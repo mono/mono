@@ -1,5 +1,9 @@
 2003-10-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* ConfigurationSettings.cs: really make the cache work.
+
+2003-10-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ConfigurationSettings.cs: pass the file name we're reading as the
 	context.
 

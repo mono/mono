@@ -55,8 +55,8 @@ namespace System.Configuration
 	//
 	class DefaultConfig : IConfigurationSystem
 	{
-		static string creatingInstance = "137213797382-asad";
-		static string buildingData = "1797382-ladgasjkdg";
+		static object creatingInstance = new object ();
+		static object buildingData = new object ();
 		static DefaultConfig instance;
 		ConfigurationData config;
 
@@ -137,59 +137,47 @@ namespace System.Configuration
         //
         class FileWatcherCache
         {
-                Hashtable _cacheTable;
-                FileInfo _lastInfo;
-                string _filename;
+                Hashtable cacheTable;
+		DateTime lastWriteTime;
+                string filename;
+		static TimeSpan seconds = new TimeSpan (0, 0, 2);
 
                 public FileWatcherCache (string filename)
                 {
-                        _cacheTable = Hashtable.Synchronized (new Hashtable());
-                        _lastInfo = new FileInfo (filename);
-                        _filename = filename;
+                        cacheTable = Hashtable.Synchronized (new Hashtable ());
+                        lastWriteTime = new FileInfo (filename).LastWriteTime;
+                        this.filename = filename;
                 }
 
-                private bool HasFileChanged()
+                void CheckFileChange ()
                 {
-                        FileInfo currentInfo = new FileInfo (_filename);
+			FileInfo info = new FileInfo (filename);
 
-                        if (currentInfo.Exists == false)
-                                return (true);
+			if (!info.Exists) {
+				lastWriteTime = DateTime.MinValue;
+				cacheTable.Clear ();
+				return;
+			}
 
-                        if (_lastInfo.LastWriteTime != currentInfo.LastWriteTime)
-                                return (true);
-
-                        if (_lastInfo.CreationTime != currentInfo.CreationTime)
-                                return (true);
-
-                        if (_lastInfo.Length != currentInfo.Length)
-                                return (true);
-
-                        return (false);
+			DateTime writeTime = info.LastWriteTime;
+			TimeSpan ts = (info.LastWriteTime - lastWriteTime);
+			if (ts >= seconds) {
+				lastWriteTime = writeTime;
+				cacheTable.Clear ();
+			}
                 }
 
-                private void CheckFileChange()
-                {
-                        if (HasFileChanged() == true)
-                        {
-                                _lastInfo = new FileInfo (_filename);
+		public object this [string key] {
+			get {
+				CheckFileChange ();
+				return cacheTable [key];
+			}
 
-                                _cacheTable.Clear();
-                        }
-                }
-
-                public void Set (string key, object value)
-                {
-                        CheckFileChange();
-
-                        _cacheTable[key] = value;
-                }
-
-                public object Get (string key)
-                {
-                        CheckFileChange();
-
-                        return (_cacheTable[key]);
-                }
+			set {
+				CheckFileChange();
+				cacheTable [key] = value;
+			}
+		}
         }
 
 	class ConfigurationData
@@ -202,23 +190,17 @@ namespace System.Configuration
                 object emptyMark = new object ();
                 FileWatcherCache fileCache = null;
 
-                private FileWatcherCache FileCache
-                {
-                        get
-                        {
-                                if (fileCache == null)
-                                {
-                                        if (fileName != null)
-                                        {
+                private FileWatcherCache FileCache {
+                        get {
+                                if (fileCache == null) {
+                                        if (fileName != null) {
                                                 fileCache = new FileWatcherCache (fileName);
-                                        }
-                                        else
-                                        {
+                                        } else {
                                                 fileCache = parent.FileCache;
                                         }
                                 }
 
-                                return (fileCache);
+                                return fileCache;
                         }
                 }
 
@@ -353,26 +335,17 @@ namespace System.Configuration
 
 		public object GetConfig (string sectionName)
 		{
-                        object config;
-
-                        // check to see if the handler is in the cache
-                        config = this.FileCache.Get (sectionName);
+                        object config = this.FileCache [sectionName];
 
                         if (config == emptyMark)
-                                return (null);
-                        else if (config != null)
-                                return (config);
-                        else
-                        {
-                                config = GetConfigInternal (sectionName);
+                                return null;
 
-                                if (config == null)
-                                        this.FileCache.Set (sectionName, emptyMark);
-                                else
-                                        this.FileCache.Set (sectionName, config);
+                        if (config != null)
+                                return config;
 
-                                return (config);
-                        }
+			config = GetConfigInternal (sectionName);
+			this.FileCache [sectionName] = (config == null) ? emptyMark : config;
+			return config;
                 }
 
 		private object LookForFactory (string key)
