@@ -1,3 +1,7 @@
+2003-11-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* exception.h (mono_get_exception_bad_image_format): New function.
+
 2003-11-24  Zoltan Varga  <vargaz@freemail.hu>
 
 	icall.c (ves_icall_System_Reflection_Assembly_InternalGetType): 
