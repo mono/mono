@@ -23,7 +23,7 @@ namespace MonoTests.System.Reflection
 [TestFixture]
 public class ModuleTest : Assertion
 {	
-	static string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.Reflection.Emit.ModuleTest");
+	static string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.Reflection.ModuleTest");
 
 	[SetUp]
 	public void SetUp () {
