@@ -55,7 +55,13 @@ namespace Mono.ILASM {
                 private ArrayList inst_list;
                 private Hashtable label_table;
                 private PEAPI.MethodDef methoddef;
+                private bool entry_point;
+                private bool is_resolved;
                 private bool is_defined;
+                private ArrayList local_list;
+                private Hashtable named_local_table;
+                private bool init_locals;
+                private int max_stack;
 
                 public MethodDef (PEAPI.MethAttr meth_attr, PEAPI.ImplAttr impl_attr,
                                 string name, ITypeRef ret_type, ArrayList param_list)
@@ -68,8 +74,14 @@ namespace Mono.ILASM {
 
                         inst_list = new ArrayList ();
                         label_table = new Hashtable ();
+                        local_list = new ArrayList ();
+                        named_local_table = new Hashtable ();
+                        entry_point = false;
+                        init_locals = false;
+                        max_stack = -1;
 
                         is_defined = false;
+                        is_resolved = false;
                         CreateSignature ();
                 }
 
@@ -85,13 +97,47 @@ namespace Mono.ILASM {
                         get { return methoddef; }
                 }
 
-                /// <summary>
-                ///  Define a global method
-                /// </summary>
-                public void Define (CodeGen code_gen)
+                public void AddLocals (ArrayList local_list)
                 {
-                        if (is_defined)
-                                return;
+                        int slot_pos = this.local_list.Count;
+
+                        foreach (Local local in local_list) {
+                                if (local.Slot == -1) {
+                                        local.Slot = slot_pos;
+                                }
+                                slot_pos++;
+                                if (local.Name == null)
+                                        continue;
+                                named_local_table.Add (local.Name, local);
+                        }
+
+                        this.local_list.AddRange (local_list);
+                }
+
+                public Local GetNamedLocal (string name)
+                {
+                        return (Local) named_local_table[name];
+                }
+
+                public void InitLocals ()
+                {
+                        init_locals = true;
+                }
+
+                public void EntryPoint ()
+                {
+                        entry_point = true;
+                }
+
+                public void SetMaxStack (int max_stack)
+                {
+                        this.max_stack = max_stack;
+                }
+
+                public PEAPI.MethodDef Resolve (CodeGen code_gen)
+                {
+                        if (is_resolved)
+                                return methoddef;
 
                         PEAPI.Param[] param_array = new PEAPI.Param[param_list.Count];
                         int count = 0;
@@ -104,6 +150,43 @@ namespace Mono.ILASM {
 
                         methoddef = code_gen.PEFile.AddMethod (meth_attr, impl_attr,
                                         name, ret_type.PeapiType, param_array);
+
+                        is_resolved = true;
+
+                        return methoddef;
+                }
+
+                public PEAPI.MethodDef Resolve (CodeGen code_gen, PEAPI.ClassDef classdef)
+                {
+                        if (is_resolved)
+                                return methoddef;
+
+                        PEAPI.Param[] param_array = new PEAPI.Param[param_list.Count];
+                        int count = 0;
+                        ret_type.Resolve (code_gen);
+
+                        foreach (ParamDef paramdef in param_list) {
+                                paramdef.Define (code_gen);
+                                param_array[count++] = paramdef.PeapiParam;
+                        }
+
+                        methoddef = classdef.AddMethod (meth_attr, impl_attr,
+                                        name, ret_type.PeapiType, param_array);
+
+                        is_resolved = true;
+
+                        return methoddef;
+                }
+
+                /// <summary>
+                ///  Define a global method
+                /// </summary>
+                public void Define (CodeGen code_gen)
+                {
+                        if (is_defined)
+                                return;
+
+                        Resolve (code_gen);
 
                         WriteCode (code_gen, methoddef);
 
@@ -118,17 +201,7 @@ namespace Mono.ILASM {
                         if (is_defined)
                                 return;
 
-                        PEAPI.Param[] param_array = new PEAPI.Param[param_list.Count];
-                        int count = 0;
-                        ret_type.Resolve (code_gen);
-
-                        foreach (ParamDef paramdef in param_list) {
-                                paramdef.Define (code_gen);
-                                param_array[count++] = paramdef.PeapiParam;
-                        }
-
-                        methoddef = classdef.AddMethod (meth_attr, impl_attr,
-                                        name, ret_type.PeapiType, param_array);
+                        Resolve (code_gen, classdef);
 
                         WriteCode (code_gen, methoddef);
 
@@ -142,6 +215,22 @@ namespace Mono.ILASM {
 
                 protected void WriteCode (CodeGen code_gen, PEAPI.MethodDef methoddef)
                 {
+                        if (entry_point)
+                                methoddef.DeclareEntryPoint ();
+
+                        if (local_list != null) {
+                                PEAPI.Local[] local_array = new PEAPI.Local[local_list.Count];
+                                int i = 0;
+
+                                foreach (Local local in local_list)
+                                        local_array[local.Slot]  = local.GetPeapiLocal (code_gen);
+
+                                methoddef.AddLocals (local_array, init_locals);
+                        }
+
+                        if (max_stack >= 0)
+                                methoddef.SetMaxStack (max_stack);
+
                         if (inst_list.Count < 1)
                                 return;
 
@@ -189,10 +278,13 @@ namespace Mono.ILASM {
 
                 private void CreateSignature ()
                 {
+                        signature = CreateSignature (name, param_list);
+                }
+
+                public static string CreateSignature (string name, ICollection param_list)
+                {
                         StringBuilder builder = new StringBuilder ();
 
-                        builder.Append (ret_type.FullName);
-                        builder.Append ('_');
                         builder.Append (name);
                         builder.Append ('(');
 
@@ -205,7 +297,7 @@ namespace Mono.ILASM {
                         builder.Append (')');
 
 
-                        signature = builder.ToString ();
+                        return builder.ToString ();
                 }
         }
 

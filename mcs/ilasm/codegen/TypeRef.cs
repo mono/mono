@@ -94,6 +94,12 @@ namespace Mono.ILASM {
                         is_pinned = true;
                 }
 
+                public  IMethodRef GetMethodRef (ITypeRef ret_type,
+                                string name, ITypeRef[] param)
+                {
+                        return new MethodRef (this, ret_type, name, param);
+                }
+
                 public void Resolve (CodeGen code_gen)
                 {
                         if (is_resolved)

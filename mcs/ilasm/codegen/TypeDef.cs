@@ -23,8 +23,8 @@ namespace Mono.ILASM {
                 private IClassRef parent;
                 private ArrayList impl_list;
                 private PEAPI.ClassDef classdef;
-                private ArrayList field_list;
-                private ArrayList method_list;
+                private Hashtable field_table;
+                private Hashtable method_table;
                 private ArrayList data_list;
                 private TypeDef outer;
 
@@ -36,8 +36,8 @@ namespace Mono.ILASM {
                         this.name = name;
                         this.parent = parent;
                         this.impl_list = impl_list;
-                        field_list = new ArrayList ();
-                        method_list = new ArrayList ();
+                        field_table = new Hashtable ();
+                        method_table = new Hashtable ();
                         data_list = new ArrayList ();
 
                         is_defined = false;
@@ -71,7 +71,7 @@ namespace Mono.ILASM {
 
                 public void AddFieldDef (FieldDef fielddef)
                 {
-                        field_list.Add (fielddef);
+                        field_table.Add (fielddef.Name, fielddef);
                 }
 
                 public void AddDataDef (DataDef datadef)
@@ -81,7 +81,7 @@ namespace Mono.ILASM {
 
                 public void AddMethodDef (MethodDef methoddef)
                 {
-                        method_list.Add (methoddef);
+                        method_table.Add (methoddef.Signature, methoddef);
                 }
 
                 public void Define (CodeGen code_gen)
@@ -131,13 +131,20 @@ namespace Mono.ILASM {
 
                 public void DefineContents (CodeGen code_gen)
                 {
-                        foreach (FieldDef fielddef in field_list) {
+                        foreach (FieldDef fielddef in field_table.Values) {
                                 fielddef.Define (code_gen, classdef);
                         }
 
-                        foreach (MethodDef methoddef in method_list) {
+                        foreach (MethodDef methoddef in method_table.Values) {
                                 methoddef.Define (code_gen, classdef);
                         }
+                }
+
+                public PEAPI.Method ResolveMethod (string signature, CodeGen code_gen)
+                {
+                        MethodDef methoddef = (MethodDef) method_table[signature];
+
+                        return methoddef.Resolve (code_gen, classdef);
                 }
 
                 private string MakeFullName ()

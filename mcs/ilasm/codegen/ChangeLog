@@ -1,3 +1,22 @@
+2003-05-10 Jackson Harper <jackson@latitudegeo.com>
+
+	* IMethodRef.cs: New file - Interface that method references must
+	implement
+	* ExternMethodRef.cs: New file - Reference to a method in another
+	assembly
+	* Local.cs: New file - A Local variable
+	* MethodInstr.cs: New file - an instruction that takes a method
+	reference operand
+	* IClassRef.cs: Add method to get a method reference from a class
+	reference
+	* MethodDef.cs: Add ability to resolve methods before defining
+	them, add max stack, locals, and entry point. Make CreateSignature
+	method public and static so other classes can use it.
+	* TypeDef.cs: Store methods and fields in hashtables so they can
+	be easily retrieved, add method to resolve member methods.
+	* TypeRef.cs: Add method for resolving member methods.
+	
+		
 2003-05-07 Jackson Harper <jackson@latitudegeo.com>
 
 	* TypeInstr.cs: New file - implementation of instructions that
