@@ -224,8 +224,8 @@ namespace System.Web.UI {
 			
 			protected readonly byte PrimaryId, SecondaryId = 255, TertiaryId = 255;
 			
-			protected abstract void Write (BinaryWriter w, object o, WriterContext ctx);
-			protected abstract object Read (byte token, BinaryReader r, ReaderContext ctx);
+			protected internal abstract void Write (BinaryWriter w, object o, WriterContext ctx);
+			protected internal abstract object Read (byte token, BinaryReader r, ReaderContext ctx);
 			protected abstract Type Type { get; }
 			protected virtual int NumberOfIds { get { return 1; } }
 			
@@ -334,7 +334,7 @@ namespace System.Web.UI {
 		
 		#region Primitive Formatters
 		class StringFormatter : ObjectFormatter {
-			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
+			protected internal override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				short key;
 				if (ctx.RegisterCache (o, out key)) {
@@ -346,7 +346,7 @@ namespace System.Web.UI {
 				}
 			}
 			
-			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
+			protected internal override object Read (byte token, BinaryReader r, ReaderContext ctx)
 			{
 				if (token == PrimaryId) {
 					string s = r.ReadString ();
@@ -366,13 +366,13 @@ namespace System.Web.UI {
 		}
 		
 		class Int64Formatter : ObjectFormatter {
-			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
+			protected internal override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				w.Write (PrimaryId);
 				w.Write ((long)o);
 			}
 			
-			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
+			protected internal override object Read (byte token, BinaryReader r, ReaderContext ctx)
 			{
 				return r.ReadInt64 ();
 			}
@@ -382,7 +382,7 @@ namespace System.Web.UI {
 		}
 		
 		class Int32Formatter : ObjectFormatter {
-			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
+			protected internal override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				int i = (int) o;
 				if ((int)(byte) i == i) {
@@ -394,7 +394,7 @@ namespace System.Web.UI {
 				}
 			}
 			
-			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
+			protected internal override object Read (byte token, BinaryReader r, ReaderContext ctx)
 			{
 				if (token == PrimaryId)
 					return r.ReadInt32 ();
@@ -411,13 +411,13 @@ namespace System.Web.UI {
 		}
 		
 		class Int16Formatter : ObjectFormatter {
-			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
+			protected internal override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				w.Write (PrimaryId);
 				w.Write ((short)o);
 			}
 			
-			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
+			protected internal override object Read (byte token, BinaryReader r, ReaderContext ctx)
 			{
 				return r.ReadInt16 ();
 			}
@@ -427,13 +427,13 @@ namespace System.Web.UI {
 		}
 		
 		class ByteFormatter : ObjectFormatter {
-			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
+			protected internal override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				w.Write (PrimaryId);
 				w.Write ((byte)o);
 			}
 			
-			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
+			protected internal override object Read (byte token, BinaryReader r, ReaderContext ctx)
 			{
 				return r.ReadByte ();
 			}
@@ -443,7 +443,7 @@ namespace System.Web.UI {
 		}
 		
 		class BooleanFormatter : ObjectFormatter {
-			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
+			protected internal override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				if ((bool)o == true)
 					w.Write (PrimaryId);
@@ -451,7 +451,7 @@ namespace System.Web.UI {
 					w.Write (SecondaryId);
 			}
 			
-			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
+			protected internal override object Read (byte token, BinaryReader r, ReaderContext ctx)
 			{
 				return token == PrimaryId;
 			}
@@ -466,13 +466,13 @@ namespace System.Web.UI {
 		}
 		
 		class CharFormatter : ObjectFormatter {
-			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
+			protected internal override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				w.Write (PrimaryId);
 				w.Write ((char) o);
 			}
 			
-			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
+			protected internal override object Read (byte token, BinaryReader r, ReaderContext ctx)
 			{
 				return r.ReadChar ();
 			}
@@ -483,13 +483,13 @@ namespace System.Web.UI {
 		}
 		
 		class DateTimeFormatter : ObjectFormatter {
-			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
+			protected internal override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				w.Write (PrimaryId);
 				w.Write (((DateTime) o).Ticks);
 			}
 			
-			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
+			protected internal override object Read (byte token, BinaryReader r, ReaderContext ctx)
 			{
 				return new DateTime (r.ReadInt64 ());
 			}
@@ -500,7 +500,7 @@ namespace System.Web.UI {
 		}
 		
 		class PairFormatter : ObjectFormatter {
-			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
+			protected internal override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				Pair p = (Pair) o;
 				w.Write (PrimaryId);
@@ -508,7 +508,7 @@ namespace System.Web.UI {
 				WriteObject (w, p.Second, ctx);
 			}
 			
-			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
+			protected internal override object Read (byte token, BinaryReader r, ReaderContext ctx)
 			{
 				Pair p = new Pair ();
 				p.First = ReadObject (r, ctx);
@@ -522,7 +522,7 @@ namespace System.Web.UI {
 		}
 		
 		class TripletFormatter : ObjectFormatter {
-			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
+			protected internal override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				Triplet t = (Triplet) o;
 				w.Write (PrimaryId);
@@ -531,7 +531,7 @@ namespace System.Web.UI {
 				WriteObject (w, t.Third, ctx);
 			}
 			
-			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
+			protected internal override object Read (byte token, BinaryReader r, ReaderContext ctx)
 			{
 				Triplet t = new Triplet ();
 				t.First = ReadObject (r, ctx);
@@ -546,7 +546,7 @@ namespace System.Web.UI {
 		}
 		
 		class ArrayListFormatter : ObjectFormatter {
-			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
+			protected internal override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				ArrayList l = (ArrayList) o;
 				
@@ -556,7 +556,7 @@ namespace System.Web.UI {
 					WriteObject (w, i, ctx);
 			}
 			
-			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
+			protected internal override object Read (byte token, BinaryReader r, ReaderContext ctx)
 			{
 				int len = Read7BitEncodedInt (r);
 				ArrayList l = new ArrayList (len);
@@ -573,7 +573,7 @@ namespace System.Web.UI {
 		}
 		
 		class HashtableFormatter : ObjectFormatter {
-			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
+			protected internal override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				Hashtable ht = (Hashtable) o;
 				
@@ -585,7 +585,7 @@ namespace System.Web.UI {
 				}
 			}
 			
-			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
+			protected internal override object Read (byte token, BinaryReader r, ReaderContext ctx)
 			{
 				int len = Read7BitEncodedInt (r);
 				Hashtable ht = new Hashtable (len);
@@ -606,7 +606,7 @@ namespace System.Web.UI {
 		}
 		
 		class ObjectArrayFormatter : ObjectFormatter {
-			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
+			protected internal override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				object [] val = (object []) o;
 				
@@ -616,7 +616,7 @@ namespace System.Web.UI {
 					WriteObject (w, i, ctx);
 			}
 			
-			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
+			protected internal override object Read (byte token, BinaryReader r, ReaderContext ctx)
 			{
 				int len = Read7BitEncodedInt (r);
 				object [] ret = new object [len];
@@ -636,7 +636,7 @@ namespace System.Web.UI {
 		
 		#region System.Web Optimizations
 		class ColorFormatter : ObjectFormatter {
-			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
+			protected internal override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				Color c = (Color) o;
 				
@@ -649,7 +649,7 @@ namespace System.Web.UI {
 				}
 			}
 			
-			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
+			protected internal override object Read (byte token, BinaryReader r, ReaderContext ctx)
 			{
 				if (token == PrimaryId)
 					return Color.FromArgb (r.ReadInt32 ());
@@ -670,7 +670,7 @@ namespace System.Web.UI {
 		
 		#region Special Formatters
 		class EnumFormatter : ObjectFormatter {
-			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
+			protected internal override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				object value = Convert.ChangeType (o, ((Enum) o).GetTypeCode ());
 				w.Write (PrimaryId);
@@ -678,7 +678,7 @@ namespace System.Web.UI {
 				WriteObject (w, value, ctx);
 			}
 			
-			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
+			protected internal override object Read (byte token, BinaryReader r, ReaderContext ctx)
 			{
 				Type t = (Type) ReadObject (r, ctx);
 				object value = ReadObject (r, ctx);
@@ -691,7 +691,7 @@ namespace System.Web.UI {
 		}
 		
 		class TypeFormatter : ObjectFormatter {
-			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
+			protected internal override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				short key;
 				if (ctx.RegisterCache (o, out key)) {
@@ -706,7 +706,7 @@ namespace System.Web.UI {
 				}
 			}
 			
-			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
+			protected internal override object Read (byte token, BinaryReader r, ReaderContext ctx)
 			{
 				if (token == PrimaryId) {
 					string type = r.ReadString ();
@@ -730,7 +730,7 @@ namespace System.Web.UI {
 		}
 		
 		class SingleRankArrayFormatter : ObjectFormatter {
-			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
+			protected internal override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				Array val = (Array) o;
 				
@@ -742,7 +742,7 @@ namespace System.Web.UI {
 					WriteObject (w, i, ctx);
 			}
 			
-			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
+			protected internal override object Read (byte token, BinaryReader r, ReaderContext ctx)
 			{
 				Type t = (Type) ReadObject (r, ctx);
 				int len = Read7BitEncodedInt (r);
@@ -760,12 +760,12 @@ namespace System.Web.UI {
 		}
 		
 		class FontUnitFormatter : StringFormatter {
-			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
+			protected internal override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				base.Write (w, o.ToString (), ctx);
 			}
 			
-			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
+			protected internal override object Read (byte token, BinaryReader r, ReaderContext ctx)
 			{
 				return FontUnit.Parse ((string) base.Read (token, r, ctx));
 			}
@@ -776,12 +776,12 @@ namespace System.Web.UI {
 		}
 
 		class UnitFormatter : StringFormatter {
-			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
+			protected internal override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				base.Write (w, o.ToString (), ctx);
 			}
 			
-			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
+			protected internal override object Read (byte token, BinaryReader r, ReaderContext ctx)
 			{
 				return Unit.Parse ((string) base.Read (token, r, ctx));
 			}
@@ -800,7 +800,7 @@ namespace System.Web.UI {
 				this.typefmt = typefmt;
 			}
 
-			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
+			protected internal override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				w.Write (PrimaryId);
 				typefmt.Write (w, o.GetType (), ctx);
@@ -809,7 +809,7 @@ namespace System.Web.UI {
 				base.Write (w, v, ctx);
 			}
 			
-			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
+			protected internal override object Read (byte token, BinaryReader r, ReaderContext ctx)
 			{
 				token = r.ReadByte ();
 				Type t = (Type) typefmt.Read (token, r, ctx);
@@ -829,7 +829,7 @@ namespace System.Web.UI {
 		}
 
 		class BinaryObjectFormatter : ObjectFormatter {
-			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
+			protected internal override void Write (BinaryWriter w, object o, WriterContext ctx)
 			{
 				w.Write (PrimaryId);
 				
@@ -841,7 +841,7 @@ namespace System.Web.UI {
 				w.Write (buf, 0, buf.Length);
 			}
 			
-			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
+			protected internal override object Read (byte token, BinaryReader r, ReaderContext ctx)
 			{
 				int len = Read7BitEncodedInt (r);
 				byte [] buf = r.ReadBytes (len);

@@ -1,3 +1,8 @@
+2004-06-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ObjectStateFormatter.cs : csc build fix. Protected Read()/Write()
+	  (of other objects) are called in TypeConverterFormatter.
+
 2004-06-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ObjectStateFormatter.cs: before choosing the binary formatter, check
