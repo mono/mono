@@ -164,8 +164,9 @@ namespace System.Web.UI {
 
 			public void InstantiateIn (Control control)
 			{
-				object template = Activator.CreateInstance (type);
-				control.Controls.Add ((Control) template);
+				Control template = Activator.CreateInstance (type) as Control;
+				template.SetBindingContainer (false);
+				control.Controls.Add (template);
 			}
 		}
 	}
