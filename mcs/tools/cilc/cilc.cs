@@ -42,11 +42,20 @@ class cilc
 		//create a makefile
 		CodeWriter makefile = new CodeWriter (target_dir + "Makefile");
 		makefile.Indenter = "\t";
+		makefile.WriteLine (@"OBJS = $(shell ls *.c | sed -e 's/\.c/.o/')");
+		makefile.WriteLine (@"CFLAGS = -static -fpic $(shell pkg-config --cflags glib-2.0 mono)");
+		makefile.LineBreak ();
 		makefile.WriteLine ("all: lib" + ns.ToLower () + ".so");
 		makefile.LineBreak ();
-		makefile.WriteLine ("lib" + ns.ToLower () + ".so: *.c");
+		makefile.WriteLine ("lib" + ns.ToLower () + ".so: $(OBJS)");
 		makefile.Indent ();
 		makefile.WriteLine ("gcc -Wall -fpic -shared `pkg-config --cflags --libs glib-2.0 mono` -lpthread *.c -o lib" + ns.ToLower () + ".so");
+		makefile.Outdent ();
+		makefile.LineBreak ();
+		makefile.WriteLine ("clean:");
+		makefile.Indent ();
+		makefile.WriteLine ("rm -rf core *~ *.o *.so");
+		makefile.Outdent ();
 		makefile.Close ();
 	}
 
@@ -279,20 +288,20 @@ class cilc
 		C.WriteLine ("{");
 		C.Indent ();
 
-		C.WriteLine ("static MonoMethod *method = NULL;");
+		C.WriteLine ("static MonoMethod *_mono_method = NULL;");
 		if (parameters.Length != 0) C.WriteLine ("gpointer params[" + parameters.Length + "];");
 		if (ctor) C.WriteLine ("MonoObject *" + CamelToC (t.Name) + ";");
 		C.LineBreak ();
 
-		C.WriteLine ("if (method == NULL) {");
+		C.WriteLine ("if (_mono_method == NULL) {");
 		C.Indent ();
 
-		if (ctor) C.WriteLine ("MonoMethodDesc *desc = mono_method_desc_new (\":.ctor()\", FALSE);");
+		if (ctor) C.WriteLine ("MonoMethodDesc *_mono_method_desc = mono_method_desc_new (\":.ctor()\", FALSE);");
 		else {
-			C.WriteLine ("MonoMethodDesc *desc = mono_method_desc_new (\":" + m.Name + "(" + mycsargs + ")" + "\", FALSE);");
+			C.WriteLine ("MonoMethodDesc *_mono_method_desc = mono_method_desc_new (\":" + m.Name + "(" + mycsargs + ")" + "\", FALSE);");
 		}
 
-		C.WriteLine ("method = mono_method_desc_search_in_class (desc, " + cur_class + "_get_mono_class ());");
+		C.WriteLine ("_mono_method = mono_method_desc_search_in_class (_mono_method_desc, " + cur_class + "_get_mono_class ());");
 
 		C.Outdent ();
 		C.WriteLine ("}");
@@ -314,7 +323,7 @@ class cilc
 		string instance_arg = "NULL";
 		if (!stat) instance_arg = CamelToC (t.Name);
 
-		C.WriteLine ("mono_runtime_invoke (method, " + instance_arg + ", " + params_arg + ", NULL);");
+		C.WriteLine ("mono_runtime_invoke (_mono_method, " + instance_arg + ", " + params_arg + ", NULL);");
 
 		if (ctor) C.WriteLine ("return " + CamelToC (t.Name) + ";");
 
@@ -430,6 +439,7 @@ class CodeWriter
 
 	public void Close ()
 	{
+		w.Flush ();
 		w.Close ();
 	}
 }
