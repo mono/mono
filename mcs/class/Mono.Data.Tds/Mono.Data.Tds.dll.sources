@@ -12,6 +12,7 @@ Mono.Data.Tds.Protocol/TdsColumnStatus.cs
 Mono.Data.Tds.Protocol/TdsColumnType.cs
 Mono.Data.Tds.Protocol/TdsComm.cs
 Mono.Data.Tds.Protocol/TdsConnectionParameters.cs
+Mono.Data.Tds.Protocol/TdsConnectionPool.cs
 Mono.Data.Tds.Protocol/TdsDataColumn.cs
 Mono.Data.Tds.Protocol/TdsDataColumnCollection.cs
 Mono.Data.Tds.Protocol/TdsDataRow.cs
