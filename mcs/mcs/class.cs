@@ -3057,14 +3057,24 @@ namespace Mono.CSharp {
 				t = ec.ContainerType;
 
 			parent_constructor_group = Expression.MemberLookup (
-				ec, t, null, t, ".ctor", 
-				MemberTypes.Constructor,
+				ec, t, ".ctor", MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly,
 				loc);
 			
 			if (parent_constructor_group == null){
-				Report.Error (1501, loc,
-				       "Can not find a constructor for this argument list");
+				parent_constructor_group = Expression.MemberLookup (
+					ec, t, ".ctor", MemberTypes.Constructor,
+					BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly,
+					loc);
+
+				if (parent_constructor_group != null)
+					Report.Error (
+						112, loc, "`{0}.{1}' is inaccessible due to " +
+						"its protection level", t.FullName, t.Name);
+				else
+					Report.Error (
+						1501, loc, "Can not find a constructor for " +
+						"this argument list");
 				return false;
 			}
 			
