@@ -1,3 +1,7 @@
+2004-06-18  Marek Safar <marek.safar@seznam.cz>
+
+	* test-273.cs: New test for #55971
+
 2004-06-18  Raja R Harinath  <rharinath@novell.com>
 
 	* test-272.cs: New test case for the breaking build.
