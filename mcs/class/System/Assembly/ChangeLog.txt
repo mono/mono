@@ -1,0 +1,3 @@
+2003-07-10  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* AssemblyInfo.cs: Added file
