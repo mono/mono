@@ -1,3 +1,8 @@
+2002-10-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XmlTextReader.cs: make it work when the underlying Stream is not
+	'seekable'.
+
 2002-10-26  Piers Haken <piersh@friskit.com>
 
 	* XmlNode.cs: add virtual property XPathNodeType

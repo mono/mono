@@ -56,6 +56,7 @@ namespace System.Xml
 			parserContext = new XmlParserContext (null, nsMgr, null, XmlSpace.None);
 			Init ();
 			reader = new StreamReader (input);
+			can_seek = input.CanSeek;
 		}
 
 		[MonoTODO]
@@ -67,6 +68,7 @@ namespace System.Xml
 			Init ();
 			// StreamReader does not support url, only filepath;-)
 			reader = new StreamReader(url);
+			can_seek = reader.Peek () != -1;
 		}
 
 		[MonoTODO]
@@ -77,6 +79,7 @@ namespace System.Xml
 			parserContext = new XmlParserContext (null, nsMgr, null, XmlSpace.None);
 			Init ();
 			reader = input;
+			can_seek = input.Peek () != -1;
 		}
 
 		[MonoTODO]
@@ -92,6 +95,7 @@ namespace System.Xml
 			parserContext = new XmlParserContext (null, nsMgr, null, XmlSpace.None);
 			Init ();
 			reader = new StreamReader (input);
+			can_seek = input.CanSeek;
 		}
 
 		[MonoTODO]
@@ -119,6 +123,7 @@ namespace System.Xml
 			parserContext = new XmlParserContext (null, nsMgr, null, XmlSpace.None);
 			Init ();
 			reader = input;
+			can_seek = input.Peek () != -1;
 		}
 
 		[MonoTODO]
@@ -126,6 +131,7 @@ namespace System.Xml
 		{
 			parserContext = context;
 			reader = new StreamReader(xmlFragment);
+			can_seek = xmlFragment.CanSeek;
 			Init();
 //			throw new NotImplementedException ();
 		}
@@ -149,6 +155,7 @@ namespace System.Xml
 			parserContext = context;
 			Init ();
 			reader = new StringReader(xmlFragment);
+			can_seek = true;
 		}
 
 		#endregion
@@ -628,6 +635,9 @@ namespace System.Xml
 		private bool saveToXmlBuffer;
 		private int line = 1;
 		private int column = 1;
+		private bool has_peek;
+		private bool can_seek;
+		private int peek_char;
 
 		internal string publicId;
 		internal string systemId;
@@ -741,12 +751,27 @@ namespace System.Xml
 
 		private int PeekChar ()
 		{
-			return reader.Peek ();
+			if (can_seek)
+				return reader.Peek ();
+
+			if (has_peek)
+				return peek_char;
+
+			peek_char = reader.Read ();
+			has_peek = true;
+			return peek_char;
 		}
 
 		private int ReadChar ()
 		{
-			int ch = reader.Read ();
+			int ch;
+			if (has_peek) {
+				ch = peek_char;
+				has_peek = false;
+			} else {
+				ch = reader.Read ();
+			}
+
 			if (ch == '\n') {
 				line++;
 				column = 1;
