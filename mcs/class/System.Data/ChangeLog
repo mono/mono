@@ -1,3 +1,7 @@
+2005-02-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Data_test.dll.sources : added DataViewManagerTest.cs.
+
 2005-01-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Data_test.dll.sources : added DataRowViewTest.cs.
