@@ -20,6 +20,7 @@ Console.WriteLine ("Finished: " + DateTime.Now.ToString ("yyyy-MM-dd HH:mm:ss.ff
 		foreach (DirectoryInfo di in
 			new DirectoryInfo (@"relax-ng").GetDirectories ()) {
 
+/*
 if (di.Name == "056") // baseURI
 	continue;
 if (di.Name == "102") // invalid URI fragment
@@ -28,6 +29,7 @@ if (di.Name == "208") // infinite loop!!
 	continue;
 if (di.Name == "210") // infinite loop!!
 	continue;
+*/
 
 			XmlTextReader xtr = null;
 			FileInfo fi = new FileInfo (di.FullName + "/i.rng");
@@ -40,9 +42,9 @@ if (di.Name == "210") // infinite loop!!
 				} catch (RelaxngException ex) {
 				} catch (XmlException ex) {
 				} catch (ArgumentNullException ex) {
-//					} catch (UriFormatException ex) {
-//					} catch (Exception ex) {
-//						Console.WriteLine ("Unexpected error type : " + di.Name + " : " + ex.Message);
+				} catch (UriFormatException ex) {
+				} catch (Exception ex) {
+					Console.WriteLine ("Unexpected error type : " + di.Name + " : " + ex.Message);
 				} finally {
 					xtr.Close ();
 				}
@@ -55,9 +57,9 @@ if (di.Name == "210") // infinite loop!!
 			try {
 				p = RelaxngPattern.Read (xtr);
 				p.Compile ();
-//				} catch (Exception ex) {
-//					Console.WriteLine ("Invalidated grammar: " + di.Name + " : " + ex.Message);
-//					continue;
+				} catch (Exception ex) {
+					Console.WriteLine ("Invalidated grammar: " + di.Name + " : " + ex.Message);
+					continue;
 			} finally {
 				xtr.Close ();
 			}
