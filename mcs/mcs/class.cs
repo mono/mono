@@ -315,11 +315,6 @@ namespace CIR {
 			return 0;
 		}
 
-		override public Type Define (Tree tree)
-		{
-			return null;
-		}
-		
 		public delegate void VisitContainer (TypeContainer container, object cback_data);
 
 		void VisitTypesAt (TypeContainer root, VisitContainer visit, object cback)

@@ -121,7 +121,5 @@ namespace CIR {
 				in_transit = value;
 			}
 		}
-
-		abstract public Type Define (Tree tree);
 	}
 }

@@ -18,7 +18,7 @@ using CIR;
 
 namespace Generator {
 	
-	public class TreeDump : CIR.IGenerator {
+	public class TreeDump : CIR.ITreeDump {
 		StreamWriter o;
 		int indent;
 		bool indented;
@@ -994,7 +994,7 @@ namespace Generator {
 			}
 		}
 		
-		public int GenerateFromTree (Tree tree, StreamWriter output)
+		public int Dump (Tree tree, StreamWriter output)
 		{
 			this.o = output;
 

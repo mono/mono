@@ -14,7 +14,7 @@ using CIR;
 
 namespace MSIL {
 
-	public class Generator : CIR.IGenerator {
+	public class Generator : CIR.ITreeDump {
 		StreamWriter o;
 		int indent = 0;
 		

@@ -141,36 +141,6 @@ namespace CIR {
 				bases = value;
 			}
 		}
-
-		Type def;
-		bool in_transit = false;
-		public override Type Define (Tree tree)
-		{
-			if (in_transit){
-				CSC.CSharpParser.error (529, "There is a cycle in interface " + Name);
-				return null;
-			}
-			in_transit = true;
-
-			ModuleBuilder mb = tree.ModuleBuilder;
-
-			if (bases != null){
-				// FIXME: Go over each one of the TypeRefs
-				// in Bases and resolve.
-				Console.WriteLine ("Base interfaces not yet supported");
-				return null;
-			}
-
-			TypeAttributes attr = TypeAttributes.Interface;
-
-			attr |= Modifiers.TypeAttr (mod_flags);
-			
-			def = mb.DefineType (Name, attr);
-
-			in_transit = false;
-
-			return def;
-		}
 	}
 
 	public class InterfaceMemberBase {

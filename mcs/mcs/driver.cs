@@ -20,7 +20,7 @@ namespace CSC
 	using CSC;
 
 	/// <summary>
-	///    Summary description for Class1.
+	///    The compiler driver.
 	/// </summary>
 	public class Driver
 	{
@@ -32,9 +32,8 @@ namespace CSC
 		// Lookup paths
 		ArrayList link_paths;
 
-		// Our parser context.
-		Tree context;
-		
+		RootContext context; 
+
 		bool yacc_verbose = false;
 
 		int error_count = 0;
@@ -75,12 +74,13 @@ namespace CSC
 			
 		}
 
-		public IGenerator lookup_output (string name)
+		public ITreeDump lookup_dumper (string name)
 		{
 			if (name == "tree")
 				return new Generator.TreeDump ();
-			if (name == "il")
-				return new MSIL.Generator ();
+			
+			//			if (name == "il")
+			// return new MSIL.Generator ();
 			
 			return null;
 		}
@@ -127,11 +127,14 @@ namespace CSC
 					return 1;
 				}
 
-				context.AddAssembly (a);
+				context.TypeManager.AddAssembly (a);
 			}
 			return 0;
 		}
-		
+
+		// <summary>
+		//   Loads all assemblies referenced on the command line
+		// </summary>
 		public int LoadReferences ()
 		{
 			int errors = 0;
@@ -143,14 +146,20 @@ namespace CSC
 			return errors;
 		}
 
-		
+		// <summary>
+		//    Parses the arguments, and drives the compilation
+		//    process.
+		//
+		//    TODO: Mostly structured to debug the compiler
+		//    now, needs to be turned into a real driver soon.
+		// </summary>
 		public Driver (string [] args)
 		{
 			Stream output_stream = Console.OpenStandardOutput ();
-			IGenerator generator = null;
+			ITreeDump generator = null;
 			int errors = 0, i;
 
-			context = new Tree ();
+			context = new RootContext ();
 			references = new ArrayList ();
 			link_paths = new ArrayList ();
 
@@ -170,7 +179,7 @@ namespace CSC
 					}
 
 					if (arg.StartsWith ("-t")){
-						generator = lookup_output (args [++i]);
+						generator = lookup_dumper (args [++i]);
 						continue;
 					}
 
@@ -211,7 +220,7 @@ namespace CSC
 					continue;
 				}
 
-				errors += parse (context, arg);
+				errors += parse (context.Tree, arg);
 			}
 			if (errors > 0)
 				error ("// Parsing failed");
@@ -229,20 +238,17 @@ namespace CSC
 				notice ("// Assemblies loaded");
 
 
-			errors += context.BuilderInit ("Module", "Module.exe");
-
 			//
-			// Name resolution on the tree.
+			// Dumping the parsed tree.
 			//
-			errors += context.Resolve ();
-						   
-			//
-			// Code generation from the tree
+			// This code generation interface is only here
+			// for debugging purposes, it will change as we
+			// move to the new tree. 
 			//
 			if (generator != null){
 				StreamWriter output = new StreamWriter (output_stream);
 				
-				errors += generator.GenerateFromTree (context, output);
+				errors += generator.Dump (context.Tree, output);
 
 				if (errors > 0)
 					error ("// Compilation failed");
@@ -251,7 +257,7 @@ namespace CSC
 
 				output.Flush ();
 				output.Close ();
-			}
+			} 
 
 			error_count = errors;
 		}

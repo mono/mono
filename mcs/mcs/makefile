@@ -9,12 +9,11 @@ COMPILER_SOURCES = \
 	assign.cs			\
 	driver.cs $(COMMON_SOURCES) 	\
 	class.cs 			\
+	cil-codegen.cs			\
 	constant.cs			\
 	decl.cs				\
 	enum.cs				\
 	expression.cs 			\
-	generator.cs			\
-	gen-il.cs			\
 	gen-treedump.cs			\
 	interface.cs			\
 	literal.cs			\
@@ -22,9 +21,11 @@ COMPILER_SOURCES = \
 	namespace.cs			\
 	parameter.cs			\
 	parameterCollection.cs		\
+	rootcontext.cs			\
 	statement.cs			\
 	statementCollection.cs		\
-	type.cs
+	type.cs				\
+	typemanager.cs
 
 TEST_TOKENIZER_SOURCES = test-token.cs $(COMMON_SOURCES)
 

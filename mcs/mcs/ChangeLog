@@ -1,3 +1,22 @@
+2001-07-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* tree.cs: moved IGenerator interface and renamed it to ITreeDump
+	and put it here.
+
+	Get rid of old crufty code.
+
+	* rootcontext.cs: Use this to keep track of the parsed
+	representation and the defined types available to the program. 
+
+	* gen-treedump.cs: adjust for new convention.
+
+	* type.cs: Split out the type manager, and the assembly builder
+	from here. 
+
+	* typemanager.cs: the type manager will live here now.
+
+	* cil-codegen.cs: And the code generator here. 
+
 2001-07-14  Sean MacIsaac  <macisaac@ximian.com>
 
 	* makefile: Fixed up for easy making.
