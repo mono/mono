@@ -1,3 +1,6 @@
+2004-04-02  Jordi Mas i Hernandez <jordi@ximian.com>
+	* Region.cs: implemented
+
 2004-04-01  Duncan Mak  <duncan@ximian.com>
 
 	* Graphics.cs (DrawCurve): Call the correct GDI+ wrappers.
@@ -11,6 +14,7 @@
 
 2004-03-30  Jordi Mas i Hernandez <jordi@ximian.com>	
 	* Image.cs: implemented a few GDI+ wrapper calls
+
 2004-03-30  Jordi Mas i Hernandez <jordi@ximian.com>
 	* Bitmap.cs: remove redundant data already present at Image.cs
 	* Image.cs: use GDI+ functions to get image details

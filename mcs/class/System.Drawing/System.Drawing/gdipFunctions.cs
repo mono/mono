@@ -152,6 +152,80 @@ namespace System.Drawing {
 		static internal extern Status GdipDeleteBrush (IntPtr brush);
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipGetBrushType (IntPtr brush, out BrushType type);
+
+
+                // Region functions
+                [DllImport("gdiplus.dll")]
+		static internal extern Status GdipCreateRegion (out IntPtr region);
+
+                [DllImport("gdiplus.dll")]
+		static internal extern Status GdipDeleteRegion (IntPtr region);
+
+                [DllImport("gdiplus.dll")]
+		static internal extern Status GdipCloneRegion (IntPtr region, out IntPtr cloned);
+
+                [DllImport("gdiplus.dll")]
+		static internal extern Status GdipCreateRegionRect (RectangleF rect, out IntPtr region);
+
+                [DllImport("gdiplus.dll")]
+		static internal extern Status GdipCreateRegionRectI (Rectangle rect,  out IntPtr region);
+
+                [DllImport("gdiplus.dll")]
+		static internal extern Status GdipCreateRegionPath (IntPtr path, out IntPtr region);
+
+                [DllImport("gdiplus.dll")]
+		static internal extern Status GdipTranslateRegion (IntPtr region, float dx, float dy);
+
+                [DllImport("gdiplus.dll")]
+		static internal extern Status GdipTranslateRegionI (IntPtr region, int dx, int dy);
+
+                [DllImport("gdiplus.dll")]
+		static internal extern Status GdipIsVisibleRegionPoint (IntPtr region, float x, float y,
+                        IntPtr graphics, out bool result);
+
+                [DllImport("gdiplus.dll")]
+		static internal extern Status GdipIsVisibleRegionPointI (IntPtr region, int x, int y,
+                        IntPtr graphics, out bool result);
+
+                [DllImport("gdiplus.dll")]
+		static internal extern Status GdipIsVisibleRegionRect (IntPtr region, float x, float y, float width,
+                        float height, IntPtr graphics, out bool result);
+
+                [DllImport("gdiplus.dll")]
+		static internal extern Status  GdipIsVisibleRegionRectI (IntPtr region, int x, int y, int width,
+                        int height, IntPtr graphics, out bool result);
+
+
+                [DllImport("gdiplus.dll")]
+		static internal extern Status GdipCombineRegionRect (IntPtr region, RectangleF rect,
+                        CombineMode combineMode);
+
+                [DllImport("gdiplus.dll")]
+		static internal extern Status GdipCombineRegionRectI (IntPtr region, Rectangle rect,
+                        CombineMode combineMode);
+
+                [DllImport("gdiplus.dll")]
+		static internal extern Status GdipCombineRegionPath (IntPtr region, IntPtr path, CombineMode combineMode);
+
+                [DllImport("gdiplus.dll")]
+		static internal extern Status GdipGetRegionBounds (IntPtr region, IntPtr graphics, ref RectangleF rect);
+
+                [DllImport("gdiplus.dll")]
+		static internal extern Status GdipSetInfinite (IntPtr region);
+
+                [DllImport("gdiplus.dll")]
+		static internal extern Status GdipSetEmpty (IntPtr region);
+
+                [DllImport("gdiplus.dll")]
+		static internal extern Status GdipIsEmptyRegion (IntPtr region, IntPtr graphics, out bool result);
+                
+                [DllImport("gdiplus.dll")]
+		static internal extern Status GdipIsInfiniteRegion (IntPtr region, IntPtr graphics, out bool result);
+
+                [DllImport("gdiplus.dll")]
+		static internal extern Status GdipCombineRegionRegion (IntPtr region, IntPtr region2,
+                        CombineMode combineMode);
+
 		
 		// Solid brush functions
 		[DllImport("gdiplus.dll")]
