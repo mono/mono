@@ -1,4 +1,8 @@
 
+Mon Dec 20 15:28:54 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: sort the constant table (bug #70693).
+
 Mon Dec 20 12:19:37 CET 2004 Paolo Molaro <lupus@ximian.com>
 
 	* object-internals.h, threads.c, domain.c: add accessors for
