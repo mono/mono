@@ -1,3 +1,8 @@
+2001-12-17  Dietmar Maurer  <dietmar@ximian.com>
+
+	* unicode.c (_wapi_unicode_to_utf8): byteswap UTF16 strings before
+	passing them to iconv
+
 2001-12-11  Dick Porter  <dick@ximian.com>
 
 	* io.c: Implement DeleteFile(), GetFileTime(), SetFileTime() and
