@@ -1,3 +1,7 @@
+2004-09-01  Martin Baulig  <martin@ximian.com>
+
+	* Makefile: Disable test-286 for the moment.
+
 2004-09-01  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (test-compiler-jit-real): Add barebones support for
