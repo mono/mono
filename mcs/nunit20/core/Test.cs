@@ -31,7 +31,6 @@ namespace NUnit.Core
 {
 	using System;
 	using System.Collections;
-	using System.Reflection;
 
 	/// <summary>
 	///		Test Class.
@@ -55,6 +54,16 @@ namespace NUnit.Core
 		/// name across multiple assemblies.
 		/// </summary>
 		private int assemblyKey;
+
+		/// <summary>
+		/// The Type of the fixture associated with this test, or null
+		/// </summary>
+		protected Type fixtureType;
+
+		/// <summary>
+		/// The fixture object, to be used with this test, or null
+		/// </summary>
+		private object fixture;
 		
 		/// <summary>
 		/// Whether or not the test should be run
@@ -103,10 +112,31 @@ namespace NUnit.Core
 
 		protected Test( string pathName, string testName, int assemblyKey ) 
 		{ 
-			fullName = pathName + "." + testName;
+			fullName = pathName == null || pathName == string.Empty ? testName : pathName + "." + testName;
 			this.testName = testName;
 			this.assemblyKey = assemblyKey;
 			shouldRun = true;
+		}
+
+		protected Test( Type fixtureType ) : this( fixtureType, 0 ) { }
+
+		protected Test( Type fixtureType, int assemblyKey ) 
+		{
+			this.fixtureType = fixtureType;
+			this.fullName = this.testName = fixtureType.FullName;
+			this.assemblyKey = assemblyKey;
+			this.shouldRun = true;
+
+			if ( fixtureType.Namespace != null )
+				testName = testName.Substring( Name.LastIndexOf( '.' ) + 1 );
+		}
+
+		// TODO: Currently, these two are only used by our tests. Remove?
+		protected Test( object fixture ) : this( fixture, 0 ) { }
+
+		protected Test( object fixture, int assemblyKey ) : this( fixture.GetType(), assemblyKey )
+		{
+			this.fixture = fixture;
 		}
 
 		#endregion
@@ -154,6 +184,12 @@ namespace NUnit.Core
 		public string UniqueName
 		{
 			get { return string.Format( "[{0}]{1}", assemblyKey, fullName ); }
+		}
+
+		public object Fixture
+		{
+			get { return fixture; }
+			set { fixture = value; }
 		}
 
 		/// <summary>
@@ -255,38 +291,6 @@ namespace NUnit.Core
 
 		public abstract TestResult Run( EventListener listener );
 		public abstract TestResult Run(EventListener listener, IFilter filter);
-
-		#endregion
-
-		#region Protected Helper Methods
-
-		protected MethodInfo FindMethodByAttribute(object fixture, Type type)
-		{
-			foreach(MethodInfo method in fixture.GetType().GetMethods(BindingFlags.Public|BindingFlags.Instance|BindingFlags.NonPublic))
-			{
-				if(method.IsDefined(type,true)) 
-				{
-					return method;
-				}
-			}
-			return null;
-		}
-
-		protected void InvokeMethod(MethodInfo method, object fixture) 
-		{
-			if(method != null)
-			{
-				try
-				{
-					method.Invoke(fixture, null);
-				}
-				catch(TargetInvocationException e)
-				{
-					Exception inner = e.InnerException;
-					throw new NunitException("Rethrown",inner);
-				}
-			}
-		}
 
 		#endregion
 

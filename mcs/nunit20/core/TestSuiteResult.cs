@@ -62,14 +62,23 @@ namespace NUnit.Core
 			}
 		}
 
+		/// <summary>
+		/// A suite is considered as failing if it is marked as a failure - usually
+		/// because TestFixtureSetUp or TestFixtureTearDown failed - or if one of the
+		/// tests it contains failed. 
+		/// </summary>
 		public override bool IsFailure
 		{
 			get 
 			{
-				bool result = false;
+				if ( base.IsFailure )
+					return true;
+
 				foreach(TestResult testResult in results)
-					result |= testResult.IsFailure;
-				return result;
+					if ( testResult.IsFailure )
+						return true;
+
+				return false;
 			}
 		}
 
@@ -87,12 +96,6 @@ namespace NUnit.Core
 				}
 				return true;
 			}
-		}
-
-		public override void NotRun(string message)
-		{
-			this.Executed = false;
-			this.messageString = message;
 		}
 
 		public IList Results

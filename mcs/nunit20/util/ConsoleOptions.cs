@@ -37,26 +37,17 @@ namespace NUnit.Util
 		[Option(Description = "Fixture to test")]
 		public string fixture;
 
+		[Option(Description = "Project configuration to load")]
+		public string config;
+
 		[Option(Description = "Name of XML output file")]
 		public string xml;
 
 		[Option(Description = "Name of transform file")]
 		public string transform;
 
-		[Option(Description = "Do not display the logo")]
-		public bool nologo = false;
-
-		[Option(Short="?", Description = "Display help")]
-		public bool help = false;
-
-		[Option(Description = "Require input to close console window")]
-		public bool wait = false;
-
 		[Option(Description = "Display XML to the console")]
 		public bool xmlConsole;
-
-		[Option(Description = "Project configuration to load")]
-		public string config;
 
 		[Option(Short="out", Description = "File to receive test output")]
 		public string output;
@@ -72,6 +63,28 @@ namespace NUnit.Util
 
 		[Option(Description = "List of categories to exclude")]
 		public string exclude;
+
+//		[Option(Description = "Run in a separate process")]
+//		public bool process;
+
+//		[Option(Description = "Run in a separate AppDomain")]
+//		public bool domain;
+
+//		[Option(Description = "Disable shadow copy when running in separate domain")]
+		[Option(Description = "Disable shadow copy")]
+		public bool noshadow;
+
+		[Option (Description = "Run tests on a separate thread")]
+		public bool thread;
+
+		[Option(Description = "Wait for input before closing console window")]
+		public bool wait = false;
+
+		[Option(Description = "Do not display the logo")]
+		public bool nologo = false;
+
+		[Option(Short="?", Description = "Display help")]
+		public bool help = false;
 
 		private bool isInvalid = false; 
 
@@ -205,6 +218,9 @@ namespace NUnit.Util
 			Console.WriteLine();
 			Console.WriteLine( "Options:" );
 			base.Help();
+			Console.WriteLine();
+			Console.WriteLine( "Options that take values may use an equal sign, a colon" );
+			Console.WriteLine( "or a space to separate the option from its value." );
 			Console.WriteLine();
 		}
 	}

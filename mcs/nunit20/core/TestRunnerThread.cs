@@ -44,9 +44,21 @@ namespace NUnit.Core
 		private string[] testNames;
 			
 		/// <summary>
-		/// Array of returned results - needed?
+		/// Array of returned results
 		/// </summary>
 		private TestResult[] results;
+
+		#endregion
+
+		#region Properties
+
+		/// <summary>
+		/// Array of returned results
+		/// </summary>
+		public TestResult[] Results
+		{
+			get { return results; }
+		}
 
 		#endregion
 
@@ -128,9 +140,7 @@ namespace NUnit.Core
 			try
 			{
 				//TODO: do we need a run started event?
-				int count = runner.CountTestCases( testNames );
 
-				Directory.SetCurrentDirectory( AppDomain.CurrentDomain.BaseDirectory );
 				results = runner.Run(listener, testNames );
 				
 				//TODO: do we need a run finished event?

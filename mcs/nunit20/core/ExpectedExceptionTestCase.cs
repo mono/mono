@@ -41,11 +41,26 @@ namespace NUnit.Core
 		private Type expectedException;
 		private string expectedMessage;
 
-		public ExpectedExceptionTestCase(object fixture, MethodInfo info, Type expectedException, string expectedMessage)
-			: base(fixture, info)
+		public ExpectedExceptionTestCase(Type fixtureType, MethodInfo method) : base(fixtureType, method)
 		{
-			this.expectedException = expectedException;
-			this.expectedMessage = expectedMessage;
+			Initialize( method );
+		}
+
+		public ExpectedExceptionTestCase(object fixture, MethodInfo method) : base(fixture, method)
+		{
+			Initialize( method );
+		}
+
+		private void Initialize( MethodInfo method )
+		{
+			NUnit.Framework.ExpectedExceptionAttribute attribute = 
+				Reflect.GetExpectedExceptionAttribute( method );
+
+			if ( attribute == null )
+				throw new InvalidTestFixtureException( "ExpectedExceptionAttribute not found" );
+
+			this.expectedException = attribute.ExceptionType;
+			this.expectedMessage = attribute.ExpectedMessage;
 		}
 
 		protected override internal void ProcessException(Exception exception, TestCaseResult testResult)

@@ -28,7 +28,7 @@
                     BaseAddress = "285212672"
                     CheckForOverflowUnderflow = "false"
                     ConfigurationOverrideFile = ""
-                    DefineConstants = "DEBUG;TRACE;StronglyNamedAssembly"
+                    DefineConstants = "DEBUG;TRACE"
                     DocumentationFile = "bin\Debug\nunit.framework.xml"
                     DebugSymbols = "true"
                     FileAlignment = "4096"
@@ -57,6 +57,26 @@
                     NoWarn = ""
                     Optimize = "true"
                     OutputPath = "bin\Release\"
+                    RegisterForComInterop = "false"
+                    RemoveIntegerChecks = "false"
+                    TreatWarningsAsErrors = "false"
+                    WarningLevel = "4"
+                />
+                <Config
+                    Name = "Debug-Strong"
+                    AllowUnsafeBlocks = "false"
+                    BaseAddress = "285212672"
+                    CheckForOverflowUnderflow = "false"
+                    ConfigurationOverrideFile = ""
+                    DefineConstants = "DEBUG;TRACE;StronglyNamedAssembly"
+                    DocumentationFile = "bin\Debug\nunit.framework.xml"
+                    DebugSymbols = "true"
+                    FileAlignment = "4096"
+                    IncrementalBuild = "true"
+                    NoStdLib = "false"
+                    NoWarn = ""
+                    Optimize = "false"
+                    OutputPath = "bin\Debug\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
                     TreatWarningsAsErrors = "false"
@@ -125,6 +145,11 @@
                 />
                 <File
                     RelPath = "IgnoreAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "IgnoreException.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -394,10 +394,8 @@ namespace NUnit.Util
 			{
 				events.FireProjectUnloading( testFileName );
 
-#if !MONO
-				if ( testFileName != null && File.Exists( testFileName ) )
-					UserSettings.RecentProjects.RecentFile = testFileName;
-#endif
+//				if ( testFileName != null && File.Exists( testFileName ) )
+//					UserSettings.RecentProjects.RecentFile = testFileName;
 
 				if ( IsTestLoaded )
 					UnloadTest();
@@ -485,7 +483,13 @@ namespace NUnit.Util
 				if ( ReloadOnChange )
 					InstallWatcher( );
 
-				events.FireTestLoaded( TestFileName, this.loadedTest );
+				if ( suite != null )
+					events.FireTestLoaded( TestFileName, this.loadedTest );
+				else
+				{
+					lastException = new ApplicationException( string.Format ( "Unable to find test {0} in assembly", testName ) );
+					events.FireTestLoadFailed( TestFileName, lastException );
+				}
 			}
 			catch( FileNotFoundException exception )
 			{
@@ -638,9 +642,7 @@ namespace NUnit.Util
 					testNames[index++] = node.UniqueName;
 
 				testDomain.SetFilter( filter );
-#if !MONO
-				testDomain.DisplayTestLabels = UserSettings.Options.TestLabels;
-#endif
+//				testDomain.DisplayTestLabels = UserSettings.Options.TestLabels;
 				testDomain.RunTest( this, testNames );
 			}
 		}

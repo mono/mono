@@ -5,6 +5,7 @@
 ./CommandLineOptions.cs
 ./ConsoleOptions.cs
 ./ConsoleWriter.cs
+./GuiOptions.cs
 ./ITestEvents.cs
 ./ITestLoader.cs
 ./NUnitProject.cs
@@ -22,6 +23,7 @@
 ./TestEventDispatcher.cs
 ./TestExceptionHandler.cs
 ./TestLoader.cs
+./TestResultItem.cs
 ./UIHelper.cs
 ./UITestNode.cs
 ./VSProjectConfigCollection.cs

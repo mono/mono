@@ -136,7 +136,6 @@ namespace NUnit.Util
 				ThrowInvalidFileType( projectPath );
 
 			string projectDirectory = Path.GetFullPath( Path.GetDirectoryName( projectPath ) );
-			string currentDirectory = Environment.CurrentDirectory;
 
 			try
 			{

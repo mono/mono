@@ -75,9 +75,19 @@ namespace NUnit.Util
 		/// </summary>
 		private EventListener listener;
 
+		/// <summary>
+		/// Indicate whether files should be shadow copied
+		/// </summary>
+		private bool shadowCopyFiles = true;
+
 		#endregion
 
 		#region Properties
+
+		public AppDomain AppDomain
+		{
+			get { return domain; }
+		}
 
 		public TextWriter Out
 		{
@@ -126,6 +136,27 @@ namespace NUnit.Util
 		public Version FrameworkVersion
 		{
 			get { return Runner.FrameworkVersion; }
+		}
+
+		public bool ShadowCopyFiles
+		{
+			get { return shadowCopyFiles; }
+			set
+			{
+				if ( this.domain != null )
+					throw new ArgumentException( "ShadowCopyFiles may not be set after domain is created" );
+				shadowCopyFiles = value;
+			}
+		}
+
+		public TestResult[] Results
+		{
+			get { return Runner.Results; }
+		}
+
+		public TestResult Result
+		{
+			get { return Runner.Result; }
 		}
 
 		#endregion
@@ -203,18 +234,17 @@ namespace NUnit.Util
 
 		public Test Load( NUnitProject project )
 		{
-			if ( project.IsAssemblyWrapper )
-				return Load( project.ActiveConfig.Assemblies[0].FullPath );
-			else
-				return Load( project.ProjectPath, project.ActiveConfig.TestAssemblies );
+			return Load( project, null );
 		}
 
 		public Test Load( NUnitProject project, string testFixture )
 		{
+			ProjectConfig cfg = project.ActiveConfig;
+
 			if ( project.IsAssemblyWrapper )
-				return Load( project.ActiveConfig.Assemblies[0].FullPath, testFixture );
+				return Load( cfg.Assemblies[0].FullPath, testFixture );
 			else
-				return Load( project.ProjectPath, project.ActiveConfig.TestAssemblies, testFixture );
+				return Load( project.ProjectPath, cfg.BasePath, cfg.ConfigurationFile, cfg.PrivateBinPath, cfg.TestAssemblies, testFixture );
 		}
 
 		public void Unload()
@@ -226,8 +256,8 @@ namespace NUnit.Util
 				try
 				{
 					AppDomain.Unload(domain);
-					DirectoryInfo cacheDir = new DirectoryInfo(cachePath);
-					if(cacheDir.Exists) cacheDir.Delete(true);
+					if ( this.ShadowCopyFiles )
+						DeleteCacheDir( new DirectoryInfo( cachePath ) );
 				}
 				catch( CannotUnloadAppDomainException )
 				{
@@ -362,6 +392,11 @@ namespace NUnit.Util
 			Runner.CancelRun();
 		}
 
+		public void Wait()
+		{
+			Runner.Wait();
+		}
+
 		// For now, just publish any unhandled exceptions and let the listener
 		// figure out what to do with them.
 		private void OnUnhandledException( object sender, UnhandledExceptionEventArgs e )
@@ -371,7 +406,7 @@ namespace NUnit.Util
 
 		#endregion
 
-		#region Helpers Used in AppDomain Creation
+		#region Helpers Used in AppDomain Creation and Removal
 
 		/// <summary>
 		/// Construct an application domain for testing a single assembly
@@ -401,16 +436,6 @@ namespace NUnit.Util
 			domain = MakeAppDomain( testFileName, appBase, configFile, binPath );
 		}
 
-		private void CreateDomain( NUnitProject project )
-		{
-			ProjectConfig cfg = project.ActiveConfig;
-
-			if ( project.IsAssemblyWrapper )
-				CreateDomain( cfg.Assemblies[0].FullPath );
-			else
-				CreateDomain( project.ProjectPath, cfg.BasePath, cfg.ConfigurationFilePath, cfg.PrivateBinPath, cfg.TestAssemblies );
-		}
-
 		/// <summary>
 		/// This method creates appDomains for the framework.
 		/// </summary>
@@ -428,11 +453,18 @@ namespace NUnit.Util
 
 			// We always use the same application name
 			setup.ApplicationName = "Tests";
-			// We always want to do shadow copying. Note that we do NOT
+			// Note that we do NOT
 			// set ShadowCopyDirectories because we  rely on the default
 			// setting of ApplicationBase plus PrivateBinPath
-			setup.ShadowCopyFiles = "true";
-			setup.ShadowCopyDirectories = appBase;
+			if ( this.ShadowCopyFiles )
+			{
+				setup.ShadowCopyFiles = "true";
+				setup.ShadowCopyDirectories = appBase;
+			}
+			else
+			{
+				setup.ShadowCopyFiles = "false";
+			}
 
 			setup.ApplicationBase = appBase;
 			setup.ConfigurationFile =  configFile;
@@ -440,7 +472,8 @@ namespace NUnit.Util
 
 			AppDomain runnerDomain = AppDomain.CreateDomain(domainName, evidence, setup);
 			
-			ConfigureCachePath(runnerDomain);
+			if ( this.ShadowCopyFiles )
+				ConfigureCachePath(runnerDomain);
 
 			return runnerDomain;
 		}
@@ -463,6 +496,30 @@ namespace NUnit.Util
 			return;
 		}
 
+		/// <summary>
+		/// Helper method to delete the cache dir. This method deals 
+		/// with a bug that occurs when pdb files are marked read-only.
+		/// </summary>
+		/// <param name="cacheDir"></param>
+		private void DeleteCacheDir( DirectoryInfo cacheDir )
+		{
+			if(cacheDir.Exists)
+			{
+				foreach( DirectoryInfo dirInfo in cacheDir.GetDirectories() )
+				{
+					dirInfo.Attributes &= ~FileAttributes.ReadOnly;
+					DeleteCacheDir( dirInfo );
+				}
+
+				foreach( FileInfo fileInfo in cacheDir.GetFiles() )
+				{
+					fileInfo.Attributes &= ~FileAttributes.ReadOnly;
+				}
+
+				cacheDir.Delete(true);
+			}
+		}
+		
 		#endregion
 	}
 }

@@ -55,20 +55,6 @@ namespace NUnit.Core
 			IsFailure = false; 
 		}
 
-		public override void NotRun(string reason)
-		{
-			Executed = false;
-			messageString = reason;
-		}
-
-		public void Failure(string message, string stackTrace)
-		{
-			Executed = true;
-			IsFailure = true;
-			this.messageString = message;
-			StackTrace = stackTrace;
-		}
-
 		public override string ToString()
 		{
 			StringBuilder builder = new StringBuilder();

@@ -191,6 +191,7 @@ namespace NUnit.Console
 				: new ConsoleWriter(Console.Error);
 
 			TestDomain testDomain = new TestDomain(outStream, errorStream);
+			if ( options.noshadow  ) testDomain.ShadowCopyFiles = false;
 
 			Test test = MakeTestFromCommandLine(testDomain, options);
 
@@ -205,7 +206,7 @@ namespace NUnit.Console
 			EventListener collector = new EventCollector( options, outStream );
 
 			string savedDirectory = Environment.CurrentDirectory;
-			TestResult result = null;
+
 			if (options.HasInclude)
 			{
 				Console.WriteLine( "Included categories: " + options.include );
@@ -217,38 +218,51 @@ namespace NUnit.Console
 				testDomain.SetFilter( new CategoryFilter( options.ExcludedCategories, true ) );
 			}
 
-			result = testDomain.Run( collector );
+			TestResult result = null;
+			if ( options.thread )
+			{
+				testDomain.RunTest( collector );
+				testDomain.Wait();
+				result = testDomain.Result;
+			}
+			else
+			{
+				result = testDomain.Run( collector );
+			}
 
 			Directory.SetCurrentDirectory( savedDirectory );
 			
 			Console.WriteLine();
 
-			StringBuilder builder = new StringBuilder();
-			XmlResultVisitor resultVisitor = new XmlResultVisitor(new StringWriter( builder ), result);
-			result.Accept(resultVisitor);
-			resultVisitor.Write();
-
-			string xmlOutput = builder.ToString();
-
+			string xmlOutput = CreateXmlOutput( result );
+			
 			if (options.xmlConsole)
 				Console.WriteLine(xmlOutput);
 			else
 				CreateSummaryDocument(xmlOutput, transformReader);
 
 			// Write xml output here
-			string xmlResult = options.IsXml ? options.xml : "TestResult.xml";
+			string xmlResultFile = options.IsXml ? options.xml : "TestResult.xml";
 
-			using (StreamWriter writer = new StreamWriter(xmlResult)) 
+			using ( StreamWriter writer = new StreamWriter( xmlResultFile ) ) 
 			{
 				writer.Write(xmlOutput);
 			}
 
-			int resultCode = 0;
-			
-			if(result.IsFailure)
-				resultCode = 1;
+			if ( testDomain != null )
+				testDomain.Unload();
 
-			return resultCode;
+			return result.IsFailure ? 1 : 0;
+		}
+
+		private string CreateXmlOutput( TestResult result )
+		{
+			StringBuilder builder = new StringBuilder();
+			XmlResultVisitor resultVisitor = new XmlResultVisitor(new StringWriter( builder ), result);
+			result.Accept(resultVisitor);
+			resultVisitor.Write();
+
+			return builder.ToString();
 		}
 
 		private void CreateSummaryDocument(string xmlOutput, XmlTextReader transformReader)
@@ -314,7 +328,21 @@ namespace NUnit.Console
 							failureCount++;
 							Console.Write("F");
 							if ( debugger )
-								messages.Add( ParseTestCaseResult( testResult ) );
+							{
+								messages.Add( string.Format( "{0}) {1} :", failureCount, testResult.Test.FullName ) );
+								messages.Add( testResult.Message.Trim( Environment.NewLine.ToCharArray() ) );
+
+								string stackTrace = StackTraceFilter.Filter( testResult.StackTrace );
+								string[] trace = stackTrace.Split( System.Environment.NewLine.ToCharArray() );
+								foreach( string s in trace )
+								{
+									if ( s != string.Empty )
+									{
+										string link = Regex.Replace( s.Trim(), @".* in (.*):line (.*)", "$1($2)");
+										messages.Add( string.Format( "at\n{0}", link ) );
+									}
+								}
+							}
 						}
 					}
 					else
@@ -393,27 +421,6 @@ namespace NUnit.Console
 					Trace.WriteLine( msg );
 					Trace.WriteLine( exception.ToString() );
 				}
-			}
-
-			private string ParseTestCaseResult( TestCaseResult result ) 
-			{
-				string[] trace = result.StackTrace.Split( System.Environment.NewLine.ToCharArray() );
-			
-				foreach (string s in trace) 
-				{
-					if ( s.IndexOf( result.Test.FullName ) >= 0 ) 
-					{
-						string link = Regex.Replace( s.Trim(), @"at " + result.Test.FullName + @"\(\) in (.*):line (.*)", "$1($2)");
-
-						string message = string.Format("{1}: {0}", 
-							result.Message.Replace(System.Environment.NewLine, "; "), 
-							result.Test.FullName).Trim(' ', ':');
-					
-						return string.Format("{0}: {1}", link, message);
-					}
-				}
-
-				return result.Message;
 			}
 		}
 

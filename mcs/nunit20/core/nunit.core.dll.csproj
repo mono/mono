@@ -28,7 +28,7 @@
                     BaseAddress = "285212672"
                     CheckForOverflowUnderflow = "false"
                     ConfigurationOverrideFile = ""
-                    DefineConstants = "DEBUG;TRACE;StronglyNamedAssembly"
+                    DefineConstants = "DEBUG;TRACE"
                     DocumentationFile = ""
                     DebugSymbols = "true"
                     FileAlignment = "4096"
@@ -57,6 +57,26 @@
                     NoWarn = ""
                     Optimize = "true"
                     OutputPath = "bin\Release\"
+                    RegisterForComInterop = "false"
+                    RemoveIntegerChecks = "false"
+                    TreatWarningsAsErrors = "false"
+                    WarningLevel = "4"
+                />
+                <Config
+                    Name = "Debug-Strong"
+                    AllowUnsafeBlocks = "false"
+                    BaseAddress = "285212672"
+                    CheckForOverflowUnderflow = "false"
+                    ConfigurationOverrideFile = ""
+                    DefineConstants = "DEBUG;TRACE;StronglyNamedAssembly"
+                    DocumentationFile = ""
+                    DebugSymbols = "true"
+                    FileAlignment = "4096"
+                    IncrementalBuild = "false"
+                    NoStdLib = "false"
+                    NoWarn = ""
+                    Optimize = "false"
+                    OutputPath = "bin\Debug\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
                     TreatWarningsAsErrors = "false"
@@ -124,11 +144,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "InvalidFixture.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "InvalidSuiteException.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -149,12 +164,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "LegacySuite.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "LongLivingMarshalByRefObject.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "NameFilter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "NamespaceSuite.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -180,6 +205,11 @@
                 />
                 <File
                     RelPath = "NunitException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Reflect.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -257,6 +287,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "TestFixture.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "TestResult.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -283,11 +318,6 @@
                 />
                 <File
                     RelPath = "TestSuiteResult.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "WarningSuite.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -129,7 +129,7 @@ namespace NUnit.Core
 			if(assembly != null)
 			{
 				Type testType = assembly.GetType(testName);
-				if(testType != null)
+				if( testType != null )
 					return MakeSuite( testType );
 
 				// Assume that testName is a namespace
@@ -140,24 +140,15 @@ namespace NUnit.Core
 
 				foreach(Type type in testTypes)
 				{
-					if(IsTestFixture(type) && type.Namespace != null)
-					//if(IsTestFixture(type) || IsTestSuiteProperty(type))
+					if( CanMakeSuite( type ) && type.Namespace != null )
 					{
 						if( type.Namespace == testName || type.Namespace.StartsWith(prefix) )
 						{
 							suite = BuildFromNameSpace(testName, 0);
 						
-							try
-							{
-								object fixture = BuildTestFixture( type );
-								suite.Add(fixture);
-								testFixtureCount++;
-							}
-							catch(InvalidTestFixtureException exception)
-							{
-								InvalidFixture fixture = new InvalidFixture(testType, exception.Message);
-								suite.Add(fixture);
-							}
+							//suite.Add( new TestFixture( type ) );
+							suite.Add( MakeSuite( type ) );
+							testFixtureCount++;
 						}
 					}
 				}
@@ -181,16 +172,17 @@ namespace NUnit.Core
 			return suite;
 		}
 		
+		// TODO: Only used in tests
 		public object BuildTestFixture( Type fixtureType )
 		{
-			ConstructorInfo ctor = fixtureType.GetConstructor(Type.EmptyTypes);
-			if(ctor == null) throw new InvalidTestFixtureException(fixtureType.FullName + " does not have a valid constructor");
+			Reflect.CheckFixtureType( fixtureType );
 
 			object testFixture;
+			ConstructorInfo ctor = Reflect.GetConstructor( fixtureType );
 
 			try
 			{
-				testFixture = ctor.Invoke(Type.EmptyTypes);
+				testFixture = ctor.Invoke( Type.EmptyTypes );
 			}
 			catch( Exception ex )
 			{
@@ -199,68 +191,7 @@ namespace NUnit.Core
 
 			if(testFixture == null) throw new InvalidTestFixtureException(ctor.Name + " cannot be invoked");
 
-			if(HasMultipleSetUpMethods(testFixture))
-			{
-				throw new InvalidTestFixtureException(ctor.Name + " has multiple SetUp methods");
-			}
-			if(HasMultipleTearDownMethods(testFixture))
-			{
-				throw new InvalidTestFixtureException(ctor.Name + " has multiple TearDown methods");
-			}
-			if(HasMultipleFixtureSetUpMethods(testFixture))
-			{
-				throw new InvalidTestFixtureException(ctor.Name + " has multiple TestFixtureSetUp methods");
-			}
-			if(HasMultipleFixtureTearDownMethods(testFixture))
-			{
-				throw new InvalidTestFixtureException(ctor.Name + " has multiple TestFixtureTearDown methods");
-			}
-
-			CheckSetUpTearDownSignature(GetMethodWithGivenAttribute(fixtureType,typeof(NUnit.Framework.SetUpAttribute)));
-			CheckSetUpTearDownSignature(GetMethodWithGivenAttribute(fixtureType,typeof(NUnit.Framework.TearDownAttribute)));
-			CheckSetUpTearDownSignature(GetMethodWithGivenAttribute(fixtureType,typeof(NUnit.Framework.TestFixtureSetUpAttribute)));
-			CheckSetUpTearDownSignature(GetMethodWithGivenAttribute(fixtureType,typeof(NUnit.Framework.TestFixtureTearDownAttribute)));
-
 			return testFixture;
-		}
-
-		public TestSuite MakeSuite( Type testType )
-		{
-			TestSuite suite = null;
-
-			if(testType != null)
-			{
-				if(IsTestFixture(testType))
-				{
-					suite = MakeSuiteFromTestFixtureType(testType);
-				}
-				else if(IsTestSuiteProperty(testType))
-				{
-					suite = MakeSuiteFromProperty(testType);
-				}
-			}
-			
-			return suite;
-		}
-
-		public TestSuite MakeSuiteFromTestFixtureType(Type fixtureType)
-		{
-			TestSuite suite = new TestSuite(fixtureType.Name);
-
-			try
-			{
-				object testFixture = BuildTestFixture(fixtureType);
-				suite.Add(testFixture);
-			}
-			catch(InvalidTestFixtureException exception)
-			{
-				InvalidFixture fixture = new InvalidFixture(fixtureType,exception.Message);
-				suite.ShouldRun = false;
-				suite.IgnoreReason = exception.Message;
-				suite.Add(fixture);
-			}
-
-			return suite.Tests[0] as TestSuite;
 		}
 
 		#endregion
@@ -299,7 +230,7 @@ namespace NUnit.Core
 			string prefix = string.Format( "[{0}]", assemblyKey );
 			if( index == -1 )
 			{
-				suite = new TestSuite( nameSpace, assemblyKey );
+				suite = new NamespaceSuite( nameSpace, assemblyKey );
 				if ( rootSuite == null )
 					rootSuite = suite;
 				else
@@ -311,7 +242,7 @@ namespace NUnit.Core
 				string parentNameSpace = nameSpace.Substring( 0,index );
 				TestSuite parent = BuildFromNameSpace( parentNameSpace, assemblyKey );
 				string suiteName = nameSpace.Substring( index+1 );
-				suite = new TestSuite( parentNameSpace, suiteName, assemblyKey );
+				suite = new NamespaceSuite( parentNameSpace, suiteName, assemblyKey );
 				parent.Add( suite );
 				namespaceSuites[nameSpace] = suite;
 			}
@@ -330,37 +261,19 @@ namespace NUnit.Core
 			Type[] testTypes = assembly.GetExportedTypes();
 			foreach(Type testType in testTypes)
 			{
-				////////////////////////////////////////////////////////////////////////
-				// Use the second if statement to allow including Suites in the
-				// tree of tests. This causes a problem when the same test is added
-				// in multiple suites so we need to either fix it or prevent it.
-				//
-				// See also the block of code to uncomment in TestSuite.cs
-				////////////////////////////////////////////////////////////////////////
-
-				if(IsTestFixture(testType))
-				//if(IsTestFixture(testType) || IsTestSuiteProperty(testType))
+				if( CanMakeSuite( testType ) )
 				{
 					testFixtureCount++;
 					string namespaces = testType.Namespace;
 					TestSuite suite = builder.BuildFromNameSpace( namespaces, assemblyKey );
 
-					try
-					{
-						object fixture = BuildTestFixture( testType );
-						suite.Add(fixture);
-					}
-					catch(InvalidTestFixtureException exception)
-					{
-						InvalidFixture fixture = new InvalidFixture(testType, exception.Message);
-						suite.Add(fixture);
-					}
+					//suite.Add( new TestFixture( testType ) );
+					suite.Add( MakeSuite( testType ) );
 				}
 			}
 
 			if(testFixtureCount == 0)
 			{
-				//throw new NoTestFixturesException(assemblyName + " has no TestFixtures");
 				builder.rootSuite.ShouldRun = false;
 				builder.rootSuite.IgnoreReason = "Has no TestFixtures";
 			}
@@ -368,120 +281,35 @@ namespace NUnit.Core
 			return builder.rootSuite;
 		}
 
-		private int CountMethodWithGivenAttribute(object fixture, Type type)
-		{
-			int count = 0;
-			foreach(MethodInfo method in fixture.GetType().GetMethods(BindingFlags.Public|BindingFlags.Instance|BindingFlags.NonPublic|BindingFlags.DeclaredOnly))
-			{
-				if(method.IsDefined(type,false)) 
-					count++;
-			}
-			return count;
-		}
-
-		private MethodInfo GetMethodWithGivenAttribute(Type fixtureType, Type attrType)
-		{
-			foreach ( MethodInfo method in fixtureType.GetMethods(BindingFlags.Public|BindingFlags.Instance|BindingFlags.NonPublic|BindingFlags.Static ))
-			{
-				if( method.IsDefined( attrType, true ) )
-					return method;
-			}
-
-			return null;
-		}
-
-		private bool HasMultipleSetUpMethods(object fixture)
-		{
-			return CountMethodWithGivenAttribute(fixture,typeof(NUnit.Framework.SetUpAttribute)) > 1;
-		}
-
-		private bool HasMultipleTearDownMethods(object fixture)
-		{
-			return CountMethodWithGivenAttribute(fixture,typeof(NUnit.Framework.TearDownAttribute)) > 1;
-		}
-
-		private bool HasMultipleFixtureSetUpMethods(object fixture)
-		{
-			return CountMethodWithGivenAttribute(fixture,typeof(NUnit.Framework.TestFixtureSetUpAttribute)) > 1;
-		}
-
-		private bool HasMultipleFixtureTearDownMethods(object fixture)
-		{
-			return CountMethodWithGivenAttribute(fixture,typeof(NUnit.Framework.TestFixtureTearDownAttribute)) > 1;
-		}
-
-		private bool IsTestFixture(Type type)
-		{
-			if(type.IsAbstract) return false;
-
-			return type.IsDefined(typeof(NUnit.Framework.TestFixtureAttribute), true);
-		}
-
-		private bool IsTestSuiteProperty(Type testClass)
-		{
-			return (GetSuiteProperty(testClass) != null);
-		}
-
 		/// <summary>
-		/// Uses reflection to obtain the suite property for the Type
+		/// Helper routine that makes a suite from either a TestFixture or
+		/// a legacy Suite property.
 		/// </summary>
-		/// <param name="testClass"></param>
-		/// <returns>The Suite property of the Type, or null if the property 
-		/// does not exist</returns>
-		private TestSuite MakeSuiteFromProperty(Type testClass) 
+		/// <param name="testType"></param>
+		/// <returns></returns>
+		private TestSuite MakeSuite( Type testType )
 		{
 			TestSuite suite = null;
-			PropertyInfo suiteProperty = null;
-			try
+
+			if(testType != null)
 			{
-				suiteProperty=GetSuiteProperty(testClass);
-				suite = (TestSuite)suiteProperty.GetValue(null, new Object[0]);
+				if( TestFixture.IsValidType( testType ) )
+				{
+					suite = new TestFixture( testType );
+				}
+				else if( LegacySuite.IsValidType( testType ) )
+				{
+					suite = new LegacySuite( testType );
+				}
 			}
-			catch(InvalidSuiteException)
-			{
-				return null;
-			}
+			
 			return suite;
 		}
 
-		private PropertyInfo GetSuiteProperty(Type testClass)
+		private bool CanMakeSuite( Type testType )
 		{
-			if(testClass != null)
-			{
-				PropertyInfo[] properties = testClass.GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
-				foreach(PropertyInfo property in properties)
-				{
-					object[] attrributes = property.GetCustomAttributes(typeof(NUnit.Framework.SuiteAttribute),false);
-					if(attrributes.Length>0)
-					{
-						try {
-							CheckSuiteProperty(property);
-						}catch(InvalidSuiteException){
-							return null;
-						}
-						return property;
-					}
-				}
-			}
-			return null;
-		}
-
-		private void CheckSuiteProperty(PropertyInfo property)
-		{
-			MethodInfo method = property.GetGetMethod(true);
-			if(method.ReturnType!=typeof(NUnit.Core.TestSuite))
-				throw new InvalidSuiteException("Invalid suite property method signature");
-			if(method.GetParameters().Length>0)
-				throw new InvalidSuiteException("Invalid suite property method signature");
-		}
-
-		private void CheckSetUpTearDownSignature(MethodInfo method)
-		{
-			if ( method != null )
-			{
-				if ( !method.IsPublic && !method.IsFamily || method.ReturnType != typeof(void) || method.GetParameters().Length > 0 )
-					throw new InvalidTestFixtureException("Invalid SetUp or TearDown method signature");
-			}
+			//return TestFixture.IsValidType( testType ) || LegacySuite.IsValidType( testType );
+			return TestFixture.IsValidType( testType );
 		}
 	}
 

@@ -51,6 +51,11 @@ namespace NUnit.Core
 		private TestSuite suite;
 
 		/// <summary>
+		/// TestRunner thread used for asynchronous running
+		/// </summary>
+		private TestRunnerThread runningThread;
+
+		/// <summary>
 		/// Our writer for standard output
 		/// </summary>
 		private TextWriter outText;
@@ -59,6 +64,31 @@ namespace NUnit.Core
 		/// Our writer for error output
 		/// </summary>
 		private TextWriter errorText;
+
+		/// <summary>
+		/// Buffered standard output writer created for each test run
+		/// </summary>
+		private BufferedStringTextWriter outBuffer;
+
+		/// <summary>
+		/// Buffered error writer created for each test run
+		/// </summary>
+		private BufferedStringTextWriter errorBuffer;
+
+		/// <summary>
+		/// Console standard output to restore after a run
+		/// </summary>
+		private TextWriter saveOut;
+
+		/// <summary>
+		/// Console error output to restore after a run
+		/// </summary>
+		private TextWriter saveError;
+
+		/// <summary>
+		/// Saved current directory to restore after a run
+		/// </summary>
+		private string currentDirectory;
 
 		/// <summary>
 		/// Saved paths of the assemblies we loaded - used to set 
@@ -78,6 +108,11 @@ namespace NUnit.Core
 		private IFilter filter;
 
 		private bool displayTestLabels;
+
+		/// <summary>
+		/// Results from the last test run
+		/// </summary>
+		private TestResult[] results;
 
 		#endregion
 
@@ -102,7 +137,9 @@ namespace NUnit.Core
 		#region Properties
 
 		/// <summary>
-		/// Writer for standard output
+		/// Writer for standard output - this is a public property
+		/// so that we can set it when creating an instance
+		/// in another AppDomain.
 		/// </summary>
 		public TextWriter Out
 		{
@@ -111,7 +148,9 @@ namespace NUnit.Core
 		}
 
 		/// <summary>
-		/// Writer for error output
+		/// Writer for error output - this is a public property
+		/// so that we can set it when creating an instance
+		/// in another AppDomain.
 		/// </summary>
 		public TextWriter Error
 		{
@@ -136,6 +175,22 @@ namespace NUnit.Core
 		{
 			get { return displayTestLabels; }
 			set { displayTestLabels = value; }
+		}
+
+		/// <summary>
+		/// Results from the last test run
+		/// </summary>
+		public TestResult[] Results
+		{
+			get { return results; }
+		}
+
+		/// <summary>
+		/// First (or only) result from the last test run
+		/// </summary>
+		public TestResult Result
+		{
+			get { return results == null ? null : results[0]; }
 		}
 
 		#endregion
@@ -232,45 +287,6 @@ namespace NUnit.Core
 			this.filter = filter;
 		}
 
-//		public TestResult Run(NUnit.Core.EventListener listener, IFilter filter)
-//		{
-//			BufferedStringTextWriter outBuffer = new BufferedStringTextWriter( outText );
-//			BufferedStringTextWriter errorBuffer = new BufferedStringTextWriter( errorText );
-//
-//			TextWriter saveOut = Console.Out;
-//			TextWriter saveError = Console.Error;
-//
-//			Console.SetOut( outBuffer );
-//			Console.SetError( errorBuffer );
-//
-////			string currentDirectory = Environment.CurrentDirectory;
-////
-////			string assemblyName = assemblies == null ? testFileName : (string)assemblies[test.AssemblyKey];
-////			string assemblyDirectory = Path.GetDirectoryName( assemblyName );
-////
-////			if ( assemblyDirectory != null && assemblyDirectory != string.Empty )
-////				Environment.CurrentDirectory = assemblyDirectory;
-//
-//
-//			try
-//			{
-//				TestResult result = suite.Run(listener, filter);
-//				return result;
-//			}
-//			finally
-//			{
-//
-//				//	Environment.CurrentDirectory = currentDirectory;
-//
-//				outBuffer.Close();
-//				errorBuffer.Close();
-//
-//				// Helps us when we run tests of this class, among other things
-//				Console.SetOut( saveOut );
-//				Console.SetError( saveError );
-//			}
-//		}
-
 		public TestResult Run( EventListener listener )
 		{
 			return Run( listener, suite );
@@ -278,41 +294,50 @@ namespace NUnit.Core
 
 		public TestResult Run(NUnit.Core.EventListener listener, string testName )
 		{
-			return Run( listener, FindTest( suite, testName ) );
+			if ( testName == null || testName.Length == 0 )
+				return Run( listener, suite );
+			else
+				return Run( listener, FindTest( suite, testName ) );
 		}
 
 		public TestResult[] Run(NUnit.Core.EventListener listener, string[] testNames)
 		{
-			return Run( listener, FindTests( suite, testNames ) );
+			if ( testNames == null || testNames.Length == 0 )
+				return new TestResult[] { Run( listener, suite ) };
+			else
+				return Run( listener, FindTests( suite, testNames ) );
 		}
 
-		// Temporary implementation - runs synchronously
 		public void RunTest(NUnit.Core.EventListener listener )
 		{
 			runningThread = new TestRunnerThread( this );
 			runningThread.Run( listener );
 		}
 		
-		// Temporary implementation - runs synchronously
 		public void RunTest(NUnit.Core.EventListener listener, string testName )
 		{
 			runningThread = new TestRunnerThread( this );
 			runningThread.Run( listener, testName );
 		}
 
-		// Temporary implementation - runs synchronously
 		public void RunTest(NUnit.Core.EventListener listener, string[] testNames)
 		{
 			runningThread = new TestRunnerThread( this );
 			runningThread.Run( listener, testNames );
 		}
 
-		private TestRunnerThread runningThread;
-
 		public void CancelRun()
 		{
 			if ( runningThread != null )
 				runningThread.Cancel();
+
+			CleanUpAfterTestRun();
+		}
+
+		public void Wait()
+		{
+			if ( runningThread != null )
+				runningThread.Wait();
 		}
 
 		#endregion
@@ -327,7 +352,7 @@ namespace NUnit.Core
 			// Create array with the one test
 			Test[] tests = new Test[] { test };
 			// Call our workhorse method
-			TestResult[] results = Run( listener, tests );
+			results = Run( listener, tests );
 			// Return the first result we got
 			return results[0];
 		}
@@ -339,15 +364,15 @@ namespace NUnit.Core
 		private TestResult[] Run( EventListener listener, Test[] tests )
 		{
 			// Create buffered writers for efficiency
-			BufferedStringTextWriter outBuffer = new BufferedStringTextWriter( outText );
-			BufferedStringTextWriter errorBuffer = new BufferedStringTextWriter( errorText );
+			outBuffer = new BufferedStringTextWriter( outText );
+			errorBuffer = new BufferedStringTextWriter( errorText );
 
 			// Save previous state of Console. This is needed because Console.Out and
 			// Console.Error are static. In the case where the test itself calls this
 			// method, we can lose output if we don't save and restore their values.
 			// This is exactly what happens when we are testing NUnit itself.
-			TextWriter saveOut = Console.Out;
-			TextWriter saveError = Console.Error;
+			saveOut = Console.Out;
+			saveError = Console.Error;
 
 			// Set Console to go to our buffers. Note that any changes made by
 			// the user in the test code or the code it calls will defeat this.
@@ -356,12 +381,12 @@ namespace NUnit.Core
 
 			// Save the current directory so we can run each test in
 			// the same directory as its assembly
-			string currentDirectory = Environment.CurrentDirectory;
+			currentDirectory = Environment.CurrentDirectory;
 			
 			try
 			{
 				// Create an array for the resuls
-				TestResult[] results = new TestResult[ tests.Length ];
+				results = new TestResult[ tests.Length ];
 
 				// Signal that we are starting the run
 				this.listener = listener;
@@ -383,7 +408,7 @@ namespace NUnit.Core
 					if ( assemblyDirectory != null && assemblyDirectory != string.Empty )
 						Environment.CurrentDirectory = assemblyDirectory;
 
-					results[index] = test.Run( this, filter );
+					results[index++] = test.Run( this, filter );
 				}
 
 				// Signal that we are done
@@ -403,16 +428,7 @@ namespace NUnit.Core
 			}
 			finally
 			{
-				// Restore the directory we saved
-				Environment.CurrentDirectory = currentDirectory;
-
-				// Close our output buffers
-				outBuffer.Close();
-				errorBuffer.Close();
-
-				// Restore previous console values
-				Console.SetOut( saveOut );
-				Console.SetError( saveError );
+				CleanUpAfterTestRun();
 			}
 		}
 
@@ -444,6 +460,42 @@ namespace NUnit.Core
 				tests[index++] = FindTest( test, name );
 
 			return tests;
+		}
+
+		private void CleanUpAfterTestRun()
+		{
+			// Restore the directory we saved
+			if ( currentDirectory != null )
+			{
+				Environment.CurrentDirectory = currentDirectory;
+				currentDirectory = null;
+			}
+
+			// Close our output buffers
+			if ( outBuffer != null )
+			{
+				outBuffer.Close();
+				outBuffer = null;
+			}
+
+			if ( errorBuffer != null )
+			{
+				errorBuffer.Close();
+				errorBuffer = null;
+			}
+
+			// Restore previous console values
+			if ( saveOut != null )
+			{
+				Console.SetOut( saveOut );
+				saveOut = null;
+			}
+
+			if ( saveError != null )
+			{
+				Console.SetError( saveError );
+				saveError = null;
+			}
 		}
 
 		#endregion

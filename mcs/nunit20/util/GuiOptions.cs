@@ -30,6 +30,7 @@
 namespace NUnit.Util
 {
 	using System;
+	using System.Text;
 	using Codeblast;
 
 	public class GuiOptions : CommandLineOptions
@@ -77,5 +78,17 @@ namespace NUnit.Util
 		{
 			return (NoArgs || ParameterCount <= 1) && !isInvalid;
 		}
+
+		public override string GetHelpText()
+		{
+			const string initialText =
+				"NUNIT-GUI [inputfile] [options]\r\rRuns a set of NUnit tests from the console. You may specify\ran assembly or a project file of type .nunit as input.\r\rOptions:\r";
+
+			const string finalText = 
+				"\rOptions that take values may use an equal sign, a colon\ror a space to separate the option from its value.";
+
+			return initialText + base.GetHelpText() + finalText;
+		}
+
 	}
 }

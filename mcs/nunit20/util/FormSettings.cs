@@ -114,9 +114,13 @@ namespace NUnit.Util
 
 		private bool IsValidLocation( Point location )
 		{
-			Rectangle workingArea = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea;
 			Rectangle myArea = new Rectangle( location, this.Size );
-			return ( myArea.IntersectsWith( workingArea ) );
+			bool intersect = false;
+			foreach (System.Windows.Forms.Screen screen in System.Windows.Forms.Screen.AllScreens)
+			{
+			  intersect |= myArea.IntersectsWith(screen.WorkingArea);
+			}
+			return intersect;
 		}
 
 		public Size Size

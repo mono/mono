@@ -41,13 +41,33 @@ namespace NUnit.Core
 	[Serializable]
 	public class TestSuite : Test
 	{
+		private static readonly string EXPLICIT_SELECTION_REQUIRED = "Explicit selection required";
+		
+		#region Fields
+
+		/// <summary>
+		/// Our collection of child tests
+		/// </summary>
 		private ArrayList tests = new ArrayList();
-		private MethodInfo fixtureSetUp;
-		private MethodInfo fixtureTearDown;
-		private object fixture;
-		private const string FIXTURE_SETUP_FAILED = "Fixture setup failed";
-		private const string EXPLICIT_SELECTION_REQUIRED = "Explicit selection required";
+
+		/// <summary>
+		/// The fixture setup method for this suite
+		/// </summary>
+		protected MethodInfo fixtureSetUp;
+
+		/// <summary>
+		/// The fixture teardown method for this suite
+		/// </summary>
+		protected MethodInfo fixtureTearDown;
+
+		/// <summary>
+		/// True if the fixture has been set up
+		/// </summary>
 		private bool isSetUp;
+
+		#endregion
+
+		#region Constructors
 
 		public TestSuite( string name ) : this( name, 0 ) { }
 
@@ -56,6 +76,25 @@ namespace NUnit.Core
 		{
 			ShouldRun = true;
 		}
+
+		public TestSuite( string parentSuiteName, string name ) 
+			: this( parentSuiteName, name, 0 ) { }
+
+		public TestSuite( string parentSuiteName, string name, int assemblyKey ) 
+			: base( parentSuiteName, name, assemblyKey )
+		{
+			ShouldRun = true;
+		}
+
+		public TestSuite( Type fixtureType ) : base( fixtureType, 0 ) { }
+
+		public TestSuite( Type fixtureType, int assemblyKey ) : base( fixtureType, assemblyKey ) { }
+
+		protected TestSuite( object fixture ) : base( fixture, 0 ) { }
+
+		protected TestSuite( object fixture, int assemblyKey ) : base( fixture, assemblyKey ) { }
+
+		#endregion
 
 		public void Sort()
 		{
@@ -69,27 +108,7 @@ namespace NUnit.Core
 			}		
 		}
 
-		public TestSuite( string parentSuiteName, string name ) 
-			: this( parentSuiteName, name, 0 ) { }
-
-		public TestSuite( string parentSuiteName, string name, int assemblyKey ) 
-			: base( parentSuiteName, name, assemblyKey )
-		{
-			ShouldRun = true;
-		}
-
-		private IList GetCategories(object fixture) 
-		{
-			IList names = new ArrayList();
-			object[] attributes = fixture.GetType().GetCustomAttributes(typeof(NUnit.Framework.CategoryAttribute), true);
-			foreach(NUnit.Framework.CategoryAttribute attribute in attributes) 
-			{
-				names.Add(attribute.Name);
-			}
-			return names;
-		}
-
-		protected internal virtual void Add(Test test) 
+		public void Add( Test test ) 
 		{
 			if(test.ShouldRun)
 			{
@@ -100,102 +119,13 @@ namespace NUnit.Core
 			tests.Add(test);
 		}
 
-		protected internal virtual TestSuite CreateNewSuite(Type type)
+		//Keep this in for testing for the time being
+		public void Add( object fixture )
 		{
-			int index = type.FullName.LastIndexOf( "." ) + 1;
-			string name = type.FullName.Substring( index );
-			return new TestSuite( type.Namespace, name, this.AssemblyKey);
+			Add( new TestFixture( fixture ) );
 		}
 
-		public void Add(object fixture) 
-		{
-			TestSuite testSuite = CreateNewSuite(fixture.GetType());
-			testSuite.fixture = fixture;
-			IList categories = GetCategories(fixture);
-			CategoryManager.Add(categories);
-			testSuite.Categories = categories;
-			testSuite.fixtureSetUp = this.FindMethodByAttribute(fixture, typeof(NUnit.Framework.TestFixtureSetUpAttribute));
-			testSuite.fixtureTearDown = this.FindMethodByAttribute(fixture, typeof(NUnit.Framework.TestFixtureTearDownAttribute));
-			Add(testSuite);
-
-			Type explicitAttribute = typeof(NUnit.Framework.ExplicitAttribute);
-			object[] attributes = fixture.GetType().GetCustomAttributes( explicitAttribute, false );
-			testSuite.IsExplicit = attributes.Length > 0;
-
-			Type ignoreMethodAttribute = typeof(NUnit.Framework.IgnoreAttribute);
-			attributes = fixture.GetType().GetCustomAttributes(ignoreMethodAttribute, false);
-			if(attributes.Length == 1)
-			{
-				NUnit.Framework.IgnoreAttribute attr = 
-					(NUnit.Framework.IgnoreAttribute)attributes[0];
-				testSuite.ShouldRun = false;
-				testSuite.IgnoreReason = attr.Reason;
-			}
-
-			Type fixtureAttribute = typeof(NUnit.Framework.TestFixtureAttribute);
-			attributes = fixture.GetType().GetCustomAttributes(fixtureAttribute, false);
-			if(attributes.Length == 1)
-			{
-				NUnit.Framework.TestFixtureAttribute fixtureAttr = 
-					(NUnit.Framework.TestFixtureAttribute)attributes[0];
-				testSuite.Description = fixtureAttr.Description;
-			}
-
-			////////////////////////////////////////////////////////////////////////
-			// Uncomment the following code block to allow including Suites in the
-			// tree of tests. This causes a problem when the same test is added
-			// in multiple suites so we need to either fix it or prevent it.
-			//
-			// See also a line to change in TestSuiteBuilder.cs
-			////////////////////////////////////////////////////////////////////////
-
-			PropertyInfo [] properties = fixture.GetType().GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
-			foreach(PropertyInfo property in properties)
-			{
-				object[] attrributes = property.GetCustomAttributes(typeof(NUnit.Framework.SuiteAttribute),false);
-				if(attrributes.Length>0)
-				{
-					MethodInfo method = property.GetGetMethod(true);
-					if(method.ReturnType!=typeof(NUnit.Core.TestSuite) || method.GetParameters().Length>0)
-					{
-						testSuite.ShouldRun = false;
-						testSuite.IgnoreReason = "Invalid suite property method signature";
-					}
-//					else
-//					{
-//						TestSuite suite = (TestSuite)property.GetValue(null, new Object[0]);
-//						foreach( Test test in suite.Tests )
-//							testSuite.Add( test );
-//					}
-				}
-			}
-
-			MethodInfo [] methods = fixture.GetType().GetMethods(BindingFlags.Public|BindingFlags.Instance|BindingFlags.Static|BindingFlags.NonPublic);
-			foreach(MethodInfo method in methods)
-			{
-				TestCase testCase = TestCaseBuilder.Make(fixture, method);
-				if(testCase != null)
-				{
-					testCase.AssemblyKey = testSuite.AssemblyKey;
-					testSuite.Add(testCase);
-				}
-			}
-
-			if(testSuite.CountTestCases() == 0)
-			{
-				testSuite.ShouldRun = false;
-				testSuite.IgnoreReason = testSuite.Name + " does not have any tests";
-			}
-		}
-
-		private void CheckSuiteProperty(PropertyInfo property)
-		{
-			MethodInfo method = property.GetGetMethod(true);
-			if(method.ReturnType!=typeof(NUnit.Core.TestSuite))
-				throw new InvalidSuiteException("Invalid suite property method signature");
-			if(method.GetParameters().Length>0)
-				throw new InvalidSuiteException("Invalid suite property method signature");
-		}
+		#region Properties
 
 		public override ArrayList Tests 
 		{
@@ -215,7 +145,10 @@ namespace NUnit.Core
 		public bool IsSetUp
 		{
 			get { return isSetUp; }
+			set { isSetUp = value; }
 		}
+
+		#endregion
 
 		/// <summary>
 		/// True if this is a fixture. May populate the test's
@@ -275,11 +208,11 @@ namespace NUnit.Core
 			if ( ShouldRun )
 			{
 				suiteResult.Executed = true;	
-				doFixtureSetup( suiteResult );
+				DoSetUp( suiteResult );
 
 				RunAllTests( suiteResult, listener, filter );
 
-				doFixtureTearDown( suiteResult );
+				DoTearDown( suiteResult );
 			}
 			else
 				suiteResult.NotRun(this.IgnoreReason);
@@ -292,80 +225,12 @@ namespace NUnit.Core
 			return suiteResult;
 		}
 
-		public void DoSetUp( TestResult suiteResult )
+		public virtual void DoSetUp( TestResult suiteResult )
 		{
-			doFixtureSetup( suiteResult );
 		}
 
-		public void DoTearDown( TestResult suiteResult )
+		public virtual void DoTearDown( TestResult suiteResult )
 		{
-			doFixtureTearDown( suiteResult );
-		}
-
-		public void InvokeFixtureTearDown() 
-		{
-			if (this.fixtureTearDown != null)
-				this.InvokeMethod(fixtureTearDown, fixture);		}
-
-		private void doFixtureTearDown(TestResult suiteResult)
-		{
-			if (this.ShouldRun) 
-			{
-				try 
-				{
-					isSetUp = false;
-					InvokeFixtureTearDown();
-				} 
-				catch (Exception ex) 
-				{
-					handleFixtureException(suiteResult, ex);
-				}
-				finally
-				{
-					suiteResult.AssertCount += NUnit.Framework.Assert.Counter;
-				}
-			}
-			if (this.IgnoreReason == FIXTURE_SETUP_FAILED) 
-			{
-				this.ShouldRun = true;
-				this.IgnoreReason = null;
-			}
-		}
-
-		private void doFixtureSetup(TestResult suiteResult)
-		{
-			try 
-			{
-				InvokeFixtureSetUp();
-				isSetUp = true;
-			} 
-			catch (Exception ex) 
-			{
-				handleFixtureException(suiteResult, ex);
-				this.ShouldRun = false;
-				this.IgnoreReason = FIXTURE_SETUP_FAILED;
-			}
-			finally
-			{
-				suiteResult.AssertCount = NUnit.Framework.Assert.Counter;
-			}
-		}
-
-		private void InvokeFixtureSetUp()
-		{
-			if (this.fixtureSetUp != null)
-				this.InvokeMethod(fixtureSetUp, fixture);
-		}
-
-		private void handleFixtureException(TestResult result, Exception ex) 
-		{
-			NunitException nex = ex as NunitException;
-			if (nex != null)
-				ex = nex.InnerException;
-
-			result.Executed = false;
-			result.NotRun(ex.ToString());
-			result.StackTrace = ex.StackTrace;
 		}
 
 		protected virtual void RunAllTests(
@@ -380,7 +245,7 @@ namespace NUnit.Core
 					if (this.ShouldRun == false)
 					{
 						test.ShouldRun = false;
-						test.IgnoreReason = FIXTURE_SETUP_FAILED;
+						test.IgnoreReason = this.IgnoreReason;
 					}
 					else if ( test.IsExplicit && filter == null )
 					{
@@ -390,7 +255,9 @@ namespace NUnit.Core
 				}
 					
 				if ( filter == null || test.Filter( filter ) )
+				{
 					suiteResult.AddResult( test.Run( listener, filter ) );
+				}
 				
 				if ( saveShouldRun && !test.ShouldRun ) 
 				{

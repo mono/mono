@@ -151,6 +151,19 @@ namespace NUnit.Util
 		/// <param name="test"></param>
 		public UITestNode ( ITest test ) : this( test, false ) { }
 
+		public UITestNode ( string pathName, string testName )
+			: this( pathName, testName, 0 ) { }
+
+		public UITestNode ( string pathName, string testName, int assemblyKey )
+		{
+			this.fullName = pathName + "." + testName;
+			this.testName = testName;
+			this.assemblyKey = assemblyKey;
+			this.shouldRun = true;
+			this.isSuite = false;
+			this.testCaseCount = 1;
+		}
+
 		/// <summary>
 		/// Populate the arraylist of child Tests recursively.
 		/// If already populated, it has no effect.

@@ -31,14 +31,14 @@ namespace NUnit.Core
 {
 	using System;
 	using System.Collections;
+	using System.Reflection;
 
 	/// <summary>
 	/// Summary description for TestCase.
 	/// </summary>
 	public abstract class TestCase : Test
 	{
-		public TestCase(string path, string name) : base(path, name)
-		{}
+		public TestCase( string path, string name ) : base( path, name ) { }
 
 		public override int CountTestCases() 
 		{

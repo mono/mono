@@ -7,14 +7,13 @@
             * src.dir               - source location(build) or target(copy)
             * build.debug           - (true|false) debug build?
             * build.defines.csc     - build defines for build config
-            * runtime.defines.csc   - build defines for target framework
-    -->
+     -->
 
     <target name="build" depends="copy">
         <csc target="library" output="${bin.dir}/nunit.framework.dll"
-                debug="${build.debug}" define="${build.defines.csc},${runtime.defines.csc},StronglyNamedAssembly">
+                debug="${build.debug}" define="${build.defines.csc},StronglyNamedAssembly">
             <sources basedir="${src.dir}/framework">
-                <includes name="*.cs"/>
+                <include name="*.cs"/>
             </sources>
         </csc>
     </target>
@@ -22,25 +21,26 @@
     <target name="copy">
         <copy todir="${src.dir}/framework">
             <fileset basedir=".">
-                <includes name="nunit.framework.dll.csproj"/>
-                <includes name="nunit.framework.build"/>
-                <includes name="AssemblyInfo.cs"/>
-                <includes name="Assert.cs"/>
-                <includes name="Assertion.cs"/>
-                <includes name="AssertionException.cs"/>
-                <includes name="AssertionFailureMessage.cs"/>
-		<includes name="CategoryAttribute.cs"/>
-                <includes name="ExpectedExceptionAttribute.cs"/>
-		<includes name="ExplicitAttribute.cs"/>
-                <includes name="IgnoreAttribute.cs"/>
-                <includes name="OldTestCase.cs"/>
-                <includes name="SetUpAttribute.cs"/>
-                <includes name="SuiteAttribute.cs"/>
-                <includes name="TearDownAttribute.cs"/>
-                <includes name="TestAttribute.cs"/>
-                <includes name="TestFixtureAttribute.cs"/>
-                <includes name="TestFixtureSetUpAttribute.cs"/>
-                <includes name="TestFixtureTearDownAttribute.cs"/>
+                <include name="nunit.framework.dll.csproj"/>
+                <include name="nunit.framework.build"/>
+                <include name="AssemblyInfo.cs"/>
+                <include name="Assert.cs"/>
+                <include name="Assertion.cs"/>
+                <include name="AssertionException.cs"/>
+                <include name="AssertionFailureMessage.cs"/>
+		<include name="CategoryAttribute.cs"/>
+                <include name="ExpectedExceptionAttribute.cs"/>
+		<include name="ExplicitAttribute.cs"/>
+                <include name="IgnoreAttribute.cs"/>
+		<include name="IgnoreException.cs"/>
+                <include name="OldTestCase.cs"/>
+                <include name="SetUpAttribute.cs"/>
+                <include name="SuiteAttribute.cs"/>
+                <include name="TearDownAttribute.cs"/>
+                <include name="TestAttribute.cs"/>
+                <include name="TestFixtureAttribute.cs"/>
+                <include name="TestFixtureSetUpAttribute.cs"/>
+                <include name="TestFixtureTearDownAttribute.cs"/>
             </fileset>
         </copy>
     </target> 

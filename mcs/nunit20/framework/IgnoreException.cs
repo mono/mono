@@ -27,67 +27,42 @@
 '***********************************************************************************/
 #endregion
 
-namespace NUnit.Util
+namespace NUnit.Framework 
 {
 	using System;
-	using NUnit.Core;
-
+	using System.Runtime.Serialization;
+	
 	/// <summary>
-	/// Summary description for ResultSummarizer.
+	/// Thrown when an assertion failed.
 	/// </summary>
-	public class ResultSummarizer
+	/// 
+	[Serializable]
+	public class IgnoreException : System.Exception
 	{
-		private SummaryVisitor visitor = new SummaryVisitor();
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="message"></param>
+		public IgnoreException (string message) : base(message) 
+		{}
 
-		public ResultSummarizer(TestResult result)
-		{
-			result.Accept(visitor);
-		}
+		/// <summary>
+		/// Standard constructor
+		/// </summary>
+		/// <param name="message">The error message that explains 
+		/// the reason for the exception</param>
+		/// <param name="inner">The exception that caused the 
+		/// current exception</param>
+		public IgnoreException(string message, Exception inner) :
+			base(message, inner) 
+		{}
 
-		public ResultSummarizer(TestResult[] results)
-		{
-			foreach( TestResult result in results )
-				result.Accept( visitor );
-		}
+		/// <summary>
+		/// Serialization Constructor
+		/// </summary>
+		protected IgnoreException(SerializationInfo info, 
+			StreamingContext context) : base(info,context)
+		{}
 
-		public string Name
-		{
-			get { return visitor.Name; }
-		}
-
-		public bool Success
-		{
-			get { return visitor.Success; }
-		}
-
-		public int ResultCount
-		{
-			get { return visitor.Count; }
-		}
-
-//		public int Errors
-//		{
-//			get { return visitor.Errors; }
-//		}
-
-		public int Failures 
-		{
-			get { return visitor.Failures; }
-		}
-
-		public double Time
-		{
-			get { return visitor.Time; }
-		}
-
-		public int TestsNotRun
-		{
-			get { return visitor.TestsNotRun; }
-		}
-
-		public int SuitesNotRun
-		{
-			get { return visitor.SuitesNotRun; }
-		}
 	}
 }

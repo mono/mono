@@ -64,33 +64,39 @@ namespace NUnit.Core
 			return normalBuilder;
 		}
 
-		public static TestCase Make(object fixture, MethodInfo method)
+		/// <summary>
+		/// Make a test case from a given fixture type and method
+		/// </summary>
+		/// <param name="fixtureType">The fixture type</param>
+		/// <param name="method">MethodInfo for the particular method</param>
+		/// <returns>A test case or null</returns>
+		public static TestCase Make(Type fixtureType, MethodInfo method)
 		{
 			TestCase testCase = null;
 
-			if(HasTestAttribute(method) || HasObsoleteTestName(method) && !HasAnySetUpOrTearDownAttribute(method) )
+			if( Reflect.HasTestAttribute(method) || Reflect.IsObsoleteTestMethod( method ) )
 			{
-				if(IsTestMethodSignatureCorrect(method))
+				if( Reflect.IsTestMethodSignatureCorrect( method ) )
 				{
 					ITestBuilder builder = GetBuilder(method);
-					testCase = builder.Make(fixture, method);
+					testCase = builder.Make(fixtureType, method);
 
-					if(HasIgnoreAttribute(method))
+					if(Reflect.HasIgnoreAttribute(method))
 					{
 						testCase.ShouldRun = false;
-						testCase.IgnoreReason = GetIgnoreReason(method);
+						testCase.IgnoreReason = Reflect.GetIgnoreReason(method);
 					}
 
-					if (HasCategoryAttribute(method)) 
+					if (Reflect.HasCategoryAttribute(method)) 
 					{
-						IList categories = GetCategories(method);
+						IList categories = Reflect.GetCategories(method);
 						CategoryManager.Add(categories);
 						testCase.Categories = categories;
 					}
 
-					testCase.IsExplicit = HasExplicitAttribute(method);
+					testCase.IsExplicit = Reflect.HasExplicitAttribute(method);
 
-					testCase.Description = GetDescription(method);
+					testCase.Description = Reflect.GetDescription(method);
 				}
 				else
 				{
@@ -101,158 +107,34 @@ namespace NUnit.Core
 			return testCase;
 		}
 
+		#region Make Test Cases with pre-created fixtures
+
+		// TODO: These methods are only used by our tests, since we no longer
+		// create the fixture in advance. They should be phased out.
+
+		public static TestCase Make(object fixture, MethodInfo method)
+		{
+			TestCase testCase = Make( fixture.GetType(), method );
+			testCase.Fixture = fixture;
+
+			return testCase;
+		}
+
 		public static TestCase Make(object fixture, string methodName)
 		{
-			MethodInfo [] methods = fixture.GetType().GetMethods(BindingFlags.NonPublic|BindingFlags.Public|BindingFlags.Instance);
-			foreach(MethodInfo method in methods)
-			{
-				if(method.Name.Equals(methodName))
-					return Make(fixture, method);
-			}
+			MethodInfo method = Reflect.GetMethod( fixture.GetType(), methodName );
+			if ( method != null )
+				return Make(fixture, method);
 
 			return null;
 		}
 
-		private static bool IsExpectedException(MethodInfo method)
-		{
-			Type exceptionAttr = typeof(NUnit.Framework.ExpectedExceptionAttribute);
-			object[] attributes = method.GetCustomAttributes(exceptionAttr, false);
-			return attributes.Length == 1;
-		}
-
-		private static NUnit.Framework.ExpectedExceptionAttribute GetExpectedExceptions(MethodInfo method)
-		{
-			Type exceptionAttr = typeof(NUnit.Framework.ExpectedExceptionAttribute);
-			object[] attributes = method.GetCustomAttributes(exceptionAttr, false);
-
-			NUnit.Framework.ExpectedExceptionAttribute expectedAttr = null;
-
-			if(attributes.Length == 1)
-			{
-				expectedAttr = (NUnit.Framework.ExpectedExceptionAttribute)attributes[0];
-			}
-
-			return expectedAttr;
-		}
-
-		private static string GetDescription(MethodInfo method)
-		{
-			Type testAttr = typeof(NUnit.Framework.TestAttribute);
-			object[] attributes = method.GetCustomAttributes(testAttr, false);
-
-			string description = null;
-
-			if(attributes.Length == 1)
-			{
-				NUnit.Framework.TestAttribute attribute = 
-					(NUnit.Framework.TestAttribute)attributes[0];
-				description = attribute.Description;
-			}
-
-			return description;
-		}
-
-
-		public static int CountTestCases(object fixture) 
-		{
-			int testCases = 0;
-
-			MethodInfo [] methods = fixture.GetType().GetMethods();
-			foreach(MethodInfo method in methods)
-			{
-				if(IsTestMethod(method))
-					testCases++;
-			}
-
-			return testCases;
-		}
-
-
-		public static bool IsTestMethod(MethodInfo methodToCheck) 
-		{
-			return
-				(HasTestAttribute(methodToCheck) || HasObsoleteTestName(methodToCheck))
-				&& IsTestMethodSignatureCorrect(methodToCheck);
-		}
-
-		private static bool IsTestMethodSignatureCorrect(MethodInfo methodToCheck)
-		{
-			return 
-				!methodToCheck.IsStatic
-				&& !methodToCheck.IsAbstract
-				&& methodToCheck.IsPublic
-				&& methodToCheck.GetParameters().Length == 0
-				&& methodToCheck.ReturnType.Equals(typeof(void));
-		}
-
-		private static bool HasTestAttribute(MethodInfo methodToCheck)
-		{
-			return methodToCheck.IsDefined(typeof(NUnit.Framework.TestAttribute),false);
-		}
-		
-		private static bool HasObsoleteTestName(MethodInfo methodToCheck)
-		{
-			return methodToCheck.Name.ToLower().StartsWith("test");
-		}
-
-		private static bool HasAnySetUpOrTearDownAttribute( MethodInfo methodToCheck )
-		{
-			object[] attributes = methodToCheck.GetCustomAttributes( false );
-			foreach( Attribute attribute in attributes )
-				if ( attribute is NUnit.Framework.SetUpAttribute ||
-					 attribute is NUnit.Framework.TestFixtureSetUpAttribute ||
-					 attribute is NUnit.Framework.TearDownAttribute || 
-					 attribute is NUnit.Framework.TestFixtureTearDownAttribute )
-					return true;
-
-			return false;	
-		}
-
-		private static bool HasIgnoreAttribute(MethodInfo methodToCheck)
-		{
-			Type ignoreMethodAttribute = typeof(NUnit.Framework.IgnoreAttribute);
-			object[] attributes = methodToCheck.GetCustomAttributes(ignoreMethodAttribute, false);
-			return attributes.Length == 1;
-		}
-
-		private static string GetIgnoreReason(MethodInfo methodToCheck)
-		{
-			Type ignoreMethodAttribute = typeof(NUnit.Framework.IgnoreAttribute);
-			NUnit.Framework.IgnoreAttribute[] attributes = (NUnit.Framework.IgnoreAttribute[])methodToCheck.GetCustomAttributes(ignoreMethodAttribute, false);
-			string result = "no reason";
-			if(attributes.Length > 0)
-				result = attributes[0].Reason;
-
-			return result;
-		}
-
-		private static bool HasCategoryAttribute(MethodInfo methodToCheck) 
-		{
-			object[] attributes = methodToCheck.GetCustomAttributes(typeof(NUnit.Framework.CategoryAttribute), false);
-			return attributes.Length > 0;
-		}
-
-		private static bool HasExplicitAttribute(MethodInfo methodToCheck)
-		{
-			object[] attributes = methodToCheck.GetCustomAttributes(typeof(NUnit.Framework.ExplicitAttribute), false);
-			return attributes.Length > 0;
-		}
-
-		private static IList GetCategories(MethodInfo methodToCheck) 
-		{
-			object[] attributes = methodToCheck.GetCustomAttributes(typeof(NUnit.Framework.CategoryAttribute), false);
-			ArrayList list = new ArrayList();
-			foreach (NUnit.Framework.CategoryAttribute attrib in attributes) 
-			{
-				list.Add(attrib.Name);
-			}
-
-			return list;
-		}
+		#endregion
 	}
 
 	internal interface ITestBuilder 
 	{
+		TestCase Make(Type fixtureType, MethodInfo method);
 		TestCase Make(object fixture, MethodInfo method);
 	}
 
@@ -260,36 +142,27 @@ namespace NUnit.Core
 	{
 		#region ITestBuilder Members
 
+		public TestCase Make(Type fixtureType, MethodInfo method)
+		{
+			return new ExpectedExceptionTestCase( fixtureType, method );
+		}
+
 		public TestCase Make(object fixture, MethodInfo method)
 		{
-			NUnit.Framework.ExpectedExceptionAttribute expectedException = GetExpectedExceptions(method);
-			TestCase testCase = new ExpectedExceptionTestCase(fixture, method, expectedException.ExceptionType, expectedException.ExpectedMessage);
-
-			return testCase;
+			return new ExpectedExceptionTestCase( fixture, method );
 		}
 
 		#endregion
-
-		private static NUnit.Framework.ExpectedExceptionAttribute GetExpectedExceptions(MethodInfo method)
-		{
-			Type exceptionAttr = typeof(NUnit.Framework.ExpectedExceptionAttribute);
-			object[] attributes = method.GetCustomAttributes(exceptionAttr, false);
-
-			NUnit.Framework.ExpectedExceptionAttribute expectedAttr = null;
-
-			if(attributes.Length == 1)
-			{
-				expectedAttr = (NUnit.Framework.ExpectedExceptionAttribute)attributes[0];
-			}
-
-			return expectedAttr;
-		}
-
 	}
 
 	internal class NormalBuilder : ITestBuilder
 	{
 		#region ITestBuilder Members
+
+		public TestCase Make(Type fixtureType, MethodInfo method)
+		{
+			return new NormalTestCase(fixtureType, method);
+		}
 
 		public TestCase Make(object fixture, MethodInfo method)
 		{
@@ -297,7 +170,6 @@ namespace NUnit.Core
 		}
 
 		#endregion
-
 	}
 
 

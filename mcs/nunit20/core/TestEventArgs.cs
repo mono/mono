@@ -165,7 +165,7 @@ namespace NUnit.Core
 
 		public Test Test
 		{
-			get { return tests[0]; }
+			get { return tests == null || tests.Length == 0 ? null : tests[0]; }
 		}
 
 		public Test[] Tests 
@@ -180,7 +180,7 @@ namespace NUnit.Core
 
 		public TestResult Result
 		{
-			get { return results[0]; }
+			get { return results == null || results.Length == 0 ? null : results[0]; }
 		}
 
 		public TestResult[] Results
