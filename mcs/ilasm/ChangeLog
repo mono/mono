@@ -1,5 +1,10 @@
 2003-03-06 Jackson Harper <jackson@latitudegeo.com>
 
+	* AssemblyInfo.cs: Bump up version number, this new version is a major 
+	structural change, PEAPI is now being used for code emission.
+
+2003-03-06 Jackson Harper <jackson@latitudegeo.com>
+
 	* Driver.cs: Check that all types are defined before writing pe file
 	
 2003-03-06 Jackson Harper <jackson@latitudegeo.com>
