@@ -914,7 +914,6 @@ namespace Mono.CSharp
 			// This is not required because Assembly.Load knows about this
 			// path.
 			//
-			link_paths.Add (GetSystemDir ());
 
 			int argc = args.Length;
 			for (i = 0; i < argc; i++){
@@ -1002,6 +1001,7 @@ namespace Mono.CSharp
 			//
 			if (timestamps)
 				ShowTime ("Loading references");
+			link_paths.Add (GetSystemDir ());
 			LoadReferences ();
 			
 			if (timestamps)

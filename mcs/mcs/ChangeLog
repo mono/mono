@@ -1,5 +1,8 @@
 2002-07-11  Miguel de Icaza  <miguel@ximian.com>
 
+	* driver.cs: Add the System directory to the link path at the end,
+	after all the other -L arguments. 
+
 	* expression.cs (ArrayAccess.EmitLoadOpcode): I was using the
 	wrong opcode for loading bytes and bools (ldelem.i1 instead of
 	ldelem.u1) and using the opposite for sbytes.
