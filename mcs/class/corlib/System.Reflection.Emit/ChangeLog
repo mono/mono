@@ -1,3 +1,8 @@
+2003-03-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ILGenerator.cs (Emit): Do not pop the arguments off the stack for
+	ldftn etc. Fixes bug #39196.
+
 2003-02-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ILGenerator.cs (Emit): Add fixup for already created methods and

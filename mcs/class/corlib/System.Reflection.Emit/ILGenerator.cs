@@ -213,6 +213,7 @@ namespace System.Reflection.Emit {
 			}
 			if (max_stack < cur_stack)
 				max_stack = cur_stack;
+
 			/* 
 			 * Note that we adjust for the pop behaviour _after_ setting max_stack.
 			 */
@@ -357,7 +358,7 @@ namespace System.Reflection.Emit {
 				add_token_fixup (constructor);
 			emit_int (token);
 			ParameterInfo[] mparams = constructor.GetParameters();
-			if (mparams != null)
+			if ((opcode.StackBehaviourPop == StackBehaviour.Varpop) && (mparams != null))
 				cur_stack -= mparams.Length;
 		}
 		public virtual void Emit (OpCode opcode, double val) {
@@ -517,7 +518,7 @@ namespace System.Reflection.Emit {
 			if (method.ReturnType != void_type)
 				cur_stack ++;
 			ParameterInfo[] mparams = method.GetParameters();
-			if (mparams != null)
+			if ((opcode.StackBehaviourPop == StackBehaviour.Varpop) && (mparams != null))
 				cur_stack -= mparams.Length;
 		}
 		[CLSCompliant(false)]
