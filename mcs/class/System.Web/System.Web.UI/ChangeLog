@@ -1,3 +1,8 @@
+2005-03-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: in FindControl, throw if there's more than one control
+	with the same ID. Fixes bug #73479.
+
 2005-03-04  Lluis Sanchez Gual <lluis@novell.com>
 
 	* Page.cs: Load control state before loading view state, and the
