@@ -601,11 +601,11 @@ namespace System
 
 			int low = array.GetLowerBound (0);
 			if (index < low)
-				throw new ArgumentOutOfRangeException ("index < lower bound");
+				throw new IndexOutOfRangeException ("index < lower bound");
 			index = index - low;
 
 			if (index + length > array.Length)
-				throw new ArgumentOutOfRangeException ("index + length > size");
+				throw new IndexOutOfRangeException ("index + length > size");
 
 			for (int i = 0; i < length; i++) 
 				array.SetValueImpl (null, index + i);

@@ -1,5 +1,6 @@
 2004-05-23  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* Array.cs: Fixed exception when we try to Clear outside bounds.
 	* Boolean.cs: Fixed Equals for True!=True (see bugzilla #58874).
 	* BitConverter.cs: Fixed negative index and integer overflow in
 	To... methods.
