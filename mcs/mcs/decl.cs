@@ -447,7 +447,6 @@ namespace Mono.CSharp {
 				return true;
 
 			string check_type_name = check_type.FullName;
-			string type_name = TypeBuilder.FullName;
 			
 			int cio = check_type_name.LastIndexOf ('+');
 			string container = check_type_name.Substring (0, cio);
@@ -474,8 +473,6 @@ namespace Mono.CSharp {
 		// and return the new level.
 		static AccessLevel CheckAccessLevel (AccessLevel level, int flags)
 		{
-			AccessLevel old_level = level;
-
 			if ((flags & Modifiers.INTERNAL) != 0) {
 				if ((flags & Modifiers.PROTECTED) != 0) {
 					if ((int) level < (int) AccessLevel.ProtectedInternal)
@@ -1114,8 +1111,6 @@ namespace Mono.CSharp {
 		void AddMembers (MemberTypes mt, BindingFlags bf, IMemberContainer container)
 		{
 			MemberList members = container.GetMembers (mt, bf);
-			BindingFlags new_bf = (container == Container) ?
-				bf | BindingFlags.DeclaredOnly : bf;
 
 			foreach (MemberInfo member in members) {
 				string name = member.Name;

@@ -2900,9 +2900,6 @@ statement
 	  }
 	| embedded_statement
 	  {
-		Statement s = (Statement) $1;
-
-
 		current_block.AddStatement ((Statement) $1);
 	  }
 	| labeled_statement
@@ -3700,10 +3697,7 @@ fixed_statement
 	  embedded_statement 
 	  {
 		Location l = (Location) oob_stack.Pop ();
-		Block assign_block = (Block) oob_stack.Pop ();
-
-		ArrayList list = (ArrayList) $4;
-		int top = list.Count;
+		oob_stack.Pop ();
 
 		$$ = new Fixed ((Expression) $3, (ArrayList) $4, (Statement) $7, l);
 	  }

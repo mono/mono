@@ -389,8 +389,6 @@ namespace Mono.CSharp {
 		{
 			TypeContainer root = Tree.Types;
 			
-			ArrayList ifaces = root.Interfaces;
-
 			if (root.Enums != null)
 				foreach (Enum en in root.Enums)
 					en.CloseType ();
@@ -461,8 +459,6 @@ namespace Mono.CSharp {
 
 		static Type NamespaceLookup (DeclSpace ds, string name, Location loc)
 		{
-			Type t;
-
 			//
 			// Try in the current namespace and all its implicit parents
 			//
@@ -789,7 +785,6 @@ namespace Mono.CSharp {
 		static public FieldBuilder MakeStaticData (byte [] data)
 		{
 			FieldBuilder fb;
-			int size = data.Length;
 			
 			if (impl_details_class == null){
 				impl_details_class = CodeGen.ModuleBuilder.DefineType (

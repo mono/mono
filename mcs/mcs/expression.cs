@@ -565,7 +565,6 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			Type expr_type = Expr.Type;
 			
 			switch (Oper) {
 			case Operator.UnaryPlus:
@@ -1792,8 +1791,6 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return null;
 
-			int errors = Report.Errors;
-
 			type = ec.DeclSpace.ResolveType (target_type, false, Location);
 			
 			if (type == null)
@@ -2192,8 +2189,6 @@ namespace Mono.CSharp {
 		Expression CheckShiftArguments (EmitContext ec)
 		{
 			Expression e;
-			Type l = left.Type;
-			Type r = right.Type;
 
 			e = ForceConversion (ec, right, TypeManager.int32_type);
 			if (e == null){
@@ -2957,7 +2952,6 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 			Type l = left.Type;
-			Type r = right.Type;
 			OpCode opcode;
 
 			//
@@ -3020,7 +3014,6 @@ namespace Mono.CSharp {
 			right.Emit (ec);
 
 			bool isUnsigned = is_unsigned (left.Type);
-			IntConstant ic;
 			
 			switch (oper){
 			case Operator.Multiply:
@@ -4480,8 +4473,6 @@ namespace Mono.CSharp {
 
 			ParameterData pd = GetParameterData (candidate);
 
-			int pd_count = pd.Count;
-
 			if (arg_count != pd.Count)
 				return false;
 
@@ -4760,8 +4751,6 @@ namespace Mono.CSharp {
 				Parameter.Modifier pm = pd.ParameterModifier (j);
 				
 				if (pm == Parameter.Modifier.PARAMS){
-					Parameter.Modifier am = a.GetParameterModifier ();
-
 					if ((pm & ~Parameter.Modifier.PARAMS) != a.GetParameterModifier ()) {
 						if (!Location.IsNull (loc))
 							Error_InvalidArguments (
@@ -4841,8 +4830,6 @@ namespace Mono.CSharp {
 			if (expr is BaseAccess)
 				is_base = true;
 
-			Expression old = expr;
-			
 			expr = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
 			if (expr == null)
 				return null;
@@ -6820,8 +6807,6 @@ namespace Mono.CSharp {
 			// it will fail to find any members at all
 			//
 
-			int errors = Report.Errors;
-			
 			Type expr_type = expr.Type;
 			if (expr is TypeExpr){
 				if (!ec.DeclSpace.CheckAccessLevel (expr_type)){
@@ -7182,9 +7167,9 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+#if false
 			ExprClass eclass = ea.Expr.eclass;
 
-#if false
 			// As long as the type is valid
 			if (!(eclass == ExprClass.Variable || eclass == ExprClass.PropertyAccess ||
 			      eclass == ExprClass.Value)) {
@@ -7710,8 +7695,6 @@ namespace Mono.CSharp {
 			ArrayList AllSetters = new ArrayList();
 			if (!CommonResolve (ec))
 				return null;
-
-			Type right_type = right_side.Type;
 
 			bool found_any = false, found_any_setters = false;
 

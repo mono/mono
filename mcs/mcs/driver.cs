@@ -146,7 +146,6 @@ namespace Mono.CSharp
 				int token, tokens = 0, errors = 0;
 
 				while ((token = lexer.token ()) != Token.EOF){
-					Location l = lexer.Location;
 					tokens++;
 					if (token == Token.ERROR)
 						errors++;
@@ -1282,9 +1281,7 @@ namespace Mono.CSharp
 
 			TypeManager.AddModule (CodeGen.ModuleBuilder);
 
-			DateTime start = DateTime.Now;
 			TypeManager.ComputeNamespaces ();
-			DateTime end = DateTime.Now;
 			
 			//
 			// Before emitting, we need to get the core

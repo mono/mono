@@ -348,7 +348,6 @@ public class TypeManager {
 			return;
 		}
 		
-		Location l;
 		tc = builder_to_declspace [t] as TypeContainer;
 		if (tc != null){
 			Report.Warning (
@@ -703,7 +702,6 @@ public class TypeManager {
 		//
 		if (assembly_get_namespaces != null){
 			int count = assemblies.Length;
-			int total;
 
 			for (int i = 0; i < count; i++){
 				Assembly a = assemblies [i];
@@ -1258,8 +1256,6 @@ public class TypeManager {
 	private static MemberList MemberLookup_FindMembers (Type t, MemberTypes mt, BindingFlags bf,
 							    string name, out bool used_cache)
 	{
-                bool not_loaded_corlib = (t.Assembly == CodeGen.AssemblyBuilder);
-                
 		//
 		// We have to take care of arrays specially, because GetType on
 		// a TypeBuilder array will return a Type, not a TypeBuilder,

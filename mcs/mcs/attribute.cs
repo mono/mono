@@ -1040,7 +1040,9 @@ namespace Mono.CSharp {
 			CallingConvention cc = CallingConvention.Winapi;
 			CharSet charset = CharSet.Ansi;
 			bool preserve_sig = true;
+#if FIXME
 			bool exact_spelling = false;
+#endif
 			bool set_last_err = false;
 			string entry_point = null;
 
@@ -1085,8 +1087,10 @@ namespace Mono.CSharp {
 							entry_point = (string) c.GetValue ();
 						else if (member_name == "SetLastError")
 							set_last_err = (bool) c.GetValue ();
+#if FIXME
 						else if (member_name == "ExactSpelling")
 							exact_spelling = (bool) c.GetValue ();
+#endif
 						else if (member_name == "PreserveSig")
 							preserve_sig = (bool) c.GetValue ();
 					} else { 

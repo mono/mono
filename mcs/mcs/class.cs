@@ -137,17 +137,9 @@ namespace Mono.CSharp {
 		public TypeContainer (NamespaceEntry ns, TypeContainer parent, string name, Location l)
 			: base (ns, parent, name, l)
 		{
-			string n;
 			types = new ArrayList ();
 
-			if (parent == null)
-				n = "";
-			else
-				n = parent.Name;
-
 			base_class_name = null;
-			
-			//Console.WriteLine ("New class " + name + " inside " + n);
 		}
 
 		public AdditionResult AddConstant (Const constant)
@@ -531,7 +523,6 @@ namespace Mono.CSharp {
 		public bool EmitFieldInitializers (EmitContext ec)
 		{
 			ArrayList fields;
-			ILGenerator ig = ec.ig;
 			Expression instance_expr;
 			
 			if (ec.IsStatic){

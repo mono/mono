@@ -359,7 +359,6 @@ namespace Mono.CSharp {
 			Label old_end = ec.LoopEnd;
 			bool old_inloop = ec.InLoop;
 			int old_loop_begin_try_catch_level = ec.LoopBeginTryCatchLevel;
-			bool ret;
 			
 			ec.LoopBegin = ig.DefineLabel ();
 			ec.LoopEnd = ig.DefineLabel ();
@@ -370,8 +369,6 @@ namespace Mono.CSharp {
 			// Inform whether we are infinite or not
 			//
 			if (expr is BoolConstant){
-				BoolConstant bc = (BoolConstant) expr;
-
 				ig.MarkLabel (ec.LoopBegin);
 				Statement.Emit (ec);
 				ig.Emit (OpCodes.Br, ec.LoopBegin);
@@ -380,7 +377,6 @@ namespace Mono.CSharp {
 				// Inform that we are infinite (ie, `we return'), only
 				// if we do not `break' inside the code.
 				//
-				ret = may_return == false;
 				ig.MarkLabel (ec.LoopEnd);
 			} else {
 				Label while_loop = ig.DefineLabel ();
@@ -394,8 +390,6 @@ namespace Mono.CSharp {
 
 				EmitBoolExpression (ec, expr, while_loop, true);
 				ig.MarkLabel (ec.LoopEnd);
-
-				ret = false;
 			}	
 
 			ec.LoopBegin = old_begin;
@@ -544,8 +538,6 @@ namespace Mono.CSharp {
 		
 		protected override void DoEmit (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-			
 			expr.EmitStatement (ec);
 		}
 
@@ -1401,7 +1393,7 @@ namespace Mono.CSharp {
 			}
 
 			if (pars != null) {
-				int idx = 0;
+				int idx;
 				Parameter p = pars.GetParameterByName (name, out idx);
 				if (p != null) {
 					Report.Error (136, l, "A local variable named `" + name + "' " +
@@ -1573,7 +1565,6 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public void EmitMeta (EmitContext ec, InternalParameters ip)
 		{
-			DeclSpace ds = ec.DeclSpace;
 			ILGenerator ig = ec.ig;
 
 			//
@@ -2636,7 +2627,6 @@ namespace Mono.CSharp {
 		protected override void DoEmit (EmitContext ec)
 		{
 			Type type = expr.Type;
-			bool val;
 			
 			if (type.IsValueType){
 				Report.Error (185, loc, "lock statement requires the expression to be " +
@@ -2654,7 +2644,7 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Call, TypeManager.void_monitor_enter_object);
 
 			// try
-			Label end = ig.BeginExceptionBlock ();
+			ig.BeginExceptionBlock ();
 			bool old_in_try = ec.InTry;
 			ec.InTry = true;
 			Label finish = ig.DefineLabel ();
@@ -3010,8 +3000,6 @@ namespace Mono.CSharp {
 			// Clear the pinned variable
 			//
 			for (int i = 0; i < data.Length; i++) {
-				LocalInfo vi = data [i].vi;
-
 				if (data [i].is_object || data [i].expr.Type.IsArray) {
 					ig.Emit (OpCodes.Ldc_I4_0);
 					ig.Emit (OpCodes.Conv_U);
@@ -3188,11 +3176,10 @@ namespace Mono.CSharp {
 		protected override void DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			Label end;
 			Label finish = ig.DefineLabel ();;
 
 			ec.TryCatchLevel++;
-			end = ig.BeginExceptionBlock ();
+			ig.BeginExceptionBlock ();
 			bool old_in_try = ec.InTry;
 			ec.InTry = true;
 			Block.Emit (ec);
@@ -3204,7 +3191,6 @@ namespace Mono.CSharp {
 
 			bool old_in_catch = ec.InCatch;
 			ec.InCatch = true;
-			DeclSpace ds = ec.DeclSpace;
 
 			foreach (Catch c in Specific){
 				LocalInfo vi;
@@ -3830,11 +3816,10 @@ namespace Mono.CSharp {
 			// Protect the code in a try/finalize block, so that
 			// if the beast implement IDisposable, we get rid of it
 			//
-			Label l;
 			bool old_in_try = ec.InTry;
 
 			if (hm.is_disposable) {
-				l = ig.BeginExceptionBlock ();
+				ig.BeginExceptionBlock ();
 				ec.InTry = true;
 			}
 			
@@ -4051,8 +4036,6 @@ namespace Mono.CSharp {
 		
 		protected override void DoEmit (EmitContext ec)
 		{
-			bool ret_val;
-			
 			ILGenerator ig = ec.ig;
 			
 			Label old_begin = ec.LoopBegin, old_end = ec.LoopEnd;
@@ -4064,9 +4047,9 @@ namespace Mono.CSharp {
 			ec.LoopBeginTryCatchLevel = ec.TryCatchLevel;
 			
 			if (hm != null)
-				ret_val = EmitCollectionForeach (ec);
+				EmitCollectionForeach (ec);
 			else
-				ret_val = EmitArrayForeach (ec);
+				EmitArrayForeach (ec);
 			
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;

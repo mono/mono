@@ -307,8 +307,6 @@ namespace Mono.CSharp {
 			
 			Type [] arg_types = im.ParameterTypes (this);
 			MethodBuilder mb;
-			Parameter [] p;
-			int i;
 
 			if (return_type == null)
 				return;

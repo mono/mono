@@ -901,7 +901,6 @@ namespace Mono.CSharp
 		//
 		int getHex (int count, out bool error)
 		{
-			int [] buffer = new int [8];
 			int i;
 			int total = 0;
 			int c;
@@ -1397,7 +1396,6 @@ namespace Mono.CSharp
 		//
 		bool handle_preprocessing_directive (bool caller_is_taking)
 		{
-			char [] blank = { ' ', '\t' };
 			string cmd, arg;
 			bool region_directive = false;
 

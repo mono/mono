@@ -436,7 +436,7 @@ namespace Mono.CSharp {
 		// </summary>
 		public void KillFlowBranching ()
 		{
-			FlowBranching cfb = (FlowBranching) FlowStack.Pop ();
+			FlowStack.Pop ();
 		}
 
 		public void EmitTopBlock (Block block, InternalParameters ip, Location loc)
