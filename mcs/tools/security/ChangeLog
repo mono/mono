@@ -1,3 +1,9 @@
+2004-12-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* permview.cs: New. Managed declarative security permission viewer for
+	assemblies. The tools isn't yet part of the build as we're missing 
+	some runtime support (for Fx 1.0/1.1).
+
 2004-12-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* certmgr.cs, signcode.cs, sn.cs: Fixlets to removed compilation 
