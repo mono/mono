@@ -1,3 +1,16 @@
+2003-11-22 Carlos Guzman Alvarez <carlosga@telefonica.net>
+
+	* Changed line endings to unix format in SSL/TLS sources.
+	
+	* Mono.Security.CryptographyoHMD5SHA1CryptoServiceProvider.cs:
+	
+	    - Removed file (now it's called MD5SHA1.cs)
+	
+	* Mono.Security.Protocol.Tls/TlsCipherSuiteFactory.cs:
+	
+	    - Removed comments from AES ciphersuites.
+
+
 2003-11-17 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls/SslClientStream.cs:
