@@ -124,7 +124,13 @@ namespace System.Data.SqlTypes
 				chars = new char [(count - index) / 2];
 			else
 				chars = new char [count - index];
-			
+
+			if (index >= data.Length)
+				throw new ArgumentOutOfRangeException ("index");
+
+			if ((index + count) > data.Length)
+				throw new ArgumentOutOfRangeException ("count");
+
 			int j = 0;
 			for (int i = index; i < chars.Length; i++) {
 				
@@ -406,7 +412,7 @@ namespace System.Data.SqlTypes
 			if (x.IsNull || y.IsNull)
 				return SqlBoolean.Null;
 			else
-				throw new NotImplementedException ();
+				return new SqlBoolean (x.CompareTo (y) > 0);
 		}
 
 		// Greater Than Or Equal
@@ -415,7 +421,7 @@ namespace System.Data.SqlTypes
 			if (x.IsNull || y.IsNull)
 				return SqlBoolean.Null;
 			else
-				throw new NotImplementedException ();
+				return new SqlBoolean (x.CompareTo (y) >= 0);
 		}
 
 		public static SqlBoolean operator != (SqlString x, SqlString y) 
@@ -432,7 +438,7 @@ namespace System.Data.SqlTypes
 			if (x.IsNull || y.IsNull)
 				return SqlBoolean.Null;
 			else
-				throw new NotImplementedException ();
+				return new SqlBoolean (x.CompareTo (y) < 0);
 		}
 
 		// Less Than Or Equal
@@ -441,7 +447,7 @@ namespace System.Data.SqlTypes
 			if (x.IsNull || y.IsNull)
 				return SqlBoolean.Null;
 			else
-				throw new NotImplementedException ();
+				return new SqlBoolean (x.CompareTo (y) <= 0);
 		}
 
 		// **************************************

@@ -1,3 +1,8 @@
+2003-06-02  Ville Palo <vi64pa@kolumbus.fi>
+
+	* SqlString.cs: implementes less than and greater than operators.
+	Added some checks to ctor.
+		
 2003-06-01  Ville Palo <vi64pa@kolumbus.fi>
 
 	* SqlString.cs: added null checking
