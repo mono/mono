@@ -562,10 +562,10 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Get a string containing a list of valid targets for the attribute 'attr'
 		/// </summary>
-		static string GetValidTargets (Attribute attr)
+		string GetValidTargets ()
 		{
 			StringBuilder sb = new StringBuilder ();
-			AttributeTargets targets = attr.GetAttributeUsage ().ValidOn;
+			AttributeTargets targets = GetAttributeUsage ().ValidOn;
 
 			if ((targets & AttributeTargets.Assembly) != 0)
 				sb.Append ("'assembly' ");
@@ -613,15 +613,6 @@ namespace Mono.CSharp {
 
 		}
 
-		public static void Error_AttributeNotValidForElement (Attribute a, Location loc)
-		{
-			Report.Error (
-				592, loc, "Attribute '" + a.Name +
-				"' is not valid on this declaration type. " +
-				"It is valid on " + GetValidTargets (a) + "declarations only.");
-		}
-
-
 		/// <summary>
 		/// Returns AttributeUsage attribute for this type
 		/// </summary>
@@ -641,35 +632,6 @@ namespace Mono.CSharp {
 			}
 		
 			return attr_class.AttributeUsage;
-		}
-
-
-		//
-		// This pulls the condition name out of a Conditional attribute
-		//
-		public string Conditional_GetConditionName ()
-		{
-			//
-			// So we have a Conditional, pull the data out.
-			//
-			if (Arguments == null || Arguments [0] == null){
-				Error_AttributeConstructorMismatch ();
-				return null;
-			}
-
-			ArrayList pos_args = (ArrayList) Arguments [0];
-			if (pos_args.Count != 1){
-				Error_AttributeConstructorMismatch ();
-				return null;
-			}
-
-			Argument arg = (Argument) pos_args [0];	
-			if (!(arg.Expr is StringConstant)){
-				Error_AttributeConstructorMismatch ();
-				return null;
-			}
-
-			return ((StringConstant) arg.Expr).Value;
 		}
 
 		public string IndexerName_GetIndexerName (EmitContext ec)
@@ -836,7 +798,8 @@ namespace Mono.CSharp {
 
 			AttributeUsageAttribute usage_attr = GetAttributeUsage ();
 			if ((usage_attr.ValidOn & ias.AttributeTargets) == 0) {
-				Error_AttributeNotValidForElement (this, Location);
+				// "Attribute '{0}' is not valid on this declaration type. It is valid on {1} declarations only.";
+				Report.Error_T (592, Location, Name, GetValidTargets ());
 				return;
 			}
 

@@ -727,6 +727,20 @@ namespace Mono.CSharp {
 				}
 			}
 			
+			//TODO: implement caching when performance will be low
+			IMethodData md = TypeManager.GetMethod (delegate_method);
+			if (md == null) {
+				if (System.Attribute.GetCustomAttribute (delegate_method, TypeManager.conditional_attribute_type) != null) {
+					// Cannot create delegate with '{0}' because it has a Conditional attribute
+					Report.Error_T (1618, loc, TypeManager.CSharpSignature (delegate_method));
+				}
+			} else {
+				if (md.OptAttributes != null && md.OptAttributes.Search (TypeManager.conditional_attribute_type, ec) != null) {
+					// Cannot create delegate with '{0}' because it has a Conditional attribute
+					Report.Error_T (1618, loc, TypeManager.CSharpSignature (delegate_method));
+				}
+			}
+			
 			if (mg.InstanceExpression != null)
 				delegate_instance_expr = mg.InstanceExpression.Resolve (ec);
 			else {

@@ -1,5 +1,14 @@
 2004-06-08  Marek Safar  <marek.safar@seznam.cz>
 
+	* class:
+	(Method.ApplyAttributeBuilder): Moved and added conditional
+	attribute error tests (CS0577, CS0578, CS0243, CS0582, CS0629).
+
+	* delegate.cs:
+	(DelegateCreation.ResolveMethodGroupExpr): Added error CS1618 test.
+
+2004-06-08  Marek Safar  <marek.safar@seznam.cz>
+
 	Fixed #59640
 	* class.cs: (EventField.attribute_targets): Changed default target.
 

@@ -2835,6 +2835,38 @@ namespace Mono.CSharp {
 				return;
 			}
 
+			if (a.Type == TypeManager.conditional_attribute_type) {
+				if (IsOperator || IsExplicitImpl) {
+					// Conditional not valid on '{0}' because it is a destructor, operator, or explicit interface implementation
+					Report.Error_T (577, Location, GetSignatureForError ());
+					return;
+				}
+
+				if (ReturnType != TypeManager.void_type) {
+					// Conditional not valid on '{0}' because its return type is not void
+					Report.Error_T (578, Location, GetSignatureForError ());
+					return;
+				}
+
+				if ((ModFlags & Modifiers.OVERRIDE) != 0) {
+					// Conditional not valid on '{0}' because it is an override method
+					Report.Error_T (243, Location, GetSignatureForError ());
+					return;
+				}
+
+				if (IsInterface) {
+					// Conditional not valid on interface members
+					Report.Error_T (582, Location);
+					return;
+				}
+
+				if (MethodData.IsImplementing) {
+					// Conditional member '{0}' cannot implement interface member
+					Report.Error_T (629, Location, GetSignatureForError ());
+					return;
+				}
+			}
+
 			MethodBuilder.SetCustomAttribute (cb);
 		}
 
@@ -2940,7 +2972,7 @@ namespace Mono.CSharp {
 			if (!CheckBase (container))
 				return false;
 
-			MethodData = new MethodData (this, ParameterInfo, ModFlags, flags, true, this);
+			MethodData = new MethodData (this, ParameterInfo, ModFlags, flags, this);
 
 			if (!MethodData.Define (container))
 				return false;
@@ -3646,7 +3678,6 @@ namespace Mono.CSharp {
 		protected MemberBase member;
 		protected int modifiers;
 		protected MethodAttributes flags;
-		protected bool is_method;
 
 		MethodBuilder builder = null;
 		public MethodBuilder MethodBuilder {
@@ -3656,94 +3687,20 @@ namespace Mono.CSharp {
 		}
 
 		public MethodData (MemberBase member, InternalParameters parameters,
-				   int modifiers, MethodAttributes flags, bool is_method, IMethodData method)
+				   int modifiers, MethodAttributes flags, IMethodData method)
 		{
 			this.member = member;
 			this.ParameterInfo = parameters;
 			this.modifiers = modifiers;
 			this.flags = flags;
-			this.is_method = is_method;
 
 			this.method = method;
-		}
-
-		//
-		// Attributes.
-		//
-		public virtual bool ApplyAttributes (Attributes opt_attrs, bool is_method,
-						     EmitContext ec)
-		{
-			if ((opt_attrs == null) || (opt_attrs.Attrs == null))
-				return true;
-
-			foreach (Attribute a in opt_attrs.Attrs) {
-				Type attr_type = a.ResolveType (ec, true);
-				if (attr_type == TypeManager.conditional_attribute_type) {
-					if (!ApplyConditionalAttribute (a))
-						return false;
-				}
-			}
-
-			return true;
-		}
-
-		//
-		// Applies the `Conditional' attribute to the method.
-		//
-		protected virtual bool ApplyConditionalAttribute (Attribute a)
-		{
-			// The Conditional attribute is only valid on methods.
-			if (!is_method) {
-				Attribute.Error_AttributeNotValidForElement (a, method.Location);
-				return false;
-			}
-
-			string condition = a.Conditional_GetConditionName ();
-
-			if (condition == null)
-				return false;
-
-			if (method.ReturnType != TypeManager.void_type) {
-				Report.Error (578, method.Location,
-					      "Conditional not valid on `" + member.Name + "' " +
-					      "because its return type is not void");
-				return false;
-			}
-
-			if ((modifiers & Modifiers.OVERRIDE) != 0) {
-				Report.Error (243, method.Location,
-					      "Conditional not valid on `" + member.Name + "' " +
-					      "because it is an override method");
-				return false;
-			}
-
-			if (member.IsExplicitImpl) {
-				Report.Error (577, method.Location,
-					      "Conditional not valid on `" + member.Name + "' " +
-					      "because it is an explicit interface implementation");
-				return false;
-			}
-
-			if (IsImplementing) {
-				Report.Error (623, method.Location,
-					      "Conditional not valid on `" + member.Name + "' " +
-					      "because it is an interface method");
-				return false;
-			}
-
-			return true;
 		}
 
 		public bool Define (TypeContainer container)
 		{
 			MethodInfo implementing = null;
 			string prefix;
-
-			EmitContext ec = method.CreateEmitContext (container, null);
-				
-			if (method.OptAttributes != null)
-				if (!ApplyAttributes (method.OptAttributes, is_method, ec))
-					return false;
 
 			if (member.IsExplicitImpl)
 				prefix = member.InterfaceType.FullName + ".";
@@ -3840,6 +3797,8 @@ namespace Mono.CSharp {
 
 				IsImplementing = true;
 			}
+
+			EmitContext ec = method.CreateEmitContext (container, null);
 
 			DefineMethodBuilder (ec, container, method_name, ParameterTypes);
 
@@ -4054,6 +4013,16 @@ namespace Mono.CSharp {
 			: base (ds, return_type, mod, false, name, parameters, attrs, l)
 		{ }
 
+		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
+		{
+			if (a.Type == TypeManager.conditional_attribute_type) {
+				// Conditional not valid on '{0}' because it is a destructor, operator, or explicit interface implementation
+				Report.Error_T (577, Location, GetSignatureForError ());
+				return;
+			}
+
+			base.ApplyAttributeBuilder (a, cb);
+		}
 	}
 	
 	abstract public class MemberBase : MemberCore {
@@ -4746,7 +4715,7 @@ namespace Mono.CSharp {
 
 			public override MethodBuilder Define(TypeContainer container)
 			{
-				method_data = new MethodData (method, method.ParameterInfo, method.ModFlags, method.flags, false, this);
+				method_data = new MethodData (method, method.ParameterInfo, method.ModFlags, method.flags, this);
 
 				if (!method_data.Define (container))
 					return null;
@@ -4812,7 +4781,7 @@ namespace Mono.CSharp {
 
 			public override MethodBuilder Define(TypeContainer container)
 			{
-				method_data = new MethodData (method, GetParameterInfo (container), method.ModFlags, method.flags, false, this);
+				method_data = new MethodData (method, GetParameterInfo (container), method.ModFlags, method.flags, this);
 
 				if (!method_data.Define (container))
 					return null;
@@ -5599,7 +5568,7 @@ namespace Mono.CSharp {
 			public MethodBuilder Define (TypeContainer container, InternalParameters ip)
 			{
 				method_data = new MethodData (method, ip, method.ModFlags,
-					method.flags | MethodAttributes.HideBySig | MethodAttributes.SpecialName, false, this);
+					method.flags | MethodAttributes.HideBySig | MethodAttributes.SpecialName, this);
 
 				if (!method_data.Define (container))
 					return null;

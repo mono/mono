@@ -90,10 +90,17 @@ namespace Mono.CSharp {
 			switch (error_no) {
  				case 0122: return "'{0}' is inaccessible due to its protection level";
 				case 0160: return "A previous catch clause already catches all exceptions of this or a super type '{0}'";
+ 				case 0243: return "Conditional not valid on '{0}' because it is an override method";
+ 				case 0577: return "Conditional not valid on '{0}' because it is a destructor, operator, or explicit interface implementation";
+ 				case 0578: return "Conditional not valid on '{0}' because its return type is not void";
+ 				case 0582: return "Conditional not valid on interface members";
+				case 0592: return "Attribute '{0}' is not valid on this declaration type. It is valid on {1} declarations only.";
 				case 0601: return "The DllImport attribute must be specified on a method marked `static' and `extern'";
 				case 0619: return "'{0}' is obsolete: '{1}'";
 				case 0626: return "Method, operator, or accessor '{0}' is marked external and has no attributes on it. Consider adding a DllImport attribute to specify the external implementation";
+ 				case 0629: return "Conditional member '{0}' cannot implement interface member";
 				case 0657: return "'{0}' is not a valid attribute location for this declaration. Valid attribute locations for this declaration are '{1}'";
+ 				case 1618: return "Cannot create delegate with '{0}' because it has a Conditional attribute";
 				case 3001: return "Argument type '{0}' is not CLS-compliant";
 				case 3002: return "Return type of '{0}' is not CLS-compliant";
 				case 3003: return "Type of '{0}' is not CLS-compliant";
