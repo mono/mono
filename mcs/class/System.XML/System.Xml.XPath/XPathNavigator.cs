@@ -8,6 +8,7 @@
 //
 
 using System;
+using Mono.Xml.XPath;
 
 namespace System.Xml.XPath
 {
@@ -59,7 +60,6 @@ namespace System.Xml.XPath
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual XPathExpression Compile (string xpath)
 		{
 			Tokenizer tokenizer = new Tokenizer (xpath);
@@ -78,10 +78,8 @@ namespace System.Xml.XPath
 			return Evaluate (expr, null);
 		}
 
-		[MonoTODO]
 		public virtual object Evaluate (XPathExpression expr, XPathNodeIterator context)
 		{
-			// TODO: check casts
 			if (context == null)
 				context = new SelfIterator (this, new DefaultContext ());
 			return ((CompiledExpression) expr).Evaluate ((BaseIterator) context);
@@ -96,15 +94,22 @@ namespace System.Xml.XPath
 			return Clone ();
 		}
 
-		[MonoTODO]
 		public virtual bool IsDescendant (XPathNavigator nav)
 		{
-			throw new NotImplementedException ();
+			if (nav != null)
+			{
+				nav = nav.Clone ();
+				while (nav.MoveToParent ())
+				{
+					if (IsSamePosition (nav))
+						return true;
+				}
+			}
+			return false;
 		}
 
 		public abstract bool IsSamePosition (XPathNavigator other);
 
-		[MonoTODO]
 		public virtual bool Matches (string xpath)
 		{
 			return Matches (Compile (xpath));
@@ -159,47 +164,73 @@ namespace System.Xml.XPath
 			return Select (Compile (xpath));
 		}
 
-		[MonoTODO]
 		public virtual XPathNodeIterator Select (XPathExpression expr)
 		{
 			BaseIterator iter = new SelfIterator (this, new DefaultContext ());
 			return ((CompiledExpression) expr).EvaluateNodeSet (iter);
 		}
 
-		[MonoTODO]
 		public virtual XPathNodeIterator SelectAncestors (XPathNodeType type, bool matchSelf)
 		{
-			throw new NotImplementedException ();
+			Axes axis = (matchSelf) ? Axes.AncestorOrSelf : Axes.Ancestor;
+			NodeTest test = new NodeTypeTest (axis, type);
+			return SelectTest (test);
 		}
 
 		[MonoTODO]
 		public virtual XPathNodeIterator SelectAncestors (string name, string namespaceURI, bool matchSelf)
 		{
-			throw new NotImplementedException ();
+			if (namespaceURI != null && namespaceURI != "")
+				throw new NotImplementedException ();
+
+			Axes axis = (matchSelf) ? Axes.AncestorOrSelf : Axes.Ancestor;
+			QName qname = new QName ("", name);
+			NodeTest test = new NodeNameTest (axis, qname);
+			return SelectTest (test);
 		}
 
-		[MonoTODO]
 		public virtual XPathNodeIterator SelectChildren (XPathNodeType type)
 		{
-			throw new NotImplementedException ();
+			NodeTest test = new NodeTypeTest (Axes.Child, type);
+			return SelectTest (test);
 		}
 
 		[MonoTODO]
 		public virtual XPathNodeIterator SelectChildren (string name, string namespaceURI)
 		{
-			throw new NotImplementedException ();
+			if (namespaceURI != null && namespaceURI != "")
+				throw new NotImplementedException ();
+
+			Axes axis = Axes.Child;
+			QName qname = new QName ("", name);
+			NodeTest test = new NodeNameTest (axis, qname);
+			return SelectTest (test);
 		}
 
-		[MonoTODO]
 		public virtual XPathNodeIterator SelectDescendants (XPathNodeType type, bool matchSelf)
 		{
-			throw new NotImplementedException ();
+			Axes axis = (matchSelf) ? Axes.DescendantOrSelf : Axes.Descendant;
+			NodeTest test = new NodeTypeTest (axis, type);
+			return SelectTest (test);
 		}
 
 		[MonoTODO]
 		public virtual XPathNodeIterator SelectDescendants (string name, string namespaceURI, bool matchSelf)
 		{
-			throw new NotImplementedException ();
+			if (namespaceURI != null && namespaceURI != "")
+				throw new NotImplementedException ();
+
+			Axes axis = (matchSelf) ? Axes.DescendantOrSelf : Axes.Descendant;
+			QName qname = new QName ("", name);
+			NodeTest test = new NodeNameTest (axis, qname);
+			return SelectTest (test);
+		}
+
+		internal XPathNodeIterator SelectTest (NodeTest test)
+		{
+			Expression expr = new ExprStep (test, null);
+			BaseIterator iter = new SelfIterator (this, new DefaultContext ());
+			return expr.EvaluateNodeSet (iter);
 		}
 
 		public override string ToString ()

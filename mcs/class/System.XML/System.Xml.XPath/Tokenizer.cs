@@ -10,10 +10,12 @@ using System;
 using System.IO;
 using System.Text;
 using System.Collections;
+using Mono.Xml.XPath;
+using Mono.Xml.XPath.yyParser;
 
 namespace System.Xml.XPath
 {
-	internal class Tokenizer : yyParser.yyInput
+	internal class Tokenizer : Mono.Xml.XPath.yyParser.yyInput
 	{
 		private char [] m_rgchInput;
 		private int m_ich;

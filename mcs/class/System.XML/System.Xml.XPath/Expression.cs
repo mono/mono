@@ -15,51 +15,11 @@ using System.Xml.Xsl;
 
 namespace System.Xml.XPath
 {
-/*
-	public class MonoTODOAttribute : Attribute
-	{
-	}
-	public abstract class XPathExpression
-	{
-		internal XPathExpression () {}
-
-		public abstract void AddSort (Object obj, IComparer cmp);
-		public abstract void AddSort(object obj, XmlSortOrder sortOrder, XmlCaseOrder caseOrder, string str, XmlDataType type);
-		public abstract XPathExpression Clone ();
-		public abstract void SetContext (XmlNamespaceManager nsManager);
-		public abstract String Expression { get; }
-		public abstract XPathResultType ReturnType { get; }
-	}
-*/
-
 	internal class CompiledExpression : XPathExpression
 	{
 		protected XmlNamespaceManager _nsm;
 		protected Expression _expr;
 
-/*
-		public static void Main (String [] rgstrArgs)
-		{
-			Tokenizer tokenizer = new Tokenizer ("/root/*[position() = last()]/@goo");
-			XPathParser parser = new XPathParser ();
-//			Expression e = (Expression) parser.yyparse (tokenizer, new yydebug.yyDebugSimple ());
-			Expression e = (Expression) parser.yyparse (tokenizer);
-			Console.WriteLine (e.ToString ());
-			CompiledExpression expr = new CompiledExpression (e);
-			XmlDocument doc = new XmlDocument ();
-			doc.Load ("..\\doc.xml");
-			XPathNavigator nav = doc.CreateNavigator ();
-			BaseIterator iter = new SelfIterator (nav, new DefaultContext ());
-
-			BaseIterator iterResult = expr._expr.EvaluateNodeSet (iter);
-			while (iterResult.MoveNext ())
-			{
-				System.Diagnostics.Debug.WriteLine ("------");
-				System.Diagnostics.Debug.WriteLine (iterResult.Current.Name);
-				System.Diagnostics.Debug.WriteLine (iterResult.Current.Value);
-			}
-		}
-*/
 		public CompiledExpression (Expression expr)
 		{
 			_expr = expr;
@@ -291,17 +251,11 @@ namespace System.Xml.XPath
 				}
 			}
 			else if (typeL == XPathResultType.Boolean || typeR == XPathResultType.Boolean)
-			{
 				return Compare (_left.EvaluateBoolean (iter), _right.EvaluateBoolean (iter));
-			}
 			else if (typeL == XPathResultType.Number || typeR == XPathResultType.Number)
-			{
 				return Compare (_left.EvaluateNumber (iter), _right.EvaluateNumber (iter));
-			}
 			else
-			{
 				return Compare (_left.EvaluateString (iter), _right.EvaluateString (iter));
-			}
 		}
 		[MonoTODO]
 		public abstract bool Compare (object arg1, object arg2);	// TODO: should probably have type-safe methods here
@@ -670,55 +624,50 @@ namespace System.Xml.XPath
 		}
 	}
 
-	internal enum NodeTestTypes
-	{
-		Comment,
-		Text,
-		ProcessingInstruction,
-		Node,
-		Principal,
-	}
-
 	internal class NodeTypeTest : NodeTest
 	{
-		protected NodeTestTypes _type;
+		protected XPathNodeType _type;
 		protected String _param;
-		public NodeTypeTest (Axes axis, NodeTestTypes type) : base (axis)
+		public NodeTypeTest (Axes axis) : base (axis)
+		{
+			_type = _axis.NodeType;
+		}
+		public NodeTypeTest (Axes axis, XPathNodeType type) : base (axis)
 		{
 			_type = type;
 		}
 		[MonoTODO]
-		public NodeTypeTest (Axes axis, NodeTestTypes type, String param) : base (axis)
+		public NodeTypeTest (Axes axis, XPathNodeType type, String param) : base (axis)
 		{
 			_type = type;
 			_param = param;
-			if (param != null && type != NodeTestTypes.ProcessingInstruction)
+			if (param != null && type != XPathNodeType.ProcessingInstruction)
 				throw new Exception ("No argument allowed for "+ToString (_type)+"() test");	// TODO: better description
 		}
 		public override String ToString ()
 		{
 			String strType = ToString (_type);
-			if (_type == NodeTestTypes.ProcessingInstruction && _param != null)
+			if (_type == XPathNodeType.ProcessingInstruction && _param != null)
 				strType += "('" + _param + "')";
-			else if (_type != NodeTestTypes.Principal)
+			else
 				strType += "()";
 
 			return _axis.ToString () + "::" + strType;
 		}
-		private static String ToString (NodeTestTypes type)
+		private static String ToString (XPathNodeType type)
 		{
 			switch (type)
 			{
-				case NodeTestTypes.Comment:
+				case XPathNodeType.Comment:
 					return "comment";
-				case NodeTestTypes.Text:
+				case XPathNodeType.Text:
 					return "text";
-				case NodeTestTypes.ProcessingInstruction:
+				case XPathNodeType.ProcessingInstruction:
 					return "processing-instruction";
-				case NodeTestTypes.Node:
+				case XPathNodeType.All:
+				case XPathNodeType.Attribute:
+				case XPathNodeType.Element:
 					return "node";
-				case NodeTestTypes.Principal:
-					return "*";
 				default:
 					throw new NotImplementedException ();
 			}
@@ -728,22 +677,18 @@ namespace System.Xml.XPath
 			XPathNodeType nodeType = nav.NodeType;
 			switch (_type)
 			{
-				case NodeTestTypes.Comment:
-					return nodeType == XPathNodeType.Comment;
-				case NodeTestTypes.Text:
-					return nodeType == XPathNodeType.Text;
-				case NodeTestTypes.ProcessingInstruction:
+				case XPathNodeType.All:
+					return true;
+
+				case XPathNodeType.ProcessingInstruction:
 					if (nodeType != XPathNodeType.ProcessingInstruction)
 						return false;
 					if (_param != null && nav.Name != _param)
 						return false;
 					return true;
-				case NodeTestTypes.Node:
-					return true;
-				case NodeTestTypes.Principal:
-					return nodeType == _axis.NodeType;
+				
 				default:
-					throw new NotImplementedException ();
+					return _type == nodeType;
 			}
 		}
 	}
@@ -762,9 +707,12 @@ namespace System.Xml.XPath
 			if (nav.NodeType != _axis.NodeType)
 				return false;
 
-			// test the local part of the name first
-			if (_name.Local != nav.LocalName)
-				return false;
+			if (_name.Local != null && _name.Local != "")
+			{
+				// test the local part of the name first
+				if (_name.Local != nav.LocalName)
+					return false;
+			}
 
 			// get the prefix for the given name
 			String strURI1 = "";
@@ -783,27 +731,6 @@ namespace System.Xml.XPath
 			return strURI1 == nav.NamespaceURI;
 		}
 	}
-
-	internal class NodeNameTestAny : NodeNameTest
-	{
-		public NodeNameTestAny (Axes axis, NCName name) : base (axis, name) {}
-		[MonoTODO]	// TODO: this is a hack, the local part of the NCName is actually used as a prefix.
-		public override bool Match (XsltContext context, XPathNavigator nav)
-		{
-			// must be the correct node type
-			if (nav.NodeType != _axis.NodeType)
-				return false;
-
-			// get the prefix for the given name
-			String strURI1 = context.LookupNamespace (_name.Local);	// TODO: check to see if this returns null or ""
-			if (strURI1 == null)
-				throw new Exception ("Invalid namespace prefix: "+_name.Local);
-
-			// just test the prefixes
-			return strURI1 == nav.NamespaceURI;
-		}
-	}
-
 
 	internal class ExprStep : NodeSet
 	{
@@ -892,9 +819,10 @@ namespace System.Xml.XPath
 		}
 		public override String ToString ()
 		{
+			String strLocal = (_local != null) ? _local : "*";
 			if (_prefix != null)
-				return _prefix + ':' + _local;
-			return _local;
+				return _prefix + ':' + strLocal;
+			return strLocal;
 		}
 		public String Prefix { get { return _prefix; } }
 		public String Local { get { return _local; } }

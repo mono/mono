@@ -11,13 +11,14 @@
 // TODO: flatten argument/predicate lists in place
 
 using System;
+using System.Xml.XPath;
 
-namespace System.Xml.XPath
+namespace Mono.Xml.XPath
 {
 	public class XPathParser
 	{
 
-					// line 21 "-"
+					// line 22 "-"
 
   /** simplified error message.
       @see <a href="#yyerror(java.lang.String, java.lang.String[])">yyerror</a>
@@ -85,7 +86,6 @@ namespace System.Xml.XPath
     "RelativeLocationPath : RelativeLocationPath SLASH2 Step",
     "Step : AxisSpecifier QName ZeroOrMorePredicates",
     "Step : AxisSpecifier ASTERISK ZeroOrMorePredicates",
-    "Step : AxisSpecifier NCName COLON ASTERISK ZeroOrMorePredicates",
     "Step : AxisSpecifier NodeType PAREN_OPEN OptionalLiteral PAREN_CLOSE ZeroOrMorePredicates",
     "Step : DOT",
     "Step : DOT2",
@@ -127,6 +127,7 @@ namespace System.Xml.XPath
     "OptionalLiteral :",
     "OptionalLiteral : LITERAL",
     "QName : NCName",
+    "QName : NCName COLON ASTERISK",
     "QName : NCName COLON NCName",
   };
   protected static  string [] yyName = {    
@@ -324,341 +325,341 @@ namespace System.Xml.XPath
         yyVal = yyDefault(yyV > yyTop ? null : yyVals[yyV]);
         switch (yyN) {
 case 3:
-					// line 106 "Parser.jay"
+					// line 107 "Parser.jay"
   {
 		yyVal = new ExprOR ((Expression) yyVals[-2+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 5:
-					// line 114 "Parser.jay"
+					// line 115 "Parser.jay"
   {
 		yyVal = new ExprAND ((Expression) yyVals[-2+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 7:
-					// line 122 "Parser.jay"
+					// line 123 "Parser.jay"
   {
 		yyVal = new ExprEQ ((Expression) yyVals[-2+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 8:
-					// line 126 "Parser.jay"
+					// line 127 "Parser.jay"
   {
 		yyVal = new ExprNE ((Expression) yyVals[-2+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 10:
-					// line 134 "Parser.jay"
+					// line 135 "Parser.jay"
   {
 		yyVal = new ExprLT ((Expression) yyVals[-2+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 11:
-					// line 138 "Parser.jay"
+					// line 139 "Parser.jay"
   {
 		yyVal = new ExprGT ((Expression) yyVals[-2+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 12:
-					// line 142 "Parser.jay"
+					// line 143 "Parser.jay"
   {
 		yyVal = new ExprLE ((Expression) yyVals[-2+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 13:
-					// line 146 "Parser.jay"
+					// line 147 "Parser.jay"
   {
 		yyVal = new ExprGE ((Expression) yyVals[-2+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 15:
-					// line 154 "Parser.jay"
+					// line 155 "Parser.jay"
   {
 		yyVal = new ExprPLUS ((Expression) yyVals[-2+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 16:
-					// line 158 "Parser.jay"
+					// line 159 "Parser.jay"
   {
 		yyVal = new ExprMINUS ((Expression) yyVals[-2+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 18:
-					// line 166 "Parser.jay"
+					// line 167 "Parser.jay"
   {
 		yyVal = new ExprMULT ((Expression) yyVals[-2+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 19:
-					// line 170 "Parser.jay"
+					// line 171 "Parser.jay"
   {
 		yyVal = new ExprDIV ((Expression) yyVals[-2+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 20:
-					// line 174 "Parser.jay"
+					// line 175 "Parser.jay"
   {
 		yyVal = new ExprMOD ((Expression) yyVals[-2+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 22:
-					// line 182 "Parser.jay"
+					// line 183 "Parser.jay"
   {
 		yyVal = new ExprNEG ((Expression) yyVals[0+yyTop]);
 	}
   break;
 case 24:
-					// line 190 "Parser.jay"
+					// line 191 "Parser.jay"
   {
 		yyVal = new ExprUNION ((NodeSet) yyVals[-2+yyTop], (NodeSet) yyVals[0+yyTop]);
 	}
   break;
 case 26:
-					// line 198 "Parser.jay"
+					// line 199 "Parser.jay"
   {
 		yyVal = new ExprRoot ();
 	}
   break;
 case 27:
-					// line 202 "Parser.jay"
+					// line 203 "Parser.jay"
   {
 		yyVal = new ExprSLASH (new ExprRoot (), (NodeSet) yyVals[0+yyTop]);
 	}
   break;
 case 28:
-					// line 206 "Parser.jay"
+					// line 207 "Parser.jay"
   {
-		ExprStep exprStep = new ExprStep (new NodeTypeTest (Axes.DescendantOrSelf, NodeTestTypes.Node));
+		ExprStep exprStep = new ExprStep (new NodeTypeTest (Axes.DescendantOrSelf, XPathNodeType.All));
 		yyVal = new ExprSLASH (new ExprSLASH (new ExprRoot (), exprStep), (NodeSet) yyVals[0+yyTop]);
 	}
   break;
 case 30:
-					// line 212 "Parser.jay"
+					// line 213 "Parser.jay"
   {
 		yyVal = new ExprSLASH ((NodeSet) yyVals[-2+yyTop], (NodeSet) yyVals[0+yyTop]);
 	}
   break;
 case 31:
-					// line 216 "Parser.jay"
+					// line 217 "Parser.jay"
   {
-		ExprStep exprStep = new ExprStep (new NodeTypeTest (Axes.DescendantOrSelf, NodeTestTypes.Node));
+		ExprStep exprStep = new ExprStep (new NodeTypeTest (Axes.DescendantOrSelf, XPathNodeType.All));
 		yyVal = new ExprSLASH (new ExprSLASH ((NodeSet) yyVals[-2+yyTop], exprStep), (NodeSet) yyVals[0+yyTop]);
 	}
   break;
 case 33:
-					// line 225 "Parser.jay"
+					// line 226 "Parser.jay"
   {
 		yyVal = new ExprSLASH ((NodeSet) yyVals[-2+yyTop], (NodeSet) yyVals[0+yyTop]);
 	}
   break;
 case 34:
-					// line 229 "Parser.jay"
+					// line 230 "Parser.jay"
   {
-		ExprStep exprStep = new ExprStep (new NodeTypeTest (Axes.DescendantOrSelf, NodeTestTypes.Node));
+		ExprStep exprStep = new ExprStep (new NodeTypeTest (Axes.DescendantOrSelf, XPathNodeType.All));
 		yyVal = new ExprSLASH (new ExprSLASH ((NodeSet) yyVals[-2+yyTop], exprStep), (NodeSet) yyVals[0+yyTop]);
 	}
   break;
 case 35:
-					// line 237 "Parser.jay"
+					// line 238 "Parser.jay"
   {
 		yyVal = new ExprStep (new NodeNameTest ((Axes) yyVals[-2+yyTop], (QName) yyVals[-1+yyTop]), (ExprPredicates) yyVals[0+yyTop]);
 	}
   break;
 case 36:
-					// line 241 "Parser.jay"
+					// line 242 "Parser.jay"
   {
-		yyVal = new ExprStep (new NodeTypeTest ((Axes) yyVals[-2+yyTop], NodeTestTypes.Principal), (ExprPredicates) yyVals[0+yyTop]);
+		yyVal = new ExprStep (new NodeTypeTest ((Axes) yyVals[-2+yyTop]), (ExprPredicates) yyVals[0+yyTop]);
 	}
   break;
 case 37:
-					// line 245 "Parser.jay"
+					// line 251 "Parser.jay"
   {
-		yyVal = new ExprStep (new NodeNameTestAny ((Axes) yyVals[-4+yyTop], (NCName) yyVals[-3+yyTop]), (ExprPredicates) yyVals[0+yyTop]);
+		yyVal = new ExprStep (new NodeTypeTest ((Axes) yyVals[-5+yyTop], (XPathNodeType) yyVals[-4+yyTop], (String) yyVals[-2+yyTop]), (ExprPredicates) yyVals[0+yyTop]);
 	}
   break;
 case 38:
-					// line 249 "Parser.jay"
+					// line 255 "Parser.jay"
   {
-		yyVal = new ExprStep (new NodeTypeTest ((Axes) yyVals[-5+yyTop], (NodeTestTypes) yyVals[-4+yyTop], (String) yyVals[-2+yyTop]), (ExprPredicates) yyVals[0+yyTop]);
+		yyVal = new ExprStep (new NodeTypeTest (Axes.Self, XPathNodeType.All));
 	}
   break;
 case 39:
-					// line 253 "Parser.jay"
+					// line 259 "Parser.jay"
   {
-		yyVal = new ExprStep (new NodeTypeTest (Axes.Self, NodeTestTypes.Node));
+		yyVal = new ExprStep (new NodeTypeTest (Axes.Parent, XPathNodeType.All));
 	}
   break;
 case 40:
-					// line 257 "Parser.jay"
-  {
-		yyVal = new ExprStep (new NodeTypeTest (Axes.Parent, NodeTestTypes.Node));
-	}
-  break;
-case 41:
-					// line 264 "Parser.jay"
+					// line 266 "Parser.jay"
   {
 		yyVal = Axes.Child;
 	}
   break;
-case 42:
-					// line 268 "Parser.jay"
+case 41:
+					// line 270 "Parser.jay"
   {
 		yyVal = Axes.Attribute;
 	}
   break;
-case 43:
-					// line 272 "Parser.jay"
+case 42:
+					// line 274 "Parser.jay"
   {
 		yyVal = yyVals[-1+yyTop];
 	}
   break;
+case 43:
+					// line 280 "Parser.jay"
+  { yyVal = XPathNodeType.Comment; }
+  break;
 case 44:
-					// line 278 "Parser.jay"
-  { yyVal = NodeTestTypes.Comment; }
+					// line 281 "Parser.jay"
+  { yyVal = XPathNodeType.Text; }
   break;
 case 45:
-					// line 279 "Parser.jay"
-  { yyVal = NodeTestTypes.Text; }
+					// line 282 "Parser.jay"
+  { yyVal = XPathNodeType.ProcessingInstruction; }
   break;
 case 46:
-					// line 280 "Parser.jay"
-  { yyVal = NodeTestTypes.ProcessingInstruction; }
+					// line 283 "Parser.jay"
+  { yyVal = XPathNodeType.All; }
   break;
-case 47:
-					// line 281 "Parser.jay"
-  { yyVal = NodeTestTypes.Node; }
-  break;
-case 49:
-					// line 288 "Parser.jay"
+case 48:
+					// line 290 "Parser.jay"
   {
 		yyVal = new ExprFilter ((Expression) yyVals[-1+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
-case 50:
-					// line 295 "Parser.jay"
+case 49:
+					// line 297 "Parser.jay"
   {
 		yyVal = new ExprVariable ((QName) yyVals[0+yyTop]);
 	}
   break;
-case 51:
-					// line 299 "Parser.jay"
+case 50:
+					// line 301 "Parser.jay"
   {
 		yyVal = yyVals[-1+yyTop];
 	}
   break;
-case 52:
-					// line 303 "Parser.jay"
+case 51:
+					// line 305 "Parser.jay"
   {
 		yyVal = new ExprLiteral ((String) yyVals[0+yyTop]);
 	}
   break;
-case 53:
-					// line 307 "Parser.jay"
+case 52:
+					// line 309 "Parser.jay"
   {
 		yyVal = new ExprNumber ((double) yyVals[0+yyTop]);
 	}
   break;
-case 55:
-					// line 315 "Parser.jay"
+case 54:
+					// line 317 "Parser.jay"
   {
 		yyVal = new ExprFunctionCall ((String) yyVals[-3+yyTop], (FunctionArguments) yyVals[-1+yyTop]);
 	}
   break;
-case 57:
-					// line 323 "Parser.jay"
+case 56:
+					// line 325 "Parser.jay"
   {
 		yyVal = new FunctionArguments ((Expression) yyVals[-1+yyTop], (FunctionArguments) yyVals[0+yyTop]);
 	}
   break;
-case 59:
-					// line 331 "Parser.jay"
+case 58:
+					// line 333 "Parser.jay"
   {
 		yyVal = new FunctionArguments ((Expression) yyVals[-1+yyTop], (FunctionArguments) yyVals[0+yyTop]);
 	}
   break;
-case 61:
-					// line 340 "Parser.jay"
+case 60:
+					// line 342 "Parser.jay"
   {
 		yyVal = new ExprPredicates ((Expression) yyVals[-1+yyTop], (ExprPredicates) yyVals[0+yyTop]);
 	}
   break;
-case 62:
-					// line 347 "Parser.jay"
+case 61:
+					// line 349 "Parser.jay"
   {
 		yyVal = yyVals[-1+yyTop];
 	}
   break;
-case 63:
-					// line 353 "Parser.jay"
+case 62:
+					// line 355 "Parser.jay"
   { yyVal = Axes.Ancestor; }
   break;
-case 64:
-					// line 354 "Parser.jay"
+case 63:
+					// line 356 "Parser.jay"
   { yyVal = Axes.AncestorOrSelf; }
   break;
-case 65:
-					// line 355 "Parser.jay"
+case 64:
+					// line 357 "Parser.jay"
   { yyVal = Axes.Attribute; }
   break;
-case 66:
-					// line 356 "Parser.jay"
+case 65:
+					// line 358 "Parser.jay"
   { yyVal = Axes.Child; }
   break;
-case 67:
-					// line 357 "Parser.jay"
+case 66:
+					// line 359 "Parser.jay"
   { yyVal = Axes.Descendant; }
   break;
-case 68:
-					// line 358 "Parser.jay"
+case 67:
+					// line 360 "Parser.jay"
   { yyVal = Axes.DescendantOrSelf; }
   break;
-case 69:
-					// line 359 "Parser.jay"
+case 68:
+					// line 361 "Parser.jay"
   { yyVal = Axes.Following; }
   break;
-case 70:
-					// line 360 "Parser.jay"
+case 69:
+					// line 362 "Parser.jay"
   { yyVal = Axes.FollowingSibling; }
   break;
-case 71:
-					// line 361 "Parser.jay"
+case 70:
+					// line 363 "Parser.jay"
   { yyVal = Axes.Namespace; }
   break;
-case 72:
-					// line 362 "Parser.jay"
+case 71:
+					// line 364 "Parser.jay"
   { yyVal = Axes.Parent; }
   break;
-case 73:
-					// line 363 "Parser.jay"
+case 72:
+					// line 365 "Parser.jay"
   { yyVal = Axes.Preceding; }
   break;
-case 74:
-					// line 364 "Parser.jay"
+case 73:
+					// line 366 "Parser.jay"
   { yyVal = Axes.PrecedingSibling; }
   break;
-case 75:
-					// line 365 "Parser.jay"
+case 74:
+					// line 367 "Parser.jay"
   { yyVal = Axes.Self; }
   break;
-case 77:
-					// line 371 "Parser.jay"
+case 76:
+					// line 373 "Parser.jay"
   {
 		yyVal = yyVals[0+yyTop];
 	}
   break;
-case 78:
-					// line 378 "Parser.jay"
+case 77:
+					// line 380 "Parser.jay"
   {
 		yyVal = new NCName ((String) yyVals[0+yyTop]);
 	}
   break;
+case 78:
+					// line 384 "Parser.jay"
+  {
+		yyVal = new QName ((String) yyVals[-2+yyTop], null);
+	}
+  break;
 case 79:
-					// line 382 "Parser.jay"
+					// line 388 "Parser.jay"
   {
 		yyVal = new QName ((String) yyVals[-2+yyTop], (String) yyVals[0+yyTop]);
 	}
   break;
-					// line 662 "-"
+					// line 663 "-"
         }
         yyTop -= yyLen[yyN];
         yyState = yyStates[yyTop];
@@ -692,97 +693,97 @@ case 79:
     0,    1,    1,    2,    2,    3,    3,    3,    4,    4,
     4,    4,    4,    5,    5,    5,    6,    6,    6,    6,
     7,    7,    8,    8,    9,    9,    9,    9,    9,    9,
-    9,   10,   10,   10,   12,   12,   12,   12,   12,   12,
-   13,   13,   13,   16,   16,   16,   16,   11,   11,   19,
-   19,   19,   19,   19,   21,   22,   22,   23,   23,   15,
-   15,   20,   18,   18,   18,   18,   18,   18,   18,   18,
-   18,   18,   18,   18,   18,   17,   17,   14,   14,
+    9,   10,   10,   10,   12,   12,   12,   12,   12,   13,
+   13,   13,   16,   16,   16,   16,   11,   11,   19,   19,
+   19,   19,   19,   21,   22,   22,   23,   23,   15,   15,
+   20,   18,   18,   18,   18,   18,   18,   18,   18,   18,
+   18,   18,   18,   18,   17,   17,   14,   14,   14,
   };
    static  short [] yyLen = {           2,
     1,    1,    3,    1,    3,    1,    3,    3,    1,    3,
     3,    3,    3,    1,    3,    3,    1,    3,    3,    3,
     1,    2,    1,    3,    1,    1,    2,    2,    1,    3,
-    3,    1,    3,    3,    3,    3,    5,    6,    1,    1,
-    0,    1,    2,    1,    1,    1,    1,    1,    2,    2,
-    3,    1,    1,    1,    4,    0,    2,    0,    3,    0,
-    2,    3,    1,    1,    1,    1,    1,    1,    1,    1,
-    1,    1,    1,    1,    1,    0,    1,    1,    3,
+    3,    1,    3,    3,    3,    3,    6,    1,    1,    0,
+    1,    2,    1,    1,    1,    1,    1,    2,    2,    3,
+    1,    1,    1,    4,    0,    2,    0,    3,    0,    2,
+    3,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+    1,    1,    1,    1,    0,    1,    1,    3,    3,
   };
    static  short [] yyDefRed = {            0,
-    0,    0,   39,   40,   42,    0,    0,    0,    0,   63,
-   64,   65,   66,   67,   68,   69,   70,   71,   72,   73,
-   74,   75,   53,   52,    0,    0,    0,    0,    0,    0,
-    0,   17,    0,   23,    0,    0,   32,    0,    0,   48,
-   54,    0,    0,    0,    0,   22,    0,   50,    0,    0,
+    0,    0,   38,   39,   41,    0,    0,    0,    0,   62,
+   63,   64,   65,   66,   67,   68,   69,   70,   71,   72,
+   73,   74,   52,   51,    0,    0,    0,    0,    0,    0,
+    0,   17,    0,   23,    0,    0,   32,    0,    0,   47,
+   53,    0,    0,    0,    0,   22,    0,   49,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,   49,    0,   44,
-   45,   46,   47,    0,    0,    0,   43,    0,    0,   51,
+    0,    0,    0,    0,    0,    0,    0,   48,    0,   43,
+   44,   45,   46,    0,    0,   42,    0,    0,   50,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,   19,   20,   18,   24,   33,   34,    0,    0,    0,
-   36,    0,    0,   35,    0,    0,   57,   55,   79,   62,
-   61,    0,   77,    0,    0,   37,    0,   59,   38,
+   19,   20,   18,   24,   33,   34,    0,    0,    0,   36,
+    0,   35,    0,    0,   56,   54,   78,   79,   61,   60,
+   76,    0,    0,    0,   58,   37,
   };
   protected static  short [] yyDgoto  = {            25,
    26,   27,   28,   29,   30,   31,   32,   33,   34,   35,
-   36,   37,   38,   48,  101,   76,  114,   39,   40,  102,
-   41,   79,  107,
+   36,   37,   38,   48,  100,   75,  112,   39,   40,  101,
+   41,   78,  105,
   };
-  protected static  short [] yySindex = {         -174,
- -104, -104,    0,    0,    0, -263, -174, -174, -297,    0,
+  protected static  short [] yySindex = {         -188,
+  -85,  -85,    0,    0,    0, -258, -188, -188, -297,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0, -262, -253, -265, -259, -248,
- -260,    0, -250,    0, -203, -247,    0, -258, -242,    0,
-    0, -203, -203, -174, -224,    0, -197,    0, -174, -174,
- -174, -174, -174, -174, -174, -174, -174, -174, -174, -174,
- -174, -124, -104, -104, -104, -104, -174,    0, -193,    0,
-    0,    0,    0, -187, -193, -192,    0, -188, -191,    0,
- -227, -253, -265, -259, -259, -248, -248, -248, -248, -260,
- -260,    0,    0,    0,    0,    0,    0, -203, -203, -186,
-    0, -193, -270,    0, -223, -174,    0,    0,    0,    0,
-    0, -193,    0, -190, -188,    0, -193,    0,    0,
+    0,    0,    0,    0,    0, -215, -257, -253, -265, -245,
+ -261,    0, -221,    0, -218, -252,    0, -256, -203,    0,
+    0, -218, -218, -188, -209,    0, -200,    0, -188, -188,
+ -188, -188, -188, -188, -188, -188, -188, -188, -188, -188,
+ -188, -130,  -85,  -85,  -85,  -85, -188,    0, -204,    0,
+    0,    0,    0, -204, -195,    0, -199, -194,    0, -268,
+ -257, -253, -265, -265, -245, -245, -245, -245, -261, -261,
+    0,    0,    0,    0,    0,    0, -218, -218, -202,    0,
+ -204,    0, -229, -188,    0,    0,    0,    0,    0,    0,
+    0, -191, -199, -204,    0,    0,
   };
-  protected static  short [] yyRindex = {         -239,
-    1, -239,    0,    0,    0,    0, -239, -239,    0,    0,
+  protected static  short [] yyRindex = {         -182,
+    1, -182,    0,    0,    0,    0, -182, -182,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,  253,   65,   23,  435,  319,
   244,    0,  222,    0,   90,  112,    0,    0,    0,    0,
-    0,  134,  156, -268,    0,    0,   40,    0, -239, -239,
- -239, -239, -239, -239, -239, -239, -239, -239, -239, -239,
- -239, -239, -239, -239, -239, -239, -239,    0,   68,    0,
-    0,    0,    0,   40,   68,    0,    0, -182,    0,    0,
-    0,  510,  501,  457,  479,  347,  369,  391,  413,  267,
-  289,    0,    0,    0,    0,    0,    0,  178,  200,    0,
-    0,   68,    0,    0, -180, -239,    0,    0,    0,    0,
-    0,   68,    0,    0, -182,    0,   68,    0,    0,
+    0,  134,  156, -267,    0,    0,   40,    0, -182, -182,
+ -182, -182, -182, -182, -182, -182, -182, -182, -182, -182,
+ -182, -182, -182, -182, -182, -182, -182,    0,   68,    0,
+    0,    0,    0,   68,    0,    0, -190,    0,    0,    0,
+  510,  501,  457,  479,  347,  369,  391,  413,  267,  289,
+    0,    0,    0,    0,    0,    0,  178,  200,    0,    0,
+   68,    0, -187, -182,    0,    0,    0,    0,    0,    0,
+    0,    0, -190,   68,    0,    0,
   };
   protected static  short [] yyGindex = {           -7,
-    0,   35,   44,    7,   -4,   14,   -6,    0,   33,    4,
-    0,   10,    0,   59,  -71,    0,    0,    0,    0,   62,
-    0,    0,  -15,
+    0,   34,   35,   -3,  -29,   -1,   -6,    0,   24,    4,
+    0,  -12,    0,   49,  -71,    0,    0,    0,    0,   52,
+    0,    0,  -21,
   };
   protected static  short [] yyTable = {            45,
-   26,   46,   56,  104,   42,   43,   44,  112,   47,   41,
-   49,   65,   66,   59,   60,   51,   52,   61,   50,   69,
-   67,   77,    4,   53,   54,   55,   56,   57,   58,   62,
-  111,   41,   41,   41,   41,  109,   78,   41,   41,   78,
-  116,   70,   71,   72,   73,  119,   80,   74,   86,   87,
-   88,   89,   92,   93,   94,   63,   64,   84,   85,  100,
-   41,   41,   41,   41,    2,   81,   41,   60,   98,   99,
-   90,   91,   96,   97,   67,  103,  106,  105,  109,  108,
-  117,  113,  110,   82,    1,    2,    3,    4,   58,   25,
-   76,    5,    6,   83,   95,    7,   75,   68,  115,  118,
-    0,    0,    8,    0,    9,    0,    0,    0,    0,    0,
-    0,   29,   10,   11,   12,   13,   14,   15,   16,   17,
-   18,   19,   20,   21,   22,    0,    0,    0,    0,   23,
-   24,    0,    0,   27,    1,    2,    3,    4,    0,    0,
-    0,    5,    6,    0,    0,    7,    0,    0,    0,    0,
-    0,    0,    0,    0,    9,   28,    3,    4,    0,    0,
-    0,    5,   10,   11,   12,   13,   14,   15,   16,   17,
-   18,   19,   20,   21,   22,    0,    0,   30,    0,   23,
-   24,    0,   10,   11,   12,   13,   14,   15,   16,   17,
-   18,   19,   20,   21,   22,    0,    0,    0,    0,   31,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+   26,   46,  102,   55,   42,   43,   65,   66,   47,  107,
+   40,   44,   59,   60,   50,   67,   61,   53,   54,   55,
+   56,   69,    4,   85,   86,   87,   88,   51,   52,  110,
+   57,   58,   40,   40,   40,   40,   77,  108,   40,   77,
+   63,   64,  116,   70,   71,   72,   73,   83,   84,   47,
+   95,   96,   91,   92,   93,   89,   90,   49,   62,   99,
+   76,   79,   80,   67,    2,  104,  109,   59,   97,   98,
+    1,    2,    3,    4,  103,  111,  106,    5,    6,  114,
+   57,    7,   81,   75,   82,   94,   74,   68,    8,   25,
+    9,  115,    0,    0,    0,   40,  113,    0,   10,   11,
+   12,   13,   14,   15,   16,   17,   18,   19,   20,   21,
+   22,   29,    0,    0,    0,   23,   24,   40,   40,   40,
+   40,    0,    0,   40,    0,    0,    0,    0,    1,    2,
+    3,    4,    0,   27,    0,    5,    6,    0,    0,    7,
+    0,    0,    0,    0,    0,    0,    0,    0,    9,    0,
+    0,    0,    0,    0,    0,   28,   10,   11,   12,   13,
+   14,   15,   16,   17,   18,   19,   20,   21,   22,    0,
+    0,    0,    0,   23,   24,    3,    4,   30,    0,    0,
+    5,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,   31,
+    0,   10,   11,   12,   13,   14,   15,   16,   17,   18,
+   19,   20,   21,   22,    0,    0,    0,    0,    0,    0,
     0,   21,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,   14,    0,    0,    0,    0,    0,    0,
@@ -790,13 +791,13 @@ case 79:
     0,    0,    0,    0,    0,   26,   15,    0,    0,   26,
     0,   26,   26,   26,   26,   26,   26,   26,   26,    0,
    26,   26,   26,   26,   26,   26,   26,    4,   16,    0,
-    0,    4,    0,    4,    4,    4,    0,    0,   78,   78,
-   41,   41,   41,   41,   78,    0,   41,   78,   78,    0,
-   78,   78,   78,   78,   78,   78,   78,   78,    9,   78,
-   78,   78,   78,   78,   78,   78,   60,   60,    0,    2,
-    0,    0,   60,    2,    0,    2,   60,    2,   60,   60,
-   60,   60,   60,   60,   60,   60,   12,   60,   60,   60,
-   60,   60,   60,   60,   25,    0,    0,    0,   25,    0,
+    0,    4,    0,    4,    4,    4,    0,    0,   77,   77,
+   40,   40,   40,   40,   77,    0,   40,   77,   77,    0,
+   77,   77,   77,   77,   77,   77,   77,   77,    9,   77,
+   77,   77,   77,   77,   77,   77,   59,   59,    0,    2,
+    0,    0,   59,    2,    0,    2,   59,    2,   59,   59,
+   59,   59,   59,   59,   59,   59,   12,   59,   59,   59,
+   59,   59,   59,   59,   25,    0,    0,    0,   25,    0,
    25,   25,   25,   25,   25,   25,   25,   25,   13,   25,
    25,   25,   25,   25,   25,   25,   29,    0,    0,    0,
    29,    0,   29,   29,   29,   29,   29,   29,   29,   29,
@@ -842,28 +843,28 @@ case 79:
     3,    0,    3,
   };
   protected static  short [] yyCheck = {             7,
-    0,    8,  271,   75,    1,    2,  270,  278,  306,  278,
-  273,  259,  260,  274,  275,  281,  282,  278,  272,  278,
-  268,  264,    0,  283,  284,  285,  286,  276,  277,  280,
-  102,  300,  301,  302,  303,  306,   44,  306,  278,    0,
-  112,  300,  301,  302,  303,  117,  271,  306,   53,   54,
-   55,   56,   59,   60,   61,  259,  260,   51,   52,   67,
-  300,  301,  302,  303,    0,  263,  306,    0,   65,   66,
-   57,   58,   63,   64,  268,  263,  265,  270,  306,  271,
-  271,  305,  269,   49,  259,  260,  261,  262,  271,    0,
-  271,  266,  267,   50,   62,  270,   38,   36,  106,  115,
-   -1,   -1,  277,   -1,  279,   -1,   -1,   -1,   -1,   -1,
-   -1,    0,  287,  288,  289,  290,  291,  292,  293,  294,
-  295,  296,  297,  298,  299,   -1,   -1,   -1,   -1,  304,
-  305,   -1,   -1,    0,  259,  260,  261,  262,   -1,   -1,
-   -1,  266,  267,   -1,   -1,  270,   -1,   -1,   -1,   -1,
-   -1,   -1,   -1,   -1,  279,    0,  261,  262,   -1,   -1,
-   -1,  266,  287,  288,  289,  290,  291,  292,  293,  294,
-  295,  296,  297,  298,  299,   -1,   -1,    0,   -1,  304,
-  305,   -1,  287,  288,  289,  290,  291,  292,  293,  294,
-  295,  296,  297,  298,  299,   -1,   -1,   -1,   -1,    0,
-   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
-   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+    0,    8,   74,  271,    1,    2,  259,  260,  306,  278,
+  278,  270,  274,  275,  272,  268,  278,  283,  284,  285,
+  286,  278,    0,   53,   54,   55,   56,  281,  282,  101,
+  276,  277,  300,  301,  302,  303,   44,  306,  306,    0,
+  259,  260,  114,  300,  301,  302,  303,   51,   52,  306,
+   63,   64,   59,   60,   61,   57,   58,  273,  280,   67,
+  264,  271,  263,  268,    0,  265,  269,    0,   65,   66,
+  259,  260,  261,  262,  270,  305,  271,  266,  267,  271,
+  271,  270,   49,  271,   50,   62,   38,   36,  277,    0,
+  279,  113,   -1,   -1,   -1,  278,  104,   -1,  287,  288,
+  289,  290,  291,  292,  293,  294,  295,  296,  297,  298,
+  299,    0,   -1,   -1,   -1,  304,  305,  300,  301,  302,
+  303,   -1,   -1,  306,   -1,   -1,   -1,   -1,  259,  260,
+  261,  262,   -1,    0,   -1,  266,  267,   -1,   -1,  270,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,  279,   -1,
+   -1,   -1,   -1,   -1,   -1,    0,  287,  288,  289,  290,
+  291,  292,  293,  294,  295,  296,  297,  298,  299,   -1,
+   -1,   -1,   -1,  304,  305,  261,  262,    0,   -1,   -1,
+  266,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
+   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,    0,
+   -1,  287,  288,  289,  290,  291,  292,  293,  294,  295,
+  296,  297,  298,  299,   -1,   -1,   -1,   -1,   -1,   -1,
    -1,    0,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,    0,   -1,   -1,   -1,   -1,   -1,   -1,
@@ -923,9 +924,9 @@ case 79:
   271,   -1,  273,
   };
 
-					// line 388 "Parser.jay"
+					// line 394 "Parser.jay"
 	}
-					// line 929 "-"
+					// line 930 "-"
 namespace yydebug {
         using System;
 	 public interface yyDebug {

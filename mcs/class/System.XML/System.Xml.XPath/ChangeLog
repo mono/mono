@@ -1,3 +1,26 @@
+2002-06-29  Piers Haken <piersh@friskit.com>
+
+	* Expression.cs:
+		- remove dead code
+		- NodeTest uses XPathResultType instead of internal NodeTestTypes enum
+		- remove NodeTestTypes enum
+		- remove NodeTestTypeAny (functionality provided by base now)
+		- fix ExprStep to handle wildcard QNames
+	* Parser.jay:
+		- moved to Mono.Xml.XPath namespace
+		- use XPathResultType
+		- handle wildcard QNames
+		
+	* Tokenizer.cs: moved to Mono.Xml.XPath namespace
+	
+	* XPathNavigator.cs: implement
+		- IsDescendant
+		- SelectAncestors
+		- SelectDescendants
+		- SelectChildren
+		
+	* XPathResultType.cs: fix enum values
+	
 2002-06-24  Jason Diamond  <jason@injektilo.org>
 
 	* XPathScanner.cs: Removed.

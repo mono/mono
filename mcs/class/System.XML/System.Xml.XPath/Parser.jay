@@ -9,8 +9,9 @@
 // TODO: flatten argument/predicate lists in place
 
 using System;
+using System.Xml.XPath;
 
-namespace System.Xml.XPath
+namespace Mono.Xml.XPath
 {
 	public class XPathParser
 	{
@@ -204,7 +205,7 @@ PathExpr
 	}
 	| SLASH2 RelativeLocationPath 
 	{
-		ExprStep exprStep = new ExprStep (new NodeTypeTest (Axes.DescendantOrSelf, NodeTestTypes.Node));
+		ExprStep exprStep = new ExprStep (new NodeTypeTest (Axes.DescendantOrSelf, XPathNodeType.All));
 		$$ = new ExprSLASH (new ExprSLASH (new ExprRoot (), exprStep), (NodeSet) $2);
 	}
 	| FilterExpr 
@@ -214,7 +215,7 @@ PathExpr
 	}
 	| FilterExpr SLASH2 RelativeLocationPath
 	{
-		ExprStep exprStep = new ExprStep (new NodeTypeTest (Axes.DescendantOrSelf, NodeTestTypes.Node));
+		ExprStep exprStep = new ExprStep (new NodeTypeTest (Axes.DescendantOrSelf, XPathNodeType.All));
 		$$ = new ExprSLASH (new ExprSLASH ((NodeSet) $1, exprStep), (NodeSet) $3);
 	}
 	;
@@ -227,7 +228,7 @@ RelativeLocationPath
 	}
 	| RelativeLocationPath SLASH2 Step 
 	{
-		ExprStep exprStep = new ExprStep (new NodeTypeTest (Axes.DescendantOrSelf, NodeTestTypes.Node));
+		ExprStep exprStep = new ExprStep (new NodeTypeTest (Axes.DescendantOrSelf, XPathNodeType.All));
 		$$ = new ExprSLASH (new ExprSLASH ((NodeSet) $1, exprStep), (NodeSet) $3);
 	}
 	;
@@ -239,23 +240,24 @@ Step
 	}
 	| AxisSpecifier ASTERISK ZeroOrMorePredicates
 	{
-		$$ = new ExprStep (new NodeTypeTest ((Axes) $1, NodeTestTypes.Principal), (ExprPredicates) $3);
+		$$ = new ExprStep (new NodeTypeTest ((Axes) $1), (ExprPredicates) $3);
 	}
-	| AxisSpecifier NCName COLON ASTERISK ZeroOrMorePredicates
+/*	| AxisSpecifier NCName COLON ASTERISK ZeroOrMorePredicates
 	{
 		$$ = new ExprStep (new NodeNameTestAny ((Axes) $1, (NCName) $2), (ExprPredicates) $5);
 	}
+*/
 	| AxisSpecifier NodeType PAREN_OPEN OptionalLiteral PAREN_CLOSE ZeroOrMorePredicates
 	{
-		$$ = new ExprStep (new NodeTypeTest ((Axes) $1, (NodeTestTypes) $2, (String) $4), (ExprPredicates) $6);
+		$$ = new ExprStep (new NodeTypeTest ((Axes) $1, (XPathNodeType) $2, (String) $4), (ExprPredicates) $6);
 	}
 	| DOT
 	{
-		$$ = new ExprStep (new NodeTypeTest (Axes.Self, NodeTestTypes.Node));
+		$$ = new ExprStep (new NodeTypeTest (Axes.Self, XPathNodeType.All));
 	}
 	| DOT2
 	{
-		$$ = new ExprStep (new NodeTypeTest (Axes.Parent, NodeTestTypes.Node));
+		$$ = new ExprStep (new NodeTypeTest (Axes.Parent, XPathNodeType.All));
 	}
 	;
 
@@ -275,10 +277,10 @@ AxisSpecifier
 	;
 
 NodeType
-	: COMMENT					{ $$ = NodeTestTypes.Comment; }
-	| TEXT						{ $$ = NodeTestTypes.Text; }
-	| PROCESSING_INSTRUCTION	{ $$ = NodeTestTypes.ProcessingInstruction; }
-	| NODE						{ $$ = NodeTestTypes.Node; }
+	: COMMENT					{ $$ = XPathNodeType.Comment; }
+	| TEXT						{ $$ = XPathNodeType.Text; }
+	| PROCESSING_INSTRUCTION	{ $$ = XPathNodeType.ProcessingInstruction; }
+	| NODE						{ $$ = XPathNodeType.All; }
 	;
 
 
@@ -377,6 +379,10 @@ QName
 	: NCName
 	{
 		$$ = new NCName ((String) $1);
+	}
+	| NCName COLON ASTERISK
+	{
+		$$ = new QName ((String) $1, null);
 	}
 	| NCName COLON NCName
 	{
