@@ -1,3 +1,7 @@
+2004-09-18  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs: Do not report warning CS0067 on the interfaces.
+
 2004-09-16  Marek Safar  <marek.safar@seznam.cz>
 
 	* cs-parser.jay: Add error 504 report.

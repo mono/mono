@@ -1991,13 +1991,6 @@ namespace Mono.CSharp {
 						Report.Warning (649, f.Location, "Field '{0}' is never assigned to, and will always have its default value '{1}'", f.GetSignatureForError (), "");
 					}
 				}
-
-				if ((events != null) && (RootContext.WarningLevel >= 3)) {
-					foreach (Event e in events){
-						if (e.status == 0)
-							Report.Warning (67, e.Location, "The event '{0}' is never used", e.GetSignatureForError ());
-					}
-				}
 			}
 		}
 
@@ -2611,7 +2604,15 @@ namespace Mono.CSharp {
 					}
 				}
 			}
+
 			base.VerifyMembers (ec);
+
+			if ((events != null) && (RootContext.WarningLevel >= 3)) {
+				foreach (Event e in events){
+					if (e.status == 0)
+						Report.Warning (67, e.Location, "The event '{0}' is never used", e.GetSignatureForError ());
+				}
+			}
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
