@@ -606,14 +606,10 @@ namespace System.Windows.Forms {
 				top_node = nodes [0];
 			// Decide if we need a scrollbar
 			int old_open_node_count = open_node_count;
-			open_node_count = GetOpenNodeCount ();
-			int node_count = 0;
 
 			Rectangle fill = ClientRectangle;
 			add_vscroll = false;
 			add_hscroll = false;
-			
-			add_vscroll = (open_node_count * ItemHeight) > ClientRectangle.Height;
 			
 			DeviceContext.FillRectangle (new SolidBrush (BackColor), fill);
 
@@ -622,12 +618,13 @@ namespace System.Windows.Forms {
 			Font font = Font;
 			int height = ClientRectangle.Height;
 
-			int visible_node_count = 0;
+			open_node_count = 0;
 			foreach (TreeNode node in nodes) {
-				DrawNode (node, clip, ref depth, ref node_count, item_height,
-						font, ref visible_node_count, height);
+				DrawNode (node, clip, ref depth, item_height, font, height);
 				depth = 0;
 			}
+
+			add_vscroll = (open_node_count * ItemHeight) > ClientRectangle.Height;
 
 			if (max_node_width > ClientRectangle.Width)
 				add_hscroll = true;
@@ -776,17 +773,13 @@ namespace System.Windows.Forms {
 			node.UpdateBounds (x + xoff, y, width, item_height);
 		}
 
-		private void DrawNode (TreeNode node, Rectangle clip, ref int depth, ref int node_count, int item_height,
-				Font font, ref int visible_node_count, int max_height)
+		private void DrawNode (TreeNode node, Rectangle clip, ref int depth, int item_height,
+				Font font, int max_height)
 		{
-			node_count++;
+			open_node_count++;
 			int x = (!show_root_lines && node.Parent != null ? depth  - 1 : depth) * indent - hbar_offset;
-			int y = item_height * (node_count - skipped_nodes - 1);
+			int y = item_height * (open_node_count - skipped_nodes - 1);
 			bool visible = (y >= 0 && y < max_height);
-
-			if (visible)
-				visible_node_count++;
-
 			
 			// The thing is totally out of the clipping rectangle
 			if (clip.Top > y + ItemHeight || clip.Bottom < y)
@@ -851,15 +844,20 @@ namespace System.Windows.Forms {
 				y += item_height + 1;
 			}
 
-			if (node.Bounds.Right > max_node_width)
+			if (node.Bounds.Right > max_node_width) {
 				max_node_width = node.Bounds.Right;
+				if (max_node_width > ClientRectangle.Width && !add_hscroll) {
+					max_height -= ItemHeight;
+					add_hscroll = true;
+				}
+			}
 
 			depth++;
 			if (node.IsExpanded) {
 				for (int i = 0; i < _n_count; i++) {
 					int tdepth = depth;
-					DrawNode (node.nodes [i], clip, ref tdepth, ref node_count, item_height,
-							font, ref visible_node_count, max_height);
+					DrawNode (node.nodes [i], clip, ref tdepth, item_height,
+							font, max_height);
 				}
 			}
 

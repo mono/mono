@@ -1,3 +1,9 @@
+2005-01-11  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Calculate the open node count while drawing. This
+	saves us an entire tree traversal for every paint operation. Use
+	a member var for the open node count so less vars are passed around.
+
 2005-01-11  John BouAntoun  <jba-mono@optusnet.com.au>
 
 	* MonthCalendar.cs:
