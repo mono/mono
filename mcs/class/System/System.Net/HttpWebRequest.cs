@@ -510,9 +510,14 @@ namespace System.Net
 			if (webResponse != null) {
 				HttpStatusCode code = ((HttpWebResponse) webResponse).StatusCode;
 				if (code >= HttpStatusCode.MultipleChoices) {
-					string msg = String.Format ("The remote server returned an error: " +
-								    "({0}) {1}", (int) code, code);
-					throw new WebException (msg);
+					string msg = String.Format ("The remote server returned an error: ({0}) {1}",
+						(int) code, code);
+					
+					throw new WebException (
+						msg,
+						null,
+						WebExceptionStatus.ProtocolError,
+						webResponse);
 				}
 			}
 			

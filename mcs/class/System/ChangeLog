@@ -1,3 +1,7 @@
+2003-05-21  Ben Maurer <bmaurer@users.sourceforge.net>
+	StringWriter.cs: Fixed bug #43379 "Missing WebException.Response
+	property."
+
 2003-03-30  Martin Willemoes Hansen <mwh@sysrq.dk>
 
 	* Stubed rest of System.ComponentModel
