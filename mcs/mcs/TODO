@@ -82,8 +82,13 @@ LookupTypeReflection:
 		System.Object is also used a lot as a toplevel class, and we assume it will
 		have children, we should just shortcut this.
 
+    A cache:
+
 	Adding a cache and adding a catch for `System.Object' to flag that it wont be the
 	root of a hierarchy reduced the MCS bootstrap time from 10.22 seconds to 8.90 seconds.
+
+	This cache is currently enabled with SIMPLE_SPEEDUP in typemanager.cs.  Memory consumption
+	went down from 74 megs to 65 megs with this change.  
 
 Ideas:
 ------

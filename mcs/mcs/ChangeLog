@@ -1,3 +1,9 @@
+2002-11-12  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Binary.EmitBranchable): Also handle the cases for
+	LogicalOr and LogicalAnd that can benefit from recursively
+	handling EmitBranchable.  The code now should be nice for Paolo.
+
 2002-11-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* typemanager.cs (LookupType): Added a negative-hit hashtable for

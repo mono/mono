@@ -2312,13 +2312,96 @@ namespace Mono.CSharp {
 						ig.Emit (OpCodes.Brfalse, target);
 					return true;
 				} 
-			} else if (!(oper == Operator.LessThan ||
-				      oper == Operator.GreaterThan ||
-				      oper == Operator.LessThanOrEqual ||
-				      oper == Operator.GreaterThanOrEqual))
-				return false;
-			
+			} else if (oper == Operator.LogicalAnd){
+				if (left is Binary){
+					Binary left_binary = (Binary) left;
 
+					if (onTrue){
+						Label tests_end = ig.DefineLabel ();
+						
+						if (left_binary.EmitBranchable (ec, tests_end, false)){
+							if (right is Binary){
+								Binary right_binary = (Binary) right;
+
+								if (right_binary.EmitBranchable (ec, target, true)){
+									ig.MarkLabel (tests_end);
+									return true;
+								}
+							}
+							right.Emit (ec);
+							ig.Emit (OpCodes.Brtrue, target);
+							ig.MarkLabel (tests_end);
+							return true;
+						}
+					} else {
+						if (left_binary.EmitBranchable (ec, target, false)){
+							if (right is Binary){
+								Binary right_binary = (Binary) right;
+								
+								if (right_binary.EmitBranchable (ec, target, false))
+									return true;
+							}
+							right.Emit (ec);
+							if (onTrue)
+								ig.Emit (OpCodes.Brtrue, target);
+							else
+								ig.Emit (OpCodes.Brfalse, target);
+							return true;
+						}
+					}
+					//
+					// Give up, and let the regular Emit work, but we could
+					// also optimize the left-non-Branchable, but-right-Branchable
+					//
+				}
+				return false;
+			} else if (oper == Operator.LogicalOr){
+				if (left is Binary){
+					Binary left_binary = (Binary) left;
+
+					if (onTrue){
+						if (left_binary.EmitBranchable (ec, target, true)){
+							if (right is Binary){
+								Binary right_binary = (Binary) right;
+								
+								if (right_binary.EmitBranchable (ec, target, true))
+									return true;
+							}
+							right.Emit (ec);
+							ig.Emit (OpCodes.Brtrue, target);
+							return true;
+						}
+						
+						//
+						// Give up, and let the regular Emit work, but we could
+						// also optimize the left-non-Branchable, but-right-Branchable
+						//
+					} else {
+						Label tests_end = ig.DefineLabel ();
+						
+						if (left_binary.EmitBranchable (ec, tests_end, true)){
+							if (right is Binary){
+								Binary right_binary = (Binary) right;
+
+								if (right_binary.EmitBranchable (ec, target, false)){
+									ig.MarkLabel (tests_end);
+									return true;
+								}
+							}
+							right.Emit (ec);
+							ig.Emit (OpCodes.Brfalse, target);
+							ig.MarkLabel (tests_end);
+							return true;
+						}
+					}
+				}
+				
+				return false;
+			} else if (!(oper == Operator.LessThan ||
+				oper == Operator.GreaterThan ||
+				oper == Operator.LessThanOrEqual ||
+				oper == Operator.GreaterThanOrEqual))
+				return false;
 			
 			left.Emit (ec);
 			right.Emit (ec);
@@ -2432,11 +2515,24 @@ namespace Mono.CSharp {
 			if (oper == Operator.LogicalAnd){
 				Label load_zero = ig.DefineLabel ();
 				Label end = ig.DefineLabel ();
-				
-				left.Emit (ec);
-				ig.Emit (OpCodes.Brfalse, load_zero);
-				right.Emit (ec);
-				ig.Emit (OpCodes.Br, end);
+				bool process = true;
+
+				if (left is Binary){
+					Binary left_binary = (Binary) left;
+
+					if (left_binary.EmitBranchable (ec, load_zero, false)){
+						right.Emit (ec);
+						ig.Emit (OpCodes.Br, end);
+						process = false;
+					}
+				}
+
+				if (process){
+					left.Emit (ec);
+					ig.Emit (OpCodes.Brfalse, load_zero);
+					right.Emit (ec);
+					ig.Emit (OpCodes.Br, end);
+				}
 				ig.MarkLabel (load_zero);
 				ig.Emit (OpCodes.Ldc_I4_0);
 				ig.MarkLabel (end);
@@ -2444,11 +2540,24 @@ namespace Mono.CSharp {
 			} else if (oper == Operator.LogicalOr){
 				Label load_one = ig.DefineLabel ();
 				Label end = ig.DefineLabel ();
+				bool process = true;
 				
-				left.Emit (ec);
-				ig.Emit (OpCodes.Brtrue, load_one);
-				right.Emit (ec);
-				ig.Emit (OpCodes.Br, end);
+				if (left is Binary){
+					Binary left_binary = (Binary) left;
+
+					if (left_binary.EmitBranchable (ec, load_one, true)){
+						right.Emit (ec);
+						ig.Emit (OpCodes.Br, end);
+						process = false;
+					} 
+				}
+
+				if (process){
+					left.Emit (ec);
+					ig.Emit (OpCodes.Brtrue, load_one);
+					right.Emit (ec);
+					ig.Emit (OpCodes.Br, end);
+				}
 				ig.MarkLabel (load_one);
 				ig.Emit (OpCodes.Ldc_I4_1);
 				ig.MarkLabel (end);
