@@ -1,5 +1,14 @@
 2004-11-07  Ben Maurer  <bmaurer@ximian.com>
 
+	* class-internals.h (MonoMethod): Move addr to MonoMethodPInvoke
+	since most only those methods use it. the code member of
+	MonoMethodPInvoke was dead, so that can be removed too. Also,
+	remove inline_count (again, not used), and move slot so that it
+	can share bits with some other flags. This saves 8 bytes in the
+	structure and gives us about 50 kb back for mcs helloworld.cs
+
+	* *.[ch]: Do naming changes for the above.
+
 	* loader.c (mono_method_get_header): Lazily init the header
 	on first access.
 	(mono_get_method_from_token): don't init the header here
