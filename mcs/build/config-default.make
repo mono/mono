@@ -9,6 +9,7 @@
 RUNTIME_FLAGS = 
 TEST_HARNESS = $(topdir)/class/lib/nunit-console.exe
 MCS_FLAGS = $(PLATFORM_DEBUG_FLAGS)
+MBAS_FLAGS = $(PLATFORM_DEBUG_FLAGS)
 LIBRARY_FLAGS = /noconfig
 CFLAGS = -g -O2
 INSTALL = /usr/bin/install
@@ -20,6 +21,7 @@ prefix = /usr/local
 # keep track of the default value
 
 DEFAULT_MCS_FLAGS := $(MCS_FLAGS)
+DEFAULT_MBAS_FLAGS := $(MBAS_FLAGS)
 
 # You shouldn't need to set these but might on a 
 # weird platform.

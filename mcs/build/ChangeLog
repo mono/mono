@@ -1,5 +1,12 @@
 2004-06-09  Raja R Harinath  <rharinath@novell.com>
 
+	Partial support for writing Visual Basic source files.
+	* rules.make (USE_MBAS_FLAGS,BASCOMPILE,INTERNAL_MBAS): New.
+	* config-default.make (MBAS_FLAGS, DEFAULT_MBAS_FLAGS): New.
+	* profiles/default.make (MBAS): New.
+
+2004-06-09  Raja R Harinath  <rharinath@novell.com>
+
 	Do away with stampfiles.
 	* executable.make (stampfile): Remove.
 	(clean-local): Remove mention of $(stampfile).
