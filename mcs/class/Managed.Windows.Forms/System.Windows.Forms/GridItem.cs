@@ -26,6 +26,7 @@
 // NOT COMPLETE
 
 using System;
+using System.Drawing;
 
 namespace System.Windows.Forms
 {
@@ -93,6 +94,16 @@ namespace System.Windows.Forms
 		#region Public Instance Methods
 		public abstract new bool Select ();
 		#endregion	// Public Instance Methods
+
+		internal abstract int Top {
+			get;
+			set;
+		}
+
+		internal abstract Rectangle PlusMinusBounds {
+			get;
+			set;
+		}
 
 	}
 }

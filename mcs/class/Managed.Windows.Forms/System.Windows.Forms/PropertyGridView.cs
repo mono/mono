@@ -27,43 +27,65 @@
 // NOT COMPLETE
 
 using System;
+using System.Collections;
 using System.Drawing;
+using System.Drawing.Design;
+using System.ComponentModel;
 
-namespace System.Windows.Forms.PropertyGridInternal
+namespace System.Windows.Forms.PropertyGridInternal 
 {
-	public class PropertyGridView : System.Windows.Forms.ScrollableControl
+	public class PropertyGridView : System.Windows.Forms.ScrollableControl 
 	{
-		internal const int LEFT_COLUMN_WIDTH = 16;
+
+		#region Private Members
+		internal const int V_INDENT = 16;
 		internal const int ROW_HEIGHT = 16;
 		internal const int RESIZE_WIDTH = 3;
-		private TextBox grid_textbox;
+		internal const int BUTTON_WIDTH = 25;
+		private PropertyGridTextBox grid_textbox;
 		internal PropertyGrid property_grid;
 		internal bool redraw;
 		internal bool resizing_grid;
 		internal int label_column_width;
+		private bool add_hscroll;
+		private int open_grid_item_count = -1;
+		private VScrollBar vbar;
+		private bool vbar_added;
+		private int skipped_grid_items;
+		private Form dropdown_form;
+		private ListBox listBox;
+		#endregion
 
-		public PropertyGridView(PropertyGrid property_grid)
+		#region Contructors
+		public PropertyGridView (PropertyGrid propertyGrid) 
 		{
-			this.property_grid = property_grid;
+			property_grid = propertyGrid;
 			this.BackColor = Color.Beige;
-			grid_textbox = new TextBox();
+			grid_textbox = new PropertyGridTextBox();
+			grid_textbox.DropDownButtonClicked +=new EventHandler(grid_textbox_DropDownButtonClicked);
 
-			grid_textbox.Visible = false;
+			dropdown_form = new Form();
+			dropdown_form.FormBorderStyle = FormBorderStyle.None;
+			dropdown_form.Deactivate +=new EventHandler(dropdown_form_Deactivate);
+
+			listBox = new ListBox();
+			listBox.Dock = DockStyle.Fill;
+			listBox.SelectedIndexChanged +=new EventHandler(listBox_SelectedIndexChanged);
+			dropdown_form.Controls.Add(listBox);
+
+			grid_textbox.Visible = true;
 			grid_textbox.Font = new Font(this.Font,FontStyle.Bold);
-			grid_textbox.BorderStyle = BorderStyle.None;
 			grid_textbox.BackColor = this.BackColor;
-			grid_textbox.Validated += new EventHandler(grid_textbox_Validated);
+			// Not working at all, used to??
+			//grid_textbox.TextBox.Validated += new EventHandler(TextBoxValidated);
 
 			label_column_width = 65;
 			resizing_grid = false;
-
-			this.Controls.Add(grid_textbox);
 
 			ForeColorChanged+=new EventHandler(RedrawEvent);
 			BackColorChanged+=new System.EventHandler(RedrawEvent);
 			FontChanged+=new EventHandler(RedrawEvent);
 			SizeChanged+=new EventHandler(RedrawEvent);
-			MouseMove+=new MouseEventHandler(PropertyGridView_MouseMove);
 			
 			SetStyle(ControlStyles.UserPaint, true);
 			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
@@ -71,148 +93,373 @@ namespace System.Windows.Forms.PropertyGridInternal
 			SetStyle(ControlStyles.StandardClick | ControlStyles.StandardDoubleClick, false);
 		}
 
-		protected override void OnPaint(PaintEventArgs pevent)
+		#endregion
+
+		#region Protected Instance Methods
+		protected override void WndProc (ref Message m) 
 		{
-			this.grid_textbox.Visible = false;
-			Draw(pevent);
-			pevent.Graphics.DrawImage(this.ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
-			if (property_grid.SelectedGridItem != null)
-				grid_textbox.Visible = true;
-			base.OnPaint (pevent);
-		}
+			switch ((Msg) m.Msg) {
+			case Msg.WM_PAINT: {				
+				PaintEventArgs	paint_event;
 
-		// Derived classes should override Draw method and we dont want
-		// to break the control signature, hence this approach.
-		internal virtual void Draw (PaintEventArgs e) 
-		{
-			if (redraw) 
-			{
-				Rectangle grid_rect = new Rectangle(0,0,this.Width-1,this.Height-1);
-
-				Rectangle grid_left_rect = new Rectangle(grid_rect.Left+1,grid_rect.Top+1,LEFT_COLUMN_WIDTH,ROW_HEIGHT);
-				Rectangle grid_label_rect = new Rectangle(grid_left_rect.Right,grid_rect.Top+1,label_column_width,ROW_HEIGHT);
-				Rectangle grid_value_rect = new Rectangle(grid_label_rect.Right,grid_rect.Top+1,grid_rect.Right-grid_label_rect.Right,ROW_HEIGHT);
-
-
-				Brush label_brush = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorWindowText);
-				Brush label_backcolor_brush = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorWindow);
-				Brush back_color_brush = ThemeEngine.Current.ResPool.GetSolidBrush(this.BackColor);
-				Brush control_brush = ThemeEngine.Current.ResPool.GetSolidBrush(property_grid.LineColor);
-				Pen control_pen = ThemeEngine.Current.ResPool.GetPen(property_grid.LineColor);
-				
-				// draw grid outline
-				e.Graphics.FillRectangle(back_color_brush,grid_rect);
-				e.Graphics.DrawRectangle(ThemeEngine.Current.ResPool.GetPen(SystemColors.ControlDark),grid_rect);
-
-				// draw items
-				GridItemCollection grid_items = this.property_grid.grid_items;
-				for (int i = 0; i < grid_items.Count; i++) {
-					GridItem grid_item = grid_items[i];
-					
-					label_brush = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorWindowText);
-					label_backcolor_brush = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorWindow);
-					if (grid_item == this.property_grid.SelectedGridItem) {
-						label_backcolor_brush = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorHilight);
-						label_brush = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorHilightText);
-						grid_textbox.Size = new Size(grid_value_rect.Size.Width-6,grid_value_rect.Size.Height);
-						grid_textbox.Location = new Point(grid_value_rect.Location.X+4,grid_value_rect.Location.Y+1);
-						
-						// PDB - added check to prevent crash with test app
-						if (grid_item.Value != null)  {
-							grid_textbox.Text = grid_item.Value.ToString();
-						} else {
-							grid_textbox.Text = string.Empty;
-						}
-					}
-
-					e.Graphics.FillRectangle(control_brush,grid_left_rect);
-
-					e.Graphics.FillRectangle(label_backcolor_brush,grid_label_rect);
-					e.Graphics.DrawRectangle(control_pen,grid_label_rect);
-					e.Graphics.DrawString(grid_item.Label,this.Font,label_brush,grid_label_rect.Left + 5,grid_label_rect.Top+1);
-
-					e.Graphics.FillRectangle(back_color_brush,grid_value_rect);
-					e.Graphics.DrawRectangle(control_pen,grid_value_rect);
-					// PDB - added check to prevent crash with test app
-					if (grid_item.Value != null) {
-						e.Graphics.DrawString(grid_item.Value.ToString(),new Font(this.Font,FontStyle.Bold),ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorWindowText),grid_value_rect.Left + 2,grid_value_rect.Top+1);
-					}
-
-				   
-					// shift down for next item
-					grid_left_rect.Y = grid_label_rect.Y = grid_value_rect.Y = grid_left_rect.Y + ROW_HEIGHT;
-				}
-				redraw = false;
+				paint_event = XplatUI.PaintEventStart (Handle);
+				DoPaint (paint_event);
+				XplatUI.PaintEventEnd (Handle);
+				return;
 			}
+			}
+			base.WndProc (ref m);
 		}
 
-			
-		private void grid_textbox_Validated(object sender, EventArgs e)
-		{
-			if (this.property_grid.SelectedGridItem != null)
-			this.property_grid.SelectedGridItem.PropertyDescriptor.SetValue(this.property_grid.SelectedObject,this.property_grid.SelectedGridItem.PropertyDescriptor.Converter.ConvertTo(((TextBox)sender).Text,this.property_grid.SelectedGridItem.PropertyDescriptor.PropertyType));
-		}
-
-		protected override void OnMouseMove(MouseEventArgs e)
+		protected override void OnMouseMove (MouseEventArgs e) 
 		{
 			if (resizing_grid) {
-				label_column_width = Math.Max(e.X - LEFT_COLUMN_WIDTH,LEFT_COLUMN_WIDTH);
+				label_column_width = Math.Max(e.X - V_INDENT,V_INDENT);
 				Redraw();
-			} else if (e.X > label_column_width+LEFT_COLUMN_WIDTH - RESIZE_WIDTH && e.X < label_column_width+LEFT_COLUMN_WIDTH + RESIZE_WIDTH) {
+			}
+			else if (e.X > label_column_width+V_INDENT - RESIZE_WIDTH && e.X < label_column_width+V_INDENT + RESIZE_WIDTH) {
 				this.Cursor = Cursors.VSplit;
 			}
 			base.OnMouseMove (e);
 		}
 
-
-		protected override void OnMouseDown(MouseEventArgs e)
+		private GridItem GetSelectedGridItem (GridItemCollection grid_items, int y) 
 		{
-			if (e.X > label_column_width+LEFT_COLUMN_WIDTH + 2 - RESIZE_WIDTH && e.X < label_column_width+LEFT_COLUMN_WIDTH + 2 + RESIZE_WIDTH) {
+			foreach (GridItem child_grid_item in grid_items) {
+				if (y > child_grid_item.Top && y < child_grid_item.Top + ROW_HEIGHT) {
+					return child_grid_item;
+				}
+				GridItem foundItem = GetSelectedGridItem(child_grid_item.GridItems, y);
+				if (foundItem != null)
+					return foundItem;
+			}
+			return null;
+		}
+
+		protected override void OnMouseDown (MouseEventArgs e) 
+		{
+			if (e.X > label_column_width+V_INDENT + 2 - RESIZE_WIDTH && e.X < label_column_width+V_INDENT + 2 + RESIZE_WIDTH) {
 				resizing_grid = true;
-			} else {
-				int index = e.Y / ROW_HEIGHT;
-				if (index < property_grid.grid_items.Count)
-					this.property_grid.SelectedGridItem = this.property_grid.grid_items[index];
+			}
+			else {
+				GridItem foundItem = GetSelectedGridItem(property_grid.grid_items, e.Y);
+				if (this.property_grid.SelectedGridItem != null) {
+					PropertyDescriptor desc = property_grid.SelectedGridItem.PropertyDescriptor;
+					if (desc != null) {
+						desc.SetValue(property_grid.SelectedObject, desc.Converter.ConvertFromString(grid_textbox.TextBoxText));
+					}
+				}
+				if (foundItem != null)
+					property_grid.SelectedGridItem = foundItem;
+				if (property_grid.SelectedGridItem.Expandable) {
+					if (((CategoryGridEntry)property_grid.SelectedGridItem).PlusMinusBounds.Contains(e.X,e.Y)){
+						property_grid.SelectedGridItem.Expanded = !property_grid.SelectedGridItem.Expanded;
+					}
+				}
+				Redraw();
 				base.OnMouseDown (e);
 			}
 		}
 
-		protected override void OnMouseUp(MouseEventArgs e)
+		protected override void OnMouseUp (MouseEventArgs e) 
 		{
 			resizing_grid = false;
 			base.OnMouseUp (e);
 		}
 
-
-		protected override void OnKeyDown(KeyEventArgs e)
+		protected override void OnKeyDown (KeyEventArgs e) 
 		{
-			if (this.property_grid.SelectedGridItem != null) {
-				grid_textbox.Focus();
-			}
 			base.OnKeyDown (e);
 		}
 
+		#endregion
 
-		internal void Redraw() 
+		#region Private Helper Methods
+		private void AddVerticalScrollBar (int total_grid_items, bool count_changed) 
+		{
+			if (vbar == null) {
+				vbar = new VScrollBar ();
+				count_changed = true;
+			}
+
+			vbar.Bounds = new Rectangle (ClientRectangle.Width - vbar.Width,
+				0, vbar.Width, Height);
+
+			if (count_changed) {
+				vbar.Maximum = total_grid_items;
+				int height = ClientRectangle.Height;
+				vbar.LargeChange = height / ROW_HEIGHT;
+			}
+
+			if (!vbar_added) {
+				Controls.Add (vbar);
+				vbar.ValueChanged += new EventHandler (VScrollBarValueChanged);
+				vbar_added = true;
+			}
+
+			vbar.Visible = true;
+		}
+
+		internal void Redraw () 
 		{
 			redraw = true;
 			Refresh ();
 		}
 
-		private void RedrawEvent(object sender, System.EventArgs e) 
+		private GridItem GetGridItemAt (int y) 
+		{
+			return null;
+		}
+
+		#region Drawing Code
+		private void DoPaint (PaintEventArgs pevent) 
+		{
+			Draw(pevent.ClipRectangle);
+			pevent.Graphics.DrawImage(this.ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
+		}
+
+		[MonoTODO("Do a better job of clipping")]
+		private void Draw (Rectangle clip) 
+		{
+			if (redraw) {
+				
+				// Decide if we need a scrollbar
+				bool add_vscroll = false;
+				int old_open_grid_item_count = open_grid_item_count;
+
+				// Use same brushes for all grid items
+				Brush line_brush = ThemeEngine.Current.ResPool.GetSolidBrush(property_grid.LineColor);
+				Pen line_pen = ThemeEngine.Current.ResPool.GetPen(property_grid.LineColor);
+				Brush text_brush = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorWindowText);
+
+
+				Rectangle fill = ClientRectangle;
+				// draw grid outline
+				DeviceContext.FillRectangle (new SolidBrush (BackColor), fill);
+				DeviceContext.DrawRectangle(ThemeEngine.Current.ResPool.GetPen(SystemColors.ControlDark),fill);
+
+				int depth = 0;
+				int item_height = ROW_HEIGHT;
+				Font font = Font;
+				int height = ClientRectangle.Height;
+
+				GridItemCollection grid_items = this.property_grid.grid_items;
+
+				open_grid_item_count = 0;
+				foreach (GridItem grid_item in grid_items) {
+					DrawGridItem (grid_item, clip, ref depth, item_height, font, height, line_brush, text_brush, line_pen);
+					depth = 0;
+				}
+
+				add_vscroll = (open_grid_item_count * ROW_HEIGHT) > ClientRectangle.Height;
+
+				if (add_vscroll) {
+					AddVerticalScrollBar (open_grid_item_count, old_open_grid_item_count != open_grid_item_count);
+				} else if (vbar != null) {
+					vbar.Visible = false;
+					skipped_grid_items = 0;
+				}
+
+				if (property_grid.SelectedGridItem != null && property_grid.SelectedGridItem.GridItemType == GridItemType.Property) {
+					//if (grid_textbox.Visible == false) {
+					this.Controls.Add(grid_textbox);
+					//}
+					//grid_textbox.Visible = true;
+					if (!grid_textbox.Focused)
+						grid_textbox.Focus();
+				}
+				else {
+					this.Controls.Remove(grid_textbox);
+					//grid_textbox.Visible = false;
+				}
+
+				redraw = false;
+			}
+		}
+
+		private void DrawGridItem (GridItem grid_item, Rectangle clip, ref int depth, int item_height,
+			Font font, int max_height, Brush line_brush, Brush text_brush, Pen line_pen) 
+		{
+
+			int y = ClientRectangle.Top+1+(ROW_HEIGHT*(open_grid_item_count-skipped_grid_items));
+			grid_item.Top = y;
+
+			Rectangle indentRectangle = new Rectangle(ClientRectangle.Left+1,y,V_INDENT,ROW_HEIGHT);
+			Rectangle labelRectangle = new Rectangle(indentRectangle.Right,y,label_column_width,ROW_HEIGHT);
+			Rectangle valueRectangle = new Rectangle(labelRectangle.Right,y,ClientRectangle.Right-labelRectangle.Right,ROW_HEIGHT);
+
+			DrawGridItemIndent(grid_item, line_brush, indentRectangle, grid_item.Expandable, grid_item.Expanded);
+			DrawGridItemLabel(grid_item, labelRectangle, line_pen, text_brush, Font, depth, line_brush);
+			DrawGridItemValue(grid_item, valueRectangle, line_pen, text_brush, new Font(Font, FontStyle.Bold), line_brush);
+
+			if (grid_item == property_grid.SelectedGridItem) {
+				if (grid_item.Value != null) {
+					grid_textbox.TextBoxText = grid_item.Value.ToString();
+				} 
+				else {
+					grid_textbox.TextBoxText = string.Empty;
+				}
+				grid_textbox.Size = new Size(valueRectangle.Size.Width- (vbar == null || !vbar.Visible ? 0 : ThemeEngine.Current.VerticalScrollBarWidth),valueRectangle.Size.Height);
+				grid_textbox.Location = new Point(valueRectangle.Location.X+4,valueRectangle.Location.Y+1);
+			}
+			
+			open_grid_item_count++;
+
+			
+			depth++;
+			if (grid_item.Expanded) {
+				foreach (GridItem child_item in grid_item.GridItems) {
+					int tdepth = depth;
+					DrawGridItem(child_item, clip, ref tdepth, item_height, font, max_height, line_brush, text_brush, line_pen);
+				}
+			}
+		}
+
+		private void DrawGridItemIndent (GridItem grid_item, Brush brush, Rectangle rect, bool showPlusMinus, bool expanded) 
+		{
+
+			DeviceContext.FillRectangle(brush,rect);
+
+			if (showPlusMinus) {
+				Rectangle plus_minus_rect = new Rectangle(rect.X+3,rect.Y+3,8,8);
+				grid_item.PlusMinusBounds = plus_minus_rect;
+
+				DeviceContext.DrawRectangle (SystemPens.ControlDark, plus_minus_rect);
+
+				int middle = (plus_minus_rect.Bottom-plus_minus_rect.Top)/2 + plus_minus_rect.Top;
+				int x = plus_minus_rect.X;
+				DeviceContext.DrawLine (SystemPens.ControlDarkDark, x + 2, middle, x + 6, middle); 
+
+				if (!expanded) {
+					DeviceContext.DrawLine (SystemPens.ControlDarkDark, x + 4, middle - 2, x + 4, middle + 2);
+				}
+			}
+		}
+
+		private void DrawGridItemLabel (GridItem grid_item, Rectangle rect, Pen pen, Brush brush, Font font, int depth, Brush line_brush) 
+		{
+			Brush backBrush = ThemeEngine.Current.ResPool.GetSolidBrush(BackColor);
+			Brush foreBrush = brush;
+			bool selectedItem = false, expandable = false;
+			if (grid_item == property_grid.SelectedGridItem){
+				backBrush = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorHilight);
+				foreBrush = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorHilightText);
+			}
+			if (grid_item.Expandable){
+				backBrush = line_brush;
+				foreBrush = brush;
+			}
+
+			DeviceContext.FillRectangle(backBrush,rect);
+			DeviceContext.DrawRectangle(pen,rect);
+			DeviceContext.DrawString(grid_item.Label,font,foreBrush,rect.Left + 5 + depth*V_INDENT,rect.Top+1);
+		}
+
+		[MonoTODO("GetEditor once the TypeDescriptor class is complete")]
+		private void DrawGridItemValue (GridItem grid_item, Rectangle rect, Pen pen, Brush brush, Font font, Brush line_brush) 
+		{
+			DeviceContext.FillRectangle((grid_item.GridItemType == GridItemType.Property) ? ThemeEngine.Current.ResPool.GetSolidBrush(BackColor) : line_brush,rect);
+			DeviceContext.DrawRectangle(pen,rect);
+
+			// PDB - added check to prevent crash with test app
+			if (grid_item.Value != null) {
+				DeviceContext.DrawString(grid_item.Value.ToString(),font,brush,rect.Left + 2,rect.Top+1);
+			}
+
+			if (grid_item == property_grid.SelectedGridItem) {
+				grid_textbox.ReadOnly = false;
+				if (grid_item.PropertyDescriptor != null) {
+					UITypeEditor editor = null;//(UITypeEditor)grid_item.PropertyDescriptor.GetEditor(typeof(UITypeEditor));
+					if (editor != null) {
+						UITypeEditorEditStyle style =  editor.GetEditStyle();
+						if (style == UITypeEditorEditStyle.DropDown) {
+							grid_textbox.DropDownButtonVisible = true;
+							grid_textbox.DialogButtonVisible = false;
+							
+						}
+						else if (style == UITypeEditorEditStyle.Modal) {
+							grid_textbox.DropDownButtonVisible = false;
+							grid_textbox.DialogButtonVisible = true;
+						}
+						
+					}
+					else if (grid_item.PropertyDescriptor.Converter.GetStandardValuesSupported()) {
+						listBox.Items.Clear();
+						foreach (object obj in grid_item.PropertyDescriptor.Converter.GetStandardValues())
+							listBox.Items.Add(obj);
+						grid_textbox.DropDownButtonVisible = true;
+						grid_textbox.DialogButtonVisible = false;
+						grid_textbox.ReadOnly = true;
+					}
+					else {
+						grid_textbox.DropDownButtonVisible = false;
+						grid_textbox.DialogButtonVisible = false;
+					}
+				}
+				else {
+					grid_textbox.DropDownButtonVisible = false;
+					grid_textbox.DialogButtonVisible = false;
+				}
+			}
+		}
+
+		#endregion
+
+		#region Event Handling
+		private void RedrawEvent (object sender, System.EventArgs e) 
 		{
 			Redraw();
 		}
 
-		private void PropertyGridView_MouseMove(object sender, MouseEventArgs e)
+		private void VScrollBarValueChanged (object sender, EventArgs e) 
 		{
+			int old_skip = skipped_grid_items;
+			skipped_grid_items = vbar.Value;
 
-			if (e.X > label_column_width+LEFT_COLUMN_WIDTH - RESIZE_WIDTH && e.X < label_column_width+LEFT_COLUMN_WIDTH + RESIZE_WIDTH
-				|| resizing_grid) {
-				this.Cursor = Cursors.VSplit;
-			} else {
-				this.Cursor = Cursors.Default;
+			int y_move = (old_skip - skipped_grid_items) * ROW_HEIGHT;
+			// need this to refresh drawing
+			redraw = true;
+			XplatUI.ScrollWindow (Handle, ClientRectangle, 0, y_move, true);
+		}
+
+		private void TextBoxValidated (object sender, EventArgs e) 
+		{
+			if (this.property_grid.SelectedGridItem != null) {
+				PropertyDescriptor desc = property_grid.SelectedGridItem.PropertyDescriptor;
+				if (desc != null) {
+					desc.SetValue(property_grid.SelectedObject, desc.Converter.ConvertFromString(grid_textbox.TextBoxText));
+				}
 			}
+		}
+
+		#endregion
+
+		
+		#endregion
+
+		private void dropdown_form_Deactivate (object sender, EventArgs e) 
+		{
+			dropdown_form.Hide();
+		}
+
+
+		private void listBox_SelectedIndexChanged (object sender, EventArgs e) 
+		{
+			if (this.property_grid.SelectedGridItem != null) {
+				PropertyDescriptor desc = property_grid.SelectedGridItem.PropertyDescriptor;
+				if (desc != null) {
+					desc.SetValue(property_grid.SelectedObject, listBox.SelectedItem);
+				}
+			}
+			dropdown_form.Hide();
+			Redraw();
+		}
+
+		private void grid_textbox_DropDownButtonClicked (object sender, EventArgs e) 
+		{
+			dropdown_form.Location = PointToScreen(new Point(grid_textbox.Location.X,grid_textbox.Location.Y+ROW_HEIGHT));
+			dropdown_form.Width = grid_textbox.Width;
+			dropdown_form.Show();
 		}
 	}
 }

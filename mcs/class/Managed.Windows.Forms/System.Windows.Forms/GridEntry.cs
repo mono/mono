@@ -28,22 +28,28 @@
 using System;
 using System.Windows.Forms;
 using System.ComponentModel;
+using System.Drawing;
 
 namespace System.Windows.Forms.PropertyGridInternal
 {
-	public class GridEntry : GridItem
+	internal class GridEntry : GridItem
 	{
 		#region Local Variables
-		private bool expanded = false;
+		private bool expanded = true;
 		private GridItemCollection grid_items;
 		private GridItem parent;
 		private PropertyDescriptor property_descriptor;
 		private object selected_object;
+		private string label;
+		private int top;
+		private Rectangle plus_minus_bounds;
 		#endregion	// Local Variables
 
 		#region  Contructors
 		public GridEntry() : base() {
-			grid_items = GridItemCollection.Empty;
+			plus_minus_bounds = new Rectangle(0,0,0,0);
+			top = -1;
+			grid_items = new GridItemCollection();
 		}
 
 		public GridEntry(object obj, PropertyDescriptor prop_desc) : this() {
@@ -56,7 +62,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 		public override bool Expandable
 		{
 			get {
-				return false;
+				return grid_items.Count > 0;
 			}
 		}
 
@@ -109,7 +115,10 @@ namespace System.Windows.Forms.PropertyGridInternal
 		public override object Value
 		{
 			get {
-				return property_descriptor.GetValue(selected_object);
+				object return_value = null;
+				if (selected_object != null)
+					return_value = property_descriptor.GetValue(selected_object);
+				return return_value;
 			}
 		}
 		#endregion	// Public Instance Properties
@@ -120,5 +129,25 @@ namespace System.Windows.Forms.PropertyGridInternal
 			throw new NotImplementedException();
 		}
 		#endregion	// Public Instance Methods
+
+		internal override int Top {
+			get {
+				return top;
+			}
+			set {
+				top = value;
+			}
+		}
+
+		internal override Rectangle PlusMinusBounds {
+			get{
+				return plus_minus_bounds;
+			}
+			set{
+				plus_minus_bounds = value;
+			}
+		}
+
+
 	}
 }

@@ -83,7 +83,33 @@ namespace System.Windows.Forms
 		#region IEnumerable Members
 		public IEnumerator GetEnumerator()
 		{
-			return list.GetEnumerator();
+			return new GridItemEnumerator(this);
+		}
+		#endregion
+
+		#region Enumerator Class
+		public class GridItemEnumerator : IEnumerator{
+			int nIndex;
+			GridItemCollection collection;
+			public GridItemEnumerator(GridItemCollection coll) {
+				collection = coll;
+				nIndex = -1;
+			}
+
+			public bool MoveNext() {
+				nIndex++;
+				return(nIndex < collection.Count);
+			}
+
+			public void Reset() {
+				nIndex = -1;
+			}
+
+			object System.Collections.IEnumerator.Current {
+				get {
+					return(collection[nIndex]);
+				}
+			}
 		}
 		#endregion
 	}

@@ -1,3 +1,14 @@
+2005-03-22  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* CategoryGridEntry.cs: Added
+	* GridItem.cs: Added helper properties
+	* PropertyGridTextBox.cs: Custom textbox control for PropertyGrid.
+	* GridEntry.cs: Updated code for collection
+	* PropertyGrid.cs: Cleaned up some formatting
+	* PropertyGridView.cs: Added drop down functionality for enums.
+	* GridItemCollection.cs: Added enumerator logic
+	* PropertyGridEntry.cs: Added
+
 2005-03-19  Alexander Olk  <xenomorph2@onlinehome.de>
 
 	* FileDialog.cs:
