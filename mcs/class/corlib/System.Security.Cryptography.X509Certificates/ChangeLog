@@ -1,3 +1,10 @@
+2002-12-22  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* X509Certificate.cs: Completed CreateFromSignedFile. Added a new 
+	internal constructor so Publisher (and the related classes) can 
+	create a X509Certificate object which return null dates (for both 
+	GetEffectiveDateString and GetExpirationDateString methods).
+
 2002-12-15  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* X509Certificate.cs: Fixed the date issue. MS implementation always

@@ -140,7 +140,8 @@ internal class ASN1 {
 		int nLength;
 		byte[] aValue;
 
-		while (anPos < anLength) {
+		// minimum is 2 bytes (tag + length of 0)
+		while (anPos < anLength - 1) {
 			int nPosOri = anPos;
 			DecodeTLV (asn1, ref anPos, out nTag, out nLength, out aValue);
 
@@ -220,6 +221,7 @@ public class X509Certificate
 	private string m_subject;
 	private byte[] m_publickey;
 	private byte[] m_serialnumber;
+	private bool hideDates;
 
 	// almost every byte[] returning function has a string equivalent
 	// sadly the BitConverter insert dash between bytes :-(
@@ -477,24 +479,69 @@ public class X509Certificate
 		return new X509Certificate (data);
 	}
 
-	[MonoTODO()]
-	// LAMESPEC: How does it differ from CreateFromCertFile
+	// LAMESPEC: How does it differ from CreateFromCertFile ?
+	// It seems to get the certificate inside a PE file (maybe a CAB too ?)
 	public static X509Certificate CreateFromSignedFile (string filename)
 	{
-		// FIXME: not sure about this method
-		// ??? get cert from CAB, DLL, EXE ???
-		// Note: MS throws a COMException for "normal" certificates
-		// It's seems to call some SPC certs.
-		throw new NotSupportedException ("CreateFromSignedFile");
+		FileStream fs = new FileStream (filename, FileMode.Open, FileAccess.Read);
+
+		// first we must find the start of the signature structure
+		// we read the last 16k of the file at try to find the signature
+		int length = (int) Math.Min (fs.Length, 16384);
+		byte[] last16k = new byte [length];
+
+		fs.Seek (-length, SeekOrigin.End);
+		fs.Read (last16k, 0, length);
+		fs.Close ();
+
+		// quick to code but a long way from optimal
+		string s = BitConverter.ToString (last16k);
+		int pos = s.IndexOf ("00-3C-00-3C-00-3C-00-4F-00-62-00-73-00-6F-00-6C-00-65-00-74-00-65-00-3E-00-3E-00-3E");
+		if (pos == -1)
+			return null;
+		pos = (pos / 3) - 93;
+		int signLength = BitConverter.ToInt32 (last16k, pos);
+		int signFlags = BitConverter.ToInt32 (last16k, pos + 4);
+		if (signFlags != 0x00020200)
+			return null;
+		byte[] signature = new byte [signLength - 8];
+		Array.Copy (last16k, pos+8, signature, 0, signature.Length);
+
+		// \/ for debugging only \/
+		FileStream debug = new FileStream (@"d:\debug.sig", FileMode.Create);
+		debug.Write (signature, 0, signature.Length);
+		debug.Close ();
+		// /\ for debugging only /\
+
+		// this is a big bad ASN.1 structure
+		// Reference: http://www.cs.auckland.ac.nz/~pgut001/pubs/authenticode.txt
+		// next we must find the last certificate inside the structure
+		ASN1 sign = new ASN1 (signature);
+		try {
+			// we don't have to understand much of it to get the certificate
+			ASN1 certs = sign.Element(0).Element(1).Element(0).Element(3);
+			byte[] lastCert = certs.Element(certs.Count - 1).GetDER();
+			X509Certificate x509 = new X509Certificate (lastCert);
+			return x509;
+		}
+		catch {
+			return null;
+		}
 	}
 
 	// constructors
 
-	public X509Certificate (byte[] data)
+	// special constructor for Publisher (and related classes).
+	// Dates strings are null
+	internal X509Certificate (byte[] data, bool dates) 
 	{
-		if (data != null)
+		if (data != null) {
 			Parse (data);
+			hideDates = !dates;
+		}
 	}
+
+	public X509Certificate (byte[] data) : this (data, true) {}
 
 	[MonoTODO("Handle on CryptoAPI certificate")]
 	public X509Certificate (IntPtr handle) 
@@ -510,6 +557,7 @@ public class X509Certificate
 			byte[] data = cert.GetRawCertData ();
 			if (data != null)
 				Parse(data);
+			hideDates = false;
 		}
 	}
 
@@ -560,6 +608,8 @@ public class X509Certificate
 	// BUG: This will not be corrected in Framework 1.1 and also affect WSE 1.0
 	public virtual string GetEffectiveDateString ()
 	{
+		if (hideDates)
+			return null;
 		DateTime dt = m_from.AddHours (-8);
 		return dt.ToString ("yyyy-MM-dd HH:mm:ss");
 	}
@@ -569,6 +619,8 @@ public class X509Certificate
 	// BUG: This will not be corrected in Framework 1.1 and also affect WSE 1.0
 	public virtual string GetExpirationDateString () 
 	{
+		if (hideDates)
+			return null;
 		DateTime dt = m_until.AddHours (-8);
 		return dt.ToString ("yyyy-MM-dd HH:mm:ss");
 	}
