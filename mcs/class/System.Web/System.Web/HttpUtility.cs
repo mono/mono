@@ -498,10 +498,10 @@ namespace System.Web {
 			if (offset < 0 || offset >= len)
 				throw new ArgumentOutOfRangeException("offset");
 
-			if (count < 0 || offset <= len - count)
+			if (count < 0 || offset > len - count)
 				throw new ArgumentOutOfRangeException("count");
 
-			ArrayList result = new ArrayList ();
+			MemoryStream result = new MemoryStream ();
 			int end = offset + count;
 			for (int i = offset; i < end; i++){
 				char c = (char) bytes [i];
@@ -511,10 +511,10 @@ namespace System.Web {
 					c = GetChar (bytes, i, 2);
 					i += 2;
 				}
-				result.Add ((byte) c);
+				result.WriteByte ((byte) c);
 			}
 
-			return (byte []) result.ToArray (typeof (byte));
+			return result.ToArray ();
 		}
 
 		public static string UrlEncode(string str) 
@@ -601,27 +601,27 @@ namespace System.Web {
 			if (count < 0 || offset < len - count)
 				throw new ArgumentOutOfRangeException("count");
 
-			ArrayList result = new ArrayList ();
+			MemoryStream result = new MemoryStream ();
 			int end = offset + count;
 			for (int i = offset; i < end; i++) {
 				char c = (char) bytes [i];
 				if (c == ' ')
-					result.Add ((byte) '+');
+					result.WriteByte ((byte) '+');
 				else if ((c < '0' && c != '-' && c != '.') ||
 					 (c < 'A' && c > '9') ||
 					 (c > 'Z' && c < 'a' && c != '_') ||
 					 (c > 'z')) {
-					result.Add ((byte) '%');
+					result.WriteByte ((byte) '%');
 					int idx = ((int) c) >> 4;
-					result.Add ((byte) hexChars [idx]);
+					result.WriteByte ((byte) hexChars [idx]);
 					idx = ((int) c) & 0x0F;
-					result.Add ((byte) hexChars [idx]);
+					result.WriteByte ((byte) hexChars [idx]);
 				} else {
-					result.Add ((byte) c);
+					result.WriteByte ((byte) c);
 				}
 			}
 
-			return (byte []) result.ToArray (typeof (byte));
+			return result.ToArray ();
 		}
 
 		public static string UrlEncodeUnicode (string str)

@@ -1,3 +1,9 @@
+2004-02-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpUtility.cs: fixed length check. Closes bug #54201.
+	Thanks to Michal Moskal. Use MemoryStream instead of an ArrayList when
+	decoding.
+
 2004-02-11  Jackson Harper <jackson@ximian.com>
 
 	* TraceData.cs: Use ToString for cookie/header/var name values so
