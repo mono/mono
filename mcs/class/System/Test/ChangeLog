@@ -1,5 +1,9 @@
 2002-03-29  Nick Drochak  <ndrochak@gol.com>
 
+	* makefile.gnu: link from where the dll is placed now
+
+2002-03-29  Nick Drochak  <ndrochak@gol.com>
+
 	* BasicOperationsTest.cs: Moved into proper subdir
 	* system_linux_test.args: Change path to above file
 
