@@ -1,3 +1,8 @@
+2003-07-14  Jerome Laban <jlaban@wanadoo.fr>
+
+	* NetConfigurationHandler.cs: New file that handles 
+	system.net/settings	
+
 2003-06-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* NetAuthenticationModuleHandler.cs: register the modules using
