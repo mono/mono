@@ -93,6 +93,8 @@ namespace System.Xml.Schema
 				return datatypeEntity;
 			case "ENTITIES":
 				return datatypeEntities;
+			case "NOTATION":
+				return datatypeNotation;
 			default:
 				throw new NotImplementedException ();
 			}
@@ -112,6 +114,7 @@ namespace System.Xml.Schema
 		private static XsdIDRefs datatypeIDRefs = new XsdIDRefs ();
 		private static XsdEntity datatypeEntity = new XsdEntity ();
 		private static XsdEntities datatypeEntities = new XsdEntities ();
+		private static XsdNotation datatypeNotation = new XsdNotation ();
 
 	}
 }

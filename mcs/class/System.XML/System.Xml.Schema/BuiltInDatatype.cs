@@ -86,6 +86,7 @@ namespace Mono.Xml.Schema
 		// ParseValue () method is as same as that of xs:string
 	}
 
+	// xs:token
 	public class XsdToken : XsdNormalizedString
 	{
 		internal XsdToken ()
@@ -103,6 +104,7 @@ namespace Mono.Xml.Schema
 		// ParseValue () method is as same as that of xs:string
 	}
 
+	// xs:language
 	public class XsdLanguage : XsdToken
 	{
 		internal XsdLanguage ()
@@ -120,6 +122,7 @@ namespace Mono.Xml.Schema
 		// ParseValue () method is as same as that of xs:string
 	}
 
+	// xs;NMTOKEN
 	public class XsdNMToken : XsdToken
 	{
 		internal XsdNMToken ()
@@ -137,6 +140,7 @@ namespace Mono.Xml.Schema
 		// ParseValue () method is as same as that of xs:string
 	}
 
+	// xs:NMTOKENS
 	public class XsdNMTokens : XsdNMToken
 	{
 		internal XsdNMTokens ()
@@ -154,6 +158,7 @@ namespace Mono.Xml.Schema
 		// ParseValue () method is as same as that of xs:string
 	}
 
+	// xs:Name
 	public class XsdName : XsdToken
 	{
 		internal XsdName ()
@@ -171,6 +176,7 @@ namespace Mono.Xml.Schema
 		// ParseValue () method is as same as that of xs:string
 	}
 
+	// xs:NCName
 	public class XsdNCName : XsdName
 	{
 		internal XsdNCName ()
@@ -188,6 +194,7 @@ namespace Mono.Xml.Schema
 		// ParseValue () method is as same as that of xs:string
 	}
 
+	// xs:ID
 	public class XsdID : XsdName
 	{
 		internal XsdID ()
@@ -205,6 +212,7 @@ namespace Mono.Xml.Schema
 		// ParseValue () method is as same as that of xs:string
 	}
 
+	// xs:IDREF
 	public class XsdIDRef : XsdName
 	{
 		internal XsdIDRef ()
@@ -222,6 +230,7 @@ namespace Mono.Xml.Schema
 		// ParseValue () method is as same as that of xs:string
 	}
 
+	// xs:IDREFS
 	public class XsdIDRefs : XsdName
 	{
 		internal XsdIDRefs ()
@@ -239,6 +248,7 @@ namespace Mono.Xml.Schema
 		// ParseValue () method is as same as that of xs:string
 	}
 
+	// xs:ENTITY
 	public class XsdEntity : XsdName
 	{
 		internal XsdEntity ()
@@ -256,6 +266,7 @@ namespace Mono.Xml.Schema
 		// ParseValue () method is as same as that of xs:string
 	}
 
+	// xs:ENTITIES
 	public class XsdEntities : XsdName
 	{
 		internal XsdEntities ()
@@ -272,4 +283,51 @@ namespace Mono.Xml.Schema
 
 		// ParseValue () method is as same as that of xs:string
 	}
+
+	// xs:NOTATION
+	public class XsdNotation : XmlSchemaDatatype
+	{
+		internal XsdNotation ()
+		{
+		}
+
+		public override XmlTokenizedType TokenizedType {
+			get { return XmlTokenizedType.NOTATION; }
+		}
+
+		public override Type ValueType {
+			get { return typeof (string); }
+		}
+
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		// Fundamental Facets
+		public virtual bool Bounded {
+			get { return false; }
+		}
+		public virtual bool Finite {
+			get { return false; }
+		}
+		public virtual bool Numeric {
+			get { return false; }
+		}
+		public virtual bool Ordered {
+			get { return false; }
+		}
+
+		// Constraining Facets
+		public bool HasLengthFacet;
+		public bool HasMaxLengthFacet;
+		public bool HasMinLengthFacet;
+		public int Length;
+		public int MaxLength;
+		public int MinLength;
+		public string Pattern;
+		public ICollection Enumeration;
+	}
+
 }
