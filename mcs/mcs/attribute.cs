@@ -129,21 +129,24 @@ namespace Mono.CSharp {
 			
 			ArrayList pos_args = new ArrayList ();
 			ArrayList named_args = new ArrayList ();
+			int pos_arg_count = 0;
 			
 			if (Arguments != null) {
 				pos_args = (ArrayList) Arguments [0];
+				if (pos_args != null)
+					pos_arg_count = pos_args.Count;
 				if (Arguments.Count > 1)
 					named_args = (ArrayList) Arguments [1];
 			}
-				
-			object [] pos_values = new object [pos_args.Count];
+
+			object [] pos_values = new object [pos_arg_count];
 
 			//
 			// First process positional arguments 
 			//
 			
 			int i;
-			for (i = 0; i < pos_args.Count; i++) {
+			for (i = 0; i < pos_arg_count; i++) {
 				Argument a = (Argument) pos_args [i];
 				Expression e;
 

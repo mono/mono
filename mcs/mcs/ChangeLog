@@ -1,5 +1,8 @@
 2002-05-13  Miguel de Icaza  <miguel@ximian.com>
 
+	* attribute.cs (Attribute.Resolve): Positional parameters are
+	optional.  Deal with that case.
+
 	* class.cs (DefineType): Call Attribute.GetExtraTypeInfo to fetch
 	the Ansi/Unicode/Auto information for the type.
 
