@@ -1,3 +1,8 @@
+
+Fri Nov 2 18:40:12 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* SerializationException.cs: implemented.
+
 2001-08-24  Nick Drochak  <ndrochak@gol.com>
 
 	* SerializationInfo.cs: Added all the public methods so that the compile would not break
