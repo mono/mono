@@ -144,6 +144,8 @@ namespace System.Windows.Forms {
 		internal abstract void SetCaretPos(IntPtr hwnd, int x, int y);
 		internal abstract void CaretVisible(IntPtr hwnd, bool visible);
 
+		internal abstract void SetFocus(IntPtr hwnd);
+
 		internal abstract void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount);
 
 		internal abstract bool GetFontMetrics(Graphics g, Font font, out int ascent, out int descent);

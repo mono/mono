@@ -311,6 +311,10 @@ namespace System.Windows.Forms {
 			driver.CaretVisible(hwnd, visible);
 		}
 
+		internal static void SetFocus(IntPtr hwnd) {
+			driver.SetFocus(hwnd);
+		}
+
 		internal static bool GetFontMetrics(Graphics g, Font font, out int ascent, out int descent) {
 			return driver.GetFontMetrics(g, font, out ascent, out descent);
 		}

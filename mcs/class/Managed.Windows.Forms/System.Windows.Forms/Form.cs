@@ -35,6 +35,7 @@ using System.Threading;
 namespace System.Windows.Forms {
 	public class Form : ContainerControl {
 		#region Local Variables
+		internal Form			active_form;
 		internal bool			closing;
 		FormBorderStyle			formBorderStyle;
 		private static bool		autoscale;
@@ -165,6 +166,33 @@ namespace System.Windows.Forms {
 						}
 						break;
 					}
+
+					case Msg.WM_ACTIVATEAPP: {
+						if (m.WParam == (IntPtr)1) {
+Console.WriteLine("App activated");
+							owner.active_form = owner;
+							owner.OnActivated(EventArgs.Empty);
+						} else {
+Console.WriteLine("App de-activated");
+							owner.OnDeactivate(EventArgs.Empty);
+							owner.active_form = null;
+						}
+						break;
+					}
+
+					case Msg.WM_ACTIVATE: {
+						Console.WriteLine("WM_ACTIVATE received");
+						break;
+					}
+					
+#if topmost_workaround
+					case Msg.WM_ACTIVATE: {
+							if (this.OwnedForms.Length>0) {
+								XplatUI.SetZOrder(this.OwnedForms[0].window.Handle, this.window.Handle, false, false);
+							}
+						break;
+					}
+#endif
 
 					default: {
 						base.WndProc (ref m);
@@ -744,14 +772,6 @@ namespace System.Windows.Forms {
 					break;
 				}
 
-#if topmost_workaround
-				case Msg.WM_ACTIVATE: {
-					if (this.OwnedForms.Length>0) {
-						XplatUI.SetZOrder(this.OwnedForms[0].window.Handle, this.window.Handle, false, false);
-					}
-					break;
-				}
-#endif
 				default: {
 					base.WndProc (ref m);
 					break;

@@ -996,6 +996,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal override void SetFocus(IntPtr hwnd) {
+			Win32SetFocus(hwnd);
+		}
+
 		internal override bool GetFontMetrics(Graphics g, Font font, out int ascent, out int descent) {
 			IntPtr		dc;
 			TEXTMETRIC	tm;

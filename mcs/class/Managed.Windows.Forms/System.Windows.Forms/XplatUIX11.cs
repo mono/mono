@@ -79,6 +79,7 @@ namespace System.Windows.Forms {
 		private static IntPtr		FosterParent;		// Container to hold child windows until their parent exists
 		private static int		wm_protocols;		// X Atom
 		private static int		wm_delete_window;	// X Atom
+		private static int		wm_take_focus;		// X Atom
 		private static int		mwm_hints;		// X Atom
 		private static int		wm_no_taskbar;		// X Atom
 		private static int		wm_state_above;		// X Atom
@@ -86,6 +87,7 @@ namespace System.Windows.Forms {
 		private static int		wm_state_modal;		// X Atom
 		private static int		net_wm_state;		// X Atom
 		private static int		net_active_window;	// X Atom
+		private static int		net_wm_context_help;	// X Atom
 		private static int		async_method;
 		private static int		post_message;		// X Atom send to generate a PostMessage event
 		private static IntPtr		default_colormap;	// X Colormap ID
@@ -130,6 +132,7 @@ namespace System.Windows.Forms {
 				EventMask.EnterWindowMask | 
 				EventMask.LeaveWindowMask |
 				EventMask.ExposureMask |
+				EventMask.FocusChangeMask |
 				EventMask.PointerMotionMask | 
 				EventMask.VisibilityChangeMask |
 				EventMask.StructureNotifyMask;
@@ -361,6 +364,7 @@ namespace System.Windows.Forms {
 				// Prepare for shutdown
 				wm_protocols=XInternAtom(display_handle, "WM_PROTOCOLS", false);
 				wm_delete_window=XInternAtom(display_handle, "WM_DELETE_WINDOW", false);
+				wm_take_focus=XInternAtom(display_handle, "WM_TAKE_FOCUS", false);
 
 				// handling decorations and such
 				mwm_hints=XInternAtom(display_handle, "_MOTIF_WM_HINTS", false);
@@ -421,10 +425,9 @@ namespace System.Windows.Forms {
 			int			Width;
 			int			Height;
 			MotifWmHints		mwmHints;
-			IntPtr[]	atoms;
+			IntPtr[]		atoms;
 			int			atom_count;
 			int			BorderWidth;
-			int			protocols;
 			XSetWindowAttributes	attr;
 
 			ParentHandle=cp.Parent;
@@ -552,8 +555,19 @@ namespace System.Windows.Forms {
 					XMapWindow(DisplayHandle, WindowHandle);
 				}
 
-				protocols=wm_delete_window;
-				XSetWMProtocols(DisplayHandle, WindowHandle, ref protocols, 1);
+				atom_count = 0;
+				atoms[atom_count++] = (IntPtr)wm_delete_window;
+
+				// Only get the WM_TAKE_FOCUS message if we're a toplevel window
+				if ((cp.Parent == IntPtr.Zero) && ((cp.Style & (int)(WindowStyles.WS_POPUP | WindowStyles.WS_OVERLAPPEDWINDOW)) != 0)) {
+					atoms[atom_count++] = (IntPtr)wm_take_focus;
+				}
+
+				if ((cp.ExStyle & (int)WindowStyles.WS_EX_CONTEXTHELP) != 0) {
+					atoms[atom_count++] = (IntPtr)net_wm_context_help;
+				}
+
+				XSetWMProtocols(DisplayHandle, WindowHandle, atoms, atom_count);
 			}
 			return(WindowHandle);
 		}
@@ -1155,16 +1169,30 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.FocusIn: {
-					msg.message=Msg.WM_ACTIVATE;
-					msg.wParam=(IntPtr)WindowActiveFlags.WA_ACTIVE;
-					msg.lParam=IntPtr.Zero;
+					if (xevent.FocusChangeEvent.detail == NotifyDetail.NotifyNonlinear) {
+						msg.message=Msg.WM_ACTIVATEAPP;
+						msg.wParam=(IntPtr)1;
+						msg.lParam=IntPtr.Zero;
+					} else {
+						Console.WriteLine("Received focus: {0}", xevent.FocusChangeEvent.detail);
+						msg.message=Msg.WM_SETFOCUS;
+						msg.wParam=IntPtr.Zero;
+						msg.lParam=IntPtr.Zero;
+					}
 					break;
 				}
 
 				case XEventName.FocusOut: {
-					msg.message=Msg.WM_ACTIVATE;
-					msg.wParam=(IntPtr)WindowActiveFlags.WA_INACTIVE;
-					msg.lParam=IntPtr.Zero;
+					if (xevent.FocusChangeEvent.detail == NotifyDetail.NotifyNonlinear) {
+						msg.message=Msg.WM_ACTIVATEAPP;
+						msg.wParam=IntPtr.Zero;
+						msg.lParam=IntPtr.Zero;
+					} else {
+						Console.WriteLine("Lost focus: {0}", xevent.FocusChangeEvent.detail);
+						msg.message=Msg.WM_KILLFOCUS;
+						msg.wParam=IntPtr.Zero;
+						msg.lParam=IntPtr.Zero;
+					}
 					break;
 				}
 
@@ -1203,20 +1231,38 @@ namespace System.Windows.Forms {
 						if (result != null)
 							result.Complete (ret);
 						handle.Free ();
-					} else if (xevent.ClientMessageEvent.message_type == (IntPtr)hover.hevent) {
+						break;
+					}
+
+					if (xevent.ClientMessageEvent.message_type == (IntPtr)hover.hevent) {
 						msg.message = Msg.WM_MOUSEHOVER;
 						msg.wParam = GetMousewParam(0);
 						msg.lParam = (IntPtr) (xevent.ClientMessageEvent.ptr1);
-					} else if (xevent.ClientMessageEvent.message_type == (IntPtr) post_message) {
+						break;
+					}
+
+					if (xevent.ClientMessageEvent.message_type == (IntPtr) post_message) {
 						msg.message = (Msg) xevent.ClientMessageEvent.ptr1.ToInt32 ();
 						msg.hwnd = xevent.ClientMessageEvent.window;
 						msg.wParam = xevent.ClientMessageEvent.ptr2;
 						msg.lParam = xevent.ClientMessageEvent.ptr3;
-					} else {
-						msg.message = Msg.WM_DESTROY;
-						msg.wParam = IntPtr.Zero;
-						msg.lParam = IntPtr.Zero;
-						Exit ();
+						break;
+					}
+
+					if  (xevent.ClientMessageEvent.message_type == (IntPtr)wm_protocols) {
+						if (xevent.ClientMessageEvent.ptr1 == (IntPtr)wm_take_focus) {
+							msg.message=Msg.WM_ACTIVATEAPP;
+							msg.wParam=(IntPtr)1;
+							msg.lParam=IntPtr.Zero;
+							break;
+						}
+
+						if (xevent.ClientMessageEvent.ptr1 == (IntPtr)wm_delete_window) {
+							msg.message = Msg.WM_DESTROY;
+							msg.wParam = IntPtr.Zero;
+							msg.lParam = IntPtr.Zero;
+							Exit ();
+						}
 					}
 					break;
 				}
@@ -1620,6 +1666,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal override void SetFocus(IntPtr hwnd) {
+			XSetInputFocus(DisplayHandle, hwnd, RevertTo.None, IntPtr.Zero);
+		}
+
 		internal override bool GetFontMetrics(Graphics g, Font font, out int ascent, out int descent) {
 			return GetFontMetrics(g.GetHdc(), font.ToHfont(), out ascent, out descent);
 		}
@@ -1751,7 +1801,7 @@ namespace System.Windows.Forms {
 		internal extern static int XInternAtom(IntPtr display, string atom_name, bool only_if_exists);
 
 		[DllImport ("libX11", EntryPoint="XSetWMProtocols")]
-		internal extern static int XSetWMProtocols(IntPtr display, IntPtr window, ref int protocols, int count);
+		internal extern static int XSetWMProtocols(IntPtr display, IntPtr window, IntPtr[] protocols, int count);
 
 		[DllImport ("libX11", EntryPoint="XGrabPointer")]
 		internal extern static int XGrabPointer(IntPtr display, IntPtr window, bool owner_events, EventMask event_mask, GrabMode pointer_mode, GrabMode keyboard_mode, IntPtr confine_to, uint cursor, uint timestamp);
@@ -1853,6 +1903,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XGetWindowProperty")]
 		internal extern static int XGetWindowProperty(IntPtr display, IntPtr window, int atom, int long_offset, int long_length, bool delete, Atom req_type, out Atom actual_type, out int actual_format, out int nitems, out int bytes_after, ref IntPtr prop);
+
+		[DllImport ("libX11", EntryPoint="XSetInputFocus")]
+		internal extern static int XSetInputFocus(IntPtr display, IntPtr window, RevertTo revert_to, IntPtr time);
 		#endregion
 	}
 }
