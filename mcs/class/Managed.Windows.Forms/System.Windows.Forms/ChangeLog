@@ -1,3 +1,8 @@
+2005-02-23  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ProgressBar.cs: use clip region in ProgressBar
+	* ThemeWin32Classic.cs: use clip region in ProgressBar
+
 2004-02-22  Jackson Harper  <jackson@ximian.com>
 
 	* BindingsCollection.cs: Remove some debug code.

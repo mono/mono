@@ -2207,26 +2207,31 @@ namespace System.Windows.Forms
 		#endregion	// PictureBox
 
 		#region ProgressBar
-		public override void DrawProgressBar (Graphics dc, Rectangle clip_rectangle, ProgressBar progress_bar) {
-			Rectangle	client_area		= progress_bar.client_area;
-			int		space_betweenblocks	= 2;
-			int		x;
+		public override void DrawProgressBar (Graphics dc, Rectangle clip_rect, ProgressBar ctrl) 
+		{
+			Rectangle	block_rect;
+			Rectangle	client_area = ctrl.client_area;
+			int		space_betweenblocks	= 2;			
 			int		block_width;
 			int		increment;
 			int		barpos_pixels;
-
-			x = client_area.X;
+			
 			block_width = ((client_area.Height) * 2 ) / 3;
-			barpos_pixels = ((progress_bar.Value - progress_bar.Minimum) * client_area.Width) / (progress_bar.Maximum - progress_bar.Minimum);
+			barpos_pixels = ((ctrl.Value - ctrl.Minimum) * client_area.Width) / (ctrl.Maximum - ctrl.Minimum);
 			increment = block_width + space_betweenblocks;
 
 			/* Draw border */
-			CPDrawBorder3D (dc, progress_bar.paint_area, Border3DStyle.SunkenInner, Border3DSide.All, ColorButtonFace);
+			CPDrawBorder3D (dc, ctrl.ClientRectangle, Border3DStyle.SunkenInner, Border3DSide.All, ColorButtonFace);
 			
 			/* Draw Blocks */
-			while ((x - client_area.X) < barpos_pixels) {
-				dc.FillRectangle (ResPool.GetSolidBrush (progressbarblock_color), x, client_area.Y, block_width, client_area.Height);
-				x  = x + increment;
+			block_rect = new Rectangle (client_area.X, client_area.Y, block_width, client_area.Height);
+			while ((block_rect.X - client_area.X) < barpos_pixels) {
+				
+				if (clip_rect.IntersectsWith (block_rect) == true) {				
+					dc.FillRectangle (ResPool.GetSolidBrush (progressbarblock_color), block_rect);
+				}				
+				
+				block_rect.X  += increment;
 			}
 		}
 		

@@ -39,8 +39,7 @@ namespace System.Windows.Forms
 		private int maximum;
 		private int minimum;
 		internal int step;
-		internal int val;
-		internal Rectangle paint_area = new Rectangle ();
+		internal int val;		
 		internal Rectangle client_area = new Rectangle ();
 		#endregion	// Local Variables
 
@@ -367,7 +366,7 @@ namespace System.Windows.Forms
 			UpdateAreas ();
 
 			CreateBuffers (Width, Height);
-			Draw ();
+			
 		}
 
 		public void PerformStep ()
@@ -393,10 +392,6 @@ namespace System.Windows.Forms
 		#region Private Instance Methods
 		private void UpdateAreas ()
 		{
-			paint_area.X = paint_area.Y = 0;
-			paint_area.Width = Width;
-			paint_area.Height = Height;
-
 			client_area.X = client_area.Y = 2;
 			client_area.Width = Width - 4;
 			client_area.Height = Height - 4;
@@ -410,9 +405,9 @@ namespace System.Windows.Forms
 			UpdateAreas ();
     		}
 
-		private void Draw ()
+		private void Draw (Rectangle clip)
 		{
-			ThemeEngine.Current.DrawProgressBar (DeviceContext, this.ClientRectangle, this);
+			ThemeEngine.Current.DrawProgressBar (DeviceContext, clip, this);
 		}
 
 		private void OnPaintPB (Object o, PaintEventArgs pevent)
@@ -421,10 +416,10 @@ namespace System.Windows.Forms
     				return;
 
 			/* Copies memory drawing buffer to screen*/
-			Draw ();
-			pevent.Graphics.DrawImage (ImageBuffer, 0, 0);
-		}
-
+			Draw (pevent.ClipRectangle);
+			pevent.Graphics.DrawImage (ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
+		}		
+		
 		#endregion
 	}
 }
