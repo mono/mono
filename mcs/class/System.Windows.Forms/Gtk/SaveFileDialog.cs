@@ -7,6 +7,8 @@
 //
 // (C) 2002 Ximian, Inc
 //
+
+using System.ComponentModel;
 using System.IO;
 
 namespace System.Windows.Forms {
@@ -32,11 +34,13 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Properties
 		//
+		// pregunta si queremos crear un archivo nuevo.
 		[MonoTODO]
 		public bool CreatePrompt {
 			get {return createPrompt;}
 			set {createPrompt = value;}
 		}
+		// pregunta si queremos sobreescribir.
 		[MonoTODO]
 		public bool OverwritePrompt {
 			get {return overwritePrompt;}
@@ -56,22 +60,18 @@ namespace System.Windows.Forms {
 			base.Reset();
 			CheckFileExists = false;
 		}
+		public override string ToString(){
+			return String.Format (
+				"System.Windows.Forms.SaveFileDialog: Title: {0}, FileName: {1}",
+				this.Title,
+				this.FileName);
+		}
 		
 		[MonoTODO]
 		internal override Gtk.Dialog CreateDialog (){
-			Gtk.FileSelection s = new Gtk.FileSelection ("FileSelection - Save");
-			s.CancelButton.Clicked += new EventHandler (BtnCancelClicked);
-			s.OkButton.Clicked += new EventHandler (BtnOkClicked);
-			s.DeleteEvent += new GtkSharp.DeleteEventHandler (OnDelete);
-			s.Response += new GtkSharp.ResponseHandler (OnResponse);
-			return s;
+			return new Gtk.FileSelection (String.Empty);
 		}
-		[MonoTODO]
-		internal void BtnCancelClicked (object sender, EventArgs args){
-		}
-		[MonoTODO]
-		internal void BtnOkClicked (object sender, EventArgs args){
-		}
+		
 		
 	 }
 }

@@ -1,10 +1,14 @@
 //
 // System.Windows.Forms.MainMenu
 // 
+// 	Author:
+//		Alberto Fernandez	(infjaf00@yahoo.es)
+//
 
 using System;
 using System.ComponentModel;
-namespace System.Windows.Forms{	
+
+namespace System.Windows.Forms{
 
 	public class MainMenu:Menu{
 		private RightToLeft rightToLeft = RightToLeft.Inherit;
@@ -47,7 +51,7 @@ namespace System.Windows.Forms{
 		}
 		[MonoTODO]
 		protected override void Dispose (bool disposing){
-			base.Dispose (disposing);
+			base.Dispose (disposing);			
 		}
 		public virtual Form GetForm (){
 			return ownerForm;
@@ -58,9 +62,7 @@ namespace System.Windows.Forms{
 				return base.ToString () + ", GetForm: " +
 					ownerForm.ToString ();
 			}
-			else{
-				return base.ToString ();
-			}
+			return base.ToString (); 
 		}
 		
 		
@@ -80,11 +82,10 @@ namespace System.Windows.Forms{
 		}
 		
 		internal override void OnNewMenuItemAdd (MenuItem item){
-			((Gtk.MenuBar)Widget).Add (item.Widget);
+			((Gtk.MenuBar)Widget).Append (item.Widget);
 		}
 		internal override void OnRemoveMenuItem (MenuItem item){
 			((Gtk.MenuBar)Widget).Remove (item.Widget);
-		}
-		
+		}		
 	}
 }

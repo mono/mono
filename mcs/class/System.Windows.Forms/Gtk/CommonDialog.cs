@@ -54,7 +54,7 @@ namespace System.Windows.Forms {
 		}
 		
 		public DialogResult ShowDialog(IWin32Window owner){
-			bool res = RunDialog ( owner.Handle );
+			bool res = RunDialog ( IntPtr.Zero );
 			return res ? DialogResult.OK : DialogResult.Cancel;
 		}		
 		public event EventHandler HelpRequest;
@@ -64,30 +64,43 @@ namespace System.Windows.Forms {
 			get {
 				if (dialog == null){
 					dialog = CreateDialog();
+					dialog.Modal = true;
+					dialog.Response += new GtkSharp.ResponseHandler (OnResponse);
+					dialog.DeleteEvent += new GtkSharp.DeleteEventHandler (OnDelete);
 				}
 				return dialog;
 			}
 		}
-		// TODO: Change to abstract.
+
 		internal abstract Gtk.Dialog CreateDialog();
 			
 		internal void OnDelete (object sender, GtkSharp.DeleteEventArgs args){
 			Gtk.Window d = (Gtk.Window) sender;
 			d.Hide ();
+			dialogRetValue = false;
+			OnCancel();
 			args.RetVal = true;
 		}
-		internal void OnResponse (object o, GtkSharp.ResponseArgs args){
-			Console.WriteLine ("OnResponse {0}" ,args.ResponseId);
+		internal virtual void OnResponse (object o, GtkSharp.ResponseArgs args){
 			switch (args.ResponseId){
 				case (int)Gtk.ResponseType.Accept:
 				case (int)Gtk.ResponseType.Ok:
 				case (int)Gtk.ResponseType.Yes:
 				case (int)Gtk.ResponseType.Apply:
 									dialogRetValue = true;
+									OnAccept();
+									Dialog.Hide();
 									break;
 				default:dialogRetValue = false;
+						OnCancel();
+						Dialog.Hide();
 						break;
 			}
+		}
+		internal virtual void OnCancel(){
+			
+		}
+		internal virtual void OnAccept (){
 		}
 	}
 }

@@ -41,7 +41,6 @@ namespace System.Windows.Forms {
 			get { return showReadOnly; }
 			set { showReadOnly = value;}
 		}
-
 		[MonoTODO]
 		public Stream OpenFile() {
 			return new FileStream ( FileName, FileMode.Open, FileAccess.Read );
@@ -54,21 +53,17 @@ namespace System.Windows.Forms {
 			ShowReadOnly = false;
 			ReadOnlyChecked = false;
 		}
+		public override string ToString(){
+			return String.Format (
+				"System.Windows.Forms.OpenFileDialog: Title: {0}, FileName: {1}",
+				this.Title,
+				this.FileName);
+		}
 		
 		[MonoTODO]
 		internal override Gtk.Dialog CreateDialog (){
-			Gtk.FileSelection s = new Gtk.FileSelection ("FileSelection - Open");
-			s.CancelButton.Clicked += new EventHandler (BtnCancelClicked);
-			s.OkButton.Clicked += new EventHandler (BtnOkClicked);
-			s.DeleteEvent += new GtkSharp.DeleteEventHandler (OnDelete);
-			s.Response += new GtkSharp.ResponseHandler (OnResponse);
-			return s;
+			return new Gtk.FileSelection (String.Empty);
 		}
-		[MonoTODO]
-		internal void BtnCancelClicked (object sender, EventArgs args){
-		}
-		[MonoTODO]
-		internal void BtnOkClicked (object sender, EventArgs args){
-		}
+
 	}
 }

@@ -1,3 +1,10 @@
+//
+// System.Windows.Forms.Cursor
+//
+// Author:
+//		Alberto Fernandez (infjaf00@yahoo.es)
+//
+
 
 namespace System.Windows.Forms{
 
@@ -7,6 +14,9 @@ namespace System.Windows.Forms{
 	using System.IO;
 
 	public sealed class Cursor : IDisposable, ISerializable {
+	
+		internal Cursor(){
+		}
 		[MonoTODO]
 		public Cursor (IntPtr handle){
 			if (handle == IntPtr.Zero){
@@ -69,7 +79,7 @@ namespace System.Windows.Forms{
 			throw new NotImplementedException();
 		}
 		[MonoTODO]
-		public bool Equals (Object obj){
+		public override bool Equals (Object obj){
 			throw new NotImplementedException();
 		}
 		[MonoTODO]
@@ -95,9 +105,8 @@ namespace System.Windows.Forms{
 		public override String ToString(){
 			return base.ToString();
 		}
-		
 		public static bool operator==(Cursor left, Cursor right){
-			throw new NotImplementedException();
+			return left.Equals(right);
 		}
 		public static bool operator!=(Cursor left, Cursor right) {
 			return ( !(left == right));

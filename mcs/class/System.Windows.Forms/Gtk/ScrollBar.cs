@@ -12,12 +12,12 @@ using System.Drawing;
 
 namespace System.Windows.Forms {
 
-	// <summary>
-	// </summary>
+	/// <summary>
+	/// </summary>
 
 	public class ScrollBar : Control {
 		internal Gtk.Adjustment adj;
-		private double value;
+		private double val;
 		private double lower;
 		private double upper;
 		private double step_increment;
@@ -28,22 +28,18 @@ namespace System.Windows.Forms {
 		//  --- Constructor
 		//
 
-		public ScrollBar() : base()
-		{
+		public ScrollBar() : base(){
 			// Defaults
 			this.upper = 100;
 			this.lower = 0;
-			this.value = 0;
+			this.val = 0;
 			this.step_increment = 1;
-			this.page_increment = 100;
-			this.page_size = 100;
-
-			this.adj = new Gtk.Adjustment(value, lower, upper, step_increment, page_increment, page_size);
-
+			this.page_increment = 10;
+			this.page_size = 10;
+			this.adj = new Gtk.Adjustment(val, lower, upper, step_increment, page_increment, page_size);
 			//spec says tabstop defaults to false.
 			base.TabStop = false;
-
-			ConnectToChanged ();
+			ConnectToChanged();
 		}
 
 		//
@@ -51,111 +47,117 @@ namespace System.Windows.Forms {
 		//
 
 
-		[MonoTODO]
 		public int LargeChange {
-			get {
-				return (int)this.adj.PageIncrement;
-			}
+			get {return (int)page_increment;}
 			set {
+				if (value < 0){
+					String st = String.Format (
+						"'{0}' is not a valid value for LargeChange."+
+						"It should be >= 0", value
+					);
+					throw new ArgumentException (st);
+				}
 				page_increment = value;
-				this.adj.SetBounds (lower, upper, step_increment, page_increment, page_size);
+				UpdateGtkScroll();
 			}
 		}
 
-		 [MonoTODO]
 		public int Maximum {
-			get {
-				return (int)this.adj.Upper;
-			}
+			get {return (int) upper;}
 			set {
 				upper = value;
-				this.adj.SetBounds (lower, upper, step_increment, page_increment, page_size);
+				if (value < lower)
+					lower = value;
+				if (value < this.Value)
+					this.Value = value;
+					
+				UpdateGtkScroll();
 			}
 		}
 
-		 [MonoTODO]
 		public int Minimum {
-			get {
-				return (int)this.adj.Lower;
-			}
+			get {return (int) lower;}
 			set {
 				lower = value;
-				this.adj.SetBounds (lower, upper, step_increment, page_increment, page_size);
+				if (value > upper)
+					upper = value;
+				if (value > val)
+					val = value;
+				UpdateGtkScroll();
 			}
 		}
-
-		 [MonoTODO]
 		public int SmallChange {
-			get {
-				return (int) this.adj.StepIncrement;
-			}
+			get { return (int) step_increment;}
 			set {
+				if (value < 0){
+					String st = String.Format (
+						"'{0}' is not a valid value for SmallChange."+
+						"It should be >= 0", value
+					);
+					throw new ArgumentException (st);
+				}
 				step_increment = value;
-				this.adj.SetBounds (lower, upper, step_increment, page_increment, page_size);
+				UpdateGtkScroll();
 			}
 		}
 
-		 public override string Text {
-			 //Can't imagen what a scroll bar would do with text, so just call base.
-			 get {
-				 return base.Text;
-			 }
-			 set {
-				 base.Text = value;
-			 }
-		 }
-
-		 [MonoTODO]
 		public int Value {
-			get {
-				return (int)this.adj.Value;
-			}
+			get {return (int) val; }
+				
 			set {
-				this.adj.Value = value;
+				if ((value > upper) || (value < lower)){
+					String st = String.Format (
+					"'{0}' is not a valid value for Minimum."+
+					" It should be betwen Minimum and Maximum", value);
+					
+					throw new ArgumentException (st);
+				}
+				val = value; 
+				UpdateGtkScroll();
 			}
-		}
-
-		//
-		//  --- Public Methods
-		//
-
-		public override string ToString()
-		{	
-			 //replace with value, if implmeted as property.
-			return Value.ToString();
 		}
 
 		//
 		//  --- Public Events
 		//
 
-		[MonoTODO]
 		public event ScrollEventHandler Scroll;
-
-
 		public event EventHandler ValueChanged;
 
-		internal protected void changed_cb (object o, EventArgs args)
-		{
+		protected virtual void OnValueChanged (EventArgs args){
 			if (ValueChanged != null)
 				ValueChanged (this, args);
 		}
+		protected virtual void OnScroll (ScrollEventArgs args){
+			if (Scroll != null)
+				Scroll (this, args);
+		}
+		[MonoTODO]
+		protected override void OnEnabledChanged(EventArgs e){
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		protected override void OnHandleCreated(EventArgs e){
+			throw new NotImplementedException();
+		}	
 		
-		internal protected void ConnectToChanged ()
-		{
+		// FIXME: 
+		
+		internal protected void changed_cb (object o, EventArgs args){
+			val = this.adj.Value;
+			OnValueChanged(args);
+			OnScroll (new ScrollEventArgs(ScrollEventType.ThumbPosition ,(int) val));
+		}
+		
+		internal protected void ConnectToChanged (){
 			this.adj.ValueChanged += new EventHandler (changed_cb);
 		}
-
-		[MonoTODO]
-		protected override void OnEnabledChanged(EventArgs e)
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		protected override void OnHandleCreated(EventArgs e)
-		{
-			throw new NotImplementedException();
+		
+		internal protected void UpdateGtkScroll(){
+			this.adj.SetBounds (lower, upper, step_increment, page_increment, page_size);
+			if ((int) val != this.adj.Value)
+				this.adj.Value = (int) val;
 		}
 	 }
 }

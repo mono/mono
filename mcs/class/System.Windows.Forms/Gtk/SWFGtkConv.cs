@@ -72,30 +72,14 @@ namespace System.Windows.Forms{
 			return ret;
 		}
 		
+		
+		// Font not implemented.
 		[MonoTODO]
 		public static Pango.FontDescription Font (System.Drawing.Font f){
-		
-			// TODO: Font Size.
-			// TODO: Font Family/Name
-			
 			FontDescription ret = new FontDescription();
-			ret.Weight = (f.Bold) ? Pango.Weight.Bold :  Pango.Weight.Normal;
-			ret.Family = f.FontFamily.Name;
-			//ret.Family = f.Name;
-			
-			
-			//GdiCharSet
-			//GdiVerticalFont
-			//Height
-			ret.Style = (f.Italic) ? Pango.Style.Italic : Pango.Style.Normal;
-			//Italic
-			//Name
-			//Size
-			//SizeInPoints
-			//Strikeout
-			//Style
-			//Underline
-			//Unit
+			//ret.Weight = (f.Bold) ? Pango.Weight.Bold :  Pango.Weight.Normal;
+			//ret.Family = f.FontFamily.Name;
+			//ret.Style = (f.Italic) ? Pango.Style.Italic : Pango.Style.Normal;
 			
 			return ret;
 		}

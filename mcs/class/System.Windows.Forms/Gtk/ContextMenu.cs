@@ -1,6 +1,9 @@
 //
 // System.Windows.Forms.ContextMenu
 // 
+// 	Author:
+//		Alberto Fernandez	(infjaf00@yahoo.es)
+//
 
 using System;
 using System.ComponentModel;

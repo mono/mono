@@ -6,6 +6,7 @@
 //
 //
 using System;
+using System.Collections;
 using System.Drawing;
 using Gtk;
 using GtkSharp;
@@ -33,7 +34,7 @@ namespace System.Windows.Forms {
 			public ItemCollection (ListBox owner){
 
 				this.owner = owner;
-				owner.store = new ListStore ((int)TypeFundamentals.TypeString);
+				owner.store = new ListStore (typeof (string));
 				
 			}
 						
@@ -46,13 +47,14 @@ namespace System.Windows.Forms {
 			}
 		}
 		
+		protected override void SetItemsCore(IList items){}
 		public ListBox () : base (){
 			this.Items = new ItemCollection(this);
 		}
 	
 		internal override Gtk.Widget CreateWidget () {
 		
-			ListStore store = new ListStore ((int)TypeFundamentals.TypeString);
+			ListStore store = new ListStore (typeof (string));
 			TreeView tv = new TreeView ();
 			tv.HeadersVisible = true;
 			tv.HeadersClickable = false;

@@ -141,7 +141,7 @@ namespace System.Windows.Forms{
 		[MonoTODO] 
 		public virtual Rectangle Bounds{
 			get	{throw new NotImplementedException ();}
-			set{throw new NotImplementedException ();}
+			set {throw new NotImplementedException ();}
 		}
 		[MonoTODO] 
 		public virtual bool CanFocus{
@@ -160,7 +160,7 @@ namespace System.Windows.Forms{
 		[MonoTODO] 
 		public virtual bool CausesValidation{
 			get{return true;}
-			set{throw new NotImplementedException ();}
+			set{}
 		}
 		[MonoTODO] 
 		public virtual Rectangle ClientRectangle	{
@@ -193,19 +193,19 @@ namespace System.Windows.Forms{
 		public virtual ControlCollection Controls{
 			get	{
 				if (controls == null)
-					controls = new ControlCollection (this);
+					controls = CreateControlsInstance();
 				return controls;
+				
 			}
 		}
 		[MonoTODO] 
-		public virtual bool Created
-		{
+		public virtual bool Created{
 			get{return true;}
 		}
 		[MonoTODO] 
 		public virtual Cursor Cursor{
 			get{throw new NotImplementedException ();}
-			set{throw new NotImplementedException ();}
+			set{}
 
 		}
 		[MonoTODO] 
@@ -264,8 +264,7 @@ namespace System.Windows.Forms{
 		public virtual bool HasChildren{
 			get{return (Controls.Count > 0);}
 		}
-		public int Height
-		{
+		public int Height{
 			get	{return Size.Height;}
 			set {
 				Size s = Size;
@@ -285,8 +284,7 @@ namespace System.Windows.Forms{
 		}
 
 		[MonoTODO] 
-		public virtual bool InvokeRequired
-		{
+		public virtual bool InvokeRequired{
 			get {return false;}
 		}
 
@@ -296,18 +294,15 @@ namespace System.Windows.Forms{
 			set{return;	}
 		}
 		[MonoTODO] 
-		public bool IsDisposed
-		{
+		public bool IsDisposed{
 			get{return false;}
 		}
 		[MonoTODO] 
-		public bool IsHandleCreated
-		{
+		public bool IsHandleCreated{
 			get	{return true;}
 		}
 
-		public int Left
-		{
+		public int Left{
 			get{return Location.X;}
 			set{
 				Point p = Location;
@@ -315,13 +310,11 @@ namespace System.Windows.Forms{
 				this.Location = p;
 			}
 		}
-
-		public Point Location
-		{
+		public Point Location{
 			get{return location;}
 			set{
 				location = value;
-				OnLocationChanged (EventArgs.Empty);								
+				OnLocationChanged (EventArgs.Empty);						
 			}
 		}
 		[MonoTODO] 
@@ -334,6 +327,7 @@ namespace System.Windows.Forms{
 		}
 		[MonoTODO] 
 		public static Point MousePosition{
+			
 			get{ return new Point (0, 0);}
 		}
 		public virtual string Name{
@@ -343,8 +337,6 @@ namespace System.Windows.Forms{
 				Widget.Name = value;
 			}
 		}
-
-		[MonoTODO] 
 		public virtual Control Parent{
 			get{return parent;}
 			set{
@@ -373,7 +365,7 @@ namespace System.Windows.Forms{
 		[MonoTODO] 
 		public virtual Region Region{
 			get{throw new NotImplementedException ();}
-			set{throw new NotImplementedException ();}
+			set{}
 		}
 		public virtual int Right{
 			get{ return Left + Width;}
@@ -437,7 +429,7 @@ namespace System.Windows.Forms{
 			set{Widget.Visible = value;}
 		}
 
-		[MonoTODO] public virtual int Width{
+		public virtual int Width{
 			get	{return Size.Width;}
 			set	{
 				Size s = this.Size;
@@ -454,7 +446,7 @@ namespace System.Windows.Forms{
 		}
 		[MonoTODO] 
 		protected virtual ImeMode DefaultImeMode{
-			get	{return ImeMode.Disable;}
+			get	{return ImeMode.Inherit;}
 		}
 
 		protected virtual Size DefaultSize{
@@ -463,12 +455,12 @@ namespace System.Windows.Forms{
 		[MonoTODO] 
 		protected virtual int FontHeight{
 			get	{throw new NotImplementedException ();}
-			set {throw new NotImplementedException ();}
+			set {}
 		}
 		[MonoTODO] 
 		protected virtual bool ResizeRedraw{
 			get{throw new NotImplementedException ();}
-			set{throw new NotImplementedException ();}
+			set{}
 		}
 		[MonoTODO] 
 		protected virtual bool ShowFocusCues{
@@ -497,9 +489,12 @@ namespace System.Windows.Forms{
 		[MonoTODO] 
 		public virtual void BringToFront (){
 		}
-		[MonoTODO] 
 		public virtual bool Contains (Control c){
-			throw new NotImplementedException ();
+			foreach (Control control in Controls){
+				if  ( (control == c)  || control.Contains(c))
+					return true;
+			}
+			return false;
 		}
 		[MonoTODO]
 		protected virtual AccessibleObject	CreateAccessibilityInstance (){
@@ -509,8 +504,8 @@ namespace System.Windows.Forms{
 		public virtual void CreateControl (){
 		}
 		[MonoTODO]
-		protected virtual ControlCollection	CreateControlInstance (){
-			throw new NotImplementedException ();
+		protected virtual ControlCollection	CreateControlsInstance (){
+			return new ControlCollection (this);			
 		}
 		[MonoTODO] 
 		public virtual Graphics CreateGraphics (){
@@ -1466,7 +1461,7 @@ namespace System.Windows.Forms{
 				//	owner.OnControlAdded (new ControlEventArgs (value));
 				//}
 			}
-			public virtual void AddRange (Control[]controls){
+			public virtual void AddRange (Control[] controls){
 				// Because we really do have to check for a few
 				// special cases we cannot use the AddRange and
 				// will have to check each Control that we add
@@ -1519,7 +1514,7 @@ namespace System.Windows.Forms{
 			int IList.Add (object value){
 				return list.Add (value);
 			}
-			public void Clear (){
+			public virtual void Clear (){
 				list.Clear ();
 			}
 			bool IList.Contains (object value){

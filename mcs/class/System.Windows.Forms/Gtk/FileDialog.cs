@@ -19,27 +19,26 @@ namespace System.Windows.Forms {
     public abstract class FileDialog : CommonDialog {
 
 		
-		private string fileName = String.Empty;
-		private bool addExtension=true;
-		private bool checkFileExists = false;
-		private bool checkPathExists = true;
-		private string defaultExt = "";
-		private bool dereferenceLinks = true;
+		private string fileName;
+		private bool addExtension;
+		private bool checkFileExists;
+		private bool checkPathExists;
+		private string defaultExt;
+		private bool dereferenceLinks;
 		int filterIndex;
 		string filter;
 		
 		
 		bool showHelp;
-		string title;
 		string initialDirectory;
 		bool restoreDirectory;
 		bool validateNames;
 
-		// Don't use,
+		// Don't use, ? 
 		//protected static readonly object EventFileOk;
 		
-		protected FileDialog ( ){
-			
+		protected FileDialog ( ):base(){	
+			this.Reset();		
 		}
  
 		public bool AddExtension {
@@ -79,24 +78,12 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		public string[] FileNames {
-			get {
-				return new String[0];
-				//throw new NotImplementedException ();
-			}
+			get {return new String[]{this.FileName};}
 		}
 
 		public string Filter {
 			get { return filter; }
-			set { 
-				/*if ( value.Length > 0 ) {
-					int sepNum = getSeparatorsCount ( value );
-					if ( ( sepNum / 2 ) * 2 == sepNum ) {
-						// number of separators should be odd
-						throw new ArgumentException ("Parameter format is invalid");
-					}
-				}*/
-				filter = value;
-			}
+			set { filter = value;}
 		}
 
 		public int FilterIndex {
@@ -120,8 +107,8 @@ namespace System.Windows.Forms {
 		}
 
 		public string Title {
-			get { return title; }
-			set { title = value;}
+			get { return Dialog.Title; }
+			set { Dialog.Title = value;}
 		}
 
 		public bool ValidateNames {
@@ -139,7 +126,6 @@ namespace System.Windows.Forms {
 			checkPathExists = true;
 			dereferenceLinks = true;
 			showHelp = false;
-			title = string.Empty;
 			initialDirectory = string.Empty;
 			restoreDirectory = false;
 			validateNames = true;
@@ -147,9 +133,9 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		public override string ToString(){
-			//FIXME:
 			return base.ToString();
 		}
+
 		public event CancelEventHandler FileOk;
 
 	

@@ -16,6 +16,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Collections;
 using System.Runtime.CompilerServices;
+using System.IO;
 
 namespace System.Windows.Forms
 {
@@ -43,9 +44,16 @@ namespace System.Windows.Forms
 		
 		[MonoTODO]
 		public static string CommonAppDataPath{
-			get{
-				//FIXME:
-				return "";
+			get{				
+				String cadp = Environment.GetFolderPath(
+					Environment.SpecialFolder.CommonApplicationData);
+				if (cadp == "")
+					cadp = Environment.GetFolderPath(
+						Environment.SpecialFolder.ApplicationData);
+				char c = Path.DirectorySeparatorChar;
+				cadp += c + CompanyName + c + ProductName +c + ProductVersion;
+				return cadp;
+
 			}
 		}
 
@@ -57,37 +65,53 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		public static string CompanyName{
 			get{
-				AssemblyCompanyAttribute[] attrs =(AssemblyCompanyAttribute[]) Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute),true);
-				if (attrs != null && attrs[0] != null)
-					return attrs[0].Company;
-				return "";
+				Type t = Assembly.GetEntryAssembly().EntryPoint.ReflectedType;
+				String ret1 = (t.Namespace == "") ? 
+					t.Name : 
+					t.Namespace.Substring (0,t.Namespace.IndexOf('.'));
+				
+				try{
+					AssemblyCompanyAttribute[] attrs =(AssemblyCompanyAttribute[]) Assembly.GetEntryAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute),true);
+					if ((attrs != null) && (attrs[0] != null))
+						return attrs[0].Company;
+				}
+				catch (Exception){
+					
+				}
+				return ret1;
+				
 			}
 		}
 	
 		[MonoTODO]
 		public static CultureInfo CurrentCulture 
 		{
-			get{return CultureInfo.CurrentCulture;}
-			set{Thread.CurrentThread.CurrentCulture = value;}
+			get{ return CultureInfo.CurrentCulture; }
+			set{ Thread.CurrentThread.CurrentCulture = value; }
 		}
 	
-		//[MonoTODO]
-		//public static InputLanguage CurrentInputLanguage 
-		//{
-		//	get { throw new NotImplementedException (); }
-		//	set {return;}
-		//}
+		[MonoTODO]
+		public static InputLanguage CurrentInputLanguage {
+			get { throw new NotImplementedException (); }
+			set {return;}
+		}
 	
 		[MonoTODO]
 		public static string ExecutablePath{
-			get {return Assembly.GetExecutingAssembly().Location;}
+			get { return Assembly.GetExecutingAssembly().Location; }
 		}
 	
 		[MonoTODO]
 		public static string LocalUserAppDataPath {
 			get{
-				//FIXME:
-				return "";
+				String cadp = Environment.GetFolderPath(
+					Environment.SpecialFolder.LocalApplicationData);
+				if (cadp == "")
+					cadp = Environment.GetFolderPath(
+						Environment.SpecialFolder.ApplicationData);
+				char c = Path.DirectorySeparatorChar;
+				cadp += c + CompanyName + c + ProductName +c + ProductVersion;
+				return cadp;
 			}
 		}
 	
@@ -99,21 +123,28 @@ namespace System.Windows.Forms
 			
 		[MonoTODO]
 		public static string ProductName{
-			get{
-				AssemblyProductAttribute[] attrs =(AssemblyProductAttribute[]) Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute),true);
-				if (attrs != null && attrs[0] != null)
-					return attrs[0].Product;
-				return "";
+			get{ 
+				
+				Type t = Assembly.GetEntryAssembly().EntryPoint.ReflectedType;
+				String ret1 = (t.Namespace == "") ? 
+					t.Name : 
+					t.Namespace.Substring (t.Namespace.LastIndexOf('.')+1);
+					
+				try{
+					AssemblyProductAttribute[] attrs =(AssemblyProductAttribute[]) Assembly.GetEntryAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute),true);
+					if (attrs != null && attrs[0] != null)
+						return attrs[0].Product;
+				}
+				catch (Exception){
+				}
+				return ret1;				
 			}
 		}
 	
 		[MonoTODO]
 		public static string ProductVersion{
 			get	{
-				AssemblyVersionAttribute[] attrs =(AssemblyVersionAttribute[]) Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyVersionAttribute),true);
-				if (attrs != null && attrs[0] != null)
-					return attrs[0].Version;
-				return "";
+				return Assembly.GetEntryAssembly().GetName().Version.ToString();
 			}
 		}
 	
@@ -126,17 +157,21 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		public static string StartupPath {
 			get{
-				//FIXME:
-				return "";
+				String exe = Assembly.GetEntryAssembly().GetName().CodeBase;
+				//Remove "file://"
+				exe = exe.Substring (7);
+				return new FileInfo(exe).DirectoryName;
 			}
 		}
 	
 		[MonoTODO]
 		public static string UserAppDataPath{
-			get 
-			{
-				//FIXME:
-				return "";
+			get{
+				String cadp = Environment.GetFolderPath(
+					Environment.SpecialFolder.ApplicationData);
+				char c = Path.DirectorySeparatorChar;
+				cadp += c + CompanyName + c + ProductName +c + ProductVersion;
+				return cadp;
 			}
 		}
 	
@@ -154,7 +189,6 @@ namespace System.Windows.Forms
 		public static void DoEvents (){
 			while (Gtk.Application.EventsPending())
 					Gtk.Application.RunIteration(); 
-
 		}
 		[MonoTODO]
 		//.NET version 1.1
@@ -250,7 +284,6 @@ namespace System.Windows.Forms
 		public static void Run (Form mainForm){
 			// Documents say this parameter name should be mainform, 
 			// but the verifier says context.
-			//mainForm.CreateControl ();
 			ApplicationContext context = new ApplicationContext (mainForm);
 			Run (context);
 		}

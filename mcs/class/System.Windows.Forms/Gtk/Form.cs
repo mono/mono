@@ -21,8 +21,10 @@ using GtkSharp;
 namespace System.Windows.Forms
 {
 
-	public class Form:ContainerControl
+	public class Form : ContainerControl
 	{
+		private Gtk.RadioButton firstRadioButton;
+		private int radioButtonsCount = 0;
 		internal Gtk.Window win;
 		
 		
@@ -306,24 +308,7 @@ namespace System.Windows.Forms
 
 
 		public MainMenu Menu{
-			/*else if (value.GetType () ==
-				 * typeof (System.Windows.Forms.
-				 * MainMenu))
-				 * {
-				 * MainMenu m = (MainMenu) value;
-				 * this.owner.vbox.PackStart (m.mb,
-				 * false,
-				 * false, 0);
-				 * m.mb.ShowAll ();
-				 * this.owner.vbox.ReorderChild (m.mb,
-				 * 0);
-				 * this.owner.vbox.ShowAll ();
-				 * list.Add (value);
-				 * } */
-			get{
-				return mainMenu;
-				//throw new NotImplementedException ();
-				}
+			get{ return mainMenu; }
 			set{
 				if (value == mainMenu){
 					return;
@@ -332,7 +317,6 @@ namespace System.Windows.Forms
 					this.vbox.Remove (mainMenu.Widget);
 					this.vbox.ShowAll();
 					mainMenu.RemoveFromForm();
-					// Quitar el menu de la ventana.
 				}
 				if (value != null){
 					this.vbox.PackStart(value.Widget, false, false, 0);
@@ -341,11 +325,7 @@ namespace System.Windows.Forms
 					value.AddToForm (this);
 				}
 				
-				mainMenu = value;
-			
-			
-				//throw new NotImplementedException ();
-			
+				mainMenu = value;			
 			}
 		}
 
@@ -640,6 +620,8 @@ namespace System.Windows.Forms
 		protected override Size DefaultSize{
 			get{return new Size (300, 300);}
 		}
+		
+		
 
 		[MonoTODO] 
 		protected Rectangle MaximizedBounds{
@@ -684,6 +666,21 @@ namespace System.Windows.Forms
 				e.Cancel = true;	// don't destroy modal form
 				DialogResult = DialogResult.Cancel;
 			}
+		}
+		protected override void OnControlAdded (ControlEventArgs e){
+			base.OnControlAdded(e);
+			if (e.Control is RadioButton){
+				if (radioButtonsCount == 0)
+					firstRadioButton = e.Control.Widget as Gtk.RadioButton;
+				else
+					(e.Control.Widget as Gtk.RadioButton).Group = 
+						firstRadioButton.Group;
+				radioButtonsCount++;
+			}		
+		}
+		[MonoTODO]
+		protected override void OnControlRemoved (ControlEventArgs e){	
+			base.OnControlRemoved (e);
 		}
 
 		protected override void OnCreateControl (){

@@ -1,6 +1,9 @@
 //
 // System.Windows.Forms.Menu
 // 
+// 	Author:
+//		Alberto Fernandez	(infjaf00@yahoo.es)
+//
 
 using System;
 using System.ComponentModel;
@@ -81,24 +84,23 @@ namespace System.Windows.Forms{
 				return (ContextMenu)menu;
 		}
 		public virtual MainMenu GetMainMenu(){
-				Menu menu = this;
-				while((menu != null) && !(menu is MainMenu)){
-					if(menu is System.Windows.Forms.MenuItem){
-						menu = ((System.Windows.Forms.MenuItem)menu).Parent;
-					}
-					else{
-						return null;
-					}
+			Menu menu = this;
+			while((menu != null) && !(menu is MainMenu)){
+				if(menu is System.Windows.Forms.MenuItem){
+					menu = ((System.Windows.Forms.MenuItem)menu).Parent;
 				}
-				return (MainMenu)menu;
+				else{
+					return null;
+				}
+			}
+			return (MainMenu)menu;
 		}
 		
 		[MonoTODO]
 		public virtual void MergeMenu (Menu menuSrc){
 			if (menuSrc == this){
 				throw new Exception ();
-			}
-			
+			}			
 			
 		}
 		// Don't use
@@ -146,20 +148,6 @@ namespace System.Windows.Forms{
 			public MenuItemCollection (Menu m) {
 				parentMenu_ = m;
 			}
-			
-			/*[MonoTODO]
-			internal void MoveItemToIndex( int index, MenuItem mi) {
-				if( index >= items_.Count){
-					// FIXME: Set exception parameters
-					throw new ArgumentException();
-				}
-				else if( items_.Count != 1){
-					items_.Remove (mi);
-					items_.Insert (index, mi);
-					mi.Index = index;
-				}
-			}*/
-
 			//
 			// -- Public Methods
 			//
@@ -250,15 +238,15 @@ namespace System.Windows.Forms{
 				}
 			}
 
-			public override bool Equals(object o) {
-				return base.Equals(o);
-			}
+			//public override bool Equals(object o) {
+			//	return base.Equals(o);
+			//}
 
 			[MonoTODO]
-			public override int GetHashCode() {
+			//public override int GetHashCode() {
 				//FIXME add our proprities
-				return base.GetHashCode();
-			}
+			//	return base.GetHashCode();
+			//}
 
 			public IEnumerator GetEnumerator() {
 				return items_.GetEnumerator();
@@ -287,7 +275,6 @@ namespace System.Windows.Forms{
 
 			public override string ToString() {
 				return base.ToString();
-				//throw new NotImplementedException ();
 			}
 
 			//
@@ -304,41 +291,27 @@ namespace System.Windows.Forms{
 			//
 
 			public int Count {
-				get {
-					return items_.Count;					
-				}
+				get {return items_.Count;}
 			}
 
 			/// <summary>
 			/// IList Interface implmentation.
 			/// </summary>
 			bool IList.IsReadOnly {
-				get {
-					// We allow addition, removeal, and editing of 
-					// items after creation of the list.
-					return false;
-				}
+				get { return items_.IsReadOnly; }
 			}
 
 			bool IList.IsFixedSize {
-				get {
-					// We allow addition and removeal of 
-					// items after creation of the list.
-					return false;
-				}
+				get { return false;	}
 			}
 
 			public MenuItem this[int index] {
-				get {
-					return items_[index] as MenuItem;
-				}
+				get { return items_[index] as MenuItem; }
 			}
 
 			//[MonoTODO]
 			object IList.this[int index] {
-				get {
-					return items_[index];
-				}
+				get { return items_[index];	}
 				set {
 					// FIXME: Set exception members
 					throw new System.NotSupportedException();
@@ -394,19 +367,13 @@ namespace System.Windows.Forms{
 			/// ICollection Interface implmentation.
 			/// </summary>
 			int ICollection.Count {
-				get {
-					return Count;
-				}
+				get { return Count;	}
 			}
 			bool ICollection.IsSynchronized {
-				get {
-					throw new NotImplementedException ();
-				}
+				get { return items_.IsSynchronized; }
 			}
 			object ICollection.SyncRoot {
-				get {
-					throw new NotImplementedException ();
-				}
+				get { return items_.SyncRoot; }
 			}
 			void ICollection.CopyTo(Array array, int index){
 				CopyTo(array, index);

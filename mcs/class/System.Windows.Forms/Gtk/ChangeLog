@@ -1,3 +1,35 @@
+Thu Jan 16 19:20:00 GMT+2 2003 Joel Basson <jstrike@mweb.co.za>
+	* Applied patch from Alberto Fernandez with the following changes...
+	Finished ProgressBar (Events?)
+	Finished HScrollBar VScrollBar and ScrollBar
+	Finished FolderBrowserDialog
+	Base ComboBox
+	Added DrawMode.cs
+	Added ComboBoxStyle.cs
+	Added Appearance.cs
+	Added CheckState.cs
+	Added TabAlignment
+	Added TabAppearance.cs
+	Added TabDrawMode.cs
+	Added TabSizeMode.cs	
+	Added Panel.cs
+	Added TabPage.cs
+	Added TabControl.cs
+	Added Cursors.cs
+	Added MessageBoxDefaultButton.cs
+	Added MessageBoxIcon.cs
+	Added MessageBoxOptions.cs	
+	Changes in MessageBoxButtons.cs (Added values)
+	Changes in MessageBox (Completed all functions, added return values).
+	"Finished" CheckBox.cs
+	"Finished" ComboBox.cs
+	"Finished" RadioButton
+	"Finished" GroupBox
+	"Finished" Panel
+	Changes in Form to work with new RadioButton.
+	Fix double Click reported on MenuItems.
+	"Finished" Application
+		
 Tue Dec 16 12:15:00 GMT+2 2003 Joel Basson <jstrike@mweb.co.za>
 
 	* Applied patch from Alberto Fernandez with the following changes...

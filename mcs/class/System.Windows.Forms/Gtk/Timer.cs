@@ -57,11 +57,9 @@ namespace System.Windows.Forms{
 
 		public event EventHandler Tick;
 
-		protected virtual void OnTick(EventArgs e) 
-		{
+		protected virtual void OnTick(EventArgs e){
 			if ( Tick != null )
 				Tick ( this, e );
-			//Application.DoEvents();
 		}
 		protected override void Dispose( bool disposing	) {
 			Enabled = false;

@@ -154,12 +154,7 @@ namespace System.Windows.Forms
 			[MonoTODO]
 			public event EventHandler Apply;
 	
-			
-			//[MonoTODO]
-			/*protected override IntPtr HookProc( IntPtr hWnd,  int msg,  IntPtr wparam,  IntPtr lparam )
-			{
-				return base.HookProc(hWnd, msg, wparam,lparam);					
-			}*/
+
 			[MonoTODO]
 			protected override bool RunDialog(IntPtr hWndOwner){	
 				Dialog.Run();			
@@ -167,10 +162,7 @@ namespace System.Windows.Forms
 			}
 			[MonoTODO]
 			internal override Gtk.Dialog CreateDialog(){
-				//TODO: I18N
-				Gtk.FontSelectionDialog diag = new Gtk.FontSelectionDialog("FontSelectionDialog");			
-				
-				return diag;
+				return new Gtk.FontSelectionDialog("");
 			}
 		 }
 		 

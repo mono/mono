@@ -155,8 +155,7 @@ namespace System.Windows.Forms {
 		}*/
 		
 		[MonoTODO]
-		protected virtual void AdjustFormScrollbars (
-			bool displayScrollbars) {
+		protected virtual void AdjustFormScrollbars (bool displayScrollbars) {
 			//FIXME:
 		}
 
@@ -344,4 +343,3 @@ namespace System.Windows.Forms {
 		}
 	}
 }
-

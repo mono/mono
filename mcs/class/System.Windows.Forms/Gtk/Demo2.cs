@@ -40,6 +40,12 @@ namespace demo2
 			button1.Text = "Color";
 			button1.Click += new EventHandler(this.button1_Click);    
 
+		//ivate StatusBar statusBar1 = new StatusBar();
+		//ivate StatusBar statusBar2 = new StatusBar();
+		//ivate StatusBar statusBar3 = new StatusBar();
+
+		//private void InitializeWidgets()
+		//{
 			this.statusBar1.Location = new System.Drawing.Point(0, 251);
 			this.statusBar1.Name = "statusBar1";
 			this.statusBar1.Size = new System.Drawing.Size(292, 22);
@@ -102,7 +108,7 @@ namespace demo2
 			this.Controls.AddRange(new System.Windows.Forms.Control[] { 
 									    this.button1,
 									    this.button2,
-									    //this.color1,
+									    this.color1,
 									    this.lb,
 									    this.combo1, 
 									    this.statusBar1,
@@ -112,7 +118,7 @@ namespace demo2
 			this.Size = new Size(512, 250);
 			this.Menu = mainMenu1;
 			// Freaky stuff
-			//this.button1.Controls.Add (this.statusBar3);
+			this.button1.Controls.Add (this.statusBar3);
 		}
 
 		public GtkForm()

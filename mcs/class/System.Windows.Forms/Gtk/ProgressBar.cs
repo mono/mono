@@ -4,6 +4,7 @@
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
 //  Remco de Jong (rdj@rdj.cg.nu)
+//  Alberto Fernandez (infjaf00@yahoo.es)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -30,20 +31,16 @@ namespace System.Windows.Forms {
 		#endregion
 
 		#region Constructor
-		[MonoTODO]
-		public ProgressBar() 
-		{
+		
+		public ProgressBar(){
 			maximum=100;
 			minimum=0;
 			step=10;
 			val=0;
+			this.Size = this.DefaultSize;
 		}
 		#endregion
-
-		internal override Gtk.Widget CreateWidget () {
-			Gtk.ProgressBar pbar = new Gtk.ProgressBar ();
-			return pbar;
-		}		
+	
 		
 /*		#region Properties
 		[MonoTODO]
@@ -72,10 +69,6 @@ namespace System.Windows.Forms {
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
-		protected override Size DefaultSize {
-			get { throw new NotImplementedException (); }		
-		}
 		
 		[MonoTODO]
 		public override Font Font {
@@ -83,25 +76,48 @@ namespace System.Windows.Forms {
 			set { throw new NotImplementedException (); }
 		}
 */
+		protected override Size DefaultSize {
+			get { return new System.Drawing.Size (100, 23); }		
+		}
 		
 		/// This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
 		/// public new ImeMode ImeMode {get; set;}
 		
 		public int Maximum {
-			get { 
-				return maximum; 
-			}
+			get { return maximum;}
 			set { 
+				if (value < 0){
+					String st = String.Format (
+						"'{0}' is not a valid value for Maximum."+
+						"It should be >= 0", value
+					);
+					throw new ArgumentException (st);
+				}
 				maximum=value; 
+				if (value < minimum)
+					minimum = value;
+				if (value < val)
+					val = value;
+				UpdateGtkProgressBar();
 			}
 		}
 		
 		public int Minimum {
-			get { 
-				return minimum; 
-			}
+			get { return minimum; }
 			set { 
+				if (value < 0){
+					String st = String.Format (
+						"'{0}' is not a valid value for Minimum."+
+						"It should be >= 0", value
+					);
+					throw new ArgumentException (st);
+				}
 				minimum=value; 
+				if (value > maximum)
+					maximum = value;
+				if (value > val)
+					val = value;
+				UpdateGtkProgressBar();
 			}
 		}
 		
@@ -114,29 +130,27 @@ namespace System.Windows.Forms {
 		}
 */		
 		public int Step {
-			get { 
-				return step; 
-			}
-			set { 
-				step=value; 
-			}
+			get { return step; }
+			set { step=value; }
 		}
 		
-		protected override void  OnTextChanged(EventArgs e)
-		{
-			((Gtk.ProgressBar)Widget).Text = Text;
-		}
+		
 		
 		public int Value {
 			get { 
 				return val; 
 			}
 			set { 
-				if (val <= maximum) {
-					val=value; 
-					float fraction = ((float) val / (float) maximum);
-					((Gtk.ProgressBar)Widget).Fraction = fraction;
+				if ((value > maximum) || (value < minimum)){
+					String st = String.Format (
+					"'{0}' is not a valid value for Value."+
+					" It should be betwen Minimum and Maximum", value);
+					
+					throw new ArgumentException (st);
 				}
+
+				val=value; 
+				UpdateGtkProgressBar();
 			}
 		}
 //		#endregion
@@ -151,10 +165,11 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 */		
-		[MonoTODO]
-		public void Increment(int value) 
-		{
-			Value += value;
+		public void Increment(int value) {
+			int tmp = Value + value;
+			tmp = (tmp < Minimum) ? Minimum : tmp;
+			tmp = (tmp > Maximum) ? Maximum : tmp;
+			Value = tmp;
 		}
 		
 /*		[MonoTODO]
@@ -163,17 +178,18 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 */		
-		[MonoTODO]
-		public void PerformStep() 
-		{
-			Value += step;
+		public void PerformStep(){
+			this.Increment (this.Step);			
 		}
 		
-		[MonoTODO]
-		public override string ToString() 
-		{
-			return base.ToString();
-			//throw new NotImplementedException ();
+		public override string ToString(){
+			String ret = String.Format (
+				"System.Windows.Forms.ProgressBar, " +
+				"Minimum: {0}, Maximum: {1}, Value: {2}",
+				this.Minimum,
+				this.Maximum,
+				this.Value);
+			return ret;
 		}
 //		#endregion
 		
@@ -192,5 +208,16 @@ namespace System.Windows.Forms {
 		 public new event PaintEventHandler Paint;
 		*/
 		#endregion
+		internal override Gtk.Widget CreateWidget () {
+			Gtk.ProgressBar pbar = new Gtk.ProgressBar ();
+			return pbar;
+		}	
+		protected override void  OnTextChanged(EventArgs e){
+			((Gtk.ProgressBar)Widget).Text = Text;
+		}
+		internal void UpdateGtkProgressBar(){
+			float fraction = ((float) val / (float) maximum);
+			(Widget as Gtk.ProgressBar).Fraction = fraction;
+		}
 	}
 }

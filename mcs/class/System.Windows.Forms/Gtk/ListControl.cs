@@ -1,180 +1,101 @@
 //
-// System.Windows.Forms.ListControl.cs
+//	System.Windows.Forms.ListControl
 //
-// Author:
-//   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
-//	Dennis Hayes (dennish@raytek.com)
-// (C) 2002/3 Ximian, Inc
+//	Author:
+//		Alberto Fernandez	(infjaf00@yahoo.es)
 //
+
+
+
 using System;
-using System.Drawing;
 using System.Collections;
-using System.Reflection;
 
-namespace System.Windows.Forms {
+namespace System.Windows.Forms{
 
-	// <summary>
-	//
-	// </summary>
-
-    public abstract class ListControl : Control {
-
-		protected string DisplayMember_ = String.Empty;
-
-		//ControlStyles controlStyles;
-		//
-		//  --- Public Properties
-		//
+	public abstract class ListControl : Control{
+		[MonoTODO]
+		protected ListControl(){
+		}
+		[MonoTODO]
+		protected CurrencyManager DataManager {
+			get { throw new NotImplementedException(); }
+		}
 		[MonoTODO]
 		public object DataSource {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+			get {throw new NotImplementedException();}
+			set {}
 		}
 		[MonoTODO]
 		public string DisplayMember {
-			get {
-				return DisplayMember_;
-			}
-			set {
-				if( DisplayMember_ != value) {
-					DisplayMember_ = value;
-					OnDisplayMemberChanged(new EventArgs());
-				}
-			}
+			get { throw new NotImplementedException();}			
+			set {}
 		}
+		public abstract int SelectedIndex {get; set;}
 		
-		internal string getDisplayMemberOfObj( object obj) {
-			string objectString = String.Empty;
-			Type t = obj.GetType();
-			if( DisplayMember != String.Empty) {
-				if( t != null) {
-					PropertyInfo prop = t.GetProperty(DisplayMember);
-					if( prop != null) {
-						objectString = prop.GetValue(obj, null).ToString();
-					}
-				}
-			}
-			if( objectString == String.Empty) {
-				objectString = obj.ToString();
-			}
-			return objectString;
-		}
-		
-		internal class ListControlComparer : IComparer {
-			private ListControl owner_ = null;
-			public ListControlComparer(ListControl owner) {
-				owner_ = owner;
-			}
-
-			public int Compare(object x, object y) {
-				return owner_.getDisplayMemberOfObj(x).CompareTo(owner_.getDisplayMemberOfObj(y));
-			}
-		}
-		
-
-		[MonoTODO]
-		public abstract int SelectedIndex {get;set;}
-
 		[MonoTODO]
 		public object SelectedValue {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+			get {throw new NotImplementedException();}
+			set {}
 		}
 		[MonoTODO]
 		public string ValueMember {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+			get { throw new NotImplementedException(); } 
+			set {}
 		}
 
-		//
-		//  --- Public Methods
-		//
-
-		[MonoTODO]
-		public string GetItemText(object item)
-		{
-			throw new NotImplementedException ();
+		// No usar
+		protected object FilterItemOnProperty(object item){
+			throw new NotImplementedException();
 		}
-
-		//
-		//  --- Public Events
-		//
-		[MonoTODO]
-		public event EventHandler DataSourceChanged;
-		[MonoTODO]
-		public event EventHandler DisplayMemberChanged;
-
-		//
-		// --- Protected Constructor
-		//
-		[MonoTODO]
-		protected ListControl()
-		{
-			
-		}
-
-		//
-		//  --- Protected Properties
-		//
-		[MonoTODO]
-		//protected CurrencyManager DataManager {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-
-		//
-		//  --- Protected Methods
-		//
-		[MonoTODO]
-		//protected override bool IsInputKey(Keys keyData)
-		//{
-		//	//FIXME:
-		//	return base.IsInputKey(keyData);
-		//}
-		[MonoTODO]
-		protected virtual void OnDataSourceChanged(EventArgs e) {
-			//FIXME:
-		}
-		[MonoTODO]
-		protected virtual void OnDisplayMemberChanged(EventArgs e) {
-			//FIXME:
+		protected object FilterItemOnProperty( object item, string field){
+			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
-		protected virtual void OnSelectedIndexChanged(EventArgs e) {
-			//FIXME:
-		}		
+		public string GetItemText(object item){
+			throw new NotImplementedException();
+		}
+		[MonoTODO]
+		protected override bool IsInputKey( Keys keyData){
+			return base.IsInputKey (keyData);
+		}
+		[MonoTODO]
+		protected override void OnBindingContextChanged(EventArgs e){
 		
-		[MonoTODO]
-		protected virtual void OnSelectedValueChanged(EventArgs e){
-			//FIXME:
 		}
+		protected virtual void OnDataSourceChanged(EventArgs e){
+			if (DataSourceChanged != null)
+				DataSourceChanged (this,e);			
+		}
+		protected virtual void OnDisplayMemberChanged( EventArgs e){
+			if (DisplayMemberChanged != null)
+				DisplayMemberChanged (this,e);
+		}
+		protected virtual void OnSelectedIndexChanged(EventArgs e){
+			if (SelectedValueChanged != null)
+				SelectedValueChanged (this, e);
+		}
+		protected virtual void OnSelectedValueChanged(EventArgs e){
+			if (SelectedValueChanged != null)
+				SelectedValueChanged (this, e);
+		}
+		protected virtual void OnValueMemberChanged(EventArgs e){
+			if (ValueMemberChanged != null)
+				ValueMemberChanged (this, e);
+		}
+		protected abstract void RefreshItem(int index);
+		
+		// Don't use
+		[MonoTODO]
+		protected virtual void SetItemCore(int index, object value){
+		}
+		// Don't use
+		protected abstract void SetItemsCore(IList items);
+		
 
+		public event EventHandler DataSourceChanged;
+		public event EventHandler DisplayMemberChanged;
 		public event EventHandler SelectedValueChanged;
 		public event EventHandler ValueMemberChanged;
-		
-		[MonoTODO]
-		protected override void OnBindingContextChanged(EventArgs e)
-		{
-			//FIXME:
-			base.OnBindingContextChanged(e);
-		}
-
-		[MonoTODO]
-		protected abstract void RefreshItem(int index);
-
-	 }
+	}
 }

@@ -3,23 +3,27 @@
 //
 // Author:
 //   Dennis Hayes (dennish@raytek.com)
+// Gtk.
+//   Alberto Fernandez (infjaf00@yahoo.es)
 //
 // (C) 2002 Ximian, Inc
 //
+
+using System.Runtime.Remoting;
+using System.ComponentModel;
 
 namespace System.Windows.Forms {
 
 	// <summary>
 	//
 	// </summary>
-	using System.Runtime.Remoting;
-	using System.ComponentModel;
+	
 
 
 	// Beta specs do not specify what class to defrive from.
 	// Using CommonDialog because 
 	public class FolderBrowserDialog : CommonDialog  {
-
+		string folder;
 		string description;
 
 		//
@@ -27,7 +31,8 @@ namespace System.Windows.Forms {
 		//
 		[MonoTODO]
 		public FolderBrowserDialog() {
-			description = "";
+			description = String.Empty;
+			folder = (Dialog as Gtk.FileSelection).Filename;
 		}
 
 		[MonoTODO]
@@ -37,7 +42,9 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		protected override bool RunDialog(IntPtr hWndOwner){
-			throw new NotImplementedException ();
+			this.Dialog.Run();
+			folder = (Dialog as Gtk.FileSelection).Filename;
+			return dialogRetValue;
 		}
 
 		//
@@ -45,75 +52,45 @@ namespace System.Windows.Forms {
 		//
 
 		public string Description {
-			get {
-				return description;
-			}
-			set {
-				description = value;
-			}
+			get { return description; }
+			set { description = value; }
 		}
 
-		//beta docs do not have accessor.
-		//protected bool DesignMode {
-		//}
-
-		//protected EventHandlerList Events {
-		//}
-
+		[MonoTODO]
 		public Environment.SpecialFolder RootFolder {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return Environment.SpecialFolder.Desktop; }
 			set {
-			//FIXME:
+				if (! Enum.IsDefined (typeof (Environment.SpecialFolder), value)){
+					throw new InvalidEnumArgumentException();
+				}
 			}
 		}
 
 		public string SelectedPath {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+			get { return (this.Dialog as Gtk.FileSelection).Filename; }
+			set { (this.Dialog as Gtk.FileSelection).Filename = value; }
 		}
 
 		public bool ShowNewFolderButton {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+			get { return (this.Dialog as Gtk.FileSelection).FileopCDir.Visible; }
+			set { (this.Dialog as Gtk.FileSelection).FileopCDir.Visible = value;}
+		}
+		public override String ToString(){
+			return "System.Windows.Forms.FolderBrowserDialog";
 		}
 
-
-		//public virtual System.ComponentModel.IContainer Container {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-
-		// FIXME: beta 1.1 says the following should be public virtual ISite Site {
-		// but the compiler gives warning that it must be new.
-		// Probably system.component needs to change to be beta 1.1 compliant
-		// looks fixed on 9/28/2003
-/*		public virtual ISite Site {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
-		}*/
-
-		//Specs seem to say they need to be here, but adding them conflicts with commondialog : component.disposed/helprequest
-		//public event EventHandler Disposed;
-		//public event EventHandler HelpRequest;
 		[MonoTODO]
 		internal override Gtk.Dialog CreateDialog (){
-			return new Gtk.Dialog();
+			Gtk.FileSelection f = new Gtk.FileSelection(String.Empty);
+			f.FileList.Sensitive = false;
+			f.FileopDelFile.Visible = false;
+			f.FileopRenFile.Visible = false;
+			f.SelectionEntry.Visible = false;
+			return f;
 		}
 
+		internal override void OnCancel (){
+			(Dialog as Gtk.FileSelection).Filename = folder;
+		}
 	}
 }

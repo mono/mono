@@ -1,6 +1,9 @@
 //
 // System.Windows.Forms.MenuItem
 // 
+// 	Author:
+//		Alberto Fernandez	(infjaf00@yahoo.es)
+//
 
 using System;
 
@@ -127,7 +130,7 @@ namespace System.Windows.Forms{
 		[MonoTODO]
 		public virtual bool OwnerDraw{
 			get{return false;}
-			set{throw new NotImplementedException ();}
+			set{}
 		}
 
 		public virtual Menu Parent{
@@ -252,7 +255,7 @@ namespace System.Windows.Forms{
 		[MonoTODO]
 		internal void ConnectEvents(){
 			GtkMyMenuItem w = (GtkMyMenuItem)Widget;
-			w.Activated += new EventHandler (OnGtkActivated);
+			w.GtkActivated += new EventHandler (OnGtkActivated);
 			w.Selected += new EventHandler (OnGtkSelected);
 			// TODO: Connect Events:
 			// DrawItem
@@ -371,9 +374,22 @@ namespace System.Windows.Forms{
 				enabled = value;
 			}
 		}
+		public event EventHandler GtkActivated;
 		
+		
+		private void OnGtkActivated(EventArgs args){
+			if (GtkActivated != null)
+				GtkActivated (this, args);
+		}
+		// Lock variable
+		private bool tog = false;
 		private void OnToggled (object sender, EventArgs args){
+			if (tog)
+				return;
+			tog = true;
 			this.Active = Checked;
+			OnGtkActivated (args);
+			tog = false;
 		}
 		
 		internal void OnShowShortcutChange (bool value){

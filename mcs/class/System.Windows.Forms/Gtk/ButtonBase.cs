@@ -32,12 +32,12 @@ namespace System.Windows.Forms {
 		bool isDefault;
 		bool isPushed;
 		
-		protected Label label;
+		protected Label label = new Label();
 
 //		
 //		// --- Constructor ---
 		protected ButtonBase() : base(){
-			label = new Label();
+			//label = new Label();
 			label.Text = Text;
 			label.Visible = true;
 			flatStyle = FlatStyle.Standard;
@@ -72,9 +72,7 @@ namespace System.Windows.Forms {
 			set{label.Font = value;}
 		}
 		protected override Size DefaultSize {
-			get {
-				return new Size(75,23);// default size for button.
-			}
+			get { return new Size(75,23); }
 		}
 		[MonoTODO]
 		public FlatStyle FlatStyle {
