@@ -1,3 +1,8 @@
+2004-04-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Security.Win32.dll.sources: Added AssemblyInfo.cs and Locale.cs
+	to the assembly.
+
 2003-02-05  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Mono.Security.Win32.build: New. NAnt build file. As this 
