@@ -34,7 +34,7 @@
 						<TR>
 							<TD> </TD>
 							<TD> <IMG src="cm/complete.gif"/> </TD>
-							<TD> Missing </TD>
+							<TD> Completed </TD>
 						</TR>
 					</TABLE>
 				</P>
