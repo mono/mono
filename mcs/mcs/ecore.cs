@@ -2032,25 +2032,17 @@ namespace Mono.CSharp {
 				}
 			}
 
-			//
-			// First, the using aliases
-			//
-			if (alias_value != null){
+			if ((t = RootContext.LookupType (ds, Name, true, loc)) != null)
+				return new TypeExpression (t, loc);
+
+			if (alias_value != null) {
 				if ((t = RootContext.LookupType (ds, alias_value, true, loc)) != null)
 					return new TypeExpression (t, loc);
 				
 				// we have alias value, but it isn't Type, so try if it's namespace
 				return new SimpleName (alias_value, loc);
 			}
-			
-			//
-			// Stage 2: Lookup up if we are an alias to a type
-			// or a namespace.
-			//
 
-			if ((t = RootContext.LookupType (ds, Name, true, loc)) != null)
-				return new TypeExpression (t, loc);
-				
 			// No match, maybe our parent can compose us
 			// into something meaningful.
 			return this;
@@ -2256,7 +2248,7 @@ namespace Mono.CSharp {
 
 		override public Expression DoResolve (EmitContext ec)
 		{
-			return ResolveAsTypeTerminal (ec, true);
+			return ResolveAsTypeTerminal (ec, false);
 		}
 
 		override public void Emit (EmitContext ec)

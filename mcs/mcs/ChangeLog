@@ -1,3 +1,28 @@
+2004-10-07  Raja R Harinath  <rharinath@novell.com>
+
+	More DeclSpace.ResolveType avoidance.
+	* decl.cs (MemberCore.InUnsafe): New property.
+	* class.cs (MemberBase.DoDefine): Use ResolveAsTypeTerminal 
+	with newly created EmitContext.
+	(FieldMember.Define): Likewise.
+	* delegate.cs (Delegate.Define): Likewise.
+	* ecore.cs (SimpleName.ResolveAsTypeStep): Lookup with alias
+	only if normal name-lookup fails.
+	(TypeExpr.DoResolve): Enable error-checking.
+	* expression.cs (ArrayCreation.DoResolve): Use ResolveAsTypeTerminal.
+	(SizeOf.DoResolve): Likewise.
+	(ComposedCast.DoResolveAsTypeStep): Likewise.
+	(StackAlloc.DoResolve): Likewise.
+	* statement.cs (Block.Flags): Add new flag 'Unsafe'.
+	(Block.Unsafe): New property.
+	(Block.EmitMeta): Set ec.InUnsafe as appropriate.
+	(Unsafe): Set 'unsafe' flag of contained block.
+	(LocalInfo.Resolve): Use ResolveAsTypeTerminal.
+	(Fixed.Resolve): Likewise.
+	(Catch.Resolve): Likewise.
+	(Using.ResolveLocalVariableDecls): Likewise.
+	(Foreach.Resolve): Likewise.
+
 2004-10-05  John Luke <john.luke@gmail.com>
 
 	* cs-parser.jay: add location to error CS0175

@@ -420,7 +420,7 @@ namespace Mono.CSharp {
 
 		// The emit context for toplevel objects.
 		EmitContext ec;
-		
+
 		//
 		// Pointers to the default constructor and the default static constructor
 		//
@@ -4757,6 +4757,9 @@ namespace Mono.CSharp {
 
 		protected virtual bool DoDefine ()
 		{
+			EmitContext ec = new EmitContext (Parent, Location, null, null, 0);
+			ec.InUnsafe = InUnsafe;
+
 			if (Name == null)
 				throw new InternalErrorException ();
 
@@ -4778,9 +4781,11 @@ namespace Mono.CSharp {
 			}
 
 			// Lookup Type, verify validity
-			MemberType = Parent.ResolveType (Type, false, Location);
-			if (MemberType == null)
+			Type = Type.ResolveAsTypeTerminal (ec, false);
+			if (Type == null)
 				return false;
+
+			MemberType = Type.Type;
 
 			if ((Parent.ModFlags & Modifiers.SEALED) != 0){
 				if ((ModFlags & (Modifiers.VIRTUAL|Modifiers.ABSTRACT)) != 0){
@@ -4824,11 +4829,12 @@ namespace Mono.CSharp {
 				return false;
 
 			if (IsExplicitImpl) {
-				InterfaceType = Parent.ResolveType (
-					ExplicitInterfaceName.GetTypeExpression (Location),
-					false, Location);
-				if (InterfaceType == null)
+				Expression expr = ExplicitInterfaceName.GetTypeExpression (Location);
+				expr = expr.ResolveAsTypeTerminal (ec, false);
+				if (expr == null)
 					return false;
+
+				InterfaceType = expr.Type;
 
 				if (InterfaceType.IsClass) {
 					Report.Error (538, Location, "'{0}' in explicit interface declaration is not an interface", ExplicitInterfaceName);
@@ -5088,10 +5094,14 @@ namespace Mono.CSharp {
 
 		public override bool Define()
 		{
-			MemberType = Parent.ResolveType (Type, false, Location);
-			
-			if (MemberType == null)
+			EmitContext ec = new EmitContext (Parent, Location, null, null, 0);
+			ec.InUnsafe = InUnsafe;
+
+			Type = Type.ResolveAsTypeTerminal (ec, false);
+			if (Type == null)
 				return false;
+
+			MemberType = Type.Type;
 
 			if (!CheckBase ())
 				return false;

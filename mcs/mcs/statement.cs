@@ -1010,17 +1010,20 @@ namespace Mono.CSharp {
 
 		public bool Resolve (EmitContext ec)
 		{
-			if (VariableType == null)
-				VariableType = ec.DeclSpace.ResolveType (Type, false, Location);
+			if (VariableType == null) {
+				Type = Type.ResolveAsTypeTerminal (ec, false);
+
+				if (Type == null)
+					return false;
+				
+				VariableType = Type.Type;
+			}
 
 			if (VariableType == TypeManager.void_type) {
 				Report.Error (1547, Location,
 					      "Keyword 'void' cannot be used in this context");
 				return false;
 			}
-
-			if (VariableType == null)
-				return false;
 
 			if (VariableType.IsAbstract && VariableType.IsSealed) {
 				Report.Error (723, Location, "Cannot declare variable of static type '{0}'", TypeManager.CSharpName (VariableType));
@@ -1119,7 +1122,8 @@ namespace Mono.CSharp {
 			VariablesInitialized = 8,
 			HasRet = 16,
 			IsDestructor = 32,
-			HasVarargs = 64	
+			HasVarargs = 64,
+			Unsafe = 128,
 		}
 		Flags flags;
 
@@ -1135,6 +1139,15 @@ namespace Mono.CSharp {
 			}
 			set {
 				flags |= Flags.Unchecked;
+			}
+		}
+
+		public bool Unsafe {
+			get {
+				return (flags & Flags.Unsafe) != 0;
+			}
+			set {
+				flags |= Flags.Unsafe;
 			}
 		}
 
@@ -1642,6 +1655,12 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 
+			bool old_unsafe = ec.InUnsafe;
+
+			// If some parent block was unsafe, we remain unsafe even if this block
+			// isn't explicitly marked as such.
+			ec.InUnsafe |= Unsafe;
+
 			//
 			// Compute the VariableMap's.
 			//
@@ -1745,6 +1764,8 @@ namespace Mono.CSharp {
 				foreach (Block b in children)
 					b.EmitMeta (ec, ip);
 			}
+
+			ec.InUnsafe = old_unsafe;
 		}
 
 		void UsageWarning (FlowBranching.UsageVector vector)
@@ -2973,6 +2994,7 @@ namespace Mono.CSharp {
 		public Unsafe (Block b)
 		{
 			Block = b;
+			Block.Unsafe = true;
 		}
 
 		public override bool Resolve (EmitContext ec)
@@ -3030,9 +3052,11 @@ namespace Mono.CSharp {
 				return false;
 			}
 			
-			expr_type = ec.DeclSpace.ResolveType (type, false, loc);
-			if (expr_type == null)
+			type = type.ResolveAsTypeTerminal (ec, false);
+			if (type == null)
 				return false;
+
+			expr_type = type.Type;
 
 			CheckObsolete (expr_type);
 
@@ -3297,9 +3321,11 @@ namespace Mono.CSharp {
 		public override bool Resolve (EmitContext ec)
 		{
 			if (type_expr != null) {
-				type = ec.DeclSpace.ResolveType (type_expr, false, loc);
-				if (type == null)
+				TypeExpr te = type_expr.ResolveAsTypeTerminal (ec, false);
+				if (te == null)
 					return false;
+
+				type = te.Type;
 
 				CheckObsolete (type);
 
@@ -3499,11 +3525,13 @@ namespace Mono.CSharp {
 		//
 		bool ResolveLocalVariableDecls (EmitContext ec)
 		{
-			expr_type = ec.DeclSpace.ResolveType (expr, false, loc);
 			int i = 0;
 
-			if (expr_type == null)
+			expr = expr.ResolveAsTypeTerminal (ec, false);
+			if (expr == null)
 				return false;
+
+			expr_type = expr.Type;
 
 			//
 			// The type must be an IDisposable or an implicit conversion
@@ -3771,9 +3799,11 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
-			var_type = ec.DeclSpace.ResolveType (type, false, loc);
-			if (var_type == null)
+			type = type.ResolveAsTypeTerminal (ec, false);
+			if (type == null)
 				return false;
+
+			var_type = type.Type;
 			
 			//
 			// We need an instance variable.  Not sure this is the best

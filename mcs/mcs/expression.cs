@@ -6062,10 +6062,11 @@ namespace Mono.CSharp {
 			//
 			Expression array_type_expr;
 			array_type_expr = new ComposedCast (requested_base_type, array_qualifier.ToString (), loc);
-			type = ec.DeclSpace.ResolveType (array_type_expr, false, loc);
-
-			if (type == null)
+			array_type_expr = array_type_expr.ResolveAsTypeTerminal (ec, false);
+			if (array_type_expr == null)
 				return false;
+
+			type = array_type_expr.Type;
 			
 			if (!type.IsArray) {
 				Error (622, "Can only use array initializer expressions to assign to array types. Try using a new expression instead.");
@@ -6829,7 +6830,7 @@ namespace Mono.CSharp {
 	///   Implements the sizeof expression
 	/// </summary>
 	public class SizeOf : Expression {
-		public readonly Expression QueriedType;
+		public Expression QueriedType;
 		Type type_queried;
 		
 		public SizeOf (Expression queried_type, Location l)
@@ -6846,10 +6847,12 @@ namespace Mono.CSharp {
 					"(consider using System.Runtime.InteropServices.Marshal.SizeOf");
 				return null;
 			}
-				
-			type_queried = ec.DeclSpace.ResolveType (QueriedType, false, loc);
-			if (type_queried == null)
+
+			QueriedType = QueriedType.ResolveAsTypeTerminal (ec, false);
+			if (QueriedType == null)
 				return null;
+
+			type_queried = QueriedType.Type;
 
 			CheckObsoleteAttribute (type_queried);
 
@@ -8389,9 +8392,11 @@ namespace Mono.CSharp {
 
 		public override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
-			Type ltype = ec.DeclSpace.ResolveType (left, false, loc);
-			if (ltype == null)
+			left = left.ResolveAsTypeTerminal (ec, false);
+			if (left == null)
 				return null;
+
+			Type ltype = left.Type;
 
 			if ((ltype == TypeManager.void_type) && (dim != "*")) {
 				Report.Error (1547, Location,
@@ -8550,10 +8555,11 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			otype = ec.DeclSpace.ResolveType (t, false, loc);
-
-			if (otype == null)
+			t = t.ResolveAsTypeTerminal (ec, false);
+			if (t == null)
 				return null;
+
+			otype = t.Type;
 
 			if (!TypeManager.VerifyUnManaged (otype, loc))
 				return null;
