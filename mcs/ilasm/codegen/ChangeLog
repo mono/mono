@@ -1,3 +1,7 @@
+2003-05-11 Jackson Harper <jackson@latitudegeo.com>
+
+	* TypeDef.cs: Add size and packing information
+		
 2003-05-10 Jackson Harper <jackson@latitudegeo.com>
 
 	* IFieldRef.cs: New file - interface field references must implement

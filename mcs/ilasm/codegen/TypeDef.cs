@@ -28,6 +28,9 @@ namespace Mono.ILASM {
                 private ArrayList data_list;
                 private TypeDef outer;
 
+                private int size;
+                private int pack;
+
                 public TypeDef (PEAPI.TypeAttr attr, string name_space, string name,
                                 IClassRef parent, ArrayList impl_list, Location location)
                 {
@@ -39,6 +42,9 @@ namespace Mono.ILASM {
                         field_table = new Hashtable ();
                         method_table = new Hashtable ();
                         data_list = new ArrayList ();
+
+                        size = -1;
+                        pack = -1;
 
                         is_defined = false;
                         is_intransit = false;
@@ -67,6 +73,16 @@ namespace Mono.ILASM {
 
                 public bool IsDefined {
                         get { return is_defined; }
+                }
+
+                public void SetSize (int size)
+                {
+                        this.size = size;
+                }
+
+                public void SetPack (int pack)
+                {
+                        this.pack = pack;
                 }
 
                 public void AddFieldDef (FieldDef fielddef)
@@ -122,6 +138,9 @@ namespace Mono.ILASM {
                                                 name_space, name);
                                 }
                         }
+
+                        if (size != -1)
+                                classdef.AddLayoutInfo (pack, size);
 
                         is_intransit = false;
                         is_defined = true;
