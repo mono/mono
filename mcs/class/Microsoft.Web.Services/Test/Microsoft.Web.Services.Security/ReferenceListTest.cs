@@ -100,6 +100,21 @@ namespace MonoTests.MS.Web.Services.Security {
 		}
 
 		[Test]
+		public void ListWithEnumerator () 
+		{
+			ReferenceList rl = new ReferenceList ();
+			for (int i=0; i < 16; i++) {
+				rl.Add ("mono" + i.ToString ());
+			}
+			int n = 0;
+			foreach (string s in rl) {
+				Assert (s.StartsWith ("mono"));
+				n++;
+			}
+			AssertEquals ("Count", 16, n);
+		}
+
+		[Test]
 		public void GetXml_Empty () 
 		{
 			ReferenceList rl = new ReferenceList ();
