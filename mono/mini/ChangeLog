@@ -1,3 +1,9 @@
+
+Wed Aug 20 13:04:53 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini.h: make sure per-thread data allocated by the jit is
+	freed.
+
 2003-08-10  Miguel de Icaza  <miguel@ximian.com>
 
 	* cpu-pentium.md (ldtoken): Change the length for mul.ovf.un from
