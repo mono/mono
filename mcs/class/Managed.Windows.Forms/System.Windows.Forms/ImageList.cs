@@ -342,9 +342,9 @@ namespace System.Windows.Forms {
 			image_collection = new ImageCollection(this);
 		}
 
-		[MonoTODO]
-		public ImageList(System.ComponentModel.IContainer container) {
-			throw new NotImplementedException();
+		public ImageList(System.ComponentModel.IContainer container) : this ()
+		{
+			container.Add (this);
 		}
 		#endregion	// Public Constructors
 

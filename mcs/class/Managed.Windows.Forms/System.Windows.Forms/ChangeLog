@@ -1,3 +1,7 @@
+2005-01-05  Jackson Harper  <jackson@ximian.com>
+
+	* ImageList.cs: Implment ctor
+
 2005-01-05  Geoff Norton  <gnorton@customerdna.com>
 
 	* XplatUIOSX.cs: Implement Activate/SetTopmost
