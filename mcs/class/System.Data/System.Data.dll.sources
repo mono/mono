@@ -1,3 +1,5 @@
+Assembly/AssemblyInfo.cs
+Assembly/Locale.cs
 System.Data/AcceptRejectRule.cs
 System.Data/CommandBehavior.cs
 System.Data/CommandType.cs
@@ -61,7 +63,6 @@ System.Data/InvalidExpressionException.cs
 System.Data/IsolationLevel.cs
 System.Data/ITableMapping.cs
 System.Data/ITableMappingCollection.cs
-System.Data/Locale.cs
 System.Data/MappingType.cs
 System.Data/MergeFailedEventArgs.cs
 System.Data/MergeFailedEventHandler.cs

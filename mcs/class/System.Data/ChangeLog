@@ -1,3 +1,7 @@
+2003-07-18  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* System.Data.dll.sources: Assembly/Locale.cs added, Assembly/AssemblyInfo.cs added
+
 2003-07-18  Peter Williams  <peter@newton.cx>
 
 	* Makefile (EXTRA_DISTFILES): NUnit.Prefs is not
