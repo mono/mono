@@ -17,6 +17,7 @@ namespace System.Globalization
 	[Serializable]
 	public class CompareInfo : IDeserializationCallback
 	{
+		// Keep in synch with MonoCompareInfo in the runtime. 
 		private int lcid;
 		private string icu_name;
 		private IntPtr ICU_collator;
