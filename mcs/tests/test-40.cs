@@ -5,7 +5,8 @@ public class Blah {
 	enum Bar {
 		a = MyEnum.Foo,
 		b = A.c,
-		c = MyEnum.Bar
+		c = MyEnum.Bar,
+		d = myconstant
 	}
 	
 	public enum MyEnum : byte {
@@ -23,6 +24,8 @@ public class Blah {
 	
 	enum AA : byte { a, b }
 	enum BB : ulong { x, y }
+
+	const int myconstant = 30;
 	
 	public static int Main ()
 	{
@@ -59,6 +62,11 @@ public class Blah {
 		j = (int) Bar.c;
 
 		if (j != 1)
+			return 1;
+
+		j = (int) Bar.d;
+
+		if (j != 30)
 			return 1;
 
 		Console.WriteLine ("Enum emission test okay");
