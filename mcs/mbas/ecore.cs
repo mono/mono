@@ -3352,28 +3352,28 @@ namespace Mono.MonoBASIC {
 
                                 if (target_type == TypeManager.sbyte_type){
                                         if (v >= SByte.MinValue && v <= SByte.MaxValue)
-                                                return (sbyte) v;
+						return new SByteConstant ((sbyte) System.Math.Round (v));
                                 } else if (target_type == TypeManager.byte_type){
                                         if (v >= Byte.MinValue && v <= Byte.MaxValue)
-                                                return (byte) v;
+						return new ByteConstant ((byte) System.Math.Round (v));
                                 } else if (target_type == TypeManager.char_type){
                                         if (v >= Char.MinValue && v <= Char.MaxValue)
-                                                return (char) v;
+						return (char) v;
                                 } else if (target_type == TypeManager.short_type){
                                         if (v >= Int16.MinValue && v <= Int16.MaxValue)
-                                                return (short) v;
+						return new ShortConstant ((short) System.Math.Round (v));
                                 } else if (target_type == TypeManager.ushort_type){
                                         if (v >= UInt16.MinValue && v <= UInt16.MaxValue)
-                                                return (ushort) v;
+						 return new UShortConstant ((ushort) System.Math.Round (v));
 				} else if (target_type == TypeManager.int32_type){
                                         if (v >= Int32.MinValue && v <= Int32.MaxValue)
-                                                return (int) v;
+						return new IntConstant ((int) System.Math.Round (v));
                                 } else if (target_type == TypeManager.uint32_type){
                                         if (v >= 0 && v <= UInt32.MaxValue)
-                                                return (uint) v;
+						return new UIntConstant ((uint) System.Math.Round (v));
                                 } else if (target_type == TypeManager.uint64_type){
                                         if (v > 0)
-                                                return (ulong) v;
+						return new ULongConstant ((ulong) System.Math.Round (v));
                                 }
                                 s = v.ToString ();
 			}
