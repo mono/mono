@@ -18,7 +18,7 @@ namespace Mono.CSharp.Debugger
 {
 	public struct OffsetTable
 	{
-		public const int Version = 19;
+		public const int Version = 20;
 		public const long Magic   = 0x45e82623fd7fa614;
 
 		public int total_file_size;
