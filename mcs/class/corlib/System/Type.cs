@@ -1001,6 +1001,19 @@ namespace System {
 		public abstract MethodInfo DeclaringMethod {
 			get;
 		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern Type make_array_type (int rank);		
+
+		public virtual Type MakeArrayType ()
+		{
+			return MakeArrayType (1);
+		}
+
+		public virtual Type MakeArrayType (int rank)
+		{
+			return make_array_type (rank);
+		}
 #endif
 	}
 }
