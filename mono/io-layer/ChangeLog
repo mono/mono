@@ -1,5 +1,19 @@
 2003-04-03  Martin Baulig  <martin@ximian.com>
 
+	The following change is conditional to `WITH_INCLUDED_LIBGC'
+	which is not yet enabled by default.
+
+	* threads.c (SuspendThread, ResumeThread): Fully implemented this.
+	(gc_init): New static function; install a signal handler for
+	SIGPWR which is used to suspend threads.  [FIXME: it SIGPWR
+	doesn't exist on all Unix systems, we need to find another
+	signal].
+	(mono_wapi_push_thread_stack): New public function.  Tells the
+	garbage collector about the current stack pointer of a suspended
+	thread.
+
+2003-04-03  Martin Baulig  <martin@ximian.com>
+
 	* timed-thread.h (TimedThread): Added `suspended_sem',
 	`suspend_count' and `stack_ptr'.
 
