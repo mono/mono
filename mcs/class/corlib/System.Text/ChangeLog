@@ -1,3 +1,12 @@
+2001-07-12  Marcin Szczepanski <marcins@zipworld.com.au>
+
+	* StringBuilder.cs: Implemented.
+
+	The only methods left unimplemented are the AppendFormat( ... )
+	ones just because it's probably better to wait until some of the
+	Format related classes are implemented.  I've put that as a TODO
+	comment at the top and created the methods with a "nop" body.
+
 2001-06-26  Sean MacIsaac  <macisaac@ximian.com>
 
 	* UnicodeEncoding.cs: Members added so that a clean compile is
