@@ -72,6 +72,9 @@ namespace System.Windows.Forms
 		private int lastclick_pos_thumb;      // Position of the last button-down event relative to the thumb		
 		private bool outside_thumbarea_right = false;
 		private bool outside_thumbarea_left = false;
+
+		private Rectangle dirty;
+
 		internal ThumbMoving thumb_moving = ThumbMoving.None;
 		#endregion	// Local Variables
 
@@ -343,11 +346,11 @@ namespace System.Windows.Forms
 				if (position != value){
 					position = value;
 
-					if (ValueChanged != null)
-						ValueChanged (this, EventArgs.Empty);
+					OnValueChanged (EventArgs.Empty);
 
+					ClearDirty ();
 					UpdatePos (Value, true);
-					Refresh ();
+					InvalidateDirty ();
 				}
 			}
 		}
@@ -500,7 +503,6 @@ namespace System.Windows.Forms
     		{
 			UpdatePos (position + large_change, true);
 
-			Refresh ();
 			OnScroll (new ScrollEventArgs (ScrollEventType.LargeIncrement, position));
 			OnScroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
     		}
@@ -509,7 +511,6 @@ namespace System.Windows.Forms
     		{
 			UpdatePos (position - large_change, true);
 
-			Refresh ();
 			OnScroll (new ScrollEventArgs (ScrollEventType.LargeDecrement, position));
 			OnScroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
     		}    		
@@ -533,16 +534,18 @@ namespace System.Windows.Forms
 			if (Width <= 0 || Height <=  0 || Visible == false)
     				return;
 
+			Console.WriteLine ("clipping rect:   " + pevent.ClipRectangle);
 			/* Copies memory drawing buffer to screen*/			
 			Draw ();
 
-			if (double_buffering)
-				pevent.Graphics.DrawImage (ImageBuffer, 0, 0);
+			pevent.Graphics.DrawImage (ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
 
 		}
 
 		private void OnTimer (Object source, EventArgs e)
 		{
+			ClearDirty ();
+
 			switch (timer_type) {
 
 			case TimerType.HoldButton:
@@ -576,8 +579,8 @@ namespace System.Windows.Forms
 				if (thumb_area_screen.Contains (MousePosition) == false) {					
 					timer.Enabled = false;
 					thumb_moving = ThumbMoving.None;
-					Refresh ();
-					break;
+					DirtyThumbArea ();
+					InvalidateDirty ();
 				}				
 				
 				pnt = PointToClient (MousePosition);
@@ -594,8 +597,10 @@ namespace System.Windows.Forms
 						timer.Enabled = false;						
     						thumb_moving = ThumbMoving.None;
     						Refresh ();    			
-					} else
+						return;
+					} else {
 						LargeIncrement ();
+				}
 				}
 				else
 					if ((vert && (thumb_pos.Y < lastclick_pos)) ||
@@ -603,8 +608,9 @@ namespace System.Windows.Forms
 						timer.Enabled = false;
 						thumb_moving = ThumbMoving.None;
     						Refresh ();    						
-					} else
+					} else {
 						LargeDecrement ();
+					}
 
 				break;
 			}
@@ -612,6 +618,7 @@ namespace System.Windows.Forms
 				break;
 			}
 
+			InvalidateDirty ();
 		}		
 
     		private void OnMouseMoveSB (object sender, MouseEventArgs e)
@@ -626,21 +633,21 @@ namespace System.Windows.Forms
 			if (firstbutton_pressed) {
     				if (!first_arrow_area.Contains (e.X, e.Y) && ((firstbutton_state & ButtonState.Pushed) == ButtonState.Pushed)) {
 					firstbutton_state = ButtonState.Normal;
-					Refresh ();
+					Invalidate (first_arrow_area);
 					return;
 				} else if (first_arrow_area.Contains (e.X, e.Y) && ((firstbutton_state & ButtonState.Normal) == ButtonState.Normal)) {
 					firstbutton_state = ButtonState.Pushed;
-					Refresh ();
+					Invalidate (first_arrow_area);
 					return;
 				}
 			} else if (secondbutton_pressed) {
 				if (!second_arrow_area.Contains (e.X, e.Y) && ((secondbutton_state & ButtonState.Pushed) == ButtonState.Pushed)) {
 					secondbutton_state = ButtonState.Normal;
-					Refresh ();
+					Invalidate (second_arrow_area);
 					return;
 				} else if (second_arrow_area.Contains (e.X, e.Y) && ((secondbutton_state & ButtonState.Normal) == ButtonState.Normal)) {
 					secondbutton_state = ButtonState.Pushed;
-					Refresh ();
+					Invalidate (second_arrow_area);
 					return;
 				}
 			} else if (thumb_pressed == true) {
@@ -724,6 +731,8 @@ namespace System.Windows.Forms
 
     		private void OnMouseDownSB (object sender, MouseEventArgs e)
     		{
+			ClearDirty ();
+			
     			if (e.Button == MouseButtons.Right) {
     				if (MouseDown != null) {
 					MouseDown (this, e);
@@ -737,20 +746,27 @@ namespace System.Windows.Forms
 				this.Capture = true;				
 				firstbutton_state = ButtonState.Pushed;
 				firstbutton_pressed = true;
-				Refresh ();				
+				Invalidate (first_arrow_area);
+				if (!timer.Enabled) {
+					SetHoldButtonClickTimer ();
+					timer.Enabled = true;
+				}
 			}
 
 			if (secondbutton_state != ButtonState.Inactive && second_arrow_area.Contains (e.X, e.Y)) {
 				this.Capture = true;				
 				secondbutton_state = ButtonState.Pushed;
 				secondbutton_pressed = true;
-				Refresh ();
+				Invalidate (second_arrow_area);
+				if (!timer.Enabled) {
+					SetHoldButtonClickTimer ();
+					timer.Enabled = true;
+				}
 			}
 
 			if (thumb_size > 0 && thumb_pos.Contains (e.X, e.Y)) {
 				thumb_pressed = true;
 				this.Capture = true;
-				Refresh ();
 				if (vert) {
 					lastclick_pos_thumb = e.Y - thumb_pos.Y;
 					lastclick_pos = e.Y;					
@@ -761,8 +777,7 @@ namespace System.Windows.Forms
 					lastclick_pos = e.X;
 					thumb_pixel_click_move_prev = thumb_pixel_click_move = e.X;
 				}
-			}
-			else {
+			} else {
 				if (thumb_size > 0 && thumb_area.Contains (e.X, e.Y)) {
 
 					if (vert) {
@@ -772,13 +787,18 @@ namespace System.Windows.Forms
 						if (e.Y > thumb_pos.Y + thumb_pos.Height) {
 							LargeIncrement ();							
 							thumb_moving = ThumbMoving.Forward;							
-						}
-						else {
+							Dirty (new Rectangle (0, thumb_pos.Y + thumb_pos.Height,
+										      ClientRectangle.Width,
+										      ClientRectangle.Height -	(thumb_pos.Y + thumb_pos.Height) -
+										      scrollbutton_height));
+						} else {
 							LargeDecrement ();							
 							thumb_moving = ThumbMoving.Backwards;
+							Dirty (new Rectangle (0,  scrollbutton_height,
+										      ClientRectangle.Width,
+										      thumb_pos.Y - scrollbutton_height));
 						}
-					}
-					else 	{
+					} else {
 
 						lastclick_pos_thumb = e.X - thumb_pos.X;
 						lastclick_pos = e.X;
@@ -786,32 +806,30 @@ namespace System.Windows.Forms
 						if (e.X > thumb_pos.X + thumb_pos.Width) {
 							thumb_moving = ThumbMoving.Forward;
 							LargeIncrement ();							
-						}
-						else {
+							Dirty (new Rectangle (thumb_pos.X + thumb_pos.Width, 0,
+										      ClientRectangle.Width -  (thumb_pos.X + thumb_pos.Width) -
+										      scrollbutton_width,
+										      ClientRectangle.Height));
+						} else {
 							thumb_moving = ThumbMoving.Backwards;
 							LargeDecrement ();							
+							Dirty (new Rectangle (scrollbutton_width,  0,
+										      thumb_pos.X - scrollbutton_width,
+										      ClientRectangle.Height));
 						}
 					}
 
 					SetHoldThumbAreaTimer ();
 					timer.Enabled = true;
-					Refresh ();
+					InvalidateDirty ();
 				}
-			}
-				
-			
-
-			/* If arrows are pressed, fire timer for auto-repeat */
-			if ((((firstbutton_state & ButtonState.Pushed) == ButtonState.Pushed)
-			|| ((secondbutton_state & ButtonState.Pushed) == ButtonState.Pushed)) &&
-				timer.Enabled == false) {
-		        	SetHoldButtonClickTimer ();
-		        	timer.Enabled = true;
 			}
     		}
     		
     		private void OnMouseUpSB (object sender, MouseEventArgs e)
     		{
+			ClearDirty ();
+
     			if (e.Button == MouseButtons.Right) {
     				if (MouseUp != null) {
 					MouseUp (this, e);
@@ -822,12 +840,10 @@ namespace System.Windows.Forms
 				return;
 
     			timer.Enabled = false;
-    			
     			if (thumb_moving != ThumbMoving.None) {
+				DirtyThumbArea ();
     				thumb_moving = ThumbMoving.None;
-    				Refresh ();
     			}    			
-
 			this.Capture = false;
 
 			if (firstbutton_pressed) {
@@ -836,26 +852,29 @@ namespace System.Windows.Forms
 					SmallDecrement ();
 				}
 				firstbutton_pressed = false;
-				return;
 			} else if (secondbutton_pressed) {
 				secondbutton_state = ButtonState.Normal;
 				if (second_arrow_area.Contains (e.X, e.Y)) {
 					SmallIncrement ();
 				}
 				secondbutton_pressed = false;
-				return;
 			} else if (thumb_pressed == true) {
 				OnScroll (new ScrollEventArgs (ScrollEventType.ThumbPosition, position));
 				OnScroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
 				thumb_pressed = false;
 				Refresh ();
+				return;
 			}
+
+			InvalidateDirty ();
     		}
 
     		private void OnKeyDownSB (Object o, KeyEventArgs key)
 		{
 			if (Enabled == false)
 				return;
+
+			ClearDirty ();
 
 			switch (key.KeyCode){
 			case Keys.Up:
@@ -880,25 +899,25 @@ namespace System.Windows.Forms
 			}
 			case Keys.Home:
 			{		
-				Value = 0;		
+				SetValue (0);
 				break;
 			}			
 			case Keys.End:
 			{	
-				Value = Maximum;			
+				SetValue (Maximum);
 				break;
 			}
 			default:
 				break;
 			}
 
+			InvalidateDirty ();
 		}
 
     		private void SmallIncrement ()
     		{
 			UpdatePos (position + small_change, true);
 
-			Refresh ();
 			OnScroll (new ScrollEventArgs (ScrollEventType.SmallIncrement, position));
 			OnScroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
     		}
@@ -907,7 +926,6 @@ namespace System.Windows.Forms
     		{
 			UpdatePos (position - small_change, true);
 
-			Refresh ();
 			OnScroll (new ScrollEventArgs (ScrollEventType.SmallDecrement, position));
 			OnScroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
     		}
@@ -966,8 +984,7 @@ namespace System.Windows.Forms
 					UpdateThumbPos (thumb_area.Y + (int)(((float)(pos - minimum)) * pixel_per_pos), false);
 				else
 					UpdateThumbPos (thumb_area.X + (int)(((float)(pos - minimum)) * pixel_per_pos), false);
-
-				Value = pos;
+				SetValue (pos);
 			}
 			else {
 				position = pos; // Updates directly the value to avoid thumb pos update
@@ -986,6 +1003,7 @@ namespace System.Windows.Forms
     			float new_pos = 0;
 
     			if (vert) {
+				Dirty (thumb_pos);
 	    			if (pixel < thumb_area.Y)
 	    				thumb_pos.Y = thumb_area.Y;
 	    			else
@@ -1000,8 +1018,9 @@ namespace System.Windows.Forms
 				new_pos = (float) (thumb_pos.Y - thumb_area.Y);
 				new_pos = new_pos / pixel_per_pos;
 
+				Dirty (thumb_pos);
 			} else	{
-
+				Dirty (thumb_pos);
 				if (pixel < thumb_area.X)
 	    				thumb_pos.X = thumb_area.X;
 	    			else
@@ -1015,12 +1034,74 @@ namespace System.Windows.Forms
 				thumb_pos.Height = ThemeEngine.Current.ScrollBarButtonSize;
 				new_pos = (float) (thumb_pos.X - thumb_area.X);
 				new_pos = new_pos / pixel_per_pos;
+
+				Dirty (thumb_pos);
 			}
 
 			if (update_value)
 				UpdatePos ((int) new_pos + minimum, false);
     		}
 
+		private void SetValue (int value)
+		{
+			if ( value < minimum || value > maximum )
+				throw new ArgumentException(
+					String.Format("'{0}' is not a valid value for 'Value'. 'Value' should be between 'Minimum' and 'Maximum'", value));
+
+			if (position != value){
+				position = value;
+
+				OnValueChanged (EventArgs.Empty);
+				UpdatePos (value, true);
+			}
+		}
+
+		private void ClearDirty ()
+		{
+			dirty = Rectangle.Empty;
+		}
+
+		private void Dirty (Rectangle r)
+		{
+			if (dirty == Rectangle.Empty) {
+				dirty = r;
+				return;
+			}
+			dirty = Rectangle.Union (dirty, r);
+		}
+
+		private void DirtyThumbArea ()
+		{
+			if (thumb_moving == ThumbMoving.Forward) {
+				if (vert) {
+					Dirty (new Rectangle (0, thumb_pos.Y + thumb_pos.Height,
+								      ClientRectangle.Width,
+								      ClientRectangle.Height -	(thumb_pos.Y + thumb_pos.Height) -
+								      scrollbutton_height));
+				} else {
+					Dirty (new Rectangle (thumb_pos.X + thumb_pos.Width, 0,
+								      ClientRectangle.Width -  (thumb_pos.X + thumb_pos.Width) -
+								      scrollbutton_width,
+								      ClientRectangle.Height));
+				}
+			} else if (thumb_moving == ThumbMoving.Backwards) {
+				if (vert) {
+					Dirty(new Rectangle (0,	 scrollbutton_height,
+								      ClientRectangle.Width,
+								      thumb_pos.Y - scrollbutton_height));
+				} else {
+					Dirty (new Rectangle (scrollbutton_width,  0,
+								      thumb_pos.X - scrollbutton_width,
+								      ClientRectangle.Height));
+				}
+			}
+		}
+
+		private void InvalidateDirty ()
+		{
+			Invalidate (dirty);
+			dirty = Rectangle.Empty;
+		}
 
 		#endregion //Private Methods
 	 }

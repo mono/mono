@@ -1,3 +1,9 @@
+2005-02-03  Jackson Harper  <jackson@ximian.com>
+
+	* ScrollBar.cs: First part of my scrollbar fixups. This removes
+	all the unneeded refreshes and uses invalidates with properly
+	computed rects.
+
 2005-02-03  Peter Bartok  <pbartok@novell.com>
 
 	* ComponentModel.cs: Added
