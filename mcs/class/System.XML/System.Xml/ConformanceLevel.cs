@@ -31,8 +31,8 @@ namespace System.Xml
 	public enum ConformanceLevel
 	{
 		Auto,
-		Document,
-		Fragment
+		Fragment,
+		Document
 	}
 }
 #endif

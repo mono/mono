@@ -1,12 +1,10 @@
 //
-// XmlItemViewCollection.cs
+// XmlConvertDateTimeOption.cs
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// (C)2004 Novell Inc.
-//
-
+// Copyright (C) 2004 Novell Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,18 +25,22 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
 
-using System.Collections;
-using System.ComponentModel;
 
-namespace System.Xml
-{
-	[MonoTODO]
-	public class XmlItemViewCollection 
-//		: IBindingList, IList, ICollection, IEnumerable, ITypedList
-	{
-		// TODO: fill members
-	}
-}
-#endif
+namespace System.Xml {
+
+
+	/// <summary>
+	/// </summary>
+	public enum Formatting {
+
+		/// <summary>
+		/// </summary>
+		None = 0,
+
+		/// <summary>
+		/// </summary>
+		Indented = 1,
+	} // Formatting
+
+} // System.Xml
