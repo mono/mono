@@ -71,7 +71,7 @@ namespace System.Xml
 		private XmlDocument document;
 		// Current namespace node (ancestor's attribute of current node).
 		private XmlAttribute nsNode;
-		private ArrayList iteratedNsNames = new ArrayList ();
+		private ArrayList iteratedNsNames;
 		#endregion
 
 		#region Properties
@@ -119,10 +119,15 @@ namespace System.Xml
 		public XmlAttribute NsNode {
 			get { return nsNode; }
 			set {
-				if (value == null)
-					iteratedNsNames.Clear ();
-				else
+				if (value == null) {
+					if (iteratedNsNames != null)
+						iteratedNsNames.Clear ();
+				}
+				else {
+					if (iteratedNsNames == null)
+						iteratedNsNames = new ArrayList ();
 					iteratedNsNames.Add (value.Name);
+				}
 				nsNode = value;
 			}
 		}
@@ -224,10 +229,12 @@ namespace System.Xml
 
 		private bool CheckNsNameAppearance (string name, string ns)
 		{
-			if (iteratedNsNames.Contains (name))
+			if (iteratedNsNames != null && iteratedNsNames.Contains (name))
 				return true;
 			// default namespace erasure - just add name and never return this node
 			if (ns == String.Empty) {
+				if (iteratedNsNames == null)
+					iteratedNsNames = new ArrayList ();
 				iteratedNsNames.Add ("xmlns");
 				return true;
 			}
@@ -239,7 +246,8 @@ namespace System.Xml
 		{
 			XmlDocumentNavigator clone = new XmlDocumentNavigator (node, nsNodeXml);
 			clone.nsNode = nsNode;
-			clone.iteratedNsNames = (ArrayList) iteratedNsNames.Clone ();
+			if (iteratedNsNames != null)
+				clone.iteratedNsNames = (ArrayList) iteratedNsNames.Clone ();
 			return clone;
 		}
 

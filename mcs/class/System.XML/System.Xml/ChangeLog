@@ -1,3 +1,8 @@
+2004-11-05  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlDocumentNavigator.cs : create rarely-used ArrayList later. This
+	  significantly improves XmlDocument-based XPath performance.
+
 2004-11-04  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextReader.cs : Manually expanded some of AppendValueChar() and
@@ -61,7 +66,7 @@
 2004-10-29  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlNodeReader.cs : Reimplemented ResolveEntity(). It does not use
-	  XmlTextReader trick anymore. XmlNodeReader itself it used instead.
+	  XmlTextReader trick anymore. XmlNodeReader itself is used instead.
 
 2004-10-29  Atsushi Enomoto <atsushi@ximian.com>
 
