@@ -2194,6 +2194,9 @@ public class TypeManager {
 	/// </remarks>
 	public static string IndexerPropertyName (Type t)
 	{
+		if (t.IsGenericInstance)
+			t = t.GetGenericTypeDefinition ();
+
 		if (t is TypeBuilder) {
 			if (t.IsInterface) {
 				Interface i = LookupInterface (t);
