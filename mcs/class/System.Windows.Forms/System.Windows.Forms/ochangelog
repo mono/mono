@@ -1,3 +1,7 @@
+2002-9-3   John Sohn <jsohn@columbus.rr.com>
+	* Control.cs: mapped more of the functions to the Win32 API
+	* Win32.cs: added more Win32 imports and definitions
+	
 2002-9-1   John Sohn <jsohn@columbus.rr.com>
 	* MessageBox.cs: added mostly complete implementation of the 
 	MessageBox class

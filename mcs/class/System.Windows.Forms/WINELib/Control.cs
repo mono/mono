@@ -71,26 +71,28 @@ namespace System.Windows.Forms {
 		//bool tabStop;
 		//string text;
 		//bool visible;
-		
+		CreateParams createParams = new CreateParams ();
+
 		// --- Constructors ---
 		public Control ()
 		{
-			CreateParams cp = new CreateParams ();
+			// FIXME: should window creation happen here
+			// (in the constructor)?
 			window = new ControlNativeWindow (this);
 			
-			cp.Caption = "";
-			cp.ClassName = "mono_native_window";
-			cp.X = 10;
-			cp.Y = 10;
-			cp.Width = 50;
-			cp.Height = 50;
-			cp.ClassStyle = 0;
-			cp.ExStyle = 0;
-			cp.Param = 0;
-			cp.Param = 0;
-			cp.Style = (int) Win32.WS_OVERLAPPEDWINDOW;
+			createParams.Caption = "";
+			createParams.ClassName = "mono_native_window";
+			createParams.X = 10;
+			createParams.Y = 10;
+			createParams.Width = 50;
+			createParams.Height = 50;
+			createParams.ClassStyle = 0;
+			createParams.ExStyle = 0;
+			createParams.Param = 0;
+			createParams.Param = 0;
+			createParams.Style = (int) Win32.WS_OVERLAPPEDWINDOW;
 
-			window.CreateHandle (cp);
+			window.CreateHandle (createParams);
 
 			//Acually many of these need to be gotten or sent to 
 			//the OS, and not stored here.
@@ -123,31 +125,26 @@ namespace System.Windows.Forms {
 		
 		public Control (string text) : this() 
 		{
-			throw new NotImplementedException ();
-			//this.text=text;
+			Win32.SetWindowTextA (Handle, text);
 		}
 		
-		[MonoTODO]
 		public Control (Control parent, string text) : this (text) 
 		{
-			// FIXME: set parent
-			throw new NotImplementedException ();
+			Win32.SetParent (Handle, parent.Handle);
 		}
 		
-		[MonoTODO]
 		public Control (string text, int left, int top, 
 				int width, int height) : this(text) 
 		{
-			// FIXME: set size and location
-			throw new NotImplementedException ();
+			Win32.SetWindowPos (Handle, (IntPtr) 0, left, top,
+					    width, height, 0);
 		}
 		
-		[MonoTODO]
 		public Control (Control parent,string text,int left, int top,
-				int width,int height) : this (parent,text) 
+				int width,int height) : this (parent, text)
 		{
-			// FIXME: set size and location
-			throw new NotImplementedException ();
+			Win32.SetWindowPos (Handle, (IntPtr) 0, left, top,
+					    width, height, 0);
 		}
 		
 		// --- Properties ---
@@ -161,7 +158,8 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		
+
+		[MonoTODO]
 		public string AccessibleDefaultActionDescription {
 			get {
 				//return accessibleDefaultActionDescription;
@@ -173,6 +171,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		
+		[MonoTODO]
 		public string AccessibleDescription {
 			get {
 				//return accessibleDescription;
@@ -184,6 +183,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		
+		[MonoTODO]
 		public string AccessibleName {
 			get {
 				//return accessibleName;
@@ -195,6 +195,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		
+		[MonoTODO]
 		public AccessibleRole AccessibleRole {
 			get {
 				//return accessibleRole;
@@ -206,6 +207,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		
+		[MonoTODO]
 		public virtual bool AllowDrop {
 			get {
 				//return allowDrop;
@@ -217,6 +219,7 @@ namespace System.Windows.Forms {
 			}
 		}
 	
+		[MonoTODO]
 		public virtual AnchorStyles Anchor {
 			get {
 				//return anchor;
@@ -230,15 +233,24 @@ namespace System.Windows.Forms {
 		
 		public virtual Color BackColor {
 			get {
-				//return backColor;
-				throw new NotImplementedException ();
+				IntPtr dc = Win32.GetDC (Handle);
+				uint bgColor = Win32.GetBkColor (dc);
+				Win32.ReleaseDC (Handle, dc);
+
+				int r = (int) (bgColor & 0xFF);
+				int g = (int) ((bgColor >> 8) & 0xFF);
+				int b = (int) ((bgColor >> 16) & 0xFF);
+
+				return Color.FromArgb (r, g, b);
 			}
 			set {
-				//backColor=value;
-				throw new NotImplementedException ();
+				IntPtr dc = Win32.GetDC (Handle);
+				Win32.SetBkColor (dc, (uint) value.ToArgb());
+				Win32.ReleaseDC (Handle, dc);
 			}
 		}
 		
+		[MonoTODO]
 		public virtual Image BackgroundImage {
 			get {
 				//return backgroundImage;
@@ -262,30 +274,33 @@ namespace System.Windows.Forms {
 		//	}
 		//}
 		
-		[MonoTODO]
 		public int Bottom {
 			get {
-				throw new NotImplementedException ();
+				return Top + Height;
 			}
 		}
 		
-		[MonoTODO]
 		public Rectangle Bounds {
-			// CHECKME:
 			get {
-				//return bounds;
-				throw new NotImplementedException ();
+				Win32.RECT rect = new Win32.RECT();
+				Win32.GetWindowRect (Handle, ref rect);
+				return new Rectangle ((int) rect.left, 
+						      (int) rect.top,
+						      (int) rect.right, 
+						      (int) rect.bottom);
 			}
 			set {
-				//bounds=value;
-				throw new NotImplementedException ();
+				Win32.SetWindowPos ( 
+					Handle, (IntPtr) 0, value.X, value.Y,
+					value.Width, value.Height, 0);
 			}
 		}
 		
-		[MonoTODO]
 		public bool CanFocus {
 			get {
-				throw new NotImplementedException ();
+				if (Handle != (IntPtr) 0 && Visible && Enabled)
+					return true;
+				return false;
 			}
 		}
 		
@@ -296,16 +311,28 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		[MonoTODO]
 		public bool Capture {
 			get {
-				throw new NotImplementedException ();
+				IntPtr captured = Win32.GetCapture ();
+				if (Handle == captured) 
+					return true;
+				return false;
 			}
 			set {
-				throw new NotImplementedException ();
+				if (value)
+					Win32.SetCapture (Handle);
+				else {
+					IntPtr captured = Win32.GetCapture ();
+
+					// if this window is in capture state
+					// release it
+					if (Handle == captured)
+						Win32.ReleaseCapture ();
+				}
 			}
 		}
 		
+		[MonoTODO]
 		public bool CausesValidation {
 			get {
 				//return causesValidation;
@@ -317,16 +344,22 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		[MonoTODO]
 		public Rectangle ClientRectangle {
 			get {
-				throw new NotImplementedException ();
+				Win32.RECT rect = new Win32.RECT();
+				Win32.GetClientRect (Handle, ref rect);
+				return new Rectangle ((int) rect.left, 
+						      (int) rect.top,
+						      (int) rect.right, 
+						      (int) rect.bottom);
 			}
 		}
 		
 		[MonoTODO]
 		public Size ClientSize {
 			get {
+				// FIXME: use GetSystemMetrics and/or
+				// GetClientRect here?
 				throw new NotImplementedException ();
 			}
 			set {
@@ -341,10 +374,12 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		[MonoTODO]
 		public bool ContainsFocus {
 			get {
-				throw new NotImplementedException ();
+				IntPtr focusedWindow = Win32.GetFocus();
+				if (focusedWindow == Handle)
+					return true;
+				return false;
 			}
 		}
 		
@@ -366,17 +401,17 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		[MonoTODO]
 		public bool Created {
-			get {
-				throw new NotImplementedException ();
+			get { 
+				if (Handle != (IntPtr) 0)
+					return true;
+				return false;
 			}
 		}
 		
-		[MonoTODO]
 		protected virtual CreateParams CreateParams {
 			get {
-				throw new NotImplementedException ();
+				return createParams;
 			}
 		}
 		
@@ -400,12 +435,14 @@ namespace System.Windows.Forms {
 		
 		public static Color DefaultBackColor {
 			get {
+				// FIXME: use GetSystemMetrics?
 				//return SystemColors.Control;
 				throw new NotImplementedException ();
 			}
 		}
 
 		//[MonoTODO]
+		// FIXME: use GetSystemMetrics?
  		//public static Font DefaultFont {
 			// FIXME: get current system font from GenericSansSerif
 			//        call ArgumentException not called
@@ -417,6 +454,7 @@ namespace System.Windows.Forms {
 		
 		public static Color DefaultForeColor {
 			get {
+				// FIXME: use GetSystemMetrics?
 				//return SystemColors.ControlText;
 				throw new NotImplementedException ();
 			}
@@ -432,14 +470,14 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual Size DefaultSize {
 			get {
+				// FIXME: use GetSystemMetrics?
 				throw new NotImplementedException ();
 			}
 		}
 		
-		[MonoTODO]
 		public virtual Rectangle DisplayRectangle {
 			get {
-				throw new NotImplementedException ();
+				return ClientRectangle;
 			}
 		}
 		
@@ -463,27 +501,22 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
 		public virtual bool Enabled {
-			// CHECKME:
 			get {
-				//return enabled;
-				throw new NotImplementedException ();
+				return Win32.IsWindowEnabled (Handle);
 			}
 			set {
-				//enabled=value;
-				throw new NotImplementedException ();
+				Win32.EnableWindow (Handle, value);
 			}
 		}
 		
-		[MonoTODO]
 		public virtual bool Focused {
 			get {
-				throw new NotImplementedException ();
+				return ContainsFocus;
 			}
 		}
 		
-		[MonoTODO]
+		// [MonoTODO]
 		//public virtual Font Font {
 			// CHECKME:
 		//	get {
@@ -521,6 +554,7 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		public bool HasChildren {
+			// FIXME: use EnumChildWindows here?
 			get {
 				throw new NotImplementedException ();
 			}
@@ -562,17 +596,19 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		[MonoTODO]
 		public bool IsDisposed {
 			get {
-				throw new NotImplementedException ();
+				if (Handle == (IntPtr) 0)
+					return true;
+				return false;
 			}
 		}
 		
-		[MonoTODO]
 		public bool IsHandleCreated {
 			get {
-				throw new NotImplementedException ();
+				if (Handle != (IntPtr) 0)
+					return true;
+				return false;
 			}
 		}
 		
@@ -609,14 +645,16 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public static MouseButtons MouseButtons {
 			get {
+				// FIXME: use GetAsycKeyState?
 				throw new NotImplementedException ();
 			}
 		}
 		
-		[MonoTODO]
 		public static Point MousePosition {
 			get {
-				throw new NotImplementedException ();
+				Win32.POINT point = new Win32.POINT();
+				Win32.GetCursorPos (ref point);
+				return new Point ( (int) point.x, (int) point.y);
 			}
 		}
 		
@@ -636,9 +674,13 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public Control Parent {
 			get {
+				// Need to get HWND from Control class
+				// Win32.GetParent (Handle);
 				throw new NotImplementedException ();
 			}
 			set {
+				// Need to get HWND from Control class
+				// Win32.SetParent (value);
 				throw new NotImplementedException ();
 			}
 		}
@@ -664,7 +706,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		[MonoTODO]
+		// [MonoTODO]
 		// Region class not ready
 		//public Region Region {
 		//	// CHECKME:
@@ -688,10 +730,9 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		[MonoTODO]
 		public int Right {
 			get {
-				throw new NotImplementedException ();
+				return Left + Width;
 			}
 		}
 		
@@ -775,16 +816,15 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		[MonoTODO]
 		public virtual string Text {
-			// CHECKME:
 			get {
-				//return text;
-				throw new NotImplementedException ();
+				String text = "";
+				int length = Win32.GetWindowTextLengthA (Handle);
+				Win32.GetWindowTextA (Handle, ref text, length);
+				return text;
 			}
 			set {
-				//text=value;
-				throw new NotImplementedException ();
+				Win32.SetWindowTextA (Handle, value);
 			}
 		}
 		
@@ -804,17 +844,18 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 		}
-		
-		[MonoTODO]
+
 		public bool Visible {
-			// CHECKME:
 			get {
-				//return visible;
 				throw new NotImplementedException ();
 			}
 			set {
-				//visible=value;
-				throw new NotImplementedException ();
+				if (value)
+					Win32.ShowWindow (
+						Handle, Win32.SW_SHOW);
+				else
+					Win32.ShowWindow (
+						Handle, Win32.SW_HIDE);
 			}
 		}
 		
@@ -828,8 +869,6 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		
-		
 		/// --- methods ---
 		/// internal .NET framework supporting methods, not stubbed out:
 		/// - protected virtual void NotifyInvalidate(Rectangle invalidatedArea)
@@ -838,7 +877,6 @@ namespace System.Windows.Forms {
 		/// - protected void RaiseMouseEvent(object key,MouseEventArgs e);
 		/// - protected void RaisePaintEvent(object key,PaintEventArgs e);
 		/// - protected void ResetMouseEventArgs();
-		
 		
 		[MonoTODO]
 		protected void AccessibilityNotifyClients (
@@ -865,7 +903,7 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		//[MonoTODO]
 		// AccessibleObject not ready
 		//protected virtual AccessibleObject CreateAccessibilityInstance() {
 		//	throw new NotImplementedException ();
@@ -889,16 +927,14 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 	
-		[MonoTODO]
 		protected virtual void DefWndProc (ref Message m)
 		{
 			window.DefWndProc(ref m);
 		}
-	
-		[MonoTODO]
+		
 		protected virtual void DestroyHandle ()
 		{
-			throw new NotImplementedException ();
+			window.DestroyHandle ();
 		}
 	
 		[MonoTODO]
@@ -923,10 +959,11 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 	
-		[MonoTODO]
 		public bool Focus () 
 		{
-			throw new NotImplementedException ();
+			if (Win32.SetFocus (Handle) != (IntPtr) 0)
+				return true;
+			return false;
 		}
 	
 		[MonoTODO]
@@ -947,7 +984,7 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 	
-		[MonoTODO]
+		// [MonoTODO]
 		//public IContainerControl GetContainerControl () 
 		//{
 		//	throw new NotImplementedException ();
@@ -971,10 +1008,9 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		public void Hide ()
  		{
-			throw new NotImplementedException ();
+			Win32.ShowWindow (Handle, Win32.SW_HIDE);
 		}
 		
 		[MonoTODO]
@@ -983,10 +1019,10 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		public void Invalidate () 
 		{
-			throw new NotImplementedException ();
+			Win32.RECT rect = (Win32.RECT) null;
+			Win32.InvalidateRect (Handle, ref rect, true);
 		}
 		
 		[MonoTODO]
@@ -995,13 +1031,17 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		public void Invalidate (Rectangle rc) 
 		{
-			throw new NotImplementedException ();
+			Win32.RECT rect = new Win32.RECT();
+			rect.left = rc.Left;
+			rect.top = rc.Top;
+			rect.right = rc.Right;
+			rect.bottom = rc.Bottom;
+			Win32.InvalidateRect (Handle, ref rect, true);
 		}
 		
-		[MonoTODO]
+		//[MonoTODO]
 		// Region class not ready
 		//public void Invalidate(Region region) 
 		//{
@@ -1014,7 +1054,7 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
+		//[MonoTODO]
 		// Region not ready
 		//public void Invalidate(Region region,bool invalidateChildren) 
 		//{
@@ -1071,15 +1111,15 @@ namespace System.Windows.Forms {
 		}
 		
 		// methods used with events:
-		[MonoTODO]
 		protected virtual void OnBackColorChanged (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			BackColorChanged (this, e);
 		}
 		
 		[MonoTODO]
 		protected virtual void OnBackgroundImageChanged (EventArgs e)
 		{
+			//BackgroundImageChanged (this, e);
 			throw new NotImplementedException ();
 		}
 		
@@ -1095,7 +1135,7 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
+		// [MonoTODO]
 		// Region not ready
 		//protected virtual void OnChangeUICues(UICuesEventArgs e) 
 		//{
@@ -1105,7 +1145,6 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual void OnClick (EventArgs e)
 		{
-			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
@@ -1147,7 +1186,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual void OnDoubleClick (EventArgs e)
 		{
-			throw new NotImplementedException ();
+
 		}
 		
 		[MonoTODO]
@@ -1177,19 +1216,19 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual void OnEnabledChanged (EventArgs e)
 		{
-			throw new NotImplementedException ();
+
 		}
 		
 		[MonoTODO]
 		protected virtual void OnEnter (EventArgs e)
 		{
-			throw new NotImplementedException ();
+
 		}
 		
 		[MonoTODO]
 		protected virtual void OnFontChanged (EventArgs e)
 		{
-			throw new NotImplementedException ();
+
 		}
 		
 		[MonoTODO]
@@ -1208,19 +1247,19 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual void OnGotFocus (EventArgs e) 
 		{
-			throw new NotImplementedException ();
+
 		}
 		
 		[MonoTODO]
 		protected virtual void OnHandleCreated (EventArgs e) 
 		{
-			throw new NotImplementedException ();
+
 		}
 		
 		[MonoTODO]
 		protected virtual void OnHandleDestroyed (EventArgs e) 
 		{
-			throw new NotImplementedException ();
+
 		}
 		
 		[MonoTODO]
@@ -1268,7 +1307,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual void OnLeave (EventArgs e) 
 		{
-			throw new NotImplementedException ();
+
 		}
 		
 		[MonoTODO]
@@ -1280,7 +1319,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual void OnLostFocus (EventArgs e) 
 		{
-			throw new NotImplementedException ();
+
 		}
 		
 		[MonoTODO]
@@ -1292,55 +1331,54 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual void OnMouseEnter (EventArgs e) 
 		{
-			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
 		protected virtual void OnMouseHover (EventArgs e) 
 		{
-			throw new NotImplementedException ();
+
 		}
 		
 		[MonoTODO]
 		protected virtual void OnMouseLeave (EventArgs e) 
 		{
-			throw new NotImplementedException ();
+
 		}
 		
 		[MonoTODO]
 		protected virtual void OnMouseMove (MouseEventArgs e) 
 		{
-			throw new NotImplementedException ();
+
 		}
 		
 		[MonoTODO]
 		protected virtual void OnMouseUp (MouseEventArgs e) 
 		{
-			throw new NotImplementedException ();
+
 		}
 		
 		[MonoTODO]
 		protected virtual void OnMouseWheel (MouseEventArgs e) 
 		{
-			throw new NotImplementedException ();
+
 		}
 		
 		[MonoTODO]
 		protected virtual void OnMove (EventArgs e) 
 		{
-			throw new NotImplementedException ();
+
 		}
 		
 		[MonoTODO]
 		protected virtual void OnNotifyMessage (Message m) 
 		{
-			throw new NotImplementedException ();
+
 		}
 		
 		[MonoTODO]
 		protected virtual void OnPaint (PaintEventArgs e) 
 		{
-			throw new NotImplementedException ();
+
 		}
 		
 		[MonoTODO]
@@ -1417,7 +1455,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual void OnResize (EventArgs e) 
 		{
-			throw new NotImplementedException ();
+
 		}
 		
 		[MonoTODO]
@@ -1429,7 +1467,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual void OnSizeChanged (EventArgs e) 
 		{
-			throw new NotImplementedException ();
+
 		}
 		
 		[MonoTODO]
@@ -1441,7 +1479,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual void OnSystemColorsChanged (EventArgs e) 
 		{
-			throw new NotImplementedException ();
+
 		}
 		
 		[MonoTODO]
@@ -1457,9 +1495,11 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		protected virtual void OnTextChanged (EventArgs e) {
-			throw new NotImplementedException ();
+		protected virtual void OnTextChanged (EventArgs e) 
+		{
+
 		}
+
 		[MonoTODO]
 		protected virtual void OnTextAlignChanged (EventArgs e) {
 			throw new NotImplementedException ();
@@ -1481,7 +1521,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual void OnVisibleChanged (EventArgs e) 
 		{
-			throw new NotImplementedException ();
+
 		}
 		// --- end of methods for events ---
 		
@@ -1586,10 +1626,10 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		public virtual void Refresh () 
 		{
-			throw new NotImplementedException ();
+			Win32.InvalidateRect (Handle, (RECT) null, true);
+			Win32.UpdateWindow (Handle);
 		}
 		
 		[MonoTODO]
@@ -1765,10 +1805,18 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		protected void SetTopLevel (bool value)
 		{
-			throw new NotImplementedException ();
+			if (value)
+				// FIXME: verify on whether this is supposed
+				// to activate/deactive the window
+				Win32.SetWindowPos (Handle, 
+						    (IntPtr) Win32.HWND_NOTOPMOST,
+						    0, 0, 0, 0, 0);
+			else
+				// FIXME: this does not make sense but
+				// the docs say the window is hidden
+				Win32.ShowWindow (Handle, Win32.SW_HIDE);
 		}
 		
 		[MonoTODO]
@@ -1777,10 +1825,9 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		public void Show () 
 		{
-			throw new NotImplementedException ();
+			Win32.ShowWindow (Handle, Win32.SW_SHOW);
 		}
 		
 		[MonoTODO]
@@ -1789,10 +1836,9 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		public void Update () 
 		{
-			throw new NotImplementedException ();
+			Win32.UpdateWindow (Handle);
 		}
 		
 		[MonoTODO]
@@ -1827,12 +1873,164 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
+		// WndProc - calls appriate On... function for the give
+		// message
+		//
+		// These On... functions do not appear to be called by
+		// WndProc:
+		//
+		// background color/image handled by WinForms
+		// OnBackColorChanged
+		// OnBackgroundImageChanged
+		// OnForeColorChanged
+		// OnPaintBackground
+		//
+		// controls are added/removed by WinForms
+		// OnControlAdded
+		// OnControlRemoved
+		// OnCreateControl
+		//
+		// OnBindingContextChanged
+		// OnCausesValidationChanged
+		// OnChangeUICues
+		// OnContextMenuChanged
+		// OnRightToLeftChanged
+		// OnGiveFeedback
+		// OnLayout
+		// OnDockChanged
+		// OnCursorChanged
+		// OnTextAlignChanged
+		// OnValidated
+		// OnValidating
+		// OnTabIndexChanged
+		// OnTabStopChanged
+		// OnLocationChanged
+		//
+		// FIXME: may be one of the WM_IME_ messages
+		// OnImeModeChanged 
+		//
+		// InvalidateRect is called by no Invalidate message exists
+		// OnInvalidated
+		//
+		// these messages ARE not called by WNDPROC according to docs
+		// OnParentBackColorChanged 
+		// OnParentBackgroundImageChanged
+		// OnParentBindingContextChanged
+		// OnParentChanged
+		// OnParentEnabledChanged
+		// OnParentFontChanged
+		// OnParentForeColorChanged
+		// OnParentRightToLeftChanged
+		// OnParentVisibleChanged
+		//
 		protected virtual void WndProc(ref Message m) 
 		{
-			DefWndProc(ref m);
+			EventArgs eventArgs = new EventArgs ();
+
+			switch (m.Msg) {
+
+			case Win32.WM_CREATE:
+				OnHandleCreated (eventArgs);
+				break;
+			case Win32.WM_LBUTTONDBLCLK:
+				OnDoubleClick (eventArgs);
+				break;
+				// OnDragDrop
+				// OnDragEnter
+				// OnDragLeave
+				// OnDragOver
+				// OnQueryContinueDrag
+			case Win32.WM_ENABLE:
+				OnEnabledChanged (eventArgs);
+				break;
+			case Win32.WM_SETFOCUS:
+				OnEnter (eventArgs);
+				OnGotFocus (eventArgs);
+				break;
+			case Win32.WM_FONTCHANGE:
+				OnFontChanged (eventArgs);
+				break;
+			case Win32.WM_DESTROY:
+				OnHandleDestroyed (eventArgs);
+				break;
+			case Win32.WM_HELP:
+				// FIXME:
+				//OnHelpRequested (eventArgs);
+				break;
+			case Win32.WM_KEYDOWN:
+				// FIXME:
+				// OnKeyDown (eventArgs);
+				break;
+			case Win32.WM_CHAR:
+				// FIXME:
+				// OnKeyPress (eventArgs);
+				break;
+			case Win32.WM_KEYUP:
+				// FIXME:
+				// OnKeyUp (eventArgs);
+				break;
+			case Win32.WM_KILLFOCUS:
+				OnLeave (eventArgs);
+				OnLostFocus (eventArgs);
+				break;
+			case Win32.WM_LBUTTONDOWN:
+				// FIXME:
+				// OnMouseDown (eventArgs);
+				break;
+			case Win32.WM_MOUSEACTIVATE:
+				OnMouseEnter (eventArgs);
+				break;
+			case Win32.WM_MOUSEHOVER: // called by TrackMouseEvent
+				OnMouseHover (eventArgs);
+				break;
+			case Win32.WM_MOUSELEAVE: // called by TrackMouseEvent
+				OnMouseLeave (eventArgs);
+				break;
+			case Win32.WM_MOUSEMOVE:
+				// FIXME:
+				// OnMouseMove (eventArgs);
+				break;
+			case Win32.WM_LBUTTONUP:
+				// FIXME:
+				// OnMouseUp (eventArgs);
+				break;
+			case Win32.WM_MOUSEWHEEL:
+				// FIXME:
+				// OnMouseWheel (eventArgs);
+				break;
+			case Win32.WM_MOVE:
+				OnMove (eventArgs);
+				break;
+			case Win32.WM_NOTIFY:
+				// FIXME: get NM_CLICKED msg from pnmh
+				// OnClick (eventArgs);
+				// OnNotifyMessage (eventArgs);
+			case Win32.WM_PAINT:
+				// FIXME:
+				// OnPaint (eventArgs);
+				break;
+			case Win32.WM_SIZE:
+				OnResize (eventArgs);
+				OnSizeChanged (eventArgs);
+				break;
+			case Win32.WM_STYLECHANGED:
+				OnStyleChanged (eventArgs);
+				break;
+			case Win32.WM_SYSCOLORCHANGE:
+				OnSystemColorsChanged (eventArgs);
+				break;
+			case Win32.WM_SETTEXT:
+				OnTextChanged (eventArgs);
+				break;
+			case Win32.WM_SHOWWINDOW:
+				OnVisibleChanged (eventArgs);
+				break;
+			default:
+				DefWndProc (ref m);
+				break;
+			}
 		}
-		
+
 		/// --- Control: events ---
 		[MonoTODO]
 		public event EventHandler BackColorChanged;// {
@@ -2399,9 +2597,8 @@ namespace System.Windows.Forms {
 		}
 		
 		/// --- IWin32Window properties
-		[MonoTODO]
 		public IntPtr Handle {
-			get { throw new NotImplementedException (); }
+			get { return window.Handle; }
 		}
 		
 		/// --- ISynchronizeInvoke properties ---

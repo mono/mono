@@ -22,8 +22,16 @@ namespace System.Windows.Forms {
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
+		public struct RECT {
+			public long left; 
+			public long top; 
+			public long right; 
+			public long bottom;
+		}
+ 
+		[StructLayout(LayoutKind.Sequential)]
 		public struct MSG {
-			public IntPtr   hwnd;	 
+			public IntPtr   hwnd;
 			public uint  message; 
 			public IntPtr wParam; 
 			public IntPtr lParam; 
@@ -80,7 +88,7 @@ namespace System.Windows.Forms {
 		[DllImport ("user32.dll", CallingConvention = 
 			    CallingConvention.StdCall, CharSet = CharSet.Auto)]
 		public static extern int ShowWindow (IntPtr hWnd, 
-						     int nCmdShow);
+						     uint nCmdShow);
 
 		[DllImport ("user32.dll", CallingConvention = 
 			    CallingConvention.StdCall,CharSet = CharSet.Auto)]
@@ -128,6 +136,114 @@ namespace System.Windows.Forms {
 			    CharSet = CharSet.Auto)]
 		public static extern int MessageBoxA (
 			IntPtr hWnd, string pText, string pCaption, uint uType);
+		[DllImport ("user32.dll", 
+			    CallingConvention = CallingConvention.StdCall, 
+			    CharSet = CharSet.Auto)]
+		public static extern IntPtr SetParent (
+			IntPtr hWndChild, IntPtr hWndNewParent);
+
+		[DllImport ("user32.dll", 
+			    CallingConvention = CallingConvention.StdCall, 
+			    CharSet = CharSet.Auto)]
+		public static extern bool SetWindowTextA (
+			IntPtr hWnd, string lpString);
+
+		[DllImport ("user32.dll", 
+			    CallingConvention = CallingConvention.StdCall, 
+			    CharSet = CharSet.Auto)]
+		public static extern bool UpdateWindow (IntPtr hWnd);
+
+		[DllImport ("user32.dll", 
+			    CallingConvention = CallingConvention.StdCall, 
+			    CharSet = CharSet.Auto)]
+		public static extern uint GetBkColor (IntPtr hdc);
+
+		[DllImport ("user32.dll", 
+			    CallingConvention = CallingConvention.StdCall, 
+			    CharSet = CharSet.Auto)]
+		public static extern uint SetBkColor (IntPtr hdc, uint crColor);
+
+		[DllImport ("user32.dll", 
+			    CallingConvention = CallingConvention.StdCall, 
+			    CharSet = CharSet.Auto)]
+		public static extern IntPtr GetDC (IntPtr hWnd);
+
+		[DllImport ("user32.dll", 
+			    CallingConvention = CallingConvention.StdCall, 
+			    CharSet = CharSet.Auto)]
+		public static extern int ReleaseDC (IntPtr hWnd, IntPtr hDC);
+
+		[DllImport ("user32.dll", 
+			    CallingConvention = CallingConvention.StdCall, 
+			    CharSet = CharSet.Auto)]
+		public static extern IntPtr GetFocus();
+
+		[DllImport ("user32.dll", 
+			    CallingConvention = CallingConvention.StdCall, 
+			    CharSet = CharSet.Auto)]
+		public static extern IntPtr SetFocus (IntPtr hWnd);
+
+		[DllImport ("user32.dll", 
+			    CallingConvention = CallingConvention.StdCall, 
+			    CharSet = CharSet.Auto)]
+		public static extern bool IsWindowEnabled (IntPtr hWnd);
+
+		[DllImport ("user32.dll", 
+			    CallingConvention = CallingConvention.StdCall, 
+			    CharSet = CharSet.Auto)]
+		public static extern bool EnableWindow (
+			IntPtr hWnd, bool bEnable);
+
+		[DllImport ("user32.dll", 
+			    CallingConvention = CallingConvention.StdCall, 
+			    CharSet = CharSet.Auto)]
+		public static extern bool GetWindowRect (
+			IntPtr hWnd, ref RECT lpRect);
+
+		[DllImport ("user32.dll", 
+			    CallingConvention = CallingConvention.StdCall, 
+			    CharSet = CharSet.Auto)]
+		public static extern bool GetClientRect (
+			IntPtr hWnd, ref RECT lpRect);
+
+		[DllImport ("user32.dll", 
+			    CallingConvention = CallingConvention.StdCall, 
+			    CharSet = CharSet.Auto)]
+		public static extern bool InvalidateRect (
+			IntPtr hWnd, ref RECT lpRect, bool bErase); 
+
+		[DllImport ("user32.dll", 
+			    CallingConvention = CallingConvention.StdCall, 
+			    CharSet = CharSet.Auto)]
+		public static extern IntPtr GetCapture ();
+
+		[DllImport ("user32.dll", 
+			    CallingConvention = CallingConvention.StdCall, 
+			    CharSet = CharSet.Auto)]
+		public static extern IntPtr SetCapture (IntPtr hWnd);
+
+		[DllImport ("user32.dll", 
+			    CallingConvention = CallingConvention.StdCall, 
+			    CharSet = CharSet.Auto)]
+		public static extern bool ReleaseCapture ();
+
+		[DllImport ("user32.dll", 
+			    CallingConvention = CallingConvention.StdCall, 
+			    CharSet = CharSet.Auto)]
+		public static extern int GetWindowTextA (
+			IntPtr hWnd, ref String lpString, int nMaxCount);
+
+		[DllImport ("user32.dll", 
+			    CallingConvention = CallingConvention.StdCall, 
+			    CharSet = CharSet.Auto)]
+		public static extern int GetWindowTextLengthA (IntPtr hWnd);
+
+		[DllImport ("user32.dll", 
+			    CallingConvention = CallingConvention.StdCall, 
+			    CharSet = CharSet.Auto)]
+		public static extern bool GetCursorPos (ref POINT lpPoint);
+
+
 
 		// Window Messages
 		public const uint WM_NULL                 = 0x0000;
@@ -424,6 +540,9 @@ namespace System.Windows.Forms {
 
 		public const uint WM_APP               = 0x8000;
 
+		public const int WM_MOUSEHOVER                   = 0x02A1;
+		public const int WM_MOUSELEAVE                   = 0x02A3;
+
 		// Window Styles
 		public const uint WS_OVERLAPPED = 0x00000000;
 		public const uint WS_POPUP = 0x80000000;
@@ -450,7 +569,22 @@ namespace System.Windows.Forms {
 		  WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
 
 		// ShowWindow types
-		public const uint SW_SHOW = 5;
+		public const uint SW_HIDE             = 0;
+		public const uint SW_SHOWNORMAL       = 1;
+		public const uint SW_NORMAL           = 1;
+		public const uint SW_SHOWMINIMIZED    = 2;
+		public const uint SW_SHOWMAXIMIZED    = 3;
+		public const uint SW_MAXIMIZE         = 3;
+		public const uint SW_SHOWNOACTIVATE   = 4;
+		public const uint SW_SHOW             = 5;
+		public const uint SW_MINIMIZE         = 6;
+		public const uint SW_SHOWMINNOACTIVE  = 7;
+		public const uint SW_SHOWNA           = 8;
+		public const uint SW_RESTORE          = 9;
+		public const uint SW_SHOWDEFAULT      = 10;
+		public const uint SW_FORCEMINIMIZE    = 11;
+		public const uint SW_MAX              = 11;
+		public const uint SW_NORMALNA         = 0xCC;
 
 		// SetWindowPos types
 		public const uint SWP_NOSIZE          = 0x0001;
@@ -485,11 +619,12 @@ namespace System.Windows.Forms {
 		public const uint CS_GLOBALCLASS      = 0x4000;
 		public const uint CS_IME              = 0x00010000;
 
+		// PeekMessage types
 		public const uint PM_NOREMOVE     = 0x0000;
 		public const uint PM_REMOVE       = 0x0001;
 		public const uint PM_NOYIELD      = 0x0002;
 
-
+		// MessageBox types
 		public const uint MB_OK                   = 0x00000000;
 		public const uint MB_OKCANCEL             = 0x00000001;
 		public const uint MB_ABORTRETRYIGNORE     = 0x00000002;
@@ -497,5 +632,11 @@ namespace System.Windows.Forms {
 		public const uint MB_YESNO                = 0x00000004;
 		public const uint MB_RETRYCANCEL          = 0x00000005;
 		public const uint MB_TYPEMASK             = 0x0000000F;
+
+		public const int HWND_TOP = 0;
+		public const int HWND_BOTTOM = 1;
+		public const int HWND_TOPMOST = -1;
+		public const int HWND_NOTOPMOST = -2;
+		public const int HWND_MESSAGE = -3;
 	}
 }
