@@ -1,3 +1,8 @@
+2004-02-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ConvertTest.cs: Added a new test for bug #54939 when converting a
+	base64 containing NF and/or LF.
+
 2004-02-27  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* StringTest.cs: Added test for Concat when one of the arguments is an

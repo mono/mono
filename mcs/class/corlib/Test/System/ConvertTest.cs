@@ -2832,6 +2832,16 @@ namespace MonoTests.System
 			}
 		}
 
+		[Test]
+		public void TestBase64WithNewLines () 
+		{
+			byte[] data = new byte [15];
+			string s = Convert.ToBase64String (data);
+			string base64 = s + Environment.NewLine + s;
+			byte[] doubledata = Convert.FromBase64String (base64);
+			AssertEquals ("doubledata.Length", 30, doubledata.Length);
+		}
+
                 public void TestConvertFromNull() {
                 	
                 	AssertEquals ("#W1", false, Convert.ToBoolean (null as object));
