@@ -559,6 +559,11 @@ namespace Mono.Xml
 		protected DTDObjectModel Root {
 			get { return root; }
 		}
+
+		internal XmlException NotWFError (string message)
+		{
+			return new XmlException (this as IXmlLineInfo, BaseURI, message);
+		}
 	}
 
 	internal class DTDElementDeclaration : DTDNode
@@ -887,7 +892,7 @@ namespace Mono.Xml
 				loadException = ex;
 				LiteralEntityValue = String.Empty;
 				LoadFailed = true;
-//				throw new XmlException (this, "Cannot resolve external entity. URI is " + absPath + " .");
+//				throw NotWFError ("Cannot resolve external entity. URI is " + absPath + " .");
 			} finally {
 				if (s != null)
 					s.Close ();
@@ -957,13 +962,13 @@ namespace Mono.Xml
 				hasExternalReference = true;
 
 			if (recursed)
-				throw new XmlException ("Entity recursion was found.");
+				throw NotWFError ("Entity recursion was found.");
 			recursed = true;
 
 			if (scanned) {
 				foreach (string referenced in refs)
 					if (this.ReferencingEntities.Contains (referenced))
-						throw new XmlException (String.Format (
+						throw NotWFError (String.Format (
 							"Nested entity was found between {0} and {1}",
 							referenced, Name));
 				recursed = false;
@@ -982,7 +987,7 @@ namespace Mono.Xml
 						break;
 					string name = value.Substring (start, i - start);
 					if (name.Length == 0)
-						throw new XmlException (this as IXmlLineInfo, "Entity reference name is missing.");
+						throw NotWFError ("Entity reference name is missing.");
 					if (name [0] == '#')
 						break;	// character reference
 					if (XmlChar.GetPredefinedEntity (name) >= 0)

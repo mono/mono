@@ -538,7 +538,7 @@ namespace System.Xml
 			more = ReadContent ();
 
 			if (!more && startNodeType == XmlNodeType.Document && currentState != XmlNodeType.EndElement)
-				throw new XmlException ("Document element did not appear.");
+				throw NotWFError ("Document element did not appear.");
 
 			useProceedingLineInfo = false;
 			return more;
@@ -1070,6 +1070,11 @@ namespace System.Xml
 		private bool closeInput = true;
 		private EntityHandling entityHandling; // 2.0
 
+		private XmlException NotWFError (string message)
+		{
+			return new XmlException (this as IXmlLineInfo, BaseURI, message);
+		}
+
 		private void Init ()
 		{
 			currentToken = new XmlTokenInfo (this, true);
@@ -1333,7 +1338,7 @@ namespace System.Xml
 						true // clearAttributes
 					);
 					if (depth > 0)
-						throw new XmlException ("unexpected end of file. Current depth is " + depth);
+						throw NotWFError ("unexpected end of file. Current depth is " + depth);
 
 					return false;
 				} else {
@@ -1385,11 +1390,9 @@ namespace System.Xml
 			DTDEntityDeclaration decl = DTD != null ? DTD.EntityDecls [entityReferenceName] : null;
 			if (this.isStandalone)
 				if (DTD == null || decl == null || !decl.IsInternalSubset)
-					throw new XmlException (this as IXmlLineInfo,
-						"Standalone document must not contain any references to an non-internally declared entity.");
+					throw NotWFError ("Standalone document must not contain any references to an non-internally declared entity.");
 			if (decl != null && decl.NotationName != null)
-				throw new XmlException (this as IXmlLineInfo,
-					"Reference to any unparsed entities is not allowed here.");
+				throw NotWFError ("Reference to any unparsed entities is not allowed here.");
 
 			ClearValueBuffer ();
 			SetProperties (
@@ -1410,8 +1413,7 @@ namespace System.Xml
 		private void ReadStartTag ()
 		{
 			if (currentState == XmlNodeType.EndElement)
-				throw new XmlException (this as IXmlLineInfo,
-					"Multiple document element was detected.");
+				throw NotWFError ("Multiple document element was detected.");
 			currentState = XmlNodeType.Element;
 
 			parserContext.NamespaceManager.PushScope ();
@@ -1422,7 +1424,7 @@ namespace System.Xml
 			string prefix, localName;
 			string name = ReadName (out prefix, out localName);
 			if (currentState == XmlNodeType.EndElement)
-				throw new XmlException (this as IXmlLineInfo,"document has terminated, cannot open new element");
+				throw NotWFError ("document has terminated, cannot open new element");
 
 			bool isEmptyElement = false;
 
@@ -1445,8 +1447,7 @@ namespace System.Xml
 					if (Object.ReferenceEquals (attributeTokens [i].Name, attributeTokens [j].Name) ||
 						(Object.ReferenceEquals (attributeTokens [i].LocalName, attributeTokens [j].LocalName) &&
 						Object.ReferenceEquals (attributeTokens [i].NamespaceURI, attributeTokens [j].NamespaceURI)))
-						throw new XmlException (this as IXmlLineInfo,
-							"Attribute name and qualified name must be identical.");
+						throw NotWFError ("Attribute name and qualified name must be identical.");
 			}
 
 			if (PeekChar () == '/') {
@@ -1478,12 +1479,12 @@ namespace System.Xml
 
 			if (namespaces) {
 				if (NamespaceURI == null)
-					throw new XmlException (String.Format ("'{0}' is undeclared namespace.", Prefix));
+					throw NotWFError (String.Format ("'{0}' is undeclared namespace.", Prefix));
 				try {
 					for (int i = 0; i < attributeCount; i++) {
 						MoveToAttribute (i);
 						if (NamespaceURI == null)
-							throw new XmlException (String.Format ("'{0}' is undeclared namespace.", Prefix));
+							throw NotWFError (String.Format ("'{0}' is undeclared namespace.", Prefix));
 					}
 				} finally {
 					MoveToElement ();
@@ -1513,7 +1514,7 @@ namespace System.Xml
 							parserContext.XmlSpace = XmlSpace.Default;
 							break;
 						default:
-							throw new XmlException (this as IXmlLineInfo, String.Format ("Invalid xml:space value: {0}", value));
+							throw NotWFError (String.Format ("Invalid xml:space value: {0}", value));
 						}
 						break;
 					}
@@ -1539,8 +1540,7 @@ namespace System.Xml
 		private void ReadEndTag ()
 		{
 			if (currentState != XmlNodeType.Element)
-				throw new XmlException (this as IXmlLineInfo,
-					"End tag cannot appear in this state.");
+				throw NotWFError ("End tag cannot appear in this state.");
 
 			currentLinkedNodeLineNumber = line;
 			currentLinkedNodeLinePosition = column;
@@ -1548,10 +1548,10 @@ namespace System.Xml
 			string prefix, localName;
 			string name = ReadName (out prefix, out localName);
 			if (elementNameStackPos == 0)
-				throw new XmlException (this as IXmlLineInfo,"closing element without matching opening element");
+				throw NotWFError ("closing element without matching opening element");
 			string expected = elementNames [--elementNameStackPos];
 			if (expected != name)
-				throw new XmlException (this as IXmlLineInfo,String.Format ("unmatched closing element: expected {0} but found {1}", expected, name));
+				throw NotWFError (String.Format ("unmatched closing element: expected {0} but found {1}", expected, name));
 			parserContext.PopScope ();
 
 			ExpectAfterWhitespace ('>');
@@ -1662,8 +1662,7 @@ namespace System.Xml
 		private void ReadText (bool notWhitespace)
 		{
 			if (currentState != XmlNodeType.Element)
-				throw new XmlException (this as IXmlLineInfo,
-					"Text node cannot appear in this state.");
+				throw NotWFError ("Text node cannot appear in this state.");
 
 			if (notWhitespace)
 				ClearValueBuffer ();
@@ -1686,7 +1685,7 @@ namespace System.Xml
 					// and in case of "\r\n", discard '\r'.
 				} else {
 					if (CharacterChecking && XmlChar.IsInvalid (ch))
-						throw new XmlException (this, "Not allowed character was found.");
+						throw NotWFError ("Not allowed character was found.");
 					ch = ReadChar ();
 				}
 
@@ -1705,8 +1704,7 @@ namespace System.Xml
 				if (ch == ']') {
 					if (previousWasCloseBracket)
 						if (PeekChar () == '>')
-							throw new XmlException (this as IXmlLineInfo,
-								"Inside text content, character sequence ']]>' is not allowed.");
+							throw NotWFError ("Inside text content, character sequence ']]>' is not allowed.");
 					previousWasCloseBracket = true;
 				}
 				else if (previousWasCloseBracket)
@@ -1763,8 +1761,7 @@ namespace System.Xml
 					else if (ch >= 'a' && ch <= 'f')
 						value = (value << 4) + ch - 'a' + 10;
 					else
-						throw new XmlException (this as IXmlLineInfo,
-							String.Format (CultureInfo.InvariantCulture, 
+						throw NotWFError (String.Format (CultureInfo.InvariantCulture, 
 								"invalid hexadecimal digit: {0} (#x{1:X})",
 								(char) ch,
 								ch));
@@ -1776,8 +1773,7 @@ namespace System.Xml
 					if (ch >= '0' && ch <= '9')
 						value = value * 10 + ch - '0';
 					else
-						throw new XmlException (this as IXmlLineInfo,
-							String.Format (CultureInfo.InvariantCulture, 
+						throw NotWFError (String.Format (CultureInfo.InvariantCulture, 
 								"invalid decimal digit: {0} (#x{1:X})",
 								(char) ch,
 								ch));
@@ -1788,8 +1784,7 @@ namespace System.Xml
 
 			// There is no way to save surrogate pairs...
 			if (CharacterChecking && XmlChar.IsInvalid (value))
-				throw new XmlException (this as IXmlLineInfo,
-					"Referenced character was not allowed in XML. Normalization is " + normalization + ", checkCharacters = " + checkCharacters);
+				throw NotWFError ("Referenced character was not allowed in XML. Normalization is " + normalization + ", checkCharacters = " + checkCharacters);
 			return value;
 		}
 
@@ -1828,7 +1823,7 @@ namespace System.Xml
 
 			do {
 				if (!SkipWhitespace () && requireWhitespace)
-					throw new XmlException ("Unexpected token. Name is required here.");
+					throw NotWFError ("Unexpected token. Name is required here.");
 
 				IncrementAttributeToken ();
 				currentAttributeToken.LineNumber = line;
@@ -1920,7 +1915,7 @@ namespace System.Xml
 			int quoteChar = (dummyQuoteChar < 0) ? ReadChar () : dummyQuoteChar;
 
 			if (quoteChar != '\'' && quoteChar != '\"')
-				throw new XmlException (this as IXmlLineInfo,"an attribute value was not quoted");
+				throw NotWFError ("an attribute value was not quoted");
 			currentAttributeToken.QuoteChar = (char) quoteChar;
 
 			IncrementAttributeValueToken ();
@@ -1950,10 +1945,10 @@ namespace System.Xml
 				switch (ch)
 				{
 				case '<':
-					throw new XmlException (this as IXmlLineInfo,"attribute values cannot contain '<'");
+					throw NotWFError ("attribute values cannot contain '<'");
 				case -1:
 					if (dummyQuoteChar < 0)
-						throw new XmlException (this as IXmlLineInfo,"unexpected end of file in an attribute value");
+						throw NotWFError ("unexpected end of file in an attribute value");
 					else	// Attribute value constructor.
 						loop = false;
 					break;
@@ -1963,8 +1958,7 @@ namespace System.Xml
 						ReadChar ();
 						ch = ReadCharacterReference ();
 						if (CharacterChecking && XmlChar.IsInvalid (ch))
-							throw new XmlException (this as IXmlLineInfo,
-								"Not allowed character was found.");
+							throw NotWFError ("Not allowed character was found.");
 						AppendValueChar (ch);
 						break;
 					}
@@ -1997,7 +1991,7 @@ namespace System.Xml
 					break;
 				default:
 					if (CharacterChecking && XmlChar.IsInvalid (ch))
-						throw new XmlException (this, "Invalid character was found.");
+						throw NotWFError ("Invalid character was found.");
 					// FIXME: it might be optimized by the JIT later,
 //					AppendValueChar (ch);
 					{
@@ -2028,18 +2022,17 @@ namespace System.Xml
 			if (entDecl == null) {
 				if (entityHandling == EntityHandling.ExpandEntities
 					|| (DTD != null && resolver != null && entDecl == null))
-					throw new XmlException (this,
-						String.Format ("Referenced entity '{0}' does not exist.", entName));
+					throw NotWFError (String.Format ("Referenced entity '{0}' does not exist.", entName));
 				else
 					return;
 			}
 
 			if (entDecl.HasExternalReference)
-				throw new XmlException (this, "Reference to external entities is not allowed in the value of an attribute.");
+				throw NotWFError ("Reference to external entities is not allowed in the value of an attribute.");
 			if (isStandalone && !entDecl.IsInternalSubset)
-				throw new XmlException (this, "Reference to external entities is not allowed in the internal subset.");
+				throw NotWFError ("Reference to external entities is not allowed in the internal subset.");
 			if (entDecl.EntityValue.IndexOf ('<') >= 0)
-				throw new XmlException (this, "Attribute must not contain character '<' either directly or indirectly by way of entity references.");
+				throw NotWFError ("Attribute must not contain character '<' either directly or indirectly by way of entity references.");
 		}
 
 		// The reader is positioned on the first character
@@ -2053,16 +2046,14 @@ namespace System.Xml
 				ReadXmlDeclaration ();
 				return;
 			} else if (target.ToLower (CultureInfo.InvariantCulture) == "xml")
-				throw new XmlException (this as IXmlLineInfo,
-					"Not allowed processing instruction name which starts with 'X', 'M', 'L' was found.");
+				throw NotWFError ("Not allowed processing instruction name which starts with 'X', 'M', 'L' was found.");
 
 			if (currentState == XmlNodeType.None)
 				currentState = XmlNodeType.XmlDeclaration;
 
 			if (!SkipWhitespace ())
 				if (PeekChar () != '?')
-					throw new XmlException (this as IXmlLineInfo,
-						"Invalid processing instruction name was found.");
+					throw NotWFError ("Invalid processing instruction name was found.");
 
 			ClearValueBuffer ();
 
@@ -2075,7 +2066,7 @@ namespace System.Xml
 				}
 
 				if (CharacterChecking && XmlChar.IsInvalid (ch))
-					throw new XmlException (this, "Invalid character was found.");
+					throw NotWFError ("Invalid character was found.");
 				AppendValueChar (ch);
 			}
 
@@ -2094,8 +2085,7 @@ namespace System.Xml
 		private void ReadXmlDeclaration ()
 		{
 			if (currentState != XmlNodeType.None) {
-				throw new XmlException (this as IXmlLineInfo,
-					"XML declaration cannot appear in this state.");
+				throw NotWFError ("XML declaration cannot appear in this state.");
 			}
 			currentState = XmlNodeType.XmlDeclaration;
 
@@ -2121,7 +2111,7 @@ namespace System.Xml
 			this.isStandalone = (sa == "yes");
 
 			if (message != null)
-				throw new XmlException (this as IXmlLineInfo, message);
+				throw NotWFError (message);
 
 			SetProperties (
 				XmlNodeType.XmlDeclaration, // nodeType
@@ -2159,8 +2149,7 @@ namespace System.Xml
 			}
 			if (new string (peekChars, 2, 4) != "xml ") {
 				if (new string (peekChars, 2, 3).ToLower (CultureInfo.InvariantCulture) == "xml") {
-					throw new XmlException (this as IXmlLineInfo,
-						"Processing instruction name must not be character sequence 'X' 'M' 'L' with case insensitivity.");
+					throw NotWFError ("Processing instruction name must not be character sequence 'X' 'M' 'L' with case insensitivity.");
 				}
 				peekCharsIndex = 0;
 				return;
@@ -2181,25 +2170,21 @@ namespace System.Xml
 				case '"':
 					while (PeekChar () != quoteChar) {
 						if (PeekChar () == -1)
-							throw new XmlException (this as IXmlLineInfo,
-								"Invalid version declaration inside text declaration.");
+							throw NotWFError ("Invalid version declaration inside text declaration.");
 						else if (versionLength == 3)
-							throw new XmlException (this as IXmlLineInfo,
-								"Invalid version number inside text declaration.");
+							throw NotWFError ("Invalid version number inside text declaration.");
 						else {
 							expect1_0 [versionLength] = (char) ReadChar ();
 							versionLength++;
 							if (versionLength == 3 && new String (expect1_0) != "1.0")
-								throw new XmlException (this as IXmlLineInfo,
-									"Invalid version number inside text declaration.");
+								throw NotWFError ("Invalid version number inside text declaration.");
 						}
 					}
 					ReadChar ();
 					SkipWhitespace ();
 					break;
 				default:
-					throw new XmlException (this as IXmlLineInfo,
-						"Invalid version declaration inside text declaration.");
+					throw NotWFError ("Invalid version declaration inside text declaration.");
 				}
 			}
 
@@ -2213,20 +2198,17 @@ namespace System.Xml
 				case '"':
 					while (PeekChar () != quoteChar)
 						if (ReadChar () == -1)
-							throw new XmlException (this as IXmlLineInfo,
-								"Invalid encoding declaration inside text declaration.");
+							throw NotWFError ("Invalid encoding declaration inside text declaration.");
 					ReadChar ();
 					SkipWhitespace ();
 					break;
 				default:
-					throw new XmlException (this as IXmlLineInfo,
-						"Invalid encoding declaration inside text declaration.");
+					throw NotWFError ("Invalid encoding declaration inside text declaration.");
 				}
 				// Encoding value should be checked inside XmlInputStream.
 			}
 			else
-				throw new XmlException (this as IXmlLineInfo,
-					"Encoding declaration is mandatory in text declaration.");
+				throw NotWFError ("Encoding declaration is mandatory in text declaration.");
 
 			Expect ("?>");
 		}
@@ -2253,8 +2235,7 @@ namespace System.Xml
 				ReadDoctypeDecl ();
 				break;
 			default:
-				throw new XmlException (this as IXmlLineInfo,
-					"Unexpected declaration markup was found.");
+				throw NotWFError ("Unexpected declaration markup was found.");
 			}
 		}
 
@@ -2274,15 +2255,14 @@ namespace System.Xml
 					ReadChar ();
 
 					if (PeekChar () != '>')
-						throw new XmlException (this as IXmlLineInfo,"comments cannot contain '--'");
+						throw NotWFError ("comments cannot contain '--'");
 
 					ReadChar ();
 					break;
 				}
 
 				if (XmlChar.IsInvalid (ch))
-					throw new XmlException (this as IXmlLineInfo,
-						"Not allowed character was found.");
+					throw NotWFError ("Not allowed character was found.");
 
 				AppendValueChar (ch);
 			}
@@ -2303,8 +2283,7 @@ namespace System.Xml
 		private void ReadCDATA ()
 		{
 			if (currentState != XmlNodeType.Element)
-				throw new XmlException (this as IXmlLineInfo,
-					"CDATA section cannot appear in this state.");
+				throw NotWFError ("CDATA section cannot appear in this state.");
 
 			ClearValueBuffer ();
 
@@ -2334,7 +2313,7 @@ namespace System.Xml
 					continue;
 				}
 				if (CharacterChecking && XmlChar.IsInvalid (ch))
-					throw new XmlException (this, "Invalid character was found.");
+					throw NotWFError ("Invalid character was found.");
 
 				// FIXME: it might be optimized by the JIT later,
 //				AppendValueChar (ch);
@@ -2364,14 +2343,12 @@ namespace System.Xml
 		private void ReadDoctypeDecl ()
 		{
 			if (prohibitDtd)
-				throw new XmlException (this as IXmlLineInfo,
-					"Document Type Declaration (DTD) is prohibited in this XML.");
+				throw NotWFError ("Document Type Declaration (DTD) is prohibited in this XML.");
 			switch (currentState) {
 			case XmlNodeType.DocumentType:
 			case XmlNodeType.Element:
 			case XmlNodeType.EndElement:
-				throw new XmlException (this as IXmlLineInfo,
-					"Document type cannot appear in this state.");
+				throw NotWFError ("Document type cannot appear in this state.");
 			}
 			currentState = XmlNodeType.DocumentType;
 
@@ -2392,8 +2369,7 @@ namespace System.Xml
 			case 'P':
 				publicId = ReadPubidLiteral ();
 				if (!SkipWhitespace ())
-					throw new XmlException (this as IXmlLineInfo,
-						"Whitespace is required between PUBLIC id and SYSTEM id.");
+					throw NotWFError ("Whitespace is required between PUBLIC id and SYSTEM id.");
 				systemId = ReadSystemLiteral (false);
 				break;
 			}
@@ -2522,11 +2498,11 @@ namespace System.Xml
 					case DtdInputState.InsideSingleQuoted:
 						continue;
 					default:
-						throw new XmlException (this as IXmlLineInfo,"unexpected end of file at DTD.");
+						throw NotWFError ("unexpected end of file at DTD.");
 					}
 					break;
 				case -1:
-					throw new XmlException (this as IXmlLineInfo,"unexpected end of file at DTD.");
+					throw NotWFError ("unexpected end of file at DTD.");
 				case '<':
 					switch (State) {
 					case DtdInputState.InsideDoubleQuoted:
@@ -2552,7 +2528,7 @@ namespace System.Xml
 								stateStack.Push (DtdInputState.EntityDecl);
 								break;
 							default:
-								throw new XmlException (this as IXmlLineInfo,"unexpected token '<!E'.");
+								throw NotWFError ("unexpected token '<!E'.");
 							}
 							break;
 						case 'A':
@@ -2570,7 +2546,7 @@ namespace System.Xml
 						}
 						break;
 					default:
-						throw new XmlException (this as IXmlLineInfo, String.Format ("unexpected '<{0}'.", (char) c));
+						throw NotWFError (String.Format ("unexpected '<{0}'.", (char) c));
 					}
 					break;
 				case '\'':
@@ -2601,7 +2577,7 @@ namespace System.Xml
 					case DtdInputState.Comment:
 						continue;
 					default:
-						throw new XmlException (this as IXmlLineInfo,"unexpected token '>'");
+						throw NotWFError ("unexpected token '>'");
 					}
 					break;
 				case '?':
@@ -2621,7 +2597,7 @@ namespace System.Xml
 					break;
 				case '%':
 					if (State != DtdInputState.Free && State != DtdInputState.EntityDecl && State != DtdInputState.Comment && State != DtdInputState.InsideDoubleQuoted && State != DtdInputState.InsideSingleQuoted)
-						throw new XmlException (this as IXmlLineInfo,"Parameter Entity Reference cannot appear as a part of markupdecl (see XML spec 2.8).");
+						throw NotWFError ("Parameter Entity Reference cannot appear as a part of markupdecl (see XML spec 2.8).");
 					break;
 				}
 			}
@@ -2633,8 +2609,7 @@ namespace System.Xml
 			if(expectSYSTEM) {
 				Expect ("SYSTEM");
 				if (!SkipWhitespace ())
-					throw new XmlException (this as IXmlLineInfo,
-						"Whitespace is required after 'SYSTEM'.");
+					throw NotWFError ("Whitespace is required after 'SYSTEM'.");
 			}
 			else
 				SkipWhitespace ();
@@ -2645,7 +2620,7 @@ namespace System.Xml
 			while (c != quoteChar) {
 				c = ReadChar ();
 				if (c < 0)
-					throw new XmlException (this as IXmlLineInfo,"Unexpected end of stream in ExternalID.");
+					throw NotWFError ("Unexpected end of stream in ExternalID.");
 				if (c != quoteChar)
 					AppendValueChar (c);
 			}
@@ -2656,8 +2631,7 @@ namespace System.Xml
 		{
 			Expect ("PUBLIC");
 			if (!SkipWhitespace ())
-				throw new XmlException (this as IXmlLineInfo,
-					"Whitespace is required after 'PUBLIC'.");
+				throw NotWFError ("Whitespace is required after 'PUBLIC'.");
 			int quoteChar = ReadChar ();
 			int startPos = currentTagLength;
 			int c = 0;
@@ -2665,9 +2639,9 @@ namespace System.Xml
 			while(c != quoteChar)
 			{
 				c = ReadChar ();
-				if(c < 0) throw new XmlException (this as IXmlLineInfo,"Unexpected end of stream in ExternalID.");
+				if(c < 0) throw NotWFError ("Unexpected end of stream in ExternalID.");
 				if(c != quoteChar && !XmlChar.IsPubidChar (c))
-					throw new XmlException (this as IXmlLineInfo,"character '" + (char) c + "' not allowed for PUBLIC ID");
+					throw NotWFError (String.Format ("character '{0}' not allowed for PUBLIC ID", (char)c ));
 				if (c != quoteChar)
 					AppendValueChar (c);
 			}
@@ -2688,7 +2662,7 @@ namespace System.Xml
 
 			int ch = PeekChar ();
 			if (!XmlChar.IsFirstNameChar (ch))
-				throw new XmlException (this as IXmlLineInfo,String.Format (CultureInfo.InvariantCulture, "a name did not start with a legal character {0} ({1})", ch, (char) ch));
+				throw NotWFError (String.Format (CultureInfo.InvariantCulture, "a name did not start with a legal character {0} ({1})", ch, (char) ch));
 
 			nameLength = 0;
 
@@ -2742,8 +2716,7 @@ namespace System.Xml
 			int ch = ReadChar ();
 
 			if (ch != expected) {
-				throw new XmlException (this as IXmlLineInfo,
-					String.Format (CultureInfo.InvariantCulture, 
+				throw NotWFError (String.Format (CultureInfo.InvariantCulture, 
 						"expected '{0}' ({1:X}) but found '{2}' ({3:X})",
 						(char) expected,
 						expected,
@@ -2766,7 +2739,7 @@ namespace System.Xml
 				if (i < 0x21 && XmlChar.IsWhitespace (i))
 					continue;
 				if (c != i)
-					throw new XmlException (this, String.Format (CultureInfo.InvariantCulture, "Expected {0}, but found {1} [{2}]", c, (char) i, i));
+					throw NotWFError (String.Format (CultureInfo.InvariantCulture, "Expected {0}, but found {1} [{2}]", c, (char) i, i));
 				break;
 			}
 		}
@@ -2847,7 +2820,7 @@ namespace System.Xml
 				else if (ch >= '0' && ch <= '9')
 					return (byte) (ch - '0' + 52);
 				else
-					throw new XmlException ("Invalid Base64 character was found.");
+					throw NotWFError ("Invalid Base64 character was found.");
 			}
 		}
 
@@ -2876,7 +2849,7 @@ namespace System.Xml
 				int c = PeekChar ();
 				switch (c) {
 				case -1:
-					throw new XmlException (this as IXmlLineInfo, "Unexpected end of xml.");
+					throw NotWFError ("Unexpected end of xml.");
 				case '<':
 					ReadChar ();
 					if (PeekChar () != '/') {
@@ -2914,8 +2887,7 @@ namespace System.Xml
 				ch = ReadChar ();
 				switch (ch) {
 				case -1:
-					throw new XmlException (this as IXmlLineInfo,
-						"Unexpected end of xml.");
+					throw NotWFError ("Unexpected end of xml.");
 				case '<':
 					if (PeekChar () != '/')
 						continue;

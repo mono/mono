@@ -3,8 +3,10 @@
 //
 // Author:
 //   Jason Diamond (jason@injektilo.org)
+//   Atsushi Enomoto (atsushi@ximian.com)
 //
 // (C) 2002 Jason Diamond  http://injektilo.org/
+// (C) 2004 Novell Inc.
 //
 
 //
@@ -41,6 +43,7 @@ namespace System.Xml
 
 		int lineNumber;
 		int linePosition;
+		string sourceUri;
 
 		#endregion
 
@@ -63,6 +66,7 @@ namespace System.Xml
 		{
 			this.lineNumber = info.GetInt32 ("lineNumber");
 			this.linePosition = info.GetInt32 ("linePosition");
+			this.sourceUri = info.GetString ("sourceUri");
 		}
 
 #if NET_1_0
@@ -74,12 +78,13 @@ namespace System.Xml
 		{
 		}
 
-		internal XmlException (IXmlLineInfo li, string message) : base (message)
+		internal XmlException (IXmlLineInfo li, string sourceUri, string message) : base (message)
 		{
 			if (li != null) {
 				this.lineNumber = li.LineNumber;
 				this.linePosition = li.LinePosition;
 			}
+			this.sourceUri = sourceUri;
 		}
 		
 #if NET_1_0
@@ -105,13 +110,19 @@ namespace System.Xml
 			get { return linePosition; }
 		}
 
+#if NET_2_0
+		public string SourceUri {
+			get { return sourceUri; }
+		}
+#endif
+
 		public override string Message {
 			get {
 				if (lineNumber == 0)
 					return base.Message;
 
-				return String.Format (CultureInfo.InvariantCulture, "{0} Line {1}, position {2}.",
-						      base.Message, lineNumber, linePosition);
+				return String.Format (CultureInfo.InvariantCulture, "{0} {3} Line {1}, position {2}.",
+						      base.Message, lineNumber, linePosition, sourceUri);
 			}
 		}
 
@@ -124,6 +135,7 @@ namespace System.Xml
 			base.GetObjectData (info, context);
 			info.AddValue ("lineNumber", lineNumber);
 			info.AddValue ("linePosition", linePosition);
+			info.AddValue ("sourceUri", sourceUri);
 		}
 
 		#endregion

@@ -423,7 +423,7 @@ namespace System.Xml
 			if (MoveToContent () != XmlNodeType.Element) {
 				string error = String.Format ("'{0}' is an invalid node type.",
 							      NodeType.ToString ());
-				throw new XmlException (this as IXmlLineInfo, error);
+				throw XmlError (error);
 			}
 
 			string result = String.Empty;
@@ -433,7 +433,7 @@ namespace System.Xml
 				if (NodeType != XmlNodeType.EndElement) {
 					string error = String.Format ("'{0}' is an invalid node type.",
 								      NodeType.ToString ());
-					throw new XmlException (this as IXmlLineInfo, error);
+					throw XmlError (error);
 				}
 			}
 
@@ -446,13 +446,13 @@ namespace System.Xml
 			if (MoveToContent () != XmlNodeType.Element) {
 				string error = String.Format ("'{0}' is an invalid node type.",
 							      NodeType.ToString ());
-				throw new XmlException (this as IXmlLineInfo, error);
+				throw XmlError (error);
 			}
 
 			if (name != Name) {
 				string error = String.Format ("The {0} tag from namespace {1} is expected.",
 							      Name, NamespaceURI);
-				throw new XmlException (this as IXmlLineInfo, error);
+				throw XmlError (error);
 			}
 
 			string result = String.Empty;
@@ -462,7 +462,7 @@ namespace System.Xml
 				if (NodeType != XmlNodeType.EndElement) {
 					string error = String.Format ("'{0}' is an invalid node type.",
 								      NodeType.ToString ());
-					throw new XmlException (this as IXmlLineInfo, error);
+					throw XmlError (error);
 				}
 			}
 
@@ -475,13 +475,13 @@ namespace System.Xml
 			if (MoveToContent () != XmlNodeType.Element) {
 				string error = String.Format ("'{0}' is an invalid node type.",
 							      NodeType.ToString ());
-				throw new XmlException (this as IXmlLineInfo, error);
+				throw XmlError (error);
 			}
 
 			if (localName != LocalName || NamespaceURI != namespaceName) {
 				string error = String.Format ("The {0} tag from namespace {1} is expected.",
 							      LocalName, NamespaceURI);
-				throw new XmlException (this as IXmlLineInfo, error);
+				throw XmlError (error);
 			}
 
 			string result = String.Empty;
@@ -491,7 +491,7 @@ namespace System.Xml
 				if (NodeType != XmlNodeType.EndElement) {
 					string error = String.Format ("'{0}' is an invalid node type.",
 								      NodeType.ToString ());
-					throw new XmlException (this as IXmlLineInfo, error);
+					throw XmlError (error);
 				}
 			}
 
@@ -504,7 +504,7 @@ namespace System.Xml
 			if (MoveToContent () != XmlNodeType.EndElement) {
 				string error = String.Format ("'{0}' is an invalid node type.",
 							      NodeType.ToString ());
-				throw new XmlException (this as IXmlLineInfo, error);
+				throw XmlError (error);
 			}
 
 			Read ();
@@ -543,7 +543,7 @@ namespace System.Xml
 				Read ();
 				while (startDepth < Depth) {
 					if (ReadState != ReadState.Interactive)
-						throw new XmlException ("Unexpected end of the XML reader.");
+						throw XmlError ("Unexpected end of the XML reader.");
 					xtw.WriteNode (this, false);
 				}
 				// reader is now end element, then proceed once more.
@@ -571,7 +571,7 @@ namespace System.Xml
 			if (MoveToContent () != XmlNodeType.Element) {
 				string error = String.Format ("'{0}' is an invalid node type.",
 							      NodeType.ToString ());
-				throw new XmlException (this as IXmlLineInfo, error);
+				throw XmlError (error);
 			}
 
 			Read ();
@@ -582,13 +582,13 @@ namespace System.Xml
 			if (MoveToContent () != XmlNodeType.Element) {
 				string error = String.Format ("'{0}' is an invalid node type.",
 							      NodeType.ToString ());
-				throw new XmlException (this as IXmlLineInfo, error);
+				throw XmlError (error);
 			}
 
 			if (name != Name) {
 				string error = String.Format ("The {0} tag from namespace {1} is expected.",
 							      Name, NamespaceURI);
-				throw new XmlException (this as IXmlLineInfo, error);
+				throw XmlError (error);
 			}
 
 			Read ();
@@ -599,14 +599,14 @@ namespace System.Xml
 			if (MoveToContent () != XmlNodeType.Element) {
 				string error = String.Format ("'{0}' is an invalid node type.",
 							      NodeType.ToString ());
-				throw new XmlException (this as IXmlLineInfo, error);
+				throw XmlError (error);
 			}
 
 			if (localName != LocalName || NamespaceURI != namespaceName) {
 				string error = String.Format ("Expecting {0} tag from namespace {1}, got {2} and {3} instead",
 							      localName, namespaceName,
 							      LocalName, NamespaceURI);
-				throw new XmlException (this as IXmlLineInfo, error);
+				throw XmlError (error);
 			}
 
 			Read ();
@@ -846,6 +846,11 @@ namespace System.Xml
 			while (Read() && depth < Depth);
 			if (NodeType == XmlNodeType.EndElement)
 				Read ();
+		}
+
+		private XmlException XmlError (string message)
+		{
+			return new XmlException (this as IXmlLineInfo, BaseURI, message);
 		}
 
 		#endregion
