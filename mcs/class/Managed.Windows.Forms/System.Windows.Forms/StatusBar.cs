@@ -41,28 +41,107 @@ namespace System.Windows.Forms {
 
 		public StatusBar ()
 		{
-			Dock = DockStyle.Bottom;
+			base.Dock = DockStyle.Bottom;
 			Anchor = AnchorStyles.Top | AnchorStyles.Left;
+		}
+
+		public string Text {
+			get { return base.Text; }
+			set {
+				if (value == Text)
+					return;
+				base.Text = value;
+				Refresh ();
+			}
+			
 		}
 
 		public bool ShowPanels {
 			get { return show_panels; }
 			set {
-				bool refresh = (show_panels != value);
+				if (show_panels == value)
+					return;
 				show_panels = value;
-				if (refresh)
-					Refresh ();
 			}
 		}
 
 		public bool SizingGrip {
 			get { return sizing_grip; }
 			set {
-				bool refresh = (sizing_grip != value);
+				if (sizing_grip == value)
+					return;
 				sizing_grip = value;
-				if (refresh)
-					Refresh ();
 			}
+		}
+
+		public Color ForeColor {
+			get { return base.ForeColor; }
+			set {
+				if (value == ForeColor)
+					return;
+				if (ForeColorChanged != null)
+					ForeColorChanged (this, EventArgs.Empty);
+				Refresh ();
+			}
+		}
+
+		public Color BackColor {
+			get { return base.BackColor; }
+			set {
+				if (value == BackColor)
+					return;
+				base.BackColor = value;
+				if (BackColorChanged != null)
+					BackColorChanged (this, EventArgs.Empty);
+				Refresh ();
+			}
+		}
+
+		public Image BackgroundImage {
+			get { return base.BackgroundImage; }
+			set {
+				if (value == BackgroundImage)
+					return;
+				base.BackgroundImage = value;
+				if (BackgroundImageChanged != null)
+					BackgroundImageChanged (this, EventArgs.Empty);
+			}
+		}
+
+		public override DockStyle Dock {
+			get { return base.Dock; }
+			set {
+				if (value == Dock)
+					return;
+				base.Dock = value;
+				Refresh ();
+			}
+		}
+
+		public override Font Font {
+			get { return base.Font; }
+			set {
+				if (value == Font)
+					return;
+				base.Font = value;
+				Refresh ();
+			}
+		}
+
+		public new ImeMode ImeMode {
+			get { return base.ImeMode; }
+			set {
+				if (value == ImeMode)
+					return;
+				base.ImeMode = value;
+				if (ImeModeChanged != null)
+					ImeModeChanged (this, EventArgs.Empty);
+			}
+		}
+
+		public new bool TabStop {
+			get { return base.TabStop; }
+			set { base.TabStop = value; }
 		}
 
 		public StatusBarPanelCollection Panels {
@@ -73,8 +152,36 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public override string ToString ()
+		{
+			return base.ToString () + ", Panels.Count: " + Panels.Count +
+				(Panels.Count > 0 ? ", Panels[0]: " + Panels [0] : String.Empty);
+		}
+
+		public new event EventHandler BackColorChanged;
+		public new event EventHandler ForeColorChanged;
+		public new event EventHandler BackgroundImageChanged;
+		public event StatusBarDrawItemEventHandler DrawItem;
+		public new event EventHandler ImeModeChanged;
+		public new event PaintEventHandler Paint;
+		public event StatusBarPanelClickEventHandler PanelClick;
+		
+		protected override CreateParams CreateParams {
+			get {
+				CreateParams createParams = base.CreateParams;
+				createParams.ClassName = "msctls_statusbar32";
+				createParams.Style = (int) (WindowStyles.WS_CHILD |
+					WindowStyles.WS_VISIBLE);
+				return createParams;
+			}
+		}
+
 		protected override Size DefaultSize {
 			get { return new Size (100, 22); }
+		}
+
+		protected override ImeMode DefaultImeMode {
+			get { return ImeMode.Disable; }
 		}
 
 		protected override void WndProc(ref Message m)
@@ -85,12 +192,17 @@ namespace System.Windows.Forms {
 				PaintEventArgs	paint_event;
 
 				paint_event = XplatUI.PaintEventStart (Handle);
-				Paint (paint_event);
+				DoPaint (paint_event);
 				XplatUI.PaintEventEnd (Handle);
 				return;
 			}
 			}
 			base.WndProc (ref m);
+		}
+
+		protected override void CreateHandle ()
+		{
+			base.CreateHandle ();
 		}
 
 		protected override void OnResize (EventArgs e)
@@ -115,7 +227,59 @@ namespace System.Windows.Forms {
 			Draw();
 		}
 
-		private void Paint (PaintEventArgs pevent)
+		protected override void OnHandleDestroyed (EventArgs e)
+		{
+			base.OnHandleDestroyed (e);
+		}
+
+		protected override void OnLayout (LayoutEventArgs e)
+		{
+			base.OnLayout (e);
+		}
+
+		protected override void OnMouseDown (MouseEventArgs e)
+		{
+                        if (panels == null)
+                                return;
+
+                        float prev_x = 0;
+                        float gap = ThemeEngine.Current.StatusBarHorzGapWidth;
+                        for (int i = 0; i < panels.Count; i++) {
+                                float x = panels [i].Width + prev_x + (i == panels.Count - 1 ? gap : gap / 2);
+                                if (e.X >= prev_x && e.X <= x) {
+                                        OnPanelClick (new StatusBarPanelClickEventArgs (panels [i],
+                                                                      e.Button, e.Clicks, e.X, e.Y));
+                                        break;
+                                }
+                                prev_x = x;
+                        }
+
+			base.OnMouseDown (e);
+		}
+
+		protected virtual void OnPanelClick (StatusBarPanelClickEventArgs e)
+		{
+			if (PanelClick != null)
+				PanelClick (this, e);
+		}
+
+		internal void OnDrawItemInternal (StatusBarDrawItemEventArgs e)
+		{
+			OnDrawItem (e);
+		}
+
+		protected virtual void OnDrawItem (StatusBarDrawItemEventArgs e)
+		{
+			if (DrawItem != null)
+				DrawItem (this, e);
+		}
+
+		protected override void Dispose (bool disposing)
+		{
+			base.Dispose (disposing);
+		}
+
+		private void DoPaint (PaintEventArgs pevent)
 		{
 		       if (Width <= 0 || Height <=  0 || Visible == false)
 			       return;
@@ -129,6 +293,9 @@ namespace System.Windows.Forms {
 		private void CalcPanelSizes ()
 		{
 			if (panels == null || !show_panels)
+				return;
+
+			if (Width == 0 || Height == 0)
 				return;
 
 			int gap = ThemeEngine.Current.StatusBarHorzGapWidth;
