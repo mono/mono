@@ -1,3 +1,9 @@
+2005-01-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataView.cs : Fixed duplicate insertion to Hashtable.
+	* UniqueConstraint.cs : Unique constrained pair of columns could be
+	  nullable.
+
 2005-01-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataView.cs :

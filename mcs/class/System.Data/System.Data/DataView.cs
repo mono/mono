@@ -698,10 +698,11 @@ namespace System.Data
 			for (int r = 0; r < rows.Length; r++) {
 				DataRow dr = rows [r];
 				DataRowView rv = (DataRowView) rowViewPool [dr];
-				if (rv == null)
+				if (rv == null) {
 					rv = new DataRowView (this, dr);
+					newPool.Add (dr, rv);
+				}
 				newRowCache[r] = rv;
-				newPool.Add (dr, rv);
 			}
 			rowViewPool = newPool;
 			rowCache = newRowCache;
