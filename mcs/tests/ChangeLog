@@ -1,3 +1,9 @@
+2004-12-30  Duncan Mak  <duncan@ximian.com>
+
+	* test-330.cs: New test for #70468.
+	
+	* Makefile (TEST_SOURCES_common): Added test-330.cs
+
 2004-12-09  Marek Safar <marek.safar@seznam.cz>
 
 	* test-329.cs: New test for #67412.
