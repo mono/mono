@@ -381,6 +381,9 @@ namespace System.Windows.Forms{
 		internal static extern bool EndPaint(IntPtr hWnd, ref PAINTSTRUCT ps);
 
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		internal static extern bool GetUpdateRect(IntPtr hwnd, ref RECT rect, bool erase);		
+
+		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		internal static extern bool ClientToScreen(IntPtr hWnd, ref POINT pt);
 		
 		internal static bool ClientToScreen(IntPtr hWnd, ref RECT rect) {

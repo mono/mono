@@ -544,7 +544,7 @@ namespace System.Windows.Forms {
     		}
     		
     		protected virtual CreateParams CreateParams {
-    			get {
+			get {
 				CreateParams createParams = new CreateParams ();
 				createParams.Caption = Text;
 				createParams.X = Left;
@@ -2254,8 +2254,8 @@ namespace System.Windows.Forms {
 			Win32.ClientToScreen (Handle,ref rect);
 			return new Rectangle (rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
 		}
-    		
-    		[MonoTODO]
+
+		[MonoTODO]
 		protected static bool ReflectMessage (IntPtr hWnd, ref Message m) {
 			bool result = false;
 			Control cntrl = Control.FromHandle (hWnd);
@@ -2265,23 +2265,23 @@ namespace System.Windows.Forms {
 			}
 			return result;
 		}
-    		
-    		public virtual void Refresh () 
-    		{
-    			Win32.UpdateWindow (Handle);
-    		}
-    		
-    		[MonoTODO]
-		public virtual void ResetBackColor () 
-    		{
-			//FIXME:
-		}
-    		
-    		[MonoTODO]
-		public void ResetBindings () 
-    		{
-			//FIXME:
-		}
+
+			public virtual void Refresh () 
+			{
+				Win32.UpdateWindow (Handle);
+			}
+
+			[MonoTODO]
+			public virtual void ResetBackColor () 
+			{
+				//FIXME:
+			}
+
+			[MonoTODO]
+			public void ResetBindings () 
+			{
+				//FIXME:
+			}
     		
     		[MonoTODO]
 		public virtual void ResetFont () 
@@ -2747,7 +2747,7 @@ namespace System.Windows.Forms {
 
     			switch (m.Msg) {
        			case Msg.WM_CREATE:
-    				Console.WriteLine ("WM_CREATE");
+				Console.WriteLine("WM_CREATE");
     				OnHandleCreated (eventArgs);
     				break;
     			case Msg.WM_LBUTTONDBLCLK:
@@ -2870,22 +2870,40 @@ namespace System.Windows.Forms {
 					if (!GetStyle (ControlStyles.UserPaint)) {
 						CallControlWndProc (ref m);
 					}
-					else {
-						PAINTSTRUCT	ps = new PAINTSTRUCT ();
-						IntPtr hdc = Win32.BeginPaint (Handle, ref ps);
-						Rectangle rc = new Rectangle ();
+
+					Rectangle rc = new Rectangle ();
+					bool beginPaint = false;
+					IntPtr hdc = IntPtr.Zero;
+					RECT updateRect = new RECT();
+					PAINTSTRUCT	ps = new PAINTSTRUCT ();
+					
+					if (Win32.GetUpdateRect (Handle, ref updateRect, false)) {
+						hdc = Win32.BeginPaint (Handle, ref ps);
 						rc.X = ps.rcPaint.left;
 						rc.Y = ps.rcPaint.top;
 						rc.Width = ps.rcPaint.right - ps.rcPaint.left;
 						rc.Height = ps.rcPaint.bottom - ps.rcPaint.top;
-						PaintEventArgs paintEventArgs = new PaintEventArgs (Graphics.FromHdc (hdc), rc);
-	    				if (GetStyle (ControlStyles.AllPaintingInWmPaint)) {
-	    					OnPaintBackground (paintEventArgs);
-	    				}
-						OnPaint (paintEventArgs);
-						paintEventArgs.Dispose ();
-						Win32.EndPaint (Handle, ref ps);
+						beginPaint = true;
+					} else {
+						hdc = Win32.GetDC (Handle);
+						rc.X = updateRect.left;
+						rc.Y = updateRect.top;
+						rc.Width = updateRect.right - updateRect.left;
+						rc.Height = updateRect.bottom - updateRect.top;
 					}
+
+					PaintEventArgs paintEventArgs = new PaintEventArgs (Graphics.FromHdc (hdc), rc);
+	    			if (GetStyle (ControlStyles.AllPaintingInWmPaint)) {
+	    				OnPaintBackground (paintEventArgs);
+	    			}
+					OnPaint (paintEventArgs);
+					paintEventArgs.Dispose ();
+
+					if(beginPaint)
+						Win32.EndPaint (Handle, ref ps);
+					else
+						Win32.ReleaseDC (Handle, hdc);
+
 					break;
     			case Msg.WM_SIZE:
     				if (GetStyle (ControlStyles.ResizeRedraw)) {

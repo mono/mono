@@ -1,3 +1,8 @@
+2003-08-31  Jerome Laban <jlaban@wanadoo.fr>
+	* win32functions.cs: Added GetUpdateRect function. 
+	* Control.cs: Make sure to call OnPaint even if UserPaint style is not
+	enabled. Get the appropriate DC for WM_PAINT operations.
+
 2003-07-16  Peter Williams  <peter@newton.cx>
 
 	* System.Windows.Forms.dll.sources: Don't build with two
