@@ -1,3 +1,7 @@
+2003-03-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UrlUtils.cs: another little fix in Combine ().
+
 2003-01-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UrlUtils.cs: fixed Combine ().

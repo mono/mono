@@ -118,7 +118,8 @@ namespace System.Web.Util
 				if (basePath == null || (basePath.Length == 1 && basePath [0] == '/'))
 					basePath = String.Empty;
 
-				return Reduce (basePath + "/" + relPath);
+				string slash = relPath [0] == '/' ? "" : "/";
+				return Reduce (basePath + slash + relPath);
 			}
 
 			string vPath = HttpRuntime.AppDomainAppVirtualPath;
