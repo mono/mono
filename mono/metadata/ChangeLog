@@ -1,3 +1,8 @@
+2002-05-19  Martin Baulig  <martin@gnome.org>
+
+	* unicode.c (ves_icall_iconv_get_bytes): Actually use the `charCount'
+	argument to get the length, don't default to the array length.
+
 2002-05-18  Miguel de Icaza  <miguel@ximian.com>
 
 	* assembly.c (mono_assembly_setrootdir): New function used to
