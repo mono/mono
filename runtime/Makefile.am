@@ -36,4 +36,4 @@ copy_dlls:
 	cp /nt/mono/mcs/class/*/*.dll .
 
 push_dlls:
-	scp -o "Protocol 1" *.dll snapshot@mono-cvs.ximian.com:dlls
+	scp -o "Protocol 1" *.dll *.exe snapshot@mono-cvs.ximian.com:dlls
