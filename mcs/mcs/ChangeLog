@@ -1,5 +1,48 @@
 2002-07-31  Martin Baulig  <martin@gnome.org>
 
+	Implemented Control Flow Analysis.
+
+	* codegen.cs (EmitContext.DoFlowAnalysis): New public variable.
+	(EmitContext.CurrentBranching): Added.
+	(EmitContext.StartFlowBranching): Added.
+	(EmitContext.EndFlowBranching): Added.
+	(EmitContext.KillFlowBranching): Added.
+	(EmitContext.IsVariableAssigned): Added.
+	(EmitContext.SetVariableAssigned): Added.
+	(EmitContext.IsParameterAssigned): Added.
+	(EmitContext.SetParameterAssigned): Added.
+	(EmitContext.EmitTopBlock): Added `InternalParameters ip' argument.
+	Added control flow analysis stuff here.
+
+	* expression.cs (Unary.DoResolve): If the operator is Oper.AddressOf,
+	resolve the expression as lvalue.
+	(LocalVariableReference.DoResolve): Check whether the variable has
+	already been assigned.
+	(ParameterReference.DoResolveLValue): Override lvalue resolve to mark
+	the parameter as assigned here.
+	(ParameterReference.DoResolve): Check whether the parameter has already
+	been assigned.
+	(Argument.Resolve): If it's a `ref' or `out' argument, resolve the
+	expression as lvalue.
+
+	* statement.cs (FlowBranching): New class for the flow analysis code.
+	(Goto): Resolve the label in Resolve, not in Emit; added flow analysis.
+	(LabeledStatement.IsDefined): New public property.
+	(LabeledStatement.AddUsageVector): New public method to tell flow
+	analyis that the label may be reached via a forward jump.
+	(GotoCase): Lookup and resolve the label in Resolve, not in Emit; added
+	flow analysis.
+	(VariableInfo.Number): New public field.  This is used by flow analysis
+	to number all locals of a block.
+	(Block.CountVariables): New public property.  This is the number of
+	local variables in this block (including the locals from all parent
+	blocks).
+	(Block.EmitMeta): Number all the variables.
+
+	* statement.cs: Added flow analysis support to all classes.
+
+2002-07-31  Martin Baulig  <martin@gnome.org>
+
 	* driver.cs: Added "--mcs-debug" argument if MCS_DEBUG is defined.
 	To get debugging messages, compile mcs with /define:MCS_DEBUG and
 	then use this argument.

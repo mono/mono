@@ -490,7 +490,10 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			Expr = Expr.Resolve (ec);
+			if (Oper == Oper.AddressOf)
+				Expr = Expr.ResolveLValue (ec, new EmptyExpression ());
+			else
+				Expr = Expr.Resolve (ec);
 			
 			if (Expr == null)
 				return null;
@@ -2768,18 +2771,28 @@ namespace Mono.CSharp {
 				return e;
 			}
 
+			if (!ec.IsVariableAssigned (vi)) {
+				Report.Error (
+					165, loc,
+					"Use of unassigned local variable `" + Name + "'");
+				ec.SetVariableAssigned (vi);
+				return null;
+			}
+
 			type = vi.VariableType;
 			return this;
 		}
 
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
+			VariableInfo vi = VariableInfo;
+
+			ec.SetVariableAssigned (vi);
+
 			Expression e = DoResolve (ec);
 
 			if (e == null)
 				return null;
-
-			VariableInfo vi = VariableInfo;
 
 #if BROKEN
 			//
@@ -2821,11 +2834,6 @@ namespace Mono.CSharp {
 		{
 			VariableInfo vi = VariableInfo;
 
-			if ((mode & AddressOp.Load) != 0)
-				vi.Used = true;
-			if ((mode & AddressOp.Store) != 0)
-				vi.Assigned = true;
-
 			ec.ig.Emit (OpCodes.Ldloca, vi.LocalBuilder);
 		}
 	}
@@ -2838,8 +2846,8 @@ namespace Mono.CSharp {
 		Parameters pars;
 		String name;
 		int idx;
+		public Parameter.Modifier mod;
 		public bool is_ref;
-		Parameter.Modifier mod;
 		Location loc;
 		
 		public ParameterReference (Parameters pars, int idx, string name, Location loc)
@@ -2868,6 +2876,25 @@ namespace Mono.CSharp {
 			type = pars.GetParameterInfo (ec.DeclSpace, idx, out mod);
 			is_ref = (mod & Parameter.Modifier.ISBYREF) != 0;
 			eclass = ExprClass.Variable;
+
+			if (((mod & (Parameter.Modifier.OUT)) != 0) && !ec.IsParameterAssigned (idx)) {
+				Report.Error (
+					165, loc,
+					"Use of unassigned local variable `" + name + "'");
+				return null;
+			}
+
+			return this;
+		}
+
+		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		{
+			type = pars.GetParameterInfo (ec.DeclSpace, idx, out mod);
+			is_ref = (mod & Parameter.Modifier.ISBYREF) != 0;
+			eclass = ExprClass.Variable;
+
+			if ((mod & Parameter.Modifier.OUT) != 0)
+				ec.SetParameterAssigned (idx);
 
 			return this;
 		}
@@ -3018,7 +3045,16 @@ namespace Mono.CSharp {
 		
 		public bool Resolve (EmitContext ec, Location loc)
 		{
-			Expr = Expr.Resolve (ec);
+			if (ArgType == AType.Ref) {
+				Expr = Expr.Resolve (ec);
+				if (Expr == null)
+					return false;
+
+				Expr = Expr.ResolveLValue (ec, Expr);
+			} else if (ArgType == AType.Out)
+				Expr = Expr.ResolveLValue (ec, new EmptyExpression ());
+			else
+				Expr = Expr.Resolve (ec);
 
 			if (Expr == null)
 				return false;

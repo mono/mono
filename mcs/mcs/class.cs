@@ -2202,7 +2202,7 @@ namespace Mono.CSharp {
 
 			Attribute.ApplyAttributes (ec, ConstructorBuilder, this, OptAttributes, Location);
 
-			ec.EmitTopBlock (Block, Location);
+			ec.EmitTopBlock (Block, ParameterInfo, Location);
 		}
 	}
 
@@ -2640,11 +2640,11 @@ namespace Mono.CSharp {
 								 end.SymbolDocument,
 								 end.Row, 0);
 
-					ec.EmitTopBlock (block, Location);
+					ec.EmitTopBlock (block, ParameterInfo, Location);
 
 					sw.CloseMethod ();
 				} else
-					ec.EmitTopBlock (block, Location);
+					ec.EmitTopBlock (block, ParameterInfo, Location);
 			}
 		}
 
@@ -2659,7 +2659,7 @@ namespace Mono.CSharp {
 			ec.InTry = true;
 			ec.ReturnLabel = finish;
 			ec.HasReturnLabel = true;
-			ec.EmitTopBlock (block, Location);
+			ec.EmitTopBlock (block, null, Location);
 			ec.InTry = old_in_try;
 			
 			// ig.MarkLabel (finish);

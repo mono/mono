@@ -228,6 +228,11 @@ namespace Mono.CSharp {
 		///   Whether this is generating code for a constructor
 		/// </summary>
 		public bool IsConstructor;
+
+		/// <summary>
+		///   Whether we're control flow analysis enabled
+		/// </summary>
+		public bool DoFlowAnalysis;
 		
 		/// <summary>
 		///   Keeps track of the Type to LocalBuilder temporary storage created
@@ -307,6 +312,8 @@ namespace Mono.CSharp {
 		///   we relax the rules
 		/// </summary>
 		public bool InEnumContext;
+
+		protected Stack FlowStack;
 		
 		public EmitContext (TypeContainer parent, DeclSpace ds, Location l, ILGenerator ig,
 				    Type return_type, int code_flags, bool is_constructor)
@@ -330,6 +337,8 @@ namespace Mono.CSharp {
 			}
 			OnlyLookupTypes = false;
 			loc = l;
+
+			FlowStack = new Stack ();
 			
 			if (ReturnType == TypeManager.void_type)
 				ReturnType = null;
@@ -347,7 +356,116 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public void EmitTopBlock (Block block, Location loc)
+		public FlowBranching CurrentBranching {
+			get {
+				return (FlowBranching) FlowStack.Peek ();
+			}
+		}
+
+		// <summary>
+		//   Starts a new code branching.  This inherits the state of all local
+		//   variables and parameters from the current branching.
+		// </summary>
+		public FlowBranching StartFlowBranching (FlowBranchingType type, Location loc)
+		{
+			FlowBranching cfb = new FlowBranching (CurrentBranching, type, null, loc);
+
+			FlowStack.Push (cfb);
+
+			return cfb;
+		}
+
+		// <summary>
+		//   Starts a new code branching for block `block'.
+		// </summary>
+		public FlowBranching StartFlowBranching (Block block)
+		{
+			FlowBranching cfb;
+			FlowBranchingType type;
+
+			if (CurrentBranching.Type == FlowBranchingType.SWITCH)
+				type = FlowBranchingType.SWITCH_SECTION;
+			else
+				type = FlowBranchingType.BLOCK;
+
+			cfb = new FlowBranching (CurrentBranching, type, block, block.StartLocation);
+
+			FlowStack.Push (cfb);
+
+			return cfb;
+		}
+
+		// <summary>
+		//   Ends a code branching.  Merges the state of locals and parameters
+		//   from all the children of the ending branching.
+		// </summary>
+		public FlowReturns EndFlowBranching ()
+		{
+			FlowBranching cfb = (FlowBranching) FlowStack.Pop ();
+
+			return CurrentBranching.MergeChild (cfb);
+		}
+
+		// <summary>
+		//   Kills the current code branching.  This throws away any changed state
+		//   information and should only be used in case of an error.
+		// </summary>
+		public void KillFlowBranching ()
+		{
+			FlowBranching cfb = (FlowBranching) FlowStack.Pop ();
+		}
+
+		// <summary>
+		//   Checks whether the local variable `vi' is already initialized
+		//   at the current point of the method's control flow.
+		//   If this method returns false, the caller must report an
+		//   error 165.
+		// </summary>
+		public bool IsVariableAssigned (VariableInfo vi)
+		{
+			if (DoFlowAnalysis)
+				return CurrentBranching.IsVariableAssigned (vi);
+			else
+				return true;
+		}
+
+		// <summary>
+		//   Marks the local variable `vi' as being initialized at the current
+		//   current point of the method's control flow.
+		// </summary>
+		public void SetVariableAssigned (VariableInfo vi)
+		{
+			if (DoFlowAnalysis)
+				CurrentBranching.SetVariableAssigned (vi);
+		}
+
+		// <summary>
+		//   Checks whether the parameter `number' is already initialized
+		//   at the current point of the method's control flow.
+		//   If this method returns false, the caller must report an
+		//   error 165.  This is only necessary for `out' parameters and the
+		//   call will always succeed for non-`out' parameters.
+		// </summary>
+		public bool IsParameterAssigned (int number)
+		{
+			if (DoFlowAnalysis)
+				return CurrentBranching.IsParameterAssigned (number);
+			else
+				return true;
+		}
+
+		// <summary>
+		//   Marks the parameter `number' as being initialized at the current
+		//   current point of the method's control flow.  This is only necessary
+		//   for `out' parameters.
+		// </summary>
+		public void SetParameterAssigned (int number)
+		{
+			if (DoFlowAnalysis)
+				CurrentBranching.SetParameterAssigned (number);
+		}
+
+		public void EmitTopBlock (Block block, InternalParameters ip, Location loc)
 		{
 			bool has_ret = false;
 
@@ -362,9 +480,23 @@ namespace Mono.CSharp {
 				block.EmitMeta (this, block);
 
 				if (Report.Errors == errors){
-					if (!block.Resolve (this))
+					bool old_do_flow_analysis = DoFlowAnalysis;
+					DoFlowAnalysis = true;
+
+					FlowBranching cfb = new FlowBranching (block, ip, loc);
+					FlowStack.Push (cfb);
+
+					if (!block.Resolve (this)) {
+						FlowStack.Pop ();
+						DoFlowAnalysis = old_do_flow_analysis;
 						return;
-					
+					}
+
+					cfb = (FlowBranching) FlowStack.Pop ();
+					cfb.MergeTopBlock ();
+
+					DoFlowAnalysis = old_do_flow_analysis;
+
 					has_ret = block.Emit (this);
 
 					if (Report.Errors == errors){
