@@ -3909,6 +3909,10 @@ namespace Mono.CSharp {
 
 		public bool ResolveMethodGroup (EmitContext ec, Location loc)
 		{
+			ConstructedType ctype = Expr as ConstructedType;
+			if (ctype != null)
+				Expr = ctype.GetMemberAccess (ec);
+
 			// FIXME: csc doesn't report any error if you try to use `ref' or
 			//        `out' in a delegate creation expression.
 			Expr = Expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
