@@ -580,7 +580,7 @@ namespace Mono.CSharp {
 
 		public DelegateCreation () {}
 
-		public static void Error_NoMatchingMethodForDelegate (MethodGroupExpr mg, Type t, MethodBase method, Location loc)
+		public static void Error_NoMatchingMethodForDelegate (EmitContext ec, MethodGroupExpr mg, Type type, Location loc)
 		{
 			string method_desc;
 			
@@ -589,8 +589,12 @@ namespace Mono.CSharp {
 			else
 				method_desc = Invocation.FullMethodDesc (mg.Methods [0]);
 
+			Expression invoke_method = Expression.MemberLookup (
+				ec, type, "Invoke", MemberTypes.Method,
+				Expression.AllBindingFlags, loc);
+			MethodBase method = ((MethodGroupExpr) invoke_method).Methods [0];
 			ParameterData param = Invocation.GetParameterData (method);
-			string delegate_desc = Delegate.FullDelegateDesc (t, method, param);
+			string delegate_desc = Delegate.FullDelegateDesc (type, method, param);
 			
 			Report.Error (123, loc, "Method '" + method_desc + "' does not " +
 				      "match delegate '" + delegate_desc + "'");
@@ -636,7 +640,7 @@ namespace Mono.CSharp {
 			}
 			
 			if (delegate_method == null) {
-				Error_NoMatchingMethodForDelegate (mg, type, delegate_method, loc);
+				Error_NoMatchingMethodForDelegate (ec, mg, type, loc);
 				return null;
 			}
 			

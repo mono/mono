@@ -1,3 +1,9 @@
+2004-02-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* delegate.cs (Error_NoMatchingMethodForDelegate): Compute the
+	method to print information for from the type, not from the
+	null-method we were given.
+
 2004-02-01  Duncan Mak  <duncan@ximian.com>
 
 	* cs-tokenizer.cs (get_cmd_arg): Skip over whitespace before
