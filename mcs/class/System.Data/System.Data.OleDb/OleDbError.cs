@@ -37,20 +37,21 @@ using System.Data.Common;
 
 namespace System.Data.OleDb
 {
+	[Serializable]
 	public sealed class OleDbError
 	{
-		private string errorMessage;
+		private string message;
 		private int nativeError;
-		private string errorSource;
+		private string source;
 		private string sqlState;
 
 		#region Constructors
 
 		internal OleDbError (string msg, int code, string source, string sql)
 		{
-			errorMessage = msg;
+			message = msg;
 			nativeError = code;
-			errorSource = source;
+			this.source = source;
 			sqlState = sql;
 		}
 		
@@ -60,7 +61,7 @@ namespace System.Data.OleDb
 
 		public string Message {
 			get {
-				return errorMessage;
+				return message;
 			}
 		}
 
@@ -72,7 +73,7 @@ namespace System.Data.OleDb
 
 		public string Source {
 			get {
-				return errorSource;
+				return source;
 			}
 		}
 
@@ -93,8 +94,8 @@ namespace System.Data.OleDb
                         String stackTrace;
                         stackTrace = " <Stack Trace>";
                         // FIXME: generate the correct SQL error string
-                        toStr = "OleDbError:" + errorMessage + stackTrace;
-                        return toStr;
+			toStr = "OleDbError:" + message + stackTrace;
+			return toStr;
 
 		}
 

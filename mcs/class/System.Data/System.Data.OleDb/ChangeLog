@@ -1,3 +1,9 @@
+2004-06-16  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* OleDbError.cs: fixed serialization compatibility with MS.NET
+	* OleDbErrorCollection.cs: fixed serialization compatibility with
+	MS.NET
+
 2004-06-13  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* OleDbLiteral.cs: changed enum field values to match MS.NET

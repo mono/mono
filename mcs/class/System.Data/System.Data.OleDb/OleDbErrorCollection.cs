@@ -39,13 +39,13 @@ using System.Data.Common;
 
 namespace System.Data.OleDb
 {
-	[ListBindableAttribute ( false)]	
-
+	[ListBindableAttribute ( false)]
+	[Serializable]
 	public sealed class OleDbErrorCollection : ICollection, IEnumerable
 	{
 		#region Fields
 
-		ArrayList list;
+		ArrayList items;
 	
 		#endregion // Fields
 
@@ -60,25 +60,25 @@ namespace System.Data.OleDb
 
 		public int Count {
 			get {
-				return list.Count;
+				return items.Count;
 			}
 		}
 
 		public OleDbError this[int index] {
 			get {
-				return (OleDbError) list[index];
+				return (OleDbError) items[index];
 			}
 		}
 
 		object ICollection.SyncRoot {
 			get {
-				return list.SyncRoot;
+				return items.SyncRoot;
 			}
 		}
 
 		bool ICollection.IsSynchronized {
 			get {
-				return list.IsSynchronized;
+				return items.IsSynchronized;
 			}
 		}
 
@@ -88,7 +88,7 @@ namespace System.Data.OleDb
 
 		internal void Add (OleDbError error)
 		{
-			list.Add ((object) error);
+			items.Add ((object) error);
 		}
 		
 		public void CopyTo (Array array, int index) 
@@ -102,15 +102,15 @@ namespace System.Data.OleDb
                         // is the check for IsFixedSize required?
                         if ((array.IsFixedSize) || (index + this.Count > array.GetUpperBound (0)))
                                 throw new ArgumentException("array");
-                                                                                                    
-                        ((OleDbError[])(list.ToArray ())).CopyTo (array, index);
-                                                                                                    
+
+			((OleDbError[]) (items.ToArray ())).CopyTo (array, index);
+
 
 		}
 
 		public IEnumerator GetEnumerator ()
 		{
-			return list.GetEnumerator ();
+			return items.GetEnumerator ();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
