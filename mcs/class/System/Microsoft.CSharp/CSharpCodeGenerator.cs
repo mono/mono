@@ -772,6 +772,16 @@ namespace Mono.CSharp
 			Output.Write( GetSafeName (memberName) );
 		}
 			
+		protected override void GenerateParameterDeclarationExpression (CodeParameterDeclarationExpression e)
+		{
+			if (e.CustomAttributes != null && e.CustomAttributes.Count > 0)
+				OutputAttributeDeclarations (e.CustomAttributes);
+			OutputDirection (e.Direction);
+			OutputType (e.Type);
+			Output.Write (' ');
+			Output.Write (GetSafeName (e.Name));
+		}
+
 		/* 
 		 * ICodeGenerator
 		 */

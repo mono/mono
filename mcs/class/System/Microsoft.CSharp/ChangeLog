@@ -1,3 +1,9 @@
+2003-10-15  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* CSharpCodeGenerator.cs: added override for the method 
+	  GenerateParameterDeclarationExpression. The parameter must be generated
+	  with a safe C# name.
+	
 2003-09-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CSharpCodeCompiler.cs: don't leave temporary files around.
