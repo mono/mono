@@ -1,3 +1,9 @@
+2004-08-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StackTrace.cs: Implemented GetFrames as public virtual for NET_2_0
+	and internal for NET_1_0/NET_1_1 so it can be used for CAS. Removed
+	XML documentation and mono-ized the source code.
+
 2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* StackTrace.cs: added TODO for serialization
