@@ -211,24 +211,34 @@ namespace System.Web {
 			}
 		}
 
-		[MonoTODO("Handle multipart/form-data")]
 		private void ParseFormData ()
 		{
 			if (_oFormData != null)
 				return;
 
 			string contentType = ContentType;
-			if (0 != String.Compare (contentType, "application/x-www-form-urlencoded", true)) {
+			if (0 == String.Compare (contentType, "application/x-www-form-urlencoded", true)) {
+				byte [] arrData = GetRawContent ();
+				Encoding enc = ContentEncoding;
+				string data = enc.GetString (arrData);
+				_oFormData = new HttpValueCollection (data, true, enc);
+			}
+			if (!ContentType.StartsWith ("multipart/form-data")) {
 				if (contentType.Length > 0)
 					Console.WriteLine ("Content-Type -> {0} not supported", contentType);
 				_oFormData = new HttpValueCollection ();
 				return;
 			}
+			
+			MultipartContentElement [] parts = GetMultipartFormData ();
+			_oFormData = new HttpValueCollection ();
+			if (parts == null) return;
+				
+			foreach (MultipartContentElement p in parts) {
+				if (!p.IsFormItem) continue;
+				_oFormData.Add (p.Name, p.GetString (ContentEncoding));
+			}
 
-			byte [] arrData = GetRawContent ();
-			Encoding enc = ContentEncoding;
-			string data = enc.GetString (arrData);
-			_oFormData = new HttpValueCollection (data, true, enc);
 		}
 
 		[MonoTODO("void Dispose")]
@@ -530,11 +540,40 @@ namespace System.Web {
 			}
 		}
 
-		[MonoTODO()]
+		HttpFileCollection files;
 		public HttpFileCollection Files {
 			get {
-				throw new NotImplementedException();
+				if (files != null)
+					return files;
+				
+				files = new HttpFileCollection ();
+				FillPostedFiles ();
+				return files;
+				
 			}
+		}
+		
+		void FillPostedFiles ()
+		{
+			if (!ContentType.StartsWith ("multipart/form-data")) return;
+			
+			MultipartContentElement [] parts = GetMultipartFormData ();
+			if (parts == null) return;
+				
+			foreach (MultipartContentElement p in parts) {
+				if (!p.IsFile) continue;
+				files.AddFile (p.Name, p.GetFile ());
+			}
+		}
+		
+		MultipartContentElement [] multipartContent;
+		MultipartContentElement [] GetMultipartFormData ()
+		{
+			if (multipartContent != null) return multipartContent;
+			
+			byte [] raw = GetRawContent ();
+			byte [] boundary = Encoding.ASCII.GetBytes (("--" + GetValueFromHeader (ContentType, "boundary")).ToCharArray ());
+			return multipartContent = HttpMultipartContentParser.Parse (raw, boundary, ContentEncoding);
 		}
 
 		public Stream Filter {

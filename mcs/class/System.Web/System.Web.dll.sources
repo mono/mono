@@ -24,6 +24,7 @@ System.Web/HttpForbiddenHandler.cs
 System.Web/HttpHelper.cs
 System.Web/HttpMethodNotAllowedHandler.cs
 System.Web/HttpModuleCollection.cs
+System.Web/HttpMultipartContentParser.cs
 System.Web/HttpParseException.cs
 System.Web/HttpPostedFile.cs
 System.Web/HttpRequest.cs
