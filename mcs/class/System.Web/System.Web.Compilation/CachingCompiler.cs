@@ -29,7 +29,7 @@ namespace System.Web.Compilation
 			try {
 				this.reference = File.GetLastWriteTime (result.OutputFile);
 			} catch (FileNotFoundException fnf){
-				throw new FileNotFoundException (String.Format ("File: {0} at {1}", fnf.FileName, System.Environment.CurrentDirectory), fnf.FileName);
+				throw new FileNotFoundException (String.Format ("File: {0} at {1}", result.OutputFile, System.Environment.CurrentDirectory), fnf.FileName);
 			}
 		}
 
