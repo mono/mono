@@ -1,3 +1,7 @@
+2004-04-02  Jackson Harper  <jackson@ximian.com>
+
+	* ILParser.jay: Set assembly info.
+	
 2004-04-01  Jackson Harper  <jackson@ximian.com>
 
 	* ILParser.jay: Set a flag in the tokenizer when parsing byte

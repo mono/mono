@@ -2372,9 +2372,29 @@ assembly_decls		: /* EMPTY */
 			| assembly_decls assembly_decl
 			;
 
-assembly_decl		: D_HASH K_ALGORITHM int32
+assembly_decl		: D_PUBLICKEY ASSIGN bytes_list
+			  {
+				codegen.SetAssemblyPublicKey ((byte []) $3);
+			  }
+			| D_VER int32 COLON int32 COLON int32 COLON int32
+			  {
+				codegen.SetAssemblyVersion ((int) $2, (int) $4, (int) $6, (int) $8);
+			  }
+			| D_LOCALE comp_qstring
+			  {
+				codegen.SetAssemblyLocale ((string) $2);
+			  }
+			| D_LOCALE ASSIGN bytes_list
+			| D_HASH K_ALGORITHM int32
+			  {
+				int alg = (int) $3;
+				codegen.SetAssemblyHashAlgorithm ((HashAlgorithm) alg);
+			  }
+			| customattr_decl
+			  {
+				codegen.AddAssemblyCustomAttribute ((CustomAttr) $1);
+			  }
 			| sec_decl
-			| asm_or_ref_decl
 			;
 
 asm_or_ref_decl		: D_PUBLICKEY ASSIGN bytes_list
