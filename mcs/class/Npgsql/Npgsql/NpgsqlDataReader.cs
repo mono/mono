@@ -175,9 +175,9 @@ namespace Npgsql
 
         public Boolean HasRows
         {
-        	get
-        	{
-            	return _currentResultset.Count > 0;
+            get
+            {
+                return _currentResultset.Count > 0;
             }
 
         }
@@ -359,7 +359,7 @@ namespace Npgsql
                 return DbType.String;
             }
         }
-        
+
         /// <summary>
         /// Return the data NpgsqlDbType of the column at index <param name="Index"></param>.
         /// </summary>
@@ -378,10 +378,10 @@ namespace Npgsql
             else
             {
                 return TI.NpgsqlDbType;
-                
+
             }
         }
-        
+
 
         /// <summary>
         /// Return the value of the column at index <param name="Index"></param>.
@@ -486,11 +486,20 @@ namespace Npgsql
 
             result = (Byte[]) GetValue(i);
 
+            if (buffer == null)
+                return result.Length;
+
+
+            // We just support read all the field for while. So, any fieldOffset value other than 0 will not read
+            // anything and return 0.
+
+            if (fieldOffset != 0)
+                return 0;
+
             // [TODO] Implement blob support.
-            if (buffer != null)
-            {
-                result.CopyTo(buffer, 0);
-            }
+
+            result.CopyTo(buffer, fieldOffset);
+
 
             return result.Length;
 

@@ -1,3 +1,9 @@
+2004-09-26  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+    * Npgsql/NpgsqlDataReader.cs:
+        GetBytes: Added a little fix for proper handling of getbytes with current Npgsql semantics in mind. For while, we just support offset value of 0 as we
+        read all the bytes field value at a time. So there is no copy when offset is not 0.
+        
 2004-09-25  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 
     * Npgsql/NpgsqlCommand.cs:
