@@ -17,7 +17,9 @@ etc/mono/2.0/machine.config: $(top_srcdir)/data/net_2_0/machine.config
 $(symlinks):
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 
+# The write check is to foil 'make distcheck'
 all-local: $(symlinks) mono-wrapper
+	if test -w $(mcs_topdir); then :; else chmod -R +w $(mcs_topdir); fi
 	d=`pwd`; cd $(mcs_topdir) && $(MAKE) RUNTIME=$$d/mono-wrapper PROFILES='$(build_profiles)' all-profiles
 
 if INSTALL_2_0
@@ -78,3 +80,13 @@ $(tmpinst)/bin/pedump: $(srcdir)/Makefile.am
 	$(mkdir_p) $(@D)
 	(b=`pwd`; echo '#! /bin/sh'; echo 'exec "'"$$b/libtool"'" --mode=execute "'"$$b/mono/metadata/pedump"'" "$$@"') > $@
 	chmod +x $@
+
+# the 'cygnus' option also disables the default 'distdir:' target, which we _do_ want
+MYDISTFILES = Makefile.am Makefile.in mono-wrapper.in
+distdir: $(MYDISTFILES)
+	rm -fr $(distdir)
+	mkdir $(distdir)
+	test -z '$(MYDISTFILES)' || for file in ''$(MYDISTFILES); do \
+	  if test -f $$file; then d=.; else d=$(srcdir); fi; \
+	  cp -p $$d/$$file $(distdir) ; done
+	find $(distdir) -type f -exec chmod a+r {} ';'
