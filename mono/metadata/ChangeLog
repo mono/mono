@@ -1,3 +1,10 @@
+2004-09-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class.c (class_compute_field_layout): System.Object is blittable.
+
+	* marshal.c (mono_marshal_get_native_wrapper): Pass blittable classes
+	as in/out. Fixes #59909.
+
 2004-09-01  Martin Baulig  <martin@ximian.com>
 
 	* metadata.h (MONO_TYPE_ISREFERENCE): Call
