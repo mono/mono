@@ -1,3 +1,7 @@
+2004-12-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* process.c: (complete_path) return the path quoted
+
 2004-12-01  Martin Baulig  <martin@ximian.com>
 
 	* class-internals.h (MonoGenericInst): New structure.
