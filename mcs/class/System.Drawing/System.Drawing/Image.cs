@@ -359,16 +359,24 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		GDIPlus.CheckStatus (st);
 	}
 
-	[MonoTODO]	
-	public void SaveAdd(EncoderParameters encoderParams)
+	
+	public void SaveAdd (EncoderParameters encoderParams)
 	{
-		throw new NotImplementedException ();
+		Status st;
+		
+		IntPtr nativeEncoderParams = encoderParams.ToNativePtr ();
+		st = GDIPlus.GdipSaveAdd (nativeObject, nativeEncoderParams);
+		Marshal.FreeHGlobal (nativeEncoderParams);
 	}
 	
-	[MonoTODO]	
-	public void SaveAdd(Image image, EncoderParameters encoderParams)
+	
+	public void SaveAdd (Image image, EncoderParameters encoderParams)
 	{
-		throw new NotImplementedException ();
+		Status st;
+		
+		IntPtr nativeEncoderParams = encoderParams.ToNativePtr ();
+		st = GDIPlus.GdipSaveAddImage (nativeObject, image.NativeObject, nativeEncoderParams);
+		Marshal.FreeHGlobal (nativeEncoderParams);
 	}
 	
 	

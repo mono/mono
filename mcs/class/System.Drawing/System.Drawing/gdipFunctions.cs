@@ -944,6 +944,9 @@ namespace System.Drawing
 		internal static extern Status GdipSaveAdd ( IntPtr image, IntPtr encoderParameters );
 		
 		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipSaveAddImage (IntPtr image, IntPtr imagenew, IntPtr encoderParameters);
+		
+		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipDrawImageI (IntPtr graphics, IntPtr image, int x, int y);
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipGetImageGraphicsContext (IntPtr image, out int graphics);		
