@@ -131,10 +131,6 @@ namespace System.IO
 
 		public static DateTime GetLastAccessTime (string path)
 		{
-			CheckPathExceptions (path);
-			if (!Exists (path))
-				throw new IOException ("Directory '" + path + "' does not exists");
-
 			return File.GetLastAccessTime (path);
 		}
 		
@@ -145,10 +141,6 @@ namespace System.IO
 		      
 		public static DateTime GetLastWriteTime (string path)
 		{
-			CheckPathExceptions (path);
-			if (!Exists (path))
-				throw new IOException ("Directory '" + path + "' does not exists");
-
 			return File.GetLastWriteTime (path);
 		}
 		
@@ -159,11 +151,6 @@ namespace System.IO
 
 		public static DateTime GetCreationTime (string path)
 		{
-			CheckPathExceptions (path);
-
-			if (!Exists (path))
-				throw new IOException ("Directory '" + path + "' does not exists");
-
 			return File.GetCreationTime (path);
 		}
 
@@ -270,10 +257,6 @@ namespace System.IO
 
 		public static void SetCreationTime (string path, DateTime creation_time)
 		{
-			CheckPathExceptions (path);
-			if (!Exists (path))
-				throw new FileNotFoundException ("Directory '" + path + "' not found.");
-
 			File.SetCreationTime (path, creation_time);
 		}
 
@@ -299,10 +282,6 @@ namespace System.IO
 
 		public static void SetLastAccessTime (string path, DateTime last_access_time)
 		{
-			CheckPathExceptions (path); 
-			if (!Exists (path))
-				throw new FileNotFoundException ("Directory '" + path + "' does not exists");
-
 			File.SetLastAccessTime (path, last_access_time);
 		}
 
@@ -313,10 +292,6 @@ namespace System.IO
 
 		public static void SetLastWriteTime (string path, DateTime last_write_time)
 		{
-			CheckPathExceptions (path);
-			if (!Exists (path))
-				throw new FileNotFoundException ("Directory '" + path + "' does not exists");
-
 			File.SetLastWriteTime (path, last_write_time);
 		}
 
@@ -337,8 +312,6 @@ namespace System.IO
 				throw new ArgumentException ("Only blank characters in path");
 			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ("Path contains invalid chars");
-			if (path == ":")
-				throw new NotSupportedException ("Only ':' In path");
 		}
 
 		private static string [] GetFileSystemEntries (string path, string pattern, FileAttributes mask, FileAttributes attrs)

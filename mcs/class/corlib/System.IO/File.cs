@@ -6,6 +6,7 @@
 //   Miguel de Icaza (miguel@ximian.com)
 //   Jim Richardson  (develop@wtfo-guru.com)
 //   Dan Lewis       (dihlewis@yahoo.co.uk)
+//   Ville Palo      (vi64pa@kolumbus.fi)
 //
 // Copyright 2002 Ximian, Inc. http://www.ximian.com
 // Copyright (C) 2001 Moonlight Enterprises, All Rights Reserved
@@ -166,30 +167,48 @@ namespace System.IO
 		{
 			MonoIOStat stat;
 			MonoIOError error;
+			CheckPathExceptions (path);
 			
 			if (!MonoIO.GetFileStat (path, out stat, out error))
 				throw new IOException (path);
 			return DateTime.FromFileTime (stat.CreationTime);
 		}
 
+		public static DateTime GetCreationTimeUtc (string path)
+		{
+			return GetCreationTime (path).ToUniversalTime ();
+		}
+
 		public static DateTime GetLastAccessTime (string path)
 		{
 			MonoIOStat stat;
 			MonoIOError error;
-			
+			CheckPathExceptions (path);
+
 			if (!MonoIO.GetFileStat (path, out stat, out error))
-				throw MonoIO.GetException (path, error);
+				throw new IOException (path);
 			return DateTime.FromFileTime (stat.LastAccessTime);
+		}
+
+		public static DateTime GetLastAccessTimeUtc (string path)
+		{
+			return GetLastAccessTime (path).ToUniversalTime ();
 		}
 
 		public static DateTime GetLastWriteTime (string path)
 		{
 			MonoIOStat stat;
 			MonoIOError error;
-			
+			CheckPathExceptions (path);
+
 			if (!MonoIO.GetFileStat (path, out stat, out error))
-				throw MonoIO.GetException (path, error);
+				throw new IOException (path);
 			return DateTime.FromFileTime (stat.LastWriteTime);
+		}
+
+		public static DateTime GetLastWriteTimeUtc (string path)
+		{
+			return GetLastWriteTime (path).ToUniversalTime ();
 		}
 
 		public static void Move (string src, string dest)
@@ -256,6 +275,7 @@ namespace System.IO
 						  FileAttributes attributes)
 		{
 			MonoIOError error;
+			CheckPathExceptions (path);
 			
 			if (!MonoIO.SetFileAttributes (path, attributes,
 						       out error)) {
@@ -267,6 +287,9 @@ namespace System.IO
 						    DateTime creation_time)
 		{
 			MonoIOError error;
+			CheckPathExceptions (path);
+			if (!MonoIO.Exists (path, out error))
+				throw MonoIO.GetException (path, error);
 			
 			if (!MonoIO.SetFileTime (path, creation_time.ToFileTime(),
 						 -1, -1, out error)) {
@@ -274,10 +297,19 @@ namespace System.IO
 			}
 		}
 
+		public static void SetCreationTimeUtc (string path,
+						    DateTime creation_time)
+		{
+			SetCreationTime (path, creation_time.ToLocalTime ());
+		}
+
 		public static void SetLastAccessTime (string path,DateTime last_access_time)
 		{
 			MonoIOError error;
-			
+			CheckPathExceptions (path);
+			if (!MonoIO.Exists (path, out error))
+				throw MonoIO.GetException (path, error);
+
 			if (!MonoIO.SetFileTime (path, -1,
 						 last_access_time.ToFileTime(), -1,
 						 out error)) {
@@ -285,16 +317,46 @@ namespace System.IO
 			}
 		}
 
+		public static void SetLastAccessTimeUtc (string path,DateTime last_access_time)
+		{
+			SetLastAccessTime (path, last_access_time.ToLocalTime ());
+		}
+
 		public static void SetLastWriteTime (string path,
 						     DateTime last_write_time)
 		{
 			MonoIOError error;
-			
+			CheckPathExceptions (path);
+			if (!MonoIO.Exists (path, out error))
+				throw MonoIO.GetException (path, error);
+
 			if (!MonoIO.SetFileTime (path, -1, -1,
 						 last_write_time.ToFileTime(),
 						 out error)) {
 				throw MonoIO.GetException (path, error);
 			}
 		}
+
+		public static void SetLastWriteTimeUtc (string path,
+						     DateTime last_write_time)
+		{
+			SetLastWriteTime (path, last_write_time.ToLocalTime ());
+		}
+
+		#region Private
+
+		private static void CheckPathExceptions (string path)
+		{
+			if (path == null)
+				throw new System.ArgumentNullException("Path is Null");
+			if (path == "")
+				throw new System.ArgumentException("Path is Empty");
+			if (path.Trim().Length == 0)
+				throw new ArgumentException ("Only blank characters in path");
+			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ("Path contains invalid chars");
+		}
+
+		#endregion
 	}
 }
