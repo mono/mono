@@ -2,6 +2,9 @@
 # being compiled on windows.
 #
 
+# hack to prevent 'check' from depending on 'all'
+AUTOMAKE_OPTIONS = cygnus
+
 tmpinst = _tmpinst
 
 noinst_SCRIPTS = mono-wrapper
@@ -15,29 +18,44 @@ $(symlinks):
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 
 all-local: $(symlinks) mono-wrapper
-	d=`pwd`; cd $(mcs_topdir) && $(MAKE) RUNTIME=$$d/mono-wrapper all-profiles
+	d=`pwd`; cd $(mcs_topdir) && $(MAKE) RUNTIME=$$d/mono-wrapper PROFILES='$(build_profiles)' all-profiles
 
 if INSTALL_2_0
-install_profiles = default net_2_0
+build_profiles = default net_2_0
+clean_profiles = basic net_1_1_bootstrap default net_2_0_bootstrap net_2_0
 else
-install_profiles = default
+build_profiles = default
+clean_profiles = basic net_1_1_bootstrap default
 endif
 
-install-exec-local:
-	d=`pwd`; cd $(mcs_topdir) && $(MAKE) RUNTIME=$$d/mono-wrapper prefix=$(exec_prefix) PROFILES='$(install_profiles)' install-profiles
+# override automake
+install: install-exec install-data
+
+# override automake
+install-exec:
+	d=`pwd`; cd $(mcs_topdir) && $(MAKE) RUNTIME=$$d/mono-wrapper prefix=$(exec_prefix) PROFILES='$(build_profiles)' install-profiles
+
+# override automake
+install-data:
+	@:
 
 clean-local:
 	-rm -fr $(symlinks)
-	d=`pwd`; cd $(mcs_topdir) && $(MAKE) PROFILES='basic net_1_1_bootstrap default net_2_0_bootstrap net_2_0' clean-profiles
+	d=`pwd`; cd $(mcs_topdir) && $(MAKE) PROFILES='$(clean_profiles)' clean-profiles
 	-rm -fr $(tmpinst)
 
+if INSTALL_2_0
 TEST_SUPPORT_FILES = $(tmpinst)/bin/mcs $(tmpinst)/bin/mbas $(tmpinst)/bin/ilasm $(tmpinst)/bin/gmcs
+else
+TEST_SUPPORT_FILES = $(tmpinst)/bin/mcs $(tmpinst)/bin/mbas $(tmpinst)/bin/ilasm
+endif
+
 check-local:
 	$(mkdir_p) $(tmpinst)/bin
 	$(MAKE) $(TEST_SUPPORT_FILES)
 	d=`pwd`; PATH=$$d/$(tmpinst)/bin:$$PATH ; export PATH ; \
-	( cd $(mcs_topdir) && $(MAKE) RUNTIME=$$d/mono-wrapper run-test-profiles ) || ret=false ; \
-	rm -f $(tmpinst) ; $$ret
+	( cd $(mcs_topdir) && $(MAKE) RUNTIME=$$d/mono-wrapper PROFILES='$(build_profiles)' run-test-profiles ) || ret=false ; \
+	rm -fr $(tmpinst) ; $$ret
 
 $(tmpinst)/bin/mcs:
 	$(MAKE) test-support-file target=$@ file=class/lib/default/mcs.exe
