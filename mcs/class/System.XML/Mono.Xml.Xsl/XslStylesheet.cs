@@ -83,9 +83,6 @@ namespace Mono.Xml.Xsl {
 		Hashtable functions = new Hashtable ();
 		// [QName]=>XslSortKey
 		Hashtable sortKeys = new Hashtable ();
-		//  attributes::
-		string xpathDefaultNamespace = "";
-		XslDefaultValidation defaultValidation = XslDefaultValidation.Lax;
 
 		public string BaseUri {
 			get { return c.Input.BaseURI; }

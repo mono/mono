@@ -72,11 +72,6 @@ namespace Mono.Xml.Xsl
 		QName [] cdataSectionElements;
 		string indent;
 		string mediaType;
-		bool escapeUriAttributes;
-		bool includeContentType;
-		bool normalizeUnicode;
-		bool undeclareNamespaces;
-		QName [] useCharacterMaps;
 
 		// for compilation only.
 		ArrayList cdSectsList = new ArrayList ();
@@ -131,27 +126,6 @@ namespace Mono.Xml.Xsl
 
 		public string MediaType {
 			get { return mediaType; }
-		}
-
-		// Below are introduced in XSLT 2.0 (WD-20030502)
-		public bool EscapeUriAttributes {
-			get { return escapeUriAttributes; }
-		}
-
-		public bool IncludeContentType {
-			get { return includeContentType; }
-		}
-
-		public bool NormalizeUnicode {
-			get { return normalizeUnicode; }
-		}
-
-		public bool UndeclareNamespaces {
-			get { return undeclareNamespaces; }
-		}
-
-		public QName [] UseCharacterMaps {
-			get { return useCharacterMaps; }
 		}
 
 		public void Fill (XPathNavigator nav)
