@@ -239,15 +239,16 @@ namespace System.Text {
 			// re-ordered to avoid possible integer overflow
 			if (startIndex < 0 || length < 0 || startIndex > _length - length)
 				throw new ArgumentOutOfRangeException();
-
+			
+			if (null != _cached_str)
+				InternalEnsureCapacity (_length);
+			
 			// Copy everything after the 'removed' part to the start 
 			// of the removed part and truncate the sLength
 			if (_length - (startIndex + length) > 0)
 				String.InternalStrcpy (_str, startIndex, _str, startIndex + length, _length - (startIndex + length));
 
 			_length -= length;
-			if (null != _cached_str)
-				InternalEnsureCapacity (_length);
 
 			return this;
 		}			       

@@ -1,3 +1,8 @@
+2005-01-31  Ben Maurer  <bmaurer@ximian.com>
+
+	* StringBuilder.cs (Remove): We need to do the check that the
+	string isnt being cached *before* we munge it.
+
 2005-01-21  Ben Maurer  <bmaurer@ximian.com>
 
 	* StringBuilder.cs: Don't allocate memory on the .ctor, do it
