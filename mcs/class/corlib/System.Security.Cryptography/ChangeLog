@@ -1,3 +1,10 @@
+2004-12-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DataProtectionScope.cs: Moved in System.Security.dll
+	* MemoryProtectionScope.cs: Moved in System.Security.dll
+	* ProtectedData.cs: Moved in System.Security.dll
+	* ProtectedMemory.cs: Moved in System.Security.dll
+
 2004-12-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RSA.cs: Throw the proper CryptographicException exception when 
