@@ -1,5 +1,26 @@
 2003-08-12  Duncan Mak  <duncan@ximian.com>
 
+	* Mono.Cairo/Cairo.cs: Now that the namespace is called 'Cairo',
+	the enums no longer need to be nested inside the Cairo class.
+
+	* Mono.Cairo/Matrix.cs:
+	* Mono.Cairo/Object.cs:
+	* Mono.Cairo/Surface.cs: I never liked having the word 'Object' in
+	the name of a class, esp. now that we have namespaces. So I have
+	decided to rename them.
+
+		CairoObject        -> Cairo.Object
+		CairoMatrixObject  -> Cairo.Matrix
+		CairoSurfaceObject -> Cairo.Surface
+
+	I didn't like the Mono.Cairo namespace either, so they're just in
+	the Cairo namespace now. I know it's icky that the directory is
+	called Mono.Cairo, and the dll we write to is called
+	'Mono.Cairo.dll', and yet the namespace now gonna just be 'Cairo'
+	and not 'Mono.Cairo'. C'est la vie.
+	
+2003-08-12  Duncan Mak  <duncan@ximian.com>
+
 	* Mono.Cairo/CairoObject.cs (Pattern): Re-enable this. This
 	is actually a CairoSurfaceObject (a C cairo_surface_t); the
 	CairoPatternObject is just something I made up...

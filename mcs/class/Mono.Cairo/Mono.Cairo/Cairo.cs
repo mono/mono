@@ -14,7 +14,7 @@ using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
-namespace Mono.Cairo {
+namespace Cairo {
 
 	public class Cairo
         {
@@ -338,85 +338,88 @@ namespace Mono.Cairo {
                 [DllImport (CairoImp)]                                
                 public static extern Cairo.Status cairo_matrix_transform_point (
                         IntPtr matrix, ref double x, ref double y);
-                                           
-                public enum Format {
-                        ARGB32 = 0,
-                        RGB24 = 1,
-                        A8 = 2,
-                        A1 = 4
-                }
+        }
 
-                public enum Operator {
-                        Clear = 0,
-                        Src = 1,
-                        Dst = 2,
-                        Over = 3,
-                        OverReverse = 4,
-                        In = 5,
-                        InReverse = 6,
-                        Out = 7,
-                        OutReverse = 8,
-                        Atop = 9,
-                        AtopReverse = 10,
-                        Xor = 11,
-                        Add = 12,
-                        Saturate = 13,
+        //
+        // Enumerations
+        //
+        public enum Format {
+                ARGB32 = 0,
+                RGB24 = 1,
+                A8 = 2,
+                A1 = 4
+        }
+
+        public enum Operator {
+                Clear = 0,
+                Src = 1,
+                Dst = 2,
+                Over = 3,
+                OverReverse = 4,
+                In = 5,
+                InReverse = 6,
+                Out = 7,
+                OutReverse = 8,
+                Atop = 9,
+                AtopReverse = 10,
+                Xor = 11,
+                Add = 12,
+                Saturate = 13,
                 
-                        DisjointClear = 16,
-                        DisjointSrc = 17,
-                        DisjointDst = 18,
-                        DisjointOver = 19,
-                        DisjointOverReverse = 20,
-                        DisjointIn = 21,
-                        DisjointInReverse = 22,
-                        DisjointOut = 23,
-                        DisjointOutReverse = 24,
-                        DisjointAtop = 25,
-                        DisjointAtopReverse = 26,
-                        DisjointXor = 27,
+                DisjointClear = 16,
+                DisjointSrc = 17,
+                DisjointDst = 18,
+                DisjointOver = 19,
+                DisjointOverReverse = 20,
+                DisjointIn = 21,
+                DisjointInReverse = 22,
+                DisjointOut = 23,
+                DisjointOutReverse = 24,
+                DisjointAtop = 25,
+                DisjointAtopReverse = 26,
+                DisjointXor = 27,
 
-                        ConjointClear = 32,
-                        ConjointSrc = 33,
-                        ConjointDst = 34,
-                        ConjointOver = 35,
-                        ConjointOverReverse = 36,
-                        ConjointIn = 37,
-                        ConjointInReverse = 38,
-                        ConjointOut = 39,
-                        ConjointOutReverse = 40,
-                        ConjointAtop = 41,
-                        ConjointAtopReverse = 42,
-                        ConjointXor = 43
-                }
+                ConjointClear = 32,
+                ConjointSrc = 33,
+                ConjointDst = 34,
+                ConjointOver = 35,
+                ConjointOverReverse = 36,
+                ConjointIn = 37,
+                ConjointInReverse = 38,
+                ConjointOut = 39,
+                ConjointOutReverse = 40,
+                ConjointAtop = 41,
+                ConjointAtopReverse = 42,
+                ConjointXor = 43
+        }
 
-                public enum FillRule {
-                        Winding,
-                        EvenOdd
-                }
+        public enum FillRule {
+                Winding,
+                EvenOdd
+        }
 
-                public enum LineCap {
-                        Butt, Round, Square
-                }
+        public enum LineCap {
+                Butt, Round, Square
+        }
 
-                public enum LineJoin {
-                        Miter, Round, Bevel
-                }
+        public enum LineJoin {
+                Miter, Round, Bevel
+        }
 
-                public enum Status {
-                        Success = 0,
-                        NoMemory,
-                        InvalidRestore,
-                        InvalidPopGroup,
-                        NoCurrentPoint,
-                        InvalidMatrix
-                }
+        public enum Status {
+                Success = 0,
+                NoMemory,
+                InvalidRestore,
+                InvalidPopGroup,
+                NoCurrentPoint,
+                InvalidMatrix
+        }
 
-                public enum Filter {
-                        Fast,
-                        Good,
-                        Best,
-                        Nearest,
-                        Bilinear
-                }
+        public enum Filter {
+                Fast,
+                Good,
+                Best,
+                Nearest,
+                Bilinear
         }
 }

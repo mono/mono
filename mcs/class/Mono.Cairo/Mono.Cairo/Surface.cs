@@ -11,45 +11,45 @@
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using Mono.Cairo;
+using Cairo;
 
-namespace Mono.Cairo {
+namespace Cairo {
 
-	public class CairoSurfaceObject
+	public class Surface
         {
                 IntPtr surface;
 
-                CairoSurfaceObject (IntPtr ptr)
+                Surface (IntPtr ptr)
                 {
                         surface = ptr;
                 }
 
-                public static CairoSurfaceObject CreateForImage (
+                public static Cairo.Surface CreateForImage (
                         string data, Cairo.Format format, int width, int height, int stride)
                 {
                         IntPtr p = Cairo.cairo_surface_create_for_image (
                                 data, format, width, height, stride);
                         
-                        return new CairoSurfaceObject (p);
+                        return new Cairo.Surface (p);
                 }
 
-                public static CairoSurfaceObject CreateSimilar (
-                        CairoSurfaceObject surface, Cairo.Format format, int width, int height)
+                public static Cairo.Surface CreateSimilar (
+                        Cairo.Surface surface, Cairo.Format format, int width, int height)
                 {
                         IntPtr p = Cairo.cairo_surface_create_similar (
                                 surface.Pointer, format, width, height);
 
-                        return new CairoSurfaceObject (p);
+                        return new Cairo.Surface (p);
                 }
 
-                public static CairoSurfaceObject CreateSimilarSolid (
-                        CairoSurfaceObject surface, Cairo.Format format,
+                public static Cairo.Surface CreateSimilarSolid (
+                        Cairo.Surface surface, Cairo.Format format,
                         int width, int height, double red, double green, double blue, double alpha)
                 {
                         IntPtr p = Cairo.cairo_surface_create_similar_solid (
                                 surface.Pointer, format, width, height, red, green, blue, alpha);
 
-                        return new CairoSurfaceObject (p);
+                        return new Cairo.Surface (p);
                 }
 
                 public void Destroy ()
@@ -72,7 +72,7 @@ namespace Mono.Cairo {
                         }
                 }
 
-                public CairoMatrixObject Matrix {
+                public Cairo.Matrix Matrix {
                         set {
                                 Cairo.cairo_surface_set_matrix (surface, value.Pointer);
                         }
@@ -82,7 +82,7 @@ namespace Mono.Cairo {
                                 
                                 Cairo.cairo_surface_get_matrix (surface, ref p);
 
-                                return new CairoMatrixObject (p);
+                                return new Cairo.Matrix (p);
                         }
                 }
 

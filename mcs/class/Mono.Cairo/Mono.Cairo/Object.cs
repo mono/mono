@@ -1,5 +1,5 @@
 //
-// Mono.Cairo.CairoObject.cs
+// Mono.Cairo.Object.cs
 //
 // Author: Duncan Mak
 //
@@ -11,20 +11,20 @@
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using Mono.Cairo;
+using Cairo;
 
-namespace Mono.Cairo {
+namespace Cairo {
 
-        public class CairoObject
+        public class Object
         {
                 IntPtr state;
 
-                public CairoObject ()
+                public Object ()
                         : this (Create ())
                 {
                 }
                 
-                public CairoObject (IntPtr ptr)
+                public Object (IntPtr ptr)
                 {
                         state = ptr;
                 }
@@ -147,7 +147,7 @@ namespace Mono.Cairo {
                         Cairo.cairo_set_dash (state, dashes, ndash, offset);
                 }
 
-                public CairoSurfaceObject Pattern {
+                public Cairo.Surface Pattern {
                         set {
                                 Cairo.cairo_set_pattern (state, value.Pointer);
                         }
@@ -293,12 +293,12 @@ namespace Mono.Cairo {
                         Cairo.cairo_inverse_transform_distance (state, ref dx, ref dy);
                 }
 
-                public void ConcatMatrix (CairoMatrixObject matrix)
+                public void ConcatMatrix (Cairo.Matrix matrix)
                 {
                         Cairo.cairo_concat_matrix (state, matrix.Pointer);
                 }
 
-                public CairoMatrixObject Matrix {
+                public Cairo.Matrix Matrix {
                         set {
                                 Cairo.cairo_set_matrix (state, value.Pointer);
                         }

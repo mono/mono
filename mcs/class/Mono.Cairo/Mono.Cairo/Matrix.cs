@@ -1,5 +1,5 @@
 //
-// Mono.Cairo.CairoMatrixObject.cs
+// Mono.Cairo.Matrix.cs
 //
 // Author: Duncan Mak
 //
@@ -11,20 +11,20 @@
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
-using Mono.Cairo;
+using Cairo;
 
-namespace Mono.Cairo {
+namespace Cairo {
 
-	public class CairoMatrixObject
+	public class Matrix
         {
                 IntPtr matrix;
 
-                public CairoMatrixObject ()
+                public Matrix ()
                         : this (Create ())
                 {                        
                 }
 
-                internal CairoMatrixObject (IntPtr ptr)
+                internal Matrix (IntPtr ptr)
                 {
                         matrix = ptr;
                 }
@@ -39,13 +39,13 @@ namespace Mono.Cairo {
                         Cairo.cairo_matrix_destroy (matrix);
                 }
 
-                public Cairo.Status Copy (out CairoMatrixObject other)
+                public Cairo.Status Copy (out Cairo.Matrix other)
                 {
                         IntPtr p = IntPtr.Zero;
                         
                         Cairo.Status status = Cairo.cairo_matrix_copy (matrix, out p);
 
-                        other = new CairoMatrixObject (p);
+                        other = new Cairo.Matrix (p);
 
                         return status;
                 }
@@ -89,15 +89,14 @@ namespace Mono.Cairo {
                 }
 
                 public static Cairo.Status Multiply (
-                        out CairoMatrixObject result,
-                        CairoMatrixObject a, CairoMatrixObject b)
+                        out Cairo.Matrix result, Cairo.Matrix a, Cairo.Matrix b)
                 {
                         IntPtr p = IntPtr.Zero;
                         
                         Cairo.Status status = Cairo.cairo_matrix_multiply (
                                 out p, a.Pointer, b.Pointer);
 
-                        result = new CairoMatrixObject (p);
+                        result = new Cairo.Matrix (p);
 
                         return status;
                 }
