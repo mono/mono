@@ -11,6 +11,8 @@
 using System;
 using System.ComponentModel;
 using System.Globalization;
+using System.IO;
+using System.Drawing.Imaging;
 
 namespace System.Drawing
 {
@@ -18,35 +20,51 @@ namespace System.Drawing
 	/// Summary description for ImageConverter.
 	/// </summary>
 	public class ImageConverter : TypeConverter
-	{
-		
-		[MonoTODO ("Implement")]
+	{		
 		public ImageConverter ()
 		{
 		}
-
-		[MonoTODO ("Implement")]
+		
 		public override bool CanConvertFrom (ITypeDescriptorContext context, Type srcType)
 		{
-			throw new NotImplementedException (); 
+			if (srcType == typeof (System.Byte[]))
+				return true;
+			else
+				return false; 
 		}
 
-		[MonoTODO ("Implement")]
 		public override bool CanConvertTo (ITypeDescriptorContext context, Type destType)
 		{
-			throw new NotImplementedException (); 
+			if ((destType == typeof (System.Byte[])) || (destType == typeof (System.String)))
+				return true;
+			else
+				return false;
 		}
 		
-		[MonoTODO ("Implement")]
 		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object val)
 		{
-			throw new NotImplementedException (); 
+			byte [] bytes = val as byte [];
+			if (bytes == null)
+				return base.ConvertFrom (context, culture, val);
+			
+			MemoryStream ms = new MemoryStream (bytes);
+			
+			return Image.FromStream (ms);	
 		}
 
-		[MonoTODO ("Implement")]
 		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object val, Type destType )
 		{
-			throw new NotImplementedException (); 
+			if ( (val is Image) && (destType == typeof (string)))
+				return val.ToString();
+			else if (CanConvertTo(null, destType)) 
+			{
+				//came here means destType is byte array ;
+				MemoryStream ms = new MemoryStream();
+				((Image)val).Save (ms, ((Image)val).RawFormat);
+				return ms.GetBuffer();
+			}
+			else
+				return new NotSupportedException ();
 		}
 
 		[MonoTODO ("Implement")]
