@@ -37,10 +37,13 @@ namespace System.Threading
 			}
 		}
 
+		// Looks up the object associated with the current thread
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static Thread CurrentThread_internal();
+		
 		public static Thread CurrentThread {
 			get {
-				// FIXME
-				return(null);
+				return(CurrentThread_internal());
 			}
 		}
 
@@ -86,11 +89,26 @@ namespace System.Threading
 			// FIXME
 		}
 
+		// Returns milliseconds remaining (due to interrupted sleep)
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static int Sleep_internal(int ms);
+
+		// Causes thread to give up its timeslice
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static void Schedule_internal();
+		
 		public static void Sleep(int millisecondsTimeout) {
 			if(millisecondsTimeout<0) {
 				throw new ArgumentException("Negative timeout");
 			}
-			// FIXME
+			if(millisecondsTimeout==0) {
+				// Schedule another thread
+				Schedule_internal();
+			}
+			int ms_remaining=Sleep_internal(millisecondsTimeout);
+			if(ms_remaining>0) {
+				throw new ThreadInterruptedException("Thread interrupted while sleeping");
+			}
 		}
 
 		public static void Sleep(TimeSpan timeout) {
@@ -98,7 +116,14 @@ namespace System.Threading
 			if(timeout.Milliseconds < 0 || timeout.Milliseconds > Int32.MaxValue) {
 				throw new ArgumentOutOfRangeException("Timeout out of range");
 			}
-			// FIXME
+			if(timeout.Milliseconds==0) {
+				// Schedule another thread
+				Schedule_internal();
+			}
+			int ms_remaining=Sleep_internal(timeout.Milliseconds);
+			if(ms_remaining>0) {
+				throw new ThreadInterruptedException("Thread interrupted while sleeping");
+			}
 		}
 
 		private ThreadStart start_delegate=null;
@@ -162,13 +187,15 @@ namespace System.Threading
 			}
 		}
 
+		private string thread_name=null;
+		
 		public string Name {
 			get {
-				// FIXME
-				return("none");
+				return(thread_name);
 			}
 			
 			set {
+				thread_name=value;
 			}
 		}
 

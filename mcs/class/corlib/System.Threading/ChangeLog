@@ -1,3 +1,8 @@
+2001-09-23  Dick Porter  <dick@ximian.com>
+
+	* Thread.cs: Implemented CurrentThread and Sleep (both versions)
+	with internal calls, and Name.
+
 2001-09-21  Dick Porter  <dick@ximian.com>
 
 	* Thread.cs: Implement Thread(ThreadStart) constructor and Start()
