@@ -289,7 +289,7 @@ namespace System.Net
 
 		private string HA2 (HttpWebRequest webRequest) 
 		{
-			string ha2 = String.Format ("{0}:{1}", webRequest.Method, webRequest.RequestUri.AbsolutePath);
+			string ha2 = String.Format ("{0}:{1}", webRequest.Method, webRequest.RequestUri.PathAndQuery);
 			if (QOP == "auth-int") {
 				// TODO
 				// ha2 += String.Format (":{0}", hentity);
