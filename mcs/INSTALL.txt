@@ -1,17 +1,30 @@
 Basic Installation
 ==================
 
-The Mono project has developed mono, an x86-specific CL JIT compiler and
-mint, a portable CLI interpreter. The build process of each of these
-depends on nothing more than a C compiler, glib2 and libgc.
+The Mono project has developed mono, a CLI runtime. The build process
+of each of these depends on nothing more than a C compiler and glib2.
 
 However, to provide a working runtime environment, these programs must
-be supplemented by corlib, a CLR assembly to which they are closely
-tied. This package provides the C# sources for corlib as well as some
-additional assemblies and mcs, the Mono C# compiler.
+be supplemented by the class libraries, which are written in C#.  This
+package contains the components written in C#: class libraries,
+compilers and tools.
 
-Building MCS
-============
+Build Process for Users.
+========================
+
+If you only want to build a snapshot or a fresh CVS checkout of the
+sources, you should go into the `mono' sibling directory and issue the
+following command:
+
+	  ./autogen --prefix=/usr/local
+	  make fullbuild
+
+That will build and install the code in a single pass.  The
+compilation is bundled with the build due to depedencies on the class
+libraries on the runtime.
+
+Build Features for Developers.
+==============================
 
 These instructions apply to both Linux and Windows. To build this
 package, you must already have a C# compiler installed.  This means
