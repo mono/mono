@@ -1,5 +1,10 @@
 2002-09-11  Kral Ferch <kral_ferch@hotmail.com>
 
+	* XPathNavigatorEvaluateTests.cs:  Added tests for
+	local-name, namespace-uri, and string.
+
+2002-09-11  Kral Ferch <kral_ferch@hotmail.com>
+
 	* Added XPathNavigatorEvaluateTests.cs file to 
 	the MonoMicro.Test project.
 

@@ -21,9 +21,11 @@ namespace MonoTests.System.Xml
 		public XPathNavigatorEvaluateTests (string name) : base (name) {}
 
 		XmlDocument document;
-		XmlDocument document2;
 		XPathNavigator navigator;
+		XmlDocument document2;
 		XPathNavigator navigator2;
+		XmlDocument document3;
+		XPathNavigator navigator3;
 		XPathExpression expression;
 		XPathNodeIterator iterator;
 
@@ -36,6 +38,10 @@ namespace MonoTests.System.Xml
 			document2 = new XmlDocument ();
 			document2.LoadXml ("<foo><bar baz='1'/><bar baz='2'/><bar baz='3'/></foo>");
 			navigator2 = document2.CreateNavigator ();
+
+			document3 = new XmlDocument ();
+			document3.LoadXml ("<foo><bar/><baz/><qux/></foo>");
+			navigator3 = document3.CreateNavigator ();
 		}
 
 		// Testing Core Function Library functions defined at: http://www.w3.org/TR/xpath#corelib
@@ -81,7 +87,7 @@ namespace MonoTests.System.Xml
 
 		public void saveTestCoreFunctionNodeSetID ()
 		{
-			document.LoadXml(
+			document.LoadXml (
 				"<!DOCTYPE foo [" +
 				"<!ELEMENT foo (bar)>" +
 				"<!ELEMENT bar EMPTY>" +
@@ -94,14 +100,60 @@ namespace MonoTests.System.Xml
 			AssertEquals("world", navigator.Evaluate ("string(id('2')/@qux)").ToString ());
 		}
 
-		public void saveTestCoreFunctionLocalName ()
+		public void TestCoreFunctionLocalName ()
 		{
-			Assert(true);
+			AssertEquals("", navigator.Evaluate ("local-name()").ToString ());
+			AssertEquals("", navigator.Evaluate ("local-name(/bogus)").ToString ());
+			AssertEquals("foo", navigator.Evaluate ("local-name(/foo)").ToString ());
+			AssertEquals("bar", navigator3.Evaluate ("local-name(/foo/*)").ToString ());
 		}
 
-		public void saveTestCoreFunctionNamespaceURI ()
+		// TODO:  umm.  Unable to make this return a namespace-uri so far...
+		public void TestCoreFunctionNamespaceURI ()
 		{
-			Assert(true);
+			document.LoadXml ("<foo:bar xmlns:foo='#foo'><foo:baz><foo:qux /></foo:baz></foo:bar>");
+			navigator = document.CreateNavigator();
+
+			AssertEquals("", navigator.Evaluate ("namespace-uri()").ToString ());
+			AssertEquals("", navigator.Evaluate ("namespace-uri(/bogus)").ToString ());
+			//AssertEquals("foo", navigator.Evaluate ("namespace-uri(/bar)").ToString ());
+			AssertEquals("", navigator2.Evaluate ("namespace-uri(//bar)").ToString ());
+		}
+
+		public void saveTestCoreFunctionString ()
+		{
+			document.LoadXml ("<foo>hello<bar>world</bar><baz>how are you</baz></foo>");
+			navigator = document.CreateNavigator();
+
+			AssertEquals("world", navigator.Evaluate ("string(/foo/*)").ToString ());
+			AssertEquals("NaN", navigator.Evaluate ("string(0 div 0)").ToString ());
+			//AssertEquals("0", navigator.Evaluate ("string(+0)").ToString ());
+			//AssertEquals("0", navigator.Evaluate ("string(-0)").ToString ());
+			AssertEquals("Infinity", navigator.Evaluate ("string(1 div 0)").ToString ());
+			AssertEquals("-Infinity", navigator.Evaluate ("string(-1 div 0)").ToString ());
+			AssertEquals("45", navigator.Evaluate ("string(45)").ToString ());
+			AssertEquals("-22", navigator.Evaluate ("string(-22)").ToString ());
+			AssertEquals("0.25", navigator.Evaluate ("string(.25)").ToString ());
+			AssertEquals("-0.25", navigator.Evaluate ("string(-.25)").ToString ());
+			AssertEquals("2", navigator.Evaluate ("string(2.0)").ToString ());
+			AssertEquals("2.01", navigator.Evaluate ("string(2.01)").ToString ());
+			AssertEquals("-3", navigator.Evaluate ("string(-3.0)").ToString ());
+			AssertEquals("3.45", navigator.Evaluate ("string(3.45)").ToString ());
+
+			// Wonder what this will look like under a different platform.
+			AssertEquals("0.33333333333333331", navigator.Evaluate ("string(1 div 3)").ToString ());
+		}
+
+		public void saveTestCoreFunctionConcat ()
+		{
+		}
+
+		public void saveTestCoreFunctionStartsWith ()
+		{
+		}
+
+		public void saveTestCoreFunctionContains ()
+		{
 		}
 	}
 }
