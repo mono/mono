@@ -1,4 +1,9 @@
 
+Fri Nov 14 17:58:27 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, inssel-long32.brg: fixed endianess issues in int64
+	implementation of 32 bit systems.
+
 Thu Nov 13 16:14:41 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* exceptions-ppc.c: fix build on Linux/ppc from Jeroen@xs4all.nl
