@@ -1,4 +1,7 @@
-MCS=../mcs/mcs.exe
+#
+# Compile at the maximum warning level to probe for warnings
+#
+MCS=../mcs/mcs.exe --wlevel 4
 
 all:
 	failed=false; \

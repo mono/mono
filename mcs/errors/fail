@@ -27,9 +27,6 @@ cs0216.cs:
 cs0234.cs:
 	Will be hard to fix;
 
-cs0246.cs:
-	Compiler crashes
-
 cs0534.cs:
 	This is bad.  We were supposed to catch this
 
@@ -37,10 +34,7 @@ cs0563.cs:
 	Parser error.  This is bad.
 
 cs0646.cs:
-	Compiler crashes
-
-cs0649.cs:
-	Just a warning on private field usage.
+	Compiler crash
 
 cs0654.cs:
 	Compiler crash
@@ -48,6 +42,7 @@ cs0654.cs:
 cs1001.cs:
 	Compiler emits syntax error;  Its ok.
 
+	Compiler crashes
 cs1501.cs:
 	Compiler crashes.  Easy to fix
 
