@@ -1,5 +1,11 @@
 2004-05-06  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlDataReader.cs : Added. This class will work better when our
+	  schema inference and schema read engine gets improved. (It contains
+	  standalone testable Driver class.)
+
+2004-05-06  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ForeignKeyConstraint.cs : Check step change. Existence then column
 	  validity. just for tests.
 	* XmlSchemaDataImporter.cs : code simplification. reduced extraneous
