@@ -851,7 +851,10 @@ throw new Exception ("HERE the value was modified");
 
 		public object GetFormat (Type formatType) 
 		{
-			return (formatType == typeof (NumberFormatInfo)) ? this : null;
+			// work around http://bugzilla.ximian.com/show_bug.cgi?id=55978
+			// the comparison fails because formatType likely comes from another domain
+			//return (formatType == typeof (NumberFormatInfo)) ? this : null;
+			return this;
 		}
 		
 		public object Clone () 

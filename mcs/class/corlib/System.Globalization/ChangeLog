@@ -1,3 +1,8 @@
+
+Wed Jun 30 17:06:43 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* NumberFormatInfo.cs: workaround for bug 55978.
+
 2004-06-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeFormatInfo.cs : check if pattern array is empty or not. Now
