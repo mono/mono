@@ -1,5 +1,29 @@
 2004-03-19  Martin Baulig  <martin@ximian.com>
 
+	* interface.cs: Completely killed this file.
+	(Interface): We're now a TypeContainer and live in class.cs.
+
+	* class.cs (TypeContainer.GetClassBases): Added `bool is_iface'
+	argument; we're now also called for interfaces.
+	(TypeContainer.DefineMembers): Allow this method being called
+	multiple times.
+	(TypeContainer.GetMethods): New public method; formerly known as
+	Interface.GetMethod().  This is used by PendingImplementation.
+	(TypeContainer.EmitDefaultMemberAttr): Moved here from Interface;
+	it's now private and non-static.
+	(Interface): Moved this here; it's now implemented similar to
+	Class and Struct.
+	(Method, Property, Event, Indexer): Added `bool is_interface'
+	argument to their .ctor's.
+	(MemberBase.IsInterface): New public field.
+
+	* cs-parser.jay: Create normal Method, Property, Event, Indexer
+	instances instead of InterfaceMethod, InterfaceProperty, etc.
+	(opt_interface_base): Removed; we now use `opt_class_base' instead.
+	(InterfaceAccessorInfo): Create `Get' and `Set' Accessor's.
+
+2004-03-19  Martin Baulig  <martin@ximian.com>
+
 	* class.cs (MethodCore.IsDuplicateImplementation): New private
 	method which does the CS0111 checking.
 	(Method.CheckBase, Constructor.CheckBase, PropertyBase.CheckBase):

@@ -154,10 +154,10 @@ namespace Mono.CSharp {
 
 					iface = TypeManager.LookupInterface (t);
 					
-					mi = iface.GetMethods (container);
+					mi = iface.GetMethods ();
 				} else 
 					mi = t.GetMethods ();
-				
+
 				int count = mi.Length;
 				pending_implementations [i].type = t;
 				pending_implementations [i].optional = missing.Optional;

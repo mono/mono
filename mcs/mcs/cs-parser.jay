@@ -906,8 +906,9 @@ method_header
 	  member_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  {
-		Method method = new Method (current_container, (Expression) $3, (int) $2, (string) $4, 
-					    (Parameters) $6, (Attributes) $1, lexer.Location);
+		Method method = new Method (current_container, (Expression) $3, (int) $2,
+					    false, (string) $4,  (Parameters) $6,
+					    (Attributes) $1, lexer.Location);
 
 		current_local_parameters = (Parameters) $6;
 
@@ -919,9 +920,9 @@ method_header
 	  member_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  {
-		Method method = new Method (current_container, TypeManager.system_void_expr, (int) $2,
-					    (string) $4, (Parameters) $6, (Attributes) $1,
-					    lexer.Location);
+		Method method = new Method (current_container, TypeManager.system_void_expr,
+					    (int) $2, false, (string) $4, (Parameters) $6,
+					    (Attributes) $1, lexer.Location);
 
 		current_local_parameters = (Parameters) $6;
 		$$ = method;
@@ -934,9 +935,9 @@ method_header
 		Report.Error (1585, lexer.Location, 
 			String.Format ("Modifier {0} should appear before type", 
 				Modifiers.Name ((int) $4)));
-		Method method = new Method (current_container, TypeManager.system_void_expr, 0,
-					    (string) $5, (Parameters) $7, (Attributes) $1,
-					    lexer.Location);
+		Method method = new Method (current_container, TypeManager.system_void_expr,
+					    0, false, (string) $5, (Parameters) $7,
+					    (Attributes) $1, lexer.Location);
 
 		current_local_parameters = (Parameters) $7;
 		$$ = method;
@@ -1064,8 +1065,8 @@ property_declaration
 		Accessor set_block = (Accessor) pair.Second;
 
 		Location loc = (Location) $6;
-		prop = new Property (current_container, (Expression) $3, (string) $4, (int) $2,
-				     get_block, set_block, (Attributes) $1, loc);
+		prop = new Property (current_container, (Expression) $3, (int) $2, false,
+				     (string) $4, (Attributes) $1, get_block, set_block, loc);
 		if (SimpleIteratorContainer.Simple.Yields)
 			prop.SetYields ();
 		
@@ -1172,9 +1173,10 @@ interface_declaration
 			Report.Error (-2, l, "Internal compiler error: interface inside interface");
 		}
 		current_interface = new_interface;
+		current_container = new_interface;
 		RootContext.Tree.RecordDecl (full_interface_name, new_interface);
 	  }
-	  opt_interface_base
+	  opt_class_base
 	  interface_body opt_semicolon
 	  { 
 		Interface new_interface = (Interface) current_interface;
@@ -1183,36 +1185,12 @@ interface_declaration
 			new_interface.Bases = (ArrayList) $6;
 
 		current_interface = null;
+		current_container = current_container.Parent;
 		CheckDef (current_container.AddInterface (new_interface), 
 			  new_interface.Name, new_interface.Location);
 	  }
 	| opt_attributes opt_modifiers INTERFACE error {
 		CheckIdentifierToken (yyToken);
-	  }
-	;
-
-opt_interface_base
-	: /* empty */			  { $$ = null; }
-	| interface_base
-	;
-
-interface_base
-	: COLON interface_type_list	  { $$ = $2; }
-	;
-
-interface_type_list
-	: interface_type
-	  {
-		ArrayList interfaces = new ArrayList (4);
-
-		interfaces.Add (($1).ToString ());
-		$$ = interfaces;
-	  }
-	| interface_type_list COMMA interface_type
-	  {
-		ArrayList interfaces = (ArrayList) $1;
-		interfaces.Add (($3).ToString ());
-		$$ = interfaces;
 	  }
 	;
 
@@ -1235,28 +1213,28 @@ interface_member_declarations
 interface_member_declaration
 	: interface_method_declaration		
 	  { 
-		InterfaceMethod m = (InterfaceMethod) $1;
+		Method m = (Method) $1;
 
 		CheckDef (current_interface.AddMethod (m), m.Name, m.Location);
 	  }
 	| interface_property_declaration	
 	  { 
-		InterfaceProperty p = (InterfaceProperty) $1;
+		Property p = (Property) $1;
 
 		CheckDef (current_interface.AddProperty (p), p.Name, p.Location);
           }
 	| interface_event_declaration 
           { 
 		if ($1 != null){
-			InterfaceEvent e = (InterfaceEvent) $1;
+			Event e = (Event) $1;
 			CheckDef (current_interface.AddEvent (e), e.Name, lexer.Location);
 		}
 	  }
 	| interface_indexer_declaration
 	  { 
-		InterfaceIndexer i = (InterfaceIndexer) $1;
+		Indexer i = (Indexer) $1;
 
-		CheckDef (current_interface.AddIndexer (i), "indexer", i.Location);
+		current_interface.AddIndexer (i);
 	  }
 	;
 
@@ -1274,16 +1252,17 @@ interface_method_declaration
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  SEMICOLON
 	  {
-		$$ = new InterfaceMethod ((Expression) $3, (string) $4, (int) $2, 
-					  (Parameters) $6, (Attributes) $1, lexer.Location);
+		$$ = new Method (current_container, (Expression) $3, (int) $2, true,
+				 (string) $4, (Parameters) $6, (Attributes) $1,
+				 lexer.Location);
 	  }
 	| opt_attributes opt_new VOID IDENTIFIER 
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  SEMICOLON
 	  {
-		$$ = new InterfaceMethod (
-			TypeManager.system_void_expr, (string) $4, (int) $2, (Parameters) $6, 
-					  (Attributes) $1, lexer.Location);
+		$$ = new Method (current_container, TypeManager.system_void_expr, (int) $2,
+				 true, (string) $4, (Parameters) $6,  (Attributes) $1,
+				 lexer.Location);
 	  }
 	;
 
@@ -1299,10 +1278,9 @@ interface_property_declaration
 	  {
                 InterfaceAccessorInfo pinfo = (InterfaceAccessorInfo) $7;
 
-		$$ = new InterfaceProperty ((Expression) $3, (string) $4, (int) $2, 
-					    pinfo.has_get, pinfo.has_set, (Attributes) $1,
-                                            pinfo.get_attrs, pinfo.set_attrs,
-					    lexer.Location);
+		$$ = new Property (current_container, (Expression) $3, (int) $2, true,
+				   (string) $4, (Attributes) $1, pinfo.Get, pinfo.Set,
+				   lexer.Location);
 	  }
 	| opt_attributes
 	  opt_new
@@ -1324,8 +1302,8 @@ interface_accessors
 interface_event_declaration
 	: opt_attributes opt_new EVENT type IDENTIFIER SEMICOLON
 	  {
-		$$ = new InterfaceEvent ((Expression) $4, (string) $5, (int) $2, (Attributes) $1,
-					 lexer.Location);
+		$$ = new Event ((Expression) $4, (int) $2, true, (string) $5, null,
+				(Attributes) $1, null, null, lexer.Location);
 	  }
 	| opt_attributes opt_new EVENT type error {
 		CheckIdentifierToken (yyToken);
@@ -1352,12 +1330,9 @@ interface_indexer_declaration
 	  {
 		InterfaceAccessorInfo info = (InterfaceAccessorInfo) $10;
 
-	  	bool do_get = info.has_get;
-		bool do_set = info.has_set;
-
-		$$ = new InterfaceIndexer ((Expression) $3, (Parameters) $6, do_get, do_set,
-					   (int) $2, (Attributes) $1, (Attributes) info.get_attrs,
-                                           (Attributes) info.set_attrs, lexer.Location);
+		$$ = new Indexer (current_container, (Expression) $3, null, (int) $2, true,
+				  (Parameters) $6, (Attributes) $1, info.Get, info.Set,
+				  lexer.Location);
 	  }
 	;
 
@@ -1628,9 +1603,9 @@ event_declaration
 	  {
 		foreach (VariableDeclaration var in (ArrayList) $5) {
 
-			Event e = new Event ((Expression) $4, var.identifier, 
+			Event e = new Event ((Expression) $4, (int) $2, false, var.identifier,
 					     var.expression_or_array_initializer,
-					     (int) $2, null, null, (Attributes) $1, lexer.Location);
+					     (Attributes) $1, null, null, lexer.Location);
 
 			CheckDef (current_container.AddEvent (e), e.Name, e.Location);
 				       
@@ -1666,8 +1641,9 @@ event_declaration
 			if (pair.Second != null)
 				rem_accessor = (Accessor) pair.Second;
 			
-			Event e = new Event ((Expression) $4, (string) $5, null, (int) $2, add_accessor, rem_accessor,
-					     (Attributes) $1, loc);
+			Event e = new Event ((Expression) $4, (int) $2, false, (string) $5,
+					     null, (Attributes) $1, add_accessor, rem_accessor,
+					     loc);
 			
 			CheckDef (current_container.AddEvent (e), e.Name, loc);
 			implicit_value_parameter_type = null;
@@ -1766,8 +1742,9 @@ indexer_declaration
 		Accessor get_block = (Accessor) pair.First;
 		Accessor set_block = (Accessor) pair.Second;
 
-		indexer = new Indexer (current_container, decl.type, decl.interface_type, (int) $2,
-				       decl.param_list, get_block, set_block, (Attributes) $1, loc);
+		indexer = new Indexer (current_container, decl.type, decl.interface_type,
+				       (int) $2, false, decl.param_list, (Attributes) $1,
+				       get_block, set_block, loc);
 
 		// Note that there is no equivalent of CheckDef for this case
 		// We shall handle this in semantic analysis
@@ -3910,18 +3887,15 @@ public class VariableDeclaration {
 /// </summary>
 public class InterfaceAccessorInfo {
 
-        public bool has_get;
-        public bool has_set;
-        public Attributes get_attrs;
-        public Attributes set_attrs;
+        public readonly Accessor Get, Set;
 
         public InterfaceAccessorInfo (bool has_get, bool has_set,
                                       Attributes get_attrs, Attributes set_attrs)
         {
-                this.has_get = has_get;
-                this.has_set = has_set;
-                this.get_attrs = get_attrs;
-                this.set_attrs = set_attrs;
+		if (has_get)
+			Get = new Accessor (null, get_attrs);
+		if (has_set)
+			Set = new Accessor (null, set_attrs);
         }
 }
 
