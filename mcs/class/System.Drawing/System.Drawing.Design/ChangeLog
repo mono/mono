@@ -1,4 +1,9 @@
+2003-06-30  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* ToolboxItem.cs: Added serialization/deserialization support
+	
 2003-06-18  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* CategoryNameCollection.cs
 	* ToolboxItemCollection.cs: Implemented
 

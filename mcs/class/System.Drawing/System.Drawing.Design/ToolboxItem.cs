@@ -2,8 +2,8 @@
 // System.Drawing.Design.ToolboxItem.cs
 //
 // Authors:
-//	Alejandro Sánchez Acosta
-//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Alejandro Sánchez Acosta
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Alejandro Sánchez Acosta
 // (C) 2003 Andreas Nahr
@@ -25,9 +25,9 @@ namespace System.Drawing.Design
 		private AssemblyName assembly;
 		private Bitmap bitmap;
 		private ICollection filter = new ToolboxItemFilterAttribute[0];
-		private string displayname = "";
+		private string displayname = string.Empty;
 		private bool locked = false;
-		private string name = "";
+		private string name = string.Empty;
 		
 		public ToolboxItem() {
 		}
@@ -121,10 +121,14 @@ namespace System.Drawing.Design
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected virtual void Deserialize (SerializationInfo info, StreamingContext context)
 		{
-			throw new NotImplementedException ();
+			assembly = (AssemblyName)info.GetValue ("AssemblyName", typeof (AssemblyName));
+			bitmap = (Bitmap)info.GetValue ("Bitmap", typeof (Bitmap));
+			filter = (ICollection)info.GetValue ("Filter", typeof (ICollection));
+			displayname = info.GetString ("DisplayName");
+			locked = info.GetBoolean ("Locked");
+			name = info.GetString ("TypeName");
 		}
 
 		public override bool Equals (object obj)
@@ -166,11 +170,10 @@ namespace System.Drawing.Design
 
 			throw new NotImplementedException ();
 		}
-		
-		[MonoTODO]		
+			
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			throw new NotImplementedException ();
+			Serialize (info, context);
 		}
 
 		public void Lock ()
@@ -180,18 +183,24 @@ namespace System.Drawing.Design
 
 		protected virtual void OnComponentsCreated (ToolboxComponentsCreatedEventArgs args)
 		{
-			this.ComponentsCreated (this, args);
+			if (ComponentsCreated != null)
+				this.ComponentsCreated (this, args);
 		}
 
 		protected virtual void OnComponentsCreating (ToolboxComponentsCreatingEventArgs args)
 		{
-			this.ComponentsCreating (this, args);
+			if (ComponentsCreated != null)
+				this.ComponentsCreating (this, args);
 		}
 
-		[MonoTODO]
 		protected virtual void Serialize (SerializationInfo info, StreamingContext context)
 		{
-			throw new NotImplementedException ();
+			info.AddValue ("AssemblyName", assembly);
+			info.AddValue ("Bitmap", bitmap);
+			info.AddValue ("Filter", filter);
+			info.AddValue ("DisplayName", displayname);
+			info.AddValue ("Locked", locked);
+			info.AddValue ("TypeName", name);
 		}
 
 		public override string ToString()
