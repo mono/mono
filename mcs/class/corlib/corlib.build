@@ -61,7 +61,6 @@
 				<excludes name="System/RuntimeTypeHandle.cs"/>
 				<excludes name="System.PAL/IOperatingSystem.cs"/>
 				<excludes name="System.Collections/Queue.cs"/>
-				<excludes name="System.Resources/*"/>
 				<excludes name="System.Security/CodeAccessPermission.cs"/>
 			</sources>
 		</csc>
@@ -84,7 +83,6 @@
 				<excludes name="Test/**"/>
 				<excludes name="Linux/**"/>
 				<excludes name="System.PAL/IOperatingSystem.cs"/>
-				<excludes name="System.Resources/*"/>
 			</sources>
 		</csc>
 		<csc target="library" output="Test/corlib_res.dll" debug="${debug}">
@@ -107,7 +105,6 @@
 				<excludes name="System/RuntimeTypeHandle.cs"/>
 				<excludes name="System.PAL/IOperatingSystem.cs"/>
 				<excludes name="System.Collections/Queue.cs"/>
-				<excludes name="System.Resources/*"/>
 				<excludes name="System.Security/CodeAccessPermission.cs"/>
 			</sources>
 		</csc>
