@@ -24,6 +24,13 @@ namespace MonoTests.System.Runtime.InteropServices
 			AssertEquals (false, handle.IsAllocated);
 		}
 
+		[Test]
+		public void AllocNull ()
+		{
+			IntPtr ptr = (IntPtr)GCHandle.Alloc(null);
+			GCHandle gch = (GCHandle)ptr;
+		}
+
 	}
 }
 

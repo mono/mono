@@ -1,3 +1,7 @@
+2005-04-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* GCHandleTest.cs: Add test for calling Alloc with null.
+
 2004-09-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MarshalTest.cs: Add test for AllocHGlobal and zero size.
