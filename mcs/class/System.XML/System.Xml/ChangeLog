@@ -1,6 +1,10 @@
+2003-01-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XmlCharacterData.cs: added XPathNodeType property.
+
 2003-01-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-	* System.Xml/XmlTextWriter.cs: throw an exception if WriteEndDocument is
+	* XmlTextWriter.cs: throw an exception if WriteEndDocument is
 	called without a prior call to WriteStartDocument.
 
 2003-01-21  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>

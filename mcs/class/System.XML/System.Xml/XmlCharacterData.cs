@@ -9,6 +9,7 @@
 //
 
 using System;
+using System.Xml.XPath;
 
 namespace System.Xml
 {
@@ -62,6 +63,10 @@ namespace System.Xml
 			set {
 				Data = value;
 			}
+		}
+
+		internal override XPathNodeType XPathNodeType {
+			get { return XPathNodeType.Text; }
 		}
 
 		#endregion
@@ -128,7 +133,6 @@ namespace System.Xml
 		{
 			return data.Substring (offset, count);
 		}
-
 		#endregion
 	}
 }
