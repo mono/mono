@@ -34,5 +34,9 @@ namespace Microsoft.JScript.Tmp {
 		{
 			get { return comment; }
 		}
+
+		public string Comment {
+			get { return comment; }
+		}
 	}
 }

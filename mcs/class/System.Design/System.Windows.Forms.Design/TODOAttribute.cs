@@ -29,5 +29,9 @@ namespace System.Windows.Forms.Design {
 		{
 			this.comment = comment;
 		}
+
+		public string Comment {
+			get { return comment; }
+		}
 	}
 }

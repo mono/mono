@@ -29,5 +29,9 @@ namespace System { // Some classes are not under System.Design.* namespace
 		{
 			this.comment = comment;
 		}
+
+		public string Comment {
+			get { return comment; }
+		}
 	}
 }

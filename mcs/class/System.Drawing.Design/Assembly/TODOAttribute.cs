@@ -28,4 +28,8 @@ internal class MonoTODOAttribute : Attribute {
 	{
 			this.comment = comment;
 	}
+
+		public string Comment {
+			get { return comment; }
+		}
 }

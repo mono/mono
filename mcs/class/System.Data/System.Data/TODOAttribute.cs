@@ -29,5 +29,9 @@ namespace System.Data {
 		{
 			this.comment = comment;
 		}
+
+		public string Comment {
+			get { return comment; }
+		}
 	}
 }

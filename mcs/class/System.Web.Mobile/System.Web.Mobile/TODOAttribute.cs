@@ -29,5 +29,9 @@ namespace System.Web.Mobile {
 		{
 			this.comment = comment;
 		}
+
+		public string Comment {
+			get { return comment; }
+		}
 	}
 }

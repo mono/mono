@@ -30,5 +30,9 @@ namespace System.DirectoryServices {
 		{
 			this.comment = comment;
 		}
+
+		public string Comment {
+			get { return comment; }
+		}
 	}
 }

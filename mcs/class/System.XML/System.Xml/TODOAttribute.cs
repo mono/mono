@@ -28,5 +28,9 @@ namespace System.Xml {
 		{
 			this.comment = comment;
 		}
+
+		public string Comment {
+			get { return comment; }
+		}
 	}
 }

@@ -21,5 +21,9 @@ namespace System.Messaging
 		}
 		
 		public MonoTODOAttribute() {}
+
+		public string Comment {
+			get { return comment; }
+		}
 	}
 }

@@ -29,5 +29,9 @@ namespace Mono.Data.PostgreSqlClient {
 		{
 			this.comment = comment;
 		}
+
+		public string Comment {
+			get { return comment; }
+		}
 	}
 }

@@ -29,5 +29,9 @@ namespace Mono.Data.SybaseTypes {
 		{
 			this.comment = comment;
 		}
+
+		public string Comment {
+			get { return comment; }
+		}
 	}
 }

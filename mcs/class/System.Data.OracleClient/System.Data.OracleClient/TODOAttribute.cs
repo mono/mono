@@ -29,5 +29,9 @@ namespace System.Data.OracleClient {
 		{
 			this.comment = comment;
 		}
+
+		public string Comment {
+			get { return comment; }
+		}
 	}
 }

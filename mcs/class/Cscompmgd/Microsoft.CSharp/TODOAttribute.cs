@@ -29,5 +29,9 @@ namespace Microsoft.CSharp {
 		{
 			this.comment = comment;
 		}
+
+		public string Comment {
+			get { return comment; }
+		}
 	}
 }
