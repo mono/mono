@@ -106,6 +106,7 @@ namespace System.Web.Services.Description
 		public ServiceDescription ServiceDescription;
 		public XmlSchema CurrentSchema;
 		XmlSchemas schemas = new XmlSchemas ();
+		ServiceDescriptionCollection services;
 		
 		public ConformanceCheckContext (ServiceDescriptionCollection collection, BasicProfileViolationCollection violations)
 		{
@@ -115,12 +116,14 @@ namespace System.Web.Services.Description
 				if (sd.Types != null && sd.Types.Schemas != null)
 					schemas.Add (sd.Types.Schemas);
 			}
+			services = collection;
 		}
 		
 		public ConformanceCheckContext (WebReference webReference, BasicProfileViolationCollection violations)
 		{
 			this.webReference = webReference;
 			this.violations = violations;
+			services = new ServiceDescriptionCollection ();
 			
 			foreach (object doc in webReference.Documents.Values) 
 			{
@@ -128,6 +131,7 @@ namespace System.Web.Services.Description
 					schemas.Add ((XmlSchema)doc);
 				else if (doc is ServiceDescription) {
 					ServiceDescription sd = (ServiceDescription) doc;
+					services.Add (sd);
 					if (sd.Types != null && sd.Types.Schemas != null)
 						schemas.Add (sd.Types.Schemas);
 				}
@@ -145,6 +149,10 @@ namespace System.Web.Services.Description
 		
 		public XmlSchemas Schemas {
 			get { return schemas; }
+		}
+		
+		public ServiceDescriptionCollection Services {
+			get { return services; }
 		}
 		
 		public object GetDocument (string url)

@@ -92,6 +92,14 @@ namespace System.Web.Services.Description
 			get { return type; }
 			set { type = value; }
 		}
+		
+		internal bool DefinedByType {
+			get { return type != null && type != XmlQualifiedName.Empty; }
+		}
+
+		internal bool DefinedByElement {
+			get { return element != null && element != XmlQualifiedName.Empty; }
+		}
 
 		#endregion // Properties
 

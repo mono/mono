@@ -85,6 +85,15 @@ namespace System.Web.Services.Description {
 			}
 		}
 
+		internal OperationFault Fault {
+			get { 
+				foreach (object message in List)
+					if (message is OperationFault)
+						return (OperationFault) message;
+				return null;
+			}
+		}
+
 		#endregion // Properties
 
 		#region Methods

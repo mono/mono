@@ -1,3 +1,16 @@
+2004-08-24  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* BasicProfileChecker.cs: Implemented more rules.
+	* ConformanceChecker.cs: Added service list property in 
+	  ConformanceCheckContext.
+	* MessagePart.cs: Added some convenient internal properties.
+	* OperationMessageCollection.cs: Added property for getting the fault
+	  message.
+	* ServiceDescriptionFormatExtensionCollection.cs: The find method now
+	  can return subclasses of the provided class.
+	* WebServicesInteroperability.cs: Set the context schema when processing
+	  a schema.
+
 2004-07-28  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* BasicProfileChecker.cs, ConformanceChecker.cs, 

@@ -152,6 +152,7 @@ namespace System.Web.Services.Description
 				checker.Check (ctx, sd.Types);
 				if (sd.Types.Schemas != null) {
 					foreach (XmlSchema s in sd.Types.Schemas) {
+						ctx.CurrentSchema = s;
 						checker.Check (ctx, s);
 						CheckObjects (ctx, checker, new Hashtable (), s.Items);
 					}
