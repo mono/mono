@@ -1,5 +1,10 @@
 2002-09-20  Martin Baulig  <martin@gnome.org>
 
+	* MonoSymbolTable.cs: Set version number to 23, include the size
+	of a variable.
+
+2002-09-20  Martin Baulig  <martin@gnome.org>
+
 	* MonoSymbolTable.cs: Set version number to 22.  Provide information
 	about parameters and local variables.
 

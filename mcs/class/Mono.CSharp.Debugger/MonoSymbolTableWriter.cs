@@ -83,9 +83,9 @@ namespace Mono.CSharp.Debugger
 				int num_locals = method.Locals.Length;
 
 				int variable_table_offset = address_table_size;
-				int my_size2 = VariableInfo.Size * (num_params + num_locals);
+				int my_size2 = VariableInfo.StructSize * (num_params + num_locals);
 				if (!method.MethodBase.IsStatic)
-					my_size2 += VariableInfo.Size;
+					my_size2 += VariableInfo.StructSize;
 				address_table_size += my_size2;
 
 				for (int i = 0; i < count; i++) {

@@ -18,7 +18,7 @@ namespace Mono.CSharp.Debugger
 {
 	public struct OffsetTable
 	{
-		public const int Version = 22;
+		public const int Version = 23;
 		public const long Magic   = 0x45e82623fd7fa614;
 
 		public int total_file_size;
@@ -95,6 +95,7 @@ namespace Mono.CSharp.Debugger
 	{
 		public readonly int Index;
 		public readonly int Offset;
+		public readonly int Size;
 		public readonly AddressMode Mode;
 		public readonly int BeginScope;
 		public readonly int EndScope;
@@ -108,9 +109,9 @@ namespace Mono.CSharp.Debugger
 
 		const long AddressModeFlags = 0xf0000000;
 
-		public static int Size {
+		public static int StructSize {
 			get {
-				return 16;
+				return 20;
 			}
 		}
 
@@ -118,6 +119,7 @@ namespace Mono.CSharp.Debugger
 		{
 			Index = reader.ReadInt32 ();
 			Offset = reader.ReadInt32 ();
+			Size = reader.ReadInt32 ();
 			BeginScope = reader.ReadInt32 ();
 			EndScope = reader.ReadInt32 ();
 
@@ -129,8 +131,8 @@ namespace Mono.CSharp.Debugger
 
 		public override string ToString ()
 		{
-			return String.Format ("[VariableInfo {0}:{1:x}:{2:x}:{3:x}:{4:x}]",
-					      Mode, Index, Offset, BeginScope, EndScope);
+			return String.Format ("[VariableInfo {0}:{1:x}:{2:x}:{3:x}:{4:x}:{5:x}]",
+					      Mode, Index, Offset, Size, BeginScope, EndScope);
 		}
 	}
 
