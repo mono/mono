@@ -1,3 +1,11 @@
+2004-03-11  Miguel de Icaza  <miguel@ximian.com>
+
+	* loader.c (mono_lookup_pinvoke_call): Call the Windows.Forms init
+	code when we P/Invoke the first library in Windows.Forms, instead
+	of when we first open the assembly.
+
+	* assembly.c: Drop the lookup from here.
+
 2004-03-10  Martin Baulig  <martin@ximian.com>
 
 	* reflection.c (mono_reflection_get_custom_attrs): Use the correct
