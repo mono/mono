@@ -1,3 +1,11 @@
+2003-02-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (ResolveMemberAccess): When resolving a constant,
+	do not attempt to pull a constant if the value was not able to
+	generate a valid constant.
+
+	* const.cs (LookupConstantValue): Do not report more errors than required.
+
 2003-02-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* expression.cs: fixes bug #38328.
