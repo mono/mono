@@ -1,3 +1,10 @@
+2004-03-20 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* expression.cs: Make sure fp comparisons work with NaN.
+	This fixes bug #54303. Mig approved this patch a long
+	time ago, but we were not able to test b/c the runtime
+	had a related bug.
+
 2004-03-19  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (TypExpr.GetHashCode): implement this overload. 
