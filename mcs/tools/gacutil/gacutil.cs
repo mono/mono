@@ -64,13 +64,44 @@ namespace Mono.Tools
 				return;
 			}
 
-			if(!Directory.Exists (gac_path + Path.DirectorySeparatorChar  + args[0])) {
-				Console.WriteLine ("ERROR: assembly is not in the gac");
-				return;
+			string joinedArgs = String.Join ("", args);
+
+			string[] assemblyPieces = joinedArgs.Split(new char[] { ',' });
+
+			Hashtable paramInfo = new Hashtable ();
+
+			foreach (string item in assemblyPieces) {
+				string[] pieces = item.Trim ().Split (new char[] { '=' }, 2);
+				if(pieces.Length == 1)
+					paramInfo["assembly"] = pieces[0];
+				else
+					paramInfo[pieces[0].ToLower ()] = pieces[1];
 			}
 
-			Directory.Delete (gac_path + Path.DirectorySeparatorChar + args[0], true);
-			Console.WriteLine ("Assembly '" + args[0] + "' removed from the gac.");
+			string searchString = (string) paramInfo["assembly"] + Path.DirectorySeparatorChar;
+
+			if (paramInfo.Keys.Count != 1) {
+				if (paramInfo["version"] != null) {
+					searchString += (string) paramInfo["version"] + "*";
+				}
+			} else {
+				if (Directory.Exists (gac_path + paramInfo["assembly"])) {
+					Directory.Delete (gac_path + Path.DirectorySeparatorChar + paramInfo["assembly"], true);
+					Console.WriteLine ("All assemblies with the name '" + paramInfo["assembly"] + " removed from the GAC");
+					return;
+				} else {
+					Console.WriteLine ("ERROR: No assemblies named '" + paramInfo["assembly"] + "' in the GAC");
+					return;
+				}
+			}
+
+			string[] directories = Directory.GetDirectories (gac_path, searchString);
+
+			foreach (string dir in directories) {
+				Directory.Delete (dir, true);
+				Console.WriteLine ("Assembly removed from the gac");
+			}
+			
 		}
 
 		public void ListAssemblies (string[] args)

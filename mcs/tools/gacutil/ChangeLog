@@ -1,3 +1,9 @@
+2003-11-14  Todd Berman  <tberman@gentoo.org>
+
+	* gacutil.cs: added proper removal of assemblies, now the version=
+	syntax also works.
+	* gacutil.exe: somehow got added, removing, duh.
+
 2003-11-12  Todd Berman  <tberman@gentoo.org>
 
 	* Makefile:
