@@ -18,7 +18,8 @@ namespace System.Web.Compilation
 		ServerComment,
 		DataBinding,
 		CodeRender,
-		CodeRenderExpression
+		CodeRenderExpression,
+		Include
 	}
 }
 

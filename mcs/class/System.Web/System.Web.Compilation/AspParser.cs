@@ -152,6 +152,53 @@ namespace System.Web.Compilation
 			}
 		}
 
+		bool GetInclude (string str, out string pathType, out string filename)
+		{
+			pathType = null;
+			filename = null;
+			str = str.Substring (2).Trim ();
+			int len = str.Length;
+			int lastQuote = str.LastIndexOf ('"');
+			if (len < 10 || lastQuote != len - 1 || !str.StartsWith ("#include "))
+				return false;
+
+			str = str.Substring (9).Trim ();
+			bool isfile = (str.StartsWith ("file"));
+			if (!isfile && !str.StartsWith ("virtual"))
+				return false;
+
+			pathType = (isfile) ? "file" : "virtual";
+			if (str.Length < pathType.Length + 3)
+				return false;
+
+			str = str.Substring (pathType.Length).Trim ();
+			if (str.Length < 3 || str [0] != '=')
+				return false;
+
+			int index = 1;
+			for (; index < str.Length; index++) {
+				if (Char.IsWhiteSpace (str [index]))
+					index++;
+				else if (str [index] == '"')
+					break;
+			}
+
+			if (index == str.Length || index == lastQuote)
+				return false;
+
+			str = str.Substring (index);
+			if (str.Length == 2) { // only quotes
+				OnError ("Empty file name.");
+				return false;
+			}
+
+			filename = str.Trim ().Substring (index, str.Length - 2);
+			if (filename.LastIndexOf  ('"') != -1)
+				return false; // file=""" -> no error
+
+			return true;
+		}
+
 		void GetTag (out TagType tagtype, out string id, out TagAttributes attributes)
 		{
 			int token = tokenizer.get_token ();
@@ -185,8 +232,15 @@ namespace System.Web.Compilation
 				if (comment == null)
 					OnError ("Unfinished HTML comment/DTD");
 
-				tagtype = TagType.Text;
-				id = "<!" + comment + end;
+				string pathType, filename;
+				if (double_dash && GetInclude (comment, out pathType, out filename)) {
+					tagtype = TagType.Include;
+					attributes = new TagAttributes ();
+					attributes.Add (pathType, filename);
+				} else {
+					tagtype = TagType.Text;
+					id = "<!" + comment + end;
+				}
 				break;
 			case Token.IDENTIFIER:
 				id = tokenizer.Value;

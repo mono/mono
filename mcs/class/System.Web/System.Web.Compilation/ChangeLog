@@ -1,3 +1,9 @@
+2003-05-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs:
+	* AspParser.cs:
+	* TagType.cs: Added support for server side includes.
+
 2003-05-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CSCompiler.cs: actually add the list of referenced assemblies to the

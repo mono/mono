@@ -201,6 +201,14 @@ namespace System.Web.Compilation
 			case TagType.CodeRender:
 				ProcessCode (tagtype, tagid, location);
 				break;
+			case TagType.Include:
+				string file = attributes ["virtual"] as string;
+				bool isvirtual = (file != null);
+				if (!isvirtual)
+					file = attributes ["file"] as string;
+
+				TextParsed (location, tparser.ProcessInclude (isvirtual, file));
+				break;
 			default:
 				break;
 			}

@@ -313,6 +313,30 @@ namespace System.Web.UI
 				ThrowParseException ("Unknown attribute: " + GetOneKey (atts));
 		}
 
+		internal string ProcessInclude (bool isvirtual, string file)
+		{
+			if (isvirtual) {
+				file = MapPath (file);
+			} else if (!Path.IsPathRooted (file)) {
+				file = UrlUtils.Combine (BaseVirtualDir, file);
+			}
+			
+			string result = null;
+			TextReader reader = null;
+			try {
+				reader = new StreamReader (file); //FIXME: encoding
+				result = reader.ReadToEnd ();
+				AddDependency (file);
+			} catch (Exception e) {
+				ThrowParseException (e.Message);
+			} finally {
+				if (reader != null)
+					reader.Close ();
+			}
+
+			return result;
+		}
+		
 		Assembly GetAssemblyFromSource (string vpath)
 		{
 			vpath = UrlUtils.Combine (BaseVirtualDir, vpath);
