@@ -442,6 +442,11 @@ namespace System
 
 		public override object[] GetCustomAttributes (Type attributeType, bool inherit)
 		{
+			if (attributeType == null)
+			{
+				throw new ArgumentNullException("attributeType");
+			}
+			
 			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
 		}
 

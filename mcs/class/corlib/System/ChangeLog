@@ -1,3 +1,8 @@
+2004-05-19  Gert Driesen (drieseng@users.sourceforge.net)
+
+	* MonoType.cs: throw ArgumentNullException when type parameter in
+	GetCustomAttributes(Type, bool) is null
+
 2004-05-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Buffer.cs: Added checks for null source and destination. Fix failing
