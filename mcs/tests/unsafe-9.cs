@@ -13,7 +13,7 @@ unsafe struct X {
 	{
 		X* foo = null;
 		
-		if ((int) (foo + 1) != sizeof (foo))
+		if ((int) (foo + 1) != sizeof (X))
 			return 1;
 		return 0;
 	}
