@@ -1,3 +1,9 @@
+2004-10-20  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (MethodCore.CheckBase): Add errors 505, 533, 544,
+	561 report.
+	(PropertyBase.FindOutParentMethod): Add errors 545, 546 report.
+
 2004-10-18  Martin Baulig  <martin@ximian.com>
 
 	Merged latest changes into gmcs.  Please keep this comment in
