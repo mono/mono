@@ -1,0 +1,30 @@
+Mono Intermediate Representation Documentation
+
+Operation: OP_LOCALLOC
+	inst_left:
+		The value 
+                                ins->inst_left = *sp;
+                                ins->cil_code = ip;
+
+	This is the equivalent of alloca() in a C implementation: it
+	allocates a bunch of bytes on the stack dynamically. Local
+	variables are allocated statically in the stack instead.
+	
+	It is implemented by moving the stack pointer according to the
+	platform ABI: you may need to keep a specific frame register
+	to address local variables when LOCALLOC is used (the PPC code
+	does this, for example: ifyou're doing the s390 port I suggest
+	starting from that)
+
+Operation: OP_CALL_HANDLER.
+
+	cil_code: 
+		Points to the CIL where the LEAVE or LEAVE_S
+		instruction was found.
+
+	inst_target_bb:
+		The target basic block for this invocation.
+
+	This instruction must call the target basic block.
+	
+	
