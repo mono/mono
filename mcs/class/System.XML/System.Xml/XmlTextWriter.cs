@@ -228,8 +228,6 @@ namespace System.Xml
 					string ans = (string) ent.Value;
 					string aprefix = (string) ent.Key;
 
-					if (aprefix == prefix)
-						continue;
 					if (namespaceManager.LookupNamespace (aprefix) == ans)
 						continue;
 	
@@ -570,9 +568,11 @@ namespace System.Xml
 		// WriteStartDocument() cannot specify encoding, while WriteNode() can write it).
 		public override void WriteProcessingInstruction (string name, string text)
 		{
-			if ((name == null) || (name == string.Empty) || (name.IndexOf("?>") > 0) || (text.IndexOf("?>") > 0)) {
+			if ((name == null) || (name == string.Empty))
 				throw new ArgumentException ();
-			}
+			XmlConvert.VerifyName (name);
+			if ((text.IndexOf("?>") > 0))
+				throw new ArgumentException ("Processing instruction cannot contain \"?>\" as its value.");
 
 			CheckState ();
 			CloseStartElement ();

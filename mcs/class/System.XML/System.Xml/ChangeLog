@@ -1,3 +1,10 @@
+2003-11-24  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* XmlTextWriter.cs :
+	  WriteProcessingInstruction() should check name validity.
+	  AddMissingElementXmlns() should allow namespace emission even if it
+	  is identical to existing one.
+
 2003-11-22  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* XmlTextReader.cs : Fixed ReadInnerXml(). This fixes bug #51267.
