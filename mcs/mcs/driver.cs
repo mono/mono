@@ -286,13 +286,14 @@ namespace CIR
 			if (output_file == null)
 				output_file = "a.exe";
 
-			context.CodeGen = new CilCodeGen (output_file, output_file);
+			context.CodeGen = new CodeGen (output_file, output_file);
 
 			//
 			// The second pass of the compiler
 			//
 			context.ResolveTree ();
 			context.PopulateTypes ();
+			context.EmitCode ();
 			
 			if (context.Report.Errors > 0){
 				error ("Compilation failed");

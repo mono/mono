@@ -664,7 +664,7 @@ method_header
 	  member_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  {
-		Method method = new Method ("void", (int) $2, (string) $4, (Parameters) $6);
+		Method method = new Method ("System.Void", (int) $2, (string) $4, (Parameters) $6);
 
 		current_local_parameters = (Parameters) $6;
 		$$ = method;

@@ -166,6 +166,14 @@ namespace CIR {
 
 			return types;
 		}
+
+		public CallingConventions GetCallingConvention ()
+		{
+			if (ArrayParameter != null)
+				return CallingConventions.VarArgs;
+			else
+				return CallingConventions.Standard;
+		}
 	}
 }
 		

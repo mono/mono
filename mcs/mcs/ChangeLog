@@ -1,3 +1,39 @@
+2001-08-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* codegen.cs (EmitCode): New function, will emit the code for a
+	Block of code given a TypeContainer and its ILGenerator. 
+
+	* statement.cs (Block): Standard public readonly optimization.
+	(Block::Block constructors): Link children. 
+	(Block::Child): Child Linker.
+	(Block::EmitVariables): Emits IL variable declarations.
+
+	* class.cs: Drop support for MethodGroups here, delay until
+	Semantic Analysis.
+	(Method::): Applied the same simplification that I did before, and
+	move from Properties to public readonly fields.
+	(Method::ParameterTypes): Returns the parameter types for the
+	function, and implements a cache that will be useful later when I
+	do error checking and the semantic analysis on the methods is
+	performed.
+	(Constructor::GetCallingConvention): Renamed from CallingConvetion
+	and made a method, optional argument tells whether this is a class
+	or a structure to apply the `has-this' bit.
+	(Method::GetCallingConvention): Implement, returns the calling
+	convention. 
+	(Method::Define): Defines the type, a second pass is performed
+	later to populate the methods.
+
+	(Constructor::ParameterTypes): implement a cache similar to the
+	one on Method::ParameterTypes, useful later when we do semantic
+	analysis. 
+
+	(TypeContainer::EmitMethod):  New method.  Emits methods.
+
+	* expression.cs: Removed MethodGroup class from here.
+	
+	* parameter.cs (Parameters::GetCallingConvention): new method.
+
 2001-08-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (TypeContainer::Populate): Drop RootContext from the

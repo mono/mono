@@ -631,9 +631,11 @@ namespace Generator {
 
 			if (b.Variables != null){
 				foreach (DictionaryEntry entry in b.Variables){
+					VariableInfo vi = (VariableInfo) entry.Value;
+					
 					space ();
 					output_newline (
-						(string) entry.Value + " " +
+						vi.Type + " " +
 						(string) entry.Key + ";");
 				}
 				newline ();
@@ -664,15 +666,6 @@ namespace Generator {
 			newline ();
 		}
 
-		void GenerateMethodGroup (MethodGroup mg)
-		{
-			foreach (DictionaryEntry de in mg.Methods){
-				Method m = (Method) de.Value;
-
-				GenerateMethod (m);
-			}
-		}
-		
 		void GenerateInterfaceMethod (InterfaceMethod imethod)
 		{
 			space ();
@@ -883,11 +876,9 @@ namespace Generator {
 			
 			GenerateFromTypes (tc);
 			
-			if (tc.MethodGroups != null){
-				foreach (DictionaryEntry de in tc.MethodGroups){
-					MethodGroup mg = (MethodGroup) de.Value;
-					
-					GenerateMethodGroup (mg);
+			if (tc.Methods != null){
+				foreach (Method m in tc.Methods){
+					GenerateMethod (m);
 				}
 			}
 		}

@@ -9,11 +9,11 @@
                     EnableUnmanagedDebugging = "false"
                     EnableSQLServerDebugging = "false"
                     StartAction = "Project"
-                    StartArguments = ""
+                    StartArguments = "i-undefined.cs"
                     StartPage = ""
                     StartProgram = ""
                     StartURL = ""
-                    StartWorkingDirectory = ""
+                    StartWorkingDirectory = "c:\mono\mcs\tests"
                     StartWithIE = "false"
                 />
                 <Config

@@ -457,40 +457,6 @@ namespace CIR {
 			}
 		}
 	}
-
-	public class MethodGroup : Expression {
-		Hashtable signatures;
-		string name;
-		
-		public MethodGroup (string name)
-		{
-			signatures = new Hashtable ();
-			this.name = name;
-		}
-
-		public bool Add (Method method)
-		{
-			string sig = method.ArgumentSignature;
-
-			if (signatures.Contains (sig))
-				return false;
-
-			signatures.Add (sig, method);
-			return true;
-		}
-
-		public string Name {
-			get {
-				return name;
-			}
-		}
-
-		public Hashtable Methods {
-			get {
-				return signatures;
-			}
-		}
-	}
 }
 
 

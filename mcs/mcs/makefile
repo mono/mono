@@ -10,7 +10,7 @@ COMPILER_SOURCES = \
 	assign.cs			\
 	driver.cs $(COMMON_SOURCES) 	\
 	class.cs 			\
-	cil-codegen.cs			\
+	codegen.cs			\
 	constant.cs			\
 	decl.cs				\
 	enum.cs				\

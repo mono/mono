@@ -8,6 +8,8 @@
 //
 
 using System;
+using System.Reflection;
+using System.Reflection.Emit;
 
 namespace CIR {
 
@@ -213,58 +215,91 @@ namespace CIR {
 		}
 	}
 	
+	public struct VariableInfo {
+		public readonly string Type;
+		public LocalBuilder LocalBuilder ;
+
+		public VariableInfo (string type)
+		{
+			Type = type;
+			LocalBuilder = null;
+		}
+	}
+		
 	// <summary>
 	//   Used for Label management
 	// </summary>
 	//
 	public class Block : Statement {
-		Block parent;
+		public readonly Block  Parent;
+		public readonly bool   Implicit;
+		public readonly string Label;
+
+		//
+		// The statements in this block
+		//
 		StatementCollection statements;
+
+		//
+		// Labels.  (label, block) pairs.
+		//
 		Hashtable labels;
-		Hashtable labels_referenced;
-		bool implicit_block;
+
+		//
+		// Keeps track of (name, type) pairs
+		//
 		Hashtable variables;
-		string label;
-		int internal_id_serial;
-		bool used = false;
+
+		//
+		// Maps variable names to ILGenerator.LocalBuilders
+		//
+		Hashtable local_builders;
+
+		//
+		// If we have a child, here it is
+		//
+		Block child;
 		
+		bool used = false;
+
 		public Block (Block parent)
 		{
-			this.parent = parent;
-			this.implicit_block = false;
+			if (parent != null)
+				parent.Child = this;
+			
+			this.Parent = parent;
+			this.Implicit = false;
 		}
 
 		public Block (Block parent, bool implicit_block)
 		{
-			this.parent = parent;
-			this.implicit_block = true;
+			if (parent != null)
+				parent.Child = this;
+			
+			this.Parent = parent;
+			this.Implicit = true;
 		}
 
 		public Block (Block parent, string labeled)
 		{
-			this.parent = parent;
-			this.implicit_block = true;
-			label = labeled;
+			if (parent != null)
+				parent.Child = this;
+			
+			this.Parent = parent;
+			this.Implicit = true;
+			Label = labeled;
 		}
 		
-		public Block Parent {
+		public Block Child {
 			get {
-				return parent;
+				return child;
+			}
+
+			set {
+				child = value;
 			}
 		}
 
-		public bool Implicit {
-			get {
-				return implicit_block;
-			}
-		}
-
-		public string Label {
-			get {
-				return label;
-			}
-		}
-		
 		// <summary>
 		//   Adds a label to the current block. 
 		// </summary>
@@ -292,8 +327,10 @@ namespace CIR {
 
 			if (GetVariableType (name) != null)
 				return false;
+
+			VariableInfo vi = new VariableInfo (type);
 			
-			variables.Add (name, type);
+			variables.Add (name, vi);
 			return true;
 		}
 
@@ -311,8 +348,8 @@ namespace CIR {
 				type = (string) variables [name];
 			if (type != null)
 				return type;
-			else if (parent != null)
-				return parent.GetVariableType (name);
+			else if (Parent != null)
+				return Parent.GetVariableType (name);
 			return null;
 		}
 
@@ -334,31 +371,13 @@ namespace CIR {
 			}
 		}
 
-		// <summary>
-		//   Call this to label the label as used in a block
-		// </summary>
-		public void Reference (string name)
-		{
-			if (labels_referenced == null)
-				labels_referenced = new Hashtable ();
-			labels_referenced.Add (name, null);
-		}
-
 		// <returns>
 		//   A list of labels that were not used within this block
 		// </returns>
 		public string [] GetUnreferenced ()
 		{
-			ArrayList unrefs = new ArrayList ();
-
-			foreach (string s in (string []) labels.Keys) {
-				if (labels_referenced [s] == null)
-					unrefs.Add (s);
-			}
-
-			string [] result = new string [unrefs.Count];
-			unrefs.CopyTo (result);
-			return result;
+			// FIXME: Implement me
+			return null;
 		}
 
 		public StatementCollection Statements {
@@ -390,11 +409,44 @@ namespace CIR {
 		//   used to create temporary variables that should not
 		//   be seen by the application
 		// </summary
+		int internal_id_serial;
 		public string MakeInternalID () {
 			string ret = internal_id_serial.ToString ();
 
 			internal_id_serial++;
 			return "0_" + ret;
+		}
+
+		// <summary>
+		//   Emits the variable declarations
+		// </summary>
+
+		public void EmitVariables (TypeContainer tc, ILGenerator ig)
+		{
+			//
+			// Process this block variables
+			//
+			if (variables != null){
+				local_builders = new Hashtable ();
+
+				foreach (DictionaryEntry de in variables){
+					string name = (string) de.Key;
+					VariableInfo vi = (VariableInfo) de.Value;
+					Type t;
+					
+					t = tc.LookupType (vi.Type, false);
+					if (t == null)
+						continue;
+
+					vi.LocalBuilder = ig.DeclareLocal (t);
+				}
+			}
+
+			//
+			// Now, handle the children
+			//
+			if (Child != null)
+				Child.EmitVariables (tc, ig);
 		}
 	}
 

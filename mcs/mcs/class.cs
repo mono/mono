@@ -46,8 +46,8 @@ namespace CIR {
 		// Holds the list of
 		ArrayList interfaces;
 
-		// Holds the method groups.
-		Hashtable method_groups;
+		// Holds the methods.
+		ArrayList methods;
 
 		//
 		// Pointers to the default constructor and the default static constructor
@@ -167,26 +167,15 @@ namespace CIR {
 			string name = method.Name;
 			Object value = defined_names [name];
 			
-			if (value != null && (!(value is MethodGroup)))
+			if (value != null && (!(value is Method)))
 				return AdditionResult.NameExists;
 
-			if (method_groups == null)
-				method_groups = new Hashtable ();
+			if (methods == null)
+				methods = new ArrayList ();
 
-			MethodGroup mg = (MethodGroup) method_groups [name];
-			if (mg == null){
-				mg = new MethodGroup (name);
+			methods.Add (method);
+			DefineName (name, method);
 
-				mg.Add (method);
-				method_groups.Add (name, mg);
-
-				return AdditionResult.Success;
-			}
-			mg.Add (method);
-
-			if (value == null)
-				DefineName (name, mg);
-			
 			return AdditionResult.Success;
 		}
 
@@ -296,9 +285,9 @@ namespace CIR {
 			}
 		}
 
-		public Hashtable MethodGroups {
+		public ArrayList Methods {
 			get {
-				return method_groups;
+				return methods;
 			}
 		}
 
@@ -463,26 +452,14 @@ namespace CIR {
 		//
 		void EmitConstructor (Constructor c)
 		{
-			ConstructorBuilder cb;
-			MethodAttributes ca = (MethodAttributes.RTSpecialName |
-					       MethodAttributes.SpecialName);
-			bool is_static = (c.ModFlags & Modifiers.STATIC) != 0;
-			
-			if (is_static)
-				ca |= MethodAttributes.Static;
-
-			ca |= Modifiers.MethodAttr (c.ModFlags);
-
-			cb = TypeBuilder.DefineConstructor (
-				ca, c.CallingConvention, c.ParameterTypes (this));
-			
-			if (is_static){
+			if ((c.ModFlags & Modifiers.STATIC) != 0){
 				if (initialized_static_fields != null)
-					EmitStaticFieldInitializers (cb);
+					EmitStaticFieldInitializers (c.ConstructorBuilder);
 			} else {
 				if (initialized_fields != null)
-					EmitFieldInitializers (cb);
+					EmitFieldInitializers (c.ConstructorBuilder);
 			}
+
 		}
 
 		//
@@ -532,16 +509,36 @@ namespace CIR {
 
 			if (Constructors != null){
 				foreach (Constructor c in Constructors)
-					EmitConstructor (c);
+					c.Define (this);
 			}
 
+			if (Methods != null){
+				foreach (Method m in Methods)
+					m.Define (this);
+			}
+		}
+
+		//
+		// Emits the code, this step is performed after all
+		// the types, enumerations, constructors
+		//
+		public void Emit ()
+		{
 			if (default_constructor == null)
 				EmitDefaultConstructor (false);
 
 			if (initialized_static_fields != null && default_static_constructor == null)
 				EmitDefaultConstructor (true);
-		}
 
+			if (Constructors != null)
+				foreach (Constructor c in Constructors)
+					c.Emit ();
+			
+			if (Methods != null)
+				foreach (Method m in Methods)
+					m.Emit (this);
+		}
+		
 		public delegate void ExamineType (TypeContainer container, object cback_data);
 
 		void WalkTypesAt (TypeContainer root, ExamineType visit, object cback_data)
@@ -645,19 +642,21 @@ namespace CIR {
 	}
 
 	public class Method {
-		Parameters parameters;
-		string     return_type;
-		string     name;
-		int        modifiers;
-		Block      block;
-
+		public readonly Parameters Parameters;
+		public readonly string     ReturnType;
+		public readonly string     Name;
+		public readonly int        ModFlags;
+		public MethodBuilder MethodBuilder;
+		
+		Block block;
+		
 		// return_type can be "null" for VOID values.
 		public Method (string return_type, int mod, string name, Parameters parameters)
 		{
-			this.return_type = return_type;
-			this.name = name;
-			this.parameters = parameters;
-			this.modifiers = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE);
+			Name = name;
+			ReturnType = return_type;
+			Parameters = parameters;
+			ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE);
 		}
 
 		// <summary>
@@ -686,34 +685,89 @@ namespace CIR {
 			}
 		}
 
-		public string Name {
-			get {
-				return name;
+		//
+		// Returns the `System.Type' for the ReturnType of this
+		// function.  Provides a nice cache.  (used between semantic analysis
+		// and actual code generation
+		//
+		Type type_return_type;
+		public Type GetReturnType (TypeContainer parent)
+		{
+			if (type_return_type == null)
+				type_return_type = parent.LookupType (ReturnType, false);
+			
+			return type_return_type;
+		}
+
+		//
+		//  Returns the System.Type array for the parameters of this method
+		//
+		Type [] parameter_types;
+		public Type [] ParameterTypes (TypeContainer parent)
+		{
+			if (Parameters == null)
+				return null;
+			
+			if (parameter_types == null)
+				parameter_types = Parameters.GetParameterInfo (parent);
+
+			return parameter_types;
+		}
+
+		public CallingConventions GetCallingConvention (bool is_class)
+		{
+			CallingConventions cc = 0;
+			
+			cc = Parameters.GetCallingConvention ();
+
+			if (is_class)
+				if ((ModFlags & Modifiers.STATIC) != 0)
+					cc |= CallingConventions.HasThis;
+
+			return cc;
+		}
+
+		//
+		// Creates the type
+		// 
+		public void Define (TypeContainer parent)
+		{
+			Type ret_type = GetReturnType (parent);
+			Type [] parameters = ParameterTypes (parent);
+
+			//
+			// Create the method
+			//
+			MethodBuilder = parent.TypeBuilder.DefineMethod (
+				Name, Modifiers.MethodAttr (ModFlags),
+				GetCallingConvention (parent is Class),
+				ret_type, parameters);
+
+			//
+			// Define each type attribute (in/out/ref) and
+			// the argument names.
+			//
+			Parameter [] p = Parameters.FixedParameters;
+			if (p != null){
+				int i;
+				
+				for (i = 0; i < p.Length; i++)
+					MethodBuilder.DefineParameter (
+						i + 1, p [i].Attributes, p [i].Name);
+
+				if (i != parameters.Length)
+					Console.WriteLine ("Implement the type definition for params");
 			}
 		}
 
-		public int ModFlags {
-			get {
-				return modifiers;
-			}
-		}
+		//
+		// Emits the code
+		// 
+		public void Emit (TypeContainer parent)
+		{
+			ILGenerator ig = MethodBuilder.GetILGenerator ();
 
-		public Parameters Parameters {
-			get {
-				return parameters;
-			}
-		}
-
-		public string ReturnType {
-			get {
-				return return_type;
-			}
-		}
-
-		public string ArgumentSignature {
-			get {
-				return ""; // TYPEFIX: Type.MakeParameterSignature (name, parameters);
-			}
+			CodeGen.EmitCode (parent, ig, block);
 		}
 	}
 
@@ -772,6 +826,7 @@ namespace CIR {
 	}
 	
 	public class Constructor {
+		public ConstructorBuilder ConstructorBuilder;
 		public readonly ConstructorInitializer Initializer;
 		public readonly Parameters Parameters;
 		public readonly string Name;
@@ -829,27 +884,60 @@ namespace CIR {
 			}
 		}
 
-		public CallingConventions CallingConvention {
-			get {
-				CallingConventions cc = 0;
-				
-				if (Parameters.ArrayParameter != null)
-					cc |= CallingConventions.VarArgs;
-				else
-					cc |= CallingConventions.Standard;
+		public CallingConventions GetCallingConvention (bool parent_is_class)
+		{
+			CallingConventions cc = 0;
+			
+			if (Parameters.ArrayParameter != null)
+				cc |= CallingConventions.VarArgs;
+			else
+				cc |= CallingConventions.Standard;
 
+			if (parent_is_class)
 				if ((ModFlags & Modifiers.STATIC) != 0)
 					cc |= CallingConventions.HasThis;
 
 				// FIXME: How is `ExplicitThis' used in C#?
 				
-				return cc;
-			}
+			return cc;
 		}
 
+		//
+		// Cached representation
+		///
+		Type [] parameter_types;
 		public Type [] ParameterTypes (TypeContainer tc)
 		{
-			return Parameters.GetParameterInfo (tc);
+			if (Parameters == null)
+				return null;
+			
+			if (parameter_types == null)
+				parameter_types = Parameters.GetParameterInfo (tc);
+			
+			return parameter_types;
+		}
+
+		//
+		// Creates the ConstructorBuilder
+		//
+		public void Define (TypeContainer parent)
+		{
+			MethodAttributes ca = (MethodAttributes.RTSpecialName |
+					       MethodAttributes.SpecialName);
+			
+			if ((ModFlags & Modifiers.STATIC) != 0)
+				ca |= MethodAttributes.Static;
+			
+			ConstructorBuilder = parent.TypeBuilder.DefineConstructor (
+				ca, GetCallingConvention (parent is Class),
+				ParameterTypes (parent));
+		}
+
+		//
+		// Emits the code
+		//
+		public void Emit ()
+		{
 		}
 	}
 

@@ -30,7 +30,7 @@ namespace CIR {
 		//
 		// The System.Reflection.Emit CodeGenerator
 		//
-		CilCodeGen cg;
+		CodeGen cg;
 
 		//
 		// The module builder pointer
@@ -78,7 +78,7 @@ namespace CIR {
 			}
 		}
 
-		public CilCodeGen CodeGen {
+		public CodeGen CodeGen {
 			get {
 				return cg;
 			}
@@ -583,6 +583,19 @@ namespace CIR {
 			}
 		}
 
+		public void EmitCode ()
+		{
+			Hashtable classes;
+			
+			if ((classes = tree.Classes) != null){
+				foreach (DictionaryEntry de in classes){
+					TypeContainer tc = (TypeContainer) de.Value;
+
+					tc.Emit ();
+				}
+			}
+		}
+		
 		// <summary>
 		//   Compiling against Standard Libraries property.
 		// </summary>
