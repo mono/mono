@@ -30,6 +30,12 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 {
 	internal class TlsClientCertificate : HandshakeMessage
 	{
+		#region Fields
+
+		private X509Certificate clientCertificate;
+
+		#endregion
+
 		#region Constructors
 
 		public TlsClientCertificate(Context context, byte[] buffer)
@@ -43,7 +49,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
 		public override void Update()
 		{
-			throw new NotSupportedException();
+			this.Context.ClientSettings.Certificates.Add(clientCertificate);
 		}
 
 		#endregion
@@ -57,7 +63,10 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
 		protected override void ProcessAsTls1()
 		{
-			throw new NotSupportedException();
+			int length = this.ReadInt24();
+			this.clientCertificate = new X509Certificate(this.ReadBytes(length));
+
+#warning "Is client certificate validation needed ??"
 		}
 
 		#endregion

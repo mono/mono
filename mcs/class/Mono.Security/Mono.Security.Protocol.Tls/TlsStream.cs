@@ -168,7 +168,7 @@ namespace Mono.Security.Protocol.Tls
 			int int24 = IPAddress.HostToNetworkOrder(value);
 			byte[] content = new byte[3];
 				
-			System.Array.Copy(BitConverter.GetBytes(int24), 1, content, 0, 3);
+			Buffer.BlockCopy(BitConverter.GetBytes(int24), 1, content, 0, 3);
 
 			Write(content);
 		}

@@ -91,11 +91,10 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			 */
 			if (this.ReadInt16() != 0)
 			{
-				ASN1	rdn = new ASN1(this.ReadBytes(this.ReadInt16()));
+				ASN1 rdn = new ASN1(this.ReadBytes(this.ReadInt16()));
 
 				distinguisedNames = new string[rdn.Count];
 
-				#warning "needs testing"
 				for (int i = 0; i < rdn.Count; i++)
 				{
 					// element[0] = attributeType

@@ -104,8 +104,8 @@ namespace Mono.Security.Protocol.Tls
 
 			byte[] result = new byte[36];
 
-			System.Array.Copy(md5.Hash, 0, result, 0, 16);
-			System.Array.Copy(sha.Hash, 0, result, 16, 20);
+			Buffer.BlockCopy(md5.Hash, 0, result, 0, 16);
+			Buffer.BlockCopy(sha.Hash, 0, result, 16, 20);
 
 			return result;
 		}

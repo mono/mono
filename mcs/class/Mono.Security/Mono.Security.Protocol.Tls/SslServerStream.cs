@@ -664,7 +664,6 @@ namespace Mono.Security.Protocol.Tls
 				if (this.context.Cipher.ExchangeAlgorithmType == ExchangeAlgorithmType.RsaKeyX)
 				{
 					this.protocol.SendRecord(HandshakeType.ServerKeyExchange);
-					
 				}
 
 				// If the negotiated cipher is a KeyEx cipher or

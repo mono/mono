@@ -80,7 +80,14 @@ namespace Mono.Security.Protocol.Tls
 
 			block.Write(this.Context.ServerWriteMAC);
 			block.Write(this.pad1);
-			block.Write(this.Context.ReadSequenceNumber);
+			if (this.Context is ClientContext)
+			{
+				block.Write(this.Context.ReadSequenceNumber);
+			}
+			else
+			{
+				block.Write(this.Context.WriteSequenceNumber);
+			}
 			block.Write((byte)contentType);
 			block.Write((short)fragment.Length);
 			block.Write(fragment);
@@ -109,7 +116,14 @@ namespace Mono.Security.Protocol.Tls
 
 			block.Write(this.Context.ClientWriteMAC);
 			block.Write(this.pad1);
-			block.Write(this.Context.WriteSequenceNumber);
+			if (this.Context is ClientContext)
+			{
+				block.Write(this.Context.ReadSequenceNumber);
+			}
+			else
+			{
+				block.Write(this.Context.WriteSequenceNumber);
+			}
 			block.Write((byte)contentType);
 			block.Write((short)fragment.Length);
 			block.Write(fragment);

@@ -44,6 +44,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
 		protected override void ProcessAsSsl3()
 		{
+			bool decryptError = false;
+
 			// Compute handshake messages hashes
 			HashAlgorithm hash = new SslHandshakeHash(this.Context.MasterSecret);
 
@@ -61,22 +63,33 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 			// Check client prf against server prf
 			if (clientHash.Length != serverHash.Length)
 			{
-				throw new TlsException("Invalid ServerFinished message received.");
+				decryptError = true;
+			}
+			else
+			{
+				for (int i = 0; i < clientHash.Length; i++)
+				{
+					if (clientHash[i] != serverHash[i])
+					{
+						decryptError = true;
+						break;
+					}
+				}
 			}
 
-			for (int i = 0; i < clientHash.Length; i++)
+			if (decryptError)
 			{
-				if (clientHash[i] != serverHash[i])
-				{
-					throw new TlsException("Invalid ServerFinished message received.");
-				}
+				this.Context.RecordProtocol.SendAlert(AlertDescription.DecryptError);
+
+				throw new TlsException("Decrypt error.");
 			}
 		}
 
 		protected override void ProcessAsTls1()
 		{
-			byte[]			clientPRF	= this.ReadBytes((int)this.Length);
-			HashAlgorithm	hash		= new MD5SHA1();
+			byte[]			clientPRF		= this.ReadBytes((int)this.Length);
+			HashAlgorithm	hash			= new MD5SHA1();
+			bool			decryptError	= false;
 
 			hash.ComputeHash(
 				this.Context.HandshakeMessages.ToArray(), 
@@ -89,15 +102,24 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 			// Check client prf against server prf
 			if (clientPRF.Length != serverPRF.Length)
 			{
-				throw new TlsException("Invalid ServerFinished message received.");
+				decryptError = true;
+			}
+			else
+			{
+				for (int i = 0; i < serverPRF.Length; i++)
+				{
+					if (clientPRF[i] != serverPRF[i])
+					{
+						decryptError = true;
+					}
+				}
 			}
 
-			for (int i = 0; i < serverPRF.Length; i++)
+			if (decryptError)
 			{
-				if (clientPRF[i] != serverPRF[i])
-				{
-					throw new TlsException("Invalid ServerFinished message received.");
-				}
+				this.Context.RecordProtocol.SendAlert(AlertDescription.DecryptError);
+
+				throw new TlsException("Decrypt error.");
 			}
 		}
 

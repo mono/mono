@@ -1,3 +1,29 @@
+2004-03-17 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* Mono.Security.Protocol.Tls.Handshake.Server/TlsClientCertificate.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Server/TlsServerKeyExchange.cs:
+
+		- Initial implementation.
+
+
+2004-03-16 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* Mono.Security.Protocol.Tls/SslCipherSuite.cs:
+
+		- Added changes for allow it to work as server or client.
+
+
+2004-03-15 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* Mono.Security.Protocol.Tls/TlsStream.cs:
+	* Mono.Security.Protocol.Tls/CipherSuite.cs:
+	* Mono.Security.Protocol.Tls/TlsCipherSuite.cs:
+	* Mono.Security.Protocol.Tls/SslHandshakeHash.cs:
+	* Mono.Security.Protocol.Tls/RecordProtocol.cs:
+	* Mono.Security.Cryptography/MD5SHA1.cs:
+
+		- Use Buffer.BlockCopy instead of System.Array.Copy
+
 2004-03-10 Carlos Guzman Alvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls.Handshake.Client/TlsClientCertificateVerify.cs:

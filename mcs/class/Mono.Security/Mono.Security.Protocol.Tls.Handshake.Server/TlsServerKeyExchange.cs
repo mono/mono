@@ -25,6 +25,8 @@
 using System;
 using System.Security.Cryptography;
 
+using SX509 = System.Security.Cryptography.X509Certificates;
+
 using Mono.Security.Cryptography;
 using Mono.Security.X509;
 
@@ -59,7 +61,48 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
 		protected override void ProcessAsTls1()
 		{
-			throw new NotSupportedException();
+			ServerContext context = (ServerContext)this.Context;
+
+			// Select the private key information
+			RSA rsa = (RSA)context.SslStream.PrivateKeyCertSelectionDelegate(
+				new SX509.X509Certificate(context.ServerSettings.Certificates[0].RawData),
+				null);
+
+			RSAParameters rsaParams = rsa.ExportParameters(false);
+
+			// Write Modulus
+			this.WriteInt24(rsaParams.Modulus.Length);
+			this.Write(rsaParams.Modulus, 0, rsaParams.Modulus.Length);
+			
+			// Write exponent
+			this.WriteInt24(rsaParams.Exponent.Length);
+			this.Write(rsaParams.Exponent, 0, rsaParams.Exponent.Length);
+
+			// Write signed params
+			byte[] signature = this.createSignature(rsa, this.ToArray());
+			this.WriteInt24(signature.Length);
+			this.Write(signature);
+		}
+
+		#endregion
+
+		#region Private Methods
+
+		private byte[] createSignature(RSA rsa, byte[] buffer)
+		{
+			MD5SHA1	hash = new MD5SHA1();
+
+			// Create server params array
+			TlsStream stream = new TlsStream();
+
+			stream.Write(this.Context.RandomCS);
+			stream.Write(buffer, 0, buffer.Length);
+
+			hash.ComputeHash(stream.ToArray());
+
+			stream.Reset();
+
+			return hash.CreateSignature(rsa);			
 		}
 
 		#endregion

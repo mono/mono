@@ -159,10 +159,10 @@ namespace Mono.Security.Protocol.Tls
 
 				// Generate IV keys
 				this.Context.ClientWriteIV = new byte[this.IvSize];				
-				System.Array.Copy(ivBlock, 0, this.Context.ClientWriteIV, 0, this.Context.ClientWriteIV.Length);
+				Buffer.BlockCopy(ivBlock, 0, this.Context.ClientWriteIV, 0, this.Context.ClientWriteIV.Length);
 
 				this.Context.ServerWriteIV = new byte[this.IvSize];
-				System.Array.Copy(ivBlock, this.IvSize, this.Context.ServerWriteIV, 0, this.Context.ServerWriteIV.Length);
+				Buffer.BlockCopy(ivBlock, this.IvSize, this.Context.ServerWriteIV, 0, this.Context.ServerWriteIV.Length);
 			}
 
 			// Clear no more needed data

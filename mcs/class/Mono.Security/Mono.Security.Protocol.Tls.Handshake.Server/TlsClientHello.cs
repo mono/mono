@@ -118,7 +118,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 			}
 			else
 			{
-#warning "Send alert"
+				this.Context.RecordProtocol.SendAlert(AlertDescription.ProtocolVersion);
+
 				throw this.Context.CreateException("Incorrect protocol version received from server");
 			}
 		}
@@ -126,6 +127,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 		private void selectCipherSuite()
 		{
 			int index = 0;
+
 			for (int i = 0; i < this.cipherSuites.Length; i++)
 			{
 				if ((index = this.Context.SupportedCiphers.IndexOf(this.cipherSuites[i])) != -1)	
@@ -136,7 +138,9 @@ namespace Mono.Security.Protocol.Tls.Handshake.Server
 
 			if (this.Context.Cipher == null)
 			{
-#warning "Send an Alert and Throw and exception"
+				this.Context.RecordProtocol.SendAlert(AlertDescription.InsuficientSecurity);
+
+				throw this.Context.CreateException("Insuficient Security");
 			}
 		}
 

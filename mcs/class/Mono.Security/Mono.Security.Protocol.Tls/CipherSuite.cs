@@ -390,11 +390,11 @@ namespace Mono.Security.Protocol.Tls
 
 			// Secret 1
 			byte[] secret1 = new byte[secretLen];
-			System.Array.Copy(secret, 0, secret1, 0, secretLen);
+			Buffer.BlockCopy(secret, 0, secret1, 0, secretLen);
 
 			// Secret2
 			byte[] secret2 = new byte[secretLen];
-			System.Array.Copy(secret, secretLen, secret2, 0, secretLen);
+			Buffer.BlockCopy(secret, secretLen, secret2, 0, secretLen);
 
 			// Secret 1 processing
 			byte[] p_md5 = Expand("MD5", secret1, seed, length);
@@ -440,7 +440,7 @@ namespace Mono.Security.Protocol.Tls
 
 			byte[] res = new byte[length];
 			
-			System.Array.Copy(resMacs.ToArray(), 0, res, 0, res.Length);
+			Buffer.BlockCopy(resMacs.ToArray(), 0, res, 0, res.Length);
 
 			resMacs.Reset();
 

@@ -73,8 +73,8 @@ namespace Mono.Security.Cryptography
 
 			byte[] hash = new byte[36];
 
-			System.Array.Copy(this.md5.Hash, 0, hash, 0, 16);
-			System.Array.Copy(this.sha.Hash, 0, hash, 16, 20);
+			Buffer.BlockCopy(this.md5.Hash, 0, hash, 0, 16);
+			Buffer.BlockCopy(this.sha.Hash, 0, hash, 16, 20);
 
 			return hash;
 		}

@@ -101,6 +101,9 @@ namespace Mono.Security.Protocol.Tls
 		// Secure Random generator		
 		private RandomNumberGenerator random;
 
+		// Record protocol
+		private RecordProtocol recordProtocol;
+
 		#endregion
 
 		#region Properties
@@ -304,6 +307,12 @@ namespace Mono.Security.Protocol.Tls
 		{
 			get { return this.serverWriteIV; }
 			set { this.serverWriteIV = value; }
+		}
+
+		public RecordProtocol RecordProtocol
+		{
+			get { return this.recordProtocol; }
+			set { this.recordProtocol = value; }
 		}
 
 		#endregion

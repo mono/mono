@@ -60,8 +60,9 @@ namespace Mono.Security.Protocol.Tls
 
 		public RecordProtocol(Stream innerStream, Context context)
 		{
-			this.innerStream	= innerStream;
-			this.context		= context;
+			this.innerStream			= innerStream;
+			this.context				= context;
+			this.context.RecordProtocol = this;
 		}
 
 		#endregion
@@ -348,7 +349,7 @@ namespace Mono.Security.Protocol.Tls
 			if (this.context.Cipher.CipherMode == CipherMode.CBC)
 			{
 				byte[] iv = new byte[this.context.Cipher.IvSize];
-				System.Array.Copy(ecr, ecr.Length - iv.Length, iv, 0, iv.Length);
+				Buffer.BlockCopy(ecr, ecr.Length - iv.Length, iv, 0, iv.Length);
 
 				this.context.Cipher.UpdateClientCipherIV(iv);
 			}
@@ -363,14 +364,27 @@ namespace Mono.Security.Protocol.Tls
 			ContentType	contentType, 
 			byte[]		fragment)
 		{
-			byte[]	dcrFragment	= null;
-			byte[]	dcrMAC		= null;
+			byte[]	dcrFragment		= null;
+			byte[]	dcrMAC			= null;
+			bool	badRecordMac	= false;
 
-			// Decrypt message
-			this.context.Cipher.DecryptRecord(fragment, ref dcrFragment, ref dcrMAC);
+			try
+			{
+				this.context.Cipher.DecryptRecord(fragment, ref dcrFragment, ref dcrMAC);
+			}
+			catch
+			{
+				if (this.context is ServerContext)
+				{
+					this.Context.RecordProtocol.SendAlert(AlertDescription.DecryptionFailed);
+				}
+
+				throw;
+			}
 			
-			// Check MAC code
+			// Generate record MAC
 			byte[] mac = null;
+
 			if (this.Context is ClientContext)
 			{
 				mac = this.context.Cipher.ComputeServerRecordMAC(contentType, dcrFragment);
@@ -380,18 +394,31 @@ namespace Mono.Security.Protocol.Tls
 				mac = this.context.Cipher.ComputeClientRecordMAC(contentType, dcrFragment);
 			}
 
-			// Check that the mac is correct
+			// Check record MAC
 			if (mac.Length != dcrMAC.Length)
 			{
-				throw new TlsException("Invalid MAC received from server.");
+				badRecordMac = true;
+			}
+			else
+			{
+				for (int i = 0; i < mac.Length; i++)
+				{
+					if (mac[i] != dcrMAC[i])
+					{
+						badRecordMac = true;
+						break;
+					}
+				}
 			}
 
-			for (int i = 0; i < mac.Length; i++)
+			if (badRecordMac)
 			{
-				if (mac[i] != dcrMAC[i])
+				if (this.context is ServerContext)
 				{
-					throw new TlsException("Invalid MAC received from server.");
+					this.Context.RecordProtocol.SendAlert(AlertDescription.BadRecordMAC);
 				}
+
+				throw new TlsException("Bad record MAC");
 			}
 
 			// Update sequence number
