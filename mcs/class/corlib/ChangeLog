@@ -1,3 +1,8 @@
+2002-03-03  Nick Drochak  <ndrochak@gol.com>
+
+	* corlib.build: Exclude a bunch of interfaces from corlib_res.dll
+	that were preventing the tests from running on Windows.
+
 2002-01-25  Mark Crichton  <crichton@gimp.org>
 
 	* System.Security.Cryptography/RijndaelManaged.cs: added
