@@ -1,3 +1,9 @@
+2003-03-23  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* added XmlReaderCommonTests.cs which is mostly copied from
+	  XmlTextReaderTests and XmlNodeReaderTests. These tests are removed
+	  from each files.
+
 2003-03-22  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XPathNavigatorTests.cs : added DocumentWithXmlDeclaration() 
