@@ -1,3 +1,13 @@
+2005-02-16  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlAttribute.cs : just use InnerText for Value. Patch by Andrew
+	  Skiba.
+	* XmlConvert.cs : Handle null and empty strings for EncodeName(),
+	  EncodeLocalName() and EncodeNmToken(). Patch by Andrew Skiba.
+	* NameTable.cs : usually tail of namespaces are rather different than
+	  head of them. Patch by Andrew Skiba.
+	* XmlUrlResolver.cs : missing %20 handling. Patch by Andrew Skiba.
+
 2005-02-15  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlAttribute.cs : For default attributes, WriteTo() writes nothing

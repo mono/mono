@@ -156,6 +156,9 @@ namespace System.Xml {
 
 		public static string EncodeLocalName (string name)
 		{
+			if (name == null)
+				return name;
+
 			string encoded = EncodeName (name);
 			int pos = encoded.IndexOf (':');
 			if (pos == -1)
@@ -176,6 +179,9 @@ namespace System.Xml {
 
 		private static string EncodeName (string name, bool nmtoken)
 		{
+			if (name == null || name.Length == 0)
+				return name;
+
 			StringBuilder sb = new StringBuilder ();
 			int length = name.Length;
 			for (int i = 0; i < length; i++) {
@@ -195,8 +201,10 @@ namespace System.Xml {
 			return EncodeName (name, false);
 		}
 		
-		public static string EncodeNmToken(string name)
+		public static string EncodeNmToken (string name)
 		{
+			if (name == String.Empty)
+				throw new XmlException ("Invalid NmToken: ''");
 			return EncodeName (name, true);
 		}
 

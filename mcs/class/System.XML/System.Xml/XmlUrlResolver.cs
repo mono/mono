@@ -89,8 +89,9 @@ namespace System.Xml
 			return src.Replace ("%3C", "<")
 				.Replace ("%3E", ">")
 				.Replace ("%23", "#")
-				.Replace ("%25", "%")
-				.Replace ("%22", "\"");
+				.Replace ("%22", "\"")
+				.Replace ("%20", " ")
+				.Replace ("%25", "%");
 		}
 	}
 }

@@ -222,20 +222,8 @@ namespace System.Xml
 			}
 		}
 
-		private string BuildChildValue (XmlNodeList list)
-		{
-			string ret = String.Empty;
-			for (int i = 0; i < list.Count; i++) {
-				if (list [i].NodeType == XmlNodeType.EntityReference)
-					ret += BuildChildValue (list [i].ChildNodes);
-				else
-					ret += list [i].Value;
-			}
-			return ret;
-		}
-
 		public override string Value {
-			get { return BuildChildValue (ChildNodes); }
+			get { return InnerText; }
 
 			set {
 				if (this.IsReadOnly)

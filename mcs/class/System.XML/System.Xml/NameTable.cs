@@ -186,10 +186,19 @@ namespace System.Xml {
 	
 		static bool StrEqArray (string str, char [] str2, int start)
 		{
-			for (int i = 0; i < str.Length; i++) {
-				if (str [i] != str2 [start + i])
+			int i = str.Length;
+			i --;
+			start += i;
+			do
+			{
+				if (str[i] != str2[start])
 					return false;
+
+				i--;
+				start--;
 			}
+			while(i >= 0);
+
 			return true;
 		}
 	}
