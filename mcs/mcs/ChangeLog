@@ -3,6 +3,13 @@
 	* attribute.cs (CheckAttributeTarget): Ensure that we allow return
 	value attributes to be applied to ParameterBuilders.
 
+	* class.cs (MethodCore.LabelParameters): Make static and more
+	generic so that it can be used from other places - like interface
+	methods, for instance.
+
+	* interface.cs (Interface.Emit): Call LabelParameters before
+	emitting attributes on the InterfaceMethod.
+
 2003-08-26  Martin Baulig  <martin@ximian.com>
 
 	* ecore.cs (SimpleName.SimpleNameResolve): Look for members before

@@ -885,10 +885,17 @@ namespace Mono.CSharp {
                                 foreach (InterfaceMethod im in defined_method) {
                                         EmitContext ec = new EmitContext (tc, this, Location, null,
                                                                           im.ReturnType.Type, ModFlags, false);
+  
+                                        MethodCore.LabelParameters (ec, im.Builder,
+                                                                    im.Parameters,
+                                                                    im.OptAttributes,
+                                                                    Location);
                                         
                                         if (im.OptAttributes != null)
-                                        	Attribute.ApplyAttributes (ec, im.Builder, im, im.OptAttributes);
-                                }      
+                                        	Attribute.ApplyAttributes (ec, im.Builder,
+                                                                           im, im.OptAttributes);
+                                        
+                                }
                         }
 
                         if (defined_properties != null) {
