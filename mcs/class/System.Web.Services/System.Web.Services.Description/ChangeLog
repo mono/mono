@@ -1,3 +1,8 @@
+2004-02-11  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SoapProtocolReflector.cs: Fixed bug #53247. Element name asigned to the 
+	  message part (in literal+bare format) was incorrect.
+
 2004-01-27  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SoapProtocolImporter.cs, SoapProtocolReflector.cs: Support methods with 

@@ -161,7 +161,7 @@ namespace System.Web.Services.Description {
 						if (members[n].Any)
 							part.Type = new XmlQualifiedName ("any", members[n].Namespace);
 						else
-							part.Element = new XmlQualifiedName (members[n].MemberName, members[n].Namespace);
+							part.Element = new XmlQualifiedName (members[n].ElementName, members[n].Namespace);
 					}
 					else {
 						string namesp = members[n].TypeNamespace;
