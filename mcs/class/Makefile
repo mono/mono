@@ -43,7 +43,7 @@ SUBDIRS = \
 	ICSharpCode.SharpZipLib		\
 	ByteFX.Data			\
 	Commons.Xml.Relaxng		\
-	Novell.Directory.Ldap		\
+	Mono.Directory.LDAP		\
 	Mono.Security.Win32		\
 	Novell.Directory.Ldap		\
 	System.DirectoryServices	\

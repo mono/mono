@@ -7,7 +7,7 @@
 // (C) 2003 Ben Maurer
 //
 
-//#define TRACE
+#define TRACE
 
 using System.Collections;
 using System.Drawing;

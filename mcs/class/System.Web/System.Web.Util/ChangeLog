@@ -1,8 +1,3 @@
-2003-12-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
-
-	* UrlUtils.cs: don't forget basePath when relative path is not rooted.
-	Fixes bug #51522.
-
 2003-11-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UrlUtils.cs: fix bug introduced with last change that makes relative

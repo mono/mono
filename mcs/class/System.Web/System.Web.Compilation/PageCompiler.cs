@@ -80,18 +80,6 @@ namespace System.Web.Compilation
 				method.Statements.Add (invoke);
 			}
 			
-			int lcid = pageParser.LCID;
-			if (lcid != -1)
-				method.Statements.Add (CreatePropertyAssign ("LCID", lcid));
-
-			string culture = pageParser.Culture;
-			if (culture != null)
-				method.Statements.Add (CreatePropertyAssign ("Culture", culture));
-
-			culture = pageParser.UICulture;
-			if (culture != null)
-				method.Statements.Add (CreatePropertyAssign ("UICulture", culture));
-
 			base.AddStatementsToFrameworkInitialize (method);
 		}
 

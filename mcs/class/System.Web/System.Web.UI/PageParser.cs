@@ -8,7 +8,6 @@
 //
 using System;
 using System.Collections;
-using System.Globalization;
 using System.Text;
 using System.Web;
 using System.Web.Compilation;
@@ -23,9 +22,6 @@ namespace System.Web.UI
 		string responseEncoding;
 		string contentType;
 		int codepage = -1;
-		int lcid = -1;
-		string culture;
-		string uiculture;
 
 		// FIXME: this is here just for DesignTimeTemplateParser. Anything to do?
 		internal PageParser ()
@@ -98,98 +94,21 @@ namespace System.Web.UI
 			
 			contentType = GetString (atts, "ContentType", null);
 
-			string lcidStr = GetString (atts, "LCID", null);
-			if (lcidStr != null) {
-				try {
-					lcid = (int) UInt32.Parse (lcidStr);
-				} catch {
-					ThrowParseException ("Invalid value for LCID: " + lcid);
-				}
-
-				CultureInfo ci = null;
-				try {
-					ci = new CultureInfo (lcid);
-				} catch {
-					ThrowParseException ("Unsupported LCID: " + lcid);
-				}
-
-				if (ci.IsNeutralCulture) {
-					string suggestedCulture = SuggestCulture (ci.Name);
-					string fmt = "LCID attribute must be set to a non-neutral Culture.";
-					if (suggestedCulture != null) {
-						ThrowParseException (fmt + " Please try one of these: " +
-								     suggestedCulture);
-					} else {
-						ThrowParseException (fmt);
-					}
-				}
-			}
-
-			culture = GetString (atts, "Culture", null);
-			if (culture != null) {
-				if (lcidStr != null) 
-					ThrowParseException ("Culture and LCID are mutually exclusive.");
-				
-				CultureInfo ci = null;
-				try {
-					ci = new CultureInfo (culture);					
-				} catch {
-					ThrowParseException ("Unsupported Culture: " + culture);
-				}
-
-				if (ci.IsNeutralCulture) {
-					string suggestedCulture = SuggestCulture (culture);
-					string fmt = "Culture attribute must be set to a non-neutral Culture.";
-					if (suggestedCulture != null)
-						ThrowParseException (fmt +
-								" Please try one of these: " + suggestedCulture);
-					else
-						ThrowParseException (fmt);
-				}
-			}
-
-			uiculture = GetString (atts, "UICulture", null);
-			if (uiculture != null) {
-				CultureInfo ci = null;
-				try {
-					ci = new CultureInfo (uiculture);					
-				} catch {
-					ThrowParseException ("Unsupported Culture: " + uiculture);
-				}
-
-				if (ci.IsNeutralCulture) {
-					string suggestedCulture = SuggestCulture (uiculture);
-					string fmt = "UICulture attribute must be set to a non-neutral Culture.";
-					if (suggestedCulture != null)
-						ThrowParseException (fmt +
-								" Please try one of these: " + suggestedCulture);
-					else
-						ThrowParseException (fmt);
-				}
-			}
-
 			// Ignored by now
 			GetString (atts, "Buffer", null);
 			GetString (atts, "ClientTarget", null);
+			GetString (atts, "Culture", null);
 			GetString (atts, "EnableViewStateMac", null);
 			GetString (atts, "ErrorPage", null);
+			GetString (atts, "LCID", null);
 			GetString (atts, "Trace", null);
 			GetString (atts, "TraceMode", null);
+			GetString (atts, "UICulture", null);
 			GetBool (atts, "ValidateRequest", true);
 
 			base.ProcessMainAttributes (atts);
 		}
 		
-		static string SuggestCulture (string culture)
-		{
-			string retval = null;
-			foreach (CultureInfo ci in CultureInfo.GetCultures (CultureTypes.SpecificCultures)) {
-				if (ci.Name.StartsWith (culture))
-					retval += ci.Name + " ";
-			}
-			return retval;
-		}
-
 		protected override Type CompileIntoType ()
 		{
 			AspGenerator generator = new AspGenerator (this);
@@ -204,12 +123,18 @@ namespace System.Web.UI
 			get { return readonlySessionState; }
 		}
 		
-		internal override Type DefaultBaseType {
-			get { return typeof (Page); }
+		internal override Type DefaultBaseType
+		{
+			get {
+				return typeof (Page);
+			}
 		}
 
-		internal override string DefaultDirectiveName {
-			get { return "page"; }
+		internal override string DefaultDirectiveName
+		{
+			get {
+				return "page";
+			}
 		}
 
 		internal string ResponseEncoding {
@@ -222,18 +147,6 @@ namespace System.Web.UI
 
 		internal int CodePage {
 			get { return codepage; }
-		}
-
-		internal string Culture {
-			get { return culture; }
-		}
-
-		internal string UICulture {
-			get { return uiculture; }
-		}
-
-		internal int LCID {
-			get { return lcid; }
 		}
 	}
 }

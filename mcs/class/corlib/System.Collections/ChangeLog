@@ -1,20 +1,3 @@
-2003-12-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
-
-	* Queue.cs: patch from Carlos Barcenilla.
-	public class Queue
-		- method: ICollection.Clone()
-		- Optimized. Removed unneeded instructions.
-		- method: public static Queue Synchronized (Queue queue)
-		- ArgumentNullException.ParamName must be "queue", not null.
-		- method: public virtual void TrimToSize()
-		- Must increment modCount.
-
-	private class SyncQueue
-		- method: public override object Clone ()
-		- Must return a synchronized (SyncStack) instance.
-		- method: public override void TrimToSize ()
-		- Not implemented.
-
 2003-11-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* IEnumerator.cs: Added missing attribute

@@ -14,9 +14,8 @@ namespace System.Data.Odbc
 	/// <summary>
 	/// Summary description for OdbcTransaction.
 	/// </summary>
-	public class OdbcTransaction : MarshalByRefObject, IDbTransaction
+	public class OdbcTransaction : MarshalByRefObject
 	{
-		private bool disposed = false;
 		private OdbcConnection connection;
 		private IsolationLevel isolationlevel;
 
@@ -80,36 +79,5 @@ namespace System.Data.Odbc
 			else
 				throw new InvalidOperationException();
 		}
-
-		public IDbConnection Connection
-		{
-			get {
-				return connection;
-			}
-		}
-		
-		public IsolationLevel IsolationLevel
-		{
-			get {
-				return isolationlevel;
-			}
-		}
-
-		private void Dispose (bool disposing)
-		{
-			if (!disposed)  {
-				if (disposing) {
-					Rollback ();
-				}
-				disposed = true;
-			}
-		}
-
-		public void Dispose ()
-		{
-			Dispose (true);
-			GC.SuppressFinalize (this);
-		}
-
 	}
 }

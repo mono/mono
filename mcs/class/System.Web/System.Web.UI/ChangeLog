@@ -1,20 +1,3 @@
-2003-11-30 Ben Maurer  <bmaurer@users.sourceforge.net>
-
-	* LosFormatter.cs: Use ObjectStateFormatter. Pretty big size
-	reduction.
-
-	* ObjectStateFormatter.cs: Comment out tracing.
-
-2003-11-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
-
-	* Page.cs: fixed UICulture, LCID and Culture. Set the thread
-	[UI]Culture before processing the request.
-
-	* PageParser.cs: read Culture, UICulture and LCID attributes. Added
-	properties for these. Partially contributed by Mohammad Damt.
-
-	Fixes bug #51511.
-
 2003-11-27  Jackson Harper <jackson@ximian.com>
 
 	* TemplateParser.cs: Ignore aspCompat attribute. This fixes bug
