@@ -9,6 +9,7 @@
  */
 
 using System;
+using System.IO;
 using System.Web.UI.WebControls;
 using System.Web.UI.Design;
 
@@ -37,10 +38,10 @@ namespace System.Web.UI.Design.WebControls
 				link.Enabled     = toDesign.Enabled;
 				link.TabIndex    = toDesign.TabIndex;
 
-				image.ApplyStyle(toDesign.ControlStyle);
-				image.ImageUrl      = String.Empty;
-				image.AlternateText = toDesign.ID;
-				image.ToolTip       = toDesign.ToolTip;
+				disp.ApplyStyle(toDesign.ControlStyle);
+				disp.ImageUrl      = String.Empty;
+				disp.AlternateText = toDesign.ID;
+				disp.ToolTip       = toDesign.ToolTip;
 
 				link.RenderBeginTag(writer);
 				link.RenderControl(writer);
@@ -48,6 +49,7 @@ namespace System.Web.UI.Design.WebControls
 
 				return writer.ToString();
 			}
+			return String.Empty;
 		}
 	}
 }
