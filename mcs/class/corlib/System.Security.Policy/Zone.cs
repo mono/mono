@@ -5,9 +5,6 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -60,7 +57,13 @@ namespace System.Security.Policy {
 		[MonoTODO("This depends on zone configuration in IE")]
 		public static Zone CreateFromUrl (string url)
 		{
-			throw new NotImplementedException ();
+			if (url == null)
+				throw new ArgumentNullException ("url");
+			// while waiting for our own tool...
+			if (url.ToUpper ().StartsWith ("FILE://"))
+				return new Zone (SecurityZone.MyComputer);
+			else
+				return new Zone (SecurityZone.Untrusted);
 		}
 
 		public override bool Equals (object o)

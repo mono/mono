@@ -1,3 +1,9 @@
+2004-08-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Zone.cs: (Very) basic implementation of CreateFromUrl so we can
+	create a Zone evidence using an assembly location (file://...).
+	* ZoneMembershipCondition.cs: Fixed implementation wrt new unit tests.
+
 2004-08-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeGroup.cs: Added PolicyLevel parameter to internal 

@@ -1,8 +1,9 @@
 //
 // System.Security.Policy.ZoneMembershipCondition.cs
 //
-// Author:
-//   Duncan Mak (duncan@ximian.com)
+// Authors:
+//	Duncan Mak (duncan@ximian.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003, Ximian Inc.
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
@@ -28,6 +29,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Globalization;
 
 namespace System.Security.Policy {
@@ -45,12 +47,24 @@ namespace System.Security.Policy {
                 
                 public ZoneMembershipCondition (SecurityZone zone)
                 {
-                        this.zone = zone;
+			// we need the validations
+                        SecurityZone = zone;
                 }
 
                 public SecurityZone SecurityZone {
-                        set { zone = value; }
                         get { return zone; }
+                        set {
+				if (!Enum.IsDefined (typeof (SecurityZone), value)) {
+					throw new ArgumentException (Locale.GetText (
+						"invalid zone"));
+				}
+				if (value == SecurityZone.NoZone) {
+					throw new ArgumentException (Locale.GetText (
+						"NoZone isn't valid for membership condition"));
+				}
+
+				zone = value;
+			}
                 }
 
                 public bool Check (Evidence evidence)
@@ -58,9 +72,10 @@ namespace System.Security.Policy {
 			if (evidence == null)
 				return false;
 
-			foreach (object o in evidence) {
-				if (o is Zone) {
-					Zone z = (o as Zone);
+			IEnumerator e = evidence.GetHostEnumerator ();
+			while (e.MoveNext ()) {
+				Zone z = (e.Current as Zone);
+				if (z != null) {
 					if (z.SecurityZone == zone)
 						return true;
 				}
@@ -89,8 +104,7 @@ namespace System.Security.Policy {
                 public void FromXml (SecurityElement element, PolicyLevel level)
                 {
 			if (element == null)
-				throw new ArgumentNullException (
-                                        Locale.GetText ("The argument is null."));
+				throw new ArgumentException ("element");
 
                         if (element.Attribute ("version") != "1")
                                 throw new ArgumentException (
