@@ -1,3 +1,7 @@
+2004-09-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* pinvoke2.cs libtest.c: Add test for stdcall name mangling on windows.
+
 2004-09-08  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* delegate8.cs: New regression test for bug #59299.
