@@ -1,3 +1,8 @@
+2002-03-18  Nick Drochak  <ndrochak@gol.com>
+
+	* DoubleTest.cs: Add unique identifier to Assert()'s. Needed to find
+	which one was faling on Linux.
+
 2002-03-12  Nick Drochak  <ndrochak@gol.com>
 
 	* ArrayTest.cs: Add tests for IList methods and for enumerator on

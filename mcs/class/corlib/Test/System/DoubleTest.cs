@@ -61,17 +61,17 @@ public class DoubleTest : TestCase
 		//If you do int foo =  d_ninf.CompareTo(d_pinf); Assert(".." foo < 0, true) this works.... WHY???
 		AssertEquals("CompareTo Infinity failed", d_ninf.CompareTo(d_pinf) < 0, true);		
 
-		AssertEquals("CompareTo Failed", d_neg.CompareTo(d_pos) < 0, true);
+		AssertEquals("CompareTo Failed01", d_neg.CompareTo(d_pos) < 0, true);
 		AssertEquals("CompareTo NaN Failed", d_nan.CompareTo(d_neg) < 0, true);				
 
-		AssertEquals("CompareTo Failed", 0, d_pos.CompareTo(d_pos2));		
-		AssertEquals("CompareTo Failed", 0, d_pinf.CompareTo(d_pinf));		
-		AssertEquals("CompareTo Failed", 0, d_ninf.CompareTo(d_ninf));		
-		AssertEquals("CompareTo Failed", 0, d_nan.CompareTo(d_nan));		
+		AssertEquals("CompareTo Failed02", 0, d_pos.CompareTo(d_pos2));		
+		AssertEquals("CompareTo Failed03", 0, d_pinf.CompareTo(d_pinf));		
+		AssertEquals("CompareTo Failed04", 0, d_ninf.CompareTo(d_ninf));		
+		AssertEquals("CompareTo Failed05", 0, d_nan.CompareTo(d_nan));		
 
-		AssertEquals("CompareTo Failed", d_pos.CompareTo(d_neg) > 0, true);		
-		AssertEquals("CompareTo Failed", d_pos.CompareTo(d_nan) > 0, true);		
-		AssertEquals("CompareTo Failed", d_pos.CompareTo(null) > 0, true);		
+		Assert("CompareTo Failed06", d_pos.CompareTo(d_neg) > 0);		
+		Assert("CompareTo Failed07", d_pos.CompareTo(d_nan) > 0);		
+		Assert("CompareTo Failed08", d_pos.CompareTo(null) > 0);		
 		
 		try {
 			d_pos.CompareTo(s);
