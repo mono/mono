@@ -48,14 +48,10 @@ namespace System.Data {
 		{
 			get
 			{
-				foreach (DataColumn column in base.List)
-				{					
-					if (String.Compare (column.ColumnName, name, true) == 0)
-					{
-						return column;
-					}
-				}
-				return null;                
+				int tmp = IndexOf(name, true);
+				if (tmp == -1)
+					return null;
+				return this[tmp]; 
 			}
 		}
 
@@ -125,12 +121,14 @@ namespace System.Data {
 			{
 				column.ColumnName = GetNextDefaultColumnName ();
 			}
-			else if (Contains(column.ColumnName))
+			int tmp = IndexOf(column.ColumnName);
+			// if we found a column with same name we have to check
+			// that it is the same case.
+			// indexof can return a table with different case letters.
+			if (tmp != -1)
 			{
-				if (object.ReferenceEquals(this [column.ColumnName], column))
-					throw new ArgumentException ("Column '" + column.ColumnName + "' already belongs to this DataTable.");
-				else if (CaseSensitiveContains (column.ColumnName))
-					throw new DuplicateNameException("A column named '" + column.ColumnName + "' already belongs to this DataTable.");
+				if(column.ColumnName == this[tmp].ColumnName)
+					throw new DuplicateNameException("A DataColumn named '" + column.ColumnName + "' already belongs to this DataTable.");
 			}
 
 			if (column.Table != null)
@@ -361,7 +359,7 @@ namespace System.Data {
 		/// <returns>true if a column exists with this name; otherwise, false.</returns>
 		public bool Contains(string name)
 		{
-			return (IndexOf(name) != -1);
+			return (IndexOf(name, false) != -1);
 		}
 
 		/// <summary>
@@ -381,17 +379,7 @@ namespace System.Data {
 		/// <returns>The zero-based index of the column with the specified name, or -1 if the column doesn't exist in the collection.</returns>
 		public int IndexOf(string columnName)
 		{
-			
-			DataColumn column = this[columnName];
-			
-			if (column != null)
-			{
-				return IndexOf(column);
-			}
-			else
-			{
-				return -1;
-			}
+			return IndexOf(columnName, false);
 		}
 
 		/// <summary>
@@ -486,6 +474,27 @@ namespace System.Data {
 				return string.Compare (column.ColumnName, columnName, false) == 0; 
 
 			return false;
+		}
+
+		private int IndexOf (string name, bool error)
+		{
+			int count = 0, match = -1;
+			for (int i = 0; i < list.Count; i++)
+			{
+				String name2 = ((DataColumn) list[i]).ColumnName;
+				if (String.Compare (name, name2, true) == 0)
+				{
+					if (String.Compare (name, name2, false) == 0)
+						return i;
+					match = i;
+					count++;
+				}
+			}
+			if (count == 1)
+				return match;
+			if (count > 1 && error)
+				throw new ArgumentException ("There is no match for the name in the same case and there are multiple matches in different case.");
+			return -1;
 		}
 		
 

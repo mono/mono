@@ -110,7 +110,11 @@ namespace System.Data
 			
 			// if the source table not exists in the target dataset
 			// we act according to the missingschemaaction param.
-			if (!targetSet.Tables.Contains(tableName))
+			int tmp = targetSet.Tables.IndexOf(tableName);
+			// we need to check if it is equals names
+			if (tmp != -1 && !targetSet.Tables[tmp].Equals(tableName))
+				tmp = -1;
+			if (tmp == -1)
 			{
 				if (missingSchemaAction == MissingSchemaAction.Ignore)
 					return true;

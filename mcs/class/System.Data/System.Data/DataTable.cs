@@ -352,43 +352,47 @@ namespace System.Data {
 				return uc.Columns;
 			}
 			set {
-
-				//YUK: msft removes a previous unique constraint if it is flagged as a pk  
-				//when a new pk is set 
+				UniqueConstraint oldPKConstraint = UniqueConstraint.GetPrimaryKeyConstraint( Constraints);
 				
-				//clear Primary Key if value == null
-				if (null == value) {
-					
-					RemoveUniqueConstraints ();
+				// first check if value is the same as current PK.
+				if (oldPKConstraint != null && DataColumn.AreColumnSetsTheSame(value, oldPKConstraint.Columns))
 					return;
+
+				// remove PK Constraint
+				if(oldPKConstraint != null)
+				{
+					Constraints.Remove(oldPKConstraint);
 				}
+				
+				if (value != null)
+				{
+					//Does constraint exist for these columns
+					UniqueConstraint uc = UniqueConstraint.GetUniqueConstraintForColumnSet(
+						this.Constraints, (DataColumn[]) value);
+				
+					//if constraint doesn't exist for columns
+					//create new unique primary key constraint
+					if (null == uc) 
+					{
+						foreach (DataColumn Col in (DataColumn[]) value) 
+						{
 
-				//Does constraint exist for these columns
-				UniqueConstraint uc = UniqueConstraint.GetUniqueConstraintForColumnSet(
-					this.Constraints, (DataColumn[]) value);
+							if (Col.Table == null)
+								break;
 
-				//if constraint doesn't exist for columns
-				//create new unique primary key constraint
-				if (null == uc) {
+							if (Columns.IndexOf (Col) < 0)
+								throw new ArgumentException ("PrimaryKey columns do not belong to this table.");
+						}
 
-					RemoveUniqueConstraints ();						
+
+						uc = new UniqueConstraint( (DataColumn[]) value, true);
 					
-					foreach (DataColumn Col in (DataColumn[]) value) {
-
-						if (Col.Table == null)
-							break;
-
-						if (Columns.IndexOf (Col) < 0)
-							throw new ArgumentException ("PrimaryKey columns do not belong to this table.");
+						Constraints.Add (uc);
 					}
-
-
-					uc = new UniqueConstraint( (DataColumn[]) value, true);
-					
-					Constraints.Add (uc);
-				}
-				else { //set existing constraint as the new primary key
-					UniqueConstraint.SetAsPrimaryKey(this.Constraints, uc);
+					else 
+					{ //set existing constraint as the new primary key
+						UniqueConstraint.SetAsPrimaryKey(this.Constraints, uc);
+					}
 				}
 				
 			}
@@ -555,21 +559,11 @@ namespace System.Data {
 
 			object obj = null;
 
-			// filter rows
-			ExpressionElement Expression = new ExpressionMainElement (filter);
+			DataRow[] rows = Select(filter);
 			
-			ArrayList List = new ArrayList ();
-			foreach (DataRow Row in Rows) {
-				
-				if (Expression.Test (Row))
-					List.Add (Row);
-			}
+			ExpressionAggregate Expression = new ExpressionAggregate (expression);
+			obj = Expression.Result(rows);
 			
-			DataRow[] rows = (DataRow [])List.ToArray (typeof (DataRow));
-
-			// TODO: with the filtered rows, execute the aggregate function
-			//       mentioned in expression
-
 			return obj;
 		}
 

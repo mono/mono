@@ -73,56 +73,60 @@ namespace System.Data {
 			/// <param name="relation">The relation to check.</param>
 			protected override void AddCore (DataRelation relation)
 			{
-				base.AddCore (relation);
-				if (relation.ChildTable.DataSet != this.dataSet || relation.ParentTable.DataSet != this.dataSet)
-					throw new DataException ();
-				//List.Add (relation);
-				relation.SetDataSet (dataSet);
-				relation.ParentTable.ChildRelations.Add (relation);
-				relation.ChildTable.ParentRelations.Add (relation);
-				ForeignKeyConstraint foreignKeyConstraint = null;
-				if (relation.createConstraints) 
-				{
-					foreignKeyConstraint = new ForeignKeyConstraint (relation.RelationName, relation.ParentColumns, relation.ChildColumns);
-					relation.ChildTable.Constraints.Add (foreignKeyConstraint);
+				 base.AddCore (relation);
+				 if (relation.ChildTable.DataSet != this.dataSet || relation.ParentTable.DataSet != this.dataSet)
+					 throw new DataException ();
+				 relation.SetDataSet (dataSet);
+				 relation.ParentTable.ChildRelations.Add (relation);
+				 relation.ChildTable.ParentRelations.Add (relation);
+				 ForeignKeyConstraint foreignKeyConstraint = null;
+			
+				 if (relation.createConstraints) 
+				 {
+					 
+					 UniqueConstraint uniqueConstraint = null;
+					 ConstraintCollection parentConstrains = relation.ParentTable.Constraints;
+					 // find if the unique constraint already exists in the parent table.
+					 foreach (Constraint o in parentConstrains) 
+					 {
+						 if (o is UniqueConstraint) 
+						 {
+							 UniqueConstraint uc = (UniqueConstraint) o;
+							 if (uc.Columns.Length == relation.ParentColumns.Length) 
+							 {
+								 bool allColumnsEqual = true;
+								 for (int columnCnt = 0; columnCnt < uc.Columns.Length; ++columnCnt) 
+								 {
+									 if (uc.Columns[columnCnt] != relation.ParentColumns[columnCnt]) 
+									 {
+										 allColumnsEqual = false;
+										 break;
+									 }
+								 }
+								 if (allColumnsEqual) 
+								 {
+									 uniqueConstraint = uc;
+									 break;
+								 }
+							 }
+						 }
+					 }
+					 // if we did not find the unique constraint in the parent table.
+					 // we generate new uniqueconastraint and add it to the parent table.
+					 if (uniqueConstraint == null)
+					 {
+						 uniqueConstraint = new UniqueConstraint(relation.ParentColumns, false);
+						 relation.ParentTable.Constraints.Add(uniqueConstraint);
+					 }
+					
+					 foreignKeyConstraint = new ForeignKeyConstraint (relation.RelationName, relation.ParentColumns, relation.ChildColumns);
+					 relation.ChildTable.Constraints.Add (foreignKeyConstraint);
+
+					 relation.SetParentKeyConstraint (uniqueConstraint);
+					 relation.SetChildKeyConstraint (foreignKeyConstraint);
+				 }
 				
-					UniqueConstraint uniqueConstraint = null;
-					ConstraintCollection parentConstrains = relation.ParentTable.Constraints;
-					// find if the unique constraint already exists in the parent table.
-					foreach (Constraint o in parentConstrains) 
-					{
-						if (o is UniqueConstraint) 
-						{
-							UniqueConstraint uc = (UniqueConstraint) o;
-							if (uc.Columns.Length == relation.ParentColumns.Length) 
-							{
-								bool allColumnsEqual = true;
-								for (int columnCnt = 0; columnCnt < uc.Columns.Length; ++columnCnt) 
-								{
-									if (uc.Columns[columnCnt] != relation.ParentColumns[columnCnt]) 
-									{
-										allColumnsEqual = false;
-										break;
-									}
-								}
-								if (allColumnsEqual) 
-								{
-									uniqueConstraint = uc;
-									break;
-								}
-							}
-						}
-					}
-					// if we did not find the unique constraint in the parent table.
-					// we generate new uniqueconastraint and add it to the parent table.
-					if (uniqueConstraint == null)
-					{
-						uniqueConstraint = new UniqueConstraint(relation.ParentColumns, false);
-						relation.ParentTable.Constraints.Add(uniqueConstraint);
-					}
-					relation.SetParentKeyConstraint (uniqueConstraint);
-					relation.SetChildKeyConstraint (foreignKeyConstraint);
-				}
+			
 			}
 
 			public override void AddRange (DataRelation[] relations)
@@ -260,7 +264,7 @@ namespace System.Data {
 			if(relation.RelationName == string.Empty)
 				relation.RelationName = GenerateRelationName();
 			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
-			List.Add(relation);
+			//List.Add(relation);
 			OnCollectionChanged(e);
 		}
 
@@ -404,6 +408,7 @@ namespace System.Data {
 				//TODO: Issue a good exception message.
 				throw new DuplicateNameException("A Relation named " + relation.RelationName + " already belongs to this DataSet.");
 			}
+			List.Add(relation);
 		}
 
 		/// <summary>
@@ -415,11 +420,11 @@ namespace System.Data {
 			foreach (DataRelation relation in relations) Add(relation);
 		}
 
-		[MonoTODO]
 		public virtual bool CanRemove(DataRelation relation)
 		{
-			//TODO: Implement.
-			return false;
+			if (relation == null || !GetDataSet().Equals(relation.DataSet))
+				return false;
+			return true;
 		}
 
 		public virtual void Clear()

@@ -148,14 +148,15 @@ namespace System.Data {
 
 					foreach (DataColumn c2 in childColumns) {
 						if (!Object.ReferenceEquals (c2.Table, cc.Table))
-							throw new InvalidConstraintException ("Cannot create a Key from Columns thath belong to different tables.");
+								throw new ArgumentException ("Cannot create a Key from Columns thath belong to different tables.");
+						
 					}
 
 					if (! pc.DataType.Equals(cc.DataType))
 					{
 						//LAMESPEC: spec says throw InvalidConstraintException
 						//		implementation throws InvalidOperationException
-						throw new InvalidConstraintException("Parent column is not type compatible with it's child"
+						throw new ArgumentException("Parent column is not type compatible with it's child"
 								+ " column.");
 					}
 				}	

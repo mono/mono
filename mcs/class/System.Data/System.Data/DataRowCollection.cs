@@ -266,7 +266,10 @@ namespace System.Data
 			if (index < 0)
 				throw new IndexOutOfRangeException ("The given datarow is not in the current DataRowCollection.");
 			row.Delete();
-			row.AcceptChanges();
+			// if the row was in added state it will be in Detached state after the
+			// delete operation, so we have to check it.
+			if (row.RowState != DataRowState.Detached)
+				row.AcceptChanges();
 		}
 
 		/// <summary>

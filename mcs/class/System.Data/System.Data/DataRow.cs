@@ -190,22 +190,30 @@ namespace System.Data {
 				//if (rowState == DataRowState.Detached && version == DataRowVersion.Default)
 				//	throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
 				// Non-existent version
-				if (!HasVersion (version))
-					throw new VersionNotFoundException (Locale.GetText ("There is no " + version.ToString () + " data to access."));
-				switch (version) {
-				case DataRowVersion.Default:
-					if (editing || rowState == DataRowState.Detached)
-						return proposed[columnIndex];
-					return current[columnIndex];
-				case DataRowVersion.Proposed:
-					return proposed[columnIndex];
-				case DataRowVersion.Current:
-					return current[columnIndex];
-				case DataRowVersion.Original:
-					return original[columnIndex];
-				default:
-					throw new ArgumentException ();
+				//if (!HasVersion (version))
+				//	throw new VersionNotFoundException (Locale.GetText ("There is no " + version.ToString () + " data to access."));
+				if (HasVersion(version))
+				{
+					switch (version) 
+					{
+						case DataRowVersion.Default:
+							if (editing || rowState == DataRowState.Detached)
+								return proposed[columnIndex];
+							return current[columnIndex];
+						case DataRowVersion.Proposed:
+							return proposed[columnIndex];
+						case DataRowVersion.Current:
+							return current[columnIndex];
+						case DataRowVersion.Original:
+							return original[columnIndex];
+						default:
+							throw new ArgumentException ();
+					}
 				}
+				if (rowState == DataRowState.Detached && proposed == null)
+					throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
+				
+				throw new VersionNotFoundException (Locale.GetText ("There is no " + version.ToString () + " data to access."));
 			}
 		}
 
@@ -504,6 +512,8 @@ namespace System.Data {
 			switch (rowState) {
 			case DataRowState.Added:
 				Table.Rows.RemoveInternal (this);
+				// if row was in Added state we move it to Detached.
+				DetachRow();
 				break;
 			case DataRowState.Deleted:
 				break;
@@ -742,7 +752,9 @@ namespace System.Data {
 					if (allColumnsMatch) rows.Add(row);
 				}
 			}
-			return rows.ToArray(typeof(DataRow)) as DataRow[];
+			DataRow[] result = relation.ChildTable.NewRowArray(rows.Count);
+			rows.CopyTo(result, 0);
+			return result;
 		}
 
 		/// <summary>
@@ -895,7 +907,10 @@ namespace System.Data {
 					if (allColumnsMatch) rows.Add(row);
 				}
 			}
-			return rows.ToArray(typeof(DataRow)) as DataRow[];
+
+			DataRow[] result = relation.ParentTable.NewRowArray(rows.Count);
+			rows.CopyTo(result, 0);
+			return result;
 		}
 
 		/// <summary>

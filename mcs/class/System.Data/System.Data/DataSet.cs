@@ -889,9 +889,10 @@ namespace System.Data {
 
 			reader.MoveToContent ();
 			ReadXml (reader, XmlReadMode.IgnoreSchema);
-
-			reader.MoveToContent ();
-			reader.ReadEndElement ();	// </DataSet>
+			
+			// the XmlSerializationReader does this lines!!!
+			//reader.MoveToContent ();
+			//reader.ReadEndElement ();	// </DataSet>
 		}
 		
 		void IXmlSerializable.WriteXml (XmlWriter writer)

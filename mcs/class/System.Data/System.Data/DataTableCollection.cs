@@ -88,9 +88,16 @@ namespace System.Data {
 				NameTable (table);
 		    
 			// check if the collection has a table with the same name.
-			if(Contains(table.TableName))
-				throw new DuplicateNameException("A DataTable named '" + table.TableName + "' already belongs to this DataSet.");
-				
+			int tmp = IndexOf(table.TableName);
+			// if we found a table with same name we have to check
+			// that it is the same case.
+			// indexof can return a table with different case letters.
+			if (tmp != -1)
+			{
+				if(table.TableName == this[tmp].TableName)
+					throw new DuplicateNameException("A DataTable named '" + table.TableName + "' already belongs to this DataSet.");
+			}
+	
 			list.Add (table);
 			table.dataSet = dataSet;
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, table));
