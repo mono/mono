@@ -59,23 +59,29 @@ namespace Mine {
 			
 			return 0;
 		}
-		
+	
+		public Blah (int v)
+		{
+			i = v;
+		}
+	
 		public static Blah operator + (Blah i, Blah j)
 		{
-			Console.WriteLine ("Overloaded binary + operator");
-			return null; 
+			Blah b = new Blah (i.i + j.i);
+			Console.WriteLine ("Overload binary + operator");
+			return b;
 		}
 
 		public static Blah operator + (Blah i)
 		{
-			Console.WriteLine ("Overloaded unary + operator");
-			return null;
+			Console.WriteLine ("Overload unary + operator");
+			return new Blah (i.i);
 		}
 
 		public static Blah operator - (Blah i)
 		{
 			Console.WriteLine ("Overloaded unary - operator");
-			return null;
+			return new Blah (- i.i);
 		}
 
 		public static Blah operator - (Blah i, Blah j)
