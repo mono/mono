@@ -1,3 +1,6 @@
+2003-04-26  Boris Kirzner <borisk@mainsoft.com>
+	* DataColumnMappingCollection.cs : Small fix in exception message thrown.
+	  
 2003-04-25  Boris Kirzner <borisk@mainsoft.com>
 	* DbDataAdapter.cs : Fixed bug in Fill :
 	  - Reader can have empty results (fo example from UPDATE or DELETE).

@@ -60,7 +60,7 @@ namespace System.Data.Common {
 		public DataColumnMapping this [string sourceColumn] {
 			get {
 				if (!Contains(sourceColumn)) {
-					throw new IndexOutOfRangeException("DataColumnMappingCollection doesn't contains DataColumnMapping with SourceColumn 'field_int2'.");
+					throw new IndexOutOfRangeException("DataColumnMappingCollection doesn't contains DataColumnMapping with SourceColumn '" + sourceColumn + "'.");
 				}
 				return (DataColumnMapping) sourceColumns[sourceColumn]; }
 			set { this [list.IndexOf (sourceColumns[sourceColumn])] = value; }
