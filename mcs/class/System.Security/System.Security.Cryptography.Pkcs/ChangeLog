@@ -1,3 +1,7 @@
+2004-09-04  Tim Coleman <tim@timcoleman.com>
+	* Pkcs9ContentType.cs Pkcs9MessageDigest.cs:
+		New classes for 2.0
+
 2004-07-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ContentInfo.cs: Added finalizer.
