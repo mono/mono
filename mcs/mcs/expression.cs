@@ -5027,24 +5027,12 @@ namespace Mono.CSharp {
 				       "Could not find any applicable function for this argument list");
 				return null;
 			}
-			
+
 			MethodInfo mi = method as MethodInfo;
 			if (mi != null) {
 				type = TypeManager.TypeToCoreType (mi.ReturnType);
-				if (!mi.IsStatic && !mg.IsExplicitImpl && (mg.InstanceExpression == null)) {
+				if (!mi.IsStatic && !mg.IsExplicitImpl && (mg.InstanceExpression == null))
 					SimpleName.Error_ObjectRefRequired (ec, loc, mi.Name);
-					return null;
-				}
-
-				Expression iexpr = mg.InstanceExpression;
-				if (mi.IsStatic && (iexpr != null) && !(iexpr is This)) {
-					if (mg.IdenticalTypeName)
-						mg.InstanceExpression = null;
-					else {
-						MemberAccess.error176 (loc, mi.Name);
-						return null;
-					}
-				}
 			}
 
 			if (type.IsPointer){
@@ -6749,7 +6737,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public static void error176 (Location loc, string name)
+		static void error176 (Location loc, string name)
 		{
 			Report.Error (176, loc, "Static member `" +
 				      name + "' cannot be accessed " +
@@ -6898,9 +6886,9 @@ namespace Mono.CSharp {
 
 			if (member_lookup is IMemberExpr) {
 				IMemberExpr me = (IMemberExpr) member_lookup;
-				MethodGroupExpr mg = me as MethodGroupExpr;
 
 				if (left_is_type){
+					MethodGroupExpr mg = me as MethodGroupExpr;
 					if ((mg != null) && left_is_explicit && left.Type.IsInterface)
 						mg.IsExplicitImpl = left_is_explicit;
 
@@ -6922,7 +6910,7 @@ namespace Mono.CSharp {
 							error176 (loc, me.Name);
 							return null;
 						}
-					}						
+					}
 
 					//
 					// Since we can not check for instance objects in SimpleName,
@@ -6944,9 +6932,6 @@ namespace Mono.CSharp {
 							return null;
 						}
 					}
-
-					if ((mg != null) && IdenticalNameAndTypeName (ec, left_original, loc))
-						mg.IdenticalTypeName = true;
 
 					me.InstanceExpression = left;
 				}
