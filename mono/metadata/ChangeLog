@@ -1,3 +1,8 @@
+2004-10-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_MonoType_get_Namespace): Return NULL instead of
+	an empty string when a type has no namespace. Fixes #64230.
+
 2004-10-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* tabledefs.h: Added "internal" security actions to support non-CAS
