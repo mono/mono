@@ -3,7 +3,7 @@ Test cases listed by Category:
 
 * Operators
 
-  test-146.cs test-175.cs test-200.cs
+  test-146.cs test-175.cs test-200.cs test-204.cs
 
 * Overloading
 
@@ -63,7 +63,7 @@ Test cases listed by Category:
 
 * Type resolution and name lookup
 
-  test-198.cs test-201.cs test-202.cs
+  test-198.cs test-201.cs test-202.cs test-203.cs
 
 Test cases listed by Number:
 ============================
@@ -307,7 +307,22 @@ Compound assignment (x = (y += 3)).  Fixes bug #45854.
 test-201.cs
 -----------
 
-Fix for Bug #35631.
+Fix for bug #35631.
+
+test-202.cs
+-----------
+
+Fix for bug #41975.
+
+test-203.cs
+-----------
+
+Fix for bug #33026.
+
+test-204.cs
+-----------
+
+User defined conditional logical operators; bug #40505.
 
 verify-1.cs
 -----------

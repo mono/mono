@@ -1,3 +1,11 @@
+2003-07-14  Martin Baulig  <martin@ximian.com>
+
+	* test-204.cs: User defined conditional logical operators; bug #40505.
+
+2003-07-14  Martin Baulig  <martin@ximian.com>
+
+	* test-203.cs: Added test for bug #33026.
+
 2003-07-13  Ravi Pratap M  <ravi@ximian.com>
 
 	* test-178.cs: Use this as it is a free slot. Test 
