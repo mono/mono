@@ -1,3 +1,7 @@
+2003-02-01 Jackson Harper <jackson@latitudegeo.com>
+
+	* decl.cs: Check access levels when resolving types
+	
 2003-01-31 Jackson Harper <jackson@latitudegeo.com>
 
 	* statement.cs: Add parameters and locals set in catch blocks that might 
