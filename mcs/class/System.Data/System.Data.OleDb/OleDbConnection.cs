@@ -115,12 +115,22 @@ namespace System.Data.OleDb
 			return null;
 		}
 
+		IDbTransaction IDbConnection.BeginTransaction ()
+		{
+			return BeginTransaction ();
+		}
+		
 		public OleDbTransaction BeginTransaction (IsolationLevel level)
 		{
 			if (gdaConnection != IntPtr.Zero)
 				return new OleDbTransaction (this, level);
 
 			return null;
+		}
+
+		IDbTransaction IDbConnection.BeginTransaction (IsolationLevel level)
+		{
+			return BeginTransaction (level);
 		}
 
 		public void ChangeDatabase (string name)
@@ -139,7 +149,7 @@ namespace System.Data.OleDb
 		public OleDbCommand CreateCommand ()
 		{
 			if (gdaConnection != IntPtr.Zero && libgda.gda_connection_is_open (gdaConnection))
-				return new OleDbCommand ();
+				return new OleDbCommand (null, this);
 
 			return null;
 		}
@@ -162,22 +172,9 @@ namespace System.Data.OleDb
 			throw new NotImplementedException();
 		}
 
-		[MonoTODO]
-		IDbTransaction IDbConnection.BeginTransaction ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		IDbTransaction IDbConnection.BeginTransaction (IsolationLevel level)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
 		IDbCommand IDbConnection.CreateCommand ()
 		{
-			throw new NotImplementedException ();
+			return CreateCommand ();
 		}
 
 		public void Open ()

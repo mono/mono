@@ -250,7 +250,7 @@ namespace System.Data.OleDb
 
 		#region Internal Methods
 
-		// only meant to be used between OleDbConnectioin,
+		// only meant to be used between OleDbConnection,
 		// OleDbCommand, and OleDbDataReader
 		internal void OpenReader (OleDbDataReader reader) 
 		{
