@@ -1,3 +1,7 @@
+2003-04-07  Martin Willemoes Hansen <mwh@sysrq.dk>
+
+	* Stubed rest of System.Drawing.Design
+
 2003-03-31  Martin Willemoes Hansen <mwh@sysrq.dk>
  
         * Initialized this assembly and made stubs for System.Drawing.Design

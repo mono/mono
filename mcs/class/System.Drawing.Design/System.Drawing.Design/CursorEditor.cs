@@ -1,5 +1,5 @@
 //
-// System.Drawing.Design.FontEditor
+// System.Drawing.Design.CursorEditor
 //
 // Authors:
 //      Martin Willemoes Hansen (mwh@sysrq.dk)
@@ -11,10 +11,10 @@ using System.ComponentModel;
 
 namespace System.Drawing.Design
 {
-	public class FontEditor : UITypeEditor
+	public class CursorEditor : UITypeEditor
 	{
 		[MonoTODO]
-		public FontEditor()
+		public CursorEditor()
 		{
 		}
 
@@ -25,9 +25,10 @@ namespace System.Drawing.Design
 		{
 			throw new NotImplementedException();
 		}
-
+			
 		[MonoTODO]
-		public override UITypeEditorEditStyle GetEditStyle (ITypeDescriptorContext context)
+		public override UITypeEditorEditStyle GetEditStyle (
+                                ITypeDescriptorContext context)
 		{
 			throw new NotImplementedException();
 		}

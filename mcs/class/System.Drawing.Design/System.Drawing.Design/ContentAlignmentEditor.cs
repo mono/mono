@@ -1,5 +1,5 @@
 //
-// System.Drawing.Design.FontEditor
+// System.Drawing.Design.ContentAlignmentEditor
 //
 // Authors:
 //      Martin Willemoes Hansen (mwh@sysrq.dk)
@@ -11,10 +11,10 @@ using System.ComponentModel;
 
 namespace System.Drawing.Design
 {
-	public class FontEditor : UITypeEditor
+	public class ContentAlignmentEditor : UITypeEditor
 	{
 		[MonoTODO]
-		public FontEditor()
+		public ContentAlignmentEditor()
 		{
 		}
 
@@ -27,7 +27,8 @@ namespace System.Drawing.Design
 		}
 
 		[MonoTODO]
-		public override UITypeEditorEditStyle GetEditStyle (ITypeDescriptorContext context)
+		public override UITypeEditorEditStyle GetEditStyle (
+				ITypeDescriptorContext context)
 		{
 			throw new NotImplementedException();
 		}

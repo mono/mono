@@ -1,5 +1,5 @@
 //
-// System.Drawing.Design.BitmapEditor
+// System.Drawing.Design.MetafileEditor
 //
 // Authors:
 //      Martin Willemoes Hansen (mwh@sysrq.dk)
@@ -11,13 +11,14 @@ using System.IO;
 
 namespace System.Drawing.Design
 {
-	public class BitmapEditor : ImageEditor
+	public class MetafileEditor : ImageEditor
 	{
 		[MonoTODO]
-		public BitmapEditor()
+		public MetafileEditor()
 		{
 		}
 
+		[MonoTODO]
 		protected override string[] GetExtensions()
 		{
 			throw new NotImplementedException();
@@ -33,11 +34,6 @@ namespace System.Drawing.Design
 		protected override Image LoadFromStream (Stream stream)
 		{
 			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~BitmapEditor()
-		{
 		}
 	}
 }

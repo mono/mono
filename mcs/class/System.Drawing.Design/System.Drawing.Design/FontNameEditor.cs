@@ -1,5 +1,5 @@
 //
-// System.Drawing.Design.FontEditor
+// System.Drawing.Design.FontNameEditor
 //
 // Authors:
 //      Martin Willemoes Hansen (mwh@sysrq.dk)
@@ -11,23 +11,21 @@ using System.ComponentModel;
 
 namespace System.Drawing.Design
 {
-	public class FontEditor : UITypeEditor
+	public class FontNameEditor : UITypeEditor
 	{
 		[MonoTODO]
-		public FontEditor()
+		public FontNameEditor()
 		{
 		}
 
 		[MonoTODO]
-		public override object EditValue (ITypeDescriptorContext context,
-						  IServiceProvider provider,
-						  object value)
+		public override bool GetPaintValueSupported (ITypeDescriptorContext context)
 		{
 			throw new NotImplementedException();
 		}
 
 		[MonoTODO]
-		public override UITypeEditorEditStyle GetEditStyle (ITypeDescriptorContext context)
+		public override void PaintValue (PaintValueEventArgs e)
 		{
 			throw new NotImplementedException();
 		}
