@@ -61,24 +61,26 @@ namespace MonoTests.System
 		}	
 		
 		[Test]
-		public void Port ()
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void BadPort1 ()
 		{
-			try {
-				b.Port = -12345;
-				Assertion.Fail ("#1 should've failed, illegal port.");
-			} catch (ArgumentOutOfRangeException) {}
-			try {
-				b.Port = 123456789;
-				Assertion.Fail ("#2 should've failed, illegal port.");
-			} catch (ArgumentOutOfRangeException) {}
-			try {
-				b.Port = -1;
-				Assertion.AssertEquals ("#3", -1, b.Port);
-			} catch (ArgumentOutOfRangeException) {
-				Assertion.Fail ("#4: spec should allow -1 as value.");
-			}
+			b.Port = -12345;
 		}
-		
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void BadPort2 ()
+		{
+			b.Port = 123456789;
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void BadPort3 ()
+		{
+			b.Port = -1;
+		}
+
 		[Test]
 		public void Query ()
 		{

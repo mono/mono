@@ -1,3 +1,8 @@
+2003-08-18  Nick Drochak  <ndrochak@gol.com>
+
+	* UriBuilderTest.cs: Separated tests into NUnit v2 style. Need to track
+	down a test failure.
+
 2003-05-07  Ben Maurer <bmaurer@users.sourceforge.net>
 
 	* UriTest.cs: added tests for UNIX file paths.
