@@ -10,8 +10,6 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Data;
-using System.Data.Common;
 using System.Diagnostics;
 using System.Net.Sockets;
 using System.Text;
@@ -39,7 +37,6 @@ namespace Mono.Data.TdsClient.Internal {
 
 		Encoding encoder;
 		TdsServerType serverType;
-		IsolationLevel isolationLevel;
 		bool autoCommit;
 
 		bool doneProc;
@@ -728,9 +725,9 @@ namespace Mono.Data.TdsClient.Internal {
 			}
 		}
 
-		private TdsPacketRowResult LoadRow (TdsContext context)
+		private TdsPacketRowResult LoadRow ()
 		{
-			TdsPacketRowResult result = new TdsPacketRowResult (context);
+			TdsPacketRowResult result = new TdsPacketRowResult ();
 
 			int i = 0;
 			foreach (TdsSchemaInfo schema in columnInfo) {
@@ -1082,7 +1079,7 @@ namespace Mono.Data.TdsClient.Internal {
 				result = new TdsPacketControlResult ();
 				break;
 			case TdsPacketSubType.Row :
-				result = LoadRow (null);
+				result = LoadRow ();
 				break;
 			default:
 				return null;

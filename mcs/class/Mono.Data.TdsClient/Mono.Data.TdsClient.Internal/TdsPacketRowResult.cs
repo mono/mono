@@ -15,27 +15,21 @@ namespace Mono.Data.TdsClient.Internal {
 	{
 		#region Fields
 
-		TdsContext context;
 		ArrayList list;
 
 		#endregion // Fields
 
 		#region Constructors
 
-		public TdsPacketRowResult (TdsContext context)
+		public TdsPacketRowResult ()
 			: base (TdsPacketSubType.Row)
 		{
-			this.context = context;
 			list = new ArrayList ();
 		}
 
 		#endregion // Constructors
 
 		#region Properties
-
-		public TdsContext Context {
-			get { return context; }
-		}
 
 		public int Count {
 			get { return list.Count; }

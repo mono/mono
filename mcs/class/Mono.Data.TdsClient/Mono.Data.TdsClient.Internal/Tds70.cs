@@ -8,7 +8,6 @@
 //
 
 using System;
-using System.Data.Common;
 
 namespace Mono.Data.TdsClient.Internal {
         internal class Tds70 : Tds

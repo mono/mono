@@ -7,8 +7,6 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
-using System.Data;
-
 namespace Mono.Data.TdsClient.Internal {
 	internal class TdsPacketColumnOrderResult : TdsPacketResult
 	{

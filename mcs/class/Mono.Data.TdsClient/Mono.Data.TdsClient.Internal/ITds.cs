@@ -8,7 +8,6 @@
 //
 
 using System;
-using System.Data.Common;
 using System.Collections;
 
 namespace Mono.Data.TdsClient.Internal {

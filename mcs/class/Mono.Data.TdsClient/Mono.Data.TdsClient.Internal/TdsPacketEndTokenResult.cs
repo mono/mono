@@ -8,7 +8,6 @@
 //
 
 using System;
-using System.Data;
 
 namespace Mono.Data.TdsClient.Internal {
 	internal class TdsPacketEndTokenResult : TdsPacketResult

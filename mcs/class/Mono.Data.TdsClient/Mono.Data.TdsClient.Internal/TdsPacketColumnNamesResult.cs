@@ -8,7 +8,6 @@
 //
 
 using System.Collections;
-using System.Data;
 
 namespace Mono.Data.TdsClient.Internal {
 	internal class TdsPacketColumnNamesResult : TdsPacketResult, IEnumerable
