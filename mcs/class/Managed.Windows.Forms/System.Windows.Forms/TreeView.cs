@@ -601,7 +601,6 @@ namespace System.Windows.Forms {
 		
 		private void Draw (Rectangle clip)
 		{
-			DateTime start = DateTime.Now;
 			if (top_node == null && Nodes.Count > 0)
 				top_node = nodes [0];
 			// Decide if we need a scrollbar
@@ -652,28 +651,6 @@ namespace System.Windows.Forms {
 				AddSizeGrip ();
 			else if (grip != null)
 				grip.Visible = false;
-
-			/*
-			Console.WriteLine ("treeview drawing time:  " + (DateTime.Now - start));
-			Console.WriteLine ("node count:		    " + node_count);
-			Console.WriteLine ("total node count:	    " + total_node_count);
-			*/
-		}
-
-		private void DumpNode (TreeNode node, ref int depth)
-		{
-			for (int i = 0; i < depth; i++)
-				Console.Write ("****");
-			Console.WriteLine (node.Text);
-
-			if (node.PrevNode != null)
-				Console.WriteLine (" -- " + node.PrevNode.Text);
-			depth++;
-			foreach (TreeNode child in node.Nodes) {
-				DumpNode (child, ref depth);
-			}
-			depth--;
-			
 		}
 
 		private void DrawNodePlusMinus (TreeNode node, Rectangle clip, int x, int y, int middle)
@@ -725,7 +702,7 @@ namespace System.Windows.Forms {
 				ladjust = 13;
 			if (checkboxes)
 				radjust = 3;
-			
+
 			DeviceContext.DrawLine (dash, x - indent + ladjust, middle, x + radjust, middle);
 
 			int ly = 0;
@@ -744,7 +721,6 @@ namespace System.Windows.Forms {
 
 		private void DrawNodeImage (TreeNode node, Rectangle clip, int x, int y)
 		{
-
 			Rectangle r = new Rectangle (x, y + 2, ImageList.ImageSize.Width, 
 					ImageList.ImageSize.Height);
 			if (!RectsIntersect (r, x, y + 2, ImageList.ImageSize.Width, ImageList.ImageSize.Height))
@@ -757,7 +733,6 @@ namespace System.Windows.Forms {
 				ImageList.Draw (DeviceContext, x, y + 2, ImageList.ImageSize.Width, 
 						ImageList.ImageSize.Height, ImageIndex);
 			}
-			
 		}
 
 		private void UpdateNodeBounds (TreeNode node, int x, int y, int item_height)
@@ -856,8 +831,7 @@ namespace System.Windows.Forms {
 			if (node.IsExpanded) {
 				for (int i = 0; i < _n_count; i++) {
 					int tdepth = depth;
-					DrawNode (node.nodes [i], clip, ref tdepth, item_height,
-							font, max_height);
+					DrawNode (node.nodes [i], clip, ref tdepth, item_height, font, max_height);
 				}
 			}
 
@@ -923,24 +897,28 @@ namespace System.Windows.Forms {
 
 		private void SizeChangedHandler (object sender, EventArgs e)
 		{
+			SuspendLayout ();
+
 			if (max_node_width > ClientRectangle.Width) {
 				add_hscroll = true;
 				AddHorizontalScrollBar ();
 			}
 
 			if (vbar != null) {
-				vbar.Left = Right - vbar.Width;
-				vbar.Height = Height;
+				int height = (hbar != null && hbar.Visible ? Height - hbar.Height : Height);
+				vbar.SetBounds (Right - vbar.Width, 0, 0, height, BoundsSpecified.X | BoundsSpecified.Height);
 			}
 
 			if (hbar != null) {
-				hbar.Top = Bottom - hbar.Height;
-				hbar.Width = Width;
+				int width = (vbar != null && vbar.Visible ? Width - vbar.Width : Width);
+				hbar.SetBounds (0, Bottom - hbar.Height, width, 0, BoundsSpecified.Y | BoundsSpecified.Width);
 			}
 
 			if (grip != null) {
-				grip.Top = Bottom - grip.Height;
+				grip.SetBounds (Right - grip.Width, Bottom - grip.Height, 0, 0, BoundsSpecified.X | BoundsSpecified.Y);
 			}
+
+			ResumeLayout ();
 		}
 
 		private void VScrollBarValueChanged (object sender, EventArgs e)

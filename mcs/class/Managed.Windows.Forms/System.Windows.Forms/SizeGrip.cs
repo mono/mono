@@ -39,13 +39,23 @@ namespace System.Windows.Forms {
 
 		protected override void OnPaint (PaintEventArgs pe)
 		{
+			base.OnPaint (pe);
+
 			if (redraw)
 				Draw ();
+
 			pe.Graphics.DrawImage (ImageBuffer, pe.ClipRectangle, pe.ClipRectangle, GraphicsUnit.Pixel);
 		}
 
 		protected override void OnSizeChanged (EventArgs e)
 		{
+			base.OnSizeChanged (e);
+			redraw = true;
+		}
+
+		protected override void OnVisibleChanged (EventArgs e)
+		{
+			base.OnVisibleChanged (e);
 			redraw = true;
 		}
 
