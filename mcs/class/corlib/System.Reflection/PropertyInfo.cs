@@ -18,7 +18,9 @@ namespace System.Reflection {
 		public abstract bool CanRead {get;}
 		public abstract bool CanWrite {get;}
 
-		public bool IsSpecialName {get {return false;}}
+		public bool IsSpecialName {
+			get {return (Attributes & PropertyAttributes.SpecialName) != 0;}
+		}
 
 		public override MemberTypes MemberType {
 			get {return MemberTypes.Property;}
@@ -29,16 +31,16 @@ namespace System.Reflection {
 		}
 
 		public MethodInfo[] GetAccessors() {
-			return null;
+			return GetAccessors (false);
 		}
 		public abstract MethodInfo[] GetAccessors( bool nonPublic);
 		public MethodInfo GetGetMethod() {
-			return null;
+			return GetGetMethod (false);
 		}
 		public abstract MethodInfo GetGetMethod( bool nonPublic);
 		public abstract ParameterInfo[] GetIndexParameters();
 		public MethodInfo GetSetMethod() {
-			return null;
+			return GetSetMethod (false);
 		}
 		public abstract MethodInfo GetSetMethod( bool nonPublic);
 		public virtual object GetValue( object obj, object[] index) {

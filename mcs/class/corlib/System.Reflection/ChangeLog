@@ -1,4 +1,11 @@
 
+Tue Dec 18 18:46:22 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* MonoMethod.cs: implemented GetParameters().
+	* MonoProperty.cs: PropertyInfo implementation.
+	* ParameterInfo.cs: implemented.
+	* PropertyInfo.cs: fixes.
+
 Thu Dec 13 20:18:05 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* FieldInfo.cs: implemented some Is* propeties.

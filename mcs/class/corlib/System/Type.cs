@@ -244,10 +244,32 @@ namespace System {
 			return res;
 		}
 
+		public PropertyInfo[] GetProperties ()
+		{
+			return GetProperties (BindingFlags.Public);
+		}
+
+		public PropertyInfo[] GetProperties (BindingFlags bindingAttr)
+		{
+			MemberInfo[] m = FindMembers (MemberTypes.Property, bindingAttr, null, null);
+			PropertyInfo[] res = new PropertyInfo [m.Length];
+			int i;
+			for (i = 0; i < m.Length; ++i)
+				res [i] = (PropertyInfo) m [i];
+			return res;
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern PropertyInfo get_property (Type type, string name, Type[] types);
+		
+		public PropertyInfo GetProperty (string name)
+		{
+			return get_property (this, name, EmptyTypes);
+		}
+
 		public PropertyInfo GetProperty (string name, Type[] types)
 		{
-			// FIXME
-			throw new NotImplementedException ();
+			return get_property (this, name, types);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

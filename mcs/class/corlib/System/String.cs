@@ -274,11 +274,21 @@ namespace System {
 			} else if (strB == null)
 				return 1;
 
-			min = strA.Length < strB.Length ? strA.Length : strB.Length;
+			min = strA.length < strB.length ? strA.length : strB.length;
 
-			for (i = 0; strA[i] == strB[i] && i < min; i++);
-
-			return ((int) (strA[i] - strB[i]));
+			for (i = 0; i < min; i++) {
+				if (strA.c_str[i] != strB.c_str[i]) {
+					return (int)strA.c_str[i] - (int)strB.c_str[i];
+				}
+			}
+			if (strA.length == strB.length) {
+				return 0;
+			}
+			if (strA.length > min) {
+				return 1;
+			} else {
+				return -1;
+			}
 		}
 
 		public static int Compare (string strA, string strB, bool ignoreCase)
@@ -301,14 +311,14 @@ namespace System {
 			} else if (strB == null)
 				return 1;
 
-			min = strA.Length < strB.Length ? strA.Length : strB.Length;
+			min = strA.length < strB.length ? strA.length : strB.length;
 
 			for (i = 0; i < min; i++) {
-				if (Char.ToLower (strA[i]) != Char.ToLower (strB[i]))
+				if (Char.ToLower (strA.c_str[i]) != Char.ToLower (strB.c_str[i]))
 					break;
 			}
 
-			return ((int) (strA[i] - strB[i]));
+			return ((int) (strA.c_str[i] - strB.c_str[i]));
 		}
 
 		public static int Compare (string strA, string strB, bool ignoreCase, CultureInfo culture)

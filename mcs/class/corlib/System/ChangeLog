@@ -1,4 +1,11 @@
 
+Tue Dec 18 18:39:54 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* Enum.cs: implemented GetValues(), GetNames(), GetName(),
+	IsDefined(), GetUnderlyingType().
+	* String.cs: fix one instance of Compare().
+	* Type.cs: implemented GetProperties(), GetProperty().
+
 Thu Dec 13 20:10:57 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* Array.cs: implement CopyTo ().

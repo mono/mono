@@ -6,30 +6,59 @@
 
 namespace System.Reflection
 {
-	public class ParameterInfo
+	public class ParameterInfo : ICustomAttributeProvider
 	{
+		protected Type ClassImpl;
+		protected object DefaultValueImpl;
+		protected MemberInfo MemberImpl;
+		protected string NameImpl;
+		protected int PositionImpl;
+		protected ParameterAttributes AttrsImpl;
 
-		public virtual Type ParameterType {
-			get {return null;}
+		protected ParameterInfo () {
 		}
-		public virtual ParameterAttributes Attributes {get{return(ParameterAttributes)0;}}
-		public virtual object DefaultValue {get{return null;}}
+		
+		public virtual Type ParameterType {
+			get {return ClassImpl;}
+		}
+		public virtual ParameterAttributes Attributes {
+			get {return AttrsImpl;}
+		}
+		public virtual object DefaultValue {
+			get {return DefaultValueImpl;}
+		}
 
-		public bool IsIn {get{return false;}}
+		public bool IsIn {
+			get {return (AttrsImpl & ParameterAttributes.In) != 0;}
+		}
 
-		public bool IsLcid {get{return false;}}
+		public bool IsLcid {
+			get {return (AttrsImpl & ParameterAttributes.Lcid) != 0;}
+		}
 
-		public bool IsOptional {get{return false;}}
+		public bool IsOptional {
+			get {return (AttrsImpl & ParameterAttributes.Optional) != 0;}
+		}
 
-		public bool IsOut {get{return false;}}
+		public bool IsOut {
+			get {return (AttrsImpl & ParameterAttributes.Out) != 0;}
+		}
 
-		public bool IsRetval {get{return false;}}
+		public bool IsRetval {
+			get {return (AttrsImpl & ParameterAttributes.Retval) != 0;}
+		}
 
-		public virtual MemberInfo Member {get{return null;}}
+		public virtual MemberInfo Member {
+			get {return MemberImpl;}
+		}
 
-		public virtual string Name {get{return null;}}
+		public virtual string Name {
+			get {return NameImpl;}
+		}
 
-		public virtual int Position {get{return 0;}}
+		public virtual int Position {
+			get {return PositionImpl;}
+		}
 
 		public virtual object[] GetCustomAttributes (bool inherit)
 		{
@@ -41,6 +70,10 @@ namespace System.Reflection
 		{
 			// FIXME
 			return null;
+		}
+		public virtual bool IsDefined( Type attributeType, bool inherit) {
+			// FIXME
+			return false;
 		}
 	}
 }

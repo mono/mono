@@ -10,10 +10,53 @@
 //
 
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace System {
+	internal struct MonoEnumInfo {
+		internal Type utype;
+		internal Array values;
+		internal string[] names;
+		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern void get_enum_info (Type enumType, out MonoEnumInfo info);
+		
+		internal static void GetInfo (Type enumType, out MonoEnumInfo info) {
+			get_enum_info (enumType, out info);
+			Array.Sort (info.values, info.names);
+		}
+	};
 
 	public abstract class Enum : ValueType, IComparable {
+
+		public static Array GetValues (Type enumType) {
+			MonoEnumInfo info;
+			MonoEnumInfo.GetInfo (enumType, out info);
+			return info.values;
+		}
+		public static string[] GetNames (Type enumType) {
+			MonoEnumInfo info;
+			MonoEnumInfo.GetInfo (enumType, out info);
+			return info.names;
+		}
+		public static string GetName( Type enumType, object value) {
+			MonoEnumInfo info;
+			int i;
+			MonoEnumInfo.GetInfo (enumType, out info);
+			for (i = 0; i < info.values.Length; ++i) {
+				if (info.values.GetValue (i) == value)
+					return info.names [i];
+			}
+			return null;
+		}
+		public static bool IsDefined( Type enumType, object value) {
+			return GetName (enumType, value) != null;
+		}
+		public static Type GetUnderlyingType( Type enumType) {
+			MonoEnumInfo info;
+			MonoEnumInfo.GetInfo (enumType, out info);
+			return info.utype;
+		}
 
 		/// <summary>
 		///   Compares the enum value with another enum value of the same type.
@@ -33,11 +76,6 @@ namespace System {
 			throw new NotImplementedException ();
 		}
 		
-		public static bool IsDefined (Type enum_type, object value)
-		{
-			throw new NotImplementedException ();
-		}
-
 		public override string ToString ()
 		{
 			throw new NotImplementedException ();

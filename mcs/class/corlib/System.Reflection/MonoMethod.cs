@@ -23,6 +23,9 @@ namespace System.Reflection {
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern void get_method_info (RuntimeMethodHandle handle, out MonoMethodInfo info);
+		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern ParameterInfo[] get_parameter_info (RuntimeMethodHandle handle);
 	};
 	
 	/*
@@ -54,7 +57,7 @@ namespace System.Reflection {
 		}
 
 		public override ParameterInfo[] GetParameters() {
-			return null;
+			return MonoMethodInfo.get_parameter_info (mhandle);
 		}
 		
 		public override Object Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {
@@ -116,7 +119,7 @@ namespace System.Reflection {
 		}
 
 		public override ParameterInfo[] GetParameters() {
-			return null;
+			return MonoMethodInfo.get_parameter_info (mhandle);
 		}
 		
 		public override Object Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {
