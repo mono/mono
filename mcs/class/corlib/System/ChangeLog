@@ -1,3 +1,9 @@
+2004-08-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AppDomain.cs: Added a new icall, getDomainByID, to get the an 
+	AppDomain using it's Id. Completed SetAppDomainPolicy.
+	* Environment.cs: Bumped mono_corlib_version to 23.
+
 2004-08-02  Martin Baulig  <martin@ximian.com>
 
 	* DateTime.cs, TimeSpan.cs, Guid.cs, Version.cs: Implement IComparable<T>.

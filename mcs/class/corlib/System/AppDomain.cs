@@ -68,8 +68,11 @@ namespace System
 		[ThreadStatic]
 		Hashtable assembly_resolve_in_progress;
 
-		// Evidence evidence;
+		// CAS
+		private Evidence _evidence;
+		private PermissionSet _granted;
 
+		// non-CAS
 		private PrincipalPolicy _principalPolicy;
 
 		[ThreadStatic]
@@ -122,11 +125,9 @@ namespace System
 			}
 		}
 
-		[MonoTODO ("Return evidence")]
 		public Evidence Evidence {
 			get {
-				return null;
-				//return evidence;
+				return _evidence;
 			}
 		}
 
@@ -153,6 +154,16 @@ namespace System
 		public static AppDomain CurrentDomain {
 			get {
 				return getCurDomain ();
+			}
+		}
+
+		// Get an AppDomain by it's ID (required to find the "default" app domain)
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private static extern AppDomain getDomainByID (int domain_id);
+
+		internal static AppDomain DefaultDomain {
+			get {
+				return getDomainByID (0);
 			}
 		}
 
@@ -469,10 +480,19 @@ namespace System
 			return LoadAssemblyRaw (rawAssembly, rawSymbolStore, securityEvidence);
 		}
 
-		[MonoTODO]
+		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
 		public void SetAppDomainPolicy (PolicyLevel domainPolicy)
 		{
-			throw new NotImplementedException ();
+			if (domainPolicy == null)
+				throw new ArgumentNullException ("domainPolicy");
+			if (_granted != null) {
+				throw new PolicyException (Locale.GetText (
+					"An AppDomain policy is already specified."));
+			}
+			if (IsFinalizingForUnload ())
+				throw new AppDomainUnloadedException ();
+
+			_granted = SecurityManager.ResolvePolicy (_evidence);
 		}
 
 		public void SetCachePath (string path)
