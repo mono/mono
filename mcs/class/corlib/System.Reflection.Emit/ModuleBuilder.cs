@@ -371,7 +371,6 @@ namespace System.Reflection.Emit {
 					res_name = "MonoSymbolFile:" + fqname;
 				byte[] data = symbol_writer.CreateSymbolFile (assemblyb);
 				assemblyb.EmbedResource (res_name, data, ResourceAttributes.Public);
-				Console.WriteLine ("RESOURCE: |{0}|", res_name);
 			}
 		}
 	}
