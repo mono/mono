@@ -19,7 +19,7 @@
 				<excludes name="System.Data/DataRow.cs"/>
 				<excludes name="System.Data/DataRowCollection.cs"/>
 				<excludes name="System.Data/DataRowChangeEventArgs.cs"/>
-				<excludes name="System.Data/DataTableRelationCollection.cs"/>
+				<excludes name="System.Data/DataTableCollection.cs"/>
 				<excludes name="System.Data/DataRelationCollection.cs"/>
 				<excludes name="System.Data/DataTable.cs"/>
 				<excludes name="System.Data/DataView.cs"/>
