@@ -1,3 +1,7 @@
+2002-11-10  Ville Palo <vi64pa@koti.soon.fi>
+
+	* System.Data.SqlTypes/SqlStringTest.cs: Added more tests
+
 2002-11-07  Ville Palo <vi64pa@koti.soon.fi>
 
 	* System.Data.SqlTypes/SqlDecimalTest.cs

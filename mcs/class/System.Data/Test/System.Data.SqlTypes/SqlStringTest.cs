@@ -77,7 +77,21 @@ namespace MonoTests.System.Data.SqlTypes
 			// SqlString (int, SqlCompareOptions, byte[], int, int)
 			TestString = new SqlString (2057, SqlCompareOptions.BinarySort, new byte [2] {113, 100}, 0, 2);
                 	Assert ("#A07", !TestString.IsNull);
-                	
+
+			try {
+				TestString = new SqlString (2057, SqlCompareOptions.BinarySort, new byte [2] {113, 100}, 2, 1);
+				Fail ("#A07b");
+                	} catch (Exception e) {
+				AssertEquals ("#A07c", typeof (ArgumentOutOfRangeException), e.GetType ());
+			}
+
+			try {
+				TestString = new SqlString (2057, SqlCompareOptions.BinarySort, new byte [2] {113, 100}, 0, 4);
+				Fail ("#A07d");
+			} catch (Exception e) {
+				AssertEquals ("#A07e", typeof (ArgumentOutOfRangeException), e.GetType ());
+			}
+
 			// SqlString (int, SqlCompareOptions, byte[], int, int, bool)
 			TestString = new SqlString (2057, SqlCompareOptions.IgnoreCase, new byte [3] {100, 111, 50}, 1, 2, false);
                 	AssertEquals ("#A08", "o2", TestString.Value);
@@ -118,7 +132,7 @@ namespace MonoTests.System.Data.SqlTypes
                 	
 			// IsNull
 			Assert ("#C03", !Test1.IsNull);
-                	Assert ("C04", SqlString.Null.IsNull);
+                	Assert ("#C04", SqlString.Null.IsNull);
                 	
 			// LCID
 			AssertEquals ("#C05", 3081, Test1.LCID);
@@ -245,15 +259,34 @@ namespace MonoTests.System.Data.SqlTypes
 			AssertEquals ("#M02", CompareOptions.IgnoreCase,
 				    SqlString.CompareOptionsFromSqlCompareOptions (
 				    SqlCompareOptions.IgnoreCase));
-
+			try {
+				
+				CompareOptions test = SqlString.CompareOptionsFromSqlCompareOptions (
+				    SqlCompareOptions.BinarySort);
+				Fail ("#M03");
+			} catch (Exception e) {
+				AssertEquals ("#M04", typeof (ArgumentOutOfRangeException), e.GetType ());
+			}
 		}
 
 		public void TestUnicodeBytes()
 		{
 			AssertEquals ("#N01", (byte)105, Test1.GetNonUnicodeBytes () [1]);
 			AssertEquals ("#N02", (byte)32, Test1.GetNonUnicodeBytes () [5]);
+
 			AssertEquals ("#N03", (byte)70, Test1.GetUnicodeBytes () [0]);
+			AssertEquals ("#N03b", (byte)70, Test1.GetNonUnicodeBytes () [0]);
+			AssertEquals ("#N03c", (byte)0, Test1.GetUnicodeBytes () [1]);
+			AssertEquals ("#N03d", (byte)105, Test1.GetNonUnicodeBytes () [1]);
+			AssertEquals ("#N03e", (byte)105, Test1.GetUnicodeBytes () [2]);
+			AssertEquals ("#N03f", (byte)114, Test1.GetNonUnicodeBytes () [2]);
+			AssertEquals ("#N03g", (byte)0, Test1.GetUnicodeBytes () [3]);
+			AssertEquals ("#N03h", (byte)115, Test1.GetNonUnicodeBytes () [3]);
+			AssertEquals ("#N03i", (byte)114, Test1.GetUnicodeBytes () [4]);
+			AssertEquals ("#N03j", (byte)116, Test1.GetNonUnicodeBytes () [4]);
+
 			AssertEquals ("#N04", (byte)105, Test1.GetUnicodeBytes () [2]);
+
 			try {
 				byte test = Test1.GetUnicodeBytes () [105];
 				Fail ("#N05");
@@ -266,7 +299,7 @@ namespace MonoTests.System.Data.SqlTypes
                 {
 
 			SqlString String250 = new SqlString ("250");
-			SqlString String9E300 = new SqlString ("9E300");
+			SqlString String9E300 = new SqlString ("9E+300");
 
                         // ToSqlBoolean ()
         
@@ -321,7 +354,7 @@ namespace MonoTests.System.Data.SqlTypes
                         }      
 
 			// ToSqlDouble
-			AssertEquals ("#O19", (SqlDouble)9e300, String9E300.ToSqlDouble ());
+			AssertEquals ("#O19", (SqlDouble)9E+300, String9E300.ToSqlDouble ());
 
 			try {
 				SqlDouble test = (new SqlString ("4e400")).ToSqlDouble ();
@@ -493,7 +526,7 @@ namespace MonoTests.System.Data.SqlTypes
 		
                 public void TestSqlDoubleToSqlString()
                 {
-			SqlDouble TestDouble = new SqlDouble (64e64);
+			SqlDouble TestDouble = new SqlDouble (64E+64);
                 	AssertEquals ("#V01", "6.4E+65", ((SqlString)TestDouble).Value);
                 }
 
@@ -552,7 +585,7 @@ namespace MonoTests.System.Data.SqlTypes
                 
                 public void TestSqlSingleToSqlString()
                 {
-                	SqlSingle TestSingle = new SqlSingle (3e20);
+                	SqlSingle TestSingle = new SqlSingle (3E+20);
                 	AssertEquals ("#AB01", "3E+20", ((SqlString)TestSingle).Value);
                 }
                                               
