@@ -1,3 +1,7 @@
+2003-03-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* unix.args: added ModuleResolveEventHandler.cs
+
 2003-02-19  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* unix.args: added 

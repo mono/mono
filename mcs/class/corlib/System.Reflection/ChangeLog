@@ -1,3 +1,9 @@
+2003-03-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Assembly.cs: added missing stuff. Only ModuleResolve event is left
+	out to avoid changing MonoReflectionAssembly by now.
+	* ModuleResolveEventHandler.cs: delegate.
+
 2003-02-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TargetInvocationException.cs: added serialization ctor.

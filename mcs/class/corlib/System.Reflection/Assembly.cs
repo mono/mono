@@ -24,6 +24,11 @@ namespace System.Reflection {
 
 		internal Assembly () {}
 
+		//TODO: when adding this, MonoReflectionAssembly must be modified too.
+		// Probably, adding a delegate field after _mono_assbmely and using it in add/remove 
+		// is the way to go (to avoid the compiler inserting the delegate field before).
+		//public event ModuleResolveEventHandler ModuleResolve;
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern string get_code_base ();
 		
@@ -41,6 +46,14 @@ namespace System.Reflection {
 				return get_code_base ();
 			}
 		} 
+
+		[MonoTODO]
+		public virtual string EscapedCodeBase {
+			get {
+				//FIXME: escape characters -> Uri
+				return get_code_base ();
+			}
+		}
 
 		public virtual string FullName {
 			get {
@@ -63,6 +76,13 @@ namespace System.Reflection {
 			}
 		}
 
+		public bool GlobalAssemblyCache {
+			get {
+				//TODO: if we ever have a GAC, fix this.
+				return false;
+			}
+		}
+		
 		public virtual String Location {
 			get {
 				return get_location ();
@@ -94,11 +114,20 @@ namespace System.Reflection {
 
 		public virtual FileStream[] GetFiles ()
 		{
-			string[] names = (string[])GetFilesInternal (null);
+			string[] names = (string[]) GetFilesInternal (null);
+			if (names == null)
+				return new FileStream [0];
+
 			FileStream[] res = new FileStream [names.Length];
 			for (int i = 0; i < names.Length; ++i)
 				res [i] = new FileStream (names [i], FileMode.Open, FileAccess.Read);
 			return res;
+		}
+
+		[MonoTODO]
+		public virtual FileStream [] GetFiles (bool getResourceModules)
+		{
+			throw new NotImplementedException ();
 		}
 
 		public virtual FileStream GetFile (String name)
@@ -227,6 +256,12 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static Assembly LoadFrom (String assemblyFile);
 
+		[MonoTODO]
+		public static Assembly LoadFrom (String assemblyFile, Evidence securityEvidence)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public static Assembly Load (String assemblyString)
 		{
 			return AppDomain.CurrentDomain.Load (assemblyString);
@@ -269,6 +304,18 @@ namespace System.Reflection {
 		}
 
 		[MonoTODO]
+		public Module LoadModule (string moduleName, byte [] rawModule)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public Module LoadModule (string moduleName, byte [] rawModule, byte [] rawSymbolStore)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		public static Assembly LoadWithPartialName (string partialName, Evidence securityEvidence)
 		{
 			return AppDomain.CurrentDomain.Load (partialName, securityEvidence);
@@ -295,16 +342,31 @@ namespace System.Reflection {
 			return Activator.CreateInstance (t, bindingAttr, binder, args, culture, activationAttributes);
 		}
 
+		[MonoTODO]
 		public Module[] GetLoadedModules ()
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
+		public Module[] GetLoadedModules (bool getResourceModules)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		public Module[] GetModules ()
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
+		public Module[] GetModules (bool getResourceModules)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		public Module GetModule (String name)
 		{
 			throw new NotImplementedException ();
@@ -322,6 +384,7 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern AssemblyName[] GetReferencedAssemblies ();
 
+		[MonoTODO]
 		public virtual ManifestResourceInfo GetManifestResourceInfo (String resourceName)
 		{
 			throw new NotImplementedException ();

@@ -317,6 +317,7 @@ System.Reflection/MethodImplAttributes.cs
 System.Reflection/MethodInfo.cs
 System.Reflection/Missing.cs
 System.Reflection/Module.cs
+System.Reflection/ModuleResolveEventHandler.cs
 System.Reflection/MonoEvent.cs
 System.Reflection/MonoField.cs
 System.Reflection/MonoMethod.cs
