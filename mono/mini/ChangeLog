@@ -1,5 +1,8 @@
 2003-05-08  Dietmar Maurer  <dietmar@ximian.com>
 
+	* mini.c (mono_jit_create_remoting_trampoline): make it work with
+	abstract methods (fix bug 42542)
+
 	* aot.c: add ability to handle array types
 	
 2003-05-08  Zoltan Varga  <vargaz@freemail.hu>
