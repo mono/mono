@@ -1,3 +1,11 @@
+2003-07-20  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* XmlSchema.cs : added support for collecting missing type references
+	  at compilation-time.
+	* XmlSchemaType.cs, XmlSchemaComplexType.cs, XmlSchemaSimpleType.cs:
+	  - Renamed qName to QNameInternal.
+	  - Added BaseSchemaType and ContentTypeParticle support.
+
 2003-07-19  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* XmlSchema.cs, XmlSchemaAll.cs, XmlSchemaAnnotated.cs,

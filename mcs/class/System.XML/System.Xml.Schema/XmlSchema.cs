@@ -45,6 +45,7 @@ namespace System.Xml.Schema
 
 		// post schema compilation infoset
 		private Hashtable idCollection;
+		private Hashtable missingBaseSchemaTypeRefs;
 
                 // Compiler specific things
                 private static string xmlname = "schema";
@@ -65,6 +66,7 @@ namespace System.Xml.Schema
                         notations                       = new XmlSchemaObjectTable();
                         schemaTypes                     = new XmlSchemaObjectTable();
 			idCollection                    = new Hashtable ();
+			missingBaseSchemaTypeRefs       = new Hashtable ();
 
                 }
 
@@ -220,27 +222,10 @@ namespace System.Xml.Schema
 			get { return idCollection; }
 		}
 
-		/*
-		internal XmlSchemaForm ElementFormDefaultCompiled
+		internal Hashtable MissingBaseSchemaTypeRefs
 		{
-			get { return elementFormDefaultCompiled; }
+			get { return missingBaseSchemaTypeRefs; }
 		}
-
-		internal XmlSchemaForm AttributeFormDefaultCompiled
-		{
-			get { return attributeFormDefaultCompiled; }
-		}
-
-		internal XmlSchemaDerivationMethod BlockDefaultCompiled
-		{
-			get { return blockDefaultCompiled; }
-		}
-
-		internal XmlSchemaDerivationMethod FinalDefaultCompiled
-		{
-			get { return finalDefaultCompiled; }
-		}
-		*/
 
                 #endregion
 
@@ -338,6 +323,10 @@ namespace System.Xml.Schema
                                         }
                                 }
 			}
+			// Add missing references.
+			foreach (XmlSchemaComplexType cType in missingBaseSchemaTypeRefs.Keys)
+				cType.BaseSchemaTypeInternal = 
+					SchemaTypes [missingBaseSchemaTypeRefs [cType] as XmlQualifiedName];
 
 			foreach(XmlSchemaObject obj in Items)
                         {

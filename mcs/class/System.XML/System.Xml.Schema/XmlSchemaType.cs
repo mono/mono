@@ -12,19 +12,19 @@ namespace System.Xml.Schema
 	/// </summary>
 	public class XmlSchemaType : XmlSchemaAnnotated
 	{
-		private object baseSchemaType;
+		internal object BaseSchemaTypeInternal;
 		private XmlSchemaDatatype datatype;
 		private XmlSchemaDerivationMethod derivedBy;
 		private XmlSchemaDerivationMethod final;
 		internal XmlSchemaDerivationMethod finalResolved;
 		private bool isMixed;
 		private string name;
-		internal XmlQualifiedName qName;
+		internal XmlQualifiedName QNameInternal;
 
 		public XmlSchemaType()
 		{
 			final = XmlSchemaDerivationMethod.None;
-			qName = XmlQualifiedName.Empty;
+			QNameInternal = XmlQualifiedName.Empty;
 		}
 
 		#region Attributes
@@ -44,7 +44,7 @@ namespace System.Xml.Schema
 		[XmlIgnore]
 		public XmlQualifiedName QualifiedName 
 		{
-			get{ return qName; }
+			get{ return QNameInternal; }
 		}
 		[XmlIgnore]
 		public XmlSchemaDerivationMethod FinalResolved 
@@ -54,7 +54,7 @@ namespace System.Xml.Schema
 		[XmlIgnore]
 		public object BaseSchemaType 
 		{
-			get{ return  baseSchemaType; }
+			get{ return  BaseSchemaTypeInternal; }
 		}
 		[XmlIgnore]
 		public XmlSchemaDerivationMethod DerivedBy 

@@ -160,6 +160,7 @@ namespace System.Xml.Schema
 			if (this.IsComplied (schema.CompilationId))
 				return 0;
 
+			// block/final resolution
 			if(istoplevel)
 			{
 				if(this.Name == null || this.Name == string.Empty)
@@ -167,7 +168,7 @@ namespace System.Xml.Schema
 				else if(!XmlSchemaUtil.CheckNCName(Name))
 					error(h,"name must be a NCName");
 				else
-					this.qName = new XmlQualifiedName(Name, schema.TargetNamespace);
+					this.QNameInternal = new XmlQualifiedName(Name, schema.TargetNamespace);
 				
 				if(Block != XmlSchemaDerivationMethod.None)
 				{
@@ -234,20 +235,56 @@ namespace System.Xml.Schema
 					error(h,"block must be absent in a local complex type");
 			}
 
+			// Process contents and BaseSchemaType
 			if(ContentModel != null)
 			{
 				if(anyAttribute != null || Attributes.Count != 0 || Particle != null)
 					error(h,"attributes, particles or anyattribute is not allowed if ContentModel is present");
 
+				XmlQualifiedName baseTypeName = null;
 				if(ContentModel is XmlSchemaSimpleContent)
 				{
 					XmlSchemaSimpleContent smodel = (XmlSchemaSimpleContent)ContentModel;
 					errorCount += smodel.Compile(h,schema);
+
+					XmlSchemaSimpleContentExtension sscx = smodel.Content as XmlSchemaSimpleContentExtension;
+					if (sscx != null)
+						baseTypeName = sscx.BaseTypeName;
+					else {
+						XmlSchemaSimpleContentRestriction sscr = smodel.Content as XmlSchemaSimpleContentRestriction;
+						baseTypeName = sscr.BaseTypeName;
+						if (sscr.BaseType != null) {
+							sscr.BaseType.Compile (h, schema);
+							BaseSchemaTypeInternal = sscr.BaseType;
+						}
+					}
 				}
 				else if(ContentModel is XmlSchemaComplexContent)
 				{
 					XmlSchemaComplexContent cmodel = (XmlSchemaComplexContent)ContentModel;
 					errorCount += cmodel.Compile(h,schema);
+
+					XmlSchemaComplexContentExtension sccx = cmodel.Content as XmlSchemaComplexContentExtension;
+					if (sccx != null) {
+						contentTypeParticle = sccx.Particle;
+						baseTypeName = sccx.BaseTypeName;
+					}
+					else {
+						XmlSchemaComplexContentRestriction sccr = cmodel.Content as XmlSchemaComplexContentRestriction;
+						contentTypeParticle = sccr.Particle;
+						baseTypeName = sccr.BaseTypeName;
+					}
+				}
+
+				// fill base schema type
+				if (BaseSchemaTypeInternal == null && baseTypeName != null) {	// simple content restriction may have type itself.
+					if (baseTypeName.Namespace == XmlSchema.Namespace)
+						BaseSchemaTypeInternal = XmlSchemaDatatype.FromName (baseTypeName);
+					else {
+						BaseSchemaTypeInternal = schema.SchemaTypes [baseTypeName];
+						if (BaseSchemaTypeInternal == null)
+							schema.MissingBaseSchemaTypeRefs.Add (this, baseTypeName);
+					}
 				}
 			}
 			else
@@ -272,6 +309,7 @@ namespace System.Xml.Schema
 					XmlSchemaSequence xss = (XmlSchemaSequence)Particle;
 					errorCount += xss.Compile(h,schema);
 				}
+				this.contentTypeParticle = Particle;
 
 				if(this.anyAttribute != null)
 				{
