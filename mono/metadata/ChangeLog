@@ -1,3 +1,7 @@
+2004-05-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-tables.h: reflecting locale-builder updates.
+
 2004-05-25  Jackson Harper  <jackson@ximian.com>
 
 	* locales.c: When creating the current culture use the $LANGs
