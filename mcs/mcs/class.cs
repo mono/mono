@@ -1706,6 +1706,9 @@ namespace Mono.CSharp {
 				//
 //				Report.Warning (-20, "Exception while creating class: " + TypeBuilder.Name);
 //				Console.WriteLine (e.Message);
+			} catch {
+				Console.WriteLine ("In type: " + Name);
+				throw;
 			}
 			
 			if (Enums != null)
@@ -2353,7 +2356,6 @@ namespace Mono.CSharp {
 					ec, parent.TypeBuilder,
 					Name, flags, ret_type, parameters);
 			} else {
-
 				MethodBuilder = parent.TypeBuilder.DefineMethod (
 					Name, flags,
 					GetCallingConvention (parent is Class),

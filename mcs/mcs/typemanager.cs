@@ -371,51 +371,23 @@ public class TypeManager {
 	/// </summary>
 	static public string CSharpName (Type t)
 	{
-                string ar = String.Empty;
+		string s = t.FullName;
 
-                if (t.IsArray) {
-                        for (int i = 0; i < t.GetArrayRank(); i++)
-                                ar += "[]";
-                        t = t.GetElementType();
-
-                }
-
-		if (t == int32_type)
-			return "int" + ar;
-		else if (t == uint32_type)
-			return "uint" + ar;
-		else if (t == int64_type)
-			return "long" + ar;
-		else if (t == uint64_type)
-			return "ulong" + ar;
-		else if (t == float_type)
-			return "float" + ar;
-		else if (t == double_type)
-			return "double" + ar;
-		else if (t == char_type)
-			return "char" + ar;
-		else if (t == short_type)
-			return "short" + ar;
-		else if (t == decimal_type)
-			return "decimal" + ar;
-		else if (t == bool_type)
-			return "bool" + ar;
-		else if (t == sbyte_type)
-			return "sbyte" + ar;
-		else if (t == byte_type)
-			return "byte" + ar;
-		else if (t == short_type)
-			return "short" + ar;
-		else if (t == ushort_type)
-			return "ushort" + ar;
-		else if (t == string_type)
-			return "string" + ar;
-		else if (t == object_type)
-			return "object" + ar;
-		else if (t == void_type)
-			return "void";
-		else
-			return t.FullName + ar;
+		return s.
+		Replace ("System.Int32", "int").
+		Replace ("System.UInt32", "uint").
+		Replace ("System.Int16", "short").
+		Replace ("System.UInt16", "ushort").
+		Replace ("System.Int64", "long").
+		Replace ("System.UInt64", "ulong").
+		Replace ("System.Single", "float").
+		Replace ("System.Souble", "double").
+		Replace ("System.Char", "char").
+		Replace ("System.Decimal", "decimal").
+		Replace ("System.Byte", "byte").
+		Replace ("System.SByte", "sbyte").
+		Replace ("System.Object", "object").
+		Replace ("System.Void", "void");
 	}
 
         /// <summary>

@@ -1,6 +1,17 @@
+2002-04-29  Miguel de Icaza  <miguel@ximian.com>
+
+	* typemanager.cs (CSharpName): reimplemented with Lupus
+	suggestion.
+
 2002-04-28  Miguel de Icaza  <miguel@ximian.com>
 
-	* statement.cs (Statement.Warning_DeadCodeFound): Factorize code.
+	* statement.cs (If): correclty implement Resolve, because we were
+	not catching sem errors in there.  The same process is needed
+	everywhere else. 
+	(Return, StatementExpression, For, While, Do, Throw, Lock): Implement Resolve
+	
+
+	(Statement.Warning_DeadCodeFound): Factorize code.
 	(While): Report dead code here too.
 
 	(Statement): Added Resolve virtual method to allow

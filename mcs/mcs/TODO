@@ -1,10 +1,7 @@
 Dead Code Elimination bugs:
 ---------------------------
 
-	I should also resolve all the children expressions.
-
-	I could *probably* do this only if /optimize is passed.
-
+	I should also resolve all the children expressions in Switch, Fixed, Using.
 
 Major tasks:
 ------------

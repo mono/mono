@@ -11,7 +11,7 @@
                     RemoteDebugEnabled = "false"
                     RemoteDebugMachine = ""
                     StartAction = "Project"
-                    StartArguments = "@response"
+                    StartArguments = "aa.cs"
                     StartPage = ""
                     StartProgram = ""
                     StartURL = ""
