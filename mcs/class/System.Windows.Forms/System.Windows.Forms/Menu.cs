@@ -403,14 +403,9 @@ namespace System.Windows.Forms  {
 				}
 			}
 
-			[MonoTODO]
 			object IList.this[int index]{
-				get{
-					throw new NotImplementedException ();
-				}
-				set{
-					//FIXME:
-				}
+				[MonoTODO] get { throw new NotImplementedException (); }
+				[MonoTODO] set { throw new NotImplementedException (); }
 			}
 		
 			[MonoTODO]

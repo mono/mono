@@ -1,0 +1,4 @@
+2002-12-10  Jeroen Janssen <japj@darius.demon.nl>
+	
+	* added ChangeLog
+	* fixed MonoTodo compile errors with csc
