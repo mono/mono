@@ -1,5 +1,12 @@
 2003-12-11  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
+	* XmlDocument.cs : Fixed ReadNode() to call AppendChild() to document
+	  after setting all attribute nodes. Modified ReadNode() to handle
+	  Depth comparison and error handling (!= to <). It allows MS's
+	  SgmlReader bug that returns incorrect Depth.
+
+2003-12-11  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
 	* XmlDocumentNavigator.cs : Fixed MoveToNextAttribute (and 
 	  MoveToNextNamespace) that might result in NullReferenceException.
 	  patch by Sanjay Gupta. This fixed bug #51941 (and possibly #51415)

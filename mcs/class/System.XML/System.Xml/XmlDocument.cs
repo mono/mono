@@ -767,10 +767,6 @@ namespace System.Xml
 				case XmlNodeType.Element:
 					XmlElement element = CreateElement (reader.Prefix, reader.LocalName, reader.NamespaceURI);
 					element.IsEmpty = reader.IsEmptyElement;
-					if(currentNode != null)
-						currentNode.AppendChild (element);
-					else
-						resultNode = element;
 
 					// set the element's attributes.
 					while (reader.MoveToNextAttribute ()) {
@@ -778,6 +774,12 @@ namespace System.Xml
 					}
 
 					reader.MoveToElement ();
+
+					// MS.NET adds element to document after its attributes are filled.
+					if(currentNode != null)
+						currentNode.AppendChild (element);
+					else
+						resultNode = element;
 
 					if (!reader.IsEmptyElement)
 						currentNode = element;
@@ -867,7 +869,7 @@ namespace System.Xml
 					break;
 			} while (ignoredWhitespace || reader.Depth > startDepth ||
 				(reader.Depth == startDepth && reader.NodeType == XmlNodeType.EndElement));
-			if (startDepth != reader.Depth && reader.EOF)
+			if (startDepth < reader.Depth && reader.EOF)
 				throw new XmlException ("Unexpected end of xml reader.");
 			return resultNode != null ? resultNode : newNode;
 		}
