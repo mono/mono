@@ -1,3 +1,8 @@
+2003-11-07 Jackson Harper <jackson@ximian.com>
+
+	* Control.cs (ResolveUrl): Special case for urls that consist of
+	only a page anchor. ie <a href="#top">. This fixes bug #50165.
+	
 2003-11-07 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* IHierarchicalEnumerable.cs:

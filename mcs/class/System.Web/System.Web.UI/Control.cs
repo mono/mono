@@ -714,6 +714,9 @@ namespace System.Web.UI
 			if (relativeUrl == "")
 				return "";
 
+			if (relativeUrl [0] == '#')
+				return relativeUrl;
+			
 			string ts = TemplateSourceDirectory;
 			if (UrlUtils.IsRelativeUrl (relativeUrl) == false || ts == "")
 				return relativeUrl;
