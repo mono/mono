@@ -50,7 +50,6 @@ namespace Mono.Xml.Schema
 		XmlResolver resolver;
 		IHasXmlSchemaInfo sourceReaderSchemaInfo;
 		IXmlLineInfo readerLineInfo;
-//		bool laxElementValidation = true;
 		ValidationType validationType;
 		XmlSchemaSet schemas = new XmlSchemaSet ();
 		bool namespaces = true;
@@ -65,7 +64,6 @@ namespace Mono.Xml.Schema
 
 		XsdValidationStateManager stateManager = new XsdValidationStateManager ();
 		XsdValidationContext context = new XsdValidationContext ();
-		XsdValidationState childParticleState;
 
 		int xsiNilDepth = -1;
 		StringBuilder storedCharacters = new StringBuilder ();
@@ -513,8 +511,10 @@ namespace Mono.Xml.Schema
 		private void ValidateStartElementParticle ()
 		{
 			stateManager.CurrentElement = null;
-			context.ParticleState = context.ParticleState.EvaluateStartElement (reader.LocalName, reader.NamespaceURI);
-			if (context.ParticleState == XsdValidationState.Invalid)
+			context.SiblingState =
+				context.SiblingState.EvaluateStartElement (
+					reader.LocalName, reader.NamespaceURI);
+			if (context.SiblingState == XsdValidationState.Invalid)
 				HandleError ("Invalid start element: " + reader.NamespaceURI + ":" + reader.LocalName);
 
 			context.Element = stateManager.CurrentElement;
@@ -524,8 +524,8 @@ namespace Mono.Xml.Schema
 
 		private void ValidateEndElementParticle ()
 		{
-			if (childParticleState != null) {
-				if (!childParticleState.EvaluateEndElement ()) {
+			if (context.ChildState != null) {
+				if (!context.ChildState.EvaluateEndElement ()) {
 					HandleError ("Invalid end element: " + reader.Name);
 				}
 			}
@@ -770,14 +770,14 @@ namespace Mono.Xml.Schema
 				HandleError ("Element item appeared, while current element context is nil.");
 
 			context.Load (reader.Depth);
-			if (childParticleState != null) {
-				context.ParticleState = childParticleState;
-				childParticleState = null;
+			if (context.ChildState != null) {
+				context.SiblingState = context.ChildState;
+				context.ChildState = null;
 			}
 
 			// If validation state exists, then first assess particle validity.
 			context.SchemaType = null;
-			if (context.ParticleState != null) {
+			if (context.SiblingState != null) {
 				ValidateStartElementParticle ();
 			}
 
@@ -855,17 +855,19 @@ namespace Mono.Xml.Schema
 				}
 			}
 
-			if (stateManager.ProcessContents == XmlSchemaContentProcessing.Skip)
+			if (stateManager.ProcessContents
+				== XmlSchemaContentProcessing.Skip)
 				skipValidationDepth = reader.Depth;
-
-			// Finally, create child particle state.
-			XmlSchemaComplexType xsComplexType = SchemaType as XmlSchemaComplexType;
-			if (xsComplexType != null)
-				childParticleState = stateManager.Create (xsComplexType.ValidatableParticle);
-			else if (stateManager.ProcessContents == XmlSchemaContentProcessing.Lax)
-				childParticleState = stateManager.Create (XmlSchemaAny.AnyTypeContent);
-			else
-				childParticleState = stateManager.Create (XmlSchemaParticle.Empty);
+			else {
+				// create child particle state.
+				XmlSchemaComplexType xsComplexType = SchemaType as XmlSchemaComplexType;
+				if (xsComplexType != null)
+					context.ChildState = stateManager.Create (xsComplexType.ValidatableParticle);
+				else if (stateManager.ProcessContents == XmlSchemaContentProcessing.Lax)
+					context.ChildState = stateManager.Create (XmlSchemaAny.AnyTypeContent);
+				else
+					context.ChildState = stateManager.Create (XmlSchemaParticle.Empty);
+			}
 
 			AssessStartIdentityConstraints ();
 
@@ -962,29 +964,27 @@ namespace Mono.Xml.Schema
 			// 2 (xsi:nil and content prohibition)
 			// See AssessStartElementSchemaValidity() and ValidateCharacters()
 
-			string elementNs = reader.NamespaceURI;
 			// 3. attribute uses and 
 			// 5. wild IDs
-			while (reader.MoveToNextAttribute ()) {
-				if (reader.NamespaceURI == "http://www.w3.org/2000/xmlns/")
-					continue;
-				else if (reader.NamespaceURI == XmlSchema.InstanceNamespace)
-					continue;
-				XmlQualifiedName qname = new XmlQualifiedName (reader.LocalName, reader.NamespaceURI);
-				XmlSchemaObject attMatch = FindAttributeDeclaration (cType, qname, elementNs);
-				if (attMatch == null)
-					HandleError ("Attribute declaration was not found for " + qname);
-				else {
-					XmlSchemaAttribute attdecl = attMatch as XmlSchemaAttribute;
-					if (attdecl == null) { // i.e. anyAttribute
-//						XmlSchemaAnyAttribute anyAttrMatch = attMatch as XmlSchemaAnyAttribute;
-					} else {
-						AssessAttributeLocallyValidUse (attdecl);
-						AssessAttributeLocallyValid (attdecl, true);
+			if (reader.MoveToFirstAttribute ()) {
+				do {
+					switch (reader.NamespaceURI) {
+					case"http://www.w3.org/2000/xmlns/":
+					case XmlSchema.InstanceNamespace:
+						continue;
 					}
-				}
+					XmlQualifiedName qname = new XmlQualifiedName (reader.LocalName, reader.NamespaceURI);
+					XmlSchemaObject attMatch = FindAttributeDeclaration (cType, qname);
+					if (attMatch == null)
+						HandleError ("Attribute declaration was not found for " + qname);
+					XmlSchemaAttribute attdecl = attMatch as XmlSchemaAttribute;
+					if (attdecl != null) {
+						AssessAttributeLocallyValidUse (attdecl);
+						AssessAttributeLocallyValid (attdecl);
+					} // otherwise anyAttribute or null.
+				} while (reader.MoveToNextAttribute ());
+				reader.MoveToElement ();
 			}
-			reader.MoveToElement ();
 
 			// Collect default attributes.
 			// 4.
@@ -1024,8 +1024,7 @@ namespace Mono.Xml.Schema
 
 		private XmlSchemaObject FindAttributeDeclaration (
 			XmlSchemaComplexType cType,
-			XmlQualifiedName qname,
-			string elementNs)
+			XmlQualifiedName qname)
 		{
 			XmlSchemaObject result = cType.AttributeUses [qname];
 			if (result != null)
@@ -1047,16 +1046,9 @@ namespace Mono.Xml.Schema
 				return null;
 		}
 
-		// 3.2.4 Attribute Locally Valid and 3.4.4 - 5.wildIDs
-		private void AssessAttributeLocallyValid (XmlSchemaAttribute attr, bool checkWildIDs)
+		// 3.2.4 Attribute Locally Valid and 3.4.4
+		private void AssessAttributeLocallyValid (XmlSchemaAttribute attr)
 		{
-			// 1.
-			switch (reader.NamespaceURI) {
-			case XmlNamespaceManager.XmlnsXml:
-			case XmlNamespaceManager.XmlnsXmlns:
-			case XmlSchema.InstanceNamespace:
-				break;
-			}
 			// 2. - 4.
 			if (attr.AttributeType == null)
 				HandleError ("Attribute type is missing for " + attr.QualifiedName);
@@ -1072,47 +1064,36 @@ namespace Mono.Xml.Schema
 				} catch (Exception ex) { // FIXME: (wishlist) It is bad manner ;-(
 					HandleError ("Attribute value is invalid against its data type " + dt.TokenizedType, ex);
 				}
-				if (attr.ValidatedFixedValue != null && attr.ValidatedFixedValue != normalized)
+				if (attr.ValidatedFixedValue != null && attr.ValidatedFixedValue != normalized) {
 					HandleError ("The value of the attribute " + attr.QualifiedName + " does not match with its fixed value.");
-				if (this.checkIdentity && checkWildIDs)
-					AssessEachAttributeIdentityConstraint (dt, normalized, parsedValue);
+					parsedValue = dt.ParseValue (attr.ValidatedFixedValue, reader.NameTable, this.ParserContext.NamespaceManager);
+				}
+				if (this.checkIdentity)
+					AssessEachAttributeIdentityConstraint (dt, parsedValue);
 			}
 		}
 
-		private void AssessEachAttributeIdentityConstraint (XmlSchemaDatatype dt,
-			string normalized, object parsedValue)
+		// 3.4.4-5 wild IDs
+		private void AssessEachAttributeIdentityConstraint (
+			XmlSchemaDatatype dt, object parsedValue)
 		{
-			// Get normalized value and (if required) parsedValue if missing.
-			switch (dt.TokenizedType) {
-			case XmlTokenizedType.IDREFS:
-				if (normalized == null)
-					normalized = dt.Normalize (reader.Value);
-				if (parsedValue == null)
-					parsedValue = dt.ParseValue (normalized, reader.NameTable, ParserContext.NamespaceManager);
-				break;
-			case XmlTokenizedType.ID:
-			case XmlTokenizedType.IDREF:
-				if (normalized == null)
-					normalized = dt.Normalize (reader.Value);
-				break;
-			}
-
 			// Validate identity constraints.
+			string str = parsedValue as string;
 			switch (dt.TokenizedType) {
 			case XmlTokenizedType.ID:
 				if (thisElementId != null)
 					HandleError ("ID type attribute was already assigned in the containing element.");
-				thisElementId = normalized;
-				if (idList.Contains (normalized))
+				thisElementId = str;
+				if (idList.Contains (str))
 					HandleError ("Duplicate ID value was found.");
 				else
-					idList.Add (normalized, normalized);
-				if (MissingIDReferences.Contains (normalized))
-					MissingIDReferences.Remove (normalized);
+					idList.Add (str, str);
+				if (MissingIDReferences.Contains (str))
+					MissingIDReferences.Remove (str);
 				break;
 			case XmlTokenizedType.IDREF:
-				if (!idList.Contains (normalized))
-					MissingIDReferences.Add (normalized);
+				if (!idList.Contains (str))
+					MissingIDReferences.Add (str);
 				break;
 			case XmlTokenizedType.IDREFS:
 				string [] idrefs = (string []) parsedValue;
@@ -1134,8 +1115,9 @@ namespace Mono.Xml.Schema
 
 		private void AssessEndElementSchemaValidity ()
 		{
-			if (childParticleState == null)
-				childParticleState = context.ParticleState;
+			if (context.ChildState == null)
+				context.ChildState =
+					context.SiblingState;
 			ValidateEndElementParticle ();	// validate against childrens' state.
 
 			if (shouldValidateCharacters) {
@@ -1675,7 +1657,7 @@ namespace Mono.Xml.Schema
 					AssessEndElementSchemaValidity ();
 
 				storedCharacters.Length = 0;
-				childParticleState = null;
+				context.ChildState = null;
 				popContext = true;
 				break;
 
@@ -1752,7 +1734,8 @@ namespace Mono.Xml.Schema
 
 			// Some of them might be missing (See the spec section 5.3, and also 3.3.4).
 			public XmlSchemaElement Element;
-			public XsdValidationState ParticleState;
+			public XsdValidationState SiblingState;
+			public XsdValidationState ChildState;
 			public XmlSchemaAttribute [] DefaultAttributes;
 
 			// Some of them might be missing (See the spec section 5.3).
@@ -1773,7 +1756,9 @@ namespace Mono.Xml.Schema
 			{
 				Element = null;
 				SchemaType = null;
-				ParticleState = null;
+				SiblingState = null;
+				// FIXME: It should be fine. Need more refactory.
+//				ChildState = null;
 				LocalTypeDefinition = null;
 			}
 
@@ -1794,7 +1779,7 @@ namespace Mono.Xml.Schema
 				XsdValidationContext restored = (XsdValidationContext) contextStack [depth];
 				if (restored != null) {
 					this.Element = restored.Element;
-					this.ParticleState = restored.ParticleState;
+					this.SiblingState = restored.SiblingState;
 					this.SchemaType = restored.SchemaType;
 					this.LocalTypeDefinition = restored.LocalTypeDefinition;
 				}
