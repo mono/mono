@@ -1,3 +1,7 @@
+2004-02-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* switch.cs: Add test for bug #54473.
+
 2004-02-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* libtest.c: Add <time.h>
