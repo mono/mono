@@ -26,6 +26,7 @@ namespace demo
 			private CheckBox check1 = new CheckBox();
 	    	private RadioButton opt1 = new RadioButton();
 			private RadioButton opt2 = new RadioButton();
+			private RadioButton opt3 = new RadioButton();
 			private GroupBox frame1 = new GroupBox();
 			private PictureBox pbox = new PictureBox();
 			private FileDialog fdialog = new FileDialog();
@@ -80,12 +81,16 @@ namespace demo
 				check1.Checked = false;
 		
 				opt1.Location = new Point(20, 160);
-				opt1.Size = new Size(180, 20);
+				opt1.Size = new Size(100, 20);
 				opt1.Text = "CenterImage";
 
-				opt2.Location = new Point(20,200);
-				opt2.Size = new Size(180, 20);
+				opt2.Location = new Point(20,180);
+				opt2.Size = new Size(100, 20);
 				opt2.Text = "StretchImage";
+				
+				opt3.Location = new Point(20,200);
+				opt3.Size = new Size(100, 20);
+				opt3.Text = "Normal";
 
 				frame1.Location = new Point(15, 140);
 				frame1.Size = new Size (110, 85);
@@ -108,9 +113,10 @@ namespace demo
 									this.check1,
 									this.opt1,
 									this.opt2,
+									this.opt3,
 									this.frame1,
 									this.pbox,
-									fdialog,
+									this.fdialog,
 									this.label1 });
           this.Size = new Size(512, 250);
     		}
@@ -142,7 +148,10 @@ namespace demo
 				}
 				if (this.opt1.Checked){
 					this.pbox.SizeMode = PictureBoxSizeMode.CenterImage;
-				}			
+				}	
+				if (this.opt3.Checked){
+					this.pbox.SizeMode = PictureBoxSizeMode.Normal;
+				}	
   		}
 
 		private void button2_Click(object sender, EventArgs e){ 							
