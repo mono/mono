@@ -1,4 +1,4 @@
-//
+// Compiler options: -langversion:default
 // Test for covariance support in delegates
 //
 

@@ -1,3 +1,4 @@
+// Compiler options: -langversion:default
 //
 // Test for contravariance support in delegates
 //
