@@ -1,3 +1,9 @@
+
+Wed Jan 26 17:34:09 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* domain.c: fixed long standing bug in mono_string_equal() which
+	was brought to light with the ldstr changes.
+
 2005-01-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* reflection.c: Remove warning by adding missing include for marshal.h
