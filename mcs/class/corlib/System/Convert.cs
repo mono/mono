@@ -224,6 +224,7 @@ namespace System {
 			return (value != 0); 
 		}
 
+		[CLSCompliant (false)]
 		public static bool ToBoolean (sbyte value) 
 		{ 
 			return (value != 0); 
@@ -243,17 +244,20 @@ namespace System {
 		{
 			return Boolean.Parse (value); // provider is ignored.
 		}
-	
+
+		[CLSCompliant (false)]
 		public static bool ToBoolean (uint value) 
 		{ 
 			return (value != 0);
 		}
 
+		[CLSCompliant (false)]
 		public static bool ToBoolean (ulong value) 
 		{ 
 			return (value != 0); 
 		}
 
+		[CLSCompliant (false)]
 		public static bool ToBoolean (ushort value) 
 		{ 
 			return (value != 0); 
@@ -358,6 +362,7 @@ namespace System {
 			return (byte)value;
 		}
 
+		[CLSCompliant (false)]
 		public static byte ToByte (sbyte value) 
 		{ 
 			if (value < Byte.MinValue)
@@ -390,7 +395,8 @@ namespace System {
 		{
 			return (byte) ConvertFromBase (value, fromBase);
 		}
-	
+
+		[CLSCompliant (false)]
 		public static byte ToByte (uint value) 
 		{ 
 			if (value > Byte.MaxValue)
@@ -400,6 +406,7 @@ namespace System {
 			return (byte)value;
 		}
 
+		[CLSCompliant (false)]
 		public static byte ToByte (ulong value) 
 		{ 
 			if (value > Byte.MaxValue)
@@ -409,6 +416,7 @@ namespace System {
 			return (byte)value;
 		}
 
+		[CLSCompliant (false)]
 		public static byte ToByte (ushort value) 
 		{ 
 			if (value > Byte.MaxValue)
@@ -485,6 +493,7 @@ namespace System {
 			throw new InvalidCastException ("This conversion is not supported.");
 		}
 
+		[CLSCompliant (false)]
 		public static char ToChar (sbyte value) 
 		{ 
 			if (value < Char.MinValue)
@@ -512,7 +521,8 @@ namespace System {
 		{
 			return Char.Parse (value); // provider is ignored.
 		}
-	
+
+		[CLSCompliant (false)]
 		public static char ToChar (uint value) 
 		{ 
 			if (value > Char.MaxValue)
@@ -522,6 +532,7 @@ namespace System {
 			return (char)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static char ToChar (ulong value) 
 		{ 
 			if (value > Char.MaxValue)
@@ -531,6 +542,7 @@ namespace System {
 			return (char)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static char ToChar (ushort value) 
 		{ 
 			if (value > Char.MaxValue)
@@ -1505,7 +1517,6 @@ namespace System {
 			return (float)value; 
 		}
 
-		[CLSCompliant (false)]
 		public static float ToSingle (object value)
 		{
 			return ToSingle (value, null);
@@ -1644,11 +1655,13 @@ namespace System {
 			return String.Empty;
 		}				
 
+		[CLSCompliant (false)]
 		public static string ToString (sbyte value) 
 		{ 
 			return value.ToString (); 
 		}
 
+		[CLSCompliant (false)]				
 		public static string ToString (sbyte value, IFormatProvider provider) 
 		{ 
 			return value.ToString (provider); 

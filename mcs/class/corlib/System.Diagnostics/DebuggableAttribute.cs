@@ -8,7 +8,8 @@
 //
 
 namespace System.Diagnostics {
-
+	
+	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Module)]
 	public sealed class DebuggableAttribute : System.Attribute {
 
 		private bool JITTrackingEnabledFlag;

@@ -46,6 +46,7 @@ namespace System
                                 throw new OverflowException(Locale.GetText ("Value is too small"));
                         return (value < 0)? -value: value;
                 }
+		[CLSCompliant (false)]
                 public static sbyte Abs(sbyte value)
                 {
                         if (value == SByte.MinValue)
@@ -107,6 +108,8 @@ namespace System
                 {
                         return (val1 > val2)? val1: val2;
                 }
+
+		[CLSCompliant (false)]
                 public static sbyte Max(sbyte val1, sbyte val2)
                 {
                         return (val1 > val2)? val1: val2;
@@ -115,14 +118,20 @@ namespace System
                 {
                         return (val1 > val2)? val1: val2;
                 }
+
+		[CLSCompliant (false)]
                 public static uint Max(uint val1, uint val2)
                 {
                         return (val1 > val2)? val1: val2;
                 }
+
+		[CLSCompliant (false)]
                 public static ulong Max(ulong val1, ulong val2)
                 {
                         return (val1 > val2)? val1: val2;
                 }
+
+		[CLSCompliant (false)]
                 public static ushort Max(ushort val1, ushort val2)
                 {
                         return (val1 > val2)? val1: val2;
@@ -151,6 +160,8 @@ namespace System
                 {
                         return (val1 < val2)? val1: val2;
                 }
+
+		[CLSCompliant (false)]
                 public static sbyte Min(sbyte val1, sbyte val2)
                 {
                         return (val1 < val2)? val1: val2;
@@ -159,14 +170,20 @@ namespace System
                 {
                         return (val1 < val2)? val1: val2;
                 }
+
+		[CLSCompliant (false)]
                 public static uint Min(uint val1, uint val2)
                 {
                         return (val1 < val2)? val1: val2;
                 }
+
+		[CLSCompliant (false)]
                 public static ulong Min(ulong val1, ulong val2)
                 {
                         return (val1 < val2)? val1: val2;
                 }
+
+		[CLSCompliant (false)]
                 public static ushort Min(ushort val1, ushort val2)
                 {
                         return (val1 < val2)? val1: val2;
@@ -252,6 +269,8 @@ namespace System
                         if (value > 0) return 1;
                         return (value == 0)? 0: -1;
                 }
+
+		[CLSCompliant (false)]
                 public static int Sign(sbyte value)
                 {
                         if (value > 0) return 1;
