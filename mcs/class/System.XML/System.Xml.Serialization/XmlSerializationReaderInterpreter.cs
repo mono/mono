@@ -210,54 +210,51 @@ namespace System.Xml.Serialization
 				}
 			}
 			
-			if (map.AttributeMembers != null)
+			// Reads attributes
+
+			XmlTypeMapMember anyAttrMember = map.DefaultAnyAttributeMember;
+			int anyAttributeIndex = 0;
+			object anyAttributeArray = null;
+
+			while (Reader.MoveToNextAttribute())
 			{
-				// Reads attributes
+				XmlTypeMapMemberAttribute member = map.GetAttribute (Reader.LocalName, Reader.NamespaceURI);
 
-				XmlTypeMapMember anyAttrMember = map.DefaultAnyAttributeMember;
-				int anyAttributeIndex = 0;
-				object anyAttributeArray = null;
-
-				while (Reader.MoveToNextAttribute())
+				if (member != null) 
 				{
-					XmlTypeMapMemberAttribute member = map.GetAttribute (Reader.LocalName, Reader.NamespaceURI);
-
-					if (member != null) 
-					{
-						SetMemberValue (member, ob, GetValueFromXmlString (Reader.Value, member.TypeData, member.MappedType), isValueList);
-					}
-					else if (IsXmlnsAttribute(Reader.Name)) 
-					{
-						// If the map has NamespaceDeclarations,
-						// then store this xmlns to the given member.
-						// If the instance doesn't exist, then create.
-						if (map.NamespaceDeclarations != null) {
-							XmlSerializerNamespaces nss = this.GetMemberValue (map.NamespaceDeclarations, ob, isValueList) as XmlSerializerNamespaces;
-							if (nss == null) {
-								nss = new XmlSerializerNamespaces ();
-								SetMemberValue (map.NamespaceDeclarations, ob, nss, isValueList);
-							}
-							if (Reader.Prefix == "xmlns")
-								nss.Add (Reader.LocalName, Reader.Value);
-							else
-								nss.Add ("", Reader.Value);
+					SetMemberValue (member, ob, GetValueFromXmlString (Reader.Value, member.TypeData, member.MappedType), isValueList);
+				}
+				else if (IsXmlnsAttribute(Reader.Name)) 
+				{
+					// If the map has NamespaceDeclarations,
+					// then store this xmlns to the given member.
+					// If the instance doesn't exist, then create.
+					if (map.NamespaceDeclarations != null) {
+						XmlSerializerNamespaces nss = this.GetMemberValue (map.NamespaceDeclarations, ob, isValueList) as XmlSerializerNamespaces;
+						if (nss == null) {
+							nss = new XmlSerializerNamespaces ();
+							SetMemberValue (map.NamespaceDeclarations, ob, nss, isValueList);
 						}
-					}	
-					else if (anyAttrMember != null) 
-					{
-						XmlAttribute attr = (XmlAttribute) Document.ReadNode(Reader);
-						ParseWsdlArrayType (attr);
-						AddListValue (anyAttrMember.TypeData, ref anyAttributeArray, anyAttributeIndex++, attr, true);
+						if (Reader.Prefix == "xmlns")
+							nss.Add (Reader.LocalName, Reader.Value);
+						else
+							nss.Add ("", Reader.Value);
 					}
-					else
-						ProcessUnknownAttribute(ob);
-				}
-
-				if (anyAttrMember != null)
+				}	
+				else if (anyAttrMember != null) 
 				{
-					anyAttributeArray = ShrinkArray ((Array)anyAttributeArray, anyAttributeIndex, anyAttrMember.TypeData.Type.GetElementType(), true);
-					SetMemberValue (anyAttrMember, ob, anyAttributeArray, isValueList);
+					XmlAttribute attr = (XmlAttribute) Document.ReadNode(Reader);
+					ParseWsdlArrayType (attr);
+					AddListValue (anyAttrMember.TypeData, ref anyAttributeArray, anyAttributeIndex++, attr, true);
 				}
+				else
+					ProcessUnknownAttribute(ob);
+			}
+
+			if (anyAttrMember != null)
+			{
+				anyAttributeArray = ShrinkArray ((Array)anyAttributeArray, anyAttributeIndex, anyAttrMember.TypeData.Type.GetElementType(), true);
+				SetMemberValue (anyAttrMember, ob, anyAttributeArray, isValueList);
 			}
 			
 			if (!isValueList)

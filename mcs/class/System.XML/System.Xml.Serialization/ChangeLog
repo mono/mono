@@ -1,5 +1,11 @@
 2004-05-03  Lluis Sanchez Gual <lluis@ximian.com>
 
+	* XmlSerializationReaderInterpreter.cs: Removed the check for null 
+	  AttributeMembers collection. Even if there are no attribute members,
+	  attributes need to be read.
+
+2004-05-03  Lluis Sanchez Gual <lluis@ximian.com>
+
 	* XmlSerializationReader.cs: In ReadSerializable(), take into account that
 	  the IXmlSerializable object may not read all the EndElement it read.
 	  This fixes bug #57413.
