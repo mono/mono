@@ -46,12 +46,13 @@ SUBDIRS = \
 	Novell.Directory.Ldap		\
 	Mono.Security.Win32		\
 	System.DirectoryServices	\
-	System.Messaging	\
-	System.ServiceProcess \
+	System.Messaging	        \
+	System.ServiceProcess           \
 	System.Drawing.Design		\
 	Mono.Http			\
 	Microsoft.Vsa			\
-	Mono.Cairo
+	Mono.Cairo                      \
+	IBM.Data.DB2			     
 #	Microsoft.JScript		\
 
 # Starting with Microsoft.Vsa, the libraries above weren't in the

@@ -1,3 +1,8 @@
+2004-06-11  Duncan Mak  <duncan@ximian.com>
+
+	* IBM.Data.DB2/IBM.Data.DB2.dll.sources: 
+	* Makefile: Add IBM.Data.DB2.
+
 2004-05-07  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (SUBDIRS): Build 'corlib' and first pass of 'System'
