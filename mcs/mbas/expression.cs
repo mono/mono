@@ -4010,12 +4010,6 @@ namespace Mono.CSharp {
 							this.expr, Arguments, loc)).Resolve (ec);
 				}
 			}
-			/*
-			if (!(expr is MethodGroupExpr)){
-				expr.Error118 (ResolveFlags.MethodGroup);
-				return null;
-			}
-			*/
 
 			//
 			// Next, evaluate all the expressions in the argument list
@@ -4044,12 +4038,20 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				MethodInfo mi = method as MethodInfo;
-				if (mi != null) 
+				if ((method as MethodInfo) != null) 
 				{
+					MethodInfo mi = method as MethodInfo;
 					type = TypeManager.TypeToCoreType (mi.ReturnType);
 					if (!mi.IsStatic && !mg.IsExplicitImpl && (mg.InstanceExpression == null))
 						SimpleName.Error_ObjectRefRequired (ec, loc, mi.Name);
+				}
+
+				if ((method as ConstructorInfo) != null) 
+				{
+					ConstructorInfo ci = method as ConstructorInfo;
+					type = TypeManager.void_type;
+					if (!ci.IsStatic && !mg.IsExplicitImpl && (mg.InstanceExpression == null))
+						SimpleName.Error_ObjectRefRequired (ec, loc, ci.Name);
 				}
 
 				if (type.IsPointer)
@@ -6655,12 +6657,16 @@ namespace Mono.CSharp {
 			Expression e;
 
 			if (ec.IsStatic){
-				Error (1511, "Keyword base is not allowed in static method");
+				Error (1511, "Keyword MyBase is not allowed in static method");
 				return null;
 			}
-				
+			
+			if (member == "New")
+				member = ".ctor";
+			
 			member_lookup = MemberLookup (ec, base_type, base_type, member,
 						      AllMemberTypes, AllBindingFlags, loc);
+
 			if (member_lookup == null) {
 				Error (117,
 					      TypeManager.CSharpName (base_type) + " does not " +
