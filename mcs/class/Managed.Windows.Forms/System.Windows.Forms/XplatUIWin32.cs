@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.22 $
+// $Revision: 1.23 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.23  2004/08/20 20:39:07  pbartok
+// - Added jackson's Async code from X11 to Win32
+//
 // Revision 1.22  2004/08/20 20:02:45  pbartok
 // - Added method for setting the background color
 // - Added handling for erasing the window background
@@ -797,6 +800,17 @@ namespace System.Windows.Forms {
 					break;
 				}
 
+				case Msg.WM_ASYNC_MESSAGE: {
+					GCHandle handle = (GCHandle)msg.lParam;
+					AsyncMethodData asyncdata = (AsyncMethodData) handle.Target;
+					AsyncMethodResult asyncresult = asyncdata.Result.Target as AsyncMethodResult;
+					object ret = asyncdata.Method.DynamicInvoke (asyncdata.Args);
+					if (asyncresult != null)
+						asyncresult.Complete (ret);
+					handle.Free ();
+					break;
+				}
+
 				case Msg.WM_MOUSEMOVE: {
 					if (msg.hwnd != prev_mouse_hwnd) {
 						TRACKMOUSEEVENT	tme;
@@ -925,7 +939,7 @@ namespace System.Windows.Forms {
 
 		internal override void SendAsyncMethod (AsyncMethodData method)
 		{
-			throw new NotImplementedException ();
+			Win32PostMessage(IntPtr.Zero, Msg.WM_ASYNC_MESSAGE, IntPtr.Zero, (IntPtr)GCHandle.Alloc (method));
 		}
 
 		// Santa's little helper
@@ -1051,6 +1065,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("gdi32.dll", EntryPoint="DeleteObject", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32DeleteObject(IntPtr o);
+
+		[DllImport ("user32.dll", EntryPoint="PostMessage", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static bool Win32PostMessage(IntPtr hwnd, Msg msg, IntPtr wParam, IntPtr lParam);
 		#endregion
 
 	}
