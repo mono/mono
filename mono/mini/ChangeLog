@@ -1,3 +1,7 @@
+2004-04-19 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* iltests.il: more tests.
+
 2004-04-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-*.c (mono_arch_get_allocatable_int_vars): Skip written-only
