@@ -407,7 +407,11 @@ namespace System.Xml
 		[MonoTODO]
 		public override void WriteQualifiedName (string localName, string ns)
 		{
-			throw new NotImplementedException ();
+			if (localName == null || localName == String.Empty)
+				throw new ArgumentException ();
+
+			CheckState ();
+			w.Write ("{0}:{1}", ns, localName);
 		}
 
 		public override void WriteRaw (string data)
