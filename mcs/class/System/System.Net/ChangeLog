@@ -1,3 +1,18 @@
+2004-11-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs: check for FIN or RST on the socket before reusing.
+	Fixes bug #69388.
+
+2004-11-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ChunkStream.cs: simplified condition for WantMore property.
+
+	* WebConnection.cs: in Connect(), finish any pending reads we might
+	have for chunked data. Ignore possible blank lines at the very
+	beginning of the server response. Honor user set KeepAlive in
+	HttpWebRequest for HTTP/1.1 connections. Thanks to Eyal Alayuf for
+	his suggestions and code.
+
 2004-11-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebResponse.cs: don't lock up when the cookie received ends with

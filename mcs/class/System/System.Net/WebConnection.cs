@@ -89,14 +89,22 @@ namespace System.Net
 			queue = group.Queue;
 		}
 
+		bool CanReuse ()
+		{
+			// The real condition is !(socket.Poll (0, SelectMode.SelectRead) || socket.Available != 0)
+			// but if there's data pending to read (!) we won't reuse the socket.
+			return (socket.Poll (0, SelectMode.SelectRead) == false);
+		}
+		
 		void Connect ()
 		{
 			lock (this) {
 				if (socket != null && socket.Connected && status == WebExceptionStatus.Success) {
 					// Take the chunked stream to the expected state (State.None)
-					while (chunkedRead && chunkStream.WantMore && Read (buffer, 0, buffer.Length) > 0);
-					reused = true;
-					return;
+					if (CanReuse () && CompleteChunkedRead ()) {
+						reused = true;
+						return;
+					}
 				}
 
 				reused = false;
@@ -104,7 +112,7 @@ namespace System.Net
 					socket.Close();
 					socket = null;
 				}
-				
+
 				chunkStream = null;
 				IPHostEntry hostEntry = sPoint.HostEntry;
 
@@ -218,6 +226,7 @@ namespace System.Net
 		{
 			try {
 				NetworkStream serverStream = new NetworkStream (socket, false);
+
 				if (request.Address.Scheme == Uri.UriSchemeHttps) {
 					ssl = true;
 					EnsureSSLStreamAvailable ();
@@ -301,7 +310,6 @@ namespace System.Net
 				return;
 			}
 
-			//Console.WriteLine (System.Text.Encoding.Default.GetString (cnc.buffer, 0, nread + cnc.position));
 			int pos = -1;
 			nread += cnc.position;
 			if (cnc.readState == ReadState.None) { 
@@ -399,11 +407,18 @@ namespace System.Net
 			string line = null;
 			bool lineok = false;
 			bool isContinue = false;
+			bool emptyFirstLine = false;
 			do {
 				if (readState == ReadState.None) {
 					lineok = ReadLine (buffer, ref pos, max, ref line);
 					if (!lineok)
 						return -1;
+
+					if (line == null) {
+						emptyFirstLine = true;
+						continue;
+					}
+					emptyFirstLine = false;
 
 					readState = ReadState.Status;
 
@@ -429,6 +444,7 @@ namespace System.Net
 						return pos;
 				}
 
+				emptyFirstLine = false;
 				if (readState == ReadState.Status) {
 					readState = ReadState.Headers;
 					Data.Headers = new WebHeaderCollection ();
@@ -482,7 +498,7 @@ namespace System.Net
 						return pos;
 					}
 				}
-			} while (isContinue == true);
+			} while (emptyFirstLine || isContinue);
 
 			return -1;
 		}
@@ -502,7 +518,6 @@ namespace System.Net
 			keepAlive = request.KeepAlive;
 			Data = new WebConnectionData ();
 			Data.request = request;
-
 			Connect ();
 			if (status != WebExceptionStatus.Success) {
 				request.SetWriteStreamError (status);
@@ -559,7 +574,7 @@ namespace System.Net
 				busy = false;
 				string header = (sPoint.UsesProxy) ? "Proxy-Connection" : "Connection";
 				string cncHeader = (Data.Headers != null) ? Data.Headers [header] : null;
-				bool keepAlive = (Data.Version == HttpVersion.Version11);
+				bool keepAlive = (Data.Version == HttpVersion.Version11 && this.keepAlive);
 				if (cncHeader != null) {
 					cncHeader = cncHeader.ToLower ();
 					keepAlive = (this.keepAlive && cncHeader.IndexOf ("keep-alive") != -1);
@@ -659,10 +674,12 @@ namespace System.Net
 					nbytes = nstream.EndRead (wr.InnerAsyncResult);
 
 				chunkStream.WriteAndReadBack (wr.Buffer, wr.Offset, wr.Size, ref nbytes);
-				if (nbytes < wr.Size && chunkStream.WantMore) {
+				while (nbytes == 0 && chunkStream.WantMore) {
 					int size = chunkStream.ChunkLeft;
-					if (size < 0) // not read chunk size yet
+					if (size <= 0) // not read chunk size yet
 						size = 1024;
+					else if (size > 16384)
+						size = 16384;
 
 					byte [] morebytes = new byte [size];
 					int nread;
@@ -678,6 +695,20 @@ namespace System.Net
 			return nstream.EndRead (result);
 		}
 
+		bool CompleteChunkedRead()
+		{
+			if (!chunkedRead || chunkStream == null)
+				return true;
+
+			while (chunkStream.WantMore) {
+				int nbytes = nstream.Read (buffer, 0, buffer.Length);
+				if (nbytes <= 0)
+					return false; // Socket was disconnected
+				chunkStream.Write(buffer, 0, nbytes);
+			}
+
+			return true;
+  		}
 		internal IAsyncResult BeginWrite (byte [] buffer, int offset, int size, AsyncCallback cb, object state)
 		{
 			IAsyncResult result = null;

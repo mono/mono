@@ -167,7 +167,7 @@ namespace System.Net
 		}
 
 		public bool WantMore {
-			get { return (chunkRead != chunkSize || chunkSize != 0 || (chunkSize == 0 && state != State.None)); }
+			get { return (chunkRead != chunkSize || chunkSize != 0 || state != State.None); }
 		}
 
 		public int ChunkLeft {
