@@ -21,3 +21,4 @@ System.Windows.Forms.Design/MenusCommands.cs
 System.Windows.Forms.Design/ParentControlDesigner.cs
 System.Windows.Forms.Design/ScrollableControlDesigner.cs
 System.Windows.Forms.Design/SelectionRules.cs
+System.Windows.Forms.Design/TODOAttribute.cs
