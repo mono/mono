@@ -28,7 +28,7 @@ namespace System.Windows.Forms {
     		// Helper NativeWindow class to dispatch messages back
     		// to the Control class
 		//
-    		protected class ControlNativeWindow : NativeWindow {
+    		protected internal class ControlNativeWindow : NativeWindow {
     
     			private Control control;
     
