@@ -1,3 +1,8 @@
+2003/01/30  Nick Drochak <ndrochak@gol.com>
+
+	* corlib_test.build: AllTests.cs do not exist anymore. No need to
+	excluded them.
+
 2003-01-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* makefile.gnu: compile and run with debugging enabled.

@@ -15,7 +15,6 @@
 		<csc target="library" output="corlib_test.dll" debug="${debug}">
 			<sources>
 				<includes name="**/*.cs"/>
-				<excludes name="**/AllTests.cs"/>
 			</sources>
 			<references basedir="..\..\..\nunit20">
 				<includes name="NUnit.Framework.dll"/>
@@ -29,7 +28,6 @@
 		<csc target="library" output="corlib_reference.dll" debug="${debug}">
 			<sources>
 				<includes name="**/*.cs"/>
-				<excludes name="**/AllTests.cs"/>
 			</sources>
 			<references basedir="..\..\..\nunit20">
 				<includes name="NUnit.Framework.dll"/>
