@@ -1,6 +1,13 @@
+2002-12-21  Ravi Pratap  <ravi@ximian.com>
+
+	* ecore.cs (StandardImplicitConversion): When in an unsafe
+	context, we allow conversion between void * to any other pointer
+	type. This fixes bug #35973.
+
 2002-12-20 Jackson Harper <jackson@latitudegeo.com>
 
-	* codegen.cs: Use Path.GetFileNameWithoutExtension so an exception is not thrown when extensionless outputs are used 
+	* codegen.cs: Use Path.GetFileNameWithoutExtension so an exception
+	is not thrown when extensionless outputs are used 
 
 2002-12-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
