@@ -82,7 +82,7 @@ namespace System.Web.Security
 				return;
 
 			FormsAuthenticationTicket ticket = FormsAuthentication.Decrypt (cookie.Value);
-			if (ticket == null || ticket.Expired)
+			if (ticket == null || (ticket.IsPersistent && ticket.Expired))
 				return;
 
 			if (config.SlidingExpiration)
