@@ -1548,30 +1548,85 @@ scope_block		: OPEN_BRACE method_decls CLOSE_BRACE
 			;
 
 seh_block		: try_block seh_clauses
+                          {
+                                Console.WriteLine ($1);
+                                Console.WriteLine ($2);
+                                TryBlock try_block = (TryBlock) $1;
+                                try_block.SetMethod (codegen.CurrentMethodDef);
+
+                                ArrayList clause_list = (ArrayList) $2;
+                                foreach (object clause in clause_list) {
+                                        Console.WriteLine ("clause:  " + clause);
+                                        try_block.AddSehClause ((ISehClause) clause);
+                                }
+
+                                codegen.CurrentMethodDef.AddInstr (try_block);
+                          }
 			;
 
 try_block		: D_TRY scope_block
 			| D_TRY id K_TO id
+                          {
+                                $$ = new TryBlock ((string) $2, (string) $4);
+                          }
 			| D_TRY int32 K_TO int32
 			;
 
 seh_clauses		: seh_clause
+                          {
+                                ArrayList clause_list = new ArrayList ();
+                                clause_list.Add ($1);
+                                $$ = clause_list;
+                          }
 			| seh_clauses seh_clause
+                          {
+                                ArrayList clause_list = (ArrayList) $1;
+                                clause_list.Add ($2);
+                          }
 			;
 
 seh_clause		: K_CATCH class_ref handler_block
+                          {
+                                Console.WriteLine ($2);
+                                Console.WriteLine ($3);
+                                ITypeRef type = (ITypeRef) $2;
+                                CatchBlock cb = new CatchBlock (type.AsClassRef (codegen));
+                                cb.SetHandlerBlock ((HandlerBlock) $3);
+                                $$ = cb;
+                          }
 			| K_FINALLY handler_block
+                          {
+                                FinallyBlock fb = new FinallyBlock ();
+                                fb.SetHandlerBlock ((HandlerBlock) $2);
+                                $$ = fb;
+                          }
 			| K_FAULT handler_block
+                          {
+                                FaultBlock fb = new FaultBlock ();
+                                fb.SetHandlerBlock ((HandlerBlock) $2);
+                                $$ = fb;
+                          }
 			| filter_clause handler_block
+                          {
+                                FilterBlock fb = (FilterBlock) $1;
+                                fb.SetHandlerBlock ((HandlerBlock) $2);
+                          }
 			;
 
 filter_clause		: K_FILTER scope_block
 			| K_FILTER id
+                          {
+                                FilterBlock fb = new FilterBlock ((string) $2);
+                                $$ = fb;
+                          }
 			| K_FILTER int32
 			;
 
 handler_block		: scope_block
 			| K_HANDLER id K_TO id
+                          {
+                                $$ = new HandlerBlock ((string) $2, (string) $4);
+                          }
 			| K_HANDLER int32 K_TO int32
 			;
 
