@@ -1,3 +1,7 @@
+2004-10-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Makefile.am (libgc_libs): Do some automake magic so libmono/mono
+	depends on libmonogc.
 
 Wed Sep 22 19:06:02 CEST 2004 Paolo Molaro <lupus@ximian.com>
 

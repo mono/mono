@@ -1,3 +1,8 @@
+2004-10-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Makefile.am (libgc_libs): Do some automake magic so libmono/mono
+	depends on libmonogc. Fixes #68805.
+
 2004-10-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* mini.c (mono_jit_free_method): Provide extra information for
