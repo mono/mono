@@ -17,9 +17,7 @@ namespace System {
 		public const byte MinValue = 0;
 		public const byte MaxValue = 255;
 		
-		// VES needs to know about value.  public is workaround
-		// so source will compile
-		public byte value;
+		internal byte value;
 
 		public int CompareTo (object v)
 		{

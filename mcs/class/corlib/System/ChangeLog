@@ -1,3 +1,9 @@
+2002-09-04  Miguel de Icaza  <miguel@ximian.com>
+
+	* Int16.cs, UInt16.cs, Int32.cs, UInt32.cs, Int64.cs, UInt64.cs,
+	SByte.cs, Byte.cs, Char.cs: Use internal for the actual value
+	instead of public.
+
 2002-09-03  Jonathan Pryor <jonpryor@vt.edu>
 	* Enum.cs: Fixed Enum.Format so that the "x" format specifier would work
 	           properly.

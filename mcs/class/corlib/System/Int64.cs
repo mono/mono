@@ -18,7 +18,7 @@ namespace System {
 		public const long MaxValue = 0x7fffffffffffffff;
 		public const long MinValue = -9223372036854775808;
 		
-		public long value;
+		internal long value;
 
 		public int CompareTo (object v)
 		{

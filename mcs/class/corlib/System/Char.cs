@@ -24,9 +24,7 @@ namespace System {
 		public const char MaxValue = (char) 0xffff;
 		public const char MinValue = (char) 0;
 		
-		// VES needs to know about value.  public is workaround
-		// so source will compile
-		public char value;
+		internal char value;
 		
 		public int CompareTo (object v)
 		{

@@ -18,9 +18,7 @@ namespace System {
 		public const sbyte MinValue = -128;
 		public const sbyte MaxValue = 127;
 
-		// VES needs to know about value. public is workaround
-		// so source will compile
-		public sbyte value;
+		internal sbyte value;
 
 		public int CompareTo (object v)
 		{

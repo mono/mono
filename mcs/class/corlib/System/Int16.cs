@@ -17,9 +17,7 @@ namespace System {
 		public const short MaxValue =  32767;
 		public const short MinValue = -32768;
 		
-		// VES needs to know about value.  public is workaround
-		// so source will compile
-		public short value;
+		internal short value;
 
 		public int CompareTo (object v)
 		{

@@ -18,7 +18,7 @@ namespace System {
 		public const ulong MaxValue = 0xffffffffffffffff;
 		public const ulong MinValue = 0;
 		
-		public ulong value;
+		internal ulong value;
 
 		public int CompareTo (object v)
 		{

@@ -18,7 +18,7 @@ namespace System {
 		public const ushort MaxValue = 0xffff;
 		public const ushort MinValue = 0;
 		
-		public ushort value;
+		internal ushort value;
 
 		public int CompareTo (object v)
 		{

@@ -19,7 +19,7 @@ namespace System {
 		public const uint MaxValue = 0xffffffff;
 		public const uint MinValue = 0;
 		
-		public uint value;
+		internal uint value;
 
 		public int CompareTo (object v)
 		{
