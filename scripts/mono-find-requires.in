@@ -1,2 +1,2 @@
 #!/bin/sh
-exec @bindir@/@mono_interp@ @plat_bindir@/mono-find-requires.exe "$@"
+exec @bindir@/@mono_interp@ @mono_one_instdir@/mono-find-requires.exe "$@"
