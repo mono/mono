@@ -129,6 +129,8 @@ System.Collections.Specialized/ProcessStringDictionary.cs
 System.Collections.Specialized/StringCollection.cs
 System.Collections.Specialized/StringDictionary.cs
 System.Collections.Specialized/StringEnumerator.cs
+System.ComponentModel/AsyncCompletedEventArgs.cs
+System.ComponentModel/AsyncCompletedEventHandler.cs
 System.ComponentModel/AttributeCollection.cs
 System.ComponentModel/BaseNumberConverter.cs
 System.ComponentModel/BindableAttribute.cs
