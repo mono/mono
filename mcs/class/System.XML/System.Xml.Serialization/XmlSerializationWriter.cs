@@ -53,28 +53,27 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected Exception CreateMismatchChoiceException (string value, string elementName, string enumValue)
 		{
-			throw new NotImplementedException ();
+			string message = String.Format ("Value of {0} mismatches the type of {1}, you need to set it to {2}.", elementName, value, enumValue);
+			return new InvalidOperationException (message);
 		}
 
-		[MonoTODO ("Implement")]
 		protected Exception CreateUnknownAnyElementException (string name, string ns)
 		{
-			throw new NotImplementedException ();
+			string message = String.Format ("The XML element named '{0}' from namespace '{1}' was not expected. The XML element name and namespace must match those provided via XmlAnyElementAttribute(s).", name, ns);
+			return new InvalidOperationException (message);
 		}
 
-		[MonoTODO ("Implement")]
 		protected Exception CreateUnknownTypeException (object o)
 		{
-			throw new NotImplementedException ();
+			return CreateUnknownTypeException (o.GetType ());
 		}
 
-		[MonoTODO ("Implement")]
 		protected Exception CreateUnknownTypeException (Type type)
 		{
-			throw new NotImplementedException ();
+			string message = String.Format ("The type {0} may not be used in this context.", type);
+			return new InvalidOperationException (message);
 		}
 
 		[MonoTODO ("Implement")]
@@ -89,10 +88,9 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected static string FromChar (char value)
 		{
-			throw new NotImplementedException ();
+			return ((int) value).ToString ();
 		}
 
 		[MonoTODO ("Implement")]
@@ -149,7 +147,6 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-
 		protected abstract void InitCallbacks ();
 
 		[MonoTODO ("Implement")]
@@ -158,16 +155,14 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteAttribute (string localName, byte[] value)
 		{
-			throw new NotImplementedException ();
+			WriteAttribute (localName, String.Empty, value);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteAttribute (string localName, string value)
 		{
-			throw new NotImplementedException ();
+			WriteAttribute (String.Empty, localName, String.Empty, value);
 		}
 
 		[MonoTODO ("Implement")]
@@ -176,10 +171,9 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteAttribute (string localName, string ns, string value)
 		{
-			throw new NotImplementedException ();
+			WriteAttribute (String.Empty, localName, ns, value);
 		}
 
 		[MonoTODO ("Implement")]
@@ -224,22 +218,19 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteElementString (string localName, string value)
 		{
-			throw new NotImplementedException ();
+			WriteElementString (localName, String.Empty, value, null);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteElementString (string localName, string ns, string value)
 		{
-			throw new NotImplementedException ();
+			WriteElementString (localName, ns, value, null);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteElementString (string localName, string value, XmlQualifiedName xsiType)
 		{
-			throw new NotImplementedException ();
+			WriteElementString (localName, String.Empty, value, xsiType);
 		}
 
 		[MonoTODO ("Implement")]
@@ -248,40 +239,34 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteElementStringRaw (string localName, byte[] value)
 		{
-			throw new NotImplementedException ();
+			WriteElementStringRaw (localName, String.Empty, value, null);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteElementStringRaw (string localName, string value)
 		{
-			throw new NotImplementedException ();
+			WriteElementStringRaw (localName, String.Empty, value, null);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteElementStringRaw (string localName, byte[] value, XmlQualifiedName xsiType)
 		{
-			throw new NotImplementedException ();
+			WriteElementStringRaw (localName, String.Empty, value, xsiType);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteElementStringRaw (string localName, string ns, byte[] value)
 		{
-			throw new NotImplementedException ();
+			WriteElementStringRaw (localName, ns, value, null);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteElementStringRaw (string localName, string ns, string value)
 		{
-			throw new NotImplementedException ();
+			WriteElementStringRaw (localName, ns, value, null);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteElementStringRaw (string localName, string value, XmlQualifiedName xsiType)
 		{
-			throw new NotImplementedException ();
+			WriteElementStringRaw (localName, String.Empty, value, null);
 		}
 
 		[MonoTODO ("Implement")]
@@ -296,10 +281,9 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteEmptyTag (string name)
 		{
-			throw new NotImplementedException ();
+			WriteEmptyTag (name, String.Empty);
 		}
 
 		[MonoTODO ("Implement")]
@@ -308,10 +292,9 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteEndElement ()
 		{
-			throw new NotImplementedException ();
+			WriteEndElement (null);
 		}
 
 		[MonoTODO ("Implement")]
@@ -374,10 +357,9 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteNullTagEncoded (string name)
 		{
-			throw new NotImplementedException ();
+			WriteNullTagEncoded (name, String.Empty);
 		}
 
 		[MonoTODO ("Implement")]
@@ -386,10 +368,9 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteNullTagLiteral (string name)
 		{
-			throw new NotImplementedException ();
+			WriteNullTagLiteral (name, String.Empty);
 		}
 
 		[MonoTODO ("Implement")]
@@ -398,22 +379,19 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WritePotentiallyReferencingElement (string n, string ns, object o)
 		{
-			throw new NotImplementedException ();
+			WritePotentiallyReferencingElement (n, ns, o, null, false, false);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WritePotentiallyReferencingElement (string n, string ns, object o, Type ambientType)
 		{
-			throw new NotImplementedException ();
+			WritePotentiallyReferencingElement (n, ns, o, ambientType, false, false);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WritePotentiallyReferencingElement (string n, string ns, object o, Type ambientType, bool suppressReference)
 		{
-			throw new NotImplementedException ();
+			WritePotentiallyReferencingElement (n, ns, o, ambientType, suppressReference, false);
 		}
 
 		[MonoTODO ("Implement")]
@@ -428,10 +406,9 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteReferencingElement (string n, string ns, object o)
 		{
-			throw new NotImplementedException ();
+			WriteReferencingElement (n, ns, o, false);
 		}
 
 		[MonoTODO ("Implement")]
@@ -446,34 +423,29 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteStartDocument ()
 		{
-			throw new NotImplementedException ();
+			Writer.WriteStartDocument ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteStartElement (string name)
 		{
-			throw new NotImplementedException ();
+			WriteStartElement (name, String.Empty, null, false);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteStartElement (string name, string ns)
 		{
-			throw new NotImplementedException ();
+			WriteStartElement (name, ns, null, false);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteStartElement (string name, string ns, bool writePrefixed)
 		{
-			throw new NotImplementedException ();
+			WriteStartElement (name, ns, null, writePrefixed);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteStartElement (string name, string ns, object o)
 		{
-			throw new NotImplementedException ();
+			WriteStartElement (name, ns, o, false);
 		}
 
 		[MonoTODO ("Implement")]
@@ -488,16 +460,14 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteValue (byte[] value)
 		{
-			throw new NotImplementedException ();
+			Writer.WriteBase64 (value, 0, value.Length);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteValue (string value)
 		{
-			throw new NotImplementedException ();
+			Writer.WriteString (value);
 		}
 
 		[MonoTODO ("Implement")]
