@@ -117,13 +117,11 @@ namespace System.Globalization {
 			return (m_win32LangID);
 		}
 
-		[MonoTODO]
 		public virtual char ToLower(char c)
 		{
 			return Char.ToLower (c);
 		}
 		
-		[MonoTODO]
 		public virtual string ToLower(string str)
 		{
 			if(str==null) 
