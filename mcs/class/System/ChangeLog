@@ -1,3 +1,7 @@
+2003-07-27  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* System.dll.sources: SRDescriptionAttribute.cs moved
+
 2003-07-21  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* README: removed (contained only obsolete build instructions)

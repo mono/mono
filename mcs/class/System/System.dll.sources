@@ -370,7 +370,6 @@ System.Diagnostics/ProcessStartInfo.cs
 System.Diagnostics/ProcessThreadCollection.cs
 System.Diagnostics/ProcessThread.cs
 System.Diagnostics/ProcessWindowStyle.cs
-System.Diagnostics/SRDescriptionAttribute.cs
 System.Diagnostics/Switch.cs
 System.Diagnostics/TextWriterTraceListener.cs
 System.Diagnostics/ThreadPriorityLevel.cs
@@ -503,6 +502,7 @@ System.Timers/ElapsedEventArgs.cs
 System.Timers/ElapsedEventHandler.cs
 System.Timers/Timer.cs
 System.Timers/TimersDescriptionAttribute.cs
+System/SRDescriptionAttribute.cs
 System/TODOAttribute.cs
 System/UriBuilder.cs
 System/Uri.cs
