@@ -1,3 +1,7 @@
+2005-02-10  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* SoapReader.cs: Don't crash if the xml has more fields than expected.
+
 2004-09-13  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SoapReader.cs: Handle SOAP invocation without arguments in SoapReader.

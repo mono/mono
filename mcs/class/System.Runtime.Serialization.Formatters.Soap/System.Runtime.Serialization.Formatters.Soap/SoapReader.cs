@@ -524,13 +524,23 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 
 			object[] data = new object[tm.MemberInfos.Length];
 			xmlReader.Read();
-			for(int i = 0; i < tm.MemberInfos.Length; i++)
+			xmlReader.MoveToContent ();
+			while (xmlReader.NodeType != XmlNodeType.EndElement)
 			{
+				if (xmlReader.NodeType != XmlNodeType.Element) {
+					xmlReader.Skip ();
+					continue;
+				}
+				
 				object fieldObject;
 				long fieldId, fieldHref;
-				int index = (int) tm.Indices[xmlReader.LocalName];
+
+				object indexob = tm.Indices [xmlReader.LocalName];
+				if (indexob == null)
+					throw new SerializationException ("Field \"" + xmlReader.LocalName + "\" not found in class " + currentType.FullName);
+				
+				int index = (int) indexob;
 				FieldInfo fieldInfo = (tm.MemberInfos[index]) as FieldInfo;
-				if(fieldInfo == null) continue;
 
 				fieldObject = 
 					DeserializeComponent(fieldInfo.FieldType,
