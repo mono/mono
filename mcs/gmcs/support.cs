@@ -480,10 +480,20 @@ namespace Mono.CSharp {
 				// buffer.
 				if ((value >= buffer_start) && (value < buffer_start + buffer_size)) {
 					int byte_offset = value - buffer_start;
+
+					// pos is an index into a char
+					// buffer so it might be
+					// greater than the buffer
+					// length now, if the buffer
+					// contains multibyte chars
 					pos = byte_offset;
-					// encoded characters can take more than 1 byte length
-					while (reader.CurrentEncoding.GetByteCount (buffer, 0, pos) > byte_offset)
+					
+					// encoded characters can take
+					// more than 1 byte length.
+					while ((pos > buffer.Length) ||
+					       reader.CurrentEncoding.GetByteCount (buffer, 0, pos) > byte_offset) {
 						pos--;
+					}
 					
 					return;
 				}

@@ -1,3 +1,48 @@
+2005-01-24  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #71649
+	* class.cs (StaticClass.DefineContainerMembers): Enable enums and
+	delegates in static class.
+
+2005-01-24  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs (FlowBranching.UsageVector.MergeChild): If we're
+	merging an implicit block, just use its reachability.
+
+	* statement.cs (Block.Resolve): Make the unreachable code check
+	work wrt. implicit blocks; see test-337 from #63842.
+
+2005-01-21  Alp Toker  <alp@atoker.com>
+ 
+ 	* cs-parser.jay: destructor_declaration's container is PartialContainer
+ 	not Class when partial types are used, so use Kind prop instead of
+	'is'.
+	
+2005-01-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Improve error reporting when an interface
+	declares new types.
+
+2005-01-20  Dick Porter  <dick@ximian.com>
+
+	* support.cs: SeekableStreamReader fix from Sandor Dobos
+	(dobos_s@ibcnet.hu) to cope with Position setting when multibyte
+	chars are read.  Fixes bug 70369.
+
+2005-01-20  Raja R Harinath  <rharinath@novell.com>
+
+	* cs-parser.jay (catch_clause): Simplify current_block handling
+	somewhat.
+
+2005-01-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* convert.cs (ImplicitStandardConversionExists): Synchronize the
+	code with ImplicitStandardConversion to handle the implicit
+	conversion of method groups into valid delegate invocations. 
+
+	The problem is that in parameter handling we were using this code
+	path.  Fixes bug #64698
+
 2005-01-19  Raja R Harinath  <rharinath@novell.com>
 
 	* cs-parser.jay: Fix several infelicities.

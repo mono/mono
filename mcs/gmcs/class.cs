@@ -2856,7 +2856,7 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				if ((m.ModFlags & Modifiers.STATIC) != 0)
+				if ((m.ModFlags & Modifiers.STATIC) != 0 || m is Enum || m is Delegate)
 					continue;
 
 				if (m is Constructor) {
