@@ -1,3 +1,25 @@
+2002-05-09  Dietmar Maurer  <dietmar@ximian.com>
+
+	* linear-scan.c: linear scan reg. allocation and data flow analysis
+
+	* jit.c (arch_allocate_var): add live range info
+	(mono_cfg_add_successor): create list of successors for basic
+	blocks.
+
+	* mono.c (main): new option --ls to enable linear scan
+
+	* exception.c (arch_handle_exception): print instruction pointer
+	relative to method start address.
+
+	* jit.c (mono_print_ctree): print register number if locals are
+	allocate in registers.
+
+	* emit-x86.c (arch_emit_prologue): initialize reg. allocated locals
+	(arch_emit_epilogue): take care when restoring save registers,
+	because the stack pointer may has changed.
+
+	* x86.brg: s/VAROFFSET/VARINFO/
+	modified to support global register allocation
 
 Mon May 6 15:38:15 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
