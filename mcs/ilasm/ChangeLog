@@ -1,3 +1,13 @@
+2003-03-06 Jackson Harper <jackson@latitudegeo.com>
+
+	* makefile, makefile.gnu: Include PEAPI.cs instead of linking to it, this fixes build but is not ideal.
+
+2003-03-06 Jackson Harper <jackson@latitudegeo.com>
+
+	* Driver.cs: Change a few calls to match new CodeGen
+	* makefile: Build with PEAPI
+	* makefile.gnu: Build with PEAPI
+
 2003-02-22 Jackson Harper <jackson@latitudegeo.com>
 
 	* Driver.cs: Add version option, fix bug that allowed -- switches to be invoked with /-
