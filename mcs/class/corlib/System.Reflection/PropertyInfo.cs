@@ -45,7 +45,7 @@ namespace System.Reflection {
 		}
 		public abstract MethodInfo GetSetMethod( bool nonPublic);
 		public virtual object GetValue( object obj, object[] index) {
-			return null;
+			return GetValue(obj, BindingFlags.Default, null, index, null);
 		}
 		public abstract object GetValue( object obj, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture);
 		public virtual void SetValue( object obj, object value, object[] index) {

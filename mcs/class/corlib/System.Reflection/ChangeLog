@@ -1,3 +1,7 @@
+2002-04-24	Patrik Torstensson <patrik.torstensson@labs2.com>
+
+	* MonoProperty.cs (GetValue) : basic implementation to support nunit
+	* PropertyInfo.cs (GetValue) : call MonoProperty::GetValue instead of returning null
 
 Thu Apr 18 16:40:54 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

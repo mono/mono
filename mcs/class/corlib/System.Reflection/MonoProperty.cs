@@ -1,11 +1,10 @@
-
-
 //
 // System.Reflection/MonoProperty.cs
 // The class used to represent Properties from the mono runtime.
 //
 // Author:
 //   Paolo Molaro (lupus@ximian.com)
+//   Patrik Torstensson (patrik.torstensson@labs2.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
@@ -139,9 +138,21 @@ namespace System.Reflection {
 		public override object[] GetCustomAttributes( Type attributeType, bool inherit) {
 			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
 		}
+
 		public override object GetValue( object obj, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture) {
-			return null;
+			object ret = null;
+			
+			if (index == null || index.Length == 0) {
+				MethodInfo method = GetGetMethod(false);
+
+				ret = method.Invoke(obj, invokeAttr, binder, null, culture);
+			}
+
+			// fixme: support indexed parameters..
+
+			return ret;
 		}
+
 		public override void SetValue( object obj, object value, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture) {
 		}
 
