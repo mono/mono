@@ -111,20 +111,20 @@ namespace System.Security.Permissions {
 		public override IPermission Intersect (IPermission target) 
 		{
 			StrongNameIdentityPermission snip = (target as StrongNameIdentityPermission);
-			if (snip == null)
+			if ((snip == null) || IsEmpty ())
 				return null;
-
-			if (IsEmpty () || snip.IsEmpty ())
+			if (snip.IsEmpty ())
 				return new StrongNameIdentityPermission (PermissionState.None);
-
-			if (name != snip.name)
+			if (!Match (snip.name))
 				return null;
+
+			string n = ((name.Length < snip.name.Length) ? name : snip.name);
 			if (!assemblyVersion.Equals (snip.assemblyVersion))
 				return null;
 			if (!publickey.Equals (snip.publickey))
 				return null;
 
-			return Copy ();
+			return new StrongNameIdentityPermission (publickey, n, assemblyVersion);
 		}
 	
 		public override bool IsSubsetOf (IPermission target) 
@@ -133,11 +133,18 @@ namespace System.Security.Permissions {
 			if (snip == null)
 				return IsEmpty ();
 
-			if (((name != null) && (name.Length > 0)) && (name != snip.Name))
+			if (IsEmpty ())
+				return true;
+
+			if ((name != null) && (name.Length > 0) && !IsNameSubsetOf (snip.Name))
 				return false;
 			if ((assemblyVersion != null) && !assemblyVersion.Equals (snip.assemblyVersion))
 				return false;
-			return publickey.Equals (snip.publickey);
+			// in case PermissionState.None was used in the constructor
+			if (publickey == null)
+				return (snip.publickey == null);
+			else
+				return publickey.Equals (snip.publickey);
 		}
 	
 		public override SecurityElement ToXml () 
@@ -158,6 +165,9 @@ namespace System.Security.Permissions {
 			if ((snip == null) || snip.IsEmpty ())
 				return Copy ();
 
+			if (IsEmpty ())
+				return snip.Copy ();
+
 			if (!publickey.Equals (snip.publickey)) {
 #if NET_2_0
 				string msg = Locale.GetText ("Permissions have different public keys.");
@@ -170,6 +180,9 @@ namespace System.Security.Permissions {
 			string n = name;
 			if ((n == null) || (n.Length == 0)) {
 				n = snip.name;
+			}
+			else if (Match (snip.name)) {
+				n = ((name.Length > snip.name.Length) ? name : snip.name);
 			}
 			else if ((snip.name != null) && (snip.name.Length > 0) && (n != snip.name)) {
 #if NET_2_0
@@ -224,6 +237,46 @@ namespace System.Security.Permissions {
 			}
 
 			return snip;
+		}
+
+		private bool IsNameSubsetOf (string target) 
+		{
+			int wildcard = name.LastIndexOf ('*');
+			if (wildcard == 0)
+				return true;		// *
+			if (wildcard == -1)
+				wildcard = name.Length;	// exact match
+
+			return (String.Compare (name, 0, target, 0, wildcard, true, CultureInfo.InvariantCulture) == 0);
+		}
+
+		private bool Match (string target) 
+		{
+			if ((name == null) || (target == null))
+				return false;
+
+			int wcu = name.LastIndexOf ('*');
+			int wct = target.LastIndexOf ('*');
+			int length = Int32.MaxValue;
+
+			if ((wcu == -1) && (wct == -1)) {
+				// no wildcard, this is an exact match
+				length = Math.Max (name.Length, target.Length);
+			}
+			else if (wcu == -1) {
+				// only "target" has a wildcard, use it
+				length = wct;
+			}
+			else if (wct == -1) {
+				// only "this" has a wildcard, use it
+				length = wcu;
+			}
+			else {
+				// both have wildcards, partial match with the smallest
+				length = Math.Min (wcu, wct);
+			}
+
+			return (String.Compare (name, 0, target, 0, length, true, CultureInfo.InvariantCulture) == 0);
 		}
 	} 
 }

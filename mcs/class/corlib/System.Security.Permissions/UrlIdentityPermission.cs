@@ -71,8 +71,13 @@ namespace System.Security.Permissions {
 
 		public override IPermission Copy () 
 		{
-			if (url == null)
+			if (url == null) {
+#if NET_2_0
 				return new UrlIdentityPermission (PermissionState.None);
+#else
+				throw new NullReferenceException ("Url");
+#endif
+			}
 			else
 				return new UrlIdentityPermission (url);
 		}
@@ -91,7 +96,6 @@ namespace System.Security.Permissions {
 				Url = u;
 		}
 
-		[MonoTODO ("do not support wildcard")]
 		public override IPermission Intersect (IPermission target) 
 		{
 			// if one permission is null (object or url) then there's no intersection
@@ -99,18 +103,32 @@ namespace System.Security.Permissions {
 			UrlIdentityPermission uip = Cast (target);
 			if ((uip == null) || (IsEmpty ()))
 				return null;
-			if (url == uip.url)
-				return Copy ();
+			if (Match (uip.url)) {
+				// longest form is the intersection
+				if (url.Length > uip.url.Length)
+					return Copy ();
+				else
+					return uip.Copy ();
+			}
 			return null;
 		}
 
-		[MonoTODO ("do not support wildcard")]
 		public override bool IsSubsetOf (IPermission target) 
 		{
 			UrlIdentityPermission uip = Cast (target);
 			if (uip == null)
 				return IsEmpty ();
-			return (url == uip.url);
+			if (IsEmpty ())
+				return true;
+			if (uip.url == null)
+				return false;
+
+			// here Match wouldn't work as it is bidirectional
+			int wildcard = uip.url.LastIndexOf ('*');
+			if (wildcard == -1)
+				wildcard = uip.url.Length;	// exact match
+
+			return (String.Compare (url, 0, uip.url, 0, wildcard, true, CultureInfo.InvariantCulture) == 0);
 		}
 
 		public override SecurityElement ToXml () 
@@ -121,7 +139,6 @@ namespace System.Security.Permissions {
 			return se;
 		}
 
-		[MonoTODO ("do not support wildcard")]
 		public override IPermission Union (IPermission target) 
 		{
 			UrlIdentityPermission uip = Cast (target);
@@ -129,10 +146,17 @@ namespace System.Security.Permissions {
 				return Copy ();
 			if (IsEmpty () && uip.IsEmpty ())
 				return null;
-			if (uip.IsEmpty () || (url == uip.url))
+			if (uip.IsEmpty ())
 				return Copy ();
 			if (IsEmpty ())
 				return uip.Copy ();
+			if (Match (uip.url)) {
+				// shortest form is the union
+				if (url.Length < uip.url.Length)
+					return Copy ();
+				else
+					return uip.Copy ();
+			}
 #if NET_2_0
 			throw new ArgumentException (Locale.GetText (
 				"Cannot union two different urls."), "target");
@@ -165,6 +189,35 @@ namespace System.Security.Permissions {
 			}
 
 			return uip;
+		}
+
+		private bool Match (string target) 
+		{
+			if ((url == null) || (target == null))
+				return false;
+
+			int wcu = url.LastIndexOf ('*');
+			int wct = target.LastIndexOf ('*');
+			int length = Int32.MaxValue;
+
+			if ((wcu == -1) && (wct == -1)) {
+				// no wildcard, this is an exact match
+				length = Math.Max (url.Length, target.Length);
+			}
+			else if (wcu == -1) {
+				// only "this" has a wildcard, use it
+				length = wct;
+			}
+			else if (wct == -1) {
+				// only "target" has a wildcard, use it
+				length = wcu;
+			}
+			else {
+				// both have wildcards, partial match with the smallest
+				length = Math.Min (wcu, wct);
+			}
+
+			return (String.Compare (url, 0, target, 0, length, true, CultureInfo.InvariantCulture) == 0);
 		}
 	}
 }

@@ -158,7 +158,8 @@ namespace System.Security.Permissions {
 		public override SecurityElement ToXml () 
 		{
 			SecurityElement e = Element (version);
-			e.AddAttribute (_access.ToString (), _pathList);
+			if (_pathList != null)
+				e.AddAttribute (_access.ToString (), _pathList);
 			return e;
 		}
 

@@ -99,15 +99,7 @@ namespace System.Security.Permissions {
 			if (fdp == null)
 				return null;
 
-			if (IsUnrestricted ())
-				return fdp.Copy ();
-			if (fdp.IsUnrestricted ())
-				return Copy ();
-
-			FileDialogPermissionAccess a = FileDialogPermissionAccess.None;
-			// note: there are no more OpenSave cases (as they're Unrestricted)
-			a = (_access & fdp._access);
-
+			FileDialogPermissionAccess a = (_access & fdp._access);
 			return ((a == FileDialogPermissionAccess.None) ? null : new FileDialogPermission (a));
 		}
 
@@ -117,12 +109,7 @@ namespace System.Security.Permissions {
 			if (fdp == null)
 				return false;
 
-			if (IsUnrestricted ())
-				return fdp.IsUnrestricted ();
-			else if (fdp.IsUnrestricted ())
-				return true;
-
-			return ((_access | fdp._access) == _access);
+			return ((_access & fdp._access) == _access);
 		}
 
 		public bool IsUnrestricted () 

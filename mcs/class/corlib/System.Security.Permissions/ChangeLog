@@ -1,3 +1,19 @@
+2004-09-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EnvironmentPermission.cs: Fixed GetPathList which has little 
+	differences between Fx 1.1 and 2.0. Required to run the MSDN samples.
+	* FileDialogPermission.cs: Fixed IsSubsetOf and Intersect.
+	* RegistryPermission.cs: Fixed ToXml to avoid NullReferenceException.
+	Required to run the MSDN library samples.
+	* SecurityPermission.cs: Return null for an empty intersection. 
+	Required to run the MSDN library samples.
+	* SiteIdentityPermission.cs: Implemented wildcard support in 
+	Intersect, IsSubsetOf and Union.
+	* StrongNameIdentityPermission.cs: Implemented wildcard support in 
+	Intersect, IsSubsetOf and Union. Fixed ToXml to pass the MSDN samples.
+	* UrlIdentityPermission.cs: Implemented wildcard support in Intersect,
+	IsSubsetOf and Union. Fixed difference between Fx1.1 and 2.0 in Copy.
+
 2004-09-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SiteIdentityPermission.cs: Updated to match latest unit tests, i.e. 

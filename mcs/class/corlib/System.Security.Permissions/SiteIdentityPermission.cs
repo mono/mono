@@ -56,12 +56,12 @@ namespace System.Security.Permissions {
 		public string Site {
 			get { 
 				if (IsEmpty ())
-					throw new NullReferenceException ("Site");
+					throw new NullReferenceException ("No site.");
 				return _site; 
 			}
 			set {
 				if (!IsValid (value))
-					throw new ArgumentException ("Site");
+					throw new ArgumentException ("Invalid site.");
 				_site = value;
 			}
 		}
@@ -88,24 +88,35 @@ namespace System.Security.Permissions {
 				Site = s;
 		}
 
-		[MonoTODO ("do not support wildcard")]
 		public override IPermission Intersect (IPermission target)
 		{
 			SiteIdentityPermission sip = Cast (target);
 			if ((sip == null) || (IsEmpty ()))
 				return null;
-			if (_site == sip._site)
-				return Copy ();
+
+			if (Match (sip._site)) {
+				string s = ((_site.Length > sip._site.Length) ? _site : sip._site);
+				return new SiteIdentityPermission (s);
+			}
 			return null;
 		}
 
-		[MonoTODO ("do not support wildcard")]
 		public override bool IsSubsetOf (IPermission target) 
 		{
 			SiteIdentityPermission sip = Cast (target);
 			if (sip == null)
 				return IsEmpty ();
-			return (_site == sip._site);
+			if ((_site == null) && (sip._site == null))
+				return true;
+			if ((_site == null) || (sip._site == null))
+				return false;
+
+			int wildcard = sip._site.IndexOf ('*');
+			if (wildcard == -1) {
+				// exact match
+				return (_site == sip._site);
+			}
+			return _site.EndsWith (sip._site.Substring (wildcard + 1));
 		}
 
 		public override SecurityElement ToXml ()
@@ -116,14 +127,18 @@ namespace System.Security.Permissions {
                         return e;
 		}
 
-		[MonoTODO ("do not support wildcard")]
 		public override IPermission Union (IPermission target) 
 		{
 			SiteIdentityPermission sip = Cast (target);
-			if ((sip == null) || (_site == sip._site) || sip.IsEmpty ())
+			if ((sip == null) || sip.IsEmpty ())
 				return Copy ();
 			if (IsEmpty ())
 				return sip.Copy ();
+
+			if (Match (sip._site)) {
+				string s = ((_site.Length < sip._site.Length) ? _site : sip._site);
+				return new SiteIdentityPermission (s);
+			}
 #if NET_2_0
 			throw new ArgumentException (Locale.GetText (
 				"Cannot union two different sites."), "target");
@@ -173,7 +188,7 @@ namespace System.Security.Permissions {
 
 		private bool IsValid (string s)
 		{
-			if (s == null)
+			if ((s == null) || (s.Length == 0))
 				return false;
 
 			for (int i = 0; i < s.Length; i++) {
@@ -198,11 +213,36 @@ namespace System.Security.Permissions {
 			return true;
 		}
 
-		private bool HasWildcard ()
+		private bool Match (string target) 
 		{
-			if (_site == null)
+			if ((_site == null) || (target == null))
 				return false;
-			return (_site.IndexOf ('*') >= 0);
+
+			int wcs = _site.IndexOf ('*');
+			int wct = target.IndexOf ('*');
+			int pos = Int32.MaxValue;
+
+			if ((wcs == -1) && (wct == -1)) {
+				// no wildcard, this is an exact match
+				return (_site == target);
+			}
+			else if (wcs == -1) {
+				// only "target" has a wildcard, use it
+				return _site.EndsWith (target.Substring (wct + 1));
+			}
+			else if (wct == -1) {
+				// only "this" has a wildcard, use it
+				return target.EndsWith (_site.Substring (wcs + 1));
+			}
+			else {
+				// both have wildcards, partial match with the smallest
+				string s = _site.Substring (wcs + 1);
+				target = target.Substring (wct + 1);
+				if (s.Length > target.Length)
+					return s.EndsWith (target);
+				else
+					return target.EndsWith (s);
+			}
 		}
 	}
 }

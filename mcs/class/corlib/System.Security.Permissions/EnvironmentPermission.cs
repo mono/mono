@@ -126,10 +126,10 @@ namespace System.Security.Permissions {
 			// Note: we do not (yet) care about the return value 
 			// as we only accept version 1 (min/max values)
 
-			string read = (esd.Attributes ["Read"] as string);
+			string read = esd.Attribute ("Read");
 			if ((read != null) && (read.Length > 0))
 				SetPathList (EnvironmentPermissionAccess.Read, read);
-			string write = (esd.Attributes ["Write"] as string);
+			string write = esd.Attribute ("Write");
 			if ((write != null) && (write.Length > 0))
 				SetPathList (EnvironmentPermissionAccess.Write, write);
 
@@ -138,38 +138,20 @@ namespace System.Security.Permissions {
 
 		public string GetPathList (EnvironmentPermissionAccess flag)
 		{
-			StringBuilder sb = new StringBuilder ();
 			switch (flag) {
 				case EnvironmentPermissionAccess.AllAccess:
 				case EnvironmentPermissionAccess.NoAccess:
 					ThrowInvalidFlag (flag, true);
 					break;
 				case EnvironmentPermissionAccess.Read:
-					foreach (string path in readList) {
-						sb.Append (path);
-						sb.Append (";");
-					}
-					break;
+					return GetPathList (readList);
 				case EnvironmentPermissionAccess.Write:
-					foreach (string path in writeList) {
-						sb.Append (path);
-						sb.Append (";");
-					}
-					break;
+					return GetPathList (writeList);
 				default:
 					ThrowInvalidFlag (flag, false);
 					break;
 			}
-			string result = sb.ToString ();
-			// remove last ';'
-			int n = result.Length;
-			if (n > 0)
-				return result.Substring (0, n - 1);
-#if NET_2_0
-			return String.Empty;
-#else
-			return ((_state == PermissionState.Unrestricted) ? String.Empty : null);
-#endif
+			return null; // never reached
 		}
 
 		public override IPermission Intersect (IPermission target)
@@ -303,6 +285,9 @@ namespace System.Security.Permissions {
 			if (IsUnrestricted () || ep.IsUnrestricted ())
 				return new EnvironmentPermission (PermissionState.Unrestricted);
 
+			if (IsEmpty () && ep.IsEmpty ())
+				return null;
+
 			EnvironmentPermission result = (EnvironmentPermission) Copy ();
 			string path = ep.GetPathList (EnvironmentPermissionAccess.Read);
 			if (path != null) 
@@ -320,6 +305,11 @@ namespace System.Security.Permissions {
 		}
 
 		// helpers
+
+		private bool IsEmpty ()
+		{
+			return ((_state == PermissionState.None) && (readList.Count == 0) && (writeList.Count == 0));
+		}
 
 		private EnvironmentPermission Cast (IPermission target)
 		{
@@ -342,6 +332,35 @@ namespace System.Security.Permissions {
 			else
 				msg = Locale.GetText ("Invalid flag '{0}' in this context.");
 			throw new ArgumentException (String.Format (msg, flag), "flag");
+		}
+
+		private string GetPathList (ArrayList list)
+		{
+			if (IsUnrestricted ())
+				return String.Empty;
+#if NET_2_0
+			if (list.Count == 0)
+				return String.Empty;
+#else
+			if (list.Count == 0)
+				return null;
+#endif
+			StringBuilder sb = new StringBuilder ();
+			foreach (string path in list) {
+				sb.Append (path);
+				sb.Append (";");
+			}
+
+			string result = sb.ToString ();
+			// remove last ';'
+			int n = result.Length;
+			if (n > 0)
+				return result.Substring (0, n - 1);
+#if NET_2_0
+			return String.Empty;
+#else
+			return ((_state == PermissionState.Unrestricted) ? String.Empty : null);
+#endif
 		}
 
 		#endregion // Methods

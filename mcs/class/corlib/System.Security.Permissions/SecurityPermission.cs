@@ -93,7 +93,12 @@ namespace System.Security.Permissions {
 				return sp.Copy ();
 			if (sp.IsUnrestricted ())
 				return this.Copy ();
-			return new SecurityPermission (flags & sp.flags);
+
+			SecurityPermissionFlag f = flags & sp.flags;
+			if (f == SecurityPermissionFlag.NoFlags)
+				return null;
+			else
+				return new SecurityPermission (f);
 		}
 
 		public override IPermission Union (IPermission target) 
