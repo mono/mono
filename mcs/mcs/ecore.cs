@@ -3801,7 +3801,7 @@ namespace Mono.CSharp {
 				// System.Array.Length can be called, but the Type does not
 				// support invoking GetArrayRank, so test for that case first
 				//
-				if (iet == TypeManager.array_type || (iet.GetArrayRank () == 1)){
+				if (iet != TypeManager.array_type && (iet.GetArrayRank () == 1)){
 					instance_expr.Emit (ec);
 					ec.ig.Emit (OpCodes.Ldlen);
 					return;

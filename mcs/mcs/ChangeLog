@@ -1,4 +1,8 @@
 
+Wed Jun 19 22:33:37 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* ecore.cs: don't use ldlen with System.Array.
+
 Wed Jun 19 20:57:40 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* ecore.cs: stobj requires a type argument. Handle indirect stores on enums.
