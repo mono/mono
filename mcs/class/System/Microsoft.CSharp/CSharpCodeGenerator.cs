@@ -40,11 +40,16 @@ namespace Mono.CSharp
 	internal class CSharpCodeGenerator
 		: CodeGenerator
 	{
+            
+		// It is used for beautiful "for" syntax
+		bool dont_write_semicolon;
+            
 		//
 		// Constructors
 		//
 		public CSharpCodeGenerator()
 		{
+			dont_write_semicolon = false;
 		}
 
 		//
@@ -87,7 +92,7 @@ namespace Mono.CSharp
 
 				OutputType( createType );
 				
-				output.WriteLine( "[] {" );
+				output.WriteLine( "{" );
 				++Indent;
 				OutputExpressionList( initializers, true );
 				--Indent;
@@ -278,13 +283,16 @@ namespace Mono.CSharp
 		protected override void GenerateExpressionStatement( CodeExpressionStatement statement )
 		{
 			GenerateExpression( statement.Expression );
+			if (dont_write_semicolon)
+				return;
 			Output.WriteLine( ';' );
 		}
 
 		protected override void GenerateIterationStatement( CodeIterationStatement statement )
 		{
 			TextWriter output = Output;
-
+                    
+			dont_write_semicolon = true;
 			output.Write( "for (" );
 			GenerateStatement( statement.InitStatement );
 			output.Write( "; " );
@@ -292,7 +300,12 @@ namespace Mono.CSharp
 			output.Write( "; " );
 			GenerateStatement( statement.IncrementStatement );
 			output.Write( ") " );
+			dont_write_semicolon = false;
+			output.WriteLine ('{');
+			++Indent;
 			GenerateStatements( statement.Statements );
+			--Indent;
+			output.WriteLine ('}');
 		}
 
 		protected override void GenerateThrowExceptionStatement( CodeThrowExceptionStatement statement )
@@ -410,6 +423,8 @@ namespace Mono.CSharp
 			GenerateExpression( statement.Left );
 			output.Write( " = " );
 			GenerateExpression( statement.Right );
+			if (dont_write_semicolon)
+				return;
 			output.WriteLine( ';' );
 		}
 
@@ -485,6 +500,9 @@ namespace Mono.CSharp
 
 		protected override void GenerateEvent( CodeMemberEvent eventRef, CodeTypeDeclaration declaration )
 		{
+			if (eventRef.CustomAttributes.Count > 0)
+				OutputAttributeDeclarations (eventRef.CustomAttributes);
+
 			OutputMemberAccessModifier (eventRef.Attributes);
 			OutputMemberScopeModifier (eventRef.Attributes | MemberAttributes.Final); // Don't output "virtual"
 			Output.Write ("event ");
@@ -499,14 +517,15 @@ namespace Mono.CSharp
 			if (field.CustomAttributes.Count > 0)
 				OutputAttributeDeclarations( field.CustomAttributes );
 
-			MemberAttributes attributes = field.Attributes;
-			OutputMemberAccessModifier( attributes );
-			OutputFieldScopeModifier( attributes );
-
 			if (IsCurrentEnum)
 				Output.Write(field.Name);
-			else
+			else {
+				MemberAttributes attributes = field.Attributes;
+				OutputMemberAccessModifier( attributes );
+				OutputFieldScopeModifier( attributes );
+
 				OutputTypeNamePair( field.Type, GetSafeName (field.Name) );
+			}
 
 			CodeExpression initExpression = field.InitExpression;
 			if ( initExpression != null ) {
@@ -642,6 +661,9 @@ namespace Mono.CSharp
 		protected override void GenerateConstructor( CodeConstructor constructor,
 							     CodeTypeDeclaration declaration )
 		{
+			if (constructor.CustomAttributes.Count > 0)
+				OutputAttributeDeclarations (constructor.CustomAttributes);
+
 			OutputMemberAccessModifier (constructor.Attributes);
 			Output.Write (GetSafeName (CurrentTypeName) + " (");
 			OutputParameters (constructor.Parameters);
@@ -796,6 +818,7 @@ namespace Mono.CSharp
 			Output.Write( GetTypeOutput( type ) );
 		}
 
+		[MonoTODO ("Implement missing special characters")]
 		protected override string QuoteSnippetString( string value )
 		{
 			// FIXME: this is weird, but works.
@@ -882,59 +905,60 @@ namespace Mono.CSharp
 			if ( arrayType != null )
 				output = GetTypeOutput( arrayType );
 			else { 
-				switch ( type.BaseType ) {
 
-				case "System.Decimal":
+				switch ( type.BaseType.ToLower (System.Globalization.CultureInfo.InvariantCulture)) {
+
+				case "system.decimal":
 					output = "decimal";
 					break;
-				case "System.Double":
+				case "system.double":
 					output = "double";
 					break;
-				case "System.Single":
+				case "system.single":
 					output = "float";
 					break;
 					
-				case "System.Byte":
+				case "system.byte":
 					output = "byte";
 					break;
-				case "System.SByte":
+				case "system.sbyte":
 					output = "sbyte";
 					break;
-				case "System.Int32":
+				case "system.int32":
 					output = "int";
 					break;
-				case "System.UInt32":
+				case "system.uint32":
 					output = "uint";
 					break;
-				case "System.Int64":
+				case "system.int64":
 					output = "long";
 					break;
-				case "System.UInt64":
+				case "system.uint64":
 					output = "ulong";
 					break;
-				case "System.Int16":
+				case "system.int16":
 					output = "short";
 					break;
-				case "System.UInt16":
+				case "system.uint16":
 					output = "ushort";
 					break;
 
-				case "System.Boolean":
+				case "system.boolean":
 					output = "bool";
 					break;
 					
-				case "System.Char":
+				case "system.char":
 					output = "char";
 					break;
 
-				case "System.String":
+				case "system.string":
 					output = "string";
 					break;
-				case "System.Object":
+				case "system.object":
 					output = "object";
 					break;
 
-				case "System.Void":
+				case "system.void":
 					output = "void";
 					break;
 
@@ -954,7 +978,7 @@ namespace Mono.CSharp
 				output += "]";
 			}
 
-			return output;
+			return output.Replace ('+', '.');
 		}
 
 		protected override bool IsValidIdentifier ( string identifier )

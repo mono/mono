@@ -45,6 +45,7 @@ namespace System.CodeDom
 		//
 		// Constructors
 		//
+		[MonoTODO ("Missing implementation. Implement array info extraction from the string")]
 		public CodeTypeReference( string baseType )
 		{
 			this.baseType = baseType;
@@ -52,6 +53,11 @@ namespace System.CodeDom
 		
 		public CodeTypeReference( Type baseType )
 		{
+			if (baseType.IsArray) {
+				this.rank = baseType.GetArrayRank ();
+				this.arrayType = new CodeTypeReference (baseType.GetElementType ());
+				return;
+			}
 			this.baseType = baseType.FullName;
 		}
 

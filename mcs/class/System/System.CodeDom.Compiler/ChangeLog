@@ -1,3 +1,9 @@
+2004-09-01  Marek Safar  <marek.safar@seznam.cz>
+
+	* CodeGenerator.cs : Added newline after global attributes output.
+	(OutputAttributeDeclaration): Replace '+' with '.' for nested
+	attribute types.
+
 2004-08-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CodeGenerator.cs :

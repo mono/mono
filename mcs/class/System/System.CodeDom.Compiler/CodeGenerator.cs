@@ -199,6 +199,7 @@ namespace System.CodeDom.Compiler {
 					OutputAttributeDeclaration (att);
 					GenerateAttributeDeclarationsEnd (attributes);
 				}
+				output.WriteLine ();
 			}
 
 			foreach (CodeNamespace ns in compileUnit.Namespaces)
@@ -642,7 +643,7 @@ namespace System.CodeDom.Compiler {
 
 		private void OutputAttributeDeclaration (CodeAttributeDeclaration attribute)
 		{
-			output.Write (attribute.Name);
+			output.Write (attribute.Name.Replace ('+', '.'));
 			output.Write ('(');
 			IEnumerator enumerator = attribute.Arguments.GetEnumerator();
 			if (enumerator.MoveNext()) {

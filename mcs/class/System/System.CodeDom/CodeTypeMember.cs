@@ -50,6 +50,7 @@ namespace System.CodeDom
 		//
 		public CodeTypeMember()
 		{
+			attributes = (MemberAttributes.Private | MemberAttributes.Final);
 		}
 		
 		//

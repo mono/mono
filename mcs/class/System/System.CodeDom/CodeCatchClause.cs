@@ -52,6 +52,7 @@ namespace System.CodeDom
 		public CodeCatchClause ( string localName )
 		{
 			this.localName = localName;
+			this.catchExceptionType = new CodeTypeReference (typeof (Exception));
 		}
 
 		public CodeCatchClause ( string localName,

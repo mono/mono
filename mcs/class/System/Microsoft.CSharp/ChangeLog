@@ -1,3 +1,13 @@
+2004-09-01 Marek Safar <marek.safar@seznam.cz>
+
+	* CSharpCodeGenerator.cs : New private member dont_write_semicolon.
+	Used for one row "for" syntax.
+	(GenerateEvent): Added attributes output.
+	(GenerateField): Don't output access and scope modifier for enum field.
+	(GenerateConstructor): Added attributes output.
+	(QuoteSnippetString): Fixed mixed case type conversion. Replace '+'
+	with '.' for nested classes.
+
 2004-07-21  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* CSharpCodeCompiler.cs: Hack to make code generation work in 2.0.
