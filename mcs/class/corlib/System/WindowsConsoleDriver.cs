@@ -49,6 +49,11 @@ namespace System {
 		//
 	}
 
+	struct CharInfo {
+		public char Character;
+		public short Attributes;
+	}
+	
 	struct Coord {
 		public short X;
 		public short Y;
@@ -66,12 +71,12 @@ namespace System {
 		public short Right;
 		public short Bottom;
 
-		public SmallRect (short left, short top, short right, short bottom)
+		public SmallRect (int left, int top, int right, int bottom)
 		{
-			Left = left;
-			Top = top;
-			Right = right;
-			Bottom = bottom;
+			Left = (short) left;
+			Top = (short) top;
+			Right = (short) right;
+			Bottom = (short) bottom;
 		}
 	}
 
@@ -89,7 +94,7 @@ namespace System {
 		STD_ERROR = -12
 	}
 
-	class WindowsConsoleDriver : IConsoleDriver {
+	unsafe class WindowsConsoleDriver : IConsoleDriver {
 		IntPtr inputHandle;
 		IntPtr outputHandle;
 		short defaultAttribute;
@@ -416,7 +421,39 @@ namespace System {
 					int targetLeft, int targetTop, Char sourceChar,
 					ConsoleColor sourceForeColor, ConsoleColor sourceBackColor)
 		{
-			throw new NotImplementedException ();
+			if (sourceForeColor < 0)
+				throw new ArgumentException ("Cannot be less than 0.", "sourceForeColor");
+
+			if (sourceBackColor < 0)
+				throw new ArgumentException ("Cannot be less than 0.", "sourceBackColor");
+
+			if (sourceWidth == 0 || sourceHeight == 0)
+				return;
+
+			ConsoleScreenBufferInfo info = new ConsoleScreenBufferInfo ();
+			GetConsoleScreenBufferInfo (outputHandle, out info);
+			CharInfo [] buffer = new CharInfo [sourceWidth * sourceHeight];
+			Coord bsize = new Coord (sourceWidth, sourceHeight);
+			Coord bpos = new Coord (0, 0);
+			SmallRect region = new SmallRect (sourceLeft, sourceTop, sourceLeft + sourceWidth - 1, sourceTop + sourceHeight - 1);
+			fixed (void *ptr = &buffer [0]) {
+				if (!ReadConsoleOutput (outputHandle, ptr, bsize, bpos, ref region))
+					throw new ArgumentException ("", "Cannot read from the specified coordinates.");
+			}
+
+			int written;
+			short attr  = GetAttrForeground (0, sourceForeColor);
+			attr  = GetAttrBackground (attr, sourceBackColor);
+			bpos = new Coord (sourceLeft, sourceTop);
+			for (int i = 0; i < sourceHeight; i++, bpos.Y++) {
+				FillConsoleOutputCharacter (outputHandle, sourceChar, sourceWidth, bpos, out written);
+				FillConsoleOutputAttribute (outputHandle, attr, sourceWidth, bpos, out written);
+			}
+
+			bpos = new Coord (0, 0);
+			region = new SmallRect (targetLeft, targetTop, targetLeft + sourceWidth - 1, targetTop + sourceHeight - 1);
+			if (!WriteConsoleOutput (outputHandle, buffer, bsize, bpos, ref region))
+				throw new ArgumentException ("", "Cannot write to the specified coordinates.");
 		}
 
 		public ConsoleKeyInfo ReadKey (bool intercept)
@@ -548,6 +585,12 @@ namespace System {
 
 		[DllImport ("kernel32.dll", EntryPoint="GetLargestConsoleWindowSize", SetLastError=true, CharSet=CharSet.Unicode)]
 		extern static Coord GetLargestConsoleWindowSize (IntPtr handle);
+
+		[DllImport ("kernel32.dll", EntryPoint="ReadConsoleOutput", SetLastError=true, CharSet=CharSet.Unicode)]
+		extern static bool ReadConsoleOutput (IntPtr handle, void *buffer, Coord bsize, Coord bpos, ref SmallRect region);
+
+		[DllImport ("kernel32.dll", EntryPoint="WriteConsoleOutput", SetLastError=true, CharSet=CharSet.Unicode)]
+		extern static bool WriteConsoleOutput (IntPtr handle, CharInfo [] buffer, Coord bsize, Coord bpos, ref SmallRect region);
 	}
 }
 #endif

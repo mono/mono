@@ -1,3 +1,7 @@
+2005-02-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WindowsConsoleDriver.cs: implemented MoveBufferArea.
+
 2005-02-14  Raja R Harinath  <rharinath@novell.com>
 
 	* Array.cs (Array.Swapper) [!BOOTSTRAP_WITH_OLDLIB]: Make nested.
