@@ -149,6 +149,14 @@ public class DSATest : Assertion {
 	{
 		dsa.FromXmlString (null);
 	}
+
+	[Test]
+	public void ToXmlStringWithoutSeed ()
+	{
+		DSA d = DSA.Create ();
+		d.FromXmlString ("<DSAKeyValue><P>vb95327o8+f5lbrS9qSXxLQYTkcP/WTlJnI0fuw/vFaf7DFQe/ORdTqpa0I3okDOcRiUihzr0y58aQarlNf58MMhMcx/XqRzB2UOVZ/bt2EpfAC3CISwXHlHFoW6+dCHpc72aJOXpreWV6k0oZUg71tKMsPVUP1I8xgELArxAUE=</P><Q>5ul/yRjQ8hFv4w94ZHsP337ebjk=</Q><G>NunCU4DkWaq6IKKhRPCMBBmMgILU8Zqd3aHe0UyKZLYFSOjcKkOIPJ9iWtfDtErHcxb3yjHRV6/EndR+wX8rNsTjYDeUGg5vC6IV4Es+rRCmhVXQ7Y2N+bAH71VxPRbNC90NjgYqKwXZHf2l6c+W4XRvRvNiM5puwz+ubWcm5AA=</G><Y>hQinH+upZPNtTS2o7bi03EOybn9eHC8U61/Rax+oe00YPG+0Md7Okup6CMxZmww0n2F8W7YRZeI7Pltm8TlpmUdMmGSAiILUX585vFM19GR4XeSecqpj1BFO/x4T9tGeakoWxquEjFl4JqEuvDQwnvM76jWDmkUTI4U8kJPnHcw=</Y><J>0l0NjQKpwTJt+h8qmlXhbt4jL+OnaSZkM1zdyIPmOpNavJz7slGtoDAneoQ8STNiT+RrNqGdPbs5glAP8sXS0mdKJ6dGQuySGwGZTP9cWCq81YjRJJ74QuPJUYUruuhN0RTkiukqGzkJYQtA</J></DSAKeyValue>");
+		d.ToXmlString (false);
+	}
 }
 
 }

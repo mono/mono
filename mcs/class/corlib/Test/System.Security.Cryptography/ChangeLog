@@ -1,3 +1,8 @@
+2004-03-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DSATest.cs : Added ToXmlString test that checks if input without
+	  Seed and PgenCounter elements pass or not.
+
 2004-02-12  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptoStreamTest.cs: Added new tests for [From|To]Base64Transform 
