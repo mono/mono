@@ -1,3 +1,8 @@
+2004-11-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* reflection.c: (mono_image_create_pefile): Don't use NULL argument
+	  for (int*) written size. This fixes bug #69592.
+
 2004-11-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* icall.c: Added IsAuthenticodePresnet internal call.
