@@ -313,8 +313,8 @@ namespace System.Xml.XPath
 			}
 
 			// ancestors might select this node.
-			if (!e.NeedAbsoluteMatching)
-				return false;
+//			if (!e.NeedAbsoluteMatching)
+//				return false;
 
 			XPathNavigator navigator = Clone ();
 
