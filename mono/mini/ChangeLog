@@ -1,3 +1,7 @@
+2004-07-16  Ben Maurer  <bmaurer@ximain.com>
+
+	* mini.c: use the new stelem.ref wrapper
+	* exceptions.cs, arrays.cs: new stelem.ref tests
 
 Wed Jul 14 19:08:41 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
