@@ -430,7 +430,7 @@ namespace Mono.CSharp.Debugger
 				for (int i = 0; i < MethodCount; i++) {
 					MethodIndexEntry ie = GetMethodIndexEntry (i + 1);
 
-					method_token_hash.Add (ie.Token, i);
+					method_token_hash.Add (ie.Token, i + 1);
 				}
 			}
 
