@@ -1,3 +1,6 @@
+2003-04-26 Alexandre Pigolkine <pigolkine@gmx.de>
+	* LinearGradientBrush.cs  some implementation added
+
 2003-3-15 DennisHayes <dennish@raytek.com>
 	* Stubbed and somewhat implmented
 

@@ -15,14 +15,19 @@ namespace System.Drawing.Drawing2D
 	/// </summary>
 	public sealed class LinearGradientBrush : Brush
 	{
+		private Color[] linearColors_;
+		
 		//Constructors.
 		public LinearGradientBrush(Point point1, Point point2, Color color1, Color color2) {
+			linearColors_ = new Color[] { color1, color2 };
 		}
 
 		public LinearGradientBrush(PointF point1, PointF point2, Color color1, Color color2) {
+			linearColors_ = new Color[] { color1, color2 };
 		}
 
 		public LinearGradientBrush(Rectangle rect, Color color1, Color color2, LinearGradientMode linearGradientMode) {
+			linearColors_ = new Color[] { color1, color2 };
 		}
 
 
@@ -53,9 +58,11 @@ namespace System.Drawing.Drawing2D
 
 		public Color [] LinearColors {
 			get {
-				throw new NotImplementedException ();
+				return linearColors_;
 			}
 			set {
+				linearColors_[0] = value[0];
+				linearColors_[1] = value[1];
 			}
 		}
 		public RectangleF Rectange {
