@@ -1,3 +1,7 @@
+2003-11-18  Todd Berman <tberman@gentoo.org>
+
+	* IOrderedDictionary.cs: new v2 interface
+
 2003-10-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* NameObjectCollectionBase.cs: added serialization support.
