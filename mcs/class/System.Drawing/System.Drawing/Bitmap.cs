@@ -323,8 +323,6 @@ namespace System.Drawing
 			Graphics gr = Graphics.FromImage(bmp);
 			Rectangle destRect = new Rectangle(0,0, Width, Height);
 			ImageAttributes imageAttr = new ImageAttributes();
-						
-			gr.Clear(Color.Transparent);					
 			
 			imageAttr.SetColorKey(transparentColor,	transparentColor);
 
