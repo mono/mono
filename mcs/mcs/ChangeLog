@@ -1,3 +1,8 @@
+2002-06-22  Martin Baulig  <martin@gnome.org>
+
+	* ecore.cs (Expression.Constantify): Call TypeManager.TypeToCoreType() on
+	the return value of Object.GetType().  [FIXME: we need to do this whenever
+	we get a type back from the reflection library].
 
 Fri Jun 21 13:37:57 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
@@ -23,6 +28,11 @@ Fri Jun 21 13:37:57 CEST 2002 Paolo Molaro <lupus@ximian.com>
 	context like: IA; IB : IA; IC : IA, IB; the interface "IC" to
 	be IA, IB, IC.
 	
+2002-06-21  Martin Baulig  <martin@gnome.org>
+
+	* typemanager.cs (TypeManager.EnumToUnderlying): It's now safe to call this function
+	on System.Enum.
+
 2002-06-21  Martin Baulig  <martin@gnome.org>
 
 	* typemanager.cs (TypeManager.TypeToCoreType): New function.  When compiling corlib
