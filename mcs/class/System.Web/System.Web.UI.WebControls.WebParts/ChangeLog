@@ -1,3 +1,22 @@
+2004-08-31  Sanjay Gupta <gsanjay@novell.com>
+
+    	* ConnectionConsumerCallback.cs:
+	* ConnectionProviderCallback.cs:
+    	* IFilter.cs:
+	* IParameters.cs:
+	* IPersonalizable.cs:
+    	* IVersioningPersonalizable.cs:
+	* WebPartAuthorizationEventArgs.cs:
+    	* WebPartAuthorizationEventHandler.cs:
+    	* WebPartCancelEventHandler.cs:
+	* WebPartConnectionsEventHandler.cs:
+   	* WebPartDisplayModeCancelEventHandler.cs:
+   	* WebPartDisplayModeEventHandler.cs:
+	* WebPartEventHandler.cs:
+    	* WebPartVerbsEventHandler.cs: Minor modifications, compiler error
+		corrections and removal of "sealed" specifier from *EventHandler.cs
+   	* WebPartDisplayMode.cs: Added new file.
+
 2004-08-12  Sanjay Gupta <gsanjay@novell.com>
 
 	* IField.cs:

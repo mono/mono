@@ -31,7 +31,7 @@
 #if NET_2_0
 
 using System.ComponentModel;
-using System.Collections.Specialized;
+using System.Collections;
 
 namespace System.Web.UI.WebControls.WebParts
 {

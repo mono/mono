@@ -30,7 +30,7 @@
 
 #if NET_2_0
 namespace System.Web.UI.WebControls.WebParts {
-	public sealed delegate object ConnectionProviderCallback ();
+	public delegate object ConnectionProviderCallback ();
 }
 #endif
 

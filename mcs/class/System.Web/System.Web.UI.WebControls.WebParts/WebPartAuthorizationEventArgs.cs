@@ -32,7 +32,7 @@
 
 namespace System.Web.UI.WebControls.WebParts
 {
-	public class WebPartiAuthorizationEventArgs : WebPartEventArgs
+	public class WebPartAuthorizationEventArgs : WebPartEventArgs
 	{
 		private bool authorized;
 		public WebPartAuthorizationEventArgs (WebPart part) : base (part)

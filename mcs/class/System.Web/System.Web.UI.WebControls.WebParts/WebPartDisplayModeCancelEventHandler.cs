@@ -30,7 +30,7 @@
 
 #if NET_2_0
 namespace System.Web.UI.WebControls.WebParts {
-	public sealed delegate void WebPartDisplayModeCancelEventHandler (object source, WebPartDisplayModeCancelEventArgs e);
+	public delegate void WebPartDisplayModeCancelEventHandler (object source, WebPartDisplayModeCancelEventArgs e);
 }
 #endif
 

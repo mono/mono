@@ -1,5 +1,5 @@
 //
-// System.Web.UI.WebControls.WebParts.IPersonalizable.cs
+// System.Web.UI.WebControls.WebParts.WebPartDisplayMode.cs
 //
 // Authors:
 //      Sanjay Gupta (gsanjay@novell.com)
@@ -30,16 +30,21 @@
 
 #if NET_2_0
 
-using System.Collections;
+using System.ComponentModel;
 
 namespace System.Web.UI.WebControls.WebParts
 {
-	public interface IPersonalizable
+	public abstract class WebPartDisplayMode
 	{
-		void Load (IDictionary sharedState, IDictionary userState);
-		void Save (IDictionary state);
+		protected WebPartDisplayMode ()
+		{}
+	
+		public abstract bool IsEnabled (WebPartManager manager);
 		
-		bool IsDirty { get; }
+		public abstract bool AllowPageDesign { get; }
+		
+		public abstract string Name { get; }
+	
 	}
 }
 #endif

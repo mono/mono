@@ -30,7 +30,7 @@
 
 #if NET_2_0
 namespace System.Web.UI.WebControls.WebParts {
-	public sealed delegate void WebPartConnectionsEventHandler (object source, WebPartConnectionsEventArgs e);
+	public delegate void WebPartConnectionsEventHandler (object source, WebPartConnectionsEventArgs e);
 }
 #endif
 
