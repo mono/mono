@@ -97,7 +97,7 @@ namespace System.Collections.Generic
 
 		public IEnumerator<T> GetEnumerator ()
 		{
-			return new Enumerator<T> (this);
+			return new Enumerator (this);
 		}
 
 		protected sealed class Node<T>
@@ -112,7 +112,7 @@ namespace System.Collections.Generic
 			}
 		}
 
-		protected struct Enumerator<T> : IEnumerator<T>
+		protected class Enumerator : IEnumerator<T>
 		{
 			Stack<T> stack;
 			int modified;
