@@ -37,7 +37,6 @@ namespace System.Windows.Forms {
 			Dock = DockStyle.Bottom;
 			showPanels = false;
 			sizingGrip = true;
-			Size = DefaultSize;
 		}
 
 		public override string ToString()
@@ -231,18 +230,10 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
-				CreateParams createParams = new CreateParams ();
+				CreateParams createParams = base.CreateParams;
 
-				createParams.Caption = Text;
 				createParams.ClassName = "msctls_statusbar32";
-				createParams.X = Left;
-				createParams.Y = Top;
-				createParams.Width = Width;
-				createParams.Height = Height;
-				createParams.ClassStyle = 0;
-				createParams.ExStyle = 0;
-				createParams.Param = 0;
-				createParams.Parent = Parent.Handle;
+
 				createParams.Style = (int) (
 					WindowStyles.WS_CHILD | 
 					WindowStyles.WS_VISIBLE |

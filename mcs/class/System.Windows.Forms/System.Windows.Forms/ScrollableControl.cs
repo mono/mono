@@ -93,7 +93,7 @@ namespace System.Windows.Forms {
 				if (!classRegistered) {
 					WNDCLASS wndClass = new WNDCLASS();
  
-					wndClass.style = (int) (CS_.CS_OWNDC | CS_.CS_VREDRAW | CS_.CS_HREDRAW);
+					wndClass.style = (int) (CS_.CS_OWNDC);
 					wndClass.lpfnWndProc = NativeWindow.GetWindowProc();
 					wndClass.cbClsExtra = 0;
 					wndClass.cbWndExtra = 0;
@@ -108,29 +108,13 @@ namespace System.Windows.Forms {
 						classRegistered = true; 
 				}		
 
-				CreateParams createParams = new CreateParams ();
+				CreateParams createParams = base.CreateParams;
 				createParams.Caption = "Hello World";
 				createParams.ClassName = "mono_scrollable_control";
-				createParams.X = Left;
-				createParams.Y = Top;
-				createParams.Width = Width;
-				createParams.Height = Height;
-				createParams.ClassStyle = 0;
-				createParams.ExStyle = 0;
-				createParams.Param = 0;
   				
-				createParams.Style = (int) (WindowStyles.WS_VISIBLE | WindowStyles.WS_CLIPCHILDREN);
+				createParams.Style = (int) (WindowStyles.WS_VISIBLE | WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CHILD);
 				//test version with scroll bars.
 				//createParams.Style = (int) (WindowStyles.WS_OVERLAPPEDWINDOW | WindowStyles.WS_HSCROLL | WindowStyles.WS_VSCROLL);
-				
-				if (Parent != null) {
-					createParams.Parent = Parent.Handle;
-					createParams.Style |= (int) WindowStyles.WS_CHILD;
-				}
-				else {
-					createParams.Parent = (IntPtr) 0;
-					createParams.Style |= (int) WindowStyles.WS_OVERLAPPEDWINDOW;
-				}
 				
 				return createParams;			
 			}

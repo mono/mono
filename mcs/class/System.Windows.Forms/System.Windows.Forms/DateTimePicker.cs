@@ -76,7 +76,6 @@ namespace System.Windows.Forms {
 			showCheckBox = false;
 			showUpDown = false;
 			val = DateTime.Now;
-			Size = DefaultSize;
 		}
 
 		[MonoTODO]
@@ -435,39 +434,28 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
-				if ( Parent != null ) {
-					CreateParams createParams = new CreateParams ();
+				CreateParams createParams = base.CreateParams;
 
-					createParams.Caption = Text;
-					createParams.ClassName = "SysDateTimePick32";
-					createParams.X = Left;
-					createParams.Y = Top;
-					createParams.Width = Width;
-					createParams.Height = Height;
-					createParams.ClassStyle = 0;
-					createParams.ExStyle = 0;
-					createParams.Param = 0;
-					createParams.Parent = Parent.Handle;
-					createParams.Style = (int) (
-						WindowStyles.WS_CHILDWINDOW | 
-						WindowStyles.WS_VISIBLE |
-						WindowStyles.WS_CLIPCHILDREN|
-						WindowStyles.WS_CLIPSIBLINGS);
-					
-					if ( ShowUpDown )
-						createParams.Style |= (int) DateTimePickerControlStyles.DTS_UPDOWN;
+				createParams.ClassName = "SysDateTimePick32";
 
-					if ( ShowCheckBox )
-						createParams.Style |= (int) DateTimePickerControlStyles.DTS_SHOWNONE;
+				createParams.Style = (int) (
+					WindowStyles.WS_CHILDWINDOW | 
+					WindowStyles.WS_VISIBLE |
+					WindowStyles.WS_CLIPCHILDREN|
+					WindowStyles.WS_CLIPSIBLINGS);
+				
+				if ( ShowUpDown )
+					createParams.Style |= (int) DateTimePickerControlStyles.DTS_UPDOWN;
 
-					if ( DropDownAlign == LeftRightAlignment.Right )
-						createParams.Style |= (int) DateTimePickerControlStyles.DTS_RIGHTALIGN;
+				if ( ShowCheckBox )
+					createParams.Style |= (int) DateTimePickerControlStyles.DTS_SHOWNONE;
 
-					createParams.Style |= formatStyle ( Format );
+				if ( DropDownAlign == LeftRightAlignment.Right )
+					createParams.Style |= (int) DateTimePickerControlStyles.DTS_RIGHTALIGN;
 
-					return createParams;
-				}
-				return null;
+				createParams.Style |= formatStyle ( Format );
+
+				return createParams;
 			}		
 		}
 

@@ -628,9 +628,13 @@
 					pars.ExStyle |= (int)WindowExStyles.WS_EX_MDICHILD;
 				}
 				else 
-					pars.Style |= (int)( WindowStyles.WS_OVERLAPPEDWINDOW | 
+					pars.Style = (int)( WindowStyles.WS_OVERLAPPEDWINDOW | 
 							WindowStyles.WS_CLIPSIBLINGS /* |
 							WindowStyles.WS_CLIPCHILDREN */);
+
+				if ( Parent == null ) 
+					pars.Parent = IntPtr.Zero;
+
 				// should have WS_CLIPCHILDREN style but there are
 				// problems with GroupBox at the moment
 

@@ -1,3 +1,13 @@
+2003-04-11 Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* Control.cs : init bounds in ctor, invisible parking window
+	* TrackBar.cs 
+	* ProgressBar.cs.cs 
+	* DateTimePicker.cs 
+	* StatusBar.cs : use base version of CreateParams
+	* ScrollableControl.cs : use base version of CreateParams, removed CS_VREDRAW, CS_HREDRAW styles
+	* Form.cs : reset parent back to zero for the main form
+	* StatusBarPanel.cs : small bug-fix
+
 2003-04-6  DennisHayes <dennish@raytek.com>
 	* Converted to Unix newlines
 	* Changed copyright from 2002 to 2002/3

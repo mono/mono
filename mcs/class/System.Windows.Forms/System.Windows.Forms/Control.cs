@@ -6,6 +6,7 @@
     //	Dennis Hayes (dennish@rayetk.com)
     //   WINELib implementation started by John Sohn (jsohn@columbus.rr.com)
     //	 Alexandre Pigolkine (pigolkine@gmx.de)
+    //	Aleksey Ryabchuk (ryabchuk@yahoo.com)
     //
     // (C) Ximian, Inc., 2002
     //
@@ -51,6 +52,7 @@
     		private ControlCollection childControls;
     		private Control parent;
     		static private Hashtable controlsCollection = new Hashtable ();
+		static private NativeWindow parkingWindow = null;
 
     		// private fields
     		// it seems these are stored in case the window is not created,
@@ -195,7 +197,10 @@
     			parent = null;
 			isDisposed = false;
 
-				mouseIsInside_ = false;
+			bounds.Width = DefaultSize.Width;
+			bounds.Height= DefaultSize.Height;
+
+			mouseIsInside_ = false;
 				recreatingHandle = false;
 				// Do not create Handle here, only in CreateHandle
     			// CreateHandle();//sets window handle. FIXME: No it does not
@@ -533,7 +538,6 @@
     			get {
   					CreateParams createParams = new CreateParams ();
   					createParams.Caption = Text;
-  					createParams.ClassName = "CONTROL";
   					createParams.X = Left;
   					createParams.Y = Top;
   					createParams.Width = Width;
@@ -545,7 +549,7 @@
   					if (parent != null)
   						createParams.Parent = parent.Handle;
   					else 
-  						createParams.Parent = (IntPtr) 0;
+  						createParams.Parent = ParkingWindowHandle;
 	  
   					createParams.Style = (int) WindowStyles.WS_OVERLAPPEDWINDOW;
 	  
@@ -899,6 +903,22 @@
     			}
     		}
     		
+		private static IntPtr ParkingWindowHandle {
+			get {
+				if ( parkingWindow == null )
+					parkingWindow = new NativeWindow ( );
+
+				if ( parkingWindow.Handle == IntPtr.Zero ) {
+					CreateParams pars = new CreateParams ( );
+					pars.ClassName = "mono_native_window";
+					pars.Style = (int) WindowStyles.WS_OVERLAPPED;
+					parkingWindow.CreateHandle ( pars );
+				}
+
+				return parkingWindow.Handle;
+			}
+		}
+
     		[MonoTODO]
     		public string ProductName {
     			get {
@@ -2947,7 +2967,7 @@
     			public virtual void Add (Control value) 
     			{
 					if( !Contains(value)) {
-						value.parent = owner;
+						value.Parent = owner;
 						collection.Add (value);
 					}
 				}

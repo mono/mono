@@ -178,7 +178,9 @@ namespace System.Windows.Forms {
 
 		public int GetContentWidth ( ) {
 			if( Parent != null) {
-				int cxsize = Win32.GetTextExtent( Parent.Handle, Text ).cx;
+				int cxsize = 0;
+				if ( Text != null )
+					cxsize = Win32.GetTextExtent( Parent.Handle, Text ).cx;
 				return cxsize < MinWidth ? MinWidth : cxsize;
 			}
 			return Width;
