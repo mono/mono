@@ -1,12 +1,26 @@
+2003-10-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Microsoft.VisualBasic/VBCodeCompiler.cs: New.
+	* Microsoft.VisualBasic/VBCodeGenerator.cs:
+	* Microsoft.VisualBasic/VBCodeProvider.cs: modified others to use the
+	new CodeCompiler.
+
+	New VBCodeCompiler by Jochen Wezel <jwezel@compumaster.de>.
+
+
 2003-07-07  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
-	* VBCodeProvider.cs: Removed unneccesary attributes according to corecompare
+	* VBCodeProvider.cs: Removed unneccesary attributes according to
+	corecompare
 
 2003-06-25  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* VBCodeGenerator.cs: Added and nearly completely implemented
 		(it compiles, but the functionallity is completely untested)
 		(also without a working mbas the compilaton options will fail)
-		(once all command line arguments for mbas are final and the warning output is final
-		 change the apropriate code to generate these options)
+		(once all command line arguments for mbas are final and the
+		warning output is final change the apropriate code to generate
+		these options)
+
 	* VBCodeProvider.cs: Added and implemented
+

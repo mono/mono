@@ -117,15 +117,10 @@ namespace System.Net.Sockets
 			IPAddress[] addresses = Dns.Resolve (hostname).AddressList;
 			for(int i=0; i<addresses.Length; i++) {
 				try {
-					Console.WriteLine("Trying: {0}, Family: {1}", addresses[i], addresses[i].AddressFamily);
-
 					this.family = addresses[i].AddressFamily;
 					Connect (new IPEndPoint (addresses[i], port));
-
-					Console.WriteLine("Connected: {0}, Family: {1}", addresses[i], family);
 					break;
-				}
-				catch(Exception e) {
+				} catch(Exception e) {
 					if(i == addresses.Length - 1){
 						if(socket != null) {
 							socket.Close();
@@ -137,7 +132,6 @@ namespace System.Net.Sockets
 					}
 				}
 			}
-
 		}
 #endregion
 		#region Multicast methods

@@ -34,7 +34,7 @@ namespace Microsoft.VisualBasic
 
 		public override ICodeCompiler CreateCompiler()
 		{
-			return new Microsoft.VisualBasic.VBCodeGenerator();
+			return new Microsoft.VisualBasic.VBCodeCompiler ();
 		}
 
 		public override ICodeGenerator CreateGenerator()

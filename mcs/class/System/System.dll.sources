@@ -4,6 +4,7 @@ Assembly/Locale.cs
 Microsoft.CSharp/CSharpCodeCompiler.cs
 Microsoft.CSharp/CSharpCodeGenerator.cs
 Microsoft.CSharp/CSharpCodeProvider.cs
+Microsoft.VisualBasic/VBCodeCompiler.cs
 Microsoft.VisualBasic/VBCodeGenerator.cs
 Microsoft.VisualBasic/VBCodeProvider.cs
 Microsoft.Win32/PowerModeChangedEventArgs.cs

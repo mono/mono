@@ -19,7 +19,7 @@ using System.Collections;
 
 namespace Microsoft.VisualBasic
 {
-	internal class VBCodeGenerator : CodeCompiler
+	internal class VBCodeGenerator : CodeGenerator
 	{
 		private string[] Keywords = new string[] {
 			"AddHandler", "AddressOf", "Alias", "And",
@@ -1129,79 +1129,6 @@ namespace Microsoft.VisualBasic
 		protected override bool Supports (GeneratorSupport supports)
 		{
 			return true;
-		}
-
-		protected override string CompilerName {
-			get {
-				return "mbas.exe";
-			}
-		}
-
-		protected override string FileExtension {
-			get {
-				return "vb";
-			}
-		}
-
-		[MonoTODO ("check")]
-		protected override string CmdArgsFromParameters (CompilerParameters options)
-		{
-			//FIXME correct this agains mbas parameters if parameters are complete
-			StringBuilder args = new StringBuilder();
-			if (options.GenerateExecutable)
-				args.Append ("/target:exe ");
-			else
-				args.Append ("/target:library ");
-
-			if (options.IncludeDebugInformation)
-				args.Append ("/debug ");
-
-			if (options.TreatWarningsAsErrors)
-				args.Append ("/warnaserror ");
-			args.AppendFormat ("/warn:{0} ", options.WarningLevel);
-			if (options.OutputAssembly == null)
-				options.OutputAssembly = Path.ChangeExtension (Path.GetTempFileName(), "dll");
-
-			args.AppendFormat ("/out:'{0}' ", options.OutputAssembly);
-
-			if (null != options.ReferencedAssemblies) {
-				foreach (string import in options.ReferencedAssemblies)
-					args.AppendFormat ("/r:'{0}' ", import);
-			}
-
-			if (options.Win32Resource != null)
-				args.AppendFormat ("/Win32Resource:{0} ", options.Win32Resource);
-
-			foreach (string source in options.TempFiles)
-				args.AppendFormat ("'{0}' ", source);
-
-			return args.ToString();
-		}
-
-		[MonoTODO ("check")]
-		protected override void ProcessCompilerOutputLine (CompilerResults results, string line)
-		{
-			CompilerError error = new CompilerError();
-			//FIXME check this Regex against mbas compiler if the output there is complete
-			Regex reg = new Regex (@"^(\s*(?<file>.*)\((?<line>\d*)(,(?<column>\d*))?\)\s+)*(?<level>\w+)\s*(?<number>.*):\s(?<message>.*)",
-				RegexOptions.Compiled | RegexOptions.ExplicitCapture);
-			Match match = reg.Match (line);
-			if (!match.Success) {
-				return;
-			}
-			if (String.Empty != match.Result ("${file}"))
-				error.FileName = match.Result ("${file}");
-			if (String.Empty != match.Result ("${line}"))
-				error.Line = Int32.Parse (match.Result ("${line}"));
-			if (String.Empty != match.Result ("${column}"))
-				error.Column = Int32.Parse (match.Result ("${column}"));
-			if (match.Result ("${level}") == "warning")
-				error.IsWarning=true;
-			error.ErrorNumber = match.Result ("${number}");
-			error.ErrorText = match.Result ("${message}");
-
-			results.Errors.Add (error);
-			return;
 		}
 	}
 }
