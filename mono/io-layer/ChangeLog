@@ -1,3 +1,7 @@
+2005-03-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* io-layer.h: Add required header files for compiling with VS.NET.
+
 2005-03-17 Miguel de Icaza <miguel@novell.com>
 
 	* io.c: don't fail on NFS when there are no more locks available.
