@@ -727,6 +727,7 @@ System.Runtime.Remoting.Metadata.W3cXsd2001/SoapTime.cs
 System.Runtime.Remoting.Proxies/RealProxy.cs
 System.Runtime.Remoting.Proxies/RemotingProxy.cs
 System.Runtime.Remoting.Proxies/ProxyAttribute.cs
+System.Runtime.Remoting.Services/EnterpriseServicesHelper.cs
 System.Runtime.Remoting.Services/ITrackingHandler.cs
 System.Runtime.Remoting.Services/TrackingServices.cs
 System.Runtime.Serialization/Formatter.cs

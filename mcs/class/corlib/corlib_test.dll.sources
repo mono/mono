@@ -76,6 +76,7 @@ System/ResolveEventArgsTest.cs
 System.Resources/ResourceReaderTest.cs
 System.Runtime.CompilerServices/RuntimeHelpersTest.cs
 System.Runtime.Remoting/ContextTest.cs
+System.Runtime.Remoting/SoapServicesTest.cs
 System.Runtime.Remoting/SynchronizationAttributeTest.cs
 System.Runtime.Serialization/FormatterServicesTests.cs
 System.Runtime.Serialization/ObjectIDGeneratorTests.cs
