@@ -1,6 +1,8 @@
 2004-07-23  Jackson Harper  <jackson@ximian.com>
 
-	* MethodDef.cs: Params are 1 based if the method is static. 
+	* MethodDef.cs: Params are 1 based if the method is instance
+	because of the 'this' arg.
+	
 2004-07-21  Jackson Harper  <jackson@ximian.com>
 
 	* ExternTypeRefInst.cs: Use the PeapiType so that modified types
