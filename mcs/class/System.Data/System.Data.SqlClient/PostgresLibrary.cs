@@ -14,6 +14,9 @@
 // (C) Ximian, Inc 2002
 //
 
+// *** uncomment #define to get debug messages, comment for production ***
+// #define DEBUG_PostgresLibrary
+
 using System;
 using System.Data;
 using System.Runtime.InteropServices;
@@ -68,6 +71,8 @@ namespace System.Data.SqlClient {
 		public static DbType TypnameToSqlDbType(string typname) {
 			DbType sqlType;
 			
+			// FIXME: use hashtable here?
+
 			switch(typname) {
 
 			case "abstime":
@@ -111,7 +116,7 @@ namespace System.Data.SqlClient {
 				break;
 
 			case "date":
-				sqlType = DbType.String;
+				sqlType = DbType.Date;
 				break;
 
 			case "float4":
@@ -195,19 +200,19 @@ namespace System.Data.SqlClient {
 				break;
 
 			case "time":
-				sqlType = DbType.String;
+				sqlType = DbType.Time;
 				break;
 
 			case "timestamp":
-				sqlType = DbType.String;
+				sqlType = DbType.DateTime;
 				break;
 
 			case "timestamptz":
-				sqlType = DbType.String;
+				sqlType = DbType.DateTime;
 				break;
 
 			case "timetz":
-				sqlType = DbType.String;
+				sqlType = DbType.DateTime;
 				break;
 
 			case "tinterval":
@@ -238,33 +243,70 @@ namespace System.Data.SqlClient {
 			//        from PostgreSQL oid type
 			//        to .NET System.<type>
 
+			// TODO: need to handle a NULL for each type
+			//       maybe setting obj to System.DBNull.Value ?
+
+#if DEBUG_PostgresLibrary
+			Console.WriteLine("ConvertDbTypeToSystem typ: " + 
+				typ + "  value: " + value);
+#endif // DEBUG_PostgresLibrary
+
+			// Date, Time, and DateTime 
+			// are parsed based on ISO format
+			// "YYYY-MM-DD hh:mi:ss:ms"
+
 			switch(typ) {
 			case DbType.String:
-				obj = (object) String.Copy(value); 
+				obj = String.Copy(value); 
 				break;
 			case DbType.Boolean:
-				obj = (object) Boolean.Parse(value);
+				if(value.Equals("t"))
+					obj = Boolean.Parse("true");
+				else
+					obj = Boolean.Parse("false");
 				break;
 			case DbType.Int16:
-				obj = (object) Int16.Parse(value);
+				obj = Int16.Parse(value);
 				break;
 			case DbType.Int32:
-				obj = (object) Int32.Parse(value);
+				obj = Int32.Parse(value);
 				break;
 			case DbType.Int64:
-				obj = (object) Int64.Parse(value);
+				obj = Int64.Parse(value);
 				break;
 			case DbType.Decimal:
-				obj = (object) Decimal.Parse(value);
+				obj = Decimal.Parse(value);
 				break;
 			case DbType.Single:
-				obj = (object) Single.Parse(value);
+				obj = Single.Parse(value);
 				break;
 			case DbType.Double:
-				obj = (object) Double.Parse(value);
+				obj = Double.Parse(value);
+				break;
+			case DbType.Date:
+				String[] sd = value.Split(new Char[] {'-'});
+				obj = new DateTime(
+					Int32.Parse(sd[0]), Int32.Parse(sd[1]), Int32.Parse(sd[2]),
+					0,0,0);
+				break;
+			case DbType.Time:
+				String[] st = value.Split(new Char[] {':'});
+				obj = new DateTime(0001,01,01,
+					Int32.Parse(st[0]),Int32.Parse(st[1]),Int32.Parse(st[2]));
+				break;
+			case DbType.DateTime:
+				Int32 YYYY,MM,DD,hh,mi,ss,ms;
+				YYYY = Int32.Parse(value.Substring(0,4));
+				MM = Int32.Parse(value.Substring(5,2));
+				DD = Int32.Parse(value.Substring(8,2));
+				hh = Int32.Parse(value.Substring(11,2));
+				mi = Int32.Parse(value.Substring(14,2));
+				ss = Int32.Parse(value.Substring(17,2));
+				ms = Int32.Parse(value.Substring(20,2));
+				obj = new DateTime(YYYY,MM,DD,hh,mi,ss,ms);
 				break;
 			default:
-				obj = (object) String.Copy(value);
+				obj = String.Copy(value);
 				break;
 			}
 
@@ -304,6 +346,11 @@ namespace System.Data.SqlClient {
 				break;
 			case DbType.Double:
 				typ = typeof(Double);
+				break;
+			case DbType.Date:
+			case DbType.Time:
+			case DbType.DateTime:
+				typ = typeof(DateTime);
 				break;
 			default:
 				typ = typeof(String);

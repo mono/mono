@@ -1,3 +1,21 @@
+2002-05-09  Daniel Morgan <danmorg@sc.rr.com>
+
+	* System.Data.SqlClient/PostgresLibrary.cs: got
+	PostgreSQL data types time, date, timestamp (DateTime like)
+	mapped to .NET System.DateTime working based 
+	on ISO DateTime formatting "YYYY-MM-DD hh:mi:ss.ms"
+	Also mapped pg type boolean to .net Boolean
+	
+	* SqlClient/SqlConnection.cs: run SQL command to set
+	Date style to ISO
+	
+	* Test/PostgresTest.cs: added test for an UPDATE SQL command,
+	added tests for aggregates min(), max(), sum(), count().  could
+	not get avg() to work due to some formatting error; someone claimed
+	that it was my locale settings.  added tests for SELECT of columns
+	of type boolean, float, double, date, time, and timestamp.  They
+	have not been fully tested, but its a start.
+
 2002-05-09  Tim Coleman <tim@timcoleman.com>
 	* System.Data.SqlTypes/SqlDecimal.cs: Implementations of 
 	addition, subtraction, and multiplication for the

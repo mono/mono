@@ -247,10 +247,7 @@ namespace System.Data.SqlClient {
 			connStatus = PostgresLibrary.PQstatus (pgConn);
 			if(connStatus == ConnStatusType.CONNECTION_OK) {
 				// Successfully Connected
-				conState = ConnectionState.Open;
-				// FIXME: load types into hashtable
-				types = new PostgresTypes(this);
-				types.Load();
+				SetupConnection();
 			}
 			else {
 				String errorMessage = PostgresLibrary.
@@ -261,6 +258,20 @@ namespace System.Data.SqlClient {
 					errorMessage, 0, "",
 					host, "SqlConnection", 0);
 			}
+		}
+
+		private void SetupConnection() {
+			conState = ConnectionState.Open;
+
+			// FIXME: load types into hashtable
+			types = new PostgresTypes(this);
+			types.Load();
+
+			// set DATE style to YYYY/MM/DD
+			IntPtr pgResult = IntPtr.Zero;
+			pgResult = PostgresLibrary.PQexec (pgConn, "SET DATESTYLE TO 'ISO'");
+			PostgresLibrary.PQclear (pgResult);
+			pgResult = IntPtr.Zero;
 		}
 
 		private void CloseDataSource () {
@@ -556,46 +567,54 @@ namespace System.Data.SqlClient {
 				hashTypes = new Hashtable();
 			}
 
+			private void AddPgType(Hashtable types, 
+				string typname, DbType dbType) {
+
+				PostgresType pgType = new PostgresType();
+			
+				pgType.typname = typname;
+				pgType.dbType = dbType;	
+
+				types.Add(pgType.typname, pgType);
+			}
+
 			private void BuildTypes(IntPtr pgResult, 
 				int nRows, int nFields) {
 
 				String value;
 
-				int r, c;
+				int r;
 				for(r = 0; r < nRows; r++) {
 					PostgresType pgType = 
 						new PostgresType();
 
-					for(c = 0; c < nFields; c++) {
-						// get data value
-						value = PostgresLibrary.
-							PQgetvalue(
+					// get data value (oid)
+					value = PostgresLibrary.
+						PQgetvalue(
 							pgResult,
-							r, c);
+							r, 0);
 						
-						if(c == 0) {
-							pgType.oid = Int32.Parse(value);
-						}
-						else if(c == 1) {
-							pgType.typname = String.Copy(value);
-							pgType.dbType = PostgresHelper.
-								TypnameToSqlDbType(
+					pgType.oid = Int32.Parse(value);
+
+					// get data value (typname)
+					value = PostgresLibrary.
+						PQgetvalue(
+						pgResult,
+						r, 1);	
+					pgType.typname = String.Copy(value);
+					pgType.dbType = PostgresHelper.
+							TypnameToSqlDbType(
 								pgType.typname);
 
-							pgTypes.Add(pgType);
-						}
-						// FIXME: needs to be Read Only
-						// pgTypes = ArrayList.ReadOnly(pgTypes);
-
-					}
+					pgTypes.Add(pgType);
 				}
+				pgTypes = ArrayList.ReadOnly(pgTypes);
 			}
 
 			internal void Load() {
 				pgTypes = new ArrayList();
-				IntPtr pgResult; // PGresult
-				ExecStatusType execStatus;	
-
+				IntPtr pgResult = IntPtr.Zero; // PGresult
+				
 				if(con.State != ConnectionState.Open)
 					throw new InvalidOperationException(
 						"ConnnectionState is not Open");
@@ -611,39 +630,46 @@ namespace System.Data.SqlClient {
 				pgResult = PostgresLibrary.
 					PQexec (con.PostgresConnection, SEL_SQL_GetTypes);
 
-				execStatus = PostgresLibrary.
-					PQresultStatus (pgResult);
-			
-				if(execStatus == ExecStatusType.PGRES_TUPLES_OK) {
-					int nRows;
-					int nFields;
-
-					nRows = PostgresLibrary.
-						PQntuples(pgResult);
-
-					nFields = PostgresLibrary.
-						PQnfields(pgResult);
-
-					BuildTypes (pgResult, nRows, nFields);
-
-					// close result set
-					PostgresLibrary.PQclear (pgResult);
-
-				}
-				else {
-					String errorMessage;
-				
-					errorMessage = PostgresLibrary.
-						PQresStatus(execStatus);
-
-					errorMessage += " " + PostgresLibrary.
-						PQresultErrorMessage(pgResult);
-				
+				if(pgResult.Equals(IntPtr.Zero)) {
 					throw new SqlException(0, 0,
-						errorMessage, 0, "",
+						"No Resultset from PostgreSQL", 0, "",
 						con.DataSource, "SqlConnection", 0);
 				}
+				else {
+					ExecStatusType execStatus;
 
+					execStatus = PostgresLibrary.
+						PQresultStatus (pgResult);
+			
+					if(execStatus == ExecStatusType.PGRES_TUPLES_OK) {
+						int nRows;
+						int nFields;
+
+						nRows = PostgresLibrary.
+							PQntuples(pgResult);
+
+						nFields = PostgresLibrary.
+							PQnfields(pgResult);
+
+						BuildTypes (pgResult, nRows, nFields);
+					}
+					else {
+						String errorMessage;
+				
+						errorMessage = PostgresLibrary.
+							PQresStatus(execStatus);
+
+						errorMessage += " " + PostgresLibrary.
+							PQresultErrorMessage(pgResult);
+				
+						throw new SqlException(0, 0,
+							errorMessage, 0, "",
+							con.DataSource, "SqlConnection", 0);
+					}
+					// close result set
+					PostgresLibrary.PQclear (pgResult);
+					pgResult = IntPtr.Zero;
+				}
 			}
 
 			public ArrayList List {

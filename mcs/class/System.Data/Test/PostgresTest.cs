@@ -48,7 +48,7 @@ namespace TestSystemDataSqlClient {
 				"int2_value smallint, " +
 				"int4_value integer, " +
 				"bigint_value bigint, " +
-				"float_value real, " +
+				"float_value real, " + 
 				"double_value double precision, " +
 				"numeric_value numeric(15, 3), " +
 				"char_value char(50), " +
@@ -129,12 +129,18 @@ namespace TestSystemDataSqlClient {
 
 			selectCommand.CommandText = 
 				"select " +				
+					"boolean_value, " +
 					"int2_value, " +
 					"int4_value, " +
 					"bigint_value, " +
+					"float_value, " + 
+					"double_value, " +
 					"char_value, " +
 					"varchar_value, " +
-					"text_value " +
+					"text_value, " +
+					"time_value, " +
+					"date_value, " +
+					"timestamp_value " +
 				"from mono_postgres_test";
 
 			reader = selectCommand.ExecuteReader ();
@@ -142,10 +148,49 @@ namespace TestSystemDataSqlClient {
 			return reader;
 		}
 
+		static void UpdateData (IDbConnection cnc) {
+	
+			IDbCommand updateCommand = cnc.CreateCommand();		
+		
+			updateCommand.CommandText = 
+				"update mono_postgres_test " +				
+				"set " +
+					"boolean_value = 'F', " +
+					"int2_value    = 5, " +
+					"int4_value    = 3, " +
+					"bigint_value  = 9, " +
+					"char_value    = 'Mono.Data!'   , " +
+					"varchar_value = 'It was not me!', " +
+					"text_value    = 'We got data!'   " +
+				"where int2_value = -22";
+
+			updateCommand.ExecuteNonQuery ();		
+		}
+
+		// used to do a min(), max(), count(), sum(), or avg()
+		static object SelectAggregate (IDbConnection cnc, String agg) {
+	
+			IDbCommand selectCommand = cnc.CreateCommand();
+			object data;
+
+			Console.WriteLine("Aggregate: " + agg);
+
+			selectCommand.CommandText = 
+				"select " + agg +
+				"from mono_postgres_test";
+
+			data = selectCommand.ExecuteScalar ();
+
+			Console.WriteLine("Agg Result: " + data);
+
+			return data;
+		}
+
 		/* Postgres provider tests */
 		static void DoPostgresTest (IDbConnection cnc) {
 
 			IDataReader reader;
+			Object oDataValue;
 
 			Console.WriteLine ("\tPostgres provider specific tests...\n");
 
@@ -156,7 +201,7 @@ namespace TestSystemDataSqlClient {
 				Console.WriteLine ("OK");
 			}
 			catch (SqlException e) {
-				Console.WriteLine("Error (don't worry about this one): + e");
+				Console.WriteLine("Error (don't worry about this one)" + e);
 			}
 			
 			try {
@@ -169,7 +214,24 @@ namespace TestSystemDataSqlClient {
 				Console.WriteLine ("\t\tInsert values for all known types: ");
 				InsertData (cnc);
 				Console.WriteLine ("OK");
-				
+
+				/* Update values */
+				Console.WriteLine ("\t\tUpdate values: ");
+				UpdateData (cnc);
+				Console.WriteLine ("OK");
+
+				/* Inserts values */
+				Console.WriteLine ("\t\tInsert values for all known types: ");
+				InsertData (cnc);
+				Console.WriteLine ("OK");			
+
+				/* Select aggregates */
+				SelectAggregate (cnc, "count(*)");
+				// SelectAggregate (cnc, "avg(int4_value)");
+				SelectAggregate (cnc, "min(text_value)");
+				SelectAggregate (cnc, "max(int4_value)");
+				SelectAggregate (cnc, "sum(int4_value)");
+
 				/* Select values */
 				Console.WriteLine ("\t\tSelect values from the database: ");
 				reader = SelectData (cnc);
@@ -203,7 +265,7 @@ namespace TestSystemDataSqlClient {
 							"    Col " + 
 							c + ": " + 
 							dt.Columns[c].ColumnName + 
-							" - " +
+							": " +
 							reader.GetValue(c));
 					}
 	
@@ -245,6 +307,7 @@ namespace TestSystemDataSqlClient {
 
 			cnc.Open();
 			DoPostgresTest(cnc);
+
 			cnc.Close();
 		}
 	}
