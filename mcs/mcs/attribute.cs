@@ -262,7 +262,7 @@ namespace Mono.CSharp {
 					if (e is Constant){
 						object value = ((Constant) e).GetValue ();
 						
-						if (false && StructLayout && fi.Name == "CharSet"){
+						if (StructLayout && fi.Name == "CharSet"){
 							CharSet cs = (CharSet) value;
 
 							switch (cs){
