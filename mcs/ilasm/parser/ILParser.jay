@@ -1235,7 +1235,7 @@ field_init		: K_FLOAT32 OPEN_PARENS float64 CLOSE_PARENS
                           }
 			| K_FLOAT64 OPEN_PARENS int64 CLOSE_PARENS
                           {
-                                $$ = new DoubleConst (Convert.ToDouble (3));
+                                $$ = new DoubleConst (Convert.ToDouble ($3));
                           }
 			| K_INT64 OPEN_PARENS int64 CLOSE_PARENS
                           {

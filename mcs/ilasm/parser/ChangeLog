@@ -1,5 +1,9 @@
 2004-03-28  Jackson Harper  <jackson@ximian.com>
 
+	* ILParser.jay: Fix typo.
+	
+2004-03-28  Jackson Harper  <jackson@ximian.com>
+
 	* ILParser.jay: Set true and false literals properly. Add instance
 	property attribute.
 	
