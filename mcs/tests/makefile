@@ -1,3 +1,6 @@
+MCS=../mcs/compiler
+CSC=csc
+
 TEST_SOURCES = \
 	test-1 test-4 test-6 test-7 test-8 test-9 test-10
 
@@ -6,7 +9,7 @@ TEST_NOPASS = \
 
 test-compiler:
 	for i in $(TEST_SOURCES); do \
-		if ../mcs/compiler $$i.cs > /dev/null; then \
+		if $(MCS) $$i.cs > /dev/null; then \
 			if ./$$i.exe; then \
 				echo $$i: ok; \
 			else \
@@ -16,3 +19,22 @@ test-compiler:
 			echo compiler failed on $$i;   exit; \
 		fi \
 	done
+
+casts.cs: gen-cast-test.cs
+	$(CSC) /out:csc-cast.exe gen-cast-test.cs
+	./csc-cast > casts.cs
+
+casts-csc.exe: casts.cs
+	$(CSC) /out:casts-csc.exe casts.cs
+
+casts.exe: casts.cs
+	$(MCS) casts.cs
+
+csc-casts.out: casts-csc.exe
+	./casts-csc.exe > csc-casts.out
+
+msc-casts.out: casts.exe
+	./casts.exe > msc-casts.out
+
+test-casts: csc-casts.out msc-casts.out
+	cmp csc-casts.out msc-casts.out
