@@ -22,52 +22,52 @@
     <PMDesignator>PM</PMDesignator>
     <AMDesignator>AM</AMDesignator>
     <MonthNames>
-      <MonthName>January</MonthName>
-      <MonthName>February</MonthName>
-      <MonthName>March</MonthName>
+      <MonthName>Januar</MonthName>
+      <MonthName>Februar</MonthName>
+      <MonthName>Marts</MonthName>
       <MonthName>April</MonthName>
-      <MonthName>May</MonthName>
-      <MonthName>June</MonthName>
-      <MonthName>July</MonthName>
+      <MonthName>Maj</MonthName>
+      <MonthName>Juni</MonthName>
+      <MonthName>Juli</MonthName>
       <MonthName>August</MonthName>
       <MonthName>September</MonthName>
-      <MonthName>October</MonthName>
+      <MonthName>Oktober</MonthName>
       <MonthName>November</MonthName>
       <MonthName>December</MonthName>
       <MonthName />
     </MonthNames>
     <DayNames>
-      <DayName>Sunday</DayName>
-      <DayName>Monday</DayName>
-      <DayName>Tuesday</DayName>
-      <DayName>Wednesday</DayName>
-      <DayName>Thursday</DayName>
-      <DayName>Friday</DayName>
-      <DayName>Saturday</DayName>
+      <DayName>Søndag</DayName>
+      <DayName>Mandag</DayName>
+      <DayName>Tirsdag</DayName>
+      <DayName>Onsdag</DayName>
+      <DayName>Torsdag</DayName>
+      <DayName>Fredag</DayName>
+      <DayName>Lørdag</DayName>
     </DayNames>
     <AbbreviatedMonthNames>
       <AbbreviatedMonthName>Jan</AbbreviatedMonthName>
       <AbbreviatedMonthName>Feb</AbbreviatedMonthName>
       <AbbreviatedMonthName>Mar</AbbreviatedMonthName>
       <AbbreviatedMonthName>Apr</AbbreviatedMonthName>
-      <AbbreviatedMonthName>May</AbbreviatedMonthName>
+      <AbbreviatedMonthName>Maj</AbbreviatedMonthName>
       <AbbreviatedMonthName>Jun</AbbreviatedMonthName>
       <AbbreviatedMonthName>Jul</AbbreviatedMonthName>
       <AbbreviatedMonthName>Aug</AbbreviatedMonthName>
       <AbbreviatedMonthName>Sep</AbbreviatedMonthName>
-      <AbbreviatedMonthName>Oct</AbbreviatedMonthName>
+      <AbbreviatedMonthName>Okt</AbbreviatedMonthName>
       <AbbreviatedMonthName>Nov</AbbreviatedMonthName>
       <AbbreviatedMonthName>Dec</AbbreviatedMonthName>
       <AbbreviatedMonthName />
     </AbbreviatedMonthNames>
     <AbbreviatedDayNames>
-      <AbbreviatedDayName>Sun</AbbreviatedDayName>
-      <AbbreviatedDayName>Mon</AbbreviatedDayName>
-      <AbbreviatedDayName>Tue</AbbreviatedDayName>
-      <AbbreviatedDayName>Wed</AbbreviatedDayName>
-      <AbbreviatedDayName>Thu</AbbreviatedDayName>
-      <AbbreviatedDayName>Fri</AbbreviatedDayName>
-      <AbbreviatedDayName>Sat</AbbreviatedDayName>
+      <AbbreviatedDayName>Søn</AbbreviatedDayName>
+      <AbbreviatedDayName>Man</AbbreviatedDayName>
+      <AbbreviatedDayName>Tir</AbbreviatedDayName>
+      <AbbreviatedDayName>Ons</AbbreviatedDayName>
+      <AbbreviatedDayName>Tor</AbbreviatedDayName>
+      <AbbreviatedDayName>Fre</AbbreviatedDayName>
+      <AbbreviatedDayName>Lør</AbbreviatedDayName>
     </AbbreviatedDayNames>
   </DateTimeFormat>
   <DisplayNames>
@@ -77,10 +77,10 @@
     <DisplayName lang="zh-CHS">da-DK (Needs translation)</DisplayName>
     <DisplayName lang="zh-CHT">da-DK (Needs translation)</DisplayName>
     <DisplayName lang="cs">da-DK (Needs translation)</DisplayName>
-    <DisplayName lang="da">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="da">Dansk</DisplayName>
     <DisplayName lang="de">da-DK (Needs translation)</DisplayName>
     <DisplayName lang="el">da-DK (Needs translation)</DisplayName>
-    <DisplayName lang="en">da-DK (Needs translation)</DisplayName>
+    <DisplayName lang="en">Danish</DisplayName>
     <DisplayName lang="es">da-DK (Needs translation)</DisplayName>
     <DisplayName lang="fi">da-DK (Needs translation)</DisplayName>
     <DisplayName lang="fr">da-DK (Needs translation)</DisplayName>
@@ -139,10 +139,10 @@
     <DisplayName lang="syr">da-DK (Needs translation)</DisplayName>
     <DisplayName lang="div">da-DK (Needs translation)</DisplayName>
   </DisplayNames>
-  <EnglishName>da-DK (Need English name)</EnglishName>
+  <EnglishName>Danish</EnglishName>
   <LCID>1030</LCID>
   <Name>da-DK</Name>
-  <NativeName>da-DK (Need native name)</NativeName>
+  <NativeName>Dansk</NativeName>
   <NumberFormat>
     <PositiveSign>+</PositiveSign>
     <PositiveInfinitySymbol>Infinity</PositiveInfinitySymbol>

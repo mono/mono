@@ -2,7 +2,7 @@
 <!--Danish-->
 <CultureInfo name="da">
   <Calendar>System.Globalization.GregorianCalendar</Calendar>
-  <CompareInfo LCID="6" />
+  <CompareInfo LCID="1030" />
   <DisplayNames>
     <DisplayName lang="ar">da (Needs translation)</DisplayName>
     <DisplayName lang="bg">da (Needs translation)</DisplayName>
@@ -10,10 +10,10 @@
     <DisplayName lang="zh-CHS">da (Needs translation)</DisplayName>
     <DisplayName lang="zh-CHT">da (Needs translation)</DisplayName>
     <DisplayName lang="cs">da (Needs translation)</DisplayName>
-    <DisplayName lang="da">da (Needs translation)</DisplayName>
+    <DisplayName lang="da">Dansk</DisplayName>
     <DisplayName lang="de">da (Needs translation)</DisplayName>
     <DisplayName lang="el">da (Needs translation)</DisplayName>
-    <DisplayName lang="en">da (Needs translation)</DisplayName>
+    <DisplayName lang="en">Danish</DisplayName>
     <DisplayName lang="es">da (Needs translation)</DisplayName>
     <DisplayName lang="fi">da (Needs translation)</DisplayName>
     <DisplayName lang="fr">da (Needs translation)</DisplayName>
@@ -72,10 +72,10 @@
     <DisplayName lang="syr">da (Needs translation)</DisplayName>
     <DisplayName lang="div">da (Needs translation)</DisplayName>
   </DisplayNames>
-  <EnglishName>da (Need English name)</EnglishName>
-  <LCID>6</LCID>
+  <EnglishName>Danish</EnglishName>
+  <LCID>1030</LCID>
   <Name>da</Name>
-  <NativeName>da (Need native name)</NativeName>
+  <NativeName>Dansk</NativeName>
   <OptionalCalendars>
     <Calendar>System.Globalization.GregorianCalendar</Calendar>
   </OptionalCalendars>
