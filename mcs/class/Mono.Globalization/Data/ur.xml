@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Urdu-->
+<CultureInfo name="ur">
+  <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  <CompareInfo LCID="32" />
+  <DisplayName>ur (Need display name)</DisplayName>
+  <EnglishName>ur (Need English name)</EnglishName>
+  <IsNeutralCulture>True</IsNeutralCulture>
+  <LCID>32</LCID>
+  <Name>ur</Name>
+  <NativeName>ur (Need native name)</NativeName>
+  <OptionalCalendars>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  </OptionalCalendars>
+  <Parent />
+  <TextInfo>
+    <ANSICodePage>1256</ANSICodePage>
+    <EBCDICCodePage>20420</EBCDICCodePage>
+    <ListSeparator>;</ListSeparator>
+    <MacCodePage>10004</MacCodePage>
+    <OEMCodePage>720</OEMCodePage>
+  </TextInfo>
+  <ThreeLetterISOLanguageName>urd</ThreeLetterISOLanguageName>
+  <TwoLetterISOLanguageName>ur</TwoLetterISOLanguageName>
+</CultureInfo>

@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Bulgarian-->
+<CultureInfo name="bg">
+  <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  <CompareInfo LCID="2" />
+  <DisplayName>bg (Need display name)</DisplayName>
+  <EnglishName>bg (Need English name)</EnglishName>
+  <IsNeutralCulture>True</IsNeutralCulture>
+  <LCID>2</LCID>
+  <Name>bg</Name>
+  <NativeName>bg (Need native name)</NativeName>
+  <OptionalCalendars>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  </OptionalCalendars>
+  <Parent />
+  <TextInfo>
+    <ANSICodePage>1251</ANSICodePage>
+    <EBCDICCodePage>20420</EBCDICCodePage>
+    <ListSeparator>;</ListSeparator>
+    <MacCodePage>10007</MacCodePage>
+    <OEMCodePage>866</OEMCodePage>
+  </TextInfo>
+  <ThreeLetterISOLanguageName>bul</ThreeLetterISOLanguageName>
+  <TwoLetterISOLanguageName>bg</TwoLetterISOLanguageName>
+</CultureInfo>

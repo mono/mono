@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Croatian-->
+<CultureInfo name="hr">
+  <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  <CompareInfo LCID="26" />
+  <DisplayName>hr (Need display name)</DisplayName>
+  <EnglishName>hr (Need English name)</EnglishName>
+  <IsNeutralCulture>True</IsNeutralCulture>
+  <LCID>26</LCID>
+  <Name>hr</Name>
+  <NativeName>hr (Need native name)</NativeName>
+  <OptionalCalendars>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  </OptionalCalendars>
+  <Parent />
+  <TextInfo>
+    <ANSICodePage>1250</ANSICodePage>
+    <EBCDICCodePage>500</EBCDICCodePage>
+    <ListSeparator>;</ListSeparator>
+    <MacCodePage>10082</MacCodePage>
+    <OEMCodePage>852</OEMCodePage>
+  </TextInfo>
+  <ThreeLetterISOLanguageName>hrv</ThreeLetterISOLanguageName>
+  <TwoLetterISOLanguageName>hr</TwoLetterISOLanguageName>
+</CultureInfo>

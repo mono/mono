@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Arabic-->
+<CultureInfo name="ar">
+  <Calendar>System.Globalization.HijriCalendar</Calendar>
+  <CompareInfo LCID="1" />
+  <DisplayName>ar (Need display name)</DisplayName>
+  <EnglishName>ar (Need English name)</EnglishName>
+  <IsNeutralCulture>True</IsNeutralCulture>
+  <LCID>1</LCID>
+  <Name>ar</Name>
+  <NativeName>ar (Need native name)</NativeName>
+  <OptionalCalendars>
+    <Calendar>System.Globalization.HijriCalendar</Calendar>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  </OptionalCalendars>
+  <Parent />
+  <TextInfo>
+    <ANSICodePage>1256</ANSICodePage>
+    <EBCDICCodePage>20420</EBCDICCodePage>
+    <ListSeparator>;</ListSeparator>
+    <MacCodePage>10004</MacCodePage>
+    <OEMCodePage>720</OEMCodePage>
+  </TextInfo>
+  <ThreeLetterISOLanguageName>ara</ThreeLetterISOLanguageName>
+  <TwoLetterISOLanguageName>ar</TwoLetterISOLanguageName>
+</CultureInfo>

@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Hindi-->
+<CultureInfo name="hi">
+  <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  <CompareInfo LCID="57" />
+  <DisplayName>hi (Need display name)</DisplayName>
+  <EnglishName>hi (Need English name)</EnglishName>
+  <IsNeutralCulture>True</IsNeutralCulture>
+  <LCID>57</LCID>
+  <Name>hi</Name>
+  <NativeName>hi (Need native name)</NativeName>
+  <OptionalCalendars>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  </OptionalCalendars>
+  <Parent />
+  <TextInfo>
+    <ANSICodePage>0</ANSICodePage>
+    <EBCDICCodePage>500</EBCDICCodePage>
+    <ListSeparator>,</ListSeparator>
+    <MacCodePage>2</MacCodePage>
+    <OEMCodePage>1</OEMCodePage>
+  </TextInfo>
+  <ThreeLetterISOLanguageName>hin</ThreeLetterISOLanguageName>
+  <TwoLetterISOLanguageName>hi</TwoLetterISOLanguageName>
+</CultureInfo>

@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Belarusian-->
+<CultureInfo name="be">
+  <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  <CompareInfo LCID="35" />
+  <DisplayName>be (Need display name)</DisplayName>
+  <EnglishName>be (Need English name)</EnglishName>
+  <IsNeutralCulture>True</IsNeutralCulture>
+  <LCID>35</LCID>
+  <Name>be</Name>
+  <NativeName>be (Need native name)</NativeName>
+  <OptionalCalendars>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  </OptionalCalendars>
+  <Parent />
+  <TextInfo>
+    <ANSICodePage>1251</ANSICodePage>
+    <EBCDICCodePage>500</EBCDICCodePage>
+    <ListSeparator>;</ListSeparator>
+    <MacCodePage>10007</MacCodePage>
+    <OEMCodePage>866</OEMCodePage>
+  </TextInfo>
+  <ThreeLetterISOLanguageName>bel</ThreeLetterISOLanguageName>
+  <TwoLetterISOLanguageName>be</TwoLetterISOLanguageName>
+</CultureInfo>

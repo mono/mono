@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Swahili-->
+<CultureInfo name="sw">
+  <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  <CompareInfo LCID="65" />
+  <DisplayName>sw (Need display name)</DisplayName>
+  <EnglishName>sw (Need English name)</EnglishName>
+  <IsNeutralCulture>True</IsNeutralCulture>
+  <LCID>65</LCID>
+  <Name>sw</Name>
+  <NativeName>sw (Need native name)</NativeName>
+  <OptionalCalendars>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  </OptionalCalendars>
+  <Parent />
+  <TextInfo>
+    <ANSICodePage>1252</ANSICodePage>
+    <EBCDICCodePage>500</EBCDICCodePage>
+    <ListSeparator>,</ListSeparator>
+    <MacCodePage>10000</MacCodePage>
+    <OEMCodePage>437</OEMCodePage>
+  </TextInfo>
+  <ThreeLetterISOLanguageName>swa</ThreeLetterISOLanguageName>
+  <TwoLetterISOLanguageName>sw</TwoLetterISOLanguageName>
+</CultureInfo>

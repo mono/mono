@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Georgian-->
+<CultureInfo name="ka">
+  <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  <CompareInfo LCID="55" />
+  <DisplayName>ka (Need display name)</DisplayName>
+  <EnglishName>ka (Need English name)</EnglishName>
+  <IsNeutralCulture>True</IsNeutralCulture>
+  <LCID>55</LCID>
+  <Name>ka</Name>
+  <NativeName>ka (Need native name)</NativeName>
+  <OptionalCalendars>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  </OptionalCalendars>
+  <Parent />
+  <TextInfo>
+    <ANSICodePage>0</ANSICodePage>
+    <EBCDICCodePage>500</EBCDICCodePage>
+    <ListSeparator>;</ListSeparator>
+    <MacCodePage>2</MacCodePage>
+    <OEMCodePage>1</OEMCodePage>
+  </TextInfo>
+  <ThreeLetterISOLanguageName>kat</ThreeLetterISOLanguageName>
+  <TwoLetterISOLanguageName>ka</TwoLetterISOLanguageName>
+</CultureInfo>

@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Russian-->
+<CultureInfo name="ru">
+  <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  <CompareInfo LCID="25" />
+  <DisplayName>ru (Need display name)</DisplayName>
+  <EnglishName>ru (Need English name)</EnglishName>
+  <IsNeutralCulture>True</IsNeutralCulture>
+  <LCID>25</LCID>
+  <Name>ru</Name>
+  <NativeName>ru (Need native name)</NativeName>
+  <OptionalCalendars>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  </OptionalCalendars>
+  <Parent />
+  <TextInfo>
+    <ANSICodePage>1251</ANSICodePage>
+    <EBCDICCodePage>20880</EBCDICCodePage>
+    <ListSeparator>;</ListSeparator>
+    <MacCodePage>10007</MacCodePage>
+    <OEMCodePage>866</OEMCodePage>
+  </TextInfo>
+  <ThreeLetterISOLanguageName>rus</ThreeLetterISOLanguageName>
+  <TwoLetterISOLanguageName>ru</TwoLetterISOLanguageName>
+</CultureInfo>

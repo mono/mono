@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Swedish-->
+<CultureInfo name="sv">
+  <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  <CompareInfo LCID="29" />
+  <DisplayName>sv (Need display name)</DisplayName>
+  <EnglishName>sv (Need English name)</EnglishName>
+  <IsNeutralCulture>True</IsNeutralCulture>
+  <LCID>29</LCID>
+  <Name>sv</Name>
+  <NativeName>sv (Need native name)</NativeName>
+  <OptionalCalendars>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  </OptionalCalendars>
+  <Parent />
+  <TextInfo>
+    <ANSICodePage>1252</ANSICodePage>
+    <EBCDICCodePage>20278</EBCDICCodePage>
+    <ListSeparator>;</ListSeparator>
+    <MacCodePage>10000</MacCodePage>
+    <OEMCodePage>850</OEMCodePage>
+  </TextInfo>
+  <ThreeLetterISOLanguageName>swe</ThreeLetterISOLanguageName>
+  <TwoLetterISOLanguageName>sv</TwoLetterISOLanguageName>
+</CultureInfo>

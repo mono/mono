@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--FYRO Macedonian-->
+<CultureInfo name="mk">
+  <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  <CompareInfo LCID="47" />
+  <DisplayName>mk (Need display name)</DisplayName>
+  <EnglishName>mk (Need English name)</EnglishName>
+  <IsNeutralCulture>True</IsNeutralCulture>
+  <LCID>47</LCID>
+  <Name>mk</Name>
+  <NativeName>mk (Need native name)</NativeName>
+  <OptionalCalendars>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  </OptionalCalendars>
+  <Parent />
+  <TextInfo>
+    <ANSICodePage>1251</ANSICodePage>
+    <EBCDICCodePage>500</EBCDICCodePage>
+    <ListSeparator>;</ListSeparator>
+    <MacCodePage>10007</MacCodePage>
+    <OEMCodePage>866</OEMCodePage>
+  </TextInfo>
+  <ThreeLetterISOLanguageName>mkd</ThreeLetterISOLanguageName>
+  <TwoLetterISOLanguageName>mk</TwoLetterISOLanguageName>
+</CultureInfo>

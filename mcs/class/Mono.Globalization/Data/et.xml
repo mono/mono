@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Estonian-->
+<CultureInfo name="et">
+  <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  <CompareInfo LCID="37" />
+  <DisplayName>et (Need display name)</DisplayName>
+  <EnglishName>et (Need English name)</EnglishName>
+  <IsNeutralCulture>True</IsNeutralCulture>
+  <LCID>37</LCID>
+  <Name>et</Name>
+  <NativeName>et (Need native name)</NativeName>
+  <OptionalCalendars>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  </OptionalCalendars>
+  <Parent />
+  <TextInfo>
+    <ANSICodePage>1257</ANSICodePage>
+    <EBCDICCodePage>500</EBCDICCodePage>
+    <ListSeparator>;</ListSeparator>
+    <MacCodePage>10029</MacCodePage>
+    <OEMCodePage>775</OEMCodePage>
+  </TextInfo>
+  <ThreeLetterISOLanguageName>est</ThreeLetterISOLanguageName>
+  <TwoLetterISOLanguageName>et</TwoLetterISOLanguageName>
+</CultureInfo>

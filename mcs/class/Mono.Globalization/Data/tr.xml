@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Turkish-->
+<CultureInfo name="tr">
+  <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  <CompareInfo LCID="31" />
+  <DisplayName>tr (Need display name)</DisplayName>
+  <EnglishName>tr (Need English name)</EnglishName>
+  <IsNeutralCulture>True</IsNeutralCulture>
+  <LCID>31</LCID>
+  <Name>tr</Name>
+  <NativeName>tr (Need native name)</NativeName>
+  <OptionalCalendars>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  </OptionalCalendars>
+  <Parent />
+  <TextInfo>
+    <ANSICodePage>1254</ANSICodePage>
+    <EBCDICCodePage>20905</EBCDICCodePage>
+    <ListSeparator>;</ListSeparator>
+    <MacCodePage>10081</MacCodePage>
+    <OEMCodePage>857</OEMCodePage>
+  </TextInfo>
+  <ThreeLetterISOLanguageName>tur</ThreeLetterISOLanguageName>
+  <TwoLetterISOLanguageName>tr</TwoLetterISOLanguageName>
+</CultureInfo>

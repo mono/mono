@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Kazakh-->
+<CultureInfo name="kk">
+  <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  <CompareInfo LCID="63" />
+  <DisplayName>kk (Need display name)</DisplayName>
+  <EnglishName>kk (Need English name)</EnglishName>
+  <IsNeutralCulture>True</IsNeutralCulture>
+  <LCID>63</LCID>
+  <Name>kk</Name>
+  <NativeName>kk (Need native name)</NativeName>
+  <OptionalCalendars>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  </OptionalCalendars>
+  <Parent />
+  <TextInfo>
+    <ANSICodePage>1251</ANSICodePage>
+    <EBCDICCodePage>20880</EBCDICCodePage>
+    <ListSeparator>;</ListSeparator>
+    <MacCodePage>10007</MacCodePage>
+    <OEMCodePage>866</OEMCodePage>
+  </TextInfo>
+  <ThreeLetterISOLanguageName>kaz</ThreeLetterISOLanguageName>
+  <TwoLetterISOLanguageName>kk</TwoLetterISOLanguageName>
+</CultureInfo>

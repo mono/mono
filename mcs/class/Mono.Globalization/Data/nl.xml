@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Dutch-->
+<CultureInfo name="nl">
+  <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  <CompareInfo LCID="19" />
+  <DisplayName>nl (Need display name)</DisplayName>
+  <EnglishName>nl (Need English name)</EnglishName>
+  <IsNeutralCulture>True</IsNeutralCulture>
+  <LCID>19</LCID>
+  <Name>nl</Name>
+  <NativeName>nl (Need native name)</NativeName>
+  <OptionalCalendars>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  </OptionalCalendars>
+  <Parent />
+  <TextInfo>
+    <ANSICodePage>1252</ANSICodePage>
+    <EBCDICCodePage>500</EBCDICCodePage>
+    <ListSeparator>;</ListSeparator>
+    <MacCodePage>10000</MacCodePage>
+    <OEMCodePage>850</OEMCodePage>
+  </TextInfo>
+  <ThreeLetterISOLanguageName>nld</ThreeLetterISOLanguageName>
+  <TwoLetterISOLanguageName>nl</TwoLetterISOLanguageName>
+</CultureInfo>

@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--English-->
+<CultureInfo name="en">
+  <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  <CompareInfo LCID="9" />
+  <DisplayName>en (Need display name)</DisplayName>
+  <EnglishName>en (Need English name)</EnglishName>
+  <IsNeutralCulture>True</IsNeutralCulture>
+  <LCID>9</LCID>
+  <Name>en</Name>
+  <NativeName>en (Need native name)</NativeName>
+  <OptionalCalendars>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  </OptionalCalendars>
+  <Parent />
+  <TextInfo>
+    <ANSICodePage>1252</ANSICodePage>
+    <EBCDICCodePage>37</EBCDICCodePage>
+    <ListSeparator>,</ListSeparator>
+    <MacCodePage>10000</MacCodePage>
+    <OEMCodePage>437</OEMCodePage>
+  </TextInfo>
+  <ThreeLetterISOLanguageName>eng</ThreeLetterISOLanguageName>
+  <TwoLetterISOLanguageName>en</TwoLetterISOLanguageName>
+</CultureInfo>

@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Kannada-->
+<CultureInfo name="kn">
+  <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  <CompareInfo LCID="75" />
+  <DisplayName>kn (Need display name)</DisplayName>
+  <EnglishName>kn (Need English name)</EnglishName>
+  <IsNeutralCulture>True</IsNeutralCulture>
+  <LCID>75</LCID>
+  <Name>kn</Name>
+  <NativeName>kn (Need native name)</NativeName>
+  <OptionalCalendars>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  </OptionalCalendars>
+  <Parent />
+  <TextInfo>
+    <ANSICodePage>0</ANSICodePage>
+    <EBCDICCodePage>500</EBCDICCodePage>
+    <ListSeparator>,</ListSeparator>
+    <MacCodePage>2</MacCodePage>
+    <OEMCodePage>1</OEMCodePage>
+  </TextInfo>
+  <ThreeLetterISOLanguageName>kan</ThreeLetterISOLanguageName>
+  <TwoLetterISOLanguageName>kn</TwoLetterISOLanguageName>
+</CultureInfo>

@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Albanian-->
+<CultureInfo name="sq">
+  <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  <CompareInfo LCID="28" />
+  <DisplayName>sq (Need display name)</DisplayName>
+  <EnglishName>sq (Need English name)</EnglishName>
+  <IsNeutralCulture>True</IsNeutralCulture>
+  <LCID>28</LCID>
+  <Name>sq</Name>
+  <NativeName>sq (Need native name)</NativeName>
+  <OptionalCalendars>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  </OptionalCalendars>
+  <Parent />
+  <TextInfo>
+    <ANSICodePage>1250</ANSICodePage>
+    <EBCDICCodePage>20880</EBCDICCodePage>
+    <ListSeparator>;</ListSeparator>
+    <MacCodePage>10029</MacCodePage>
+    <OEMCodePage>852</OEMCodePage>
+  </TextInfo>
+  <ThreeLetterISOLanguageName>sqi</ThreeLetterISOLanguageName>
+  <TwoLetterISOLanguageName>sq</TwoLetterISOLanguageName>
+</CultureInfo>

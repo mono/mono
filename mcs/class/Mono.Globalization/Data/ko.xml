@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Korean-->
+<CultureInfo name="ko">
+  <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  <CompareInfo LCID="18" />
+  <DisplayName>ko (Need display name)</DisplayName>
+  <EnglishName>ko (Need English name)</EnglishName>
+  <IsNeutralCulture>True</IsNeutralCulture>
+  <LCID>18</LCID>
+  <Name>ko</Name>
+  <NativeName>ko (Need native name)</NativeName>
+  <OptionalCalendars>
+    <Calendar>System.Globalization.KoreanCalendar</Calendar>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  </OptionalCalendars>
+  <Parent />
+  <TextInfo>
+    <ANSICodePage>949</ANSICodePage>
+    <EBCDICCodePage>20833</EBCDICCodePage>
+    <ListSeparator>,</ListSeparator>
+    <MacCodePage>10003</MacCodePage>
+    <OEMCodePage>949</OEMCodePage>
+  </TextInfo>
+  <ThreeLetterISOLanguageName>kor</ThreeLetterISOLanguageName>
+  <TwoLetterISOLanguageName>ko</TwoLetterISOLanguageName>
+</CultureInfo>

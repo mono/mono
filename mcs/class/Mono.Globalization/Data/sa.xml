@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Sanskrit-->
+<CultureInfo name="sa">
+  <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  <CompareInfo LCID="79" />
+  <DisplayName>sa (Need display name)</DisplayName>
+  <EnglishName>sa (Need English name)</EnglishName>
+  <IsNeutralCulture>True</IsNeutralCulture>
+  <LCID>79</LCID>
+  <Name>sa</Name>
+  <NativeName>sa (Need native name)</NativeName>
+  <OptionalCalendars>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  </OptionalCalendars>
+  <Parent />
+  <TextInfo>
+    <ANSICodePage>0</ANSICodePage>
+    <EBCDICCodePage>500</EBCDICCodePage>
+    <ListSeparator>,</ListSeparator>
+    <MacCodePage>2</MacCodePage>
+    <OEMCodePage>1</OEMCodePage>
+  </TextInfo>
+  <ThreeLetterISOLanguageName>san</ThreeLetterISOLanguageName>
+  <TwoLetterISOLanguageName>sa</TwoLetterISOLanguageName>
+</CultureInfo>

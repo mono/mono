@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Vietnamese-->
+<CultureInfo name="vi">
+  <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  <CompareInfo LCID="42" />
+  <DisplayName>vi (Need display name)</DisplayName>
+  <EnglishName>vi (Need English name)</EnglishName>
+  <IsNeutralCulture>True</IsNeutralCulture>
+  <LCID>42</LCID>
+  <Name>vi</Name>
+  <NativeName>vi (Need native name)</NativeName>
+  <OptionalCalendars>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  </OptionalCalendars>
+  <Parent />
+  <TextInfo>
+    <ANSICodePage>1258</ANSICodePage>
+    <EBCDICCodePage>500</EBCDICCodePage>
+    <ListSeparator>,</ListSeparator>
+    <MacCodePage>10000</MacCodePage>
+    <OEMCodePage>1258</OEMCodePage>
+  </TextInfo>
+  <ThreeLetterISOLanguageName>vie</ThreeLetterISOLanguageName>
+  <TwoLetterISOLanguageName>vi</TwoLetterISOLanguageName>
+</CultureInfo>

@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Farsi-->
+<CultureInfo name="fa">
+  <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  <CompareInfo LCID="41" />
+  <DisplayName>fa (Need display name)</DisplayName>
+  <EnglishName>fa (Need English name)</EnglishName>
+  <IsNeutralCulture>True</IsNeutralCulture>
+  <LCID>41</LCID>
+  <Name>fa</Name>
+  <NativeName>fa (Need native name)</NativeName>
+  <OptionalCalendars>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+    <Calendar>System.Globalization.HijriCalendar</Calendar>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  </OptionalCalendars>
+  <Parent />
+  <TextInfo>
+    <ANSICodePage>1256</ANSICodePage>
+    <EBCDICCodePage>20420</EBCDICCodePage>
+    <ListSeparator>;</ListSeparator>
+    <MacCodePage>10004</MacCodePage>
+    <OEMCodePage>720</OEMCodePage>
+  </TextInfo>
+  <ThreeLetterISOLanguageName>fas</ThreeLetterISOLanguageName>
+  <TwoLetterISOLanguageName>fa</TwoLetterISOLanguageName>
+</CultureInfo>

@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Punjabi-->
+<CultureInfo name="pa">
+  <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  <CompareInfo LCID="70" />
+  <DisplayName>pa (Need display name)</DisplayName>
+  <EnglishName>pa (Need English name)</EnglishName>
+  <IsNeutralCulture>True</IsNeutralCulture>
+  <LCID>70</LCID>
+  <Name>pa</Name>
+  <NativeName>pa (Need native name)</NativeName>
+  <OptionalCalendars>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  </OptionalCalendars>
+  <Parent />
+  <TextInfo>
+    <ANSICodePage>0</ANSICodePage>
+    <EBCDICCodePage>500</EBCDICCodePage>
+    <ListSeparator>,</ListSeparator>
+    <MacCodePage>2</MacCodePage>
+    <OEMCodePage>1</OEMCodePage>
+  </TextInfo>
+  <ThreeLetterISOLanguageName>pan</ThreeLetterISOLanguageName>
+  <TwoLetterISOLanguageName>pa</TwoLetterISOLanguageName>
+</CultureInfo>

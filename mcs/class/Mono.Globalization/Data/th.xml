@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Thai-->
+<CultureInfo name="th">
+  <Calendar>System.Globalization.ThaiBuddhistCalendar</Calendar>
+  <CompareInfo LCID="30" />
+  <DisplayName>th (Need display name)</DisplayName>
+  <EnglishName>th (Need English name)</EnglishName>
+  <IsNeutralCulture>True</IsNeutralCulture>
+  <LCID>30</LCID>
+  <Name>th</Name>
+  <NativeName>th (Need native name)</NativeName>
+  <OptionalCalendars>
+    <Calendar>System.Globalization.ThaiBuddhistCalendar</Calendar>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  </OptionalCalendars>
+  <Parent />
+  <TextInfo>
+    <ANSICodePage>874</ANSICodePage>
+    <EBCDICCodePage>20838</EBCDICCodePage>
+    <ListSeparator>,</ListSeparator>
+    <MacCodePage>10021</MacCodePage>
+    <OEMCodePage>874</OEMCodePage>
+  </TextInfo>
+  <ThreeLetterISOLanguageName>tha</ThreeLetterISOLanguageName>
+  <TwoLetterISOLanguageName>th</TwoLetterISOLanguageName>
+</CultureInfo>

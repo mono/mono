@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Icelandic-->
+<CultureInfo name="is">
+  <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  <CompareInfo LCID="15" />
+  <DisplayName>is (Need display name)</DisplayName>
+  <EnglishName>is (Need English name)</EnglishName>
+  <IsNeutralCulture>True</IsNeutralCulture>
+  <LCID>15</LCID>
+  <Name>is</Name>
+  <NativeName>is (Need native name)</NativeName>
+  <OptionalCalendars>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  </OptionalCalendars>
+  <Parent />
+  <TextInfo>
+    <ANSICodePage>1252</ANSICodePage>
+    <EBCDICCodePage>20871</EBCDICCodePage>
+    <ListSeparator>;</ListSeparator>
+    <MacCodePage>10079</MacCodePage>
+    <OEMCodePage>850</OEMCodePage>
+  </TextInfo>
+  <ThreeLetterISOLanguageName>isl</ThreeLetterISOLanguageName>
+  <TwoLetterISOLanguageName>is</TwoLetterISOLanguageName>
+</CultureInfo>

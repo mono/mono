@@ -1,3 +1,8 @@
+2003-04-11 Duncan Mak  <duncan@ximian.com>
+        
+        * Mono.Globalization/Data/*.xml: Check in XML files used in
+        the implementation of System.Globalization.
+
 2003-03-31 Martin Willemoes Hansen
 
 	* Stubed System.Drawing.Design

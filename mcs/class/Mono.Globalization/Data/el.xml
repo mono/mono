@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Greek-->
+<CultureInfo name="el">
+  <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  <CompareInfo LCID="8" />
+  <DisplayName>el (Need display name)</DisplayName>
+  <EnglishName>el (Need English name)</EnglishName>
+  <IsNeutralCulture>True</IsNeutralCulture>
+  <LCID>8</LCID>
+  <Name>el</Name>
+  <NativeName>el (Need native name)</NativeName>
+  <OptionalCalendars>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  </OptionalCalendars>
+  <Parent />
+  <TextInfo>
+    <ANSICodePage>1253</ANSICodePage>
+    <EBCDICCodePage>20273</EBCDICCodePage>
+    <ListSeparator>;</ListSeparator>
+    <MacCodePage>10006</MacCodePage>
+    <OEMCodePage>737</OEMCodePage>
+  </TextInfo>
+  <ThreeLetterISOLanguageName>ell</ThreeLetterISOLanguageName>
+  <TwoLetterISOLanguageName>el</TwoLetterISOLanguageName>
+</CultureInfo>

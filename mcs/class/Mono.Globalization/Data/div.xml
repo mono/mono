@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--Divehi-->
+<CultureInfo name="div">
+  <Calendar>System.Globalization.HijriCalendar</Calendar>
+  <CompareInfo LCID="101" />
+  <DisplayName>div (Need display name)</DisplayName>
+  <EnglishName>div (Need English name)</EnglishName>
+  <IsNeutralCulture>True</IsNeutralCulture>
+  <LCID>101</LCID>
+  <Name>div</Name>
+  <NativeName>div (Need native name)</NativeName>
+  <OptionalCalendars>
+    <Calendar>System.Globalization.HijriCalendar</Calendar>
+    <Calendar>System.Globalization.GregorianCalendar</Calendar>
+  </OptionalCalendars>
+  <Parent />
+  <TextInfo>
+    <ANSICodePage>0</ANSICodePage>
+    <EBCDICCodePage>500</EBCDICCodePage>
+    <ListSeparator>،</ListSeparator>
+    <MacCodePage>2</MacCodePage>
+    <OEMCodePage>1</OEMCodePage>
+  </TextInfo>
+  <ThreeLetterISOLanguageName>div</ThreeLetterISOLanguageName>
+  <TwoLetterISOLanguageName>div</TwoLetterISOLanguageName>
+</CultureInfo>
