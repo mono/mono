@@ -1,8 +1,13 @@
+2005-01-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AspNetHostingPermissionTest.cs: Re-fixed for NET_1_1. Fx 1.1 SP1
+	as changed (fixed) the behaviour so the test has been updated to
+	work for any case.
+
 2005-01-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AspNetHostingPermissionTest.cs: Fixed for NET_1_1 which has a 
 	different (but bad) behaviour for intersecting with null.
-
 
 2004-09-10  Sebastien Pouliot  <sebastien@ximian.com>
 

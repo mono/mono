@@ -145,11 +145,12 @@ namespace MonoTests.System.Web {
 			// No intersection with null
 			foreach (AspNetHostingPermissionLevel ppl in AllLevel) {
 				anhp.Level = ppl;
-#if NET_2_0
-				Assert.IsNull (anhp.Intersect (null), ppl.ToString ());
-#else
-				Assert.AreEqual (anhp.ToString (), anhp.Intersect (null).ToString (), ppl.ToString ());
+				IPermission p = anhp.Intersect (null);
+#if ! NET_2_0
+				if (p != null)
+					Assert.Ignore ("Behaviour changed in FX 1.1 SP1");
 #endif
+				Assert.IsNull (p, ppl.ToString ());
 			}
 		}
 
