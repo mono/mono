@@ -1,6 +1,13 @@
+2003-09-12  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* FloatingPointFormatter.cs: Applied a lot of improvements in string
+	construction, make use of Append/Insert with the "count" parameter.
+    Thanks to Ben Maurer.
+
 2003-09-10  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* FloatingPointFormatter.cs: Fix a bug with Custm Format.
+
 	* FloatingPointFormatter.cs: Fix a little bug I've introduced the
 	last change.
 
@@ -8,8 +15,10 @@
 
 	* DoubleFormatter.cs: A few optimizations. Now, only one object
 	is created to convert all double numbers.
+
 	* SingleFormatter.cs: A few optimizations. Now, only one object
 	is created to convert all float numbers.
+
 	* FloatingPointFormatter.cs: Split the "number type parameters" from
 	the "numver value and format parameters". The first ones are in the
 	constructor and the others are in a method.
