@@ -1,5 +1,9 @@
 2004-11-05  Miguel de Icaza  <miguel@ximian.com>
 
+	* statement.cs (Return.Resolve): Fix regression in typo: if
+	`in_exc', we have to request a NeedReturnLabel, this was a typo
+	introduced in the anonymous method check-in.  Fixes #69131.
+
 	* Indexers were using the ShortName when defining themselves,
 	causing a regression in the compiler bootstrap when applying the
 	patch from 2004-11-02 (first part), now they use their full name
