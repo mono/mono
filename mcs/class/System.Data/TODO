@@ -14,18 +14,6 @@ In order to do this, we need to compile
 	DataTable
 	and dependencies...
 
-MSDN has the classes: 
-	DataRelation, DataRelationCollection, DataTable, DataTableCollection
-
-Mono has the classes:
-	DataRelationCollection, DataTable, DataTableRelationCollection
-
-Something is not right here:
-	maybe mono's DataTableRelationCollection 
-	was suppose to be DataTableCollection
-
-        This would mean that DataRelation is missing.
-
 Other classes missing:
 	* InternalDataCollectionBase - this is a public class despite its name
 	* DataRowBuilder
