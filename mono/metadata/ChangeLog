@@ -1,5 +1,16 @@
 2002-02-14  Jeffrey Stedfast  <fejj@ximian.com>
 
+	* reflection.c (mono_param_get_objects): Cast second argument to
+	mono_method_get_param_names to a const char** to silence the
+	compiler warning.
+
+	* appdomain.c (mono_domain_assembly_open): Put parens around the
+	truth statement in the for-loop.
+
+	* unicode.c (iconv_convert): Got rid of a compiler warning about
+	int i being unused when the system has a new iconv.
+	(iconv_get_length): Same.
+
 	* image.c (load_class_names): Cast the second argument to
 	g_hash_table_insert() to char* to hush compiler warnings about the
 	arg being a const.
