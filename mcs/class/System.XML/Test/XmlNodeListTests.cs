@@ -226,5 +226,20 @@ namespace MonoTests.System.Xml
 			enumerator.MoveNext();
 			Assertion.AssertEquals("Expected child1.", ((XmlElement)enumerator.Current).LocalName, "child1");
 		}
+
+		[Test]
+		public void ReturnNullWhenIndexIsOutOfRange ()
+		{
+			document.LoadXml ("<root><foo/></root>");
+			XmlNodeList nl = document.DocumentElement.GetElementsByTagName ("bar");
+			Assertion.AssertEquals ("empty list. count", 0, nl.Count);
+			try {
+				Assertion.AssertNull ("index 0", nl [0]);
+				Assertion.AssertNull ("index 1", nl [1]);
+				Assertion.AssertNull ("index -1", nl [-1]);
+			} catch (ArgumentOutOfRangeException) {
+				Assertion.Fail ("don't throw index out of range.");
+			}
+		}
 	}
 }

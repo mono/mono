@@ -1,3 +1,8 @@
+2003-03-21  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlNodeListTests.cs : added ReturnNullWhenIndexIsOutOfRange() for 
+	  bugzilla #39920.
+
 2003-03-15  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlTextWriterTests.cs : fixed AttributeWriteAttributeString() in
