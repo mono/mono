@@ -1,5 +1,11 @@
 2004-08-23  Martin Baulig  <martin@ximian.com>
 
+	Merged latest changes into gmcs.  Please keep this comment in
+	here, it makes it easier for me to see what changed in MCS since
+	the last time I merged.
+
+2004-08-23  Martin Baulig  <martin@ximian.com>
+
 	Back to the old error reporting system :-)
 
 	* report.cs (Message): Removed.
@@ -190,12 +196,6 @@
 	use a user-defined operator; we still need to do numeric
 	promotions in case one argument is a builtin type and the other
 	one has an implicit conversion to that type.  Fixes #62322.
-
-2004-07-25  Martin Baulig  <martin@ximian.com>
-
-	Merged latest changes into gmcs.  Please keep this comment in
-	here, it makes it easier for me to see what changed in MCS since
-	the last time I merged.
 
 2004-08-02  Martin Baulig  <martin@ximian.com>
 
