@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.27 $
+// $Revision: 1.28 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.28  2004/08/13 21:43:39  pbartok
+// - Changed GetCursorPos signature
+//
 // Revision 1.27  2004/08/13 19:00:15  jordi
 // implements PointToClient (ScreenToClient)
 //
@@ -553,8 +556,10 @@ namespace System.Windows.Forms
 
 		public static Point MousePosition {
 			get {				
-				int x = 0, y = 0;
-				XplatUI.GetCursorPos (IntPtr.Zero, ref x, ref y);
+				int x;
+				int y;
+
+				XplatUI.GetCursorPos (IntPtr.Zero, out x, out y);
 				return new Point (x, y);
 			}
 		}
