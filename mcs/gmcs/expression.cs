@@ -4283,9 +4283,9 @@ namespace Mono.CSharp {
                 ///   and the current best match
 		/// </summary>
 		/// <remarks>
-		///    Returns an integer indicating :
+		///    Returns a boolean indicating :
 		///     false if candidate ain't better
-		///     true if candidate is better than the current best match
+		///     true  if candidate is better than the current best match
 		/// </remarks>
 		static bool BetterFunction (EmitContext ec, ArrayList args, int argument_count,
 					    MethodBase candidate, bool candidate_params,
@@ -4324,8 +4324,10 @@ namespace Mono.CSharp {
 			    (candidate_pd.ParameterModifier (cand_count - 1) != Parameter.Modifier.ARGLIST))
 				if (cand_count != argument_count)
 					return false;
-			
+
 			bool better_at_least_one = false;
+			bool is_equal = true;
+
 			for (int j = 0; j < argument_count; ++j) {
 				Argument a = (Argument) args [j];
 
@@ -4340,8 +4342,10 @@ namespace Mono.CSharp {
 					if (best_params)
 						bt = TypeManager.GetElementType (bt);
 
-				Type better = BetterConversion (ec, a, ct, bt, loc);
+				if (!ct.Equals (bt))
+					is_equal = false;
 
+				Type better = BetterConversion (ec, a, ct, bt, loc);
 				// for each argument, the conversion to 'ct' should be no worse than 
 				// the conversion to 'bt'.
 				if (better == bt)
@@ -4362,6 +4366,17 @@ namespace Mono.CSharp {
                         //
                         if (!candidate_params && best_params && cand_count == argument_count)
                                 return true;
+
+			//
+			// If two methods have equal parameter types, but
+			// only one of them is generic, the non-generic one wins.
+			//
+			if (is_equal) {
+				if (TypeManager.IsGenericMethod (best) && !TypeManager.IsGenericMethod (candidate))
+					return true;
+				else if (!TypeManager.IsGenericMethod (best) && TypeManager.IsGenericMethod (candidate))
+					return false;
+			}
 
 			return better_at_least_one;
 		}
@@ -5877,8 +5892,10 @@ namespace Mono.CSharp {
 			TypeExpr texpr = RequestedType.ResolveAsTypeTerminal (ec, false);
 			if (texpr == null)
 				return null;
-			
+
 			type = texpr.ResolveType (ec);
+			if (type == null)
+				return null;
 			
 			CheckObsoleteAttribute (type);
 
@@ -5925,7 +5942,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			bool is_struct = type.IsValueType && !type.IsGenericInstance;
+			bool is_struct = type.IsValueType;
 			eclass = ExprClass.Value;
 
 			//
@@ -7709,6 +7726,7 @@ namespace Mono.CSharp {
 			if (t == null)
 				return null;
 
+			TypeArguments the_args = args;
 			if (TypeManager.HasGenericArguments (expr_type)) {
 				Type[] decl_args = TypeManager.GetTypeArguments (expr_type);
 
@@ -7719,11 +7737,11 @@ namespace Mono.CSharp {
 				if (args != null)
 					new_args.Add (args);
 
-				args = new_args;
+				the_args = new_args;
 			}
 
-			if (args != null) {
-				ConstructedType ctype = new ConstructedType (t, args, loc);
+			if (the_args != null) {
+				ConstructedType ctype = new ConstructedType (t, the_args, loc);
 				return ctype.ResolveAsTypeStep (ec);
 			}
 
@@ -9050,6 +9068,8 @@ namespace Mono.CSharp {
 				return null;
 
 			otype = texpr.ResolveType (ec);
+			if (otype == null)
+				return null;
 
 			if (!TypeManager.VerifyUnManaged (otype, loc))
 				return null;

@@ -1,5 +1,16 @@
 2004-11-10  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (Invocation.BetterFunction): If two methods have
+	equal parameter types, but only one of them is generic, the
+	non-generic one wins.
+	(New.DoResolve): Don't set `is_struct' to false if we're a generic
+	instance; just use `Type.IsValueType' to determine whether
+	something is a struct or not.
+	(MemberAccess.DoResolveAsTypeStep): Don't modify the `args' field,
+	so we can be called multiple times.
+
+2004-11-10  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs (TypeParameter.DefineConstraints): New public method.
 	(TypeParameter.CheckAccessLevel): Override this and return true.
 	(ConstructedType.ResolveType): Renamed to DoResolveType(), don't
