@@ -5371,16 +5371,17 @@ namespace Mono.CSharp {
 					this_call = true;
 					ig.Emit (OpCodes.Ldarg_0);
 				} else {
+					Type itype = instance_expr.Type;
+
 					//
 					// Push the instance expression
 					//
-					if (TypeManager.IsValueType (instance_expr.Type)){
+					if (TypeManager.IsValueType (itype)){
 						//
 						// Special case: calls to a function declared in a 
 						// reference-type with a value-type argument need
 						// to have their value boxed.  
-
-						if (TypeManager.IsValueType (instance_expr.Type)){
+						if (decl_type.IsValueType || itype.IsGenericParameter){
 							//
 							// If the expression implements IMemoryLocation, then
 							// we can optimize and use AddressOf on the
@@ -5393,18 +5394,18 @@ namespace Mono.CSharp {
 									AddressOf (ec, AddressOp.LoadStore);
 							}
 							else {
-								Type t = instance_expr.Type;
-								
 								instance_expr.Emit (ec);
-								LocalBuilder temp = ig.DeclareLocal (t);
+								LocalBuilder temp = ig.DeclareLocal (itype);
 								ig.Emit (OpCodes.Stloc, temp);
 								ig.Emit (OpCodes.Ldloca, temp);
 							}
-							if (instance_expr.Type.IsGenericParameter)
-								ig.Emit (OpCodes.Constrained, instance_expr.Type);
+							if (itype.IsGenericParameter)
+								ig.Emit (OpCodes.Constrained, itype);
+							else
+								struct_call = true;
 						} else {
 							instance_expr.Emit (ec);
-							ig.Emit (OpCodes.Box, instance_expr.Type);
+							ig.Emit (OpCodes.Box, itype);
 						} 
 					} else
 						instance_expr.Emit (ec);
