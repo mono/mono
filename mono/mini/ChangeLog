@@ -1,3 +1,7 @@
+2004-02-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* iltests.il: Add test for non-empty stack before switch instruction.
+
 2004-02-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c: Add support for new stringbuilder marshalling conventions.
