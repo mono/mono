@@ -279,16 +279,17 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
+			bool r = true;
+
 			if (member_exp != null)
-				member_exp.Resolve (context);
+				r &= member_exp.Resolve (context);
 
 			if (args1 != null)
-				args1.Resolve (context);
+				r &= args1.Resolve (context);
 
 			if (args2 != null)
-				args2.Resolve (context);
-
-			return true;
+				r &= args2.Resolve (context);
+			return r;
 		}
 
 		internal override void Emit (EmitContext ec)
@@ -300,7 +301,7 @@ namespace Microsoft.JScript {
 	internal class Identifier : Exp, IAssignable {
 
 		internal string name;
-		internal Decl binding;
+		internal AST binding;
 		internal bool assign;
 
 		internal Identifier (AST parent, string id)
@@ -319,12 +320,12 @@ namespace Microsoft.JScript {
 			if (name == "print")
 				return SemanticAnalyser.print;
 			
-			Decl bind = (Decl) context.Contains (name);
+			object bind = context.Contains (name);
 
 			if (bind == null)
 				throw new Exception ("variable not found: " +  name);
 			else
-				binding = bind;
+				binding = bind as AST;
 
 			return true;
 		}
@@ -347,26 +348,29 @@ namespace Microsoft.JScript {
 		internal override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			FieldInfo field_info = binding.field_info;
-			LocalBuilder local_builder = binding.local_builder;
-			
-			if (field_info != null) {
-				if (assign)
-					ig.Emit (OpCodes.Stsfld, binding.field_info);
-				else {
-					ig.Emit (OpCodes.Ldsfld, binding.field_info);
-					if (no_effect)
-						ig.Emit (OpCodes.Pop);
+
+			if (binding is FormalParam) {
+				FormalParam f = binding as FormalParam;
+				ig.Emit (OpCodes.Ldarg_S, f.pos);
+			} else if (binding is VariableDeclaration) {
+				VariableDeclaration bind = binding as VariableDeclaration;
+				FieldInfo field_info = bind.field_info;
+				LocalBuilder local_builder = bind.local_builder;
+				
+				if (field_info != null) {
+					if (assign)
+						ig.Emit (OpCodes.Stsfld, bind.field_info);
+					else
+						ig.Emit (OpCodes.Ldsfld, bind.field_info);
+				} else if (local_builder != null) {
+					if (assign)
+						ig.Emit (OpCodes.Stloc, bind.local_builder);
+					else
+						ig.Emit (OpCodes.Ldloc, bind.local_builder);
 				}
-			} else if (local_builder != null) {
-				if (assign)
-					ig.Emit (OpCodes.Stloc, binding.local_builder);
-				else {
-					ig.Emit (OpCodes.Ldloc, binding.local_builder);
-					if (no_effect)
-						ig.Emit (OpCodes.Pop);
-				}				
 			}
+			if (!assign && no_effect)
+				ig.Emit (OpCodes.Pop);				
 		}
 	}
 
