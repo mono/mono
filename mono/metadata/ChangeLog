@@ -1,3 +1,10 @@
+2002-04-26  Martin Baulig  <martin@gnome.org>
+
+	* assembly.c (default_assembly_name_resolver): Use G_FILE_TEST_IS_REGULAR
+	instead of G_FILE_TEST_EXISTS - if you're in mcs/class/corlib/System/Test,
+	there's a subdirectory called `System', but we don't want to read that
+	subdirectory as an assembly.
+
 2002-04-25  Martin Baulig  <martin@gnome.org>
 
 	* debug-symfile.c: Reflect latest MonoString changes.
