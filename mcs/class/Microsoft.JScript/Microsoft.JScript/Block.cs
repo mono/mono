@@ -7,6 +7,7 @@
 //
 
 using System.Collections;
+using System.Text;
 
 namespace Microsoft.JScript.Tmp {
 
@@ -14,9 +15,24 @@ namespace Microsoft.JScript.Tmp {
 
 		internal ArrayList Elements;
 
+		internal Block ()
+		{
+			Elements = new ArrayList ();
+		}
+
 		internal void Add (AST e)
 		{
 			Elements.Add (e);
+		}
+
+		public override string ToString ()
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			foreach (AST a in Elements)
+				sb.Append (a.ToString () + " ");
+
+			return sb.ToString ();
 		}
 	}
 }

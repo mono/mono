@@ -21,5 +21,10 @@ namespace Microsoft.JScript.Tmp {
 		{
 			SrcElems.Add (e);
 		}
+
+		public override string ToString ()
+		{
+			return SrcElems.ToString ();
+		}
 	}
 }
