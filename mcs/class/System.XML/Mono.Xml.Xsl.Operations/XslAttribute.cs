@@ -74,25 +74,18 @@ namespace Mono.Xml.Xsl.Operations {
 					throw new XsltCompileException ("Invalid attribute name.", ex, c.Input);
 				}
 			}
+
+			if (calcPrefix != String.Empty) {
+				calcPrefix = c.CurrentStylesheet.GetActualPrefix (calcPrefix);
+				if (calcPrefix == null)
+					calcPrefix = String.Empty;
+			}
+
 			if (calcPrefix != String.Empty && ns == null)
 				calcNs = nav.GetNamespace (calcPrefix);
 			else if (ns != null)
 				calcNs = XslAvt.AttemptPreCalc (ref ns);
 
-			if (calcNs ==null && calcPrefix != String.Empty) {
-				string test = c.CurrentStylesheet.PrefixInEffect (calcPrefix, null);
-				if (test != null) {
-					string alias = c.CurrentStylesheet.NamespaceAliases [calcPrefix] as string;
-					if (alias != null)
-						calcNs = c.Input.GetNamespace (alias);
-					else
-						calcNs = c.Input.NamespaceURI;
-				}
-			}
-
-//			if (ns == null && calcNs == null)
-//				nsm = c.GetNsm ();
-				
 			if (c.Input.MoveToFirstChild ()) {
 				value = c.CompileTemplateContent (XPathNodeType.Attribute);
 				c.Input.MoveToParent ();

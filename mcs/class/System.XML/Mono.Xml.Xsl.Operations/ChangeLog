@@ -1,5 +1,12 @@
 2005-03-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XslAttribute.cs,
+	  XslLiteralElement.cs :
+	  Now namespace aliases are collected in prior to template
+	  evaluation, so compute expected prefix at compile time.
+
+2005-03-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XslLiteralElement.cs : renamed TryElementNamespacesOutput() to
 	  OutputLiteralNamespaceUriNodes() so that everyone can understand
 	  what it means and when it should be invoked.

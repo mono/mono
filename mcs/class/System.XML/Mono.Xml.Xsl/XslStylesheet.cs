@@ -358,15 +358,8 @@ namespace Mono.Xml.Xsl {
 				case "strip-space":
 					AddSpaceControls (c.ParseQNameListAttribute ("elements"), XmlSpace.Default, n);
 					break;
-				
 				case "namespace-alias":
-					string sprefix = (string) c.GetAttribute ("stylesheet-prefix", "");
-					if (sprefix == "#default")
-						sprefix = String.Empty;
-					string rprefix= (string) c.GetAttribute ("result-prefix", "");
-					if (rprefix == "#default")
-						rprefix = String.Empty;
-					namespaceAliases.Set (sprefix, rprefix);
+					// do nothing. It is handled in prior.
 					break;
 				
 				case "attribute-set":
@@ -413,17 +406,33 @@ namespace Mono.Xml.Xsl {
 		
 		private void ProcessTopLevelElements ()
 		{
-			if (c.Input.MoveToFirstChild ()) {
-				do {
-					if (c.Input.NodeType == XPathNodeType.Element) {					
-						Debug.EnterNavigator (c);
-						this.HandleTopLevelElement();
-						Debug.ExitNavigator (c);
-					}
-				} while (c.Input.MoveToNext ());
-				
-				c.Input.MoveToParent ();
-			}
+			if (!c.Input.MoveToFirstChild ())
+				return;
+			do {
+				// Collect namespace aliases first.
+				if (c.Input.NodeType != XPathNodeType.Element ||
+					c.Input.LocalName != "namespace-alias" ||
+					c.Input.NamespaceURI != XsltNamespace)
+					continue;
+				string sprefix = (string) c.GetAttribute ("stylesheet-prefix", "");
+				if (sprefix == "#default")
+					sprefix = String.Empty;
+				string rprefix= (string) c.GetAttribute ("result-prefix", "");
+				if (rprefix == "#default")
+					rprefix = String.Empty;
+				namespaceAliases.Set (sprefix, rprefix);
+			} while (c.Input.MoveToNext ());
+
+			c.Input.MoveToFirst ();
+			do {
+				if (c.Input.NodeType != XPathNodeType.Element)
+					continue;
+				Debug.EnterNavigator (c);
+				this.HandleTopLevelElement ();
+				Debug.ExitNavigator (c);
+			} while (c.Input.MoveToNext ());
+			
+			c.Input.MoveToParent ();
 		}
 
 		private void AddSpaceControls (QName [] names, XmlSpace result,	XPathNavigator styleElem)
@@ -432,46 +441,5 @@ namespace Mono.Xml.Xsl {
 			foreach (QName name in names)
 				spaceControls [name] = result;
 		}
-
-		public string PrefixInEffect (string prefix, ArrayList additionalExcluded)
-		{
-			if (additionalExcluded != null && additionalExcluded.Contains (prefix == String.Empty ? "#default" : prefix))
-				return null;
-			if (prefix == "#default")
-				prefix = String.Empty;
-
-			if (ExcludeResultPrefixes != null) {
-				bool exclude = false;
-				foreach (XmlQualifiedName exc in ExcludeResultPrefixes)
-					if (exc.Name == "#default" && prefix == String.Empty || exc.Name == prefix) {
-						exclude = true;
-						break;
-					}
-				if (exclude)
-					return null;
-			}
-
-			if (ExtensionElementPrefixes != null) {
-				bool exclude = false;
-				foreach (XmlQualifiedName exc in ExtensionElementPrefixes)
-					if (exc.Name == "#default" && prefix == String.Empty || exc.Name == prefix) {
-						exclude = true;
-						break;
-					}
-				if (exclude)
-					return null;
-			}
-
-			return GetActualPrefix (prefix);
-		}
-	}
-
-	
-	internal enum XslDefaultValidation
-	{
-		Strict,
-		Lax,
-		Preserve,
-		Strip
 	}
 }

@@ -1,5 +1,10 @@
 2005-03-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XslStylesheet.cs : Now namespace aliases are collected in prior to
+	  all other toplevel elements. Removed unused code.
+
+2005-03-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* GenericOutputter.cs : compute attribute prefix only when actual
 	  emission. Fixed some cases that namespace output was missing.
 

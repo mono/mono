@@ -44,9 +44,6 @@ namespace Mono.Xml.Xsl.Operations {
 		ArrayList attrs;
 		XmlQualifiedName [] useAttributeSets;
 		Hashtable nsDecls;
-		bool requireNameFix;
-		XPathNavigator stylesheetNode;
-		XslStylesheet stylesheet;
 
 		public XslLiteralElement (Compiler c) : base (c) {}
 			
@@ -71,9 +68,14 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		protected override void Compile (Compiler c)
 		{
-			requireNameFix = true;
-			stylesheetNode = c.Input.Clone ();
-			stylesheet = c.CurrentStylesheet;
+			prefix = c.Input.Prefix;
+			string alias = c.CurrentStylesheet.GetActualPrefix (prefix);
+			if (alias != prefix) {
+				prefix = alias;
+				nsUri = c.Input.GetNamespace (alias);
+			}
+			else
+				nsUri = c.Input.NamespaceURI;
 
 			this.localname = c.Input.LocalName;
 			this.useAttributeSets = c.ParseQNameListAttribute ("use-attribute-sets", XsltNamespace);
@@ -97,28 +99,10 @@ namespace Mono.Xml.Xsl.Operations {
 			c.Input.MoveToParent ();
 		}
 
-		private void GetCorrectNames ()
-		{
-			requireNameFix = false;
-			prefix = stylesheetNode.Prefix;
-			string alias = stylesheet.PrefixInEffect (prefix, null);
-			if (alias != null && alias != stylesheetNode.Prefix) {
-				nsUri = stylesheetNode.GetNamespace (alias);
-				if (alias != null)
-					prefix = alias;
-			}
-			else
-				nsUri = stylesheetNode.NamespaceURI;
-
-		}
-		
 		public override void Evaluate (XslTransformProcessor p)
 		{
 			// Since namespace-alias might be determined after compilation
 			// of import-ing stylesheets, this must be determined later.
-			if (requireNameFix)
-				GetCorrectNames ();
-
 			bool isCData = p.InsideCDataElement;
 			p.PushElementState (prefix, localname, nsUri, true);
 			p.Out.WriteStartElement (prefix, localname, nsUri);
