@@ -1,3 +1,12 @@
+2004-04-08  Dick Porter  <dick@ximian.com>
+
+	* socket-io.h:
+	* socket-io.c: Don't set SO_REUSEADDR on windows.  Fixes bug
+	53992.  Also rearrange the code so that the internal calls return
+	an error value and exceptions are thrown from managed code.
+
+	* icall.c: Add type info to the socket icalls.
+
 2004-04-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* object.h: synchronize MonoCompareInfo with CompareInfo class. Someone
