@@ -1,0 +1,4 @@
+2001-07-15  Sean MacIsaac  <macisaac@ximian.com>
+
+	* StringCollection.cs: Added so that CodeDom.* would compile.
+
