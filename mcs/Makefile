@@ -6,7 +6,7 @@ DIST_ONLY_SUBDIRS := gmcs
 basic_SUBDIRS := jay mcs class
 net_1_1_bootstrap_SUBDIRS := jay mcs class
 net_2_0_bootstrap_SUBDIRS := class
-net_2_0_SUBDIRS := jay gmcs class tests errors tools
+net_2_0_SUBDIRS := jay gmcs class nunit20 tests errors tools
 
 ifdef TEST_SUBDIRS
 $(PROFILE)_SUBDIRS := $(TEST_SUBDIRS)

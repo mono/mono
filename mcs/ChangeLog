@@ -1,5 +1,9 @@
 2004-11-19  Raja R Harinath  <rharinath@novell.com>
 
+	* Makefile (net_2_0_SUBDIRS): Add nunit20.
+
+2004-11-19  Raja R Harinath  <rharinath@novell.com>
+
 	* Makefile (%-profiles): Go through an intermediate set of rules.
 	Move body to ...
 	(profiles-do--%): ... this.
