@@ -1,5 +1,15 @@
 2004-12-20  Ben Maurer  <bmaurer@ximian.com>
 
+	* mini-ops.h (OP_GETHASHCODE): New op.
+
+	* inssel.brg (OP_GETHASHCODE): Emit code for the new opcode
+
+	* mini.c (mini_get_inst_for_method): Create the intrinsic hash
+	operation.
+
+	For a microbenchmark, this reduces the cost of Hashtable.get_Item
+	by 25%.
+	
 	* mini-x86.c (mono_arch_output_basic_block): Rather than
 
 	add ebp, 4

@@ -1,3 +1,9 @@
+2004-12-20  Ben Maurer  <bmaurer@ximian.com>
+
+	* icall.c (ves_icall_System_Object_GetHashCode): There was no need
+	to do key & 0x7fffffff. Hashtable already does this. It just
+	results in longer code.
+
 2004-12-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* appdomain.c: Bump corlib version.
