@@ -1,3 +1,7 @@
+2002-12-07 Jackson Harper <jackson@latitudegeo.com>
+
+	* list list.unix: Removed Compiler classes that are being moved to their own assembly
+
 2002-12-05 Alejandro Sánchez Acosta  <raciel@gnome.org>
 
 	* list.unix: updated.
