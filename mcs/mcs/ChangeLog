@@ -1,3 +1,18 @@
+2001-09-06  Ravi Pratap  <ravi@ximian.com>
+
+	* cs-parser.jay (operator_declaration): Continue on my quest : update
+	to take attributes argument.
+	(event_declaration): Ditto.
+	(enum_declaration): Ditto.
+	(indexer_declaration): Ditto.
+	
+	* class.cs (Operator::Operator): Update constructor accordingly.
+	(Event::Event): Ditto.
+
+	* delegate.cs (Delegate::Delegate): Same here.
+
+	* enum.cs (Enum::Enum): Same here.
+	
 2001-09-05  Ravi Pratap  <ravi@ximian.com>
 
 	* cs-parser.jay (CheckAttributeTarget): Update to use the right error number.

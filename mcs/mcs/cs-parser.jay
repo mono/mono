@@ -1067,7 +1067,7 @@ operator_declaration
 		OperatorDeclaration decl = (OperatorDeclaration) $3;
 		
 		Operator op = new Operator (decl.optype, decl.ret_type, (int) $2, decl.arg1type, decl.arg1name,
-					    decl.arg2type, decl.arg2name, (Block) $4);
+					    decl.arg2type, decl.arg2name, (Block) $4, (Attributes) $1);
 
 		// Note again, checking is done in semantic analysis
 		current_container.AddOperator (op);
@@ -1211,7 +1211,7 @@ event_declaration
 
 			// FIXME : Is this right ?
 			Event e = new Event ((string) $4, var.identifier, var.expression_or_array_initializer,
-					     (int) $2, null, null);
+					     (int) $2, null, null, (Attributes) $1);
 
 			CheckDef (current_container.AddEvent (e), e.Name);
 				       
@@ -1231,7 +1231,7 @@ event_declaration
 		if (pair.Value != null)
 			rem_block = (Block) pair.Value;
 		
-		Event e = new Event ((string) $4, (string) $5, null, (int) $2, add_block, rem_block);
+		Event e = new Event ((string) $4, (string) $5, null, (int) $2, add_block, rem_block, (Attributes) $1);
 		
 		CheckDef (current_container.AddEvent (e), e.Name);
 	}
@@ -1295,7 +1295,7 @@ indexer_declaration
 			set_block = (Block) pair.Value;
 
 		indexer = new Indexer (decl.type, decl.interface_type, (int) $2, decl.param_list,
-				       get_block, set_block);
+				       get_block, set_block, (Attributes) $1);
 
 		// Note that there is no equivalent of CheckDef for this case
 		// We shall handle this in semantic analysis
@@ -1326,7 +1326,7 @@ enum_declaration
 	  opt_semicolon
 	  { 
 		string name = (string) $4;
-		Enum e = new Enum ((string) $5, (int) $2, name);
+		Enum e = new Enum ((string) $5, (int) $2, name, (Attributes) $1);
 
 		foreach (VariableDeclaration ev in (ArrayList) $6){
 			CheckDef (e.AddEnumMember (ev.identifier, 
@@ -1393,7 +1393,7 @@ delegate_declaration
 	  CLOSE_PARENS 
 	  SEMICOLON
 	  {
-		Delegate del = new Delegate ((string) $4, (int) $2, (string) $5, (Parameters) $7);
+		Delegate del = new Delegate ((string) $4, (int) $2, (string) $5, (Parameters) $7, (Attributes) $1);
 
 		CheckDef (current_container.AddDelegate (del), del.Name);
 	  }	
@@ -1405,7 +1405,7 @@ delegate_declaration
 	  CLOSE_PARENS 
 	  SEMICOLON
 	  {
-		Delegate del = new Delegate (null, (int) $2, (string) $5, (Parameters) $7);
+		Delegate del = new Delegate (null, (int) $2, (string) $5, (Parameters) $7, (Attributes) $1);
 
 		CheckDef (current_container.AddDelegate (del), del.Name);
 	  }

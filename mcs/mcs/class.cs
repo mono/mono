@@ -1149,8 +1149,10 @@ namespace CIR {
 		public readonly Block     Add;
 		public readonly Block     Remove;
 		public EventBuilder       EventBuilder;
-
-		public Event (string type, string name, Object init, int flags, Block add_block, Block rem_block)
+		public Attributes         OptAttributes;
+		
+		public Event (string type, string name, Object init, int flags, Block add_block, Block rem_block,
+			      Attributes attrs)
 		{
 			Type = type;
 			Name = name;
@@ -1158,6 +1160,7 @@ namespace CIR {
 			ModFlags = Modifiers.Check (AllowedModifiers, flags, Modifiers.PRIVATE);  
 			Add = add_block;
 			Remove = rem_block;
+			OptAttributes = attrs;
 		}
 
 		public void Define (TypeContainer parent)
@@ -1208,9 +1211,10 @@ namespace CIR {
 		public readonly int        ModFlags;
 		public readonly Block      Get;
 		public readonly Block      Set;
+		public Attributes          OptAttributes;
 
 		public Indexer (string type, string int_type, int flags, Parameters parms,
-				Block get_block, Block set_block)
+				Block get_block, Block set_block, Attributes attrs)
 		{
 
 			Type = type;
@@ -1219,6 +1223,7 @@ namespace CIR {
 			FormalParameters = parms;
 			Get = get_block;
 			Set = set_block;
+			OptAttributes = attrs;
 		}
 	}
 
@@ -1271,9 +1276,10 @@ namespace CIR {
 		public readonly string SecondArgName;
 		public readonly int    ModFlags;
 		public readonly Block  Block;
+		public Attributes      OptAttributes;
 
 		public Operator (OpType type, string ret_type, int flags, string arg1type, string arg1name,
-				 string arg2type, string arg2name, Block block)
+				 string arg2type, string arg2name, Block block, Attributes attrs)
 		{
 			OperatorType = type;
 			ReturnType = ret_type;
@@ -1283,6 +1289,7 @@ namespace CIR {
 			SecondArgType = arg2type;
 			SecondArgName = arg2name;
 			Block = block;
+			OptAttributes = attrs;
 		}
 			      
 		public static void CheckUnaryOperator (OpType op)
@@ -1296,7 +1303,6 @@ namespace CIR {
 				
 			default :
 				// We have an error
-				
 				CSharpParser.error (1019, "Overloadable unary operator expected"); 
 				break;
 				

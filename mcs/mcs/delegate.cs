@@ -22,6 +22,7 @@ namespace CIR {
 		public string type;
 		public int    mod_flags;
 		public Parameters parameters;
+		public Attributes OptAttributes;
 
 		const int AllowedModifiers =
 			Modifiers.NEW |
@@ -30,12 +31,14 @@ namespace CIR {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Delegate (string type, int mod_flags, string name, Parameters param_list) : base (name)
+		public Delegate (string type, int mod_flags, string name, Parameters param_list,
+				 Attributes attrs) : base (name)
 		{
 			this.name       = name;
 			this.type       = type;
 			this.mod_flags  = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PUBLIC);
 			parameters      = param_list;
+			OptAttributes   = attrs;
 		}
 		    
 		

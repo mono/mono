@@ -22,6 +22,7 @@ namespace CIR {
 		string name;
 		int mod_flags;
 		public EnumBuilder EnumBuilder;
+		public Attributes  OptAttributes;
 		
 		public const int AllowedModifiers =
 			Modifiers.NEW |
@@ -30,12 +31,12 @@ namespace CIR {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Enum (string type, int mod_flags, string name) : base (name)
+		public Enum (string type, int mod_flags, string name, Attributes attrs) : base (name)
 		{
 			this.type = type;
 			this.name = name;
 			this.mod_flags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PUBLIC);
-
+			OptAttributes = attrs;
 			ordered_enums = new ArrayList ();
 		}
 
