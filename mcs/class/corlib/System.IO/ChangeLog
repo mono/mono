@@ -1,5 +1,10 @@
 2004-05-27  Dick Porter  <dick@ximian.com>
 
+	* FileSystemInfo.cs: Take out the error checking in Refresh(), it
+	broke other stuff
+	
+2004-05-27  Dick Porter  <dick@ximian.com>
+
 	* MonoIO.cs: Define icalls for Lock() and Unlock()
 	
 	* FileStream.cs: Implement Lock() and Unlock().  Also improve IO

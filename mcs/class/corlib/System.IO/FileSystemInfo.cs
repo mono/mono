@@ -199,10 +199,9 @@ namespace System.IO {
 			MonoIOError error;
 			
 			MonoIO.GetFileStat (FullName, out stat, out error);
-			if (error != MonoIOError.ERROR_SUCCESS) {
-				throw MonoIO.GetException (FullName,
-							   error);
-			}
+			/* Don't throw on error here, too much other
+			 * stuff relies on it not doing so...
+			 */
 			
 			valid = true;
 			
