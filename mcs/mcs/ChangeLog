@@ -1,5 +1,14 @@
 2003-10-09  Martin Baulig  <martin@ximian.com>
 
+	* class.cs (MethodCore): Added additional `DeclSpace ds' argument
+	to the .ctor.
+	(MethodCore.DoDefineParameters): Removed the TypeContainer
+	argument; use the DeclSpace which was passed to the .ctor instead.
+	(MethodCore.CheckParameter): Take a DeclSpace instead of a
+	TypeContainer; we only need a DeclSpace here.
+
+2003-10-09  Martin Baulig  <martin@ximian.com>
+
 	* class.cs (MethodData): Added additional `DeclSpace ds' argument
 	to the .ctor.
 	(MethodData.Define, MethodData.Emit): Pass the `ds' to the

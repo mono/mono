@@ -573,7 +573,7 @@ namespace Mono.CSharp {
 			Constructor c;
 			int mods = 0;
 
-			c = new Constructor (Basename, Parameters.EmptyReadOnlyParameters,
+			c = new Constructor (this, Basename, Parameters.EmptyReadOnlyParameters,
 					     new ConstructorBaseInitializer (
 						     null, Parameters.EmptyReadOnlyParameters,
 						     Location),
@@ -2093,6 +2093,7 @@ namespace Mono.CSharp {
 	public abstract class MethodCore : MemberBase {
 		public readonly Parameters Parameters;
 		protected Block block;
+		protected DeclSpace ds;
 		
 		//
 		// Parameters, cached for semantic analysis.
@@ -2105,11 +2106,12 @@ namespace Mono.CSharp {
 		// </summary>
 		public bool OverridesSomething;
 
-		public MethodCore (Expression type, int mod, int allowed_mod, string name,
-				   Attributes attrs, Parameters parameters, Location loc)
+		public MethodCore (DeclSpace ds, Expression type, int mod, int allowed_mod,
+				   string name, Attributes attrs, Parameters parameters, Location loc)
 			: base (type, mod, allowed_mod, Modifiers.PRIVATE, name, attrs, loc)
 		{
 			Parameters = parameters;
+			this.ds = ds;
 		}
 		
 		//
@@ -2138,14 +2140,14 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected virtual bool DoDefineParameters (TypeContainer container)
+		protected virtual bool DoDefineParameters ()
 		{
 			// Check if arguments were correct
-			parameter_types = Parameters.GetParameterInfo (container);
-			if ((parameter_types == null) || !CheckParameters (container, parameter_types))
+			parameter_types = Parameters.GetParameterInfo (ds);
+			if ((parameter_types == null) || !CheckParameters (ds, parameter_types))
 				return false;
 
-			parameter_info = new InternalParameters (container, Parameters);
+			parameter_info = new InternalParameters (ds, Parameters);
 
 			Parameter array_param = Parameters.ArrayParameter;
 			if ((array_param != null) &&
@@ -2301,9 +2303,9 @@ namespace Mono.CSharp {
 		//
 		// return_type can be "null" for VOID values.
 		//
-		public Method (Expression return_type, int mod, string name, Parameters parameters,
-			       Attributes attrs, Location l)
-			: base (return_type, mod, AllowedModifiers, name, attrs, parameters, l)
+		public Method (DeclSpace ds, Expression return_type, int mod, string name,
+			       Parameters parameters, Attributes attrs, Location l)
+			: base (ds, return_type, mod, AllowedModifiers, name, attrs, parameters, l)
 		{ }
 
 		//
@@ -2366,7 +2368,7 @@ namespace Mono.CSharp {
 			base.CheckBase (container);
 			
 			// Check whether arguments were correct.
-			if (!DoDefineParameters (container))
+			if (!DoDefineParameters ())
 				return false;
 
 			MethodSignature ms = new MethodSignature (Name, null, ParameterTypes);
@@ -2649,8 +2651,9 @@ namespace Mono.CSharp {
 		// The spec claims that static is not permitted, but
 		// my very own code has static constructors.
 		//
-		public Constructor (string name, Parameters args, ConstructorInitializer init, Location l)
-			: base (null, 0, AllowedModifiers, name, null, args, l)
+		public Constructor (DeclSpace ds, string name, Parameters args,
+				    ConstructorInitializer init, Location l)
+			: base (ds, null, 0, AllowedModifiers, name, null, args, l)
 		{
 			Initializer = init;
 		}
@@ -2680,7 +2683,7 @@ namespace Mono.CSharp {
 					       MethodAttributes.SpecialName);
 
 			// Check if arguments were correct.
-			if (!DoDefineParameters (container))
+			if (!DoDefineParameters ())
 				return false;
 
 			if ((ModFlags & Modifiers.STATIC) != 0){
@@ -3583,19 +3586,19 @@ namespace Mono.CSharp {
 			return ok;
 		}
 
-		protected virtual bool CheckParameters (TypeContainer container, Type [] parameters)
+		protected virtual bool CheckParameters (DeclSpace ds, Type [] parameters)
 		{
 			bool error = false;
 
 			foreach (Type partype in parameters){
 				if (partype.IsPointer){
-					if (!UnsafeOK (container))
+					if (!UnsafeOK (ds))
 						error = true;
 					if (!TypeManager.VerifyUnManaged (TypeManager.GetElementType (partype), Location))
 						error = true;
 				}
 
-				if (container.AsAccessible (partype, ModFlags))
+				if (ds.AsAccessible (partype, ModFlags))
 					continue;
 
 				if (this is Indexer)
@@ -3913,10 +3916,11 @@ namespace Mono.CSharp {
 
 		protected EmitContext ec;
 
-		public PropertyBase (Expression type, string name, int mod_flags, int allowed_mod,
-				     Parameters parameters, Accessor get_block, Accessor set_block,
+		public PropertyBase (DeclSpace ds, Expression type, string name, int mod_flags,
+				     int allowed_mod, Parameters parameters,
+				     Accessor get_block, Accessor set_block,
 				     Attributes attrs, Location loc)
-			: base (type, mod_flags, allowed_mod, name, attrs, parameters, loc)
+			: base (ds, type, mod_flags, allowed_mod, name, attrs, parameters, loc)
 		{
 			Get = get_block;
 			Set = set_block;
@@ -3940,7 +3944,7 @@ namespace Mono.CSharp {
 			base.CheckBase (container);
 			
 			// Check whether arguments were correct.
-			if (!DoDefineParameters (container))
+			if (!DoDefineParameters ())
 				return false;
 
 			if (IsExplicitImpl)
@@ -4086,10 +4090,10 @@ namespace Mono.CSharp {
 			Modifiers.EXTERN |
 			Modifiers.VIRTUAL;
 
-		public Property (Expression type, string name, int mod_flags,
+		public Property (DeclSpace ds, Expression type, string name, int mod_flags,
 				 Accessor get_block, Accessor set_block,
 				 Attributes attrs, Location loc)
-			: base (type, name, mod_flags, AllowedModifiers,
+			: base (ds, type, name, mod_flags, AllowedModifiers,
 				Parameters.EmptyReadOnlyParameters,
 				get_block, set_block, attrs, loc)
 		{
@@ -4519,9 +4523,10 @@ namespace Mono.CSharp {
 		//
 		bool IsImplementing = false;
 		
-		public Indexer (Expression type, string int_type, int flags, Parameters parameters,
-				Accessor get_block, Accessor set_block, Attributes attrs, Location loc)
-			: base (type, "", flags, AllowedModifiers, parameters, get_block, set_block,
+		public Indexer (DeclSpace ds, Expression type, string int_type, int flags,
+				Parameters parameters, Accessor get_block, Accessor set_block,
+				Attributes attrs, Location loc)
+			: base (ds, type, "", flags, AllowedModifiers, parameters, get_block, set_block,
 				attrs, loc)
 		{
 			ExplicitInterfaceName = int_type;
@@ -4779,7 +4784,7 @@ namespace Mono.CSharp {
 				param_list[1] = new Parameter (SecondArgType, SecondArgName,
 							       Parameter.Modifier.NONE, null);
 			
-			OperatorMethod = new Method (ReturnType, ModFlags, MethodName,
+			OperatorMethod = new Method (container, ReturnType, ModFlags, MethodName,
 						     new Parameters (param_list, null, Location),
 						     OptAttributes, Location);
 
