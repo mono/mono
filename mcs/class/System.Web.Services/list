@@ -3,6 +3,7 @@ System.Web.Services/WebMethodAttribute.cs
 System.Web.Services/WebService.cs
 System.Web.Services/WebServiceAttribute.cs
 System.Web.Services/WebServiceBindingAttribute.cs
+System.Web.Services/WebServicesDescriptionAttribute.cs
 System.Web.Services.Configuration/XmlFormatExtensionAttribute.cs
 System.Web.Services.Configuration/XmlFormatExtensionPointAttribute.cs
 System.Web.Services.Configuration/XmlFormatExtensionPrefixAttribute.cs
@@ -57,9 +58,9 @@ System.Web.Services.Description/ServiceDescriptionBaseCollection.cs
 System.Web.Services.Description/ServiceDescriptionCollection.cs
 System.Web.Services.Description/ServiceDescriptionFormatExtension.cs
 System.Web.Services.Description/ServiceDescriptionFormatExtensionCollection.cs
-System.Web.Services.Description/ServiceDescriptionImporter.cs
 System.Web.Services.Description/ServiceDescriptionImportStyle.cs
 System.Web.Services.Description/ServiceDescriptionImportWarnings.cs
+System.Web.Services.Description/ServiceDescriptionImporter.cs
 System.Web.Services.Description/ServiceDescriptionReflector.cs
 System.Web.Services.Description/SoapAddressBinding.cs
 System.Web.Services.Description/SoapBinding.cs
@@ -70,8 +71,8 @@ System.Web.Services.Description/SoapExtensionImporter.cs
 System.Web.Services.Description/SoapExtensionReflector.cs
 System.Web.Services.Description/SoapFaultBinding.cs
 System.Web.Services.Description/SoapHeaderBinding.cs
-System.Web.Services.Description/SoapHeaderFaultBinding.cs
 System.Web.Services.Description/SoapOperationBinding.cs
+System.Web.Services.Description/SoapHeaderFaultBinding.cs
 System.Web.Services.Description/SoapProtocolImporter.cs
 System.Web.Services.Description/SoapTransportImporter.cs
 System.Web.Services.Description/Types.cs
@@ -102,6 +103,7 @@ System.Web.Services.Protocols/SoapHeader.cs
 System.Web.Services.Protocols/SoapHeaderAttribute.cs
 System.Web.Services.Protocols/SoapHeaderCollection.cs
 System.Web.Services.Protocols/SoapHeaderDirection.cs
+System.Web.Services.Protocols/SoapHeaderException.cs
 System.Web.Services.Protocols/SoapHttpClientProtocol.cs
 System.Web.Services.Protocols/SoapMessage.cs
 System.Web.Services.Protocols/SoapMessageStage.cs

@@ -1,4 +1,11 @@
 2002-07-22  Tim Coleman <tim@timcoleman.com>
+	* makefile.gnu:
+	* list:
+		Modifications to make this library buildable on
+		linux.
+		
+
+2002-07-22  Tim Coleman <tim@timcoleman.com>
 	* list: Added new files from System.Web.Services.Protocols
 		and System.Web.Services.Configuration
 
