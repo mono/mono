@@ -4088,6 +4088,11 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
+			if (expr is NullLiteral) {
+				Report.Error (186, expr.Location, "Use of null is not valid in this context");
+				return false;
+			}
+
 			TypeExpr texpr = type.ResolveAsTypeTerminal (ec, false);
 			if (texpr == null)
 				return false;

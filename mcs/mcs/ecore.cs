@@ -766,11 +766,15 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (qualifier_type != null)
+			if (name == ".ctor" && TypeManager.FindMembers (qualifier_type, MemberTypes.Constructor,
+				BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly, null, null).Count == 0)
+			{
+				Report.Error (143, loc, String.Format ("The type '{0}' has no constructors defined", TypeManager.CSharpName (queried_type)));
+				return;
+			}
+
+			if (qualifier_type != null) {
 				Report.Error (122, loc, "'{0}' is inaccessible due to its protection level", TypeManager.CSharpName (qualifier_type) + "." + name);
-			else if (name == ".ctor") {
-				Report.Error (143, loc, String.Format ("The type {0} has no constructors defined",
-								       TypeManager.CSharpName (queried_type)));
 			} else {
 				Report.Error (122, loc, "'{0}' is inaccessible due to its protection level", name);
 			}

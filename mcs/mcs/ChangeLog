@@ -1,3 +1,11 @@
+2004-12-17  Marek Safar  <marek.safar@seznam.cz>
+
+	* delegate.cs (NewDelegate.DoResolve): Add error 149 report.
+	
+	* ecore.cs (Expression.MemberLookupFailed): Fixed error 143.
+	
+	* statement.cs (Foreach.Resolve): Add error 186 report.
+
 2004-12-16  Marek Safar  <marek.safar@seznam.cz>
 
 	* expression.cs (Conditional.DoResolve): Add warning 429.
