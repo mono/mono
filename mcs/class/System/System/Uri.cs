@@ -149,11 +149,13 @@ namespace System
 			}
 			
 			// 8 fragment
-			pos = relativeUri.IndexOf ('#');
-			if (pos != -1) {
-				fragment = relativeUri.Substring (pos);
-				// fragment is not escaped.
-				relativeUri = relativeUri.Substring (0, pos);
+			if (scheme != UriSchemeFile) {
+				pos = relativeUri.IndexOf ('#');
+				if (pos != -1) {
+					fragment = relativeUri.Substring (pos);
+					// fragment is not escaped.
+					relativeUri = relativeUri.Substring (0, pos);
+				}
 			}
 
 			// 6 query
@@ -172,8 +174,16 @@ namespace System
 					return;
 				} else {
 					path = relativeUri;
-					if (!userEscaped)
-						path = EscapeString (path);
+					if (!userEscaped) {
+						if (scheme == UriSchemeFile) {
+							string [] list = path.Split ('#');
+							for (int i = 0; i < list.Length; i++)
+								list [i] = EscapeString (list [i]);
+							path = String.Join ("#", list);
+						}
+						else
+							path = EscapeString (path);
+					}
 					return;
 				}
 			}
@@ -754,7 +764,14 @@ namespace System
 				return;
 
 			host = EscapeString (host, false, true, false);
-			path = EscapeString (path);
+			if (scheme == UriSchemeFile) {
+				string [] list = path.Split ('#');
+				for (int i = 0; i < list.Length; i++)
+					list [i] = EscapeString (list [i]);
+				path = String.Join ("#", list);
+			}
+			else
+				path = EscapeString (path);
 		}
 		
 		protected virtual string Unescape (string str)
@@ -820,9 +837,8 @@ namespace System
 				is_root_path = true;
 			}
 
-			if ((uriString.Length >= 2) &&
-					((uriString [0] == '/') && (uriString [1] == '/')) ||
-					((uriString [0] == '\\') || (uriString [1] == '\\'))) {
+			if (uriString.StartsWith ("//")
+					|| uriString.StartsWith ("\\\\"))  {
 				is_wins_dir = true;
 				is_root_path = true;
 			}
@@ -860,9 +876,8 @@ namespace System
 			}
 
 			// 3
-			if ((uriString.Length >= 2) && 
-			    ((uriString [0] == '/') && (uriString [1] == '/')) ||
-			    ((uriString [0] == '\\') || (uriString [1] == '\\')))  {
+			if (uriString.StartsWith ("//")
+					|| uriString.StartsWith ("\\\\"))  {
 				if (scheme == Uri.UriSchemeFile)
 					uriString = uriString.TrimStart (new char [] {'/', '\\'});
 				else
@@ -874,10 +889,12 @@ namespace System
 			}
 
 			// 8 fragment
-			pos = uriString.IndexOf ('#');
-			if (!IsUnc && pos != -1) {
-				fragment = uriString.Substring (pos);
-				uriString = uriString.Substring (0, pos);
+			if (scheme != UriSchemeFile) {
+				pos = uriString.IndexOf ('#');
+				if (!IsUnc && pos != -1) {
+					fragment = uriString.Substring (pos);
+					uriString = uriString.Substring (0, pos);
+				}
 			}
 
 			// 6 query

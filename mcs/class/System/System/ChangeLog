@@ -1,3 +1,8 @@
+2004-06-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Uri.cs : Don't escape '#' in file URI paths. This fixes bug #47691.
+	  Some code simplification.
+
 2004-06-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Uri.cs : 
