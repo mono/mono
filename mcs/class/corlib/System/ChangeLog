@@ -1,3 +1,13 @@
+2002-04-26  Duncan Mak  <duncan@ximian.com>
+
+	* MissingMemberException.cs: Made the message variable 'protected'
+	instead of 'private', so that we can see it in
+	MissingMethodException and MissingFieldException.
+
+	* MissingFieldException.cs:
+	* MissingMethodException.cs: Added missing (string, string)
+	constructor, and also the Message property.
+
 2002-04-26  Martin Baulig  <martin@gnome.org>
 
 	* Enum.cs: Implemented the IConvertible methods.
