@@ -45,7 +45,7 @@ namespace System.IO
 
 			
 			if (pathcomponents.Length == 1) {
-				tmpinfo = Directory.RealCreateDirectory(pathsumm.ToString());
+				tmpinfo = Directory.RealCreateDirectory(path);
 			} 
 			else {
 				foreach(string dir in pathcomponents)
@@ -59,8 +59,7 @@ namespace System.IO
 						}
 					}
 					
-
-					if (!Directory.Exists (pathsumm.ToString())) {
+					if (pathsumm.Length != 0 && !Directory.Exists (pathsumm.ToString())) {
 						tmpinfo = Directory.RealCreateDirectory (pathsumm.ToString());
 					}
 				}

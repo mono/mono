@@ -1,3 +1,8 @@
+2002-12-07  Peter Williams  <peterw@ximian.com>
+
+	* Directory.cs: Don't use the uninitialized pathsumm here.
+	Don't try and create "" if we're using an absolute path.
+
 2002-12-07  Eduardo Garcia Cebollero <kiwnix@yahoo.es>
 
 	* Directory.cs: Now the creation of a new directory works recursively
