@@ -53,8 +53,9 @@ namespace System.Runtime.Remoting.Lifetime
 
 		public void StopManager()
 		{
-			_timer.Dispose();
+			Timer t = _timer;
 			_timer = null;
+			t.Dispose();
 		}
 
 		public void ManageLeases(object state)
