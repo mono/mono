@@ -91,7 +91,7 @@ namespace System.Web.Caching {
 
 			_enumPriority = enumPriority;
 
-			_ticksExpires = dtExpires.Ticks;
+			_ticksExpires = dtExpires.ToUniversalTime ().Ticks;
 
 			_ticksSlidingExpiration = tsSpan.Ticks;
 

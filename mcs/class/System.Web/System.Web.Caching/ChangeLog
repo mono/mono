@@ -1,3 +1,8 @@
+2004-11-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CacheEntry.cs: convert the external DateTime to GMT, as everything
+	else uses that timezone. Fixes bug #69194.
+
 2004-10-03 Ben Maurer  <bmaurer@ximian.com>
 
 	* Cache.cs, CacheEntry.cs, CacheExpires.cs, ExpiresBuckets.cs:
