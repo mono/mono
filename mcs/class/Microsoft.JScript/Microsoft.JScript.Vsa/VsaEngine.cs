@@ -220,7 +220,7 @@ namespace Microsoft.JScript.Vsa {
 
 		public ScriptObject ScriptObjectStackTop ()
 		{
-			throw new NotImplementedException ();
+			return (ScriptObject) globals.Peek ();
 		}
 
 		public virtual void SetOutputStream (IMessageReceiver output)
