@@ -1,3 +1,7 @@
+2005-01-13  Mike Kestner  <mkestner@novell.com>
+
+	* driver.cs: use relative symlinks for the package dir.
+
 2005-01-11  Jackson Harper  <jackson@ximian.com>
 
 	* driver.cs: Make sure the actual assembly file exists when
