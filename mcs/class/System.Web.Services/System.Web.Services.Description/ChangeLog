@@ -1,3 +1,22 @@
+2004-01-24  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ExtensionManager.cs: Support more than one XmlFormatExtensionPrefixAttribute
+	  un one soap extension.
+	* HttpSimpleProtocolImporter.cs: Made class internal.
+	* HttpSimpleProtocolReflector.cs.cs: ReflectMethodBinding(): GET and POST
+	  do not use method bindings. Return null.
+	* ProtocolReflector.cs: Several fixes: do not generate binding if it doesn't
+	  have any operation, avoid port and binding name colisions, and other minor
+	  fixes.
+	* ServiceDescription.cs: Collect the namespaces to be added to the root
+	  element of a serializaed wsdl document from the soap extensions.
+	* ServiceDescriptionSerializerBase.cs: Made classes internal.
+	* SoapAddressBinding.cs, SoapFaultBinding.cs, SoapOperationBinding.cs,
+	  SoapProtocolImporter.cs: Class should not be sealed.
+	* SoapBodyBinding.cs: Set the correct class attributes.
+	* SoapHeaderBinding.cs: Class should not be sealed. Added missing method.
+	* SoapHeaderFaultBinding.cs: Fixed class attributes.
+
 2004-01-21  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* HttpSimpleProtocolImporter.cs: pass the web service class list to the xml 

@@ -202,7 +202,36 @@ namespace System.Web.Services.Description {
 			ns.Add ("mime", MimeContentBinding.Namespace);
 			ns.Add ("tm", MimeTextBinding.Namespace);
 			ns.Add ("s0", TargetNamespace);
+			
+			AddExtensionNamespaces (ns, Extensions);
+			
+			if (Types != null) AddExtensionNamespaces (ns, Types.Extensions);
+			
+			foreach (Service ser in Services)
+				foreach (Port port in ser.Ports)
+					AddExtensionNamespaces (ns, port.Extensions);
+
+			foreach (Binding bin in Bindings)
+			{
+				AddExtensionNamespaces (ns, bin.Extensions);
+				foreach (OperationBinding op in bin.Operations)
+				{
+					AddExtensionNamespaces (ns, op.Extensions);
+					if (op.Input != null) AddExtensionNamespaces (ns, op.Input.Extensions);
+					if (op.Output != null) AddExtensionNamespaces (ns, op.Output.Extensions);
+				}
+			}
 			return ns;
+		}
+		
+		void AddExtensionNamespaces (XmlSerializerNamespaces ns, ServiceDescriptionFormatExtensionCollection extensions)
+		{
+			foreach (ServiceDescriptionFormatExtension ext in extensions)
+			{
+				ExtensionInfo einf = ExtensionManager.GetFormatExtensionInfo (ext.GetType ());
+				foreach (XmlQualifiedName qname in einf.NamespaceDeclarations)
+					ns.Add (qname.Name, qname.Namespace);
+			}
 		}
 		
 		internal static void WriteExtensions (XmlWriter writer, object ob)
@@ -219,16 +248,15 @@ namespace System.Web.Services.Description {
 		{
 			Type type = ext.GetType ();
 			ExtensionInfo info = ExtensionManager.GetFormatExtensionInfo (type);
-			string prefix = info.Prefix;
-			
-			if (prefix == null || prefix == "") prefix = writer.LookupPrefix (info.Namespace);
 			
 //				if (prefix != null && prefix != "")
 //					Writer.WriteStartElement (prefix, info.ElementName, info.Namespace);
 //				else
 //					WriteStartElement (info.ElementName, info.Namespace, false);
 
-			info.Serializer.Serialize (writer, ext);
+			XmlSerializerNamespaces ns = new XmlSerializerNamespaces ();
+			ns.Add ("","");
+			info.Serializer.Serialize (writer, ext, ns);
 		}
 		
 		internal static void ReadExtension (XmlReader reader, object ob)

@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Collections;
 using System.Web.Services.Configuration;
 using System.Xml.Serialization;
+using System.Xml;
 
 namespace System.Web.Services.Description 
 {
@@ -38,7 +39,7 @@ namespace System.Web.Services.Description
 			RegisterExtensionType (typeof (SoapBodyBinding));
 			RegisterExtensionType (typeof (SoapFaultBinding));
 			RegisterExtensionType (typeof (SoapHeaderBinding));
-			RegisterExtensionType (typeof (SoapHeaderFaultBinding));
+//			RegisterExtensionType (typeof (SoapHeaderFaultBinding));
 			RegisterExtensionType (typeof (SoapOperationBinding));
 			
 			foreach (Type type in WSConfig.Instance.FormatExtensionTypes)
@@ -51,12 +52,9 @@ namespace System.Web.Services.Description
 			ext.Type = type;
 			
 			object[] ats = type.GetCustomAttributes (typeof(XmlFormatExtensionPrefixAttribute), true);
-			if (ats.Length > 0)
-			{
-				XmlFormatExtensionPrefixAttribute at = (XmlFormatExtensionPrefixAttribute)ats[0];
-				ext.Prefix = at.Prefix;
-				ext.Namespace = at.Namespace;
-			}
+			
+			foreach (XmlFormatExtensionPrefixAttribute at in ats)
+				ext.NamespaceDeclarations.Add (new XmlQualifiedName (at.Prefix, at.Namespace));
 			
 			ats = type.GetCustomAttributes (typeof(XmlFormatExtensionAttribute), true);
 			if (ats.Length > 0)
@@ -158,16 +156,18 @@ namespace System.Web.Services.Description
 	
 	internal class ExtensionInfo
 	{
-		public string _prefix;
-		public string _namespace;
-		public string _elementName;
-		public Type _type;
-		public XmlSerializer _serializer;
+		ArrayList _namespaceDeclarations;
+		string _namespace;
+		string _elementName;
+		Type _type;
+		XmlSerializer _serializer;
 
-		public string Prefix
+		public ArrayList NamespaceDeclarations
 		{
-			get { return _prefix; }
-			set { _prefix = value; }
+			get { 
+				if (_namespaceDeclarations == null) _namespaceDeclarations = new ArrayList ();
+				return _namespaceDeclarations; 
+			}
 		}
 		
 		public string Namespace

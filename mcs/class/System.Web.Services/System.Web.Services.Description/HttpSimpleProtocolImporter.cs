@@ -18,7 +18,7 @@ using System.Collections;
 
 namespace System.Web.Services.Description 
 {
-	public abstract class HttpSimpleProtocolImporter : ProtocolImporter 
+	internal abstract class HttpSimpleProtocolImporter : ProtocolImporter 
 	{
 
 		#region Fields

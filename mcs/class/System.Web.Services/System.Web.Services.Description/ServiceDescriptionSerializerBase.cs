@@ -7,7 +7,7 @@ using System.Globalization;
 
 namespace System.Web.Services.Description
 {
-	public class ServiceDescriptionReaderBase : XmlSerializationReader
+	internal class ServiceDescriptionReaderBase : XmlSerializationReader
 	{
 		public System.Web.Services.Description.ServiceDescription ReadTree ()
 		{
@@ -1297,7 +1297,7 @@ namespace System.Web.Services.Description
 
 	}
 
-	public class ServiceDescriptionWriterBase : XmlSerializationWriter
+	internal class ServiceDescriptionWriterBase : XmlSerializationWriter
 	{
 		public void WriteTree (System.Web.Services.Description.ServiceDescription ob)
 		{

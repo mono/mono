@@ -143,7 +143,7 @@ namespace System.Web.Services.Description {
 			get { return schemaExporter; }
 		}
 
-		public SoapSchemaExporter SoapSchemaExporter {
+		internal SoapSchemaExporter SoapSchemaExporter {
 			get { return soapSchemaExporter; }
 		}
 
@@ -228,8 +228,7 @@ namespace System.Web.Services.Description {
 		{
 			port = new Port ();
 			port.Name = portNames.AddUnique (binfo.Name, port);
-			port.Binding = new XmlQualifiedName (binfo.Name, binfo.Namespace);
-			service.Ports.Add (port);
+			bool bindingFull = true;
 
 			if (binfo.Namespace != desc.TargetNamespace)
 			{
@@ -238,29 +237,52 @@ namespace System.Web.Services.Description {
 					ServiceDescription newDesc = new ServiceDescription();
 					newDesc.TargetNamespace = binfo.Namespace;
 					newDesc.Name = binfo.Name;
-					int id = ServiceDescriptions.Add (newDesc);
-					AddImport (desc, binfo.Namespace, GetWsdlUrl (url,id));
-					ImportBindingContent (newDesc, typeInfo, url, binfo);
+					bindingFull = ImportBindingContent (newDesc, typeInfo, url, binfo);
+					if (bindingFull) {
+						int id = ServiceDescriptions.Add (newDesc);
+						AddImport (desc, binfo.Namespace, GetWsdlUrl (url,id));
+					}
 				}
-				else
+				else {
 					AddImport (desc, binfo.Namespace, binfo.Location);
+					bindingFull = true;
+				}
 			}
 			else
-				ImportBindingContent (desc, typeInfo, url, binfo);
+				bindingFull = ImportBindingContent (desc, typeInfo, url, binfo);
+				
+			if (bindingFull)
+			{
+				port.Binding = new XmlQualifiedName (binding.Name, binfo.Namespace);
+				service.Ports.Add (port);
+			}
 		}
 
-		void ImportBindingContent (ServiceDescription desc, TypeStubInfo typeInfo, string url, BindingInfo binfo)
+		bool ImportBindingContent (ServiceDescription desc, TypeStubInfo typeInfo, string url, BindingInfo binfo)
 		{
 			serviceDescription = desc;
 			
+			// Look for an unused name
+			
+			int n=0;
+			string name = binfo.Name;
+			bool found;
+			do
+			{
+				found = false;
+				foreach (Binding bi in desc.Bindings)
+					if (bi.Name == name) { found = true; n++; name = binfo.Name+n; break; }
+			}
+			while (found);
+			
+			// Create the binding
+			
 			binding = new Binding ();
-			binding.Name = binfo.Name;
-			binding.Type = new XmlQualifiedName (binfo.Name, binfo.Namespace);
-			desc.Bindings.Add (binding);
+			binding.Name = name;
+			binding.Type = new XmlQualifiedName (binding.Name, binfo.Namespace);
 			
 			portType = new PortType ();
 			portType.Name = binding.Name;
-			desc.PortTypes.Add (portType);
 
 			BeginClass ();
 			
@@ -269,7 +291,7 @@ namespace System.Web.Services.Description {
 				methodStubInfo = method;
 				
 				string metBinding = ReflectMethodBinding ();
-				if (metBinding != null && (metBinding != binding.Name)) continue;
+				if (typeInfo.GetBinding (metBinding) != binfo) continue;
 				
 				operation = new Operation ();
 				operation.Name = method.OperationName;
@@ -304,8 +326,17 @@ namespace System.Web.Services.Description {
 					reflector.ReflectMethod ();
 				}
 			}
-
+			
 			EndClass ();
+			
+			if (portType.Operations.Count > 0)
+			{
+				desc.Bindings.Add (binding);
+				desc.PortTypes.Add (portType);
+				return true;
+			}
+			else
+				return false;
 		}
 
 		void ImportOperationBinding ()

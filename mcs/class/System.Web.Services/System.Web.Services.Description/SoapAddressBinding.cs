@@ -12,7 +12,7 @@ using System.Xml.Serialization;
 
 namespace System.Web.Services.Description {
 	[XmlFormatExtension ("address", "http://schemas.xmlsoap.org/wsdl/soap/", typeof (Port))]
-	public sealed class SoapAddressBinding : ServiceDescriptionFormatExtension {
+	public class SoapAddressBinding : ServiceDescriptionFormatExtension {
 
 		#region Fields
 

@@ -13,7 +13,9 @@ using System.Xml.Serialization;
 
 namespace System.Web.Services.Description {
 	[XmlFormatExtension ("body", "http://schemas.xmlsoap.org/wsdl/soap/", typeof (InputBinding), typeof (OutputBinding), typeof (MimePart))]
-	public sealed class SoapBodyBinding : ServiceDescriptionFormatExtension {
+	[XmlFormatExtensionPrefixAttribute ("soap", "http://schemas.xmlsoap.org/wsdl/soap/")]
+	[XmlFormatExtensionPrefixAttribute ("soapenc", "http://schemas.xmlsoap.org/soap/encoding/")]
+	public class SoapBodyBinding : ServiceDescriptionFormatExtension {
 
 		#region Fields
 		

@@ -15,7 +15,7 @@ using System.Xml.Serialization;
 
 namespace System.Web.Services.Description {
 	[XmlFormatExtension ("header", "http://schemas.xmlsoap.org/wsdl/soap/", typeof (InputBinding), typeof (OutputBinding))]
-	public sealed class SoapHeaderBinding : ServiceDescriptionFormatExtension {
+	public class SoapHeaderBinding : ServiceDescriptionFormatExtension {
 
 		#region Fields
 
@@ -82,6 +82,15 @@ namespace System.Web.Services.Description {
 			get { return use; }
 			set { use = value; }
 		}
+
+#if NET_1_1
+		[MonoTODO]
+		public SoapHeaderFaultBinding Fault 
+		{
+			get { return null; }
+			set { ; }
+		}
+#endif
 
 		#endregion // Properties
 	}

@@ -13,8 +13,8 @@ using System.Xml;
 using System.Xml.Serialization;
 
 namespace System.Web.Services.Description {
-	[XmlFormatExtension ("headerfault", "http://schemas.xmlsoap.org/wsdl/soap/", typeof (InputBinding), typeof (OutputBinding))]
-	public sealed class SoapHeaderFaultBinding : ServiceDescriptionFormatExtension {
+
+	public class SoapHeaderFaultBinding : ServiceDescriptionFormatExtension {
 
 		#region Fields
 

@@ -114,7 +114,7 @@ namespace System.Web.Services.Description {
 
 		protected override string ReflectMethodBinding ()
 		{
-			return TypeInfo.DefaultBinding;
+			return null;
 		}
 
 		#endregion

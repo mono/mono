@@ -18,7 +18,7 @@ using System.Configuration;
 using System.Collections;
 
 namespace System.Web.Services.Description {
-	public sealed class SoapProtocolImporter : ProtocolImporter {
+	public class SoapProtocolImporter : ProtocolImporter {
 
 		#region Fields
 

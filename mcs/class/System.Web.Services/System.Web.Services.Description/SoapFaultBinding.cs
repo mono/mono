@@ -13,7 +13,7 @@ using System.Xml.Serialization;
 
 namespace System.Web.Services.Description {
 	[XmlFormatExtension ("fault", "http://schemas.xmlsoap.org/wsdl/soap/", typeof (FaultBinding))]
-	public sealed class SoapFaultBinding : ServiceDescriptionFormatExtension {
+	public class SoapFaultBinding : ServiceDescriptionFormatExtension {
 
 		#region Fields
 
