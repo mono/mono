@@ -24,9 +24,6 @@
 //
 //
 
-// NOT COMPLETE
-
-
 namespace System.Windows.Forms 
 {
 	[Serializable]
