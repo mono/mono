@@ -453,6 +453,10 @@ test-232.cs:
 ------------
 Tests for {...}-style array creation
 
+test-233.cs:
+------------
+dup of basic-float.cs from mini, for bug 54303.
+
 verify-1.cs
 -----------
 Test whether we do not jump out of the method in a Try/Finally block.
