@@ -49,26 +49,16 @@ namespace Mono.CSharp {
 			return ParameterType != null;
 		}
 
-		public Type ExternalType ()
+		public Type ExternalType (DeclSpace ds, Location l)
 		{
 			if ((ModFlags & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) != 0){
 				string n = ParameterType.FullName + "&";
-				Type t;
-				
-				t = Type.GetType (n);
 
-				//
-				// It is a type defined by the source code we are compiling
-				//
-				if (t == null){
-					ModuleBuilder mb = RootContext.ModuleBuilder;
-
-					t = mb.GetType (n);
-				}
+				Type t = RootContext.LookupType (ds, n, false, l);
 
 				return t;
 			}
-
+			
 			return ParameterType;
 		}
 		
@@ -100,7 +90,7 @@ namespace Mono.CSharp {
 					return null;
 			}
 
-			return ExternalType ().FullName;
+			return ExternalType (ds, loc).FullName;
 		}
 	}
 
@@ -256,7 +246,7 @@ namespace Mono.CSharp {
 					Type t = null;
 					
 					if (p.Resolve (ds, loc))
-						t = p.ExternalType ();
+						t = p.ExternalType (ds, loc);
 					
 					types [i] = t;
 					i++;
@@ -265,7 +255,7 @@ namespace Mono.CSharp {
 			
 			if (extra > 0){
 				if (ArrayParameter.Resolve (ds, loc))
-					types [i] = ArrayParameter.ExternalType ();
+					types [i] = ArrayParameter.ExternalType (ds, loc);
 			}
 
 			return true;

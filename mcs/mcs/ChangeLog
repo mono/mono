@@ -1,3 +1,16 @@
+2002-02-25  Ravi Pratap  <ravi@ximian.com>
+
+	* parameter.cs (Parameter.ExternalType): Take in extra DeclSpace and
+	Location arguments. Ensure we use RootContext.LookupType to do our work
+	and not try to do a direct Type.GetType and ModuleBuilder.GetType
+
+	* interface.cs (PopulateMethod): Handle the type of the parameter being
+	null gracefully.
+
+	* expression.cs (Invocation.BetterFunction): Handle the case when we 
+	have a params method with no fixed arguments and a call is made with no
+	arguments.
+
 2002-02-25  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-tokenizer.cs: Add support for the quote-escape-sequence in

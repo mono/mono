@@ -2987,25 +2987,32 @@ namespace Mono.CSharp {
 			else
 				argument_count = args.Count;
 
-			if (candidate_pd.Count == 0 && argument_count == 0)
+			int cand_count = candidate_pd.Count;
+
+			if (cand_count == 0 && argument_count == 0)
 				return 1;
 
-			if (candidate_pd.ParameterModifier (candidate_pd.Count - 1) != Parameter.Modifier.PARAMS)
-				if (candidate_pd.Count != argument_count)
+			if (candidate_pd.ParameterModifier (cand_count - 1) != Parameter.Modifier.PARAMS)
+				if (cand_count != argument_count)
 					return 0;
 			
 			if (best == null) {
 				int x = 0;
+
+				if (argument_count == 0 && cand_count == 1 &&
+				    candidate_pd.ParameterModifier (cand_count - 1) == Parameter.Modifier.PARAMS)
+					return 1;
+				
 				for (int j = argument_count; j > 0;) {
 					j--;
-					
+
 					Argument a = (Argument) args [j];
 					Type t = candidate_pd.ParameterType (j);
 
 					if (candidate_pd.ParameterModifier (j) == Parameter.Modifier.PARAMS)
 						if (expanded_form)
 							t = t.GetElementType ();
-					
+
 					x = BetterConversion (ec, a, t, null, loc);
 					
 					if (x <= 0)
@@ -3169,7 +3176,10 @@ namespace Mono.CSharp {
 			
 			if (pd_count - 1 > arg_count)
 				return false;
-
+			
+			if (pd_count == 1 && arg_count == 0)
+				return true;
+			
 			//
 			// If we have come this far, the case which remains is when the number of parameters
 			// is less than or equal to the argument count.
@@ -3379,10 +3389,10 @@ namespace Mono.CSharp {
 				// number of arguments, then the expanded params method is never applicable
 				// so we debar the params method.
 				//
-				//if (IsParamsMethodApplicable (Arguments, candidate) &&
-				//    IsApplicable (Arguments, method))
-				//	continue;
-
+				if (IsParamsMethodApplicable (Arguments, candidate) &&
+				    IsApplicable (Arguments, method))
+					continue;
+					
 				int x = BetterFunction (ec, Arguments, method, candidate,
 							chose_params_expanded, loc);
 

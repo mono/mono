@@ -288,6 +288,10 @@ namespace Mono.CSharp {
 				return;
 
 			foreach (Type t in arg_types){
+
+				if (t == null)
+					return;
+				
 				if (t.IsPointer && !UnsafeOK (this))
 					return;
 			}
