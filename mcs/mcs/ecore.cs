@@ -328,14 +328,46 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// This routine should remove members that are overwritten from
-		// a base class.
+		// We copy methods from `new_members' into `target_list' if the signature
+		// for the method from in the new list does not exist in the target_list
 		//
-		// 
+		// The name is assumed to be the same.
 		//
-		static MemberInfo [] RemoveOverwritten (Type t, MemberInfo [] mi)
+		static ArrayList CopyNewMethods (ArrayList target_list, MemberInfo [] new_members)
 		{
-			return mi;
+			if (target_list == null){
+				target_list = new ArrayList ();
+
+				target_list.AddRange (new_members);
+				return target_list;
+			}
+			
+			MemberInfo [] target_array = new MemberInfo [target_list.Count];
+			target_list.CopyTo (target_array, 0);
+			
+			foreach (MemberInfo mi in new_members){
+				MethodBase new_method = (MethodBase) mi;
+				Type [] new_args = TypeManager.GetArgumentTypes (new_method);
+					
+				foreach (MethodBase method in target_array){
+					Type [] old_args = TypeManager.GetArgumentTypes (method);
+					int new_count = new_args.Length;
+					int old_count = old_args.Length;
+					
+					if (new_count != old_count){
+						target_list.Add (method);
+						continue;
+					}
+
+					for (int i = 0; i < old_count; i++){
+						if (old_args [i] == new_args [i])
+							continue;
+						target_list.Add (method);
+						break;
+					}
+				}
+			}
+			return target_list;
 		}
 		
 		//
@@ -365,6 +397,9 @@ namespace Mono.CSharp {
 		// This is so we can catch correctly attempts to invoke instance methods
 		// from a static body (scan for error 120 in ResolveSimpleName).
 		//
+		//
+		// FIXME: Potential optimization, have a static ArrayList
+		//
 		public static Expression MemberLookup (EmitContext ec, Type t, string name,
 						       bool same_type, MemberTypes mt,
 						       BindingFlags bf, Location loc)
@@ -372,50 +407,62 @@ namespace Mono.CSharp {
 			if (same_type)
 				bf |= BindingFlags.NonPublic;
 
-			MemberInfo [] mi = ec.TypeContainer.RootContext.TypeManager.FindMembers (
-				t, mt, bf, Type.FilterName, name);
-
-			if (mi == null)
-				return null;
-
 			//
-			// Empty array ...
-			// This arises when we use FindMembers from SRE.
-			// Our code prefers to send a null back
+			// Lookup for members starting in the type requested and going
+			// up the hierarchy until a match is found.
 			//
-			// FIXME: Ponder whether this is a good idea, maybe we should
-			// just stick to the convention and use empty arrays.
+			// As soon as a non-method match is found, we return.
 			//
-			int count = mi.Length;
-			
-			if (count == 0) 
-				return null;
+			// If methods are found though, then the search proceeds scanning
+			// for more public methods in the hierarchy with signatures that
+			// do not match any of the signatures found so far.
+			//
+			ArrayList method_list = null;
+			Type current_type = t;
+			bool searching = true;
+			do {
+				MemberInfo [] mi;
 
-			if (count > 1)
-				mi = RemoveOverwritten (t, mi);
-			
-			if (mi.Length == 1 && !(mi [0] is MethodBase))
-				return Expression.ExprClassFromMemberInfo (ec, mi [0], loc);
-			
-			for (int i = 0; i < mi.Length; i++)
-				if (!(mi [i] is MethodBase)){
-					Error (-5, "Do not know how to reproduce this case: " + 
-					       "Methods and non-Method with the same name, " +
-					       "report this please");
+				mi = ec.TypeContainer.RootContext.TypeManager.FindMembers (
+					current_type, mt, bf | BindingFlags.DeclaredOnly,
+					Type.FilterName, name);
+				
+				if (current_type == TypeManager.object_type)
+					searching = false;
+				else {
+					current_type = current_type.BaseType;
 
-					Console.WriteLine (name);
-					for (i = 0; i < mi.Length; i++){
-						Type tt = mi [i].GetType ();
-
-						Console.WriteLine (i + ": " + mi [i]);
-						while (tt != TypeManager.object_type){
-							Console.WriteLine (tt);
-							tt = tt.BaseType;
-						}
-					}
+					//
+					// This happens with interfaces, they have a null
+					// basetype
+					//
+					if (current_type == null)
+						searching = false;
 				}
 
-			return new MethodGroupExpr (mi);
+				if (mi == null)
+					continue;
+				
+				int count = mi.Length;
+
+				if (count == 0)
+					continue;
+				
+				if (count == 1 && !(mi [0] is MethodBase))
+					return Expression.ExprClassFromMemberInfo (ec, mi [0], loc);
+
+				//
+				// We found methods, turn the search into "method scan"
+				// mode.
+				//
+				method_list = CopyNewMethods (method_list, mi);
+				mt &= (MemberTypes.Method | MemberTypes.Constructor);
+			} while (searching);
+
+			if (method_list != null && method_list.Count > 0)
+				return new MethodGroupExpr (method_list);
+
+			return null;
 		}
 
 		public const MemberTypes AllMemberTypes =

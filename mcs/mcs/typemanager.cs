@@ -627,8 +627,6 @@ public class TypeManager {
 	/// </summary>
 	static public Type [] GetArgumentTypes (MethodBase mb)
 	{
-		object o = method_arguments [mb];
-
 		if (method_arguments.Contains (mb))
 			return (Type []) method_arguments [mb];
 		else {

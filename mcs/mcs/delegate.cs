@@ -69,18 +69,16 @@ namespace Mono.CSharp {
 			
 			if (parent_builder is ModuleBuilder) {
 				ModuleBuilder builder = (ModuleBuilder) parent_builder;
-				
 				attr = TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Sealed;
 
 				TypeBuilder = builder.DefineType (Name, attr, TypeManager.delegate_type);
-								  
 			} else {
 				TypeBuilder builder = (TypeBuilder) parent_builder;
-				
-				attr = TypeAttributes.NestedPublic | TypeAttributes.Class | TypeAttributes.Sealed;
+				attr = TypeAttributes.NestedPublic | TypeAttributes.Class |
+					TypeAttributes.Sealed;
 
-				TypeBuilder = builder.DefineNestedType (Name, attr, TypeManager.delegate_type);
-
+				TypeBuilder = builder.DefineNestedType (
+					Name, attr, TypeManager.delegate_type);
 			}
 
 			RootContext.TypeManager.AddDelegateType (Name, TypeBuilder, this);
@@ -92,8 +90,9 @@ namespace Mono.CSharp {
 			MethodAttributes mattr;
 			int i;
 			
+			// FIXME: POSSIBLY make this static, as it is always constant
+			// 
 			Type [] const_arg_types = new Type [2];
-
 			const_arg_types [0] = TypeManager.object_type;
 			const_arg_types [1] = TypeManager.intptr_type;
 
@@ -103,6 +102,22 @@ namespace Mono.CSharp {
 			ConstructorBuilder = TypeBuilder.DefineConstructor (mattr,
 									    CallingConventions.Standard,
 									    const_arg_types);
+
+			//
+			// HACK because System.Reflection.Emit is lame
+			//
+			//
+			// FIXME: POSSIBLY make these static, as they are always the same
+			Parameter [] fixed_pars = new Parameter [2];
+			fixed_pars [0] = new Parameter (null, null, Parameter.Modifier.NONE, null);
+			fixed_pars [1] = new Parameter (null, null, Parameter.Modifier.NONE, null);
+			Parameters const_parameters = new Parameters (fixed_pars, null);
+			
+			TypeManager.RegisterMethod (
+				ConstructorBuilder,
+				new InternalParameters (const_arg_types, const_parameters),
+				const_arg_types);
+				
 			
 			ConstructorBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
 			

@@ -1,3 +1,12 @@
+2001-12-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* delegate.cs (Delegate.Populate): Register the delegage constructor builder here. 
+
+	* ecore.cs: (CopyNewMethods): new utility function used to
+	assemble the list of methods from running FindMembers.
+
+	(MemberLookup): Rework FindMembers so that 
+
 2001-12-16  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (TypeContainer): Remove Delegates who fail to be
