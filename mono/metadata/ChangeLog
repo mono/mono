@@ -1,3 +1,6 @@
+2003-01-17  Martin Baulig  <martin@ximian.com>
+
+	* gc.c: Raise an ExecutionEngineException instead of using g_error().
 
 2003-01-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
