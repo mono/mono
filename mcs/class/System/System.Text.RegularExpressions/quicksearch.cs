@@ -184,7 +184,7 @@ namespace System.Text.RegularExpressions {
 			if(shift == null)
 				return 1;
 
-			object s = shift[c];
+			object s = shift [GetChar (c)];
 			return (s != null ? (int)s : len + 1);
 		}
 
