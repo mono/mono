@@ -1,3 +1,7 @@
+2003-11-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c: Emit FILE and EXPORTEDTYPE tables.
+	
 2003-11-10  Martin Baulig  <martin@ximian.com>
 
 	* metadata.c
@@ -8,6 +12,8 @@
 	matter whether it has the same number of type parameters or not.
 
 2003-11-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c: Emit FILE and EXPORTEDTYPE tables.
 
 	* assembly.c (mono_assembly_load_references): Move the image<->assembly
 	assignment code to this function so it gets called recursively for all
