@@ -54,6 +54,7 @@ namespace System.Web.UI.WebControls {
 			return DataSource as IDataSource;
 		}
 		
+		[MonoTODO ("Wrap DataSource object with a dynamically created data source view")]
 		protected DataSourceView GetData ()
 		{
 			if (DataSource != null && DataSourceID != "")
@@ -83,6 +84,9 @@ namespace System.Web.UI.WebControls {
 			if (ds != null && DataSourceID != "")
 				ds.DataSourceChanged += new EventHandler (OnDataSourceViewChanged);
 			
+			if (!Page.IsPostBack || !EnableViewState)
+				RequiresDataBinding = true;
+
 			base.OnLoad(e);
 		}
 		

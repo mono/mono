@@ -454,9 +454,9 @@ namespace System.Web.UI.WebControls
 			// should be `internal protected' (why, oh WHY did they do that !?!)
 			protected override void OnLoad (EventArgs e)
 			{
-				IDataSource ds = GetDataSourceObject () as IDataSource;
+				IDataSource ds = GetDataSourceObject ();
 				if (ds != null && DataSourceID != "")
-					ds.DataSourceChanged += new EventHandler (OnDataSourceChanged);
+					ds.DataSourceChanged += new EventHandler (OnDataSourceViewChanged);
 				
 				base.OnLoad(e);
 			}
@@ -474,12 +474,12 @@ namespace System.Web.UI.WebControls
 					DataBind ();
 			}
 			
-			protected virtual object GetDataSourceObject ()
+			IDataSource GetDataSourceObject ()
 			{
 				if (DataSourceID != "")
 					return (IDataSource) NamingContainer.FindControl (DataSourceID);
-				
-				return DataSource;
+			
+				return DataSource as IDataSource;
 			}
 			
 			protected virtual IEnumerable GetResolvedDataSource ()
@@ -487,7 +487,7 @@ namespace System.Web.UI.WebControls
 				if (DataSource != null && DataSourceID != "")
 					throw new HttpException ();
 				
-				IDataSource ds = this.GetDataSourceObject () as IDataSource;
+				IDataSource ds = this.GetDataSourceObject ();
 				if (ds != null && DataSourceID != "")
 					return ds.GetView (DataMember).ExecuteSelect (selectArguments);
 				else if (DataSource != null)
@@ -496,15 +496,13 @@ namespace System.Web.UI.WebControls
 					return null; 
 			}
 			
-			protected void OnDataSourceChanged (object sender, EventArgs e)
+			protected virtual void OnDataSourceViewChanged (object sender, EventArgs e)
 			{
 				RequiresDataBinding = true;
 			}
 			
-#if NET_2_0
 		    [IDReferencePropertyAttribute (typeof(System.Web.UI.DataSourceControl))]
     		[DefaultValueAttribute ("")]
-#endif
 			public virtual string DataSourceID {
 				get {
 					object o = ViewState ["DataSourceID"];

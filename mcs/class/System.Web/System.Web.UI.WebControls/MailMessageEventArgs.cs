@@ -30,7 +30,7 @@
 
 #if NET_2_0
 
-using System.Web.Mail;
+using System.Net.Mail;
 
 namespace System.Web.UI.WebControls
 {

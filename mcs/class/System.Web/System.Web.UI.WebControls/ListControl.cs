@@ -59,7 +59,7 @@ namespace System.Web.UI.WebControls
 		private static readonly object SelectedIndexChangedEvent = new object();
 
 		#if !NET_2_0
-		private object             dataSource;
+		private object dataSource;
 		#endif
 		
 		private ListItemCollection items;
@@ -315,6 +315,54 @@ namespace System.Web.UI.WebControls
 			}
 		}
 #endif
+
+#if NET_2_0
+    	[ThemeableAttribute (false)]
+		[DefaultValue (false), WebCategory ("Behavior")]
+		[WebSysDescription ("Determines if validation is performed when clicked.")]
+		public bool CausesValidation
+		{
+			get
+			{
+				Object cv = ViewState["CausesValidation"];
+				if(cv!=null)
+					return (Boolean)cv;
+				return true;
+			}
+			set
+			{
+				ViewState["CausesValidation"] = value;
+			}
+		}
+
+		[DefaultValueAttribute ("")]
+		[ThemeableAttribute (false)]
+		[WebCategoryAttribute ("Behavior")]
+		public string ValidationGroup {
+			get {
+				string text = (string)ViewState["ValidationGroup"];
+				if (text!=null) return text;
+				return String.Empty;
+			}
+			set {
+				ViewState["ValidationGroup"] = value;
+			}
+		}
+		
+		[ThemeableAttribute (false)]
+		[WebCategory ("Behavior")]
+		[DefaultValueAttribute (false)]
+		public bool AppendDataBoundItems {
+			get {
+				Object cv = ViewState["AppendDataBoundItems"];
+				if (cv != null) return (bool) cv;
+				return false;
+			}
+			set {
+				ViewState["AppendDataBoundItems"] = value;
+			}
+		}
+#endif
 		
 		internal virtual ArrayList SelectedIndices
 		{
@@ -349,6 +397,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if !NET_2_0
 		protected override void LoadViewState(object savedState)
 		{
 			//Order: BaseClass, Items (Collection), Indices
@@ -364,25 +413,52 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
+#else
+		protected override void LoadViewState(object savedState)
+		{
+			//Order: BaseClass, Items (Collection)
+			if(savedState != null && savedState is Pair)
+			{
+				Pair state = (Pair) savedState;
+				base.LoadViewState(state.First);
+				Items.LoadViewState(state.Second);
+			}
+		}
+#endif
 
-		#if NET_2_0
+#if NET_2_0
+		protected override void PerformSelect ()
+		{
+			base.PerformSelect ();
+		}
+
 		protected override void PerformDataBinding (IEnumerable ds)
 		{
 			base.PerformDataBinding (ds);
-		#else
+			if (!AppendDataBoundItems)
+				Items.Clear();
+			FillItems (ds);
+		}
+		
+#else
 		protected override void OnDataBinding(EventArgs e)
 		{
 			base.OnDataBinding(e);
 			IEnumerable ds = DataSourceHelper.GetResolvedDataSource (DataSource, DataMember);
-		#endif
+			if (ds != null)
+				Items.Clear ();
+			FillItems (ds);
+		}
+#endif
+
+		void FillItems (IEnumerable ds)
+		{
 			if(ds != null) {
 				string dtf = DataTextField;
 				string dvf = DataValueField;
 				string dtfs = DataTextFormatString;
 				if (dtfs.Length == 0)
 					dtfs = "{0}";
-
-				Items.Clear();
 
 				bool dontUseProperties = (dtf.Length == 0 && dvf.Length == 0);
 
@@ -446,11 +522,13 @@ namespace System.Web.UI.WebControls
 			base.OnPreRender(e);
 		}
 
+#if !NET_2_0
 		protected override object SaveViewState()
 		{
 			//Order: BaseClass, Items (Collection), Indices
 			object vs = base.SaveViewState();
 			object itemSvs = Items.SaveViewState();
+			
 			object indices = null;
 			if (SaveSelectedIndicesViewState)
 				indices = SelectedIndices;
@@ -460,6 +538,18 @@ namespace System.Web.UI.WebControls
 
 			return null;
 		}
+#else
+		protected override object SaveViewState()
+		{
+			//Order: BaseClass, Items (Collection), Indices
+			object vs = base.SaveViewState();
+			object itemSvs = Items.SaveViewState();
+			if (vs != null || itemSvs != null)
+				return new Pair (vs, itemSvs);
+
+			return null;
+		}
+#endif
 
 		protected override void TrackViewState()
 		{
@@ -479,5 +569,62 @@ namespace System.Web.UI.WebControls
 				return true;
 			}
 		}
+		
+#if NET_2_0
+
+		protected override void OnInit (EventArgs e)
+		{
+			Page.RegisterRequiresControlState (this);
+			base.OnInit (e);
+		}
+		
+		protected internal override void LoadControlState (object ob)
+		{
+			if (ob == null) return;
+			object[] state = (object[]) ob;
+			base.LoadControlState (state[0]);
+			ArrayList indices = state[1] as ArrayList;
+			if (indices != null)
+				Select (indices);
+		}
+		
+		protected internal override object SaveControlState ()
+		{
+			object bstate = base.SaveControlState ();
+			ArrayList mstate = SelectedIndices;
+			if (mstate.Count == 0) mstate = null;
+			
+			if (bstate != null || mstate != null)
+				return new object[] { bstate, mstate };
+			else
+				return null;
+		}
+		
+		protected internal virtual void VerifyMultiSelect ()
+		{
+			object o = ViewState ["SelectionMode"];
+			if (o != null && o.ToString () == "Single")
+				throw new HttpException ("Cannot_MultiSelect_In_Single_Mode");
+		}
+		
+		protected override void RenderContents (HtmlTextWriter writer)
+		{
+			bool selMade = false;
+			foreach (ListItem current in Items){
+				writer.WriteBeginTag ("option");
+				if (current.Selected){
+					if (selMade) VerifyMultiSelect ();
+					selMade = true;
+					writer.WriteAttribute ("selected", "selected");
+				}
+				writer.WriteAttribute ("value", current.Value, true);
+				writer.Write ('>');
+				writer.Write (HttpUtility.HtmlEncode (current.Text));
+				writer.WriteEndTag ("option");
+				writer.WriteLine ();
+			}
+		}
+		
+#endif
 	}
 }

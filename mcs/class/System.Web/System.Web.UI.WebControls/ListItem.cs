@@ -53,6 +53,10 @@ namespace System.Web.UI.WebControls
 		private bool dirty_t;
 		private bool dirty_v;
 
+#if NET_2_0
+		private bool enabled;
+#endif
+
 		public ListItem(string text, string value)
 		{
 			this.text  = text;
@@ -67,6 +71,13 @@ namespace System.Web.UI.WebControls
 		public ListItem(): this(null, null)
 		{
 		}
+
+#if NET_2_0
+		public ListItem (string text, string value, bool enabled): this (text, value)
+		{
+			this.enabled = enabled;
+		}
+#endif
 
 		public static ListItem FromString(string text)
 		{
@@ -160,6 +171,15 @@ namespace System.Web.UI.WebControls
 					dirty_v = true;
 			}
 		}
+		
+#if NET_2_0
+		[MonoTODO ("Disable items in ListControl and subclasses")]
+		[DefaultValue (true)]
+		public bool Enabled {
+			get { return enabled; }
+			set { enabled = value; }
+		}
+#endif		
 
 		string IAttributeAccessor.GetAttribute (string key)
 		{

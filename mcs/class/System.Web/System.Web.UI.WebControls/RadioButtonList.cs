@@ -211,7 +211,16 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
 		bool IPostBackDataHandler.LoadPostData(string postDataKey, NameValueCollection postCollection)
+		{
+			return LoadPostData (postDataKey, postCollection);
+		}
+		
+		protected virtual bool LoadPostData(string postDataKey, NameValueCollection postCollection)
+#else
+		bool IPostBackDataHandler.LoadPostData(string postDataKey, NameValueCollection postCollection)
+#endif
 		{
 			string value = postCollection [postDataKey];
 			int c = Items.Count;
@@ -230,21 +239,55 @@ namespace System.Web.UI.WebControls
 			return false;
 		}
 
-		void IPostBackDataHandler.RaisePostDataChangedEvent()
+#if NET_2_0
+		void IPostBackDataHandler.RaisePostDataChangedEvent ()
+		{
+			RaisePostDataChangedEvent ();
+		}
+		
+		protected virtual void RaisePostDataChangedEvent ()
+		{
+			if (CausesValidation)
+				Page.Validate (ValidationGroup);
+
+			if(selectionIndexChanged)
+				OnSelectedIndexChanged(EventArgs.Empty);
+		}
+#else
+		void IPostBackDataHandler.RaisePostDataChangedEvent ()
 		{
 			if(selectionIndexChanged)
 				OnSelectedIndexChanged(EventArgs.Empty);
 		}
+#endif
+		
 
+#if NET_2_0
+		Style IRepeatInfoUser.GetItemStyle(System.Web.UI.WebControls.ListItemType itemType, int repeatIndex)
+		{
+			return GetItemStyle (itemType, repeatIndex);
+		}
+		protected virtual Style GetItemStyle(System.Web.UI.WebControls.ListItemType itemType, int repeatIndex)
+		{
+			return null;
+		}
+#else
 		Style IRepeatInfoUser.GetItemStyle(System.Web.UI.WebControls.ListItemType itemType, int repeatIndex)
 		{
 			return null;
 		}
+#endif
 
-		void IRepeatInfoUser.RenderItem (System.Web.UI.WebControls.ListItemType itemType,
-						 int repeatIndex,
-						 RepeatInfo repeatInfo,
-						 HtmlTextWriter writer)
+#if NET_2_0
+		void IRepeatInfoUser.RenderItem (System.Web.UI.WebControls.ListItemType itemType, int repeatIndex, RepeatInfo repeatInfo, HtmlTextWriter writer)
+		{
+			RenderItem (itemType, repeatIndex, repeatInfo, writer);
+		}
+		
+		protected virtual void RenderItem (System.Web.UI.WebControls.ListItemType itemType, int repeatIndex, RepeatInfo repeatInfo, HtmlTextWriter writer)
+#else
+		void IRepeatInfoUser.RenderItem (System.Web.UI.WebControls.ListItemType itemType, int repeatIndex, RepeatInfo repeatInfo, HtmlTextWriter writer)
+#endif
 		{
 			/* Create a new RadioButton as if it was defined in the page and render it */
 			RadioButton button = new RadioButton ();
@@ -262,36 +305,60 @@ namespace System.Web.UI.WebControls
 			button.RenderControl (writer);
 		}
 
-		bool IRepeatInfoUser.HasFooter
-		{
-			get
-			{
-				return false;
-			}
+#if NET_2_0
+		bool IRepeatInfoUser.HasFooter {
+			get { return HasFooter; }
 		}
 
-		bool IRepeatInfoUser.HasHeader
-		{
-			get
-			{
-				return false;
-			}
+		protected virtual bool HasFooter {
+			get { return false; }
+		}
+#else
+		bool IRepeatInfoUser.HasFooter {
+			get { return false; }
+		}
+#endif
+
+#if NET_2_0
+		bool IRepeatInfoUser.HasHeader {
+			get { return HasHeader; }
 		}
 
-		bool IRepeatInfoUser.HasSeparators
-		{
-			get
-			{
-				return false;
-			}
+		protected virtual bool HasHeader {
+			get { return false; }
+		}
+#else
+		bool IRepeatInfoUser.HasHeader {
+			get { return false; }
+		}
+#endif
+
+#if NET_2_0
+		bool IRepeatInfoUser.HasSeparators {
+			get { return HasSeparators; }
 		}
 
-		int IRepeatInfoUser.RepeatedItemCount
-		{
-			get
-			{
-				return Items.Count;
-			}
+		protected virtual bool HasSeparators {
+			get { return false; }
 		}
+#else
+		bool IRepeatInfoUser.HasSeparators {
+			get { return false; }
+		}
+#endif
+
+#if NET_2_0
+		int IRepeatInfoUser.RepeatedItemCount {
+			get { return RepeatedItemCount; }
+		}
+
+		protected virtual int RepeatedItemCount {
+			get { return Items.Count; }
+		}
+#else
+		int IRepeatInfoUser.RepeatedItemCount {
+			get { return Items.Count; }
+		}
+#endif
 	}
 }

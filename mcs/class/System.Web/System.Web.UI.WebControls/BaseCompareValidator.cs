@@ -56,6 +56,15 @@ namespace System.Web.UI.WebControls
 		}
 
 #if NET_2_0
+		public static bool CanConvert (string text, ValidationDataType type, bool cultureInvariant)
+		{
+			object o = null;
+			return Convert(text, type, cultureInvariant, out o);
+		}
+#endif
+
+
+#if NET_2_0
 	    [ThemeableAttribute (false)]
 #endif
 		[DefaultValue(ValidationDataType.String)]
@@ -77,6 +86,22 @@ namespace System.Web.UI.WebControls
 				ViewState["Type"] = value;
 			}
 		}
+
+#if NET_2_0
+		[DefaultValueAttribute (false)]
+		[ThemeableAttribute (false)]
+		[WebCategory ("Behavior")]
+		public bool CultureInvariantValues {
+			get {
+				object o = ViewState ["CultureInvariantValues"];
+				if (o != null) return (bool) o;
+				return false;
+			}
+			set {
+				ViewState ["CultureInvariantValues"] = value;
+			}
+		}
+#endif
 
 		protected static int CutoffYear
 		{
@@ -101,8 +126,13 @@ namespace System.Web.UI.WebControls
 			base.AddAttributesToRender(writer);
 			if(RenderUplevel)
 			{
-				writer.AddAttribute("type", PropertyConverter.EnumToString(typeof(ValidationDataType), Type));
+#if NET_2_0
+				CultureInfo culture = CultureInvariantValues ? CultureInfo.InvariantCulture : CultureInfo.CurrentCulture;
+				NumberFormatInfo currInfo = culture.NumberFormat;
+#else
 				NumberFormatInfo currInfo = NumberFormatInfo.CurrentInfo;
+#endif
+				writer.AddAttribute("type", PropertyConverter.EnumToString(typeof(ValidationDataType), Type));
 				if(Type == ValidationDataType.Double)
 				{
 					writer.AddAttribute("decimalchar", currInfo.NumberDecimalSeparator);
@@ -131,20 +161,31 @@ namespace System.Web.UI.WebControls
 
 		protected override bool DetermineRenderUplevel()
 		{
-			if(Type == ValidationDataType.Date && DateTimeFormatInfo.CurrentInfo.Calendar.GetType() != typeof(GregorianCalendar))
+#if NET_2_0
+			CultureInfo culture = CultureInvariantValues ? CultureInfo.InvariantCulture : CultureInfo.CurrentCulture;
+			DateTimeFormatInfo currInfo = culture.DateTimeFormat;
+#else
+			DateTimeFormatInfo currInfo = DateTimeFormatInfo.CurrentInfo;
+#endif
+			if(Type == ValidationDataType.Date && currInfo.Calendar.GetType() != typeof(GregorianCalendar))
 			{
 				return false;
 			}
 			return base.DetermineRenderUplevel();
 		}
 
-		/// <summary>
-		/// Undocumented
-		/// </summary>
 		protected static bool Compare(string leftText, string rightText, ValidationCompareOperator op, ValidationDataType type)
 		{
+			return Compare (leftText, false, rightText, false, op, type);
+		}
+		
+#if NET_2_0
+		protected
+#endif
+		static bool Compare(string leftText, bool cultureInvariantLeftText, string rightText, bool cultureInvariantRightText, ValidationCompareOperator op, ValidationDataType type)
+		{
 			object left = null, right = null;
-			if(!Convert(leftText, type, out left))
+			if(!Convert(leftText, type, cultureInvariantLeftText, out left))
 			{
 				return false;
 			}
@@ -152,7 +193,7 @@ namespace System.Web.UI.WebControls
 			{
 				return true;
 			}
-			if(!Convert(rightText, type, out right))
+			if(!Convert(rightText, type, cultureInvariantRightText, out right))
 			{
 				return true;
 			}
@@ -196,9 +237,9 @@ namespace System.Web.UI.WebControls
 		/// <summary>
 		/// Undocumented
 		/// </summary>
-		protected static string GetDateElementOrder()
+		protected static string GetDateElementOrder (CultureInfo culture)
 		{
-			string pattern = DateTimeFormatInfo.CurrentInfo.ShortDatePattern;
+			string pattern = culture.DateTimeFormat.ShortDatePattern;
 
 			//TODO: What are the various possibilities?
 			// I can think of only y*/M*/d*, d*/M*/y*, M*/d*/y*
@@ -213,17 +254,17 @@ namespace System.Web.UI.WebControls
 			return "dmy";
 		}
 
-		static bool ConvertDate (string text, ValidationDataType type, ref object convertedValue)
+		static bool ConvertDate (string text, ValidationDataType type, CultureInfo culture, ref object convertedValue)
 		{
 			//Console.WriteLine (DateTimeFormatInfo.CurrentInfo.Calendar.GetType ());
 			// FIXME: sometime, somehow, the condition is true even when GetType () says
 			// it's a GregorianCalendar.
-			if (DateTimeFormatInfo.CurrentInfo.Calendar.GetType () != typeof (GregorianCalendar)) {
+			if (culture.DateTimeFormat.Calendar.GetType () != typeof (GregorianCalendar)) {
 				convertedValue = DateTime.Parse (text);
 				return true;
 			}
 
-			string order = GetDateElementOrder ();
+			string order = GetDateElementOrder (culture);
 			int date = 0, mth = 0, year = 0;
 			string dateStr = null;
 			string mthStr = null;
@@ -275,10 +316,10 @@ namespace System.Web.UI.WebControls
 			return false;
 		}
 
-		static bool ConvertDouble (string text, ValidationDataType type, ref object convertedValue)
+		static bool ConvertDouble (string text, ValidationDataType type, CultureInfo culture, ref object convertedValue)
 		{
 			Match match = Regex.Match (text, @"^\s*([-\+])?(\d+)?(\" +
-						   NumberFormatInfo.CurrentInfo.NumberDecimalSeparator +
+						   culture.NumberFormat.NumberDecimalSeparator +
 						   @"(\d+))?\s*$");
 
 			if (!match.Success)
@@ -292,11 +333,11 @@ namespace System.Web.UI.WebControls
 			return true;
 		}
 
-		static bool ConvertCurrency (string text, ValidationDataType type, ref object convertedValue)
+		static bool ConvertCurrency (string text, ValidationDataType type, CultureInfo culture, ref object convertedValue)
 		{
-			string decSep = NumberFormatInfo.CurrentInfo.CurrencyDecimalSeparator;
-			string grpSep = NumberFormatInfo.CurrentInfo.CurrencyGroupSeparator;
-			int decDig = NumberFormatInfo.CurrentInfo.CurrencyDecimalDigits;
+			string decSep = culture.NumberFormat.CurrencyDecimalSeparator;
+			string grpSep = culture.NumberFormat.CurrencyGroupSeparator;
+			int decDig = culture.NumberFormat.CurrencyDecimalDigits;
 			if (grpSep [0] == 0xA0)
 				grpSep = " ";
 
@@ -338,12 +379,17 @@ namespace System.Web.UI.WebControls
 			return true;
 		}
 
-		/// <summary>
-		/// Undocumented
-		/// </summary>
 		protected static bool Convert (string text, ValidationDataType type, out object convertedValue)
 		{
-			CultureInfo inv = CultureInfo.InvariantCulture;
+			return Convert (text, type, true, out convertedValue);
+		}
+		
+#if NET_2_0
+		protected
+#endif
+		static bool Convert (string text, ValidationDataType type, bool cultureInvariant, out object convertedValue)
+		{
+			CultureInfo culture = cultureInvariant ? CultureInfo.InvariantCulture : CultureInfo.CurrentCulture;
 			convertedValue = null;
 			try {
 				switch(type) {
@@ -351,14 +397,14 @@ namespace System.Web.UI.WebControls
 					convertedValue = text;
 					break;
 				case ValidationDataType.Integer:
-					convertedValue = Int32.Parse (text, inv);
+					convertedValue = Int32.Parse (text, culture);
 					break;
 				case ValidationDataType.Double:
-					return ConvertDouble (text, type, ref convertedValue);
+					return ConvertDouble (text, type, culture, ref convertedValue);
 				case ValidationDataType.Date:
-					return ConvertDate (text, type, ref convertedValue);
+					return ConvertDate (text, type, culture, ref convertedValue);
 				case  ValidationDataType.Currency:
-					return ConvertCurrency (text, type, ref convertedValue);
+					return ConvertCurrency (text, type, culture, ref convertedValue);
 				}
 			} catch (Exception) {
 				convertedValue = null;

@@ -301,8 +301,16 @@ namespace System.Web.UI.WebControls
 			RenderEndTag(writer);
 		}
 
-		bool IPostBackDataHandler.LoadPostData (string postDataKey,
-							NameValueCollection postCollection)
+#if NET_2_0
+		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
+		{
+			return LoadPostData (postDataKey, postCollection);
+		}
+		
+		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
+#else
+		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
+#endif
 		{
 			if (postCollection [postDataKey] != Text){
 				Text = postCollection [postDataKey];
@@ -311,10 +319,22 @@ namespace System.Web.UI.WebControls
 			return false;
 		}
 
+#if NET_2_0
+		void IPostBackDataHandler.RaisePostDataChangedEvent ()
+		{
+			RaisePostDataChangedEvent ();
+		}
+		
+		protected virtual void RaisePostDataChangedEvent ()
+		{
+			OnTextChanged (EventArgs.Empty);
+		}
+#else
 		void IPostBackDataHandler.RaisePostDataChangedEvent ()
 		{
 			OnTextChanged (EventArgs.Empty);
 		}
+#endif
 	}
 }
 

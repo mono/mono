@@ -32,19 +32,19 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
-using System.Data;
+using System.Data.Common;
 using System.ComponentModel;
 
 namespace System.Web.UI.WebControls {
 	public class SqlDataSourceCommandEventArgs : CancelEventArgs {
 		
-		public SqlDataSourceCommandEventArgs (IDbCommand command)
+		public SqlDataSourceCommandEventArgs (DbCommand command)
 		{
 			this.command = command;
 		}
 		
-		IDbCommand command;
-		public IDbCommand Command {
+		DbCommand command;
+		public DbCommand Command {
 			get { return command; }
 		}
 	}

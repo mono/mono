@@ -46,6 +46,9 @@ namespace System.Web.UI.WebControls
 	[ParseChildren(false)]
 	[ToolboxData("<{0}:LinkButton runat=\"server\">LinkButton</{0}:LinkButton>")]
 	public class LinkButton : WebControl, IPostBackEventHandler
+#if NET_2_0
+		, IButtonControl
+#endif
 	{
 		private static readonly object ClickEvent   = new object();
 		private static readonly object CommandEvent = new object();
@@ -116,6 +119,78 @@ namespace System.Web.UI.WebControls
 
 			set { ViewState ["Text"] = value; }
 		}
+		
+#if NET_2_0
+		[ThemeableAttribute (false)]
+		[EditorAttribute ("System.Web.UI.Design.UrlEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[DefaultValueAttribute ("")]
+		[UrlProperty]
+		public string PostBackUrl {
+			get {
+				string text = (string)ViewState["PostBackUrl"];
+				if (text!=null) return text;
+				return String.Empty;
+			}
+			set {
+				ViewState["PostBackUrl"] = value;
+			}
+		}
+		
+		[BindableAttribute (true)]
+		[LocalizableAttribute (true)]
+		[DefaultValueAttribute ("")]
+		public string SoftkeyLabel {
+			get {
+				string text = (string)ViewState["SoftkeyLabel"];
+				if (text!=null) return text;
+				return String.Empty;
+			}
+			set {
+				ViewState["SoftkeyLabel"] = value;
+			}
+		}
+		
+		[DefaultValueAttribute ("")]
+		[ThemeableAttribute (false)]
+		[WebCategoryAttribute ("Behavior")]
+		public string ValidationGroup {
+			get {
+				string text = (string)ViewState["ValidationGroup"];
+				if (text!=null) return text;
+				return String.Empty;
+			}
+			set {
+				ViewState["ValidationGroup"] = value;
+			}
+		}
+		
+		[DefaultValueAttribute ("")]
+		[ThemeableAttribute (false)]
+		[WebCategoryAttribute ("Behavior")]
+		public string OnClientClick {
+			get {
+				string text = (string)ViewState["OnClientClick"];
+				if (text!=null) return text;
+				return String.Empty;
+			}
+			set {
+				ViewState["OnClientClick"] = value;
+			}
+		}
+		
+		protected virtual PostBackOptions GetPostBackOptions ()
+		{
+			PostBackOptions ops = new PostBackOptions (this);
+			if (PostBackUrl != "")
+				ops.ActionUrl = PostBackUrl;
+			ops.PerformValidation = Page.Validators.Count > 0 && CausesValidation;
+			if (ops.PerformValidation)
+				ops.ValidationGroup = ValidationGroup;
+			ops.RequiresJavaScriptProtocol = false;
+			return ops;
+		}
+#endif
+
 
 		[WebCategory ("Action")]
 		[WebSysDescription ("Raised when the LinkButton is clicked.")]
@@ -157,6 +232,20 @@ namespace System.Web.UI.WebControls
 			base.OnPreRender(e);
 		}
 
+#if NET_2_0
+		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
+		{
+			RaisePostBackEvent (eventArgument);
+		}
+		
+		protected virtual void RaisePostBackEvent (string eventArgument)
+		{
+			if (CausesValidation)
+				Page.Validate (ValidationGroup);
+			OnClick (EventArgs.Empty);
+			OnCommand (new CommandEventArgs (CommandName, CommandArgument));
+		}
+#else
 		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
 		{
 			if (CausesValidation)
@@ -164,10 +253,33 @@ namespace System.Web.UI.WebControls
 			OnClick (EventArgs.Empty);
 			OnCommand (new CommandEventArgs (CommandName, CommandArgument));
 		}
+#endif
 
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
 			base.AddAttributesToRender (writer);
+#if NET_2_0
+			if (Page != null && Enabled) {
+				string script = "";
+				
+				script = OnClientClick;
+				if (script.Length > 0) script += ";";
+				
+				PostBackOptions ops = GetPostBackOptions ();
+				if (ops != null && ops.RequiresSpecialPostBack) {
+					script += Page.GetPostBackEventReference (ops);
+				}
+				else if (CausesValidation && Page.Validators.Count > 0) {
+					script += Utils.GetClientValidatedPostBack (this);
+				}
+				else {
+					script += Page.GetPostBackClientEvent (this,"");
+				}			
+				if (script != "")
+					writer.AddAttribute (HtmlTextWriterAttribute.Href, "javascript:" + script);
+			}
+
+#else
 			if (Enabled && Page != null){
 				if (CausesValidation && Page.Validators.Count > 0){
 					writer.AddAttribute (HtmlTextWriterAttribute.Href,
@@ -178,6 +290,7 @@ namespace System.Web.UI.WebControls
 				writer.AddAttribute (HtmlTextWriterAttribute.Href,
 						     Page.GetPostBackClientHyperlink (this, ""));
 			}
+#endif
 		}
 
 		protected override void AddParsedSubObject (object obj)

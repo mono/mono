@@ -48,12 +48,11 @@ namespace System.Web.UI.WebControls
 	[ParseChildren(false)]
 	[ToolboxData("<{0}:Label runat=\"server\">Label</{0}:Label>")]
 	public class Label : WebControl
+#if NET_2_0
+		, IStaticTextControl
+#endif
 	{
 		public Label (): base ()
-		{
-		}
-
-		internal Label (HtmlTextWriterTag tagKey) : base (tagKey)
 		{
 		}
 
@@ -72,6 +71,46 @@ namespace System.Web.UI.WebControls
 
 			set { ViewState ["Text"] = value; }
 		}
+		
+#if NET_2_0
+		[ThemeableAttribute (false)]
+		[DefaultValueAttribute ("")]
+		[IDReferencePropertyAttribute (typeof(System.Web.UI.Control))]
+		[WebCategory ("Accessibility")]
+		[TypeConverterAttribute (typeof(AssociatedControlConverter))]
+		public string AssociatedControlID
+		{
+			get {
+				object o = ViewState ["AssociatedControlID"];
+				return (o == null) ? String.Empty : (string) o;
+			}
+
+			set { ViewState ["AssociatedControlID"] = value; }
+		}
+	
+	
+		protected override HtmlTextWriterTag TagKey {
+			get {
+				if (AssociatedControlID.Length == 0)
+					return HtmlTextWriterTag.Span;
+				else
+					return HtmlTextWriterTag.Label;
+			}
+		}
+		
+		protected override void AddAttributesToRender (HtmlTextWriter writer)
+		{
+			if (AssociatedControlID.Length > 0) {
+				Control ctrl = Page.FindControl (AssociatedControlID);
+				if (ctrl != null)
+					writer.AddAttribute (HtmlTextWriterAttribute.For, ctrl.ClientID);
+			}
+			
+			base.AddAttributesToRender (writer);
+			
+		}
+#endif
+
 
 		protected override void AddParsedSubObject (object obj)
 		{

@@ -44,9 +44,15 @@ namespace System.Web.UI.WebControls
 #endif
 	[DefaultEvent("Click")]
 	public class ImageButton: Image, IPostBackDataHandler, IPostBackEventHandler
+#if NET_2_0
+		, IButtonControl
+#endif
 	{
 		private static readonly object ClickEvent   = new object();
 		private static readonly object CommandEvent = new object();
+#if NET_2_0
+		private static readonly object ButtonClickEvent   = new object();
+#endif
 
 		private int x, y;
 
@@ -154,18 +160,128 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+		[BindableAttribute (true)]
+		[DefaultValueAttribute ("")]
+		public string SoftkeyLabel {
+			get {
+				string text = (string)ViewState["SoftkeyLabel"];
+				if (text!=null) return text;
+				return String.Empty;
+			}
+			set {
+				ViewState["SoftkeyLabel"] = value;
+			}
+		}
+		
+		[ThemeableAttribute (false)]
+		[EditorAttribute ("System.Web.UI.Design.UrlEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[DefaultValueAttribute ("")]
+		[UrlProperty]
+		public string PostBackUrl {
+			get {
+				string text = (string)ViewState["PostBackUrl"];
+				if (text!=null) return text;
+				return String.Empty;
+			}
+			set {
+				ViewState["PostBackUrl"] = value;
+			}
+		}
+		
+		[DefaultValueAttribute ("")]
+		[ThemeableAttribute (false)]
+		[WebCategoryAttribute ("Behavior")]
+		public string OnClientClick {
+			get {
+				string text = (string)ViewState["OnClientClick"];
+				if (text!=null) return text;
+				return String.Empty;
+			}
+			set {
+				ViewState["OnClientClick"] = value;
+			}
+		}
+
+		[DefaultValueAttribute ("")]
+		[ThemeableAttribute (false)]
+		[WebCategoryAttribute ("Behavior")]
+		public string ValidationGroup {
+			get {
+				string text = (string)ViewState["ValidationGroup"];
+				if (text!=null) return text;
+				return String.Empty;
+			}
+			set {
+				ViewState["ValidationGroup"] = value;
+			}
+		}
+		
+		public string Text {
+			get { return AlternateText; }
+			set { AlternateText = value; }
+		}
+		
+		event EventHandler IButtonControl.Click
+		{
+			add
+			{
+				Events.AddHandler (ButtonClickEvent, value);
+			}
+			remove
+			{
+				Events.RemoveHandler (ButtonClickEvent, value);
+			}
+		}
+
+		
+		protected virtual PostBackOptions GetPostBackOptions ()
+		{
+			PostBackOptions ops = new PostBackOptions (this);
+			if (PostBackUrl != "")
+				ops.ActionUrl = PostBackUrl;
+			ops.PerformValidation = Page.Validators.Count > 0 && CausesValidation;
+			if (ops.PerformValidation)
+				ops.ValidationGroup = ValidationGroup;
+			ops.RequiresJavaScriptProtocol = false;
+			return ops;
+		}
+#endif
+
 		protected override void AddAttributesToRender(HtmlTextWriter writer)
 		{
 			writer.AddAttribute(HtmlTextWriterAttribute.Type, "image");
 			writer.AddAttribute(HtmlTextWriterAttribute.Name, UniqueID);
-			if(Page != null && CausesValidation)
-			{
-				if(Page.Validators.Count > 0)
-				{
-					writer.AddAttribute(HtmlTextWriterAttribute.Onclick, Utils.GetClientValidatedEvent(Page));
-					writer.AddAttribute("language", "javascript");
+			
+#if NET_2_0
+			if (Page != null && Enabled) {
+				string script = "";
+				
+				script = OnClientClick;
+				if (script.Length > 0) script += ";";
+				
+				PostBackOptions ops = GetPostBackOptions ();
+				if (ops != null && ops.RequiresSpecialPostBack) {
+					script += Page.GetPostBackEventReference (ops);
+				}
+				else if (CausesValidation && Page.Validators.Count > 0) {
+					script += Utils.GetClientValidatedEvent (Page);
+				}
+				
+				if (script != "") {
+					writer.AddAttribute (HtmlTextWriterAttribute.Onclick, script);
+					writer.AddAttribute ("language", "javascript");
 				}
 			}
+			
+			if (!Enabled)
+				writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
+#else
+			if (Page != null && CausesValidation && Page.Validators.Count > 0) {
+				writer.AddAttribute (HtmlTextWriterAttribute.Onclick, Utils.GetClientValidatedEvent (Page));
+				writer.AddAttribute ("language", "javascript");
+			}
+#endif
 			base.AddAttributesToRender(writer);
 		}
 
@@ -176,6 +292,12 @@ namespace System.Web.UI.WebControls
 				ImageClickEventHandler iceh = (ImageClickEventHandler)(Events[ClickEvent]);
 				if(iceh != null)
 					iceh(this, e);
+
+#if NET_2_0
+				EventHandler eh = (EventHandler) (Events [ButtonClickEvent]);
+				if(eh != null)
+					eh (this, e);
+#endif
 			}
 		}
 
@@ -198,7 +320,16 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
 		bool IPostBackDataHandler.LoadPostData(string postDataKey, NameValueCollection postCollection)
+		{
+			return LoadPostData (postDataKey, postCollection);
+		}
+		
+		protected virtual bool LoadPostData(string postDataKey, NameValueCollection postCollection)
+#else
+		bool IPostBackDataHandler.LoadPostData(string postDataKey, NameValueCollection postCollection)
+#endif
 		{
 			string xCoord = postCollection[UniqueID + ".x"];
 			string yCoord = postCollection[UniqueID + ".y"];
@@ -221,16 +352,45 @@ namespace System.Web.UI.WebControls
 			return false;
 		}
 
+#if NET_2_0
+		void IPostBackDataHandler.RaisePostDataChangedEvent()
+		{
+			RaisePostDataChangedEvent ();
+		}
+		
+		protected virtual void RaisePostDataChangedEvent ()
+		{
+		}
+#else
 		void IPostBackDataHandler.RaisePostDataChangedEvent()
 		{
 		}
+#endif
 
+
+#if NET_2_0
 		void IPostBackEventHandler.RaisePostBackEvent(string eventArgument)
 		{
+			RaisePostBackEvent (eventArgument);
+		}
+		
+		protected virtual void RaisePostBackEvent(string eventArgument)
+		{
 			if(CausesValidation)
-				Page.Validate();
+				Page.Validate (ValidationGroup);
+
 			OnClick(new ImageClickEventArgs(x, y));
 			OnCommand(new CommandEventArgs(CommandName, CommandArgument));
 		}
+#else
+		void IPostBackEventHandler.RaisePostBackEvent(string eventArgument)
+		{
+			if(CausesValidation)
+				Page.Validate ();
+
+			OnClick(new ImageClickEventArgs(x, y));
+			OnCommand(new CommandEventArgs(CommandName, CommandArgument));
+		}
+#endif
 	}
 }

@@ -261,18 +261,24 @@ namespace System.Web.UI.WebControls
 		}
 
 #if NET_2_0
-		void IPostBackDataHandler.RaisePostDataChangedEvent()
+		void IPostBackDataHandler.RaisePostDataChangedEvent ()
 		{
 			RaisePostDataChangedEvent ();
 		}
 		
-		protected virtual void RaisePostDataChangedEvent()
-#else
-		void IPostBackDataHandler.RaisePostDataChangedEvent()
-#endif
+		protected virtual void RaisePostDataChangedEvent ()
 		{
-			OnSelectedIndexChanged(EventArgs.Empty);
+			if (CausesValidation)
+				Page.Validate (ValidationGroup);
+
+			OnSelectedIndexChanged (EventArgs.Empty);
 		}
+#else
+		void IPostBackDataHandler.RaisePostDataChangedEvent ()
+		{
+			OnSelectedIndexChanged (EventArgs.Empty);
+		}
+#endif
 
 
 #if NET_2_0

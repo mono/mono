@@ -34,11 +34,11 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
-using System.Data;
+using System.Data.Common;
 
 namespace System.Web.UI.WebControls {
 	public class SqlDataSourceStatusEventArgs : EventArgs {
-		public SqlDataSourceStatusEventArgs (IDbCommand command, int rowsAffected, Exception exception)
+		public SqlDataSourceStatusEventArgs (DbCommand command, int rowsAffected, Exception exception)
 		{
 			this.command = command;
 			this.rowsAffected = rowsAffected;
@@ -46,12 +46,12 @@ namespace System.Web.UI.WebControls {
 			this.exceptionHandled = false;
 		}
 		
-		IDbCommand command;
+		DbCommand command;
 		Exception exception;
 		int rowsAffected;
 		bool exceptionHandled;
 		
-		public IDbCommand Command {
+		public DbCommand Command {
 			get { return command; }
 		}
 		

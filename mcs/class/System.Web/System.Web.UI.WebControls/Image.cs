@@ -128,6 +128,39 @@ namespace System.Web.UI.WebControls
 				ViewState["ImageUrl"] = value;
 			}
 		}
+		
+#if NET_2_0
+		[WebCategory ("Accessibility")]
+		[DefaultValueAttribute ("")]
+		[UrlPropertyAttribute]
+		[EditorAttribute ("System.Web.UI.Design.UrlEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		public string DescriptionUrl {
+			get {
+				object o = ViewState["DescriptionUrl"];
+				if(o!=null)
+					return (string)o;
+				return String.Empty;
+			}
+			set {
+				ViewState["DescriptionUrl"] = value;
+			}
+		}
+		
+		[DefaultValueAttribute (false)]
+		[WebCategory ("Accessibility")]
+		public bool GenerateEmptyAlternateText {
+			get {
+				object o = ViewState["GenerateEmptyAlternateText"];
+				if(o!=null)
+					return (bool)o;
+				return false;
+			}
+			set {
+				ViewState["GenerateEmptyAlternateText"] = value;
+			}
+		}
+		
+#endif		
 
 		protected override void AddAttributesToRender(HtmlTextWriter writer)
 		{
@@ -136,10 +169,18 @@ namespace System.Web.UI.WebControls
 			{
 				writer.AddAttribute(HtmlTextWriterAttribute.Src, ResolveUrl(ImageUrl));
 			}
-			if(AlternateText.Length > 0)
-			{
+
+#if NET_2_0
+			if (DescriptionUrl.Length > 0)
+				writer.AddAttribute (HtmlTextWriterAttribute.Longdesc, DescriptionUrl);
+				
+			if (AlternateText.Length > 0 || GenerateEmptyAlternateText)
 				writer.AddAttribute(HtmlTextWriterAttribute.Alt, AlternateText);
-			}
+#else
+			if (AlternateText.Length > 0)
+				writer.AddAttribute(HtmlTextWriterAttribute.Alt, AlternateText);
+#endif
+			
 			if(BorderWidth.IsEmpty)
 			{
 				writer.AddAttribute(HtmlTextWriterAttribute.Border, "0");

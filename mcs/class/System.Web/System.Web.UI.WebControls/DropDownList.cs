@@ -196,6 +196,7 @@ namespace System.Web.UI.WebControls
 			return new EmptyControlCollection(this);
 		}
 
+#if !NET_2_0
 		protected override void RenderContents(HtmlTextWriter writer)
 		{
 			if(Items != null)
@@ -221,6 +222,13 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
+#else
+		protected internal override void VerifyMultiSelect ()
+		{
+			throw new HttpException(HttpRuntime.FormatResourceString("Cannot_Multiselect_In_DropDownList"));
+		}
+#endif
+
 
 #if NET_2_0
 		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
@@ -247,17 +255,23 @@ namespace System.Web.UI.WebControls
 		}
 
 #if NET_2_0
-		void IPostBackDataHandler.RaisePostDataChangedEvent()
+		void IPostBackDataHandler.RaisePostDataChangedEvent ()
 		{
 			RaisePostDataChangedEvent ();
 		}
 		
-		protected virtual void RaisePostDataChangedEvent()
-#else
-		void IPostBackDataHandler.RaisePostDataChangedEvent()
-#endif
+		protected virtual void RaisePostDataChangedEvent ()
 		{
-			OnSelectedIndexChanged(EventArgs.Empty);
+			if (CausesValidation)
+				Page.Validate (ValidationGroup);
+
+			OnSelectedIndexChanged (EventArgs.Empty);
 		}
+#else
+		void IPostBackDataHandler.RaisePostDataChangedEvent ()
+		{
+			OnSelectedIndexChanged (EventArgs.Empty);
+		}
+#endif
 	}
 }

@@ -133,8 +133,17 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		bool IPostBackDataHandler.LoadPostData (string postDataKey,
-						        NameValueCollection postCollection)
+
+#if NET_2_0
+		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
+		{
+			return LoadPostData (postDataKey, postCollection);
+		}
+		
+		protected override bool LoadPostData (string postDataKey, NameValueCollection postCollection)
+#else
+		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
+#endif
 		{
 			bool _checked = Checked;
 			if (postCollection [UniqueGroupNamePrivate] == ValueAttributePrivate){
@@ -149,9 +158,21 @@ namespace System.Web.UI.WebControls
 			return true;
 		}
 
+#if NET_2_0
+		void IPostBackDataHandler.RaisePostDataChangedEvent ()
+		{
+			RaisePostDataChangedEvent ();
+		}
+		
+		protected override void RaisePostDataChangedEvent ()
+		{
+			OnCheckedChanged (EventArgs.Empty);
+		}
+#else
 		void IPostBackDataHandler.RaisePostDataChangedEvent ()
 		{
 			OnCheckedChanged (EventArgs.Empty);
 		}
+#endif
 	}
 }

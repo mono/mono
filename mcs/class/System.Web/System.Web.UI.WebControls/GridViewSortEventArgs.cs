@@ -37,15 +37,22 @@ namespace System.Web.UI.WebControls
 	public class GridViewSortEventArgs : CancelEventArgs
 	{
 		private string sortExpression;
+		private SortDirection sortDirection;
 		
-		public GridViewSortEventArgs (string expression)
+		public GridViewSortEventArgs (string expression, SortDirection sortDirection)
 		{
 			this.sortExpression = expression;
+			this.sortDirection = sortDirection;
 		}
 		
 		public string SortExpression {
 			get { return sortExpression; }
 			set { sortExpression = value;}
+		}
+		
+		public SortDirection SortDirection {
+			get { return sortDirection; }
+			set { sortDirection = value;}
 		}
 	}
 }

@@ -48,7 +48,7 @@ namespace System.Web.UI.WebControls
 #endif
 	public class Literal : Control
 #if NET_2_0
-//	, IStaticTextControl
+	, IStaticTextControl
 #endif
 	{
 		public Literal () : base ()
@@ -99,10 +99,9 @@ namespace System.Web.UI.WebControls
 			set { literalMode = value; }
 		}
 
-		[MonoTODO]
 		public override void Focus ()
 		{
-			throw new NotImplementedException ("MS .NET throws non-visual control does not support the Focus operation"); 
+			throw new NotSupportedException ("The Literal control does not support the Focus operation"); 
 		}
 #endif
 	}

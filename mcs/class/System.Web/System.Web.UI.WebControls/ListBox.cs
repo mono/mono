@@ -106,6 +106,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if !NET_2_0
 		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Bindable (false), EditorBrowsable (EditorBrowsableState.Never)]
 		public override string ToolTip
@@ -113,6 +114,7 @@ namespace System.Web.UI.WebControls
 			get { return String.Empty; }
 			set { /* Don't do anything. */ }
 		}
+#endif
 
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
@@ -141,6 +143,7 @@ namespace System.Web.UI.WebControls
 				Page.RegisterRequiresPostBack(this);
 		}
 
+#if !NET_2_0
 		protected override void RenderContents (HtmlTextWriter writer)
 		{
 			bool isMultAllowed = (SelectionMode == ListSelectionMode.Multiple);
@@ -160,9 +163,23 @@ namespace System.Web.UI.WebControls
 				writer.WriteLine ();
 			}
 		}
+#endif
 
-		bool IPostBackDataHandler.LoadPostData (string postDataKey,
-							NameValueCollection postCollection)
+#if NET_2_0
+		public int[] GetSelectedIndices ()
+		{
+			return (int[]) SelectedIndices.ToArray (typeof(int));
+		}
+
+		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
+		{
+			return LoadPostData (postDataKey, postCollection);
+		}
+		
+		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
+#else
+		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
+#endif
 		{
 			string[] vals = postCollection.GetValues (postDataKey);
 			bool updated = false;
@@ -201,9 +218,24 @@ namespace System.Web.UI.WebControls
 			return updated;
 		}
 
+#if NET_2_0
+		void IPostBackDataHandler.RaisePostDataChangedEvent ()
+		{
+			RaisePostDataChangedEvent ();
+		}
+		
+		protected virtual void RaisePostDataChangedEvent ()
+		{
+			if (CausesValidation)
+				Page.Validate (ValidationGroup);
+
+			OnSelectedIndexChanged (EventArgs.Empty);
+		}
+#else
 		void IPostBackDataHandler.RaisePostDataChangedEvent ()
 		{
 			OnSelectedIndexChanged (EventArgs.Empty);
 		}
+#endif
 	}
 }

@@ -43,7 +43,7 @@ namespace System.Web.UI.WebControls
 		object dataSource;
 		string dataSourceId;
 		bool initialized;
-		bool requiresDataBinding = true;
+		bool requiresDataBinding;
 		
 		[BindableAttribute (true)]
 		[ThemeableAttribute (false)]
@@ -62,7 +62,7 @@ namespace System.Web.UI.WebControls
 		[DefaultValueAttribute ("")]
 		[ThemeableAttribute (false)]
 		public virtual string DataSourceID {
-			get { return dataSourceId; }
+			get { return dataSourceId != null ? dataSourceId : string.Empty; }
 			set { dataSourceId = value; }
 		}
 		
@@ -70,14 +70,18 @@ namespace System.Web.UI.WebControls
 			get { return initialized; }
 		}
 		
-		[MonoTODO]
 		protected bool IsBoundUsingDataSourceID {
-			get { return dataSourceId != null; }
+			get { return DataSourceID.Length > 0; }
 		}
 		
 		protected bool RequiresDataBinding {
 			get { return requiresDataBinding; }
-			set { requiresDataBinding = value; }
+			set {
+				if (value && DataSourceID.Length > 0)
+					DataBind ();
+				else
+					requiresDataBinding = value;
+			}
 		}
 		
 		[MonoTODO]

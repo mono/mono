@@ -40,6 +40,9 @@ namespace System.Web.UI.WebControls
 {
 	[ToolboxItem(false)]
 	public class RepeaterItem: Control, INamingContainer
+#if NET_2_0
+	, IDataItemContainer
+#endif
 	{
 		private int          itemIndex;
 		private ListItemType itemType;

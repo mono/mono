@@ -1,3 +1,33 @@
+2005-02-16  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* HyperLinkColumn.cs, Label.cs: Added missing 2.0 properties.
+	* RadioButton.cs: Added missing 2.0 methods.
+	* ListItem.cs: Added Enabled property.
+	* MailMessageEventArgs.cs: Use the correct message class.
+	* ListControl.cs: Implemented missing properties and support for
+	control state. Implemented base RenderContents method.
+	* Image.cs: Implemented DescriptionUrl and GenerateEmptyAlternateText
+	properties.
+	* BaseCompareValidator.cs: Implemented methods that support conditional
+	use of the invariant culture.
+	* DataBoundControl.cs: Set RequiresDataBinding to true in OnLoad.
+	* SqlDataSourceCommandEventArgs.cs, SqlDataSourceStatusEventArgs.cs:
+	It takes a DbCommand instead of a IDbCommand.
+	* GridViewSortEventArgs.cs: Added SortDirection property.
+	* TextBox.cs, CheckBoxList.cs: Added protected version of
+	IPostBackDataHandler methods.
+	* RadioButtonList.cs: Added protected version of
+	IPostBackDataHandler and IRepeatInfoUser methods.
+	* Repeater.cs: Updated some method names.
+	* DropDownList.cs:  Added protected version of
+	IPostBackDataHandler methods. Reuse RenderContents from base class.
+	* RepeaterItem.cs, Localize.cs, Literal.cs: Fix inheritance.
+	* GridViewUpdatedEventArgs.cs: Fix typo.
+	* ListBox.cs: Added protected version of IPostBackDataHandler methods.
+	Reuse RenderContents from base class.
+	* BaseDataBoundControl.cs: Several fixes.
+	* ImageButton.cs, LinkButton.cs: Implemented several 2.0 properties.
+
 2005-02-10  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* CheckBoxList.cs: Fix build.
