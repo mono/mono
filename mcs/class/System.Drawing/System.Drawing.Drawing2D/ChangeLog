@@ -1,3 +1,8 @@
+2004-03-18  Ravindra  <rkumar@novell.com>
+	* HatchBrush.cs: Fixed Clone method.
+	* PathGradientBrush.cs: Fixed Clone method and few minor
+	fixes.
+
 2004-03-17  Ravindra  <rkumar@novell.com>
 	* Blend.cs: Fixed.
 	* ColorBlend.cs: Fixed.

@@ -62,7 +62,12 @@ namespace System.Drawing.Drawing2D
 
 		public override object Clone ()
 		{
-			return new HatchBrush (NativeObject);
+			IntPtr clonePtr;
+			Status status = GDIPlus.GdipCloneBrush (nativeObject, out clonePtr);
+			GDIPlus.CheckStatus (status);
+
+			HatchBrush clone = new HatchBrush (clonePtr);
+			return clone;
 		}
 
 	}

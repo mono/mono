@@ -53,7 +53,12 @@ namespace System.Drawing
 		
 		public override object Clone()
 		{
-			return new SolidBrush (color);
+			IntPtr clonePtr;
+			Status status = GDIPlus.GdipCloneBrush (nativeObject, out clonePtr);
+			GDIPlus.CheckStatus (status);
+
+			SolidBrush clone = new SolidBrush (clonePtr);
+			return clone;
 		}
 		
 		protected override void Dispose (bool disposing)

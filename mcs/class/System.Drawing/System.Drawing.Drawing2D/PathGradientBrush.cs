@@ -6,8 +6,8 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //   Ravindra (rkumar@novell.com)
 //
-// (C) 2002/3 Ximian, Inc
-// (C) 2004, Novell, Inc.
+// (C) 2002/3 Ximian, Inc. http://www.ximian.com
+// (C) 2004, Novell, Inc. http://www.novell.com
 //
 
 using System;
@@ -40,10 +40,8 @@ namespace System.Drawing.Drawing2D
 			Status status = GDIPlus.GdipCreatePathGradientFromPath (path.NativeObject, out nativeObject);
 			GDIPlus.CheckStatus (status);
  
-//			IntPtr rect;
 			status = GDIPlus.GdipGetPathGradientRect (nativeObject, out rectangle);
 			GDIPlus.CheckStatus (status);
-//			rectangle = (RectangleF) Marshal.PtrToStructure (rect, typeof (RectangleF));
 		}
 
 		public PathGradientBrush (Point[] points) : this (points, WrapMode.Clamp)
@@ -59,10 +57,8 @@ namespace System.Drawing.Drawing2D
 			Status status = GDIPlus.GdipCreatePathGradientI (points, points.Length, wrapMode, out nativeObject);
 			GDIPlus.CheckStatus (status);
 
-//			IntPtr rect;
 			status = GDIPlus.GdipGetPathGradientRect (nativeObject, out rectangle);
 			GDIPlus.CheckStatus (status);
-//			rectangle = (RectangleF) Marshal.PtrToStructure (rect, typeof (RectangleF));
 		}
 
 		public PathGradientBrush (PointF[] points, WrapMode wrapMode)
@@ -70,10 +66,8 @@ namespace System.Drawing.Drawing2D
 			Status status = GDIPlus.GdipCreatePathGradient (points, points.Length, wrapMode, out nativeObject);
 			GDIPlus.CheckStatus (status);
 
-//			IntPtr rect;
 			status = GDIPlus.GdipGetPathGradientRect (nativeObject, out rectangle);
 			GDIPlus.CheckStatus (status);
-//			rectangle = (RectangleF) Marshal.PtrToStructure (rect, typeof (RectangleF));
 		}
 
 		// Properties
@@ -105,7 +99,7 @@ namespace System.Drawing.Drawing2D
 				return center;
 			}
 			set {
-				Status status = GDIPlus.GdipSetPathGradientCenterPoint (nativeObject, value);
+				Status status = GDIPlus.GdipSetPathGradientCenterPoint (nativeObject, ref value);
 				GDIPlus.CheckStatus (status);
 				center = value;
 			}
@@ -150,11 +144,12 @@ namespace System.Drawing.Drawing2D
 				return surroundColors;
 			}
 			set {
-				int[] colors = new int [value.Length];
-				for (int i = 0; i < value.Length; i++)
+				int length = value.Length;
+				int[] colors = new int [length];
+				for (int i = 0; i < length; i++)
 					colors [i] = value [i].ToArgb ();
 
-				Status status = GDIPlus.GdipSetPathGradientSurroundColorsWithCount (nativeObject, colors, colors.Length);
+				Status status = GDIPlus.GdipSetPathGradientSurroundColorsWithCount (nativeObject, colors, ref length);
 				GDIPlus.CheckStatus (status);
 				surroundColors = value;
 			}
@@ -165,7 +160,6 @@ namespace System.Drawing.Drawing2D
 				return transform;
 			}
 			set {
-
 				Status status = GDIPlus.GdipSetPathGradientTransform (nativeObject, value.nativeMatrix);
 				GDIPlus.CheckStatus (status);
 				transform = value;
@@ -259,17 +253,11 @@ namespace System.Drawing.Drawing2D
 
 		public override object Clone ()
 		{
-			PathGradientBrush clone = new PathGradientBrush (nativeObject);
-			clone.blend = this.blend;
-			clone.centerColor = this.centerColor;
-			clone.center = this.center;
-			clone.focus = this.focus;
-			clone.rectangle = this.rectangle;
-			clone.surroundColors = this.surroundColors;
-			clone.interpolationColors = this.interpolationColors;
-			clone.transform = this.transform;
-			clone.wrapMode = this.wrapMode;
+			IntPtr clonePtr;
+			Status status = GDIPlus.GdipCloneBrush (nativeObject, out clonePtr);
+			GDIPlus.CheckStatus (status);
 
+			PathGradientBrush clone = new PathGradientBrush (clonePtr);
 			return clone;
 		}
 	}

@@ -211,7 +211,7 @@ namespace System.Drawing {
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipSetPathGradientCenterColor (IntPtr brush, int color);
 		[DllImport("gdiplus.dll")]
-		static internal extern Status GdipSetPathGradientCenterPoint (IntPtr brush, PointF point);
+		static internal extern Status GdipSetPathGradientCenterPoint (IntPtr brush, ref PointF point);
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipSetPathGradientFocusScales (IntPtr brush, float xScale, float yScale);
 		[DllImport("gdiplus.dll")]
@@ -219,7 +219,7 @@ namespace System.Drawing {
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipGetPathGradientRect (IntPtr brush, out RectangleF rect);
 		[DllImport("gdiplus.dll")]
-		static internal extern Status GdipSetPathGradientSurroundColorsWithCount (IntPtr brush, int[] color, int count);
+		static internal extern Status GdipSetPathGradientSurroundColorsWithCount (IntPtr brush, int[] color, ref int count);
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipSetPathGradientTransform (IntPtr brush, IntPtr matrix);
 		[DllImport("gdiplus.dll")]

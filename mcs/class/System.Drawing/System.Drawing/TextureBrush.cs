@@ -132,7 +132,12 @@ namespace System.Drawing
 
 		public override object Clone ()
 		{
-			return new TextureBrush (nativeObject);
+			IntPtr clonePtr;
+			Status status = GDIPlus.GdipCloneBrush (nativeObject, out clonePtr);
+			GDIPlus.CheckStatus (status);
+
+			TextureBrush clone = new TextureBrush (clonePtr);
+			return clone;
 		}
 
 		public void MultiplyTransform (Matrix matrix)
