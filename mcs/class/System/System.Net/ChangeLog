@@ -1,3 +1,7 @@
+2004-09-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebResponse.cs: remove unused SplitValue method.
+
 2004-09-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DnsPermission.cs: Updated to pass new unit tests.
