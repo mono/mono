@@ -1,4 +1,8 @@
 
+Tue Apr 29 15:46:00 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: handle arrays as arguments to custom attributes.
+
 Tue Apr 29 11:43:01 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: handle a string value in a custom attr
