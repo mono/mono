@@ -295,6 +295,7 @@ namespace MonoTests.System.Data.Common
 		{
 			columnMapCollection.AddRange(cols);
 			DataColumnMapping mymap=new DataColumnMapping("sourceName","dataSetName");
+			columnMapCollection.Add(mymap);
 			columnMapCollection.Remove((Object)mymap);
 			bool eq=columnMapCollection.Contains((Object)mymap);
 			AssertEquals("test1",false,eq);
