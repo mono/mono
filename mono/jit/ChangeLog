@@ -1,3 +1,11 @@
+2003-01-16  Dietmar Maurer  <dietmar@ximian.com>
+
+	* exception.c (arch_handle_exception): exclude runtime invoke
+	wrapper from the stack trace
+
+	* jit.c (mono_cfg_new): allocate extra space to store esp (used by exceptions)
+	(mono_thread_start_cb): save an additional LMF at thread start
+
 2003-01-16  Martin Baulig  <martin@ximian.com>
 
 	* jit.c (mono_runtime_install_handlers): Use SYS_sigaction() for
