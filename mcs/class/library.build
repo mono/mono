@@ -22,6 +22,7 @@
 		
 		<!-- TODO: Mono.Data.* depends on System.Data -->
 		<nant basedir="System.Data" target="build" buildfile="System.Data/System.Data.build"/>
+		<nant basedir="System.Data.OracleClient" target="build" buildfile="System.Data.OracleClient/System.Data.OracleClient.build"/>
 		<nant basedir="Mono.Data.MySql" target="build" buildfile="Mono.Data.MySql/Mono.Data.MySql.build"/>
 		<nant basedir="Mono.Data.PostgreSqlClient" target="build" buildfile="Mono.Data.PostgreSqlClient/Mono.Data.PostgreSqlClient.build"/>
 		<nant basedir="Mono.Data.SqliteClient" target="build" buildfile="Mono.Data.SqliteClient/Mono.Data.SqliteClient.build"/>	
@@ -44,6 +45,8 @@
 		<nant basedir="System.Web" target="build" buildfile="System.Web/System.Web.build"/>
 		<nant basedir="System.Web.Services" target="build" buildfile="System.Web.Services/System.Web.Services.build"/>
 		<nant basedir="System.Windows.Forms" target="build" buildfile="System.Windows.Forms/System.Windows.Forms.build"/>
+		<!-- System.Design depends on System.Deawing and System.Windows.Forms -->
+		<nant basedir="System.Design" target="build" buildfile="System.Design/System.Design.build"/>
 		<nant basedir="System.XML" target="build" buildfile="System.XML/System.XML.build"/>
 		<!-- System.Security depends on System.XML -->
 		<nant basedir="System.Security" target="build" buildfile="System.Security/System.Security.build"/>
@@ -83,6 +86,7 @@
 		<nant basedir="I18N" target="clean"/>
 		<nant basedir="System" target="clean"/>
 		<nant basedir="System.Drawing" target="clean"/>
+		<nant basedir="System.Design" target="clean"/>
 		<nant basedir="System.EnterpriseServices" target="clean"/>
 		<nant basedir="System.XML" target="clean"/>
 		<nant basedir="Mono.Data.Tds" target="clean"/>
