@@ -1,0 +1,6 @@
+2001-09-09  Nick Drochak <ndrochak@gol.com>
+
+	* ChangeLog: added this file
+	
+	* Switch.cs: call OnSwitchSettingChanged() when the switch setting is, yes you gessed it, changed.
+	

@@ -14,7 +14,7 @@ namespace System.Diagnostics
         /// </summary>
         public abstract class Switch
         {
-                private string desc = "";
+	            private string desc = "";
                 private string display_name = "";
                 private int iSwitch;
 
@@ -74,20 +74,20 @@ namespace System.Diagnostics
                         }
                         set
                         {
-				if(iSwitch != value) 
-				{
-					
+							if(iSwitch != value) 
+							{
+								iSwitch = value;
+								OnSwitchSettingChanged();
+							}
+						}
 				}
-                                iSwitch = value;
-                        }
-                }
 
                 /// <summary>
                 /// Raises the SwitchSettingChanged event
                 /// </summary>
-		protected virtual void OnSwitchSettingChanged()
-		{
-			// TODO: implement me
-		}
+				protected virtual void OnSwitchSettingChanged()
+				{
+					// TODO: implement me
+				}
         }
 }
