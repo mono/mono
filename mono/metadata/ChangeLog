@@ -1,3 +1,11 @@
+2005-02-15  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h (MonoSymbolTable): Allow variable-length chunks in
+	the data table.
+
+	* mono-debug.c (DATA_TABLE_CHUNK_SIZE): Set to 32768; we may now
+	allocate larger chunks if needed.
+
 2005-02-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* threads.c (start_wrapper): Remove #ifdef PLATFORM_WIN32 probably left
