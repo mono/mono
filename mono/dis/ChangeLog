@@ -1,3 +1,9 @@
+2004-06-25  Jackson Harper  <jackson@ximian.com>
+
+	* get.c: Add a few more keywords to be escaped.
+	* main.c: MS's ildasm writes '// end of class' not '// end of
+	type'. The python.net tool searches for this string.
+	
 2004-06-24  David Waite  <mass@akuma.org>
 
 	* dump.c: change to C90-style comments from C99/C++-style
