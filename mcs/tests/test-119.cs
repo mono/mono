@@ -31,10 +31,20 @@ class Derived : MyObject {
 }
 
 class Test {
-	static void Main ()
+	static int Main ()
 	{
 		Value v = new Value ();
 
-		Derived d = (Derived) v;
+		v = null;
+
+		try {
+			// This will throw an exception.
+			// This test is more of a compile test, we need a real
+			// good test that does not require this lame catch.
+			Derived d = (Derived) v;
+		} catch {
+		}
+
+		return 0;
 	}
 }
