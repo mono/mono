@@ -21,7 +21,7 @@
 				<includes name="AssemblyInfo.cs"/>
 				<includes name="chktrust.cs"/>
 			</sources>
-		</csc>
+		</csc -->
 		<csc target="exe" output="makecert.exe" debug="${debug}">
 			<arg value="/r:..\..\class\lib\System.dll"/>
 			<arg value="/r:..\..\class\lib\Mono.Security.dll"/>
@@ -29,8 +29,8 @@
 				<includes name="AssemblyInfo.cs"/>
 				<includes name="MakeCert.cs"/>
 			</sources>
-		</csc -->
-		<csc target="exe" output="secutil.exe" debug="${debug}">
+		</csc>
+		<!-- csc target="exe" output="secutil.exe" debug="${debug}">
 			<sources basedir=".">
 				<includes name="AssemblyInfo.cs"/>
 				<includes name="secutil.cs"/>

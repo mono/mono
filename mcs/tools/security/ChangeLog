@@ -1,3 +1,11 @@
+2003-03-15  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AssemblyInfo.cs: Updated version for mono 0.23.
+	* MakeCert.cs: New. MakeCert clone utility to create X.509
+	certificates (e.g. for testing Authenticode signatures).
+	* makefile: Added cert2spc, sn & makecert to Windows build.
+	* sectools.build: Added makecert to build.
+
 2003-03-09  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* makefile: Removed cert2spc and sn from linux build (as
