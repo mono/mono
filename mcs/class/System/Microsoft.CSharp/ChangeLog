@@ -1,3 +1,7 @@
+2003-08-05  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* CSharpCodeGenerator.cs: GenerateComment(): Render multiline comments.
+
 2003-07-30  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* CSharpCodeGenerator.cs: GenerateTypeStart(): Write type custom attributes

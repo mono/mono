@@ -276,13 +276,16 @@ namespace Mono.CSharp
 		protected override void GenerateComment( CodeComment comment )
 		{
 			TextWriter output = Output;
+			string[] lines = comment.Text.Split ('\n');
 
-			if ( comment.DocComment )
-				output.Write( "/// " );
-			else
-				output.Write( "// " );
+			foreach (string line in lines){
+				if ( comment.DocComment )
+					output.Write( "/// " );
+				else
+					output.Write( "// " );
 
-			output.WriteLine( comment.Text );
+				output.WriteLine( line );
+    		}
 		}
 
 		protected override void GenerateMethodReturnStatement( CodeMethodReturnStatement statement )
