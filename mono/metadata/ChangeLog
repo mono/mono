@@ -1,5 +1,10 @@
 2004-11-24  Martin Baulig  <martin@ximian.com>
 
+	* class.c (mono_class_create_generic_2): If we don't have a
+	`ginst->parent', inflate `gklass->parent' to get our parent.
+
+2004-11-24  Martin Baulig  <martin@ximian.com>
+
 	* reflection.c (compare_genericparam): Correctly sort the
 	GenericParam table; fixes #69779.
 
