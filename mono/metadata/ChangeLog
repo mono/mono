@@ -1,5 +1,10 @@
 2004-03-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* appdomain.c: don't add the culture to the filename we're looking for
+	if it's neutral or NULL. Fixes bug #53788. Removed redundant memset.
+
+2004-03-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* locales.c: don't ignore symbols when doing case insensitive compares.
 	Thanks Dick! Fixes bug #54046.
 
