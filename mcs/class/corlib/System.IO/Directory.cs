@@ -168,7 +168,14 @@ namespace System.IO
 			string str = Environment.CurrentDirectory;
 			CheckPermission.Demand (FileIOPermissionAccess.Read & FileIOPermissionAccess.Write, str);
 			*/
-			return Environment.CurrentDirectory;
+
+			MonoIOError error;
+				
+			string result = MonoIO.GetCurrentDirectory (out error);
+			if (error != MonoIOError.ERROR_SUCCESS)
+				throw MonoIO.GetException (error);
+
+			return result;
 		}
 		
 		public static string [] GetDirectories (string path)
@@ -274,11 +281,15 @@ namespace System.IO
 			CheckArgument.Path (path, true);
 			CheckPermission.Demand (FileIOPermissionAccess.Read & FileIOPermissionAccess.Write, path);	
 			*/
+			MonoIOError error;
+				
 			if (!Exists (path))
-			{
-				throw new DirectoryNotFoundException ("Directory \"" + path + "\" not found.");
-			}
-			Environment.CurrentDirectory = path;
+				throw new DirectoryNotFoundException ("Directory \"" +
+									path + "\" not found.");
+
+			MonoIO.SetCurrentDirectory (path, out error);
+			if (error != MonoIOError.ERROR_SUCCESS)
+				throw MonoIO.GetException (path, error);
 		}
 
 		public static void SetLastAccessTime (string path, DateTime last_access_time)

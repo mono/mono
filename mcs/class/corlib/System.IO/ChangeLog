@@ -1,5 +1,13 @@
 2003-11-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Directory.cs:
+	(GetCurrentDirectory):
+	(SetCurrentDirectory): moved here from Environment. Handle error cases.
+
+	* MonoIO.cs: add path to the default error message.
+
+2003-11-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* StringReader.cs: fixed ReadLine for some cases where there are mixed
 	'\r' and '\n'. Closes bug #51020.
 

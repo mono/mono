@@ -1,3 +1,9 @@
+2003-11-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Environment.cs: use Directory in CurrentDirectory property.
+	We were not throwing any exception when setting the directory to an
+	invalid path.
+
 2003-11-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Array.cs:

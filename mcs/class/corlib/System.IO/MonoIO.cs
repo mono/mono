@@ -47,7 +47,7 @@ namespace System.IO
 				return new UnauthorizedAccessException (message);
 
 			default:
-				message = String.Format ("Win32 IO returned {0}", error);
+				message = String.Format ("Win32 IO returned {0}. Path: {1}", error, path);
 				return new IOException (message);
 			}
 		}
