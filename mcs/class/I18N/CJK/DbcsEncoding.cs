@@ -130,7 +130,7 @@ namespace I18N.CJK
 		internal class DbcsDecoder : Decoder
 		{
 			protected DbcsConvert convert;
-			internal int lastByte;
+			protected int lastByte;
 			
 			// Constructor.
 			public DbcsDecoder(DbcsConvert convert)

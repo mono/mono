@@ -1,5 +1,5 @@
 //
-// I18N.CJK.CP950
+// I18N.CJK.CP936
 //
 // Author:
 //   Alan Tam Siu Lung (Tam@SiuLung.com)
@@ -11,14 +11,14 @@ using I18N.Common;
 
 namespace I18N.CJK
 {
-	internal class CP950 : DbcsEncoding
+	internal class CP936 : DbcsEncoding
 	{
-		// Magic number used by Windows for the Big5 code page.
-		private const int BIG5_CODE_PAGE = 950;
+		// Magic number used by Windows for the GB2312 code page.
+		private const int GB2312_CODE_PAGE = 936;
 		
 		// Constructor.
-		public CP950() : base(BIG5_CODE_PAGE) {
-			convert = Big5Convert.Convert;
+		public CP936() : base(GB2312_CODE_PAGE) {
+			convert = Gb2312Convert.Convert;
 		}
 		
 		// Get the bytes that result from encoding a character buffer.
@@ -50,7 +50,7 @@ namespace I18N.CJK
 		public override int GetChars(byte[] bytes, int byteIndex, int byteCount,
 					     char[] chars, int charIndex)
 		{
-			// A1 40 - FA FF
+			// A1 A1 - FA F7
 			base.GetChars(bytes, byteIndex, byteCount, chars, charIndex);
 			int origIndex = charIndex;
 			int lastByte = 0;
@@ -60,14 +60,14 @@ namespace I18N.CJK
 					if (b <= 0x80 || b == 0xFF) { // ASCII
 						chars[charIndex++] = (char)b;
 						continue;
-					} else if (b < 0xA1 || b >= 0xFA) {
+					} else if (b < 0xA1 || b >= 0xF8) {
 						continue;
 					} else {
 						lastByte = b;
 						continue;
 					}
 				}
-				int ord = ((lastByte - 0xA1) * 191 + b - 0x40) * 2;
+				int ord = ((lastByte - 0xA1) * 94 + b - 0xA1) * 2;
 				char c1 = (char)(convert.n2u[ord] + convert.n2u[ord + 1] * 256);
 				if (c1 == 0)
 					chars[charIndex++] = '?';
@@ -78,49 +78,49 @@ namespace I18N.CJK
 			return charIndex - origIndex;
 		}
 		
-		// Get a decoder that handles a rolling Big5 state.
+		// Get a decoder that handles a rolling GB2312 state.
 		public override Decoder GetDecoder()
 		{
-			return new CP950Decoder(convert);
+			return new CP936Decoder(convert);
 		}
 		
 		// Get the mail body name for this encoding.
 		public override String BodyName
 		{
-			get { return "big5"; }
+			get { return "gb2312"; }
 		}
 		
 		// Get the human-readable name for this encoding.
 		public override String EncodingName
 		{
-			get { return "Chinese Traditional (Big5)"; }
+			get { return "Chinese Simplified (GB2312)"; }
 		}
 		
 		// Get the mail agent header name for this encoding.
 		public override String HeaderName
 		{
-			get { return "big5"; }
+			get { return "gb2312"; }
 		}
 		
 		// Get the IANA-preferred Web name for this encoding.
 		public override String WebName
 		{
-			get { return "big5"; }
+			get { return "gb2312"; }
 		}
 		
 		/*
 		// Get the Windows code page represented by this object.
 		public override int WindowsCodePage
 		{
-			get { return BIG5_PAGE; }
+			get { return GB2312_PAGE; }
 		}
 		*/
 		
-		// Decoder that handles a rolling Big5 state.
-		private sealed class CP950Decoder : DbcsDecoder
+		// Decoder that handles a rolling GB2312 state.
+		private sealed class CP936Decoder : DbcsDecoder
 		{
 			// Constructor.
-			public CP950Decoder(DbcsConvert convert) : base(convert) {}
+			public CP936Decoder(DbcsConvert convert) : base(convert) {}
 			
 			public override int GetChars(byte[] bytes, int byteIndex, int byteCount,
 						     char[] chars, int charIndex)
@@ -133,14 +133,14 @@ namespace I18N.CJK
 						if (b <= 0x80 || b == 0xFF) { // ASCII
 							chars[charIndex++] = (char)b;
 							continue;
-						} else if (b < 0xA1 || b >= 0xFA) {
+						} else if (b < 0xA1 || b >= 0xF8) {
 							continue;
 						} else {
 							lastByte = b;
 							continue;
 						}
 					}
-					int ord = ((lastByte - 0xA1) * 191 + b - 0x40) * 2;
+					int ord = ((lastByte - 0xA1) * 94 + b - 0xA1) * 2;
 					char c1 = (char)(convert.n2u[ord] + convert.n2u[ord + 1] * 256);
 					if (c1 == 0) {
 						chars[charIndex++] = '?';
@@ -154,8 +154,8 @@ namespace I18N.CJK
 		}
 	}
 	
-	internal class ENCbig5 : CP950
+	internal class ENCgb2312 : CP936
 	{
-		public ENCbig5() {}
+		public ENCgb2312() {}
 	}
 }
