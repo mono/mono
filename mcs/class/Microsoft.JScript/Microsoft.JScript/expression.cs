@@ -134,6 +134,11 @@ namespace Microsoft.JScript {
 			case JSToken.Multiply:
 				ig.Emit (OpCodes.Call, typeof (NumericBinary).GetMethod ("EvaluateNumericBinary"));
 				break;
+			case JSToken.BitwiseAnd:
+			case JSToken.BitwiseXor:
+			case JSToken.BitwiseOr:
+				ig.Emit (OpCodes.Call, typeof (BitwiseBinary).GetMethod ("EvaluateBitwiseBinary"));
+					 break;
 			case JSToken.Equal:
 				ig.Emit (OpCodes.Call, typeof (Equality).GetMethod ("EvaluateEquality"));
 				Label t = ig.DefineLabel ();
@@ -145,7 +150,7 @@ namespace Microsoft.JScript {
 				ig.Emit (OpCodes.Ldc_I4_1);
 				ig.MarkLabel (f);
 				ig.Emit (OpCodes.Pop);
-				break;
+				break;				
 			}
 		}
 
@@ -188,7 +193,7 @@ namespace Microsoft.JScript {
 			} else if (current_op == JSToken.BitwiseAnd) {
 				t = typeof (BitwiseBinary);
 				local_builder = ig.DeclareLocal (t);
-				ig.Emit (OpCodes.Ldc_I4_S, (byte) 52);				
+				ig.Emit (OpCodes.Ldc_I4_S, (byte) 52);
 			} else if (current_op == JSToken.Equal) {
 				t = typeof (Equality);
 				local_builder = ig.DeclareLocal (t);

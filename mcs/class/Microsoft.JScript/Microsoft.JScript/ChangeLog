@@ -1,5 +1,10 @@
 2004-03-31  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* BitwiseBinary.cs: added constructor for building it according to
+	JSToken enum. return a new object on EvaluateBitwiseBinary (this
+	needs a real implementation).
+	* expression.cs: added code for evaluation of bitwise operators at emit_op_eval.
+
 	* Statement.cs: added stub for While and DoWhile ast
 	representation (reworking my Emit code).
 	* jscript-parser-lexer.g: allow iteration statement ast build.

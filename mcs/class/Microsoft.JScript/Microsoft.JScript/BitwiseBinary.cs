@@ -13,6 +13,11 @@ namespace Microsoft.JScript {
 
 	public sealed class BitwiseBinary : BinaryOp {
 
+		public BitwiseBinary (int operatorTok)
+		{
+			current_op = (JSToken) operatorTok;
+		} 
+
 		public BitwiseBinary (Context context, AST operand1, AST operand2,
 				      JSToken operatorTok)
 		{
@@ -22,7 +27,7 @@ namespace Microsoft.JScript {
 
 		public object EvaluateBitwiseBinary (object v1, object v2)
 		{
-			throw new NotImplementedException ();
+			return new object ();
 		}
 
 		internal override bool Resolve (IdentificationTable context)
