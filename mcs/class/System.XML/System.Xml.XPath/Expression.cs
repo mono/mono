@@ -919,11 +919,23 @@ namespace System.Xml.XPath
 			XsltContext context = iter.NamespaceManager as XsltContext;
 			if (context != null)
 				var = context.ResolveVariable (_name.Namespace, _name.Name);
-			if (context == null)
-				var = DefaultContext.ResolveVariable (_name.Namespace, _name.Name);
+			//if (context == null)
+			//	var = DefaultContext.ResolveVariable (_name.Namespace, _name.Name);
 			if (var == null)
 				throw new XPathException ("variable "+_name.Namespace+":"+_name.Name+" not found");
 			return var.VariableType;
+		}
+		public override object Evaluate (BaseIterator iter)
+		{
+			IXsltContextVariable var = null;
+			XsltContext context = iter.NamespaceManager as XsltContext;
+			if (context != null)
+				var = context.ResolveVariable (_name.Namespace, _name.Name);
+			//if (context == null)
+			//	var = DefaultContext.ResolveVariable (_name.Namespace, _name.Name);
+			if (var == null)
+				throw new XPathException ("variable "+_name.Namespace+":"+_name.Name+" not found");
+			return var.Evaluate (context);
 		}
 	}
 
