@@ -2458,6 +2458,10 @@ object_creation_expression
 	  {
 		$$ = new New ((Expression) $2, (ArrayList) $4, lexer.Location);
 	  }
+	| NEW type
+	  {
+		$$ = new New ((Expression) $2, new ArrayList(), lexer.Location);
+	  }
 	;
 	
 array_creation_expression
@@ -3228,12 +3232,22 @@ conditional_and_expression
 		$$ = new Binary (Binary.Operator.LogicalAnd,
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
+	| conditional_and_expression ANDALSO exclusive_or_expression
+	  {	// FIXME: this is likely to be broken
+		$$ = new Binary (Binary.Operator.LogicalAnd,
+			         (Expression) $1, (Expression) $3, lexer.Location);
+	  }
 	;
 
 conditional_or_expression
 	: conditional_and_expression
 	| conditional_or_expression OR conditional_and_expression
 	  {
+		$$ = new Binary (Binary.Operator.LogicalOr,
+			         (Expression) $1, (Expression) $3, lexer.Location);
+	  }
+	| conditional_or_expression ORELSE conditional_and_expression
+	  {	// FIXME: this is likely to be broken
 		$$ = new Binary (Binary.Operator.LogicalOr,
 			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }
