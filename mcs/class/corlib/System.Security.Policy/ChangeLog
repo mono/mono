@@ -1,0 +1,9 @@
+2001-12-29  Nick Drochak  <ndrochak@gol.com>
+
+	* PolicyLevel.cs: New file
+
+2001-12-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* SecurityElement.cs, CodeAccessPermission.cs IPermission.cs
+	IStackWalk.cs SecurityElement.cs ISecurityEncodable.cs: New files.
+	
