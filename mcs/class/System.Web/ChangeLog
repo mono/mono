@@ -1,3 +1,8 @@
+2004-11-19  Sanjay Gupta <gsanjay@novell.com>
+
+	* System.Web.dll.sources: Added new file:
+		System.Web.UI.WebControls/AccessDataSourceView.cs.
+
 2004-11-18  Lluis Sanchez Gual <lluis@novell.com>
 
 	* System.Web.dll.sources: Added new files:
