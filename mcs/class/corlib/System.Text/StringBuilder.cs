@@ -2,11 +2,16 @@
 //
 // System.Text.StringBuilder
 //
-// Author: Marcin Szczepanski (marcins@zipworld.com.au)
+// Authors: 
+//   Marcin Szczepanski (marcins@zipworld.com.au)
+//   Paolo Molaro (lupus@ximian.com)
 //
 // TODO: Make sure the coding complies to the ECMA draft, there's some
 // variable names that probably don't (like sString)
 //
+// NOTE: the string returned by ToString() is cached in the 'thestring'
+// member: if you change/add a method that modifies the stringbuilder, make
+// sure thestring is set to null (to invalidate the cache).
 using System.Runtime.CompilerServices;
 
 namespace System.Text {
@@ -20,6 +25,7 @@ namespace System.Text {
 		private int sLength;
 		private char[] sString;
 		private int sMaxCapacity = Int32.MaxValue;
+		string thestring;
 
 		public StringBuilder(string value, int startIndex, int length, int capacity) {
 			// first, check the parameters and throw appropriate exceptions if needed
@@ -133,6 +139,7 @@ namespace System.Text {
 						// the MS implementation does.
 
 						sLength = value;
+						thestring = null;
 					} else {
 						// Expand the capacity to the new length and
 						// pad the string with spaces.
@@ -171,11 +178,14 @@ namespace System.Text {
 					throw new IndexOutOfRangeException();
 				}
 				sString[ index ] = value;
+				thestring = null;
 			}
 		}
 
 		public override string ToString() {
-			return ToString(0, sLength);
+			if (thestring != null)
+				return thestring;
+			return (thestring = ToString(0, sLength));
 		}
 
 		public string ToString( int startIndex, int length ) {
@@ -220,6 +230,7 @@ namespace System.Text {
 				    sLength - (startIndex + length));
 
 			sLength -= length;
+			thestring = null;
 			return this;
 		}			       
 
@@ -239,6 +250,7 @@ namespace System.Text {
 				}
 			}
 
+			thestring = null;
 			return this;
 		}
 
@@ -303,6 +315,7 @@ namespace System.Text {
 			sCapacity = newStringB.sCapacity;
 			sString = newStringB.sString;
 			sLength = newStringB.sLength;
+			thestring = null;
 			return this;
 		}
 
@@ -321,6 +334,7 @@ namespace System.Text {
 			Array.Copy( value, 0, sString, sLength, value.Length );
 			sLength += value.Length;
 
+			thestring = null;
 			return this;
 		} 
 		
@@ -332,6 +346,7 @@ namespace System.Text {
 
 				value.CopyTo (0, sString, sLength, value.Length);
 				sLength = new_size;
+				thestring = null;
 				return this;
 			} else {
 				return null;
@@ -404,6 +419,7 @@ namespace System.Text {
 			}
 			sString [sLength] = value;
 			sLength++;
+			thestring = null;
 
 			return this;
 		}
@@ -500,6 +516,7 @@ namespace System.Text {
 				Array.Copy( value, 0, sString, index, value.Length );
 				
 				sLength += value.Length;
+				thestring = null;
 				return this;
 			}
 		}
@@ -522,6 +539,7 @@ namespace System.Text {
 			value.CopyTo (0, sString, index, len);
 			
 			sLength += len;
+			thestring = null;
 			return this;
 		}
 

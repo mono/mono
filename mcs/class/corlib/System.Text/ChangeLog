@@ -1,3 +1,8 @@
+
+Fri Apr 11 08:29:50 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* StringBuilder.cs: cache the result from ToString().
+
 2003-03-18  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* UnicodeEncoding.cs: changed WebName from unicodeFFFE to utf-16be.
