@@ -1,7 +1,0 @@
-2004-06-28  Raja R Harinath  <rharinath@novell.com>
-
-	* Makefile (%.resources): Use $(RESGEN).
-
-2004-06-21  Raja R Harinath  <rharinath@novell.com>
-
-	* Makefile (LIBRARY_SNK): Sign with nunit.key.

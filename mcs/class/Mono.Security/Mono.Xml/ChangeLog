@@ -1,6 +1,0 @@
-2004-02-06  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* MiniParser.cs: New. Copy from corlib internal class. Required for
-	SecurityParser.
-	* SecurityParser.cs: New. Copy from corlib internal class. Required
-	for KeyPairPersistence.

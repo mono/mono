@@ -1,9 +1,0 @@
-2004-07-08  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* AccessControlActions.cs: Fixed enum values. Added missing attributes.
-
-2004-07-07  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* AccessControlActions.cs: New enum in Fx 2.0. Required for new stuff
-	in System.Security.Permissions. Will also "creates" the namespace for
-	"corcompare".

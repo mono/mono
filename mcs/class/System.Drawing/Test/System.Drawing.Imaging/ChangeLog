@@ -1,8 +1,0 @@
-2004-06-10  Sanjay Gupta <gsanjay@novell.com>
-                                                                                
-        * TestBmpCodec.cs, TestImageCodecInfo.cs, TestJpedCodec.cs: Removed
-        dependency on obsolete class, Assertion from NUnit.
-
-2004-03-17  Ravindra  <rkumar@novell.com>
-	* Created this repository for System.Drawing.Imaging tests.
-	* ChangeLog: Added.

@@ -1,7 +1,0 @@
-2004-06-21  Raja R Harinath  <rharinath@novell.com>
-
-	* Makefile (LIBRARY_SNK): Sign with nunit.key.
-
-2004-05-25  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* Imported NUnit 2.1.91 (2.2 beta) source code for new assembly.

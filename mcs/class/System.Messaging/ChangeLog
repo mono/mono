@@ -1,8 +1,0 @@
-2004-06-02  Gert Driesen <drieseng@users.sourceforge.net>
-
-	* Makefile: added extra assembly references
-	* System.Messaging.dll.sources: added new classes in
-	System.Messaging.Design namespace
-
-2003-02-23  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
-	* added just files enough to compile a dummy DLL for now
