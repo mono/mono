@@ -1,3 +1,10 @@
+2004-03-19  David Sheldon <dave-mono@earth.li>
+
+  * ThreadTest.cs: Removed Ignore attributes from 
+      CurrentPrincipal_PrincipalPolicy_NoPrincipal and
+      CurrentPrincipal_PrincipalPolicy_UnauthenticatedPrincipal
+    Now that bug 54041 is fixed, and they wont livelock.
+
 2004-02-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ThreadTest.cs: Added unit tests for CurrentPrincipal.

@@ -449,7 +449,7 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
-		public void CurrentPrincipal_PrincipalPolicy_UnauthenticatedPrincipal () 
+		 public void CurrentPrincipal_PrincipalPolicy_UnauthenticatedPrincipal () 
 		{
 			// note: switching from PrincipalPolicy won't work inside the same thread
 			// because as soon as a Principal object is created the Policy doesn't matter anymore
