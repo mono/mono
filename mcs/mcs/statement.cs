@@ -134,13 +134,15 @@ namespace Mono.CSharp {
 		public override bool Resolve (EmitContext ec)
 		{
 			expr = ResolveBoolean (ec, expr, loc);
-			if (expr == null)
+			if (expr == null){
 				return false;
+			}
 			
 			if (TrueStatement.Resolve (ec)){
 				if (FalseStatement != null){
 					if (FalseStatement.Resolve (ec))
 						return true;
+					
 					return false;
 				}
 				return true;

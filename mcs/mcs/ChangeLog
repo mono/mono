@@ -1,5 +1,7 @@
 2002-05-06  Miguel de Icaza  <miguel@ximian.com>
 
+	* assign.cs: Report the error, instead of failing silently
+
 	* rootcontext.cs (AddGlobalAttributes): Track attributes on the
 	typecontainer that they are declared, because the
 	typecontainer/namespace will have the list of using clauses that

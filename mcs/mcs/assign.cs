@@ -92,7 +92,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class Assign : ExpressionStatement {
 		Expression target, source;
-		Location l;
+		public Location l;
 
 		public Assign (Expression target, Expression source, Location l)
 		{
@@ -260,6 +260,7 @@ namespace Mono.CSharp {
 					if (StandardConversionExists (a.original_source, target_type))
 						return this;
 
+					Error_CannotConvertImplicit (l, source_type, target_type);
 					return null;
 				}
 			}
