@@ -120,16 +120,16 @@ FileOpenedNoWrite = FIXME: FileOpenedNoWrite
 UseFilePutObject = FIXME: UseFilePutObject
 
 # Errors in Financial.java
-Argument_RankEQOne1 = FIXME: Argument_RankEQOne1 |1
-Financial_CalcDivByZero = FIXME: Financial_CalcDivByZero
-Financial_CannotCalculateNPer = FIXME: Financial_CannotCalculateNPer
-PPMT_PerGT0AndLTNPer = FIXME: PPMT_PerGT0AndLTNPer |1
-Rate_NPerMustBeGTZero = FIXME: Rate_NPerMustBeGTZero
-Financial_CannotCalculateRate = FIXME: Financial_CannotCalculateRate
-Financial_LifeNEZero = FIXME: Financial_LifeNEZero
-Financial_ArgGTZero1 = FIXME: Financial_ArgGTZero1 |1
-Financial_ArgGEZero1 = FIXME: Financial_ArgGEZero1 |1
-Financial_PeriodLELife = FIXME: Financial_PeriodLELife
+Argument_RankEQOne1 = Rank of |1 does not equal 1.
+Financial_CalcDivByZero = Division by zero has occurred.
+Financial_CannotCalculateNPer = Cannot calculate NPer.
+PPMT_PerGT0AndLTNPer = |1 value invalid, it must be greater than 1 and smaller than NPer.
+Rate_NPerMustBeGTZero = Rate must be less than or equal to 0.
+Financial_CannotCalculateRate = Cannot calculate Rate.
+Financial_LifeNEZero = Life cannot be zero.
+Financial_ArgGTZero1 = |1 must be greater than 0.
+Financial_ArgGEZero1 = |1 must be greater than or equal to 0.
+Financial_PeriodLELife = Period must be greater than Life.
 
 # Errors in FlowControl.java
 ForLoop_CommonType3 = FIXME: ForLoop_CommonType3 |1 |2 |3

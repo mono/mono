@@ -1,4 +1,7 @@
 2004-06-15 Anirban Bhattacharjee <banirban@novell.com>
+	* VBUtils.txt: Exception messages for Financial functions by Rob Tillie
+
+2004-06-15 Anirban Bhattacharjee <banirban@novell.com>
 	* Financial.cs: Complete implementation by Rob Tillie
 
 2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
