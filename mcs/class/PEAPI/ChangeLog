@@ -1,3 +1,12 @@
+2003-03-06 Jackson Harper <jackson@latitudegeo.com>
+
+	* makefile.gnu: Add file
+	* list.unix: Add file
+
+2003-03-02 Jackson Harper <jackson@latitudegeo.com>
+
+	* PEAPI.cs: Do not add file extensions to output names
+	
 2003-03-02 Jackson Harper <jackson@latitudegeo.com>
 
 	* PEAPI.cs: Add file
