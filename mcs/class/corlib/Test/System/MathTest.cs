@@ -5,6 +5,7 @@
 //
 // (C) 2002 Jon Guymon
 // Copyright (C) 2003 Pedro Martínez Juliá <yoros@wanadoo.es>
+// Copyright (C) 2004 Novell (http://www.novell.com)
 // 
 
 using System;
@@ -13,12 +14,8 @@ using NUnit.Framework;
 namespace MonoTests.System 
 {
 
-public class MathTest : TestCase {
-
-	public MathTest() {}
-
-	protected override void SetUp() {}
-	protected override void TearDown() {}
+[TestFixture]
+public class MathTest : Assertion {
 
 	static double x = 0.1234;
 	static double y = 12.345;
@@ -347,7 +344,12 @@ public class MathTest : TestCase {
 
 		Assert(a.ToString("G99") + " != " + b.ToString("G99"), 
 		       (Math.Abs(a - b) <= double.Epsilon));
-		Assert(double.IsNaN(Math.IEEERemainder(y, 0)));
+
+		Assert ("Positive 0", double.IsNaN (Math.IEEERemainder (y, 0)));
+
+		// http://www.obtuse.com/resources/negative_zero.html
+		double n0 = Convert.ToDouble (0x8000000000000000);
+		Assert ("Negative 0", double.IsNaN (Math.IEEERemainder (n0, 0)));
 	}
 
 	public void TestLog() {

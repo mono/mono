@@ -50,6 +50,11 @@ public class TimeSpanTest : Assertion {
 		// but the negative hours, minutes, seconds & ms correct this
 		int days = (int) (Int64.MaxValue / TimeSpan.TicksPerDay) + 1;
 		TimeSpan ts = new TimeSpan (days, Int32.MinValue, Int32.MinValue, Int32.MinValue, Int32.MinValue);
+		AssertEquals ("Days", 10650320, ts.Days);
+		AssertEquals ("Hours", 0, ts.Hours);
+		AssertEquals ("Minutes", 14, ts.Minutes);
+		AssertEquals ("Seconds", 28, ts.Seconds);
+		AssertEquals ("Milliseconds", 352, ts.Milliseconds);
 		AssertEquals ("Ticks", 9201876488683520000, ts.Ticks);
 	}
 
@@ -57,6 +62,11 @@ public class TimeSpanTest : Assertion {
 	public void NoOverflowInHoursMinsSecondsMS () 
 	{
 		TimeSpan ts = new TimeSpan (0, Int32.MaxValue, Int32.MaxValue, Int32.MaxValue, Int32.MaxValue);
+		AssertEquals ("Days", 24879, ts.Days);
+		AssertEquals ("Hours", 22, ts.Hours);
+		AssertEquals ("Minutes", 44, ts.Minutes);
+		AssertEquals ("Seconds", 30, ts.Seconds);
+		AssertEquals ("Milliseconds", 647, ts.Milliseconds);
 		AssertEquals ("Ticks", 21496274706470000, ts.Ticks);
 	}
 
@@ -64,9 +74,11 @@ public class TimeSpanTest : Assertion {
 	public void NegativeTimeSpan () 
 	{
 		TimeSpan ts = new TimeSpan (-23, -59, -59);
+		AssertEquals ("Days", 0, ts.Days);
 		AssertEquals ("Hours", -23, ts.Hours);
 		AssertEquals ("Minutes", -59, ts.Minutes);
 		AssertEquals ("Seconds", -59, ts.Seconds);
+		AssertEquals ("Milliseconds", 0, ts.Milliseconds);
 		AssertEquals ("Ticks", -863990000000, ts.Ticks);
 	}
 
@@ -477,6 +489,13 @@ public class TimeSpanTest : Assertion {
 		AssertEquals ("A4", "-10675199.02:48:05.4775808", TimeSpan.MinValue.ToString ());
 	}
 
+	[Test]
+	public void ToString_Constants () 
+	{
+		AssertEquals ("Zero", "00:00:00", TimeSpan.Zero.ToString ());
+		AssertEquals ("MaxValue", "10675199.02:48:05.4775807", TimeSpan.MaxValue.ToString ());
+		AssertEquals ("MinValue", "-10675199.02:48:05.4775808", TimeSpan.MinValue.ToString ());
+	}
 }
 
 }
