@@ -1,3 +1,7 @@
+2002-11-17  Sebastien Pouliot <spouliot@videotron.ca>
+
+	* corlib_linux_test.args: added missing crypto test files.
+
 2002-11-16  Sebastien Pouliot <spouliot@videotron.ca>
 
 	* corlib_test.build: removed DSATest from exclusions.
