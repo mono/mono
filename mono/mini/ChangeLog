@@ -1,3 +1,10 @@
+2003-08-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_thread_abort): Fix warning.
+	(mono_jit_compile_method): Call static constructor in the AOT case too.
+
+	* aot.c (mono_compile_assembly): Fix warning.
+
 2003-08-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* mini.c: register a SIGINT handler if MONO_DEBUG is defined.
