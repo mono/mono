@@ -17,7 +17,7 @@ namespace System.Xml.Schema
 	public class XmlSchemaSimpleContent : XmlSchemaContentModel
 	{
 		private XmlSchemaContent content;
-		private static string xmlname = "simpleContent";
+		const string xmlname = "simpleContent";
 		public XmlSchemaSimpleContent()
 		{
 		}

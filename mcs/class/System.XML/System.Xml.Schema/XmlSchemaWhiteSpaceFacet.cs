@@ -10,7 +10,7 @@ namespace System.Xml.Schema
 	/// </summary>
 	public class XmlSchemaWhiteSpaceFacet : XmlSchemaFacet
 	{
-		private static string xmlname = "whiteSpace";
+		const string xmlname = "whiteSpace";
 
 		public XmlSchemaWhiteSpaceFacet()
 		{

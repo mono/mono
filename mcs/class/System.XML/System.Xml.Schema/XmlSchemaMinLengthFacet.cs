@@ -10,7 +10,7 @@ namespace System.Xml.Schema
 	/// </summary>
 	public class XmlSchemaMinLengthFacet : XmlSchemaNumericFacet
 	{
-		private static string xmlname = "minLength";
+		const string xmlname = "minLength";
 
 		public XmlSchemaMinLengthFacet()
 		{

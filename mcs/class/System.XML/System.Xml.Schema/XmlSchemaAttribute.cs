@@ -34,7 +34,7 @@ namespace System.Xml.Schema
 		//Compilation fields
 		internal bool ParentIsSchema = false;
 		private XmlSchemaAttribute referencedAttribute;
-		private static string xmlname = "attribute";
+		const string xmlname = "attribute";
 
 		public XmlSchemaAttribute()
 		{

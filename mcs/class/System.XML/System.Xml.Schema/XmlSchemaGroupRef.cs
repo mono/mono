@@ -19,7 +19,7 @@ namespace System.Xml.Schema
 	{
 		private XmlSchema schema;
 		private XmlQualifiedName refName;
-		private static string xmlname = "group";
+		const string xmlname = "group";
 		private XmlSchemaGroup referencedGroup;
 
 		public XmlSchemaGroupRef()

@@ -15,7 +15,7 @@ namespace System.Xml.Schema
 		private string pub;
 		private string system;
 		private XmlQualifiedName qualifiedName;
-		private static string xmlname = "notation";
+		const string xmlname = "notation";
 
 		public XmlSchemaNotation()
 		{

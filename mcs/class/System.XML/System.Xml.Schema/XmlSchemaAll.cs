@@ -19,7 +19,7 @@ namespace System.Xml.Schema
 	{
 		private XmlSchema schema;
 		private XmlSchemaObjectCollection items;
-		private static string xmlname = "all";
+		const string xmlname = "all";
 		private bool emptiable;
 
 		public XmlSchemaAll()

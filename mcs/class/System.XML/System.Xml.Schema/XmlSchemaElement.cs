@@ -47,7 +47,7 @@ namespace System.Xml.Schema
 		// Post compilation items. It should be added on all schema components.
 		XmlSchema schema;
 
-		private static string xmlname = "element";
+		const string xmlname = "element";
 
 		public XmlSchemaElement()
 		{

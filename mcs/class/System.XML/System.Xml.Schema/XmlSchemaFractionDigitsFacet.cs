@@ -10,7 +10,7 @@ namespace System.Xml.Schema
 	/// </summary>
 	public class XmlSchemaFractionDigitsFacet : XmlSchemaNumericFacet
 	{
-		private static string xmlname = "fractionDigits";
+		const string xmlname = "fractionDigits";
 
 		public XmlSchemaFractionDigitsFacet()
 		{

@@ -13,7 +13,7 @@ namespace System.Xml.Schema
 	{
 		private XmlSchemaAnnotation annotation;
 		private string nameSpace;
-		private static string xmlname = "import";
+		const string xmlname = "import";
 
 		public XmlSchemaImport()
 		{

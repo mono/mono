@@ -18,7 +18,7 @@ namespace System.Xml.Schema
 	{
 		private XmlSchemaContent content;
 		private bool isMixed;
-		private static string xmlname = "complexContent";
+		const string xmlname = "complexContent";
 
 		public XmlSchemaComplexContent()
 		{}

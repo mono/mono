@@ -12,7 +12,7 @@ namespace System.Xml.Schema
 	public class XmlSchemaInclude : XmlSchemaExternal
 	{
 		private XmlSchemaAnnotation annotation;
-		private static string xmlname = "include";
+		const string xmlname = "include";
 
 		public XmlSchemaInclude()
 		{

@@ -14,7 +14,7 @@ namespace System.Xml.Schema
 	{
 		private XmlSchemaSimpleType itemType;
 		private XmlQualifiedName itemTypeName;
-		private static string xmlname = "list";
+		const string xmlname = "list";
 		private object validatedListItemType;
 
 		public XmlSchemaSimpleTypeList()

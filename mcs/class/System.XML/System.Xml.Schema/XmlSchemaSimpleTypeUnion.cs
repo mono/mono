@@ -14,7 +14,7 @@ namespace System.Xml.Schema
 	{
 		private XmlSchemaObjectCollection baseTypes;
 		private XmlQualifiedName[] memberTypes;
-		private static string xmlname = "union";
+		const string xmlname = "union";
 		private object [] validatedTypes;
 
 		public XmlSchemaSimpleTypeUnion()

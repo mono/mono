@@ -17,7 +17,7 @@ namespace System.Xml.Schema
 	/// </summary>
 	public class XmlSchemaSimpleType : XmlSchemaType
 	{
-		private static string xmlname = "simpleType";
+		const string xmlname = "simpleType";
 		private static XmlSchemaSimpleType schemaLocationType;
 
 		private XmlSchemaSimpleTypeContent content;

@@ -22,7 +22,7 @@ namespace System.Xml.Schema
 		private XmlQualifiedName qualifiedName;
 		private bool isCircularDefinition;
 		
-		private static string xmlname = "group";
+		const string xmlname = "group";
 
 		public XmlSchemaGroup()
 		{

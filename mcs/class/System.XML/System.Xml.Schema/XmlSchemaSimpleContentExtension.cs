@@ -20,7 +20,7 @@ namespace System.Xml.Schema
 		private XmlSchemaAnyAttribute any;
 		private XmlSchemaObjectCollection attributes;
 		private XmlQualifiedName baseTypeName;
-		private static string xmlname = "extension";
+		const string xmlname = "extension";
 
 		public XmlSchemaSimpleContentExtension()
 		{

@@ -10,7 +10,7 @@ namespace System.Xml.Schema
 	/// </summary>
 	public class XmlSchemaLengthFacet : XmlSchemaNumericFacet
 	{
-		private static string xmlname = "length";
+		const string xmlname = "length";
 
 		public XmlSchemaLengthFacet()
 		{

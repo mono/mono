@@ -10,7 +10,7 @@ namespace System.Xml.Schema
 	/// </summary>
 	public class XmlSchemaMinExclusiveFacet : XmlSchemaFacet
 	{
-		private static string xmlname = "minExclusive";
+		const string xmlname = "minExclusive";
 
 		public XmlSchemaMinExclusiveFacet()
 		{

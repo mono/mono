@@ -10,7 +10,7 @@ namespace System.Xml.Schema
 	/// </summary>
 	public class XmlSchemaEnumerationFacet : XmlSchemaFacet
 	{
-		private static string xmlname = "enumeration";
+		const string xmlname = "enumeration";
 		public XmlSchemaEnumerationFacet()
 		{
 		}

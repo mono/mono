@@ -18,7 +18,7 @@ namespace System.Xml.Schema
 	public class XmlSchemaSequence : XmlSchemaGroupBase
 	{
 		private XmlSchemaObjectCollection items;
-		private static string xmlname = "sequence";
+		const string xmlname = "sequence";
 
 		public XmlSchemaSequence()
 		{

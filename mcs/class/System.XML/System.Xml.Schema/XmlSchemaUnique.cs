@@ -10,7 +10,7 @@ namespace System.Xml.Schema
 	/// </summary>
 	public class XmlSchemaUnique : XmlSchemaIdentityConstraint
 	{
-		private static string xmlname = "unique";
+		const string xmlname = "unique";
 
 		public XmlSchemaUnique()
 		{

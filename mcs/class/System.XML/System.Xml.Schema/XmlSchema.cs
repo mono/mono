@@ -57,7 +57,7 @@ namespace System.Xml.Schema
 		private Hashtable handledUris;
 
                 // Compiler specific things
-                private static string xmlname = "schema";
+                const string xmlname = "schema";
 
                 public XmlSchema()
                 {

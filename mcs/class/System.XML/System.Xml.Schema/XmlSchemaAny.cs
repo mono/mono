@@ -41,7 +41,7 @@ namespace System.Xml.Schema
 
 		private string nameSpace;
 		private XmlSchemaContentProcessing processing;
-		private static string xmlname = "any";
+		const string xmlname = "any";
 
 		private XsdWildcard wildcard;
 

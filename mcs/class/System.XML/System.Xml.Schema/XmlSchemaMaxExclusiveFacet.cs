@@ -10,7 +10,7 @@ namespace System.Xml.Schema
 	/// </summary>
 	public class XmlSchemaMaxExclusiveFacet : XmlSchemaFacet
 	{
-		private static string xmlname = "maxExclusive";
+		const string xmlname = "maxExclusive";
 
 		public XmlSchemaMaxExclusiveFacet()
 		{

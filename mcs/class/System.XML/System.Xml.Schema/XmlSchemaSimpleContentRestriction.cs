@@ -17,7 +17,7 @@ namespace System.Xml.Schema
 		private XmlSchemaSimpleType baseType;
 		private XmlQualifiedName baseTypeName;
 		private XmlSchemaObjectCollection facets;
-		private static string xmlname = "restriction";
+		const string xmlname = "restriction";
 
 		public XmlSchemaSimpleContentRestriction()
 		{

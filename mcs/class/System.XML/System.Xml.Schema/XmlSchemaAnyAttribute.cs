@@ -22,7 +22,7 @@ namespace System.Xml.Schema
 	{
 		private string nameSpace;
 		private XmlSchemaContentProcessing processing;
-		private static string xmlname = "anyAttribute";
+		const string xmlname = "anyAttribute";
 		private XsdWildcard wildcard;
 
 		public XmlSchemaAnyAttribute()

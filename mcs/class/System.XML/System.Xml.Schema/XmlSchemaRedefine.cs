@@ -15,7 +15,7 @@ namespace System.Xml.Schema
 		private XmlSchemaObjectTable groups;
 		private XmlSchemaObjectCollection items;
 		private XmlSchemaObjectTable schemaTypes;
-		private static string xmlname = "redefine";
+		const string xmlname = "redefine";
 
 		public XmlSchemaRedefine()
 		{

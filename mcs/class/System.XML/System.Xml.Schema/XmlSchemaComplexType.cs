@@ -35,7 +35,7 @@ namespace System.Xml.Schema
 		internal bool ValidatedIsAbstract;
 		internal bool ParentIsSchema = false;
 
-		private static string xmlname = "complexType";
+		const string xmlname = "complexType";
 
 		private static XmlSchemaComplexType anyType;
 

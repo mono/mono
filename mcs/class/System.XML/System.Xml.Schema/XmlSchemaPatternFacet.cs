@@ -10,7 +10,7 @@ namespace System.Xml.Schema
 	/// </summary>
 	public class XmlSchemaPatternFacet : XmlSchemaFacet
 	{
-		private static string xmlname = "pattern";
+		const string xmlname = "pattern";
 
 		public XmlSchemaPatternFacet()
 		{

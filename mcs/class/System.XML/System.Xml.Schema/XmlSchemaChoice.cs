@@ -15,7 +15,7 @@ namespace System.Xml.Schema
 	public class XmlSchemaChoice : XmlSchemaGroupBase
 	{
 		private XmlSchemaObjectCollection items;
-		private static string xmlname = "choice";
+		const string xmlname = "choice";
 		private decimal minEffectiveTotalRange = -1;
 
 		public XmlSchemaChoice ()

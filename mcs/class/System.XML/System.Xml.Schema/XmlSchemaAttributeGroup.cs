@@ -22,7 +22,7 @@ namespace System.Xml.Schema
 		private string name;
 		private XmlSchemaAttributeGroup redefined;
 		private XmlQualifiedName qualifiedName;
-		private static string xmlname = "attributeGroup";
+		const string xmlname = "attributeGroup";
 		private XmlSchemaObjectTable attributeUses;
 		private XmlSchemaAnyAttribute anyAttributeUse;
 

@@ -10,7 +10,7 @@ namespace System.Xml.Schema
 	/// </summary>
 	public class XmlSchemaTotalDigitsFacet : XmlSchemaNumericFacet
 	{
-		private static string xmlname = "totalDigits";
+		const string xmlname = "totalDigits";
 
 		public XmlSchemaTotalDigitsFacet()
 		{

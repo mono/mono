@@ -15,7 +15,7 @@ namespace System.Xml.Schema
 		private string id;
 		private XmlSchemaObjectCollection items;
 		private XmlAttribute[] unhandledAttributes;
-		private static string xmlname = "annotation";
+		const string xmlname = "annotation";
 
 		public XmlSchemaAnnotation()
 		{

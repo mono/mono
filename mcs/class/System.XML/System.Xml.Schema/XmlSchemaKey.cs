@@ -10,7 +10,7 @@ namespace System.Xml.Schema
 	/// </summary>
 	public class XmlSchemaKey : XmlSchemaIdentityConstraint
 	{
-		private static string xmlname = "key";
+		const string xmlname = "key";
 
 		public XmlSchemaKey()
 		{

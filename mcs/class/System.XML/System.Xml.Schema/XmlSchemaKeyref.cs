@@ -12,7 +12,7 @@ namespace System.Xml.Schema
 	public class XmlSchemaKeyref : XmlSchemaIdentityConstraint
 	{
 		private XmlQualifiedName refer;
-		private static string xmlname = "keyref";
+		const string xmlname = "keyref";
 		private XmlSchemaIdentityConstraint target;
 
 		public XmlSchemaKeyref()

@@ -20,7 +20,7 @@ namespace System.Xml.Schema
 		private XmlSchemaObjectCollection attributes;
 		private XmlQualifiedName baseTypeName;
 		private XmlSchemaParticle particle;
-		private static string xmlname = "restriction";
+		const string xmlname = "restriction";
 
 		public XmlSchemaComplexContentRestriction()
 		{

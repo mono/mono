@@ -17,7 +17,7 @@ namespace System.Xml.Schema
 	public class XmlSchemaAttributeGroupRef : XmlSchemaAnnotated
 	{
 		private XmlQualifiedName refName;
-		private static string xmlname = "attributeGroup";
+		const string xmlname = "attributeGroup";
 
 		public XmlSchemaAttributeGroupRef()
 		{

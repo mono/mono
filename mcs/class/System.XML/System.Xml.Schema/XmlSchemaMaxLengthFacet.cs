@@ -10,7 +10,7 @@ namespace System.Xml.Schema
 	/// </summary>
 	public class XmlSchemaMaxLengthFacet : XmlSchemaNumericFacet
 	{
-		private static string xmlname = "maxLength";
+		const string xmlname = "maxLength";
 
 		public XmlSchemaMaxLengthFacet()
 		{
