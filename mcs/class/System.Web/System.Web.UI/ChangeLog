@@ -1,3 +1,7 @@
+2003-08-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateControl.cs: more Delegate.CreateDelegate fixes.
+
 2003-08-01  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* PartialCachingControl.cs: is not abstract

@@ -99,7 +99,8 @@ namespace System.Web.UI {
 				if (evt == null)
 					continue;
 
-				evt.AddEventHandler (this, Delegate.CreateDelegate (typeof (EventHandler), method));
+				evt.AddEventHandler (this, Delegate.CreateDelegate (
+							typeof (EventHandler), this, method.Name));
 			}
 		}
 
