@@ -12,6 +12,7 @@
 
 using System.Reflection;
 using System.Collections;
+using System.Xml;
 using System.Xml.Serialization;
 using System.Web.Services;
 using System.Web.Services.Description;
@@ -44,6 +45,8 @@ namespace System.Web.Services.Protocols {
 
 		internal XmlSerializer RequestSerializer;
 		internal XmlSerializer ResponseSerializer;
+
+		static XmlSerializer _faultSerializer;
 
 		//
 		// Constructor
@@ -226,6 +229,16 @@ namespace System.Web.Services.Protocols {
 			return out_members;
 		}
 
+		public XmlSerializer FaultSerializer
+		{
+			get
+			{
+				if (_faultSerializer != null) return _faultSerializer;
+				_faultSerializer = new XmlSerializer (typeof(Fault));
+				return _faultSerializer;
+			}
+		}
+
 		static void e (object o, XmlNodeEventArgs a)
 		{
 			Console.WriteLine ("Unexpected Node: {5}:{6} {0}/{1}/{2}/{3}/{4}",
@@ -233,6 +246,14 @@ namespace System.Web.Services.Protocols {
 					   a.LineNumber, a.LinePosition);
 //			throw new Exception ();
 		}
+	}
+
+	internal class Fault
+	{
+		public XmlQualifiedName faultcode;
+		public string faultstring;
+		public string faultactor;
+		public XmlNode detail;
 	}
 
 	//

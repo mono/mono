@@ -144,12 +144,13 @@ namespace System.Web.Services.Protocols {
 			HttpWebResponse http_response = (HttpWebResponse) response;
 			HttpStatusCode code = http_response.StatusCode;
 			MethodStubInfo msi = message.MethodStubInfo;
-			
-			if (!(code == HttpStatusCode.Accepted || code == HttpStatusCode.OK))
+
+			if (!(code == HttpStatusCode.Accepted || code == HttpStatusCode.OK || code == HttpStatusCode.InternalServerError))
 				throw new Exception ("Return code was: " + http_response.StatusCode);
 
 			//
 			// Remove optional encoding
+
 			//
 			string content_type, encoding_name;
 			GetContentTypeProperties (response.ContentType, out encoding_name, out content_type);
@@ -162,17 +163,21 @@ namespace System.Web.Services.Protocols {
 			StreamReader reader = new StreamReader (stream, encoding, false);
 			XmlTextReader xml_reader = new XmlTextReader (reader);
 
-			//
-			// Handle faults/errors somewhere
-			//
 			xml_reader.MoveToContent ();
 			xml_reader.ReadStartElement ("Envelope", soap_envelope);
 			xml_reader.MoveToContent ();
 			xml_reader.ReadStartElement ("Body", soap_envelope);
 
-			object [] ret = (object []) msi.ResponseSerializer.Deserialize (xml_reader);
-
-			return (object []) ret;
+			if (code != HttpStatusCode.InternalServerError)
+			{
+				object [] ret = (object []) msi.ResponseSerializer.Deserialize (xml_reader);
+				return (object []) ret;
+			}
+			else
+			{
+				Fault fault = (Fault) msi.FaultSerializer.Deserialize (xml_reader);
+				throw new SoapException (fault.faultstring, fault.faultcode, fault.faultactor, fault.detail);
+			}
 		}
 
 		protected object[] Invoke (string method_name, object[] parameters)
@@ -182,10 +187,21 @@ namespace System.Web.Services.Protocols {
 			SoapClientMessage message = new SoapClientMessage (
 				this, msi, Url, parameters);
 
-			WebRequest request = GetWebRequest (uri);
-			SendRequest (request, message);
+			WebResponse response;
+			try
+			{
+				WebRequest request = GetWebRequest (uri);
+				SendRequest (request, message);
+				response = request.GetResponse ();
+			}
+			catch (WebException ex)
+			{
+				response = ex.Response;
+				HttpWebResponse http_response = response as HttpWebResponse;
+				if (http_response == null || http_response.StatusCode != HttpStatusCode.InternalServerError)
+					throw ex;
+			}
 
-			WebResponse response = request.GetResponse ();
 			return ReceiveResponse (response, message);
 		}
 

@@ -1,3 +1,8 @@
+2003-06-13  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Methods.cs: Added serializer to MethodStubInfo for deserializing faults.
+	* SoapHttpClientProtocol.cs: Added support for faults.
+
 2003-06-10  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Methods.cs: removed handler for UnknownNode event
