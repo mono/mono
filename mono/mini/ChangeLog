@@ -1,3 +1,7 @@
+2004-09-21  Neale Ferguson <Neale.Ferguson@SoftwareAG-usa.com>
+
+	* mini-s390.c, cpu-s390.md: Minor changes to OP_ARGLIST handling
+
 2004-09-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_method_to_ir): Fix LDSTR in dynamic methods.
