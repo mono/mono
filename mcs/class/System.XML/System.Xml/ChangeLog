@@ -1,3 +1,7 @@
+2002-03-14  Duncan Mak  <duncan@ximian.com>
+
+	* XmlNodeChangedEventHandler.cs: Added to CVS.
+
 2002-03-13  Duncan Mak  <duncan@ximian.com>
 
 	* XmlException.cs: Made it [Serializable], implemented good ol'
