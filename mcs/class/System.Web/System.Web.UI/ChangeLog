@@ -1,3 +1,10 @@
+2003-11-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* LosFormatter.cs: encoding updates. 
+	* Page.cs: implemented CodePage and ContentType.
+	* PageParser.cs: handle CodePage, ContentEncoding and ResponseEncoding
+	attributes.
+
 2003-11-04 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Control.cs (GetWebResourceUrl): new v2 function
@@ -10,8 +17,8 @@
 
 	* DesignTimeTemplateParser.cs: added FIXME related to PageParser.
 
-	* PageParser.cs: initialize the parser in the constructor, not just before
-	compiling and reference the application assembly.
+	* PageParser.cs: initialize the parser in the constructor, not just
+	before compiling and reference the application assembly.
 
 	* SimpleWebHandlerParser.cs: reference the assembly that contains the
 	application Type.

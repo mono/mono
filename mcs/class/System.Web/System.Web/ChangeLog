@@ -1,7 +1,18 @@
+2003-11-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs:
+	* HttpResponse.cs:
+	* HttpUtility.cs:
+	* HttpValueCollection.cs: encoding fixes/updates.
+
+	* HttpWriter.cs: when updating the encoding, flush the existing stream.
+	Encoding updates.
+
 2003-11-04 Ben Maurer  <bmaurer@users.sourceforge.net>
 
-	* HttpContext.cs (IsCustomErrorEnabled): dont throw exception, just return false
-	(which makes sense, as the custom errors *arent* enabled; ie they dont work.
+	* HttpContext.cs (IsCustomErrorEnabled): dont throw exception, just
+	return false (which makes sense, as the custom errors *arent* enabled;
+	ie they dont work.
 	* HttpResponseStream.cs: you actually can write with len = 0
 
 2003-11-03 Jackson Harper <jackson@ximian.com>

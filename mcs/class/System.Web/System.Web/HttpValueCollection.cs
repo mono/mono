@@ -25,7 +25,7 @@ namespace System.Web
 
 		internal HttpValueCollection (string sData)
 		{
-			FillFromQueryString (sData, WebEncoding.Encoding);
+			FillFromQueryString (sData, Encoding.UTF8);
 			IsReadOnly = true;
 		}
 
@@ -85,7 +85,7 @@ namespace System.Web
 
 		internal void FillFromHeaders (string sData)
 		{
-			FillFromHeaders (sData, WebEncoding.Encoding);
+			FillFromHeaders (sData, Encoding.UTF8);
 		}
 
 		// String = test=aaa&kalle=nisse
@@ -130,12 +130,12 @@ namespace System.Web
 
 		internal void FillFromQueryString (string sData)
 		{
-			FillFromQueryString (sData, WebEncoding.Encoding);
+			FillFromQueryString (sData, Encoding.UTF8);
 		}
 
 		internal void FillFromCookieString (string sData)
 		{
-			FillFromQueryString (sData, WebEncoding.Encoding);
+			FillFromQueryString (sData, Encoding.UTF8);
 		}
 
 		internal void MakeReadOnly ()
@@ -172,9 +172,9 @@ namespace System.Web
 
 				if (UrlEncode) {
 					// use encoding
-					result.Append (HttpUtility.UrlEncode (strKey, WebEncoding.Encoding));
+					result.Append (HttpUtility.UrlEncode (strKey, Encoding.UTF8));
 					result.Append (eq);
-					result.Append (HttpUtility.UrlEncode (Get (strKey), WebEncoding.Encoding));
+					result.Append (HttpUtility.UrlEncode (Get (strKey), Encoding.UTF8));
 				} else {
 					result.Append (strKey);
 					result.Append (eq);

@@ -1,3 +1,10 @@
+2003-11-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* GlobalizationConfiguration.cs: added GetInstance method.
+
+	* GlobalizationConfigurationHandler.cs: warn about unsupported encodings
+	and provide reasonable defaults.
+
 2003-10-17 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* CompilationConfiguration.cs (Init): you have to inherit copying

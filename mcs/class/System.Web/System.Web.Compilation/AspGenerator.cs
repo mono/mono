@@ -153,8 +153,7 @@ namespace System.Web.Compilation
 		
 		void InitParser (string filename)
 		{
-			//FIXME: use the encoding of the file or the one specified in the machine.config/web.config file.
-			StreamReader reader = new StreamReader (filename, Encoding.Default);
+			StreamReader reader = new StreamReader (filename, WebEncoding.FileEncoding);
 			AspParser parser = new AspParser (filename, reader);
 			parser.Error += new ParseErrorHandler (ParseError);
 			parser.TagParsed += new TagParsedHandler (TagParsed);

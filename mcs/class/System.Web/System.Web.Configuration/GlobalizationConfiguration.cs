@@ -33,6 +33,21 @@ namespace System.Web.Configuration
 			Culture = parent.Culture;
 			UICulture = parent.UICulture;
 		}
+
+		static public GlobalizationConfiguration GetInstance (HttpContext context)
+		{
+			GlobalizationConfiguration config;
+			if (context == null)
+				context = HttpContext.Context;
+
+			config = context.GetConfig ("system.web/globalization") as GlobalizationConfiguration;
+
+			if (config == null)
+				throw new HttpException ("Configuration error.", 500);
+
+			return config;
+		}
+
 	}
 }
 

@@ -1,3 +1,10 @@
+2003-11-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: use fileEncoding from configuration files.
+
+	* PageCompiler.cs: add assign statements for ContentType,
+	ResponseEncoding and CodePage if supplied.
+
 2003-10-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateControlCompiler.cs: fix bug #42994. Now we don't generate

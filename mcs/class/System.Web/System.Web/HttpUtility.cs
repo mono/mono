@@ -324,7 +324,7 @@ namespace System.Web {
 	
 		public static string UrlDecode (string str) 
 		{
-			return UrlDecode(str, WebEncoding.Encoding);
+			return UrlDecode(str, Encoding.UTF8);
 		}
 	
 		private static char [] GetChars (MemoryStream b, Encoding e)
@@ -338,7 +338,7 @@ namespace System.Web {
 				return null;
 
 			if (e == null)
-				e = WebEncoding.Encoding;
+				e = Encoding.UTF8;
 	
 			StringBuilder output = new StringBuilder ();
 			long len = s.Length;
@@ -475,7 +475,7 @@ namespace System.Web {
 
 		public static byte [] UrlDecodeToBytes (string str)
 		{
-			return UrlDecodeToBytes (str, WebEncoding.Encoding);
+			return UrlDecodeToBytes (str, Encoding.UTF8);
 		}
 
 		public static byte [] UrlDecodeToBytes (string str, Encoding e)
@@ -519,7 +519,7 @@ namespace System.Web {
 
 		public static string UrlEncode(string str) 
 		{
-			return UrlEncode(str, WebEncoding.Encoding);
+			return UrlEncode(str, Encoding.UTF8);
 		}
 	
 		public static string UrlEncode (string s, Encoding Enc) 
@@ -558,7 +558,7 @@ namespace System.Web {
 
 		public static byte [] UrlEncodeToBytes (string str)
 		{
-			return UrlEncodeToBytes (str, WebEncoding.Encoding);
+			return UrlEncodeToBytes (str, Encoding.UTF8);
 		}
 
 		public static byte [] UrlEncodeToBytes (string str, Encoding e)

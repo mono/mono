@@ -16,6 +16,9 @@ namespace System.Web.Configuration
 {
 	class GlobalizationConfigurationHandler : IConfigurationSectionHandler
 	{
+		static bool encoding_warning;
+		static bool culture_warning;
+
 		public object Create (object parent, object configContext, XmlNode section)
 		{
 			GlobalizationConfiguration config = new GlobalizationConfiguration (parent);
@@ -24,23 +27,33 @@ namespace System.Web.Configuration
 				ThrowException ("No child nodes allowed here.", section);
 
 			string attvalue = AttValue ("requestEncoding", section, true);
-			if (attvalue != null)
+			if (attvalue == null)
+				config.RequestEncoding = Encoding.Default;
+			else
 				config.RequestEncoding = GetEncoding (section, "requestEncoding", attvalue);
 
 			attvalue = AttValue ("responseEncoding", section, true);
-			if (attvalue != null)
+			if (attvalue == null)
+				config.ResponseEncoding = Encoding.Default;
+			else
 				config.ResponseEncoding = GetEncoding (section, "responseEncoding", attvalue);
 
 			attvalue = AttValue ("fileEncoding", section, true);
-			if (attvalue != null)
+			if (attvalue == null)
+				config.FileEncoding = Encoding.Default;
+			else
 				config.FileEncoding = GetEncoding (section, "fileEncoding", attvalue);
 
 			attvalue = AttValue ("culture", section, true);
-			if (attvalue != null)
+			if (attvalue == null)
+				config.Culture = CultureInfo.InvariantCulture;
+			else
 				config.Culture = GetCulture (section, "culture", attvalue);
 
 			attvalue = AttValue ("uiculture", section, true);
-			if (attvalue != null)
+			if (attvalue == null)
+				config.UICulture = CultureInfo.InvariantCulture;
+			else
 				config.UICulture = GetCulture (section, "uiculture", attvalue);
 
 			if (section.Attributes == null || section.Attributes.Count != 0)
@@ -55,8 +68,8 @@ namespace System.Web.Configuration
 			try {
 				encoding = Encoding.GetEncoding (enc);
 			} catch {
-				string msg = String.Format ("Error getting encoding {0} for {1}", enc, att);
-				ThrowException (msg, section);
+				EncodingFailed (section, att, enc);
+				encoding = new UTF8Encoding ();
 			}
 
 			return encoding;
@@ -68,13 +81,33 @@ namespace System.Web.Configuration
 			try {
 				culture = new CultureInfo (cul);
 			} catch {
-				string msg = String.Format ("Error getting culture {0} for {1}", cul, att);
-				ThrowException (msg, section);
+				CultureFailed (section, att, cul);
+				culture = new CultureInfo (0x007f); // Invariant
 			}
 
 			return culture;
 		}
 		
+		static void EncodingFailed (XmlNode section, string att, string enc)
+		{
+			if (encoding_warning)
+				return;
+
+			encoding_warning = true;
+			Console.WriteLine ("Encoding {1} cannot be loaded. Perhaps your runtime \n" +
+					   "don't have ICU support?\n{0}=\"{1}\"\n", att, enc);
+		}
+
+		static void CultureFailed (XmlNode section, string att, string cul)
+		{
+			if (culture_warning)
+				return;
+
+			culture_warning = true;
+			Console.WriteLine ("Culture {1} cannot be loaded. Perhaps your runtime \n" +
+					   "don't have ICU support?\n{0}=\"{1}\"\n", att, cul);
+		}
+
 		// A few methods to save some typing
 		static string AttValue (string name, XmlNode node, bool optional)
 		{

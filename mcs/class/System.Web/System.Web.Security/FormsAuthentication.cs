@@ -72,8 +72,7 @@ namespace System.Web.Security
 
 			Initialize ();
 			byte [] bytes = MachineKeyConfigHandler.GetBytes (encryptedTicket, encryptedTicket.Length);
-			//TODO: decrypt
-			string decrypted = WebEncoding.Encoding.GetString (bytes);
+			string decrypted = Encoding.ASCII.GetString (bytes);
 			FormsAuthenticationTicket ticket = null;
 			try {
 				string [] values = decrypted.Split ((char) 1, (char) 2, (char) 3, (char) 4, (char) 5, (char) 6, (char) 7);
@@ -190,7 +189,7 @@ namespace System.Web.Security
 
 		static string GetHexString (string str)
 		{
-			return GetHexString (WebEncoding.Encoding.GetBytes (str));
+			return GetHexString (Encoding.ASCII.GetBytes (str));
 		}
 
 		static string GetHexString (byte [] bytes)
@@ -212,9 +211,9 @@ namespace System.Web.Security
 
 			byte [] bytes;
 			if (String.Compare (passwordFormat, "MD5", true) == 0) {
-				bytes = MD5.Create ().ComputeHash (WebEncoding.Encoding.GetBytes (password));
+				bytes = MD5.Create ().ComputeHash (Encoding.ASCII.GetBytes (password));
 			} else if (String.Compare (passwordFormat, "SHA1", true) == 0) {
-				bytes = SHA1.Create ().ComputeHash (WebEncoding.Encoding.GetBytes (password));
+				bytes = SHA1.Create ().ComputeHash (Encoding.ASCII.GetBytes (password));
 			} else {
 				throw new ArgumentException ("The format must be either MD5 or SHA1", "passwordFormat");
 			}

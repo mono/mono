@@ -1,3 +1,8 @@
+2003-11-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebEncoding.cs: added properties to access configuration files
+	encoding.
+
 2003-08-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ICalls.cs: holds a couple of icalls.

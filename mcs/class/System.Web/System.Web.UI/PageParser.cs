@@ -8,6 +8,7 @@
 //
 using System;
 using System.Collections;
+using System.Text;
 using System.Web;
 using System.Web.Compilation;
 using System.Web.Util;
@@ -18,6 +19,9 @@ namespace System.Web.UI
 	{
 		bool enableSessionState = true;
 		bool readonlySessionState;
+		string responseEncoding;
+		string contentType;
+		int codepage = -1;
 
 		// FIXME: this is here just for DesignTimeTemplateParser. Anything to do?
 		internal PageParser ()
@@ -55,16 +59,48 @@ namespace System.Web.UI
 				}
 			}
 
+			string cp = GetString (atts, "CodePage", null);
+			if (cp != null) {
+				if (responseEncoding != null)
+					ThrowParseException ("CodePage and ResponseEncoding are " +
+							     "mutually exclusive.");
+
+				int codepage = 0;
+				try {
+					codepage = (int) UInt32.Parse (cp);
+				} catch {
+					ThrowParseException ("Invalid value for CodePage: " + cp);
+				}
+
+				try {
+					Encoding.GetEncoding (codepage);
+				} catch {
+					ThrowParseException ("Unsupported codepage: " + cp);
+				}
+			}
+			
+			responseEncoding = GetString (atts, "ResponseEncoding", null);
+			if (responseEncoding != null) {
+				if (codepage != -1)
+					ThrowParseException ("CodePage and ResponseEncoding are " +
+							     "mutually exclusive.");
+
+				try {
+					Encoding.GetEncoding (responseEncoding);
+				} catch {
+					ThrowParseException ("Unsupported encoding: " + responseEncoding);
+				}
+			}
+			
+			contentType = GetString (atts, "ContentType", null);
+
 			// Ignored by now
 			GetString (atts, "Buffer", null);
 			GetString (atts, "ClientTarget", null);
-			GetString (atts, "CodePage", null);
-			GetString (atts, "ContentType", null);
 			GetString (atts, "Culture", null);
 			GetString (atts, "EnableViewStateMac", null);
 			GetString (atts, "ErrorPage", null);
 			GetString (atts, "LCID", null);
-			GetString (atts, "ResponseEncoding", null);
 			GetString (atts, "Trace", null);
 			GetString (atts, "TraceMode", null);
 			GetString (atts, "UICulture", null);
@@ -99,6 +135,18 @@ namespace System.Web.UI
 			get {
 				return "page";
 			}
+		}
+
+		internal string ResponseEncoding {
+			get { return responseEncoding; }
+		}
+
+		internal string ContentType {
+			get { return contentType; }
+		}
+
+		internal int CodePage {
+			get { return codepage; }
 		}
 	}
 }

@@ -49,6 +49,32 @@ namespace System.Web.Compilation
 			mainClass.Members.Add (method);
 		}
 
+		static CodeAssignStatement CreatePropertyAssign (string name, object value)
+		{
+			CodePropertyReferenceExpression prop;
+			prop = new CodePropertyReferenceExpression (thisRef, name);
+			CodePrimitiveExpression prim;
+			prim = new CodePrimitiveExpression (value);
+			return new CodeAssignStatement (prop, prim);
+		}
+
+		protected override void AddStatementsToFrameworkInitialize (CodeMemberMethod method)
+		{
+			string responseEncoding = pageParser.ResponseEncoding;
+			if (responseEncoding != null)
+				method.Statements.Add (CreatePropertyAssign ("ResponseEncoding", responseEncoding));
+			
+			int codepage = pageParser.CodePage;
+			if (codepage != -1)
+				method.Statements.Add (CreatePropertyAssign ("CodePage", codepage));
+
+			string contentType = pageParser.ContentType;
+			if (contentType != null)
+				method.Statements.Add (CreatePropertyAssign ("ContentType", contentType));
+			
+			base.AddStatementsToFrameworkInitialize (method);
+		}
+
 		protected override void CreateMethods ()
 		{
 			base.CreateMethods ();

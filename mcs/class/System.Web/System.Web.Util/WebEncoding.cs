@@ -5,19 +5,35 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
+// (C) 2003 Novell, Inc (http://www.novell.com)
 //
 
 using System.Text;
+using System.Web.Configuration;
 
 namespace System.Web.Util
 {
 	internal class WebEncoding
 	{
-		static Encoding encoding = new UTF8Encoding (false);
+		static public Encoding FileEncoding {
+			get {
+				GlobalizationConfiguration gc = GlobalizationConfiguration.GetInstance (null);
+				return gc.FileEncoding;
+			}
+		}
 
-		static public Encoding Encoding
-		{
-			get { return encoding; }
+		static public Encoding ResponseEncoding {
+			get {
+				GlobalizationConfiguration gc = GlobalizationConfiguration.GetInstance (null);
+				return gc.ResponseEncoding;
+			}
+		}
+
+		static public Encoding RequestEncoding {
+			get {
+				GlobalizationConfiguration gc = GlobalizationConfiguration.GetInstance (null);
+				return gc.RequestEncoding;
+			}
 		}
 	}
 }

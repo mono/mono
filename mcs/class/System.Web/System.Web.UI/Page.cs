@@ -113,18 +113,16 @@ public class Page : TemplateControl, IHttpHandler
 		set { throw new NotImplementedException (); }
 	}
 
-	[MonoTODO]
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected int CodePage
 	{
-		set { throw new NotImplementedException (); }
+		set { Response.ContentEncoding = Encoding.GetEncoding (value); }
 	}
 
-	[MonoTODO]
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected string ContentType
 	{
-		set { throw new NotImplementedException (); }
+		set { Response.ContentType = value; }
 	}
 
 	protected override HttpContext Context

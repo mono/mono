@@ -111,13 +111,6 @@ namespace System.Web
 			 _TextWriter = _Writer;
 		}
 
-		internal Encoder ContentEncoder
-		{
-			get {
-				return ContentEncoding.GetEncoder ();
-			}
-		}
-
 		internal void FinalFlush ()
 		{
 			Flush (true);
@@ -361,7 +354,7 @@ namespace System.Web
 		{
 			get {
 				if (_ContentEncoding == null)
-					_ContentEncoding = WebEncoding.Encoding;
+					_ContentEncoding = WebEncoding.ResponseEncoding;
 
 				return _ContentEncoding;
 			}

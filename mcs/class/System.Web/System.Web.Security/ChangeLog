@@ -1,3 +1,7 @@
+2003-11-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FormsAuthentication.cs: encoding updates.
+
 2003-10-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FormsAuthenticationModule.cs: fixed for applications other than /.

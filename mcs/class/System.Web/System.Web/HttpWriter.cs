@@ -19,7 +19,6 @@ namespace System.Web
 
 		MemoryStream _OutputStream;
 		StreamWriter _OutputHelper;
-		Encoder _Encoder;
 		Encoding _Encoding;	
 
 		Stream _OutputFilter;
@@ -30,7 +29,7 @@ namespace System.Web
 			_Response = Response;
 
 			_OutputStream = new MemoryStream (32768);
-			_OutputHelper = new StreamWriter (_OutputStream, WebEncoding.Encoding);
+			_OutputHelper = new StreamWriter (_OutputStream, _Response.ContentEncoding);
 			_ResponseStream = new HttpResponseStream (this);
 
 			Update ();
@@ -100,7 +99,7 @@ namespace System.Web
 					
 			// Quick way of doing cleanup
 			_OutputStream = new MemoryStream (32768);
-			_OutputHelper = new StreamWriter (_OutputStream, WebEncoding.Encoding);
+			_OutputHelper = new StreamWriter (_OutputStream, _Response.ContentEncoding);
 		}
 
 		internal void SendContent (HttpWorkerRequest Handler)
@@ -116,8 +115,9 @@ namespace System.Web
 
 		internal void Update ()
 		{
-			_Encoder = _Response.ContentEncoder;
 			_Encoding = _Response.ContentEncoding;
+			_OutputHelper.Flush ();
+			_OutputHelper = new StreamWriter (_OutputStream, _Encoding);
 		}
 
 		internal long BufferSize
