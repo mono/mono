@@ -1,9 +1,22 @@
-// cs0202.cs: GetEnumerator cant return a pointer, only an instance.
-// Line: 6
+// cs0202.cs: The call to GetEnumerator must return a class or a struct, not 'Foo.P*'
+// Line: 18
+// Compiler options: -unsafe
 
-public class Foo
+public unsafe class Foo
 {
-	int P* GetEnumerator ()
-	{
-	}
+        public class P
+        {
+            public P* GetEnumerator ()
+            {
+                return null;
+            }
+        }
+       
+        public static void Main ()
+        {
+            P o = new P ();
+            foreach (P p in o)
+            {
+            }
+        }
 }
