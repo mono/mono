@@ -4682,7 +4682,7 @@ integer_division_expression
 	| integer_division_expression _mark_ OP_IDIV multiplicative_expression
           {
 	  	//FIXME: Is this right ?
-		$$ = new Binary (Binary.Operator.Division,
+		$$ = new Binary (Binary.Operator.IntDivision,
 			   (Expression) $1, (Expression) $4, (Location)$2);
           }
 	| /*empty*/ _mark_ 

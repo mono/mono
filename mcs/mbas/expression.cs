@@ -1772,7 +1772,7 @@ namespace Mono.MonoBASIC {
 	public class Binary : Expression {
 		public enum Operator : byte {
 			Exponentiation,
-			Multiply, Division, Modulus,
+			Multiply, Division, IntDivision, Modulus,
 			Addition, Subtraction,
 			LeftShift, RightShift,
 			LessThan, GreaterThan, LessThanOrEqual, GreaterThanOrEqual, 
@@ -1807,6 +1807,7 @@ namespace Mono.MonoBASIC {
 
 			oper_names [(int) Operator.Multiply] = "op_Multiply";
 			oper_names [(int) Operator.Division] = "op_Division";
+			oper_names [(int) Operator.IntDivision] = "op_Division";
 			oper_names [(int) Operator.Modulus] = "op_Modulus";
 			oper_names [(int) Operator.Addition] = "op_Addition";
 			oper_names [(int) Operator.Subtraction] = "op_Subtraction";
@@ -1874,6 +1875,8 @@ namespace Mono.MonoBASIC {
 				return "*";
 			case Operator.Division:
 				return "/";
+			case Operator.IntDivision:
+				return "\\";
 			case Operator.Modulus:
 				return "Mod";
 			case Operator.Addition:
@@ -1975,6 +1978,14 @@ namespace Mono.MonoBASIC {
 					conv_right_as = type = TypeManager.int64_type;
 					r = conv_right_as;
 				}
+			}
+
+			if (oper == Operator.IntDivision) {
+				if (l == TypeManager.decimal_type || r == TypeManager.decimal_type ||
+				    l == TypeManager.float_type || r == TypeManager.float_type ||
+				    l == TypeManager.double_type || r == TypeManager.double_type) 
+					conv_left_as = conv_right_as = TypeManager.int64_type;
+					l = r = TypeManager.int64_type;
 			}
 
 			if (IsLogicalOperator (oper)) {
@@ -2126,6 +2137,7 @@ namespace Mono.MonoBASIC {
 				oper == Operator.Subtraction ||	
 				oper == Operator.Multiply ||	
 				oper == Operator.Division ||	
+				oper == Operator.IntDivision ||	
 				oper == Operator.Exponentiation ||	
 				oper == Operator.Modulus);
 		}
@@ -2565,7 +2577,7 @@ namespace Mono.MonoBASIC {
 							fqn = "System.Decimal.Subtract";
 						else if (oper == Operator.Multiply) 
 							fqn = "System.Decimal.Multiply";
-						else if (oper == Operator.Division) 
+						else if (oper == Operator.Division)
 							fqn = "System.Decimal.Divide";
 						else if (oper == Operator.Modulus) 
 							fqn = "System.Decimal.Remainder";
@@ -2984,6 +2996,7 @@ namespace Mono.MonoBASIC {
 				break;
 
 			case Operator.Division:
+			case Operator.IntDivision:
 				if (l == TypeManager.uint32_type || l == TypeManager.uint64_type)
 					opcode = OpCodes.Div_Un;
 				else
