@@ -1,3 +1,7 @@
+2003-11-21  Jackson Harper <jackson@ximian.com>
+
+	* System.web.dll.sources: Add CachedVaryBy.cs to the build
+	
 2003-11-21  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* System.Web.dll.sources: added XmlBuilder.cs
