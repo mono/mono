@@ -1544,6 +1544,10 @@ namespace Mono.CSharp {
 			if (mb.DeclaringType is TypeBuilder)
 				return null;
 
+			PropertyInfo pi = PropertyExpr.AccessorTable [mb] as PropertyInfo;
+			if (pi != null)
+				return GetMemberObsoleteAttribute (pi);
+
 			return GetMemberObsoleteAttribute (mb);
 		}
 

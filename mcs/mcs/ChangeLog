@@ -1,5 +1,14 @@
 2005-01-10  Marek Safar  <marek.safar@seznam.cz>
 
+	Fix #71058
+	* attribute.cs (GetMethodObsoleteAttribute): Need to transform
+	accessors to its properties.
+
+	* ecore.cs (PropertyExpr): Add AccessorTable to help track back
+	from accessors to property.
+	
+2005-01-10  Marek Safar  <marek.safar@seznam.cz>
+
 	Fix #70722
 	* class.cs (MethodCore.CheckBase): Test base method obsoleteness
 	only for overrides.
