@@ -50,6 +50,7 @@ namespace System.Drawing
 
 		// We use X Drawable on Linux.
 		private static bool use_x_drawable = (Environment.OSVersion.Platform == (PlatformID) 128);
+		private static bool use_quartz_drawable = (Environment.GetEnvironmentVariable ("MONO_MWF_USE_QUARTZ_BACKEND") != null);
 
 		[ComVisible(false)]
 		public delegate bool EnumerateMetafileProc (EmfPlusRecordType recordType,
@@ -1253,18 +1254,17 @@ namespace System.Drawing
 			return null;
 		}
 
-		public static Graphics FromHwndWithSize (IntPtr hwnd, int width, int height) {
-			IntPtr graphics;
-			Status s = GDIPlus.GdipCreateFromQuartz_macosx (hwnd, width, height, out graphics);
-			GDIPlus.CheckStatus (s);
-			return new Graphics (graphics);
-		}
-
 		[EditorBrowsable (EditorBrowsableState.Advanced)]		
 		public static Graphics FromHwnd (IntPtr hwnd)
 		{
 			IntPtr graphics;
 
+			if (use_quartz_drawable) {
+				QuartzContext qc = (QuartzContext) Marshal.PtrToStructure (hwnd, typeof (QuartzContext));
+				GDIPlus.GdipCreateFromQuartz_macosx (qc.cgContext, qc.width,qc.height, out graphics);
+				
+				return new Graphics (graphics);
+			}
 			if (use_x_drawable) {
 				if (display == IntPtr.Zero) {
 					display = GDIPlus.XOpenDisplay (IntPtr.Zero);
@@ -1984,6 +1984,13 @@ namespace System.Drawing
 				GDIPlus.CheckStatus (status);
                                 return rect;
 			}
+		}
+
+		internal struct QuartzContext
+		{
+			public IntPtr cgContext;
+			public int width;
+			public int height;
 		}
 	}
 }

@@ -1,3 +1,8 @@
+2004-12-08  Geoff Norton  <gnorton@customerdna.com>
+
+	* Graphics.cs:  Drop FromHwndWithSize; we can't change the public API
+	Add Quartz support to FromHwnd marshalling a struct back with the ptr/width/height.
+
 2004-12-07  Geoff Norton  <gnorton@customerdna.com>
 
         * Graphics.cs:  Add FromHwndWithSize for the MWF/Quartz backend
