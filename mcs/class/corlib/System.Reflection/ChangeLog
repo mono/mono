@@ -1,3 +1,7 @@
+2002-04-08  Nick Drochak  <ndrochak@gol.com>
+
+	* DefaultMemberAttribute.cs: Add AttributeUsage attribute for class,
+	struct and interface.
 
 Fri Apr 5 15:40:24 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
