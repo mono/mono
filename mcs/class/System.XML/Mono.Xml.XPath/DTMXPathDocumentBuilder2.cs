@@ -263,8 +263,6 @@ namespace Mono.Xml.XPath
 				goto case XmlNodeType.Text;
 			case XmlNodeType.CDATA:
 			case XmlNodeType.Text:
-				if (value == null)
-					skipRead = true;
 				AddNode (parent,
 					0,
 					prevSibling,
@@ -299,13 +297,14 @@ namespace Mono.Xml.XPath
 						case XmlNodeType.Whitespace:
 							if (xmlReader.NodeType != XmlNodeType.Whitespace || xmlSpace == XmlSpace.Preserve)
 								value += xmlReader.Value;
-							xmlReader.Read ();
+							loop = xmlReader.Read ();
+							skipRead = true;
 							continue;
 						default:
 							loop = false;
 							break;
 						}
-					} while (loop && !xmlReader.EOF);
+					} while (loop);
 					nodes [nodeIndex].Value = NonAtomicIndex (value);
 					nodes [nodeIndex].NodeType = type;
 				}
