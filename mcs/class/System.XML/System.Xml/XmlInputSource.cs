@@ -27,6 +27,14 @@ namespace System.Xml
 
 		private bool FLastCharWasCR;
 
+		// locator
+		int FColumnNumber;
+		int FStartColumnNumber;
+		int FStartLineNumber;
+		bool FLastWCharWasLF;
+		int FLineNumber;
+		bool FPieceEndSet;
+
 		// Buffer storage for UTF-8 surrogates
 		// see http://www.ietf.org/rfc/rfc2279.txt for a complete description of UTF-8 encoding
 		private int FLastUcs4;				
@@ -84,6 +92,26 @@ namespace System.Xml
 			{
 				return FsystemID;
 			}
+		}
+
+		public int columnNumber
+		{
+			get { return FColumnNumber; }
+		}
+
+		public int lineNumber
+		{
+			get { return FLineNumber; }
+		}
+
+		public int startColumnNumber
+		{
+			get { return FStartColumnNumber; }
+		}
+		
+		public int startLineNumber
+		{
+			get { return FStartLineNumber; }
 		}
 
 		// private methods
@@ -263,6 +291,35 @@ namespace System.Xml
 			}
 		}
 		
+		private void evaluate(char c)
+		{
+			if (FLastWCharWasLF)
+			{
+				FLineNumber++;
+				FLastWCharWasLF = false;
+				FColumnNumber = 1;
+			}
+			else
+				FColumnNumber++;
+
+			if (c == (char) 10 )
+				FLastWCharWasLF = true;
+
+			if (FPieceEndSet)
+				pieceStart();
+		}
+
+		public void pieceEnd()
+		{
+			FPieceEndSet = true;
+		}
+
+		public void pieceStart()
+		{
+			FStartColumnNumber = FColumnNumber;
+			FStartLineNumber =   FLineNumber;
+			FPieceEndSet = false;
+		}
 
 		/// <summary>
 		/// Return true if input stream is at EOF.
@@ -491,9 +548,9 @@ namespace System.Xml
 			}
 			else
 				FLastCharWasCR = false;
+			  
+			evaluate(retval);
 			return retval;
-  
-			//  if assigned(locator) then locator.evaluate(dest);
 		}
 
 		/// <summary>
@@ -517,6 +574,13 @@ namespace System.Xml
 					FStream.Seek(0, SeekOrigin.Begin);
 					break;
 			}
+
+			FColumnNumber =      0;
+			FLineNumber =        0;
+			FStartColumnNumber = 0;
+			FStartLineNumber =   0;
+			FLastWCharWasLF = true;
+			pieceEnd();
 		}
         
 /*
