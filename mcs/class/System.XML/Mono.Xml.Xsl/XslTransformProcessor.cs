@@ -33,7 +33,6 @@ namespace Mono.Xml.Xsl {
 		XsltArgumentList args;
 		XmlResolver resolver;
 		bool outputStylesheetXmlns;
-		bool insideCDataSectionElements;
 		string currentOutputUri;
 		
 		internal readonly XsltCompiledContext XPathContext;
@@ -236,7 +235,8 @@ namespace Mono.Xml.Xsl {
 		{	
 
 			XslTemplate currentTemplate = (XslTemplate)currentTemplateStack.Peek();
-			if (currentTemplate == null) throw new Exception ("Invalid context for apply-imports");
+			if (currentTemplate == null)
+				throw new XsltException ("Invalid context for apply-imports", null, CurrentNode);
 			XslTemplate t;
 			
 			for (int i = currentTemplate.Parent.Imports.Count - 1; i >= 0; i--) {
@@ -332,7 +332,7 @@ namespace Mono.Xml.Xsl {
 			XslTemplate ret = style.Templates.FindTemplate (name);
 			if (ret != null) return ret;
 				
-			throw new Exception ("Could not resolve named template " + name);
+			throw new XsltException ("Could not resolve named template " + name, null, CurrentNode);
 		}
 		
 		#endregion
@@ -446,7 +446,17 @@ namespace Mono.Xml.Xsl {
 		#region Variable Stack
 		Stack variableStack = new Stack ();
 		object [] currentStack;
-		
+		public int StackItemCount {
+			get {
+				if (currentStack == null)
+				      return 0;
+				for (int i = 0; i < currentStack.Length; i++)
+					if (currentStack [i] == null)
+						return i;
+				return currentStack.Length;
+			}
+		}
+
 		public object GetStackItem (int slot)
 		{
 			return currentStack [slot];

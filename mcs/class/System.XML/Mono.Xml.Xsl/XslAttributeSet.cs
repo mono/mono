@@ -10,7 +10,6 @@
 //
 
 using System;
-using System.CodeDom;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Xml;
@@ -61,7 +60,7 @@ namespace Mono.Xml.Xsl {
 				}
 					
 				if (c.Input.NamespaceURI != XsltNamespace || c.Input.LocalName != "attribute")
-					throw new Exception ("Invalid attr set content");
+					throw new XsltCompileException ("Invalid attr set content", null, c.Input);
 				attributes.Add (new XslAttribute (c));
 			} while (c.Input.MoveToNext ());
 			

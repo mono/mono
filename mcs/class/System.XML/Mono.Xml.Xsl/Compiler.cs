@@ -254,7 +254,8 @@ namespace Mono.Xml.Xsl
 			case null: return defaultVal;
 			case "yes": return true;
 			case "no": return false;
-			default: throw new Exception ("invalid value for " + localName);
+			default:
+				throw new XsltCompileException ("invalid value for " + localName, null, Input);
 			}
 		}
 		
@@ -288,7 +289,7 @@ namespace Mono.Xml.Xsl
 		public void AssertAttribute (string localName, string ns)
 		{
 			if (Input.GetAttribute (localName, ns) == null)
-				throw new Exception ("Was expecting the " + localName + " attribute.");
+				throw new XsltCompileException ("Was expecting the " + localName + " attribute.", null, Input);
 		}
 		
 		public XslAvt ParseAvt (string s)
@@ -376,7 +377,7 @@ namespace Mono.Xml.Xsl
 		public int AddVariable (XslLocalVariable v)
 		{
 			if (curVarScope == null)
-				throw new Exception ("not inited");
+				throw new XsltCompileException ("Not initialized variable", null, Input);
 			
 			return curVarScope.AddVariable (v);
 		}

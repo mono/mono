@@ -51,7 +51,7 @@ namespace Mono.Xml.Xsl
 		
 		public abstract object Invoke (XsltCompiledContext xsltContext, object [] args, XPathNavigator docContext);
 		
-		public static XPathResultType GetXPathType (Type type) {
+		public static XPathResultType GetXPathType (Type type, XPathNavigator node) {
 			switch (Type.GetTypeCode(type)) {
 			case TypeCode.String:
 				return XPathResultType.String;
@@ -66,7 +66,7 @@ namespace Mono.Xml.Xsl
 				
 				return XPathResultType.Any;
 			case TypeCode.DateTime :
-				throw new Exception ();
+				throw new XsltException ("Invalid type DateTime was specified.", null, node);
 			default: // Numeric
 				return XPathResultType.Number;
 			} 
@@ -79,7 +79,7 @@ namespace Mono.Xml.Xsl
 		private MethodInfo method;
 		private TypeCode [] typeCodes;
 
-		public XsltExtensionFunction (object extension, MethodInfo method)
+		public XsltExtensionFunction (object extension, MethodInfo method, XPathNavigator currentNode)
 		{
 			this.extension = extension;
 			this.method = method;
@@ -94,7 +94,7 @@ namespace Mono.Xml.Xsl
 			bool canBeOpt = true;
 			for (int i = parameters.Length - 1; 0 <= i; i--) { // optionals at the end
 				typeCodes [i] = Type.GetTypeCode (parameters [i].ParameterType);
-				argTypes [i] = GetXPathType (parameters [i].ParameterType);
+				argTypes [i] = GetXPathType (parameters [i].ParameterType, currentNode);
 				if (canBeOpt) {
 					if (parameters[i].IsOptional)
 						minArgs --;
@@ -102,7 +102,7 @@ namespace Mono.Xml.Xsl
 						canBeOpt = false;
 				}
 			}
-			base.Init (minArgs, maxArgs, GetXPathType (method.ReturnType), argTypes);
+			base.Init (minArgs, maxArgs, GetXPathType (method.ReturnType, currentNode), argTypes);
 		}
 
 		public override object Invoke (XsltCompiledContext xsltContext, object [] args, XPathNavigator docContext)

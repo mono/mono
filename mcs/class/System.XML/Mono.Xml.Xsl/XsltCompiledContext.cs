@@ -9,7 +9,6 @@
 //
 
 using System;
-using System.CodeDom;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Xml;
@@ -70,7 +69,7 @@ namespace Mono.Xml.Xsl
 			MethodInfo method = FindBestMethod (extension.GetType (), name.Name, argTypes, isScript);
 			
 			if (method != null) 
-				return new XsltExtensionFunction (extension, method);
+				return new XsltExtensionFunction (extension, method, p.CurrentNode);
 			return null;
 		}
 		
@@ -113,7 +112,7 @@ namespace Mono.Xml.Xsl
 					if (required == XPathResultType.Any)
 						continue; // dunno what it is
 					
-					XPathResultType actual = XPFuncImpl.GetXPathType (pi [par].ParameterType);
+					XPathResultType actual = XPFuncImpl.GetXPathType (pi [par].ParameterType, p.CurrentNode);
 					if (actual != required && actual != XPathResultType.Any) {
 						match = false;
 						break;
