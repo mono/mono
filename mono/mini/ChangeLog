@@ -1,3 +1,8 @@
+2004-12-21  Ben Maurer  <bmaurer@ximian.com>
+
+	* inssel.brg (OP_CHECK_ARRAY_TYPE): Optimize this by only looking
+	at the vtable->klass. If it is non-shared code we can just use the
+	vtable.
 
 Tue Dec 21 17:43:06 CET 2004 Paolo Molaro <lupus@ximian.com>
 
