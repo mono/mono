@@ -1,3 +1,9 @@
+2003-01-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DbEnumerator.cs: why does the runtime throw an invalid cast here? The
+	object is an Int16... Gotta fill a bug report and when fixed undo this
+	patch.
+
 2003-01-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DbDataRecord.cs: return DbNull.Value in GetValue () if value is null.

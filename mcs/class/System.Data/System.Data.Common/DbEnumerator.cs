@@ -76,14 +76,14 @@ namespace System.Data.Common {
 				columnSchema.TableName = row ["BaseTableName"].ToString ();
 
 				if (row ["NumericPrecision"] != DBNull.Value)
-					columnSchema.NumericPrecision = (byte) row ["NumericPrecision"];
+					columnSchema.NumericPrecision = Convert.ToByte (row ["NumericPrecision"]);
 				else
-					columnSchema.NumericPrecision = (byte) 0;
+					columnSchema.NumericPrecision = Convert.ToByte (0);
 
 				if (row ["NumericScale"] != DBNull.Value)
-					columnSchema.NumericScale = (byte) row ["NumericScale"];
+					columnSchema.NumericScale = Convert.ToByte (row ["NumericScale"]);
 				else
-					columnSchema.NumericScale = (byte) 0;
+					columnSchema.NumericScale = Convert.ToByte (0);
 
 				schema [index] = columnSchema;
 				index += 1;
