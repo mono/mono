@@ -1,8 +1,11 @@
 // DataTableTest.cs - NUnit Test Cases for testing the DataTable 
 //
-// Franklin Wise (gracenote@earthlink.net)
+// Authors:
+//   Franklin Wise (gracenote@earthlink.net)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
 // 
 // (C) Franklin Wise
+// (C) 2003 Martin Willemoes Hansen
 // 
 
 using NUnit.Framework;
@@ -11,26 +14,11 @@ using System.Data;
 
 namespace MonoTests.System.Data
 {
-
-	public class DataTableTest : TestCase 
+	[TestFixture]
+	public class DataTableTest
 	{
-	
-		public DataTableTest() : base ("MonoTest.System.Data.DataTableTest") {}
-		public DataTableTest(string name) : base(name) {}
-
-		protected override void SetUp() {}
-
-		protected override void TearDown() {}
-
-		public static ITest Suite 
-		{
-			get 
-			{ 
-				return new TestSuite(typeof(DataTableTest)); 
-			}
-		}
-
-		public void TestCtor()
+		[Test]
+		public void Ctor()
 		{
 			DataTable dt = new DataTable();
 
@@ -55,7 +43,8 @@ namespace MonoTests.System.Data
 			
 		}
 
-                public void TestSelect ()
+		[Test]
+                public void Select ()
                 {
 			DataSet Set = new DataSet ();
 			DataTable Mom = new DataTable ("Mom");
@@ -133,38 +122,39 @@ namespace MonoTests.System.Data
                 	Child.Rows.Add (Row);
                 	
                 	DataRow [] Rows = Mom.Select ("Name = 'Teresa'");
-                	AssertEquals ("test#01", 2, Rows.Length);
+                	Assertion.AssertEquals ("test#01", 2, Rows.Length);
                 	
                 	Rows = Mom.Select ("Name = 'Teresa' and ChildName = 'Nick'");
-                	AssertEquals ("test#02", 0, Rows.Length);
+                	Assertion.AssertEquals ("test#02", 0, Rows.Length);
 
                 	Rows = Mom.Select ("Name = 'Teresa' and ChildName = 'Jack'");
-                	AssertEquals ("test#03", 1, Rows.Length);
+                	Assertion.AssertEquals ("test#03", 1, Rows.Length);
 
                 	Rows = Mom.Select ("Name = 'Teresa' and ChildName <> 'Jack'");
-                	AssertEquals ("test#04", "Mack", Rows [0] [1]);
+                	Assertion.AssertEquals ("test#04", "Mack", Rows [0] [1]);
                 	
                 	Rows = Mom.Select ("Name = 'Teresa' or ChildName <> 'Jack'");
-                	AssertEquals ("test#05", 5, Rows.Length);
+                	Assertion.AssertEquals ("test#05", 5, Rows.Length);
 			
                 	Rows = Child.Select ("age = 20 - 1");
-                	AssertEquals ("test#06", 1, Rows.Length);
+                	Assertion.AssertEquals ("test#06", 1, Rows.Length);
 			
                 	Rows = Child.Select ("age <= 20");
-                	AssertEquals ("test#07", 3, Rows.Length);
+                	Assertion.AssertEquals ("test#07", 3, Rows.Length);
 			
                 	Rows = Child.Select ("age >= 20");
-                	AssertEquals ("test#08", 3, Rows.Length);
+                	Assertion.AssertEquals ("test#08", 3, Rows.Length);
 			
                 	Rows = Child.Select ("age >= 20 and name = 'Mack' or name = 'Nick'");
-                	AssertEquals ("test#09", 2, Rows.Length);
+                	Assertion.AssertEquals ("test#09", 2, Rows.Length);
 
                 	Rows = Child.Select ("age >= 20 and (name = 'Mack' or name = 'Nick')");
-                	AssertEquals ("test#10", 1, Rows.Length);
-                	AssertEquals ("test#11", "Mack", Rows [0] [0]);
+                	Assertion.AssertEquals ("test#10", 1, Rows.Length);
+                	Assertion.AssertEquals ("test#11", "Mack", Rows [0] [0]);
                 }
                 
-                public void TestSelect2 ()
+		[Test]
+                public void Select2 ()
                 {
 			DataSet Set = new DataSet ();
 			DataTable Child = new DataTable ("Child");						
@@ -207,32 +197,33 @@ namespace MonoTests.System.Data
                 	Child.Rows.Add (Row);
 
 			DataRow [] Rows = Child.Select ("age >= 20", "age DESC");
-                	AssertEquals ("test#01", 3, Rows.Length);
-                	AssertEquals ("test#02", "Mack", Rows [0] [0]);
-                	AssertEquals ("test#03", "Mick", Rows [1] [0]);                	
-                	AssertEquals ("test#04", "Dick", Rows [2] [0]);                	
+                	Assertion.AssertEquals ("test#01", 3, Rows.Length);
+                	Assertion.AssertEquals ("test#02", "Mack", Rows [0] [0]);
+                	Assertion.AssertEquals ("test#03", "Mick", Rows [1] [0]);                	
+                	Assertion.AssertEquals ("test#04", "Dick", Rows [2] [0]);                	
                 	
                 	Rows = Child.Select ("age >= 20", "age asc");
-                	AssertEquals ("test#05", 3, Rows.Length);
-                	AssertEquals ("test#06", "Dick", Rows [0] [0]);
-                	AssertEquals ("test#07", "Mick", Rows [1] [0]);                	
-                	AssertEquals ("test#08", "Mack", Rows [2] [0]);                	
+                	Assertion.AssertEquals ("test#05", 3, Rows.Length);
+                	Assertion.AssertEquals ("test#06", "Dick", Rows [0] [0]);
+                	Assertion.AssertEquals ("test#07", "Mick", Rows [1] [0]);                	
+                	Assertion.AssertEquals ("test#08", "Mack", Rows [2] [0]);                	
                 
                 	Rows = Child.Select ("age >= 20", "name asc");
-                	AssertEquals ("test#09", 3, Rows.Length);
-                	AssertEquals ("test#10", "Dick", Rows [0] [0]);
-                	AssertEquals ("test#11", "Mack", Rows [1] [0]);                	
-                	AssertEquals ("test#12", "Mick", Rows [2] [0]);                	
+                	Assertion.AssertEquals ("test#09", 3, Rows.Length);
+                	Assertion.AssertEquals ("test#10", "Dick", Rows [0] [0]);
+                	Assertion.AssertEquals ("test#11", "Mack", Rows [1] [0]);                	
+                	Assertion.AssertEquals ("test#12", "Mick", Rows [2] [0]);                	
 
                 	Rows = Child.Select ("age >= 20", "name desc");
-                	AssertEquals ("test#09", 3, Rows.Length);
-                	AssertEquals ("test#10", "Mick", Rows [0] [0]);
-                	AssertEquals ("test#11", "Mack", Rows [1] [0]);                	
-                	AssertEquals ("test#12", "Dick", Rows [2] [0]);                	
+                	Assertion.AssertEquals ("test#09", 3, Rows.Length);
+                	Assertion.AssertEquals ("test#10", "Mick", Rows [0] [0]);
+                	Assertion.AssertEquals ("test#11", "Mack", Rows [1] [0]);                	
+                	Assertion.AssertEquals ("test#12", "Dick", Rows [2] [0]);                	
 
                 }
 
-		public void TestSelectParsing ()
+		[Test]
+		public void SelectParsing ()
 		{
 			DataTable T = new DataTable ("test");
 			DataColumn C = new DataColumn ("name");
@@ -261,33 +252,34 @@ namespace MonoTests.System.Data
 			Row [2] = 1;
 			T.Rows.Add (Row);
 
-			AssertEquals ("test#01", 12, T.Select ("age<=10").Length);
+			Assertion.AssertEquals ("test#01", 12, T.Select ("age<=10").Length);
 			
-			AssertEquals ("test#02", 12, T.Select ("age\n\t<\n\t=\t\n10").Length);
+			Assertion.AssertEquals ("test#02", 12, T.Select ("age\n\t<\n\t=\t\n10").Length);
 
 			try {
 				T.Select ("name = 1human ");
-				Fail ("test#03");
+				Assertion.Fail ("test#03");
 			} catch (Exception e) {
 				
 				// missing operand after 'human' operand 
-				AssertEquals ("test#04", typeof (SyntaxErrorException), e.GetType ());				
+				Assertion.AssertEquals ("test#04", typeof (SyntaxErrorException), e.GetType ());				
 			}
 			
 			try {			
 				T.Select ("name = 1");
-				Fail ("test#05");
+				Assertion.Fail ("test#05");
 			} catch (Exception e) {
 				
 				// Cannot perform '=' operation between string and Int32
-				AssertEquals ("test#06", typeof (EvaluateException), e.GetType ());
+				Assertion.AssertEquals ("test#06", typeof (EvaluateException), e.GetType ());
 			}
 			
-			AssertEquals ("test#07", 1, T.Select ("age = '13'").Length);
+			Assertion.AssertEquals ("test#07", 1, T.Select ("age = '13'").Length);
 
 		}
 
-		public void TestSelectOperators ()
+		[Test]
+		public void SelectOperators ()
 		{
 			DataTable T = new DataTable ("test");
 			DataColumn C = new DataColumn ("name");
@@ -316,22 +308,23 @@ namespace MonoTests.System.Data
 			Row [2] = 1;
 			T.Rows.Add (Row);
 			
-			AssertEquals ("test#01", 11, T.Select ("age < 10").Length);
-			AssertEquals ("test#02", 12, T.Select ("age <= 10").Length);			
-			AssertEquals ("test#03", 12, T.Select ("age< =10").Length);			
-			AssertEquals ("test#04", 89, T.Select ("age > 10").Length);
-			AssertEquals ("test#05", 90, T.Select ("age >= 10").Length);			
-			AssertEquals ("test#06", 100, T.Select ("age <> 10").Length);
-			AssertEquals ("test#07", 3, T.Select ("name < 'human10'").Length);
-			AssertEquals ("test#08", 3, T.Select ("id < '10'").Length);
+			Assertion.AssertEquals ("test#01", 11, T.Select ("age < 10").Length);
+			Assertion.AssertEquals ("test#02", 12, T.Select ("age <= 10").Length);			
+			Assertion.AssertEquals ("test#03", 12, T.Select ("age< =10").Length);			
+			Assertion.AssertEquals ("test#04", 89, T.Select ("age > 10").Length);
+			Assertion.AssertEquals ("test#05", 90, T.Select ("age >= 10").Length);			
+			Assertion.AssertEquals ("test#06", 100, T.Select ("age <> 10").Length);
+			Assertion.AssertEquals ("test#07", 3, T.Select ("name < 'human10'").Length);
+			Assertion.AssertEquals ("test#08", 3, T.Select ("id < '10'").Length);
 			// FIXME: Somebody explain how this can be possible.
 			// it seems that it is no matter between 10 - 30. The
 			// result is allways 25 :-P
-			AssertEquals ("test#09", 25, T.Select ("id < 10").Length);
+			Assertion.AssertEquals ("test#09", 25, T.Select ("id < 10").Length);
 			
 		}
 
-		public void TestSelectExceptions ()
+		[Test]
+		public void SelectExceptions ()
 		{
 			DataTable T = new DataTable ("test");
 			DataColumn C = new DataColumn ("name");
@@ -352,27 +345,28 @@ namespace MonoTests.System.Data
 			
 			try {
 				T.Select ("name = human1");
-				Fail ("test#01");
+				Assertion.Fail ("test#01");
 			} catch (Exception e) {
 				
 				// column name human not found
-				AssertEquals ("test#02", typeof (EvaluateException), e.GetType ());
+				Assertion.AssertEquals ("test#02", typeof (EvaluateException), e.GetType ());
 			}
 			
-			AssertEquals ("test#04", 1, T.Select ("id = '12'").Length);
-			AssertEquals ("test#05", 1, T.Select ("id = 12").Length);
+			Assertion.AssertEquals ("test#04", 1, T.Select ("id = '12'").Length);
+			Assertion.AssertEquals ("test#05", 1, T.Select ("id = 12").Length);
 			
 			try {
 				T.Select ("id = 1k3");
-				Fail ("test#06");
+				Assertion.Fail ("test#06");
 			} catch (Exception e) {
 				
 				// no operands after k3 operator
-				AssertEquals ("test#07", typeof (SyntaxErrorException), e.GetType ());
+				Assertion.AssertEquals ("test#07", typeof (SyntaxErrorException), e.GetType ());
 			}						
 		}
 		
-		public void TestSelectStringOperators ()
+		[Test]
+		public void SelectStringOperators ()
 		{
  			DataTable T = new DataTable ("test");
 			DataColumn C = new DataColumn ("name");
@@ -400,59 +394,60 @@ namespace MonoTests.System.Data
 			Row [2] = 1;
 			T.Rows.Add (Row);
 					
-			AssertEquals ("test#01", 1, T.Select ("name = 'human' + 1").Length);
+			Assertion.AssertEquals ("test#01", 1, T.Select ("name = 'human' + 1").Length);
 			
-			AssertEquals ("test#02", "human1", T.Select ("name = 'human' + 1") [0] ["name"]);			
-			AssertEquals ("test#03", 1, T.Select ("name = 'human' + '1'").Length);
-			AssertEquals ("test#04", "human1", T.Select ("name = 'human' + '1'") [0] ["name"]);			
-			AssertEquals ("test#05", 1, T.Select ("name = 'human' + 1 + 2").Length);
-			AssertEquals ("test#06", "human12", T.Select ("name = 'human' + '1' + '2'") [0] ["name"]);
+			Assertion.AssertEquals ("test#02", "human1", T.Select ("name = 'human' + 1") [0] ["name"]);			
+			Assertion.AssertEquals ("test#03", 1, T.Select ("name = 'human' + '1'").Length);
+			Assertion.AssertEquals ("test#04", "human1", T.Select ("name = 'human' + '1'") [0] ["name"]);			
+			Assertion.AssertEquals ("test#05", 1, T.Select ("name = 'human' + 1 + 2").Length);
+			Assertion.AssertEquals ("test#06", "human12", T.Select ("name = 'human' + '1' + '2'") [0] ["name"]);
 			
-			AssertEquals ("test#07", 1, T.Select ("name = 'huMAn' + 1").Length);
+			Assertion.AssertEquals ("test#07", 1, T.Select ("name = 'huMAn' + 1").Length);
 			
 			Set.CaseSensitive = true;
-			AssertEquals ("test#08", 0, T.Select ("name = 'huMAn' + 1").Length);
+			Assertion.AssertEquals ("test#08", 0, T.Select ("name = 'huMAn' + 1").Length);
 			
 			T.CaseSensitive = false;
-			AssertEquals ("test#09", 1, T.Select ("name = 'huMAn' + 1").Length);
+			Assertion.AssertEquals ("test#09", 1, T.Select ("name = 'huMAn' + 1").Length);
 			
 			T.CaseSensitive = true;
-			AssertEquals ("test#10", 0, T.Select ("name = 'huMAn' + 1").Length);
+			Assertion.AssertEquals ("test#10", 0, T.Select ("name = 'huMAn' + 1").Length);
 			
 			Set.CaseSensitive = false;
-			AssertEquals ("test#11", 0, T.Select ("name = 'huMAn' + 1").Length);
+			Assertion.AssertEquals ("test#11", 0, T.Select ("name = 'huMAn' + 1").Length);
 			
 			T.CaseSensitive = false;
-			AssertEquals ("test#12", 1, T.Select ("name = 'huMAn' + 1").Length);
+			Assertion.AssertEquals ("test#12", 1, T.Select ("name = 'huMAn' + 1").Length);
 			
-			AssertEquals ("test#13", 0, T.Select ("name = 'human1*'").Length);
-			AssertEquals ("test#14", 11, T.Select ("name like 'human1*'").Length);
-			AssertEquals ("test#15", 11, T.Select ("name like 'human1%'").Length);
+			Assertion.AssertEquals ("test#13", 0, T.Select ("name = 'human1*'").Length);
+			Assertion.AssertEquals ("test#14", 11, T.Select ("name like 'human1*'").Length);
+			Assertion.AssertEquals ("test#15", 11, T.Select ("name like 'human1%'").Length);
 			
 			try {
-				AssertEquals ("test#16", 11, T.Select ("name like 'h*an1'").Length);
-				Fail ("test#16");
+				Assertion.AssertEquals ("test#16", 11, T.Select ("name like 'h*an1'").Length);
+				Assertion.Fail ("test#16");
 			} catch (Exception e) {
 				
 				// 'h*an1' is invalid
-				AssertEquals ("test#17", typeof (EvaluateException), e.GetType ());
+				Assertion.AssertEquals ("test#17", typeof (EvaluateException), e.GetType ());
 			}
 			
 			try {
-				AssertEquals ("test#18", 11, T.Select ("name like 'h%an1'").Length);
-				Fail ("test#19");
+				Assertion.AssertEquals ("test#18", 11, T.Select ("name like 'h%an1'").Length);
+				Assertion.Fail ("test#19");
 			} catch (Exception e) {
 				
 				// 'h%an1' is invalid
-				AssertEquals ("test#20", typeof (EvaluateException), e.GetType ());
+				Assertion.AssertEquals ("test#20", typeof (EvaluateException), e.GetType ());
 			}
 			
-			AssertEquals ("test#21", 0, T.Select ("name like 'h[%]an'").Length);
-			AssertEquals ("test#22", 1, T.Select ("name like 'h[*]an'").Length);
+			Assertion.AssertEquals ("test#21", 0, T.Select ("name like 'h[%]an'").Length);
+			Assertion.AssertEquals ("test#22", 1, T.Select ("name like 'h[*]an'").Length);
 			
 		}
 
-		public void TestSelectAggregates ()
+		[Test]
+		public void SelectAggregates ()
 		{
 			DataTable T = new DataTable ("test");
 			DataColumn C = new DataColumn ("name");
@@ -472,16 +467,17 @@ namespace MonoTests.System.Data
 				T.Rows.Add (Row);
 			}
 			
-			AssertEquals ("test#01", 1000, T.Select ("Sum(age) > 10").Length);
-			AssertEquals ("test#02", 1000, T.Select ("avg(age) = 499").Length);
-			AssertEquals ("test#03", 1000, T.Select ("min(age) = 0").Length);
-			AssertEquals ("test#04", 1000, T.Select ("max(age) = 999").Length);
-			AssertEquals ("test#05", 1000, T.Select ("count(age) = 1000").Length);
-			AssertEquals ("test#06", 1000, T.Select ("stdev(age) > 287 and stdev(age) < 289").Length);
-			AssertEquals ("test#07", 1000, T.Select ("var(age) < 83417 and var(age) > 83416").Length);
+			Assertion.AssertEquals ("test#01", 1000, T.Select ("Sum(age) > 10").Length);
+			Assertion.AssertEquals ("test#02", 1000, T.Select ("avg(age) = 499").Length);
+			Assertion.AssertEquals ("test#03", 1000, T.Select ("min(age) = 0").Length);
+			Assertion.AssertEquals ("test#04", 1000, T.Select ("max(age) = 999").Length);
+			Assertion.AssertEquals ("test#05", 1000, T.Select ("count(age) = 1000").Length);
+			Assertion.AssertEquals ("test#06", 1000, T.Select ("stdev(age) > 287 and stdev(age) < 289").Length);
+			Assertion.AssertEquals ("test#07", 1000, T.Select ("var(age) < 83417 and var(age) > 83416").Length);
 		}
 		
-		public void TestSelectFunctions ()
+		[Test]
+		public void SelectFunctions ()
 		{
 			DataTable T = new DataTable ("test");
 			DataColumn C = new DataColumn ("name");
@@ -508,20 +504,21 @@ namespace MonoTests.System.Data
 			T.Rows.Add (Row);
 
 			//TODO: How to test Convert-function
-			AssertEquals ("test#01", 25, T.Select ("age = 5*5") [0]["age"]);			
-			AssertEquals ("test#02", 901, T.Select ("len(name) > 7").Length);
-			AssertEquals ("test#03", 125, T.Select ("age = 5*5*5 AND len(name)>7") [0]["age"]);
-			AssertEquals ("test#04", 1, T.Select ("isnull(id, 'test') = 'test'").Length);			
-			AssertEquals ("test#05", 1000, T.Select ("iif(id = '56', 'test', 'false') = 'false'").Length);			
-			AssertEquals ("test#06", 1, T.Select ("iif(id = '56', 'test', 'false') = 'test'").Length);
-			AssertEquals ("test#07", 9, T.Select ("substring(id, 2, 3) = '23'").Length);
-			AssertEquals ("test#08", "123", T.Select ("substring(id, 2, 3) = '23'") [0] ["id"]);
-			AssertEquals ("test#09", "423", T.Select ("substring(id, 2, 3) = '23'") [3] ["id"]);
-			AssertEquals ("test#10", "923", T.Select ("substring(id, 2, 3) = '23'") [8] ["id"]);
+			Assertion.AssertEquals ("test#01", 25, T.Select ("age = 5*5") [0]["age"]);			
+			Assertion.AssertEquals ("test#02", 901, T.Select ("len(name) > 7").Length);
+			Assertion.AssertEquals ("test#03", 125, T.Select ("age = 5*5*5 AND len(name)>7") [0]["age"]);
+			Assertion.AssertEquals ("test#04", 1, T.Select ("isnull(id, 'test') = 'test'").Length);			
+			Assertion.AssertEquals ("test#05", 1000, T.Select ("iif(id = '56', 'test', 'false') = 'false'").Length);			
+			Assertion.AssertEquals ("test#06", 1, T.Select ("iif(id = '56', 'test', 'false') = 'test'").Length);
+			Assertion.AssertEquals ("test#07", 9, T.Select ("substring(id, 2, 3) = '23'").Length);
+			Assertion.AssertEquals ("test#08", "123", T.Select ("substring(id, 2, 3) = '23'") [0] ["id"]);
+			Assertion.AssertEquals ("test#09", "423", T.Select ("substring(id, 2, 3) = '23'") [3] ["id"]);
+			Assertion.AssertEquals ("test#10", "923", T.Select ("substring(id, 2, 3) = '23'") [8] ["id"]);
 			
 		}
 
-		public void TestSelectRelations ()
+		[Test]
+		public void SelectRelations ()
 		{
                         DataSet Set = new DataSet ();
                         DataTable Mom = new DataTable ("Mom");
@@ -600,21 +597,21 @@ namespace MonoTests.System.Data
                         Child.Rows.Add (Row);
 			
 			DataRow [] Rows = Child.Select ("name = Parent.Childname");
-			AssertEquals ("test#01", 6, Rows.Length);
+			Assertion.AssertEquals ("test#01", 6, Rows.Length);
 			Rows = Child.Select ("Parent.childname = 'Jack'");
-			AssertEquals ("test#02", 1, Rows.Length);
+			Assertion.AssertEquals ("test#02", 1, Rows.Length);
 			
 			try {
 				// FIXME: LAMESPEC: Why the exception is thrown why... why... 
 				Mom.Select ("Child.Name = 'Jack'");
-				Fail ("test#03");
+				Assertion.Fail ("test#03");
 			} catch (Exception e) {
-				AssertEquals ("test#04", typeof (SyntaxErrorException), e.GetType ());
-				AssertEquals ("test#05", "Cannot interpret token 'Child' at position 1.", e.Message);
+				Assertion.AssertEquals ("test#04", typeof (SyntaxErrorException), e.GetType ());
+				Assertion.AssertEquals ("test#05", "Cannot interpret token 'Child' at position 1.", e.Message);
 			}
 			
 			Rows = Child.Select ("Parent.name = 'Laura'");
-			AssertEquals ("test#06", 3, Rows.Length);
+			Assertion.AssertEquals ("test#06", 3, Rows.Length);
 			
 			DataTable Parent2 = new DataTable ("Parent2");
                         Col = new DataColumn ("Name");
@@ -654,28 +651,29 @@ namespace MonoTests.System.Data
 			
 			try {
 				Rows = Child.Select ("Parent.ChildName = 'Jack'");
-				Fail ("test#07");
+				Assertion.Fail ("test#07");
 			} catch (Exception e) {
-				AssertEquals ("test#08", typeof (EvaluateException), e.GetType ());
-				AssertEquals ("test#09", "The table [Child] involved in more than one relation. You must explicitly mention a relation name in the expression 'parent.[ChildName]'.", e.Message);
+				Assertion.AssertEquals ("test#08", typeof (EvaluateException), e.GetType ());
+				Assertion.AssertEquals ("test#09", "The table [Child] involved in more than one relation. You must explicitly mention a relation name in the expression 'parent.[ChildName]'.", e.Message);
 			}
 			
 			Rows = Child.Select ("Parent(rel).ChildName = 'Jack'");
-			AssertEquals ("test#10", 1, Rows.Length);
+			Assertion.AssertEquals ("test#10", 1, Rows.Length);
 
 			Rows = Child.Select ("Parent(Rel2).ChildName = 'Jack'");
-			AssertEquals ("test#10", 1, Rows.Length);
+			Assertion.AssertEquals ("test#10", 1, Rows.Length);
 			
 			try {
 			     	Mom.Select ("Parent.name  = 'John'");
 			} catch (Exception e) {
-				AssertEquals ("test#11", typeof (IndexOutOfRangeException), e.GetType ());
-				AssertEquals ("test#12", "Cannot find relation 0.", e.Message);
+				Assertion.AssertEquals ("test#11", typeof (IndexOutOfRangeException), e.GetType ());
+				Assertion.AssertEquals ("test#12", "Cannot find relation 0.", e.Message);
 			}
 			
 		}
 
-		public void TestToString()
+		[Test]
+		public void ToStringTest()
 		{
 			DataTable dt = new DataTable();
 			dt.Columns.Add("Col1",typeof(int));

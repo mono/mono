@@ -1,13 +1,15 @@
 // DataColumnTest.cs - NUnit Test Cases for System.Data.DataColumn
 //
-// Author:
+// Authors:
 //   Franklin Wise <gracenote@earthlink.net>
 //   Rodrigo Moya <rodrigo@ximian.com>
 //   Daniel Morgan <danmorg@sc.rr.com>
+//   Martin Willemoes Hansen <mwh@sysrq.dk>
 //
 // (C) Copyright 2002 Franklin Wise
 // (C) Copyright 2002 Rodrigo Moya
 // (C) Copyright 2003 Daniel Morgan
+// (C) Copyright 2003 Martin Willemoes Hansen
 //
 
 using NUnit.Framework;
@@ -16,27 +18,19 @@ using System.Data;
 
 namespace MonoTests.System.Data
 {
-	public class DataColumnTest : TestCase
+	[TestFixture]
+	public class DataColumnTest
 	{
-		public DataColumnTest () : base ("System.Data.DataColumn") {}
-		public DataColumnTest (string name) : base (name) {}
-
 		private DataTable _tbl;
 
-		protected override void SetUp () 
+		[SetUp]
+		public void GetReady () 
 		{
 			_tbl = new DataTable();
 		}
 
-		protected override void TearDown() {}
-
-		public static ITest Suite {
-			get { 
-				return new TestSuite (typeof (DataColumnTest)); 
-			}
-		}
-
-		public void TestCtor()	
+		[Test]
+		public void Ctor()	
 		{
 			string colName = "ColName";
 			DataColumn col = new DataColumn();
@@ -54,7 +48,7 @@ namespace MonoTests.System.Data
 				Assertion.Fail("DC7: Failed to throw ArgumentNullException.");
 			}
 			catch (ArgumentNullException){}
-			catch (AssertionFailedError exc) {throw  exc;}
+			catch (AssertionException exc) {throw  exc;}
 			catch (Exception exc)
 			{
 				Assertion.Fail("DC8: DataColumnNull. Wrong exception type. Got:" + exc);
@@ -62,7 +56,8 @@ namespace MonoTests.System.Data
 
 		}
 
-		public void TestAllowDBNull()
+		[Test]
+		public void AllowDBNull()
 		{
 			DataColumn col = new DataColumn("NullCheck",typeof(int));
 			_tbl.Columns.Add(col);
@@ -72,7 +67,8 @@ namespace MonoTests.System.Data
 			col.AllowDBNull = false;
 		}
 
-		public void TestAutoIncrement()
+		[Test]
+		public void AutoIncrement()
 		{
 			DataColumn col = new DataColumn("Auto",typeof(string));
 			col.AutoIncrement = true;
@@ -85,7 +81,8 @@ namespace MonoTests.System.Data
 			Assertion.Assert("DC11: AutoInc type convert failed." ,col.DataType == typeof (int));
 		}
 
-		public void TestAutoIncrementExceptions()
+		[Test]
+		public void AutoIncrementExceptions()
 		{
 			DataColumn col = new DataColumn();
 
@@ -98,7 +95,7 @@ namespace MonoTests.System.Data
 				Assertion.Fail("DC12: Failed to throw ArgumentException");
 			}
 			catch (ArgumentException){}
-			catch (AssertionFailedError exc) {throw  exc;}
+			catch (AssertionException exc) {throw  exc;}
 			catch (Exception exc)
 			{
 				Assertion.Fail("DC13: ExprAutoInc. Wrong exception type. Got:" + exc);
@@ -107,7 +104,8 @@ namespace MonoTests.System.Data
 
 		}
 
-		public void TestCaption()
+		[Test]
+		public void Caption()
 		{
 			DataColumn col = new DataColumn("ColName");
 			//Caption not set at this point
@@ -123,7 +121,8 @@ namespace MonoTests.System.Data
 			
 		}
 
-		public void TestForColumnNameException()
+		[Test]
+		public void ForColumnNameException()
 		{
 			DataColumn col = new DataColumn();
 			DataColumn col2 = new DataColumn();
@@ -131,7 +130,7 @@ namespace MonoTests.System.Data
 			DataColumn col4 = new DataColumn();
 			
 			col.ColumnName = "abc";
-			AssertEquals( "abc", col.ColumnName);
+			Assertion.AssertEquals( "abc", col.ColumnName);
 
 			_tbl.Columns.Add(col);
 			
@@ -140,11 +139,11 @@ namespace MonoTests.System.Data
 			{
 				col2.ColumnName = "abc";
 				_tbl.Columns.Add(col2);
-				AssertEquals( "abc", col2.ColumnName);
+				Assertion.AssertEquals( "abc", col2.ColumnName);
 				Assertion.Fail("DC17: Failed to throw duplicate name exception.");
 			}
 			catch (DuplicateNameException){}
-			catch (AssertionFailedError exc) {throw  exc;}
+			catch (AssertionException exc) {throw  exc;}
 			catch (Exception exc)
 			{
 				Assertion.Fail("DC18: Wrong exception type. " + exc.ToString());
@@ -155,7 +154,8 @@ namespace MonoTests.System.Data
 			_tbl.Columns.Add(col3);
 		}
 
-		public void TestDefaultValue()
+		[Test]
+		public void DefaultValue()
 		{
 			DataTable tbl = new DataTable();
 			tbl.Columns.Add("MyCol", typeof(int));
@@ -168,7 +168,7 @@ namespace MonoTests.System.Data
 				Assertion.Fail("DC19: Failed to throw ArgumentException.");
 			}
 			catch (ArgumentException){}
-			catch (AssertionFailedError exc) {throw  exc;}
+			catch (AssertionException exc) {throw  exc;}
 			catch (Exception exc)
 			{
 				Assertion.Fail("DC20: Wrong exception type. " + exc.ToString());
@@ -184,7 +184,7 @@ namespace MonoTests.System.Data
 				Assertion.Fail("DC21: Failed to throw InvalidCastException.");
 			}
 			catch (InvalidCastException){}
-			catch (AssertionFailedError exc) {throw  exc;}
+			catch (AssertionException exc) {throw  exc;}
 			catch (Exception exc)
 			{
 				Assertion.Fail("DC22: Wrong exception type. " + exc.ToString());
@@ -198,7 +198,8 @@ namespace MonoTests.System.Data
 
 		}
 
-		public void TestSetDataType()
+		[Test]
+		public void SetDataType()
 		{
 			//test for DataAlready exists and change the datatype
 			
@@ -208,7 +209,8 @@ namespace MonoTests.System.Data
 
 		}
 
-		public void TestDefaults1() 
+		[Test]
+		public void Defaults1() 
 		{
 			//Check for defaults - ColumnName not set at the beginning
 			DataTable table = new DataTable();		
@@ -238,7 +240,8 @@ namespace MonoTests.System.Data
 			Assertion.AssertEquals("DC6: Value from DataRow.Item", v, DBNull.Value);
 		}
 
-		public void TestDefaults2() 
+		[Test]
+		public void Defaults2() 
 		{
 			//Check for defaults - ColumnName set at the beginning
 			string blah = "Blah";
@@ -270,7 +273,8 @@ namespace MonoTests.System.Data
 			Assertion.AssertEquals("DC28: Value from DataRow.Item", v, DBNull.Value);
 		}
 
-                public void TestExpressionFunctions ()
+		[Test]
+                public void ExpressionFunctions ()
                 {
                 	DataTable T = new DataTable ("test");
 			DataColumn C = new DataColumn ("name");
@@ -298,19 +302,19 @@ namespace MonoTests.System.Data
 			Row [1] = DBNull.Value;
 			T.Rows.Add (Row);
 						
-			AssertEquals ("DC29", "hum710", T.Rows [10] [2]);
-			AssertEquals ("DC30", "hum64", T.Rows [4] [2]);
+			Assertion.AssertEquals ("DC29", "hum710", T.Rows [10] [2]);
+			Assertion.AssertEquals ("DC30", "hum64", T.Rows [4] [2]);
                 	C = T.Columns [2];
                 	C.Expression = "isnull (age, 'succ[[]]ess')";
-                	AssertEquals ("DC31", "succ[[]]ess", T.Rows [100] [2]);
+                	Assertion.AssertEquals ("DC31", "succ[[]]ess", T.Rows [100] [2]);
                 	
                 	C.Expression = "iif (age = 24, 'hurrey', 'boo')";
-                	AssertEquals ("DC32", "boo", T.Rows [50] [2]);
-	               	AssertEquals ("DC33", "hurrey", T.Rows [24] [2]);
+                	Assertion.AssertEquals ("DC32", "boo", T.Rows [50] [2]);
+	               	Assertion.AssertEquals ("DC33", "hurrey", T.Rows [24] [2]);
                 	
                 	C.Expression = "convert (age, 'System.Boolean')";
-                	AssertEquals ("DC32", Boolean.TrueString, T.Rows [50] [2]);
-                	AssertEquals ("DC32", Boolean.FalseString, T.Rows [0] [2]);
+                	Assertion.AssertEquals ("DC32", Boolean.TrueString, T.Rows [50] [2]);
+                	Assertion.AssertEquals ("DC32", Boolean.FalseString, T.Rows [0] [2]);
                 	
                 	//
                 	// Exceptions
@@ -318,41 +322,42 @@ namespace MonoTests.System.Data
                 	
                 	try {
                 		C.Expression = "iff (age = 24, 'hurrey', 'boo')";
-                		Fail ("DC34");
+                		Assertion.Fail ("DC34");
                 	} catch (Exception e) {
                 		                	
                 		// The expression contains undefined function call iff().
-                		AssertEquals ("DC35", typeof (EvaluateException), e.GetType ());
+                		Assertion.AssertEquals ("DC35", typeof (EvaluateException), e.GetType ());
                 	}
                 	
                 	try {
                 		C.Expression = "iif (nimi = 24, 'hurrey', 'boo')";
-                		Fail ("DC36");
+                		Assertion.Fail ("DC36");
                 	} catch (Exception e) {                		               	
-                		AssertEquals ("DC37", typeof (EvaluateException), e.GetType ());
-                		AssertEquals ("DC38", "Cannot find column [nimi].", e.Message);
+                		Assertion.AssertEquals ("DC37", typeof (EvaluateException), e.GetType ());
+                		Assertion.AssertEquals ("DC38", "Cannot find column [nimi].", e.Message);
                 	}
                 	
                 	try {
                 		C.Expression = "iif (name = 24, 'hurrey', 'boo')";
-                		Fail ("DC39");
+                		Assertion.Fail ("DC39");
                 	} catch (Exception e) {
-                		AssertEquals ("DC40", typeof (EvaluateException), e.GetType ());
-                		AssertEquals ("DC41", "Cannot perform '=' operation on System.String and System.Int32.", e.Message);
+                		Assertion.AssertEquals ("DC40", typeof (EvaluateException), e.GetType ());
+                		Assertion.AssertEquals ("DC41", "Cannot perform '=' operation on System.String and System.Int32.", e.Message);
                 	}
                 	
 
                 	try {
                 		C.Expression = "convert (age, Boolean)";	
-                		Fail ("DC42");
+                		Assertion.Fail ("DC42");
                 	} catch (Exception e) {
-                		AssertEquals ("DC43", typeof (EvaluateException), e.GetType ());
-                		AssertEquals ("DC44", "Invalid type name 'Boolean'.", e.Message);
+                		Assertion.AssertEquals ("DC43", typeof (EvaluateException), e.GetType ());
+                		Assertion.AssertEquals ("DC44", "Invalid type name 'Boolean'.", e.Message);
                 	}
                 	
                 }
 
-                public void TestExpressionAggregates ()
+		[Test]
+                public void ExpressionAggregates ()
                 {
                 	DataTable T = new DataTable ("test");
 			DataTable T2 = new DataTable ("test2");
@@ -408,35 +413,36 @@ namespace MonoTests.System.Data
                 	
                 	C = T.Columns [3];
                 	C.Expression = "Sum (Child.age)";
-                	AssertEquals ("DC45", "-2", T.Rows [0] [3]);
-                	AssertEquals ("DC46", "98", T.Rows [50] [3]);
+                	Assertion.AssertEquals ("DC45", "-2", T.Rows [0] [3]);
+                	Assertion.AssertEquals ("DC46", "98", T.Rows [50] [3]);
                 	
 			C.Expression = "Count (Child.age)";
-                	AssertEquals ("DC47", "2", T.Rows [0] [3]);
-                	AssertEquals ("DC48", "2", T.Rows [60] [3]);		                	
+                	Assertion.AssertEquals ("DC47", "2", T.Rows [0] [3]);
+                	Assertion.AssertEquals ("DC48", "2", T.Rows [60] [3]);		                	
 		
 			C.Expression = "Avg (Child.age)";
-                	AssertEquals ("DC49", "-1", T.Rows [0] [3]);
-                	AssertEquals ("DC50", "59", T.Rows [60] [3]);		                	
+                	Assertion.AssertEquals ("DC49", "-1", T.Rows [0] [3]);
+                	Assertion.AssertEquals ("DC50", "59", T.Rows [60] [3]);		                	
 
 			C.Expression = "Min (Child.age)";
-                	AssertEquals ("DC51", "-2", T.Rows [0] [3]);
-                	AssertEquals ("DC52", "58", T.Rows [60] [3]);		                	
+                	Assertion.AssertEquals ("DC51", "-2", T.Rows [0] [3]);
+                	Assertion.AssertEquals ("DC52", "58", T.Rows [60] [3]);		                	
 
 			C.Expression = "Max (Child.age)";
-                	AssertEquals ("DC53", "0", T.Rows [0] [3]);
-                	AssertEquals ("DC54", "60", T.Rows [60] [3]);		                	
+                	Assertion.AssertEquals ("DC53", "0", T.Rows [0] [3]);
+                	Assertion.AssertEquals ("DC54", "60", T.Rows [60] [3]);		                	
 
 			C.Expression = "stdev (Child.age)";
-                	AssertEquals ("DC55", "1,4142135623731", T.Rows [0] [3]);
-                	AssertEquals ("DC56", "1,4142135623731", T.Rows [60] [3]);		                	
+                	Assertion.AssertEquals ("DC55", "1,4142135623731", T.Rows [0] [3]);
+                	Assertion.AssertEquals ("DC56", "1,4142135623731", T.Rows [60] [3]);		                	
 
 			C.Expression = "var (Child.age)";
-                	AssertEquals ("DC57", "2", T.Rows [0] [3]);
-                	AssertEquals ("DC58", "2", T.Rows [60] [3]);		                	
+                	Assertion.AssertEquals ("DC57", "2", T.Rows [0] [3]);
+                	Assertion.AssertEquals ("DC58", "2", T.Rows [60] [3]);		                	
                 }
 
-		public void TestExpressionOperator ()
+		[Test]
+		public void ExpressionOperator ()
 		{
                 	DataTable T = new DataTable ("test");
 			DataColumn C = new DataColumn ("name");
@@ -466,51 +472,51 @@ namespace MonoTests.System.Data
 			
                 	C = T.Columns [2];
                 	C.Expression = "age + 4";
-			AssertEquals ("DC59", "68", T.Rows [64] [2]);
+			Assertion.AssertEquals ("DC59", "68", T.Rows [64] [2]);
 			
 			C.Expression = "age - 4";
-			AssertEquals ("DC60", "60", T.Rows [64] [2]);
+			Assertion.AssertEquals ("DC60", "60", T.Rows [64] [2]);
 			
 			C.Expression = "age * 4";
-			AssertEquals ("DC61", "256", T.Rows [64] [2]);
+			Assertion.AssertEquals ("DC61", "256", T.Rows [64] [2]);
 			
 			C.Expression = "age / 4";
-			AssertEquals ("DC62", "16", T.Rows [64] [2]);
+			Assertion.AssertEquals ("DC62", "16", T.Rows [64] [2]);
 			
 			C.Expression = "age % 5";
-			AssertEquals ("DC63", "4", T.Rows [64] [2]);
+			Assertion.AssertEquals ("DC63", "4", T.Rows [64] [2]);
 			
 			C.Expression = "age in (5, 10, 15, 20, 25)";
-			AssertEquals ("DC64", "False", T.Rows [64] [2]);
-			AssertEquals ("DC65", "True", T.Rows [25] [2]);
+			Assertion.AssertEquals ("DC64", "False", T.Rows [64] [2]);
+			Assertion.AssertEquals ("DC65", "True", T.Rows [25] [2]);
 			
 			C.Expression = "name like 'human1%'";
-			AssertEquals ("DC66", "True", T.Rows [1] [2]);
-			AssertEquals ("DC67", "False", T.Rows [25] [2]);
+			Assertion.AssertEquals ("DC66", "True", T.Rows [1] [2]);
+			Assertion.AssertEquals ("DC67", "False", T.Rows [25] [2]);
 
                 	C.Expression = "age < 4";
-			AssertEquals ("DC68", "False", T.Rows [4] [2]);
-			AssertEquals ("DC69", "True", T.Rows [3] [2]);
+			Assertion.AssertEquals ("DC68", "False", T.Rows [4] [2]);
+			Assertion.AssertEquals ("DC69", "True", T.Rows [3] [2]);
 
                 	C.Expression = "age <= 4";
-			AssertEquals ("DC70", "True", T.Rows [4] [2]);
-			AssertEquals ("DC71", "False", T.Rows [5] [2]);
+			Assertion.AssertEquals ("DC70", "True", T.Rows [4] [2]);
+			Assertion.AssertEquals ("DC71", "False", T.Rows [5] [2]);
 
                 	C.Expression = "age > 4";
-			AssertEquals ("DC72", "False", T.Rows [4] [2]);
-			AssertEquals ("DC73", "True", T.Rows [5] [2]);
+			Assertion.AssertEquals ("DC72", "False", T.Rows [4] [2]);
+			Assertion.AssertEquals ("DC73", "True", T.Rows [5] [2]);
 
                 	C.Expression = "age >= 4";
-			AssertEquals ("DC74", "True", T.Rows [4] [2]);
-			AssertEquals ("DC75", "False", T.Rows [1] [2]);
+			Assertion.AssertEquals ("DC74", "True", T.Rows [4] [2]);
+			Assertion.AssertEquals ("DC75", "False", T.Rows [1] [2]);
 
                 	C.Expression = "age = 4";
-			AssertEquals ("DC76", "True", T.Rows [4] [2]);
-			AssertEquals ("DC77", "False", T.Rows [1] [2]);
+			Assertion.AssertEquals ("DC76", "True", T.Rows [4] [2]);
+			Assertion.AssertEquals ("DC77", "False", T.Rows [1] [2]);
 
                 	C.Expression = "age <> 4";
-			AssertEquals ("DC76", "False", T.Rows [4] [2]);
-			AssertEquals ("DC77", "True", T.Rows [1] [2]);
+			Assertion.AssertEquals ("DC76", "False", T.Rows [4] [2]);
+			Assertion.AssertEquals ("DC77", "True", T.Rows [1] [2]);
 		}
 	}
 }

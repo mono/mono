@@ -1,9 +1,12 @@
 // ConstraintTest.cs - NUnit Test Cases for testing the abstract class System.Data.Constraint
 // The tests use an inherited class (UniqueConstraint) to test the Constraint class.
 //
-// Franklin Wise <gracenote@earthlink.net>
+// Authors:
+//   Franklin Wise <gracenote@earthlink.net>
+//   Martin Willemoes Hansen <mwh@sysrq.dk>
 //
 // (C) 2002 Franklin Wise
+// (C) 2003 Martin Willemoes Hansen
 // 
 
 using NUnit.Framework;
@@ -28,17 +31,15 @@ namespace MonoTests.System.Data
 //		}
 //	}
 
-	public class ConstraintTest : TestCase 
+	[TestFixture]
+	public class ConstraintTest
 	{
 		private DataTable _table;
 		private Constraint _constraint1;
 		private Constraint _constraint2;
 
-		public ConstraintTest() : base ("MonoTests.System.Data.ConstraintTest") {}
-		public ConstraintTest(string name) : base(name) {}
-
-		public void PublicSetup(){SetUp();}
-		protected override void SetUp() {
+		[SetUp]
+		public void GetReady() {
 
 			//Setup DataTable
 			_table = new DataTable("TestTable");
@@ -56,16 +57,8 @@ namespace MonoTests.System.Data
 			_table.Constraints.Clear();
 		}  
 		
-
-		protected override void TearDown() {}
-
-		public static ITest Suite {
-			get { 
-				return new TestSuite(typeof(ConstraintTest)); 
-			}
-		}
-
-		public void TestSetConstraintNameNullOrEmptyExceptions() {
+		[Test]
+		public void SetConstraintNameNullOrEmptyExceptions() {
 			bool exceptionCaught = false;
 			string name = null;
 
@@ -96,7 +89,8 @@ namespace MonoTests.System.Data
 			}	
 		}
 
-		public void TestSetConstraintNameDuplicateException() {
+		[Test]
+		public void SetConstraintNameDuplicateException() {
 			_constraint1.ConstraintName = "Dog";
 			_constraint2.ConstraintName = "Cat";
 
@@ -111,14 +105,15 @@ namespace MonoTests.System.Data
 					" DuplicateNameException exception.");
 			}	
 			catch (DuplicateNameException) {}
-			catch (AssertionFailedError exc) {throw exc;}
+			catch (AssertionException exc) {throw exc;}
 			catch {
 				Assertion.Fail("Wrong exception type thrown.");
 			}
 		
 		}
 
-		public void TestToString() {
+		[Test]
+		public void ToStringTest() {
 			_constraint1.ConstraintName = "Test";
 			Assertion.Assert("ToString is the same as constraint name.", _constraint1.ConstraintName.CompareTo( _constraint1.ToString()) == 0);
 			
@@ -126,13 +121,13 @@ namespace MonoTests.System.Data
 			Assertion.AssertNotNull("ToString should return empty.",_constraint1.ToString());
 		}
 
-		public void TestGetExtendedProperties() {
+		[Test]
+		public void GetExtendedProperties() {
 			PropertyCollection col = _constraint1.ExtendedProperties as
 				PropertyCollection;
 
 			Assertion.AssertNotNull("ExtendedProperties returned null or didn't " +
 				"return the correct type", col);
 		}
-		
 	}
 }

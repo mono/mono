@@ -1,12 +1,13 @@
 // DataRowTest.cs - NUnit Test Cases for System.DataRow
 //
-// Franklin Wise (gracenote@earthlink.net)
-// Daniel Morgan <danmorg@sc.rr.com>
+// Authors:
+//   Franklin Wise (gracenote@earthlink.net)
+//   Daniel Morgan <danmorg@sc.rr.com>
 //
 // (C) Copyright 2002 Franklin Wise
 // (C) Copyright 2003 Daniel Morgan
+// (C) Copyright 2003 Martin Willemoes Hansen
 // 
-
 
 using NUnit.Framework;
 using System;
@@ -14,49 +15,40 @@ using System.Data;
 
 namespace MonoTests.System.Data
 {
-
-	public class DataRowTest : TestCase {
+	[TestFixture]
+	public class DataRowTest {
 	
-		public DataRowTest() : base ("MonoTests.System.Data.DataRowTest") {}
-		public DataRowTest(string name) : base(name) {}
-
 		private DataTable _tbl;	
 
-		protected override void SetUp() {
+		[SetUp]
+		public void GetReady() {
 			_tbl = new DataTable();
 		}
 
-		protected override void TearDown() {}
-
-		public static ITest Suite {
-			get { 
-				return new TestSuite(typeof(DataRowTest)); 
-			}
-		}
-
 		// tests item at row, column in table to be DBNull.Value
-		private void TestDBNull(string message, DataTable dt, int row, int column) 
+		private void DBNullTest (string message, DataTable dt, int row, int column) 
 		{
 			object val = dt.Rows[row].ItemArray[column];
 			Assertion.AssertEquals(message, DBNull.Value, val);
 		}
 
 		// tests item at row, column in table to be null
-		private void TestNull(string message, DataTable dt, int row, int column) 
+		private void NullTest (string message, DataTable dt, int row, int column) 
 		{
 			object val = dt.Rows[row].ItemArray[column];
 			Assertion.AssertEquals(message, null, val);
 		}
 
 		// tests item at row, column in table to be 
-		private void TestValue(string message, DataTable dt, int row, int column, object value) 
+		private void ValueTest (string message, DataTable dt, int row, int column, object value) 
 		{
 			object val = dt.Rows[row].ItemArray[column];
 			Assertion.AssertEquals(message, value, val);
 		}
 
 		// test set null, DBNull.Value, and ItemArray short count
-		public void TestNullInItemArray () 
+		[Test]
+		public void NullInItemArray () 
 		{
 			string zero = "zero";
 			string one = "one";
@@ -147,28 +139,29 @@ namespace MonoTests.System.Data
 			table.Rows.Add(row);
 
 			// -- normal -----------------
-			TestValue("DR5: normal value test", table, 0, 0, zero);
-			TestValue("DR6: normal value test", table, 0, 1, one);
-			TestValue("DR7: normal value test", table, 0, 2, two);
+			ValueTest("DR5: normal value test", table, 0, 0, zero);
+			ValueTest("DR6: normal value test", table, 0, 1, one);
+			ValueTest("DR7: normal value test", table, 0, 2, two);
 
 			// -- null ----------
-			TestValue("DR8: null value test", table, 1, 0, zero);
-			TestValue("DR9: null value test", table, 1, 1, DBNull.Value);
-			TestValue("DR10: null value test", table, 1, 2, two);
+			ValueTest("DR8: null value test", table, 1, 0, zero);
+			ValueTest("DR9: null value test", table, 1, 1, DBNull.Value);
+			ValueTest("DR10: null value test", table, 1, 2, two);
 
 			// -- DBNull.Value -------------
-			TestValue("DR11: DBNull.Value value test", table, 2, 0, zero);
-			TestValue("DR12: DBNull.Value value test", table, 2, 1, DBNull.Value);
-			TestValue("DR13: DBNull.Value value test", table, 2, 2, two);
+			ValueTest("DR11: DBNull.Value value test", table, 2, 0, zero);
+			ValueTest("DR12: DBNull.Value value test", table, 2, 1, DBNull.Value);
+			ValueTest("DR13: DBNull.Value value test", table, 2, 2, two);
 
 			// -- object array smaller than number of columns -----
-			TestValue("DR14: array smaller value test", table, 3, 0, abc);
-			TestValue("DR15: array smaller value test", table, 3, 1, def);
-			TestValue("DR16: array smaller value test", table, 3, 2, DBNull.Value);
+			ValueTest("DR14: array smaller value test", table, 3, 0, abc);
+			ValueTest("DR15: array smaller value test", table, 3, 1, def);
+			ValueTest("DR16: array smaller value test", table, 3, 2, DBNull.Value);
 		}
 	
 		// test DefaultValue when setting ItemArray
-		public void TestDefaultValueInItemArray () {		
+		[Test]
+		public void DefaultValueInItemArray () {		
 			string zero = "zero";
 
 			DataTable table = new DataTable();
@@ -253,24 +246,25 @@ namespace MonoTests.System.Data
 			table.Rows.Add(row);
 
 			// -- normal -----------------
-			TestValue("DR20: normal value test", table, 0, 0, zero);
-			TestValue("DR21: normal value test", table, 0, 1, 8);
+			ValueTest("DR20: normal value test", table, 0, 0, zero);
+			ValueTest("DR21: normal value test", table, 0, 1, 8);
 			
 			// -- null ----------
-			TestValue("DR22: null value test", table, 1, 0, zero);
-			TestValue("DR23: null value test", table, 1, 1, 15);
+			ValueTest("DR22: null value test", table, 1, 0, zero);
+			ValueTest("DR23: null value test", table, 1, 1, 15);
 			
 			// -- DBNull.Value -------------
-			TestValue("DR24: DBNull.Value value test", table, 2, 0, zero);
-			TestDBNull("DR25: DBNull.Value value test", table, 2, 1);
+			ValueTest("DR24: DBNull.Value value test", table, 2, 0, zero);
+			DBNullTest("DR25: DBNull.Value value test", table, 2, 1);
 			
 			// -- object array smaller than number of columns -----
-			TestValue("DR26: array smaller value test", table, 3, 0, abc);
-			TestValue("DR27: array smaller value test", table, 3, 1, 15);
+			ValueTest("DR26: array smaller value test", table, 3, 0, abc);
+			ValueTest("DR27: array smaller value test", table, 3, 1, 15);
 		}
 
 		// test AutoIncrement when setting ItemArray
-		public void TestAutoIncrementInItemArray () {
+		[Test]
+		public void AutoIncrementInItemArray () {
 			string zero = "zero";
 			string num = "num";
 			
@@ -408,32 +402,32 @@ namespace MonoTests.System.Data
 			table.Rows.Add(row);
 
 			// -- normal -----------------
-			TestValue("DR34: normal value test", table, 0, 0, zero);
-			TestValue("DR35: normal value test", table, 0, 1, 8);
+			ValueTest("DR34: normal value test", table, 0, 0, zero);
+			ValueTest("DR35: normal value test", table, 0, 1, 8);
 			
 			// -- null 1----------
-			TestValue("DR36: null value test", table, 1, 0, zero);
-			TestValue("DR37: null value test", table, 1, 1, 9);
+			ValueTest("DR36: null value test", table, 1, 0, zero);
+			ValueTest("DR37: null value test", table, 1, 1, 9);
 
 			// -- null 2----------
-			TestValue("DR38: null value test", table, 2, 0, zero);
-			TestValue("DR39: null value test", table, 2, 1, 10);
+			ValueTest("DR38: null value test", table, 2, 0, zero);
+			ValueTest("DR39: null value test", table, 2, 1, 10);
 
 			// -- null 3----------
-			TestValue("DR40: null value test", table, 3, 0, zero);
-			TestValue("DR41: null value test", table, 3, 1, 11);
+			ValueTest("DR40: null value test", table, 3, 0, zero);
+			ValueTest("DR41: null value test", table, 3, 1, 11);
 
 			// -- DBNull.Value -------------
-			TestValue("DR42: DBNull.Value value test", table, 4, 0, zero);
-			TestValue("DR43: DBNull.Value value test", table, 4, 1, DBNull.Value);
+			ValueTest("DR42: DBNull.Value value test", table, 4, 0, zero);
+			ValueTest("DR43: DBNull.Value value test", table, 4, 1, DBNull.Value);
 
 			// -- null 4----------
-			TestValue("DR44: null value test", table, 5, 0, zero);
-			TestValue("DR45: null value test", table, 5, 1, 13);
+			ValueTest("DR44: null value test", table, 5, 0, zero);
+			ValueTest("DR45: null value test", table, 5, 1, 13);
 
 			// -- object array smaller than number of columns -----
-			TestValue("DR46: array smaller value test", table, 6, 0, abc);
-			TestValue("DR47: array smaller value test", table, 6, 1, 14);
+			ValueTest("DR46: array smaller value test", table, 6, 0, abc);
+			ValueTest("DR47: array smaller value test", table, 6, 1, 14);
 		}
 	}
 }

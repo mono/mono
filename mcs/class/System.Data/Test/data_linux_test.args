@@ -1,10 +1,3 @@
---target library
--o data_linux_test.dll
---noconfig
--r ../../lib/System.Data.dll
--r ../../lib/System.dll
--r ../../../nunit/NUnitCore_mono.dll
-System.Data.SqlTypes/AllTests.cs
 System.Data.SqlTypes/SqlBinaryTest.cs
 System.Data.SqlTypes/SqlBooleanTest.cs
 System.Data.SqlTypes/SqlByteTest.cs
@@ -18,9 +11,7 @@ System.Data.SqlTypes/SqlDateTimeTest.cs
 System.Data.SqlTypes/SqlGuidTest.cs
 System.Data.SqlTypes/SqlDecimalTest.cs
 System.Data.SqlTypes/SqlStringTest.cs
-System.Xml/AllTests.cs
 System.Xml/XmlDataDocumentTest.cs
-System.Data/AllTests.cs
 System.Data/DataColumnTest.cs
 System.Data/UniqueConstraintTest.cs
 System.Data/ConstraintTest.cs
@@ -32,4 +23,3 @@ System.Data/DataRowTest.cs
 System.Data/DataColumnCollectionTest.cs
 System.Data/DataSetTest.cs
 System.Data/DataRelationTest.cs
-AllTests.cs

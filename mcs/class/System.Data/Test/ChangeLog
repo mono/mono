@@ -1,3 +1,35 @@
+2003-03-17  Martin Willemoes Hansen <mwh@sysrq.dk>
+	* Removed AllTests.cs, System.Data/AllTests.cs,
+	  System.Data.SqlTypes/AllTests.cs,
+	  System.Xml/AllTests.cs,
+	  TheTests.cs
+	* NUnit2ified makefile.gnu, data_linux_test.args
+	  System.Data/DataColumnCollectionTest.cs, 
+	  System.Data/DataSetTest.cs,
+          System.Data/DataColumnTest.cs,
+          System.Data/DataTableTest.cs,
+          System.Data/UniqueConstraintTest.cs,
+	  System.Data/ConstraintCollectionTest.cs,
+	  System.Data/DataRelationTest.cs,
+	  System.Data/ForeignKeyConstraintTest.cs,
+	  System.Data/ConstraintTest.cs,
+          System.Data/DataRowCollectionTest.cs,
+	  System.Data/DataRowTest.cs,
+	  System.Data.SqlTypes/SqlBinaryTest.cs,
+	  System.Data.SqlTypes/SqlDateTimeTest.cs,
+	  System.Data.SqlTypes/SqlGuidTest.cs,
+	  System.Data.SqlTypes/SqlInt64Test.cs,
+	  System.Data.SqlTypes/SqlStringTest.cs,
+	  System.Data.SqlTypes/SqlBooleanTest.cs,
+	  System.Data.SqlTypes/SqlDecimalTest.cs,
+	  System.Data.SqlTypes/SqlInt16Test.cs,
+	  System.Data.SqlTypes/SqlMoneyTest.cs,
+	  System.Data.SqlTypes/SqlByteTest.cs,
+	  System.Data.SqlTypes/SqlDoubleTest.cs,
+	  System.Data.SqlTypes/SqlInt32Test.cs,
+	  System.Data.SqlTypes/SqlSingleTest.cs
+	  System.Xml/XmlDataDocumentTest.cs
+
 2003-02-16  Daniel Morgan <danmorg@sc.rr.com>
 
 	* TestSqlConnection.cs: added test file

@@ -1,8 +1,11 @@
 // UniqueConstraintTest.cs - NUnit Test Cases for testing the class System.Data.UniqueConstraint
 //
-// Franklin Wise <gracenote@earthlink.net>
+// Authors:
+//   Franklin Wise <gracenote@earthlink.net>
+//   Martin Willemoes Hansen <mwh@sysrq.dk>
 //
 // (C) 2002 Franklin Wise
+// (C) 2003 Martin Willemoes Hansen
 // 
 
 using NUnit.Framework;
@@ -11,15 +14,13 @@ using System.Data;
 
 namespace MonoTests.System.Data
 {
-	public class UniqueConstraintTest : TestCase 
+	[TestFixture]
+	public class UniqueConstraintTest
 	{
 		private DataTable _table;
 
-		public UniqueConstraintTest() : base ("MonoTests.System.Data.UniqueConstraintTest") {}
-		public UniqueConstraintTest(string name) : base(name) {}
-	
-		public void PublicSetup() {this.SetUp();}
-		protected override void SetUp() {
+		[SetUp]
+		public void GetReady() {
 
 			//Setup DataTable
 			_table = new DataTable("TestTable");
@@ -29,15 +30,8 @@ namespace MonoTests.System.Data
 
 		}  
 
-		protected override void TearDown() {}
-
-		public static ITest Suite {
-			get { 
-				return new TestSuite(typeof(UniqueConstraintTest)); 
-			}
-		}
-
-		public void TestCtorExceptions() {
+		[Test]
+		public void CtorExceptions() {
 			//UniqueConstraint(string name, DataColumn column, bool isPrimaryKey)
 
 			UniqueConstraint cst;
@@ -52,7 +46,7 @@ namespace MonoTests.System.Data
 				Assertion.Fail("Failed to throw ArgumentException.");
 			}
 			catch (ArgumentException) {}
-			catch (AssertionFailedError exc) {throw exc;}
+			catch (AssertionException exc) {throw exc;}
 			catch {
 				Assertion.Fail("A1: Wrong Exception type.");
 			}	
@@ -63,7 +57,7 @@ namespace MonoTests.System.Data
 				cst = new UniqueConstraint((DataColumn)null);
 			}
 			catch (ArgumentNullException) {}
-			catch (AssertionFailedError exc) {throw exc;}
+			catch (AssertionException exc) {throw exc;}
 			catch {
 				Assertion.Fail("A2: Wrong Exception type.");
 			}
@@ -78,7 +72,7 @@ namespace MonoTests.System.Data
 				Assertion.Fail("B1: Failed to throw InvalidConstraintException.");
 			}
 			catch (InvalidConstraintException) {}
-			catch (AssertionFailedError exc) {throw exc;}
+			catch (AssertionException exc) {throw exc;}
 			catch {
 				Assertion.Fail("A3: Wrong Exception type.");
 			}
@@ -102,7 +96,7 @@ namespace MonoTests.System.Data
 				Assertion.Fail("B2: Failed to throw InvalidConstraintException");
 			}
 			catch (InvalidConstraintException) {}
-			catch (AssertionFailedError exc) {throw exc;}
+			catch (AssertionException exc) {throw exc;}
 			catch {
 				Assertion.Fail("A4: Wrong Exception type.");
 			}
@@ -111,8 +105,8 @@ namespace MonoTests.System.Data
 			
 		}
 
-
-		public void TestCtor() {
+		[Test]
+		public void Ctor() {
 			
 			UniqueConstraint cst;
 		
@@ -154,25 +148,26 @@ namespace MonoTests.System.Data
 		
 		}
 
-		public void TestUnique ()                             
+		[Test]
+		public void Unique ()                             
 		{                                                     
 			UniqueConstraint U = new UniqueConstraint (_table.Columns [0]);
-			AssertEquals ("test#01", false, _table.Columns [0].Unique); 
+			Assertion.AssertEquals ("test#01", false, _table.Columns [0].Unique); 
 			
                         U = new UniqueConstraint (new DataColumn [] {_table.Columns [0],_table.Columns [1]});     
 			
-                        AssertEquals ("test#02", false, _table.Columns [0].Unique);
-                        AssertEquals ("test#03", false, _table.Columns [1].Unique);
-                        AssertEquals ("test#04", false, _table.Columns [2].Unique);
+                        Assertion.AssertEquals ("test#02", false, _table.Columns [0].Unique);
+                        Assertion.AssertEquals ("test#03", false, _table.Columns [1].Unique);
+                        Assertion.AssertEquals ("test#04", false, _table.Columns [2].Unique);
 			
                         _table.Constraints.Add (U);
-                        AssertEquals ("test#05", false, _table.Columns [0].Unique);
-                        AssertEquals ("test#06", false, _table.Columns [1].Unique);
-                        AssertEquals ("test#07", false, _table.Columns [2].Unique);
+                        Assertion.AssertEquals ("test#05", false, _table.Columns [0].Unique);
+                        Assertion.AssertEquals ("test#06", false, _table.Columns [1].Unique);
+                        Assertion.AssertEquals ("test#07", false, _table.Columns [2].Unique);
                 }                                                     
 		
-
-		public void TestEqualsAndHashCode() {
+		[Test]
+		public void EqualsAndHashCode() {
 			UniqueConstraint cst = new UniqueConstraint( new DataColumn [] {
 					_table.Columns[0], _table.Columns[1]});
 			UniqueConstraint cst2 = new UniqueConstraint( new DataColumn [] {
@@ -195,12 +190,6 @@ namespace MonoTests.System.Data
 
 			//false
 			Assertion.Assert("Hash Not Equals", (cst.GetHashCode() == cst3.GetHashCode()) == false);
-
-
 		}
-
-
-	
-		
 	}
 }
