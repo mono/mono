@@ -247,7 +247,7 @@ namespace System.Windows.Forms {
 					attributes |= WindowAttributes.kWindowResizableAttribute | WindowAttributes.kWindowHorizontalZoomAttribute | WindowAttributes.kWindowVerticalZoomAttribute;
 				}
 				if ((cp.Style & ((int)WindowStyles.WS_SYSMENU)) != 0) {
-					attributes |= WindowAttributes.kWindowNoAttributes;
+					attributes |= WindowAttributes.kWindowCloseBoxAttribute;
 				}
 				if ((cp.ExStyle & ((int)WindowStyles.WS_EX_TOOLWINDOW)) != 0) {
 					attributes = WindowAttributes.kWindowStandardHandlerAttribute | WindowAttributes.kWindowCompositingAttribute;

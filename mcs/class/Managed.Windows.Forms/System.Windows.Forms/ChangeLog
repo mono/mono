@@ -1,5 +1,9 @@
 2005-01-19  Geoff Norton  <gnorton@customerdna.com>
 
+	* XplatUIOSX.cs: Fix a minor bug to bring the close box back
+
+2005-01-19  Geoff Norton  <gnorton@customerdna.com>
+
 	* OSXStructs (WindowAttributes): Fixed csc complaints
 
 2005-01-19  Geoff Norton  <gnorton@customerdna.com>
