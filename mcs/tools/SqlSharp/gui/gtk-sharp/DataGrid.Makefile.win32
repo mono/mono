@@ -1,0 +1,17 @@
+# make sure MCS and CLR_CLASS_LIBS are set
+# they can be set as environment variables too
+MCS=mono f:/cygwin/home/DanielMorgan/mono/install/bin/mcs.exe
+CLR_CLASS_LIBS=f:/cygwin/home/DanielMorgan/mono/install/lib
+
+local_paths=-L $(CLR_CLASS_LIBS)
+all_assemblies=-r $(CLR_CLASS_LIBS)/glib-sharp.dll -r $(CLR_CLASS_LIBS)/pango-sharp.dll -r $(CLR_CLASS_LIBS)/atk-sharp.dll -r $(CLR_CLASS_LIBS)/gdk-sharp.dll -r $(CLR_CLASS_LIBS)/gtk-sharp.dll -r $(CLR_CLASS_LIBS)/System.Drawing.dll -r $(CLR_CLASS_LIBS)/System.Data.dll
+
+all: windows
+	
+windows: datagrid.exe
+
+datagrid.exe: DataGrid.cs
+	$(MCS) --unsafe -o datagrid.exe DataGrid.cs $(all_assemblies)
+
+clean:
+	rm -f *.exe

@@ -1,3 +1,13 @@
+2002-11-16  Daniel Morgan <danmorg@sc.rr.com>
+
+	* DataGrid.cs
+	* DataGrid.Makefile.win32: DataGrid demo based on the
+	TreeViewDemo in GTK#.  It works on GTK# Win32.
+	Includes the start of data binding for a GTK# widget.
+	However, it needs to be generalized into base classes.
+	The goal is to make a DataGrid for GTK# to be like
+	a ASP.NET DataGrid and Windows.Froms DataGrid.
+
 2002-10-25  Daniel Morgan <danmorg@sc.rr.com>
 
 	* sqlsharpgtk.cs: add support for
