@@ -1,35 +1,49 @@
 //
-// System.Drawing.Design.FontEditor
-//
+// System.Drawing.Design.FontEditor.cs
+// 
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
-//
+//  Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+// 
 // (C) 2003 Martin Willemoes Hansen
-//
-
-using System.ComponentModel;
-
+// (C) 2003 Andreas Nahr
+// 
+using System;
+using System.Drawing;
+using System.ComponentModel;using System.Windows.Forms;
 namespace System.Drawing.Design
 {
 	public class FontEditor : UITypeEditor
 	{
-		[MonoTODO]
+
+		private FontDialog fontEdit;
+
 		public FontEditor()
 		{
 		}
 
-		[MonoTODO]
 		public override object EditValue (ITypeDescriptorContext context,
-						  IServiceProvider provider,
-						  object value)
+			IServiceProvider provider, object value)
 		{
-			throw new NotImplementedException();
+			fontEdit = new FontDialog ();
+			if (value is Font)
+				fontEdit.Font = (Font) value;
+			else
+				// Set default
+				fontEdit.Font = new Drawing.Font (FontFamily.GenericSansSerif, 12);
+
+			fontEdit.FontMustExist = true;
+			DialogResult result = fontEdit.ShowDialog();
+
+			if (result == DialogResult.OK)
+				return fontEdit.Font;
+			else
+				return value;
 		}
 
-		[MonoTODO]
 		public override UITypeEditorEditStyle GetEditStyle (ITypeDescriptorContext context)
 		{
-			throw new NotImplementedException();
+			return UITypeEditorEditStyle.Modal;
 		}
 	}
 }

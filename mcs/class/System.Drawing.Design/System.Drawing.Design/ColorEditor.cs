@@ -1,49 +1,54 @@
 //
-// System.Drawing.Design.ColorEditor
-//
+// System.Drawing.Design.ColorEditor.cs
+// 
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
-//
+//  Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+// 
 // (C) 2003 Martin Willemoes Hansen
-//
-
+// (C) 2003 Andreas Nahr
+// 
+using System;
+using System.Drawing;
 using System.ComponentModel;
-
 namespace System.Drawing.Design
 {
 	public class ColorEditor : UITypeEditor
 	{
-		[MonoTODO]
+
 		public ColorEditor()
 		{
 		}
 
 		[MonoTODO]
 		public override object EditValue (ITypeDescriptorContext context,
-						  IServiceProvider provider,
-						  object value)
+			IServiceProvider provider, object value)
 		{
-			throw new NotImplementedException();
+			// TODO IMPLEMENT
+			return value;
 		}
 
-		[MonoTODO]
 		public override UITypeEditorEditStyle GetEditStyle (
-				ITypeDescriptorContext context)
+			ITypeDescriptorContext context)
 		{
-			throw new NotImplementedException();
+			return UITypeEditorEditStyle.DropDown;
 		}
 
-		[MonoTODO]
 		public override bool GetPaintValueSupported (
-				     ITypeDescriptorContext context)
+			ITypeDescriptorContext context)
 		{
-			throw new NotImplementedException();
+			return true;
 		}
 
-		[MonoTODO]
 		public override void PaintValue (PaintValueEventArgs e)
 		{
-			throw new NotImplementedException();
+			Graphics G = e.Graphics;
+			if (e.Value != null)
+			{
+				Color C = (Color) e.Value;
+				G.FillRectangle(new SolidBrush (C), e.Bounds);
+			}
+			G.DrawRectangle (Pens.Black, e.Bounds);
 		}
 	}
 }

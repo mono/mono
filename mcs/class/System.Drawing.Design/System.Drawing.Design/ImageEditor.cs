@@ -1,83 +1,110 @@
 //
-// System.Drawing.Design.ImageEditor
-//
+// System.Drawing.Design.ImageEditor.cs
+// 
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
-//
+//  Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+// 
 // (C) 2003 Martin Willemoes Hansen
-//
-
+// (C) 2003 Andreas Nahr
+// 
+using System;
 using System.IO;
+using System.Drawing;
 using System.ComponentModel;
+using System.Windows.Forms;
 
 namespace System.Drawing.Design
 {
 	public class ImageEditor : UITypeEditor
 	{
-		[MonoTODO]
+
+		private OpenFileDialog openDialog;
+
 		public ImageEditor()
 		{
 		}
 
-		[MonoTODO]
 		public override object EditValue (ITypeDescriptorContext context,
-						  IServiceProvider provider,
-						  object value)
+			IServiceProvider provider, object value)
 		{
-			throw new NotImplementedException();	
+			openDialog = new OpenFileDialog();
+			// FIXME: Add multilanguage support
+			openDialog.Title = "Open image file";
+			openDialog.CheckFileExists = true;
+			openDialog.CheckPathExists = true;
+			openDialog.Filter = CreateFilterEntry (this);
+			openDialog.Multiselect = false;
+
+			// Show the dialog
+			DialogResult result = openDialog.ShowDialog();
+
+			// Check the result and create a new image from the file
+			if (result == DialogResult.OK)
+			{
+				return LoadFromStream (openDialog.OpenFile());
+			}
+			else
+				return value;	
 		}
 
-		[MonoTODO]
 		public override UITypeEditorEditStyle GetEditStyle (ITypeDescriptorContext context)
 		{
-			throw new NotImplementedException();
+			return UITypeEditorEditStyle.Modal;
 		}
 
-		[MonoTODO]
 		public override bool GetPaintValueSupported (ITypeDescriptorContext context)
 		{
-			throw new NotImplementedException();
+			return true;
 		}
 
-		[MonoTODO]
 		public override void PaintValue (PaintValueEventArgs e)
 		{
-			throw new NotImplementedException();
+			Graphics G = e.Graphics;
+			if (e.Value != null)
+			{
+				Image I = (Image) e.Value;
+				G.DrawImage (I, e.Bounds);
+			}
+			G.DrawRectangle (Pens.Black, e.Bounds);
 		}
 
-		[MonoTODO]
 		protected static string CreateExtensionsString (string[] extensions, string sep)
 		{
-			throw new NotImplementedException();
+			if (extensions.Length > 0)
+			{
+				string Ext = extensions[0];
+				for (int x = 1; x < extensions.Length - 1; x++)
+					Ext = string.Concat(Ext, sep, extensions[x]);
+				return Ext;
+			}
+			else
+			{
+				return string.Empty;
+			}
 		}
 
-		[MonoTODO]
 		protected static string CreateFilterEntry (ImageEditor e)
 		{
-			throw new NotImplementedException();
+			string ExtStr = CreateExtensionsString (e.GetExtensions(), ";");
+			string Desc = e.GetFileDialogDescription() + " (" + ExtStr + ")";
+			return String.Concat (Desc, "|", ExtStr);
 		}
 
-		[MonoTODO]
 		protected virtual string[] GetExtensions()
 		{
-			throw new NotImplementedException();
+			return new string[] {"*.bmp", "*.gif", "*.jpg", "*.jpeg", "*.png", "*.ico", "*.emf", "*.wmf"};
 		}
 
-		[MonoTODO]
 		protected virtual string GetFileDialogDescription()
 		{
-			throw new NotImplementedException();
+			// FIXME: Add multilanguage support
+			return "All image files";
 		}
 
-		[MonoTODO]
 		protected virtual Image LoadFromStream (Stream stream)
 		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~ImageEditor()
-		{
+			return new Bitmap (stream);
 		}
 	}
 }

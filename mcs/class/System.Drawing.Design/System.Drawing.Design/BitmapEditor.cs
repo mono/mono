@@ -1,43 +1,39 @@
 //
-// System.Drawing.Design.BitmapEditor
-//
+// System.Drawing.Design.BitmapEditor.cs
+// 
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
-//
+//  Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+// 
 // (C) 2003 Martin Willemoes Hansen
-//
-
+// (C) 2003 Andreas Nahr
+// 
+using System;
 using System.IO;
-
+using System.Drawing;
 namespace System.Drawing.Design
 {
 	public class BitmapEditor : ImageEditor
 	{
-		[MonoTODO]
+
 		public BitmapEditor()
 		{
 		}
 
 		protected override string[] GetExtensions()
 		{
-			throw new NotImplementedException();
+			return new string[] {"*.bmp", "*.gif", "*.jpg", "*.jpeg", "*.png", "*.ico"};
 		}
 
-		[MonoTODO]
 		protected override string GetFileDialogDescription()
 		{
-			throw new NotImplementedException();
+			// FIXME: Add multilanguage support
+			return "All bitmap files";
 		}
 
-		[MonoTODO]
 		protected override Image LoadFromStream (Stream stream)
 		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~BitmapEditor()
-		{
+			return new Bitmap (stream);
 		}
 	}
 }

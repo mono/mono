@@ -1,36 +1,37 @@
 //
-// System.Drawing.Design.ContentAlignmentEditor
-//
+// System.Drawing.Design.ContentAlignmentEditor.cs
+// 
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
-//
+//  Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+// 
 // (C) 2003 Martin Willemoes Hansen
-//
-
+// (C) 2003 Andreas Nahr
+// 
+using System;
+using System.Drawing;
 using System.ComponentModel;
-
 namespace System.Drawing.Design
 {
 	public class ContentAlignmentEditor : UITypeEditor
 	{
-		[MonoTODO]
+
 		public ContentAlignmentEditor()
 		{
 		}
 
 		[MonoTODO]
 		public override object EditValue (ITypeDescriptorContext context,
-						  IServiceProvider provider,
-						  object value)
+			IServiceProvider provider, object value)
 		{
-			throw new NotImplementedException();
+			// TODO IMPLEMENT
+			return value;
 		}
 
-		[MonoTODO]
 		public override UITypeEditorEditStyle GetEditStyle (
-				ITypeDescriptorContext context)
+			ITypeDescriptorContext context)
 		{
-			throw new NotImplementedException();
+			return UITypeEditorEditStyle.DropDown;
 		}
 	}
 }

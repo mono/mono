@@ -1,81 +1,114 @@
 //
-// System.Drawing.Design.IconEditor
-//
+// System.Drawing.Design.IconEditor.cs
+// 
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
-//
+//  Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+// 
 // (C) 2003 Martin Willemoes Hansen
-//
-
-using System.ComponentModel;
+// (C) 2003 Andreas Nahr
+// 
+using System;
 using System.IO;
+using System.Drawing;
+using System.ComponentModel;
+using System.Windows.Forms;
 
 namespace System.Drawing.Design
 {
+	// Strange thing that this is not inherited from ImageEditor
 	public class IconEditor : UITypeEditor
 	{
-		[MonoTODO]
+
+		private OpenFileDialog openDialog;
+
 		public IconEditor()
 		{
 		}
 
-		[MonoTODO]
-		protected static string CreateExtensionsString (string[] extensions,
-								string sep)
+		protected static string CreateExtensionsString (string[] extensions, string sep)
 		{
-			throw new NotImplementedException();
+			if (extensions.Length > 0)
+			{
+				string Ext = extensions[0];
+				for (int x = 1; x < extensions.Length - 1; x++)
+					Ext = string.Concat(Ext, sep, extensions[x]);
+				return Ext;
+			}
+			else
+			{
+				return string.Empty;
+			}
 		}
 
-		[MonoTODO]
 		protected static string CreateFilterEntry (IconEditor e)
 		{
-			throw new NotImplementedException();
+			string ExtStr = CreateExtensionsString (e.GetExtensions(), ";");
+			string Desc = e.GetFileDialogDescription() + " (" + ExtStr + ")";
+			return String.Concat (Desc, "|", ExtStr);
 		}
 
-		[MonoTODO]
 		public override object EditValue (ITypeDescriptorContext context,
-						  IServiceProvider provider,
-						  object value)
+			IServiceProvider provider, object value)
 		{
-			throw new NotImplementedException();
+			openDialog = new OpenFileDialog();
+			// FIXME: Add multilanguage support
+			openDialog.Title = "Open image file";
+			openDialog.CheckFileExists = true;
+			openDialog.CheckPathExists = true;
+			openDialog.Filter = CreateFilterEntry (this);
+			openDialog.Multiselect = false;
+
+			// Show the dialog
+			DialogResult result = openDialog.ShowDialog();
+
+			// Check the result and create a new image from the file
+			if (result == DialogResult.OK)
+			{
+				return LoadFromStream (openDialog.OpenFile());
+			}
+			else
+				return value;
 		}
 
-		[MonoTODO]
 		public override UITypeEditorEditStyle GetEditStyle (
-				ITypeDescriptorContext context)
+			ITypeDescriptorContext context)
 		{
-			throw new NotImplementedException();
+			return UITypeEditorEditStyle.Modal;
 		}
 
-		[MonoTODO]
 		protected virtual string[] GetExtensions()
 		{
-			throw new NotImplementedException();
+			return new string[] {"*.ico"};
 		}
 
-		[MonoTODO]
 		protected virtual string GetFileDialogDescription()
 		{
-			throw new NotImplementedException();
+			// FIXME: Add multilanguage support
+			return "Icon files";
 		}
 
-		[MonoTODO]
 		public override bool GetPaintValueSupported (
-				     ITypeDescriptorContext context)
+			ITypeDescriptorContext context)
 		{
-			throw new NotImplementedException();
+			return true;
 		}
 
-		[MonoTODO]
 		protected virtual Icon LoadFromStream (Stream stream)
 		{
-			throw new NotImplementedException();
+			return new Icon (stream);
 		}
 
-		[MonoTODO]
 		public override void PaintValue (PaintValueEventArgs e)
 		{
-			throw new NotImplementedException();
+			Graphics G = e.Graphics;
+			G.DrawRectangle (Pens.Black, e.Bounds);
+			if (e.Value != null)
+			{
+				Image I = (Image) e.Value;
+				G.DrawImage (I, e.Bounds);
+			}
 		}
 	}
 }
+

@@ -1,39 +1,39 @@
 //
-// System.Drawing.Design.MetafileEditor
-//
+// System.Drawing.Design.MetafileEditor.cs
+// 
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
-//
+//  Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+// 
 // (C) 2003 Martin Willemoes Hansen
-//
-
+// (C) 2003 Andreas Nahr
+// 
+using System;
 using System.IO;
-
+using System.Drawing.Imaging;
 namespace System.Drawing.Design
 {
 	public class MetafileEditor : ImageEditor
 	{
-		[MonoTODO]
+
 		public MetafileEditor()
 		{
 		}
 
-		[MonoTODO]
 		protected override string[] GetExtensions()
 		{
-			throw new NotImplementedException();
+			return new string[] {"*.emf", "*.wmf"};
 		}
 
-		[MonoTODO]
 		protected override string GetFileDialogDescription()
 		{
-			throw new NotImplementedException();
+			// FIXME: Add multilanguage support
+			return "All metafile files";
 		}
 
-		[MonoTODO]
 		protected override Image LoadFromStream (Stream stream)
 		{
-			throw new NotImplementedException();
+			return new Metafile (stream);
 		}
 	}
 }

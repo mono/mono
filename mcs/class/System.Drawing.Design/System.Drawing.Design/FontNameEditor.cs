@@ -1,33 +1,41 @@
 //
-// System.Drawing.Design.FontNameEditor
-//
+// System.Drawing.Design. FontNameEditor.cs
+// 
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
-//
+//  Martin Willemoes Hansen (mwh@sysrq.dk)
+//  Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+// 
 // (C) 2003 Martin Willemoes Hansen
-//
-
+// (C) 2003 Andreas Nahr
+// 
+using System;
+using System.Drawing;
 using System.ComponentModel;
-
 namespace System.Drawing.Design
 {
 	public class FontNameEditor : UITypeEditor
 	{
-		[MonoTODO]
-		public FontNameEditor()
+
+		public  FontNameEditor()
 		{
 		}
 
-		[MonoTODO]
 		public override bool GetPaintValueSupported (ITypeDescriptorContext context)
 		{
-			throw new NotImplementedException();
+			return true;
 		}
 
 		[MonoTODO]
 		public override void PaintValue (PaintValueEventArgs e)
 		{
-			throw new NotImplementedException();
+			// TODO may not be correct
+			Graphics G = e.Graphics;
+			if (e.Value != null)
+			{
+				Font F = (Font) e.Value;
+				G.DrawString("Ab", F, Brushes.Black, e.Bounds);
+			}
+			G.DrawRectangle (Pens.Black, e.Bounds);
 		}
 	}
 }
