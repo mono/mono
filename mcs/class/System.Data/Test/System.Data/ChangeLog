@@ -1,5 +1,9 @@
 2003-03-16  Ville Palo <vi64pa@kolumbus.fi>
 
+	* DataColumnCollectionTest.cs: Typos
+	
+2003-03-16  Ville Palo <vi64pa@kolumbus.fi>
+
 	* DataSetTest.cs: Fixed line-ending problems
 	
 2003-03-06  Ville Palo <vi64pa@kolumbus.fi>
