@@ -28,6 +28,7 @@ namespace System.Runtime.Remoting.Proxies
 
 		public override IMessage Invoke (IMessage request)
 		{
+			((MonoMethodMessage)request).Uri = ObjectIdentity.ObjectUri;
 			return _sink.SyncProcessMessage (request);
 		}
 

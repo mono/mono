@@ -40,14 +40,15 @@ namespace System.Runtime.Remoting.Channels.Simple {
 
 		void SerializeObject (BinaryWriter writer, object obj)
 		{
-			Type type = obj.GetType ();
-
 			if (obj == null) {
 				writer.Write ((byte)TypeId.NULL);
 				return;
 			}
 			
-			if (type == typeof (String)) {
+			Type type = obj.GetType ();
+
+			if (type == typeof (String)) 
+			{
 				writer.Write ((byte)TypeId.String);
 				writer.Write ((String)obj);
 				return;
@@ -225,6 +226,7 @@ namespace System.Runtime.Remoting.Channels.Simple {
 			}
 			
 			MonoMethodMessage msg = new MonoMethodMessage (svr_type, method_name, args);
+			msg.Uri = uri;
 			
 			return msg;
 		}

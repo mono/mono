@@ -26,9 +26,6 @@ namespace System.Runtime.Remoting
 		// Holds the identities of the objects, using uri as index
 		static Hashtable uri_hash = new Hashtable ();		
 
-		// Holds the identities of the objects, using the object as index
-		static Hashtable object_hash = new Hashtable ();
-		
 		internal static string app_id;
 		static int next_id = 1;
 		
@@ -84,6 +81,11 @@ namespace System.Runtime.Remoting
 			return GetRemoteObject(classToProxy, url, null);
 		}
 
+		public static object Connect (Type classToProxy, string url, object data)
+		{
+			return GetRemoteObject (classToProxy, url, data);
+		}
+
 		public static Type GetServerTypeForUri (string uri)
 		{
 			object svr = GetServerForUri (uri);
@@ -96,10 +98,12 @@ namespace System.Runtime.Remoting
 
 		public static string GetObjectUri (MarshalByRefObject obj)
 		{
-			lock (uri_hash)
+			if (IsTransparentProxy(obj))
 			{
-				return ((Identity)object_hash[obj]).ObjectUri;
+				return GetRealProxy (obj).ObjectIdentity.ObjectUri;
 			}
+			else
+				return obj.ObjectIdentity.ObjectUri;
 		}
 		
 		internal static MarshalByRefObject GetServerForUri (string uri)
@@ -143,17 +147,14 @@ namespace System.Runtime.Remoting
 
 				// Creates an identity and a proxy for the remote object
 
-				identity = new Identity(objectUri, null);
-				RemotingProxy proxy = new RemotingProxy (requiredType, identity);
-
-				identity.RealObject = proxy.GetTransparentProxy();
-				identity.RealProxy = proxy;
+				identity = new Identity(objectUri, null, requiredType);
 				identity.ClientSink = sink;
 
-				// Registers the identity
-				uri_hash[objectUri] = identity;
-				object_hash[proxy.GetTransparentProxy()] = identity;
+				RemotingProxy proxy = new RemotingProxy (requiredType, identity);
+				identity.RealObject = proxy.GetTransparentProxy();
 
+				// Registers the identity
+				uri_hash [objectUri] = identity;
 				return identity;
 			}
 		}
@@ -170,14 +171,12 @@ namespace System.Runtime.Remoting
 				if (identity != null) 
 					return identity;	// Object already registered
 
-				identity = new Identity (objectUri, Context.DefaultContext);
+				identity = new Identity (objectUri, Context.DefaultContext, realObject.GetType());
 				identity.RealObject = realObject;
 
 				// Registers the identity
 				uri_hash[objectUri] = identity;
-
 				realObject.ObjectIdentity = identity;
-				object_hash[realObject] = identity;
 
 				return identity;
 			}
@@ -185,7 +184,8 @@ namespace System.Runtime.Remoting
 
 		internal static object GetRemoteObject(Type requiredType, string url, object channelData)
 		{
-			return GetClientIdentity(requiredType, url, channelData).RealObject;
+			Identity id = GetClientIdentity(requiredType, url, channelData);
+			return id.RealObject;
 		}
 		
 		public static object Unmarshal (ObjRef objref)

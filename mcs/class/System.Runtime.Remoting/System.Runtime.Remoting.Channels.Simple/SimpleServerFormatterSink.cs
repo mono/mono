@@ -58,7 +58,7 @@ namespace System.Runtime.Remoting.Channels.Simple {
 		{
 			IMessage call;
 			
-			string uri = (string)requestHeaders ["_requestUri"];
+			string uri = (string)requestHeaders [CommonTransportKeys.RequestUri];
 
 			if (requestMsg == null) {
 				call = (IMessage)format.DeserializeRequest (requestStream, uri);

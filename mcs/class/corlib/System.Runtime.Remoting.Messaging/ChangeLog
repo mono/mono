@@ -1,5 +1,9 @@
 2002-12-20  Lluis Sanchez Gual <lsg@ctv.es>
 
+	* MonoMethodMessage.cs: Implemented property Uri
+
+2002-12-20  Lluis Sanchez Gual <lsg@ctv.es>
+
 	* ServerContextTerminatorSink.cs: Added
 	* ServerObjectTerminatorSink.cs: Added
 	* StackBuilderSink.cs: Added

@@ -30,6 +30,8 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public Exception exc;
 
+		string uri;
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern void InitMessage (MonoMethod method, object [] out_args);
 
@@ -107,10 +109,11 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public string Uri {
 			get {
-				return null;
+				return uri;
 			}
 
 			set {
+				uri = value;
 			}
 		}
 

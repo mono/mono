@@ -96,6 +96,7 @@ namespace System.Runtime.Remoting.Channels.Simple
 			try {
 				// create a new header
 				TransportHeaders req_headers = new TransportHeaders ();
+				req_headers[CommonTransportKeys.RequestUri] = call.Uri;
 
 				//fixme: set some header values
 

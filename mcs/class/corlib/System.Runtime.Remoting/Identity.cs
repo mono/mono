@@ -23,7 +23,9 @@ namespace System.Runtime.Remoting
 		// The object that this identity represents. Can be a MarshalByRefObject
 		// (if it is a server object) or a transparent proxy (if it is a client
 		// proxy to a remote object).
-		object _realObject;		
+		object _realObject;
+
+		Type _objectType;
 
 		// URI of the object
 		string _objectUri;
@@ -36,18 +38,19 @@ namespace System.Runtime.Remoting
 		IMessageSink _serverSink = null;
 		Context _context;
 
-		RealProxy _realProxy = null;
 		ObjRef _objRef = null;
 
-		public Identity(string objectUri, Context context)
+		public Identity(string objectUri, Context context, Type objectType)
 		{
 			_objectUri = objectUri;
 			_context = context;
+			_objectType = objectType;
 		}
 
 		public ObjRef CreateObjRef (Type requestedType)
 		{
 			// fixme: handle requested_type		
+			if (requestedType == null) requestedType = _objectType;
 			ObjRef res = new ObjRef ((MarshalByRefObject)_realObject, requestedType);
 			res.URI = _objectUri;
 			_objRef = res;
@@ -89,12 +92,6 @@ namespace System.Runtime.Remoting
 				}
 				return _serverSink; 
 			}
-		}
-
-		public RealProxy RealProxy
-		{
-			get { return _realProxy; }
-			set { _realProxy = value; }
 		}
 
 		public Context Context
