@@ -1,3 +1,9 @@
+
+Thu Aug 5 17:11:44 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: fix to deal with object[] arrays in custom ctors
+	(bug #62550).
+
 2004-08-05  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_class_array_element_size): Added support for
