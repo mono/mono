@@ -94,9 +94,9 @@ all-local: $(gac_assemblies)
 install-data-local:
 	@if test -n '$(gac_assemblies)'; then \
 	  for i in ''$(gac_assemblies); do \
-	    echo "MONO_PATH=$(srcdir) $(mono_runtime) $(gacutil) -i $(srcdir)/$$i.dll /f /root $(DESTDIR)" ; \
+	    echo "MONO_PATH=$(srcdir) $(mono_runtime) $(gacutil) -i $(srcdir)/$$i /f /root $(DESTDIR)$(libdir)" ; \
 	    MONO_PATH=$(srcdir) \
-	      $(mono_runtime) $(gacutil) -i $(srcdir)/$$i /f /root $(DESTDIR) || exit 1 ; \
+	      $(mono_runtime) $(gacutil) -i $(srcdir)/$$i /f /root $(DESTDIR)$(libdir) || exit 1 ; \
 	  done; fi
 
 uninstall-local:
