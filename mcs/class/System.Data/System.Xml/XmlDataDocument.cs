@@ -379,7 +379,7 @@ namespace System.Xml {
 			if (row == null)
 				return;
 			
-			if (row [args.Node.Name] != args.Node.InnerText)
+			if (row [args.Node.Name].ToString () != args.Node.InnerText)
 				row [args.Node.Name] = args.Node.InnerText;
 		}
 
