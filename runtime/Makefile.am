@@ -51,7 +51,7 @@ TEST_SUPPORT_FILES = $(tmpinst)/bin/mcs $(tmpinst)/bin/mbas $(tmpinst)/bin/ilasm
 endif
 
 check-local:
-	$(mkdir_p) $(tmpinst)/bin
+	$(mkinstalldirs) $(tmpinst)/bin
 	$(MAKE) $(TEST_SUPPORT_FILES)
 	d=`pwd`; PATH=$$d/$(tmpinst)/bin:$$PATH ; export PATH ; \
 	( cd $(mcs_topdir) && $(MAKE) RUNTIME=$$d/mono-wrapper PROFILES='$(build_profiles)' run-test-profiles ) || ret=false ; \
