@@ -21,42 +21,88 @@
 
 using System;
 using System.Collections;
+using System.Runtime.Serialization;
 
 namespace Mono.Doc.Core
 {
-	public delegate void CollectionModifiedEventHandler(object sender);
-
 	/// <summary>
 	/// An implementation of the Hashtable class that provides 
 	/// a mechanism to receive a notification event
 	/// when the elements of the Hashtable are changed
-	/// </summary>
-	public class NotifyHashtable : Hashtable
+	// </summary>
+	public class NotifyHashtable : Hashtable, INotifyCollection
 	{
-		#region Private Instance Fields
+		#region Protected Instance Fields
 		
-		private bool callModifiedEvent = true;
-		private bool changedDuringUpdate = false;
+		protected NotifyCollectionHandler handler = null;
+
+		#endregion
+
+		#region Constructors and Destructor
 		
-		#endregion // Private Instance Fields
-
-		#region Protected Instance Methods
-
-		protected void OnModified()
+		public NotifyHashtable() : base()
 		{
-			// if in the middle of begin/end update
-			// save the event call until EndUpdate()
-			if (!callModifiedEvent)
-			{
-				changedDuringUpdate = true;
-			}
-			else if (Modified != null)
-			{
-				Modified(this);
-			}
+			handler = new NotifyCollectionHandler(this);	
+		}
+		
+		public NotifyHashtable(IDictionary d) : base(d) 
+		{
+			handler = new NotifyCollectionHandler(this);	
+		}
+		
+		public NotifyHashtable(int i) : base(i) 
+		{
+			handler = new NotifyCollectionHandler(this);	
+		}
+		
+		public NotifyHashtable(IDictionary d, float f) : base(d, f)
+		{
+			handler = new NotifyCollectionHandler(this);	
+		}
+		
+		public NotifyHashtable(IHashCodeProvider hp, IComparer c)
+			: base(hp, c)
+		{
+			handler = new NotifyCollectionHandler(this);	
+		}
+		
+		public NotifyHashtable(int i, float f) : base(i, f)
+		{
+			handler = new NotifyCollectionHandler(this);	
+		}
+		
+		protected NotifyHashtable(SerializationInfo si, 
+			StreamingContext sc) : base(si, sc)
+		{
+			handler = new NotifyCollectionHandler(this);	
+		}
+		
+		public NotifyHashtable(IDictionary d, IHashCodeProvider hcp, 
+			IComparer c) : base(d, hcp, c)
+		{
+			handler = new NotifyCollectionHandler(this);	
+		}
+		
+		public NotifyHashtable(int i, IHashCodeProvider hcp, 
+			IComparer c) : base(i, hcp, c)
+		{
+			handler = new NotifyCollectionHandler(this);
+		}
+		
+		public NotifyHashtable(IDictionary d, float f, 
+			IHashCodeProvider hcp, IComparer c) 
+			: base(d, f, hcp, c)
+		{
+			handler = new NotifyCollectionHandler(this);
+		}
+		
+		public NotifyHashtable(int i, float f, IHashCodeProvider hcp,
+			IComparer c) : base(i, f, hcp, c)
+ 		{
+			handler = new NotifyCollectionHandler(this);
 		}
 
-		#endregion // Protected Instance Methods
+		#endregion
 
 		#region Public Instance Fields
 
@@ -76,8 +122,7 @@ namespace Mono.Doc.Core
 		/// </summary>
 		public virtual void BeginUpdate()
 		{
-			callModifiedEvent = false;
-			changedDuringUpdate = false;
+			handler.BeginUpdate();
 		}
 
 		/// <summary>
@@ -86,14 +131,15 @@ namespace Mono.Doc.Core
 		/// </summary>
 		public virtual void EndUpdate()
 		{
-			// call the event if changes occured between the
-			// begin/end update calls
-			if (changedDuringUpdate && Modified != null)
+			handler.EndUpdate();
+		}
+
+		public virtual void SetModifiedEvent()
+		{
+			if (Modified != null)
 			{
 				Modified(this);
-			}
-			changedDuringUpdate = false;
-			callModifiedEvent = true;
+			}			
 		}
 
 		public override object this[object key]
@@ -101,26 +147,26 @@ namespace Mono.Doc.Core
 			set
 			{
 				base[key] = value;
-				OnModified();
+				handler.OnModified();
 			}
 		}
 
 		public override void Add(object key,object value)
 		{
 			base.Add(key, value);
-			OnModified();
+			handler.OnModified();
 		}
 		
 		public override void Clear()
 		{
 			base.Clear();
-			OnModified();
+			handler.OnModified();
 		}
 
 		public override void Remove(object key)
 		{
 			base.Remove(key);
-			OnModified();
+			handler.OnModified();
 		}
 		#endregion // Public Instance Methods
 	}
