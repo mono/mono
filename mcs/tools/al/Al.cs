@@ -179,7 +179,10 @@ namespace Mono.AssemblyLinker
 					if (arg == null)
 						ReportMissingArgument (opt);
 					try {
-						int val = Int32.Parse (arg);
+						string realArg = arg;
+						if (realArg.StartsWith ("0x"))
+							realArg = realArg.Substring (2);
+						uint val = Convert.ToUInt32 (realArg, 16);
 						AddCattr (typeof (AssemblyAlgorithmIdAttribute), typeof (uint), val);
 					}
 					catch (Exception) {
@@ -262,7 +265,10 @@ namespace Mono.AssemblyLinker
 					if (arg == null)
 						ReportMissingArgument (opt);
 					try {
-						int val = Int32.Parse (arg);
+						string realArg = arg;
+						if (realArg.StartsWith ("0x"))
+							realArg = realArg.Substring (2);
+						uint val = Convert.ToUInt32 (realArg, 16);
 						AddCattr (typeof (AssemblyFlagsAttribute), typeof (uint), val);
 					}
 					catch (Exception) {
