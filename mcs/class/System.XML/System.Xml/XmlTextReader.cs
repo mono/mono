@@ -458,9 +458,10 @@ namespace System.Xml
 			currentToken.Clear ();
 
 			// It was moved from end of ReadStartTag ().
-			if (depthUp)
+			if (depthUp) {
 				++depth;
-			depthUp = false;
+				depthUp = false;
+			}
 
 			if (shouldSkipUntilEndTag) {
 				shouldSkipUntilEndTag = false;
@@ -470,9 +471,6 @@ namespace System.Xml
 			base64CacheStartsAt = -1;
 
 			more = ReadContent ();
-
-			if (depth == 0 && !allowMultipleRoot && (IsEmptyElement || NodeType == XmlNodeType.EndElement))
-				currentState = XmlNodeType.EndElement;
 
 			if (!more && startNodeType == XmlNodeType.Document && currentState != XmlNodeType.EndElement)
 				throw new XmlException ("Document element did not appear.");
@@ -1317,6 +1315,9 @@ namespace System.Xml
 				null, // value
 				false // clearAttributes
 			);
+
+			if (IsEmptyElement)
+				CheckCurrentStateUpdate ();
 		}
 
 		private void PushElementName (string name)
@@ -1358,6 +1359,14 @@ namespace System.Xml
 			);
 
 			popScope = true;
+
+			CheckCurrentStateUpdate ();
+		}
+
+		private void CheckCurrentStateUpdate ()
+		{
+			if (depth == 0 && !allowMultipleRoot && (IsEmptyElement || NodeType == XmlNodeType.EndElement))
+				currentState = XmlNodeType.EndElement;
 		}
 
 		private void AppendNameChar (int ch)
@@ -1682,7 +1691,7 @@ namespace System.Xml
 			currentAttributeValueToken.Clear ();
 		}
 
-		// FIXME: normalize here
+		// LAMESPEC: Orthodox XML reader should normalize attribute values
 		private void ReadAttributeValueTokens (int dummyQuoteChar)
 		{
 			int quoteChar = (dummyQuoteChar < 0) ? ReadChar () : dummyQuoteChar;
@@ -2515,6 +2524,11 @@ namespace System.Xml
 		// Returns -1 if it should throw an error.
 		private int ReadCharsInternal (char [] buffer, int offset, int length)
 		{
+			if (IsEmptyElement) {
+				Read ();
+				return 0;
+			}
+
 			shouldSkipUntilEndTag = true;
 
 			if (offset < 0)
@@ -2541,19 +2555,11 @@ namespace System.Xml
 					}
 					// Seems to skip immediate EndElement
 					Expect ('/');
-					string name = ReadName ();
-					if (name != elementNames [elementNameStackPos - 1]) {
-						if (i + 1 < length) {
-							buffer [bufIndex++] = '<';
-							buffer [bufIndex++] = '/';
-						}
-						for (int n = 0; n < name.Length && i + n + 1 < length; n++)
-							buffer [bufIndex++] = name [n];
-						continue;
+					if (depthUp) {
+						depth++;
+						depthUp = false;
 					}
-					Expect ('>');
-					depth--;
-					elementNames [--elementNameStackPos] = null;
+					ReadEndTag();
 					shouldSkipUntilEndTag = false;
 					Read ();
 					return i;

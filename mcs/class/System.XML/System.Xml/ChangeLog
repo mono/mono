@@ -1,3 +1,10 @@
+2004-05-27  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextReader.cs : simplified ReadCharsInternal(); use ReadEndTag()
+	  and don't bork against <foo></foo>. Also mofidied this method to skip
+	  <foo/>. Fixed bug #59142.
+	  Modified some comments on the code (FIXME->LAMESPEC et al).
+
 2004-05-24  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTDReader.cs : When sequential PE references exist, the reader only
