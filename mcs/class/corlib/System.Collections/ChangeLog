@@ -1,3 +1,8 @@
+2003-07-29  Miguel de Icaza  <miguel@ximian.com>
+
+	* ArrayList.cs: Deployed ArrayList from Tum;  Fixed iterator to
+	allow nulls, and inline a few calls to make profiling more useful.
+
 2003-07-24  Miguel de Icaza  <miguel@ximian.com>
 
 	* ArrayList.cs: Removed MonoTODO.
