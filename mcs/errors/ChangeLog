@@ -1,3 +1,12 @@
+2004-05-07 Marek Safar <marek.safar@seznam.cz>
+
+	* cs0579-4.cs, CS0579-4-1.cs,
+	* cs0579-5.cs,
+	* cs0657.cs,
+	* cs3015-2.cs,
+	* cs3019.cs,
+	* cs3019-2.cs: 6 new error tests.
+        
 2004-05-03 Marek Safar <marek.safar@seznam.cz>
 
 	* cs0579-3.cs,
