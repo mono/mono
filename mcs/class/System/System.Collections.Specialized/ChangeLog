@@ -1,3 +1,7 @@
+2005-03-04  Lluis Sanchez Gual <lluis@novell.com>
+
+	* OrderedDictionary.cs: Implemented.
+
 2004-08-16  Duncan Mak  <duncan@ximian.com>
 
 	* NameObjectCollectionBase.cs: Fix line endings. It's mostly in
