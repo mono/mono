@@ -1,3 +1,10 @@
+2002-07-30  Rodrigo Moya <rodrigo@ximian.com>
+
+	* OleDbDataReader.cs (FieldCount): implemented.
+	(IsClosed, Item, RecordsAffected): implemented some properties.
+
+	* libgda.cs: added GdaDataModel methods.
+
 2002-07-29  Rodrigo Moya <rodrigo@ximian.com>
 
 	* OleDbDataReader.cs (OleDbDataReader constructor): changed to receive

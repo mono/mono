@@ -24,6 +24,8 @@ namespace System.Data.OleDb
 		private bool open;
 		private ArrayList gdaResults;
 		private int currentResult;
+		private int currentRow;
+		private bool isOpened;
 
 		#endregion
 
@@ -33,9 +35,14 @@ namespace System.Data.OleDb
 		{
 			this.command = command;
 			open = true;
-			gdaResults = results;
+			if (results != null)
+				gdaResults = results;
+			else
+				gdaResults = new ArrayList ();
 			currentResult = -1;
+			currentRow = -1;
 			command.OpenReader(this);
+			isOpened = true;
 		}
 
 		#endregion
@@ -48,13 +55,20 @@ namespace System.Data.OleDb
 		}
 
 		public int FieldCount {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				if (currentResult < 0 ||
+				    currentResult >= gdaResults.Count)
+					return 0;
+
+				return libgda.gda_data_model_get_n_columns (
+					(IntPtr) gdaResults[currentResult]);
+			}
 		}
 
 		public bool IsClosed {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				return !isOpened;
+			}
 		}
 
 		public object this[string name] {
@@ -63,13 +77,37 @@ namespace System.Data.OleDb
 		}
 
 		public object this[int index] {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				if (currentResult < 0 ||
+				    currentResult >= gdaResults.Count)
+					return null;
+				
+				return libgda.gda_data_model_get_value_at (
+						(IntPtr) gdaResults[currentResult],
+						index,
+						currentRow);
+			}
 		}
 
 		public int RecordsAffected {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				int total_rows;
+				
+				if (currentResult < 0 ||
+				    currentResult >= gdaResults.Count)
+					return 0;
+
+				total_rows = libgda.gda_data_model_get_n_rows (
+					(IntPtr) gdaResults[currentResult]);
+				if (total_rows > 0) {
+					if (FieldCount > 0) {
+						// It's a SELECT statement
+						return -1;
+					}
+				}
+
+				return FieldCount > 0 ? -1 : total_rows;
+			}
 		}
 
 		#endregion

@@ -53,6 +53,15 @@ namespace System.Data.OleDb
 		public static extern void gda_init (string app_id, string version, int nargs, string[] args);
 
 		[DllImport("gda-2")]
+		public static extern int gda_data_model_get_n_rows (IntPtr model);
+
+		[DllImport("gda-2")]
+		public static extern int gda_data_model_get_n_columns (IntPtr model);
+
+		[DllImport("gda-2")]
+		public static extern IntPtr gda_data_model_get_value_at (IntPtr model, int col, int row);
+		
+		[DllImport("gda-2")]
 		public static extern IntPtr gda_client_new ();
 
 		[DllImport("gda-2")]
