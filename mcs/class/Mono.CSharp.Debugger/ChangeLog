@@ -1,3 +1,11 @@
+2002-08-24  Martin Baulig  <martin@gnome.org>
+
+	* MonoSymbolTable.cs, MonoSymbolTableWriter.cs: New files.  This
+	creates a binary application.dbg file which will be used by the
+	JIT to display source lines for exceptions.
+
+	* list.unix: Disabled the dwarf file writer in the build.
+
 2002-08-23  Martin Baulig  <martin@gnome.org>
 
 	* MonoSymbolWriter.cs (MonoSymbolWriter.Initialize): Added

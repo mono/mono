@@ -1,6 +1,5 @@
-AssemblerWriterI386.cs
-IAssemblerWriter.cs
 IMonoSymbolWriter.cs
-MonoDwarfFileWriter.cs
 MonoSymbolDocumentWriter.cs
 MonoSymbolWriter.cs
+MonoSymbolTable.cs
+MonoSymbolTableWriter.cs

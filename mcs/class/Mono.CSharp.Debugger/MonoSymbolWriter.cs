@@ -265,27 +265,6 @@ namespace Mono.CSharp.Debugger
 		}
 	}
 
-	public class MethodParameter : Variable, IMethodParameter
-	{
-		private static int get_index (ISourceMethod method, ParameterInfo param)
-		{
-			return method.MethodBase.IsStatic ? param.Position - 1 :
-				param.Position;
-		}
-
-		public MethodParameter (DwarfFileWriter writer, ISourceMethod method,
-					ParameterInfo param)
-			: base (param.Name, writer.RegisterType (param.ParameterType),
-				method, get_index (method, param))
-		{
-			this._method = method;
-			this._param = param;
-		}
-
-		private readonly ISourceMethod _method;
-		private readonly ParameterInfo _param;
-	}
-
 	public class SourceMethod : ISourceMethod
 	{
 		private ArrayList _lines = new ArrayList ();
@@ -464,7 +443,6 @@ namespace Mono.CSharp.Debugger
 		protected ArrayList orphant_methods = null;
 		protected ArrayList methods = null;
 		protected Hashtable sources = null;
-		protected DwarfFileWriter writer = null;
 		private ArrayList mbuilder_array = null;
 
 		public ISourceMethod[] Methods {
@@ -483,14 +461,9 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		public DwarfFileWriter DwarfFileWriter {
-			get {
-				return writer;
-			}
-		}
-
 		protected SourceMethod current_method = null;
 		private string assembly_filename = null;
+		private string output_filename = null;
 
 		//
 		// Interface IMonoSymbolWriter
@@ -513,7 +486,7 @@ namespace Mono.CSharp.Debugger
 
 			DoFixups (assembly);
 
-			CreateDwarfFile (assembly);
+			CreateOutput (assembly);
 		}
 
 		public void CloseNamespace () {
@@ -571,16 +544,6 @@ namespace Mono.CSharp.Debugger
 						 int startOffset,
 						 int endOffset)
 		{
-			if (current_method == null)
-				return;
-
-			ITypeHandle type = writer.RegisterType (local.LocalType);
-
-			LocalVariable local_info = new LocalVariable (name, type, current_method,
-								      position, null);
-
-			current_method.CurrentBlock.AddLocal (local_info);
-			locals.Add (local_info);
 		}
 
 
@@ -615,7 +578,7 @@ namespace Mono.CSharp.Debugger
 
 		public void Initialize (string assembly_filename, string filename, string[] args)
 		{
-			this.writer = new DwarfFileWriter (filename, args);
+			this.output_filename = filename;
 			this.assembly_filename = assembly_filename;
 		}
 
@@ -723,51 +686,6 @@ namespace Mono.CSharp.Debugger
 		//
 		// MonoSymbolWriter implementation
 		//
-		protected void WriteLocal (DwarfFileWriter.Die parent_die, ILocalVariable local)
-		{
-			DwarfFileWriter.DieMethodVariable die;
-
-			die = new DwarfFileWriter.DieMethodVariable (parent_die, local);
-		}
-
-		protected void WriteBlock (DwarfFileWriter.Die parent_die, ISourceBlock block)
-		{
-			DwarfFileWriter.DieLexicalBlock die;
-
-			die = new DwarfFileWriter.DieLexicalBlock (parent_die, block);
-
-			foreach (ILocalVariable local in block.Locals)
-				WriteLocal (die, local);
-
-			foreach (ISourceBlock subblock in block.Blocks)
-				WriteBlock (die, subblock);
-		}
-
-		protected void WriteMethod (ISourceMethod method)
-		{
-			DwarfFileWriter.DieCompileUnit parent_die = writer.DieGlobalCompileUnit;
-			DwarfFileWriter.TypeHandle declaring_type;
-			DwarfFileWriter.DieSubProgram die;
-			DwarfFileWriter.Die defining_die;
-
-			declaring_type = DwarfFileWriter.RegisterType (method.MethodBase.DeclaringType);
-
-			die = new DwarfFileWriter.DieSubProgram (declaring_type.TypeDie, method);
-			defining_die = new DwarfFileWriter.DieSubProgram (parent_die, die, method);
-
-			foreach (ILocalVariable local in method.Locals)
-				WriteLocal (defining_die, local);
-
-			foreach (ISourceBlock block in method.Blocks)
-				WriteBlock (defining_die, block);
-		}
-
-		protected void WriteSource (DwarfFileWriter writer, ISourceFile source)
-		{
-			foreach (ISourceMethod method in source.Methods)
-				WriteMethod (method);
-		}
-
 		protected void DoFixups (Assembly assembly)
 		{
 			foreach (SourceMethod method in methods) {
@@ -785,27 +703,10 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		protected void CreateDwarfFile (Assembly assembly)
+		protected void CreateOutput (Assembly assembly)
 		{
-			foreach (ISourceFile source in sources.Values)
-				WriteSource (writer, source);
-
-			if (orphant_methods.Count > 0) {
-				SourceFile source = new SourceFile ("<unknown>");
-
-				foreach (SourceMethod orphant in orphant_methods) {
-					orphant._source_file = source;
-					source.AddMethod (orphant);
-				}
-
-				WriteSource (writer, source);
-			}
-
-			writer.WriteSymbolTable (this);
-
-			writer.WriteLineNumberTable (this);
-
-			writer.Close ();
+			using (MonoSymbolTableWriter writer = new MonoSymbolTableWriter (output_filename))
+				writer.WriteSymbolTable (this);
 		}
 	}
 }
