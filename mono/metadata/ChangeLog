@@ -1,4 +1,10 @@
 
+Tue Jun 15 16:40:19 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* domain-internals.h, Makefile.am, appdomain.c, appdomain.h,
+	domain.c, gc.c, icall.c, mono-debug.c, object.c, reflection.c,
+	threadpool.c, threads.c: first pass at the exported API cleanup.
+
 Tue Jun 15 15:29:47 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: fix signatures of some VolatileRead and VolatileWrite icalls.
