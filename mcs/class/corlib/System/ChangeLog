@@ -1,3 +1,9 @@
+
+Fri Apr 5 15:38:54 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Type.cs: also look for nested types in FindMembers.
+	* MonoType.cs: make GetNestedTypes() an internalcall.
+
 2002-04-05  Nick Drochak  <ndrochak@gol.com>
 
 	* Enum.cs (Parse): Handle different underlying types.

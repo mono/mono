@@ -98,10 +98,8 @@ namespace System
 			return null;
 		}
 
-		public override Type[] GetNestedTypes (BindingFlags bindingAttr) {
-			// FIXME
-			return null;
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern override Type[] GetNestedTypes (BindingFlags bindingAttr);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern override PropertyInfo[] GetProperties( BindingFlags bindingAttr);

@@ -801,6 +801,18 @@ namespace System {
 					l.AddRange (c);
 				}
 			}
+			if ((memberType & MemberTypes.NestedType) != 0) {
+				Type[] c = GetNestedTypes (bindingAttr);
+				if (filter != null) {
+					foreach (MemberInfo m in c) {
+						if (filter (m, filterCriteria)) {
+							l.Add (m);
+						}
+					}
+				} else {
+					l.AddRange (c);
+				}
+			}
 			result = new MemberInfo [l.Count];
 			l.CopyTo (result);
 			return result;
