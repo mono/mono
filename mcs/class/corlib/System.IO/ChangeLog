@@ -1,5 +1,9 @@
 2004-01-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Path.cs: now Path.GetFullPath ("/") returns "/" instead of "".
+
+2004-01-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Path.cs: add the trailing directory separator only for volumes.
 	Fixes bug #53035.
 

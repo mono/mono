@@ -174,8 +174,7 @@ namespace System.IO
 
 			if (path.Length >= 2 &&
 				IsDsc (path [0]) &&
-				IsDsc (path [1])
-			) {
+				IsDsc (path [1])) {
 				if (path.Length == 2 || path.IndexOf (path [0], 2) < 0)
 					throw new ArgumentException ("UNC pass should be of the form \\\\server\\share.");
 				else
@@ -349,7 +348,9 @@ namespace System.IO
 			
 			// STEP 2: Check to see if this is only a root
 			string root = GetPathRoot (path);
-//			if (root == path) return path; // it will return '\' for path '\', while it should return 'c:\' or so.
+			// it will return '\' for path '\', while it should return 'c:\' or so.
+			// Note: commenting this out makes the ened for the (target == 1...) check in step 5
+			//if (root == path) return path;
 				
 			// STEP 3: split the directories, this gets rid of consecutative "/"'s
 			string [] dirs = path.Split (DirectorySeparatorChar, AltDirectorySeparatorChar);
@@ -366,7 +367,7 @@ namespace System.IO
 			}
 
 			// STEP 5: Combine everything.
-			if (target == 0)
+			if (target == 0 || (target == 1 && dirs [0] == ""))
 				return root;
 			else {
 				string ret = String.Join (DirectorySeparatorStr, dirs, 0, target);
