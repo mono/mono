@@ -1,3 +1,8 @@
+2005-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Comparison.cs : allow comparison between guid and string.
+	* ColumnReference.cs : return guid value too. Fixed bug #72426.
+
 2005-01-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Comparison.cs : Eval() could be direct invocation to EvalBoolean().

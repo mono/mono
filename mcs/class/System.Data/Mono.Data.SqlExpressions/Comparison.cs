@@ -71,9 +71,13 @@ namespace Mono.Data.SqlExpressions {
 
 			try {
 				if (o1 is string && Numeric.IsNumeric (o2))
-						o1 = (IComparable)Convert.ChangeType (o1, o2.GetType ());
-				if (o2 is string && Numeric.IsNumeric (o1))
-						o2 = (IComparable)Convert.ChangeType (o2, o1.GetType ());
+					o1 = (IComparable) Convert.ChangeType (o1, o2.GetType ());
+				else if (o2 is string && Numeric.IsNumeric (o1))
+					o2 = (IComparable) Convert.ChangeType (o2, o1.GetType ());
+				else if (o1 is string && o2 is Guid)
+					o2 = o2.ToString ();
+				else if (o2 is string && o1 is Guid)
+					o1 = o1.ToString ();
 			} catch (FormatException) {
 				throw new EvaluateException (String.Format ("Cannot perform compare operation on {0} and {1}.", o1.GetType(), o2.GetType()));
 			}
