@@ -65,6 +65,9 @@ namespace System.Web.UI
 			string cname;
 			int colon = tagName.IndexOf (':');
 			if (colon != -1) {
+				if (colon == 0)
+					throw new Exception ("Empty TagPrefix is not valid");
+
 				if (colon + 1 == tagName.Length)
 					return null;
 
@@ -78,6 +81,8 @@ namespace System.Web.UI
 			Type t = foundry.GetComponentType (prefix, cname);
 			if (t != null)
 				return t;
+			else if (prefix != "")
+				throw new Exception ("TagPrefix " + prefix + " not registered");
 			
 			return LookupHtmlControls (tagName, attribs);
 		}

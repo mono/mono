@@ -152,7 +152,7 @@ namespace System.Web
 			}
 			
 			builder.Append ("<hr>\n</body>\n</html>\n");
-			builder.AppendFormat ("<!--\n{0}\n-->\n", exc.ToString ());
+			builder.AppendFormat ("<!--\n{0}\n-->\n", HtmlEncode (exc.ToString ()));
 			return builder.ToString ();
 		}
 

@@ -1,3 +1,8 @@
+2003-05-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* RootBuilder.cs: throw exception when the tagprefix is not valid or
+	not found.
+
 2003-05-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateControlParser.cs: return after processing @Register.

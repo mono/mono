@@ -11,6 +11,7 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using System.Web.UI;
+using System.Web.Util;
 
 namespace System.Web.Compilation
 {
@@ -57,10 +58,50 @@ namespace System.Web.Compilation
 		}
 	}
 
+	class ParserStack
+	{
+		Hashtable files;
+		Stack parsers;
+		AspParser current;
+
+		public ParserStack ()
+		{
+			files = new Hashtable (); // may be this should be case sensitive for windows
+			parsers = new Stack ();
+		}
+		
+		public bool Push (AspParser parser)
+		{
+			if (files.Contains (parser.Filename))
+				return false;
+
+			files [parser.Filename] = true;
+			parsers.Push (parser);
+			current = parser;
+			return true;
+		}
+
+		public AspParser Pop ()
+		{
+			if (parsers.Count == 0)
+				return null;
+
+			files.Remove (current.Filename);
+			return (AspParser) parsers.Pop ();
+		}
+		
+		public AspParser Parser {
+			get { return current; }
+		}
+
+		public string Filename {
+			get { return current.Filename; }
+		}
+	}
+	
 	class AspGenerator
 	{
-		string filename;
-		AspParser parser;
+		ParserStack pstack;
 		BuilderLocationStack stack;
 		TemplateParser tparser;
 		StringBuilder text;
@@ -72,15 +113,23 @@ namespace System.Web.Compilation
 		public AspGenerator (TemplateParser tparser)
 		{
 			this.tparser = tparser;
-			this.filename = Path.GetFullPath (tparser.InputFile);
 			tparser.AddDependency (tparser.InputFile);
 			text = new StringBuilder ();
 			stack = new BuilderLocationStack ();
 			rootBuilder = new RootBuilder (tparser);
 			stack.Push (rootBuilder, null);
 			tparser.RootBuilder = rootBuilder;
+			pstack = new ParserStack ();
 		}
 
+		public AspParser Parser {
+			get { return pstack.Parser; }
+		}
+		
+		public string Filename {
+			get { return pstack.Filename; }
+		}
+		
 		BaseCompiler GetCompilerFromType ()
 		{
 			Type type = tparser.GetType ();
@@ -96,19 +145,32 @@ namespace System.Web.Compilation
 			throw new Exception ("Got type: " + type);
 		}
 		
-		public Type GetCompiledType ()
+		void InitParser (string filename)
 		{
 			//FIXME: use the encoding of the file or the one specified in the machine.config/web.config file.
 			StreamReader reader = new StreamReader (filename, Encoding.Default);
-			parser = new AspParser (filename, reader);
+			AspParser parser = new AspParser (filename, reader);
 			parser.Error += new ParseErrorHandler (ParseError);
 			parser.TagParsed += new TagParsedHandler (TagParsed);
 			parser.TextParsed += new TextParsedHandler (TextParsed);
+			if (!pstack.Push (parser))
+				throw new ParseException (Location, "Infinite recursion detected including file: " + filename);
+			tparser.AddDependency (filename);
+		}
 
-			parser.Parse ();
+		void DoParse ()
+		{
+			pstack.Parser.Parse ();
 			if (text.Length > 0)
 				FlushText ();
 
+			pstack.Pop ();
+		}
+
+		public Type GetCompiledType ()
+		{
+			InitParser (Path.GetFullPath (tparser.InputFile));
+			DoParse ();
 #if DEBUG
 			PrintTree (rootBuilder, 0);
 #endif
@@ -207,7 +269,14 @@ namespace System.Web.Compilation
 				if (!isvirtual)
 					file = attributes ["file"] as string;
 
-				TextParsed (location, tparser.ProcessInclude (isvirtual, file));
+				if (isvirtual) {
+					file = tparser.MapPath (file);
+				} else if (!Path.IsPathRooted (file)) {
+					file = UrlUtils.Combine (tparser.BaseVirtualDir, file);
+				}
+
+				InitParser (file);
+				DoParse ();
 				break;
 			default:
 				break;
@@ -251,11 +320,25 @@ namespace System.Web.Compilation
 			ControlBuilder builder = null;
 			BuilderLocation bl = null;
 			Hashtable htable = (atts != null) ? atts.GetDictionary (null) : emptyHash;
-			if (stack.Count > 1)
-				builder = parent.CreateSubBuilder (tagid, htable, null, tparser, location);
+			if (stack.Count > 1) {
+				try {
+					builder = parent.CreateSubBuilder (tagid, htable, null, tparser, location);
+				} catch (TypeLoadException e) {
+					throw new ParseException (Location, "Type not found.", e);
+				} catch (Exception e) {
+					throw new ParseException (Location, e.Message, e);
+				}
+			}
 
-			if (builder == null && atts != null && atts.IsRunAtServer ())
-				builder = rootBuilder.CreateSubBuilder (tagid, htable, null, tparser, location);
+			if (builder == null && atts != null && atts.IsRunAtServer ()) {
+				try {
+					builder = rootBuilder.CreateSubBuilder (tagid, htable, null, tparser, location);
+				} catch (TypeLoadException e) {
+					throw new ParseException (Location, "Type not found.", e);
+				} catch (Exception e) {
+					throw new ParseException (Location, e.Message, e);
+				}
+			}
 			
 			if (builder == null)
 				return false;
@@ -280,7 +363,7 @@ namespace System.Web.Compilation
 		{
 			if (tagtype != TagType.Close && attributes != null && attributes.IsRunAtServer ()) {
 				if (tagtype == TagType.Tag) {
-					parser.VerbatimID = "script";
+					Parser.VerbatimID = "script";
 					inScript = true;
 				} //else if (tagtype == TagType.SelfClosing)
 					// load script file here

@@ -1,3 +1,8 @@
+2003-05-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpException.cs: encode as HTML the inner exception that
+	is appended as a comment at the end of error pages.
+
 2003-05-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWriter.cs: don't do anything in Flush. Fixes #42249.

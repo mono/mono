@@ -1,3 +1,8 @@
+2003-05-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: fully support including files, ie., treat them just
+	as C treats #includes.
+
 2003-05-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs:
