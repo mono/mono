@@ -6847,7 +6847,7 @@ namespace Mono.MonoBASIC {
 			if (member == "New")
 				member = ".ctor";
 			
-			member_lookup = MemberLookup (ec, base_type, base_type, member,
+			member_lookup = MemberLookup (ec, current_type, base_type, member,
 						      AllMemberTypes, AllBindingFlags, loc);
 
 			if (member_lookup == null) {
