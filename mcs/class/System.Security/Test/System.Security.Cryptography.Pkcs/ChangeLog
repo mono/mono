@@ -1,3 +1,15 @@
+2003-12-07  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ContentInfoTest.cs: Changed test for GetContentType.
+	* EnvelopedPkcs7Test.cs: New. Unit tests for EnvelopedPkcs7 
+	(encryption).
+	* KeyTransRecipientInfoTest.cs: New. Unit tests for 
+	KeyTransRecipientInfo.
+	* Pkcs7RecipientTest.cs: New. Unit tests for Pkcs7Recipient.
+	* SignedPkcs7Test.cs: New. Unit tests for SignedPkcs7 (signatures).
+	* SignedInfoTest.cs: New. Unit tests for SignedInfo.
+	* SubjectIdentifierTest.cs: New. Unit tests for SubjectIdentifier.
+
 2003-11-08  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ContentInfoTest.cs: New. (Incomplete) Unit tests for ContentInfo.
