@@ -1955,11 +1955,12 @@ delegate_declaration
 	  SEMICOLON
 	  {
 		Location l = lexer.Location;
+		string name = MakeName ((string) $5);
 		Delegate del = new Delegate (current_namespace, current_container, (Expression) $4,
-					     (int) $2, MakeName ((string) $5), (Parameters) $7, 
-					     (Attributes) $1, l);
-		  
+					     (int) $2, name, (Parameters) $7, (Attributes) $1, l);
+
 		current_container.AddDelegate (del);
+		RootContext.Tree.RecordDecl (name, del);
 	  }	
 	| opt_attributes
 	  opt_modifiers
@@ -1970,12 +1971,14 @@ delegate_declaration
 	  SEMICOLON
 	  {
 		Location l = lexer.Location;
+		string name = MakeName ((string) $5);
 		Delegate del = new Delegate (
 			current_namespace, current_container,
-			TypeManager.system_void_expr, (int) $2, MakeName ((string) $5), 
+			TypeManager.system_void_expr, (int) $2, name,
 			(Parameters) $7, (Attributes) $1, l);
 
 		current_container.AddDelegate (del);
+		RootContext.Tree.RecordDecl (name, del);
 	  }
 	;
 
