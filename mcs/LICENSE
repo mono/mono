@@ -21,6 +21,11 @@ The Mono code is licensed under various different licenses.
 		Third party libraries include: ByteFX.Data,
 		ICSharpCode.SharpZipLib, Npgsql.
 
+		The Microsoft.JScript assembly is covered by the
+		MIT X11 and the Mozilla MPL license as it contains
+		ported pieces of code from Rhino, the Mozilla JavaScript
+		implementations
+
 	* Mono C# compiler: GNU GPL
 
 	* Mono Basic compiler: GNU GPL.
