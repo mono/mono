@@ -42,6 +42,7 @@ namespace System.Reflection
 		protected string NameImpl;
 		protected int PositionImpl;
 		protected ParameterAttributes AttrsImpl;
+		protected UnmanagedMarshal marshalAs;
 
 		protected ParameterInfo () {
 		}
@@ -138,13 +139,13 @@ namespace System.Reflection
 		internal object[] GetPseudoCustomAttributes () {
 			int count = 0;
 
-			/* FIXME: Add support for MarshalAsAttribute */
-
 			if (IsIn)
 				count ++;
 			if (IsOut)
 				count ++;
 			if (IsOptional)
+				count ++;
+			if (marshalAs != null)
 				count ++;
 
 			if (count == 0)
@@ -158,6 +159,9 @@ namespace System.Reflection
 				attrs [count ++] = new OptionalAttribute ();
 			if (IsOut)
 				attrs [count ++] = new OutAttribute ();
+
+			if (marshalAs != null)
+				attrs [count ++] = marshalAs.ToMarshalAsAttribute ();
 
 			return attrs;
 		}			

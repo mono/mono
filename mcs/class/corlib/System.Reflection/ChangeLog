@@ -1,3 +1,8 @@
+2004-09-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ParameterInfo.cs: Add marshalAs field, add support for returning
+	MarshalAsAttribute.
+
 2004-09-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Module.cs: Add new 2.0 GetMethods and GetFields methods.
