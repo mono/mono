@@ -3916,6 +3916,10 @@ namespace Mono.MonoBASIC {
 			if (container is Interface)
 				return true;
 
+			Type retval = null;
+			if ((ModFlags & Modifiers.READONLY) != 0)
+				retval = MemberType;
+
 			string report_name;
 			MethodSignature base_ms;
 			if (this is Indexer) {
@@ -3925,10 +3929,10 @@ namespace Mono.MonoBASIC {
 				name = TypeManager.IndexerPropertyName (container.TypeBuilder);
 				ms = new MethodSignature (name, null, ParameterTypes);
 				base_name = TypeManager.IndexerPropertyName (container.TypeBuilder.BaseType);
-				base_ms = new MethodSignature (base_name, null, ParameterTypes);
+				base_ms = new MethodSignature (base_name, retval, ParameterTypes);
 			} else {
 				report_name = Name;
-				ms = base_ms = new MethodSignature (Name, null, ParameterTypes);
+				ms = base_ms = new MethodSignature (Name, retval, ParameterTypes);
 			}
 
 			//
@@ -5181,15 +5185,8 @@ namespace Mono.MonoBASIC {
 			if (mi != null)
 				args = TypeManager.GetArgumentTypes (mi);
 			else
-			{
-				Type [] targs = TypeManager.GetArgumentTypes (pi);
-				args = new Type[targs.Length + 1];
-				args[0] = pi.PropertyType;
-				
-				int i = 1;
-				foreach (Type tt in targs)
-					args [i++] = tt;
-			}
+				args = TypeManager.GetArgumentTypes (pi);
+
 			Type [] sigp = sig.Parameters;
 
 			if (args.Length != sigp.Length)

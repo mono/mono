@@ -1372,12 +1372,33 @@ public class TypeManager {
 	{
 		if (indexer_arguments.Contains (indexer))
 			return (Type []) indexer_arguments [indexer];
-		else if (indexer is PropertyBuilder)
+		else {
 			// If we're a PropertyBuilder and not in the
 			// 'indexer_arguments' hash, then we're a property and
 			// not an indexer.
-			return NoTypes;
-		else {
+
+			MethodInfo mi = indexer.GetSetMethod (true);
+			if (mi == null) {
+				mi = indexer.GetGetMethod (true);
+				if (mi == null)
+					return NoTypes;
+			}
+
+			ParameterInfo [] pi = mi.GetParameters ();
+			if (pi == null)
+				return NoTypes;
+
+			int c = pi.Length;
+			Type [] types = new Type [c];
+			
+			for (int i = 0; i < c; i++)
+				types [i] = pi [i].ParameterType;
+
+			indexer_arguments.Add (indexer, types);
+			return types;
+		}
+		/*else 
+		{
 			ParameterInfo [] pi = indexer.GetIndexParameters ();
 			// Property, not an indexer.
 			if (pi == null)
@@ -1390,7 +1411,7 @@ public class TypeManager {
 
 			indexer_arguments.Add (indexer, types);
 			return types;
-		}
+		}*/
 	}
 	
 	// <remarks>

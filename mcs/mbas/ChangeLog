@@ -1,3 +1,9 @@
+2004-08-13 Anirban Bhattacharjee <banirban@novell.com>
+	* class.cs:
+	* typemanager.cs:
+		-Bug fixed to resolve the ReadOnly properties from base class
+		-Fixed bug in resolving properties from different assembly
+
 2004-08-14 Bernie Solomon <bernard@ugsolutions.com>
 	* mb-parser.jay: fix block used as body of For Each
 
