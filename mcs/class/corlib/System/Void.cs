@@ -7,9 +7,10 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
-namespace System {
-	
+namespace System
+{
 	[Serializable]
-	public struct Void {
+	public struct Void
+	{
 	}
 }

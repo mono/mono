@@ -7,17 +7,16 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
-using System.Globalization;
-
-namespace System {
-	
+namespace System
+{
 	[Serializable]
-	public sealed class Version : ICloneable, IComparable {
+	public sealed class Version : ICloneable, IComparable
+	{
 
 		int major, minor, build, revision;
 
 		private const int UNDEFINED = -1;
-		
+
 		private void CheckedSet (int defined, int major, int minor, int build, int revision)
 		{
 			// defined should be 2, 3 or 4
@@ -58,13 +57,13 @@ namespace System {
 		{
 			CheckedSet (2, 0, 0, -1, -1);
 		}
-			
+
 		public Version (string version)
 		{
 			int n;
 			string [] vals;
 			int major = -1, minor = -1, build = -1, revision = -1;
-			
+
 			if (version == null) {
 				throw new ArgumentNullException ("version");
 			}
@@ -73,9 +72,10 @@ namespace System {
 			n = vals.Length;
 
 			if (n < 2 || n > 4) {
-				throw new ArgumentException (Locale.GetText ("There must be 2, 3 or 4 components in the version string"));
+				throw new ArgumentException (Locale.GetText
+					("There must be 2, 3 or 4 components in the version string."));
 			}
-	
+
 			if (n > 0)
 				major = int.Parse (vals [0]);
 			if (n > 1)
@@ -87,7 +87,7 @@ namespace System {
 
 			CheckedSet (n, major, minor, build, revision);
 		}
-		
+
 		public Version (int major, int minor)
 		{
 			CheckedSet (2, major, minor, 0, 0);
@@ -135,16 +135,12 @@ namespace System {
 		public int CompareTo (object version)
 		{
 			Version v;
-			
-			// LAMESPEC: Docs are unclear whether an 
-			// ArgumentNullException should be thrown are 
-			// that a value > 0 should be returned.
+
 			if (version == null)
 				return 1;
-			//	throw new ArgumentNullException ("version");
-			
+
 			if (! (version is Version))
-				throw new ArgumentException (Locale.GetText ("Argument to Version.CompareTo must be a Version"));
+				throw new ArgumentException (Locale.GetText ("Argument to Version.CompareTo must be a Version."));
 
 			v = version as Version;
 
@@ -227,13 +223,15 @@ namespace System {
 				return major.ToString () + "." + minor.ToString ();
 			if (fields == 3){
 				if (build == UNDEFINED)
-					throw new ArgumentException (Locale.GetText ("fields is larger than the number of components defined in this instance"));
+					throw new ArgumentException (Locale.GetText
+					("fields is larger than the number of components defined in this instance."));
 				return major.ToString () + "." + minor.ToString () + "." +
 					build.ToString ();
 			}
 			if (fields == 4){
 				if (build == UNDEFINED || revision == UNDEFINED)
-					throw new ArgumentException (Locale.GetText ("fields is larger than the number of components defined in this instance"));
+					throw new ArgumentException (Locale.GetText
+					("fields is larger than the number of components defined in this instance."));
 				return major.ToString () + "." + minor.ToString () + "." +
 					build.ToString () + "." + revision.ToString ();
 			}
@@ -269,9 +267,5 @@ namespace System {
 		{
 			return v1.CompareTo (v2) <= 0;
 		}
-
 	}
 }
-
-
-

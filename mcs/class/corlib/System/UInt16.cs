@@ -9,34 +9,34 @@
 
 using System.Globalization;
 
-namespace System {
-
-	[CLSCompliant(false)]
+namespace System
+{
 	[Serializable]
-	public struct UInt16 : IComparable, IFormattable, IConvertible {
-
+	[CLSCompliant (false)]
+	public struct UInt16 : IComparable, IFormattable, IConvertible
+	{
 		public const ushort MaxValue = 0xffff;
 		public const ushort MinValue = 0;
-		
+
 		internal ushort value;
 
-		public int CompareTo (object v)
+		public int CompareTo (object value)
 		{
-			if (v == null)
+			if (value == null)
 				return 1;
-			
-			if(!(v is System.UInt16))
-				throw new ArgumentException (Locale.GetText ("Value is not a System.UInt16"));
 
-			return value - ((ushort) v);
+			if(!(value is System.UInt16))
+				throw new ArgumentException (Locale.GetText ("Value is not a System.UInt16."));
+
+			return this.value - ((ushort) value);
 		}
 
-		public override bool Equals (object o)
+		public override bool Equals (object obj)
 		{
-			if (!(o is System.UInt16))
+			if (!(obj is System.UInt16))
 				return false;
 
-			return ((ushort) o) == value;
+			return ((ushort) obj) == value;
 		}
 
 		public override int GetHashCode ()
@@ -52,77 +52,78 @@ namespace System {
 			int i;
 			bool digits_seen = false;
 			bool has_negative_sign = false;
-			
+
 			if (s == null)
 				throw new ArgumentNullException (Locale.GetText ("s is null"));
 
 			len = s.Length;
 
 			char c;
-			for (i = 0; i < len; i++){
+			for (i = 0; i < len; i++) {
 				c = s [i];
 				if (!Char.IsWhiteSpace (c))
 					break;
 			}
-			
+
 			if (i == len)
 				throw new FormatException ();
 
 			if (s [i] == '+')
 				i++;
 			else
-				if (s[i] == '-'){
+				if (s[i] == '-') {
 					i++;
 					has_negative_sign = true;
 				}
 
-			for (; i < len; i++){
+			for (; i < len; i++) {
 				c = s [i];
 
-				if (c >= '0' && c <= '9'){
+				if (c >= '0' && c <= '9') {
 					ushort d = (ushort) (c - '0');
-					
+
 					val = checked ((ushort) (val * 10 + d));
 					digits_seen = true;
-				} else {
-					if (Char.IsWhiteSpace (c)){
-						for (i++; i < len; i++){
+				}
+				else {
+					if (Char.IsWhiteSpace (c)) {
+						for (i++; i < len; i++) {
 							if (!Char.IsWhiteSpace (s [i]))
 								throw new FormatException ();
 						}
 						break;
-					} else
+					}
+					else
 						throw new FormatException ();
 				}
 			}
 			if (!digits_seen)
 				throw new FormatException ();
-			
+
 			if (has_negative_sign)
 				throw new OverflowException ();
 
 			return val;
-
 		}
 
-		[CLSCompliant(false)]
-		public static ushort Parse (string s, IFormatProvider fp)
+		[CLSCompliant (false)]
+		public static ushort Parse (string s, IFormatProvider provider)
 		{
-			return Parse (s, NumberStyles.Integer, fp);
+			return Parse (s, NumberStyles.Integer, provider);
 		}
 
-		[CLSCompliant(false)]
+		[CLSCompliant (false)]
 		public static ushort Parse (string s, NumberStyles style)
 		{
 			return Parse (s, style, null);
 		}
 
-		[CLSCompliant(false)]
-		public static ushort Parse (string s, NumberStyles style, IFormatProvider fp)
+		[CLSCompliant (false)]
+		public static ushort Parse (string s, NumberStyles style, IFormatProvider provider)
 		{
-			uint tmpResult = UInt32.Parse (s, style, fp);
+			uint tmpResult = UInt32.Parse (s, style, provider);
 			if (tmpResult > UInt16.MaxValue || tmpResult < UInt16.MinValue)
-				throw new OverflowException ("Value too large or too small.");
+				throw new OverflowException (Locale.GetText ("Value too large or too small."));
 
 			return (ushort) tmpResult;
 		}
@@ -132,9 +133,9 @@ namespace System {
 			return ToString (null, null);
 		}
 
-		public string ToString (IFormatProvider fp)
+		public string ToString (IFormatProvider provider)
 		{
-			return ToString (null, fp);
+			return ToString (null, provider);
 		}
 
 		public string ToString (string format)
@@ -142,18 +143,17 @@ namespace System {
 			return ToString (format, null);
 		}
 
-		public string ToString (string format, IFormatProvider fp)
+		public string ToString (string format, IFormatProvider provider)
 		{
-			NumberFormatInfo nfi = NumberFormatInfo.GetInstance( fp );
-			
-			if ( format == null )
+			NumberFormatInfo nfi = NumberFormatInfo.GetInstance (provider);
+
+			if (format == null)
 				format = "G";
 			
-			return IntegerFormatter.NumberToString(format, nfi, value);
+			return IntegerFormatter.NumberToString (format, nfi, value);
 		}
 
 		// =========== IConvertible Methods =========== //
-
 		public TypeCode GetTypeCode ()
 		{
 			return TypeCode.UInt16;
@@ -209,7 +209,7 @@ namespace System {
 		{
 			return System.Convert.ToSByte (value);
 		}
-		
+
 		float IConvertible.ToSingle (IFormatProvider provider)
 		{
 			return System.Convert.ToSingle (value);

@@ -12,19 +12,16 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace System {
-
+namespace System
+{
 	[Serializable]
-	public abstract class ValueType {
-
-		// <summary>
-		//   ValueType constructor
-		// </summary>
+	public abstract class ValueType
+	{
 		protected ValueType ()
 		{
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static bool InternalEquals (object o1, object o2, out object[] fields);
 
 		// This is also used by RuntimeHelpers
@@ -50,7 +47,7 @@ namespace System {
 				}
 
 				if (!meVal.Equals (youVal))
-					return false;				
+					return false;
 			}
 
 			return true;
@@ -64,7 +61,7 @@ namespace System {
 			return DefaultEquals (this, o);
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static int InternalGetHashCode (object o, out object[] fields);
 
 		// <summary>
@@ -91,7 +88,7 @@ namespace System {
 		// </summary>
 		public override string ToString ()
 		{
-			return GetType().FullName;
+			return GetType ().FullName;
 		}
 	}
 }

@@ -10,40 +10,40 @@
 using System.Globalization;
 using System.Threading;
 
-namespace System {
-
-	[CLSCompliant(false)]
+namespace System
+{
 	[Serializable]
-	public struct UInt32 : IComparable, IFormattable, IConvertible {
-
+	[CLSCompliant (false)]
+	public struct UInt32 : IComparable, IFormattable, IConvertible
+	{
 		public const uint MaxValue = 0xffffffff;
 		public const uint MinValue = 0;
-		
+
 		internal uint value;
 
-		public int CompareTo (object v)
+		public int CompareTo (object value)
 		{
-			if (v == null)
+			if (value == null)
 				return 1;
-			
-			if (!(v is System.UInt32))
-				throw new ArgumentException (Locale.GetText ("Value is not a System.UInt32"));
 
-			if (value == (uint) v)
+			if (!(value is System.UInt32))
+				throw new ArgumentException (Locale.GetText ("Value is not a System.UInt32."));
+
+			if (this.value == (uint) value)
 				return 0;
 
-			if (value < (uint) v)
+			if (this.value < (uint) value)
 				return -1;
 
 			return 1;
 		}
 
-		public override bool Equals (object o)
+		public override bool Equals (object obj)
 		{
-			if (!(o is System.UInt32))
+			if (!(obj is System.UInt32))
 				return false;
 
-			return ((uint) o) == value;
+			return ((uint) obj) == value;
 		}
 
 		public override int GetHashCode ()
@@ -51,7 +51,7 @@ namespace System {
 			return (int) value;
 		}
 
-		[CLSCompliant(false)]
+		[CLSCompliant (false)]
 		public static uint Parse (string s)
 		{
 			uint val = 0;
@@ -59,41 +59,42 @@ namespace System {
 			int i;
 			bool digits_seen = false;
 			bool has_negative_sign = false;
-			
+
 			if (s == null)
 				throw new ArgumentNullException (Locale.GetText ("s is null"));
 
 			len = s.Length;
 
 			char c;
-			for (i = 0; i < len; i++){
+			for (i = 0; i < len; i++) {
 				c = s [i];
 				if (!Char.IsWhiteSpace (c))
 					break;
 			}
-			
+
 			if (i == len)
 				throw new FormatException ();
 
 			if (s [i] == '+')
 				i++;
 			else
-				if (s[i] == '-'){
+				if (s[i] == '-') {
 					i++;
 					has_negative_sign = true;
 				}
 
-			for (; i < len; i++){
+			for (; i < len; i++) {
 				c = s [i];
 
-				if (c >= '0' && c <= '9'){
+				if (c >= '0' && c <= '9') {
 					uint d = (uint) (c - '0');
-					
+
 					val = checked (val * 10 + d);
 					digits_seen = true;
-				} else {
-					if (Char.IsWhiteSpace (c)){
-						for (i++; i < len; i++){
+				}
+				else {
+					if (Char.IsWhiteSpace (c)) {
+						for (i++; i < len; i++) {
 							if (!Char.IsWhiteSpace (s [i]))
 								throw new FormatException ();
 						}
@@ -104,38 +105,38 @@ namespace System {
 			}
 			if (!digits_seen)
 				throw new FormatException ();
-			
+
 			if (has_negative_sign)
 				throw new OverflowException ();
 
 			return val;
 		}
 
-		[CLSCompliant(false)]
-		public static uint Parse (string s, IFormatProvider fp)
+		[CLSCompliant (false)]
+		public static uint Parse (string s, IFormatProvider provider)
 		{
-			return Parse (s, NumberStyles.Integer, fp);
+			return Parse (s, NumberStyles.Integer, provider);
 		}
 
-		[CLSCompliant(false)]
+		[CLSCompliant (false)]
 		public static uint Parse (string s, NumberStyles style)
 		{
 			return Parse (s, style, null);
 		}
 
-		[CLSCompliant(false)]
-		public static uint Parse (string s, NumberStyles style, IFormatProvider fp)
+		[CLSCompliant (false)]
+		public static uint Parse (string s, NumberStyles style, IFormatProvider provider)
 		{
 			if (s == null)
 				throw new ArgumentNullException ();
 
 			if (s.Length == 0)
-				throw new FormatException ("Input string was not in the correct format.");
+				throw new FormatException (Locale.GetText ("Input string was not in the correct format."));
 
 			NumberFormatInfo nfi;
-			if (fp != null) {
-				Type typeNFI = typeof (System.Globalization.NumberFormatInfo);
-				nfi = (NumberFormatInfo) fp.GetFormat (typeNFI);
+			if (provider != null) {
+				Type typeNFI = typeof (NumberFormatInfo);
+				nfi = (NumberFormatInfo) provider.GetFormat (typeNFI);
 			}
 			else
 				nfi = Thread.CurrentThread.CurrentCulture.NumberFormat;
@@ -174,9 +175,9 @@ namespace System {
 					pos = Int32.JumpOverWhite (pos, s, true);
 
 				if (s.Substring (pos, nfi.NegativeSign.Length) == nfi.NegativeSign)
-					throw new FormatException ("Input string was not in the correct format.");
+					throw new FormatException (Locale.GetText ("Input string was not in the correct format."));
 				if (s.Substring (pos, nfi.PositiveSign.Length) == nfi.PositiveSign)
-					throw new FormatException ("Input string was not in the correct format.");
+					throw new FormatException (Locale.GetText ("Input string was not in the correct format."));
 			}
 
 			if (AllowLeadingSign && !foundSign) {
@@ -186,14 +187,13 @@ namespace System {
 					if (AllowLeadingWhite)
 						pos = Int32.JumpOverWhite (pos, s, true);
 					if (AllowCurrencySymbol) {
-						Int32.FindCurrency (ref pos, s, nfi,
-								    ref foundCurrency);
+						Int32.FindCurrency (ref pos, s, nfi, ref foundCurrency);
 						if (foundCurrency && AllowLeadingWhite)
 							pos = Int32.JumpOverWhite (pos, s, true);
 					}
 				}
 			}
-			
+
 			if (AllowCurrencySymbol && !foundCurrency) {
 				// Currency + sign
 				Int32.FindCurrency (ref pos, s, nfi, ref foundCurrency);
@@ -202,36 +202,33 @@ namespace System {
 						pos = Int32.JumpOverWhite (pos, s, true);
 					if (foundCurrency) {
 						if (!foundSign && AllowLeadingSign) {
-							Int32.FindSign (ref pos, s, nfi, ref foundSign,
-									ref negative);
+							Int32.FindSign (ref pos, s, nfi, ref foundSign, ref negative);
 							if (foundSign && AllowLeadingWhite)
 								pos = Int32.JumpOverWhite (pos, s, true);
 						}
 					}
 				}
 			}
-			
+
 			uint number = 0;
 			int nDigits = 0;
 			bool decimalPointFound = false;
 			uint digitValue;
 			char hexDigit;
-				
+
 			// Number stuff
 			// Just the same as Int32, but this one adds instead of substract
 			do {
 
 				if (!Int32.ValidDigit (s [pos], AllowHexSpecifier)) {
-					if (AllowThousands &&
-					    Int32.FindOther (ref pos, s, nfi.NumberGroupSeparator))
-					    continue;
+					if (AllowThousands && Int32.FindOther (ref pos, s, nfi.NumberGroupSeparator))
+						continue;
 					else
-					if (!decimalPointFound && AllowDecimalPoint &&
-					    Int32.FindOther (ref pos, s, nfi.NumberDecimalSeparator)) {
-					    decimalPointFound = true;
-					    continue;
-					}
-
+						if (!decimalPointFound && AllowDecimalPoint &&
+						    Int32.FindOther (ref pos, s, nfi.NumberDecimalSeparator)) {
+							decimalPointFound = true;
+							continue;
+						}
 					break;
 				}
 				else if (AllowHexSpecifier) {
@@ -251,25 +248,23 @@ namespace System {
 					// Allows decimal point as long as it's only 
 					// followed by zeroes.
 					if (s [pos++] != '0')
-						throw new OverflowException ("Value too large or too small.");
+						throw new OverflowException (Locale.GetText ("Value too large or too small."));
 				}
 				else {
 					nDigits++;
 
 					try {
-						number = checked (
-							number * 10 + 
-							(uint) (s [pos++] - '0')
-							);
-					} catch (OverflowException) {
-						throw new OverflowException ("Value too large or too small.");
+						number = checked (number * 10 + (uint) (s [pos++] - '0'));
+					}
+					catch (OverflowException) {
+						throw new OverflowException (Locale.GetText ("Value too large or too small."));
 					}
 				}
 			} while (pos < s.Length);
 
 			// Post number stuff
 			if (nDigits == 0)
-				throw new FormatException ("Input string was not in the correct format.");
+				throw new FormatException (Locale.GetText ("Input string was not in the correct format."));
 
 			if (AllowTrailingSign && !foundSign) {
 				// Sign + Currency
@@ -278,11 +273,10 @@ namespace System {
 					if (AllowTrailingWhite)
 						pos = Int32.JumpOverWhite (pos, s, true);
 					if (AllowCurrencySymbol)
-						Int32. FindCurrency (ref pos, s, nfi,
-								     ref foundCurrency);
+						Int32. FindCurrency (ref pos, s, nfi, ref foundCurrency);
 				}
 			}
-			
+
 			if (AllowCurrencySymbol && !foundCurrency) {
 				// Currency + sign
 				Int32.FindCurrency (ref pos, s, nfi, ref foundCurrency);
@@ -290,27 +284,26 @@ namespace System {
 					if (AllowTrailingWhite)
 						pos = Int32.JumpOverWhite (pos, s, true);
 					if (!foundSign && AllowTrailingSign)
-						Int32.FindSign (ref pos, s, nfi, ref foundSign,
-								ref negative);
+						Int32.FindSign (ref pos, s, nfi, ref foundSign, ref negative);
 				}
 			}
-			
+
 			if (AllowTrailingWhite && pos < s.Length)
 				pos = Int32.JumpOverWhite (pos, s, false);
 
 			if (foundOpenParentheses) {
 				if (pos >= s.Length || s [pos++] != ')')
-					throw new FormatException ("Input string was not in the correct " + 
-								   "format.");
+					throw new FormatException (Locale.GetText
+						("Input string was not in the correct format."));
 				if (AllowTrailingWhite && pos < s.Length)
 					pos = Int32.JumpOverWhite (pos, s, false);
 			}
 
 			if (pos < s.Length && s [pos] != '\u0000')
-				throw new FormatException ("Input string was not in the correct format.");
+				throw new FormatException (Locale.GetText ("Input string was not in the correct format."));
 
 			if (negative)
-				throw new OverflowException ( "Value too large or too small.");
+				throw new OverflowException (Locale.GetText ("Value too large or too small."));
 
 			return number;
 		}
@@ -332,16 +325,15 @@ namespace System {
 
 		public string ToString (string format, IFormatProvider fp)
 		{
-			NumberFormatInfo nfi = NumberFormatInfo.GetInstance( fp );
+			NumberFormatInfo nfi = NumberFormatInfo.GetInstance (fp);
 			
-			if ( format == null )
+			if (format == null)
 				format = "G";
 			
-			return IntegerFormatter.NumberToString(format, nfi, value);
+			return IntegerFormatter.NumberToString (format, nfi, value);
 		}
 
 		// =========== IConvertible Methods =========== //
-
 		public TypeCode GetTypeCode ()
 		{
 			return TypeCode.UInt32;

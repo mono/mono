@@ -7,35 +7,28 @@
 // (C) 2001 Chris Hynes
 //
 
-using System;
-using System.Reflection;
-
 namespace System 
 {
 	[Serializable]
-	public class UnhandledExceptionEventArgs: EventArgs
+	public class UnhandledExceptionEventArgs : EventArgs
 	{
 		private object exception;
 		private bool m_isTerminating;
 
-		public UnhandledExceptionEventArgs(object exception, bool isTerminating)
+		public UnhandledExceptionEventArgs (object exception, bool isTerminating)
 		{
 			this.exception = exception;
 			this.m_isTerminating = isTerminating;
 		}
 
-		public object ExceptionObject
-		{
-			get 
-			{
+		public object ExceptionObject {
+			get {
 				return exception;
 			}
 		}
 
-		public bool IsTerminating
-		{
-			get
-			{
+		public bool IsTerminating {
+			get {
 				return m_isTerminating;
 			}
 		}

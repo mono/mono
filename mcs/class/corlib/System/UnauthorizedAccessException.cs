@@ -1,23 +1,23 @@
 //
 // System.UnauthorizedAccessException.cs
 //
-// Author:
+// Authors:
 //   Paolo Molaro (lupus@ximian.com)
 //   Duncan Mak  (duncan@ximian.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System {
-
+namespace System
+{
 	[Serializable]
-	public class UnauthorizedAccessException : SystemException {
+	public class UnauthorizedAccessException : SystemException
+	{
 		// Constructors
 		public UnauthorizedAccessException ()
-			: base (Locale.GetText ("Access to the requested resource is not authorized"))
+			: base (Locale.GetText ("Access to the requested resource is not authorized."))
 		{
 		}
 

@@ -1,3 +1,17 @@
+2004-03-08  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* WeakReference.cs
+	* Void.cs
+	* Version.cs
+	* ValueType.cs
+	* UnitySerializationHolder.cs
+	* UnhandledExceptionEventHandler.cs
+	* UnauthorizedAccessException.cs
+	* UIntPtr.cs
+	* UInt64.cs
+	* UInt32.cs
+	* UInt16.cs: Mono styled, Locale.GetText fixes, msg fixes
+
 2004-03-04  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* Environment.cs: Bump corlib version.
