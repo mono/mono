@@ -1,4 +1,15 @@
 
+Wed Nov 14 19:26:06 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* class.h, class.c: add a max_interface_id to MonoClass.
+	* icall.c: rename my_mono_new_object() to my_mono_new_mono_type()
+	since it's used to do that. Added mono_type_type_from_obj().
+	Make GetType() return NULL instead of segfaulting if the type was not
+	found. Handle simple arrays in assQualifiedName.
+	* object.h: add a struct to represent an Exception.
+	* reflection.c: output call convention in method signature.
+	Add code to support P/Invoke methods and fixed offsets for fields.
+
 Mon Nov 12 12:41:32 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* decimal.c, decimal.h: mono_double2decimal() get the sign bit from

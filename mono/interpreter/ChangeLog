@@ -1,3 +1,12 @@
+
+Wed Nov 14 19:23:00 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: move the stack frame dumping code to a function so it can
+	be called from the debugger. Fix virtual method lookup for interfaces.
+	Throw exceptions instead of aborting in more places.
+	Print also the message in an exception. Updates for field renames in
+	corlib.
+
 2001-11-09  Dick Porter  <dick@ximian.com>
 
 	* Makefile.am (mint_LDADD): Don't need THREAD_LIBS any more
