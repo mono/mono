@@ -1,3 +1,8 @@
+
+Thu Mar 21 17:35:01 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: implement is_interned() the right way.
+
 2002-03-21  Martin Baulig  <martin@gnome.org>
 
 	* debug-symfile.[ch]: New files to handle debugging information
