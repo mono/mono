@@ -396,7 +396,14 @@ namespace Mono.Xml.Xsl.Functions {
 		
 		public override object Invoke (XsltCompiledContext xsltContext, object [] args, XPathNavigator docContext)
 		{
-			throw new NotImplementedException ();
+			double d = (double)args [0];
+			string s = (string)args [1];
+			QName nm = QName.Empty;
+			
+			if (args.Length == 3)
+				nm = XslNameUtil.FromString ((string)args [0], xsltContext);
+			
+			return xsltContext.Processor.CompiledStyle.LookupDecimalFormat (nm).FormatNumber (d, s);
 		}
 	}
 	

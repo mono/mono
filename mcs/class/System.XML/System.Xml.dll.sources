@@ -33,6 +33,7 @@ Mono.Xml.Xsl/Compiler.cs
 Mono.Xml.Xsl/Debug.cs
 Mono.Xml.Xsl/MSXslScriptManager.cs
 Mono.Xml.Xsl/XslAttributeSet.cs
+Mono.Xml.Xsl/XslDecimalFormat.cs
 Mono.Xml.Xsl/XslKey.cs
 Mono.Xml.Xsl/XslOutput.cs
 Mono.Xml.Xsl/XslStylesheet.cs

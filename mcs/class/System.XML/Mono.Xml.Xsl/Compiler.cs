@@ -33,8 +33,9 @@ namespace Mono.Xml.Xsl {
 		XmlNamespaceManager nsMgr;
 		ArrayList keys;
 		Hashtable outputs;
+		Hashtable decimalFormats;
 		
-		public CompiledStylesheet (XslStylesheet style, Hashtable globalVariables, Hashtable attrSets, ExpressionStore exprStore, XmlNamespaceManager nsMgr, ArrayList keys, Hashtable outputs)
+		public CompiledStylesheet (XslStylesheet style, Hashtable globalVariables, Hashtable attrSets, ExpressionStore exprStore, XmlNamespaceManager nsMgr, ArrayList keys, Hashtable outputs, Hashtable decimalFormats)
 		{
 			this.style = style;
 			this.globalVariables = globalVariables;
@@ -43,6 +44,7 @@ namespace Mono.Xml.Xsl {
 			this.nsMgr = nsMgr;
 			this.keys = keys;
 			this.outputs = outputs;
+			this.decimalFormats = decimalFormats;
 		}
 		public Hashtable Variables {get{return globalVariables;}}
 		public XslStylesheet Style { get { return style; }}
@@ -50,6 +52,14 @@ namespace Mono.Xml.Xsl {
 		public XmlNamespaceManager NamespaceManager {get{return nsMgr;}}
 		public ArrayList Keys {get { return keys;}}
 		public Hashtable Outputs { get { return outputs; }}
+		
+		public XslDecimalFormat LookupDecimalFormat (QName name)
+		{
+			XslDecimalFormat ret = decimalFormats [name] as XslDecimalFormat;
+			if (ret == null && name == QName.Empty)
+				return XslDecimalFormat.Default;
+			return ret;
+		}
 		
 		public XslGeneralVariable ResolveVariable (QName name)
 		{
@@ -104,7 +114,7 @@ namespace Mono.Xml.Xsl {
 			}
 			this.rootStyle = new XslStylesheet (this);
 			
-			return new CompiledStylesheet (rootStyle, globalVariables, attrSets, exprStore, nsMgr, keys, outputs);
+			return new CompiledStylesheet (rootStyle, globalVariables, attrSets, exprStore, nsMgr, keys, outputs, decimalFormats);
 		}
 		
 #region Input
@@ -376,6 +386,20 @@ namespace Mono.Xml.Xsl {
 		public void AddKeyPattern (XslKey key)
 		{
 			keys.Add (key);
+		}
+#endregion
+		
+#region Decimal Format
+		Hashtable decimalFormats = new Hashtable ();
+		
+		public void CompileDecimalFormat ()
+		{
+			QName nm = ParseQNameAttribute ("name");
+			
+			if (decimalFormats.Contains (nm))
+				((XslDecimalFormat)decimalFormats [nm]).CheckSameAs (this);
+			else
+				decimalFormats [nm] = new XslDecimalFormat (this);
 		}
 #endregion
 		

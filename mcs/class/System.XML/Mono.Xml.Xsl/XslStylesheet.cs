@@ -38,8 +38,6 @@ namespace Mono.Xml.Xsl {
 		Hashtable spaceControls = new Hashtable ();
 		// [string stylesheet-prefix]=>string result-prefix
 		Hashtable namespaceAliases = new Hashtable ();
-		// [QName]=>XslDecimalFormat
-		Hashtable decimalFormats = new Hashtable ();
 		// [QName]=>XmlSpace
 		Hashtable parameters = new Hashtable ();
 		
@@ -77,10 +75,6 @@ namespace Mono.Xml.Xsl {
 
 		public Hashtable NamespaceAliases {
 			get { return namespaceAliases; }
-		}
-
-		public Hashtable DecimalFormats {
-			get { return decimalFormats; }
 		}
 
 		public Hashtable Parameters {
@@ -172,6 +166,10 @@ namespace Mono.Xml.Xsl {
 					
 				case "output":
 					c.CompileOutput ();
+					break;
+				
+				case "decimal-format":
+					c.CompileDecimalFormat ();
 					break;
 					
 				case "template":

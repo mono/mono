@@ -1,5 +1,11 @@
 2003-08-20 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* Compiler.cs, XslStylesheet.cs, XsltCompiledContext.cs: Stubs for
+	format-number.
+	* XslDecimalFormat.cs: Stub for decimal-format.
+
+2003-08-20 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* TextOutputter.cs: Add option to ignore element content (Oleg).
 
 2003-08-19 Ben Maurer  <bmaurer@users.sourceforge.net>
