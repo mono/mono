@@ -1,3 +1,8 @@
+2005-01-19  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* UriTest.cs: Ignore one of the tests on Linux, as .NET's behavior is
+	  counterintuitive (see the UnixLocalPath_WTF comment).
+
 2005-01-08  Nick Drochak  <ndrochak@ieee.org>
 
 	* UriTest.cs
