@@ -1,5 +1,6 @@
 Assembly/AssemblyInfo.cs
 Assembly/Locale.cs
+Assembly/Consts.cs
 System.Configuration.Install/IManagedInstaller.cs
 System.Configuration.Install/Installer.cs
 System.Configuration.Install/InstallException.cs
