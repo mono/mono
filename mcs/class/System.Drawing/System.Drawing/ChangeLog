@@ -1,3 +1,7 @@
+2004-07-13  Ravindra <rkumar@novell.com>
+
+	* gdipFunctions.cs: Added some P/Invokes for PathGradientBrush.
+
 2004-07-09  Peter Bartok <pbartok@novell.com>
 	* Graphics.cs: Added support required for new managed SWF library
 	* gdipFunctions.cs: Added XOpenDisplay definition/import
