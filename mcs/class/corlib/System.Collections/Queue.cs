@@ -15,12 +15,12 @@ namespace System.Collections {
 	[Serializable]
 	public class Queue : ICollection, IEnumerable, ICloneable {
 
-		private object[] contents;
-		private int head = 0;   // points to the first used slot
-		private int count = 0;
-		private int capacity;
-		private float growFactor;
-		private int modCount = 0;
+		private object[] _array;
+		private int _head = 0;   // points to the first used slot
+		private int _size = 0;
+		private int _tail = 0;
+		private int _growFactor;
+		private int _version = 0;
 
 		public Queue () : this (32, 2.0F) {}
 		public Queue (int initialCapacity) : this (initialCapacity, 2.0F) {}
@@ -29,8 +29,9 @@ namespace System.Collections {
 			if (col == null)
 				throw new ArgumentNullException ("col");
 			
-			count = capacity;
-			col.CopyTo (contents, 0);
+			_size = _array.Length;
+			_tail = _size;
+			col.CopyTo (_array, 0);
 		}
 			
 		public Queue (int initialCapacity, float growFactor) {
@@ -39,16 +40,15 @@ namespace System.Collections {
 			if (!(growFactor >= 1.0F && growFactor <= 10.0F))
 				throw new ArgumentOutOfRangeException("growFactor", "Queue growth factor must be between 1.0 and 10.0, inclusive");
 	    
-			capacity = initialCapacity;
-			contents = new object[capacity];
+			_array = new object[initialCapacity];
 
-			this.growFactor = growFactor;
+			this._growFactor = (int)(growFactor * 100);
 		}
-
+		
 		// from ICollection
 
 		public virtual int Count {
-			get { return count; }
+			get { return _size; }
 		}
 
 		public virtual bool IsSynchronized {
@@ -69,18 +69,18 @@ namespace System.Collections {
 
 			if (array.Rank > 1 
 			    || (index != 0 && index >= array.Length)
-			    || count > array.Length - index)
+			    || _size > array.Length - index)
 				throw new ArgumentException ();
 			
-			int contents_length = contents.Length;
-			int length_from_head = contents_length - head;
-			// copy the contents of the circular array
-			Array.Copy (contents, head, array, index,
-				    Math.Min (count, length_from_head));
-			if (count >  length_from_head)
-				Array.Copy (contents, 0, array, 
+			int contents_length = _array.Length;
+			int length_from_head = contents_length - _head;
+			// copy the _array of the circular array
+			Array.Copy (_array, _head, array, index,
+				    Math.Min (_size, length_from_head));
+			if (_size >  length_from_head)
+				Array.Copy (_array, 0, array, 
 					    index + length_from_head,
-					    count - length_from_head);
+					    _size - length_from_head);
 		}
 
 		// from IEnumerable
@@ -94,34 +94,37 @@ namespace System.Collections {
 		public virtual object Clone () {
 			Queue newQueue;
 			
-			newQueue = new Queue (this.capacity, this.growFactor);
+			newQueue = new Queue (this._array.Length);
+			newQueue._growFactor = _growFactor;
 			
-			Array.Copy (this.contents, 0, newQueue.contents, 0,
-				    this.capacity);
-			newQueue.head = this.head;
-			newQueue.count = this.count;
+			Array.Copy (this._array, 0, newQueue._array, 0,
+				    this._array.Length);
+			newQueue._head = this._head;
+			newQueue._size = this._size;
+			newQueue._tail = this._tail;
 
 			return newQueue;
 		}
 
 		public virtual void Clear () {
-			modCount++;
-			head = 0;
-			count = 0;
-			for (int length = contents.Length - 1; length >= 0; length--)
-				contents [length] = null;
+			_version++;
+			_head = 0;
+			_size = 0;
+			_tail = 0;
+			for (int length = _array.Length - 1; length >= 0; length--)
+				_array [length] = null;
 		}
 
 		public virtual bool Contains (object obj) {
-			int tail = head + count;
+			int tail = _head + _size;
 			if (obj == null) {
-				for (int i = head; i < tail; i++) {
-					if (contents[i % capacity] == null) 
+				for (int i = _head; i < tail; i++) {
+					if (_array[i % _array.Length] == null) 
 						return true;
 				}
 			} else {
-				for (int i = head; i < tail; i++) {
-					if (obj.Equals (contents[i % capacity]))
+				for (int i = _head; i < tail; i++) {
+					if (obj.Equals (_array[i % _array.Length]))
 						return true;
 				}
 			}
@@ -130,29 +133,30 @@ namespace System.Collections {
 		
 		public virtual object Dequeue ()
 		{
-			modCount++;
-			if (count < 1)
+			_version++;
+			if (_size < 1)
 				throw new InvalidOperationException ();
-			object result = contents[head];
-			contents [head] = null;
-			head = (head + 1) % capacity;
-			count--;
+			object result = _array[_head];
+			_array [_head] = null;
+			_head = (_head + 1) % _array.Length;
+			_size--;
 			return result;
 		}
 
 		public virtual void Enqueue (object obj) {
-			modCount++;
-			if (count == capacity) 
+			_version++;
+			if (_size == _array.Length) 
 				grow ();
-			contents[(head + count) % capacity] = obj;
-			count++;
+			_array[_tail] = obj;
+			_tail = (_tail+1) % _array.Length;
+			_size++;
 
 		}
 
 		public virtual object Peek () {
-			if (count < 1)
+			if (_size < 1)
 				throw new InvalidOperationException ();
-			return contents[head];
+			return _array[_head];
 		}
 
 		public static Queue Synchronized (Queue queue) {
@@ -163,28 +167,29 @@ namespace System.Collections {
 		}
 
 		public virtual object[] ToArray () {
-			object[] ret = new object[count];
+			object[] ret = new object[_size];
 			CopyTo (ret, 0);
 			return ret;
 		}
 
 		public virtual void TrimToSize() {
-			modCount++;
-			object[] trimmed = new object [count];
+			_version++;
+			object[] trimmed = new object [_size];
 			CopyTo (trimmed, 0);
-			contents = trimmed;
+			_array = trimmed;
+			_head = 0;
+			_tail = _head + _size;
 		}
 
 		// private methods
 
 		private void grow () {
-			int newCapacity = (int) Math.Ceiling
-				(contents.Length * growFactor);
+			int newCapacity = (_array.Length * _growFactor) / 100;
 			object[] newContents = new object[newCapacity];
 			CopyTo (newContents, 0);
-			contents = newContents;
-                        capacity = newCapacity;
-                        head = 0;
+			_array = newContents;
+			_head = 0;
+			_tail = _head + _size;
 		}
 
 		// private classes
@@ -199,7 +204,7 @@ namespace System.Collections {
 			public override int Count {
 				get { 
 					lock (queue) {
-						return queue.count; 
+						return queue._size; 
 					}
 				}
 			}
@@ -290,39 +295,39 @@ namespace System.Collections {
 		[Serializable]
 		private class QueueEnumerator : IEnumerator, ICloneable {
 			Queue queue;
-			private int modCount;
+			private int _version;
 			private int current;
 
 			internal QueueEnumerator (Queue q) {
 				queue = q;
-				modCount = q.modCount;
-				current = -1;  // one element before the head
+				_version = q._version;
+				current = -1;  // one element before the _head
 			}
 
 			public object Clone ()
 			{
 				QueueEnumerator q = new QueueEnumerator (queue);
-				q.modCount = modCount;
+				q._version = _version;
 				q.current = current;
 				return q;
 			}
 
 			public virtual object Current {
 				get {
-					if (modCount != queue.modCount 
+					if (_version != queue._version 
 					    || current < 0
-					    || current >= queue.count)
+					    || current >= queue._size)
 						throw new InvalidOperationException ();
-					return queue.contents[(queue.head + current) % queue.contents.Length];
+					return queue._array[(queue._head + current) % queue._array.Length];
 				}
 			}
 
 			public virtual bool MoveNext () {
-				if (modCount != queue.modCount) {
+				if (_version != queue._version) {
 					throw new InvalidOperationException ();
 				}
 
-				if (current >= queue.count - 1) {
+				if (current >= queue._size - 1) {
 					return false;
 				} else {
 					current++;
@@ -331,7 +336,7 @@ namespace System.Collections {
 			}
 
 			public virtual void Reset () {
-				if (modCount != queue.modCount) {
+				if (_version != queue._version) {
 					throw new InvalidOperationException();
 				}
 				current = -1;

@@ -1,3 +1,11 @@
+2004-04-20  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Queue.cs: Renamed internal membesr to match MS.NET (to allow serialization
+	interoperability). I also had to make some changes in the implementation:
+	I added a field _tail that points at the first free position in the array, and
+	changed the type of growFactor, which is now an int (its value is the old
+	growFactor * 100).
+
 2004-04-19  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Comparer.cs: Made constructor public.
