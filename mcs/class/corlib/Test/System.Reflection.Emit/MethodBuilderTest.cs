@@ -207,6 +207,34 @@ public class MethodBuilderTest : Assertion
 		}
 	}
 
+	[Test]
+	[ExpectedException (typeof(InvalidOperationException))]
+	public void TestDefineParameterInvalidIndexComplete ()
+	{
+		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+		MethodBuilder mb = tb.DefineMethod (
+			genMethodName (), 0, typeof (void),
+			new Type[2] {
+			typeof(int), typeof(int)
+		});
+		tb.CreateType ();
+		mb.DefineParameter (-5, ParameterAttributes.None, "param1");
+	}
+
+	[Test]
+	[ExpectedException (typeof(InvalidOperationException))]
+	public void TestDefineParameterValidIndexComplete ()
+	{
+		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+		MethodBuilder mb = tb.DefineMethod (
+			genMethodName (), 0, typeof (void),
+			new Type[2] {
+			typeof(int), typeof(int)
+		});
+		tb.CreateType ();
+		mb.DefineParameter (1, ParameterAttributes.None, "param1");
+	}
+
 	public void TestDefineParameter () {
 		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
 		MethodBuilder mb = tb.DefineMethod (
@@ -244,6 +272,20 @@ public class MethodBuilderTest : Assertion
 		}
 		catch (InvalidOperationException) {
 		}
+	}
+
+	[Test]
+	public void TestHashCode ()
+	{
+		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+		string methodName = genMethodName ();
+		MethodBuilder mb = tb.DefineMethod (
+			methodName, 0, typeof (void),
+			new Type[2] {
+			typeof(int), typeof(int)
+		});
+		AssertEquals ("Hashcode of method should be equal to hashcode of method name",
+			methodName.GetHashCode (), mb.GetHashCode ());
 	}
 
 	public void TestGetBaseDefinition () {

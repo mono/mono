@@ -1,5 +1,17 @@
 2004-06-09  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* TypeBuilderTest.cs: Added tests for completed/created type
+
+	* FieldBuilderTest.cs: Added tests for FieldBuilder (mostly
+	checking error conditions for now)
+
+	* EnumBuilderTest.cs: Added tests for EnumBuilder
+
+	* MethodBuilderTest.cs: Added tests for invalid parameter 
+	indexes for created types, added test for GetHashCode
+
+2004-06-09  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* MethodRentalTest.cs: Added check for invalid method size,
 	fixed tests on MS.NET, Mono-stylized
 
