@@ -1,3 +1,8 @@
+2005-04-05  Lluis Sanchez Gual <lluis@novell.com>
+
+	* TemplateControlCompiler.cs: Don't autogenerate IDs for
+	controls inside Content template.
+
 2005-03-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateControlCompiler.cs: make typedesc.aspx work again.

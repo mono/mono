@@ -701,7 +701,7 @@ namespace System.Web.Compilation
 #if NET_2_0
 					if (b is ContentControlBuilder) {
 						ContentControlBuilder cb = (ContentControlBuilder) b;
-						CreateControlTree (cb, true, true);
+						CreateControlTree (cb, false, true);
 						AddContentTemplateInvocation (cb, builder.method, cb.method.Name);
 						continue;
 					}
