@@ -1,3 +1,10 @@
+2001-11-19  Dietmar Maurer  <dietmar@ximian.com>
+
+	* jit.c (mono_analyze_stack): impl. LDFTN
+
+	* emit-x86.c (enter_method): more debugging output for Strings
+	(arch_compile_method): added delegate support
+	(arch_compile_method): align EBP to 8 byte boundary
 
 Mon Nov 19 11:36:22 CET 2001 Paolo Molaro <lupus@ximian.com>
 
