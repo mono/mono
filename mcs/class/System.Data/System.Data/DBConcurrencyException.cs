@@ -24,15 +24,17 @@ namespace System.Data {
 		{
 		}
 
+		DataRow row;
+
 		public DataRow Row {
 			get { return row; }
-			set {} // setting the row has no effect
+			set { row = value;} // setting the row has no effect
 		}
 
 		[MonoTODO]
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			base (info, context)
+			base.GetObjectData (info, context);
 		}
 	}
 }

@@ -10,9 +10,9 @@ using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace System.Data {
+	[Serializable]
 	public class EvaluateException : InvalidExpressionException
 	{
-		[Serializable]
 		public EvaluateException ()
 			: base (Locale.GetText ("This expression cannot be evaluated"))
 		{

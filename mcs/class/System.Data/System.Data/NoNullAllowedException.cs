@@ -11,9 +11,9 @@ using System.Runtime.Serialization;
 
 namespace System.Data {
 
+	[Serializable]
 	public class NoNullAllowedException : DataException
 	{
-		[Serializable]
 		public NoNullAllowedException ()
 			: base (Locale.GetText ("Cannot insert a NULL value"))
 		{

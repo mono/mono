@@ -10,9 +10,9 @@ using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace System.Data {
+	[Serializable]
 	public class SyntaxErrorException : InvalidExpressionException
 	{
-		[Serializable]
 		public SyntaxErrorException ()
 			: base (Locale.GetText ("There is a syntax error in this Expression"))
 		{
