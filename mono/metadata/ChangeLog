@@ -1,3 +1,7 @@
+2003-09-24 Bernie Solomon <bernard@ugsolutions.com>
+
+        * object.c: fix cast warning in big endian code.
+
 2003-09-19 Jackson Harper <jackson@latitudegeo.com>
 
 	* icall.c: Timezone patch from Zoltan Varga (vargaz@freemail.hu)
