@@ -33,7 +33,7 @@ namespace Mono.CSharp {
 			this.Type = expr;
 		}
 
-		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
 			if (a.Type == TypeManager.marshal_as_attr_type) {
 				UnmanagedMarshal marshal = a.GetMarshal (this);
@@ -214,6 +214,7 @@ namespace Mono.CSharp {
 			TypeAttributes attr = Modifiers.TypeAttr (ModFlags, IsTopLevel);
 
 			ec = new EmitContext (this, this, Location, null, null, ModFlags, false);
+			ec.InEnumContext = true;
 
 			attr |= TypeAttributes.Class | TypeAttributes.Sealed;
 
@@ -255,6 +256,8 @@ namespace Mono.CSharp {
 				TypeBuilder = builder.DefineNestedType (
 					Basename, attr, TypeManager.enum_type);
 			}
+
+			ec.ContainerType = TypeBuilder;
 
 			//
 			// Call MapToInternalType for corlib
@@ -481,19 +484,14 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		//
-		// Horrible, horrible.  But there is no other way we can pass the EmitContext
-		// to the recursive definition triggered by the evaluation of a forward
-		// expression
-		//
-		static EmitContext current_ec = null;
-		
 		/// <summary>
 		///  This is used to lookup the value of an enum member. If the member is undefined,
 		///  it attempts to define it and return its value
 		/// </summary>
-		public object LookupEnumValue (EmitContext ec, string name, Location loc)
+		public object LookupEnumValue (string name, Location loc)
 		{
+			if (ec == null)
+				Report.Error (-1, loc, "Enum.LookupEnumValue () called too soon");
 			
 			object default_value = null;
 			Constant c = null;
@@ -534,14 +532,7 @@ namespace Mono.CSharp {
 						Location m_loc = (Mono.CSharp.Location)
 							member_to_location [n];
 						in_transit.Add (name, true);
-
-						EmitContext old_ec = current_ec;
-						current_ec = ec;
-			
-						default_value = LookupEnumValue (ec, n, m_loc);
-
-						current_ec = old_ec;
-						
+						default_value = LookupEnumValue (n, m_loc);
 						in_transit.Remove (name);
 						if (default_value == null)
 							return null;
@@ -551,17 +542,12 @@ namespace Mono.CSharp {
 				}
 				
 			} else {
-				bool old = ec.InEnumContext;
-				ec.InEnumContext = true;
-				in_transit.Add (name, true);
+				if (!EmitContext.InEnumContext)
+					Report.Error (-1, loc, "foo");
 
-				EmitContext old_ec = current_ec;
-				current_ec = ec;
-				val = val.Resolve (ec);
-				current_ec = old_ec;
-				
+				in_transit.Add (name, true);
+				val = val.Resolve (EmitContext);
 				in_transit.Remove (name);
-				ec.InEnumContext = old;
 
 				if (val == null)
 					return null;
@@ -626,7 +612,8 @@ namespace Mono.CSharp {
 			if (TypeBuilder == null)
 				return false;
 
-			ec = new EmitContext (this, this, Location, null, UnderlyingType, ModFlags, false);
+			if (ec == null)
+				throw new InternalErrorException ("Enum.Define () called too soon");
 			
 			object default_value = 0;
 			
@@ -641,7 +628,7 @@ namespace Mono.CSharp {
 				Location loc = (Mono.CSharp.Location) member_to_location [name];
 
 				if (this [name] != null) {
-					default_value = LookupEnumValue (ec, name, loc);
+					default_value = LookupEnumValue (name, loc);
 
 					if (default_value == null)
 						return true;
@@ -744,10 +731,8 @@ namespace Mono.CSharp {
 			ArrayList members = new ArrayList ();
 
 			if ((mt & MemberTypes.Field) != 0) {
-				if (criteria is string){
-					if (member_to_value [criteria] == null && current_ec != null){
-						LookupEnumValue (current_ec, (string) criteria, Location.Null);
-					}
+				if (criteria is string && member_to_value [criteria] == null) {
+					LookupEnumValue ((string) criteria, Location.Null);
 				}
 				
 				foreach (FieldBuilder fb in field_builders)
