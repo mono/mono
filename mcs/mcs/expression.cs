@@ -70,6 +70,27 @@ namespace CIR {
 		}
 
 		// <summary>
+		//   Utility wrapper routine for Error, just to beautify the code
+		// </summary>
+		static protected void Error (TypeContainer tc, int error, string s)
+		{
+			tc.RootContext.Report.Error (error, s);
+		}
+
+		static protected void Error (TypeContainer tc, int error, Location l, string s)
+		{
+			tc.RootContext.Report.Error (error, l, s);
+		}
+		
+		// <summary>
+		//   Utility wrapper routine for Warning, just to beautify the code
+		// </summary>
+		static protected void Warning (TypeContainer tc, int warning, string s)
+		{
+			tc.RootContext.Report.Warning (warning, s);
+		}
+
+		// <summary>
 		//   Performs semantic analysis on the Expression
 		// </summary>
 		//
@@ -167,13 +188,14 @@ namespace CIR {
 		// This is so we can catch correctly attempts to invoke instance methods
 		// from a static body (scan for error 120 in ResolveSimpleName).
 		//
-		public static Expression MemberLookup (RootContext rc, Type t, string name,
-							  bool same_type, MemberTypes mt, BindingFlags bf)
+		public static Expression MemberLookup (TypeContainer tc, Type t, string name,
+						       bool same_type, MemberTypes mt, BindingFlags bf)
 		{
 			if (same_type)
 				bf |= BindingFlags.NonPublic;
 
-			MemberInfo [] mi = rc.TypeManager.FindMembers (t, mt, bf, Type.FilterName, name);
+			MemberInfo [] mi = tc.RootContext.TypeManager.FindMembers (
+				t, mt, bf, Type.FilterName, name);
 
 			if (mi == null)
 				return null;
@@ -183,8 +205,10 @@ namespace CIR {
 			
 			for (int i = 0; i < mi.Length; i++)
 				if (!(mi [i] is MethodBase)){
-					rc.Report.Error (-5, "Do not know how to reproduce this case: " + 
-							 "Methods and non-Method with the same name, report this please");
+					Error (tc,
+					       -5, "Do not know how to reproduce this case: " + 
+					       "Methods and non-Method with the same name, " +
+					       "report this please");
 
 					for (i = 0; i < mi.Length; i++){
 						Type tt = mi [i].GetType ();
@@ -213,49 +237,46 @@ namespace CIR {
 			BindingFlags.Static |
 			BindingFlags.Instance;
 
-		public static Expression MemberLookup (RootContext rc, Type t, string name,
+		public static Expression MemberLookup (TypeContainer tc, Type t, string name,
 						       bool same_type)
 		{
-			return MemberLookup (rc, t, name, same_type, AllMemberTypes, AllBindingsFlags);
+			return MemberLookup (tc, t, name, same_type, AllMemberTypes, AllBindingsFlags);
 		}
-		
-		// <summary>
-		//   Resolves the E in `E.I' side for a member_access
+
 		//
-		//   This is suboptimal and should be merged with ResolveMemberAccess
-		// </summary>
-		static Expression ResolvePrimary (TypeContainer tc, string name)
-		{
-			int dot_pos = name.LastIndexOf (".");
-
-			if (tc.RootContext.IsNamespace (name))
-				return new NamespaceExpr (name);
-
-			if (dot_pos != -1){
-			} else {
-				Type t = tc.LookupType (name, false);
-
-				if (t != null)
-					return new TypeExpr (t);
-			}
-
-			return null;
-		}
-			
+		// I am in general unhappy with this implementation.
+		//
+		// I need to revise this.
+		//
 		static public Expression ResolveMemberAccess (TypeContainer tc, string name)
 		{
-			Expression left_e;
+			Expression left_e = null;
 			int dot_pos = name.LastIndexOf (".");
 			string left = name.Substring (0, dot_pos);
 			string right = name.Substring (dot_pos + 1);
+			Type t;
 
-			left_e = ResolvePrimary (tc, left);
-			if (left_e == null)
+			if ((t = tc.LookupType (left, false)) != null)
+				left_e = new TypeExpr (t);
+			else {
+				//
+				// FIXME: IMplement:
+				
+				// Handle here:
+				//    T.P  Static property access (P) on Type T.
+				//    e.P  instance property access on instance e for P.
+				//    p
+				//
+			}
+
+			if (left_e == null){
+				Error (tc, 246, "Can not find type or namespace `"+left+"'");
 				return null;
+			}
 
 			switch (left_e.ExprClass){
 			case ExprClass.Type:
-				return  MemberLookup (tc.RootContext,
+				return  MemberLookup (tc,
 						      left_e.Type, right,
 						      left_e.Type == tc.TypeBuilder);
 				
@@ -268,10 +289,8 @@ namespace CIR {
 			case ExprClass.EventAccess:
 			case ExprClass.MethodGroup:
 			case ExprClass.Invalid:
-				tc.RootContext.Report.Error (-1000,
-							     "Internal compiler error, should have " +
-							     "got these handled before");
-				break;
+				throw new Exception ("Should have got the " + left_e.ExprClass +
+						     " handled before");
 			}
 			
 			return null;
@@ -555,7 +574,7 @@ namespace CIR {
 				TypeManager.CSharpName (target.Type) + "' to `" +
 				TypeManager.CSharpName (type) + "'";
 
-			tc.RootContext.Report.Error (29, l, msg);
+			Error (tc, 29, l, msg);
 
 			return null;
 		}
@@ -783,11 +802,6 @@ namespace CIR {
 			return expr;
 		}
 
-		void report (TypeContainer tc, int error, string s)
-		{
-			tc.RootContext.Report.Error (error, s);
-		}
-
 		static string ExprClassName (ExprClass c)
 		{
 			switch (c){
@@ -820,8 +834,8 @@ namespace CIR {
 		// </summary>
 		protected void report118 (TypeContainer tc, Expression expr, string expected)
 		{
-			report (tc, 118, "Expression denotes a '" + ExprClassName (expr.ExprClass) +
-				"' where an " + expected + " was expected");
+			Error (tc, 118, "Expression denotes a '" + ExprClassName (expr.ExprClass) +
+			       "' where an " + expected + " was expected");
 		}
 	}
 
@@ -1083,7 +1097,7 @@ namespace CIR {
 			else
 				op_name = "op_" + oper;
 
-			mg = MemberLookup (tc.RootContext, expr_type, op_name, false);
+			mg = MemberLookup (tc, expr_type, op_name, false);
 			
 			if (mg != null) {
 				Arguments = new ArrayList ();
@@ -1257,9 +1271,16 @@ namespace CIR {
 				}
 			}
 
-			tc.RootContext.Report.Error (187, "No such operator '" + OperName () +
-						     "' defined for type '" +
-						     TypeManager.CSharpName (expr_type) + "'");
+			if (oper == Operator.AddressOf){
+				if (expr.ExprClass != ExprClass.Variable){
+					Error (tc, 211, "Cannot take the address of non-variables");
+					return null;
+				}
+				type = Type.GetType (expr.Type.ToString () + "*");
+			}
+			
+			Error (tc, 187, "No such operator '" + OperName () + "' defined for type '" +
+			       TypeManager.CSharpName (expr_type) + "'");
 			return null;
 
 		}
@@ -1308,7 +1329,7 @@ namespace CIR {
 				//
 				if (oper == Operator.PreDecrement || oper == Operator.PreIncrement ||
 				    oper == Operator.PostDecrement || oper == Operator.PostIncrement){
-					((LValue) expr).Store (ig);
+					((LValue) expr).Store (ec);
 				}
 				return;
 			}
@@ -1334,7 +1355,8 @@ namespace CIR {
 				break;
 				
 			case Operator.AddressOf:
-				throw new Exception ("Not implemented yet");
+				((LValue)expr).AddressOf (ec);
+				break;
 				
 			case Operator.Indirection:
 				throw new Exception ("Not implemented yet");
@@ -1353,7 +1375,7 @@ namespace CIR {
 					else
 						ig.Emit (OpCodes.Add);
 					ig.Emit (OpCodes.Dup);
-					((LValue) expr).Store (ig);
+					((LValue) expr).Store (ec);
 				} else {
 					throw new Exception ("Handle Indexers and Properties here");
 				}
@@ -1373,7 +1395,7 @@ namespace CIR {
 						ig.Emit (OpCodes.Sub);
 					else
 						ig.Emit (OpCodes.Add);
-					((LValue) expr).Store (ig);
+					((LValue) expr).Store (ec);
 				} else {
 					throw new Exception ("Handle Indexers and Properties here");
 				}
@@ -1659,11 +1681,11 @@ namespace CIR {
 				    (other == TypeManager.int64_type)){
 					string oper = OperName ();
 					
-					tc.RootContext.Report.Error (34, "Operator `" + OperName ()
-								     + "' is ambiguous on operands of type `"
-								     + TypeManager.CSharpName (l) + "' "
-								     + "and `" + TypeManager.CSharpName (r)
-								     + "'");
+					Error (tc, 34, "Operator `" + OperName ()
+					       + "' is ambiguous on operands of type `"
+					       + TypeManager.CSharpName (l) + "' "
+					       + "and `" + TypeManager.CSharpName (r)
+					       + "'");
 				}
 				type = TypeManager.uint64_type;
 			} else if (l == TypeManager.int64_type || r == TypeManager.int64_type){
@@ -1721,11 +1743,10 @@ namespace CIR {
 
 		void error19 (TypeContainer tc)
 		{
-			tc.RootContext.Report.Error (
-				19,
-				"Operator " + OperName () + " cannot be applied to operands of type `" +
-				TypeManager.CSharpName (left.Type) + "' and `" +
-				TypeManager.CSharpName (right.Type) + "'");
+			Error (tc, 19,
+			       "Operator " + OperName () + " cannot be applied to operands of type `" +
+			       TypeManager.CSharpName (left.Type) + "' and `" +
+			       TypeManager.CSharpName (right.Type) + "'");
 						     
 		}
 		
@@ -1766,9 +1787,9 @@ namespace CIR {
 			
 			string op = "op_" + oper;
 
-			left_expr = MemberLookup (tc.RootContext, l, op, false);
+			left_expr = MemberLookup (tc, l, op, false);
 
-			right_expr = MemberLookup (tc.RootContext, r, op, false);
+			right_expr = MemberLookup (tc, r, op, false);
 
 			MethodGroupExpr union = Invocation.MakeUnionSet (left_expr, right_expr);
 
@@ -2162,7 +2183,7 @@ namespace CIR {
 			Expression e;
 			Report r = tc.RootContext.Report;
 
-			e = MemberLookup (tc.RootContext, tc.TypeBuilder, Name, true);
+			e = MemberLookup (tc, tc.TypeBuilder, Name, true);
 			if (e != null){
 				if (e is TypeExpr)
 					return e;
@@ -2184,8 +2205,8 @@ namespace CIR {
 			//
 			// FIXME: implement me.
 
-			r.Error (103, Location, "The name `" + Name + "' does not exist in the class `" +
-				 tc.Name + "'");
+			Error (tc, 103, Location, "The name `" + Name + "' does not exist in the class `" +
+			       tc.Name + "'");
 
 			return null;
 		}
@@ -2214,7 +2235,19 @@ namespace CIR {
 	//   A simple interface that should be implemeneted by LValues
 	// </summary>
 	public interface LValue {
-		void Store (ILGenerator ig);
+
+		// <summary>
+		//   The Store method should store the contents of the top
+		//   of the stack into the storage that is implemented by
+		//   the particular implementation of LValue
+		// </summary>
+		void Store     (EmitContext ec);
+
+		// <summary>
+		//   The AddressOf method should generate code that loads
+		//   the address of the LValue and leaves it on the stack
+		// </summary>
+		void AddressOf (EmitContext ec);
 	}
 	
 	public class LocalVariableReference : Expression, LValue {
@@ -2266,16 +2299,17 @@ namespace CIR {
 				break;
 
 			default:
-				if (idx < 255)
-					ig.Emit (OpCodes.Ldloc_S, idx);
+				if (idx <= 255)
+					ig.Emit (OpCodes.Ldloc_S, (byte) idx);
 				else
 					ig.Emit (OpCodes.Ldloc, idx);
 				break;
 			}
 		}
 
-		public void Store (ILGenerator ig)
+		public void Store (EmitContext ec)
 		{
+			ILGenerator ig = ec.ig;
 			VariableInfo vi = VariableInfo;
 			int idx = vi.Idx;
 					
@@ -2297,12 +2331,23 @@ namespace CIR {
 				break;
 				
 			default:
-				if (idx < 255)
-					ig.Emit (OpCodes.Stloc_S, idx);
+				if (idx <= 255)
+					ig.Emit (OpCodes.Stloc_S, (byte) idx);
 				else
 					ig.Emit (OpCodes.Stloc, idx);
 				break;
 			}
+		}
+
+		public void AddressOf (EmitContext ec)
+		{
+			VariableInfo vi = VariableInfo;
+			int idx = vi.Idx;
+			
+			if (idx <= 255)
+				ec.ig.Emit (OpCodes.Ldloca_S, (byte) idx);
+			else
+				ec.ig.Emit (OpCodes.Ldloca, idx);
 		}
 	}
 
@@ -2330,19 +2375,27 @@ namespace CIR {
 
 		public override void Emit (EmitContext ec)
 		{
-			if (Idx < 255)
-				ec.ig.Emit (OpCodes.Ldarg_S, Idx);
+			if (Idx <= 255)
+				ec.ig.Emit (OpCodes.Ldarg_S, (byte) Idx);
 			else
 				ec.ig.Emit (OpCodes.Ldarg, Idx);
 		}
 
-		public void Store (ILGenerator ig)
+		public void Store (EmitContext ec)
 		{
-			if (Idx < 255)
-				ig.Emit (OpCodes.Starg_S, Idx);
+			if (Idx <= 255)
+				ec.ig.Emit (OpCodes.Starg_S, (byte) Idx);
 			else
-				ig.Emit (OpCodes.Starg, Idx);
+				ec.ig.Emit (OpCodes.Starg, Idx);
 			
+		}
+
+		public void AddressOf (EmitContext ec)
+		{
+			if (Idx <= 255)
+				ec.ig.Emit (OpCodes.Ldarga_S, (byte) Idx);
+			else
+				ec.ig.Emit (OpCodes.Ldarga, Idx);
 		}
 	}
 	
@@ -2542,7 +2595,7 @@ namespace CIR {
 
 			Expression mg;
 			
-			mg = MemberLookup (tc.RootContext, to, "op_Implicit", false);
+			mg = MemberLookup (tc, to, "op_Implicit", false);
 
 			if (mg != null) {
 				MethodGroupExpr me = (MethodGroupExpr) mg;
@@ -2557,7 +2610,7 @@ namespace CIR {
 				}
 			}
 
-			mg = MemberLookup (tc.RootContext, from, "op_Implicit", false);
+			mg = MemberLookup (tc, from, "op_Implicit", false);
 
 			if (mg != null) {
 				MethodGroupExpr me = (MethodGroupExpr) mg;
@@ -2895,10 +2948,10 @@ namespace CIR {
 				Expression conv = ConvertImplicit (tc, a_expr, pd.ParameterType (j));
 
 				if (conv == null) {
-					tc.RootContext.Report.Error (1502, loc,
+					Error (tc, 1502, loc,
 					       "The best overloaded match for method '" + FullMethodDesc (method) +
 					       "' has some invalid arguments");
-					tc.RootContext.Report.Error (1503, loc,
+					Error (tc, 1503, loc,
 					       "Argument " + (j+1) +
 					       " : Cannot convert from '" + TypeManager.CSharpName (a_expr.Type)
 					       + "' to '" + TypeManager.CSharpName (pd.ParameterType (j)) + "'");
@@ -2947,7 +3000,7 @@ namespace CIR {
 			method = OverloadResolve (tc, (MethodGroupExpr) this.expr, Arguments, Location);
 
 			if (method == null){
-				tc.RootContext.Report.Error (-6, Location,
+				Error (tc, -6, Location,
 				       "Could not find any applicable function for this argument list");
 				return null;
 			}
@@ -3069,7 +3122,7 @@ namespace CIR {
 
 			Expression ml;
 
-			ml = MemberLookup (tc.RootContext, type, ".ctor", false,
+			ml = MemberLookup (tc, type, ".ctor", false,
 					   MemberTypes.Constructor, AllBindingsFlags);
 
 			if (! (ml is MethodGroupExpr)){
@@ -3093,8 +3146,8 @@ namespace CIR {
 			method = Invocation.OverloadResolve (tc, (MethodGroupExpr) ml, Arguments, Location);
 
 			if (method == null) {
-				tc.RootContext.Report.Error (-6, Location,
-				"New invocation: Can not find a constructor for this argument list");
+				Error (tc, -6, Location,
+				       "New invocation: Can not find a constructor for this argument list");
 				return null;
 			}
 			
@@ -3134,12 +3187,20 @@ namespace CIR {
 			ec.ig.Emit (OpCodes.Ldarg_0);
 		}
 
-		public void Store (ILGenerator ig)
+		public void Store (EmitContext ec)
 		{
 			//
-			// Assignment to the "this" variable
+			// Assignment to the "this" variable.
 			//
-			ig.Emit (OpCodes.Starg, 0);
+			// FIXME: Apparently this is a bug that we
+			// must catch as `this' seems to be readonly ;-)
+			//
+			ec.ig.Emit (OpCodes.Starg, 0);
+		}
+
+		public void AddressOf (EmitContext ec)
+		{
+			ec.ig.Emit (OpCodes.Ldarga_S, (byte) 0);
 		}
 	}
 
@@ -3214,7 +3275,7 @@ namespace CIR {
 			if (new_expression == null)
 				return null;
 
-			member_lookup = MemberLookup (tc.RootContext, expr.Type, Identifier, false);
+			member_lookup = MemberLookup (tc, expr.Type, Identifier, false);
 
 			if (member_lookup is MethodGroupExpr){
 				MethodGroupExpr mg = (MethodGroupExpr) member_lookup;
@@ -3410,12 +3471,22 @@ namespace CIR {
 			}
 		}
 
-		public void Store (ILGenerator ig)
+		public void Store (EmitContext ec)
 		{
 			if (FieldInfo.IsStatic)
-				ig.Emit (OpCodes.Stsfld, FieldInfo);
+				ec.ig.Emit (OpCodes.Stsfld, FieldInfo);
 			else
-				ig.Emit (OpCodes.Stfld, FieldInfo);
+				ec.ig.Emit (OpCodes.Stfld, FieldInfo);
+		}
+
+		public void AddressOf (EmitContext ec)
+		{
+			if (FieldInfo.IsStatic)
+				ec.ig.Emit (OpCodes.Ldsflda, FieldInfo);
+			else {
+				Instance.Emit (ec);
+				ec.ig.Emit (OpCodes.Ldflda, FieldInfo);
+			}
 		}
 	}
 	
@@ -3625,8 +3696,8 @@ namespace CIR {
 			MethodGroupExpr union;
 			MethodInfo mi;
 			
-			mg1 = MemberLookup (tc.RootContext, source.Type, "op_Implicit", false);
-			mg2 = MemberLookup (tc.RootContext, target, "op_Implicit", false);
+			mg1 = MemberLookup (tc, source.Type, "op_Implicit", false);
+			mg2 = MemberLookup (tc, target, "op_Implicit", false);
 			
 			union = Invocation.MakeUnionSet (mg1, mg2);
 
@@ -3649,8 +3720,8 @@ namespace CIR {
 			
 			if (target == TypeManager.bool_type) {
 
-				mg1 = MemberLookup (tc.RootContext, source.Type, "op_True", false);
-				mg2 = MemberLookup (tc.RootContext, target, "op_True", false);
+				mg1 = MemberLookup (tc, source.Type, "op_True", false);
+				mg2 = MemberLookup (tc, target, "op_True", false);
 				
 				union = Invocation.MakeUnionSet (mg1, mg2);
 
@@ -3684,8 +3755,8 @@ namespace CIR {
 			MethodBase method;
 			ArrayList arguments;
 			
-			mg1 = MemberLookup (tc.RootContext, source.Type, "op_Implicit", false);
-			mg2 = MemberLookup (tc.RootContext, target, "op_Implicit", false);
+			mg1 = MemberLookup (tc, source.Type, "op_Implicit", false);
+			mg2 = MemberLookup (tc, target, "op_Implicit", false);
 			
 			MethodGroupExpr union = Invocation.MakeUnionSet (mg1, mg2);
 
@@ -3710,8 +3781,8 @@ namespace CIR {
 			
 			if (target == TypeManager.bool_type) {
 
-				mg1 = MemberLookup (tc.RootContext, source.Type, "op_True", false);
-				mg2 = MemberLookup (tc.RootContext, target, "op_True", false);
+				mg1 = MemberLookup (tc, source.Type, "op_True", false);
+				mg2 = MemberLookup (tc, target, "op_True", false);
 				
 				union = Invocation.MakeUnionSet (mg1, mg2);
 

@@ -82,6 +82,7 @@ namespace CIR
 				"-v         Verbose parsing\n"+
 				"-o         Specifies output file\n" +
 				"-L         Specifies path for loading assemblies\n" +
+				"--fatal    Makes errors fatal\n" + 
 				"--nostdlib Does not load core libraries\n" +
 				"--target   Specifies the target (exe, winexe, library, module)\n" +
 				"--dumper   Specifies a tree dumper\n" +

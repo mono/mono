@@ -25,7 +25,7 @@ namespace CIR {
 		//
 		// Contains loaded assemblies and our generated code as we go.
 		//
-		TypeManager type_manager;
+		public TypeManager TypeManager;
 
 		//
 		// The System.Reflection.Emit CodeGenerator
@@ -59,17 +59,11 @@ namespace CIR {
 		public RootContext ()
 		{
 			tree = new Tree (this);
-			type_manager = new TypeManager ();
+			TypeManager = new TypeManager ();
 			report = new Report ();
 
 			object_type = System.Type.GetType ("System.Object");
 			value_type = System.Type.GetType ("System.ValueType");
-		}
-
-		public TypeManager TypeManager {
-			get {
-				return type_manager;
-			}
 		}
 
 		public Tree Tree {
@@ -102,7 +96,7 @@ namespace CIR {
 		Type GetInterfaceTypeByName (string name)
 		{
 			Interface parent;
-			Type t = type_manager.LookupType (name);
+			Type t = TypeManager.LookupType (name);
 
 			if (t != null) {
 
@@ -218,7 +212,7 @@ namespace CIR {
 					    ifaces);
 			iface.TypeBuilder = tb;
 
-			type_manager.AddUserType (name, tb);
+			TypeManager.AddUserType (name, tb);
 
 			iface.InTransit = false;
 			return tb;
@@ -239,7 +233,7 @@ namespace CIR {
 			error = false;
 			name = MakeFQN (ns, name);
 			
-			t  = type_manager.LookupType (name);
+			t  = TypeManager.LookupType (name);
 			if (t != null)
 				return t;
 
@@ -453,7 +447,7 @@ namespace CIR {
 					    ifaces);
 
 			tc.TypeBuilder = tb;
-			type_manager.AddUserType (name, tb, tc);
+			TypeManager.AddUserType (name, tb, tc);
 			tc.InTransit = false;
 			
 			return tb;
@@ -511,7 +505,7 @@ namespace CIR {
 		// </remarks>
 		public void CloseTypes ()
 		{
-			foreach (TypeBuilder t in type_manager.UserTypes){
+			foreach (TypeBuilder t in TypeManager.UserTypes){
 				t.CreateType ();
 			}
 		}
@@ -526,14 +520,14 @@ namespace CIR {
 		{
 			Type t;
 
-			t = type_manager.LookupType (MakeFQN (tc.Namespace.Name, name));
+			t = TypeManager.LookupType (MakeFQN (tc.Namespace.Name, name));
 			if (t != null)
 				return t;
 
 			// It's possible that name already is fully qualified. So we do
 			// a simple direct lookup without adding any namespace names
 
-			t = type_manager.LookupType (name); 
+			t = TypeManager.LookupType (name); 
 			if (t != null)
 				return t;
 			
@@ -544,7 +538,7 @@ namespace CIR {
 					continue;
 
 				foreach (string n in using_list){
-					t = type_manager.LookupType (MakeFQN (n, name));
+					t = TypeManager.LookupType (MakeFQN (n, name));
 					if (t != null)
 						return t;
 				}
@@ -570,8 +564,6 @@ namespace CIR {
 
 				if (ns != null)
 					return true;
-				else
-					return false;
 			}
 
 			return false;

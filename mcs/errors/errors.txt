@@ -19,3 +19,6 @@ numbers to match the Microsoft numbers:
 	not know how this is possible to begin with.
 
 -6      Generic internal compiler error.
+
+-7      Internal compiler error/library error: no default constructor
+	for a built-in type.  Ie, decimal (int 32)

@@ -88,7 +88,7 @@ namespace CIR {
 				if (!is_statement)
 					ig.Emit (OpCodes.Dup);
 
-				((LValue) target).Store (ig);
+				((LValue) target).Store (ec);
 			} else if (target.ExprClass == ExprClass.PropertyAccess){
 				// FIXME
 				throw new Exception ("Can not assign to properties yet");

@@ -1,3 +1,45 @@
+2001-09-27  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (LValue): Add new method AddressOf to be used by
+	the `&' operator.  
+
+	Change the argument of Store to take an EmitContext instead of an
+	ILGenerator, because things like FieldExpr need to be able to call
+	their children expression to generate the instance code. 
+
+	(Expression::Error, Expression::Warning): Sugar functions for
+	reporting errors.
+
+	(Expression::MemberLookup): Accept a TypeContainer instead of a
+	Report as the first argument.
+
+	(Expression::ResolvePrimary): Killed.  I still want to improve
+	this as currently the code is just not right.
+
+	(Expression::ResolveMemberAccess): Simplify, but it is still
+	wrong. 
+
+	(Unary::Resolve): Catch errors in AddressOf operators.
+
+	(LocalVariableReference::Emit, ::Store, ::AddressOf): typecast
+	index to a byte for the short-version, or the compiler will choose
+	the wrong Emit call, which generates the wrong data.
+
+	(ParameterReference::Emit, ::Store): same.
+
+	(FieldExpr::AddressOf): Implement.
+	
+	* typemanager.cs: TypeManager: made public variable instead of
+	property.
+	
+	* driver.cs: document --fatal.
+
+	* report.cs (ErrorMessage, WarningMessage): new names for the old
+	Error and Warning classes.
+
+	* cs-parser.jay (member_access): Turn built-in access to types
+	into a normal simplename
+
 2001-09-27  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (Invocation::BetterConversion): Fix to cope

@@ -1568,7 +1568,7 @@ member_access
 	  }
 	| predefined_type DOT IDENTIFIER
 	  {
-		$$ = new BuiltinTypeAccess ((string) $1, (string) $3);
+		$$ = new SimpleName ((string) $1 + "." + (string) $3, lexer.Location);
 	  }
 	;
 

@@ -54,7 +54,7 @@ namespace CIR {
 
 		public void Message (Message m)
 		{
-			if (m is Error)
+			if (m is ErrorMessage)
 				Error (m.code, m.text);
 			else
 				Warning (m.code, m.text);
@@ -94,14 +94,14 @@ namespace CIR {
 		}
 	}
 
-	public class Warning : Message {
-		public Warning (int code, string text) : base (code, text)
+	public class WarningMessage : Message {
+		public WarningMessage (int code, string text) : base (code, text)
 		{
 		}
 	}
 
-	public class Error : Message {
-		public Error (int code, string text) : base (code, text)
+	public class ErrorMessage : Message {
+		public ErrorMessage (int code, string text) : base (code, text)
 		{
 		}
 

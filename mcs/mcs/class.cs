@@ -1048,7 +1048,7 @@ namespace CIR {
 			}
 
 			parent_constructor_group = Expression.MemberLookup (
-				tc.RootContext,
+				tc,
 				tc.TypeBuilder.BaseType, ".ctor", false,
 				MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance);
