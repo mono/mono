@@ -1,3 +1,7 @@
+2003-12-06  Martin Baulig  <martin@ximian.com>
+
+	* DefaultTraceListener: Don't use `where' in variable names.
+
 2003-11-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* ICollectData.cs: Fixed signature

@@ -44,22 +44,22 @@ namespace System.Diagnostics {
 				// If we're running on Unix, we don't have OutputDebugString.
 				// Instead, send output to...wherever the MONO_TRACE environment
 				// variables says to.
-				String where = Environment.GetEnvironmentVariable("MONO_TRACE");
+				String trace = Environment.GetEnvironmentVariable("MONO_TRACE");
 
-				if (where != null) {
+				if (trace != null) {
 					string file = null;
 					string prefix = null;
 
-					if (where.StartsWith (ConsoleOutTrace)) {
+					if (trace.StartsWith (ConsoleOutTrace)) {
 						file = ConsoleOutTrace;
-						prefix = GetPrefix (where, ConsoleOutTrace);
+						prefix = GetPrefix (trace, ConsoleOutTrace);
 					}
-					else if (where.StartsWith (ConsoleErrorTrace)) {
+					else if (trace.StartsWith (ConsoleErrorTrace)) {
 						file = ConsoleErrorTrace;
-						prefix = GetPrefix (where, ConsoleErrorTrace);
+						prefix = GetPrefix (trace, ConsoleErrorTrace);
 					}
 					else {
-						file = where;
+						file = trace;
 
 						// We can't firgure out what the prefix would be, as ':' is a
 						// valid filename character.  Thus, arbitrary files don't support
@@ -91,16 +91,16 @@ namespace System.Diagnostics {
 		 * prefix.
 		 *
 		 * @param	var		The current MONO_TRACE variable
-		 * @param	where	The name of the output location, e.g. "Console.Out"
+		 * @param	target	The name of the output location, e.g. "Console.Out"
 		 */
-		private static string GetPrefix (string var, string where)
+		private static string GetPrefix (string var, string target)
 		{
-			// actually, we permit any character to separate `where' and the prefix;
-			// we just skip over where the ':' would be.  This means that a space or
+			// actually, we permit any character to separate `target' and the prefix;
+			// we just skip over target the ':' would be.  This means that a space or
 			// anything else would suffice, as long as it was only a single
 			// character.
-			if (var.Length > where.Length)
-				return var.Substring (where.Length + 1);
+			if (var.Length > target.Length)
+				return var.Substring (target.Length + 1);
 			return "";
 		}
 
