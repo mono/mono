@@ -1,3 +1,10 @@
+2002-04-20  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg: added constant folding for inegers 
+
+	* emit-x86.c (tree_allocate_regs): handle the special case when
+	chain rules need a register.
+
 2002-04-19  Dietmar Maurer  <dietmar@ximian.com>
 
 	* invoke.c (arch_create_native_wrapper): do not save LMF for Strings
