@@ -1,5 +1,9 @@
 2004-12-29  Jonathan Pryor <jonpryor@vt.edu>
 
+	* UnixPath.cs: Add check for when symlink points to a full path name.
+
+2004-12-29  Jonathan Pryor <jonpryor@vt.edu>
+
 	* Syscall.cs: Fix Object.Equals implementations.
 	* UnixPath.cs: New & improved, with Testing!  GetRealPath() is changed so
 	  that it doesn't walk the entire path looking for symlinks, it just reads 

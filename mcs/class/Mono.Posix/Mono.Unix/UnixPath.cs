@@ -181,7 +181,7 @@ namespace Mono.Unix {
 			int r;
 			do {
 				r = Syscall.readlink (path, buf);
-				if (r == -1) {
+				if (r < 0) {
 					Error e;
 					switch (e = Syscall.GetLastError()) {
 					case Error.EINVAL:
@@ -193,8 +193,12 @@ namespace Mono.Unix {
 					}
 				}
 				string name = buf.ToString (0, r);
-				path = GetDirectoryName (path) + DirectorySeparatorChar + name;
-				path = GetCanonicalPath (path);
+				if (IsPathRooted (name))
+					path = name;
+				else {
+					path = GetDirectoryName (path) + DirectorySeparatorChar + name;
+					path = GetCanonicalPath (path);
+				}
 			} while (r >= 0);
 
 			return path;
