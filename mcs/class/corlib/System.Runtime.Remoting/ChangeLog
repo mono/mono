@@ -1,7 +1,7 @@
 2003-12-10  Martin Willemoes Hansen  <mwh@sysrq.dk>
 
 	* RemotingConfiguration.cs: fixed wrong attribute name
-	  sponsorshipTimeOut it should be sponsorshipTimeout
+	  sponsorShipTimeOut it should be sponsorshipTimeout
 
 2003-12-03  Lluis Sanchez Gual <lluis@ximian.com>
 

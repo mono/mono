@@ -545,7 +545,7 @@ namespace System.Runtime.Remoting
 				case "leaseTime":
 					LifetimeServices.LeaseTime = ParseTime (attrs.GetValue(i));
 					break;
-				case "sponsorShipTimeout":
+				case "sponsorshipTimeout":
 					LifetimeServices.SponsorshipTimeout = ParseTime (attrs.GetValue(i));
 					break;
 				case "renewOnCallTime":
