@@ -1,3 +1,10 @@
+2004-12-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Thread.cs: Add new fields 'serialized_culture_info{_len}'.
+	
+	* Thread.cs (CurrentCulture): Fix leaking of culture info objects 
+	across appdomains. Partially fixes #50049.
+
 2004-12-05  Miguel de Icaza  <miguel@ximian.com>
 
 	* AutoResetEvent.cs (Set, Reset): If we are disposed, throw a

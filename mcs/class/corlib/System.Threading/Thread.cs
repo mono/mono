@@ -32,10 +32,13 @@
 //
 
 using System.Runtime.Remoting.Contexts;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Permissions;
 using System.Security.Principal;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.IO;
 using System.Collections;
 
 #if NET_2_0
@@ -76,6 +79,10 @@ namespace System.Threading
 		private IntPtr suspend_event;
 		private IntPtr resume_event;
 		private object synch_lock = new Object();
+		private IntPtr serialized_culture_info;
+		private int serialized_culture_info_len;
+		private IntPtr serialized_ui_culture_info;
+		private int serialized_ui_culture_info_len;
 		#endregion
 
 		private ThreadStart threadstart;
@@ -302,6 +309,30 @@ namespace System.Threading
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern int current_lcid ();
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern CultureInfo GetCachedCurrentCulture ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern byte[] GetSerializedCurrentCulture ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern void SetCachedCurrentCulture (CultureInfo culture);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern void SetSerializedCurrentCulture (byte[] culture);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern CultureInfo GetCachedCurrentUICulture ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern byte[] GetSerializedCurrentUICulture ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern void SetCachedCurrentUICulture (CultureInfo culture);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern void SetSerializedCurrentUICulture (byte[] culture);
+
 		/* If the current_lcid() isn't known by CultureInfo,
 		 * it will throw an exception which may cause
 		 * String.Concat to try and recursively look up the
@@ -309,31 +340,69 @@ namespace System.Threading
 		 * Use a boolean to short-circuit this scenario.
 		 */
 		private static bool in_currentculture=false;
-		
+
+		/*
+		 * Thread objects are shared between appdomains, and CurrentCulture
+		 * should always return an object in the calling appdomain. See bug
+		 * http://bugzilla.ximian.com/show_bug.cgi?id=50049 for more info.
+		 * This is hard to implement correctly and efficiently, so the current
+		 * implementation is not perfect: changes made in one appdomain to the 
+		 * state of the current cultureinfo object are not visible to other 
+		 * appdomains.
+		 */		
 		public CultureInfo CurrentCulture {
 			get {
-				if (current_culture == null) {
+				if (in_currentculture)
+					/* Bail out */
+					return CultureInfo.InvariantCulture;
+
+				CultureInfo culture = GetCachedCurrentCulture ();
+				if (culture != null)
+					return culture;
+
+				byte[] arr = GetSerializedCurrentCulture ();
+				if (arr == null) {
 					lock (typeof (Thread)) {
-						if(current_culture==null) {
-							if(in_currentculture==true) {
-								/* Bail out */
-								current_culture = CultureInfo.InvariantCulture;
-							} else {
-								in_currentculture=true;
-							
-								current_culture = CultureInfo.ConstructCurrentCulture ();
-							}
-						}
-						
-						in_currentculture=false;
+						in_currentculture=true;
+						culture = CultureInfo.ConstructCurrentCulture ();
+						CurrentCulture = culture;
+						in_currentculture = false;
+						return culture;
 					}
 				}
-				
-				return(current_culture);
+
+				/*
+				 * No cultureinfo object exists for this domain, so create one
+				 * by deserializing the serialized form.
+				 */
+				in_currentculture = true;
+				try {
+					BinaryFormatter bf = new BinaryFormatter ();
+					MemoryStream ms = new MemoryStream (arr);
+					culture = (CultureInfo)bf.Deserialize (ms);
+					SetCachedCurrentCulture (culture);
+				}
+				finally {
+					in_currentculture = false;
+				}
+
+				return culture;
 			}
 			
 			set {
-				current_culture = value;
+				in_currentculture = true;
+
+				try {
+					BinaryFormatter bf = new BinaryFormatter();
+					MemoryStream ms = new MemoryStream ();
+					bf.Serialize (ms, value);
+
+					SetCachedCurrentCulture (value);
+					SetSerializedCurrentCulture (ms.GetBuffer ());
+				}
+				finally {
+					in_currentculture = false;
+				}
 			}
 		}
 
@@ -818,3 +887,4 @@ namespace System.Threading
 		
 	}
 }
+
