@@ -1,3 +1,9 @@
+2004-02-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* string-icalls.c locales.c: Applied patch from Jaroslaw Kowalski
+	(jaak@zd.com.pl). Fix memory corruption in String.Replace 
+	(bug #54988).
+	
 2004-02-27  Martin Baulig  <martin@ximian.com>
 
 	* reflection.c (mono_reflection_bind_generic_parameters): Take a
