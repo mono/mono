@@ -1,3 +1,9 @@
+
+Wed Jul 14 19:08:41 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, exceptions-ppc.c: cleanups and fixes (the
+	new XSP should work with these changes).
+
 2004-07-14  Ben Maurer  <bmaurer@ximain.com>
 	
 	* inssel-{long32,x86,}.brg: trivial optimizations.
