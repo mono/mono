@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections;
+using System.Threading;
 using NUnit.Framework;
 
 namespace MonoTests.System.Runtime.Remoting
@@ -21,7 +22,7 @@ namespace MonoTests.System.Runtime.Remoting
 		public static void DoWork ()
 		{
 			for (int n=0; n<10; n++)
-				System.Threading.Thread.Sleep (1);
+				Thread.Sleep (1);
 		}
 	}
 
