@@ -1,3 +1,8 @@
+2005-02-14  mono-HEAD-vs-fx-2  <vargaz@freemail.hu>
+
+	* mini.c (mono_method_to_ir): Allocate a GOT var in CEE_NEWOBJ. Fixes
+	#72522.
+
 2004-02-13  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* mini.c: Moved linkdemand check into helper function check_linkdemand
