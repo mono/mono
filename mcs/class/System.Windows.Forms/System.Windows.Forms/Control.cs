@@ -677,10 +677,15 @@
 	  		//Compact Framework
     		public virtual bool Enabled {
     			get {
-    				return Win32.IsWindowEnabled (Handle);
+					return enabled;
+    				//return Win32.IsWindowEnabled (Handle);
     			}
     			set {
-    				Win32.EnableWindow (Handle, value);
+					if( enabled != value) {
+						Win32.EnableWindow (Handle, value);
+						enabled = value;
+						// FIXME: Disable/enable all children here
+					}
     			}
     		}
     		
@@ -999,10 +1004,11 @@
     			}
     			set {
 					if( IsHandleCreated) {
-						Win32.SetWindowPos(Handle, SetWindowPosZOrder.HWND_TOP, 0, 0, this.Size.Width, this.Size.Height,
+						Win32.SetWindowPos(Handle, SetWindowPosZOrder.HWND_TOP, 0, 0, value.Width, value.Height,
 							SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOMOVE | 
 							SetWindowPosFlags.SWP_NOZORDER);// Activating might be a good idea?? | SetWindowPosFlags.SWP_NOACTIVATE);
 					}
+
 					Width = value.Width;
 					Height = value.Height;
     			}
@@ -1177,7 +1183,11 @@
 						window = new ControlNativeWindow (this);
 					}
 					if( window != null) {
-						window.CreateHandle (CreateParams);
+						CreateParams createParams = CreateParams;
+						if( !Enabled) {
+							createParams.Style |= (int)WindowStyles.WS_DISABLED;
+						}
+						window.CreateHandle (createParams);
 					}
 					if( Handle != IntPtr.Zero) {
 						if( controlsCollection[Handle] == null) {
@@ -1199,8 +1209,13 @@
     		
     		protected virtual void DestroyHandle ()
     		{
-    			window.DestroyHandle ();
-    		}
+				if( Handle != IntPtr.Zero) {
+					controlsCollection.Remove(Handle);
+				}
+				if( window != null) {
+					window.DestroyHandle ();
+				}
+			}
     	
     		protected override void Dispose (bool disposing) 
     		{
@@ -1963,9 +1978,11 @@
     		// are big enough to warrant recreating the HWND
     		protected void RecreateHandle() 
     		{
-    			CreateHandle ();
-    
-    		}
+				if( IsHandleCreated) {
+					DestroyHandle ();
+					CreateHandle ();
+				}
+       		}
     		
  			//Compact Framework
     		[MonoTODO]
@@ -2404,7 +2421,7 @@
 					CallControlWndProc(ref m);
 					break;
     			case Msg.WM_MOUSEACTIVATE:
-    				OnMouseEnter (eventArgs);
+    				//OnMouseEnter (eventArgs);
 					CallControlWndProc(ref m);
 					break;
     			case Msg.WM_MOUSEHOVER: // called by TrackMouseEvent

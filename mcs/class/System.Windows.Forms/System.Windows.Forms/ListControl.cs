@@ -8,6 +8,7 @@
 //
 using System;
 using System.Drawing;
+using System.Reflection;
 
 namespace System.Windows.Forms {
 
@@ -16,6 +17,8 @@ namespace System.Windows.Forms {
 	// </summary>
 
     public abstract class ListControl : Control {
+
+		protected string DisplayMember_ = String.Empty;
 
 		//ControlStyles controlStyles;
 		//
@@ -33,12 +36,32 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public string DisplayMember {
 			get {
-				throw new NotImplementedException ();
+				return DisplayMember_;
 			}
 			set {
-				//FIXME:
+				if( DisplayMember_ != value) {
+					DisplayMember_ = value;
+					OnDisplayMemberChanged(new EventArgs());
+				}
 			}
 		}
+		internal string getDisplayMemberOfObj( object obj) {
+			string objectString = String.Empty;
+			Type t = obj.GetType();
+			if( DisplayMember != String.Empty) {
+				if( t != null) {
+					PropertyInfo prop = t.GetProperty(DisplayMember);
+					if( prop != null) {
+						objectString = prop.GetValue(obj, null).ToString();
+					}
+				}
+			}
+			if( objectString == String.Empty) {
+				objectString = obj.ToString();
+			}
+			return objectString;
+		}
+
 		[MonoTODO]
 		public abstract int SelectedIndex {get;set;}
 

@@ -267,6 +267,9 @@ namespace System.Windows.Forms {
 							OnClick(new ControlEventArgs(this));
 							CallControlWndProc(ref m);
 							break;
+						default:
+							CallControlWndProc(ref m);
+							break;
 					}
 					break;
 				}

@@ -36,7 +36,7 @@ namespace System.Windows.Forms {
 		object selectedItem;
 		int selecedStart;
 		private ComboBox.ObjectCollection Items_ = null;
-
+		int itemHeight_;
 
 		bool updateing; // true when begin update has been called. do not paint when true;
 		// --- Constructor ---
@@ -50,13 +50,14 @@ namespace System.Windows.Forms {
 			updateing = false;
 			//controlStyles = null;
 			drawMode = DrawMode.Normal;
-			dropDownStyle = ComboBoxStyle.DropDown;
+			dropDownStyle = ComboBoxStyle.DropDownList;
 			droppedDown = false;
 			integralHeight = true;
 			sorted = false;
 			backgroundImage = null;
 			text = "";
 			Items_ = new ComboBox.ObjectCollection(this);
+			itemHeight_ = 13;
 
 			SubClassWndProc_ = true;
 		}
@@ -107,15 +108,25 @@ namespace System.Windows.Forms {
 					// FIXME: Create combo box with 5 elements in drop down list box
 					createParams.Height = Height * 5;
 					createParams.ClassStyle = 0;
-					createParams.ExStyle = (int)WindowExStyles.WS_EX_RIGHTSCROLLBAR;
+					createParams.ExStyle = (int)( WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_NOPARENTNOTIFY);
 					createParams.Param = 0;
 					createParams.Parent = Parent.Handle;
 					createParams.Style = (int) (
 						(int)WindowStyles.WS_CHILD | 
 						(int)WindowStyles.WS_VISIBLE |
 						(int)WindowStyles.WS_VSCROLL |
-						(int)WindowStyles.WS_CLIPSIBLINGS |
-						(int)ComboBoxStyles.CBS_HASSTRINGS);
+						(int)WindowStyles.WS_TABSTOP |
+						(int)ComboBoxStyles.CBS_HASSTRINGS );
+
+					switch( DrawMode){
+						case DrawMode.OwnerDrawFixed:
+							createParams.Style |= (int)ComboBoxStyles.CBS_OWNERDRAWFIXED;
+							break;
+						case DrawMode.OwnerDrawVariable:
+							createParams.Style |= (int)ComboBoxStyles.CBS_OWNERDRAWVARIABLE;
+							break;
+					}
+
 					switch(DropDownStyle) {
 						case ComboBoxStyle.Simple:
 							createParams.Style |= (int)ComboBoxStyles.CBS_SIMPLE;
@@ -127,6 +138,13 @@ namespace System.Windows.Forms {
 							createParams.Style |= (int)ComboBoxStyles.CBS_DROPDOWNLIST;
 							break;
 					}
+					if( !integralHeight) {
+						createParams.Style |= (int)ComboBoxStyles.CBS_NOINTEGRALHEIGHT;
+					}
+					if( sorted) {
+						createParams.Style |= (int)ComboBoxStyles.CBS_SORT;
+					}
+
 					return createParams;
 				}
 				return null;
@@ -138,22 +156,29 @@ namespace System.Windows.Forms {
 				return new Size(121,21);//correct size
 			}
 		}
-		
+
 		public DrawMode DrawMode {
 			get {
 				return drawMode;
 			}
 			set {
-				drawMode = value;
+				if( drawMode != value) {
+					drawMode = value;
+					RecreateHandle();
+				}
 			}
 		}
-		
+
 		public ComboBoxStyle DropDownStyle {
 			get {
 				return dropDownStyle;
 			}
 			set {
-				dropDownStyle = value;
+				if( dropDownStyle != value) {
+					dropDownStyle = value;
+					RecreateHandle();
+					OnDropDownStyleChanged( new EventArgs());
+				}
 			}
 		}
 		
@@ -198,17 +223,38 @@ namespace System.Windows.Forms {
 				return integralHeight;
 			}
 			set {
-				integralHeight=value;
+				if( integralHeight != value) {
+					integralHeight = value;
+					if( IsHandleCreated) {
+						if( integralHeight) {
+							Win32.UpdateWindowStyle(Handle, (int)ComboBoxStyles.CBS_NOINTEGRALHEIGHT, 0);
+						}
+						else {
+							Win32.UpdateWindowStyle(Handle, 0, (int)ComboBoxStyles.CBS_NOINTEGRALHEIGHT);
+						}
+					}
+				}
 			}
 		}
 		
 		[MonoTODO]
 		public int ItemHeight {
 			get {
-				throw new NotImplementedException (); 
+				return itemHeight_;
 			}
 			set {
-				//FIXME:
+				itemHeight_ = value;
+				if( IsHandleCreated) {
+					if( DrawMode != DrawMode.OwnerDrawVariable) {
+						Win32.SendMessage(Handle, (int)ComboBoxMessages.CB_SETITEMHEIGHT, 0, itemHeight_);
+					}
+					else {
+						for( int i = 0; i < Items.Count; i++) {
+							Win32.SendMessage(Handle, (int)ComboBoxMessages.CB_SETITEMHEIGHT, i, itemHeight_);
+						}
+					}
+					Win32.SendMessage(Handle, (int)ComboBoxMessages.CB_SETITEMHEIGHT, -1, itemHeight_);
+				}
 			}
 		}
 		
@@ -321,7 +367,21 @@ namespace System.Windows.Forms {
 				return sorted;
 			}
 			set {
-				sorted = value;
+				if( sorted != value) {
+					sorted = value;
+					if( IsHandleCreated) {
+						if( sorted) {
+							Win32.UpdateWindowStyle(Handle, 0, (int)ComboBoxStyles.CBS_SORT);
+							object[] items = new object[Items.Count];
+							Items.CopyTo(items, 0);
+							Items.Clear();
+							Items.AddRange(items);
+						}
+						else {
+							Win32.UpdateWindowStyle(Handle, (int)ComboBoxStyles.CBS_SORT, 0);
+						}
+					}
+				}
 			}
 		}
 		
@@ -345,7 +405,7 @@ namespace System.Windows.Forms {
 			if( IsHandleCreated && items != null) {
 				foreach( object obj in items) {
 					if( obj != null) {
-						Win32.SendMessage(Handle, (int)ComboBoxMessages.CB_ADDSTRING, 0, obj.ToString());
+						Win32.SendMessage(Handle, (int)ComboBoxMessages.CB_ADDSTRING, 0, getDisplayMemberOfObj(obj));
 					}
 				}
 			}
@@ -440,7 +500,9 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual void OnDrawItem(DrawItemEventArgs e) 
 		{
-			//FIXME:		
+			if( DrawItem != null) {
+				DrawItem(this, e);
+			}
 		}
 		
 		[MonoTODO]
@@ -495,7 +557,9 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual void OnMeasureItem(MeasureItemEventArgs e) 
 		{
-			//FIXME:
+			if(MeasureItem != null) {
+				MeasureItem(this, e);
+			}
 		}
 		
 		[MonoTODO]
@@ -573,11 +637,43 @@ namespace System.Windows.Forms {
 		protected override void WndProc(ref Message m) 
 		{
 			switch (m.Msg) {
+				case Msg.WM_MEASUREITEM: {
+					MEASUREITEMSTRUCT mis = new MEASUREITEMSTRUCT();
+					Win32.CopyMemory(ref mis, m.LParam, 24);
+					MeasureItemEventArgs args = new MeasureItemEventArgs(CreateGraphics(),mis.itemID);
+					args.ItemHeight = mis.itemHeight;
+					args.ItemWidth = mis.itemWidth;
+					OnMeasureItem( args);
+					mis.itemHeight = args.ItemHeight;
+					mis.itemWidth = args.ItemWidth;
+					Win32.CopyMemory(m.LParam, ref mis, 24);
+				}
+					break;
+				case Msg.WM_DRAWITEM: {
+					DRAWITEMSTRUCT dis = new DRAWITEMSTRUCT();
+					Win32.CopyMemory(ref dis, m.LParam, 48);
+					Rectangle	rect = new Rectangle(dis.rcItem.left, dis.rcItem.top, dis.rcItem.right - dis.rcItem.left, dis.rcItem.bottom - dis.rcItem.top);
+					DrawItemEventArgs args = new DrawItemEventArgs(Graphics.FromHdc(dis.hDC), Font,
+						rect, dis.itemID, (DrawItemState)dis.itemState);
+					OnDrawItem( args);
+					Win32.CopyMemory(m.LParam, ref dis, 48);
+				}
+					break;
+/*
+				case Msg.WM_COMPAREITEM: {
+					int i = 10;
+				}
+					break;
+*/					
 				case Msg.WM_COMMAND: 
 					switch(m.HiWordWParam) {
 						case (uint)ComboBoxNotification.CBN_SELCHANGE:
-							OnSelectedIndexChanged(new EventArgs());
+							//OnSelectedIndexChanged(new EventArgs());
+							SelectedIndex = Win32.SendMessage(Handle, (int)ComboBoxMessages.CB_GETCURSEL, 0, 0);
 							m.Result = IntPtr.Zero;
+							CallControlWndProc(ref m);
+							break;
+						default:
 							CallControlWndProc(ref m);
 							break;
 					}
@@ -696,26 +792,27 @@ namespace System.Windows.Forms {
 			[MonoTODO]
 			public void Clear() 
 			{
-				//FIXME:		
+				collection_.Clear();
+				Win32.SendMessage(owner_.Handle, (int)ComboBoxMessages.CB_RESETCONTENT, 0, 0);
 			}
 			
 			[MonoTODO]
 			public bool Contains(object value) 
 			{
-				throw new NotImplementedException ();
+				return collection_.Contains(value);
 			}
 			
 			[MonoTODO]
 			public void CopyTo(object[] dest,int arrayIndex) 
 			{
-				throw new NotImplementedException ();
+				collection_.CopyTo(dest, arrayIndex);
 			}
 			
 			/// for ICollection:
 			[MonoTODO]
 			void ICollection.CopyTo(Array dest,int index) 
 			{
-				throw new NotImplementedException ();
+				collection_.CopyTo(dest, index);
 			}
 			
 			[MonoTODO]
@@ -727,7 +824,7 @@ namespace System.Windows.Forms {
 			[MonoTODO]
 			public int IndexOf(object value) 
 			{
-				throw new NotImplementedException ();
+				return collection_.IndexOf(value);
 			}
 			
 			[MonoTODO]
