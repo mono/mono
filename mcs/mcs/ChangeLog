@@ -12,7 +12,6 @@
 
 	* cs-tokenizer.cs: little fixes to line numbering when #line is used.
 
->>>>>>> 1.953
 2003-01-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* class.cs (Constructor::Emit): Emit debugging info for constructors.
