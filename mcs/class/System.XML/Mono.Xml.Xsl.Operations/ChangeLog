@@ -1,5 +1,11 @@
 2005-02-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XslProcessingInstruction.cs : MS.NET recovers from invalid PI name
+	  (it must be both NCName and PITarget, or must be ignored). Patch by
+	  Andrew Skiba.
+
+2005-02-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XslTemplateContent.cs : MS.NET recovers from incorrect non-text
 	  children in attribute, PI and comments. Patch by Andrew Skiba.
 
