@@ -855,7 +855,9 @@ namespace System.Xml
 			Expect ('>');
 
 			if (!depthDown)
-			++depth;
+				++depth;
+			else
+				depthDown = false;
 
 			SetProperties (
 				XmlNodeType.Element, // nodeType
