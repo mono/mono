@@ -5494,17 +5494,17 @@ namespace Mono.CSharp {
 	public class ReDim : Statement {
 		Expression RedimTarget;
 		ArrayList NewIndexes;
-		ArrayList Initializers;
 		Type BaseType;
+		bool Preserve;
 		
 		private StatementExpression ReDimExpr;
 		
-		public ReDim (Expression expr, ArrayList args, bool opt_preserve, ArrayList inits, Location l)
+		public ReDim (Expression expr, ArrayList args, bool opt_preserve, Location l)
 		{
 			loc = l;
 			RedimTarget = expr;
 			NewIndexes = args;
-			Initializers = inits;
+			Preserve = opt_preserve;
 		}
 		
 		public override bool Resolve (EmitContext ec)
@@ -5527,11 +5527,19 @@ namespace Mono.CSharp {
 			NewIndexes = args;
 			if (RedimTarget.Type.GetArrayRank() != args.Count) 
 				Report.Error (415, "'ReDim' cannot change the number of dimensions of an array.");
-
+				
 			BaseType = RedimTarget.Type.GetElementType();
 			Expression BaseTypeExpr = MonoBASIC.Parser.DecomposeQI(BaseType.FullName.ToString(), Location.Null);
-			ArrayCreation acExpr = new ArrayCreation (BaseTypeExpr, NewIndexes, "", Initializers, Location.Null); 	
-			ReDimExpr = (StatementExpression) new StatementExpression ((ExpressionStatement) new Assign (RedimTarget, acExpr, loc), loc);
+			ArrayCreation acExpr = new ArrayCreation (BaseTypeExpr, NewIndexes, "", null, Location.Null); 	
+			if (Preserve)
+			{
+				// TODO: Generate call to copying code, which has to make lots of verifications
+				//PreserveExpr = (ExpressionStatement) new Preserve(RedimTarget, acExpr, loc);
+				//ReDimExpr = (StatementExpression) new StatementExpression ((ExpressionStatement) new Assign (RedimTarget, PreserveExpr, loc), loc);
+				ReDimExpr = (StatementExpression) new StatementExpression ((ExpressionStatement) new Assign (RedimTarget, acExpr, loc), loc);
+			}
+			else
+				ReDimExpr = (StatementExpression) new StatementExpression ((ExpressionStatement) new Assign (RedimTarget, acExpr, loc), loc);
 			ReDimExpr.Resolve(ec);
 			
 			return true;
@@ -5544,4 +5552,37 @@ namespace Mono.CSharp {
 		}		
 		
 	}
+	
+	public class Erase : Statement {
+		Expression EraseTarget;
+		
+		private StatementExpression EraseExpr;
+		
+		public Erase (Expression expr, Location l)
+		{
+			loc = l;
+			EraseTarget = expr;
+		}
+		
+		public override bool Resolve (EmitContext ec)
+		{
+			EraseTarget = EraseTarget.Resolve (ec);
+			if (!EraseTarget.Type.IsArray) 
+				Report.Error (49, "'Erase' statement requires an array");
+
+			EraseExpr = (StatementExpression) new StatementExpression ((ExpressionStatement) new Assign (EraseTarget, NullLiteral.Null, loc), loc);
+			EraseExpr.Resolve(ec);
+			
+			return true;
+		}
+				
+		protected override bool DoEmit (EmitContext ec)
+		{
+			EraseExpr.Emit(ec);
+			return false;
+		}		
+		
+	}
+	
+	
 }

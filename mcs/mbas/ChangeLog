@@ -1,3 +1,12 @@
+2003/08/13  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* mb-parser.jay: ReDim statement parses many variables now (but initializers aren't allowed)
+					 Erase statement implemented
+					 Lots of garbage (never reduced rules) deleted
+					 Reduce/Reduce problems eliminated (where due to having opt_modifiers duplicated inside property_declaration rule)
+	* statement.cs : class Redim is prepared to have ReDim Preserve copying code called,
+					 but we need to check if that code is lying in Microsoft.VisualBasic.dll
+					 New class Erase
+
 2003-07-26  Ben Maurer  <bmaurer@users.sourceforge.net>
 	
 	* statement.cs: Make Math.XXX System.Math.XXX, to fix the build.

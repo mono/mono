@@ -1160,9 +1160,15 @@ struct_member_declarations
 	;
 
 struct_member_declaration
-	: opt_modifiers
+	: opt_attributes
+	  opt_modifiers
+	  { 
+	   	current_attributes = (Attributes) $1;
+	   	current_modifiers = (int) $2; 
+	  }
 	  struct_member_declarator
 	;
+	
 struct_member_declarator	
 	: field_declaration
 	//| constant_declaration
@@ -1407,12 +1413,10 @@ interface_event_declaration
 	;
 
 property_declaration
-	  : opt_access_specifier opt_modifiers PROPERTY identifier opt_property_parameters AS type opt_implement_clause EOL
+	  : opt_access_specifier PROPERTY identifier opt_property_parameters AS type opt_implement_clause EOL
 	  {
 		get_implicit_value_parameter_type = (Expression) $7;
 		get_implicit_value_parameter_name = (string) $4;
-		
-		current_modifiers = (int) $2; 
 		
 		current_local_parameters = (Parameters) $5;
 		if (current_local_parameters != Parameters.EmptyReadOnlyParameters) { 
@@ -1920,11 +1924,14 @@ array_handling_statement
 	;
 	
 redim_statement
-	: REDIM opt_preserve invocation_expression opt_array_initializer
+	: REDIM opt_preserve redim_clauses
 	  {
-	  	Invocation i = (Invocation) $3;
-	  	ReDim r = new ReDim (i.expr, i.Arguments, (bool) $2, (ArrayList) $4, lexer.Location);
-	  	current_block.AddStatement (r);	
+	  	ArrayList list = (ArrayList) $3;
+		foreach(Invocation i in list)
+		{
+	  		ReDim r = new ReDim (i.expr, i.Arguments, (bool) $2, lexer.Location);
+	  		current_block.AddStatement (r);	
+		}
 	  }
 	;	
 	
@@ -1952,17 +1959,41 @@ redim_clauses
 
 redim_clause
 	: invocation_expression
-	/* : identifier OPEN_PARENS expression_list CLOSE_PARENS opt_array_initializer */
+	;
+	
+erase_statement
+	: ERASE erase_clauses
+	{
+	  	ArrayList list = (ArrayList) $2;
+		foreach(Expression e in list)
+		{
+	  		Erase r = new Erase (e, lexer.Location);
+	  		current_block.AddStatement (r);	
+		}
+	}
+	;	
+	
+erase_clauses
+	: erase_clause
+	  {
+		ArrayList clauses = new ArrayList ();
+
+		clauses.Add ($1);
+		$$ = clauses;
+	  }	
+	| erase_clauses COMMA erase_clause
+	  {
+		ArrayList clauses = (ArrayList) ($1);
+		clauses.Add ($2);
+
+		$$ = clauses;
+	  }	
 	;
 
-opt_array_initializer
-	: /* empty */
-	| array_initializer
+erase_clause
+	: primary_expression
 	;
-			
-erase_statement
-	: ERASE primary_expression
-	;	
+
 		        
 jump_statement
 	: /*break_statement
@@ -2345,11 +2376,6 @@ for_statement
 opt_step
 	: /* empty */ 		{ $$ = new IntLiteral ((Int32) 1); }
 	| STEP expression 	{ $$ = $2; }
-	;
-
-opt_next_identifier
-	: /* empty */
-	| qualified_identifier
 	;
 
 selection_statement
@@ -2881,55 +2907,6 @@ variable_initializer_list
 	  }
 	;	
 		
-/* 
- * The following is from Rhys' grammar:
- * > Types in local variable declarations must be recognized as 
- * > expressions to prevent reduce/reduce errors in the grammar.
- * > The expressions are converted into types during semantic analysis.
- */
-local_variable_type
-	: primary_expression opt_rank_specifiers
-	  { 
-		// FIXME: Do something smart here regarding the composition of the type.
-
-		// Ok, the above "primary_expression" is there to get rid of
-		// both reduce/reduce and shift/reduces in the grammar, it should
-		// really just be "type_name".  If you use type_name, a reduce/reduce
-		// creeps up.  If you use qualified_identifier (which is all we need
-		// really) two shift/reduces appear.
-		// 
-
-		// So the super-trick is that primary_expression
-		// can only be either a SimpleName or a MemberAccess. 
-		// The MemberAccess case arises when you have a fully qualified type-name like :
-		// Foo.Bar.Blah i;
-		// SimpleName is when you have
-		// Blah i;
-		  
-		Expression expr = (Expression) $1;  
-		if (!(expr is SimpleName || expr is MemberAccess)) {
-			Error_ExpectingTypeName (lexer.Location, expr);
-			$$ = null;
-		} else {
-			//
-			// So we extract the string corresponding to the SimpleName
-			// or MemberAccess
-			// 
-			if ((string) $2 == "")
-				$$ = $1;
-			else
-				$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
-		}
-	  }
-	| builtin_types opt_rank_specifiers
-	  {
-		if ((string) $2 == "")
-			$$ = $1;
-		else
-			$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
-	  }
-        ;
-	        	
 opt_rank_specifiers
 	: /* empty */
 	  {
@@ -3192,27 +3169,7 @@ opt_expression
 	: /* empty */
 	| expression
 	;
-	
-expression_list
-	: expression
-	  {
-		ArrayList list = new ArrayList ();
-		list.Add ($1);
-		$$ = list;
-	  }
-	| expression_list COMMA expression
-	  {
-		ArrayList list = (ArrayList) $1;
-		list.Add ($3);
-		$$ = list;
-	  }
-	;
-
-opt_expression_list
-	: /*empty */ { $$ = null; }
-	| expression_list
-	;
-	
+		
 this_access
 	: ME
 	  {
@@ -3220,7 +3177,8 @@ this_access
 	  }
 	| MYCLASS
 	  {
-		// FIXME: This is actually somewhat different from Me
+		// FIXME: This is actually somewhat different from Me, 
+		// because it is for acessing static (classifier) methods/properties/fields
 		$$ = new This (current_block, lexer.Location);
 	  }
 	;
@@ -3490,8 +3448,6 @@ type
 		$$ = DecomposeQI ((string) $1, lexer.Location); 
 	  }
 	| builtin_types 
-	/*| array_type 
-	 | pointer_type */
 	;
 
 type_list
@@ -3518,38 +3474,6 @@ type_name
 namespace_or_type_name
 	: qualified_identifier
 	;
-
-array_type
-	: type bracketed_rank_specifiers
-	  {
-		$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
-	  }
-	;
-	
-bracketed_rank_specifiers
-	: bracketed_rank_specifier bracketed_opt_rank_specifier
-	  {
-		  $$ = (string) $2 + (string) $1;
-	  }
-        ;
-
-bracketed_rank_specifier
-	: OPEN_BRACKET opt_dim_separators CLOSE_BRACKET
-	  {
-		$$ = "[" + (string) $2 + "]";
-	  }
-	;
-
-bracketed_opt_rank_specifier
-	: /* empty */
-	  {
-		  $$ = "";
-	  }
-	| bracketed_rank_specifiers
-	  {
-		$$ = $1;
-	  }
-	;        	
 
 /* Built-in / Integral types */
 builtin_types
