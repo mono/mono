@@ -27,35 +27,35 @@ namespace Mono.Tools {
 		private enum Command {
 			Unknown,
 			Install,
+			InstallFromList,
 			Uninstall,
+			UninstallFromList,
 			UninstallSpecific,
 			List,
 			Help
 		}
+
+		private static bool silent;
 
 		public static int Main (string [] args)
 		{
 			if (args.Length == 0)
 				Usage ();
 
-			Command command = GetCommand (args [0]);
-
-			if (command == Command.Unknown && IsSwitch (args [0])) {
-				Console.WriteLine ("Unknown command: " + args [0]);
-				Environment.Exit (1);
-			} else if (command == Command.Unknown) {
-				Usage ();
-			} else if (command == Command.Help) {
-				ShowHelp (true);
-				Environment.Exit (1);
-			}
+			Command command = Command.Unknown;
+			string command_str = null;
 
 			string libdir;
 			string name, package, gacdir, root;
 			name = package = root = gacdir = null;
 			bool check_refs = false;
 
-			for (int i=1; i<args.Length; i++) {
+			// Check for silent arg first so we can supress
+			// warnings during command line parsing
+			if (Array.IndexOf (args, "/silent") > -1 || Array.IndexOf (args, "-silent") > -1)
+				silent = true;
+
+			for (int i=0; i<args.Length; i++) {
 				if (IsSwitch (args [i])) {
 
 					// for cmd line compatibility with other gacutils
@@ -63,14 +63,34 @@ namespace Mono.Tools {
 					if (args [i] == "-f" || args [i] == "/f")
 						continue;
 
+					// Ignore this option for now, although we might implement it someday
+					if (args [i] == "/r") {
+						WriteLine ("WARNING: gacutil does not support traced references." +
+							"This option is being ignored.");
+						i += 3;
+						continue;
+					}
+
+					// This is already handled we just dont want to choke on it
+					if (args [i] == "-silent" || args [i] == "/silent")
+						continue; 
+
 					if (args [i] == "-check_refs" || args [i] == "/check_refs") {
 						check_refs = true;
 						continue;
 					}
 
+					if (command == Command.Unknown) {
+						command = GetCommand (args [i]);
+						if (command != Command.Unknown) {
+							command_str = args [i];
+							continue;
+						}
+					}
+
 					if (i + 1 >= args.Length) {
 						Console.WriteLine ("Option " + args [i] + " takes 1 argument");
-						Environment.Exit (1);
+						return 1;
 					}
 
 					switch (args [i]) {
@@ -95,6 +115,16 @@ namespace Mono.Tools {
 					name += args [i];
 			}
 
+			if (command == Command.Unknown && IsSwitch (args [0])) {
+				Console.WriteLine ("Unknown command: " + args [0]);
+				return 1;
+			} else if (command == Command.Unknown) {
+				Usage ();
+			} else if (command == Command.Help) {
+				ShowHelp (true);
+				return 1;
+			}
+
 			if (gacdir == null) {
 				gacdir = GetGacDir ();
 				libdir = GetLibDir ();
@@ -113,24 +143,43 @@ namespace Mono.Tools {
 			switch (command) {
 			case Command.Install:
 				if (name == null) {
-					Console.WriteLine ("Option " + args [0] + " takes 1 argument");
-					Environment.Exit (1);
+					WriteLine ("Option " + command_str + " takes 1 argument");
+					return 1;
 				}
-				Install (check_refs, name, package, gacdir, link_gacdir, libdir, link_libdir);
+				if (!Install (check_refs, name, package, gacdir, link_gacdir, libdir, link_libdir))
+					return 1;
+				break;
+			case Command.InstallFromList:
+				if (name == null) {
+					WriteLine ("Option " + command_str + " takes 1 argument");
+					return 1;
+				}
+				if (!InstallFromList (check_refs, name, package, gacdir, link_gacdir, libdir, link_libdir))
+					return 1;
 				break;
 			case Command.Uninstall:
 				if (name == null) {
-					Console.WriteLine ("Option " + args [0] + " takes 1 argument");
-					Environment.Exit (1);
+					WriteLine ("Option " + command_str + " takes 1 argument");
+					return 1;
 				}
-				Uninstall (name, package, gacdir, libdir);
+				if (!Uninstall (name, package, gacdir, libdir))
+					Environment.Exit (1);
+				break;
+			case Command.UninstallFromList:
+				if (name == null) {
+					WriteLine ("Option " + command_str + " takes 1 argument");
+					return 1;
+				}
+				if (!UninstallFromList (name, package, gacdir, libdir))
+					return 1;
 				break;
 			case Command.UninstallSpecific:
 				if (name == null) {
-					Console.WriteLine ("Opetion " + args [0] + " takes 1 argument");
-					Environment.Exit (1);
+					WriteLine ("Opetion " + command_str + " takes 1 argument");
+					return 1;
 				}
-				UninstallSpecific (name, package, gacdir, libdir);
+				if (!UninstallSpecific (name, package, gacdir, libdir))
+					return 1;
 				break;
 			case Command.List:
 				List (name, gacdir);
@@ -140,13 +189,13 @@ namespace Mono.Tools {
 			return 0;
 		}
 
-		private static void Install (bool check_refs, string name, string package,
+		private static bool Install (bool check_refs, string name, string package,
 				string gacdir, string link_gacdir, string libdir, string link_libdir)
 		{
 			string failure_msg = "Failure adding assembly to the cache: ";
 
 			if (!File.Exists (name)) {
-				Console.WriteLine (failure_msg + "The system cannot find the file specified.");
+				WriteLine (failure_msg + "The system cannot find the file specified.");
 				Environment.Exit (1);
 			}
 
@@ -156,20 +205,20 @@ namespace Mono.Tools {
 			try {
 				an = AssemblyName.GetAssemblyName (name);
 			} catch {
-				Console.WriteLine (failure_msg + "The file specified is not a valid assembly.");
-				Environment.Exit (1);
+				WriteLine (failure_msg + "The file specified is not a valid assembly.");
+				return false;
 			}
 
 			pub_tok = an.GetPublicKeyToken ();
 			if (pub_tok == null || pub_tok.Length == 0) {
-				Console.WriteLine (failure_msg + "Attempt to install an assembly without a strong name.");
-				Environment.Exit (1);
+				WriteLine (failure_msg + "Attempt to install an assembly without a strong name.");
+				return false;
 			}
 
 			if (check_refs && !CheckReferencedAssemblies (an)) {
-				Console.WriteLine (failure_msg + "Attempt to install an assembly that references non " +
+				WriteLine (failure_msg + "Attempt to install an assembly that references non " +
 						"strong named assemblies with -check_refs enabled.");
-				Environment.Exit (1);
+				return false;
 			}
 
 			string conf_name = name + ".config";
@@ -188,9 +237,9 @@ namespace Mono.Tools {
 				}
 				Directory.CreateDirectory (full_path);
 			} catch {
-				Console.WriteLine (failure_msg + "gac directories could not be created, " +
+				WriteLine (failure_msg + "gac directories could not be created, " +
 						"possibly permission issues.");
-				Environment.Exit (1);
+				return false;
 			}
 
 			File.Copy (name, asmb_path, true);
@@ -207,20 +256,21 @@ namespace Mono.Tools {
 				try {
 					Directory.CreateDirectory (ref_dir);
 				} catch {
-					Console.WriteLine ("ERROR: Could not create package dir file.");
+					WriteLine ("ERROR: Could not create package dir file.");
 					Environment.Exit (1);
 				}
 				Symlink (Path.Combine (link_path, asmb_file), ref_path);
 
-				Console.WriteLine ("Package exported to: " + ref_path + " -> " +
+				WriteLine ("Package exported to: " + ref_path + " -> " +
 						Path.Combine (link_path, asmb_file));
 
 			}
 
-			Console.WriteLine ("{0} installed into the gac ({1})", an.Name, gacdir); 
+			WriteLine ("{0} installed into the gac ({1})", an.Name, gacdir);
+			return true;
 		}
 
-		private static void Uninstall (string name, string package, string gacdir, string libdir)
+		private static bool Uninstall (string name, string package, string gacdir, string libdir)
 		{
 			string [] assembly_pieces = name.Split (new char[] { ',' });
 			Hashtable asm_info = new Hashtable ();
@@ -235,8 +285,8 @@ namespace Mono.Tools {
 
 			string asmdir = Path.Combine (gacdir, (string) asm_info ["assembly"]);
 			if (!Directory.Exists (asmdir)) {
-				Console.WriteLine ("No assemblies found that match: " + name);
-				Environment.Exit (1);
+				WriteLine ("No assemblies found that match: " + name);
+				return false;
 			}
 
 			string searchString = GetSearchString (asm_info);
@@ -249,27 +299,29 @@ namespace Mono.Tools {
 					string link = Path.Combine (link_dir, (string) asm_info ["assembly"] + ".dll");
 					File.Delete (link);
 					if (Directory.GetFiles (link_dir).Length == 0) {
-						Console.WriteLine ("Cleaning package directory, it is empty.");
+						WriteLine ("Cleaning package directory, it is empty.");
 						Directory.Delete (link_dir);
 					}
 				}
-				Console.WriteLine ("Assembly removed from the gac.");
+				WriteLine ("Assembly removed from the gac.");
 			}
 
 			if(Directory.GetDirectories (asmdir).Length == 0) {
-				Console.WriteLine ("Cleaning assembly dir, its empty");
+				WriteLine ("Cleaning assembly dir, its empty");
 				Directory.Delete (asmdir);
 			}
+
+			return true;
 		}
 
-		private static void UninstallSpecific (string name, string package,
+		private static bool UninstallSpecific (string name, string package,
 				string gacdir, string libdir)
 		{
 			string failure_msg = "Failure to remove assembly from the cache: ";
 
 			if (!File.Exists (name)) {
-				Console.WriteLine (failure_msg + "The system cannot find the file specified.");
-				Environment.Exit (1);
+				WriteLine (failure_msg + "The system cannot find the file specified.");
+				return false;
 			}
 
 			AssemblyName an = null;
@@ -277,17 +329,17 @@ namespace Mono.Tools {
 			try {
 				an = AssemblyName.GetAssemblyName (name);
 			} catch {
-				Console.WriteLine (failure_msg + "The file specified is not a valid assembly.");
-				Environment.Exit (1);
+				WriteLine (failure_msg + "The file specified is not a valid assembly.");
+				return false;
 			}
 
-			Uninstall (an.FullName.Replace (" ", String.Empty),
+			return Uninstall (an.FullName.Replace (" ", String.Empty),
 					package, gacdir, libdir);
 		}
 
 		private static void List (string name, string gacdir)
 		{
-			Console.WriteLine ("The following assemblies are installed into the GAC:");
+			WriteLine ("The following assemblies are installed into the GAC:");
 
 			if (name != null) {
 				FilteredList (name, gacdir);
@@ -298,11 +350,11 @@ namespace Mono.Tools {
 			DirectoryInfo gacinfo = new DirectoryInfo (gacdir);
 			foreach (DirectoryInfo parent in gacinfo.GetDirectories ()) {
 				foreach (DirectoryInfo dir in parent.GetDirectories ()) {
-					Console.WriteLine (AsmbNameFromVersionString (parent.Name, dir.Name));
+					WriteLine (AsmbNameFromVersionString (parent.Name, dir.Name));
 					count++;
 				}
 			}
-			Console.WriteLine ("Number of items = " + count);
+			WriteLine ("Number of items = " + count);
 		}
 
 		private static void FilteredList (string name, string gacdir)
@@ -320,7 +372,7 @@ namespace Mono.Tools {
 			
 			string asmdir = Path.Combine (gacdir, (string) asm_info ["assembly"]);
 			if (!Directory.Exists (asmdir)) {
-				Console.WriteLine ("Number of items = 0");
+				WriteLine ("Number of items = 0");
 				return;
 			}
 			string search = GetSearchString (asm_info);
@@ -328,11 +380,69 @@ namespace Mono.Tools {
 
 			int count = 0;
 			foreach (string dir in dir_list) {
-				Console.WriteLine (AsmbNameFromVersionString ((string) asm_info ["assembly"],
+				WriteLine (AsmbNameFromVersionString ((string) asm_info ["assembly"],
 						new DirectoryInfo (dir).Name));
 				count++;
 			}
-			Console.WriteLine ("Number of items = " + count);
+			WriteLine ("Number of items = " + count);
+		}
+
+		private static bool InstallFromList (bool check_refs, string list_file, string package,
+				string gacdir, string link_gacdir, string libdir, string link_libdir)
+		{
+			StreamReader s = null;
+			int processed, failed;
+
+			processed = failed = 0;
+
+			try {
+				s = new StreamReader (list_file);
+
+				string line;
+				while ((line = s.ReadLine ()) != null) {
+					if (!Install (check_refs, line, package, gacdir, link_gacdir,
+							    libdir, link_libdir))
+						failed++;
+					processed++;
+							
+				}
+			} catch (IOException ioe) {
+				WriteLine ("Failed to open assemblies list file " + list_file + ".");
+				return false;
+			} finally {
+				if (s != null)
+					s.Close ();
+			}
+
+			return true;
+		}
+
+		private static bool UninstallFromList (string list_file, string package,
+				string gacdir, string libdir)
+		{
+			StreamReader s = null;
+			int processed, failed;
+
+			processed = failed = 0;
+
+			try {
+				s = new StreamReader (list_file);
+
+				string line;
+				while ((line = s.ReadLine ()) != null) {
+					if (!Uninstall (line, package, gacdir, libdir))
+						failed++;
+					processed++;
+				}
+			} catch (IOException ioe) {
+				WriteLine ("Failed to open assemblies list file " + list_file + ".");
+				return false;
+			} finally {
+				if (s != null)
+					s.Close ();
+			}
+
+			return true;
 		}
 
 		private static bool CheckReferencedAssemblies (AssemblyName an)
@@ -348,12 +458,11 @@ namespace Mono.Tools {
 						continue;
 					byte [] pt = ref_an.GetPublicKeyToken ();
 					if (pt == null || pt.Length == 0) {
-						Console.WriteLine (ref_an);
 						return false;
 					}
 				}
 			} catch	 (Exception e) {
-				Console.WriteLine (e); // This should be removed pre beta3
+				WriteLine (e.ToString ()); // This should be removed pre beta3
 				return false;
 			} finally {
 				if (d != null) {
@@ -405,11 +514,21 @@ namespace Mono.Tools {
 			case "--install":
 				c = Command.Install;
 				break;
+			case "-il":
+			case "/il":
+			case "--install-from-list":
+				c = Command.InstallFromList;
+				break;
 			case "-u":
 			case "/u":
 			case "/uf":
 			case "--uninstall":
 				c = Command.Uninstall;
+				break;
+			case "-ul":
+			case "/ul":
+			case "--uninstall-from-list":
+				c = Command.UninstallFromList;
 				break;
 			case "-us":
 			case "/us":
@@ -445,7 +564,7 @@ namespace Mono.Tools {
 			PropertyInfo gac = typeof (System.Environment).GetProperty ("GacPath",
 					BindingFlags.Static|BindingFlags.NonPublic);
 			if (gac == null) {
-				Console.WriteLine ("ERROR: Mono runtime not detected, please use " +
+				WriteLine ("ERROR: Mono runtime not detected, please use " +
 						"the mono runtime for gacutil.exe");
 				Environment.Exit (1);
 			}
@@ -457,7 +576,7 @@ namespace Mono.Tools {
 			MethodInfo libdir = typeof (System.Environment).GetMethod ("internalGetGacPath",
 					BindingFlags.Static|BindingFlags.NonPublic);
 			if (libdir == null) {
-				Console.WriteLine ("ERROR: Mono runtime not detected, please use " +
+				WriteLine ("ERROR: Mono runtime not detected, please use " +
 						"the mono runtime for gacutil.exe");
 				Environment.Exit (1);
 			}
@@ -480,6 +599,27 @@ namespace Mono.Tools {
 			return String.Concat (a, sep, end);
 		}
 
+		private static void WriteLine ()
+		{
+			if (silent)
+				return;
+			Console.WriteLine ();
+		}
+
+		private static void WriteLine (string line)
+		{
+			if (silent)
+				return;
+			Console.WriteLine (line);
+		}
+
+		private static void WriteLine (string line, params object [] p)
+		{
+			if (silent)
+				return; 
+			Console.WriteLine (line, p);
+		}
+
 		private static void Usage ()
 		{
 			ShowHelp (false);
@@ -488,78 +628,112 @@ namespace Mono.Tools {
 
 		private static void ShowHelp (bool detailed)
 		{
-			Console.WriteLine ("Usage: gacutil.exe <commands> [ <options> ]");
-			Console.WriteLine ("Commands:");
+			WriteLine ("Usage: gacutil.exe <commands> [ <options> ]");
+			WriteLine ("Commands:");
 
-			Console.WriteLine ("-i <assembly_path> [-check_refs] [-package NAME] [-root ROOTDIR] [-gacdir GACDIR]");
-			Console.WriteLine ("\tInstalls an assembly into the global assembly cache.");
+			WriteLine ("-i <assembly_path> [-check_refs] [-package NAME] [-root ROOTDIR] [-gacdir GACDIR]");
+			WriteLine ("\tInstalls an assembly into the global assembly cache.");
 			if (detailed) {
-				Console.WriteLine ("\t<assembly_path> is the name of the file that contains the " +
+				WriteLine ("\t<assembly_path> is the name of the file that contains the " +
 						"\tassembly manifest\n" +
 						"\tExample: -i myDll.dll");
 			}
-			Console.WriteLine ();
+			WriteLine ();
 
-			Console.WriteLine ("-u <assembly_display_name> [-package NAME] [-root ROOTDIR] [-gacdir GACDIR]");
-			Console.WriteLine ("\tUninstalls an assembly from the global assembly cache.");
+			WriteLine ("-il <assembly_list_file> [-check_refs] [-package NAME] [-root ROOTDIR] [-gacdir GACDIR]");
+			WriteLine ("\tInstalls one or more assemblies into the global assembly cache.");
 			if (detailed) {
-				Console.WriteLine ("\t<assembly_display_name> is the name of the assembly (partial or\n" +
+				WriteLine ("\t<assembly_list_file> is the path to a test file containing a list of\n" +
+						"\tassembly file paths on separate lines.\n" +
+						"\tExample -il assembly_list.txt\n" +
+						"\t\tassembly_list.txt contents:\n" +
+						"\t\tassembly1.dll\n" +
+						"\t\tassembly2.dll");
+			}
+			WriteLine ();
+			
+			WriteLine ("-u <assembly_display_name> [-package NAME] [-root ROOTDIR] [-gacdir GACDIR]");
+			WriteLine ("\tUninstalls an assembly from the global assembly cache.");
+			if (detailed) {
+				WriteLine ("\t<assembly_display_name> is the name of the assembly (partial or\n" +
 						"\tfully qualified) to remove from the global assembly cache. If a \n" +
 						"\tpartial name is specified all matching assemblies will be uninstalled.\n" +
 						"\tExample: -u myDll,Version=1.2.1.0");
 			}
-			Console.WriteLine ();
+			WriteLine ();
 
-			Console.WriteLine ("-us <assembly_path> [-package NAME] [-root ROOTDIR] [-gacdir GACDIR]");
-			Console.WriteLine ("\tUninstalls an assembly using the specifed assemblies full name.");
+			WriteLine ("-ul <assembly_list_file> [-package NAME] [-root ROOTDIR] [-gacdir GACDIR]");
+			WriteLine ("\tUninstalls one or more assemblies from the global assembly cache.");
 			if (detailed) {
-				Console.WriteLine ("\t<assembly path> is the path to an assembly. The full assembly name\n" +
+				WriteLine ("\t<assembly_list_file> is the path to a test file containing a list of\n" +
+						"\tassembly names on separate lines.\n" +
+						"\tExample -ul assembly_list.txt\n" +
+						"\t\tassembly_list.txt contents:\n" +
+						"\t\tassembly1,Version=1.0.0.0,Culture=en,PublicKeyToken=0123456789abcdef\n" +
+						"\t\tassembly2,Version=2.0.0.0,Culture=en,PublicKeyToken=0123456789abcdef");
+			}
+			WriteLine ();
+
+			WriteLine ("-us <assembly_path> [-package NAME] [-root ROOTDIR] [-gacdir GACDIR]");
+			WriteLine ("\tUninstalls an assembly using the specifed assemblies full name.");
+			if (detailed) {
+				WriteLine ("\t<assembly path> is the path to an assembly. The full assembly name\n" +
 						"\tis retrieved from the specified assembly if there is an assembly in\n" +
 						"\tthe GAC with a matching name, it is removed.\n" +
 						"\tExample: -us myDll.dll");
 			}
-			Console.WriteLine ();
+			WriteLine ();
 
-			Console.WriteLine ("-l [assembly_name] [-root ROOTDIR] [-gacdir GACDIR]");
-			Console.WriteLine ("\tLists the contents of the global assembly cache.");
+			WriteLine ("-l [assembly_name] [-root ROOTDIR] [-gacdir GACDIR]");
+			WriteLine ("\tLists the contents of the global assembly cache.");
 			if (detailed) {
-				Console.WriteLine ("\tWhen the <assembly_name> parameter is specified only matching\n" +
+				WriteLine ("\tWhen the <assembly_name> parameter is specified only matching\n" +
 						"\tassemblies are listed.");
 			}
-			Console.WriteLine ();
+			WriteLine ();
 
-			Console.WriteLine ("-?");
-			Console.WriteLine ("\tDisplays a detailed help screen\n");
-			Console.WriteLine ();
+			WriteLine ("-?");
+			WriteLine ("\tDisplays a detailed help screen");
+			WriteLine ();
 
 			if (!detailed)
 				return;
 
-			Console.WriteLine ("Options:");
-			Console.WriteLine ("-package <NAME>");
-			Console.WriteLine ("Used to create a directory in prefix/lib/mono with the name NAME, and a\n" +
+			WriteLine ("Options:");
+			WriteLine ("-package <NAME>");
+			WriteLine ("\tUsed to create a directory in prefix/lib/mono with the name NAME, and a\n" +
 					"\tsymlink is created from NAME/assembly_name to the assembly on the GAC.\n" +
 					"\tThis is used so developers can reference a set of libraries at once.");
-			Console.WriteLine ();
+			WriteLine ();
 
-			Console.WriteLine ("-gacdir <GACDIR>");
-			Console.WriteLine ("Used to specify the GACs base directory. Once an assembly has been installed\n" +
+			WriteLine ("-gacdir <GACDIR>");
+			WriteLine ("\tUsed to specify the GACs base directory. Once an assembly has been installed\n" +
 					"\tto a non standard gacdir the MONO_GAC_PATH environment variable must be used\n" +
 					"\tto access the assembly.");
-			Console.WriteLine ();
+			WriteLine ();
 
-			Console.WriteLine ("-root <ROOTDIR>");
-			Console.WriteLine ("\tUsed by developers integrating this with automake tools or packaging tools\n" +
+			WriteLine ("-root <ROOTDIR>");
+			WriteLine ("\tUsed by developers integrating this with automake tools or packaging tools\n" +
 					"\tthat require a prefix directory to  be specified. The root represents the\n" +
 					"\t\"libdir\" component of a prefix (typically prefix/lib).");
-			Console.WriteLine ();
+			WriteLine ();
 
-			Console.WriteLine ("-check_refs");
-			Console.WriteLine ("\tUsed to ensure that the assembly being installed into the GAC does not\n" +
+			WriteLine ("-check_refs");
+			WriteLine ("\tUsed to ensure that the assembly being installed into the GAC does not\n" +
 					"\treference any non strong named assemblies. Assemblies being installed to\n" +
 					"\tthe GAC should not reference non strong named assemblies, however the is\n" +
-					"\tan optional check.\n");
+					"\tan optional check.");
 
+			WriteLine ();
+			WriteLine ("Ignored Options:");
+			WriteLine ("-f");
+			WriteLine ("\tThe Mono gacutil ignores the -f option to maintian commandline compatibility with");
+			WriteLine ("\tother gacutils. gacutil will always force the installation of a new assembly.");
+
+			WriteLine ();
+			WriteLine ("-r <reference_scheme> <reference_id> <description>");
+			WriteLine ("\tThe Mono gacutil has not implemented traced references and will emit a warning");
+			WriteLine ("\twhen this option is used.");
 		}
 	}
 }

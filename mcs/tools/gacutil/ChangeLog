@@ -1,3 +1,10 @@
+2004-06-08  Jackson Harper  <jackson@ximian.com>
+
+	* driver.cs Add install from list and uninstall from list
+	commands. Allow options to come before commands. Add the /silent
+	option so we can shut the tool up. And use returns instead of
+	Environment.Exit where appropriate.
+	
 2004-06-07  Jackson Harper  <jackson@ximian.com>
 
 	* driver.cs: Add -check_refs option to check if all referenced
