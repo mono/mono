@@ -1,3 +1,28 @@
+2004-02-03  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlChar.cs : now GetPredefinedEntity() returns int and -1 for not
+	  predefined entity names.
+	* DTDObjectModel.cs : DTDxxxCollection now derives from 
+	  - DTDCollectionBase that derives from DictionaryBase.
+	  - "Literal value" and "replacement text" are handled differently.
+	  - Throw XmlException when external entity could not be resolved. 
+	  - Return ReplacementText for EntityValue.
+	* DTDReader.cs :
+	  - Support IXmlLineInfo.
+	  - Fixed IGNORE section handling to be more strict.
+	  - Compute replacement text on reading entity declarations.
+	  - Don't expand char references before getting literal entity value.
+	  - Check not allowed parameter entity inside internal subset.
+	  - Added ValidateWhitespaceNode() to check whitespace's Validity
+	    Constraints on external elementdecl and standalone document.
+	  - When invalid data against its datatype was found, don't throw
+	    parse error.
+	  - Other code refactory.
+	* XmlTextReader.cs : 
+	  - Check for invalid Text pattern "]]>" should not depend on line 
+	    info since it might not be supported.
+	  - Check referenced character's validity (WFC).
+
 2004-01-28  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTDReader.cs : Added Normalization.  Parameter Entity declaration

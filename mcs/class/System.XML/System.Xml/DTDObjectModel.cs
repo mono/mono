@@ -198,142 +198,113 @@ namespace Mono.Xml
 		}
 	}
 
-	public class DTDElementDeclarationCollection
+	public class DTDCollectionBase : DictionaryBase
 	{
-		Hashtable elementDecls = new Hashtable ();
 		DTDObjectModel root;
 
-		public DTDElementDeclarationCollection (DTDObjectModel root)
+		protected DTDCollectionBase (DTDObjectModel root)
 		{
 			this.root = root;
 		}
 
+		protected DTDObjectModel Root {
+			get { return root; }
+		}
+
+		public ICollection Keys {
+			get { return InnerHashtable.Keys; }
+		}
+
+		public ICollection Values {
+			get { return InnerHashtable.Values; }
+		}
+	}
+
+	public class DTDElementDeclarationCollection : DTDCollectionBase
+	{
+
+		public DTDElementDeclarationCollection (DTDObjectModel root) : base (root) {}
+
 		public DTDElementDeclaration this [string name] {
-			get { return elementDecls [name] as DTDElementDeclaration; }
+			get { return Get (name); }
+		}
+
+		public DTDElementDeclaration Get (string name)
+		{
+			return InnerHashtable [name] as DTDElementDeclaration;
 		}
 
 		public void Add (string name, DTDElementDeclaration decl)
 		{
-			if (elementDecls [name] != null) {
-				this.root.AddError (new XmlSchemaException (String.Format (
+			if (InnerHashtable.Contains (name)) {
+				Root.AddError (new XmlSchemaException (String.Format (
 					"Element declaration for {0} was already added.",
 					name), null));
 				return;
 			}
-			decl.SetRoot (root);
-			elementDecls.Add (name, decl);
-		}
-
-		public ICollection Keys {
-			get { return elementDecls.Keys; }
-		}
-
-		public ICollection Values {
-			get { return elementDecls.Values; }
+			decl.SetRoot (Root);
+			InnerHashtable.Add (name, decl);
 		}
 	}
 
-	public class DTDAttListDeclarationCollection
+	public class DTDAttListDeclarationCollection : DTDCollectionBase
 	{
-		Hashtable attListDecls = new Hashtable ();
-		DTDObjectModel root;
-
-		public DTDAttListDeclarationCollection (DTDObjectModel root)
-		{
-			this.root = root;
-		}
+		public DTDAttListDeclarationCollection (DTDObjectModel root) : base (root) {}
 
 		public DTDAttListDeclaration this [string name] {
-			get { return attListDecls [name] as DTDAttListDeclaration; }
+			get { return InnerHashtable [name] as DTDAttListDeclaration; }
 		}
 
 		public void Add (string name, DTDAttListDeclaration decl)
 		{
 			DTDAttListDeclaration existing = this [name];
 			if (existing != null) {
-				// It should be valid and 
-				// has effect of additive declaration.
+				// It is valid, that is additive declaration.
 				foreach (DTDAttributeDefinition def in decl.Definitions)
 					if (decl.Get (def.Name) == null)
 						existing.Add (def);
 			} else {
-				decl.SetRoot (root);
-				attListDecls.Add (name, decl);
+				decl.SetRoot (Root);
+				InnerHashtable.Add (name, decl);
 			}
-		}
-
-		public ICollection Keys {
-			get { return attListDecls.Keys; }
-		}
-
-		public ICollection Values {
-			get { return attListDecls.Values; }
 		}
 	}
 
-	public class DTDEntityDeclarationCollection
+	public class DTDEntityDeclarationCollection : DTDCollectionBase
 	{
-		Hashtable entityDecls = new Hashtable ();
-		DTDObjectModel root;
-
-		public DTDEntityDeclarationCollection (DTDObjectModel root)
-		{
-			this.root = root;
-		}
+		public DTDEntityDeclarationCollection (DTDObjectModel root) : base (root) {}
 
 		public DTDEntityDeclaration this [string name] {
-			get { return entityDecls [name] as DTDEntityDeclaration; }
+			get { return InnerHashtable [name] as DTDEntityDeclaration; }
 		}
 
 		public void Add (string name, DTDEntityDeclaration decl)
 		{
-			if (entityDecls [name] != null)
+			if (InnerHashtable [name] != null)
 				throw new InvalidOperationException (String.Format (
 					"Entity declaration for {0} was already added.",
 					name));
-			decl.SetRoot (root);
-			entityDecls.Add (name, decl);
-		}
-
-		public ICollection Keys {
-			get { return entityDecls.Keys; }
-		}
-
-		public ICollection Values {
-			get { return entityDecls.Values; }
+			decl.SetRoot (Root);
+			InnerHashtable.Add (name, decl);
 		}
 	}
 
-	public class DTDNotationDeclarationCollection
+	public class DTDNotationDeclarationCollection : DTDCollectionBase
 	{
-		Hashtable notationDecls = new Hashtable ();
-		DTDObjectModel root;
-
-		public DTDNotationDeclarationCollection (DTDObjectModel root)
-		{
-			this.root = root;
-		}
+		public DTDNotationDeclarationCollection (DTDObjectModel root) : base (root) {}
 
 		public DTDNotationDeclaration this [string name] {
-			get { return notationDecls [name] as DTDNotationDeclaration; }
+			get { return InnerHashtable [name] as DTDNotationDeclaration; }
 		}
 
 		public void Add (string name, DTDNotationDeclaration decl)
 		{
-			if (notationDecls [name] != null)
+			if (InnerHashtable [name] != null)
 				throw new InvalidOperationException (String.Format (
 					"Notation declaration for {0} was already added.",
 					name));
-			decl.SetRoot (root);
-			notationDecls.Add (name, decl);
-		}
-
-		public ICollection Keys {
-			get { return notationDecls.Keys; }
-		}
-
-		public ICollection Values {
-			get { return notationDecls.Values; }
+			decl.SetRoot (Root);
+			InnerHashtable.Add (name, decl);
 		}
 	}
 
@@ -678,8 +649,8 @@ namespace Mono.Xml
 				} else {
 					sb.Append (value.Substring (pos, next - 1));
 					string name = value.Substring (next + 1, semicolon - 2);
-					char predefined = XmlChar.GetPredefinedEntity (name);
-					if (predefined != 0)
+					int predefined = XmlChar.GetPredefinedEntity (name);
+					if (predefined >= 0)
 						sb.Append (predefined);
 					else
 						sb.Append (Root.ResolveEntity (name));
@@ -759,11 +730,19 @@ namespace Mono.Xml
 		string publicId;
 		string systemId;
 		string literalValue;
+		string replacementText;
 		bool isInvalid;
+		Exception loadException;
+		bool loadFailed;
 
 		internal bool IsInvalid {
 			get { return isInvalid; }
 			set { isInvalid = value; }
+		}
+
+		public bool LoadFailed {
+			get { return loadFailed; }
+			set { loadFailed = value; }
 		}
 
 		public string Name {
@@ -786,6 +765,42 @@ namespace Mono.Xml
 			set { literalValue = value; }
 		}
 
+		public string ReplacementText {
+			get { return replacementText; }
+			set { replacementText = value; }
+		}
+
+		public void Resolve (XmlResolver resolver)
+		{
+			if (resolver == null || SystemId == null || SystemId.Length == 0) {
+				LoadFailed = true;
+				LiteralEntityValue = String.Empty;
+				return;
+			}
+
+			Uri baseUri = null;
+			try {
+				if (BaseURI != null && BaseURI.Length > 0)
+					baseUri = new Uri (BaseURI);
+			} catch (UriFormatException) {
+			}
+
+			Uri absUri = resolver.ResolveUri (baseUri, SystemId);
+			string absPath = absUri.ToString ();
+
+			try {
+				Stream s = resolver.GetEntity (absUri, null, typeof (Stream)) as Stream;
+				XmlTextReader xtr = new XmlTextReader (s);
+				// Don't skip Text declaration here. LiteralEntityValue contains it. See spec 4.5
+				this.BaseURI = absPath;
+				LiteralEntityValue = xtr.GetRemainder ().ReadToEnd ();
+			} catch (Exception ex) {
+				loadException = ex;
+				LiteralEntityValue = String.Empty;
+				LoadFailed = true;
+//				throw new XmlException (this, "Cannot resolve external entity. URI is " + absPath + " .");
+			}
+		}
 	}
 
 	public class DTDEntityDeclaration : DTDEntityBase
@@ -830,11 +845,12 @@ namespace Mono.Xml
 						entityValue = "";
 					else if (SystemId == null || SystemId == String.Empty) {
 						// FIXME: Isn't it an error??
-						entityValue = LiteralEntityValue;
+						entityValue = ReplacementText;
+//						entityValue = LiteralEntityValue;
 						if (entityValue == null)
 							entityValue = String.Empty;
 					} else {
-						entityValue = ResolveExternalEntity (Root.Resolver);
+						entityValue = ReplacementText;
 					}
 					// Check illegal recursion.
 					ScanEntityValue (new StringCollection ());
@@ -883,7 +899,7 @@ namespace Mono.Xml
 					// FIXME: Should be checked, but how to handle entity for ENTITY attribute?
 //					if (!XmlChar.IsName (name))
 //						throw new XmlException (this as IXmlLineInfo, "Invalid entity reference name.");
-					if (XmlChar.GetPredefinedEntity (name) != 0)
+					if (XmlChar.GetPredefinedEntity (name) >= 0)
 						break;	// predefined reference
 
 					this.ReferencingEntities.Add (name);
@@ -911,53 +927,6 @@ namespace Mono.Xml
 			scanned = true;
 			entityValue = value;
 			recursed = false;
-		}
-
-		private string ResolveExternalEntity (XmlResolver resolver)
-		{
-			if (resolver == null)
-				return String.Empty;
-
-			string baseUri = this.BaseURI;
-			if (baseUri == "")
-				baseUri = null;
-			Uri uri = resolver.ResolveUri (
-				baseUri != null ? new Uri (baseUri) : null, SystemId);
-			Stream stream = null;
-			try {
-				stream = resolver.GetEntity (uri, null, typeof (Stream)) as Stream;
-			} catch (Exception ex) { // FIXME: (wishlist) bad catch ;-(
-				Root.AddError (new XmlSchemaException ("Cannot resolve external entity " + uri.ToString () + " .",
-					this.LineNumber, this.LinePosition, null, this.BaseURI, ex));
-			}
-			if (stream == null)
-				return String.Empty;
-			XmlTextReader extEntReader = new XmlTextReader (uri.ToString (), stream, this.Root.NameTable);
-			extEntReader.SkipTextDeclaration ();
-			TextReader reader = extEntReader.GetRemainder ();
-			extEntReader.Close ();
-
-			StringBuilder sb = new StringBuilder ();
-
-			bool checkTextDecl = true;
-			while (reader.Peek () != -1) {
-				sb.Append ((char) reader.Read ());
-				if (checkTextDecl && sb.Length == 6) {
-					if (sb.ToString () == "<?xml ") {
-						// Skip Text declaration.
-						sb.Length = 0;
-						StringBuilder textdecl = new StringBuilder ();
-						while (reader.Peek () != '>' && reader.Peek () != -1)
-							textdecl.Append ((char) reader.Read ());
-						if (textdecl.ToString ().IndexOf ("encoding") < 0)
-							throw new XmlException ("Text declaration must have encoding specification: " + BaseURI);
-						if (textdecl.ToString ().IndexOf ("standalone") >= 0)
-							throw new XmlException ("Text declaration cannot have standalone declaration: " + BaseURI);
-					}
-					checkTextDecl = false;
-				}
-			}
-			return sb.ToString ();
 		}
 	}
 
@@ -1016,12 +985,9 @@ namespace Mono.Xml
 
 		public void Add (string name, DTDParameterEntityDeclaration decl)
 		{
-			if (peDecls [name] != null) {
-//				this.root.AddError (new XmlSchemaException (String.Format (
-//					"Parameter entity declaration for {0} was already added.",
-//					name), null));
+			// PEDecl can be overriden.
+			if (peDecls [name] != null)
 				return;
-			}
 			decl.SetRoot (root);
 			peDecls.Add (name, decl);
 		}
@@ -1037,54 +1003,6 @@ namespace Mono.Xml
 
 	public class DTDParameterEntityDeclaration : DTDEntityBase
 	{
-		string resolvedValue;
-		Exception loadException;
-		bool loadFailed;
-
-		public bool LoadFailed {
-			get { return loadFailed; }
-			set { loadFailed = value; }
-		}
-
-		public string Value {
-			get {
-				if (LiteralEntityValue != null)
-					return LiteralEntityValue;
-				if (resolvedValue == null)
-					throw new InvalidOperationException ();
-				return resolvedValue;
-			}
-		}
-
-		public void Resolve (XmlResolver resolver)
-		{
-			if (resolver == null) {
-				resolvedValue = String.Empty;
-				LoadFailed = true;
-				return;
-			}
-
-			Uri baseUri = null;
-			try {
-				if (BaseURI != null && BaseURI.Length > 0)
-					baseUri = new Uri (BaseURI);
-			} catch (UriFormatException) {
-			}
-
-			Uri absUri = resolver.ResolveUri (baseUri, SystemId);
-			string absPath = absUri.ToString ();
-
-			try {
-				Stream s = resolver.GetEntity (absUri, null, typeof (Stream)) as Stream;
-				XmlTextReader xtr = new XmlTextReader (s);
-				xtr.SkipTextDeclaration ();
-				resolvedValue = xtr.GetRemainder ().ReadToEnd ();
-			} catch (IOException ex) {
-				loadException = ex;
-				resolvedValue = String.Empty;
-				LoadFailed = true;
-			}
-		}
 	}
 
 	public enum DTDContentOrderType

@@ -147,7 +147,7 @@ namespace System.Xml
 			return false;
 		}
 
-		public static char GetPredefinedEntity (string name)
+		public static int GetPredefinedEntity (string name)
 		{
 			switch (name) {
 			case "amp":
@@ -161,7 +161,7 @@ namespace System.Xml
 			case "apos":
 				return '\'';
 			default:
-				return (char) 0;
+				return -1;
 			}
 		}
 

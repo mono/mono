@@ -774,6 +774,10 @@ namespace System.Xml
 
 		#region Internals
 		// Parsed DTD Objects
+#if DTD_HANDLE_EVENTS
+		internal event ValidationEventHandler ValidationEventHandler;
+#endif
+
 		internal DTDObjectModel DTD {
 			get { return parserContext.Dtd; }
 		}
@@ -1283,8 +1287,6 @@ namespace System.Xml
 		private void SetEntityReferenceProperties ()
 		{
 			DTDEntityDeclaration decl = DTD != null ? DTD.EntityDecls [entityReferenceName] : null;
-//			if (DTD != null && resolver != null && decl == null)
-//				throw new XmlException (this as IXmlLineInfo, "Entity declaration does not exist.");
 			if (this.isStandalone)
 				if (DTD == null || decl == null || !decl.IsInternalSubset)
 					throw new XmlException (this as IXmlLineInfo,
@@ -1455,6 +1457,7 @@ namespace System.Xml
 
 		private void AppendValueChar (int ch)
 		{
+			// FIXME: Handle surrogate pair correctly
 			valueBuffer.Append ((char)ch);
 		}
 
@@ -1480,8 +1483,7 @@ namespace System.Xml
 				ClearValueBuffer ();
 
 			int ch = PeekChar ();
-			int previousCloseBracketLine = 0;
-			int previousCloseBracketColumn = 0;
+			bool previousWasCloseBracket = false;
 
 			while (ch != '<' && ch != -1) {
 				if (ch == '&') {
@@ -1500,15 +1502,14 @@ namespace System.Xml
 
 				// Block "]]>"
 				if (ch == ']') {
-					if (previousCloseBracketColumn == LinePosition - 1 &&
-						previousCloseBracketLine == LineNumber)
+					if (previousWasCloseBracket)
 						if (PeekChar () == '>')
 							throw new XmlException (this as IXmlLineInfo,
 								"Inside text content, character sequence ']]>' is not allowed.");
-					// This tricky style is required to check "] ]]>"
-					previousCloseBracketColumn = LinePosition;
-					previousCloseBracketLine = LineNumber;
+					previousWasCloseBracket = true;
 				}
+				else if (previousWasCloseBracket)
+					previousWasCloseBracket = false;
 				ch = PeekChar ();
 				notWhitespace = true;
 			}
@@ -1609,8 +1610,8 @@ namespace System.Xml
 				throw new XmlException (this as IXmlLineInfo,
 					"Invalid entity reference name was found.");
 
-			char predefined = XmlChar.GetPredefinedEntity (name);
-			if (predefined != 0)
+			int predefined = XmlChar.GetPredefinedEntity (name);
+			if (predefined >= 0)
 //				AppendValueChar (predefined);
 				return predefined;
 			else {
@@ -1763,6 +1764,9 @@ namespace System.Xml
 					if (PeekChar () == '#') {
 						ReadChar ();
 						ch = ReadCharacterReference ();
+						if (normalization && XmlConstructs.IsInvalid (ch))
+							throw new XmlException (this as IXmlLineInfo,
+								"Not allowed character was found.");
 						AppendValueChar (ch);
 						break;
 					}
@@ -1770,7 +1774,7 @@ namespace System.Xml
 					string entName = ReadName ();
 					Expect (';');
 					int predefined = XmlChar.GetPredefinedEntity (entName);
-					if (predefined == 0) {
+					if (predefined < 0) {
 						DTDEntityDeclaration entDecl = 
 							DTD == null ? null : DTD.EntityDecls [entName];
 						if (DTD != null && resolver != null && entDecl == null)
@@ -2201,7 +2205,19 @@ namespace System.Xml
 
 			DTDReader dr = new DTDReader (DTD, intSubsetStartLine, intSubsetStartColumn);
 			dr.Normalization = this.normalization;
+#if DTD_HANDLE_EVENTS
+			dr.ValidationEventHandler += new ValidationEventHandler (OnValidationEvent);
+#endif
 			return dr.GenerateDTDObjectModel ();
+		}
+
+		private void OnValidationEvent (object o, ValidationEventArgs e)
+		{
+#if DTD_HANDLE_EVENTS
+			if (ValidationEventHandler != null)
+				// Override object as this.
+				ValidationEventHandler (this, e);
+#endif
 		}
 
 		private enum DtdInputState
