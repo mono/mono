@@ -170,7 +170,7 @@ namespace System.Web.UI
 					case "duration":
 						oc_duration = Int32.Parse ((string) entry.Value);
 						if (oc_duration < 1)
-							ThrowParseException ("The 'd	uration' attribute must be set " +
+							ThrowParseException ("The 'duration' attribute must be set " +
 									"to a positive integer value");
 						break;
 					case "varybyparam":
@@ -183,8 +183,34 @@ namespace System.Web.UI
 						oc_custom = (string) entry.Value;
 						break;
 					case "location":
-						oc_location = (OutputCacheLocation) Enum.Parse (typeof (OutputCacheLocation),
-								(string) entry.Value);
+						if (this is TemplateControlParser)
+							goto default;
+
+						try {
+							oc_location = (OutputCacheLocation) Enum.Parse (
+								typeof (OutputCacheLocation), (string) entry.Value);
+						} catch {
+							ThrowParseException ("The 'location' attribute is case sensitive and " +
+									"must be one of the following values: Any, Client, " +
+									"Downstram, Server, None, ServerAndClient.");
+						}
+						break;
+					case "varybycontrol":
+						if (!(this is TemplateControlParser))
+							goto default;
+
+                                                oc_controls = (string) entry.Value;
+						break;
+					case "shared":
+						if (!(this is TemplateControlParser))
+							goto default;
+
+						try {
+							oc_shared = Boolean.Parse ((string) entry.Value);
+						} catch {
+							ThrowParseException ("The 'shared' attribute is case sensitive" +
+									" and must be set to 'true' or 'false'.");
+						}
 						break;
 					default:
 						ThrowParseException ("The '" + key + "' attribute is not " +
