@@ -2,7 +2,9 @@
 
 	* PEAPI.cs: make sure small index sizes get set properly. Use a
 	continue to reduce nesting a little and make code almost mildly
-	readable.
+	readable. Add MDTable.Field to the list of tables that can
+	increase the CustomAttributeType shift. TODO: What else should be
+	here?
 	
 2004-07-13  Jackson Harper  <jackson@ximian.com>
 

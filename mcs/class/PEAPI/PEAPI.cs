@@ -4648,7 +4648,7 @@ if (rsrc != null)
               lgeCIx[(int)CIx.HasCustomAttr] = true;
             }
             if (count > max3BitSmlIx) {
-              if ((tabIx == MDTable.TypeRef) || (tabIx == MDTable.ModuleRef) || (tabIx == MDTable.Method) || (tabIx == MDTable.TypeSpec)) 
+              if ((tabIx == MDTable.TypeRef) || (tabIx == MDTable.ModuleRef) || (tabIx == MDTable.Method) || (tabIx == MDTable.TypeSpec) || (tabIx == MDTable.Field)) 
                 lgeCIx[(int)CIx.CustomAttributeType] = true;
               if ((tabIx == MDTable.Method) || (tabIx == MDTable.MemberRef)) 
                 lgeCIx[(int)CIx.MemberRefParent] = true;
