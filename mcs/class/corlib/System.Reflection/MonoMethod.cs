@@ -21,10 +21,10 @@ namespace System.Reflection {
 		internal MethodImplAttributes iattrs;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern void get_method_info (RuntimeMethodHandle handle, out MonoMethodInfo info);
+		internal static extern void get_method_info (IntPtr handle, out MonoMethodInfo info);
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern ParameterInfo[] get_parameter_info (RuntimeMethodHandle handle);
+		internal static extern ParameterInfo[] get_parameter_info (IntPtr handle);
 	};
 	
 	/*
@@ -32,7 +32,7 @@ namespace System.Reflection {
 	 * the .NET reflection class hierarchy is so broken.
 	 */
 	internal class MonoMethod : MethodInfo {
-		internal RuntimeMethodHandle mhandle;
+		internal IntPtr mhandle;
 		string name;
 		Type reftype;
 		
@@ -48,7 +48,9 @@ namespace System.Reflection {
 			}
 		}
 		public override ICustomAttributeProvider ReturnTypeCustomAttributes { 
-			get {return null;}
+			get {
+				return new ParameterInfo (ReturnType, this);
+			}
 		}
 		
 		public override MethodImplAttributes GetMethodImplementationFlags() {
@@ -82,7 +84,7 @@ namespace System.Reflection {
 		}
 
 		public override RuntimeMethodHandle MethodHandle { 
-			get {return mhandle;} 
+			get {return new RuntimeMethodHandle (mhandle);} 
 		}
 		public override MethodAttributes Attributes { 
 			get {
@@ -134,7 +136,7 @@ namespace System.Reflection {
 	}
 	
 	internal class MonoCMethod : ConstructorInfo {
-		internal RuntimeMethodHandle mhandle;
+		internal IntPtr mhandle;
 		string name;
 		Type reftype;
 		
@@ -173,7 +175,7 @@ namespace System.Reflection {
 		}
 
 		public override RuntimeMethodHandle MethodHandle { 
-			get {return mhandle;} 
+			get {return new RuntimeMethodHandle (mhandle);} 
 		}
 		public override MethodAttributes Attributes { 
 			get {

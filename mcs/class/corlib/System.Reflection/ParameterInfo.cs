@@ -28,6 +28,15 @@ namespace System.Reflection
 			this.PositionImpl = pb.Position;
 			this.AttrsImpl = (ParameterAttributes) pb.Attributes;
 		}
+	
+		/* to build a ParameterInfo for the return type of a method */
+		internal ParameterInfo (Type type, MemberInfo member) {
+			this.ClassImpl = type;
+			this.MemberImpl = member;
+			this.NameImpl = "";
+			this.PositionImpl = 0;
+			this.AttrsImpl = ParameterAttributes.Retval;
+		}
 		
 		public virtual Type ParameterType {
 			get {return ClassImpl;}

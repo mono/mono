@@ -1,3 +1,9 @@
+
+Thu Dec 19 16:43:19 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MonoMethod.cs, ParameterInfo.cs: return a custom attribute
+	provider for the return type of a method.
+
 2002-12-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AssemblyName.cs: little fix in FullName.
