@@ -92,10 +92,10 @@ class UTF7Encoding : Encoding
 		-1, -1, -1, -1, -1, -1, -1, -1,   -1, -1, -1, -1, 62, -1, -1, 63, // 20
 		52, 53, 54, 55, 56, 57, 58, 59,   60, 61, -1, -1, -1, -1, -1, -1, // 30
 
-		 0,  1,  2,  3,  4,  5,  6,  7,    8,  9, 10, 11, 12, 13, 14, 15, // 40
-		16, 17, 18, 19, 20, 21, 22, 23,   24, 25, -1, -1, -1, -1, -1, -1, // 50
-		26, 27, 28, 29, 30, 31, 32, 33,   34, 35, 36, 37, 38, 39, 40, 41, // 60
-		42, 43, 44, 45, 46, 47, 48, 49,   50, 51, -1, -1, -1, -1, -1, -1, // 70
+		-1,  0,  1,  2,  3,  4,  5,  6,    7,  8,  9, 10, 11, 12, 13, 14, // 40
+		15, 16, 17, 18, 19, 20, 21, 22,   23, 24, 25, -1, -1, -1, -1, -1, // 50
+		-1, 26, 27, 28, 29, 30, 31, 32,   33, 34, 35, 36, 37, 38, 39, 40, // 60
+		41, 42, 43, 44, 45, 46, 47, 48,   49, 50, 51, -1, -1, -1, -1, -1, // 70
 
 		-1, -1, -1, -1, -1, -1, -1, -1,   -1, -1, -1, -1, -1, -1, -1, -1, // 80
 		-1, -1, -1, -1, -1, -1, -1, -1,   -1, -1, -1, -1, -1, -1, -1, -1, // 90
@@ -380,7 +380,7 @@ class UTF7Encoding : Encoding
 				// Process the next byte in a base64 sequence.
 				if (byteval == (int)'-') {
 					// End of a base64 sequence.
-					if (prevIsPlus || leftOverSize > 0) {
+					if (prevIsPlus) {
 						++length;
 						leftOverSize = 0;
 					}
@@ -470,14 +470,13 @@ class UTF7Encoding : Encoding
 							throw new ArgumentException (_("Arg_InsufficientSpace"), "chars");
 						}
 						chars[posn++] = '+';
-					} else if (leftOverSize > 0) {
-						if (posn >= charLength) {
-							throw new ArgumentException (_("Arg_InsufficientSpace"), "chars");
-						}
-						chars[posn++] = (char)(leftOverBits << (16 - leftOverSize));
-						leftOverSize = 0;
-						leftOverBits = 0;
 					}
+					// RFC1642 Rule #2
+					// When decoding, any bits at the end of the Modified Base64 sequence that 
+					// do not constitute a complete 16-bit Unicode character are discarded. 
+					// If such discarded bits are non-zero the sequence is ill-formed.
+					if (leftOverBits != 0)
+						throw new FormatException ("unused bits not zero");
 					normal = true;
 				} else if ((b64value = base64[byteval]) != -1) {
 					// Extra character in a base64 sequence.

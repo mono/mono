@@ -1,3 +1,8 @@
+2004-06-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* UTF7Encoding.cs: Fixed decoding table. Fixed char count calculation.
+	Follow the RFC1642 rules for "overbits".
+
 2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* ASCIIEncoding.cs: added TODO for serialization
