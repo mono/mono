@@ -1,3 +1,8 @@
+2005-01-13  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Attr.cs : added Category("NotDotNet") for those tests that
+	  exposes MS bugs.
+
 2004-04-24  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Attr.cs : Don't check locale-dependent message.

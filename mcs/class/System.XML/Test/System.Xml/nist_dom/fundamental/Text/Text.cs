@@ -541,6 +541,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
+	[Category ("NotDotNet")] // MS DOM is buggy
 	public void core0009T()
         {
             string computedValue = "";

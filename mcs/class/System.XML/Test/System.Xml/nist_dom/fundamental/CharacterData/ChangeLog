@@ -1,3 +1,8 @@
+2005-01-13  Atsushi Enomoto <atsushi@ximian.com>
+
+	* CharacterData.cs : added Category("NotDotNet") for those tests that
+	  exposes MS bugs.
+
 2004-05-13  Atsushi Enomoto <atsushi@ximian.com>
 
 	* CharacterData.cs : More don't check error message.

@@ -982,6 +982,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
+	[Category ("NotDotNet")] // MS DOM is buggy
 	public void core0018M()
         {
             string computedValue = "";
@@ -1038,6 +1039,7 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
+	[Category ("NotDotNet")] // MS DOM is buggy
 	public void core0019M()
         {
             string computedValue = "";
