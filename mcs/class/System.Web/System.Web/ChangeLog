@@ -1,3 +1,7 @@
+2002-03-28  Wictor Wilén  <wictor@iBizkit.se>
+
+	* HttpServerUtils.cs : Added some more functionality
+	
 2002-03-28  Martin Baulig  <martin@gnome.org>
 
 	* HttpServerUtils.cs (UrlDecode): You cannot implicitly cast a
