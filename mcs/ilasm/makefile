@@ -1,12 +1,13 @@
 RUNTIME = mono
 MCS = mcs
 CSFLAGS = --target exe
-LIBFLAGS = /r:PEAPI.dll
+#LIBFLAGS = /r:PEAPI.dll
 INSTALL = /usr/bin/install
 prefix = /usr
 
 SOURCES = 				\
 	Driver.cs			\
+	../class/PEAPI/PEAPI.cs		\
 	codegen/CodeGen.cs		\
 	codegen/ClassTable.cs		\
 	parser/ILParser.cs		\
@@ -24,7 +25,7 @@ SOURCES = 				\
 	scanner/StringHelper.cs
 
 ilasm.exe: list
-	$(MCS) $(CSFLAGS) $(LIBFLAGS) @list -o ilasm.exe
+	$(MCS) $(CSFLAGS) @list -o ilasm.exe
 
 install: all
 	mkdir -p $(prefix)/bin
