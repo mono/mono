@@ -320,8 +320,8 @@ FileClose $0
 
 FileOpen $0 "$WINDIR\monobasepath.bat" "w"
 FileWrite $0 'set MONO_BASEPATH="$INSTDIR"$\r$\n'
-FileWrite $0 "set MONO_PATH=%MONO_BASEPATH%\lib$\r$\n"
-FileWrite $0 "set MONO_CFG_DIR=%MONO_BASEPATH%\etc\mono"
+FileWrite $0 'set MONO_PATH="$INSTDIR\lib"$\r$\n'
+FileWrite $0 'set MONO_CFG_DIR="$INSTDIR\etc\mono"'
 FileClose $0
 
 
@@ -341,8 +341,8 @@ FileWrite $0 "shift$\r$\n"
 FileWrite $0 "goto loop$\r$\n"
 FileWrite $0 ":done$\r$\n"
 FileWrite $0 "setlocal$\r$\n"
-FileWrite $0 'set path="%MONO_BASEPATH%\bin\;%MONO_BASEPATH%\lib\;%path%"$\r$\n'
-FileWrite $0 "%MONO_BASEPATH%\bin\mono.exe %MONO_BASEPATH%\bin\mcs.exe %MONOARGS%$\r$\n"
+FileWrite $0 'set path="$INSTDIR\bin\;$INSTDIR\lib\;%path%"$\r$\n'
+FileWrite $0 '"$INSTDIR\bin\mono.exe" "$INSTDIR\bin\mcs.exe" %MONOARGS%$\r$\n'
 FileWrite $0 "endlocal$\r$\n"
 
 FileClose $0
@@ -363,8 +363,8 @@ FileWrite $0 "shift$\r$\n"
 FileWrite $0 "goto loop$\r$\n"
 FileWrite $0 ":done$\r$\n"
 FileWrite $0 "setlocal$\r$\n"
-FileWrite $0 'set path="%MONO_BASEPATH%\bin\;%MONO_BASEPATH%\lib\;%path%"$\r$\n'
-FileWrite $0 "%MONO_BASEPATH%\bin\mono.exe %MONO_BASEPATH%\bin\mbas.exe %MONOARGS%$\r$\n"
+FileWrite $0 'set path="$INSTDIR\bin\;$INSTDIR\lib\;%path%"$\r$\n'
+FileWrite $0 '"$INSTDIR\bin\mono.exe" "$INSTDIR\bin\mbas.exe" %MONOARGS%$\r$\n'
 FileWrite $0 "endlocal$\r$\n"
 
 FileClose $0
@@ -385,8 +385,8 @@ FileWrite $0 "shift$\r$\n"
 FileWrite $0 "goto loop$\r$\n"
 FileWrite $0 ":done$\r$\n"
 FileWrite $0 "setlocal$\r$\n"
-FileWrite $0 'set path="%MONO_BASEPATH%\bin\;%MONO_BASEPATH%\lib\;%path%"$\r$\n'
-FileWrite $0 "%MONO_BASEPATH%\bin\mint.exe %MONOARGS%$\r$\n"
+FileWrite $0 'set path="$INSTDIR\bin\;$INSTDIR\lib\;%path%"$\r$\n'
+FileWrite $0 '"$INSTDIR\bin\mint.exe" %MONOARGS%$\r$\n'
 FileWrite $0 "endlocal$\r$\n"
 
 FileClose $0
@@ -407,10 +407,9 @@ FileWrite $0 "shift$\r$\n"
 FileWrite $0 "goto loop$\r$\n"
 FileWrite $0 ":done$\r$\n"
 FileWrite $0 "setlocal$\r$\n"
-FileWrite $0 'set path="%MONO_BASEPATH%\bin\;%MONO_BASEPATH%\lib\;%path%"$\r$\n'
-FileWrite $0 "%MONO_BASEPATH%\bin\mono.exe %MONOARGS%$\r$\n"
+FileWrite $0 'set path="$INSTDIR\bin\;$INSTDIR\lib\;%path%"$\r$\n'
+FileWrite $0 '"$INSTDIR\bin\mono.exe" %MONOARGS%$\r$\n'
 FileWrite $0 "endlocal$\r$\n"
-
 FileClose $0
 
 ;========================
@@ -429,8 +428,8 @@ FileWrite $0 "shift$\r$\n"
 FileWrite $0 "goto loop$\r$\n"
 FileWrite $0 ":done$\r$\n"
 FileWrite $0 "setlocal$\r$\n"
-FileWrite $0 'set path="%MONO_BASEPATH%\bin\;%MONO_BASEPATH%\lib\;%path%"$\r$\n'
-FileWrite $0 "%MONO_BASEPATH%\bin\monodis.exe %MONOARGS%$\r$\n"
+FileWrite $0 'set path="$INSTDIR\bin\;$INSTDIR\lib\;%path%"$\r$\n'
+FileWrite $0 '"$INSTDIR\bin\monodis.exe" %MONOARGS%$\r$\n'
 FileWrite $0 "endlocal$\r$\n"
 
 FileClose $0
@@ -451,8 +450,8 @@ FileWrite $0 "shift$\r$\n"
 FileWrite $0 "goto loop$\r$\n"
 FileWrite $0 ":done$\r$\n"
 FileWrite $0 "setlocal$\r$\n"
-FileWrite $0 'set path="%MONO_BASEPATH%\bin\;%MONO_BASEPATH%\lib\;%path%"$\r$\n'
-FileWrite $0 "%MONO_BASEPATH%\bin\mono.exe %MONO_BASEPATH%\bin\monoilasm.exe %MONOARGS%$\r$\n"
+FileWrite $0 'set path="$INSTDIR\bin\;$INSTDIR\lib\;%path%"$\r$\n'
+FileWrite $0 '"$INSTDIR\bin\mono.exe" "$INSTDIR\bin\monoilasm.exe" %MONOARGS%$\r$\n'
 FileWrite $0 "endlocal$\r$\n"
 
 FileClose $0
@@ -474,8 +473,8 @@ FileWrite $0 "shift$\r$\n"
 FileWrite $0 "goto loop$\r$\n"
 FileWrite $0 ":done$\r$\n"
 FileWrite $0 "setlocal$\r$\n"
-FileWrite $0 'set path="%MONO_BASEPATH%\bin\;%MONO_BASEPATH%\lib\;%path%"$\r$\n'
-FileWrite $0 "%MONO_BASEPATH%\bin\mono.exe %MONO_BASEPATH%\bin\sqlsharp.exe %MONOARGS%$\r$\n"
+FileWrite $0 'set path="$INSTDIR\bin\;$INSTDIR\lib\;%path%"$\r$\n'
+FileWrite $0 '"$INSTDIR\bin\mono.exe" "$INSTDIR\bin\sqlsharp.exe" %MONOARGS%$\r$\n'
 FileWrite $0 "endlocal$\r$\n"
 
 FileClose $0
@@ -496,8 +495,8 @@ FileWrite $0 "shift$\r$\n"
 FileWrite $0 "goto loop$\r$\n"
 FileWrite $0 ":done$\r$\n"
 FileWrite $0 "setlocal$\r$\n"
-FileWrite $0 'set path="%MONO_BASEPATH%\bin\;%MONO_BASEPATH%\lib\;%path%"$\r$\n'
-FileWrite $0 "%MONO_BASEPATH%\bin\mono.exe %MONO_BASEPATH%\bin\secutil.exe %MONOARGS%$\r$\n"
+FileWrite $0 'set path="$INSTDIR\bin\;$INSTDIR\lib\;%path%"$\r$\n'
+FileWrite $0 '"$INSTDIR\bin\mono.exe" "$INSTDIR\bin\secutil.exe" %MONOARGS%$\r$\n'
 FileWrite $0 "endlocal$\r$\n"
 
 FileClose $0
@@ -518,8 +517,8 @@ FileWrite $0 "shift$\r$\n"
 FileWrite $0 "goto loop$\r$\n"
 FileWrite $0 ":done$\r$\n"
 FileWrite $0 "setlocal$\r$\n"
-FileWrite $0 'set path="%MONO_BASEPATH%\bin\;%MONO_BASEPATH%\lib\;%path%"$\r$\n'
-FileWrite $0 "%MONO_BASEPATH%\bin\mono.exe %MONO_BASEPATH%\bin\cert2spc.exe %MONOARGS%$\r$\n"
+FileWrite $0 'set path="$INSTDIR\bin\;$INSTDIR\lib\;%path%"$\r$\n'
+FileWrite $0 '"$INSTDIR\bin\mono.exe" "$INSTDIR\bin\cert2spec.exe" %MONOARGS%$\r$\n'
 FileWrite $0 "endlocal$\r$\n"
 
 FileClose $0
@@ -541,8 +540,8 @@ FileWrite $0 "shift$\r$\n"
 FileWrite $0 "goto loop$\r$\n"
 FileWrite $0 ":done$\r$\n"
 FileWrite $0 "setlocal$\r$\n"
-FileWrite $0 'set path="%MONO_BASEPATH%\bin\;%MONO_BASEPATH%\lib\;%path%"$\r$\n'
-FileWrite $0 "%MONO_BASEPATH%\bin\mono.exe %MONO_BASEPATH%\bin\monoresgen.exe %MONOARGS%$\r$\n"
+FileWrite $0 'set path="$INSTDIR\bin\;$INSTDIR\lib\;%path%"$\r$\n'
+FileWrite $0 '"$INSTDIR\bin\mono.exe" "$INSTDIR\bin\monoresgen.exe" %MONOARGS%$\r$\n'
 FileWrite $0 "endlocal$\r$\n"
 
 FileClose $0
@@ -563,8 +562,8 @@ FileWrite $0 "shift$\r$\n"
 FileWrite $0 "goto loop$\r$\n"
 FileWrite $0 ":done$\r$\n"
 FileWrite $0 "setlocal$\r$\n"
-FileWrite $0 'set path="%MONO_BASEPATH%\bin\;%MONO_BASEPATH%\lib\;%path%"$\r$\n'
-FileWrite $0 "%MONO_BASEPATH%\bin\monosn.exe %MONOARGS%$\r$\n"
+FileWrite $0 'set path="$INSTDIR\bin\;$INSTDIR\lib\;%path%"$\r$\n'
+FileWrite $0 '"$INSTDIR\bin\monosn.exe" %MONOARGS%$\r$\n'
 FileWrite $0 "endlocal$\r$\n"
 
 FileClose $0
@@ -586,8 +585,8 @@ FileWrite $0 "shift$\r$\n"
 FileWrite $0 "goto loop$\r$\n"
 FileWrite $0 ":done$\r$\n"
 FileWrite $0 "setlocal$\r$\n"
-FileWrite $0 'set path="%MONO_BASEPATH%\bin\;%MONO_BASEPATH%\lib\;%path%"$\r$\n'
-FileWrite $0 "%MONO_BASEPATH%\bin\mono.exe %MONO_BASEPATH%\bin\cilc.exe %MONOARGS%$\r$\n"
+FileWrite $0 'set path="$INSTDIR\bin\;$INSTDIR\lib\;%path%"$\r$\n'
+FileWrite $0 '"$INSTDIR\bin\mono.exe" "$INSTDIR\bin\cilc.exe" %MONOARGS%$\r$\n'
 FileWrite $0 "endlocal$\r$\n"
 
 FileClose $0
