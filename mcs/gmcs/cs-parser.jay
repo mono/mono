@@ -2182,6 +2182,10 @@ add_accessor_declaration
 		Report.Error (73, lexer.Location, "Add or remove accessor must have a body");
 		$$ = null;
 	  }
+	| opt_attributes modifiers ADD {
+		Report.Error (1609, lexer.Location, "Modifiers cannot be placed on event accessor declarations");
+		$$ = null;
+	  }
 	;
 
 remove_accessor_declaration
@@ -2204,6 +2208,10 @@ remove_accessor_declaration
 	  }
 	| opt_attributes REMOVE error {
 		Report.Error (73, lexer.Location, "Add or remove accessor must have a body");
+		$$ = null;
+	  }
+	| opt_attributes modifiers REMOVE {
+		Report.Error (1609, lexer.Location, "Modifiers cannot be placed on event accessor declarations");
 		$$ = null;
 	  }
 	;
@@ -3226,7 +3234,7 @@ anonymous_method_parameter
 		$$ = new Parameter ((Expression) $2, (string) $3, (Parameter.Modifier) $1, null);
 	  }
 	| PARAMS type IDENTIFIER {
-		Report.Error (-221, lexer.Location, "params modifier not allowed in anonymous method declaration");
+		Report.Error (1670, lexer.Location, "params modifier not allowed in anonymous method declaration");
 		$$ = null;
 	  }
 	;
@@ -4413,6 +4421,11 @@ yield_statement
 			$$ = new Yield ((Expression) $3, lexer.Location); 
 		}
 	  }
+	| IDENTIFIER RETURN SEMICOLON
+	{
+		Report.Error (1627, lexer.Location, "Expression expected after yield return");
+		$$ = null;
+	}
 	| IDENTIFIER BREAK SEMICOLON
 	  {
 		string s = (string) $1;
