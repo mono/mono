@@ -1,0 +1,4 @@
+#! /bin/sh
+MONO_CFG_DIR='@mono_cfg_dir@'; export MONO_CFG_DIR
+r=@mono_build_root@
+exec "$r/libtool" --mode=execute "$r/@mono_runtime@" --config "$r/data/config" "$@"

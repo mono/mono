@@ -1,3 +1,8 @@
+2004-11-23  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (MCS,ILASM): Don't refer to runtime/ directory.
+	Refer directly to the mcs/ tree.
+
 2004-11-19  Neale Ferguson <Neale.Ferguson@SoftwareAG-usa.com>
 
 	* mini-s390.c, tramp-s390.c, mini-s390.h: Add LMF processing for trampolines.

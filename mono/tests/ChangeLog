@@ -1,3 +1,8 @@
+2004-11-23  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (CSC,ILASM): Don't refer to runtime/ directly.  Use
+	the mcs/ tree directly.
+
 2004-11-19  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (check-local): New.  Hook into 'make check'.
