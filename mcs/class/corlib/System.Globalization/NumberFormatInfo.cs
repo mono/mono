@@ -654,40 +654,9 @@ namespace System.Globalization {
 		
 		public object Clone () 
 		{
-			NumberFormatInfo clone = new NumberFormatInfo ();
-
-			clone.readOnly = this.readOnly;
-
-			clone.currencyDecimalDigits = this.currencyDecimalDigits; 
-			clone.currencyDecimalSeparator = String.Copy (this.currencyDecimalSeparator);
-			clone.currencyGroupSeparator = String.Copy (this.currencyGroupSeparator);
-			clone.currencyGroupSizes = (int[]) this.currencyGroupSizes.Clone();
-			clone.currencyNegativePattern = this.currencyNegativePattern;
-			clone.currencyPositivePattern = this.currencyPositivePattern;
-			clone.currencySymbol = String.Copy (this.currencySymbol);
-
-			clone.naNSymbol = String.Copy (this.naNSymbol);
-			clone.negativeInfinitySymbol = String.Copy (this.negativeInfinitySymbol);
-			clone.negativeSign = String.Copy (this.negativeSign);
-
-			clone.numberDecimalDigits = this.numberDecimalDigits;
-			clone.numberDecimalSeparator = String.Copy (this.numberDecimalSeparator);
-			clone.numberGroupSeparator = String.Copy (this.numberGroupSeparator);
-			clone.numberGroupSizes = (int[]) this.numberGroupSizes.Clone();
-			clone.numberNegativePattern = this.numberNegativePattern;
-
-			clone.percentDecimalDigits = this.percentDecimalDigits;
-			clone.percentDecimalSeparator = String.Copy (this.percentDecimalSeparator);
-			clone.percentGroupSeparator = String.Copy (this.percentGroupSeparator); 
-			clone.percentGroupSizes = (int []) this.percentGroupSizes.Clone();
-			clone.percentNegativePattern = this.percentNegativePattern;
-			clone.percentPositivePattern = this.percentPositivePattern;
-			clone.percentSymbol = String.Copy (this.percentSymbol);
-			
-			clone.perMilleSymbol = String.Copy (this.perMilleSymbol);
-			clone.positiveInfinitySymbol = String.Copy (this.positiveInfinitySymbol);
-			clone.positiveSign = String.Copy (this.positiveSign);
-			
+			NumberFormatInfo clone = (NumberFormatInfo) MemberwiseClone();
+			// clone is not read only
+			clone.readOnly = false;
 			return clone;
 		}
 
