@@ -1,3 +1,10 @@
+2004-12-03  Ravindra <rkumar@novell.com>
+
+	* ListView.cs (ListView_KeyDown):
+	* ListView.cs (ListView_KeyUp): Fixed multiple selection handling
+	when CTRL key is pressed.
+	* ListViewItem.cs (Selected): Fixed setting the property.
+
 2004-12-03  Marek Safar  <marek.safar@seznam.cz>
 
 	* Application.cs (OnThreadException): Use ThreadExceptionDialog.

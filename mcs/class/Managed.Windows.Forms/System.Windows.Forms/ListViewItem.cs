@@ -253,15 +253,14 @@ namespace System.Windows.Forms
 		public bool Selected {
 			get { return selected; }
 			set {
-				if (value != selected) {
-					selected = value;
-
 					if (owner != null) {
 						if (owner.CanMultiselect == false &&
 						    owner.SelectedItems.Count > 0) {
 							owner.SelectedItems.Clear ();
 							owner.SelectedIndices.list.Clear ();
 						}
+
+						selected = value;
 						if (selected) {
 							//do we need !owner.SelectedItems.Contains (this))
 							owner.SelectedItems.list.Add (this);
@@ -273,7 +272,6 @@ namespace System.Windows.Forms
 						}
 					}
 				}
-			}
 		}
 
 		[DefaultValue (-1)]

@@ -918,7 +918,7 @@ namespace System.Windows.Forms
 
 		private void ListView_KeyDown (object sender, KeyEventArgs ke)
 		{
-			if (!ke.Handled && ke.Control) {
+			if (!ke.Handled && ke.KeyCode == Keys.ControlKey) {
 				this.ctrl_pressed = true;
 				ke.Handled = true;
 			}
@@ -926,7 +926,7 @@ namespace System.Windows.Forms
 
 		private void ListView_KeyUp (object sender, KeyEventArgs ke)
 		{
-			if (!ke.Handled && ke.Control) {
+			if (!ke.Handled && ke.KeyCode == Keys.ControlKey) {
 				this.ctrl_pressed = false;
 				ke.Handled = true;
 			}
@@ -1002,10 +1002,8 @@ namespace System.Windows.Forms
 
 			if (this.clicked_item != null) {
 				this.clicked_item.Selected = true;
-
-				// Raise the event if it is a new selection
-				if (this.clicked_item != this.last_clicked_item)
-					this.OnSelectedIndexChanged (new EventArgs ());
+				// Raise the event
+				this.OnSelectedIndexChanged (new EventArgs ());
 
 				this.Redraw (false);
 			}
@@ -1026,18 +1024,9 @@ namespace System.Windows.Forms
 			ListViewItem item = this.GetItemAt (hit.X, hit.Y);
 
 			if (item != null) {
-				if (this.CanMultiselect == false &&
-				    this.selected_items.Count > 0) {
-					this.selected_items.Clear ();
-					this.selected_indices.list.Clear ();
-				}
-
 				item.Selected = true;
-				this.selected_items.list.Add (item);
-				this.selected_indices.list.Add (item.Index);
-
-				if (this.CanMultiselect)
-					this.OnSelectedIndexChanged (new EventArgs ());
+				// Raise the event
+				this.OnSelectedIndexChanged (new EventArgs ());
 
 				this.Redraw (false);
 			}
