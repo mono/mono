@@ -1,3 +1,7 @@
+2003-01-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* StringBuilder.cs: fixed typo in set_Length.
+
 2002-12-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Encoding.cs: g_get_encoding () returns "ASCII". In Default, when the

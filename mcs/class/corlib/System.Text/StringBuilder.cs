@@ -143,7 +143,7 @@ namespace System.Text {
 						
 						string padding = new String( ' ', padLength );
 						Array.Copy( sString, tString, sLength );
-						padding.CopyTo (0, sString, sLength, padLength);
+						padding.CopyTo (0, tString, sLength, padLength);
 						sString = tString;
 						sLength = sString.Length;
 						sCapacity = value;
