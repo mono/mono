@@ -4186,7 +4186,7 @@ namespace Mono.CSharp {
 			MemberInfo[] group;
 
 			group = TypeManager.MemberLookup (
-				PropertyInfo.DeclaringType, PropertyInfo.DeclaringType,
+				invocation_type, PropertyInfo.DeclaringType,
 				MemberTypes.Method, flags, accessor_name + "_" + PropertyInfo.Name);
 
 			//
@@ -4198,14 +4198,20 @@ namespace Mono.CSharp {
 			foreach (MethodInfo mi in group) {
 				MethodAttributes ma = mi.Attributes & MethodAttributes.MemberAccessMask;
 
-				// If only accessible to the current class.
+				//
+				// If only accessible to the current class or children
+				//
 				if (ma == MethodAttributes.Private) {
-					if (mi.DeclaringType != invocation_type)
-						continue;
-					else
+					Type declaring_type = mi.DeclaringType;
+					
+					if (invocation_type != declaring_type){
+						if (TypeManager.IsSubclassOrNestedChildOf (invocation_type, mi.DeclaringType))
+							return mi;
+						else
+							continue;
+					} else
 						return mi;
 				}
-
 				//
 				// FamAndAssem requires that we not only derivate, but we are on the
 				// same assembly.  

@@ -1996,12 +1996,20 @@ public class TypeManager {
 				if (!IsSubclassOrNestedChildOf (closure_invocation_type, mb.DeclaringType))
 					return false;
 
+#if false
+				//
+				// See test 174 for a sample.  Essentially, it is ok in a derived
+				// class to invoke a base class protected method.  1540 is still caught
+				// elsewhere
+				//
+				
 				// Although a derived class can access protected members of its base class
 				// it cannot do so through an instance of the base class (CS1540).
 				if (!mb.IsStatic && (closure_invocation_type != closure_start_type) &&
-				    closure_invocation_type.IsSubclassOf (closure_start_type))
+				    closure_start_type != mb.DeclaringType)
 					return false;
-
+#endif
+				
 				return true;
 			}
 
@@ -2043,12 +2051,18 @@ public class TypeManager {
 				if (!IsSubclassOrNestedChildOf (closure_invocation_type, fi.DeclaringType))
 					return false;
 
+#if false
+				//
+				// See test-174 for a sample.
+				//
+				
 				// Although a derived class can access protected members of its base class
 				// it cannot do so through an instance of the base class (CS1540).
 				if (!fi.IsStatic && (closure_invocation_type != closure_start_type) &&
-				    closure_invocation_type.IsSubclassOf (closure_start_type))
+				    closure_start_type != fi.DeclaringType)
 					return false;
-
+#endif
+				
 				return true;
 			}
 
@@ -2108,20 +2122,8 @@ public class TypeManager {
 		// If we are a nested class, we always have access to our container
 		// type names
 		//
-		if (invocation_type != null){
-			string invocation_name = invocation_type.FullName;
-			if (invocation_name.IndexOf ('+') != -1){
-				string container = queried_type.FullName + "+";
-				int container_length = container.Length;
-				
-				if (invocation_name.Length > container_length){
-					string shared = invocation_name.Substring (0, container_length);
-				
-					if (shared == container)
-						always_ok_flag = true;
-				}
-			}
-		}
+		if (invocation_type != null)
+			always_ok_flag = IsSubclassOrNestedChildOf (invocation_type, queried_type);
 		
 		do {
 			MemberList list;
