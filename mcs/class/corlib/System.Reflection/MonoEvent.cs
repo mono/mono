@@ -13,6 +13,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace System.Reflection {
+
 	internal struct MonoEventInfo {
 		public Type parent;
 		public String name;
@@ -44,12 +45,14 @@ namespace System.Reflection {
 				
 			return info.add_method;
 		}
+
 		public override MethodInfo GetRaiseMethod( bool nonPublic) {
 			MonoEventInfo info;
 			MonoEventInfo.get_event_info (this, out info);
 				
 			return info.raise_method;
 		}
+
 		public override MethodInfo GetRemoveMethod( bool nonPublic) {
 			MonoEventInfo info;
 			MonoEventInfo.get_event_info (this, out info);
@@ -65,6 +68,7 @@ namespace System.Reflection {
 				return info.parent;
 			}
 		}
+
 		public override Type ReflectedType {
 			get {
 				MonoEventInfo info;
@@ -73,6 +77,7 @@ namespace System.Reflection {
 				return info.parent;
 			}
 		}
+
 		public override string Name {
 			get {
 				MonoEventInfo info;
@@ -81,5 +86,10 @@ namespace System.Reflection {
 				return info.name;
 			}
 		}
+
+		public override string ToString () {
+			return EventHandlerType + " " + Name;
+		}
+
 	}
 }

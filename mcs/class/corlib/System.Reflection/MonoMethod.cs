@@ -140,9 +140,15 @@ namespace System.Reflection {
 			for (int i = 0; i < p.Length; ++i) {
 				if (i > 0)
 					parms = parms + ", ";
-				parms = parms + p [i].ParameterType.Name;
+				if (p[i].ParameterType.IsClass)
+					parms = parms + p[i].ParameterType.Namespace + "." + p[i].ParameterType.Name;
+				else
+					parms = parms + p[i].ParameterType.Name;
 			}
-			return ReturnType.Name+" "+Name+"("+parms+")";
+			if (ReturnType.IsClass) {
+				return ReturnType.Namespace + "." + ReturnType.Name + " " + Name + "(" + parms + ")";
+			}
+			return ReturnType.Name + " " + Name + "(" + parms + ")";
 		}
 
 	

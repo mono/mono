@@ -1,3 +1,10 @@
+2003-10-17  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* MonoEvent.cs: implement ToString method as in MS.NET.
+
+	* MonoMethod.cs: fix some differences between mono and MS.NET
+	implementation of ToString.
+
 2003-10-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyName.cs: Fix Version property when some version fields are
