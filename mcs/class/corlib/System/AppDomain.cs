@@ -520,11 +520,11 @@ namespace System {
 		}
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern AppDomain InternalSetDomainByID (int domain_id);
+		private static extern AppDomain InternalSetDomainByID (int domain_id);
  
 		// Changes the active domain and returns the old domain
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern AppDomain InternalSetDomain (AppDomain context);
+		private static extern AppDomain InternalSetDomain (AppDomain context);
 
 		// Notifies the runtime that this thread references 'domain'.
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -563,7 +563,7 @@ namespace System {
 				InternalPushDomainRef (domain);
 				pushed = true;
 				InternalSetDomain (domain);
-				return method.Invoke (obj, args);
+				return ((MonoMethod)method).InternalInvoke (obj, args);
 			}
 			finally {
 				InternalSetDomain (current);
@@ -580,7 +580,7 @@ namespace System {
 				InternalPushDomainRefByID (domain_id);
 				pushed = true;
 				InternalSetDomainByID (domain_id);
-				return method.Invoke (obj, args);
+				return ((MonoMethod)method).InternalInvoke (obj, args);
 			}
 			finally {
 				InternalSetDomain (current);
