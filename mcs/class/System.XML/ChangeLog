@@ -1,3 +1,6 @@
+2002-07-22  Tim Coleman <tim@timcoleman.com>
+	* list.unix: added new classes to build list.
+
 2002-06-20  Ajay kumar Dwivedi <adwiv@yahoo.com>
 	
 	* System.Xml.Serialization: Added to build target
