@@ -1,3 +1,10 @@
+2003-06-26  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Hashtable.cs: Fixed bug when serializing and deserializing
+	  a hashtable from which one element has been deleted. The Object instance
+	  used as a removed marker is not detected as a such, since the
+	  serializer creates a different instace.
+
 2003-06-13  Herve Poussineau  <hpoussineau@fr.st>
 
 	* SortedList.cs: Can enumerate on DictionaryEntries, not only on

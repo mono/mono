@@ -31,15 +31,19 @@ namespace System.Collections {
 			internal int hashMix;
 		}
 
+		[Serializable]
+		internal class KeyMarker: IObjectReference
+		{
+			public static KeyMarker Removed = new KeyMarker();
+			public object GetRealObject (StreamingContext context)
+			{ return KeyMarker.Removed; }
+		}
+
 		//
 		// Private data
 		//
 
 		private readonly static int CHAIN_MARKER  = ~Int32.MaxValue;
-
-
-		// Used as indicator for the removed parts of a chain.
-		private readonly static Object REMOVED_MARKER = new Object ();
 
 
 		private int inUse;
@@ -141,15 +145,15 @@ namespace System.Collections {
 		{
 		}
 
-		public Hashtable (int capacity, 
-		                  IHashCodeProvider hcp, 
+		public Hashtable (int capacity,
+		                  IHashCodeProvider hcp,
 		                  IComparer comparer)
 			: this (capacity, 1.0f, hcp, comparer)
 		{
 		}
 
 
-		public Hashtable (IDictionary d, float loadFactor, 
+		public Hashtable (IDictionary d, float loadFactor,
 		                  IHashCodeProvider hcp, IComparer comparer)
 			: this (d!=null ? d.Count : 0,
 		                loadFactor, hcp, comparer)
@@ -162,7 +166,7 @@ namespace System.Collections {
 			while (it.MoveNext ()) {
 				Add (it.Key, it.Value);
 			}
-			
+
 		}
 
 		public Hashtable (IDictionary d, float loadFactor)
@@ -299,7 +303,7 @@ namespace System.Collections {
 		{
 			if (null == array)
 				throw new ArgumentNullException ("array");
-			
+
 			if (arrayIndex < 0)
 				throw new ArgumentOutOfRangeException ("arrayIndex");
 
@@ -308,10 +312,10 @@ namespace System.Collections {
 
 			if (arrayIndex >= array.Length)
 				throw new ArgumentException ("arrayIndex is equal to or greater than array.Length");
-			
+
 			if (arrayIndex + this.inUse > array.Length)
 				throw new ArgumentException ("Not enough room from arrayIndex to end of array for this Hashtable");
-			
+
 			IDictionaryEnumerator it = GetEnumerator ();
 			int i = arrayIndex;
 
@@ -328,7 +332,7 @@ namespace System.Collections {
 			PutImpl (key, value, false);
 		}
 
-		public virtual void Clear () 
+		public virtual void Clear ()
 		{
 			for (int i = 0;i<table.Length;i++) {
 				table [i].key = null;
@@ -359,7 +363,7 @@ namespace System.Collections {
 				h &= CHAIN_MARKER;
 				table [i].hashMix = h;
 				table [i].key = (h != 0)
-				              ? REMOVED_MARKER
+				              ? KeyMarker.Removed
 				              : null;
 				table [i].value = null;
 				--inUse;
@@ -382,7 +386,7 @@ namespace System.Collections {
 
 			for (int i = 0; i < size; i++) {
 				Slot entry = table [i];
-				if (entry.key != null && entry.key!= REMOVED_MARKER
+				if (entry.key != null && entry.key!= KeyMarker.Removed
 				    && value.Equals (entry.value)) {
 					return true;
 				}
@@ -550,7 +554,7 @@ namespace System.Collections {
 					uint spot = (uint)h;
 					uint step = ((uint) (h>>5)+1)% (newSize-1)+1;
 					for (uint j = spot%newSize;;spot+= step, j = spot%newSize) {
-						// No check for REMOVED_MARKER here, 
+						// No check for KeyMarker.Removed here,
 						// because the table is just allocated.
 						if (newTable [j].key == null) {
 							newTable [j].key = s.key;
@@ -593,12 +597,12 @@ namespace System.Collections {
 				entry = table [indx];
 
 				if (freeIndx == -1
-				    && entry.key == REMOVED_MARKER
+				    && entry.key == KeyMarker.Removed
 				    && (entry.hashMix & CHAIN_MARKER)!= 0)
 					freeIndx = indx;
 
 				if (entry.key == null ||
-				    (entry.key == REMOVED_MARKER
+				    (entry.key == KeyMarker.Removed
 				     && (entry.hashMix & CHAIN_MARKER)!= 0)) {
 
 					if (freeIndx == -1)
@@ -638,7 +642,7 @@ namespace System.Collections {
 
 		}
 
-		private void  CopyToArray (Array arr, int i, 
+		private void  CopyToArray (Array arr, int i,
 					   EnumeratorMode mode)
 		{
 			IEnumerator it = new Enumerator (this, mode);
@@ -741,7 +745,7 @@ namespace System.Collections {
 					while (++pos < size) {
 						Slot entry = host.table [pos];
 
-						if (entry.key != null && entry.key != REMOVED_MARKER) {
+						if (entry.key != null && entry.key != KeyMarker.Removed) {
 							currentKey = entry.key;
 							currentValue = entry.value;
 							return true;
