@@ -1,3 +1,9 @@
+2004-01-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* StringBuilder.cs:
+	(Remove): fixed offsets when copying and set the new size. Fixes bug
+	#53240.
+
 2004-01-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* StringBuilder.cs: added checks for null in a few Append methods.
