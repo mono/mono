@@ -81,7 +81,7 @@ clean-mstest :
 distclean :
 	make clean
 	rm -rf testsuite
-	rm $(TEST_ARCHIVE) $(XSLTTEST_RESULTS_ARCHIVE) $(MSTEST_RESULTS_ARCHIVE)
+	rm -f $(TEST_ARCHIVE) $(XSLTTEST_RESULTS_ARCHIVE) $(MSTEST_RESULTS_ARCHIVE)
 
 create-reference-output : clean-original xslttest.exe
 	./xslttest.exe --generate
