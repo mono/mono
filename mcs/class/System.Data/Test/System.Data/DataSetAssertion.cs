@@ -120,7 +120,8 @@ namespace MonoTests.System.Data
 			AssertEquals (label + "Expression: " , expression, col.Expression);
 			AssertEquals (label + "MaxLength: " , maxLength, col.MaxLength);
 			AssertEquals (label + "Namespace: " , ns, col.Namespace);
-//			AssertEquals (label + "Ordinal: " , ordinal, col.Ordinal);
+			if (ordinal >= 0)
+				AssertEquals (label + "Ordinal: " , ordinal, col.Ordinal);
 			AssertEquals (label + "Prefix: " , prefix, col.Prefix);
 			AssertEquals (label + "ReadOnly: " , readOnly, col.ReadOnly);
 			AssertEquals (label + "Unique: " , unique, col.Unique);

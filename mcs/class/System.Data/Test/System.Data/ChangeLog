@@ -1,3 +1,11 @@
+2004-05-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DataSetAssertion.cs : Enabled "Ordinal" check again, unless the test
+	  value is -1.
+	* DataSetInferXmlSchemaTest.cs,
+	  DataSetReadXmlSchemaTest.cs  : Enabled Ordinal check again, as long
+	  as working. Added IgnoredNamespaces() to inferxmlschema test.
+
 2004-05-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DataSetReadXmlSchemaTest.cs : Added test014.xsd tes (contains two
