@@ -1,3 +1,7 @@
+2003-10-22  Todd Berman <tberman@gentoo.org>
+
+	* TimestampOutputFilter.cs: WSE2 Runtime fix
+
 2003-10-05  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* TimestampFormatException.cs: Use Locale.GetText and removed I18N todo.

@@ -32,7 +32,6 @@ namespace Microsoft.Web.Services.Timestamp {
 			// internal method
 			envelope.Context.Timestamp.SetTimestamp (DateTime.UtcNow);
 			XmlElement xel = envelope.Context.Timestamp.GetXml (envelope);
-
 			if (envelope.Header == null) {
 				XmlElement header = envelope.CreateHeader ();
 				envelope.Envelope.PrependChild (xel);
