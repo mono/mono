@@ -11,7 +11,7 @@ namespace System.Runtime.Remoting.Channels {
 
 	public interface IChannelReceiverHook : IChannel
 	{
-		string ChannelScheme { get; };
+		string ChannelScheme { get; }
 
 		IServerChannelSink ChannelSinkChain { get; }
 

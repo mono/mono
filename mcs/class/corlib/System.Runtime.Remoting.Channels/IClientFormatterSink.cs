@@ -6,6 +6,8 @@
 // 2002 (C) Copyright, Ximian, Inc.
 //
 
+using System.Runtime.Remoting.Messaging;
+
 namespace System.Runtime.Remoting.Channels {
 
 	public interface IClientFormatterSink :  IMessageSink, IClientChannelSink, IChannelSinkBase
