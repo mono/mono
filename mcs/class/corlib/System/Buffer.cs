@@ -1,4 +1,3 @@
-
 //
 // System/Buffer.cs
 //
@@ -10,20 +9,24 @@
 
 namespace System {
 	public sealed class Buffer {
-		public static void BlockCopy( Array src, int srcOffset, Array dst, int dstOffset, int count) {
-		}
-		public static int ByteLength( Array array) {
-			return 0;
-		}
-
-		public static byte GetByte( Array array, int index) {
-			return 0;
+		public static void BlockCopy( Array src, int srcOffset, Array dst, int dstOffset, int count)
+		{
+			throw new NotImplementedException ();
 		}
 
-		public static void SetByte( Array array, int index, byte value) {
+		public static int ByteLength( Array array)
+		{
+			throw new NotImplementedException ();
 		}
 
+		public static byte GetByte( Array array, int index)
+		{
+			throw new NotImplementedException ();
+		}
 
-
+		public static void SetByte( Array array, int index, byte value)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

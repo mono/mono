@@ -13,7 +13,10 @@ using System;
 
 namespace System {
 	public sealed class GC {
-		public static void SuppressFinalize( object obj) {
+		
+		public static void SuppressFinalize (object obj)
+		{
+			throw new NotImplementedException ();
 		}
 
 	}

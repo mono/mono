@@ -1,3 +1,7 @@
+2001-11-05  Miguel de Icaza  <miguel@ximian.com>
+
+	* NonSerializedAttribute.cs: Add AttributeUsage rules for this
+	attribute. 
 
 Fri Nov 2 18:23:15 CET 2001 Paolo Molaro <lupus@ximian.com>
 
