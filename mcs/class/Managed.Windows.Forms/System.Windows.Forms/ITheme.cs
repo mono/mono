@@ -24,9 +24,12 @@
 //
 //
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 // $Modtime: $
 // $Log: ITheme.cs,v $
+// Revision 1.4  2004/08/09 15:53:58  jackson
+// Themes now handle default control properties
+//
 // Revision 1.3  2004/08/08 22:54:21  jordi
 // Label BorderStyles
 //
@@ -54,6 +57,11 @@ namespace System.Windows.Forms
 		Color ColorFocus {get;}		
 		Color ColorShadow {get;}	
 		Color ColorLightTop {get;}
+
+		/* Default Control properties */
+		Color DefaultBackColor {get;}
+		Color DefaultForeColor {get;}
+		Font DefaultFont {get;}
 
 		/* Windows System Colors. Based on Wine */
 		Color ColorScrollbar {get;} 		//COLOR_SCROLLBAR
