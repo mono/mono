@@ -233,8 +233,8 @@ namespace System.Windows.Forms {
 				l = document.Lines;
 				lines = new string[l];
 
-				for (i = 0; i < l; i++) {
-					lines[i] = document.GetLine(i).text.ToString();
+				for (i = 1; i <= l; i++) {
+					lines[i - 1] = document.GetLine(i).text.ToString();
 				}
 
 				return lines;

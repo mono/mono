@@ -1,5 +1,9 @@
 2005-01-27  Peter Bartok  <pbartok@novell.com>
 
+	* TextBoxBase.cs (get_Lines): Fixed index off by one error
+
+2005-01-27  Peter Bartok  <pbartok@novell.com>
+
 	* GridEntry.cs: Added; Patch by Jonathan S. Chambers
 	* GridItem.cs: Added; Patch by Jonathan S. Chambers
 	* GridItemCollection.cs: Added; Patch by Jonathan S. Chambers
