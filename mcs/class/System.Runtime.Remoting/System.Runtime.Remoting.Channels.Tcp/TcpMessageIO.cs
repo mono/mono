@@ -147,6 +147,11 @@ namespace System.Runtime.Remoting.Channels.Tcp
 				}
 			}
 		}
+		
+		static byte[] msgUriTransportKey = new byte[] { 4, 0, 1, 1 };
+		static byte[] msgContentTypeTransportKey = new byte[] { 6, 0, 1, 1 };
+		static byte[] msgDefaultTransportKey = new byte[] { 1, 0, 1 };
+		static byte[] msgHeaderTerminator = new byte[] { 0, 0 };
 
 		private static void SendHeaders(Stream networkStream, ITransportHeaders requestHeaders, byte[] buffer)
 		{
@@ -160,25 +165,21 @@ namespace System.Runtime.Remoting.Channels.Tcp
 					switch (hdr.Key.ToString())
 					{
 						case CommonTransportKeys.RequestUri: 
-							buffer[0] = 4; buffer[1] = 0; buffer[2] = 1;
-							networkStream.Write(buffer, 0, 3);
+							networkStream.Write (msgUriTransportKey, 0, 4);
 							break;
 						case "Content-Type": 
-							buffer[0] = 6; buffer[1] = 0; buffer[2] = 1;
-							networkStream.Write(buffer, 0, 3);
+							networkStream.Write (msgContentTypeTransportKey, 0, 4);
 							break;
 						default: 
-							buffer[0] = 1; buffer[1] = 0; buffer[2] = 1;
-							networkStream.Write(buffer, 0, 3);
+							networkStream.Write (msgDefaultTransportKey, 0, 3);
 							SendString (networkStream, hdr.Key.ToString(), buffer);
+							networkStream.WriteByte (1);
 							break;
 					}
-					networkStream.WriteByte (1);
 					SendString (networkStream, hdr.Value.ToString(), buffer);
 				}
 			}
-			networkStream.WriteByte (0);	// End of headers
-			networkStream.WriteByte (0);
+			networkStream.Write (msgHeaderTerminator, 0, 2);	// End of headers
 		}
 		
 		public static ITransportHeaders ReceiveHeaders (Stream networkStream, byte[] buffer)
