@@ -887,10 +887,26 @@ namespace System.Xml.Schema
 				        nss.Add ("tns", TargetNamespace);
 			}
 
-			XmlSerializer xser = new XmlSerializer (typeof (XmlSchema));
+//			XmlSerializer xser = new XmlSerializer (typeof (XmlSchema));
+//			xser.Serialize (writer, this, nss);
+			XmlSchemaSerializer xser = new XmlSchemaSerializer ();
 			xser.Serialize (writer, this, nss);
 			writer.Flush();
 		}
                 #endregion
         }
+
+	class XmlSchemaSerializer : XmlSerializer
+	{
+		protected override void Serialize (object o, XmlSerializationWriter writer)
+		{
+			XmlSchemaSerializationWriter w = writer as XmlSchemaSerializationWriter;
+			w.WriteRoot_XmlSchema ((XmlSchema) o);
+		}
+
+		protected override XmlSerializationWriter CreateWriter ()
+		{
+			return new XmlSchemaSerializationWriter ();
+		}
+	}
 }
