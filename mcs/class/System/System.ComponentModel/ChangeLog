@@ -1,4 +1,8 @@
 2002-07-22  Tim Coleman <tim@timcoleman.com>
+	* RecommendedAsConfigurableAttribute.cs: new file added
+		for System.Web.Services build
+
+2002-07-22  Tim Coleman <tim@timcoleman.com>
 	* ExpandableObjectConverter.cs: Fix error with constructor
 
 2002-07-22  Tim Coleman <tim@timcoleman.com>
