@@ -91,7 +91,7 @@ namespace System.Security.Cryptography {
 		private PaddingMode paddingmode;
 
 		// For chaining modes
-		private byte[] state;
+		private byte[] feedback;
 
 		RijndaelImpl impl;
 
@@ -108,7 +108,7 @@ namespace System.Security.Cryptography {
 			this.paddingmode = paddingmode;
 			this.blocksize = blocksize;
 
-			if (ciphermode != CipherMode.ECB) {
+			if (ciphermode != CipherMode.ECB && ciphermode != CipherMode.CBC) {
 				throw new System.NotImplementedException();
 			}
 			if (key.Length * 8 != keysize) {
@@ -121,7 +121,9 @@ namespace System.Security.Cryptography {
 				throw new ArgumentException("Only zero padding supported just now");
 			}
 
-			state = new byte[blocksize];
+			// Initialize feedback buffer
+			feedback = new byte[iv.Length];
+			Array.Copy(iv, 0, feedback, 0, iv.Length);
 
 			impl = new RijndaelImpl(keysize, blocksize, key);
 		}
@@ -145,6 +147,17 @@ namespace System.Security.Cryptography {
 			}
 		}
 
+		private void XorInto(byte[] src, byte[] dest) 
+		{
+			if (src.Length != dest.Length) {
+				throw new ArgumentException("Arrays have different lengths");
+			}
+
+			for (int i=0; i < dest.Length; i++) {
+				dest[i] = (byte) (src[i] ^ dest[i]);
+			}
+		}
+
 		public int TransformBlock (byte[] inputBuffer, int inputOffset, int inputCount, 
 					   byte[] outputBuffer, int outputOffset)
 		{
@@ -152,13 +165,27 @@ namespace System.Security.Cryptography {
 				throw new ArgumentException("Input length doesn't match block size");
 			}
 
-			byte[] input = new byte[blocksize / 8];
-			Array.Copy(inputBuffer, inputOffset, input, 0, inputCount);
+			byte[] pre = new byte[blocksize / 8];
+			Array.Copy(inputBuffer, inputOffset, pre, 0, inputCount);
 
-			byte[] output = encrypt ? impl.Encrypt(input) : impl.Decrypt(input);
-			Array.Copy(output, 0, outputBuffer, outputOffset, blocksize / 8);
+			if (encrypt && ciphermode == CipherMode.CBC) {
+				XorInto(feedback, pre);
+			}
 
-			return blocksize / 8;
+			// Do the encryption/decryption proper
+			byte[] post = encrypt ? impl.Encrypt(pre) : impl.Decrypt(pre);
+
+			if (ciphermode == CipherMode.CBC) {
+				Array.Copy(post, 0, feedback, 0, post.Length);
+			}
+
+			if (!encrypt && ciphermode == CipherMode.CBC) {
+				XorInto(feedback, post);
+			}
+
+			Array.Copy(post, 0, outputBuffer, outputOffset, blocksize / 8);
+
+			return post.Length;
 		}
 
                 public byte[] TransformFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount)
@@ -167,8 +194,22 @@ namespace System.Security.Cryptography {
 				throw new ArgumentException("Input length exceeds block size");
 			}
 
+			if (paddingmode == PaddingMode.None && inputCount != blocksize / 8) {
+				throw new ArgumentException("Input must be a complete block if padding is None");
+			}
+
 			byte[] input = new byte[blocksize / 8];
 			Array.Copy(inputBuffer, inputOffset, input, 0, inputCount);
+			
+			byte padding_value = 0;
+
+			if (paddingmode == PaddingMode.PKCS7) {
+				padding_value = (byte) (input.Length - inputCount);
+			} 
+
+			for (int i = inputCount; i < input.Length; i++) {
+				input[i] = padding_value;
+			}
 
 			return encrypt ? impl.Encrypt(input) : impl.Decrypt(input);
 		}

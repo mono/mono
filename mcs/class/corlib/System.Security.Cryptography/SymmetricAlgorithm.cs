@@ -86,9 +86,8 @@ namespace System.Security.Cryptography {
 				if (value == null)
 					throw new ArgumentNullException("tried setting initial vector to null");
 					
-				// FIXME: dont know if to compare with block or key size	
-				if (value.Length != this.KeySizeValue)
-					throw new CryptographicException("tried setting initial vector with illegal size");
+				if (value.Length * 8 != this.BlockSizeValue)
+					throw new CryptographicException("IV length must match block size");
 				
 				this.IVValue = new byte [value.Length];
 				System.Array.Copy (value, 0, this.IVValue, 0, value.Length);
@@ -112,9 +111,9 @@ namespace System.Security.Cryptography {
 				if (!IsLegalKeySize(this.LegalKeySizesValue, value.Length * 8))
 					throw new CryptographicException("key size not supported by algorithm");
 
-				this.KeySizeValue = value.Length;
-				this.KeyValue = new byte [this.KeySizeValue];
-				System.Array.Copy (value, 0, this.KeyValue, 0, this.KeySizeValue);
+				this.KeySizeValue = value.Length * 8;
+				this.KeyValue = new byte [value.Length];
+				System.Array.Copy (value, 0, this.KeyValue, 0, value.Length);
 			}
 		}
 		
