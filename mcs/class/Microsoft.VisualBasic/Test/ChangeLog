@@ -1,4 +1,11 @@
-2002/10/28  Nick Drochak <ndrochak@gol.com>
+2003-03-12  Martin Willemoes Hansen <mwh@sysrq.dk>
+	* Added makefile.gnu
+	* Added microsoftvisualbasic_test.args
+	* Removed AllTests.cs not need for NUnit 2.0
+	* Updated CollectionTest.cs, ConversionTest.cs and
+	  DateAndTimeTest.cs to NUnit 2.0
+
+2002-10-28  Nick Drochak <ndrochak@gol.com>
 
 	* DateAndTimeTest.cs: Make tests pass on Windows with .NET
 

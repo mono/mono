@@ -1,5 +1,6 @@
 topdir = ../..
 
+TEST_DIR= Test
 LIBRARY = $(topdir)/class/lib/Microsoft.VisualBasic.dll
 
 LIB_LIST = list
