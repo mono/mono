@@ -53,7 +53,7 @@ namespace System.Net
 		
 		public void WriteAndReadBack (byte [] buffer, int offset, int size, ref int read)
 		{
-			Write (buffer, offset, read);
+			Write (buffer, offset, offset+read);
 			read = Read (buffer, offset, size);
 		}
 

@@ -1,4 +1,12 @@
-2004-01-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+2004-01-16  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ChunkStream.cs: The "size" parameter of Write is not the number of bytes
+	to write, but the last offset to be written. Thus, in WriteAndReadBack,
+	since "read" is not an offset but the number of bytes, it must be added to
+	the offset. Maybe it would be a good idea to change the name of the 
+	parameter, since it is confusing. This should fix bug #52591.
+
+2004-01-12  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* WebConnection.cs: Yet another fix for WebConnection. This fixes 
 	bug #52169.
