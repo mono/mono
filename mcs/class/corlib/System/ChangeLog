@@ -1,3 +1,7 @@
+2004-01-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Environment.cs: Bump version.
+
 2003-12-24 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Type.cs (IsNotPublic): One would normally assume that
