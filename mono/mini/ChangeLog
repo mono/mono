@@ -1,3 +1,9 @@
+2003-09-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* exceptions-x86.c (mono_arch_has_unwind_info): Added explicit check
+	for the register saving instruction sequence since the 
+	frame_state_for function in glibc 2.3.2 don't seem to detect it.
+
 2003-09-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TODO: Fix todo item && remove another.
