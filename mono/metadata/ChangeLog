@@ -1,5 +1,13 @@
 2004-06-21  Martin Baulig  <martin@ximian.com>
 
+	* exception.c (mono_get_exception_security): It's in
+	"System.Security", not in "System".
+
+	* mono-debug-debugger.c (mono_debugger_add_builtin_types): Add all
+	the exception classes.
+
+2004-06-21  Martin Baulig  <martin@ximian.com>
+
 	* mono-debug-debugger.c (mono_debugger_unhandled_exception):
 	Protect the exception object from being finalized.
 
