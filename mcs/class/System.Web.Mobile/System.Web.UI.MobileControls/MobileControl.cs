@@ -9,6 +9,7 @@
  */
 
 using System.Drawing;
+using System.Collections;
 using System.Web.UI;
 using System.Web.Mobile;
 
@@ -182,6 +183,100 @@ namespace System.Web.UI.MobileControls
 			{
 				throw new NotImplementedException();
 			}
+		}
+
+		protected string InnerText
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+			set
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		protected virtual bool PaginateChildren
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+			set
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		public virtual void AddLinkedForms(IList linkedForms)
+		{
+			throw new NotImplementedException();
+		}
+
+		public virtual void CreateDefaultTemplatedUI(bool doDataBind)
+		{
+			throw new NotImplementedException();
+		}
+
+		public virtual void EnsureTemplatedUI()
+		{
+			throw new NotImplementedException();
+		}
+
+		public virtual ITemplate GetTemplate(string templateName)
+		{
+			throw new NotImplementedException();
+		}
+
+		public bool IsVisibleOnPage(int pageNumber)
+		{
+			throw new NotImplementedException();
+		}
+
+		public virtual void PaginateRecursive(ControlPager pager)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Form ResolveFormReference(string name)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected virtual Style CreateStyle()
+		{
+			throw new NotImplementedException();
+		}
+
+		protected virtual void CreatedTempaltedUI(bool doDataBind)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected virtual bool isFormSubmitControl()
+		{
+			throw new NotImplementedException();
+		}
+
+		protected virtual void LoadPrivateViewState(object state)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected virtual void OnPageChange(int oldIndex, int newIndex)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected virtual void OnRender(HtmlTextWriter writer)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected virtual object SavePrivateViewState()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

@@ -1,6 +1,11 @@
 
 2003-01-12	Gaurav Vaish <gvaish_mono AT lycos.com>
 
+	* MobileControl.cs       : Stub-ing completed. ;-)
+	* ControlPager.cs        : Dummy implementation.
+
+2003-01-12	Gaurav Vaish <gvaish_mono AT lycos.com>
+
 	* FontInfo.cs            : Implemented.
 	* Form.cs                : Initial implementation.
 	* Panel.cs               : Initial implementation.
