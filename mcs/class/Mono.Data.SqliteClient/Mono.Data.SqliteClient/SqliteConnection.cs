@@ -152,6 +152,12 @@ namespace Mono.Data.SqliteClient
                         sqlite_handle = IntPtr.Zero;
                 }
 
+		public int LastInsertRowId {
+			get {
+				return sqlite_last_insert_rowid (Handle);
+			}
+		}
+
 		public void ChangeDatabase (string databaseName)
                 {
                         throw new NotImplementedException ();
@@ -193,5 +199,8 @@ namespace Mono.Data.SqliteClient
 
                 [DllImport("sqlite")]
                 static extern void sqlite_close (IntPtr sqlite_handle);
+
+		[DllImport("sqlite")]
+		static extern int sqlite_last_insert_rowid (IntPtr sqlite_handle);
         }
 }
