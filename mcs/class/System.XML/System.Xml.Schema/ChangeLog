@@ -1,3 +1,8 @@
+2004-01-08  Nick Drochak <ndrochak@ieee.org>
+
+	* XmlSchemaSimpleType.cs: Needed a 'new' on the property
+	* XmlSchemaXPath.cs: Removed unreachable code.
+	
 2004-01-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaDatatype.cs : trivial allocation fix.

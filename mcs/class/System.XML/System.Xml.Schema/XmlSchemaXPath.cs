@@ -208,7 +208,6 @@ namespace System.Xml.Schema
 					}
 					break;
 				}
-				break;
 			}
 			if (!step.IsCurrent)	// Current step is meaningless, other than its representation.
 				steps.Add (step);

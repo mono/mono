@@ -46,7 +46,7 @@ namespace System.Xml.Schema
 			get{ return variety; }
 		}
 
-		internal XmlSchemaDatatype Datatype
+		new internal XmlSchemaDatatype Datatype
 		{
 			get {
 				XmlSchemaDatatype dt = BaseSchemaType as XmlSchemaDatatype;
