@@ -21,6 +21,7 @@ namespace MonoTests.System.Threading {
                         {
                                 TestSuite suite =  new TestSuite();
                                 suite.AddTest(ThreadTest.Suite);
+                                suite.AddTest(MutexTest.Suite);
                                 return suite;
                         }
                 }

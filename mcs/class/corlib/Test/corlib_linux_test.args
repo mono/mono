@@ -124,3 +124,4 @@ System.Text/AllTests.cs
 System.Text/StringBuilderTest.cs
 System.Threading/AllTests.cs
 System.Threading/ThreadTest.cs
+System.Threading/MutexTest.cs

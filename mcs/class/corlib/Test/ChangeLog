@@ -1,6 +1,9 @@
+2002-11-09 Eduardo Garcia Cebollero <kiwnix@yahoo.es>
+	* corlib_linux_tests.args: added MutexTest.cs in System.Threading
+
 2002-11-23 Eduardo Garcia Cebollero <kiwnix@yahoo.es>
 
-	* colib_linux_tests.args: added System.Threading and
+	* corlib_linux_tests.args: added System.Threading and
 	ThreadTest.cs suites.
 	* AllTests.cs: Added System.Threading suite.
 	

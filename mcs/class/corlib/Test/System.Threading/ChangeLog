@@ -1,3 +1,8 @@
+2002-11-29  Eduardo Garcia Cebollero <kiwnix@yahoo.es>
+
+	* MutexTest.cs : New suite for Mutex.
+	
+
 2002-11-23  Eduardo Garcia Cebollero <kiwnix@yahoo.es>
 
 	* ThreadTest.cs : New suite for Thread.
