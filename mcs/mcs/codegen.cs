@@ -1025,6 +1025,7 @@ namespace Mono.CSharp {
 				return;
 			}
 			OptAttributes.AddAttributes (attrs);
+			OptAttributes.CheckTargets (this);
 		}
 
 		public virtual void Emit (TypeContainer tc) 
