@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 
 namespace System.Reflection.Emit {
 	public sealed class TypeBuilder : Type {
+		private IntPtr _impl;
 
 	public const int UnspecifiedTypeSize = 1; // FIXME: check the real value
 		

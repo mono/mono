@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace System.Reflection {
 	public class AssemblyName /* : ICloneable, ISerializable, IDeserializationCallback */ {
-		string name;
+		private string name;
 		
 		public virtual string Name {
 			get {return name;}
