@@ -93,7 +93,7 @@ namespace Mono.CSharp
 		//
 		// Encoding: ISO-Latin1 is 28591
 		//
-		static Encoding encoding = Encoding.GetEncoding (28591);
+		static Encoding encoding;
 
 		//
 		// Whether the user has specified a different encoder manually
@@ -543,6 +543,14 @@ namespace Mono.CSharp
 			} else
 				RootContext.WarningLevel = level;
 		}
+
+		static void Version ()
+		{
+			string version = Assembly.GetExecutingAssembly ().GetName ().Version.ToString ();
+			Console.WriteLine ("Mono C# compiler version {0}", version);
+			Environment.Exit (0);
+		}
+		
 		//
 		// Currently handles the Unix-like command line options, but will be
 		// deprecated in favor of the CSCParseOption, which will also handle the
@@ -553,6 +561,10 @@ namespace Mono.CSharp
 			switch (arg){
 			case "-v":
 				yacc_verbose = true;
+				return true;
+
+			case "--version":
+				Version ();
 				return true;
 				
 			case "--parse":
@@ -1064,6 +1076,13 @@ namespace Mono.CSharp
 		{
 			int i;
 			bool parsing_options = true;
+
+			try {
+				encoding = Encoding.GetEncoding (28591);
+			} catch {
+				Console.WriteLine ("Error: could not load encoding 28591, trying 1252");
+				encoding = Encoding.GetEncoding (1252);
+			}
 			
 			references = new ArrayList ();
 			soft_references = new ArrayList ();

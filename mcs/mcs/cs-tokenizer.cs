@@ -1363,15 +1363,21 @@ namespace Mono.CSharp
 					}
 
 					ifstack.Pop ();
-					ifstack.Push (state | ELSE_SEEN);
 
+					bool ret;
 					if ((state & TAKEN_BEFORE) == 0){
-						if ((state & PARENT_TAKING) != 0)
-							return true;
-						else
-							return false;
-					}
-					return false;
+						ret = ((state & PARENT_TAKING) != 0);
+					} else
+						ret = false;
+					
+					if (ret)
+						state |= TAKING;
+					else
+						state &= ~TAKING;
+					
+					ifstack.Push (state | ELSE_SEEN);
+					
+					return ret;
 				}
 			}
 

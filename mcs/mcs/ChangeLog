@@ -1,5 +1,16 @@
 2002-12-10  Miguel de Icaza  <miguel@ximian.com>
 
+	* driver.cs (MainDriver): On rotor encoding 28591 does not exist,
+	default to the Windows 1252 encoding.
+
+	(UnixParseOption): Support version, thanks to Alp for the missing
+	pointer. 
+
+	* AssemblyInfo.cs: Add nice assembly information.
+
+	* cs-tokenizer.cs: Add fix from Felix to the #if/#else handler
+	(bug 35169).
+
 	* cs-parser.jay: Allow a trailing comma before the close bracked
 	in the attribute_section production.
 

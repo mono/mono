@@ -6,6 +6,7 @@ prefix = /usr
 COMMON_SOURCES = cs-parser.cs cs-tokenizer.cs tree.cs location.cs
 
 COMPILER_SOURCES = \
+	AssemblyInfo.cs			\
 	assign.cs			\
 	attribute.cs			\
 	driver.cs $(COMMON_SOURCES) 	\
