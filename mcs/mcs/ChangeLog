@@ -1,5 +1,14 @@
 2002-07-19  Martin Baulig  <martin@gnome.org>
 
+	* expression.cs (Invocation.EmitParams): Use TypeManager.LookupType(),
+	not Type.GetType() to lookup the array type.  This is needed when
+	we're constructing an array of a user-defined type.
+	(ArrayAccess.EmitDynamicInitializers): Only emit the Ldelema for
+	single-dimensional arrays, but also for single-dimensial arrays of
+	type decimal.
+
+2002-07-19  Martin Baulig  <martin@gnome.org>
+
 	* expression.cs (New.DoEmit): Create a new LocalTemporary each time
 	this function is called, it's not allowed to share LocalBuilders
 	among ILGenerators.

@@ -3750,7 +3750,7 @@ namespace Mono.CSharp {
 			string array_type = t.FullName + "[]";
 			LocalBuilder array;
 
-			array = ig.DeclareLocal (Type.GetType (array_type));
+			array = ig.DeclareLocal (TypeManager.LookupType (array_type));
 			IntConstant.EmitInt (ig, count);
 			ig.Emit (OpCodes.Newarr, TypeManager.TypeToCoreType (t));
 			ig.Emit (OpCodes.Stloc, array);
@@ -4522,7 +4522,7 @@ namespace Mono.CSharp {
 			}
 
 			is_builtin_type = TypeManager.IsBuiltinType (type);
-			
+
 			if (is_builtin_type) {
 				Expression ml;
 				
@@ -4789,8 +4789,10 @@ namespace Mono.CSharp {
 						// If we are dealing with a struct, get the
 						// address of it, so we can store it.
 						//
-						if (etype.IsSubclassOf (TypeManager.value_type) &&
-						    !TypeManager.IsBuiltinType (etype)){
+						if ((dims == 1) &&
+						    etype.IsSubclassOf (TypeManager.value_type) &&
+						    (!TypeManager.IsBuiltinType (etype) ||
+						     etype == TypeManager.decimal_type)) {
 							if (e is New){
 								New n = (New) e;
 
@@ -4803,7 +4805,7 @@ namespace Mono.CSharp {
 									     
 							ig.Emit (OpCodes.Ldelema, etype);
 						}
-						    
+
 						e.Emit (ec);
 						
 						if (dims == 1)
