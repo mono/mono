@@ -156,7 +156,6 @@ Microsoft.JScript/VBArrayConstructor.cs
 Microsoft.JScript/VBArrayObject.cs
 Microsoft.JScript/VBArrayPrototype.cs
 Microsoft.JScript/VersionableAttribute.cs
-Microsoft.JScript/Visitor.cs
 Microsoft.JScript.Vsa/VsaEngine.cs
 Microsoft.JScript/With.cs
 Antlr.Runtime/antlr/ANTLRException.cs
