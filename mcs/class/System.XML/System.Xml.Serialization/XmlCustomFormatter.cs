@@ -195,6 +195,7 @@ namespace System.Xml.Serialization {
 				case "unsignedInt": return XmlConvert.ToString ((UInt32)value);
 				case "unsignedLong": return XmlConvert.ToString ((UInt64)value);
 				case "guid": return XmlConvert.ToString ((Guid)value);
+				case "base64":
 				case "base64Binary": return Convert.ToBase64String ((byte[])value);
 			default: return value is IFormattable ? ((IFormattable) value).ToString (null, CultureInfo.InvariantCulture) : value.ToString ();
 			}
@@ -223,6 +224,7 @@ namespace System.Xml.Serialization {
 				case "unsignedInt": return XmlConvert.ToUInt32 (value);
 				case "unsignedLong": return XmlConvert.ToUInt64 (value);
 				case "guid": return XmlConvert.ToGuid (value);
+				case "base64":
 				case "base64Binary": return Convert.FromBase64String (value);
 				default: 
 					if (type.Type != null)
@@ -253,6 +255,7 @@ namespace System.Xml.Serialization {
 				case "unsignedInt": return value + ".ToString(CultureInfo.InvariantCulture)";
 				case "unsignedLong": return value + ".ToString(CultureInfo.InvariantCulture)";
 				case "guid": return "XmlConvert.ToString (" + value + ")";
+				case "base64":
 				case "base64Binary": return "Convert.ToBase64String (" + value + ")";
 				case "NMTOKEN":
 				case "Name":
@@ -290,6 +293,7 @@ namespace System.Xml.Serialization {
 				case "unsignedInt": return "UInt32.Parse (" + value + ", CultureInfo.InvariantCulture)";
 				case "unsignedLong": return "UInt64.Parse (" + value + ", CultureInfo.InvariantCulture)";
 				case "guid": return "XmlConvert.ToGuid (" + value + ")";
+				case "base64:":
 				case "base64Binary": return "Convert.FromBase64String (" + value + ")";
 				default: return value;
 			}
