@@ -1,3 +1,19 @@
+2004-09-03  Tim Colmean <tim@timcoleman.com>
+	* EncryptedXml.cs: Add support for RSA for key formatting
+	* Reference.cs: Include XmlDecryptionTransform
+	* SignedXml.cs: 
+		Set the EncryptedKey on the XmlDecryptionTransform when 
+		loading XML
+	* XmlDecryptionTransform.cs:
+		Clean up decryption transformation to work without ugly hack.
+	* XmlDsigExcC14NTransform.cs XmlDsigExcC14NWithCommentsTransform.cs:
+		Implement this class based on XmlDsigC14N
+	* XmlSignature.cs: Add namespaces for various classes.
+	* KeyInfoEncryptedKey.cs SymmetricKeyWrap.cs: 
+		Remove TODO attributes from implemented methods.
+	* KeyInfoName.cs: Put #if NET_2_0 markers in
+	* Transform.cs: Implement GetDigestedOutput
+
 2004-09-02  Tim Coleman <tim@timcoleman.com>
 	* CipherReference.cs: Add XmlDecryptionTransform for 2.0
 	* EncryptedType.cs: Fix type initialization to conform to .NET

@@ -117,7 +117,6 @@ namespace System.Security.Cryptography.Xml {
 			return C;
 		}
 
-		[MonoTODO]
 		public static byte[] AESKeyWrapDecrypt (byte[] rgbKey, byte[] rgbEncryptedWrappedKeyData)
 		{
 			SymmetricAlgorithm symAlg = SymmetricAlgorithm.Create ("Rijndael");
@@ -179,7 +178,6 @@ namespace System.Security.Cryptography.Xml {
 			return R;
 		}
 
-		[MonoTODO]
 		public static byte[] TripleDESKeyWrapEncrypt (byte[] rgbKey, byte[] rgbWrappedKeyData)
 		{
 			SymmetricAlgorithm symAlg = SymmetricAlgorithm.Create ("TripleDES");
@@ -231,7 +229,6 @@ namespace System.Security.Cryptography.Xml {
 			return rtnval;
 		}
 
-		[MonoTODO]
 		public static byte[] TripleDESKeyWrapDecrypt (byte[] rgbKey, byte[] rgbEncryptedWrappedKeyData)
 		{
 			SymmetricAlgorithm symAlg = SymmetricAlgorithm.Create ("TripleDES");

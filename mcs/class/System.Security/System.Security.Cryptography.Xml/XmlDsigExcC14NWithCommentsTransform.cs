@@ -34,13 +34,12 @@ namespace System.Security.Cryptography.Xml {
 	
 		#region Constructors
 
-		[MonoTODO]
 		public XmlDsigExcC14NWithCommentsTransform ()
 			: base (true)
 		{
+			Algorithm = XmlSignature.AlgorithmNamespaces.XmlDsigExcC14NWithCommentsTransform;
 		}
 
-		[MonoTODO]
 		public XmlDsigExcC14NWithCommentsTransform (string inclusiveNamespacesPrefixList)
 			: base (true, inclusiveNamespacesPrefixList)
 		{

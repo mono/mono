@@ -42,10 +42,12 @@ namespace System.Security.Cryptography.Xml {
 		{
 		}
 
+#if NET_2_0
 		public KeyInfoName (string keyName)
 		{
 			name = keyName;
 		}
+#endif
 
 		public string Value {
 			get { return name; }

@@ -72,7 +72,6 @@ namespace System.Security.Cryptography.Xml {
 			return GetXml (new XmlDocument ());
 		}
 
-		[MonoTODO]
 		internal XmlElement GetXml (XmlDocument document)
 		{
 			if (encryptedKey != null)
@@ -80,7 +79,6 @@ namespace System.Security.Cryptography.Xml {
 			return null;
 		}
 
-		[MonoTODO]
 		public override void LoadXml (XmlElement value)
 		{
 			EncryptedKey = new EncryptedKey ();

@@ -29,6 +29,8 @@
 
 #if NET_2_0
 
+using Mono.Xml;
+using System.IO;
 using System.Xml;
 
 namespace System.Security.Cryptography.Xml {
@@ -36,6 +38,8 @@ namespace System.Security.Cryptography.Xml {
 
 		#region Fields
 
+		XmlCanonicalizer canonicalizer;
+		object inputObj;
 		string inclusiveNamespacesPrefixList;
 		bool includeComments;
 
@@ -43,25 +47,25 @@ namespace System.Security.Cryptography.Xml {
 	
 		#region Constructors
 
-		[MonoTODO]
 		public XmlDsigExcC14NTransform ()
 		{
 			Algorithm = XmlSignature.AlgorithmNamespaces.XmlDsigExcC14NTransform;
+			canonicalizer = new XmlCanonicalizer (true, false);
 		}
 
-		[MonoTODO]
 		public XmlDsigExcC14NTransform (bool includeComments)
 		{
 			this.includeComments = includeComments;
+			canonicalizer = new XmlCanonicalizer (true, includeComments);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("What does inclusiveNamespacesPrefixList mean?")]
 		public XmlDsigExcC14NTransform (string inclusiveNamespacesPrefixList)
 		{
 			this.inclusiveNamespacesPrefixList = inclusiveNamespacesPrefixList;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("What does inclusiveNamespacesPrefixList mean?")]
 		public XmlDsigExcC14NTransform (bool includeComments, string inclusiveNamespacesPrefixList)
 		{
 			this.inclusiveNamespacesPrefixList = inclusiveNamespacesPrefixList;
@@ -77,54 +81,62 @@ namespace System.Security.Cryptography.Xml {
 			set { inclusiveNamespacesPrefixList = value; }
 		}
 
-		[MonoTODO]
 		public override Type[] InputTypes {
-			get { throw new NotImplementedException (); }
+			get { return new Type [3] {typeof (System.IO.Stream), typeof (System.Xml.XmlDocument), typeof (System.Xml.XmlNodeList)}; }
 		}
 
-		[MonoTODO]
 		public override Type[] OutputTypes {
-			get { throw new NotImplementedException (); }
+			get { return new Type [1] {typeof (System.IO.Stream)}; }
 		}
 
 		#endregion // Properties
 
 		#region Methods
 
-		[MonoTODO]
 		public override byte[] GetDigestedOutput (HashAlgorithm hash)
 		{
-			throw new NotImplementedException ();
+			return hash.ComputeHash ((Stream) GetOutput());
 		}
 
-		[MonoTODO]
 		protected override XmlNodeList GetInnerXml ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 
-		[MonoTODO]
 		public override object GetOutput ()
 		{
-			throw new NotImplementedException ();
+			Stream s = null;
+
+			if (inputObj is Stream) {
+                                XmlDocument doc = new XmlDocument ();
+                                doc.PreserveWhitespace = true;  // REALLY IMPORTANT
+                                doc.Load (inputObj as Stream);
+                                s = canonicalizer.Canonicalize (doc);
+                        } 
+			else if (inputObj is XmlDocument)
+                                s = canonicalizer.Canonicalize (inputObj as XmlDocument);
+                        else if (inputObj is XmlNodeList)
+                                s = canonicalizer.Canonicalize (inputObj as XmlNodeList);
+
+                        // note: there is no default are other types won't throw an exception
+
+			return (object) s;
 		}
 
-		[MonoTODO]
 		public override object GetOutput (Type type)
 		{
-			throw new NotImplementedException ();
+ 			if (type == Type.GetType ("Stream"))
+				return GetOutput ();
+			throw new ArgumentException ("type");
 		}
 
-		[MonoTODO]
 		public override void LoadInnerXml (XmlNodeList nodeList)
 		{
-			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		public override void LoadInput (object obj)
 		{
-			throw new NotImplementedException ();
+			inputObj = obj;
 		}
 
 		#endregion // Methods

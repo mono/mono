@@ -33,6 +33,7 @@
 //
 
 using System.Collections;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Policy;
 using System.Xml;
@@ -94,10 +95,9 @@ namespace System.Security.Cryptography.Xml {
 
 		#region Methods
 #if NET_2_0
-		[MonoTODO]
 		public virtual byte[] GetDigestedOutput (HashAlgorithm hash)
 		{
-			throw new NotImplementedException ();
+			return hash.ComputeHash ((Stream) GetOutput (typeof (Stream)));
 		}
 #endif
 
