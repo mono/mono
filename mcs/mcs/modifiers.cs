@@ -68,6 +68,8 @@ namespace Mono.CSharp {
 				s = "extern"; break;
 			case Modifiers.VOLATILE:
 				s = "volatile"; break;
+			case Modifiers.UNSAFE:
+				s = "unsafe"; break;
 			}
 
 			return s;

@@ -1,3 +1,12 @@
+2004-05-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (MemberBase.DoDefine): Pass UNSAFE on interface
+	definitions. 
+
+	(Method): Allow UNSAFE here.
+
+	* modifiers.cs: Support unsafe reporting.
+
 2004-05-17  Marek Safar  <marek.safar@seznam.cz>
 
 	* decl.cs: Fix bug #58478.
