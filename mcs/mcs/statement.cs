@@ -1718,7 +1718,7 @@ namespace Mono.CSharp {
 			Label lblEnd = ig.DefineLabel ();	// at the end ;-)
 			Label lblDefault = ig.DefineLabel ();
 
-			Type typeKeys;
+			Type typeKeys = null;
 			if (rgKeys.Length > 0)
 				typeKeys = rgKeys [0].GetType ();	// used for conversions
 

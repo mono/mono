@@ -1,3 +1,7 @@
+2002-06-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* statement.cs: fixed build-breaker. All tests passed ok.
+
 2002-06-27  Martin Baulig  <martin@gnome.org>
 
 	* typemanager.cs (TypeManager.VerifyUnManaged): Added explicit check
