@@ -1,3 +1,7 @@
+2003-12-23 Atsushi Enomoto <atsushi@ximian.com>
+
+	* ScriptCompilerInfo.cs : Use "mjs" as JScript compiler.
+
 2003-12-20 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* XsltCompiledContext.cs: Remove workaround now that monodoc

@@ -176,7 +176,7 @@ end namespace
 	{
 		public JScriptCompilerInfo ()
 		{
-			this.CompilerCommand = "dummy-jscript-compiler.exe";
+			this.CompilerCommand = "mjs";
 #if MS_NET
 			this.CompilerCommand = "jsc.exe";
 #endif
