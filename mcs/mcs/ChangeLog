@@ -1,5 +1,9 @@
 2004-06-24  Marek Safar  <marek.safar@seznam.cz>
 
+	* cs-parser.jay: Added error CS0210 test.
+
+2004-06-24  Marek Safar  <marek.safar@seznam.cz>
+
 	* cs-parser.jay: Added error CS0134 test.
 
 2004-06-24  Marek Safar  <marek.safar@seznam.cz>

@@ -92,6 +92,7 @@ namespace Mono.CSharp {
  				case 0134: return "Cannot use qualified namespace names in nested namespace declarations";
 				case 0145: return "A const field requires a value to be provided";
 				case 0160: return "A previous catch clause already catches all exceptions of this or a super type '{0}'";
+				case 0210: return "You must provide an initializer in a fixed or using statement declaration";
  				case 0243: return "Conditional not valid on '{0}' because it is an override method";
 				case 0247: return "Cannot use a negative size with stackalloc";
 				case 0415: return "The 'IndexerName' attribute is valid only on an indexer that is not an explicit interface member declaration";

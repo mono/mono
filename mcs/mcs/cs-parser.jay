@@ -3851,14 +3851,16 @@ fixed_statement
 
 fixed_pointer_declarators
 	: fixed_pointer_declarator	{ 
-	   	ArrayList declarators = new ArrayList (4); 
-		declarators.Add ($1);
+	   	ArrayList declarators = new ArrayList (4);
+	   	if ($1 != null)
+			declarators.Add ($1);
 		$$ = declarators;
 	  }
 	| fixed_pointer_declarators COMMA fixed_pointer_declarator
 	  {
 		ArrayList declarators = (ArrayList) $1;
-		declarators.Add ($3);
+		if ($3 != null)
+			declarators.Add ($3);
 		$$ = declarators;
 	  }
 	;
@@ -3867,6 +3869,12 @@ fixed_pointer_declarator
 	: IDENTIFIER ASSIGN expression
 	  {	
 		$$ = new Pair ($1, $3);
+	  }
+	| IDENTIFIER
+	  {
+		// You must provide an initializer in a fixed or using statement declaration
+		Report.Error_T (210, lexer.Location);
+		$$ = null;
 	  }
 	;
 
@@ -3912,6 +3920,10 @@ using_statement
 					expr = (Expression) decl.expression_or_array_initializer;
 				} else {
 					ArrayList init = (ArrayList) decl.expression_or_array_initializer;
+					if (init == null) {
+						// You must provide an initializer in a fixed or using statement declaration
+						Report.Error_T (210, l);
+					}
 					
 					expr = new ArrayCreation (type, "", init, decl.Location);
 				}
