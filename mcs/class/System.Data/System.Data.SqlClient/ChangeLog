@@ -1,5 +1,18 @@
 2004-08-16  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* SqlConnection.cs: added TODO on ConnectionString for keywords
+	that are not yet implemented. check value of Integrated Security
+	keyword, check value of bool keywords, improve error reporting
+	for int keywords, added support for the following keyword 
+	synonyms : APP, TIMEOUT, NETWORK, PERSISTSECURITYINFO, WSID,
+	LANGUAGE, USER. Throw NotImplementedException when encrypt keyword
+	is set to true, enlist keyword is set to false or attachdbfilename
+	keyword (or one of its synonyms) is set. Added FIXME for PERSIST
+	SECURITY INFO keyword, throwing a NotImplementedException here
+	would break lots of apps
+
+2004-08-16  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* SqlConnection.cs - spaces to tabs
 
 2004-08-12  Sureshkumar T <tsureshkumar@novell.com>

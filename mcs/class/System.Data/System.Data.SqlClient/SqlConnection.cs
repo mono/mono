@@ -46,6 +46,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.EnterpriseServices;
+using System.Globalization;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -114,6 +115,7 @@ namespace System.Data.SqlClient {
 		[EditorAttribute ("Microsoft.VSDesigner.Data.SQL.Design.SqlConnectionStringEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		[RecommendedAsConfigurable (true)]	
 		[RefreshProperties (RefreshProperties.All)]
+		[MonoTODO("persist security info, encrypt, enlist and , attachdbfilename keyword not implemented")]
 		public string ConnectionString	{
 			get { return connectionString; }
 			set { SetConnectionString (value); }
@@ -125,7 +127,7 @@ namespace System.Data.SqlClient {
 			get { return connectionTimeout; }
 		}
 
-		[DataSysDescription ("Current SQL Server database, 'Initial Catalog=X' in the ConnectionString.")]	
+		[DataSysDescription ("Current SQL Server database, 'Initial Catalog=X' in the ConnectionString.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string Database	{
 			get { return tds.Database; }
@@ -185,7 +187,7 @@ namespace System.Data.SqlClient {
 		#endregion // Properties
 
 		#region Events
-               
+
 		[DataCategory ("InfoMessage")]
 		[DataSysDescription ("Event triggered when messages arrive from the DataSource.")]
 		public event SqlInfoMessageEventHandler InfoMessage;
@@ -446,6 +448,46 @@ namespace System.Data.SqlClient {
 			return success;
 		}
 
+		private bool ConvertIntegratedSecurity (string value)
+		{
+			if (value.ToUpper() == "SSPI") 
+			{
+				return true;
+			}
+
+			return ConvertToBoolean("integrated security", value);
+		}
+
+		private bool ConvertToBoolean(string key, string value)
+		{
+			string upperValue = value.ToUpper();
+
+			if (upperValue == "TRUE" ||upperValue == "YES")
+			{
+				return true;
+			} 
+			else if (upperValue == "FALSE" || upperValue == "NO")
+			{
+				return false;
+			}
+
+			throw new ArgumentException(string.Format(CultureInfo.InvariantCulture,
+				"Invalid value \"{0}\" for key '{1}'.", value, key));
+		}
+
+		private int ConvertToInt32(string key, string value)
+		{
+			try
+			{
+				return int.Parse(value);
+			}
+			catch (Exception ex)
+			{
+				throw new ArgumentException(string.Format(CultureInfo.InvariantCulture,
+					"Invalid value \"{0}\" for key '{1}'.", value, key));
+			}
+		}
+
 		private int DiscoverTcpPortViaSqlMonitor(string ServerName, string InstanceName) 
 		{
 			SqlMonitorSocket msock;
@@ -551,9 +593,9 @@ namespace System.Data.SqlClient {
 
 		void SetDefaultConnectionParameters (NameValueCollection parameters)
 		{
-			if (null == parameters.Get ("APPLICATION NAME"))
+			if (null == parameters.Get ("APPLICATION NAME") && null == parameters.Get ("APP"))
 				parameters["APPLICATION NAME"] = "Mono SqlClient Data Provider";
-			if (null == parameters.Get ("CONNECT TIMEOUT") && null == parameters.Get ("CONNECTION TIMEOUT"))
+			if (null == parameters.Get ("TIMEOUT") && null == parameters.Get ("CONNECT TIMEOUT") && null == parameters.Get ("CONNECTION TIMEOUT"))
 				parameters["CONNECT TIMEOUT"] = "15";
 			if (null == parameters.Get ("CONNECTION LIFETIME"))
 				parameters["CONNECTION LIFETIME"] = "0";
@@ -567,43 +609,43 @@ namespace System.Data.SqlClient {
 				parameters["MAX POOL SIZE"] = "100";
 			if (null == parameters.Get ("MIN POOL SIZE"))
 				parameters["MIN POOL SIZE"] = "0";
-			if (null == parameters.Get ("NETWORK LIBRARY") && null == parameters.Get ("NET"))
+			if (null == parameters.Get ("NETWORK LIBRARY") && null == parameters.Get ("NET") && null == parameters.Get ("NETWORK"))
 				parameters["NETWORK LIBRARY"] = "dbmssocn";
 			if (null == parameters.Get ("PACKET SIZE"))
 				parameters["PACKET SIZE"] = "512";
-			if (null == parameters.Get ("PERSIST SECURITY INFO"))
+			if (null == parameters.Get ("PERSIST SECURITY INFO") && null == parameters.Get ("PERSISTSECURITYINFO"))
 				parameters["PERSIST SECURITY INFO"] = "false";
 			if (null == parameters.Get ("POOLING"))
 				parameters["POOLING"] = "true";
-			if (null == parameters.Get ("WORKSTATION ID"))
+			if (null == parameters.Get ("WORKSTATION ID") && null == parameters.Get ("WSID"))
 				parameters["WORKSTATION ID"] = Dns.GetHostName();
 		}
 
 		private void SetProperties (NameValueCollection parameters)
 		{
-			string value;
-			string upperValue;
 			foreach (string name in parameters) {
-				value = parameters[name];
-				upperValue = value.ToUpper ();
+				string value = parameters[name];
 
 				switch (name) {
+					case "APP" :
 					case "APPLICATION NAME" :
 						parms.ApplicationName = value;
 						break;
 					case "ATTACHDBFILENAME" :
 					case "EXTENDED PROPERTIES" :
 					case "INITIAL FILE NAME" :
-						break;
+						throw new NotImplementedException("Attachable database support is not implemented.");
+					case "TIMEOUT" :
 					case "CONNECT TIMEOUT" :
 					case "CONNECTION TIMEOUT" :
-						connectionTimeout = Int32.Parse (value);
+						connectionTimeout = ConvertToInt32 ("connection timeout", value);
 						break;
 					case "CONNECTION LIFETIME" :
 						break;
 					case "CONNECTION RESET" :
-						connectionReset = !(upperValue.Equals ("FALSE") || upperValue.Equals ("NO"));
+						connectionReset = ConvertToBoolean ("connection reset", value);
 						break;
+					case "LANGUAGE" :
 					case "CURRENT LANGUAGE" :
 						parms.Language = value;
 						break;
@@ -614,7 +656,21 @@ namespace System.Data.SqlClient {
 					case "NETWORK ADDRESS" :
 						dataSource = value;
 						break;
+					case "ENCRYPT":
+						if (ConvertToBoolean("encrypt", value))
+						{
+							throw new NotImplementedException("SSL encryption for"
+								+ " data sent between client and server is not"
+								+ " implemented.");
+						}
+						break;
 					case "ENLIST" :
+						if (!ConvertToBoolean("enlist", value))
+						{
+							throw new NotImplementedException("Disabling the automatic"
+								+ " enlistment of connections in the thread's current"
+								+ " transaction context is not implemented.");
+						}
 						break;
 					case "INITIAL CATALOG" :
 					case "DATABASE" :
@@ -622,39 +678,44 @@ namespace System.Data.SqlClient {
 						break;
 					case "INTEGRATED SECURITY" :
 					case "TRUSTED_CONNECTION" :
-						parms.DomainLogin = upperValue.Equals ("TRUE") || upperValue.Equals ("YES") || upperValue.Equals ("SSPI");
+						parms.DomainLogin = ConvertIntegratedSecurity(value);
 						break;
 					case "MAX POOL SIZE" :
-						maxPoolSize = Int32.Parse (value);
+						maxPoolSize = ConvertToInt32 ("max pool size", value);
 						break;
 					case "MIN POOL SIZE" :
-						minPoolSize = Int32.Parse (value);
+						minPoolSize = ConvertToInt32 ("min pool size", value);
 						break;
 #if NET_2_0
 				case "MULTIPLEACTIVERESULTSETS":
 					break;
 #endif
 					case "NET" :
+					case "NETWORK" :
 					case "NETWORK LIBRARY" :
 						if (!value.ToUpper ().Equals ("DBMSSOCN"))
 							throw new ArgumentException ("Unsupported network library.");
 						break;
 					case "PACKET SIZE" :
-						packetSize = Int32.Parse (value);
+						packetSize = ConvertToInt32 ("packet size", value);
 						break;
 					case "PASSWORD" :
 					case "PWD" :
 						parms.Password = value;
 						break;
+					case "PERSISTSECURITYINFO" :
 					case "PERSIST SECURITY INFO" :
+						// FIXME : not implemented
 						break;
 					case "POOLING" :
-						pooling = !(value.ToUpper ().Equals ("FALSE") || value.ToUpper ().Equals ("NO"));
+						pooling = ConvertToBoolean("pooling", value);
 						break;
 					case "UID" :
+					case "USER" :
 					case "USER ID" :
 						parms.User = value;
 						break;
+					case "WSID" :
 					case "WORKSTATION ID" :
 						parms.Hostname = value;
 						break;
