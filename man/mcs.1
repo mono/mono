@@ -36,8 +36,10 @@ the math operations checked (the default is unchecked).
 .I \-\-define SYMBOL
 Defines a symbol named SYMBOL.  This can be tested in the source code
 by the pre-processor.
-.TP \-\-debug or \-g
-Generate debugging information.
+.TP
+.I \-\-debug or \-g
+Generate debugging information.  The debugging information is written
+into an assembler file FILE-debug.s.
 .TP
 .I \-\-fatal 
 This is used for debugging the compiler.  This makes the error emission
@@ -117,6 +119,12 @@ Debugging. Turns on verbose yacc parsing.
 Use this to stop option parsing, and allow option-looking parameters
 to be passed on the command line.
 .PP
+.SH DEBUGGING SUPPORT
+When use the "--debug" or "-g" flag, MCS will create an assembler file
+FILE-debug.s containing debugging information where FILE is the name of
+the generated assembly. You need to run this file through the assembler
+to get a object file FILE-debug.o.  See mono's "--dwarf-plus" argument
+for details on how to use this file.
 .SH NOTES
 During compilation the MCS compiler defines the __MonoCS__ symbol,
 this can be used by pre-processor instructions to compile Mono C#

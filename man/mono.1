@@ -49,6 +49,16 @@ created from a stream of CIL opcodes.
 .I "--stabs"
 Writes out stabs debug information
 .TP
+.I "--dwarf"
+Writes out dwarf debug information
+.TP
+.I "--dwarf-plus"
+Uses an extended debugging information file which has been generated
+by MCS.  This extended debugging information will allow you to debug
+C# source code rather than IL code.  To use it, just run the JIT in
+your debugger and call "mono_debug_make_symbols" each time the program
+stops.
+.TP
 .I "--debug method"
 Debugs the method whose name is `method'
 .TP
