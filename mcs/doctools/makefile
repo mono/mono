@@ -7,3 +7,4 @@ linux:
 	../nant/NAnt.exe linux
 
 clean:
+	rm -rf build
