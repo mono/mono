@@ -723,9 +723,9 @@ namespace Mono.CSharp {
 				if (expr_type.IsPointer)
 					return null;
 
-				if (expr_type.IsValueType)
+				if (TypeManager.IsValueType (expr_type))
 					return new BoxedCast (expr);
-				if (expr_type.IsClass || expr_type.IsInterface)
+				if (expr_type.IsClass || expr_type.IsInterface || expr_type == TypeManager.enum_type)
 					return new EmptyCast (expr, target_type);
 			} else if (expr_type.IsSubclassOf (target_type)) {
 				//
@@ -986,11 +986,9 @@ namespace Mono.CSharp {
 			// This is the boxed case.
 			//
 			if (target_type == TypeManager.object_type) {
-				if ((expr_type.IsClass) ||
-				    (expr_type.IsValueType) ||
-				    (expr_type.IsInterface))
+				if (expr_type.IsClass || TypeManager.IsValueType (expr_type) ||
+				    expr_type.IsInterface || expr_type == TypeManager.enum_type)
 					return true;
-				
 			} else if (expr_type.IsSubclassOf (target_type)) {
 				return true;
 			} else {

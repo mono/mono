@@ -149,6 +149,7 @@
 					error176 (loc, pe.PropertyInfo.Name);
 					return null;
 				}
+				Console.WriteLine ("HERE *************");
 				pe.InstanceExpression = left;
 				
 				return pe;

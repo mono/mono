@@ -45,6 +45,9 @@ install:
 mcs.exe: cs-parser.cs $(COMPILER_SOURCES)
 	$(CSC) $(CSCFLAGS) /target:exe /r:System.dll /out:mcs.exe $(COMPILER_SOURCES)
 
+count:
+	wc -l $(COMPILER_SOURCES)
+
 res:
 	echo --target exe -o mcs2.exe $(COMPILER_SOURCES) > response
 
