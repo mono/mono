@@ -6,6 +6,7 @@ class X {
 	
 	void g_object_get (IntPtr obj, string name, out string val, IntPtr term)
 	{
+		val = null;
 	}
 
 	public void GetProperty (String name, out String val)
@@ -15,6 +16,7 @@ class X {
 
 	void g_object_get (IntPtr obj, string name, out bool val, IntPtr term)
 	{
+		val = true;
 	}
 	
 	public void GetProperty (String name, out bool val)
