@@ -1,3 +1,7 @@
+2004-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TableStyle.cs: don't render empty 'rules' attribute (again).
+
 2004-09-21 Sanjay Gupta <gsanjay@novell.com>
 
 	* FormViewUpdatedEventArgs.cs: Spelling mistake.
