@@ -1,3 +1,7 @@
+2005-04-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-x86.h exceptions-x86.c: Hopefully fix compilation on *BSD.
+
 2005-04-01  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-sparc.c mini-sparc.h: Add asserts when running with sigaltstack.
