@@ -16,34 +16,80 @@ namespace System.EnterpriseServices.Internal
 	public interface IComSoapPublisher
 	{
 		[DispId(6)]
-		void CreateMailBox (string RootMailServer, string MailBox, out string SmtpName, out string Domain,
-         			       out string PhysicalPath, out string Error);
+		void CreateMailBox (
+			[MarshalAs(UnmanagedType.BStr)] string RootMailServer,
+			[MarshalAs(UnmanagedType.BStr)] string MailBox,
+			[MarshalAs(UnmanagedType.BStr)] out string SmtpName,
+			[MarshalAs(UnmanagedType.BStr)] out string Domain,
+			[MarshalAs(UnmanagedType.BStr)] out string PhysicalPath,
+			[MarshalAs(UnmanagedType.BStr)] out string Error);
+
 		[DispId(4)]
-		void CreateVirtualRoot (string Operation, string FullUrl, out string BaseUrl, out string VirtualRoot,
-					       out string PhysicalPath, out string Error);
+		void CreateVirtualRoot (
+			[MarshalAs(UnmanagedType.BStr)] string Operation,
+			[MarshalAs(UnmanagedType.BStr)] string FullUrl,
+			[MarshalAs(UnmanagedType.BStr)] out string BaseUrl,
+			[MarshalAs(UnmanagedType.BStr)] out string VirtualRoot,
+			[MarshalAs(UnmanagedType.BStr)] out string PhysicalPath,
+			[MarshalAs(UnmanagedType.BStr)] out string Error);
+
 		[DispId(7)]
-		void DeleteMailBox (string RootMailServer, string MailBox, out string Error);
+		void DeleteMailBox (
+			[MarshalAs(UnmanagedType.BStr)] string RootMailServer,
+			[MarshalAs(UnmanagedType.BStr)] string MailBox,
+			[MarshalAs(UnmanagedType.BStr)] out string Error);
+
 		[DispId(5)]
-		void DeleteVirtualRoot (string RootWebServer, string FullUrl, out string Error);
+		void DeleteVirtualRoot (
+			[MarshalAs(UnmanagedType.BStr)] string RootWebServer,
+			[MarshalAs(UnmanagedType.BStr)] string FullUrl,
+			[MarshalAs(UnmanagedType.BStr)] out string Error);
+
 		[DispId(13)]
-		void GacInstall (string AssemblyPath);
+		void GacInstall ([MarshalAs(UnmanagedType.BStr)] string AssemblyPath);
+
 		[DispId(14)]
-		void GacRemove (string AssemblyPath);
+		void GacRemove ([MarshalAs(UnmanagedType.BStr)] string AssemblyPath);
+
 		[DispId(15)]
-		void GetAssemblyNameForCache (string TypeLibPath, out string CachePath);
+		void GetAssemblyNameForCache (
+			[MarshalAs(UnmanagedType.BStr)] string TypeLibPath,
+			[MarshalAs(UnmanagedType.BStr)] out string CachePath);
+
+		[return: MarshalAs(UnmanagedType.BStr)]
 		[DispId(10)]
-		string GetTypeNameFromProgId (string AssemblyPath, string ProgId);
+		string GetTypeNameFromProgId (
+			[MarshalAs(UnmanagedType.BStr)] string AssemblyPath,
+			[MarshalAs(UnmanagedType.BStr)] string ProgId);
+
 		[DispId(9)]
-		void ProcessClientTlb (string ProgId, string SrcTlbPath, string PhysicalPath, string VRoot, string BaseUrl,
-        			       string Mode, string Transport, out string AssemblyName, out string TypeName,
-				       out string Error);
+		void ProcessClientTlb (
+			[MarshalAs(UnmanagedType.BStr)] string ProgId,
+			[MarshalAs(UnmanagedType.BStr)] string SrcTlbPath,
+			[MarshalAs(UnmanagedType.BStr)] string PhysicalPath,
+			[MarshalAs(UnmanagedType.BStr)] string VRoot,
+			[MarshalAs(UnmanagedType.BStr)] string BaseUrl,
+			[MarshalAs(UnmanagedType.BStr)] string Mode,
+			[MarshalAs(UnmanagedType.BStr)] string Transport,
+			[MarshalAs(UnmanagedType.BStr)] out string AssemblyName,
+			[MarshalAs(UnmanagedType.BStr)] out string TypeName,
+			[MarshalAs(UnmanagedType.BStr)] out string Error);
+
 		[DispId(8)]
-		void ProcessServerTlb (string ProgId, string SrcTlbPath, string PhysicalPath, string Operation, 
-					out string AssemblyName, out string TypeName, out string Error);
+		void ProcessServerTlb (
+			[MarshalAs(UnmanagedType.BStr)] string ProgId,
+			[MarshalAs(UnmanagedType.BStr)] string SrcTlbPath,
+			[MarshalAs(UnmanagedType.BStr)] string PhysicalPath,
+			[MarshalAs(UnmanagedType.BStr)] string Operation,
+			[MarshalAs(UnmanagedType.BStr)] out string AssemblyName,
+			[MarshalAs(UnmanagedType.BStr)] out string TypeName,
+			[MarshalAs(UnmanagedType.BStr)] out string Error);
+
 		[DispId(11)]
-		void RegisterAssembly (string AssemblyPath);
+		void RegisterAssembly ([MarshalAs(UnmanagedType.BStr)] string AssemblyPath);
+
 		[DispId(12)]
-		void UnRegisterAssembly (string AssemblyPath);
+		void UnRegisterAssembly ([MarshalAs(UnmanagedType.BStr)] string AssemblyPath);
 	}
 #endif
 }

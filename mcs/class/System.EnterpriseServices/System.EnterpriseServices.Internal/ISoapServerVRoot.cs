@@ -14,11 +14,39 @@ namespace System.EnterpriseServices.Internal {
 	[Guid("A31B6577-71D2-4344-AEDF-ADC1B0DC5347")]
 	public interface ISoapServerVRoot {
 		[DispId(1)]
-		void CreateVirtualRootEx (string rootWebServer, string inBaseUrl, string inVirtualRoot, string homePage, string discoFile, string secureSockets, string authentication, string operation, out string baseUrl, out string virtualRoot, out string physicalPath);
+		void CreateVirtualRootEx (
+			[MarshalAs(UnmanagedType.BStr)] string rootWebServer,
+			[MarshalAs(UnmanagedType.BStr)] string inBaseUrl,
+			[MarshalAs(UnmanagedType.BStr)] string inVirtualRoot,
+			[MarshalAs(UnmanagedType.BStr)] string homePage,
+			[MarshalAs(UnmanagedType.BStr)] string discoFile,
+			[MarshalAs(UnmanagedType.BStr)] string secureSockets,
+			[MarshalAs(UnmanagedType.BStr)] string authentication,
+			[MarshalAs(UnmanagedType.BStr)] string operation,
+			[MarshalAs(UnmanagedType.BStr)] out string baseUrl,
+			[MarshalAs(UnmanagedType.BStr)] out string virtualRoot,
+			[MarshalAs(UnmanagedType.BStr)] out string physicalPath);
+
 		[DispId(2)]
-		void DeleteVirtualRootEx (string rootWebServer, string baseUrl, string virtualRoot);
+		void DeleteVirtualRootEx (
+			[MarshalAs(UnmanagedType.BStr)] string rootWebServer,
+			[MarshalAs(UnmanagedType.BStr)] string baseUrl,
+			[MarshalAs(UnmanagedType.BStr)] string virtualRoot);
+
 		[DispId(3)]
-		void GetVirtualRootStatus (string rootWebServer, string inBaseUrl, string inVirtualRoot, out string exists, out string secureSockets, out string windowsAuth, out string anonymous, out string homePage, out string discoFile, out string physicalPath, out string baseUrl, out string virtualRoot);
+		void GetVirtualRootStatus (
+			[MarshalAs(UnmanagedType.BStr)] string rootWebServer,
+			[MarshalAs(UnmanagedType.BStr)] string inBaseUrl,
+			[MarshalAs(UnmanagedType.BStr)] string inVirtualRoot,
+			[MarshalAs(UnmanagedType.BStr)] out string exists,
+			[MarshalAs(UnmanagedType.BStr)] out string secureSockets,
+			[MarshalAs(UnmanagedType.BStr)] out string windowsAuth,
+			[MarshalAs(UnmanagedType.BStr)] out string anonymous,
+			[MarshalAs(UnmanagedType.BStr)] out string homePage,
+			[MarshalAs(UnmanagedType.BStr)] out string discoFile,
+			[MarshalAs(UnmanagedType.BStr)] out string physicalPath,
+			[MarshalAs(UnmanagedType.BStr)] out string baseUrl,
+			[MarshalAs(UnmanagedType.BStr)] out string virtualRoot);
 	}
 #endif
 }

@@ -1,3 +1,15 @@
+2004-06-18  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* IComManagedImportUtil.cs: added missing marshalling attributes
+	* IComSoapIISVRoot.cs: added missing marshalling attributes
+	* IComSoapMetadata.cs: added missing marshalling attributes
+	* IComSoapPublisher.cs: added missing marshalling attributes
+	* IServerWebConfig.cs: added missing marshalling attributes
+	* ISoapClientImport.cs: added missing marshalling attributes
+	* ISoapServerTlb.cs: added missing marshalling attributes
+	* ISoapServerVRoot.cs: added missing marshalling attributes
+	* ISoapUtility.cs: added missing marshalling attributes
+
 2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* IClrObjectFactory.cs: added missing DispId attributes

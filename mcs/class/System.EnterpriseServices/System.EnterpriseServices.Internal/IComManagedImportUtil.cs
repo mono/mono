@@ -16,9 +16,9 @@ namespace System.EnterpriseServices.Internal
 	public interface IComManagedImportUtil 
 	{
 		[DispId(4)] 
-		void GetComponentInfo (string assemblyPath, out string numComponents, out string componentInfo);
+		void GetComponentInfo ([MarshalAs(UnmanagedType.BStr)] string assemblyPath, [MarshalAs(UnmanagedType.BStr)] out string numComponents, [MarshalAs(UnmanagedType.BStr)] out string componentInfo);
 		[DispId(5)] 
-		void InstallAssembly (string filename, string parname, string appname);
+		void InstallAssembly ([MarshalAs(UnmanagedType.BStr)] string filename, [MarshalAs(UnmanagedType.BStr)] string parname, [MarshalAs(UnmanagedType.BStr)] string appname);
 	}
 #endif
 }
