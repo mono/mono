@@ -1,4 +1,8 @@
 
+Sat Jul 13 19:38:03 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* expression.cs: check against the building corlib void type.
+
 Sat Jul 13 19:35:58 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* ecore.cs: fix for valuetype static readonly fields: when 
