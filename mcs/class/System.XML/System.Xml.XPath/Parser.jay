@@ -47,56 +47,56 @@ namespace Mono.Xml.XPath
 %token ERROR
 %token EOF
 
-%token SLASH
-%token SLASH2
-%token DOT
-%token DOT2
-%token COLON
-%token COLON2
-%token COMMA
-%token AT
+%token SLASH			"/"
+%token SLASH2			"//"
+%token DOT				"."
+%token DOT2				".."
+%token COLON			":"
+%token COLON2			"::"
+%token COMMA			","
+%token AT				"@"
 
 %token FUNCTION_NAME
 
-%token BRACKET_OPEN
-%token BRACKET_CLOSE
-%token PAREN_OPEN
-%token PAREN_CLOSE
+%token BRACKET_OPEN		"["
+%token BRACKET_CLOSE	"]"
+%token PAREN_OPEN		"("
+%token PAREN_CLOSE		")"
 
-%token AND
-%token OR
-%token DIV
-%token MOD
-%token PLUS
-%token MINUS
-%token ASTERISK
-%token DOLLAR
-%token BAR
-%token EQ
-%token NE
-%token LE
-%token GE
-%token LT
-%token GT
+%token AND				"and"
+%token OR				"or"
+%token DIV				"div"
+%token MOD				"mod"
+%token PLUS				"+"
+%token MINUS			"-"
+%token ASTERISK			"*"
+%token DOLLAR			"$"
+%token BAR				"|"
+%token EQ				"="
+%token NE				"!="
+%token LE				"<="
+%token GE				">="
+%token LT				"<"
+%token GT				">"
 
-%token ANCESTOR
-%token ANCESTOR_OR_SELF
-%token ATTRIBUTE
-%token CHILD
-%token DESCENDANT
-%token DESCENDANT_OR_SELF
-%token FOLLOWING
-%token FOLLOWING_SIBLING
-%token NAMESPACE
-%token PARENT
-%token PRECEDING
-%token PRECEDING_SIBLING
-%token SELF
+%token ANCESTOR					"ancestor"
+%token ANCESTOR_OR_SELF			"ancstor-or-self"
+%token ATTRIBUTE				"attribute"
+%token CHILD					"child"
+%token DESCENDANT				"descendant"
+%token DESCENDANT_OR_SELF		"descendant-or-self"
+%token FOLLOWING				"following"
+%token FOLLOWING_SIBLING		"sibling"
+%token NAMESPACE				"NameSpace"
+%token PARENT					"parent"
+%token PRECEDING				"preceding"
+%token PRECEDING_SIBLING		"preceding-sibling"
+%token SELF						"self"
 
-%token COMMENT
-%token TEXT
-%token PROCESSING_INSTRUCTION
-%token NODE
+%token COMMENT					"comment"
+%token TEXT						"text"
+%token PROCESSING_INSTRUCTION	"processing-instruction"
+%token NODE						"node"
 
 %token NUMBER
 %token LITERAL

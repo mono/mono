@@ -22,7 +22,8 @@ namespace System.Xml.XPath
 		private int m_cch;
 		private int m_iToken;
 		private Object m_objToken;
-		private static Hashtable s_mapTokens = new Hashtable ();
+		private bool m_fPrevWasSpecial = false;
+		private static readonly Hashtable s_mapTokens = new Hashtable ();
 		private static readonly Object [] s_rgTokenMap =
 		{
 		   Token.AND, "and",
@@ -47,12 +48,43 @@ namespace System.Xml.XPath
 		   Token.PROCESSING_INSTRUCTION, "processing-instruction",
 		   Token.NODE, "node",
 		};
+		private static readonly Hashtable s_mapfPrevWasSpecial = new Hashtable ();
+		private static readonly int [] s_rgfPrevWasSpecial =
+		{
+			Token.AT,
+			Token.COLON2,
+			Token.PAREN_OPEN,
+			Token.BRACKET_OPEN,
+			Token.COMMA,
+
+			Token.AND,
+			Token.OR,
+			Token.DIV,
+			Token.MOD,
+
+			Token.SLASH,
+			Token.SLASH2,
+			Token.BAR,
+			Token.PLUS,
+			Token.MINUS,
+			Token.EQ,
+			Token.NE,
+			Token.LE,
+			Token.LT,
+			Token.GE,
+			Token.GT,
+
+			Token.ASTERISK,
+		};
 		private const char EOL = '\0';
 
 		static Tokenizer ()
 		{
 			for (int i = 0; i < s_rgTokenMap.Length; i += 2)
 				s_mapTokens.Add (s_rgTokenMap [i + 1], s_rgTokenMap [i]);
+			object objTmp = new Object ();
+			for (int i = 0; i < s_rgfPrevWasSpecial.Length; i++)
+				s_mapfPrevWasSpecial.Add (s_rgfPrevWasSpecial [i], null);
 		}
 
 		public Tokenizer (string strInput)
@@ -63,11 +95,16 @@ namespace System.Xml.XPath
 			SkipWhitespace ();
 		}
 
+		private char Peek (int iOffset)
+		{
+			if (m_ich + iOffset>= m_cch)
+				return EOL;
+			return m_rgchInput [m_ich + iOffset];
+		}
+
 		private char Peek ()
 		{
-			if (m_ich >= m_cch)
-				return EOL;
-			return m_rgchInput [m_ich];
+			return Peek (0);
 		}
 
 		private char GetChar ()
@@ -84,10 +121,15 @@ namespace System.Xml.XPath
 			return m_rgchInput [--m_ich];
 		}
 
-		private void SkipWhitespace ()
+		private bool SkipWhitespace ()	// returns trus if any whitespace was skipped
 		{
+			if (!IsWhitespace (Peek ()))
+				return false;
+					
 			while (IsWhitespace (Peek ()))
 				GetChar ();
+
+			return true;
 		}
 
 		[MonoTODO]
@@ -136,15 +178,27 @@ namespace System.Xml.XPath
 
 			String strToken = sb.ToString ();
 			Object objToken = s_mapTokens [strToken];
-			if (objToken != null)
+
+			if (!m_fPrevWasSpecial && objToken != null)
 				return (int) objToken;
 
-			m_objToken = strToken;
-
 			SkipWhitespace ();
-			if (Peek () == '(')					
-				return Token.FUNCTION_NAME;
 
+			ch = Peek ();
+			if (ch == '(')					
+			{
+				if (objToken != null)
+					return (int) objToken;
+				m_objToken = strToken;
+				return Token.FUNCTION_NAME;
+			}
+			else if (ch == ':' && Peek (1) == ':')
+			{
+				if (objToken != null)
+					return (int) objToken;
+			}
+
+			m_objToken = strToken;
 			return Token.NCName;
 		}
 
@@ -309,7 +363,8 @@ namespace System.Xml.XPath
 		{
 			m_objToken = null;
 			m_iToken = ParseToken ();
-			SkipWhitespace ();
+			bool fWhitespace = SkipWhitespace ();
+			m_fPrevWasSpecial = (!fWhitespace && s_mapfPrevWasSpecial.Contains (m_iToken));
 			return (m_iToken != Token.EOF);
 		}
 
