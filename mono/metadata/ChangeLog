@@ -1,3 +1,7 @@
+2004-03-22  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* profiler.c: Added lock for accessing coverage_hash.
+
 2004-03-22  Martin Baulig  <martin@ximian.com>
 
 	* icall.c (ves_icall_MethodInfo_get_IsGenericMethod): Use
