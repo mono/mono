@@ -1,5 +1,10 @@
 2004-08-27 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* inssel-long32.brg: c&p rules for LCONV_x4 (membase) and
+	LCONV_x4 (shrun_32 (membase)).
+
+2004-08-27 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* inssel-x86.brg: c&p rules for push/setret of long
 
 2004-08-26 Ben Maurer  <bmaurer@users.sourceforge.net>
