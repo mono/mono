@@ -100,7 +100,7 @@ namespace Mono.Tools {
 						ShowPermissionSet (tw, "Refused Permission Set:", GetPermissionSet (sa));
 						break;
 					default:
-						// Bug in VS.NET 2005 Nov CTP - Evrything action is a LinkDemand
+						// Bug in VS.NET 2005 Nov CTP - Every action is a LinkDemand :(
 						string msg = String.Format ("ERROR {0} Permission Set:", sa.Action);
 						ShowPermissionSet (tw, msg, GetPermissionSet (sa));
 						break;
