@@ -1,5 +1,14 @@
 2004-12-08  Martin Baulig  <martin@ximian.com>
 
+	* class.cs (TypeContainer.VerifyClsCompliance): Report a CS3003
+	instead of a CS3002 for properties and indexer.  Added CS3024
+	check for generic interfaces.
+
+	* attributes.cs (AttributeTester.AnalyzeTypeCompliance): Generic
+	instances are not CLS-compliant.
+
+2004-12-08  Martin Baulig  <martin@ximian.com>
+
 	* cs-parser.jay
 	(void_pointer_expression): New rule for `void*', `void**' etc.
 	(typeof_expression): Add `void_pointer_expression'; fixes #66846.	

@@ -1467,7 +1467,7 @@ namespace Mono.CSharp {
 				return ds.IsClsCompliaceRequired (ds.Parent);
 			}
 
-			if (type.IsGenericParameter)
+			if (type.IsGenericParameter || type.IsGenericInstance)
 				return false;
 
 			object[] CompliantAttribute = type.GetCustomAttributes (TypeManager.cls_compliant_attribute_type, false);

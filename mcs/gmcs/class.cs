@@ -2415,6 +2415,12 @@ namespace Mono.CSharp {
 
 			VerifyClsName ();
 
+			if (IsGeneric) {
+				Report.Error (3024, Location, "'{0}': type parameters are not CLS-compliant",
+					      GetSignatureForError ());
+				return false;
+			}
+
 			Type base_type = TypeBuilder.BaseType;
 			if (base_type != null && !AttributeTester.IsClsCompliant (base_type)) {
 				Report.Error (3009, Location, "'{0}': base type '{1}' is not CLS-compliant", GetSignatureForError (), TypeManager.CSharpName (base_type));
@@ -3487,7 +3493,12 @@ namespace Mono.CSharp {
 			}
 
 			if (!AttributeTester.IsClsCompliant (MemberType)) {
-				Report.Error (3002, Location, "Return type of '{0}' is not CLS-compliant", GetSignatureForError ());
+				if ((this is Property) || (this is Indexer))
+					Report.Error (3003, Location, "Type of `{0}' is not CLS-compliant",
+						      GetSignatureForError ());
+				else
+					Report.Error (3002, Location, "Return type of '{0}' is not CLS-compliant",
+						      GetSignatureForError ());
 			}
 
 			AttributeTester.AreParametersCompliant (Parameters.FixedParameters, Location);
