@@ -108,7 +108,7 @@ namespace System.Data.Common {
 		public int Add (object value) 
 		{
 			if (!(value is System.Data.Common.DataTableMapping))
-				throw new SystemException ("The object passed in was not a DataTableMapping object.");
+				throw new InvalidCastException ("The object passed in was not a DataTableMapping object.");
 
 			sourceTables[((DataTableMapping)value).SourceTable] = value;	
 			dataSetTables[((DataTableMapping)value).DataSetTable] = value;	
@@ -160,7 +160,22 @@ namespace System.Data.Common {
 
 		public DataTableMapping GetByDataSetTable (string dataSetTable) 
 		{
-			return (DataTableMapping)(dataSetTables[dataSetTable]);
+			
+			// this should work case-insenstive.
+                        if (!(dataSetTables[dataSetTable] == null)) 
+	                         return (DataTableMapping)(dataSetTables[dataSetTable]);
+                        else {
+                                string lowcasevalue = dataSetTable.ToLower();
+                                object [] keyarray = new object[dataSetTables.Count];
+                                dataSetTables.Keys.CopyTo(keyarray,0);
+                                for (int i=0; i<keyarray.Length; i++) {
+                                        string temp = (string) keyarray[i];
+                                        if (lowcasevalue.Equals(temp.ToLower()))                                                		return (DataTableMapping)(dataSetTables[keyarray[i]]);
+                                }
+                                return null;
+                                                                                
+                        }
+
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -198,6 +213,8 @@ namespace System.Data.Common {
 		public void Insert (int index, object value) 
 		{
 			mappings.Insert (index, value);
+			sourceTables[((DataTableMapping)value).SourceTable] = value;
+                        dataSetTables[((DataTableMapping)value).DataSetTable] = value;
 		}
 
 		ITableMapping ITableMappingCollection.Add (string sourceTableName, string dataSetTableName)
@@ -214,11 +231,20 @@ namespace System.Data.Common {
 
 		public void Remove (object value) 
 		{
+			if (!(value is DataTableMapping))
+                                 throw new InvalidCastException ();
+			int index = mappings.IndexOf (value);
+			if (( index < 0 ) || (index >=mappings.Count))
+                                    throw new ArgumentException("There is no such element in collection.");                                                                                 
+
 			mappings.Remove ((DataTableMapping) value);
 		}
 
 		public void RemoveAt (int index) 
 		{
+			 if (( index < 0 ) || (index >=mappings.Count))
+                                    throw new IndexOutOfRangeException("There is no element in collection.");
+
 			mappings.RemoveAt (index);
 		}
 
