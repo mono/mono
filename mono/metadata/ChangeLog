@@ -1,3 +1,8 @@
+2003-11-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (assembly_name_to_aname): Allow extra characters in
+	assembly names. Fixes #51468.
+
 2003-11-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* exception.c (mono_exception_from_name_domain): New helper function.
