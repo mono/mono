@@ -60,7 +60,8 @@ namespace System.Windows.Forms {
 		private static int		wm_state_above;		// X Atom
 		private static int		atom;			// X Atom
 		private static int		net_wm_state;		// X Atom
-		private static IntPtr		async_method;
+		private static int		async_method;
+		private static int		hover_event;
 		private static uint		default_colormap;	// X Colormap ID
 		internal static Keys		key_state;
 		internal static MouseButtons	mouse_state;
@@ -75,6 +76,11 @@ namespace System.Windows.Forms {
 		internal static int		click_pending_time;	// Last time we received a mouse click
 		internal static bool		click_pending;		// True if we haven't sent the last mouse click
 		internal static int		double_click_interval;	// in milliseconds, how fast one has to click for a double click
+		internal static int		hover_interval;		// in milliseconds, how long to hold before hover is generated
+		internal static Timer		hover_timer;		// for hovering
+		internal static	int		hover_x;		// Last MouseMove X coordinate; used to generate WM_MOUSEHOVER
+		internal static	int		hover_y;		// Last MouseMove Y coordinate; used to generate WM_MOUSEHOVER
+		internal static IntPtr		hover_hwnd;		// Last window we entered; used to generate WM_MOUSEHOVER
 
 		private static Hashtable	handle_data;
 		private XEventQueue		message_queue;
@@ -155,6 +161,14 @@ namespace System.Windows.Forms {
 			wake.Connect (listen.LocalEndPoint);
 
 			double_click_interval = 500;
+			hover_interval = 500;
+
+			hover_timer = new Timer();
+			hover_timer.Enabled = false;
+			hover_timer.Interval = hover_interval;		// FIXME - read this from somewhere
+			hover_timer.Tick +=new EventHandler(MouseHover);
+			hover_x = -1;
+			hover_y = -1;
 
 #if __MonoCS__
 			pollfds = new Pollfd [2];
@@ -198,6 +212,29 @@ namespace System.Windows.Forms {
 
 		internal override event EventHandler Idle;
 		
+
+		private void MouseHover(object sender, EventArgs e) {
+			if ((hover_x == mouse_position.X) && (hover_y == mouse_position.Y)) {
+				XEvent xevent;
+
+				hover_timer.Enabled = false;
+
+				if (hover_hwnd != IntPtr.Zero) {
+					xevent = new XEvent ();
+					xevent.type = XEventName.ClientMessage;
+					xevent.ClientMessageEvent.display = DisplayHandle;
+					xevent.ClientMessageEvent.window = (IntPtr)hover_hwnd;
+					xevent.ClientMessageEvent.message_type = (IntPtr)hover_event;
+					xevent.ClientMessageEvent.format = 32;
+					xevent.ClientMessageEvent.ptr1 = (IntPtr) (hover_y << 16 | hover_x);
+
+					message_queue.EnqueueLocked (xevent);
+
+					WakeupMain ();
+				}
+			}
+		}
+
 		#region Public Static Methods
 		internal override IntPtr InitializeDriver() {
 			lock (this) {
@@ -254,6 +291,8 @@ namespace System.Windows.Forms {
 				wm_no_taskbar=XInternAtom(display_handle, "_NET_WM_STATE_NO_TASKBAR", false);
 				wm_state_above=XInternAtom(display_handle, "_NET_WM_STATE_ABOVE", false);
 				atom=XInternAtom(display_handle, "ATOM", false);
+				async_method = XInternAtom(display_handle, "_SWF_AsyncAtom", false);
+				hover_event = XInternAtom(display_handle, "_SWF_HoverAtom", false);
 
 				handle_data = new Hashtable ();
 			} else {
@@ -596,7 +635,13 @@ namespace System.Windows.Forms {
 		internal override IntPtr DefWndProc(ref Message msg) {
 			switch((Msg)msg.Msg) {
 				case Msg.WM_ERASEBKGND: {
-					XClearArea(DisplayHandle, msg.HWnd, 0, 0, 0, 0, false);
+					HandleData data = (HandleData) handle_data [msg.HWnd];
+					if (data == null) {
+						throw new Exception ("null data on WM_ERASEBKGND: " + msg.HWnd);
+
+					}
+					
+					XClearArea(DisplayHandle, msg.HWnd, data.InvalidArea.Left, data.InvalidArea.Top, (uint)data.InvalidArea.Width, (uint)data.InvalidArea.Height, false);
 
 					return IntPtr.Zero;
 				}
@@ -969,11 +1014,14 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.MotionNotify: {
-					msg.message=Msg.WM_MOUSEMOVE;
-					msg.wParam=GetMousewParam(0);
-					msg.lParam=(IntPtr) (xevent.MotionEvent.y << 16 | xevent.MotionEvent.x);
-					mouse_position.X=xevent.MotionEvent.x;
-					mouse_position.Y=xevent.MotionEvent.y;
+					msg.message = Msg.WM_MOUSEMOVE;
+					msg.wParam = GetMousewParam(0);
+					msg.lParam = (IntPtr) (xevent.MotionEvent.y << 16 | xevent.MotionEvent.x);
+					mouse_position.X = xevent.MotionEvent.x;
+					mouse_position.Y = xevent.MotionEvent.y;
+					hover_x = mouse_position.X;
+					hover_y = mouse_position.Y;
+					hover_timer.Interval = hover_interval;
 					break;
 				}
 
@@ -982,6 +1030,8 @@ namespace System.Windows.Forms {
 						return true;
 					}
 					msg.message=Msg.WM_MOUSE_ENTER;
+					hover_timer.Enabled = true;
+					hover_hwnd = msg.hwnd;
 					break;
 				}
 
@@ -990,6 +1040,8 @@ namespace System.Windows.Forms {
 						return true;
 					}
 					msg.message=Msg.WM_MOUSE_LEAVE;
+					hover_timer.Enabled = false;
+					hover_hwnd = IntPtr.Zero;
 					break;
 				}
 
@@ -1032,7 +1084,7 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.ClientMessage: {
-					if (xevent.ClientMessageEvent.message_type == async_method) {
+					if (xevent.ClientMessageEvent.message_type == (IntPtr)async_method) {
 						GCHandle handle = (GCHandle)xevent.ClientMessageEvent.ptr1;
 						AsyncMethodData data = (AsyncMethodData) handle.Target;
 						AsyncMethodResult result = data.Result.Target as AsyncMethodResult;
@@ -1040,6 +1092,11 @@ namespace System.Windows.Forms {
 						if (result != null)
 							result.Complete (ret);
 						handle.Free ();
+					} else if (xevent.ClientMessageEvent.message_type == (IntPtr)hover_event) {
+						msg.message = Msg.WM_MOUSEHOVER;
+						msg.wParam = GetMousewParam(0);
+						msg.lParam = (IntPtr) (xevent.ClientMessageEvent.ptr1);
+
 					} else {
 						msg.message=Msg.WM_QUIT;
 						msg.wParam=IntPtr.Zero;
@@ -1306,7 +1363,7 @@ namespace System.Windows.Forms {
 			xevent.type = XEventName.ClientMessage;
 			xevent.ClientMessageEvent.display = DisplayHandle;
 			xevent.ClientMessageEvent.window = IntPtr.Zero;
-			xevent.ClientMessageEvent.message_type = async_method;
+			xevent.ClientMessageEvent.message_type = (IntPtr)async_method;
 			xevent.ClientMessageEvent.format = 32;
 			xevent.ClientMessageEvent.ptr1 = (IntPtr) GCHandle.Alloc (method);
 
@@ -1590,7 +1647,6 @@ namespace System.Windows.Forms {
 				return 1; // ie, 500 ms
 			}
 		}
-#endregion
-
+		#endregion
 	}
 }
