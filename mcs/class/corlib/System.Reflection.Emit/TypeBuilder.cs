@@ -540,6 +540,28 @@ namespace System.Reflection.Emit {
 		public override RuntimeTypeHandle TypeHandle { get { return _impl; } }
 
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
+			string attrname = customBuilder.Ctor.ReflectedType.FullName;
+			if (attrname == "System.Runtime.InteropServices.StructLayoutAttribute") {
+				byte[] data = customBuilder.Data;
+				int layout_kind; /* the (stupid) ctor takes a short ... */
+				layout_kind = (int)data [2];
+				layout_kind |= ((int)data [3]) << 8;
+				attrs &= ~TypeAttributes.LayoutMask;
+				switch ((LayoutKind)layout_kind) {
+				case LayoutKind.Auto:
+					attrs |= TypeAttributes.AutoLayout;
+					break;
+				case LayoutKind.Explicit:
+					attrs |= TypeAttributes.ExplicitLayout;
+					break;
+				case LayoutKind.Sequential:
+					attrs |= TypeAttributes.SequentialLayout;
+					break;
+				default:
+					throw new Exception ("Internal error in customattr");
+				}
+				return;
+			}
 			if (cattrs != null) {
 				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
 				cattrs.CopyTo (new_array, 0);

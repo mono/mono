@@ -1,4 +1,11 @@
 
+Fri May 10 20:57:27 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* CustomAttributeBuilder.cs: expose internal data for use in
+	reflection.
+	* FieldBuilder.cs, TypeBuilder.cs: special case FieldOffset and
+	StructLayout attributes.
+
 Fri May 10 16:30:57 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* MethodBuilder.cs, ConstructorBuilder.cs: implemented InitLocals

@@ -79,6 +79,15 @@ namespace System.Reflection.Emit {
 			def_value = defaultValue;
 		}
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
+			string attrname = customBuilder.Ctor.ReflectedType.FullName;
+			if (attrname == "System.Runtime.InteropServices.FieldOffsetAttribute") {
+				byte[] data = customBuilder.Data;
+				offset = (int)data [2];
+				offset |= ((int)data [3]) << 8;
+				offset |= ((int)data [4]) << 16;
+				offset |= ((int)data [5]) << 24;
+				return;
+			}
 			if (cattrs != null) {
 				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
 				cattrs.CopyTo (new_array, 0);

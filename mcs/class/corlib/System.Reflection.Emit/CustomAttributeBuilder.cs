@@ -17,6 +17,14 @@ namespace System.Reflection.Emit {
 	public class CustomAttributeBuilder {
 		ConstructorInfo ctor;
 		byte[] data;
+
+		internal ConstructorInfo Ctor {
+			get {return ctor;}
+		}
+
+		internal byte[] Data {
+			get {return data;}
+		}
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern byte[] GetBlob(ConstructorInfo con, object[] constructorArgs, PropertyInfo[] namedProperties, object[] propertyValues, FieldInfo[] namedFields, object[] fieldValues);
