@@ -1,4 +1,9 @@
 
+Wed Jan 26 22:20:46 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c: rework the gc handles code to reuse handles
+	when freed.
+
 Wed Jan 26 17:34:09 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* domain.c: fixed long standing bug in mono_string_equal() which
