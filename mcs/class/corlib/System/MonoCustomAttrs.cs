@@ -53,6 +53,10 @@ namespace System
 			/* FIXME: Add other types */
 			if (obj is Type)
 				pseudoAttrs = ((Type)obj).GetPseudoCustomAttributes ();
+			else if (obj is MonoMethod)
+				pseudoAttrs = ((MonoMethod)obj).GetPseudoCustomAttributes ();
+			else if (obj is FieldInfo)
+				pseudoAttrs = ((FieldInfo)obj).GetPseudoCustomAttributes ();
 
 			if (pseudoAttrs != null) {
 				object[] res = new object [attrs.Length + pseudoAttrs.Length];

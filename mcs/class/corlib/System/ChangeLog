@@ -1,5 +1,8 @@
 2004-09-24  Zoltan Varga  <vargaz@freemail.hu>
 
+	* MonoCustomAttrs.cs (GetCustomAttributesBase): Add support for
+	methods and fields.
+	
 	* MonoCustomAttrs.cs: Beginnings of support for returning 2.0 pseudo
 	custom attributes.
 
