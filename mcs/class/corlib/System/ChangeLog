@@ -1,3 +1,7 @@
+2004-02-11  Marek Safar  <marek.safar@seznam.cz>
+
+        * Type.cs (FilterNameIgnoreCase_impl): Added extra check for speedup.
+
 2004-02-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AppDomain.cs (Load): Check that assemblyRef.Name is not empty, to
