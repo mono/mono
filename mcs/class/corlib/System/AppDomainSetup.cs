@@ -26,6 +26,7 @@ namespace System {
 		string shadow_copy_directories;
 		string shadow_copy_files;
 		bool publisher_policy;
+		private LoaderOptimization loader_optimization;
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern AppDomainSetup InitAppDomainSetup (AppDomainSetup setup);
@@ -111,7 +112,16 @@ namespace System {
 			}
 		}
 
-		
+		public LoaderOptimization LoaderOptimization
+		{
+			get {
+				return loader_optimization;
+			}
+
+			set { 
+				loader_optimization = value;
+			}
+		}
 
 		public string PrivateBinPath {
 
