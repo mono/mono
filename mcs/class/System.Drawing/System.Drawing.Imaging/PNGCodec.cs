@@ -204,10 +204,13 @@ namespace System.Drawing.Imaging
 			png.Decode (image, stream, info);
 		}
 
-		internal static void EncodeDelegate (Image image, Stream stream, BitmapData info) 
+		internal static void EncodeDelegate (Image image, Stream stream) 
 		{
 			PNGCodec png = new PNGCodec();
+			BitmapData info = ((Bitmap)image).LockBits (new Rectangle (new Point (0,0), image.Size),
+									  ImageLockMode.ReadOnly, image.PixelFormat);
 			png.Encode (image, stream, info);
+			((Bitmap)image).UnlockBits (info);
 		}
 
 		internal unsafe void switch_color_bytes (byte[] image)

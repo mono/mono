@@ -590,10 +590,13 @@ namespace System.Drawing.Imaging
 			jpeg.Decode (image, stream, info);
 		}
 
-		internal static void EncodeDelegate (Image image, Stream stream, BitmapData info)
+		internal static void EncodeDelegate (Image image, Stream stream)
 		{
 			JPEGCodec jpeg = new JPEGCodec();
+			BitmapData info = ((Bitmap)image).LockBits (new Rectangle (new Point (0,0), image.Size),
+									  ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
 			jpeg.Encode (image, stream, info);
+			((Bitmap)image).UnlockBits (info);
 		}
 
 		internal unsafe void switch_color_bytes (byte[] image) {
@@ -795,9 +798,31 @@ namespace System.Drawing.Imaging
 				start = (byte *) (void *) info.Scan0;
 				stride = info.Stride;
 				while (cinfo.NextScanLine < cinfo.ImageHeight){
+					// Exchange red <=> blue bytes
+//					fixed (byte *pbuf = start) {
+						byte* curByte = start;
+						for (int i = 0; i < info.Width; i++) {
+							byte t = *(curByte+2);
+							*(curByte+2) = *curByte;
+							*curByte = t;
+							curByte += 3;
+						}
+//					}
+
 					scanline = (IntPtr) start;
-					start += stride;
 					jpeg_write_scanlines (cinfo.raw_struct, ref scanline, 1);
+					
+					// Exchange red <=> blue bytes back
+//					fixed (byte *pbuf1 = start) {
+						curByte = start;
+						for (int i = 0; i < info.Width; i++) {
+							byte t = *(curByte+2);
+							*(curByte+2) = *curByte;
+							*curByte = t;
+							curByte += 3;
+						}
+//					}
+					start += stride;
 				}
 				break;
 

@@ -1,3 +1,10 @@
+2003-11-02  Alexandre Pigolkine <pigolkine@gmx.de>
+	* BmpCodec.cs
+	* ImageCodecInfo.cs
+	* JPEGCodec.cs
+	* PNGCodec.cs
+					codec can select pixel format of bitmap 
+	
 2003-10-23  Miguel de Icaza  <miguel@ximian.com>
 
 	* JPEGCodec.cs (JSAMPARRAY): Do not allocate memory here anymore,

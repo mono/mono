@@ -260,21 +260,22 @@ namespace System.Drawing.Imaging {
 			return true;
 		}
 
-		internal static void EncodeDelegate (Image image, Stream stream, BitmapData info)
+		internal static void EncodeDelegate (Image image, Stream stream)
 		{
 			BMPCodec bmp = new BMPCodec();
+			BitmapData info = ((Bitmap)image).LockBits (new Rectangle (new Point (0,0), image.Size),
+									  ImageLockMode.ReadOnly, image.PixelFormat);
 			bmp.Encode (image, stream, info);
+			((Bitmap)image).UnlockBits (info);
 		}
 		
 		internal bool Encode (Image image, Stream stream, BitmapData info)
 		{
-#if false
-
 			BITMAPFILEHEADER bmfh = new BITMAPFILEHEADER();
 			bmfh.bfReserved1 = bmfh.bfReserved2 = 0;
 			bmfh.bfType = (ushort)BitmapFileType.BFT_BITMAP;
 			bmfh.bfOffBits = (uint)(14 + 40 + image.Palette.Entries.Length * 4);
-			int line_size = info.Width * Image.GetPixelFormatSize (info.PixelFormat) / 8;
+			int line_size = info.Stride;
 			bmfh.bfSize = (uint)(bmfh.bfOffBits + info.Height * line_size);
 					     
 			BinaryWriter bw = new BinaryWriter(stream);
@@ -302,12 +303,12 @@ namespace System.Drawing.Imaging {
 			byte [] line_buffer = new byte [line_size];
 			int stride = info.Stride;
 			int start = 0;
-			for (line = 0; line < info.Height; line++){
-				Marshal.Copy (info.Scan0, line_buffer, start, line_size);
+			for (int line = 0; line < info.Height; line++){
+				//FIXME: not an optimal way to specify starting address
+				Marshal.Copy ((IntPtr)( info.Scan0.ToInt32() + start), line_buffer, 0, line_size);
 				stream.Write(line_buffer, 0, line_size);
 				start += stride;
 			}
-#endif
 			return true;
 		}
 	}
