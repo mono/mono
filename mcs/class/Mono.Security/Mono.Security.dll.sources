@@ -30,7 +30,7 @@
 ./Mono.Security.X509.Extensions/KeyUsageExtension.cs
 ./Mono.Security.X509.Extensions/SubjectAltNameExtension.cs
 ./Mono.Security.Cryptography/TlsHMAC.cs
-./Mono.Security.Protocol.Tls/TlsAbstractCipherSuite.cs
+./Mono.Security.Protocol.Tls/CipherSuite.cs
 ./Mono.Security.Protocol.Tls/TlsCipherSuite.cs
 ./Mono.Security.Protocol.Tls/TlsCipherSuiteCollection.cs
 ./Mono.Security.Protocol.Tls/TlsCipherSuiteFactory.cs
@@ -46,6 +46,8 @@
 ./Mono.Security.Protocol.Tls/TlsSessionState.cs
 ./Mono.Security.Protocol.Tls/TlsSocket.cs
 ./Mono.Security.Protocol.Tls/TlsStream.cs
+./Mono.Security.Protocol.Tls/TlsCompressionMethod.cs
+./Mono.Security.Protocol.Tls/TlsSslCipherSuite.cs
 ./Mono.Security.Protocol.Tls.Alerts/TlsAlert.cs
 ./Mono.Security.Protocol.Tls.Alerts/TlsCloseNotifyAlert.cs
 ./Mono.Security.Protocol.Tls.Alerts/TlsWarningAlertEventArgs.cs
