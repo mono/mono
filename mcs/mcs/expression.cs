@@ -5971,11 +5971,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		void Error_NegativeArrayIndex ()
-		{
-			Error (284, "Can not create array with a negative size");
-		}
-		
 		//
 		// Converts `source' to an int, uint, long or ulong.
 		//
@@ -6006,14 +6001,14 @@ namespace Mono.CSharp {
 			if (target is Constant){
 				if (target is IntConstant){
 					if (((IntConstant) target).Value < 0){
-						Error_NegativeArrayIndex ();
+						Expression.Error_NegativeArrayIndex (loc);
 						return null;
 					}
 				}
 
 				if (target is LongConstant){
 					if (((LongConstant) target).Value < 0){
-						Error_NegativeArrayIndex ();
+						Expression.Error_NegativeArrayIndex (loc);
 						return null;
 					}
 				}

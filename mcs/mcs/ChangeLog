@@ -1,5 +1,9 @@
 2004-09-11  Marek Safar  <marek.safar@seznam.cz>
 
+	* ecore.cs (Error_NegativeArrayIndex): Fix 248 error.
+
+2004-09-11  Marek Safar  <marek.safar@seznam.cz>
+
 	* expression.cs (Probe.DoResolve): Add error CS0241 report.
 
 2004-09-10  Marek Safar  <marek.safar@seznam.cz>
