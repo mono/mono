@@ -228,8 +228,12 @@ namespace Mono.ILASM {
                                 methoddef.AddLocals (local_array, init_locals);
                         }
 
-                        if (max_stack >= 0)
-                                methoddef.SetMaxStack (max_stack);
+                        /// Nothing seems to work if maxstack is not set,
+                        /// i need to find out if this NEEDs to be set
+                        /// and what its default value should be
+                        if (max_stack < 0)
+                                max_stack = 8;
+                        methoddef.SetMaxStack (max_stack);
 
                         if (inst_list.Count < 1)
                                 return;

@@ -1,5 +1,9 @@
 2003-05-10 Jackson Harper <jackson@latitudegeo.com>
 
+	* MethodDef.cs: Allways set max stack
+		
+2003-05-10 Jackson Harper <jackson@latitudegeo.com>
+
 	* ExternTable.cs: Alias corlib to mscorlib since these seem to get
 	used interchangably
 		
