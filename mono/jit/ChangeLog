@@ -1,3 +1,8 @@
+
+Mon Apr 8 17:16:40 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* jit.c: call mono_runtime_init ().
+
 2002-04-08  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (mono_jit_cleanup): added more statistics
