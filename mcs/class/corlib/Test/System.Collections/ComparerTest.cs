@@ -2,27 +2,24 @@
 
 using System;
 using System.Collections;
-
 using NUnit.Framework;
-
 
 
 namespace MonoTests.System.Collections {
 
 
-	/// <summary>Comparer test suite.</summary>
-	public class ComparerTest : TestCase {
-		protected override void SetUp ()
-		{
-		}
+	[TestFixture]
+	public class ComparerTest {
 
+		[Test]
 		public void TestDefaultInstance ()
 		{
 			// Make sure the instance returned by Default
 			// is really a Comparer.
-			Assert((Comparer.Default as Comparer) != null);
+			Assert.IsNotNull (Comparer.Default as Comparer);
 		}
 
+		[Test]
 		public void TestCompare ()
 		{
 			Comparer c = Comparer.Default;
@@ -35,23 +32,21 @@ namespace MonoTests.System.Collections {
 				thrown = true;
 			}
 
-			Assert("ArgumentException expected", thrown);
+			Assert.IsTrue (thrown, "ArgumentException expected");
 
-			Assert(c.Compare (1, 2) < 0);
-			Assert(c.Compare (2, 2) == 0);
-			Assert(c.Compare (3, 2) > 0);
+			Assert.IsTrue (c.Compare (1, 2) < 0, "1,2");
+			Assert.IsTrue (c.Compare (2, 2) == 0, "2,2");
+			Assert.IsTrue (c.Compare (3, 2) > 0, "3,2");
 
 		}
 
+
 		[Test]
+		
 		public void Invariant ()
 		{
 			Comparer c = Comparer.DefaultInvariant;
-
-			Assert (c.Compare ("a", "A") < 0);
+			Assert.IsTrue (c.Compare ("a", "A") < 0);
 		}
-		
-				
 	}
-
 }
