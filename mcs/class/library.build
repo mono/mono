@@ -14,6 +14,7 @@
 		<nant basedir="System.XML" target="build"/>
 		<nant basedir="System.Data" target="build"/>
 		<nant basedir="System.Web" target="build"/>
+		<nant basedir="System.Web.Services" target="build"/>
 		<nant basedir="Microsoft.VisualBasic" target="build"/>
 		<nant basedir="System.Configuration.Install" target="build"/>
 	</target>
