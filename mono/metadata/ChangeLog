@@ -1,3 +1,14 @@
+2003-10-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c: removed mono_delegate_semaphore.
+
+	* threadpool.c:
+	(mono_thread_pool_add): moved hash table creation inside and the thread 
+	creation outside of the critical region.
+	(mono_thread_pool_finish): removed obsolete code.
+	(async_invoke_thread): don't use the semaphore. Use a plain Sleep and
+	continue or exit the thread depending on the queue.
+
 2003-10-07  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* metadata.c (mono_type_to_unmanaged): allow bools to marshal as I1
