@@ -9,6 +9,5 @@ public class Y {
 	static void Main ()
 	{
 	}
-	
 }
 
