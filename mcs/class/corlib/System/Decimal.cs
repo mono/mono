@@ -172,12 +172,13 @@ namespace System
 				"Value is greater than Decimal.MaxValue or less than Decimal.MinValue"));
 		}
 		// we must respect the precision (double2decimal doesn't)
-		Decimal d = Decimal.Parse (val.ToString (CultureInfo.InvariantCulture), NumberStyles.Float);
+		Decimal d = Decimal.Parse (val.ToString (CultureInfo.InvariantCulture),
+				NumberStyles.Float, CultureInfo.InvariantCulture);
 		ss32 = d.ss32;
 		hi32 = d.hi32;
 		lo32 = d.lo32;
 		mid32 = d.mid32;
-        }
+	}
 
 	public Decimal (double val) 
 	{
@@ -186,7 +187,8 @@ namespace System
 				"Value is greater than Decimal.MaxValue or less than Decimal.MinValue"));
 		}
 		// we must respect the precision (double2decimal doesn't)
-		Decimal d = Decimal.Parse (val.ToString (CultureInfo.InvariantCulture), NumberStyles.Float);
+		Decimal d = Decimal.Parse (val.ToString (CultureInfo.InvariantCulture),
+				NumberStyles.Float, CultureInfo.InvariantCulture);
 		ss32 = d.ss32;
 		hi32 = d.hi32;
 		lo32 = d.lo32;

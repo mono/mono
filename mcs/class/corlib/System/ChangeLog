@@ -1,3 +1,9 @@
+2004-06-21  Jackson Harper  <jackson@ximian.com>
+
+	* Decimal.cs: Make sure to use invariant culture when parsing
+	floats stringified with the invariant culture. Patch by Rodrigo
+	B. de Oliveira.
+	
 2004-06-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* FloatingPointFormatter.cs : Literal string should be kept in the
