@@ -23,12 +23,35 @@ namespace System.ComponentModel
 		}
 
 		[MonoTODO]
-		public int Add (PropertyDescriptor value) {
+		public int Add (PropertyDescriptor value)
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
+		int IList.Add (object value)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		void IDictionary.Add (object key, object value)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
 		public void Clear () {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		void IList.Clear () {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		void IDictionary.Clear () {
 			throw new NotImplementedException ();
 		}
 
@@ -38,14 +61,30 @@ namespace System.ComponentModel
 		}
 
 		[MonoTODO]
+		bool IList.Contains (object value) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		bool IDictionary.Contains (object value) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		public void CopyTo (Array array, int index) {
 			throw new NotImplementedException ();
 		}
 
 		public virtual PropertyDescriptor Find (string name, bool ignoreCase) {
+			throw new NotImplementedException ();
 		}
 
 		public virtual IEnumerator GetEnumerator () {
+			throw new NotImplementedException ();
+		}
+
+		IDictionaryEnumerator IDictionary.GetEnumerator () {
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -54,12 +93,30 @@ namespace System.ComponentModel
 		}
 
 		[MonoTODO]
+		int IList.IndexOf (object value) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		public void Insert (int index, PropertyDescriptor value) {
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
+		void IList.Insert (int index, object value) {
+			throw new NotImplementedException ();
+		}
+
 		public void Remove (PropertyDescriptor value) {
-			Remove (IndexOf (value));
+			throw new NotImplementedException ();
+		}
+
+		void IDictionary.Remove (object value) {
+			throw new NotImplementedException ();
+		}
+
+		void IList.Remove (object value) {
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -67,10 +124,17 @@ namespace System.ComponentModel
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
+		void IList.RemoveAt (int index) {
+			throw new NotImplementedException ();
+		}
+
 		public virtual PropertyDescriptorCollection Sort () {
+			throw new NotImplementedException ();
 		}
 
 		public virtual PropertyDescriptorCollection Sort (IComparer ic) {
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -85,28 +149,35 @@ namespace System.ComponentModel
 		
 		public static readonly PropertyDescriptorCollection Empty;
 
-		bool IsFixedSize {
+		public bool IsFixedSize {
 			[MonoTODO]
 			get {
 				throw new NotImplementedException ();	
 			}
 		}
 
-		bool IsReadOnly {
+		public bool IsReadOnly {
 			[MonoTODO]
 			get {
 				throw new NotImplementedException ();	
 			}
 		}
 
-		ICollection Keys {
+		public bool IsSynchronized {
+			[MonoTODO]
+			get {
+				throw new NotImplementedException ();	
+			}
+		}
+
+		public ICollection Keys {
 			[MonoTODO]
 			get {
 				throw new NotImplementedException ();
 			}
 		}
 
-		ICollection Values {
+		public ICollection Values {
 			[MonoTODO]
 			get {
 				throw new NotImplementedException ();
@@ -120,7 +191,25 @@ namespace System.ComponentModel
 			}
 		}
 
-		object this[object key] {
+		object ICollection.SyncRoot {
+			[MonoTODO]
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		public object this[object key] {
+			[MonoTODO]
+			get {
+				throw new NotImplementedException ();
+			}
+			[MonoTODO]
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		public object this [int key] {
 			[MonoTODO]
 			get {
 				throw new NotImplementedException ();
@@ -133,11 +222,7 @@ namespace System.ComponentModel
 		
 		public virtual PropertyDescriptor this[string s] {
 			get {
-			}
-		}
-		
-		public virtual PropertyDescriptor this[int i] {
-			get {
+				throw new NotImplementedException ();
 			}
 		}
 	}
