@@ -1,3 +1,12 @@
+2002-11-11  Daniel Morgan <danmorg@sc.rr.com>
+
+	* SqlSharpCli.cs: added new SQL# command \exexml 
+	to execute a query and put results in an xml file via a
+	generic DbDataAdapter and a DataSet.  Added 
+	Mono.Data.SybaseClient as a provider to use
+	via \provider sybase which is easier than SQL# command
+	\loadextprovider Mono.Data.SybaseClient Mono.DataSybaseClient.SybaseConnection
+	
 2002-10-26  Daniel Morgan <danmorg@sc.rr.com>
 
 	* SqlSharpCli.cs: just write to the console

@@ -1,20 +1,30 @@
 //
-// SqlSharpCli.cs - main driver for SqlSharp
+// SqlSharpCli.cs - main driver for SQL# Command Line Interface
+//                  found in mcs/tools/SqlSharp
 //
-//                    Currently, only working on a command line interface for SqlSharp
+//                  SQL# is a SQL query tool allowing to enter queries and get
+//                  back results displayed to the console, to an html file, or
+//                  an xml file.  SQL non-query commands and aggregates can be
+//                  can be entered too.
 //
-//                    However, once GTK# and System.Windows.Forms are good-to-go,
-//                    I would like to create a SqlSharpGui using this.
+//                  Can be used to test the various data providers in Mono
+//                  and data providers external to Mono.
 //
-//                    It would be nice if this is included as part of Mono
-//                    extra goodies under Mono.Data.SqlSharp.
+//                  There is a GTK# version of SQL# 
+//                  found in mcs/tools/SqlSharp/gui/gtk-sharp
 //
-//                    Also, this makes a good Test program for Mono System.Data.
-//                    For more information about Mono::, 
-//                    visit http://www.go-mono.com/
+//                  This program is included in Mono and is licenced under the GPL.
+//                  http://www.fsf.org/licenses/gpl.html  
 //
-// To build SqlSharpCli.cs:
+//                  For more information about Mono, 
+//                  visit http://www.go-mono.com/
+//
+// To build SqlSharpCli.cs on Linux:
 // $ mcs SqlSharpCli.cs -r System.Data.dll
+//
+// To build SqlSharpCli.exe on Windows:
+// $ mono c:/cygwin/home/someuser/mono/install/bin/mcs.exe \ 
+//        SqlSharpCli.cs -r System.Data.dll
 //
 // To run with mono:
 // $ mono SqlSharpCli.exe
@@ -621,8 +631,103 @@ namespace Mono.Data.SqlSharp {
 			}
 		}
 
-		public void ExecuteSqlXml(string sql) {
-			Console.WriteLine("Error: Not implemented yet.");
+		public void ExecuteSqlXml(string sql, string[] parms) {
+			string filename = "";
+
+			if(parms.Length != 2) {
+				Console.WriteLine("Error: wrong number of parameters");
+				return;
+			}
+			try {
+				filename = parms[1];
+			}
+			catch(Exception e) {
+				Console.WriteLine("Error: Unable to setup output results file. " + 
+					e.Message);
+				return;
+			}
+
+			try {	
+				Console.WriteLine("Execute SQL XML: " + sql);
+
+				IDbCommand cmd = null;
+				
+				cmd = conn.CreateCommand();
+
+				// set command properties
+				cmd.CommandType = CommandType.Text;
+				cmd.CommandText = sql;
+				cmd.Connection = conn;
+
+				BuildParameters(cmd);
+
+				Console.WriteLine("Creating new DataSet...");
+				DataSet dataSet = new DataSet ();
+
+				Console.WriteLine("Creating new provider DataAdapter...");                        
+				DbDataAdapter adapter = CreateNewDataAdapter (cmd, conn);		
+
+				Console.WriteLine("Filling DataSet via Data Adapter...");
+				adapter.Fill (dataSet);	
+							
+				Console.WriteLine ("Write DataSet to XML file: " + 
+					filename);
+				dataSet.WriteXml (filename);
+
+				Console.WriteLine ("Done.");
+			}
+			catch(Exception exexml) {
+				Console.WriteLine("Error: Execute SQL XML Failure: " + 
+					exexml);
+			}
+		}
+
+		public DbDataAdapter CreateNewDataAdapter (IDbCommand command,
+			IDbConnection connection) {
+
+			DbDataAdapter adapter = null;
+
+			switch(provider) {
+			// FIXME: System.Data.Odbc does not have
+			//        have a OdbcDataAdapter yet
+			//case "ODBC":
+			//	adapter = (DbDataAdapter) new OdbcDataAdapter ();
+			//	break;
+			case "OLEDB":
+				adapter = (DbDataAdapter) new OleDbDataAdapter ();
+				break;
+			case "SQLCLIENT":
+				adapter = (DbDataAdapter) new SqlDataAdapter ();
+				break;
+			case "LOADEXTPROVIDER":
+				adapter = CreateExternalDataAdapter (command, connection);
+				if (adapter == null)
+					return null;
+				break;
+			default:
+				Console.WriteLine("Error: Data Adapter not found in provider.");
+				return null;
+			}
+			IDbDataAdapter dbAdapter = (IDbDataAdapter) adapter;
+			dbAdapter.SelectCommand = command;
+
+			return adapter;
+		}
+
+		public DbDataAdapter CreateExternalDataAdapter (IDbCommand command,
+			IDbConnection connection) {
+
+			DbDataAdapter adapter = null;
+
+			Assembly ass = Assembly.Load (providerAssembly); 
+			Type [] types = ass.GetTypes (); 
+			foreach (Type t in types) { 
+				if (t.IsSubclassOf (typeof(System.Data.Common.DbDataAdapter))) {
+					adapter = (DbDataAdapter) Activator.CreateInstance (t);	
+				}
+			}
+                        
+			return adapter;
 		}
 
 		// like ShowHelp - but only show at the beginning
@@ -636,8 +741,8 @@ namespace Mono.Data.SqlSharp {
 			Console.WriteLine(@"                  Oracle,PostgreSql,Sqlite,Sybase,Tds)");
 			Console.WriteLine(@"       \Open to open the connection");
 			Console.WriteLine(@"       \Close to close the connection");
-			Console.WriteLine(@"       \Execute to execute SQL command(s)/queries(s)");
-			Console.WriteLine(@"       \h to show this help.");
+			Console.WriteLine(@"       \e to execute SQL query (SELECT)");
+			Console.WriteLine(@"       \h to show help (all commands).");
 			Console.WriteLine(@"       \defaults to show default variables.");
 			Console.WriteLine();
 		}
@@ -652,34 +757,38 @@ namespace Mono.Data.SqlSharp {
 			Console.WriteLine(@"                  Oracle,PostgreSql,Sqlite,Sybase,Tds}");
 			Console.WriteLine(@"       \Open to open the connection");
 			Console.WriteLine(@"       \Close to close the connection");
-			Console.WriteLine(@"       \Execute to execute SQL command(s)/queries(s)");
-			Console.WriteLine(@"       \exenonquery execute an SQL non query (not a SELECT).");
-			Console.WriteLine(@"       \exescalar execute SQL to get a single row/single column result.");
-			Console.WriteLine(@"       \f FILENAME to read a batch of Sql# commands/queries from.");
-			Console.WriteLine(@"       \o FILENAME to write out the result of commands executed.");
+			Console.WriteLine(@"       \e to execute SQL query (SELECT)");
+			Console.WriteLine(@"       \exenonquery to execute an SQL non query (not a SELECT).");
+			Console.WriteLine(@"       \exescalar to execute SQL to get a single row and single column.");
+			Console.WriteLine(@"       \exexml FILENAME to execute SQL and save output to XML file.");
+			Console.WriteLine(@"       \f FILENAME to read a batch of SQL# commands from file.");
+			Console.WriteLine(@"       \o FILENAME to write result of commands executed to file.");
 			Console.WriteLine(@"       \load FILENAME to load from file SQL commands into SQL buffer.");
 			Console.WriteLine(@"       \save FILENAME to save SQL commands from SQL buffer to file.");
-			Console.WriteLine(@"       \h to show this help.");
+			Console.WriteLine(@"       \h to show help (all commands).");
 			Console.WriteLine(@"       \defaults to show default variables, such as,");
 			Console.WriteLine(@"            Provider and ConnectionString.");
 			Console.WriteLine(@"       \s {TRUE, FALSE} to silent messages.");
-			Console.WriteLine(@"       \r reset (clear) the query buffer.");
-			Console.WriteLine(@"       \set NAME VALUE - set an internal variable.");
+			Console.WriteLine(@"       \r to reset or clear the query buffer.");
 			WaitForEnterKey();
-			Console.WriteLine(@"       \unset NAME - remove an internal variable.");
-			Console.WriteLine(@"       \variable NAME - display the value of an internal variable.");
-			Console.WriteLine(@"       \loadextprovider ASSEMBLY CLASS - load the provider"); 
+			Console.WriteLine(@"       \set NAME VALUE to set an internal variable.");
+			Console.WriteLine(@"       \unset NAME to remove an internal variable.");
+			Console.WriteLine(@"       \variable NAME to display the value of an internal variable.");
+			Console.WriteLine(@"       \loadextprovider ASSEMBLY CLASS to load the provider"); 
 			Console.WriteLine(@"            use the complete name of its assembly and");
 			Console.WriteLine(@"            its Connection class.");
 			Console.WriteLine(@"       \print - show what's in the SQL buffer now.");
-			Console.WriteLine(@"       \UseParameters (TRUE,FALSE) - use parameters when executing SQL.");
-			Console.WriteLine(@"       \UseSimpleReader (TRUE,FALSE) - use simple reader when displaying results.");
+			Console.WriteLine(@"       \UseParameters (TRUE,FALSE) to use parameters when executing SQL.");
+			Console.WriteLine(@"       \UseSimpleReader (TRUE,FALSE) to use simple reader when displaying results.");
 			Console.WriteLine();
 		}
 
-		public void WaitForEnterKey() {
+		public bool WaitForEnterKey() {
                         Console.Write("Waiting... Press Enter key to continue. ");
 			string entry = Console.ReadLine();
+			if (entry.ToUpper() == "Q")
+				return false;
+			return true;
 		}
 
 		// ShowDefaults - show defaults for connection variables
@@ -784,6 +893,15 @@ namespace Mono.Data.SqlSharp {
 								     "\\loadextprovider",
 								     "Mono.Data.TdsClient",
 								     "Mono.Data.TdsClient.TdsConnection"};
+					SetupExternalProvider(extp);
+					UseParameters = false;
+					UseSimpleReader = false;
+					break;
+				case "SYBASE":
+					extp = new string[3] {
+								     "\\loadextprovider",
+								     "Mono.Data.SybaseClient",
+								     "Mono.Data.SybaseClient.SybaseConnection"};
 					SetupExternalProvider(extp);
 					UseParameters = false;
 					UseSimpleReader = false;
@@ -1138,6 +1256,8 @@ namespace Mono.Data.SqlSharp {
 				SetupSilentMode(parms);
 				break;
 			case "\\E":
+			case "\\EXEQUERY":
+			case "\\EXEREADER":
 			case "\\EXECUTE":
 				// Execute SQL Commands or Queries
 				if(conn == null)
@@ -1184,6 +1304,22 @@ namespace Mono.Data.SqlSharp {
 					build = null;
 				}
 				break;
+			case "\\EXEXML":
+				// \exexml OUTPUT_FILENAME
+				if(conn == null)
+					Console.WriteLine("Error: connection is not Open.");
+				else if(conn.State == ConnectionState.Closed)
+					Console.WriteLine("Error: connection is not Open.");
+				else {
+					if(build == null)
+						Console.WriteLine("Error: SQL Buffer is empty.");
+					else {
+						buff = build.ToString();
+						ExecuteSqlXml(buff, parms);
+					}
+					build = null;
+				}
+				break;
 			case "\\F":
 				SetupInputCommandsFile(parms);
 				break;
@@ -1211,6 +1347,8 @@ namespace Mono.Data.SqlSharp {
 			case "\\QUIT":
 				// Quit
 				break;
+			case "\\CLEAR":
+			case "\\RESET":
 			case "\\R": 
 				// reset (clear) the query buffer
 				build = null;
