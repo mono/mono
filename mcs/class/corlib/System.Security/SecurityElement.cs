@@ -322,9 +322,9 @@ namespace System.Security
 			else {
 				s.Append (">").Append (text);
 				if (children != null) {
-					for (int i = 0; i < children.Count; i++) {
+					foreach (SecurityElement child in children) {
 						s.Append (Environment.NewLine);
-						((SecurityElement) children [i]).ToXml (ref s, level + 1);
+						child.ToXml (ref s, level + 1);
 					}
 				}
 				s.Append (Environment.NewLine)

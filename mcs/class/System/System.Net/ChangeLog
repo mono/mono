@@ -1,3 +1,11 @@
+2002-04-28  Lawrence Pit <loz@cable.a2000.nl>
+
+	* EndpointPermission: implemented
+	* SocketPermission.cs: implemented
+	* SocketPermissionAttribute.cs: implemented
+	* ProtocolViolationException.cs: implemented
+	* Dns.c: passing w32 error code when no host found
+
 2002-04-27  Lawrence Pit <loz@cable.a2000.nl>
 
 	* Cookie.cs: implemented

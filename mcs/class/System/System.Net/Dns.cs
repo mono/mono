@@ -152,7 +152,7 @@ namespace System.Net {
                                                           out h_aliases,
                                                           out h_addrlist);
                         if (ret == false) {
-                                throw new SocketException();
+                                throw new SocketException(11001);
                         }
                         
                         return(hostent_to_IPHostEntry(h_name, h_aliases,
@@ -171,7 +171,7 @@ namespace System.Net {
                                                           out h_aliases,
                                                           out h_addrlist);
                         if (ret == false) {
-                                throw new SocketException();
+                                throw new SocketException(11001);
                         }
 
                         return(hostent_to_IPHostEntry(h_name, h_aliases,

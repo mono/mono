@@ -55,7 +55,8 @@ namespace System.Security {
 		///<returns> A System.String containing the XML  representation of the state of the current instance.</returns>
 		public override string ToString()
 		{
-		    return null;
+			SecurityElement elem = ToXml ();
+			return elem == null ? null : elem.ToString ();
 		}
 
 		///<summary> Returns the XML encoding of the current instance.</summary>

@@ -1,4 +1,8 @@
-2002-04-47  Lawrence Pit <loz@cable.a2000.nl>
+2002-04-28  Lawrence Pit <loz@cable.a2000.nl>
+
+	* CodeAccessPermission.cs : implemented ToString method
+
+2002-04-27  Lawrence Pit <loz@cable.a2000.nl>
 
 	* SecurityElement.cs: fixed bugs, implemented several methods
 
