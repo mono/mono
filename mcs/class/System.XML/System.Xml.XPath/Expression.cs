@@ -296,7 +296,7 @@ namespace System.Xml.XPath
 		}
 		protected static XsltContext DefaultContext { get { return _ctxDefault; } }
 
-		static XPathResultType GetReturnType (object obj)
+		protected static XPathResultType GetReturnType (object obj)
 		{
 			if (obj is string)
 				return XPathResultType.String;
@@ -462,6 +462,13 @@ namespace System.Xml.XPath
 		{
 			XPathResultType typeL = _left.GetReturnType (iter);
 			XPathResultType typeR = _right.GetReturnType (iter);
+
+			// TODO: avoid double evaluations
+			if (typeL == XPathResultType.Any)
+				typeL = GetReturnType (_left.Evaluate (iter));
+			if (typeR == XPathResultType.Any)
+				typeR = GetReturnType (_right.Evaluate (iter));
+
 			if (typeL == XPathResultType.NodeSet || typeR == XPathResultType.NodeSet)
 			{
 				Expression left, right;
@@ -557,6 +564,13 @@ namespace System.Xml.XPath
 		{
 			XPathResultType typeL = _left.GetReturnType (iter);
 			XPathResultType typeR = _right.GetReturnType (iter);
+
+			// TODO: avoid double evaluations
+			if (typeL == XPathResultType.Any)
+				typeL = GetReturnType (_left.Evaluate (iter));
+			if (typeR == XPathResultType.Any)
+				typeR = GetReturnType (_right.Evaluate (iter));
+
 			if (typeL == XPathResultType.NodeSet || typeR == XPathResultType.NodeSet)
 			{
 				bool fReverse = false;

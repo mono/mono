@@ -1,5 +1,9 @@
 2003-07-28  Piers Haken	<piersh@friskit.com>
 
+	* Expression.cs: boolean operators: handle comparing .Any better
+
+2003-07-28  Piers Haken	<piersh@friskit.com>
+
 	* DefaultContext.cs: count() should return a double
 	* Expression.cs: better support for handling non-double numbers
 
