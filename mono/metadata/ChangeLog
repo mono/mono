@@ -12,6 +12,11 @@
 
 2005-02-10  Martin Baulig  <martin@ximian.com>
 
+	* icall.c (ves_icall_MonoDebugger_MakeArrayType): New interncall.
+	(ves_icall_MonoDebugger_GetTypeToken): New interncall.
+
+2005-02-10  Martin Baulig  <martin@ximian.com>
+
 	* mono-debug.c, mono-debug-debugger.c: Completely reworked the
 	debugging code; this is almost a complete rewrite.
 
