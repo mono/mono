@@ -106,8 +106,6 @@ namespace Mono.Data.SqliteClient
 			IntPtr pazValue = IntPtr.Zero;
 			IntPtr pazColName = IntPtr.Zero;
 			SqliteError res;
-			IntPtr errStr = IntPtr.Zero;
-			string msg = "";
 
 			while (true) {
 				if (version == 3) {
