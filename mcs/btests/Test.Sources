@@ -132,7 +132,8 @@ PropertyA \
 PropertyB \
 PropertyC \
 PropertyD \
-PropertyE                                                          
+PropertyE \
+DelegateA
 
 # All negetive test cases which should
 # fail during compilation goes here
@@ -281,7 +282,9 @@ EnumC7 \
 PropertyC1 \
 PropertyC2 \
 PropertyC3 \
-PropertyC4 
+PropertyC4 \
+DelegateC1 \
+DelegateC2 
 
 # All negetive test cases which should fail at
 # runtime goes here
