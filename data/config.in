@@ -2,4 +2,5 @@
 	<dllmap dll="cygwin1.dll" target="@LIBC@" />
 	<dllmap dll="libc" target="@LIBC@" />
 	<dllmap dll="libxslt.dll" target="libxslt.so" />
+	<dllmap dll="libmySQL.dll" target="libmysqlclient.so" />
 </configuration>
