@@ -1,3 +1,17 @@
+2004-03-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ChangeLog: commited missing ChangeLog entries.
+
+2004-03-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CertificateFormatter.cs: Support PEM (base64) certificates. Removed
+	temporary comments for MCS bug.
+	* certview.exe.config: Added KeyAttributesExtension extension.
+	* gcertview.cs: Updated to work with latest Gtk#.
+	* gcertview.exe.config: Added KeyAttributesExtension extension.
+	* Makefile: Re-added the /win32icon:mono.ico (now supported by mcs).
+	* TODO: New. Incomplete TODO for X.509 GUI tools
+
 2003-06-15  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* .cvsignore: Ignore generated files (remove with make clean).
