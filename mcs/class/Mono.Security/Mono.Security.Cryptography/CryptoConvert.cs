@@ -97,7 +97,7 @@ namespace Mono.Security.Cryptography {
 			Array.Copy (blob, pos, rsap.D, 0, byteLen);
 			Array.Reverse (rsap.D);
 
-			RSA rsa = RSA.Create ();
+			RSA rsa = (RSA)RSA.Create ();
 			try {
 				rsa.ImportParameters (rsap);
 			}
@@ -210,7 +210,7 @@ namespace Mono.Security.Cryptography {
 			Array.Copy (blob, pos, rsap.Modulus, 0, byteLen);
 			Array.Reverse (rsap.Modulus);
 
-			RSA rsa = RSA.Create ();
+			RSA rsa = (RSA)RSA.Create ();
 			try {
 				rsa.ImportParameters (rsap);
 			}

@@ -1,3 +1,7 @@
+2003-06-19  Nick Drochak <ndrochak@gol.com>
+
+	* CryptoConvert.cs: Work around for mcs? bug 45127.
+
 2003-03-07  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ARC4Managed.cs: New. Implementation of the Alleged RC4(tm)
