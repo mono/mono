@@ -68,8 +68,9 @@
 // UI64 |   X    X    X      X   X   X   X   X    X    X   X    X    X    X
 //
 
-using System.Security.Cryptography;
 using System.Globalization;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace System {
   
@@ -1524,7 +1525,7 @@ namespace System {
 			if (NotValidBase (toBase))
 				throw new ArgumentException ("toBase is not valid.");
 			
-			return ConvertToBase ((int) value, int toBase);
+			return ConvertToBase ((int) value, toBase);
 		}
 
 		public static string ToString (char value) 
@@ -2197,7 +2198,7 @@ namespace System {
 			return result;
 		}
 
-		private static string ConvertToBase (value, toBase)
+		private static string ConvertToBase (int value, int toBase)
 		{
 			StringBuilder sb = new StringBuilder ();
 			BuildConvertedString (sb, value, toBase);
@@ -2210,7 +2211,7 @@ namespace System {
 			int reminder = value % toBase;		
 
 			if (divided > 0)
-				SBFromBase (sb, divided, toBase);
+				BuildConvertedString (sb, divided, toBase);
 		
 			if (reminder >= 10)
 				sb.Append ((char) (reminder + 'a' - 10));
