@@ -1,4 +1,8 @@
 
+Fri Apr 30 15:54:26 EDT 2004	Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: fixed typos.
+
 Thu Apr 29 20:15:41 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c, exceptions-ppc.c: more code saves registers
