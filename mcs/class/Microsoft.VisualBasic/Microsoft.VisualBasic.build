@@ -9,21 +9,19 @@
 		<mkdir dir="../lib"/>
 		<csc target="library" output="../lib/Microsoft.VisualBasic.dll" debug="${debug}">
 			<arg value="/nowarn:1595"/>
-			<arg value="/unsafe"/>
 			<arg value="/noconfig"/>	<!-- don't reference ms assemblies -->
-			<arg value="/r:System.dll"/>
-			<arg value="/lib:../lib/"/>
+			<!--<arg value="/lib:../lib/"/>-->
 			
 			<!-- cor compare dies with these currently -->
 			<!--arg value="/nostdlib"/--> 	<!-- don't reference mscorlib -->
 			<!--arg value="/r:corlib.dll"/-->
-			<arg value="/r:System.Xml.dll"/>
+			<arg value="/r:..\lib\System.dll"/>
 			<sources>
 				<includes name="**/*.cs"/> 
 				<excludes name="Test/**"/>
 			</sources>
 			<references>
-				<includes name="../lib/corlib.dll"/>
+				<!--<includes name="../lib/corlib.dll"/>-->
 				<includes name="../lib/System.dll"/>
 			</references>
 		</csc>
@@ -32,9 +30,11 @@
 	</target>
 
 	<target name="test" depends="build">
+		<nant basedir="Test" target="test"/>
 	</target>
 
 	<target name="clean">
+		<nant basedir="Test" target="clean"/>
 		<delete file="../lib/Microsoft.VisualBasic.dll" failonerror="false"/>
 	</target>
 </project>
