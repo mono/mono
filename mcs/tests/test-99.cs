@@ -32,6 +32,13 @@ class X {
 		// Now try the implicit conversions for underlying types in enum operators
 		byte b = 1;
 		short s = (short) (Test.A + b);
+
+		//
+		// Make sure that other operators still work
+		if (Test.A != Test.A)
+			return 3;
+		if (Test.A == Test.B)
+			return 4;
 		
 		return 0;
 	}
