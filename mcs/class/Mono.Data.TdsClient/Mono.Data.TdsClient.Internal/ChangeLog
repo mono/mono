@@ -1,3 +1,28 @@
+2002-10-23  Tim Coleman (tim@timcoleman.com)
+        * ITds.cs:
+        * Tds42.cs:
+        * Tds50.cs:
+        * Tds70.cs:
+        * Tds80.cs:
+                New classes added.  Functionality
+                is split up because different protocols
+                have slight differences.
+        * Tds.cs:
+                Remove some unnecessary code after
+                the above split, and add in a whole
+                lot more stuff for completeness.
+        * TdsColumnType.cs:
+                Fix Int4.  Wrong enum value.
+        * TdsComm.cs:
+                Move the encoder out of constructor
+                because we don't know the charset at
+                that point
+        * TdsConnectionParameters.cs:
+                Small changes
+        * TdsPacketEndTokenResult.cs:
+                Implement ToString ()
+
+
 2002-10-22  Tim Coleman (tim@timcoleman.com)
 	* Tds.cs :
 		More implementation.  Does some

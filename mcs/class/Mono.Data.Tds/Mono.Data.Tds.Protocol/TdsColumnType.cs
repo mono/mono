@@ -21,7 +21,7 @@ namespace Mono.Data.TdsClient.Internal {
 		Int1 = 0x30,
 		Bit = 0x32,
 		Int2 = 0x34,
-		Int4 = 0x56,
+		Int4 = 0x38,
 		DateTime4 = 0x3a,
 		Real = 0x3b,
 		Money = 0x3c,

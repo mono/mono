@@ -20,6 +20,7 @@ namespace Mono.Data.TdsClient.Internal {
 		int rowCount;
 		bool isRetStatSet;
 		int retStat;
+		TdsPacketSubType type;
 
 		#endregion // Fields
 
@@ -30,6 +31,7 @@ namespace Mono.Data.TdsClient.Internal {
 		{
 			if (type == TdsPacketSubType.DoneInProc)
 				throw new TdsException ("");
+			this.type = type;
 			this.status = status;
 			this.rowCount = rowCount;
 			this.isRetStatSet = false;
@@ -70,7 +72,7 @@ namespace Mono.Data.TdsClient.Internal {
 		[MonoTODO]
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			return String.Format ("token type: {0}, row count: {1}, more results: {2}, was cancelled? {3}, return status: {4}", type, RowCount, MoreResults, Cancelled, (ReturnStatusExists ? ReturnStatus.ToString () : "No return status"));
 		}	
 
 		#endregion // Methods

@@ -44,9 +44,8 @@ namespace Mono.Data.TdsClient.Internal {
 		
 		#region Constructors
 		
-		public TdsComm (Encoding encoder, Socket socket, int packetSize, TdsVersion tdsVersion)
+		public TdsComm (Socket socket, int packetSize, TdsVersion tdsVersion)
 		{
-			this.encoder = encoder;
 			this.packetSize = packetSize;
 			this.tdsVersion = tdsVersion;
 
@@ -61,6 +60,10 @@ namespace Mono.Data.TdsClient.Internal {
 		#endregion // Constructors
 		
 		#region Properties
+
+		internal Encoding Encoder {
+			set { encoder = value; }
+		}
 		
 		public int PacketSize {
 			get { return packetSize; }
@@ -163,6 +166,9 @@ namespace Mono.Data.TdsClient.Internal {
 		// Appends with padding
 		public byte[] Append (string s, int len, byte pad)
 		{
+			if (s == null)
+				return new byte[0];
+
 			byte[] result = encoder.GetBytes (s);
 			Append (result, len, pad);
 			return result;
