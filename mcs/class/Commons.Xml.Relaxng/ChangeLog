@@ -1,0 +1,6 @@
+2003-04-29  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* Started.
+	* added ChangeLog, list, list.unix, makefile.gnu and
+	  Commons.Xml.Relaxng.build.
+
