@@ -1,3 +1,8 @@
+2004-10-14  Miguel de Icaza  <miguel@ximian.com>
+
+	* TextInfo.cs: Fix ToTitleCase to do title case for each word on
+	the string per the spec.
+
 2004-06-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeFormatInfo.cs : check if pattern array is empty or not. Now
