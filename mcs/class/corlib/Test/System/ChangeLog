@@ -1,3 +1,9 @@
+2002-03-28  Nick Drochak  <ndrochak@gol.com>
+
+	* EnumTest.cs(TestFormat): Use Fail() instead of AssertEquals() in
+	try-catch blocks. Add test to check if correct exception is being 
+	thrown.
+
 2002/03/18  Nick Drochak <ndrochak@gol.com>
 
 	* ByteTest.cs:

@@ -86,90 +86,91 @@ public class EnumTest : TestCase
 	}
 
 	public void TestFormat() {
-		{
-			bool errorThrown = false;
-			try {
-				TestingEnum x = TestingEnum.Test;
-				Enum.Format(null, x, "G");
-			} catch (ArgumentNullException) {
-				errorThrown = true;
-			}
-			Assert("null first arg not caught.", 
-			       errorThrown);
+		try {
+			TestingEnum x = TestingEnum.Test;
+			Enum.Format(null, x, "G");
+			Fail("null first arg not caught.");
+		} catch (ArgumentNullException) {
+			return;
+		} catch (Exception e) {
+			Fail("first arg null, wrong exception: " + e.ToString());
 		}
-		{
-			bool errorThrown = false;
-			try {
-				TestingEnum x = TestingEnum.Test;
-				Enum.Format(x.GetType(), null, "G");
-			} catch (ArgumentNullException) {
-				errorThrown = true;
-			}
-			Assert("null second arg not caught.", 
-			       errorThrown);
+		Fail ("01 - Should not be here");
+
+		try {
+			TestingEnum x = TestingEnum.Test;
+			Enum.Format(x.GetType(), null, "G");
+			Fail("null second arg not caught.");
+		} catch (ArgumentNullException) {
+			return;
+		} catch (Exception e) {
+			Fail("second arg null, wrong exception: " + e.ToString());
 		}
-		{
-			bool errorThrown = false;
-			try {
-				TestingEnum x = TestingEnum.Test;
-				Enum.Format(x.GetType(), x, null);
-			} catch (ArgumentNullException) {
-				errorThrown = true;
-			}
-			Assert("null third arg not caught.", 
-			       errorThrown);
+		Fail ("02 - Should not be here");
+
+		try {
+			TestingEnum x = TestingEnum.Test;
+			Enum.Format(x.GetType(), x, null);
+			Fail("null third arg not caught.");
+		} catch (ArgumentNullException) {
+			return;
+		} catch (Exception e) {
+			Fail("third arg null, wrong exception: " + e.ToString());
 		}
-		{
-			bool errorThrown = false;
-			try {
-				String bad = "huh?";
-				TestingEnum x = TestingEnum.Test;
-				Enum.Format(bad.GetType(), x, "G");
-			} catch (ArgumentException) {
-				errorThrown = true;
-			}
-			Assert("non-enum type not caught.", 
-			       errorThrown);
+		Fail ("03 - Should not be here");
+
+		try {
+			String bad = "huh?";
+			TestingEnum x = TestingEnum.Test;
+			Enum.Format(bad.GetType(), x, "G");
+			Fail("bad type arg not caught.");
+		} catch (ArgumentNullException) {
+			return;
+		} catch (Exception e) {
+			Fail("bad type, wrong exception: " + e.ToString());
 		}
-		{
-			bool errorThrown = false;
-			try {
-				TestingEnum x = TestingEnum.Test;
-				TestingEnum2 y = TestingEnum2.Test;
-				Enum.Format(y.GetType(), x, "G");
-			} catch (ArgumentException) {
-				errorThrown = true;
-			}
-			Assert("wrong enum type not caught.", 
-			       errorThrown);
+		Fail ("04 - Should not be here");
+
+		try {
+			TestingEnum x = TestingEnum.Test;
+			TestingEnum2 y = TestingEnum2.Test;
+			Enum.Format(y.GetType(), x, "G");
+			Fail("wrong enum type not caught.");
+		} catch (ArgumentNullException) {
+			return;
+		} catch (Exception e) {
+			Fail("wrong enum type, wrong exception: " + e.ToString());
 		}
-		{
-			bool errorThrown = false;
-			try {
-				String bad = "huh?";
-				TestingEnum x = TestingEnum.Test;
-				Enum.Format(x.GetType(), bad, "G");
-			} catch (ArgumentException) {
-				errorThrown = true;
-			}
-			Assert("non-enum object not caught.", 
-			       errorThrown);
+		Fail ("05 - Should not be here");
+
+		try {
+			String bad = "huh?";
+			TestingEnum x = TestingEnum.Test;
+			Enum.Format(x.GetType(), bad, "G");
+			Fail("non-enum object not caught.");
+		} catch (ArgumentNullException) {
+			return;
+		} catch (Exception e) {
+			Fail("non-enum object, wrong exception: " + e.ToString());
 		}
+		Fail ("06 - Should not be here");
+
 		string[] codes = {"a", "b", "c", "ad", "e", "af", "ag", "h", 
 				  "i", "j", "k", "l", "m", "n", "o", "p", 
 				  "q", "r", "s", "t", "u", "v", "w", "ax", 
 				  "y", "z"};
 		foreach (string code in codes) {
-			bool errorThrown = false;
 			try {
 				TestingEnum x = TestingEnum.Test;
 				Enum.Format(x.GetType(), x, code);
+				Fail ("bad format code not caught - " + code);
 			} catch (FormatException) {
-				errorThrown = true;
+
+			} catch (Exception e) {
+				Fail ("bad format code, wrong exception: " + e.ToString());
 			}
-			Assert("bad format code not caught - " + code, 
-			       errorThrown);
 		}
+
 		{
 			TestingEnum x = TestingEnum.Test;
 			AssertEquals("decimal format wrong", 
@@ -292,10 +293,10 @@ public class EnumTest : TestCase
 	public void TestGetTypeCode() {
 		TestingEnum x = TestingEnum.This;
 		TestingEnum y = new TestingEnum();
-		AssertEquals("bad type code", 
-			     x.GetTypeCode(), TypeCode.Int32);
-		AssertEquals("bad type code", 
-			     y.GetTypeCode(), TypeCode.Int32);
+		AssertEquals("01 bad type code", 
+			     TypeCode.Int32, x.GetTypeCode());
+		AssertEquals("02 bad type code", 
+			     TypeCode.Int32, y.GetTypeCode());
 	}
 
 	enum TestShortEnum : short { zero, one, two, three, four, five, six};
