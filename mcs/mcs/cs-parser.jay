@@ -1171,7 +1171,7 @@ event_declaration
 	| opt_attributes
 	  opt_modifiers
 	  EVENT type member_name 
-	  OPEN_BRACE event_accessor_declarations CLOSE_BRACE SEMICOLON
+	  OPEN_BRACE event_accessor_declarations CLOSE_BRACE
 	{
 		DictionaryEntry pair = (DictionaryEntry) $7;
 		Block add_block = null;

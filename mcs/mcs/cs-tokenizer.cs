@@ -148,6 +148,7 @@ namespace CIR
 
 			keywords.Add ("abstract", Token.ABSTRACT);
 			keywords.Add ("as", Token.AS);
+			keywords.Add ("add", Token.ADD);
 			keywords.Add ("base", Token.BASE);
 			keywords.Add ("bool", Token.BOOL);
 			keywords.Add ("break", Token.BREAK);
@@ -199,6 +200,7 @@ namespace CIR
 			keywords.Add ("public", Token.PUBLIC);
 			keywords.Add ("readonly", Token.READONLY);
 			keywords.Add ("ref", Token.REF);
+			keywords.Add ("remove", Token.REMOVE);
 			keywords.Add ("return", Token.RETURN);
 			keywords.Add ("sbyte", Token.SBYTE);
 			keywords.Add ("sealed", Token.SEALED);

@@ -1,5 +1,12 @@
 2001-08-28  Ravi Pratap  <ravi@che.iitm.ac.in>
 
+	* cs-tokenizer.cs (initTokens): Add keywords 'add' and 'remove'
+
+	* cs-parser.jay (event_declaration): Correct to remove the semicolon
+	when the add and remove accessors are specified. 
+
+2001-08-28  Ravi Pratap  <ravi@che.iitm.ac.in>
+
 	* cs-parser.jay (IndexerDeclaration): New helper class to hold
 	information about indexer_declarator.
 	(indexer_declarator): Implement actions.
