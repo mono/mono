@@ -1549,6 +1549,10 @@ instr			: INSTR_NONE
 			| INSTR_FIELD type type_spec DOUBLE_COLON id
 			| INSTR_FIELD type id
 			| INSTR_TYPE type_spec
+                          {
+                                codegen.CurrentMethodDef.AddInstr (new TypeInstr ((TypeOp) $1,
+                                        (ITypeRef) $2));
+                          }
 			| INSTR_STRING comp_qstring
                           {
                                 if ((MiscInstr) $1 == MiscInstr.ldstr)

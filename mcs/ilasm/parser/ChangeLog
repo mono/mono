@@ -1,5 +1,10 @@
 2003-05-07 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Add type instructions. NOTE - type_spec is not
+	fully implemented yet, so this has some explosive potential.
+		
+2003-05-07 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: Remove dotted_name, it is not used at all
 	anymore. vtattr only take an int64 param, this fix gets rid of all
 	of the remaining reduce/reduce conflicts
