@@ -1,3 +1,15 @@
+2003-10-16  Martin Baulig  <martin@ximian.com>
+
+	* class.c (inflate_generic_signature): Copy `generic_param_count'.
+	(inflate_generic_header): Copy `gen_params'.
+
+	* icall.c (ves_icall_MethodInfo_get_IsGenericMethodDefinition):
+	New interncall.
+
+	* metadata.c (mono_metadata_parse_method_signature): Actually set
+	the `method->generic_param_count' here.
+	(mono_metadata_load_generic_params): Initialize `pklass' to NULL.
+
 2003-10-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* object.h: Add a new field to TypedRef to simplify the implementation
