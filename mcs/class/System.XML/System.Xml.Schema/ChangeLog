@@ -1,3 +1,7 @@
+2004-01-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaDatatype.cs : trivial allocation fix.
+
 2003-12-17  David Sheldon  <dave-mono@earth.li>
 
   * BuiltInDatatype.cs : Added whitespace=collapse to data types 
