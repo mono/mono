@@ -1,3 +1,8 @@
+2005-02-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* cil-opcodes.xml opcode.def: Correct definition of mono_classconst and
+	add mono_not_taken which is used for branch prediction hints.
+
 2005-01-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* cil-opcodes.xml opcode.def: Add mono_classconst.
