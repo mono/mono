@@ -38,6 +38,11 @@ using System.Data.Common;
 using System.Collections;
 using System.Runtime.InteropServices;
 
+#if NET_2_0
+using System.Data.ProviderBase;
+using System.Data;
+#endif
+
 namespace System.Data.OleDb
 {
 	/// <summary>
@@ -45,7 +50,13 @@ namespace System.Data.OleDb
 	/// </summary>
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.OleDbCommandDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 	[ToolboxItemAttribute ("System.Drawing.Design.ToolboxItem, "+ Consts.AssemblySystem_Drawing)]
-	public sealed class OleDbCommand : Component, ICloneable, IDbCommand
+	public sealed class OleDbCommand : 
+#if NET_2_0
+	DbCommandBase
+#else
+	Component
+#endif
+	, ICloneable, IDbCommand
 	{
 		#region Fields
 
@@ -378,6 +389,37 @@ namespace System.Data.OleDb
 		{
 			timeout = 30;
 		}
+		
+#if NET_2_0
+		[MonoTODO]
+		protected override DbParameter CreateDbParameter ()
+		{
+			throw new NotImplementedException ();	
+		}
+		
+		[MonoTODO]
+		protected override DbDataReader ExecuteDbDataReader (CommandBehavior behavior)
+		{
+			throw new NotImplementedException ();	
+		}
+		
+		[MonoTODO]
+		protected override DbConnection DbConnection {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+		
+		[MonoTODO]
+		protected override DbParameterCollection DbParameterCollection {
+			get { throw new NotImplementedException (); }
+		}
+		
+		[MonoTODO]
+		protected override DbTransaction DbTransaction {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+#endif
 
 		#endregion
 	}
