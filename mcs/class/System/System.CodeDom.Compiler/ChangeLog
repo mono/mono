@@ -1,3 +1,8 @@
+2003-08-05  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* CodeGenerator.cs: Generate comments for properties and fields.
+	  Write a line separator between type declarations.
+
 2003-07-10  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* Executor.cs: Changed abstract to sealed

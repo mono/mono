@@ -369,8 +369,10 @@ namespace System.CodeDom.Compiler {
 
 			output.WriteLine();
 
-			foreach (CodeTypeDeclaration type in ns.Types)
+			foreach (CodeTypeDeclaration type in ns.Types) {
 				GenerateType (type);
+				output.WriteLine();
+			}
 
 			GenerateNamespaceEnd (ns);
 		}
@@ -925,6 +927,9 @@ namespace System.CodeDom.Compiler {
 
 			InitOutput (output, options);
 
+			foreach (CodeCommentStatement statement in type.Comments)
+				GenerateCommentStatement (statement);
+
 			GenerateTypeStart (type);
 
 			CodeTypeMember [] members = new CodeTypeMember [type.Members.Count];
@@ -942,6 +947,9 @@ namespace System.CodeDom.Compiler {
 
 				if (options.BlankLinesBetweenMembers)
 					output.WriteLine ();
+
+				foreach (CodeCommentStatement statement in member.Comments)
+					GenerateCommentStatement (statement);
 
 				CodeMemberEvent eventm = member as CodeMemberEvent;
 				if (eventm != null) 
