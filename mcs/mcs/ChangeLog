@@ -1,3 +1,12 @@
+2004-06-23  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (IndexerName_GetIndexerName): Renamed to
+	GetIndexerAttributeValue.
+	(ScanForIndexerName): Renamed to GetIndexerNameAttribute.
+
+	* class.cs (Indexer.Define): Added error tests for CS0415,
+	CS0609.
+
 2004-06-23  Miguel de Icaza  <miguel@ximian.com>
 
 	* attribute.cs (Attribute.Resolve): Keep field code in sync with

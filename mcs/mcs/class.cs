@@ -5920,7 +5920,7 @@ namespace Mono.CSharp {
 		const int AllowedInterfaceModifiers =
 			Modifiers.NEW;
 
-		public string IndexerName;
+		public string IndexerName = "Item";
 		public string InterfaceIndexerName;
 
 		//
@@ -5951,21 +5951,28 @@ namespace Mono.CSharp {
 			if (!DoDefine (container))
 				return false;
 
-			if (OptAttributes != null)
-				IndexerName = OptAttributes.ScanForIndexerName (ec);
+			if (OptAttributes != null) {
+				Attribute indexer_attr = OptAttributes.GetIndexerNameAttribute (ec);
+				if (indexer_attr != null) {
+					IndexerName = indexer_attr.GetIndexerAttributeValue (ec);
 
-			if (IndexerName == null)
-				IndexerName = "Item";
-			else {
-				if (! Tokenizer.IsValidIdentifier (IndexerName)) {
-					Report.Error (633, Location, "The IndexerName specified is an invalid identifier");
-					return false;
-				}
-				
-				if (IsExplicitImpl) {
-					Report.Error (592, Location,
-						      "Attribute 'IndexerName' is not valid on explicit implementations.");
-					return false;
+					if (IsExplicitImpl) {
+						// The 'IndexerName' attribute is valid only on an indexer that is not an explicit interface member declaration
+						Report.Error_T (415, indexer_attr.Location);
+						return false;
+					}
+
+					if ((ModFlags & Modifiers.OVERRIDE) != 0) {
+						// Cannot set the 'IndexerName' attribute on an indexer marked override
+						Report.Error_T (609, indexer_attr.Location);
+						return false;
+					}
+
+					if (!Tokenizer.IsValidIdentifier (IndexerName)) {
+						// The argument to the 'IndexerName' attribute must be a valid identifier
+						Report.Error_T (633, indexer_attr.Location);
+						return false;
+					}
 				}
 			}
 
