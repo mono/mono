@@ -328,7 +328,7 @@ FileClose $0
 
 FileOpen $0 "$WINDIR\monobasepath.bat" "w"
 FileWrite $0 'set MONO_BASEPATH="$INSTDIR"$\r$\n'
-FileWrite $0 'set MONO_PATH="$INSTDIR\lib"$\r$\n'
+FileWrite $0 'set MONO_PATH=$INSTDIR\lib$\r$\n'
 FileWrite $0 'set MONO_CFG_DIR="$INSTDIR\etc\mono"'
 FileClose $0
 
