@@ -1,14 +1,10 @@
 //
-// image1.cs test application
+// font.cs 
+// font/text operations
 //
 // Author:
 //   Alexandre Pigolkine(pigolkine@gmx.de)
 // 
-//
-// (C) Ximian, Inc.  http://www.ximian.com
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -30,23 +26,38 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 using System;
 using System.Drawing;
+using System.Drawing.Text;
 using System.Drawing.Imaging;
 
-namespace ImageTest1 {
-	public class ImageTest {
-		public static void Main(string[] argv) {
-			if( argv.Length == 1) {
-				Bitmap bmp = new Bitmap(argv[0]);
-				
-				Console.WriteLine("Output file " + argv[0] + ".bmp");
-				bmp.Save("output.bmp", ImageFormat.Bmp);
-				
+namespace MonoSamples.System.Drawing
+{
+	public class FontSample
+	{
+		public static void Main () {
+
+			float width = 400.0F;
+			float height = 800.0F;
+		
+			FontCollection ifc = new InstalledFontCollection ();
+			foreach (FontFamily ffm in ifc.Families) {
+				Console.WriteLine (ffm.Name);
 			}
-			else {
-				Console.WriteLine("usage: image1.exe <filename>");
-			}
+
+			Font f = new Font ("Arial",12);
+			Console.WriteLine ("Height: {0}", f.Height);
+
+			Bitmap bmp = new Bitmap ((int) width, (int) height);
+			Graphics gr = Graphics.FromImage (bmp);
+			gr.Clear (Color.White);
+
+			Brush br = new SolidBrush (Color.Black);
+			gr.DrawString ("The test string", f, br, 10, 10);
+
+			bmp.Save ("font.png", ImageFormat.Png);
+			Console.WriteLine ("output file font.png");
 		}
 	}
 }
