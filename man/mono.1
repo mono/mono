@@ -256,6 +256,15 @@ If set its the directory where the ".wapi" handle state is stored.
 This is the directory where the Windows I/O Emulation layer stores its
 shared state data (files, events, mutexes, pipes).  By default Mono
 will store the ".wapi" directory in the users's home directory.
+.TP
+.I "MONO_UNMANAGED_XSLT"
+If set any value, System.Xml.Xsl.XslTransform uses libxslt-based
+transformation engine (a.k.a Unmanaged XSLT). Unmanaged XSLT has
+long been used for XSLT engine while Managed XSLT engine is so
+new and might have some bugs. Basically we recommend Managed XSLT
+solution, but if it contains some blocking bugs, then you can also
+use traditional libxslt. If you want to use msxsl:script, you have
+to select Managed XSLT.
 .SH FILES
 On Unix assemblies are loaded from the installation lib directory.  If you set
 `prefix' to /usr, the assemblies will be located in /usr/lib.  On
