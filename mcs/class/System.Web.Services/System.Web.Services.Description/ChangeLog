@@ -1,3 +1,7 @@
+2004-05-25  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* BindingCollection.cs: Fixed this[string] property.
+
 2004-05-24  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ProtocolImporter.cs: issue a warning if no services have been found.

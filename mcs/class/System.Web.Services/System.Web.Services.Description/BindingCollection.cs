@@ -37,7 +37,7 @@ namespace System.Web.Services.Description {
 		}
 
 		public Binding this [string name] {
-			get { return this[IndexOf ((Binding) Table[name])]; }
+			get { return (Binding) Table[name]; }
 		}
 
 		#endregion // Properties
