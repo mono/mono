@@ -1,2 +1,3 @@
-*.out
+boot-casts.out
+mcs-casts.out
 *.dll
