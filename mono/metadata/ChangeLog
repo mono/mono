@@ -3,6 +3,7 @@
 	* marshal.c (mono_marshal_get_native_wrapper): support BOOLEAN
 	(mono_marshal_get_native_wrapper): make it comp. with the old code
 	(mono_marshal_get_native_wrapper): support boolean
+	(mono_marshal_get_managed_wrapper): support more types
 
 2002-06-25  Dietmar Maurer  <dietmar@ximian.com>
 
