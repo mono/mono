@@ -1,3 +1,9 @@
+2004-03-30  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SerializationCodeGenerator.cs, XmlReflectionImporter.cs, 
+	  XmlSerializationReader.cs, XmlSerializationReaderInterpreter.cs:
+	  Support deserialization of members of type XmlDocument. This fixes #56169.
+
 2004-03-25  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SerializationCodeGenerator.cs: Generate an integer for unknown enum values.

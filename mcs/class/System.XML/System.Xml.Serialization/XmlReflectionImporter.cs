@@ -443,16 +443,23 @@ namespace System.Xml.Serialization {
 			helper.RegisterClrType (elemMap, typeof(XmlElement), elemMap.XmlTypeNamespace);
 
 			XmlTypeMapping textMap = CreateTypeMapping (TypeTranslator.GetTypeData (typeof(XmlText)), root, null, defaultNamespace);
-			helper.RegisterClrType (elemMap, typeof(XmlText), textMap.XmlTypeNamespace);
+			helper.RegisterClrType (textMap, typeof(XmlText), textMap.XmlTypeNamespace);
+
+			XmlTypeMapping docMap = CreateTypeMapping (TypeTranslator.GetTypeData (typeof(XmlDocument)), root, null, defaultNamespace);
+			helper.RegisterClrType (docMap, typeof(XmlDocument), textMap.XmlTypeNamespace);
 
 			XmlTypeMapping obmap = ImportTypeMapping (typeof(object));
 			obmap.DerivedTypes.Add (nodeMap);
 			obmap.DerivedTypes.Add (elemMap);
 			obmap.DerivedTypes.Add (textMap);
+			obmap.DerivedTypes.Add (docMap);
 			nodeMap.DerivedTypes.Add (elemMap);
 			nodeMap.DerivedTypes.Add (textMap);
+			nodeMap.DerivedTypes.Add (docMap);
 
-			return helper.GetRegisteredClrType (type, GetTypeNamespace (TypeTranslator.GetTypeData (type), root, defaultNamespace));
+			map = helper.GetRegisteredClrType (type, GetTypeNamespace (TypeTranslator.GetTypeData (type), root, defaultNamespace));
+			if (map == null) throw new InvalidOperationException ("Objects of type '" + type + "' can't be serialized");
+			return map;
 		}
 
 		XmlTypeMapping ImportPrimitiveMapping (Type type, XmlRootAttribute root, string defaultNamespace)

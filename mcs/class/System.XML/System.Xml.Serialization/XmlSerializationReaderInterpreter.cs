@@ -347,8 +347,8 @@ namespace System.Xml.Serialization
 						else if (info.Member.GetType() == typeof (XmlTypeMapMemberAnyElement))
 						{
 							XmlTypeMapMemberAnyElement mem = (XmlTypeMapMemberAnyElement)info.Member;
-							if (mem.TypeData.IsListType) AddListValue (mem.TypeData, ref flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex]++, ReadXmlNode (false), true);
-							else SetMemberValue (mem, ob, ReadXmlNode (false), isValueList);
+							if (mem.TypeData.IsListType) AddListValue (mem.TypeData, ref flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex]++, ReadXmlNode (mem.TypeData.ListItemTypeData, false), true);
+							else SetMemberValue (mem, ob, ReadXmlNode (mem.TypeData, false), isValueList);
 						}
 						else if (info.Member.GetType() == typeof(XmlTypeMapMemberElement))
 						{
@@ -369,8 +369,8 @@ namespace System.Xml.Serialization
 					else if (map.DefaultAnyElementMember != null)
 					{
 						XmlTypeMapMemberAnyElement mem = map.DefaultAnyElementMember;
-						if (mem.TypeData.IsListType) AddListValue (mem.TypeData, ref flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex]++, ReadXmlNode (false), true);
-						else SetMemberValue (mem, ob, ReadXmlNode (false), isValueList);
+						if (mem.TypeData.IsListType) AddListValue (mem.TypeData, ref flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex]++, ReadXmlNode (mem.TypeData.ListItemTypeData, false), true);
+						else SetMemberValue (mem, ob, ReadXmlNode (mem.TypeData, false), isValueList);
 					}
 					else 
 						ProcessUnknownElement(ob);
@@ -381,9 +381,9 @@ namespace System.Xml.Serialization
 					{
 						XmlTypeMapMemberExpandable mem = (XmlTypeMapMemberExpandable)map.XmlTextCollector;
 						XmlTypeMapMemberFlatList flatl = mem as XmlTypeMapMemberFlatList;
-						Type itype = (flatl == null) ? mem.TypeData.ListItemType : flatl.ListMap.FindTextElement().TypeData.Type;
+						TypeData itype = (flatl == null) ? mem.TypeData.ListItemTypeData : flatl.ListMap.FindTextElement().TypeData;
 
-						object val = (itype == typeof (string)) ? (object) Reader.ReadString() : (object) ReadXmlNode (false);
+						object val = (itype.Type == typeof (string)) ? (object) Reader.ReadString() : (object) ReadXmlNode (itype, false);
 						AddListValue (mem.TypeData, ref flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex]++, val, true);
 					}
 					else
@@ -475,7 +475,7 @@ namespace System.Xml.Serialization
 			switch (elem.TypeData.SchemaType)
 			{
 				case SchemaTypes.XmlNode:
-					return ReadXmlNode (true);
+					return ReadXmlNode (elem.TypeData, true);
 
 				case SchemaTypes.Primitive:
 				case SchemaTypes.Enum:
@@ -644,7 +644,15 @@ namespace System.Xml.Serialization
 
 		object ReadXmlNodeElement (XmlTypeMapping typeMap, bool isNullable)
 		{
-			return ReadXmlNode (false);
+			return ReadXmlNode (typeMap.TypeData, false);
+		}
+		
+		object ReadXmlNode (TypeData type, bool wrapped)
+		{
+			if (type.Type == typeof (XmlDocument))
+				return ReadXmlDocument (wrapped);
+			else
+				return ReadXmlNode (wrapped);
 		}
 
 		object ReadPrimitiveElement (XmlTypeMapping typeMap, bool isNullable)

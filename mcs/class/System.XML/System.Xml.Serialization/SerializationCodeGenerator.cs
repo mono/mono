@@ -1555,14 +1555,14 @@ namespace System.Xml.Serialization
 						XmlTypeMapMemberAnyElement mem = (XmlTypeMapMemberAnyElement)info.Member;
 						if (mem.TypeData.IsListType) { 
 							if (!GenerateReadArrayMemberHook (xmlMapType, info.Member, indexes[mem.FlatArrayIndex])) {
-								GenerateAddListValue (mem.TypeData, flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex], GetReadXmlNode (mem.TypeData.ListItemTypeData), true);
+								GenerateAddListValue (mem.TypeData, flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex], GetReadXmlNode (mem.TypeData.ListItemTypeData, false), true);
 								GenerateEndHook ();
 							}
 							WriteLine (indexes[mem.FlatArrayIndex] + "++;");
 						}
 						else {
 							if (!GenerateReadMemberHook (xmlMapType, info.Member)) {
-								GenerateSetMemberValue (mem, ob, GetReadXmlNode(mem.TypeData), isValueList);
+								GenerateSetMemberValue (mem, ob, GetReadXmlNode(mem.TypeData, false), isValueList);
 								GenerateEndHook ();
 							}
 						}
@@ -1602,13 +1602,13 @@ namespace System.Xml.Serialization
 						XmlTypeMapMemberAnyElement mem = map.DefaultAnyElementMember;
 						if (mem.TypeData.IsListType) {
 							if (!GenerateReadArrayMemberHook (xmlMapType, mem, indexes[mem.FlatArrayIndex])) {
-								GenerateAddListValue (mem.TypeData, flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex], GetReadXmlNode(mem.TypeData.ListItemTypeData), true);
+								GenerateAddListValue (mem.TypeData, flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex], GetReadXmlNode(mem.TypeData.ListItemTypeData, false), true);
 								GenerateEndHook ();
 							}
 							WriteLine (indexes[mem.FlatArrayIndex] + "++;");
 						}
 						else if (! GenerateReadMemberHook (xmlMapType, mem)) {
-							GenerateSetMemberValue (mem, ob, GetReadXmlNode(mem.TypeData), isValueList);
+							GenerateSetMemberValue (mem, ob, GetReadXmlNode(mem.TypeData, false), isValueList);
 							GenerateEndHook ();
 						}
 					}
@@ -1632,10 +1632,10 @@ namespace System.Xml.Serialization
 						{
 							XmlTypeMapMemberExpandable mem = (XmlTypeMapMemberExpandable)map.XmlTextCollector;
 							XmlTypeMapMemberFlatList flatl = mem as XmlTypeMapMemberFlatList;
-							Type itype = (flatl == null) ? mem.TypeData.ListItemType : flatl.ListMap.FindTextElement().TypeData.Type;
+							TypeData itype = (flatl == null) ? mem.TypeData.ListItemTypeData : flatl.ListMap.FindTextElement().TypeData;
 							
 							if (!GenerateReadArrayMemberHook (xmlMapType, map.XmlTextCollector, indexes[mem.FlatArrayIndex])) {
-								string val = (itype == typeof (string)) ? "Reader.ReadString()" : GetCast(itype,"ReadXmlNode (false)");
+								string val = (itype.Type == typeof (string)) ? "Reader.ReadString()" : GetReadXmlNode (itype, false);
 								GenerateAddListValue (mem.TypeData, flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex], val, true);
 								GenerateEndHook ();
 							}
@@ -1725,7 +1725,7 @@ namespace System.Xml.Serialization
 			switch (elem.TypeData.SchemaType)
 			{
 				case SchemaTypes.XmlNode:
-					return GetCast (elem.TypeData, TypeTranslator.GetTypeData(typeof(XmlNode)), "ReadXmlNode (true)");
+					return GetReadXmlNode (elem.TypeData, true);
 
 				case SchemaTypes.Primitive:
 				case SchemaTypes.Enum:
@@ -1916,7 +1916,7 @@ namespace System.Xml.Serialization
 
 		void GenerateReadXmlNodeElement (XmlTypeMapping typeMap, string isNullable)
 		{
-			WriteLine ("return " + GetReadXmlNode (typeMap.TypeData) + ";");
+			WriteLine ("return " + GetReadXmlNode (typeMap.TypeData, false) + ";");
 		}
 
 		void GenerateReadPrimitiveElement (XmlTypeMapping typeMap, string isNullable)
@@ -2063,9 +2063,12 @@ namespace System.Xml.Serialization
 			}
 		}
 
-		string GetReadXmlNode (TypeData type)
+		string GetReadXmlNode (TypeData type, bool wrapped)
 		{
-			return GetCast (type, TypeTranslator.GetTypeData (typeof(XmlNode)), "ReadXmlNode (false)");
+			if (type.Type == typeof (XmlDocument))
+				return GetCast (type, TypeTranslator.GetTypeData (typeof(XmlDocument)), "ReadXmlDocument (" + GetLiteral(wrapped) + ")");
+			else
+				return GetCast (type, TypeTranslator.GetTypeData (typeof(XmlNode)), "ReadXmlNode (" + GetLiteral(wrapped) + ")");
 		}
 		
 		#endregion

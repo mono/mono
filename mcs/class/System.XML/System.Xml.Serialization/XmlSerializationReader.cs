@@ -639,6 +639,21 @@ namespace System.Xml.Serialization {
 				return node;
 		}
 
+		protected XmlDocument ReadXmlDocument (bool wrapped)
+		{
+			if (wrapped)
+				reader.ReadStartElement ();
+				
+			XmlDocument doc = new XmlDocument ();
+			XmlNode node = doc.ReadNode (reader);
+			doc.AppendChild (node);
+			
+			if (wrapped)
+				reader.ReadEndElement ();
+				
+			return doc;
+		}
+
 		[MonoTODO ("Implement")]
 		protected void Referenced (object o)
 		{
