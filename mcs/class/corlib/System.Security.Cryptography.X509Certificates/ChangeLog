@@ -1,3 +1,9 @@
+2004-11-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate.cs: Added ComVisible attributes to match 2.0 October
+	Preview. Prepared Import and Export to be plugged with PKCS#12 code.
+	* X509ContentType.cs: Fixed typo (dnd) in comments.
+
 2004-09-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate.cs: CreateFromSignedFile now throw the COMException

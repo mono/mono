@@ -172,26 +172,55 @@ namespace System.Security.Cryptography.X509Certificates {
 		[MonoTODO]
 		public X509Certificate (byte[] rawData, string password)
 		{
+			Import (rawData, password, X509KeyStorageFlags.DefaultKeySet);
+		}
+
+		[MonoTODO]
+		public X509Certificate (byte[] rawData, SecureString password)
+		{
+			Import (rawData, password, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		[MonoTODO]
 		public X509Certificate (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{
+			Import (rawData, password, keyStorageFlags);
+		}
+
+		[MonoTODO]
+		public X509Certificate (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
+		{
+			Import (rawData, password, keyStorageFlags);
 		}
 
 		[MonoTODO]
 		public X509Certificate (string fileName)
 		{
+			Import (fileName, (byte[])null, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		[MonoTODO]
 		public X509Certificate (string fileName, string password)
 		{
+			Import (fileName, password, X509KeyStorageFlags.DefaultKeySet);
+		}
+
+		[MonoTODO]
+		public X509Certificate (string fileName, SecureString password)
+		{
+			Import (fileName, password, X509KeyStorageFlags.DefaultKeySet);
 		}
 
 		[MonoTODO]
 		public X509Certificate (string fileName, string password, X509KeyStorageFlags keyStorageFlags)
 		{
+			Import (fileName, password, keyStorageFlags);
+		}
+
+		[MonoTODO]
+		public X509Certificate (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags)
+		{
+			Import (fileName, password, keyStorageFlags);
 		}
 
 		[MonoTODO]
@@ -400,6 +429,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 #if NET_2_0
+		[ComVisible (false)]
 		public override bool Equals (object obj) 
 		{
 			X509Certificate x = (obj as X509Certificate);
@@ -408,16 +438,43 @@ namespace System.Security.Cryptography.X509Certificates {
 			return false;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("incomplete")]
+		[ComVisible (false)]
 		public virtual byte[] Export (X509ContentType contentType)
 		{
-			return null;
+			return Export (contentType, (byte[])null);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("incomplete")]
+		[ComVisible (false)]
 		public virtual byte[] Export (X509ContentType contentType, string password)
 		{
-			return null;
+			return Export (contentType, Encoding.UTF8.GetBytes (password));
+		}
+
+		[MonoTODO ("incomplete")]
+		[ComVisible (false)]
+		public virtual byte[] Export (X509ContentType contentType, SecureString password)
+		{
+			return Export (contentType, password.GetBuffer ());
+		}
+
+		[MonoTODO ("export!")]
+		internal byte[] Export (X509ContentType contentType, byte[] password)
+		{
+			try {
+				switch (contentType) {
+				case X509ContentType.Cert:
+					return x509.RawData;
+				default:
+					throw new NotSupportedException ();
+				}
+			}
+			finally {
+				// protect password
+				if (password != null)
+					Array.Clear (password, 0, password.Length);
+			}
 		}
 
 		[MonoTODO]
@@ -425,24 +482,82 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 		}
 
-		[MonoTODO]
+		[MonoTODO ("incomplete")]
+		[ComVisible (false)]
 		public virtual void Import (byte[] rawData)
 		{
+			Import (rawData, (byte[])null, X509KeyStorageFlags.DefaultKeySet);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("incomplete")]
+		[ComVisible (false)]
 		public virtual void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
 		{
+			Import (rawData, Encoding.UTF8.GetBytes (password), keyStorageFlags);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("incomplete")]
+		[ComVisible (false)]
+		public virtual void Import (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
+		{
+			Import (rawData, password.GetBuffer (), keyStorageFlags);
+		}
+
+		[MonoTODO ("import!")]
+		internal void Import (byte[] rawData, byte[] password, X509KeyStorageFlags keyStorageFlags)
+		{
+			try {
+				if (password == null) {
+					x509 = new Mono.Security.X509.X509Certificate (rawData);
+				}
+				else {
+					// TODO
+					throw new NotSupportedException ();
+				}
+			}
+			finally {
+				// protect password
+				if (password != null)
+					Array.Clear (password, 0, password.Length);
+			}
+		}
+
+		[MonoTODO ("incomplete")]
+		[ComVisible (false)]
 		public virtual void Import (string fileName)
 		{
+			Import (fileName, (byte[])null, X509KeyStorageFlags.DefaultKeySet);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("incomplete - is the password UTF8, ASCII, Unicode ?")]
+		[ComVisible (false)]
 		public virtual void Import (string fileName, string password, X509KeyStorageFlags keyStorageFlags)
 		{
+			Import (fileName, Encoding.UTF8.GetBytes (password), keyStorageFlags);
+		}
+
+		[MonoTODO ("incomplete")]
+		[ComVisible (false)]
+		public virtual void Import (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags)
+		{
+			Import (fileName, password.GetBuffer (), keyStorageFlags);
+		}
+
+		internal void Import (string fileName, byte[] password, X509KeyStorageFlags keyStorageFlags)
+		{
+			try {
+				using (FileStream fs = new FileStream (fileName, FileMode.Open)) {
+					byte[] data = new byte [fs.Length];
+					fs.Read (data, 0, data.Length);
+					fs.Close ();
+					Import (data, password, keyStorageFlags);
+				}
+			}
+			finally {
+				// protect password
+				if (password != null)
+					Array.Clear (password, 0, password.Length);
+			}
 		}
 
 		[MonoTODO]
@@ -451,12 +566,14 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 		[MonoTODO]
+		[ComVisible (false)]
 		public virtual void Reset ()
 		{
 		}
 
 		// properties
 
+		[ComVisible (false)]
 		public IntPtr Handle {
 			get { return (IntPtr) 0; }
 		}

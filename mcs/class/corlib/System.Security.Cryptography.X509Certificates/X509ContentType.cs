@@ -30,7 +30,7 @@ using System;
 
 namespace System.Security.Cryptography.X509Certificates {
 
-// Note: Definitions are useful for 1.0 Untitled 1and 1.1 so we declare them internal
+// Note: Definitions are useful for 1.0 and 1.1 so we declare them internal
 
 	[Serializable]
 #if NET_2_0
