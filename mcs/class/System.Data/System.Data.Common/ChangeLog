@@ -1,3 +1,7 @@
+2004-06-10 Umadevi S <sumadevi@novell.com>
+	* DataTableMappingCollection.cs - fixed nunit testcase errors
+	IndexOfDataSetTable method
+
 2004-06-09 Umadevi S <sumadevi@novell.com>
 	* DataTableMappingCollection.cs - fixed nunit testcase errors
 	- Add, GetByDataSetTable,Insert, Remove, RemoveAt methods.

@@ -207,7 +207,24 @@ namespace System.Data.Common {
 
 		public int IndexOfDataSetTable (string dataSetTable) 
 		{
-			return IndexOf ((DataTableMapping)(dataSetTables[dataSetTable]));
+	 		  // this should work case-insensitive
+                	                                                                     
+                         if (!(dataSetTables[dataSetTable] == null)) 
+				return IndexOf ((DataTableMapping)(dataSetTables[dataSetTable]));
+                         else {
+                                string lowcasevalue = dataSetTable.ToLower();
+				object [] keyarray = new object[dataSetTables.Count];
+                                dataSetTables.Keys.CopyTo(keyarray,0);
+                                for (int i=0; i<keyarray.Length; i++) {
+                                        string temp = (string) keyarray[i];
+                                        if (lowcasevalue.Equals(temp.ToLower()))
+						return IndexOf ((DataTableMapping)(dataSetTables[keyarray[i]]));
+                                          
+                                }
+				return -1;
+                                                                                                    
+                        }
+
 		}
 
 		public void Insert (int index, object value) 
