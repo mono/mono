@@ -1,3 +1,8 @@
+2002-07-15  Dietmar Maurer  <dietmar@ximian.com>
+
+	* marshal.c (mono_marshal_get_native_wrapper): handle enum types
+	(fix bug #27782)
+
 2002-07-13  Gonzalo Paniagua Javier <gonzalo@gnome-db.org>
 
 	* reflection.[ch]: 
