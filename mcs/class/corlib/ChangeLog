@@ -1,3 +1,8 @@
+2004-06-11  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (TEST_COMPILE): Use internal mcs to compile the
+	platform testsuite too.
+
 2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* corlib_test.dll.sources: added EnumBuilderTest and 

@@ -47,12 +47,16 @@ cmplib = $(topdir)/class/lib/$(PROFILE)/corlib_cmp.dll
 $(plattestlib).sources: corlib_test.dll.sources $(plattestlib).excludes
 	cat corlib_test.dll.sources $(plattestlib).excludes | sort | uniq -u >$@
 
+TEST_MCS_FLAGS = /debug+ /debug:full /nowarn:0618 /nowarn:0672 /unsafe
+
 ifndef PLATFORM_MONO_NATIVE
 test_lib = $(plattestlib)
 test_against = $(PLATFORM_CORLIB)
 HAVE_CS_TESTS = $(plattestlib).sources
+
+## for now, compiling the testsuite with CSC causes CS0583.  So compile with internal MCS
+TEST_COMPILE = $(INTERNAL_MCS) $(USE_MCS_FLAGS)
 endif
-TEST_MCS_FLAGS = /debug+ /debug:full /nowarn:0618 /nowarn:0672 /unsafe
 
 run-test-ondotnet-local: run-plattest-ondotnet
 
