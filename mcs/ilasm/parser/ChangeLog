@@ -1,3 +1,7 @@
+2003-07-14 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: Seperate generic constraints from generic parameters.
+		
 2003-06-14 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Add set imagebase, subsystem, and corflags.

@@ -446,16 +446,12 @@ class_head 		: D_CLASS class_attr id typars_clause extends_clause
                                 codegen.BeginTypeDef ((TypeAttr) $2, (string) $3, 
 						$5 as IClassRef, $6 as ArrayList, null);
 
-                                                /*
                                 if ($4 != null) {
                                         ArrayList typars_list = (ArrayList) $4;
-                                        foreach (DictionaryEntry entry in typars_list) {
-                                                ITypeRef constraint = (ITypeRef) entry.Key;
-                                                string id = (string) entry.Value;
-                                                codegen.CurrentTypeDef.AddGenericParam (constraint, id);
-                                        }
+                                        foreach (string id in typars_list)
+                                                codegen.CurrentTypeDef.AddGenericParam (id);
                                 }
-                                */
+                                
                           }
 			;
 
@@ -509,7 +505,7 @@ typars_clause           : /* EMPTY */
                                 $$ = $2;
                           }
                         ;
-
+/*
 typars                  : type
                           {
                                 ArrayList typars_list = new ArrayList ();
@@ -523,7 +519,7 @@ typars                  : type
                                 $$ = typars_list;
                           }
                         ;
-
+*/
 formal_typars           : formal_typar
                           {
                                 ArrayList formal_list = new ArrayList ();
@@ -539,13 +535,9 @@ formal_typars           : formal_typar
                         ;
 
 
-formal_typar            : type
+formal_typar            : id
                           {
-                                $$ = new DictionaryEntry ($1, null);
-                          }
-                        | type id
-                          {
-                                $$ = new DictionaryEntry ($1, $2);
+                                $$ = $1;
                           }
                         ;
                         
