@@ -1,3 +1,8 @@
+
+Sun Jan 30 20:19:48 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* appdomain.c: fix infinite recursion when adding assemblies.
+
 2005-01-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* object.c: Fix small typo to return all items for Environment.
