@@ -1,3 +1,10 @@
+2004-09-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FileIOPermissionAttributeTest.cs: Added a new test to check that the
+	attribute class accept (and retains) non-c14n filenames while the 
+	permission class accept, but c14n, filenames. Fixed other tests that
+	didn't check for c14n results from the created permission.
+
 2004-09-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RegistryPermissionTest.cs: New. Unit tests for RegistryPermission.
