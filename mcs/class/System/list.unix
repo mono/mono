@@ -393,6 +393,7 @@ System.Net/ConnectionModes.cs
 System.Net.Configuration/ConnectionManagementHandler.cs
 System.Net.Configuration/DefaultProxyHandler.cs
 System.Net.Configuration/NetAuthenticationModuleHandler.cs
+System.Net.Configuration/WebRequestModuleHandler.cs
 System.Net/CookieCollection.cs
 System.Net/CookieContainer.cs
 System.Net/Cookie.cs
@@ -404,9 +405,11 @@ System.Net/DnsPermission.cs
 System.Net/EndPoint.cs
 System.Net/EndpointPermission.cs
 System.Net/FileWebRequest.cs
+System.Net/FileWebRequestCreator.cs
 System.Net/FileWebResponse.cs
 System.Net/GlobalProxySelection.cs
 System.Net/HttpContinueDelegate.cs
+System.Net/HttpRequestCreator.cs
 System.Net/HttpStatusCode.cs
 System.Net/HttpVersion.cs
 System.Net/HttpWebRequest.cs

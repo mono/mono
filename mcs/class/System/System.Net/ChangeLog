@@ -1,5 +1,12 @@
 2003-06-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* FileWebRequestCreator.cs: splitted from WebRequest.
+	* HttpRequestCreator.cs: splitted fromWebRequest.
+	* WebRequest.cs: added methods that are used by the new configuration
+	handler to set prefix/type name requests creators.
+
+2003-06-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* AuthenticationManager.cs:
 	* Authorization.cs:
 	* BasicClient.cs: new file.

@@ -1,5 +1,10 @@
 2003-06-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* WebRequestModuleHandler.cs: handles system.net/webRequestModules
+	configuration section.
+
+2003-06-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* DefaultProxyHandler.cs: new file.
 	* NetAuthenticationModuleHandler.cs: new file. 
 

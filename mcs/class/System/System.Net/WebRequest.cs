@@ -1,13 +1,14 @@
 //
 // System.Net.WebRequest
 //
-// Author:
+// Authors:
 //   Lawrence Pit (loz@cable.a2000.nl)
 //
 
 using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Configuration;
 using System.IO;
 using System.Runtime.Serialization;
 
@@ -16,37 +17,14 @@ namespace System.Net
 	[Serializable]
 	public abstract class WebRequest : MarshalByRefObject, ISerializable
 	{
-		private static HybridDictionary prefixes;
-		
-		static WebRequest () {
-			prefixes = new HybridDictionary (3, true);
-			RegisterPrefix ("file", new FileWebRequestCreator ());
-			RegisterPrefix ("http", new HttpWebRequestCreator ());
-			RegisterPrefix ("https", new HttpWebRequestCreator ());
-		}
-		
-		internal class HttpWebRequestCreator : IWebRequestCreate
-		{
-			internal HttpWebRequestCreator () { }
-			
-			public WebRequest Create (Uri uri) 
-			{
-				return new HttpWebRequest (uri);
-			}
-		}
-
-		internal class FileWebRequestCreator : IWebRequestCreate
-		{
-			internal FileWebRequestCreator () { }
-			
-			public WebRequest Create (Uri uri) 
-			{
-				return new FileWebRequest (uri);
-			}
-		}
-
+		static HybridDictionary prefixes = new HybridDictionary ();
 		
 		// Constructors
+		
+		static WebRequest ()
+		{
+			ConfigurationSettings.GetConfig ("system.net/webRequestModules");
+		}
 		
 		protected WebRequest () { }		
 		
@@ -212,5 +190,26 @@ namespace System.Net
 				
 			return creator;
 		}
+
+		internal static void ClearPrefixes ()
+		{
+			prefixes.Clear ();
+		}
+
+		internal static void RemovePrefix (string prefix)
+		{
+			prefixes.Remove (prefix);
+		}
+
+		internal static void AddPrefix (string prefix, string typeName)
+		{
+			Type type = Type.GetType (typeName);
+			if (type == null)
+				throw new ConfigurationException (String.Format ("Type {0} not found", typeName));
+
+			object o = Activator.CreateInstance (type);
+			prefixes [prefix] = o;
+		}
 	}
 }
+
