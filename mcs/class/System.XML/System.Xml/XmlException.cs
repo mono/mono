@@ -61,11 +61,11 @@ namespace System.Xml
 		}
 		
 #if NET_1_0
-		internal XmlException (string message, int lineNumber, int linePosition)
+		internal XmlException (string message, Exception innerException, int lineNumber, int linePosition)
 #else
-		public XmlException (string message, int lineNumber, int linePosition)
+		public XmlException (string message, Exception innerException, int lineNumber, int linePosition)
 #endif
-			: base (message)
+			: base (message, innerException)
 		{
 			this.lineNumber = lineNumber;
 			this.linePosition = linePosition;

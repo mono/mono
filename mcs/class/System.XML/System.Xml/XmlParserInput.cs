@@ -192,7 +192,7 @@ namespace Mono.Xml.Native
 
 		private XmlException ReaderError (string message)
 		{
-			return new XmlException (message, line, column);
+			return new XmlException (message, null, line, column);
 		}
 		#endregion
 	}
