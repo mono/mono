@@ -20,11 +20,19 @@ namespace System.Xml
 	{
 		#region Constructors
 
-		internal XmlDocumentNavigator(XmlNode node)
+		internal XmlDocumentNavigator (XmlNode node)
+			: this (node, null)
+		{
+			nsNodeXml = document.CreateAttribute ("xmlns", "xml", Xmlns);
+			nsNodeXml.Value = XmlnsXML;
+		}
+
+		private XmlDocumentNavigator (XmlNode node, XmlAttribute nsNodeXml)
 		{
 			this.node = node;
 			this.document = node.NodeType == XmlNodeType.Document ?
 				node as XmlDocument : node.OwnerDocument;
+			this.nsNodeXml = nsNodeXml;
 		}
 
 		#endregion
@@ -33,6 +41,7 @@ namespace System.Xml
 		private const string Xmlns = "http://www.w3.org/2000/xmlns/";
 		private const string XmlnsXML = "http://www.w3.org/XML/1998/namespace";
 
+		private XmlAttribute nsNodeXml;
 		private XmlNode node;
 		private XmlDocument document;
 		// Current namespace node (ancestor's attribute of current node).
@@ -85,7 +94,7 @@ namespace System.Xml
 		public override string LocalName {
 			get {
 				if (nsNode != null) {
-					if (nsNode == document)
+					if (nsNode == nsNodeXml)
 						return "xml";
 					else
 						return (nsNode.Name == "xmlns") ? String.Empty : nsNode.LocalName;
@@ -148,7 +157,7 @@ namespace System.Xml
 				case XPathNodeType.Root:
 					return node.InnerText;
 				case XPathNodeType.Namespace:
-					return nsNode == document ? XmlnsXML : nsNode.Value;
+					return nsNode == nsNodeXml ? XmlnsXML : nsNode.Value;
 				}
 				return String.Empty;
 			}
@@ -166,7 +175,7 @@ namespace System.Xml
 
 		public override XPathNavigator Clone ()
 		{
-			XmlDocumentNavigator clone = new XmlDocumentNavigator (node);
+			XmlDocumentNavigator clone = new XmlDocumentNavigator (node, nsNodeXml);
 			clone.nsNode = nsNode;
 			return clone;
 		}
@@ -314,7 +323,7 @@ namespace System.Xml
 			}
 
 			if (namespaceScope == XPathNamespaceScope.All) {
-				nsNode = document;
+				nsNode = nsNodeXml;
 				return true;
 			}
 			else
@@ -334,7 +343,7 @@ namespace System.Xml
 		public override bool MoveToNamespace (string name)
 		{
 			if (name == "xml") {
-				nsNode = document;
+				nsNode = nsNodeXml;
 				return true;
 			}
 
@@ -428,7 +437,7 @@ namespace System.Xml
 
 		public override bool MoveToNextNamespace (XPathNamespaceScope namespaceScope)
 		{
-			if (nsNode == document)
+			if (nsNode == nsNodeXml)
 				// Current namespace is "xml", so there should be no more namespace nodes.
 				return false;
 
@@ -473,7 +482,7 @@ namespace System.Xml
 			}
 
 			if (namespaceScope == XPathNamespaceScope.All) {
-				nsNode = document;
+				nsNode = nsNodeXml;
 				return true;
 			}
 			else
@@ -542,7 +551,7 @@ namespace System.Xml
 			nsNode = null;
 		}
 
-		internal XmlNode Node { get { return node; } }
+		internal XmlNode Node { get { return nsNode != null ? nsNode : node; } }
 
                 XmlNode IHasXmlNode.GetNode ()
                 {
