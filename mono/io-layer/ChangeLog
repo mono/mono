@@ -1,3 +1,18 @@
+2001-11-12  Dick Porter  <dick@ximian.com>
+
+	* semaphores.c: Implement semaphores
+
+	* wait.c (wait_for_item): Maintain a wait count rather than count
+	signalled booleans.
+
+	* threads.c (thread_wait_multiple): Don't lock the wait item, that
+	will block other wait threads
+
+2001-11-11  Dick Porter  <dick@ximian.com>
+
+	* Makefile.am: Rename some automake variables
+	(from Nick Drochak <ndrochak@gol.com>)
+
 2001-11-10  Dick Porter  <dick@ximian.com>
 
 	* Makefile.am (libwapiincludedir): Fix include destination
