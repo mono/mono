@@ -39,6 +39,7 @@ namespace System.Data
 		DataRowView[] rowCache = new DataRowView[0];
 		// DataRow -> DataRowView
 		Hashtable addNewCache = new Hashtable ();
+		Hashtable rowViewPool = new Hashtable ();
 
 		bool allowNew = true; 
 		bool allowEdit = true;
@@ -140,6 +141,9 @@ namespace System.Data
 			
 			[MonoTODO]
 			set {
+				if (applyDefaultSort == value)
+					return;
+
 				applyDefaultSort = value;
 				if (applyDefaultSort == true && (sort == null || sort == string.Empty)) {
 					foreach (Constraint c in dataTable.Constraints)	{
@@ -150,7 +154,7 @@ namespace System.Data
 						}
 					}
 				}
-				UpdateIndex ();
+				UpdateIndex (true);
 				OnListChanged (new ListChangedEventArgs (ListChangedType.Reset,-1,-1));
 			}
 		}
@@ -198,6 +202,8 @@ namespace System.Data
 			set {
 				if (value == null)
 					value = String.Empty;
+				if (rowFilter == value)
+					return;
 				if (value == String.Empty) 
 					rowFilterExpr = null;
 				else {
@@ -205,7 +211,7 @@ namespace System.Data
 					rowFilterExpr = parser.Compile (value);
 				}
 				rowFilter = value;
-				UpdateIndex ();
+				UpdateIndex (true);
 				OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, - 1, -1));
 			}
 		}
@@ -221,8 +227,10 @@ namespace System.Data
 			
 			[MonoTODO]
 			set {
+				if (value == rowState)
+					return;
 				rowState = value;
-				UpdateIndex ();
+				UpdateIndex (true);
 				OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, - 1, -1));
 			}
 		}
@@ -238,6 +246,9 @@ namespace System.Data
 			
 			[MonoTODO]
 			set {
+				if (value == sort)
+					return;
+
 				if (value == null) {	
 				/* if given value is null useDefaultSort */
 					useDefaultSort = true;
@@ -260,7 +271,7 @@ namespace System.Data
 					sort = value;
 					sortedColumns = SortableColumn.ParseSortString (dataTable, value, true);
 				}
-				UpdateIndex ();
+				UpdateIndex (true);
 				OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, - 1, -1));
 			}
 		}
@@ -290,7 +301,7 @@ namespace System.Data
 
 				if (dataTable != null) {
 					RegisterEventHandlers();
-					UpdateIndex ();
+					UpdateIndex (true);
 					OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, - 1, -1));
 				}
 			}
@@ -310,11 +321,12 @@ namespace System.Data
 				throw new SystemException ("Row not created");
 			DataRowView rowView = new DataRowView (this, row, true);
 			addNewCache.Add (row, rowView);
+			rowViewPool.Add (row, rowView);
 
 			// Add to the end of the list (i.e. recreate rowCache),
 			// regardless of Sort property.
 			DataRowView [] newCache = new DataRowView [rowCache.Length + 1];
-			Array.Copy (rowCache, newCache, rowCache.Length);
+			rowCache.CopyTo (newCache, 0);
 			newCache [newCache.Length - 1] = rowView;
 			rowCache = newCache;
 
@@ -333,10 +345,13 @@ namespace System.Data
 		[MonoTODO]
 		public void CopyTo (Array array, int index) 
 		{
+			/*
 			int row = 0;
 			for (; row < rowCache.Length && row < array.Length; row++) {
 				array.SetValue (rowCache[row], index + row);
 			}
+			*/
+			rowCache.CopyTo (array, index);
 		}
 
 		public void Delete(int index) 
@@ -371,14 +386,18 @@ namespace System.Data
 		internal void CancelEditRowView (DataRowView rowView)
 		{
 			addNewCache.Remove (rowView.Row);
-			UpdateIndex (false);
+			rowViewPool.Remove (rowView.Row);
+			// FIXME: it should not be required. MS does not do it.
+			UpdateIndex ();
 			rowView.Row.CancelEdit ();
 		}
 
 		internal void DeleteRowView (DataRowView rowView)
 		{
 			addNewCache.Remove (rowView.Row);
-			UpdateIndex (false);
+			rowViewPool.Remove (rowView.Row);
+			// FIXME: it should not be required. MS does not do it.
+			UpdateIndex ();
 			rowView.Row.Delete ();
 		}
 
@@ -525,7 +544,6 @@ namespace System.Data
 			//        Otherwise, if getting a/the DataRowView(s),
 			//        Count, or other properties, then just use the
 			//        index cache.
-			//		dataTable.ColumnChanged  += new DataColumnChangeEventHandler(OnColumnChanged);
 			if (dataTable != null) {
 				RegisterEventHandlers();
 				UpdateIndex (true);
@@ -549,16 +567,12 @@ namespace System.Data
 			dataTable.Constraints.CollectionChanged -= new CollectionChangeEventHandler(OnConstraintCollectionChanged);
 		}
 		
-		private void OnColumnChanged(object sender, DataColumnChangeEventArgs args)
-		{	/* not used */
-			UpdateIndex(true);
-		}
-		
 		private void OnRowChanged(object sender, DataRowChangeEventArgs args)
 		{
 			int oldIndex,newIndex;
 			oldIndex = newIndex = -1;
 			oldIndex = IndexOf (args.Row);
+			// FIXME: it should not be required. MS does not do it.
 			UpdateIndex (true);
 			newIndex = IndexOf (args.Row);
 
@@ -582,13 +596,16 @@ namespace System.Data
 			/* ItemDeleted */
 			int newIndex;
 			newIndex = IndexOf (args.Row);
+			// FIXME: it should not be required. MS does not do it.
 			UpdateIndex (true);
 			OnListChanged (new ListChangedEventArgs (ListChangedType.ItemDeleted, newIndex, -1));
 		}
 		
 		private void OnColumnCollectionChanged (object sender, CollectionChangeEventArgs args)
 		{
-			UpdateIndex (true);
+			// UpdateIndex() is not invoked here (even if the sort
+			// column is being removed).
+
 			/* PropertyDescriptor Add */
 			if (args.Action == CollectionChangeAction.Add)
 				OnListChanged (new ListChangedEventArgs (ListChangedType.PropertyDescriptorAdded,0,0));
@@ -612,7 +629,9 @@ namespace System.Data
 				if (ApplyDefaultSort == true && useDefaultSort == true)
 						Sort = GetSortString ((UniqueConstraint) args.Element);
 			}
-			UpdateIndex (true);
+
+			// UpdateIndex() is not invoked here.
+
 			/* ItemReset */
 			OnListChanged (new ListChangedEventArgs (ListChangedType.Reset,-1,-1));
 		}
@@ -642,7 +661,7 @@ namespace System.Data
 #endif
 
 		// internal use by Mono
-		protected virtual void UpdateIndex () 
+		protected void UpdateIndex () 
 		{
 			UpdateIndex (false);
 		}
@@ -660,8 +679,6 @@ namespace System.Data
 			DataRowView[] newRowCache = null;
 			DataRow[] rows = null;
 
-			ArrayList al = new ArrayList ();
-			
 			// I guess, "force" parameter is used to indicate
 			// whether we should "query" against DataTable.
 			// For example, when adding a new row, we don't have
@@ -669,23 +686,24 @@ namespace System.Data
 
 			// Handle sort by itself, considering AddNew rows.
 			rows = dataTable.Select (rowFilterExpr, null, RowStateFilter);
-			al.AddRange (rows);
-
-			al.AddRange (addNewCache.Keys);
-
-			rows = (DataRow []) al.ToArray (typeof (DataRow));
+			DataRow [] tmp = new DataRow [rows.Length + addNewCache.Count];
+			rows.CopyTo (tmp, 0);
+			addNewCache.Keys.CopyTo (tmp, rows.Length);
+			rows = tmp;
 			if (sortedColumns != null)
 				new DataTable.RowSorter (dataTable, sortedColumns).SortRows (rows);
 
 			newRowCache = new DataRowView [rows.Length];
+			Hashtable newPool = rowViewPool.Count > 0 ? new Hashtable (rows.Length + 2) : rowViewPool;
 			for (int r = 0; r < rows.Length; r++) {
 				DataRow dr = rows [r];
-				if (addNewCache.ContainsKey (dr))
-					newRowCache [r] = (DataRowView) 
-						addNewCache [dr];
-				else
-					newRowCache[r] = new DataRowView (this, dr);
+				DataRowView rv = (DataRowView) rowViewPool [dr];
+				if (rv == null)
+					rv = new DataRowView (this, dr);
+				newRowCache[r] = rv;
+				newPool.Add (dr, rv);
 			}
+			rowViewPool = newPool;
 			rowCache = newRowCache;
 		}
 

@@ -1,5 +1,15 @@
 2005-01-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataView.cs :
+	  Don't do anything for Sort/ApplyDefaultSort/RowFilter/RowStateFilter
+	  when the same value is being set.
+	  Examined UpdateIndex() and marked FIXME where MS does not invoke it.
+	  Removed unused OnColumnChanged().
+	  Now store rowViewPool and reuse DataRowView objects.
+	  Optimized UpdateIndex() - avoid ArrayList. Avoid Haashtable.Rehash().
+
+2005-01-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataViewSettings.cs : no MonoTODO anymore.
 	* DataViewManager.cs : pass itself to new DataView() (new ctor).
 	* DataRowView.cs : GetHashCode() returns its Row's hash.
