@@ -1,3 +1,9 @@
+2005-02-15  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (ConstructedType.Constraints): Correctly check
+	constraints if the argument type is a type parameter; fixes
+	#72326.	
+
 2005-02-02  Martin Baulig  <martin@ximian.com>
 
 	* delegate.cs (Delegate.DefineType): Report an internal error if

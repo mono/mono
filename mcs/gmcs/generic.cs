@@ -1126,17 +1126,31 @@ namespace Mono.CSharp {
 			if (gc == null)
 				return true;
 
+			bool is_class, is_struct;
+			if (atype.IsGenericParameter) {
+				GenericConstraints agc = TypeManager.GetTypeParameterConstraints (atype);
+				if (agc != null) {
+					is_class = agc.HasReferenceTypeConstraint;
+					is_struct = agc.HasValueTypeConstraint;
+				} else {
+					is_class = is_struct = false;
+				}
+			} else {
+				is_class = atype.IsClass;
+				is_struct = atype.IsValueType;
+			}
+
 			//
 			// First, check the `class' and `struct' constraints.
 			//
-			if (gc.HasReferenceTypeConstraint && !atype.IsClass) {
+			if (gc.HasReferenceTypeConstraint && !is_class) {
 				Report.Error (452, loc, "The type `{0}' must be " +
 					      "a reference type in order to use it " +
 					      "as type parameter `{1}' in the " +
 					      "generic type or method `{2}'.",
 					      atype, ptype, DeclarationName);
 				return false;
-			} else if (gc.HasValueTypeConstraint && !atype.IsValueType) {
+			} else if (gc.HasValueTypeConstraint && !is_struct) {
 				Report.Error (453, loc, "The type `{0}' must be " +
 					      "a value type in order to use it " +
 					      "as type parameter `{1}' in the " +
