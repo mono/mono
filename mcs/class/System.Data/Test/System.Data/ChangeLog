@@ -1,3 +1,7 @@
+2005-01-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSetTest.cs : added CloneCopy2().
+
 2005-01-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSetTest.cs : use more normalized schema comparison.

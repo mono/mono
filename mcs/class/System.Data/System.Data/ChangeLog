@@ -1,3 +1,8 @@
+2005-01-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataTable.cs : CopyColumn() should copy AutoIncrement after
+	  DefaultValue, or it will raise an error in some cases.
+
 2005-01-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ConstraintCollection.cs : Add() should throw ArgumentException when

@@ -617,6 +617,9 @@ namespace MonoTests.System.Data
 		{
 			DataSet ds = new DataSet ();
 			ds.ReadXmlSchema ("Test/System.Data/store.xsd");
+			AssertDataSet ("read DataSet", ds, "NewDataSet", 3, 2);
+			AssertDataTable ("read bookstore table", ds.Tables [0], "bookstore", 1, 0, 0, 1, 1, 1);
+			AssertDataTable ("read book table", ds.Tables [1], "book", 5, 0, 1, 1, 2, 1);
 			ds.ReadXml ("Test/System.Data/region.xml", XmlReadMode.IgnoreSchema);
 			TextWriter writer = new StringWriter ();
 			
@@ -1283,7 +1286,14 @@ namespace MonoTests.System.Data
                         }
 		}
 
-	
+		[Test]
+		public void CloneCopy2 ()
+		{
+			DataSet ds = new DataSet ();
+			ds.ReadXmlSchema ("Test/System.Data/store.xsd");
+			ds.Clone ();
+		}
+
 		[Test]
 		public void WriteNestedTableXml ()
 		{
@@ -2189,7 +2199,6 @@ namespace MonoTests.System.Data
                         MyDataSet ds = (MyDataSet)(ds1.Clone());
                      	AssertEquals("A#01",2,MyDataSet.count);
 		}
-		
         }
 
 

@@ -1586,10 +1586,6 @@ namespace System.Data {
 			DataColumn Copy = new DataColumn ();
 
 			// Copy all the properties of column
-			Copy.AllowDBNull = Column.AllowDBNull;
-			Copy.AutoIncrement = Column.AutoIncrement;
-			Copy.AutoIncrementSeed = Column.AutoIncrementSeed;
-			Copy.AutoIncrementStep = Column.AutoIncrementStep;
 			Copy.Caption = Column.Caption;
 			Copy.ColumnMapping = Column.ColumnMapping;
 			Copy.ColumnName = Column.ColumnName;
@@ -1605,6 +1601,12 @@ namespace System.Data {
 			//Copy.Site
 			//we do not copy the unique value - it will be copyied when copying the constraints.
 			//Copy.Unique = Column.Unique;
+
+			// At least AutoIncrement must be set after DefaultValue
+			Copy.AllowDBNull = Column.AllowDBNull;
+			Copy.AutoIncrement = Column.AutoIncrement;
+			Copy.AutoIncrementSeed = Column.AutoIncrementSeed;
+			Copy.AutoIncrementStep = Column.AutoIncrementStep;
 			
 			return Copy;
 		}			
