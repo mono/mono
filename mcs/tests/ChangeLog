@@ -1,3 +1,7 @@
+2004-09-07  Raja R Harinath  <rharinath@novell.com>
+
+	* test-290.cs: New test.
+
 2004-09-06 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* unsafe-10.cs: new test

@@ -472,6 +472,12 @@ test-237.cs:
 Test for bug #56442.  Verify that delegate invocation and normal method
 invocation act the same when the 'params' keyword is used.
 
+test-290.cs:
+-----------
+Test for bug reported in 
+
+  http://lists.ximian.com/archives/public/mono-devel-list/2004-September/007777.html
+
 verify-1.cs
 -----------
 Test whether we do not jump out of the method in a Try/Finally block.

@@ -1,3 +1,10 @@
+2004-09-07  Raja R Harinath  <rharinath@novell.com>
+
+	Fix test-290.cs.
+	* cs-parser.jay (delegate_declaration): Record a delegate
+	declaration as a type declaration.
+	Reported by Jo Vermeulen <jo@lumumba.luc.ac.be>.
+
 2004-09-06  Miguel de Icaza  <miguel@ximian.com>
 
 	* parameter.cs: Do not crash if the type can not be resolved. 
