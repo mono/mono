@@ -128,7 +128,7 @@ namespace Mono.Xml.Xsl
 			KeyIndexTable table =
 				keyIndexTables [name] as KeyIndexTable;
 			if (table == null) {
-				table = new KeyIndexTable (this, p.CompiledStyle.Style.FindKey (name));
+				table = new KeyIndexTable (this, p.CompiledStyle.ResolveKey (name));
 				keyIndexTables [name] = table;
 			}
 			return table;

@@ -59,6 +59,8 @@ namespace Mono.Xml.Xsl {
 		Hashtable parameters = new Hashtable ();
 		// [QName]=>XslKey
 		Hashtable keys = new Hashtable();
+		// [QName]=>XslVariable
+		Hashtable variables = new Hashtable ();
 
 		XslTemplateTable templates;
 
@@ -67,6 +69,11 @@ namespace Mono.Xml.Xsl {
 		XmlQualifiedName [] extensionElementPrefixes;
 		XmlQualifiedName [] excludeResultPrefixes;
 		ArrayList stylesheetNamespaces = new ArrayList ();
+
+		// in-process includes. They must be first parsed as
+		// XPathNavigator, collected imports, and then processed
+		// other content.
+		Hashtable inProcessIncludes = new Hashtable ();
 
 		public XmlQualifiedName [] ExtensionElementPrefixes {
 			get { return extensionElementPrefixes; }
@@ -100,15 +107,15 @@ namespace Mono.Xml.Xsl {
 			get { return templates; }
 		}
 
-		public Hashtable Keys {
-			get { return keys; }
-		}
-
 		public string Version {
 			get { return version; }
 		}
 
-		public XslStylesheet (Compiler c)
+		public XslStylesheet ()
+		{
+		}
+
+		internal void Compile (Compiler c)
 		{
 			c.PushStylesheet (this);
 			
@@ -123,7 +130,7 @@ namespace Mono.Xml.Xsl {
 				if (c.Input.GetAttribute ("version", XsltNamespace) == String.Empty)
 					throw new XsltCompileException ("Mandatory global attribute version is missing.", null, c.Input);
 				// then it is simplified stylesheet.
-				Templates.Add (new XslTemplate (c));
+				templates.Add (new XslTemplate (c));
 			} else {
 				if (c.Input.LocalName != "stylesheet" &&
 					c.Input.LocalName != "transform")
@@ -145,8 +152,14 @@ namespace Mono.Xml.Xsl {
 				}
 				ProcessTopLevelElements (c);
 			}
-			
+
+			foreach (XslGlobalVariable v in variables.Values)
+				c.AddGlobalVariable (v);
+			foreach (XslKey key in keys.Values)
+				c.AddKey (key);
+
 			c.PopStylesheet ();
+			inProcessIncludes = null;
 		}
 
 		private QName [] ParseMappedPrefixes (string list, XPathNavigator nav)
@@ -166,19 +179,6 @@ namespace Mono.Xml.Xsl {
 				}
 			}
 			return (QName []) al.ToArray (typeof (QName));
-		}
-
-		public XslKey FindKey (QName name)
-		{
-			XslKey key = Keys [name] as XslKey;
-			if (key != null)
-				return key;
-			for (int i = Imports.Count - 1; i >= 0; i--) {
-				key = ((XslStylesheet) Imports [i]).FindKey (name);
-				if (key != null)
-					return key;
-			}
-			return null;
 		}
 
 		bool countedSpaceControlExistence;
@@ -319,36 +319,81 @@ namespace Mono.Xml.Xsl {
 			return result != null ? result : prefix;
 		}
 
-		private XslStylesheet (Compiler c, XslStylesheet importer) : this (c)
+		private void StoreInclude (Compiler c)
 		{
-//			this.importer = importer;
-		}
-		
-		private void HandleInclude (Compiler c, string href)
-		{
-			c.PushInputDocument (href);
+			XPathNavigator including = c.Input.Clone ();
+			c.PushInputDocument (c.Input.GetAttribute ("href", String.Empty));
+			inProcessIncludes [including] = c.Input;
 
-			// move to root element
+			HandleImportsInInclude (c);
+			c.PopInputDocument ();
+		}
+
+		private void HandleImportsInInclude (Compiler c)
+		{
+			if (c.Input.NamespaceURI != XsltNamespace) {
+				if (c.Input.GetAttribute ("version",
+					XsltNamespace) == String.Empty)
+					throw new XsltCompileException ("Mandatory global attribute version is missing.", null, c.Input);
+				// simplified style == never imports.
+				// Keep this position
+				return;
+			}
+
+			if (!c.Input.MoveToFirstChild ()) {
+				c.Input.MoveToRoot ();
+				return;
+			}
+
+			HandleIncludesImports (c);
+		}
+
+		private void HandleInclude (Compiler c)
+		{
+			XPathNavigator included = null;
+			foreach (XPathNavigator inc in inProcessIncludes.Keys) {
+				if (inc.IsSamePosition (c.Input)) {
+					included = (XPathNavigator) inProcessIncludes [inc];
+					break;
+				}
+			}
+			if (included == null)
+				throw new Exception ("Should not happen. Current input is " + c.Input.BaseURI + " / " + c.Input.Name + ", " + inProcessIncludes.Count);
+
+			if (included.NodeType == XPathNodeType.Root)
+				return; // Already done.
+
+			c.PushInputDocument (included);
+
 			while (c.Input.NodeType != XPathNodeType.Element)
 				if (!c.Input.MoveToNext ())
-					throw new XsltCompileException ("Stylesheet root element must be either \"stylesheet\" or \"transform\" or any literal element.", null, c.Input);
+					break;
 
-			if (c.Input.NamespaceURI != XsltNamespace) {
-				if (c.Input.GetAttribute ("version", XsltNamespace) == String.Empty)
-					throw new XsltCompileException ("Mandatory global attribute version is missing.", null, c.Input);
+			if (c.Input.NamespaceURI != XsltNamespace &&
+				c.Input.NodeType == XPathNodeType.Element) {
 				// then it is simplified stylesheet.
-				Templates.Add (new XslTemplate (c));
+				templates.Add (new XslTemplate (c));
 			}
-			else
-				ProcessTopLevelElements (c);
+			else {
+				do {
+					if (c.Input.NodeType != XPathNodeType.Element)
+						continue;
+					Debug.EnterNavigator (c);
+					HandleTopLevelElement (c);
+					Debug.ExitNavigator (c);
+				} while (c.Input.MoveToNext ());
+			}
 
+			c.Input.MoveToParent ();
 			c.PopInputDocument ();
 		}
 		
 		private void HandleImport (Compiler c, string href)
 		{
 			c.PushInputDocument (href);
-			imports.Add (new XslStylesheet (c, this));
+			XslStylesheet imported = new XslStylesheet ();
+			imported.Compile (c);
+			imports.Add (imported);
 			c.PopInputDocument ();
 		}
 		
@@ -358,14 +403,10 @@ namespace Mono.Xml.Xsl {
 			switch (n.NamespaceURI)
 			{
 			case XsltNamespace:
-				
 				switch (n.LocalName)
 				{
 				case "include":
-					HandleInclude (c, c.GetAttribute ("href"));
-					break;
-				case "import":
-					HandleImport (c, c.GetAttribute ("href"));
+					HandleInclude (c);
 					break;
 				case "preserve-space":
 					AddSpaceControls (c.ParseQNameListAttribute ("elements"), XmlSpace.Preserve, n);
@@ -383,7 +424,8 @@ namespace Mono.Xml.Xsl {
 					break;
 
 				case "key":
-					keys [c.ParseQNameAttribute ("name")] = new XslKey (c);
+					XslKey key = new XslKey (c);
+					keys [key.Name] = key;
 					break;
 					
 				case "output":
@@ -398,14 +440,16 @@ namespace Mono.Xml.Xsl {
 					templates.Add (new XslTemplate (c));	
 					break;
 				case "variable":
-					c.AddGlobalVariable (new XslGlobalVariable (c));
+					XslGlobalVariable gvar = new XslGlobalVariable (c);
+					variables [gvar.Name] = gvar;
 					break;
 				case "param":
-					c.AddGlobalVariable (new XslGlobalParam (c));
+					XslGlobalParam gpar = new XslGlobalParam (c);
+					variables [gpar.Name] = gpar;
 					break;
 				default:
 					if (version == "1.0")
-						throw new XsltCompileException ("Unrecognized top level element.", null, c.Input);
+						throw new XsltCompileException ("Unrecognized top level element after imports.", null, c.Input);
 					break;
 				}
 				break;
@@ -419,11 +463,48 @@ namespace Mono.Xml.Xsl {
 				break;
 			}
 		}
-		
+
+		private XPathNavigator HandleIncludesImports (Compiler c)
+		{
+			// process imports. They must precede to other
+			// top level elements by schema.
+			do {
+				if (c.Input.NodeType != XPathNodeType.Element)
+					continue;
+				if (c.Input.LocalName != "import" ||
+					c.Input.NamespaceURI != XsltNamespace)
+					break;
+				Debug.EnterNavigator (c);
+				HandleImport (c, c.GetAttribute ("href"));
+				Debug.ExitNavigator (c);
+			} while (c.Input.MoveToNext ());
+
+			XPathNavigator saved = c.Input.Clone ();
+
+			// process includes to handle nested imports. They must precede to other
+			// top level elements by schema.
+			do {
+				if (c.Input.NodeType != XPathNodeType.Element ||
+					c.Input.LocalName != "include" ||
+					c.Input.NamespaceURI != XsltNamespace)
+					continue;
+				Debug.EnterNavigator (c);
+				StoreInclude (c);
+				Debug.ExitNavigator (c);
+			} while (c.Input.MoveToNext ());
+
+			c.Input.MoveTo (saved);
+
+			return saved;
+		}
+
 		private void ProcessTopLevelElements (Compiler c)
 		{
 			if (!c.Input.MoveToFirstChild ())
 				return;
+
+			XPathNavigator saved = HandleIncludesImports (c);
+
 			do {
 				// Collect namespace aliases first.
 				if (c.Input.NodeType != XPathNodeType.Element ||
@@ -439,7 +520,7 @@ namespace Mono.Xml.Xsl {
 				namespaceAliases.Set (sprefix, rprefix);
 			} while (c.Input.MoveToNext ());
 
-			c.Input.MoveToFirst ();
+			c.Input.MoveTo (saved);
 			do {
 				if (c.Input.NodeType != XPathNodeType.Element)
 					continue;

@@ -97,6 +97,11 @@ namespace Mono.Xml.Xsl
 			return (XslGeneralVariable)globalVariables [name];
 		}
 		
+		public XslKey ResolveKey (QName name)
+		{
+			return (XslKey) keys [name];
+		}
+		
 		public XslAttributeSet ResolveAttributeSet (QName name)
 		{
 			return (XslAttributeSet)attrSets [name];
@@ -112,6 +117,7 @@ namespace Mono.Xml.Xsl
 		Stack styleStack = new Stack ();
 		XslStylesheet currentStyle;
 		
+		Hashtable keys = new Hashtable ();
 		Hashtable globalVariables = new Hashtable ();
 		Hashtable attrSets = new Hashtable ();
 	
@@ -150,14 +156,15 @@ namespace Mono.Xml.Xsl
 				nav.MoveToParent ();
 			}
 			try {
-				this.rootStyle = new XslStylesheet (this);
+				rootStyle = new XslStylesheet ();
+				rootStyle.Compile (this);
 			} catch (XsltCompileException) {
 				throw;
 			} catch (Exception x) {
 				throw new XsltCompileException ("XSLT compile error. " + x.Message, x,  Input);
 			}
 			
-			return new CompiledStylesheet (rootStyle, globalVariables, attrSets, exprStore, nsMgr, rootStyle.Keys, outputs, decimalFormats, msScripts);
+			return new CompiledStylesheet (rootStyle, globalVariables, attrSets, exprStore, nsMgr, keys, outputs, decimalFormats, msScripts);
 		}
 		
 		MSXslScriptManager msScripts = new MSXslScriptManager ();
@@ -220,7 +227,7 @@ namespace Mono.Xml.Xsl
 			}
 		}
 		
-		private void PushInputDocument (XPathNavigator nav)
+		public void PushInputDocument (XPathNavigator nav)
 		{
 			// Inclusion nest check
 			IXmlLineInfo li = currentInput as IXmlLineInfo;
@@ -392,7 +399,12 @@ namespace Mono.Xml.Xsl
 		{
 			globalVariables [var.Name] = var;
 		}
-		
+
+		public void AddKey (XslKey key)
+		{
+			keys [key.Name] = key;
+		}
+
 		public void AddAttributeSet (XslAttributeSet set)
 		{
 			XslAttributeSet existing = attrSets [set.Name] as XslAttributeSet;
@@ -598,6 +610,7 @@ namespace Mono.Xml.Xsl
 	}
 	
 	internal class VariableScope {
+		ArrayList variableNames;
 		Hashtable variables;
 		VariableScope parent;
 		int nextSlot = 0;
@@ -622,10 +635,15 @@ namespace Mono.Xml.Xsl
 		
 		public int AddVariable (XslLocalVariable v)
 		{
-			if (variables == null)
+			if (variables == null) {
+				variableNames = new ArrayList ();
 				variables = new Hashtable ();
-			
+			}
 			variables [v.Name] = v;
+			int idx = variableNames.IndexOf (v.Name);
+			if (idx >= 0)
+				return idx;
+			variableNames.Add (v.Name);
 			return nextSlot++;
 		}
 		

@@ -1,3 +1,19 @@
+2005-03-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslStylesheet.cs :
+	  Variables are stored per stylesheet and added to compiler after
+	  all of the contents are processed (handle import precedence).
+	  Imports are now processed in prior to other contents (incorrect
+	  imports are now rejected). After imports, process includes to 
+	  process nested imports. In-process included stylesheets are 
+	  temporarily stored in including stylesheet.
+	  Handle keys like variables are handled.
+	  Added Compile() that is splitted from .ctor().
+	* Compiler.cs :
+	  Store keys in compiler and compiled stylesheet.
+	  Duplicate variables in imports are now overriden as expected.
+	* XsltCompiledContext.cs : use CompiledStylesheet.ResolveKey().
+
 2005-03-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslTransformProcessor.cs : now it looks safe to remove SetContext()
