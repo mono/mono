@@ -1,0 +1,23 @@
+POSTECHO
+
+To run the postecho tool your web server must have a script present to return
+the TEST variable value to the tool.
+
+The tool can use the HttpWebRequest|Response or the SslClientStream directly.
+This is almost identical when executed on Mono but very different if you test
+with the MS runtime.
+
+
+Available server-side scripts
+
+1.	sendback.asp
+
+	ASP* script to return back the TEST value.
+
+
+[*] This ISN'T an ASP.NET script as I didn't have it IIS present when 
+installing VS.NET.
+
+
+Sebastien Pouliot
+sebastien@ximian.com

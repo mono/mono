@@ -1,0 +1,8 @@
+2005-02-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ChangeLog: New. Track changes of postecho;
+	* Makefile: New. Build/clean the postecho tool;
+	* postecho.cs: New. Tool to POST a buffer and receive/compare the 
+	same data back from the server.
+	* sendback.asp: ASP (not ASP.NET) script to work with postecho.
+	* README: instructions about postecho
