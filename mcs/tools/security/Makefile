@@ -17,7 +17,8 @@ DISTFILES = \
 	chktrust.cs	\
 	signcode.cs	\
 	setreg.cs	\
-	certmgr.cs
+	certmgr.cs	\
+	StrongNameManager.cs
 
 all-local: $(SECURITY_PROGRAMS)
 
@@ -40,6 +41,9 @@ clean-local:
 	rm -f *.exe *.pdb
 
 dist-local: dist-default
+
+sn.exe: sn.cs StrongNameManager.cs AssemblyInfo.cs
+	$(CSCOMPILE) $^
 
 %.exe: %.cs AssemblyInfo.cs
 	$(CSCOMPILE) $^

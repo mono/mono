@@ -1,3 +1,13 @@
+2004-03-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile: Updated sn.exe to include StrongNameManager.cs.
+	* sn.cs: Updated to use StrongNameManager. This allows remapping a
+	public key token to another public key (e.g. ECMA key). Also added
+	support for -Vl.
+	* StrongNameManager.cs: New. First version. Allows remapping of
+	public key tokens to alternate public keys (e.g. ECMA) and disabling
+	strongname verification for specific tokens/assemblies/users combo.
+
 2004-03-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* sn.cs: fixed crash in -T and -Tp.

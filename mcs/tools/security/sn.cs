@@ -2,9 +2,10 @@
 // SN.cs: sn clone tool
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -38,11 +39,11 @@ namespace Mono.Tools {
 			Console.WriteLine ("{0}{1}", copyright, Environment.NewLine);
 		}
 
-		static string defaultCSP = null;
+		static string defaultCSP;
 
-		// TODO
 		static bool LoadConfig () 
 		{
+			StrongNameManager.LoadConfig ("strongnames.config");
 			// default CSP
 			return false;
 		}
@@ -137,42 +138,68 @@ namespace Mono.Tools {
 			}
 
 			StrongName sign = new StrongName (key);
-			// try to compare public key
-			bool same = Compare (sign.PublicKey, an.GetPublicKey ());
+			byte[] token = an.GetPublicKeyToken ();
+
+			// first, try to compare using a mapped public key (e.g. ECMA)
+			bool same = Compare (sign.PublicKey, StrongNameManager.GetMappedPublicKey (token));
 			if (!same) {
-				// second chance, try to compare public key token
-				same = Compare (sign.PublicKeyToken, an.GetPublicKeyToken ());
+				// second, try to compare using the assembly public key
+				same = Compare (sign.PublicKey, an.GetPublicKey ());
+				if (!same) {
+					// third (and last) chance, try to compare public key token
+					same = Compare (sign.PublicKeyToken, token);
+				}
 			}
 
-			if ((same) && (an.Flags == AssemblyNameFlags.PublicKey)) {
+			if (same) {
 				if (sign.Sign (assemblyName))
-					Console.WriteLine ("Assembly signed");
+					Console.WriteLine ("Assembly {0} signed.", assemblyName);
 				else
-					Console.WriteLine ("Couldn't sign the assembly");
+					Console.WriteLine ("Couldn't sign the assembly {0}.", assemblyName);
 			}
-			else
-				Console.WriteLine ("There is no public key present in assembly {0}", assemblyName);
+			else {
+				Console.WriteLine ("Couldn't sign the assembly {0} with this key pair.", assemblyName);
+			}
 		}
 
-		static void Verify (string assemblyName, StrongName sn) 
+		static int Verify (string assemblyName, bool forceVerification) 
 		{
 			// this doesn't load the assembly (well it unloads it ;)
 			// http://weblogs.asp.net/nunitaddin/posts/9991.aspx
 			AssemblyName an = AssemblyName.GetAssemblyName (assemblyName);
 			if (an == null) {
 				Console.WriteLine ("Unable to load assembly: {0}", assemblyName);
-				return;
+				return 2;
 			}
 
-			if (an.Flags != AssemblyNameFlags.PublicKey) {
-				Console.WriteLine ("There is no public key present in assembly {0}", assemblyName);
-				return;
+			byte[] publicKey = StrongNameManager.GetMappedPublicKey (an.GetPublicKeyToken ());
+			if ((publicKey == null) || (publicKey.Length < 12)) {
+				// no mapping
+				publicKey = an.GetPublicKey ();
+				if ((publicKey == null) || (publicKey.Length < 12)) {
+					Console.WriteLine ("{0} is not a strongly named assembly.", assemblyName);
+					return 2;
+				}
 			}
 
-			if (sn.Verify (assemblyName))
-				Console.WriteLine ("Assembly {0} is strongnamed.", assemblyName);
-			else
-				Console.WriteLine ("Assembly {0} isn't strongnamed", assemblyName);
+			// Note: MustVerify is based on the original token (by design). Public key
+			// remapping won't affect if the assebmly is verified or not.
+			if (forceVerification || StrongNameManager.MustVerify (an)) {
+				RSA rsa = CryptoConvert.FromCapiPublicKeyBlob (publicKey, 12);
+				StrongName sn = new StrongName (rsa);
+				if (sn.Verify (assemblyName)) {
+					Console.WriteLine ("Assembly {0} is strongnamed.", assemblyName);
+					return 0;
+				}
+				else {
+					Console.WriteLine ("Assembly {0} isn't strongnamed", assemblyName);
+					return 1;
+				}
+			}
+			else {
+				Console.WriteLine ("Assembly {0} is strongnamed (verification skipped).", assemblyName);
+				return 0;
+			}
 		}
 
 		static bool Compare (byte[] value1, byte[] value2) 
@@ -390,22 +417,12 @@ namespace Mono.Tools {
 					break;
 				case "-v":
 					filename = args [i++];
-					an = AssemblyName.GetAssemblyName (filename);
-					byte[] akey = an.GetPublicKey ();
-					if(akey == null || akey.Length < 12) {
-						Console.WriteLine (filename + " is not a strongly named assembly");
-						break;
-					}
-					byte[] pkey = new byte [akey.Length - 12];
-					Buffer.BlockCopy (akey, 12, pkey, 0, pkey.Length);
-					sn = new StrongName (pkey);
-					Verify (filename, sn);
-					break;
+					return Verify (filename, false);
 				case "-vf":
-					Console.WriteLine ("Unimplemented option");
-					break;
+					filename = args [i++];
+					return Verify (filename, true);	// force verification
 				case "-Vl":
-					Console.WriteLine ("Unimplemented option");
+					Console.WriteLine (new StrongNameManager ().ToString ());
 					break;
 				case "-Vr":
 					Console.WriteLine ("Unimplemented option");
@@ -414,6 +431,7 @@ namespace Mono.Tools {
 					Console.WriteLine ("Unimplemented option");
 					break;
 				case "-Vx":
+					// we must remove <verificationSettings> from each config files
 					Console.WriteLine ("Unimplemented option");
 					break;
 				case "-?":
