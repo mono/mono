@@ -21,6 +21,7 @@ namespace Microsoft.Web.Services.Security {
 
 		private XmlQualifiedName encoding;
 		internal XmlQualifiedName valueType;
+		private byte[] rawData;
 
 		public BinarySecurityToken (XmlElement element) : base (element)
 		{
@@ -44,10 +45,9 @@ namespace Microsoft.Web.Services.Security {
 			}
 		}
 
-		[MonoTODO ("used ?")]
 		public virtual byte[] RawData {
-			get { return null; }
-			set { ; }
+			get { return rawData; }
+			set { rawData = value; }
 		}
 
 		public virtual XmlQualifiedName ValueType {
@@ -64,18 +64,31 @@ namespace Microsoft.Web.Services.Security {
 			if (document == null)
 				throw new ArgumentNullException ("document");
 
+			XmlAttribute nsa = null;
+			string prefix = document.GetPrefixOfNamespace (valueType.Namespace);
+			if ((prefix == null) || (prefix == String.Empty)) {
+				nsa = document.CreateAttribute ("xmlns:vt");
+				nsa.InnerText = valueType.Namespace;
+				prefix = "vt";
+			}
+
 			XmlAttribute bstvt = document.CreateAttribute (WSSecurity.AttributeNames.ValueType);
-			bstvt.InnerText = String.Concat (WSSecurity.Prefix, ":", "X509v3");
+			bstvt.InnerText = String.Concat (prefix, ":", valueType.Name);
 			XmlAttribute bstet = document.CreateAttribute (WSSecurity.AttributeNames.EncodingType);
 			bstet.InnerText = String.Concat (WSSecurity.Prefix, ":", name);
 			XmlAttribute bstid = document.CreateAttribute (WSTimestamp.Prefix, WSTimestamp.AttributeNames.Id, WSTimestamp.NamespaceURI);
 			bstid.InnerText = Id;
 			
 			XmlElement bst = document.CreateElement (WSSecurity.Prefix, WSSecurity.ElementNames.BinarySecurityToken, WSSecurity.NamespaceURI);
+			if (nsa != null) {
+				bst.Attributes.Append (nsa);
+			}
 			bst.Attributes.Append (bstvt);
 			bst.Attributes.Append (bstet);
 			bst.Attributes.Append (bstid);
-			bst.InnerText = Convert.ToBase64String (RawData);
+			if (rawData != null) {
+				bst.InnerText = Convert.ToBase64String (rawData);
+			}
 			return bst;
 		}
 
@@ -107,7 +120,7 @@ namespace Microsoft.Web.Services.Security {
 				string prefix = element.GetPrefixOfNamespace (WSSecurity.NamespaceURI);
 				XmlQualifiedName xqne = new XmlQualifiedName (et [1], WSSecurity.NamespaceURI);
 				EncodingType = xqne;
-				if ((et [0] == prefix) && (et [1] == name))
+				if ((et [0] == prefix) && (et [1] == name) && (element.InnerText.Length > 0))
 					RawData = Convert.FromBase64String (element.InnerText);
 			}
 		}

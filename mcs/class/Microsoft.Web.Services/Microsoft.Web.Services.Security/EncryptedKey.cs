@@ -193,16 +193,12 @@ namespace Microsoft.Web.Services.Security {
 			if ((xnl != null) && (xnl.Count > 0)) {
 				KeyInfo ki = new KeyInfo ();
 				ki.LoadXml ((XmlElement) xnl [0]);
-				foreach (KeyInfoClause kic in ki) {
-					if (kic is KeyInfoNode) {
-						KeyInfoNode kin = (kic as KeyInfoNode);
-						if ((kin != null) && (kin.Value.LocalName == WSSecurity.ElementNames.SecurityTokenReference)) {
-							SecurityTokenReference str = new SecurityTokenReference (kin.Value);
-							if (str.KeyIdentifier != null)
-								dk = str.KeyIdentifier.DecryptionKey;
-						}
-					}
-				}
+#if WSE1
+				DecryptionKeyProvider dkp = new DecryptionKeyProvider ();
+				dk = dkp.GetDecryptionKey (keyex, ki);
+#else
+				// TODO
+#endif
 			}
 
 			byte[] encdata = null;

@@ -1,3 +1,10 @@
+2003-11-06  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* BinarySecurityToken.cs: Oops unit tests were failing on this one. Also implemented RawData (it's  actually used - see updated unit tests).
+	* DecryptionKeyProvider.cs: Basic implementation based on code I (wrongly) put in EncryptedKey.
+	* EncrypedKey.cs: Now calls DecryptionKeyProvider.
+	* SignatureOptions.cs: Updated for WSE2 compatibility (removed IncludePath*).
+
 2003-10-31  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* IReplayCache.cs: New. Interface for ReplayCache.
