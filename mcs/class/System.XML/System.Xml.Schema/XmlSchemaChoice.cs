@@ -36,7 +36,6 @@ namespace System.Xml.Schema
 			get{ return items; }
 		}
 
-		/*
 		internal override XmlSchemaParticle ActualParticle {
 			get {
 				if (this.ValidatedMinOccurs == 1 &&
@@ -47,7 +46,6 @@ namespace System.Xml.Schema
 					return this;
 			}
 		}
-		*/
 
 		[MonoTODO]
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
@@ -83,9 +81,9 @@ namespace System.Xml.Schema
 				return errorCount;
 
 			CompiledItems.Clear ();
-			foreach (XmlSchemaObject obj in Items) {
-				errorCount += obj.Validate (h, schema);
-				CompiledItems.Add (obj);
+			foreach (XmlSchemaParticle p in Items) {
+				errorCount += p.Validate (h, schema);
+				CompiledItems.Add (p);
 			}
 
 			ValidationId = schema.ValidationId;
@@ -107,19 +105,11 @@ namespace System.Xml.Schema
 				// RecurseLax
 				this.ValidateOccurenceRangeOK (choice, h, schema);
 
-				// FIXME: What is the correct "order preserving" mapping?
-				int baseIndex = 0;
-				for (int i = 0; i < this.Items.Count; i++) {
-					XmlSchemaParticle pd = Items [i] as XmlSchemaParticle;
-					if (choice.Items.Count > baseIndex) {
-						XmlSchemaParticle pb = choice.Items [baseIndex] as XmlSchemaParticle;
-						pd.ActualParticle.ValidateDerivationByRestriction (pb.ActualParticle, h, schema);
-						baseIndex++;
-					}
-					else
-						error (h, "Invalid choice derivation by extension was found.");
-				}
-
+				// If it is totally optional, then ignore their contents.
+				if (choice.ValidatedMinOccurs == 0 && choice.ValidatedMaxOccurs == 0 &&
+					this.ValidatedMinOccurs == 0 && this.ValidatedMaxOccurs == 0)
+					return;
+				this.ValidateRecurse (choice, h, schema);
 				return;
 			}
 

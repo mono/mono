@@ -536,13 +536,13 @@ namespace Mono.Xml.Schema
 	public class XsdByte : XsdShort
 	{
 		public override Type ValueType {
-			get { return typeof (byte); }
+			get { return typeof (sbyte); }
 		}
 
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
-			return XmlConvert.ToByte (Normalize (s));
+			return XmlConvert.ToSByte (Normalize (s));
 		}
 	}
 

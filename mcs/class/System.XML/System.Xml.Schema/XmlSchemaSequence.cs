@@ -35,6 +35,20 @@ namespace System.Xml.Schema
 			get{ return items; }
 		}
 
+		internal override XmlSchemaParticle ActualParticle {
+			get {
+				if (CompiledItems.Count == 0)
+					return XmlSchemaParticle.Empty;
+				if (ValidatedMaxOccurs == 1 &&
+					ValidatedMinOccurs == 1 &&
+					CompiledItems.Count == 1)
+					return ((XmlSchemaParticle) CompiledItems [0]).ActualParticle;
+				else
+					return this;
+			}
+		}
+
+
 		[MonoTODO]
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
@@ -93,19 +107,11 @@ namespace System.Xml.Schema
 				// Recurse
 				ValidateOccurenceRangeOK (seq, h, schema);
 
-				// FIXME: What is the correct "order preserving" mapping?
-				int baseIndex = 0;
-				for (int i = 0; i < this.CompiledItems.Count; i++) {
-					XmlSchemaParticle pd = this.CompiledItems [i] as XmlSchemaParticle;
-					if (seq.Items.Count > baseIndex) {
-						XmlSchemaParticle pb = seq.CompiledItems [baseIndex] as XmlSchemaParticle;
-						pd.ActualParticle.ValidateDerivationByRestriction (pb.ActualParticle, h, schema);
-						baseIndex++;
-					}
-					else
-						error (h, "Invalid sequence derivation by extension was found.");
-				}
-
+				// If it is totally optional, then ignore their contents.
+				if (seq.ValidatedMinOccurs == 0 && seq.ValidatedMaxOccurs == 0 &&
+					this.ValidatedMinOccurs == 0 && this.ValidatedMaxOccurs == 0)
+					return;
+				this.ValidateRecurse (seq, h, schema);
 				return;
 			} 
 

@@ -37,6 +37,18 @@ namespace System.Xml.Schema
 			get { return emptiable; }
 		}
 
+		internal override XmlSchemaParticle ActualParticle {
+			get {
+				if (CompiledItems.Count == 0)
+					return XmlSchemaParticle.Empty;
+				else if (CompiledItems.Count == 1)
+					return ((XmlSchemaParticle) CompiledItems [0]).ActualParticle;
+				else
+					return this;
+			}
+		}
+
+
 		/// <remarks>
 		/// 1. MaxOccurs must be one. (default is also one)
 		/// 2. MinOccurs must be zero or one.
@@ -117,20 +129,7 @@ namespace System.Xml.Schema
 			} else if (derivedAll != null) {
 				// Recurse
 				ValidateOccurenceRangeOK (derivedAll, h, schema);
-
-				// FIXME: What is the correct "order preserving" mapping?
-				int baseIndex = 0;
-				for (int i = 0; i < this.Items.Count; i++) {
-					XmlSchemaParticle pd = Items [i] as XmlSchemaParticle;
-					if (derivedAll.Items.Count > baseIndex) {
-						XmlSchemaParticle pb = derivedAll.Items [baseIndex] as XmlSchemaParticle;
-						pd.ActualParticle.ValidateDerivationByRestriction (pb.ActualParticle, h, schema);
-						baseIndex++;
-					}
-					else
-						error (h, "Invalid choice derivation by extension was found.");
-				}
-
+				this.ValidateRecurse (derivedAll, h, schema);
 				return;
 			}
 			else

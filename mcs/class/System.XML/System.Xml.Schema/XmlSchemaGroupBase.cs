@@ -51,5 +51,38 @@ namespace System.Xml.Schema
 				p.ValidateDerivationByRestriction (any, h, schema);
 			ValidateOccurenceRangeOK (any, h, schema);
 		}
+
+		internal void ValidateRecurse (XmlSchemaGroupBase baseGroup,
+			ValidationEventHandler h, XmlSchema schema)
+		{
+			int index = 0;
+			for (int i = 0; i < baseGroup.CompiledItems.Count; i++) {
+				XmlSchemaParticle pb = baseGroup.CompiledItems [i] as XmlSchemaParticle;
+				if (pb.ActualParticle == XmlSchemaParticle.Empty)
+					continue;
+				XmlSchemaParticle pd = null;
+				while (this.CompiledItems.Count > index) {
+					pd = this.CompiledItems [index] as XmlSchemaParticle;
+					index++;
+					if (pd.ActualParticle != XmlSchemaParticle.Empty)
+						break;
+				}
+				if (pd != null) {
+					try {
+						pd.ActualParticle.ValidateDerivationByRestriction (pb.ActualParticle, h, schema);
+					} catch (XmlSchemaException ex) {
+						if (!pb.ValidateIsEmptiable ())
+							error (h, "Invalid particle derivation by restriction was found. Invalid sub-particle derivation was found.", ex);
+						else
+							index--; // try the same derived particle and next base particle.
+					}
+				} else if (!pb.ValidateIsEmptiable ()) {
+					error (h, "Invalid particle derivation by restriction was found. Base schema particle has non-emptiable sub particle that is not mapped to the derived particle.");
+					return;
+				}
+			}
+			if (index != this.CompiledItems.Count)
+				error (h, "Invalid particle derivation by restriction was found. Extraneous derived particle was found.");
+		}
 	}
 }

@@ -44,6 +44,9 @@ namespace System.Xml.Schema
 		private ArrayList substitutingElements = new ArrayList ();
 		XmlSchemaElement referencedElement;
 
+		// Post compilation items. It should be added on all schema components.
+		XmlSchema schema;
+
 		private static string xmlname = "element";
 
 		public XmlSchemaElement()
@@ -233,6 +236,26 @@ namespace System.Xml.Schema
 
 		#endregion
 
+		/*
+		// FIXME: using this causes stack overflow...
+		internal override XmlSchemaParticle ActualParticle {
+			get {
+				if (this.SubstitutingElements != null && this.SubstitutingElements.Count > 0) {
+					XmlSchemaChoice choice = new XmlSchemaChoice ();
+					choice.Compile (null, schema); // compute Validated Min/Max Occurs.
+					choice.CompiledItems.Add (this);
+					for (int i = 0; i < SubstitutingElements.Count; i++) {
+						XmlSchemaElement se = SubstitutingElements [i] as XmlSchemaElement;
+						choice.CompiledItems.Add (se);
+					}
+					return choice;
+				}
+				else
+					return this;
+			}
+		}
+		*/
+
 		/// <remarks>
 		/// a) If Element has parent as schema:
 		///		1. name must be present and of type NCName.
@@ -264,6 +287,7 @@ namespace System.Xml.Schema
 			// If this is already compiled this time, simply skip.
 			if (this.IsComplied (schema.CompilationId))
 				return 0;
+			this.schema = schema;
 
 			if(this.defaultValue != null && this.fixedValue != null)
 				error(h,"both default and fixed can't be present");
@@ -636,12 +660,14 @@ namespace System.Xml.Schema
 		internal override void ValidateDerivationByRestriction (XmlSchemaParticle baseParticle,
 			ValidationEventHandler h, XmlSchema schema)
 		{
+			// element - NameAndTypeOK
 			XmlSchemaElement baseElement = baseParticle as XmlSchemaElement;
 			if (baseElement != null) {
 				ValidateDerivationByRestrictionNameAndTypeOK (baseElement, h, schema);
 				return;
 			}
 
+			// any - NSCompat
 			XmlSchemaAny baseAny = baseParticle as XmlSchemaAny;
 			if (baseAny != null) {
 				// NSCompat
@@ -649,6 +675,27 @@ namespace System.Xml.Schema
 				ValidateOccurenceRangeOK (baseAny, h, schema);
 				return;
 			}
+
+//*
+			// choice - RecurseAsIfGroup
+			XmlSchemaGroupBase gb = null;
+			if (baseParticle is XmlSchemaSequence)
+				gb = new XmlSchemaSequence ();
+			else if (baseParticle is XmlSchemaChoice)
+				gb = new XmlSchemaChoice ();
+			else if (baseParticle is XmlSchemaAll)
+				gb = new XmlSchemaAll ();
+
+			if (gb != null) {
+				gb.Items.Add (this);
+				gb.Compile (h, schema);
+				gb.Validate (h, schema);
+				// It looks weird, but here we never think about 
+				// _pointlessness_ of this groupbase particle.
+				gb.ValidateDerivationByRestriction (baseParticle, h, schema);
+				return;
+			}
+//*/
 		}
 
 		private void ValidateDerivationByRestrictionNameAndTypeOK (XmlSchemaElement baseElement,
@@ -684,7 +731,7 @@ namespace System.Xml.Schema
 					XmlSchemaSimpleType derivedSType = this.ElementType as XmlSchemaSimpleType;
 					if (derivedSType != null)
 						derivedSType.ValidateTypeDerivationOK (baseElement.ElementType, h, schema, true);
-					else if (baseElement.ElementType != this.ElementType)
+					else if (baseElement.ElementType != XmlSchemaComplexType.AnyType && baseElement.ElementType != this.ElementType)
 						error (h, "Invalid element derivation by restriction of particle was found. Both primitive types differ.");
 				}
 			}

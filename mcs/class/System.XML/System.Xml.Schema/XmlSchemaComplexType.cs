@@ -550,8 +550,6 @@ namespace System.Xml.Schema
 				if (baseComplexType == null) {
 					// Basically it is an error. Considering ValidationEventHandler.
 				}
-				else if (baseComplexType.resolvedContentType == XmlSchemaContentType.TextOnly)
-					error (h, "Content of the base complex type is Text-only.");
 				else if (baseComplexType.ContentTypeParticle == XmlSchemaParticle.Empty
 					|| baseComplexType == XmlSchemaComplexType.AnyType)
 					contentTypeParticle = cce.Particle;
@@ -890,6 +888,8 @@ namespace System.Xml.Schema
 			} else {
 				// 5.3 => 3.9.6 Particle Valid (Restriction)
 				if (baseType.ContentTypeParticle != null) {
+					// 3.9.6 - 1 : same particle.
+					// 3.9.6 - 2 is covered by using ActualParticle.
 					if (!contentTypeParticle.ActualParticle.ParticleEquals (baseType.ContentTypeParticle.ActualParticle))
 						contentTypeParticle.ActualParticle.ValidateDerivationByRestriction (
 							baseType.ContentTypeParticle.ActualParticle, h, schema);

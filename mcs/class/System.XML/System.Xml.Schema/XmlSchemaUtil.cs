@@ -70,17 +70,10 @@ namespace System.Xml.Schema
 				idCollection.Add(id,xso);
 		}
 
-//		[MonoTODO]
 		public static bool CheckAnyUri(string uri)
 		{
 			if (uri.StartsWith ("##"))
 				return false;
-			return true;
-		}
-
-		public static bool CheckToken(string token)
-		{
-			//check if the string conforms to http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/datatypes.html#token
 			return true;
 		}
 

@@ -167,8 +167,12 @@ namespace System.Xml.Schema
 				this.patternFacetValues = patterns.ToArray (typeof (string)) as string [];
 				this.rexPatterns = new Regex [patterns.Count];
 				for (int i = 0; i < patternFacetValues.Length; i++) {
-					Regex rex = new Regex (patternFacetValues [i]);
-					rexPatterns [i] = rex;
+					try {
+						Regex rex = new Regex (patternFacetValues [i]);
+						rexPatterns [i] = rex;
+					} catch (Exception ex) {
+						error (h, "Invalid regular expression pattern was specified.", ex);
+					}
 				}
 			}
 
@@ -182,12 +186,12 @@ namespace System.Xml.Schema
 			XmlSchemaSimpleTypeList listType = baseST != null ? baseST.Content as XmlSchemaSimpleTypeList : null;
 			// numeric
 			if (listType != null)
-				return ValidateNonListValueWithFacets (value, nt);
-			else
 				return ValidateListValueWithFacets (value, nt);
+			else
+				return ValidateNonListValueWithFacets (value, nt);
 		}
 
-		private bool ValidateNonListValueWithFacets (string value, XmlNameTable nt)
+		private bool ValidateListValueWithFacets (string value, XmlNameTable nt)
 		{
 			string [] list = ((XsdAnySimpleType) XmlSchemaDatatype.FromName ("anySimpleType")).ParseListValue (value, nt);
 
@@ -227,7 +231,7 @@ namespace System.Xml.Schema
 			return true;
 		}
 
-		private bool ValidateListValueWithFacets (string value, XmlNameTable nt)
+		private bool ValidateNonListValueWithFacets (string value, XmlNameTable nt)
 		{
 			// pattern
 			if (this.patternFacetValues != null) {

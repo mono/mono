@@ -1,5 +1,25 @@
 2003-10-25  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
+	* BuiltInDatatype.cs : XsdByte was incorrectly typed as byte, while
+	  the correct binding is sbyte.
+	* XmlSchemaAll.cs,
+	  XmlSchemaChoice.cs,
+	  XmlSchemaSequence.cs,
+	  XmlSchemaGroupBase.cs : ActualParticle now considers pointlessness
+	  described in WXS structures 3.9.6.
+	  Added ValidateRecurse() to support 'Recurse' validation.
+	* XmlSchemaComplexType.cs : Removed incorrect content type conformity
+	  check.
+	* XmlSchemaElement.cs : Implemented 'RecurseAsIfGroup' validation
+	  described in WXS structures 3.9.6.  Fixed type derivation check to
+	  do only if the base type is not anyType.
+	* XmlSchemaSimpleTypeRestriction.cs : Should catch Regex() 
+	  construction exception. ValidateList... and ValidateNonList... was
+	  in reverse.
+	* XmlSchemaUtil.cs : Removed extra MonoTODO. Removed CheckToken().
+
+2003-10-25  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
 	* BuiltInDatatype.cs : Fixed incorrect inheritance of date and time.
 	  Fixed most of date-time related types' ParseValue().
 	  Applied Normalize() before parsing values in some ParseValue().
