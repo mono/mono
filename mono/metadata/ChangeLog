@@ -1,4 +1,8 @@
 
+Mon Jun 17 17:29:40 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.h, marshal.c: some support code to handle complex marshaling.
+
 Mon Jun 17 16:32:56 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.h, class.c, reflection.c: handle ignorecase in GetType ().
