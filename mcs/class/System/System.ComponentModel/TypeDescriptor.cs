@@ -570,7 +570,7 @@ public sealed class TypeDescriptor
 			if (_attributes != null) return _attributes;
 			
 			bool cache = true;
-			object[] ats = _component.GetType().GetCustomAttributes (typeof(DesignerAttribute), true);
+			object[] ats = _component.GetType().GetCustomAttributes (true);
 			Hashtable t = new Hashtable ();
 			foreach (Attribute at in ats)
 				t [at.TypeId] = at;

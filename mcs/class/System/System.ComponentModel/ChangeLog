@@ -1,15 +1,21 @@
+2004-04-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TypeDescriptor.cs: fixed ComponentInfo.GetAttributes(). Now it returns
+	all the attributes, not just DesignerAttribute instances. nGallery
+	complained.
+
 2004-04-21  Lluis Sanchez Gual <lluis@ximian.com>
 
-	* BooleanConverter.cs: GetStandardValues must return an array of booleans,
-	  not an array of strings.
+	* BooleanConverter.cs: GetStandardValues must return an array of
+	booleans, not an array of strings.
 
 2004-04-16  Lluis Sanchez Gual <lluis@ximian.com>
 
-	* ReflectionPropertyDescriptor.cs: Access internal PropertyInfo through
-	GetPropertyInfo(). Take into account that a component may not be sited or
-	not have some services.
-	* TypeDescriptor.cs: GetTypeFromName():  Added null check for Site property.
-	Other minor fixes.
+	* ReflectionPropertyDescriptor.cs: Access internal PropertyInfo
+	through GetPropertyInfo(). Take into account that a component may not
+	be sited or not have some services.
+	* TypeDescriptor.cs: GetTypeFromName():  Added null check for Site
+	property.  Other minor fixes.
 
 2004-04-16	Joerg Rosenkranz <joergr@voelcker.com>
 
