@@ -1,5 +1,7 @@
 2002-06-17  Dietmar Maurer  <dietmar@ximian.com>
 
+	* x86.brg: added inlined versions of Math.Sin, Math.Cos, Math.Sqrt
+
 	* jit.c (mono_analyze_stack): impl. STARG
 	(mono_analyze_stack): impl. LDARGA
 
