@@ -139,7 +139,7 @@ namespace Microsoft.JScript.Tmp
 		public const int SPACE = 117;
 		public const int NO_BREAK_SPACE = 118;
 		public const int LINE_FEED = 119;
-		public const int CARRIGE_RETURN = 120;
+		public const int CARRIAGE_RETURN = 120;
 		public const int LINE_SEPARATOR = 121;
 		public const int PARAGRAPH_SEPARATOR = 122;
 		public const int UNSIGNED_RIGHT_SHIFT = 123;
@@ -1967,6 +1967,7 @@ _loop81_breakloop:						;
 				 }
 			}
 			match(RPAREN);
+			match(SEMI_COLON);
 		}
 		catch (RecognitionException ex)
 		{
@@ -5088,7 +5089,7 @@ _loop162_breakloop:			;
 		@"""SPACE""",
 		@"""NO_BREAK_SPACE""",
 		@"""LINE_FEED""",
-		@"""CARRIGE_RETURN""",
+		@"""CARRIAGE_RETURN""",
 		@"""LINE_SEPARATOR""",
 		@"""PARAGRAPH_SEPARATOR""",
 		@"""UNSIGNED_RIGHT_SHIFT""",

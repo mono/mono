@@ -147,7 +147,7 @@ namespace Microsoft.JScript.Tmp
 		public const int SPACE = 117;
 		public const int NO_BREAK_SPACE = 118;
 		public const int LINE_FEED = 119;
-		public const int CARRIGE_RETURN = 120;
+		public const int CARRIAGE_RETURN = 120;
 		public const int LINE_SEPARATOR = 121;
 		public const int PARAGRAPH_SEPARATOR = 122;
 		public const int UNSIGNED_RIGHT_SHIFT = 123;
@@ -288,7 +288,7 @@ tryAgain:
 						}
 						case '\r':
 						{
-							mCARRIGE_RETURN(true);
+							mCARRIAGE_RETURN(true);
 							theRetToken = returnToken_;
 							break;
 						}
@@ -703,10 +703,10 @@ tryAgain:
 		returnToken_ = _token;
 	}
 	
-	public void mCARRIGE_RETURN(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
+	public void mCARRIAGE_RETURN(bool _createToken) //throws RecognitionException, CharStreamException, TokenStreamException
 {
 		int _ttype; Token _token=null; int _begin=text.Length;
-		_ttype = CARRIGE_RETURN;
+		_ttype = CARRIAGE_RETURN;
 		
 		match('\u000D');
 		newline (); { _ttype =Token.SKIP; }

@@ -169,7 +169,6 @@ debugger_statement: "debugger" ;
 
 empty_statement: SEMI_COLON ;
 
-
 if_statement
     :
 	"if" LPAREN expression RPAREN statement (("else")=> "else" statement)?    
@@ -313,7 +312,7 @@ print_statement returns [Print p]
     AST exp = null;
 }
     :
-	"print" LPAREN (exp = primary_expression { p.Exp = exp; } | ) RPAREN ;
+	"print" LPAREN (exp = primary_expression { p.Exp = exp; } | ) RPAREN SEMI_COLON;
 
 
 // FIXME: more options left to implement
@@ -598,7 +597,6 @@ array_literal
 	LSQUARE (elision | ) RSQUARE
     ;
 
-
 elision: (COMMA)+ ;
 
 
@@ -739,7 +737,7 @@ LINE_FEED
     ;
 
 
-CARRIGE_RETURN
+CARRIAGE_RETURN
     :
         '\u000D'
         { newline (); { _ttype =Token.SKIP; }}

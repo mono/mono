@@ -1,3 +1,7 @@
+2003-09-21    <cesar@ciencias.unam.mx>
+
+	* jscript-lexer-parser.g: fixed typo and added SEMI_COLON to print_statement.
+
 2003-09-20    <cesar@ciencias.unam.mx>
 
 	* jscript-lexer-parser.g: We are little bit closer to the spec on
