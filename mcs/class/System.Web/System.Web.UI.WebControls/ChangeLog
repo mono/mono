@@ -1,5 +1,8 @@
 2002-05-24  Duncan Mak  <duncan@ximian.com>
 
+	* DataGridItem.cs (SetItemType): Changed function signature to
+	match 1.0 spec.
+
 	* ListItemCollection.cs (this): Changes the visibility level of
 	the indexer.
 

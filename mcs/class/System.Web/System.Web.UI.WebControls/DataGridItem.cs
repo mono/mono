@@ -78,7 +78,7 @@ namespace System.Web.UI.WebControls
 			return false;
 		}
 
-		internal void SetItemType(ListItemType itemType)
+		protected internal virtual void SetItemType(ListItemType itemType)
 		{
 			this.itemType = itemType;
 		}
