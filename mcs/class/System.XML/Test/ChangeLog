@@ -1,6 +1,11 @@
 2002-03-26  Duncan Mak  <duncan@ximian.com>
 
-	* 
+	* AllTests.cs: 
+	* Microsoft.Test.csproj: 
+	* Mono.Test.csproj: Updated to include new test,
+	XmlDocumentTypeTests.
+
+	* XmlDocumentTypeTests.cs: New testsuite for XmlDocumentType class.
 
 	* XmlCommentTests.cs (TestXmlNodeBaseProperties): Move the
 	XmlNode.Value test in here.

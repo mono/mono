@@ -202,14 +202,10 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public virtual XmlDocumentType CreateDocumentType (
-			string name,
-			string publicId,
-			string systemId,
-			string internalSubset)
+		public virtual XmlDocumentType CreateDocumentType (string name, string publicId,
+								   string systemId, string internalSubset)
 		{
-			throw new NotImplementedException ();
+			return new XmlDocumentType (name, publicId, systemId, internalSubset, this);
 		}
 
 		public XmlElement CreateElement (string name)

@@ -173,10 +173,9 @@ namespace System.Xml
 			get { return null; }
 		}
 
-		[MonoTODO]
 		public virtual string Value {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return null; }
+			set { throw new InvalidOperationException ("This node does not have a value"); }
 		}
 
 		#endregion

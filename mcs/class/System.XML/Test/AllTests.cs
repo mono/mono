@@ -32,6 +32,7 @@ namespace Ximian.Mono.Tests
 				suite.AddTest (new TestSuite (typeof (XmlWhitespaceTests)));
 				suite.AddTest (new TestSuite (typeof (XmlSignificantWhitespaceTests)));
 				suite.AddTest (new TestSuite (typeof (XmlDeclarationTests)));
+                                suite.AddTest (new TestSuite (typeof (XmlDocumentTypeTests)));
 #if !MICROSOFT
 				suite.AddTest (new TestSuite (typeof (XPathScannerTests)));
 #endif
