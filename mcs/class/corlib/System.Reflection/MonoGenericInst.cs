@@ -281,48 +281,6 @@ namespace System.Reflection
 		}
 	}
 
-	internal class MonoInflatedMethod : MonoMethod
-	{
-		private readonly IntPtr gmethod;
-
-		public override bool IsDefined (Type attributeType, bool inherit)
-		{
-			// FIXME
-			return false;
-		}
-		public override object[] GetCustomAttributes (bool inherit)
-		{
-			// FIXME
-			return new object [0];
-		}
-		public override object[] GetCustomAttributes (Type attributeType, bool inherit)
-		{
-			// FIXME
-			return new object [0];
-		}
-	}
-
-	internal class MonoInflatedCtor : MonoCMethod
-	{
-		private readonly IntPtr gmethod;
-
-		public override bool IsDefined (Type attributeType, bool inherit)
-		{
-			// FIXME
-			return false;
-		}
-		public override object[] GetCustomAttributes (bool inherit)
-		{
-			// FIXME
-			return new object [0];
-		}
-		public override object[] GetCustomAttributes (Type attributeType, bool inherit)
-		{
-			// FIXME
-			return new object [0];
-		}
-	}
-
 	internal class MonoInflatedField : MonoField
 	{
 		private readonly IntPtr dhandle;

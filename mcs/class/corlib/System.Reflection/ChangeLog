@@ -1,3 +1,7 @@
+2004-02-12  Martin Baulig  <martin@ximian.com>
+
+	* MonoGenericInst.cs (MonoInflatedMethod, MonoInflatedCtor): Removed.
+
 2004-02-08  Martin Baulig  <martin@ximian.com>
 
 	* MonoGenericInst.cs (MonoGenericInst.inflate): Pass recursive
