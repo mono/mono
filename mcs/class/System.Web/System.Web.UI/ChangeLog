@@ -1,3 +1,8 @@
+2003-12-14  Alon Gazit <along@mainsoft.com>
+	* AttributeCollection.cs: Changed AttributeCollection.Render().
+	After the change attributes ,that their value is null, aren't 
+	rendered.
+
 2003-12-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs: remove a few dangling ^M, don't set values for fields

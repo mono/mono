@@ -75,7 +75,8 @@ namespace System.Web.UI {
 		{
 			foreach (string key in bag.Keys) {
 				string value = bag [key] as string;
-				writer.WriteAttribute (key, value);
+				if (value != null)
+					writer.WriteAttribute (key, value);
 			}
 		}
 	}
