@@ -1,3 +1,16 @@
+2005-02-07  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* domain.c, domain-internals.h: Moved RuntimeInfo to domain-internals.h,
+	and renamed to MonoRuntimeInfo. Added fields to store the expected
+	framework assembly version. Changed mono_get_framework_version and
+	mono_get_runtime_version for a single mono_get_runtime_info method.
+	
+	* assembly.c: Added method to remap system assembly versions to the
+	current executing runtime version. Removed old mapping code.
+	Remap assembly versions in mono_assembly_load and mono_assembly_loaded.
+	
+	* icall.c, reflection.c: Track api changes.
+
 2005-02-06  Miguel de Icaza  <miguel@novell.com>
 
 	* loader.c (method_from_memberref): Improve error reporting,
