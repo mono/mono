@@ -12,11 +12,13 @@ namespace Mono.Data.TdsClient.Internal {
 	{
 		#region Fields
 
+		string baseColumnName;
 		string columnName;
-		string tableName;
+		string baseTableName;
 		TdsColumnType columnType;
 		object value;
-		bool nullable;
+		bool allowDBNull;
+		bool isExpression;
 		bool isReadOnly;
 		bool isIdentity = false;
 		bool isKey;
@@ -31,6 +33,9 @@ namespace Mono.Data.TdsClient.Internal {
 
 		public TdsSchemaInfo ()
 		{
+			baseColumnName = null;
+			isExpression = false;
+			isKey = false;
 		}
 
 		#endregion // Constructors
@@ -38,8 +43,22 @@ namespace Mono.Data.TdsClient.Internal {
 		#region Properties
 
 		public bool AllowDBNull {
-			get { return nullable; }
-			set { nullable = value; }
+			get { return allowDBNull; }
+			set { allowDBNull = value; }
+		}
+
+		public string BaseTableName {
+			get { return baseTableName; }
+			set { baseTableName = value; }
+		}
+
+		public string BaseColumnName {
+			get { 
+				if (baseColumnName == null)
+					return columnName;
+				return baseColumnName; 
+			}
+			set { baseColumnName = value; }
 		}
 
 		public int ColumnOrdinal {
@@ -60,6 +79,11 @@ namespace Mono.Data.TdsClient.Internal {
 		public TdsColumnType ColumnType {
 			get { return columnType; }
 			set { columnType = value; }
+		}
+
+		public bool IsExpression {
+			get { return isExpression; }
+			set { isExpression = value; }
 		}
 
 		public bool IsIdentity {
@@ -85,11 +109,6 @@ namespace Mono.Data.TdsClient.Internal {
 		public byte NumericScale {
 			get { return scale; }
 			set { scale = value; }
-		}
-
-		public string TableName {
-			get { return tableName; }
-			set { tableName = value; }
 		}
 
 		#endregion // Properties

@@ -266,7 +266,7 @@ namespace Mono.Data.TdsClient.Internal {
 				result[index].NumericScale = scale;
 				result[index].ColumnSize = bufLength;
 				result[index].ColumnName = ColumnNames[index];
-				result[index].TableName = tableName;
+				result[index].BaseTableName = tableName;
 				result[index].AllowDBNull = nullable;
 				result[index].IsReadOnly = !writable;
 				result[index].ColumnType = columnType;

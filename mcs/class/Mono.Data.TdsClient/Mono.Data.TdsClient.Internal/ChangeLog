@@ -1,3 +1,19 @@
+2002-11-03  Tim Coleman (tim@timcoleman.com)
+	* TdsColumnStatus.cs:
+		Newly added to handle column metadata
+	* Tds.cs
+		Handle table name and column detail results
+	* Tds42.cs
+	* Tds50.cs
+	* Tds70.cs
+		rename TableName BaseTableName for consistency
+	* TdsPacketSubType.cs:
+		We now know what subtype 0xa5 is
+	* TdsPacketTableNameResult.cs:
+		Add means to store table names
+	* TdsSchemaInfo.cs:
+		Add new schema information
+
 2002-11-01  Tim Coleman (tim@timcoleman.com)
 	* ITds.cs:
 		Add DoneProc property

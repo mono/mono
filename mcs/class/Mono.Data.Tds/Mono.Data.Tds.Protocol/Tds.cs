@@ -50,8 +50,8 @@ namespace Mono.Data.TdsClient.Internal {
 		TdsPacketRowResult currentRow = null;
 		TdsPacketColumnNamesResult columnNames;
 		TdsPacketColumnInfoResult columnInfo;
+		TdsPacketTableNameResult tableNames;
 		TdsPacketErrorResultCollection errors = new TdsPacketErrorResultCollection ();
-
 
 		bool queryInProgress;
 		int cancelsRequested;
@@ -85,7 +85,6 @@ namespace Mono.Data.TdsClient.Internal {
 		protected TdsComm Comm {
 			get { return comm; }
 		}
-
 
 		public string Database {
 			get { return database; }
@@ -224,6 +223,9 @@ namespace Mono.Data.TdsClient.Internal {
 					case "Mono.Data.TdsClient.Internal.TdsPacketRowResult" :
 						currentRow = (TdsPacketRowResult) result;
 						break;
+					case "Mono.Data.TdsClient.Internal.TdsPacketTableNameResult" :
+						tableNames = (TdsPacketTableNameResult) result;
+						break;
 					case "Mono.Data.TdsClient.Internal.TdsPacketEndTokenResult" :
 						done = !((TdsPacketEndTokenResult) result).MoreResults;
 						break;
@@ -267,9 +269,14 @@ namespace Mono.Data.TdsClient.Internal {
 						break;
 					case "Mono.Data.TdsClient.Internal.TdsPacketColumnInfoResult" :
 						columnInfo = (TdsPacketColumnInfoResult) result;
-						return true;
+						if (comm.Peek () != (byte) TdsPacketSubType.TableName)
+							return true;
+						break;
 					case "Mono.Data.TdsClient.Internal.TdsPacketRowResult" :
 						currentRow = (TdsPacketRowResult) result;
+						break;
+					case "Mono.Data.TdsClient.Internal.TdsPacketTableNameResult" :
+						tableNames = (TdsPacketTableNameResult) result;
 						break;
 					case "Mono.Data.TdsClient.Internal.TdsPacketEndTokenResult" :
 						done = !((TdsPacketEndTokenResult) result).MoreResults;
@@ -754,6 +761,49 @@ namespace Mono.Data.TdsClient.Internal {
 			}
 		}
 
+		protected TdsPacketColumnInfoResult ProcessColumnDetail ()
+		{
+			TdsPacketColumnInfoResult result = columnInfo;
+
+			int len = comm.GetTdsShort ();
+			byte[] values = new byte[3];
+			int columnNameLength;
+			string baseColumnName = String.Empty;
+			int position = 0;
+
+			while (position < len) {
+				for (int j = 0; j < 3; j += 1) 
+					values[j] = comm.GetByte ();
+				position += 3;
+
+				if ((values[2] & (byte) TdsColumnStatus.Rename) != 0) {
+					if (tdsVersion == TdsVersion.tds70) {
+						columnNameLength = comm.GetByte ();
+						position += 2 * len + 1;
+					}
+					else {
+						columnNameLength = comm.GetByte ();
+						position += len + 1;
+					}
+					baseColumnName = comm.GetString (columnNameLength);
+				}
+
+				if ((values[2] & (byte) TdsColumnStatus.Hidden) == 0) {
+					byte index = (byte) (values[0] - (byte) 1);
+					byte tableIndex = (byte) (values[1] - (byte) 1);
+
+					result [index].IsExpression = ((values[2] & (byte) TdsColumnStatus.IsExpression) != 0);
+					result [index].IsKey = ((values[2] & (byte) TdsColumnStatus.IsKey) != 0);
+
+					if ((values[2] & (byte) TdsColumnStatus.Rename) != 0)
+						result [index].BaseColumnName = baseColumnName;
+					result [index].BaseTableName = tableNames [tableIndex];
+				}
+			}
+
+			return result;
+		}
+
 		protected abstract TdsPacketColumnInfoResult ProcessColumnInfo ();
 
 		private TdsPacketColumnNamesResult ProcessColumnNames ()
@@ -975,7 +1025,9 @@ namespace Mono.Data.TdsClient.Internal {
 			case TdsPacketSubType.ColumnMetadata :
 				result = ProcessColumnInfo ();
 				break;
-			case TdsPacketSubType.Unknown0xA5 :
+			case TdsPacketSubType.ColumnDetail :
+				result = ProcessColumnDetail ();
+				break;
 			case TdsPacketSubType.Unknown0xA7 :
 			case TdsPacketSubType.Unknown0xA8 :
 				comm.Skip (comm.GetTdsShort ());
@@ -1004,9 +1056,23 @@ namespace Mono.Data.TdsClient.Internal {
 
 		private TdsPacketTableNameResult ProcessTableName ()
 		{
+			TdsPacketTableNameResult result = new TdsPacketTableNameResult ();
 			int totalLength = comm.GetTdsShort ();
-			comm.Skip (totalLength);
-			return new TdsPacketTableNameResult ();
+			int position = 0;
+			int len;
+
+			while (position < totalLength) {
+				if (tdsVersion == TdsVersion.tds70) {
+					len = comm.GetTdsShort ();
+					position += 2 * (len + 1);
+				}
+				else {
+					len = comm.GetByte ();
+					position += len + 1;
+				}
+				result.Add (comm.GetString (len));
+			}	
+			return result;
 		}
 
 		private object ReadFloatN (int len)

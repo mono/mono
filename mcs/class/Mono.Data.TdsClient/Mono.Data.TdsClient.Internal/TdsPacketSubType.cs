@@ -22,7 +22,7 @@ namespace Mono.Data.TdsClient.Internal {
 		DoneInProc = 0xff,
 		ColumnNameToken = 0xa0,
 		ColumnInfoToken = 0xa1,
-		Unknown0xA5 = 0xa5,
+		ColumnDetail = 0xa5,
 		Unknown0xA7 = 0xa7,
 		Unknown0xA8 = 0xa8,
 		TableName = 0xa4,

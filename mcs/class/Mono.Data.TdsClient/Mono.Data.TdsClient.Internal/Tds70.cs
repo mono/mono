@@ -247,7 +247,7 @@ namespace Mono.Data.TdsClient.Internal {
 				result[index].IsReadOnly = !writable;
 				result[index].NumericPrecision = precision;
 				result[index].NumericScale = scale;
-				result[index].TableName = tableName;
+				result[index].BaseTableName = tableName;
 			}
 
 			return result;
