@@ -1,3 +1,9 @@
+2003-12-20 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* CompareInfo.cs: Replace blah == "" with blah.Length == 0.
+	MUCH faster. Note, we dont need to check for nulls, because
+	the properties were used in other places.
+
 2003-12-19  Dick Porter  <dick@ximian.com>
 
 	* CompareInfo.cs: Added assorted shortcuts when comparing empty

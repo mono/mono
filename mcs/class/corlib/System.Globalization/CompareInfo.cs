@@ -50,13 +50,13 @@ namespace System.Globalization
 		public virtual int Compare (string string1, string string2)
 		{
 			/* Short cuts... */
-			if(string1 == String.Empty) {
-				if(string2 == String.Empty) {
+			if(string1.Length == 0) {
+				if(string2.Length == 0) {
 					return(0);
 				} else {
 					return(-1);
 				}
-			} else if(string2 == String.Empty) {
+			} else if(string2.Length == 0) {
 				return(1);
 			}
 
@@ -69,13 +69,13 @@ namespace System.Globalization
 					    CompareOptions options)
 		{
 			/* Short cuts... */
-			if(string1 == String.Empty) {
-				if(string2 == String.Empty) {
+			if(string1.Length == 0) {
+				if(string2.Length == 0) {
 					return(0);
 				} else {
 					return(-1);
 				}
-			} else if(string2 == String.Empty) {
+			} else if(string2.Length == 0) {
 				return(1);
 			}
 
@@ -92,15 +92,15 @@ namespace System.Globalization
 			 * the offset >= string length specified check
 			 * in the process...)
 			 */
-			if(string1 == String.Empty ||
+			if(string1.Length == 0 ||
 			   offset1 == string1.Length) {
-				if(string2 == String.Empty ||
+				if(string2.Length == 0 ||
 				   offset2 == string2.Length) {
 					return(0);
 				} else {
 					return(-1);
 				}
-			} else if(string2 == String.Empty ||
+			} else if(string2.Length == 0 ||
 				  offset2 == string2.Length) {
 				return(1);
 			}
@@ -133,15 +133,15 @@ namespace System.Globalization
 			 * the offset >= string length specified check
 			 * in the process...)
 			 */
-			if(string1 == String.Empty ||
+			if(string1.Length == 0 ||
 			   offset1 == string1.Length) {
-				if(string2 == String.Empty ||
+				if(string2.Length == 0 ||
 				   offset2 == string2.Length) {
 					return(0);
 				} else {
 					return(-1);
 				}
-			} else if(string2 == String.Empty ||
+			} else if(string2.Length == 0 ||
 				  offset2 == string2.Length) {
 				return(1);
 			}
@@ -174,17 +174,17 @@ namespace System.Globalization
 			 * the offset >= string length specified check
 			 * in the process...)
 			 */
-			if(string1 == String.Empty ||
+			if(string1.Length == 0 ||
 			   offset1 == string1.Length ||
 			   length1 == 0) {
-				if(string2 == String.Empty ||
+				if(string2.Length == 0 ||
 				   offset2 == string2.Length ||
 				   length2 == 0) {
 					return(0);
 				} else {
 					return(-1);
 				}
-			} else if(string2 == String.Empty ||
+			} else if(string2.Length == 0 ||
 				  offset2 == string2.Length ||
 				  length2 == 0) {
 				return(1);
@@ -226,17 +226,17 @@ namespace System.Globalization
 			 * the offset >= string length specified check
 			 * in the process...)
 			 */
-			if(string1 == String.Empty ||
+			if(string1.Length == 0 ||
 			   offset1 == string1.Length ||
 			   length1 == 0) {
-				if(string2 == String.Empty ||
+				if(string2.Length == 0 ||
 				   offset2 == string2.Length ||
 				   length2 == 0) {
 					return(0);
 				} else {
 					return(-1);
 				}
-			} else if(string2 == String.Empty ||
+			} else if(string2.Length == 0 ||
 				  offset2 == string2.Length ||
 				  length2 == 0) {
 				return(1);
