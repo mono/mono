@@ -1,10 +1,8 @@
 //
-// System.Data.SqlClient.ISqlNotificationReceiver
+// System.Data.SqlClient.SqlNotificationSource.cs
 //
 // Author:
-//   Tim Coleman (tim@timcoleman.com)
-//
-// Copyright (C) Tim Coleman, 2003
+//   Umadevi S <sumadevi@novell.com>
 //
 
 //
@@ -32,19 +30,27 @@
 
 #if NET_2_0
 
-namespace System.Data.SqlClient {
+namespace System.Data.SqlClient
+{
+	/// <summary>
+	/// Indicates the source of the notification received by the dependency event handler
+	/// </summary>
+	[Serializable]
+	public enum SqlNotificationSource {
 
-	public interface ISqlNotificationReceiver 
-	{
-		#region Methods
+		Data = 0,
+		Database = 3,
+		Environment = 6,
+		Execution = 7,
+		Object = 2,
+		Statement = 5,
+		System = 4,
+		Timeout = 1
 
-		void Invalidate (string id, SqlNotificationType type, SqlNotificationInfo info, SqlNotificationSource source);
-		void InvalidateImmediate (string id, SqlNotificationType type, SqlNotificationInfo info, SqlNotificationSource source);
-
-		#endregion // Methods
 	}
-
 
 }
 
 #endif
+
+

@@ -1,10 +1,8 @@
 //
-// System.Data.SqlClient.ISqlNotificationReceiver
+// System.Data.SqlClient.SqlNotificationType.cs
 //
 // Author:
-//   Tim Coleman (tim@timcoleman.com)
-//
-// Copyright (C) Tim Coleman, 2003
+//   Umadevi S <sumadevi@novell.com>
 //
 
 //
@@ -32,19 +30,22 @@
 
 #if NET_2_0
 
-namespace System.Data.SqlClient {
+namespace System.Data.SqlClient
+{
+	/// <summary>
+	/// Describes the differnt notification types that can be received by the dependency
+	/// event handler.
+	/// </summary>
+	[Serializable]
+	public enum SqlNotificationType {
 
-	public interface ISqlNotificationReceiver 
-	{
-		#region Methods
+		Change = 0,
+		Subscribe = 1
 
-		void Invalidate (string id, SqlNotificationType type, SqlNotificationInfo info, SqlNotificationSource source);
-		void InvalidateImmediate (string id, SqlNotificationType type, SqlNotificationInfo info, SqlNotificationSource source);
-
-		#endregion // Methods
 	}
-
 
 }
 
 #endif
+
+

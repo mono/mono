@@ -1,3 +1,7 @@
+2004-10-06 Umadevi S <sumadevi@novell.com>
+	* ISqlNoticationReceiver.cs - changed namespace
+	* Added files SqlNotificationType.cs, SqlNotificationInfo.cs, SqlNotificationSource.cs
+
 2004-09-24  Umadevi S <sumadevi@novell.com>
 	* SqlTransaction.cs - Dispose will not call rollback incase the transaction is not open.
 
