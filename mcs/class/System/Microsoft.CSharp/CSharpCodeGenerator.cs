@@ -139,7 +139,7 @@ namespace Mono.CSharp
 				GenerateExpression( targetObject );
 				Output.Write( '.' );
 			}
-			output.Write( expression.MethodName );
+			output.Write( GetSafeName (expression.MethodName) );
 
 			output.Write( ')' );
 		}
@@ -151,17 +151,17 @@ namespace Mono.CSharp
 				GenerateExpression( targetObject );
 				Output.Write( '.' );
 			}
-			Output.Write( expression.FieldName );
+			Output.Write( GetSafeName (expression.FieldName) );
 		}
 		
 		protected override void GenerateArgumentReferenceExpression( CodeArgumentReferenceExpression expression )
 		{
-			Output.Write( expression.ParameterName );
+			Output.Write( GetSafeName (expression.ParameterName) );
 		}
 
 		protected override void GenerateVariableReferenceExpression( CodeVariableReferenceExpression expression )
 		{
-			Output.Write( expression.VariableName );
+			Output.Write( GetSafeName (expression.VariableName) );
 		}
 			
 		protected override void GenerateIndexerExpression( CodeIndexerExpression expression )
@@ -204,14 +204,14 @@ namespace Mono.CSharp
 		{
 			GenerateExpression( expression.TargetObject );
 			Output.Write( '.' );
-			Output.Write( expression.MethodName );
+			Output.Write( GetSafeName (expression.MethodName) );
 		}
 
 		protected override void GenerateEventReferenceExpression( CodeEventReferenceExpression expression )
 		{
 			GenerateExpression( expression.TargetObject );
 			Output.Write( '.' );
-			Output.Write( expression.EventName );
+			Output.Write( GetSafeName (expression.EventName) );
 		}
 
 		protected override void GenerateDelegateInvokeExpression( CodeDelegateInvokeExpression expression )
@@ -343,7 +343,7 @@ namespace Mono.CSharp
 				else
 					output.WriteLine();
 				output.Write( "catch (" );
-				OutputTypeNamePair( clause.CatchExceptionType, clause.LocalName );
+				OutputTypeNamePair( clause.CatchExceptionType, GetSafeName (clause.LocalName) );
 				output.WriteLine( ") {" );
 				++Indent;
 				GenerateStatements( clause.Statements );
@@ -400,7 +400,7 @@ namespace Mono.CSharp
 			TextWriter output = Output;
 
 			output.Write( "goto " );
-			output.Write( statement.Label );
+			output.Write( GetSafeName (statement.Label) );
 			output.Write( ";" );
 		}
 		
@@ -408,7 +408,7 @@ namespace Mono.CSharp
 		{
 			TextWriter output = Output;
 
-			output.Write( statement.Label );
+			output.Write( GetSafeName (statement.Label) );
 			GenerateStatement( statement.Statement );
 		}
 
@@ -416,7 +416,7 @@ namespace Mono.CSharp
 		{
 			TextWriter output = Output;
 
-			OutputTypeNamePair( statement.Type, statement.Name );
+			OutputTypeNamePair( statement.Type, GetSafeName (statement.Name) );
 
 			CodeExpression initExpression = statement.InitExpression;
 			if ( initExpression != null ) {
@@ -461,7 +461,7 @@ namespace Mono.CSharp
 			OutputMemberAccessModifier( attributes );
 			OutputFieldScopeModifier( attributes );
 
-			OutputTypeNamePair( field.Type, field.Name );
+			OutputTypeNamePair( field.Type, GetSafeName (field.Name) );
 
 			CodeExpression initExpression = field.InitExpression;
 			if ( initExpression != null ) {
@@ -469,7 +469,10 @@ namespace Mono.CSharp
 				GenerateExpression( initExpression );
 			}
 
-			output.WriteLine( ';' );
+			if (IsCurrentEnum)
+				output.WriteLine( ',' );
+			else
+				output.WriteLine( ';' );
 		}
 		
 		protected override void GenerateSnippetMember( CodeSnippetTypeMember member )
@@ -506,7 +509,7 @@ namespace Mono.CSharp
 				OutputType( privateType );
 				output.Write( '.' );
 			}
-			output.Write( method.Name );
+			output.Write( GetSafeName (method.Name) );
 
 			output.Write( '(' );
 			OutputParameters( method.Parameters );
@@ -535,7 +538,7 @@ namespace Mono.CSharp
 			OutputMemberAccessModifier( attributes );
 			OutputMemberScopeModifier( attributes );
 
-			OutputTypeNamePair( property.Type, property.Name );
+			OutputTypeNamePair( property.Type, GetSafeName (property.Name));
 			output.WriteLine (" {");
 			++Indent;
 
@@ -569,7 +572,7 @@ namespace Mono.CSharp
 							     CodeTypeDeclaration declaration )
 		{
 			OutputMemberAccessModifier (constructor.Attributes);
-			Output.Write (CurrentTypeName + " (");
+			Output.Write (GetSafeName (CurrentTypeName) + " (");
 			OutputParameters (constructor.Parameters);
 			Output.WriteLine (") {");
 			Indent++;
@@ -580,7 +583,7 @@ namespace Mono.CSharp
 		
 		protected override void GenerateTypeConstructor( CodeTypeConstructor constructor )
 		{
-			Output.WriteLine ("static " + CurrentTypeName + "() {");
+			Output.WriteLine ("static " + GetSafeName (CurrentTypeName) + "() {");
 			Indent++;
 			GenerateStatements (constructor.Statements);
 			Indent--;
@@ -599,7 +602,7 @@ namespace Mono.CSharp
 					      declaration.IsStruct,
 					      declaration.IsEnum );
 
-			output.Write( declaration.Name );
+			output.Write( GetSafeName (declaration.Name) );
 			output.Write( ' ' );
 			
 			IEnumerator enumerator = declaration.BaseTypes.GetEnumerator();
@@ -635,7 +638,7 @@ namespace Mono.CSharp
 			string name = ns.Name;
 			if ( name != null && name != "" ) {
 				output.Write( "namespace " );
-				output.Write( name );
+				output.Write( GetSafeName (name) );
 				output.WriteLine( " {" );
 				++Indent;
 			}
@@ -655,7 +658,7 @@ namespace Mono.CSharp
 			TextWriter output = Output;
 
 			output.Write( "using " );
-			output.Write( import.Namespace );
+			output.Write( GetSafeName (import.Namespace) );
 			output.WriteLine( ';' );
 		}
 		
@@ -690,7 +693,7 @@ namespace Mono.CSharp
 		{
 			TextWriter output = Output;
 
-			OutputTypeNamePair( type, name );
+			OutputTypeNamePair( type, GetSafeName (name) );
 
 			if ( initExpression != null ) {
 				output.Write( " = " );
@@ -704,7 +707,7 @@ namespace Mono.CSharp
 		{
 			GenerateExpression( targetObject );
 			Output.Write( '.' );
-			Output.Write( memberName );
+			Output.Write( GetSafeName (memberName) );
 		}
 			
 		/* 
@@ -823,5 +826,28 @@ namespace Mono.CSharp
 		{
 		}
 #endif
+
+		string GetSafeName (string id)
+		{
+			if (keywordsTable == null) {
+				keywordsTable = new Hashtable ();
+				foreach (string keyword in keywords) keywordsTable.Add (keyword,keyword);
+			}
+			if (keywordsTable.Contains (id)) return "@" + id;
+			else return id;
+		}
+
+		static Hashtable keywordsTable;
+		static string[] keywords = new string[] {
+			"abstract","event","new","struct","as","explicit","null","switch","base","extern",
+			"object","this","bool","false","operator","throw","break","finally","out","true",
+			"byte","fixed","override","try","case","float","params","typeof","catch","for",
+			"private","uint","char","foreach","protected","ulong","checked","goto","public",
+			"unchecked","class","if","readonly","unsafe","const","implicit","ref","ushort",
+			"continue","in","return","using","decimal","int","sbyte","virtual","default",
+			"interface","sealed","volatile","delegate","internal","short","void","do","is",
+			"sizeof","while","double","lock","stackalloc","else","long","static","enum",
+			"namespace","string"
+		};
 	}
 }

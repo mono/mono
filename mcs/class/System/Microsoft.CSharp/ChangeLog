@@ -1,5 +1,12 @@
 2003-08-05  Lluis Sanchez Gual <lluis@ximian.com>
 
+	* CSharpCodeGenerator.cs: Added method GetSafeName() that checks if
+	  a given id is a C# keyword, and returns the same if if it is not,
+	  or @id if it is a keyword. This method is used everywhere
+	  a name is rendered.
+
+2003-08-05  Lluis Sanchez Gual <lluis@ximian.com>
+
 	* CSharpCodeGenerator.cs: GenerateComment(): Render multiline comments.
 
 2003-07-30  Lluis Sanchez Gual <lluis@ximian.com>
