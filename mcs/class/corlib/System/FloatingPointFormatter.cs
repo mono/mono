@@ -209,9 +209,9 @@ namespace System {
 					exponent++;
 					decimals--;
 				}
-				while (decimals > 0) {
-					sb.Append('0');
-					decimals--;
+				if (decimals > 0) {
+					sb.Append ('0', decimals);
+					decimals = 0;
 				}
 			}
 			if (precision != 0) {
@@ -391,9 +391,9 @@ namespace System {
 					exponent++;
 					decimals--;
 				}
-				while (decimals > 0) {
-					sb.Append('0');
-					decimals--;
+				if (decimals > 0) {
+					sb.Append ('0', decimals);
+					decimals = 0;
 				}
 			}
 			if (precision != 0) {
@@ -517,9 +517,9 @@ namespace System {
 					exponent++;
 					decimals--;
 				}
-				while (decimals > 0) {
-					sb.Append('0');
-					decimals--;
+				if (decimals > 0) {
+					sb.Append ('0', decimals);
+					decimals = 0;
 				}
 			}
 			if (precision != 0) {
@@ -604,9 +604,9 @@ namespace System {
 					exponent++;
 					decimals--;
 				}
-				while (decimals > 0) {
-					sb.Append('0');
-					decimals--;
+				if (decimals > 0) {
+					sb.Append ('0', decimals);
+					decimals = 0;
 				}
 			}
 			if (precision != 0) {
