@@ -20,49 +20,44 @@ namespace System.Web.Util
 	{
 		public static IEnumerable GetResolvedDataSource(object source, string member)
 		{
-			if(source==null)
-				return null;
-			if(source is IListSource)
+			if(source != null && source is IListSource)
 			{
-				IListSource ils = (IListSource)source;
-				IList       il  = ils.GetList();
-				if(ils.ContainsListCollection)
+				IListSource src = (IListSource)source;
+				IList list = src.GetList();
+				if(!src.ContainsListCollection)
 				{
-					return il;
+					return list;
 				}
-				if(il is ITypedList)
+				if(list != null && list is ITypedList)
 				{
-					ITypedList itl = (ITypedList)il;
-					PropertyDescriptorCollection pdc = itl.GetItemProperties(new PropertyDescriptor[0]);
-					PropertyDescriptor pd = null;
-					if(pdc != null)
+					ITypedList tlist = (ITypedList)list;
+					PropertyDescriptorCollection pdc = tlist.GetItemProperties(new PropertyDescriptor[0]);
+					if(pdc != null && pdc.Count > 0)
 					{
-						if(pdc.Count > 0)
+						PropertyDescriptor pd = null;
+						if(member != null && member.Length > 0)
 						{
-							if(member != null)
+							pd = pdc.Find(member, true);
+						} else
+						{
+							pd = pdc[0];
+						}
+						if(pd != null)
+						{
+							object rv = pd.GetValue(list[0]);
+							if(rv != null && rv is IEnumerable)
 							{
-								if(member.Length > 0)
-								{
-									pd = pdc.Find(member, true);
-								} else
-								{
-									pd = pdc[0];
-								}
+								return (IEnumerable)rv;
 							}
 						}
+						throw new HttpException(
+						      HttpRuntime.FormatResourceString("ListSource_Missing_DataMember", member));
 					}
-					if(pd!=null)
-					{
-						object o = pd.GetValue(il[0]);
-						if(o!=null)
-						{
-							if(o is IEnumerable)
-								return (IEnumerable)o;
-						}
-						throw new HttpException("ListSource Empty"); // no data in ListSource object
-					}
+					throw new HttpException(
+					      HttpRuntime.FormatResourceString("ListSource_Without_DataMembers"));
 				}
-			} else if(source is IEnumerable)
+			}
+			if(source is IEnumerable)
 			{
 				return (IEnumerable)source;
 			}

@@ -1,3 +1,10 @@
+
+2002-10-28      Gaurav Vaish <gvaish_mono@lycos.com>
+
+	* DataSourceHelper.cs       : Fresh implementation. Moved from
+	                      System.Web.UI.WebControls.DataGrid
+	                      ::ResolveData(object, string).
+
 2002-10-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebTrace.cs: fixed namespace.
