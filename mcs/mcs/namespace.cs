@@ -142,7 +142,11 @@ namespace Mono.CSharp {
 			int errors = 0;
 			
 			foreach (Namespace ns in all_namespaces){
-				foreach (UsingEntry ue in ns.UsingTable){
+				ArrayList uses = ns.UsingTable;
+				if (uses == null)
+					continue;
+				
+				foreach (UsingEntry ue in uses){
 					if (ue.Used)
 						continue;
 					unused.Add (ue);
@@ -158,13 +162,13 @@ namespace Mono.CSharp {
 
 				foreach (UsingEntry ue in unused){
 					if (namespaces.Contains (ue.Name)){
-						Report.Warning (-24, ue.Location, "Unused namespace in `using' declaration");
+						Report.Warning (6024, ue.Location, "Unused namespace in `using' declaration");
 						continue;
 					}
 
 					errors++;
-					Report.Error (246, ue.Location, "The namespace " + ue.Name +
-						      " can not be found (missing assembly reference?)");
+					Report.Error (246, ue.Location, "The namespace `" + ue.Name +
+						      "' can not be found (missing assembly reference?)");
 				}
 			}
 			

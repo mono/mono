@@ -1,5 +1,10 @@
 2002-09-11  Miguel de Icaza  <miguel@ximian.com>
 
+	* driver.cs: Activate the using-error detector at warning level
+	4 (at least for MS-compatible APIs).
+
+	* namespace.cs (VerifyUsing): Small buglett fix.
+
 	* pending.cs (PendingImplementation): pass the container pointer. 
 
 	* interface.cs (GetMethods): Allow for recursive definition.  Long
