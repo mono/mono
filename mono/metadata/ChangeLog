@@ -1,3 +1,8 @@
+2004-02-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (emit_struct_conv): Print an error message instead of
+	asserting when a type does not have the StructLayout attribute.
+
 2004-02-20  Martin Baulig  <martin@ximian.com>
 
 	* reflection.c (mono_type_get_object): Also use the cache for
