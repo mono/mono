@@ -321,7 +321,7 @@ namespace System.Text.RegularExpressions {
 				count = Int32.MaxValue;
 
 			int ptr = startat;
-			while (count -- > 0) {
+			while (--count > 0) {
 				Match m = Match (input, ptr);
 				if (!m.Success)
 					break;
@@ -330,12 +330,11 @@ namespace System.Text.RegularExpressions {
 				ptr = m.Index + m.Length;
 			}
 
-			if (count > 0)
+			if (ptr < input.Length) {
 				splits.Add (input.Substring (ptr));
+			}
 
-			string[] result = new string[splits.Count];
-			splits.CopyTo (result);
-			return result;
+			return (string []) splits.ToArray (typeof (string));
 		}
 
 		// object methods

@@ -1,3 +1,8 @@
+2003-07-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* regex.cs: patch from Eric Lindvall <eric@5stops.com> that fixes bug
+	#44830.
+
 2003-03-05  Miguel de Icaza  <miguel@ximian.com>
 
 	* category.cs (CategoryUtils.CategoryFromName): Use StartsWith
