@@ -520,6 +520,11 @@ namespace System.Data.Odbc
 						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.Real, ref float_data, 0, ref outsize);
 						DataValue=float_data;
 						break;
+                                        case OdbcType.Double:
+						double double_data=0;
+						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.Double, ref double_data, 0, ref outsize);
+						DataValue=double_data;
+						break;
 					case OdbcType.Timestamp:
 					case OdbcType.DateTime:
 					case OdbcType.Date:
