@@ -1,3 +1,8 @@
+2005-01-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: added Console 2.0 icalls.
+	* Makefile.am: added console-io.[ch]
+	* console-io.[ch]: internal calls for Console 2.0 API.
 
 Mon Jan 31 19:01:29 CET 2005 Paolo Molaro <lupus@ximian.com>
 
