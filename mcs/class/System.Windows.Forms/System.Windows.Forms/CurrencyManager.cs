@@ -23,10 +23,8 @@ namespace System.Windows.Forms {
 		}
 
 		#region Fields
-		/* uncomment if needed
 		protected Type finalType;
 		protected int listposition;
-		*/
 		internal int count = 0;
 		internal object current = null;
 		internal int position = 0;
@@ -126,12 +124,12 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		
-		/* this method only supports .NET framework
+		// this method only supports .NET framework
 		[MonoTODO]
 		protected virtual void OnPositionChanged(EventArgs e) 
 		{
 			throw new NotImplementedException ();
-		}*/
+		}
 		/// </methods for events>
 		
 		[MonoTODO]

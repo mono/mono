@@ -33,17 +33,12 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		// Commented out: bug in mcs, it has been now filed.
-//		public Binding this[string propertyName] {
-//			get { throw new NotImplementedException (); }
-//		}
+		public Binding this[string propertyName] {
+			get { throw new NotImplementedException (); }
+		}
 		#endregion
 		
 		#region Methods
-		/// following methods were not stubbed out, because they only support .NET framework:
-		/// - protected override void AddCore(Binding dataBinding);
-		/// - protected override void ClearCore();
-		/// - protected override void RemoveCore(Binding dataBinding);
 		public new void Add(Binding binding) 
 		{
 			throw new NotImplementedException ();
@@ -72,6 +67,20 @@ namespace System.Windows.Forms {
 		{
 			//FIXME:
 		}
+
+		//internal
+		[MonoTODO]
+		protected virtual void AddCore(Binding dataBinding) {
+		}
+
+		[MonoTODO]
+		protected virtual void ClearCore(){
+		}
+
+		[MonoTODO]
+		protected virtual void RemoveCore(Binding dataBinding){
+		}
+
 		#endregion
 		
 	}

@@ -27,7 +27,7 @@ namespace System.Windows.Forms  {
 
 		// Static Constant Fields
 		public const int FindHandle = 0;
-		public const int FindShortCut = 1;
+		public const int FindShortcut = 1;
 
 
 		//
@@ -138,12 +138,10 @@ namespace System.Windows.Forms  {
 		internal IntPtr menuHandle_ = IntPtr.Zero;
 		internal bool   isPopupMenu = false;
 		
-//		[MonoTODO]
-//		protected virtual int CreateMenuHandle() {
-//			throw new NotImplementedException();
-//			// FIXME:
-//		}
-		internal void CreateMenuHandle() {
+		[MonoTODO]
+		protected virtual IntPtr CreateMenuHandle() {
+			//changed from internal void to protected intptr for signture reasons.
+			//Also had to add return menuitem_ at same time.
 			if( menuHandle_ == IntPtr.Zero) {
 				if ( !isPopupMenu )
 					menuHandle_ = Win32.CreateMenu();
@@ -153,6 +151,7 @@ namespace System.Windows.Forms  {
 				BuildMenuStructure();
 				allMenus_[menuHandle_] = this;
 			}
+			return menuHandle_;
 		}
 		
 		public IntPtr Handle {

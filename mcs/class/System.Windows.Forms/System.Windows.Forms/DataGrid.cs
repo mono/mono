@@ -29,6 +29,7 @@ namespace System.Windows.Forms {
 		BorderStyle borderStyle;
 		Color captionBackColor;
 		Font captionFont;
+		Font headerFont;
 		Color captionForeColor;
 		string captionText;
 		bool captionVisible;
@@ -296,6 +297,15 @@ namespace System.Windows.Forms {
 			set {
 				if (value==Color.Empty) throw new ArgumentNullException();
 				headerBackColor=value;
+			}
+		}
+
+		public Font HeaderFont {
+			get {
+				return headerFont;
+			}
+			set {
+				headerFont=value;
 			}
 		}
 		
@@ -735,7 +745,7 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
-		protected virtual void OnResize(EventArgs e) {
+		protected override void OnResize(EventArgs e) {
 			//FIXME:
 		}
 
@@ -983,14 +993,14 @@ namespace System.Windows.Forms {
 			[Flags]
 				[Serializable]
 				public enum HitTestType {
-				Caption = 32,
+				None = 0,
 				Cell = 1,
 				ColumnHeader = 2,
-				ColumnResize = 8,
-				None = 0,
-				ParentRows = 64,
 				RowHeader = 4,
-				RowResize = 16
+				ColumnResize = 8,
+				RowResize = 16,
+				Caption = 32,
+				ParentRows = 64
 			}
 		}
 	}

@@ -47,7 +47,6 @@ namespace System.Windows.Forms {
 		}
 		
 		// --- public Methods ---
-		// following internal methods are (will) not be stubbed out:
 		[MonoTODO]
 		protected virtual void AddCore(Binding dataBinding) {
 		}

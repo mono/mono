@@ -40,16 +40,25 @@ namespace System.Windows.Forms {
 			
 		}
 		
-		/*
-		 * This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
+		// This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
 		[MonoTODO]
 		public DataGridBoolColumn(PropertyDescriptor prop,bool isDefault) 
 		{
 		}
-		*/
+
 		#endregion
 		
 		#region Properties
+
+		[MonoTODO]
+		public AccessibleObject HeaderAccessibleObject {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+			//Fixme:
+			}
+		}
 		
 		public bool AllowNull {
 			get { return allowNull; }
@@ -167,9 +176,12 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		public event EventHandler FalseValueChanged;
+
+		[MonoTODO]
+		public event EventHandler FontChanged;
 		
 		[MonoTODO]
-		protected event EventHandler TrueValueChanged;
+		public event EventHandler TrueValueChanged;
 		#endregion
 	}
 }

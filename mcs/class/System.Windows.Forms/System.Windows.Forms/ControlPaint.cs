@@ -234,18 +234,6 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
-		public static void DrawBorder3D(
-			Graphics graphics, int x) {
-			//FIXME:
-		}
-		//is this part of spec? I do not think so.
-		//[MonoTODO]
-		//public static void DrawBorder3D(
-		//	Graphics graphics, int x) {
-		//	throw new NotImplementedException ();
-		//}
-
-		[MonoTODO]
 		public static void DrawBorder3D( Graphics graphics, int x, int y, int width, int height) {
 			DrawBorder3D( graphics, new Rectangle(x, y, width, height));
 		}
@@ -282,14 +270,6 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public static void DrawCaptionButton(
 			Graphics graphics,
-			Rectangle rectangle,
-			ButtonState state) {
-			//FIXME:
-		}
-		
-		[MonoTODO]
-		public static void DrawCaptionButton(
-			Graphics graphics,
 			int x,
 			int y,
 			int width,
@@ -300,6 +280,12 @@ namespace System.Windows.Forms {
 		}
 		
 		public static void DrawCheckBox( Graphics graphics, Rectangle rectangle, ButtonState state) {
+			DrawFrameControlHelper (graphics, rectangle, (uint)DrawFrameControl.DFC_BUTTON, (uint)state | (uint)DrawFrameControl.DFCS_BUTTONCHECK);
+		}
+		
+		[MonoTODO]
+		public static void DrawCheckBox( Graphics graphics, Rectangle rectangle,CaptionButton button, ButtonState state) {
+			//Fixme: blindly and wrongly copied from same function without CaptionButton. This ignors CaptionButton. It should use it.
 			DrawFrameControlHelper (graphics, rectangle, (uint)DrawFrameControl.DFC_BUTTON, (uint)state | (uint)DrawFrameControl.DFCS_BUTTONCHECK);
 		}
 		

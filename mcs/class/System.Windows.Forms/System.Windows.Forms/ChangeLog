@@ -1,4 +1,15 @@
-2003-09-01  Dennis Hayes <dennish@raytek.com>
+2003-09-27  Dennis Hayes <dennish@raytek.com>
+	* BindingsCollection.cs
+	* ControlBindingsCollection.cs
+	* CurrencyManager.cs
+	* ControlPaint.cs
+	* Menu.cs
+	* DataGrid.cs
+	* DataGridBoolColumn.cs
+
+	*signiture corrections
+
+2003-09-27  Dennis Hayes <dennish@raytek.com>
 	* Application.cs
 	* Cursor.cs
 	* Clipboard.cs
