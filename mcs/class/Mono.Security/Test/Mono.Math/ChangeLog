@@ -1,3 +1,9 @@
+2004-12-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BigIntegerTest.cs: Added tests for ModPow when power is 0, for a 
+	known case that was faling in classpath and when modulo is a power of
+	two (bug #70169).
+
 2004-10-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BigIntegerTest.cs: New. General unit tests for BigInteger.
