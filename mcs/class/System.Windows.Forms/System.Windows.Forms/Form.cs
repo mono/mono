@@ -34,7 +34,8 @@ namespace System.Windows.Forms {
 		// End of temperay varibles
 
 		internal class MdiClient : Control {
-			public MdiClient ( Control parent ) : base (parent, "") {
+			public MdiClient ( Control parent ) : base (parent, "") 
+			{
 			}
 			protected override CreateParams CreateParams {
 				get {
@@ -61,7 +62,8 @@ namespace System.Windows.Forms {
 					return pars;
 				}
 			}
-			public void DestroyControl ( ) {
+			public void DestroyControl ( ) 
+			{
 				DestroyHandle ( );
 			}
 		}
@@ -81,7 +83,8 @@ namespace System.Windows.Forms {
 		IButtonControl    acceptButton;
 		IButtonControl    cancelButton;
 
-		public Form () : base () {
+		public Form () : base () 
+		{
 			opacity = 1.00;
 			TopLevel = true;
 			modal    = false;
@@ -371,7 +374,8 @@ namespace System.Windows.Forms {
 		//[MonoTODO]
 		private MainMenu mainMenu_ = null;
 
-		private void assignMenu() {
+		private void assignMenu() 
+		{
 			if ( mainMenu_ != null )
 				mainMenu_.setForm ( this );
 
@@ -579,23 +583,27 @@ namespace System.Windows.Forms {
     
     		
 		//  --- Public Methods
-		public void Activate () {
+		public void Activate () 
+		{
 			Win32.SetActiveWindow (Handle);
 		}
     
 		[MonoTODO]
-		public void AddOwnedForm (Form ownedForm) {
+		public void AddOwnedForm (Form ownedForm) 
+		{
 			//FIXME:
 		}
     
 		//Compact Framework
-		public void Close () {
+		public void Close () 
+		{
 			//Win32.DestroyWindow (Handle);
 			if ( IsHandleCreated )
 				Win32.PostMessage ( Handle, Msg.WM_CLOSE, 0, 0 );
 		}
     
-		public void LayoutMdi (MdiLayout value) {
+		public void LayoutMdi (MdiLayout value) 
+		{
 			if ( IsMdiContainer && mdiClientWnd.IsHandleCreated ) {
 				int mes = 0;
 				int wp  = 0;
@@ -622,12 +630,14 @@ namespace System.Windows.Forms {
 		}
     
 		[MonoTODO]
-		public void RemoveOwnedForm (Form ownedForm) {
+		public void RemoveOwnedForm (Form ownedForm) 
+		{
 			//FIXME:
 		}
     
      
-		public void SetDesktopLocation (int x, int y) {
+		public void SetDesktopLocation (int x, int y) 
+		{
 			Win32.SetWindowPos ((IntPtr) Handle, SetWindowPosZOrder.HWND_TOPMOST, 
 					    x, y, 0, 0, 
 					    SetWindowPosFlags.SWP_NOSIZE | 
@@ -635,7 +645,8 @@ namespace System.Windows.Forms {
 		}
     
 		[MonoTODO]
-		public void SetDesktopBounds (int x, int y, int width, int height) {
+		public void SetDesktopBounds (int x, int y, int width, int height) 
+		{
 			///implmentation from setwindow location.
 			///not sure width and height were added correctly
 			Win32.SetWindowPos ((IntPtr) Handle, SetWindowPosZOrder.HWND_TOPMOST, 
@@ -643,14 +654,16 @@ namespace System.Windows.Forms {
 					    SetWindowPosFlags.SWP_NOZORDER);
 		}
 		[MonoTODO]
-		public DialogResult ShowDialog (IWin32Window owner) {
+		public DialogResult ShowDialog (IWin32Window owner) 
+		{
 			//IWin32Window has 1 public prop, "Handle"
 			//use this knowledge to modify the () version for this version
 			throw new NotImplementedException();
 		}
    
 		[MonoTODO]
-		public DialogResult ShowDialog () {
+		public DialogResult ShowDialog () 
+		{
 			Control owner = Control.getOwnerWindow ( this );
 			Control oldOwner = dlgOwner;
 			dlgOwner = owner;
@@ -681,12 +694,14 @@ namespace System.Windows.Forms {
 			return DialogResult;
 		}
     
-		public override string ToString () {
+		public override string ToString () 
+		{
 			return GetType( ).FullName.ToString( ) + ", Text: " + Text;
 		}
     
 		[MonoTODO]
-		protected override void UpdateDefaultButton(){
+		protected override void UpdateDefaultButton()
+		{
 			base.UpdateDefaultButton();
 		}
 
@@ -845,11 +860,13 @@ namespace System.Windows.Forms {
 			return base.CreateControlsInstance ();
 		}
     
-		protected override void CreateHandle () {
+		protected override void CreateHandle () 
+		{
 			base.CreateHandle ();
 		}
     
-		protected override void DefWndProc (ref Message m) {
+		protected override void DefWndProc (ref Message m) 
+		{
 			if ( IsMdiChild )
 				window.DefMDIChildProc ( ref m );
 			else if ( IsMdiContainer && mdiClientWnd.IsHandleCreated ) {
@@ -875,20 +892,23 @@ namespace System.Windows.Forms {
 		}
 
 		//Compact Framework
-		protected virtual void OnActivated (EventArgs e) {
+		protected virtual void OnActivated (EventArgs e) 
+		{
 			if (Activated != null) {
 				Activated(this,e);
 			}
 		}
 
 		//Compact Framework
-		protected virtual void OnClosed (EventArgs e) {
+		protected virtual void OnClosed (EventArgs e) 
+		{
 			if (Closed != null)
 				Closed (this, e);
 		}
     
 		//Compact Framework
-		protected virtual void  OnClosing(CancelEventArgs e) {
+		protected virtual void  OnClosing(CancelEventArgs e) 
+		{
 			if ( Closing != null )
 				Closing ( this, e);
 
@@ -898,7 +918,8 @@ namespace System.Windows.Forms {
 			}
 		}
     
-		protected override void OnCreateControl () {
+		protected override void OnCreateControl () 
+		{
 			OnLoad ( EventArgs.Empty );
 			base.OnCreateControl ();
 			Control c = getNextFocusedControl ( this, true );
@@ -907,15 +928,18 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
-		protected virtual void OnDeactivate (EventArgs e) {
+		protected virtual void OnDeactivate (EventArgs e) 
+		{
 				
 		}
     
-		protected override void OnFontChanged (EventArgs e) {
+		protected override void OnFontChanged (EventArgs e) 
+		{
 			base.OnFontChanged (e);
 		}
     
-		protected override void OnHandleCreated (EventArgs e) {
+		protected override void OnHandleCreated (EventArgs e) 
+		{
 			base.OnHandleCreated (e);
 			if ( IsMdiChild ) 
 				activateMdiChild ( );
@@ -923,7 +947,8 @@ namespace System.Windows.Forms {
 			assignMenu();
 		}
     
-		protected override void OnHandleDestroyed (EventArgs e) {
+		protected override void OnHandleDestroyed (EventArgs e) 
+		{
 			base.OnHandleDestroyed (e);
 		}
     
@@ -940,66 +965,79 @@ namespace System.Windows.Forms {
 		}
     
 		//Compact Framework
-		protected virtual void OnLoad (EventArgs e) {
+		protected virtual void OnLoad (EventArgs e) 
+		{
 			if (Load != null)
 				Load (this, e);
 		}
     
-		protected virtual void OnMaximizedBoundsChanged (EventArgs e) {
+		protected virtual void OnMaximizedBoundsChanged (EventArgs e) 
+		{
 			if (MaximizedBoundsChanged != null)
 				MaximizedBoundsChanged (this, e);
 		}
     
-		protected virtual void OnMaximumSizeChanged (EventArgs e) {
+		protected virtual void OnMaximumSizeChanged (EventArgs e) 
+		{
 			if (MaximumSizeChanged != null)
 				MaximumSizeChanged (this, e);
 		}
     
-		protected virtual void OnMdiChildActivate (EventArgs e) {
+		protected virtual void OnMdiChildActivate (EventArgs e) 
+		{
 			if (MdiChildActivate != null)
 				MdiChildActivate (this, e);
 		}
     
-		protected virtual void OnMenuComplete (EventArgs e) {
+		protected virtual void OnMenuComplete (EventArgs e) 
+		{
 			if (MenuComplete != null)
 				MenuComplete (this, e);
 		}
     
-		protected virtual void OnMenuStart (EventArgs e) {
+		protected virtual void OnMenuStart (EventArgs e) 
+		{
 			if (MenuStart != null)
 				MenuStart (this, e);
 		}
     
-		protected virtual void OnMinimumSizeChanged (EventArgs e) {
+		protected virtual void OnMinimumSizeChanged (EventArgs e) 
+		{
 			if ( MinimumSizeChanged != null )
 				MinimumSizeChanged ( this, e );
 		}
     
 		//Compact Framework
-		protected override void  OnPaint (PaintEventArgs e) {
+		protected override void  OnPaint (PaintEventArgs e) 
+		{
 			base.OnPaint (e);
 		}
     
 		//Compact Framework
-		protected override void  OnResize (EventArgs e) {
+		protected override void  OnResize (EventArgs e) 
+		{
 			base.OnResize (e);
 			//			resizeMdiClient ();
 		}
     
-		protected override void  OnStyleChanged (EventArgs e) {
+		protected override void  OnStyleChanged (EventArgs e) 
+		{
 			base.OnStyleChanged (e);
 		}
     
 		//Compact Framework
-		protected override void  OnTextChanged (EventArgs e) {
+		protected override void  OnTextChanged (EventArgs e) 
+		{
 			base.OnTextChanged (e);
 		}
     
-		protected override void  OnVisibleChanged (EventArgs e) {
+		protected override void  OnVisibleChanged (EventArgs e) 
+		{
 			base.OnVisibleChanged (e);
 		}
 
-		internal virtual IntPtr OnMenuCommand (uint id) {
+		internal virtual IntPtr OnMenuCommand (uint id) 
+		{
 			IntPtr result = (IntPtr)1;
 			System.Console.WriteLine("Form on command {0}", id);
 			if(Menu != null) {
@@ -1012,7 +1050,8 @@ namespace System.Windows.Forms {
 			return result;
 		}
 
-		protected internal override void OnWmCommand (ref Message m) {
+		protected internal override void OnWmCommand (ref Message m) 
+		{
 			int wNotifyCode = (int)m.HiWordWParam;
 			int wID = (int)m.LoWordWParam;
 
@@ -1041,11 +1080,13 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		protected override bool ProcessCmdKey (	ref Message msg, Keys keyData) {
+		protected override bool ProcessCmdKey (	ref Message msg, Keys keyData) 
+		{
 			return base.ProcessCmdKey (ref msg, keyData);
 		}
     
-		protected override bool ProcessDialogKey (Keys keyData) {
+		protected override bool ProcessDialogKey (Keys keyData) 
+		{
 			if ( keyData == Keys.Enter && AcceptButton != null ) {
 				AcceptButton.PerformClick ( );
 				return true;
@@ -1057,14 +1098,16 @@ namespace System.Windows.Forms {
 			return base.ProcessDialogKey (keyData);
 		}
     
-		protected override bool ProcessKeyPreview (ref Message m) {
+		protected override bool ProcessKeyPreview (ref Message m) 
+		{
 			if ( KeyPreview )
 				return ProcessKeyEventArgs ( ref m ); 
 
 			return false;
 		}
 
-		protected override bool ProcessTabKey ( bool forward ) {
+		protected override bool ProcessTabKey ( bool forward ) 
+		{
 			Control newFocus = getNextFocusedControl ( this, forward );
 			if ( newFocus != null ) {
 				return newFocus.Focus ( );
@@ -1072,16 +1115,19 @@ namespace System.Windows.Forms {
 			return base.ProcessTabKey ( forward );
 		}
     
-		protected override void ScaleCore (float x, float y) {
+		protected override void ScaleCore (float x, float y) 
+		{
 			ClientSize = new Size ( (int) ( ClientSize.Width * x ), (int) ( ClientSize.Height * y) );
 		}
 
 		[MonoTODO]
-		protected override void Select(bool directed, bool forward){
+		protected override void Select(bool directed, bool forward)
+		{
 			base.Select(directed, forward);
 		}
     
-		protected override void SetBoundsCore (	int x, int y,  int width, int height, BoundsSpecified specified ) {
+		protected override void SetBoundsCore (	int x, int y,  int width, int height, BoundsSpecified specified ) 
+		{
 			if ( MaximumSize != Size.Empty ) {
 				if ( width > MaximumSize.Width )
 					width = MaximumSize.Width;
@@ -1098,15 +1144,18 @@ namespace System.Windows.Forms {
 			base.SetBoundsCore (x, y, width, height, specified);
 		}
     
-		protected override void SetClientSizeCore (int x, int y) {
+		protected override void SetClientSizeCore (int x, int y) 
+		{
 			base.SetClientSizeCore (x, y);
 		}
     
-		protected override void SetVisibleCore (bool value) {
+		protected override void SetVisibleCore (bool value) 
+		{
 			base.SetVisibleCore (value);
 		}
 
-		protected override void WndProc (ref Message m) {
+		protected override void WndProc (ref Message m) 
+		{
 			switch ((Msg) m.Msg) {
 			case Msg.WM_CLOSE:
 				CancelEventArgs args = new CancelEventArgs( false );
@@ -1261,14 +1310,16 @@ namespace System.Windows.Forms {
 		}
     		
 		#region new 11.26.2002 from Alexandre Pigolkine (pigolkine@gmx.de)
-		internal protected virtual void OnWmInitMenu (ref Message m) {
+		internal protected virtual void OnWmInitMenu (ref Message m) 
+		{
 			Menu mn = System.Windows.Forms.Menu.GetMenuByHandle( m.WParam);
 			if( mn != null) {
 				mn.OnWmInitMenu();
 			}
 		}
 
-		internal protected virtual void OnWmInitMenuPopup (ref Message m) {
+		internal protected virtual void OnWmInitMenuPopup (ref Message m) 
+		{
 			Menu mn = System.Windows.Forms.Menu.GetMenuByHandle( m.WParam);
 			if( mn != null) {
 				mn.OnWmInitMenuPopup();
@@ -1276,7 +1327,8 @@ namespace System.Windows.Forms {
 		}
 		#endregion
 			
-		private void createMdiClient ( ) {
+		private void createMdiClient ( ) 
+		{
 			if(  mdiClientWnd == null ) {
 				mdiClientWnd = new MdiClient ( this );
 				Controls.Add ( mdiClientWnd );
@@ -1292,14 +1344,16 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void destroyMdiClient ( ) {
+		private void destroyMdiClient ( ) 
+		{
 			if ( mdiClientWnd != null ) {
 				Controls.Remove ( mdiClientWnd );
 				mdiClientWnd.DestroyControl ( );
 				mdiClientWnd = null;
 			}
 		}
-		private void resizeMdiClient ( ) {
+		private void resizeMdiClient ( ) 
+		{
 			if ( IsMdiContainer && mdiClientWnd.IsHandleCreated ) {
 				Win32.MoveWindow ( mdiClientWnd.Handle,
 						   Location.X, Location.Y,
@@ -1308,11 +1362,13 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void activateMdiChild ( ) {
+		private void activateMdiChild ( ) 
+		{
 			Win32.SendMessage ( Parent.Handle, Msg.WM_MDIACTIVATE, Handle.ToInt32(), 0 );
 		}
 
-		protected void ActivateMdiChild (Form form ) {
+		protected void ActivateMdiChild (Form form ) 
+		{
 			///function copied from above. no clue if this is what it shoul do
 			///
 
@@ -1320,22 +1376,26 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
-		protected void ApplyAutoScaling(){
+		protected void ApplyAutoScaling()
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected void CenterToScreen(){
+		protected void CenterToScreen()
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected void CenterToParent(){
+		protected void CenterToParent()
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected override void Dispose(bool disposing){
+		protected override void Dispose(bool disposing)
+		{
 			base.Dispose(disposing);
 		}
 
@@ -1343,7 +1403,8 @@ namespace System.Windows.Forms {
 			get { return this.mdiClientWnd; }
 		}
 
-		internal void replaceMdiWindowMenu ( IntPtr hMenu ) {
+		internal void replaceMdiWindowMenu ( IntPtr hMenu ) 
+		{
 			Control mdiClient = MdiClientControl;
 			if ( mdiClient != null && mdiClient.Handle != IntPtr.Zero )
 				if ( hMenu != IntPtr.Zero )
@@ -1368,7 +1429,8 @@ namespace System.Windows.Forms {
 			set { exitModalLoop = value; }
 		}
 
-		private void getFrameStyle ( FormBorderStyle borderStyle, ref int baseStyle, ref int exStyle ) {
+		private void getFrameStyle ( FormBorderStyle borderStyle, ref int baseStyle, ref int exStyle ) 
+		{
 			baseStyle = 0;
 			exStyle = 0;
 			
@@ -1402,7 +1464,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private int getSysStyles ( ) {
+		private int getSysStyles ( ) 
+		{
 			int sysStyles = 0;
 			if ( MinimizeBox )
 				sysStyles  |= (int)( WindowStyles.WS_MINIMIZEBOX );
@@ -1414,11 +1477,13 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
-		public static SizeF GetAutoScaleSize(Font font){
+		public static SizeF GetAutoScaleSize(Font font)
+		{
 			throw new NotImplementedException ();
 		}
 
-		private void getStartPosition ( ref CreateParams pars ) {
+		private void getStartPosition ( ref CreateParams pars ) 
+		{
 			switch ( StartPosition ) {
 			case FormStartPosition.WindowsDefaultLocation:
 				pars.X = pars.Y = (int)CreateWindowCoordinates.CW_USEDEFAULT;
@@ -1460,28 +1525,33 @@ namespace System.Windows.Forms {
     
 			//  --- Constructor
 			// base class not defined (yet!)
-			public ControlCollection (Form owner) : base(owner) {
+			public ControlCollection (Form owner) : base(owner) 
+			{
     
 			}
     		
 			//  --- Public Methods
     
 			// TODO: see what causes this compile error
-			public override void Add(Control value) {
+			public override void Add(Control value) 
+			{
 				base.Add (value);
 			}
     
-			public override bool Equals (object obj) {
+			public override bool Equals (object obj) 
+			{
 				//FIXME:
 				return base.Equals(obj);
 			}
 
-			public override int GetHashCode () {
+			public override int GetHashCode () 
+			{
 				//FIXME add our proprities
 				return base.GetHashCode ();
 			}
     
-			public override void Remove(Control value) {
+			public override void Remove(Control value) 
+			{
 				base.Remove (value);
 			}
 
