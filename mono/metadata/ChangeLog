@@ -1,3 +1,8 @@
+2004-07-21  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* rand.c: use g_getenv for both lookups of
+	MONO_EGD_SOCKET
+
 2004-07-17  Martin Baulig  <martin@ximian.com>
 
 	* reflection.c (mono_reflection_bind_generic_method_parameters):
