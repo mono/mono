@@ -1,5 +1,10 @@
 2003-12-10  Jackson Harper <jackson@ximian.com>
 
+	* ILParser.jay: Use the extern table for all extern type
+	creations.
+	
+2003-12-10  Jackson Harper <jackson@ximian.com>
+
 	* ILParser.jay: Add COMP_NAME token.
 	
 2003-12-10  Jackson Harper <jackson@ximian.com>
