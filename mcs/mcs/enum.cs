@@ -23,7 +23,6 @@ namespace Mono.CSharp {
 
 		ArrayList ordered_enums;
 		public readonly string BaseType;
-		public TypeBuilder EnumBuilder;
 		public Attributes  OptAttributes;
 		
 		public Type UnderlyingType;
@@ -102,8 +101,7 @@ namespace Mono.CSharp {
 				else
 					attr |= TypeAttributes.NotPublic;
 				
-				EnumBuilder = builder.DefineType (Name, attr, TypeManager.enum_type);
-
+				TypeBuilder = builder.DefineType (Name, attr, TypeManager.enum_type);
 			} else {
 				TypeBuilder builder = (System.Reflection.Emit.TypeBuilder) parent_builder;
 
@@ -113,15 +111,15 @@ namespace Mono.CSharp {
 					attr |= TypeAttributes.NestedPrivate;
 
 				
-				EnumBuilder = builder.DefineNestedType (
+				TypeBuilder = builder.DefineNestedType (
 					Basename, attr, TypeManager.enum_type);
 			}
 
-			EnumBuilder.DefineField ("value__", UnderlyingType,
+			TypeBuilder.DefineField ("value__", UnderlyingType,
 						 FieldAttributes.Public | FieldAttributes.SpecialName
 						 | FieldAttributes.RTSpecialName);
 
-			RootContext.TypeManager.AddEnumType (Name, EnumBuilder, this);
+			RootContext.TypeManager.AddEnumType (Name, TypeBuilder, this);
 
 			return;
 		}
@@ -287,7 +285,7 @@ namespace Mono.CSharp {
 			FieldAttributes attr = FieldAttributes.Public | FieldAttributes.Static
 					| FieldAttributes.Literal;
 			
-			FieldBuilder fb = EnumBuilder.DefineField (name, UnderlyingType, attr);
+			FieldBuilder fb = TypeBuilder.DefineField (name, UnderlyingType, attr);
 			
 			try {
 				default_value = Convert.ChangeType (default_value, UnderlyingType);
@@ -311,7 +309,7 @@ namespace Mono.CSharp {
 			//
 			// If there was an error during DefineEnum, return
 			//
-			if (EnumBuilder == null)
+			if (TypeBuilder == null)
 				return false;
 			
 			EmitContext ec = new EmitContext (parent, Location, null, UnderlyingType, ModFlags);
@@ -338,8 +336,8 @@ namespace Mono.CSharp {
 						return true;
 
 				} else {
-					
-					FieldBuilder fb = EnumBuilder.DefineField (name, UnderlyingType, attr);
+					FieldBuilder fb = TypeBuilder.DefineField (
+						name, UnderlyingType, attr);
 					
 					if (default_value == null) {
 					   Report.Error (543, loc, "Enumerator value for '" + name + "' is too large to " +
@@ -365,7 +363,7 @@ namespace Mono.CSharp {
 				default_value = GetNextDefaultValue (default_value);
 			}
 			
-			Attribute.ApplyAttributes (ec, EnumBuilder, this, OptAttributes, Location);
+			Attribute.ApplyAttributes (ec, TypeBuilder, this, OptAttributes, Location);
 
 			return true;
 		}
@@ -395,11 +393,6 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public void CloseEnum ()
-		{
-			EnumBuilder.CreateType ();
-		}
-		
 		public ArrayList ValueNames {
 			get {
 				return ordered_enums;

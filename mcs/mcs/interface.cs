@@ -682,11 +682,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public void CloseType ()
-		{
-			TypeBuilder.CreateType ();
-		}
-		
 	}
 
 	public class InterfaceMemberBase {

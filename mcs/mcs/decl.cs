@@ -148,7 +148,8 @@ namespace Mono.CSharp {
 		///   created with System.Reflection.Emit
 		/// </summary>
 		TypeBuilder definition;
-
+		public bool Created = false;
+		
 		//
 		// This is the namespace in which this typecontainer
 		// was declared.  We use this to resolve names.
@@ -219,11 +220,26 @@ namespace Mono.CSharp {
 				definition = value;
 			}
 		}
+
+		public virtual void CloseType ()
+		{
+			if (!Created){
+				try {
+					definition.CreateType ();
+				} catch {
+					//
+					// The try/catch is needed because
+					// nested enumerations fail to load when they
+					// are defined.
+					//
+					// Even if this is the right order (enumerations
+					// declared after types).
+					//
+					// Note that this still creates the type and
+					// it is possible to save it
+				}
+				Created = true;
+			}
+		}
 	}
 }
-
-
-
-
-
-

@@ -1144,7 +1144,7 @@ namespace Mono.CSharp {
 		///   A member comparission method based on name only
 		/// </summary>
 		static IComparer mif_compare;
-		
+
 		static TypeContainer ()
 		{
 			abstract_method_filter = new MemberFilter (IsAbstractMethod);
@@ -1245,8 +1245,8 @@ namespace Mono.CSharp {
 
 				if (Enums != null)
 					foreach (Enum en in Enums)
-						if (filter (en.EnumBuilder, criteria) == true)
-							members.Add (en.EnumBuilder);
+						if (filter (en.TypeBuilder, criteria) == true)
+							members.Add (en.TypeBuilder);
 				
 			}
 
@@ -1450,6 +1450,7 @@ namespace Mono.CSharp {
 			if (constants != null)
 				foreach (Const con in constants)
 					con.EmitConstant (this);
+			return;
 		}
 		
 		/// <summary>
@@ -1503,24 +1504,32 @@ namespace Mono.CSharp {
 //					tc.Emit ();
 		}
 		
-		public void CloseType ()
+		public override void CloseType ()
 		{
-			TypeBuilder.CreateType ();
 			try {
-			} catch (InvalidOperationException e){
-				Console.WriteLine ("Exception while creating class: " + TypeBuilder.Name);
-				Console.WriteLine ("Message: " + e.Message);
+				if (!Created){
+					Created = true;
+					TypeBuilder.CreateType ();
+				}
+			} catch (TypeLoadException e){
+				Report.Warning (-20, "Exception while creating class: " + TypeBuilder.Name);
+				Console.WriteLine (e.Message);
 			}
 			
-
-			if (Types != null)
-				foreach (TypeContainer tc in Types)
-					tc.CloseType ();
-
 			if (Enums != null)
 				foreach (Enum en in Enums)
-					en.CloseEnum ();
+					en.CloseType ();
 			
+			if (Types != null){
+				foreach (TypeContainer tc in Types)
+					if (tc is Struct)
+						tc.CloseType ();
+
+				foreach (TypeContainer tc in Types)
+					if (!(tc is Struct))
+						tc.CloseType ();
+			}
+
 			if (Delegates != null)
 				foreach (Delegate d in Delegates)
 					d.CloseDelegate ();
@@ -1864,6 +1873,7 @@ namespace Mono.CSharp {
 		static Method ()
 		{
 			method_signature_filter = new MemberFilter (MemberSignatureCompare);
+			return;
 		}
 		
 		//
@@ -2212,6 +2222,7 @@ namespace Mono.CSharp {
 		public bool Resolve (EmitContext ec)
 		{
 			Expression parent_constructor_group;
+			Type t;
 			
 			if (argument_list != null){
 				for (int i = argument_list.Count; i > 0; ){
@@ -2223,9 +2234,13 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (this is ConstructorBaseInitializer)
+				t = ec.TypeContainer.TypeBuilder.BaseType;
+			else
+				t = ec.TypeContainer.TypeBuilder;
+			
 			parent_constructor_group = Expression.MemberLookup (
-				ec,
-				ec.TypeContainer.TypeBuilder.BaseType, ".ctor", true,
+				ec, t, ".ctor", true,
 				MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance, location);
 			
@@ -2237,8 +2252,10 @@ namespace Mono.CSharp {
 			parent_constructor = (ConstructorInfo) Invocation.OverloadResolve (ec, 
 				(MethodGroupExpr) parent_constructor_group, argument_list, location);
 			
-			if (parent_constructor == null)
+			if (parent_constructor == null){
+				Console.WriteLine ("Could not locate a proper overload function");
 				return false;
+			}
 			
 			return true;
 		}
@@ -2354,12 +2371,13 @@ namespace Mono.CSharp {
 			ILGenerator ig = ConstructorBuilder.GetILGenerator ();
 			EmitContext ec = new EmitContext (parent, Location, ig, null, ModFlags, true);
 
-			if (parent is Class){
+			if (parent is Class && ((ModFlags & Modifiers.STATIC) == 0)){
 				if (Initializer == null)
 					Initializer = new ConstructorBaseInitializer (null, parent.Location);
-
-				if (!Initializer.Resolve (ec))
-					return;
+				
+				if (!Initializer.Resolve (ec)){
+					Console.WriteLine ("Could not resolve initializer: " + parent.Name);
+				}
 			}
 
 			//
@@ -2640,7 +2658,7 @@ namespace Mono.CSharp {
 			} else {
 				SetBuilder = parent.TypeBuilder.DefineMethod (
 					name, flags, null, parameters);
-
+				
 				if (implementing != null)
 					parent.TypeBuilder.DefineMethodOverride (
 						SetBuilder, implementing);
@@ -2950,7 +2968,7 @@ namespace Mono.CSharp {
 		{
 			if (!parent.MethodModifiersValid (ModFlags, Name, Location))
 				return false;
-			
+
 			MethodAttributes m_attr = Modifiers.MethodAttr (ModFlags);
 			EventAttributes e_attr = EventAttributes.RTSpecialName | EventAttributes.SpecialName;
 
@@ -3178,7 +3196,6 @@ namespace Mono.CSharp {
 			if (is_get){
 				GetBuilder = parent.TypeBuilder.DefineMethod (
 					"get_Item", attr, IndexerType, parameters);
-
 				if (implementing != null)
 					parent.TypeBuilder.DefineMethodOverride (
 						GetBuilder, implementing);
@@ -3187,7 +3204,6 @@ namespace Mono.CSharp {
 			} else {
 				SetBuilder = parent.TypeBuilder.DefineMethod (
 					"set_Item", attr, null, parameters);
-
 				if (implementing != null)
 					parent.TypeBuilder.DefineMethodOverride (
 						SetBuilder, implementing);

@@ -183,21 +183,38 @@ namespace Mono.CSharp {
 			
 			ArrayList ifaces = root.Interfaces;
 
-			if (ifaces != null)
-				foreach (Interface i in ifaces) 
-					i.CloseType ();
-			
-			foreach (TypeContainer tc in root.Types)
-				tc.CloseType ();
+			if (root.Enums != null)
+				foreach (Enum en in root.Enums)
+					en.CloseType ();
 
+			if (interface_resolve_order != null){
+				foreach (Interface iface in interface_resolve_order)
+					iface.CloseType ();
+			}
+
+			//
+			// We do this in two passes, first we close the structs,
+			// then the classes, because it seems the code needs it this
+			// way.  If this is really what is going on, we should probably
+			// make sure that we define the structs in order as well.
+			//
+			if (type_container_resolve_order != null){
+				foreach (TypeContainer tc in type_container_resolve_order){
+					if (tc is Struct && tc.Parent == tree.Types){
+						tc.CloseType ();
+					}
+				}
+
+				foreach (TypeContainer tc in type_container_resolve_order){
+					if (!(tc is Struct && tc.Parent == tree.Types))
+						tc.CloseType ();					
+				}
+			}
+			
 			if (root.Delegates != null)
 				foreach (Delegate d in root.Delegates)
 					d.CloseDelegate ();
 
-			if (root.Enums != null)
-				foreach (Enum en in root.Enums)
-					en.CloseEnum ();
-			
 
 			//
 			// If we have a <PrivateImplementationDetails> class, close it

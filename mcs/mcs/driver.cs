@@ -17,14 +17,15 @@ namespace Mono.CSharp
 	using System.IO;
 	using Mono.Languages;
 
+	enum Target {
+		Library, Exe, Module, WinExe
+	};
+	
 	/// <summary>
 	///    The compiler driver.
 	/// </summary>
 	public class Driver
 	{
-		enum Target {
-			Library, Exe, Module, WinExe
-		};
 		
 		//
 		// Assemblies references to be linked.   Initialized with

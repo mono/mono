@@ -766,6 +766,25 @@ method_declaration
 	  }
 	;
 
+opt_error_modifier
+	: /* empty */
+	| modifiers 
+	  {
+		int m = (int) $1;
+		int i = 1;
+
+		while (m != 0){
+			if ((i & m) != 0){
+				Report.Error (
+					1585, lexer.Location, "Member modifier `" + 
+					Modifiers.Name (i) + "' must precede member type and name");
+			}
+			m &= ~i;
+			i = i << 1;
+		}
+	  }
+	;
+
 method_header
 	: opt_attributes
 	  opt_modifiers

@@ -208,7 +208,7 @@ namespace Mono.CSharp {
 				//Report.Error (161, loc, "Not all code paths return a value");
 				return;
 			}
-				
+
 			if (return_value != null){
 				ig.MarkLabel (ReturnLabel);
 				ig.Emit (OpCodes.Ldloc, return_value);

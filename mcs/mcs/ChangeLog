@@ -1,3 +1,19 @@
+2001-12-28  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs: Do not lookup or create a base initializer for a
+	static constructor.
+
+	(ConstructorInitializer.Resolve): use the proper type to lookup
+	for constructors.
+
+	* cs-parser.jay: Report error 1585 (modifiers between type and name).
+
+	* enum.cs, interface.cs: Remove CloseType, this is taken care by
+	in DeclSpace. 
+
+	* decl.cs: CloseType is now an virtual method, the default
+	implementation just closes this type.
+	
 2001-12-28  Ravi Pratap  <ravi@ximian.com>
 
 	* attribute.cs (DefinePInvokeMethod): Set the implementation flags
