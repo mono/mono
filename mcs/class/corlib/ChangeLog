@@ -1,3 +1,8 @@
+2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* corlib_test.dll.sources: added EnumBuilderTest and 
+	FieldBuilderTest to the build
+
 2004-06-11  Raja R Harinath  <rharinath@novell.com>
 
 	* corlib_plattest.dll.excludes: Remove contents.  Any file listed
