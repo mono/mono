@@ -1,3 +1,8 @@
+2004-07-09  Ben Maurer  <bmaurer@ximian.com>
+
+	* domain.c, gc.c, marshal.c, mono-debug-debugger.c,
+	threadpool.c, threads.c: remove static data from rootset.
+
 2004-07-09  Dick Porter  <dick@ximian.com>
 
 	* locales.c (ves_icall_System_String_InternalReplace_Str_Comp):
