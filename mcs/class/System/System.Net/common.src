@@ -3,3 +3,7 @@ EndPoint.cs
 IPAdress.cs
 IPEndPoint.cs
 SocketAddress.cs
+HttpStatusCode.cs
+NetworkAccess.cs
+TransportType.cs
+WebExceptionStatus.cs
