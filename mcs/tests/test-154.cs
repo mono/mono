@@ -530,4 +530,25 @@ public class X
 			return;
 		}
 	}
+
+	//
+	// Bug 52625
+	//
+	public static void test36 ()
+	{
+		string myVar;
+		int counter = 0;
+
+		while (true)
+		{
+			if (counter < 3)
+				counter++;
+			else {
+				myVar = "assigned";
+				break;
+			}
+		}
+		Console.WriteLine (myVar);
+	}
+
 }
