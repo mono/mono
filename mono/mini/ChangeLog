@@ -1,3 +1,7 @@
+2004-04-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* aot.c (mono_compile_assembly): Add back unlink removed by mistake.
+
 2004-04-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c: Only set bblock->real_offset when adding a new bblock, and
