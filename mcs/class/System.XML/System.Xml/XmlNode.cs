@@ -19,18 +19,31 @@ namespace System.Xml
 		private XmlNodeListAsArrayList _childNodes;
 		protected XmlDocument FOwnerDocument;
 		protected XmlNode _parent;
-		
-		/// <summary>
-		/// Return a clone of this node
-		/// </summary>
-		/// <returns></returns>
-		public virtual object Clone()
-		{
-			// TODO - implement XmlNode.Clone() as object
-			throw new NotImplementedException("object XmlNode.Clone() not implmented");
-		}
 
-		// ============ Properties ============================
+		// Names of node
+		// for <foo:bar xmlns:foo="http://www.foobar.com/schema/foobar">... </foo:bar>
+		//	qualified name: foo:bar
+		//	namespaceURI = "http://www.foobar.com/schema/foobar"
+		//  localName = bar
+		//	prefix = foo
+		// Note that namespaces can be nested (child namespace != parent namespace)
+		// namespaces are optional
+		protected string Fname;
+		protected string FnamespaceURI;
+		protected string Fprefix;
+		protected string FlocalName;
+
+		// baseURI holds the location from which the document was loaded
+		// If the node was created from a document at c:\tmp.xml, then that's what will be here
+		protected string FbaseURI;
+
+		// value of the node (overriden in classes that do something different)
+		//	default behavior is just to store it
+		protected string Fvalue;
+		
+		//=====================================================================
+		// ============ Properties ============================================
+		//=====================================================================
 		/// <summary>
 		/// Get the XmlAttributeCollection representing the attributes
 		///   on the node type.  Returns null if the node type is not XmlElement.
@@ -50,9 +63,7 @@ namespace System.Xml
 		{
 			get 
 			{
-				// TODO - implement XmlNode.BaseURI {get;}
-				throw new NotImplementedException("XmlNode.BaseURI not implemented");
-
+				return FbaseURI;
 			}
 
 		}
@@ -93,7 +104,7 @@ namespace System.Xml
 		{
 			get 
 			{
-				if (_childNodes.Count == 0)
+				if (ChildNodes.Count == 0)
 					return true;
 				else
 					return false;
@@ -272,14 +283,13 @@ namespace System.Xml
 		{
 			get
 			{
-				// TODO - implement Prefix {get;}
-				throw new NotImplementedException();
+				return Fprefix;
 			}
 			
 			set
 			{
-				// TODO - implement Prefix {set;}
-				throw new NotImplementedException();
+				// TODO - validation on XmlNode.Prefix {set;}? (no)
+				Fprefix = value;
 			}
 		}
 
@@ -307,18 +317,18 @@ namespace System.Xml
 		{
 			get
 			{
-				// TODO - implement Value {get;}
-				throw new NotImplementedException();
+				return Fvalue;
 			}
 			
 			set
 			{
-				// TODO - implement Value {set;}
-				throw new NotImplementedException();
+				Fvalue = value;
 			}
 		}
 
-		//======= Methods ==========================
+		//=====================================================================
+		//======= Methods =====================================================
+		//=====================================================================
 		/// <summary>
 		/// Appends the specified node to the end of the child node list
 		/// </summary>
@@ -327,6 +337,16 @@ namespace System.Xml
 		public virtual XmlNode AppendChild (XmlNode newChild)
 		{
 			return InsertBefore(newChild, null);
+		}
+
+		/// <summary>
+		/// Return a clone of this node
+		/// </summary>
+		/// <returns></returns>
+		public virtual object Clone()
+		{
+			// TODO - implement XmlNode.Clone() as object
+			throw new NotImplementedException("object XmlNode.Clone() not implmented");
 		}
 
 		/// <summary>
@@ -391,7 +411,7 @@ namespace System.Xml
 		/// Node to insert is an ancestor of this node.</exception>
 		/// <param name="newChild">Child node to insert.</param>
 		/// <param name="refChild">Reference node to insert after</param>
-		/// <returns></returns>
+		/// <returns>Removed node, or null if no node removed.</returns>
 		public virtual XmlNode InsertAfter(XmlNode newChild, XmlNode refChild)
 		{
 			// Checks parent not ancestor, arguments valid, etc.  Throws exception on error
@@ -461,10 +481,18 @@ namespace System.Xml
 		
 		/// <summary>
 		/// Insert newChild directly before the reference node.
+		/// If refChild is null, newChild is inserted at the end of childnodes.
+		/// If newChild is a document fragment, all nodes are inserted before refChild.
+		/// If newChild is already in the tree, it is first removed.
 		/// </summary>
-		/// <param name="newChild"></param>
-		/// <param name="refChild"></param>
-		/// <returns></returns>
+		/// <exception cref="ArgumentException">NewChild was created from different document.
+		/// RefChild not a child of this node, or is null.
+		/// Node is read-only</exception>
+		/// <exception cref="InvalidOperationException">Node is of type that does not have children.
+		/// Node to insert is an ancestor of this node.</exception>
+		/// <param name="newChild">Child node to insert.</param>
+		/// <param name="refChild">Reference node to insert after</param>
+		/// <returns>Removed node, or null if no node removed.</returns>
 		public virtual XmlNode InsertBefore(XmlNode newChild, XmlNode refChild)
 		{
 			// Checks parent not ancestor, arguments valid, etc.  Throws exception on error
@@ -498,8 +526,6 @@ namespace System.Xml
 
 			if ( ( refNodeIndex == -1 ) & (refChild != null) )
 				throw new ArgumentException("Reference node not found (and not null) in call to XmlNode.InsertAfter()");
-
-			
 
 			if (refChild == null)
 				refNodeIndex = _childNodes.Count;

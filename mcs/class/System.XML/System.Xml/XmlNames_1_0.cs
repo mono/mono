@@ -79,7 +79,6 @@ namespace System.Xml
 					if ( (S >= 0x00c0) & (S <= 0x00d6) ) return true;	
 					if ( (S >= 0x00d8) & (S <= 0x00f6) ) return true;	
 					if ( (S >= 0x00f8) & (S <= 0x00ff) ) return true;	
-					return false;
 					break;
 				case 1:
 					if ( (S >= 0x0100) & (S <= 0x0131) ) return true;	
@@ -519,6 +518,28 @@ namespace System.Xml
 				return true;
 			return false;
 		}
+
+		/// <summary>
+		/// Return true if the passed string is a valid Xml 1.0 name
+		/// </summary>
+		/// <param name="s">String to check for validity</param>
+		/// <returns>true if string is valid Xml name</returns>
+		public static bool isXmlName( string s )
+		{
+			if ( s.Length == 0 ) return false;
+
+			if ( !IsXmlLetter(s[0]) | (s[0] != '_') | (s[0] != ':') )
+				return false;
+
+			for (int i = 1; i < s.Length; i++)
+			{
+				if (! IsXmlNameChar( s[i] ) )
+					return false;
+			}
+
+			return true;
+		}
+
 
 		// Constructors
 

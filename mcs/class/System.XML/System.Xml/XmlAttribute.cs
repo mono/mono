@@ -15,16 +15,88 @@ namespace System.Xml
 	public class XmlAttribute : XmlNode
 	{
 		// ============  private data structures ==============================
-		private  XmlNode FOwner;
 		private XmlNode FOwnerElement;
 		
-		string FelementName;
 		string FattrName;
 		string FattrValue;
 		
 		//==== Public Properties ====================================================
 
+		/// <summary>
+		/// Returns the local name of the attribute.  For attributes, this is the same as Name
+		/// </summary>
+		public override string LocalName 
+		{
+			get
+			{
+				return Name;
+			}
+		}
 
+		/// <summary>
+		/// Get the qualified attribute name.  Attributes do not have an associated namespace.
+		/// </summary>
+		public override string Name 
+		{ 
+			get
+			{
+				return Name;
+			}
+		}
+
+		/// <summary>
+		/// Override.  Returns the node type.
+		/// </summary>
+		public override XmlNodeType NodeType 
+		{
+			get
+			{
+				return XmlNodeType.Attribute;
+			}
+		}
+
+		/// <summary>
+		/// Retrieve the XmlElement owner of this attribute, or null if attribute not assigned
+		/// </summary>
+		public virtual XmlElement OwnerElement
+		{
+			get
+			{
+				if (FOwnerElement.NodeType == XmlNodeType.Element)
+					return FOwnerElement as XmlElement;
+				else
+					return null;
+			}
+		}
+
+		/// <summary>
+		/// Get/Set the value for this node
+		/// </summary>
+		public override string Value 
+		{
+			get
+			{
+				return FattrValue;
+			}
+			
+			set
+			{
+				FattrValue = value;
+			}
+		}
+
+		//============== Public Methods =============================================
+
+		/// <summary>
+		/// Return a clone of the node
+		/// </summary>
+		/// <param name="deep">Make copy of all children</param>
+		/// <returns>Cloned node</returns>
+		public override XmlNode CloneNode( bool deep)
+		{
+			// TODO - implement XmlAttribute.CloneNode()
+			throw new NotImplementedException();
+		}
 
 		/// <summary>
 		/// Saves all children of the current node to the passed writer
@@ -46,78 +118,6 @@ namespace System.Xml
 			throw new NotImplementedException();
 		}
 
-		/// <summary>
-		/// Returns the local name of the attribute.  For attributes, this is the same as Name
-		/// </summary>
-		public override string LocalName 
-		{
-			get
-			{
-				return Name;
-			}
-		}
-
-		/// <summary>
-		/// Get the XmlNode representing the owning document
-		/// </summary>
-		public override XmlDocument OwnerDocument
-		{
-			get
-			{
-				if (FOwner.NodeType == XmlNodeType.Document)
-					return FOwner as XmlDocument;
-				else
-					return null;
-			}
-		}
-
-		/// <summary>
-		/// Retrieve the XmlElement owner of this attribute, or null if attribute not assigned
-		/// </summary>
-		public virtual XmlElement OwnerElement
-		{
-			get
-			{
-				if (FOwnerElement.NodeType == XmlNodeType.Element)
-					return FOwnerElement as XmlElement;
-				else
-					return null;
-			}
-		}
-		/// <summary>
-		/// Get the qualified attribute name.  Attributes do not have an associated namespace.
-		/// </summary>
-		public override string Name 
-		{ 
-			get
-			{
-				return Name;
-			}
-		}
-
-		//============== Public Methods =============================================
-		/// <summary>
-		/// Override.  Returns the node type.
-		/// </summary>
-		public override XmlNodeType NodeType 
-		{
-			get
-			{
-				return XmlNodeType.Attribute;
-			}
-		}
-
-		/// <summary>
-		/// Return a clone of the node
-		/// </summary>
-		/// <param name="deep">Make copy of all children</param>
-		/// <returns>Cloned node</returns>
-		public override XmlNode CloneNode( bool deep)
-		{
-			// TODO - implement XmlAttribute.CloneNode()
-			throw new NotImplementedException();
-		}
-
 		// ============  Internal methods  ====================================
 		internal void setOwnerElement( XmlElement newOwnerElement)
 		{
@@ -125,18 +125,8 @@ namespace System.Xml
 		}
 
 		// ============  Constructors =========================================
-		public XmlAttribute(XmlDocument aOwnerDoc) : base(aOwnerDoc)
-		{
-			//
-			// TODO: Add constructor logic here
-			//
-		}
-
 		internal XmlAttribute ( XmlDocument aOwner,			// owner document
-			string elementName,								// can be ""
 			string attributeName,							// cannot be ""
-			// attType,
-			// defaultDecl,
 			string attValue) : base(aOwner)
 		{
 			if (aOwner == null)
@@ -144,9 +134,7 @@ namespace System.Xml
 			if (attributeName.Length == 0)
 				throw new ArgumentException("Empty string passed to XmlAttribute constructor");
 
-			FOwner = aOwner;
 			FOwnerElement = null;
-			FelementName = elementName;
 			FattrName = attributeName;
 			FattrValue = attValue;
 		}

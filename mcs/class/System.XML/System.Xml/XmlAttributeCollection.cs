@@ -294,12 +294,13 @@ namespace System.Xml
 		private XmlAttribute InsertHelper(XmlAttribute newNode, XmlAttribute refNode, int offset)
 		{
 			// TODO - validation? (no)
+			// TODO - null refNode is valid (== prepend)
 			if (refNode == null)
 				throw new ArgumentNullException("Null refNode passed to InsertAfter()");
 			if (newNode == null)
 				throw new ArgumentNullException("Null newNode passed to InsertAfter()");
 
-			if (! newNode.OwnerDocument.Equals(refNode.OwnerDocument) )
+			if (! newNode.OwnerDocument.Equals(FOwner.OwnerDocument) )
 				throw new ArgumentException("Node to insert does not have same owner document as reference");
 
 			// Logically, it makes no sense to insert node "A" after node "A",

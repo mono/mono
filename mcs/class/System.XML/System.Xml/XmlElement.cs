@@ -31,6 +31,22 @@ namespace System.Xml
 			}
 		}
 
+		/// <summary>
+		/// Get/Set the value for this node
+		/// </summary>
+		public override string Value 
+		{
+			get
+			{
+				return null;
+			}
+			
+			set
+			{
+				// Do nothing, can't set value on XmlElement...
+			}
+		}
+
 		// Implement abstract methods of XmlNode
 		//=====================================================================
 		/// <summary>
@@ -121,7 +137,7 @@ namespace System.Xml
 
 		// Constructors
 		// ==========================================================================
-		internal XmlElement( XmlDocument aOwnerDoc ) : base(aOwnerDoc)
+		internal XmlElement( XmlDocument aOwnerDoc, string elementName ) : base(aOwnerDoc)
 		{
 			_attributes = new XmlAttributeCollection(aOwnerDoc, this, null);
 		}

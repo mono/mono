@@ -121,25 +121,23 @@ namespace System.Xml
 		}
 
 		/// <summary>
-		/// 
+		/// Get the local name of the node.  For documents, returns "#document"
 		/// </summary>
 		public override string LocalName {
 			get
 			{
-				// TODO - implement XmlDocument.LocalName {get;}
-				throw new NotImplementedException("LocalName get not implemented");
+				return "#document";
 			}
 		}
 
 		/// <summary>
-		/// 
+		/// Get the qualified name of the node.  For documents, returns "#document"
 		/// </summary>
 		public override string Name 
 		{
 			get
 			{
-				// TODO - implement XmlDocument.Name {get;}
-				throw new NotImplementedException("Name get not implemented");
+				return "#document";
 			}
 		}
 
