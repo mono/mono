@@ -1,3 +1,7 @@
+2003-09-19    <cesar@ciencias.unam.mx>
+
+	* JSToken.cs: public API compliance.
+
 2003-09-07 Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* Context.cs: Added constructor and Document field.
