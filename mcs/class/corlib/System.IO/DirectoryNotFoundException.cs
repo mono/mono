@@ -30,7 +30,7 @@ namespace System.IO {
 		{
 		}
 
-		public DirectoryNotFoundException (SerializationInfo info, StreamingContext context)
+		protected DirectoryNotFoundException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}
