@@ -1,3 +1,10 @@
+2002-10-13 John Sohn <jsohn@columbus.rr.com>
+	* Button.cs:
+	* Label.cs: 
+	* Control.cs:
+	* Form.cs: fixed location of elements on Form
+	* FormTest.cs: changed location of Label and Button on Form
+
 2002-10-12 John Sohn <jsohn@columbus.rr.com>
 	* ButtonBase.cs:
 	* Button.cs:  initial implementation of Button class

@@ -662,12 +662,14 @@ namespace System.Windows.Forms {
 		
 		//  --- Protected Methods
 		
-		protected override void AdjustFormScrollbars (bool displayScrollbars)
+		protected override void AdjustFormScrollbars (
+			bool displayScrollbars)
 		{
 			base.AdjustFormScrollbars (displayScrollbars);
 		}
 
-		protected override Control.ControlCollection CreateControlsInstance ()
+		protected override Control.ControlCollection 
+		CreateControlsInstance ()
 		{
 			return base.CreateControlsInstance ();
 		}
@@ -724,13 +726,15 @@ namespace System.Windows.Forms {
 			base.OnHandleDestroyed (e);
 		}
 
-		protected virtual void OnInputLanguageChanged (InputLanguageChangedEventArgs e)
+		protected virtual void OnInputLanguageChanged (
+			InputLanguageChangedEventArgs e)
 		{
 			if (InputLanguageChanged != null)
 				InputLanguageChanged (this, e);
 		}
 
-		protected virtual void OnInputLanguagedChanging (InputLanguageChangingEventArgs e)
+		protected virtual void OnInputLanguagedChanging (
+			InputLanguageChangingEventArgs e)
 		{
 			if (InputLanguageChanging != null)
 				InputLanguageChanging (this, e);
@@ -802,7 +806,8 @@ namespace System.Windows.Forms {
 			base.OnVisibleChanged (e);
 		}
 
-		protected override bool ProcessCmdKey (ref Message msg, Keys keyData)
+		protected override bool ProcessCmdKey (
+			ref Message msg, Keys keyData)
 		{
 			return base.ProcessCmdKey (ref msg, keyData);
 		}
@@ -953,7 +958,9 @@ namespace System.Windows.Forms {
 		// TODO: implement support classes and derive from 
 		// proper classes
 		// FIXME: use this or the one defined on Control?
-		public class  ControlCollectionX : System.Windows.Forms.Control.ControlCollection /*,ICollection*/ {
+		public class  ControlCollectionX : 
+		System.Windows.Forms.Control.ControlCollection 
+		/*,ICollection*/ {
 
 			//  --- Constructor
 			// base class not defined (yet!)

@@ -34,9 +34,6 @@ namespace System.Windows.Forms {
 
 			protected override void WndProc (ref Message m) {
 				base.WndProc (ref m);
-
-			if (m.Msg == Win32.WM_CREATE)
-				Console.WriteLine ("CNW WndProc WM_CREATE");
 				control.WndProc (ref m);
 			}
 		}
@@ -422,8 +419,8 @@ namespace System.Windows.Forms {
 				CreateParams createParams = new CreateParams ();
 				createParams.Caption = Text;
 				createParams.ClassName = "mono_native_window";
-				createParams.X = Top;
-				createParams.Y = Left;
+				createParams.X = Left;
+				createParams.Y = Top;
 				createParams.Width = Width;
 				createParams.Height = Height;
 				createParams.ClassStyle = 0;
@@ -633,14 +630,15 @@ namespace System.Windows.Forms {
 			get {
 				if (IsHandleCreated) {
 					// FIXME: GetWindowPos
-				}
-				return Bounds.X;
+					return 0;
+				} else return bounds.X;
 			}
 			set {
+				bounds.X = value;
+
 				if (IsHandleCreated) {
 					// FIXME: SetWindowPos
 				}
-				Bounds.X = value;
 			}
 		}
 		
@@ -689,7 +687,7 @@ namespace System.Windows.Forms {
 				return name;
 			}
 			set {
-				name=value;
+				name = value;
 			}
 		}
 		
@@ -862,7 +860,7 @@ namespace System.Windows.Forms {
 				} else return bounds.Top;
 			}
 			set {
-				bounds.X = value;
+				bounds.Y = value;
 
 				if (IsHandleCreated) {
 					// FIXME: SetWindowPos

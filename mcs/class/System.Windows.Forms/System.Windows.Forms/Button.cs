@@ -35,8 +35,8 @@ namespace System.Windows.Forms {
 
 				createParams.Caption = Text;
 				createParams.ClassName = "BUTTON";
-				createParams.X = Top;
-				createParams.Y = Left;
+				createParams.X = Left;
+				createParams.Y = Top;
 				createParams.Width = Width;
 				createParams.Height = Height;
 				createParams.ClassStyle = 0;

@@ -10,15 +10,15 @@ class FormTest : Form {
 	public FormTest () : base ()
 	{
 		label = new Label ();
-		label.Top = 60;
-		label.Left = 50;
+		label.Top = 50;
+		label.Left = 10;
 		label.Width = 50;
 		label.Height = 50;
 		label.Parent = this;
 		label.Text = "Label";
 
 		button = new Button ();
-		button.Top = 120;
+		button.Top = 50;
 		button.Left = 120;
 		button.Width = 50;
 		button.Height = 50;
