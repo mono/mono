@@ -17,6 +17,8 @@ PLATFORM_TWEAK_CORLIB_SOURCES=cat - corlib.dll.win32-excludes |sort |uniq -u
 PLATFORM_CHANGE_SEPARATOR_CMD=tr '/' '\\\\'
 PLATFORM_PATH_SEPARATOR = ;
 
+TEST_RUNTIME = mono
+
 hidden_prefix = 
 hidden_suffix = .tmp
 

@@ -1,3 +1,8 @@
+2004-06-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* platforms/win32.make : TEST_RUNTIME should be always mono we can't
+	  test our libs against MS.NET runtime. Think about internal call).
+
 2004-05-30  Jackson Harper  <jackson@ximian.com>
 
 	* library.make: Install to 2.0 package if building with the
