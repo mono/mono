@@ -154,4 +154,14 @@ Checking in new System.Windows.forms classe for John Rebbeck <john@rebent.com>
 * UserControl.cs
 Stubbed and commented out
 
+ 2002-5-8 Dennis Hayes <dennish@raytek.com>
+Dennis Hayes <dennish@raytek.com>
+Checking in new System.Windows.forms classe for Paul Osman <paul.osmand@sympatico.ca>
+
+* NavigateEventArgs.cs
+* NodeLabelEditEventArgs.cs
+* NotifyIcon.cs
+Stubbed and commented out
+
+
 
