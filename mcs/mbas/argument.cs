@@ -101,8 +101,15 @@ namespace Mono.MonoBASIC {
 				Expr = Expr.ResolveLValue (ec, new EmptyExpression ());
 			else if (ArgType == AType.AddressOf) {
 				Expression temp_expr = Expr;
-				SimpleName sn = temp_expr as SimpleName;
-				temp_expr = sn.DoResolveAllowStatic(ec);
+				
+				if (temp_expr is SimpleName) {
+					SimpleName sn = temp_expr as SimpleName;
+					temp_expr = sn.DoResolveAllowStatic(ec);
+				}
+				else if (temp_expr is MemberAccess)	{
+					MemberAccess ma = temp_expr as MemberAccess;
+					temp_expr = ma.DoResolve(ec);
+				}
 
 				if (temp_expr is MethodGroupExpr)
 					return true;

@@ -3619,7 +3619,6 @@ namespace Mono.MonoBASIC {
 
 			ParameterData pd = GetParameterData (candidate);
 			Parameters ps = GetFullParameters (candidate);
-			
 			if (ps == null) {
 				ps_count = 0;
 				po_count = 0;
@@ -3661,8 +3660,9 @@ namespace Mono.MonoBASIC {
 									a = new Argument ((Expression) a.Expr, Argument.AType.Expression);
 									ArrayList args = new ArrayList();
 									args.Add (a);
-									string param_name = param_type.Name;
+									string param_name = pd.ParameterDesc(i).Replace('+', '.');
 									Expression pname = MonoBASIC.Parser.DecomposeQI (param_name, Location.Null);
+
 
 									New temp_new = new New ((Expression)pname, args, Location.Null);
 									Expression del_temp = temp_new.DoResolve(ec);
@@ -3740,7 +3740,7 @@ namespace Mono.MonoBASIC {
 					a = new Argument ((Expression) a.Expr, Argument.AType.Expression);
 					ArrayList args = new ArrayList();
 					args.Add (a);
-					string param_name = param_type.Name;
+					string param_name = pd.ParameterDesc(i).Replace('+', '.');
 					Expression pname = MonoBASIC.Parser.DecomposeQI (param_name, Location.Null);
 								
 					New temp_new = new New ((Expression)pname, args, Location.Null);

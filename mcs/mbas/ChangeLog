@@ -1,3 +1,8 @@
+2004-07-22 Anirban Bhattacharjee <banirban@novell.com>
+	* argument.cs:
+	* expression.cs:
+		Little betterment in resolution of parameter with Addressof operator in method argument
+
 2004-07-20 Anirban Bhattacharjee <banirban@novell.com>
 	* expression.cs: Resolution of fully qualified type names - bug fixed
 
