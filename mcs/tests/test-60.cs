@@ -1,6 +1,9 @@
 //
 // Really lame test, but it should be fine for now
 //
+#if (X)
+#endif
+
 #if YY
 #errro this should not be printed
 #if X
