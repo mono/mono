@@ -1,3 +1,15 @@
+2005-02-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class.c (mono_class_get_method_from_name_flags): New helper method.
+
+	* debug-helpers.h debug-helpers.c (mono_find_method_by_name): Remove
+	this.
+
+	* class.c (mono_class_get_cctor): New helper method.
+
+	* string-icalls.c object.c class.c marshal.c reflection.c: Use
+	mono_class_get_method () to look up methods.
+
 2005-02-01  Miguel de Icaza  <miguel@novell.com>
 
 	* console-io.c: Fix the build, this should work on Windows.
