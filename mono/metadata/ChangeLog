@@ -1,5 +1,7 @@
 2004-03-14  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.c (create_custom_attr): Allow len == 0.
+
 	* object.c (mono_class_compute_gc_descriptor): Fix descriptor
 	computation on big-endian machines.
 
