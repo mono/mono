@@ -1,5 +1,13 @@
 2004-05-05  Atsushi Enomoto <atsushi@ximian.com>
 
+	* DataColumnCollectionTest.cs : catch only specific exception. Don't
+	  rely on localizable error message.
+	* DataSetTest.cs : Attribute orders should not be significant, so
+	  just hacked to match current implementation's order.
+	  Added WriteNestedTableXml().
+
+2004-05-05  Atsushi Enomoto <atsushi@ximian.com>
+
 	* ConstraintCollectionTest.cs : uncommented some tests that should be
 	  implemented until mono 1.0.
 	* ConstraintTest.cs : use ExpectedException. Don't expect localizable

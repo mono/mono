@@ -194,17 +194,17 @@ namespace MonoTests.System.Data
 			try {
 				Cols.Add (C);
 				Fail ("test#04");
-			} catch (Exception e) {
-				AssertEquals ("test#05", typeof (ArgumentException), e.GetType ());
-				AssertEquals ("test#06", "Column 'test' already belongs to this or another DataTable.", e.Message);
+			} catch (ArgumentException e) {
+//				AssertEquals ("test#05", typeof (ArgumentException), e.GetType ());
+//				AssertEquals ("test#06", "Column 'test' already belongs to this or another DataTable.", e.Message);
 			}
 
 			try {
 				Table2.Columns.Add (C);
 				Fail ("test#07");
-			} catch (Exception e) {
-				AssertEquals ("test#08", typeof (ArgumentException), e.GetType ());
-				AssertEquals ("test#09", "Column 'test' already belongs to this or another DataTable.", e.Message);
+			} catch (ArgumentException e) {
+//				AssertEquals ("test#08", typeof (ArgumentException), e.GetType ());
+//				AssertEquals ("test#09", "Column 'test' already belongs to this or another DataTable.", e.Message);
 			}
 
 			DataColumn C2 = new DataColumn ("test");
@@ -212,17 +212,17 @@ namespace MonoTests.System.Data
 			try {
 				Cols.Add (C2);
 				Fail ("test#10");
-			} catch (Exception e) {
-				AssertEquals ("test#11", typeof (DuplicateNameException), e.GetType ());
-				AssertEquals ("test#12", "A DataColumn named 'test' already belongs to this DataTable.", e.Message);
+			} catch (DuplicateNameException e) {
+//				AssertEquals ("test#11", typeof (DuplicateNameException), e.GetType ());
+//				AssertEquals ("test#12", "A DataColumn named 'test' already belongs to this DataTable.", e.Message);
 			}
 
 			try {
 				Cols.Add ("test2", typeof (string), "substring ('fdsafewq', 2)");
 				Fail ("test#13");
-			} catch (Exception e) {
-				AssertEquals ("test#14", true, e is InvalidExpressionException);
-				AssertEquals ("test#15", "Expression 'substring ('fdsafewq', 2)' is invalid.", e.Message);
+			} catch (InvalidExpressionException e) {
+//				AssertEquals ("test#14", true, e is InvalidExpressionException);
+//				AssertEquals ("test#15", "Expression 'substring ('fdsafewq', 2)' is invalid.", e.Message);
 			}
 		}
 
