@@ -155,7 +155,7 @@ namespace System.Runtime.Remoting.Channels
 			// TODO: put Identity in message
 
 			IMethodMessage call = (IMethodMessage)msg;
-			Identity identity = RemotingServices.GetIdentityForUri(call.Uri);
+			ServerIdentity identity = RemotingServices.GetIdentityForUri(call.Uri) as ServerIdentity;
 			if (identity == null) return new ReturnMessage (new RemotingException ("No receiver for uri " + call.Uri), (IMethodCallMessage) msg);
 
 			return identity.Context.GetServerContextSinkChain().SyncProcessMessage (msg);

@@ -1,3 +1,7 @@
+2003-02-04  Lluis Sanchez Gual  <lluis@ideary.com>
+
+	* ChannelServices.cs: Modified to work with new types of identities.
+
 2003-02-03 Patrik Torstensson
 
 	* CrossAppDomainChannel.cs: Implemented cross appdomain marshalling via cross 
