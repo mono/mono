@@ -56,11 +56,27 @@ namespace System.Windows.Forms {
 				return Win32.GetSystemMetrics(SystemMetricsCodes.SM_CYCAPTION); 
 			}
 		}
-		[MonoTODO]
-		public static string ComputerName {
 
-			get{ throw new NotImplementedException (); }
+		[DllImport ("libc")]
+		static unsafe extern int gethostname (byte *p, int len);
+		
+		static string _gethostname ()
+		{
+			byte [] buf = new byte [256];
+			unsafe {
+				fixed (byte *p = &buf [0]){
+					gethostname (p, 256);
+				}
+			}
+			return new String(Encoding.UTF8.GetChars (buf));
 		}
+	
+		public static string ComputerName {
+			get {
+				return _gethostname ();
+			}
+		}
+		
 		[MonoTODO]
 		public static Size CursorSize {
 
