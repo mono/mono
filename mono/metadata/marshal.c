@@ -4628,6 +4628,8 @@ mono_marshal_get_struct_to_ptr (MonoClass *klass)
 
 	g_assert (klass != NULL);
 
+	mono_marshal_load_type_info (klass);
+
 	if (klass->str_to_ptr)
 		return klass->str_to_ptr;
 
@@ -4690,6 +4692,8 @@ mono_marshal_get_ptr_to_struct (MonoClass *klass)
 	MonoMethod *res;
 
 	g_assert (klass != NULL);
+
+	mono_marshal_load_type_info (klass);
 
 	if (klass->ptr_to_str)
 		return klass->ptr_to_str;
