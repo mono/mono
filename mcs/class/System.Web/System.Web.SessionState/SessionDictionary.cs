@@ -46,12 +46,17 @@ internal class SessionDictionary : NameObjectCollectionBase
 	internal void Clear ()
 	{
 		_dirty = true;
-		BaseClear ();
+		lock (this)
+			BaseClear ();
 	}
 
 	internal string GetKey (int index)
 	{
-		return BaseGetKey (index);
+		string value;
+		lock (this)
+			value = BaseGetKey (index);
+			
+		return value;
 	}
 
 	internal static bool IsInmutable (object o)
@@ -62,28 +67,32 @@ internal class SessionDictionary : NameObjectCollectionBase
 
 	internal void Remove (string s)
 	{
-		BaseRemove (s);
+		lock (this)
+			BaseRemove (s);
 		_dirty = true;
 	}
 
 	internal void RemoveAt (int index)
 	{
-		BaseRemoveAt (index);
+		lock (this)
+			BaseRemoveAt (index);
 		_dirty = true;
 	}
 
 	internal void Serialize (BinaryWriter w)
 	{
-		w.Write (Count);
-		foreach (string key in Keys) {
-			w.Write (key);
-			object value = BaseGet (key);
-			if (value == null) {
-				w.Write (16); // types.Count + 1
-				continue;
-			}
+		lock (this) {
+			w.Write (Count);
+			foreach (string key in Keys) {
+				w.Write (key);
+				object value = BaseGet (key);
+				if (value == null) {
+					w.Write (16); // types.Count + 1
+					continue;
+				}
 
-			SerializeByType (w, value);
+				SerializeByType (w, value);
+			}
 		}
 	}
 
@@ -225,18 +234,35 @@ internal class SessionDictionary : NameObjectCollectionBase
 
 	internal object this [string s]
 	{
-		get { return BaseGet (s); }
+		get {
+			object o;
+			lock (this)
+				o = BaseGet (s);
+
+			return o;
+		}
+
 		set {
-			BaseSet (s, value);
+			lock (this)
+				BaseSet (s, value);
+
 			_dirty = true;
 		}
 	}
 
 	public object this [int index]
 	{
-		get { return BaseGet (index); }
+		get {
+			object o;
+			lock (this)
+				o = BaseGet (index);
+
+			return o;
+		}
 		set {
-			BaseSet (index, value);
+			lock (this)
+				BaseSet (index, value);
+
 			_dirty = true;
 		}
 	}

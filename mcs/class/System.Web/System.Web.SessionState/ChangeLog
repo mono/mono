@@ -1,3 +1,9 @@
+2003-07-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SessionDictionary.cs: locking.
+
+	* SessionInProcHandler.cs: use the new method instead of the setter.
+
 2003-07-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ISessionHandler.cs:

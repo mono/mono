@@ -204,11 +204,6 @@ namespace System.Web
 			get {
 				return (HttpSessionState) _oSession;
 			}
-
-			set {
-				//FIXME: gotta remove set
-				_oSession=value;
-			}
 		}
 
 		public bool SkipAuthorization
@@ -247,6 +242,11 @@ namespace System.Web
 			}
 		}
 
+		internal void SetSession (HttpSessionState session)
+		{
+			_oSession = session;
+		}
+		
 		public void AddError (Exception errorInfo)
 		{
 			if (_arrExceptions == null)

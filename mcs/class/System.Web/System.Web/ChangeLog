@@ -1,3 +1,9 @@
+2003-07-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpContext.cs: Session doesn't have a setter.
+
+	* HttpResponse.cs: Request is private.
+
 2003-07-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequest.cs: fixed Headers property. It was getting known headers

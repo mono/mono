@@ -519,7 +519,7 @@ namespace System.Web
 			}
 		}
 
-		public HttpRequest Request
+		HttpRequest Request
 		{
 			get {
 				if (_Context == null)

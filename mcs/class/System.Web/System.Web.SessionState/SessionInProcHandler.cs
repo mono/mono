@@ -89,7 +89,7 @@ namespace System.Web.SessionState
 					// update the timestamp.
 					container.Touch ();
 					 // Can we do this? It feels safe, but what do I know.
-					context.Session = container.SessionState;
+					context.SetSession (container.SessionState);
 					return false; // and we're done
 				} else if(container!=null) {
 					//A empty or expired session, lets kill it.
@@ -111,7 +111,7 @@ namespace System.Web.SessionState
 			_sessionTable [sessionID]=container;
 
 			// and returns it.
-			context.Session = container.SessionState;
+			context.SetSession (container.SessionState);
 			context.Session.IsNewSession = true;
 
 
