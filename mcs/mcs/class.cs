@@ -3370,7 +3370,21 @@ namespace Mono.CSharp {
 			if (!DoDefineParameters (parent))
 				return false;
 
-			MethodSignature ms = new MethodSignature (Name, null, ParameterTypes);
+			string report_name;
+			MethodSignature ms, base_ms;
+			if (this is Indexer) {
+				string name, base_name;
+
+				report_name = "this";
+				name = TypeManager.IndexerPropertyName (parent.TypeBuilder);
+				ms = new MethodSignature (name, null, ParameterTypes);
+				base_name = TypeManager.IndexerPropertyName (parent.TypeBuilder.BaseType);
+				base_ms = new MethodSignature (base_name, null, ParameterTypes);
+			} else {
+				report_name = Name;
+				ms = base_ms = new MethodSignature (Name, null, ParameterTypes);
+			}
+
 			MemberList props_this;
 
 			props_this = TypeContainer.FindMembers (
@@ -3382,7 +3396,7 @@ namespace Mono.CSharp {
 
 			if (props_this.Count > 0) {
 				Report.Error (111, Location, "Class `" + parent.Name + "' " +
-					      "already defines a member called `" + Name + "' " +
+					      "already defines a member called `" + report_name + "' " +
 					      "with the same parameter types");
 				return false;
 			}
@@ -3394,13 +3408,13 @@ namespace Mono.CSharp {
 			MemberList props_static = TypeContainer.FindMembers (
 				parent.TypeBuilder.BaseType, MemberTypes.Property,
 				BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static,
-				MethodSignature.inheritable_property_signature_filter, ms);
+				MethodSignature.inheritable_property_signature_filter, base_ms);
 
 			MemberList props_instance = TypeContainer.FindMembers (
 				parent.TypeBuilder.BaseType, MemberTypes.Property,
 				BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance,
 				MethodSignature.inheritable_property_signature_filter,
-				ms);
+				base_ms);
 
 			//
 			// Find if we have anything
@@ -3424,7 +3438,7 @@ namespace Mono.CSharp {
 					inherited_set : inherited_get;
 				
 				if (reference != null) {
-					string name = reference.DeclaringType.Name + "." + Name;
+					string name = reference.DeclaringType.Name + "." + report_name;
 
 					if (!CheckMethodAgainstBase (parent, flags, reference, name))
 						return false;

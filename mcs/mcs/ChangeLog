@@ -1,3 +1,12 @@
+2002-09-17  Martin Baulig  <martin@gnome.org>
+
+	* class.cs (PropertyBase.CheckBase): Make this work for indexers with
+	different `IndexerName' attributes.
+
+	* expression.cs (BaseIndexerAccess): Rewrote this class to use IndexerAccess.
+	(IndexerAccess): Added special protected ctor for BaseIndexerAccess and
+	virtual CommonResolve().
+
 2002-09-16  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs (Foreach.Resolve): Indexers are just like variables

@@ -6334,22 +6334,44 @@ namespace Mono.CSharp {
 		//
 		// Points to our "data" repository
 		//
-		ElementAccess ea;
 		MethodInfo get, set;
 		Indexers ilist;
 		ArrayList set_arguments;
+		bool is_base_indexer;
+
+		protected Type indexer_type;
+		protected Type current_type;
+		protected Expression instance_expr;
+		protected ArrayList arguments;
 		
-		public IndexerAccess (ElementAccess ea_data, Location l)
+		public IndexerAccess (ElementAccess ea, Location loc)
+			: this (ea.Expr, false, loc)
 		{
-			ea = ea_data;
-			eclass = ExprClass.Value;
-			loc = l;
+			this.arguments = ea.Arguments;
+		}
+
+		protected IndexerAccess (Expression instance_expr, bool is_base_indexer,
+					 Location loc)
+		{
+			this.instance_expr = instance_expr;
+			this.is_base_indexer = is_base_indexer;
+			this.eclass = ExprClass.Value;
+			this.loc = loc;
+		}
+
+		protected virtual bool CommonResolve (EmitContext ec)
+		{
+			indexer_type = instance_expr.Type;
+			current_type = ec.ContainerType;
+
+			return true;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			Type indexer_type = ea.Expr.Type;
-			
+			if (!CommonResolve (ec))
+				return null;
+
 			//
 			// Step 1: Query for all `Item' *properties*.  Notice
 			// that the actual methods are pointed from here.
@@ -6358,28 +6380,24 @@ namespace Mono.CSharp {
 
 			if (ilist == null)
 				ilist = Indexers.GetIndexersForType (
-					ec.ContainerType, indexer_type, ea.Location);
-
+					current_type, indexer_type, loc);
 
 			//
 			// Step 2: find the proper match
 			//
-			if (ilist != null && ilist.getters != null && ilist.getters.Count > 0){
-				Location loc = ea.Location;
-				
+			if (ilist != null && ilist.getters != null && ilist.getters.Count > 0)
 				get = (MethodInfo) Invocation.OverloadResolve (
-					ec, new MethodGroupExpr (ilist.getters, loc), ea.Arguments, loc);
-			}
+					ec, new MethodGroupExpr (ilist.getters, loc), arguments, loc);
 
 			if (get == null){
-				ea.Error (154, "indexer can not be used in this context, because " +
-					  "it lacks a `get' accessor");
+				Error (154, "indexer can not be used in this context, because " +
+				       "it lacks a `get' accessor");
 				return null;
 			}
 
 			type = get.ReturnType;
 			if (type.IsPointer && !ec.InUnsafe){
-				UnsafeError (ea.Location);
+				UnsafeError (loc);
 				return null;
 			}
 			
@@ -6389,17 +6407,17 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
-			Type indexer_type = ea.Expr.Type;
+			if (!CommonResolve (ec))
+				return null;
+
 			Type right_type = right_side.Type;
 
 			if (ilist == null)
 				ilist = Indexers.GetIndexersForType (
-					ec.ContainerType, indexer_type, ea.Location);
+					current_type, indexer_type, loc);
 
 			if (ilist != null && ilist.setters != null && ilist.setters.Count > 0){
-				Location loc = ea.Location;
-				
-				set_arguments = (ArrayList) ea.Arguments.Clone ();
+				set_arguments = (ArrayList) arguments.Clone ();
 				set_arguments.Add (new Argument (right_side, Argument.AType.Expression));
 
 				set = (MethodInfo) Invocation.OverloadResolve (
@@ -6407,8 +6425,8 @@ namespace Mono.CSharp {
 			}
 			
 			if (set == null){
-				ea.Error (200, "indexer X.this [" + TypeManager.CSharpName (right_type) +
-					  "] lacks a `set' accessor");
+				Error (200, "indexer X.this [" + TypeManager.CSharpName (right_type) +
+				       "] lacks a `set' accessor");
 				return null;
 			}
 
@@ -6419,7 +6437,7 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
-			Invocation.EmitCall (ec, false, false, ea.Expr, get, ea.Arguments, ea.Location);
+			Invocation.EmitCall (ec, false, false, instance_expr, get, arguments, loc);
 		}
 
 		//
@@ -6429,7 +6447,7 @@ namespace Mono.CSharp {
 		//
 		public void EmitAssign (EmitContext ec, Expression source)
 		{
-			Invocation.EmitCall (ec, false, false, ea.Expr, set, set_arguments, ea.Location);
+			Invocation.EmitCall (ec, false, false, instance_expr, set, set_arguments, loc);
 		}
 	}
 
@@ -6494,38 +6512,28 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   The base indexer operator
 	/// </summary>
-	public class BaseIndexerAccess : Expression {
-		ArrayList Arguments;
-		
-		public BaseIndexerAccess (ArrayList args, Location l)
+	public class BaseIndexerAccess : IndexerAccess {
+		public BaseIndexerAccess (ArrayList args, Location loc)
+			: base (null, true, loc)
 		{
-			Arguments = args;
-			loc = l;
+			arguments = new ArrayList ();
+			foreach (Expression tmp in args)
+				arguments.Add (new Argument (tmp, Argument.AType.Expression));
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		protected override bool CommonResolve (EmitContext ec)
 		{
-			Type current_type = ec.ContainerType;
-			Type base_type = current_type.BaseType;
-			Expression member_lookup;
+			instance_expr = ec.This;
 
-			if (ec.IsStatic){
-				Error (1511,
-					      "Keyword base is not allowed in static method");
-				return null;
+			current_type = ec.ContainerType.BaseType;
+			indexer_type = current_type;
+
+			foreach (Argument a in arguments){
+				if (!a.Resolve (ec, loc))
+					return false;
 			}
-			
-			member_lookup = MemberLookup (ec, base_type, base_type, "get_Item",
-						      MemberTypes.Method, AllBindingFlags, loc);
-			if (member_lookup == null)
-				return null;
 
-			return MemberAccess.ResolveMemberAccess (ec, member_lookup, ec.This, loc, null);
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			throw new Exception ("Should never be called");
+			return true;
 		}
 	}
 	
