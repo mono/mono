@@ -106,6 +106,7 @@ foreach $alltest (@allfiles) {
     print qq[namespace $namespace\n\{\n];
     print qq[\tpublic class Run$suite : $suite\n\t\{\n];
     print qq[\t\tprotected override void RunTest ()\n\t\t\{\n];
+#    print qq[\t\t\tbool errorThrown = false;\n\n];
     my $test;
   testloop:
     foreach $test (@tests) {
@@ -116,8 +117,15 @@ foreach $alltest (@allfiles) {
 	foreach $badtest (@badtests) {
 	    next testloop if $fullname =~ /$badtest/;
 	}
-	print qq[\t\t\ttry \{ $test (); \} catch { }\n];
+#	print qq[\t\t\ttry \{\n\t\t\t\t$test ();\n\t\t\t\} catch \{\n];
+#	print qq[\t\t\t\tConsole.WriteLine ("$namespace:$suite:$test failed");\n];
+#	print qq[\t\t\t\terrorThrown = true;\n];
+#	print qq[\t\t\t\}\n];
+	print qq[\t\t\t$test ();\n];
+#	print qq[\t\t\tConsole.WriteLine ("$namespace:$suite:$test DONE");\n];
     }
+    print qq[\n];
+#    print qq[\t\t\tif (errorThrown)\n\t\t\t\tthrow new ArgumentException ();\n];
     print qq[\t\t\}\n\t\}\n];
     print qq[\}\n\n];
 }
