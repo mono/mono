@@ -1,12 +1,12 @@
 //
-// System.Windows.Drawing.Region.cs
+// System.Drawing.Region.cs
 //
 // Author:
 //	Dennis Hayes (dennish@raytek.com)
 // (C) 2002 Ximian, Inc
 //
 using System;
-using System.Drawing2d;
+using System.Drawing.Drawing2D;
 namespace System.Drawing
 {
 	/// <summary>
@@ -19,7 +19,7 @@ namespace System.Drawing
 		public Region() {
 		}
 		//[comVisible(false)]
-		public Region(GraphicsPath path) {
-		}
+		//public Region(GraphicsPath path) {
+		//}
 	}
 }
