@@ -1,4 +1,3 @@
-
 Mon May 20 17:36:36 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c, reflection.h: added icall to get info about an event.
@@ -7,6 +6,8 @@ Mon May 20 17:36:36 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* object.c (mono_value_box): don't use memcpy for boxing on BIG
 	endian
+	(mono_value_box): don't use memcpy for small sizes on
+	architectures with unaligned access
 
 2002-05-20  Martin Baulig  <martin@gnome.org>
 
