@@ -43,13 +43,39 @@ class MonoP {
 	static Type GetType (string tname, bool ignoreCase)
 	{
 		Type t;
-		if (assembly != null){
-			Assembly a = Assembly.LoadWithPartialName (assembly);
+		if (assembly != null) {
+			Assembly a = GetAssembly (assembly);
 			t = a.GetType (tname, false, ignoreCase);
-		} else
+		} else {
 			t = Type.GetType (tname, false, ignoreCase);
+		}
 
 		return t;
+	}
+
+	static Assembly GetAssembly (string assembly)
+	{
+		Assembly a;
+
+		try {
+			// if is starts with / use the full path
+			// otherwise try to load from the GAC
+			if (assembly.StartsWith ("/"))
+				a = Assembly.LoadFrom (assembly);
+			else
+				a = Assembly.LoadWithPartialName (assembly);
+
+			// if the above failed try Load
+			if (a == null)
+				a = Assembly.Load (assembly);
+
+			return a;
+		}
+		catch {
+			Console.WriteLine ("Could not load {0}", assembly);
+			Environment.Exit (1);
+			return null;
+		}
 	}
 
 	static Type GetType (string tname)
@@ -59,7 +85,7 @@ class MonoP {
 	
 	static void PrintTypes (string assembly)
 	{
-		Assembly a = Assembly.Load (assembly);
+		Assembly a = GetAssembly (assembly);
 		Type [] types = a.GetExportedTypes ();
 
 		foreach (Type t in types)
@@ -86,7 +112,7 @@ class MonoP {
 		foreach (string assm in common_assemblies) {
 			try {
 				
-				Assembly a = Assembly.Load (assm);
+				Assembly a = GetAssembly (assm);
 				foreach (Type t in a.GetExportedTypes ()) {
 					
 					if (t.Name.StartsWith (prefix)) {
@@ -117,7 +143,7 @@ class MonoP {
 		IndentedTextWriter o = new IndentedTextWriter (Console.Out, "    ");
 
 		int i = 0;
-		if (args [0].StartsWith ("-r:")){
+		if (args [0].StartsWith ("-r:") || args [0].StartsWith ("/r:")){
 			i++;
 			assembly = args [0].Substring (3);
 			
@@ -156,7 +182,7 @@ class MonoP {
 		if (t == null) {
 			foreach (string assm in common_assemblies) {
 				try {
-					Assembly a = Assembly.Load (assm);
+					Assembly a = GetAssembly (assm);
 					t = a.GetType (tname, false, true);
 					if (t != null)
 						goto found;
