@@ -490,7 +490,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			if (Oper == Oper.AddressOf)
+			if (Oper == Operator.AddressOf)
 				Expr = Expr.ResolveLValue (ec, new EmptyExpression ());
 			else
 				Expr = Expr.Resolve (ec);

@@ -1137,7 +1137,7 @@ namespace Mono.CSharp {
 	// <summary>
 	//   The type of a FlowBranching.
 	// </summary>
-	enum FlowBranchingType {
+	public enum FlowBranchingType {
 		// Normal (conditional or toplevel) block.
 		BLOCK,
 
@@ -1268,8 +1268,7 @@ namespace Mono.CSharp {
 			//
 			MyBitVector locals, parameters;
 			FlowReturns real_returns, real_breaks;
-			bool returns_set, breaks_set;
-			public bool is_finally;
+			bool returns_set, breaks_set, is_finally;
 
 			static int next_id = 0;
 			int id;
@@ -2230,10 +2229,8 @@ namespace Mono.CSharp {
 			used = true;
 		}
 
-		InternalParameters parameter_info = null;
-
 		bool variables_initialized = false;
-		int count_variables = 0, parameter_count = 0, first_variable = 0;
+		int count_variables = 0, first_variable = 0;
 
 		void UpdateVariableInfo (EmitContext ec)
 		{
