@@ -1,3 +1,7 @@
+2004-07-09  Ben Maurer  <bmaurer@ximian.com>
+
+	* aot.c: register roots
+
 2004-07-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* aot.c : I could just use PLATFORM_WIN32 flag.
