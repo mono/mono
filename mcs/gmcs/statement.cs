@@ -820,7 +820,6 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			bool in_catch = ec.CurrentBranching.InCatch ();
 			ec.CurrentBranching.CurrentUsageVector.Throw ();
 
 			if (expr != null){
@@ -831,7 +830,7 @@ namespace Mono.CSharp {
 				ExprClass eclass = expr.eclass;
 
 				if (!(eclass == ExprClass.Variable || eclass == ExprClass.PropertyAccess ||
-				      eclass == ExprClass.Value || eclass == ExprClass.IndexerAccess)) {
+					eclass == ExprClass.Value || eclass == ExprClass.IndexerAccess)) {
 					expr.Error_UnexpectedKind ("value, variable, property or indexer access ", loc);
 					return false;
 				}
@@ -839,20 +838,25 @@ namespace Mono.CSharp {
 				Type t = expr.Type;
 				
 				if ((t != TypeManager.exception_type) &&
-				    !t.IsSubclassOf (TypeManager.exception_type) &&
-				    !(expr is NullLiteral)) {
+					!t.IsSubclassOf (TypeManager.exception_type) &&
+					!(expr is NullLiteral)) {
 					Error (155,
-						      "The type caught or thrown must be derived " +
-						      "from System.Exception");
+						"The type caught or thrown must be derived " +
+						"from System.Exception");
 					return false;
 				}
-			} else if (!in_catch) {
-				Error (156,
-				       "A throw statement with no argument is only " +
-				       "allowed in a catch clause");
+				return true;
+			}
+
+			if (ec.CurrentBranching.InFinally (true)) {
+				Error (724, "A throw statement with no argument is only allowed in a catch clause nested inside of the innermost catch clause");
 				return false;
 			}
 
+			if (!ec.CurrentBranching.InCatch ()) {
+				Error (156, "A throw statement with no argument is only allowed in a catch clause");
+				return false;
+			}
 			return true;
 		}
 			

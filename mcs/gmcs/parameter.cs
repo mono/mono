@@ -148,6 +148,8 @@ namespace Mono.CSharp {
 		public readonly string Name;
 		GenericConstraints constraints;
 		Type parameter_type;
+
+		EmitContext ec;  // because ApplyAtrribute doesn't have ec
 		
 		public Parameter (Expression type, string name, Modifier mod, Attributes attrs)
 			: base (attrs)
@@ -159,8 +161,20 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
+			if (a.Type == TypeManager.in_attribute_type && Attributes == ParameterAttributes.Out) {
+				Report.Error (36, a.Location, "Can not use [In] attribute on out parameter");
+				return;
+			}
+
 			if (a.Type == TypeManager.param_array_type) {
 				Report.Error (674, a.Location, "Do not use 'System.ParamArrayAttribute'. Use the 'params' keyword instead");
+				return;
+			}
+
+			if (a.Type == TypeManager.out_attribute_type && (ModFlags & Modifier.REF) != 0 &&
+			    !OptAttributes.Contains (TypeManager.in_attribute_type, ec)) {
+				Report.Error (662, a.Location,
+					"'{0}' cannot specify only Out attribute on a ref parameter. Use both In and Out attributes, or neither", GetSignatureForError ());
 				return;
 			}
 
@@ -177,6 +191,8 @@ namespace Mono.CSharp {
 		public bool Resolve (EmitContext ec, Location l)
 		{
 			TypeExpr texpr = TypeName.ResolveAsTypeTerminal (ec);
+			this.ec = ec;
+
 			if (texpr == null)
 				return false;
 
@@ -315,11 +331,6 @@ namespace Mono.CSharp {
 					
 			if (OptAttributes != null) {
 				OptAttributes.Emit (ec, this);
-	
-				if (par_attr == ParameterAttributes.Out){
-					if (OptAttributes.Contains (TypeManager.in_attribute_type, ec))
-						Report.Error (36, loc,	"Can not use [In] attribute on out parameter");
-				}
 			}
 		}
 

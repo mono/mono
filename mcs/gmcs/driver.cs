@@ -1620,7 +1620,7 @@ namespace Mono.CSharp
 
 				if (ep == null) {
 					if (RootContext.MainClass != null) {
-						object main_cont = RootContext.Tree.Decls [RootContext.MainClass];
+						DeclSpace main_cont = RootContext.Tree.Decls [RootContext.MainClass] as DeclSpace;
 						if (main_cont == null) {
 							Report.Error (1555, output_file, "Could not find '{0}' specified for Main method", RootContext.MainClass); 
 							return false;
@@ -1630,6 +1630,9 @@ namespace Mono.CSharp
 							Report.Error (1556, output_file, "'{0}' specified for Main method must be a valid class or struct", RootContext.MainClass);
 							return false;
 						}
+
+						Report.Error (1558, main_cont.Location, "'{0}' does not have a suitable static Main method", main_cont.GetSignatureForError ());
+						return false;
 					}
 
 					if (Report.Errors == 0)
