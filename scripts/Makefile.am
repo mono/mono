@@ -1,8 +1,8 @@
-EXTRA_DIST = mcs.in mbas.in ilasm.in cilc.in monoresgen.in secutil.in sqlsharp.in xsd.in
+EXTRA_DIST = mcs.in mbas.in ilasm.in cilc.in monoresgen.in secutil.in sqlsharp.in xsd.in wsdl.in
 
-bin_SCRIPTS = mcs mbas ilasm cilc monoresgen secutil sqlsharp xsd
+bin_SCRIPTS = mcs mbas ilasm cilc monoresgen secutil sqlsharp xsd wsdl
 
-CLEANFILES = mcs mbas ilasm cilc monoresgen secutil sqlsharp xsd
+CLEANFILES = mcs mbas ilasm cilc monoresgen secutil sqlsharp xsd wsdl
 
 if X86
 MONO_INTERP = mono
@@ -42,3 +42,7 @@ sqlsharp: sqlsharp.in
 xsd: xsd.in
 	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' < $(srcdir)/xsd.in > xsd.tmp \
 	&& mv xsd.tmp xsd
+
+wsdl: wsdl.in
+	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' < $(srcdir)/wsdl.in > wsdl.tmp \
+	&& mv wsdl.tmp wsdl
