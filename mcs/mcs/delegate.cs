@@ -85,7 +85,7 @@ namespace Mono.CSharp {
 				TypeAttributes.Class | TypeAttributes.Sealed;
 
 			if (TypeManager.multicast_delegate_type == null)
-				Report.Error (-100, loc, "Internal error: delegate used before " +
+				Report.Error (-100, Location, "Internal error: delegate used before " +
 					      "System.MulticastDelegate is resolved.  This can only " +
 					      "happen during corlib compilation, when using a delegate " +
 					      "in any of the `core' classes.  See bug #72015 for details.");
