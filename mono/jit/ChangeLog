@@ -1,3 +1,20 @@
+2001-09-13  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg: use the right offsets to access local variables
+	and arguments.
+
+	* emit-x86.c: only save/restore callee saved registers if they are
+	really modified.
+
+	* testjit.c (tree_allocate_regs): use the new MonoRegSet to
+	allocate registers.
+	(mono_compile_method): changed the tree for mothod calls
+
+	* regset.h: impl.
+	
+	* regset.c: impl.
+	
+
 2001-09-10  Miguel de Icaza  <miguel@ximian.com>
 
 	* x86.brg: Use Unix assembly syntax.
