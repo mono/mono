@@ -130,6 +130,14 @@ namespace MonoTests.System.Text.RegularExpressions
             		AssertEquals ("MM #08", @"d:\Temp\SomeDir\SomeDir\", match.Groups[3].Value);
             		AssertEquals ("MM #09", "bla.xml", match.Groups[4].Value);
         	}
+
+		[Test] 
+		public void SameNameGroups () // First problem in fixing bug #56000
+		{
+			string rex = "link\\s*rel\\s*=\\s*[\"']?alternate[\"']?\\s*";
+			rex += "type\\s*=\\s*[\"']?text/xml[\"']?\\s*href\\s*=\\s*(?:\"(?<1>[^\"]*)\"|'(?<1>[^']*)'|(?<1>\\S+))";
+			Regex rob = new Regex (rex, RegexOptions.IgnoreCase);
+		}
 	}
 }
 
