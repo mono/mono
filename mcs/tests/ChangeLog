@@ -1,5 +1,12 @@
 2004-12-07  Raja R Harinath  <rharinath@novell.com>
 
+	* Makefile (TEST_HARNESS_EXTRAS): New.  List of files that need to
+	be copied to the test harness directory.
+	(test-harness-run): Use it.
+	* xml-025.cs, xml-025-ref.xml: Don't use ../ to refer to xml-025.inc.
+
+2004-12-07  Raja R Harinath  <rharinath@novell.com>
+
 	* Makefile (DISTFILES): Distribute *.inc files too.
 	(with_mono_path): New.
 	(casts.cs, boot-casts.out, mcs-casts.out): Use it.

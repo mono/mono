@@ -131,6 +131,11 @@ TEST_ORDERING = \
 	pu-pi:pi pu-pi:pp \
 	pu-ip:pi pu-ip:pp
 
+# Some tests may require additional files to be available in the current directory.
+# To promote interoperability, we prefer that those files not be referred to with ../ or ..\\
+# To that end, we will copy those files to the test-harness directory, so that we can refer to simple filenames.
+TEST_HARNESS_EXTRAS = $(wildcard *.inc)
+
 all-local install-local uninstall-local:
 
 # casts
@@ -199,6 +204,7 @@ test-harness-run:
 	@sed 's,@thisdir@,$(thisdir)/dir-$(TEST_TAG),' harness.mk > dir-$(TEST_TAG)/Makefile
 	@test -z '$(exe_tests)' || for i in ''$(exe_tests); do echo $$i | sed 's,\(.*\)-exe$$,\1-exe.res: \1-dll.res,' >> dir-$(TEST_TAG)/Makefile; done
 	@test -z '$(TEST_ORDERING)' || for i in ''$(TEST_ORDERING); do echo $$i.res | sed 's,:,.res: ,' >> dir-$(TEST_TAG)/Makefile; done
+	@test -z '$(TEST_HARNESS_EXTRAS)' || cp -p $(TEST_HARNESS_EXTRAS) dir-$(TEST_TAG)/
 	@echo 'Running $(TEST_TAG) tests with flags "$(TEST_RUNTIME)" ... '
 	@if test -z '$(TEST_SOURCES)'; then :; else \
 	  cd dir-$(TEST_TAG) ; \
@@ -220,7 +226,7 @@ ilasm:
 TEST_SOURCES_XML = \
 	xml-001 xml-002 xml-003 xml-004 xml-005 xml-006 xml-007 xml-008 xml-009 xml-010 \
 	xml-011 xml-012 xml-013 xml-014 xml-015 xml-016 xml-017 xml-018 xml-019 xml-020 \
-	xml-021 xml-022 xml-023 xml-024 xml-025 xml-026 xml-028 xml-029 xml-030 \
+	xml-021 xml-022 xml-023 xml-024 xml-025 xml-026 	xml-028 xml-029 xml-030 \
 	xml-031 xml-032
 
 # currently no formalization on 'cref' attribute was found, so there are some

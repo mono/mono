@@ -5,7 +5,7 @@
     </assembly>
     <members>
         <member name="T:Testing.Test">
-            <!-- No matching elements were found for the following include tag --><include file="../xml-025.inc" path="/foo"/>
+            <!-- No matching elements were found for the following include tag --><include file="xml-025.inc" path="/foo"/>
         </member>
         <member name="F:Testing.Test.S1">
             <root attr="is attribute allowed?">
