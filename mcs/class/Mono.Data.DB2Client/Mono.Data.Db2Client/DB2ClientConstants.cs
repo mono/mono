@@ -77,6 +77,14 @@ namespace DB2ClientCS
 		public const int  SQL_C_CHAR			= SQL_CHAR;
 		public const int  SQL_C_DEFAULT			= 99;
 
+		public const int  SQL_BLOB_LOCATOR		= 31;
+		public const int  SQL_CLOB_LOCATOR		= 41;
+		public const int  SQL_DBCLOB_LOCATOR	= -351;
+
+		public const int  SQL_C_BLOB_LOCATOR = SQL_BLOB_LOCATOR;
+		public const int  SQL_C_CLOB_LOCATOR = SQL_CLOB_LOCATOR;
+		public const int  SQL_C_DBCLOB_LOCATOR = SQL_DBCLOB_LOCATOR;
+
 		public const int  SQL_USER_DEFINED_TYPE = (-450);
 
 		/* SQLDriverConnect Options */

@@ -476,6 +476,17 @@ namespace DB2ClientCS
 			return Convert.ToString(this[col]);
 		}
 		#endregion
+
+		#region GetLobLocator
+		///
+		///Returns a LOB Locator class
+		///
+		//DB2ClientLOBLocator GetLobLocator(int col)
+		//{
+
+		#endregion
+
+	
 		#region GetValue
 		///
 		/// GetVCalue, returns an object

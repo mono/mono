@@ -63,6 +63,17 @@ namespace DB2ClientCS
 			internal static extern short SQLBindParameter(IntPtr stmtHandle, ushort paramNumber, 
 			short dataType, short valueType, short paramType, uint colSize, short decDigits,
 			ref int dataBufferPtr, int dataBufferLength, int StrLen_or_IndPtr);
-
+		[DllImport("db2cli.dll", EntryPoint = "SQLGetLength")]
+			internal static extern short SQLGetLength( IntPtr stmtHandle, short locatorCType, int Locator,
+			IntPtr stringLength, IntPtr indicatorValue);
+		[DllImport("db2cli.dll", EntryPoint = "SQLGetPosition")]
+			internal static extern short SQLGetPosition(IntPtr stmtHandle, short locatorCType, int sourceLocator, int searchLocator, 
+			string searchLiteral, int searchLiteralLength, uint fromPosition, IntPtr locatedAt, IntPtr indicatorValue);
+		[DllImport("db2cli.dll", EntryPoint = "SQLGetPosition")]
+		    internal static extern short SQLBindFileToCol (IntPtr stmtHandle, ushort colNum, string fileName, IntPtr fileNameLength, 
+			IntPtr fileOptions, short maxFileNameLength, IntPtr stringLength, IntPtr indicatorValue);
+		[DllImport("db2cli.dll", EntryPoint = "SQLGetPosition")]
+		    internal static extern short SQLBindFileToParam (IntPtr stmtHandle, ushort targetType, short dataType, string fileName,
+			IntPtr fileNameLength, short maxFileNameLength, IntPtr indicatorValue);
 	}
 }
