@@ -153,6 +153,26 @@ namespace Mono.CSharp {
 			Check (code);
 		}
 
+		static public void Error (int code, Location loc, string format, params object[] args)
+		{
+			Error (code, loc, String.Format (format, args));
+		}
+
+		static public void Error (int code, string format, params object[] args)
+		{
+			Error (code, String.Format (format, args));
+		}
+
+		static public void Warning (int code, Location loc, string format, params object[] args)
+		{
+			Warning (code, loc, String.Format (format, args));
+		}
+
+		static public void Warning (int code, string format, params object[] args)
+		{
+			Warning (code, String.Format (format, args));
+		}
+
 		static public void Message (Message m)
 		{
 			if (m is ErrorMessage)

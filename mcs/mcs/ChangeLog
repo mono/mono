@@ -1,5 +1,10 @@
 2003-09-07  Martin Baulig  <martin@ximian.com>
 
+	* report.cs (Error, Warning): Added overloaded versions which take
+	a `params object[] args' and call String.Format().
+
+2003-09-07  Martin Baulig  <martin@ximian.com>
+
 	* decl.cs (DeclSpace..ctor): Don't call
 	NamespaceEntry.DefineName() here; do it in RecordDecl() which is
 	called from Tree.RecordDecl().  Fixes the CS0101 reporting.
