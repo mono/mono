@@ -1,3 +1,7 @@
+2001-10-02  Dietmar Maurer  <dietmar@ximian.com>
+
+	* get.c (get_method): always write namespace and class name.
+
 2001-09-06  Miguel de Icaza  <miguel@ximian.com>
 
 	* monodis.1: Update man page.
