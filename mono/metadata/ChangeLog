@@ -1,4 +1,9 @@
 
+Wed Jun 16 18:23:45 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* threads.h, icall.c, object.c, threadpool.c, threads-types.h:
+	cleaned up public header threads.h.
+
 Wed Jun 16 18:11:41 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* Makefile.am, *.c, *.h: more API cleanups.
