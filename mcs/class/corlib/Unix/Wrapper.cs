@@ -179,6 +179,12 @@ public class Wrapper {
 	[DllImport("monowrapper", EntryPoint="mono_wrapper_seek", CharSet=CharSet.Ansi)]
 	public unsafe static extern long seek (IntPtr fd, long offset, int whence);
 
+	[DllImport("monowrapper", EntryPoint="mono_wrapper_mkdir", CharSet=CharSet.Ansi)]
+	public unsafe static extern int mkdir (string path, int mode);
+
+	[DllImport("monowrapper", EntryPoint="mono_wrapper_rmdir", CharSet=CharSet.Ansi)]
+	public unsafe static extern int rmdir (string path);
+
 	[DllImport("monowrapper", EntryPoint="mono_wrapper_read", CharSet=CharSet.Ansi)]
 	[CLSCompliant(false)]
 	public unsafe static extern int read (IntPtr fd, void * buf, int count);
@@ -221,6 +227,9 @@ public class Wrapper {
 
 	[DllImport("monowrapper", EntryPoint="mono_wrapper_environ", CharSet=CharSet.Ansi)]
 	public unsafe static extern IntPtr environ ();
+
+	[DllImport("monowrapper", EntryPoint="mono_wrapper_rename", CharSet=CharSet.Ansi)]
+	public unsafe static extern int rename (string source, string target);
 
 }
 }

@@ -1,3 +1,14 @@
+2002-01-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* DirectoryInfo.cs (GetFiles, GetDirectories, GetFileSystemInfos,
+	Delete, Create, Parent, Exists, MoveTo): Implement. 
+
+	* Directory.cs (GetListing): implement new utility function.
+	(GetDirectories): Implement.
+	(GetFileSystemEntries): Implement.
+	(GetFiles): Implement.
+
+	* CheckArgument.cs (Path): Do not allow null by default.
 
 Tue Jan 22 22:53:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 

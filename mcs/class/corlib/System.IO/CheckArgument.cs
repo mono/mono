@@ -25,15 +25,15 @@ namespace System.IO
 		/// <summary>
 		/// Generates and exception if arg contains whitepace only
 		/// </summary>
-		public static void WhitespaceOnly(string arg, string desc)
+		public static void WhitespaceOnly (string arg, string desc)
 		{
-			if(arg != null && arg.Length > 0)
+			if (arg != null && arg.Length > 0)
 			{
 				string temp = arg;
-				temp.Trim();
-				if(temp.Length == 0)
+				temp.Trim ();
+				if (temp.Length == 0)
 				{
-					throw new ArgumentException(desc);
+					throw new ArgumentException (desc);
 				}
 			}
 		}
@@ -41,62 +41,62 @@ namespace System.IO
 		/// <summary>
 		/// Generates and exception if arg contains whitepace only
 		/// </summary>
-		public static void WhitespaceOnly(string arg)
+		public static void WhitespaceOnly (string arg)
 		{
-			WhitespaceOnly(arg, "Argument string consists of whitespace characters only.");
+			WhitespaceOnly (arg, "Argument string consists of whitespace characters only.");
 		}
 		
 		/// <summary>
 		/// Generates and exception if arg is empty
 		/// </summary>
-		public static void Empty(string arg, string desc)
+		public static void Empty (string arg, string desc)
 		{
-			if(arg != null && arg.Length == 0)
+			if (arg != null && arg.Length == 0)
 			{
-				throw new ArgumentException(desc);
+				throw new ArgumentException (desc);
 			}
 		}
 		
 		/// <summary>
 		/// Generates and exception if arg is empty
 		/// </summary>
-		public static void Empty(string arg)
+		public static void Empty (string arg)
 		{
-			Empty(arg, "Argument string is empty.");
+			Empty (arg, "Argument string is empty.");
 		}
 		
 		/// <summary>
 		/// Generates and exception if arg is null
 		/// </summary>
-		public static void Null(Object arg, string desc)
+		public static void Null (Object arg, string desc)
 		{
-			if(arg == null)
+			if (arg == null)
 			{
-				throw new ArgumentNullException(desc);
+				throw new ArgumentNullException (desc);
 			}
 		}
 		
 		/// <summary>
 		/// Generates and exception if arg is null
 		/// </summary>
-		public static void Null(Object arg)
+		public static void Null (Object arg)
 		{
-			if(arg == null)
+			if (arg == null)
 			{
-				throw new ArgumentNullException();
+				throw new ArgumentNullException ();
 			}
 		}
 		
 		/// <summary>
 		/// Generates and exception if path contains invalid path characters
 		/// </summary>
-		public static void PathChars(string path, string desc)
+		public static void PathChars (string path, string desc)
 		{
-			if(path != null)
+			if (path != null)
 			{
-				if(path.IndexOfAny(System.IO.Path.InvalidPathChars) > -1)
+				if (path.IndexOfAny (System.IO.Path.InvalidPathChars) > -1)
 				{
-					throw new ArgumentException(desc);
+					throw new ArgumentException (desc);
 				}
 			}
 		}
@@ -104,16 +104,16 @@ namespace System.IO
 		/// <summary>
 		/// Generates and exception if path contains invalid path characters
 		/// </summary>
-		public static void PathChars(string path)
+		public static void PathChars (string path)
 		{
-			PathChars(path, "Path contains invalid characters");
+			PathChars (path, "Path contains invalid characters");
 		}
 		
 		/// <summary>
 		/// Generates and exception if path too long
 		/// </summary>
 		[MonoTODO]
-		public static void PathLength(string path, string desc)
+		public static void PathLength (string path, string desc)
 		{
 		 	//TODO: find out how long is too long
 		}
@@ -121,46 +121,46 @@ namespace System.IO
 		/// <summary>
 		/// Generates and exception if path too long
 		/// </summary>
-		public static void PathLength(string path)
+		public static void PathLength (string path)
 		{
-			PathLength(path);
+			PathLength (path);
 		}
 		
 		/// <summary>
 		/// Generates and exception if path is illegal
 		/// </summary>
-		public static void Path(string path, bool bAllowNull, bool bLength)
+		public static void Path (string path, bool bAllowNull, bool bLength)
 		{
-			if(path != null) //allow null
+			if (path != null) //allow null
 			{
-				Empty(path, "Path cannot be the empty string");	// path can't be empty
-				WhitespaceOnly(path, "Path cannot be all whitespace");	// path can't be all whitespace
-				PathChars(path);	// path can't contain invalid characters
-				if(bLength)
+				Empty (path, "Path cannot be the empty string");	// path can't be empty
+				WhitespaceOnly (path, "Path cannot be all whitespace");	// path can't be all whitespace
+				PathChars (path);	// path can't contain invalid characters
+				if (bLength)
 				{
-					PathLength("Path too long");
+					PathLength ("Path too long");
 				}
 			}
-			else if(!bAllowNull)
+			else if (!bAllowNull)
 			{
-				throw new ArgumentNullException("Parameter name: path");
+				throw new ArgumentNullException ("Parameter name: path");
 			}
 		}
 		
 		/// <summary>
 		/// Generates and exception if path is illegal
 		/// </summary>
-		public static void Path(string path, bool bAllowNull)
+		public static void Path (string path, bool bAllowNull)
 		{
-			Path(path, bAllowNull, false);
+			Path (path, bAllowNull, false);
 		}
 		
 		/// <summary>
 		/// Generates and exception if path is illegal
 		/// </summary>
-		public static void Path(string path)
+		public static void Path (string path)
 		{
-			Path(path, true, false);
+			Path (path, false, false);
 		}
 
 	}

@@ -33,6 +33,12 @@ namespace System {
 			// Prime the loaded assemblies with the assemblies that were loaded
 			// by the runtime in our behalf
 			//
+
+			//
+			// TODO: Maybe we can lazily do this, as loaded_assemblies
+			// will not be used all the time, we can just compute this on
+			// demand.
+			//
 			foreach (Assembly a in getDefaultAssemblies ())
 				loaded_assemblies [a.FullName] = a;
 		}

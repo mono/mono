@@ -1,242 +1,259 @@
-//------------------------------------------------------------------------------
 // 
 // System.IO.Directory.cs 
 //
+// Authors:
+//   Jim Richardson  (develop@wtfo-guru.com)
+//   Miguel de Icaza (miguel@ximian.com)
+//
 // Copyright (C) 2001 Moonlight Enterprises, All Rights Reserved
+// Copyright (C) 2002 Ximian, Inc.
 // 
-// Author:         Jim Richardson, develop@wtfo-guru.com
 // Created:        Monday, August 13, 2001 
 //
-// TODO: Research exceptions for all methods
 //------------------------------------------------------------------------------
 
 using System;
 using System.Security.Permissions;
+using System.Collections;
+using System.Private;
 
 namespace System.IO
 {
-
-
-	/// <summary>
-	/// 
-	/// </summary>
 	public sealed class Directory : Object
 	{
 
-		/// <summary>
-		/// Creates all directories not existing in path
-		/// </summary>
-		public static DirectoryInfo CreateDirectory(string path)
+		public static DirectoryInfo CreateDirectory (string path)
 		{	
-			DirectoryInfo dInfo = getInfo(path);
-			if(!dInfo.Exists)
+			DirectoryInfo dInfo = getInfo (path);
+			if (!dInfo.Exists)
 			{
-				dInfo.Create();
+				dInfo.Create ();
 			}
 			return dInfo;
 		}
 		
-		/// <summary>
-		/// Delete an empty directory
-		/// </summary>
-		public static void Delete(string path)
+		public static void Delete (string path)
 		{	
-			DirectoryInfo dInfo = getInfo(path);
-			if(dInfo.Exists)
+			DirectoryInfo dInfo = getInfo (path);
+			if (dInfo.Exists)
+				dInfo.Delete ();
+		}
+		
+		public static void Delete (string path, bool bRecurse)
+		{	
+			DirectoryInfo dInfo = getInfo (path);
+			if (dInfo.Exists)
 			{
-				dInfo.Delete();
+				dInfo.Delete (bRecurse);
 			}
 		}
 		
-		/// <summary>
-		/// Delete a directory, and contents if bRecurse is true
-		/// </summary>
-		public static void Delete(string path, bool bRecurse)
-		{	
-			DirectoryInfo dInfo = getInfo(path);
-			if(dInfo.Exists)
-			{
-				dInfo.Delete(bRecurse);
-			}
-		}
-		
-		/// <summary>
-		/// Returns true if directory exists on disk
-		/// </summary>
-		public static bool Exists(string path)
+		public static bool Exists (string path)
 		{
-			return getInfo(path).Exists;
+			return getInfo (path).Exists;
 		}
 		
-		/// <summary>
-		/// Returns the date and time the directory specified by path was created
-		/// </summary>
-		public static DateTime GetCreationTime(string path)
+		public static DateTime GetCreationTime (string path)
 		{
-			return getInfo(path).CreationTime;
+			return getInfo (path).CreationTime;
 		}
 		
-		/// <summary>
-		/// Returns the date and time the directory specified by path was created
-		/// </summary>
-		public static string GetCurrentDirectory()
+		public static string GetCurrentDirectory ()
 		{	// Implementation complete 08/25/2001 14:24 except for
 			// LAMESPEC: documentation specifies invalid exceptions (i think)
 			//           also shouldn't need Write to getcurrrent should we?
 			string str = Environment.CurrentDirectory;
-			CheckPermission.Demand(FileIOPermissionAccess.Read & FileIOPermissionAccess.Write, str);
+			CheckPermission.Demand (FileIOPermissionAccess.Read & FileIOPermissionAccess.Write, str);
 			return str;	
 		}
-		
-		/// <summary>
-		/// Returns an array of directories in the directory specified by path
-		/// </summary>
-		public static string[] GetDirectories(string path)
+
+		static bool Matches (string name, string pattern)
 		{
-			return getNames(getInfo(path).GetDirectories());
+			return true;
 		}
 		
-		/// <summary>
-		/// Returns an array of directories in the directory specified by path
-		/// matching the filter specified by mask
-		/// </summary>
-		public static string[] GetDirectories(string path, string mask)
+		internal static ArrayList GetListing (string path, string pattern)
 		{
-			return getNames(DirectoryInfo.GetDirectories(mask));
+			IntPtr handle = Wrapper.opendir (path);
+			ArrayList list;
+			string name;
+			
+			if (path == null)
+				return null;
+
+			list = new ArrayList ();
+			while ((name = Wrapper.readdir (handle)) != null){
+				if (pattern == null){
+					list.Add (name);
+					continue;
+				}
+				if (Matches (name, pattern))
+					list.Add (name);
+			}
+			Wrapper.closedir (handle);
+
+			return list;
 		}
 		
-		/// <summary>
-		/// Returns the root of the specified path
-		/// </summary>
-		public static string GetDirectoryRoot(string path)
+		public static string[] GetDirectories (string path)
 		{
-			return getInfo(path).Root.FullName;
+			return GetDirectories (path, "*");
+		}
+
+		enum Kind {
+			Files = 1,
+			Dirs  = 2,
+			All   = Files | Dirs
 		}
 		
-		/// <summary>
-		/// Returns an array of files in the directory specified by path
-		/// </summary>
-		public static string[] GetFiles(string path)
+		static string [] GetFileListing (ArrayList list, string path, Kind kind)
 		{
-			return getNames(getInfo(path).GetFiles());
+			ArrayList result_list = new ArrayList ();
+			foreach (string name in list){
+				string full = path + Path.DirectorySeparatorChar + name;
+
+				unsafe {
+					stat s;
+					
+					if (Wrapper.stat (full, &s) != 0)
+						continue;
+
+					if ((s.st_mode & Wrapper.S_IFDIR) != 0){
+						if ((kind & Kind.Dirs) != 0)
+							result_list.Add (full);
+					} else {
+						if ((kind & Kind.Files) != 0)
+							result_list.Add (full);
+					}
+				}
+			}
+			string [] names = new string [result_list.Count];
+			result_list.CopyTo (names);
+			return names;
 		}
 		
-		/// <summary>
-		/// Returns an array of files in the directory specified by path
-		/// matching the filter specified by mask
-		/// </summary>
-		public static string[] GetFiles(string path, string mask)
+		public static string[] GetDirectories (string path, string mask)
 		{
-			return getNames(getInfo(path).GetFiles());
+			if (path == null || mask == null)
+				throw new ArgumentNullException ();
+			
+			ArrayList list = GetListing (path, mask);
+			if (list == null)
+				throw new DirectoryNotFoundException ();
+			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ("Path contains invalid characters");
+
+			return GetFileListing (list, path, Kind.Dirs);
 		}
-		/// <summary>
-		/// Returns an array of filesystementries in the directory specified by path
-		/// I think this is just files and directories
-		/// </summary>
+		
+		public static string GetDirectoryRoot (string path)
+		{
+			return getInfo (path).Root.FullName;
+		}
+		
+		public static string[] GetFiles (string path)
+		{
+			return GetFiles (path, "*");
+		}
+		
+		public static string[] GetFiles (string path, string mask)
+		{
+			if (path == null || mask == null)
+				throw new ArgumentNullException ();
+			
+			ArrayList list = GetListing (path, mask);
+			if (list == null)
+				throw new DirectoryNotFoundException ();
+			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ("Path contains invalid characters");
+
+			return GetFileListing (list, path, Kind.Files);
+		}
+
+		public static string[] GetFileSystemEntries (string path)
+		{	
+			return GetFileSystemEntries (path, "*");
+		}
+
+		public static string[] GetFileSystemEntries (string path, string mask)
+		{
+			if (path == null || mask == null)
+				throw new ArgumentNullException ();
+			
+			ArrayList list = GetListing (path, mask);
+			if (list == null)
+				throw new DirectoryNotFoundException ();
+			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException ("Path contains invalid characters");
+
+			return GetFileListing (list, path, Kind.All);
+		}
+		
+		public static DateTime GetLastAccessTime (string path)
+		{
+			return getInfo (path).LastAccessTime;
+		}
+		
+		public static DateTime GetLastWriteTime (string path)
+		{
+			return getInfo (path).LastWriteTime;
+		}
+		
 		[MonoTODO]
-		public static string[] GetFileSystemEntries(string path)
-		{	// TODO: Research to verify this is files + directories
-			return getNames(getInfo(path).GetFileSystemInfos());
-		}
-		/// <summary>
-		/// Returns an array of filesystementries in the directory specified by path
-		/// matching the filter specified by mask
-		/// </summary>
-		[MonoTODO]
-		public static string[] GetFileSystemEntries(string path, string mask)
-		{	// TODO: Research to verify this is files + directories
-			return getNames(getInfo(path).GetFileSystemInfos());		}
-		
-		/// <summary>
-		/// Returns the date and time the directory specified by path was last accessed
-		/// </summary>
-		public static DateTime GetLastAccessTime(string path)
-		{
-			return getInfo(path).LastAccessTime;
-		}
-		
-		/// <summary>
-		/// Returns the date and time the directory specified by path was last modified
-		/// </summary>
-		public static DateTime GetLastWriteTime(string path)
-		{
-			return getInfo(path).LastWriteTime;
-		}
-		
-		/// <summary>
-		/// Returns an array of logical drives on this system
-		/// </summary>
-		[MonoTODO]
-		public static string[] GetLogicalDrives()
+		public static string[] GetLogicalDrives ()
 		{	// TODO: Implement
 			return null;
 		}
-		/// <summary>
-		/// Returns the parent directory of the directory specified by path
-		/// </summary>
+
 		[MonoTODO]
-		public static DirectoryInfo GetParent(string path)
+		public static DirectoryInfo GetParent (string path)
 		{	// TODO: Implement
 			return null;
 		}
-		/// <summary>
-		/// Moves a directory and its contents
-		/// </summary>
-		public static void Move(string src, string dst)
+
+		public static void Move (string src, string dst)
 		{
-			 getInfo(src).MoveTo(dst);
+			 getInfo (src).MoveTo (dst);
 		}
 		
-		/// <summary>
-		/// Sets the creation time of the directory specified by path
-		/// </summary>
-		public static void SetCreationTime(string path, DateTime creationTime)
+		public static void SetCreationTime (string path, DateTime creationTime)
 		{
-			getInfo(path).CreationTime = creationTime;
+			getInfo (path).CreationTime = creationTime;
 		}
 		
-		/// <summary>
-		/// Sets the current directory to the directory specified by path
-		/// </summary>
-		public static void SetCurrentDirectory(string path)
+		public static void SetCurrentDirectory (string path)
 		{	// Implementation complete 08/25/2001 14:24 except for
 			// LAMESPEC: documentation specifies invalid exceptions IOException (i think)
-			CheckArgument.Path(path, true);
-			CheckPermission.Demand(FileIOPermissionAccess.Read & FileIOPermissionAccess.Write, path);	
-			if(!Exists(path))
+			CheckArgument.Path (path, true);
+			CheckPermission.Demand (FileIOPermissionAccess.Read & FileIOPermissionAccess.Write, path);	
+			if (!Exists (path))
 			{
-				throw new DirectoryNotFoundException("Directory \"" + path + "\" not found.");
+				throw new DirectoryNotFoundException ("Directory \"" + path + "\" not found.");
 			}
 			Environment.CurrentDirectory = path;
 		}
 		
-		/// <summary>
-		/// Sets the last access time of the directory specified by path
-		/// </summary>
-		public static void SetLastAccessTime(string path, DateTime accessTime)
+		public static void SetLastAccessTime (string path, DateTime accessTime)
 		{
-			getInfo(path).LastAccessTime = accessTime;
+			getInfo (path).LastAccessTime = accessTime;
 		}
 		
-		/// <summary>
-		/// Sets the last write time of the directory specified by path
-		/// </summary>
-		public static void SetLastWriteTime(string path, DateTime modifiedTime)
+		public static void SetLastWriteTime (string path, DateTime modifiedTime)
 		{
-			getInfo(path).LastWriteTime = modifiedTime;
+			getInfo (path).LastWriteTime = modifiedTime;
 		}
 		
-		private static DirectoryInfo getInfo(string path)
+		private static DirectoryInfo getInfo (string path)
 		{
-			return new DirectoryInfo(path);
+			return new DirectoryInfo (path);
 		}
 		
-		private static string[] getNames(FileSystemInfo[] arInfo)
+		private static string[] getNames (FileSystemInfo[] arInfo)
 		{
 			int index = 0;
 			string[] ar = new string[arInfo.Length];
 						
-			foreach(FileInfo fi in arInfo)
+			foreach (FileInfo fi in arInfo)
 			{
 				ar[index++] = fi.FullName;
 			}
