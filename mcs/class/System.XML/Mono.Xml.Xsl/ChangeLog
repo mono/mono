@@ -1,3 +1,8 @@
+2005-03-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslDecimalFormat.cs : in some cases it does not throw format
+	  exception.
+
 2005-03-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsltCompiledContext.cs,

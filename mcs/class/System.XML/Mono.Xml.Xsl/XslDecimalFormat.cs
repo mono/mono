@@ -169,22 +169,25 @@ namespace Mono.Xml.Xsl {
 
 		private void Parse (string pattern, XslDecimalFormat format)
 		{
+			if (pattern.Length == 0)
+				throw new ArgumentException ("Invalid number format pattern string.");
+
 			positivePattern = new DecimalFormatPattern ();
+			negativePattern = positivePattern;
 
 			int pos = positivePattern.ParsePattern (0, pattern, format);
 			if (pos < pattern.Length) {
 				if (pattern [pos] != format.PatternSeparator)
 					// Expecting caught and wrapped by caller,
 					// since it cannot provide XPathNavigator.
-					throw new ArgumentException ("Invalid number format pattern string.");
+//					throw new ArgumentException ("Invalid number format pattern string.");
+					return;
 				pos++;
 				negativePattern = new DecimalFormatPattern ();
 				pos = negativePattern.ParsePattern (pos, pattern, format);
 				if (pos < pattern.Length)
 					throw new ArgumentException ("Number format pattern string ends with extraneous part.");
 			}
-			else
-				negativePattern = positivePattern;
 		}
 
 		public string FormatNumber (double number)
@@ -198,12 +201,12 @@ namespace Mono.Xml.Xsl {
 
 	internal class DecimalFormatPattern
 	{
-		public string Prefix;
-		public string Suffix;
+		public string Prefix = String.Empty;
+		public string Suffix = String.Empty;
 		public string NumberPart;
 		NumberFormatInfo info;
 
-		StringBuilder builder;
+		StringBuilder builder = new StringBuilder ();
 
 		internal int ParsePattern (int start, string pattern, XslDecimalFormat format)
 		{
@@ -224,8 +227,11 @@ namespace Mono.Xml.Xsl {
 			}
 
 			Prefix = pattern.Substring (start, pos - start);
-			if (pos == pattern.Length)
-				throw new ArgumentException ("Invalid number format pattern."); 
+			if (pos == pattern.Length) {
+				// Invalid number pattern.
+//				throw new ArgumentException ("Invalid number format pattern."); 
+				return pos;
+			}
 
 			// number
 			pos = ParseNumber (pos, pattern, format);
@@ -247,8 +253,6 @@ namespace Mono.Xml.Xsl {
 		[MonoTODO ("Collect grouping digits")]
 		private int ParseNumber (int start, string pattern, XslDecimalFormat format)
 		{
-			builder = new StringBuilder ();
-
 			int pos = start;
 			// process non-minint part.
 			for (; pos < pattern.Length; pos++) {
