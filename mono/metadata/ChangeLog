@@ -1,5 +1,13 @@
 2004-12-02  Zoltan Varga  <vargaz@freemail.hu>
 
+	* threadpool.c (async_invoke_thread): Call push/pop_appdomain_ref
+	around the domain changes.
+
+	* appdomain.c (mono_domain_unload): Handle the case when the thread
+	calling Unload is itself being aborted during unloading. Fixes #70022.
+
+	* appdomain.h: Add prototype for mono_install_runtime_cleanup.
+
 	* marshal.c (emit_thread_interrupt_checkpoint_call): Call 
 	checkpoint_func as an icall so it gets a wrapper.
 	(mono_marshal_get_xappdomain_invoke): Call push/pop_appdomain_ref ()
