@@ -43,7 +43,8 @@ namespace System.Runtime.Remoting.MetadataServices
 			ICodeCompiler comp = prov.CreateCompiler ();
 			CompilerParameters pars = new CompilerParameters ();
 			pars.OutputAssembly = assemblyPath;
-			comp.CompileAssemblyFromSource (pars, codePath);
+			CompilerResults cr = comp.CompileAssemblyFromFile(pars, codePath);
+			CheckResult (cr);
 		}
 
 		[MonoTODO ("strong name")]
@@ -56,7 +57,23 @@ namespace System.Runtime.Remoting.MetadataServices
 			ICodeCompiler comp = prov.CreateCompiler ();
 			CompilerParameters pars = new CompilerParameters ();
 			pars.OutputAssembly = assemblyPath;
-			comp.CompileAssemblyFromSourceBatch (pars, (string[]) outCodeStreamList.ToArray(typeof(string)));
+			CompilerResults cr  = comp.CompileAssemblyFromFileBatch (pars, (string[]) outCodeStreamList.ToArray(typeof(string)));
+			CheckResult (cr);
+		}
+		
+		static void CheckResult (CompilerResults cr)
+		{
+			if (cr.Errors.Count > 0)
+			{
+				foreach (string s in cr.Output)
+					Console.WriteLine (s);
+					
+				string errs = "";
+				foreach (CompilerError error in cr.Errors)
+					if (error.FileName != "")
+						errs += error.ToString () + "\n";
+				throw new Exception ("There where errors during compilation of the assembly:\n" + errs);
+			}
 		}
 
 		public static void ConvertSchemaStreamToCodeSourceStream (

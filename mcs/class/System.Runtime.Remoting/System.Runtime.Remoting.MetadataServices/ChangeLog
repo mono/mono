@@ -1,3 +1,11 @@
+2003-12-05  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* MetaData.cs: Added check of compilation results in 
+	  ConvertCodeSourceFileToAssemblyFile().
+	* MetaDataCodeGenerator.cs, MetaDataExporter.cs: Many fixes. 
+	  Added support for delegates, base classes, implemented interfaces, 
+	  methods, properties, ISerializable, enums, etc.
+	
 2003-12-03  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* MetaData.cs: Implemented most of methods.

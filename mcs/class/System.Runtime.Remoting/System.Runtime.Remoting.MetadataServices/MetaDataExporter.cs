@@ -13,9 +13,9 @@ using System.Text;
 using System.Xml;
 using System.Reflection;
 using System.Net;
-using System.Web.Services.Description;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Metadata;
+using System.Runtime.Serialization;
 
 namespace System.Runtime.Remoting.MetadataServices
 {
@@ -95,7 +95,7 @@ namespace System.Runtime.Remoting.MetadataServices
 				WriteServiceBinding (tw, st);
 */
 			foreach (ServiceType st in services)
-				WriteServiceBinding (tw, st);
+				WriteServiceBinding (tw, st, dataTypes);
 
 			// Service element
 			
@@ -129,7 +129,7 @@ namespace System.Runtime.Remoting.MetadataServices
 			tw.WriteEndElement ();
 		}
 		
-		void WriteServiceBinding  (XmlTextWriter tw, ServiceType st)
+		void WriteServiceBinding  (XmlTextWriter tw, ServiceType st, Hashtable dataTypes)
 		{
 			Type type = st.ObjectType;
 			string typeName = type.Name;
@@ -190,7 +190,7 @@ namespace System.Runtime.Remoting.MetadataServices
 						if (sb.Length != 0) sb.Append (" ");
 						sb.Append (par.Name);
 					}
-					tw.WriteAttributeString ("parameterOreder", sb.ToString ());
+					tw.WriteAttributeString ("parameterOrder", sb.ToString ());
 					
 					tw.WriteStartElement ("input", MetaData.WsdlNamespace);
 					tw.WriteAttributeString ("name", met.Name + "Request");
@@ -218,32 +218,15 @@ namespace System.Runtime.Remoting.MetadataServices
 			tw.WriteAttributeString ("transport", "http://schemas.xmlsoap.org/soap/http");
 			tw.WriteEndElement ();
 			
-			if (type.IsInterface)
+			WriteTypeSuds (tw, type);
+			
+			SchemaInfo sinfo = (SchemaInfo) dataTypes [GetXmlNamespace (type,null)];
+			if (!sinfo.SudsGenerated)
 			{
-				tw.WriteStartElement ("suds", "interface", MetaData.SudsNamespace);
-				tw.WriteAttributeString ("type", GetQualifiedXmlType (tw, type, null));
-				if (type.BaseType != null && type.BaseType != typeof(object))
-					tw.WriteAttributeString ("extends", GetQualifiedXmlType (tw, type.BaseType, null));
+				foreach (Type dt in sinfo.Types)
+					WriteTypeSuds (tw, dt);
+				sinfo.SudsGenerated = true;
 			}
-			else
-			{
-				tw.WriteStartElement ("suds", "class", MetaData.SudsNamespace);
-				tw.WriteAttributeString ("type", GetQualifiedXmlType (tw, type, null));
-				
-				if (isService)
-				{
-					if (type.IsMarshalByRef) {
-						tw.WriteAttributeString ("rootType", "MarshalByRefObject");
-					}
-					else {
-						tw.WriteAttributeString ("rootType", "Delegate");
-					}
-					
-					if (type.BaseType != typeof(MarshalByRefObject))
-						tw.WriteAttributeString ("extends", GetQualifiedXmlType (tw, type.BaseType, null));
-				}
-			}
-			tw.WriteEndElement ();
 			
 			if (isService)
 			{
@@ -276,6 +259,59 @@ namespace System.Runtime.Remoting.MetadataServices
 				}
 			}
 			tw.WriteEndElement ();	// binding
+		}
+		
+		void WriteTypeSuds (XmlTextWriter tw, Type type)
+		{
+			if (type.IsArray || type.IsEnum)
+			{
+				return;
+			}
+			else if (type.IsInterface)
+			{
+				tw.WriteStartElement ("suds", "interface", MetaData.SudsNamespace);
+				tw.WriteAttributeString ("type", GetQualifiedXmlType (tw, type, null));
+				foreach (Type interf in type.GetInterfaces ()) {
+					tw.WriteStartElement ("suds","extends", MetaData.SudsNamespace);
+					tw.WriteAttributeString ("type", GetQualifiedXmlType (tw, interf, null));
+					tw.WriteEndElement ();
+				}
+			}
+			else if (type.IsValueType)
+			{
+				tw.WriteStartElement ("suds", "struct", MetaData.SudsNamespace);
+				tw.WriteAttributeString ("type", GetQualifiedXmlType (tw, type, null));
+				if (type.BaseType != typeof(ValueType))
+					tw.WriteAttributeString ("extends", GetQualifiedXmlType (tw, type.BaseType, null));
+			}
+			else
+			{
+				tw.WriteStartElement ("suds", "class", MetaData.SudsNamespace);
+				tw.WriteAttributeString ("type", GetQualifiedXmlType (tw, type, null));
+				
+				if (IsService (type))
+				{
+					if (type.IsMarshalByRef)
+						tw.WriteAttributeString ("rootType", "MarshalByRefObject");
+					else
+						tw.WriteAttributeString ("rootType", "Delegate");
+					
+					if (type.BaseType != typeof(MarshalByRefObject))
+						tw.WriteAttributeString ("extends", GetQualifiedXmlType (tw, type.BaseType, null));
+						
+					if (type.IsMarshalByRef) {
+						foreach (Type interf in type.GetInterfaces ()) {
+							tw.WriteStartElement ("suds","implements", MetaData.SudsNamespace);
+							tw.WriteAttributeString ("type", GetQualifiedXmlType (tw, interf, null));
+							tw.WriteEndElement ();
+						}
+					}
+				}
+				else if (typeof(ISerializable).IsAssignableFrom (type))
+					tw.WriteAttributeString ("rootType", "ISerializable");
+					
+			}
+			tw.WriteEndElement ();	// suds
 		}
 		
 		void WriteMessageBindingBody (XmlTextWriter tw, Type t)
@@ -358,7 +394,7 @@ namespace System.Runtime.Remoting.MetadataServices
 			
 			tw.WriteStartElement ("complexType", MetaData.SchemaNamespace);
 			tw.WriteAttributeString ("name", GetXmlType (type));
-			if (type.BaseType != null && type.BaseType != typeof(object))
+			if (type.BaseType != null && type.BaseType != typeof(object) && type.BaseType != typeof(ValueType))
 				tw.WriteAttributeString ("base", GetQualifiedXmlType (tw, type.BaseType, null));
 			
 			FieldInfo[] fields = type.GetFields (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
@@ -441,7 +477,7 @@ namespace System.Runtime.Remoting.MetadataServices
 			}
 			else
 			{
-				name = GetXsdType (type);
+				name = GetXsdType (type);					
 				if (name != null) return "xsd:" + name;
 				
 				if (!SoapServices.GetXmlTypeForInteropType (type, out name, out ns))
@@ -468,9 +504,7 @@ namespace System.Runtime.Remoting.MetadataServices
 			{
 				string name = null, ns;
 				
-				if (!type.IsEnum)
-					name = GetXsdType (type);
-					
+				name = GetXsdType (type);
 				if (name != null) return name;
 				
 				if (SoapServices.GetXmlTypeForInteropType (type, out name, out ns))
@@ -515,6 +549,8 @@ namespace System.Runtime.Remoting.MetadataServices
 			
 			if (!IsService (t))
 			{
+				if (!t.IsSerializable) return;
+				
 				string ns = GetXmlNamespace (t, containerType);
 				SchemaInfo sinfo = (SchemaInfo) types [ns];
 				if (sinfo == null)
@@ -563,6 +599,8 @@ namespace System.Runtime.Remoting.MetadataServices
 		
 		static string GetXsdType (Type type)
 		{
+			if (type.IsEnum) return null;
+			
 			switch (Type.GetTypeCode (type))
 			{
 				case TypeCode.Boolean: return "boolean";
@@ -595,5 +633,6 @@ namespace System.Runtime.Remoting.MetadataServices
 	{
 		public ArrayList Types = new ArrayList ();
 		public ArrayList Imports = new ArrayList ();
+		public bool SudsGenerated;
 	}
 }
