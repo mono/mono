@@ -1,3 +1,8 @@
+2003-05-30  Dietmar Maurer  <dietmar@ximian.com>
+
+	* mini.c (mini_method_compile):  always remove unreachable code,
+	because the code in them may be inconsistent  (access to dead
+	variables for example).
 
 Thu May 29 11:44:49 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
