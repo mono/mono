@@ -36,7 +36,7 @@ namespace System.Reflection.Emit {
   		public static readonly OpCode Bne_Un;
   		public static readonly OpCode Bne_Un_S;
   		public static readonly OpCode Box;
-[Obsolete]	public static readonly OpCode Boxval;
+[Obsolete]	public static readonly OpCode Boxval = new OpCode("boxval", 1, OpCodeType.Primitive, OperandType.InlineType, StackBehaviour.Pop1, StackBehaviour.Pushref, FlowControl.Next, 0xFF, 0x8C);
   		public static readonly OpCode Br;
   		public static readonly OpCode Br_S;
   		public static readonly OpCode Break;
@@ -399,7 +399,6 @@ namespace System.Reflection.Emit {
   			Conv_Ovf_U8_Un = new OpCode("conv.ovf.u8.un", 1, OpCodeType.Primitive, OperandType.InlineNone, StackBehaviour.Pop1, StackBehaviour.Pushi8, FlowControl.Next, 0xFF, 0x89);
   			Conv_Ovf_I_Un = new OpCode("conv.ovf.i.un", 1, OpCodeType.Primitive, OperandType.InlineNone, StackBehaviour.Pop1, StackBehaviour.Pushi, FlowControl.Next, 0xFF, 0x8A);
   			Conv_Ovf_U_Un = new OpCode("conv.ovf.u.un", 1, OpCodeType.Primitive, OperandType.InlineNone, StackBehaviour.Pop1, StackBehaviour.Pushi, FlowControl.Next, 0xFF, 0x8B);
-  			Boxval = new OpCode("boxval", 1, OpCodeType.Primitive, OperandType.InlineType, StackBehaviour.Pop1, StackBehaviour.Pushref, FlowControl.Next, 0xFF, 0x8C);
   			Box = new OpCode("box", 1, OpCodeType.Primitive, OperandType.InlineType, StackBehaviour.Pop1, StackBehaviour.Pushref, FlowControl.Next, 0xFF, 0x8C);
   			Newarr = new OpCode("newarr", 1, OpCodeType.Objmodel, OperandType.InlineType, StackBehaviour.Popi, StackBehaviour.Pushref, FlowControl.Next, 0xFF, 0x8D);
   			Ldlen = new OpCode("ldlen", 1, OpCodeType.Objmodel, OperandType.InlineNone, StackBehaviour.Popref, StackBehaviour.Pushi, FlowControl.Next, 0xFF, 0x8E);

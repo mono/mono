@@ -1,3 +1,7 @@
+2003-11-19  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* OpCodes.cs: Small rearrange to fix csc compiler warning about obsolete member used
+
 2003-11-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyBuilderAccess.cs PackingSize: Add [Flags].
