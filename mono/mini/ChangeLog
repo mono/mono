@@ -1,5 +1,8 @@
 2005-03-29  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mono_method_to_ir): Applied Ben's patch from bug #61441 to
+	avoid calling constructors using callvirt.
+
 	* inssel.brg: Fix #74073.
 
 2005-03-29  Sebastien Pouliot  <sebastien@ximian.com>
