@@ -1,3 +1,9 @@
+
+Fri Jan 23 21:07:02 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* socket-wrappers.h, sockets.h, sockets.c, Makefile.am: move socket
+	wrappers to its own non-installed header file.
+
 2004-01-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* io.c:
