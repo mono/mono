@@ -1,3 +1,6 @@
+2001-11-30  Dick Porter  <dick@ximian.com>
+
+	* exception.c: Implement mono_exception_from_name()
 
 Fri Nov 30 12:01:02 CET 2001 Paolo Molaro <lupus@ximian.com>
 
