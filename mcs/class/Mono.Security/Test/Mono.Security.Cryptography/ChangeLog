@@ -1,3 +1,10 @@
+2004-09-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SHA224ManagedTest.cs: New. Unit tests for the managed implementation
+	of SHA-224.
+	* SHA224Test.cs: New. Unit tests for SHA-224. Use test vectors from
+	RFC3874.
+
 2004-05-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ARC4ManagedTest.cs: Added unit tests for exceptions coming from 
