@@ -40,5 +40,5 @@ ListItemsCollectionEditor
 ------------------------------------------------------
 
 & RegexEditorDialog
-RepeatDesigner
+* RepeaterDesigner
 & XmlDesigner

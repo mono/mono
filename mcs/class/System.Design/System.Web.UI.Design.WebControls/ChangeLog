@@ -1,6 +1,11 @@
 
 2002-10-29     Gaurav Vaish <gvaish_mono@lycos.com>
 
+	* RepeaterDesigner.CS     : Initial implementation.
+	* XmlDesigner.cs          : Minor bug fixes.
+
+2002-10-29     Gaurav Vaish <gvaish_mono@lycos.com>
+
 	* XmlDesigner.cs          : Initial implementation.
 
 2002-10-29     Gaurav Vaish <gvaish_mono@lycos.com>

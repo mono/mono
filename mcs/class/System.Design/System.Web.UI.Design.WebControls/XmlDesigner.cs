@@ -9,6 +9,7 @@
  */
 
 using System;
+using System.ComponentModel;
 using System.Web.UI.WebControls;
 using System.Web.UI.Design;
 
@@ -16,7 +17,7 @@ namespace System.Web.UI.Design.WebControls
 {
 	public class XmlDesigner : ControlDesigner
 	{
-		private Xml xml;
+		private System.Web.UI.WebControls.Xml xml;
 
 		public XmlDesigner()
 		{
@@ -24,9 +25,9 @@ namespace System.Web.UI.Design.WebControls
 
 		public override void Initialize(IComponent component)
 		{
-			if(component is Xml)
+			if(component is System.Web.UI.WebControls.Xml)
 			{
-				xml = (Xml)component;
+				xml = (System.Web.UI.WebControls.Xml)component;
 			}
 			base.Initialize(component);
 		}
@@ -46,7 +47,7 @@ namespace System.Web.UI.Design.WebControls
 		{
 			if(disposing)
 				xml = null;
-			base.Disponse(disposing);
+			base.Dispose(disposing);
 		}
 	}
 }
