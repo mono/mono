@@ -1,3 +1,7 @@
+2003-12-22  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* marshal.c: (ves_icall_System_Runtime_InteropServices_Marshal_Read/WriteXXX)
+	make work for unaligned access.
 
 Mon Dec 22 18:37:02 CET 2003 Paolo Molaro <lupus@ximian.com>
 
