@@ -1382,6 +1382,409 @@ namespace System.Windows.Forms
 		}
 		#endregion	// ListView
 
+		#region MonthCalendar
+
+		// draw the month calendar
+		public override void DrawMonthCalendar(Graphics dc, Rectangle clip_rectangle, MonthCalendar mc) 
+		{
+			Rectangle client_rectangle = mc.ClientRectangle;
+			Size month_size = mc.SingleMonthSize;
+			// cache local copies of Marshal-by-ref internal members (gets around error CS0197)
+			Size calendar_spacing = (Size)((object)mc.calendar_spacing);
+			Size date_cell_size = (Size)((object)mc.date_cell_size);
+			// fill the background of the calendar
+			dc.FillRectangle (ResPool.GetSolidBrush (mc.BackColor), client_rectangle);
+		
+			// draw the singlecalendars
+			int x_offset = 1;
+			int y_offset = 1;
+			// adjust for the position of the specific month
+			for (int i=0; i < mc.CalendarDimensions.Height; i++) 
+			{
+				if (i > 0) 
+				{
+					y_offset += month_size.Height + calendar_spacing.Height;
+				}
+				// now adjust for x position	
+				for (int j=0; j < mc.CalendarDimensions.Width; j++) 
+				{
+					if (j > 0) 
+					{
+						x_offset += month_size.Width + calendar_spacing.Width;
+					} 
+					else 
+					{
+						x_offset = 1;
+					}
+
+					DrawSingleMonth (
+						dc,
+						new Rectangle (x_offset, y_offset, month_size.Width, month_size.Height),
+						mc,
+						i,
+						j);
+
+					// draw the today date if it's set
+					if (mc.ShowToday &&
+						(i == mc.CalendarDimensions.Height-1 && j == 0)) 
+					{
+						int today_offset = 0;
+						if (mc.ShowTodayCircle) 
+						{
+							Rectangle today_circle_rect = new Rectangle (
+								client_rectangle.X + 5,
+								Math.Max(client_rectangle.Bottom - date_cell_size.Height - 2, 0),
+								date_cell_size.Width,
+								date_cell_size.Height);
+							DrawTodayCircle (dc, today_circle_rect);
+							today_offset = date_cell_size.Width + 5;
+						}
+						// draw today's date
+						StringFormat text_format = new StringFormat();
+						text_format.LineAlignment = StringAlignment.Center;
+						text_format.Alignment = StringAlignment.Near;
+						Font bold_font = new Font (mc.Font.FontFamily, mc.Font.Size, mc.Font.Style | FontStyle.Bold);
+						Rectangle today_rect = new Rectangle (
+								today_offset + client_rectangle.X,
+								Math.Max(client_rectangle.Bottom - date_cell_size.Height, 0),
+								Math.Max(client_rectangle.Width - today_offset, 0),
+								date_cell_size.Height);						
+						dc.DrawString ("Today: " + DateTime.Now.ToShortDateString(), bold_font, ResPool.GetSolidBrush (mc.ForeColor), today_rect, text_format);
+					}
+				}
+			}
+		}
+
+		// darws a single part of the month calendar (with one month)
+		private void DrawSingleMonth(Graphics dc, Rectangle rectangle, MonthCalendar mc, int row, int col) 
+		{
+			// cache local copies of Marshal-by-ref internal members (gets around error CS0197)
+			Size title_size = (Size)((object)mc.title_size);
+			Size date_cell_size = (Size)((object)mc.date_cell_size);
+			DateTime current_month = (DateTime)((object)mc.current_month);
+			
+			// set up some standard string formating variables
+			StringFormat text_format = new StringFormat();
+			text_format.LineAlignment = StringAlignment.Center;
+			text_format.Alignment = StringAlignment.Center;
+			
+
+			// draw the title back ground
+			Rectangle title_rect = new Rectangle(rectangle.X, rectangle.Y, title_size.Width, title_size.Height);
+			dc.FillRectangle (ResPool.GetSolidBrush (mc.TitleBackColor), title_rect);
+			// draw the title
+			DateTime this_month = current_month.AddMonths (row*mc.CalendarDimensions.Width+col);
+			string title_text = this_month.ToString ("MMMM yyyy");
+			dc.DrawString (title_text, mc.Font, ResPool.GetSolidBrush (mc.TitleForeColor), title_rect, text_format);
+
+			// draw previous and next buttons if it's time
+			if (row == 0 && col == 0) 
+			{
+				// draw previous button
+				DrawMonthCalendarButton (
+					dc,
+					rectangle,
+					mc,
+					title_size,
+					mc.button_x_offset,
+					(System.Drawing.Size)((object)mc.button_size),
+					true);
+			}
+			if (row == 0 && col == mc.CalendarDimensions.Width-1) 
+			{
+				// draw next button
+				DrawMonthCalendarButton (
+					dc,
+					rectangle,
+					mc,
+					title_size,
+					mc.button_x_offset,
+					(System.Drawing.Size)((object)mc.button_size),
+					false);
+			}
+			
+			// set the week offset and draw week nums if needed
+			int col_offset = (mc.ShowWeekNumbers) ? 1 : 0;
+			// draw the day names 
+			DayOfWeek first_day_of_week = mc.GetDayOfWeek(mc.FirstDayOfWeek);
+			for (int i=0; i < 7; i++) 
+			{
+				int position = i - (int) first_day_of_week;
+				if (position < 0) 
+				{
+					position = 7 + position;
+				}
+				// draw it
+				Rectangle day_rect = new Rectangle(
+					rectangle.X + ((position + col_offset) * date_cell_size.Width),
+					rectangle.Y + title_size.Height,
+					date_cell_size.Width,
+					date_cell_size.Height);
+				dc.DrawString (((DayOfWeek)i).ToString().Substring(0, 3), mc.Font, ResPool.GetSolidBrush (mc.TitleBackColor), day_rect, text_format);
+			}
+
+			// draw the vertical divider
+			int vert_divider_y = Math.Max(title_size.Height+ date_cell_size.Height-1, 0);
+			dc.DrawLine (
+				ResPool.GetPen (mc.ForeColor),
+				rectangle.X + (col_offset * date_cell_size.Width) + mc.divider_line_offset,
+				rectangle.Y + vert_divider_y,
+				rectangle.Right - mc.divider_line_offset,
+				rectangle.Y + vert_divider_y);
+
+			// draw the actual date items in the grid (including the week
+			Rectangle date_rect = new Rectangle(
+				rectangle.X,
+				rectangle.Y + title_size.Height + date_cell_size.Height,
+				date_cell_size.Width,
+				date_cell_size.Height);
+			int month_row_count = 0;
+			DateTime current_date = mc.GetFirstDateInMonthGrid ( new DateTime (this_month.Year, this_month.Month, 1));
+			for (int i=0; i < 6; i++) 
+			{
+				// if we are drawing the lead and trailing dates
+				bool draw_other_dates = false;
+				// draw the week number if required
+				if (mc.ShowWeekNumbers) 
+				{
+					// get the week for this row
+					int week = mc.GetWeekOfYear (current_date);	
+					// determine if we are drawing this week number
+					bool draw_week_num = false;					
+					if (current_date.Year <= this_month.Year || (current_date.Year == this_month.Year && current_date.Month <= this_month.Month)) {
+						draw_week_num = true;
+					} else {
+						// find out if we are the lead of the first calendar or the trail of the last calendar						
+						draw_week_num = ((row == mc.CalendarDimensions.Height-1 && col == mc.CalendarDimensions.Width-1) && (this_month.AddMonths(1).Year == current_date.Year && this_month.AddMonths(1).Month == current_date.Month)) ;
+					}
+
+					if (draw_week_num) {
+						dc.DrawString (
+							week.ToString(),
+							mc.Font,
+							ResPool.GetSolidBrush (mc.TitleBackColor),
+							date_rect,
+							text_format);
+						date_rect.Offset(date_cell_size.Width, 0);
+						month_row_count = i;
+						
+					} else {
+						// leave the loop
+						break;
+					}
+				}
+				
+				// only draw the days if we have to
+				if(month_row_count == i) {
+					for (int j=0; j < 7; j++) 
+					{
+						DrawMonthCalendarDate (
+							dc,
+							date_rect,
+							mc,
+							current_date,
+							this_month,
+							row,
+							col);
+
+						// move the day on
+						current_date = current_date.AddDays(1);
+						date_rect.Offset(date_cell_size.Width, 0);
+					}
+
+					// shift the rectangle down one row
+					date_rect.Offset(-8*date_cell_size.Width, date_cell_size.Height);
+				}
+			}
+
+			// month_row_count is zero based, so add one
+			month_row_count++;
+
+			// draw week numbers if required
+			if (mc.ShowWeekNumbers) {
+				col_offset = 1;
+				dc.DrawLine (
+					ResPool.GetPen (mc.ForeColor),
+					rectangle.X + date_cell_size.Width - 1,
+					rectangle.Y + title_size.Height + date_cell_size.Height + mc.divider_line_offset,
+					rectangle.X + date_cell_size.Width - 1,
+					rectangle.Y + title_size.Height + date_cell_size.Height + (month_row_count * date_cell_size.Height) - mc.divider_line_offset);			
+			}
+		}
+
+		// draws the pervious or next button
+		private void DrawMonthCalendarButton (Graphics dc, Rectangle rectangle, MonthCalendar mc, Size title_size, int x_offset, Size button_size, bool is_previous) 
+		{
+			bool is_clicked = false;
+			Rectangle button_rect;
+			Rectangle arrow_rect = new Rectangle (rectangle.X, rectangle.Y, 4, 7);
+			Point[] arrow_path = new Point[3];
+			// prepare the button
+			if (is_previous) 
+			{
+				is_clicked = mc.is_previous_clicked;
+				button_rect = new Rectangle (
+					rectangle.X + 1 + x_offset,
+					rectangle.Y + 1 + ((title_size.Height - button_size.Height)/2),
+					Math.Max(button_size.Width - 1, 0),
+					Math.Max(button_size.Height - 1, 0));
+				arrow_rect.X = button_rect.X + ((button_rect.Width - arrow_rect.Width)/2);
+				arrow_rect.Y = button_rect.Y + ((button_rect.Height - arrow_rect.Height)/2);
+				if (is_clicked) {
+					arrow_rect.Offset(1,1);
+				}
+				arrow_path[0] = new Point (arrow_rect.Right, arrow_rect.Y);
+				arrow_path[1] = new Point (arrow_rect.X, arrow_rect.Y + arrow_rect.Height/2);
+				arrow_path[2] = new Point (arrow_rect.Right, arrow_rect.Bottom);
+			}
+			else
+			{
+				is_clicked = mc.is_next_clicked;
+				button_rect = new Rectangle (
+					rectangle.Right - 1 - x_offset - button_size.Width,
+					rectangle.Y + 1 + ((title_size.Height - button_size.Height)/2),
+					Math.Max(button_size.Width - 1, 0),
+					Math.Max(button_size.Height - 1, 0));
+				arrow_rect.X = button_rect.X + ((button_rect.Width - arrow_rect.Width)/2);
+				arrow_rect.Y = button_rect.Y + ((button_rect.Height - arrow_rect.Height)/2);
+				if (is_clicked) {
+					arrow_rect.Offset(1,1);
+				}
+				arrow_path[0] = new Point (arrow_rect.X, arrow_rect.Y);
+				arrow_path[1] = new Point (arrow_rect.Right, arrow_rect.Y + arrow_rect.Height/2);
+				arrow_path[2] = new Point (arrow_rect.X, arrow_rect.Bottom);				
+			}
+
+			// fill the background
+			dc.FillRectangle (SystemBrushes.Control, button_rect);
+			// draw the border
+			if (is_clicked) {
+				dc.DrawRectangle (SystemPens.ControlDark, button_rect);
+			}
+			else {
+				CPDrawBorder3D (dc, button_rect, Border3DStyle.Raised, Border3DSide.All);
+			}
+			// draw the arrow
+			dc.FillPolygon (SystemBrushes.ControlText, arrow_path);			
+		}
+		
+
+		// draws one day in the calendar grid
+		private void DrawMonthCalendarDate (Graphics dc, Rectangle rectangle, MonthCalendar mc,	DateTime date, DateTime month, int row, int col) {
+			Color date_color = mc.ForeColor;
+			Rectangle interior = new Rectangle (rectangle.X, rectangle.Y, Math.Max(rectangle.Width - 1, 0), Math.Max(rectangle.Height - 1, 0));
+
+			// find out if we are the lead of the first calendar or the trail of the last calendar						
+			if (date.Year != month.Year || date.Month != month.Month) {
+				DateTime check_date = month.AddMonths (-1);
+				// check if it's the month before 
+				if (check_date.Year == date.Year && check_date.Month == date.Month && row == 0 && col == 0) {
+					date_color = mc.TrailingForeColor;
+				} else {
+					// check if it's the month after
+					check_date = month.AddMonths (1);
+					if (check_date.Year == date.Year && check_date.Month == date.Month && row == mc.CalendarDimensions.Height-1 && col == mc.CalendarDimensions.Width-1) {
+						date_color = mc.TrailingForeColor;
+					} else {
+						return;
+					}
+				}
+			} else {
+				date_color = mc.ForeColor;
+			}
+
+
+			if (date == mc.SelectionStart && date == mc.SelectionEnd) {
+				// see if the date is in the start of selection
+				date_color = mc.BackColor;
+				// draw the left hand of the back ground
+				Rectangle selection_rect = Rectangle.Inflate(rectangle, -3, -3);				
+				dc.FillPie (ResPool.GetSolidBrush (mc.TitleBackColor), selection_rect, 0, 359);
+			} else if (date == mc.SelectionStart) {
+				// see if the date is in the start of selection
+				date_color = mc.BackColor;
+				// draw the left hand of the back ground
+				Rectangle selection_rect = Rectangle.Inflate(rectangle, -3, -3);				
+				dc.FillPie (ResPool.GetSolidBrush (mc.TitleBackColor), selection_rect, 90, 180);
+				// fill the other side as a straight rect
+				if (date < mc.SelectionEnd) 
+				{
+					// use rectangle instead of rectangle to go all the way to edge of rect
+					selection_rect.X = (int) Math.Floor(rectangle.X + rectangle.Width / 2);
+					selection_rect.Width = Math.Max(rectangle.Right - selection_rect.X, 0);
+					dc.FillRectangle (ResPool.GetSolidBrush (mc.TitleBackColor), selection_rect);
+				}
+			} else if (date == mc.SelectionEnd) {
+				// see if it is the end of selection
+				date_color = mc.BackColor;
+				// draw the left hand of the back ground
+				Rectangle selection_rect = Rectangle.Inflate(rectangle, -3, -3);
+				dc.FillPie (ResPool.GetSolidBrush (mc.TitleBackColor), selection_rect, 270, 180);
+				// fill the other side as a straight rect
+				if (date > mc.SelectionStart) {
+					selection_rect.X = rectangle.X;
+					selection_rect.Width = rectangle.Width - (rectangle.Width / 2);
+					dc.FillRectangle (ResPool.GetSolidBrush (mc.TitleBackColor), selection_rect);
+				}
+			} else if (date > mc.SelectionStart && date < mc.SelectionEnd) {
+				// now see if it's in the middle
+				date_color = mc.BackColor;
+				// draw the left hand of the back ground
+				Rectangle selection_rect = Rectangle.Inflate(rectangle, 0, -3);
+				dc.FillRectangle (ResPool.GetSolidBrush (mc.TitleBackColor), selection_rect);
+			}
+
+			// set up some standard string formating variables
+			StringFormat text_format = new StringFormat();
+			text_format.LineAlignment = StringAlignment.Center;
+			text_format.Alignment = StringAlignment.Center;
+			
+
+			// establish if it's a bolded font
+			Font font;
+			if (mc.all_bolded_dates != null && mc.all_bolded_dates.Contains (date)) {
+				font = new Font (mc.Font.FontFamily, mc.Font.Size, mc.Font.Style | FontStyle.Bold);
+			} else {
+				font = mc.Font;
+			}
+
+			// just draw the date now
+			dc.DrawString (date.Day.ToString(), font, ResPool.GetSolidBrush (date_color), rectangle, text_format);
+
+			// today circle if needed
+			if (mc.ShowTodayCircle && date == DateTime.Now.Date) {
+				DrawTodayCircle (dc, interior);
+			}
+
+			// draw the selection grid
+			if (mc.is_date_clicked && mc.clicked_date == date) {				
+				using (Pen pen = new Pen (Color.Black, 1) ) {
+					pen.DashStyle = DashStyle.Dot;
+					dc.DrawRectangle (pen, interior);
+				}
+			}
+		}
+
+		private void DrawTodayCircle (Graphics dc, Rectangle rectangle) {
+			Color circle_color = Color.FromArgb (248, 0, 0);
+			// draw the left hand of the circle 
+			Rectangle lhs_circle_rect = new Rectangle (rectangle.X + 1, rectangle.Y + 4, Math.Max(rectangle.Width - 2, 0), Math.Max(rectangle.Height - 5, 0));
+			Rectangle rhs_circle_rect = new Rectangle (rectangle.X + 1, rectangle.Y + 1, Math.Max(rectangle.Width - 2, 0), Math.Max(rectangle.Height - 2, 0));
+			Point [] curve_points = new Point [3];
+			curve_points [0] = new Point (lhs_circle_rect.X, rhs_circle_rect.Y + rhs_circle_rect.Height/12);
+			curve_points [1] = new Point (lhs_circle_rect.X + lhs_circle_rect.Width/9, rhs_circle_rect.Y);
+			curve_points [2] = new Point (lhs_circle_rect.X + lhs_circle_rect.Width/2 + 1, rhs_circle_rect.Y);
+
+			using (Pen pen = new Pen (circle_color, 2)) {
+				dc.DrawArc (pen, lhs_circle_rect, 90, 180);
+				dc.DrawArc (pen, rhs_circle_rect, 270, 180);					
+				dc.DrawCurve (pen, curve_points);
+				dc.DrawLine (ResPool.GetPen (circle_color), curve_points [2], new Point (curve_points [2].X, lhs_circle_rect.Y));
+			}
+		}
+
+		#endregion 	// MonthCalendar
+
 		#region Panel
 		public override Size PanelDefaultSize {
 			get {

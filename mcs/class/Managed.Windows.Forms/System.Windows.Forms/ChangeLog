@@ -1,3 +1,13 @@
+2004-11-23  John BouAntoun <jba-mono@optusnet.com.au>
+
+	* ThemeWin32Classic.cs: Fixed DrawMonthCalendar and private support methods
+	* System.Windows.Forms/Theme.cs
+	* MonthCalendar.cs: added for MonthCalendar
+	* SelectionRange.cs: added for MonthCalendar
+	* Day.cs: added for MonthCalendar: added for MonthCalendar
+	* DateRangeEventArgs.cs: added for MonthCalendar
+	* DateRangeEventHandler.cs: added for MonthCalendar
+
 2004-11-22  Ravindra <rkumar@novell.com>
 
 	* ThemeWin32Classic.cs: Fixed ListViewDrawing with 'UseItemStyleForSubItems'

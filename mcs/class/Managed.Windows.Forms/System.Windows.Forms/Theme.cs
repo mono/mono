@@ -444,6 +444,12 @@ namespace System.Windows.Forms
 		public abstract Size ToolTipSize(ToolTip tt, string text);
 		#endregion	// ToolTip
 
+		#region MonthCalendar
+
+		public abstract void DrawMonthCalendar(Graphics dc, Rectangle clip_rectangle, MonthCalendar month_calendar);
+
+		#endregion 	// MonthCalendar
+
 		#region TrackBar
 		// Drawing
 		public abstract void DrawTrackBar (Graphics dc, Rectangle clip_rectangle, TrackBar tb);

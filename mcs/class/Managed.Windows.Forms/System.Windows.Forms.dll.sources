@@ -48,6 +48,9 @@ System.Windows.Forms/ConvertEventArgs.cs
 System.Windows.Forms/ConvertEventHandler.cs
 System.Windows.Forms/CreateParams.cs
 System.Windows.Forms/Cursor.cs
+System.Windows.Forms/DateRangeEventArgs.cs
+System.Windows.Forms/DateRangeEventHandler.cs
+System.Windows.Forms/Day.cs
 System.Windows.Forms/DialogResult.cs
 System.Windows.Forms/DockStyle.cs
 System.Windows.Forms/DragAction.cs
@@ -123,6 +126,7 @@ System.Windows.Forms/ListViewAlignment.cs
 System.Windows.Forms/ListViewItem.cs
 System.Windows.Forms/ListViewItemConverter.cs
 System.Windows.Forms/GroupBox.cs
+System.Windows.Forms/MonthCalendar.cs
 System.Windows.Forms/MainMenu.cs
 System.Windows.Forms/MeasureItemEventHandler.cs
 System.Windows.Forms/MeasureItemEventArgs.cs
@@ -156,6 +160,7 @@ System.Windows.Forms/QueryContinueDragEventArgs.cs
 System.Windows.Forms/QueryContinueDragEventHandler.cs
 System.Windows.Forms/RadioButton.cs
 System.Windows.Forms/RightToLeft.cs
+System.Windows.Forms/SelectionRange.cs
 System.Windows.Forms/SelectionMode.cs
 System.Windows.Forms/ScrollableControl.cs
 System.Windows.Forms/ScrollBar.cs
