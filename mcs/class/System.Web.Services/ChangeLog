@@ -1,3 +1,7 @@
+2003-07-21  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* System.Web.Services.dll.sources: Added Assembly/AssemblyInfo.cs, Assembly/Locale.cs
+
 2003-07-04  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* list: added System.Web.Services.Protocols.HttpSoapWebServiceHandler.cs and

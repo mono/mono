@@ -1,3 +1,5 @@
+Assembly/AssemblyInfo.cs
+Assembly/Locale.cs
 System.Web.Services/TODOAttribute.cs
 System.Web.Services/WebMethodAttribute.cs
 System.Web.Services/WebService.cs
