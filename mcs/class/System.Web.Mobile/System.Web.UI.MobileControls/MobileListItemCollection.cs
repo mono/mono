@@ -111,7 +111,7 @@ namespace System.Web.UI.MobileControls
 
 		public void Remove(string item)
 		{
-			RemoveAt(IndexOf(new MobileListItem(item));
+			RemoveAt(IndexOf(new MobileListItem(item)));
 		}
 
 		public void Remove(MobileListItem item)
