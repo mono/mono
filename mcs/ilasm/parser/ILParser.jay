@@ -776,6 +776,10 @@ type			: K_CLASS class_ref
                           {
                                 $$ = new PrimitiveTypeRef (PrimitiveType.Char, "System.Char");
                           }
+			| K_WCHAR
+			  {
+				$$ = new PrimitiveTypeRef (PrimitiveType.Char, "System.Char");
+			  }
 			| K_VOID
                           {
                                 $$ = new PrimitiveTypeRef (PrimitiveType.Void, "System.Void");
@@ -1254,6 +1258,10 @@ field_init		: K_FLOAT32 OPEN_PARENS float64 CLOSE_PARENS
                           {
                                 $$ = new CharConst (Convert.ToChar ($3));
                           }
+			| K_WCHAR OPEN_PARENS int64 CLOSE_PARENS
+			  {
+				$$ = new CharConst (Convert.ToChar ($3));
+			  }
 			| K_INT8 OPEN_PARENS int64 CLOSE_PARENS
                           {
                                 $$ = new IntConst (Convert.ToByte ($3));
@@ -1331,6 +1339,10 @@ dataitem		: K_CHAR STAR OPEN_PARENS comp_qstring CLOSE_PARENS
                           {
                                 $$ = new StringConst ((string) $4);
                           }
+			| K_WCHAR STAR OPEN_PARENS comp_qstring CLOSE_PARENS
+			  {
+				$$ = new StringConst ((string) $4);
+			  }
 			| AMPERSAND OPEN_PARENS id CLOSE_PARENS
                           {
                            //     DataDef def = codegen.CurrentTypeDef.GetDataDef ((string) $3);
