@@ -1,3 +1,12 @@
+//
+// module.cs: Module handler
+//
+// Author: Rafael Teixeira (rafaelteixeirabr@hotmail.com)
+//
+// Licensed under the terms of the GNU GPL
+//
+// (C) 2002 Rafael Teixeira
+//
 using System;
 using System.Collections;
 using System.Diagnostics.SymbolStore;

@@ -117,7 +117,7 @@ namespace Mono.CSharp {
 		{
 			if (ConstantValue != null)
 				return ConstantValue;
-			
+
 			Expr = Expr.Resolve (ec);
 
 			if (Expr == null) {
@@ -131,6 +131,42 @@ namespace Mono.CSharp {
 			}
 
 			ConstantValue = ((Constant) Expr).GetValue ();
+
+			if (type != Expr.Type) {
+				try {
+					ConstantValue = TypeManager.ChangeType (ConstantValue, type);
+				} catch {
+					Expression.Error_CannotConvertImplicit (Location, Expr.Type, type);
+					return null;
+				}
+
+				if (type == TypeManager.int32_type)
+					Expr = new IntConstant ((int) ConstantValue);
+				else if (type == TypeManager.uint32_type)
+					Expr = new UIntConstant ((uint) ConstantValue);
+				else if (type == TypeManager.int64_type)
+					Expr = new LongConstant ((long) ConstantValue);
+				else if (type == TypeManager.uint64_type)
+					Expr = new ULongConstant ((ulong) ConstantValue);
+				else if (type == TypeManager.float_type)
+					Expr = new FloatConstant ((float) ConstantValue);
+				else if (type == TypeManager.double_type)
+					Expr = new DoubleConstant ((double) ConstantValue);
+				else if (type == TypeManager.string_type)
+					Expr = new StringConstant ((string) ConstantValue);
+				else if (type == TypeManager.short_type)
+					Expr = new ShortConstant ((short) ConstantValue);
+				else if (type == TypeManager.ushort_type)
+					Expr = new UShortConstant ((ushort) ConstantValue);
+				else if (type == TypeManager.sbyte_type)
+					Expr = new SByteConstant ((sbyte) ConstantValue);
+				else if (type == TypeManager.byte_type)
+					Expr = new ByteConstant ((byte) ConstantValue);
+				else if (type == TypeManager.char_type)
+					Expr = new CharConstant ((char) ConstantValue);
+				else if (type == TypeManager.bool_type)
+					Expr = new BoolConstant ((bool) ConstantValue);
+			}
 
 			if (type.IsEnum){
 				//

@@ -1,4 +1,8 @@
 2002-06-07  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* merged const.cs, enum.cs, expression.cs and  typemanager.cs from mcs/mcs
+      * comments on module.cs
+
+2002-06-07  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* merged class.cs, attribute.cs from mcs/mcs
 
 2002-06-07  Rafael Teixeira <rafaelteixeirabr@hotmail.com>

@@ -1181,6 +1181,8 @@ namespace Mono.CSharp {
 					return new FloatConstant ((float) v);
 				if (target_type == TypeManager.double_type)
 					return new DoubleConstant ((double) v);
+				if (target_type == TypeManager.char_type)
+					return new CharConstant ((char) v);
 			}
 			if (expr is SByteConstant){
 				sbyte v = ((SByteConstant) expr).Value;
@@ -1203,6 +1205,8 @@ namespace Mono.CSharp {
 					return new FloatConstant ((float) v);
 				if (target_type == TypeManager.double_type)
 					return new DoubleConstant ((double) v);
+				if (target_type == TypeManager.char_type)
+					return new CharConstant ((char) v);
 			}
 			if (expr is ShortConstant){
 				short v = ((ShortConstant) expr).Value;
@@ -1225,6 +1229,8 @@ namespace Mono.CSharp {
 					return new FloatConstant ((float) v);
 				if (target_type == TypeManager.double_type)
 					return new DoubleConstant ((double) v);
+				if (target_type == TypeManager.char_type)
+					return new CharConstant ((char) v);
 			}
 			if (expr is UShortConstant){
 				ushort v = ((UShortConstant) expr).Value;
@@ -1247,6 +1253,8 @@ namespace Mono.CSharp {
 					return new FloatConstant ((float) v);
 				if (target_type == TypeManager.double_type)
 					return new DoubleConstant ((double) v);
+				if (target_type == TypeManager.char_type)
+					return new CharConstant ((char) v);
 			}
 			if (expr is IntConstant){
 				int v = ((IntConstant) expr).Value;
@@ -1269,6 +1277,8 @@ namespace Mono.CSharp {
 					return new FloatConstant ((float) v);
 				if (target_type == TypeManager.double_type)
 					return new DoubleConstant ((double) v);
+				if (target_type == TypeManager.char_type)
+					return new CharConstant ((char) v);
 			}
 			if (expr is UIntConstant){
 				uint v = ((UIntConstant) expr).Value;
@@ -1291,6 +1301,8 @@ namespace Mono.CSharp {
 					return new FloatConstant ((float) v);
 				if (target_type == TypeManager.double_type)
 					return new DoubleConstant ((double) v);
+				if (target_type == TypeManager.char_type)
+					return new CharConstant ((char) v);
 			}
 			if (expr is LongConstant){
 				long v = ((LongConstant) expr).Value;
@@ -1313,6 +1325,8 @@ namespace Mono.CSharp {
 					return new FloatConstant ((float) v);
 				if (target_type == TypeManager.double_type)
 					return new DoubleConstant ((double) v);
+				if (target_type == TypeManager.char_type)
+					return new CharConstant ((char) v);
 			}
 			if (expr is ULongConstant){
 				ulong v = ((ULongConstant) expr).Value;
@@ -1335,6 +1349,8 @@ namespace Mono.CSharp {
 					return new FloatConstant ((float) v);
 				if (target_type == TypeManager.double_type)
 					return new DoubleConstant ((double) v);
+				if (target_type == TypeManager.char_type)
+					return new CharConstant ((char) v);
 			}
 			if (expr is FloatConstant){
 				float v = ((FloatConstant) expr).Value;
@@ -1357,6 +1373,8 @@ namespace Mono.CSharp {
 					return new ULongConstant ((ulong) v);
 				if (target_type == TypeManager.double_type)
 					return new DoubleConstant ((double) v);
+				if (target_type == TypeManager.char_type)
+					return new CharConstant ((char) v);
 			}
 			if (expr is DoubleConstant){
 				double v = ((DoubleConstant) expr).Value;
@@ -1379,6 +1397,8 @@ namespace Mono.CSharp {
 					return new ULongConstant ((ulong) v);
 				if (target_type == TypeManager.float_type)
 					return new FloatConstant ((float) v);
+				if (target_type == TypeManager.char_type)
+					return new CharConstant ((char) v);
 			}
 
 			return null;

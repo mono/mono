@@ -12,6 +12,7 @@
 #define CACHE
 
 using System;
+using System.Globalization;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -1084,6 +1085,59 @@ public class TypeManager {
 		} while (t != null);
 		
 		return false;
+	}
+
+	// This is a custom version of Convert.ChangeType() which works
+	// with the TypeBuilder defined types when compiling corlib.
+	public static object ChangeType (object value, Type conversionType)
+	{
+		if (!(value is IConvertible))
+			throw new ArgumentException ();
+
+		IConvertible convertValue = (IConvertible) value;
+		CultureInfo ci = CultureInfo.CurrentCulture;
+		NumberFormatInfo provider = ci.NumberFormat;
+
+		//
+		// We must use Type.Equals() here since `conversionType' is
+		// the TypeBuilder created version of a system type and not
+		// the system type itself.  You cannot use Type.GetTypeCode()
+		// on such a type - it'd always return TypeCode.Object.
+		//
+		if (conversionType.Equals (typeof (Boolean)))
+			return (object)(convertValue.ToBoolean (provider));
+		else if (conversionType.Equals (typeof (Byte)))
+			return (object)(convertValue.ToByte (provider));
+		else if (conversionType.Equals (typeof (Char)))
+			return (object)(convertValue.ToChar (provider));
+		else if (conversionType.Equals (typeof (DateTime)))
+			return (object)(convertValue.ToDateTime (provider));
+		else if (conversionType.Equals (typeof (Decimal)))
+			return (object)(convertValue.ToDecimal (provider));
+		else if (conversionType.Equals (typeof (Double)))
+			return (object)(convertValue.ToDouble (provider));
+		else if (conversionType.Equals (typeof (Int16)))
+			return (object)(convertValue.ToInt16 (provider));
+		else if (conversionType.Equals (typeof (Int32)))
+			return (object)(convertValue.ToInt32 (provider));
+		else if (conversionType.Equals (typeof (Int64)))
+			return (object)(convertValue.ToInt64 (provider));
+		else if (conversionType.Equals (typeof (SByte)))
+			return (object)(convertValue.ToSByte (provider));
+		else if (conversionType.Equals (typeof (Single)))
+			return (object)(convertValue.ToSingle (provider));
+		else if (conversionType.Equals (typeof (String)))
+			return (object)(convertValue.ToString (provider));
+		else if (conversionType.Equals (typeof (UInt16)))
+			return (object)(convertValue.ToUInt16 (provider));
+		else if (conversionType.Equals (typeof (UInt32)))
+			return (object)(convertValue.ToUInt32 (provider));
+		else if (conversionType.Equals (typeof (UInt64)))
+			return (object)(convertValue.ToUInt64 (provider));
+		else if (conversionType.Equals (typeof (Object)))
+			return (object)(value);
+		else 
+			throw new InvalidCastException ();
 	}
 
 	//
