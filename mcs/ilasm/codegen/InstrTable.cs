@@ -47,7 +47,7 @@ namespace Mono.ILASM {
 			op_table = new Hashtable ();
 
 			op_table["nop"] = Op.nop;
-			op_table["breakOp"] = Op.breakOp;
+			op_table["break"] = Op.breakOp;
 			op_table["ldarg.0"] = Op.ldarg_0;
 			op_table["ldarg.1"] = Op.ldarg_1;
 			op_table["ldarg.2"] = Op.ldarg_2;

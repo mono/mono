@@ -176,7 +176,7 @@ namespace Mono.ILASM {
 		public void AddInstruction (InstrBase instr)
 		{
 			if (instr == null) {
-				throw new System.NullReferenceException ("<null> instruction");
+				throw new System.ArgumentNullException ("instr", "<null> instruction");
 			}
 
 			if (instructions == null) {
