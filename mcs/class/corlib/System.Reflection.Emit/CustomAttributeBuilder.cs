@@ -83,6 +83,14 @@ namespace System.Reflection.Emit {
 			Initialize (con, constructorArgs, namedProperties, propertyValues, namedFields, fieldValues);
 		}
 
+		private bool IsValidType (Type t)
+		{
+			/* FIXME: Add more checks */
+			if (t.IsArray && t.GetArrayRank () > 1)
+				return false;
+			return true;
+		}
+
 		private void Initialize (ConstructorInfo con, object [] constructorArgs,
 				PropertyInfo [] namedProperties, object [] propertyValues,
 				FieldInfo [] namedFields, object [] fieldValues)
@@ -118,6 +126,8 @@ namespace System.Reflection.Emit {
 			i = 0;
 			foreach (FieldInfo fi in namedFields) {
 				Type t = fi.DeclaringType;
+				if (!IsValidType (t))
+					throw new ArgumentException ("Field '" + fi.Name + "' does not have a valid type.");
 				if ((atype != t) && (!t.IsSubclassOf (atype)) && (!atype.IsSubclassOf (t)))
 					throw new ArgumentException ("Field '" + fi.Name + "' does not belong to the same class as the constructor");
 				// FIXME: Check enums and TypeBuilders as well
@@ -139,6 +149,8 @@ namespace System.Reflection.Emit {
 				if (!pi.CanWrite)
 					throw new ArgumentException ("Property '" + pi.Name + "' does not have a setter.");
 				Type t = pi.DeclaringType;
+				if (!IsValidType (t))
+					throw new ArgumentException ("Property '" + pi.Name + "' does not have a valid type.");
 				if ((atype != t) && (!t.IsSubclassOf (atype)) && (!atype.IsSubclassOf (t)))
 					throw new ArgumentException ("Property '" + pi.Name + "' does not belong to the same class as the constructor");
 				if (propertyValues [i] != null) {
@@ -153,6 +165,8 @@ namespace System.Reflection.Emit {
 			foreach (ParameterInfo pi in con.GetParameters ()) {
 				if (pi != null) {
 					Type paramType = pi.ParameterType;
+					if (!IsValidType (paramType))
+						throw new ArgumentException ("Argument " + i + " does not have a valid type.");
 					if (constructorArgs [i] != null)
 						if (!(paramType is TypeBuilder) && !paramType.IsEnum && !paramType.IsAssignableFrom (constructorArgs [i].GetType ()))
 							if (!paramType.IsArray)

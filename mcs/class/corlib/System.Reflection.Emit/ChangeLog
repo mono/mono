@@ -1,3 +1,8 @@
+2004-10-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* CustomAttributeBuilder.cs: Check that arguments are not 
+	multi-dimensional arrays.
+
 2004-10-12  Martin Baulig  <martin@ximian.com>
 
 	* TypeBuilder.cs (TypeBuilder.setup_generic_class): Renamed to
