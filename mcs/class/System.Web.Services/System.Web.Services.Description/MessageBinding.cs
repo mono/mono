@@ -24,7 +24,7 @@ namespace System.Web.Services.Description {
 		
 		protected MessageBinding ()
 		{
-			name = String.Empty;
+			name = null;
 			operationBinding = new OperationBinding ();
 		}
 		
@@ -37,7 +37,7 @@ namespace System.Web.Services.Description {
 			get;
 		}
 
-		[DefaultValue ("")]
+		[DefaultValue (null)]
 		[XmlAttribute ("name", DataType = "NMTOKEN")]	
 		public string Name {
 			get { return name; }

@@ -251,8 +251,8 @@ namespace System.Web.Services.Description {
 
 		Operation FindPortOperation ()
 		{
-			string inMessage = (operationBinding.Input.Name != "") ? operationBinding.Input.Name : operationBinding.Name;
-			string outMessage = (operationBinding.Output.Name != "") ? operationBinding.Output.Name : operationBinding.Name;
+			string inMessage = (operationBinding.Input.Name != null) ? operationBinding.Input.Name : operationBinding.Name;
+			string outMessage = (operationBinding.Output.Name != null) ? operationBinding.Output.Name : operationBinding.Name;
 			string operName = operationBinding.Name;
 			
 			foreach (Operation oper in PortType.Operations)
