@@ -7,11 +7,9 @@ include build/rules.make
 
 #all: platform-check profile-check all-recursive #all-local
 
-.PHONY: all clean all-profile clean-profile install uninstall test run-test testcorlib
-all clean:
-	$(MAKE) $@-profile
+.PHONY: all clean all-profiles clean-profiles install uninstall test run-test testcorlib
 
-all-profile: platform-check profile-check all-recursive
+all: platform-check profile-check all-recursive
 
 install: platform-check profile-check install-recursive #install-local
 
@@ -21,13 +19,17 @@ test: platform-check profile-check test-recursive #test-local
 
 run-test: run-test-recursive #run-test-local
 
-clean-profile: clean-recursive #clean-local
+clean: clean-recursive #clean-local
 
 # fun specialty targets
 
 all-profiles:
 	$(MAKE) PROFILE=default all || exit 1 ; \
 	$(MAKE) PROFILE=net_2_0 all || exit 1 ;
+
+clean-profiles:
+	$(MAKE) PROFILE=default clean || exit 1 ; \
+	$(MAKE) PROFILE=net_2_0 clean || exit 1 ;
 
 testcorlib:
 	@cd class/corlib && $(MAKE) test run-test
