@@ -1,3 +1,7 @@
+2003-01-04  Piers Haken  <piersh@friskit.com>
+
+	* Parser.*: Remove extraneous "using" that was stopping the build. Permanently thisi time ;-)
+
 2003-02-02  Piers Haken <piersh@friskit.com>
 
 	* Parser.jay: add token names
