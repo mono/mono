@@ -106,8 +106,8 @@ namespace Mono.Xml.Xsl
 	internal class Compiler : IStaticXsltContext {
 		public const string XsltNamespace = "http://www.w3.org/1999/XSL/Transform";
 			
-		ArrayList inputStack = new ArrayList ();
-		XPathNavigator currentInput;
+		ArrayList inputNSResolverStack = new ArrayList ();
+		XPathNavigatorNsm currentNsm;
 		
 		Stack styleStack = new Stack ();
 		XslStylesheet currentStyle;
@@ -169,7 +169,7 @@ namespace Mono.Xml.Xsl
 		
 #region Input
 		public XPathNavigator Input {
-			get { return currentInput; }
+			get { return currentNsm.Navigator; }
 		}
 		
 		public XslStylesheet CurrentStylesheet {
@@ -213,26 +213,29 @@ namespace Mono.Xml.Xsl
 		
 		private void PushInputDocument (XPathNavigator nav)
 		{
-			for (int i = 0; i < inputStack.Count; i++) {
-				XPathNavigator cur = (XPathNavigator) inputStack [i];
+			// Inclusion nest check
+			IXmlLineInfo li = currentNsm != null ?
+				currentNsm.Navigator as IXmlLineInfo : null;
+			bool hasLineInfo = (li != null && !li.HasLineInfo ());
+			for (int i = 0; i < inputNSResolverStack.Count; i++) {
+				XPathNavigator cur = ((XPathNavigatorNsm) inputNSResolverStack [i]).Navigator;
 				if (cur.BaseURI == nav.BaseURI) {
-					IXmlLineInfo li = currentInput as IXmlLineInfo;
 					throw new XsltCompileException (null,
-						currentInput.BaseURI, 
-						li != null ? li.LineNumber : 0,
-						li != null ? li.LinePosition : 0);
+						currentNsm.Navigator.BaseURI, 
+						hasLineInfo ? li.LineNumber : 0,
+						hasLineInfo ? li.LinePosition : 0);
 				}
 			}
-			if (currentInput != null)
-				inputStack.Add (currentInput);
-			currentInput = nav;
+			if (currentNsm != null)
+				inputNSResolverStack.Add (currentNsm);
+			currentNsm = new XPathNavigatorNsm (nav);
 		}
 		
 		public void PopInputDocument ()
 		{
-			int last = inputStack.Count - 1;
-			currentInput = (XPathNavigator) inputStack [last];
-			inputStack.RemoveAt (last);
+			int last = inputNSResolverStack.Count - 1;
+			currentNsm = (XPathNavigatorNsm) inputNSResolverStack [last];
+			inputNSResolverStack.RemoveAt (last);
 		}
 		
 		public QName ParseQNameAttribute (string localName)
@@ -549,12 +552,12 @@ namespace Mono.Xml.Xsl
 		
 		XmlNamespaceManager IStaticXsltContext.GetNsm ()
 		{
-			return new XPathNavigatorNsm (Input);
+			return currentNsm;
 		}
 		
 		public XmlNamespaceManager GetNsm ()
 		{
-			return new XPathNavigatorNsm (Input);
+			return currentNsm;
 		}
 #endregion
 		public void CompileOutput ()
@@ -825,7 +828,11 @@ namespace Mono.Xml.Xsl
 			if (nsScope.NodeType == XPathNodeType.Attribute)
 				nsScope.MoveToParent ();
 		}
-		
+
+		public XPathNavigator Navigator {
+			get { return nsScope; }
+		}
+
 		public override string DefaultNamespace { get { return String.Empty; }}
 
 #if NET_2_0

@@ -1,3 +1,7 @@
+2004-12-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Compiler.cs : don't create XPathNavigatorNsm for every GetNsm() call.
+
 2004-11-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslKey.cs, XslStylesheet.cs, MSXslScriptManager.cs :
