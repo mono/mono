@@ -1,3 +1,8 @@
+2002-12-08  Martin Baulig  <martin@ximian.com>
+
+	* handles.c (_wapi_handle_new): Create new non-shared handles with
+	an initial refcount of 1, not 0.
+
 2002-11-22  Dietmar Maurer  <dietmar@ximian.com>
 
 	* threads.c (TlsGetValue): removed unnecessary mutex
