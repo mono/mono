@@ -1061,7 +1061,7 @@ namespace Mono.CSharp
 
 			if (arg == "default"){
 				line = ref_line = line;
-				return false;
+				return true;
 			}
 			
 			try {
