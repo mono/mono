@@ -1,3 +1,8 @@
+2003-11-20  Jackson Harper <jackson@ximian.com>
+
+	* System.web.dll.sources: add OutputCacheModule.cs and
+	CachedRawResponse.cs to the build.
+	
 2003-11-19  Todd Berman <tberman@gentoo.org>
 
 	* System.Web.dll.sources: Add KeyedList.cs and KeyedListEnumerator.cs
