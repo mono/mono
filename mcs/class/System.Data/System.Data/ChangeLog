@@ -1,3 +1,9 @@
+2004-05-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CustomDataClassGenerator.cs : Modified that DataSet contains each
+	  DataTable field so that each table property can access them directly.
+	  (plus, modified standalone code driver code: shouldn't affect)
+
 2004-05-05  Boris Kirzner  <borisk@mainsoft.com>
 
 	* DataView.cs , DataRowView.cs : Added implementation to basic methods and properties.

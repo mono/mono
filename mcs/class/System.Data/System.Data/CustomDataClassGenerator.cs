@@ -24,6 +24,7 @@ using System.Runtime.Serialization;
 
 // only for Driver
 using Microsoft.CSharp;
+using System.IO;
 
 namespace System.Data
 {
@@ -41,10 +42,19 @@ namespace System.Data
 
 				DataSet ds = new DataSet ();
 				ds.ReadXml (args [0]);
-				CodeNamespace cns = new CodeNamespace ();
 				ICodeGenerator gen = new CSharpCodeProvider ().CreateGenerator ();
+
+				CodeNamespace cns = new CodeNamespace ();
+				TextWriter tw = new StreamWriter (Path.ChangeExtension (args [0], ".ms.cs"), false, Encoding.Default);
+				TypedDataSetGenerator.Generate (ds, cns, gen);
+				gen.GenerateCodeFromNamespace (cns, tw, null);
+				tw.Close ();
+
+				cns = new CodeNamespace ();
+				tw = new StreamWriter (Path.ChangeExtension (args [0], ".mono.cs"), false, Encoding.Default);
 				CustomDataClassGenerator.CreateDataSetClasses (ds, cns, gen, null);
-				gen.GenerateCodeFromNamespace (cns, Console.Out, null);
+				gen.GenerateCodeFromNamespace (cns, tw, null);
+				tw.Close ();
 			} catch (Exception ex) {
 				Console.WriteLine (ex);
 			}
@@ -463,7 +473,7 @@ namespace System.Data
 			// Clone()
 			dsType.Members.Add (CreateDataSetCloneMethod (dsType));
 
-// FIXME: I kept these methods out of the generated source right now.
+// FIXME: I keep these methods out of the generated source right now.
 // It should be added after runtime serialization was implemented.
 /*
 			// ShouldSerializeTables()
@@ -629,6 +639,7 @@ namespace System.Data
 			method.Parameters.Add (Param (TypeRef (typeof (XmlReader)), "reader"));
 			// TODO: implemnet
 			method.Statements.Add (Comment ("TODO: implement"));
+			// Hey, how can I specify the constructor to invoke chained ctor with an empty parameter list!?
 			method.Statements.Add (Throw (New (typeof (NotImplementedException))));
 			return method;
 		}
@@ -647,17 +658,16 @@ namespace System.Data
 			m.Statements.Add (Let (PropRef ("CaseSensitive"), Const (ds.CaseSensitive)));
 			m.Statements.Add (Let (PropRef ("EnforceConstraints"), Const (ds.EnforceConstraints)));
 
-/* FIXME: currently we have no local table variables, so we don't have to fill 
 			// table
-			string tableFieldName = "table" + opts.TableMemberName (dt.TableName);
 			foreach (DataTable dt in ds.Tables) {
-				m.Statements.Add (Let (FieldRef (tableFieldName), New (TypeRef (opts.TableTypeName (dt.TableName)))));
+				string tableFieldName = "__table" + opts.TableMemberName (dt.TableName, gen);
+				string tableTypeName = opts.TableTypeName (dt.TableName, gen);
+				m.Statements.Add (Let (FieldRef (tableFieldName), New (tableTypeName)));
 				m.Statements.Add (Eval (MethodInvoke (PropRef ("Tables"), "Add", FieldRef (tableFieldName))));
 				// TODO: ForeignKeyConstraint
 			}
 
 			// TODO: relations
-*/
 
 			return m;
 		}
@@ -668,10 +678,12 @@ namespace System.Data
 			m.Attributes = MemberAttributes.Assembly;
 			m.Name = "InitializeFields";
 
-/* TODO: field initialization
+			foreach (DataTable dt in ds.Tables)
+				m.Statements.Add (Eval (MethodInvoke (FieldRef ("__table" + opts.TableMemberName (dt.TableName, gen)), "InitializeFields")));
+
+/* TODO: relation field initialization
 
 */
-
 			return m;
 		}
 
@@ -697,13 +709,17 @@ namespace System.Data
 			string tableTypeName = opts.TableTypeName (table.TableName, gen);
 			string tableVarName = opts.TableMemberName (table.TableName, gen);
 
+			CodeMemberField privTable = new CodeMemberField ();
+			privTable.Type = TypeRef (tableTypeName);
+			privTable.Name = "__table" + tableVarName;
+			dsType.Members.Add (privTable);
+
 			CodeMemberProperty pubTable = new CodeMemberProperty ();
 			pubTable.Type = TypeRef (tableTypeName);
 			pubTable.Name = tableVarName;
 			pubTable.HasSet = false;
-			// Code: return Tables ["foo"];
-			// FIXME: Would "return table[foo];" be better?
-			pubTable.GetStatements.Add (Return (Cast (tableTypeName, IndexerRef (PropRef ("Tables"), Const (table.TableName)))));
+			// Code: return __table[foo];
+			pubTable.GetStatements.Add (Return (FieldRef ("__table" + tableVarName)));
 
 			dsType.Members.Add (pubTable);
 
