@@ -1,3 +1,10 @@
+2004-12-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* xslttest.cs : improved. See "mono xslttest.exe -?" for details.
+	* Makefile : modified "make test" to "make run-test" and output
+	  results into TestResult.Xml that contains all results.
+	* README : updated as well.
+
 2004-01-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* xslttest.cs : Now it tests against XPathDocument. Reduced error msgs.

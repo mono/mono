@@ -18,8 +18,8 @@ $(RESULTS) :
 xslt-testsuite-01.zip :
 	wget http://www.oasis-open.org/committees/download.php/1937/xslt-testsuite-01.zip
 
-test :
-	$(RUNTIME) xslttest.exe
+run-test :
+	$(RUNTIME) xslttest.exe --report:TestResult.xml --xml --details --outall
 
 # Be careful to use this!
 # clean :

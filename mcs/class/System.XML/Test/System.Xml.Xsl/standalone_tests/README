@@ -8,7 +8,7 @@ http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=xslt
 "make" will do what you need (downloading test archive, expanding,
 compiling test runner.
 
-"make test" will do the actual tests.
+"make run-test" will do the actual tests.
 
 If you want to create reference output files by yourself, compile
 prepare.cs and run it on Microsoft.NET (it requires cygwin).
