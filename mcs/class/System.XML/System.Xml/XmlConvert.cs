@@ -336,26 +336,30 @@ namespace System.Xml {
 			return value.ToString(CultureInfo.InvariantCulture);
 		}
 
-		public static string ToString(TimeSpan value)
+		public static string ToString (TimeSpan value)
 		{
-			StringBuilder builder = new StringBuilder();
+			StringBuilder builder = new StringBuilder ();
 			if (value.Ticks < 0) {
-				builder.Append('-');
-				value = value.Negate();
+				builder.Append ('-');
+				value = value.Negate ();
 			}
-			builder.Append('P');
-			if (value.Days > 0) builder.Append(value.Days).Append('D');
-			if (value.Days > 0 || value.Minutes > 0 || value.Seconds > 0 || value.Milliseconds > 0) {
+			builder.Append ('P');
+			if (value.Days > 0)
+				builder.Append (value.Days).Append ('D');
+			if (value.Days > 0 || value.Hours > 0 || value.Minutes > 0 || value.Seconds > 0 || value.Milliseconds > 0) {
 				builder.Append('T');
-				if (value.Hours > 0) builder.Append(value.Hours).Append('D');
-				if (value.Minutes > 0) builder.Append(value.Minutes).Append('M');
+				if (value.Hours > 0)
+					builder.Append (value.Hours).Append ('H');
+				if (value.Minutes > 0) 
+					builder.Append (value.Minutes).Append ('M');
 				if (value.Seconds > 0 || value.Milliseconds > 0) {
-					builder.Append(value.Seconds);
-					if (value.Milliseconds > 0) builder.Append('.').Append(String.Format("{0:000}", value.Milliseconds));
-					builder.Append('S');
+					builder.Append (value.Seconds);
+					if (value.Milliseconds > 0)
+						builder.Append ('.').AppendFormat ("{0:000}", value.Milliseconds);
+					builder.Append ('S');
 				}
 			}
-			return builder.ToString();
+			return builder.ToString ();
 		}
 
 		public static string ToString(double value)
