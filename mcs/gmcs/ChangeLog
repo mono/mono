@@ -1,3 +1,9 @@
+2004-10-13  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (TypeManager.InflatedConstraints): New nested class.
+	(TypeParameter.DefineType): If we're a method type parameter and
+	that method is overriding something, "inflate" its constraints.
+
 2004-10-12  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (MemberAccess.DoResolve): If we're a SimpleName

@@ -445,7 +445,7 @@ namespace Mono.CSharp {
 
 			if (HasClassConstraint != gc.HasClassConstraint)
 				return false;
-			if (HasClassConstraint && !gc.ClassConstraint.Equals (ClassConstraint))
+			if (HasClassConstraint && !TypeManager.IsEqual (gc.ClassConstraint, ClassConstraint))
 				return false;
 
 			int gc_icount = gc.InterfaceConstraints != null ?
@@ -459,10 +459,7 @@ namespace Mono.CSharp {
 			foreach (Type iface in gc.InterfaceConstraints) {
 				bool ok = false;
 				foreach (Type check in InterfaceConstraints) {
-					if (iface.IsGenericParameter && check.IsGenericParameter) {
-						ok = true;
-						break;
-					} else if (iface.Equals (check)) {
+					if (TypeManager.IsEqual (iface, check)) {
 						ok = true;
 						break;
 					}
@@ -566,17 +563,22 @@ namespace Mono.CSharp {
 
 				int pos = type.GenericParameterPosition;
 				ParameterData pd = Invocation.GetParameterData (mb);
-				gc = pd.GenericConstraints (pos);
+				GenericConstraints temp_gc = pd.GenericConstraints (pos);
 				Type mparam = mb.GetGenericArguments () [pos];
+
+				if (temp_gc != null)
+					gc = new InflatedConstraints (temp_gc, implementing.DeclaringType);
+				else if (constraints != null)
+					gc = new InflatedConstraints (constraints, implementing.DeclaringType);
 
 				bool ok = true;
 				if (constraints != null) {
-					if (gc == null)
+					if (temp_gc == null)
 						ok = false;
 					else if (!constraints.CheckInterfaceMethod (ec, gc))
 						ok = false;
 				} else {
-					if (!is_override && (gc != null))
+					if (!is_override && (temp_gc != null))
 						ok = false;
 				}
 
@@ -716,6 +718,82 @@ namespace Mono.CSharp {
 		public override string ToString ()
 		{
 			return "TypeParameter[" + name + "]";
+		}
+
+		protected class InflatedConstraints : GenericConstraints
+		{
+			GenericConstraints gc;
+			Type base_type;
+			Type class_constraint;
+			Type[] iface_constraints;
+			Type[] dargs;
+			Type declaring;
+
+			public InflatedConstraints (GenericConstraints gc, Type declaring)
+			{
+				this.gc = gc;
+				this.declaring = declaring;
+
+				dargs = TypeManager.GetTypeArguments (declaring);
+
+				ArrayList list = new ArrayList ();
+				if (gc.HasClassConstraint)
+					list.Add (inflate (gc.ClassConstraint));
+				foreach (Type iface in gc.InterfaceConstraints)
+					list.Add (inflate (iface));
+
+				bool has_class_constr = false;
+				if (list.Count > 0) {
+					Type first = (Type) list [0];
+					has_class_constr = !first.IsInterface && !first.IsGenericParameter;
+				}
+
+				if ((list.Count > 0) && has_class_constr) {
+					class_constraint = (Type) list [0];
+					iface_constraints = new Type [list.Count - 1];
+					list.CopyTo (1, iface_constraints, 0, list.Count - 1);
+				} else {
+					iface_constraints = new Type [list.Count];
+					list.CopyTo (iface_constraints, 0);
+				}
+
+				if (HasValueTypeConstraint)
+					base_type = TypeManager.value_type;
+				else if (class_constraint != null)
+					base_type = class_constraint;
+				else
+					base_type = TypeManager.object_type;
+			}
+
+			Type inflate (Type t)
+			{
+				if (t == null)
+					return null;
+				if (t.IsGenericParameter)
+					return dargs [t.GenericParameterPosition];
+				if (t.IsGenericInstance) {
+					t = t.GetGenericTypeDefinition ();
+					t = t.BindGenericParameters (dargs);
+				}
+
+				return t;
+			}
+
+			public override GenericParameterAttributes Attributes {
+				get { return gc.Attributes; }
+			}
+
+			public override Type ClassConstraint {
+				get { return class_constraint; }
+			}
+
+			public override Type EffectiveBaseClass {
+				get { return base_type; }
+			}
+
+			public override Type[] InterfaceConstraints {
+				get { return iface_constraints; }
+			}
 		}
 	}
 
