@@ -132,16 +132,23 @@ namespace Mono.MonoBASIC {
 				
 				if ((list.Count > 0) && ((ModFlags & Modifiers.SHADOWS) == 0))
 					Report.Warning (
-							40004, 2, Location, 
-							"Const '" + Name + "' should be declared " +
-                            "Shadows since the base type '" + ptype.Name /*parent.MakeName (Name)*/ + 
-							"' has a Const with same name");
+						40004, 2, Location, 
+						"Const '" + Name + "' should be declared " +
+						"Shadows since the base type '" + ptype.Name + 
+						"' has a Const with same name");
+				if (list.Count == 0) {
+					// if a member of module is not inherited from Object class
+					// can not be declared protected
+					if ((parent is Module) && ((ModFlags & Modifiers.PROTECTED) != 0))
+						Report.Error (30593, Location,
+							"'Const' inside a 'Module' can not be " +
+							"declared as 'Protected'");
 
-				/*if (list.Count == 0)
-					if ((ModFlags & Modifiers.NEW) != 0)
+					/*if ((ModFlags & Modifiers.NEW) != 0)
 						WarningNotHiding (parent);*/
-
-			} /*else if ((ModFlags & Modifiers.NEW) != 0)
+				}
+			} 
+			/*else if ((ModFlags & Modifiers.NEW) != 0)
 				WarningNotHiding (parent);*/
 
 			FieldBuilder = parent.TypeBuilder.DefineField (Name, type, FieldAttr);

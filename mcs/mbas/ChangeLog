@@ -1,3 +1,9 @@
+2004-04-16 Anirban Bhattacharjee <banirban@novell.com>
+	* class.cs: Duplicate entry point exception number changed
+		    Checked delaration of Types, fields, methods as Protected if they are member of Module type
+	* const.cs: Checked delaration of constructor as Protected if it is member of Module type
+	* driver.cs: exception number is changed for "Entry point does not exist" exception
+
 2004-04-15 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: Classes can't be delared static impicitly as other module members
 

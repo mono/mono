@@ -818,6 +818,11 @@ namespace Mono.MonoBASIC {
 					Report.Error (31047, Location,
 						"Only internal classes can be declared as 'Protected'");
 			}
+
+			if ((Parent is Module) && ((ModFlags & Modifiers.PROTECTED) != 0))
+				Report.Error (30735, Location,
+					"'Type' inside a 'Module' can not be " +
+					"declared as 'Protected'");
 			
 			TypeAttributes type_attributes = TypeAttr;
 
@@ -2327,7 +2332,7 @@ namespace Mono.MonoBASIC {
                 void DuplicateEntryPoint (MethodInfo b, Location location)
                 {
                         Report.Error (
-                                17, location,
+                                30738, location,
                                 "Program `" + CodeGen.FileName +
                                 "'  has more than one entry point defined: `" +
                                 TypeManager.MonoBASIC_Signature(b) + "'");
@@ -2461,8 +2466,16 @@ namespace Mono.MonoBASIC {
 								"not maked as Overrides");
 						}
 					}
+					// if a member of module is not inherited from Object class
+					// can not be declared protected
+					if ((parent is Module) && ((ModFlags & Modifiers.PROTECTED) != 0))
+						Report.Error (31066, Location,
+								"'Sub' or 'Function' inside a 'Module' can not be declared as " +
+								"'Protected' or 'Protected Friend'");
 				}
-			}/* else if ((ModFlags & Modifiers.NEW) != 0)
+			}
+		
+			/* else if ((ModFlags & Modifiers.NEW) != 0)
 				WarningNotHiding (parent);
 			*/
 			return true;
@@ -3598,6 +3611,13 @@ namespace Mono.MonoBASIC {
 
 						ModFlags |= Modifiers.SHADOWS;
 					}
+					if (list.Count == 0)
+						// if a member of module is not inherited from Object class
+						// can not be declared protected
+						if ((parent is Module) && ((ModFlags & Modifiers.PROTECTED) != 0))
+						Report.Error (30593, Location,
+							"'Variable' inside a 'Module' can not be " +
+							"declared as 'Protected'");
 				}
 			}
 

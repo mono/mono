@@ -814,7 +814,7 @@ namespace Mono.Languages
 			
 				if (ep == null)
 				{
-					Report.Error (5001, "Program " + outputFileName +
+					Report.Error (30737, "Program " + outputFileName +
 						" does not have an entry point defined");
 					return false;
 				}
