@@ -1,3 +1,11 @@
+2001-11-07  Dietmar Maurer  <dietmar@ximian.com>
+
+	* emit-x86.c (enter_method): print out all method arguments
+	(x86_magic_trampoline): impl.
+	(arch_create_simple_jit_trampoline): we use different trampolines
+	for static methods (no need to write the address back into to
+	vtable).
+
 2001-11-06  Dietmar Maurer  <dietmar@ximian.com>
 
 	* emit-x86.c (arch_create_jit_trampoline): optimised trampoline to
