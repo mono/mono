@@ -321,6 +321,7 @@ namespace System.Drawing
 			
 			gr.Dispose();
 			bmp.Dispose();
+			imageAttr.Dispose();
 		}
 
 		public void SetResolution (float xDpi, float yDpi)
