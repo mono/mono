@@ -14,33 +14,28 @@ namespace System.Runtime.Remoting.Channels
 		IServerFormatterSinkProvider, IServerChannelSinkProvider
 	{
 		private IServerChannelSinkProvider _next;
-//		////[MonoTODO]
+
 		public SoapServerFormatterSinkProvider ()
 		{
-//			throw new NotImplementedException ();
 		}
 
-//		////[MonoTODO]
+		[MonoTODO]
 		public SoapServerFormatterSinkProvider (IDictionary properties,
 							ICollection providerData)
 		{
-//			throw new NotImplementedException ();
 		}
 
 		public IServerChannelSinkProvider Next
 		{
-//			////[MonoTODO]
 			get {
 				return _next;
 			}
 
-//			////[MonoTODO]
 			set {
 				_next = value;
 			}
 		}
 
-//		////[MonoTODO]
 		public IServerChannelSink CreateSink (IChannelReceiver channel)
 		{
 			IServerChannelSink chain = _next.CreateSink(channel);
@@ -49,7 +44,6 @@ namespace System.Runtime.Remoting.Channels
 			return sinkFormatter;
 		}
 
-//		////[MonoTODO]
 		public void GetChannelData (IChannelDataStore channelData)
 		{
 			if(_next != null)

@@ -22,8 +22,7 @@ namespace System.Runtime.Remoting.Channels
 		[MonoTODO]
 		public BinaryServerFormatterSinkProvider (IDictionary properties,
 							  ICollection providerData)
-	        {
-			throw new NotImplementedException ();
+		{
 		}
 
 		public IServerChannelSinkProvider Next

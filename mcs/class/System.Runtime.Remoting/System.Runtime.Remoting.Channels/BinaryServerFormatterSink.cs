@@ -98,8 +98,6 @@ namespace System.Runtime.Remoting.Channels {
 				MethodCallHeaderHandler mhh = new MethodCallHeaderHandler(uri);
 				requestMsg = (IMessage) _deserializationFormatter.Deserialize (requestStream, new HeaderHandler(mhh.HandleHeaders));
 
-				// Fixme: check if the message is an async msg
-
 				res = next_sink.ProcessMessage (sinkStack, requestMsg, requestHeaders, null, out responseMsg, out responseHeaders, out responseStream);
 			}
 			catch (Exception ex)
@@ -143,4 +141,3 @@ namespace System.Runtime.Remoting.Channels {
 		}
 	}
 }
-

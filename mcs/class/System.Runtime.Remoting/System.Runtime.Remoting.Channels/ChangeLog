@@ -1,3 +1,9 @@
+2003-11-12  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* BinaryServerFormatterSink.cs: Removed fixme.
+	* BinaryServerFormatterSinkProvider.cs: Removed a NotImplementedException.
+	* SoapServerFormatterSinkProvider.cs: Removed some TODOs.
+
 2003-09-25  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* SoapMessageFormatter.cs: Consider parameters with Out flag when collectiong
