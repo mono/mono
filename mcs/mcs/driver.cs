@@ -700,6 +700,8 @@ namespace Mono.CSharp
 
 			RootContext.CodeGen = new CodeGen (output_file, output_file);
 
+			RootContext.TypeManager.AddModule (RootContext.CodeGen.ModuleBuilder);
+
 			//
 			// Before emitting, we need to get the core
 			// types emitted from the user defined types
@@ -711,8 +713,6 @@ namespace Mono.CSharp
 			if (timestamps)
 				ShowTime ("   Core Types done");
 
-			RootContext.TypeManager.AddModule (RootContext.CodeGen.ModuleBuilder);
-			
 			//
 			// The second pass of the compiler
 			//

@@ -63,13 +63,26 @@ namespace Mono.CSharp
 			root_types = new TypeContainer (null, "", new Location (-1));
 		}
 
-
+		void RecordDecl (Hashtable decl, string name, DeclSpace ds)
+		{
+			if (decl.Contains (name)){
+				Report.Error (
+					101, ds.Location,
+					"There is already a definition for `" + name + "'");
+				DeclSpace other = (DeclSpace) decl [name];
+				Report.Error (0,
+					other.Location, "(Location of symbol related to previous error)");
+				return;
+			}
+			decl.Add (name, ds);
+		}
+		
 		public void RecordInterface (string name, Interface iface)
 		{
 			if (ifaces == null)
 				ifaces = new Hashtable ();
 
-			ifaces.Add (name, iface);
+			RecordDecl (ifaces, name, iface);
 		}
 		
 		public void RecordStruct (string name, Struct s)
@@ -77,7 +90,7 @@ namespace Mono.CSharp
 			if (structs == null)
 				structs = new Hashtable ();
 
-			structs.Add (name, s);
+			RecordDecl (structs, name, s);
 		}
 		
 		public void RecordClass (string name, Class c)
@@ -85,7 +98,7 @@ namespace Mono.CSharp
 			if (classes == null)
 				classes = new Hashtable ();
 
-			classes.Add (name, c);
+			RecordDecl (classes, name, c);
 		}
 
 		public void RecordEnum (string name, Enum e)
@@ -93,7 +106,7 @@ namespace Mono.CSharp
 			if (enums == null)
 				enums = new Hashtable ();
 
-			enums.Add (name, e);
+			RecordDecl (enums, name, e);
 		}
 
 		public Namespace RecordNamespace (Namespace parent, string file, string name)

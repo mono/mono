@@ -162,7 +162,7 @@ public class TypeManager {
 
 	public TypeManager ()
 	{
-		assemblies = null;
+		assemblies = new Assembly [0];
 		modules = null;
 		user_types = new ArrayList ();
 		types = new Hashtable ();
@@ -183,8 +183,12 @@ public class TypeManager {
 
 	public void AddUserType (string name, TypeBuilder t)
 	{
-		types.Add (name, t);
-		user_types.Add (t);
+		try {
+			types.Add (name, t);
+			user_types.Add (t);
+		} catch {
+			Report.Error (-17, "The type `" + name + "' has already been defined");
+		}
 	}
 	
 	public void AddUserType (string name, TypeBuilder t, TypeContainer tc)
@@ -251,11 +255,11 @@ public class TypeManager {
 	/// </summary>
 	public void AddAssembly (Assembly a)
 	{
-		int top = assemblies != null ? assemblies.Length : 0;
+		int top = assemblies.Length;
 		Assembly [] n = new Assembly [top + 1];
 
-		if (assemblies != null)
-			assemblies.CopyTo (n, 0);
+		assemblies.CopyTo (n, 0);
+		
 		n [top] = a;
 		assemblies = n;
 	}

@@ -3620,7 +3620,7 @@ CheckDef (AdditionResult result, string name)
 	
 	switch (result){
 	case AdditionResult.NameExists:
-		Report.Error (102, l, "The namespace `" + current_container.Name + 
+		Report.Error (102, l, "The container `" + current_container.Name + 
 				 "' already contains a definition for `"+
 				 name + "'");
 		break;
