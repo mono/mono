@@ -15,6 +15,7 @@ COMPILER_SOURCES = \
 	codegen.cs			\
 	const.cs			\
 	constant.cs			\
+	convert.cs			\
 	decl.cs				\
 	delegate.cs			\
 	enum.cs				\

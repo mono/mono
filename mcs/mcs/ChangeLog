@@ -1,3 +1,31 @@
+2003-05-20  Miguel de Icaza  <miguel@ximian.com>
+
+	* convert.cs: Move Error_CannotConvertType,
+	ImplicitReferenceConversion, ImplicitReferenceConversionExists,
+	ImplicitNumericConversion, ImplicitConversionExists,
+	ImplicitUserConversionExists, StandardConversionExists,
+	FindMostEncompassedType, FindMostSpecificSource,
+	FindMostSpecificTarget, ImplicitUserConversion,
+	ExplicitUserConversion, GetConversionOperators,
+	UserDefinedConversion, ConvertImplicit, ConvertImplicitStandard,
+	TryImplicitIntConversion, Error_CannotConvertImplicit,
+	ConvertImplicitRequired, ConvertNumericExplicit,
+	ExplicitReferenceConversionExists, ConvertReferenceExplicit,
+	ConvertExplicit, ConvertExplicitStandard from the ecore.cs into
+	its own file.
+
+	Perform the following renames:
+	
+	StandardConversionExists -> ImplicitStandardConversionExists
+	ConvertImplicit -> ImplicitConversion
+        ConvertImplicitStandard -> ImplicitStandardConversion
+        TryImplicitIntConversion -> ImplicitIntConversion
+        ConvertImplicitRequired -> ImplicitConversionRequired
+        ConvertNumericExplicit -> ExplicitNumericConversion
+        ConvertReferenceExplicit -> ExplicitReferenceConversion
+        ConvertExplicit -> ExplicitConversion
+        ConvertExplicitStandard -> ExplicitStandardConversion
+
 2003-05-19  Martin Baulig  <martin@ximian.com>
 
 	* statement.cs (TypeInfo.StructInfo): Made this type protected.

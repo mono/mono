@@ -636,7 +636,7 @@ namespace Mono.CSharp {
 				}
 
 				if (Expr.Type != ec.ReturnType)
-					Expr = Expression.ConvertImplicitRequired (
+					Expr = Convert.ImplicitConversionRequired (
 						ec, Expr, ec.ReturnType, loc);
 
 				if (Expr == null)
@@ -3679,7 +3679,7 @@ namespace Mono.CSharp {
 			foreach (Type tt in allowed_types){
 				Expression e;
 				
-				e = Expression.ImplicitUserConversion (ec, Expr, tt, loc);
+				e = Convert.ImplicitUserConversion (ec, Expr, tt, loc);
 				if (e == null)
 					continue;
 
@@ -3945,7 +3945,7 @@ namespace Mono.CSharp {
 			// initialize the block list with one element per key
 			ArrayList rgKeyBlocks = new ArrayList ();
 			foreach (object key in rgKeys)
-				rgKeyBlocks.Add (new KeyBlock (Convert.ToInt64 (key)));
+				rgKeyBlocks.Add (new KeyBlock (System.Convert.ToInt64 (key)));
 
 			KeyBlock kbCurr;
 			// iteratively merge the blocks while they are at least half full
@@ -3985,7 +3985,8 @@ namespace Mono.CSharp {
 				kbCurr = (KeyBlock) rgKeyBlocks [0];
 				foreach (object key in rgKeys)
 				{
-					bool fNextBlock = (key is UInt64) ? (ulong) key > (ulong) kbCurr.nLast : Convert.ToInt64 (key) > kbCurr.nLast;
+					bool fNextBlock = (key is UInt64) ? (ulong) key > (ulong) kbCurr.nLast :
+						System.Convert.ToInt64 (key) > kbCurr.nLast;
 					if (fNextBlock)
 						kbCurr = (KeyBlock) rgKeyBlocks [++iBlockCurr];
 					kbCurr.rgKeys.Add (key);
@@ -4029,17 +4030,17 @@ namespace Mono.CSharp {
 
 						// check block range (could be > 2^31)
 						ig.Emit (OpCodes.Ldloc, val);
-						EmitObjectInteger (ig, Convert.ChangeType (kb.nFirst, typeKeys));
+						EmitObjectInteger (ig, System.Convert.ChangeType (kb.nFirst, typeKeys));
 						ig.Emit (OpCodes.Blt, lblDefault);
 						ig.Emit (OpCodes.Ldloc, val);
-						EmitObjectInteger (ig, Convert.ChangeType (kb.nFirst, typeKeys));
+						EmitObjectInteger (ig, System.Convert.ChangeType (kb.nFirst, typeKeys));
 						ig.Emit (OpCodes.Bgt, lblDefault);
 
 						// normalize range
 						ig.Emit (OpCodes.Ldloc, val);
 						if (kb.nFirst != 0)
 						{
-							EmitObjectInteger (ig, Convert.ChangeType (kb.nFirst, typeKeys));
+							EmitObjectInteger (ig, System.Convert.ChangeType (kb.nFirst, typeKeys));
 							ig.Emit (OpCodes.Sub);
 						}
 						ig.Emit (OpCodes.Conv_I4);	// assumes < 2^31 labels!
@@ -4068,7 +4069,7 @@ namespace Mono.CSharp {
 					for (int iJump = 0; iJump < cJumps; iJump++)
 					{
 						object key = kb.rgKeys [iKey];
-						if (Convert.ToInt64 (key) == kb.nFirst + iJump)
+						if (System.Convert.ToInt64 (key) == kb.nFirst + iJump)
 						{
 							SwitchLabel sl = (SwitchLabel) Elements [key];
 							rgLabels [iJump] = sl.ILLabel;
@@ -4600,7 +4601,7 @@ namespace Mono.CSharp {
 					//
 					ArrayPtr array_ptr = new ArrayPtr (e, loc);
 					
-					Expression converted = Expression.ConvertImplicitRequired (
+					Expression converted = Convert.ImplicitConversionRequired (
 						ec, array_ptr, vi.VariableType, loc);
 					if (converted == null)
 						return false;
@@ -4678,7 +4679,7 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Stloc, pinned_string);
 
 					Expression sptr = new StringPtr (pinned_string, loc);
-					Expression converted = Expression.ConvertImplicitRequired (
+					Expression converted = Convert.ImplicitConversionRequired (
 						ec, sptr, vi.VariableType, loc);
 					
 					if (converted == null)
@@ -5007,7 +5008,7 @@ namespace Mono.CSharp {
 					if (var == null)
 						return false;
 					
-					converted_vars [i] = Expression.ConvertImplicitRequired (
+					converted_vars [i] = Convert.ImplicitConversionRequired (
 						ec, var, TypeManager.idisposable_type, loc);
 
 					if (converted_vars [i] == null)
@@ -5040,7 +5041,7 @@ namespace Mono.CSharp {
 		bool ResolveExpression (EmitContext ec)
 		{
 			if (!TypeManager.ImplementsInterface (expr_type, TypeManager.idisposable_type)){
-				conv = Expression.ConvertImplicitRequired (
+				conv = Convert.ImplicitConversionRequired (
 					ec, expr, TypeManager.idisposable_type, loc);
 
 				if (conv == null)
@@ -5234,7 +5235,7 @@ namespace Mono.CSharp {
 			// Although it is not as important in this case, as the type
 			// will not likely be object (what the enumerator will return).
 			//
-			conv = Expression.ConvertExplicit (ec, empty, var_type, loc);
+			conv = Convert.ExplicitConversion (ec, empty, var_type, loc);
 			if (conv == null)
 				return false;
 

@@ -490,7 +490,7 @@ namespace Mono.CSharp {
 					Type etype = TypeManager.EnumToUnderlying (c.Type);
 					
 					if (!ImplicitConversionExists (etype, UnderlyingType)){
-						Expression.Error_CannotConvertImplicit (
+						Convert.Error_CannotImplicitConversion (
 							loc, c.Type, UnderlyingType);
 						return null;
 					}

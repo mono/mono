@@ -136,8 +136,8 @@ namespace Mono.CSharp {
 					 (oper != Binary.Operator.Subtraction));
 
 				if (need_check &&
-				    !Expression.ImplicitConversionExists (ec, match, other.Type)) {
-					Expression.Error_CannotConvertImplicit (loc, match.Type, other.Type);
+				    !Convert.ImplicitConversionExists (ec, match, other.Type)) {
+					Convert.Error_CannotImplicitConversion (loc, match.Type, other.Type);
 					left = null;
 					right = null;
 					return;

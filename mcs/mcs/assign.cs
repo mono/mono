@@ -216,7 +216,7 @@ namespace Mono.CSharp {
 				PropertyExpr property_assign = (PropertyExpr) target;
 
 				if (source_type != target_type){
-					source = ConvertImplicitRequired (ec, source, target_type, loc);
+					source = Convert.ImplicitConversionRequired (ec, source, target_type, loc);
 					if (source == null)
 						return null;
 				}
@@ -308,9 +308,9 @@ namespace Mono.CSharp {
 					//    target_type
 					//
 					
-					source = ConvertExplicit (ec, source, target_type, loc);
+					source = Convert.ExplicitConversion (ec, source, target_type, loc);
 					if (source == null){
-						Error_CannotConvertImplicit (loc, source_type, target_type);
+						Convert.Error_CannotImplicitConversion (loc, source_type, target_type);
 						return null;
 					}
 				
@@ -318,15 +318,15 @@ namespace Mono.CSharp {
 					// 2. and the original right side is implicitly convertible to
 					// the type of target_type.
 					//
-					if (StandardConversionExists (a.original_source, target_type))
+					if (Convert.ImplicitStandardConversionExists (a.original_source, target_type))
 						return this;
 
-					Error_CannotConvertImplicit (loc, a.original_source.Type, target_type);
+					Convert.Error_CannotImplicitConversion (loc, a.original_source.Type, target_type);
 					return null;
 				}
 			}
 			
-			source = ConvertImplicitRequired (ec, source, target_type, loc);
+			source = Convert.ImplicitConversionRequired (ec, source, target_type, loc);
 			if (source == null)
 				return null;
 

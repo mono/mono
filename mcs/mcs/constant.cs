@@ -62,7 +62,7 @@ namespace Mono.CSharp {
 			DoubleConstant c = ConvertToDouble ();
 
 			if (c == null)
-				Error_CannotConvertImplicit (loc, Type, TypeManager.double_type);
+				Convert.Error_CannotImplicitConversion (loc, Type, TypeManager.double_type);
 
 			return c;
 		}
@@ -72,7 +72,7 @@ namespace Mono.CSharp {
 			FloatConstant c = ConvertToFloat ();
 
 			if (c == null)
-				Error_CannotConvertImplicit (loc, Type, TypeManager.float_type);
+				Convert.Error_CannotImplicitConversion (loc, Type, TypeManager.float_type);
 
 			return c;
 		}
@@ -82,7 +82,7 @@ namespace Mono.CSharp {
 			ULongConstant c = ConvertToULong ();
 
 			if (c == null)
-				Error_CannotConvertImplicit (loc, Type, TypeManager.uint64_type);
+				Convert.Error_CannotImplicitConversion (loc, Type, TypeManager.uint64_type);
 
 			return c;
 		}
@@ -92,7 +92,7 @@ namespace Mono.CSharp {
 			LongConstant c = ConvertToLong ();
 
 			if (c == null)
-				Error_CannotConvertImplicit (loc, Type, TypeManager.int64_type);
+				Convert.Error_CannotImplicitConversion (loc, Type, TypeManager.int64_type);
 
 			return c;
 		}
@@ -102,7 +102,7 @@ namespace Mono.CSharp {
 			UIntConstant c = ConvertToUInt ();
 
 			if (c == null)
-				Error_CannotConvertImplicit (loc, Type, TypeManager.uint32_type);
+				Convert.Error_CannotImplicitConversion (loc, Type, TypeManager.uint32_type);
 
 			return c;
 		}
@@ -112,7 +112,7 @@ namespace Mono.CSharp {
 			IntConstant c = ConvertToInt ();
 
 			if (c == null)
-				Error_CannotConvertImplicit (loc, Type, TypeManager.int32_type);
+				Convert.Error_CannotImplicitConversion (loc, Type, TypeManager.int32_type);
 
 			return c;
 		}
