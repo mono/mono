@@ -1955,16 +1955,16 @@ instr			: INSTR_NONE
 			| INSTR_STRING K_BYTEARRAY ASSIGN OPEN_PARENS
                           bytes CLOSE_PARENS
                           {
-                                string str = stream.CurrentEncoding.GetString ((byte[]) $5);
+                                byte[] bs = (byte[]) $5;
                                 if ((MiscInstr) $1 == MiscInstr.ldstr)
-                                        codegen.CurrentMethodDef.AddInstr (new LdstrInstr (str));
+                                        codegen.CurrentMethodDef.AddInstr (new LdstrInstr (bs));
                           }
 			| INSTR_STRING K_BYTEARRAY OPEN_PARENS bytes
                           CLOSE_PARENS
                           {
-                                string str = stream.CurrentEncoding.GetString ((byte[]) $4);
+                                byte[] bs = (byte[]) $4;
                                 if ((MiscInstr) $1 == MiscInstr.ldstr)
-                                        codegen.CurrentMethodDef.AddInstr (new LdstrInstr (str));
+                                        codegen.CurrentMethodDef.AddInstr (new LdstrInstr (bs));
                           }
 			| INSTR_SIG call_conv type OPEN_PARENS type_list CLOSE_PARENS
                           {
@@ -2469,8 +2469,13 @@ float64			: FLOAT64
                           }
 			;
 
-hexbyte			: HEXBYTE
-                        | INT64         { $$ = Convert.ToByte ($1); }
+hexbyte			: HEXBYTE       { }
+                        | INT64
+                          {
+                                long l = (long) $1;
+                                byte b = Byte.Parse (l.ToString (), NumberStyles.HexNumber);
+                                $$ = b;
+                          }
                         | ID
                           {
                                 $$ = Byte.Parse ((string) $1, NumberStyles.HexNumber);

@@ -1,3 +1,8 @@
+2003-11-17 Jackson Harper <jackson@ximian.com>
+
+	* ILParser.jay: Create strings from byte arrays. Fix parsing of
+	bytes that are passed as INT64.
+	
 2003-11-16 Jackson Harper <jackson@ximian.com>
 
 	* ILParser.jay: Handle string instructions that are given byte
