@@ -1,3 +1,9 @@
+2004-01-08  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* XsdValidatingReader.cs: In MoveToAttribute(name), if "name" is a default
+	attribute, search for the attribute ignoring the namespace. This matches
+	MS.NET behavior (and fixes bug #52557).
+
 2004-01-08  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdValidatingReader.cs : Fixed in reflection to 

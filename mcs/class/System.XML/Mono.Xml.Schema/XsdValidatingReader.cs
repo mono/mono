@@ -1312,7 +1312,7 @@ namespace Mono.Xml.Schema
 			for (int i = 0; i < this.defaultAttributes.Length; i++) {
 				XmlSchemaAttribute attr = defaultAttributes [i];
 				if (attr.QualifiedName.Name == localName &&
-					attr.QualifiedName.Namespace == ns)
+					(ns == null || attr.QualifiedName.Namespace == ns))
 					return i;
 			}
 			return -1;
@@ -1368,8 +1368,7 @@ namespace Mono.Xml.Schema
 				return true;
 			}
 
-			XmlQualifiedName qname = SplitQName (name);
-			return MoveToDefaultAttribute (qname.Name, qname.Namespace);
+			return MoveToDefaultAttribute (name, null);
 		}
 
 		public override bool MoveToAttribute (string localName, string ns)
