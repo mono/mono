@@ -1,4 +1,8 @@
 
+Thu Mar 7 18:55:15 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: update to the new mono_Array_class_get interface.
+
 Thu Mar 7 17:23:26 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* appdomain.c, object.c: Boehm-GC enable.
