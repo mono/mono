@@ -1,3 +1,8 @@
+2004-01-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AppDomain.cs: Keep track of type resolve and assembly resolve 
+	events in progress to prevent infinite recursion.
+
 2004-01-06  Miguel de Icaza  <miguel@ximian.com>
 
 	* Console.cs: Test for UTF-8 being present anywhere on the

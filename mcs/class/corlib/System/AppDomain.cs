@@ -37,6 +37,12 @@ namespace System {
 		IntPtr _mono_app_domain;
 		static string _process_guid;
 
+		[ThreadStatic]
+		Hashtable type_resolve_in_progress;
+
+		[ThreadStatic]
+		Hashtable assembly_resolve_in_progress;
+
 		// Evidence evidence;
 
 		AppDomain () {}
@@ -411,7 +417,6 @@ namespace System {
 			return ab;
 		}
 
-
 		public void DoCallBack (CrossAppDomainDelegate theDelegate)
 		{
 			if (theDelegate != null)
@@ -720,14 +725,31 @@ namespace System {
 			if (AssemblyResolve == null)
 				return null;
 			
-			foreach (Delegate eh in AssemblyResolve.GetInvocationList ()) {
-				ResolveEventHandler handler = (ResolveEventHandler) eh;
-				Assembly assembly = handler (this, new ResolveEventArgs (name));
-				if (assembly != null)
-					return assembly;
+			/* Prevent infinite recursion */
+			Hashtable ht = assembly_resolve_in_progress;
+			if (ht == null) {
+				ht = new Hashtable ();
+				assembly_resolve_in_progress = ht;
 			}
 
-			return null;
+			if (ht.Contains (name))
+				return null;
+			else
+				ht [name] = name;
+
+			try {
+				foreach (Delegate eh in AssemblyResolve.GetInvocationList ()) {
+					ResolveEventHandler handler = (ResolveEventHandler) eh;
+					Assembly assembly = handler (this, new ResolveEventArgs (name));
+					if (assembly != null)
+						return assembly;
+				}
+
+				return null;
+			}
+			finally {
+				ht.Remove (name);
+			}
 		}
 
 		internal Assembly DoTypeResolve (Object name_or_tb)
@@ -742,14 +764,31 @@ namespace System {
 			else
 				name = (string)name_or_tb;
 
-			foreach (Delegate d in TypeResolve.GetInvocationList ()) {
-				ResolveEventHandler eh = (ResolveEventHandler)d;
-				Assembly assembly = eh (this, new ResolveEventArgs (name));
-				if (assembly != null)
-					return assembly;
+			/* Prevent infinite recursion */
+			Hashtable ht = type_resolve_in_progress;
+			if (ht == null) {
+				ht = new Hashtable ();
+				type_resolve_in_progress = ht;
 			}
 
-			return null;
+			if (ht.Contains (name))
+				return null;
+			else
+				ht [name] = name;
+
+			try {
+				foreach (Delegate d in TypeResolve.GetInvocationList ()) {
+					ResolveEventHandler eh = (ResolveEventHandler)d;
+					Assembly assembly = eh (this, new ResolveEventArgs (name));
+					if (assembly != null)
+						return assembly;
+				}
+
+				return null;
+			}
+			finally {
+				ht.Remove (name);
+			}
 		}
 
 		private void DoDomainUnload () {
