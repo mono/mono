@@ -1,3 +1,7 @@
+2003-11-13  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* RemotingServices.cs: Add ".rem" suffix to generated uri names.
+
 2003-11-12  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* RemotingConfiguration.cs: Implemented all remaining functionality.
