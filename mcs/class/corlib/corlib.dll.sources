@@ -1044,3 +1044,5 @@ System/ArraySegment.cs
 System/Comparison.cs
 System/Converter.cs
 System/Predicate.cs
+System.Collections.Generic/Comparer.cs
+System.Collections/IKeyComparer.cs

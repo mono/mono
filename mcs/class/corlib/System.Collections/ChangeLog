@@ -1,3 +1,7 @@
+2004-06-18  Ben Maurer <bmaurer@ximian.com>
+
+	* IKeyComparer.cs: v2 class
+
 2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CaseInsensitiveComparer.cs: added TODO for serialization
