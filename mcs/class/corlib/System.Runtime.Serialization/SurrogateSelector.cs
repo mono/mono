@@ -37,7 +37,8 @@ namespace System.Runtime.Serialization
 		}
 
 		[MonoTODO]
-		public virtual ISerializationSurrogate GetSurrogate (Type type, StreamingContext context, out ISurrogateSelector selector)
+		public virtual ISerializationSurrogate GetSurrogate (Type type,
+			     StreamingContext context, out ISurrogateSelector selector)
 		{
 			selector = null;
 			return null;

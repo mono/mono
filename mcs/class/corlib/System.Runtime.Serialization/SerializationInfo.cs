@@ -16,10 +16,9 @@ namespace System.Runtime.Serialization
 {
 	public sealed class SerializationInfo
 	{
-		
 		Hashtable serialized = new Hashtable ();
-		string assemblyName; // name of the assembly where the type/class being serialized resides.
-		string fullTypeName; // name of the type being serialized.
+		string assemblyName; // the assembly being serialized
+		string fullTypeName; // the type being serialized.
 
 		[CLSCompliant (false)] IFormatterConverter converter;
 
@@ -29,7 +28,7 @@ namespace System.Runtime.Serialization
 		{
 			if (type == null && converter == null)
 				throw new ArgumentNullException ("Null arguments.");
-						
+			
 			this.converter = converter;
 			assemblyName = type.Assembly.FullName;
 			fullTypeName = type.FullName;
@@ -99,7 +98,7 @@ namespace System.Runtime.Serialization
 
 		public SerializationInfoEnumerator GetEnumerator ()
 		{
-			return null;
+			return new SerializationInfoEnumerator (serialized);
 		}
 		
 		[CLSCompliant(false)]
@@ -170,6 +169,7 @@ namespace System.Runtime.Serialization
 		{
 			AddValue (name, value, typeof (System.Int64));
 		}
+
 		[CLSCompliant(false)]
 	        public void AddValue (string name, UInt64 value)
 		{
