@@ -3,7 +3,7 @@
 # The default 'bootstrap' profile -- builds so that we link against
 # the libraries as we build them.
 #
-# We use the platform's native C# runtime if possible.
+# We use the platform's native C# runtime and compiler if possible.
 
 # Note that we have sort of confusing terminology here; BOOTSTRAP_MCS
 # is what allows us to bootstrap ourselves, but when we are bootstrapping,
@@ -17,7 +17,7 @@
 ifeq ($(PLATFORM_RUNTIME),$(RUNTIME))
 MCS = MONO_PATH="$(topdir)/class/lib:$$MONO_PATH" $(INTERNAL_MCS)
 else
-MCS = $(PLATFORM_RUNTIME) $(topdir)/mcs/mcs.exe /lib:$(topdir)/class/lib
+MCS = $(PLATFORM_RUNTIME) $(BOOTSTRAP_MCS) /lib:$(topdir)/class/lib
 endif
 
 # nuttzing!
