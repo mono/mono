@@ -3,8 +3,11 @@ System.Drawing/TestBrushes.cs
 System.Drawing/TestFont.cs
 System.Drawing/TestPens.cs
 System.Drawing/TestPoint.cs
+System.Drawing/TestPointConverter.cs
 System.Drawing/TestPointF.cs
+System.Drawing/TestRectangleConverter.cs
 System.Drawing/TestSize.cs
+System.Drawing/TestSizeConverter.cs
 System.Drawing/TestSizeF.cs
 System.Drawing/TestStringFormat.cs
 System.Drawing/TestSystemBrushes.cs
