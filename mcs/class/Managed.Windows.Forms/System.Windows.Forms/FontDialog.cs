@@ -119,23 +119,31 @@ namespace System.Windows.Forms
 	internal class FontDialogPanel : Panel
 	{
 		private Panel examplePanel;
-		private Button cancelButton;
-		private Label scriptLabel;
-		private TextBox fontstyleTextBox;
-		private CheckBox underlinedCheckBox;
+		
 		private Button okButton;
-		private ComboBox scriptComboBox;
-		private Label typesizeLabel;
-		private CheckBox strikethroughCheckBox;
-		private GroupBox effectsGroupBox;
-		private Label fontLabel;
-		private ListBox fontstyleListBox;
-		private GroupBox exampleGroupBox;
-		private ListBox fontListBox;
-		private TextBox sizeTextBox;
-		private Label fontstyleLabel;
+		private Button cancelButton;
+		private Button applyButton;
+		private Button helpButton;
+		
 		private TextBox fontTextBox;
+		private TextBox fontstyleTextBox;
+		private TextBox sizeTextBox;
+		
+		private ListBox fontListBox;
+		private ListBox fontstyleListBox;
 		private ListBox sizeListBox;
+		
+		private GroupBox effectsGroupBox;
+		private CheckBox strikethroughCheckBox;
+		private CheckBox underlinedCheckBox;
+		private ComboBox scriptComboBox;
+		
+		private Label fontLabel;
+		private Label fontstyleLabel;
+		private Label sizeLabel;
+		private Label scriptLabel;
+		
+		private GroupBox exampleGroupBox;
 		
 		private FontFamily[] fontFamilies;
 		
@@ -153,27 +161,37 @@ namespace System.Windows.Forms
 		
 		private FontDialog fontDialog;
 		
+		private System.Collections.Hashtable fontHash = new System.Collections.Hashtable();
+		
 		public FontDialogPanel( FontDialog fontDialog )
 		{
 			this.fontDialog = fontDialog;
 			
-			sizeListBox = new ListBox( );
+			okButton = new Button( );
+			cancelButton = new Button( );
+			applyButton = new Button( );
+			helpButton = new Button( );
+			
 			fontTextBox = new TextBox( );
-			fontstyleLabel = new Label( );
+			fontstyleTextBox = new TextBox( );
 			sizeTextBox = new TextBox( );
+			
 			fontListBox = new ListBox( );
+			sizeListBox = new ListBox( );
+			
+			fontLabel = new Label( );
+			fontstyleLabel = new Label( );
+			sizeLabel = new Label( );
+			scriptLabel = new Label( );
+			
 			exampleGroupBox = new GroupBox( );
 			fontstyleListBox = new ListBox( );
-			fontLabel = new Label( );
+			
 			effectsGroupBox = new GroupBox( );
-			strikethroughCheckBox = new CheckBox( );
-			typesizeLabel = new Label( );
-			scriptComboBox = new ComboBox( );
-			okButton = new Button( );
 			underlinedCheckBox = new CheckBox( );
-			fontstyleTextBox = new TextBox( );
-			scriptLabel = new Label( );
-			cancelButton = new Button( );
+			strikethroughCheckBox = new CheckBox( );
+			scriptComboBox = new ComboBox( );
+			
 			examplePanel = new Panel( );
 			
 			exampleGroupBox.SuspendLayout( );
@@ -236,10 +254,10 @@ namespace System.Windows.Forms
 			strikethroughCheckBox.TabIndex = 0;
 			strikethroughCheckBox.Text = "Strikethrough";
 			// schriftgradLabel
-			typesizeLabel.Location = new Point( 284, 10 );
-			typesizeLabel.Size = new Size( 100, 16 );
-			typesizeLabel.TabIndex = 2;
-			typesizeLabel.Text = "Size:";
+			sizeLabel.Location = new Point( 284, 10 );
+			sizeLabel.Size = new Size( 100, 16 );
+			sizeLabel.TabIndex = 2;
+			sizeLabel.Text = "Size:";
 			// scriptComboBox
 			scriptComboBox.Location = new Point( 164, 253 );
 			scriptComboBox.Size = new Size( 172, 21 );
@@ -251,6 +269,24 @@ namespace System.Windows.Forms
 			okButton.Size = new Size( 70, 23 );
 			okButton.TabIndex = 3;
 			okButton.Text = "OK";
+			// cancelButton
+			cancelButton.FlatStyle = FlatStyle.System;
+			cancelButton.Location = new Point( 352, 52 );
+			cancelButton.Size = new Size( 70, 23 );
+			cancelButton.TabIndex = 4;
+			cancelButton.Text = "Cancel";
+			// applyButton
+			applyButton.FlatStyle = FlatStyle.System;
+			applyButton.Location = new Point( 352, 78 );
+			applyButton.Size = new Size( 70, 23 );
+			applyButton.TabIndex = 5;
+			applyButton.Text = "Apply";
+			// helpButton
+			helpButton.FlatStyle = FlatStyle.System;
+			helpButton.Location = new Point( 352, 104 );
+			helpButton.Size = new Size( 70, 23 );
+			helpButton.TabIndex = 6;
+			helpButton.Text = "Help";
 			// underlinedCheckBox
 			underlinedCheckBox.FlatStyle = FlatStyle.System;
 			underlinedCheckBox.Location = new Point( 8, 36 );
@@ -266,17 +302,11 @@ namespace System.Windows.Forms
 			scriptLabel.Size = new Size( 100, 16 );
 			scriptLabel.TabIndex = 13;
 			scriptLabel.Text = "Script:";
-			// cancelButton
-			cancelButton.FlatStyle = FlatStyle.System;
-			cancelButton.Location = new Point( 352, 52 );
-			cancelButton.Size = new Size( 70, 23 );
-			cancelButton.TabIndex = 4;
-			cancelButton.Text = "Cancel";
 			// examplePanel
-			examplePanel.BorderStyle = BorderStyle.Fixed3D;
 			examplePanel.Location = new Point( 8, 20 );
-			examplePanel.Size = new Size( 156, 40 );
 			examplePanel.TabIndex = 0;
+			examplePanel.BorderStyle = BorderStyle.Fixed3D;
+			examplePanel.Size = new Size( 156, 40 );
 			
 			ClientSize = new Size( 430, 318 );
 			
@@ -292,9 +322,11 @@ namespace System.Windows.Forms
 			Controls.Add( fontTextBox );
 			Controls.Add( cancelButton );
 			Controls.Add( okButton );
-			Controls.Add( typesizeLabel );
+			Controls.Add( sizeLabel );
 			Controls.Add( fontstyleLabel );
 			Controls.Add( fontLabel );
+			Controls.Add( applyButton );
+			Controls.Add( helpButton );
 			
 			exampleGroupBox.ResumeLayout( false );
 			effectsGroupBox.ResumeLayout( false );
@@ -307,6 +339,7 @@ namespace System.Windows.Forms
 			foreach ( FontFamily ff in fontFamilies )
 			{
 				fontListBox.Items.Add( ff.Name );
+				fontHash.Add( ff.Name, ff );
 			}
 			fontListBox.EndUpdate( );
 			
@@ -322,8 +355,6 @@ namespace System.Windows.Forms
 			currentFontStyle = FontStyle.Regular;
 			
 			currentFont = new Font( currentFamily, currentSize, currentFontStyle );
-			
-			fontDialog.Font = currentFont;
 			
 			currentColor = fontDialog.Color;
 			
@@ -357,30 +388,22 @@ namespace System.Windows.Forms
 			sizeListBox.Items.Add( "72" );
 			sizeListBox.EndUpdate( );
 			
+			applyButton.Hide( );
+			helpButton.Hide( );
+			
 			cancelButton.Click += new EventHandler( OnClickCancelButton );
 			okButton.Click += new EventHandler( OnClickOkButton );
 			examplePanel.Paint += new PaintEventHandler( OnPaintExamplePanel );
 			fontListBox.SelectedIndexChanged += new EventHandler( OnSelectedIndexChangedFontListBox );
 			sizeListBox.SelectedIndexChanged += new EventHandler( OnSelectedIndexChangedSizeListBox );
 			fontstyleListBox.SelectedIndexChanged += new EventHandler( OnSelectedIndexChangedFontStyleListBox );
+			underlinedCheckBox.CheckedChanged += new EventHandler( OnCheckedChangedUnderlinedCheckBox );
+			strikethroughCheckBox.CheckedChanged += new EventHandler( OnCheckedChangedStrikethroughCheckBox );
 		}
 		
 		private FontFamily FindByName( string name )
 		{
-			FontFamily result = null;
-			
-			// a hashtable would be better
-			
-			foreach ( FontFamily ff in fontFamilies )
-			{
-				if ( ff.Name == name )
-				{
-					result = ff;
-					break;
-				}
-			}
-			
-			return result;
+			return fontHash[ name ] as FontFamily;
 		}
 		
 		void OnClickCancelButton( object sender, EventArgs e )
@@ -390,6 +413,7 @@ namespace System.Windows.Forms
 		
 		void OnClickOkButton( object sender, EventArgs e )
 		{
+			fontDialog.Font = currentFont;
 			fontDialog.form.DialogResult = DialogResult.OK;
 		}
 		
@@ -417,14 +441,10 @@ namespace System.Windows.Forms
 			if ( fontListBox.SelectedIndex != -1 )
 			{
 				currentFamily = FindByName( fontListBox.Items[ fontListBox.SelectedIndex ].ToString( ) );
-				currentFont = new Font( currentFamily, currentSize );
 				
 				fontTextBox.Text = currentFamily.Name;
 				
-				fontDialog.Font = currentFont;
-				
-				examplePanel.Invalidate( );
-				examplePanel.Update( );
+				UpdateExamplePanel( );
 			}
 		}
 		
@@ -433,14 +453,10 @@ namespace System.Windows.Forms
 			if ( sizeListBox.SelectedIndex != -1 )
 			{
 				currentSize = System.Convert.ToInt32( sizeListBox.Items[ sizeListBox.SelectedIndex ] );
-				currentFont = new Font( currentFamily, currentSize, currentFontStyle );
 				
 				sizeTextBox.Text = currentSize.ToString( );
 				
-				fontDialog.Font = currentFont;
-				
-				examplePanel.Invalidate( );
-				examplePanel.Update( );
+				UpdateExamplePanel( );
 			}
 		}
 		
@@ -448,38 +464,59 @@ namespace System.Windows.Forms
 		{
 			if ( fontstyleListBox.SelectedIndex != -1 )
 			{
-				string flb = fontstyleListBox.Items[ fontstyleListBox.SelectedIndex ].ToString( );
-				
-				if ( flb == "Regular" )
+				switch ( fontstyleListBox.SelectedIndex )
 				{
-					currentFontStyle = FontStyle.Regular;
-				}
-				else
-				if ( flb == "Bold" )
-				{
-					currentFontStyle = FontStyle.Bold;
-				}
-				else
-				if ( flb == "Italic" )
-				{
-					currentFontStyle = FontStyle.Italic;
-				}
-				else
-				if ( flb == "Bold Italic" )
-				{
-					currentFontStyle = FontStyle.Bold | FontStyle.Italic;
+					case 0:
+						currentFontStyle = FontStyle.Regular;
+						break;
+					case 1:
+						currentFontStyle = FontStyle.Bold;
+						break;
+					case 2:
+						currentFontStyle = FontStyle.Italic;
+						break;
+					case 3:
+						currentFontStyle = FontStyle.Bold | FontStyle.Italic;
+						break;
+					default:
+						currentFontStyle = FontStyle.Regular;
+						break;
 				}
 				
-				currentFont = new Font( currentFamily, currentSize, currentFontStyle );
+				fontstyleTextBox.Text = fontstyleListBox.Items[ fontstyleListBox.SelectedIndex ].ToString( );
 				
-				fontstyleTextBox.Text = flb;
-				
-				fontDialog.Font = currentFont;
-				
-				examplePanel.Invalidate( );
-				examplePanel.Update( );
+				UpdateExamplePanel( );
 			}
+		}
+		
+		void OnCheckedChangedUnderlinedCheckBox( object sender, EventArgs e )
+		{
+			if ( underlinedCheckBox.Checked )
+				currentFontStyle = currentFontStyle | FontStyle.Underline;
+			else
+				currentFontStyle = currentFontStyle ^ FontStyle.Underline;
+			
+			UpdateExamplePanel( );
+		}
+		
+		void OnCheckedChangedStrikethroughCheckBox( object sender, EventArgs e )
+		{
+			if ( strikethroughCheckBox.Checked )
+				currentFontStyle = currentFontStyle | FontStyle.Strikeout;
+			else
+				currentFontStyle = currentFontStyle ^ FontStyle.Strikeout;
+			
+			UpdateExamplePanel( );
+		}
+		
+		private void UpdateExamplePanel( )
+		{
+			currentFont = new Font( currentFamily, currentSize, currentFontStyle );
+			
+			examplePanel.Invalidate( );
+			examplePanel.Update( );
 		}
 	}
 }
+
 
