@@ -1,3 +1,7 @@
+2004-07-08  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.c: Check for `handle->symfile' being non-NULL everywhere.
+	(mono_debug_get_domain_data): Make this function static.
 
 Wed Jul 7 12:32:29 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
