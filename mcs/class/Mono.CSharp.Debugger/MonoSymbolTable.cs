@@ -663,6 +663,19 @@ namespace Mono.CSharp.Debugger
 			ClassTypeIndex = file.DefineType (method.ReflectedType);
 		}
 
+		// BuildLineNumberTable() eliminates duplicate line numbers and ensures
+		// we aren't going "backwards" since this would counfuse the runtime's
+		// debugging code (and the debugger).
+		//
+		// In the line number table, the "offset" field most be strictly
+		// monotonic increasing; that is, the next entry must not have an offset
+		// which is equal to or less than the current one.
+		//
+		// The most common case is that our input (ie. the line number table as
+		// we get it from mcs) contains several entries with the same offset
+		// (and different line numbers) - but it may also happen that the offset
+		// is decreasing (this can be considered as an exception, such lines will
+		// simply be discarded).
 		LineNumberEntry[] BuildLineNumberTable (LineNumberEntry[] line_numbers)
 		{
 			ArrayList list = new ArrayList ();
