@@ -1,4 +1,8 @@
 
+Sat Dec 13 10:31:12 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* cpu-g4.md, basic.cs: fixed div target register.
+
 Sat Dec 13 09:45:56 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c, basic.cs: shl_imm fix with test.
