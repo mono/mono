@@ -1,3 +1,7 @@
+2003-07-04  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlDocument.cs : removed xmlReader.Close() from Load(XmlReader).
+
 2003-06-30  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlDocumentNavigator.cs : Implemented MoveTo*Namespace() and 

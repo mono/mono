@@ -570,7 +570,6 @@ namespace System.Xml
 				if(n == null) break;
 				AppendChild (n);
 			} while (true);
-			xmlReader.Close ();
 		}
 
 		public virtual void LoadXml (string xml)
