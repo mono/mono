@@ -1,3 +1,8 @@
+
+Fri Mar 8 17:29:58 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* StringBuilder.cs: make Append(char) do the smart thing.
+
 2002-01-05  Ravi Pratap  <ravi@ximian.com>
 
 	* ASCIIEncoding.cs, Encoding.cs, UTF7Encoding.cs, 

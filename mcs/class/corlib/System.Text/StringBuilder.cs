@@ -413,7 +413,17 @@ namespace System.Text {
 		}
 
 		public StringBuilder Append( char value ) {
-			return Append (value, 1);
+			if( sLength + 1 > sCapacity ) {
+				// Need more capacity, double the capacity StringBuilder 
+				// and make sure we have at least enough for the value 
+				// if that's going to go over double. 
+					 
+				Capacity = 1 + ( sCapacity + sCapacity);
+			}
+			sString [sLength] = value;
+			sLength++;
+
+			return this;
 		}
 
 		public StringBuilder Append( char value, int repeatCount ) {
