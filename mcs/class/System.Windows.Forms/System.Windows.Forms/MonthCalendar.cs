@@ -620,12 +620,6 @@ namespace System.Windows.Forms {
 			}
 		}
 		[MonoTODO]
-		public override IntPtr Handle  {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-		[MonoTODO]
 		public bool HasChildren  {
 			get {
 				throw new NotImplementedException ();
@@ -638,12 +632,6 @@ namespace System.Windows.Forms {
 			}
 			set {
 				//FIXME:
-			}
-		}
-		[MonoTODO]
-		public override bool InvokeRequired  {
-			get {
-				throw new NotImplementedException ();
 			}
 		}
 		[MonoTODO]
@@ -1546,7 +1534,6 @@ namespace System.Windows.Forms {
 		public event EventHandler CursorChanged;
 		public event DateRangeEventHandler DateChanged;
 		public event DateRangeEventHandler DateSelected;
-		public override event EventHandler Disposed;
 		public event EventHandler DockChanged;
 		public event DragEventHandler DragDrop;
 		public event DragEventHandler DragEnter;
