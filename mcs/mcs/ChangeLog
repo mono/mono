@@ -1,5 +1,8 @@
 2002-10-19  Miguel de Icaza  <miguel@ximian.com>
 
+	* statement.cs (Switch.SimpleSwitchEmit): Simplified the code, and
+	fixed a bug in the process (32476)
+
 	* expression.cs (ArrayAccess.EmitAssign): Patch from
 	hwang_rob@yahoo.ca that fixes bug 31834.3
 

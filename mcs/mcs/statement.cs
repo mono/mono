@@ -3793,9 +3793,6 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Call, TypeManager.string_isinterneted_string);
 				ig.Emit (OpCodes.Stloc, val);
 			}
-
-			SwitchSection last_section;
-			last_section = (SwitchSection) Sections [Sections.Count-1];
 			
 			foreach (SwitchSection ss in Sections){
 				Label sec_begin = ig.DefineLabel ();
@@ -3848,7 +3845,7 @@ namespace Mono.CSharp {
 						}
 					}
 				}
-				if (label_count != 1 && ss != last_section)
+				if (label_count != 1)
 					ig.Emit (OpCodes.Br, next_test);
 				
 				if (null_found)
