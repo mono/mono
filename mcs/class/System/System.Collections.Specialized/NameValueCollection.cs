@@ -306,8 +306,10 @@ namespace System.Collections.Specialized{
 			return AsStringArray(values);
 		}
 		
-		private static string[] AsStringArray(ArrayList values){
-			
+		private static string[] AsStringArray(ArrayList values)
+		{
+			if (values == null)
+				return null;
 			int max = values.Count;//get_Count();
 			if (max==0)
 				return null;

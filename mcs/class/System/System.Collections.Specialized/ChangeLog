@@ -1,4 +1,8 @@
-2002-09-10  Lawrence Pit <loz@cable.a2000.nl>
+2002-05-11  Lawrence Pit <loz@cable.a2000.nl>
+
+	* NameValueCollection.AsStringArray: fixed ArgumentNullException bug.
+
+2002-05-10  Lawrence Pit <loz@cable.a2000.nl>
 
 	* HybridDictionary.cs: implemented
 	* CollectionsUtil.cs: implemented
