@@ -435,8 +435,6 @@ namespace System.Net
 				return;
 
 			cnc.Write (bytes, 0, length);
-			if (!cnc.Connected)
-				throw new WebException ("Error writing request.", null, WebExceptionStatus.SendFailure, null);
 		}
 
 		internal void InternalClose ()

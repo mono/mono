@@ -1,5 +1,10 @@
 2004-12-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* WebConnectionStream.cs: remove unneeded check. Write detects and
+	triggers the exception now.
+
+2004-12-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* AuthenticationManager.cs: don't lock on a public Type.
 	* HttpWebRequest.cs: read the error response for auth. errors.
 
