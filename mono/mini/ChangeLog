@@ -1,3 +1,7 @@
+2004-05-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* cpu-sparc.md mini-sparc.c: Add overflow detection to div opcodes.
+
 2004-05-28	Patrik Torstensson <totte@hiddenpeaks.com>
 
 	* mini.c (mono_jit_runtime_invoke): Init class in this
