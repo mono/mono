@@ -1,4 +1,9 @@
 
+Mon Sep 24 18:49:01 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* x86/tramp.c: don't change a MONO_TYPE_STRING to a char*
+	when it's an argument to an internalcall.
+
 Sun Sep 23 13:44:57 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* x86/tramp.c: handle MONO_TYPE_CLASS in trampolines.

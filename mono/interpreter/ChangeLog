@@ -1,3 +1,19 @@
+
+Mon Sep 24 18:50:25 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: catch a few more error conditions with exceptions instead of
+	erroring out.
+	Don't use g_print() in stack traces because it doesn't work with
+	some float values.
+	When we call an instance method of a valuetype class, unbox the 'this'
+	argument if it is an object.
+	Use mono_ldstr () to implement the ldstr opcode: it takes care of
+	interning the string if necessary.
+	Implemented new opcodes: ckfinite, cgt.un, clt.un, ldvirtftn, ldarga.
+	Fixes to handle NaNs when comparing doubles.
+	Make sure the loaded assembly has an entry point defined.
+	Fixed portability bugs in neg and not opcodes.
+
 2001-09-24  Dietmar Maurer  <dietmar@ximian.com>
 
 	* interp.c (ves_exec_method): LDC_I4: 8bit constants are signed
