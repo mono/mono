@@ -226,9 +226,9 @@ namespace System.Web {
 
 		[MonoTODO ("Move timeout value to config")]
 		internal void Dispose() {
+			WaitForRequests(5000);
 			queueManager.Dispose (); // Send a 503 to all queued requests
 			queueManager = null;
-			WaitForRequests(5000);
 			
 			_cache = null;
 			HttpApplicationFactory.EndApplication();

@@ -14,7 +14,7 @@ using System.Web.Util;
 
 namespace System.Web {
 
-	public class CacheabilityUpdatedEventArgs : EventArgs {
+	class CacheabilityUpdatedEventArgs : EventArgs {
 
 		public readonly HttpCacheability Cacheability;
 
