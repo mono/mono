@@ -1,3 +1,7 @@
+2002-01-25  Dietmar Maurer  <dietmar@ximian.com>
+
+	* appdomain.c (mono_appdomain_get): impl.
+	(ves_icall_System_AppDomain_ExecuteAssembly): impl.
 
 Thu Jan 24 12:59:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
