@@ -99,6 +99,7 @@ namespace MonoTests.System.Data
 		
 		[Test]		
 		[ExpectedException(typeof(ArgumentNullException))]
+		[Ignore ("It does not pass under MS.NET")]
 		public void AddException1()
 		{
 			DataRelationCollection drcol = _dataset.Relations;
@@ -299,15 +300,7 @@ namespace MonoTests.System.Data
 			drcol.Add(dr1);
 			
 			DataRelation drnull = null;
-			try
-			{			
-				drcol.Remove(drnull);
-				Fail("Err:: drcol.Remove(null) must fail");
-			}
-			catch(Exception e)
-			{
-				AssertEquals("test#3", typeof (ArgumentNullException), e.GetType());
-			}
+			drcol.Remove(drnull);
 			
 			DataRelation newdr = new DataRelation("newdr"
 										,_dataset.Tables["Customer"].Columns["custid"]
@@ -326,9 +319,8 @@ namespace MonoTests.System.Data
 				drcol.Remove("newdr");
 				Fail("Err: removed relation which not part of collection");
 			}
-			catch (Exception e)
+			catch (ArgumentException e)
 			{
-				AssertEquals ("test#5", typeof(ArgumentOutOfRangeException), e.GetType());
 			}
 
 			
@@ -352,20 +344,16 @@ namespace MonoTests.System.Data
 				drcol.RemoveAt(-1);
 				Fail("the index was out of bound: must have failed");
 			}
-			catch(Exception e)
+			catch(IndexOutOfRangeException e)
 			{
-				AssertEquals ("test#1", typeof (ArgumentException), e.GetType ());
-				AssertEquals ("test#2", "There is no row at position -1.", e.Message);
 			}
 			try
 			{
 				drcol.RemoveAt(101);
 				Fail("the index was out of bound: must have failed");
 			}
-			catch(Exception e)
+			catch(IndexOutOfRangeException e)
 			{
-				AssertEquals ("test#3", typeof (ArgumentException), e.GetType ());
-				AssertEquals ("test#4", "There is no row at position 101.",e.Message);
 			}
 			
 			drcol.RemoveAt (1);

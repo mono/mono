@@ -1,5 +1,14 @@
 2005-01-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ForeignKeyConstraintTest.cs : Fixed Ctor5() to pass under MS.NET 1.1.
+	  Design time ctor() needs more love.
+	* DataRelationCollectionTest.cs,
+	  DataTableCollectionTest.cs : Made Remove() pass under MS.NET 1.1.
+	  When index is out of range, IndexOutOfRangeException is thrown.
+	  DataRelationCollectionTest.AddException1() was invalid.
+
+2005-01-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ConstraintCollectionTest.cs : Fixed run-test-ondotnet. MS.NET does
 	  not fill Table property even after EndInit().
 	* DataRelationTest.cs : Fixed run-test-ondotnet. ExpectedException 

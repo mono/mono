@@ -330,20 +330,16 @@ namespace MonoTests.System.Data
 				tbcol.RemoveAt(-1);
 				Fail("the index was out of bound: must have failed");
 			}
-			catch(Exception e)
+			catch(IndexOutOfRangeException e)
 			{
-				AssertEquals ("test#1", typeof (ArgumentException), e.GetType ());
-				AssertEquals ("test#2", "There is no row at position -1.", e.Message);
 			}
 			try
 			{
 				tbcol.RemoveAt(101);
 				Fail("the index was out of bound: must have failed");
 			}
-			catch(Exception e)
+			catch(IndexOutOfRangeException e)
 			{
-				AssertEquals ("test#3", typeof (ArgumentException), e.GetType ());
-				AssertEquals ("test#4", "There is no row at position 101.", e.Message);
 			}
 			tbcol.RemoveAt (1);
 			AssertEquals ("test#5", 1, tbcol.Count);
