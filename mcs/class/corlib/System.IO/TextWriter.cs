@@ -5,9 +5,11 @@
 //
 // TODO: Implement the Thread Safe stuff
 
+using System.Text;
+
 namespace System.IO {
 
-	[MonoTODO] [Serializable]
+	[Serializable]
 	public abstract class TextWriter : MarshalByRefObject, IDisposable {
                 
                 protected TextWriter() {
@@ -22,9 +24,9 @@ namespace System.IO {
 
                 internal IFormatProvider internalFormatProvider;
 
-                public static readonly TextWriter Null;
+                public static readonly TextWriter Null = new NullTextWriter ();
 
-                public abstract System.Text.Encoding Encoding { get; }
+                public abstract Encoding Encoding { get; }
 
                 public virtual IFormatProvider FormatProvider { 
                         get {
@@ -264,6 +266,20 @@ namespace System.IO {
 			WriteLine();
 		}
 
+		//
+		// Null version of the TextWriter, for the `Null' instance variable
+		//
+		sealed class NullTextWriter : TextWriter {
+			public override Encoding Encoding {
+				get {
+					return Encoding.Default;
+				}
+			}
+			
+			public override void Write (string s)
+			{
+			}
+		}
         }
 }
 
