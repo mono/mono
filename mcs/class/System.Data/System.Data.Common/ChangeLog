@@ -1,3 +1,12 @@
+2003-02-25  Alan Tam <Tam@SiuLung.com>
+	
+	* DbDataAdapter.cs: Added support for filling when schema is present.
+	Fixed incorrect behavior when ColumnMapping is present
+	when more than one fields have the same name. Implemented Dispose.
+	Fixed error when there is no ColumnMapping at all.
+	Still have some problems in finding the correct TableMapping
+	because the SourceTable name is not present in BuildSchema
+
 2003-02-24  Aleksey Demakov <avd@openlinksw.com>
 
 	* DbDataAdapter.cs: The original code might pass a null DataTableMapping

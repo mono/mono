@@ -74,9 +74,14 @@ namespace System.Data.Common {
 			return args;
 		}
 
-		[MonoTODO]
 		protected override void Dispose (bool disposing)
 		{
+			if (disposing) {
+				((IDbDataAdapter) this).SelectCommand = null;
+				((IDbDataAdapter) this).InsertCommand = null;
+				((IDbDataAdapter) this).UpdateCommand = null;
+				((IDbDataAdapter) this).DeleteCommand = null;
+			}
 		}
 
                 public override int Fill (DataSet dataSet)
@@ -97,7 +102,6 @@ namespace System.Data.Common {
 			return Fill (dataSet, 0, 0, srcTable, SelectCommand, CommandBehavior.Default);
 		}
 
-		[MonoTODO ("Support filling after we have already filled.")]
 		protected virtual int Fill (DataTable dataTable, IDataReader dataReader) 
 		{
 			int count = 0;
@@ -136,7 +140,6 @@ namespace System.Data.Common {
 			return this.Fill (dataSet, startRecord, maxRecords, srcTable, SelectCommand, CommandBehavior.Default);
 		}
 
-		[MonoTODO ("Support filling after we have already filled.")]
 		protected virtual int Fill (DataSet dataSet, string srcTable, IDataReader dataReader, int startRecord, int maxRecords) 
 		{
 			if (startRecord < 0)
@@ -291,30 +294,31 @@ namespace System.Data.Common {
 		[MonoTODO ("Test")]
 		private void BuildSchema (IDataReader reader, DataTable table, SchemaType schemaType)
 		{
-			string sourceColumnName;
-			string sourceTableName;
-			string dsColumnName;
-
-			ArrayList primaryKey = new ArrayList (); 	
-			table.Columns.Clear ();
+			ArrayList primaryKey = new ArrayList ();
+			ArrayList sourceColumns = new ArrayList ();
 
 			foreach (DataRow schemaRow in reader.GetSchemaTable ().Rows) {
-				// generate a unique column name in the dataset table.
-				if (schemaRow ["BaseColumnName"].Equals (DBNull.Value))
-					sourceColumnName = DefaultSourceColumnName;
-				else 
-					sourceColumnName = (string) schemaRow ["BaseColumnName"];
-
-				dsColumnName = sourceColumnName;
-
-				for (int i = 1; table.Columns.Contains (dsColumnName); i += 1) 
-					dsColumnName = String.Format ("{0}{1}", sourceColumnName, i);
-
+				string sourceTableName;
 				if (schemaRow ["BaseTableName"].Equals (DBNull.Value))
 					sourceTableName = table.TableName; 
 				else
 					sourceTableName = (string) schemaRow ["BaseTableName"];
 
+				// generate a unique column name in the source table.
+				string sourceColumnName;
+				if (schemaRow ["BaseColumnName"].Equals (DBNull.Value))
+					sourceColumnName = DefaultSourceColumnName;
+				else 
+					sourceColumnName = (string) schemaRow ["BaseColumnName"];
+
+				string realSourceColumnName = sourceColumnName;
+
+				for (int i = 1; sourceColumns.Contains (realSourceColumnName); i += 1) 
+					realSourceColumnName = String.Format ("{0}{1}", sourceColumnName, i);
+				sourceColumns.Add(realSourceColumnName);
+
+				// generate DataSetColumnName from DataTableMapping, if any
+				string dsColumnName = realSourceColumnName;
 				DataTableMapping tableMapping = null;
 				if (schemaType == SchemaType.Mapped)
 					tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (TableMappings, sourceTableName, table.TableName, MissingMappingAction.Ignore); 
@@ -322,7 +326,9 @@ namespace System.Data.Common {
 					table.TableName = tableMapping.DataSetTable;
 
 					// check to see if the column mapping exists
-					if (tableMapping.ColumnMappings.IndexOfDataSetColumn (dsColumnName) < 0) {
+					if (tableMapping.ColumnMappings.Contains (dsColumnName)) {
+						dsColumnName = tableMapping.ColumnMappings [realSourceColumnName].DataSetColumn;
+					} else {
 						if (MissingSchemaAction == MissingSchemaAction.Error)
 							throw new SystemException ();
 						tableMapping.ColumnMappings.Add (sourceColumnName, dsColumnName);
@@ -331,8 +337,8 @@ namespace System.Data.Common {
 						TableMappings.Add (tableMapping);
 				}
 
-				table.Columns.Add (dsColumnName, (Type) schemaRow ["DataType"]);
-
+				if (!table.Columns.Contains(dsColumnName))
+					table.Columns.Add (dsColumnName, (Type) schemaRow ["DataType"]);
 
 				if (!schemaRow["IsKey"].Equals (DBNull.Value))
 					if ((bool) (schemaRow ["IsKey"]))
@@ -427,7 +433,9 @@ namespace System.Data.Common {
 					DataColumnMappingCollection columnMappings = tableMapping.ColumnMappings;
 
 					foreach (IDataParameter parameter in command.Parameters) {
-						string dsColumnName = columnMappings [parameter.SourceColumn].DataSetColumn;
+						string dsColumnName = parameter.SourceColumn;
+						DataColumnMapping mapping = columnMappings [parameter.SourceColumn];
+						if (mapping != null) dsColumnName = mapping.DataSetColumn;
 						DataRowVersion rowVersion = DataRowVersion.Proposed;
 
 						// Parameter version is ignored for non-update commands
