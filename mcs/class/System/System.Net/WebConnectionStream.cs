@@ -69,7 +69,7 @@ namespace System.Net
 		
 		internal void CheckComplete ()
 		{
-			if (readBufferSize - readBufferOffset == contentLength) {
+			if (!nextReadCalled && readBufferSize - readBufferOffset == contentLength) {
 				nextReadCalled = true;
 				cnc.NextRead ();
 			}
@@ -101,6 +101,7 @@ namespace System.Net
 
 					b = ms.GetBuffer ();
 					new_size = (int) ms.Length;
+					contentLength = new_size;
 				} else {
 					new_size = contentLength - totalRead;
 					b = new byte [new_size];
@@ -119,7 +120,6 @@ namespace System.Net
 				readBuffer = b;
 				readBufferOffset = 0;
 				readBufferSize = new_size;
-				contentLength = new_size;
 				totalRead = 0;
 				nextReadCalled = true;
 			}
@@ -294,7 +294,7 @@ namespace System.Net
 				} catch (IOException e) {
 					if (cnc.Connected)
 						throw;
-					
+
 					if (!cnc.TryReconnect ())
 						throw;
 

@@ -19,7 +19,6 @@ namespace System.Net
 		ServicePoint sPoint;
 		string name;
 		ArrayList connections;
-		static ConnectionManagementData manager;
 		Random rnd;
 
 		public WebConnectionGroup (ServicePoint sPoint, string name)
@@ -70,7 +69,7 @@ namespace System.Net
 			for (int i = 0; i < count; i++) {
 				WeakReference wr = connections [i] as WeakReference;
 				cnc = wr.Target as WebConnection;
-				if (cnc == null || !cnc.Connected) {
+				if (cnc == null) {
 					connections.RemoveAt (i);
 					count--;
 					continue;
@@ -81,7 +80,7 @@ namespace System.Net
 
 				return cnc;
 			}
-			
+
 			if (sPoint.ConnectionLimit > count) {
 				cnc = new WebConnection (this, sPoint);
 				connections.Add (new WeakReference (cnc));

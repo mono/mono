@@ -1,5 +1,23 @@
 2004-01-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* WebConnection.cs: Data.Init is a bad boy. Lluis realized. He also
+	tidied up the end of ReadDone. Disabled relaunching the request if 2
+	InitRead are called, since now we don't throw everything into
+	RegisterWaitForSingleObject but one request at a time.
+
+	* WebConnectionGroup.cs: when checking available connections, allow them
+	not to be Connected but allocated to honor the connection limit.
+	
+	* WebConnectionStream.cs: CheckComplete() now checks for nextReadCalled
+	too. ReadAll don't mess contentLength if it's provided in the headers.
+
+	BIG thanks to Lluis. Turns out that we were debugging the same stuff and
+	his Data.Init discovery was THE thing I was missing.
+
+	Fixes bug #51277.
+
+2004-01-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ServicePointManager.cs: use GetMaxConnections to get the appropiate
 	number of connections limit.
 

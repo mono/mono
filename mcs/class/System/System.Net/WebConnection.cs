@@ -117,7 +117,7 @@ namespace System.Net
 			lock (this) {
 				busy = false;
 				if (st == WebExceptionStatus.RequestCanceled)
-					Data.Init ();
+					Data = new WebConnectionData ();
 
 				status = st;
 			}
@@ -240,17 +240,16 @@ namespace System.Net
 			bool more = false;
 			lock (cnc) {
 				more = (cnc.queue.Count > 0);
-			}
-
-			if (more)
-				stream.ReadAll ();
-
-			data.stream = stream;
-			stream.CheckComplete ();
-			data.request.SetResponseData (data);
-			lock (cnc) {
 				cnc.prevStream = stream;
 			}
+
+			data.stream = stream;
+			if (more)
+				stream.ReadAll ();
+			else
+				stream.CheckComplete ();
+
+			data.request.SetResponseData (data);
 		}
 		
 		static void InitRead (object state)
@@ -339,22 +338,9 @@ namespace System.Net
 		{
 			HttpWebRequest request = (HttpWebRequest) state;
 
-			// Just in case 2 requests are released
-			bool relaunch = false;
-			lock (this) {
-				relaunch = busy;
-				busy = true;
-			}
-
-			if (relaunch) {
-				SendRequest (request);
-				return;
-			}
-			//
-
 			if (status == WebExceptionStatus.RequestCanceled) {
 				busy = false;
-				Data.Init ();
+				Data = new WebConnectionData ();
 				goAhead.Set ();
 				aborted = false;
 				SendNext ();
@@ -362,7 +348,7 @@ namespace System.Net
 			}
 
 			keepAlive = request.KeepAlive;
-			Data.Init ();
+			Data = new WebConnectionData ();
 			Data.request = request;
 
 			Connect ();
@@ -392,6 +378,7 @@ namespace System.Net
 				}
 
 				if (!busy) {
+					busy = true;
 					ThreadPool.RegisterWaitForSingleObject (goAhead, initConn,
 										request, -1, true);
 				} else {
