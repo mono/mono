@@ -1,3 +1,8 @@
+2004-05-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-sparc.c (mono_arch_output_basic_block): Fix sub.imm.
+
+	* basic-long.cs: New regression test.
 
 Thu May 27 15:50:52 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
