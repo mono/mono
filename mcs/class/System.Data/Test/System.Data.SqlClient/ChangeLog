@@ -1,3 +1,6 @@
+2004-10-15 Umadevi S <sumadevi@novell.com>
+	* SqlDataReaderTest.cs: Added testcase for reading emptyntextfield
+
 2004-10-14 Umadevi S <sumadevi@novell.com>
 	* SqlCommandTest.cs - added Test for clone method
 

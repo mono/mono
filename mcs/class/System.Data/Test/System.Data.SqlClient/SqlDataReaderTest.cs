@@ -50,6 +50,41 @@ namespace MonoTests.System.Data.SqlClient
 		CloseConnection ();
           }
 
+
+	 [Test]
+	 public void ReadEmptyNTextFieldTest () {
+		try {
+			  using (conn) {
+	 			 SqlCommand sqlCommand = conn.CreateCommand();
+			         sqlCommand.CommandText = "CREATE TABLE #MonoTest (NAME ntext)";
+			         sqlCommand.ExecuteNonQuery();
+                                                                                                    
+			         sqlCommand.CommandText = "INSERT INTO #MonoTest VALUES ('')"; //('')";
+			         sqlCommand.ExecuteNonQuery();
+                                                                                                    
+			         sqlCommand.CommandText = "SELECT * FROM #MonoTest";
+			         SqlDataReader dr = sqlCommand.ExecuteReader();
+			         while (dr.Read()) {
+			                Console.WriteLine(dr["NAME"].GetType().FullName);
+					Assert.AreEqual("System.String",dr["NAME"].GetType().FullName);
+            			 }
+        		 }
+		 }
+                catch  (Exception e) {
+                        Assert.Fail("A#01 Got an exception");
+                        //Console.WriteLine(e.StackTrace);
+                                                                                                    
+                }
+                                                                                                    
+                finally { // try/catch is necessary to gracefully close connections^M
+                                                                                                    
+                        CloseConnection ();
+                }
+   
+
+
+	 }		
+
 	 [Test]
 	  /**
 	  The below test expects a table table4 with a bigint column.
