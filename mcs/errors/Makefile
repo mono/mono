@@ -52,7 +52,7 @@ test-everything:
 
 run-mcs-tests:
 	-rm -f $(TEST_PROFILE).log
-	@./do-tests.pl $(TEST_PROFILE) "$(CSCOMPILE)" "cs*.cs"
+	@./do-tests.pl $(TEST_PROFILE) '$(CSCOMPILE)' "cs*.cs"
 
 run-generics-tests:
 	-rm -f generics.log
