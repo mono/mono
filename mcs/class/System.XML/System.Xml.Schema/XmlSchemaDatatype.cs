@@ -146,11 +146,6 @@ namespace System.Xml.Schema
 			return FromName (qname.Name, qname.Namespace);
 		}
 
-		internal static XmlSchemaDatatype FromName (string localName)
-		{
-			return FromName (localName, XmlSchema.Namespace);
-		}
-
 		internal static XmlSchemaDatatype FromName (string localName, string ns)
 		{
 			switch (ns) {

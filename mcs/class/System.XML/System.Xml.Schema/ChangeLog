@@ -1,3 +1,10 @@
+2004-08-30  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaDatatype.cs : Removed FromName(localName) that cannot
+	  handle xdt:* types.
+	* XmlSchemaType.cs : added internal GetBuiltInType() methods that
+	  mix GetBuiltInSimpleType() and GetBuiltInComplexType().
+
 2004-08-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaSimpleType.cs : Fill list types such as xs:IDREFS.

@@ -157,6 +157,21 @@ namespace System.Xml.Schema
 #endif
 		#endregion
 
+		internal static XmlSchemaType GetBuiltInType (XmlQualifiedName qualifiedName)
+		{
+			XmlSchemaType t = GetBuiltInSimpleType (qualifiedName);
+			if (t == null)
+				t = GetBuiltInComplexType (qualifiedName);
+			return t;
+		}
+
+		internal static XmlSchemaType GetBuiltInType (XmlTypeCode typecode)
+		{
+			if (typecode == XmlTypeCode.Item)
+				return XmlSchemaComplexType.AnyType;
+			return GetBuiltInSimpleType (typecode);
+		}
+
 #if NET_2_0
 		public static XmlSchemaComplexType GetBuiltInComplexType (XmlQualifiedName qualifiedName)
 #else
