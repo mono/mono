@@ -92,12 +92,12 @@ SNFLAGS = -q -R
 endif
 
 ifeq ($(PLATFORM), win32)
-GACDIR = `cygpath -w $(libdir)`
-GACROOT = `cygpath -w $(DESTDIR)$(libdir)`
+GACDIR = `cygpath -w $(mono_libdir)`
+GACROOT = `cygpath -w $(DESTDIR)$(mono_libdir)`
 test_flags += -d:WINDOWS
 else
-GACDIR = $(libdir)
-GACROOT = $(DESTDIR)$(libdir)
+GACDIR = $(mono_libdir)
+GACROOT = $(DESTDIR)$(mono_libdir)
 endif
 
 all-local: $(the_lib)

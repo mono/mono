@@ -1,3 +1,8 @@
+2005-03-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpCookieCollection.cs: when adding more than one cookie with the
+	same name, the last one is the winner.
+
 2005-03-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequest.cs: correctly store the value cookies in Params. Fixes

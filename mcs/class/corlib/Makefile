@@ -19,7 +19,7 @@ LIBRARY_USE_INTERMEDIATE_FILE = yes
 # disable, until people fix their code...
 #corlib_flags = /unsafe /nostdlib /d:INSIDE_CORLIB
 
-LIBRARY_INSTALL_DIR = $(libdir)/mono/$(FRAMEWORK_VERSION)
+LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 
 CLEAN_FILES = $(cmplib) $(reslib) $(plattestlib) $(plattestlib).sources \
 	       $(cmp_response) $(cmp_makefrag) \

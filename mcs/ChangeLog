@@ -15,7 +15,7 @@
 
 	* btests: Removed. This directory is now superseded by
 	mbas/Test.
-	
+
 2004-12-13  Raja R Harinath  <rharinath@novell.com>
 
 	* INSTALL.txt: Minor updates to reflect build changes.

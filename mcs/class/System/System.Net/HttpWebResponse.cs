@@ -477,11 +477,24 @@ namespace System.Net
 			while (k < length && Char.IsWhiteSpace (header [k]))
 				k++;
 
-			int begin = k;
-			while (k < length && header [k] != ';')
-				k++;
+			int begin;
+			if (header [k] == '"'){
+				int j;
+				begin = ++k;
 
-			pos = k;
+				while (k < length && header [k] != '"')
+					k++;
+
+				for (j = k; j < length && header [j] != ';'; j++)
+					;
+				pos = j;
+			} else {
+				begin = k;
+				while (k < length && header [k] != ';')
+					k++;
+				pos = k;
+			}
+				
 			return header.Substring (begin, k - begin).Trim ();
 		}
 	}

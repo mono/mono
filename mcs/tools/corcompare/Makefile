@@ -21,7 +21,7 @@ CORCOMPARE_SOURCES = \
 	MissingType.cs \
 	ToDoAssembly.cs
 
-PROGRAM_INSTALL_DIR = $(libdir)/mono/$(FRAMEWORK_VERSION)
+PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 
 APIINFO_SOURCES = mono-api-info.cs
 APIDIFF_SOURCES = mono-api-diff.cs

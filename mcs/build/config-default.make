@@ -15,7 +15,7 @@ CFLAGS = -g -O2
 INSTALL = /usr/bin/install
 prefix = /usr/local
 exec_prefix = $(prefix)
-libdir = $(exec_prefix)/lib
+mono_libdir = $(exec_prefix)/lib
 RUNTIME = mono $(RUNTIME_FLAGS)
 TEST_RUNTIME = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$(TEST_MONO_PATH)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) --debug
 

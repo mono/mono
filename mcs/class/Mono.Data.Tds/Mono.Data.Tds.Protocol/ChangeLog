@@ -1,3 +1,13 @@
+2005-03-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Tds70.cs: turns out that sp_reset_connection procedure might not be
+	found ("Invalid object name 'sp_reset_connection'"). In this case, and
+	if we get a proper state ('Class' property in the SqlException), just
+	ignore the error.
+
+	* TdsConnectionPool.cs: if the connection cannot be reset, attemp to
+	disconnect it before losing the last reference to it.
+
 2005-03-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Tds.cs: set the charset for MS SQL 2000. Patch from Aleksandar

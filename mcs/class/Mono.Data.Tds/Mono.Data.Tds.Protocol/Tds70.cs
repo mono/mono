@@ -353,16 +353,19 @@ namespace Mono.Data.Tds.Protocol {
 
 		public override bool Reset ()
 		{
-			try
-			{
+			try {
 				ExecProc ("exec sp_reset_connection");
-				return true;
+			} catch (Exception e) {
+				System.Reflection.PropertyInfo pinfo = e.GetType ().GetProperty ("Class");
+				if (pinfo != null && pinfo.PropertyType == typeof (byte)) {
+					byte klass = (byte) pinfo.GetValue (e, null);
+					// 11 to 16 indicates error that can be fixed by the user such as 'Invalid object name'
+					if (klass < 11 || klass > 16)
+						return false;
+				}
 			}
-			catch
-			{
-				Console.WriteLine ("Error reseting");
-				return false;
-			}
+
+			return true;
 		}
 
 		public override void ExecPrepared (string commandText, TdsMetaParameterCollection parameters, int timeout, bool wantResults)
