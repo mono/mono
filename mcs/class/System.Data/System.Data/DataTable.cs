@@ -946,7 +946,8 @@ namespace System.Data {
 		{
 			DataRow newRow = NewRow();
 			row.CopyValuesToRow (newRow);
-			Rows.Add (newRow);
+                        if (row.RowState != DataRowState.Detached)
+                                Rows.Add (newRow);
 			row.CopyState (newRow);
 		}
 
