@@ -445,9 +445,17 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static IntPtr StringToCoTaskMemAnsi (string s) {
-			throw new NotImplementedException ();
+			int length = s.Length + 1;
+			IntPtr ctm = AllocCoTaskMem (length);
+
+			byte[] asBytes = new byte[length];
+			for (int i = 0; i < s.Length; i++)
+				asBytes[i] = (byte)s[i];
+			asBytes[s.Length] = 0;
+
+			copy_to_unmanaged (asBytes, 0, ctm, length);
+			return ctm;
 		}
 
 		[MonoTODO]
@@ -455,9 +463,16 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static IntPtr StringToCoTaskMemUni (string s) {
-			throw new NotImplementedException ();
+			int length = s.Length + 1;
+			IntPtr ctm = AllocCoTaskMem (length * 2);
+
+			char[] asChars = new char[length];
+			s.CopyTo (0, asChars, 0, s.Length);
+			asChars[s.Length] = '\0';
+
+			copy_to_unmanaged (asChars, 0, ctm, length);
+			return ctm;
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

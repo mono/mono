@@ -1,3 +1,6 @@
+2004-05-06  Mike Shaver  <shaver@off.net>
+	* Marshal.cs: Implement StringToCoTaskMem{Ansi,Uni}
+
 2004-05-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Marshal.cs: Applied patch from vladimir@pobox.com (Vladimir Vukicevic). Implement UnsafeAddrOfPinnedArrayElement.
