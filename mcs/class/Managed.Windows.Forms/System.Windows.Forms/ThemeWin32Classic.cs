@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.32 $
+// $Revision: 1.33 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.33  2004/09/05 08:03:51  jordi
+// fixes bugs, adds flashing on certain situations
+//
 // Revision 1.32  2004/09/02 16:32:54  jordi
 // implements resource pool for pens, brushes, and hatchbruses
 //
@@ -1017,7 +1020,6 @@ namespace System.Windows.Forms
 			ButtonState first_arrow, ButtonState second_arrow, ref int scrollbutton_width, 
 			ref int scrollbutton_height, bool vert)
 		{
-
 			
 			if (vert) {		
 
@@ -1036,8 +1038,42 @@ namespace System.Windows.Forms
 				DrawScrollButton (dc, second_arrow_area, ScrollButton.Down, second_arrow);				
 
 				/* Background */
-				dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace), 0,  
-					scrollbutton_height, area.Width, area.Height - (scrollbutton_height * 2));
+				switch (bar.thumb_moving) {
+				case ScrollBar.ThumbMoving.None:				
+				{
+					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace), 0,  
+						scrollbutton_height, area.Width, area.Height - (scrollbutton_height * 2));
+					
+					break;
+				}
+				case ScrollBar.ThumbMoving.Forward: {
+					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace),
+						0,  scrollbutton_height,
+						area.Width, thumb_pos.Y - scrollbutton_height);
+												
+					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (255, 63,63,63), Color.Black),
+						0, thumb_pos.Y + thumb_pos.Height,
+						area.Width, area.Height -  (thumb_pos.Y + thumb_pos.Height) - scrollbutton_height);						
+						
+					break;
+				}
+				
+				case ScrollBar.ThumbMoving.Backwards: {
+					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (255, 63,63,63), Color.Black),
+						0,  scrollbutton_height,
+						area.Width, thumb_pos.Y - scrollbutton_height);
+												
+					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace),
+						0, thumb_pos.Y + thumb_pos.Height,
+						area.Width, area.Height -  (thumb_pos.Y + thumb_pos.Height) - scrollbutton_height);						
+						
+					break;
+				}
+				
+				default:
+					break;
+				}
+					
 			}
 			else {
 				
@@ -1056,11 +1092,49 @@ namespace System.Windows.Forms
 				DrawScrollButton (dc, second_arrow_area, ScrollButton.Right, second_arrow);
 
 				/* Background */
-				dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace), scrollbutton_width, 
-					0, area.Width - (scrollbutton_width * 2), area.Height);
+				//dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace), scrollbutton_width, 
+				//	0, area.Width - (scrollbutton_width * 2), area.Height);
+					
+				switch (bar.thumb_moving) {
+				case ScrollBar.ThumbMoving.None:				
+				{
+					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace), scrollbutton_width,
+						0, area.Width - (scrollbutton_width * 2), area.Height);
+					
+					break;
+				}
+				
+				case ScrollBar.ThumbMoving.Forward: {
+					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace),
+						scrollbutton_width,  0,
+						thumb_pos.X - scrollbutton_width, area.Height);
+												
+					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (255, 63,63,63), Color.Black),
+						thumb_pos.X + thumb_pos.Width, 0,
+						area.Width -  (thumb_pos.X + thumb_pos.Width) - scrollbutton_width, area.Height);
+						
+					break;
+				}
+				
+				case ScrollBar.ThumbMoving.Backwards: {
+					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (255, 63,63,63), Color.Black),
+						scrollbutton_width,  0,
+						thumb_pos.X - scrollbutton_width, area.Height);
+												
+					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace),
+						thumb_pos.X + thumb_pos.Width, 0,
+						area.Width -  (thumb_pos.X + thumb_pos.Width) - scrollbutton_width, area.Height);
+
+						
+					break;
+				}
+				
+				default:
+					break;
+				}
 			}
 
-			/* Thumbail */
+			/* Thumb */
 			if (bar.Enabled)
 				DrawScrollButtonPrimitive (dc, thumb_pos, ButtonState.Normal);			
 		}

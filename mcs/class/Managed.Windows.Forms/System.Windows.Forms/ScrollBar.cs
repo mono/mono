@@ -26,9 +26,12 @@
 //	Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.18 $
+// $Revision: 1.19 $
 // $Modtime: $
 // $Log: ScrollBar.cs,v $
+// Revision 1.19  2004/09/05 08:03:51  jordi
+// fixes bugs, adds flashing on certain situations
+//
 // Revision 1.18  2004/08/31 10:35:04  jordi
 // adds autorepeat timer, uses a single timer, fixes scrolling bugs, adds new methods
 //
@@ -78,7 +81,7 @@
 // Theme support
 //
 
-// NOT COMPLETE
+// COMPLETE
 
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -118,10 +121,10 @@ namespace System.Windows.Forms
 		private const int thumb_min_size = 8;
 		internal bool vert;
 		private int lastclick_pos;      // Position of the last button-down event
-		private int lastclick_pos_thumb;      // Position of the last button-down event relative to the thumb
-		private bool repeat_thumb_forward;
+		private int lastclick_pos_thumb;      // Position of the last button-down event relative to the thumb		
 		private bool outside_thumbarea_right = false;
 		private bool outside_thumbarea_left = false;
+		internal ThumbMoving thumb_moving = ThumbMoving.None;
 		#endregion	// Local Variables
 
 		private enum TimerType
@@ -130,6 +133,13 @@ namespace System.Windows.Forms
 			RepeatButton,
 			HoldThumbArea,
 			RepeatThumbArea
+		}
+		
+		internal enum ThumbMoving
+		{
+			None,
+			Forward,
+			Backwards,
 		}
 
 		#region Events
@@ -549,11 +559,21 @@ namespace System.Windows.Forms
 
 			case TimerType.RepeatThumbArea:
 			{
+				Point pnt;
+				pnt = PointToClient (MousePosition);
+				
+				if (vert)
+					lastclick_pos = pnt.Y;
+				else
+					lastclick_pos = pnt.X;
 
-				if (repeat_thumb_forward) {
+				if (thumb_moving == ThumbMoving.Forward) {
 					if ((vert && (thumb_pos.Y + thumb_size > lastclick_pos)) ||
-						(!vert && (thumb_pos.X + thumb_size > lastclick_pos))){
-						timer.Enabled = false;
+						(!vert && (thumb_pos.X + thumb_size > lastclick_pos)) ||
+						(thumb_area.Contains (pnt) == false)){
+						timer.Enabled = false;						
+    						thumb_moving = ThumbMoving.None;
+    						Refresh ();    			
 					} else
 						LargeIncrement ();
 				}
@@ -561,6 +581,8 @@ namespace System.Windows.Forms
 					if ((vert && (thumb_pos.Y < lastclick_pos)) ||
 						(!vert && (thumb_pos.X  < lastclick_pos))){
 						timer.Enabled = false;
+						thumb_moving = ThumbMoving.None;
+    						Refresh ();    						
 					} else
 						LargeDecrement ();
 
@@ -596,7 +618,8 @@ namespace System.Windows.Forms
 
 					int mouse_click = e.Y;
 					int outside_curpos = thumb_area.Y + thumb_area.Height - thumb_size + lastclick_pos_thumb;
-
+					
+					
 					if (mouse_click > thumb_area.Y + thumb_area.Height) {
 						outside_thumbarea_right = true;
 						mouse_click = thumb_area.Y + thumb_area.Height;
@@ -630,7 +653,7 @@ namespace System.Windows.Forms
 				else {
 					int mouse_click = e.X;
 					int outside_curpos = thumb_area.X + thumb_area.Width - thumb_size + lastclick_pos_thumb;
-
+										
 					if (mouse_click >  thumb_area.X + thumb_area.Width) {
 						outside_thumbarea_right = true;
 						mouse_click = thumb_area.X + thumb_area.Width;
@@ -669,15 +692,14 @@ namespace System.Windows.Forms
 
     		private void OnMouseDownSB (object sender, MouseEventArgs e)
     		{
-
     			if (firstbutton_state != ButtonState.Inactive && first_arrow_area.Contains (e.X, e.Y)) {
-				this.Capture = true;
+				this.Capture = true;				
 				firstbutton_state = ButtonState.Pushed;
-				Refresh ();
+				Refresh ();				
 			}
 
 			if (secondbutton_state != ButtonState.Inactive && second_arrow_area.Contains (e.X, e.Y)) {
-				this.Capture = true;
+				this.Capture = true;				
 				secondbutton_state = ButtonState.Pushed;
 				Refresh ();
 			}
@@ -697,7 +719,7 @@ namespace System.Windows.Forms
 					thumb_pixel_click_move_prev = thumb_pixel_click_move = e.X;
 				}
 			}
-			else
+			else {
 				if (thumb_area.Contains (e.X, e.Y)) {
 
 					if (vert) {
@@ -705,12 +727,12 @@ namespace System.Windows.Forms
 						lastclick_pos = e.Y;
 
 						if (e.Y > thumb_pos.Y + thumb_pos.Height) {
-							LargeIncrement ();
-							repeat_thumb_forward = true;
+							LargeIncrement ();							
+							thumb_moving = ThumbMoving.Forward;							
 						}
 						else {
-							LargeDecrement ();
-							repeat_thumb_forward = false;
+							LargeDecrement ();							
+							thumb_moving = ThumbMoving.Backwards;
 						}
 					}
 					else 	{
@@ -719,19 +741,22 @@ namespace System.Windows.Forms
 						lastclick_pos = e.X;
 
 						if (e.X > thumb_pos.X + thumb_pos.Width) {
-							LargeIncrement ();
-							repeat_thumb_forward = true;
+							thumb_moving = ThumbMoving.Forward;
+							LargeIncrement ();							
 						}
 						else {
-							LargeDecrement ();
-							repeat_thumb_forward = false;
+							thumb_moving = ThumbMoving.Backwards;
+							LargeDecrement ();							
 						}
 					}
 
 					SetHoldThumbAreaTimer ();
 					timer.Enabled = true;
+					Refresh ();
 				}
-
+			}
+				
+			
 
 			/* If arrows are pressed, fire timer for auto-repeat */
 			if ((((firstbutton_state & ButtonState.Pushed) == ButtonState.Pushed)
@@ -740,12 +765,16 @@ namespace System.Windows.Forms
 		        	SetHoldButtonClickTimer ();
 		        	timer.Enabled = true;
 			}
-
     		}
     		
     		private void OnMouseUpSB (object sender, MouseEventArgs e)
     		{
     			timer.Enabled = false;
+    			
+    			if (thumb_moving != ThumbMoving.None) {
+    				thumb_moving = ThumbMoving.None;
+    				Refresh ();
+    			}    			
 
     			if (firstbutton_state != ButtonState.Inactive && first_arrow_area.Contains (e.X, e.Y)) {
 
@@ -763,7 +792,7 @@ namespace System.Windows.Forms
 				OnScroll (new ScrollEventArgs (ScrollEventType.ThumbPosition, position));
 				OnScroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
 				this.Capture = false;
-				thumb_pressed = false;
+				thumb_pressed = false;				
 				Refresh ();
 			}
 
@@ -848,7 +877,6 @@ namespace System.Windows.Forms
 			timer_type = TimerType.RepeatThumbArea;
 			timer.Enabled = true;
 		}    		
-
 		
     		private void UpdatePos (int newPos, bool update_thumbpos)
     		{
@@ -873,6 +901,9 @@ namespace System.Windows.Forms
 			}
 			else {
 				position = pos; // Updates directly the value to avoid thumb pos update
+				
+				if (ValueChanged != null)
+					ValueChanged (this, EventArgs.Empty);
 			}
 
 			if (pos != old) // Fire event
