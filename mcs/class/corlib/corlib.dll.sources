@@ -383,6 +383,8 @@ System.Reflection/MonoEvent.cs
 System.Reflection/MonoField.cs
 System.Reflection/MonoMethod.cs
 System.Reflection/MonoProperty.cs
+System.Reflection/ObfuscateAssemblyAttribute.cs
+System.Reflection/ObfuscationAttribute.cs
 System.Reflection/ParameterAttributes.cs
 System.Reflection/ParameterInfo.cs
 System.Reflection/ParameterModifier.cs

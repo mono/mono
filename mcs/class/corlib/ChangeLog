@@ -1,3 +1,8 @@
+2004-09-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* corlib.dll.sources: Add System.Reflection.ObfuscateAssemblyAttribute
+	and System.Reflection.ObfuscationAttribute.
+
 2004-09-21  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (net20bootstrapcorlib): Rename from net20bootstraplib.
