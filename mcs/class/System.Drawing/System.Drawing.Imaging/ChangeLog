@@ -1,3 +1,7 @@
+2004-01-19  Ravindra <rkumar@novell.com>
+
+	* Encoder.cs: Implemented.
+
 2004-01-10  Ravindra <rkumar@novell.com>
 
 	* All Enums: Made serializable.
