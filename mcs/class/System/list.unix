@@ -165,6 +165,7 @@ System.Net.Sockets/Socket.cs
 System.Net.Sockets/ProtocolFamily.cs
 System.Net.Sockets/NetworkStream.cs
 System.ComponentModel/ITypedList.cs
+System.ComponentModel/BaseNumberConverter.cs
 System.ComponentModel/Component.cs
 System.ComponentModel/ComponentCollection.cs
 System.ComponentModel/DefaultEventAttribute.cs
@@ -176,6 +177,7 @@ System.ComponentModel/BrowsableAttribute.cs
 System.ComponentModel/DescriptionAttribute.cs
 System.ComponentModel/ExpandableObjectConverter.cs
 System.ComponentModel/IBindingList.cs
+System.ComponentModel/Int32Converter.cs
 System.ComponentModel/DesignerSerializationVisibility.cs
 System.ComponentModel/PropertyChangedEventArgs.cs
 System.ComponentModel/LocalizableAttribute.cs
@@ -217,6 +219,7 @@ System.ComponentModel/IComponent.cs
 System.ComponentModel/ISite.cs
 System.ComponentModel/MarshalByValueComponent.cs
 System.ComponentModel/PropertyChangedEventHandler.cs
+System.ComponentModel/PropertyTabScope.cs
 System.ComponentModel/ReadOnlyAttribute.cs
 System.ComponentModel/Win32Exception.cs
 System.ComponentModel/ITypeDescriptorContext.cs
