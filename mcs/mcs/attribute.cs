@@ -128,7 +128,7 @@ namespace Mono.CSharp {
 						this.ImplOptions = (MethodImplOptions) pos_values [0];
 
 					if (MarshalAsAttr)
-						this.UnmanagedType = (UnmanagedType) pos_values [0];
+						this.UnmanagedType = (System.Runtime.InteropServices.UnmanagedType) pos_values [0];
 					
 				} else { 
 					error182 ();

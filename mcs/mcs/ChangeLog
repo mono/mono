@@ -1,3 +1,7 @@
+2002-03-11  Miguel de Icaza  <miguel@ximian.com>
+
+	* attribute.cs: Temporary hack, so Paolo can keep working.
+
 2002-03-08  Ravi Pratap  <ravi@ximian.com>
 
 	* attribute.cs (Attribute.UnmanagedType): This is to keep track of
