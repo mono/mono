@@ -25,8 +25,9 @@ namespace System {
 		//   True if this instance and o represent the same type
 		//   and have the same value.
 		// </summary>
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern override bool Equals (object o);
+		public override bool Equals (object o) {
+			return InternalEquals (this, o);
+		}
 
 		// <summary>
 		//   Gets a hashcode for this value type using the
@@ -44,5 +45,8 @@ namespace System {
 		{
 			return GetType().FullName;
 		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static bool InternalEquals (object o1, object o2);
 	}
 }
