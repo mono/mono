@@ -948,22 +948,3 @@ Dns
 web.app.com
 
 
--------------------------
-file:///test.domain.com/name space
-file://test.domain.com/name space
-file://test.domain.com/name%20space
-file
-test.domain.com
-\\test.domain.com\name space
-
--1
-True
-True
-False
-False
-Dns
-/name%20space
-/name%20space
-test.domain.com
-
-

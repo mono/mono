@@ -36,3 +36,22 @@ Basic
 
 
 
+------------------------- MS.NET totally rejects Unix Path
+file:///test.top-level.directory/name space
+file:///test.top-level.directory/name space
+file:///test.top-level.directory/name%20space
+file
+
+/test.top-level.directory/name space
+
+-1
+True
+False
+False
+False
+Basic
+/test.top-level.directory/name%20space
+/test.top-level.directory/name%20space
+
+
+

@@ -119,8 +119,6 @@ http://web.app.com/test.cgi?value=あいうえお
 #辭典:cn_to_ja/ファイル
 #ファイル:
 #辭典:
-# I think it is not totally retional, but ToString() returns unespaced string.
-file:///test.domain.com/name space
 #
 #
 # MS.NET supplies no host info (consoto.com), but I think Mono is better.
