@@ -1,4 +1,9 @@
 
+Thu Mar 28 11:29:58 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* util.c: when an invalid flags combination is seen,
+	return the string "invalid-flags", so disassembly can continue.
+
 Tue Mar 19 18:15:29 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* dis-cil.c: use unsigned for variables.
