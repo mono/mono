@@ -1457,6 +1457,26 @@ public class TypeManager {
 			return t.HasGenericArguments ? t.GetGenericArguments ().Length : 0;
 	}
 
+	public static Type[] GetTypeArguments (Type t)
+	{
+		DeclSpace tc = LookupDeclSpace (t);
+		if (tc != null) {
+			if (!tc.IsGeneric)
+				throw new InvalidOperationException ();
+
+			TypeParameter[] tparam = tc.TypeParameters;
+			Type[] ret = new Type [tparam.Length];
+			for (int i = 0; i < tparam.Length; i++) {
+				ret [i] = tparam [i].Type;
+				if (ret [i] == null)
+					throw new InternalErrorException ();
+			}
+
+			return ret;
+		} else
+			return t.GetGenericArguments ();
+	}
+
 	public static bool CheckGeneric (Type t, int num_type_arguments)
 	{
 		if (num_type_arguments < 0)
@@ -1584,6 +1604,88 @@ public class TypeManager {
 			return true;
 		else
 			return IsEqualGenericType (a, b);
+	}
+
+	static bool MayBecomeEqualGenericTypes (Type a, Type b)
+	{
+		if (a.IsGenericParameter) {
+			//
+			// If b is a generic parameter or an actual type,
+			// they may become equal:
+			//
+			//    class X<T,U> : I<T>, I<U>
+			//    class X<T> : I<T>, I<float>
+			// 
+			if (b.IsGenericParameter || !b.IsGenericInstance)
+				return true;
+
+			//
+			// We're now comparing a type parameter with a
+			// generic instance.  They may become equal unless
+			// the type parameter appears anywhere in the
+			// generic instance:
+			//
+			//    class X<T,U> : I<T>, I<X<U>>
+			//        -> error because you could instanciate it as
+			//           X<X<int>,int>
+			//
+			//    class X<T> : I<T>, I<X<T>> -> ok
+			//
+
+			Type[] bargs = GetTypeArguments (b);
+			for (int i = 0; i < bargs.Length; i++) {
+				if (a.Equals (bargs [i]))
+					return false;
+			}
+
+			return true;
+		}
+
+		if (b.IsGenericParameter)
+			return MayBecomeEqualGenericTypes (b, a);
+
+		//
+		// At this point, neither a nor b are a type parameter.
+		//
+		// If one of them is a generic instance, let
+		// MayBecomeEqualGenericInstances() compare them (if the
+		// other one is not a generic instance, they can never
+		// become equal).
+		//
+
+		if (a.IsGenericInstance || b.IsGenericInstance)
+			return MayBecomeEqualGenericInstances (a, b);
+
+		//
+		// Ok, two ordinary types.
+		//
+
+		return a.Equals (b);
+	}
+
+	//
+	// Checks whether two generic instances may become equal for some
+	// particular instantiation (26.3.1).
+	//
+	public static bool MayBecomeEqualGenericInstances (Type a, Type b)
+	{
+		if (!a.IsGenericInstance || !b.IsGenericInstance)
+			return false;
+		if (a.GetGenericTypeDefinition () != b.GetGenericTypeDefinition ())
+			return false;
+
+		Type[] aargs = GetTypeArguments (a);
+		Type[] bargs = GetTypeArguments (b);
+
+		if (aargs.Length != bargs.Length)
+			return false;
+
+		for (int i = 0; i < aargs.Length; i++) {
+			if (MayBecomeEqualGenericTypes (aargs [i], bargs [i]))
+				return true;
+		}
+
+		return false;
 	}
 
 	//

@@ -778,6 +778,32 @@ namespace Mono.CSharp {
 			return TypeManager.ExpandInterfaces (ifaces);
 		}
 
+		bool CheckGenericInterfaces (Type[] ifaces)
+		{
+			ArrayList already_checked = new ArrayList ();
+
+			for (int i = 0; i < ifaces.Length; i++) {
+				Type iface = ifaces [i];
+				foreach (Type t in already_checked) {
+					if (!TypeManager.MayBecomeEqualGenericInstances (iface, t))
+						continue;
+
+					Report.Error (
+						695, Location,
+						"`{0}' cannot implement both `{1}' and `{2}' " +
+						"because they may unify for some type " +
+						"parameter substitutions",
+						TypeManager.GetFullName (TypeBuilder),
+						iface, t);
+					return false;
+				}
+
+				already_checked.Add (iface);
+			}
+
+			return true;
+		}
+
 		bool error = false;
 		
 		//
@@ -890,10 +916,23 @@ namespace Mono.CSharp {
 
 			// add interfaces that were not added at type creation
 			if (ifaces != null) {
-				foreach (TypeExpr iface in ifaces) {
-					Type itype = iface.ResolveType (ec);
-					TypeBuilder.AddInterfaceImplementation (itype);
+				Type[] itypes = new Type [ifaces.Length];
+				for (int i = 0; i < ifaces.Length; i++) {
+					itypes [i] = ifaces [i].ResolveType (ec);
+					if (itypes [i] == null)
+						error = true;
 				}
+
+				if (error)
+					return null;
+
+				if (!CheckGenericInterfaces (itypes)) {
+					error = true;
+					return null;
+				}
+
+				for (int i = 0; i < ifaces.Length; i++)
+					TypeBuilder.AddInterfaceImplementation (itypes [i]);
 			}
 
 			//
