@@ -1,3 +1,11 @@
+2004-09-14  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (MCS) [PROFILE=default]: Force testing of 'mcs'.
+	(test-everything): Remove.
+	(TEST_PROFILE): New.
+	(run-mcs-tests, run-gmcs-tests): Unify using TEST_PROFILE.
+	(run-test-local) [PROFILE=net_2_0]: Run generics tests.
+
 2004-09-10 Marek Safar <marek.safar@seznam.cz>
 
 	* do-test.pl: Make report readable (I was really confuse).
