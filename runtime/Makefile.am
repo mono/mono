@@ -27,7 +27,7 @@ assemblies_DATA =	\
 	Mono.Data.SybaseClient.dll				\
 	Mono.Data.TdsClient.dll					\
 	Mono.Data.Tds.dll					\
-	Mono.Directory.LDAP.dll					\
+	Novell.Directory.Ldap.dll					\
 	Mono.GetOptions.dll					\
 	Mono.Http.dll						\
 	Mono.PEToolkit.dll					\
