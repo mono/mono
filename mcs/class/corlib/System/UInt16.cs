@@ -54,7 +54,7 @@ namespace System
 			bool has_negative_sign = false;
 
 			if (s == null)
-				throw new ArgumentNullException (Locale.GetText ("s is null"));
+				throw new ArgumentNullException ("s");
 
 			len = s.Length;
 
@@ -223,7 +223,7 @@ namespace System
 		[CLSCompliant (false)]
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
-			return System.Convert.ToUInt16 (value);
+			return value;
 		}
 
 		[CLSCompliant (false)]

@@ -1,5 +1,12 @@
 2004-03-08  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* UnauthorizedAccessException.cs: Exceptions set the HResult
+	* UInt64.cs: Implemented two missing methods
+	* UInt32.cs: Fix wrong parameters for ArgumentNullException, simpler convert
+	* UInt16.cs: Fix wrong parameters for ArgumentNullException, simpler convert
+
+2004-03-08  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* WeakReference.cs
 	* Void.cs
 	* Version.cs

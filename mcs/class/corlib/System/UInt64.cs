@@ -73,7 +73,7 @@ namespace System
 		public static ulong Parse (string s, NumberStyles style, IFormatProvider provider)
 		{
 			if (s == null)
-				throw new ArgumentNullException ();
+				throw new ArgumentNullException ("s");
 
 			if (s.Length == 0)
 				throw new FormatException (Locale.GetText ("Input string was not in the correct format."));
@@ -303,7 +303,7 @@ namespace System
 
 		DateTime IConvertible.ToDateTime (IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return System.Convert.ToDateTime (value);
 		}
 
 		decimal IConvertible.ToDecimal (IFormatProvider provider)
@@ -344,7 +344,7 @@ namespace System
 
 		object IConvertible.ToType (Type conversionType, IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return System.Convert.ToType (value, conversionType, provider);
 		}
 
 		[CLSCompliant (false)]

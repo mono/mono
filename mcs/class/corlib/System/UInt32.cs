@@ -61,7 +61,7 @@ namespace System
 			bool has_negative_sign = false;
 
 			if (s == null)
-				throw new ArgumentNullException (Locale.GetText ("s is null"));
+				throw new ArgumentNullException ("s");
 
 			len = s.Length;
 
@@ -128,7 +128,7 @@ namespace System
 		public static uint Parse (string s, NumberStyles style, IFormatProvider provider)
 		{
 			if (s == null)
-				throw new ArgumentNullException ();
+				throw new ArgumentNullException ("s");
 
 			if (s.Length == 0)
 				throw new FormatException (Locale.GetText ("Input string was not in the correct format."));
@@ -409,7 +409,7 @@ namespace System
 		[CLSCompliant (false)]
 		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
-			return System.Convert.ToUInt32 (value);
+			return value;
 		}
 
 		[CLSCompliant (false)]
