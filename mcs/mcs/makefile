@@ -106,4 +106,4 @@ pn:
 #	sed -e "s/@CONTAINEE@/Parameter/g" -e "s/@arrayname@/parameters/g" < X-Collection.cs > parameterCollection.cs
 
 clean:
-	rm -f mcs.exe cs-parser.cs y.output mcs.pdb *~ .*~ mcs.log response
+	rm -f mcs.exe mcs2.exe mcs3.exe cs-parser.cs y.output mcs.pdb *~ .*~ mcs.log response

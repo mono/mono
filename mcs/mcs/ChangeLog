@@ -1,3 +1,7 @@
+2002-10-23  Nick Drochak  <ndrochak@gol.com>
+
+	* makefile: Remove mcs2.exe and mcs3.exe on 'make clean'
+
 2002-10-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs: Do not make mcs-debug conditional, so we do not break
