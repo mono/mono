@@ -1,5 +1,8 @@
 2002-05-08  Rodrigo Moya <rodrigo@ximian.com>
 
+	* Test/System.Data_test.build: excluded TestDataColumn, which
+	should be replaced with a nunit test.
+
 	* Test/TestDataColumn.cs: added basic test for DataColumn.cs.
 
 2002-05-07  Tim Coleman <tim@timcoleman.com>
