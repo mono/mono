@@ -496,7 +496,7 @@ namespace Mono.CSharp.Debugger
 
 		LineNumberEntry[] BuildLineNumberTable (LineNumberEntry[] line_numbers)
 		{
-			// Array.Sort (line_numbers, LineNumberEntry.OffsetComparer);
+			Array.Sort (line_numbers, LineNumberEntry.OffsetComparer);
 
 			ArrayList list = new ArrayList ();
 			int last_offset = -1;
