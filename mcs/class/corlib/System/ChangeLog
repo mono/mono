@@ -1,3 +1,9 @@
+2004-04-16  David Sheldon <dave-mono@earth.li>
+
+  * DecimalFormatter.cs: Don't append a decimal point after the
+    end of a number. ((decimal)1).ToString("P0") should be "100 %", not
+    "100. %"
+
 2004-04-09  Miguel de Icaza  <miguel@ximian.com>
 
 	* OutOfMemoryException.cs: Removed the call to Locale.GetText from

@@ -232,7 +232,7 @@ namespace System
                 }
             }
 
-            if (decimals > 0)
+            if ((decimals > 0) && (decPos+offset < sb.Length))
             {
                 sb.Insert(offset + ((decPos <= 0) ? 1 : decPos), decSeparator);
             }
