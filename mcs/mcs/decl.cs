@@ -139,7 +139,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public int ModFlags;
 
-		public readonly TypeContainer Parent;
+		public /*readonly*/ TypeContainer Parent;
 
 		/// <summary>
 		///   Location where this declaration happens

@@ -1,3 +1,11 @@
+2005-01-06  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #70817
+	* class.cs (PropertyMethod): Set Parent field in ctors.
+	(SetMethod.InternalParameters): Add unsafe switch hack.
+	
+	* decl.cs (MemberCore.Parent): Cannot be readonly.
+
 2005-01-06  Raja R Harinath  <rharinath@novell.com>
 
 	* decl.cs (DeclSpace.ResolveType): Remove.

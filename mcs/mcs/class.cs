@@ -5712,11 +5712,16 @@ namespace Mono.CSharp {
 				Parameter [] parms = new Parameter [1];
 				parms [0] = new Parameter (method.Type, "value", Parameter.Modifier.NONE, null);
 				Parameters parameters = new Parameters (parms, null, method.Location);
+
+				bool old_unsafe = ec.InUnsafe;
+				ec.InUnsafe = InUnsafe;
 				Type [] types = parameters.GetParameterInfo (ec);
+				ec.InUnsafe = old_unsafe;
+
 				return new InternalParameters (types, parameters);
 			}
 
-			public override MethodBuilder Define(TypeContainer container)
+			public override MethodBuilder Define (TypeContainer container)
 			{
 				if (container.EmitContext == null)
 					throw new InternalErrorException ("SetMethod.Define called too early");
@@ -5766,6 +5771,7 @@ namespace Mono.CSharp {
 				: base (method, prefix)
 			{
 				this.method = method;
+				Parent = method.Parent;
 			}
 
 			public PropertyMethod (MethodCore method, Accessor accessor,
@@ -5773,6 +5779,7 @@ namespace Mono.CSharp {
 				: base (method, accessor, prefix)
 			{
 				this.method = method;
+				Parent = method.Parent;
 				this.ModFlags = accessor.ModFlags;
 
 				if (accessor.ModFlags != 0 && RootContext.Version == LanguageVersion.ISO_1) {
