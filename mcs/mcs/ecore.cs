@@ -61,7 +61,10 @@ namespace Mono.CSharp {
 
 		// Disable control flow analysis while resolving the expression.
 		// This is used when resolving the instance expression of a field expression.
-		DisableFlowAnalysis	= 16
+		DisableFlowAnalysis	= 16,
+
+		// Set if this is resolving the first part of a MemberAccess.
+		Intermediate		= 32
 	}
 
 	//
@@ -286,8 +289,10 @@ namespace Mono.CSharp {
 				ec.DoFlowAnalysis = false;
 
 			Expression e;
+			bool intermediate = (flags & ResolveFlags.Intermediate) == ResolveFlags.Intermediate;
 			if (this is SimpleName)
-				e = ((SimpleName) this).DoResolveAllowStatic (ec);
+				e = ((SimpleName) this).DoResolveAllowStatic (ec, intermediate);
+
 			else 
 				e = DoResolve (ec);
 
@@ -1966,18 +1971,18 @@ namespace Mono.CSharp {
 		
 		public override Expression DoResolve (EmitContext ec)
 		{
-			return SimpleNameResolve (ec, null, false);
+			return SimpleNameResolve (ec, null, false, false);
 		}
 
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
-			return SimpleNameResolve (ec, right_side, false);
+			return SimpleNameResolve (ec, right_side, false, false);
 		}
 		
 
-		public Expression DoResolveAllowStatic (EmitContext ec)
+		public Expression DoResolveAllowStatic (EmitContext ec, bool intermediate)
 		{
-			return SimpleNameResolve (ec, null, true);
+			return SimpleNameResolve (ec, null, true, intermediate);
 		}
 
 		public override Expression ResolveAsTypeStep (EmitContext ec)
@@ -2037,9 +2042,9 @@ namespace Mono.CSharp {
 		}
 
 		Expression SimpleNameResolve (EmitContext ec, Expression right_side,
-					      bool allow_static)
+					      bool allow_static, bool intermediate)
 		{
-			Expression e = DoSimpleNameResolve (ec, right_side, allow_static);
+			Expression e = DoSimpleNameResolve (ec, right_side, allow_static, intermediate);
 			if (e == null)
 				return null;
 
@@ -2075,7 +2080,7 @@ namespace Mono.CSharp {
 		///   Type is both an instance variable and a Type;  Type.GetType
 		///   is the static method not an instance method of type.
 		/// </remarks>
-		Expression DoSimpleNameResolve (EmitContext ec, Expression right_side, bool allow_static)
+		Expression DoSimpleNameResolve (EmitContext ec, Expression right_side, bool allow_static, bool intermediate)
 		{
 			Expression e = null;
 
@@ -2173,24 +2178,23 @@ namespace Mono.CSharp {
 
 				// This fails if ResolveMemberAccess() was unable to decide whether
 				// it's a field or a type of the same name.
+				
 				if (!me.IsStatic && (me.InstanceExpression == null))
 					return e;
-
+				
 				if (!me.IsStatic &&
 				    TypeManager.IsNestedChildOf (me.InstanceExpression.Type, me.DeclaringType) &&
-				    !me.InstanceExpression.Type.IsSubclassOf (me.DeclaringType)) {
+				    !me.InstanceExpression.Type.IsSubclassOf (me.DeclaringType) &&
+				    (!intermediate || !MemberAccess.IdenticalNameAndTypeName (ec, this, e, loc))) {
 					Error (38, "Cannot access nonstatic member `" + me.Name + "' of " +
 					       "outer type `" + me.DeclaringType + "' via nested type `" +
 					       me.InstanceExpression.Type + "'");
 					return null;
 				}
 
-				if (right_side != null)
-					e = e.DoResolveLValue (ec, right_side);
-				else
-					e = e.DoResolve (ec);
-
-				return e;				
+				return (right_side != null)
+					? e.DoResolveLValue (ec, right_side)
+					: e.DoResolve (ec);
 			}
 
 			if (ec.IsStatic || ec.IsFieldInitializer){

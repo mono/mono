@@ -6897,7 +6897,7 @@ namespace Mono.CSharp {
 				      "type name instead");
 		}
 
-		static bool IdenticalNameAndTypeName (EmitContext ec, Expression left_original, Expression left, Location loc)
+		public static bool IdenticalNameAndTypeName (EmitContext ec, Expression left_original, Expression left, Location loc)
 		{
 			SimpleName sn = left_original as SimpleName;
 			if (sn == null || left == null || left.Type.Name != sn.Name)
@@ -7108,7 +7108,7 @@ namespace Mono.CSharp {
 			//
 
 			Expression original = expr;
-			expr = expr.Resolve (ec, flags | ResolveFlags.DisableFlowAnalysis);
+			expr = expr.Resolve (ec, flags | ResolveFlags.Intermediate | ResolveFlags.DisableFlowAnalysis);
 			if (expr == null)
 				return null;
 

@@ -1,3 +1,19 @@
+2004-06-11  Raja R Harinath  <rharinath@novell.com>
+
+	Fix bug #59477.
+	* ecore.cs (ResolveFlags): Add new 'Intermediate' flag to tell
+	that the call to Resolve is part of a MemberAccess.
+	(Expression.Resolve): Use it for SimpleName resolution.
+	(SimpleName.SimpleNameResolve, SimpleName.DoResolveAllowStatic):
+	Add 'intermediate' boolean argument.
+	(SimpleName.DoSimpleNameResolve): Likewise.  Use it to disable an
+	error message when the SimpleName can be resolved ambiguously
+	between an expression and a type.
+	* expression.cs (MemberAccess.IdenticalNameAndTypeName): Make
+	public.
+	(MemberAccess.Resolve): Pass 'Intermediate' flag to the Resolve()
+	call on the left-side.
+
 2004-06-11  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs:
