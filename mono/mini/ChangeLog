@@ -1,4 +1,8 @@
 
+Wed Mar 23 14:29:49 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: fixed ABI issue on sysv/ppc.
+
 Tue Mar 22 19:03:17 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* tramp-ppc.c, exceptions-ppc.c: added missing icache flush
