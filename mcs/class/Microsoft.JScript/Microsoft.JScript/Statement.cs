@@ -11,6 +11,7 @@ using System;
 using System.Text;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Collections;
 
 namespace Microsoft.JScript {
 
@@ -220,5 +221,67 @@ namespace Microsoft.JScript {
 		}
 	}
 
+	internal class For : AST {
+		
+		AST [] exprs;
+		AST stms;
 
+		internal For (AST parent, AST [] exprs, AST stms)
+		{
+			this.parent = parent;
+			this.exprs = exprs;
+			this.stms = stms;
+		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			bool r = true;
+			foreach (AST ast in exprs)
+				if (ast != null)
+					r &= ast.Resolve (context);
+			if (stms != null)
+				r &= stms.Resolve (context);
+			return true;
+		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			AST tmp;
+			ILGenerator ig = ec.ig;
+			Label back = ig.DefineLabel ();
+			Label forward = ig.DefineLabel ();
+
+			/* emit init expr */
+			tmp = exprs [0];
+			if (tmp != null)
+				tmp.Emit (ec);
+			ig.MarkLabel (back);
+
+			/* emit condition */
+			tmp = exprs [1];
+			if (tmp != null)
+				tmp.Emit (ec);
+
+			if (tmp != null && tmp is Expression) {
+				ArrayList t = ((Expression) tmp).exprs;
+				AST a = (AST) t [t.Count - 1];
+				if (a is Equality)
+					ig.Emit (OpCodes.Brfalse, forward);
+				else if (a is Relational) {
+					ig.Emit (OpCodes.Ldc_I4_0);
+					ig.Emit (OpCodes.Conv_R8);
+					ig.Emit (OpCodes.Bge, forward);
+				}
+			}
+			/* emit stm */
+			if (stms != null)
+				stms.Emit (ec);
+			tmp = exprs [2];
+			if (tmp != null)
+				tmp.Emit (ec);
+			
+			ig.Emit (OpCodes.Br, back);
+			ig.MarkLabel (forward);
+		}
+	}	
 }

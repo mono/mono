@@ -1,5 +1,6 @@
 2004-05-21  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* Statement.cs: initial code generation of 'for'.
 	* jscript-lexer-parser.g: let's build for's ast.
 
 2004-05-18  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
