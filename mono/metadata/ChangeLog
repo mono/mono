@@ -1,3 +1,7 @@
+2005-02-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* object.c (mono_runtime_get_main_args): Fix stupid typo.
+
 2005-01-31  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_FieldInfo_SetValueInternal): Handle setting of
