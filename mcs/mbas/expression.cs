@@ -3768,7 +3768,7 @@ namespace Mono.CSharp {
 			Type current_type = null;
 			int argument_count;
 			ArrayList candidates = new ArrayList ();
-			
+
 			foreach (MethodBase candidate in me.Methods){
 				int x;
 
@@ -3992,12 +3992,12 @@ namespace Mono.CSharp {
 			expr = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
 			if (expr == null)
 				return null;
-				
+		
 			if (expr is Invocation) {
 				// FIXME Calls which return an Array are not resolved (here or in the grammar)
 				expr = expr.Resolve(ec);
 			}
-			
+
 			if (!(expr is MethodGroupExpr)) 
 			{
 				Type expr_type = expr.Type;
@@ -4687,7 +4687,6 @@ namespace Mono.CSharp {
 		public bool CheckIndices (EmitContext ec, ArrayList probe, int idx, bool specified_dims)
 		{
 			if (specified_dims) { 
-				Console.WriteLine  ("specified_dims");
 				Argument a = (Argument) arguments [idx];
 				
 				if (!a.Resolve (ec, loc))
@@ -4897,6 +4896,7 @@ namespace Mono.CSharp {
 			//
 			Expression array_type_expr;
 			array_type_expr = new ComposedCast (requested_base_type, array_qualifier.ToString (), loc);
+			string sss = array_qualifier.ToString ();
 			type = ec.DeclSpace.ResolveType (array_type_expr, false, loc);
 
 			if (type == null)
@@ -6140,6 +6140,35 @@ namespace Mono.CSharp {
 #endif
 
 			Type t = ea.Expr.Type;
+			
+			if (t == typeof (System.Object))
+			{
+				// We can't resolve now, but we
+				// have to try to access the array with a call
+				// to LateIndexGet in the runtime
+				
+				Expression lig_call_expr = Mono.MonoBASIC.Parser.DecomposeQI("Microsoft.VisualBasic.CompilerServices.LateBinding.LateIndexGet", Location.Null);
+				Expression obj_type = Mono.MonoBASIC.Parser.DecomposeQI("System.Object", Location.Null);
+				ArrayList adims = new ArrayList();
+				
+				ArrayList ainit = new ArrayList(); 
+				foreach (Argument a in ea.Arguments)
+					ainit.Add ((Expression) a.Expr);		
+						
+				adims.Add ((Expression) new IntLiteral (ea.Arguments.Count));
+				
+				Expression oace = new ArrayCreation (obj_type, adims, "", ainit, Location.Null);
+				
+				ArrayList args = new ArrayList();
+				args.Add (new Argument(ea.Expr, Argument.AType.Expression));
+				args.Add (new Argument(oace, Argument.AType.Expression));
+				args.Add (new Argument(NullLiteral.Null, Argument.AType.Expression));
+				
+				Expression lig_call = new Invocation (lig_call_expr, args, Location.Null);
+				lig_call = lig_call.Resolve(ec);
+				return lig_call;
+			}
+						
 			if (t.GetArrayRank () != ea.Arguments.Count){
 				ea.Error (22,
 					  "Incorrect number of indexes for array " +
