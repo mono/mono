@@ -248,7 +248,7 @@ end namespace
 
 		static JScriptCompilerInfo ()
 		{
-			Assembly jsasm = Assembly.LoadWithPartialName ("Microsoft.JScript.dll", null);
+			Assembly jsasm = Assembly.LoadWithPartialName ("Microsoft.JScript", null);
 			providerType = jsasm.GetType ("Microsoft.JScript.JScriptCodeProvider");
 		}
 
