@@ -18,6 +18,8 @@ namespace System.Runtime.Serialization
 	public sealed class SerializationInfo
 	{
 		Hashtable serialized = new Hashtable ();
+		ArrayList values = new ArrayList ();
+
 		string assemblyName; // the assembly being serialized
 		string fullTypeName; // the type being serialized.
 
@@ -40,16 +42,21 @@ namespace System.Runtime.Serialization
 			fullTypeName = type.FullName;
 			converter = new FormatterConverter ();
 
-			for (int i = 0; i < len; i++)
+			for (int i = 0; i < len; i++) {
 				serialized.Add (data [i].Name, data [i]);
+				values.Add (data [i]);
+			}
 		}
 
 		// Constructor
 		[CLSCompliant (false)]
 		public SerializationInfo (Type type, IFormatterConverter converter)
 		{
-			if (type == null && converter == null)
-				throw new ArgumentNullException ("Null arguments.");
+			if (type == null)
+				throw new ArgumentNullException ("type", "Null argument");
+
+			if (converter == null)
+				throw new ArgumentNullException ("converter", "Null argument");
 			
 			this.converter = converter;
 			assemblyName = type.Assembly.FullName;
@@ -87,11 +94,18 @@ namespace System.Runtime.Serialization
 		// Methods
 		public void AddValue (string name, object value, Type type)
 		{
+			if (name == null)
+				throw new ArgumentNullException ("name is null");
+			if (type == null)
+				throw new ArgumentNullException ("type is null");
+			
 			if (serialized.ContainsKey (name))
 				throw new SerializationException ("Value has been serialized already.");
 			
-			SerializationEntry values = new SerializationEntry (name, type, value);
-			serialized.Add (name, values);
+			SerializationEntry entry = new SerializationEntry (name, type, value);
+
+			serialized.Add (name, entry);
+			values.Add (entry);
 		}
 
 		public object GetValue (string name, Type type)
@@ -102,13 +116,13 @@ namespace System.Runtime.Serialization
 				throw new ArgumentNullException ("type");
 			if (!serialized.ContainsKey (name))
 				throw new SerializationException ("No element named " + name + " could be found.");
-                        			
-			SerializationEntry values = (SerializationEntry) serialized [name];
+						
+			SerializationEntry entry = (SerializationEntry) serialized [name];
 
-			if (values.Value != null && !type.IsAssignableFrom (values.Value.GetType()))
-				return converter.Convert (values.Value, type);
+			if (entry.Value != null && !type.IsAssignableFrom (entry.Value.GetType()))
+				return converter.Convert (entry.Value, type);
 			else
-				return values.Value;
+				return entry.Value;
 		}
 
 		public void SetType (Type type)
@@ -122,7 +136,7 @@ namespace System.Runtime.Serialization
 
 		public SerializationInfoEnumerator GetEnumerator ()
 		{
-			return new SerializationInfoEnumerator (serialized);
+			return new SerializationInfoEnumerator (values);
 		}
 		
 		public void AddValue (string name, short value)
@@ -151,55 +165,55 @@ namespace System.Runtime.Serialization
 			AddValue (name, value, typeof (System.Boolean));
 		}
 	       
-	        public void AddValue (string name, char value)
+		public void AddValue (string name, char value)
 		{
 			AddValue (name, value, typeof (System.Char));
 		}
 
 		[CLSCompliant(false)]
-	        public void AddValue (string name, SByte value)
+		public void AddValue (string name, SByte value)
 		{
 			AddValue (name, value, typeof (System.SByte));
 		}
 		
-	        public void AddValue (string name, double value)
+		public void AddValue (string name, double value)
 		{
 			AddValue (name, value, typeof (System.Double));
 		}
 		
-	        public void AddValue (string name, Decimal value)
+		public void AddValue (string name, Decimal value)
 		{
 			AddValue (name, value, typeof (System.Decimal));
 		}
 		
-	        public void AddValue (string name, DateTime value)
+		public void AddValue (string name, DateTime value)
 		{
 			AddValue (name, value, typeof (System.DateTime));
 		}
 		
-	        public void AddValue (string name, float value)
+		public void AddValue (string name, float value)
 		{
 			AddValue (name, value, typeof (System.Single));
 		}
 
 		[CLSCompliant(false)]
-	        public void AddValue (string name, UInt32 value)
+		public void AddValue (string name, UInt32 value)
 		{
 			AddValue (name, value, typeof (System.UInt32));
 		}
 	       
-	        public void AddValue (string name, long value)
+		public void AddValue (string name, long value)
 		{
 			AddValue (name, value, typeof (System.Int64));
 		}
 
 		[CLSCompliant(false)]
-	        public void AddValue (string name, UInt64 value)
+		public void AddValue (string name, UInt64 value)
 		{
 			AddValue (name, value, typeof (System.UInt64));
 		}
 		
-	        public void AddValue (string name, object value)
+		public void AddValue (string name, object value)
 		{
 			if (value == null)
 				AddValue (name, value, typeof (System.Object));
@@ -213,19 +227,19 @@ namespace System.Runtime.Serialization
 			return converter.ToBoolean (value);
 		}
 		
-	        public byte GetByte (string name)
+		public byte GetByte (string name)
 		{
 			object value = GetValue (name, typeof (System.Byte));
 			return converter.ToByte (value);
 		}
 		
-	        public char GetChar (string name)
+		public char GetChar (string name)
 		{
 			object value = GetValue (name, typeof (System.Char));
 			return converter.ToChar (value);
 		}
 
-	        public DateTime GetDateTime (string name)
+		public DateTime GetDateTime (string name)
 		{
 			object value = GetValue (name, typeof (System.DateTime));
 			return converter.ToDateTime (value);

@@ -1,3 +1,15 @@
+2004-06-09  Duncan Mak  <duncan@ximian.com>
+
+	* SerializationInfoEnumerator.cs: Instead of using
+	IDictionaryEnumerator from a Hashtable, use a normal IEnumerator
+	from the newly added ArrayList in SerializationInfo.
+
+	* SerializationInfo.cs: Added an extra ArrayList so that we can
+	keep the SerializationEntrys added in the order.
+	(SerializationInfo, AddValue): Throw ArgumentNullException
+	correctly.
+
+
 2004-06-08  Duncan Mak  <duncan@ximian.com>
 
 	* ObjectManager.cs (RegisterObject): Throw

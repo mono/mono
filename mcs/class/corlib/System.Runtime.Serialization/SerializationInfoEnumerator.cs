@@ -14,23 +14,23 @@ namespace System.Runtime.Serialization
 {
 	public sealed class SerializationInfoEnumerator : IEnumerator
 	{
-		IDictionaryEnumerator ide;
+		IEnumerator enumerator;
 
 		// Constructor
-		internal SerializationInfoEnumerator (Hashtable collection)
+		internal SerializationInfoEnumerator (ArrayList list)
 		{
-			ide = collection.GetEnumerator ();
+			this.enumerator = list.GetEnumerator ();
 		}
 		
 		// Properties
 		public SerializationEntry Current
 		{
-			get { return (SerializationEntry) ide.Value; }
+			get { return (SerializationEntry) enumerator.Current; }
 		}
 
 		object IEnumerator.Current
 		{			
-			get { return ide.Value; }
+			get { return enumerator.Current; }
 		}
 
 		public string Name
@@ -51,12 +51,12 @@ namespace System.Runtime.Serialization
 		// Methods
 		public bool MoveNext ()
 		{
-			return ide.MoveNext ();
+			return enumerator.MoveNext ();
 		}
 
 		public void Reset ()
 		{
-			ide.Reset ();
+			enumerator.Reset ();
 		}
 	}	
 }
