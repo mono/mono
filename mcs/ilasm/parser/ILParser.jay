@@ -645,7 +645,7 @@ type			: K_CLASS class_ref
 			| K_METHOD call_conv type STAR OPEN_PARENS sig_args CLOSE_PARENS
 			| K_TYPEDREF
                           {
-                                $$ = new TypeRef (PrimativeType.TypedRef,
+                                $$ = new TypeRef (PrimitiveType.TypedRef,
                                         "System.TypedReference");
                           }
 			| K_CHAR
@@ -752,17 +752,41 @@ bound			: /* EMPTY */
 			;
 
 call_conv		: K_INSTANCE call_conv
+                          {
+                                $$ = (CallConv) $2 | CallConv.Instance;
+                          }
 			| K_EXPLICIT call_conv
+                          {
+                                $$ = (CallConv) $2 | CallConv.InstanceExplicit;
+                          }
 			| call_kind
 			;
 
 call_kind		: /* EMPTY */
 			| K_DEFAULT
+                          {
+                                $$ = CallConv.Default;
+                          }
 			| K_VARARG
+                          {
+                                $$ = CallConv.Vararg;
+                          }
 			| K_UNMANAGED K_CDECL
+                          {
+                                $$ = CallConv.Cdecl;
+                          }
 			| K_UNMANAGED K_STDCALL
+                          {
+                                $$ = CallConv.Stdcall;
+                          }
 			| K_UNMANAGED K_THISCALL
+                          {
+                                $$ = CallConv.Thiscall;
+                          }
 			| K_UNMANAGED K_FASTCALL
+                          {
+                                $$ = CallConv.Fastcall;
+                          }
 			;
 
 native_type		: /* EMPTY */
