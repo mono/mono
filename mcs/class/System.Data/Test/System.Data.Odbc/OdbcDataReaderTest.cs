@@ -231,5 +231,44 @@ namespace MonoTests.System.Data.Odbc
                         CloseConnection ();
                 }
       }
+
+      [Test]
+      public void GetDateTimeTest ()
+      {
+                OdbcCommand cmd = conn.CreateCommand ();
+                string sql = "SELECT * FROM test";
+                cmd.CommandText = sql;
+                OdbcDataReader reader = cmd.ExecuteReader (CommandBehavior.Default);
+                try {
+                        if (reader.Read ()) {
+                                object ob = reader["col_datetime"];
+                                Assertion.AssertEquals ("Type of datetime column is wrong!", 
+                                                "System.DateTime", ob.GetType ().ToString () );
+                                ob = reader["col_date"];
+                                Assertion.AssertEquals ("Type of date column is wrong!", 
+                                                "System.DateTime", ob.GetType ().ToString () );
+				// FIXME : Once TIME data type is fixed, enable this check
+                                //ob = reader["col_time"];
+                                //Assertion.AssertEquals ("Type of time column is wrong!", 
+                                                //"System.DateTime", ob.GetType ().ToString () );
+
+				DateTime dt = reader.GetDateTime (4);
+				Assertion.AssertEquals ("DateValue (SQL_TIMESTAMP) is wrong", new DateTime (2004, 8, 22, 0, 0, 0), dt);
+				dt = reader.GetDateTime (5);
+				Assertion.AssertEquals ("DateValue (SQL_DATE) is wrong", new DateTime (2004, 8, 22, 0, 0, 0), dt);
+				// FIXME : Once TIME data type is fixed, enable this check
+				//dt = reader.GetDateTime (7);
+				//Assertion.AssertEquals ("DateValue is wrong", "2004-08-22", dt.ToString ());
+                        }
+                } finally {
+                        // clean up
+                        if (reader != null && !reader.IsClosed )
+                                reader.Close ();
+                        reader = null;
+                        CleanTestSetup ();
+                        CloseConnection ();
+                }
+      }
+
   }
 }

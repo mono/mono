@@ -1,3 +1,7 @@
+2004-08-26  Sureshkumar T <tsureshkumar@novell.com>
+        * OdbcDataReaderTest.cs - Added a test for DateTime - GetDateTimeTest
+	* OdbcCommandTest.cs - Syntax Error Fix
+
 2004-07-29 Umadevi S <sumadevi@novell.com>
         * OdbcCommandTest.cs - Added testcase for bug 62046. ExecuteNonQuery
                                                                                                     
