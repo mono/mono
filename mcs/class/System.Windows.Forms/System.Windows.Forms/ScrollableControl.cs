@@ -207,11 +207,11 @@ namespace System.Windows.Forms {
 		
 		public class DockPaddingEdges : ICloneable {
 			// --- Fields ---
-			public int all;
-			public int bottom;
-			public int left;
-			public int right;
-			public int top;
+			private int all;
+			private int bottom;
+			private int left;
+			private int right;
+			private int top;
 			
 			
 			// --- public Properties ---

@@ -35,8 +35,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("(c) 2003 Various Authors")]
 [assembly: AssemblyTrademark("")]
 
-//TODO add once compliance is reached!
-//[assembly: CLSCompliant(true)]
+[assembly: CLSCompliant(true)]
 [assembly: ComVisible(false)]
 [assembly: AssemblyDefaultAlias("System.Windows.Forms.dll")]
 [assembly: AssemblyInformationalVersion("0.0.0.1")]

@@ -1,3 +1,10 @@
+2004-04-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AxHost.cs:
+	* ScrollableControl.cs:
+	* win32Enums.cs:
+	* win32Structs.cs: patch by Gert Driesen that makes SWF CLS compliant.
+
 2004-04-02  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* FolderBrowserDialog.cs: Fixed build for net_1_0 profile.

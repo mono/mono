@@ -734,7 +734,7 @@ namespace System.Windows.Forms
 
 	#region SYSTIME
 	[ StructLayout( LayoutKind.Sequential )]
-	public class SYSTIME
+	internal class SYSTIME
 	{
 		public ushort wYear; 
 		public ushort wMonth; 

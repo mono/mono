@@ -214,6 +214,7 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
+		[CLSCompliant(false)]
 		protected static Color GetColorFromOleColor(uint color){
 			throw new NotImplementedException (); 
 		}
@@ -259,6 +260,7 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
+		[CLSCompliant(false)]
 		protected static uint GetOleColorFromColor(Color color){
 			throw new NotImplementedException (); 
 		}
