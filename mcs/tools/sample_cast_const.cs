@@ -3,7 +3,7 @@ using System;
 class X {
 	static void w (string s)
 	{
-		Console.WriteLine (s);
+		Console.WriteLine ("\t" + s);
 	}
 	
 	static void Main ()
@@ -27,8 +27,8 @@ class X {
 			string small = "TypeManager." + names [i, 1] + "_type";
 			string nat = ((string) names [i,0]).ToLower ();
 			
-			w ("\t\tif (expr is " + big + "Constant){");
-			w ("\t\t\t" + big + " v = ((" + big + ") expr).Value;");
+			w ("\t\tif (expr is " + big + "){");
+			w ("\t\t\t" + nat + " v = ((" + big + ") expr).Value;");
 			w ("");
 
 			for (int j = 0; names [j,0] != null; j++){
@@ -40,7 +40,7 @@ class X {
 					continue;
 				
 				w ("\t\t\tif (target_type == " + s + ")");
-				w ("\t\t\t\treturn new " + b + "((" + n + ") v);");
+				w ("\t\t\t\treturn new " + b + " ((" + n + ") v);");
 			}
 			w ("\t\t}");
 		}
