@@ -223,7 +223,7 @@ System.ComponentModel/PropertyChangedEventHandler.cs
 System.ComponentModel/PropertyTabScope.cs
 System.ComponentModel/ReadOnlyAttribute.cs
 System.ComponentModel/RefreshProperties.cs
-System.ComponentModel/RefreshPropertyAttribute.cs
+System.ComponentModel/RefreshPropertiesAttribute.cs
 System.ComponentModel/Win32Exception.cs
 System.ComponentModel/ITypeDescriptorContext.cs
 System.ComponentModel/ToolboxItemAttribute.cs
