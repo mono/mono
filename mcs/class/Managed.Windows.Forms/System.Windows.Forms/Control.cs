@@ -29,9 +29,14 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.53 $
+// $Revision: 1.54 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.54  2004/09/01 01:41:31  pbartok
+// - Added firing of BackColorChanged event
+// - Added TopLevelControl property
+// - Fixed handling of WM_ERASEBKGRND message
+//
 // Revision 1.53  2004/08/27 20:17:25  pbartok
 // - Removed unneeded stack vars
 // - First attempt to fix sizing issues when layout is suspended
@@ -773,7 +778,7 @@ namespace System.Windows.Forms
 					XplatUI.SetWindowBackground(this.window.Handle, value);
 				}
 				SetChildColor(this);
-
+				OnBackColorChanged(EventArgs.Empty);
 				Refresh();
 			}
 		}
@@ -1157,6 +1162,18 @@ namespace System.Windows.Forms
 
 			set {
 				SetBoundsCore(bounds.X, value, bounds.Width, bounds.Height, BoundsSpecified.Y);
+			}
+		}
+
+		public Control TopLevelControl {
+			get {
+				Control	p = this;
+
+				while (p.parent != null) {
+					p = p.parent;
+				}
+
+				return p;
 			}
 		}
 
@@ -1738,8 +1755,10 @@ namespace System.Windows.Forms
 				
 				case Msg.WM_ERASEBKGND:{					
 					if (GetStyle (ControlStyles.UserPaint)){						
-	    					PaintEventArgs eraseEventArgs = new PaintEventArgs (Graphics.FromHdc (m.WParam), new Rectangle (new Point (0,0),Size));
-		    				OnPaintBackground (eraseEventArgs);
+						if (!GetStyle(ControlStyles.AllPaintingInWmPaint)) {
+		    					PaintEventArgs eraseEventArgs = new PaintEventArgs (Graphics.FromHdc (m.WParam), new Rectangle (new Point (0,0),Size));
+			    				OnPaintBackground (eraseEventArgs);
+						}
 	    					m.Result = (IntPtr)1;
     					}	
     					else {
