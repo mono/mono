@@ -17,7 +17,7 @@
 using System;
 using System.ComponentModel;
 using System.Data;
-using System.Data.OracleClient.OCI;
+using System.Data.OracleClient.Oci;
 
 namespace System.Data.OracleClient {
 	public sealed class OracleTransaction : MarshalByRefObject, IDbTransaction, IDisposable
@@ -33,7 +33,7 @@ namespace System.Data.OracleClient {
 
 		#region Constructors
 
-		internal OracleTransaction (OracleConnection connection, IsolationLevel isolevel)
+		internal OracleTransaction (OracleConnection connection, IsolationLevel isolevel, IntPtr transactionHandle)
 		{
 			this.connection = connection;
 			this.isolationLevel = isolevel;

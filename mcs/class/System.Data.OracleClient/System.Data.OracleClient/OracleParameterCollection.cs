@@ -19,7 +19,7 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
-using System.Data.OracleClient.OCI;
+using System.Data.OracleClient.Oci;
 
 namespace System.Data.OracleClient {
 	public class OracleParameterCollection : MarshalByRefObject, IDataParameterCollection, IList, ICollection, IEnumerable

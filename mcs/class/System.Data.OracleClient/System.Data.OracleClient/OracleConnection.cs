@@ -27,7 +27,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
-using System.Data.OracleClient.OCI;
+using System.Data.OracleClient.Oci;
 using System.Text;
 
 namespace System.Data.OracleClient 
@@ -73,7 +73,7 @@ namespace System.Data.OracleClient
 		// only for DEBUG purposes - not part of MS.NET 1.1 OracleClient
 		public static uint ConnectionCount {
 			get {
-				uint count = OciGlue.OciGlue_ConnectionCount();
+				uint count = 0; // OciGlue.OciGlue_ConnectionCount();
 				return count;
 			}
 		}
@@ -122,7 +122,7 @@ namespace System.Data.OracleClient
 
 		public OracleTransaction BeginTransaction (IsolationLevel il)
 		{
-			Int32 status;
+			IntPtr transactionHandle;
 
 			if (state == ConnectionState.Closed)
 				throw new InvalidOperationException ("The connection is not open.");
@@ -130,14 +130,11 @@ namespace System.Data.OracleClient
 			if (transaction != null)
 				throw new InvalidOperationException ("OracleConnection does not support parallel transactions.");
 
-			status = oci.BeginTransaction ();
-			if(status != 0)
-				throw new Exception("Error: Unable to connect: " + 
-					status.ToString() + 
-					": " +
-					oci.CheckError(status));
+			transactionHandle = oci.BeginTransaction ();
+			if (transactionHandle == IntPtr.Zero)
+				throw new Exception("Error: Unable to start transaction");
 			else
-				transaction = new OracleTransaction (this, il);
+				transaction = new OracleTransaction (this, il, transactionHandle);
 
 			return transaction;
 		}

@@ -20,7 +20,7 @@
 using System;
 using System.ComponentModel;
 using System.Data;
-using System.Data.OracleClient.OCI;
+using System.Data.OracleClient.Oci;
 
 namespace System.Data.OracleClient {
 	public class OracleCommand : Component, ICloneable, IDbCommand
@@ -36,6 +36,9 @@ namespace System.Data.OracleClient {
 		OracleParameterCollection parameters;
 		OracleTransaction transaction;
 		UpdateRowSource updatedRowSource;
+
+		IntPtr statementHandle;
+		OciStatementType statementType;
 
 		#endregion // Fields
 
@@ -166,7 +169,11 @@ namespace System.Data.OracleClient {
 			int rowsAffected = -1;
 
 			ValidateCommand ("ExecuteNonQuery");
+			statementHandle = Connection.Oci.PrepareStatement (CommandText);
+			statementType = Connection.Oci.GetStatementType (statementHandle);
+			Connection.Oci.ExecuteStatement (statementHandle, statementType);
 
+			/*
 			Int32 status;
 			status = connection.Oci.PrepareAndExecuteNonQuerySimple (commandText);
 			if(status != 0) {
@@ -178,6 +185,7 @@ namespace System.Data.OracleClient {
 					statusText;
 				throw new Exception(msg);
 			}
+			*/
 
 			return rowsAffected;
 		}

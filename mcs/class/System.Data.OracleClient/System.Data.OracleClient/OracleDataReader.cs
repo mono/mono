@@ -19,7 +19,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
-using System.Data.OracleClient.OCI;
+using System.Data.OracleClient.Oci;
 
 namespace System.Data.OracleClient {
 	public sealed class OracleDataReader : MarshalByRefObject, IDataReader, IDisposable, IDataRecord, IEnumerable

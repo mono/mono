@@ -1,3 +1,31 @@
+2003-02-11  Tim Coleman <tim@timcoleman.com>
+	* System.Data.OracleClient.Oci/OciAttributeType.cs:
+	* System.Data.OracleClient.Oci/OciCredentialType.cs:
+	* System.Data.OracleClient.Oci/OciDescriptorType.cs:
+	* System.Data.OracleClient.Oci/OciEnvironmentMode.cs:
+	* System.Data.OracleClient.Oci/OciExecuteMode.cs:
+	* System.Data.OracleClient.Oci/OciHandleType.cs:
+	* System.Data.OracleClient.Oci/OciLobType.cs:
+	* System.Data.OracleClient.Oci/OciPointerType.cs:
+	* System.Data.OracleClient.Oci/OciSessionMode.cs:
+	* System.Data.OracleClient.Oci/OciStatementLanguage.cs:
+	* System.Data.OracleClient.Oci/OciStatementMode.cs:
+	* System.Data.OracleClient.Oci/OciStatementType.cs:
+	* System.Data.OracleClient.Oci/OciTransactionFlags.cs:
+		New files for Oci namespace
+	* list:
+	* makefile.gnu:
+		Update these files to fix linux build
+	* System.Data.OracleClient/OciGlue.cs:
+		Use OCI through P/Invoke directly, rename namespace
+	* System.Data.OracleClient/OracleCommand.cs:
+	* System.Data.OracleClient/OracleConnection.cs:
+	* System.Data.OracleClient/OracleDataReader.cs:
+	* System.Data.OracleClient/OracleParameter.cs:
+	* System.Data.OracleClient/OracleParameterCollection.cs:
+	* System.Data.OracleClient/OracleTransaction.cs:
+		Retrofit these files for the changes in OciGlue.cs
+
 2003-02-10  Tim Coleman <tim@timcoleman.com>
 	* System.Data.OracleClient/OracleDataReader.cs:
 	* System.Data.OracleClient/OracleParameter.cs:
