@@ -1,3 +1,7 @@
+2005-03-24  Jackson Harper  <jackson@ximian.com>
+
+	* TabControl.cs: Need a couple more pixels for the lines.
+
 2005-03-23  Jackson Harper  <jackson@ximian.com>
 
 	* TabControl.cs: Give the tab page focus when it is selected.

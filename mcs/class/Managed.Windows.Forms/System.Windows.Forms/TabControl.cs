@@ -246,7 +246,7 @@ namespace System.Windows.Forms {
 					// The lines are drawn on the edges of the tabs so the invalid area should
 					// needs to include the extra pixels of line width.
 					if (appearance == TabAppearance.Normal)
-						invalid.Inflate (4, 4);
+						invalid.Inflate (6, 4);
 					Invalidate (invalid);
 				}
 			}
