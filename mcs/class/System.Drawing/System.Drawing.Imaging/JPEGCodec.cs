@@ -1,5 +1,5 @@
 //
-// System.Drawing.Imaging.BMPCodec.cs
+// System.Drawing.Imaging.JPEGCodec.cs
 //
 // Author: 
 //		Alexandre Pigolkine (pigolkine@gmx.de)
