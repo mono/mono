@@ -249,7 +249,6 @@ namespace System.Xml
 			get { return cursorToken.NodeType; }
 		}
 
-		[MonoTODO]
 		public bool Normalization
 		{
 			get { return normalization; }
@@ -856,35 +855,44 @@ namespace System.Xml
 			public int ValueTokenStartIndex;
 			public int ValueTokenEndIndex;
 			string valueCache;
+			bool cachedNormalization;
+			StringBuilder tmpBuilder = new StringBuilder ();
 
 			public override string Value {
 				get {
+					if (cachedNormalization != Reader.Normalization)
+						valueCache = null;
 					if (valueCache != null)
 						return valueCache;
+					cachedNormalization = Reader.Normalization;
+
 					// An empty value should return String.Empty.
 					if (ValueTokenStartIndex == ValueTokenEndIndex) {
 						XmlTokenInfo ti = Reader.attributeValueTokens [ValueTokenStartIndex];
-						if (ti.NodeType == XmlNodeType.Text)
-							valueCache = ti.Value;
-						else
+						if (ti.NodeType == XmlNodeType.EntityReference)
 							valueCache = String.Concat ("&", ti.Name, ";");
+						else
+							valueCache = ti.Value;
+						if (cachedNormalization)
+							NormalizeSpaces ();
 						return valueCache;
 					}
 
-					StringBuilder sb = new StringBuilder ();
+					tmpBuilder.Length = 0;
 					for (int i = ValueTokenStartIndex; i <= ValueTokenEndIndex; i++) {
 						XmlTokenInfo ti = Reader.attributeValueTokens [i];
 						if (ti.NodeType == XmlNodeType.Text)
-							sb.Append (ti.Value);
+							tmpBuilder.Append (ti.Value);
 						else {
-							sb.Append ('&');
-							sb.Append (ti.Name);
-							sb.Append (';');
+							tmpBuilder.Append ('&');
+							tmpBuilder.Append (ti.Name);
+							tmpBuilder.Append (';');
 						}
 					}
 
-					valueCache = sb.ToString ();
-
+					valueCache = tmpBuilder.ToString ();
+					if (cachedNormalization)
+						NormalizeSpaces ();
 					return valueCache;
 				}
 				set {
@@ -905,6 +913,26 @@ namespace System.Xml
 				base.FillNames ();
 				if (Prefix == "xmlns" || Name == "xmlns")
 					NamespaceURI = XmlNamespaceManager.XmlnsXmlns;
+			}
+
+			private void NormalizeSpaces ()
+			{
+				tmpBuilder.Length = 0;
+				for (int i = 0; i < valueCache.Length; i++)
+					switch (valueCache [i]) {
+					case '\r':
+						if (i + 1 < valueCache.Length && valueCache [i + 1] == '\n')
+							i++;
+						goto case '\n';
+					case '\t':
+					case '\n':
+						tmpBuilder.Append (' ');
+						break;
+					default:
+						tmpBuilder.Append (valueCache [i]);
+						break;
+					}
+				valueCache = tmpBuilder.ToString ();
 			}
 		}
 
@@ -1438,7 +1466,7 @@ namespace System.Xml
 					if (ReadReference (false))
 						break;
 				} else {
-					if (XmlConstructs.IsInvalid (ch))
+					if (normalization && XmlConstructs.IsInvalid (ch))
 						throw new XmlException (this as IXmlLineInfo,
 							"Not allowed character was found.");
 					AppendValueChar (ReadChar ());
@@ -1528,7 +1556,7 @@ namespace System.Xml
 			ReadChar (); // ';'
 
 			// FIXME: how to handle such chars larger than 0xffff?
-			if (value < 0xffff && !XmlConstructs.IsValid (value))
+			if (normalization && value < 0xffff && !XmlConstructs.IsValid (value))
 				throw new XmlException (this as IXmlLineInfo,
 					"Referenced character was not allowed in XML.");
 			AppendValueChar (value);

@@ -107,7 +107,7 @@ namespace System.Xml
 		void ParseInput (string input)
 		{
 			char [] sep = new char [] {'\'', '"'};
-			if (!input.Trim ().StartsWith ("version"))
+			if (!input.Trim (XmlChar.WhitespaceChars).StartsWith ("version"))
 				throw new XmlException("missing \"version\".");
 			int start = input.IndexOf ("encoding");
 			int sstart = -1;

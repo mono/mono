@@ -1,5 +1,16 @@
 2003-10-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlChar.cs : added WhitespaceChars, used in common.
+	* XmlConvert.cs,
+	  XmlDeclaration.cs,
+	  XmlParserInput.cs,
+	  XmlTextReader.cs,
+	  XmlTextWriter.cs : String.Trim()
+	* XmlConvert.cs : shifted XmlConstructs to XmlChar.
+	* XmlTextReader.cs : Implemented Normalization.
+
+2003-10-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlNode.cs : GetPrefixOfNamespace() also contained a bug similar to
 	  GetNamespaceOfPrefix() fixed at 2003-10-13.
 	* XmlTextReader.cs : ReadBase64() should keep incomplete base64 block

@@ -12,6 +12,8 @@ namespace System.Xml
 {
 	internal class XmlChar
 	{
+		internal static char [] WhitespaceChars = new char [] {' ', '\n', '\t', '\r'};
+
 		internal static bool IsWhitespace(int ch)
 		{
 			return ch == 0x20 || ch == 0x9 || ch == 0xD || ch == 0xA;

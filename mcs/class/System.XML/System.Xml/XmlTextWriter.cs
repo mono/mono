@@ -405,7 +405,7 @@ namespace System.Xml
 
 		public override void WriteDocType (string name, string pubid, string sysid, string subset)
 		{
-			if (name == null || name.Trim ().Length == 0)
+			if (name == null || name.Trim (XmlChar.WhitespaceChars).Length == 0)
 				throw new ArgumentException ("Invalid DOCTYPE name", "name");
 
 			w.Write ("<!DOCTYPE ");

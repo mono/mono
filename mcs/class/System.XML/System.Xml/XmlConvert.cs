@@ -69,9 +69,9 @@ namespace System.Xml {
 				return false;
 			
 			if (firstOnlyLetter)
-				return !XmlConstructs.IsNameStart (c);
+				return !XmlChar.IsFirstNameChar (c);
 			else
-				return !XmlConstructs.IsName (c);
+				return !XmlChar.IsNameChar (c);
 		}
 
 		private static string EncodeName (string name, bool nmtoken)
@@ -103,7 +103,7 @@ namespace System.Xml {
 		// {true, false, 1, 0}
 		public static bool ToBoolean(string s)
 		{
-			s = s.Trim();
+			s = s.Trim (XmlChar.WhitespaceChars);
 			switch(s)
 			{
 				case "1":
@@ -403,28 +403,25 @@ namespace System.Xml {
 			return UInt64.Parse(s, CultureInfo.InvariantCulture);
 		}
 
-		public static string VerifyName(string name)
+		public static string VerifyName (string name)
 		{
-			Exception innerEx;
 			if(name == null)
 				throw new ArgumentNullException("name");
 
-			if(XmlConstructs.IsValidName(name, out innerEx))
-				return name;
+			if(!XmlChar.IsName (name))
+				throw new XmlException("'" + name + "' is not a valid XML Name");
+			return name;
 			
-			throw new XmlException("'"+name+"' is not a valid XML Name",null);
 		}
 
 		public static string VerifyNCName(string ncname)
 		{
-			Exception innerEx;
 			if(ncname == null)
 				throw new ArgumentNullException("ncname");
 
-			if(XmlConstructs.IsValidNCName(ncname, out innerEx))
-				return ncname;
-			
-			throw new XmlException("'"+ncname+"' is not a valid XML NCName",innerEx);
+			if(!XmlChar.IsNCName (ncname))
+				throw new XmlException ("'" + ncname + "' is not a valid XML NCName");
+			return ncname;
 		}
 	}
 }
