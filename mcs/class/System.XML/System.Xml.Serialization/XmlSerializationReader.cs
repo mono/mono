@@ -270,7 +270,6 @@ namespace System.Xml.Serialization {
 			return targets.ContainsKey (id);
 		}
 
-		[MonoTODO ("Implement")]
 		protected XmlQualifiedName GetXsiType ()
 		{
 			string typeName = Reader.GetAttribute ("xsi:type");

@@ -146,7 +146,6 @@ namespace System.Xml.Serialization
 
 #region Methods
 
-		[MonoTODO ("Implement.")]
 		public virtual bool CanDeserialize (XmlReader xmlReader)
 		{
 			xmlReader.MoveToContent	();

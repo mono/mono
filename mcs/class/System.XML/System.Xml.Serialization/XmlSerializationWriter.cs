@@ -198,7 +198,6 @@ namespace System.Xml.Serialization {
 			return prefix;
 		}
 
-		[MonoTODO ("Need to check for namespace conflicts before blindly allocating qN")]
 		private string GetQualifiedName (string name, string ns)
 		{
 			string prefix = GetNamespacePrefix (ns);
@@ -327,7 +326,6 @@ namespace System.Xml.Serialization {
 			WriteElementString (localName, String.Empty, value, xsiType);
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteElementString (string localName, string ns, string value, XmlQualifiedName xsiType)
 		{
 			if (value == null) return;
@@ -379,7 +377,6 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("Implement")]
 		protected void WriteElementStringRaw (string localName, string ns, string value, XmlQualifiedName xsiType)
 		{
 			localName = XmlCustomFormatter.FromXmlNCName (localName);
@@ -397,7 +394,6 @@ namespace System.Xml.Serialization {
 			WriteEmptyTag (name, String.Empty);
 		}
 
-		[MonoTODO ("Verify")]
 		protected void WriteEmptyTag (string name, string ns)
 		{
 			name = XmlCustomFormatter.FromXmlName (name);

@@ -1,3 +1,8 @@
+2003-11-12  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* XmlSerializationReader.cs, XmlSerializationWriter.cs, XmlSerializer.cs:
+	  Removed several TODOs already done.
+
 2003-11-03  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* XmlCustomFormatter.cs: Added support for anyUri type. This fixes
