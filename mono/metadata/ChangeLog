@@ -1,3 +1,14 @@
+2002-10-17  Dick Porter  <dick@ximian.com>
+
+	* appdomain.c (mono_runtime_cleanup): Don't signal the async
+	delegate semaphore before waiting for all threads to finish,
+	because new threads can also call async delegates.  Fixes bug
+	32004.
+
+	* threadpool.c (async_invoke_thread): Only wait for 500ms instead
+	of 3 seconds, in case another async job is queued.  (This part is
+	needed because the bug fix reintroduced the 3s exit lag.)  This
+	makes the mono_runtime_shutdown flag superfluous.
 
 Thu Oct 17 13:11:39 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
