@@ -1,3 +1,8 @@
+2004-12-30  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* sys-statvfs.c: Fix Mac OS X build (statfs.f_frsize doesn't exist on OSX;
+	  f_fsid isn't an integral type; fstatfs needs to use fpathconf).
+
 2004-12-29  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* unistd.c: Null-terminate the string returned by readlink(2).  This works

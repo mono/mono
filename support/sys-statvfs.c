@@ -9,6 +9,8 @@
 
 #include <errno.h>
 
+#include <string.h>
+
 #include "mph.h"
 
 #ifdef HAVE_SYS_STATVFS_H
@@ -109,21 +111,29 @@ static void
 copy_statfs (struct Mono_Posix_Statvfs *to, struct statfs *from)
 {
   to->f_bsize   = from->f_bsize;
-  to->f_frsize  = from->f_frsize;
+  to->f_frsize  = from->f_bsize;
   to->f_blocks  = from->f_blocks;
   to->f_bfree   = from->f_bfree;
   to->f_bavail  = from->f_bavail;
   to->f_files   = from->f_files;
   to->f_ffree   = from->f_ffree;
   to->f_favail  = from->f_ffree; /* OSX doesn't have f_avail */
-  to->f_fsid    = from->f_fsid;
   to->f_flag    = from->f_flags;
+	// from->f_fsid is an int32[2], to->f_fsid is a uint64, 
+	// so this shouldn't lose anything.
+	memcpy (&to->f_fsid, from->f_fsid, sizeof(to->f_fsid));
 }
 
 static void
 set_namemax (const char *path, struct Mono_Posix_Statvfs *buf)
 {
   buf->f_namemax = pathconf (path, _PC_NAME_MAX);
+}
+
+static void
+set_fnamemax (int fd, struct Mono_Posix_Statvfs *buf)
+{
+  buf->f_namemax = fpathconf (fd, _PC_NAME_MAX);
 }
 #endif /* (def HAVE_STATFS || def HAVE_FSTATFS) && !def HAVE_STATVFS */
 
@@ -161,8 +171,8 @@ Mono_Posix_Syscall_fstatvfs (gint32 fd, struct Mono_Posix_Statvfs *buf)
 	}
 
 	if ((r = fstatfs (fd, &s)) == 0) {
-		copy_statvfs (buf, &s);
-		set_namemax (path, buf);
+		copy_statfs (buf, &s);
+		set_fnamemax (fd, buf);
 	}
 
 	return r;
