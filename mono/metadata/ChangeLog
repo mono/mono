@@ -1,3 +1,7 @@
+2004-09-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c: Fix problems with previous checkin.
+
 2004-09-21    <vargaz@freemail.hu>
 
 	* marshal.h marshal.c icall.c: Add new icalls for Alloc/FreeHGlobal. Change the
