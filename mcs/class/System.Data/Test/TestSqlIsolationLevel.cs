@@ -72,7 +72,8 @@ namespace TestSystemDataSqlClient
 
 			// execute the DELETE SQL command
 			Console.WriteLine ("Execute DELETE SQL Command...");
-			cmd.ExecuteNonQuery();
+			rowsAffected = cmd.ExecuteNonQuery();
+			Console.WriteLine ("Rows Affected: " + rowsAffected);
 
 			// change the SQL command to an SQL INSERT Command
 			Console.WriteLine ("Now use INSERT SQL Command...");

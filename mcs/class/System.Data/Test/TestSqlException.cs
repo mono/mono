@@ -48,12 +48,12 @@ namespace TestSystemDataSqlClient
 				"password=viewsonic";
 
 			insertStatement = 
-				"insert into sometable " +
+				"insert into NoSuchTable " +
 				"(tid, tdesc) " +
 				"values ('beer', 'Beer for All!') ";
 
 			deleteStatement = 
-				"delete from NoSuchTable " +
+				"delete from sometable " +
 				"where tid = 'beer' ";
 
 			try {
@@ -73,7 +73,6 @@ namespace TestSystemDataSqlClient
 
 				// execute the DELETE SQL command
 				Console.WriteLine ("Execute DELETE SQL Command...");
-				cmd.ExecuteNonQuery();
 				rowsAffected = cmd.ExecuteNonQuery();
 				Console.WriteLine ("Rows Affected: " + rowsAffected);
 

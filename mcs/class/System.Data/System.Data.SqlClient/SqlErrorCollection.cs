@@ -20,7 +20,6 @@ namespace System.Data.SqlClient
 	[MonoTODO]
 	public sealed class SqlErrorCollection : ICollection, IEnumerable
 	{
-		private int count = 0;
 		ArrayList errorList = new ArrayList();
 
 		internal SqlErrorCollection() {
@@ -67,9 +66,9 @@ namespace System.Data.SqlClient
 		public IEnumerator GetEnumerator() {
 			throw new NotImplementedException ();
 		}
-
-		[MonoTODO]
+		
 		// Index property (indexer)
+		// [MonoTODO]
 		public SqlError this[int index] {
 			get {
 				return (SqlError) errorList[index];

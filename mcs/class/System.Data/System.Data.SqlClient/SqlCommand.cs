@@ -103,7 +103,8 @@ namespace System.Data.SqlClient
 			String rowsAffectedString;
 
 			if(conn.State != ConnectionState.Open)
-				throw new InvalidOperationException("ConnnectionState is not Open");
+				throw new InvalidOperationException(
+					"ConnnectionState is not Open");
 
 			// FIXME: PQexec blocks 
 			// while PQsendQuery is non-blocking
@@ -265,7 +266,12 @@ namespace System.Data.SqlClient
 				// FIXME: throw an InvalidOperationException
 				// if the change was during a 
 				// transaction in progress
+
+				// csc
 				Connection = (SqlConnection) value; 
+				// mcs
+				// Connection = value; 
+				
 				// FIXME: set Transaction property to null
 			}
 		}
@@ -317,8 +323,14 @@ namespace System.Data.SqlClient
 			}
 
 			set { 
-				// FIXME: error handling
-				Transaction = (SqlTransaction) value; 
+				// FIXME: error handling - do not allow
+				// setting of transaction if transaction
+				// has already begun
+
+				// csc
+				Transaction = (SqlTransaction) value;
+				// mcs
+				// Transaction = value; 
 			}
 		}
 

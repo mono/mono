@@ -1,3 +1,34 @@
+2002-04-21  Daniel Morgan <danmorg@sc.rr.com>
+
+* System.Data.SqlClient/SqlCommand.cs: modified - to 
+compile using mcs.  This problem is
+returning a stronger type in csc vs. msc
+
+* System.Data.SqlClient/SqlConnection.cs: modified - msc
+can not do a using PGconn = IntPtr; and then declare
+with PGconn pgConn = IntPtr.Zero;
+Thiw works under csc though.  Had to comment using and
+changed declaration to IntPtr pgConn = IntPtr.Zero;
+Also, got rid of compile warnings for hostaddr and port.
+
+* System.Data.SqlClient/SqlErrorCollection.cs: modified - got
+rid of compile warnings.  Commented MonoTODO attribute because mcs
+doesn't seem to work with C# array property indexer (Item)
+this[int index]
+
+* System.Data.SqlClient/SqlParameterCollection.cs: modified -
+commented MonoTODO attribute for indexer for mcs compiling
+
+* Test/TestSqlIsolationLevel.cs:
+* Test/TestSqlInsert.cs:
+* Test/TestSqlException.cs: modified -
+removed extra ExecuteNonQuery which caused two inserted rows
+
+2002-04-20  Daniel Morgan <danmorg@sc.rr.com>
+
+* System.Data/StateChangeEventArgs.cs - added
+needed to compile System.Data.dll with mcs.  
+
 2002-04-20  Daniel Morgan <danmorg@sc.rr.com>
 
 * System.Data.OleDb: added directory - for OleDb database 

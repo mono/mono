@@ -41,7 +41,7 @@ namespace System.Data.SqlClient
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		// [MonoTODO]
 		public object this[string parameterName]
 		{
 			get { throw new NotImplementedException (); }
@@ -169,6 +169,7 @@ namespace System.Data.SqlClient
 			}			  
 		}
 
+		// [MonoTODO]
 		object IList.this[int index] {
 			get {	
 				throw new NotImplementedException ();
@@ -179,7 +180,7 @@ namespace System.Data.SqlClient
 			}			  
 		}
 
-		[MonoTODO]
+		// [MonoTODO]
 		public SqlParameter this[int index] {
 			get {	
 				throw new NotImplementedException ();

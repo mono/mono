@@ -73,7 +73,6 @@ namespace TestSystemDataSqlClient
 
 			// execute the DELETE SQL command
 			Console.WriteLine ("Execute DELETE SQL Command...");
-			cmd.ExecuteNonQuery();
 			rowsAffected = cmd.ExecuteNonQuery();
 			Console.WriteLine ("Rows Affected: " + rowsAffected);
 
@@ -83,7 +82,6 @@ namespace TestSystemDataSqlClient
 
 			// execute the INSERT SQL command
 			Console.WriteLine ("Execute INSERT SQL Command...");
-			cmd.ExecuteNonQuery();
 			rowsAffected = cmd.ExecuteNonQuery();
 			Console.WriteLine ("Rows Affected: " + rowsAffected);
 

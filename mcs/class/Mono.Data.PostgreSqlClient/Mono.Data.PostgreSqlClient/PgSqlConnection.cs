@@ -20,7 +20,7 @@ using System.Text;
 
 namespace System.Data.SqlClient
 {
-	using PGconn = IntPtr; 
+	// using PGconn = IntPtr; 
 	// PGconn is native C library type in libpq for Postgres Connection
 
 	// using PGressult = IntPtr;
@@ -38,7 +38,7 @@ namespace System.Data.SqlClient
 
 		#region Fields
 
-		private PGconn pgConn = IntPtr.Zero;    
+		private IntPtr pgConn = IntPtr.Zero;    
 		// PGConn (Postgres Connection)
 		private string connectionString = "";    
 		// OLE DB Connection String
@@ -233,9 +233,11 @@ namespace System.Data.SqlClient
 		private void OpenDataSource ()
 		{
 			if(dbname.Equals(""))
-				throw new InvalidOperationException("dbname missing");
+				throw new InvalidOperationException(
+					"dbname missing");
 			else if(conState == ConnectionState.Open)
-				throw new InvalidOperationException("ConnnectionState is already Open");
+				throw new InvalidOperationException(
+					"ConnnectionState is already Open");
 
 			ConnStatusType connStatus;
 
@@ -372,6 +374,14 @@ namespace System.Data.SqlClient
 					sParameter.Length - index - 1);
 
 				switch(parmKey.ToLower()) {
+				case "hostaddr":
+					hostaddr = parmValue;
+					break;
+
+				case "port":
+					port = parmValue;
+					break;
+
 				case "host":
 					// set DataSource property
 					host = parmValue;
