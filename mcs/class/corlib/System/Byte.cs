@@ -157,7 +157,8 @@ namespace System
 		{
 			NumberFormatInfo nfi = NumberFormatInfo.GetInstance (provider);
 
-			if (format == null)
+			// null or empty ("")
+			if ((format == null) || (format.Length == 0))
 				format = "G";
 
 			return IntegerFormatter.NumberToString (format, nfi, m_value);
