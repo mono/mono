@@ -1,3 +1,7 @@
+2004-09-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* appdomain.c, threads.c : don't use GC_CreateThread when with-gc=none
+
 2004-09-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (emit_marshal_array): Really null terminate string arrays.
