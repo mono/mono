@@ -7403,6 +7403,13 @@ namespace Mono.CSharp {
 				}
 				
 			} else {
+				if (OperatorType == OpType.BitwiseAnd && 
+					(first_arg_type != return_type || first_arg_type != parameter_types [1])) {
+					Report.Error (217, Location, "In order to be applicable as a short circuit operator a user-defined logical operator ('{0}') " +
+						"must have the same return type as the type of its 2 parameters", GetSignatureForError ());
+					return false;
+				}
+
 				// Checks for Binary operators
 				
 				if (first_arg_type != declaring_type &&

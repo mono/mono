@@ -1,3 +1,9 @@
+2005-02-21  Marek Safar  <marek.safar@seznam.cz>
+
+	* ecore.cs (PropertyExpr.DoResolve): Add error 214 report.
+	
+	* class.cs (Operator.Define): Add error 217 report.
+	
 2005-02-21  Raja R Harinath  <rharinath@novell.com>
 
 	* namespace.cs (UsingEntry.Resolve): Undo change below.

@@ -3237,6 +3237,11 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			if (PropertyInfo.PropertyType.IsPointer && !ec.InUnsafe){
+				UnsafeError (loc);
+				return null;
+			}
+
 			return this;
 		}
 
