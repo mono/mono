@@ -1,3 +1,8 @@
+2004-04-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* interp.c (ves_exec_method_with_context): Add support for STRWLPARRAY 
+	marshalling convention.
+
 2004-03-29  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* interp.c interp.h: remove child from MonoInvocation
