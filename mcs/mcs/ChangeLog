@@ -1,3 +1,10 @@
+2004-11-25  Miguel de Icaza  <miguel@ximian.com>
+
+ 	* const.cs (Const.ChangeType): Cope with the "0 literal can be
+ 	converted to an enum" here, before we try to change the underlying
+ 	type.  This code exists, but it is a different code path than the
+ 	one used while encoding constants.
+
 2004-11-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* driver.cs: Strip the path from the names of embedded resources. Fixes

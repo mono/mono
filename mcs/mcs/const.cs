@@ -131,6 +131,13 @@ namespace Mono.CSharp {
 				Convert.Error_CannotImplicitConversion (loc, expr.Type, type);
 				return null;
 			}
+
+			// Special-case: The 0 literal can be converted to an enum value,
+			// and ImplicitStandardConversionExists will return true in that case.
+			if (expr.Type == TypeManager.int32_type && TypeManager.IsEnumType (type)){
+				if (expr is IntLiteral && ((IntLiteral) expr).Value == 0)
+					return new EnumConstant (expr, type);
+			}
 			
 			object constant_value = TypeManager.ChangeType (expr.GetValue (), type, out fail);
 			if (fail){
