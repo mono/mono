@@ -1,3 +1,8 @@
+2002-11-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Encoding.cs: unixConsoleEncoding is now the same as Default. Avoid
+	locking whenever possible.
+
 2002-10-30  Miguel de Icaza  <miguel@ximian.com>
 
 	* Encoding.cs (UTF8Unmarked): New static property, used to return

@@ -558,12 +558,15 @@ public abstract class Encoding
 	public static Encoding ASCII
 	{
 		get {
-			lock (typeof(Encoding)) {
-				if (asciiEncoding == null) {
-					asciiEncoding = new ASCIIEncoding ();
+			if (asciiEncoding == null) {
+				lock (typeof(Encoding)) {
+					if (asciiEncoding == null) {
+						asciiEncoding = new ASCIIEncoding ();
+					}
 				}
-				return asciiEncoding;
 			}
+
+			return asciiEncoding;
 		}
 	}
 
@@ -571,12 +574,15 @@ public abstract class Encoding
 	public static Encoding BigEndianUnicode
 	{
 		get {
-			lock (typeof(Encoding)) {
-				if (bigEndianEncoding == null) {
-					bigEndianEncoding = new UnicodeEncoding (true, true);
+			if (bigEndianEncoding == null) {
+				lock (typeof(Encoding)) {
+					if (bigEndianEncoding == null) {
+						bigEndianEncoding = new UnicodeEncoding (true, true);
+					}
 				}
-				return bigEndianEncoding;
 			}
+
+			return bigEndianEncoding;
 		}
 	}
 
@@ -587,19 +593,22 @@ public abstract class Encoding
 	public static Encoding Default
 	{
 		get {
-			lock (typeof(Encoding)) {
-				if (defaultEncoding == null) {
-					// See if the underlying system knows what
-					// code page handler we should be using.
-					string codePage = InternalCodePage ();
-					try {
-						defaultEncoding = GetEncoding (codePage);
-					} catch (NotSupportedException) {
-						defaultEncoding = UTF8;
+			if (defaultEncoding == null) {
+				lock (typeof(Encoding)) {
+					if (defaultEncoding == null) {
+						// See if the underlying system knows what
+						// code page handler we should be using.
+						string codePage = InternalCodePage ();
+						try {
+							defaultEncoding = GetEncoding (codePage);
+						} catch (NotSupportedException) {
+							defaultEncoding = UTF8;
+						}
 					}
 				}
-				return defaultEncoding;
 			}
+
+			return defaultEncoding;
 		}
 	}
 
@@ -607,12 +616,15 @@ public abstract class Encoding
 	private static Encoding ISOLatin1
 	{
 		get {
-			lock (typeof(Encoding)) {
-				if (isoLatin1Encoding == null) {
-					isoLatin1Encoding = new Latin1Encoding ();
+			if (isoLatin1Encoding == null) {
+				lock (typeof(Encoding)) {
+					if (isoLatin1Encoding == null) {
+						isoLatin1Encoding = new Latin1Encoding ();
+					}
 				}
-				return isoLatin1Encoding;
 			}
+
+			return isoLatin1Encoding;
 		}
 	}
 
@@ -625,12 +637,15 @@ public abstract class Encoding
 	static Encoding UTF7
 	{
 		get {
-			lock (typeof(Encoding)) {
-				if (utf7Encoding == null) {
-					utf7Encoding = new UTF7Encoding ();
+			if (utf7Encoding == null) {
+				lock (typeof(Encoding)) {
+					if (utf7Encoding == null) {
+						utf7Encoding = new UTF7Encoding ();
+					}
 				}
-				return utf7Encoding;
 			}
+
+			return utf7Encoding;
 		}
 	}
 
@@ -638,12 +653,15 @@ public abstract class Encoding
 	public static Encoding UTF8
 	{
 		get {
-			lock (typeof(Encoding)) {
-				if (utf8EncodingWithMarkers == null) {
-					utf8EncodingWithMarkers = new UTF8Encoding (true);
+			if (utf8EncodingWithMarkers == null) {
+				lock (typeof(Encoding)) {
+					if (utf8EncodingWithMarkers == null) {
+						utf8EncodingWithMarkers = new UTF8Encoding (true);
+					}
 				}
-				return utf8EncodingWithMarkers;
 			}
+
+			return utf8EncodingWithMarkers;
 		}
 	}
 
@@ -652,13 +670,15 @@ public abstract class Encoding
 	//
 	internal static Encoding UTF8Unmarked {
 		get {
-			lock (typeof (Encoding)){
-				if (utf8EncodingWithoutMarkers == null){
-					utf8EncodingWithoutMarkers = new UTF8Encoding (false, true);
+			if (utf8EncodingWithoutMarkers == null) {
+				lock (typeof (Encoding)){
+					if (utf8EncodingWithoutMarkers == null){
+						utf8EncodingWithoutMarkers = new UTF8Encoding (false, true);
+					}
 				}
-
-				return utf8EncodingWithoutMarkers;
 			}
+
+			return utf8EncodingWithoutMarkers;
 		}
 	}
 	
@@ -666,12 +686,15 @@ public abstract class Encoding
 	public static Encoding Unicode
 	{
 		get {
-			lock (typeof(Encoding)) {
-				if (unicodeEncoding == null) {
-					unicodeEncoding = new UnicodeEncoding (false, true);
+			if (unicodeEncoding == null) {
+				lock (typeof(Encoding)) {
+					if (unicodeEncoding == null) {
+						unicodeEncoding = new UnicodeEncoding (false, true);
+					}
 				}
-				return unicodeEncoding;
 			}
+
+			return unicodeEncoding;
 		}
 	}
 
@@ -681,11 +704,14 @@ public abstract class Encoding
 	//
 	internal static Encoding UnixConsoleEncoding {
 		get {
-			lock (typeof(Encoding)){
-				if (unixConsoleEncoding == null)
-					unixConsoleEncoding = GetEncoding (28591);
-				return unixConsoleEncoding;
+			if (unixConsoleEncoding == null) {
+				lock (typeof(Encoding)){
+					if (unixConsoleEncoding == null)
+						unixConsoleEncoding = Default;
+				}
 			}
+
+			return unixConsoleEncoding;
 		}
 	}
 	
