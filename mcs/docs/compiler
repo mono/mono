@@ -10,13 +10,46 @@
 	Its goals are to provide a free and alternate implementation
 	of the C# language.  The Mono C# compiler generates ECMA CIL
 	images through the use of the System.Reflection.Emit API which
-	enable the compiler to be platform independent. 
+	enable the compiler to be platform independent.
 	
-* How the compiler fits together
+* Overview: How the compiler fits together
 
-	The driver, the tokenizer, the parser, the internal
-	representation, the resolution process, the code generation
-	step. 
+	The compilation process is managed by the compiler driver (it
+	lives in driver.cs).
+
+	The compiler reads a set of C# source code files, and parses
+	them.  Any assemblies or modules that the user might want to
+	use with his project are loaded after parsing is done.
+
+	Once all the files have been parsed, the type hierarchy is
+	resolved.  First interfaces are resolved, then types and
+	enumerations.
+
+	Once the type hierarchy is resolved, every type is populated:
+	fields, methods, indexers, properties, events and delegates
+	are entered into the type system.  
+
+	At this point the program skeleton has been completed.  The
+	next process is to actually emit the code for each of the
+	executable methods.  The compiler drives this from
+	RootContext.EmitCode.
+
+	Each type then has to populate its methods: populating a
+	method requires creating a structure that is used as the state
+	of the block being emitted (this is the EmitContext class) and
+	then generating code for the topmost statement (the Block).
+
+	Code generation has two steps: the first step is the semantic
+	analysis (Resolve method) that resolves any pending tasks, and
+	guarantees that the code is correct.  The second phase is the
+	actual code emission.  All errors are flagged during in the
+	"Resolution" process. 
+
+	After all code has been emitted, then the compiler closes all
+	the types (this basically tells the Reflection.Emit library to
+	finish up the types), resources, and definition of the entry
+	point are done at this point, and the output is saved to
+	disk. 
 
 * The parsing process
 
@@ -39,28 +72,8 @@
 	At the time the assignment expression `a = "hello"' is parsed,
 	it is not know whether a is a class field from this class, or
 	its parents, or whether it is a property access or a variable
-	reference.
-
-	Hence, the compiler driver has to parse all the input files.
-	Once all the input files have been parsed, and an internal
-	representation of the input program exists, the following
-	steps are taken:
-
-		* The interface hierarchy is resolved first.
-	 	  As the interface hierarchy is constructed,
-		  TypeBuilder objects are created for each one of
-		  them. 
-
-		* Classes and structure hierarchy is resolved next,
-		  TypeBuilder objects are created for them.
-
-		* Constants and enumerations are resolved.
-
-		* Method, indexer, properties, delegates and event
-		  definitions are now entered into the TypeBuilders. 
-
-		* Elements that contain code are now invoked to
-		  perform semantic analysis and code generation.
+	reference.  The actual meaning of `a' will not be discvored
+	until the semantic analysis phase.
 
 ** The Tokenizer and the pre-processor
 
@@ -80,20 +93,28 @@
 	analysis phase to produce error messages that can pin point
 	the location of the problem. 
 
+	Some tokens have values associated with it, for example when
+	the tokenizer encounters a string, it will return a
+	LITERAL_STRING token, and the actual string parsed will be
+	available in the `Value' property of the tokenizer.   The same
+	mechanism is used to return integers and floating point
+	numbers. 
+
 	C# has a limited pre-processor that allows conditional
 	compilation, but it is not as fully featured as the C
-	pre-processor, and most notable, macros are missing.  This
+	pre-processor, and most notably, macros are missing.  This
 	makes it simple to implement in very few lines and mesh it
 	with the tokenizer.
 
 	The `handle_preprocessing_directive' method in the tokenizer
 	handles all the pre-processing, and it is invoked when the '#'
-	symbol is found as the first token in a line.  The state of
-	the pre-processor is contained in a Stack called `ifstack',
-	this state is used to track the if/elif/else/endif states.
-	The state is encoded in the top of the stack as a number of
-	values `TAKING', `TAKEN_BEFORE', `ELSE_SEEN',
-	`PARENT_TAKING'.
+	symbol is found as the first token in a line.  
+
+	The state of the pre-processor is contained in a Stack called
+	`ifstack', this state is used to track the if/elif/else/endif
+	nesting and the current state.  The state is encoded in the
+	top of the stack as a number of values `TAKING',
+	`TAKEN_BEFORE', `ELSE_SEEN', `PARENT_TAKING'.
 
 ** Locations
 
@@ -107,10 +128,32 @@
 	this is currently not being used or encoded.  It could
 	probably be encoded in the low 9 bits, allowing for columns
 	from 1 to 512 to be encoded.
-	
+
 * The Parser
 
-* Internal Representatio
+	The parser is written using Jay, which is a port of Berkeley
+	Yacc to Java, that I later ported to C#. 
+
+	Many people ask why the grammar of the parser does not match
+	exactly the definition in the C# specification.  The reason is
+	simple: the grammar in the C# specification is designed to be
+	consumed by humans, and not by a computer program.  Before
+	you can feed this grammar to a tool, it needs to be simplified
+	to allow the tool to generate a correct parser for it. 
+
+	In the Mono C# compiler, we use a class for each of the
+	statements and expressions in the C# language.  For example,
+	there is a `While' class for the the `while' statement, a
+	`Cast' class to represent a cast expression and so on.
+
+	There is a Statement class, and an Expression class which are
+	the base classes for statements and expressions. 
+
+** Namespaces
+	
+	Using list.
+
+* Internal Representation
 
 ** Expressions
 
@@ -151,13 +194,39 @@
 
 ** Statements
 
+* The semantic analysis 
+
+	Hence, the compiler driver has to parse all the input files.
+	Once all the input files have been parsed, and an internal
+	representation of the input program exists, the following
+	steps are taken:
+
+		* The interface hierarchy is resolved first.
+	 	  As the interface hierarchy is constructed,
+		  TypeBuilder objects are created for each one of
+		  them. 
+
+		* Classes and structure hierarchy is resolved next,
+		  TypeBuilder objects are created for them.
+
+		* Constants and enumerations are resolved.
+
+		* Method, indexer, properties, delegates and event
+		  definitions are now entered into the TypeBuilders. 
+
+		* Elements that contain code are now invoked to
+		  perform semantic analysis and code generation.
+
 * Output Generation
 
 ** Code Generation
 
 	The EmitContext class is created any time that IL code is to
 	be generated (methods, properties, indexers and attributes all
-	create EmitContexts).
+	create EmitContexts).  
+
+	The EmitContext keeps track of the current namespace and type
+	container.  This is used during name resolution.
 
 	An EmitContext is used by the underlying code generation
 	facilities to track the state of code generation:
@@ -243,6 +312,3 @@
 		* InUnsafe
 		  Whether we are inside an unsafe block
 		
-
-
-
