@@ -1,3 +1,7 @@
+2005-02-04  Raja R Harinath  <rharinath@novell.com>
+
+	* location.cs (Location.AddFile): Fix CS2002 error report.
+
 2005-02-02  Martin Baulig  <martin@ximian.com>
 
 	* delegate.cs (Delegate.DefineType): Report an internal error if
