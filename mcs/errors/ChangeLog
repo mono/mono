@@ -1,3 +1,7 @@
+2005-01-10 Marek Safar <marek.safar@seznam.cz>
+
+	* cs0612-2.cs, CS0612-2-lib.cs: Bug #70722.
+	
 2005-01-07 Marek Safar <marek.safar@seznam.cz>
 
 	* cs0102-14.cs: Bug #70942.
