@@ -31,8 +31,7 @@ namespace System.IO {
 
                 public override System.Text.Encoding Encoding {
                         get {
-                                // TODO: Implement
-                                return null;
+                                return System.Text.Encoding.Unicode;
                         }
                 }
 

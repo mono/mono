@@ -1,5 +1,9 @@
 2002-08-03  Jason Diamond  <jason@injektilo.org>
 
+	* StringWriter.cs: Return UnicodeEncoding for Encoding property.
+
+2002-08-03  Jason Diamond  <jason@injektilo.org>
+
 	* StreamWriter.cs: Use GetByteCount() to get exact length instead
 	of GetMaxByteCount when converting chars to bytes.
 
