@@ -111,7 +111,7 @@ namespace System.Data.OleDb
 		public static extern void gda_init (string app_id, string version, int nargs, string[] args);
 
 		[DllImport("gda-2")]
-		public static extern GdaValueType gda_value_get_vtype (IntPtr value);
+		public static extern GdaValueType gda_value_get_type (IntPtr value);
 
 		[DllImport("gda-2")]
 		public static extern long gda_value_get_bigint (IntPtr value);

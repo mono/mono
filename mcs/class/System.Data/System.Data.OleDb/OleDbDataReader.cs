@@ -154,7 +154,7 @@ namespace System.Data.OleDb
 			if (value == IntPtr.Zero)
 				throw new InvalidCastException ();
 			
-			if (libgda.gda_value_get_vtype (value) != GdaValueType.Boolean)
+			if (libgda.gda_value_get_type (value) != GdaValueType.Boolean)
 				throw new InvalidCastException ();
 			return libgda.gda_value_get_boolean (value);
 		}
@@ -171,7 +171,7 @@ namespace System.Data.OleDb
 			if (value == IntPtr.Zero)
 				throw new InvalidCastException ();
 			
-			if (libgda.gda_value_get_vtype (value) != GdaValueType.Tinyint)
+			if (libgda.gda_value_get_type (value) != GdaValueType.Tinyint)
 				throw new InvalidCastException ();
 			return libgda.gda_value_get_tinyint (value);
 		}
@@ -194,7 +194,7 @@ namespace System.Data.OleDb
 			if (value == IntPtr.Zero)
 				throw new InvalidCastException ();
 			
-			if (libgda.gda_value_get_vtype (value) != GdaValueType.Tinyint)
+			if (libgda.gda_value_get_type (value) != GdaValueType.Tinyint)
 				throw new InvalidCastException ();
 			return (char) libgda.gda_value_get_tinyint (value);
 		}
@@ -244,19 +244,19 @@ namespace System.Data.OleDb
 			if (value == IntPtr.Zero)
 				throw new InvalidCastException ();
 			
-			if (libgda.gda_value_get_vtype (value) == GdaValueType.Date) {
+			if (libgda.gda_value_get_type (value) == GdaValueType.Date) {
 				GdaDate gdt;
 
 				gdt = (GdaDate) Marshal.PtrToStructure (libgda.gda_value_get_date (value),
 									typeof (GdaDate));
 				return new DateTime ((int) gdt.year, (int) gdt.month, (int) gdt.day);
-			} else if (libgda.gda_value_get_vtype (value) == GdaValueType.Time) {
+			} else if (libgda.gda_value_get_type (value) == GdaValueType.Time) {
 				GdaTime gdt;
 
 				gdt = (GdaTime) Marshal.PtrToStructure (libgda.gda_value_get_time (value),
 									typeof (GdaTime));
 				return new DateTime (0, 0, 0, (int) gdt.hour, (int) gdt.minute, (int) gdt.second, 0);
-			} else if (libgda.gda_value_get_vtype (value) == GdaValueType.Timestamp) {
+			} else if (libgda.gda_value_get_type (value) == GdaValueType.Timestamp) {
 				GdaTimestamp gdt;
 				
 				gdt = (GdaTimestamp) Marshal.PtrToStructure (libgda.gda_value_get_timestamp (value),
@@ -288,7 +288,7 @@ namespace System.Data.OleDb
 			if (value == IntPtr.Zero)
 				throw new InvalidCastException ();
 			
-			if (libgda.gda_value_get_vtype (value) != GdaValueType.Double)
+			if (libgda.gda_value_get_type (value) != GdaValueType.Double)
 				throw new InvalidCastException ();
 			return libgda.gda_value_get_double (value);
 		}
@@ -311,7 +311,7 @@ namespace System.Data.OleDb
 			if (value == IntPtr.Zero)
 				throw new InvalidCastException ();
 			
-			if (libgda.gda_value_get_vtype (value) != GdaValueType.Single)
+			if (libgda.gda_value_get_type (value) != GdaValueType.Single)
 				throw new InvalidCastException ();
 			return libgda.gda_value_get_single (value);
 		}
@@ -334,7 +334,7 @@ namespace System.Data.OleDb
 			if (value == IntPtr.Zero)
 				throw new InvalidCastException ();
 			
-			if (libgda.gda_value_get_vtype (value) != GdaValueType.Smallint)
+			if (libgda.gda_value_get_type (value) != GdaValueType.Smallint)
 				throw new InvalidCastException ();
 			return (short) libgda.gda_value_get_smallint (value);
 		}
@@ -351,7 +351,7 @@ namespace System.Data.OleDb
 			if (value == IntPtr.Zero)
 				throw new InvalidCastException ();
 			
-			if (libgda.gda_value_get_vtype (value) != GdaValueType.Integer)
+			if (libgda.gda_value_get_type (value) != GdaValueType.Integer)
 				throw new InvalidCastException ();
 			return libgda.gda_value_get_integer (value);
 		}
@@ -368,7 +368,7 @@ namespace System.Data.OleDb
 			if (value == IntPtr.Zero)
 				throw new InvalidCastException ();
 			
-			if (libgda.gda_value_get_vtype (value) != GdaValueType.Bigint)
+			if (libgda.gda_value_get_type (value) != GdaValueType.Bigint)
 				throw new InvalidCastException ();
 			return libgda.gda_value_get_bigint (value);
 		}
@@ -415,7 +415,7 @@ namespace System.Data.OleDb
 			if (value == IntPtr.Zero)
 				throw new InvalidCastException ();
 			
-			if (libgda.gda_value_get_vtype (value) != GdaValueType.String)
+			if (libgda.gda_value_get_type (value) != GdaValueType.String)
 				throw new InvalidCastException ();
 			return libgda.gda_value_get_string (value);
 		}
@@ -439,7 +439,7 @@ namespace System.Data.OleDb
 			if (value == IntPtr.Zero)
 				throw new IndexOutOfRangeException ();
 
-			type = libgda.gda_value_get_vtype (value);
+			type = libgda.gda_value_get_type (value);
 			switch (type) {
 			case GdaValueType.Bigint : return GetInt64 (ordinal);
 			case GdaValueType.Boolean : return GetBoolean (ordinal);
