@@ -147,7 +147,7 @@ namespace System.Reflection {
 			throw new NotSupportedException ();
 		}
 
-		public virtual Type [] GetGenericParameters ()
+		public virtual Type [] GetGenericArguments ()
 		{
 			throw new NotSupportedException ();
 		}

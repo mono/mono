@@ -1,3 +1,15 @@
+2004-04-07  Martin Baulig  <martin@ximian.com>
+
+	* MethodBase.cs
+	(MethodBase.GetGenericParameters): Renamed to GetGenericArguments().
+
+	* MonoGenericInst.cs (MonoGenericInst.DeclaringType): Removed.
+	(MonoGenericInst.GetNestedTypes): Just call
+	`generic_type.GetNestedTypes (bf)' here.
+
+	* MonoMethod.cs (MonoMethod.ToString): If we're a generic method,
+	include the type arguments.
+
 2004-04-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StrongNameKeyPair.cs: Added support for ECMA "key". Now returns a

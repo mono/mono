@@ -164,7 +164,20 @@ namespace System.Reflection {
 			}
 			if (ReturnType.IsClass && ReturnType.Namespace != "")
 				return ReturnType.Namespace + "." + ReturnType.Name + " " + Name + "(" + parms + ")";
-			return ReturnType.Name + " " + Name + "(" + parms + ")";
+			string generic = "";
+#if NET_1_2
+			if (HasGenericParameters) {
+				Type[] gen_params = GetGenericArguments ();
+				generic = "[";
+				for (int j = 0; j < gen_params.Length; j++) {
+					if (j > 0)
+						generic += ",";
+					generic += gen_params [j].Name;
+				}
+				generic += "]";
+			}
+#endif
+			return ReturnType.Name + " " + Name + generic + "(" + parms + ")";
 		}
 
 	
@@ -179,7 +192,7 @@ namespace System.Reflection {
 		public override extern MethodInfo BindGenericParameters (Type [] types);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public override extern Type [] GetGenericParameters ();
+		public override extern Type [] GetGenericArguments ();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern MethodInfo GetGenericMethodDefinition_impl ();

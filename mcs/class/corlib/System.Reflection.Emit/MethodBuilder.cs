@@ -344,7 +344,7 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		public override Type[] GetGenericParameters ()
+		public override Type[] GetGenericArguments ()
 		{
 			if (generic_params == null)
 				return new Type [0];
