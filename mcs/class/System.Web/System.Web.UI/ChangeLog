@@ -1,3 +1,7 @@
+2004-08-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlTextWriterTag.cs: readded author name.
+
 2004-08-04 Sanjay Gupta <gsanjay@novell.com>
 
 	* HtmlTextWriterAttribute.cs:
