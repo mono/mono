@@ -1,3 +1,9 @@
+2004-02-18  Jackson Harper  <jackson@ximian.com>
+
+	* ILParser.jay: Create ExternTypeRefInsts when a valuetype
+	extern_class is encountered. This way the underlying type is not
+	changed to a value type.
+	
 2003-12-10  Jackson Harper <jackson@ximian.com>
 
 	* ILParser.jay: When modifying extern types, clone them and modify
