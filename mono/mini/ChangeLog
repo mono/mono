@@ -1,5 +1,9 @@
 2004-05-16	Patrik Torstensson <totte@hiddenpeaks.com>
 
+	* basic-long.cs: reg test for complex ceq_long bug.
+
+2004-05-16	Patrik Torstensson <totte@hiddenpeaks.com>
+
 	* mini-x86.c (mono_arch_local_regalloc): Correctly free 
 	reg in long and clob case (bug #58343). Fixed/added comments.
 
