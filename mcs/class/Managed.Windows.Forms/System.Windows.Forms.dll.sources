@@ -12,7 +12,7 @@ System.Windows.Forms/Binding.cs
 System.Windows.Forms/BindingContext.cs
 System.Windows.Forms/BindingMemberInfo.cs
 System.Windows.Forms/BindingsCollection.cs
-System.Windows.Forms/BindingsManagerBase.cs
+System.Windows.Forms/BindingManagerBase.cs
 System.Windows.Forms/Border3DSide.cs
 System.Windows.Forms/Border3DStyle.cs
 System.Windows.Forms/BorderStyle.cs
