@@ -41,4 +41,4 @@
       <xs:field xpath="second_first" />
     </xs:unique>
   </xs:element>
-</xs:schema
+</xs:schema>
