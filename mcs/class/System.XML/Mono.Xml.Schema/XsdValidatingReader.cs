@@ -559,8 +559,6 @@ namespace Mono.Xml.Schema
 				if (context.Element != null) {
 					if (context.Element.ValidatedDefaultValue != null)
 						value = context.Element.ValidatedDefaultValue;
-					else if (context.Element.ValidatedFixedValue != null)
-						value = context.Element.ValidatedFixedValue;
 				}					
 			}
 
@@ -568,7 +566,6 @@ namespace Mono.Xml.Schema
 			XmlSchemaSimpleType st = context.ActualType as XmlSchemaSimpleType;
 			if (dt == null) {
 				if (st != null) {
-//					if (st.Variety == XmlSchemaDerivationMethod.Restriction)
 					dt = st.Datatype;
 				} else {
 					XmlSchemaComplexType ct = context.ActualType as XmlSchemaComplexType;

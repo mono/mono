@@ -173,45 +173,71 @@ namespace Mono.Xml.Schema
 		internal void ValidateWildcardSubset (XsdWildcard other,
 			ValidationEventHandler h, XmlSchema schema)
 		{
+			ValidateWildcardSubset (other, h, schema, true);
+		}
+
+		internal bool ValidateWildcardSubset (XsdWildcard other,
+			ValidationEventHandler h, XmlSchema schema, bool raiseError)
+		{
 			// 1.
 			if (other.HasValueAny)
-				return;
+				return true;
+			// 2.
 			if (HasValueOther && other.HasValueOther) {
-					// 2.1 and 2.2
-					if (TargetNamespace == other.TargetNamespace ||
-						other.TargetNamespace == null || other.TargetNamespace == "")
-						return;
+				// 2.1 and 2.2
+				if (TargetNamespace == other.TargetNamespace ||
+					other.TargetNamespace == null || other.TargetNamespace == "")
+					return true;
 			}
-			// 3.1.
-			if (this.HasValueAny)
-				xsobj.error (h, "Invalid wildcard subset was found.");
+			// 3.1. (not)
+			if (this.HasValueAny) {
+				if (raiseError)
+					xsobj.error (h, "Invalid wildcard subset was found.");
+				return false;
+			}
 			// 3.2
 			if (other.HasValueOther) {
 				// 3.2.2
-				if (other.TargetNamespace == null || other.TargetNamespace == String.Empty)
-					return;
-				else {
-					foreach (string ns in ResolvedNamespaces)
+				if ( (this.HasValueTargetNamespace && other.TargetNamespace == this.TargetNamespace) ||
+					(this.HasValueLocal && (other.TargetNamespace == null || other.TargetNamespace.Length == 0)) ) {
+					if (raiseError)
+						xsobj.error (h, "Invalid wildcard subset was found.");
+					return false;
+				} else {
+					foreach (string ns in ResolvedNamespaces) {
 						if (ns == other.TargetNamespace) {
-							xsobj.error (h, "Invalid wildcard subset was found.");
-							return;
+							if (raiseError)
+								xsobj.error (h, "Invalid wildcard subset was found.");
+							return false;
 						}
+					}
 				}
 			} else {
 				// 3.2.1
-				if (!other.HasValueLocal && HasValueLocal) {
-					xsobj.error (h, "Invalid wildcard subset was found.");
-					return;
-				} else if (ResolvedNamespaces.Count == 0) {
-					return;
+				if ((this.HasValueLocal && !other.HasValueLocal) ||
+					this.HasValueTargetNamespace && !other.HasValueTargetNamespace) {
+					if (raiseError)
+						xsobj.error (h, "Invalid wildcard subset was found.");
+					return false;
+				} else if (this.HasValueOther) {
+//					if (
+//						(other.HasValueLocal && !(this.TargetNamespace == null || this.TargetNamespace.Length == 0)) || 
+//						other.ResolvedNamespaces.Count > 1 || 
+//						other.ResolvedNamespaces.Count == 1 && other.ResolvedNamespaces [0] != other.TargetNamespace) {
+						if (raiseError)
+							xsobj.error (h, "Invalid wildcard subset was found.");
+						return false;
+//					}
 				} else {
 					foreach (string ns in ResolvedNamespaces)
 						if (!other.ResolvedNamespaces.Contains (ns)) {
-							xsobj.error (h, "Invalid wildcard subset was found.");
-							return;
+							if (raiseError)
+								xsobj.error (h, "Invalid wildcard subset was found.");
+							return false;
 						}
 				}
 			}
+			return true;
 		}
 	}
 }

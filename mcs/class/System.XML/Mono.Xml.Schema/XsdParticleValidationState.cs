@@ -167,10 +167,10 @@ namespace Mono.Xml.Schema
 			this.manager = manager;
 		}
 
-		// Normally checks MaxOccurs boundary
+		// Normally checks Max Occurs boundary
 		public abstract XsdValidationState EvaluateStartElement (string localName, string ns);
 
-		// Normally checks MinOccurs boundary
+		// Normally checks Min Occurs boundary
 		public abstract bool EvaluateEndElement ();
 
 		internal abstract bool EvaluateIsEmptiable ();
@@ -276,7 +276,7 @@ namespace Mono.Xml.Schema
 				return result;
 
 			OccuredInternal++;
-			if (OccuredInternal > groupRef.MaxOccurs)
+			if (OccuredInternal > groupRef.ValidatedMaxOccurs)
 				return XsdValidationState.Invalid;
 			return Manager.MakeSequence (result, this);
 		}
@@ -558,7 +558,7 @@ namespace Mono.Xml.Schema
 			if (all.CompiledItems.Count == consumed.Count)
 				return true;
 			foreach (XmlSchemaElement el in all.CompiledItems)
-				if (el.MinOccurs > 0 && !consumed.Contains (el))
+				if (el.ValidatedMinOccurs > 0 && !consumed.Contains (el))
 					return false;
 			return true;
 		}
@@ -568,7 +568,7 @@ namespace Mono.Xml.Schema
 			if (all.Emptiable || all.ValidatedMinOccurs == 0)
 				return true;
 			foreach (XmlSchemaElement el in all.CompiledItems)
-				if (el.MinOccurs > 0 && !consumed.Contains (el))
+				if (el.ValidatedMinOccurs > 0 && !consumed.Contains (el))
 					return false;
 			return true;
 		}

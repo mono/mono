@@ -1,3 +1,10 @@
+2004-01-20  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdParticleValidationState.cs : Use ValidatedMaxOccurs instead of
+	  MaxOccurs. (in the meantime)
+	* XsdValidatingReader.cs : "fixed" should not be treated as default.
+	* XsdWildcard.cs : several Wildcard Subset constraint related fixes.
+
 2004-01-15  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdValidatingReader.cs : Now use ValidatableParticle instead of
