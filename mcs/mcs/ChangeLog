@@ -1,3 +1,11 @@
+2002-05-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-tokenizer.cs (adjust_real): Share code between LITERAL_DOUBLE
+	and the default.
+
+	(token): Do not consume an extra character before calling
+	decimal_digits.
+
 2002-05-06  Piers Haken	<piersh@friskit.com>
 
 	* cs-parser.jay: add 'override' attribute to System.Object.Finalize

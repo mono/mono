@@ -250,9 +250,9 @@ namespace Mono.CSharp
 		static Tokenizer ()
 		{
 			InitTokens ();
-			csharp_format_info = new NumberFormatInfo ();
-			csharp_format_info.CurrencyDecimalSeparator = ".";
-			styles = NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint;
+			csharp_format_info = NumberFormatInfo.InvariantInfo;
+			styles = NumberStyles.Float;
+			
 			id_builder = new System.Text.StringBuilder ();
 			string_builder = new System.Text.StringBuilder ();
 			number_builder = new System.Text.StringBuilder ();
@@ -637,17 +637,13 @@ namespace Mono.CSharp
 				val = System.Decimal.Parse (
 					s, styles, csharp_format_info);
 				break;
-			case Token.LITERAL_DOUBLE:
-				val = new System.Double ();
-				val = System.Double.Parse (
-					s, styles, csharp_format_info);
-				break;
 			case Token.LITERAL_FLOAT:
 				val = new System.Double ();
 				val = (float) System.Double.Parse (
 					s, styles, csharp_format_info);
 				break;
 
+			case Token.LITERAL_DOUBLE:
 			case Token.NONE:
 				val = new System.Double ();
 				val = System.Double.Parse (
@@ -703,13 +699,10 @@ namespace Mono.CSharp
 				number_builder.Append ("e");
 				c = getChar ();
 				
-				if (c == '+'){
+				if (c == '+')
 					number_builder.Append ((char) c);
-					c = getChar ();
-				} else if (c == '-'){
+				else if (c == '-')
 					number_builder.Append ((char) c);
-					c = getChar ();
-				}
 				decimal_digits (-1);
 				c = getChar ();
 			}
