@@ -50,6 +50,11 @@ namespace Microsoft.JScript {
 			symbols.Add (id, d);
 		}
 
+		internal void Remove (string id)
+		{
+			symbols.Remove (id);
+		}
+
 		internal object Contains (string id)
 		{
 			return symbols [id];
