@@ -20,6 +20,16 @@ namespace Mono.CSharp {
 	struct TypeAndMethods {
 		public Type          type;
 		public MethodInfo [] methods;
+
+		// 
+		// Whether it is optional, this is used to allow the explicit/implicit
+		// implementation when a parent class already implements an interface. 
+		//
+		// For example:
+		//
+		// class X : IA { }  class Y : X, IA { IA.Explicit (); }
+		//
+		public bool          optional;
 		
 		// Far from ideal, but we want to avoid creating a copy
 		// of methods above.
@@ -122,7 +132,7 @@ namespace Mono.CSharp {
 			return list;
 		}
 
-		PendingImplementation (TypeContainer container, Type [] ifaces, ArrayList abstract_methods, int total)
+		PendingImplementation (TypeContainer container, MissingInterfacesInfo [] missing_ifaces, ArrayList abstract_methods, int total)
 		{
 			TypeBuilder type_builder = container.TypeBuilder;
 			
@@ -130,35 +140,35 @@ namespace Mono.CSharp {
 			pending_implementations = new TypeAndMethods [total];
 
 			int i = 0;
-			if (ifaces != null){
-				foreach (Type t in ifaces){
-					MethodInfo [] mi;
-
-					if (t is TypeBuilder){
-						Interface iface;
-
-						iface = TypeManager.LookupInterface (t);
-						
-						mi = iface.GetMethods (container);
-					} else 
-						mi = t.GetMethods ();
-
-					int count = mi.Length;
-					pending_implementations [i].type = t;
-					pending_implementations [i].methods = mi;
-					pending_implementations [i].args = new Type [count][];
-					pending_implementations [i].found = new bool [count];
-					pending_implementations [i].need_proxy = new MethodInfo [count];
-
-					int j = 0;
-					foreach (MethodInfo m in mi){
-						Type [] types = TypeManager.GetArgumentTypes (m);
-
-						pending_implementations [i].args [j] = types;
-						j++;
-					}
-					i++;
+			foreach (MissingInterfacesInfo missing in missing_ifaces){
+				MethodInfo [] mi;
+				Type t = missing.Type;
+				
+				if (t is TypeBuilder){
+					Interface iface;
+					
+					iface = TypeManager.LookupInterface (t);
+					
+					mi = iface.GetMethods (container);
+				} else 
+					mi = t.GetMethods ();
+				
+				int count = mi.Length;
+				pending_implementations [i].type = missing.Type;
+				pending_implementations [i].optional = missing.Optional;
+				pending_implementations [i].methods = mi;
+				pending_implementations [i].args = new Type [count][];
+				pending_implementations [i].found = new bool [count];
+				pending_implementations [i].need_proxy = new MethodInfo [count];
+				
+				int j = 0;
+				foreach (MethodInfo m in mi){
+					Type [] types = TypeManager.GetArgumentTypes (m);
+					
+					pending_implementations [i].args [j] = types;
+					j++;
 				}
+				i++;
 			}
 
 			if (abstract_methods != null){
@@ -183,7 +193,20 @@ namespace Mono.CSharp {
 			}
 		}
 
-		static Type [] GetMissingInterfaces (TypeBuilder type_builder)
+		struct MissingInterfacesInfo {
+			public Type Type;
+			public bool Optional;
+
+			public MissingInterfacesInfo (Type t)
+			{
+				Type = t;
+				Optional = false;
+			}
+		}
+
+		static MissingInterfacesInfo [] EmptyMissingInterfacesInfo = new MissingInterfacesInfo [0];
+		
+		static MissingInterfacesInfo [] GetMissingInterfaces (TypeBuilder type_builder)
 		{
 			//
 			// Notice that TypeBuilders will only return the interfaces that the Type
@@ -196,8 +219,14 @@ namespace Mono.CSharp {
 			Type [] implementing_ifaces = type_builder.GetInterfaces ();
 			int count = implementing_ifaces.Length;
 
-			if (count == 0)
-				return new Type [0];
+			if (implementing_ifaces.Length == 0)
+				return EmptyMissingInterfacesInfo;
+
+			MissingInterfacesInfo [] missing_info = new MissingInterfacesInfo [count];
+
+			for (int i = 0; i < count; i++)
+				missing_info [i] = new MissingInterfacesInfo (implementing_ifaces [i]);
+			
 			
 			//
 			// Now, we have to extract the interfaces implements by our parents, and
@@ -209,10 +238,8 @@ namespace Mono.CSharp {
 					
 				foreach (Type base_iface in base_ifaces){
 					for (int i = 0; i < count; i++){
-						if (implementing_ifaces [i] == base_iface){
-							implementing_ifaces [i] = null;
-							removed++;
-						}
+						if (implementing_ifaces [i] == base_iface)
+							missing_info [i].Optional = true;
 					}
 				}
 
@@ -224,17 +251,7 @@ namespace Mono.CSharp {
 					break;
 			}
 
-			if (removed == 0)
-				return implementing_ifaces;
-
-			Type [] ifaces = new Type [count-removed];
-			int j = 0;
-
-			for (int i = 0; i < count; i++)
-				if (implementing_ifaces [i] != null)
-					ifaces [j++] = implementing_ifaces [i];
-
-			return ifaces;
+			return missing_info;
 		}
 		
 		//
@@ -247,12 +264,10 @@ namespace Mono.CSharp {
 		static public PendingImplementation GetPendingImplementations (TypeContainer container)
 		{
 			TypeBuilder type_builder = container.TypeBuilder;
-			Type [] ifaces;
+			MissingInterfacesInfo [] missing_interfaces;
 			Type b = type_builder.BaseType;
-			int icount = 0;
 
-			ifaces = GetMissingInterfaces (type_builder);
-			icount = ifaces.Length;
+			missing_interfaces = GetMissingInterfaces (type_builder);
 
 			//
 			// If we are implementing an abstract class, and we are not
@@ -272,11 +287,11 @@ namespace Mono.CSharp {
 					implementing_abstract = false;
 			}
 			
-			int total = icount +  (implementing_abstract ? 1 : 0);
+			int total = missing_interfaces.Length +  (implementing_abstract ? 1 : 0);
 			if (total == 0)
 				return null;
 
-			return new PendingImplementation (container, ifaces, abstract_methods, total);
+			return new PendingImplementation (container, missing_interfaces, abstract_methods, total);
 		}
 
 		public enum Operation {
@@ -509,6 +524,9 @@ namespace Mono.CSharp {
 						if (ParentImplements (type, mi))
 							continue;
 
+						if (pending_implementations [i].optional)
+							continue;
+						
 						string extra = "";
 						
 						if (pending_implementations [i].found [j])

@@ -1,3 +1,17 @@
+2002-12-04  Miguel de Icaza  <miguel@ximian.com>
+
+	* pending.cs (PendingImplementation): Rework so we can keep track
+	of interface types all the time, and flag those which were
+	implemented by parents as optional.
+
+2002-12-03  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Binary.ResolveOperator): Use
+	String.Concat(string,string,string) or
+	String.Concat(string,string,string,string) when possible. 
+
+	* typemanager: More helper methods.
+
 
 Tue Dec 3 19:32:04 CET 2002 Paolo Molaro <lupus@ximian.com>
 

@@ -2913,7 +2913,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class EmptyCast : Expression {
 		protected Expression child;
-
+		
 		public EmptyCast (Expression child, Type return_type)
 		{
 			eclass = child.eclass;

@@ -93,7 +93,7 @@ namespace Mono.CSharp {
 		public Parameter.Modifier ParameterModifier (int pos)
 		{
 			int len = pi.Length;
-			
+
 			if (pos >= len - 1)
 				if (last_arg_is_params)
 					return Parameter.Modifier.PARAMS;
@@ -251,4 +251,5 @@ namespace Mono.CSharp {
 			Second = s;
 		}
 	}
+
 }

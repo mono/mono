@@ -2129,7 +2129,36 @@ namespace Mono.CSharp {
 							return new StringConstant (
 								ls.Value + rs.Value);
 						}
-						
+
+						if (left is Binary){
+							Binary b = (Binary) left;
+
+							//
+							// Call String.Concat (string, string, string) or
+							// String.Concat (string, string, string, string)
+							// if possible.
+							//
+							if (b.oper == Operator.Addition){
+								ArrayList bargs = b.Arguments;
+								int count = bargs.Count;
+								
+								if (count == 2){
+									Arguments = bargs;
+									Arguments.Add (new Argument (right, Argument.AType.Expression));
+									type = TypeManager.string_type;
+									method = TypeManager.string_concat_string_string_string;
+									
+									return this;
+								} else if (count == 3){
+									Arguments = bargs;
+									Arguments.Add (new Argument (right, Argument.AType.Expression));
+									type = TypeManager.string_type;
+									method = TypeManager.string_concat_string_string_string_string;									
+									return this;
+								}
+							}
+						}
+
 						// string + string
 						method = TypeManager.string_concat_string_string;
 					} else {
