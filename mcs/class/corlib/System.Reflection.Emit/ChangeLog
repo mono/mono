@@ -1,3 +1,9 @@
+2004-10-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* LocalBuilder.cs: Make this inherit from LocalVariableInfo under
+	net 2.0. Reorganize fields so the layout visible to the runtime is the
+	same under 1.0 and 2.0. Add 2.0 properties.
+
 2004-10-02  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeBuilder.cs: throw NotSupportedException when defining default

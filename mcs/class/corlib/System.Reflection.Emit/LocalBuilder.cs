@@ -41,20 +41,26 @@ using System.Runtime.CompilerServices;
 using System.Diagnostics.SymbolStore;
 
 namespace System.Reflection.Emit {
+#if NET_2_0
+	public sealed class LocalBuilder : LocalVariableInfo {
+#else
 	public sealed class LocalBuilder {
-		//
-		// These are kept in sync with reflection.h
-		//
+#endif
+
+#if NET_2_0
+		// Some fields are already defined in LocalVariableInfo
+		#region Sync with reflection.h
+		private string name;
+		#endregion
+#else
 		#region Sync with reflection.h
 		private Type type;
-		private string name;
 		internal bool is_pinned;
-		#endregion
-		
-		//
-		// Order does not matter after here
-		//
 		internal ushort position;
+		private string name;
+		#endregion
+#endif
+		
 		internal ILGenerator ilgen;
 
 		internal LocalBuilder (Type t, ILGenerator ilgen)
@@ -73,12 +79,30 @@ namespace System.Reflection.Emit {
 			SetLocalSymInfo (lname, 0, 0);
 		}
 
-
+#if NET_2_0
+		override
+#endif
 		public Type LocalType
 		{
 			get {
 				return type;
 			}
 		}
+
+#if NET_2_0
+		public override bool IsPinned
+		{
+			get {
+				return is_pinned;
+			}
+		}
+
+		public override int LocalIndex
+		{
+			get {
+				return position;
+			}
+		}
+#endif
 	}
 }
