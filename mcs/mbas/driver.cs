@@ -71,7 +71,7 @@ namespace Mono.Languages
 		[Option("Shows stack trace at Error location", "Stacktrace")]
 		public bool Stacktrace { set { Report.Stacktrace = value; } }
 
-		[Option("References an assembly", 'r')]
+		[Option(-1, "References an assembly", 'r')]
 		public string reference { set { references.Add(value); } }
 
 		[Option("Adds PARAM as a resource", "resource")]
@@ -386,8 +386,7 @@ namespace Mono.Languages
 				"System",
 				"System.Data",
 				"System.Xml",
-				"System.Drawing",        // just for now
-				//"Microsoft.VisualBasic", // just for now
+				"Microsoft.VisualBasic", 
 #if EXTRA_DEFAULT_REFS
 				//
 				// Is it worth pre-loading all this stuff?
