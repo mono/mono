@@ -70,7 +70,7 @@ namespace System.Web.UI.HtmlControls{
 			Attributes.Render(writer);
 		}
 		
-		internal static void WriteOnClickAttribute(HtmlTextWriter writer, bool submitsAutomatically, bool submitsProgramatically, bool causesValidation) {
+		internal void WriteOnClickAttribute(HtmlTextWriter writer, bool submitsAutomatically, bool submitsProgramatically, bool causesValidation) {
 			string local1;
 			string local2;
 			string local3;
@@ -79,11 +79,11 @@ namespace System.Web.UI.HtmlControls{
 			local1 = null;
 			if (submitsAutomatically) {
 				if ((causesValidation))
-					local1 = System.Web.UI.Utils.GetClientValidateEvent(Page);
+					local1 = System.Web.UI.Utils.GetClientValidatedEvent(Page);
 			}
 			else if (submitsProgramatically) {
 				if (causesValidation)
-					local1 = System.Web.UI.Utils.GetClientValidatedPostback(this);
+					local1 = System.Web.UI.Utils.GetClientValidatedPostBack(this);
 				else
 					local1 = Page.GetPostBackClientEvent(this, String.Empty);
 			}

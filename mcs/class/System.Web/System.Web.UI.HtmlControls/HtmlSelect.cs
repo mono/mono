@@ -73,9 +73,9 @@ namespace System.Web.UI.HtmlControls{
 				while(current.MoveNext()){
 					if (valid == true){
 						if (text.Length >= 0)
-							li.Text = DataBinder.GetPropertyValue(current, text, null);
+							li.Text = DataBinder.GetPropertyValue(current, text) as string;
 						if (value.Length >= 0)
-							li.Value = DataBinder.GetPropertyValue(current, value, null);
+							li.Value = DataBinder.GetPropertyValue(current, value) as string;
 					}
 					else{
 						li.Value = li.Text = current.ToString();
@@ -210,7 +210,7 @@ namespace System.Web.UI.HtmlControls{
 		}
 		
 		//starts tracking changes to the viewstate
-		protected internal virtual void TrackViewState(){
+		internal virtual new void TrackViewState(){
 			TrackViewState();
 			Items.TrackViewState();
 		}

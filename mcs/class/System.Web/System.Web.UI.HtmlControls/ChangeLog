@@ -1,3 +1,16 @@
+2002-05-07  Duncan Mak  <duncan@ximian.com>
+
+	* HtmlSelect.cs (TrackViewState): Added 'new' keyword to avoid
+	clashing with the method defined in the parent class.
+	(OnDataBinding): Added missing casts.
+
+	* HtmlForm.cs (Render): Fixed call too SetAttribute, need to cast
+	'this' to IAttributeAccessor before calling interface method.
+	Also renamed some calls to reflect changes in the API.
+
+	* HtmlControl.cs (WriteOnClickAttribute): Made it not static and
+	fixed a typo.
+
 2001-09-03  Leen Toelen  <toelen@hotmail.com>
 
         * HtmlAnchor.cs: Initial implementation.

@@ -41,7 +41,7 @@ namespace System.Web.UI.HtmlControls{
 		//TODO: adapt code for non-IE browsers
 		protected override void Render(HtmlTextWriter output){
 			if (Page.SmartNavigation == true){
-				IAttributeAccessor.SetAttribute("_smartNavigation","true");
+				((IAttributeAccessor) this).SetAttribute("_smartNavigation","true");
 				HttpBrowserCapabilities browserCap = Context.Request.Browser;
 				if (browserCap.Browser.ToLower() != "ie" && browserCap.MajorVersion < 5){
 					base.Render(output);
@@ -79,9 +79,9 @@ namespace System.Web.UI.HtmlControls{
 						attr = attr.Substring(lastSlash + 1);
 				}
 				else{
-					attr = Util.UrlPath.MakeRelative(filePath,executionFilePath);
+					attr = System.Web.Utils.UrlUtils.MakeRelative(filePath,executionFilePath);
 				}
-				string queryString = Context.Request.QueryStringText;
+				string queryString = Context.Request.QueryStringRaw;
 				if (queryString != null && queryString.Length > 0)
 					attr = String.Concat(attr, '?', queryString);
 				return attr;
