@@ -81,5 +81,24 @@ namespace System
 		{
 			return GetFunctionPointer (value);
 		}
+
+
+		public override bool Equals (object obj)
+		{
+			if (obj == null || GetType () != obj.GetType ())
+				return false;
+
+			return value == ((RuntimeMethodHandle)obj).Value;
+		}
+
+		public bool Equals (RuntimeMethodHandle handle)
+		{
+			return value == handle.Value;
+		}
+
+		public override int GetHashCode ()
+		{
+			return value.GetHashCode ();
+		}
 	}
 }

@@ -70,5 +70,31 @@ namespace System
 
 			info.AddValue ("TypeObj", Type.GetTypeHandle (this), typeof (MonoType));
 		}
+
+
+		public override bool Equals (object obj)
+		{
+			if (obj == null || GetType () != obj.GetType ())
+				return false;
+
+			return value == ((RuntimeTypeHandle)obj).Value;
+		}
+
+		public bool Equals (RuntimeTypeHandle handle)
+		{
+			return value == handle.Value;
+		}
+
+		public override int GetHashCode ()
+		{
+			return value.GetHashCode ();
+		}
+
+#if NET_2_0
+		[CLSCompliant (false)]
+		public ModuleHandle GetModuleHandle () {
+			return Type.GetTypeFromHandle (this).Module.ModuleHandle;
+		}
+#endif
 	}
 }

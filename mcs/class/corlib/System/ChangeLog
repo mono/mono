@@ -1,3 +1,11 @@
+2004-10-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Runtime*Handle.cs ModuleHandle.cs: Add Equals + GetHashCode.
+
+	* ModuleHandle.cs: Add missing methods.
+
+	* RuntimeTypeHandle.cs: Add GetModuleHandle () method.
+
 2004-10-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AttributeTargets.cs: Add 2.0 GenericParameter value.

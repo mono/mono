@@ -38,6 +38,7 @@ using System.Runtime.CompilerServices;
 
 namespace System
 {
+	[CLSCompliant (false)]
 	public struct ModuleHandle
 	{
 		IntPtr value;
@@ -49,7 +50,7 @@ namespace System
 			value = v;
 		}
 
-		public IntPtr Value {
+		internal IntPtr Value {
 			get {
 				return value;
 			}
@@ -96,6 +97,41 @@ namespace System
 				throw new TypeLoadException (String.Format ("Could not load type '0x{0:x}' from assembly '0x{1:x}'", typeToken, value.ToInt64 ()));
 			else
 				return new RuntimeTypeHandle (res);
+		}
+
+		[Obsolete]
+		public RuntimeFieldHandle GetRuntimeFieldHandleFromMetadataToken (int fieldToken) {
+			return ResolveFieldHandle (fieldToken);
+		}
+
+		[Obsolete]
+		public RuntimeMethodHandle GetRuntimeMethodHandleFromMetadataToken (int methodToken)
+		{
+			return ResolveMethodHandle (methodToken);
+		}
+
+		[Obsolete]
+		public RuntimeTypeHandle GetRuntimeTypeHandleFromMetadataToken (int typeToken)
+		{
+			return ResolveTypeHandle (typeToken);
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj == null || GetType () != obj.GetType ())
+				return false;
+
+			return value == ((ModuleHandle)obj).Value;
+		}
+
+		public bool Equals (ModuleHandle handle)
+		{
+			return value == handle.Value;
+		}
+
+		public override int GetHashCode ()
+		{
+			return value.GetHashCode ();
 		}
 	}
 }

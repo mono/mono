@@ -71,5 +71,24 @@ namespace System
 
 			info.AddValue ("FieldObj", (MonoField) FieldInfo.GetFieldFromHandle (this), typeof (MonoField));
 		}
+
+
+		public override bool Equals (object obj)
+		{
+			if (obj == null || GetType () != obj.GetType ())
+				return false;
+
+			return value == ((RuntimeFieldHandle)obj).Value;
+		}
+
+		public bool Equals (RuntimeFieldHandle handle)
+		{
+			return value == handle.Value;
+		}
+
+		public override int GetHashCode ()
+		{
+			return value.GetHashCode ();
+		}
 	}
 }
