@@ -1,4 +1,9 @@
 
+Mon Dec 20 12:19:40 EST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, mini-ppc.h, mini-exceptions.c, exceptions-ppc.c:
+	started code sharing with the generic code.
+
 Mon Dec 20 11:08:06 EST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c, cpu-g4.md: added code for direct access to
