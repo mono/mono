@@ -164,6 +164,7 @@ namespace System.Web.Services.Protocols
 
 		MethodStubInfo GetMethodFromAction (string soapAction)
 		{
+			soapAction = soapAction.Trim ('"',' ');
 			int i = soapAction.LastIndexOf ('/');
 			string methodName = soapAction.Substring (i + 1);
 			return _typeStubInfo.GetMethod (methodName);
