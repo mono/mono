@@ -58,6 +58,7 @@ namespace System.Windows.Forms
 		internal string openSaveButtonText;
 		internal string searchSaveLabelText;
 		internal bool fileDialogShowReadOnly;
+		internal bool fileDialogMultiSelect;
 		
 		public bool AddExtension
 		{
@@ -141,7 +142,10 @@ namespace System.Windows.Forms
 		{
 			get
 			{
-				return fileNames;
+				if ( fileDialogMultiSelect )
+					return fileNames;
+				
+				return null;
 			}
 		}
 		
@@ -285,6 +289,20 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		internal bool FileDialogMultiSelect
+		{
+			set
+			{
+				fileDialogMultiSelect = value;
+				fileDialogPanel.MultiSelect = value;
+			}
+			
+			get
+			{
+				return fileDialogMultiSelect;
+			}
+		}
+		
 		public override void Reset( )
 		{
 			addExtension = true;
@@ -382,6 +400,11 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		internal void SetFilenames( string[] filenames )
+		{
+			fileNames = filenames;
+		}
+		
 		internal ArrayList filterArrayList = new ArrayList();
 		
 		internal class FileDialogPanel : Panel
@@ -440,6 +463,8 @@ namespace System.Windows.Forms
 			internal string currentFileName = "";
 			
 			private MenuItem previousCheckedMenuItem;
+			
+			private bool multiSelect = false;
 			
 			public FileDialogPanel( FileDialog fileDialog )
 			{
@@ -518,6 +543,7 @@ namespace System.Windows.Forms
 				fileListView.Columns.Add( " Type", 100, HorizontalAlignment.Left );
 				fileListView.Columns.Add( " Last Access", 150, HorizontalAlignment.Left );
 				fileListView.AllowColumnReorder = true;
+				fileListView.MultiSelect = false;
 				fileListView.TabIndex = 2;
 				
 				// fileNameLabel
@@ -756,24 +782,72 @@ namespace System.Windows.Forms
 				}
 			}
 			
+			public bool MultiSelect
+			{
+				set
+				{
+					multiSelect = value;
+					fileListView.MultiSelect = value;
+				}
+				
+				get
+				{
+					return multiSelect;
+				}
+			}
+			
 			void OnClickOpenButton( object sender, EventArgs e )
 			{
-				currentFileName = Path.Combine(currentDirectoryName, fileNameComboBox.Text.Trim());
+				currentFileName = Path.Combine( currentDirectoryName, fileNameComboBox.Text.Trim( ) );
 				Console.WriteLine( "OnClickOpenButton currentFileName: " + currentFileName );
 				
-				if ( currentFileName.Length == 0 )
-					return;
-				
-				if ( fileDialog.CheckFileExists )
+				if ( !multiSelect )
 				{
-					if ( !File.Exists( currentFileName ) )
-					{
-						string message = currentFileName + " doesn't exist. Please verify that you have entered the correct file name.";
-						MessageBox.Show( message, fileDialog.OpenSaveButtonText, MessageBoxButtons.OK, MessageBoxIcon.Warning );
-						
-						currentFileName = "";
-						
+					if ( currentFileName.Length == 0 )
 						return;
+					
+					if ( fileDialog.CheckFileExists )
+					{
+						if ( !File.Exists( currentFileName ) )
+						{
+							string message = currentFileName + " doesn't exist. Please verify that you have entered the correct file name.";
+							MessageBox.Show( message, fileDialog.OpenSaveButtonText, MessageBoxButtons.OK, MessageBoxIcon.Warning );
+							
+							currentFileName = "";
+							
+							return;
+						}
+					}
+					
+					fileDialog.FileName = currentFileName;
+				}
+				else // multiSelect = true
+				{
+					if ( fileListView.SelectedItems.Count > 0 )
+					{
+						// first remove all selected directories
+						ArrayList al = new ArrayList( );
+						
+						foreach ( ListViewItem lvi in fileListView.SelectedItems )
+						{
+							FileStruct fileStruct = (FileStruct)fileHashtable[ lvi.Text ];
+							
+							if ( fileStruct.attributes != FileAttributes.Directory )
+							{
+								al.Add( fileStruct );
+							}
+						}
+						
+						fileDialog.FileName = ( (FileStruct)al[ 0 ] ).fullname;
+						
+						string[] filenames = new string[ al.Count ];
+						
+						for ( int i = 0; i < al.Count; i++ )
+						{
+							filenames[ i ] = ( (FileStruct)al[ i ] ).fullname;
+						}
+						
+						fileDialog.SetFilenames( filenames );
 					}
 				}
 				
@@ -789,8 +863,6 @@ namespace System.Windows.Forms
 						return;
 					}
 				}
-				
-				fileDialog.FileName = currentFileName;
 				
 				CancelEventArgs cancelEventArgs = new CancelEventArgs( );
 				
@@ -843,6 +915,11 @@ namespace System.Windows.Forms
 						
 						fileListView.UpdateFileListView( );
 					}
+				}
+				else
+				if ( e.Button == newdirToolBarButton )
+				{
+					
 				}
 			}
 			
@@ -1064,17 +1141,21 @@ namespace System.Windows.Forms
 				
 				protected override void OnClick( EventArgs e )
 				{
-					ListViewItem listViewItem;
-
-					if (SelectedItems.Count > 0) {
-						listViewItem = SelectedItems[ 0 ];
-
-						FileStruct fileStruct = (FileStruct)fileDialogPanel.fileHashtable[ listViewItem.Text ];
+					Console.WriteLine( "SelectedItems.Count: " + SelectedItems.Count );
 					
-						if ( fileStruct.attributes != FileAttributes.Directory )
+					if ( !MultiSelect )
+					{
+						if ( SelectedItems.Count > 0 )
 						{
-							fileDialogPanel.FileNameComboBox.Text = listViewItem.Text;
-							fileDialogPanel.CurrentFileName = fileStruct.fullname;
+							ListViewItem listViewItem = SelectedItems[ 0 ];
+							
+							FileStruct fileStruct = (FileStruct)fileDialogPanel.fileHashtable[ listViewItem.Text ];
+							
+							if ( fileStruct.attributes != FileAttributes.Directory )
+							{
+								fileDialogPanel.FileNameComboBox.Text = listViewItem.Text;
+								fileDialogPanel.CurrentFileName = fileStruct.fullname;
+							}
 						}
 					}
 					
@@ -1083,23 +1164,59 @@ namespace System.Windows.Forms
 				
 				protected override void OnDoubleClick( EventArgs e )
 				{
-					ListViewItem listViewItem = SelectedItems[ 0 ];
-					
-					FileStruct fileStruct = (FileStruct)fileDialogPanel.fileHashtable[ listViewItem.Text ];
-					
-					if ( fileStruct.attributes == FileAttributes.Directory )
+					if ( SelectedItems.Count > 0 )
 					{
-						fileDialogPanel.ChangeDirectory( fileStruct.fullname );
-					}
-					else
-					{
-						fileDialogPanel.FileNameComboBox.Text =  listViewItem.Text;
-						fileDialogPanel.CurrentFileName = fileStruct.fullname;
-						fileDialogPanel.ForceDialogEnd( );
-						return;
+						ListViewItem listViewItem = SelectedItems[ 0 ];
+						
+						FileStruct fileStruct = (FileStruct)fileDialogPanel.fileHashtable[ listViewItem.Text ];
+						
+						if ( fileStruct.attributes == FileAttributes.Directory )
+						{
+							fileDialogPanel.ChangeDirectory( fileStruct.fullname );
+						}
+						else
+						{
+							fileDialogPanel.FileNameComboBox.Text =  listViewItem.Text;
+							fileDialogPanel.CurrentFileName = fileStruct.fullname;
+							fileDialogPanel.ForceDialogEnd( );
+							return;
+						}
 					}
 					
 					base.OnDoubleClick( e );
+				}
+				
+				protected override void OnSelectedIndexChanged( EventArgs e )
+				{
+					if ( MultiSelect )
+					{
+						if ( SelectedItems.Count > 0 )
+						{
+							string combotext = "";
+							
+							if ( SelectedItems.Count == 1 )
+							{
+								FileStruct fileStruct = (FileStruct)fileDialogPanel.fileHashtable[ SelectedItems[ 0 ].Text ];
+								
+								if ( fileStruct.attributes != FileAttributes.Directory )
+									combotext = SelectedItems[ 0 ].Text;
+							}
+							else
+							{
+								foreach ( ListViewItem lvi in SelectedItems )
+								{
+									FileStruct fileStruct = (FileStruct)fileDialogPanel.fileHashtable[ lvi.Text ];
+									
+									if ( fileStruct.attributes != FileAttributes.Directory )
+										combotext += "\"" + lvi.Text + "\" ";
+								}
+							}
+							
+							fileDialogPanel.FileNameComboBox.Text = combotext;
+						}
+					}
+					
+					base.OnSelectedIndexChanged( e );
 				}
 			}
 			

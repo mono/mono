@@ -1,3 +1,7 @@
+2005-03-19  Alexander Olk  <xenomorph2@onlinehome.de>
+
+	* FileDialog.cs, OpenFileDialog.cs: OpenFileDialog Multiselect now works
+
 2005-03-18  Peter Bartok  <pbartok@novell.com>
 
 	* ThemeWin32Classic.cs: Moved listview column headers a bit, to avoid
@@ -9,9 +13,9 @@
 
 2005-03-18  Peter Bartok  <pbartok@novell.com>
 
-	* ControlPaint.cs: 
-	  - Don't throw NotImplemented exceptions, just print a notice once 
-	    instead (requested by Miguel). This makes running existing SWF 
+	* ControlPaint.cs:
+	  - Don't throw NotImplemented exceptions, just print a notice once
+	    instead (requested by Miguel). This makes running existing SWF
 	    apps a bit easier
 	* Control.cs:
 	  - Commented out Drag'N'Drop XplatUI call (no driver support yet)
@@ -23,7 +27,7 @@
 	* ListView.cs:
 	  - Removed debug output
 	* ThemeWin32Classic.cs:
-	  - Fixed drawing of status bar, now draws Text property if there 
+	  - Fixed drawing of status bar, now draws Text property if there
 	    are no defined panels
 
 2005-03-18  Jackson Harper  <jackson@ximian.com>

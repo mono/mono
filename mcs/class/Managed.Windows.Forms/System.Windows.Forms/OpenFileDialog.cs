@@ -66,6 +66,7 @@ namespace System.Windows.Forms
 			set
 			{
 				multiSelect = value;
+				FileDialogMultiSelect = value;
 			}
 		}
 		
