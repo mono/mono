@@ -344,7 +344,7 @@ namespace Mono.AssemblyInfo
 		public static bool MustDocumentMethod(MethodBase method)
 		{
 			// All other methods
-			return (method.IsPublic || method.IsFamily);
+			return (method.IsPublic || method.IsFamily || method.IsFamilyOrAssembly);
 		}
 
 		static string GetClassType (Type t)

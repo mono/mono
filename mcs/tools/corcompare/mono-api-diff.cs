@@ -1116,12 +1116,6 @@ namespace Mono.AssemblyCompare
 	{
 		Hashtable eventTypes;
 
-		public override void CompareTo (XmlDocument doc, XmlNode parent, object other)
-		{
-			base.CompareTo (doc, parent, other);
-			AddCountersAttributes (parent);
-		}
-
 		protected override void LoadExtraData (string name, XmlNode node)
 		{
 			XmlAttribute xatt = node.Attributes ["eventtype"];
@@ -1137,17 +1131,27 @@ namespace Mono.AssemblyCompare
 
 		protected override void CompareToInner (string name, XmlNode parent, XMLNameGroup other)
 		{
-			base.CompareToInner (name, parent, other);
-			if (eventTypes == null)
-				return;
+			Counters copy = counters;
+			counters = new Counters ();
 
-			XMLEvents evt = (XMLEvents) other;
-			string etype = eventTypes [name] as string;
-			string oetype = null;
-			if (evt.eventTypes != null)
-				oetype = evt.eventTypes [name] as string;
+			try {
+				base.CompareToInner (name, parent, other);
+				AddCountersAttributes (parent);
+				if (eventTypes == null)
+					return;
 
-			AddWarning (parent, "Event type is {0} and should be {1}", oetype, etype);
+				XMLEvents evt = (XMLEvents) other;
+				string etype = eventTypes [name] as string;
+				string oetype = null;
+				if (evt.eventTypes != null)
+					oetype = evt.eventTypes [name] as string;
+
+				AddWarning (parent, "Event type is {0} and should be {1}", oetype, etype);
+			} finally {
+				AddCountersAttributes (parent);
+				copy.AddPartialToPartial (counters);
+				counters = copy;
+			}
 		}
 
 		protected override string ConvertToString (int att)
