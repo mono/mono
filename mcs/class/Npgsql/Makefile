@@ -62,3 +62,5 @@ install: install-recursive install-local
 
 uninstall: uninstall-recursive uninstall-local
 
+test:
+
