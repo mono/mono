@@ -1,3 +1,7 @@
+2004-05-27	Patrik Torstensson <totte@hiddenpeaks.com>
+
+	* HttpApplicationFactory.cs: Added SignalError (still todo)
+
 2004-05-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpResponse.cs: remove hardcoded "HTTP/1.0" version that kept

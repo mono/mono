@@ -350,5 +350,9 @@ namespace System.Web {
 		internal Type AppType {
 			get { return _appType; }
 		}
+
+		internal static void SignalError(Exception exc) {
+			// TODO: Raise an error (we probably don't have a HttpContext)
+		}
 	}
 }
