@@ -16,7 +16,7 @@ using System.Xml.XPath;
 using System.Xml.Xsl;
 
 namespace Mono.Xml.Xsl.Operations {
-	public class XslCopy : XslCompiledElement {
+	internal class XslCopy : XslCompiledElement {
 		XslOperation children;
 		XmlQualifiedName [] useAttributeSets;
 		

@@ -16,7 +16,7 @@ using System.Xml.XPath;
 using System.Xml.Xsl;
 
 namespace Mono.Xml.Xsl.Operations {
-	public class XslCopyOf : XslCompiledElement {
+	internal class XslCopyOf : XslCompiledElement {
 		XPathExpression select;
 		public XslCopyOf (Compiler c) : base (c) {}
 		protected override void Compile (Compiler c)

@@ -18,7 +18,7 @@ using System.Xml.Xsl;
 using QName = System.Xml.XmlQualifiedName;
 
 namespace Mono.Xml.Xsl.Operations {	
-	public class XslElement : XslCompiledElement {
+	internal class XslElement : XslCompiledElement {
 		XslAvt name, ns;
 		string calcName, calcNs, calcPrefix;
 		XmlNamespaceManager nsm;

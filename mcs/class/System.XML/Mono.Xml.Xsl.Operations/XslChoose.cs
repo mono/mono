@@ -16,7 +16,7 @@ using System.Xml.XPath;
 using System.Xml.Xsl;
 
 namespace Mono.Xml.Xsl.Operations {
-	public class XslChoose : XslCompiledElement {
+	internal class XslChoose : XslCompiledElement {
 		XslOperation defaultChoice = null;
 		ArrayList conditions = new ArrayList ();
 		
