@@ -1,3 +1,7 @@
+2004-03-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SignatureTest.cs : added some malformed xml tests.
+
 2004-02-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlDsigC14NTransformTest.cs,

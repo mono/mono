@@ -60,5 +60,25 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			string result = signature.GetXml ().OuterXml;
 			Assert ("Load", ((test1 == result) || (test2 == result)));
 		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void LoadXmlMalformed1 ()
+		{
+			SignedXml s = new SignedXml ();
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<root/>");
+			s.LoadXml (doc.DocumentElement);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void LoadXmlMalformed2 ()
+		{
+			SignedXml s = new SignedXml ();
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<ds:Signature xmlns:ds='http://www.w3.org/2000/09/xmldsig#'><foo/><bar/></ds:Signature>");
+			s.LoadXml (doc.DocumentElement);
+		}
 	}
 }
