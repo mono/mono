@@ -1,5 +1,12 @@
 2004-10-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* icall.c (ves_icall_System_Reflection_Module_GetGlobalType): Special
+	case initial images of dynamic assemblies.
+
+	* reflection.c (mono_image_basic_init): Set 'initial_image' field.
+
+	* metadata-internals.h (MonoDynamicImage): Add 'initial_image' field.
+
 	* reflection.c (mono_reflection_event_builder_get_event_info): Fix
 	length of event->other array.
 	(typebuilder_setup_events): Ditto.
