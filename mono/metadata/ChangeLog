@@ -1,5 +1,15 @@
 2004-09-26  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.c (mono_param_get_objects): Fill out MarshalAsImpl field.
+
+	* reflection.c (mono_reflection_marshal_from_marshal_spec): New 
+	function to convert a MarshalSpec structure to its managed counterpart.
+
+	* reflection.c: Fix warnings.
+	
+	* object-internals.h (MonoReflectionParameter): Add MarshalAsImpl
+	field.
+
 	* icall.c (mono_create_icall_signature): Fix build.
 
 2004-09-25  Zoltan Varga  <vargaz@freemail.hu>
