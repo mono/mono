@@ -5,6 +5,9 @@
 	have to verify that there is an implicit conversion from one to
 	the other.
 
+	(ArrayAccess.DoResolve): Array Access can operate on
+	non-variables. 
+
 2002-04-30  Miguel de Icaza  <miguel@ximian.com>
 
 	* assign.cs (CompoundAssign): A new class used as a "flag" that
