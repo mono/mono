@@ -1,3 +1,13 @@
+2004-04-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* metadata.h: Add STRARRAY_STRWLPARRAY marshalling convention.
+
+	* marshal.h marshal.c (mono_marshal_string_array_to_unicode): New 
+	function.
+
+	* marshal.c (mono_marshal_get_native_wrapper): Take CharSet into
+	account when marshalling string arrays. Fixes #56965.
+
 2004-04-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* icall.c: Add new icalls mapping for security.
@@ -33,6 +43,7 @@
 	* icall.c: Clairfy out of sync error message. It is not always
 	your corlib that is out of sync.
 
+>>>>>>> 1.1516
 2004-04-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_Type_GetPropertiesByName): Avoid duplicate
