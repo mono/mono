@@ -13,16 +13,6 @@ using System;
 
 namespace System
 {
-	// this seemed like a logical place to put this enumeration
-	public enum PlatformID
-	{	// TODO: determine what definitions to incorporate
-		//       possibilities are quite varied
-		minPlatform,
-		i386Linux = minPlatform,
-		i686Linux,
-		maxPlatform
-	}
-
 	/// <summary>
 	/// Class representing a specific operating system version for a specific platform
 	/// </summary>
