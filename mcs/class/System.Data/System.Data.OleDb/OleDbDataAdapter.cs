@@ -27,9 +27,6 @@ namespace System.Data.OleDb
 		MissingMappingAction missingMappingAction;
 		MissingSchemaAction missingSchemaAction;
 
-		static readonly object EventRowUpdated = new object ();
-		static readonly object EventRowUpdating = new object ();
-
 		#endregion
 
 		#region Constructors
@@ -188,31 +185,22 @@ namespace System.Data.OleDb
 
 		protected override void OnRowUpdated (RowUpdatedEventArgs value) 
 		{
-         		OleDbRowUpdatedEventHandler handler = (OleDbRowUpdatedEventHandler) Events[EventRowUpdated];
-			if ((handler != null) && (value is OleDbRowUpdatedEventArgs))
-            			handler (this, (OleDbRowUpdatedEventArgs) value);
+			if (RowUpdated != null)
+				RowUpdated (this, (OleDbRowUpdatedEventArgs) value);
 		}
 
 		protected override void OnRowUpdating (RowUpdatingEventArgs value) 
 		{
-         		OleDbRowUpdatingEventHandler handler = (OleDbRowUpdatingEventHandler) Events[EventRowUpdating];
-			if ((handler != null) && (value is OleDbRowUpdatingEventArgs))
-            			handler (this, (OleDbRowUpdatingEventArgs) value);
+			if (RowUpdating != null)
+				RowUpdating (this, (OleDbRowUpdatingEventArgs) value);
 		}
 		
 		#endregion // Methods
 
 		#region Events and Delegates
 
-		public event OleDbRowUpdatedEventHandler RowUpdated {
-			add { Events.AddHandler (EventRowUpdated, value); }
-			remove { Events.RemoveHandler (EventRowUpdated, value); }
-		}
-
-		public event OleDbRowUpdatedEventHandler RowUpdating {
-			add { Events.AddHandler (EventRowUpdating, value); }
-			remove { Events.RemoveHandler (EventRowUpdating, value); }
-		}
+		public event OleDbRowUpdatedEventHandler RowUpdated;
+		public event OleDbRowUpdatingEventHandler RowUpdating;
 
 		#endregion // Events and Delegates
 
