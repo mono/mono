@@ -2591,7 +2591,7 @@ namespace Mono.CSharp {
 			// This is used to track the Entry Point,
 			//
 			if (Name == "Main" &&
-			    ((ModFlags & Modifiers.STATIC) != 0) && 
+			    ((ModFlags & Modifiers.STATIC) != 0) && RootContext.NeedsEntryPoint && 
 			    (RootContext.MainClass == null ||
 			     RootContext.MainClass == container.TypeBuilder.FullName)){
                                 if (IsEntryPoint (MethodBuilder, ParameterInfo)) {

@@ -1,5 +1,12 @@
 2003-12-23 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* class.cs: Ignore static void main in DLLs.
+	* rootcontext.cs: Handle the target type here,
+	since we are have to access it from class.cs
+	* driver.cs: account for the above.
+
+2003-12-23 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* report.cs: Give line numbers and files if available.
 
 2003-12-20  Zoltan Varga  <vargaz@freemail.hu>

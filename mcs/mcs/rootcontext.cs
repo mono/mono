@@ -63,6 +63,9 @@ namespace Mono.CSharp {
 		static TypeBuilder impl_details_class;
 
 		public static int WarningLevel = 2;
+		
+		public static Target Target = Target.Exe;
+		public static string TargetExt = ".exe";
 
 		//
 		// If set, enable C# version 2 features
@@ -76,6 +79,12 @@ namespace Mono.CSharp {
 			tree = new Tree ();
 			interface_resolve_order = new ArrayList ();
 			type_container_resolve_order = new ArrayList ();
+		}
+		
+		public static bool NeedsEntryPoint {
+			get {
+				return RootContext.Target == Target.Exe || RootContext.Target == Target.WinExe;
+			}
 		}
 
 		static public Tree Tree {

@@ -19,7 +19,7 @@ namespace Mono.CSharp
 	using System.Globalization;
 	using Mono.Languages;
 
-	enum Target {
+	public enum Target {
 		Library, Exe, Module, WinExe
 	};
 	
@@ -56,9 +56,6 @@ namespace Mono.CSharp
 		static bool tokenize = false;
 		
 		static string first_source;
-
-		static Target target = Target.Exe;
-		static string target_ext = ".exe";
 
 		static bool want_debugging_support = false;
 
@@ -753,21 +750,21 @@ namespace Mono.CSharp
 				string type = args [++i];
 				switch (type){
 				case "library":
-					target = Target.Library;
-					target_ext = ".dll";
+					RootContext.Target = Target.Library;
+					RootContext.TargetExt = ".dll";
 					break;
 					
 				case "exe":
-					target = Target.Exe;
+					RootContext.Target = Target.Exe;
 					break;
 					
 				case "winexe":
-					target = Target.WinExe;
+					RootContext.Target = Target.WinExe;
 					break;
 					
 				case "module":
-					target = Target.Module;
-					target_ext = ".dll";
+					RootContext.Target = Target.Module;
+					RootContext.TargetExt = ".dll";
 					break;
 				default:
 					TargetUsage ();
@@ -906,21 +903,21 @@ namespace Mono.CSharp
 			case "/target":
 				switch (value){
 				case "exe":
-					target = Target.Exe;
+					RootContext.Target = Target.Exe;
 					break;
 
 				case "winexe":
-					target = Target.WinExe;
+					RootContext.Target = Target.WinExe;
 					break;
 
 				case "library":
-					target = Target.Library;
-					target_ext = ".dll";
+					RootContext.Target = Target.Library;
+					RootContext.TargetExt = ".dll";
 					break;
 
 				case "module":
-					target = Target.Module;
-					target_ext = ".netmodule";
+					RootContext.Target = Target.Module;
+					RootContext.TargetExt = ".netmodule";
 					break;
 
 				default:
@@ -1326,14 +1323,14 @@ namespace Mono.CSharp
 				int pos = first_source.LastIndexOf ('.');
 
 				if (pos > 0)
-					output_file = first_source.Substring (0, pos) + target_ext;
+					output_file = first_source.Substring (0, pos) + RootContext.TargetExt;
 				else
-					output_file = first_source + target_ext;
+					output_file = first_source + RootContext.TargetExt;
 			}
 
 			CodeGen.Init (output_file, output_file, want_debugging_support);
 
-			if (target == Target.Module) {
+			if (RootContext.Target == Target.Module) {
 				PropertyInfo module_only = typeof (AssemblyBuilder).GetProperty ("IsModuleOnly", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
 				if (module_only == null) {
 					Report.Error (0, new Location (-1), "Cannot use /target:module on this runtime: try the Mono runtime instead.");
@@ -1421,21 +1418,21 @@ namespace Mono.CSharp
 			RootContext.CloseTypes ();
 
 			PEFileKinds k = PEFileKinds.ConsoleApplication;
-				
-			if (target == Target.Library || target == Target.Module){
-				k = PEFileKinds.Dll;
+			
+			switch (RootContext.Target) {
+			case Target.Library:
+			case Target.Module:
+				k = PEFileKinds.Dll; break;
+			case Target.Exe:
+				k = PEFileKinds.ConsoleApplication; break;
+			case Target.WinExe:
+				k = PEFileKinds.WindowApplication; break;
+			}
 
-				if (RootContext.MainClass != null)
-					Report.Error (2017, "Can not specify -main: when building module or library");
-			} else if (target == Target.Exe)
-				k = PEFileKinds.ConsoleApplication;
-			else if (target == Target.WinExe)
-				k = PEFileKinds.WindowApplication;
-
-			if (target == Target.Exe || target == Target.WinExe){
+			if (RootContext.NeedsEntryPoint) {
 				MethodInfo ep = RootContext.EntryPoint;
 
-				if (ep == null){
+				if (ep == null) {
 					if (Report.Errors == 0)
 						Report.Error (5001, "Program " + output_file +
 							      " does not have an entry point defined");
@@ -1443,6 +1440,8 @@ namespace Mono.CSharp
 				}
 				
 				CodeGen.AssemblyBuilder.SetEntryPoint (ep, k);
+			} else if (RootContext.MainClass != null) {
+				Report.Error (2017, "Can not specify -main: when building module or library");
 			}
 
 			//
