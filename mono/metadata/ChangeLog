@@ -1,4 +1,8 @@
 
+Tue Jul 2 19:33:20 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: add special cases to compile corlib.
+
 Mon Jul 1 18:00:40 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: handle properties with only a set method.
