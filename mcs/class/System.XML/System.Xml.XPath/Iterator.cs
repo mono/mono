@@ -47,7 +47,6 @@ namespace System.Xml.XPath
 	internal abstract class BaseIterator : XPathNodeIterator
 	{
 		private NSResolver _nsm;
-		protected bool _needClone = true; // TODO: use this field in practice.
 
 		internal BaseIterator (BaseIterator other)
 		{
@@ -166,7 +165,7 @@ namespace System.Xml.XPath
 			if (_pos == 0)
 			{
 				_pos = 1;
-				_current = _needClone ? _nav.Clone () : _nav;
+				_current = _nav;
 				return true;
 			}
 			return false;
@@ -224,7 +223,7 @@ namespace System.Xml.XPath
 			if (_pos == 0 && _nav.MoveToParent ())
 			{
 				_pos = 1;
-				_current = _needClone ? _nav.Clone () : _nav;
+				_current = _nav;
 				return true;
 			}
 			return false;
@@ -1016,7 +1015,7 @@ namespace System.Xml.XPath
 					_iterRight = _expr.EvaluateNodeSet (_iterLeft);
 				}
 				XPathNavigator nav = _iterRight.Current;
-				_navStore.Add (_needClone ? nav.Clone () : nav);
+				_navStore.Add (nav);
 			}
 		}
 

@@ -1,3 +1,7 @@
+2004-11-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Iterator.cs : Some removal of Clone() were harmless.
+
 2004-10-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XPathDocument.cs : now all the new stuff that used to be in 2.0 are
