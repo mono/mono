@@ -102,6 +102,8 @@ namespace System.ComponentModel
 				       Locale.GetText("Connection timed out"));
 			w32_errors.Add(10061,
 				       Locale.GetText("Connection refused"));
+			w32_errors.Add(10065,
+				       Locale.GetText("No route to host"));
 			w32_errors.Add(10093,
 				       Locale.GetText("Winsock not initialized"));
 			w32_errors.Add(10107,

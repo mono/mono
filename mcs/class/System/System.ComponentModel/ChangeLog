@@ -1,3 +1,7 @@
+2003-02-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Win32Exception.cs: added 10065 (WSA_EHOSTUNREACH).
+
 2003-02-05  Alan Tam <Tam@SiuLung.com>
 
  	* DesignedCategoryAttribute.cs: Implemented DesignerCategoryAttribute
