@@ -1,3 +1,7 @@
+2004-11-06  Ben Maurer  <bmaurer@ximian.com>
+
+	* System.Resources/ResXResourceReader.cs: use File.OpenRead so
+	that we can open on read-only files. 68260
 
 Wed Oct 13 15:12:17 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
