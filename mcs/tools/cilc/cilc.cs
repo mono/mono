@@ -167,7 +167,7 @@ public class cilc
 				continue;
 			}
 
-			if (!t.IsClass) {
+			if (!t.IsClass && !t.IsEnum) {
 				//Console.WriteLine ("Ignoring unrecognised type: " + t.Name);
 				warnings_ignored++;
 				continue;
@@ -310,8 +310,8 @@ public class cilc
 
 		if (t.IsClass)
 			ClassGen (t);
-		//else if (t.IsEnum)
-		//	EnumGen (t);
+		else if (t.IsEnum)
+			EnumGen (t);
 
 		H.WriteLine ();
 		H.WriteLine ("#ifdef __cplusplus");
@@ -328,12 +328,27 @@ public class cilc
 	static void EnumGen (Type t)
 	{
 		//TODO: we needn't split out each enum into its own file
-		//TODO: just use glib-mkenums
 
-		C.WriteLine ("GType " + cur_type + "_get_type (void)");
+		string gname = CsTypeToG (t);
+
+		Hdecls.WriteLine ("typedef enum");
+		Hdecls.WriteLine ("{");
+		C.WriteLine ("GType " + cur_type + "_get_type (void)", H, ";");
 		C.WriteLine ("{");
 		C.WriteLine ("static GType etype = 0;");
-		C.WriteLine ("etype = g_enum_register_static (\"" + "\", NULL);");
+		C.WriteLine ("if (etype == 0) {");
+		C.WriteLine ("static const GEnumValue values[] = {");
+		foreach (FieldInfo fi in t.GetFields (BindingFlags.Static|BindingFlags.Public)) {
+			string finame = (cur_type + "_" + CamelToC (fi.Name)).ToUpper ();
+			Hdecls.WriteLine (finame + ",");
+			C.WriteLine ("{ " + finame + ", \"" + finame + "\", \"" + CamelToC (fi.Name).Replace ("_", "-") + "\" },");
+		}
+		Hdecls.WriteLine ("} " + gname + ";");
+		Hdecls.WriteLine ();
+		C.WriteLine ("{ 0, NULL, NULL }");
+		C.WriteLine ("};");
+		C.WriteLine ("}");
+		C.WriteLine ("etype = g_enum_register_static (\"" + gname + "\", NULL);");
 		C.WriteLine ("return etype;");
 		C.WriteLine ("}");
 	}
@@ -712,7 +727,7 @@ public class cilc
 
 				if (i == 0)
 					myname += "_with_";
-				else if (i != parameters.Length - 1)
+				else
 					myname += "_and_";
 
 				myname += p.Name;
