@@ -1,4 +1,8 @@
 
+Thu Apr 10 17:43:49 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* inssel-long32.brg, exceptions.cs: fix conversions from long, too.
+
 Thu Apr 10 16:27:43 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* inssel.brg, basic.cs: fixed checked conversions to byte and short.
