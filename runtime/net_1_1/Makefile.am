@@ -12,9 +12,11 @@ endif
 
 MONO_CSHARP_DEBUGGER = Mono.CSharp.Debugger
 if PLATFORM_WIN32
-GAC_DIR = `cygpath -w $(DESTDIR)$(libdir)`
+GAC_DIR = `cygpath -w $(libdir)`
+GAC_ROOT_DIR = `cygpath -w $(DESTDIR)$(libdir)`
 else
-GAC_DIR = $(DESTDIR)$(libdir)
+GAC_DIR = $(libdir)
+GAC_ROOT_DIR = $(DESTDIR)$(libdir)
 endif
 
 gac_assemblies_list = \
@@ -88,17 +90,17 @@ all-local: $(gac_assemblies)
 install-data-local:
 	@if test -n '$(gac_assemblies)'; then \
 	  for i in ''$(gac_assemblies); do \
-	    echo "MONO_PATH=$(srcdir) $(DESTDIR)$(bindir)/mono $(gacutil) /i $(srcdir)/$$i /f /package 1.0 /gacdir $(GAC_DIR) /root $(GAC_DIR)" ; \
+	    echo "MONO_PATH=$(srcdir) $(mono_runtime) --config ../../data/config $(gacutil) /i $(srcdir)/$$i /f /package 1.0 /gacdir $(GAC_DIR) /root $(GAC_ROOT_DIR)" ; \
 	    MONO_PATH=$(srcdir) \
-	      $(LIBTOOL) --mode=execute $(DESTDIR)$(bindir)/mono $(gacutil) /i $(srcdir)/$$i /f /package 1.0 /gacdir $(GAC_DIR) /root $(GAC_DIR) || exit 1 ; \
+	      $(LIBTOOL) --mode=execute $(mono_runtime) --config ../../data/config $(gacutil) /i $(srcdir)/$$i /f /package 1.0 /gacdir $(GAC_DIR) /root $(GAC_ROOT_DIR) || exit 1 ; \
 	  done; fi
 
 uninstall-local:
 	@if test -n '$(gac_assemblies_list)'; then \
 	  for i in ''$(gac_assemblies_list); do \
-	    echo "MONO_PATH=$(srcdir) $(mono_runtime) $(gacutil) /u $$i /gacdir $(GAC_DIR) /root $(GAC_DIR)" ; \
+	    echo "MONO_PATH=$(srcdir) $(mono_runtime) $(gacutil) /u $$i /gacdir $(GAC_DIR) /root $(GAC_ROOT_DIR)" ; \
 	    MONO_PATH=$(srcdir) \
-	      $(LIBTOOL) --mode=execute $(DESTDIR)$(bindir)/mono $(gacutil) /u $$i /gacdir $(GAC_DIR) /root $(GAC_DIR) || true ; \
+	      $(LIBTOOL) --mode=execute $(mono_runtime) --config ../../data/config $(gacutil) /u $$i /gacdir $(GAC_DIR) /root $(GAC_ROOT_DIR) || true ; \
 	  done; fi
 
 copy_dlls:
