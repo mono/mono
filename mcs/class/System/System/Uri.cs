@@ -296,7 +296,8 @@ namespace System
 					return true;
 					
 				try {
-					return IPAddress.IsLoopback (IPAddress.Parse (host));
+					if (IPAddress.Loopback.Equals (IPAddress.Parse (host)))
+						return true;
 				} catch (FormatException) {}
 
 				try {
