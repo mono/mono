@@ -54,6 +54,9 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+#if NET_2_0
+		[UrlPropertyAttribute]
+#endif
 		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
 		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		[WebSysDescription ("The URL to the image file.")]
@@ -72,6 +75,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+		[UrlPropertyAttribute]
+#endif
 		[DefaultValue (""), Bindable (true), WebCategory ("Navigation")]
 		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		[WebSysDescription ("The URL to navigate to.")]
@@ -90,7 +96,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (""), Bindable (true), WebCategory ("Navigation")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (""), WebCategory ("Navigation")]
 		[TypeConverter (typeof (TargetConverter))]
 		[WebSysDescription ("The target frame in which the navigation target should be opened.")]
 		public string Target
@@ -108,6 +117,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+		[Localizable (true)]
+#endif
 		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
 		[PersistenceMode (PersistenceMode.InnerDefaultProperty)]
 		[WebSysDescription ("The text that should be shown on this HyperLink.")]

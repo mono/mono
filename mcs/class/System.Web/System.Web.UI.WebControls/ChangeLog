@@ -1,3 +1,35 @@
+2005-02-02  Lluis Sanchez Gual <lluis@novell.com>
+
+	* Button.cs, MonthChangedEventArgs.cs, FontInfo.cs, Xml.cs, Style.cs,
+	CookieParameter.cs, HyperLinkColumn.cs, Table.cs,
+	RegularExpressionValidator.cs, WizardNavigationEventArgs.cs,
+	ServerValidateEventArgs.cs, Menu.cs, DataControlField.cs,
+	DataGridPagerStyle.cs, Label.cs, CheckBox.cs, ListItem.cs,
+	RadioButton.cs, TableStyle.cs, ListControl.cs, Image.cs,
+	BaseCompareValidator.cs, FontUnit.cs, DataListCommandEventArgs.cs,
+	IButtonControl.cs, BaseDataList.cs, DataList.cs, BulletedList.cs,
+	RangeValidator.cs, DataBoundControl.cs, ControlParameter.cs,
+	RepeaterItemEventArgs.cs, SqlDataSource.cs, BaseValidator.cs,
+	CustomValidator.cs, MenuItem.cs, SessionParameter.cs, TextBox.cs,
+	QueryStringParameter.cs, Content.cs, ContentPlaceHolder.cs,
+	CheckBoxList.cs, RepeaterCommandEventArgs.cs, RadioButtonList.cs,
+	RequiredFieldValidator.cs, AdRotator.cs, DataListItemEventArgs.cs,
+	DataGridSortCommandEventArgs.cs, Repeater.cs,
+	MenuItemTemplateContainer.cs, HyperLink.cs, SqlDataSourceView.cs,
+	XmlDataSource.cs, MultiView.cs, DataGridCommandEventArgs.cs,
+	Panel.cs, CompositeControl.cs, DataGrid.cs, ButtonColumn.cs,
+	CompareValidator.cs, HierarchicalDataBoundControl.cs,
+	EditCommandColumn.cs, Calendar.cs, SiteMapDataSource.cs, 
+	ListBox.cs, TableCell.cs, ObjectDataSourceSelectingEventArgs.cs,
+	ObjectDataSourceMethodEventArgs.cs,DataGridPageChangedEventArgs.cs,
+	WebControl.cs, BaseDataBoundControl.cs, FormParameter.cs,
+	ValidationSummary.cs, View.cs, ImageButton.cs, TableRow.cs,
+	LinkButton.cs, DataGridColumn.cs, Parameter.cs, TableItemStyle.cs,
+	AdCreatedEventArgs.cs:
+	
+	General 2.0 API fixes: missing attributes, incorrect inheritance,
+	missing sealed keywords, wrong signatures, etc.
+
 2005-01-28  Lluis Sanchez Gual <lluis@novell.com>
 
 	* Table.cs: Added some 2.0 properties.

@@ -177,7 +177,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
+#if NET_2_0
+		[UrlProperty]
+#else
+		[Bindable (true)]
+#endif
+		[DefaultValue (""), WebCategory ("Appearance")]
 		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		[WebSysDescription ("The URL to the image file used as background.")]
 		public virtual string BackImageUrl
@@ -216,7 +221,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[Browsable (false), Bindable (true)]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription ("The index number for the currently selected page.")]
 		public int CurrentPageIndex
@@ -488,7 +496,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (false), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (false), WebCategory ("Appearance")]
 		[WebSysDescription ("Determines if the footer should be shown.")]
 		public virtual bool ShowFooter
 		{
@@ -505,7 +516,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (false), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (false), WebCategory ("Appearance")]
 		[WebSysDescription ("Determines if the header should be shown.")]
 		public virtual bool ShowHeader
 		{

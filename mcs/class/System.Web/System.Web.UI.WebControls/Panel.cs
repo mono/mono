@@ -48,7 +48,12 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
-		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
+#if NET_2_0
+		[UrlProperty]
+#else
+		[Bindable (true)]
+#endif
+		[DefaultValue (""), WebCategory ("Appearance")]
 		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		[WebSysDescription ("An Url specifying the background image for the panel.")]
 		public virtual string BackImageUrl
@@ -66,7 +71,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (typeof (HorizontalAlign), "NotSet"), Bindable (true), WebCategory ("Layout")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (typeof (HorizontalAlign), "NotSet"), WebCategory ("Layout")]
 		[WebSysDescription ("The horizonal alignment of the panel.")]
 		public virtual HorizontalAlign HorizontalAlign
 		{
@@ -87,7 +95,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (true), Bindable (true), WebCategory ("Layout")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (true), WebCategory ("Layout")]
 		[WebSysDescription ("Determines if the content wraps at line-end.")]
 		public virtual bool Wrap
 		{

@@ -37,6 +37,10 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 
 namespace System.Web.UI.WebControls {
+
+	[DesignerAttribute ("System.Web.UI.Design.WebControls.BulletedListDesigner, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IDesigner")]
+	[DefaultEventAttribute ("Click")]
+	[DefaultPropertyAttribute ("BulletStyle")]
 	public class BulletedList : ListControl, IPostBackEventHandler {
 		
 		[MonoTODO ("we are missing a new style enum, we should be using it")]
@@ -161,20 +165,27 @@ namespace System.Web.UI.WebControls {
 			this.OnClick (new BulletedListEventArgs (int.Parse (eventArgument, CultureInfo.InvariantCulture)));
 		}
 			
+	    [BrowsableAttribute (false)]
+    	[EditorBrowsableAttribute (EditorBrowsableState.Never)]
 		public override bool AutoPostBack { 
 			get { return base.AutoPostBack; }
 			set { throw new NotSupportedException (String.Format ("This property is not supported in {0}", GetType ())); }
 		}
 		
+	    [EditorBrowsableAttribute (EditorBrowsableState.Never)]
 		public override int SelectedIndex {
 			get { return base.SelectedIndex; }
 			set { throw new NotSupportedException (String.Format ("This property is not supported in {0}", GetType ())); }
 		}
 		
+	    [EditorBrowsableAttribute (EditorBrowsableState.Never)]
 		public override ListItem SelectedItem {
 			get { return base.SelectedItem; }
 		}
 		
+		[DefaultValueAttribute ("")]
+		[EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[UrlPropertyAttribute]
 		public virtual string BulletImageUrl {
 			get {
 				object ret = ViewState ["BulletImageUrl"];
@@ -188,6 +199,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
+	    [DefaultValueAttribute (BulletStyle.NotSet)]
 		public virtual BulletStyle BulletStyle {
 			get {
 				object ret = ViewState ["BulletStyle"];
@@ -206,6 +218,7 @@ namespace System.Web.UI.WebControls {
 		
 		public override ControlCollection Controls { get { return new EmptyControlCollection (this); } }
 		
+	    [DefaultValueAttribute (BulletedListDisplayMode.Text)]
 		public virtual BulletedListDisplayMode DisplayMode {
 			get {
 				object ret = ViewState ["DisplayMode"];
@@ -222,6 +235,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
+	    [DefaultValueAttribute (1)]
 		public virtual int FirstBulletNumber {
 			get {
 				object ret = ViewState ["FirstBulletNumber"];
@@ -257,6 +271,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
+	    [DefaultValueAttribute ("")]
 		public virtual string Target {
 			get {
 				object ret = ViewState ["Target"];
@@ -271,7 +286,7 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		static readonly object ClickEvent = new object ();
-		public event EventHandler Click
+		public event BulletedListEventHandler Click
 		{
 			add {
 				Events.AddHandler (ClickEvent, value);
@@ -284,7 +299,7 @@ namespace System.Web.UI.WebControls {
 		protected virtual void OnClick (BulletedListEventArgs e)
 		{
 			if (Events != null) {
-				EventHandler eh = (EventHandler) (Events [ClickEvent]);
+				BulletedListEventHandler eh = (BulletedListEventHandler) (Events [ClickEvent]);
 				if (eh != null)
 					eh (this, e);
 			}

@@ -31,6 +31,7 @@
 #if NET_2_0
 
 using System.Collections;
+using System.Collections.Specialized;
 
 namespace System.Web.UI.WebControls
 {
@@ -38,7 +39,7 @@ namespace System.Web.UI.WebControls
 	{
 		private bool executeSelectCount;  
 		
-		public ObjectDataSourceSelectingEventArgs (IDictionary inputParameters, bool executeSelectCount) : base (inputParameters)
+		public ObjectDataSourceSelectingEventArgs (IOrderedDictionary inputParameters, bool executeSelectCount) : base (inputParameters)
 		{
 			this.executeSelectCount = executeSelectCount;
 		}

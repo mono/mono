@@ -53,7 +53,12 @@ namespace System.Web.UI.WebControls
 	[Designer ("System.Web.UI.Design.WebControls.AdRotatorDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	[ToolboxData("<{0}:AdRotator runat=\"server\" Height=\"60px\" "
 	+ "Width=\"468\"></{0}:AdRotator>")]
-	public class AdRotator: WebControl
+	public class AdRotator: 
+#if NET_2_0
+		DataBoundControl
+#else
+		WebControl
+#endif
 	{
 		string advertisementFile;
 		static readonly object AdCreatedEvent = new object();

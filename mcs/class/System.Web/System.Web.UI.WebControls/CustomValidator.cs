@@ -49,6 +49,9 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+#if NET_2_0
+    	[ThemeableAttribute (false)]
+#endif
 		[DefaultValue (""), WebCategory ("Behavior")]
 		[WebSysDescription ("A client script that performs the validation.")]
 		public string ClientValidationFunction

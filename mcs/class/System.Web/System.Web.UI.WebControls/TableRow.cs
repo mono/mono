@@ -37,6 +37,9 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
+#if NET_2_0
+	[Bindable (false)]
+#endif
 	[DefaultProperty("Cells")]
 	[ParseChildren(true, "Cells")]
 	[ToolboxItem (false)]
@@ -60,7 +63,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (typeof (HorizontalAlign), "NotSet"), Bindable (true), WebCategory ("Layout")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (typeof (HorizontalAlign), "NotSet"), WebCategory ("Layout")]
 		[WebSysDescription ("The horizontal alignment for all table cells in that row.")]
 		public virtual HorizontalAlign HorizontalAlign
 		{
@@ -73,7 +79,10 @@ namespace System.Web.UI.WebControls
 			set { ((TableItemStyle)ControlStyle).HorizontalAlign = value; }
 		}
 
-		[DefaultValue (typeof (VerticalAlign), "NotSet"), Bindable (true), WebCategory ("Layout")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (typeof (VerticalAlign), "NotSet"), WebCategory ("Layout")]
 		[WebSysDescription ("The verical alignment for all table cells in that row.")]
 		public virtual VerticalAlign VerticalAlign
 		{

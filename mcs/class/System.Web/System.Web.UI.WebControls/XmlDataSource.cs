@@ -39,6 +39,7 @@ using System.IO;
 
 namespace System.Web.UI.WebControls {
 
+	[DesignerAttribute ("System.Web.UI.Design.WebControls.XmlDataSourceDesigner, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IDesigner")]
 	[DefaultProperty ("DataFile")]
 	[DefaultEvent ("Transforming")]
 	[ParseChildren (true)]
@@ -182,6 +183,7 @@ namespace System.Web.UI.WebControls {
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[WebSysDescription ("Inline XML data.")]
 		[WebCategory ("Data")]
+	    [EditorAttribute ("System.ComponentModel.Design.MultilineStringEditor,System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 //		[TypeConverter (typeof(MultilineStringConverter))]
 		public virtual string Data {
 			get {
@@ -197,6 +199,8 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
+		[DefaultValueAttribute ("")]
+		[EditorAttribute ("System.Web.UI.Design.XmlDataFileEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		public virtual string DataFile {
 			get {
 				string ret = ViewState ["DataFile"] as string;
@@ -221,6 +225,10 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
+//		[TypeConverterAttribute (typeof(System.ComponentModel.MultilineStringConverter)]
+		[EditorAttribute ("System.ComponentModel.Design.MultilineStringEditor,System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[DefaultValueAttribute ("")]
 		public virtual string Schema {
 			get {
 				string ret = ViewState ["Schema"] as string;
@@ -235,6 +243,8 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
+		[DefaultValueAttribute ("")]
+		[EditorAttribute ("System.Web.UI.Design.XsdSchemaFileEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		public virtual string SchemaFile {
 			get {
 				string ret = ViewState ["SchemaFile"] as string;
@@ -250,11 +260,17 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		XsltArgumentList transformArgumentList;
+		
+	    [BrowsableAttribute (false)]
 		public virtual XsltArgumentList TransformArgumentList {
 			get { return transformArgumentList; }
 			set { transformArgumentList = value; }
 		}
 		
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[EditorAttribute ("System.ComponentModel.Design.MultilineStringEditor,System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[DefaultValueAttribute ("")]
+//		[TypeConverterAttribute (typeof(System.ComponentModel.MultilineStringConverter))]
 		public virtual string Transform {
 			get {
 				string ret = ViewState ["Transform"] as string;
@@ -269,6 +285,8 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
+		[EditorAttribute ("System.Web.UI.Design.XslTransformFileEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[DefaultValueAttribute ("")]
 		public virtual string TransformFile {
 			get {
 				string ret = ViewState ["TransformFile"] as string;
@@ -283,6 +301,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
+		[DefaultValueAttribute ("")]
 		public virtual string XPath {
 			get {
 				string ret = ViewState ["XPath"] as string;

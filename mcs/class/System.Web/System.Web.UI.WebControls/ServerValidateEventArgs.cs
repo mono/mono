@@ -38,7 +38,10 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
-	public sealed class ServerValidateEventArgs : EventArgs
+#if !NET_2_0
+	sealed
+#endif
+	public class ServerValidateEventArgs : EventArgs
 	{
 		private bool isValid;
 		private string value;

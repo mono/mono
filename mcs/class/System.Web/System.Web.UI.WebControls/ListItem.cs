@@ -38,6 +38,9 @@ using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
+#if NET_2_0
+	[ParseChildren (true, "Text")]
+#endif
 	[TypeConverter(typeof(ExpandableObjectConverter))]
 	[ControlBuilder(typeof(ListItemControlBuilder))]
 	public sealed class ListItem : IStateManager, IParserAccessor, IAttributeAccessor
@@ -81,6 +84,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+//	    [TypeConverterAttribute (typeof (System.Web.UI.MinimizableAttributeTypeConverter))]
+#endif
 		[DefaultValue (false)]
 		public bool Selected
 		{
@@ -105,6 +111,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+		[Localizable (true)]
+#endif
 		[DefaultValue ("")]
 		[PersistenceMode (PersistenceMode.EncodedInnerDefaultProperty)]
 		public string Text
@@ -129,6 +138,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+		[Localizable (true)]
+#endif
 		[DefaultValue ("")]
 		public string Value
 		{

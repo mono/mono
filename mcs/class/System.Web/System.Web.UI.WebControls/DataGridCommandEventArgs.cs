@@ -37,7 +37,10 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
-	public sealed class DataGridCommandEventArgs : CommandEventArgs
+#if !NET_2_0
+	sealed
+#endif
+	public class DataGridCommandEventArgs : CommandEventArgs
 	{
 		DataGridItem     dgItem;
 		object           cmdSrc;

@@ -37,9 +37,14 @@ using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
+	[PersistChildrenAttribute (false)]
+	[DesignerAttribute ("System.Web.UI.Design.WebControls.SiteMapDataSourceDesigner, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IDesigner")]
+	[ParseChildrenAttribute (true)]
 	public class SiteMapDataSource : HierarchicalDataSourceControl, IDataSource, IListSource
 	{
 		[MonoTODO]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[BrowsableAttribute (false)]
 		public DataSourceView GetView (string viewName)
 		{
 			throw new NotImplementedException ();

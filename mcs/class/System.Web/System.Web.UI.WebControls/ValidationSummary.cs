@@ -48,7 +48,10 @@ namespace System.Web.UI.WebControls
 			ForeColor     = Color.Red;
 		}
 
-		[DefaultValue (typeof (ValidationSummaryDisplayMode), "BulletList"), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (typeof (ValidationSummaryDisplayMode), "BulletList"), WebCategory ("Appearance")]
 		[WebSysDescription ("The type of how validation summaries should be displayed.")]
 		public ValidationSummaryDisplayMode DisplayMode
 		{
@@ -67,6 +70,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+	    [ThemeableAttribute (false)]
+#endif
 		[DefaultValue (true), WebCategory ("Behavior")]
 		[WebSysDescription ("Determines if the validation summary should be updated directly on the client using script code.")]
 		public bool EnableClientScript
@@ -97,7 +103,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (false), Bindable (true), WebCategory ("Behavior")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (false), WebCategory ("Behavior")]
 		[WebSysDescription ("Determines if the validation summary should display a message box on the client if an uplevel browser is used.")]
 		public bool ShowMessageBox
 		{
@@ -114,7 +123,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (true), Bindable (true), WebCategory ("Behavior")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (true), WebCategory ("Behavior")]
 		[WebSysDescription ("Determines if the validation summary should display a summary.")]
 		public bool ShowSummary
 		{
@@ -131,6 +143,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+		[Localizable (true)]
+#endif
 		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
 		[WebSysDescription ("A text that is diplayed as a header for the validation report.")]
 		public string HeaderText

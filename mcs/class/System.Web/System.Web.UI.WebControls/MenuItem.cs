@@ -115,12 +115,6 @@ namespace System.Web.UI.WebControls
 		internal Menu Menu {
 			get { return menu; }
 			set {
-				if (SelectedFlag) {
-					if (value != null)
-						value.SetSelectedItem (this);
-					else if (menu != null)
-						menu.SetSelectedItem (null);
-				}
 				menu = value;
 				if (items != null)
 					items.SetMenu (menu);
@@ -358,7 +352,10 @@ namespace System.Web.UI.WebControls
 		[Browsable (false)]
 		public bool Selected {
 			get {
-				return SelectedFlag;
+				if (menu != null)
+					return menu.SelectedItem == this;
+				else
+					return false;
 			}
 			set {
 				if (menu != null) {
@@ -367,19 +364,6 @@ namespace System.Web.UI.WebControls
 					else if (value)
 						menu.SetSelectedItem (this);
 				}
-				else
-					SelectedFlag = value;
-			}
-		}
-		
-		internal bool SelectedFlag {
-			get {
-				object o = ViewState ["Selected"];
-				if(o != null) return (bool)o;
-				return false;
-			}
-			set {
-				ViewState ["Selected"] = value;
 			}
 		}
 		
@@ -442,9 +426,6 @@ namespace System.Web.UI.WebControls
 
 			object[] states = (object[]) savedState;
 			ViewState.LoadViewState (states [0]);
-			
-			if (menu != null && SelectedFlag)
-				menu.SetSelectedItem (this);
 			
 			if (states [1] != null)
 				((IStateManager)ChildItems).LoadViewState (states [1]);

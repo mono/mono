@@ -32,8 +32,11 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
+using System.ComponentModel;
 
 namespace System.Web.UI.WebControls {
+
+	[DefaultPropertyAttribute ("FormField")]
 	public class FormParameter : Parameter {
 
 		public FormParameter () : base ()
@@ -60,14 +63,15 @@ namespace System.Web.UI.WebControls {
 			return new FormParameter (this);
 		}
 		
-		protected override object Evaluate (Control control)
+		protected override object Evaluate (HttpContext ctx, Control control)
 		{
-			if (control == null || control.Page == null || control.Page.Request == null)
+			if (control == null || ctx.Request == null)
 				return null;
 			
-			return control.Page.Request.Form [FormField];
+			return ctx.Request.Form [FormField];
 		}
 		
+	    [DefaultValueAttribute ("")]
 		public string FormField {
 			get {
 				string s = ViewState ["FormField"] as string;

@@ -54,7 +54,13 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
-		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
+#if NET_2_0
+    	[NotifyParentPropertyAttribute (true)]
+		[UrlPropertyAttribute]
+#else
+		[Bindable (true)]
+#endif
+		[DefaultValue (""), WebCategory ("Appearance")]
 		[WebSysDescription ("An Url specifying the background image for the table.")]
 		public virtual string BackImageUrl
 		{
@@ -73,7 +79,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (-1), Bindable (true), WebCategory ("Appearance")]
+#if NET_2_0
+    	[NotifyParentPropertyAttribute (true)]
+#else
+		[Bindable (true)]
+#endif
+		[DefaultValue (-1), WebCategory ("Appearance")]
 		[WebSysDescription ("The space left around the borders within a cell.")]
 		public virtual int CellPadding
 		{
@@ -92,7 +103,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (-1), Bindable (true), WebCategory ("Appearance")]
+#if NET_2_0
+    	[NotifyParentPropertyAttribute (true)]
+#else
+		[Bindable (true)]
+#endif
+		[DefaultValue (-1), WebCategory ("Appearance")]
 		[WebSysDescription ("The space left between cells.")]
 		public virtual int CellSpacing
 		{
@@ -111,7 +127,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (typeof (GridLines), "None"), Bindable (true), WebCategory ("Appearance")]
+#if NET_2_0
+    	[NotifyParentPropertyAttribute (true)]
+#else
+		[Bindable (true)]
+#endif
+		[DefaultValue (typeof (GridLines), "None"), WebCategory ("Appearance")]
 		[WebSysDescription ("The type of grid that a table uses.")]
 		public virtual GridLines GridLines
 		{
@@ -130,7 +151,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (typeof (HorizontalAlign), "NotSet"), Bindable (true), WebCategory ("Layout")]
+#if NET_2_0
+    	[NotifyParentPropertyAttribute (true)]
+#else
+		[Bindable (true)]
+#endif
+		[DefaultValue (typeof (HorizontalAlign), "NotSet"), WebCategory ("Layout")]
 		[WebSysDescription ("The horizonal alignment of the table.")]
 		public virtual HorizontalAlign HorizontalAlign
 		{

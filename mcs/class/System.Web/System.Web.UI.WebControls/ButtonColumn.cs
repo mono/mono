@@ -130,8 +130,10 @@ namespace System.Web.UI.WebControls
 		// LAMESPEC The framework uses Description values for metadata here. However they should be WebSysDescriptions
 		// because all metadata in this namespace has WebSysDescriptions
 
-		[DefaultValue (typeof (ButtonColumnType), "LinkButton"), WebCategory ("Misc")]
+#if !NET_2_0
 		[Description ("The type of button used in this column.")]
+#endif
+		[DefaultValue (typeof (ButtonColumnType), "LinkButton"), WebCategory ("Misc")]
 		public virtual ButtonColumnType ButtonType
 		{
 			get
@@ -149,8 +151,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (""), WebCategory ("Misc")]
+#if !NET_2_0
 		[Description ("The command assigned to this column.")]
+#endif
+		[DefaultValue (""), WebCategory ("Misc")]
 		public virtual string CommandName
 		{
 			get
@@ -166,8 +170,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (""), WebCategory ("Misc")]
+#if !NET_2_0
 		[Description ("The datafield that is bound to the text property.")]
+#endif
+		[DefaultValue (""), WebCategory ("Misc")]
 		public virtual string DataTextField
 		{
 			get
@@ -183,8 +189,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (""), WebCategory ("Misc")]
+#if !NET_2_0
 		[Description ("A format that is applied to the bound text property.")]
+#endif
+		[DefaultValue (""), WebCategory ("Misc")]
 		public virtual string DataTextFormatString
 		{
 			get
@@ -200,8 +208,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (""), WebCategory ("Misc")]
+#if NET_2_0
+		[Localizable (true)]
+#else
 		[Description ("The text used for this button.")]
+#endif
+		[DefaultValue (""), WebCategory ("Misc")]
 		public virtual string Text
 		{
 			get

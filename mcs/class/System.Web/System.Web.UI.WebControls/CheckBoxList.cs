@@ -53,7 +53,10 @@ namespace System.Web.UI.WebControls
 			isChangeNotified = false;
 		}
 
-		[DefaultValue (-1), Bindable (true), WebCategory ("Layout")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (-1), WebCategory ("Layout")]
 		[WebSysDescription ("The border left within a CheckBox.")]
 		public virtual int CellPadding
 		{
@@ -67,7 +70,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (-1), Bindable (true), WebCategory ("Layout")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (-1), WebCategory ("Layout")]
 		[WebSysDescription ("The border left between CheckBoxes.")]
 		public virtual int CellSpacing
 		{
@@ -81,7 +87,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (0), Bindable (true), WebCategory ("Layout")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (0), WebCategory ("Layout")]
 		[WebSysDescription ("The number of columns that should be used to display the CheckBoxes.")]
 		public virtual int RepeatColumns
 		{
@@ -100,7 +109,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (typeof (RepeatDirection), "Vertical"), Bindable (true), WebCategory ("Layout")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (typeof (RepeatDirection), "Vertical"), WebCategory ("Layout")]
 		[WebSysDescription ("The direction that is followed when doing the layout.")]
 		public virtual RepeatDirection RepeatDirection
 		{
@@ -119,7 +131,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (typeof (RepeatLayout), "Table"), Bindable (true), WebCategory ("Layout")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (typeof (RepeatLayout), "Table"), WebCategory ("Layout")]
 		[WebSysDescription ("The method used to create the layout.")]
 		public virtual RepeatLayout RepeatLayout
 		{
@@ -138,7 +153,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (typeof (TextAlign), "Right"), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (typeof (TextAlign), "Right"), WebCategory ("Appearance")]
 		[WebSysDescription ("The alignment of the CheckBox text.")]
 		public virtual TextAlign TextAlign
 		{

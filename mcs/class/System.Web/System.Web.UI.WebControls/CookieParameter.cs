@@ -32,8 +32,11 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
+using System.ComponentModel;
 
 namespace System.Web.UI.WebControls {
+
+	[DefaultPropertyAttribute ("CookieName")]
 	public class CookieParameter : Parameter {
 
 		public CookieParameter () : base ()
@@ -60,18 +63,19 @@ namespace System.Web.UI.WebControls {
 			return new CookieParameter (this);
 		}
 		
-		protected override object Evaluate (Control control)
+		protected override object Evaluate (HttpContext ctx, Control control)
 		{
-			if (control == null || control.Page == null || control.Page.Request == null)
+			if (control == null || ctx.Request == null)
 				return null;
 			
-			HttpCookie c = control.Page.Request.Cookies [CookieName];
+			HttpCookie c = ctx.Request.Cookies [CookieName];
 			if (c == null)
 				return null;
 			
 			return c.Value;
 		}
 		
+	    [DefaultValueAttribute ("")]
 		public string CookieName {
 			get {
 				string s = ViewState ["CookieName"] as string;

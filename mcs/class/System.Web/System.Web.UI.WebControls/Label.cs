@@ -38,6 +38,9 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
+#if NET_2_0
+	[ControlValuePropertyAttribute ("Text")]
+#endif
 	[DefaultProperty("Text")]
 	[Designer("System.Web.UI.Design.WebControls.LabelDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	[DataBindingHandler("System.Web.UI.Design.TextDataBindingHandler, " + Consts.AssemblySystem_Design)]
@@ -54,6 +57,9 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+#if NET_2_0
+		[Localizable (true)]
+#endif
 		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
 		[PersistenceMode (PersistenceMode.InnerDefaultProperty)]
 		[WebSysDescription ("The text that should be shown on this Label.")]

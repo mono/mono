@@ -40,7 +40,7 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
-		public ControlCollection Controls
+		public override ControlCollection Controls
 		{
 			get {
 				EnsureChildControls();
@@ -53,6 +53,14 @@ namespace System.Web.UI.WebControls
 			OnDataBinding(EventArgs.Empty);
 			EnsureChildControls();
 			DataBindChildren();
+		}
+		
+		void ICompositeControlDesignerAccessor.RecreateChildControls ()
+		{
+			if (ChildControlsCreated) {
+				ChildControlsCreated = false;
+				EnsureChildControls ();
+			}
 		}
 	}
 }

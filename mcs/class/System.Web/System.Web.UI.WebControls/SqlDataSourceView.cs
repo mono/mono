@@ -126,10 +126,7 @@ namespace System.Web.UI.WebControls {
 			OnSelecting (cmdEventArgs);
 			connection.Open ();
 			SqlDataReader reader = command.ExecuteReader ();
-			int resultCount =0;
-			/*while (reader.Read ())
-				resultCount++;
-			Console.WriteLine ("reader returned "+resultCount);*/
+
 			IEnumerable enums = null; 
 			Exception exception = null;
 			try {
@@ -333,14 +330,23 @@ namespace System.Web.UI.WebControls {
 			return output;
 		}
 		
+		[DefaultValueAttribute (null)]
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		public ParameterCollection DeleteParameters {
 			get { return GetParameterCollection (ref deleteParameters); }
 		}
 		
+		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[DefaultValueAttribute (null)]
 		public ParameterCollection FilterParameters {
 			get { return GetParameterCollection (ref filterParameters); }
 		}
 		
+		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[DefaultValueAttribute (null)]
 		public ParameterCollection InsertParameters {
 			get { return GetParameterCollection (ref insertParameters); }
 		}
@@ -349,6 +355,9 @@ namespace System.Web.UI.WebControls {
 			get { return GetParameterCollection (ref selectParameters); }
 		}
 		
+		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[DefaultValueAttribute (null)]
 		public ParameterCollection UpdateParameters {
 			get { return GetParameterCollection (ref updateParameters); }
 		}

@@ -60,6 +60,10 @@ namespace System.Web.UI.WebControls
 			renderUplevel = false;
 		}
 
+#if NET_2_0
+		[IDReferencePropertyAttribute (typeof(System.Web.UI.Control))]
+		[ThemeableAttribute (false)]
+#endif
 		[DefaultValue (""), WebCategory ("Behavior")]
 		[TypeConverter (typeof (ValidatedControlConverter))]
 		[WebSysDescription ("The ID of the control to validate.")]
@@ -80,7 +84,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (typeof (ValidatorDisplay), "Static"), Bindable (true), WebCategory ("Appearance")]
+#if NET_2_0
+		[ThemeableAttribute (false)]
+#else
+		[Bindable (true)]
+#endif
+		[DefaultValue (typeof (ValidatorDisplay), "Static"), WebCategory ("Appearance")]
 		[WebSysDescription ("Determines how the validator is displayed.")]
 		public ValidatorDisplay Display
 		{
@@ -103,6 +112,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+		[ThemeableAttribute (false)]
+#endif
 		[DefaultValue (true), WebCategory ("Behavior")]
 		[WebSysDescription ("Determines if client script is activated on uplevel browsers.")]
 		public bool EnableClientScript
@@ -136,7 +148,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
+#if NET_2_0
+	    [Localizable (true)]
+#else
+		[Bindable (true)]
+#endif
+		[DefaultValue (""), WebCategory ("Appearance")]
 		[WebSysDescription ("An error message that is displayed if the control validates to false.")]
 		public string ErrorMessage
 		{
@@ -168,6 +185,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+		[ThemeableAttribute (false)]
+#endif
 		[DefaultValue (true), Browsable (false), WebCategory ("Misc")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription ("Indicates if the control validated to false.")]

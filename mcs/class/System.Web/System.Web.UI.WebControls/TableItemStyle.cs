@@ -53,7 +53,9 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
-		[Bindable(true)]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
 		[DefaultValue(HorizontalAlign.NotSet)]
 		[NotifyParentProperty(true)]
 		[WebCategory("Layout")]
@@ -77,7 +79,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[Bindable(true)]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
 		[DefaultValue(VerticalAlign.NotSet)]
 		[NotifyParentProperty(true)]
 		[WebCategory("Layout")]
@@ -101,7 +105,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[Bindable(true)]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
 		[DefaultValue(VerticalAlign.NotSet)]
 		[NotifyParentProperty(true)]
 		[WebCategory("Layout")]

@@ -32,8 +32,11 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
+using System.ComponentModel;
 
 namespace System.Web.UI.WebControls {
+
+	[DefaultPropertyAttribute ("QueryStringField")]
 	public class QueryStringParameter : Parameter {
 
 		public QueryStringParameter () : base ()
@@ -61,14 +64,15 @@ namespace System.Web.UI.WebControls {
 			return new QueryStringParameter (this);
 		}
 		
-		protected override object Evaluate (Control control)
+		protected override object Evaluate (HttpContext ctx, Control control)
 		{
-			if (control == null || control.Page == null || control.Page.Request == null)
+			if (control == null || ctx.Request == null)
 				return null;
 			
-			return control.Page.Request.QueryString [QueryStringField];
+			return ctx.Request.QueryString [QueryStringField];
 		}
 		
+	    [DefaultValueAttribute ("")]
 		public string QueryStringField {
 			get {
 				string s = ViewState ["QueryStringField"] as string;

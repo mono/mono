@@ -118,8 +118,11 @@ namespace System.Web.UI.WebControls
 				selectionBits |= MARKED;
 		}
 
+#if !NET_2_0
+		[Bindable (true)]
+#endif
 		[NotifyParentProperty (true)]
-		[DefaultValue (null), Bindable (true), WebCategory ("Appearance")]
+		[DefaultValue (null), WebCategory ("Appearance")]
 		[TypeConverter (typeof (WebColorConverter))]
 		[WebSysDescription ("The background color for the WebControl.")]
 		public Color BackColor {
@@ -134,8 +137,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if !NET_2_0
+		[Bindable (true)]
+#endif
 		[NotifyParentProperty (true)]
-		[DefaultValue (null), Bindable (true), WebCategory ("Appearance")]
+		[DefaultValue (null), WebCategory ("Appearance")]
 		[TypeConverter (typeof (WebColorConverter))]
 		[WebSysDescription ("The border color for the WebControl.")]
 		public Color BorderColor {
@@ -150,8 +156,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if !NET_2_0
+		[Bindable (true)]
+#endif
 		[NotifyParentProperty (true)]
-		[DefaultValue (typeof(BorderStyle), "NotSet"), Bindable (true), WebCategory ("Appearance")]
+		[DefaultValue (typeof(BorderStyle), "NotSet"), WebCategory ("Appearance")]
 		[WebSysDescription ("The style/type of the border used for the WebControl.")]
 		public BorderStyle BorderStyle {
 			get {
@@ -165,8 +174,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if !NET_2_0
+		[Bindable (true)]
+#endif
 		[NotifyParentProperty (true)]
-		[DefaultValue (null), Bindable (true), WebCategory ("Appearance")]
+		[DefaultValue (null), WebCategory ("Appearance")]
 		[WebSysDescription ("The width of the border used for the WebControl.")]
 		public Unit BorderWidth {
 			get {
@@ -195,8 +207,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if !NET_2_0
+		[Bindable (true)]
+#endif
 		[NotifyParentProperty (true)]
-		[DefaultValue (null), Bindable (true), WebCategory ("Appearance")]
+		[DefaultValue (null), WebCategory ("Appearance")]
 		[TypeConverter (typeof (WebColorConverter))]
 		[WebSysDescription ("The color that is used to paint the primary display of the WebControl.")]
 		public Color ForeColor {
@@ -211,8 +226,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if !NET_2_0
+		[Bindable (true)]
+#endif
 		[NotifyParentProperty (true)]
-		[DefaultValue (null), Bindable (true), WebCategory ("Layout")]
+		[DefaultValue (null), WebCategory ("Layout")]
 		[WebSysDescription ("The height of this WebControl.")]
 		public Unit Height {
 			get {
@@ -226,8 +244,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if !NET_2_0
+		[Bindable (true)]
+#endif
 		[NotifyParentProperty (true)]
-		[DefaultValue (null), Bindable (true), WebCategory ("Layout")]
+		[DefaultValue (null), WebCategory ("Layout")]
 		[WebSysDescription ("The width of this WebControl.")]
 		public Unit Width {
 			get {
@@ -568,6 +589,9 @@ namespace System.Web.UI.WebControls
 				viewState.SetDirty ();
 		}
 		
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[BrowsableAttribute (false)]
+		[EditorBrowsableAttribute (EditorBrowsableState.Advanced)]
 		public string RegisteredCssClass {
 			get { return regClass; }
 		}

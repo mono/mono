@@ -47,7 +47,12 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
-		[DefaultValue (""), Bindable (true), WebCategory ("Behavior")]
+#if NET_2_0
+	    [ThemeableAttribute (false)]
+#else
+		[Bindable (true)]
+#endif
+		[DefaultValue (""), WebCategory ("Behavior")]
 		[Editor ("System.Web.UI.Design.WebControls.RegexTypeEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		[WebSysDescription ("A regular expression that is used to validate.")]
 		public string ValidationExpression

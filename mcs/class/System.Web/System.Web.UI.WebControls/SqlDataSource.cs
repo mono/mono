@@ -34,8 +34,15 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
+using System.ComponentModel;
 
 namespace System.Web.UI.WebControls {
+
+	[ParseChildrenAttribute (true)]
+	[PersistChildrenAttribute (false)]
+	[DefaultPropertyAttribute ("SelectQuery")]
+	[DesignerAttribute ("System.Web.UI.Design.WebControls.SqlDataSourceDesigner, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IDesigner")]
+	[DefaultEventAttribute ("Selecting")]
 	public class SqlDataSource : DataSourceControl {
 
 		public SqlDataSource ()
@@ -129,6 +136,8 @@ namespace System.Web.UI.WebControls {
 		//public virtual string SqlCacheDependency { get; set; }
 		//public virtual bool EnableCaching { get; set; }
 		
+		[DefaultValueAttribute ("")]
+//		[TypeConverterAttribute (typeof (System.Web.UI.Design.WebControls.DataProviderNameConverter)]
 		public virtual string ProviderName {
 			get {
 				string val = ViewState ["ProviderName"] as string;
@@ -138,6 +147,8 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		
+		[EditorAttribute ("System.Web.UI.Design.ConnectionStringEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[DefaultValueAttribute ("")]
 		public virtual string ConnectionString {
 			get {
 				string val = ViewState ["ConnectionString"] as string;
@@ -146,6 +157,7 @@ namespace System.Web.UI.WebControls {
 			set { ViewState ["ConnectionString"] = value; }
 		}
 		
+	    [DefaultValueAttribute (SqlDataSourceMode.DataSet)]
 		public SqlDataSourceMode DataSourceMode {
 			get {
 				object val = ViewState ["DataSourceMode"];
@@ -154,45 +166,71 @@ namespace System.Web.UI.WebControls {
 			set { ViewState ["DataSourceMode"] = value; }
 		}
 				
+	    [DefaultValueAttribute ("")]
 		public string DeleteCommand {
 			get { return View.DeleteCommand; }
 			set { View.DeleteCommand = value; }
 		}
 		
+		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[MergablePropertyAttribute (false)]
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[DefaultValueAttribute (null)]
 		public ParameterCollection DeleteParameters {
 			get { return View.DeleteParameters; }
 		}
 		
+		[DefaultValueAttribute (null)]
+		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[MergablePropertyAttribute (false)]
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		public ParameterCollection FilterParameters {
 			get { return View.FilterParameters; }
 		}
 		
+	    [DefaultValueAttribute ("")]
 		public string InsertCommand {
 			get { return View.InsertCommand; }
 			set { View.InsertCommand = value; }
 		}
+		
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[DefaultValueAttribute (null)]
+		[MergablePropertyAttribute (false)]
+		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		public ParameterCollection InsertParameters {
 			get { return View.InsertParameters; }
 		}
 
+		[DefaultValueAttribute ("")]
 		public string SelectCommand {
 			get { return View.SelectCommand; }
 			set { View.SelectCommand = value; }
 		}
 		
+		[DefaultValueAttribute (null)]
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[MergablePropertyAttribute (false)]
+		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		public ParameterCollection SelectParameters {
 			get { return View.SelectParameters; }
 		}
 		
+	    [DefaultValueAttribute ("")]
 		public string UpdateCommand {
 			get { return View.UpdateCommand; }
 			set { View.UpdateCommand = value; }
 		}
 		
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[MergablePropertyAttribute (false)]
+		[DefaultValueAttribute (null)]
 		public ParameterCollection UpdateParameters {
 			get { return View.UpdateParameters; }
 		}
 		
+	    [DefaultValueAttribute ("")]
 		public string FilterExpression {
 			get { return View.FilterExpression; }
 			set { View.FilterExpression = value; }

@@ -31,19 +31,20 @@
 #if NET_2_0
 
 using System.Collections;
+using System.Collections.Specialized;
 
 namespace System.Web.UI.WebControls
 {
 	public class ObjectDataSourceMethodEventArgs : EventArgs
 	{
-		private IDictionary parameters; 
+		private IOrderedDictionary parameters; 
 		
-		public ObjectDataSourceMethodEventArgs (IDictionary inputParameters)
+		public ObjectDataSourceMethodEventArgs (IOrderedDictionary inputParameters)
 		{
 			this.parameters = inputParameters;
 		}
 		
-		public IDictionary InputParameters {
+		public IOrderedDictionary InputParameters {
 			get { return parameters; }
 		}
 	}

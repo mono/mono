@@ -32,8 +32,12 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.Web.UI;
+using System.ComponentModel;
 
 namespace System.Web.UI.WebControls {
+
+	[DefaultPropertyAttribute ("HeaderText")]
+	[TypeConverterAttribute (typeof(ExpandableObjectConverter))]
 	public abstract class DataControlField : IStateManager, IDataSourceViewSchemaAccessor
 	{
 		bool tracking = false;
@@ -203,8 +207,14 @@ namespace System.Web.UI.WebControls {
 			TrackViewState();
 		}
 
+		[DefaultValueAttribute ("")]
+		[LocalizableAttribute (true)]
+		[WebCategoryAttribute ("Accessibility")]
 		public virtual string AccessibleHeaderText {
-			get { return (string) viewState ["accessibleHeaderText"]; }
+			get {
+				object val = viewState ["accessibleHeaderText"];
+				return val != null ? (string) val : "";
+			}
 			set { 
 				accessibleHeaderText = value;
 				viewState.SetItemDirty ("accessibleHeaderText", true);
@@ -215,6 +225,10 @@ namespace System.Web.UI.WebControls {
 			get { return control; }
 		}
 
+		[WebCategoryAttribute ("Styles")]
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[DefaultValueAttribute (null)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
 		public virtual Style ControlStyle {
 			get { return controlStyle; }
 		}
@@ -223,60 +237,108 @@ namespace System.Web.UI.WebControls {
 			get { return designMode; }
 		}
 
+		[DefaultValueAttribute (null)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[WebCategoryAttribute ("Styles")]
 		public virtual TableItemStyle FooterStyle {
 			get { return footerStyle; }
 		}
 
+		[LocalizableAttribute (true)]
+		[WebCategoryAttribute ("Appearance")]
+		[DefaultValue ("")]
 		public virtual string FooterText {
-			get { return (string) viewState ["footerText"]; }
+			get {
+				object val = viewState ["footerText"];
+				return val != null ? (string) val : "";
+			}
 			set { 
 				footerText = value;
 				viewState.SetItemDirty ("footerText", true);
 			}
 		}
 
+		[UrlPropertyAttribute]
+		[DefaultValueAttribute ("")]
+		[EditorAttribute ("System.Web.UI.Design.UrlEditor, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[WebCategoryAttribute ("Appearance")]
 		public virtual string HeaderImageUrl {
-			get { return (string) viewState ["headerImageUrl"]; }
+			get {
+				object val = viewState ["headerImageUrl"];
+				return val != null ? (string) val : "";
+			}
 			set { 
 				headerImageUrl = value;
 				viewState.SetItemDirty ("headerImageUrl", true);
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[WebCategoryAttribute ("Styles")]
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[DefaultValueAttribute (null)]
 		public virtual TableItemStyle HeaderStyle {
 			get { return headerStyle; }
 		}
 
+		[DefaultValueAttribute ("")]
+		[LocalizableAttribute (true)]
+		[WebCategoryAttribute ("Appearance")]
 		public virtual string HeaderText {
-			get { return (string) viewState ["headerText"]; }
+			get {
+				object val = viewState ["headerText"];
+				return val != null ? (string) val : "";
+			}
 			set { 
 				headerText = value;
 				viewState.SetItemDirty ("headerText", true);
 			}
 		}
 
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[WebCategoryAttribute ("Styles")]
+		[DefaultValueAttribute (null)]
 		public virtual TableItemStyle ItemStyle {
 			get { return itemStyle; }
 		}
 
+		[WebCategoryAttribute ("Behavior")]
+		[DefaultValueAttribute (true)]
 		public virtual bool ShowHeader {
-			get { return (bool) viewState ["showHeader"]; }
+			get {
+				object val = viewState ["showHeader"];
+				return val != null ? (bool) val : true;
+			}
 			set { 
 				showHeader = value;
 				viewState.SetItemDirty ("showHeader", true);
 			}
 		}
 
+		[DefaultValueAttribute ("")]
+//		[TypeConverterAttribute ("System.Web.UI.Design.DataSourceViewSchemaConverter, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[WebCategoryAttribute ("Behavior")]
 		public virtual string SortExpression {
-			get { return (string) viewState ["sortExpression"]; }
+			get {
+				object val = viewState ["sortExpression"];
+				return val != null ? (string) val : "";
+			}
 			set { 
 				sortExpression = value;
 				viewState.SetItemDirty ("sortExpression", true);
 			}
 		}
 
+		[WebCategoryAttribute ("Behavior")]
+		[LocalizableAttribute (true)]
+		[DefaultValueAttribute (true)]
 		public bool Visible {
-			get { return (bool) viewState ["visible"]; }
+			get {
+				object val = viewState ["visible"];
+				return val != null ? (bool) val : true;
+			}
 			set { 
 				visible = value;
 				viewState.SetItemDirty ("visible", true);

@@ -43,6 +43,9 @@ using System.ComponentModel.Design;
 
 namespace System.Web.UI.WebControls
 {
+#if NET_2_0
+	[ControlValuePropertyAttribute ("Checked")]
+#endif
 	[DefaultEvent("CheckedChanged")]
 	[DefaultProperty("Text")]
 	[DataBindingHandler("System.Web.UI.Design.TextDataBindingHandler, " + Consts.AssemblySystem_Design)]
@@ -56,6 +59,9 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+#if NET_2_0
+	    [ThemeableAttribute (false)]
+#endif
 		[DefaultValue (false), WebCategory ("Behavior")]
 		[WebSysDescription ("The control automatically posts back after changing the text.")]
 		public virtual bool AutoPostBack
@@ -69,6 +75,9 @@ namespace System.Web.UI.WebControls
 		}
 
 
+#if NET_2_0
+	    [ThemeableAttribute (false)]
+#endif
 		[DefaultValue (false), Bindable (true)]
 		[WebSysDescription ("Determines if the control is checked.")]
 		public virtual bool Checked
@@ -81,6 +90,9 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["Checked"] = value; }
 		}
 
+#if NET_2_0
+	    [Localizable (true)]
+#endif
 		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
 		[WebSysDescription ("The text that this control displays.")]
 		public virtual string Text
@@ -104,8 +116,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-
-		[DefaultValue (typeof (TextAlign), "Right"), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (typeof (TextAlign), "Right"), WebCategory ("Appearance")]
 		[WebSysDescription ("The alignment of the text.")]
 		public virtual TextAlign TextAlign
 		{

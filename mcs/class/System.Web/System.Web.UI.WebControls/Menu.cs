@@ -43,6 +43,7 @@ namespace System.Web.UI.WebControls
 {
 	[DefaultEvent ("MenuItemClick")]
 	[ControlValueProperty ("SelectedValue")]
+	[Designer ("System.Web.UI.Design.WebControls.MenuDesigner, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IDesigner")]
 	public class Menu : HierarchicalDataBoundControl, IPostBackEventHandler, INamingContainer
 	{
 		MenuItemStyle dynamicMenuItemStyle;
@@ -62,6 +63,7 @@ namespace System.Web.UI.WebControls
 		MenuItemCollection items;
 		MenuItemBindingCollection dataBindings;
 		MenuItem selectedItem;
+		string selectedItemPath;
 		Hashtable bindings;
 		ArrayList dynamicMenus;
 		
@@ -398,6 +400,7 @@ namespace System.Web.UI.WebControls
 
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+	    [Editor ("System.Web.UI.Design.WebControls.MenuItemStyleCollectionEditor,System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		public virtual MenuItemStyleCollection LevelMenuItemStyles {
 			get {
 				if (levelMenuItemStyles == null) {
@@ -547,6 +550,7 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (null)]
 		[TemplateContainer (typeof(MenuItemTemplateContainer), BindingDirection.OneWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
+	    [Browsable (false)]
 		public ITemplate StaticItemTemplate {
 			get { return staticItemTemplate; }
 			set { staticItemTemplate = value; }
@@ -555,6 +559,7 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (null)]
 		[TemplateContainer (typeof(MenuItemTemplateContainer), BindingDirection.OneWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
+	    [Browsable (false)]
 		public ITemplate DynamicItemTemplate {
 			get { return dynamicItemTemplate; }
 			set { dynamicItemTemplate = value; }
@@ -563,10 +568,17 @@ namespace System.Web.UI.WebControls
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public MenuItem SelectedItem {
-			get { return selectedItem; }
+			get {
+				if (selectedItem == null && selectedItemPath != null) {
+					selectedItem = FindItemByPos (selectedItemPath);
+				}
+				
+				return selectedItem;
+			}
 		}
 
 		[Browsable (false)]
+		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string SelectedValue {
 			get { return selectedItem != null ? selectedItem.Value : null; }
@@ -575,10 +587,8 @@ namespace System.Web.UI.WebControls
 		internal void SetSelectedItem (MenuItem item)
 		{
 			if (selectedItem == item) return;
-			if (selectedItem != null)
-				selectedItem.SelectedFlag = false;
 			selectedItem = item;
-			selectedItem.SelectedFlag = true;
+			selectedItemPath = item.Path;
 		}
 		
 		public MenuItem FindItem (string valuePath)
@@ -637,7 +647,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
+		public void RaisePostBackEvent (string eventArgument)
 		{
 			MenuItem item = FindItemByPos (eventArgument);
 			if (item == null) return;
@@ -759,6 +769,38 @@ namespace System.Web.UI.WebControls
 				dynamicHoverStyle.LoadViewState (states[12]);
 		}
 		
+		protected override void OnInit (EventArgs e)
+		{
+			Page.RegisterRequiresControlState (this);
+			base.OnInit (e);
+		}
+		
+		protected internal override void LoadControlState (object ob)
+		{
+			if (ob == null) return;
+			object[] state = (object[]) ob;
+			base.LoadControlState (state[0]);
+			selectedItemPath = state[1] as string;
+		}
+		
+		protected internal override object SaveControlState ()
+		{
+			object bstate = base.SaveControlState ();
+			object mstate = selectedItemPath;
+			
+			if (bstate != null && mstate != null)
+				return new object[] { bstate, mstate };
+			else
+				return null;
+		}
+		
+		[MonoTODO]
+		protected override void CreateChildControls ()
+		{
+			base.CreateChildControls ();
+		}
+		
+		
 		protected override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
@@ -834,9 +876,18 @@ namespace System.Web.UI.WebControls
 			Page.Header.StyleSheet.CreateStyleRule (ts, "." + baseStyle.RegisteredCssClass + " A", this);
 		}
 		
-		public override void RenderBeginTag (HtmlTextWriter writer)
+		protected override void Render (HtmlTextWriter writer)
+		{
+			base.Render (writer);
+		}
+		
+		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
 			RenderMenuBeginTagAttributes (writer, false);
+		}
+		
+		public override void RenderBeginTag (HtmlTextWriter writer)
+		{
 			base.RenderBeginTag (writer);
 		}
 		

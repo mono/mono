@@ -39,6 +39,9 @@ using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
+#if NET_2_0
+	[DesignerAttribute ("System.Web.UI.Design.WebControls.PreviewControlDesigner, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IDesigner")]
+#endif
 	[DefaultEvent("Click")]
 	public class ImageButton: Image, IPostBackDataHandler, IPostBackEventHandler
 	{
@@ -51,7 +54,12 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
-		[DefaultValue (true), Bindable (false), WebCategory ("Behavior")]
+#if NET_2_0
+		[ThemeableAttribute (false)]
+#else
+		[Bindable (false)]
+#endif
+		[DefaultValue (true), WebCategory ("Behavior")]
 		[WebSysDescription ("Determines if validation is performed when clicked.")]
 		public bool CausesValidation
 		{
@@ -68,6 +76,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+	    [ThemeableAttribute (false)]
+#endif
 		[DefaultValue (""), Bindable (true), WebCategory ("Behavior")]
 		[WebSysDescription ("An argument for the Command of this control.")]
 		public string CommandArgument
@@ -85,6 +96,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+	    [ThemeableAttribute (false)]
+#endif
 		[DefaultValue (""), WebCategory ("Behavior")]
 		[WebSysDescription ("The name of the Command of this control.")]
 		public string CommandName

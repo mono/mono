@@ -32,8 +32,11 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
+using System.ComponentModel;
 
 namespace System.Web.UI.WebControls {
+
+	[DefaultPropertyAttribute ("ControlID")]
 	public class ControlParameter : Parameter {
 
 		public ControlParameter () : base ()
@@ -69,11 +72,16 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		[MonoTODO]
-		protected override object Evaluate (Control control)
+		protected override object Evaluate (HttpContext ctx, Control control)
 		{
 			throw new NotImplementedException ();
 		}
 		
+		[WebCategoryAttribute ("Control")]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
+		[TypeConverterAttribute (typeof (ControlIDConverter))]
+		[DefaultValueAttribute ("")]
+		[IDReferencePropertyAttribute (typeof(System.Web.UI.Control))]
 		public string ControlID {
 			get {
 				string s = ViewState ["ControlID"] as string;
@@ -90,6 +98,9 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
+		[DefaultValueAttribute ("")]
+		[TypeConverterAttribute (typeof (ControlPropertyNameConverter))]
+		[WebCategoryAttribute ("Control")]
 		public string PropertyName {
 			get {
 				string s = ViewState ["PropertyName"] as string;

@@ -46,7 +46,12 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
-		[DefaultValue (""), Bindable (true), WebCategory ("Behavior")]
+#if NET_2_0
+	    [ThemeableAttribute (false)]
+#else
+		[Bindable (true)]
+#endif
+		[DefaultValue (""), WebCategory ("Behavior")]
 		[WebSysDescription ("The maximum value that the validated control can be assigned.")]
 		public string MaximumValue
 		{
@@ -65,7 +70,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (""), Bindable (true), WebCategory ("Behavior")]
+#if NET_2_0
+	    [ThemeableAttribute (false)]
+#else
+		[Bindable (true)]
+#endif
+		[DefaultValue (""), WebCategory ("Behavior")]
 		[WebSysDescription ("The minimum value that the validated control can be assigned.")]
 		public string MinimumValue
 		{

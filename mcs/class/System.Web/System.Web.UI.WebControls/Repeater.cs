@@ -501,6 +501,10 @@ namespace System.Web.UI.WebControls
 				RequiresDataBinding = true;
 			}
 			
+#if NET_2_0
+		    [IDReferencePropertyAttribute (typeof(System.Web.UI.DataSourceControl))]
+    		[DefaultValueAttribute ("")]
+#endif
 			public virtual string DataSourceID {
 				get {
 					object o = ViewState ["DataSourceID"];
@@ -523,7 +527,7 @@ namespace System.Web.UI.WebControls
 				set { requiresDataBinding = value; }
 			}
 			
-			protected bool inited;
+			bool inited;
 
 			DataSourceSelectArguments selectArguments = null;
 	

@@ -158,6 +158,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+		[UrlProperty]
+#endif
 		[DefaultValue (""), WebCategory ("Misc")]
 		[WebSysDescription ("The URL to an image that is displayed in the header of this column.")]
 		public virtual string HeaderImageUrl

@@ -69,7 +69,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (typeof (PagerMode), "NextPrev"), Bindable (true), WebCategory ("Misc")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (typeof (PagerMode), "NextPrev"), WebCategory ("Misc")]
 		[NotifyParentProperty (true)]
 		[WebSysDescription ("The mode used for displaying multiple pages.")]
 		public PagerMode Mode
@@ -93,7 +96,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (">"), Bindable (true), WebCategory ("Misc")]
+#if NET_2_0
+		[Localizable (true)]
+#else
+		[Bindable (true)]
+#endif
+		[DefaultValue (">"), WebCategory ("Misc")]
 		[NotifyParentProperty (true)]
 		[WebSysDescription ("The text for the 'next page' button.")]
 		public string NextPageText
@@ -113,7 +121,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue ("<"), Bindable (true), WebCategory ("Misc")]
+#if NET_2_0
+		[Localizable (true)]
+#else
+		[Bindable (true)]
+#endif
+		[DefaultValue ("<"), WebCategory ("Misc")]
 		[NotifyParentProperty (true)]
 		[WebSysDescription ("The text for the 'previous page' button.")]
 		public string PrevPageText
@@ -133,7 +146,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (10), Bindable (true), WebCategory ("Misc")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (10), WebCategory ("Misc")]
 		[NotifyParentProperty (true)]
 		[WebSysDescription ("The maximum number of pages to show as direct links.")]
 		public int PageButtonCount
@@ -156,7 +172,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (typeof (PagerPosition), "Bottom"), Bindable (true), WebCategory ("Misc")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (typeof (PagerPosition), "Bottom"), WebCategory ("Misc")]
 		[NotifyParentProperty (true)]
 		[WebSysDescription ("The position for the page display.")]
 		public PagerPosition Position
@@ -180,7 +199,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (true), Bindable (true), WebCategory ("Misc")]
+#if NET_2_0
+		[Localizable (true)]
+#else
+		[Bindable (true)]
+#endif
+		[DefaultValue (true), WebCategory ("Misc")]
 		[NotifyParentProperty (true)]
 		[WebSysDescription ("Determines if paging functionallity is visible to the user.")]
 		public bool Visible

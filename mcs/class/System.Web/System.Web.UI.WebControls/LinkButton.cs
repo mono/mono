@@ -54,7 +54,12 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
-		[DefaultValue (true), Bindable (false), WebCategory ("Behavior")]
+#if NET_2_0
+		[ThemeableAttribute (false)]
+#else
+		[Bindable (false)]
+#endif
+		[DefaultValue (true), WebCategory ("Behavior")]
 		[WebSysDescription ("Determines if validation is performed when clicked.")]
 		public bool CausesValidation
 		{
@@ -66,6 +71,9 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["CausesValidation"] = value; }
 		}
 
+#if NET_2_0
+		[ThemeableAttribute (false)]
+#endif
 		[DefaultValue (""), Bindable (true), WebCategory ("Behavior")]
 		[WebSysDescription ("An argument for the Command of this control.")]
 		public string CommandArgument
@@ -78,6 +86,9 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["CommandArgument"] = value; }
 		}
 
+#if NET_2_0
+		[ThemeableAttribute (false)]
+#endif
 		[DefaultValue (""), WebCategory ("Behavior")]
 		[WebSysDescription ("The name of the Command of this control.")]
 		public string CommandName
@@ -90,6 +101,9 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["CommandName"] = value; }
 		}
 
+#if NET_2_0
+		[Localizable (true)]
+#endif
 		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
 		[PersistenceMode (PersistenceMode.InnerDefaultProperty)]
 		[WebSysDescription ("The text that should be shown on this LinkButton.")]

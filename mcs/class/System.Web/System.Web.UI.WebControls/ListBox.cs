@@ -69,8 +69,10 @@ namespace System.Web.UI.WebControls
 			set { base.BorderWidth = value; }
 		}
 
-
-		[DefaultValue (4), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (4), WebCategory ("Appearance")]
 		[WebSysDescription ("The number of rows displayed by the control.")]
 		public virtual int Rows
 		{

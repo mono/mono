@@ -39,7 +39,10 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
-	public sealed class AdCreatedEventArgs: EventArgs
+#if !NET_2_0
+	sealed
+#endif
+	public class AdCreatedEventArgs: EventArgs
 	{
 
 		private IDictionary adProperties;

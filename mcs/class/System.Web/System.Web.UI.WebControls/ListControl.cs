@@ -40,10 +40,12 @@ using System.Web.Util;
 
 namespace System.Web.UI.WebControls
 {
-	[DefaultEvent("SelectedIndexChanged")]
-	#if !NET_2_0
+#if NET_2_0
+	[ControlValuePropertyAttribute ("SelectedValue")]
+#else
 	[DefaultProperty("DataSource")]
-	#endif
+#endif
+	[DefaultEvent("SelectedIndexChanged")]
 	[Designer ("System.Web.UI.Design.WebControls.ListControlDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	[DataBindingHandler("System.Web.UI.Design.ListControlDataBindingHandler, " + Consts.AssemblySystem_Design)]
 	[ParseChildren(true, "Items")]
@@ -89,6 +91,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+	    [ThemeableAttribute (false)]
+#endif
 		[DefaultValue (false), WebCategory ("Behavior")]
 		[WebSysDescription ("The control automatically posts back after changing the text.")]
 		public virtual bool AutoPostBack
@@ -145,6 +150,9 @@ namespace System.Web.UI.WebControls
 		}
 		#endif
 
+#if NET_2_0
+	    [ThemeableAttribute (false)]
+#endif
 		[DefaultValue (""), WebCategory ("Data")]
 		[WebSysDescription ("The field in the datatable that provides the text entry.")]
 		public virtual string DataTextField
@@ -162,6 +170,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+	    [ThemeableAttribute (false)]
+#endif
 		[DefaultValue (""), WebCategory ("Data")]
 		[WebSysDescription ("Specifies a formatting rule for the texts that are returned.")]
 		public virtual string DataTextFormatString
@@ -179,6 +190,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+	    [ThemeableAttribute (false)]
+#endif
 		[DefaultValue (""), WebCategory ("Data")]
 		[WebSysDescription ("The field in the datatable that provides the entry value.")]
 		public virtual string DataValueField
@@ -196,6 +210,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+	    [Editor ("System.Web.UI.Design.WebControls.ListItemsCollectionEditor,System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+#endif
 		[DefaultValue (null), MergableProperty (false), WebCategory ("Misc")]
 		[PersistenceMode (PersistenceMode.InnerDefaultProperty)]
 		[WebSysDescription ("A collection of all items contained in this list.")]
@@ -215,6 +232,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+	    [ThemeableAttribute (false)]
+#endif
 		[DefaultValue (0), Bindable (true), WebCategory ("Misc")]
 		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription ("The index number of the currently selected ListItem.")]
@@ -260,6 +280,9 @@ namespace System.Web.UI.WebControls
 		}
 
 #if NET_1_1
+		#if NET_2_0
+	    [ThemeableAttribute (false)]
+		#endif
 		[DefaultValue (""), Bindable (true), WebCategory ("Misc")]
 		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription ("The value of the currently selected ListItem.")]

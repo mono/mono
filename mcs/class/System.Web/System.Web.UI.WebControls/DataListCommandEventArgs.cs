@@ -37,7 +37,10 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
-	public sealed class DataListCommandEventArgs: CommandEventArgs
+#if !NET_2_0
+	sealed
+#endif
+	public class DataListCommandEventArgs: CommandEventArgs
 	{
 		private DataListItem dlItem;
 		private object       cmdSrc;

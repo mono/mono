@@ -39,6 +39,10 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
+#if NET_2_0
+	[ControlValuePropertyAttribute ("Text")]
+	[DesignerAttribute ("System.Web.UI.Design.WebControls.PreviewControlDesigner, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IDesigner")]
+#endif
 	[ControlBuilder (typeof (TextBoxControlBuilder))]
 	[DefaultEvent("TextChanged")]
 	[DefaultProperty("Text")]
@@ -53,6 +57,9 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+#if NET_2_0
+	    [ThemeableAttribute (false)]
+#endif
 		[DefaultValue (false), WebCategory ("Behavior")]
 		[WebSysDescription ("The control automatically posts back after changing the text.")]
 		public virtual bool AutoPostBack {
@@ -64,7 +71,10 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["AutoPostBack"] = value; }
 		}
 
-		[DefaultValue (0), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (0), WebCategory ("Appearance")]
 		[WebSysDescription ("The width of this control specified in characters.")]
 		public virtual int Columns {
 			get {
@@ -81,7 +91,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (0), Bindable (true), WebCategory ("Behavior")]
+#if NET_2_0
+	    [ThemeableAttribute (false)]
+#else
+		[Bindable (true)]
+#endif
+		[DefaultValue (0), WebCategory ("Behavior")]
 		[WebSysDescription ("The maximum number of characters you can enter in this control.")]
 		public virtual int MaxLength {
 			get {
@@ -98,6 +113,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+	    [ThemeableAttribute (false)]
+#endif
 		[DefaultValue (false), Bindable (true), WebCategory ("Behavior")]
 		[WebSysDescription ("If the control is ReadOnly you cannot enter new text.")]
 		public virtual bool ReadOnly {
@@ -108,7 +126,12 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["ReadOnly"] = value; }
 		}
 
-		[DefaultValue (0), Bindable (true), WebCategory ("Behavior")]
+#if NET_2_0
+	    [ThemeableAttribute (false)]
+#else
+		[Bindable (true)]
+#endif
+		[DefaultValue (0), WebCategory ("Behavior")]
 		[WebSysDescription ("The number of lines that this multiline contol spans.")]
 		public virtual int Rows {
 			get {
@@ -124,6 +147,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+	    [LocalizableAttribute (true)]
+	    [EditorAttribute ("System.ComponentModel.Design.MultilineStringEditor,System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+#endif
 		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
 		[PersistenceMode (PersistenceMode.EncodedInnerDefaultProperty)]
 		[WebSysDescription ("The text that this control initially displays.")]
@@ -136,6 +163,9 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["Text"] = value; }
 		}
 
+#if NET_2_0
+	    [ThemeableAttribute (false)]
+#endif
 		[DefaultValue (typeof (TextBoxMode), "SingleLine"), WebCategory ("Behavior")]
 		[WebSysDescription ("A mode of how the control operates.")]
 		public virtual TextBoxMode TextMode {

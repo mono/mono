@@ -38,10 +38,14 @@ using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
+#if NET_2_0
+	[Bindable (false)]
+#else
+	[ParseChildren(false)]
+#endif
 	[DefaultProperty("Text")]
 	[ToolboxItem(false)]
 	[ControlBuilder(typeof(TableCellControlBuilder))]
-	[ParseChildren(false)]
 	[PersistChildren(true)]
 	public class TableCell: WebControl
 	{
@@ -55,7 +59,17 @@ namespace System.Web.UI.WebControls
 			PreventAutoID ();
 		}
 
-		[DefaultValue (0), Bindable (true), WebCategory ("Appearance")]
+#if NET_2_0
+		public TableCell (string text) : this ()
+		{
+			Text = text;
+		}
+#endif
+
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (0), WebCategory ("Appearance")]
 		[WebSysDescription ("The number of columns spanned by this cell.")]
 		public virtual int ColumnSpan
 		{
@@ -71,7 +85,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (0), Bindable (true), WebCategory ("Layout")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (0), WebCategory ("Layout")]
 		[WebSysDescription ("The number of rows spanned by this cell.")]
 		public virtual int RowSpan
 		{
@@ -87,7 +104,13 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
+#if NET_2_0
+	    [LocalizableAttribute (true)]
+    	[PersistenceModeAttribute (PersistenceMode.EncodedInnerDefaultProperty)]
+#else
+		[Bindable (true)]
+#endif
+		[DefaultValue (""), WebCategory ("Appearance")]
 		[WebSysDescription ("The text that is shown in this cell.")]
 		public virtual string Text
 		{
@@ -103,7 +126,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (typeof (HorizontalAlign), "NotSet"), Bindable (true), WebCategory ("Layout")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (typeof (HorizontalAlign), "NotSet"), WebCategory ("Layout")]
 		[WebSysDescription ("The horizontal alignment for this cell.")]
 		public virtual HorizontalAlign HorizontalAlign
 		{
@@ -115,7 +141,10 @@ namespace System.Web.UI.WebControls
 			set { ((TableItemStyle) ControlStyle).HorizontalAlign = value; }
 		}
 
-		[DefaultValue (typeof (VerticalAlign), "NotSet"), Bindable (true), WebCategory ("Layout")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (typeof (VerticalAlign), "NotSet"), WebCategory ("Layout")]
 		[WebSysDescription ("The horizontal alignment for this cell.")]
 		public virtual VerticalAlign VerticalAlign
 		{
@@ -128,7 +157,10 @@ namespace System.Web.UI.WebControls
 			set { ((TableItemStyle) ControlStyle).VerticalAlign = value; }
 		}
 
-		[DefaultValue (true), Bindable (true), WebCategory ("Layout")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (true), WebCategory ("Layout")]
 		[WebSysDescription ("Determines if the text in the cell should be wraped at line-end.")]
 		public virtual bool Wrap
 		{

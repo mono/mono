@@ -46,6 +46,9 @@ namespace System.Web.UI.WebControls
 			// Intitalize();
 		}
 
+#if NET_2_0
+    	[ThemeableAttribute (false)]
+#endif
 		[DefaultValue (""), WebCategory ("Behavior")]
 		[TypeConverter (typeof (ValidatedControlConverter))]
 		[WebSysDescription ("The ID of a control that is compared.")]
@@ -65,6 +68,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+    	[ThemeableAttribute (false)]
+#endif
 		[DefaultValue (typeof (ValidationCompareOperator), "Equal"), WebCategory ("Behavior")]
 		[WebSysDescription ("The operator that is used for comparison.")]
 		public ValidationCompareOperator Operator
@@ -84,7 +90,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (""), Bindable (true), WebCategory ("Behavior")]
+#if NET_2_0
+    	[ThemeableAttribute (false)]
+#else
+		[Bindable (true)]
+#endif
+		[DefaultValue (""), WebCategory ("Behavior")]
 		[WebSysDescription ("The value that is compared to.")]
 		public string ValueToCompare
 		{

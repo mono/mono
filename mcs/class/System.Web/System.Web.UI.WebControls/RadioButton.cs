@@ -48,6 +48,9 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+#if NET_2_0
+	    [ThemeableAttribute (false)]
+#endif
 		[DefaultValue (""), WebCategory ("Behavior")]
 		[WebSysDescription ("The name of the group that this control belongs to.")]
 		public virtual string GroupName

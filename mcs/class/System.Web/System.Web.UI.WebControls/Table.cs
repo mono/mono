@@ -98,7 +98,7 @@ namespace System.Web.UI.WebControls
 		}
 
 #if NET_2_0
-		[DefaultValue (""), WebCategory ("Accessibility")]
+		[DefaultValue (""), WebCategory ("Accessibility"), Localizable (true)]
 		public virtual string Caption
 		{
 			get {

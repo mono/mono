@@ -115,6 +115,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+		[UrlPropertyAttribute]
+#endif
 		[DefaultValue (""), WebCategory ("Misc")]
 		[WebSysDescription ("The URL that this hyperlink links to.")]
 		public virtual string NavigateUrl {
@@ -147,6 +150,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+		[Localizable (true)]
+#endif
 		[DefaultValue (""), WebCategory ("Misc")]
 		[WebSysDescription ("The Text for the hyperlink.")]
 		public virtual string Text {

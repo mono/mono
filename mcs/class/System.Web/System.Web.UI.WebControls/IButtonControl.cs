@@ -42,7 +42,6 @@ namespace System.Web.UI.WebControls
 		string SoftkeyLabel { get; }
 		string Text { get; set; }
 		string ValidationGroup { get; set; }
-		bool Visible { get; set; }
 
 		event EventHandler Click;
 		event CommandEventHandler Command;

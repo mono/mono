@@ -45,7 +45,12 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
-		[DefaultValue (""), Bindable (true), WebCategory ("Behavior")]
+#if NET_2_0
+	    [ThemeableAttribute (false)]
+#else
+		[Bindable (true)]
+#endif
+		[DefaultValue (""), WebCategory ("Behavior")]
 		[WebSysDescription ("The initial value for the required field.")]
 		public string InitialValue
 		{

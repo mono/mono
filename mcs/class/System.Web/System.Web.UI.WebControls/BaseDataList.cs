@@ -95,7 +95,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if !NET_2_0
 		[Bindable(true)]
+#endif
 		[DefaultValue(-1)]
 		[WebCategory("Layout")]
 		[WebSysDescription("BaseDataList_CellPadding")]
@@ -113,7 +115,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if !NET_2_0
 		[Bindable(true)]
+#endif
 		[DefaultValue(-1)]
 		[WebCategory("Layout")]
 		[WebSysDescription("BaseDataList_CellSpacing")]
@@ -131,6 +135,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+	    [ThemeableAttribute (false)]
+#endif
 		[DefaultValue("")]
 		[WebCategory("Data")]
 		[WebSysDescription("BaseDataList_DataKeyField")]
@@ -163,6 +170,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+	    [ThemeableAttribute (false)]
+#endif
 		[DefaultValue("")]
 		[WebCategory("Data")]
 		[WebSysDescription("BaseDataList_DataMember")]
@@ -181,6 +191,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+	    [ThemeableAttribute (false)]
+#endif
 		[Bindable(true)]
 		[DefaultValue(null)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -200,7 +213,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if !NET_2_0
 		[Bindable(true)]
+#endif
 		[DefaultValue(GridLines.Both)]
 		[WebCategory("Appearance")]
 		[WebSysDescription("BaseDataList_GridLines")]
@@ -221,7 +236,9 @@ namespace System.Web.UI.WebControls
 		// LAMESPEC HorizontalAlign has a Category attribute, this should obviously be a WebCategory attribute
 		// but is defined incorrectly in the MS framework
 
+#if !NET_2_0
 		[Bindable(true)]
+#endif
 		[DefaultValue(HorizontalAlign.NotSet)]
 		[Category("Layout")]
 		[WebSysDescription("BaseDataList_HorizontalAlign")]
@@ -359,7 +376,12 @@ namespace System.Web.UI.WebControls
 			{
 				RequiresDataBinding = true;
 			}
-			
+
+#if NET_2_0
+			[DefaultValueAttribute ("")]
+			[IDReferencePropertyAttribute (typeof(System.Web.UI.DataSourceControl))]
+			[ThemeableAttribute (false)]
+#endif
 			public virtual string DataSourceID {
 				get {
 					object o = ViewState ["DataSourceID"];
@@ -382,7 +404,7 @@ namespace System.Web.UI.WebControls
 				set { requiresDataBinding = value; }
 			}
 			
-			protected bool inited;
+			bool inited;
 			
 			DataSourceSelectArguments selectArguments = null;
 			

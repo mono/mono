@@ -37,7 +37,10 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
-	public sealed class RepeaterCommandEventArgs: CommandEventArgs
+#if !NET_2_0
+	sealed
+#endif
+	public class RepeaterCommandEventArgs: CommandEventArgs
 	{
 		private RepeaterItem rItem;
 		private object       cmdSrc;

@@ -36,7 +36,7 @@ using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
-	public class MenuItemTemplateContainer: Control, IDataItemContainer, INamingContainer
+	public sealed class MenuItemTemplateContainer: Control, IDataItemContainer, INamingContainer
 	{
 		object dataItem;
 		int index;

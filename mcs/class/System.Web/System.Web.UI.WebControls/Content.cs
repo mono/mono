@@ -35,11 +35,17 @@ using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
+	[ToolboxDataAttribute ("<{0}:Content runat='server'></{0}:Content>")]
+	[DesignerAttribute ("System.Web.UI.Design.WebControls.ContentDesigner, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IDesigner")]
 	[ControlBuilder(typeof(ContentControlBuilder))] 
 	public class Content: Control, INamingContainer
 	{
 		string placeHolderId;
 		
+		[ThemeableAttribute (false)]
+		[DefaultValueAttribute ("")]
+		[WebCategoryAttribute ("Behavior")]
+		[IDReferencePropertyAttribute (typeof(ContentPlaceHolder))]
 		public string ContentPlaceHolderID {
 			get { return placeHolderId; }
 			set { placeHolderId = value; }

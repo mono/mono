@@ -55,6 +55,9 @@ namespace System.Web.UI.WebControls
 			return Convert(text, type, out o);
 		}
 
+#if NET_2_0
+	    [ThemeableAttribute (false)]
+#endif
 		[DefaultValue(ValidationDataType.String)]
 		[WebCategory("Behavior")]
 		[WebSysDescription("RangeValidator_Type")]

@@ -44,6 +44,9 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
+#if NET_2_0
+		[Localizable (true)]
+#endif
 		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
 		[WebSysDescription ("An alternative text that is shown if the image cannot be displayed.")]
 		public virtual string AlternateText
@@ -84,7 +87,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (typeof (ImageAlign), "NotSet"), Bindable (true), WebCategory ("Layout")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (typeof (ImageAlign), "NotSet"), WebCategory ("Layout")]
 		[WebSysDescription ("The alignment of the image.")]
 		public virtual ImageAlign ImageAlign
 		{
@@ -101,6 +107,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+		[Localizable (true)]
+		[UrlProperty]
+#endif
 		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
 		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		[WebSysDescription ("The URL to the image file.")]

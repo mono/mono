@@ -74,11 +74,6 @@ namespace System.Web.UI.WebControls {
 			return new Parameter (this);
 		}
 		
-		protected virtual object Evaluate (Control control)
-		{
-			return this.DefaultValue;
-		}
-		
 		protected void OnParameterChanged ()
 		{
 			if (_owner != null)
@@ -211,6 +206,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+	    [DefaultValueAttribute (TypeCode.Object)]
 		[WebCategoryAttribute ("Parameter"), 
 		WebSysDescriptionAttribute("Represents type of the parameter.")]
 		public TypeCode Type
@@ -253,7 +249,7 @@ namespace System.Web.UI.WebControls {
 
 		protected virtual object Evaluate (HttpContext context, Control control)
 		{
-			return null;
+			return this.DefaultValue;
 		}
 
 		protected internal virtual void SetDirty()

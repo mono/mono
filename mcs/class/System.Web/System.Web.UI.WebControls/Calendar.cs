@@ -45,6 +45,9 @@ using System.ComponentModel.Design;
 
 namespace System.Web.UI.WebControls
 {
+#if NET_2_0
+//	[ControlValuePropertyAttribute ("SelectedDate", DateTime.MinValue)]
+#endif
 	[DefaultEvent("SelectionChanged")]
 	[DefaultProperty("SelectedDate")]
 	[Designer("System.Web.UI.Design.WebControls.CalendarDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
@@ -87,7 +90,10 @@ namespace System.Web.UI.WebControls
 		}
 
 
-		[DefaultValue (2), Bindable (true), WebCategory ("Layout")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (2), WebCategory ("Layout")]
 		[WebSysDescription ("The border left within the calendar days.")]
 		public int CellPadding
 		{
@@ -106,7 +112,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (0), Bindable (true), WebCategory ("Layout")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (0), WebCategory ("Layout")]
 		[WebSysDescription ("The border left between calendar days.")]
 		public int CellSpacing
 		{
@@ -141,7 +150,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (typeof (DayNameFormat), "Short"), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (typeof (DayNameFormat), "Short"), WebCategory ("Appearance")]
 		[WebSysDescription ("The format for the day name display.")]
 		public DayNameFormat DayNameFormat
 		{
@@ -177,7 +189,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (typeof (FirstDayOfWeek), "Default"), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (typeof (FirstDayOfWeek), "Default"), WebCategory ("Appearance")]
 		[WebSysDescription ("The day that a week begins with.")]
 		public FirstDayOfWeek FirstDayOfWeek
 		{
@@ -196,7 +211,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (">"), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#else
+		[Localizable (true)]
+#endif
+		[DefaultValue (">"), WebCategory ("Appearance")]
 		[WebSysDescription ("The text for selecting the next month.")]
 		public string NextMonthText
 		{
@@ -213,7 +233,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (typeof (NextPrevFormat), "CustomText"), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (typeof (NextPrevFormat), "CustomText"), WebCategory ("Appearance")]
 		[WebSysDescription ("The format for the month navigation.")]
 		public NextPrevFormat NextPrevFormat
 		{
@@ -265,7 +288,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue ("<"), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#else
+		[Localizable (true)]
+#endif
+		[DefaultValue ("<"), WebCategory ("Appearance")]
 		[WebSysDescription ("The text for selecting the previous month.")]
 		public string PrevMonthText
 		{
@@ -339,7 +367,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (typeof (CalendarSelectionMode), "Day"), Bindable (true), WebCategory ("Behavior")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (typeof (CalendarSelectionMode), "Day"), WebCategory ("Behavior")]
 		[WebSysDescription ("The mode in which days or other entries are selected.")]
 		public CalendarSelectionMode SelectionMode
 		{
@@ -358,7 +389,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (">>"), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#else
+		[Localizable (true)]
+#endif
+		[DefaultValue (">>"), WebCategory ("Appearance")]
 		[WebSysDescription ("The text that is used for selection of months.")]
 		public string SelectMonthText
 		{
@@ -389,7 +425,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (">"), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#else
+		[Localizable (true)]
+#endif
+		[DefaultValue (">"), WebCategory ("Appearance")]
 		[WebSysDescription ("The text that is used for selection of weeks.")]
 		public string SelectWeekText
 		{
@@ -406,7 +447,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (true), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (true), WebCategory ("Appearance")]
 		[WebSysDescription ("Determines if the header for days is shown.")]
 		public bool ShowDayHeader
 		{
@@ -423,7 +467,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (false), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (false), WebCategory ("Appearance")]
 		[WebSysDescription ("Determines if gridlines are shown.")]
 		public bool ShowGridLines
 		{
@@ -440,7 +487,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (true), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (true), WebCategory ("Appearance")]
 		[WebSysDescription ("Determines if month navigation is shown.")]
 		public bool ShowNextPrevMonth
 		{
@@ -457,7 +507,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (true), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (true), WebCategory ("Appearance")]
 		[WebSysDescription ("Determines if the title is shown.")]
 		public bool ShowTitle
 		{
@@ -474,7 +527,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (typeof (TitleFormat), "MonthYear"), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (typeof (TitleFormat), "MonthYear"), WebCategory ("Appearance")]
 		[WebSysDescription ("The format in which the title is rendered.")]
 		public TitleFormat TitleFormat
 		{
@@ -526,7 +582,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[Bindable (true), Browsable (false)]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription ("The current date.")]
 		public DateTime TodaysDate

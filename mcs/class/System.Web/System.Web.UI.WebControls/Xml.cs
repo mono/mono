@@ -96,6 +96,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+		[Obsolete]
+#endif
 		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription ("This is the XML document that is used for the XML Webcontrol.")]
 		public XmlDocument Document {
@@ -125,7 +128,13 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (""), Bindable (true), WebCategory ("Behavior")]
+#if NET_2_0
+		[Localizable (true)]
+		[UrlProperty]
+#else
+		[Bindable (true)]
+#endif
+		[DefaultValue (""), WebCategory ("Behavior")]
 		[Editor ("System.Web.UI.Design.XmlUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		[WebSysDescription ("The URL or the source of the XML content that is transformed for the XML Webcontrol.")]
 		public string DocumentSource {
@@ -154,7 +163,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (""), Bindable (true), WebCategory ("Behavior")]
+#if NET_2_0
+		[Localizable (true)]
+#else
+		[Bindable (true)]
+#endif
+		[DefaultValue (""), WebCategory ("Behavior")]
 		[Editor ("System.Web.UI.Design.XmlUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		[WebSysDescription ("An URL specifying the source that is used for the XSL transformation.")]
 		public string TransformSource {

@@ -30,9 +30,12 @@
 
 #if NET_2_0
 using System.Collections;
+using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
+	[DefaultProperty ("DataSourceID")]
+	[DesignerAttribute ("System.Web.UI.Design.WebControls.BaseDataBoundControlDesigner, System.Design, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.IDesigner")]
 	public abstract class BaseDataBoundControl: WebControl
 	{
 		public event EventHandler DataBound;
@@ -42,6 +45,10 @@ namespace System.Web.UI.WebControls
 		bool initialized;
 		bool requiresDataBinding = true;
 		
+		[BindableAttribute (true)]
+		[ThemeableAttribute (false)]
+		[DefaultValueAttribute (null)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public virtual object DataSource {
 			get {
 				return dataSource;
@@ -52,6 +59,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		[DefaultValueAttribute ("")]
+		[ThemeableAttribute (false)]
 		public virtual string DataSourceID {
 			get { return dataSourceId; }
 			set { dataSourceId = value; }

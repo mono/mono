@@ -62,7 +62,10 @@ namespace System.Web.UI.WebControls
 		{
 		}
 		
-		[DefaultValue (false), Bindable (true), WebCategory ("Font")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (false), WebCategory ("Font")]
 		[NotifyParentProperty (true)]
 		[WebSysDescription ("The 'bold' style of the font.")]
 		public bool Bold
@@ -80,7 +83,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		[DefaultValue (false), Bindable (true), WebCategory ("Font")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (false), WebCategory ("Font")]
 		[NotifyParentProperty (true)]
 		[WebSysDescription ("The 'italic' style of the font.")]
 		public bool Italic
@@ -98,7 +104,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		[DefaultValue (false), Bindable (true), WebCategory ("Font")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (false), WebCategory ("Font")]
 		[NotifyParentProperty (true)]
 		[WebSysDescription ("The 'overline' style of the font.")]
 		public bool Overline
@@ -116,7 +125,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		[DefaultValue (false), Bindable (true), WebCategory ("Font")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (false), WebCategory ("Font")]
 		[NotifyParentProperty (true)]
 		[WebSysDescription ("The 'strikeout' style of the font.")]
 		public bool Strikeout
@@ -134,7 +146,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		[DefaultValue (false), Bindable (true), WebCategory ("Font")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (false), WebCategory ("Font")]
 		[NotifyParentProperty (true)]
 		[WebSysDescription ("The 'underline' style of the font.")]
 		public bool Underline
@@ -152,7 +167,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (null), Bindable (true), WebCategory ("Font")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (null), WebCategory ("Font")]
 		[NotifyParentProperty (true)]
 		[WebSysDescription ("The size of the font.")]
 		public FontUnit Size
@@ -172,7 +190,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (""), Bindable (true), WebCategory ("Font")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (""), WebCategory ("Font")]
 		[NotifyParentProperty (true), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Editor ("System.Drawing.Design.FontNameEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		[TypeConverter (typeof (FontConverter.FontNameConverter))]

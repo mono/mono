@@ -40,6 +40,9 @@ using System.Web.Util;
 
 namespace System.Web.UI.WebControls
 {
+#if NET_2_0
+	[ControlValueProperty ("SelectedValue")]
+#endif
 	[Designer("System.Web.UI.Design.WebControls.DataListDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	[Editor ("System.Web.UI.Design.WebControls.DataListComponentEditor, " + Consts.AssemblySystem_Design, typeof (ComponentEditor))]
 	public class DataList: BaseDataList, INamingContainer, IRepeatInfoUser
@@ -282,7 +285,10 @@ namespace System.Web.UI.WebControls
 		}
 
 
-		[DefaultValue (0), Bindable (true), WebCategory ("Layout")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (0), WebCategory ("Layout")]
 		[WebSysDescription ("The number of columns that should be used.")]
 		public virtual int RepeatColumns {
 			get {
@@ -300,7 +306,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (typeof (RepeatDirection), "Vertical"), Bindable (true), WebCategory ("Layout")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (typeof (RepeatDirection), "Vertical"), WebCategory ("Layout")]
 		[WebSysDescription ("Which direction should be used when filling the columns.")]
 		public virtual RepeatDirection RepeatDirection {
 			get {
@@ -318,7 +327,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (typeof (RepeatLayout), "Table"), Bindable (true), WebCategory ("Layout")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (typeof (RepeatLayout), "Table"), WebCategory ("Layout")]
 		[WebSysDescription ("The type of layout - mechanism that is used.")]
 		public virtual RepeatLayout RepeatLayout {
 			get {
@@ -447,7 +459,10 @@ namespace System.Web.UI.WebControls
 			set { separatorTemplate = value; }
 		}
 
-		[DefaultValue (true), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (true), WebCategory ("Appearance")]
 		[WebSysDescription ("Display the header for the DataList.")]
 		public virtual bool ShowHeader {
 			get {
@@ -460,7 +475,10 @@ namespace System.Web.UI.WebControls
 			set { ViewState ["ShowHeader"] = value; }
 		}
 
-		[DefaultValue (true), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (true), WebCategory ("Appearance")]
 		[WebSysDescription ("Display the footer for the DataList.")]
 		public virtual bool ShowFooter {
 			get {

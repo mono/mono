@@ -38,7 +38,10 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
-	public sealed class DataGridSortCommandEventArgs : EventArgs
+#if !NET_2_0
+	sealed
+#endif
+	public class DataGridSortCommandEventArgs : EventArgs
 	{
 		private object source;
 		private string sortExpr;

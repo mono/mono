@@ -32,7 +32,7 @@
 
 namespace System.Web.UI.WebControls
 {
-	public sealed class WizardNavigationEventArgs : EventArgs
+	public class WizardNavigationEventArgs : EventArgs
 	{
 		private int curStepIndex;
 		private int nxtStepIndex;

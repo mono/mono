@@ -40,6 +40,9 @@ using System.Collections.Specialized;
 
 namespace System.Web.UI.WebControls
 {
+#if NET_2_0
+	[ThemeableAttribute (true)]
+#endif
 	[PersistChildrenAttribute(false)]
 	[ParseChildrenAttribute(true)]
 	public class WebControl : Control, IAttributeAccessor
@@ -65,7 +68,12 @@ namespace System.Web.UI.WebControls
 			tagName = tag;
 		}
 
-		[DefaultValue (""), Bindable (true), WebCategory ("Behavior")]
+#if NET_2_0
+		[Localizable (true)]
+#else
+		[Bindable (true)]
+#endif
+		[DefaultValue (""), WebCategory ("Behavior")]
 		[WebSysDescription ("A keyboard shortcut for the WebControl.")]
 		public virtual string AccessKey
 		{
@@ -107,7 +115,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (null), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (null), WebCategory ("Appearance")]
 		[TypeConverter (typeof (WebColorConverter))]
 		[WebSysDescription ("The background color for the WebControl.")]
 		public virtual Color BackColor
@@ -123,7 +134,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (null), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (null), WebCategory ("Appearance")]
 		[TypeConverter (typeof (WebColorConverter))]
 		[WebSysDescription ("The border color for the WebControl.")]
 		public virtual Color BorderColor
@@ -139,7 +153,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (typeof(BorderStyle), "NotSet"), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (typeof(BorderStyle), "NotSet"), WebCategory ("Appearance")]
 		[WebSysDescription ("The style/type of the border used for the WebControl.")]
 		public virtual BorderStyle BorderStyle
 		{
@@ -154,7 +171,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (null), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (null), WebCategory ("Appearance")]
 		[WebSysDescription ("The width of the border used for the WebControl.")]
 		public virtual Unit BorderWidth
 		{
@@ -190,6 +210,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+	    [EditorBrowsableAttribute (EditorBrowsableState.Advanced)]
+#endif
 		[Browsable (false), DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription ("Determines if a style exists for this Webcontrol.")]
 		public bool ControlStyleCreated
@@ -200,7 +223,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (""), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (""), WebCategory ("Appearance")]
 		[WebSysDescription ("The cascading stylesheet class that is associated with this WebControl.")]
 		public virtual string CssClass
 		{
@@ -214,6 +240,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+	    [ThemeableAttribute (false)]
+#endif
 		[DefaultValue (true), Bindable (true), WebCategory ("Behavior")]
 		[WebSysDescription ("The activation state of this WebControl.")]
 		public virtual bool Enabled {
@@ -231,7 +260,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (null), NotifyParentProperty (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[DefaultValue (null)]
+#endif
+		[NotifyParentProperty (true), WebCategory ("Appearance")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[WebSysDescription ("The font of this WebControl.")]
 		public virtual FontInfo Font
@@ -242,7 +274,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (null), Bindable (true), WebCategory ("Appearance")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (null), WebCategory ("Appearance")]
 		[TypeConverter (typeof (WebColorConverter))]
 		[WebSysDescription ("The color that is used to paint the primary display of the WebControl.")]
 		public virtual Color ForeColor
@@ -258,7 +293,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (null), Bindable (true), WebCategory ("Layout")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (null), WebCategory ("Layout")]
 		[WebSysDescription ("The height of this WebControl.")]
 		public virtual Unit Height
 		{
@@ -303,7 +341,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (""), Bindable (true), WebCategory ("Behavior")]
+#if NET_2_0
+		[Localizable (true)]
+#else
+		[Bindable (true)]
+#endif
+		[DefaultValue (""), WebCategory ("Behavior")]
 		[WebSysDescription ("A tooltip that is shown when hovering the mouse above the WebControl.")]
 		public virtual string ToolTip
 		{
@@ -320,7 +363,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (null), Bindable (true), WebCategory ("Layout")]
+#if !NET_2_0
+		[Bindable (true)]
+#endif
+		[DefaultValue (null), WebCategory ("Layout")]
 		[WebSysDescription ("The width of this WebControl.")]
 		public virtual Unit Width
 		{

@@ -35,6 +35,7 @@
 using System;
 using System.Web;
 using System.Web.UI;
+using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
@@ -43,7 +44,10 @@ namespace System.Web.UI.WebControls
 		public EditCommandColumn(): base()
 		{
 		}
-		
+
+#if NET_2_0
+	    [DefaultValueAttribute (ButtonColumnType.LinkButton)]
+#endif
 		public virtual ButtonColumnType ButtonType
 		{
 			get
@@ -66,6 +70,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+	    [LocalizableAttribute (true)]
+    	[DefaultValueAttribute ("")]
+#endif
 		public virtual string CancelText
 		{
 			get
@@ -84,6 +92,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+	    [DefaultValueAttribute ("")]
+    	[LocalizableAttribute (true)]
+#endif
 		public virtual string EditText
 		{
 			get
@@ -102,6 +114,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+	    [DefaultValueAttribute ("")]
+    	[LocalizableAttribute (true)]
+#endif
 		public virtual string UpdateText
 		{
 			get

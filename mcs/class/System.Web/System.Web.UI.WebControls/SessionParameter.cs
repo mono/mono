@@ -32,8 +32,11 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
+using System.ComponentModel;
 
 namespace System.Web.UI.WebControls {
+
+	[DefaultPropertyAttribute ("SessionField")]
 	public class SessionParameter : Parameter {
 
 		public SessionParameter () : base ()
@@ -60,14 +63,16 @@ namespace System.Web.UI.WebControls {
 			return new SessionParameter (this);
 		}
 		
-		protected override object Evaluate (Control control)
+		protected override object Evaluate (HttpContext ctx, Control control)
 		{
-			if (control == null || control.Page == null || control.Page.Session == null)
+			if (control == null || ctx.Session == null)
 				return null;
 			
-			return control.Page.Session [SessionField];
+			return ctx.Session [SessionField];
 		}
 		
+		[DefaultValueAttribute ("")]
+		[WebCategoryAttribute ("Parameter")]
 		public string SessionField {
 			get {
 				string s = ViewState ["SessionField"] as string;

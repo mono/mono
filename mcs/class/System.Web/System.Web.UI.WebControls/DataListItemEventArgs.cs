@@ -38,7 +38,10 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
-	public sealed class DataListItemEventArgs : EventArgs
+#if !NET_2_0
+	sealed
+#endif
+	public class DataListItemEventArgs : EventArgs
 	{
 		private DataListItem item;
 

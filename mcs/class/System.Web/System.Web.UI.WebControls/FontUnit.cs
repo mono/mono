@@ -42,6 +42,9 @@ using System.Web.UI;
 namespace System.Web.UI.WebControls
 {
 	[TypeConverter(typeof(FontUnitConverter))]
+#if NET_2_0
+	[Serializable]
+#endif
 	public struct FontUnit
 	{
 		public static readonly FontUnit Empty   = new FontUnit();
