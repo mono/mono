@@ -1,5 +1,11 @@
 2004-06-19  Jackson Harper  <jackson@ximian.com>
 
+	* MethodPointerTypeRef.cs: New File - represents a method pointer
+	that is being treated as a typeref. For example method void*() in
+	the statement castclass method void*().
+	
+2004-06-19  Jackson Harper  <jackson@ximian.com>
+
 	* InstrTable.cs: Add undocumented brnull opcode. This is really
 	just an alias for brfalse.
 	
