@@ -90,8 +90,6 @@ namespace System.Reflection {
 				StringBuilder fname = new StringBuilder ();
 				fname.Append (name);
 				fname.Append (", Version=");
-				if (Version == null)
-					Console.WriteLine ("Version!!!!");
 				fname.Append (Version.ToString ());
 				fname.Append (", Culture=");
 				if (CultureInfo == null || CultureInfo.LCID == CultureInfo.InvariantCulture.LCID)
