@@ -422,3 +422,30 @@
 	we replace one or more instructions with others that perform
 	better for the given architecture or CPU.
 	
+* 64 bit support tips, by Zoltan Varga (vargaz@gmail.com)
+
+	For a 64-bit port of the Mono runtime, you will typically do
+	the following:
+
+		* need to use inssel-long.brg instead of
+		  inssel-long32.brg.
+
+		* need to implement lots of new opcodes:
+		       OP_I<OP> is 32 bit op
+		       OP_L<OP> and CEE_<OP> are 64 bit ops
+
+
+	The 64 bit version of an existing port might share the code
+	with the 32 bit port (for example SPARC/SPARV9), or it might
+	be separate (x86/AMD64).  
+
+	That will depend on the similarities of the two instructions
+	sets/ABIs etc.
+
+	The runtime and most parts of the JIT are 64 bit clean
+	at this point, so the only parts which require changing are
+	the arch dependent files.
+
+
+
+	
