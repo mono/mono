@@ -48,6 +48,8 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			ITransportHeaders headers, Stream requestStream)
 		{
 			TcpConnection connection = null;
+			bool isOneWay = RemotingServices.IsOneWay (((IMethodMessage)msg).MethodBase);
+
 			try
 			{
 				// Sends the stream using a connection from the pool
@@ -57,7 +59,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 				connection = TcpConnectionPool.GetConnection (_host, _port);
 				TcpMessageIO.SendMessageStream (connection.Stream, requestStream, headers, connection.Buffer);
 
-				if (!RemotingServices.IsOneWay (((IMethodMessage)msg).MethodBase)) 
+				if (!isOneWay) 
 				{
 					sinkStack.Push (this, connection);
 					ThreadPool.QueueUserWorkItem (new WaitCallback(ReadAsyncTcpMessage), sinkStack);
@@ -66,7 +68,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			catch
 			{
 				if (connection != null) connection.Release();
-				throw;
+				if (!isOneWay) throw;
 			}
 		}
 
@@ -135,21 +137,13 @@ namespace System.Runtime.Remoting.Channels.Tcp
 				connection = TcpConnectionPool.GetConnection (_host, _port);
 				TcpMessageIO.SendMessageStream (connection.Stream, requestStream, requestHeaders, connection.Buffer);
 
-				if (!RemotingServices.IsOneWay (((IMethodMessage)msg).MethodBase)) 
-				{
-					// Reads the response
-					MessageStatus status = TcpMessageIO.ReceiveMessageStatus (connection.Stream);
+				// Reads the response
+				MessageStatus status = TcpMessageIO.ReceiveMessageStatus (connection.Stream);
 
-					if (status != MessageStatus.MethodMessage)
-						throw new RemotingException ("Unknown response message from server");
+				if (status != MessageStatus.MethodMessage)
+					throw new RemotingException ("Unknown response message from server");
 
-					responseStream = TcpMessageIO.ReceiveMessageStream (connection.Stream, out responseHeaders, connection.Buffer);
-				}
-				else
-				{
-					responseHeaders = null;
-					responseStream = null;
-				}
+				responseStream = TcpMessageIO.ReceiveMessageStream (connection.Stream, out responseHeaders, connection.Buffer);
 			}
 			finally
 			{

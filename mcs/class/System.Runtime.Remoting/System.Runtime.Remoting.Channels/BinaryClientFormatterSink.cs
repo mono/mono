@@ -125,6 +125,7 @@ namespace System.Runtime.Remoting.Channels
 
 				ITransportHeaders call_headers = new TransportHeaders();
 				call_headers[CommonTransportKeys.RequestUri] = ((IMethodCallMessage)msg).Uri;
+				call_headers["Content-Type"] = "application/octet-stream";
 
 				Stream call_stream = nextInChain.GetRequestStream(msg, call_headers);
 				if (call_stream == null) call_stream = new MemoryStream ();

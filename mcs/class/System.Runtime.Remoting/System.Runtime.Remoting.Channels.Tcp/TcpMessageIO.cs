@@ -4,7 +4,9 @@
 //
 // (C) 2002 Lluis Sanchez Gual
 
+using System;
 using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections;
 using System.IO;
 using System.Text;
@@ -18,8 +20,8 @@ namespace System.Runtime.Remoting.Channels.Tcp
 	{
 		static byte[][] _msgHeaders = 
 			  {
-				  new byte[] { (byte)'.', (byte)'N', (byte)'E', (byte)'T', 0 },
-				  new byte[] { 255, 255, 255, 255, 255 }
+				  new byte[] { (byte)'.', (byte)'N', (byte)'E', (byte)'T', 1, 0 },
+				  new byte[] { 255, 255, 255, 255, 255, 255 }
 			  };
 							
 		public static int DefaultStreamBufferSize = 1000;
@@ -64,14 +66,25 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			byte[] dotnetHeader = _msgHeaders[(int) MessageStatus.MethodMessage];
 			networkStream.Write(dotnetHeader, 0, dotnetHeader.Length);
 
+			// Writes header tag (0x0000 if request stream, 0x0002 if response stream)
+			if(requestHeaders[CommonTransportKeys.RequestUri]!=null) buffer [0] = (byte) 0;
+			else buffer[0] = (byte) 2;
+			buffer [1] = (byte) 0 ;
+
+			// Writes ID
+			buffer [2] = (byte) 0;
+
+			// Writes assemblyID????
+			buffer [3] = (byte) 0;
+
 			// Writes the length of the stream being sent (not including the headers)
 			int num = (int)data.Length;
-			buffer [0] = (byte) num;
-			buffer [1] = (byte) (num >> 8);
-			buffer [2] = (byte) (num >> 16);
-			buffer [3] = (byte) (num >> 24);
-			networkStream.Write(buffer, 0, 4);
-
+			buffer [4] = (byte) num;
+			buffer [5] = (byte) (num >> 8);
+			buffer [6] = (byte) (num >> 16);
+			buffer [7] = (byte) (num >> 24);
+			networkStream.Write(buffer, 0, 8);
+	
 			// Writes the message headers
 			SendHeaders (networkStream, requestHeaders, buffer);
 
@@ -96,38 +109,78 @@ namespace System.Runtime.Remoting.Channels.Tcp
 
 		private static void SendHeaders(Stream networkStream, ITransportHeaders requestHeaders, byte[] buffer)
 		{
-			if (requestHeaders == null) 
-				SendString (networkStream, "", buffer);
-			else
+			// Writes the headers as a sequence of strings
+			if (networkStream != null)
 			{
-				// Writes the headers as a sequence of strings
 				IEnumerator e = requestHeaders.GetEnumerator();
 				while (e.MoveNext())
 				{
 					DictionaryEntry hdr = (DictionaryEntry)e.Current;
-					SendString (networkStream, hdr.Key.ToString(), buffer);
+					switch (hdr.Key.ToString())
+					{
+						case CommonTransportKeys.RequestUri: 
+							buffer[0] = 4; buffer[1] = 0; buffer[2] = 1;
+							networkStream.Write(buffer, 0, 3);
+							break;
+						case "Content-Type": 
+							buffer[0] = 6; buffer[1] = 0; buffer[2] = 1;
+							networkStream.Write(buffer, 0, 3);
+							break;
+						default: 
+							buffer[0] = 1; buffer[1] = 0; buffer[2] = 1;
+							networkStream.Write(buffer, 0, 3);
+							SendString (networkStream, hdr.Key.ToString(), buffer);
+							break;
+					}
+					networkStream.WriteByte (1);
 					SendString (networkStream, hdr.Value.ToString(), buffer);
 				}
-				SendString (networkStream, "", buffer);
 			}
+			networkStream.WriteByte (0);	// End of headers
+			networkStream.WriteByte (0);
 		}
 		
 		public static ITransportHeaders ReceiveHeaders (Stream networkStream, byte[] buffer)
 		{
-			TransportHeaders headers = new TransportHeaders();
+			byte headerType;
+			headerType = (byte) networkStream.ReadByte ();
+			networkStream.ReadByte ();
 
-			string key = ReceiveString (networkStream, buffer);
-			while (key != string.Empty)
+			TransportHeaders headers = new TransportHeaders ();
+
+			while (headerType != 0)
 			{
+				string key;
+				networkStream.ReadByte ();	// byte 1
+				switch (headerType)
+				{
+					case 4: key = CommonTransportKeys.RequestUri; break;
+					case 6: key = "Content-Type"; break;
+					case 1: key = ReceiveString (networkStream, buffer); break;
+					default: throw new NotSupportedException ("Unknown header code: " + headerType);
+				}
+				networkStream.ReadByte ();	// byte 1
 				headers[key] = ReceiveString (networkStream, buffer);
-				key = ReceiveString (networkStream, buffer);
+
+				headerType = (byte) networkStream.ReadByte ();
+				networkStream.ReadByte ();
 			}
+
 			return headers;
 		}
 		
 		public static Stream ReceiveMessageStream (Stream networkStream, out ITransportHeaders headers, byte[] buffer)
 		{
+			headers = null;
+
 			if (buffer == null) buffer = new byte[DefaultStreamBufferSize];
+
+			// Reads header tag:  0 -> Stream with headers or 2 -> Response Stream
+			byte head = (byte)networkStream.ReadByte();
+			byte c = (byte)networkStream.ReadByte();
+
+			c = (byte)networkStream.ReadByte();
+			c = (byte)networkStream.ReadByte();
 
 			// Gets the length of the data stream
 			int nr = 0;
@@ -138,7 +191,6 @@ namespace System.Runtime.Remoting.Channels.Tcp
 				(buffer [2] << 16) | (buffer [3] << 24));
 
 			// Reads the headers
-
 			headers = ReceiveHeaders (networkStream, buffer);
 
 			byte[] resultBuffer = new byte[byteCount];
@@ -146,6 +198,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			nr = 0;
 			while (nr < byteCount)
 				nr += networkStream.Read (resultBuffer, nr, byteCount - nr);
+
 			
 			return new MemoryStream(resultBuffer);
 		}		
@@ -198,6 +251,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 				nr += networkStream.Read (buffer, nr, byteCount - nr);
 
 			char[] chars = Encoding.UTF8.GetChars(buffer, 0, byteCount);
+	
 			return new string(chars);
 		}
 		
