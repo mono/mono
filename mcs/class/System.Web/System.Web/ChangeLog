@@ -1,3 +1,8 @@
+2003-10-13  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* HttpResponse.cs: Changed harcoded switch to en-US culture to a switch
+	  to invariant culture.
+
 2003-10-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpResponse.cs:

@@ -139,7 +139,7 @@ namespace System.Web
 			oHeaders.Add (new HttpResponseHeader ("X-Powered-By", "Mono"));
 			// save culture info, we need us info here
 			CultureInfo oSavedInfo = Thread.CurrentThread.CurrentCulture;
-			Thread.CurrentThread.CurrentCulture = new CultureInfo (0x0409);
+			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
 			string date = DateTime.Now.ToUniversalTime ().ToString ("ddd, d MMM yyyy HH:mm:ss ");
 			oHeaders.Add (new HttpResponseHeader ("Date", date + "GMT"));
@@ -923,4 +923,3 @@ namespace System.Web
 		}
 	}
 }
-
