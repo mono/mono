@@ -74,7 +74,7 @@ namespace CIR {
 	}
 
 	public struct EmitContext {
-		TypeContainer parent;
+		public TypeContainer parent;
 		public ILGenerator   ig;
 
 		// FIXME: FIXME: FIXME!

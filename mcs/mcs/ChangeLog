@@ -1,3 +1,40 @@
+2001-10-03  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (Binary::DoNumericPromotions): Fix the case when
+	we do a forcible conversion regardless of type, to check if 
+	ForceConversion returns a null.
+
+	(Binary::error19): Use location to report error.
+
+	(Unary::error23): Use location here too.
+
+	* ../errors/cs0019.cs : Check in.
+
+	* ../errors/cs0023.cs : Check in.
+
+	* expression.cs (Expression.MemberLookup): Return null for a rather esoteric
+	case of a non-null MethodInfo object with a length of 0 !
+
+	(Binary::ResolveOperator): Flag error if overload resolution fails to find
+	an applicable member - according to the spec :-)
+	Also fix logic to find members in base types.
+
+	(Unary::ResolveOperator): Same here.
+
+	(Unary::report23): Change name to error23 and make first argument a TypeContainer
+	as I was getting thoroughly confused between this and error19 :-)
+	
+	* expression.cs (Expression::ImplicitUserConversion): Re-write fully
+	(::FindMostEncompassedType): Implement.
+	(::FindMostEncompassingType): Implement.
+	(::StandardConversionExists): Implement.
+
+	(UserImplicitCast): Re-vamp. We now need info about most specific
+	source and target types so that we can do the necessary conversions.
+
+	(Invocation::MakeUnionSet): Completely re-write to make sure we form a proper
+	mathematical union with no duplicates.
+
 2001-10-03  Miguel de Icaza  <miguel@ximian.com>
 
 	* rootcontext.cs (RootContext::PopulateTypes): Populate containers

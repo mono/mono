@@ -14,7 +14,7 @@ using System;
 
 namespace CIR {
 
-	interface ParameterData {
+	public interface ParameterData {
 		Type ParameterType (int pos);
 		int  Count { get; }
 	}

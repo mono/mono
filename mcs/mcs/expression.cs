@@ -268,6 +268,10 @@ namespace CIR {
 
 			if (mi == null)
 				return null;
+
+			// FIXME : How does this wierd case arise ?
+			if (mi.Length == 0)
+				return null;
 			
 			if (mi.Length == 1 && !(mi [0] is MethodBase))
 				return Expression.ExprClassFromMemberInfo (tc, mi [0]);
@@ -616,57 +620,301 @@ namespace CIR {
 		}
 
 		// <summary>
+		//  Determines if a standard implicit conversion exists from
+		//  expr_type to target_type
+		// </summary>
+		static bool StandardConversionExists (Type expr_type, Type target_type)
+		{
+			if (expr_type == target_type)
+				return true;
+
+			// First numeric conversions 
+			
+			if (expr_type == TypeManager.sbyte_type){
+				//
+				// From sbyte to short, int, long, float, double.
+				//
+				if ((target_type == TypeManager.int32_type) || 
+				    (target_type == TypeManager.int64_type) ||
+				    (target_type == TypeManager.double_type) ||
+				    (target_type == TypeManager.float_type)  ||
+				    (target_type == TypeManager.short_type) ||
+				    (target_type == TypeManager.decimal_type))
+					return true;
+				
+			} else if (expr_type == TypeManager.byte_type){
+				//
+				// From byte to short, ushort, int, uint, long, ulong, float, double
+				// 
+				if ((target_type == TypeManager.short_type) ||
+				    (target_type == TypeManager.ushort_type) ||
+				    (target_type == TypeManager.int32_type) ||
+				    (target_type == TypeManager.uint32_type) ||
+				    (target_type == TypeManager.uint64_type) ||
+				    (target_type == TypeManager.int64_type) ||
+				    (target_type == TypeManager.float_type) ||
+				    (target_type == TypeManager.double_type) ||
+				    (target_type == TypeManager.decimal_type))
+					return true;
+	
+			} else if (expr_type == TypeManager.short_type){
+				//
+				// From short to int, long, float, double
+				// 
+				if ((target_type == TypeManager.int32_type) ||
+				    (target_type == TypeManager.int64_type) ||
+				    (target_type == TypeManager.double_type) ||
+				    (target_type == TypeManager.float_type) ||
+				    (target_type == TypeManager.decimal_type))
+					return true;
+					
+			} else if (expr_type == TypeManager.ushort_type){
+				//
+				// From ushort to int, uint, long, ulong, float, double
+				//
+				if ((target_type == TypeManager.uint32_type) ||
+				    (target_type == TypeManager.uint64_type) ||
+				    (target_type == TypeManager.int32_type) ||
+				    (target_type == TypeManager.int64_type) ||
+				    (target_type == TypeManager.double_type) ||
+				    (target_type == TypeManager.float_type) ||
+				    (target_type == TypeManager.decimal_type))
+					return true;
+				    
+			} else if (expr_type == TypeManager.int32_type){
+				//
+				// From int to long, float, double
+				//
+				if ((target_type == TypeManager.int64_type) ||
+				    (target_type == TypeManager.double_type) ||
+				    (target_type == TypeManager.float_type) ||
+				    (target_type == TypeManager.decimal_type))
+					return true;
+					
+			} else if (expr_type == TypeManager.uint32_type){
+				//
+				// From uint to long, ulong, float, double
+				//
+				if ((target_type == TypeManager.int64_type) ||
+				    (target_type == TypeManager.uint64_type) ||
+				    (target_type == TypeManager.double_type) ||
+				    (target_type == TypeManager.float_type) ||
+				    (target_type == TypeManager.decimal_type))
+					return true;
+					
+			} else if ((expr_type == TypeManager.uint64_type) ||
+				   (expr_type == TypeManager.int64_type)) {
+				//
+				// From long/ulong to float, double
+				//
+				if ((target_type == TypeManager.double_type) ||
+				    (target_type == TypeManager.float_type) ||
+				    (target_type == TypeManager.decimal_type))
+					return true;
+				    
+			} else if (expr_type == TypeManager.char_type){
+				//
+				// From char to ushort, int, uint, long, ulong, float, double
+				// 
+				if ((target_type == TypeManager.ushort_type) ||
+				    (target_type == TypeManager.int32_type) ||
+				    (target_type == TypeManager.uint32_type) ||
+				    (target_type == TypeManager.uint64_type) ||
+				    (target_type == TypeManager.int64_type) ||
+				    (target_type == TypeManager.float_type) ||
+				    (target_type == TypeManager.double_type) ||
+				    (target_type == TypeManager.decimal_type))
+					return true;
+
+			} else if (expr_type == TypeManager.float_type){
+				//
+				// float to double
+				//
+				if (target_type == TypeManager.double_type)
+					return true;
+			}	
+			
+			// Next reference conversions
+
+			if (target_type == TypeManager.object_type) {
+				if ((expr_type.IsClass) ||
+				    (expr_type.IsValueType))
+					return true;
+				
+			} else if (expr_type.IsSubclassOf (target_type)) {
+				return true;
+				
+			} else {
+				// from any class-type S to any interface-type T.
+				if (expr_type.IsClass && target_type.IsInterface)
+					return true;
+				
+				// from any interface type S to interface-type T.
+				// FIXME : Is it right to use IsAssignableFrom ?
+				if (expr_type.IsInterface && target_type.IsInterface)
+					if (target_type.IsAssignableFrom (expr_type))
+						return true;
+				
+				// from an array-type S to an array-type of type T
+				if (expr_type.IsArray && target_type.IsArray) 
+					return true;
+				
+				// from an array-type to System.Array
+				if (expr_type.IsArray && target_type.IsAssignableFrom (expr_type))
+					return true;
+				
+				// from any delegate type to System.Delegate
+				if (expr_type.IsSubclassOf (TypeManager.delegate_type) &&
+				    target_type == TypeManager.delegate_type)
+					if (target_type.IsAssignableFrom (expr_type))
+						return true;
+					
+				// from any array-type or delegate type into System.ICloneable.
+				if (expr_type.IsArray || expr_type.IsSubclassOf (TypeManager.delegate_type))
+					if (target_type == TypeManager.cloneable_interface)
+						return true;
+				
+				// from the null type to any reference-type.
+				// FIXME : How do we do this ?
+
+			}
+
+			return false;
+		}
+		
+		// <summary>
+		//  Finds "most encompassed type" according to the spec (13.4.2)
+		//  amongst the methods in the MethodGroupExpr which convert from a
+		//  type encompassing source_type
+		// </summary>
+		static Type FindMostEncompassedType (TypeContainer tc, MethodGroupExpr me, Type source_type)
+		{
+			Type best = null;
+			
+			for (int i = me.Methods.Length; i > 0; ) {
+				i--;
+
+				MethodBase mb = me.Methods [i];
+				ParameterData pd = Invocation.GetParameterData (mb);
+				Type param_type = pd.ParameterType (0);
+
+				if (StandardConversionExists (source_type, param_type)) {
+					if (best == null)
+						best = param_type;
+					
+					if (StandardConversionExists (param_type, best))
+						best = param_type;
+				}
+			}
+
+			return best;
+		}
+		
+		// <summary>
+		//  Finds "most encompassing type" according to the spec (13.4.2)
+		//  amongst the methods in the MethodGroupExpr which convert to a
+		//  type encompassed by target_type
+		// </summary>
+		static Type FindMostEncompassingType (TypeContainer tc, MethodGroupExpr me, Type target)
+		{
+			Type best = null;
+			
+			for (int i = me.Methods.Length; i > 0; ) {
+				i--;
+				
+				MethodInfo mi = (MethodInfo) me.Methods [i];
+				Type ret_type = mi.ReturnType;
+				
+				if (StandardConversionExists (target, ret_type)) {
+					if (best == null)
+						best = ret_type;
+					
+					if (!StandardConversionExists (ret_type, best))
+						best = ret_type;
+				}
+				
+			}
+			
+			return best;
+
+		}
+		
+		
+		// <summary>
 		//   User-defined implicit conversions
 		// </summary>
 		static public Expression ImplicitUserConversion (TypeContainer tc, Expression source,
 								 Type target, Location l)
 		{
-			Expression mg1, mg2;
-			MethodBase method;
-			ArrayList arguments;
+			Expression mg1 = null, mg2 = null, mg3 = null, mg4 = null;
+			MethodBase method = null;
+			Type source_type = source.Type;
+
+			string op_name;
 			
-			mg1 = MemberLookup (tc, source.Type, "op_Implicit", false);
-			mg2 = MemberLookup (tc, target, "op_Implicit", false);
+			// If we have a boolean type, we need to check for the True operator
+
+			// FIXME : How does the False operator come into the picture ?
+			// FIXME : This doesn't look complete and very correct !
+			if (target == TypeManager.bool_type)
+				op_name = "op_True";
+			else
+				op_name = "op_Implicit";
 			
-			MethodGroupExpr union = Invocation.MakeUnionSet (mg1, mg2);
+			mg1 = MemberLookup (tc, source_type, op_name, false);
+
+			if (source_type.BaseType != null)
+				mg2 = MemberLookup (tc, source_type.BaseType, op_name, false);
+			
+			mg3 = MemberLookup (tc, target, op_name, false);
+
+			if (target.BaseType != null)
+				mg4 = MemberLookup (tc, target.BaseType, op_name, false);
+
+			MethodGroupExpr union1 = Invocation.MakeUnionSet (mg1, mg2);
+			MethodGroupExpr union2 = Invocation.MakeUnionSet (mg3, mg4);
+
+			MethodGroupExpr union  = Invocation.MakeUnionSet (union1, union2);
 
 			if (union != null) {
-				arguments = new ArrayList ();
-				arguments.Add (new Argument (source, Argument.AType.Expression));
 
-				method = Invocation.OverloadResolve (tc, union, arguments, l, true);
+				Type most_specific_source, most_specific_target;
 
-				if (method != null) { 
-					MethodInfo mi = (MethodInfo) method;
-					
-					if (mi.ReturnType == target)
-						return new UserImplicitCast (mi, arguments);
-				}
-			}
-			
-			// If we have a boolean type, we need to check for the True
-			// and False operators too.
-			
-			if (target == TypeManager.bool_type) {
+				most_specific_source = FindMostEncompassedType (tc, union, source_type);
 
-				mg1 = MemberLookup (tc, source.Type, "op_True", false);
-				mg2 = MemberLookup (tc, target, "op_True", false);
-				
-				union = Invocation.MakeUnionSet (mg1, mg2);
-
-				if (union == null)
+				if (most_specific_source == null)
 					return null;
+				
 
-				arguments = new ArrayList ();
-				arguments.Add (new Argument (source, Argument.AType.Expression));
-			
-				method = Invocation.OverloadResolve (tc, union, arguments, l, true);
-				if (method != null) {
-					MethodInfo mi = (MethodInfo) method;
+				most_specific_target = FindMostEncompassingType (tc, union, target);
 
-					if (mi.ReturnType == target) 
-						return new UserImplicitCast (mi, arguments);
+				if (most_specific_target == null) 
+					return null;
+				
+
+				int count = 0;
+				
+				for (int i = union.Methods.Length; i > 0;) {
+					i--;
+
+					MethodBase mb = union.Methods [i];
+					ParameterData pd = Invocation.GetParameterData (mb);
+					MethodInfo mi = (MethodInfo) union.Methods [i];
+
+					if (pd.ParameterType (0) == most_specific_source &&
+					    mi.ReturnType == most_specific_target) {
+						method = mb;
+						count++;
+					}
 				}
+
+				if (method == null || count > 1)
+					return null;
+				
+
+				return new UserImplicitCast ((MethodInfo) method, source, most_specific_source,
+							     most_specific_target);
+
 			}
 			
 			return null;
@@ -704,6 +952,7 @@ namespace CIR {
 				if (i.Value == 0)
 					return new EmptyCast (expr, target_type);
 			}
+
 			return null;
 		}
 
@@ -1334,9 +1583,10 @@ namespace CIR {
 			return ConvertImplicit (tc, expr, target_type, new Location (-1));
 		}
 
-		void report23 (Report r, Type t)
+		void error23 (TypeContainer tc, Type t)
 		{
-			r.Error (23, "Operator " + OperName () + " cannot be applied to operand of type `" +
+			tc.RootContext.Report.Error (23, location, "Operator " + OperName () +
+				 " cannot be applied to operand of type `" +
 				 TypeManager.CSharpName (t) + "'");
 		}
 
@@ -1380,8 +1630,8 @@ namespace CIR {
 				op_name = "op_" + oper;
 
 			mg = MemberLookup (tc, expr_type, op_name, false);
-
-			if (mg == null && expr_type != TypeManager.object_type)
+			
+			if (mg == null && expr_type.BaseType != null)
 				mg = MemberLookup (tc, expr_type.BaseType, op_name, false);
 			
 			if (mg != null) {
@@ -1392,10 +1642,13 @@ namespace CIR {
 								     Arguments, location);
 				if (method != null) {
 					MethodInfo mi = (MethodInfo) method;
-
 					type = mi.ReturnType;
 					return this;
+				} else {
+					error23 (tc, expr_type);
+					return null;
 				}
+					
 			}
 
 			//
@@ -1410,7 +1663,7 @@ namespace CIR {
 			
 			if (oper == Operator.Negate){
 				if (expr_type != TypeManager.bool_type) {
-					report23 (tc.RootContext.Report, expr.Type);
+					error23 (tc, expr.Type);
 					return null;
 				}
 				
@@ -1424,7 +1677,7 @@ namespace CIR {
 				      (expr_type == TypeManager.int64_type) ||
 				      (expr_type == TypeManager.uint64_type) ||
 				      (expr_type.IsSubclassOf (TypeManager.enum_type)))){
-					report23 (tc.RootContext.Report, expr.Type);
+					error23 (tc, expr.Type);
 					return null;
 				}
 				type = expr_type;
@@ -1502,7 +1755,7 @@ namespace CIR {
 					// -92233720368547758087 (-2^63) to be written as
 					// decimal integer literal.
 					//
-					report23 (tc.RootContext.Report, expr_type);
+					error23 (tc, expr_type);
 					return null;
 				}
 
@@ -1527,7 +1780,7 @@ namespace CIR {
 					return this;
 				}
 
-				report23 (tc.RootContext.Report, expr_type);
+				error23 (tc, expr_type);
 				return null;
 			}
 
@@ -2045,15 +2298,29 @@ namespace CIR {
 
 				type = TypeManager.decimal_type;
 			} else {
-				left = ForceConversion (tc, left, TypeManager.int32_type);
-				right = ForceConversion (tc, right, TypeManager.int32_type);
+				Expression l_tmp, r_tmp;
+
+				l_tmp = ForceConversion (tc, left, TypeManager.int32_type);
+				if (l_tmp == null) {
+					error19 (tc);
+					left = l_tmp;
+					return;
+				}
+				
+				r_tmp = ForceConversion (tc, right, TypeManager.int32_type);
+				if (r_tmp == null) {
+					error19 (tc);
+					right = r_tmp;
+					return;
+				}
+				
 				type = TypeManager.int32_type;
 			}
 		}
 
 		void error19 (TypeContainer tc)
 		{
-			Error (tc, 19,
+			Error (tc, 19, location,
 			       "Operator " + OperName () + " cannot be applied to operands of type `" +
 			       TypeManager.CSharpName (left.Type) + "' and `" +
 			       TypeManager.CSharpName (right.Type) + "'");
@@ -2101,31 +2368,31 @@ namespace CIR {
 			string op = "op_" + oper;
 
 			left_expr = MemberLookup (tc, l, op, false);
-
-			if (left_expr == null && l != TypeManager.object_type)
+			if (left_expr == null && l.BaseType != null)
 				left_expr = MemberLookup (tc, l.BaseType, op, false);
 			
 			right_expr = MemberLookup (tc, r, op, false);
-			if (right_expr != null && r != TypeManager.object_type)
+			if (right_expr == null && r.BaseType != null)
 				right_expr = MemberLookup (tc, r.BaseType, op, false);
 			
-
 			MethodGroupExpr union = Invocation.MakeUnionSet (left_expr, right_expr);
-
+			
 			if (union != null) {
 				Arguments = new ArrayList ();
 				Arguments.Add (new Argument (left, Argument.AType.Expression));
 				Arguments.Add (new Argument (right, Argument.AType.Expression));
-			
+				
 				method = Invocation.OverloadResolve (tc, union, Arguments, location);
 				if (method != null) {
 					MethodInfo mi = (MethodInfo) method;
-					
 					type = mi.ReturnType;
 					return this;
+				} else {
+					error19 (tc);
+					return null;
 				}
 			}	
-			
+
 			//
 			// Step 2: Default operations on CLI native types.
 			//
@@ -2193,6 +2460,7 @@ namespace CIR {
 			if (left == null || right == null)
 				return null;
 
+			
 			if (oper == Operator.BitwiseAnd ||
 			    oper == Operator.BitwiseOr ||
 			    oper == Operator.ExclusiveOr){
@@ -2214,7 +2482,7 @@ namespace CIR {
 			    oper == Operator.GreaterThan){
 				type = TypeManager.bool_type;
 			}
-			
+
 			return this;
 		}
 		
@@ -2916,7 +3184,7 @@ namespace CIR {
 		//   Returns the Parameters (a ParameterData interface) for the
 		//   Method `mb'
 		// </summary>
-		static ParameterData GetParameterData (MethodBase mb)
+		public static ParameterData GetParameterData (MethodBase mb)
 		{
 			object pd = method_parameter_cache [mb];
 
@@ -3191,7 +3459,7 @@ namespace CIR {
 				i--;
 				sb.Append (TypeManager.CSharpName (pd.ParameterType (i)));
 				if (i != 0)
-					sb.Append (",");
+					sb.Append (", ");
 			}
 			
 			sb.Append (")");
@@ -3200,36 +3468,67 @@ namespace CIR {
 
 		public static MethodGroupExpr MakeUnionSet (Expression mg1, Expression mg2)
 		{
-
-			if (mg1 != null || mg2 != null) {
-					
+			MemberInfo [] miset;
+			MethodGroupExpr union;
+			
+			if (mg1 != null && mg2 != null) {
+				
 				MethodGroupExpr left_set = null, right_set = null;
 				int length1 = 0, length2 = 0;
 				
-				if (mg1 != null) {
-					left_set = (MethodGroupExpr) mg1;
-					length1 = left_set.Methods.Length;
+				left_set = (MethodGroupExpr) mg1;
+				length1 = left_set.Methods.Length;
+				
+				right_set = (MethodGroupExpr) mg2;
+				length2 = right_set.Methods.Length;
+
+				ArrayList common = new ArrayList ();
+				
+				for (int i = 0; i < left_set.Methods.Length; i++) {
+					for (int j = 0; j < right_set.Methods.Length; j++) {
+						if (left_set.Methods [i] == right_set.Methods [j]) 
+							common.Add (left_set.Methods [i]);
+					}
 				}
 				
-				if (mg2 != null) {
-					right_set = (MethodGroupExpr) mg2;
-					length2 = right_set.Methods.Length;
-				}
+				miset = new MemberInfo [length1 + length2 - common.Count];
+
+				left_set.Methods.CopyTo (miset, 0);
+
+				int k = 0;
 				
-				MemberInfo [] miset = new MemberInfo [length1 + length2];
-				if (left_set != null)
-					left_set.Methods.CopyTo (miset, 0);
-				if (right_set != null)
-					right_set.Methods.CopyTo (miset, length1);
+				for (int j = 0; j < right_set.Methods.Length; j++)
+					if (!common.Contains (right_set.Methods [j]))
+						miset [length1 + k++] = right_set.Methods [j];
 				
-				MethodGroupExpr union = new MethodGroupExpr (miset);
+				union = new MethodGroupExpr (miset);
 
 				return union;
+
+			} else if (mg1 == null && mg2 != null) {
 				
+				MethodGroupExpr me = (MethodGroupExpr) mg2; 
+				
+				miset = new MemberInfo [me.Methods.Length];
+				me.Methods.CopyTo (miset, 0);
+
+				union = new MethodGroupExpr (miset);
+				
+				return union;
+
+			} else if (mg2 == null && mg1 != null) {
+				
+				MethodGroupExpr me = (MethodGroupExpr) mg1; 
+				
+				miset = new MemberInfo [me.Methods.Length];
+				me.Methods.CopyTo (miset, 0);
+
+				union = new MethodGroupExpr (miset);
+				
+				return union;
 			}
-
+			
 			return null;
-
 		}
 
 		// <summary>
@@ -4042,12 +4341,17 @@ namespace CIR {
 
 	public class UserImplicitCast : Expression {
 		MethodBase method;
-		ArrayList  arguments;
+		Expression source;
+		Type       most_specific_source;
+		Type       most_specific_target;
 		
-		public UserImplicitCast (MethodInfo method, ArrayList arguments)
+		public UserImplicitCast (MethodInfo method, Expression source, Type most_specific_source,
+					 Type most_specific_target)
 		{
 			this.method = method;
-			this.arguments = arguments;
+			this.source = source;
+			this.most_specific_source = most_specific_source;
+			this.most_specific_target = most_specific_target;
 			type = method.ReturnType;
 			eclass = ExprClass.Value;
 		}
@@ -4063,11 +4367,12 @@ namespace CIR {
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			
+			Location tmp = new Location (-1);
+
 			// Note that operators are static anyway
-				
-			if (arguments != null) 
-				Invocation.EmitArguments (ec, method, arguments);
+
+			Expression e = ConvertImplicitStandard (ec.parent, source, most_specific_source, tmp);
+			e.Emit (ec);
 			
 			if (method is MethodInfo)
 				ig.Emit (OpCodes.Call, (MethodInfo) method);
