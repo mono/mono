@@ -1,3 +1,7 @@
+2004-09-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ConstructorBuilder.cs: Add 2.0 GetILGenerator(size) method.
+
 2004-09-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* UnmanagedMarshal.cs: Add ToMarshalAsAttribute method.

@@ -183,7 +183,13 @@ namespace System.Reflection.Emit {
 		public ILGenerator GetILGenerator () {
 			return GetILGenerator (64);
 		}
-		internal ILGenerator GetILGenerator (int size) {
+
+#if NET_2_0
+		public
+#else
+		internal 
+#endif
+		ILGenerator GetILGenerator (int size) {
 			ilgen = new ILGenerator (type.Module, ((ModuleBuilder)type.Module).GetTokenGenerator (), size);
 			return ilgen;
 		}
