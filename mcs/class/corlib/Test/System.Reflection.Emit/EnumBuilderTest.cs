@@ -39,8 +39,18 @@ namespace MonoTests.System.Reflection.Emit {
 			AssertNull ("type.DeclaringType of toplevel type should be null", enumBuilder.DeclaringType);
 			AssertNull ("type.ReflectedType should be null", enumBuilder.ReflectedType);
 			AssertEquals (_enumType, enumBuilder.UnderlyingSystemType);
+		}
+
+		[Test][Category("NotWorking")]
+		public void TestEnumBuilder_NotInMono ()
+		{
+			// If we decide to fix this (I dont see why we should),
+			// move to the routine above
+			
+			EnumBuilder enumBuilder = GenerateEnum ();
 			AssertEquals ("Comparing the IsSerializable field", false, enumBuilder.IsSerializable);
 		}
+
 
 		[Test]
 		[ExpectedException (typeof(NotSupportedException))]

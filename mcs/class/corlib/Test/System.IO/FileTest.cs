@@ -613,7 +613,8 @@ namespace MonoTests.System.IO
                 
 
 
-                [Test]
+		// Setting the creation time on Unix is not possible
+                [Test][Category("NotWorking")]
                 public void CreationTime ()
                 {
                         string path = TempFolder + Path.DirectorySeparatorChar + "creationTime";                	

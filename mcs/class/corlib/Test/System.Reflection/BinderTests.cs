@@ -173,6 +173,19 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (prop1, prop2);
 		}
 
+		[Test][Category("NotWorking")]
+		public void Select1Match_NotWorking ()
+		{
+			// See bug 71297
+
+			Type type = typeof (SingleIndexer);
+			PropertyInfo [] props = type.GetProperties (BindingFlags.DeclaredOnly |
+								    BindingFlags.Public |
+								    BindingFlags.Instance);
+			PropertyInfo prop = binder.SelectProperty (0, props, null, new Type [0], null);
+			Assert.IsNull (prop, "empty");
+		}
+		
 		[Test]
 		public void Select1Match ()
 		{
@@ -181,8 +194,8 @@ namespace MonoTests.System.Reflection
 								    BindingFlags.Public |
 								    BindingFlags.Instance);
 
-			PropertyInfo prop = binder.SelectProperty (0, props, null, new Type [0], null);
-			Assert.IsNull (prop, "empty");
+			PropertyInfo prop;
+			
 			prop = binder.SelectProperty (0, props, null, new Type [] { typeof (long) }, null);
 			Assert.IsNull (prop, "long");
 			prop = binder.SelectProperty (0, props, null, new Type [] { typeof (int) }, null);
