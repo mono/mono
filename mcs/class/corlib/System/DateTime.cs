@@ -405,7 +405,7 @@ namespace System
 
 		public DateTime AddDays (double days)
 		{
-			return AddMilliseconds (days * 86400000);
+			return AddMilliseconds (Math.Round (days * 86400000));
 		}
 		
 		public DateTime AddTicks (long t)
