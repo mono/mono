@@ -2113,8 +2113,8 @@ public class TypeManager {
 	[Flags]
 	public enum MethodFlags {
 		IsObsolete = 1,
-		IsObsoleteError = 2,
-		ShouldIgnore = 3
+		IsObsoleteError = 1 << 1,
+		ShouldIgnore = 1 << 2
 	}
 	
 	//

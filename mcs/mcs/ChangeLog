@@ -1,3 +1,8 @@
+2003-08-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* typemanager.cs: fixed the values of MethodFlags. Closes #47855 and
+	#47854.
+
 2003-08-22  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (TypeManager.DefineType): When defining a nested type,
