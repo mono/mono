@@ -38,11 +38,13 @@ namespace System.Collections {
 		private int modificationCount;
 		private Slot[] table;
 		private IComparer comparer;
+		private int defaultCapacity;
 
 		//
 		// Constructors
 		//
-		public SortedList () : this (INITIAL_SIZE)
+		public SortedList () 
+			: this (null, INITIAL_SIZE)
 		{
 		}
 
@@ -54,7 +56,12 @@ namespace System.Collections {
 		public SortedList (IComparer comparer, int initialCapacity)
 		{
 			if (initialCapacity < 0)
-				throw new ArgumentOutOfRangeException();
+				throw new ArgumentOutOfRangeException ("initialCapacity");
+
+			if (initialCapacity == 0)
+				defaultCapacity = 0;
+			else
+				defaultCapacity = INITIAL_SIZE;
 
 			this.comparer = comparer;
 			InitTable (initialCapacity, true);
@@ -174,13 +181,13 @@ namespace System.Collections {
 				}
 				else if (value == 0) {
 					// return to default size
-                                        Slot [] newTable = new Slot [INITIAL_SIZE];
+                                        Slot [] newTable = new Slot [defaultCapacity];
                                         Array.Copy (table, newTable, inUse);
                                         this.table = newTable;
 				}
 #if NET_1_0
-				else if (current > INITIAL_SIZE && value < current) {
-                                        Slot [] newTable = new Slot [INITIAL_SIZE];
+				else if (current > defaultCapacity && value < current) {
+                                        Slot [] newTable = new Slot [defaultCapacity];
                                         Array.Copy (table, newTable, inUse);
                                         this.table = newTable;
                                 }
@@ -220,7 +227,8 @@ namespace System.Collections {
 
 		public virtual void Clear () 
 		{
-			this.table = new Slot [INITIAL_SIZE];
+			defaultCapacity = INITIAL_SIZE;
+			this.table = new Slot [defaultCapacity];
 			inUse = 0;
 			modificationCount++;
 		}
@@ -418,7 +426,7 @@ namespace System.Collections {
 			// of the SortedList to the default capacity,
 			// not zero.
 			if (Count == 0)
-                                Resize (INITIAL_SIZE, false);
+                                Resize (defaultCapacity, false);
 			else
                                 Resize (Count, true);
 		}
@@ -526,8 +534,10 @@ namespace System.Collections {
 			InitTable (capacity, false);
 		}
 
-		private void InitTable (int capacity, bool forceSize) {
-			if (!forceSize && (capacity < INITIAL_SIZE)) capacity = INITIAL_SIZE;
+		private void InitTable (int capacity, bool forceSize) 
+		{
+			if (!forceSize && (capacity < defaultCapacity))
+				capacity = defaultCapacity;
 			this.table = new Slot [capacity];
 			this.inUse = 0;
 			this.modificationCount = 0;
