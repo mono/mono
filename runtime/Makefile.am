@@ -83,7 +83,7 @@ $(monobins_DATA):
 	-cp $(top_srcdir)/../mcs/tools/genxs/genxs.exe . || cp $(monobinsdir)/genxs.exe .
 	-cp $(top_srcdir)/../mcs/tools/SqlSharp/sqlsharp.exe . || cp $(monobinsdir)/genxs.exe .
 	-cp $(top_srcdir)/../mcs/tools/security/chktrust.exe . || cp $(monobinsdir)/chktrust.exe .
-	-cp $(top_srcdir)/../.mcs/tools/security/signcode.exe . || cp $(monobinsdir)/signcode.exe .
+	-cp $(top_srcdir)/../mcs/tools/security/signcode.exe . || cp $(monobinsdir)/signcode.exe .
         
 dist-hook:
 	for i in $(monobins_DATA) $(assemblies_DATA); do	\
