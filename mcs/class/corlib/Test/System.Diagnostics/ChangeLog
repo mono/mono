@@ -1,3 +1,7 @@
+2004-08-29  Nick Drochak <ndrochak@ieee.com>
+
+	* StackFrameTest.cs : Ignore tests that fail on MS.NET.
+
 2004-08-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StackFrameTest.cs: Added new unit tests to validate exceptions.

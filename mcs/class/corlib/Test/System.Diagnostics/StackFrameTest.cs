@@ -135,8 +135,10 @@ namespace MonoTests.System.Diagnostics {
                                    frame1.GetFileName());
                                      
                 }
-
+		[Ignore("Does not pass on .NET because of AppDomain/StackFrame usage")]
 		public void TestGetFileName2() {
+						AssertNotNull("File name not null", frame2.GetFileName());
+						Assert("File name not empty", frame2.GetFileName().Length == 0);
                         Assert("File name (2) " + frame2.GetFileName()
                                         + " ends with StackFrameTest.cs",
                                frame2.GetFileName().EndsWith("StackFrameTest.cs"));
@@ -254,6 +256,7 @@ namespace MonoTests.System.Diagnostics {
                 /// <summary>
                 ///   Tests whether getting file name works.
                 /// </summary>
+		[Ignore("Does not pass on .NET because of AppDomain/StackFrame usage")]
                 public void TestGetFileName() {
                         AssertNull("File name (1)",
                                    frame1.GetFileName());
