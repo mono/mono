@@ -2,7 +2,7 @@ MCS=../mcs/compiler
 CSC=csc
 
 TEST_SOURCES = \
-	test-1 test-4 test-6 test-7 test-8 test-9 test-10 test-11
+	test-1 test-4 test-6 test-7 test-8 test-9 test-10 test-11 test-12
 
 TEST_NOPASS = \
 	test-2 test-3 test-5
