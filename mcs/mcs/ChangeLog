@@ -1,3 +1,7 @@
+2002-10-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* typemanager.cs (IsUnmanagedtype): Finish implementation.
+
 2002-10-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs: Use StoreFromPtr instead of extracting the type
