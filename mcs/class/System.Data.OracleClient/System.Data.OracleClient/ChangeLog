@@ -1,3 +1,8 @@
+2005-02-22  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* OracleCommand.cs: set behavior for execute reader.
+        fixes bug #72607.
+
 2004-12-19  Daniel Morgan <danielmorgan@verizon.net>
 
 	* OracleCommand.cs: ExecuteReader needs to be able 

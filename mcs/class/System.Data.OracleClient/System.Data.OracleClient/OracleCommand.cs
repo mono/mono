@@ -313,6 +313,8 @@ namespace System.Data.OracleClient {
 			AssertNoDataReader ();
 			bool hasRows = false;
 
+			this.behavior = behavior;
+
 			if (Transaction != null) 
 				Transaction.AttachToServiceContext ();
 			
