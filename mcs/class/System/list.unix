@@ -190,6 +190,7 @@ System.ComponentModel/AttributeCollection.cs
 System.ComponentModel/DesignerSerializationVisibilityAttribute.cs
 System.ComponentModel/PropertyDescriptor.cs
 System.ComponentModel/Container.cs
+System.ComponentModel/DesignerAttribute.cs
 System.ComponentModel/DesignOnlyAttribute.cs
 System.ComponentModel/EventHandlerList.cs
 System.ComponentModel/MemberDescriptor.cs
@@ -213,6 +214,7 @@ System.ComponentModel/IEditableObject.cs
 System.ComponentModel/IExtenderProvider.cs
 System.ComponentModel/EventDescriptor.cs
 System.ComponentModel/DefaultValueAttribute.cs
+System.ComponentModel/EditorAttribute.cs
 System.ComponentModel/EditorBrowsableAttribute.cs
 System.ComponentModel/EditorBrowsableState.cs
 System.ComponentModel/EventDescriptorCollection.cs
