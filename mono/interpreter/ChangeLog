@@ -1,4 +1,9 @@
 
+Thu Jan 3 23:19:27 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: temporary mul.ovf, mul.ovf.un, add.ovf.un implementations
+	to get the compiler going.
+
 Mon Dec 24 17:23:45 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: fix ldc.i8.
