@@ -684,6 +684,20 @@ namespace System.Windows.Forms
 	}
 	#endregion
 
+	#region SYSTIME
+	[ StructLayout( LayoutKind.Sequential )]
+	public class SYSTIME
+	{
+		public ushort wYear; 
+		public ushort wMonth; 
+		public ushort wDayOfWeek; 
+		public ushort wDay; 
+		public ushort wHour; 
+		public ushort wMinute; 
+		public ushort wSecond; 
+		public ushort wMilliseconds; 
+	}
+	#endregion
 
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct MSG {

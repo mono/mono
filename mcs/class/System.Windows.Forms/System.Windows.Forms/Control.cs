@@ -2546,7 +2546,9 @@
 					break;
 				case Msg.WM_HSCROLL:
 				case Msg.WM_VSCROLL:
-					Control.ReflectMessage( m.LParam, ref m );
+					if(!Control.ReflectMessage( m.LParam, ref m )) {
+    					CallControlWndProc(ref m);
+					}
 					break;
 				default:
 					CallControlWndProc(ref m);

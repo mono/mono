@@ -652,6 +652,7 @@
     
     		protected override void OnCreateControl ()
     		{
+			OnLoad ( EventArgs.Empty );
     			base.OnCreateControl ();
     		}
     

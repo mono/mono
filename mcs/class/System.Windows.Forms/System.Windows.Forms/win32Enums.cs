@@ -2425,7 +2425,62 @@ namespace System.Windows.Forms{
 	}
 	#endregion
 
-	internal enum OwnerDrawTypes : int {
+	#region DateTimePicker Control Styles
+	public enum DateTimePickerControlStyles 
+	{
+		DTS_UPDOWN    =       0x0001,
+		DTS_SHOWNONE  =       0x0002,
+		DTS_SHORTDATEFORMAT = 0x0000,
+		DTS_LONGDATEFORMAT  = 0x0004,
+		DTS_TIMEFORMAT      = 0x0009,
+		DTS_APPCANPARSE     = 0x0010,
+		DTS_RIGHTALIGN      = 0x0020
+	}
+	#endregion
+
+	#region DateTimePicker Control Messages
+	internal enum DateTimePickerMessages 
+	{
+		DTM_FIRST		=  0x1000,
+		DTM_GETSYSTEMTIME	= (DTM_FIRST + 1),
+		DTM_SETSYSTEMTIME	= (DTM_FIRST + 2),
+		DTM_GETRANGE		= (DTM_FIRST + 3),
+		DTM_SETRANGE		= (DTM_FIRST + 4),
+		DTM_SETFORMATA		= (DTM_FIRST + 5),
+		DTM_SETMCCOLOR		= (DTM_FIRST + 6),
+		DTM_GETMCCOLOR		= (DTM_FIRST + 7),
+		DTM_GETMONTHCAL		= (DTM_FIRST + 8),
+		DTM_SETMCFONT		= (DTM_FIRST + 9),
+		DTM_GETMCFONT		= (DTM_FIRST + 10),
+		DTM_SETFORMATW		= (DTM_FIRST + 50)
+	}
+	#endregion
+
+	#region DateTimePicker Control Flags
+	internal enum DateTimePickerFlags
+	{
+		GDT_ERROR    = -1,
+		GDT_VALID    = 0,
+		GDT_NONE     = 1,
+		GDTR_MIN     = 0x0001,
+		GDTR_MAX     = 0x0002
+	}
+	#endregion
+
+	#region MonthCal Colors
+	internal enum MonthCalColors
+	{
+		MCSC_BACKGROUND   = 0,
+		MCSC_TEXT         = 1,
+		MCSC_TITLEBK      = 2,
+		MCSC_TITLETEXT    = 3,
+		MCSC_MONTHBK      = 4,
+		MCSC_TRAILINGTEXT = 5
+	}
+	#endregion
+
+	internal enum OwnerDrawTypes : int 
+	{
 		ODT_COMBOBOX = 3,
 		ODT_LISTBOX = 2,
 		ODT_LISTVIEW = 102,

@@ -4,10 +4,14 @@
 // Author:
 //   stubbed out by Richard Baumann (biochem333@nyc.rr.com)
 //   Dennis Hayes (dennish@Raytek.com)
+//   Aleksey Ryabchuk (ryabchuk@yahoo.com)
 //
 // (C) Ximian, Inc., 2002
 //
 using System.Drawing;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
+
 namespace System.Windows.Forms {
 
 	// <summary>
@@ -47,7 +51,7 @@ namespace System.Windows.Forms {
 		private int preferredHeight;
 		private bool showCheckBox;
 		private bool showUpDown;
-		private DateTime value;
+		private DateTime val;
 
 		//
 		//  --- Constructors/Destructors
@@ -57,6 +61,7 @@ namespace System.Windows.Forms {
 		public DateTimePicker() : base()
 		{
 			// defaults :)
+			calendarFont = Control.DefaultFont;
 			calendarForeColor = ForeColor;
 			calendarMonthBackground = DefaultMonthBackColor;
 			calendarTitleBackColor = DefaultTitleBackColor;
@@ -70,6 +75,8 @@ namespace System.Windows.Forms {
 			minDate = MinDateTime;
 			showCheckBox = false;
 			showUpDown = false;
+			val = DateTime.Now;
+			Size = DefaultSize;
 		}
 
 		[MonoTODO]
@@ -109,7 +116,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void CreateHandle()
 		{
-			//FIXME: Just to get it running
+			initCommonControlsLibrary();
 			base.CreateHandle();
 		}
 
@@ -127,22 +134,14 @@ namespace System.Windows.Forms {
 			return base.IsInputKey(keyData);
 		}
 
-		[MonoTODO]
-		protected virtual void OnCloseUp(EventArgs e)
-		{
-			if (CloseUp != null) {
-
-				CloseUp(this, e);
-			}
+		protected virtual void OnCloseUp(EventArgs e) {
+			if ( CloseUp != null ) 
+				CloseUp( this, e );
 		}
 
-		[MonoTODO]
-		protected virtual void OnDropDown(EventArgs e)
-		{
-			if (DropDown != null) {
-
-				DropDown(this, e);
-			}
+		protected virtual void OnDropDown(EventArgs e)	{
+			if ( DropDown != null )
+				DropDown( this, e );
 		}
 
 		[MonoTODO]
@@ -154,31 +153,33 @@ namespace System.Windows.Forms {
 			//}
 		}
 
-		[MonoTODO]
-		protected virtual void OnFormatChanged(EventArgs e)
-		{
-			if (FormatChanged != null) {
-
+		protected virtual void OnFormatChanged(EventArgs e) {
+			if (FormatChanged != null)
 				FormatChanged(this, e);
-			}
 		}
 
 		[MonoTODO]
 		protected override void OnSystemColorsChanged(EventArgs e)
 		{
-			//FIXME:
+			//FIXME: update default colors
 			//if (SystemColorsChanged != null) {
 			//	SystemColorsChanged(this, e);
 			//}
+			base.OnSystemColorsChanged( e );
 		}
 
-		[MonoTODO]
-		protected virtual void OnValueChanged(EventArgs e)
-		{
-			if (ValueChanged != null) {
+		protected override void OnHandleCreated(EventArgs e) {
+			base.OnHandleCreated(e);
+			setControlRange( (int)( DateTimePickerFlags.GDTR_MIN | DateTimePickerFlags.GDTR_MAX ) );
+			setControlValue( );
+			setCalendarColors( );
+			setCustomFormat( );
+			setCalendarFont( );
+		}
 
+		protected virtual void OnValueChanged(EventArgs e) {
+			if (ValueChanged != null) 
 				ValueChanged(this, e);
-			}
 		}
 
 		[MonoTODO]
@@ -201,174 +202,178 @@ namespace System.Windows.Forms {
 		public event EventHandler CloseUp;
 		public event EventHandler DropDown;
 		public event EventHandler FormatChanged;
-		//public new event PaintEventHandler Paint; // This event is internal to the .NET framework.
 		public event EventHandler ValueChanged;
 
 		
 		//  --- Public Properties
 		
-		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override Color BackColor {
-
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+			get {	return base.BackColor;	}
+			set {	base.BackColor = value; }
 		}
 
-		[MonoTODO]
-		public override Image BackgroundImage {
-
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
+		public override Image BackgroundImage 	{
+			get {	return base.BackgroundImage; }
+			set {	base.BackgroundImage = value;}
 		}
 
-		[MonoTODO]
 		public Font CalendarFont {
-
-			get {
-				throw new NotImplementedException ();
-			}
+			get {	return calendarFont; }
 			set {
-				//FIXME:
+				calendarFont = value;
+				setCalendarFont( );
 			}
 		}
 
-		[MonoTODO]
 		public Color CalendarForeColor {
-
-			get {
-				throw new NotImplementedException ();
-			}
+			get {	return calendarForeColor; }
 			set {
-				//FIXME:
+				if ( calendarForeColor != value ) {
+					calendarForeColor = value;
+					setCalendarColor( (int) MonthCalColors.MCSC_TEXT, value );
+				}
 			}
 		}
 
-		[MonoTODO]
 		public Color CalendarMonthBackground {
-
-			get {
-				throw new NotImplementedException ();
-			}
+			get {	return calendarMonthBackground; }
 			set {
-				//FIXME:
+				if ( calendarMonthBackground != value ) {
+					calendarMonthBackground = value;
+					setCalendarColor( (int) MonthCalColors.MCSC_MONTHBK, value );
+				}
 			}
 		}
 
-		[MonoTODO]
 		public Color CalendarTitleBackColor {
-
-			get {
-				throw new NotImplementedException ();
-			}
+			get {	return calendarTitleBackColor; }
 			set {
-				//FIXME:
+				if ( calendarTitleBackColor != value ) {
+					calendarTitleBackColor = value;
+					setCalendarColor( (int) MonthCalColors.MCSC_TITLEBK, value );
+				}
 			}
 		}
 
-		[MonoTODO]
 		public Color CalendarTitleForeColor {
-
-			get {
-				throw new NotImplementedException ();
-			}
+			get {	return calendarTitleForeColor; }
 			set {
-				//FIXME:
+				if ( calendarTitleForeColor != value ) 	{
+					calendarTitleForeColor = value;
+					setCalendarColor( (int) MonthCalColors.MCSC_TITLETEXT, value );
+				}
 			}
 		}
 
-		[MonoTODO]
 		public Color CalendarTrailingForeColor {
-
-			get {
-				throw new NotImplementedException ();
-			}
+			get {	return calendarTrailingForeColor; }
 			set {
-				//FIXME:
+				if ( calendarTrailingForeColor != value ) {
+					calendarTrailingForeColor = value;
+					setCalendarColor( (int) MonthCalColors.MCSC_TRAILINGTEXT, value );
+				}
 			}
 		}
 
-		[MonoTODO]
 		public bool Checked {
-
-			get {
-				throw new NotImplementedException ();
+			get {	
+				if ( ShowCheckBox )
+					getControlValue ( false ); // don't actually update the Value property
+				return CHecked;
 			}
-			set {
-				//FIXME:
+			set {	
+				CHecked = value;
+				if ( ShowCheckBox )
+					setCheckState ( );
 			}
 		}
 
-		[MonoTODO]
 		public string CustomFormat {
-
-			get {
-				throw new NotImplementedException ();
-			}
+			get {	return customFormat; }
 			set {
-				//FIXME:
+				customFormat = value;
+				setCustomFormat ( );
 			}
 		}
 
-		[MonoTODO]
-		public LeftRightAlignment DropDownAlign {
+		public LeftRightAlignment DropDownAlign 
+		{
+			get {	return dropDownAlign; }
+			set {	
+				if ( !Enum.IsDefined ( typeof(LeftRightAlignment), value ) )
+					throw new InvalidEnumArgumentException( "DropDownAlign",
+						(int)value,
+						typeof(LeftRightAlignment));
 
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
+				if ( dropDownAlign != value ) {
+					dropDownAlign = value;
+					if ( IsHandleCreated )
+						RecreateHandle();
+				}
 			}
 		}
 
-		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Color ForeColor {
-			//FIXME: Just to get it to run
-			get {
-				return base.ForeColor;
-			}
-			set {
-				base.ForeColor = value;
-			}
+			get {	return base.ForeColor;	}
+			set {	base.ForeColor = value;	}
 		}
 
-		[MonoTODO]
 		public DateTimePickerFormat Format {
-
-			get {
-				throw new NotImplementedException (); 
-			}
+			get {	return format;	}
 			set {
-				//FIXME:
+				if ( !Enum.IsDefined ( typeof(DateTimePickerFormat), value ) )
+					throw new InvalidEnumArgumentException( "Format",
+						(int)value,
+						typeof(DateTimePickerFormat));
+
+				if ( format != value ) {
+					int StyleToRemove = formatStyle ( format );
+					format = value;
+					if ( IsHandleCreated )
+						Win32.UpdateWindowStyle ( Handle, StyleToRemove, formatStyle ( format ) );
+					OnFormatChanged( EventArgs.Empty );
+				}
 			}
 		}
 
-		[MonoTODO]
 		public DateTime MaxDate {
-
-			get {
-				throw new NotImplementedException ();
-			}
+			get {	return maxDate; }
 			set {
-				//FIXME:
+				if ( value == maxDate )
+					return;
+				
+				if ( value < MinDate )
+					throw new ArgumentException (
+						string.Format ("'{0}' is not a valid value for 'MaxDate'. 'MaxDate'  must be greater than or equal to MinDate", value ) );
+
+				if ( value > MaxDateTime )
+					throw new ArgumentException (
+						string.Format ("DateTimePicker does not support dates after {0}.", MaxDateTime ) );
+
+				maxDate = value;
+				setControlRange	( (int)DateTimePickerFlags.GDTR_MAX );
 			}
 		}
 
-		[MonoTODO]
 		public DateTime MinDate {
-
-			get {
-				throw new NotImplementedException ();
-			}
+			get {	return minDate;	}
 			set {
-				//FIXME:
+				if ( value == minDate )
+					return;
+
+				if ( value >= MaxDate )
+					throw new ArgumentException (
+					string.Format ("'{0}' is not a valid value for 'MinDate'. 'MinDate' must be less than MaxDate.", value ) );
+
+				if ( value < MinDateTime )
+					throw new ArgumentException (
+					string.Format ("DateTimePicker does not support dates before {0}.", MinDateTime ) );
+
+				minDate = value;
+				setControlRange	( (int)DateTimePickerFlags.GDTR_MIN );
 			}
 		}
 
@@ -379,47 +384,46 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
 		public bool ShowCheckBox {
-
-			get {
-				throw new NotImplementedException ();
-			}
+			get {	return showCheckBox; }
 			set {
-				//FIXME:
+				if ( showCheckBox != value ) {
+					showCheckBox = value;
+					if ( IsHandleCreated )
+						RecreateHandle();
+				}
 			}
 		}
 
-		[MonoTODO]
 		public bool ShowUpDown {
-
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
+			get {	return showUpDown; }
+			set {	
+				if ( showUpDown != value ) {
+					showUpDown = value;
+					if ( IsHandleCreated )
+						RecreateHandle();
+				}
 			}
 		}
 
-		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override string Text {
-			//FIXME: just to get it to run
-			get {
-				return base.Text;
-			}
-			set {
-				base.Text = value;
-			}
+			get {	return base.Text; }
+			set {	base.Text = value;}
 		}
 
 		[MonoTODO]
 		public DateTime Value {
-
 			get {
-				throw new NotImplementedException ();
+				getControlValue( true );
+				return val;
 			}
 			set {
-				//FIXME:
+				if ( val != value ) {
+					val = value; // do we need to check that the value is in the range ?
+					setControlValue( );
+					OnValueChanged ( EventArgs.Empty );
+				}
 			}
 		}
 
@@ -429,31 +433,177 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
-				CreateParams createParams = new CreateParams ();
-				window = new ControlNativeWindow (this);
+				if ( Parent != null ) {
+					CreateParams createParams = new CreateParams ();
 
-				createParams.Caption = Text;
-				createParams.ClassName = "DATETIMEPICKER";
-				createParams.X = Left;
-				createParams.Y = Top;
-				createParams.Width = Width;
-				createParams.Height = Height;
-				createParams.ClassStyle = 0;
-				createParams.ExStyle = 0;
-				createParams.Param = 0;
-				//			createParams.Parent = Parent.Handle;
-				createParams.Style = (int) (
-					WindowStyles.WS_CHILD | 
-					WindowStyles.WS_VISIBLE);
-				window.CreateHandle (createParams);
-				return createParams;
+					createParams.Caption = Text;
+					createParams.ClassName = "SysDateTimePick32";
+					createParams.X = Left;
+					createParams.Y = Top;
+					createParams.Width = Width;
+					createParams.Height = Height;
+					createParams.ClassStyle = 0;
+					createParams.ExStyle = 0;
+					createParams.Param = 0;
+					createParams.Parent = Parent.Handle;
+					createParams.Style = (int) (
+						WindowStyles.WS_CHILDWINDOW | 
+						WindowStyles.WS_VISIBLE |
+						WindowStyles.WS_CLIPCHILDREN|
+						WindowStyles.WS_CLIPSIBLINGS);
+					
+					if ( ShowUpDown )
+						createParams.Style |= (int) DateTimePickerControlStyles.DTS_UPDOWN;
+
+					if ( ShowCheckBox )
+						createParams.Style |= (int) DateTimePickerControlStyles.DTS_SHOWNONE;
+
+					if ( DropDownAlign == LeftRightAlignment.Right )
+						createParams.Style |= (int) DateTimePickerControlStyles.DTS_RIGHTALIGN;
+
+					createParams.Style |= formatStyle ( Format );
+
+					return createParams;
+				}
+				return null;
 			}		
 		}
 
 		protected override Size DefaultSize {
-			get{
-				return new System.Drawing.Size(200,20);//correct size.
+			get{	return new System.Drawing.Size(200,20);	}
+		}
+
+		private void initCommonControlsLibrary	( ) {
+			if ( !RecreatingHandle ) {
+				INITCOMMONCONTROLSEX	initEx = new INITCOMMONCONTROLSEX();
+				initEx.dwICC = CommonControlInitFlags.ICC_DATE_CLASSES;
+				Win32.InitCommonControlsEx(initEx);
 			}
+		}
+
+		private SYSTIME toSysTime ( DateTime val ) {
+			SYSTIME systime = new SYSTIME() ;
+			systime.wDay = (ushort)val.Day;
+			systime.wHour = (ushort)val.Hour;
+			systime.wMilliseconds = (ushort)val.Millisecond;
+			systime.wMinute = (ushort)val.Minute;
+			systime.wMonth = (ushort)val.Month;
+			systime.wSecond = (ushort)val.Second;
+			systime.wYear = (ushort)val.Year;
+			return systime;
+		}
+
+		private DateTime toDateTime ( ref SYSTIME val ) {
+			return new DateTime(	val.wYear, val.wMonth, val.wDay,
+						val.wHour, val.wMinute, val.wSecond,
+						val.wMilliseconds );
+		}
+
+		private void setControlValue ( ) {
+			if ( IsHandleCreated ) 	{
+				SYSTIME systime = toSysTime ( Value ) ;
+
+				IntPtr ptr = Marshal.AllocCoTaskMem ( Marshal.SizeOf ( systime ) );
+				Marshal.StructureToPtr( systime, ptr, false );
+				Win32.SendMessage ( Handle, (int)DateTimePickerMessages.DTM_SETSYSTEMTIME,
+							(int)DateTimePickerFlags.GDT_VALID, ptr );
+				Marshal.FreeCoTaskMem( ptr );
+			}
+		}
+
+		private void setCheckState ( ) {
+			if ( Checked )
+				setControlValue ();
+			else {
+				if ( IsHandleCreated ) 	{
+					Win32.SendMessage ( Handle, (int)DateTimePickerMessages.DTM_SETSYSTEMTIME,
+						(int)DateTimePickerFlags.GDT_NONE, 0 );
+				}
+			}
+		}
+
+		private void getControlValue ( bool updateProp ) {
+			if ( IsHandleCreated ) 	{
+				SYSTIME systime = new SYSTIME();
+				IntPtr ptr = Marshal.AllocCoTaskMem ( Marshal.SizeOf ( systime ) );
+				Marshal.StructureToPtr( systime, ptr, false );
+				int res = Win32.SendMessage ( Handle, (int)DateTimePickerMessages.DTM_GETSYSTEMTIME,
+							      0	, ptr ).ToInt32();
+				if ( res == (int)DateTimePickerFlags.GDT_VALID ) {
+					systime = Marshal.PtrToStructure ( ptr, systime.GetType ( ) ) as SYSTIME;
+					DateTime newValue = toDateTime ( ref systime );
+
+					CHecked = !( newValue == val || newValue == DateTime.Now );
+
+					if ( updateProp )
+						val = newValue;
+				}
+				else
+					CHecked = false;
+				Marshal.FreeCoTaskMem( ptr );
+			}
+		}
+
+		private void setControlRange ( int rangeFlag ) {
+			if ( IsHandleCreated ) {
+				SYSTIME[] range = { toSysTime ( MinDate ), toSysTime ( MaxDate ) };
+				IntPtr buffer = Marshal.AllocCoTaskMem( Marshal.SizeOf( range[0] ) * 2 );
+				IntPtr current = buffer;
+				Marshal.StructureToPtr ( range[0], current, false );
+				current = (IntPtr)( current.ToInt32() + Marshal.SizeOf( range[0] ) );
+				Marshal.StructureToPtr ( range[1], current, false );
+				Win32.SendMessage( Handle, (int)DateTimePickerMessages.DTM_SETRANGE, rangeFlag, buffer.ToInt32() );
+				Marshal.FreeCoTaskMem( buffer );
+			}
+		}
+
+		private void setCalendarColor ( int ColorFlag, Color clr ) {
+			if ( IsHandleCreated )
+				Win32.SendMessage ( Handle, (int)DateTimePickerMessages.DTM_SETMCCOLOR, ColorFlag, Win32.RGB(clr) );
+		}
+
+		private void setCalendarColors ( ) {
+			if ( calendarForeColor != ForeColor )
+				setCalendarColor( (int) MonthCalColors.MCSC_TEXT, calendarForeColor );
+			if ( calendarMonthBackground != DefaultMonthBackColor )
+				setCalendarColor( (int) MonthCalColors.MCSC_MONTHBK, calendarMonthBackground );
+			if ( calendarTitleBackColor != DefaultTitleBackColor )
+				setCalendarColor( (int) MonthCalColors.MCSC_TITLEBK, calendarTitleBackColor );
+			if ( calendarTitleForeColor != DefaultTitleForeColor )
+				setCalendarColor( (int) MonthCalColors.MCSC_TITLETEXT, calendarTitleForeColor );
+			if ( calendarTrailingForeColor != DefaultTrailingForeColor )
+				setCalendarColor( (int) MonthCalColors.MCSC_TRAILINGTEXT, calendarTrailingForeColor );
+		}
+
+		private int formatStyle ( DateTimePickerFormat format ) {
+			int style = 0;
+
+			switch ( format ) {
+			case DateTimePickerFormat.Long:
+				style = (int)DateTimePickerControlStyles.DTS_LONGDATEFORMAT;
+			break;
+			case DateTimePickerFormat.Short:
+				style = (int)DateTimePickerControlStyles.DTS_SHORTDATEFORMAT;
+			break;
+			case DateTimePickerFormat.Time:
+				style = (int)DateTimePickerControlStyles.DTS_TIMEFORMAT;
+			break;
+			}
+			return style;
+		}
+
+		private void setCustomFormat ( ) {
+			if ( Format == DateTimePickerFormat.Custom && IsHandleCreated ) 
+				Win32.SendMessage ( Handle, (int)DateTimePickerMessages.DTM_SETFORMATA, 0, CustomFormat );
+		}
+		
+		private void setCalendarFont ( ) {
+			// This code will not work because Font.Equals is not implemented
+			/*
+			if ( IsHandleCreated && !CalendarFont.Equals( Control.DefaultFont ) ) 
+				Win32.SendMessage ( Handle, (int)DateTimePickerMessages.DTM_SETMCFONT,
+							CalendarFont.ToHfont().ToInt32(), 0 );
+			*/
 		}
 	}
 }

@@ -1,3 +1,14 @@
+2003-03-23 Alexandre Pigolkine <pigolkine@gmx.de>
+	* DateTimePicker.cs
+	* Form.cs
+	* ProgressBar.cs
+	* win32Enums.cs
+	* win32Structs.cs
+		Implementation of ProgressBar and DateTimePicker controls by
+		Aleksey Ryabchuk <ryabchuk@yahoo.com>
+
+	* Control.cs	small fix to handle scroll bar messages
+
 2003-03-20 Alexandre Pigolkine <pigolkine@gmx.de
 	* Control.cs
 	* Form.cs
