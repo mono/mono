@@ -1,3 +1,10 @@
+2004-05-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ForeignKeyConstraint.cs : Check step change. Existence then column
+	  validity. just for tests.
+	* XmlSchemaDataImporter.cs : code simplification. reduced extraneous
+	  fields.
+
 2004-05-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSet.cs : Ignore empty content only when output type is diffgram.

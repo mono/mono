@@ -145,6 +145,9 @@ namespace System.Data
 {
 	internal class XmlSchemaDataImporter
 	{
+		static readonly XmlSchemaDatatype schemaIntegerType;
+		static readonly XmlSchemaComplexType schemaAnyType;
+
 		static XmlSchemaDataImporter ()
 		{
 			XmlSchema s = new XmlSchema ();
@@ -162,14 +165,9 @@ namespace System.Data
 			schemaAnyType = e.ElementType as XmlSchemaComplexType;
 		}
 
-		static readonly XmlSchemaDatatype schemaIntegerType;
-		static readonly XmlSchemaComplexType schemaAnyType;
-
 		DataSet dataset;
-		DataTable table;
 		XmlSchema schema;
 
-		Hashtable nameToComponentMap = new Hashtable ();
 		Hashtable relationParentColumns = new Hashtable ();
 		Hashtable nestedRelationColumns = new Hashtable ();
 
@@ -181,9 +179,6 @@ namespace System.Data
 
 		// import target elements
 		ArrayList targetElements = new ArrayList ();
-
-		// The DataTable currently processing
-		DataTable contextTable;
 
 		// The columns and orders which will be added to the context
 		// table (See design notes; Because of the ordinal problem)
@@ -200,13 +195,11 @@ namespace System.Data
 		public XmlSchemaDataImporter (DataSet dataset, XmlReader reader)
 		{
 			this.dataset = dataset;
-			ProcessMain (reader);
-		}
-
-		public XmlSchemaDataImporter (DataTable table, XmlReader reader)
-		{
-			this.table = table;
-			ProcessMain (reader);
+			schema = XmlSchema.Read (reader, null);
+			// FIXME: Just XmlSchema.Namespace should work (mcs bug)
+			if (reader.NodeType == XmlNodeType.EndElement && reader.LocalName == "schema" && reader.NamespaceURI == System.Xml.Schema.XmlSchema.Namespace)
+				reader.ReadEndElement ();
+			schema.Compile (null);
 		}
 
 		// types
@@ -230,25 +223,16 @@ namespace System.Data
 			get { return dataset; }
 		}
 
-		public DataTable DataTable {
-			get { return table; }
-		}
-
 		public XmlSchema XmlSchema {
 			get { return schema; }
 		}
 
 		// methods
 
-		private void ProcessMain (XmlReader reader)
+		public void Process ()
 		{
-			schema = XmlSchema.Read (reader, null);
-			// FIXME: Just XmlSchema.Namespace should work (mcs bug)
-			if (reader.NodeType == XmlNodeType.EndElement && reader.LocalName == "schema" && reader.NamespaceURI == System.Xml.Schema.XmlSchema.Namespace)
-				reader.ReadEndElement ();
-			schema.Compile (null);
 			if (schema.Id != null)
-				dataset.DataSetName = schema.Id; // default
+				dataset.DataSetName = schema.Id; // default. Overridable by "DataSet element"
 			dataset.Namespace = schema.TargetNamespace;
 
 			foreach (XmlSchemaObject obj in schema.Items) {
@@ -292,7 +276,7 @@ el.ElementType != schemaAnyType)
 		{
 			// If it is already registered (by resolving reference
 			// in previously-imported elements), just ignore.
-			if (nameToComponentMap.Contains (el))
+			if (dataset.Tables.Contains (el.QualifiedName.Name))
 				return;
 
 			// Check if element is DataSet element
@@ -379,26 +363,18 @@ el.ElementType != schemaAnyType)
 		private void ProcessDataTableElement (XmlSchemaElement el)
 		{
 			// If it is already registered, just ignore.
-			if (nameToComponentMap.Contains (el))
+			if (dataset.Tables.Contains (el.QualifiedName.Name))
 				return;
-
-			// On reading schema into DataTable (not into DataSet)
-			// This operation should be an error.
-			if (table != null)
-				throw new InvalidOperationException ("More than one table is defined in this schema");
-			else if (contextTable != null)
-				throw new InvalidOperationException ("Should not occur. Request for data table definition was found on defining another data table.");
 
 			string name = el.QualifiedName.Name;
 
 			currentOrdinalColumns.Clear ();
 			currentNonOrdinalColumns.Clear ();
 			currentColumnNames.Clear ();
-			contextTable = new DataTable ();
+			DataTable contextTable = new DataTable ();
 			contextTable.TableName = name;
 
 			dataset.Tables.Add (contextTable);
-			nameToComponentMap.Add (name, el);
 
 			// Find Locale
 			if (el.UnhandledAttributes != null) {
@@ -449,18 +425,16 @@ el.ElementType != schemaAnyType)
 			foreach (DataColumn dc in currentNonOrdinalColumns)
 				contextTable.Columns.Add (dc);
 
-			HandlePopulatedRelationship (el);
-
-			contextTable = null;
+			HandlePopulatedRelationship (contextTable, el);
 		}
 
-		private void HandlePopulatedRelationship (XmlSchemaElement el)
+		private void HandlePopulatedRelationship (DataTable table, XmlSchemaElement el)
 		{
 			// If there is a parent column, create DataRelation and pk
 			DataColumn col = relationParentColumns [el] as DataColumn;
 			if (col != null) {
 				if (col.Table.PrimaryKey.Length > 0)
-					throw new DataException (String.Format ("There is already primary key columns in the table \"{0}\".", contextTable.TableName));
+					throw new DataException (String.Format ("There is already primary key columns in the table \"{0}\".", table.TableName));
 				col.Table.PrimaryKey = new DataColumn [] {col};
 
 				DataColumn child = new DataColumn ();
@@ -468,7 +442,7 @@ el.ElementType != schemaAnyType)
 				child.Namespace = String.Empty; // don't copy
 				child.ColumnMapping = MappingType.Hidden;
 				child.DataType = col.DataType;
-				contextTable.Columns.Add (child);
+				table.Columns.Add (child);
 
 				DataRelation rel = new DataRelation (col.Table.TableName + '_' + child.Table.TableName, col, child);
 				if (nestedRelationColumns.ContainsValue (col))
@@ -724,8 +698,8 @@ el.ElementType != schemaAnyType)
 
 			string tableName = GetSelectorTarget (ic.Selector.XPath);
 			
-			DataTable table = dataset.Tables [tableName];
-			if (table == null)
+			DataTable dt = dataset.Tables [tableName];
+			if (dt == null)
 				throw new DataException (String.Format ("Invalid XPath selection inside selector. Cannot find: {0}", tableName));
 
 			DataColumn [] cols = new DataColumn [ic.Fields.Count];
@@ -737,11 +711,11 @@ el.ElementType != schemaAnyType)
 				if (index > 0)
 					colName = colName.Substring (index + 1);
 
-				DataColumn col = table.Columns [colName];
+				DataColumn col = dt.Columns [colName];
 				if (col == null)
 					throw new DataException (String.Format ("Invalid XPath selection inside field. Cannot find: {0}", tableName));
 
-				cols [i] = table.Columns [colName];
+				cols [i] = dt.Columns [colName];
 				i++;
 			}
 			
@@ -764,7 +738,7 @@ el.ElementType != schemaAnyType)
 				}
 			}
 			UniqueConstraint c = new UniqueConstraint (constraintName, cols, isPK);
-			table.Constraints.Add (c);
+			dt.Constraints.Add (c);
 		}
 
 		private void ProcessReferenceKey (XmlSchemaElement element, XmlSchemaKeyref keyref)
@@ -774,8 +748,8 @@ el.ElementType != schemaAnyType)
 			string tableName = GetSelectorTarget (keyref.Selector.XPath);
 
 			DataColumn [] cols;
-			DataTable table = dataset.Tables [tableName];
-			if (table == null)
+			DataTable dt = dataset.Tables [tableName];
+			if (dt == null)
 				throw new DataException (String.Format ("Invalid XPath selection inside selector. Cannot find: {0}", tableName));
 
 			cols = new DataColumn [keyref.Fields.Count];
@@ -787,7 +761,7 @@ el.ElementType != schemaAnyType)
 				if (index != -1)
 					colName = colName.Substring (index + 1);
 
-				cols [i] = table.Columns [colName];
+				cols [i] = dt.Columns [colName];
 				i++;
 			}
 			string name = keyref.Refer.Name;
@@ -795,7 +769,7 @@ el.ElementType != schemaAnyType)
 			UniqueConstraint uniq = FindConstraint (name, element);
 			// generate the FK.
 			ForeignKeyConstraint fkc = new ForeignKeyConstraint(keyref.Name, uniq.Columns, cols);
-			table.Constraints.Add (fkc);
+			dt.Constraints.Add (fkc);
 			// generate the relation.
 			DataRelation rel = new DataRelation (keyref.Name, uniq.Columns, cols, false);
 			if (keyref.UnhandledAttributes != null) {
@@ -824,7 +798,7 @@ el.ElementType != schemaAnyType)
 					string tableName = GetSelectorTarget (c.Selector.XPath);
 
 					// find the table in the dataset.
-					DataTable table = dataset.Tables [tableName];
+					DataTable dt = dataset.Tables [tableName];
 
 					string constraintName = c.Name;
 					// find if there is an attribute with the constraint name
@@ -833,7 +807,7 @@ el.ElementType != schemaAnyType)
 						foreach (XmlAttribute attr in c.UnhandledAttributes)
 							if (attr.LocalName == "ConstraintName" && attr.NamespaceURI == XmlConstants.MsdataNamespace)
 								constraintName = attr.Value;
-					return (UniqueConstraint) table.Constraints [constraintName];
+					return (UniqueConstraint) dt.Constraints [constraintName];
 				}
 			}
 			throw new DataException ("Target identity constraint was not found: " + name);

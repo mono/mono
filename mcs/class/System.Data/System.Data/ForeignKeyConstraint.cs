@@ -180,11 +180,11 @@ namespace System.Data {
 
 			DataTable ptable = parentColumns[0].Table;
 			DataTable ctable = childColumns[0].Table;
-	
-			for (int i = 0; i < parentColumns.Length; i++)
-			{
+
+			for (int i = 0; i < parentColumns.Length; i++) {
 				DataColumn pc = parentColumns[i];
 				DataColumn cc = childColumns[i];
+
 				//not null check
 				if (null == pc.Table) 
 					throw new ArgumentException("All columns must belong to a table." + 
@@ -193,7 +193,7 @@ namespace System.Data {
 				//All columns must belong to the same table
 				if (ptable != pc.Table)
 					throw new InvalidConstraintException("Parent columns must all belong to the same table.");
-				
+
 				//not null check
 				if (null == cc.Table) 
 					throw new ArgumentException("All columns must belong to a table." + 
@@ -202,6 +202,13 @@ namespace System.Data {
 				//All columns must belong to the same table.
 				if (ctable != cc.Table)
 					throw new InvalidConstraintException("Child columns must all belong to the same table.");
+				
+			}
+
+			for (int i = 0; i < parentColumns.Length; i++)
+			{
+				DataColumn pc = parentColumns[i];
+				DataColumn cc = childColumns[i];
 				
 				//Can't be the same column
 				if (pc == cc)
@@ -233,6 +240,7 @@ namespace System.Data {
 		private void _validateRemoveParentConstraint(ConstraintCollection sender, 
 				Constraint constraint, ref bool cancel, ref string failReason)
 		{
+#if !NET_1_1
 			//if we hold a reference to the parent then cancel it
 			if (constraint == _parentUniqueConstraint) 
 			{
@@ -240,6 +248,7 @@ namespace System.Data {
 				failReason = "Cannot remove UniqueConstraint because the"
 					+ " ForeignKeyConstraint " + this.ConstraintName + " exists.";
 			}
+#endif
 		}
 		
 		//Checks to see if a related unique constraint exists
