@@ -13,31 +13,44 @@ namespace System.Runtime.Remoting.Channels
 	public class BinaryClientFormatterSinkProvider :
 		IClientFormatterSinkProvider, IClientChannelSinkProvider
 	{
-		[MonoTODO]
+		IClientChannelSinkProvider next = null;
+
+		// this is not used at the moment ??
+		IDictionary properties;
+		
 		public BinaryClientFormatterSinkProvider ()
 		{
-			throw new NotImplementedException ();
+			properties = new Hashtable ();
 		}
 
-		[MonoTODO]
 		public BinaryClientFormatterSinkProvider (IDictionary properties,
 							  ICollection providerData)
 	        {
-			throw new NotImplementedException ();
+			this.properties = properties;
+			// fixme: what shall we do with providerData?
 		}
 
 		public IClientChannelSinkProvider Next
 		{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				return next;
+			}
+			
+			set {
+				next = value;
+			}
 		}
 
-		[MonoTODO]
 		public IClientChannelSink CreateSink (IChannelSender channel,
 						      string url,
 						      object remoteChannelData)
 		{
-			throw new NotImplementedException ();
+			IClientChannelSink next_sink = null;
+
+			if (next != null)
+				next_sink = next.CreateSink (channel, url, remoteChannelData);
+			
+			return new BinaryClientFormatterSink (next_sink);
 		}		
 	}
 }

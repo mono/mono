@@ -1,3 +1,6 @@
+2002-08-21  Dietmar Maurer  <dietmar@ximian.com>
+
+	* Exception.cs: set stack_trace to null
 
 Wed Aug 21 13:02:20 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

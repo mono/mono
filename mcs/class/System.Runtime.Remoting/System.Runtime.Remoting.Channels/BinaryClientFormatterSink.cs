@@ -2,6 +2,7 @@
 // System.Runtime.Remoting.Channels.BinaryClientFormatterSink.cs
 //
 // Author: Rodrigo Moya (rodrigo@ximian.com)
+//         Dietmar Maurer (dietmar@ximian.com)
 //
 // 2002 (C) Copyright, Ximian, Inc.
 //
@@ -31,14 +32,16 @@ namespace System.Runtime.Remoting.Channels
 
 		public IMessageSink NextSink
 		{
-			[MonoTODO]
-				get { throw new NotImplementedException (); }
+			get {
+				return (IMessageSink) nextInChain;
+			}
 		}
 
 		public IDictionary Properties
 		{
-			[MonoTODO]
-				get { throw new NotImplementedException (); }
+			get {
+				return null;
+			}
 		}
 
 		[MonoTODO]
@@ -66,27 +69,39 @@ namespace System.Runtime.Remoting.Channels
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public Stream GetRequestStream (IMessage msg,
 						ITransportHeaders headers)
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 
-		[MonoTODO]
 		public void ProcessMessage (IMessage msg,
 					    ITransportHeaders requestHeaders,
 					    Stream requestStream,
 					    out ITransportHeaders responseHeaders,
 					    out Stream responseStream)
 		{
-			throw new NotImplementedException ();
+			nextInChain.ProcessMessage (msg, requestHeaders, requestStream,
+						    out responseHeaders, out responseStream);
 		}
 
 		[MonoTODO]
 		public IMessage SyncProcessMessage (IMessage msg)
 		{
-			throw new NotImplementedException ();
+			ITransportHeaders response_headers;
+			Stream response_stream;
+			
+			// fixme: use nextInChain.GetRequestStream() ??
+			Stream out_stream = new MemoryStream ();
+
+			// fixme: serialize msg to the stream
+
+			ProcessMessage (msg, null, out_stream, out response_headers, out response_stream);
+
+			// fixme: deserialize response_stream
+			IMessage result = null;
+
+			return null;
 		}
 	}
 }

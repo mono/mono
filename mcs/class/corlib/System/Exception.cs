@@ -21,7 +21,7 @@ namespace System {
 		string message;
 		string help_link;
 		string class_name;
-		string stack_trace = "TODO: implement stack traces";
+		string stack_trace = null;
 		string remote_stack_trace = "TODO: Implement remote stack trace";
 		int remote_stack_index;
 		int hresult;
