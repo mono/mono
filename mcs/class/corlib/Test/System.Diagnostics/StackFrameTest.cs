@@ -132,10 +132,13 @@ namespace MonoTests.System.Diagnostics {
                 /// <summary>
                 ///   Tests whether getting file name works.
                 /// </summary>
-                public void TestGetFileName() {
+                public void TestGetFileName1() {
                         AssertNull("File name (1)",
                                    frame1.GetFileName());
                                      
+                }
+
+		public void TestGetFileName2() {
                         Assert("File name (2) " + frame2.GetFileName()
                                         + " ends with StackFrameTest.cs",
                                frame2.GetFileName().EndsWith("StackFrameTest.cs"));
