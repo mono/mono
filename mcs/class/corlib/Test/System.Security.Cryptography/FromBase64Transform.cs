@@ -195,5 +195,140 @@ namespace MonoTests.System.Security.Cryptography {
 			for (int i = 0; i < expected.Length; i++)
 				AssertEquals ("IDisposable(" + i + ")", expected [i], output [i]);
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TransformBlock_Input_Null () 
+		{
+			byte[] output = new byte [16];
+			using (ICryptoTransform t = new FromBase64Transform ()) {
+				t.TransformBlock (null, 0, output.Length, output, 0);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void TransformBlock_InputOffset_Negative () 
+		{
+			byte[] input = new byte [16];
+			byte[] output = new byte [16];
+			using (ICryptoTransform t = new FromBase64Transform ()) {
+				t.TransformBlock (input, -1, input.Length, output, 0);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TransformBlock_InputOffset_Overflow () 
+		{
+			byte[] input = new byte [16];
+			byte[] output = new byte [16];
+			using (ICryptoTransform t = new FromBase64Transform ()) {
+				t.TransformBlock (input, Int32.MaxValue, input.Length, output, 0);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void TransformBlock_InputCount_Negative () 
+		{
+			byte[] input = new byte [16];
+			byte[] output = new byte [16];
+			using (ICryptoTransform t = new FromBase64Transform ()) {
+				t.TransformBlock (input, 0, -1, output, 0);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (OutOfMemoryException))]
+		public void TransformBlock_InputCount_Overflow () 
+		{
+			byte[] input = new byte [16];
+			byte[] output = new byte [16];
+			using (ICryptoTransform t = new FromBase64Transform ()) {
+				t.TransformBlock (input, 0, Int32.MaxValue, output, 0);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void TransformBlock_Output_Null () 
+		{
+			byte[] input = new byte [16];
+			using (ICryptoTransform t = new FromBase64Transform ()) {
+				t.TransformBlock (input, 0, input.Length, null, 0);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void TransformBlock_OutputOffset_Negative () 
+		{
+			byte[] input = new byte [16];
+			byte[] output = new byte [16];
+			using (ICryptoTransform t = new FromBase64Transform ()) {
+				t.TransformBlock (input, 0, input.Length, output, -1);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void TransformBlock_OutputOffset_Overflow () 
+		{
+			byte[] input = new byte [16];
+			byte[] output = new byte [16];
+			using (ICryptoTransform t = new FromBase64Transform ()) {
+				t.TransformBlock (input, 0, input.Length, output, Int32.MaxValue);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TransformFinalBlock_Input_Null () 
+		{
+			using (ICryptoTransform t = new FromBase64Transform ()) {
+				t.TransformFinalBlock (null, 0, 16);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void TransformFinalBlock_InputOffset_Negative () 
+		{
+			byte[] input = new byte [16];
+			using (ICryptoTransform t = new FromBase64Transform ()) {
+				t.TransformFinalBlock (input, -1, input.Length);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TransformFinalBlock_InputOffset_Overflow () 
+		{
+			byte[] input = new byte [16];
+			using (ICryptoTransform t = new FromBase64Transform ()) {
+				t.TransformFinalBlock (input, Int32.MaxValue, input.Length);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void TransformFinalBlock_InputCount_Negative () 
+		{
+			byte[] input = new byte [16];
+			using (ICryptoTransform t = new FromBase64Transform ()) {
+				t.TransformFinalBlock (input, 0, -1);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (OutOfMemoryException))]
+		public void TransformFinalBlock_InputCount_Overflow () 
+		{
+			byte[] input = new byte [16];
+			using (ICryptoTransform t = new FromBase64Transform ()) {
+				t.TransformFinalBlock (input, 0, Int32.MaxValue);
+			}
+		}
 	}
 }
