@@ -1,3 +1,7 @@
+2004-05-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Makefile.am (DISABLED_TESTS): appdomain-unload.exe seems to run too.
+
 2004-05-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Makefile.am (DISABLED_TESTS): Reenable remoting2 and remoting3.
