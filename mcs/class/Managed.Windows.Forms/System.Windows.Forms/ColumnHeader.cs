@@ -22,9 +22,12 @@
 // Author:
 //	Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: ColumnHeader.cs,v $
+// Revision 1.2  2004/10/15 15:06:44  ravindra
+// Flushing some formatting changes.
+//
 // Revision 1.1  2004/09/30 13:25:33  ravindra
 // Supporting class for ListView control.
 //
@@ -116,13 +119,13 @@ namespace System.Windows.Forms
 		{
 			return string.Format ("ColumnHeader: Text: {0}", text);
 		}
-		#endregion //Public Methods
+		#endregion // Public Methods
 
 		#region Protected Methods
 		protected override void Dispose (bool disposing)
 		{
 			base.Dispose (disposing);
 		}
-		#endregion //Protected Methods
+		#endregion // Protected Methods
 	}
 }
