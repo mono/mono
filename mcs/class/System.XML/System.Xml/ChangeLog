@@ -1,5 +1,7 @@
 2002-02-24  Duncan Mak  <duncan@ximian.com>
 
+	* XmlQualifiedName.cs: Fixed a warning from Equals ().
+
 	* XmlTokenizedType.cs: Added to CVS.
 
 	* XmlUrlResolver.cs: Added to CVS with one TODO task.

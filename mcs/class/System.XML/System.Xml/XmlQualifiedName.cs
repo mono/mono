@@ -32,8 +32,7 @@ namespace System.Xml
 		}
 
 		// Fields
-		[MonoTODO] public static readonly XmlQualifiedName Empty = new XmlQualifiedName ();
-		
+		public static readonly XmlQualifiedName Empty = new XmlQualifiedName ();		
 		private string name;
 		private string ns;
 		
@@ -61,7 +60,7 @@ namespace System.Xml
 		// Methods
 		public override bool Equals (object other)
 		{
-			if (this == other)
+			if ((XmlQualifiedName) this == (XmlQualifiedName) other)
 				return true;
 			else
 				return false;
