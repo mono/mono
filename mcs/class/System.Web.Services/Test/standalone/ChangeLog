@@ -1,3 +1,10 @@
+2004-02-04  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* wstest.cs: Added new option that downloads and cahces the wsdl docs.
+	* services.xml: More services.
+	* Makefile: Updated.
+	* server/TestBinding5.asmx: new test service.
+
 2004-01-27  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* wstest.cs: Improved the way wsdl documents are downloaded.

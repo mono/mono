@@ -3283,4 +3283,35 @@
     </protocols>
     <clientTest>false</clientTest>
   </service>
+  <service>
+    <wsdl>http://localhost:8080/TestBinding5.asmx?wsdl</wsdl>
+    <name>TestBinding5Test</name>
+    <serverType>Mono-XSP Server/0.6.99.0 128 # Mono</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://paracite.ecs.soton.ac.uk/paracite.wsdl</wsdl>
+    <name>paraciteTest</name>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://sms.smspoint.net:8080/special/services/Sms?wsdl</wsdl>
+    <name>SmsTest</name>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://webservices.instantlogic.com/zipcodes.ils?wsdl</wsdl>
+    <name>zipcodesTest</name>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.boyzoid.com/threat.cfc?wsdl</wsdl>
+    <name>threatTest</name>
+    <clientTest>false</clientTest>
+  </service>
 </services>

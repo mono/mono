@@ -27,9 +27,10 @@ public class Driver
 			Console.WriteLine ("Usage: wstest [options]");
 			Console.WriteLine ();
 			Console.WriteLine ("Options:");
+			Console.WriteLine ("  ur <url>: Update service references from DISCO or WSDL document");
+			Console.WriteLine ("  dw: download wsdl documents for registered services");
 			Console.WriteLine ("  gp: Generate proxies");
 			Console.WriteLine ("  gc <url>: Generate test client class");
-			Console.WriteLine ("  ur <url>: Update service references from DISCO or WSDL document");
 			Console.WriteLine ();
 			return;
 		}
@@ -63,6 +64,10 @@ public class Driver
 		else if (args[0] == "stat")
 		{
 			ShowStatus ();
+		}
+		else if (args[0] == "dw")
+		{
+			DownloadWsdls ();
 		}
 		else if (args[0] == "clean")
 		{
@@ -172,46 +177,67 @@ public class Driver
 			
 			if (ignore)
 			{
-				if (sd != null) RemoveService (re.Url);
+				if (sd != null) {
+					RemoveService (re.Url);
+					Console.WriteLine ("Removed " + re.Url);
+				}
 				continue;
 			}
 			
-			if (sd == null || !File.Exists (GetWsdlFile(sd)))
+			if (sd == null)
 			{
-				Console.Write ("Resolving " + re.Url + " ");
-				try
-				{
-					DiscoveryClientProtocol contract = new DiscoveryClientProtocol ();
-					contract.DiscoverAny (re.Url);
-					if (sd == null)
-					{
-						sd = CreateServiceData (re, contract);
-						services.services.Add (sd);
-					}
-					
-					string wsdlFile = GetWsdlFile (sd);
-					CreateFolderForFile (wsdlFile);
-					
-					ServiceDescription doc = (ServiceDescription) contract.Documents [re.Url];
-					doc.Write (wsdlFile);
-					
-					Console.WriteLine ("OK");
-				}
-				catch (Exception ex)
-				{
-					Console.WriteLine ("FAILED");
-					ReportError ("Error resolving: " + re.Url, ex.ToString ());
-				}
+				sd = CreateServiceData (re);
+				Console.WriteLine ("Added " + re.Url);
+				services.services.Add (sd);
 			}
+		}
+		Console.WriteLine ("Done");
+		Console.WriteLine ();
+	}
+	
+	static void DownloadWsdls ()
+	{
+		Console.WriteLine ();
+		Console.WriteLine ("Downloading WSDL documents");
+		Console.WriteLine ("---------------------------");
+		
+		foreach (ServiceData sd in services.services)
+			if (!File.Exists (GetWsdlFile(sd)))
+				Resolve (sd);
+				
+		Console.WriteLine ("Done");
+		Console.WriteLine ();
+	}
+	
+	static void Resolve (ServiceData sd)
+	{
+		Console.Write ("Resolving " + sd.Wsdl + " ");
+		try
+		{
+			DiscoveryClientProtocol contract = new DiscoveryClientProtocol ();
+			contract.DiscoverAny (sd.Wsdl);
+			
+			if (sd.Protocols == null || sd.Protocols.Length==0) 
+				RetrieveServiceData (sd, contract);
+				
+			string wsdlFile = GetWsdlFile (sd);
+			CreateFolderForFile (wsdlFile);
+			
+			ServiceDescription doc = (ServiceDescription) contract.Documents [sd.Wsdl];
+			doc.Write (wsdlFile);
+			
+			Console.WriteLine ("OK");
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine ("FAILED");
+			ReportError ("Error resolving: " + sd.Wsdl, ex.ToString ());
 		}
 	}
 	
-	public static ServiceData CreateServiceData (DiscoveryReference dref, DiscoveryClientProtocol contract)
+	public static ServiceData CreateServiceData (DiscoveryReference dref)
 	{
 		ServiceData sd = new ServiceData ();
-		ServiceDescriptionCollection col = new ServiceDescriptionCollection ();
-		foreach (object doc in contract.Documents.Values)
-			if (doc is ServiceDescription) col.Add ((ServiceDescription)doc);
 		
 		string name = GetServiceName (dref);
 		sd.Name = name;
@@ -223,6 +249,14 @@ public class Driver
 		}
 		
 		sd.Wsdl = dref.Url;
+		return sd;
+	}
+	
+	public static void RetrieveServiceData (ServiceData sd, DiscoveryClientProtocol contract)
+	{
+		ServiceDescriptionCollection col = new ServiceDescriptionCollection ();
+		foreach (object doc in contract.Documents.Values)
+			if (doc is ServiceDescription) col.Add ((ServiceDescription)doc);
 		
 		string loc = GetLocation (col[0]);
 		if (loc != null)
@@ -230,7 +264,9 @@ public class Driver
 			WebResponse res = null;
 			try
 			{
-				res = WebRequest.Create (loc).GetResponse ();
+				WebRequest req = (WebRequest)WebRequest.Create (loc);
+				req.Timeout = 15000;
+				res = req.GetResponse ();
 			}
 			catch (Exception ex)
 			{
@@ -245,7 +281,6 @@ public class Driver
 		
 		ArrayList bins = GetBindingTypes (col);
 		sd.Protocols = (string[]) bins.ToArray(typeof(string));
-		return sd;
 	}
 	
 	static ArrayList GetBindingTypes (ServiceDescriptionCollection col)
@@ -408,6 +443,9 @@ public class Driver
 		foreach (string f in proxies)
 			sw.WriteLine (f);
 		sw.Close ();
+		
+		Console.WriteLine ("Done");
+		Console.WriteLine ();
 	}
 	
 	static void BuildProxy (ServiceData fd, bool rebuild, ArrayList proxies)
