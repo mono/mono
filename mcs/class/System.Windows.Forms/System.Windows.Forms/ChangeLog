@@ -355,3 +355,8 @@ Added delegates. All delegates in System.Windows.Forms done
 * MessageBox.cs
 * Fixed bugs preventing compile
 
+2002-6-28 DennisHayes <dennish@raytek.com>
+* Checked in for Jackson Harper (jackson@latitudegeo.com)
+* Tooltip.cs
+* new class
+
