@@ -1,5 +1,9 @@
 2005-01-05  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* map.c: Fix Win32 build break.  Win32 doesn't have all the sys/* headers.
+
+2005-01-05  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* serial.c: HPUX compiler fix.
 	* stdlib.c: Add C-defined macro wrappers.
 
