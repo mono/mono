@@ -565,7 +565,7 @@ namespace System.Web {
 				}
 			}
 
-			private void ExecuteNext(Exception lasterror) {
+			internal void ExecuteNext(Exception lasterror) {
 				bool ready_sync = false;
 				IStateHandler handler;
 
@@ -862,7 +862,8 @@ namespace System.Web {
 
 			_asyncWebResult = new HttpAsyncResult(cb, extraData);
 
-			_state.Start();
+			_state.Reset ();
+			_state.ExecuteNext (null);
 
 			return _asyncWebResult;
       }

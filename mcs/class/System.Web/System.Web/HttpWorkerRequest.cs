@@ -1,5 +1,5 @@
 // 
-// System.Web.HttpResponseStreamProxy
+// System.Web.HttpWorkerRequest
 //
 // Authors:
 // 	Patrik Torstensson (Patrik.Torstensson@labs2.com)

@@ -1,3 +1,10 @@
+2002-11-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: don't begin the request using ExecuteNextAsync
+	(it fails to work on NetServ).
+
+	* HttpWorkerRequest.cs: typo.
+
 2002-11-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpValueCollection.cs: the value may contain trailing '=' as it is
