@@ -1,3 +1,13 @@
+2004-11-12  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* TypeOf.cs, Plus.cs, Equality.cs:  implementation of
+	JScriptTypeOf, EvaluatePlus, EvaluateEquality.
+	* Convert.cs (ToString): use the IConvertible/TypeCode approach
+	for convertions. Add GetTypeCode.
+
+	* Parser.cs, expression.cs: discriminate among =, +=, -=, etc. Add overload of
+	ToJSToken.
+
 2004-11-10  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* expression.cs (emit_late_call): Pop after Call or CallValue when
