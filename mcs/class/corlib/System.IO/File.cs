@@ -264,6 +264,8 @@ namespace System.IO
 				throw new FileNotFoundException (src + " does not exist");
 			if (MonoIO.ExistsDirectory (dest, out error))
 					throw new IOException (dest + " is a directory");	
+			if (MonoIO.Exists (dest, out error))
+				throw new IOException (dest + " already exists");
 
 			string DirName;
 			DirName = Path.GetDirectoryName(src);
