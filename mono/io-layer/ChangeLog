@@ -1,5 +1,10 @@
 2004-05-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* io.c: fixed for FindFirstFile for empty directories. Closes
+	bug #58147.
+
+2004-05-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* processes.c: set the start time for the current process. Fixes bug
 	#58109.
 
