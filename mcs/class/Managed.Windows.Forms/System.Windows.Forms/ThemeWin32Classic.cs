@@ -2479,8 +2479,7 @@ namespace System.Windows.Forms
 
 		private int DrawTab (Graphics dc, TabPage page, TabControl tab, Rectangle bounds, bool is_selected)
 		{
-			int FlatButtonSpacing = 8;
-			int RoundCornerSize = 5;
+			int FlatButtonSpacing = 8;			
 			Rectangle interior;
 			int res = bounds.Width;
 

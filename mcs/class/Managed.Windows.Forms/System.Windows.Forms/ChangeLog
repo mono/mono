@@ -1,3 +1,8 @@
+2004-12-09  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ThemeWin32Classic.cs, XplatUIOSX.cs, XplatUIWin32.cs:
+	remove warnings
+
 2004-12-08  Geoff Norton  <gnorton@customerdna.com>
 
 	* XplatUIOSX.cs: Added mouse move/click/grab support

@@ -476,7 +476,7 @@ namespace System.Windows.Forms {
 										break;
 								}
 								msg.wParam = (IntPtr)wParam;
-								msg.lParam = (IntPtr) ((short)hiPoint.y << 16 | (short)hiPoint.x);
+								msg.lParam = (IntPtr) ((ushort)hiPoint.y << 16 | (ushort)hiPoint.x);
 								mouse_position.X = (int)hiPoint.x;
 								mouse_position.Y = (int)hiPoint.y;
 								carbonEvents.Enqueue (msg);
@@ -485,8 +485,7 @@ namespace System.Windows.Forms {
 							case 5: {
 								QDPoint point = new QDPoint ();
 								IntPtr pView = IntPtr.Zero;
-								IntPtr rView = IntPtr.Zero;
-								int wParam = 0;
+								IntPtr rView = IntPtr.Zero;								
 								ushort btn = 0;
 								GetEventParameter (inEvent, 1835168878, 1835168878, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (ushort)), IntPtr.Zero, ref btn);
 								CheckError (GetEventParameter (inEvent, 1835822947, 1363439732, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (QDPoint)), IntPtr.Zero, ref point), "GetEventParameter() MouseLocation");
@@ -515,8 +514,7 @@ namespace System.Windows.Forms {
 							case 6: {
 								QDPoint point = new QDPoint ();
 								IntPtr pView = IntPtr.Zero;
-								IntPtr rView = IntPtr.Zero;
-								int wParam = 0;
+								IntPtr rView = IntPtr.Zero;								
 								ushort btn = 0;
 								GetEventParameter (inEvent, 1835168878, 1835168878, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (ushort)), IntPtr.Zero, ref btn);
 								CheckError (GetEventParameter (inEvent, 1835822947, 1363439732, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (QDPoint)), IntPtr.Zero, ref point), "GetEventParameter() MouseLocation");
@@ -545,7 +543,7 @@ namespace System.Windows.Forms {
 								else
 									msg.hwnd = grabWindow;
 								msg.message = Msg.WM_MOUSEMOVE;
-								msg.lParam = (IntPtr) ((short)hiPoint.y << 16 | (short)hiPoint.x);
+								msg.lParam = (IntPtr) ((ushort)hiPoint.y << 16 | (ushort)hiPoint.x);
 								msg.wParam = GetMousewParam (0);
 								mouse_position.X = (int)hiPoint.x;
 								mouse_position.Y = (int)hiPoint.y;

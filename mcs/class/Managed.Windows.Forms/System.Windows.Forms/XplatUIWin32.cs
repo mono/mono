@@ -1046,8 +1046,7 @@ namespace System.Windows.Forms {
 			y = pnt.y;
 		}
 
-		internal override void ClientToScreen(IntPtr handle, ref int x, ref int y) {
-			IntPtr	parent;
+		internal override void ClientToScreen(IntPtr handle, ref int x, ref int y) {			
 			POINT	pnt = new POINT();			
 
 			pnt.x = x;
