@@ -1,3 +1,7 @@
+2003-02-09  Martin Baulig  <martin@ximian.com>
+
+	* IMonoSymbolWriter.cs: Ooops, I forgot to remove this.
+
 2003-02-08  Martin Baulig  <martin@ximian.com>
 
 	* MonoSymbolDocumentWriter.cs: Removed.
