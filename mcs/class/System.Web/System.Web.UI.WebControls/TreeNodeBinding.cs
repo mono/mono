@@ -31,33 +31,245 @@
 #if NET_2_0
 
 using System;
+using System.Collections;
 using System.Web.UI;
+using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
 	public sealed class TreeNodeBinding: IStateManager, ICloneable, IDataSourceViewSchemaAccessor
 	{
-		[MonoTODO]
-		void IStateManager.LoadViewState (object state)
+		StateBag ViewState = new StateBag ();
+		
+		public string DataMember {
+			get {
+				object o = ViewState ["DataMember"];
+				if (o != null) return (string) o;
+				return "";
+			}
+			set {
+				ViewState ["DataMember"] = value;
+			}
+		}
+
+		public int Depth {
+			get {
+				object o = ViewState ["Depth"];
+				if (o != null) return (int) o;
+				return -1;
+			}
+			set {
+				ViewState ["Depth"] = value;
+			}
+		}
+
+		public string FormatString {
+			get {
+				object o = ViewState ["FormatString"];
+				if (o != null) return (string) o;
+				return "";
+			}
+			set {
+				ViewState ["FormatString"] = value;
+			}
+		}
+
+		public string ImageToolTip {
+			get {
+				object o = ViewState ["ImageToolTip"];
+				if (o != null) return (string) o;
+				return "";
+			}
+			set {
+				ViewState ["ImageToolTip"] = value;
+			}
+		}
+
+		public string ImageToolTipField {
+			get {
+				object o = ViewState ["ImageToolTipField"];
+				if (o != null) return (string) o;
+				return "";
+			}
+			set {
+				ViewState ["ImageToolTipField"] = value;
+			}
+		}
+
+		public string ImageUrl {
+			get {
+				object o = ViewState ["ImageUrl"];
+				if (o != null) return (string) o;
+				return "";
+			}
+			set {
+				ViewState ["ImageUrl"] = value;
+			}
+		}
+
+		public string ImageUrlField {
+			get {
+				object o = ViewState ["ImageUrlField"];
+				if (o != null) return (string) o;
+				return "";
+			}
+			set {
+				ViewState ["ImageUrlField"] = value;
+			}
+		}
+
+		public string NavigateUrl {
+			get {
+				object o = ViewState ["NavigateUrl"];
+				if (o != null) return (string) o;
+				return "";
+			}
+			set {
+				ViewState ["NavigateUrl"] = value;
+			}
+		}
+
+		public string NavigateUrlField {
+			get {
+				object o = ViewState ["NavigateUrlField"];
+				if (o != null) return (string) o;
+				return "";
+			}
+			set {
+				ViewState ["NavigateUrlField"] = value;
+			}
+		}
+
+		public bool PopulateOnDemand {
+			get {
+				object o = ViewState ["PopulateOnDemand"];
+				if (o != null) return (bool) o;
+				return false;
+			}
+			set {
+				ViewState ["PopulateOnDemand"] = value;
+			}
+		}
+
+		public TreeNodeSelectAction SelectAction {
+			get {
+				object o = ViewState ["SelectAction"];
+				if (o != null) return (TreeNodeSelectAction)o;
+				return TreeNodeSelectAction.Select;
+			}
+			set {
+				ViewState ["SelectAction"] = value;
+			}
+		}
+
+		public bool ShowCheckBox {
+			get {
+				object o = ViewState ["ShowCheckBox"];
+				if (o != null) return (bool)o;
+				return false;
+			}
+			set {
+				ViewState ["ShowCheckBox"] = value;
+			}
+		}
+
+		public string Target {
+			get {
+				object o = ViewState ["Target"];
+				if(o != null) return (string)o;
+				return "";
+			}
+			set {
+				ViewState ["Target"] = value;
+			}
+		}
+
+		[Localizable (true)]
+		[DefaultValue ("")]
+		[WebSysDescription ("The display text of the tree node.")]
+		public string Text {
+			get {
+				object o = ViewState ["Text"];
+				if(o != null) return (string)o;
+				return "";
+			}
+			set {
+				ViewState ["Text"] = value;
+			}
+		}
+
+		public string TextField {
+			get {
+				object o = ViewState ["TextField"];
+				if(o != null) return (string)o;
+				return "";
+			}
+			set {
+				ViewState ["TextField"] = value;
+			}
+		}
+
+		public string ToolTip {
+			get {
+				object o = ViewState ["ToolTip"];
+				if(o != null) return (string)o;
+				return "";
+			}
+			set {
+				ViewState ["ToolTip"] = value;
+			}
+		}
+
+		public string ToolTipField {
+			get {
+				object o = ViewState ["ToolTipField"];
+				if(o != null) return (string)o;
+				return "";
+			}
+			set {
+				ViewState ["ToolTipField"] = value;
+			}
+		}
+
+		public string Value {
+			get {
+				object o = ViewState ["Value"];
+				if(o != null) return (string)o;
+				return "";
+			}
+			set {
+				ViewState ["Value"] = value;
+			}
+		}
+
+		public string ValueField {
+			get {
+				object o = ViewState ["ValueField"];
+				if(o != null) return (string)o;
+				return "";
+			}
+			set {
+				ViewState ["ValueField"] = value;
+			}
+		}
+
+		void IStateManager.LoadViewState (object savedState)
 		{
-			throw new NotImplementedException ();
+			ViewState.LoadViewState (savedState);
 		}
 		
-		[MonoTODO]
 		object IStateManager.SaveViewState ()
 		{
-			throw new NotImplementedException ();
+			return ViewState.SaveViewState();
 		}
 		
-		[MonoTODO]
 		void IStateManager.TrackViewState ()
 		{
-			throw new NotImplementedException ();
+			ViewState.TrackViewState ();
 		}
 		
-		[MonoTODO]
 		bool IStateManager.IsTrackingViewState {
-			get { throw new NotImplementedException (); }
+			get { return ViewState.IsTrackingViewState; }
 		}
 		
 		[MonoTODO]
@@ -66,10 +278,12 @@ namespace System.Web.UI.WebControls
 			set { throw new NotImplementedException (); }
 		}
 		
-		[MonoTODO]
 		object ICloneable.Clone ()
 		{
-			throw new NotImplementedException ();
+			TreeNodeBinding bin = new TreeNodeBinding ();
+			foreach (DictionaryEntry e in ViewState)
+				bin.ViewState [(string)e.Key] = e.Value;
+			return bin;
 		}
 	}
 }

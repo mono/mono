@@ -38,6 +38,13 @@ using System.ComponentModel;
 using System.IO;
 
 namespace System.Web.UI.WebControls {
+
+	[DefaultProperty ("DataFile")]
+	[DefaultEvent ("Transforming")]
+	[ParseChildren (true)]
+	[PersistChildren (false)]
+	[WebSysDescription ("Connect to an XML file.")]
+//	[WebSysDisplayName ("XML file")]
 	public class XmlDataSource : HierarchicalDataSourceControl, IDataSource, IListSource {
 
 		
@@ -170,6 +177,12 @@ namespace System.Web.UI.WebControls {
 		//public virtual DataSourceCacheExpiry CacheExpirationPolicy { get; set; }
 		//public virtual string CacheKeyDependency { get; set; }
 		//public virtual bool EnableCaching { get; set; }
+		
+		[DefaultValue ("")]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("Inline XML data.")]
+		[WebCategory ("Data")]
+//		[TypeConverter (typeof(MultilineStringConverter))]
 		public virtual string Data {
 			get {
 				string ret = ViewState ["Data"] as string;

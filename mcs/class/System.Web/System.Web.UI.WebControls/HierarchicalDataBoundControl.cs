@@ -33,8 +33,85 @@ using System.Collections;
 
 namespace System.Web.UI.WebControls
 {
-	public class HierarchicalDataBoundControl : BaseDataBoundControl
+	public abstract class HierarchicalDataBoundControl : BaseDataBoundControl
 	{
+		public override string DataSourceID {
+			get {
+				object o = ViewState ["DataSourceID"];
+				if (o != null)
+					return (string)o;
+				
+				return String.Empty;
+			}
+			set {
+				if (Initialized)
+					RequiresDataBinding = true;
+				
+				ViewState ["DataSourceID"] = value;
+			}
+		}
+		
+		protected HierarchicalDataSourceView GetData (string viewPath)
+		{
+			if (DataSource != null && DataSourceID != "")
+				throw new HttpException ();
+			
+			IHierarchicalDataSource ds = GetDataSource ();
+			if (ds != null)
+				return ds.GetHierarchicalView (viewPath);
+			else
+				return null; 
+		}
+		
+		protected IHierarchicalDataSource GetDataSource ()
+		{
+			if (DataSourceID != "")
+				return NamingContainer.FindControl (DataSourceID) as IHierarchicalDataSource;
+			
+			return DataSource as IHierarchicalDataSource;
+		}
+		
+		protected override void OnDataPropertyChanged ()
+		{
+			RequiresDataBinding = true;
+		}
+		
+		protected virtual void OnDataSourceChanged (object sender, EventArgs e)
+		{
+			RequiresDataBinding = true;
+		}
+
+		protected override void OnLoad (EventArgs e)
+		{
+			IHierarchicalDataSource ds = GetDataSource ();
+			if (ds != null && DataSourceID != "")
+				ds.DataSourceChanged += new EventHandler (OnDataSourceChanged);
+			
+			base.OnLoad(e);
+		}
+
+		[MonoTODO]
+		protected override void OnPagePreLoad (object sender, EventArgs e)
+		{
+			base.OnPagePreLoad (sender, e);
+		}
+		
+		protected internal virtual void PerformDataBinding ()
+		{
+			OnDataBinding (EventArgs.Empty);
+		}
+		
+		protected override void PerformSelect ()
+		{
+			PerformDataBinding ();
+		}
+		
+		protected override void ValidateDataSource (object dataSource)
+		{
+			if (dataSource is IHierarchicalDataSource || dataSource is IHierarchicalEnumerable)
+				return;
+			throw new InvalidOperationException ("Invalid data source");
+		}
 	}
 }
 #endif

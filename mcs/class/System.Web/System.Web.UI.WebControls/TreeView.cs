@@ -31,6 +31,7 @@
 #if NET_2_0
 
 using System;
+using System.Collections;
 using System.Text;
 using System.ComponentModel;
 using System.Web.UI;
@@ -52,29 +53,63 @@ namespace System.Web.UI.WebControls
 		
 		TreeNodeStyleCollection levelStyles;
 		TreeNodeCollection nodes;
+		TreeNodeBindingCollection dataBindings;
+		
 		TreeNode selectedNode;
+		Hashtable bindings;
 		
-		static string defaultExpandImage;
-		static string defaultCollapseImage;
-		static string defaultNoExpandImage;
-		
-		private static readonly object CheckChangedEvent = new object();
+		private static readonly object TreeNodeCheckChangedEvent = new object();
 		private static readonly object SelectedNodeChangedEvent = new object();
 		private static readonly object TreeNodeCollapsedEvent = new object();
 		private static readonly object TreeNodeDataBoundEvent = new object();
 		private static readonly object TreeNodeExpandedEvent = new object();
 		private static readonly object TreeNodePopulateEvent = new object();
 		
-		static TreeView ()
+		static Hashtable imageStyles = new Hashtable ();
+		
+		class ImageStyle
 		{
-			defaultExpandImage = AssemblyResourceLoader.GetResourceUrl (typeof(TreeView), "TreeView_Default_Expand.gif");
-			defaultCollapseImage = AssemblyResourceLoader.GetResourceUrl (typeof(TreeView), "TreeView_Default_Collapse.gif");
-			defaultNoExpandImage = AssemblyResourceLoader.GetResourceUrl (typeof(TreeView), "TreeView_Default_NoExpand.gif");
+			public ImageStyle (string expand, string collapse, string noExpand, string icon, string iconLeaf, string iconRoot) {
+				Expand = expand;
+				Collapse = collapse;
+				NoExpand = noExpand;
+				RootIcon = iconRoot;
+				ParentIcon = icon;
+				LeafIcon = iconLeaf;
+			}
+			
+			public string Expand;
+			public string Collapse;
+			public string NoExpand;
+			public string RootIcon;
+			public string ParentIcon;
+			public string LeafIcon;
 		}
 		
-		public event TreeNodeEventHandler CheckChanged {
-			add { Events.AddHandler (CheckChangedEvent, value); }
-			remove { Events.RemoveHandler (CheckChangedEvent, value); }
+		static TreeView ()
+		{
+			imageStyles [TreeViewImageSet.Arrows] = new ImageStyle ("arrow_plus", "arrow_minus", "arrow_noexpand", null, null, null);
+			imageStyles [TreeViewImageSet.BulletedList] = new ImageStyle (null, null, null, "dot_full", "dot_empty", "dot_full");
+			imageStyles [TreeViewImageSet.BulletedList2] = new ImageStyle (null, null, null, "box_full", "box_empty", "box_full");
+			imageStyles [TreeViewImageSet.BulletedList3] = new ImageStyle (null, null, null, "star_full", "star_empty", "star_full");
+			imageStyles [TreeViewImageSet.BulletedList4] = new ImageStyle (null, null, null, "star_full", "star_empty", "dots");
+			imageStyles [TreeViewImageSet.Contacts] = new ImageStyle ("TreeView_plus", "TreeView_minus", "contact", null, null, null);
+			imageStyles [TreeViewImageSet.Events] = new ImageStyle ("TreeView_plus", "TreeView_minus", "TreeView_noexpand", null, "warning", null);
+			imageStyles [TreeViewImageSet.Inbox] = new ImageStyle ("TreeView_plus", "TreeView_minus", "TreeView_noexpand", "inbox", "inbox", "inbox");
+			imageStyles [TreeViewImageSet.Msdn] = new ImageStyle ("box_plus", "box_minus", "box_noexpand", null, null, null);
+			imageStyles [TreeViewImageSet.Simple] = new ImageStyle ("TreeView_plus", "TreeView_minus", "box_full", null, null, null);
+			imageStyles [TreeViewImageSet.Simple2] = new ImageStyle ("TreeView_plus", "TreeView_minus", "box_empty", null, null, null);
+
+			// TODO
+			imageStyles [TreeViewImageSet.News] = new ImageStyle ("TreeView_plus", "TreeView_minus", "TreeView_noexpand", null, null, null);
+			imageStyles [TreeViewImageSet.Faq] = new ImageStyle ("TreeView_plus", "TreeView_minus", "TreeView_noexpand", null, null, null);
+			imageStyles [TreeViewImageSet.WindowsHelp] = new ImageStyle ("TreeView_plus", "TreeView_minus", "TreeView_noexpand", null, null, null);
+			imageStyles [TreeViewImageSet.XPFileExplorer] = new ImageStyle ("TreeView_plus", "TreeView_minus", "TreeView_noexpand", null, null, null);
+		}
+		
+		public event TreeNodeEventHandler TreeNodeCheckChanged {
+			add { Events.AddHandler (TreeNodeCheckChangedEvent, value); }
+			remove { Events.RemoveHandler (TreeNodeCheckChangedEvent, value); }
 		}
 		
 		public event EventHandler SelectedNodeChanged {
@@ -102,10 +137,10 @@ namespace System.Web.UI.WebControls
 			remove { Events.RemoveHandler (TreeNodePopulateEvent, value); }
 		}
 		
-		protected virtual void OnCheckChanged (TreeNodeEventArgs e)
+		protected virtual void OnTreeNodeCheckChanged (TreeNodeEventArgs e)
 		{
 			if (Events != null) {
-				TreeNodeEventHandler eh = (TreeNodeEventHandler) Events [CheckChangedEvent];
+				TreeNodeEventHandler eh = (TreeNodeEventHandler) Events [TreeNodeCheckChangedEvent];
 				if (eh != null) eh (this, e);
 			}
 		}
@@ -151,7 +186,7 @@ namespace System.Web.UI.WebControls
 		}
 
 
-
+		[Localizable (true)]
 		public virtual string CollapseImageToolTip {
 			get {
 				object o = ViewState ["CollapseImageToolTip"];
@@ -163,6 +198,26 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[MonoTODO ("Implement support for this")]
+		[WebCategory ("Behavior")]
+		[WebSysDescription ("Whether the tree will automatically generate bindings.")]
+		[DefaultValue (true)]
+		public virtual bool AutoGenerateDataBindings {
+			get {
+				object o = ViewState ["AutoGenerateDataBindings"];
+				if (o != null) return (bool)o;
+				return true;
+			}
+			set {
+				ViewState["AutoGenerateDataBindings"] = value;
+			}
+		}
+
+		[DefaultValue ("")]
+		[WebSysDescription ("The url of the image to show when a node can be collapsed.")]
+		[UrlProperty]
+		[WebCategory ("Appearance")]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public virtual string CollapseImageUrl {
 			get {
 				object o = ViewState ["CollapseImageUrl"];
@@ -174,6 +229,26 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[WebCategory ("Data")]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("Bindings for tree nodes.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[Editor ("System.Web.UI.Design.TreeViewBindingsEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		public virtual TreeNodeBindingCollection DataBindings {
+			get {
+				if (dataBindings == null) {
+					dataBindings = new TreeNodeBindingCollection ();
+					if (IsTrackingViewState)
+						((IStateManager)dataBindings).TrackViewState();
+				}
+				return dataBindings;
+			}
+		}
+
+		[WebCategory ("Behavior")]
+		[WebSysDescription ("Whether the tree view can use client-side script to expand and collapse nodes.")]
+		[Themeable (false)]
+		[DefaultValue (true)]
 		public virtual bool EnableClientScript {
 			get {
 				object o = ViewState ["EnableClientScript"];
@@ -185,6 +260,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (-1)]
+		[WebCategory ("Behavior")]
+		[WebSysDescription ("The initial expand depth.")]
 		public virtual int ExpandDepth {
 			get {
 				object o = ViewState ["ExpandDepth"];
@@ -196,6 +274,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Localizable (true)]
 		public virtual string ExpandImageToolTip {
 			get {
 				object o = ViewState ["ExpandImageToolTip"];
@@ -207,6 +286,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
+		[UrlProperty]
+		[WebSysDescription ("The url of the image to show when a node can be expanded.")]
+		[WebCategory ("Appearance")]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public virtual string ExpandImageUrl {
 			get {
 				object o = ViewState ["ExpandImageUrl"];
@@ -218,6 +302,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[NotifyParentProperty (true)]
+		[DefaultValue (null)]
+		[WebCategory ("Styles")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public virtual Style HoverNodeStyle {
 			get {
 				if (hoverNodeStyle == null) {
@@ -229,6 +318,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (TreeViewImageSet.Custom)]
 		public virtual TreeViewImageSet ImageSet {
 			get {
 				object o = ViewState ["ImageSet"];
@@ -240,6 +330,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[NotifyParentProperty (true)]
+		[DefaultValue (null)]
+		[WebCategory ("Styles")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public virtual TreeNodeStyle LeafNodeStyle {
 			get {
 				if (leafNodeStyle == null) {
@@ -251,6 +346,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		[DefaultValue (null)]
+		[WebCategory ("Styles")]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		[Editor ("System.Web.UI.Design.TreeNodeStyleCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public virtual TreeNodeStyleCollection LevelStyles {
 			get {
 				if (levelStyles == null) {
@@ -262,6 +362,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
 		public virtual string LineImagesFolder {
 			get {
 				object o = ViewState ["LineImagesFolder"];
@@ -273,6 +374,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (-1)]
 		public virtual int MaxDataBindDepth {
 			get {
 				object o = ViewState ["MaxDataBindDepth"];
@@ -284,6 +386,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (20)]
 		public virtual int NodeIndent {
 			get {
 				object o = ViewState ["NodeIndent"];
@@ -298,6 +401,7 @@ namespace System.Web.UI.WebControls
 		[WebSysDescription ("The collection of nodes of the tree.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[Editor ("System.Web.UI.Design.TreeNodeCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public virtual TreeNodeCollection Nodes {
 			get {
 				if (nodes == null) {
@@ -309,6 +413,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[NotifyParentProperty (true)]
+		[DefaultValue (null)]
+		[WebCategory ("Styles")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public virtual TreeNodeStyle NodeStyle {
 			get {
 				if (nodeStyle == null) {
@@ -320,6 +429,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		[DefaultValue (false)]
 		public virtual bool NodeWrap {
 			get {
 				object o = ViewState ["NodeWrap"];
@@ -331,6 +441,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[UrlProperty]
+		[DefaultValue ("")]
+		[WebSysDescription ("The url of the image to show for leaf nodes.")]
+		[WebCategory ("Appearance")]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public virtual string NoExpandImageUrl {
 			get {
 				object o = ViewState ["NoExpandImageUrl"];
@@ -342,6 +457,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[NotifyParentProperty (true)]
+		[DefaultValue (null)]
+		[WebCategory ("Styles")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public virtual TreeNodeStyle ParentNodeStyle {
 			get {
 				if (parentNodeStyle == null) {
@@ -353,6 +473,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		[DefaultValue ('/')]
 		public virtual char PathSeparator {
 			get {
 				object o = ViewState ["PathSeparator"];
@@ -364,6 +485,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (true)]
+		[MonoTODO ("Support this")]
 		public virtual bool PopulateNodesFromClient {
 			get {
 				object o = ViewState ["PopulateNodesFromClient"];
@@ -375,6 +498,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[NotifyParentProperty (true)]
+		[DefaultValue (null)]
+		[WebCategory ("Styles")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public virtual TreeNodeStyle RootNodeStyle {
 			get {
 				if (rootNodeStyle == null) {
@@ -386,6 +514,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[NotifyParentProperty (true)]
+		[DefaultValue (null)]
+		[WebCategory ("Styles")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public virtual TreeNodeStyle SelectedNodeStyle {
 			get {
 				if (selectedNodeStyle == null) {
@@ -397,6 +530,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		[DefaultValue (TreeNodeTypes.None)]
 		public virtual TreeNodeTypes ShowCheckBoxes {
 			get {
 				object o = ViewState ["ShowCheckBoxes"];
@@ -408,6 +542,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (true)]
 		public virtual bool ShowExpandCollapse {
 			get {
 				object o = ViewState ["ShowExpandCollapse"];
@@ -419,6 +554,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (false)]
 		public virtual bool ShowLines {
 			get {
 				object o = ViewState ["ShowLines"];
@@ -430,18 +566,20 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		protected override HtmlTextWriterTag TagKey {
-			get { return HtmlTextWriterTag.Div; }
-		}
-		
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public TreeNode SelectedNode {
 			get { return selectedNode; }
 		}
 
+		[Browsable (false)]
+		[DefaultValue ("")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string SelectedValue {
 			get { return selectedNode != null ? selectedNode.Value : ""; }
 		}
 
+		[DefaultValue ("")]
 		public virtual string Target {
 			get {
 				object o = ViewState ["Target"];
@@ -451,6 +589,69 @@ namespace System.Web.UI.WebControls
 			set {
 				ViewState ["Target"] = value;
 			}
+		}
+		
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public TreeNodeCollection CheckedNodes {
+			get {
+				TreeNodeCollection col = new TreeNodeCollection ();
+				FindCheckedNodes (Nodes, col);
+				return col;
+			}
+		}
+		
+		void FindCheckedNodes (TreeNodeCollection nodeList, TreeNodeCollection result)
+		{
+			foreach (TreeNode node in nodeList) {
+				if (node.Checked) result.Add (node);
+				FindCheckedNodes (node.ChildNodes, result);
+			}
+		}
+		
+		public void ExpandAll ()
+		{
+			foreach (TreeNode node in Nodes)
+				node.ExpandAll ();
+		}
+		
+		public void CollapseAll ()
+		{
+			foreach (TreeNode node in Nodes)
+				node.CollapseAll ();
+		}
+		
+		public TreeNode FindNode (string valuePath)
+		{
+			if (valuePath == null) throw new ArgumentNullException ("valuePath");
+			string[] path = valuePath.Split (PathSeparator);
+			int n = 0;
+			TreeNodeCollection col = Nodes;
+			bool foundBranch = true;
+			while (col.Count > 0 && foundBranch) {
+				foundBranch = false;
+				foreach (TreeNode node in Nodes) {
+					if (node.Value == path [n]) {
+						if (++n == path.Length) return node;
+						col = node.ChildNodes;
+						foundBranch = true;
+						break;
+					}
+				}
+			}
+			return null;
+		}
+		
+		ImageStyle GetImageStyle ()
+		{
+			if (ImageSet != TreeViewImageSet.Custom)
+				return (ImageStyle) imageStyles [ImageSet];
+			else
+				return null;
+		}
+		
+		protected override HtmlTextWriterTag TagKey {
+			get { return HtmlTextWriterTag.Div; }
 		}
 		
 		internal void SetSelectedNode (TreeNode node)
@@ -465,7 +666,7 @@ namespace System.Web.UI.WebControls
 		
 		internal void NotifyCheckChanged (TreeNode node)
 		{
-			OnCheckChanged (new TreeNodeEventArgs (node));
+			OnTreeNodeCheckChanged (new TreeNodeEventArgs (node));
 		}
 
 		internal void NotifyExpandedChanged (TreeNode node)
@@ -478,6 +679,8 @@ namespace System.Web.UI.WebControls
 
 		protected override void TrackViewState()
 		{
+			EnsureDataBound ();
+			
 			base.TrackViewState();
 			if (hoverNodeStyle != null) {
 				hoverNodeStyle.TrackViewState();
@@ -500,6 +703,9 @@ namespace System.Web.UI.WebControls
 			if (selectedNodeStyle != null) {
 				selectedNodeStyle.TrackViewState();
 			}
+			if (dataBindings != null) {
+				((IStateManager)dataBindings).TrackViewState ();
+			}
 			if (nodes != null) {
 				((IStateManager)nodes).TrackViewState();;
 			}
@@ -507,7 +713,7 @@ namespace System.Web.UI.WebControls
 
 		protected override object SaveViewState()
 		{
-			object[] states = new object [9];
+			object[] states = new object [10];
 			states[0] = base.SaveViewState();
 			states[1] = (hoverNodeStyle == null ? null : hoverNodeStyle.SaveViewState());
 			states[2] = (leafNodeStyle == null ? null : leafNodeStyle.SaveViewState());
@@ -516,7 +722,8 @@ namespace System.Web.UI.WebControls
 			states[5] = (parentNodeStyle == null ? null : parentNodeStyle.SaveViewState());
 			states[6] = (rootNodeStyle == null ? null : rootNodeStyle.SaveViewState());
 			states[7] = (selectedNodeStyle == null ? null : selectedNodeStyle.SaveViewState());
-			states[8] = (nodes == null ? null : ((IStateManager)nodes).SaveViewState());
+			states[8] = (dataBindings == null ? null : ((IStateManager)dataBindings).SaveViewState());
+			states[9] = (nodes == null ? null : ((IStateManager)nodes).SaveViewState());
 
 			for (int i = states.Length - 1; i >= 0; i--) {
 				if (states [i] != null)
@@ -549,14 +756,16 @@ namespace System.Web.UI.WebControls
 			if (states[7] != null)
 				SelectedNodeStyle.LoadViewState(states[7]);
 			if (states[8] != null)
-				((IStateManager)Nodes).LoadViewState(states[8]);
+				((IStateManager)dataBindings).LoadViewState(states[8]);
+			if (states[9] != null)
+				((IStateManager)Nodes).LoadViewState(states[9]);
 		}
 
 		[MonoTODO]
 		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
 		{
 			string[] args = eventArgument.Split ('|');
-			TreeNode node = FindNode (args[1]);
+			TreeNode node = FindNodeByPos (args[1]);
 			if (node == null) return;
 			
 			if (args [0] == "sel")
@@ -606,136 +815,470 @@ namespace System.Web.UI.WebControls
 			return "";
 		}
 		
-		protected override void RenderContents (HtmlTextWriter writer)
+		protected override ControlCollection CreateControlCollection ()
 		{
-			foreach (TreeNode node in Nodes)
-				RenderNode (writer, node, 0);
+			return new EmptyControlCollection (this);
+		}
+		
+		protected internal override void PerformDataBinding ()
+		{
+			base.PerformDataBinding ();
+			HierarchicalDataSourceView data = GetData ("");
+			IHierarchicalEnumerable e = data.Select ();
+			foreach (object obj in e) {
+				IHierarchyData hdata = e.GetHierarchyData (obj);
+				TreeNode node = new TreeNode ();
+				node.Bind (hdata);
+				Nodes.Add (node);
+			}
 		}
 		
 		protected override void OnLoad (EventArgs e)
 		{
-			if (EnableClientScript && !Page.IsClientScriptBlockRegistered ("TreeView_ToggleExpand")) {
-				string script = "<script language=javascript>\n<!--\nfunction TreeView_ToggleExpand (nodeId) {\n";
-				script += "\tvar node = document.getElementById (nodeId);\n";
-				script += "\tnode.style.display = (node.style.display == 'none') ? 'block' : 'none';\n";
-				script += "}\n";
-				script += "// -->\n</script>";
-				Page.RegisterClientScriptBlock ("TreeView_ToggleExpand", script);
+			EnsureDataBound ();
+			
+			if (EnableClientScript && !Page.ClientScript.IsClientScriptIncludeRegistered (GetType(), "TreeView.js")) {
+				string url = Page.GetWebResourceUrl (typeof(TreeView), "TreeView.js");
+				Page.ClientScript.RegisterClientScriptInclude (GetType(), "TreeView.js", url);
+				
+				string ctree = ClientID + "_data";
+				string script = string.Format ("var {0} = new Object ();\n", ctree);
+				script += string.Format ("{0}.showImage = {1};\n", ctree, ShowExpandCollapse.ToString().ToLower());
+				
+				if (ShowExpandCollapse) {
+					bool defaultImages = ShowLines || ImageSet != TreeViewImageSet.Custom || (ExpandImageUrl == "" && CollapseImageUrl == "");
+					script += string.Format ("{0}.defaultImages = {1};\n", ctree, defaultImages.ToString().ToLower());
+					if (!defaultImages) {
+						ImageStyle imageStyle = GetImageStyle ();
+						script += string.Format ("{0}.expandImage = '{1}';\n", ctree, GetNodeImageUrl ("plus", imageStyle));
+						script += string.Format ("{0}.collapseImage = '{1}';\n", ctree, GetNodeImageUrl ("minus", imageStyle));
+					}
+				}
+				
+				Page.ClientScript.RegisterStartupScript (GetType(), "", script, true);
+			}
+
+			if (!Page.IsPostBack && ExpandDepth != 0) {
+				foreach (TreeNode node in Nodes)
+					node.Expand (ExpandDepth - 1);
 			}
 			
-			if (!Page.IsPostBack && nodes != null && ExpandDepth != 0) {
-				foreach (TreeNode node in nodes)
-					node.Expand (ExpandDepth - 1);
+			if (Page.IsPostBack) {
+				if (ShowCheckBoxes != TreeNodeTypes.None) {
+					UnsetCheckStates (Nodes, Context.Request.Form);
+					SetCheckStates (Context.Request.Form);
+				}
+				
+				if (EnableClientScript) {
+					string states = Context.Request [ClientID + "_ExpandStates"];
+					if (states != null) {
+						string[] ids = states.Split ('|');
+						UnsetExpandStates (Nodes, ids);
+						SetExpandStates (ids);
+					}
+					else
+						UnsetExpandStates (Nodes, new string[0]);
+				}
+			}
+			
+			base.OnLoad (e);
+		}
+		
+		protected override void OnPreRender (EventArgs e)
+		{
+			base.OnPreRender (e);
+			if (EnableClientScript) {
+				Page.ClientScript.RegisterHiddenField (ClientID + "_ExpandStates", GetExpandStates ());
+			}
+			
+			if (dataBindings != null && dataBindings.Count > 0) {
+				bindings = new Hashtable ();
+				foreach (TreeNodeBinding bin in dataBindings) {
+					string key = GetBindingKey (bin.DataMember, bin.Depth);
+					bindings [key] = bin;
+				}
+			}
+			else
+				bindings = null;
+		}
+		
+		string GetBindingKey (string dataMember, int depth)
+		{
+			return dataMember + " " + depth;
+		}
+		
+		internal TreeNodeBinding FindBindingForNode (string type, int depth)
+		{
+			if (bindings == null) return null;
+
+			TreeNodeBinding bin = (TreeNodeBinding) bindings [GetBindingKey (type, depth)];
+			if (bin != null) return bin;
+			
+			bin = (TreeNodeBinding) bindings [GetBindingKey (type, -1)];
+			if (bin != null) return bin;
+			
+			bin = (TreeNodeBinding) bindings [GetBindingKey ("", depth)];
+			if (bin != null) return bin;
+			
+			bin = (TreeNodeBinding) bindings [GetBindingKey ("", -1)];
+			return bin;
+		}
+		
+		protected override void RenderContents (HtmlTextWriter writer)
+		{
+			ArrayList levelLines = new ArrayList ();
+			int num = Nodes.Count;
+			for (int n=0; n<num; n++)
+				RenderNode (writer, Nodes [n], 0, levelLines, n>0, n<num-1);
+		}
+		
+ 		void RenderNode (HtmlTextWriter writer, TreeNode node, int level, ArrayList levelLines, bool hasPrevious, bool hasNext)
+		{
+			string nodeImage;
+			bool clientExpand = EnableClientScript && Events [TreeNodeCollapsedEvent] == null && Events [TreeNodeExpandedEvent] == null;
+			ImageStyle imageStyle = GetImageStyle ();
+			
+			writer.AddAttribute ("cellpadding", "0");
+			writer.AddAttribute ("cellspacing", "0");
+			writer.RenderBeginTag (HtmlTextWriterTag.Table);
+			writer.RenderBeginTag (HtmlTextWriterTag.Tr);
+			
+			// Vertical lines from previous levels
+			
+			for (int n=0; n<level; n++) {
+				writer.RenderBeginTag (HtmlTextWriterTag.Td);
+				if (ShowLines) {
+					if (levelLines [n] == null)
+						nodeImage = GetNodeImageUrl ("noexpand", imageStyle);
+					else
+						nodeImage = GetNodeImageUrl ("i", imageStyle);
+
+					writer.AddAttribute ("src", nodeImage);
+					writer.AddAttribute ("border", "0");
+					writer.RenderBeginTag (HtmlTextWriterTag.Img);
+					writer.RenderEndTag ();
+				}
+				writer.AddStyleAttribute ("width", NodeIndent + "px");
+				writer.RenderBeginTag (HtmlTextWriterTag.Div);
+				writer.RenderEndTag ();
+				writer.RenderEndTag ();	// TD
+			}
+			
+			// Node image + line
+			
+			if (ShowExpandCollapse || ShowLines) {
+				bool buttonImage = false;
+				string tooltip = null;
+				string shape;
+				
+				if (ShowLines) {
+					if (hasPrevious && hasNext) shape = "t";
+					else if (hasPrevious && !hasNext) shape = "l";
+					else if (!hasPrevious && hasNext) shape = "r";
+					else shape = "dash";
+				} else
+					shape = "";
+				
+				if (ShowExpandCollapse) {
+					if (node.ChildNodes.Count > 0) {
+						buttonImage = true;
+						if (node.Expanded) {
+							shape += "minus";
+							tooltip = CollapseImageToolTip;
+							if (tooltip == "") tooltip = "Collapse " + node.Text;
+						}
+						else {
+							shape += "plus";
+							tooltip = ExpandImageToolTip;
+							if (tooltip == "") tooltip = "Expand " + node.Text;
+						}
+					} else if (!ShowLines)
+						shape = "noexpand";
+				}
+
+				if (shape != "") {
+					nodeImage = GetNodeImageUrl (shape, imageStyle);
+					writer.RenderBeginTag (HtmlTextWriterTag.Td);	// TD
+					
+					if (buttonImage) {
+						if (!clientExpand)
+							writer.AddAttribute ("href", GetClientEvent (node, "ec"));
+						else
+							writer.AddAttribute ("href", GetClientExpandEvent(node));
+						writer.RenderBeginTag (HtmlTextWriterTag.A);	// Anchor
+					}
+					
+					if (tooltip != null)
+						writer.AddAttribute ("alt", tooltip);
+					if (buttonImage && clientExpand)
+						writer.AddAttribute ("id", ClientID + "_img_" + node.Path);
+					writer.AddAttribute ("src", nodeImage);
+					writer.AddAttribute ("border", "0");
+					writer.RenderBeginTag (HtmlTextWriterTag.Img);
+					writer.RenderEndTag ();
+					
+					if (buttonImage)
+						writer.RenderEndTag ();		// Anchor
+
+					writer.RenderEndTag ();		// TD
+				}
+			}
+			
+			// Node icon
+			
+			string imageUrl = node.ImageUrl;
+			if (imageUrl == "" && imageStyle != null) {
+				if (imageStyle.RootIcon != null && node.IsRootNode)
+					imageUrl = GetNodeIconUrl (imageStyle.RootIcon);
+				else if (imageStyle.ParentIcon != null && node.IsParentNode)
+					imageUrl = GetNodeIconUrl (imageStyle.ParentIcon);
+				else if (imageStyle.LeafIcon != null && node.IsLeafNode)
+					imageUrl = GetNodeIconUrl (imageStyle.LeafIcon);
+			}
+			
+			if (imageUrl != "") {
+				writer.RenderBeginTag (HtmlTextWriterTag.Td);	// TD
+				BeginNodeTag (writer, node, clientExpand);
+				writer.AddAttribute ("src", imageUrl);
+				writer.AddAttribute ("border", "0");
+				if (node.ImageToolTip != "") writer.AddAttribute ("alt", node.ImageToolTip);
+				writer.RenderBeginTag (HtmlTextWriterTag.Img);
+				writer.RenderEndTag ();	// IMG
+				writer.RenderEndTag ();	// style tag
+				writer.RenderEndTag ();	// TD
+			}
+			
+			// Checkbox
+			
+			bool showChecks = (ShowCheckBoxes == TreeNodeTypes.All) ||
+						 (ShowCheckBoxes == TreeNodeTypes.Leaf && node.ChildNodes.Count == 0) ||
+						 (ShowCheckBoxes == TreeNodeTypes.Parent && node.ChildNodes.Count > 0 && node.Parent != null) ||
+						 (ShowCheckBoxes == TreeNodeTypes.Root && node.Parent == null && node.ChildNodes.Count > 0);
+
+			if (showChecks) {
+				AddNodeStyle (writer, node, level);
+				writer.RenderBeginTag (HtmlTextWriterTag.Td);	// TD
+				writer.AddAttribute ("name", ClientID + "_cs_" + node.Path);
+				writer.AddAttribute ("type", "checkbox");
+				if (node.Checked) writer.AddAttribute ("checked", "checked");
+				writer.RenderBeginTag (HtmlTextWriterTag.Input);	// INPUT
+				writer.RenderEndTag ();	// INPUT
+				writer.RenderEndTag ();	// TD
+			}
+			
+			// Text
+			
+			if (!NodeWrap)
+				writer.AddAttribute ("nowrap", "nowrap");
+			writer.RenderBeginTag (HtmlTextWriterTag.Td);	// TD
+			
+			AddNodeStyle (writer, node, level);
+			BeginNodeTag (writer, node, clientExpand);
+			writer.Write (node.Text);
+			writer.RenderEndTag ();	// style tag
+			
+			writer.RenderEndTag ();	// TD
+			
+			writer.RenderEndTag ();	// TR
+			writer.RenderEndTag ();	// TABLE
+			
+			// Children
+			
+			if ((node.Expanded || clientExpand) && node.ChildNodes.Count > 0) {
+				if (clientExpand) {
+					if (!node.Expanded) writer.AddStyleAttribute ("display", "none");
+					else writer.AddStyleAttribute ("display", "block");
+					writer.AddAttribute ("id", ClientID + "_" + node.Path);
+					writer.RenderBeginTag (HtmlTextWriterTag.Span);
+				}
+				
+				if (level >= levelLines.Count) {
+					if (hasNext) levelLines.Add (this);
+					else levelLines.Add (null);
+				} else {
+					if (hasNext) levelLines [level] = this;
+					else levelLines [level] = null;
+				}
+				
+				int num = node.ChildNodes.Count;
+				for (int n=0; n<num; n++)
+					RenderNode (writer, node.ChildNodes [n], level + 1, levelLines, true, n<num-1);
+					
+				if (clientExpand)
+					writer.RenderEndTag ();	// SPAN
 			}
 		}
 		
-		void RenderNode (HtmlTextWriter writer, TreeNode node, int level)
+		void AddNodeStyle (HtmlTextWriter writer, TreeNode node, int level)
 		{
-			writer.RenderBeginTag (HtmlTextWriterTag.Div);
-			
-			string nodeImage;
-			
-			if (node.ChildNodes.Count > 0) {
-				if (node.Expanded)
-					nodeImage = CollapseImageUrl != "" ? CollapseImageUrl : defaultCollapseImage;
-				else
-					nodeImage = ExpandImageUrl != "" ? ExpandImageUrl : defaultExpandImage;
-			}
-			else
-				nodeImage = NoExpandImageUrl != "" ? NoExpandImageUrl : defaultNoExpandImage;
-			
-			bool clientExpand = EnableClientScript && Events [TreeNodeCollapsedEvent] == null && Events [TreeNodeExpandedEvent] == null;
-			
-			if (!clientExpand)
-				writer.AddAttribute ("href", GetClientEvent (node, "ec"));
-			else
-				writer.AddAttribute ("href", "javascript:TreeView_ToggleExpand ('" + ClientID + "_" + GetNodePath (node) + "')");
-
-			writer.RenderBeginTag (HtmlTextWriterTag.A);	// Anchor
-			
-			writer.AddAttribute ("src", nodeImage);
-			writer.AddAttribute ("border", "0");
-			writer.RenderBeginTag (HtmlTextWriterTag.Img);
-			writer.RenderEndTag ();
-			
-			writer.RenderEndTag ();	// Anchor
-			
 			if (nodeStyle != null)
 				nodeStyle.AddAttributesToRender (writer);
 				
 			if (levelStyles != null && level < levelStyles.Count)
 				levelStyles [level].AddAttributesToRender (writer);
 			else {
-				if (rootNodeStyle != null && node.Parent == null && node.ChildNodes.Count > 0)
+				if (rootNodeStyle != null && node.IsRootNode)
 					rootNodeStyle.AddAttributesToRender (writer);
 	
-				if (leafNodeStyle != null && node.ChildNodes.Count == 0)
+				if (leafNodeStyle != null && node.IsLeafNode)
 					leafNodeStyle.AddAttributesToRender (writer);
 	
-				if (parentNodeStyle != null && node.ChildNodes.Count > 0 && node.Parent != null)
+				if (parentNodeStyle != null && node.IsParentNode)
 					parentNodeStyle.AddAttributesToRender (writer);
 			}
 			
 			if (node.Selected && selectedNodeStyle != null)
 				selectedNodeStyle.AddAttributesToRender (writer);
-			
-			writer.AddAttribute ("href", GetClientEvent (node, "sel"));
-			writer.AddStyleAttribute ("text-decoration", "none");
-			writer.RenderBeginTag (HtmlTextWriterTag.A);
-			writer.Write (node.Text);
-			writer.RenderEndTag ();
-			
-			if ((node.Expanded || clientExpand) && node.ChildNodes.Count > 0) {
-			
-				if (clientExpand) {
-					if (!node.Expanded) writer.AddStyleAttribute ("display", "none");
-					else writer.AddStyleAttribute ("display", "block");
-					writer.AddAttribute ("id", ClientID + "_" + GetNodePath (node));
-				}
-				
-				writer.AddStyleAttribute ("margin-left", NodeIndent.ToString ());
-				writer.RenderBeginTag (HtmlTextWriterTag.Div);
-				foreach (TreeNode child in node.ChildNodes)
-					RenderNode (writer, child, level + 1);
-				writer.RenderEndTag ();
+		}
+		
+		void BeginNodeTag (HtmlTextWriter writer, TreeNode node, bool clientExpand)
+		{
+			if (node.NavigateUrl != "") {
+				writer.AddAttribute ("href", node.NavigateUrl);
+				if (node.Target != null)
+					writer.AddAttribute ("target", node.Target);
+				writer.AddStyleAttribute ("text-decoration", "none");
+				writer.RenderBeginTag (HtmlTextWriterTag.A);
 			}
-			writer.RenderEndTag ();
+			else if (node.SelectAction != TreeNodeSelectAction.None) {
+				if (node.SelectAction == TreeNodeSelectAction.Expand && clientExpand)
+					writer.AddAttribute ("href", GetClientExpandEvent (node));
+				else
+					writer.AddAttribute ("href", GetClientEvent (node, "sel"));
+				writer.AddStyleAttribute ("text-decoration", "none");
+				writer.RenderBeginTag (HtmlTextWriterTag.A);
+			}
+			else
+				writer.RenderBeginTag (HtmlTextWriterTag.Span);
+		}
+		
+		string GetNodeImageUrl (string shape, ImageStyle imageStyle)
+		{
+			if (ShowLines) {
+				if (LineImagesFolder != "")
+					return LineImagesFolder + "/" + shape + ".gif";
+			} else {
+				if (shape == "plus") {
+					if (ExpandImageUrl != "")
+						return ExpandImageUrl;
+					if (imageStyle != null && imageStyle.Expand != null)
+						return imageStyle.Expand;
+				}
+				else if (shape == "minus") {
+					if (CollapseImageUrl != "")
+						return CollapseImageUrl;
+					if (imageStyle != null && imageStyle.Collapse != null)
+						return imageStyle.Collapse;
+				}
+				else if (shape == "noexpand") {
+					if (NoExpandImageUrl != "")
+						return NoExpandImageUrl;
+					if (imageStyle != null && imageStyle.NoExpand != null)
+						return imageStyle.NoExpand;
+				}
+			}
+			return AssemblyResourceLoader.GetResourceUrl (typeof(TreeView), "TreeView_" + shape + ".gif");
+		}
+		
+		string GetNodeIconUrl (string icon)
+		{
+			return AssemblyResourceLoader.GetResourceUrl (typeof(TreeView), icon + ".gif");
 		}
 		
 		string GetClientEvent (TreeNode node, string ev)
 		{
-			return Page.GetPostBackClientHyperlink (this, ev + "|" + GetNodePath (node));
+			return Page.GetPostBackClientHyperlink (this, ev + "|" + node.Path);
 		}
 		
-		string GetNodePath (TreeNode node)
+		string GetClientExpandEvent (TreeNode node)
 		{
-			StringBuilder sb = new StringBuilder ();
-			while (node != null) {
-				if (sb.Length != 0) sb.Insert (0, '_');
-				sb.Insert (0, node.Index.ToString ());
-				node = node.Parent;
-			}
-			return sb.ToString ();
+			return "javascript:TreeView_ToggleExpand ('" + ClientID + "', '" + node.Path + "')";
 		}
 		
-		TreeNode FindNode (string path)
+		TreeNode FindNodeByPos (string path)
 		{
-			if (nodes == null) return null;
-			
 			string[] indexes = path.Split ('_');
 			TreeNode node = null;
 			
 			foreach (string index in indexes) {
 				int i = int.Parse (index);
 				if (node == null) {
-					if (i >= nodes.Count) return null;
-					node = nodes [i];
+					if (i >= Nodes.Count) return null;
+					node = Nodes [i];
 				} else {
 					if (i >= node.ChildNodes.Count) return null;
 					node = node.ChildNodes [i];
 				}
 			}
 			return node;
+		}
+		
+		void UnsetCheckStates (TreeNodeCollection col, NameValueCollection states)
+		{
+			foreach (TreeNode node in col) {
+				if (node.Checked) {
+					string val = states [ClientID + "_cs_" + node.Path];
+					if (val != "on") node.Checked = false;
+				}
+				if (node.HasChildData)
+					UnsetCheckStates (node.ChildNodes, states);
+			}
+		}
+		
+		void SetCheckStates (NameValueCollection states)
+		{
+			string keyPrefix = ClientID + "_cs_";
+			foreach (string key in states) {
+				if (key.StartsWith (keyPrefix)) {
+					string id = key.Substring (keyPrefix.Length);
+					TreeNode node = FindNodeByPos (id);
+					if (node != null)
+						node.Checked = (Context.Request.Form [key] == "on");
+				}
+			}
+		}
+		
+		void UnsetExpandStates (TreeNodeCollection col, string[] states)
+		{
+			foreach (TreeNode node in col) {
+				if (node.Expanded) {
+					bool expand = (Array.IndexOf (states, node.Path) != -1);
+					if (!expand) node.Expanded = false;
+				}
+				if (node.HasChildData)
+					UnsetExpandStates (node.ChildNodes, states);
+			}
+		}
+		
+		void SetExpandStates (string[] states)
+		{
+			foreach (string id in states) {
+				if (id == null || id == "") continue;
+				TreeNode node = FindNodeByPos (id);
+				node.Expanded = true;
+			}
+		}
+		
+		string GetExpandStates ()
+		{
+			StringBuilder sb = new StringBuilder ("|");
+			
+			foreach (TreeNode node in Nodes)
+				GetExpandStates (sb, node);
+
+			return sb.ToString ();
+		}
+		
+		void GetExpandStates (StringBuilder sb, TreeNode node)
+		{
+			if (node.Expanded) {
+				sb.Append (node.Path);
+				sb.Append ('|');
+			}
+			if (node.HasChildData) {
+				foreach (TreeNode child in node.ChildNodes)
+					GetExpandStates (sb, child);
+			}
 		}
 	}
 }

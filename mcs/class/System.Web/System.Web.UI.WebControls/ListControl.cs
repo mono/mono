@@ -343,10 +343,9 @@ namespace System.Web.UI.WebControls
 		}
 
 		#if NET_2_0
-		protected override void PerformDataBinding ()
+		protected override void PerformDataBinding (IEnumerable ds)
 		{
-			base.PerformDataBinding ();
-			IEnumerable ds = GetResolvedDataSource ();
+			base.PerformDataBinding (ds);
 		#else
 		protected override void OnDataBinding(EventArgs e)
 		{

@@ -1,3 +1,21 @@
+2004-11-26 Lluis Sanchez Gual <lluis@novell.com>
+
+	* TreeNodeBindingCollection.cs: Implemented.
+	* TreeNodeBinding.cs: Implemented.
+	* TreeNode.cs: Added support for data binding.
+	* TreeView_Default_Collapse.gif, TreeView_Default_Expand.gif
+	  TreeView_Default_NoExpand.gif: Moved to resources directory.
+	* ListControl.cs: Fixed api.
+	* XmlHierarchicalEnumerable.cs: Made internal.
+	* DataBoundControl.cs: Modified api to match latest ms.net.
+	* TreeView.js: New javascript file to support TreeView in the client.
+	* XmlDataSource.cs: Added missing attributes.
+	* HierarchicalDataBoundControl.cs: Mostly implemented.
+	* BaseDataBoundControl.cs: Mostly implemented.
+	* XmlHierarchyData.cs: Made internal.
+	* TreeView.cs: Mostly implemented. The major missing feature is
+	  client side tree population.
+
 2004-11-25 Sanjay Gupta <gsanjay@novell.com>
 
 	* BaseDataList.cs: 

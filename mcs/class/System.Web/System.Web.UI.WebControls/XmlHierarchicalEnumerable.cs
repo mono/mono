@@ -35,7 +35,7 @@ using System.Text;
 using System.Xml;
 
 namespace System.Web.UI.WebControls {
-	public class XmlHierarchicalEnumerable : IHierarchicalEnumerable {
+	internal class XmlHierarchicalEnumerable : IHierarchicalEnumerable {
 		internal XmlHierarchicalEnumerable (XmlNodeList nodeList)
 		{
 			this.nodeList = nodeList;

@@ -37,7 +37,7 @@ using System.ComponentModel;
 using AC = System.ComponentModel.AttributeCollection;
 
 namespace System.Web.UI.WebControls {
-	public class XmlHierarchyData : IHierarchyData, ICustomTypeDescriptor {
+	internal class XmlHierarchyData : IHierarchyData, ICustomTypeDescriptor {
 		internal XmlHierarchyData (XmlNode item)
 		{
 			this.item = item;

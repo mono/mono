@@ -31,22 +31,72 @@
 #if NET_2_0
 
 using System;
+using System.Collections;
 using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
 	public sealed class TreeNodeBindingCollection: StateManagedCollection
 	{
-		[MonoTODO]
+		static Type[] types = new Type[] { typeof (TreeNodeBinding) };
+		
+		internal TreeNodeBindingCollection ()
+		{
+		}
+		
+		public int Add (TreeNodeBinding binding)
+		{
+			return ((IList)this).Add (binding);
+		}
+		
+		public bool Contains (TreeNodeBinding binding)
+		{
+			return ((IList)this).Contains (binding);
+		}
+		
+		public void CopyTo (TreeNodeBinding[] array, int index)
+		{
+			((IList)this).CopyTo (array, index);
+		}
+		
 		protected override object CreateKnownType (int index)
 		{
-			throw new NotImplementedException ();
+			return new TreeNodeBinding ();
+		}
+		
+		protected override Type[] GetKnownTypes ()
+		{
+			return types;
+		}
+		
+		public int IndexOf (TreeNodeBinding binding)
+		{
+			return ((IList)this).IndexOf (binding);
+		}
+		
+		public void Insert (int index, TreeNodeBinding binding)
+		{
+			((IList)this).Insert (index, binding);
+		}
+		
+		public void Remove (TreeNodeBinding binding)
+		{
+			((IList)this).Remove (binding);
+		}
+		
+		public void RemoveAt (int index)
+		{
+			((IList)this).RemoveAt (index);
+		}
+		
+		public TreeNodeBinding this [int i] {
+			get { return (TreeNodeBinding) ((IList)this) [i]; }
+			set { ((IList)this) [i] = value; }
 		}
 		
 		[MonoTODO]
 		protected override void SetDirtyObject (object o)
 		{
-			throw new NotImplementedException ();
 		}
 	}
 }

@@ -35,6 +35,95 @@ namespace System.Web.UI.WebControls
 {
 	public abstract class BaseDataBoundControl: WebControl
 	{
+		public event EventHandler DataBound;
+		
+		object dataSource;
+		string dataSourceId;
+		bool initialized;
+		bool requiresDataBinding = true;
+		
+		public virtual object DataSource {
+			get {
+				return dataSource;
+			}
+			set {
+				ValidateDataSource (value);
+				dataSource = value;
+			}
+		}
+		
+		public virtual string DataSourceID {
+			get { return dataSourceId; }
+			set { dataSourceId = value; }
+		}
+		
+		protected bool Initialized {
+			get { return initialized; }
+		}
+		
+		[MonoTODO]
+		protected bool IsBoundUsingDataSourceID {
+			get { return dataSourceId != null; }
+		}
+		
+		protected bool RequiresDataBinding {
+			get { return requiresDataBinding; }
+			set { requiresDataBinding = value; }
+		}
+		
+		[MonoTODO]
+		protected void ConfirmInitState ()
+		{
+		}
+		
+		public override void DataBind ()
+		{
+			PerformSelect ();
+			RequiresDataBinding = false;
+			OnDataBound (EventArgs.Empty);
+		}
+		
+		protected void EnsureDataBound ()
+		{
+			if (RequiresDataBinding && DataSourceID != "")
+				DataBind ();
+		}
+		
+		protected virtual void OnDataBound (EventArgs e)
+		{
+			if (DataBound != null)
+				DataBound (this, e);
+		}
+		
+		[MonoTODO]
+		protected virtual void OnDataPropertyChanged ()
+		{
+		}
+		
+		[MonoTODO]
+		protected override void OnInit (EventArgs e)
+		{
+			base.OnInit (e);
+			initialized = true;
+			if (!Page.IsPostBack)
+				RequiresDataBinding = true;
+		}
+		
+		[MonoTODO]
+		protected virtual void OnPagePreLoad (object sender, EventArgs e)
+		{
+		}
+		
+		protected override void OnPreRender (EventArgs e)
+		{
+			EnsureDataBound ();
+			base.OnPreRender (e);
+		}
+		
+		protected abstract void PerformSelect ();
+		
+		protected abstract void ValidateDataSource (object dataSource);
+		
 	}
 }
 

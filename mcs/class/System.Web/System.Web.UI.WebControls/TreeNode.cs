@@ -31,6 +31,8 @@
 #if NET_2_0
 
 using System;
+using System.Collections;
+using System.Text;
 using System.ComponentModel;
 using System.Web.UI;
 
@@ -45,6 +47,13 @@ namespace System.Web.UI.WebControls
 		TreeView tree;
 		TreeNode parent;
 		int index;
+		string path;
+		int depth = -1;
+		
+		IHierarchyData hierarchyData;
+		bool gotBinding;
+		TreeNodeBinding binding;
+		PropertyDescriptorCollection boundProperties;
 		
 		public TreeNode ()
 		{
@@ -77,6 +86,26 @@ namespace System.Web.UI.WebControls
 			Target = target;
 		}
 		
+		public int Depth {
+			get {
+				if (depth != -1) return depth;
+				depth = 0;
+				TreeNode nod = parent;
+				while (nod != null) {
+					depth++;
+					nod = nod.parent;
+				}
+				return depth;
+			}
+		}
+		
+		void ResetPathData ()
+		{
+			path = null;
+			depth = -1;
+			gotBinding = false;
+		}
+		
 		internal TreeView Tree {
 			get { return tree; }
 			set {
@@ -89,6 +118,25 @@ namespace System.Web.UI.WebControls
 				tree = value;
 				if (nodes != null)
 					nodes.SetTree (tree);
+				ResetPathData ();
+			}
+		}
+		
+		public bool DataBound {
+			get { return hierarchyData != null; }
+		}
+		
+		public object DataItem {
+			get {
+				if (hierarchyData == null) throw new InvalidOperationException ("TreeNode is not data bound.");
+				return hierarchyData.Item;
+			}
+		}
+		
+		public string DataPath {
+			get {
+				if (hierarchyData == null) throw new InvalidOperationException ("TreeNode is not data bound.");
+				return hierarchyData.Path;
 			}
 		}
 		
@@ -100,6 +148,8 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["Checked"] = value;
+				if (tree != null)
+					tree.NotifyCheckChanged (this);
 			}
 		}
 
@@ -110,7 +160,11 @@ namespace System.Web.UI.WebControls
 		public virtual TreeNodeCollection ChildNodes {
 			get {
 				if (nodes == null) {
-					nodes = new TreeNodeCollection (this);
+					if (DataBound)
+						FillBoundChildren ();
+					else
+						nodes = new TreeNodeCollection (this);
+						
 					if (IsTrackingViewState)
 						((IStateManager)nodes).TrackViewState();
 				}
@@ -126,6 +180,8 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["Expanded"] = value;
+				if (tree != null)
+					tree.NotifyExpandedChanged (this);
 			}
 		}
 
@@ -133,13 +189,21 @@ namespace System.Web.UI.WebControls
 			get {
 				object o = ViewState ["ImageToolTip"];
 				if (o != null) return (string)o;
+				if (DataBound) {
+					TreeNodeBinding bin = GetBinding ();
+					if (bin != null) {
+						if (bin.ImageToolTipField != "")
+							return (string) GetBoundPropertyValue (bin.ImageToolTipField);
+						return bin.ImageToolTip;
+					}
+				}
 				return "";
 			}
 			set {
 				ViewState ["ImageToolTip"] = value;
 			}
 		}
-
+		
 		public virtual string ImageUrl {
 			get {
 				object o = ViewState ["ImageUrl"];
@@ -213,6 +277,16 @@ namespace System.Web.UI.WebControls
 			get {
 				object o = ViewState ["Text"];
 				if(o != null) return (string)o;
+				if (DataBound) {
+					TreeNodeBinding bin = GetBinding ();
+					if (bin != null) {
+						if (bin.TextField != "")
+							return (string) GetBoundPropertyValue (bin.TextField);
+						if (bin.Text != "")
+							return bin.Text;
+					}
+					return hierarchyData.ToString ();
+				}
 				return "";
 			}
 			set {
@@ -235,6 +309,16 @@ namespace System.Web.UI.WebControls
 			get {
 				object o = ViewState ["Value"];
 				if(o != null) return (string)o;
+				if (DataBound) {
+					TreeNodeBinding bin = GetBinding ();
+					if (bin != null) {
+						if (bin.ValueField != "")
+							return (string) GetBoundPropertyValue (bin.ValueField);
+						if (bin.Value != "")
+							return bin.Value;
+					}
+					return hierarchyData.ToString ();
+				}
 				return "";
 			}
 			set {
@@ -269,20 +353,53 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		internal int Index {
-			get { return index; }
-			set { index = value; }
-		}
-		
-		
 		public TreeNode Parent {
 			get { return parent; }
 		}
 		
-		internal void SetParent (TreeNode node) {
-			parent = node;
+		public string ValuePath {
+			get {
+				if (tree == null) return Value;
+				
+				StringBuilder sb = new StringBuilder (Value);
+				TreeNode node = parent;
+				while (node != null) {
+					sb.Insert (0, tree.PathSeparator);
+					sb.Insert (0, node.Value);
+					node = node.Parent;
+				}
+				return sb.ToString ();
+			}
 		}
 		
+		internal int Index {
+			get { return index; }
+			set { index = value; ResetPathData (); }
+		}
+		
+		internal void SetParent (TreeNode node) {
+			parent = node;
+			ResetPathData ();
+		}
+		
+		internal string Path {
+			get {
+				if (path != null) return path;
+				StringBuilder sb = new StringBuilder (index.ToString());
+				TreeNode node = parent;
+				while (node != null) {
+					sb.Insert (0, '_');
+					sb.Insert (0, node.Index.ToString ());
+					node = node.Parent;
+				}
+				path = sb.ToString ();
+				return path;
+			}
+		}
+		
+		internal bool HasChildData {
+			get { return nodes != null; }
+		}
 		
 		public void Collapse ()
 		{
@@ -299,7 +416,7 @@ namespace System.Web.UI.WebControls
 			Expanded = true;
 		}
 
-		public void Expand (int depth)
+		internal void Expand (int depth)
 		{
 			SetExpandedRec (true, depth);
 		}
@@ -314,10 +431,8 @@ namespace System.Web.UI.WebControls
 			Expanded = expanded;
 			if (depth == 0) return;
 			
-			if (nodes != null) {
-				foreach (TreeNode nod in nodes)
-					nod.SetExpandedRec (expanded, depth - 1);
-			}
+			foreach (TreeNode nod in ChildNodes)
+				nod.SetExpandedRec (expanded, depth - 1);
 		}
 		
 		public void Select ()
@@ -373,10 +488,70 @@ namespace System.Web.UI.WebControls
 		
 		public object Clone ()
 		{
-			object o = SaveViewState ();
 			TreeNode nod = new TreeNode ();
-			nod.LoadViewState (o);
+			foreach (DictionaryEntry e in ViewState)
+				nod.ViewState [(string)e.Key] = e.Value;
+				
+			foreach (TreeNode c in ChildNodes)
+				nod.ChildNodes.Add ((TreeNode)c.Clone ());
+				
 			return nod;
+		}
+		
+		internal void Bind (IHierarchyData hierarchyData)
+		{
+			this.hierarchyData = hierarchyData;
+		}
+		
+		internal bool IsParentNode {
+			get { return ChildNodes.Count > 0 && Parent != null; }
+		}
+		
+		internal bool IsLeafNode {
+			get { return ChildNodes.Count == 0; }
+		}
+		
+		internal bool IsRootNode {
+			get { return ChildNodes.Count > 0 && Parent == null; }
+		}
+		
+		TreeNodeBinding GetBinding ()
+		{
+			if (tree == null) return null;
+			if (gotBinding) return binding;
+			binding = tree.FindBindingForNode (hierarchyData.Type, Depth);
+			gotBinding = true;
+			return binding;
+		}
+		
+		object GetBoundPropertyValue (string name)
+		{
+			if (boundProperties == null) {
+				ICustomTypeDescriptor desc = hierarchyData as ICustomTypeDescriptor;
+				if (desc == null)
+					throw new InvalidOperationException ("Property '" + name + "' not found in data bound item");
+				boundProperties = desc.GetProperties ();
+			}
+			
+			PropertyDescriptor prop = boundProperties.Find (name, true);
+			if (prop == null)
+				throw new InvalidOperationException ("Property '" + name + "' not found in data bound item");
+			return prop.GetValue (hierarchyData);
+		}
+
+		void FillBoundChildren ()
+		{
+			nodes = new TreeNodeCollection (this);
+			if (!hierarchyData.HasChildren) return;
+			if (tree.MaxDataBindDepth != -1 && Depth >= tree.MaxDataBindDepth) return;
+
+			IHierarchicalEnumerable e = hierarchyData.GetChildren ();
+			foreach (object obj in e) {
+				IHierarchyData hdata = e.GetHierarchyData (obj);
+				TreeNode node = new TreeNode ();
+				node.Bind (hdata);
+				nodes.Add (node);
+			}
 		}
 	}
 }

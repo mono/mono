@@ -40,101 +40,57 @@ using System.ComponentModel;
 namespace System.Web.UI.WebControls {
 	public abstract class DataBoundControl : BaseDataBoundControl
 	{
-		public event EventHandler DataBound;
-		
 		protected DataBoundControl ()
 		{
 		}
 		
-		public sealed override void DataBind ()
-		{
-			PerformDataBinding ();
-			RequiresDataBinding = false;
-			OnDataBound (EventArgs.Empty);
-		}
-		
-		protected void EnsureDataBound ()
-		{
-			if (RequiresDataBinding && DataSourceID != "")
-				DataBind ();
-		}
-
-		protected virtual object GetDataSourceObject()
+		protected IDataSource GetDataSource ()
 		{
 			if (DataSourceID != "")
-				return (IDataSource) NamingContainer.FindControl (DataSourceID);
+				return NamingContainer.FindControl (DataSourceID) as IDataSource;
 			
-			return DataSource;
+			return DataSource as IDataSource;
 		}
 		
-		
-		protected virtual IEnumerable GetResolvedDataSource ()
+		protected DataSourceView GetData ()
 		{
 			if (DataSource != null && DataSourceID != "")
 				throw new HttpException ();
 			
-			IDataSource ds = GetDataSourceObject () as IDataSource;
+			IDataSource ds = GetDataSource ();
 			if (ds != null && DataSourceID != "")
-				return ds.GetView (DataMember).ExecuteSelect (selectArguments);
-			else if (DataSource != null)
-				return DataSourceHelper.GetResolvedDataSource (DataSource, DataMember);
+				return ds.GetView (DataMember);
 			else
 				return null; 
 		}
 		
-		protected bool IsBoundToDataSourceControl()
+		protected override void OnDataPropertyChanged ()
 		{
-			return (GetDataSourceObject () is IDataSource) && DataSourceID != "";
+			RequiresDataBinding = true;
 		}
 		
-		protected virtual void OnDataBound(EventArgs e) {
-			if (DataBound != null)
-				DataBound (this, e);
-		}
-		
-		protected virtual void OnDataPropertyChanged ()
-		{
-			this.RequiresDataBinding = true;
-		}
-		
-		protected virtual void OnDataSourceChanged (object sender, EventArgs e)
+		protected virtual void OnDataSourceViewChanged (object sender, EventArgs e)
 		{
 			RequiresDataBinding = true;
 		}
 		
 		// should be `internal protected' (why, oh WHY did they do that !?!)
-		protected override void OnInit (EventArgs e)
-		{
-			base.OnInit(e);
-			inited = true;
-			if (!Page.IsPostBack)
-				RequiresDataBinding = true;
-		}
-		
-		// should be `internal protected' (why, oh WHY did they do that !?!)
 		protected override void OnLoad (EventArgs e)
 		{
-			IDataSource ds = GetDataSourceObject () as IDataSource;
+			IDataSource ds = GetDataSource ();
 			if (ds != null && DataSourceID != "")
-				ds.DataSourceChanged += new EventHandler (OnDataSourceChanged);
+				ds.DataSourceChanged += new EventHandler (OnDataSourceViewChanged);
 			
 			base.OnLoad(e);
 		}
 		
-		// should be `internal protected' (why, oh WHY did they do that !?!)
-		protected override void OnPreRender (EventArgs e)
+		protected virtual void PerformDataBinding (IEnumerable data)
 		{
-			EnsureDataBound ();
-			base.OnPreRender (e);
-		}
-		
-		protected virtual void PerformDataBinding ()
-		{
-			OnDataBinding(EventArgs.Empty);
+			OnDataBinding (EventArgs.Empty);
 		}
 
 		
-		protected virtual void ValidateDataSource (object dataSource)
+		protected override void ValidateDataSource (object dataSource)
 		{
 			if (dataSource is IListSource || dataSource is IEnumerable)
 				return;
@@ -155,19 +111,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		object dataSource;
-		public virtual object DataSource
-		{
-			get {
-				return dataSource;
-			}
-			set {
-				ValidateDataSource (value);
-				dataSource = value;
-			}
-		}
-		
-		public virtual string DataSourceID {
+		public override string DataSourceID {
 			get {
 				object o = ViewState ["DataSourceID"];
 				if (o != null)
@@ -176,25 +120,28 @@ namespace System.Web.UI.WebControls {
 				return String.Empty;
 			}
 			set {
-				if (inited)
+				if (Initialized)
 					RequiresDataBinding = true;
 				
 				ViewState ["DataSourceID"] = value;
 			}
 		}
 		
-		bool requiresDataBinding;
-		protected bool RequiresDataBinding {
-			get { return requiresDataBinding; }
-			set { requiresDataBinding = value; }
+		protected override void PerformSelect ()
+		{
+			IEnumerable data = null;
+			DataSourceView view = GetData ();
+			if (view != null)
+				data = view.ExecuteSelect (SelectArguments);
+			else if (DataSource != null)
+				data = DataSourceHelper.GetResolvedDataSource (DataSource, DataMember);
+
+			PerformDataBinding (data);
 		}
 		
-		protected bool inited;
-		
-		DataSourceSelectArguments selectArguments = null;
-			
+		[MonoTODO]
 		protected DataSourceSelectArguments SelectArguments {
-			get { return selectArguments; }
+			get { return null; }
 		}
 	}
 }
