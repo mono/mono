@@ -109,4 +109,7 @@ the Microsoft C# compiler:
 
 -211    Array expression passed to attribute is not unidimensional
 
--212    An Array creation expression is present, but the array is not initialized.
+-212    An Array creation expression is present, but the array is not
+	initialized.
+
+-213	This feature requires v2 support.

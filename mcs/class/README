@@ -37,6 +37,12 @@ the restricted dll found in the same directory.
 		throw new NotImplementedException ();
 	}
 
+* Supporting both .NET 1.1 and .NET 1.0 builds
+
+	Use #ifdef NET_1_1 for code that should only be included for
+	a .NET 1.1 build, and NET_1_0 for code that should only be included
+	for a 1.0 build.
+
 * Tagging buggy code
 
 	If there is a bug in your implementation tag the problem by using
