@@ -13,7 +13,7 @@ using System.Collections;
 
 using NUnit.Framework;
 
-namespace Ximian.Mono.Tests
+namespace MonoTests.System.Collections
 {
 	public class StackTest: TestCase
 	{

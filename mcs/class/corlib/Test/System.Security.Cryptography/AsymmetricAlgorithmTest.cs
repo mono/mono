@@ -11,7 +11,7 @@ using System.Security.Cryptography;
 
 using NUnit.Framework;
 
-namespace Testsuite.System.Security.Cryptography {
+namespace MonoTests.System.Security.Cryptography {
 
 	public class AsymmetricAlgorithmTest : TestCase {
 		private AsymmetricAlgorithm _algo;

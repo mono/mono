@@ -12,7 +12,7 @@ using S = System; // for implementation switching only
 using System.Globalization;
 using System.Runtime.CompilerServices;
 
-namespace Test {
+namespace MonoTests.System {
     /// <summary>
     /// Tests for System.Decimal
     /// </summary>

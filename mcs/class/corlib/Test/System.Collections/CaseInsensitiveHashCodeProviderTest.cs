@@ -7,24 +7,12 @@ using NUnit.Framework;
 
 
 
-namespace Testsuite.System.Collections {
+namespace MonoTests.System.Collections {
 
 
 	/// <summary>CaseInsensitiveHashCodeProvider test suite.</summary>
-	public class CaseInsensitiveHashCodeProviderTest {
-		public static ITest Suite {
-			get {
-				TestSuite suite = new TestSuite ("CaseInsensitiveHashCodeProviderTest tests");
-				suite.AddTest (CIHashCodeProviderTestCase.Suite);
-				return suite;
-			}
-		}
-	}
-
-
-	public class CIHashCodeProviderTestCase : TestCase {
-
-		public CIHashCodeProviderTestCase(String name) : base(name)
+	public class CaseInsensitiveHashCodeProviderTest : TestCase {
+		public CaseInsensitiveHashCodeProviderTest(String name) : base(name)
 		{
 		}
 
@@ -35,8 +23,7 @@ namespace Testsuite.System.Collections {
 		public static ITest Suite
 		{
 			get {
-				Console.WriteLine("Testing " + (new CaseInsensitiveHashCodeProvider()));
-				return new TestSuite(typeof(CIHashCodeProviderTestCase));
+				return new TestSuite(typeof(CaseInsensitiveHashCodeProviderTest));
 			}
 		}
 

@@ -36,8 +36,8 @@ namespace System.IO
 				   int bufferSize, bool isAsync)
 		{
 			fd = fd;
-			acc = access;
-			owner = ownsHandle;
+			//acc = access;
+			//owner = ownsHandle;
 		}
 		
 		public FileStream (string name, FileMode mode)

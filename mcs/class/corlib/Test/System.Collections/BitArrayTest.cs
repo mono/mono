@@ -8,12 +8,22 @@ using NUnit.Framework;
 using System.Collections;
 using System;
 
+namespace MonoTests.System.Collections
+{
+
 public class BitArrayTest : TestCase 
 {
   private BitArray testBa;
   private bool [] testPattern;
   private BitArray op1;
   private BitArray op2;
+
+  public static ITest Suite
+  {
+    get {
+      return new TestSuite(typeof(BitArrayTest));
+    }
+  }
 
   private void verifyPattern(BitArray ba, bool[] pattern)
   {
@@ -265,8 +275,4 @@ public class BitArrayTest : TestCase
   }
 }
 
-
-
-
-
-
+}

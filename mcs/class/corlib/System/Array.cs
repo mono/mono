@@ -13,7 +13,7 @@ using System.Runtime.CompilerServices;
 namespace System
 {
 
-	public abstract class Array : ICloneable 
+	public abstract class Array : ICloneable, ICollection
 	{
 		// Constructor		
 		protected Array ()
@@ -65,6 +65,32 @@ namespace System
 		public extern static Array CreateInstance(Type elementType, int[] lengths, int [] bounds);
 
 		// Methods Implementations
+
+		public int Count {
+			get {
+				return Length;
+			}
+		}
+
+		public bool IsSynchronized {
+			get {
+				// FIXME?
+				return false;
+			}
+		}
+
+		public object SyncRoot {
+			get {
+				// FIXME
+				return null;
+			}
+		}
+
+		public virtual IEnumerator GetEnumerator ()
+		{
+			// FIXME
+			return null;
+		}
 
 		public int GetUpperBound (int dimension)
 		{

@@ -20,6 +20,24 @@
 				<excludes name="System.Collections/Queue.cs"/>
 			</sources>
 		</csc>
+		<csc target="library" output="Test/corlib_res.dll" debug="${debug}">
+			<arg value="/nowarn:1595"/>
+			<arg value="/unsafe"/>
+			<sources>
+				<includes name="**/*.cs"/>
+				<excludes name="Test/**"/>
+				<excludes name="Linux/**"/>
+				<excludes name="System/Object.cs"/>
+				<excludes name="System/ValueType.cs"/>
+				<excludes name="System/Type.cs"/>
+				<excludes name="System/String.cs"/>
+				<excludes name="System.Reflection.Emit/**"/>
+				<excludes name="System.Reflection/**"/>
+				<excludes name="System/RuntimeTypeHandle.cs"/>
+				<excludes name="System.PAL/IOperatingSystem.cs"/>
+				<excludes name="System.Collections/Queue.cs"/>
+			</sources>
+		</csc>
 		<nant basedir="Test" target="build"/>
 	</target>
 
@@ -36,6 +54,7 @@
 				<excludes name="System.Collections/Queue.cs"/>
 			</sources>
 		</csc>
+		<copy file="../lib/corlib.dll" tofile="Test/corlib_res.dll"/>
 		<nant basedir="Test" target="build"/>
 	</target>
 
@@ -45,6 +64,7 @@
 
 	<target name="clean">
 		<delete file="../lib/corlib.dll" failonerror="false"/>
+		<delete file="Test/corlib_res.dll" failonerror="false"/>
 		<nant basedir="Test" target="clean"/>
 	</target>
 </project>

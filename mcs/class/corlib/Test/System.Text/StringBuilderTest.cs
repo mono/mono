@@ -23,7 +23,15 @@ using NUnit.Framework;
 using System.Text;
 using System;
 
+namespace MonoTests.System.Text {
+
 public class StringBuilderTest : TestCase {
+
+	public static ITest Suite {
+		get {
+			return new TestSuite(typeof(StringBuilderTest));
+		}
+	}
 
         public StringBuilderTest( string name ) : base(name) { }
 
@@ -104,4 +112,6 @@ public class StringBuilderTest : TestCase {
 
         public void TestAppendFormat() {
         }
+}
+
 }

@@ -14,6 +14,9 @@ using System.Globalization;
     /// <summary>
     /// Tests for System.Int64
     /// </summary>
+namespace MonoTests.System
+{
+
 public class Int64Test : TestCase
 {
 	private const Int64 MyInt64_1 = -42;
@@ -98,7 +101,7 @@ public class Int64Test : TestCase
 			Fail("Should raise a System.ArgumentException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.ArgumentException) == e.GetType());
+			Assert(typeof(ArgumentException) == e.GetType());
 		}
 	}
 
@@ -167,9 +170,9 @@ public class Int64Test : TestCase
         try
         {
             lv = Int64.Parse(sval1Test1, Nfi);
-            Fail("Should raise System.FormatException 1");
+            Fail("Should raise FormatException 1");
         }
-        catch (System.FormatException)
+        catch (FormatException)
         {
             // ok
         }
@@ -182,9 +185,9 @@ public class Int64Test : TestCase
         try
         {
             lv = Int64.Parse(sval1Test4, style1, Nfi);
-            Fail("Should raise System.FormatException 3");
+            Fail("Should raise FormatException 3");
         }
-        catch (System.FormatException)
+        catch (FormatException)
         {
             // ok
         }
@@ -201,14 +204,14 @@ public class Int64Test : TestCase
 			Fail("Should raise a System.ArgumentNullException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.ArgumentNullException) == e.GetType());
+			Assert(typeof(ArgumentNullException) == e.GetType());
 		}
 		try {
 			Int64.Parse("not-a-number");
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.FormatException) == e.GetType());
+			Assert(typeof(FormatException) == e.GetType());
 		}
 		//test Parse(string s, NumberStyles style)
 		try {
@@ -225,7 +228,7 @@ public class Int64Test : TestCase
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.FormatException) == e.GetType());
+			Assert(typeof(FormatException) == e.GetType());
 		}
 		Assert(42 == Int64.Parse(" $42 ", NumberStyles.Currency));
 		try {
@@ -233,7 +236,7 @@ public class Int64Test : TestCase
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.FormatException) == e.GetType());
+			Assert(typeof(FormatException) == e.GetType());
 		}
 		//test Parse(string s, IFormatProvider provider)
 		Assert(-42 == Int64.Parse(" -42 ", Nfi));
@@ -242,7 +245,7 @@ public class Int64Test : TestCase
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.FormatException) == e.GetType());
+			Assert(typeof(FormatException) == e.GetType());
 		}
 		//test Parse(string s, NumberStyles style, IFormatProvider provider)
 		Assert(16 == Int64.Parse(" 10 ", NumberStyles.HexNumber, Nfi));
@@ -251,7 +254,7 @@ public class Int64Test : TestCase
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.FormatException) == e.GetType());
+			Assert(typeof(FormatException) == e.GetType());
 		}    
     }
 
@@ -284,7 +287,7 @@ public class Int64Test : TestCase
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.FormatException) == e.GetType());
+			Assert(typeof(FormatException) == e.GetType());
 		}
     }
 
@@ -316,4 +319,4 @@ public class Int64Test : TestCase
     }
 }
 
-
+}

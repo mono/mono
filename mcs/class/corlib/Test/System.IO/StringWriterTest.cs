@@ -11,8 +11,16 @@ using System.IO;
 using System;
 using System.Text;
 
+namespace MonoTests.System.IO {
+
 public class StringWriterTest : TestCase {
 	
+	public static ITest Suite {
+		get {
+			return new TestSuite(typeof(StringWriterTest));
+		}
+	}
+
 	public StringWriterTest( string name ): base(name) { }
 
 	public void TestConstructors() {
@@ -42,4 +50,6 @@ public class StringWriterTest : TestCase {
                 writer.Write( testBuffer, 5, 6 );
                 AssertEquals( "A fooTestString", writer.ToString() );
         }
+}
+
 }

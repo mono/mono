@@ -14,12 +14,21 @@ using System.IO;
 using System;
 using System.Text;
 
+namespace MonoTests.System.IO
+{
+
 public class MemoryStreamTest : TestCase {
 	
         private MemoryStream testStream;
         private byte[] testStreamData;
         
 	public MemoryStreamTest( string name ): base(name) { }
+
+	public static ITest Suite {
+		get {
+			return new TestSuite(typeof(MemoryStreamTest));
+		}
+	}
 
         protected override void SetUp() {
                 testStreamData = new byte[100];
@@ -125,4 +134,6 @@ public class MemoryStreamTest : TestCase {
                 VerifyTestData( arrayBytes, 0, 100 );
 
         }
+}
+
 }

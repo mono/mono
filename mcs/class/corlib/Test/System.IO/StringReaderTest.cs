@@ -12,8 +12,16 @@ using NUnit.Framework;
 using System.IO;
 using System;
 
+namespace MonoTests.System.IO {
+
 public class StringReaderTest : TestCase {
 	
+	public static ITest Suite {
+		get {
+			return new TestSuite(typeof(StringReaderTest));
+		}
+	}
+
 	public StringReaderTest( string name ): base(name) { }
 
 	public void TestPeekRead() {
@@ -81,3 +89,4 @@ public class StringReaderTest : TestCase {
         }
 }
         
+}

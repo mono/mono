@@ -159,5 +159,36 @@ namespace System.PlatformAbstractionLayer
 		void SetLastAccessTimeDirectory(string path, DateTime lastAccessTime);
 	
 		void SetLastWriteTimeDirectory(string path, DateTime lastWriteTime);
+
+		double Acos(double d);
+
+		double Asin(double d);
+
+		double Atan(double d);
+
+		double Atan2(double y, double x);
+
+		double Cos(double d);
+
+		double Cosh(double value);
+
+		double Exp(dobule d);
+
+		double Log(double d);
+
+		double Log10(double d);
+
+		double Pow(double x, double y);
+
+		double Sin(double d);
+
+		double Sinh(double d);
+
+		double Sqrt(double d);
+
+		double Tan(double d);
+
+		double Tanh(double d);
+		
 	}
 }

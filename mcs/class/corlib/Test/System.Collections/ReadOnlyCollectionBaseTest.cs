@@ -13,6 +13,7 @@ using System;
 using System.Collections;
 using NUnit.Framework;
 
+namespace MonoTests.System.Collections {
 	public class ReadOnlyCollectionBaseTest : TestCase 	{
 		public ReadOnlyCollectionBaseTest () : base ("System.Collection.ReadOnlyCollectionBase testsuite") {}
 		public ReadOnlyCollectionBaseTest (String name) : base (name) {}
@@ -45,3 +46,4 @@ using NUnit.Framework;
 			Assert(null != myCollection.GetEnumerator());
 		}
 	}
+}

@@ -12,7 +12,7 @@ using System.Diagnostics;
 using System.Reflection;
 using NUnit.Framework;
 
-namespace Ximian.Mono.Tests {
+namespace MonoTests.System.Diagnostics {
         public class StackTraceTest {
                 private StackTraceTest() {}
                 public static ITest Suite 
@@ -24,13 +24,12 @@ namespace Ximian.Mono.Tests {
                                 return suite;
                         }
                 }
-        }
-        
+
         /// <summary>
         ///   Tests the case where StackTrace is created for specified
         ///   stack frame.
         /// </summary>
-        public class StackTraceTest1 : TestCase {
+        private class StackTraceTest1 : TestCase {
                 public StackTraceTest1(string name) : base(name) {}
                 
                 private StackTrace trace;
@@ -94,5 +93,6 @@ namespace Ximian.Mono.Tests {
                                      frame,
                                      trace.GetFrame(0));
                 }                
+	}
         }
 }

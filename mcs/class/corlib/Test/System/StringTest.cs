@@ -9,6 +9,9 @@ using NUnit.Framework;
 using System;
 using System.Globalization;
 
+namespace MonoTests.System
+{
+
 public class StringTest : TestCase
 {
 	public StringTest (string name) : base (name) {}
@@ -68,5 +71,7 @@ public class StringTest : TestCase
 
 		Assert (String.Concat (string1, string2) == concat);
 	}
+
+}
 
 }

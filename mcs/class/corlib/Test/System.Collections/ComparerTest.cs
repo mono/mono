@@ -7,24 +7,12 @@ using NUnit.Framework;
 
 
 
-namespace Testsuite.System.Collections {
+namespace MonoTests.System.Collections {
 
 
 	/// <summary>Comparer test suite.</summary>
-	public class ComparerTest {
-		public static ITest Suite {
-			get {
-				TestSuite suite = new TestSuite ("Comparer tests");
-				suite.AddTest (ComparerTestCase.Suite);
-				return suite;
-			}
-		}
-	}
-
-
-	public class ComparerTestCase : TestCase {
-
-		public ComparerTestCase (String name) : base(name)
+	public class ComparerTest : TestCase {
+		public ComparerTest(String name) : base(name)
 		{
 		}
 
@@ -35,8 +23,7 @@ namespace Testsuite.System.Collections {
 		public static ITest Suite
 		{
 			get {
-				Console.WriteLine("Testing " + Comparer.Default);
-				return new TestSuite(typeof(ComparerTestCase));
+				return new TestSuite(typeof(ComparerTest));
 			}
 		}
 

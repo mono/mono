@@ -7,8 +7,16 @@
 using NUnit.Framework;
 using System;
 
+namespace MonoTests.System {
+
 public class RandomTest : TestCase
 {
+	public static ITest Suite {
+		get {
+			return new TestSuite(typeof(RandomTest));
+		}
+	}
+
         public RandomTest(string name): base(name){}
         public void TestDouble()
         {
@@ -65,4 +73,6 @@ public class RandomTest : TestCase
                         Assert (c < 10 && c >= 1);
                 }
         }
+}
+
 }

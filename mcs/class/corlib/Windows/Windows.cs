@@ -691,5 +691,51 @@ namespace System.PAL
 			}
 			return false;
 		}
+
+		[ DllImport("msvcrt", EntryPoint="acos") ]
+		public extern static double Acos(double d);
+
+		[ DllImport("msvcrt", EntryPoint="asin") ]
+		public extern static double Asin(double d);
+
+		[ DllImport("msvcrt", EntryPoint="atan") ]
+		public extern static double Atan(double d);
+
+		[ DllImport("msvcrt", EntryPoint="atan2") ]
+		public extern static double Atan2(double y, double x);
+
+		[ DllImport("msvcrt", EntryPoint="cos") ]
+		public extern static double Cos(double d);
+
+		[ DllImport("msvcrt", EntryPoint="cosh") ]
+		public extern static double Cosh(double d);
+
+		[ DllImport("msvcrt", EntryPoint="exp") ]
+		public extern static double Exp(double d);
+
+		[ DllImport("msvcrt", EntryPoint="log") ]
+		public extern static double Log(double d);
+
+		[ DllImport("msvcrt", EntryPoint="log10") ]
+		public extern static double Log10(double d);
+
+		[ DllImport("msvcrt", EntryPoint="pow") ]
+		public extern static double Pow(double x, double y);
+
+		[ DllImport("msvcrt", EntryPoint="sin") ]
+		public extern static double Sin(double d);
+
+		[ DllImport("msvcrt", EntryPoint="sinh") ]
+		public extern static double Sinh(double d);
+
+		[ DllImport("msvcrt", EntryPoint="sqrt") ]
+		public extern static double Sqrt(double d);
+
+		[ DllImport("msvcrt", EntryPoint="tan") ]
+		public extern static double Tan(double d);
+
+		[ DllImport("msvcrt", EntryPoint="tanh") ]
+		public extern static double Tanh(double d);
+
 	}
 }

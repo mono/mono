@@ -12,10 +12,7 @@ using System.Diagnostics;
 using System.Reflection;
 using NUnit.Framework;
 
-// FIXME: The class must be compiler with /debug in order for the tests to run
-// properly.
-
-namespace Ximian.Mono.Tests {
+namespace MonoTests.System.Diagnostics {
         public class StackFrameTest {
                 private StackFrameTest() {}
                 public static ITest Suite 
@@ -29,13 +26,12 @@ namespace Ximian.Mono.Tests {
                                 return suite;
                         }
                 }
-        }
-        
+
         /// <summary>
         ///   Tests the case where StackFrame is created for specified file name and
         ///   location inside it.
         /// </summary>
-        public class StackFrameTest1 : TestCase {
+        private class StackFrameTest1 : TestCase {
                 public StackFrameTest1(string name) : base(name) {}
                 
                 private StackFrame frame1;
@@ -134,7 +130,7 @@ namespace Ximian.Mono.Tests {
         ///   What's the best way to do both types of tests with and without
         ///   debug information?
         /// </remarks>
-        public class StackFrameTest2 : TestCase {
+        private class StackFrameTest2 : TestCase {
                 public StackFrameTest2(string name) : base(name) {}
                 
                 private StackFrame frame1;
@@ -257,7 +253,7 @@ namespace Ximian.Mono.Tests {
         ///   What's the best way to do both types of tests with and without
         ///   debug information?
         /// </remarks>
-        public class StackFrameTest3 : TestCase {
+        private class StackFrameTest3 : TestCase {
                 public StackFrameTest3(string name) : base(name) {}
                 
                 private StackFrame frame1;
@@ -349,5 +345,6 @@ namespace Ximian.Mono.Tests {
                                      "SetUp",
                                      frame2.GetMethod().Name);
                 }
+	}
         }
 }

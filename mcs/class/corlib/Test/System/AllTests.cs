@@ -8,12 +8,12 @@
 using System;
 using NUnit.Framework;
 
-namespace Testsuite.System {
+namespace MonoTests.System {
         /// <summary>
         ///   Combines all available unit tests into one test suite.
         /// </summary>
-        public class AllSystemTests : TestCase {
-                public AllSystemTests(string name) : base(name) {}
+        public class AllTests : TestCase {
+                public AllTests(string name) : base(name) {}
                 
                 public static ITest Suite 
                 { 
@@ -24,10 +24,11 @@ namespace Testsuite.System {
                                 suite.AddTest(SByteTest.Suite);
                                 suite.AddTest(Int16Test.Suite);
                                 suite.AddTest(Int32Test.Suite);
-                                suite.AddTest(Int64Test.Suite);
+                                //suite.AddTest(Int64Test.Suite);
                                 suite.AddTest(UInt16Test.Suite);
                                 suite.AddTest(UInt32Test.Suite);
                                 suite.AddTest(UInt64Test.Suite);
+                                suite.AddTest(RandomTest.Suite);
                                 return suite;
                         }
                 }

@@ -13,6 +13,9 @@ using System;
 using System.Collections;
 using NUnit.Framework;
 
+namespace MonoTests.System.Collections
+{
+
 public class CollectionBaseTest : TestCase 	
 {
 	public CollectionBaseTest () : base ("System.Collection.CollectionBase testsuite") {}
@@ -151,7 +154,7 @@ public class CollectionBaseTest : TestCase
 		try {
 			myCollection = new ConcreteCollection();
 		}
-		catch (System.ArgumentNullException) {
+		catch (ArgumentNullException) {
 		}
 	}
 
@@ -228,4 +231,6 @@ public class CollectionBaseTest : TestCase
 		Assert(myCollection.onSetNewValue == 99);
 		Assert(myCollection.onSetCompleteNewValue == 99);
 	}
+}
+
 }

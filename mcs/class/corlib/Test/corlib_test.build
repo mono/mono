@@ -13,18 +13,20 @@
 			<sources>
 				<includes name="**/*.cs"/>
 				<excludes name="System/IntegerFormatterTest.cs"/>
-				<excludes name="temp/HashtableTest.cs"/>
-				<excludes name="temp/QueueTest.cs"/>
+				<excludes name="System/Int64Test.cs"/>
+				<excludes name="System.Collections/QueueTest.cs"/>
 				<excludes name="System/IntegerFormatterTest.cs"/>
 			</sources>
 			<references basedir="..\..\..\nunit">
 				<includes name="NUnitCore.dll"/>
 			</references>
+			<arg value="/r:corlib_res.dll"/>
+			<arg value="/nowarn:1595"/>
 		</csc>
 	</target>
 
 	<target name="test" depends="build">
-		<exec program="..\..\..\nunit\NUnitConsole" commandline="Ximian.Mono.Tests.AllTests,corlib_test.dll" failonerror="false"/>
+		<exec program="..\..\..\nunit\NUnitConsole" commandline="MonoTests.AllTests,corlib_test.dll" failonerror="false"/>
 	</target>
 
 	<target name="clean">

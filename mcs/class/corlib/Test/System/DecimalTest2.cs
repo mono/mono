@@ -11,7 +11,7 @@ using S = System;  // used for implementation switching
 using System.Globalization;
 using System.Runtime.CompilerServices;
 
-namespace Test 
+namespace MonoTests.System
 {
 
     public enum TestResultInfo

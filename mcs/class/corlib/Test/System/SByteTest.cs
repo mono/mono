@@ -9,6 +9,9 @@ using NUnit.Framework;
 using System;
 using System.Globalization;
 
+namespace MonoTests.System
+{
+
 public class SByteTest : TestCase
 {
 	private const SByte MySByte1 = -42;
@@ -58,7 +61,7 @@ public class SByteTest : TestCase
 			Fail("Should raise a System.ArgumentException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.ArgumentException) == e.GetType());
+			Assert(typeof(ArgumentException) == e.GetType());
 		}
 	}
 
@@ -93,14 +96,14 @@ public class SByteTest : TestCase
 			Fail("Should raise a System.ArgumentNullException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.ArgumentNullException) == e.GetType());
+			Assert(typeof(ArgumentNullException) == e.GetType());
 		}
 		try {
 			SByte.Parse("not-a-number");
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.FormatException) == e.GetType());
+			Assert(typeof(FormatException) == e.GetType());
 		}
 		try {
 			int OverInt = SByte.MaxValue + 1;
@@ -108,7 +111,7 @@ public class SByteTest : TestCase
 			Fail("Should raise a System.OverflowException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.OverflowException) == e.GetType());
+			Assert(typeof(OverflowException) == e.GetType());
 		}
 		//test Parse(string s, NumberStyles style)
 		Assert(42 == SByte.Parse(" $42 ", NumberStyles.Currency));
@@ -117,7 +120,7 @@ public class SByteTest : TestCase
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.FormatException) == e.GetType());
+			Assert(typeof(FormatException) == e.GetType());
 		}
 		//test Parse(string s, IFormatProvider provider)
 		Assert(-42 == SByte.Parse(" -42 ", Nfi));
@@ -126,7 +129,7 @@ public class SByteTest : TestCase
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.FormatException) == e.GetType());
+			Assert(typeof(FormatException) == e.GetType());
 		}
 		//test Parse(string s, NumberStyles style, IFormatProvider provider)
 		Assert(16 == SByte.Parse(" 10 ", NumberStyles.HexNumber, Nfi));
@@ -135,7 +138,7 @@ public class SByteTest : TestCase
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.FormatException) == e.GetType());
+			Assert(typeof(FormatException) == e.GetType());
 		}
 	}
 	
@@ -160,8 +163,9 @@ public class SByteTest : TestCase
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.FormatException) == e.GetType());
+			Assert(typeof(FormatException) == e.GetType());
 		}
 	}
 }
 
+}

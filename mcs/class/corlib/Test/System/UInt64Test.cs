@@ -9,6 +9,9 @@ using NUnit.Framework;
 using System;
 using System.Globalization;
 
+namespace MonoTests.System
+{
+
 public class UInt64Test : TestCase
 {
 	private const UInt64 MyUInt64_1 = 42;
@@ -55,7 +58,7 @@ public class UInt64Test : TestCase
 			Fail("Should raise a System.ArgumentException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.ArgumentException) == e.GetType());
+			Assert(typeof(ArgumentException) == e.GetType());
 		}
 	}
 
@@ -87,26 +90,26 @@ public class UInt64Test : TestCase
 		Assert(MyUInt64_3 == UInt64.Parse(MyString3));
 		try {
 			UInt64.Parse(null);
-			Fail("Should raise a System.ArgumentNullException");
+			Fail("Should raise a ArgumentNullException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.ArgumentNullException) == e.GetType());
+			Assert(typeof(ArgumentNullException) == e.GetType());
 		}
 		try {
 			UInt64.Parse("not-a-number");
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.FormatException) == e.GetType());
+			Assert(typeof(FormatException) == e.GetType());
 		}
 		//test Parse(string s, NumberStyles style)
 		try {
 			double OverInt = (double)UInt64.MaxValue + 1;
 			UInt64.Parse(OverInt.ToString(), NumberStyles.Float);
-			Fail("Should raise a System.OverflowException");
+			Fail("Should raise a OverflowException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.OverflowException) == e.GetType());
+			Assert(typeof(OverflowException) == e.GetType());
 		}
 		try {
 			double OverInt = (double)UInt64.MaxValue + 1;
@@ -114,15 +117,15 @@ public class UInt64Test : TestCase
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.FormatException) == e.GetType());
+			Assert(typeof(FormatException) == e.GetType());
 		}
 		Assert(42 == UInt64.Parse(" $42 ", NumberStyles.Currency));
 		try {
 			UInt64.Parse("$42", NumberStyles.Integer);
-			Fail("Should raise a System.FormatException");
+			Fail("Should raise a FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.FormatException) == e.GetType());
+			Assert(typeof(FormatException) == e.GetType());
 		}
 		//test Parse(string s, IFormatProvider provider)
 		Assert(42 == UInt64.Parse(" 42 ", Nfi));
@@ -131,7 +134,7 @@ public class UInt64Test : TestCase
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.FormatException) == e.GetType());
+			Assert(typeof(FormatException) == e.GetType());
 		}
 		//test Parse(string s, NumberStyles style, IFormatProvider provider)
 		Assert(16 == UInt64.Parse(" 10 ", NumberStyles.HexNumber, Nfi));
@@ -140,7 +143,7 @@ public class UInt64Test : TestCase
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.FormatException) == e.GetType());
+			Assert(typeof(FormatException) == e.GetType());
 		}
 	}
 	
@@ -165,8 +168,9 @@ public class UInt64Test : TestCase
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.FormatException) == e.GetType());
+			Assert(typeof(FormatException) == e.GetType());
 		}
 	}
 }
 
+}

@@ -7,37 +7,23 @@ using NUnit.Framework;
 
 
 
-namespace Testsuite.System.Collections {
+namespace MonoTests.System.Collections {
 
 
 	/// <summary>CaseInsensitiveComparer test suite.</summary>
-	public class CaseInsensitiveComparerTest {
+	public class CaseInsensitiveComparerTest : TestCase {
 		public static ITest Suite {
 			get {
-				TestSuite suite = new TestSuite("CaseInsensitiveComparerTest tests");
-				suite.AddTest(CIComparerTestCase.Suite);
-				return suite;
+				return new TestSuite(typeof(CaseInsensitiveComparerTest));
 			}
 		}
-	}
 
-
-	public class CIComparerTestCase : TestCase {
-
-		public CIComparerTestCase (String name) : base(name)
+		public CaseInsensitiveComparerTest(String name) : base(name)
 		{
 		}
 
 		protected override void SetUp ()
 		{
-		}
-
-		public static ITest Suite
-		{
-			get {
-				Console.WriteLine("Testing " + (new CaseInsensitiveComparer ()));
-				return new TestSuite(typeof(CIComparerTestCase));
-			}
 		}
 
 		public void TestDefaultInstance ()

@@ -9,6 +9,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.PAL;
 
 namespace System
 {
@@ -52,35 +53,50 @@ namespace System
                                 throw new OverflowException("Value is too small.");
                         return (short)((value < 0)? -value: value);
                 }
-                [ DllImport("libm", EntryPoint="acos") ]
-                private extern static double _Acos(double d);
+
                 public static double Acos(double d)
                 {
                         if (d < -1 || d > 1) return Double.NaN;
-                        return Math._Acos(d);
+                        return OpSys.Acos(d);
                 }
-                [ DllImport("libm", EntryPoint="asin") ]
-                private extern static double _Asin(double d);
+
                 public static double Asin(double d)
                 {
                         if (d < -1 || d > 1) return Double.NaN;
-                        return Math._Asin(d);
+                        return OpSys.Asin(d);
                 }
-                [ DllImport("libm", EntryPoint="atan") ]
-                public extern static double Atan(double d);
-                [ DllImport("libm", EntryPoint="atan2") ]
-                public extern static double Atan2(double y, double x);
+
+                public static double Atan(double d)
+		{
+			return OpSys.Atan(d);
+		}
+
+                public static double Atan2(double y, double x)
+		{
+			return OpSys.Atan2(y, x);
+		}
+
                 public static double Ceiling(double a)
                 {
                         double b = (double)((long)a);
                         return (b < a)? b+1: b;
                 }
-                [ DllImport("libm", EntryPoint="cos") ]
-                public extern static double Cos(double d);
-                [ DllImport("libm", EntryPoint="cosh") ]
-                public extern static double Cosh(double value);
-                [ DllImport("libm", EntryPoint="exp") ]
-                public extern static double Exp(double d);
+
+                public static double Cos(double d)
+		{
+			return OpSys.Cos(d);
+		}
+
+                public static double Cosh(double value)
+		{
+			return OpSys.Cosh(value);
+		}
+
+                public static double Exp(double d)
+		{
+			return OpSys.Exp(d);
+		}
+
                 public static double Floor(double d) {
 		    return (double)((long)d) ;
                 }
@@ -92,27 +108,25 @@ namespace System
                         if (r != 0) return r;
                         return (x > 0)? 0: -0;
                 }
-                [ DllImport("libm", EntryPoint="log") ]
-                private extern static double _Log(double d);
+
                 public static double Log(double d)
                 {
                         if (d == 0) return Double.NegativeInfinity;
                         else if (d < 0) return Double.NaN;
-                        return Math._Log(d);
+                        return OpSys.Log(d);
                 }
                 public static double Log(double a, double newBase)
                 {
                         if (a == 0) return Double.NegativeInfinity;
                         else if (a < 0) return Double.NaN;
-                        return Math._Log(a)/Math._Log(newBase);
+                        return OpSys.Log(a)/OpSys.Log(newBase);
                 }
-                [ DllImport("libm", EntryPoint="log10") ]
-                private extern static double _Log10(double d);
+
                 public static double Log10(double d)
                 {
                         if (d == 0) return Double.NegativeInfinity;
                         else if (d < 0) return Double.NaN;
-                        return Math._Log10(d);
+                        return OpSys.Log10(d);
                 }
                 public static byte Max(byte val1, byte val2)
                 {
@@ -202,8 +216,12 @@ namespace System
                 {
                         return (val1 < val2)? val1: val2;
                 }
-                [ DllImport("libm", EntryPoint="pow") ]
-                public extern static double Pow(double x, double y);
+
+                public static double Pow(double x, double y)
+		{
+			return OpSys.Pow(x, y);
+		}
+
                 public static decimal Round(decimal d)
                 {
                         decimal r = (decimal)((long)d);
@@ -292,20 +310,31 @@ namespace System
                         if (value > 0) return 1;
                         return (value == 0)? 0: -1;
                 }
-                [ DllImport("libm", EntryPoint="sin") ]
-                public extern static double Sin(double a);
-                [ DllImport("libm", EntryPoint="sinh") ]
-                public extern static double Sinh(double value);
-                [ DllImport("libm", EntryPoint="sqrt") ]
-                private extern static double _Sqrt(double d);
+
+                public static double Sin(double a)
+		{
+			return OpSys.Sin(a);
+		}
+
+                public static double Sinh(double value)
+		{
+			return OpSys.Sinh(value);
+		}
+
                 public static double Sqrt(double d) 
                 {
                         if (d < 0) return Double.NaN;
-                        return Math._Sqrt(d);
+                        return OpSys.Sqrt(d);
                 }
-                [ DllImport("libm", EntryPoint="tan") ]
-                public extern static double Tan(double a);
-                [ DllImport("libm", EntryPoint="tanh") ]
-                public extern static double Tanh(double value);
+
+                public static double Tan(double a)
+		{
+			return OpSys.Tan(a);
+		}
+
+                public static double Tanh(double value)
+		{
+			return OpSys.Tanh(value);
+		}
         }
 }

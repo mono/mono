@@ -8,12 +8,12 @@
 using System;
 using NUnit.Framework;
 
-namespace Testsuite.System.Security.Cryptography {
+namespace MonoTests.System.Security.Cryptography {
         /// <summary>
         ///   Combines all available crypto unit tests into one test suite.
         /// </summary>
-        public class AllCryptoTests : TestCase {
-                public AllCryptoTests(string name) : base(name) {}
+        public class AllTests : TestCase {
+                public AllTests(string name) : base(name) {}
                 
                 public static ITest Suite 
                 { 
@@ -21,7 +21,7 @@ namespace Testsuite.System.Security.Cryptography {
                         {
                                 TestSuite suite =  new TestSuite();
                                 suite.AddTest(SymmetricAlgorithmTest.Suite);
-								suite.AddTest(AsymmetricAlgorithmTest.Suite); 	
+				suite.AddTest(AsymmetricAlgorithmTest.Suite); 	
                                 return suite;
                         }
                 }

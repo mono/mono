@@ -13,12 +13,20 @@ using System.IO;
 using System;
 using System.Text;
 
+namespace MonoTests.System.IO
+{
+
 public class PathTest : TestCase {
 
         string path1;
 	string path2;
         string path3;
      
+	public static ITest Suite {
+		get {
+			return new TestSuite(typeof(PathTest));
+		}
+	}
 
 	public PathTest( string name ): base(name) { }
 
@@ -135,4 +143,6 @@ public class PathTest : TestCase {
                 AssertEquals( true, Path.IsPathRooted( "c:\\winnt\\" ) );
                 AssertEquals( false, Path.IsPathRooted( "system32\\drivers\\" ) );
         }
+}
+
 }

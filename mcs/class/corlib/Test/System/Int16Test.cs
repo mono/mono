@@ -9,6 +9,9 @@ using NUnit.Framework;
 using System;
 using System.Globalization;
 
+namespace MonoTests.System
+{
+
 public class Int16Test : TestCase
 {
 	private const Int16 MyInt16_1 = -42;
@@ -59,7 +62,7 @@ public class Int16Test : TestCase
 			Fail("Should raise a System.ArgumentException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.ArgumentException) == e.GetType());
+			Assert(typeof(ArgumentException) == e.GetType());
 		}
 	}
 
@@ -94,14 +97,14 @@ public class Int16Test : TestCase
 			Fail("Should raise a System.ArgumentNullException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.ArgumentNullException) == e.GetType());
+			Assert(typeof(ArgumentNullException) == e.GetType());
 		}
 		try {
 			Int16.Parse("not-a-number");
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.FormatException) == e.GetType());
+			Assert(typeof(FormatException) == e.GetType());
 		}
 		try {
 			int OverInt = Int16.MaxValue + 1;
@@ -109,7 +112,7 @@ public class Int16Test : TestCase
 			Fail("Should raise a System.OverflowException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.OverflowException) == e.GetType());
+			Assert(typeof(OverflowException) == e.GetType());
 		}
 		//test Parse(string s, NumberStyles style)
 		Assert(42 == Int16.Parse(" $42 ", NumberStyles.Currency));
@@ -118,7 +121,7 @@ public class Int16Test : TestCase
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.FormatException) == e.GetType());
+			Assert(typeof(FormatException) == e.GetType());
 		}
 		//test Parse(string s, IFormatProvider provider)
 		Assert(-42 == Int16.Parse(" -42 ", Nfi));
@@ -127,7 +130,7 @@ public class Int16Test : TestCase
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.FormatException) == e.GetType());
+			Assert(typeof(FormatException) == e.GetType());
 		}
 		//test Parse(string s, NumberStyles style, IFormatProvider provider)
 		Assert(16 == Int16.Parse(" 10 ", NumberStyles.HexNumber, Nfi));
@@ -136,7 +139,7 @@ public class Int16Test : TestCase
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.FormatException) == e.GetType());
+			Assert(typeof(FormatException) == e.GetType());
 		}
 	}
 	
@@ -161,8 +164,9 @@ public class Int16Test : TestCase
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.FormatException) == e.GetType());
+			Assert(typeof(FormatException) == e.GetType());
 		}
 	}
 }
 
+}
