@@ -1,3 +1,8 @@
+2002-03-01  Dietmar Maurer  <dietmar@ximian.com>
+
+	* object.h (mono_assert): new macros mono_assert and
+	mono_assert_not_reached
+
 2002-02-28  Martin Baulig  <martin@gnome.org>
 
 	* icall.c: Rename "System::String::Intern" to "System::String::_Intern"
