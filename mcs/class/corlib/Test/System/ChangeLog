@@ -1,3 +1,8 @@
+2005-02-11  Nick Drochak  <ndrochak@ieee.org>
+
+	* DecimalTest.cs: 
+	* DecimalTest2.cs: Put NotWorking on some tests.
+
 2005-02-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* NumberFormatterTest.cs : override SetUp().

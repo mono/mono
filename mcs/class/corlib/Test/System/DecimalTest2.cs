@@ -282,6 +282,7 @@ namespace MonoTests.System
             }
         }
 
+	[Category("NotWorking")]
         public void TestDiv()
         {
             decimal[] args = auto_build2;

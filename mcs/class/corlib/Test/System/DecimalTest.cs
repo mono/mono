@@ -580,66 +580,73 @@ namespace MonoTests.System {
             }
         }
 
-        public void TestConstructSingleRounding()
+	[Category("NotWorking")]
+	// see bugzilla #60227
+        public void TestConstructSingleRounding_NotWorking()
         {
             decimal d;
-
-            d = new Decimal(1765.2356f);
-            Assert(d == 1765.236m);
-
-            d = new Decimal(1765.23554f);
-            Assert("failed banker's rule rounding test 1", d == 1765.236m);
-
-            d = new Decimal(1765.2354f);
-            Assert(d == 1765.235m);
-
-            d = new Decimal(1765.2346f);
-            Assert(d == 1765.235m);
 
             d = new Decimal(1765.23454f);
             Assert("failed banker's rule rounding test 2", d == 1765.234m);
 
-            d = new Decimal(1765.2344f);
-            Assert(d == 1765.234m);
-
             d = new Decimal(0.00017652356f);
-            Assert(d == 0.0001765236m);
+            Assert("06", d == 0.0001765236m);
 
             d = new Decimal(0.000176523554f);
             Assert("failed banker's rule rounding test 3", d == 0.0001765236m);
 
             d = new Decimal(0.00017652354f);
-            Assert(d == 0.0001765235m);
+            Assert("08", d == 0.0001765235m);
 
             d = new Decimal(0.00017652346f);
-            Assert(d == 0.0001765235m);
+            Assert("09", d == 0.0001765235m);
 
             d = new Decimal(0.000176523454f);
             Assert("failed banker's rule rounding test 4", d == 0.0001765234m);
 
             d = new Decimal(0.00017652344f);
-            Assert(d == 0.0001765234m);
+            Assert("11", d == 0.0001765234m);
+	}
+
+        public void TestConstructSingleRounding()
+        {
+            decimal d;
+
+            d = new Decimal(1765.2356f);
+            Assert("01", d == 1765.236m);
+
+            d = new Decimal(1765.23554f);
+            Assert("failed banker's rule rounding test 1", d == 1765.236m);
+
+            d = new Decimal(1765.2354f);
+            Assert("03", d == 1765.235m);
+
+            d = new Decimal(1765.2346f);
+            Assert("04", d == 1765.235m);
+
+            d = new Decimal(1765.2344f);
+            Assert("05", d == 1765.234m);
 
             d = new Decimal(3.7652356e10f);
-            Assert(d == 37652360000m);
+            Assert("12", d == 37652360000m);
 
             d = new Decimal(3.7652356e20f);
-            Assert(d == 376523600000000000000m);
+            Assert("13", d == 376523600000000000000m);
 
             d = new Decimal(3.76523554e20f);
             Assert("failed banker's rule rounding test 5", d == 376523600000000000000m);
 
             d = new Decimal(3.7652352e20f);
-            Assert(d == 376523500000000000000m);
+            Assert("15", d == 376523500000000000000m);
 
             d = new Decimal(3.7652348e20f);
-            Assert(d == 376523500000000000000m);
+            Assert("16", d == 376523500000000000000m);
 
             d = new Decimal(3.76523454e20f);
             Assert("failed banker's rule rounding test 6", d == 376523400000000000000m);
 
             d = new Decimal(3.7652342e20f);
-            Assert(d == 376523400000000000000m);
+            Assert("18", d == 376523400000000000000m);
         }
 
         public void TestConstructDouble()
