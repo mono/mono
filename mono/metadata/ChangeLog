@@ -1,5 +1,8 @@
 2004-11-04  Ben Maurer  <bmaurer@ximian.com>
-
+	
+	* reflection.c (mono_module_get_object): free the basename we
+	allocate here from glib.
+	
 	* reflection.c (ensure_runtime_vtable): make sure to free
 	overrides.  Also, we were allocating an array of MonoMethod not an
 	array of MonoMethod*.
