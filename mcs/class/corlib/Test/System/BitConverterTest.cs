@@ -547,8 +547,9 @@ public class BitConverterTest : Assertion {
 	[Test]
 	public void ToBoolean () 
 	{
-		byte[] array = new byte [2] { 0x01, 0x00 };
+		byte[] array = new byte [2] { 0x02, 0x00 };
 		Assert ("True", BitConverter.ToBoolean (array, 0));
+		AssertEquals ("True==True", true, BitConverter.ToBoolean (array, 0));
 		Assert ("False", !BitConverter.ToBoolean (array, 1));
 	}
 }
