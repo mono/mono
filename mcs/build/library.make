@@ -43,13 +43,13 @@ gacutil = $(topdir)/tools/gacutil/gacutil.exe
 PACKAGE = 1.0
 
 ifeq ($(PROFILE), net_2_0)
-PACKAGE = 1.1
+PACKAGE = 2.0
 endif
 
 all-local: $(the_lib)
 
 install-local: $(the_lib) $(gacutil)
-	$(RUNTIME)  $(gacutil) /i $(the_lib) /f /root $(DESTDIR)$(prefix)/lib /package 1.0 
+	$(RUNTIME)  $(gacutil) /i $(the_lib) /f /root $(DESTDIR)$(prefix)/lib /package $(PACKAGE)
 
 uninstall-local: $(gacutil)
 	$(RUNTIME)  $(gacutil) /u $$(basename $(the_lib) .dll) ; \
