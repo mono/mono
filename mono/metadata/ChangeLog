@@ -1,3 +1,9 @@
+2004-07-16  Ben Maurer  <bmaurer@ximain.com>
+
+	* marshal.[ch] (mono_marshal_get_stelemref): a new wrapper
+	function to implement stelem.ref in managed code
+	* class-internals.h, debug-helpers.c: a new wrapper type
+	for the above.
 
 Wed Jul 14 19:26:05 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
