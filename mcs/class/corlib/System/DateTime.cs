@@ -958,7 +958,7 @@ namespace System
 
 			long newticks = (result.ticks - utcoffset).Ticks;
 
-			result = new DateTime (use_localtime, newticks);
+			result = new DateTime (newticks);
 
 			return true;
 		}
@@ -1216,17 +1216,16 @@ namespace System
 				case 'f':
 					num = Math.Min (num, 6);
 
-					long ms = (long) Millisecond;
+					long relativeTicks = ticks.Ticks % TimeSpan.TicksPerSecond;
+
 					long exp = 10;
 					for (int i = 0; i < num; i++)
 						exp = exp * 10;
-					long maxexp = TimeSpan.TicksPerMillisecond;
 
-					exp = Math.Min (exp, maxexp);
-					ms = ms * exp / maxexp;
+					long frac = relativeTicks * exp / TimeSpan.TicksPerSecond;
 
 					String prec = (num+1).ToString ("d02");
-					str = ms.ToString (String.Concat ("d", prec));
+					str = frac.ToString (String.Concat ("d", prec));
 
 					break;
 				case 'h':

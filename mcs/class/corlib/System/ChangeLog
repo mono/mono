@@ -1,3 +1,7 @@
+2003-07-2  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* DateTime.cs: Fixed formatting of fractions of second.
+
 2003-06-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Console.cs: Turn off buffering for the streams returned by
