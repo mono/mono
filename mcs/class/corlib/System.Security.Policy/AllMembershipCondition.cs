@@ -57,10 +57,10 @@ namespace System.Security.Policy
 					+ AllMembershipCondition.XmlTag);
 		}
 
-		//What's the use of a hashcode here. Equals is always true.
+		
 		public override int GetHashCode()
 		{
-			return 0;
+			return typeof (AllMembershipCondition).GetHashCode ();
 		}
 
 		public override string ToString()
