@@ -853,6 +853,8 @@ namespace Mono.CSharp
 				StringBuilder sb = new StringBuilder ();
 
 				sb.Append ("Vector (");
+				sb.Append (Type);
+				sb.Append (",");
 				sb.Append (id);
 				sb.Append (",");
 				sb.Append (IsDirty);
@@ -1000,14 +1002,16 @@ namespace Mono.CSharp
 				// 
 				bool do_break_2 = (child.Type != SiblingType.Block) &&
 					(child.Type != SiblingType.SwitchSection);
-				bool unreachable = (do_break_2 && child.Reachability.AlwaysBreaks) ||
-					child.Reachability.AlwaysThrows ||
+				bool always_throws = (child.Type != SiblingType.Try) &&
+					child.Reachability.AlwaysThrows;
+				bool unreachable = always_throws ||
+					(do_break_2 && child.Reachability.AlwaysBreaks) ||
 					child.Reachability.AlwaysReturns ||
 					child.Reachability.AlwaysHasBarrier;
 
 				Report.Debug (2, "    MERGING SIBLING #1", reachability,
 					      Type, child.Type, child.Reachability.IsUnreachable,
-					      do_break_2, unreachable);
+					      do_break_2, always_throws, unreachable);
 
 				if (!unreachable && (child.LocalVector != null))
 					MyBitVector.And (ref locals, child.LocalVector);

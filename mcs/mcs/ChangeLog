@@ -1,3 +1,8 @@
+2004-01-21  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs (UsageVector.Merge): Allow variables being
+	assinged in a 'try'; fixes exception4.cs.
+
 2004-01-21  Marek Safar  <marek.safar@seznam.cz>
         * class.cs : Implemented parameter-less constructor for TypeContainer
         
