@@ -1,3 +1,7 @@
+2003-01-14  Jonathan Pryor <jonpryor@vt.edu>
+	* GtkTypeDisplayer.cs: This was moved into /displayers/gtk, so the glade
+	  file paths need to be updated.
+
 2003-01-10  Jonathan Pryor <jonpryor@vt.edu>
 	* GtkTypeDisplayer.cs:
 	  - If the current window isn't displaying an assembly, open the assembly 

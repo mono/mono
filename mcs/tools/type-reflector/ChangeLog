@@ -1,3 +1,27 @@
+2003-01-14  Jonathan Pryor <jonpryor@vt.edu>
+	- General: massive file movement.  I felt it would be cleaner if related
+	  files were in the same directory, instead of (nearly) everything
+	  cluttering up the root directory.  Since the current architecture seems
+	  pretty final (I don't see any major changes; it works) I split things up
+	  among namespace boundaries.
+	* ConsoleTypeDisplayer.cs: moved to displayers/
+	* ITypeDisplayer.cs: moved to displayers/
+	* TypeDisplayer.cs: moved to displayers/
+	* IndentingTextWriter.cs: moved to displayers/
+	* gtk/: moved to displayers/
+	* swf/: moved to displayers/
+	* ExplicitNodeFinder.cs: moved to finders/
+	* GroupingNodeFinder.cs: moved to finders/
+	* INodeFinder.cs: moved to finders/
+	* NodeFinder.cs: moved to finders/
+	* ReflectionNodeFinder.cs: moved to finders/
+	* INodeFormatter.cs: moved to formatters/
+	* NodeFormatter.cs: moved to formatters/
+	* DefaultNodeFormatter.cs: moved to formatters/
+	* CSharpNodeFormatter.cs: moved to formatters/
+	* VBNodeFormatter.cs: moved to formatters/
+	* makefile.core: update for new file locations.
+
 2003-01-12  Jonathan Pryor <jonpryor@vt.edu>
 	* makefile.core: Add dependencies to `gui' target so it doesn't rebuild when
 	  it doesn't need to.  Reported by gonzalo.

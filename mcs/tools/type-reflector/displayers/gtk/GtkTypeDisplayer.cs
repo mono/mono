@@ -91,7 +91,7 @@ namespace Mono.TypeReflector.Displayers.Gtk
 
 		private void InitMainWindow ()
 		{
-			Glade.XML gxml = new Glade.XML (null, "gtk/type-reflector.glade", "main_window", null);
+			Glade.XML gxml = new Glade.XML (null, "displayers/gtk/type-reflector.glade", "main_window", null);
 			try {
 				gxml.Autoconnect (this);
 			} catch (Exception e) {
@@ -298,7 +298,7 @@ namespace Mono.TypeReflector.Displayers.Gtk
 		{
 			/* ignore */
 			TypeReflectorApp.PrintVersion ();
-			Glade.XML gxml = new Glade.XML (null, "gtk/type-reflector.glade", "about_window", null);
+			Glade.XML gxml = new Glade.XML (null, "displayers/gtk/type-reflector.glade", "about_window", null);
 			try {
 				gxml.Autoconnect (this);
 			} catch (Exception e) {

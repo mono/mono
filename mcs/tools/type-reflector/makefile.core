@@ -10,52 +10,71 @@ CSCFLAGS =
 
 MONO = mono
 
+DISPLAYERS_DIR=displayers$(DS)
+
+DISPLAYERS_FILES = \
+	$(DISPLAYERS_DIR)ConsoleTypeDisplayer.cs \
+	$(DISPLAYERS_DIR)IndentingTextWriter.cs \
+	$(DISPLAYERS_DIR)ITypeDisplayer.cs \
+	$(DISPLAYERS_DIR)TypeDisplayer.cs \
+
+FINDERS_DIR=finders$(DS)
+
+FINDERS_FILES = \
+	$(FINDERS_DIR)ExplicitNodeFinder.cs \
+  $(FINDERS_DIR)GroupingNodeFinder.cs \
+	$(FINDERS_DIR)INodeFinder.cs \
+	$(FINDERS_DIR)NodeFinder.cs \
+  $(FINDERS_DIR)ReflectionNodeFinder.cs \
+
+FORMATTERS_DIR=formatters$(DS)
+
+FORMATTERS_FILES = \
+	$(FORMATTERS_DIR)CSharpNodeFormatter.cs \
+	$(FORMATTERS_DIR)DefaultNodeFormatter.cs \
+	$(FORMATTERS_DIR)INodeFormatter.cs \
+	$(FORMATTERS_DIR)LanguageNodeFormatter.cs \
+	$(FORMATTERS_DIR)NodeFormatter.cs \
+	$(FORMATTERS_DIR)VBNodeFormatter.cs \
+
 PROGRAM_FILES =  \
 	AssemblyInfo.cs \
-	ConsoleTypeDisplayer.cs \
-	CSharpNodeFormatter.cs \
-	DefaultNodeFormatter.cs \
-	ExplicitNodeFinder.cs \
 	Factories.cs \
-  GroupingNodeFinder.cs \
-	IndentingTextWriter.cs \
-	INodeFinder.cs \
-	INodeFormatter.cs \
-	ITypeDisplayer.cs \
-	LanguageNodeFormatter.cs \
 	Node.cs \
-	NodeFinder.cs \
-	NodeFormatter.cs \
   NodeGrouper.cs \
 	NodeInfo.cs \
 	NodeTypes.cs \
 	ProgramOptions.cs \
-  ReflectionNodeFinder.cs \
 	TestTypes.cs \
 	TextFormatter.cs \
-	TypeDisplayer.cs \
 	TypeFactory.cs \
 	TypeLoader.cs \
 	TypeReflectorApp.cs \
 	TypeReflectorOptions.cs \
-	VBNodeFormatter.cs \
+	$(DISPLAYERS_FILES) \
+	$(FINDERS_FILES) \
+	$(FORMATTERS_FILES) \
 
 CSC_INVOKE = $(CSC) $(CSCFLAGS) $(PROGRAM_FLAGS) $(PROGRAM_FILES) $(PROGRAM_LIBS)
 
 GUI_LIBS = -r:System.Drawing.dll
 
-GUI_GTK_FILES = \
-	gtk$(DS)GtkTypeDisplayer.cs \
+GUI_GTK_DIR = $(DISPLAYERS_DIR)gtk$(DS)
 
-GUI_GTK_GLADE_FILE = gtk$(DS)type-reflector.glade
+GUI_GTK_FILES = \
+	$(GUI_GTK_DIR)GtkTypeDisplayer.cs \
+
+GUI_GTK_GLADE_FILE = $(GUI_GTK_DIR)type-reflector.glade
 
 GUI_GTK_FLAGS = -resource:$(GUI_GTK_GLADE_FILE)
 
 GUI_GTK_LIBS = -r:glib-sharp.dll -r:pango-sharp.dll -r:atk-sharp.dll -r:gdk-sharp.dll -r:gtk-sharp.dll -r:glade-sharp.dll
 
+GUI_SWF_DIR = $(DISPLAYERS_DIR)swf$(DS)
+
 GUI_SWF_FILES = \
-	swf$(DS)SwfWindow.cs \
-	swf$(DS)SwfTypeDisplayer.cs \
+	$(GUI_SWF_DIR)SwfWindow.cs \
+	$(GUI_SWF_DIR)SwfTypeDisplayer.cs \
 
 GUI_SWF_LIBS = -r:System.Windows.Forms.dll
 
@@ -106,7 +125,7 @@ windows:
 	NAnt -buildfile:type-reflector.build
 
 clean:
-	rm -f *.exe *.pdb *.dll *.dbg *~ gtk/*~ swf/*~
+	rm -f *.exe *.pdb *.dll *.dbg *~ $(DISPLAYERS_DIR)*~ $(GUI_GTK_DIR)*~ $(GUI_SWF_DIR)*~ $(FINDERS_DIR)*~ $(FORMATTERS_DIR)*~
 
 INSTALL_FILES = \
 	$(PROGRAM) \
