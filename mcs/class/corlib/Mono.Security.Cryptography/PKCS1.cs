@@ -268,6 +268,9 @@ namespace Mono.Security.Cryptography {
 			if (!result) {
 				// NOTE: some signatures don't include the hash OID (pretty lame but real)
 				// and compatible with MS implementation
+				if ((EM2 [0] != 0x00) || (EM2 [0] != 0x01))
+					return false;
+				// TODO: add more validation
 				byte[] decryptedHash = new byte [hash.Length];
 				Array.Copy (EM2, EM2.Length - hash.Length, decryptedHash, 0, decryptedHash.Length);
 				result = Compare (decryptedHash, hash);
