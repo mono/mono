@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: PaintEventHandler.cs,v $
+// Revision 1.2  2004/08/23 19:44:59  jordi
+// Adding missing attribute
+//
 // Revision 1.1  2004/07/09 05:21:25  pbartok
 // - Initial check-in
 //
@@ -33,6 +36,8 @@
 
 // COMPLETE
 
-namespace System.Windows.Forms {
+namespace System.Windows.Forms 
+{
+	[Serializable]
 	public delegate void PaintEventHandler (object sender, PaintEventArgs e);
 }
