@@ -1,9 +1,15 @@
-2004-01-08  Sebastien Pouliot  <sebastien@ximian.com>
+2005-01-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib_test.dll.sources : Added Test/System.Security/
+	HostSecurityManagerTest.cs and PermissionSetCollectionTest,cs
+	unit tests (2.0) to the build.
+
+2005-01-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib.dll.sources: Added System.Security/SecurityCriticalAttribute
 	and SecurityTransparentAttribute (2.0) to the build.
 
-2004-01-05  Sebastien Pouliot  <sebastien@ximian.com>
+2005-01-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib.dll.sources: Removed System.Security.Permissions/
 	DataProtectionPermission.cs, DataProtectionPermissionAttribute.cs and

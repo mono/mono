@@ -167,10 +167,12 @@ System.Security.Cryptography/TripleDESTest.cs
 System.Security.Cryptography.X509Certificates/X509CapiTest.cs
 System.Security.Cryptography.X509Certificates/X509CertificateTest.cs
 System.Security.Cryptography.X509Certificates/X509SpcTest.cs
+System.Security/HostSecurityManagerTest.cs
 System.Security/NamedPermissionSetTest.cs
 System.Security.Permissions/CodeAccessSecurityAttributeTest.cs
 System.Security.Permissions/EnvironmentPermissionAttributeTest.cs
 System.Security.Permissions/EnvironmentPermissionTest.cs
+System.Security/PermissionSetCollectionTest.cs
 System.Security/PermissionSetTest.cs
 System.Security.Permissions/FileDialogPermissionAttributeTest.cs
 System.Security.Permissions/FileDialogPermissionTest.cs
