@@ -1,3 +1,10 @@
+2004-05-26  Marek Safar  <marek.safar@seznam.cz>
+
+	Fixed bug #50080 & cs0214-2.cs
+	* expression.cs (Cast.DoResolve): Check unsafe context here.
+        
+	* statement.cs (Resolve.DoResolve): Likewise.
+
 2004-05-26  Martin Baulig  <martin@ximian.com>
 
 	* namespace.cs (NamespaceEntry.Lookup): Added `bool silent'.

@@ -1863,6 +1863,10 @@ namespace Mono.CSharp {
 					return e;
 			}
 
+			if (type.IsPointer && !ec.InUnsafe) {
+				UnsafeError (loc);
+				return null;
+			}
 			expr = Convert.ExplicitConversion (ec, expr, type, loc);
 			return expr;
 		}
