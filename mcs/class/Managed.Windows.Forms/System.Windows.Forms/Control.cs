@@ -460,14 +460,6 @@ namespace System.Windows.Forms
 		public Control() {			
 			creator_thread = Thread.CurrentThread;
 
-			child_controls = CreateControlsInstance();
-			client_size = new Size(DefaultSize.Width, DefaultSize.Height);
-			client_rect = new Rectangle(0, 0, DefaultSize.Width, DefaultSize.Height);
-			XplatUI.CalculateWindowRect(IntPtr.Zero, ref client_rect, CreateParams.Style, false, out bounds);
-			if ((CreateParams.Style & (int)WindowStyles.WS_CHILD) == 0) {
-				bounds.X=-1;
-				bounds.Y=-1;
-			}
 			prev_size = Size.Empty;
 			anchor_style = AnchorStyles.Top | AnchorStyles.Left;
 
@@ -487,6 +479,15 @@ namespace System.Windows.Forms
 			background_image = null;
 			text = string.Empty;
 			name = string.Empty;			
+
+			child_controls = CreateControlsInstance();
+			client_size = new Size(DefaultSize.Width, DefaultSize.Height);
+			client_rect = new Rectangle(0, 0, DefaultSize.Width, DefaultSize.Height);
+			XplatUI.CalculateWindowRect(IntPtr.Zero, ref client_rect, CreateParams.Style, false, out bounds);
+			if ((CreateParams.Style & (int)WindowStyles.WS_CHILD) == 0) {
+				bounds.X=-1;
+				bounds.Y=-1;
+			}
 		}
 
 		public Control(Control parent, string text) : this() {
@@ -1438,10 +1439,6 @@ namespace System.Windows.Forms
 					return false;
 				}
 
-				if (parent != null) {
-					return parent.Visible;
-				}
-
 				return true;
 			}
 
@@ -1506,7 +1503,7 @@ namespace System.Windows.Forms
 
 				create_params.Style = (int)WindowStyles.WS_CHILD | (int)WindowStyles.WS_CLIPCHILDREN | (int)WindowStyles.WS_CLIPSIBLINGS;
 
-				if (Visible) {
+				if (is_visible) {
 					create_params.Style |= (int)WindowStyles.WS_VISIBLE;
 				}
 

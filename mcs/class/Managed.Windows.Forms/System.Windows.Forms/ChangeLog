@@ -1,5 +1,13 @@
 2004-12-21  Peter Bartok  <pbartok@novell.com>
 
+	* Control.cs (ctor, CreateParams): Moved setting of is_visible
+	  forward so that anything that creates a window gets the default,
+	  also no longer uses Visible property in CreateParams to avoid
+	  walking up the parent chain and possibly get the wrong visible
+	  status. Fixed IsVisible to no longer walk up to the parent.
+
+2004-12-21  Peter Bartok  <pbartok@novell.com>
+
 	* Form.cs (ShowDialog): Unset modality for the proper window
  
 2004-12-20  Peter Bartok  <pbartok@novell.com>
