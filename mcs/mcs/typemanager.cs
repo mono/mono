@@ -1452,12 +1452,15 @@ public class TypeManager {
 			if (t is TypeBuilder){
 				TypeContainer tc = LookupTypeContainer (t);
 
-				foreach (Field f in tc.Fields){
-					if (f.FieldBuilder.IsStatic)
-						continue;
-					if (!IsUnmanagedType (f.FieldBuilder.FieldType))
-						return false;
-				}
+				if (tc.Fields != null){
+					foreach (Field f in tc.Fields){
+						if (f.FieldBuilder.IsStatic)
+							continue;
+						if (!IsUnmanagedType (f.FieldBuilder.FieldType))
+							return false;
+					}
+				} else
+					return true;
 			} else {
 				FieldInfo [] fields = t.GetFields ();
 

@@ -1,3 +1,8 @@
+2004-03-29  Miguel de Icaza  <miguel@ximian.com>
+
+	* typemanager.cs: Do not crash if a struct does not have fields.
+	Fixes 56150.
+
 2004-03-28 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* expression.cs: cs0213, cant fix a fixed expression.
