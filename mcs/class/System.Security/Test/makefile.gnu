@@ -4,24 +4,25 @@ LIBRARY = security_linux_test.dll
 
 LIB_LIST = security_linux_test.args
 LIB_FLAGS =	\
-	-r $(topdir)/class/lib/corlib.dll \
-	-r $(topdir)/class/lib/System.Xml.dll \
-	-r $(topdir)/class/lib/NUnitCore_mono.dll
+		-r $(topdir)/class/lib/corlib.dll \
+		-r $(topdir)/class/lib/System.Xml.dll \
+		-r $(topdir)/class/lib/System.Security.dll \
+	    	-r $(topdir)/nunit20/NUnit.Framework.dll
 
-SOURCES_INCLUDE=*.cs
+ifdef SUBDIR
+USE_SOURCE_RULES=1
+SOURCES_INCLUDE=./$(SUBDIR)/*.cs
 SOURCES_EXCLUDE=_DUMMY_
+endif
 
 include $(topdir)/class/library.make
 
-MCS_FLAGS = --target library --noconfig
-
-TEST_SUITE_PREFIX = MonoTests.
-TEST_SUITE = AllTests
-NUNITCONSOLE=$(topdir)/class/lib/NUnitConsole_mono.exe 
+NUNITCONSOLE=$(topdir)/nunit20/nunit-console.exe
+MONO_PATH = $(topdir)/nunit20:.
 
 test: $(LIBRARY) run_test
 
 .PHONY: run_test
 
 run_test:
-	MONO_PATH=$(NUNIT_MONO_PATH) mono $(NUNITCONSOLE) $(TEST_SUITE_PREFIX)$(TEST_SUITE),security_linux_test.dll
+	-MONO_PATH=$(MONO_PATH) mono --debug $(NUNITCONSOLE) $(LIBRARY)

@@ -1,3 +1,10 @@
+2003-03-18  Martin Willemoes Hansen <mwh@sysrq.dk>
+
+	* makefile.gnu NUnit20ified.
+	* security_linux_test.args NUnit20ified.
+	* renamed System.Security.Cryptography.Xml/AllTests.cs to 
+          System.Security.Cryptography.Xml/AssertCrypto.cs
+
 2003-03-03  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* System.Security_test.build: Updated build file to stop linking 
