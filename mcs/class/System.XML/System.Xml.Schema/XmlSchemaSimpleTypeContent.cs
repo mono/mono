@@ -13,7 +13,9 @@ namespace System.Xml.Schema
 		{
 		}
 
-		internal object actualBaseSchemaType;
+		internal XmlSchemaType OwnerType;
+
+		private object actualBaseSchemaType = XmlSchemaSimpleType.AnySimpleType;
 
 		internal object ActualBaseSchemaType {
 			get { return actualBaseSchemaType; }

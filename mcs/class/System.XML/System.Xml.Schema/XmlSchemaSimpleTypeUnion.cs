@@ -98,7 +98,7 @@ namespace System.Xml.Schema
 				return errorCount;
 
 			// As far as I saw, MS.NET handles simpleType.BaseSchemaType as anySimpleType.
-			this.actualBaseSchemaType = XmlSchemaSimpleType.AnySimpleType;
+//			this.actualBaseSchemaType = XmlSchemaSimpleType.AnySimpleType;
 
 			ArrayList al = new ArrayList ();
 			// Validate MemberTypes

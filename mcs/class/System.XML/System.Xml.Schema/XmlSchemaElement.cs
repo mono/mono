@@ -642,7 +642,7 @@ namespace System.Xml.Schema
 			// {substitution group affiliation}
 			// 3. subsitution group's type derivation check.
 			if (this.SubstitutionGroup != XmlQualifiedName.Empty) {
-				XmlSchemaElement substElem = substitutionGroupElement;
+				XmlSchemaElement substElem = schema.Elements [SubstitutionGroup] as XmlSchemaElement;
 				// If el is null, then it is missing sub components .
 				if (substElem != null) {
 					XmlSchemaType substSchemaType = substElem.ElementType as XmlSchemaType;

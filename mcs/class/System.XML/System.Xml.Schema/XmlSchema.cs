@@ -52,6 +52,10 @@ namespace System.Xml.Schema
 
 		internal bool missedSubComponents;
 
+		// Only compilation-time use
+                private XmlSchemaObjectCollection compilationItems;
+		private Hashtable handledUris;
+
                 // Compiler specific things
                 private static string xmlname = "schema";
 
@@ -326,9 +330,11 @@ namespace System.Xml.Schema
 
                         // Compile the content of this schema
 
-			XmlSchemaObjectCollection compilationItems = new XmlSchemaObjectCollection ();
+			compilationItems = new XmlSchemaObjectCollection ();
 			foreach (XmlSchemaObject obj in Items)
 				compilationItems.Add (obj);
+			if (this == rootSchema)
+				handledUris = new Hashtable ();
 
 			// First, we run into inclusion schemas to collect 
 			// compilation target items into compiledItems.
@@ -348,6 +354,10 @@ namespace System.Xml.Schema
 							// must skip this inclusion
 							continue;
 						}
+						if (rootSchema.handledUris.Contains (url))
+							// This schema is already handled, so simply skip (otherwise, duplicate definition errrors occur.
+							continue;
+						rootSchema.handledUris.Add (url, url);
 						try {
 							stream = resolver.GetEntity (new Uri (url), null, typeof (Stream)) as Stream;
 						} catch (Exception) {
@@ -411,10 +421,22 @@ namespace System.Xml.Schema
 					if (import != null)
 						rootSchema.schemas.Add (includedSchema);
 
-					// Add compiled items.
-					foreach (XmlSchemaObject includedObj in includedSchema.Items)
-						compilationItems.Add (includedObj);
-                                }
+					// Note that we use compiled items. Items
+					// may not exist in Items, since included
+					// schema also includes another schemas.
+					foreach (DictionaryEntry entry in includedSchema.Attributes)
+						compilationItems.Add ((XmlSchemaObject) entry.Value);
+					foreach (DictionaryEntry entry in includedSchema.Elements)
+						compilationItems.Add ((XmlSchemaObject) entry.Value);
+					foreach (DictionaryEntry entry in includedSchema.SchemaTypes)
+						compilationItems.Add ((XmlSchemaObject) entry.Value);
+					foreach (DictionaryEntry entry in includedSchema.AttributeGroups)
+						compilationItems.Add ((XmlSchemaObject) entry.Value);
+					foreach (DictionaryEntry entry in includedSchema.Groups)
+						compilationItems.Add ((XmlSchemaObject) entry.Value);
+					foreach (DictionaryEntry entry in includedSchema.Notations)
+						compilationItems.Add ((XmlSchemaObject) entry.Value);
+				}
                                 else
                                 {
                                         error(handler,"Object of Type "+obj.GetType().Name+" is not valid in Includes Property of XmlSchema");

@@ -1,5 +1,15 @@
 2004-01-22  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchema.cs : When we have schema A which includes schema B which
+	  includes schema C (i.e. A->B->C), C components should be compiled.
+	  Here, same URL inclusions are ignored.
+	* XmlSchemaElement.cs : Hack for missing substitution-group fix.
+	* XmlSchemaSimpleTypeContent.cs : make actualBaseSchemaType private
+	  and initialize. This fixes bug #53178.
+	* XmlSchemaSimpleTypeUnion.cs : Forgot to commit ;)
+
+2004-01-22  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaSimpleTypeRestriction.cs : regexp improvements. Modify
 	  pattern string as "^str$" and convert WXS specific char classes into
 	  .NET regexp patterns.
