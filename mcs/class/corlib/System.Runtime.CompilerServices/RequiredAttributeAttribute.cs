@@ -34,6 +34,9 @@ namespace System.Runtime.CompilerServices {
 
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct |
 			AttributeTargets.Enum | AttributeTargets.Interface,
+#if NET_2_0
+			AllowMultiple=true,
+#endif
 			Inherited=false)]
 	[Serializable]
 	public sealed class RequiredAttributeAttribute : Attribute

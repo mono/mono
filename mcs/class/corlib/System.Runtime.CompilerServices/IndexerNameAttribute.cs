@@ -32,7 +32,8 @@
 
 namespace System.Runtime.CompilerServices {
 
-	[AttributeUsage(AttributeTargets.Property, Inherited=false)] [Serializable]
+	[AttributeUsage(AttributeTargets.Property, Inherited=true)]
+	[Serializable]
 	public sealed class IndexerNameAttribute : Attribute {
 		public IndexerNameAttribute (string indexer_name)
 		{

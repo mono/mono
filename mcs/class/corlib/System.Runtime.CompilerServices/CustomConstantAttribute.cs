@@ -32,7 +32,7 @@ using System;
 
 namespace System.Runtime.CompilerServices {
 
-	[AttributeUsage (AttributeTargets.Class, Inherited=false)] 
+	[AttributeUsage (AttributeTargets.Parameter | AttributeTargets.Field, Inherited=false)] 
 	[Serializable]
 	public abstract class CustomConstantAttribute : Attribute
 	{

@@ -1,3 +1,15 @@
+2005-02-12  Marek Safar  <marek.safar@seznam.cz>
+
+	* CompilationRelaxationsAttribute.cs,
+	* DependencyAttribute.cs,
+	* FixedBufferAttribute.cs,
+	* InternalsVisibleToAttribute.cs,
+	* RequiredAttributeAttribute.cs,
+	* StringFreezingAttribute.cs: Fix NET_2_0 attributes.
+
+	* CustomConstantAttribute.cs,
+	* IndexerNameAttribute.cs: Fix AttributeUsage flags.
+
 2005-01-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IsVolatile.cs: Fix errors in corcompare (HEAD versus 1.1 and 2.0). 

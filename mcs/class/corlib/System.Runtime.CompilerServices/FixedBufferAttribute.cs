@@ -31,7 +31,7 @@ using System;
 
 namespace System.Runtime.CompilerServices {
 
-	[AttributeUsage (AttributeTargets.Field)] 
+	[AttributeUsage (AttributeTargets.Field, Inherited=false)] 
 	public sealed class FixedBufferAttribute : Attribute
 	{
 		Type elementType;

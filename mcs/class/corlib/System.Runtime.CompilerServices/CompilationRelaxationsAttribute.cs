@@ -32,7 +32,13 @@ using System;
 
 namespace System.Runtime.CompilerServices {
 
-	[AttributeUsage (AttributeTargets.Module)] [Serializable]
+#if NET_2_0
+	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Module | 
+		 AttributeTargets.Class | AttributeTargets.Method)]
+#else
+	[AttributeUsage (AttributeTargets.Module)]
+#endif
+	[Serializable]
 	public class CompilationRelaxationsAttribute : Attribute
 	{
 		int relax;
