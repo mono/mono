@@ -587,25 +587,18 @@ namespace Mono.CSharp {
 				throw new Exception ("EmitStoreArgument for an unknown state");
 		}
 		
-		/// <summary>
-	        ///   A dynamic This that is shared by all variables in a emitcontext.
-		///   Created on demand.
-		/// </summary>
-		public This my_this;
-		public Expression This {
-			get {
-				if (my_this == null) {
-					if (CurrentBlock != null)
-						my_this = new This (CurrentBlock, loc);
-					else
-						my_this = new This (loc);
+		public Expression GetThis (Location loc)
+		{
+			This my_this;
+			if (CurrentBlock != null)
+				my_this = new This (CurrentBlock, loc);
+			else
+				my_this = new This (loc);
 
-					if (!my_this.ResolveBase (this))
-						my_this = null;
-				}
+			if (!my_this.ResolveBase (this))
+				my_this = null;
 
-				return my_this;
-			}
+			return my_this;
 		}
 	}
 }

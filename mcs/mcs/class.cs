@@ -2562,7 +2562,7 @@ namespace Mono.CSharp {
 				if (ec.IsStatic)
 					Invocation.EmitCall (ec, true, true, null, parent_constructor, argument_list, loc);
 				else
-					Invocation.EmitCall (ec, true, false, ec.This, parent_constructor, argument_list, loc);
+					Invocation.EmitCall (ec, true, false, ec.GetThis (loc), parent_constructor, argument_list, loc);
 			}
 		}
 	}

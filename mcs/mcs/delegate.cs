@@ -673,7 +673,7 @@ namespace Mono.CSharp {
 						}
 						delegate_instance_expr = null;
 					} else
-						delegate_instance_expr = ec.This;
+						delegate_instance_expr = ec.GetThis (loc);
 				}
 
 				if (delegate_instance_expr != null)

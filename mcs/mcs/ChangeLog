@@ -1,3 +1,9 @@
+2003-07-01  Martin Baulig  <martin@ximian.com>
+
+	* ecore.cs (EmitContext.This): Replaced this property with a
+	GetThis() method which takes a Location argument.  This ensures
+	that we get the correct error location for a CS0188.
+
 2003-07-01  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs: (Convert.ConvertIntLiteral): Add test for

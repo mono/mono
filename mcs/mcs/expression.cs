@@ -6151,7 +6151,7 @@ namespace Mono.CSharp {
 
 				// Implicitly default to `this' unless we're static.
 				if (!ec.IsStatic && !ec.IsFieldInitializer && !ec.InEnumContext)
-					left = ec.This;
+					left = ec.GetThis (loc);
 			} else {
 				left_is_type = left is TypeExpr;
 				left_is_explicit = true;
@@ -7349,7 +7349,7 @@ namespace Mono.CSharp {
 			if (ec.IsStatic)
 				left = new TypeExpr (base_type, loc);
 			else
-				left = ec.This;
+				left = ec.GetThis (loc);
 			
 			e = MemberAccess.ResolveMemberAccess (ec, member_lookup, left, loc, null);
 
@@ -7382,7 +7382,7 @@ namespace Mono.CSharp {
 
 		protected override bool CommonResolve (EmitContext ec)
 		{
-			instance_expr = ec.This;
+			instance_expr = ec.GetThis (loc);
 
 			current_type = ec.ContainerType.BaseType;
 			indexer_type = current_type;
