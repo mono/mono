@@ -1,3 +1,8 @@
+
+Tue Jun 3 11:17:02 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c, reflection.h: emit custom marshal info.
+
 2003-06-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* object.c: free the GError.
@@ -5728,6 +5733,7 @@ Tue Jul  3 18:33:32 CEST 2001 Paolo Molaro <lupus@ximian.com>
 	Beta2. 
 
 	* mono/metadata/assembly.c (load_metadata_ptrs): Fix for Beta2
+
 
 
 
