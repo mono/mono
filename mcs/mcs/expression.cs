@@ -3991,6 +3991,7 @@ namespace Mono.CSharp {
 		// we will not leave anything on the stack.
 		//
 		Expression value_target;
+		bool value_target_set = false;
 		
 		public New (Expression requested_type, ArrayList arguments, Location l)
 		{
@@ -4006,6 +4007,7 @@ namespace Mono.CSharp {
 
 			set {
 				value_target = value;
+				value_target_set = true;
 			}
 		}
 
@@ -4137,7 +4139,10 @@ namespace Mono.CSharp {
 			if (is_value_type){
 				IMemoryLocation ml;
 
-				if (value_target == null)
+				// Allow DoEmit() to be called multiple times.
+				// We need to create a new LocalTemporary each time since
+				// you can't share LocalBuilders among ILGeneators.
+				if (!value_target_set)
 					value_target = new LocalTemporary (ec, type);
 					
 				ml = (IMemoryLocation) value_target;

@@ -1,5 +1,11 @@
 2002-07-19  Martin Baulig  <martin@gnome.org>
 
+	* expression.cs (New.DoEmit): Create a new LocalTemporary each time
+	this function is called, it's not allowed to share LocalBuilders
+	among ILGenerators.
+
+2002-07-19  Martin Baulig  <martin@gnome.org>
+
 	* expression.cs (Argument.Resolve): Report an error 118 when trying
 	to pass a type as argument.
 
