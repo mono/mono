@@ -4449,16 +4449,19 @@ namespace Mono.MonoBASIC {
 	public class Catch {
 		public readonly string Name;
 		public readonly Block  Block;
+		public Expression Clause;
 		public readonly Location Location;
 
 		Expression type_expr;
+		//Expression clus_expr;
 		Type type;
 		
-		public Catch (Expression type, string name, Block block, Location l)
+		public Catch (Expression type, string name, Block block, Expression clause, Location l)
 		{
 			type_expr = type;
 			Name = name;
 			Block = block;
+			Clause = clause;
 			Location = l;
 		}
 
@@ -4489,6 +4492,13 @@ namespace Mono.MonoBASIC {
 				}
 			} else
 				type = null;
+
+			if (Clause != null)	{
+				Clause = Statement.ResolveBoolean (ec, Clause, Location);
+				if (Clause == null) {
+					return false;
+				}
+			}
 
 			if (!Block.Resolve (ec))
 				return false;
@@ -4651,17 +4661,47 @@ namespace Mono.MonoBASIC {
 					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
 				} else
 					ig.Emit (OpCodes.Pop);
-				
-				if (!c.Block.Emit (ec))
-					returns = false;
+
+				//
+				// if when clause is there
+				//
+				if (c.Clause != null) {
+					if (c.Clause is BoolConstant) {
+						bool take = ((BoolConstant) c.Clause).Value;
+
+						if (take) 
+							if (!c.Block.Emit (ec))
+								returns = false;
+					} else {
+						EmitBoolExpression (ec, c.Clause, finish, false);
+						if (!c.Block.Emit (ec))
+							returns = false;
+					}
+				} else 
+					if (!c.Block.Emit (ec))
+						returns = false;
 			}
 
 			if (General != null){
 				ig.BeginCatchBlock (TypeManager.object_type);
 				ig.Emit (OpCodes.Pop);
-				if (!General.Block.Emit (ec))
-					returns = false;
+
+				if (General.Clause != null) {
+					if (General.Clause is BoolConstant) {
+						bool take = ((BoolConstant) General.Clause).Value;
+						if (take) 
+							if (!General.Block.Emit (ec))
+								returns = false;
+					} else {
+						EmitBoolExpression (ec, General.Clause, finish, false);
+						if (!General.Block.Emit (ec))
+							returns = false;
+					}
+				} else 
+					if (!General.Block.Emit (ec))
+						returns = false;
 			}
+
 			ec.InCatch = old_in_catch;
 
 			ig.MarkLabel (finish);

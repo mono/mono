@@ -1,3 +1,9 @@
+2004-10-25 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay: Enhanced catch grammar to accept
+			'When' clause
+	* statement.cs: Changed Catch and Try classes accordingly
+			to emit catch statement conditionally		
+
 2004/10/22 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* driver.cs : accept also -t:library as vbc does, besides /target:library
 

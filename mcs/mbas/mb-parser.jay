@@ -2806,8 +2806,13 @@ opt_identifier
 	| identifier
 	;
 
+opt_when
+	: /* empty */	{  $$ = null;  }
+	| WHEN boolean_expression { $$ = $2; }
+	;
+	
 catch_clause 
-	: CATCH opt_catch_args end_of_stmt
+	: CATCH opt_catch_args opt_when end_of_stmt
 	{
 		Expression type = null;
 		string id = null;
@@ -2823,14 +2828,12 @@ catch_clause
 
 				one.Add (new VariableDeclaration (id, type, loc));
 
-
 				$1 = current_block;
 				current_block = new Block (current_block);
 				Block b = declare_local_variables (type, one, loc);
 				current_block = b;
 			}
 		}
-	
 	} 
 	opt_statement_list {
 		Expression type = null;
@@ -2850,10 +2853,9 @@ catch_clause
 					current_block = current_block.Parent;
 			}
 		}
-
-		$$ = new Catch (type, id , (Block)b_catch, lexer.Location);
+		$$ = new Catch (type, id , (Block) b_catch, (Expression) $3, lexer.Location);
 	}
-        ;
+    ;
 
 opt_catch_args
 	: /* empty */ {  $$ = null; }
@@ -3005,7 +3007,7 @@ if_statement
 			$$ = new If ((Expression) tmp_expr, (Statement) tmp_block, end_block(), l);
 		}
 	  }
-	  | if_statement_open THEN else_pre_embedded_statement
+	| if_statement_open THEN else_pre_embedded_statement
 	  {
 			Location l = (Location) oob_stack.Pop ();
 			tmp_expr = (Expression)expr_stack.Pop(); 
@@ -3217,7 +3219,7 @@ case_section
 		topmost.statements.Add (new Break (lexer.Location));
 	  	$$ = new SwitchSection ((ArrayList) $2, topmost);
 	  }
-	  | CASE ELSE ends
+	| CASE ELSE ends
 	    /* FIXME: we should somehow flag an error 
 	       (BC30321 'Case' cannot follow a 'Case Else' 
 	       in the same 'Select' statement.) 
