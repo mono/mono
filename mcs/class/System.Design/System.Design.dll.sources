@@ -61,10 +61,14 @@ System.Web.UI.Design/XmlUrlEditor.cs
 System.Web.UI.Design/XslUrlEditor.cs
 System.Windows.Forms.Design/AnchorEditor.cs
 System.Windows.Forms.Design/AxImporter.cs
+System.Windows.Forms.Design/AxParameterData.cs
+System.Windows.Forms.Design/AxWrapperGen.cs
 System.Windows.Forms.Design/ComponentDocumentDesigner.cs
 System.Windows.Forms.Design/ComponentTray.cs
 System.Windows.Forms.Design/ControlDesigner.cs
+System.Windows.Forms.Design/DockEditor.cs
 System.Windows.Forms.Design/DocumentDesigner.cs
+System.Windows.Forms.Design/EventHandlerService.cs
 System.Windows.Forms.Design/FileNameEditor.cs
 System.Windows.Forms.Design/FolderNameEditor.cs
 System.Windows.Forms.Design/IMenuEditorService.cs

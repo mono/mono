@@ -1,5 +1,10 @@
 2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* System.Design.dll.sources: added more stub for classes
+	in System.Windows.Forms.Design
+
+2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* System.Design.dll.sources: added more stubs for classes
 	in System.Diagnostics.Design, System.Messaging.Design and
 	System.ServiceProcess.Design
