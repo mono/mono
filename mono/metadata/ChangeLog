@@ -1,3 +1,8 @@
+2004-12-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (mono_marshal_get_managed_wrapper): Fix returning of
+	blittable types. Fixes #70864.
+
 2004-12-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (mono_marshal_get_struct_to_ptr): Call 
