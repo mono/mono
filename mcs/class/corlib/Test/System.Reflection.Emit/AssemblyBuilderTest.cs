@@ -34,9 +34,12 @@ public class AssemblyBuilderTest : Assertion
 
 	static AppDomain domain;
 
+	static AssemblyBuilder ab;
+
 	[SetUp]
 	protected void SetUp () {
 		domain = Thread.GetDomain ();
+		ab = genAssembly ();
 	}
 
 	private AssemblyName genAssemblyName () {
@@ -60,8 +63,6 @@ public class AssemblyBuilderTest : Assertion
 	}
 
 	public void TestCodeBase () {
-		AssemblyBuilder ab = genAssembly ();
-
 		try {
 			string codebase = ab.CodeBase;
 			Fail ();
@@ -71,8 +72,6 @@ public class AssemblyBuilderTest : Assertion
 	}
 
 	public void TestEntryPoint () {
-		AssemblyBuilder ab = genAssembly ();
-
 		AssertEquals ("EntryPoint defaults to null",
 					  null, ab.EntryPoint);
 
@@ -83,8 +82,6 @@ public class AssemblyBuilderTest : Assertion
 	}
 
 	public void TestSetEntryPoint () {
-		AssemblyBuilder ab = genAssembly ();
-
 		// Check invalid arguments
 		try {
 			ab.SetEntryPoint (null);
@@ -103,8 +100,6 @@ public class AssemblyBuilderTest : Assertion
 	}
 
 	public void TestIsDefined () {
-		AssemblyBuilder ab = genAssembly ();
-
 		CustomAttributeBuilder cab = new CustomAttributeBuilder (typeof (FooAttribute).GetConstructor (new Type [1] {typeof (string)}), new object [1] { "A" });
 		ab.SetCustomAttribute (cab);
 
@@ -114,7 +109,65 @@ public class AssemblyBuilderTest : Assertion
 					  false, ab.IsDefined (typeof (AssemblyVersionAttribute), false));
 	}
 
-	
+	[ExpectedException (typeof (NotSupportedException))]
+	public void TestGetManifestResourceNames () {
+		ab.GetManifestResourceNames ();
+	}
+
+	[ExpectedException (typeof (NotSupportedException))]
+	public void TestGetManifestResourceInfo () {
+		ab.GetManifestResourceInfo ("foo");
+	}
+
+	[ExpectedException (typeof (NotSupportedException))]
+	public void TestGetManifestResourceStream1 () {
+		ab.GetManifestResourceStream ("foo");
+	}
+
+	[ExpectedException (typeof (NotSupportedException))]
+	public void TestGetManifestResourceStream2 () {
+		ab.GetManifestResourceStream (typeof (int), "foo");
+	}
+
+	[ExpectedException (typeof (NotSupportedException))]
+	public void TestGetFiles1 () {
+		ab.GetFiles ();
+	}
+
+	[ExpectedException (typeof (NotSupportedException))]
+	public void TestGetFiles2 () {
+		ab.GetFiles (true);
+	}
+
+	[ExpectedException (typeof (NotSupportedException))]
+	public void TestGetFile () {
+		ab.GetFile ("foo");
+	}
+
+	[ExpectedException (typeof (NotSupportedException))]
+	public void TestGetExportedTypes () {
+		ab.GetExportedTypes ();
+	}
+
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void TestGetDynamicModule1 () {
+		ab.GetDynamicModule (null);
+	}
+
+	[ExpectedException (typeof (ArgumentException))]
+	public void TestGetDynamicModule2 () {
+		ab.GetDynamicModule ("");
+	}
+
+	public void TestGetDynamicModule3 () {
+		AssertNull (ab.GetDynamicModule ("FOO2"));
+
+		ModuleBuilder mb = ab.DefineDynamicModule ("FOO");
+
+		AssertEquals (mb, ab.GetDynamicModule ("FOO"));
+
+		AssertNull (ab.GetDynamicModule ("FOO4"));
+	}
 }
 }
 
