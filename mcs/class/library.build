@@ -32,7 +32,7 @@
 	<target name="test">
 		<nant basedir="corlib" target="test"/>
 		<nant basedir="System" target="test"/>
-		<nant basedir="System.XML" target="build"/>
+		<nant basedir="System.XML" target="test"/>
 	</target>
 
 	<target name="clean">
@@ -43,7 +43,7 @@
 		</delete>
 		<nant basedir="corlib" target="clean"/>
 		<nant basedir="System" target="clean"/>
-		<nant basedir="System.XML" target="build"/>
+		<nant basedir="System.XML" target="clean"/>
 		<!-- Doesn't compile, will fix later -Sean
 			<nant basedir="System.Data" target="clean"/>
 		-->
