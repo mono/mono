@@ -123,6 +123,8 @@ System.Web.Configuration/AuthenticationConfigHandler.cs
 System.Web.Configuration/MachineKeyConfig.cs
 System.Web.Configuration/AuthorizationConfig.cs
 System.Web.Configuration/GlobalizationConfigurationHandler.cs
+System.Web.Configuration/TraceConfig.cs
+System.Web.Configuration/TraceConfigurationHandler.cs
 System.Web.Configuration/WebCompiler.cs
 System.Web.Configuration/WebConfigurationSettings.cs
 System.Web.Configuration/WebControlsSectionHandler.cs

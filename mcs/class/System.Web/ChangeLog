@@ -1,4 +1,9 @@
-2003-01-10  Jackson Harper <jackson@ximian.com>
+2004-01-10  Jackson Harper <jackson@ximian.com>
+
+	* System.Web.dll.sources: Add TraceConfig.cs and
+	TraceConfigurationHandler.cs to the build.
+	
+2004-01-10  Jackson Harper <jackson@ximian.com>
 
 	* System.Web.dll.sources: Add TraceData.cs and TraceManager.cs to
 	build.
