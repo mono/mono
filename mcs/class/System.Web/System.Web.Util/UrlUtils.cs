@@ -266,5 +266,21 @@ namespace System.Web.Util
 			}
 			return baseDir;
 		}
+		
+		public static string ResolveVirtualPathFromAppAbsolute (string path)
+		{
+			if (path [0] != '~') return path;
+				
+			if (path.Length == 1)
+				return HttpRuntime.AppDomainAppVirtualPath;
+			
+			if (path [1] == '/' || path [1] == '\\') {
+				string appPath = HttpRuntime.AppDomainAppVirtualPath;
+				if (appPath.Length > 1)
+					return appPath + "/" + path.Substring (2);
+				return "/" + path.Substring (2);
+			}
+			return path;	
+		}
 	}
 }

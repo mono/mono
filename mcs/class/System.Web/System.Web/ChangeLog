@@ -1,3 +1,12 @@
+2003-11-07 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* ISiteMapProvider.cs:
+	* SiteMap.cs:
+	* SiteMapNode.cs:
+	* SiteMapNodeCollection.cs:
+	* SiteMapProvider.cs:
+	* SiteMapProviderCollection.cs: V2 sitemap related stuff.
+
 2003-11-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequest.cs: don't attempt to read more bytes than specified

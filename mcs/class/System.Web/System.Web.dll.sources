@@ -439,3 +439,12 @@ System.Web.Util/WebEqualComparer.cs
 System.Web.Util/WebHashCodeProvider.cs
 System.Web.Util/WebTrace.cs
 System.Web.Util/WebEncoding.cs
+System.Web.UI/IHierarchicalEnumerable.cs
+System.Web.UI/IHierarchyData.cs
+System.Web.UI/INavigateUIData.cs
+System.Web/ISiteMapProvider.cs
+System.Web/SiteMap.cs
+System.Web/SiteMapNode.cs
+System.Web/SiteMapNodeCollection.cs
+System.Web/SiteMapProvider.cs
+System.Web/SiteMapProviderCollection.cs

@@ -1,3 +1,8 @@
+2003-11-07 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* UrlUtils.cs: add a new function for mapping app absolute
+	paths to virual paths (ie, ~/blah/ to /application/root/blah/)
+
 2003-11-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebEncoding.cs: added properties to access configuration files

@@ -1,3 +1,9 @@
+2003-11-07 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* IHierarchicalEnumerable.cs:
+	* IHierarchyData.cs:
+	* INavigateUIData.cs: New v2 interfaces.
+	
 2003-11-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs: patch by Alon Gazit <along@mainsoft.com> to remove extra
