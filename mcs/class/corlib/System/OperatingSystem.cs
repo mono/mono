@@ -94,7 +94,7 @@ namespace System
 			case System.PlatformID.Win32NT: str = "Microsoft Windows NT"; break;
 			case System.PlatformID.Win32S: str = "Microsoft Win32S";  break;
 			case System.PlatformID.Win32Windows: str = "Microsoft Windows 98"; break;
-			case System.PlatformID.Linux: str = "Linux"; break;
+			case System.PlatformID.Unix: str = "Unix"; break;
 			default: str = "<unknown>";	 break;
 			}
 

@@ -6,10 +6,8 @@
 //
 
 
-
 using System;
 using System.Collections;
-
 
 
 namespace System.Collections {
@@ -23,7 +21,7 @@ namespace System.Collections {
 
 		static Comparer ()
 		{
-			Default=new Comparer ();
+			Default = new Comparer ();
 		}
 
 
@@ -50,11 +48,8 @@ namespace System.Collections {
 				throw new ArgumentException ("Neither a nor b IComparable");
 			}
 
-
 			return res;
 		}
-
-
 
 		public override string ToString ()
 		{

@@ -1,3 +1,7 @@
+2001-09-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* Calendar.cs: Implement a bunch of missing features.
+
 2001-07-24  Derek Holden  <dholden@draper.com>
 
 	* NumberStyles.cs: Added ECMA values for Allow types and default

@@ -1,5 +1,8 @@
 CipherMode.cs
 CryptoStreamMode.cs
+DES.cs
+DESCryptoServiceProvider.cs
+FromBase64Transform.cs
 HashAlgorithm.cs
 ICryptoTransform.cs
 KeySizes.cs

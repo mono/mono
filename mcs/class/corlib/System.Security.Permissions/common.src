@@ -1,3 +1,10 @@
-ReflectionPermissionFlag.cs
-FileIOPermissionAccess.cs
 EnvironmentPermissionAccess.cs
+FileIOPermissionAccess.cs
+IsolatedStorageContainment.cs
+PermissionState.cs
+ReflectionPermissionFlag.cs
+RegistryPermissionAccess.cs
+SecurityAction.cs
+SecurityPermissionFlag.cs
+UIPermissionClipboard.cs
+UIPermissionWindow.cs

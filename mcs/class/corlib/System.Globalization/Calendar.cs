@@ -10,12 +10,27 @@ namespace System.Globalization
 {
 	public abstract class Calendar
 	{
-		protected Calendar ();
+		protected Calendar ()
+		{
+		}
 
-		public const int CurrentEra;
+		public int CurrentEra ;
 		
 		public abstract int[] Eras {get;}
-		public virtual int TwoDigitYearMax {get; set;}
+
+		//
+		// This is just a good guess, lets check what .NET actually does with this
+		//
+		int two_digit_year_max = 2029;
+		public virtual int TwoDigitYearMax {
+			get {
+				return two_digit_year_max;
+			}
+
+			set {
+				two_digit_year_max = value;
+			}
+		}
 		
 		public virtual DateTime AddDays ( DateTime time, int days );
 		public virtual DateTime AddHours ( DateTime time, int hours );
@@ -29,7 +44,7 @@ namespace System.Globalization
 
 		public abstract int GetDayOfMonth ( DateTime time );
 		public abstract DayOfWeek GetDayOfWeek ( DateTime time );
-		public abstract GetDayOfYear ( DateTime time );
+		public abstract int GetDayOfYear ( DateTime time );
 		public virtual int GetDaysInMonth ( int year, int month );
 		public abstract int GetDaysInMonth ( int year, int month, int era );
 		public virtual int GetDaysInYear ( int year );

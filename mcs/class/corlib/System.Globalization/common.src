@@ -1,3 +1,7 @@
+CompareOptions.cs
+CultureTypes.cs
 DateTimeStyles.cs
+GregorianCalendarTypes.cs
+NumberFormatInfo.cs
 NumberStyles.cs
 UnicodeCategory.cs

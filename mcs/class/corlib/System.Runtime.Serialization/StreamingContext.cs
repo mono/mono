@@ -31,13 +31,13 @@ namespace System.Runtime.Serialization {
 			}
 		}
 
-		public StreamingContextStates {
+		public StreamingContextStates State {
 			get {
 				return state;
 			}
 		}
 
-		public bool Equals (Object o)
+		override public bool Equals (Object o)
 		{
 			StreamingContext other;
 			
@@ -49,11 +49,9 @@ namespace System.Runtime.Serialization {
 			return (other.state == this.state) && (other.additional == this.additional);
 		}
 
-		public int GetHashCode ()
+		override public int GetHashCode ()
 		{
-			// FIXME: Improve this?  Is this worth it?
-			
-			return o.GetHashCode ();
+			return (int) state;
 		}
 	}
 }

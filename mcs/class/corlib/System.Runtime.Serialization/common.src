@@ -1,3 +1,6 @@
 IFormatterConverter.cs
+IObjectReference.cs
 ISerializable.cs
 SerializationInfo.cs
+StreamingContext.cs
+StreamingContextStates.cs

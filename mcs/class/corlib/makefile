@@ -5,10 +5,13 @@ DIRS=	\
 	System.Diagnostics				\
 	System.Globalization 				\
 	System.IO					\
+	System.IO.IsolatedStorage			\
 	System.Reflection 				\
 	System.Runtime.CompilerServices			\
 	System.Runtime.InteropServices			\
+	System.Runtime.Remoting				\
 	System.Runtime.Serialization			\
+	System.Runtime.Serialization.Formatters		\
 	System.Security.Cryptography			\
 	System.Security.Permissions			\
 	System.Text					\

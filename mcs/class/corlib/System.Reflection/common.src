@@ -1,2 +1,17 @@
+AssemblyNameFlags.cs
 BindingFlags.cs
+CallingConventions.cs
 DefaultMemberAttribute.cs
+EventAttributes.cs
+FieldAttributes.cs
+FieldInfo.cs
+ICustomAttributeProvider.cs
+MemberInfo.cs
+MemberTypes.cs
+MethodAttributes.cs
+MethodImplAttributes.cs
+ParameterAttributes.cs
+PropertyAttributes.cs
+ResourceAttributes.cs
+ResourceLocation.cs
+TypeAttributes.cs

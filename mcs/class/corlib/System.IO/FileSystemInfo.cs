@@ -82,17 +82,24 @@ namespace System.IO
 
 		public DateTime LastAccessTime
 		{
-			get
-			{
+			get {
 				return itsLastAccess;
+			}
+
+			set {
+				// FIXME: IMPLEMENT ME!
+				
 			}
 		}
 
 		public DateTime LastWriteTime
 		{
-			get
-			{
+			get {
 				return itsLastWrite;
+			}
+
+			set {
+				// FIXME: IMPLEMENT ME!
 			}
 		}
 

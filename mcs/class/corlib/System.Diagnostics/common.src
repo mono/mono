@@ -1,6 +1,8 @@
 BooleanSwitch.cs
 ConditionalAttribute.cs
 DebuggableAttribute.cs
+StackFrame.cs
+StackTrace.cs
 Switch.cs
 TraceLevel.cs
 TraceSwitch.cs

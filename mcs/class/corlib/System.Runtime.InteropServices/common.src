@@ -2,4 +2,7 @@ CallingConvention.cs
 CharSet.cs
 GCHandleType.cs
 LayoutKind.cs
+MethodImplOptions.cs
 OutAttribute.cs
+PInvokeMap.cs
+UnmanagedType.cs
