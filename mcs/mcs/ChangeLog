@@ -6,6 +6,10 @@
 
 2004-07-14  Martin Baulig  <martin@ximian.com>
 
+	* iterators.cs: Use real error numbers.
+
+2004-07-14  Martin Baulig  <martin@ximian.com>
+
 	* iterator.cs (IteratorHandle.IsIEnumerable): The spec explicitly
 	requires this to be a System.Collection.IEnumerable and not a
 	class implementing that interface.
