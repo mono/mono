@@ -13,6 +13,52 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 
 namespace MonoTests.System {
+    internal struct ParseTest
+    {
+        public ParseTest(String str, bool exceptionFlag)
+        {
+            this.str = str;
+            this.exceptionFlag = exceptionFlag;
+            this.style = NumberStyles.Number;
+            this.d = 0;
+        }
+
+        public ParseTest(String str, S.Decimal d)
+        {
+            this.str = str;
+            this.exceptionFlag = false;
+            this.style = NumberStyles.Number;
+            this.d = d;
+        }
+
+        public ParseTest(String str, S.Decimal d, NumberStyles style)
+        {
+            this.str = str;
+            this.exceptionFlag = false;
+            this.style = style;
+            this.d = d;
+        }
+
+        public String str;
+        public S.Decimal d;
+        public NumberStyles style;
+        public bool exceptionFlag;
+    }
+
+    internal struct ToStringTest
+    {
+        public ToStringTest(String format, S.Decimal d, String str)
+        {
+            this.format = format;
+            this.d = d;
+            this.str = str;
+        }
+
+        public String format;
+        public S.Decimal d;
+        public String str;
+    }
+
     /// <summary>
     /// Tests for System.Decimal
     /// </summary>
@@ -36,91 +82,256 @@ namespace MonoTests.System {
         private int [] partsMaxValue = {-1,-1,-1,0};
         private int [] partsMinValue = {-1,-1,-1,negativeBitValue};
         private int [] parts6 = {1234, 5678, 8888, negativeScale4Value};
+        private NumberFormatInfo NfiUser;
+
+        protected override void SetUp() 
+        {
+            NfiUser = new NumberFormatInfo();
+            NfiUser.CurrencyDecimalDigits = 3;
+            NfiUser.CurrencyDecimalSeparator = ",";
+            NfiUser.CurrencyGroupSeparator = "_";
+            NfiUser.CurrencyGroupSizes = new int[] { 2,1,0 };
+            NfiUser.CurrencyNegativePattern = 10;
+            NfiUser.CurrencyPositivePattern = 3;
+            NfiUser.CurrencySymbol = "XYZ";
+            NfiUser.NumberDecimalSeparator = "##";
+            NfiUser.NumberDecimalDigits = 4;
+            NfiUser.NumberGroupSeparator = "__";
+            NfiUser.NumberGroupSizes = new int[] { 2,1 };
+            NfiUser.PercentDecimalDigits = 1;
+            NfiUser.PercentDecimalSeparator = ";";
+            NfiUser.PercentGroupSeparator = "~";
+            NfiUser.PercentGroupSizes = new int[] {1};
+            NfiUser.PercentNegativePattern = 2;
+            NfiUser.PercentPositivePattern = 2;
+            NfiUser.PercentSymbol = "%%%";
+        }
 
         public void TestToString()
         {
+            ToStringTest[] tab = {
+                new ToStringTest("F", 12.345678m, "12.35"),
+                new ToStringTest("F3", 12.345678m, "12.346"),
+                new ToStringTest("F0", 12.345678m, "12"),
+                new ToStringTest("F7", 12.345678m, "12.3456780"),
+                new ToStringTest("E", 12.345678m, "1.234568E+01"),
+                new ToStringTest("E3", 12.345678m, "1.235E+01"),
+                new ToStringTest("E0", 12.345678m, "1E+01"),
+                new ToStringTest("e8", 12.345678m, "1.23456780e+01"),
+                new ToStringTest("F", 0.0012m, "0.00"),
+                new ToStringTest("F3", 0.0012m, "0.001"),
+                new ToStringTest("F0", 0.0012m, "0"),
+                new ToStringTest("F6", 0.0012m, "0.001200"),
+                new ToStringTest("e", 0.0012m, "1.200000e-03"),
+                new ToStringTest("E3", 0.0012m, "1.200E-03"),
+                new ToStringTest("E0", 0.0012m, "1E-03"),
+                new ToStringTest("E6", 0.0012m, "1.200000E-03"),
+                new ToStringTest("F4", -0.001234m, "-0.0012"),
+                new ToStringTest("E3", -0.001234m, "-1.234E-03"),
+                new ToStringTest("g", -0.000012m, "-1.2e-05"),
+                new ToStringTest("F", -123, "-123.00"),
+                new ToStringTest("F3", -123, "-123.000"),
+                new ToStringTest("F0", -123, "-123"),
+                new ToStringTest("E3", -123, "-1.230E+02"),
+                new ToStringTest("E0", -123, "-1E+02"),
+                new ToStringTest("E", -123, "-1.230000E+02"),
+                new ToStringTest("F3", S.Decimal.MinValue, "-79228162514264337593543950335.000"),
+                new ToStringTest("F", S.Decimal.MinValue, "-79228162514264337593543950335.00"),
+                new ToStringTest("F0", S.Decimal.MinValue, "-79228162514264337593543950335"),
+                new ToStringTest("E", S.Decimal.MinValue, "-7.922816E+28"),
+                new ToStringTest("E3", S.Decimal.MinValue, "-7.923E+28"),
+                new ToStringTest("E28", S.Decimal.MinValue, "-7.9228162514264337593543950335E+28"),
+                new ToStringTest("E30", S.Decimal.MinValue, "-7.922816251426433759354395033500E+28"),
+                new ToStringTest("E0", S.Decimal.MinValue, "-8E+28"),
+                new ToStringTest("N3", S.Decimal.MinValue, "(79,228,162,514,264,337,593,543,950,335.000)"),
+                new ToStringTest("N0", S.Decimal.MinValue, "(79,228,162,514,264,337,593,543,950,335)"),
+                new ToStringTest("N", S.Decimal.MinValue, "(79,228,162,514,264,337,593,543,950,335.00)"),
+                new ToStringTest("C", 123456.7890m, "$123,456.79"),
+                new ToStringTest("C", -123456.7890m, "($123,456.79)"),
+                new ToStringTest("C3", 1123456.7890m, "$1,123,456.789"),
+                new ToStringTest("P", 123456.7891m, "12,345,678.91 %"),
+                new ToStringTest("P", -123456.7892m, "-12,345,678.92 %"),
+                new ToStringTest("P3", 1234.56789m, "123,456.789 %"),
+            };
+
             NumberFormatInfo nfi = NumberFormatInfo.InvariantInfo;
-            S.Decimal d;
 
-            d = 12.345678m;
-            Assert(d.ToString("F", nfi) == "12.35");
-            Assert(d.ToString("F3", nfi) == "12.346");
-            Assert(d.ToString("F0", nfi) == "12");
-            Assert(d.ToString("F7", nfi) == "12.3456780");
-            Assert(d.ToString("E", nfi) == "1.234568E+01");
-            Assert(d.ToString("E3", nfi) == "1.235E+01");
-            Assert(d.ToString("E0", nfi) == "1E+01");
-            Assert(d.ToString("e8", nfi) == "1.23456780e+01");
+            for (int i = 0; i < tab.Length; i++) 
+            {
+                try
+                {
+                    string s = tab[i].d.ToString(tab[i].format, nfi);
+                    if (s != tab[i].str)
+                    {
+                        Fail(tab[i].d.ToString(tab[i].format, nfi) + " (format = '" + tab[i].format + "') != " + tab[i].str);
+                    }
+                } 
+                catch (OverflowException)
+                {
+                    Fail(tab[i].d.ToString(tab[i].format, nfi) + " (format = '" + tab[i].format + "'): unexpected exception !");
+                }
+            }      
+        }
 
-            d = 0.0012m;
-            Assert(d.ToString("F", nfi) == "0.00");
-            Assert(d.ToString("F3", nfi) == "0.001");
-            Assert(d.ToString("F0", nfi) == "0");
-            Assert(d.ToString("F6", nfi) == "0.001200");
-            Assert(d.ToString("e", nfi) == "1.200000e-03");
-            Assert(d.ToString("E3", nfi) == "1.200E-03");
-            Assert(d.ToString("E0", nfi) == "1E-03");
-            Assert(d.ToString("E6", nfi) == "1.200000E-03");
+        public void TestCurrencyPattern()
+        {
+            NumberFormatInfo nfi2 = (NumberFormatInfo)NfiUser.Clone();
+            S.Decimal d = -1234567.8976m;
+            string[] ergCurrencyNegativePattern = new String[16] {
+                "(XYZ1234_5_67,898)", "-XYZ1234_5_67,898", "XYZ-1234_5_67,898", "XYZ1234_5_67,898-",
+                "(1234_5_67,898XYZ)", "-1234_5_67,898XYZ", "1234_5_67,898-XYZ", "1234_5_67,898XYZ-",
+                "-1234_5_67,898 XYZ", "-XYZ 1234_5_67,898", "1234_5_67,898 XYZ-", "XYZ 1234_5_67,898-",
+                "XYZ -1234_5_67,898", "1234_5_67,898- XYZ", "(XYZ 1234_5_67,898)", "(1234_5_67,898 XYZ)",
+            };
 
-            d = -0.0012m;
-            Assert(d.ToString("F3", nfi) == "-0.001");
-            Assert(d.ToString("F2", nfi) == "-0.00");
-            Assert(d.ToString("F0", nfi) == "-0");
-            Assert(d.ToString("F6", nfi) == "-0.001200");
-            Assert(d.ToString("e3", nfi) == "-1.200e-03");
-            Assert(d.ToString("e", nfi) == "-1.200000e-03");
+            for (int i = 0; i < ergCurrencyNegativePattern.Length; i++) 
+            {
+                nfi2.CurrencyNegativePattern = i;
+                if (d.ToString("C", nfi2) != ergCurrencyNegativePattern[i]) 
+                {
+                    Fail("CurrencyNegativePattern #" + i + " failed: " +
+                        d.ToString("C", nfi2) + " != " + ergCurrencyNegativePattern[i]);
+                }
+            }
 
-            d = -0.000012m;
-            Assert(d.ToString("g", nfi) == "-1.2e-05");
+            d = 1234567.8976m;
+            string[] ergCurrencyPositivePattern = new String[4] {
+                "XYZ1234_5_67,898", "1234_5_67,898XYZ", "XYZ 1234_5_67,898", "1234_5_67,898 XYZ",
+            };
 
-            d = -123;
-            Assert(d.ToString("F", nfi) == "-123.00");
-            Assert(d.ToString("F3", nfi) == "-123.000");
-            Assert(d.ToString("F0", nfi) == "-123");
-            Assert(d.ToString("E3", nfi) == "-1.230E+02");
-            Assert(d.ToString("E0", nfi) == "-1E+02");
-            Assert(d.ToString("E", nfi) == "-1.230000E+02");
+            for (int i = 0; i < ergCurrencyPositivePattern.Length; i++) 
+            {
+                nfi2.CurrencyPositivePattern = i;
+                if (d.ToString("C", nfi2) != ergCurrencyPositivePattern[i]) 
+                {
+                    Fail("CurrencyPositivePattern #" + i + " failed: " +
+                        d.ToString("C", nfi2) + " != " + ergCurrencyPositivePattern[i]);
+                }
+            }
+        }
 
-            d = S.Decimal.MinValue;
-            Assert(d.ToString("F3", nfi) == "-79228162514264337593543950335.000");
-            Assert(d.ToString("F", nfi) == "-79228162514264337593543950335.00");
-            Assert(d.ToString("F0", nfi) == "-79228162514264337593543950335");
-            Assert(d.ToString("E", nfi) == "-7.922816E+28");
-            Assert(d.ToString("E3", nfi) == "-7.923E+28");
-            Assert(d.ToString("E28", nfi) == "-7.9228162514264337593543950335E+28");
-            Assert(d.ToString("E30", nfi) == "-7.922816251426433759354395033500E+28");
-            Assert(d.ToString("E0", nfi) == "-8E+28");
-            Assert(d.ToString("N3", nfi) == "(79,228,162,514,264,337,593,543,950,335.000)");
-            Assert(d.ToString("N0", nfi) == "(79,228,162,514,264,337,593,543,950,335)");
-            Assert(d.ToString("N", nfi) == "(79,228,162,514,264,337,593,543,950,335.00)");
+        public void TestNumberNegativePattern()
+        {
+            NumberFormatInfo nfi2 = (NumberFormatInfo)NfiUser.Clone();
+            S.Decimal d = -1234.89765m;
+            string[] ergNumberNegativePattern = new String[5] {
+                "(1__2__34##8976)", "-1__2__34##8976", "- 1__2__34##8976", "1__2__34##8976-", "1__2__34##8976 -",
+            };
+
+            for (int i = 0; i < ergNumberNegativePattern.Length; i++) 
+            {
+                nfi2.NumberNegativePattern = i;
+                if (d.ToString("N", nfi2) != ergNumberNegativePattern[i]) 
+                {
+                    Fail("NumberNegativePattern #" + i + " failed: " +
+                        d.ToString("N", nfi2) + " != " + ergNumberNegativePattern[i]);
+                }
+            }
+        }
+        
+        public void TestPercentPattern()
+        {
+            NumberFormatInfo nfi2 = (NumberFormatInfo)NfiUser.Clone();
+            S.Decimal d = -1234.8976m;
+            string[] ergPercentNegativePattern = new String[3] {
+                "-1~2~3~4~8~9;8 %%%", "-1~2~3~4~8~9;8%%%", "-%%%1~2~3~4~8~9;8"
+            };
+
+            for (int i = 0; i < ergPercentNegativePattern.Length; i++) 
+            {
+                nfi2.PercentNegativePattern = i;
+                if (d.ToString("P", nfi2) != ergPercentNegativePattern[i]) 
+                {
+                    Fail("PercentNegativePattern #" + i + " failed: " +
+                        d.ToString("P", nfi2) + " != " + ergPercentNegativePattern[i]);
+                }
+            }
+
+            d = 1234.8976m;
+            string[] ergPercentPositivePattern = new String[3] {
+                "1~2~3~4~8~9;8 %%%", "1~2~3~4~8~9;8%%%", "%%%1~2~3~4~8~9;8"
+            };
+
+            for (int i = 0; i < ergPercentPositivePattern.Length; i++) 
+            {
+                nfi2.PercentPositivePattern = i;
+                if (d.ToString("P", nfi2) != ergPercentPositivePattern[i]) 
+                {
+                    Fail("PercentPositivePattern #" + i + " failed: " +
+                        d.ToString("P", nfi2) + " != " + ergPercentPositivePattern[i]);
+                }
+            }
         }
 
         public void TestParse()
         {
-            const int size = 6;
-            string[] stab = new String[size] {
-                "1.2345", "-9876543210", "$ (  79,228,162,514,264,337,593,543,950,335.000 ) ",
-                "1.234567890e-10", "1.234567890e-24", "  47896396.457983645462346E10  "
-            };
-            NumberStyles[] styleTab = new NumberStyles[size] {
-                NumberStyles.Number, NumberStyles.Number, NumberStyles.Currency,
-                NumberStyles.Float, NumberStyles.Float, NumberStyles.Float
+            ParseTest[] tab = {
+                new ParseTest("1.2345", 1.2345m),
+                new ParseTest("-9876543210", -9876543210m),
+                new ParseTest("$ (  79,228,162,514,264,337,593,543,950,335.000 ) ", S.Decimal.MinValue, NumberStyles.Currency),
+                new ParseTest("1.234567890e-10", (S.Decimal)1.234567890e-10, NumberStyles.Float),
+                new ParseTest("1.234567890e-24", 1.2346e-24m, NumberStyles.Float),
+                new ParseTest("  47896396.457983645462346E10  ", 478963964579836454.62346m, NumberStyles.Float),
+                new ParseTest("-7922816251426433759354395033.250000000000001", -7922816251426433759354395033.3m),
+                new ParseTest("-000000000000007922816251426433759354395033.2500000000000000", -7922816251426433759354395033.2m),
+                new ParseTest("-  00007922816251426433759354395033.150000000000", -7922816251426433759354395033.2m),
+                new ParseTest("-7922816251426433759354395033.2400000000000", -7922816251426433759354395033.2m),
+                new ParseTest("-7922816251426433759354395033.2600000000000", -7922816251426433759354395033.3m)
             };
 
-            S.Decimal[] dtab = new S.Decimal[size] {
-                1.2345m, -9876543210m, S.Decimal.MinValue,
-                (S.Decimal)1.234567890e-10, 0.0000000000000000000000012346m, 478963964579836454.62346m
-            };
-
-            for (int i = 0; i < size; i++) 
+            S.Decimal d;
+            for (int i = 0; i < tab.Length; i++) 
             {
-                S.Decimal d;
-                d = S.Decimal.Parse(stab[i], styleTab[i], NumberFormatInfo.InvariantInfo);
-                if (d != dtab[i]) 
+                try
                 {
-                    Fail(stab[i] + " != " + d);
+                    d = S.Decimal.Parse(tab[i].str, tab[i].style, NumberFormatInfo.InvariantInfo);
+                    if (tab[i].exceptionFlag)
+                    {
+                        Fail(tab[i].str + ": missing exception !");
+                    }
+                    else if (d != tab[i].d) 
+                    {
+                        Fail(tab[i].str + " != " + d);
+                    }
+                } 
+                catch (OverflowException)
+                {
+                    if (!tab[i].exceptionFlag)
+                    {
+                        Fail(tab[i].str + ": unexpected exception !");
+                    }
                 }
-            }      
+            }  
+    
+            try 
+            {
+                d = S.Decimal.Parse(null);
+                Fail("Expected ArgumentNullException");
+            }
+            catch (ArgumentNullException)
+            {
+                //ok
+            }
+
+            try 
+            {
+                d = S.Decimal.Parse("123nx");
+                Fail("Expected FormatException");
+            }
+            catch (FormatException)
+            {
+                //ok
+            }
+
+            try 
+            {
+                d = S.Decimal.Parse("79228162514264337593543950336");
+                Fail("Expected OverflowException" + d);
+            }
+            catch (OverflowException)
+            {
+                //ok
+            }
         }
 
         public void TestConstants()
@@ -503,16 +714,9 @@ namespace MonoTests.System {
 
             d = new S.Decimal(1.765231234567853e+24);
             Assert(d == 1.76523123456785e+24m);
-        }
-
-        public void TestConstructDoubleRoundHard()
-        {
-            S.Decimal d;
 
             d = new S.Decimal(1765.2312345678454);
-            // this case fails in Microsoft implementation
-            // but it conforms to specification (rounding 15 digits according to banker's rule)
-            Assert("failed banker's rule rounding test 2", d == 1765.23123456784m);
+            Assert(d == 1765.23123456785m);
         }
 
         public void TestNegate()
