@@ -26,7 +26,7 @@
 //	- Keyboard navigation
 //	- Horizontal item scroll
 //	- Performance testing
-//	
+//
 //
 
 // NOT COMPLETE
@@ -70,11 +70,13 @@ namespace System.Windows.Forms
 		{
 			internal int Index;
 			internal bool Selected;
+			internal CheckState State;
 
 			public ListBoxItem (int index)
 			{
 				Index = index;
 				Selected = false;
+				State = CheckState.Unchecked;
 			}
 		}
 
@@ -84,7 +86,6 @@ namespace System.Windows.Forms
 		private int horizontal_extent;
 		private bool horizontal_scrollbar;
 		private bool integral_height;
-		private ObjectCollection items;
 		private bool multicolumn;
 		private bool scroll_always_visible;
 		private int selected_index;
@@ -96,12 +97,14 @@ namespace System.Windows.Forms
 		private bool use_tabstops;
 		private int preferred_height;
 		private int top_index;
-		private StringFormat string_format;
 		private int column_width_internal;
-		private ListBoxInfo listbox_info;
 		private VScrollBar vscrollbar_ctrl;
 		private HScrollBar hscrollbar_ctrl;
 		private bool suspend_ctrlupdate;
+
+		internal StringFormat string_format;
+		internal ListBoxInfo listbox_info;
+		internal ObjectCollection items;
 
 		public ListBox ()
 		{
@@ -454,12 +457,12 @@ namespace System.Windows.Forms
 
 		public int TopIndex {
 			get { return top_index;}
-			set {				
+			set {
 				if (value == top_index)
 					return;
-					
+
 				if (value < 0 || value >= Items.Count)
-					return;				
+					return;
 
 				value = top_index;
 				Refresh ();
@@ -497,7 +500,7 @@ namespace System.Windows.Forms
 		#region Public Methods
 		protected virtual void AddItemsCore (object[] value)
 		{
-			items.AddRange (value);
+			Items.AddRange (value);
 		}
 
 		public void BeginUpdate ()
@@ -580,10 +583,15 @@ namespace System.Windows.Forms
 				rect.Width = listbox_info.textdrawing_rect.Width;
 			}
 			else {
-				int which_page = index / listbox_info.page_size;
+				int which_page;
 
-				rect.X = which_page * ColumnWidthInternal;
+				if (listbox_info.page_size == 0) {
+					listbox_info.page_size = 1;
+				}
+
+				which_page = index / listbox_info.page_size;
 				rect.Y = (index % listbox_info.page_size) * ItemHeight;
+				rect.X = which_page * ColumnWidthInternal;
 				rect.Height = ItemHeight;
 				rect.Width = ColumnWidthInternal;
 			}
@@ -671,7 +679,9 @@ namespace System.Windows.Forms
 			UpdateInternalClientRect (ClientRectangle);
 			Controls.Add (vscrollbar_ctrl);
 			Controls.Add (hscrollbar_ctrl);
-			Sort ();
+
+			if (Sorted)
+				Sort ();
 		}
 
 		protected override void OnHandleDestroyed (EventArgs e)
@@ -715,7 +725,7 @@ namespace System.Windows.Forms
 
 		protected override void RefreshItem (int index)
 		{
-						
+
 		}
 
 		protected override void SetBoundsCore (int x,  int y, int width, int height, BoundsSpecified specified)
@@ -725,15 +735,15 @@ namespace System.Windows.Forms
 
 		protected override void SetItemCore (int index,  object value)
 		{
-			if (index < 0 || index >= Items.Count) 
+			if (index < 0 || index >= Items.Count)
 				return;
-				
+
 			Items[index] = value;
 		}
 
 		protected override void SetItemsCore (IList value)
-		{			
-			
+		{
+
 		}
 
 		public void SetSelected (int index, bool value)
@@ -834,10 +844,11 @@ namespace System.Windows.Forms
 			}
 
 			LBoxInfo.last_item = LastVisibleItem ();
+
 		}
 
 		internal void Draw (Rectangle clip)
-		{
+		{	
 			if (LBoxInfo.textdrawing_rect.Contains (clip) == false) {
 				// IntegralHeight has effect, we also have to paint the unused area
 				if (ClientRectangle.Height > listbox_info.client_rect.Height) {
@@ -848,9 +859,8 @@ namespace System.Windows.Forms
 						area.GetBounds (DeviceContext));
 				}
 
-				DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), LBoxInfo.textdrawing_rect);
-				ThemeEngine.Current.DrawListBoxDecorations (DeviceContext, this);
-			}
+				DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), LBoxInfo.textdrawing_rect);				
+			}					
 
 			if (Items.Count > 0) {
 				Rectangle item_rect;
@@ -872,11 +882,13 @@ namespace System.Windows.Forms
 					OnDrawItem (new DrawItemEventArgs (DeviceContext, Font, item_rect,
 						i, state, ForeColor, BackColor));
 				}
-			}
+			}			
+			
+			ThemeEngine.Current.DrawListBoxDecorations (DeviceContext, this);
 		}
 
 		// Converts a GetItemRectangle to a one that we can display
-		private Rectangle GetItemDisplayRectangle (int index, int first_displayble)
+		internal Rectangle GetItemDisplayRectangle (int index, int first_displayble)
 		{
 			Rectangle item_rect;
 			Rectangle first_item_rect = GetItemRectangle (first_displayble);
@@ -899,6 +911,18 @@ namespace System.Windows.Forms
 			Refresh ();
 		}
 
+		// Only returns visible points. The diference of with IndexFromPoint is that the rectangle
+		// has screen coordinates
+		internal int IndexFromPointDisplayRectangle (int x, int y)
+		{
+    			for (int i = LBoxInfo.top_item; i < LBoxInfo.last_item; i++) {
+				if (GetItemDisplayRectangle (i, LBoxInfo.top_item).Contains (x, y) == true)
+					return i;
+			}
+
+			return -1;
+		}
+
 		private int LastVisibleItem ()
 		{
 			Rectangle item_rect;
@@ -908,7 +932,6 @@ namespace System.Windows.Forms
 			for (i = LBoxInfo.top_item; i < Items.Count; i++) {
 
 				item_rect = GetItemDisplayRectangle (i, LBoxInfo.top_item);
-
 				if (MultiColumn) {
 
 					if (item_rect.X > LBoxInfo.textdrawing_rect.Width)
@@ -916,12 +939,13 @@ namespace System.Windows.Forms
 				}
 				else {
 					if (IntegralHeight) {
-						if (item_rect.Y + item_rect.Height > top_y)
-							return i - 1;
+						if (item_rect.Y + item_rect.Height > top_y) {
+							return i;
+						}
 					}
 					else {
 						if (item_rect.Y > top_y)
-							return i - 1;
+							return i;
 					}
 				}
 			}
@@ -929,16 +953,10 @@ namespace System.Windows.Forms
 			return i;
 		}
 
-		private void OnMouseDownLB (object sender, MouseEventArgs e)
-    		{
-    			int index = -1;
 
-    			for (int i = LBoxInfo.top_item; i < LBoxInfo.last_item; i++) {
-				if (GetItemDisplayRectangle (i, LBoxInfo.top_item).Contains (e.X, e.Y) == true) {
-					index = i;
-					break;
-				}
-			}
+		internal virtual void OnMouseDownLB (object sender, MouseEventArgs e)
+    		{
+    			int index = IndexFromPointDisplayRectangle (e.X, e.Y);
 
     			if (index == -1) return;
 
@@ -984,6 +1002,7 @@ namespace System.Windows.Forms
 
 		internal void RellocateScrollBars ()
 		{
+
 			if (listbox_info.show_verticalsb) {
 
 				vscrollbar_ctrl.Size = new Size (vscrollbar_ctrl.Width,
@@ -1062,7 +1081,7 @@ namespace System.Windows.Forms
 		}
 
 		// Updates the scrollbar's position with the new items and inside area
-		internal void UpdateItemInfo (bool adding, int first, int last)
+		internal virtual void UpdateItemInfo (bool adding, int first, int last)
 		{
 			if (!IsHandleCreated || suspend_ctrlupdate == true)
 				return;
@@ -1137,10 +1156,11 @@ namespace System.Windows.Forms
 
 				/* Is it really need it */
 				int page_size = listbox_info.client_rect.Height / listbox_info.item_height;
-				int fullpage = (page_size * (listbox_info.client_rect.Width / ColumnWidthInternal));
+				int fullpage = (page_size * (listbox_info.textdrawing_rect.Height / ColumnWidthInternal));
 
 				if (Items.Count > fullpage) {
-					show = true;
+					if (IntegralHeight == false)
+						show = true;
 				}
 				else { /* Acording to MS Documentation ScrollAlwaysVisible only affects Horizontal scrollbars but
 					  this is not true for MultiColumn listboxes */
@@ -1265,8 +1285,8 @@ namespace System.Windows.Forms
 			}
 
 			private ListBox owner;
-			private ArrayList object_items = new ArrayList ();
-			private ArrayList listbox_items = new ArrayList ();
+			internal ArrayList object_items = new ArrayList ();
+			internal ArrayList listbox_items = new ArrayList ();
 
 			public ObjectCollection (ListBox owner)
 			{
@@ -1420,7 +1440,6 @@ namespace System.Windows.Forms
 				return cnt;
 			}
 
-			// TODO: object_items have to be sorted, look at ListBoxItem. Are we using object theere?
 			internal ListBox.ListBoxItem GetListBoxItem (int index)
 			{
 				if (index < 0 || index >= Count)

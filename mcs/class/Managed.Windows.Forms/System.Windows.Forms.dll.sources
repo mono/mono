@@ -32,6 +32,7 @@ System.Windows.Forms/ButtonState.cs
 System.Windows.Forms/CaptionButton.cs
 System.Windows.Forms/CharacterCasing.cs
 System.Windows.Forms/CheckBox.cs
+System.Windows.Forms/CheckedListBox.cs
 System.Windows.Forms/CheckState.cs
 System.Windows.Forms/ColorDepth.cs
 System.Windows.Forms/ColumnClickEventArgs.cs

@@ -1,3 +1,8 @@
+2004-12-17  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ListBox.cs: bug fixes, changes for CheckedListBox.cs
+	  CheckedListBox.cs: Implementation
+
 2004-12-17  Peter Bartok  <pbartok@novell.com>
 
 	* TextControl.cs (RecalculateLine): Fixed baseline aligning calcs
