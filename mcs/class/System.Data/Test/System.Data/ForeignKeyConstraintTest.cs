@@ -229,13 +229,10 @@ namespace MonoTests.System.Data
                                 table2.Constraints.Add (fkc);
                                 throw new ApplicationException ("An Exception was expected");
                         }
-#if NET_1_1
-                        catch (InvalidOperationException) {
-			}
-#else
+                        // LAMESPEC : spec says InvalidConstraintException but throws this
                         catch (ArgumentException) {
                         }
-#endif
+
 #if false // FIXME: Here this test crashes under MS.NET.
                         // OK - So AddRange() is the only way!
                         table2.Constraints.AddRange (constraints);
@@ -256,6 +253,9 @@ namespace MonoTests.System.Data
                         }
                         catch (ArgumentException e) {
                         }
+                        catch (InvalidConstraintException e){ // Could not test on ms.net, as ms.net does not reach here so far.        
+                        }
+                        
 #if false // FIXME: Here this test crashes under MS.NET.
                         // Check whether the child table really contains the foreign key constraint named "hello world"
                         Assertion.Assert("#A11 ", table2.Constraints.Contains ("hello world"));

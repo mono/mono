@@ -1,3 +1,8 @@
+2005-02-03  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* ForeignKeyConstraintTest.cs: TestCtor5: ad-hoc fixes for mono.
+	ms.net does not allow fkc.Table. LAMESPEC.
+
 2005-02-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataViewManagerTest.cs : (Ctor) okay, #7 is silly test.
