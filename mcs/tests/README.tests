@@ -57,6 +57,10 @@ Test cases listed by Category:
 
   verify-5.cs
 
+* Enums
+
+  verify-6.cs
+
 Test cases listed by Number:
 ============================
 
@@ -184,3 +188,7 @@ verify-4.cs
 -----------
 When there's an unreachable break in a switch section, it must not emit a jump out of
 the method.
+
+verify-6.cs
+-----------
+Casts from/to System.Enum.
