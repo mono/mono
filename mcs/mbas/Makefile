@@ -21,7 +21,5 @@ mb-parser.cs: mb-parser.jay
 
 consolidate-test-results:
 	@cp Test/tests/TestResults.log $(CONSOLIDATED_TEST_RESULTS_FILE)
-	@cat Test/tests/*.vb.log >> $(CONSOLIDATED_TEST_RESULTS_FILE) 2> /dev/null; exit 0
-
 	@cat Test/errors/TestResults.log >> $(CONSOLIDATED_TEST_RESULTS_FILE)
-	@cat Test/errors/*.vb.log >> $(CONSOLIDATED_TEST_RESULTS_FILE) 2> /dev/null ; exit 0
+
