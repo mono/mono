@@ -1,3 +1,8 @@
+2005-01-19  Martin Baulig  <martin@ximian.com>
+
+	* mini.c (mono_method_to_ir): Call mono_get_inflated_method() on
+	the result of mono_get_method_constrained().
+
 2005-01-18  Neale Ferguson <NealeFerguson@earthlink.net>
 
 	* exceptions-s390.c tramp-s390.c: Allocate code using the global code
