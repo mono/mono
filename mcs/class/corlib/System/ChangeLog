@@ -1,4 +1,9 @@
 
+2005-02-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TimeZone.cs: lock on the static Hashtable instead of 'this'. Fixes
+	bug #72238.
+
 Fri Feb 4 15:46:04 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* Array.cs: provide specialized versions of some methods.
