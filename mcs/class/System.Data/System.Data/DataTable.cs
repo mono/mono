@@ -542,7 +542,7 @@ namespace System.Data {
 
 		internal bool RowsExist(DataColumn[] columns, DataColumn[] relatedColumns,DataRow row)
 		{
-			int curIndex = row.IndexFromVersion(DataRowVersion.Current);
+			int curIndex = row.IndexFromVersion(DataRowVersion.Default);
 			int tmpRecord = RecordCache.NewRecord();
 
 			try {

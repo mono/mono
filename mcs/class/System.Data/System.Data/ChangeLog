@@ -1,3 +1,13 @@
+2004-05-19  Boris Kirzner  <borisk@mainsoft.com>
+
+	* DataColumn.cs : In set_Item[int] - if autoincrement, adjust next autoincrement value.
+	* DataColumnCollection.cs : fixed parantethes.
+	* DataRow.cs : 
+		- AcceptChanges : do nothing if row state is unchanged.
+		- GetChildRows, GetParentRows  : bug fix (use correct index).
+	* DataRowCollection.cs : bug fix (compare all row's values).
+	* DataTable.cs : bug fix (use correct row version).
+	
 2004-05-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaDataImporter.cs : xs:positiveInteger is mapped to ulong.

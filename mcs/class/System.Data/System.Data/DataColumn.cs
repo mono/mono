@@ -114,8 +114,17 @@ namespace System.Data {
 			set {
 				DataContainer[index] = value;
 
-				if ( AutoIncrement && DataContainer.IsNull(index) ) {
-					AutoIncrementValue ();
+				if ( AutoIncrement && !DataContainer.IsNull(index) ) {
+					long value64 = Convert.ToInt64(value);
+					if (_autoIncrementStep > 0 ) {
+						if (value64 >= _nextAutoIncrementValue) {
+							_nextAutoIncrementValue = value64;
+							AutoIncrementValue ();
+						}
+					}
+					else if (value64 <= _nextAutoIncrementValue) {
+						AutoIncrementValue ();
+					}
 				}
 			}
 		}

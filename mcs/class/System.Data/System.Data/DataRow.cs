@@ -573,16 +573,18 @@ namespace System.Data {
 		{
 			EndEdit(); // in case it hasn't been called
 			switch (rowState) {
-			case DataRowState.Added:
-			case DataRowState.Modified:
-				rowState = DataRowState.Unchanged;
-				break;
-			case DataRowState.Deleted:
-				_table.Rows.RemoveInternal (this);
-				DetachRow();
-				break;
-			case DataRowState.Detached:
-				throw new RowNotInTableException("Cannot perform this operation on a row not in the table.");
+				case DataRowState.Unchanged:
+					return;
+				case DataRowState.Added:
+				case DataRowState.Modified:
+					rowState = DataRowState.Unchanged;
+					break;
+				case DataRowState.Deleted:
+					_table.Rows.RemoveInternal (this);
+					DetachRow();
+					break;
+				case DataRowState.Detached:
+					throw new RowNotInTableException("Cannot perform this operation on a row not in the table.");
 			}
 			// Accept from detached
 			if (_original >= 0) {
@@ -955,7 +957,7 @@ namespace System.Data {
 								allColumnsMatch = true;
 								int childIndex = row.IndexFromVersion(DataRowVersion.Default);
 								for (int columnCnt = 0; columnCnt < numColumn; ++columnCnt) {
-									if (childColumns[columnCnt].DataContainer.CompareValues(childIndex, curIndex) != 0) {
+									if (childColumns[columnCnt].DataContainer.CompareValues(childIndex, tmpRecord) != 0) {
 										allColumnsMatch = false;
 										break;
 									}
@@ -1121,7 +1123,7 @@ namespace System.Data {
 								allColumnsMatch = true;
 								int parentIndex = row.IndexFromVersion(DataRowVersion.Default);
 								for (int columnCnt = 0; columnCnt < numColumn; columnCnt++) {
-									if (parentColumns[columnCnt].DataContainer.CompareValues(parentIndex, curIndex) != 0) {
+									if (parentColumns[columnCnt].DataContainer.CompareValues(parentIndex, tmpRecord) != 0) {
 										allColumnsMatch = false;
 										break;
 									}

@@ -232,10 +232,14 @@ namespace System.Data
 			foreach (DataRow row in this) {
 				if (row.RowState != DataRowState.Deleted) {
 					int rowIndex = row.IndexFromVersion(DataRowVersion.Default);
+					bool match = true;
 					for (int columnCnt = 0; columnCnt < length; ++columnCnt) { 
-						if (primaryKey[columnCnt].DataContainer.CompareValues(rowIndex, index) == 0) {
-							return row;
+						if (primaryKey[columnCnt].DataContainer.CompareValues(rowIndex, index) != 0) {
+							match = false;
 						}
+					}
+					if ( match ) {
+						return row;
 					}
 				}
 			}
