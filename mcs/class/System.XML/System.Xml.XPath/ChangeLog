@@ -1,3 +1,8 @@
+2003-08-01 Piers Haken	<piersh@friskit.com>
+
+	* Expression.cs: added NodeNamespaceTest
+	* XPathNavigator.cs: implement Select* with namespaces
+
 2003-07-31 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Iterator.cs: Allow creation of an EnumeratorIterator with an

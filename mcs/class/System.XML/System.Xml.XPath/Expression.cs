@@ -1078,6 +1078,37 @@ namespace System.Xml.XPath
 		}
 	}
 
+	internal class NodeNamespaceTest : NodeTest
+	{
+		protected XmlQualifiedName _name;
+		public NodeNamespaceTest (Axes axis, XmlQualifiedName name) : base (axis)
+		{
+			_name = name;
+		}
+		public override String ToString () { return _axis.ToString () + "::" + _name.ToString (); }
+
+		public override bool Match (XmlNamespaceManager nsm, XPathNavigator nav)
+		{
+			// must be the correct node type
+			if (nav.NodeType != _axis.NodeType)
+				return false;
+
+			if (_name.Name != "" &&
+				_name.Name != nav.LocalName)
+			{
+				return false;
+			}
+
+			if (_name.Namespace != "" &&
+				_name.Namespace != nav.NamespaceURI)
+			{
+				return false;
+			}
+
+			return true;
+		}
+	}
+
 	internal class ExprFilter : NodeSet
 	{
 		protected Expression _expr;

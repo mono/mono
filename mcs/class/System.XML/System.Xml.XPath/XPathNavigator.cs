@@ -66,7 +66,6 @@ namespace System.Xml.XPath
 
 		public abstract XPathNavigator Clone ();
 
-		[MonoTODO]
 		public virtual XmlNodeOrder ComparePosition (XPathNavigator nav)
 		{
 			if (IsSamePosition (nav))
@@ -243,6 +242,7 @@ namespace System.Xml.XPath
 			return Matches (Compile (xpath));
 		}
 
+		[MonoTODO]	// optimize...
 		public virtual bool Matches (XPathExpression expr)
 		{
 			XPathNodeIterator nodes = Select (expr);
@@ -322,15 +322,16 @@ namespace System.Xml.XPath
 			return SelectTest (new NodeTypeTest (axis, type));
 		}
 
-		[MonoTODO]
 		public virtual XPathNodeIterator SelectAncestors (string name, string namespaceURI, bool matchSelf)
 		{
-			if (namespaceURI != null && namespaceURI != "")
-				throw new NotImplementedException ();
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if (namespaceURI == null)
+				throw new ArgumentNullException ("namespaceURI");
 
 			Axes axis = (matchSelf) ? Axes.AncestorOrSelf : Axes.Ancestor;
-			XmlQualifiedName qname = new XmlQualifiedName (name);
-			return SelectTest (new NodeNameTest (axis, qname));
+			XmlQualifiedName qname = new XmlQualifiedName (name, namespaceURI);
+			return SelectTest (new NodeNamespaceTest (axis, qname));
 		}
 
 		public virtual XPathNodeIterator SelectChildren (XPathNodeType type)
@@ -338,15 +339,16 @@ namespace System.Xml.XPath
 			return SelectTest (new NodeTypeTest (Axes.Child, type));
 		}
 
-		[MonoTODO]
 		public virtual XPathNodeIterator SelectChildren (string name, string namespaceURI)
 		{
-			if (namespaceURI != null && namespaceURI != "")
-				throw new NotImplementedException ();
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if (namespaceURI == null)
+				throw new ArgumentNullException ("namespaceURI");
 
 			Axes axis = Axes.Child;
-			XmlQualifiedName qname = new XmlQualifiedName (name);
-			return SelectTest (new NodeNameTest (axis, qname));
+			XmlQualifiedName qname = new XmlQualifiedName (name, namespaceURI);
+			return SelectTest (new NodeNamespaceTest (axis, qname));
 		}
 
 		public virtual XPathNodeIterator SelectDescendants (XPathNodeType type, bool matchSelf)
@@ -355,15 +357,17 @@ namespace System.Xml.XPath
 			return SelectTest (new NodeTypeTest (axis, type));
 		}
 
-		[MonoTODO]
 		public virtual XPathNodeIterator SelectDescendants (string name, string namespaceURI, bool matchSelf)
 		{
-			if (namespaceURI != null && namespaceURI != "")
-				throw new NotImplementedException ();
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if (namespaceURI == null)
+				throw new ArgumentNullException ("namespaceURI");
+
 
 			Axes axis = (matchSelf) ? Axes.DescendantOrSelf : Axes.Descendant;
-			XmlQualifiedName qname = new XmlQualifiedName (name);
-			return SelectTest (new NodeNameTest (axis, qname));
+			XmlQualifiedName qname = new XmlQualifiedName (name, namespaceURI);
+			return SelectTest (new NodeNamespaceTest (axis, qname));
 		}
 
 		internal XPathNodeIterator SelectTest (NodeTest test)
