@@ -474,6 +474,8 @@ System.Runtime.Remoting.Channels/IClientFormatterSink.cs
 System.Runtime.Remoting.Channels/IClientFormatterSinkProvider.cs
 System.Runtime.Remoting.Channels/IClientResponseChannelSinkStack.cs
 System.Runtime.Remoting.Channels/IServerResponseChannelSinkStack.cs
+System.Runtime.Remoting.Channels/ServerDispatchSink.cs
+System.Runtime.Remoting.Channels/ServerDispatchSinkProvider.cs
 System.Runtime.Remoting.Channels/IServerChannelSink.cs
 System.Runtime.Remoting.Channels/IServerChannelSinkProvider.cs
 System.Runtime.Remoting.Channels/IServerChannelSinkStack.cs
