@@ -1,4 +1,9 @@
 
+Wed Sep 26 16:29:36 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* x86/x86-codegen.h: added memindex addressing mode encoding
+	(and mov to/from register opcodes).
+
 Mon Sep 24 18:49:01 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* x86/tramp.c: don't change a MONO_TYPE_STRING to a char*
