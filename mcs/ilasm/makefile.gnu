@@ -1,4 +1,5 @@
 RUNTIME = mono
+topdir = ..
 MCS = $(RUNTIME) $(topdir)/mcs/mcs.exe
 CSFLAGS = --target exe
 INSTALL = /usr/bin/install
