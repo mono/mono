@@ -18,7 +18,7 @@ namespace System
 	public abstract class Array : ICloneable, ICollection, IList, IEnumerable
 	{
 		// Constructor		
-		protected Array ()
+		private Array ()
 		{
 			/* empty */
 		}
@@ -109,7 +109,7 @@ namespace System
 		// InternalCall Methods
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern int GetRank ();
+		private extern int GetRank ();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern int GetLength (int dimension);
