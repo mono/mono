@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.5 $
+// $Revision: 1.6 $
 // $Modtime: $
 // $Log: XplatUIDriver.cs,v $
+// Revision 1.6  2004/08/10 14:34:15  jackson
+// Use default colors from the theme
+//
 // Revision 1.5  2004/08/09 20:55:59  pbartok
 // - Removed Run method, was only required for initial development
 //
@@ -57,19 +60,19 @@ namespace System.Windows.Forms {
 		#region XplatUI Driver Properties
 		internal virtual Color ForeColor {
 			get {
-				return Color.Empty;
+				return ThemeEngine.Current.DefaultWindowForeColor;
 			}
 		}
 
 		internal virtual  Color BackColor { 
 			get {
-				return Color.Empty;
+				return ThemeEngine.Current.DefaultWindowBackColor;
 			}
 		}
 
 		internal virtual Font Font {
 			get {
-				return new Font("Arial", 12);
+				return ThemeEngine.Current.DefaultFont;
 			}
 		}
 
