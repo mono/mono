@@ -1,4 +1,9 @@
 
+Thu May 27 15:50:52 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* cpu-g4.md, mini-ppc.c: fixes to long add/sub ovf opcodes
+	and div/rem checks.
+
 Thu May 27 12:36:53 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* Makefile.am: fix miguel's change to build mono statically against
