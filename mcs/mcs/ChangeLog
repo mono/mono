@@ -1,3 +1,13 @@
+2002-06-10  Martin Baulig  <martin@gnome.org>
+
+	* interface.cs (Interface.PopulateIndexer): Add the indexer's
+	PropertyBuilder to the `property_builders' list.
+
+	* expression.cs (Indexers.GetIndexersForTypeOrInterface): New private method.
+	(Indexers.GetIndexersForType): Call GetIndexersForTypeOrInterface() on the
+	`lookup_type' and all its interfaces.  Unfortunately, Type.FindMembers() won't
+	find any indexers which are inherited from an interface.
+
 2002-06-09  Martin Baulig  <martin@gnome.org>
 
 	* const.cs (Const.LookupConstantValue): Convert `Expr' to a literal of
