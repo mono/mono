@@ -47,5 +47,19 @@ class T {
 		;
 	}
 
+	// Another case of goto that we did not handle properly
+	static void XXXA () {
+		goto each_logic_expr;
+
+		int j;
+		bool x = true;
+		try {
+		}
+		catch {}
+		int dd;
+		each_logic_expr:
+		;
+	}
+
 	static void Main() {}
 }
