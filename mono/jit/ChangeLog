@@ -1,5 +1,7 @@
 2002-03-06  Dietmar Maurer  <dietmar@ximian.com>
 
+	* jit.c (mono_find_final_block): find correct finally handler.
+
 	* emit-x86.c (arch_create_jit_trampoline): bug fix: preserve
 	caller saved registers.  
 
