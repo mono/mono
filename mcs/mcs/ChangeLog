@@ -1,3 +1,7 @@
+2002-07-06  Andrew Birkett  <adb@tardis.ed.ac.uk>
+
+	* cs-tokenizer.cs (xtoken): Improve handling of string literals.
+
 2002-07-04  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-tokenizer.cs (define): We also have to track locally the
