@@ -42,7 +42,9 @@ namespace System
 		
 		object IEnumerator.Current
 		{
-			return Current;
+			get { 
+				return Current;
+			}
 		}
 		
 		// Methods
