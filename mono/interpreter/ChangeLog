@@ -1,3 +1,8 @@
+2003-02-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* interp.c: added a dummy mono_runtime_install_handlers function to
+	avoid crashing when ves_pinvoke_method tries to call it.
+
 2003-02-06  Piers Haken	<piersh@friskit.com>
 
 	* interp.c: warning cleanups
