@@ -176,9 +176,10 @@ namespace Mono.ILASM {
 
                         if (param_list != null) {
                                 int param_count = param_list.Count;
+				if (IsVararg && param_list[param_count-1] == ParamDef.Ellipsis)
+					param_count--;
                                 param_array = new PEAPI.Param[param_count];
                                 int count = 0;
-                                ret_type.Resolve (code_gen);
 
                                 foreach (ParamDef paramdef in param_list) {
                                         if (paramdef == ParamDef.Ellipsis)
@@ -191,6 +192,7 @@ namespace Mono.ILASM {
                         }
 
                         FixAttributes ();
+                        ret_type.Resolve (code_gen);
 
                         methoddef = code_gen.PEFile.AddMethod (meth_attr, impl_attr,
                                         name, ret_type.PeapiType, param_array);
@@ -210,10 +212,11 @@ namespace Mono.ILASM {
 
                         if (param_list != null) {
                                 int param_count = param_list.Count;
+				if (IsVararg && param_list[param_count-1] == ParamDef.Ellipsis)		
+					param_count--;
                                 param_array = new PEAPI.Param[param_count];
                                 int count = 0;
-                                ret_type.Resolve (code_gen);
-
+				
                                 foreach (ParamDef paramdef in param_list) {
                                         if (paramdef == ParamDef.Ellipsis)
                                                 break;
@@ -225,6 +228,7 @@ namespace Mono.ILASM {
                         }
 
                         FixAttributes ();
+                        ret_type.Resolve (code_gen);
 
                         methoddef = classdef.AddMethod (meth_attr, impl_attr,
                                         name, ret_type.PeapiType, param_array);

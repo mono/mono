@@ -15,12 +15,38 @@ namespace Mono.ILASM {
         /// <summary>
         /// Reference to a primitive type, ie string, object, char
         /// </summary>
-        public class PrimitiveTypeRef : PeapiTypeRef, ITypeRef {
+        public class PrimitiveTypeRef : ModifiableType, ITypeRef {
 
-                public PrimitiveTypeRef (PEAPI.PrimitiveType prim_type,
-                                string full_name) : base (prim_type, full_name)
+                private string full_name;
+                private PEAPI.Type type;
+
+		private bool is_resolved;
+
+                public PrimitiveTypeRef (PEAPI.PrimitiveType type, string full_name)
                 {
+                        this.type = type;
+                        this.full_name = full_name;
+		
+			is_resolved = false;
+                }
 
+                public string FullName {
+                        get { return full_name; }
+                }
+
+                public PEAPI.Type PeapiType {
+                        get { return type; }
+                }
+
+                public void Resolve (CodeGen code_gen)
+                {
+			if (is_resolved)
+				return;
+
+                        // Perform all of the types modifications
+                        type = Modify (code_gen, type, ref full_name);
+			
+			is_resolved = true;
                 }
 
                 /// <summary>
@@ -54,6 +80,7 @@ namespace Mono.ILASM {
 
                 public IClassRef AsClassRef (CodeGen code_gen)
                 {
+                        /*
                         PEAPI.ClassRef class_ref = code_gen.ExternTable.GetValueClass ("corlib", FullName);
                         ExternTypeRef type_ref = new ExternTypeRef (class_ref, FullName);
 
@@ -62,6 +89,8 @@ namespace Mono.ILASM {
                                 type_ref.MakeArray ();
 
                         return type_ref;
+                        */
+                        throw new NotImplementedException ("This method is getting depricated.");
                 }
 
         }

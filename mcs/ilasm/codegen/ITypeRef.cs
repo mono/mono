@@ -78,7 +78,7 @@ namespace Mono.ILASM {
                 ///  Convert this typeref to a classref if not possible
                 ///  throw an exception
                 /// </summary>
-                IClassRef AsClassRef (CodeGen code_gen);
+                // IClassRef AsClassRef (CodeGen code_gen);
         }
 
 }

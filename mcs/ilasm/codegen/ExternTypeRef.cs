@@ -15,24 +15,43 @@ namespace Mono.ILASM {
         /// <summary>
         /// A reference to a type in another assembly
         /// </summary>
-        public class ExternTypeRef : PeapiTypeRef, IClassRef {
+        public class ExternTypeRef : ModifiableType, IClassRef {
 
-                public ExternTypeRef (PEAPI.ClassRef extern_type,
-                                string full_name) : base (extern_type, full_name)
+                private PEAPI.Type type;
+                private string assembly_name;
+                private string full_name;
+
+		private bool is_resolved;
+
+                public ExternTypeRef (string assembly_name, string full_name)
                 {
-
+                        this.assembly_name = assembly_name;
+                        this.full_name = full_name;
+			
+			is_resolved = false;
                 }
 
-                public PEAPI.Class PeapiClass {
-                        get {
-                                return PeapiType as PEAPI.Class;
-                        }
+                public PEAPI.Type PeapiType {
+                        get { return type; }
                 }
 
-                public PEAPI.ClassRef PeapiClassRef {
-                        get {
-                                return PeapiType as PEAPI.ClassRef;
-                        }
+		public PEAPI.Class PeapiClass {
+                        get { return type as PEAPI.Class; }
+                }
+
+                public string FullName {
+                        get { return full_name; }
+                }
+
+                public void Resolve (CodeGen code_gen)
+                {
+			if (is_resolved)
+				return;
+
+                        type = code_gen.ExternTable.GetClass (assembly_name, full_name);
+                        type = Modify (code_gen, type, ref full_name);
+
+			is_resolved = true;
                 }
 
                 public IMethodRef GetMethodRef (ITypeRef ret_type, PEAPI.CallConv call_conv,
@@ -48,7 +67,7 @@ namespace Mono.ILASM {
 
                 public IClassRef AsClassRef (CodeGen code_gen)
                 {
-                        return this;
+                        throw new NotImplementedException ("Not implemented.");
                 }
         }
 

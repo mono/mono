@@ -15,7 +15,7 @@ namespace Mono.ILASM {
         /// <summary>
         /// Reference to a type in the module being compiled.
         /// </summary>
-        public class TypeRef : IClassRef {
+        public class TypeRef : ModifiableType, IClassRef {
 
                 private enum ConversionMethod {
                         MakeArray,
@@ -27,12 +27,7 @@ namespace Mono.ILASM {
 
                 private Location location;
                 private string full_name;
-                private PEAPI.Type resolved_type;
-                private ArrayList conversion_list;
-                private bool is_pinned;
-                private bool is_ref;
-                private bool is_array;
-                private bool use_type_spec;
+                private PEAPI.Type type;
 
                 private bool is_resolved;
 
@@ -43,87 +38,23 @@ namespace Mono.ILASM {
                 {
                         this.full_name = full_name;
                         this.location = location;
-                        is_pinned = false;
-                        is_ref = false;
-                        is_array = false;
-                        conversion_list = new ArrayList ();
                         is_resolved = false;
-                        use_type_spec = false;
                 }
 
                 public string FullName {
                         get { return full_name; }
                 }
 
-                public bool IsPinned {
-                        get { return is_pinned; }
-                }
-
-                public bool IsArray {
-                        get { return is_array; }
-                }
-
-                public bool IsRef {
-                        get { return is_ref; }
-                }
-
-                public bool UseTypeSpec {
-                        get { return use_type_spec; }
-                }
-
                 public PEAPI.Type PeapiType {
-                        get { return resolved_type; }
+                        get { return type; }
                 }
 
                 public PEAPI.Class PeapiClass {
-                        get { return resolved_type as PEAPI.Class; }
+                        get { return type as PEAPI.Class; }
                 }
 
                 public bool IsResolved {
                         get { return is_resolved; }
-                }
-
-                public void MakeArray ()
-                {
-                        use_type_spec = true;
-                        conversion_list.Add (ConversionMethod.MakeArray);
-                        is_array = true;
-                }
-
-                public void MakeBoundArray (ArrayList bounds)
-                {
-                        use_type_spec = true;
-                        conversion_list.Add (ConversionMethod.MakeBoundArray);
-                        conversion_list.Add (bounds);
-                        is_array = true;
-                }
-
-                public void MakeManagedPointer ()
-                {
-                        use_type_spec = true;
-                        conversion_list.Add (ConversionMethod.MakeManagedPointer);
-                        is_ref = true;
-                }
-
-                public void MakeUnmanagedPointer ()
-                {
-                        use_type_spec = true;
-                        conversion_list.Add (ConversionMethod.MakeUnmanagedPointer);
-                }
-
-                public void MakeCustomModified (CodeGen code_gen, PEAPI.CustomModifier modifier,
-                                IClassRef klass)
-                {
-                        use_type_spec = true;
-                        conversion_list.Add (ConversionMethod.MakeCustomModified);
-                        conversion_list.Add (klass);
-                        conversion_list.Add (modifier);
-                }
-
-                public void MakePinned ()
-                {
-                        use_type_spec = true;
-                        is_pinned = true;
                 }
 
                 public  IMethodRef GetMethodRef (ITypeRef ret_type,
@@ -143,41 +74,9 @@ namespace Mono.ILASM {
                                 return;
 
                         PEAPI.Type base_type;
-                        PeapiTypeRef peapi_type;
-                        int count = conversion_list.Count;
 
                         base_type = code_gen.TypeManager.GetPeapiType (full_name);
-
-                        /// TODO: Proper error message
-                        if (base_type == null) {
-                                Console.WriteLine ("Type not defined: {0} {1}", full_name, location);
-                                return;
-                        }
-
-                        peapi_type = new PeapiTypeRef (base_type, full_name);
-
-                        for (int i=0; i<count; i++) {
-                                switch ((ConversionMethod) conversion_list[i]) {
-                                case ConversionMethod.MakeArray:
-                                        peapi_type.MakeArray ();
-                                        break;
-                                case ConversionMethod.MakeBoundArray:
-                                        peapi_type.MakeBoundArray ((ArrayList) conversion_list[++i]);
-                                        break;
-                                case ConversionMethod.MakeManagedPointer:
-                                        peapi_type.MakeManagedPointer ();
-                                        break;
-                                case ConversionMethod.MakeUnmanagedPointer:
-                                        peapi_type.MakeUnmanagedPointer ();
-                                        break;
-                                case ConversionMethod.MakeCustomModified:
-                                        peapi_type.MakeCustomModified (code_gen, (PEAPI.CustomModifier) conversion_list[++i],
-                                                (IClassRef) conversion_list[++i]);
-                                        break;
-                                }
-                        }
-
-                        resolved_type = peapi_type.PeapiType;
+                        type = Modify (code_gen, base_type, ref full_name);
 
                         is_resolved = true;
                 }

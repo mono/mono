@@ -21,6 +21,7 @@ namespace Mono.ILASM {
                 private PEAPI.CallConv call_conv;
 
                 private PEAPI.Method peapi_method;
+		private bool is_resolved;
 
                 public GlobalMethodRef (ITypeRef ret_type, PEAPI.CallConv call_conv,
                                 string name, ITypeRef[] param)
@@ -29,6 +30,8 @@ namespace Mono.ILASM {
                         this.call_conv = call_conv;
                         this.name = name;
                         this.param = param;
+
+			is_resolved = false;
                 }
 
                 public PEAPI.Method PeapiMethod {
@@ -37,6 +40,9 @@ namespace Mono.ILASM {
 
                 public void Resolve (CodeGen code_gen)
                 {
+			if (is_resolved)
+				return;
+
                         string sig = MethodDef.CreateSignature (name, param);
 
                         if ((call_conv & PEAPI.CallConv.Vararg) == 0) {
@@ -57,6 +63,8 @@ namespace Mono.ILASM {
                         }
 
                         peapi_method.AddCallConv (call_conv);
+			
+			is_resolved = true;
                 }
 
         }
