@@ -42,8 +42,8 @@ namespace Mono.Doc.Core
 		/// </summary>
 		/// <param name="m">The MemberInfo to name</param>
 		/// <returns>A friendly name</returns>
-		public static string GetNameForMemberInfo(MemberInfo m) {
-			return GetNameForMemberInfo(m, NamingFlags.None);
+		public static string GetName(MemberInfo m) {
+			return GetName(m, NamingFlags.None);
 		}
 
 
@@ -53,7 +53,7 @@ namespace Mono.Doc.Core
 		/// <param name="m">The MemberInfo to name</param>
 		/// <param name="flags">NamingFlags can be combined to alter the output</param>
 		/// <returns>A friendly name</returns>
-		public static string GetNameForMemberInfo(MemberInfo m, NamingFlags flags)
+		public static string GetName(MemberInfo m, NamingFlags flags)
 		{
 			StringBuilder name = new StringBuilder();
 			
@@ -64,6 +64,8 @@ namespace Mono.Doc.Core
 
 				if (m is ConstructorInfo) {
 					type = "C";
+				} else if (m is MethodInfo) {
+					type = "M";
 				} else if (m is EventInfo) {
 					type = "E";
 				} else if (m is FieldInfo) {
@@ -97,14 +99,15 @@ namespace Mono.Doc.Core
 				MethodBase      method     = m as MethodBase;
 				ParameterInfo[] parameters = method.GetParameters();
 				
-				if (parameters.Length > 0) {
+				if (parameters.Length > 0 && ((flags & NamingFlags.HideMethodParams) == 0)) {
 					bool first = true;
 					name.Append("(");
 
 					foreach (ParameterInfo p in parameters) {
 						if (!first) name.Append(",");
 						first = false;
-						name.Append(p.ParameterType.FullName);
+						name.Append(((flags & NamingFlags.ShortParamTypes) != 0) ? 
+							p.ParameterType.Name : p.ParameterType.FullName);
 					}
 
 					name.Append(")");
@@ -114,28 +117,6 @@ namespace Mono.Doc.Core
 			}
 
 			return name.ToString();
-		}
-
-
-		public static string GetKindNameForType(Type t)
-		{
-			string kind = null;
-
-			if (t.IsClass) {
-				kind = "class";
-			} else if (t.IsInterface) {
-				kind = "interface";
-			} else if (t.IsValueType) {
-				if (t.BaseType.FullName == "System.Enum") {
-					kind = "enum";
-				} else {
-					kind = "struct";
-				}
-			} else {
-				kind = "UNKNOWN";
-			}
-
-			return kind;
 		}
 	}
 }

@@ -238,6 +238,7 @@ namespace Mono.Doc.Gui
 			// 
 			// buttonParentDir
 			// 
+			this.buttonParentDir.Anchor = (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right);
 			this.buttonParentDir.Location = new System.Drawing.Point(288, 5);
 			this.buttonParentDir.Name = "buttonParentDir";
 			this.buttonParentDir.Size = new System.Drawing.Size(24, 23);

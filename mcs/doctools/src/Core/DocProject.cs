@@ -277,7 +277,7 @@ namespace Mono.Doc.Core
 			get { return isModified;  }
 			set
 			{
-				if (!isModified && value && Modified != null)
+				if (value && Modified != null)
 				{
 					isModified = value;
 					Modified(this, new EventArgs());

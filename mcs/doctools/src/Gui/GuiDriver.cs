@@ -29,7 +29,15 @@ namespace Mono.Doc.Gui
 		[STAThread]
 		public static void Main(string[] args) 
 		{
-			Application.Run(new MainForm((args.Length > 0) ? args[0] : null));
+			try
+			{
+				Application.Run(new MainForm((args.Length > 0) ? args[0] : null));
+			}
+			catch (Exception e)
+			{
+				UnexpectedErrorForm error = new UnexpectedErrorForm(e);
+				error.ShowDialog();
+			}
 		}
 	}
 }

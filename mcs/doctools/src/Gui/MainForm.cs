@@ -56,6 +56,8 @@ namespace Mono.Doc.Gui
 		private MenuItem menuWindowCascade;
 		private MenuItem menuWindowTile;
 		private MenuItem menuWindowTileHorizontal;
+		private MenuItem menuDebug;
+		private MenuItem menuDebugHaltAndCatchFire;
 		private MenuItem menuHelp;
 		private MenuItem menuHelpAbout;
 
@@ -131,6 +133,8 @@ namespace Mono.Doc.Gui
 			this.menuWindowCascade         = new MenuItem();
 			this.menuWindowTile            = new MenuItem();
 			this.menuWindowTileHorizontal  = new MenuItem();
+			this.menuDebug                 = new MenuItem();
+			this.menuDebugHaltAndCatchFire = new MenuItem();
 			this.menuHelp                  = new MenuItem();
 			this.menuHelpAbout             = new MenuItem();
 
@@ -337,6 +341,36 @@ namespace Mono.Doc.Gui
 			}
 		}
 
+		private void LoadSourceDocuments()
+		{
+			int fileCount = 0;
+
+			try
+			{
+				foreach (string dirName in this.project.XmlDirectories)
+				{
+					// TODO: abstract constant
+					RecursiveFileList fileList = new RecursiveFileList(dirName, "*.xml");
+
+					foreach (FileInfo f in fileList.Files)
+					{
+						this.status.Text = "Scanning file: " + f.Name;
+						fileCount++;
+					}
+				}
+
+				this.status.Text = "Scanned " + fileCount + " XML source files.";
+			}
+			catch (Exception e)
+			{
+				// TODO: better error handling
+				MessageBox.Show("Problem while trying to scan XML source directories.\n" +
+					e.Message + "\n" +
+					e.StackTrace
+					);
+			}
+		}
+
 		private void OpenProject(string fileName)
 		{
 			try
@@ -344,6 +378,7 @@ namespace Mono.Doc.Gui
 				project.Load(fileName);
 				UpdateTitle();
 				InitializeTree();
+				LoadSourceDocuments();
 			}
 			catch (MonodocException mde)
 			{
@@ -371,8 +406,8 @@ namespace Mono.Doc.Gui
 			this.tree.SelectedImageIndex   = 0;
 			this.tree.Name                 = "tree";
 			this.tree.TabIndex             = 1;
-			tree.AfterSelect              += new TreeViewEventHandler(this.tree_AfterSelect);
-			tree.MouseUp                  += new MouseEventHandler(this.tree_MouseUp);
+			this.tree.AfterSelect         += new TreeViewEventHandler(this.tree_AfterSelect);
+			this.tree.MouseUp             += new MouseEventHandler(this.tree_MouseUp);
 
 			// treeAssemblyNode
 			this.treeAssemblyNode.Text               = "Assemblies"; // TODO: i18n
@@ -398,9 +433,8 @@ namespace Mono.Doc.Gui
 			this.treeShortcutsNode.SelectedImageIndex = AssemblyTreeImages.Shortcuts;
 			this.treeShortcutsNode.Tag                = "SHORTCUTS"; // TODO: abstract constant
 
-			tree.BeginUpdate();
-
-			tree.Nodes.Clear();
+			this.tree.BeginUpdate();
+			this.tree.Nodes.Clear();
 
 			// ugh.  appears necessary to effectively rebuild the tree.
 			TreeNode[] nodesToRemove = new TreeNode[] {
@@ -443,20 +477,24 @@ namespace Mono.Doc.Gui
 			// project assemblies
 			try
 			{
-				foreach (string assemblyFile in project.AssemblyFiles)
+				foreach (string assemblyFile in this.project.AssemblyFiles)
 				{
-					Assembly assem = AssemblyLoader.Load(assemblyFile);
-					AssemblyTreeLoader.LoadNode(this.treeAssemblyNode, assem);
+					AssemblyLoader     asmLoader  = new AssemblyLoader(assemblyFile);
+					AssemblyTreeLoader treeLoader = new AssemblyTreeLoader(asmLoader);
+				
+					treeLoader.LoadNode(this.treeAssemblyNode);
 				}
 			} 
 			catch (ApplicationException ae)
 			{
 				// TODO: better error handling
-				MessageBox.Show(ae.Message, "Error Loading Assembly");
+				MessageBox.Show(ae.Message, "Error Loading project assemblies");
 			}
 
 			this.treeProjectRootNode.Expand();
-			tree.EndUpdate();
+			this.treeAssemblyNode.Expand();
+			this.treeDirectoryNode.Expand();
+			this.tree.EndUpdate();
 		}
 
 		#endregion // Tree Init
@@ -595,6 +633,7 @@ namespace Mono.Doc.Gui
 								   this.menuFile,
 								   this.menuEdit,
 								   this.menuWindow,
+								   this.menuDebug,
 								   this.menuHelp
 							   });
 
@@ -616,8 +655,9 @@ namespace Mono.Doc.Gui
 							   });
 
 			// File|New Project
-			this.menuFileNew.Index = 0;
-			this.menuFileNew.Text  = "New Project"; // TODO: i18n
+			this.menuFileNew.Index  = 0;
+			this.menuFileNew.Text   = "New Project"; // TODO: i18n
+			this.menuFileNew.Click += new EventHandler(this.menuFileNew_Click);
 
 			// File|Open Project
 			this.menuFileOpen.Index  = 1;
@@ -688,8 +728,23 @@ namespace Mono.Doc.Gui
 			this.menuWindowTileHorizontal.Text   = "Tile Horizontal"; // TODO: i18n
 			this.menuWindowTileHorizontal.Click += new EventHandler(this.menuWindowTileHorizontal_Click);
 
+			// DEBUG
+			this.menuDebug.Index = 3;
+			this.menuDebug.Text  = "DEBUG";
+
+			this.menuDebug.MenuItems.AddRange(
+				new MenuItem[] {
+								   this.menuDebugHaltAndCatchFire
+							   });
+
+			// DEBUG|Halt and Catch Fire
+			this.menuDebugHaltAndCatchFire.Index  = 0;
+			this.menuDebugHaltAndCatchFire.Text   = "Halt and Catch Fire";
+			this.menuDebugHaltAndCatchFire.Click += new EventHandler(this.menuDebugHaltAndCatchFire_Click);
+
+
 			// Help
-			this.menuHelp.Index   = 3;
+			this.menuHelp.Index   = 4;
 			this.menuHelp.Text    = "Help"; // TODO: i18n
 
 			this.menuHelp.MenuItems.AddRange(
@@ -706,6 +761,11 @@ namespace Mono.Doc.Gui
 		#endregion // Main Menu Init
 		
 		#region Main Menu Events
+
+		private void menuFileNew_Click(object sender, EventArgs e)
+		{
+			CloseProject();
+		}
 
 		private void menuFileOpen_Click(object sender, EventArgs e)
 		{
@@ -756,6 +816,13 @@ namespace Mono.Doc.Gui
 			this.LayoutMdi(MdiLayout.TileHorizontal);
 		}
 
+		private void menuDebugHaltAndCatchFire_Click(object sender, EventArgs e)
+		{
+			throw new ApplicationException("Test Exception Message",
+				new ApplicationException("Inner Exception Message")
+				);
+		}
+
 		private void menuHelpAbout_Click(object sender, EventArgs e)
 		{
 			Form aboutForm = new AboutForm();
@@ -770,6 +837,35 @@ namespace Mono.Doc.Gui
 		{
 			UpdateTitle();
 			InitializeTree();
+		}
+
+		// not really an event, but...
+		protected override void OnClosing(CancelEventArgs e)
+		{
+			base.OnClosing(e);
+
+			// this code is nearly duplicated from CloseProject()
+			if (project.IsModified)
+			{
+				// TODO: i18n
+				DialogResult r = MessageBox.Show(
+					"Save changes to " + projectName + "?",
+					"Save Modified Project",
+					MessageBoxButtons.YesNoCancel,
+					MessageBoxIcon.Question,
+					MessageBoxDefaultButton.Button1
+					);
+
+				switch (r)
+				{
+					case DialogResult.Yes:
+						SaveOrSaveAsProject();
+						break;
+					case DialogResult.Cancel:
+						e.Cancel = true;
+						break;
+				}
+			}
 		}
 
 		#endregion // Other Events

@@ -187,6 +187,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "RecursiveFileList.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "SortedStringValues.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "StructDoc.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

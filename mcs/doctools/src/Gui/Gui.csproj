@@ -191,6 +191,16 @@
                     DependentUpon = "TypeEditorForm.cs"
                     BuildAction = "EmbeddedResource"
                 />
+                <File
+                    RelPath = "UnexpectedErrorForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "UnexpectedErrorForm.resx"
+                    DependentUpon = "UnexpectedErrorForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
             </Include>
         </Files>
     </CSHARP>

@@ -55,6 +55,11 @@ namespace Mono.Doc.Gui
 			get { return (Bitmap) imageMgr.GetObject("AboutMonodoc.Bitmap"); }
 		}
 
+		public static Bitmap ErrorExplosionBitmap
+		{
+			get { return (Bitmap) imageMgr.GetObject("ErrorExplosion.Bitmap"); }
+		}
+
 		public static Icon OpenBookIcon
 		{
 			get	{ return (Icon) imageMgr.GetObject("OpenBook.Icon"); }

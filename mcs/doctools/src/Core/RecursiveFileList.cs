@@ -44,11 +44,8 @@ namespace Mono.Doc.Core
 		/// <summary>Constructor for RecursiveFileList.</summary>
 		/// <param name="path">The directory to recurse.</param>
 		/// <exception cref="DirectoryNotFoundException">Thrown if an invalid path is specified.</exception>
-		public RecursiveFileList(string path) 
+		public RecursiveFileList(string path) : this(path, null) 
 		{
-			this.fileInfoList = new ArrayList();
-
-			AddFilesInPath(path, null);
 		}
 
 		/// <summary>
@@ -59,6 +56,7 @@ namespace Mono.Doc.Core
 		/// <exception cref="DirectoryNotFoundException">Thrown if an invalid path is specified.</exception>
 		public RecursiveFileList(string path, string filter)
 		{
+			this.fileInfoList = new ArrayList();
 			AddFilesInPath(path, filter);
 		}
 
