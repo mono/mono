@@ -2,6 +2,8 @@
 
 	* GacIdentityPermission.cs: New. for NET_2_0
 	* GacIdentityPermissionAttribute.cs: New. for NET_2_0
+	* SecurityAction.cs: Added new "Choice" enums for NET_2_0. Removed old
+	and empty XML comments.
 	* ZoneIdentityPermission.cs: NoZone is a subset of all SecurityZone.
 
 2004-08-03  Sebastien Pouliot  <sebastien@ximian.com>

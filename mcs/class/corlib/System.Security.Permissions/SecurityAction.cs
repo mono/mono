@@ -1,3 +1,4 @@
+//
 // SecurityAction.cs
 //
 // This code was automatically generated from
@@ -8,8 +9,6 @@
 // URL: http://msdn.microsoft.com/net/ecma/AllTypes.xml
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -32,49 +31,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
 namespace System.Security.Permissions {
 
-
-	/// <summary>
-	/// </summary>
+#if NET_2_0
+	[Serializable]
+#endif
 	public enum SecurityAction {
-
-		/// <summary>
-		/// </summary>
 		Demand = 2,
-
-		/// <summary>
-		/// </summary>
 		Assert = 3,
-
-		/// <summary>
-		/// </summary>
 		Deny = 4,
-
-		/// <summary>
-		/// </summary>
 		PermitOnly = 5,
-
-		/// <summary>
-		/// </summary>
 		LinkDemand = 6,
-
-		/// <summary>
-		/// </summary>
 		InheritanceDemand = 7,
-
-		/// <summary>
-		/// </summary>
 		RequestMinimum = 8,
-
-		/// <summary>
-		/// </summary>
 		RequestOptional = 9,
-
-		/// <summary>
-		/// </summary>
 		RequestRefuse = 10,
-	} // SecurityAction
-
-} // System.Security.Permissions
+#if NET_2_0
+		LinkDemandChoice = 16,
+		InheritanceDemandChoice = 17,
+		DemandChoice = 18
+#endif
+	}
+}
