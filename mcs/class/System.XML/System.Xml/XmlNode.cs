@@ -465,7 +465,7 @@ namespace System.Xml
 			    NodeType != XmlNodeType.Attribute &&
 			    NodeType != XmlNodeType.Document &&
 			    NodeType != XmlNodeType.DocumentFragment)
-				throw new InvalidOperationException (String.Format ("Node cannot be appended to current node " + NodeType + "."));
+				throw new InvalidOperationException (String.Format ("Node cannot be appended to current node {0}.", NodeType));
 
 			switch (NodeType) {
 			case XmlNodeType.Attribute:
@@ -475,7 +475,7 @@ namespace System.Xml
 					break;
 				default:
 					throw new InvalidOperationException (String.Format (
-						"Cannot insert specified type of node {0} as a child of this node {0}.", 
+						"Cannot insert specified type of node {0} as a child of this node {1}.", 
 						newChild.NodeType, NodeType));
 				}
 				break;

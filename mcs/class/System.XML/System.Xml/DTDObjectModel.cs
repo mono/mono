@@ -626,7 +626,7 @@ namespace Mono.Xml
 						resolvedNormalizedDefaultValue = 
 							(o is string []) ? 
 							String.Join (" ", (string []) o) :
-							o.ToString ();
+							o is IFormattable ? ((IFormattable) o).ToString (null, CultureInfo.InvariantCulture) : o.ToString ();
 					} catch (Exception) {
 						// This is for non-error-reporting reader
 						resolvedNormalizedDefaultValue = Datatype.Normalize (s);
@@ -671,7 +671,7 @@ namespace Mono.Xml
 					}
 					else
 						spec = value.Substring (next + 2, semicolon - next - 2);
-					sb.Append ((char) int.Parse (spec, style));
+					sb.Append ((char) int.Parse (spec, style, CultureInfo.InvariantCulture));
 				} else {
 					sb.Append (value.Substring (pos, next - 1));
 					string name = value.Substring (next + 1, semicolon - 2);

@@ -715,13 +715,13 @@ namespace System.Xml
 			int ret = 0;
 			if (value [index] == 'x') {
 				try {
-					ret = int.Parse (value.Substring (index + 1, end - index - 1), NumberStyles.HexNumber);
+					ret = int.Parse (value.Substring (index + 1, end - index - 1), NumberStyles.HexNumber, CultureInfo.InvariantCulture);
 				} catch (FormatException) {
 					throw new XmlException (li, "Invalid number for a character reference.");
 				}
 			} else {
 				try {
-					ret = int.Parse (value.Substring (index, end - index));
+					ret = int.Parse (value.Substring (index, end - index), CultureInfo.InvariantCulture);
 				} catch (FormatException) {
 					throw new XmlException (li, "Invalid number for a character reference.");
 				}
@@ -785,7 +785,8 @@ namespace System.Xml
 				return;	// do nothing
 			}
 			// FIXME: These leading/trailing ' ' is anyways supplied inside this method!
-			currentInput.InsertParameterEntityBuffer (" " + peDecl.ReplacementText + " ");
+//			currentInput.InsertParameterEntityBuffer (" " + peDecl.ReplacementText + " ");
+			currentInput.InsertParameterEntityBuffer (peDecl.ReplacementText);
 		}
 
 		// The reader is positioned on the head of the name.
@@ -1272,7 +1273,7 @@ namespace System.Xml
 
 			if (ch != expected) {
 				throw new XmlException (this as IXmlLineInfo,
-					String.Format (
+					String.Format (CultureInfo.InvariantCulture, 
 						"expected '{0}' ({1:X}) but found '{2}' ({3:X})",
 						(char) expected,
 						expected,
@@ -1295,7 +1296,7 @@ namespace System.Xml
 				if (XmlChar.IsWhitespace (i))
 					continue;
 				if (c != i)
-					throw new XmlException (this, String.Format ("Expected {0} but found {1} [{2}].", c, (char) i, i));
+					throw new XmlException (this, String.Format (CultureInfo.InvariantCulture, "Expected {0} but found {1} [{2}].", c, (char) i, i));
 				break;
 			}
 		}
@@ -1480,6 +1481,7 @@ namespace System.Xml
 					else
 						throw new XmlException (this as IXmlLineInfo,
 							String.Format (
+								CultureInfo.InvariantCulture,
 								"invalid hexadecimal digit: {0} (#x{1:X})",
 								(char) ch,
 								ch));
@@ -1493,6 +1495,7 @@ namespace System.Xml
 					else
 						throw new XmlException (this as IXmlLineInfo,
 							String.Format (
+								CultureInfo.InvariantCulture,
 								"invalid decimal digit: {0} (#x{1:X})",
 								(char) ch,
 								ch));

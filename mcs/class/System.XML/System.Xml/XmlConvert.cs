@@ -107,7 +107,7 @@ namespace System.Xml {
 
 			char c = '\uFFFF';
 			try {
-				c = (char) Int32.Parse (s.Substring (1, 4), NumberStyles.HexNumber);
+				c = (char) Int32.Parse (s.Substring (1, 4), NumberStyles.HexNumber, CultureInfo.InvariantCulture);
 			} catch {
 				return s [0] + DecodeName (s.Substring (1));
 			}
@@ -436,7 +436,7 @@ namespace System.Xml {
 					if (!Char.IsDigit (s [i]))
 						break;
 				}
-				int value = int.Parse (s.Substring (start, i - start));
+				int value = int.Parse (s.Substring (start, i - start), CultureInfo.InvariantCulture);
 				switch (s [i]) {
 				case 'Y':
 					days += value * 365;

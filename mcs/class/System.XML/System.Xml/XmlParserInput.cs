@@ -50,7 +50,7 @@ namespace System.Xml
 
 			if (ch != expected) {
 				throw ReaderError (
-					String.Format (
+					String.Format (CultureInfo.InvariantCulture, 
 						"expected '{0}' ({1:X}) but found '{2}' ({3:X})",
 						(char)expected,
 						expected,
@@ -173,9 +173,9 @@ namespace System.Xml
 			int ret = -1;
 			if (name.Length > 0 && name [0] == '#') {
 				if (name [1] == 'x')
-					ret = int.Parse (name.Substring (2, name.Length - 2), NumberStyles.None & NumberStyles.AllowHexSpecifier);
+					ret = int.Parse (name.Substring (2, name.Length - 2), NumberStyles.None & NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture);
 				else
-					ret = int.Parse (name.Substring (1, name.Length - 1));
+					ret = int.Parse (name.Substring (1, name.Length - 1), CultureInfo.InvariantCulture);
 			}
 			return ret;
 		}

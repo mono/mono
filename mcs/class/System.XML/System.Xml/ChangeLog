@@ -1,3 +1,10 @@
+2004-06-18  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDObjectModel.cs, DTDReader.cs, XmlConvert.cs, XmlDocument.cs,
+	  XmlException.cs, XmlParserInput.cs, XmlTextReader.cs,
+	  XmlTextWriter.cs : Globalization.
+	* XmlNode.cs : Fixed error message that confused node type.
+
 2004-06-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlDocumentNavigator.cs : MoveToNext() should skip concatenating

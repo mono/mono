@@ -10,6 +10,7 @@
 //
 using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -661,7 +662,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 					localName = prefix;
 					prefix = String.Empty;
 				}
-				else if (localName.ToLower ().StartsWith ("xml"))
+				else if (localName.ToLower (CultureInfo.InvariantCulture).StartsWith ("xml"))
 					throw new ArgumentException ("Prefixes beginning with \"xml\" (regardless of whether the characters are uppercase, lowercase, or some combination thereof) are reserved for use by XML: " + prefix + ":" + localName);
 			}
 
@@ -906,9 +907,9 @@ openElements [openElementCount - 1]).IndentingOverriden;
 				if (pos < 0) {
 					cachedStringBuilder.Append ("&#x");
 					if (invalid < (char) 255)
-						cachedStringBuilder.Append (((int) invalid).ToString ("X02"));
+						cachedStringBuilder.Append (((int) invalid).ToString ("X02", CultureInfo.InvariantCulture));
 					else
-						cachedStringBuilder.Append (((int) invalid).ToString ("X04"));
+						cachedStringBuilder.Append (((int) invalid).ToString ("X04", CultureInfo.InvariantCulture));
 					cachedStringBuilder.Append (";");
 				}
 				else
@@ -979,7 +980,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			}
 
 			w.Write ("&#x");
-			w.Write (((int) ((highChar - 0xD800) * 0x400 + (lowChar - 0xDC00) + 0x10000)).ToString ("X"));
+			w.Write (((int) ((highChar - 0xD800) * 0x400 + (lowChar - 0xDC00) + 0x10000)).ToString ("X", CultureInfo.InvariantCulture));
 			w.Write (';');
 		}
 

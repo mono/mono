@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Security.Policy;
 using System.Text;
@@ -1575,7 +1576,7 @@ namespace System.Xml
 						value = (value << 4) + ch - 'a' + 10;
 					else
 						throw new XmlException (this as IXmlLineInfo,
-							String.Format (
+							String.Format (CultureInfo.InvariantCulture, 
 								"invalid hexadecimal digit: {0} (#x{1:X})",
 								(char) ch,
 								ch));
@@ -1588,7 +1589,7 @@ namespace System.Xml
 						value = value * 10 + ch - '0';
 					else
 						throw new XmlException (this as IXmlLineInfo,
-							String.Format (
+							String.Format (CultureInfo.InvariantCulture, 
 								"invalid decimal digit: {0} (#x{1:X})",
 								(char) ch,
 								ch));
@@ -1832,7 +1833,7 @@ namespace System.Xml
 			if (target == "xml") {
 				ReadXmlDeclaration ();
 				return;
-			} else if (target.ToLower () == "xml")
+			} else if (target.ToLower (CultureInfo.InvariantCulture) == "xml")
 				throw new XmlException (this as IXmlLineInfo,
 					"Not allowed processing instruction name which starts with 'X', 'M', 'L' was found.");
 
@@ -1934,7 +1935,7 @@ namespace System.Xml
 					ReadChar ();
 			}
 			if (new string (peekChars, 2, 4) != "xml ") {
-				if (new string (peekChars, 2, 3).ToLower () == "xml") {
+				if (new string (peekChars, 2, 3).ToLower (CultureInfo.InvariantCulture) == "xml") {
 					throw new XmlException (this as IXmlLineInfo,
 						"Processing instruction name must not be character sequence 'X' 'M' 'L' with case insensitivity.");
 				}
@@ -2440,7 +2441,7 @@ namespace System.Xml
 		{
 			int ch = PeekChar ();
 			if (!XmlChar.IsFirstNameChar (ch))
-				throw new XmlException (this as IXmlLineInfo,String.Format ("a name did not start with a legal character {0} ({1})", ch, (char) ch));
+				throw new XmlException (this as IXmlLineInfo,String.Format (CultureInfo.InvariantCulture, "a name did not start with a legal character {0} ({1})", ch, (char) ch));
 
 			nameLength = 0;
 
@@ -2461,7 +2462,7 @@ namespace System.Xml
 
 			if (ch != expected) {
 				throw new XmlException (this as IXmlLineInfo,
-					String.Format (
+					String.Format (CultureInfo.InvariantCulture, 
 						"expected '{0}' ({1:X}) but found '{2}' ({3:X})",
 						(char) expected,
 						expected,
@@ -2484,7 +2485,7 @@ namespace System.Xml
 				if (i < 0x21 && XmlChar.IsWhitespace (i))
 					continue;
 				if (c != i)
-					throw new XmlException (this, String.Join (String.Empty, new string [] {"Expected ", c.ToString (), ", but found " + (char) i, "[", i.ToString (), "]"}));
+					throw new XmlException (this, String.Format (CultureInfo.InvariantCulture, "Expected {0}, but found {1} [{2}]", c, (char) i, i));
 				break;
 			}
 		}

@@ -15,6 +15,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml.XPath;
@@ -838,7 +839,7 @@ namespace System.Xml
 		{
 			IXmlLineInfo li = reader as IXmlLineInfo;
 			if (li != null)
-				return String.Format ("{0} Line number = {1}, Inline position = {2}.", message, li.LineNumber, li.LinePosition);
+				return String.Format (CultureInfo.InvariantCulture, "{0} Line number = {1}, Inline position = {2}.", message, li.LineNumber, li.LinePosition);
 			else
 				return message;
 		}

@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace System.Xml
@@ -88,7 +89,7 @@ namespace System.Xml
 				if (lineNumber == 0)
 					return base.Message;
 
-				return String.Format ("{0} Line {1}, position {2}.",
+				return String.Format (CultureInfo.InvariantCulture, "{0} Line {1}, position {2}.",
 						      base.Message, lineNumber, linePosition);
 			}
 		}
