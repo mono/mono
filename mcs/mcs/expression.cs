@@ -1019,6 +1019,10 @@ namespace Mono.CSharp {
 				return;
 			case Action.LeaveOnStack:
 				// the `e != null' rule.
+				ig.Emit (OpCodes.Ldnull);
+				ig.Emit (OpCodes.Ceq);
+				ig.Emit (OpCodes.Ldc_I4_0);
+				ig.Emit (OpCodes.Ceq);
 				return;
 			case Action.Probe:
 				ig.Emit (OpCodes.Isinst, probe_type);

@@ -1,5 +1,10 @@
 2003-04-01  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (Is.Emit): For action `LeaveOnStack' we were
+	leaving a class on the stack instead of a boolean value (int
+	0/1).  Change the code so we compare against null, and then the
+	result against zero.
+
 	* class.cs (TypeContainer.GetClassBases): We were checking for the
 	parent class being sealed too late.
 
