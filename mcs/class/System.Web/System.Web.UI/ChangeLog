@@ -1,3 +1,8 @@
+2004-12-17 Lluis Sanchez Gual <lluis@novell.com>
+
+	* CssStyleCollection.cs: Make it work as a standalone collection.
+	* HtmlTextWriter.cs: Added static method for getting style names.
+
 2004-12-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ControlCollection.cs: fix off-by-one and store a null at the end to

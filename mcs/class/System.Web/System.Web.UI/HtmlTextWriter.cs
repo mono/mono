@@ -361,6 +361,10 @@ protected HtmlTextWriterStyle GetStyleKey(string styleName){
 }
 
 protected string GetStyleName(HtmlTextWriterStyle styleKey){
+	return StaticGetStyleName (styleKey);
+}
+
+internal static string StaticGetStyleName (HtmlTextWriterStyle styleKey){
 	if ((int) styleKey >= 0 && (int) styleKey < HtmlTextWriter._styleNameLookupArray.Length)
 		return HtmlTextWriter._styleNameLookupArray[(int) styleKey];
 	return System.String.Empty;

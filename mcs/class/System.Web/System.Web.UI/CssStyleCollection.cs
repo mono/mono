@@ -40,6 +40,10 @@ namespace System.Web.UI {
 		private StateBag bag;
 		private StateBag style;
 
+		internal CssStyleCollection ()
+		{
+		}
+		
 		internal CssStyleCollection (StateBag bag)
 		{
 			this.bag = bag;
@@ -106,12 +110,24 @@ namespace System.Web.UI {
 		public void Add (string key, string value)
 		{
 			style [key] = value;
-			bag ["style"] = BagToString ();
+			if (bag != null)
+				bag ["style"] = BagToString ();
+		}
+		
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		void Add (HtmlTextWriterStyle key, string value)
+		{
+			Add (HtmlTextWriter.StaticGetStyleName (key), value);
 		}
 
 		public void Clear ()
 		{
-			bag.Remove ("style");
+			if (bag != null)
+				bag.Remove ("style");
 			style.Clear ();
 		}
 
@@ -119,7 +135,8 @@ namespace System.Web.UI {
 		{
 			if (style [key] != null) {
 				style.Remove (key);
-				bag ["style"] = BagToString ();
+				if (bag != null)
+					bag ["style"] = BagToString ();
 			}
 		}
 	}
