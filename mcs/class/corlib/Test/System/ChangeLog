@@ -1,3 +1,6 @@
+2002-02-26  Duco Fijma <duco@lorentz.xs4all>
+	* TimeSpanTest.cs: added test from TimeSpan.FromMilliseconds
+
 2002-02-26  Martin Baulig  <martin@gnome.org>
 
 	* DateTimeTest.cs: New test.

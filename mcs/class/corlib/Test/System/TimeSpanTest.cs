@@ -179,7 +179,8 @@ public class TimeSpanTest : TestCase
 		AssertEquals("A2", "12:20:42", TimeSpan.FromHours(12.345).ToString());
 		AssertEquals("A3", "00:12:20.7000000", TimeSpan.FromMinutes(12.345).ToString());
 		AssertEquals("A4", "00:00:12.3450000", TimeSpan.FromSeconds(12.345).ToString());
-		AssertEquals("A5", "00:00:00.0012345", TimeSpan.FromTicks(12345).ToString());
+		AssertEquals("A5", "00:00:00.0120000", TimeSpan.FromMilliseconds(12.345).ToString());
+		AssertEquals("A6", "00:00:00.0012345", TimeSpan.FromTicks(12345).ToString());
 	}
 
 	public void TestGetHashCode()

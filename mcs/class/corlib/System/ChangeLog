@@ -1,3 +1,6 @@
+2002-02-26  Duco Fijma <duco@lorentz.xs4all.nl>
+	* TimeSpan.cs: Added method TimeSpan.FromMilliseconds, mysteriously 
+	missing for about six months.
 
 Tue Feb 26 14:21:19 CET 2002 Paolo Molaro <lupus@ximian.com>
 

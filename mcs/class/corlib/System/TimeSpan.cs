@@ -244,8 +244,21 @@ namespace System {
 				return MaxValue;
 			}
 
-			return new TimeSpan (0, 0, 0, (int) value, ((int) ((value - ((int) value)) * 1000)));
+			return new TimeSpan (0, 0, 0, (int) value) + FromMilliseconds((value - ((int) value)) * 1000);
 
+		}
+
+		public static TimeSpan FromMilliseconds (double value)
+		{
+			if (Double.IsNaN (value) || Double.IsNegativeInfinity (value)) {
+				return MinValue;
+			}
+
+			if (Double.IsPositiveInfinity (value)) {
+				return MaxValue;
+			}
+
+			return new TimeSpan (0, 0, 0, 0, (int) value);
 		}
 
 		public static TimeSpan FromTicks (long value)
