@@ -1,3 +1,7 @@
+2005-01-11  Dick Porter  <dick@ximian.com>
+
+	* error.c (errno_to_WSA): Add EADDRNOTAVAIL error code
+	translation.
 
 Mon Jan 10 20:30:19 CET 2005 Paolo Molaro <lupus@ximian.com>
 
