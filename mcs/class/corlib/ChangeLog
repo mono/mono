@@ -1,3 +1,15 @@
+2004-08-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib.dll.sources: Added System.Security.Policy/
+	ApplicationMembershipCondition.cs, 
+	DomainApplicationMembershipCondition.cs,
+	MembershipConditionHelper.cs for NET_2_0 profile.
+	* corlib_test.dll.sources: Added System.Security.Policy/
+	AllMembershipConditionTest.cs,
+	ApplicationDirectoryMembershipConditionTest.cs,
+	ApplicationMembershipConditionTest.cs and
+	DomainApplicationMembershipConditionTest.cs to unit tests.
+
 2004-08-23  Martin Baulig  <martin@ximian.com>
 
 	* Makefile: Add $(LIBRARY_FLAGS) to the $(net20bootstraplib)

@@ -201,7 +201,11 @@ System.Security.Permissions/UrlIdentityPermissionAttributeTest.cs
 System.Security.Permissions/UrlIdentityPermissionTest.cs
 System.Security.Permissions/ZoneIdentityPermissionAttributeTest.cs
 System.Security.Permissions/ZoneIdentityPermissionTest.cs
+System.Security.Policy/AllMembershipConditionTest.cs
+System.Security.Policy/ApplicationDirectoryMembershipConditionTest.cs
+System.Security.Policy/ApplicationMembershipConditionTest.cs
 System.Security.Policy/CodeGroupTest.cs
+System.Security.Policy/DomainApplicationMembershipConditionTest.cs
 System.Security.Policy/EvidenceTest.cs
 System.Security.Policy/FileCodeGroupTest.cs 
 System.Security.Policy/FirstMatchCodeGroupTest.cs
