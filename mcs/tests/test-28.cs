@@ -20,8 +20,9 @@ class X {
 	static int Main ()
 	{
 		X x = new X ();
+		int b;
 
-		x [0] = 1;
+		x [1] = x [0] = 1;
 		if (x.v1 != 1)
 			return 1;
 
