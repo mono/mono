@@ -1,3 +1,13 @@
+2002-05-01  Rodrigo Moya <rodrigo@ximian.com>
+
+	* ListSortDirection.cs: new enumeration. Please, somebody run
+	EnumCheck on it, as I don't have a windows machine.
+
+	* PropertyDescriptorCollection.cs: new class.
+
+	* ITypedList.cs:
+	* IBindingList.cs: new interfaces.
+
 2002-04-28  Duncan Mak  <duncan@ximian.com>
 
 	* CollectionChangeAction.cs: Changed enum layout to fit the MS
