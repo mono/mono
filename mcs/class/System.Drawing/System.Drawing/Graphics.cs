@@ -1228,7 +1228,9 @@ namespace System.Drawing
 		public void Flush (FlushIntention intention)
 		{
 			Status status = GDIPlus.GdipFlush (nativeObject, intention);
-                        GDIPlus.CheckStatus (status);                     
+                        GDIPlus.CheckStatus (status);                    
+			if (use_quartz_drawable)
+				Carbon.CGContextFlush (display);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]		
@@ -1260,9 +1262,10 @@ namespace System.Drawing
 			IntPtr graphics;
 
 			if (use_quartz_drawable) {
-				QuartzContext qc = (QuartzContext) Marshal.PtrToStructure (hwnd, typeof (QuartzContext));
-				GDIPlus.GdipCreateFromQuartz_macosx (qc.cgContext, qc.width,qc.height, out graphics);
+				CarbonContext cgContext = Carbon.GetCGContextForView (hwnd);
+				GDIPlus.GdipCreateFromQuartz_macosx (cgContext.ctx, cgContext.width, cgContext.height, out graphics);
 				
+				display = cgContext.ctx;
 				return new Graphics (graphics);
 			}
 			if (use_x_drawable) {
@@ -1984,13 +1987,6 @@ namespace System.Drawing
 				GDIPlus.CheckStatus (status);
                                 return rect;
 			}
-		}
-
-		internal struct QuartzContext
-		{
-			public IntPtr cgContext;
-			public int width;
-			public int height;
 		}
 	}
 }

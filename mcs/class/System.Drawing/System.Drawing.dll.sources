@@ -5,6 +5,7 @@ System.Drawing/Bitmap.cs
 System.Drawing/Brush.cs
 System.Drawing/Brushes.cs
 System.Drawing/CharacterRange.cs
+System.Drawing/carbonFunctions.cs
 System.Drawing/ColorConverter.cs
 System.Drawing/Color.cs
 System.Drawing/ColorTranslator.cs

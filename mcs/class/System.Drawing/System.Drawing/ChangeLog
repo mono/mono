@@ -1,3 +1,8 @@
+2004-12-09  Geoff Norton  <gnorton@customerdna.com>
+
+	* carbonFunctions.cs: New carbon functions/structures
+	* Graphics.cs: Update FromHwnd to work without being in the carbon eventing loop
+
 2004-12-08  Geoff Norton  <gnorton@customerdna.com>
 
 	* Graphics.cs:  Drop FromHwndWithSize; we can't change the public API
