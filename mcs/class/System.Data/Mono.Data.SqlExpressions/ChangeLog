@@ -1,3 +1,8 @@
+2004-04-28 Boris Kirzner <borisk@mainsoft.com>
+
+	* ColumnReference.cs : using DataRow _inExpressionEvaluation before accessing row value
+	  to get an access to deleted rows also.
+
 2004-04-22  Juraj Skripsky <juraj@hotfeet.ch>
 
 	* Parser.jay: Allow computed expressions on left-hand side of

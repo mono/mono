@@ -121,8 +121,10 @@ namespace Mono.Data.SqlExpressions {
 				return null;
 				
 			object val;
-			try {			
+			try {
+				referencedRow._inExpressionEvaluation = true;
 				val = referencedRow [columnName];
+				referencedRow._inExpressionEvaluation = false;
 			} catch (IndexOutOfRangeException) {
 				throw new EvaluateException (String.Format ("Cannot find column [{0}].", columnName));
 			}
