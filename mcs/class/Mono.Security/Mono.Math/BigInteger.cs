@@ -20,7 +20,7 @@ using Mono.Math.Prime;
 
 namespace Mono.Math {
 
-	[CLSCompliant(false)]is
+	[CLSCompliant(false)]
 #if INSIDE_CORLIB
 	internal
 #else
