@@ -99,6 +99,13 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
+		///   Whether this is an instance member.
+		/// </summary>
+		bool IsInstance {
+			get;
+		}
+
+		/// <summary>
 		///   Whether this is a static member.
 		/// </summary>
 		bool IsStatic {
@@ -3303,14 +3310,6 @@ namespace Mono.CSharp {
 					Error_ObjectRefRequired (ec, loc, Name);
 					return null;
 				}
-			} else if (e is MethodGroupExpr){
-				MethodGroupExpr mg = (MethodGroupExpr) e;
-
-				if (!mg.RemoveInstanceMethods ()){
-					Error_ObjectRefRequired (ec, loc, mg.Methods [0].Name);
-					return null;
-				}
-				return e;
 			}
 
 			return e;
@@ -3558,7 +3557,7 @@ namespace Mono.CSharp {
 	///  
 	///   This is a fully resolved expression that evaluates to a type
 	/// </summary>
-	public class MethodGroupExpr : Expression {
+	public class MethodGroupExpr : Expression, IMemberExpr {
 		public MethodBase [] Methods;
 		Expression instance_expression = null;
 		
@@ -3601,6 +3600,32 @@ namespace Mono.CSharp {
 
 			set {
 				instance_expression = value;
+			}
+		}
+
+		public string Name {
+			get {
+				return Methods [0].Name;
+			}
+		}
+
+		public bool IsInstance {
+			get {
+				foreach (MethodBase mb in Methods)
+					if (!mb.IsStatic)
+						return true;
+
+				return false;
+			}
+		}
+
+		public bool IsStatic {
+			get {
+				foreach (MethodBase mb in Methods)
+					if (mb.IsStatic)
+						return true;
+
+				return false;
 			}
 		}
 		
@@ -3675,6 +3700,12 @@ namespace Mono.CSharp {
 		public string Name {
 			get {
 				return FieldInfo.Name;
+			}
+		}
+
+		public bool IsInstance {
+			get {
+				return !FieldInfo.IsStatic;
 			}
 		}
 
@@ -3931,6 +3962,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool IsInstance {
+			get {
+				return !is_static;
+			}
+		}
+
 		public bool IsStatic {
 			get {
 				return is_static;
@@ -4052,6 +4089,12 @@ namespace Mono.CSharp {
 		public string Name {
 			get {
 				return EventInfo.Name;
+			}
+		}
+
+		public bool IsInstance {
+			get {
+				return !is_static;
 			}
 		}
 

@@ -5276,59 +5276,6 @@ namespace Mono.CSharp {
 				left_is_explicit = true;
 			}
 
-			//
-			// Method Groups
-			//
-			if (member_lookup is MethodGroupExpr){
-				MethodGroupExpr mg = (MethodGroupExpr) member_lookup;
-
-				//
-				// Type.MethodGroup
-				//
-				if (left_is_type){
-					if (!mg.RemoveInstanceMethods ()){
-						SimpleName.Error_ObjectRefRequired (ec, loc, mg.Methods [0].Name); 
-						return null;
-					}
-
-					return member_lookup;
-				}
-
-				//
-				// Instance.MethodGroup
-				//
-				if (IdenticalNameAndTypeName (ec, left_original, loc)){
-					if (mg.RemoveInstanceMethods ())
-						return member_lookup;
-				}
-				
-				if (!mg.RemoveStaticMethods ()){
-					error176 (loc, mg.Methods [0].Name);
-					return null;
-				} 
-				
-				mg.InstanceExpression = left;
-				return member_lookup;
-#if ORIGINAL
-				if (!mg.RemoveStaticMethods ()){
-					if (IdenticalNameAndTypeName (ec, left_original, loc)){
-						if (!mg.RemoveInstanceMethods ()){
-							SimpleName.Error_ObjectRefRequired (ec, loc, mg.Methods [0].Name);
-							return null;
-						}
-						return member_lookup;
-					}
-					
-					error176 (loc, mg.Methods [0].Name);
-					return null;
-				}
-				
-				mg.InstanceExpression = left;
-					
-				return member_lookup;
-#endif
-			}
-
 			if (member_lookup is FieldExpr){
 				FieldExpr fe = (FieldExpr) member_lookup;
 				FieldInfo fi = fe.FieldInfo;
@@ -5434,7 +5381,7 @@ namespace Mono.CSharp {
 						return null;
 					}
 				} else {
-					if (me.IsStatic){
+					if (!me.IsInstance){
 						if (IdenticalNameAndTypeName (ec, left_original, loc))
 							return member_lookup;
 

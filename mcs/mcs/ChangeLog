@@ -1,5 +1,14 @@
 2002-08-08  Martin Baulig  <martin@gnome.org>
 
+	* ecore.cs (IMemberExpr): Added `bool IsInstance' property.
+	(MethodGroupExpr): Implement the IMemberExpr interface.
+
+	* expression (MemberAccess.ResolveMemberAccess): No need to have
+	any special code for MethodGroupExprs anymore, they're now
+	IMemberExprs.	
+
+2002-08-08  Martin Baulig  <martin@gnome.org>
+
 	* typemanager.cs (TypeManager.FilterWithClosure): Check Assembly,
 	Family, FamANDAssem and FamORAssem permissions.
 	(TypeManager.IsSubclassOrNestedChildOf): New public method.
