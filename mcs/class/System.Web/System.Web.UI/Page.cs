@@ -453,7 +453,7 @@ public class Page : TemplateControl, IHttpHandler
 			Load += new EventHandler (_Page_Load);
 
 			//-- Control execution lifecycle in the docs
-			OnInit (EventArgs.Empty);
+			InitRecursive (this);
 		}
 		_got_state = false;
 		_hasForm = false;
@@ -464,10 +464,10 @@ public class Page : TemplateControl, IHttpHandler
 		if (IsPostBack)
 			ProcessPostData ();
 
-		OnLoad (EventArgs.Empty);
+		LoadRecursive ();
 		//if (this is IPostBackDataHandler)
 		//	RaisePostBackEvent ();
-		OnPreRender (EventArgs.Empty);
+		PreRenderRecursiveInternal ();
 
 		//--
 		HtmlTextWriter output = new HtmlTextWriter (context.Response.Output);
@@ -529,7 +529,7 @@ public class Page : TemplateControl, IHttpHandler
 	[MonoTODO]
 	public void RegisterViewStateHandler ()
 	{
-		throw new NotImplementedException ();
+		// Do nothing
 	}
 
 	[MonoTODO]

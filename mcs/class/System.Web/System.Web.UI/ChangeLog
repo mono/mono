@@ -1,3 +1,7 @@
+2002-07-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs: fire Init and Load events for all children.
+
 2002-07-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UserControl.cs: New file.
