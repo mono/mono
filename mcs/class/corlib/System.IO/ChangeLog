@@ -1,3 +1,7 @@
+2005-02-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* CheckPermission.cs: Fix warning.
+
 2005-02-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* File.cs: Exists does not throw when there are invalid characters in

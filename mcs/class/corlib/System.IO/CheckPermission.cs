@@ -52,7 +52,8 @@ namespace System.IO
 		[MonoTODO]
 		public static void Demand(FileIOPermissionAccess flags, string path)
 		{
-			FileIOPermission ioPerm = new FileIOPermission(flags, path);
+			//FileIOPermission ioPerm = 
+				new FileIOPermission(flags, path);
 			// FIXME: FileIOPermission is not yet implemented
 			//ioPerm.Demand();
 		}		
