@@ -18,7 +18,7 @@ class X {
 		if (e != f)
 			return 2;
 
-		string g = "Hello\nworld";
+		string g = "Hello" + System.Environment.NewLine + "world";
 		string h = @"Hello
 world";
 		if (g != h) 
