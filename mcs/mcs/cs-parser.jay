@@ -1302,7 +1302,7 @@ interface_accessors
 interface_event_declaration
 	: opt_attributes opt_new EVENT type IDENTIFIER SEMICOLON
 	  {
-		$$ = new Event ((Expression) $4, (int) $2, true, (string) $5, null,
+		$$ = new Event (current_container, (Expression) $4, (int) $2, true, (string) $5, null,
 				(Attributes) $1, null, null, lexer.Location);
 	  }
 	| opt_attributes opt_new EVENT type error {
@@ -1603,7 +1603,7 @@ event_declaration
 	  {
 		foreach (VariableDeclaration var in (ArrayList) $5) {
 
-			Event e = new Event ((Expression) $4, (int) $2, false, var.identifier,
+			Event e = new Event (current_container, (Expression) $4, (int) $2, false, var.identifier,
 					     var.expression_or_array_initializer,
 					     (Attributes) $1, null, null, lexer.Location);
 
@@ -1641,7 +1641,7 @@ event_declaration
 			if (pair.Second != null)
 				rem_accessor = (Accessor) pair.Second;
 			
-			Event e = new Event ((Expression) $4, (int) $2, false, (string) $5,
+			Event e = new Event (current_container, (Expression) $4, (int) $2, false, (string) $5,
 					     null, (Attributes) $1, add_accessor, rem_accessor,
 					     loc);
 			

@@ -1,3 +1,17 @@
+2004-04-21  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs: Refactoring.
+	(IMethodData): New inteface; Holds links to parent members
+	to avoid member duplication (reduced memory allocation).
+	(Method): Implemented IMethodData interface.
+	(PropertyBase): New inner classes for get/set methods.
+	(PropertyBase.PropertyMethod): Implemented IMethodData interface
+	(Event): New inner classes for add/remove methods.
+	(Event.DelegateMethod): Implemented IMethodData interface.
+        
+	* cs-parser.jay: Pass DeclSpace to Event class for creation of valid
+	EmitContext (related to class.cs refactoring).
+
 2004-04-21  Raja R Harinath  <rharinath@novell.com>
 
 	* delegate.cs (Delegate.VerifyApplicability): If the number of
