@@ -1,5 +1,9 @@
 2003-11-27  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mono_method_to_ir): Fix tail calls with valuetype arguments.
+	Also optimize the case when the arguments are the same in the caller 
+	and in the callee.
+
 	* iltests.il: Add tests for tail calls with valuetype arguments.
 
 Thu Nov 27 21:06:37 CET 2003 Paolo Molaro <lupus@ximian.com>
