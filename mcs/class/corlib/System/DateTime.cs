@@ -51,7 +51,11 @@ namespace System
 			// doesn't have a one-letter equivalent) is parsed
 			// too. It's important because it's used in XML
 			// serialization.
+			// FIXME: We should use GetAllDateTimePatterns() and
+			// fill the complete pattern tables.
 			"yyyy-MM-ddTHH:mm:sszzz",
+			// Fix for bug #58938
+			"yyyy-MM-dd HH:mm:ss",
 			// DayOfTheWeek, dd full_month_name yyyy
 			"dddd, dd MMMM yyyy",
 			// DayOfTheWeek, dd yyyy
@@ -540,7 +544,36 @@ namespace System
 
 		public static DateTime Parse (string s, IFormatProvider fp, DateTimeStyles styles)
 		{
-			return ParseExact (s, formats, fp, styles);
+			if (s == null)
+				throw new ArgumentNullException (Locale.GetText ("s is null"));
+			DateTime result;
+
+			if (fp == null)
+				fp = CultureInfo.CurrentCulture;
+			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance (fp);
+			// FIXME: It should be all the formats supported by dfi.
+			string [] formats = DateTime.formats;//dfi.GetAllDateTimePatterns ();
+
+			if (ParseExact (s, formats, dfi, styles, out result))
+				return result;
+
+			// Also try InvariantCulture, unless fp is invariant.
+			//
+			// FIXME: actually this method should not try Invariant
+			// culture here. Sometimes it allows string values
+			// unexpectedly, but the counterpart case would be much
+			// larger. This is a quick remedy.
+			if (fp == CultureInfo.InvariantCulture)
+				throw new FormatException ();
+
+			fp = CultureInfo.InvariantCulture;
+			dfi = DateTimeFormatInfo.GetInstance (fp);
+//			formats = dfi.GetAllDateTimePatterns ();
+
+			if (ParseExact (s, formats, dfi, styles, out result))
+				return result;
+
+			throw new FormatException ();
 		}
 
 		public static DateTime ParseExact (string s, string format, IFormatProvider fp)
@@ -943,9 +976,12 @@ namespace System
 						num = 2;
 					}
 					break;
-				case 'Z':
-					useutc = true;
-					break;
+				// This should be part of UTCpattern string and
+				// thus should not be considered here. Note that
+				// 'Z' is not defined as a pattern character.
+//				case 'Z':
+//					useutc = true;
+//					break;
 				case ':':
 					if (!_ParseString (s, 0, dfi.TimeSeparator, out num_parsed))
 						return false;
@@ -1100,16 +1136,27 @@ namespace System
 			if (formats.Length == 0)
 				throw new ArgumentNullException (Locale.GetText ("format is null"));
 
+			DateTime result;
+			if (!ParseExact (s, formats, dfi, style, out result))
+				throw new FormatException ();
+			return result;
+		}
+		
+		private static bool ParseExact (string s, string [] formats,
+			DateTimeFormatInfo dfi, DateTimeStyles style, out DateTime ret)
+		{
 			int i;
 			for (i = 0; i < formats.Length; i++)
 			{
 				DateTime result;
 
-				if (_DoParse (s, formats[i], true, out result, dfi, style))
-					return result;
+				if (_DoParse (s, formats[i], true, out result, dfi, style)) {
+					ret = result;
+					return true;
+				}
 			}
-
-			throw new FormatException ();
+			ret = DateTime.MinValue;
+			return false;
 		}
 		
 		public TimeSpan Subtract(DateTime dt)
@@ -1491,7 +1538,7 @@ namespace System
 			bool useutc = false;
 
 			if (format.Length == 1) {
-				char fchar = (format.ToCharArray ())[0];
+				char fchar = format [0];
 				format = _GetStandardPattern (fchar, dfi, out useutc);
 			}
 
