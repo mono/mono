@@ -1,5 +1,5 @@
 //
-// System.Drawing.PrintControler.cs
+// System.Drawing.PrintController.cs
 //
 // Author:
 //   Dennis Hayes (dennish@Raytek.com)
@@ -11,7 +11,7 @@ using System;
 namespace System.Drawing.Printing
 {
 	/// <summary>
-	/// Summary description for PrintControler.
+	/// Summary description for PrintController.
 	/// </summary>
 	public abstract class PrintController
 	{

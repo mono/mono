@@ -1,5 +1,5 @@
 //
-// System.Drawing.PreviewPrintControler.cs
+// System.Drawing.PreviewPrintController.cs
 //
 // Author:
 //   Dennis Hayes (dennish@Raytek.com)
@@ -11,7 +11,7 @@ using System;
 namespace System.Drawing.Printing
 {
 	/// <summary>
-	/// Summary description for PreviewPrintControler.
+	/// Summary description for PreviewPrintController.
 	/// </summary>
 	public class PreviewPrintController : PrintController
 	{

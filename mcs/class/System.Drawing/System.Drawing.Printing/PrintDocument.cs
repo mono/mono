@@ -43,7 +43,7 @@ namespace System.Drawing.Printing {
 			}
 		}
 		[MonoTODO]
-		public PrintControler PrintControler{
+		public PrintController PrintController{
 			get{
 				throw new NotImplementedException ();				
 			}

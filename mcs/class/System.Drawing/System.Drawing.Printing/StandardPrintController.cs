@@ -12,7 +12,7 @@ namespace System.Drawing.Printing {
 	/// <summary>
 	/// Summary description for StandardPrintController.
 	/// </summary>
-	public class StandardPrintController : PrintControler {
+	public class StandardPrintController : PrintController {
 //		[MonoTODO]
 //		public StandardPrintController() {
 //			throw new NotImplementedException ();
