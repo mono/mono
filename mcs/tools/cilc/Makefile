@@ -1,3 +1,7 @@
+RUNTIME=mono
+CSC = $(RUNTIME) ../../mcs/mcs.exe
+CSCFLAGS=/nologo /debug+ /debug:full /out:$@
+
 all: cilc.exe
 
 test: cilc.exe Test.dll
@@ -9,7 +13,7 @@ test: cilc.exe Test.dll
 	cp Test.dll generated
 
 cilc.exe: cilc.cs
-	mcs /out:cilc.exe cilc.cs
+	$(CSC) $(CSCFLAGS) cilc.cs
 
 Test.dll: Test.cs
 	mcs /out:Test.dll --target library Test.cs
