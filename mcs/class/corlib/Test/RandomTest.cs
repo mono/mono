@@ -40,7 +40,7 @@ public class RandomTest : TestCase
                 for (i=0; i<20; i++)
                 {
                         c = r.Next();
-                        Assert (c <= Random.MaxValue && c >= Random.MinValue);
+                        Assert (c <= Int32.MaxValue && c >= 0);
                 }
         }
         public void TestNextMax()
@@ -51,7 +51,7 @@ public class RandomTest : TestCase
                 for (i=0; i<20; i++)
                 {
                         c = r.Next(10);
-                        Assert (c <= 10 && c >= Random.MinValue);
+                        Assert (c <= 10 && c >= 0);
                 }
         }
         public void TestNextMinMax()
