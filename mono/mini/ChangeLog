@@ -1,3 +1,12 @@
+2003-12-07  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* inssel.brg: In CEE_ISINST and CEE_CASTCLASS, removed check for proxy. 
+	This has been moved to mini.c
+	* mini.c: in mono_method_to_ir, CEE_ISINST and CEE_CASTCLASS cases, if the
+	type being casted is marshalbyref it could be a proxy, so instead of
+	emitting the type check code, emit a call to a runtime method that will
+	perform the check by calling CanCastTo if needed.
+
 2003-12-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-x86.c (mono_arch_emit_prolog): Fix stack space allocation for
