@@ -1,3 +1,7 @@
+2003-07-24  Ben Maurer <bmaurer@users.sourceforge.net>
+	
+	* DefaultContext.cs: implement lang ()
+
 2003-07-24  Piers Haken	<piersh@friskit.com>
 
 	* Parser.jay:

@@ -593,10 +593,12 @@ namespace System.Xml.XPath
 		public override int Minargs { get { return 1; }}
 		public override int Maxargs { get { return 1; }}
 		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.String }; }}
-		[MonoTODO]
 		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
 		{
-			throw new NotImplementedException ();
+			string lang = ((string)args[0]).ToLower ();
+			string actualLang = docContext.XmlLang.ToLower ();
+			
+			return lang == actualLang || lang == (actualLang.Split ('-')[0]);
 		}
 		public override string Name { get { return "lang"; }}
 	}
