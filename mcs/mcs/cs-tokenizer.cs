@@ -1468,7 +1468,7 @@ namespace Mono.CSharp
 				if (s [0] == '&'){
 					if (len > 2 && s [1] == '&'){
 						s = s.Substring (2);
-						return (va & pp_eq (ref s));
+						return (va & pp_and (ref s));
 					} else {
 						Error_InvalidDirective ();
 						return false;

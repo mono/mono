@@ -1,3 +1,7 @@
+2005-02-11  Miguel de Icaza  <miguel@novell.com>
+
+	* cs-tokenizer.cs (pp_and): recurse on pp_and, fixes #61903.
+
 2005-02-11  Marek Safar  <marek.safar@seznam.cz>
 
 	C# 2.0 Fixed buffer implementation
