@@ -46,6 +46,12 @@ class Z
 	{
 		int a = 5;
 		Y y = (Y) (X) a;
+
+		//.
+		// Compile this:
+		//
+
+		int b = (Int32)int.Parse ("1");
 		return 0;
 	}
 }
