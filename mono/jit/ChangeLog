@@ -1,3 +1,7 @@
+2002-09-06  Dietmar Maurer  <dietmar@ximian.com>
+
+	* emit-x86.c (arch_emit_epilogue): use pop instead of mov
+
 2002-09-05  Martin Baulig  <martin@gnome.org>
 
 	* debug.c (MONO_DEBUGGER__debugger_info): New global data symbol
