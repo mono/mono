@@ -1,4 +1,10 @@
 
+Thu Jun 20 16:43:29 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: add all the custom attrs at the end to ensure the
+	ctors have been properly initialized when the attributes are defined
+	in the current assembly.
+
 Thu Jun 20 13:46:40 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: handle correctly multiple-nested types.
