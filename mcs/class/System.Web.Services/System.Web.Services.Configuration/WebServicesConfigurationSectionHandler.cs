@@ -180,7 +180,7 @@ namespace System.Web.Services.Configuration
 			Exception exc = null;
 			try {
 				group = (WSExtensionGroup) Int32.Parse (grp);
-				if (group < WSExtensionGroup.Low || group > WSExtensionGroup.High)
+				if (group < WSExtensionGroup.High || group > WSExtensionGroup.Low)
 					throw new ArgumentOutOfRangeException ("group", "Must be 0 or 1");
 			} catch (Exception e) {
 				exc = e;
