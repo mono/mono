@@ -1,3 +1,9 @@
+2002-06-27  Martin Baulig  <martin@gnome.org>
+
+	* UIntPtr.cs (UIntPtr.Zero): Use an explicit `u' suffix in the
+	constructor argument.  [FIXME: The implicit conversion to an
+	unsigned integer doesn't work with mcs.]
+
 2002-06-26  Martin Baulig  <martin@gnome.org>
 
 	* DecimalFormatter.cs: Removed MSTEST stuff, use `System',

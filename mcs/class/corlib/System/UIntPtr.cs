@@ -29,7 +29,7 @@ namespace System
 [Serializable]
 public unsafe struct UIntPtr : ISerializable
 {
-    public static readonly UIntPtr Zero = new UIntPtr(0);
+    public static readonly UIntPtr Zero = new UIntPtr(0u);
     private void* _pointer;
 
     [
