@@ -1,3 +1,17 @@
+2002-02-18  Dietmar Maurer  <dietmar@ximian.com>
+
+	* jit.c (mono_analyze_stack): use the magic trampoline for all
+	calls (since we cant store the address of compiled code in
+	method->addr).
+
+	* emit-x86.c (x86_magic_trampoline): handle x86_call_code().
+	(arch_compile_method): add a cache for compiled methods to avoid
+	recompilation. dont use method->addr to store domain dependent
+	code address.
+
+2002-02-15  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg: impl. BLE,BGT for freg
 
 Sat Feb 16 16:27:42 CET 2002 Paolo Molaro <lupus@ximian.com>
 
