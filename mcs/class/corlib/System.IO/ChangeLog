@@ -1,3 +1,7 @@
+2002-10-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TextReader.cs: implemented ReadBlock ().
+
 2002-10-30  Miguel de Icaza  <miguel@ximian.com>
 
 	* StreamWriter.cs: Ditto for Null stream.

@@ -10,7 +10,7 @@ using System;
 
 namespace System.IO {
 
-	[MonoTODO] [Serializable]
+	[Serializable]
 	public abstract class TextReader : MarshalByRefObject, IDisposable {
 		
 		protected TextReader() { }
@@ -42,10 +42,6 @@ namespace System.IO {
 			return -1;
 		}
 		
-		// LAMESPEC:  The Beta2 docs say this should be Read( out char[] ...
-		// whereas the MS implementation is just Read( char[] ... )
-		// Not sure which one is right, we'll see in Beta3 :)
-
 		public virtual int Read (char[] buffer, int index, int count)
 		{
 			int c, i;
@@ -59,9 +55,16 @@ namespace System.IO {
 			return i;
 		}
 		
-		public virtual int ReadBlock( char[] buffer, int index, int count )
-		{ 
-			return 0;
+		public virtual int ReadBlock (char [] buffer, int index, int count)
+		{
+			int read_count = 0;
+			do {
+				read_count = Read (buffer, index, count);
+				index += read_count;
+				count -= read_count;
+			} while (read_count != 0 && count > 0);
+
+			return read_count;
 		}
 
 		public virtual string ReadLine()
