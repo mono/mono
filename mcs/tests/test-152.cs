@@ -19,6 +19,21 @@ public class X
                 }
                 if (a != 5)
                         return 1;
+
+
+		v = 20;
+		int r = 0;
+		
+		switch (v){
+		case 20:
+			r++;
+			int j = 10;
+			r += j;
+			break;
+		}
+		if (r != 11)
+			return 5;
+		
                 return 0;
         }
 }
