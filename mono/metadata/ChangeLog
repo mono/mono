@@ -1,3 +1,8 @@
+2003-11-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c: not all of the attributes for the full assembly name
+	are required and the order doesn't matter. Fixes bug #50787.
+
 2003-11-10  Dick Porter  <dick@ximian.com>
 
 	* locales.c: Use platform-endian UTF16
