@@ -132,7 +132,7 @@ namespace System.Web.UI.WebControls
 			Unit bw = BorderWidth;
 			if (GridLines == GridLines.None)
 				bw = Unit.Pixel (0);
-			else if (!bw.IsEmpty && bw.Type == UnitType.Pixel)
+			else if (bw.IsEmpty || bw.Type == UnitType.Pixel)
 				bw = Unit.Pixel(1);
 
 			writer.AddAttribute (HtmlTextWriterAttribute.Border,
