@@ -1,5 +1,9 @@
 2005-01-31  Geoff Norton  <gnorton@customerdna.com>
 
+	* XplatUIOSX.cs: Allow applications to actually exit.
+
+2005-01-31  Geoff Norton  <gnorton@customerdna.com>
+
 	* XplatUIOSX.cs: SetWindowStyle implemented.  Reposition views in 
 	their parent at creation time rather than lazily later.  Fixes a major
 	regression we were experiencing.

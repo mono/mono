@@ -75,6 +75,7 @@ namespace System.Windows.Forms {
 									new EventTypeSpec (OSXConstants.kEventClassMouse, OSXConstants.kEventMouseDragged),
 									new EventTypeSpec (OSXConstants.kEventClassMouse, OSXConstants.kEventMouseWheelMoved),
 									new EventTypeSpec (OSXConstants.kEventClassWindow, OSXConstants.kEventWindowBoundsChanged),
+									new EventTypeSpec (OSXConstants.kEventClassWindow, OSXConstants.kEventWindowClose),
 									new EventTypeSpec (OSXConstants.kEventClassKeyboard, OSXConstants.kEventRawKeyDown),
 									new EventTypeSpec (OSXConstants.kEventClassKeyboard, OSXConstants.kEventRawKeyRepeat),
 									new EventTypeSpec (OSXConstants.kEventClassKeyboard, OSXConstants.kEventRawKeyUp)
@@ -421,7 +422,7 @@ namespace System.Windows.Forms {
 			if (view_window_mapping [handle] != null) {
 				DisposeWindow ((IntPtr)(view_window_mapping [handle]));
 			} else {
-				CFRelease (handle);
+//				CFRelease (handle);
 			}
 		}
 
@@ -542,7 +543,6 @@ namespace System.Windows.Forms {
                 }
 
 		internal override void SetWindowPos(IntPtr handle, int x, int y, int width, int height) {
-Console.WriteLine ("Moving {0}: LOC: {1}x{2} SIZE: {3}x{4}", (int)handle, x, y, width, height);
 			if (view_window_mapping [handle] != null) {
 				if (x == 0 && y == 0) {
 					Rect bounds = new Rect ();
@@ -580,7 +580,6 @@ Console.WriteLine ("Moving {0}: LOC: {1}x{2} SIZE: {3}x{4}", (int)handle, x, y, 
 				width = (int)r.size.width;
 				height = (int)r.size.height;
 
-Console.WriteLine ("CHILD WINDOW: {0}x{1}", x, y);
 			}
 			client_width = width;
 			client_height = height;
@@ -638,6 +637,13 @@ Console.WriteLine ("CHILD WINDOW: {0}x{1}", x, y);
 
 		[MonoTODO]
 		internal override IntPtr DefWndProc(ref Message msg) {
+			switch ((Msg)msg.Msg) {
+				case Msg.WM_DESTROY: {
+					if (view_window_mapping [msg.HWnd] != null)
+						XplatUI.Exit ();
+					break;
+				}
+			}
 			return IntPtr.Zero;
 		}
 
@@ -708,6 +714,16 @@ Console.WriteLine ("CHILD WINDOW: {0}x{1}", x, y);
 					}
 					case OSXConstants.kEventClassWindow: {
 						switch (eventKind) {
+							case OSXConstants.kEventWindowClose: {
+								// This is our real window; so we have to post to the corresponding view
+								IDictionaryEnumerator e = view_window_mapping.GetEnumerator ();
+								while (e.MoveNext ()) {
+									if ((IntPtr)e.Value == controlHnd) {
+										NativeWindow.WndProc((IntPtr)e.Key, Msg.WM_DESTROY, IntPtr.Zero, IntPtr.Zero);
+									}
+								}
+								return 0;
+							}
 							case OSXConstants.kEventWindowBoundsChanged: {
 								// This is our real window; so we have to resize the corresponding view as well
 								IDictionaryEnumerator e = view_window_mapping.GetEnumerator ();
