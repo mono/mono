@@ -197,6 +197,9 @@ namespace System.Xml
 			case XmlNodeType.EntityReference:
 				WriteEntityRef (reader.Name);
 				break;
+			case XmlNodeType.XmlDeclaration:
+				// LAMESPEC: It means that XmlWriter implementation _must not_ check
+				// whether PI name is "xml" (it is XML error) or not.
 			case XmlNodeType.ProcessingInstruction:
 				WriteProcessingInstruction (reader.Name, reader.Value);
 				break;
@@ -216,15 +219,6 @@ namespace System.Xml
 				WriteFullEndElement ();
 				break;
 			case XmlNodeType.EndEntity:
-				break;
-			case XmlNodeType.XmlDeclaration:
-				// FIXME: It seems different from MS way, but I have 
-				// no other idea to write start document statefully.
-				string st = reader.GetAttribute ("standalone");
-				if (st != null && st != String.Empty)
-					WriteStartDocument (st.ToLower () == "yes");
-				else
-					WriteStartDocument ();
 				break;
 			case XmlNodeType.None:
 				return;	// Do nothing, nor reporting errors.

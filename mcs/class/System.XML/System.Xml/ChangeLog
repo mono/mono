@@ -1,3 +1,11 @@
+2003-10-18  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlDocument.cs : CloneNode() does not copy PreserveWhitespace.
+	* XmlWriter.cs : Calling WriteNode() with XmlReader whose state is
+	  XmlDeclaration now calls WriteProcessingInstruction(). This fixes
+	  testcase XmlWriterTests.WriteNodeFullDocument().
+	* XmlTextWriter.cs : Added LAMESPEC comments related to above.
+
 2003-10-13  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlDocument.cs : Fixed bugzilla #49607. Save() outputs XML 

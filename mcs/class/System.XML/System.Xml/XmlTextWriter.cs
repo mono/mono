@@ -554,6 +554,9 @@ namespace System.Xml
 			w.Write (name);
 		}
 
+		// LAMESPEC: It should reject such name that starts with "x" "m" "l" by XML specification, but
+		// in fact it is used to write XmlDeclaration in WriteNode() (and it is inevitable since
+		// WriteStartDocument() cannot specify encoding, while WriteNode() can write it).
 		public override void WriteProcessingInstruction (string name, string text)
 		{
 			if ((name == null) || (name == string.Empty) || (name.IndexOf("?>") > 0) || (text.IndexOf("?>") > 0)) {

@@ -218,7 +218,6 @@ namespace System.Xml
 			XmlDocument doc = implementation.CreateDocument ();
 			doc.baseURI = baseURI;
 
-			doc.PreserveWhitespace = PreserveWhitespace;	// required?
 			if(deep)
 			{
 				foreach(XmlNode n in ChildNodes)
