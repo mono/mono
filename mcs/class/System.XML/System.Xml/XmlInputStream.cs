@@ -26,33 +26,7 @@ namespace Mono.Xml.Native
 		}
 
 		public XmlStreamReader (Stream input)
-			: this (new XmlInputStream (input, true))
-		{
-		}
-
-		public XmlStreamReader (Stream input, bool docent)
-			: this (new XmlInputStream (input, docent))
-		{
-		}
-
-//		public XmlStreamReader (string url)
-//			: this (url, true)
-//		{
-//		}
-//
-//		public XmlStreamReader (string url, bool docent)
-//			: this (new XmlInputStream (url, docent, null, null))
-//		{
-//		}
-
-		public XmlStreamReader (string url, XmlResolver resolver, string baseURI)
-			: this (url, true, resolver, baseURI)
-		{
-		}
-
-		public XmlStreamReader (string url, bool docent, XmlResolver resolver,
-			string baseURI)
-			: this (new XmlInputStream (url, docent, resolver, baseURI))
+			: this (new XmlInputStream (input))
 		{
 		}
 
@@ -79,38 +53,11 @@ namespace Mono.Xml.Native
 		byte[] buffer = new byte[256];
 		int bufLength;
 		int bufPos;
-		bool isDocumentEntity;	// allow omitting "version" or not.
 
 		static XmlException encodingException = new XmlException ("invalid encoding specification.");
-/*
-		public XmlInputStream (string url)
-			: this (url, true)
-		{
-		}
-*/
-		public XmlInputStream (string url, bool docent, XmlResolver resolver, string baseURI)
-		{
-			this.isDocumentEntity = docent;
-			// Use XmlResolver to resolve external entity.
-
-			if (resolver == null)
-				resolver = new XmlUrlResolver ();
-			Uri uri = resolver.ResolveUri (
-				baseURI == null || baseURI == String.Empty ?
-                                null : new Uri (baseURI), url);
-			Stream s = resolver.GetEntity (uri, null, typeof (Stream)) as Stream;
-
-			Initialize (s);
-		}
 
 		public XmlInputStream (Stream stream)
-			: this (stream, true)
 		{
-		}
-
-		public XmlInputStream (Stream stream, bool docent)
-		{
-			this.isDocumentEntity = docent;
 			Initialize (stream);
 		}
 

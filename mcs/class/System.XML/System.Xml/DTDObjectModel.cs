@@ -914,17 +914,16 @@ namespace Mono.Xml
 				baseUri = null;
 			Uri uri = resolver.ResolveUri (
 				baseUri != null ? new Uri (baseUri) : null, SystemId);
-			XmlStreamReader xsreader = null;
+			Stream stream = null;
 			try {
-				Stream stream = resolver.GetEntity (uri, null, typeof (Stream)) as Stream;
-				xsreader = new XmlStreamReader (stream, false);
-			} catch (Exception ex) { // FIXME: bad catch ;-(
+				stream = resolver.GetEntity (uri, null, typeof (Stream)) as Stream;
+			} catch (Exception ex) { // FIXME: (wishlist) bad catch ;-(
 				Root.AddError (new XmlSchemaException ("Cannot resolve external entity " + uri.ToString () + " .",
 					this.LineNumber, this.LinePosition, null, this.BaseURI, ex));
 			}
-			if (xsreader == null)
+			if (stream == null)
 				return String.Empty;
-			XmlTextReader extEntReader = new XmlTextReader (xsreader);
+			XmlTextReader extEntReader = new XmlTextReader (uri.AbsolutePath, stream, this.Root.NameTable);
 			extEntReader.SkipTextDeclaration ();
 			TextReader reader = extEntReader.GetRemainder ();
 			extEntReader.Close ();
@@ -1066,8 +1065,8 @@ namespace Mono.Xml
 			string absPath = absUri.ToString ();
 
 			try {
-				XmlStreamReader tw = new XmlStreamReader (absUri.ToString (), false, resolver, BaseURI);
-				XmlTextReader xtr = new XmlTextReader (tw);
+				Stream s = resolver.GetEntity (absUri, null, typeof (Stream)) as Stream;
+				XmlTextReader xtr = new XmlTextReader (s);
 				xtr.SkipTextDeclaration ();
 				resolvedValue = xtr.GetRemainder ().ReadToEnd ();
 			} catch (IOException ex) {

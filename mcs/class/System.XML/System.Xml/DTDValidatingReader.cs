@@ -398,7 +398,7 @@ namespace Mono.Xml
 				// startElementDeriv
 				// If no schema specification, then skip validation.
 				if (currentAutomata == null) {
-					SetupValidityIgnorantAttributes ();
+					ValidateAttributes (null, false);
 					if (reader.IsEmptyElement)
 						goto case XmlNodeType.EndElement;
 					break;
@@ -426,7 +426,7 @@ namespace Mono.Xml
 				DTDAttListDeclaration attList = dtd.AttListDecls [currentElement];
 				if (attList != null) {
 					// check attributes
-					ValidateAttributes (attList);
+					ValidateAttributes (attList, true);
 					currentAttribute = null;
 				} else {
 					if (reader.HasAttributes) {
@@ -434,7 +434,8 @@ namespace Mono.Xml
 							"Attributes are found on element {0} while it has no attribute definitions.", currentElement),
 							XmlSeverityType.Error);
 					}
-					SetupValidityIgnorantAttributes ();
+					// SetupValidityIgnorantAttributes ();
+					ValidateAttributes (null, false);
 				}
 
 				// If it is empty element then directly check end element.
@@ -531,6 +532,7 @@ namespace Mono.Xml
 			return true;
 		}
 
+		/*
 		private void SetupValidityIgnorantAttributes ()
 		{
 			if (reader.MoveToFirstAttribute ()) {
@@ -544,6 +546,7 @@ namespace Mono.Xml
 				reader.MoveToElement ();
 			}
 		}
+		*/
 
 		private void HandleError (string message, XmlSeverityType severity)
 		{
@@ -570,7 +573,7 @@ namespace Mono.Xml
 
 		Stack attributeValueEntityStack = new Stack ();
 
-		private void ValidateAttributes (DTDAttListDeclaration decl)
+		private void ValidateAttributes (DTDAttListDeclaration decl, bool validate)
 		{
 			while (reader.MoveToNextAttribute ()) {
 				string attrName = reader.Name;
@@ -580,40 +583,50 @@ namespace Mono.Xml
 				attributeNamespaces.Add (attrName, reader.NamespaceURI);
 				bool hasError = false;
 				XmlReader targetReader = reader;
-				while (attributeValueEntityStack.Count >= 0) {
-					if (!targetReader.ReadAttributeValue ()) {
-						if (attributeValueEntityStack.Count > 0) {
-							targetReader = attributeValueEntityStack.Pop () as XmlReader;
-							continue;
-						} else
-							break;
-					}
-					switch (targetReader.NodeType) {
-					case XmlNodeType.EntityReference:
-						DTDEntityDeclaration edecl = DTD.EntityDecls [targetReader.Name];
-						if (edecl == null) {
-							HandleError (String.Format ("Referenced entity {0} is not declared.", targetReader.Name),
-								XmlSeverityType.Error);
-							hasError = true;
-						} else {
-							XmlTextReader etr = new XmlTextReader (edecl.EntityValue, XmlNodeType.Attribute, ParserContext);
-							attributeValueEntityStack.Push (targetReader);
-							targetReader = etr;
-							continue;
+				string attrValue = null;
+				if (currentEntityHandling == EntityHandling.ExpandCharEntities)
+					attrValue = reader.Value;
+				else {
+					while (attributeValueEntityStack.Count >= 0) {
+						if (!targetReader.ReadAttributeValue ()) {
+							if (attributeValueEntityStack.Count > 0) {
+								targetReader = attributeValueEntityStack.Pop () as XmlReader;
+								continue;
+							} else
+								break;
 						}
-						break;
-					case XmlNodeType.EndEntity:
-						break;
-					default:
-						valueBuilder.Append (targetReader.Value);
-						break;
+						switch (targetReader.NodeType) {
+						case XmlNodeType.EntityReference:
+							DTDEntityDeclaration edecl = DTD.EntityDecls [targetReader.Name];
+							if (edecl == null) {
+								HandleError (String.Format ("Referenced entity {0} is not declared.", targetReader.Name),
+									XmlSeverityType.Error);
+								hasError = true;
+							} else {
+								XmlTextReader etr = new XmlTextReader (edecl.EntityValue, XmlNodeType.Attribute, ParserContext);
+								attributeValueEntityStack.Push (targetReader);
+								targetReader = etr;
+								continue;
+							}
+							break;
+						case XmlNodeType.EndEntity:
+							break;
+						default:
+							valueBuilder.Append (targetReader.Value);
+							break;
+						}
 					}
+					attrValue = valueBuilder.ToString ();
+					valueBuilder.Length = 0;
 				}
 				reader.MoveToElement ();
 				reader.MoveToAttribute (attrName);
-				string attrValue = valueBuilder.ToString ();
-				valueBuilder.Length = 0;
 				attributeValues.Add (attrName, attrValue);
+
+				if (!validate)
+					continue;
+
+				// Validation
 
 				DTDAttributeDefinition def = decl [reader.Name];
 				if (def == null) {
@@ -707,9 +720,18 @@ namespace Mono.Xml
 					}
 				}
 			}
+
+			if (validate)
+				VerifyDeclaredAttributes (decl);
+
+			MoveToElement ();
+		}
+
+		private void VerifyDeclaredAttributes (DTDAttListDeclaration decl)
+		{
 			// Check if all required attributes exist, and/or
 			// if there is default values, then add them.
-			foreach (DTDAttributeDefinition def in decl.Definitions)
+			foreach (DTDAttributeDefinition def in decl.Definitions) {
 				if (!attributes.Contains (def.Name)) {
 					if (def.OccurenceType == DTDAttributeOccurenceType.Required) {
 						HandleError (String.Format ("Required attribute {0} in element {1} not found .",
@@ -736,8 +758,7 @@ namespace Mono.Xml
 						}
 					}
 				}
-
-			reader.MoveToElement ();
+			}
 		}
 
 		public override bool ReadAttributeValue ()

@@ -162,7 +162,8 @@ namespace System.Xml
 				break;
 			case '<':
 				ReadChar ();
-				switch(ReadChar ())
+				int c = ReadChar ();
+				switch(c)
 				{
 				case '?':
 					// Only read, no store.
@@ -171,8 +172,10 @@ namespace System.Xml
 				case '!':
 					CompileDeclaration ();
 					break;
+				case -1:
+					throw new XmlException (this as IXmlLineInfo, "Unexpected end of stream.");
 				default:
-					throw new XmlException (this as IXmlLineInfo,"Syntax Error after '<' character.");
+					throw new XmlException (this as IXmlLineInfo, "Syntax Error after '<' character: " + (char) c);
 				}
 				break;
 			case ']':
@@ -1513,7 +1516,8 @@ namespace System.Xml
 			}
 			parserInputStack.Push (currentInput);
 			try {
-				currentInput = new XmlParserInput (new XmlStreamReader (url, false, DTD.Resolver, DTD.BaseURI), absPath);
+				Stream s = DTD.Resolver.GetEntity (absUri, null, typeof (Stream)) as Stream;
+				currentInput = new XmlParserInput (new XmlStreamReader (s), absPath);
 			} catch (Exception ex) { // FIXME: (wishlist) Bad exception catch ;-(
 				int line = currentInput == null ? 0 : currentInput.LineNumber;
 				int col = currentInput == null ? 0 : currentInput.LinePosition;
