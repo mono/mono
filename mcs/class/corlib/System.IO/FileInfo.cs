@@ -36,7 +36,7 @@ namespace System.IO {
 				if ((stat.Attributes & FileAttributes.Directory) != 0)
 					return false;
 
-				return true;
+				return File.Exists (FullPath);
 			}
 		}
 

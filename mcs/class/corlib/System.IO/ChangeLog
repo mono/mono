@@ -1,3 +1,7 @@
+2002-07-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FileInfo.cs: fixes buglet #27940
+
 2002-07-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Path.cs: removed unneeded line from GetExtension.
