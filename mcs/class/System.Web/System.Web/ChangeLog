@@ -1,3 +1,8 @@
+2003-03-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlizedException.cs:
+	* HttpException.cs: display the correct line number in error messages.
+
 2003-03-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpCachePolicy.cs: implemented all TODOs.

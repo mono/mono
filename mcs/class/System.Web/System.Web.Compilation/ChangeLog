@@ -1,3 +1,11 @@
+2003-03-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CompilationException.cs:
+	* ParseException.cs: display the correct line number in error messages.
+
+	* AspElements.cs: added TargetSchema attribute for control. It's
+	ignored.
+
 2003-03-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BaseCompiler.cs: fixed the hack to work under windows.

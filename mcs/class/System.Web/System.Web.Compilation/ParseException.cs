@@ -25,7 +25,7 @@ namespace System.Web.Compilation
 		{
 			this.fileName = fileName;
 			this.message = message;
-			this.line = line;
+			this.line = line >= 1 ? line : 1;
 			this.col = col;
 		}
 		
@@ -34,9 +34,10 @@ namespace System.Web.Compilation
 		{
 			this.fileName = fileName;
 			this.message = message;
-			this.line = line;
+			this.line = line >= 1 ? line : 1;
 			this.col = col;
 		}
+
 		public override string Title {
 			get { return "Parser Error"; }
 		}
@@ -59,7 +60,7 @@ namespace System.Web.Compilation
 		public override StringReader SourceError {
 			get {
 				StreamReader input = new StreamReader (File.OpenRead (fileName));
-				string result = GetErrorLines (input, line, out sourceErrorLine);
+				string result = GetErrorLines (input, line - 1, out sourceErrorLine);
 				input.Close ();
 				input = null;
 				return new StringReader (result);

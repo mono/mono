@@ -126,7 +126,11 @@ namespace System.Web
 				builder.Append ("</td></tr>\n</table>\n<p>\n");
 			}
 
-			builder.AppendFormat ("<b>Source File: </b>{0}\n<p>\n", exc.FileName);
+			builder.AppendFormat ("<b>Source File: </b>{0}", exc.FileName);
+			if (exc.SourceErrorLine != -1)
+				builder.AppendFormat ("&nbsp;&nbsp;&nbsp;&nbsp;<b>Line:</b>{0}", exc.SourceErrorLine);
+
+			builder.Append ("\n<p>\n");
 
 			if (exc.HaveSourceFile) {
 				builder.Append ("<table summary=\"Source file\" width=\"100%\" bgcolor=\"#ffffc\">\n<tr><td>");
@@ -151,10 +155,16 @@ namespace System.Web
 			string s;
 			builder.Append ("<code><pre>\n");
 			while ((s = reader.ReadLine ()) != null) {
+				if (current == errorLine)
+					builder.Append ("<span style=\"color: red\">");
+
 				if (lines)
 					builder.AppendFormat ("Line {0}: {1}\n", current++, HtmlEncode (s));
 				else
 					builder.AppendFormat ("{1}\n", current++, HtmlEncode (s));
+
+				if (current == errorLine + 1)
+					builder.Append ("</span>");
 			}
 
 			builder.Append ("</pre></code>\n");

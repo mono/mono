@@ -58,7 +58,7 @@ namespace System.Web.Compilation
 
 		//TODO: get lines from compiler output.
 		public override StringReader SourceError { get {return null;}}
-		public override int SourceErrorLine { get { return 0; } }
+		public override int SourceErrorLine { get { return -1; } }
 
 		public override TextReader SourceFile {
 			get {

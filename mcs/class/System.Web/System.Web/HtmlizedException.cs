@@ -48,7 +48,7 @@ namespace System.Web
 		internal static string GetErrorLines (TextReader reader, int line, out int errorLine)
 		{
 			int firstLine = (line > 2) ? (line - 2) : line;
-			int lastLine = (line > 0) ? (firstLine + 2) : Int32.MaxValue;
+			int lastLine = (line >= 0) ? (firstLine + 2) : Int32.MaxValue;
 			errorLine = (line > 2) ? line : 1;
 			int current = 0;
 			string s;

@@ -377,7 +377,7 @@ namespace System.Web.Compilation
 		private static string [] control_atts = { "AutoEventWireup", "ClassName", "CompilerOptions",
 							  "Debug", "Description", "EnableViewState",
 							  "Explicit", "Inherits", "Language", "Strict", "Src",
-							  "WarningLevel", "CodeBehind" };
+							  "WarningLevel", "CodeBehind", "TargetSchema" };
 
 		private static string [] import_atts = { "namespace" };
 		private static string [] implements_atts = { "interface" };
