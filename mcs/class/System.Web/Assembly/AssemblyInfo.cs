@@ -40,6 +40,7 @@ using System.Web.UI;
 [assembly: AssemblyInformationalVersion("0.0.0.1")]
 [assembly: NeutralResourcesLanguage("en-US")]
 
+[assembly: AllowPartiallyTrustedCallers()]
 [assembly: TagPrefix("System.Web.UI.WebControls", "asp")]
 
 //[assembly: AssemblyDelaySign(false)]
