@@ -132,13 +132,12 @@ namespace MonoTests.System.Xml
 			AssertEquals("InsertAfter.Last", "sub2", docelem.LastChild.Name);
 			AssertEquals("InsertAfter.Prev", "good_child", docelem.FirstChild.NextSibling.Name);
 			AssertEquals("InsertAfter.Next", "good_child", docelem.LastChild.PreviousSibling.Name);
-			try 
-			{
-				document.InsertAfter(document.CreateElement("BAD_MAN"), docelem);
-				Fail("#InsertAfter.BadPositionButNoError.1");
-			}
-			catch(XmlException) {}
-		}
+			// this doesn't throw an exception
+			document.InsertAfter(document.CreateElement("BAD_MAN"), docelem);
+			AssertEquals("InsertAfter with bad location", 
+				"<root><sub1 /><good_child /><sub2 /></root><BAD_MAN />",
+				document.InnerXml);
+}
 
 		public void TestPrependChild()
 		{

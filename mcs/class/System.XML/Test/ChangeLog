@@ -1,3 +1,7 @@
+2003-01-13  Nick Drochak  <ndrochak@gol.com>
+
+	* XmlNodeTests.cs: MS.NET doesn't throw an exception here.
+
 2003-01-11  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlElementTests.cs : added TestInnerTextAndEvent test.
