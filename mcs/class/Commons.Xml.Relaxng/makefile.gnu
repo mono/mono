@@ -1,7 +1,7 @@
 topdir = ../..
 
 TEST_DIR = Test
-LIBRARY = $(topdir)/class/lib/System.Xml.dll
+LIBRARY = $(topdir)/class/lib/Commons.Xml.Relaxng.dll
 
 LIB_LIST = list.unix
 LIB_FLAGS = -r:corlib -r:System -r:System.Xml
