@@ -1,3 +1,8 @@
+2004-09-24  Martin Baulig  <martin@ximian.com>
+
+	* GenericTypeParameterBuilder.cs
+	(GenericTypeParameterBuilder.GetGenericParameterConstraints): Override.
+
 2004-09-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* DynamicMethod.cs: Add MetadataToken property and tweak Module property.

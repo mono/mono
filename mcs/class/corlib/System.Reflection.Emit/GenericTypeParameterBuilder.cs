@@ -331,6 +331,30 @@ namespace System.Reflection.Emit
 			get { return index; }
 		}
 
+		public override GenericParameterAttributes GenericParameterAttributes {
+			get {
+				return attrs;
+			}
+		}
+
+		public override Type[] GetGenericParameterConstraints ()
+		{
+			if (base_type == null) {
+				if (iface_constraints != null)
+					return iface_constraints;
+
+				return new Type[] { typeof (object) };
+			}
+
+			if (iface_constraints == null)
+				return new Type[] { base_type };
+
+			Type[] ret = new Type [iface_constraints.Length + 1];
+			ret [0] = base_type;
+			iface_constraints.CopyTo (ret, 1);
+			return ret;
+		}
+
 		public override MethodInfo DeclaringMethod {
 			get { return mbuilder; }
 		}
