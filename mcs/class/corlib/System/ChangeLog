@@ -1,3 +1,9 @@
+
+Tue Jan 29 22:32:36 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* _AppDomain.cs: remove ToString() method: it doesn't seem right 
+	to have it in this interface and it screws up the method vtable setup.
+
 2002-01-28  Andrei Zmievski <andrei@php.net>
 
 	* Double.cs: implemented IConvertible interface.
