@@ -1,5 +1,10 @@
 2004-04-22  Ravindra <rkumar@novell.com>
 
+	* TestPointConverter.cs: Added.
+	* TestSizeConverter.cs: Added.
+
+2004-04-22  Ravindra <rkumar@novell.com>
+
 	* TestRectangleConverter.cs: Added.
 
 2004-04-21  Ravindra <rkumar@novell.com>
