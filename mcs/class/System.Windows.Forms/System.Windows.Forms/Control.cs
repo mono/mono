@@ -28,7 +28,7 @@ namespace System.Windows.Forms {
     		// Helper NativeWindow class to dispatch messages back
     		// to the Control class
 		//
-    		protected internal class ControlNativeWindow : NativeWindow {
+    		internal class ControlNativeWindow : NativeWindow {
     
     			private Control control;
     
@@ -56,7 +56,7 @@ namespace System.Windows.Forms {
     		}
     		
     		// FIXME: not sure if dervied classes should have access
-    		protected internal ControlNativeWindow window;
+    		internal ControlNativeWindow window;
     		private ControlCollection childControls;
     		private Control parent;
     		static private Hashtable controlsCollection = new Hashtable ();
