@@ -1,3 +1,7 @@
+2005-01-23  Geoff Norton  <gnorton@customerdna.com>
+
+	* dirent.c: Include <unistd.h> to bring off_t in on gcc4.0+OSX
+
 2005-01-13  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* map.h: Correct Mono_Posix_OpenFlags values (they should now match 
