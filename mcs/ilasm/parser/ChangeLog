@@ -1,3 +1,8 @@
+2003-07-287 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: Use TypeRef.Ellipsis instead of null for a 
+	placeholder in bound arrays. Do not use AsClassRef anymore.
+	
 2003-07-21 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Set maxstack

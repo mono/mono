@@ -581,9 +581,7 @@ class_ref		: OPEN_BRACKET file_name CLOSE_BRACKET slashed_name
                                 if (codegen.IsThisAssembly ((string) $2)) {
                                         $$ = new TypeRef ((string) $4, null);
                                 } else {
-                                        ClassRef klass = codegen.ExternTable.GetClass (
-                                                (string) $2, (string)$4);
-                                        $$ = new ExternTypeRef (klass, (string) $4);
+                                        $$ = new ExternTypeRef ((string) $2, (string) $4);
                                 }
                           }
 			| OPEN_BRACKET D_MODULE file_name CLOSE_BRACKET slashed_name
@@ -648,8 +646,7 @@ type			: K_CLASS class_ref
                           }
 			| K_VALUETYPE OPEN_BRACKET file_name CLOSE_BRACKET slashed_name
                           {
-                                ClassRef klass = codegen.ExternTable.GetValueClass ((string) $3, (string)$5);
-                                $$ = new ExternTypeRef (klass, (string) $5);
+                                $$ = new ExternTypeRef ((string) $3, (string) $5);
                           }
                         | K_VALUETYPE slashed_name
                           {
@@ -803,14 +800,14 @@ bound			: /* EMPTY */
 			| ELLIPSIS
                           {
                                 // No lower bound or size
-                                $$ = new DictionaryEntry (null,null);
+                                $$ = new DictionaryEntry (TypeRef.Ellipsis, TypeRef.Ellipsis);
                           }
 			| int32
                           {
                                 // ******** Not sure what this is?
                                 // For now I will say it is size because there
                                 // is allready a way to set lower
-                                $$ = new DictionaryEntry (null, $1);
+                                $$ = new DictionaryEntry (TypeRef.Ellipsis, $1);
                           }
 			| int32 ELLIPSIS int32
                           {
@@ -820,7 +817,7 @@ bound			: /* EMPTY */
 			| int32 ELLIPSIS
                           {
                                 // Just lower bound
-                                $$ = new DictionaryEntry ($1, null);
+                                $$ = new DictionaryEntry ($1, TypeRef.Ellipsis);
                           }
 			;
 
@@ -1669,8 +1666,8 @@ seh_clauses		: seh_clause
 
 seh_clause		: K_CATCH class_ref handler_block
                           {
-                                ITypeRef type = (ITypeRef) $2;
-                                CatchBlock cb = new CatchBlock (type.AsClassRef (codegen));
+                                IClassRef type = (IClassRef) $2;
+                                CatchBlock cb = new CatchBlock (type);
                                 cb.SetHandlerBlock ((HandlerBlock) $3);
                                 $$ = cb;
                           }
@@ -2074,7 +2071,7 @@ custom_type		: call_conv type type_spec DOUBLE_COLON D_CTOR OPEN_PARENS type_lis
                                 else
                                         param_list = new ITypeRef[0];
 
-                                $$ = owner.AsClassRef (codegen).GetMethodRef ((ITypeRef) $2,
+                                $$ = owner.GetMethodRef ((ITypeRef) $2,
                                         (CallConv) $1, (string) $5, param_list);
                           }
 			| call_conv type D_CTOR OPEN_PARENS type_list CLOSE_PARENS
