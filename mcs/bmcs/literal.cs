@@ -256,4 +256,20 @@ namespace Mono.CSharp {
 			return this;
 		}
 	}
+
+	//
+	// VB.NET specific
+	//
+	public class DateLiteral : DateConstant {
+		public DateLiteral (DateTime s) : base (s)
+		{
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			type = TypeManager.date_type;
+
+			return this;
+		}
+	}
 }

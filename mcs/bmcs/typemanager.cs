@@ -229,6 +229,12 @@ public partial class TypeManager {
 	static public ConstructorInfo invalid_operation_ctor;
 	static public ConstructorInfo default_member_ctor;
 	static public ConstructorInfo decimal_constant_attribute_ctor;
+
+	//
+	// VB.NET specific
+	//
+
+	static public ConstructorInfo void_datetime_ctor_ticks_arg;
 	
 	// <remarks>
 	//   Holds the Array of Assemblies that have been loaded
@@ -1437,6 +1443,12 @@ public partial class TypeManager {
 			decimal_type, dec_arg);
 		
 		void_decimal_ctor_int_arg = GetConstructor (decimal_type, int_arg);
+
+		//
+		// VB.NET specific: DateTime constructor
+		//
+		Type [] ticks_arg = { int64_type };
+		void_datetime_ctor_ticks_arg = GetConstructor ( date_type, ticks_arg);
 
 		//
 		// Attributes

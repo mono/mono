@@ -4212,10 +4212,10 @@ literal
 	: boolean_literal
 	| integer_literal
 	| real_literal
-// 	| LITERAL_DATE			{ $$ = new DateLiteral ((DateTime)lexer.Value); }
+ 	| LITERAL_DATE		{ $$ = new DateLiteral ((DateTime)lexer.Value); }
 	| LITERAL_CHARACTER     { $$ = new CharLiteral ((char) lexer.Value); }
 	| LITERAL_STRING        { $$ = new StringLiteral ((string) lexer.Value); }
-	| NOTHING				{ $$ = NullLiteral.Null; }
+	| NOTHING		{ $$ = NullLiteral.Null; }
 	;
 
 real_literal
@@ -4432,7 +4432,7 @@ cast_operator
 	: CBOOL		{ $$ = TypeManager.system_boolean_expr; 	}
 	| CBYTE		{ $$ = TypeManager.system_byte_expr;	 	}
 	| CCHAR		{ $$ = TypeManager.system_char_expr; 		}
-// 	| CDATE		{ $$ = TypeManager.system_date_expr;	 	}
+ 	| CDATE		{ $$ = TypeManager.system_date_expr;	 	}
 	| CDBL		{ $$ = TypeManager.system_double_expr; 		}
 	| CDEC		{ $$ = TypeManager.system_decimal_expr; 	}
 	| CINT		{ $$ = TypeManager.system_int32_expr; 		}
@@ -4753,7 +4753,7 @@ builtin_types
 primitive_type
 	: numeric_type
 	| BOOLEAN	{ $$ = TypeManager.system_boolean_expr; }
-// 	| DATE		{ $$ = TypeManager.system_date_expr; }
+ 	| DATE		{ $$ = TypeManager.system_date_expr; }
 	| CHAR		{ $$ = TypeManager.system_char_expr; }
 	| STRING	{ $$ = TypeManager.system_string_expr; }
 	;

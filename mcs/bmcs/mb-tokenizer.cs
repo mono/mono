@@ -417,7 +417,7 @@ namespace Mono.CSharp
 				if(tokens_seen)
 				{
 					if (cant_have_a_type_character) 
-						return ExtractDateTimeLiteral();
+						return ParseDateLiteral();
 					else
 						return Token.NUMBER_SIGN;
 				}
@@ -863,6 +863,16 @@ namespace Mono.CSharp
 		{
 			return (c == ' ' || c == '\t' || c == '\v' || c == '\r' || c == 0xa0);
 		}
+
+		private void GobbleWhiteSpaces ()
+		{
+			int d = peekChar ();
+			while (is_whitespace (d)) {
+				getChar ();
+				d = peekChar ();
+			}
+
+		}
 		
 		private bool tokens_seen = false;
 		
@@ -986,25 +996,144 @@ namespace Mono.CSharp
 			return Token.EOF;
 		}
 
-		private int ExtractDateTimeLiteral()
+		private int ParseDateLiteral ()
 		{
-			int c;
+			int c, d;
+			object temp;
+			int month = 1, day = 1, year = 1, hours = 0, minutes = 0, seconds = 0, date_separator;
+			bool minutes_specified = false, seconds_specified = false;
+			bool am_specified = false, pm_specified = false;
 			
-			StringBuilder sb = new StringBuilder();
-			for (;(c = getChar ()) != -1; col++)
-			{
-				if (c == '#') {
-					val = ParseDateLiteral(sb);
-					return Token.LITERAL_DATE;
+
+			GobbleWhiteSpaces ();
+			d = peekChar ();
+			if (d == '#') 
+				goto parse_error;
+
+			temp = ParseIntLiteral ();
+			if (temp == null)
+				goto parse_error;
+
+			d = peekChar ();
+			if (d == '/' || d == '-') {
+				c = getChar ();
+				date_separator = c;
+
+				month = (int) temp;
+				// Console.WriteLine ("Month: " + month);
+
+				temp = ParseIntLiteral ();
+				if (temp == null)
+					goto parse_error;
+				day = (int) temp;
+				// Console.WriteLine ("Day: " + day);
+
+				c = getChar ();
+				if (c != date_separator)
+					goto parse_error;
+
+				temp = ParseIntLiteral ();
+				if (temp == null)
+					goto parse_error;
+				year = (int) temp;
+				// Console.WriteLine ("Year: " + year);
+
+				GobbleWhiteSpaces ();
+				d = peekChar ();
+				if (d == '#') {
+					c = getChar ();
+					goto parse_done;
 				}
-				if (IsEOL(c)) {
-					break;
-				} 
-				if (c == '-')
-					c = '/';
-				sb.Append((char)c);
+
+				temp = ParseIntLiteral ();
+				if (temp == null) 
+					goto parse_error;
+				d = peekChar ();
 			}
+
+			hours = (int) temp;
+			// Console.WriteLine ("Hours: " + hours);
+			
+			if (d == ':') {
+				c = getChar ();
+				
+				temp = ParseIntLiteral ();
+				if (temp == null)
+					goto parse_error;
+				minutes = (int) temp; 
+				// Console.WriteLine ("Minutes: " + minutes);
+				minutes_specified = true;
+
+				d = peekChar ();
+				if (d == ':') {
+					c = getChar ();
+
+					temp = ParseIntLiteral ();
+					if (temp == null)
+						goto parse_error;
+					seconds = (int) temp;
+					// Console.WriteLine ("Seconds: " + seconds);
+					seconds_specified = true;
+				} 
+			}
+
+
+			GobbleWhiteSpaces ();
+			d = peekChar ();
+			if (d == 'A' ) {
+				c = getChar ();
+
+				d = peekChar ();
+				if (d != 'M')
+					goto parse_error;
+
+				c = getChar ();
+				// Console.WriteLine ("AM");
+				am_specified = true;
+			} else if (d == 'P' ) {
+				c = getChar ();
+
+				d = peekChar ();
+				if (d != 'M')
+					goto parse_error;
+				
+				c = getChar ();
+				// Console.WriteLine ("PM");
+				pm_specified = true;
+			}
+			
+			GobbleWhiteSpaces ();
+			
+			d = peekChar ();
+			if (d == '#') {
+				c = getChar ();
+				if (!minutes_specified && !seconds_specified &&  !am_specified && ! pm_specified)
+					goto parse_error;
+
+				if ((am_specified || pm_specified) && hours > 12)
+					goto parse_error;
+
+				if (pm_specified)
+					hours += 12;
+
+				goto parse_done;
+			}
+
+		parse_error:
+			// Console.WriteLine ("Parse Error");
 			return Token.ERROR;
+
+		parse_done:
+			try {
+				temp = new DateTime (year, month, day, hours, minutes, seconds);
+			} catch (Exception ex) {
+				// Console.WriteLine (ex);
+				return Token.ERROR;
+			}
+
+			// Console.WriteLine ("Success");
+			val =temp;
+			return Token.LITERAL_DATE;
 		}
 		
 		private int ExtractStringOrCharLiteral(int c)
@@ -1045,27 +1174,26 @@ namespace Mono.CSharp
 			return Token.ERROR;
 		}
 
-		static IFormatProvider enUSculture = new CultureInfo("en-US", true);
-
-		private DateTime ParseDateLiteral(StringBuilder value)
+		private object ParseIntLiteral ()
 		{
-			try
-			{
-	  			return DateTime.Parse(value.ToString(),
-            	           		  	  enUSculture,
-        	                   	  	  DateTimeStyles.NoCurrentDateDefault | DateTimeStyles.AllowWhiteSpaces);
- 			}
-	 		catch (FormatException ex)
- 			{
-				//TODO: What is the correct error number and message?
-				Report.Error (1, Location, string.Format("Invalid date literal '{0}'", value.ToString()) 
-					+ Environment.NewLine + ex.ToString());
- 			}
-	 		catch (Exception)
- 			{
-				Report.Error (1, Location, "Error parsing date literal");	//TODO: What is the correct error number and message?
- 			}
-			return new DateTime();
+			object retval;
+			
+			int d = peekChar ();
+			
+			if (!Char.IsDigit ((char) d))
+				return null;
+
+			int c = getChar ();
+			number = new StringBuilder ();
+			decimal_digits (c);
+
+			try {
+				retval = System.Int32.Parse (number.ToString ());
+			} catch (Exception ex) {
+				return null; 
+			}
+
+			return retval;
 		}
  
 		public void PositionCursorAtNextPreProcessorDirective()
