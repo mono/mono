@@ -83,11 +83,11 @@ namespace System.Runtime.Remoting.Messaging {
 			ArrayList args = msg.GetArguments ();
 
 			_args = msg.GetArgs (args);
-			_methodSignature = (Type []) msg.GetMethodSignature (args);
 			_callContext = msg.GetLogicalCallContext (args);
-			if (_callContext == null) _callContext = new LogicalCallContext ();
+			if (_callContext == null)
+				_callContext = new LogicalCallContext ();
 	
-			ResolveMethod ();
+			_methodBase = MethodBase.GetMethodFromHandle (msg.MethodHandle);
 			Init();
 
 			if (msg.PropertiesCount > 0)

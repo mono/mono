@@ -280,8 +280,8 @@ namespace System.Runtime.Remoting.Messaging {
 		string _uri;
 		string _methodName;
 		string _typeName;
-
-		CADArgHolder _methodSignature;
+		
+		internal RuntimeMethodHandle MethodHandle;
 
 		internal string TypeName {
 			get {
@@ -313,21 +313,13 @@ namespace System.Runtime.Remoting.Messaging {
 			_methodName = callMsg.MethodName;
 			_typeName = callMsg.TypeName;
 			_uri = callMsg.Uri;
+			MethodHandle = callMsg.MethodBase.MethodHandle;
 
 			ArrayList serializeList = null; 
 			
 			_propertyCount = MarshalProperties (callMsg.Properties, ref serializeList);
 
 			_args = MarshalArguments ( callMsg.Args, ref serializeList);
-
-			// check if we need to save method signature
-			if (RemotingServices.IsMethodOverloaded (callMsg)) {
-				if (null == serializeList)
-					serializeList = new ArrayList();
-
-				_methodSignature = new CADArgHolder (serializeList.Count);
-				serializeList.Add(callMsg.MethodSignature);
-			}
 
 			// Save callcontext
 			SaveLogicalCallContext (callMsg, ref serializeList);
@@ -354,13 +346,6 @@ namespace System.Runtime.Remoting.Messaging {
 
 		internal object [] GetArgs (ArrayList args) {
 			return UnmarshalArguments (_args, args);
-		}
-			
-		internal object [] GetMethodSignature (ArrayList args) {
-			if (null == _methodSignature)
-				return null;
-
-			return (object []) args [_methodSignature.index];
 		}
 
 		internal int PropertiesCount {

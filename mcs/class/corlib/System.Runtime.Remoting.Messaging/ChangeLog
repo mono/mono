@@ -1,3 +1,11 @@
+2004-09-11 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* CADMessages.cs, MethodCall.cs: When doing an x-appdomain
+	call, store the method in a RuntimeMethodHandle. This allows
+	us to avoid the expensive lookup operations that must be done
+	to resolve the method. This makes xsp go from 250 r/s to 450 r/s
+	for me.
+
 2004-09-05 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* MethodCall.cs, CADMessages.cs: String.Copy (x) is the same
