@@ -1,3 +1,9 @@
+2002-05-03  Nick Drochak  <ndrochak@gol.com>
+
+	* MemoryStream.cs: Refrain from allocating array until the space is
+	really needed. This fixes a bug in the Length property when the
+	constructor without the byte array is used.
+
 2002-05-01  Duncan Mak  <duncan@ximian.com>
 
 	* DirectoryNotFoundException.cs (constructor): Added missing

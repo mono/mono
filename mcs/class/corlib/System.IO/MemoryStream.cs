@@ -50,8 +50,8 @@ namespace System.IO {
                         canWrite = true;
                         
                         this.capacity = capacity;
-                        initialLength = capacity;
-                        internalBuffer = new byte[ capacity ];
+                        initialLength = 0;
+                        internalBuffer = new byte[ 0 ];
 
                         expandable = true;
                         allowGetBuffer = true;
@@ -316,9 +316,9 @@ namespace System.IO {
                         } 
 
                         byte[] newBuffer;
-                        newBuffer = new byte[ value ];
+			newBuffer = new byte[ value ];
                         
-                        if( value < capacity ) {
+                        if (value < internalBuffer.Length) {
                                 // truncate
                                 Array.Copy( internalBuffer, 0, newBuffer, 0, (int)value );                              
                         } else {
@@ -359,15 +359,20 @@ namespace System.IO {
                                 throw new ObjectDisposedException( "MemoryStream" );
                         }
 
-                        if( position + count > capacity ) {
-                                if( expandable ) {
-                                        // expand the buffer
-                                        SetLength( position + count );                       
-                                } else {
-                                        // only write as many bytes as will fit
-                                        count = (int)((long)capacity - position);
-                                }
-                        }
+			if( position + count > capacity ) {
+				if( expandable ) {
+					// expand the buffer
+					SetLength( position + count );                       
+				} else {
+					// only write as many bytes as will fit
+					count = (int)((long)capacity - position);
+				}
+			}
+
+			// internal buffer may not be allocated all the way up to capacity
+			// count will already be limited to capacity above if non-expandable
+			if( position + count >= internalBuffer.Length )
+				SetLength( position + count );
 
                         Array.Copy( buffer, offset, internalBuffer, (int)position, count );
                         position += count;
@@ -376,15 +381,18 @@ namespace System.IO {
 
 
                 public override void WriteByte( byte value ) { 
-                        if( streamClosed ) {
+                        if ( streamClosed )
                                 throw new ObjectDisposedException( "MemoryStream" );
-                        }
+			else if( !canWrite || (position >= capacity && !expandable))
+                                throw new NotSupportedException();
 
-                        if( position >= capacity ) {
+                        if ( position >= capacity )
                                 SetLength( capacity + 1 );
-                        }
 
-                        internalBuffer[ position++ ] = value;
+			if( position >= internalBuffer.Length )
+				SetLength ( position + 1 );
+
+			internalBuffer[ position++ ] = value;
                 }
                 
 
