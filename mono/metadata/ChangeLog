@@ -1,3 +1,7 @@
+2004-04-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c: Fix build.
+
 2004-04-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Makefile.am: Added security.c|h.
