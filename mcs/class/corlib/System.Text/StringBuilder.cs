@@ -64,16 +64,15 @@ namespace System.Text {
 			// if the length is not zero, then we have to copy some characters
 			if (sLength > 0) {
 				// Copy the correct number of characters into the internal array
-				char[] tString = value.ToCharArray(startIndex, sLength);
-				Array.Copy( tString, sString, sLength);
+				value.CopyTo (0, sString, 0, sLength);
 			}
 		}
 
-		public StringBuilder() : this(String.Empty, 0, 0, 0) {}
+		public StringBuilder () : this(String.Empty, 0, 0, 0) {}
 
-		public StringBuilder( int capacity ) : this("", 0, 0, capacity) {}
+		public StringBuilder( int capacity ) : this(String.Empty, 0, 0, capacity) {}
 
-		public StringBuilder( int capacity, int maxCapacity ) : this("", 0, 0, capacity) {
+		public StringBuilder( int capacity, int maxCapacity ) : this(String.Empty, 0, 0, capacity) {
 			if(capacity > maxCapacity) {
 				throw new System.ArgumentOutOfRangeException("capacity", "Capacity exceeds maximum capacity.");
 			}
@@ -119,6 +118,7 @@ namespace System.Text {
 				if( value < 0 || value > MaxCapacity) {
 					throw new ArgumentOutOfRangeException();
 				} else {
+
 					if( value < sLength ) {
 						// Truncate current string at value
 
@@ -143,7 +143,7 @@ namespace System.Text {
 						
 						string padding = new String( ' ', padLength );
 						Array.Copy( sString, tString, sLength );
-						Array.Copy( padding.ToCharArray(), 0, tString, sLength, padLength );
+						padding.CopyTo (0, sString, sLength, padLength);
 						sString = tString;
 						sLength = sString.Length;
 						sCapacity = value;
@@ -197,7 +197,7 @@ namespace System.Text {
 		}
 
 		public bool Equals( StringBuilder sb ) {
-			if( this.ToString() == sb.ToString() ) {
+			if(sLength == sb.Length && this.ToString() == sb.ToString() ) {
 				return true;
 			} else {
 				return false;
@@ -245,7 +245,6 @@ namespace System.Text {
 		public StringBuilder Replace( string oldValue, string newValue, int startIndex, int count ) {
 			string startString = this.ToString();
 			StringBuilder newStringB = new StringBuilder();
-			string newString;
 
 			if( oldValue == null ) { 
 				throw new ArgumentNullException(
@@ -297,31 +296,15 @@ namespace System.Text {
 				}
 			} 
 
-			newString = newStringB.ToString();
-
-			EnsureCapacity( newString.Length );
-			sString = newString.ToCharArray();
-			sLength = newString.Length;
+			sCapacity = newStringB.sCapacity;
+			sString = newStringB.sString;
+			sLength = newStringB.sLength;
 			return this;
 		}
 
 		      
 		/* The Append Methods */
 
-		// TODO: Currently most of these methods convert the 
-		// parameter to a CharArray (via a String) and then pass
-		// it to Append( char[] ).  There might be a faster way
-		// of doing this, but it's probably adequate and anything else
-		// would make it too messy.
-		//
-		// As an example, a sample test run of appending a 100 character
-		// string to the StringBuilder, and loooping this 50,000 times
-		// results in an elapsed time of 2.4s using the MS StringBuilder
-		// and 2.7s using this StringBuilder.  Note that this results
-		// in a 5 million character string.  I believe MS uses a lot
-		// of "native" DLLs for the "meat" of the base classes.
-
-		[MonoTODO ("Look at all Append methods and complete them if necessary")]
 		public StringBuilder Append( char[] value ) {
 			if( sLength + value.Length > sCapacity ) {
 				// Need more capacity, double the capacity StringBuilder 
@@ -339,66 +322,72 @@ namespace System.Text {
 		
 		public StringBuilder Append( string value ) {
 			if( value != null ) {
-				return Append( value.ToCharArray() );
+				int new_size = sLength + value.Length;
+				if (new_size > sCapacity)
+					Capacity = value.Length + sCapacity * 2;
+
+				value.CopyTo (0, sString, sLength, value.Length);
+				sLength = new_size;
+				return this;
 			} else {
 				return null;
 			}
 		}
 
 		public StringBuilder Append( bool value ) {
-			return Append( value.ToString().ToCharArray() );
+			return Append (value.ToString());
 		}
 		
 		public StringBuilder Append( byte value ) {
-			return Append( value.ToString().ToCharArray() );
+			return Append (value.ToString());
 		}
 
 		public StringBuilder Append( decimal value ) {
-			return Append( value.ToString().ToCharArray() );
+			return Append (value.ToString());
 		}
 
 		public StringBuilder Append( double value ) {
-			return Append( value.ToString().ToCharArray() );
+			return Append (value.ToString());
 		}
 
 		public StringBuilder Append( short value ) {
-			return Append( value.ToString().ToCharArray() );
+			return Append (value.ToString());
 		}
 
 		public StringBuilder Append( int value ) {
-			return Append( value.ToString().ToCharArray() );
+			return Append (value.ToString());
 		}
 
 		public StringBuilder Append( long value ) {
-			return Append( value.ToString().ToCharArray() );
+			return Append (value.ToString());
 		}
 
 		public StringBuilder Append( object value ) {
-			return Append( value.ToString().ToCharArray() );
+			return Append (value.ToString());
 		}
 
 		[CLSCompliant(false)]
 		public StringBuilder Append( sbyte value ) {
-			return Append( value.ToString().ToCharArray() );
+			return Append (value.ToString());
 		}
 
 		public StringBuilder Append( float value ) {
-			return Append( value.ToString().ToCharArray() );
+			return Append (value.ToString());
 		}
 
 		[CLSCompliant(false)]
 		public StringBuilder Append( ushort value ) {
-			return Append( value.ToString().ToCharArray() );
+			return Append (value.ToString());
 		}	
 		
 		[CLSCompliant(false)]
 		public StringBuilder Append( uint value ) {
-			return Append( value.ToString().ToCharArray() );
+			return Append (value.ToString());
 		}
 
 		[CLSCompliant(false)]
 		public StringBuilder Append( ulong value ) {
-			return Append( value.ToString().ToCharArray() );
+			return Append (value.ToString());
 		}
 
 		public StringBuilder Append( char value ) {
@@ -450,7 +439,7 @@ namespace System.Text {
 				throw new ArgumentOutOfRangeException();
 			}
 
-			return Append( value.Substring( startIndex, count ).ToCharArray() );
+			return Append (value.Substring (startIndex, count));
 		}
 
 		public StringBuilder AppendFormat (string format, object arg0 )
@@ -487,9 +476,6 @@ namespace System.Text {
 
 		/*  The Insert Functions */
 		
-		// Similarly to the Append functions, get everything down to a CharArray 
-		// and insert that.
-		
 		public StringBuilder Insert( int index, char[] value ) {
 			if( index > sLength || index < 0) {
 				throw new ArgumentOutOfRangeException();
@@ -515,15 +501,32 @@ namespace System.Text {
 		}
 				
 		public StringBuilder Insert( int index, string value ) {
-			return Insert( index, value.ToCharArray() );
+			if (index > sLength || index < 0)
+				throw new ArgumentOutOfRangeException ("index");
+
+			if (value == null || value.Length == 0)
+				return this;
+
+			int len = value.Length;
+			// Check we have the capacity to insert this array
+			if (sCapacity < sLength + len)
+				Capacity = len + ( sCapacity + sCapacity );
+
+			// Move everything to the right of the insert point across
+			Array.Copy (sString, index, sString, index + len, sLength - index);
+			
+			value.CopyTo (0, sString, index, len);
+			
+			sLength += len;
+			return this;
 		}
 
 		public StringBuilder Insert( int index, bool value ) {
-			return Insert( index, value.ToString().ToCharArray() );
+			return Insert( index, value.ToString());
 		}
 		
 		public StringBuilder Insert( int index, byte value ) {
-			return Insert( index, value.ToString().ToCharArray() );
+			return Insert( index, value.ToString());
 		}
 
 		public StringBuilder Insert( int index, char value) {
@@ -534,51 +537,51 @@ namespace System.Text {
 		}
 
 		public StringBuilder Insert( int index, decimal value ) {
-			return Insert( index, value.ToString().ToCharArray() );
+			return Insert( index, value.ToString() );
 		}
 
 		public StringBuilder Insert( int index, double value ) {
-			return Insert( index, value.ToString().ToCharArray() );
+			return Insert( index, value.ToString() );
 		}
 		
 		public StringBuilder Insert( int index, short value ) {
-			return Insert( index, value.ToString().ToCharArray() );
+			return Insert( index, value.ToString() );
 		}
 
 		public StringBuilder Insert( int index, int value ) {
-			return Insert( index, value.ToString().ToCharArray() );
+			return Insert( index, value.ToString() );
 		}
 
 		public StringBuilder Insert( int index, long value ) {
-			return Insert( index, value.ToString().ToCharArray() );
+			return Insert( index, value.ToString() );
 		}
 	
 		public StringBuilder Insert( int index, object value ) {
-			return Insert( index, value.ToString().ToCharArray() );
+			return Insert( index, value.ToString() );
 		}
 		
 		[CLSCompliant(false)]
 		public StringBuilder Insert( int index, sbyte value ) {
-			return Insert( index, value.ToString().ToCharArray() );
+			return Insert( index, value.ToString() );
 		}
 
 		public StringBuilder Insert( int index, float value ) {
-			return Insert( index, value.ToString().ToCharArray() );
+			return Insert( index, value.ToString() );
 		}
 
 		[CLSCompliant(false)]
 		public StringBuilder Insert( int index, ushort value ) {
-			return Insert( index, value.ToString().ToCharArray() );
+			return Insert( index, value.ToString() );
 		}
 
 		[CLSCompliant(false)]
 		public StringBuilder Insert( int index, uint value ) {
-			return Insert( index, value.ToString().ToCharArray() );
+			return Insert( index, value.ToString() );
 		}
 		
 		[CLSCompliant(false)]
 		public StringBuilder Insert( int index, ulong value ) {
-			return Insert( index, value.ToString().ToCharArray() );
+			return Insert( index, value.ToString() );
 		}
 
 		public StringBuilder Insert( int index, string value, int count ) {
@@ -590,7 +593,7 @@ namespace System.Text {
 				if( value != "" ) {
 					for( int insertCount = 0; insertCount < count; 
 						insertCount++ ) {
-						Insert( index, value.ToCharArray() );	   
+						Insert( index, value );	   
 					}
 				}
 			}

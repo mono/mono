@@ -1,3 +1,8 @@
+2002-08-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* StringBuilder.cs: improved performace by using String.InternalCopyTo
+	instead of using ToCharArray all over the place (more that 50% of
+	speed improvement when using Append).
 
 Wed Aug 21 20:02:04 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
