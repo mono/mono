@@ -79,7 +79,7 @@ $(assemblies_DATA):
 	cp -f $$f $(srcdir)
 
 $(gac_assemblies_list):
-	@f=$(mcs_topdir)/class/lib/net_1_1/$@; \
+	@f=$(mcs_topdir)/class/lib/default/$@; \
 	if test -f $$f; then :; else f=$(assembliesdir)/$@; fi ; \
 	echo "cp -f $$f $(srcdir)"; \
 	cp -f $$f $(srcdir)
