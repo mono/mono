@@ -1,3 +1,11 @@
+2004-03-19	Joerg Rosenkranz <JoergR@voelcker.com>
+	* Interaction.cs:
+		Added MonoTODO attributes
+		All not implemented members are throwing NotImplementedException
+		Implemented IIf
+		Implemented Command
+		Implemented Environ
+		
 2004-02-20  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* ComClassAttibute.cs:
 		Implemented attribute (related to bug #52570)
