@@ -371,13 +371,15 @@ namespace Mono.CSharp {
 				"System.ParamArrayAttribute",
 				"System.CLSCompliantAttribute",
 				"System.Security.UnverifiableCodeAttribute",
+				"System.Security.Permissions.SecurityAttribute",
 				"System.Runtime.CompilerServices.IndexerNameAttribute",
 				"System.Runtime.InteropServices.InAttribute",
 				"System.Runtime.InteropServices.StructLayoutAttribute",
 				"System.Runtime.InteropServices.FieldOffsetAttribute",
 				"System.InvalidOperationException",
 				"System.NotSupportedException",
-				"System.MarshalByRefObject"
+				"System.MarshalByRefObject",
+				"System.Security.CodeAccessPermission"
 			};
 
 			// We must store them here before calling BootstrapCorlib_ResolveDelegate.

@@ -32,10 +32,13 @@
 #define CACHE
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Security;
+using System.Security.Permissions;
 using System.Text;
 
 using Mono.CompilerServices.SymbolWriter;
@@ -2589,6 +2592,7 @@ namespace Mono.CSharp {
 
 	public abstract class ClassOrStruct : TypeContainer {
 		bool hasExplicitLayout = false;
+		ListDictionary declarative_security;
 
 		public ClassOrStruct (NamespaceEntry ns, TypeContainer parent,
 				      MemberName name, Attributes attrs, Kind kind,
@@ -2622,11 +2626,30 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
+			if (a.Type.IsSubclassOf (TypeManager.security_attr_type) && a.CheckSecurityActionValidity (false)) {
+				if (declarative_security == null)
+					declarative_security = new ListDictionary ();
+
+				a.ExtractSecurityPermissionSet (declarative_security);
+				return;
+			}
+
 			if (a.Type == TypeManager.struct_layout_attribute_type
 			    && (LayoutKind) a.GetPositionalValue (0) == LayoutKind.Explicit)
 				hasExplicitLayout = true;
 
 			base.ApplyAttributeBuilder (a, cb);
+		}
+
+		public override void Emit()
+		{
+			base.Emit ();
+
+			if (declarative_security != null) {
+				foreach (DictionaryEntry de in declarative_security) {
+					TypeBuilder.AddDeclarativeSecurity ((SecurityAction)de.Key, (PermissionSet)de.Value);
+				}
+			}
 		}
 
 		public override void Register ()
@@ -3365,6 +3388,7 @@ namespace Mono.CSharp {
 		public MethodBuilder MethodBuilder;
 		public MethodData MethodData;
 		ReturnParameter return_attributes;
+		ListDictionary declarative_security;
 
 		/// <summary>
 		///   Modifiers allowed in a class declaration
@@ -3488,6 +3512,13 @@ namespace Mono.CSharp {
 					Report.Error (601, a.Location, "The DllImport attribute must be specified on a method marked `static' and `extern'");
 				}
 
+				return;
+			}
+
+			if (a.Type.IsSubclassOf (TypeManager.security_attr_type) && a.CheckSecurityActionValidity (false)) {
+				if (declarative_security == null)
+					declarative_security = new ListDictionary ();
+				a.ExtractSecurityPermissionSet (declarative_security);
 				return;
 			}
 
@@ -3642,6 +3673,13 @@ namespace Mono.CSharp {
 		{
 			MethodData.Emit (Parent, this);
 			base.Emit ();
+
+			if (declarative_security != null) {
+				foreach (DictionaryEntry de in declarative_security) {
+					MethodBuilder.AddDeclarativeSecurity ((SecurityAction)de.Key, (PermissionSet)de.Value);
+				}
+			}
+
 			Block = null;
 			MethodData = null;
 		}
@@ -3969,6 +4007,7 @@ namespace Mono.CSharp {
 	public class Constructor : MethodCore, IMethodData {
 		public ConstructorBuilder ConstructorBuilder;
 		public ConstructorInitializer Initializer;
+		ListDictionary declarative_security;
 
 		// <summary>
 		//   Modifiers allowed for a constructor.
@@ -4034,6 +4073,14 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
+			if (a.Type.IsSubclassOf (TypeManager.security_attr_type) && a.CheckSecurityActionValidity (false)) {
+				if (declarative_security == null) {
+					declarative_security = new ListDictionary ();
+				}
+				a.ExtractSecurityPermissionSet (declarative_security);
+				return;
+			}
+
 			ConstructorBuilder.SetCustomAttribute (cb);
 		}
 		
@@ -4222,6 +4269,12 @@ namespace Mono.CSharp {
 				source.CloseMethod ();
 
 			base.Emit ();
+
+			if (declarative_security != null) {
+				foreach (DictionaryEntry de in declarative_security) {
+					ConstructorBuilder.AddDeclarativeSecurity ((SecurityAction)de.Key, (PermissionSet)de.Value);
+				}
+			}
 
 			block = null;
 		}
@@ -4984,7 +5037,11 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			
+			if (a.Type.IsSubclassOf (TypeManager.security_attr_type)) {
+				a.Error_InvalidSecurityParent ();
+				return;
+			}
+
 			FieldBuilder.SetCustomAttribute (cb);
 		}
 
@@ -5315,6 +5372,7 @@ namespace Mono.CSharp {
 	public abstract class AbstractPropertyEventMethod: MemberCore, IMethodData {
 		protected MethodData method_data;
 		protected ToplevelBlock block;
+		protected ListDictionary declarative_security;
 
 		// The accessor are created event if they are not wanted.
 		// But we need them because their names are reserved.
@@ -5397,6 +5455,13 @@ namespace Mono.CSharp {
 				return;
 			}
 
+			if (a.Type.IsSubclassOf (TypeManager.security_attr_type) && a.CheckSecurityActionValidity (false)) {
+				if (declarative_security == null)
+					declarative_security = new ListDictionary ();
+				a.ExtractSecurityPermissionSet (declarative_security);
+				return;
+			}
+
 			if (a.Target == AttributeTargets.Method) {
 				method_data.MethodBuilder.SetCustomAttribute (cb);
 				return;
@@ -5426,6 +5491,13 @@ namespace Mono.CSharp {
 		public virtual void Emit (TypeContainer container)
 		{
 			method_data.Emit (container, this);
+
+			if (declarative_security != null) {
+				foreach (DictionaryEntry de in declarative_security) {
+					method_data.MethodBuilder.AddDeclarativeSecurity ((SecurityAction)de.Key, (PermissionSet)de.Value);
+				}
+			}
+
 			block = null;
 		}
 
@@ -5668,6 +5740,11 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
+			if (a.Type.IsSubclassOf (TypeManager.security_attr_type)) {
+				a.Error_InvalidSecurityParent ();
+				return;
+			}
+
 			PropertyBuilder.SetCustomAttribute (cb);
 		}
 
@@ -6323,6 +6400,11 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
+			if (a.Type.IsSubclassOf (TypeManager.security_attr_type)) {
+				a.Error_InvalidSecurityParent ();
+				return;
+			}
+			
 			EventBuilder.SetCustomAttribute (cb);
 		}
 

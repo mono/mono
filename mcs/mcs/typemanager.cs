@@ -94,6 +94,8 @@ public class TypeManager {
 	static public Type mbr_type;
 	static public Type struct_layout_attribute_type;
 	static public Type field_offset_attribute_type;
+	static public Type security_attr_type;
+	static public Type code_access_permission_type;
 
 	//
 	// An empty array of types
@@ -1156,6 +1158,8 @@ public class TypeManager {
 		cls_compliant_attribute_type = CoreLookupType ("System.CLSCompliantAttribute");
 		struct_layout_attribute_type = CoreLookupType ("System.Runtime.InteropServices.StructLayoutAttribute");
 		field_offset_attribute_type = CoreLookupType ("System.Runtime.InteropServices.FieldOffsetAttribute");
+		security_attr_type = CoreLookupType ("System.Security.Permissions.SecurityAttribute");
+		code_access_permission_type = CoreLookupType ("System.Security.CodeAccessPermission");
 
 		//
 		// When compiling corlib, store the "real" types here.

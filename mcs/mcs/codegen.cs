@@ -11,10 +11,13 @@
 using System;
 using System.IO;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Security.Cryptography;
+using System.Security.Permissions;
 
 using Mono.Security.Cryptography;
 
@@ -1053,6 +1056,8 @@ namespace Mono.CSharp {
 		public AssemblyBuilder Builder;
 		bool is_cls_compliant;
 
+		ListDictionary declarative_security;
+
 		static string[] attribute_targets = new string [] { "assembly" };
 
 		public AssemblyClass (): base ()
@@ -1231,7 +1236,45 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder customBuilder)
 		{
+			if (a.Type.IsSubclassOf (TypeManager.security_attr_type) && a.CheckSecurityActionValidity (true)) {
+				if (declarative_security == null)
+					declarative_security = new ListDictionary ();
+
+				a.ExtractSecurityPermissionSet (declarative_security);
+				return;
+			}
+
 			Builder.SetCustomAttribute (customBuilder);
+		}
+
+		public override void Emit (TypeContainer tc)
+		{
+			base.Emit (tc);
+
+			if (declarative_security != null) {
+
+				MethodInfo add_permission = typeof (AssemblyBuilder).GetMethod ("AddPermissionRequests", BindingFlags.Instance | BindingFlags.NonPublic);
+				object builder_instance = Builder;
+
+				try {
+					// Microsoft runtime hacking
+					if (add_permission == null) {
+						Type assembly_builder = typeof (AssemblyBuilder).Assembly.GetType ("System.Reflection.Emit.AssemblyBuilderData");
+						add_permission = assembly_builder.GetMethod ("AddPermissionRequests", BindingFlags.Instance | BindingFlags.NonPublic);
+
+						FieldInfo fi = typeof (AssemblyBuilder).GetField ("m_assemblyData", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.GetField);
+						builder_instance = fi.GetValue (Builder);
+					}
+
+					object[] args = new object [] { declarative_security [SecurityAction.RequestMinimum],
+												  declarative_security [SecurityAction.RequestOptional],
+												  declarative_security [SecurityAction.RequestRefuse] };
+					add_permission.Invoke (builder_instance, args);
+				}
+				catch {
+					Report.RuntimeMissingSupport ("assembly permission setting");
+				}
+			}
 		}
 
 		public override string[] ValidAttributeTargets {

@@ -1,3 +1,31 @@
+2004-10-27  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #62358, implemented security attribute encoding.
+
+	* attribute.cs (Attribute.CheckSecurityActionValididy): New method.
+	Tests permitted SecurityAction for assembly or other types.
+	(Assembly.ExtractSecurityPermissionSet): New method. Transforms
+	data from SecurityPermissionAttribute to PermisionSet class.
+
+	* class.cs (ApplyAttributeBuilder): Added special handling
+	for System.Security.Permissions.SecurityAttribute based types.
+
+	* codegen.cs (AssemblyClass.ApplyAttributeBuilder): Added
+	special handling for System.Security.Permissions.SecurityAttribute
+	based types.
+
+	* enum.cs (ApplyAttributeBuilder): Added special handling
+	for System.Security.Permissions.SecurityAttribute based types.
+
+	* parameter.cs (ApplyAttributeBuilder): Added special handling
+	for System.Security.Permissions.SecurityAttribute based types.
+
+	* rootcontext.cs: Next 2 core types.
+
+	* typemanager.cs (TypeManager.security_permission_attr_type):
+	Built in type for the SecurityPermission Attribute.
+	(code_access_permission_type): Build in type.
+
 2004-10-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (LocalVariableReference.DoResolveBase, Emit):

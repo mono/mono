@@ -18,6 +18,8 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
+using System.Security; 
+using System.Security.Permissions;
 using System.Text;
 
 namespace Mono.CSharp {
@@ -79,7 +81,7 @@ namespace Mono.CSharp {
 		public readonly Location Location;
 
 		public Type Type;
-		
+
 		// Is non-null if type is AttributeUsageAttribute
 		AttributeUsageAttribute usage_attribute;
 
@@ -122,6 +124,20 @@ namespace Mono.CSharp {
 			Report.Error (182, loc,
 				      "An attribute argument must be a constant expression, typeof " +
 				      "expression or array creation expression");
+		}
+
+		/// <summary>
+		/// This is rather hack. We report many emit attribute error with same error to be compatible with
+		/// csc. But because csc has to report them this way because error came from ilasm we needn't.
+		/// </summary>
+		public void Error_AttributeEmitError (string inner)
+		{
+			Report.Error (647, Location, "Error emitting '{0}' attribute because '{1}'", Name, inner);
+		}
+
+		public void Error_InvalidSecurityParent ()
+		{
+			Error_AttributeEmitError ("it is attached to invalid parent");
 		}
 
 		void Error_AttributeConstructorMismatch ()
@@ -707,6 +723,107 @@ namespace Mono.CSharp {
 				return false;
 
 			return (bool)pos_values [0];
+		}
+
+		/// <summary>
+		/// Tests permitted SecurityAction for assembly or other types
+		/// </summary>
+		public bool CheckSecurityActionValidity (bool for_assembly)
+		{
+			SecurityAction action  = GetSecurityActionValue ();
+
+			if ((action == SecurityAction.RequestMinimum || action == SecurityAction.RequestOptional || action == SecurityAction.RequestRefuse) && for_assembly)
+				return true;
+
+			if (!for_assembly) {
+				if (action < SecurityAction.Demand || action > SecurityAction.InheritanceDemand) {
+					Error_AttributeEmitError ("SecurityAction is out of range");
+					return false;
+				}
+
+				if ((action != SecurityAction.RequestMinimum && action != SecurityAction.RequestOptional && action != SecurityAction.RequestRefuse) && !for_assembly)
+					return true;
+			}
+
+			Error_AttributeEmitError (String.Concat ("SecurityAction '", action, "' is not valid for this declaration"));
+			return false;
+		}
+
+		System.Security.Permissions.SecurityAction GetSecurityActionValue ()
+		{
+			return (SecurityAction)pos_values [0];
+		}
+
+		/// <summary>
+		/// Creates instance of SecurityAttribute class and add result of CreatePermission method to permission table.
+		/// </summary>
+		/// <returns></returns>
+		public void ExtractSecurityPermissionSet (ListDictionary permissions)
+		{
+			if (TypeManager.LookupDeclSpace (Type) != null && RootContext.StdLib) {
+				Error_AttributeEmitError ("security custom attributes can not be referenced from defining assembly");
+				return;
+			}
+
+			SecurityAttribute sa;
+			// For all assemblies except corlib we can avoid all hacks
+			if (RootContext.StdLib) {
+				sa = (SecurityAttribute) Activator.CreateInstance (Type, pos_values);
+
+				if (prop_info_arr != null) {
+					for (int i = 0; i < prop_info_arr.Length; ++i) {
+						PropertyInfo pi = prop_info_arr [i];
+						pi.SetValue (sa, prop_values_arr [i], null);
+					}
+				}
+			} else {
+				Type temp_type = Type.GetType (Type.FullName);
+				// HACK: All mscorlib attributes have same ctor syntax
+				sa = (SecurityAttribute) Activator.CreateInstance (temp_type, new object[] { GetSecurityActionValue () } );
+
+				// All types are from newly created corlib but for invocation with old we need to convert them
+				if (prop_info_arr != null) {
+					for (int i = 0; i < prop_info_arr.Length; ++i) {
+						PropertyInfo emited_pi = prop_info_arr [i];
+						PropertyInfo pi = temp_type.GetProperty (emited_pi.Name, emited_pi.PropertyType);
+
+						object old_instance = pi.PropertyType.IsEnum ?
+							System.Enum.ToObject (pi.PropertyType, prop_values_arr [i]) :
+							prop_values_arr [i];
+
+						pi.SetValue (sa, old_instance, null);
+					}
+				}
+			}
+
+			IPermission perm = sa.CreatePermission ();
+			SecurityAction action;
+
+			if (perm.GetType().IsSubclassOf (TypeManager.code_access_permission_type)) {
+				action = GetSecurityActionValue ();
+			} else {
+				switch (GetSecurityActionValue ()) {
+					case SecurityAction.Demand:
+						action = (SecurityAction)13;
+						break;
+					case SecurityAction.LinkDemand:
+						action = (SecurityAction)14;
+						break;
+					case SecurityAction.InheritanceDemand:
+						action = (SecurityAction)15;
+						break;
+					default:
+						Error_AttributeEmitError ("Invalid SecurityAction for non-Code Access Security permission");
+						return;
+				}
+			}
+
+			PermissionSet ps = (PermissionSet)permissions [action];
+			if (ps == null) {
+				ps = new PermissionSet (PermissionState.None);
+				permissions.Add (action, ps);
+			}
+			ps.AddPermission (sa.CreatePermission ());
 		}
 
 		object GetValue (object value)

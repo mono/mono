@@ -40,6 +40,11 @@ namespace Mono.CSharp {
 				return;
 			}
 
+			if (a.Type.IsSubclassOf (TypeManager.security_attr_type)) {
+				a.Error_InvalidSecurityParent ();
+				return;
+			}
+
 			builder.SetCustomAttribute (cb);
 		}
 
