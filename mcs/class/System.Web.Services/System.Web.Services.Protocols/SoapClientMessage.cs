@@ -1,10 +1,12 @@
 // 
 // System.Web.Services.Protocols.SoapClientMessage.cs
 //
-// Author:
+// Authors:
 //   Tim Coleman (tim@timcoleman.com)
+//   Miguel de Icaza (miguel@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2002
+// Copyright (C) Ximian, Inc. 2003
 //
 
 using System.Web.Services;
@@ -19,6 +21,7 @@ namespace System.Web.Services.Protocols {
 		string url;
 		LogicalMethodInfo client_method;
 		SoapDocumentMethodAttribute sma;
+		object [] parameters;
 		#endregion
 
 		#region Constructors
@@ -27,12 +30,13 @@ namespace System.Web.Services.Protocols {
 		// Constructs the SoapClientMessage
 		//
 		internal SoapClientMessage (SoapHttpClientProtocol client, SoapDocumentMethodAttribute sma,
-					    LogicalMethodInfo client_method, bool one_way, string url)
+					    LogicalMethodInfo client_method, bool one_way, string url, object [] parameters)
 		{
 			this.sma = sma;
 			this.client = client;
 			this.client_method = client_method;
 			this.url = url;
+			this.parameters = parameters;
 		}
 
 		#endregion 

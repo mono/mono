@@ -13,6 +13,14 @@
 //    Fix whether end_method_info is valid as the single element of the stuff.
 //    AsyncResultParameter
 //
+// WILD GUESS:
+//   The reason for this class is so that it can cluster method/begin/end methods
+//   together, as the begin/end methods in generated files from WSDL does *NOT*
+//   contain all the information required to make a request.
+//
+//   Either that, or the Begin*/End* versions probe the attributes on the regular
+//   method (which seems simpler). 
+//
 
 using System.Reflection;
 using System.Collections;

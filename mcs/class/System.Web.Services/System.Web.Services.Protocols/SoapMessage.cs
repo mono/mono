@@ -18,7 +18,7 @@ namespace System.Web.Services.Protocols {
 
 		#region Fields
 
-		string contentType = "text/xml";
+		string content_type = "text/xml";
 		SoapException exception = null;
 		SoapHeaderCollection headers = null;
 		SoapMessageStage stage;
@@ -41,8 +41,8 @@ namespace System.Web.Services.Protocols {
 		}
 
 		public string ContentType {
-			get { return contentType; }
-			set { contentType = value; }
+			get { return content_type; }
+			set { content_type = value; }
 		}
 
 		public SoapException Exception {

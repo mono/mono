@@ -1,3 +1,8 @@
+2003-04-30  Miguel de Icaza  <miguel@ximian.com>
+
+	* SoapHttpClientProtocol.cs: Flag the methods in the chain that
+	gets the caller method as non-inlineable.
+
 2003-04-29  Miguel de Icaza  <miguel@ximian.com>
 
 	* SoapHttpClientProtocol.cs (CreateMessage): Extract information
