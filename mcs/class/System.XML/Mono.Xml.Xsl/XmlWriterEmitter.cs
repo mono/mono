@@ -85,7 +85,10 @@ namespace Mono.Xml.Xsl {
 			writer.WriteRaw (data);
 		}
 
-		public override void Done () {}
+		public override void Done ()
+		{
+			writer.Flush ();
+		}
 		#endregion
 	}
 }

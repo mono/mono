@@ -992,28 +992,28 @@ namespace System.Xml.XPath
 
 	internal class NodeTypeTest : NodeTest
 	{
-		protected XPathNodeType _type;
+		public readonly XPathNodeType type;
 		protected String _param;
 		public NodeTypeTest (Axes axis) : base (axis)
 		{
-			_type = _axis.NodeType;
+			this.type = _axis.NodeType;
 		}
 		public NodeTypeTest (Axes axis, XPathNodeType type) : base (axis)
 		{
-			_type = type;
+			this.type = type;
 		}
 		[MonoTODO]
 		public NodeTypeTest (Axes axis, XPathNodeType type, String param) : base (axis)
 		{
-			_type = type;
+			this.type = type;
 			_param = param;
 			if (param != null && type != XPathNodeType.ProcessingInstruction)
-				throw new XPathException ("No argument allowed for "+ToString (_type)+"() test");	// TODO: better description
+				throw new XPathException ("No argument allowed for "+ToString (type)+"() test");	// TODO: better description
 		}
 		public override String ToString ()
 		{
-			String strType = ToString (_type);
-			if (_type == XPathNodeType.ProcessingInstruction && _param != null)
+			String strType = ToString (type);
+			if (type == XPathNodeType.ProcessingInstruction && _param != null)
 				strType += "('" + _param + "')";
 			else
 				strType += "()";
@@ -1042,7 +1042,7 @@ namespace System.Xml.XPath
 		public override bool Match (XmlNamespaceManager nsm, XPathNavigator nav)
 		{
 			XPathNodeType nodeType = nav.NodeType;
-			switch (_type)
+			switch (type)
 			{
 				case XPathNodeType.All:
 					return true;
@@ -1055,7 +1055,7 @@ namespace System.Xml.XPath
 					return true;
 				
 				default:
-					return _type == nodeType;
+					return type == nodeType;
 			}
 		}
 	}

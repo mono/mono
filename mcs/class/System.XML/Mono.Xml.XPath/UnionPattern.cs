@@ -18,7 +18,7 @@ using System.Xml.Xsl;
 namespace Mono.Xml.XPath {
 	internal class UnionPattern : Pattern {
 		
-		Pattern p0, p1;
+		public readonly Pattern p0, p1;
 		
 		public UnionPattern (Pattern p0, Pattern p1)
 		{
@@ -29,6 +29,10 @@ namespace Mono.Xml.XPath {
 		public override bool Matches (XPathNavigator node, XsltContext ctx)
 		{
 			return p0.Matches (node, ctx) || p1.Matches (node, ctx);
+		}
+		
+		public override string ToString () {
+			return p0.ToString () + " | " + p1.ToString ();
 		}
 	}
 }

@@ -59,6 +59,15 @@ namespace Mono.Xml.XPath {
 			if (! nodeTest.Match (ctx, node))
 				return false;
 			
+			if (nodeTest is NodeTypeTest) {
+				// node () is different in xslt patterns
+				if (((NodeTypeTest)nodeTest).type == XPathNodeType.All && 
+					(node.NodeType == XPathNodeType.Root ||
+					node.NodeType == XPathNodeType.Attribute)
+				)
+				return false;
+			}
+			
 			if (filter == null && patternPrevious == null)
 				return true;
 			
@@ -92,6 +101,16 @@ namespace Mono.Xml.XPath {
 			}
 			
 			return false;
+		}
+		
+		public override string ToString ()
+		{
+			string ret = "";
+			if (patternPrevious != null) ret = patternPrevious.ToString () + (isAncestor ? "//" : "/");
+			if (filter != null) ret += filter.ToString ();
+			else ret += nodeTest.ToString ();
+			
+			return ret;
 		}
 	}
 }
