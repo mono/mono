@@ -108,25 +108,18 @@ namespace System.Drawing {
 			unitConversion(unit, GraphicsUnit.Point, emSize, out  _sizeInPoints);
 						
 			_bold = _italic = _strikeout = _underline = false;
-			
-			switch (style) {
-			case FontStyle.Bold: 
-				_bold = true;
-				break;
-			case FontStyle.Italic:
-				_italic = true;
-				break;
-			case FontStyle.Regular:
-				break;
-			case FontStyle.Strikeout:
-				_strikeout = true;
-				break;
-			case FontStyle.Underline:
-				_underline = true;
-				break;
-			default:
-				break;
-			}			
+
+                        if ((style & FontStyle.Bold) == FontStyle.Bold)
+                                _bold = true;
+				
+                        if ((style & FontStyle.Italic) == FontStyle.Italic)
+                               _italic = true;
+
+                        if ((style & FontStyle.Strikeout) == FontStyle.Strikeout)
+                                _strikeout = true;
+
+                        if ((style & FontStyle.Underline) == FontStyle.Underline)
+                                _underline = true;                  
 		}
 
 		public static Font FromHfont(IntPtr font)

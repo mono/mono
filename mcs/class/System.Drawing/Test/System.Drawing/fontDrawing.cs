@@ -43,15 +43,15 @@ namespace Font1Sample {
 		public static void Main( ) 
 		{
 			Console.WriteLine("Fonts--------------------");			
-         	listFonts();			
+                 	listFonts();			
 		
 			Console.WriteLine("Propierties--------------------");						
 			checkFontProperties();            
 			
 			Console.WriteLine("Draw--------------------");
 			float width = 800.0F;
-			float height = 400.0F;
-            string str = "";
+			float height = 650.0F;
+                        string str = "";
 			
 			Font f1 = new Font("Arial",12);			
 			Font f2 = new Font("Verdana", 12, FontStyle.Bold);	
@@ -66,8 +66,17 @@ namespace Font1Sample {
 			Font f6  = new Font("Arial", 40, FontStyle.Regular, GraphicsUnit.Pixel);
 			Console.WriteLine("Font:" + f6.Name + " size:" + f6.Size + "Points: " + f6.SizeInPoints);
 			
-			Font f7  = new Font("Verdana", 19, FontStyle.Regular, GraphicsUnit.World);
-			Console.WriteLine("Font:" + f7.Name + " size:" + f7.Size + "Points: " + f7.SizeInPoints);					
+			Font f7  = new Font("Courier New", 19, FontStyle.Regular, GraphicsUnit.World);
+			Console.WriteLine("Font:" + f7.Name + " size:" + f7.Size + "Points: " + f7.SizeInPoints);							
+
+       			Font f8  = new Font("Courier New", 19, FontStyle.Bold |  FontStyle.Underline, GraphicsUnit.World);
+                        Console.WriteLine("Font:" + f8.Name + " size:" + f8.Size + "Points: " + f8.SizeInPoints);
+
+               		Font f9  = new Font("Courier New", 19, FontStyle.Bold |  FontStyle.Underline|  FontStyle.Italic, GraphicsUnit.World);
+			Console.WriteLine("Font:" + f9.Name + " size:" + f9.Size + "Points: " + f9.SizeInPoints);
+
+                        Font f10  = new Font(FontFamily.GenericSansSerif, 14, FontStyle.Strikeout, GraphicsUnit.Millimeter);
+			Console.WriteLine("Font:" + f10.Name + " size:" + f10.Size + "Points: " + f10.SizeInPoints);
 			
 			
 			Bitmap bmp = new Bitmap((int)width, (int)height);
@@ -79,26 +88,36 @@ namespace Font1Sample {
 			
 			br = new SolidBrush(Color.Black);
 
-            str = "This an " +  f1.Name + " test string size: "+ f1.Height;                        
+                        str = "This an " +  f1.Name + " test string size: "+ f1.Height;                        
 			gr.DrawString (str, f1, br, 10, 10);
 
-            str = "This a " +  f2.Name + " bold test string size: "+ f2.Height;
+                        str = "This a " +  f2.Name + " bold test string size: "+ f2.Height;
 			gr.DrawString( str, f2, colorRed, 10, 50);
 
-            str = "This a " +  f3.Name + " italic test string size: "+ f3.Height;
+                        str = "This a " +  f3.Name + " italic test string size: "+ f3.Height;
 			gr.DrawString( str, f3, br, 10, 100);
 
-            str = "This an " +  f1.Name + " test string size: "+ f4.Height;
+                        str = "This an " +  f1.Name + " test string size: "+ f4.Height;
 			gr.DrawString (str, f4, br, 10, 150);
 
-            str = "This a " +  f5.Name + " test string size: "+ f5.Height;
+                        str = "This a " +  f5.Name + " test string size: "+ f5.Height;
 			gr.DrawString( str, f5, colorRed, 10, 250);
 
-            str = "This a " +  f6.Name + " test string size: "+ f6.Height;
+                        str = "This a " +  f6.Name + " test string size: "+ f6.Height;
 			gr.DrawString( str, f6, br, new Rectangle(10,300,0,0));
 			
-           	str = "This a " +  f7.Name + " test string size: "+ f7.Height;
+                        str = "This a " +  f7.Name + " test string size: "+ f7.Height;
 			gr.DrawString( str, f7, br, 10,350);
+
+                        str = "This a " +  f8.Name + " test (Underline/Bold) string size: "+ f8.Height;
+			gr.DrawString( str, f8, br, 10,400);
+
+                        str = "This a " +  f9.Name + " test (Underline/Bold/Italic) string size: "+ f9.Height;
+			gr.DrawString( str, f9, br, 10,450);
+
+                        str = "This a " +  f10.Name + " test (Strikeout) string size: "+ f10.Height;
+			gr.DrawString( str, f10, br, 10,500);
+
 			
 			bmp.Save("fontdrawing.bmp", ImageFormat.Bmp);			
 		}
