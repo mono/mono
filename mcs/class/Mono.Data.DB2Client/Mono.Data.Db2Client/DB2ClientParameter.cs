@@ -28,9 +28,9 @@ namespace DB2ClientCS
 		object dataVal;
 		byte[] bDataVal;
 		private int iDataVal;
-//		private IntPtr sqlLen_or_IndPtr;
 		private byte scale, precision;
 		private int size;
+		bool selfDescribe = false;
 
 		#region Contructors and destructors
 		public DB2ClientParameter()
@@ -326,7 +326,6 @@ namespace DB2ClientCS
 			IntPtr nullable = IntPtr.Zero;
 			paramSize = IntPtr.Zero;
 			decimalDigits = IntPtr.Zero;
-			IntPtr dataType = IntPtr.Zero;
 			short sqlRet = 0;
 
 			sqlRet = DB2ClientPrototypes.SQLDescribeParam(hwndStmt, paramNum, ref db2DataType, ref paramSize, ref decimalDigits, ref nullable);
@@ -349,10 +348,11 @@ namespace DB2ClientCS
 				case DB2ClientConstants.SQL_TYPE_TIMESTAMP:
 				case DB2ClientConstants.SQL_VARCHAR:
 				case DB2ClientConstants.SQL_CHAR:
-					sqlRet = DB2ClientPrototypes.SQLBindParameter(hwndStmt, (ushort)paramNum, DB2ClientConstants.SQL_PARAM_INPUT, DB2ClientConstants.SQL_C_DEFAULT, (short)db2DataType,  Convert.ToUInt32((int)paramSize) , 0, bDataVal, 0, 0);
+					sqlRet = DB2ClientPrototypes.SQLBindParameter(hwndStmt, (ushort)paramNum, DB2ClientConstants.SQL_PARAM_INPUT, DB2ClientConstants.SQL_C_DEFAULT, (short)db2DataType,  Convert.ToUInt32((int)paramSize) , (short) decimalDigits, bDataVal, 0, 0);
 					break;
 				default:
-					sqlRet = DB2ClientPrototypes.SQLBindParameter(hwndStmt, (ushort)paramNum, DB2ClientConstants.SQL_PARAM_INPUT, DB2ClientConstants.SQL_C_DEFAULT, (short)db2DataType,  Convert.ToUInt32((int)paramSize) , 0, ref iDataVal, 0, 0);							break;
+					sqlRet = DB2ClientPrototypes.SQLBindParameter(hwndStmt, (ushort)paramNum, DB2ClientConstants.SQL_PARAM_INPUT, DB2ClientConstants.SQL_C_DEFAULT, (short)db2DataType,  Convert.ToUInt32((int)paramSize) , 0, ref iDataVal, 0, 0);
+					break;
 			}		
 			return sqlRet;
 		}
