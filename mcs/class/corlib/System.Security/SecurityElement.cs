@@ -133,7 +133,7 @@ namespace System.Security {
 				return null;
 		}
 
-		public bool Equals (SecurityElement other)
+		public bool Equal (SecurityElement other)
 		{
 			if (other == null)
 				return false;
