@@ -1,3 +1,10 @@
+2004-09-01  Martin Baulig  <martin@ximian.com>
+
+	* IMonoSymbolWriter.cs: Removed.
+
+	* ModuleBuilder.cs, LocalBuilder.cs, ILGenerator.cs: Removed the
+	old debugging code.
+
 2004-08-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyBuilder.cs: (Partly) Fix delay-signing issue (#56621) when 

@@ -62,18 +62,10 @@ namespace System.Reflection.Emit {
 			this.type = t;
 			this.ilgen = ilgen;
 		}
+
 		public void SetLocalSymInfo (string lname, int startOffset, int endOffset)
 		{
-			this.name = lname;
-
-			SignatureHelper sighelper = SignatureHelper.GetLocalVarSigHelper (ilgen.module);
-			sighelper.AddArgument (type);
-			byte[] signature = sighelper.GetSignature ();
-
-			ilgen.sym_writer.DefineLocalVariable (lname, FieldAttributes.Private,
-								  signature, SymAddressKind.ILOffset,
-								  (int) position, 0, 0,
-								  startOffset, endOffset);
+			throw new InvalidOperationException ();
 		}
 
 		public void SetLocalSymInfo (string lname)

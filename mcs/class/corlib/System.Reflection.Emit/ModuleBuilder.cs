@@ -39,7 +39,6 @@ using System.Runtime.InteropServices;
 using System.Diagnostics.SymbolStore;
 using System.IO;
 using System.Resources;
-using Mono.CSharp.Debugger;
 using System.Globalization;
 
 namespace System.Reflection.Emit {
@@ -59,7 +58,6 @@ namespace System.Reflection.Emit {
 		#endregion
 		private TypeBuilder global_type;
 		private Type global_type_created;
-		internal IMonoSymbolWriter symbol_writer;
 		Hashtable name_cache;
 		Hashtable us_string_cache = new Hashtable ();
 		private int[] table_indexes;
@@ -81,45 +79,7 @@ namespace System.Reflection.Emit {
 			table_idx = get_next_table_index (this, 0x00, true);
 			name_cache = new Hashtable ();
 
-			if (emitSymbolInfo)
-				GetSymbolWriter (fullyqname);
 			basic_init (this);
-		}
-
-		internal void GetSymbolWriter (string filename)
-		{
-			Assembly assembly;
-			try {
-				assembly = Assembly.Load (Consts.AssemblyMono_CSharp_Debugger);
-			} catch (FileNotFoundException) {
-				return;
-			}
-
-			Type type = assembly.GetType ("Mono.CSharp.Debugger.MonoSymbolWriter");
-			if (type == null)
-				return;
-
-			// First get the constructor.
-			{
-				Type[] arg_types = new Type [1];
-				arg_types [0] = typeof (ModuleBuilder);
-				ConstructorInfo constructor = type.GetConstructor (arg_types);
-
-				object[] args = new object [1];
-				args [0] = this;
-
-				if (constructor == null)
-					return;
-
-				Object instance = constructor.Invoke (args);
-				if (instance == null)
-					return;
-
-				if (!(instance is IMonoSymbolWriter))
-					return;
-
-				symbol_writer = (IMonoSymbolWriter) instance;
-			}
 		}
 
 		public override string FullyQualifiedName {get { return fqname;}}
@@ -418,14 +378,11 @@ namespace System.Reflection.Emit {
 		}
 
 		public ISymbolWriter GetSymWriter () {
-			return symbol_writer;
+			throw new InvalidOperationException ();
 		}
 
 		public ISymbolDocumentWriter DefineDocument (string url, Guid language, Guid languageVendor, Guid documentType) {
-			if (symbol_writer == null)
-				throw new InvalidOperationException ();
-
-			return symbol_writer.DefineDocument (url, language, languageVendor, documentType);
+			throw new InvalidOperationException ();
 		}
 
 		public override Type [] GetTypes ()
@@ -642,16 +599,6 @@ namespace System.Reflection.Emit {
 			}
 
 			build_metadata (this);
-
-			if (symbol_writer != null) {
-				string res_name;
-				if (is_main)
-					res_name = "MonoSymbolFile";
-				else
-					res_name = "MonoSymbolFile:" + fqname;
-				byte[] data = symbol_writer.CreateSymbolFile (assemblyb);
-				assemblyb.EmbedResource (res_name, data, ResourceAttributes.Public);
-			}
 
 			string fileName = fqname;
 			if (assemblyb.AssemblyDir != null)

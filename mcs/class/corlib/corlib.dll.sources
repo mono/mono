@@ -408,7 +408,6 @@ System.Reflection.Emit/FieldBuilder.cs
 System.Reflection.Emit/FieldToken.cs
 System.Reflection.Emit/FlowControl.cs
 System.Reflection.Emit/GenericTypeParameterBuilder.cs
-System.Reflection.Emit/IMonoSymbolWriter.cs
 System.Reflection.Emit/ILGenerator.cs
 System.Reflection.Emit/Label.cs
 System.Reflection.Emit/LocalBuilder.cs

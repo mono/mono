@@ -35,7 +35,6 @@ using System;
 using System.Collections;
 using System.Diagnostics.SymbolStore;
 using System.Runtime.InteropServices;
-using Mono.CSharp.Debugger;
 
 namespace System.Reflection.Emit {
 
@@ -197,7 +196,6 @@ namespace System.Reflection.Emit {
 		private LabelFixup[] fixups;
 		private int num_fixups;
 		internal Module module;
-		internal IMonoSymbolWriter sym_writer;
 		private Stack scopes;
 		private int cur_block;
 		private Stack open_blocks;
@@ -217,8 +215,6 @@ namespace System.Reflection.Emit {
 			token_fixups = new ILTokenInfo [8];
 			num_token_fixups = 0;
 			module = m;
-			if (module is ModuleBuilder)
-				sym_writer = ((ModuleBuilder)module).symbol_writer;
 			open_blocks = new Stack ();
 			this.token_gen = token_gen;
 		}
@@ -394,13 +390,7 @@ namespace System.Reflection.Emit {
 		}
 		
 		public virtual void BeginScope ()
-		{
-			if (sym_writer != null) {
-				if (scopes == null)
-					scopes = new Stack ();
-				scopes.Push (sym_writer.OpenScope (code_len));
-			}
-		}
+		{ }
 		
 		public LocalBuilder DeclareLocal (Type localType)
 		{
@@ -832,14 +822,7 @@ namespace System.Reflection.Emit {
 		}
 
 		public virtual void EndScope ()
-		{
-			if (sym_writer != null) {
-				sym_writer.CloseScope (code_len);
-				if (scopes == null)
-					throw new InvalidOperationException ();
-				scopes.Pop ();
-			}
-		}
+		{ }
 
 		public virtual void MarkLabel (Label loc)
 		{
@@ -854,12 +837,7 @@ namespace System.Reflection.Emit {
 
 		public virtual void MarkSequencePoint (ISymbolDocumentWriter document, int startLine,
 						       int startColumn, int endLine, int endColumn)
-		{
-			if (sym_writer == null)
-				return;
-
-			sym_writer.MarkSequencePoint (code_len, startLine, startColumn);
-		}
+		{ }
 
 		public virtual void ThrowException (Type exceptionType)
 		{
