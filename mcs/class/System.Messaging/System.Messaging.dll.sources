@@ -1,10 +1,11 @@
+Assembly/AssemblyInfo.cs
+Assembly/Locale.cs
 System.Messaging/AccessControlEntry.cs
 System.Messaging/AccessControlEntryType.cs
 System.Messaging/AccessControlList.cs
 System.Messaging/AcknowledgeTypes.cs
 System.Messaging/Acknowledgment.cs
 System.Messaging/ActiveXMessageFormatter.cs
-System.Messaging/AssemblyInfo.cs
 System.Messaging/BinaryMessageFormatter.cs
 System.Messaging/CryptographicProviderType.cs
 System.Messaging/DefaultPropertiesToSend.cs

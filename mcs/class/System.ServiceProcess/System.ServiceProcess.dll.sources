@@ -1,4 +1,5 @@
-System.ServiceProcess/Locale.cs
+Assembly/AssemblyInfo.cs
+Assembly/Locale.cs
 System.ServiceProcess/TODOAttribute.cs
 System.ServiceProcess/PowerBroadcastStatus.cs
 System.ServiceProcess/ServiceAccount.cs

@@ -1,3 +1,5 @@
+Assembly/AssemblyInfo.cs
+Assembly/Locale.cs
 System.Design/TODOAttribute.cs
 System.ComponentModel.Design/ArrayEditor.cs
 System.ComponentModel.Design/CollectionEditor.cs

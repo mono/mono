@@ -1,3 +1,5 @@
+Assembly/AssemblyInfo.cs
+Assembly/Locale.cs
 System.Data.OracleClient.Oci/OciAttributeType.cs
 System.Data.OracleClient.Oci/OciBindHandle.cs
 System.Data.OracleClient.Oci/OciCalls.cs
