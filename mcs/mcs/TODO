@@ -9,10 +9,21 @@ EmitContext.ResolveTypeTree
 	by default) to ResolveType/REsolveTypeExpr and then have the routines that
 	need ResolveType to pass null as the emit context.
 
-Idea
-----
+DeclareLocal audit
+------------------
 
-	Keep a cache of name lookups at the DeclSpace level
+	DeclareLocal is used in various statements.  The audit should be done
+	in two steps:
+
+		* Identify all the declare locals.
+
+		* Identify its uses.
+
+		* Find if we can make wrapper functions for all of them.
+
+	Then we can move DeclareLocal into a helper class.
+
+	This is required to fix foreach in iterators.
 
 Large project:
 --------------
