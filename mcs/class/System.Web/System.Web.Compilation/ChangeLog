@@ -1,3 +1,9 @@
+2004-01-14  Jackson Harper <jackson@ximian.com>
+
+	* TemplateControlCompiler.cs: Is a user control is cached and
+	shared use the controls type hashcode for the GUID so it will be
+	the same across instances.
+	
 2004-01-13  Jackson Harper <jackson@ximian.com>
 	
 	* TemplateControlCompiler.cs: If an item has the partial caching

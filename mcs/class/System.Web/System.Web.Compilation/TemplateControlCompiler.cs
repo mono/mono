@@ -437,7 +437,10 @@ namespace System.Web.Compilation
 				CodeMethodInvokeExpression build = new CodeMethodInvokeExpression (cc, "BuildCachedControl");
 				build.Parameters.Add (new CodeArgumentReferenceExpression("__ctrl"));
 				build.Parameters.Add (new CodePrimitiveExpression (child.ID));
-				build.Parameters.Add (new CodePrimitiveExpression (Guid.NewGuid ().ToString ())); // GUID
+				if (pca.Shared)
+					build.Parameters.Add (new CodePrimitiveExpression (child.ControlType.GetHashCode ()));
+				else
+					build.Parameters.Add (new CodePrimitiveExpression (Guid.NewGuid ().ToString ()));
 				build.Parameters.Add (new CodePrimitiveExpression (pca.Duration));
 				build.Parameters.Add (new CodePrimitiveExpression (pca.VaryByParams));
 				build.Parameters.Add (new CodePrimitiveExpression (pca.VaryByControls));
