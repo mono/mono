@@ -61,12 +61,23 @@ namespace System.Runtime.Remoting.Proxies
 			_objectIdentity.NotifyClientDynamicSinks (true, request, true, false);
 
 			IMessage response;
+			IMessageSink sink;
 
 			// Needs to go through the client context sink?
 			if (Thread.CurrentContext.HasExitSinks && !_hasEnvoySink)
-				response = Thread.CurrentContext.GetClientContextSinkChain ().SyncProcessMessage (request);
+				sink = Thread.CurrentContext.GetClientContextSinkChain ();
 			else
-				response = _sink.SyncProcessMessage (request);
+				sink = _sink;
+
+			if (RemotingServices.IsAsyncMessage (request))
+			{
+				AsyncResult ares = ((MonoMethodMessage)request).AsyncResult;
+				IMessageCtrl mctrl = sink.AsyncProcessMessage (request, ares);
+				if (ares != null) ares.SetMessageCtrl (mctrl);
+				response = new ReturnMessage (null, new object[0], 0, null, mMsg);
+			}
+			else
+				response = sink.SyncProcessMessage (request);
 
 			_objectIdentity.NotifyClientDynamicSinks (false, request, true, false);
 
