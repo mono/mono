@@ -1,3 +1,10 @@
+2001-10-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* Encoding.cs, UTF8Encoding.cs, UTF7Encoding.cs, ASCIIEncoding.cs,
+	UnicodeEncoding.cs: Corrected API.
+
+	* UTF8Encoding.cs: Checked in changes from Rafael.
+
 2001-08-28  Dietmar Maurer  <dietmar@ximian.com>
 
 	* UTF8Encoding.cs: impl. clumsy GetBytes
