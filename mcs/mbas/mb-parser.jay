@@ -520,14 +520,22 @@ imports_directives
 	;
 
 imports_directive
-	: /* imports_alias_directive
-	| */ imports_namespace_directive
+	: IMPORTS imports_terms EOL
 	;
 
-imports_namespace_directive
-	: IMPORTS qualified_identifier EOL 
+imports_terms
+	: imports_term
+	| imports_terms COMMA imports_terms
+	;
+	
+imports_term
+	: qualified_identifier
 	  {
-		current_namespace.Using ((string) $2, lexer.Location);
+		current_namespace.Using ((string) $1, lexer.Location);
+	  }
+	| qualified_identifier ASSIGN qualified_identifier
+	  {
+		current_namespace.UsingAlias ((string) $1, (string) $3, lexer.Location);
 	  }
 	;
 
@@ -828,8 +836,8 @@ modifier
 	: PUBLIC		{ $$ = Modifiers.PUBLIC; }
 	| PROTECTED		{ $$ = Modifiers.PROTECTED; }
 	| PRIVATE		{ $$ = Modifiers.PRIVATE; }
-	| STATIC		{ $$ = Modifiers.STATIC; }
-	/* FIXME: FRIEND and PROTECTED FRIEND are missing */
+	| SHARED		{ $$ = Modifiers.STATIC; }
+	| FRIEND		{ $$ = Modifiers.INTERNAL; }
 	;
 
 module_declaration
@@ -837,11 +845,10 @@ module_declaration
 	  { 
 		Module new_module;
 		string name;
-		// FIXME : Check for valid module modifiers
 		name = MakeName((string) $2);
 		new_module = new Module(current_container, 
 								name, 
-								current_modifiers, 
+								current_modifiers, // already checks then
 								(Attributes) current_attributes,
 								lexer.Location);
 		current_container = new_module;
@@ -860,6 +867,49 @@ module_declaration
 	  }
 	;
 
+opt_module_member_declarations
+	: /* empty */
+	| module_member_declarations
+	;
+
+module_member_declarations
+	: module_member_declaration
+	| module_member_declarations module_member_declaration
+	;
+
+module_member_declaration
+	:  opt_attributes
+	   opt_modifiers
+	   { 
+	   	current_attributes = (Attributes) $1;
+	   	current_modifiers = (int) $2 | (int)Modifiers.STATIC; // FIXME: for type_declaration it can result in trouble
+	   }
+	   module_member_declarator
+	   {
+	   	$$ = $3;
+	   }
+	;
+
+module_member_declarator
+	:  static_constructor_declaration
+	|  method_declaration
+	   { 
+	   	Method method = (Method) $1;
+	   	CheckDef (current_container.AddMethod (method), method.Name, method.Location);
+	   }	
+	|  field_declaration
+	|  withevents_declaration	/* This is a field but must be treated specially, see below */
+	|  constant_declaration
+	|  property_declaration			
+	|  event_declaration	
+	|  type_declaration			
+	;
+	
+constant_declaration // TODO: implement truly the logic
+	: CONST identifier ASSIGN constant_expression
+	| CONST identifier AS qualified_identifier ASSIGN constant_expression
+	;
+	   
 opt_class_member_declarations
 	: /* empty */
 	| class_member_declarations
@@ -891,6 +941,7 @@ class_member_declarator
 	   	CheckDef (current_container.AddMethod (method), method.Name, method.Location);
 	   }	
 	|  field_declaration
+	|  constant_declaration
 	|  property_declaration			
 	|  event_declaration	
 	|  withevents_declaration	/* This is a field but must be treated specially, see below */
@@ -1539,23 +1590,35 @@ opt_evt_handler
 		$$ = (Expression) DecomposeQI ((string)$2, lexer.Location);	
 	}
 	;	
+
+opt_empty_parens
+	: /* empty */
+	| OPEN_PARENS CLOSE_PARENS
+	;	
 	
-constructor_declaration
-	: constructor_declarator
+static_constructor_declaration
+	: SHARED SUB NEW opt_empty_parens EOL
+	  {
+	  	current_local_parameters = Parameters.EmptyReadOnlyParameters;
+	  	start_block();
+		oob_stack.Push (lexer.Location);
+
+		Location l = (Location) oob_stack.Pop ();
+		$$ = new Constructor ((string) "New", Parameters.EmptyReadOnlyParameters, (ConstructorInitializer) null, l);
+	  }
 	  opt_statement_list
 	  { 
 		Constructor c = (Constructor) $1;
 		c.Block = (Block) end_block();
 		c.ModFlags = (int) current_modifiers;
-		c.OptAttributes = (Attributes) null;
+		c.OptAttributes = current_attributes;
 		
-		CheckDef (current_container.AddConstructor (c), c.Name, c.Location);
+		CheckDef (current_container.AddConstructor(c), c.Name, c.Location);
 		current_local_parameters = null;
 	  }
 	  END SUB EOL
-	;
-
-constructor_declarator
+	
+constructor_declaration
 	: SUB NEW OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS EOL
 	  {
 	  	current_local_parameters = (Parameters) $4;
@@ -1565,8 +1628,18 @@ constructor_declarator
 		Location l = (Location) oob_stack.Pop ();
 		$$ = new Constructor ((string) "New", (Parameters) $4, (ConstructorInitializer) null, l);
 	  }
+	  opt_statement_list
+	  { 
+		Constructor c = (Constructor) $1;
+		c.Block = (Block) end_block();
+		c.ModFlags = (int) current_modifiers;
+		c.OptAttributes = current_attributes;
+		
+		CheckDef (current_container.AddConstructor(c), c.Name, c.Location);
+		current_local_parameters = null;
+	  }
+	  END SUB EOL
 	;
-	
 	
 opt_formal_parameter_list
 	: /* empty */			

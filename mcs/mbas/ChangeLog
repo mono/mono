@@ -1,3 +1,11 @@
+2003/03/04  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* mb-parser.jay: added rule for Imports with alias
+	* mb-parser.jay: Friend (internal) modifier was missing,
+					 Shared modifier was expecting Static token erroneously
+					 Modules must accept only a static constructor rule added
+					 Constant declaration rule added
+	* makefile & makefile.gnu : actually run the compiled program on test target 
+
 2003/03/03  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* mb-tokenizer.cs : new semi-keywords: Compare, Explicit, Strict, On, Off, Binary, Text
 	* mb-parser.jay: tokens for above semi-keywords, and rules for option directives

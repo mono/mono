@@ -42,7 +42,8 @@ namespace Mono.MonoBASIC
 		// </summary>
 		public new const int AllowedModifiers =
 			Modifiers.PUBLIC |
-			Modifiers.INTERNAL;
+			Modifiers.INTERNAL
+			;
 
 		public Module(TypeContainer parent, string name, int mod, Attributes attrs, Location l)
 			: base (parent, name, 0, null, l)

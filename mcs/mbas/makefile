@@ -42,6 +42,7 @@ all: mbas.exe
 
 test: mbas.exe
 	mono mbas.exe --main WriteOK testmbas/WriteOK.vb testmbas/WriteOK2.mbs
+	mono testmbas/WriteOK.exe
 
 verbose: mbas.exe
 	mono mbas.exe --verbose --main WriteOK testmbas/WriteOK.vb testmbas/WriteOK2.mbs | less
