@@ -30,13 +30,33 @@ namespace System.Web.Services.Description {
 		#region Properties
 
 		public OperationFlow Flow {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			[MonoTODO ("Verify default return value.")]
+			get { 
+				switch (Count) {
+				case 1: 
+					if (this[0] is OperationInput)
+						return OperationFlow.OneWay;
+					else
+						return OperationFlow.Notification;
+					break;
+				case 2:
+					if (this[0] is OperationInput)
+						return OperationFlow.RequestResponse;
+					else
+						return OperationFlow.SolicitResponse;
+					break;
+				}
+				return OperationFlow.None; // .NET says default is SolicitResponse.  Verify this.
+			}
 		}
 
 		public OperationInput Input {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { 
+				foreach (object message in List)
+					if (message is OperationInput)
+						return (OperationInput) message;
+				return null;
+			}
 		}
 	
 		public OperationMessage this [int index] {
@@ -45,8 +65,12 @@ namespace System.Web.Services.Description {
 		}
 
 		public OperationOutput Output {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { 
+				foreach (object message in List)
+					if (message is OperationOutput)
+						return (OperationOutput) message;
+				return null;
+			}
 		}
 
 		#endregion // Properties
@@ -80,22 +104,24 @@ namespace System.Web.Services.Description {
 			List.Insert (index, operationMessage);
 		}
 
-		[MonoTODO]
 		protected override void OnInsert (int index, object value)
 		{
-			throw new NotImplementedException ();
+			if (Count > 2 || value.GetType () == this [0].GetType ())
+				throw new InvalidOperationException ("The operation object can only contain one input and one output message.");
 		}
 
-		[MonoTODO]
 		protected override void OnSet (int index, object oldValue, object newValue)
 		{
-			throw new NotImplementedException ();
+			if (oldValue.GetType () != newValue.GetType ())
+				throw new InvalidOperationException ("The message types of the old and new value are not the same.");
 		}
 
-		[MonoTODO]
 		protected override void OnValidate (object value)
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				throw new NullReferenceException ("The message object is a null reference.");
+			if (!(value is OperationInput || value is OperationOutput))
+				throw new ArgumentException ("The message object is not an input or an output message.");
 		}
 	
 		public void Remove (OperationMessage operationMessage)

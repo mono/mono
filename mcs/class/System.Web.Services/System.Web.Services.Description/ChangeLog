@@ -1,3 +1,8 @@
+2002-07-25  Tim Coleman <tim@timcoleman.com>
+	* OperationMessageCollection.cs:
+		Some implementation of this class after consulting a
+		WSDL reference.  Now validates the inputs.
+
 2002-07-24  Tim Coleman <tim@timcoleman.com>	
 	* ProtocolImporter.cs:
 	* ProtocolReflector.cs:
