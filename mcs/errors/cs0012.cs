@@ -6,10 +6,10 @@ class Y {
 		return i.b;
 	}
 
-//	public static implicit operator byte (Y i)
-//	{
-//		return i.b;
-//	}
+	public static implicit operator byte (Y i)
+	{
+		return i.b;
+	}
 
 	public Y (byte b)
 	{
