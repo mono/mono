@@ -42,6 +42,7 @@
                                 stsfld int32 T::exc_caught
                                 leave outer
                         }
+                        leave outer
                  } finally {
                         ldc.i4.1
                         stsfld int32 T::fin_caught
