@@ -1,3 +1,12 @@
+2004-12-09  Lluis Sanchez Gual <lluis@novell.com>
+
+	* TcpConnectionPool.cs: Access the socket stream through a
+	BufferedStream.
+	* TcpMessageIO.cs: Avoid ReadByte().
+	* TcpServerChannel.cs: Access the socket stream through a
+	BufferedStream. Abort the connection if an unknown message is received.
+	All this fixes performance bug #70337.
+
 2004-07-15  Lluis Sanchez Gual <lluis@novell.com>
 
 	* TcpServerChannel.cs: Set channel name from the provided properties.

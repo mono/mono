@@ -151,7 +151,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		{
 			_pool = pool;
 			_client = client;
-			_stream = client.GetStream();
+			_stream = new BufferedStream (client.GetStream());
 			_controlTime = DateTime.Now;
 			_buffer = new byte[TcpMessageIO.DefaultStreamBufferSize];
 		}

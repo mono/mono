@@ -50,6 +50,13 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		// Identifies an incoming message
 		public static MessageStatus ReceiveMessageStatus (Stream networkStream)
 		{
+			byte[] buffer = new byte[6];
+
+			int nr = 0;
+			do {
+				nr += networkStream.Read (buffer, nr, 6 - nr);
+			} while (nr < 6);
+			
 			try
 			{
 				bool[] isOnTrack = new bool[_msgHeaders.Length];
@@ -59,7 +66,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 				while (atLeastOneOnTrack)
 				{
 					atLeastOneOnTrack = false;
-					byte c = (byte)networkStream.ReadByte();
+					byte c = buffer [i];
 					for (int n = 0; n<_msgHeaders.Length; n++)
 					{
 						if (i > 0 && !isOnTrack[n]) continue;
@@ -163,16 +170,18 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		
 		public static ITransportHeaders ReceiveHeaders (Stream networkStream, byte[] buffer)
 		{
-			byte headerType;
-			headerType = (byte) networkStream.ReadByte ();
-			networkStream.ReadByte ();
-
+			int nr = 0;
+			do {
+				nr += networkStream.Read (buffer, nr, 2 - nr);
+			} while (nr < 2);
+			
+			byte headerType = buffer [0];
 			TransportHeaders headers = new TransportHeaders ();
 
 			while (headerType != 0)
 			{
 				string key;
-				networkStream.ReadByte ();	// byte 1
+				networkStream.Read (buffer, 0, 1);	// byte 1
 				switch (headerType)
 				{
 					case 4: key = CommonTransportKeys.RequestUri; break;
@@ -180,11 +189,15 @@ namespace System.Runtime.Remoting.Channels.Tcp
 					case 1: key = ReceiveString (networkStream, buffer); break;
 					default: throw new NotSupportedException ("Unknown header code: " + headerType);
 				}
-				networkStream.ReadByte ();	// byte 1
+				networkStream.Read (buffer, 0, 1);	// byte 1
 				headers[key] = ReceiveString (networkStream, buffer);
 
-				headerType = (byte) networkStream.ReadByte ();
-				networkStream.ReadByte ();
+				nr = 0;
+				do {
+					nr += networkStream.Read (buffer, nr, 2 - nr);
+				} while (nr < 2);
+
+				headerType = buffer [0];
 			}
 
 			return headers;
@@ -197,19 +210,15 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			if (buffer == null) buffer = new byte[DefaultStreamBufferSize];
 
 			// Reads header tag:  0 -> Stream with headers or 2 -> Response Stream
-			byte head = (byte)networkStream.ReadByte();
-			byte c = (byte)networkStream.ReadByte();
-
-			c = (byte)networkStream.ReadByte();
-			c = (byte)networkStream.ReadByte();
-
+			// +
 			// Gets the length of the data stream
 			int nr = 0;
-			while (nr < 4)
-				nr += networkStream.Read (buffer, nr, 4 - nr);
+			do {
+				nr += networkStream.Read (buffer, nr, 8 - nr);
+			} while (nr < 8);
 
-			int byteCount = (buffer [0] | (buffer [1] << 8) |
-				(buffer [2] << 16) | (buffer [3] << 24));
+			int byteCount = (buffer [4] | (buffer [5] << 8) |
+				(buffer [6] << 16) | (buffer [7] << 24));
 
 			// Reads the headers
 			headers = ReceiveHeaders (networkStream, buffer);
@@ -217,11 +226,12 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			byte[] resultBuffer = new byte[byteCount];
 
 			nr = 0;
-			while (nr < byteCount)
+			do {
 				nr += networkStream.Read (resultBuffer, nr, byteCount - nr);
+			} while (nr < byteCount);
 
 			
-			return new MemoryStream(resultBuffer);
+			return new MemoryStream (resultBuffer);
 		}		
 
 		private static void SendString (Stream networkStream, string str, byte[] buffer)
@@ -249,8 +259,9 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		private static string ReceiveString (Stream networkStream, byte[] buffer)
 		{
 			int nr = 0;
-			while (nr < 4)
+			do {
 				nr += networkStream.Read (buffer, nr, 4 - nr);
+			} while (nr < 4);
 
 			// Reads the number of bytes (not chars!)
 
@@ -268,8 +279,9 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			// Reads the string
 
 			nr = 0;
-			while (nr < byteCount)
+			do {
 				nr += networkStream.Read (buffer, nr, byteCount - nr);
+			} while (nr < byteCount);
 
 			char[] chars = Encoding.UTF8.GetChars(buffer, 0, byteCount);
 	
