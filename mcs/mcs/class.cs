@@ -2532,8 +2532,8 @@ namespace Mono.CSharp {
 				}
 				ca |= MethodAttributes.HideBySig;
 
-				if ((ModFlags & Modifiers.PRIVATE) != 0)
-					ca |= MethodAttributes.Private;
+				if ((ModFlags & Modifiers.PUBLIC) != 0)
+					ca |= MethodAttributes.Public;
 				else if ((ModFlags & Modifiers.PROTECTED) != 0){
 					if ((ModFlags & Modifiers.INTERNAL) != 0)
 						ca |= MethodAttributes.FamORAssem;
@@ -2541,8 +2541,10 @@ namespace Mono.CSharp {
 						ca |= MethodAttributes.Family;
 				} else if ((ModFlags & Modifiers.INTERNAL) != 0)
 					ca |= MethodAttributes.Assembly;
-				else
+				else if (IsDefault ())
 					ca |= MethodAttributes.Public;
+				else
+					ca |= MethodAttributes.Private;
 			}
 
 			ConstructorBuilder = parent.TypeBuilder.DefineConstructor (

@@ -1,3 +1,8 @@
+2002-10-04  Martin Baulig  <martin@gnome.org>
+
+	* class.cs (Constructor.Define): The default accessibility for a
+	non-default constructor is private, not public.
+
 2002-10-04  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (Constructor): Make AllowedModifiers public, add
