@@ -272,8 +272,11 @@ namespace Mono.CSharp
 
 		protected override void GenerateThrowExceptionStatement( CodeThrowExceptionStatement statement )
 		{
-			Output.Write( "throw " );
-			GenerateExpression( statement.ToThrow );
+			Output.Write( "throw" );
+			if (statement.ToThrow != null) {
+				Output.Write (' ');
+				GenerateExpression (statement.ToThrow);
+			}
 			Output.WriteLine(";");
 		}
 
@@ -281,13 +284,16 @@ namespace Mono.CSharp
 		{
 			TextWriter output = Output;
 			string[] lines = comment.Text.Split ('\n');
-
+			bool first = true;
 			foreach (string line in lines){
 				if ( comment.DocComment )
-					output.Write( "/// " );
+					output.Write( "///" );
 				else
-					output.Write( "// " );
-
+					output.Write( "//" );
+				if (first) {
+					output.Write (' ');
+					first = false;
+				}
 				output.WriteLine( line );
     		}
 		}

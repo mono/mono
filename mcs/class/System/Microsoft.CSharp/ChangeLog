@@ -1,3 +1,9 @@
+2004-02-04  Jackson Harper <jackson@ximian.com>
+
+	* CSharpCodeGenerator.cs: Don't write ToThrow statement if it is
+	null (matches MS output). When creating comments there is a space
+	after the first // but not the following lines.
+	
 2004-01-21  Atsushi Enomoto <atsushi@ximian.com>
 
 	* CSharpCodeGenerator.cs: Implemented CreateEscapedIdentifier() and
