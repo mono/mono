@@ -1,3 +1,8 @@
+2003-11-26  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* BinaryFormatter.cs: Added missing methods.
+
+2003-11-20  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* BinaryFormatter.cs, MessageFormatter.cs, ObjectReader.cs: Added support
 	  for TypeFilter property.

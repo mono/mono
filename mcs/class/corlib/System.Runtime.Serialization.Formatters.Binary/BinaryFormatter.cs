@@ -14,6 +14,7 @@ using System.IO;
 using System.Runtime.Remoting.Messaging;
 
 namespace System.Runtime.Serialization.Formatters.Binary {
+
 	public sealed class BinaryFormatter : IRemotingFormatter, IFormatter 
 	{
 		private FormatterAssemblyStyle assembly_format = FormatterAssemblyStyle.Full;
@@ -89,6 +90,7 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 		}
 
 #if NET_1_1
+		[System.Runtime.InteropServices.ComVisible (false)]
 		public TypeFilterLevel FilterLevel 
 		{
 			get { return filter_level; }
@@ -184,6 +186,20 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 			writer.Flush();
 		}
 
+		[MonoTODO]
+		[System.Runtime.InteropServices.ComVisible (false)]
+		public object UnsafeDeserialize(Stream serializationStream, HeaderHandler handler) 
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		[System.Runtime.InteropServices.ComVisible (false)]
+		public object UnsafeDeserializeMethodResponse(Stream serializationStream, HeaderHandler handler, IMethodCallMessage methodCallmessage)
+		{
+			throw new NotImplementedException ();
+		}
+		
 		private void WriteBinaryHeader (BinaryWriter writer, bool hasHeaders)
 		{
 			writer.Write ((byte)BinaryElement.Header);
