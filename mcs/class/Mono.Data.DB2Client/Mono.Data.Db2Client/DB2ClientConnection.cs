@@ -26,12 +26,6 @@ namespace DB2ClientCS
 	
 	public class DB2ClientConnection : IDbConnection
 	{
-		private class ConnectionParameters {
-			internal string server = "";
-			internal string username = "";
-			internal string authentication = "";
-		}
-		private ConnectionParameters connectionParms = new ConnectionParameters();
 		private string connectionString = null;
 		private StringBuilder outConnectStr;
 		private string dbName = null;
@@ -229,97 +223,6 @@ namespace DB2ClientCS
 		void SetConnectionString (string connectionString) 
 		{
 			this.connectionString = connectionString;
-		}
-
-		#region ParseOutConnectString
-		/// <summary>
-		/// Since we're using SQLDriverConnect, we should really only need to parse the
-		/// connection string it returns. This will have to be expanded upun to account
-		/// for any of the keywords (properties) returned.
-		/// </summary>
-		/// <param name="outStr"></param>
-		void ParseOutConnectString(string outStr)
-		{
-			connectionString += ";";
-			NameValueCollection parameters = new NameValueCollection ();
-
-			if (connectionString == String.Empty)
-				return;
-
-			bool inQuote = false;
-			bool inDQuote = false;
-
-			string name = String.Empty;
-			string value = String.Empty;
-			StringBuilder sb = new StringBuilder ();
-
-			foreach (char c in connectionString) {
-				switch (c) {
-				case '\'':
-					inQuote = !inQuote;
-					break;
-				case '"' :
-					inDQuote = !inDQuote;
-					break;
-				case ';' :
-					if (!inDQuote && !inQuote) {
-						if (name != String.Empty && name != null) {
-							value = sb.ToString ();
-							parameters [name.ToUpper ().Trim ()] = value.Trim ();
-						}
-						name = String.Empty;
-						value = String.Empty;
-						sb = new StringBuilder ();
-					}
-					else
-						sb.Append (c);
-					break;
-				case '=' :
-					if (!inDQuote && !inQuote) {
-						name = sb.ToString ();
-						sb = new StringBuilder ();
-					}
-					else
-						sb.Append (c);
-					break;
-				default:
-					sb.Append (c);
-					break;
-				}
-			}
-
-			SetProperties (parameters);
-		}
-		#endregion
-
-		private void SetProperties (NameValueCollection parameters) 
-		{
-			string value;
-			foreach (string name in parameters) {
-				value = parameters[name];
-				
-				switch (name) {
-				case "INITIAL CATALOG" :
-				case "DATA SOURCE" :
-				case "DATABASE" :
-					// set Database property
-					connectionParms.server = value;
-					break;
-				case "PASSWORD" :
-				case "AUTHENTICATION" :
-				case "PWD" :
-					connectionParms.authentication = value;
-					break;
-				case "USER ID" :
-				case "UID" :
-				case "USERNAME" :
-				case "USER" :
-					connectionParms.username = value;
-					break;
-				default:
-					throw new ArgumentException("Invalid connection parameter: " + name);
-				}
-			}
 		}
 	}
 }
