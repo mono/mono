@@ -1,3 +1,9 @@
+2004-03-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c:
+	(overlapped_callback): call SetEvent *after* invoking the callback.
+	No need to call CloseHandle.
+
 2004-03-16  Martin Baulig  <martin@ximian.com>
 
 	* reflection.c (mono_image_get_fieldref_token): Take a
