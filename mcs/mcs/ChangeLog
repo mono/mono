@@ -1,5 +1,8 @@
 2004-01-17  Miguel de Icaza  <miguel@ximian.com>
 
+	* convert.cs: Applied patch from Benjamin Jemlich (pcgod@gmx.net)
+	that fixes #52853.  Null literal assignment to ValueType
+
 	* class.cs (MethodData.Emit): Instead of checking the name of the
 	method to determine if its a destructor, create a new derived
 	class from Method called Destructor, and test for that.  

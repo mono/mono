@@ -59,7 +59,7 @@ namespace Mono.CSharp {
 				if (expr_type.IsValueType)
 					return new BoxedCast (expr);
 				if (expr is NullLiteral)
-					return new BoxedCast (expr);
+					return new NullCast (expr, target_type);
 			} else if (expr_type.IsSubclassOf (target_type)) {
 				//
 				// Special case: enumeration to System.Enum.
