@@ -1,3 +1,9 @@
+2005-01-10  Dick Porter  <dick@ximian.com>
+
+	* misc.c (_wapi_calc_timeout): Guard against overflow when
+	calculating timeouts.  This makes waiting with a large
+	(Int32.MaxValue) timeout not return immediately.
+
 2004-12-23  Ben Maurer  <bmaurer@ximian.com>
 
 	* io.c (io_ops): make this `const' so it is shareable (well, only
