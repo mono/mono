@@ -1,3 +1,8 @@
+2004-02-13 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* 2test-6.cs, test-229.cs: some tests for foreach on
+	struct IEnumerators
+
 2004-02-02  Ravi Pratap M  <ravi@ximian.com>
 
 	* test-157.cs: Improve test for interface property accessor

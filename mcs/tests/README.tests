@@ -427,6 +427,24 @@ test-224.cs:
 ------------
 This tests the compilation of attributes with array parameters.
 
+test-229.cs:
+------------
+Test enumerating on:
+public class List : IEnumerable {
+
+	public MyEnumerator GetEnumerator () {
+		return new MyEnumerator(this);
+	}
+	
+	IEnumerator IEnumerable.GetEnumerator () {
+		...
+	}
+	
+	public struct MyEnumerator : IEnumerator {
+		...
+	}
+}
+
 verify-1.cs
 -----------
 Test whether we do not jump out of the method in a Try/Finally block.
@@ -529,3 +547,7 @@ C# 2.0 Iterators: Use of a local variable in an enumerator.
 2test-5.cs
 ----------
 Method group conversions for C# 2.0
+
+2test-6.cs
+----------
+Test iterators using foreach where you have to load the address of a struct
