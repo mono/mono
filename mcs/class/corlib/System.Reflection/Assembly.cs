@@ -490,6 +490,7 @@ namespace System.Reflection {
 		 */
 #if NET_2_0
 		[Obsolete ("")]
+		[ComVisible (false)]
 		[MonoTODO]
 		public
 #else
