@@ -1,4 +1,9 @@
+2004-09-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* StringBuilder.cs (Append): Use InternalStrcpy to append char arrays.
+
 2004-09-09  Tim Coleman <tim@timcoleman.com>
+
 	* StringBuilder.cs: Added AppendLine methods for Fx 2.0
 
 2004-06-23  Sebastien Pouliot  <sebastien@ximian.com>

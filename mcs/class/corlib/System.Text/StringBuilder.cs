@@ -301,9 +301,7 @@ namespace System.Text {
 			if (null != _cached_str || _str.Length < needed_cap)
 				InternalEnsureCapacity (needed_cap);
 			
-			for (int i = 0; i != value.Length; i++)
-				_str.InternalSetChar (i + _length, value[i]);		
-
+			String.InternalStrcpy (_str, _length, value);
 			_length += value.Length;
 
 			return this;
@@ -421,10 +419,9 @@ namespace System.Text {
 			
 			
 			InternalEnsureCapacity (_length + charCount);
-			
-			int endPos = charCount + startIndex;
-			for (int i = startIndex; i != endPos; i++)
-				_str.InternalSetChar (_length++, value[i]);
+
+			String.InternalStrcpy (_str, _length, value, startIndex, charCount);
+			_length += charCount;
 
 			return this;
 		}
