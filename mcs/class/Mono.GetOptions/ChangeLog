@@ -1,3 +1,9 @@
+2004-08-11  Jambunathan K  <kjambunathan@novell.com>
+	* OptionList.cs: Fixed NormalizeArgs so that when an option starts
+	  with a '/' or a '-', the option and the argument pair gets split
+	  at the first ':' or '='. For example /out:"C:\HelloWorld.exe"
+	  gets split up as /out and "C:\HelloWorld.exe".
+
 2004-08-08   Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
 	* OptionDetails.cs : Well format options longform with a double-dash only if parsingMode has OptionsParsingMode.GNU_DoubleDash set
 	* new OptionsParsingMode.cs source, extracted from OptionList.cs - added GNU_DoubleDash member to the enum

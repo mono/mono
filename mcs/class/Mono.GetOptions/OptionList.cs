@@ -334,7 +334,14 @@ namespace Mono.GetOptions
 
 						if (MaybeAnOption(arg))
 						{
-							result.AddRange(arg.Split(':','='));
+							int pos = arg.IndexOfAny(":=".ToCharArray());
+
+							if(pos < 0)
+								result.Add(arg);
+							else {
+								result.Add(arg.Substring(0, pos));
+								result.Add(arg.Substring(pos+1));
+							}
 							continue;
 						}
 					}
