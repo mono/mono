@@ -3,6 +3,8 @@
 #
 
 gacutil=$(srcdir)/../gacutil.exe
+sn=$(srcdir)/../sn.exe
+mono_snk=../../../mcs/class/mono.snk
 
 if USE_JIT
 mono_runtime = $(top_builddir)/mono/mini/mono
@@ -85,6 +87,9 @@ if INSTALL_2_0
 install-data-local:
 	@if test -n '$(gac_assemblies)'; then \
 	  for i in ''$(gac_assemblies); do \
+	    echo "MONO_PATH=$(srcdir) $(mono_runtime) --config ../../data/config $(sn) -q -R $(srcdir)/$$i $(mono_snk)" ; \
+	    MONO_PATH=$(srcdir) \
+	      $(LIBTOOL) --mode=execute $(mono_runtime) --config ../../data/config $(sn) -q -R $(srcdir)/$$i $(mono_snk) || exit 1 ; \
 	    echo "MONO_PATH=$(srcdir)/../net_1_1 $(mono_runtime) --config ../../data/config $(gacutil) /i $(srcdir)/$$i /f /package 2.0 /root $(DESTDIR)$(libdir)" ; \
 	    MONO_PATH=$(srcdir)/../net_1_1 \
 	      $(LIBTOOL) --mode=execute $(mono_runtime)  --config ../../data/config  $(gacutil) /i $(srcdir)/$$i /f /package 2.0 /root $(DESTDIR)$(libdir) || exit 1 ; \
