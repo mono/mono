@@ -1,3 +1,8 @@
+2004-12-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mini_init): Register mono_thread_force_interruption_checkpoint
+	icall.
+
 2004-12-01  Neale Ferguson <Neale.Ferguson@SoftwareAG-usa.com>
 
 	* inssel-s390.brg : Add OP_OUTARG_VT (OP_REFANYTYPE (reg)) rule.
