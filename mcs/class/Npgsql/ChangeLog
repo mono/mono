@@ -1,3 +1,7 @@
+2004-12-16  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com>
+	* Npgsql/NpgsqlConnector.cs: Changed name of portal and prepare prefixes to be all lower case in order to not have case problems when deallocating them.
+	* Npgsql/NpgsqlCommand.cs: Fixed gborg 1082. Added support to implicit parameters when calling stored procedures. 
+
 2004-12-05  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com>
 	* Npgsql/NpgsqlConnector (IsValid): Clean mediator after get a connection from pool and test it for validity. This fix a bug which some times occured which made available this test resultset to user when it shouldn't. 
 
