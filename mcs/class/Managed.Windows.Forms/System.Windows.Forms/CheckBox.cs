@@ -25,6 +25,10 @@
 //
 //
 // $Log: CheckBox.cs,v $
+// Revision 1.9  2004/10/15 13:25:50  ravindra
+// 	- Removed Redraw (), we get it from ButtonBase.
+// 	- Implemented Paint (), to do class specific painting.
+//
 // Revision 1.8  2004/10/13 02:46:22  pbartok
 // - Fix from John BouAntoun: Now properly sets the Appearance property
 //
@@ -282,9 +286,12 @@ namespace System.Windows.Forms {
 		#endregion	// Events
 
 		#region	Internal drawing code
-		internal override void Redraw() {
-			ThemeEngine.Current.DrawCheckBox(this.DeviceContext, this.ClientRectangle, this);
-			Refresh();
+		internal override void Paint (PaintEventArgs pe) {
+			if (redraw) {
+				ThemeEngine.Current.DrawCheckBox (this.DeviceContext, this.ClientRectangle, this);
+				redraw = false;
+			}
+			pe.Graphics.DrawImage (this.ImageBuffer, pe.ClipRectangle, pe.ClipRectangle, GraphicsUnit.Pixel);
 		}
 		#endregion	// Internal drawing code
 	}

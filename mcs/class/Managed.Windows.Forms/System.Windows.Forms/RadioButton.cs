@@ -23,6 +23,10 @@
 //	Peter Bartok	pbartok@novell.com
 //
 // $Log: RadioButton.cs,v $
+// Revision 1.7  2004/10/15 13:25:50  ravindra
+// 	- Removed Redraw (), we get it from ButtonBase.
+// 	- Implemented Paint (), to do class specific painting.
+//
 // Revision 1.6  2004/10/05 18:23:54  jackson
 // Fix ctor
 //
@@ -287,9 +291,13 @@ namespace System.Windows.Forms {
 		#endregion	// Events
 
 		#region Internal Drawing Code
-		internal override void Redraw() {
-			ThemeEngine.Current.DrawRadioButton(this.DeviceContext, this.ClientRectangle, this);
-			Refresh();
+		internal override void Paint (PaintEventArgs pe) {
+			if (redraw) {
+				ThemeEngine.Current.DrawRadioButton(this.DeviceContext, this.ClientRectangle, this);
+				redraw = false;
+			}
+
+			pe.Graphics.DrawImage (this.ImageBuffer, pe.ClipRectangle, pe.ClipRectangle, GraphicsUnit.Pixel);
 		}
 		#endregion	// Internal Drawing Code
 	}
