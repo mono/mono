@@ -675,7 +675,7 @@ namespace Mono.CSharp {
 								  TypeAttributes.Interface |
 								  InterfaceAttr |
 								  TypeAttributes.Abstract,
-								  null,   // Parent Type
+								  (Type)null,   // Parent Type
 								  ifaces);
 			} else {
 				TypeBuilder builder = (System.Reflection.Emit.TypeBuilder) parent_builder;
@@ -684,7 +684,7 @@ namespace Mono.CSharp {
 									TypeAttributes.Interface |
 									InterfaceAttr |
 									TypeAttributes.Abstract,
-									null,   // Parent Type
+									(Type)null,   // Parent Type
 									ifaces);
 			}
 			

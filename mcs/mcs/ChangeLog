@@ -1,3 +1,9 @@
+
+Wed Mar 13 12:32:40 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interface.cs: workaround bug in method overloading resolution
+	(there is already a bugzilla bug for it).
+
 2002-03-12  Miguel de Icaza  <miguel@ximian.com>
 
 	We could also solve this problem by having a separate path for
