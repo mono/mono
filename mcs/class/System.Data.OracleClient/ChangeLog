@@ -1,3 +1,9 @@
+2004-09-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile: Activate unit tests.
+	* System.Data.OracleClient_test.dll.sources: New. Sources for unit 
+	tests.
+
 2004-06-19  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* Makefile: added references to System.EnterpriseServices and

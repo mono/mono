@@ -8,7 +8,9 @@ LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll \
 	/r:System.EnterpriseServices.dll \
 	/r:System.Drawing.dll \
 	/nowarn:649 /nowarn:169
-NO_TEST = yes
+
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) /nowarn:618
+
 EXTRA_DISTFILES = Test/TestOracleClient.cs
 
 include ../../build/library.make
