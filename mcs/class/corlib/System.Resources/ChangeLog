@@ -1,5 +1,10 @@
 2002-01-17  Duncan Mak  <duncan@ximian.com>
 
+	* ResourceManager.cs: Fixed GetNeutralResourcesLanguage () and added
+	new attributes documented in 1.0 SDK.
+
+2002-01-17  Duncan Mak  <duncan@ximian.com>
+
 	* ResourceWriter.cs: Added MonoTODO decorations.
 
 	* SatelliteContractVersionAttribute.cs: added new attributes in 1.0 SDK.

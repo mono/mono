@@ -12,9 +12,11 @@ using System.Reflection;
 using System.Globalization;
 
 namespace System.Resources {
+
+	  [Serializable]
 	   public class ResourceManager {
 			 public static readonly int HeaderVersionNumber;
-		   // public static readonly int MagicNumber = 0xBEEFCACE;
+		   	 // public static readonly int MagicNumber = 0xBEEFCACE;
 
 			 protected string BaseNameField;
 			 protected Assembly MainAssembly;
@@ -110,9 +112,8 @@ namespace System.Resources {
 				    return null;
 			 }
 
-			 [MonoTODO]
 			 protected virtual string GetResourceFileName (CultureInfo culture) {
-				    return culture.Name + ".resources"; // TODO check for correctness.
+				    return culture.Name + ".resources";
 			 }
 
 			 [MonoTODO]
@@ -127,16 +128,15 @@ namespace System.Resources {
 						  r.Close();
 			 }
 
-			 [MonoTODO]
 			 protected static CultureInfo GetNeutralResourcesLanguage (Assembly a) {
 				    foreach (Attribute attribute in a.GetCustomAttributes (false)) {
-//						  if (attribute is NeutralResourcesLanguageAttribute)
-//								return new CultureInfo (attribute.CultureName);
+						  if (attribute is NeutralResourcesLanguageAttribute)
+								return new CultureInfo ((attribute as NeutralResourcesLanguageAttribute).CultureName);
 				    }
 				    return null;
 			 }
 
-			 public static Version GetSatelliteContractVersion (Assembly a) {
+			 protected static Version GetSatelliteContractVersion (Assembly a) {
 				    foreach (Attribute attribute in a.GetCustomAttributes (false)) {
 						  if (attribute is SatelliteContractVersionAttribute)
 								return new Version ((attribute as SatelliteContractVersionAttribute).Version);
