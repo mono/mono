@@ -55,6 +55,8 @@ ATOM WINAPI RegisterClassA (const WNDCLASSA *);
 HMODULE WINAPI GetModuleHandleA (LPCSTR);
 INT WINAPI MessageBoxExA (HWND, LPCSTR, LPCSTR, UINT, WORD);
 
+HINSTANCE applicationInstance = NULL;
+
 // register WNDCLASS for use in embeded application, this is a work around
 // for Bugzilla item #29548
 int PASCAL MonoRegisterClass (UINT style, WNDPROC lpfnWndProc, INT cbClsExtra,
@@ -68,7 +70,7 @@ int PASCAL MonoRegisterClass (UINT style, WNDPROC lpfnWndProc, INT cbClsExtra,
 	wc.lpszClassName = lpszClassName;
 	wc.lpfnWndProc = lpfnWndProc;
 	wc.style = style;
-	wc.hInstance = hInstance;
+	wc.hInstance = applicationInstance;
 	wc.hIcon = hIcon;
 	wc.hCursor = hCursor;
 	wc.hbrBackground = hbrBackground;
@@ -87,6 +89,8 @@ int PASCAL WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	MonoDomain *domain = NULL;
 	MonoAssembly *assembly = NULL;
 	int retval = 0;
+
+	applicationInstance = hInstance;
 
 	printf ("initializing JIT engine\n");	
 	domain = mono_jit_init (lpszCmdLine);

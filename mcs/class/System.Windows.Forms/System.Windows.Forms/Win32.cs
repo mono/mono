@@ -145,6 +145,11 @@ namespace System.Windows.Forms {
 		[DllImport ("user32.dll", 
 			    CallingConvention = CallingConvention.StdCall, 
 			    CharSet = CharSet.Auto)]
+		public static extern IntPtr GetParent (IntPtr hWnd);
+
+		[DllImport ("user32.dll", 
+			    CallingConvention = CallingConvention.StdCall, 
+			    CharSet = CharSet.Auto)]
 		public static extern bool SetWindowTextA (
 			IntPtr hWnd, string lpString);
 
@@ -638,5 +643,36 @@ namespace System.Windows.Forms {
 		public const int HWND_TOPMOST = -1;
 		public const int HWND_NOTOPMOST = -2;
 		public const int HWND_MESSAGE = -3;
+
+		// Static Control Styles
+		public const int SS_LEFT             = 0x00000000L;
+		public const int SS_CENTER           = 0x00000001L;
+		public const int SS_RIGHT            = 0x00000002L;
+		public const int SS_ICON             = 0x00000003L;
+		public const int SS_BLACKRECT        = 0x00000004L;
+		public const int SS_GRAYRECT         = 0x00000005L;
+		public const int SS_WHITERECT        = 0x00000006L;
+		public const int SS_BLACKFRAME       = 0x00000007L;
+		public const int SS_GRAYFRAME        = 0x00000008L;
+		public const int SS_WHITEFRAME       = 0x00000009L;
+
+		public const int SS_SIMPLE           = 0x0000000BL;
+		public const int SS_LEFTNOWORDWRAP   = 0x0000000CL;
+		
+		public const int SS_OWNERDRAW        = 0x0000000DL;
+		public const int SS_BITMAP           = 0x0000000EL;
+		public const int SS_ENHMETAFILE      = 0x0000000FL;
+
+		public const int SS_ETCHEDHORZ       = 0x00000010L;
+		public const int SS_ETCHEDVERT       = 0x00000011L;
+		public const int SS_ETCHEDFRAME      = 0x00000012L;
+		public const int SS_TYPEMASK         = 0x0000001FL;
+		
+		public const int SS_NOPREFIX         = 0x00000080L;
+		public const int SS_NOTIFY           = 0x00000100L;
+		public const int SS_CENTERIMAGE      = 0x00000200L;
+		public const int SS_RIGHTJUST        = 0x00000400L;
+		public const int SS_REALSIZEIMAGE    = 0x00000800L;
+		public const int SS_SUNKEN           = 0x00001000L;
 	}
 }

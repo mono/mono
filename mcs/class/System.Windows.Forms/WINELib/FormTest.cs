@@ -2,20 +2,15 @@ using System;
 using System.Windows.Forms;
 
 // Test basic functionality of the Application and Form class
-class FormTest : Form
-{
-	public class DoubleClickMessageFilter : IMessageFilter {
+class FormTest : Form {
 
-		public bool PreFilterMessage(ref Message m)
-		{
-			Console.WriteLine ("PreFilter(ing) message");
-			
-			if (m.Msg == Win32.WM_MOUSEMOVE) {
-				Console.WriteLine ("captured mousemove");
-				return true;
-			}
-			return false;
-		}
+	Label label;
+
+	public FormTest () : base ()
+	{
+		label = new Label ();
+		label.Parent = this;
+		label.Text = "Hello";
 	}
 
 	// - verifies the WndProc can be overridden propery 
@@ -29,11 +24,26 @@ class FormTest : Form
 				   Application.MessageLoop);
 	}
 
+	public class MouseMoveMessageFilter : IMessageFilter {
+
+		public bool PreFilterMessage(ref Message m)
+		{
+			Console.WriteLine ("PreFilter(ing) message");
+			
+			if (m.Msg == Win32.WM_MOUSEMOVE) {
+				Console.WriteLine ("captured mousemove");
+				return true;
+			}
+			return false;
+		}
+	}
+
+
 	static public void Test1 ()
 	{
 		MessageBox.Show ("test derived form");
 		FormTest form = new FormTest ();
-		DoubleClickMessageFilter f = new DoubleClickMessageFilter();
+		MouseMoveMessageFilter f = new MouseMoveMessageFilter();
 		Application.AddMessageFilter (f);
 
                 // should be false
@@ -41,7 +51,7 @@ class FormTest : Form
 				   Application.MessageLoop);
 
 		Application.Run (form);
-		Application.RemoveMessageFilter (f);
+		Application.RemoveMessageFilter (f); 
 	}
 
 	static public void Test2 ()
@@ -56,7 +66,7 @@ class FormTest : Form
  	static public int Main (String[] args)
 	{
 		Test1();
-		Test2();
+		//Test2();
 		return 0;
 	}
 }

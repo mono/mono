@@ -18,12 +18,8 @@ namespace System.Windows.Forms {
 	/// <summary>
 	/// Defines the base class for controls, which are components with 
 	/// visual representation.
-	///
-	/// ToDo note:
-	///  - no methods are implemented
 	/// </summary>
 	
-	[MonoTODO]
 	public class Control : Component , ISynchronizeInvoke, IWin32Window {
 
 		// Helper NativeWindow class to dispatch messages back
@@ -37,99 +33,129 @@ namespace System.Windows.Forms {
 			}
 
 			protected override void WndProc (ref Message m) {
+				base.WndProc (ref m);
+
+			if (m.Msg == Win32.WM_CREATE)
+				Console.WriteLine ("CNW WndProc WM_CREATE");
 				control.WndProc (ref m);
 			}
 		}
 		
+		// FIXME: not sure if dervied classes should have access
 		protected ControlNativeWindow window;
+		private ControlCollection childControls;
+		private Control parent;
 
 		// private fields
-		//Acually many of these need to be gotten or sent to the OS, 
-		//and not stored here.
-		//string accessibleDefaultActionDescription;
-		//string accessibleDescription;
-		//string accessibleName;
-		//AccessibleRole accessibleRole;
-		//bool allowDrop;
-		//AnchorStyles anchor;
-		//Color backColor;
-		//Image backgroundImage;
+		// it seems these are stored in case the window is not created,
+		// corresponding properties (below) need to check if window
+		// is created or not and react accordingly
+		string accessibleDefaultActionDescription;
+		string accessibleDescription;
+		string accessibleName;
+		AccessibleRole accessibleRole;
+		bool allowDrop;
+		AnchorStyles anchor;
+		Color backColor;
+		Image backgroundImage;
 		//BindingContext bindingContext;
-		//Rectangle bounds;
-		//bool causesValidation;
+		Rectangle bounds;
+		bool causesValidation;
 		//ContextMenu contextMenu;
-		//DockStyle dock;
-		//bool enabled;
-		//Font font;
-		//Color foreColor;
-		//ImeMode imeMode;
-		//bool isAccessible;
-		//Point location;
-		//string name;
-		//Region region;
-		//RightToLeft rightToLeft;
-		//bool tabStop;
-		//string text;
-		//bool visible;
-		CreateParams createParams = new CreateParams ();
+		DockStyle dock;
+		bool enabled;
+		Font font;
+		Color foreColor;
+		ImeMode imeMode;
+		bool isAccessible;
+		// Point location;  // using bounds to store location
+		string name;
+		Region region;
+		RightToLeft rightToLeft;
+		bool tabStop;
+		string text;
+		bool visible;
+		CreateParams createParams;
 
 		// --- Constructors ---
 		public Control ()
 		{
-			CreateHandle ();
-			//Acually many of these need to be gotten or sent to 
-			//the OS, and not stored here.
-			//accessibleDefaultActionDescription=null;
-			//accessibleDescription=null;
-		//accessibleName=null;
-			//accessibleRole=AccessibleRole.Default;
-			//allowDrop=false;
-			//anchor=AnchorStyles.Top|AnchorStyles.Left;
-			//backColor=Control.DefaultBackColor;
-			//backgroundImage=null;
-			//bounds=new Rectangle();
-			//bindingContext=null;
-			//causesValidation=true;
-			//contextMenu=null;
-			//dock=DockStyle.None;
-			//enabled=true;
-			//font=Control.DefaultFont;
-			//foreColor=Control.DefaultForeColor;
-			//imeMode=ImeMode.Inherit;
-			//isAccessible=false;
-			//location=new Point (0,0);
-			//name="";
-			//region=null;
-			//rightToLeft=RightToLeft.Inherit;
-			//tabStop=false;
-			//text="";
-			//visible=true;
+			CreateControlsInstance ();
+
+			accessibleDefaultActionDescription = null;
+			accessibleDescription = null;
+			accessibleName = null;
+			accessibleRole = AccessibleRole.Default;
+			allowDrop = false;
+			anchor = AnchorStyles.Top | AnchorStyles.Left;
+			//backColor = Control.DefaultBackColor;
+			backgroundImage = null;
+			bounds = new Rectangle();
+			// bindingContext = null;
+			causesValidation = true;
+			// contextMenu = null;
+			dock = DockStyle.None;
+			enabled = true;
+			// font = Control.DefaultFont;
+			// foreColor = Control.DefaultForeColor;
+			imeMode = ImeMode.Inherit;
+			isAccessible = false;
+			// location = new Point (0,0); should be from OS
+			name = "";
+			region = null;
+			rightToLeft = RightToLeft.Inherit;
+			tabStop = false;
+			text = "";
+			visible = true;
+			parent = null;
+			window = null;
+			createParams = new CreateParams ();
 		}
 		
+		// according to docs, the constructors do not create 
+		// the (HWND) window
 		public Control (string text) : this() 
 		{
-			Win32.SetWindowTextA (Handle, text);
+			Text = text;
+			// Win32.SetWindowTextA (Handle, text);
 		}
 		
 		public Control (Control parent, string text) : this (text) 
 		{
-			Win32.SetParent (Handle, parent.Handle);
+			Parent = parent;
+			// Win32.SetParent (Handle, parent.Handle);
 		}
 		
 		public Control (string text, int left, int top, 
 				int width, int height) : this(text) 
 		{
-			Win32.SetWindowPos (Handle, (IntPtr) 0, left, top,
-					    width, height, 0);
+			Left = left;
+			Top = top;
+			Width = width;
+			Height = height;
+			//Win32.SetWindowPos (Handle, (IntPtr) 0, left, top,
+			//	    width, height, 0);
 		}
 		
 		public Control (Control parent,string text,int left, int top,
 				int width,int height) : this (parent, text)
 		{
-			Win32.SetWindowPos (Handle, (IntPtr) 0, left, top,
-					    width, height, 0);
+			Left = left;
+			Top = top;
+			Width = width;
+			Height = height;
+			// Win32.SetWindowPos (Handle, (IntPtr) 0, left, top,
+			//		    width, height, 0);
 		}
-		
+
+		// for internal use only, create a control class
+		// for an existing, created HWND
+ 		private Control (IntPtr existingHandle)
+ 		{
+ 			window = (ControlNativeWindow) NativeWindow.FromHandle (
+ 				existingHandle);
+ 		}
+
 		// --- Properties ---
 		// Properties only supporting .NET framework, not stubbed out:
 		//  - protected bool RenderRightToLeft {get;}
@@ -141,106 +167,89 @@ namespace System.Windows.Forms {
 		//	}
 		//}
 
-		[MonoTODO]
 		public string AccessibleDefaultActionDescription {
 			get {
-				//return accessibleDefaultActionDescription;
-				throw new NotImplementedException ();
+				return accessibleDefaultActionDescription;
 			}
 			set {
-				//accessibleDefaultActionDescription=value;
-				throw new NotImplementedException ();
+				accessibleDefaultActionDescription = value;
 			}
 		}
 		
-		[MonoTODO]
 		public string AccessibleDescription {
 			get {
-				//return accessibleDescription;
-				throw new NotImplementedException ();
+				return accessibleDescription;
 			}
 			set {
-				//accessibleDescription=value;
-				throw new NotImplementedException ();
+				accessibleDescription=value;
 			}
 		}
 		
-		[MonoTODO]
 		public string AccessibleName {
 			get {
-				//return accessibleName;
-				throw new NotImplementedException ();
+				return accessibleName;
 			}
 			set {
-				//accessibleName=value;
-				throw new NotImplementedException ();
+				accessibleName=value;
 			}
 		}
 		
-		[MonoTODO]
 		public AccessibleRole AccessibleRole {
 			get {
-				//return accessibleRole;
-				throw new NotImplementedException ();
+				return accessibleRole;
 			}
 			set {
-				//accessibleRole=value;
-				throw new NotImplementedException ();
+				accessibleRole=value;
 			}
 		}
 		
-		[MonoTODO]
 		public virtual bool AllowDrop {
 			get {
-				//return allowDrop;
-				throw new NotImplementedException ();
+				return allowDrop;
 			}
 			set {
-				//allowDrop=value;
-				throw new NotImplementedException ();
+				allowDrop=value;
 			}
 		}
 	
-		[MonoTODO]
 		public virtual AnchorStyles Anchor {
 			get {
-				//return anchor;
-				throw new NotImplementedException ();
+				return anchor;
 			}
 			set {
-				//anchor=value;
-				throw new NotImplementedException ();
+				anchor=value;
 			}
 		}
 		
 		public virtual Color BackColor {
 			get {
-				IntPtr dc = Win32.GetDC (Handle);
-				uint bgColor = Win32.GetBkColor (dc);
-				Win32.ReleaseDC (Handle, dc);
-
-				int r = (int) (bgColor & 0xFF);
-				int g = (int) ((bgColor >> 8) & 0xFF);
-				int b = (int) ((bgColor >> 16) & 0xFF);
-
-				return Color.FromArgb (r, g, b);
+				if (IsHandleCreated) {
+					IntPtr dc = Win32.GetDC (Handle);
+					uint bgColor = Win32.GetBkColor (dc);
+					Win32.ReleaseDC (Handle, dc);
+					int r = (int) (bgColor & 0xFF);
+					int g = (int) ((bgColor >> 8) & 0xFF);
+					int b = (int) ((bgColor >> 16) & 0xFF);
+					return Color.FromArgb (r, g, b);
+				}  else return backColor;
 			}
 			set {
-				IntPtr dc = Win32.GetDC (Handle);
-				Win32.SetBkColor (dc, (uint) value.ToArgb());
-				Win32.ReleaseDC (Handle, dc);
+				backColor = value;
+				if (IsHandleCreated) {
+					IntPtr dc = Win32.GetDC (Handle);
+					Win32.SetBkColor (dc, (uint) value.ToArgb());
+					Win32.ReleaseDC (Handle, dc);
+				}
 			}
 		}
 		
-		[MonoTODO]
 		public virtual Image BackgroundImage {
 			get {
-				//return backgroundImage;
-				throw new NotImplementedException ();
+				return backgroundImage;
 			}
 			set {
-				//backgroundImage=value;
-				throw new NotImplementedException ();
+				backgroundImage = value;
+				// FIXME: force redraw
 			}
 		}
 
@@ -264,23 +273,27 @@ namespace System.Windows.Forms {
 		
 		public Rectangle Bounds {
 			get {
-				Win32.RECT rect = new Win32.RECT();
-				Win32.GetWindowRect (Handle, ref rect);
-				return new Rectangle ((int) rect.left, 
-						      (int) rect.top,
-						      (int) rect.right, 
-						      (int) rect.bottom);
+				if (IsHandleCreated) {
+					Win32.RECT rect = new Win32.RECT();
+					Win32.GetWindowRect (Handle, ref rect);
+					return new Rectangle ((int) rect.left, 
+							      (int) rect.top,
+							      (int) rect.right, 
+							      (int) rect.bottom);
+				} else return bounds;
 			}
 			set {
-				Win32.SetWindowPos ( 
-					Handle, (IntPtr) 0, value.X, value.Y,
-					value.Width, value.Height, 0);
+				if (IsHandleCreated)
+					Win32.SetWindowPos (
+						Handle, (IntPtr) 0, value.X, value.Y,
+						value.Width, value.Height, 0);
+				else bounds = value;
 			}
 		}
 		
 		public bool CanFocus {
 			get {
-				if (Handle != (IntPtr) 0 && Visible && Enabled)
+				if (IsHandleCreated && Visible && Enabled)
 					return true;
 				return false;
 			}
@@ -303,45 +316,52 @@ namespace System.Windows.Forms {
 		
 		public bool Capture {
 			get {
-				IntPtr captured = Win32.GetCapture ();
-				if (Handle == captured) 
-					return true;
+				if (IsHandleCreated) {
+					IntPtr captured = Win32.GetCapture ();
+					if (Handle == captured) 
+						return true;
+				}
 				return false;
 			}
 			set {
-				if (value)
-					Win32.SetCapture (Handle);
-				else {
-					IntPtr captured = Win32.GetCapture ();
+				if (IsHandleCreated) {
+					if (value)
+						Win32.SetCapture (Handle);
+					else {
+						IntPtr captured = Win32.GetCapture ();
 
-					// if this window is in capture state
-					// release it
-					if (Handle == captured)
-						Win32.ReleaseCapture ();
+						// if this window is in capture state
+						// release it
+						if (Handle == captured)
+							Win32.ReleaseCapture ();
+					}
 				}
 			}
 		}
 		
-		[MonoTODO]
 		public bool CausesValidation {
 			get {
-				//return causesValidation;
-				throw new NotImplementedException ();
+				return causesValidation;
 			}
 			set {
-				//causesValidation=value;
-				throw new NotImplementedException ();
+				causesValidation=value;
 			}
 		}
 		
 		public Rectangle ClientRectangle {
 			get {
-				Win32.RECT rect = new Win32.RECT();
-				Win32.GetClientRect (Handle, ref rect);
-				return new Rectangle ((int) rect.left, 
-						      (int) rect.top,
-						      (int) rect.right, 
-						      (int) rect.bottom);
+				if (IsHandleCreated) {
+					Win32.RECT rect = new Win32.RECT();
+					Win32.GetClientRect (Handle, ref rect);
+					return new Rectangle ((int) rect.left, 
+							      (int) rect.top,
+							      (int) rect.right, 
+							      (int) rect.bottom);
+				}
+
+				// FIXME: is the correct return value for
+				// window who's handle is not created
+				return new Rectangle (0, 0, 0, 0);
 			}
 		}
 		
@@ -366,9 +386,11 @@ namespace System.Windows.Forms {
 		
 		public bool ContainsFocus {
 			get {
-				IntPtr focusedWindow = Win32.GetFocus();
-				if (focusedWindow == Handle)
-					return true;
+				if (IsHandleCreated) {
+					IntPtr focusedWindow = Win32.GetFocus();
+					if (focusedWindow == Handle)
+						return true;
+				}
 				return false;
 			}
 		}
@@ -385,11 +407,8 @@ namespace System.Windows.Forms {
 		//	}
 		//}
 		
-		[MonoTODO]
 		public ControlCollection Controls {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return childControls; }
 		}
 		
 		public bool Created {
@@ -479,16 +498,12 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		[MonoTODO]
 		public virtual DockStyle Dock {
-			// CHECKME:
 			get {
-				//return dock;
-				throw new NotImplementedException ();
+				return dock;
 			}
 			set {
-				//dock=value;
-				throw new NotImplementedException ();
+				dock=value;
 			}
 		}
 
@@ -530,60 +545,55 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		[MonoTODO]
 		public virtual Color ForeColor {
-			// CHECKME:
 			get {
-				//return foreColor;
-				throw new NotImplementedException ();
+				return foreColor;
 			}
 			set {
-				//foreColor=value;
-				throw new NotImplementedException ();
+				foreColor = value;
 			}
 		}
 		
-		[MonoTODO]
 		public bool HasChildren {
-			// FIXME: use EnumChildWindows here?
 			get {
-				throw new NotImplementedException ();
+				if (childControls.Count >0) 
+					return true;
+				return false;
 			}
 		}
 		
-		[MonoTODO]
 		public int Height {
 			get {
-				throw new NotImplementedException ();
+				if (IsHandleCreated) {
+					// FIXME: GetWindowPos
+				}
+				return bounds.Height;
 			}
 			set {
-				throw new NotImplementedException ();
+				bounds.Height = value;
+				if (IsHandleCreated) {
+					// FIXME: SetWindowPos
+				}
 			}
 		}
 		
-		[MonoTODO]
 		public ImeMode ImeMode {
 			// CHECKME:
 			get {
-				//return imeMode;
-				throw new NotImplementedException ();
+				return imeMode;
 			}
 			set {
-				//imeMode=value;
-				throw new NotImplementedException ();
+				imeMode=value;
 			}
 		}
 		
-		[MonoTODO]
 		public bool IsAccessible {
 			// CHECKME:
 			get {
-				//return isAccessible;
-				throw new NotImplementedException ();
+				return isAccessible;
 			} // default is false
 			set {
-				//isAccessible=value;
-				throw new NotImplementedException ();
+				isAccessible=value;
 			}
 		}
 		
@@ -603,26 +613,34 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		[MonoTODO]
 		public int Left {
 			get {
-				throw new NotImplementedException ();
+				if (IsHandleCreated) {
+					// FIXME: GetWindowPos
+				}
+				return Bounds.X;
 			}
 			set {
-				throw new NotImplementedException ();
+				if (IsHandleCreated) {
+					// FIXME: SetWindowPos
+				}
+				Bounds.X = value;
 			}
 		}
 		
-		[MonoTODO]
 		public Point Location {
 			// CHECKME:
 			get {
-				//return location;
-				throw new NotImplementedException ();
+				return new Point (Top, Left);
 			}
 			set {
-				//location=value;
-				throw new NotImplementedException ();
+				bounds.X = value.X;
+				bounds.Y = value.Y;
+
+				if (IsHandleCreated) {
+					// FIXME: SetWindowPos
+				}
+
 			}
 		}
 		
@@ -649,30 +667,35 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		[MonoTODO]
 		public string Name {
 			// CHECKME:
 			get {
-				//return name;
-				throw new NotImplementedException ();
+				return name;
 			}
 			set {
-				//name=value;
-				throw new NotImplementedException ();
+				name=value;
 			}
 		}
 		
-		[MonoTODO]
 		public Control Parent {
 			get {
-				// Need to get HWND from Control class
-				// Win32.GetParent (Handle);
-				throw new NotImplementedException ();
+				return parent;
+				//IntPtr parent = Win32.GetParent (Handle);
+				//return FromHandle (parent);
 			}
 			set {
-				// Need to get HWND from Control class
-				// Win32.SetParent (value);
-				throw new NotImplementedException ();
+				Console.WriteLine ("setting parent");
+				parent = value;
+
+				Console.WriteLine ("add ourself to the parents control");
+				// add ourself to the parents control
+				parent.Controls.Add (this);
+
+				Console.WriteLine ("SetParent");
+				if (IsHandleCreated) {
+					Console.WriteLine ("Handle created");
+					Win32.SetParent (Handle, value.Handle);
+				}
 			}
 		}
 		
@@ -697,16 +720,13 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		// [MonoTODO]
 		public Region Region {
 			// CHECKME:
 			get {
-				//return region;
-				throw new NotImplementedException ();
+				return region;
 			}
 			set {
-				//region=value;
-				throw new NotImplementedException ();
+				region=value;
 			}
 		}
 		
@@ -730,12 +750,10 @@ namespace System.Windows.Forms {
 		public virtual RightToLeft RightToLeft {
 			// CHECKME:
 			get {
-				//return rightToLeft;
-				throw new NotImplementedException ();
+				return rightToLeft;
 			}
 			set {
-				//rightToLeft=value;
-				throw new NotImplementedException ();
+				rightToLeft=value;
 			}
 		}
 		
@@ -783,16 +801,13 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		[MonoTODO]
 		public bool TabStop {
 			// CHECKME:
 			get {
-				//return tabStop;
-				throw new NotImplementedException ();
+				return tabStop;
 			}
 			set {
-				//tabStop=value;
-				throw new NotImplementedException ();
+				tabStop = value;
 			}
 		}
 		
@@ -808,23 +823,34 @@ namespace System.Windows.Forms {
 		
 		public virtual string Text {
 			get {
-				String text = "";
-				int length = Win32.GetWindowTextLengthA (Handle);
-				Win32.GetWindowTextA (Handle, ref text, length);
-				return text;
+				if (IsHandleCreated) {
+					String text = "";
+					int length = Win32.GetWindowTextLengthA (Handle);
+					Win32.GetWindowTextA (Handle, ref text, length);
+					return text;
+				} else return text;
 			}
 			set {
-				Win32.SetWindowTextA (Handle, value);
+				text = value;
+
+				if (IsHandleCreated)
+					Win32.SetWindowTextA (Handle, value);
 			}
 		}
 		
-		[MonoTODO]
 		public int Top {
 			get {
-				throw new NotImplementedException ();
+				if (IsHandleCreated) {
+					// FIXME: GetWindowPos
+					return 0;
+				} else return bounds.Top;
 			}
 			set {
-				throw new NotImplementedException ();
+				bounds.X = value;
+
+				if (IsHandleCreated) {
+					// FIXME: SetWindowPos
+				}
 			}
 		}
 		
@@ -849,13 +875,18 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		[MonoTODO]
 		public int Width {
 			get {
-				throw new NotImplementedException ();
+				if (IsHandleCreated) {
+					// FIXME: GetWindowPos
+				}
+				return bounds.Width;
 			}
 			set {
-				throw new NotImplementedException ();
+				bounds.Width = value;
+				if (IsHandleCreated) {
+					// FIXME: SetWindowPos
+				}
 			}
 		}
 		
@@ -881,28 +912,26 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		public bool Contains (Control ctl) 
 		{
-			throw new NotImplementedException ();
+			return childControls.Contains (ctl);
 		}
 		
-		[MonoTODO]
 		public void CreateControl () 
 		{
-			throw new NotImplementedException ();
+			CreateHandle ();
 		}
 
 		//[MonoTODO]
-		// AccessibleObject not ready
+		//AccessibleObject not ready
 		//protected virtual AccessibleObject CreateAccessibilityInstance() {
 		//	throw new NotImplementedException ();
 		//}
 		
-		[MonoTODO]
 		protected virtual ControlCollection CreateControlsInstance ()
 		{
-			throw new NotImplementedException ();
+			childControls = new ControlCollection (this);
+			return childControls;
 		}
 		
 		[MonoTODO]
@@ -911,23 +940,25 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 	
-		[MonoTODO]
 		protected virtual void CreateHandle ()
 		{
-			// FIXME: should window creation happen here
-			// (in the constructor)?
 			window = new ControlNativeWindow (this);
 			
-			createParams.Caption = "";
+			createParams.Caption = Text;
 			createParams.ClassName = "mono_native_window";
-			createParams.X = 10;
-			createParams.Y = 10;
-			createParams.Width = 50;
-			createParams.Height = 50;
+			createParams.X = Top;
+			createParams.Y = Left;
+			createParams.Width = Width;
+			createParams.Height = Height;
 			createParams.ClassStyle = 0;
 			createParams.ExStyle = 0;
 			createParams.Param = 0;
-			createParams.Param = 0;
+
+			if (parent != null)
+				createParams.Parent = parent.Handle;
+			else 
+				createParams.Parent = (IntPtr) 0;
+
 			createParams.Style = (int) Win32.WS_OVERLAPPEDWINDOW;
 
 			window.CreateHandle (createParams);
@@ -978,10 +1009,10 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 	
-		[MonoTODO]
 		public static Control FromHandle (IntPtr handle) 
 		{
-			throw new NotImplementedException ();
+			Control control = new Control (handle);
+			return control;
 		}
 	
 		[MonoTODO]
@@ -1016,7 +1047,8 @@ namespace System.Windows.Forms {
 		
 		public void Hide ()
  		{
-			Win32.ShowWindow (Handle, Win32.SW_HIDE);
+			if (IsHandleCreated)
+				Win32.ShowWindow (Handle, Win32.SW_HIDE);
 		}
 		
 		[MonoTODO]
@@ -1027,8 +1059,10 @@ namespace System.Windows.Forms {
 		
 		public void Invalidate () 
 		{
-			Win32.RECT rect = (Win32.RECT) null;
-			Win32.InvalidateRect (Handle, ref rect, true);
+			if (IsHandleCreated) {
+				Win32.RECT rect = (Win32.RECT) null;
+				Win32.InvalidateRect (Handle, ref rect, true);
+			}
 		}
 		
 		[MonoTODO]
@@ -1039,12 +1073,14 @@ namespace System.Windows.Forms {
 		
 		public void Invalidate (Rectangle rc) 
 		{
-			Win32.RECT rect = new Win32.RECT();
-			rect.left = rc.Left;
-			rect.top = rc.Top;
-			rect.right = rc.Right;
-			rect.bottom = rc.Bottom;
-			Win32.InvalidateRect (Handle, ref rect, true);
+			if (IsHandleCreated) {
+				Win32.RECT rect = new Win32.RECT();
+				rect.left = rc.Left;
+				rect.top = rc.Top;
+				rect.right = rc.Right;
+				rect.bottom = rc.Bottom;
+				Win32.InvalidateRect (Handle, ref rect, true);
+			}
 		}
 		
 		//[MonoTODO]
@@ -1172,7 +1208,7 @@ namespace System.Windows.Forms {
 		
 		protected virtual void OnCreateControl ()
 		{
-
+			
 		}
 		
 		protected virtual void OnCursorChanged (EventArgs e)
@@ -1255,8 +1291,20 @@ namespace System.Windows.Forms {
 		
 		protected virtual void OnHandleCreated (EventArgs e) 
 		{
+			Console.WriteLine ("OnHandleCreated");
+
 			if (HandleCreated != null)
 				HandleCreated (this, e);
+
+			// create all child windows
+			IEnumerator cw = childControls.GetEnumerator();
+
+			while (cw.MoveNext()) {
+				Console.WriteLine ("Adding Control");
+				Control control = (Control) cw.Current;
+				control.CreateControl ();
+				control.Show ();
+			}
 		}
 		
 		protected virtual void OnHandleDestroyed (EventArgs e) 
@@ -1604,10 +1652,12 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
+		// used when properties/values of Control 
+		// are big enough to warrant recreating the HWND
 		protected void RecreateHandle() 
 		{
-			throw new NotImplementedException ();
+			CreateHandle ();
+
 		}
 		
 		[MonoTODO]
@@ -1931,11 +1981,13 @@ namespace System.Windows.Forms {
 		{
 			EventArgs eventArgs = new EventArgs ();
 			// FIXME: paintEventArgs is not being created properly
-			PaintEventArgs paintEventArgs = new PaintEventArgs (new Graphics(), new Rectangle());
+			PaintEventArgs paintEventArgs = new PaintEventArgs (
+				new Graphics(), new Rectangle());
 
 			switch (m.Msg) {
 
 			case Win32.WM_CREATE:
+				Console.WriteLine ("WM_CREATE");
 				OnHandleCreated (eventArgs);
 				break;
 			case Win32.WM_LBUTTONDBLCLK:
@@ -2030,9 +2082,9 @@ namespace System.Windows.Forms {
 			case Win32.WM_SHOWWINDOW:
 				OnVisibleChanged (eventArgs);
 				break;
-			default:
-				DefWndProc (ref m);
-				break;
+// 			default:
+// 				DefWndProc (ref m);
+// 				break;
 			}
 		}
 
@@ -2547,7 +2599,11 @@ namespace System.Windows.Forms {
 		
 		/// --- IWin32Window properties
 		public IntPtr Handle {
-			get { return window.Handle; }
+			get { 
+				if (window != null) 
+					return window.Handle; 
+				return (IntPtr) 0;
+			}
 		}
 		
 		/// --- ISynchronizeInvoke properties ---
@@ -2678,64 +2734,52 @@ namespace System.Windows.Forms {
 		/// Represents a collection of Control objects
 		/// </summary>
 		public class ControlCollection : IList, ICollection, IEnumerable, ICloneable {
-			
+
+			private ArrayList collection = new ArrayList ();
+			private Control owner;
+
 			/// --- ControlCollection.constructor ---
-			[MonoTODO]
 			public ControlCollection (Control owner) 
 			{
-				throw new NotImplementedException ();
+				this.owner = owner;
 			}
 		
 			/// --- ControlCollection Properties ---
-			[MonoTODO]
 			public int Count {
-				get { throw new NotImplementedException (); }
+				get { return collection.Count; }
 			}
 		
-			[MonoTODO]
 			public bool IsReadOnly {
-				get { throw new NotImplementedException (); }
+				get { return collection.IsReadOnly; }
 			}
 			
-			[MonoTODO]
 			public virtual Control this [int index] {
-				get { throw new NotImplementedException (); }
+				get { return (Control) collection[index]; }
 			}
 		
-		
-			/// --- ControlCollection Methods ---
-			/// .NET framework supporting internal methods, not stubbed out:
-			/// - object ICloneable.Clone();
-			/// Note: IList methods stubbed out, otherwise does not compile
-			
-			[MonoTODO]
 			public virtual void Add (Control value) 
 			{
-				throw new NotImplementedException ();
+				collection.Add (value);
 			}
 			
-			[MonoTODO]
 			public virtual void AddRange (Control[] controls) 
 			{
-				throw new NotImplementedException ();
+				collection.AddRange (controls);
 			}
 			
-			[MonoTODO]
 			public virtual void Clear () 
 			{
-				throw new NotImplementedException ();
+				collection.Clear ();
 			}
 		
-			[MonoTODO]
 			public bool Contains (Control control) 
 			{
-				throw new NotImplementedException ();
+				return collection.Contains (control);
 			}
 			
-			[MonoTODO]
 			public void CopyTo (Array dest,int index) 
 			{
-				throw new NotImplementedException ();
+				collection.CopyTo (dest, index);
 			}
 			
 			[MonoTODO]
@@ -2750,22 +2794,14 @@ namespace System.Windows.Forms {
 			//}
 
 			[MonoTODO]
-			public int GetChildIndex (Control child) 
+			public int GetChildIndex (Control child)
 			{
 				throw new NotImplementedException ();
 			}
 			
-			[MonoTODO]
-			public int GetChildIndex (Control child,
-						  bool throwException) 
-			{
-				throw new NotImplementedException ();
-			}
-			
-			[MonoTODO]
 			public IEnumerator GetEnumerator () 
 			{
-				throw new NotImplementedException ();
+				return collection.GetEnumerator ();
 			}
 			
 			[MonoTODO]
@@ -2774,22 +2810,19 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			
-			[MonoTODO]
 			public int IndexOf (Control control) 
 			{
-				throw new NotImplementedException ();
+				return collection.IndexOf (control);
 			}
 			
-			[MonoTODO]
 			public virtual void Remove (Control value) 
 			{
-				throw new NotImplementedException ();
+				collection.Remove (value);
 			}
 			
-			[MonoTODO]
 			public void RemoveAt (int index) 
 			{
-				throw new NotImplementedException ();
+				collection.RemoveAt (index);
 			}
 			
 			[MonoTODO]
@@ -2798,68 +2831,55 @@ namespace System.Windows.Forms {
 				throw new NotImplementedException ();
 			}
 			
-			
-			
 			/// --- ControlCollection.IClonable methods ---
 			[MonoTODO]
 			object ICloneable.Clone ()
 			{
 				throw new NotImplementedException ();
 			}
-	
-			
 			
 			/// --- ControlCollection.IList properties ---
-			[MonoTODO]
 			bool IList.IsFixedSize {
-				get { throw new NotImplementedException (); }
+				get { return collection.IsFixedSize; }
 			}
 
-			[MonoTODO]			
 			object IList.this [int index] {
-				get { throw new NotImplementedException (); }
-				set { throw new NotImplementedException (); }
+				get { return collection[index]; }
+				set { collection[index] = value; }
 			}
 
-			[MonoTODO]				
 			object ICollection.SyncRoot {
-				get { throw new NotImplementedException (); }
+				get { return collection.SyncRoot; }
 			}
 	
-			[MonoTODO]				
 			bool ICollection.IsSynchronized {
-				get { throw new NotImplementedException (); }
+				get { return collection.IsSynchronized; }
 			}
 			
 			/// --- ControlCollection.IList methods ---
-			[MonoTODO]
 			int IList.Add (object control) 
 			{
-				throw new NotImplementedException ();
+				return collection.Add (control);
 			}
 		
-			[MonoTODO]
 			bool IList.Contains (object control) 
 			{
-				throw new NotImplementedException ();
+				return collection.Contains (control);
 			}
 		
-			[MonoTODO]
 			int IList.IndexOf (object control) 
 			{
-				throw new NotImplementedException ();
+				return collection.IndexOf (control);
 			}
 		
-			[MonoTODO]
 			void IList.Insert (int index,object value) 
 			{
-				throw new NotImplementedException ();
+				collection.Insert (index, value);
 			}
 		
-			[MonoTODO]
 			void IList.Remove (object control) 
 			{
-				throw new NotImplementedException ();
+				collection.Remove (control);
 			}
 		}  // --- end of Control.ControlCollection ---
 	}

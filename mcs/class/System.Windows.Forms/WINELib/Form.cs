@@ -76,23 +76,21 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
 		public override bool AutoScroll {
 			get {
-				throw new NotImplementedException ();
+				return base.AutoScroll;
 			}
 			set {
-				throw new NotImplementedException ();
+				base.AutoScroll = value;
 			}
 		}
 
-		[MonoTODO]
 		public override Color BackColor {
 			get {
-				throw new NotImplementedException ();
+				return base.BackColor;
 			}
 			set {
-				throw new NotImplementedException ();
+				base.BackColor = value;
 			}
 		}
 
@@ -412,7 +410,7 @@ namespace System.Windows.Forms {
 		//  --- Public Methods
 		public void Activate ()
 		{
-			Win32.SetActiveWindow (window.Handle);
+			Win32.SetActiveWindow (Handle);
 		}
 
 		[MonoTODO]
@@ -423,7 +421,7 @@ namespace System.Windows.Forms {
 
 		public void Close ()
 		{
-			Win32.CloseWindow (window.Handle);
+			Win32.CloseWindow (Handle);
 		}
 
 		//inherited
@@ -504,7 +502,7 @@ namespace System.Windows.Forms {
 
 		public void SetDesktopLocation (int x, int y)
 		{
-			Win32.SetWindowPos ((IntPtr) window.Handle, (IntPtr) 0, 
+			Win32.SetWindowPos ((IntPtr) Handle, (IntPtr) 0, 
 					    x, y, 0, 0, 
 					    (int) (Win32.SWP_NOSIZE | 
 					    Win32.SWP_NOZORDER));
@@ -512,7 +510,7 @@ namespace System.Windows.Forms {
 
 		public new void Show ()
 		{
-			Win32.ShowWindow (window.Handle, (int) Win32.SW_SHOW);
+			Win32.ShowWindow (Handle, (int) Win32.SW_SHOW);
 		}
 
 		[MonoTODO]
@@ -561,7 +559,6 @@ namespace System.Windows.Forms {
 // 			}
 // 		}
 
-		[MonoTODO]
 		public event InputLanguageChangingEventHandler InputLanguageChanging; // {
 // 			add {
 // 				throw new NotImplementedException ();
@@ -571,7 +568,6 @@ namespace System.Windows.Forms {
 // 			}
 // 		}
 
-		[MonoTODO]
 		public event EventHandler  Load; // {
 // 			add {
 // 				throw new NotImplementedException ();
@@ -581,7 +577,6 @@ namespace System.Windows.Forms {
 // 			}
 // 		}
 
-		[MonoTODO]
 		public event EventHandler  MaximizedBoundsChanged; // {
 // 			add {
 // 				throw new NotImplementedException ();
@@ -591,7 +586,6 @@ namespace System.Windows.Forms {
 // 			}
 // 		}
 
-		[MonoTODO]
 		public event EventHandler MaximumSizeChanged; // {
 // 			add {
 // 				throw new NotImplementedException ();
@@ -601,7 +595,6 @@ namespace System.Windows.Forms {
 // 			}
 // 		}
 
-		[MonoTODO]
 		public event EventHandler  MdiChildActivate; // {
 // 			add {
 // 				throw new NotImplementedException ();
@@ -611,7 +604,6 @@ namespace System.Windows.Forms {
 // 			}
 // 		}
 
-		[MonoTODO]
 		public event EventHandler  MenuComplete; // {
 // 			add {
 // 				throw new NotImplementedException ();
@@ -621,7 +613,6 @@ namespace System.Windows.Forms {
 // 			}
 // 		}
 
-		[MonoTODO]
 		public event EventHandler  MenuStart; // {
 // 			add {
 // 				throw new NotImplementedException ();
@@ -631,7 +622,6 @@ namespace System.Windows.Forms {
 // 			}
 // 		}
 
-		[MonoTODO]
 		public event EventHandler  MinimumSizedChanged; // {
 // 			add {
 // 				throw new NotImplementedException ();
@@ -644,17 +634,15 @@ namespace System.Windows.Forms {
 		
 		//  --- Protected Properties
 		
-		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
 				return base.CreateParams;
 			}
 		}
 
-		[MonoTODO]
 		protected override ImeMode DefaultImeMode {
 			get {
-				throw new NotImplementedException ();
+				return base.DefaultImeMode;
 			}
 		}
 
@@ -676,21 +664,22 @@ namespace System.Windows.Forms {
 		
 		//  --- Protected Methods
 		
-		[MonoTODO]
 		protected override void AdjustFormScrollbars (bool displayScrollbars)
 		{
-			throw new NotImplementedException ();
+			base.AdjustFormScrollbars (displayScrollbars);
 		}
 
-		//[MonoTODO]
-		//protected override ControlCollection CreateControlsInstance()
-		//{
-		//		throw new NotImplementedException ();
-		//}
+		protected override Control.ControlCollection CreateControlsInstance ()
+		{
+			return base.CreateControlsInstance ();
+		}
 
 		protected override void CreateHandle ()
 		{
 			base.CreateHandle ();
+
+			if (IsHandleCreated)
+				OnHandleCreated (new EventArgs());
 		}
 
 		protected override void DefWndProc (ref Message m)
@@ -718,21 +707,23 @@ namespace System.Windows.Forms {
 
 		protected override void OnCreateControl ()
 		{
-			
+			base.OnCreateControl ();
 		}
 
 		protected override void OnFontChanged (EventArgs e)
 		{
-
+			base.OnFontChanged (e);
 		}
 
 		protected override void OnHandleCreated (EventArgs e)
 		{
-
+			Console.WriteLine ("OnHandleCreated");
+			base.OnHandleCreated (e);
 		}
 
 		protected override void OnHandleDestroyed (EventArgs e)
 		{
+			base.OnHandleDestroyed (e);
 		}
 
 		protected virtual void OnInputLanguageChanged (InputLanguageChangedEventArgs e)
@@ -795,7 +786,7 @@ namespace System.Windows.Forms {
 
 		protected override void  OnResize (EventArgs e)
 		{
-
+			base.OnResize (e);
 		}
 
 		protected override void  OnStyleChanged (EventArgs e)
@@ -963,24 +954,22 @@ namespace System.Windows.Forms {
 		// </summary>
 		// TODO: implement support classes and derive from 
 		// proper classes
-		public /*new(remove error)*/ class  ControlCollection /*: System.Windows.Forms.Control.ControlCollection, ICollection*/ {
+		// FIXME: use this or the one defined on Control?
+		public class  ControlCollectionX : System.Windows.Forms.Control.ControlCollection /*,ICollection*/ {
 
 			//  --- Constructor
-			[MonoTODO]
 			// base class not defined (yet!)
-			public ControlCollection (Form owner) /*: base(owner)*/ {
-				throw new NotImplementedException ();
+			public ControlCollectionX (Form owner) : base(owner) {
+
 			}
 		
 			//  --- Public Methods
 
-			[MonoTODO]
 			// TODO: see what causes this compile error
-			//public override void Add(Control value) {
-			//	throw new NotImplementedException ();
-			//}
+			public override void Add(Control value) {
+				base.Add (value);
+			}
 
-			[MonoTODO]
 			public override bool Equals (object o) {
 				throw new NotImplementedException ();
 			}
@@ -989,22 +978,18 @@ namespace System.Windows.Forms {
 			//	throw new NotImplementedException ();
 			//}
 
-			[MonoTODO]
 			public override int GetHashCode () {
 				//FIXME add our proprities
 				return base.GetHashCode ();
 			}
 
-			// Inherited
 			//public override int GetChildIndex(Control c) {
-			//	throw new NotImplementedException ();
+				//return base.GetChildIndex (c);
 			//}
 
-			//[MonoTODO]
-			// Control not yet usuable due to dependencies
-			//public override void Remove(Control value) {
-			//	throw new NotImplementedException ();
-			//}
+			public override void Remove(Control value) {
+				base.Remove (value);
+			}
 		} // end of Subclass
 	}
 }

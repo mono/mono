@@ -68,10 +68,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
 		public override Rectangle DisplayRectangle {
 			get {
-				throw new NotImplementedException ();
+				return base.DisplayRectangle;
 			}
 		}
 
@@ -202,10 +201,9 @@ namespace System.Windows.Forms {
 		//  --- Protected Properties
 		//
 
-		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
-				throw new NotImplementedException ();
+				return base.CreateParams;
 			}
 		}
 
@@ -272,10 +270,9 @@ namespace System.Windows.Forms {
 		//	throw new NotImplementedException ();
 		//}
 
-		[MonoTODO]
 		protected override void ScaleCore (float dx, float dy)
 		{
-			throw new NotImplementedException ();
+			base.ScaleCore (dx, dy);
 		}
 
 		//protected void UpdateBounds()
@@ -291,7 +288,6 @@ namespace System.Windows.Forms {
 		//	throw new NotImplementedException ();
 		//}
 
-		[MonoTODO]
 		protected override void WndProc (ref Message m)
 		{
 			base.WndProc (ref m);

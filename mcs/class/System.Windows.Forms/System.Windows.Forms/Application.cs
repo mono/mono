@@ -218,7 +218,9 @@ namespace System.Windows.Forms {
 		// Documents say this parameter name should be mainform, 
 		// but the verifier says context.
 		{
-			ApplicationContext context = new ApplicationContext (form);
+			form.CreateControl ();
+			ApplicationContext context = new ApplicationContext (
+				form);
 			Run (context);
 		}
 		

@@ -181,7 +181,8 @@ namespace System.Windows.Forms {
 
 		protected virtual void WndProc (ref Message m) 
 		{
-			Console.WriteLine ("NativeWindow.WndProc");
+			if (m.Msg == Win32.WM_CREATE)
+				Console.WriteLine ("NW WndProc WM_CREATE");
 			DefWndProc (ref m);
 		}
 
@@ -196,8 +197,6 @@ namespace System.Windows.Forms {
  		static private IntPtr WndProc (
 			IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam) 
 		{
- 		        Console.WriteLine ("in WndProc");
-
 			// windowCollection is a collection of all the 
 			// NativeWindow(s) that have been created.
 			// Dispatch the current message to the approriate
@@ -205,16 +204,21 @@ namespace System.Windows.Forms {
  			NativeWindow window = 
 			        (NativeWindow) windowCollection[hWnd];
  			Message message = new Message ();
-
+			message.HWnd = hWnd;
+			message.Msg = msg;
+			message.WParam = wParam;
+			message.LParam = lParam;
  			message.Result = (IntPtr) 0;
 
+			if (msg == Win32.WM_CREATE)
+				Console.WriteLine ("WM_CREATE (static)");
+
  			if (window != null) {
- 				message.HWnd = hWnd;
- 				message.Msg = msg;
- 				message.WParam = wParam;
- 				message.LParam = lParam;
+			if (msg == Win32.WM_CREATE)
+				Console.WriteLine ("WM_CREATE (static != null)");
  				window.WndProc(ref message);
  			} else {
+				Console.WriteLine ("no window, defwndproc");
  				// even though we are not managing the
  				// window let the window get the message
  				message.Result = Win32.DefWindowProcA (

@@ -38,9 +38,8 @@ namespace System.Windows.Forms {
 		//	set { throw new NotImplementedException (); }
 		//}
 		
-		[MonoTODO]
 		protected override CreateParams CreateParams {
-			get { throw new NotImplementedException (); }
+			get { return base.CreateParams; }
 		}
 		
 		[MonoTODO]
@@ -51,10 +50,11 @@ namespace System.Windows.Forms {
 		/// --- Methods ---
 		/// internal .NET framework supporting methods, not stubbed out:
 		/// - protected virtual void UpdateDefaultButton()
-		[MonoTODO]
-		protected override void AdjustFormScrollbars (bool displayScrollbars) 
+
+		protected override void AdjustFormScrollbars (
+			bool displayScrollbars) 
 		{
-			throw new NotImplementedException ();
+			base.AdjustFormScrollbars (displayScrollbars);
 		}
 		
 		[MonoTODO]
@@ -71,16 +71,14 @@ namespace System.Windows.Forms {
 		//}
 		
 		// [event methods]
-		[MonoTODO]
 		protected override void OnControlRemoved (ControlEventArgs e) 
 		{
-			throw new NotImplementedException ();
+			base.OnControlRemoved (e);
 		}
 		
-		[MonoTODO]
-		protected override void OnCreateControl () 
+		protected override void OnCreateControl ()
 		{
-			throw new NotImplementedException ();
+			base.OnCreateControl ();
 		}
 		// end of [event methods]
 		
@@ -120,7 +118,6 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		protected override void WndProc(ref Message m) 
 		{
 			base.WndProc(ref m);

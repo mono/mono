@@ -83,10 +83,15 @@ SOURCES = \
 	../System.Windows.Forms/MessageBoxIcon.cs \
 	../System.Windows.Forms/MessageBoxDefaultButton.cs \
 	../System.Windows.Forms/MessageBoxOptions.cs \
+	../System.Windows.Forms/FlatStyle.cs \
+	../System.Windows.Forms/ImageListStreamer.cs \
+	../System.Windows.Forms/ImageList.cs \
+	../System.Windows.Forms/ColorDepth.cs \
 	IContainerControl.cs \
 	Control.cs \
 	ScrollableControl.cs \
 	ContainerControl.cs \
+	Label.cs \
 	Form.cs \
 	Application.cs \
 	NativeWindow.cs \
