@@ -278,6 +278,23 @@ namespace Mono.CSharp {
 				Error_AttributeConstructorMismatch (Location);
 				return null;
 			}
+
+			//
+			// Now we perform some checks on the positional args as they
+			// cannot be null for a constructor which expects a parameter
+			// of type object
+			//
+
+			ParameterData pd = Invocation.GetParameterData (constructor);
+
+			for (int j = 0; j < pos_args.Count; ++j) {
+				Argument a = (Argument) pos_args [j];
+				
+				if (a.Expr is NullLiteral && pd.ParameterType (j) == TypeManager.object_type) {
+					Error_AttributeArgumentNotValid ();
+					return null;
+				}
+			}
 			
 			PropertyInfo [] prop_info_arr = new PropertyInfo [prop_infos.Count];
 			FieldInfo [] field_info_arr = new FieldInfo [field_infos.Count];
@@ -295,8 +312,11 @@ namespace Mono.CSharp {
 					(ConstructorInfo) constructor, pos_values,
 					prop_info_arr, prop_values_arr,
 					field_info_arr, field_values_arr); 
+
 			} catch (NullReferenceException) {
-				Error_AttributeArgumentNotValid ();
+				// 
+				// Don't know what to do here
+				//
 			} catch {
 				//
 				// Sample:
