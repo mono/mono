@@ -208,6 +208,9 @@ System.ComponentModel/Win32Exception.cs
 System.ComponentModel/ITypeDescriptorContext.cs
 System.ComponentModel/TypeConverter.cs
 System.ComponentModel/TypeConverterAttribute.cs
+System.ComponentModel/TypeDescriptor.cs
+System.ComponentModel/RefreshEventHandler.cs
+System.ComponentModel/RefreshEventArgs.cs
 System/UriPartial.cs
 System/TODOAttribute.cs
 System/UriFormatException.cs
