@@ -1,3 +1,9 @@
+2004-07-31  Jambunathan K  <kjambunathan@novell.com>
+	* Strings.cs: Fixed a bug in Format()
+	* DateAndTime.cs: Added support for setting Today and
+	TimeOfDay properties. Thanks to Pablo Cardona for 
+	submitting a patch.
+
 2004-07-30  Jochen Wezel  <jwezel@compumaster.de>
 
 	* Several files: added System.Serializable attribute to NET_2_0,

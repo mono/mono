@@ -1,3 +1,8 @@
+2004-07-31  Jambunathan K  <kjambunathan@novell.com>
+	* Makefile: Added /unsafe switch to the compiler command line.
+	This is required as setting of Today and TimeOfDay makes a libc
+	call - stime(). Thanks to Pablo Cardona for submitting this patch.
+
 2004-07-05   Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* Strings.cs: corrected 3 long-standing errors as detected by our nunit tests
 

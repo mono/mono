@@ -9,7 +9,8 @@
 //   Rafael Teixeira (rafaelteixeirabr@hotmail.com)
 //   Jochen Wezel (jwezel@compumaster.de)
 //   Dennis Hayes (dennish@raytek.com)
-//
+//   Pablo Cardona (pcardona37@hotmail.com) CRL Team
+// 
 // (C) 2002 Ximian Inc.
 //     2002 Tipic, Inc. (http://www.tipic.com)
 //     2003 CompuMaster GmbH (http://www.compumaster.de)
@@ -312,7 +313,7 @@ namespace Microsoft.VisualBasic
 								switch (expression.ToString().ToLower())
 								{
 									case "true":
-									case "On":
+									case "on":
 										if (style.ToLower ()=="yes/no")
 											returnstr="Yes";
 										else

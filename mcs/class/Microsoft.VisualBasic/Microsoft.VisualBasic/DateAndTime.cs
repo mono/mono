@@ -3,7 +3,8 @@
 //
 // Author:
 //   Chris J Breisch (cjbreisch@altavista.net) 
-//
+//   Pablo Cardona (pcardona37@hotmail.com) CRL Team
+
 // (C) 2002 Chris J Breisch
 //
 
@@ -66,24 +67,25 @@ namespace Microsoft.VisualBasic
 				}
 			} 
 		}
+		
+                [DllImport("libc")]
+                unsafe static extern int stime (void *t);
 
-		public static System.DateTime Today {
-			get { return DateTime.Today; }
+		unsafe public static System.DateTime Today {
+			get { 
+				return DateTime.Today; 
+			}
 			set { 
-				// FIXME: This needs to use some OS specific code
-				//	I've already written it for Windows
-				//	and Unix won't be hard, but need an
-				//	OS object from the compiler
-				//	OS specific code needs to check permissions
-				//	too, and throw an ArgumentOutOfRangeException
-				//	if no permissions
-//				DateTime dtNow = DateTime.Now;
-//
-//				SysTime.LocalTime = new DateTime(value.Year,
-//					value.Month, value.Day, dtNow.Hour,
-//					dtNow.Minute, dtNow.Second, dtNow.Millisecond);
-				throw new NotImplementedException();
-			} 
+				System.DateTime Now = DateTime.Now;
+                                System.DateTime NewDate = new DateTime(value.Year, value.Month, value.Day,
+								       Now.Hour, Now.Minute, Now.Second, Now.Millisecond);
+                                System.TimeSpan secondsTimeSpan = NewDate.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0);
+                                int seconds = (int) secondsTimeSpan.TotalSeconds;
+
+                                if(stime((void *) &seconds) == -1)
+                                        throw new UnauthorizedAccessException("The caller is not the super-user.");
+            		}
+ 
 		}
 
 		public static double Timer {  
@@ -100,7 +102,7 @@ namespace Microsoft.VisualBasic
 			get { return DateTime.Now; }
 		}
 
-		public static System.DateTime TimeOfDay {  
+		unsafe public static System.DateTime TimeOfDay {  
 			get { 
 				TimeSpan TSpan = DateTime.Now.TimeOfDay;
 
@@ -108,21 +110,18 @@ namespace Microsoft.VisualBasic
 					TSpan.Minutes, TSpan.Seconds, 
 					TSpan.Milliseconds); 
 			}
-			set { 
-				// FIXME: This needs to use some OS specific code
-				//	I've already written it for Windows
-				//	and Unix won't be hard, but need an
-				//	OS object from the compiler
-				//	OS specific code needs to check permissions
-				//	too, and throw an ArgumentOutOfRangeException
-				//	if no permissions
-//				DateTime dtToday = DateTime.Today;
-//
-//				SysTime.LocalTime = new DateTime(dtToday.Year,
-//					dtToday.Month, dtToday.Day, value.Hour, 
-//					value.Minute, value.Second, value.Millisecond);
-				throw new NotImplementedException();
-			} 
+			set {
+        		         Today = DateTime.Now;
+		                 System.DateTime NewTime = new DateTime(Today.Year, Today.Month, Today.Day,
+                		                                        value.Hour,value.Minute,value.Second);
+
+		                 TimeSpan secondsTimeSpan = NewTime.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, 0);
+                		 int seconds = (int) secondsTimeSpan.TotalSeconds;
+
+                		 if(stime((void *) &seconds) == -1)
+					 throw new UnauthorizedAccessException("The caller is not the super-user.");
+           		}
+ 
 		}
 
 		public static string TimeString {  
@@ -142,7 +141,7 @@ namespace Microsoft.VisualBasic
 				} 
 			} 
 		}
-
+	
 		// Methods
 		public static System.DateTime DateAdd (DateInterval Interval, 
 			double Number, System.DateTime DateValue) {
