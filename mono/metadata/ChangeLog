@@ -1,5 +1,7 @@
 2002-05-15  Radek Doulik  <rodo@ximian.com>
 
+	* reflection.c: fixed endianess at many places
+
 	* icall.c (ves_icall_InitializeArray): comment out debug msg
 
 2002-05-15  Dietmar Maurer  <dietmar@ximian.com>
