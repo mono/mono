@@ -3893,8 +3893,9 @@ namespace Mono.CSharp {
 				return false;
 			}
 			
-			parent_constructor = (ConstructorInfo) Invocation.OverloadResolve (ec, 
-				(MethodGroupExpr) parent_constructor_group, argument_list, loc);
+			parent_constructor = (ConstructorInfo) Invocation.OverloadResolve (
+				ec, (MethodGroupExpr) parent_constructor_group, argument_list,
+				false, loc);
 			
 			if (parent_constructor == null){
 				Report.Error (1501, loc,

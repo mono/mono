@@ -724,7 +724,8 @@ namespace Mono.CSharp {
 
 			ArrayList arguments = new ArrayList ();
 			arguments.Add (new Argument (e, Argument.AType.Expression));
-			method = Invocation.OverloadResolve (ec, (MethodGroupExpr) operator_group, arguments, loc);
+			method = Invocation.OverloadResolve (
+				ec, (MethodGroupExpr) operator_group, arguments, false, loc);
 
 			if (method == null)
 				return null;

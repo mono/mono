@@ -435,10 +435,8 @@ namespace Mono.CSharp {
 		//  Verifies whether the invocation arguments are compatible with the
 		//  delegate's target method
 		// </summary>
-		public static bool VerifyApplicability (EmitContext ec,
-							Type delegate_type,
-							ArrayList args,
-							Location loc)
+		public static bool VerifyApplicability (EmitContext ec, Type delegate_type,
+							ArrayList args, Location loc)
 		{
 			int arg_count;
 
@@ -487,9 +485,13 @@ namespace Mono.CSharp {
 
 			bool ans = false;
 			if (arg_count == pd_count)
-				ans = Invocation.VerifyArgumentsCompat (ec, args, arg_count, mb, false, delegate_type, loc);
+				ans = Invocation.VerifyArgumentsCompat (
+					ec, args, arg_count, mb, false,
+					delegate_type, false, loc);
 			if (!ans && params_method)
-				ans = Invocation.VerifyArgumentsCompat (ec, args, arg_count, mb, true,  delegate_type, loc);
+				ans = Invocation.VerifyArgumentsCompat (
+					ec, args, arg_count, mb, true,
+					delegate_type, false, loc);
 			return ans;
 		}
 		

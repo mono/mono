@@ -440,7 +440,7 @@ namespace Mono.CSharp {
 			}
 
 			MethodBase constructor = Invocation.OverloadResolve (
-				ec, (MethodGroupExpr) mg, pos_args, Location);
+				ec, (MethodGroupExpr) mg, pos_args, false, Location);
 
 			if (constructor == null) {
 				return null;

@@ -1,3 +1,8 @@
+2004-03-23  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (Invocation.OverloadResolve): Added `bool
+	may_fail' argument and use it instead of the Location.IsNull() hack.
+
 2004-09-03  Martin Baulig  <martin@ximian.com>
 
 	Merged latest changes into gmcs.  Please keep this comment in

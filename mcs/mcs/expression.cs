@@ -66,7 +66,8 @@ namespace Mono.CSharp {
                                 return null;
 
                         args.Add (a);
-			method = Invocation.OverloadResolve (ec, (MethodGroupExpr) mg, args, loc);
+			method = Invocation.OverloadResolve (
+				ec, (MethodGroupExpr) mg, args, false, loc);
 
 			if (method == null)
 				return null;
@@ -2271,7 +2272,9 @@ namespace Mono.CSharp {
 					args.Add (new Argument (left, Argument.AType.Expression));
 					args.Add (new Argument (right, Argument.AType.Expression));
 					
-					MethodBase method = Invocation.OverloadResolve (ec, union, args, Location.Null);
+					MethodBase method = Invocation.OverloadResolve (
+						ec, union, args, true, Location.Null);
+
 					if (method != null) {
 						MethodInfo mi = (MethodInfo) method;
 						
@@ -3277,7 +3280,9 @@ namespace Mono.CSharp {
 			ArrayList arguments = new ArrayList ();
 			arguments.Add (new Argument (left_temp, Argument.AType.Expression));
 			arguments.Add (new Argument (right, Argument.AType.Expression));
-			method = Invocation.OverloadResolve (ec, (MethodGroupExpr) operator_group, arguments, loc) as MethodInfo;
+			method = Invocation.OverloadResolve (
+				ec, (MethodGroupExpr) operator_group, arguments, false, loc)
+				as MethodInfo;
 			if ((method == null) || (method.ReturnType != type)) {
 				Error19 ();
 				return null;
@@ -4229,11 +4234,11 @@ namespace Mono.CSharp {
 		/// </remarks>
 		static int BetterFunction (EmitContext ec, ArrayList args, int argument_count,
 					   MethodBase candidate, bool candidate_params,
-                                           MethodBase best, bool best_params,
-					   Location loc)
+					   MethodBase best, bool best_params, Location loc)
 		{
 			ParameterData candidate_pd = GetParameterData (candidate);
 			ParameterData best_pd = GetParameterData (best);
+		
 			int cand_count = candidate_pd.Count;
 			
 			//
@@ -4388,12 +4393,33 @@ namespace Mono.CSharp {
 			return union;
 		}
 
+		static bool IsParamsMethodApplicable (EmitContext ec, MethodGroupExpr me,
+						      ArrayList arguments, int arg_count,
+						      ref MethodBase candidate)
+		{
+			return IsParamsMethodApplicable (
+				ec, me, arguments, arg_count, false, ref candidate) ||
+				IsParamsMethodApplicable (
+					ec, me, arguments, arg_count, true, ref candidate);
+
+
+		}
+
+		static bool IsParamsMethodApplicable (EmitContext ec, MethodGroupExpr me,
+						      ArrayList arguments, int arg_count,
+						      bool do_varargs, ref MethodBase candidate)
+		{
+			return IsParamsMethodApplicable (
+				ec, arguments, arg_count, candidate, do_varargs);
+		}
+
 		/// <summary>
 		///   Determines if the candidate method, if a params method, is applicable
 		///   in its expanded form to the given set of arguments
 		/// </summary>
-		static bool IsParamsMethodApplicable (EmitContext ec, ArrayList arguments, int arg_count,
-						      MethodBase candidate, bool do_varargs)
+		static bool IsParamsMethodApplicable (EmitContext ec, ArrayList arguments,
+						      int arg_count, MethodBase candidate,
+						      bool do_varargs)
 		{
 			ParameterData pd = GetParameterData (candidate);
 
@@ -4474,11 +4500,19 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		static bool IsApplicable (EmitContext ec, MethodGroupExpr me,
+					  ArrayList arguments, int arg_count,
+					  ref MethodBase candidate)
+		{
+			return IsApplicable (ec, arguments, arg_count, candidate);
+		}
+
 		/// <summary>
 		///   Determines if the candidate method is applicable (section 14.4.2.1)
 		///   to the given set of arguments
 		/// </summary>
-		static bool IsApplicable (EmitContext ec, ArrayList arguments, int arg_count, MethodBase candidate)
+		static bool IsApplicable (EmitContext ec, ArrayList arguments, int arg_count,
+					  MethodBase candidate)
 		{
 			ParameterData pd = GetParameterData (candidate);
 
@@ -4545,12 +4579,13 @@ namespace Mono.CSharp {
 		///
 		/// </summary>
 		public static MethodBase OverloadResolve (EmitContext ec, MethodGroupExpr me,
-							  ArrayList Arguments, Location loc)
+							  ArrayList Arguments, bool may_fail,
+							  Location loc)
 		{
 			MethodBase method = null;
 			bool method_params = false;
 			Type applicable_type = null;
-			int argument_count = 0;
+			int arg_count = 0;
 			ArrayList candidates = new ArrayList ();
 
                         //
@@ -4563,36 +4598,42 @@ namespace Mono.CSharp {
                         Hashtable candidate_to_form = null;
 
 			if (Arguments != null)
-				argument_count = Arguments.Count;
+				arg_count = Arguments.Count;
 
-                        if (me.Name == "Invoke" && TypeManager.IsDelegateType (me.DeclaringType)) {
+                        if ((me.Name == "Invoke") &&
+			    TypeManager.IsDelegateType (me.DeclaringType)) {
                                 Error_InvokeOnDelegate (loc);
                                 return null;
                         }
+
+			MethodBase[] methods = me.Methods;
 
                         //
                         // First we construct the set of applicable methods
                         //
 			bool is_sorted = true;
-			foreach (MethodBase candidate in me.Methods){
-                                Type decl_type = candidate.DeclaringType;
+			for (int i = 0; i < methods.Length; i++){
+                                Type decl_type = methods [i].DeclaringType;
 
                                 //
                                 // If we have already found an applicable method
                                 // we eliminate all base types (Section 14.5.5.1)
                                 //
-                                if (applicable_type != null && IsAncestralType (decl_type, applicable_type))
+                                if ((applicable_type != null) &&
+				    IsAncestralType (decl_type, applicable_type))
 					continue;
 
 				//
 				// Check if candidate is applicable (section 14.4.2.1)
 				//   Is candidate applicable in normal form?
 				//
-				bool is_applicable = IsApplicable (ec, Arguments, argument_count, candidate);
+				bool is_applicable = IsApplicable (
+					ec, me, Arguments, arg_count, ref methods [i]);
 
 				if (!is_applicable &&
-				    (IsParamsMethodApplicable (ec, Arguments, argument_count, candidate, false) ||
-				     IsParamsMethodApplicable (ec, Arguments, argument_count, candidate, true))) {
+				    (IsParamsMethodApplicable (
+					    ec, me, Arguments, arg_count, ref methods [i]))) {
+					MethodBase candidate = methods [i];
 					if (candidate_to_form == null)
 						candidate_to_form = new PtrHashtable ();
 					candidate_to_form [candidate] = candidate;
@@ -4603,7 +4644,7 @@ namespace Mono.CSharp {
 				if (!is_applicable)
 					continue;
 
-				candidates.Add (candidate);
+				candidates.Add (methods [i]);
 
 				if (applicable_type == null)
 					applicable_type = decl_type;
@@ -4621,23 +4662,26 @@ namespace Mono.CSharp {
 				// Okay so we have failed to find anything so we
 				// return by providing info about the closest match
 				//
-				for (int i = 0; i < me.Methods.Length; ++i) {
-					MethodBase c = (MethodBase) me.Methods [i];
+				for (int i = 0; i < methods.Length; ++i) {
+					MethodBase c = (MethodBase) methods [i];
 					ParameterData pd = GetParameterData (c);
 
-					if (pd.Count == argument_count) {
-						VerifyArgumentsCompat (ec, Arguments, argument_count, c, false,
-								       null, loc);
+					if (pd.Count != arg_count)
+						continue;
+
+					VerifyArgumentsCompat (ec, Arguments, arg_count,
+							       c, false, null, may_fail, loc);
 						break;
 					}
-				}
 
-                                if (!Location.IsNull (loc)) {
+                                if (!may_fail) {
                                         string report_name = me.Name;
                                         if (report_name == ".ctor")
                                                 report_name = me.DeclaringType.ToString ();
                                         
-                                        Error_WrongNumArguments (loc, report_name, argument_count);
+					Error_WrongNumArguments (
+						loc, report_name, arg_count);
+					return null;
                                 }
                                 
 				return null;
@@ -4703,7 +4747,7 @@ namespace Mono.CSharp {
 				MethodBase candidate = (MethodBase) candidates [ix];
 				bool cand_params = candidate_to_form != null && candidate_to_form.Contains (candidate);
                                 
-				if (BetterFunction (ec, Arguments, argument_count, 
+				if (BetterFunction (ec, Arguments, arg_count, 
 						    candidate, cand_params,
 						    method, method_params, loc) != 0) {
 					method = candidate;
@@ -4723,7 +4767,7 @@ namespace Mono.CSharp {
                                         continue;
 
                                 bool cand_params = candidate_to_form != null && candidate_to_form.Contains (candidate);
-				if (BetterFunction (ec, Arguments, argument_count,
+				if (BetterFunction (ec, Arguments, arg_count,
 						    method, method_params,
 						    candidate, cand_params,
 						    loc) != 1) {
@@ -4745,8 +4789,8 @@ namespace Mono.CSharp {
 			// necessary etc. and return if everything is
 			// all right
 			//
-                        if (!VerifyArgumentsCompat (ec, Arguments, argument_count, method,
-                                                    method_params, null, loc))
+                        if (!VerifyArgumentsCompat (ec, Arguments, arg_count, method,
+                                                    method_params, null, may_fail, loc))
 				return null;
 
 			return method;
@@ -4783,16 +4827,15 @@ namespace Mono.CSharp {
 		}
 		
 		public static bool VerifyArgumentsCompat (EmitContext ec, ArrayList Arguments,
-							  int argument_count,
-							  MethodBase method, 
+							  int arg_count, MethodBase method, 
 							  bool chose_params_expanded,
-							  Type delegate_type,
+							  Type delegate_type, bool may_fail,
 							  Location loc)
 		{
 			ParameterData pd = GetParameterData (method);
 			int pd_count = pd.Count;
 
-			for (int j = 0; j < argument_count; j++) {
+			for (int j = 0; j < arg_count; j++) {
 				Argument a = (Argument) Arguments [j];
 				Expression a_expr = a.Expr;
 				Type parameter_type = pd.ParameterType (j);
@@ -4800,7 +4843,7 @@ namespace Mono.CSharp {
 				
 				if (pm == Parameter.Modifier.PARAMS){
 					if ((pm & ~Parameter.Modifier.PARAMS) != a.GetParameterModifier ()) {
-						if (!Location.IsNull (loc))
+						if (!may_fail)
 							Error_InvalidArguments (
 								loc, j, method, delegate_type,
 								Argument.FullDesc (a), pd.ParameterDesc (j));
@@ -4816,7 +4859,7 @@ namespace Mono.CSharp {
 					// Check modifiers
 					//
 					if (pd.ParameterModifier (j) != a.GetParameterModifier ()){
-						if (!Location.IsNull (loc))
+						if (!may_fail)
 							Error_InvalidArguments (
 								loc, j, method, delegate_type,
 								Argument.FullDesc (a), pd.ParameterDesc (j));
@@ -4827,13 +4870,13 @@ namespace Mono.CSharp {
 				//
 				// Check Type
 				//
-				if (a.Type != parameter_type){
+				if (!a.Type.Equals (parameter_type)){
 					Expression conv;
 					
 					conv = Convert.ImplicitConversion (ec, a_expr, parameter_type, loc);
 
 					if (conv == null) {
-						if (!Location.IsNull (loc)) 
+						if (!may_fail)
 							Error_InvalidArguments (
 								loc, j, method, delegate_type,
 								Argument.FullDesc (a), pd.ParameterDesc (j));
@@ -4854,7 +4897,7 @@ namespace Mono.CSharp {
 				
 				if (a_mod != p_mod &&
 				    pd.ParameterModifier (pd_count - 1) != Parameter.Modifier.PARAMS) {
-					if (!Location.IsNull (loc)) {
+					if (!may_fail) {
 						Report.Error (1502, loc,
 						       "The best overloaded match for method '" + FullMethodDesc (method)+
 						       "' has some invalid arguments");
@@ -4911,13 +4954,10 @@ namespace Mono.CSharp {
 			}
 
 			MethodGroupExpr mg = (MethodGroupExpr) expr;
-			method = OverloadResolve (ec, mg, Arguments, loc);
+			method = OverloadResolve (ec, mg, Arguments, false, loc);
 
-			if (method == null){
-				Error (-6,
-				       "Could not find any applicable function for this argument list");
+			if (method == null)
 				return null;
-			}
 			
 			MethodInfo mi = method as MethodInfo;
 			if (mi != null) {
@@ -5562,7 +5602,8 @@ namespace Mono.CSharp {
 					}
 				}
 
-				method = Invocation.OverloadResolve (ec, (MethodGroupExpr) ml, Arguments, loc);
+				method = Invocation.OverloadResolve (
+					ec, (MethodGroupExpr) ml, Arguments, false, loc);
 				
 			}
 
@@ -6072,7 +6113,8 @@ namespace Mono.CSharp {
 					return null;
 				}
 				
-				new_method = Invocation.OverloadResolve (ec, (MethodGroupExpr) ml, arguments, loc);
+				new_method = Invocation.OverloadResolve (
+					ec, (MethodGroupExpr) ml, arguments, false, loc);
 
 				if (new_method == null) {
 					Error (-6, "New invocation: Can not find a constructor for " +
@@ -7931,7 +7973,8 @@ namespace Mono.CSharp {
 			if (AllGetters.Count > 0) {
 				found_any_getters = true;
 				get = (MethodInfo) Invocation.OverloadResolve (
-					ec, new MethodGroupExpr (AllGetters, loc), arguments, loc);
+					ec, new MethodGroupExpr (AllGetters, loc),
+					arguments, false, loc);
 			}
 
 			if (!found_any) {
@@ -7995,7 +8038,7 @@ namespace Mono.CSharp {
 				set_arguments.Add (new Argument (right_side, Argument.AType.Expression));
 				set = (MethodInfo) Invocation.OverloadResolve (
 					ec, new MethodGroupExpr (AllSetters, loc),
-					set_arguments, loc);
+					set_arguments, false, loc);
 			}
 
 			if (!found_any) {
