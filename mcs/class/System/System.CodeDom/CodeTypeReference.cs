@@ -58,14 +58,14 @@ namespace System.CodeDom
 				return;
 			}
 
-			int array_start = baseType.IndexOf ('[');
+			int array_start = baseType.LastIndexOf ('[');
 			if (array_start == -1) {
 				this.baseType = baseType;
 				return;
 			}
 			string[] args = baseType.Split (',');
 
-			int array_end = baseType.IndexOf (']');
+			int array_end = baseType.LastIndexOf (']');
 
 #if NET_2_0
 			if ((array_end - array_start) != args.Length) {
