@@ -10,6 +10,7 @@
 //------------------------------------------------------------------------------
 
 using System;
+using System.Private;
 
 namespace System.IO
 {
@@ -18,30 +19,36 @@ namespace System.IO
 	/// </summary>
 	public abstract class FileSystemInfo : MarshalByRefObject
 	{
-		private FileAttributes itsAttributes;
-		private DateTime itsCreated;
-		private DateTime itsLastAccess;
-		private DateTime itsLastWrite;
-		//private string itsFullName;
+		protected stat status;
+		private bool inited;
+		
 		protected string FullPath;
 		protected string OriginalPath;
 
 		protected FileSystemInfo()
 		{
-			itsAttributes = FileAttributes.Normal;
-			itsCreated = itsLastAccess = itsLastWrite = DateTime.MinValue;
+			status.st_dev = 0;
+			status.st_mode = 0;
+			status.st_nlink = 0;
+			status.st_uid = 0;
+			status.st_gid = 0;
+			status.st_size = 0;
+			status.st_atime = 0;
+			status.st_mtime = 0;
+			status.st_ctime = 0;
+
 			FullPath = OriginalPath = String.Empty;
 		}
 
 		public FileAttributes Attributes
-		{
+		{ 
 			get
 			{
-				return itsAttributes;
+				return getAttributes();
 			}
 			set
 			{
-				itsAttributes = value;
+				//TODO: Implement 
 			}
 		}
 
@@ -49,11 +56,18 @@ namespace System.IO
 		{
 			get
 			{
-				return itsCreated;
+				if(!inited)
+				{
+					update();
+				}
+				// TODO: fix next line as far as my research has taken me so far, Unix/Linux don't
+				//       have a creation time and according to my man the ctime if the last time
+				//       one of the chmod flags was changed
+				return c2csharpTime(status.st_ctime);
 			}
 			set
 			{
-				itsCreated = value;
+				//TODO: Implement
 			}
 		}
 
@@ -68,7 +82,7 @@ namespace System.IO
 		{
 			get
 			{
-				return Path.GetExtension(FullPath);
+				return Path.GetExtension(getPathName());
 			}
 		}
 
@@ -76,36 +90,45 @@ namespace System.IO
 		{
 			get
 			{
-				return FullPath;
+				return getPathName();
 			}
 		}
 
 		public DateTime LastAccessTime
 		{
-			get {
-				return itsLastAccess;
+			get
+			{
+				if(!inited)
+				{
+					update();
+				}
+				return c2csharpTime(status.st_atime);
 			}
 
-			set {
-				// FIXME: IMPLEMENT ME!
-				
+			set
+			{
+				// TODO: Implement
 			}
 		}
 
 		public DateTime LastWriteTime
-		{
-			get {
-				return itsLastWrite;
+		{	// TODO: Implement
+			get
+			{
+				if(!inited)
+				{
+					update();
+				}
+				return c2csharpTime(status.st_mtime);
 			}
-
-			set {
-				// FIXME: IMPLEMENT ME!
+			set
+			{	// TODO: Implement
 			}
 		}
 
 		public override int GetHashCode()
 		{
-			return FullPath.GetHashCode();
+			return getPathName().GetHashCode();
 		}
 
 		public override bool Equals(object obj)
@@ -117,26 +140,70 @@ namespace System.IO
 		{	// TODO: Implement
 			return false;
 		}
-
+				
 		public void Refresh()
-		{	// TODO: Implement
-		}
-
-		/* TODO: determine if we need these
-		public override ObjRef CreateObjRef(Type requestedType)
 		{
-			return null;
+			update();
 		}
 		
-		/*public object GetLifeTimeService ()
+
+		unsafe private void update()
 		{
-			return null;
+			stat fs;			
+			int nRetCode = Wrapper.stat(getPathName(), &fs);
+			status = fs;
+			switch(nRetCode)
+			{
+			case 0:
+				break;
+			case Wrapper.ENOENT:
+			case Wrapper.ENOTDIR:
+				throw new ArgumentException("File not found");	
+				//break; generates warning CS0162 unreachable code
+			default:
+				throw new IOException();
+			   //break; generates warning CS0162 unreachable code
+			}
+			inited = true;
 		}
 
-		public override object InitializeLifeTimeService ()
-		{
-			return null;
+		private DateTime c2csharpTime(double seconds)
+		{	// TODO: determine if UTC time which the 
+			//       calculation below is in is correct
+		   DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0);
+		   dt.AddSeconds(seconds);
+		   return dt;	
 		}
-		*/
+		
+		protected string getPathName()
+		{
+			if(FullPath == String.Empty)
+			{
+				FullPath = Path.GetFullPath(OriginalPath);
+			}
+			return FullPath;
+		} 
+		
+		protected FileAttributes getAttributes()
+		{	
+			if(!inited)
+			{
+				update();
+			}
+			
+			// TODO: lots more attribute work needed
+				
+			FileAttributes attrib = 0;
+			if(((status.st_mode & Wrapper.S_IFMT) & Wrapper.S_IFDIR) != 0)
+			{
+				attrib |= FileAttributes.Directory;
+			}
+			else
+			{
+				attrib |= FileAttributes.Normal;
+			}
+
+			return attrib;
+		}
 	}
 }

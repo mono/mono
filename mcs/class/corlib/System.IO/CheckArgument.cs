@@ -106,7 +106,7 @@ namespace System.IO.Private
 		/// </summary>
 		public static void PathChars(string path)
 		{
-			PathChars(path, "Argument contains invalid path characters");
+			PathChars(path, "Path contains invalid characters");
 		}
 		
 		/// <summary>
@@ -128,26 +128,30 @@ namespace System.IO.Private
 		/// <summary>
 		/// Generates and exception if path is illegal
 		/// </summary>
-		public static void Path(string path, bool bLength, string desc)
+		public static void Path(string path, bool bAllowNull, bool bLength)
 		{
 			if(path != null) //allow null
 			{
-				Empty(path, desc);	// path can't be empty
-				WhitespaceOnly(path, desc);	// path can't be all whitespace
-				PathChars(desc);	// path can't contain invalid characters
+				Empty(path, "Path cannot be the empty string");	// path can't be empty
+				WhitespaceOnly(path, "Path cannot be all whitespace");	// path can't be all whitespace
+				PathChars(path);	// path can't contain invalid characters
 				if(bLength)
 				{
-					PathLength(desc);
+					PathLength("Path too long");
 				}
+			}
+			else if(!bAllowNull)
+			{
+				throw new ArgumentNullException("Parameter name: path");
 			}
 		}
 		
 		/// <summary>
 		/// Generates and exception if path is illegal
 		/// </summary>
-		public static void Path(string path, bool bLength)
+		public static void Path(string path, bool bAllowNull)
 		{
-			Path(path, bLength, "Path agrument is not legal");
+			Path(path, bAllowNull, false);
 		}
 		
 		/// <summary>
@@ -155,7 +159,7 @@ namespace System.IO.Private
 		/// </summary>
 		public static void Path(string path)
 		{
-			Path(path, false);
+			Path(path, true, false);
 		}
 
 	}

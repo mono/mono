@@ -10,6 +10,8 @@
 //------------------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
+using System.IO.Private;
 
 namespace System.IO
 {
@@ -21,18 +23,29 @@ namespace System.IO
 
 		public DirectoryInfo(string path)
 		{
-			if(path == null) throw new ArgumentNullException();
-			if(path.IndexOfAny(Path.InvalidPathChars) > -1)
-				throw new ArgumentException("Invalid path characters");
-			//LAMESPEC: If we throw here how could we ever Create or check existence?	
-			//if(!Directory.Exists(path)) throw new DirectoryNotFoundException();
+			CheckArgument.Path(path, false);
+			//LAMESPEC: Does not throw directory not found exception
+			//          Does not throw security exception in constructor
+			OriginalPath = path;	
 		}
 
 		public override bool Exists
 		{
 			get
-			{	//TODO: Implement
-				return false;
+			{
+				bool bRetCode;
+				
+				try
+				{
+					Refresh();
+					bRetCode = ((Attributes & FileAttributes.Directory) != 0);
+				}
+				catch(ArgumentException ex)				
+				{
+					Debug.WriteLine(ex); // eliminates not used warning
+					bRetCode = false;
+				}
+				return bRetCode;
 			}
 		}
 

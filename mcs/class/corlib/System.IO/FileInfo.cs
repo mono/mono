@@ -10,6 +10,10 @@
 //------------------------------------------------------------------------------
 
 using System;
+using System.Private;
+using System.IO.Private;
+using System.Diagnostics;
+using System.Security.Permissions;
 
 namespace System.IO
 {
@@ -20,24 +24,56 @@ namespace System.IO
 	{
 		public FileInfo(string fileName)
 		{
-			// 
-			// TODO: Add constructor logic here
-			//
+			CheckArgument.Path(fileName, false);
+			//LAMESPEC: Does not throw security exception in constructor
+			OriginalPath = fileName;
 		}
 
+		private bool existsOnDisk(bool exNotFound, bool exIsDirectory)
+		{
+			bool bRetCode;
+			
+			try
+			{
+				Refresh();
+				if((getAttributes() & FileAttributes.Directory) != 0)
+				{
+					if(exIsDirectory)
+					{
+						throw new UnauthorizedAccessException();
+					}
+					bRetCode = false;
+				}
+				else
+				{
+					bRetCode = true;
+				}
+			}
+			catch(ArgumentException ex)				
+			{
+				Debug.WriteLine(ex); // eliminates not used warning
+				if(exNotFound)
+				{
+					throw new FileNotFoundException();
+				}
+				bRetCode = false;
+			}
+			return bRetCode;
+		}
+		
 		public override bool Exists
 		{
 			get
-			{	// TODO: Implement
-				return false;
+			{
+				return existsOnDisk(false, false);	
 			}
 		}
 
 		public override string Name
 		{
 			get
-			{	//TODO: Implement this as per the documenation
-				return FullPath;
+			{
+				return Path.GetFileName(getPathName());
 			}
 		}
 
@@ -48,7 +84,7 @@ namespace System.IO
 		{
 			get
 			{
-				return null;
+				return new DirectoryInfo(Path.GetDirectoryName(getPathName()));
 			}
 		}
 
@@ -58,8 +94,8 @@ namespace System.IO
 		public string DirectoryName
 		{
 			get
-			{	// TODO: Implement
-				return null;
+			{
+				return Path.GetDirectoryName(getPathName());
 			}
 		}
 
@@ -69,25 +105,36 @@ namespace System.IO
 		public long Length
 		{
 			get
-			{	// TODO: Implement
-				return 0;
+			{
+				try
+				{
+					Refresh();
+				}
+				catch(ArgumentException ex)
+				{
+					Debug.WriteLine(ex); // eliminates not used compiler warning
+					throw new FileNotFoundException();
+				}
+				return status.st_size;
 			}
 		}
-
+		
    		public StreamWriter AppendText()
-		{	// TODO: Implement
-			return null;
+		{	// TODO: verify using correct FileMode here might be Create & Append
+			return new StreamWriter(Open(FileMode.Append, FileAccess.Write));
 		}
 		
-
 		public FileStream Create()
-		{	// TODO: Implement
-			return null;
+		{
+			// TODO: verify using correct FileMode here
+			return Open(FileMode.OpenOrCreate, FileAccess.ReadWrite);
 		}
 
 		public StreamWriter CreateText()
-		{	// TODO: Implement
-			return null;
+		{	//TODO: According to doc even CreateText throws a file not found ex
+			//      sounds suspicious so i'll have to check it out later
+			//existsOnDisk(true, true); // throw not found, is directory
+			return new StreamWriter(Open(FileMode.Create, FileAccess.Write));
 		}
 		
 		public FileStream Open(FileMode mode)
@@ -99,10 +146,13 @@ namespace System.IO
 		{
 			return Open(mode, access, FileShare.None);
 		}
-
+		
 		public FileStream Open(FileMode mode, FileAccess access, FileShare share)
-		{	// TODO: Implement
-			return null;
+		{
+			bool bExists = existsOnDisk(false, true); // throw is directory;
+			string path = getPathName();
+		    CheckPermission.ModeAccess(mode, access, path, bExists);			
+			return new FileStream(path, mode, access, share);
 		}
 
 		public FileStream OpenRead()
@@ -111,8 +161,8 @@ namespace System.IO
 		}
 
 		public StreamReader OpenText()
-		{	// TODO: Implement
-			return null;
+		{	// TODO: verify mode and access values
+			return new StreamReader(Open(FileMode.OpenOrCreate, FileAccess.ReadWrite));
 		}
 
 		public FileStream OpenWrite()
@@ -131,7 +181,10 @@ namespace System.IO
 		}
 
 		public override void Delete()
-		{	// TODO: Implement
+		{
+			existsOnDisk(true, true); // throw not found, is directory
+			CheckPermission.Demand(FileIOPermissionAccess.AllAccess, getPathName());
+			Wrapper.unlink(getPathName());
 		}
 
 		public void MoveTo(string destName)
