@@ -1,5 +1,10 @@
 2003-05-27  Nick Drochak <ndrochak@gol.com>
 
+	* basic-long.cs: tests for (ulong)int * (ulong)int also
+	* mini.c: use the same trick for (ulong)int * (ulong)int
+
+2003-05-27  Nick Drochak <ndrochak@gol.com>
+
 	* basic-long.cs: add regression test for (long)int * (long)int
 	* cpu-pentium.md: add op_bigmul specification
 	* inssel-long32.brg: add OP_BIGMUL rule
