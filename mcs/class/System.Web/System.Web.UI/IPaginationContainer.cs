@@ -33,7 +33,7 @@ using System;
 
 namespace System.Web.UI
 {
-	public interface IPaginationiContainer
+	public interface IPaginationContainer
 	{
 		int MaximumWeight { get; }
 	}

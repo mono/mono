@@ -1,17 +1,21 @@
-2009-09-24 Sanjay Gupta <gsanjay@novell.com>
+2004-09-24 Sanjay Gupta <gsanjay@novell.com>
+
+	* IPaginationContainer.cs: Corrected name of class.
+
+2004-09-24 Sanjay Gupta <gsanjay@novell.com>
 
 	* IDReferencePropertyAttribute.cs: Completed implementation.
 
-2009-09-24 Sanjay Gupta <gsanjay@novell.com>
+2004-09-24 Sanjay Gupta <gsanjay@novell.com>
 
 	* ThemeableAttribute.cs:
 	* FilterableAttribute.cs: Code scrubbing and optimization.
 
-2009-09-14 Sanjay Gupta <gsanjay@novell.com>
+2004-09-14 Sanjay Gupta <gsanjay@novell.com>
 
 	* ThemeableAttribute.cs: Completed implementation.
 
-2009-09-14 Sanjay Gupta <gsanjay@novell.com>
+2004-09-14 Sanjay Gupta <gsanjay@novell.com>
 
 	* FilterableAttribute.cs: Completed implementation.
 
