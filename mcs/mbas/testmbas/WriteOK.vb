@@ -2,19 +2,19 @@ Option Explicit
 Option Strict Off
 Option Compare Text
 
-Imports System, IO = System.Console
-Imports Microsoft.VisualBasic.Information
-Imports Mono.GetOptions
-
-'<Assembly: AssemblyVersion("1.2.*")> 
-'<Assembly: AssemblyTitle("WriteOK - a test program for the MonoBASIC compiler")>
-'<Assembly: AssemblyCopyright("(c)2004 Rafael Teixeira")>
-'<Assembly: AssemblyDescription("Some logic and console outputting")>
-'<Assembly: Mono.About("Just a test program")>
-'<Assembly: Mono.GetOptions.Author("Rafael Teixeira")>
-
 Imports System.Reflection
 Imports System.Runtime.InteropServices
+Imports System, IO = System.Console
+Imports Microsoft.VisualBasic.Information
+
+Imports Mono.GetOptions
+
+<Assembly: AssemblyVersion("1.2.*")> 
+<Assembly: AssemblyTitle("WriteOK - a test program for the MonoBASIC compiler")>
+<Assembly: AssemblyCopyright("(c)2004 Rafael Teixeira")>
+<Assembly: AssemblyDescription("Some logic and console outputting")>
+<Assembly: Mono.About("Just a test program")>
+<Assembly: Mono.GetOptions.Author("Rafael Teixeira")>
 
 Module WriteOK
 
