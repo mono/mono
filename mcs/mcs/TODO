@@ -215,3 +215,8 @@
 		}
 
 	Is failing to create a single namespace
+
+* Arrays
+
+	We need to make sure at *compile time* that the arguments in
+	the expression list of an array creation are always positive.

@@ -4330,6 +4330,11 @@ namespace CIR {
 	// <summary>
 	//   Represents an array creation expression.
 	// </summary>
+	//
+	// <remarks>
+	//   There are two possible scenarios here: one is an array creation
+	//   expression that specifies the dimensions and optionally the
+	//   initialization data
 	public class ArrayCreation : ExpressionStatement {
 		string RequestedType;
 		string Rank;
@@ -4351,6 +4356,14 @@ namespace CIR {
 			foreach (Expression e in exprs)
 				Arguments.Add (new Argument (e, Argument.AType.Expression));
 			
+		}
+
+		public ArrayCreation (string requested_type, string rank, ArrayList initializers, Location l)
+		{
+			RequestedType = requested_type;
+			Rank = rank;
+			Initializers = initializers;
+			loc = l;
 		}
 		
 		public override Expression DoResolve (EmitContext ec)

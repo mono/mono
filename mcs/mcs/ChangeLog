@@ -1,5 +1,11 @@
 2001-10-29  Miguel de Icaza  <miguel@ximian.com>
 
+	* cs-parser.jay: Add extra production for the second form of array
+	creation. 
+
+	* expression.cs (ArrayCreation): Update to reflect the above
+	change. 
+
 	* Small changes to prepare for Array initialization.
 
 2001-10-28  Miguel de Icaza  <miguel@ximian.com>
