@@ -202,7 +202,9 @@ namespace System.Reflection {
 				throw new NotSupportedException ();
 			}
 		}
+#endif
 
+#if NET_2_0
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static MethodBody GetMethodBodyInternal (IntPtr handle);
 

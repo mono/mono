@@ -1,5 +1,7 @@
 2005-01-18  Zoltan Varga  <vargaz@freemail.hu>
 
+	* MethodBase.cs MonoMethod.cs: Hopefully fix the build.
+
 	* MethodBase.cs MonoMethod.cs: Implement 2.0 GetMethodBody ().
 
 2005-01-03  Martin Baulig  <martin@ximian.com>

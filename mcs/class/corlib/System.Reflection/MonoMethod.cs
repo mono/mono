@@ -276,7 +276,9 @@ namespace System.Reflection {
 			[MethodImplAttribute(MethodImplOptions.InternalCall)]
 			get;
 		}
+#endif
 
+#if NET_2_0
 		public override MethodBody GetMethodBody () {
 			return GetMethodBody (mhandle);
 		}
@@ -403,7 +405,9 @@ namespace System.Reflection {
 				return false;
 			}
 		}
+#endif
 
+#if NET_2_0
 		public override MethodBody GetMethodBody () {
 			return GetMethodBody (mhandle);
 		}
