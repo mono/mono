@@ -2021,6 +2021,28 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		Expression SimpleNameResolve (EmitContext ec, Expression right_side,
+					      bool allow_static)
+		{
+			Expression e = DoSimpleNameResolve (ec, right_side, allow_static);
+			if (e == null)
+				return null;
+
+			Block current_block = ec.CurrentBlock;
+			if (current_block != null){
+				LocalInfo vi = current_block.GetLocalInfo (Name);
+				if (is_base &&
+				    current_block.IsVariableNameUsedInChildBlock(Name)) {
+					Report.Error (135, Location,
+						      "'{0}' has a different meaning in a " +
+						      "child block", Name);
+					return null;
+				}
+			}
+
+			return e;
+		}
+
 		/// <remarks>
 		///   7.5.2: Simple Names. 
 		///
@@ -2038,7 +2060,7 @@ namespace Mono.CSharp {
 		///   Type is both an instance variable and a Type;  Type.GetType
 		///   is the static method not an instance method of type.
 		/// </remarks>
-		Expression SimpleNameResolve (EmitContext ec, Expression right_side, bool allow_static)
+		Expression DoSimpleNameResolve (EmitContext ec, Expression right_side, bool allow_static)
 		{
 			Expression e = null;
 
@@ -2048,11 +2070,6 @@ namespace Mono.CSharp {
 			Block current_block = ec.CurrentBlock;
 			if (current_block != null){
 				LocalInfo vi = current_block.GetLocalInfo (Name);
-				if (is_base && (vi != null) && current_block.IsVariableNameUsedInChildBlock(Name)) {
-					Report.Error (135, Location, "'" + Name + "' has a different meaning in a child block");
-					return null;
-				}
-
 				if (vi != null){
 					Expression var;
 					
