@@ -2590,14 +2590,13 @@ foreach_statement
 	  opt_statement_list
 	  NEXT opt_identifier
 	  {
-		Block foreach_block = current_block;
 		LocalVariableReference v = (LocalVariableReference) oob_stack.Pop ();
-		Block prev_block = end_block();
+		Block foreach_block = end_block();
 		Location l = (Location) oob_stack.Pop ();
 
 		Foreach f = null;
 		if (v != null) {
-			f = new Foreach (null, v, (Expression) $6, (Statement) $9, l);
+			f = new Foreach (null, v, (Expression) $6, foreach_block, l);
 		}
 		
 		$$ = f;
