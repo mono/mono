@@ -1,3 +1,7 @@
+2004-02-03  Alon Gazit <along@mainsoft.com>
+	* XmlNamedNodeMap - now Item(int index) returns null for nodeList.Count
+	  instead of throwing ArgumentOutOfRangeException.
+
 2004-02-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlChar.cs : now GetPredefinedEntity() returns int and -1 for not

@@ -56,7 +56,7 @@ namespace System.Xml
 		
 		public virtual XmlNode Item (int index)
 		{
-			if (index < 0 || index > nodeList.Count)
+			if (index < 0 || index >= nodeList.Count)
 				return null;
 			else
 				return (XmlNode) nodeList [index];
