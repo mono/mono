@@ -1,4 +1,9 @@
 
+2003-04-25  Dick Porter  <dick@ximian.com>
+
+	* driver.c: Usage reports the name as 'mono' not 'mini'
+	* exceptions-x86.c: Build and run on freebsd
+
 Thu Apr 24 17:09:03 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* Makefile.am: install the program with the 'mono' name and
