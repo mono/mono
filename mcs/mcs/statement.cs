@@ -2434,7 +2434,7 @@ namespace Mono.CSharp {
 				foreach (Statement s in statements) {
 					ec.Mark (s.loc);
 					
-					if (is_ret && !warning_shown){
+					if (is_ret && !warning_shown && !(s is EmptyStatement)){
 						warning_shown = true;
 						Warning_DeadCodeFound (s.loc);
 					}
@@ -2446,7 +2446,7 @@ namespace Mono.CSharp {
 				ec.Mark (EndLocation); 
 			} else {
 				foreach (Statement s in statements){
-					if (is_ret && !warning_shown){
+					if (is_ret && !warning_shown && !(s is EmptyStatement)){
 						warning_shown = true;
 						Warning_DeadCodeFound (s.loc);
 					}
