@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.11 $
+// $Revision: 1.12 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.12  2004/08/09 21:12:15  jackson
+// Make the default font static, it is static in control so this doesn't change functionality and creating fonts is sloooooow.
+//
 // Revision 1.11  2004/08/09 17:31:13  jackson
 // New names for control properties
 //
@@ -96,6 +99,8 @@ namespace System.Windows.Forms
 		static private Pen pen_buttonface;
 		static private Pen pen_windowframe;
 
+		static private Font default_font;
+
 		/* Cache */
 		static private SolidBrush label_br_fore_color;
 		static private SolidBrush label_br_back_color;		
@@ -130,6 +135,8 @@ namespace System.Windows.Forms
 			pen_buttonhilight = new Pen (ColorButtonHilight);
 			pen_buttonface = new Pen (ColorButtonFace);
 			pen_windowframe = new Pen (ColorWindowFrame);
+
+			default_font =	new Font (FontFamily.GenericSansSerif, 8.25f);
 		}
 
 		/* Internal colors to paint controls */
@@ -287,7 +294,7 @@ namespace System.Windows.Forms
 		}
 
 		public Font DefaultFont {
-			get { return new Font (FontFamily.GenericSansSerif, 8.25f); }
+			get { return default_font; }
 		}
 
 		public Color DefaultWindowBackColor {
