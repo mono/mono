@@ -57,13 +57,15 @@ namespace System.Windows.Forms
 	public class ColumnHeader : Component, ICloneable
 	{
 		#region Instance Variables
-		internal ListView owner;
 		private StringFormat format;
 		private string text = "ColumnHeader";
 		private HorizontalAlignment text_alignment = HorizontalAlignment.Left;
 		private int width = ThemeEngine.Current.ListViewDefaultColumnWidth;
-		// column area
+
+		// internal variables
 		internal Rectangle column_rect = Rectangle.Empty;
+		internal bool pressed = false;
+		internal ListView owner;
 		#endregion	// Instance Variables
 
 		#region Internal Constructor
@@ -86,6 +88,10 @@ namespace System.Windows.Forms
 		// Since this class inherits from MarshalByRef,
 		// we can't do ColumnHeader.column_rect.XXX. Hence,
 		// we have some of the following properties to work around CS0197.
+		internal bool Pressed {
+				get { return this.pressed; }
+		}
+
 		internal int X {
 			get { return this.column_rect.X; }
 			set { this.column_rect.X = value; }
