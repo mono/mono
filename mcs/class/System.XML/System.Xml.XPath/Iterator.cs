@@ -361,7 +361,7 @@ namespace System.Xml.XPath
 		{
 			startPosition = other.startPosition;
 			if (other.navigators != null)
-				navigators = (ArrayList) other.navigators.Clone ();
+				navigators = (ArrayList) other.navigators;
 			currentPosition = other.currentPosition;
 		}
 
