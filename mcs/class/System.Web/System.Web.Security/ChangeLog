@@ -1,3 +1,7 @@
+2004-08-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FormsAuthentication.cs: patch by Jim Pease to fix the date on renewal.
+
 2004-08-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FormsAuthenticationModule.cs: don't renew expired cookies. Only renew
