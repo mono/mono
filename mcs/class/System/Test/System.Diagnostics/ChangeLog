@@ -1,3 +1,9 @@
+2005-01-17  Nick Drochak  <ndrochak@ieee.org>
+
+	* DiagnosticsConfigurationHandlerTest.cs: Don't ignore tests, instead mark
+	  them as [Category ("NotDotNet")]; Fix the TraceTag_Listeners example (it
+	  was passing invalid XML in a "valid" test).
+
 2005-01-08  Nick Drochak  <ndrochak@ieee.org>
 
 	* EventLogPermissionTest.cs
