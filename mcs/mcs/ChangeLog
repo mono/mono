@@ -1,5 +1,10 @@
 2002-05-22  Martin Baulig  <martin@gnome.org>
 
+	* makefile (mcs-mono2.exe): New target.  This is mcs compiled with
+	itself with debugging support.
+
+2002-05-22  Martin Baulig  <martin@gnome.org>
+
 	* typemanager.cs ("System.Runtime.InteropServices.StructLayoutAttribute"):
 	Removed, this isn't needed anymore.
 
