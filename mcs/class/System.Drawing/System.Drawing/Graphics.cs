@@ -34,6 +34,8 @@ namespace System.Drawing
 
 		private Graphics (IntPtr nativeGraphics)
 		{
+			if (nativeGraphics == IntPtr.Zero)
+				Console.WriteLine ("Here: " + Environment.StackTrace);
 			nativeObject = nativeGraphics;
 		}
 		
@@ -1040,7 +1042,11 @@ namespace System.Drawing
 		public static Graphics FromHdc (IntPtr hdc)
 		{
 			int graphics;
-			GDIPlus.GdipCreateFromHDC (hdc, out graphics);
+			if (GDIPlus.GdipCreateFromHDC (hdc, out graphics) != Status.Ok){
+				Console.WriteLine ("Graphics.FromHdc: the HDC is an invalid handle");
+				return null;
+			}
+			    
 			Graphics result = new Graphics ((IntPtr) graphics);
 			return result;
 		}

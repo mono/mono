@@ -152,7 +152,12 @@ namespace System.Drawing {
 
 		public Bitmap (Type type, string resource)
 		{
-			throw new NotImplementedException ();
+			using (Stream s = type.Assembly.GetManifestResourceStream (resource)){
+				if (s == null)
+					throw new FileNotFoundException ("Resource name was not found: `" + resource + "'");
+
+				InitFromStream (s);
+			}
 		}
 
 		public Bitmap (Image original, int width, int heigth) 
