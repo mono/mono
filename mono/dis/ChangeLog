@@ -1,4 +1,9 @@
 
+Mon Apr 15 11:35:05 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* dump.c, dump.h, get.c, get.h, main.c: support for dumping the
+	module table and guid values.
+
 Mon Apr 8 17:15:04 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* main.c: removed unneeded runtime invoke support.
