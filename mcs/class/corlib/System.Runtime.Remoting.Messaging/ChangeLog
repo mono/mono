@@ -1,3 +1,11 @@
+2003-03-21  Lluis Sanchez Gual <lluis@ideary.com>
+	
+	* CADMessages.cs: removed some warnings.
+	* ClientContextTerminatorSink.cs: added support for dynamic sinks.
+	* ConstructionCall.cs: added internal property IsContextOK.
+	* MethodResponse.cs: fixed management of output parameters.
+	* ServerObjectTerminatorSink.cs: added support for dynamic sinks.
+
 2003-03-03  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* ConstructionCall.cs: Added internal constructor. Added setter for activation attributes.

@@ -28,6 +28,7 @@ namespace System.Runtime.Remoting.Messaging {
 		Type [] _methodSignature;
 		ArgInfo _inArgInfo;
 
+		object []  _args;
 		object []  _outArgs;
 		IMethodCallMessage _callMsg;
 		LogicalCallContext _callContext;
@@ -45,6 +46,7 @@ namespace System.Runtime.Remoting.Messaging {
 				_typeName = mcm.TypeName;
 				_methodBase = mcm.MethodBase;
 				_methodSignature = (Type[]) mcm.MethodSignature;
+				_args = mcm.Args;
 			}
 
 			if (headers != null)
@@ -120,16 +122,16 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public int ArgCount {
 			get { 
-				if (null == _outArgs)
+				if (null == _args)
 					return 0;
 
-				return _outArgs.Length;
+				return _args.Length;
 			}
 		}
 
 		public object[] Args {
 			get { 
-				return _outArgs; 
+				return _args; 
 			}
 		}
 
@@ -141,7 +143,7 @@ namespace System.Runtime.Remoting.Messaging {
 		
 		public bool HasVarArgs {
 			get { 
-				return false;
+				return false;	// TODO: implement var args
 			}
 		}
 		
@@ -180,21 +182,19 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public int OutArgCount {
 			get { 
-				if (null == _methodBase)
+				if (null == _outArgs)
 					return 0;
 
-				if (_inArgInfo == null) _inArgInfo = new ArgInfo (MethodBase, ArgInfoType.Out);
-				return _inArgInfo.GetInOutArgCount();
+				return _outArgs.Length;
 			}
 		}
 
 		public object[] OutArgs {
 			get { 
-				if (null == _methodBase)
+				if (null == _outArgs)
 					return new object[0];
 
-				if (_inArgInfo == null) _inArgInfo = new ArgInfo (MethodBase, ArgInfoType.Out);
-				return _inArgInfo.GetInOutArgs (_outArgs);
+				return _outArgs;
 			}
 		}
 
@@ -278,8 +278,7 @@ namespace System.Runtime.Remoting.Messaging {
 			if (null == _methodBase)
 				return null;
 
-			if (_inArgInfo == null) _inArgInfo = new ArgInfo (MethodBase, ArgInfoType.Out);
-			return _outArgs [_inArgInfo.GetInOutArgIndex (argNum)];
+			return _outArgs [argNum];
 		}
 
 		public string GetOutArgName (int index)

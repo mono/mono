@@ -80,10 +80,8 @@ namespace System.Runtime.Remoting.Messaging {
 
 			// until this is more tested, we disable it....
 			return false;
-			// until this is more tested, we disable it....
-			return false;
 
-			if (obj is string) 
+/*            if (obj is string) 
 				return true;
 
 			Type objType = obj.GetType();
@@ -91,6 +89,7 @@ namespace System.Runtime.Remoting.Messaging {
 				return true;
 			
 			return false;
+*/
 		}
 
 		// Checks an argument if it's possible to pass without marshalling and
@@ -102,6 +101,10 @@ namespace System.Runtime.Remoting.Messaging {
 			if (IsPossibleToIgnoreMarshal (arg))
 				return arg;
 
+/*			FIXME
+			IsPossibleToCAD always return false.
+			Avoid unneeded marshalling until IsPossibleToCAD is fixed
+			
 			MarshalByRefObject mbr = arg as MarshalByRefObject;
 			if (null != mbr) {
 				if (!RemotingServices.IsTransparentProxy(mbr) || RemotingServices.GetRealProxy(mbr) is RemotingProxy) {
@@ -113,7 +116,7 @@ namespace System.Runtime.Remoting.Messaging {
 					}
 				}
 			}
-
+*/
 			if (null == args)
 				args = new ArrayList();
 			

@@ -23,17 +23,20 @@ namespace System.Runtime.Remoting.Messaging
 		IList _contextProperties;
 		Type _activationType;
 		string _activationTypeName;
+		bool _isContextOk;
 
 		public ConstructionCall(IMessage msg): base (msg)
 		{
 			_activationTypeName = TypeName;
 			_activationAttributes = null;	// FIXME: put something here
+			_isContextOk = true;
 		}
 
 		public ConstructionCall (Type type)
 		{
 			_activationType = type;
 			_activationTypeName = type.AssemblyQualifiedName;
+			_isContextOk = true;
 		}
 
 		public ConstructionCall (Header[] headers): base (headers)
@@ -49,6 +52,12 @@ namespace System.Runtime.Remoting.Messaging
 			ConstructionCallDictionary props = new ConstructionCallDictionary (this);
 			ExternalProperties = props;
 			InternalProperties = props.GetInternalProperties();
+		}
+
+		internal bool IsContextOk
+		{
+			get { return _isContextOk; }
+			set { _isContextOk = value; }
 		}
 
 		public Type ActivationType 

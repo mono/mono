@@ -23,21 +23,58 @@ namespace System.Runtime.Remoting.Messaging
 			_nextSink = nextSink;
 		}
 
-		[MonoTODO("Invoke dynamic sinks")]
 		public IMessage SyncProcessMessage (IMessage msg)
 		{
-			return _nextSink.SyncProcessMessage (msg);
+			ServerIdentity identity = (ServerIdentity) RemotingServices.GetMessageTargetIdentity (msg);
+			identity.NotifyServerDynamicSinks (true, msg, false, false);
+			IMessage res = _nextSink.SyncProcessMessage (msg);
+			identity.NotifyServerDynamicSinks (false, msg, false, false);
+			return res;
 		}
 
-		[MonoTODO("Invoke dynamic sinks")]
 		public IMessageCtrl AsyncProcessMessage (IMessage msg, IMessageSink replySink)
 		{
+			ServerIdentity identity = (ServerIdentity) RemotingServices.GetMessageTargetIdentity (msg);
+			if (identity.HasServerDynamicSinks)
+			{
+				identity.NotifyServerDynamicSinks (true, msg, false, true);
+				IMessage res = _nextSink.SyncProcessMessage (msg);
+				replySink = new ServerObjectReplySink(identity, replySink);
+			}
 			return _nextSink.AsyncProcessMessage (msg, replySink);
 		}
 
 		public IMessageSink NextSink 
 		{ 
 			get { return _nextSink; }
+		}
+	}
+
+	class ServerObjectReplySink: IMessageSink
+	{
+		IMessageSink _replySink;
+		ServerIdentity _identity;
+
+		public ServerObjectReplySink (ServerIdentity identity, IMessageSink replySink)
+		{
+			_replySink = replySink;
+			_identity = identity;
+		}
+
+		public IMessage SyncProcessMessage (IMessage msg)
+		{
+			_identity.NotifyServerDynamicSinks (false, msg, true, true);
+			return _replySink.SyncProcessMessage (msg);
+		}
+
+		public IMessageCtrl AsyncProcessMessage (IMessage msg, IMessageSink replySink)
+		{
+			throw new NotSupportedException ();
+		}
+
+		public IMessageSink NextSink 
+		{ 
+			get { return _replySink; }
 		}
 	}
 }
