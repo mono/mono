@@ -1,4 +1,9 @@
 2003-05-12  Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* Control.cs : ResizeRedraw, removed some unused code
+	* DomainUpDown.cs : 
+	* UpDownBase.cs : some improvements
+
+2003-05-12  Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* Application.cs
 	* ContainerControl.cs
 	* Control.cs

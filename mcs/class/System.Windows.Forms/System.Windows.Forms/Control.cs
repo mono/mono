@@ -473,28 +473,6 @@
     			}
     		}
 
-			internal void SetClientSize(Size value, int styleIfNoWindow, bool menuIfNoWindow) {
-				RECT rc = new RECT();
-				rc.left = rc.top = 0;
-				rc.right = value.Width;
-				rc.bottom = value.Height;
-				
-				if( IsHandleCreated ){
-					int style = Win32.GetWindowLong( Handle, GetWindowLongFlag.GWL_STYLE).ToInt32();
-					int menuExists = 0;
-					if( (style & (int)WindowStyles.WS_CHILD) == 0 ){
-						menuExists = Win32.GetMenu(Handle) != IntPtr.Zero ? 1 : 0;
-					}
-					Win32.AdjustWindowRect( ref rc, style, menuExists);
-					Win32.SetWindowPos( Handle, SetWindowPosZOrder.HWND_TOP, 0, 0, rc.right - rc.left, rc.bottom - rc.top, 
-						SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOZORDER);
-				}
-				else {
-					Win32.AdjustWindowRect( ref rc, styleIfNoWindow, menuIfNoWindow ? 1 : 0);
-				}
-				Size = new Size(rc.right - rc.left, rc.bottom - rc.top);
-			}    		
-    		
     		public bool ContainsFocus {
     			get {
     				if (IsHandleCreated) {
@@ -786,12 +764,7 @@
     		}
     		
     		public bool IsHandleCreated {
-    			get {
-				return window != null && window.Handle != IntPtr.Zero;
-    				//if (Handle != (IntPtr) 0)
-    				//	return true;
-    				//return false;
-    			}
+    			get { return window != null && window.Handle != IntPtr.Zero; }
     		}
     		
   			//Compact Framework
@@ -967,14 +940,9 @@
     			}
     		}
     		
-    		[MonoTODO]
     		protected bool ResizeRedraw {
-    			get {
-    				throw new NotImplementedException ();
-    			}
-    			set {
-    				throw new NotImplementedException ();
-    			}
+    			get {	return GetStyle ( ControlStyles.ResizeRedraw );	}
+    			set {	SetStyle ( ControlStyles.ResizeRedraw, value ); }
     		}
     		
  			//Compact Framework
@@ -3440,36 +3408,3 @@
     		}  // --- end of Control.ControlCollection ---
     	}
     }
-
-/*
-			if ( forward && ctl.Controls.Count != 0 )
-				return ctl.Controls.GetFirstControl ( forward );
-			else {
-				Control parent = ctl.Parent;
-				if ( parent != null ) {
-					while ( parent != null ) {
-						Control next = parent.Controls.GetNextControl ( ctl, forward );
-						if ( next != null ) {
-							string name = next.Name;
-							if ( forward )
-								return next;
-							else {
-								if ( next.Controls.Count > 0 )
-									return next.Controls.GetFirstControl ( forward );
-								else
-									return next;
-							}
-						}
-						else if ( !forward ) {
-							return parent;
-						}
-
-						ctl = parent;
-						parent = parent.Parent;
-						
-					}
-					return null;
-				}
-				else
-					return Controls.GetFirstControl ( forward);
-			}*/

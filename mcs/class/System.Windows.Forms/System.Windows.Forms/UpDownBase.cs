@@ -111,6 +111,7 @@ namespace System.Windows.Forms {
 		internal TextBox	EditBox_;
 		internal SpinnerControl	Spinner_;
 		private bool		UserEdit_;
+		private bool            interceptArrowKeys;
 
 		/// --- Constructor ---
 		public UpDownBase()	
@@ -120,11 +121,16 @@ namespace System.Windows.Forms {
 			EditBox_ = new TextBox();
 			EditBox_.TextAlign = HorizontalAlignment.Left;
 			EditBox_.TextChanged += new System.EventHandler( this.EditBox_TextChanged );
+			EditBox_.KeyDown += new KeyEventHandler ( this.OnTextBoxKeyDown );
+			EditBox_.KeyPress += new KeyPressEventHandler ( this.OnTextBoxKeyPress );
+			EditBox_.LostFocus+= new System.EventHandler ( this.OnTextBoxLostFocus );
+			EditBox_.Resize += new System.EventHandler ( this.OnTextBoxResize );
 			EditBox_.Location = new System.Drawing.Point(0, 0);
 			Spinner_ = new SpinnerControl();
 			this.Controls.Add(EditBox_);
 			this.Controls.Add(Spinner_);
 			this.TabStop = false;
+			InterceptArrowKeys = true;
 		}
 
 		/// --- Destructor ---
@@ -200,12 +206,8 @@ namespace System.Windows.Forms {
 		// Gets or sets a value indicating whether the user can use the 
 		// UP ARROW and DOWN ARROW keys to select values
 		public bool InterceptArrowKeys {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+			get { return interceptArrowKeys;  }
+			set { interceptArrowKeys = value; }
 		}
 
 		// Gets the height of the up-down control
@@ -218,12 +220,8 @@ namespace System.Windows.Forms {
 		// Gets or sets a value indicating whether the text may be 
 		// changed by the use of the up or down buttons only
 		public bool ReadOnly {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+			get { return EditBox_.ReadOnly; }
+			set { EditBox_.ReadOnly = value;}
 		}
 
 		// Gets or sets the site of the control.
@@ -301,7 +299,7 @@ namespace System.Windows.Forms {
 		// starting position and number of characters to select.
 		public void Select(int start,int length) 
 		{
-			//FIXME:
+			EditBox_.Select ( start, length );
 		}
 		
 		// When overridden in a derived class, handles the pressing of 
@@ -372,8 +370,7 @@ namespace System.Windows.Forms {
 		// Raises the Layout event
 		protected override void OnLayout(LayoutEventArgs e) 
 		{
-			//FIXME:
-			base.OnLayout(e);
+			base.OnLayout( e );
 		}
 	
 		// Raises the MouseWheel event
@@ -385,25 +382,37 @@ namespace System.Windows.Forms {
 		// Raises the KeyDown event
 		protected virtual void OnTextBoxKeyDown(object source, KeyEventArgs e) 
 		{
-			//FIXME:
+			if ( InterceptArrowKeys ) {
+				switch ( e.KeyData ) {
+				case Keys.Up:
+					UpButton ( );
+					e.Handled = true;
+				break;
+				case Keys.Down:
+					DownButton ( );
+					e.Handled = true;
+				break;
+				}
+			}
+			OnKeyDown ( e );
 		}
 
 		// Raises the KeyPress event
 		protected virtual void OnTextBoxKeyPress(object source, KeyPressEventArgs e) 
 		{
-			//FIXME:
+			OnKeyPress ( e );
 		}
 
 		// Raises the LostFocus event
 		protected virtual void OnTextBoxLostFocus(object source, EventArgs e) 
 		{
-			//FIXME:
+			OnLostFocus ( e );
 		}
 
 		// Raises the Resize event
 		protected virtual void OnTextBoxResize(object source, EventArgs e) 
 		{
-			//FIXME:
+			OnResize ( e );
 		}
 		
 		// Raises the TextChanged event.

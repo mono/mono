@@ -73,7 +73,21 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		protected override void OnTextBoxKeyDown(object source, KeyEventArgs e)
-		{
+		{	// needs to be improved to work with different languages
+			if ( ReadOnly ) {
+				string upper = e.KeyCode.ToString ( );
+				if ( upper.Length <= 1 ) {
+					string lower = upper.ToLower( );
+					foreach ( object item in Items ) {
+						string sitem = item.ToString ( );
+						if ( sitem.StartsWith ( upper ) || sitem.StartsWith ( lower ) ) {
+							SelectedItem = item;
+							break;
+						}
+					}
+					e.Handled = true;
+				}
+			}
 			base.OnTextBoxKeyDown ( source, e );
 		}
 
@@ -156,6 +170,8 @@ namespace System.Windows.Forms {
 
 		private void itemChanged ( int index )
 		{
+			if ( index == SelectedIndex )
+				UpdateEditText ( );
 		}
 
 		private void BuddyTextChanged ( object sender, EventArgs e )
