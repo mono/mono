@@ -65,9 +65,8 @@ to use a "call" instruction to execute such finally handlers. This makes it
 also possible to execute them inside the stack unwinding code. The exception
 object for filters is passed in a local variable (cfg->exvar).
 
-throw: we first save all regs into a sigcontext struct (we pass the
-exception object in register ECX), and then call the stack unwinding
-code.
+throw: we first save all regs into a sigcontext struct and then call the stack
+unwinding code.
 
 catch handler: catch hanlders are always called from the stack unwinding
 code. The exception object is passed in a local variable (cfg->exvar).
