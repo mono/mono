@@ -14,7 +14,7 @@ namespace System.Xml
 	/// <summary>
 	/// 
 	/// </summary>
-	public class XmlDeclaration : XmlNode
+	public class XmlDeclaration : XmlLinkedNode
 	{
 		// Private data members
 		private string Fencoding = "UTF-8";

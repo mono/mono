@@ -1,7 +1,11 @@
-2002-02-24  Duncan Mak  <duncan@ximian.com>
+2002-02-25  Duncan Mak  <duncan@ximian.com>
 
-	* XmlNodeOrder.cs: Added to CVS.
+	* XmlDeclaration.cs: It should inherit from XmlLinkedNode, not XmlNode.
+
+2002-02-24  Duncan Mak  <duncan@ximian.com>
 	
+	* XmlNodeOrder.cs: Added to CVS.
+
 	* XmlQualifiedName.cs: Fixed a warning from Equals ().
 
 	* XmlTokenizedType.cs: Added to CVS.
