@@ -32,24 +32,13 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace System.Net 
 {
-	class DummyPolicy : ICertificatePolicy
-	{
-		public bool CheckValidationResult (ServicePoint point,
-						   X509Certificate certificate,
-						   WebRequest request,
-						   int certificateProblem)
-		{
-			return (certificateProblem == 0);
-		}
-	}
-	
 	public class ServicePointManager
 	{
 		private static HybridDictionary servicePoints = new HybridDictionary ();
 		
 		// Static properties
 		
-		private static ICertificatePolicy policy = new DummyPolicy ();
+		private static ICertificatePolicy policy = new DefaultCertificatePolicy ();
 		private static int defaultConnectionLimit = DefaultPersistentConnectionLimit;
 		private static int maxServicePointIdleTime = 900000; // 15 minutes
 		private static int maxServicePoints = 0;

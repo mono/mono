@@ -1,3 +1,12 @@
+2004-02-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DefaultCertificatePolicy.cs: New. Certificate validation
+	policy compatible with the documented one present in Fx. It
+	allows valid certificates and expired certificates to be used
+	for SSL connections.
+	* ServicePointManager.cs: Removed the DummyPolicy. Now creates
+	a DefaultCertificatePolicy to validate certificates. 
+
 2004-02-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ServicePoint.cs: SendContinue is always false for HTTP/1.0
