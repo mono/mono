@@ -1,3 +1,7 @@
+2003-04-22  Dietmar Maurer  <dietmar@ximian.com>
+
+	* mini.c (mono_method_to_ir): set the cil_code address (fix bug 41525)
+
 2003-04-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* mini.c:
