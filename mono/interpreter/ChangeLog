@@ -1,4 +1,8 @@
 
+Wed Jul 31 16:50:42 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: fixed indentation, simplified some code.
+
 Wed Jul 31 14:29:43 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: fix so that mint can at least get to executing Main().
