@@ -88,6 +88,7 @@ System.Data/MergeManager.cs
 System.Data/MissingMappingAction.cs
 System.Data/MissingPrimaryKeyException.cs
 System.Data/MissingSchemaAction.cs
+System.Data/Node.cs
 System.Data/NoNullAllowedException.cs
 System.Data/OperationAbortedException.cs
 System.Data/ParameterDirection.cs
@@ -122,6 +123,7 @@ System.Data/XmlConstants.cs
 System.Data/XmlDiffLoader.cs
 System.Data/ExpressionElement.cs
 System.Data.Common/CatalogLocation.cs
+System.Data.Common/ComparerFactory.cs
 System.Data.Common/DataAdapter.cs
 System.Data.Common/DataColumnMappingCollection.cs
 System.Data.Common/DataColumnMapping.cs

@@ -1,3 +1,7 @@
+2004-03-04 Eran Domb <erand@mainsoft.com>
+
+	* System.Data.dll.sources : added Node.cs, ComparerFactory.cs.
+
 2004-03-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* System.Data.dll.sources : added Index.cs.
