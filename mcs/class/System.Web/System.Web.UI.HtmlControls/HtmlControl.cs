@@ -103,7 +103,7 @@ namespace System.Web.UI.HtmlControls{
 
 		public CssStyleCollection Style
 		{
-			get { return _attributes.CssStyle; }
+			get { return Attributes.CssStyle; }
 		}
 
 		public virtual string TagName
