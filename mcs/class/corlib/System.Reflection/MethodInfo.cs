@@ -11,6 +11,7 @@ using System;
 
 namespace System.Reflection {
 
+	[Serializable]
 	public abstract class MethodInfo: MethodBase {
 
 		public abstract MethodInfo GetBaseDefinition();
