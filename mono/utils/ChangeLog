@@ -1,3 +1,8 @@
+2003-11-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mono-math.h mono-math.c: New file which contains implementations of
+	math functions/macros which are missing on some platforms.
+
 2003-11-10  Dick Porter  <dick@ximian.com>
 
 	* strenc.c: Use platform-endian UTF16
