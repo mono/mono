@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.36 $
+// $Revision: 1.37 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.37  2004/09/21 04:14:29  pbartok
+// - Fixed accessibility level for Idle handler
+//
 // Revision 1.36  2004/09/21 00:54:15  jackson
 // New message loop that uses poll so we don't get a busy loop
 //
@@ -1132,7 +1135,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public override event EventHandler Idle;
+		internal override event EventHandler Idle;
 
 		// Santa's little helper
 		static void Where() {
