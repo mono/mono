@@ -1,3 +1,9 @@
+
+Tue Jan 22 22:50:29 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Linux.cs: comment out call to Debug.Assert(): stuff from the System
+	assembly cannot be used in corlib.
+
 2001-12-11  Dick Porter  <dick@ximian.com>
 
 	* Linux.cs: IO implemented with file handles with internal calls,

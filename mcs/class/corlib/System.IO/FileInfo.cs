@@ -11,7 +11,7 @@
 
 using System;
 using System.PAL;
-using System.Diagnostics;
+//using System.Diagnostics;
 using System.Security.Permissions;
 
 namespace System.IO
@@ -52,7 +52,7 @@ namespace System.IO
 			}
 			catch(ArgumentException ex)				
 			{
-				Debug.WriteLine(ex); // eliminates not used warning
+				//Debug.WriteLine(ex); // eliminates not used warning
 				if(exNotFound)
 				{
 					throw new FileNotFoundException();
@@ -113,7 +113,7 @@ namespace System.IO
 				}
 				catch(ArgumentException ex)
 				{
-					Debug.WriteLine(ex); // eliminates not used compiler warning
+					//Debug.WriteLine(ex); // eliminates not used compiler warning
 					throw new FileNotFoundException();
 				}
 				return _os.FileLength(getPathName());

@@ -31,9 +31,9 @@ namespace System.Reflection.Emit {
 		public override string FullName {
 			get {return null;}
 		}
-		/*public override Guid GUID {
-			get {return null;}
-		}*/
+		public override Guid GUID {
+			get {return Guid.Empty;}
+		}
 		public override Module Module {
 			get {return null;}
 		}
@@ -70,7 +70,7 @@ namespace System.Reflection.Emit {
 		public FieldBuilder DefineLiteral( string literalName, object literalValue) {
 			return null;
 		}
-		/*protected override TypeAttributes GetAttributeFlagsImpl() {
+		protected override TypeAttributes GetAttributeFlagsImpl() {
 			return (TypeAttributes)0;
 		}
 		protected override ConstructorInfo GetConstructorImpl( BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) {
@@ -78,7 +78,7 @@ namespace System.Reflection.Emit {
 		}
 		public override ConstructorInfo[] GetConstructors( BindingFlags bindingAttr) {
 			return null;
-		}*/
+		}
 		public override object[] GetCustomAttributes(bool inherit) {
 			return null;
 		}
@@ -88,7 +88,7 @@ namespace System.Reflection.Emit {
 		public override Type GetElementType() {
 			throw new NotSupportedException ();
 		}
-		/*public override EventInfo GetEvent( string name, BindingFlags bindingAttr) {
+		public override EventInfo GetEvent( string name, BindingFlags bindingAttr) {
 			return null;
 		}
 		public override EventInfo[] GetEvents() {
@@ -107,17 +107,22 @@ namespace System.Reflection.Emit {
 			return null;
 		}
 		public override InterfaceMapping GetInterfaceMap( Type interfaceType) {
-			return null;
-		}*/
+			throw new NotImplementedException ();
+		}
 		public override Type[] GetInterfaces() {
 			return null;
 		}
-		/*public override MemberInfo[] GetMember( string name, MemberTypes type, BindingFlags bindingAttr) {
+		public override MemberInfo[] GetMember( string name, MemberTypes type, BindingFlags bindingAttr) {
 			return null;
 		}
 		public override MemberInfo[] GetMembers( BindingFlags bindingAttr) {
 			return null;
 		}
+		protected override MethodInfo GetMethodImpl( string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) {
+			// FIXME
+			return null;
+		}
+		
 		public override MethodInfo[] GetMethods( BindingFlags bindingAttr) {
 			return null;
 		}
@@ -147,7 +152,16 @@ namespace System.Reflection.Emit {
 		}
 		protected override bool IsCOMObjectImpl() {
 			return false;
-		}*/
+		}
+		protected override bool IsPointerImpl() {
+			return false;
+		}
+		protected override bool IsPrimitiveImpl() {
+			return false;
+		}
+		protected override bool IsValueTypeImpl() {
+			return true;
+		}
 		public override bool IsDefined( Type attributeType, bool inherit) {
 			return false;
 		}

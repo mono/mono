@@ -161,7 +161,7 @@ namespace System.PAL
 										_environment.Add(ar[0], ar[1]);
 										break;
 									default:
-										System.Diagnostics.Debug.Assert(false);	// this	shouldn't happen
+										//System.Diagnostics/.Debug.Assert(false);	// this	shouldn't happen
 										break;
 								}
 							} 
@@ -208,62 +208,62 @@ namespace System.PAL
 
 		public string ChangeExtension(string path, string extension)
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:ChangeExtension(System.String, System.String): Stub Method");
+			//System.Diagnostics/.Debug.WriteLine("Linux:ChangeExtension(System.String, System.String): Stub Method");
 			return null;
 		}
 
 		public string GetExtension(string path)
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:GetExtension(System.String): Stub Method");
+			//System.Diagnostics/.Debug.WriteLine("Linux:GetExtension(System.String): Stub Method");
 			return null;
 		}
 
 		public string GetFileName(string path)
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:GetFileName(System.String): Stub Method");
+			//System.Diagnostics/.Debug.WriteLine("Linux:GetFileName(System.String): Stub Method");
 			return null;
 		}
 	
 		public string GetFileNameWithoutExtension(string path)
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:GetFileNameWithoutExtension(System.String): Stub Method");
+			//System.Diagnostics/.Debug.WriteLine("Linux:GetFileNameWithoutExtension(System.String): Stub Method");
 			return null;
 		}
 
 		public string GetFullPath(string path)
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:GetFullPath(System.String): Stub Method");
+			//System.Diagnostics/.Debug.WriteLine("Linux:GetFullPath(System.String): Stub Method");
 			return null;
 		}
 
 		public string GetPathRoot(string path)
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:GetPathRoot(System.String): Stub Method");
+			//System.Diagnostics/.Debug.WriteLine("Linux:GetPathRoot(System.String): Stub Method");
 			return null;
 
 		}
 	
 		public string GetTempFileName()
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:GetTempFileName(): Stub Method");
+			//System.Diagnostics/.Debug.WriteLine("Linux:GetTempFileName(): Stub Method");
 			return null;
 		}
 	
 		public string GetTempPath()
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:GetTempPath(): Stub Method");
+			//System.Diagnostics/.Debug.WriteLine("Linux:GetTempPath(): Stub Method");
 			return null;
 		}
 
 		public bool HasExtension(string	path)
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:HasExtension(System.String): Stub Method");
+			//System.Diagnostics/.Debug.WriteLine("Linux:HasExtension(System.String): Stub Method");
 			return false;
 		}
 
 		public bool IsPathRooted(string	path)
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:IsPathRooted(System.String): Stub Method");
+			//System.Diagnostics/.Debug.WriteLine("Linux:IsPathRooted(System.String): Stub Method");
 			return false;
 		}
 
@@ -273,18 +273,18 @@ namespace System.PAL
 
 		public void DeleteDirectory(string path, bool recursive)
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:DeleteDirectory(System.String, System.Boolean): Stub Method");
+			//System.Diagnostics/.Debug.WriteLine("Linux:DeleteDirectory(System.String, System.Boolean): Stub Method");
 		}
 
 		public bool ExistsDirectory(string path)
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:ExistsDirectory(System.String): Stub Method");
+			//System.Diagnostics/.Debug.WriteLine("Linux:ExistsDirectory(System.String): Stub Method");
 			return false;
 		}
 
 		public DateTime	GetCreationTimeDirectory(string	path)
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:GetCreationTimeDirectory(System.String): Stub	Method");
+			//System.Diagnostics/.Debug.WriteLine("Linux:GetCreationTimeDirectory(System.String): Stub	Method");
 			return new DateTime(0);
 		}
 
@@ -293,57 +293,57 @@ namespace System.PAL
 
 		public string[]	GetDirectories(string path, string searchPattern)
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:GetDirectories(System.String,System.String): Stub Method");
+			//System.Diagnostics/.Debug.WriteLine("Linux:GetDirectories(System.String,System.String): Stub Method");
 			return null;
 		}
 
 		public string[]	GetFiles(string	path, string searchPattern)
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:GetFiles(System.String, System.String): Stub Method");
+			//System.Diagnostics/.Debug.WriteLine("Linux:GetFiles(System.String, System.String): Stub Method");
 			return null;
 		}
 
 		public string[]	GetFileSystemEntries(string path, string searchPattern)
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:GetFileSystemEntries(System.String, System.String): Stub Method");
+			//System.Diagnostics/.Debug.WriteLine("Linux:GetFileSystemEntries(System.String, System.String): Stub Method");
 			return null;
 		}
 
 		public DateTime	GetLastAccessTimeDirectory(string path)
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:GetLastAccessTimeDirectory(System.String): Stub Method");
+			//System.Diagnostics/.Debug.WriteLine("Linux:GetLastAccessTimeDirectory(System.String): Stub Method");
 			return new DateTime(0);
 		}
 
 		public DateTime	GetLastWriteTimeDirectory(string path)
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:GetLastWriteTimeDirectory(System.String): Stub Method");
+			//System.Diagnostics/.Debug.WriteLine("Linux:GetLastWriteTimeDirectory(System.String): Stub Method");
 			return new DateTime(0);
 		}
 
 		public void MoveDirectory(string sourceDirName,	string destDirName)
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:MoveDirectory(System.String, System.String): Stub Method");
+			//System.Diagnostics/.Debug.WriteLine("Linux:MoveDirectory(System.String, System.String): Stub Method");
 		}
 
 		public void SetCreationTimeDirectory(string path, DateTime creationTime)
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:SetCreationTimeDirectory(System.String, System.DateTime): Stub Method");
+			//System.Diagnostics/.Debug.WriteLine("Linux:SetCreationTimeDirectory(System.String, System.DateTime): Stub Method");
 		}
 
 		public void SetCurrentDirectory(string path)
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:SetCurrentDirectory(System.String): Stub Method");
+			//System.Diagnostics/.Debug.WriteLine("Linux:SetCurrentDirectory(System.String): Stub Method");
 		}
 
 		public void SetLastAccessTimeDirectory(string path, DateTime lastAccessTime)
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:SetLastAccessTimeDirectory(System.String, System.DateTime): Stub Method");
+			//System.Diagnostics/.Debug.WriteLine("Linux:SetLastAccessTimeDirectory(System.String, System.DateTime): Stub Method");
 		}
 
 		public void SetLastWriteTimeDirectory(string path, DateTime lastWriteTime)
 		{
-			System.Diagnostics.Debug.WriteLine("Linux:SetLastWriteTimeDirectory(System.String, System.DateTime): Stub Method");
+			//System.Diagnostics/.Debug.WriteLine("Linux:SetLastWriteTimeDirectory(System.String, System.DateTime): Stub Method");
 		}
 
 		//-----------------------------------

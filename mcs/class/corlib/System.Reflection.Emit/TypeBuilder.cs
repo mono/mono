@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Globalization;
 
 namespace System.Reflection.Emit {
 	public sealed class TypeBuilder : Type {
@@ -31,8 +32,8 @@ namespace System.Reflection.Emit {
 
 	public const int UnspecifiedTypeSize = -1;
 
-		internal override TypeAttributes AttributesImpl {
-			get {return attrs;}
+		protected override TypeAttributes GetAttributeFlagsImpl () {
+			return attrs;
 		}
 		
 		internal TypeBuilder (ModuleBuilder mb, string name, TypeAttributes attr, Type parent, Type[] interfaces) {
@@ -72,7 +73,11 @@ namespace System.Reflection.Emit {
 				return tname;
 			}
 		}
-		//public override Guid GUID {get {return null;}}
+	
+		public override Guid GUID {
+			get {return Guid.Empty;}
+		}
+
 		public override Module Module {
 			get {return pmodule;}
 		}
@@ -85,9 +90,13 @@ namespace System.Reflection.Emit {
 		public PackingSize PackingSize {
 			get {return packing_size;}
 		}
-		public override Type ReflectedType {get {return null;}}
+		public override Type ReflectedType {get {return parent;}}
 		public override MemberTypes MemberType { 
 			get {return MemberTypes.TypeInfo;}
+		}
+
+		protected override ConstructorInfo GetConstructorImpl (BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) {
+			throw new NotImplementedException ();
 		}
 
 		public override bool IsDefined( Type attributeType, bool inherit) {
@@ -239,13 +248,120 @@ namespace System.Reflection.Emit {
 					ctor.fixup ();
 				}
 			}
-			return null;
+			return this;
+		}
+
+		public override ConstructorInfo[] GetConstructors (BindingFlags bindingAttr) {
+			throw new NotImplementedException ();
 		}
 
 		public override Type GetElementType () { return null; }
 
-		public override Type[] GetInterfaces () { return null; }
+		public override EventInfo GetEvent (string name, BindingFlags bindingAttr) {
+			throw new NotImplementedException ();
+		}
 
+		public override EventInfo[] GetEvents (BindingFlags bindingAttr) {
+			throw new NotImplementedException ();
+		}
+
+		public override FieldInfo GetField( string name, BindingFlags bindingAttr) {
+			//FIXME
+			throw new NotImplementedException ();
+		}
+
+		public override FieldInfo[] GetFields (BindingFlags bindingAttr) {
+			//FIXME
+			throw new NotImplementedException ();
+		}
+
+		public override Type GetInterface (string name, bool ignoreCase) {
+			throw new NotImplementedException ();
+		}
+		
+		public override Type[] GetInterfaces () {
+			if (interfaces != null) {
+				Type[] ret = new Type [interfaces.Length];
+				System.Array.Copy (interfaces, ret, ret.Length);
+				return ret;
+			} else {
+				return Type.EmptyTypes;
+			}
+		}
+
+		public override MemberInfo[] GetMembers( BindingFlags bindingAttr) {
+			// FIXME
+			throw new NotImplementedException ();
+		}
+
+		public override MethodInfo[] GetMethods (BindingFlags bindingAttr) {
+			/*MemberInfo[] m = FindMembers (MemberTypes.Method, bindingAttr, null, null);
+			MethodInfo[] res = new MethodInfo [m.Length];
+			int i;
+			for (i = 0; i < m.Length; ++i)
+				res [i] = (MethodInfo) m [i];
+			return res;*/
+			throw new NotImplementedException ();
+		}
+
+		protected override MethodInfo GetMethodImpl( string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) {
+			// FIXME
+			return null;
+		}
+		
+		public override Type GetNestedType( string name, BindingFlags bindingAttr) {
+			// FIXME
+			return null;
+		}
+
+		public override Type[] GetNestedTypes (BindingFlags bindingAttr) {
+			// FIXME
+			return null;
+		}
+
+		public override PropertyInfo[] GetProperties( BindingFlags bindingAttr) {
+			// FIXME
+			return null;
+		}
+		
+		protected override PropertyInfo GetPropertyImpl( string name, BindingFlags bindingAttr, Binder binder, Type returnType, Type[] types, ParameterModifier[] modifiers) {
+			// FIXME
+			return null;
+		}
+
+		protected override bool HasElementTypeImpl () {
+			return IsArrayImpl() || IsByRefImpl() || IsPointerImpl ();
+		}
+
+		public override object InvokeMember( string name, BindingFlags invokeAttr, Binder binder, object target, object[] args, ParameterModifier[] modifiers, CultureInfo culture, string[] namedParameters) {
+			// FIXME
+			return null;
+		}
+
+		protected override bool IsArrayImpl () {
+			// FIXME
+			return false;
+		}
+		protected override bool IsByRefImpl () {
+			// FIXME
+			return false;
+		}
+		protected override bool IsCOMObjectImpl () {
+			return false;
+		}
+		protected override bool IsPointerImpl () {
+			// FIXME
+			return false;
+		}
+		protected override bool IsPrimitiveImpl () {
+			// FIXME
+			return false;
+		}
+		protected override bool IsValueTypeImpl () {
+			// test this one
+			return (Attributes & TypeAttributes.ClassSemanticsMask) == TypeAttributes.ValueType;
+		}
+		
 		public override RuntimeTypeHandle TypeHandle { get { return _impl; } }
 
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {

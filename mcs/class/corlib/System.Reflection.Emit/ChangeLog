@@ -1,4 +1,9 @@
 
+Tue Jan 22 23:01:11 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* EnumBuilder.cs, TypeBuilder.cs: updates for changes in Type.cs.
+	* ModuleBuilder.cs: fix lookup of nested types.
+
 Tue Jan 15 22:46:21 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* ILGenerator.cs: implement some of the exception support methods.

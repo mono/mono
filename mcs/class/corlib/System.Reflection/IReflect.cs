@@ -21,7 +21,7 @@ namespace System.Reflection {
 
 		FieldInfo    GetField   (string name, BindingFlags binding_attr);
 		FieldInfo [] GetFields  (BindingFlags binding_attr);
-		MemberInfo   GetMember  (string name, BindingFlags binding_attr);
+		MemberInfo[] GetMember  (string name, BindingFlags binding_attr);
 		MemberInfo[] GetMembers (BindingFlags binding_attr);
 		MethodInfo   GetMethod  (string name, BindingFlags binding_attr);
 		MethodInfo   GetMethod  (string name, BindingFlags binding_attr,

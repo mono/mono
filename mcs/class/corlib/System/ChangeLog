@@ -1,3 +1,9 @@
+
+Tue Jan 22 22:51:48 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MonoType.cs, Type.cs: many updates, corrected implementation,
+	completed stubs.
+
 2002-01-20  Andrei Zmievski <andrei@php.net>
 
 	* Byte.cs:

@@ -41,7 +41,7 @@ namespace System.IO
 				}
 				catch(ArgumentException ex)				
 				{
-					Debug.WriteLine(ex); // eliminates not used warning
+					//Debug.WriteLine(ex); // eliminates not used warning
 					bRetCode = false;
 				}
 				return bRetCode;

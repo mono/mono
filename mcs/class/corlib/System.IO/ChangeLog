@@ -1,3 +1,9 @@
+
+Tue Jan 22 22:53:23 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* DirectoryInfo.cs, FileInfo.cs: do not use Debug from the system
+	assembly in corlib.
+
 2002-01-20 Nick Drochak  <ndrochak@gol.com>
 
 	* SeekOrigin.cs: Added Serializable attribute.

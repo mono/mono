@@ -1,4 +1,9 @@
 
+Tue Jan 22 22:54:18 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* IReflect.cs: corrected GetMember() return type.
+	* InterfaceMapping.cs, TypeDelegator.cs: implemented.
+
 Wed Jan 9 19:37:14 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* MonoMethod.cs: ToString () implementation.

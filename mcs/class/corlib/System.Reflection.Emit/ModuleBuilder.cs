@@ -110,6 +110,8 @@ namespace System.Reflection.Emit {
 				result = search_in_array (types, pname, ignoreCase);
 				if ((result != null) && (result.subtypes != null))
 					result = search_in_array (result.subtypes, rname, ignoreCase);
+				else
+					result = null;
 			}
 			if ((result == null) && throwOnError)
 				throw new TypeLoadException (className);
