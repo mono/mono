@@ -151,6 +151,10 @@ namespace System.Data.SqlClient {
 		public void Clear()
 		{
 			metaParameters.Clear ();
+			
+			foreach (SqlParameter p in list)
+				p.Container = null;
+			
 			list.Clear ();
 		}
 		
@@ -204,12 +208,15 @@ namespace System.Data.SqlClient {
 
 		public void Remove (object value)
 		{
+			((SqlParameter) value).Container = null;
+			
 			metaParameters.Remove (((SqlParameter) value).MetaParameter);
 			list.Remove (value);
 		}
 
 		public void RemoveAt (int index)
 		{
+			this [index].Container = null;
 			metaParameters.RemoveAt (index);
 			list.RemoveAt (index);
 		}

@@ -1,3 +1,11 @@
+2003-11-16 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* SqlParameterCollection.cs (Clear): Clear needs to take
+	the parameter out of the collection so that it can be used
+	again.
+	(Remove):
+	(RemoveAt): Ditto.
+
 2003-10-03  Diego Caravana  <diego@toth.it>
 
 	* SqlCommand.cs: no change.
