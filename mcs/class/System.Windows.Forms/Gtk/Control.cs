@@ -22,7 +22,7 @@ namespace System.Windows.Forms {
 		Control parent;
 		string text, name;
 		Size size;
-		int left, top, width, height, tabindex, index;
+		int left, top, width, height, tabindex, index, tag;
 		ControlCollection controls;
 		Point location = new System.Drawing.Point (0, 0);
 		Gtk.Layout layout = null;
@@ -183,7 +183,7 @@ namespace System.Windows.Forms {
 			
 		}
 
-		public Control (string text, int left, int top, int width, int height) : this (text, left, top, width, height);
+		public Control (string text, int left, int top, int width, int height) : this (text, left, top, width, height)
 		{
 		}
 
@@ -262,6 +262,36 @@ namespace System.Windows.Forms {
 			set {
 				size = value;
 				Widget.SetSizeRequest (value.Width,value.Height);
+			}
+		}
+
+		public int Left {
+			get{
+				return location.X;
+			}
+			set{
+				location.X = value;
+				OnLocationChanged (EventArgs.Empty);
+			}
+		}
+
+		public int Top {
+			get{
+				return location.Y;
+			}
+			set{
+				top = value;
+				location.Y = value;
+				OnLocationChanged (EventArgs.Empty);
+			}
+		}
+
+		public int Tag {
+			get{
+				return tag;
+			}
+			set{
+				tag = value;
 			}
 		}
 

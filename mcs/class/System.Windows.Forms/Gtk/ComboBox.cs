@@ -107,5 +107,6 @@ namespace System.Windows.Forms {
 				menusize = value;
 			}
 		}
+
 	}
 }
