@@ -185,6 +185,7 @@ System.Windows.Forms/OpenFileDialog.cs
 System.Windows.Forms/OpenTreeNodeEnumerator.cs
 System.Windows.Forms/Orientation.cs
 System.Windows.Forms/OSFeature.cs
+System.Windows.Forms/OSXStructs.cs
 System.Windows.Forms/OwnerDrawPropertyBag.cs
 System.Windows.Forms/PaintEventArgs.cs
 System.Windows.Forms/PaintEventHandler.cs

@@ -1,3 +1,7 @@
+2005-01-11  Peter Bartok  <pbartok@novell.com>
+
+	* System.Windows.Forms.dll.Sources: Added OSXStructs.cs
+
 2005-01-05  Peter Bartok  <pbartok@novell.com>
 
 	* System.Windows.Forms.dll.Sources: Added ICommandExecutor.cs,
