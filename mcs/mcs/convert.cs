@@ -73,11 +73,15 @@ namespace Mono.CSharp {
 				// with the small distinction that we only probe there
 				//
 				// Always ensure that the code here and there is in sync
-				
-				// from the null type to any reference-type.
-				if (expr is NullLiteral && !target_type.IsValueType)
-                                        return new NullCast (expr, target_type);
 
+				// from the null type to any reference-type.
+				if (expr is NullLiteral){
+					if (target_type.IsPointer)
+						return NullPointer.Null;
+					
+					if (!target_type.IsValueType)
+						return new NullCast (expr, target_type);
+				}
 
 				// from any class-type S to any interface-type T.
 				if (target_type.IsInterface) {
@@ -148,7 +152,7 @@ namespace Mono.CSharp {
 		public static bool ImplicitReferenceConversionExists (Expression expr, Type target_type)
 		{
 			Type expr_type = expr.Type;
-			
+
 			//
 			// This is the boxed case.
 			//
@@ -216,7 +220,6 @@ namespace Mono.CSharp {
 					return true;
 				
 			}
-
 			return false;
 		}
 

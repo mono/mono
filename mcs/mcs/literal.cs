@@ -26,7 +26,7 @@ namespace Mono.CSharp {
 
 	public class NullLiteral : Constant {
 		public static readonly NullLiteral Null;
-		
+
 		static NullLiteral ()
 		{
 			Null = new NullLiteral ();
@@ -34,6 +34,7 @@ namespace Mono.CSharp {
 			
 		public NullLiteral ()
 		{
+			Driver.counter1++;
 			eclass = ExprClass.Value;
 		}
 		
@@ -56,6 +57,26 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			ec.ig.Emit (OpCodes.Ldnull);
+		}
+	}
+
+	//
+	// A null literal in a pointer context
+	//
+	public class NullPointer : NullLiteral {
+		public new static readonly NullLiteral Null;
+
+		static NullPointer ()
+		{
+			Null = new NullPointer ();
+		}
+		
+		public override void Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+				
+			ig.Emit (OpCodes.Ldc_I4_0);
+			ig.Emit (OpCodes.Conv_U);
 		}
 	}
 

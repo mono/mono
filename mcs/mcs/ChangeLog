@@ -1,6 +1,13 @@
 2003-07-04  Miguel de Icaza  <miguel@ximian.com>
 
-	* convert.cs (ExplicitConversion): Convert pointer values using
+	* literal.cs (NullPointer): new class used to represent a null
+	literal in a pointer context.
+
+	* convert.cs (Convert.ImplicitReferenceConversion): Is the target
+	type is a pointer, use a NullPointer object instead of a
+	NullLiteral.   Closes 43687
+
+	(ExplicitConversion): Convert pointer values using
 	the conv opcode to the proper type.
 
 	* ecore.cs (New): change ValueTypeVariable property into a method,
