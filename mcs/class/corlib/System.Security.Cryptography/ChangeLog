@@ -1,3 +1,8 @@
+
+Mon Feb 11 13:26:17 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* X509Certificates: dummy class.
+
 2002-01-10  Duco Fijma <duco@lorentz.xs4all.nl>
 	* Create (trivial) implementation of RandomNumberGenerator
 
