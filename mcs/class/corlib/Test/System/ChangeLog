@@ -1,3 +1,9 @@
+2002-06-11  Nick Drochak  <ndrochak@gol.com>
+
+	* Int64Test.cs: Set the culture to en-US for testing.
+	* MathTest.cs: mono is more precise in Log2, so change test to compare
+	values within a slightly larger margin of error.
+
 2002/06/10  Nick Drochak <ndrochak@gol.com>
 
 	* DecimalTest.cs: More culture indepenence. Fixes the problems we were

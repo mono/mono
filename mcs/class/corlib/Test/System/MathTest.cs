@@ -277,7 +277,7 @@ public class MathTest : TestCase {
 		double a = Math.Log(x, y);
 		double b = -0.83251695325303621;
 
-		Assert(a + " != " + b + " because diff is " + Math.Abs(a - b), (Math.Abs(a - b) <= double.Epsilon));
+		Assert(a + " != " + b + " because diff is " + Math.Abs(a - b), (Math.Abs(a - b) <= 1e-14));
 		Assert(double.IsNaN(Math.Log(-1, y)));
 		Assert(double.IsNaN(Math.Log(double.NaN, y)));
 		Assert(double.IsNaN(Math.Log(x, double.NaN)));

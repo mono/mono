@@ -10,6 +10,7 @@
 using NUnit.Framework;
 using System;
 using System.Globalization;
+using System.Threading;
 
     /// <summary>
     /// Tests for System.Int64
@@ -72,8 +73,15 @@ public class Int64Test : TestCase
 		get { return new TestSuite(typeof(Int64Test)); }
 	}
 
+	private CultureInfo old_culture;
+
 	protected override void SetUp() 
 	{
+		old_culture = Thread.CurrentThread.CurrentCulture;
+
+		// Set culture to en-US and don't let the user override.
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US", false);
+
 		int cdd = NumberFormatInfo.CurrentInfo.CurrencyDecimalDigits;
 		string csym = NumberFormatInfo.CurrentInfo.CurrencySymbol;
 		string csuffix = (cdd > 0 ? "." : "").PadRight(cdd + (cdd > 0 ? 1 : 0), '0');
@@ -94,6 +102,11 @@ public class Int64Test : TestCase
 		NfiUser.PercentNegativePattern = 2;
 		NfiUser.PercentPositivePattern = 2;
 		NfiUser.PercentSymbol = "%%%";
+	}
+
+	protected override void TearDown()
+	{
+		Thread.CurrentThread.CurrentCulture = old_culture;
 	}
 
 	public void TestMinMax()
