@@ -247,8 +247,6 @@ namespace CIR {
 			return t;
 		}
 
-		static bool ugliness_shown = false;
-		
 		//
 		// This function computes the Base class and also the
 		// list of interfaces that the class @c implements.
@@ -283,12 +281,7 @@ namespace CIR {
 			count = bases.Count;
 			Debug.Assert (count > 0);
 
-			if (!ugliness_shown){
-				Console.WriteLine ("This is horrid, kill TypeRef and TypeRefManager in type.cs");
-				ugliness_shown = true;
-			}
-
-			string name = ((TypeRef) bases [0]).UnresolvedData.Name;
+			string name = (string) bases [0];
 			Type first = GetInterfaceOrClass (name);
 
 			if (first == null){
@@ -313,7 +306,7 @@ namespace CIR {
 			Type [] ifaces = new Type [count-start];
 			
 			for (i = start, j = 0; i < count; i++, j++){
-				name = ((TypeRef) bases [i]).UnresolvedData.Name;
+				name = (string) bases [i];
 				Type t = GetInterfaceOrClass (name);
 
 				if (t == null){

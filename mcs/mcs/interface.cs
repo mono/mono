@@ -160,13 +160,13 @@ namespace CIR {
 	
 	public class InterfaceProperty : InterfaceMemberBase {
 		bool has_get, has_set, is_new;
-		TypeRef typeref;
+		string type;
 		
-		public InterfaceProperty (TypeRef typeref, string name,
+		public InterfaceProperty (string type, string name,
 					  bool is_new, bool has_get, bool has_set)
 			: base (name)
 		{
-			this.typeref = typeref;
+			this.type = type;
 			this.is_new = is_new;
 			this.has_get = has_get;
 			this.has_set = has_set;
@@ -190,27 +190,27 @@ namespace CIR {
 			}
 		}
 
-		public Type Type {
+		public string Type {
 			get {
-				return typeref.Type;
+				return type;
 			}
 		}
 	}
 
 	public class InterfaceEvent : InterfaceMemberBase {
-		TypeRef typeref;
+		string type;
 		bool is_new;
 		
-		public InterfaceEvent (TypeRef typeref, string name, bool is_new)
+		public InterfaceEvent (string type, string name, bool is_new)
 			: base (name)
 		{
-			this.typeref = typeref;
+			this.type = type;
 			this.is_new = is_new;
 		}
 
-		public Type Type {
+		public string Type {
 			get {
-				return typeref.Type;
+				return type;
 			}
 		}
 
@@ -222,11 +222,11 @@ namespace CIR {
 	}
 	
 	public class InterfaceMethod : InterfaceMemberBase {
-		TypeRef return_type;
+		string return_type;
 		bool is_new;
 		Parameters args;
 		
-		public InterfaceMethod (TypeRef return_type, string name, bool is_new, Parameters args)
+		public InterfaceMethod (string return_type, string name, bool is_new, Parameters args)
 			: base (name)
 		{
 			this.return_type = return_type;
@@ -234,9 +234,9 @@ namespace CIR {
 			this.args = args;
 		}
 
-		public Type ReturnType {
+		public string ReturnType {
 			get {
-				return return_type.Type;
+				return return_type;
 			}
 		}
 
@@ -256,21 +256,21 @@ namespace CIR {
 	public class InterfaceIndexer : InterfaceMemberBase {
 		bool do_get, do_set, is_new;
 		Parameters args;
-		TypeRef typeref;
+		string type;
 		
-		public InterfaceIndexer (TypeRef typeref, Parameters args, bool do_get, bool do_set, bool is_new)
+		public InterfaceIndexer (string type, Parameters args, bool do_get, bool do_set, bool is_new)
 			: base ("")
 		{
-			this.typeref = typeref;
+			this.type = type;
 			this.args = args;
 			this.do_get = do_get;
 			this.do_set = do_set;
 			this.is_new = is_new;
 		}
 
-		public Type Type {
+		public string Type {
 			get {
-				return typeref.Type;
+				return type;
 			}
 		}
 

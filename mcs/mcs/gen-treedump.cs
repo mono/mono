@@ -55,11 +55,6 @@ namespace Generator {
 			output (s);
 		}
 
-		string GetType (Type type)
-		{
-			return type.Name;
-		}
-
 		string GetParameter (Parameter par)
 		{
 			Parameter.Modifier f = par.ModFlags;
@@ -75,7 +70,7 @@ namespace Generator {
 			case Parameter.Modifier.NONE:
 				mod = ""; break;
 			}
-			return mod + GetType (par.Type) + " " + par.Name;
+			return mod + par.Type + " " + par.Name;
 		}
 
 		string GetUnary (Unary u, int paren_level)
@@ -243,7 +238,7 @@ namespace Generator {
 
 		string GetCast (Cast c)
 		{
-			return "(" + c.TargetType.Name + ") (" + GetExpression (c.Expr, 0) + ")";
+			return "(" + c.TargetType + ") (" + GetExpression (c.Expr, 0) + ")";
 		}
 
 		string GetConditional (Conditional c)
@@ -291,17 +286,17 @@ namespace Generator {
 
 		string GetNew (New n)
 		{
-			return "new " + n.RequestedType.Name + GetArguments (n.Arguments);
+			return "new " + n.RequestedType + GetArguments (n.Arguments);
 		}
 
 		string GetTypeOf (TypeOf t)
 		{
-			return "typeof (" + t.QueriedType.Name + ")";
+			return "typeof (" + t.QueriedType + ")";
 		}
 
 		string GetSizeOf (SizeOf t)
 		{
-			return "sizeof (" + t.QueriedType.Name + ")";
+			return "sizeof (" + t.QueriedType + ")";
 		}
 
 		string GetMemberAccess (MemberAccess m)
@@ -332,7 +327,7 @@ namespace Generator {
 			else
 				s += "UNHANDLED";
 
-			s += GetType (p.ProbeType);
+			s += p.ProbeType;
 
 			return s;
 		}
@@ -532,7 +527,7 @@ namespace Generator {
 				output ("catch ");
 				
 				if (c.Type != null){
-					output ("(" + GetType (c.Type) +
+					output ("(" + c.Type +
 						(c.Name != null ? " " + c.Name : "") + ")");
 				} 
 				GenerateBlock (c.Block, false, false);
@@ -638,8 +633,8 @@ namespace Generator {
 				foreach (DictionaryEntry entry in b.Variables){
 					space ();
 					output_newline (
-						(((CIR.TypeRef)entry.Value).Type).Name + " " +
-						(string)entry.Key + ";");
+						(string) entry.Value + " " +
+						(string) entry.Key + ";");
 				}
 				newline ();
 			}
@@ -659,7 +654,7 @@ namespace Generator {
 		void GenerateMethod (Method m)
 		{
 			ioutput (GetModifiers (m.ModFlags) +
-				 GetType (m.ReturnType) + " " +
+				 m.ReturnType + " " +
 				 m.Name + " (");
 			GenerateParameters (m.Parameters);
 			output_newline (")");
@@ -682,7 +677,7 @@ namespace Generator {
 		{
 			space ();
 			output (imethod.IsNew ? "new " : "");
-			output (GetType (imethod.ReturnType) + " " + imethod.Name + " (");
+			output (imethod.ReturnType + " " + imethod.Name + " (");
 			GenerateParameters (imethod.Parameters);
 			output (");");
 			newline ();
@@ -692,7 +687,7 @@ namespace Generator {
 		{
 			space ();
 			output (iprop.IsNew ? "new " : "");
-			output (GetType (iprop.Type) + " " + iprop.Name + " { ");
+			output (iprop.Type + " " + iprop.Name + " { ");
 			if (iprop.HasGet) output ("get; ");
 			if (iprop.HasSet) output ("set; ");
 			output ("}");
@@ -703,7 +698,7 @@ namespace Generator {
 		{
 			space ();
 			output ((ievent.IsNew ? "new " : "") + "event ");
-			output (GetType (ievent.Type) + " " + ievent.Name + ";");
+			output (ievent.Type + " " + ievent.Name + ";");
 			newline ();
 		}
 		
@@ -711,7 +706,7 @@ namespace Generator {
 		{
 			space ();
 			output (iindexer.IsNew ? "new " : "");
-			output (GetType (iindexer.Type) + " this [");
+			output (iindexer.Type + " this [");
 			output (iindexer.Parameters + "] {");
 			if (iindexer.HasGet) output ("get; ");
 			if (iindexer.HasSet) output ("set; ");
@@ -768,7 +763,7 @@ namespace Generator {
 		{
 			space ();
 			output (GetModifiers (f.ModFlags) + 
-				GetType (f.Type) + " " + f.Name);
+				f.Type + " " + f.Name);
 			if (f.Initializer != null){
 				if (f.Initializer is Expression)
 					output (" = " + GetExpression ((Expression) f.Initializer, 0));
@@ -803,7 +798,7 @@ namespace Generator {
 		void GenerateProperty (Property prop)
 		{
 			space ();
-			output (GetModifiers (prop.ModFlags) + GetType (prop.Type) +
+			output (GetModifiers (prop.ModFlags) + prop.Type +
 				" " + prop.Name + " {");
 			newline ();
 			indent++;
@@ -857,7 +852,7 @@ namespace Generator {
 
 					space ();
 
-					output ("const " + c.ConstantType.Name + " " + c.name + " = " +
+					output ("const " + c.ConstantType + " " + c.name + " = " +
 						GetExpression (c.Expr, 0) + ";");
 					newline ();
 				}

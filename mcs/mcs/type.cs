@@ -12,11 +12,11 @@ namespace CIR {
 	using System.Collections;
 	using System;
 
-	public class UnresolvedType {
+	public class xUnresolvedType {
 		TypeContainer parent;
 		string name;
 		
-		public UnresolvedType (TypeContainer parent, string name)
+		public xUnresolvedType (TypeContainer parent, string name)
 		{
 			this.parent = parent;
 			this.name = name;
@@ -35,10 +35,10 @@ namespace CIR {
 		}
 	}
 	
-	public class TypeRef {
+	public class xTypeRef {
 		object data;
 
-		public TypeRef (object data)
+		public xTypeRef (object data)
 		{
 			this.data = data;
 		}
@@ -49,7 +49,7 @@ namespace CIR {
 			}
 		}
 
-		public UnresolvedType UnresolvedData {
+		public xUnresolvedType UnresolvedData {
 			get {
 				if (data is UnresolvedType)
 					return (UnresolvedType) data;
@@ -78,10 +78,10 @@ namespace CIR {
 		}
 	}
 
-	public class TypeRefManager {
+	public class xTypeRefManager {
 		ArrayList pending_types;
 		
-		public TypeRefManager ()
+		public xTypeRefManager ()
 		{
 			pending_types = new ArrayList ();
 		}

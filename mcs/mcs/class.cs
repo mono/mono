@@ -523,15 +523,15 @@ namespace CIR {
 
 	public class Method {
 		Parameters parameters;
-		TypeRef    return_typeref;
+		string     return_type;
 		string     name;
 		int        modifiers;
 		Block      block;
 
 		// return_type can be "null" for VOID values.
-		public Method (TypeRef return_typeref, int mod, string name, Parameters parameters)
+		public Method (string return_type, int mod, string name, Parameters parameters)
 		{
-			this.return_typeref = return_typeref;
+			this.return_type = return_type;
 			this.name = name;
 			this.parameters = parameters;
 			this.modifiers = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE);
@@ -581,9 +581,9 @@ namespace CIR {
 			}
 		}
 
-		public Type ReturnType {
+		public string ReturnType {
 			get {
-				return return_typeref.Type;
+				return return_type;
 			}
 		}
 
@@ -595,7 +595,7 @@ namespace CIR {
 	}
 
 	public class Field {
-		Type type;
+		string type;
 		Object expr_or_array_init;
 		string name;
 		int modifiers;
@@ -612,7 +612,7 @@ namespace CIR {
 			Modifiers.STATIC |
 			Modifiers.READONLY;
 
-		public Field (TypeRef typeref, int mod, string name, Object expr_or_array_init)
+		public Field (string type, int mod, string name, Object expr_or_array_init)
 		{
 			this.type = type;
 			this.modifiers = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE);
@@ -620,7 +620,7 @@ namespace CIR {
 			this.expr_or_array_init = expr_or_array_init;
 		}
 
-		public Type Type {
+		public string Type {
 			get {
 				return type;
 			}
@@ -741,7 +741,7 @@ namespace CIR {
 	}
 
 	public class Property {
-		TypeRef typeref;
+		string type;
 		string name;
 		int mod_flags;
 		Block get_block, set_block;
@@ -758,18 +758,18 @@ namespace CIR {
 			Modifiers.ABSTRACT |
 			Modifiers.VIRTUAL;
 		
-		public Property (TypeRef typeref, string name, int mod_flags, Block get_block, Block set_block)
+		public Property (string type, string name, int mod_flags, Block get_block, Block set_block)
 		{
-			this.typeref = typeref;
+			this.type = type;
 			this.name = name;
 			this.mod_flags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PRIVATE);
 			this.get_block = get_block;
 			this.set_block = set_block;
 		}
 
-		public Type Type {
+		public string Type {
 			get {
-				return typeref.Type;
+				return type;
 			}
 		}
 

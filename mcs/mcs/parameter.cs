@@ -28,15 +28,15 @@ namespace CIR {
 			PARAMS,
 		}
 
-		TypeRef  typeref;
+		string   type;
 		string   name;
 		Modifier mod;
 		
-		public Parameter (TypeRef typeref, string name, Modifier mod)
+		public Parameter (string type, string name, Modifier mod)
 		{
 			this.name = name;
 			this.mod = mod;
-			this.typeref = typeref;
+			this.type = type;
 		}
 
 		string ModSignature ()
@@ -61,9 +61,9 @@ namespace CIR {
 			}
 		}
 		
-		public Type Type {
+		public string Type {
 			get {
-				return typeref.Type;
+				return type;
 			}
 		}
 

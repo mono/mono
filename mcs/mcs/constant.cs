@@ -5,7 +5,7 @@ namespace CIR {
 	public class Constant : Expression {
 		public string     name;
 		public Expression expr;
-		public TypeRef    typeref;
+		public string     type;
 
 		public const int AllowedModifiers =
 			Modifiers.NEW |
@@ -14,9 +14,9 @@ namespace CIR {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Constant (TypeRef typeref, string name, Expression expr)
+		public Constant (string type, string name, Expression expr)
 		{
-			this.typeref = typeref;
+			this.type = type;
 			this.name = name;
 			this.expr = expr;
 		}
@@ -32,9 +32,9 @@ namespace CIR {
 			}
 		}
 
-		public Type ConstantType {
+		public string ConstantType {
 			get {
-				return typeref.Type;
+				return type;
 			}
 		}
 

@@ -285,15 +285,15 @@ namespace CIR {
 			return true;
 		}
 
-		public bool AddVariable (TypeRef typeref, string name)
+		public bool AddVariable (string type, string name)
 		{
 			if (variables == null)
 				variables = new Hashtable ();
 
-			if (GetVariableTypeRef (name) != null)
+			if (GetVariableType (name) != null)
 				return false;
 			
-			variables.Add (name, typeref);
+			variables.Add (name, type);
 			return true;
 		}
 
@@ -303,16 +303,16 @@ namespace CIR {
 			}
 		}
 
-		public TypeRef GetVariableTypeRef (string name)
+		public string GetVariableType (string name)
 		{
-			TypeRef tr = null;
+			string type = null;
 
 			if (variables != null)
-				tr = (TypeRef) variables [name];
-			if (tr != null)
-				return tr;
+				type = (string) variables [name];
+			if (type != null)
+				return type;
 			else if (parent != null)
-				return parent.GetVariableTypeRef (name);
+				return parent.GetVariableType (name);
 			return null;
 		}
 
@@ -322,7 +322,7 @@ namespace CIR {
 		// </summary>
 		public bool IsVariableDefined (string name)
 		{
-			return GetVariableTypeRef (name) != null;
+			return GetVariableType (name) != null;
 		}
 
 		// <summary>
@@ -563,13 +563,13 @@ namespace CIR {
 	}
 	
 	public class Catch {
-		TypeRef typeref;
+		string type;
 		string name;
 		Block block;
 		
-		public Catch (TypeRef typeref, string name, Block block)
+		public Catch (string type, string name, Block block)
 		{
-			this.typeref = typeref;
+			this.type = type;
 			this.name = name;
 			this.block = block;
 		}
@@ -586,9 +586,9 @@ namespace CIR {
 			}
 		}
 
-		public Type Type {
+		public string Type {
 			get {
-				return typeref.Type;
+				return type;
 			}
 		}
 	}

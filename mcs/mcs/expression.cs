@@ -12,10 +12,10 @@ namespace CIR {
 	using System;
 	
 	public abstract class Expression {
-		Type type;
+		string type;
 		bool is_lvalue;
 
-		public Type Type {
+		public string Type {
 			get {
 				return type;
 			}
@@ -48,7 +48,7 @@ namespace CIR {
 			type = null;
 		}
 		
-		static bool EvaluateType (Expression expr, out Type setType)
+		static bool EvaluateType (Expression expr, out string setType)
 		{
 			setType = null;
 			return true;
@@ -93,7 +93,7 @@ namespace CIR {
 	}
 
 	public class Probe : Expression {
-		TypeRef typeref;
+		string type;
 		Expression expr;
 		Operator oper;
 
@@ -101,10 +101,10 @@ namespace CIR {
 			Is, As
 		}
 		
-		public Probe (Operator oper, Expression expr, TypeRef typeref)
+		public Probe (Operator oper, Expression expr, string type)
 		{
 			this.oper = oper;
-			this.typeref = typeref;
+			this.type = type;
 			this.expr = expr;
 		}
 
@@ -120,27 +120,27 @@ namespace CIR {
 			}
 		}
 
-		public Type ProbeType {
+		public string ProbeType {
 			get {
-				return typeref.Type;
+				return type;
 			}
 		}
 			       
 	}
 	
 	public class Cast : Expression {
-		TypeRef typeref;
+		string type;
 		Expression expr;
 		
-		public Cast (TypeRef typeref, Expression expr)
+		public Cast (string type, Expression expr)
 		{
-			this.typeref = typeref;
+			this.type = type;
 			this.expr = expr;
 		}
 
-		public Type TargetType {
+		public string TargetType {
 			get {
-				return typeref.Type;
+				return type;
 			}
 		}
 
@@ -357,11 +357,11 @@ namespace CIR {
 
 	public class New : Expression {
 		ArrayList arguments;
-		TypeRef requested_ref;
+		string requested_type;
 
-		public New (TypeRef requested_ref, ArrayList arguments)
+		public New (string requested_type, ArrayList arguments)
 		{
-			this.requested_ref = requested_ref;
+			this.requested_type = requested_type;
 			this.arguments = arguments;
 		}
 		
@@ -371,9 +371,9 @@ namespace CIR {
 			}
 		}
 		
-		public Type RequestedType {
+		public string RequestedType {
 			get {
-				return requested_ref.Type;
+				return requested_type;
 			}
 		}
 	}
@@ -382,31 +382,31 @@ namespace CIR {
 	}
 
 	public class TypeOf : Expression {
-		TypeRef queried_ref;
+		string queried_type;
 		
-		public TypeOf (TypeRef queried_ref)
+		public TypeOf (string queried_type)
 		{
-			this.queried_ref = queried_ref;
+			this.queried_type = queried_type;
 		}
 
-		public Type QueriedType {
+		public string QueriedType {
 			get {
-				return queried_ref.Type;
+				return queried_type;
 			}
 		}
 	}
 
 	public class SizeOf : Expression {
-		TypeRef queried_ref;
+		string queried_type;
 		
-		public SizeOf (TypeRef queried_ref)
+		public SizeOf (string queried_type)
 		{
-			this.queried_ref = queried_ref;
+			this.queried_type = queried_type;
 		}
 
-		public Type QueriedType {
+		public string QueriedType {
 			get {
-				return queried_ref.Type;
+				return queried_type;
 			}
 		}
 	}
@@ -435,19 +435,19 @@ namespace CIR {
 	}
 
 	public class BuiltinTypeAccess : Expression {
-		TypeRef access_base;
+		string access_base;
 		string method;
 		
-		public BuiltinTypeAccess (TypeRef typeref, string method)
+		public BuiltinTypeAccess (string type, string method)
 		{
-			System.Console.WriteLine ("DUDE!  This TypeRef should be fully resolved!");
+			System.Console.WriteLine ("DUDE! This type should be fully resolved!");
 			this.access_base = access_base;
 			this.method = method;
 		}
 
-		public Type AccessBase {
+		public string AccessBase {
 			get {
-				return access_base.Type;
+				return access_base;
 			}
 		}
 

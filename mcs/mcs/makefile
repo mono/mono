@@ -25,7 +25,6 @@ COMPILER_SOURCES = \
 	rootcontext.cs			\
 	statement.cs			\
 	statementCollection.cs		\
-	type.cs				\
 	typemanager.cs
 
 TEST_TOKENIZER_SOURCES = test-token.cs $(COMMON_SOURCES)

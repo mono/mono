@@ -1,3 +1,9 @@
+2001-08-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* interface.cs, statement.cs, class.cs, parameter.cs,
+	rootcontext.cs, gen-treedump.cs, enum.cs, cs-parse.jay:
+	Drop use of TypeRefs, and use strings instead.
+
 2001-08-04  Miguel de Icaza  <miguel@ximian.com>
 
 	* rootcontext.cs: 

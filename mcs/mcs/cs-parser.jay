@@ -70,11 +70,6 @@ namespace CSC
 		ParameterCollection implicit_value_parameters;
 
 		// <summary>
-		//   Here we keep track of type references. 
-		// </summary>
-		TypeRefManager type_references;
-
-		// <summary>
 		//   Used to record all types defined
 		// </summary>
 		CIR.Tree tree;
@@ -558,7 +553,7 @@ constant_declaration
 
 		foreach (DictionaryEntry constant in (ArrayList) $5){
 			Constant c = new Constant (
-				(TypeRef) $4, (string) constant.Key, 
+				(string) $4, (string) constant.Key, 
 				(Expression) constant.Value);
 
 			CheckDef (current_container.AddConstant (c), c.Name);
@@ -594,11 +589,11 @@ field_declaration
 	  variable_declarators
 	  SEMICOLON
 	{ 
-		TypeRef typeref = (TypeRef) $3;
+		string type = (string) $3;
 		int mod = (int) $2;
 
 		foreach (VariableDeclaration var in (ArrayList) $4){
-			Field field = new Field (typeref, mod, var.identifier, 
+			Field field = new Field (type, mod, var.identifier, 
 						 var.expression_or_array_initializer);
 
 			CheckDef (current_container.AddField (field), field.Name);
@@ -658,7 +653,7 @@ method_header
 	  member_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  {
-		Method method = new Method ((TypeRef) $3, (int) $2, (string) $4, (Parameters) $6);
+		Method method = new Method ((string) $3, (int) $2, (string) $4, (Parameters) $6);
 
 		current_local_parameters = (Parameters) $6;
 
@@ -670,7 +665,7 @@ method_header
 	  member_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  {
-		Method method = new Method (type ("void"), (int) $2, (string) $4, (Parameters) $6);
+		Method method = new Method ("void", (int) $2, (string) $4, (Parameters) $6);
 
 		current_local_parameters = (Parameters) $6;
 		$$ = method;
@@ -723,7 +718,7 @@ fixed_parameter
 	  type
 	  IDENTIFIER
 	  {
-		$$ = new Parameter ((TypeRef) $3, (string) $4, (Parameter.Modifier) $2);
+		$$ = new Parameter ((string) $3, (string) $4, (Parameter.Modifier) $2);
 	  }
 	;
 
@@ -740,7 +735,7 @@ parameter_modifier
 parameter_array
 	: opt_attributes PARAMS type IDENTIFIER
 	  { 
-		$$ = new Parameter ((TypeRef) $3, (string) $4, Parameter.Modifier.PARAMS);
+		$$ = new Parameter ((string) $3, (string) $4, Parameter.Modifier.PARAMS);
 		note ("type must be a single-dimension array type"); 
 	  }
 	;
@@ -757,7 +752,7 @@ property_declaration
 	  OPEN_BRACE 
 	  {
 		Parameter implicit_value_parameter;
-		implicit_value_parameter = new Parameter ((TypeRef) $3, "value", Parameter.Modifier.NONE);
+		implicit_value_parameter = new Parameter ((string) $3, "value", Parameter.Modifier.NONE);
 
 		lexer.properties = true;
 		
@@ -780,7 +775,7 @@ property_declaration
 		if (pair.Value != null)
 			set_block = (Block) pair.Value;
 
-		prop = new Property ((TypeRef) $3, (string) $4, (int) $2, get_block, set_block);
+		prop = new Property ((string) $3, (string) $4, (int) $2, get_block, set_block);
 		
 		CheckDef (current_container.AddProperty (prop), prop.Name);
 		implicit_value_parameters = null;
@@ -937,13 +932,13 @@ interface_method_declaration
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  SEMICOLON
 	  {
-		$$ = new InterfaceMethod ((TypeRef) $3, (string) $4, (bool) $2, (Parameters) $6);
+		$$ = new InterfaceMethod ((string) $3, (string) $4, (bool) $2, (Parameters) $6);
 	  }
 	| opt_attributes opt_new VOID IDENTIFIER 
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  SEMICOLON
 	  {
-		$$ = new InterfaceMethod (type ("void"), (string) $4, (bool) $2, (Parameters) $6);
+		$$ = new InterfaceMethod ("System.Void", (string) $4, (bool) $2, (Parameters) $6);
 	  }
 	;
 
@@ -959,7 +954,7 @@ interface_property_declaration
 	  {
 	        int gs = (int) $7;
 
-		$$ = new InterfaceProperty ((TypeRef) $3, (string) $4, (bool) $2, 
+		$$ = new InterfaceProperty ((string) $3, (string) $4, (bool) $2, 
 					    (gs & 1) == 1, (gs & 2) == 2);
 	  }
 	;
@@ -976,7 +971,7 @@ interface_accesors
 interface_event_declaration
 	: opt_attributes opt_new EVENT type IDENTIFIER SEMICOLON
 	  {
-		$$ = new InterfaceEvent ((TypeRef) $4, (string) $5, (bool) $2);
+		$$ = new InterfaceEvent ((string) $4, (string) $5, (bool) $2);
 	  }
 	;
 
@@ -994,7 +989,7 @@ interface_indexer_declaration
 	  	bool do_get = (a_flags & 1) == 1;
 		bool do_set = (a_flags & 2) == 2;
 
-		$$ = new InterfaceIndexer ((TypeRef) $3, (Parameters) $6, do_get, do_set, (bool) $2);
+		$$ = new InterfaceIndexer ((string) $3, (Parameters) $6, do_get, do_set, (bool) $2);
 	  }
 	;
 
@@ -1113,7 +1108,7 @@ constructor_initializer
 destructor_declaration
 	: opt_attributes TILDE IDENTIFIER OPEN_PARENS CLOSE_PARENS block
 	  {
-		Method d = new Method (type ("void"), 0, "Finalize", new Parameters (null, null));
+		Method d = new Method ("System.Void", 0, "Finalize", new Parameters (null, null));
 
 		d.Block = (Block) $6;
 		CheckDef (current_container.AddMethod (d), d.Name);
@@ -1173,7 +1168,7 @@ enum_declaration
 	  opt_semicolon
 	  { 
 		string name = (string) $4;
-		Enum e = new Enum ((TypeRef) $5, (int) $2, name);
+		Enum e = new Enum ((string) $5, (int) $2, name);
 
 		foreach (VariableDeclaration ev in (ArrayList) $6){
 			CheckDef (
@@ -1188,7 +1183,7 @@ enum_declaration
 	;
 
 opt_enum_base
-	: /* empty */			{ $$ = type ("System.Int32"); }
+	: /* empty */			{ $$ = "System.Int32"; }
 	| COLON integral_type		{ $$ = $2;   }
 	;
 
@@ -1273,7 +1268,7 @@ type
 	           This does interfaces, delegates, struct_types, class_types, 
 	           parent classes, and more! 4.2 
 	         */
-		$$ = type ((string) $1); 
+		$$ = $1; 
 	  }
 	| builtin_types
 	| array_type
@@ -1301,25 +1296,25 @@ type_list
  * simple types, but we need this to reuse it easily in local_variable_type
  */
 builtin_types
-	: OBJECT	{ $$ = type ("System.Object"); }
-	| STRING	{ $$ = type ("System.String"); }
-	| BOOL		{ $$ = type ("System.Boolean"); }
-	| DECIMAL	{ $$ = type ("System.Decimal"); }
-	| FLOAT		{ $$ = type ("System.Single"); }
-	| DOUBLE	{ $$ = type ("System.Double"); }
+	: OBJECT	{ $$ = "System.Object"; }
+	| STRING	{ $$ = "System.String"; }
+	| BOOL		{ $$ = "System.Boolean"; }
+	| DECIMAL	{ $$ = "System.Decimal"; }
+	| FLOAT		{ $$ = "System.Single"; }
+	| DOUBLE	{ $$ = "System.Double"; }
 	| integral_type
 	;
 
 integral_type
-	: SBYTE		{ $$ = type ("System.SByte"); }
-	| BYTE		{ $$ = type ("System.Byte"); }
-	| SHORT		{ $$ = type ("System.Int16"); }
-	| USHORT	{ $$ = type ("System.UInt16"); }
-	| INT		{ $$ = type ("System.Int32"); }
-	| UINT		{ $$ = type ("System.UInt32"); }
-	| LONG		{ $$ = type ("System.Int64"); }
-	| ULONG		{ $$ = type ("System.UInt64"); }
-	| CHAR		{ $$ = type ("System.Char"); }
+	: SBYTE		{ $$ = "System.SByte"; }
+	| BYTE		{ $$ = "System.Byte"; }
+	| SHORT		{ $$ = "System.Int16"; }
+	| USHORT	{ $$ = "System.UInt16"; }
+	| INT		{ $$ = "System.Int32"; }
+	| UINT		{ $$ = "System.UInt32"; }
+	| LONG		{ $$ = "System.Int64"; }
+	| ULONG		{ $$ = "System.UInt64"; }
+	| CHAR		{ $$ = "System.Char"; }
 	;
 
 interface_type
@@ -1419,7 +1414,7 @@ member_access
 	  }
 	| predefined_type DOT IDENTIFIER
 	  {
-		$$ = new BuiltinTypeAccess ((TypeRef) $1, (string) $3);
+		$$ = new BuiltinTypeAccess ((string) $1, (string) $3);
 	  }
 	;
 
@@ -1527,7 +1522,7 @@ new_expression
 object_or_delegate_creation_expression
 	: NEW type OPEN_PARENS opt_argument_list CLOSE_PARENS
 	  {
-		$$ = new New ((TypeRef) $2, (ArrayList) $4);
+		$$ = new New ((string) $2, (ArrayList) $4);
 	  }
 	;
 
@@ -1586,13 +1581,13 @@ variable_initializer_list
 typeof_expression
 	: TYPEOF OPEN_PARENS type CLOSE_PARENS
 	  {
-		$$ = new TypeOf ((TypeRef) $3);
+		$$ = new TypeOf ((string) $3);
 	  }
 	;
 
 sizeof_expression
 	: SIZEOF OPEN_PARENS type CLOSE_PARENS { 
-		$$ = new SizeOf ((TypeRef) $3);
+		$$ = new SizeOf ((string) $3);
 
 		note ("Verify type is unmanaged"); 
 		note ("if (5.8) builtin, yield constant expression");
@@ -1673,11 +1668,11 @@ cast_expression
 	 */
 	: OPEN_PARENS qualified_identifier CLOSE_PARENS unary_expression
 	  {
-		$$ = new Cast (type ((string) $2), (Expression) $4);
+		$$ = new Cast ((string) $2, (Expression) $4);
 	  }
 	| OPEN_PARENS builtin_types CLOSE_PARENS unary_expression
 	  {
-		$$ = new Cast ((TypeRef) $2, (Expression) $4);
+		$$ = new Cast ((string) $2, (Expression) $4);
 	  }
 	;
 
@@ -1753,12 +1748,12 @@ relational_expression
 	| relational_expression IS type
 	  {
 		$$ = new Probe (Probe.Operator.Is, 
-			         (Expression) $1, (TypeRef) $3);
+			         (Expression) $1, (string) $3);
 	  }
 	| relational_expression AS type
 	  {
 		$$ = new Probe (Probe.Operator.As, 
-			         (Expression) $1, (TypeRef) $3);
+			         (Expression) $1, (string) $3);
 	  }
 	;
 
@@ -2113,10 +2108,10 @@ local_variable_type
 		// SimpleName Expression.
 		//
 		if (((Expression) $1) is SimpleName)
-			$$ = type (((SimpleName) $1).Name);
+			$$ = ((SimpleName) $1).Name;
 		else {
 			error (-1, "Invalid Type definition");
-			$$ = type ("object");
+			$$ = "System.Object";
 		}
 	  }
 	| builtin_types type_suffixes
@@ -2126,7 +2121,9 @@ local_variable_type
 	  }
 	| VOID type_suffixes
 	  {
-		$$ = type ("VOID SOMETHING TYPE");
+		// FIXME: this is a string that represents the type
+		// Figure out something to make this work.
+		$$ = "VOID SOMETHING TYPE FIXME";
 	  }
 	;
 
@@ -2148,7 +2145,7 @@ type_suffix
 local_variable_declaration
 	: local_variable_type variable_declarators
 	  {
-		$$ = declare_local_variables ((TypeRef) $1, (ArrayList) $2);
+		$$ = declare_local_variables ((string) $1, (ArrayList) $2);
 	  }
 	;
 
@@ -2361,8 +2358,8 @@ foreach_statement
 
 		foreach_block = new Block (current_block, true);
 
-		foreach_block.AddVariable (type ("IEnumerator"), temp_id);
-		foreach_block.AddVariable ((TypeRef) $3, (string) $4);
+		foreach_block.AddVariable ("System.IEnumerator", temp_id);
+		foreach_block.AddVariable ((string) $3, (string) $4);
 		assign_e = new Assign (new LocalVariableReference (foreach_block, temp_id), 
 				       new Invocation (
 						new MemberAccess ((Expression) $6, "GetEnumerator"), null));
@@ -2374,7 +2371,7 @@ foreach_statement
 			new Assign (
 				new LocalVariableReference (foreach_block, (string) $4),
 				new Cast (
-					(TypeRef) $3, 
+					(string) $3, 
 					new MemberAccess (
 						new LocalVariableReference (foreach_block, temp_id), "Current"))));
 
@@ -2518,7 +2515,7 @@ specific_catch_clause
 		if ($4 != null)
 			id = (string) $4;
 
-		$$ = new Catch ((TypeRef) $3, id, (Block) $6);
+		$$ = new Catch ((string) $3, id, (Block) $6);
 	  }
 	;
 
@@ -2644,7 +2641,7 @@ CheckDef (bool result, string name)
 	CheckDef (DeclSpace.AdditionResult.NameExists, name);
 }
 
-Block declare_local_variables (TypeRef typeref, ArrayList variable_declarators)
+Block declare_local_variables (string type, ArrayList variable_declarators)
 {
 	Block implicit_block;
 	ArrayList inits = null;
@@ -2670,7 +2667,7 @@ Block declare_local_variables (TypeRef typeref, ArrayList variable_declarators)
 		implicit_block = new Block (current_block, true);
 
 	foreach (VariableDeclaration decl in variable_declarators){
-		if (implicit_block.AddVariable (typeref, decl.identifier)){
+		if (implicit_block.AddVariable (type, decl.identifier)){
 			if (decl.expression_or_array_initializer != null){
 				if (inits == null)
 					inits = new ArrayList ();
@@ -2725,11 +2722,6 @@ void note (string s)
 	// Used to put annotations
 }
 
-TypeRef type (string type_name)
-{
-	return type_references.GetTypeRef (current_container, type_name);
-}
-
 Tokenizer lexer;
 
 public CSharpParser(CIR.Tree tree, string name, System.IO.Stream input) 
@@ -2742,7 +2734,6 @@ public CSharpParser(CIR.Tree tree, string name, System.IO.Stream input)
 	current_container.Namespace = current_namespace;
 
 	lexer = new Tokenizer (input, name);
-	type_references = new TypeRefManager (); 
 }
 
 public int parse ()

@@ -15,7 +15,7 @@ namespace CIR {
 
 	public class Enum : DeclSpace {
 		ArrayList ordered_enums;
-		TypeRef typeref;
+		string type;
 		string name;
 		int mod_flags;
 
@@ -26,9 +26,9 @@ namespace CIR {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Enum (TypeRef typeref, int mod_flags, string name) : base (name)
+		public Enum (string type, int mod_flags, string name) : base (name)
 		{
-			this.typeref = typeref;
+			this.type = type;
 			this.name = name;
 			this.mod_flags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PUBLIC);
 
@@ -50,9 +50,9 @@ namespace CIR {
 			return AdditionResult.Success;
 		}
 
-		public Type Type {
+		public string Type {
 			get {
-				return typeref.Type;
+				return type;
 			}
 		}
 
