@@ -1,5 +1,17 @@
 2004-02-12  Martin Baulig  <martin@ximian.com>
 
+	* class.h (MonoClassField): Added `MonoType *generic_type'.
+
+	* reflection.c (mono_image_get_fieldref_token): Added support for
+	instantiated generic types.
+	(field_encode_inflated_field): Removed.
+	(mono_image_get_inflated_field_token): Removed.
+	(mono_reflection_inflate_field): Return a `MonoReflectionField *'.
+
+	* reflection.h (MonoReflectionInflatedField): Removed.
+
+2004-02-12  Martin Baulig  <martin@ximian.com>
+
 	* metadata.h (MonoMethodHeader, MonoMethodSignature): Moved the
 	`gen_method' field from MonoMethodHeader to MonoMethodSignature.
 
