@@ -1,5 +1,30 @@
 2004-08-11  Sanjay Gupta <gsanjay@novell.com>
 
+	* GridViewCancelEditEventArgs.cs:
+	* GridViewCancelEditEventHandler.cs:
+	* GridViewCommandEventArgs.cs:
+	* GridViewCommandEventHandler.cs:
+	* GridViewDeletedEventArgs.cs:
+	* GridViewDeletedEventHandler.cs:
+	* GridViewDeleteEventArgs.cs:
+	* GridViewDeleteEventHandler.cs:
+	* GridViewEditEventArgs.cs:
+	* GridViewEditEventHandler.cs:
+	* GridViewPageEventArgs.cs:
+	* GridViewPageEventHandler.cs:
+	* GridViewRowEventArgs.cs:
+	* GridViewRowEventHandler.cs:
+	* GridViewSelectEventArgs.cs:
+	* GridViewSelectEventHandler.cs:
+	* GridViewSortEventArgs.cs:
+	* GridViewSortEventHandler.cs:
+	* GridViewUpdatedEventArgs.cs:
+	* GridViewUpdatedEventHandler.cs:
+	* GridViewUpdateEventArgs.cs:
+	* GridViewUpdateEventHandler.cs: Added new delegates.
+
+2004-08-11  Sanjay Gupta <gsanjay@novell.com>
+
 	* FormViewUpdatedEventArgs.cs: Corrected constructor.
 
 2004-08-11  Sanjay Gupta <gsanjay@novell.com>
