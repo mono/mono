@@ -68,7 +68,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public void CheckArraySize (ref XEvent [] array, int min, int index)
+		private void CheckArraySize (ref XEvent [] array, int min, int index)
 		{
 			if (array.Length > min && index * 3 < array.Length) {
 				XEvent [] na = new XEvent [min];
