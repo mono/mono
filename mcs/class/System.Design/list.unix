@@ -1,3 +1,10 @@
+System.ComponentModel.Design/ArrayEditor.cs
+System.ComponentModel.Design/CollectionEditor.cs
+System.ComponentModel.Design/DisplayMode.cs
+System.ComponentModel.Design/ByteViewer.cs
+System.ComponentModel.Design/ComponentDesigner.cs
+System.ComponentModel.Design/InheritanceService.cs
+System.ComponentModel.Design/LocalizationExtenderProvider.cs
 System.ComponentModel.Design.Serialization/CodeDomSerializer.cs
 System.ComponentModel.Design.Serialization/CodeDomSerializerException.cs
 System.ComponentModel.Design.Serialization/ICodeDomDesignerReload.cs

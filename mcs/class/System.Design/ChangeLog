@@ -1,3 +1,7 @@
+2003-03-29  Martin Willemoes Hansen
+
+	* Stubed System.ComponentModel.Design
+
 2003-03-27  Martin Willemoes Hansen
 
 	* Added unix build environment
