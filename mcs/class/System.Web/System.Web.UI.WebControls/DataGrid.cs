@@ -1343,9 +1343,10 @@ namespace System.Web.UI.WebControls
 					          BindingFlags.Instance | BindingFlags.Static |
 					          BindingFlags.Public, null, null,
 					          new Type[] { typeof(int) }, null);
+					
 					if(prop_item != null)
 					{
-						prop_type = prop_item.GetType();
+						prop_type = prop_item.PropertyType;
 					}
 					if(prop_type != null && prop_type == typeof(object))
 					{
