@@ -85,7 +85,7 @@ namespace Mono.MonoBASIC {
 			if (!TypeManager.IsBuiltinType (type) &&
 			    (!type.IsSubclassOf (TypeManager.enum_type))) {
 				Report.Error (
-					-3, Location,
+					30424, Location,
 					"Constant type is not valid (only system types are allowed)");
 				return false;
 			}
@@ -136,7 +136,7 @@ namespace Mono.MonoBASIC {
 
 			if (Expr == null) {
 				if (errors == Report.Errors)
-					Report.Error (150, Location, "A constant value is expected");
+					Report.Error (30059, Location, "A constant value is expected");
 				return null;
 			}
 
@@ -148,8 +148,9 @@ namespace Mono.MonoBASIC {
 					Expr = un_expr.Expr;
 				else if ((ch_expr != null) && (ch_expr.Expr is Constant))
 					Expr = ch_expr.Expr;
-				else {
-					Report.Error (150, Location, "A constant value is expected");
+				else 
+				{
+					Report.Error (30059, Location, "A constant value is expected");
 					return null;
 				}
 			}

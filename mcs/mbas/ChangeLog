@@ -1,4 +1,7 @@
 2004-03-22 Anirban Bhattacharjee <banirban@novell.com>
+	* const.cs: Changed exception numbers
+
+2004-03-22 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: Changed grammar for constant
 
 2004/03/02  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
