@@ -1,0 +1,5 @@
+2002-11-20  Nick Drochak <ndrochak@gol.com>
+
+	* library.make: for .response allow white space at the end of
+	the line 
+

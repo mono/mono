@@ -28,7 +28,7 @@ ifdef USE_SOURCE_RULES
 else
 
 .response: $(LIB_LIST)
-	cat $^ |egrep '\.cs$$' >$@
+	cat $^ |egrep '\.cs[[:space:]]*$$' >$@
 
 .makefrag: $(LIB_LIST) $(topdir)/class/library.make
 	echo -n "library-deps.stamp: $(LIB_LIST) " >$@.new
