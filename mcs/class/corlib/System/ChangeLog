@@ -1,3 +1,7 @@
+2004-09-05 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* MonoCustomAttribute.cs: Avoid the call to GetBase when possible.
+
 2004-09-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Environment.cs: (ExpandEnvironmentVariables) don't nullify the case

@@ -195,15 +195,13 @@ namespace System
 
 		internal static bool IsDefined (ICustomAttributeProvider obj, Type attributeType, bool inherit)
 		{
-			object[] res = GetCustomAttributes (obj);
+			object [] res = GetCustomAttributes (obj);
 			foreach (object attr in res)
-			{
 				if (attributeType.Equals (attr.GetType ()))
 					return true;
-			}
 
-			ICustomAttributeProvider btype = GetBase (obj);
-			if (inherit && (btype != null))
+			ICustomAttributeProvider btype;
+			if (inherit && ((btype = GetBase (obj)) != null))
 				return IsDefined (btype, attributeType, inherit);
 
 			return false;
