@@ -7,6 +7,8 @@
 // 2001 (C) Ximian, Inc. 	http://www.ximian.com
 //
 
+using System.IO;
+
 namespace System.Resources {
 	   public sealed class ResourceWriter : IResourceWriter {
 

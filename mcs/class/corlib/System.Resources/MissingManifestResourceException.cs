@@ -8,6 +8,7 @@
 //
 
 using System.Globalization;
+using System.Runtime.Serialization;
 
 namespace System.Resources {
 
@@ -25,7 +26,7 @@ namespace System.Resources {
 				    {
 				    }
 
-			 public MissingManifestResourceException (SerializationInfo info, StramingContext context)
+			 public MissingManifestResourceException (SerializationInfo info, StreamingContext context)
 				    :base (info, context)
 				    {
 				    }

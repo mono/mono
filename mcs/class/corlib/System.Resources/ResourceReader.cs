@@ -7,8 +7,11 @@
 // 2001 (C) Ximian Inc, http://www.ximian.com
 //
 
+using System.Collections;
+using System.IO;
+
 namespace System.Resources {
-	   public sealed class ResoureReader : IResourceReader, IDisposible {
+	   public sealed class ResoureReader : IResourceReader, IDisposable {
 
 			 // Constructors
 			 public ResoureReader (Stream stream) {
@@ -33,7 +36,7 @@ namespace System.Resources {
 
 	   }
 
-	   private class DictionaryEnumerator : IDictionaryEnumerator {
+	   internal class DictionaryEnumerator : IDictionaryEnumerator {
 			 protected DictionaryEntry entry;
 			 protected object key;
 			 protected object value;

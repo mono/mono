@@ -7,6 +7,10 @@
 // 2001 (C) Ximian, Inc. http://www.ximian.com
 //
 
+using System.Collections;
+using System.Reflection;
+using System.Globalization;
+
 namespace System.Resources {
 	   public class ResourceManager {
 			 public static readonly int HeaderVersionNumber;
@@ -14,17 +18,17 @@ namespace System.Resources {
 
 			 protected string BaseNameField;
 			 protected Assembly MainAssembly;
-			 protected HashTable Resourcesets;
+			 protected Hashtable Resourcesets;
 			 
-			 private bool IgnoreCase;
-			 private Type ResourceSetType;
+			 private bool ignoreCase;
+			 private Type resourceSetType;
 
 			 // constructors
-			 public ResourceManager () {};
+			 public ResourceManager () {}
 			 public ResourceManager (Type resourceSource) {
 				    if (resourceSource == null)
 						  throw new ArgumentNullException ("resourceSource is null.");
-				    ResourceSetType = resourceSource; // TODO Incomplete
+				    resourceSetType = resourceSource; // TODO Incomplete
 			 }
 			 public ResourceManager (string baseName, Assembly assembly) {
 				    if (baseName == null || assembly == null)
@@ -47,11 +51,11 @@ namespace System.Resources {
 			 public virtual string BaseName { get { return BaseNameField; }}
 
 			 public virtual bool IgnoreCase {
-				    get { return IgnoreCase; }
-				    set { IgnoreCase = value; }
+				    get { return ignoreCase; }
+				    set { ignoreCase = value; }
 			 }
 
-			 public virtual Type ResourceSetType { get { return ResourceSetType; }}
+			 public virtual Type ResourceSetType { get { return resourceSetType; }}
 			 
 			 public virtual ResourceSet GetResourceSet (CultureInfo culture,
 											    bool createIfNotExists,
@@ -71,9 +75,10 @@ namespace System.Resources {
 				    // TODO check for correctness.				    
 			 }
 			 
-			 public virtual string GetString (string name, CultureInfo) {
+			 public virtual string GetString (string name, CultureInfo culture) {
 				    if (name == null)
-						  thrnow new ArgumentNullException ("Name is null.");
+						  throw new ArgumentNullException ("Name is null.");
+				return name;
 			 }
 
 			 protected virtual string GetResourceFileName (CultureInfo culture) {

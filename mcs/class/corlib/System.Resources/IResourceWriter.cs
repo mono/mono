@@ -7,9 +7,11 @@
 // (C) 2001 Ximian, Inc. http://www.ximian.com
 //
 
+using System;
+
 namespace System.Resources {
 
-	   public interface IResourceWriter : IDisposible {
+	   public interface IResourceWriter : IDisposable {
 			 void AddResource (string name, byte[] value);
 			 void AddResource (string name, object value);
 			 void AddResource (string name, string value);

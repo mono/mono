@@ -7,12 +7,15 @@
 // (C) 2001 Ximian, Inc.		http://www.ximian.com
 //
 
+using System.Collections;
+using System.IO;
+
 namespace System.Resources {
 
-	   public class ResourceSet : IDisposible {
+	   public class ResourceSet : IDisposable {
 
 			 protected IResourceReader Reader;
-			 protected HashTable Table;
+			 protected Hashtable Table;
 			 
 			 // Constructors
 			 protected ResourceSet () {}

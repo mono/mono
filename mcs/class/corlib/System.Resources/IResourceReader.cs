@@ -7,9 +7,12 @@
 // (C) 2001 Ximian, Inc. http://www.ximian.com
 //
 
+using System;
+using System.Collections;
+
 namespace System.Resources {
 
-	   public interface IResourceReader : IEnumerable, IDisposible {
+	   public interface IResourceReader : IEnumerable, IDisposable {
 			 void Close();
 			 IDictionaryEnumerator GetEnumerator();
 	   }

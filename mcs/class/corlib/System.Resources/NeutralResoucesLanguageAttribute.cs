@@ -18,7 +18,7 @@ namespace System.Resources {
 				    culture = cultureName;
 			 }
 			 public string CultureName {
-				    get { return culture; };
+				    get { return culture; }
 			 }
 	   }
 }

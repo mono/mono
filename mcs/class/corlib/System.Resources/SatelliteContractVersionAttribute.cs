@@ -18,7 +18,7 @@ namespace System.Resources {
 				    ver = version;
 			 }
 			 public string Version {
-				    get { return ver.ToString(); };
+				    get { return ver.ToString(); }
 			 }
 	   }
 }

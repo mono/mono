@@ -1,3 +1,9 @@
+
+Tue Dec 18 13:18:32 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* *.cs: fixed some of the compilation issues: missing
+	using directives, typos.
+
 2001-12-11  Duncan Mak  <duncan@ximian.com>
 
 	* Checked in to CVS.
