@@ -1,3 +1,9 @@
+2003-05-12  Dick Porter  <dick@ximian.com>
+
+	* gc.c: Don't run finalizers when the finalizer thread is
+	finishing up, because the default domain has already been
+	destroyed.
+
 2003-05-11  Miguel de Icaza  <miguel@ximian.com>
 
 	* string-icalls.c (ves_icall_System_String_ctor_chara_int_int): if
