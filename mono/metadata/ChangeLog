@@ -1,3 +1,21 @@
+2003-05-02  Martin Baulig  <martin@ximian.com>
+
+	* debug-mono-symfile.h
+	(MonoSymbolFile): Moved declaration into mono-debug.h.
+	(MonoDebugMethodJitInfo): Likewise.
+	(mono_debug_open_mono_symbol_file): Take the MonoDebugHandle as
+	argument.
+	(_mono_debug_address_from_il_offset): Take a
+	MonoDebugMethodJitInfo instead of a MonoDebugMethodInfo.
+
+	* mono-debug.h
+	(MonoDebugDomainData): New struct.
+	(mono_debug_get_domain_data): New function.
+	(mono_debug_add_method): Take an additional `MonoDomain *'
+	argument.
+	(mono_debug_source_location_from_address): Likewise.
+	(mono_debug_il_offset_from_address): Likewise.
+	(mono_debug_address_from_il_offset): Likewise.
 
 Thu May 1 19:40:37 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
