@@ -1,4 +1,31 @@
-2005-01-13  Peter Bartok  <pbartok@novell.com>
+2005-01-16  Peter Bartok  <pbartok@novell.com>
+
+	* XplatUI.cs, XplatUIDriver.cs: Added SetCursor(), ShowCursor(),
+	  OverrideCursor(), DefineCursor(), DefineStdCursor(), GetCursorInfo()
+	  and DestroyCursor() methods.
+	* Cursor.cs: Partially implemented, now supports standard cursors;
+	  still contains some debug code
+	* Cursors.cs: Implemented class
+	* Control.cs:
+	  - WndProc(): Added handling of WM_SETCURSOR message, setting the
+	    appropriate cursor
+	  - Implemented Cursor property
+	  - Replaced break; with return; more straightforwar and possibly
+	    faster
+	  - Now properly setting the result for WM_HELP
+	* X11Structs.cs: Added CursorFontShape enum
+	* XplatUIStructs.cs:
+	  - Added StdCursor enum (to support DefineStdCursor() method)
+	  - Added HitTest enum (to support sending WM_SETCURSOR message)
+	* XplatUIX11.cs:
+	  - Now sends the WM_SETCURSOR message
+	  - Implemented new cursor methods
+	* XplatUIOSX.cs: Stubbed new cursor methods
+	* XplatUIWin32.cs:
+	  - Implemented new cursor methods
+	  - Added GetSystemMetrics function and associated enumeration
+
+2005-01-15  Peter Bartok  <pbartok@novell.com>
 
 	* Control.cs:
 	  - WndProc(): Now handles EnableNotifyMessage
