@@ -1,3 +1,7 @@
+2005-02-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* UnmanagedFunctionPointerAttribute.cs: Add #region directives.
+
 2005-02-21  Kazuki Oikawa  <kazuki@panicode.com>
 
 	* BIND_OPTS.cs, CONNECTEDATA.cs, DISPPARAMS.cs, ELEMDESC.cs,
