@@ -1,3 +1,8 @@
+2004-09-03  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* ProtocolImporter.cs: Fixing the fix. The generated class must always
+	  be added.
+
 2004-09-01  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* BasicProfileChecker.cs: Some small fixes.

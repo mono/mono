@@ -283,8 +283,7 @@ namespace System.Web.Services.Description {
 
 				CodeTypeDeclaration codeClass = BeginClass ();
 				codeTypeDeclaration = codeClass;
-				if (port != null)
-					AddCodeType (codeClass, port.Documentation);
+				AddCodeType (codeClass, port != null ? port.Documentation : null);
 				codeClass.Attributes = MemberAttributes.Public;
 			
 				if (service != null && service.Documentation != null && service.Documentation != "")
