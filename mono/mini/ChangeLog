@@ -1,3 +1,11 @@
+2004-03-25  Martin Baulig  <martin@ximian.com>
+
+	* mini.c (mini_get_method): Take a `MonoGenericContext *' instead
+	of a `MonoGenericMethod *'.
+	(TYPE_PARAM_TO_TYPE, MTYPE_PARAM_TO_TYPE): mono_method_to_ir() has
+	a new local variable called `generic_context' which holds the
+	current `MonoGenericContext *'; use it to lookup things.
+
 2004-03-24  Martin Baulig  <martin@ximian.com>
 
 	* mini.c (mini_get_class): New static method; if we're inside a
