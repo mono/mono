@@ -1,3 +1,10 @@
+2003-04-21  Martin Baulig  <martin@ximian.com>
+
+	* icall.c
+	(ves_icall_System_Reflection_Assembly_GetReferencedAssemblies):
+	Make this work with relative pathnames; g_filename_to_uri() needs
+	an absolute filename.
+
 2003-04-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c: Track name changes in Object and ValueType.
