@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class ImageIndexConverter : Int32Converter {
+    public class ImageIndexConverter : Int32Converter {
 
 		//
 		//  --- Constructor
@@ -223,5 +223,5 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-	// }
+	 }
 }

@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class GroupBox : Control {
+    public class GroupBox : Control {
 
 		//
 		//  --- Constructor
@@ -202,5 +202,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class GridTableStylesCollection : BaseCollection, IList {
+    public class GridTableStylesCollection : BaseCollection, IList {
 
 		//
 		//  --- Public Properties
@@ -108,5 +108,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

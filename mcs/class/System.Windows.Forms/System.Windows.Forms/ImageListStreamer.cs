@@ -14,20 +14,20 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public sealed class ImageListStreamer : ISerializable {
+    public sealed class ImageListStreamer : ISerializable {
 
 		//
 		//  --- Public Methods
 		//
-		// [MonoTODO]
-		// public virtual bool Equals(object o);
-		// {
+		// [MonoTODO]
+		// public virtual bool Equals(object o);
+		// {
 		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public static bool Equals(object o1, object o2);
-		// {
+		// }
+		// [MonoTODO]
+		// public static bool Equals(object o1, object o2);
+		// {
 		//		throw new NotImplementedException ();
-		// }
-	//}
+		// }
+	}
 }

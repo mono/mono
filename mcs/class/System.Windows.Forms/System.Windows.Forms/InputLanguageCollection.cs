@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class InputLanguageCollection : ReadOnlyCollectionBase {
+    public class InputLanguageCollection : ReadOnlyCollectionBase {
 
 		//
 		//  --- Public Properties
@@ -54,5 +54,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+ }
 }

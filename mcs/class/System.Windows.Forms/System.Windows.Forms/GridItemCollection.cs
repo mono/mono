@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public abstract class GridItemCollection : ICollection, IEnumerable {
+    public abstract class GridItemCollection : ICollection, IEnumerable {
 
 		//
 		//  --- Public Properties
@@ -50,5 +50,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

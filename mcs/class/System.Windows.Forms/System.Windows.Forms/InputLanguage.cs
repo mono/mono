@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public sealed class InputLanguage {
+    public sealed class InputLanguage {
 
 		//
 		//  --- Public Properties
@@ -82,5 +82,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

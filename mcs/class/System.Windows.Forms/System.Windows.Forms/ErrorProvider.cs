@@ -1,24 +1,24 @@
-////
-//// System.Windows.Forms.ErrorProvider
-////
-//// Author:
-////   stubbed out by Paul Osman (paul.osman@sympatico.ca)
-////
-//// (C) 2002 Ximian, Inc
-////
 //
-//namespace System.Windows.Forms {
+// System.Windows.Forms.ErrorProvider
 //
-//	// <summary>
-//	//	This is only a template.  Nothing is implemented yet.
-//	//
-//	// </summary>
+// Author:
+//   stubbed out by Paul Osman (paul.osman@sympatico.ca)
 //
-//        public class ErrorProvider : Component, IExtenderProvider {
+// (C) 2002 Ximian, Inc
 //
-//		//
-//		//  --- Constructor
-//		//
+
+namespace System.Windows.Forms {
+
+	// <summary>
+	//	This is only a template.  Nothing is implemented yet.
+	//
+	// </summary>
+using System.ComponentModel;
+	public class ErrorProvider : Component, IExtenderProvider {
+
+		//
+		//  --- Constructor
+		//
 //		[MonoTODO]
 //		public ErrorProvider()
 //		{
@@ -241,5 +241,5 @@
 //		{
 //			throw new NotImplementedException ();
 //		}
-//	 }
-//}
+	 }
+}

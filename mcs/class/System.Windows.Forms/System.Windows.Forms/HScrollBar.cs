@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class HScrollBar : ScrollBar {
+    public class HScrollBar : ScrollBar {
 
 		//
 		//  --- Constructor
@@ -192,5 +192,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

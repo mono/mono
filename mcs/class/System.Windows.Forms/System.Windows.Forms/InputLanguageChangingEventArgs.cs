@@ -3,49 +3,53 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+//	Partially completed by Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
-
+using System.Globalization;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
-        //public class InputLanguageChangingEventArgs : EventArgs {
-
+    public class InputLanguageChangingEventArgs : EventArgs {
+		private Culture culture;
+		private bool systemcharset;
+		private InputLanguage inputlanguage;
 		//
 		//  --- Constructor
 		//
-		//[MonoTODO]
-		//public InputLanguageChangingEventArgs(CultureInfo culture, bool val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		[MonoTODO] //what about input lang?
+		public InputLanguageChangingEventArgs(CultureInfo culture, bool sysCharSet) {
+			this.culture = culture;
+			this.systemcharset =sysCharSet;
+		}
+
+		[MonoTODO] //what about culture?
+		public InputLanguageChangingEventArgs(InputLanguage inputlanguage, bool sysCharSet) {
+			this.culture = culture;
+			this.inputlanguage = inputlanguage;
+		}
 
 		//
 		//  --- Public Properties
 		//
-		//[MonoTODO]
-		//public CultureInfo Culture {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public InputLanguage InputLanguage {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public bool SysCharSet {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		public CultureInfo Culture {
+			get {
+				return culture;
+			}
+		}
+		public InputLanguage InputLanguage {
+			get {
+				return inputlanguage;
+			}
+		}
+		public bool SysCharSet {
+			get {
+				return systemcharset;
+			}
+		}
 
 		//
 		//  --- Public Methods
@@ -60,5 +64,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

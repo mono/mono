@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public abstract class FileDialog : CommonDialog {
+    public abstract class FileDialog : CommonDialog {
 
 		//
 		//  --- Public Properties
@@ -218,5 +218,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

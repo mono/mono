@@ -13,8 +13,8 @@ namespace System.Windows.Forms {
 	//	This is only a template.  Nothing is implemented yet.
 	//
 	// </summary>
-
-        //public sealed class ImageList : Component {
+using System.ComponentModel;
+    public sealed class ImageList : Component {
 
 		//
 		//  --- Constructor
@@ -259,5 +259,5 @@ namespace System.Windows.Forms {
 	//}
 	// }// End of Subclass
 
-	// }//End of class
+	 }//End of class
 }

@@ -3,59 +3,57 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
-//
+//	Partialy completed by Dennis Hayes (dennish@raytek.com)
 // (C) 2002 Ximian, Inc
 //
 
 namespace System.Windows.Forms {
 
-	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
-	// </summary>
+	/// <summary>
+	///
+	/// </summary>
 
-        //public class GiveFeedbackEventArgs : EventArgs {
+    public class GiveFeedbackEventArgs : EventArgs {
 
-		//
+		DragDropEffects effect;
+		bool useDefaultCursors;
+
 		//  --- Constructor
-		//
-		//[MonoTODO]
-		//public GiveFeedbackEventArgs(  DragDropEffects effect,  bool useDefaultCursors )
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
-		//
+		
+		public GiveFeedbackEventArgs(  DragDropEffects effect,  bool useDefaultCursors )
+		{
+			this.effect = effect;
+			this.useDefaultCursors = useDefaultCursors;
+		}
+		
 		//  --- Public Properties
-		//
-		//[MonoTODO]
-		//public DragDropEffects effect Effect {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public bool UseDefaultCursors {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		public DragDropEffects Effect {
+			get {
+				return effect;
+			}
+		}
+		public bool UseDefaultCursors {
+			get {
+				return useDefaultCursors;
+			}
+			set {
+				useDefaultCursors = value;
+			}
+		}
 
-		//
-		//  --- Public Methods
-		//
-		//[MonoTODO]
-		//public virtual bool Equals(object o);
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public static bool Equals(object o1, object o2);
-		//{
-		//	throw new NotImplementedException ();
-		//}
-	// }
+		
+		//	--- Public Methods
+		
+//		[MonoTODO]
+//		public virtual bool Equals(object o);
+//		{
+//			//throw new NotImplementedException ();
+//			return false;
+//		}
+//		[MonoTODO]
+//		public static bool Equals(object o1, object o2);
+//		{
+//			throw new NotImplementedException ();
+//		}
+	}
 }

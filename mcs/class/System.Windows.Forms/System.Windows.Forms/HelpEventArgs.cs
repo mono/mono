@@ -3,46 +3,44 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+//	Partially completed by Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
-
+using System.Drawing;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
-        //public class HelpEventArgs : EventArgs {
-
+    public class HelpEventArgs : EventArgs {
+		private Point mousePos;
+		private  bool handled;
 		//
 		//  --- Constructor
 		//
-		//[MonoTODO]
-		//public HelpEventArgs(Point mousePos)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		public HelpEventArgs(Point mousePos)
+		{
+			this.mousePos = mousePos;
+			handled = false; // FixMe what should we default to?
+		}
 
 		//
 		//  --- Public Properties
 		//
-		//[MonoTODO]
-		//public bool Handled {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public Point MousePos {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		public bool Handled {
+			get {
+				return handled;
+			}
+			set {
+				handled = value;
+			}
+		}
+		public Point MousePos {
+			get {
+				return mousePos;
+			}
+		}
 
 		//
 		//  --- Public Methods
@@ -62,5 +60,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

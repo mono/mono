@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public abstract class FeatureSupport : IFeatureSupport {
+    public abstract class FeatureSupport : IFeatureSupport {
 
 		//
 		//  --- Public Methods
@@ -48,5 +48,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

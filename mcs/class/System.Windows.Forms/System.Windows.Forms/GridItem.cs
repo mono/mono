@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+//	Partially completed by Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -14,26 +15,25 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public abstract class GridItem {
-
+    public abstract class GridItem {
+		bool expandable;
+		bool expanded;
 		//
 		//  --- Public Properties
 		//
-		//[MonoTODO]
-		//public bool Expandable {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public bool Expanded {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		public bool Expandable {
+			get {
+				return expandable;
+			}
+		}
+		public bool Expanded {
+			get {
+				return expanded;
+			}
+			set {
+				expanded = value;
+			}
+		}
 		//[MonoTODO]
 		//public abstract GridItemCollection GridItems {
 		//	get {
@@ -88,10 +88,10 @@ namespace System.Windows.Forms {
 		//
 		// --- Protected Constructor
 		//
-		//[MonoTODO]
-		//protected GridItem()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-	// }
+		[MonoTODO]
+		protected GridItem()
+		{
+			throw new NotImplementedException ();
+		}
+	 }
 }

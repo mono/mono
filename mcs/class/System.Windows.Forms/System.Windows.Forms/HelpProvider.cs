@@ -13,8 +13,8 @@ namespace System.Windows.Forms {
 	//	This is only a template.  Nothing is implemented yet.
 	//
 	// </summary>
-
-        //public class HelpProvider : Component, IExtenderProvider {
+using System.ComponentModel;
+    public class HelpProvider : Component, IExtenderProvider {
 
 		//
 		//  --- Constructor
@@ -124,5 +124,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }
