@@ -1,3 +1,8 @@
+2002-11-24  Tim Coleman <tim@timcoleman.com>
+	* Mono.Data.Tds.Protocol/Tds.cs: Change error/
+		message conditions because they were
+		reversed (caused wrongful exceptions).
+
 2002-11-21  Daniel Morgan <danmorg@sc.rr.com>
 
 	* Mono.Data.Tds.build: added missing file

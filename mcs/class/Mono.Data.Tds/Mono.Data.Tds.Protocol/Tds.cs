@@ -1072,9 +1072,9 @@ namespace Mono.Data.Tds.Protocol {
 			source = String.Empty; // FIXME
 
 			if (isError)
-				messages.Add (new TdsInternalError (theClass, lineNumber, message, number, procedure, server, source, state));
-			else
 				OnTdsErrorMessage (CreateTdsErrorMessageEvent (theClass, lineNumber, message, number, procedure, server, source, state));
+			else
+				messages.Add (new TdsInternalError (theClass, lineNumber, message, number, procedure, server, source, state));
 		}
 
 		protected TdsPacketOutputParam ProcessOutputParam ()
