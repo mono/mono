@@ -194,11 +194,11 @@ DISTFILES = $(sourcefile) $(EXTRA_DISTFILES)
 TEST_FILES =
 
 ifdef HAVE_CS_TESTS
-TEST_FILES += `sed 's,^,Test/,' $(test_sourcefile)`
+TEST_FILES += `sed -e '/^$$/d' -e 's,^,Test/,' $(test_sourcefile)`
 DISTFILES += $(test_sourcefile)
 endif
 ifdef HAVE_VB_TESTS
-TEST_FILES += `sed 's,^,Test/,' $(btest_sourcefile)`
+TEST_FILES += `sed -e '/^$$/d' -e 's,^,Test/,' $(btest_sourcefile)`
 DISTFILES += $(btest_sourcefile)
 endif
 
@@ -278,7 +278,7 @@ $(test_lib): $(test_dep) $(test_response) $(test_nunit_dep)
 
 $(test_response): $(test_sourcefile)
 	@echo Creating $@ ...
-	@sed 's,^,Test/,' $(test_sourcefile) | $(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
+	@sed -e '/^$$/d' -e 's,^,Test/,' $(test_sourcefile) | $(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
 
 $(test_makefrag): $(test_response)
 	@echo Creating $@ ...
@@ -295,7 +295,7 @@ $(btest_lib): $(test_dep) $(btest_response) $(test_nunit_dep)
 
 $(btest_response): $(btest_sourcefile)
 	@echo Creating $@ ...
-	@sed 's,^,Test/,' $(btest_sourcefile) | $(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
+	@sed -e '/^$$/d' -e 's,^,Test/,' $(btest_sourcefile) | $(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
 
 $(btest_makefrag): $(btest_response)
 	@echo Creating $@ ...

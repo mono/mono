@@ -1,3 +1,8 @@
+2005-03-18  Raja R Harinath  <rharinath@novell.com>
+
+	* library.make (TEST_FILES, $(test_response), $(btest_response)):
+	Be more robust to empty lines in test sources file.
+
 2005-03-14  Raja R Harinath  <rharinath@novell.com>
 
 	* executable.make (install-local): Depend on all-local even when
