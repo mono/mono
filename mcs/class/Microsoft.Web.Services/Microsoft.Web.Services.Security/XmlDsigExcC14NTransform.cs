@@ -3,22 +3,20 @@
 //	Handles WS-Security XmlDsigExcC14NTransform
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
+//	Aleksey Sanin (aleksey@aleksey.com)
 //
-// (C) 2002 Motus Technologies Inc. (http://www.motus.com)
-//
-// Licensed under MIT X11 (see LICENSE) with this specific addition:
-//
-// “This source code may incorporate intellectual property owned by Microsoft 
-// Corporation. Our provision of this source code does not include any licenses
-// or any other rights to you under any Microsoft intellectual property. If you
-// would like a license from Microsoft (e.g. rebrand, redistribute), you need 
-// to contact Microsoft directly.” 
+// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2003 Aleksey Sanin (aleksey@aleksey.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
+using System.IO;
 using System.Security.Cryptography.Xml;
 using System.Xml;
+
+using Mono.Xml;
 
 namespace Microsoft.Web.Services.Security {
 
@@ -27,16 +25,33 @@ namespace Microsoft.Web.Services.Security {
 		public const string XmlDsigExcC14NTransformUrl = "http://www.w3.org/2001/10/xml-exc-c14n#";
 		public const string XmlDsigExcC14NWithCommentsTransformUrl = "http://www.w3.org/2001/10/xml-exc-c14n#WithComments";
 
+		private Type[] input;
+		private Type[] output;
+		private XmlCanonicalizer canonicalizer;
+		private Stream s;
 		private string prefixList;
 		private bool comments;
 
-		public XmlDsigExcC14NTransform () {}
+		public XmlDsigExcC14NTransform () : this (false)
+		{
+		}
 
-		public XmlDsigExcC14NTransform (bool includeComments) {}
+		public XmlDsigExcC14NTransform (bool includeComments) 
+		{
+			comments = includeComments;
+			canonicalizer = new XmlCanonicalizer (includeComments, true);
+		}
 
-		public XmlDsigExcC14NTransform (string inclusiveNamespacesPrefixList) {}
+		public XmlDsigExcC14NTransform (string inclusiveNamespacesPrefixList)
+			: this (false, inclusiveNamespacesPrefixList)
+		{
+		}
 
-		public XmlDsigExcC14NTransform (bool includeComments, string inclusiveNamespacesPrefixList) {}
+		public XmlDsigExcC14NTransform (bool includeComments, string inclusiveNamespacesPrefixList)
+			: this (includeComments) 
+		{
+			prefixList = inclusiveNamespacesPrefixList;
+		}
 
 		public string InclusiveNamespacesPrefixList {
 			get { return prefixList; }
@@ -44,8 +59,8 @@ namespace Microsoft.Web.Services.Security {
 		}
 
 		public override Type[] InputTypes {
-			get { return null;
-	/*			if (input == null) {
+			get {
+				if (input == null) {
 					lock (this) {
 						// this way the result is cached if called multiple time
 						input = new Type [3];
@@ -54,23 +69,22 @@ namespace Microsoft.Web.Services.Security {
 						input[2] = typeof (System.Xml.XmlNodeList);
 					}
 				}
-				return input;*/
+				return input;
 			}
 		}
 
 		public override Type[] OutputTypes {
-			get { return null;
-	/*			if (output == null) {
+			get {
+				if (output == null) {
 					lock (this) {
 						// this way the result is cached if called multiple time
 						output = new Type [1];
 						output[0] = typeof (System.IO.Stream);
 					}
 				}
-				return output;*/
+				return output;
 			}
 		}
-
 		protected override XmlNodeList GetInnerXml () 
 		{
 			return null; // THIS IS DOCUMENTED AS SUCH
@@ -78,25 +92,34 @@ namespace Microsoft.Web.Services.Security {
 
 		public override object GetOutput () 
 		{
-			//		return (object) new Stream ();
-			return null;
+			return (object) s;
 		}
 
 		public override object GetOutput (Type type) 
 		{
-			if (type == Type.GetType ("Stream"))
-				return GetOutput ();
-			throw new ArgumentException ("type");
+			if (type != typeof (Stream))
+				throw new ArgumentException ("type");
+			return GetOutput ();
 		}
 
 		public override void LoadInnerXml (XmlNodeList nodeList) 
 		{
-			// NO CHANGE
+			// documented as not changing the state of the transform
 		}
 
 		public override void LoadInput (object obj) 
 		{
-			//	if (type.Equals (Stream.GetType ())
+			if (obj is Stream) {
+				s = (obj as Stream);
+				XmlDocument doc = new XmlDocument ();
+				doc.PreserveWhitespace = true;	// REALLY IMPORTANT
+				doc.Load (obj as Stream);
+				s = canonicalizer.Canonicalize (doc);
+			} else if (obj is XmlDocument)
+				s = canonicalizer.Canonicalize ((obj as XmlDocument));
+			else if (obj is XmlNodeList)
+				s = canonicalizer.Canonicalize ((obj as XmlNodeList));
+			// note: there is no default are other types won't throw an exception
 		}
 	}
 }
