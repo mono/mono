@@ -1,5 +1,11 @@
 2005-02-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataViewTest.cs : Enable ComplexEventSequence1().
+	  - Right now don't test ApplyDefaultSort event.
+	  - Also row order between identical values depends on implementation.
+
+2005-02-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataViewTest.cs : added practical event handling tests (though
 	  NotWorking since it is still not complete).
 

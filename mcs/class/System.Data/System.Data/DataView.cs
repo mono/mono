@@ -281,8 +281,12 @@ namespace System.Data
 				dataTable = value;
 
 				if (dataTable != null) {
-					RegisterEventHandlers();
+					RegisterEventHandlers ();
 					OnListChanged (new ListChangedEventArgs (ListChangedType.PropertyDescriptorChanged, 0, 0));
+					sort = null;
+					sortedColumns = null;
+					rowFilter = null;
+					rowFilterExpr = null;
 					UpdateIndex (true);
 				}
 			}
@@ -383,6 +387,10 @@ namespace System.Data
 			rowView.Row.EndEdit ();
 			if (rowView.Row.RowState == DataRowState.Detached)
 				Table.Rows.Add (rowView.Row);
+			int newIndex = int.MinValue;
+			if (rowFilterExpr == null || rowFilterExpr.EvalBoolean (rowView.Row))
+				newIndex = IndexOfRow (rowView.Row);
+			OnListChanged (new ListChangedEventArgs (ListChangedType.ItemMoved, newIndex, index));
 		}
 
 		private IExpression [] PrepareExpr (object [] key)

@@ -1,5 +1,10 @@
 2005-02-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataView.cs : DataRowView.EndEdit() raises ItemMoved event.
+	  set_Table clears Sort and RowFilter.
+
+2005-02-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataView.cs :
 	  - Clear() should clear AddNew cache.
 	  - Open() invokes Reset().
