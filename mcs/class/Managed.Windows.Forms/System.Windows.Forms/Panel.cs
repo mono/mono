@@ -36,8 +36,6 @@ namespace System.Windows.Forms {
 	[DefaultEvent("Paint")]
 	[Designer ("System.Windows.Forms.Design.PanelDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	public class Panel : ScrollableControl {
-		private BorderStyle border_style;
-
 		#region	Constructors & Destructors
 		public Panel () {
 			base.TabStop = false;

@@ -115,6 +115,8 @@ namespace System.Windows.Forms {
 		internal abstract void SetWindowState(IntPtr handle, FormWindowState state);
 
 		internal abstract void SetWindowStyle(IntPtr handle, CreateParams cp);
+		internal abstract void SetBorderStyle(IntPtr handle, BorderStyle border_style);
+		internal abstract void SetMenu(IntPtr handle, IntPtr menu_handle);
 
 		internal abstract bool GetText(IntPtr handle, out string text);
 		internal abstract bool Text(IntPtr handle, string text);
@@ -145,7 +147,7 @@ namespace System.Windows.Forms {
 		internal abstract bool SetZOrder(IntPtr hWnd, IntPtr AfterhWnd, bool Top, bool Bottom);
 		internal abstract bool SetTopmost(IntPtr hWnd, IntPtr hWndOwner, bool Enabled);
 
-		internal abstract bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, bool HasMenu, out Rectangle WindowRect);
+		internal abstract bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, int ExStyle, IntPtr MenuHandle, out Rectangle WindowRect);
 
 		internal abstract void SetCursor(IntPtr hwnd, IntPtr cursor);
 		internal abstract void ShowCursor(bool show);
@@ -163,7 +165,7 @@ namespace System.Windows.Forms {
 
 		internal abstract void GrabWindow(IntPtr hwnd, IntPtr ConfineToHwnd);
 		internal abstract void GrabInfo(out IntPtr hwnd, out bool GrabConfined, out Rectangle GrabArea);
-		internal abstract void ReleaseWindow(IntPtr hwnd);
+		internal abstract void UngrabWindow(IntPtr hwnd);
 
 		internal abstract void SendAsyncMethod (AsyncMethodData method);
 		internal abstract void SetTimer (Timer timer);
@@ -185,6 +187,9 @@ namespace System.Windows.Forms {
 		internal abstract bool SystrayAdd(IntPtr hwnd, string tip, Icon icon, out ToolTip tt);
 		internal abstract bool SystrayChange(IntPtr hwnd, string tip, Icon icon, ref ToolTip tt);
 		internal abstract void SystrayRemove(IntPtr hwnd, ref ToolTip tt);
+
+		internal abstract Graphics GetMenuDC(IntPtr hwnd, IntPtr ncpaint_region);
+		internal abstract void ReleaseMenuDC(IntPtr hwnd, Graphics dc);
 
 		// System information
 

@@ -1,5 +1,11 @@
 2005-02-13  Peter Bartok  <pbartok@novell.com>
 
+	* Panel.cs: Removed border_style, now in Control
+	* XplatUIDriver.cs: Added SetBorderStyle, SetMenu, GetMenuDC and
+	  ReleaseMenuDC Methods; renmaed ReleaseWindow to UngrabWindow
+
+2005-02-13  Peter Bartok  <pbartok@novell.com>
+
 	* MouseButtons.cs: Added missing attributes
 	* XplatUIStructs.cs: Added enumeration for title styles
 	* LeftRightAlignment.cs: Added missing attributes
