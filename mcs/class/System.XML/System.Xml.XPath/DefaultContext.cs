@@ -281,7 +281,7 @@ namespace System.Xml.XPath
 
 	internal class XPathFunctionLocalName : XPathFunction
 	{
-		public override XPathResultType ReturnType { get { return XPathResultType.NodeSet; }}
+		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
 		public override int Minargs { get { return 0; }}
 		public override int Maxargs { get { return 1; }}
 		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.NodeSet }; }}
