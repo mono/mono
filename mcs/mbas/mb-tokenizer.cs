@@ -798,6 +798,7 @@ namespace Mono.MonoBASIC
 				if(current_token == Token.END) {
 					// In case of any more addition in end block it got to be added here
 					next_token = xtoken();
+					putbacktoken = true;
 					if (next_token == Token.EOL) 
 						return Token.END_EOL;
 					else if (next_token == Token.IDENTIFIER) {

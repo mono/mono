@@ -1,4 +1,7 @@
 2005-03-24 Manjula GHM <mmanjula@novell.com>
+          * mb-parser.jay,mb-tokenizer.cs: Support 'End Statement' in parser and tokenizer file
+
+2005-03-24 Manjula GHM <mmanjula@novell.com>
            Sudharsan V <vsudharsan@novell.com>
           * mb-parser.jay,mb-tokenizer.cs:
 		Revamped end of block logic 

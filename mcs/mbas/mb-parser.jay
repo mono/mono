@@ -2703,12 +2703,12 @@ statement
 	    {
 	      current_block.AddStatement ((Statement) $1);
 	    }	  
-	  | opt_end_stmt {/*changes to be done here. End caught here*/}  
 	  ;	
 	  
 opt_end_stmt
-	: END_EOL  
+	: END_EOL {$$ = new End (lexer.Location);}
 	;
+
 	
 opt_raise_event_args 
 	: /* empty */	{ $$ = null; }
@@ -2875,6 +2875,7 @@ jump_statement
 	| throw_statement	
 	| exit_statement
 	| yield_statement
+	| opt_end_stmt
 	;
 	        
 goto_statement
@@ -4877,7 +4878,7 @@ pp_directive
 			  ifElseStateMachine.HandleToken(tok);
 		  }
 		  catch(ApplicationException) {
-			  throw new MBASException(ifElseStateMachine.Error, (Location)$3, ifElseStateMachine.ErrString);
+			  throw new MBASException(ifElseStateMachine.Error, (Location)$4, ifElseStateMachine.ErrString);
 		  }
 	  }
 	  EOL 
