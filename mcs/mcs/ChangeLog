@@ -1,5 +1,7 @@
 2003-02-14  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs: Location information for error 508
+
 	* expression.cs (New.DoResolve): Add a guard against double
 	resolution of an expression.  
 

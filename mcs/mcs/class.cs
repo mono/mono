@@ -2359,7 +2359,7 @@ namespace Mono.CSharp {
 
 						if (parent_ret != MemberType) {
 							Report.Error (
-								508, parent.MakeName (Name) + ": cannot " +
+								508, Location, parent.MakeName (Name) + ": cannot " +
 								"change return type when overriding " +
 								"inherited member " + name);
 							return false;
@@ -3683,7 +3683,7 @@ namespace Mono.CSharp {
 
 					if (parent_type != MemberType) {
 						Report.Error (
-							508, parent.MakeName (Name) + ": cannot " +
+							508, Location, parent.MakeName (Name) + ": cannot " +
 							"change return type when overriding " +
 							"inherited member " + name);
 						return false;
