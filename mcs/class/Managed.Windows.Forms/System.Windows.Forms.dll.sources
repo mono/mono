@@ -141,6 +141,7 @@ System.Windows.Forms/QueryAccessibilityHelpEventArgs.cs
 System.Windows.Forms/QueryAccessibilityHelpEventHandler.cs
 System.Windows.Forms/QueryContinueDragEventArgs.cs
 System.Windows.Forms/QueryContinueDragEventHandler.cs
+System.Windows.Forms/RadioButton.cs
 System.Windows.Forms/RightToLeft.cs
 System.Windows.Forms/ScrollableControl.cs
 System.Windows.Forms/ScrollBar.cs
