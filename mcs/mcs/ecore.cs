@@ -541,6 +541,15 @@ namespace Mono.CSharp {
 			return MemberLookup (ec, ec.ContainerType, t, name, mt, bf, loc);
 		}
 
+		//
+		// Lookup type `t' for code in class `invocation_type'.  Note that it's important
+		// to set `invocation_type' correctly since this method also checks whether the
+		// invoking class is allowed to access the member in class `t'.  When you want to
+		// explicitly do a lookup in the base class, you must set both `t' and `invocation_type'
+		// to the base class (although a derived class can access protected members of its base
+		// class it cannot do so through an instance of the base class (error CS1540)).
+		// 
+
 		public static Expression MemberLookup (EmitContext ec, Type invocation_type, Type t,
 						       string name, MemberTypes mt, BindingFlags bf,
 						       Location loc)

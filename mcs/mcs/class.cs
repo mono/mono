@@ -2969,7 +2969,7 @@ namespace Mono.CSharp {
 			
 			if (ec.ContainerType.BaseType != null) {
 				Expression member_lookup = Expression.MemberLookup (
-					ec, ec.ContainerType.BaseType, "Finalize",
+					ec, ec.ContainerType.BaseType, ec.ContainerType.BaseType, "Finalize",
 					MemberTypes.Method, Expression.AllBindingFlags, Location);
 
 				if (member_lookup != null){
