@@ -396,10 +396,9 @@ namespace System.Drawing.Imaging
 			GDIPlus.CheckStatus (status);			
 		}		
 
-		[MonoTODO]
 		public void SetWrapMode(WrapMode mode)
 		{
-			
+			SetWrapMode (mode, Color.Black);
 		}
 		
 		
