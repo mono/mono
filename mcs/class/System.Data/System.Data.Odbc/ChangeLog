@@ -1,0 +1,7 @@
+2002-10-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ChangeLog: added.
+	* OdbcError.cs:
+	* OdbcException.cs: added dummy implementation for these missing
+	classes.
+
