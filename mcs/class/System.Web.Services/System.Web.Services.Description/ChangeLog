@@ -1,3 +1,13 @@
+2003-10-13  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* HttpSimpleProtocolReflector.cs, SoapProtocolReflector.cs: 
+	  Get the namespace for literal types from LogicalTypeInfo, since it may not
+	  be the same as the service namespace.
+	* ProtocolReflector.cs: Access LogicalTypeInfo to get WS info common to
+	  all protocols.
+	* ServiceDescription.cs: Added soap/encoded namespace.
+	* SoapProtocolImporter.cs: Added some bits of RPC format support.
+	
 2003-10-06  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ProtocolImporter.cs: Moved some code to ServiceDescriptionImporter.

@@ -195,6 +195,7 @@ namespace System.Web.Services.Description {
 			XmlSerializerNamespaces ns;
 			ns = new XmlSerializerNamespaces ();
 			ns.Add ("soap", SoapBinding.Namespace);
+			ns.Add ("soapenc", "http://schemas.xmlsoap.org/soap/encoding/");
 			ns.Add ("s", XmlSchema.Namespace);
 			ns.Add ("http", HttpBinding.Namespace);
 			ns.Add ("mime", MimeContentBinding.Namespace);

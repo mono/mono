@@ -20,7 +20,7 @@ namespace System.Web.Services.Description {
 	{
 		#region Fields
 
-		const string EncodingNamespace = "http://schemas.xmlsoap.org/soap/encoding/";
+		internal const string EncodingNamespace = "http://schemas.xmlsoap.org/soap/encoding/";
 		SoapBinding soapBinding;
 
 		#endregion // Fields
@@ -90,13 +90,13 @@ namespace System.Web.Services.Description {
 				
 				if (method.Use == SoapBindingUse.Literal)
 				{
-					XmlTypeMapping mapping = ReflectionImporter.ImportTypeMapping (hf.HeaderType, ServiceDescription.TargetNamespace);
+					XmlTypeMapping mapping = ReflectionImporter.ImportTypeMapping (hf.HeaderType, TypeInfo.LogicalType.WebServiceLiteralNamespace);
 					part.Element = new XmlQualifiedName (mapping.ElementName, mapping.Namespace);
 					SchemaExporter.ExportTypeMapping (mapping);
 				}
 				else
 				{
-					XmlTypeMapping mapping = SoapReflectionImporter.ImportTypeMapping (hf.HeaderType, ServiceDescription.TargetNamespace);
+					XmlTypeMapping mapping = SoapReflectionImporter.ImportTypeMapping (hf.HeaderType, TypeInfo.LogicalType.WebServiceEncodedNamespace);
 					part.Type = new XmlQualifiedName (mapping.ElementName, mapping.Namespace);
 					SoapSchemaExporter.ExportTypeMapping (mapping);
 					hb.Encoding = EncodingNamespace;
@@ -126,8 +126,10 @@ namespace System.Web.Services.Description {
 		void ImportMessage (XmlMembersMapping members, Message msg)
 		{
 			SoapMethodStubInfo method = (SoapMethodStubInfo) MethodStubInfo;
-			
-			if (method.ParameterStyle == SoapParameterStyle.Wrapped)
+			bool needsEnclosingElement = (method.ParameterStyle == SoapParameterStyle.Wrapped && 
+											method.SoapBindingStyle == SoapBindingStyle.Document);
+
+			if (needsEnclosingElement)
 			{
 				MessagePart part = new MessagePart ();
 				part.Name = "parameters";
@@ -148,7 +150,7 @@ namespace System.Web.Services.Description {
 					}
 					else {
 						string namesp = members[n].TypeNamespace;
-						if (namesp == "") namesp = XmlSchema.Namespace;
+						if (namesp == "") namesp = members[n].Namespace;
 						part.Type = new XmlQualifiedName (members[n].TypeName, namesp);
 					}
 					msg.Parts.Add (part);
@@ -159,7 +161,7 @@ namespace System.Web.Services.Description {
 			if (method.Use == SoapBindingUse.Literal)
 				SchemaExporter.ExportMembersMapping (members);
 			else
-				SoapSchemaExporter.ExportMembersMapping (members);
+				SoapSchemaExporter.ExportMembersMapping (members, needsEnclosingElement);
 		}
 
 		protected override string ReflectMethodBinding ()

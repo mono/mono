@@ -47,10 +47,11 @@ namespace System.Web.Services.Description {
 
 		protected override bool ReflectMethod ()
 		{
+			LogicalTypeInfo ti = TypeStubManager.GetLogicalTypeInfo (ServiceType);
 			HttpOperationBinding sob = new HttpOperationBinding();
 			sob.Location = "/" + OperationBinding.Name;
 			OperationBinding.Extensions.Add (sob);
-
+			
 			if (!Method.IsVoid)
 			{
 				MimeXmlBinding mxb = new MimeXmlBinding ();
@@ -59,7 +60,8 @@ namespace System.Web.Services.Description {
 			
 				MessagePart part = new MessagePart ();
 				part.Name = "Body";	
-				XmlTypeMapping map = ReflectionImporter.ImportTypeMapping (Method.ReturnType, TypeInfo.WebServiceNamespace);
+				
+				XmlTypeMapping map = ReflectionImporter.ImportTypeMapping (Method.ReturnType, ti.WebServiceLiteralNamespace);
 				XmlQualifiedName qname = new XmlQualifiedName (map.ElementName, map.Namespace);
 				part.Element = qname;
 				OutputMessage.Parts.Add (part);
@@ -78,25 +80,29 @@ namespace System.Web.Services.Description {
 				mems [n] = mem;
 			}
 			
-			string absNamesp = TypeInfo.WebServiceNamespace;
-			if (!absNamesp.EndsWith ("/")) absNamesp += "/";
-			absNamesp += "AbstractTypes";
-			
-			XmlMembersMapping memap = ReflectionImporter.ImportMembersMapping ("", absNamesp, mems, false);
+			XmlMembersMapping memap = ReflectionImporter.ImportMembersMapping ("", ti.WebServiceAbstractNamespace, mems, false);
+			bool allPrimitives = true;
 			
 			for (int n=0; n<memap.Count; n++)
 			{
 				XmlMemberMapping mem = memap[n];
 				MessagePart part = new MessagePart ();
 				XmlQualifiedName pqname;
-				if (mem.TypeNamespace == "") pqname = new XmlQualifiedName (mem.TypeName, XmlSchema.Namespace);
-				else pqname = new XmlQualifiedName (mem.TypeName, mem.TypeNamespace);
+				
+				if (mem.TypeNamespace == "") 
+					pqname = new XmlQualifiedName (mem.TypeName, XmlSchema.Namespace);
+				else {
+					pqname = new XmlQualifiedName (mem.TypeName, mem.TypeNamespace); 
+					allPrimitives = false; 
+				}
 
 				part.Type = pqname;
 				part.Name = mem.ElementName;
 				InputMessage.Parts.Add (part);
 			}
-			SoapSchemaExporter.ExportMembersMapping (memap);
+
+			if (!allPrimitives)
+				SoapSchemaExporter.ExportMembersMapping (memap);
 			
 			return true;
 		}

@@ -84,7 +84,7 @@ namespace System.Web.Services.Description {
 		}
 
 		public LogicalMethodInfo[] Methods {
-			get { return typeInfo.LogicalMethods; }
+			get { return typeInfo.LogicalType.LogicalMethods; }
 		}
 	
 		public Operation Operation {
@@ -193,13 +193,13 @@ namespace System.Web.Services.Description {
 			
 			typeInfo = TypeStubManager.GetTypeStub (type, ProtocolName);
 			
-			ServiceDescription desc = ServiceDescriptions [typeInfo.WebServiceNamespace];
+			ServiceDescription desc = ServiceDescriptions [typeInfo.LogicalType.WebServiceNamespace];
 			
 			if (desc == null)
 			{
 				desc = new ServiceDescription ();
-				desc.TargetNamespace = typeInfo.WebServiceNamespace;
-				desc.Name = typeInfo.WebServiceName;
+				desc.TargetNamespace = typeInfo.LogicalType.WebServiceNamespace;
+				desc.Name = typeInfo.LogicalType.WebServiceName;
 				ServiceDescriptions.Add (desc);
 			}
 			
@@ -208,12 +208,12 @@ namespace System.Web.Services.Description {
 
 		void ImportService (ServiceDescription desc, TypeStubInfo typeInfo, string url)
 		{
-			service = desc.Services [typeInfo.WebServiceName];
+			service = desc.Services [typeInfo.LogicalType.WebServiceName];
 			if (service == null)
 			{
 				service = new Service ();
-				service.Name = typeInfo.WebServiceName;
-				service.Documentation = typeInfo.Description;
+				service.Name = typeInfo.LogicalType.WebServiceName;
+				service.Documentation = typeInfo.LogicalType.Description;
 				desc.Services.Add (service);
 			}
 			
