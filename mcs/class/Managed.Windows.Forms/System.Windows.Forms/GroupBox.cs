@@ -27,8 +27,6 @@
 //
 // Copyright (C) Novell Inc., 2004
 //
-// $CVS$
-//
 //
 
 // COMPLETE
