@@ -117,11 +117,21 @@ namespace System
 
 		unsafe public static bool ToBoolean (byte[] value, int startIndex)
 		{
-			bool ret;
+			if (value == null) 
+				throw new ArgumentNullException ("value");
 
-			PutBytes ((byte *) &ret, value, startIndex, 1);
+			if (startIndex < 0)
+				throw new ArgumentOutOfRangeException ("startIndex < 0");
 
-			return ret;
+			// avoid integer overflow (with large pos/neg start_index values)
+			if (value.Length - 1 < startIndex) 
+				throw new ArgumentOutOfRangeException (Locale.GetText (
+					"Value is too big to return the requested type."), "startIndex");
+
+			if (value [startIndex] != 0)
+				return true;
+			
+			return false;
 		}
 
 		unsafe public static char ToChar (byte[] value, int startIndex)
