@@ -1,3 +1,8 @@
+2004-09-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs: Return false if we fail to resolve the inner
+	expression. 
+
 2004-09-06  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs: Report errors with unsafe pointers, fixes #64896
