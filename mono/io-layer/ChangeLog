@@ -1,5 +1,12 @@
 2003-02-21  Dick Porter  <dick@ximian.com>
 
+	* processes.c (GetCurrentProcessId): Use the current process
+	handle to return the process ID, as getpid() is unreliable
+	(linuxthreads gives each thread a different pid).  Fixes bug
+	37550.
+
+2003-02-21  Dick Porter  <dick@ximian.com>
+
 	* io.c (FindNextFile): Skip over dangling symlinks.  Fixes bug
 	34076.
 
