@@ -35,6 +35,7 @@ namespace System.Web.Services.Protocols {
 		ParameterInfo [] parameters;
 		ParameterInfo [] out_parameters;
 		ParameterInfo [] in_parameters;
+		WebMethodAttribute attribute;
 
 		#endregion // Fields.
 		
@@ -230,6 +231,24 @@ namespace System.Web.Services.Protocols {
 			}
 		}
 
+		public bool EnableSession {
+			get {
+				if (method_info == null)
+					return false;
+
+				if (attribute == null) {
+					object [] o = method_info.GetCustomAttributes (false);
+					foreach (Attribute att in o) {
+						if (att is WebMethodAttribute) {
+							attribute = (WebMethodAttribute) att;
+							break;
+						}
+					}
+				}
+
+				return (attribute != null) ? attribute.EnableSession : false;
+			}
+		}
 		#endregion // Properties
 
 		#region Methods

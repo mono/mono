@@ -1,3 +1,9 @@
+2004-05-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebService.cs: added a HttpSessionState field and a setter method.
+	Session now returns null if EnableSession is not set for the method
+	invoked.
+
 2004-02-05  Alon Gazit <along@mainsoft.com>
 
 	* WebMethodAttribute.cs:

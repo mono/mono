@@ -12,6 +12,7 @@ using System;
 using System.Reflection;
 using System.Web;
 using System.Web.Services;
+using System.Web.SessionState;
 
 namespace System.Web.Services.Protocols 
 {
@@ -19,6 +20,7 @@ namespace System.Web.Services.Protocols
 	{
 		Type _type;
 		HttpContext _context;
+		HttpSessionState session;
 
 		
 		public WebServiceHandler (Type type)
@@ -40,6 +42,10 @@ namespace System.Web.Services.Protocols
 			set { _context = value; }
 		}
 
+		protected HttpSessionState Session {
+			set { this.session = value; }
+		}
+
 		public virtual void ProcessRequest (HttpContext context)
 		{
 		}
@@ -48,7 +54,11 @@ namespace System.Web.Services.Protocols
 		{
 			object ws = Activator.CreateInstance (ServiceType);
 			WebService wsi = ws as WebService;
-			if (wsi != null) wsi.SetContext (_context);
+			if (wsi != null) {
+				wsi.SetContext (_context);
+				wsi.SetSession (session);
+			}
+
 			return ws;
 		}
 

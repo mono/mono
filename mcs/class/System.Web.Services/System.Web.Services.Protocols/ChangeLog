@@ -1,3 +1,13 @@
+2004-05-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpSimpleWebServiceHandler.cs:
+	* HttpSoapWebServiceHandler.cs: use the session if the method has
+	EnableSession set.
+
+	* LogicalMethodInfo.cs: added EnableSession property.
+
+	* WebServiceHandler.cs: set the Session object of the WebService.
+
 2004-03-25  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* WebServiceHelper.cs: In GetContentEncoding, chop off the single & double

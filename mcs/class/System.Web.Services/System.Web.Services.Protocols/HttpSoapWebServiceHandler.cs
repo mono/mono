@@ -25,6 +25,7 @@ namespace System.Web.Services.Protocols
 		SoapExtension[] _extensionChainHighPrio;
 		SoapExtension[] _extensionChainMedPrio;
 		SoapExtension[] _extensionChainLowPrio;
+		SoapMethodStubInfo methodInfo;
 
 		public HttpSoapWebServiceHandler (Type type): base (type)
 		{
@@ -45,6 +46,9 @@ namespace System.Web.Services.Protocols
 			try
 			{
 				requestMessage = DeserializeRequest (context.Request);
+				if (methodInfo != null && methodInfo.MethodAttribute.EnableSession)
+					Session = context.Session;
+					
 				responseMessage = Invoke (requestMessage);
 				SerializeResponse (context.Response, responseMessage);
 			}
@@ -62,7 +66,6 @@ namespace System.Web.Services.Protocols
 			using (stream)
 			{
 				string soapAction = null;
-				SoapMethodStubInfo methodInfo = null;
 				string ctype;
 				Encoding encoding = WebServiceHelper.GetContentEncoding (request.ContentType, out ctype);
 				if (ctype != "text/xml")

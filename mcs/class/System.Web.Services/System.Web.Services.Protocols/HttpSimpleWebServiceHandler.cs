@@ -40,6 +40,9 @@ namespace System.Web.Services.Protocols
 			{
 				HttpSimpleMethodStubInfo method = (HttpSimpleMethodStubInfo) _typeInfo.GetMethod (name);
 				if (method == null) throw new InvalidOperationException ("Method " + name + " not defined in service " + ServiceType.Name);
+
+				if (method.MethodInfo.EnableSession)
+					Session = context.Session;
 			
 				MimeParameterReader parameterReader = (MimeParameterReader) method.ParameterReaderType.Create ();
 				object[] parameters = parameterReader.Read (context.Request);
