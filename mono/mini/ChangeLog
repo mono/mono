@@ -1,5 +1,8 @@
 2003-05-21  Dietmar Maurer  <dietmar@ximian.com>
 
+	* mini.c (mono_method_to_ir): call handle_loaded_temps before inlining.
+	enable use of interface variables again.
+
 	* mini-x86.c (mono_arch_get_allocatable_int_vars): dont allocate
 	I1 to registers because there is no simply way to sign extend 8bit
 	quantities in caller saved registers on x86.
