@@ -259,24 +259,27 @@ namespace System.Diagnostics {
 			}
 		}
 
-		[MonoTODO]
+		private StreamReader error_stream=null;
+		
 		public StreamReader StandardError {
 			get {
-				return(null);
+				return(error_stream);
 			}
 		}
 
-		[MonoTODO]
+		private StreamWriter input_stream=null;
+		
 		public StreamWriter StandardInput {
 			get {
-				return(null);
+				return(input_stream);
 			}
 		}
 
-		[MonoTODO]
+		private StreamReader output_stream=null;
+		
 		public StreamReader StandardOutput {
 			get {
-				return(null);
+				return(output_stream);
 			}
 		}
 
@@ -424,36 +427,89 @@ namespace System.Diagnostics {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static bool Start_internal(string file,
 							  string args,
+							  IntPtr stdin,
+							  IntPtr stdout,
+							  IntPtr stderr,
 							  ref ProcInfo proc_info);
 
-		[MonoTODO("file descriptors and the rest of ProcessStartInfo")]
-		public bool Start() {
-			bool ret;
+		private static bool Start_common(ProcessStartInfo startInfo,
+						 Process process) {
 			ProcInfo proc_info=new ProcInfo();
+			IntPtr stdin_rd, stdin_wr;
+			IntPtr stdout_rd, stdout_wr;
+			IntPtr stderr_rd, stderr_wr;
+			bool ret;
 			
-			ret=Start_internal(start_info.FileName,
-					   start_info.Arguments,
+			if(startInfo.RedirectStandardInput==true) {
+				ret=MonoIO.CreatePipe(out stdin_rd,
+						      out stdin_wr);
+			} else {
+				stdin_rd=MonoIO.ConsoleInput;
+				/* This is required to stop the
+				 * &$*£ing stupid compiler moaning
+				 * that stdin_wr is unassigned, below.
+				 */
+				stdin_wr=(IntPtr)0;
+			}
+
+			if(startInfo.RedirectStandardOutput==true) {
+				ret=MonoIO.CreatePipe(out stdout_rd,
+						      out stdout_wr);
+			} else {
+				stdout_rd=(IntPtr)0;
+				stdout_wr=MonoIO.ConsoleOutput;
+			}
+
+			if(startInfo.RedirectStandardError==true) {
+				ret=MonoIO.CreatePipe(out stderr_rd,
+						      out stderr_wr);
+			} else {
+				stderr_rd=(IntPtr)0;
+				stderr_wr=MonoIO.ConsoleError;
+			}
+			
+			ret=Start_internal(startInfo.FileName,
+					   startInfo.Arguments,
+					   stdin_rd, stdout_wr, stderr_wr,
 					   ref proc_info);
 
-			if(ret==true) {
-				process_handle=proc_info.process_handle;
-				pid=proc_info.pid;
+			process.process_handle=proc_info.process_handle;
+			process.pid=proc_info.pid;
+			
+			if(startInfo.RedirectStandardInput==true) {
+				MonoIO.Close(stdin_rd);
+				process.input_stream=new StreamWriter(new FileStream(stdin_wr, FileAccess.Write, true));
 			}
+
+			if(startInfo.RedirectStandardOutput==true) {
+				MonoIO.Close(stdout_wr);
+				process.output_stream=new StreamReader(new FileStream(stdout_rd, FileAccess.Read, true));
+			}
+
+			if(startInfo.RedirectStandardError==true) {
+				MonoIO.Close(stderr_wr);
+				process.error_stream=new StreamReader(new FileStream(stderr_rd, FileAccess.Read, true));
+			}
+
+			return(ret);
+		}
+		
+		public bool Start() {
+			bool ret;
+			
+			ret=Start_common(start_info, this);
 			
 			return(ret);
 		}
 
-		[MonoTODO("file descriptors and the rest of ProcessStartInfo")]
 		public static Process Start(ProcessStartInfo startInfo) {
+			Process process=new Process();
 			bool ret;
-			ProcInfo proc_info=new ProcInfo();
-			
-			ret=Start_internal(startInfo.FileName,
-					   startInfo.Arguments, ref proc_info);
+
+			ret=Start_common(startInfo, process);
 			
 			if(ret==true) {
-				return(new Process(proc_info.process_handle,
-						   proc_info.pid));
+				return(process);
 			} else {
 				return(null);
 			}

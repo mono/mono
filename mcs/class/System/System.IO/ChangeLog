@@ -1,0 +1,6 @@
+2002-07-20  Dick Porter  <dick@ximian.com>
+
+	* MonoIO.cs: Cut down copy of corlib/System.IO/MonoIO.cs, so it
+	can be used from the System assembly but still not be exposed to
+	users.
+

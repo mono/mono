@@ -1,3 +1,7 @@
+2002-07-20  Dick Porter  <dick@ximian.com>
+
+	* Process.cs: Implement file handle redirection
+
 2002-07-13  Jonathan Pryor <jonpryor@vt.edu>
 	* CounterCreationData.cs: Implemented
 	* CounterCreationDataCollection.cs: Implemented

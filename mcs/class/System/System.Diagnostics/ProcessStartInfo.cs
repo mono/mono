@@ -11,16 +11,16 @@ using System.Collections.Specialized;
 
 namespace System.Diagnostics {
 	public sealed class ProcessStartInfo {
-		[MonoTODO]
 		public ProcessStartInfo() {
 		}
 
-		[MonoTODO]
 		public ProcessStartInfo(string filename) {
+			this.filename=filename;
 		}
 
-		[MonoTODO]
 		public ProcessStartInfo(string filename, string arguments) {
+			this.filename=filename;
+			this.arguments=arguments;
 		}
 
 		private string arguments="";

@@ -3,6 +3,7 @@
 //
 // Author:
 //   Dan Lewis (dihlewis@yahoo.co.uk)
+//   Dick Porter (dick@ximian.com)
 //
 // (C) 2002
 //
@@ -191,6 +192,11 @@ namespace System.IO
 			get;
 		}
 
+		// pipe handles
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static bool CreatePipe (out IntPtr read_handle, out IntPtr write_handle);
+
 		// path characters
 
 		public extern static char VolumeSeparatorChar {
@@ -219,3 +225,4 @@ namespace System.IO
 		}
 	}
 }
+
