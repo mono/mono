@@ -1,3 +1,7 @@
+2002-02-02  Nick Drochak  <ndrochak@gol.com>
+
+	* CodeGroup.cs: Not done, but checking in now just in case
+
 2002-01-30  Nick Drochak  <ndrochak@gol.com>
 
 	* CodeGroup.cs: New file.  Not nearly done with this, but saving it

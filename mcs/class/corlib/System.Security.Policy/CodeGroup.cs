@@ -13,8 +13,10 @@ namespace System.Security.Policy
 	[Serializable]
 	public abstract class CodeGroup
 	{
-		PolicyStatement m_policy;
-		IMembershipCondition m_membershipCondition;
+		PolicyStatement m_policy = null;
+		IMembershipCondition m_membershipCondition = null;
+		string m_description = null;
+		string m_name = null;
 
 		public CodeGroup(IMembershipCondition membershipCondition,
 					PolicyStatement policy)
@@ -39,6 +41,42 @@ namespace System.Security.Policy
 			set
 			{
 				m_policy = value;
+			}
+		}
+
+		public string Description
+		{
+			get
+			{
+				return m_description;
+			}
+			set
+			{
+				m_description = value;
+			}
+		}
+
+		public IMembershipCondition MembershipCondition 
+		{
+			get
+			{
+				return m_membershipCondition;
+			}
+			set
+			{
+				m_membershipCondition = value;
+			}
+		}
+
+		public string Name 
+		{
+			get
+			{
+				return m_name;
+			}
+			set
+			{
+				m_name = value;
 			}
 		}
 
