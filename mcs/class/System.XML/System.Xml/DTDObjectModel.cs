@@ -8,10 +8,13 @@
 //
 using System;
 using System.Collections;
+using System.Globalization;
+using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using Mono.Xml.Schema;
+using Mono.Xml.Native;
 
 namespace Mono.Xml
 {
@@ -21,6 +24,7 @@ namespace Mono.Xml
 		DTDAttListDeclarationCollection attListDecls;
 		DTDEntityDeclarationCollection entityDecls;
 		DTDNotationDeclarationCollection notationDecls;
+		ArrayList validationErrors;
 
 		public DTDObjectModel ()
 		{
@@ -29,6 +33,7 @@ namespace Mono.Xml
 			entityDecls = new DTDEntityDeclarationCollection (this);
 			notationDecls = new DTDNotationDeclarationCollection (this);
 			factory = new DTDAutomataFactory (this);
+			validationErrors = new ArrayList ();
 		}
 
 		public string BaseURI;
@@ -110,6 +115,15 @@ namespace Mono.Xml
 				return invalidAutomata;
 			}
 		}
+
+		public XmlSchemaException [] Errors {
+			get { return validationErrors.ToArray (typeof (XmlSchemaException)) as XmlSchemaException []; }
+		}
+
+		public void AddError (XmlSchemaException ex)
+		{
+			validationErrors.Add (ex);
+		}
 	}
 
 	public class DTDElementDeclarationCollection
@@ -128,10 +142,12 @@ namespace Mono.Xml
 
 		public void Add (string name, DTDElementDeclaration decl)
 		{
-			if (elementDecls [name] != null)
-				throw new InvalidOperationException (String.Format (
+			if (elementDecls [name] != null) {
+				this.root.AddError (new XmlSchemaException (String.Format (
 					"Element declaration for {0} was already added.",
-					name));
+					name), null));
+				return;
+			}
 			decl.SetRoot (root);
 			elementDecls.Add (name, decl);
 		}
@@ -473,13 +489,48 @@ namespace Mono.Xml
 			StringBuilder sb = new StringBuilder ();
 			int pos = 0;
 			int next = 0;
-			while ((next = this.UnresolvedDefaultValue.IndexOf ('&', pos)) >= 0) {
-				sb.Append (this.UnresolvedDefaultValue.Substring (pos, next - 1));
-				int semicolon = this.UnresolvedDefaultValue.IndexOf (';', next);
-				string name = this.UnresolvedDefaultValue.Substring (pos + 1, semicolon - 1);
-				sb.Append (Root.ResolveEntity (name));
+			string value = this.UnresolvedDefaultValue;
+			while ((next = value.IndexOf ('&', pos)) >= 0) {
+				int semicolon = value.IndexOf (';', next);
+				if (value [next + 1] == '#') {
+					// character reference.
+					char c = value [next + 2];
+					NumberStyles style = NumberStyles.Integer;
+					string spec;
+					if (c == 'x' || c == 'X') {
+						spec = value.Substring (next + 3, semicolon - next - 3);
+						style |= NumberStyles.HexNumber;
+					}
+					else
+						spec = value.Substring (next + 2, semicolon - next - 2);
+					sb.Append ((char) int.Parse (spec, style));
+				} else {
+					sb.Append (value.Substring (pos, next - 1));
+					string name = value.Substring (pos + 1, semicolon - 1);
+					switch (name) {
+					case "lt":
+						sb.Append ("<");
+						break;
+					case "gt":
+						sb.Append (">");
+						break;
+					case "amp":
+						sb.Append ("&");
+						break;
+					case "quot":
+						sb.Append ("\"");
+						break;
+					case "apos":
+						sb.Append ("'");
+						break;
+					default:
+						sb.Append (Root.ResolveEntity (name));
+						break;
+					}
+				}
+				pos = semicolon + 1;
 			}
-			sb.Append (this.UnresolvedDefaultValue.Substring (pos));
+			sb.Append (value.Substring (pos));
 			// strip quote chars
 			string ret = sb.ToString (1, sb.Length - 2);
 			sb.Length = 0;
@@ -561,15 +612,61 @@ namespace Mono.Xml
 
 	public class DTDEntityDeclaration : DTDNode
 	{
+		string entityValue;
+
 		public string Name;
 		public string PublicId;
 		public string SystemId;
 		public string NotationName;
-		// FIXME: should have more complex value than simple string
-		public string EntityValue;
+		public string LiteralEntityValue;
 		public bool IsInternalSubset;
 
-		internal DTDEntityDeclaration () {}
+		public string EntityValue {
+			get {
+				if (entityValue == null) {
+					if (SystemId == null)
+						entityValue = LiteralEntityValue;
+					else {
+						// FIXME: should use specified XmlUrlResolver.
+						entityValue = ResolveExternalEntity (new XmlUrlResolver ());
+					}
+				}
+				return entityValue;
+			}
+		}
+
+		private string ResolveExternalEntity (XmlResolver resolver)
+		{
+			string baseUri = Root.BaseURI;
+			if (baseUri == "")
+				baseUri = null;
+			Uri uri = resolver.ResolveUri (
+				baseUri != null ? new Uri (baseUri) : null, SystemId);
+			Stream stream = resolver.GetEntity (uri, null, typeof (Stream)) as Stream;
+			XmlStreamReader reader = new XmlStreamReader (stream, false);
+
+			StringBuilder sb = new StringBuilder ();
+
+			bool checkTextDecl = true;
+			while (reader.Peek () != -1) {
+				sb.Append (reader.Read ());
+				if (checkTextDecl && sb.Length == 6) {
+					if (sb.ToString () == "<?xml ") {
+						// Skip Text declaration.
+						sb.Length = 0;
+						while (reader.Peek () == '>' || reader.Peek () == -1)
+							reader.Read ();
+					}
+					checkTextDecl = false;
+				}
+			}
+			return sb.ToString ();
+		}
+
+		internal DTDEntityDeclaration (DTDObjectModel root)
+		{
+			this.SetRoot (root);
+		}
 	}
 
 	public class DTDNotationDeclaration : DTDNode

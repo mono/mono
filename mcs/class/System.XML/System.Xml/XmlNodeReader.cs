@@ -476,6 +476,16 @@ namespace System.Xml
 			return null;
 		}
 
+		internal XmlParserContext GetInternalParserContext ()
+		{
+			if (entityReader != null)
+				return entityReader.GetInternalParserContext ();
+			else
+				return new XmlParserContext (document.NameTable,
+					current.ConstructNamespaceManager (),
+					XmlLang, XmlSpace);
+		}
+
 		public override string LookupNamespace (string prefix)
 		{
 			if (entityReader != null && entityReader.ReadState != ReadState.Initial)
@@ -893,6 +903,7 @@ namespace System.Xml
 					BaseURI, XmlLang, XmlSpace, Encoding.Unicode);
 			}
 			entityReader = new XmlTextReader (replacementText, xmlReaderNodeType, ctx);
+			entityReader.MaybeTextDecl = true;
 		}
 
 		public override void Skip ()

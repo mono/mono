@@ -17,6 +17,14 @@ namespace System.Xml
 			return ch == 0x20 || ch == 0x9 || ch == 0xD || ch == 0xA;
 		}
 
+		internal static bool IsWhitespace (string str)
+		{
+			foreach (char c in str)
+				if (!IsWhitespace (c))
+					return false;
+			return true;
+		}
+
 		internal static bool IsFirstNameChar(int ch)
 		{
 			bool result = false;
@@ -41,9 +49,100 @@ namespace System.Xml
 			return result;
 		}
 
+		internal static bool IsNCNameChar(int ch)
+		{
+			bool result = false;
+
+			if (ch >= 0 && ch <= 0xFFFF && ch != ':')
+			{
+				result = (nameBitmap[(namePages[ch >> 8] << 3) + ((ch & 0xFF) >> 5)] & (1 << (ch & 0x1F))) != 0;
+			}
+
+			return result;
+		}
+
+		internal static bool IsName (string str)
+		{
+			if (str.Length == 0)
+				return false;
+			if (!IsFirstNameChar (str [0]))
+				return false;
+			foreach (char c in str)
+				if (!IsNameChar (c))
+					return false;
+			return true;
+		}
+
+		internal static bool IsNCName (string str)
+		{
+			if (str.Length == 0)
+				return false;
+			if (!IsFirstNameChar (str [0]))
+				return false;
+			foreach (char c in str)
+				if (!IsNCNameChar (c))
+					return false;
+			return true;
+		}
+
+		internal static bool IsNmToken (string str)
+		{
+			if (str.Length == 0)
+				return false;
+			foreach (char c in str)
+				if (!IsNameChar (c))
+					return false;
+			return true;
+		}
+
 		internal static bool IsPubidChar(int ch)
 		{
 			return IsWhitespace(ch) | ('a' <= ch && ch <= 'z') | ('A' <= ch && ch <= 'Z') | ('0' <= ch && ch <= '9') | "-'()+,./:=?;!*#@$_%".IndexOf((char)ch) >= 0;
+		}
+
+		internal static bool IsPubid (string str)
+		{
+			foreach (char c in str)
+				if (!IsPubidChar (c))
+					return false;
+			return true;
+		}
+
+		// encodings (copied from XmlConstructs.cs)
+
+		/// <summary>
+		/// Returns true if the encoding name is a valid IANA encoding.
+		/// This method does not verify that there is a decoder available
+		/// for this encoding, only that the characters are valid for an
+		/// IANA encoding name.
+		/// </summary>
+		/// <param name="ianaEncoding">The encoding to check.</param>
+		/// <returns></returns>
+		internal static bool IsValidIANAEncoding(String ianaEncoding) 
+		{
+			if (ianaEncoding != null) 
+			{
+				int length = ianaEncoding.Length;
+				if (length > 0) 
+				{
+					char c = ianaEncoding[0];
+					if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) 
+					{
+						for (int i = 1; i < length; i++) 
+						{
+							c = ianaEncoding[i];
+							if ((c < 'A' || c > 'Z') && (c < 'a' || c > 'z') &&
+								(c < '0' || c > '9') && c != '.' && c != '_' &&
+								c != '-') 
+							{
+								return false;
+							}
+						}
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 
 		private static byte[] firstNamePages =

@@ -7,6 +7,7 @@
 // (C) Ximian, Inc.
 //
 using System;
+using System.IO;
 using System.Collections;
 using Mono.Xml;
 
@@ -34,7 +35,7 @@ namespace System.Xml
 			this.systemId = systemId;
 			this.internalSubset = internalSubset;
 
-			XmlTextReader xtr = new XmlTextReader ("", XmlNodeType.Document, null);
+			XmlTextReader xtr = new XmlTextReader (BaseURI, new StringReader (""), doc.NameTable);
 			xtr.GenerateDTDObjectModel (name, publicId, systemId, internalSubset);
 			this.dtd = xtr.DTD;
 
@@ -62,7 +63,7 @@ namespace System.Xml
 				XmlNode n = new XmlEntity (decl.Name, decl.NotationName,
 					decl.PublicId, decl.SystemId, OwnerDocument);
 				// FIXME: Value is more complex, similar to Attribute.
-				n.insertBeforeIntern (OwnerDocument.CreateTextNode (decl.EntityValue), null);
+				n.insertBeforeIntern (OwnerDocument.CreateTextNode (decl.LiteralEntityValue), null);
 				entities.Nodes.Add (n);
 			}
 			foreach (DTDNotationDeclaration decl in DTD.NotationDecls.Values) {

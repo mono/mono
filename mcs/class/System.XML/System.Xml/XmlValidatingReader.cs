@@ -59,7 +59,7 @@ namespace System.Xml {
 
 		public override string BaseURI {
 			[MonoTODO]
-			get { return validatingReader == null ? String.Empty : validatingReader.BaseURI; }
+			get { return validatingReader == null ? sourceReader.BaseURI : validatingReader.BaseURI; }
 		}
 
 		public override bool CanResolveEntity {
@@ -76,7 +76,6 @@ namespace System.Xml {
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		public EntityHandling EntityHandling {
 			get { return entityHandling; }
 			set { entityHandling = value; }
@@ -239,7 +238,15 @@ namespace System.Xml {
 
 		public XmlResolver XmlResolver {
 			[MonoTODO]
-			set { resolver = value; }
+			set {
+				resolver = value;
+				DTDValidatingReader dvr = validatingReader as DTDValidatingReader;
+				if (dvr != null)
+					dvr.XmlResolver = value;
+//				XmlSchemaValidatingReader xsvr = validatingReader as XmlSchemaValidatingReader;
+//				if (xsvr != null)
+//					xsvr.XmlResolver = value;
+			}
 		}
 
 		public override XmlSpace XmlSpace {

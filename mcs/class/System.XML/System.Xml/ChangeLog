@@ -1,3 +1,69 @@
+2003-08-07  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* DTDObjectModel.cs :
+	  - Added validation error check (and AddError(), Errors).
+	  - Fixed ComputeDefaultValue() to handle various references correctly.
+	  - DTDEntityDeclaration.EntityValue became property, and added
+	    LiteralEntityValue. The new one holds resolved value.
+	    Added ResolveExternalEntity(). It now required root in .ctor().
+	* DTDValidatingReader.cs :
+	  - Now it handles namespaced attributes (as input to xsd validator).
+	  - Added XmlResolver property as usual XmlReader.
+	  - Added currentEntityHandling field so that it can stand changing
+	    XmlValidatingReader's EntityHandling dynamically.
+	  - FilterNormalization() now requires name for getting datatypes and
+	    can stand for non-current attribute normalization.
+	  - Splitted ReadContent() from Read() that can be called recursively
+	    when expanding entities.
+	  - Now handles Entity not found error *after* resolution of entities,
+	    as MS.NET does.
+	  - Read()ing DTD checks its Errors and raises validation error events.
+	    In some situations, DTD parsing may detect VC error, not WFC error.
+	    It also strictly checks NData existence.
+	  - Handling of entity-resolved text is a bit changed and Read()ing
+	    element, endElement, cdata now changed to switch collecting text
+	    and collected text.
+	  - content type ANY should allow texts.
+	  - Added enumerated attribute validity check.
+	  - Added Name/Names creation rule check for ID/IDREF/IDREFS.
+	  - Added entity existence check for ENTITY/ENTITIES attributes.
+	  - Added NMTOKEN creation rule check for NMTOKEN/NMTOKENS.
+	  - Fixed to remove extraneous #REQUIRED check.
+	  - Contributing default attribute is now only applied to the case
+	    ValidationType is DTD or None.
+	  - ResolveEntity() now handles external entities.
+	    Added Mono.Xml.IXmlParserContext interface support.
+	* XmlDocumentType.cs : Fixed to use BaseURI to build DTD model.
+	* XmlTextReader.cs :
+	  - Fixed ReadAttributeValue() to reset returnEntityReference.
+	  - Added bool MaybeTextDecl only for ResolveEntity().
+	  - Fixed ReadWhitespace(). In fact its value is considered even if it
+	    is in the end of the XML.
+	  - Fixed ReadXmlDeclaration(). Now skips text declaration.
+	  - CompileDTDSubset() now checks IGNORE/INCLUDE section end balances.
+	  - ReadContentSpec() should set OrderType = OR for mixed model.
+	    Fixed to set content element name correctly.
+	  - ImportAsPERef() now skips Text declaration.
+	  - Type of enumerated default attributes shold be string.
+	  - Undeclared PE error is now handled as DTD's VC error, not
+	    XmlTextReader's WFC error.
+	* XmlValidatingReader.cs : BaseURI should provide that of 
+	  original XmlReader's when read was not started yet.
+	  Fixed XmlResolver to delegate to DTDValidatingReader.
+
+	* XmlAttributeCollection.cs : Acquiring attList declaration is
+	  insufficient especially in case of lack of elementdecl.
+	* XmlChar.cs : (Maybe this is compact than XmlConstructs.)
+	  added IsWhitespace(),IsNCNameChar(),IsName(),IsNCName(),IsNmToken(),
+	  IsPubid(). Copies IsValidIANAEncoding() from XmlConstructs.
+
+	* XmlInputStream.cs : Removed "version" declaration check. It should
+	  be done by XmlTextReader.
+
+	* XmlNodeReader.cs : added internal GetInternalParserContext() and now
+	  it can be used in XmlValidatingReader.ResolveEntity().
+	  ResolveEntity() sets XmlTextReader.MaybeTextDecl.
+
 2003-08-05  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* DTDValidatingReader.cs :

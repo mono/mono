@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Specialized;
 using System.Collections;
+using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
@@ -26,10 +27,13 @@ namespace Mono.Xml
 			automataStack = new Stack ();
 			attributes = new StringCollection ();
 			attributeValues = new NameValueCollection ();
+			attributeLocalNames = new NameValueCollection ();
+			attributeNamespaces = new NameValueCollection ();
 			this.validatingReader = validatingReader;
 			valueBuilder = new StringBuilder ();
 			idList = new ArrayList ();
 			missingIDReferences = new ArrayList ();
+			resolver = new XmlUrlResolver ();
 		}
 
 		Stack entityReaderStack;
@@ -44,6 +48,7 @@ namespace Mono.Xml
 		string currentElement;
 		string currentAttribute;
 		string currentTextValue;
+		string constructingTextValue;
 		bool shouldResetCurrentTextValue;
 		bool consumedAttribute;
 		bool insideContent;
@@ -52,9 +57,15 @@ namespace Mono.Xml
 		bool isStandalone;
 		StringCollection attributes;
 		NameValueCollection attributeValues;
+		NameValueCollection attributeLocalNames;
+		NameValueCollection attributeNamespaces;
 		StringBuilder valueBuilder;
 		ArrayList idList;
 		ArrayList missingIDReferences;
+		XmlResolver resolver;
+		EntityHandling currentEntityHandling;
+		bool isSignificantWhitespace;
+		bool isWhitespace;
 
 		// This field is used to get properties and to raise events.
 		XmlValidatingReader validatingReader;
@@ -80,7 +91,7 @@ namespace Mono.Xml
 			if (attributes.Count <= i)
 				throw new IndexOutOfRangeException ("Specified index is out of range: " + i);
 
-			return FilterNormalization (attributeValues [i]);
+			return FilterNormalization (attributes [i], attributeValues [i]);
 		}
 
 		public override string GetAttribute (string name)
@@ -91,7 +102,7 @@ namespace Mono.Xml
 			if (dtd == null)
 				return reader.GetAttribute (name);
 
-			return FilterNormalization (attributeValues [name]);
+			return FilterNormalization (name, attributeValues [name]);
 		}
 
 		public override string GetAttribute (string name, string ns)
@@ -102,11 +113,7 @@ namespace Mono.Xml
 			if (dtd == null)
 				return reader.GetAttribute (name, ns);
 
-			// FIXME: check whether this way is correct.
-			if (ns == String.Empty)
-				return GetAttribute (name);
-			else
-				return FilterNormalization (reader.GetAttribute (name, ns));
+			return reader.GetAttribute (attributeLocalNames [name], ns);
 		}
 
 		bool IXmlLineInfo.HasLineInfo ()
@@ -193,9 +200,10 @@ namespace Mono.Xml
 				return true;
 			}
 
-			if (ns != String.Empty)
-				throw new InvalidOperationException ("DTD validating reader does not support namespace.");
-			return MoveToAttribute (name);
+			foreach (string iter in attributes)
+				if (attributeLocalNames [iter] == name)
+					return MoveToAttribute (iter);
+			return false;
 		}
 
 		public override bool MoveToElement ()
@@ -264,6 +272,7 @@ namespace Mono.Xml
 				return false;
 		}
 
+		[MonoTODO ("Handling of whitespace entities are still not enough.")]
 		public override bool Read ()
 		{
 			if (currentTextValue != null)
@@ -276,22 +285,34 @@ namespace Mono.Xml
 			consumedAttribute = false;
 			attributes.Clear ();
 			attributeValues.Clear ();
+			attributeNamespaces.Clear ();
+			isWhitespace = false;
+			isSignificantWhitespace = false;
 
-			return ReadContent () || currentTextValue != null;
+			bool b = ReadContent () || currentTextValue != null;
+			if (!b && this.missingIDReferences.Count > 0) {
+				this.HandleError ("Missing ID reference was found: " +
+					String.Join (",", missingIDReferences.ToArray (typeof (string)) as string []),
+					XmlSeverityType.Error);
+				// Don't output the same errors so many times.
+				this.missingIDReferences.Clear ();
+			}
+			currentEntityHandling = validatingReader.EntityHandling;
+			return b;
 		}
 
 		private bool ReadContent ()
 		{
 			if (nextEntityReader != null) {
-				if (DTD == null || DTD.EntityDecls [Name] == null)
-					throw new XmlException ("Entity '" + Name + "' was not declared.");
+				if (DTD == null || DTD.EntityDecls [reader.Name] == null)
+					throw new XmlException ("Entity '" + reader.Name + "' was not declared.");
 				entityReaderStack.Push (reader);
-				entityReaderNameStack.Push (Name);
+				entityReaderNameStack.Push (reader.Name);
 				entityReaderDepthStack.Push (Depth);
 				reader = sourceTextReader = nextEntityReader;
 				nextEntityReader = null;
 				return ReadContent ();
-			} else if (NodeType == XmlNodeType.EndEntity) {
+			} else if (reader.EOF && entityReaderStack.Count > 0) {
 				reader = entityReaderStack.Pop () as XmlReader;
 				entityReaderNameStack.Pop ();
 				entityReaderDepthStack.Pop ();
@@ -316,8 +337,12 @@ namespace Mono.Xml
 			}
 
 			if (!b) {
-				if (entityReaderStack.Count > 0)
-					return true;	// EndEntity
+				if (entityReaderStack.Count > 0) {
+					if (validatingReader.EntityHandling == EntityHandling.ExpandEntities)
+						return ReadContent ();
+					else
+						return true;	// EndEntity
+				}
 
 				if (elementStack.Count != 0)
 					throw new InvalidOperationException ("Unexpected end of XmlReader.");
@@ -338,11 +363,35 @@ namespace Mono.Xml
 						reader ["PUBLIC"], reader ["SYSTEM"], reader.Value);
 				}
 				this.dtd = xmlTextReader.DTD;
+
+				// Validity Constraints Check.
+				if (DTD.Errors.Length > 0)
+					foreach (XmlSchemaException ex in DTD.Errors)
+						HandleError (ex.Message, XmlSeverityType.Error);
+
+				// NData target exists.
+				foreach (DTDEntityDeclaration ent in dtd.EntityDecls.Values)
+					if (ent.NotationName != null && dtd.NotationDecls [ent.NotationName] == null)
+						this.HandleError ("Target notation was not found for NData in entity declaration " + ent.Name + ".",
+							XmlSeverityType.Error);
+				// NOTATION exists for attribute default values
+				foreach (DTDAttListDeclaration attListIter in dtd.AttListDecls.Values)
+					foreach (DTDAttributeDefinition def in attListIter.Definitions)
+						if (def.Datatype.TokenizedType == XmlTokenizedType.NOTATION) {
+							foreach (string notation in def.EnumeratedNotations)
+								if (dtd.NotationDecls [notation] == null)
+									this.HandleError ("Target notation was not found for NOTATION typed attribute default " + def.Name + ".",
+										XmlSeverityType.Error);
+						}
+
 				break;
 
 			case XmlNodeType.Element:
-				if (currentTextValue != null)
+				if (constructingTextValue != null) {
+					currentTextValue = constructingTextValue;
+					constructingTextValue = null;
 					return true;
+				}
 				elementStack.Push (reader.Name);
 				// startElementDeriv
 				// If no schema specification, then skip validation.
@@ -394,8 +443,11 @@ namespace Mono.Xml
 				break;
 
 			case XmlNodeType.EndElement:
-				if (currentTextValue != null)
+				if (constructingTextValue != null) {
+					currentTextValue = constructingTextValue;
+					constructingTextValue = null;
 					return true;
+				}
 				elementStack.Pop ();
 				// endElementDeriv
 				// If no schema specification, then skip validation.
@@ -423,10 +475,15 @@ namespace Mono.Xml
 				break;
 
 			case XmlNodeType.CDATA:
-				if (currentTextValue != null)
+				if (currentTextValue != null) {
+					currentTextValue = constructingTextValue;
+					constructingTextValue = null;
 					return true;
+				}
 				goto case XmlNodeType.Text;
 			case XmlNodeType.SignificantWhitespace:
+//				isSignificantWhitespace = true;
+				goto case XmlNodeType.Text;
 			case XmlNodeType.Text:
 				// If no schema specification, then skip validation.
 				if (currentAutomata == null)
@@ -435,14 +492,22 @@ namespace Mono.Xml
 				DTDElementDeclaration elem = dtd.ElementDecls [elementStack.Peek () as string];
 				// Here element should have been already validated, so
 				// if no matching declaration is found, simply ignore.
-				if (elem != null && !elem.IsMixedContent) {
+				if (elem != null && !elem.IsMixedContent && !elem.IsAny) {
 					HandleError (String.Format ("Current element {0} does not allow character data content.", elementStack.Peek () as string),
 						XmlSeverityType.Error);
 					// FIXME: validation recovery code here.
 					currentAutomata = previousAutomata;
 				}
 				if (validatingReader.EntityHandling == EntityHandling.ExpandEntities) {
-					currentTextValue += reader.Value;
+					constructingTextValue += reader.Value;
+					return ReadContent ();
+				}
+				break;
+			case XmlNodeType.Whitespace:
+//				if (!isSignificantWhitespace)
+//					isWhitespace = true;
+				if (validatingReader.EntityHandling == EntityHandling.ExpandEntities) {
+					constructingTextValue += reader.Value;
 					return ReadContent ();
 				}
 				break;
@@ -462,6 +527,8 @@ namespace Mono.Xml
 				// If it was invalid, simply add specified attributes.
 				do {
 					attributes.Add (reader.Name);
+					attributeLocalNames.Add (reader.Name, reader.LocalName);
+					attributeNamespaces.Add (reader.Name, reader.NamespaceURI);
 					attributeValues.Add (reader.Name, reader.Value);
 				} while (reader.MoveToNextAttribute ());
 				reader.MoveToElement ();
@@ -486,7 +553,7 @@ namespace Mono.Xml
 
 			if (validatingReader != null)
 				this.validatingReader.OnValidationEvent (this,
-					new ValidationEventArgs (ex, message, severity));
+					new ValidationEventArgs (ex, ex.Message, severity));
 			else
 				throw ex;
 		}
@@ -496,6 +563,8 @@ namespace Mono.Xml
 			while (reader.MoveToNextAttribute ()) {
 				string attrName = reader.Name;
 				attributes.Add (attrName);
+				attributeLocalNames.Add (attrName, reader.LocalName);
+				attributeNamespaces.Add (attrName, reader.NamespaceURI);
 				bool hasError = false;
 				while (reader.ReadAttributeValue ()) {
 					if (reader.NodeType == XmlNodeType.EntityReference) {
@@ -523,13 +592,25 @@ namespace Mono.Xml
 						XmlSeverityType.Error);
 					// FIXME: validation recovery code here.
 				} else {
-					// check identity constraint
+					// check enumeration constraint
+					if (def.EnumeratedAttributeDeclaration.Count > 0)
+						if (!def.EnumeratedAttributeDeclaration.Contains (attrValue))
+							HandleError (String.Format ("Attribute enumeration constraint error in attribute {0}, value {1}.",
+								reader.Name, attrValue), XmlSeverityType.Error);
+					if (def.EnumeratedNotations.Count > 0)
+						if (!def.EnumeratedNotations.Contains (attrValue))
+							HandleError (String.Format ("Attribute notation enumeration constraint error in attribute {0}, value {1}.",
+								reader.Name, attrValue), XmlSeverityType.Error);
+
+					// check type constraint
 					switch (def.Datatype.TokenizedType) {
 					case XmlTokenizedType.ID:
-						if (this.idList.Contains (attrValue)) {
+						if (!XmlChar.IsName (FilterNormalization (def.Name, attrValue)))
+							HandleError (String.Format ("ID attribute value must match the creation rule Name: {0}", attrValue),
+								XmlSeverityType.Error);
+						else if (this.idList.Contains (attrValue)) {
 							HandleError (String.Format ("Node with ID {0} was already appeared.", attrValue),
 								XmlSeverityType.Error);
-							// FIXME: validation recovery code here.
 						} else {
 							if (missingIDReferences.Contains (attrValue))
 								missingIDReferences.Remove (attrValue);
@@ -537,34 +618,54 @@ namespace Mono.Xml
 						}
 						break;
 					case XmlTokenizedType.IDREF:
+						if (!XmlChar.IsName (attrValue))
+							HandleError (String.Format ("IDREF attribute value must match the creation rule Name: {0}", attrValue),
+								XmlSeverityType.Error);
 						if (!idList.Contains (attrValue))
 							missingIDReferences.Add (attrValue);
 						break;
 					case XmlTokenizedType.IDREFS:
 						string [] idrefs = def.Datatype.ParseValue (attrValue, NameTable, null) as string [];
-						foreach (string idref in idrefs)
-							if (!idList.Contains (attrValue))
+						foreach (string idref in idrefs) {
+							if (!XmlChar.IsName (FilterNormalization (def.Name, idref)))
+								HandleError (String.Format ("Each ID in IDREFS attribute value must match the creation rule Name: {0}", attrValue),
+									XmlSeverityType.Error);
+							if (!idList.Contains (idref))
 								missingIDReferences.Add (attrValue);
+						}
+						break;
+					case XmlTokenizedType.ENTITY:
+						if (dtd.EntityDecls [attrValue] == null)
+							HandleError (String.Format ("Reference to undeclared entity was found in attribute {0}.", reader.Name),
+								XmlSeverityType.Error);
+						break;
+					case XmlTokenizedType.ENTITIES:
+						string [] entrefs = def.Datatype.ParseValue (attrValue, NameTable, null) as string [];
+						foreach (string entref in entrefs)
+							if (dtd.EntityDecls [entref] == null)
+								HandleError (String.Format ("Reference to undeclared entity was found in attribute {0}.", reader.Name),
+									XmlSeverityType.Error);
+						break;
+					case XmlTokenizedType.NMTOKEN:
+						if (!XmlChar.IsNmToken (FilterNormalization (def.Name, attrValue)))
+							HandleError (String.Format ("NMTOKEN attribute value must match the creation rule NMTOKEN. Name={0}", reader.Name),
+								XmlSeverityType.Error);
+						break;
+					case XmlTokenizedType.NMTOKENS:
+						string [] tokens = def.Datatype.ParseValue (attrValue, NameTable, null) as string [];
+						foreach (string token in tokens)
+							if (!XmlChar.IsNmToken (FilterNormalization (def.Name, token)))
+								HandleError (String.Format ("Name Token in NMTOKENS attribute value must match the creation rule NMTOKEN. Name={0}", reader.Name),
+									XmlSeverityType.Error);
 						break;
 					}
 
-					switch (def.OccurenceType) {
-						case DTDAttributeOccurenceType.Required:
-						if (attrValue == String.Empty) {
-							HandleError (String.Format ("Required attribute {0} in element {1} not found .",
-								def.Name, decl.Name),
-								XmlSeverityType.Error);
-							// FIXME: validation recovery code here.
-						}
-						break;
-					case DTDAttributeOccurenceType.Fixed:
-						if (attrValue != def.DefaultValue) {
-							HandleError (String.Format ("Fixed attribute {0} in element {1} has invalid value {2}.",
-								def.Name, decl.Name, attrValue),
-								XmlSeverityType.Error);
-							// FIXME: validation recovery code here.
-						}
-						break;
+					if (def.OccurenceType == DTDAttributeOccurenceType.Fixed &&
+							attrValue != def.DefaultValue) {
+						HandleError (String.Format ("Fixed attribute {0} in element {1} has invalid value {2}.",
+							def.Name, decl.Name, attrValue),
+							XmlSeverityType.Error);
+						// FIXME: validation recovery code here.
 					}
 				}
 			}
@@ -573,13 +674,23 @@ namespace Mono.Xml
 			foreach (DTDAttributeDefinition def in decl.Definitions)
 				if (!attributes.Contains (def.Name)) {
 					if (def.OccurenceType == DTDAttributeOccurenceType.Required) {
-						HandleError (String.Format ("Required attribute {0} was not found.", decl.Name),
+						HandleError (String.Format ("Required attribute {0} in element {1} not found .",
+							def.Name, decl.Name),
 							XmlSeverityType.Error);
 						// FIXME: validation recovery code here.
 					}
 					else if (def.DefaultValue != null) {
-						attributes.Add (def.Name);
-						attributeValues.Add (def.Name, def.DefaultValue);
+						switch (validatingReader.ValidationType) {
+						case ValidationType.DTD:
+						case ValidationType.None:
+							// Other than them, ignore DTD defaults.
+							attributes.Add (def.Name);
+							int colonAt = def.Name.IndexOf (':');
+							attributeLocalNames.Add (def.Name, colonAt < 0 ? def.Name : def.Name.Substring (colonAt + 1));
+							attributeNamespaces.Add (def.Name, colonAt < 0 ? def.Name : def.Name.Substring (0, colonAt));
+							attributeValues.Add (def.Name, def.DefaultValue);
+							break;
+						}
 					}
 				}
 
@@ -591,7 +702,7 @@ namespace Mono.Xml
 			if (consumedAttribute)
 				return false;
 			if (NodeType == XmlNodeType.Attribute &&
-					validatingReader.EntityHandling == EntityHandling.ExpandEntities) {
+					currentEntityHandling == EntityHandling.ExpandEntities) {
 				consumedAttribute = true;
 				return true;
 			}
@@ -625,28 +736,37 @@ namespace Mono.Xml
 
 		public override void ResolveEntity ()
 		{
-			if (NodeType != XmlNodeType.EntityReference)
+			// "reader." is required since NodeType must not be entityref by nature.
+			if (reader.NodeType != XmlNodeType.EntityReference)
 				throw new InvalidOperationException ("The current node is not an Entity Reference");
-			DTDEntityDeclaration entity = DTD != null ? DTD.EntityDecls [Name] as DTDEntityDeclaration : null;
+			DTDEntityDeclaration entity = DTD != null ? DTD.EntityDecls [reader.Name] as DTDEntityDeclaration : null;
 
-			// MS.NET seems simply ignoring undeclared entity reference here ;-(
-			string replacementText =
-				(entity != null) ? entity.EntityValue : String.Empty;
+			XmlParserContext ctx = null;
+			if (sourceTextReader != null)
+				ctx = sourceTextReader.GetInternalParserContext ();
+			else if (reader is XmlNodeReader)
+				ctx = ((XmlNodeReader) reader).GetInternalParserContext ();
+			else if (reader is IHasXmlParserContext)
+				ctx = ((IHasXmlParserContext) reader).ParserContext;
+
+			if (ctx == null)
+				throw new NotSupportedException (
+					"Entity resolution from non-XmlTextReader XmlReader could not be supported.");
 
 			XmlNodeType xmlReaderNodeType =
 				(currentAttribute != null) ? XmlNodeType.Attribute : XmlNodeType.Element;
 
-			if (sourceTextReader == null)
-				throw new NotSupportedException (
-					"Entity resolution from non-XmlTextReader XmlReader could not be supported.");
-			XmlParserContext ctx = sourceTextReader.GetInternalParserContext ();
-
-			// FIXME: is seems impossible to get namespaceManager from XmlReader.
-//			ctx = new XmlParserContext (document.NameTable,
-//				new XmlNamespaceManager (NameTable),
-//				DTD,
-//				BaseURI, XmlLang, XmlSpace, Encoding.Unicode);
-			nextEntityReader = new XmlTextReader (replacementText, xmlReaderNodeType, ctx);
+			// MS.NET seems simply ignoring undeclared entity reference here ;-(
+			if (entity != null && entity.SystemId != null) {
+				Uri baseUri = entity.BaseURI == null ? null : new Uri (entity.BaseURI);
+				Stream stream = resolver.GetEntity (resolver.ResolveUri (baseUri, entity.SystemId), null, typeof (Stream)) as Stream;
+				nextEntityReader = new XmlTextReader (stream, xmlReaderNodeType, ctx);
+			} else {
+				string replacementText =
+					(entity != null) ? entity.EntityValue : String.Empty;
+				nextEntityReader = new XmlTextReader (replacementText, xmlReaderNodeType, ctx);
+			}
+			nextEntityReader.MaybeTextDecl = true;
 		}
 
 		public override int AttributeCount {
@@ -679,6 +799,9 @@ namespace Mono.Xml
 					if (NodeType != XmlNodeType.EndEntity)
 						baseNum++;
 				}
+				if (currentTextValue != null && reader.NodeType == XmlNodeType.EndElement)
+					baseNum++;
+
 				return IsDefault ? baseNum + 1 : baseNum;
 			}
 		}
@@ -775,7 +898,9 @@ namespace Mono.Xml
 		public override XmlNodeType NodeType {
 			get {
 				if (currentTextValue != null)
-					return XmlNodeType.Text;
+					return isSignificantWhitespace ? XmlNodeType.SignificantWhitespace :
+						isWhitespace ? XmlNodeType.Whitespace :
+						XmlNodeType.Text;
 
 				if (entityReaderStack.Count > 0 && reader.EOF)
 					return XmlNodeType.EndEntity;
@@ -814,14 +939,14 @@ namespace Mono.Xml
 		}
 
 		char [] whitespaceChars = new char [] {' '};
-		private string FilterNormalization (string rawValue)
+		private string FilterNormalization (string attrName, string rawValue)
 		{
 			if (DTD != null &&
 					NodeType == XmlNodeType.Attribute &&
 					sourceTextReader != null && 
 					sourceTextReader.Normalization) {
 				DTDAttributeDefinition def = 
-					dtd.AttListDecls [currentElement] [currentAttribute] as DTDAttributeDefinition;
+					dtd.AttListDecls [currentElement].Get (attrName);
 				valueBuilder.Append (rawValue);
 				valueBuilder.Replace ('\r', ' ');
 				valueBuilder.Replace ('\n', ' ');
@@ -859,12 +984,12 @@ namespace Mono.Xml
 				}
 				// As to this property, MS.NET seems ignorant of EntityHandling...
 				else if (NodeType == XmlNodeType.Attribute)// &&
-					// validatingReader.EntityHandling == EntityHandling.ExpandEntities)
-					return FilterNormalization (attributeValues [currentAttribute]);
+					// currentEntityHandling == EntityHandling.ExpandEntities)
+					return FilterNormalization (Name, attributeValues [currentAttribute]);
 				else if (consumedAttribute)
-					return FilterNormalization (attributeValues [this.currentAttribute]);
+					return FilterNormalization (Name, attributeValues [this.currentAttribute]);
 				else
-					return FilterNormalization (reader.Value);
+					return FilterNormalization (Name, reader.Value);
 			}
 		}
 
@@ -872,6 +997,12 @@ namespace Mono.Xml
 			get {
 				string val = this ["xml:lang"];
 				return val != null ? val : reader.XmlLang;
+			}
+		}
+
+		public XmlResolver XmlResolver {
+			set {
+				resolver = value;
 			}
 		}
 

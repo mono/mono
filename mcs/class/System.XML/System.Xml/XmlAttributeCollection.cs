@@ -253,8 +253,8 @@ namespace System.Xml
 			XmlDocumentType doctype = node.OwnerDocument.DocumentType;
 			if (doctype == null || doctype.DTD == null)
 				return existing;
-			DTDElementDeclaration elem = doctype.DTD.ElementDecls [ownerElement.Name];
-			DTDAttributeDefinition attdef = elem == null ? null : elem.Attributes [node.Name];
+			DTDAttListDeclaration attList = doctype.DTD.AttListDecls [ownerElement.Name];
+			DTDAttributeDefinition attdef = attList == null ? null : attList.Get (node.Name);
 			if (attdef == null || attdef.Datatype.TokenizedType != XmlTokenizedType.ID)
 				return existing;
 

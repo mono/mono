@@ -172,8 +172,9 @@ namespace Mono.Xml.Native
 
 					// version. It is optional here.
 					if (c != 'v') {
-						if (isDocumentEntity)
-							throw new XmlException ("invalid xml declaration.");
+						// FIXME: temporarily comment out here.
+//						if (isDocumentEntity)
+//							throw new XmlException ("invalid xml declaration.");
 					} else {
 						ms.WriteByte ((byte)'v');
 						while (loop++ >= 0 && c >= 0) {
@@ -209,7 +210,7 @@ namespace Mono.Xml.Native
 								ms.WriteByte ((byte)c);
 							}
 							string encodingName = Encoding.UTF8.GetString (ms.GetBuffer (), start, (int)ms.Position - start);
-							if (!XmlConstructs.IsValidIANAEncoding (encodingName))
+							if (!XmlChar.IsValidIANAEncoding (encodingName))
 								throw encodingException;
 							ms.WriteByte ((byte)quoteChar);
 							enc = Encoding.GetEncoding (encodingName);
