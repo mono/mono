@@ -208,5 +208,10 @@ namespace System.Reflection.Emit {
 			entry_point = entryMethod;
 		}
 
+		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
+		}
+		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
+		}
+
 	}
 }

@@ -1,4 +1,9 @@
 
+Wed Feb 20 14:54:01 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* AssemblyBuilder.cs: add SetCustomAttribute () to keep the compiler
+	going.
+
 Fri Feb 15 18:15:04 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* ILGenerator.cs: finally block support and fixes.
