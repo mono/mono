@@ -1,3 +1,10 @@
+2005-02-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* loader.c (mono_lookup_pinvoke_call): Correct the search order used for different CharSet
+	values.
+
+	* marshal.c (mono_marshal_get_string_encoding): CHAR_SET_AUTO means Unicode on windows.
+	
 2005-02-12  Ben Maurer  <bmaurer@ximian.com>
 
 	* domain-internals.h: add the hashtable here.
