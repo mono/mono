@@ -235,7 +235,6 @@ environment variable.
 .TP
 .I "MONO_DEBUG"
 If set, enables some features of the runtime useful for debugging.
-
 Currently it only makes the runtime display the stack traces for all the
 threads running and exit. It may not exit cleanly. Use at your own risk.
 .TP
@@ -245,12 +244,18 @@ turning externally-generated text (e.g. command-line arguments or
 filenames) into unicode.  The encoding names come from the list
 provided by iconv, and the special case "default_locale" which refers
 to the current locale's default encoding.
-
+.TP
 When reading externally-generated text strings UTF-8 is tried first,
 and then this list is tried in order with the first successful
 conversion ending the search.  When writing external text (e.g. new
 filenames or arguments to new processes) the first item in this list
 is used, or UTF-8 if the environment variable is not set.
+.TP 
+.I "MONO_SHARED_DIR"
+If set its the directory where the ".wapi" handle state is stored.
+This is the directory where the Windows I/O Emulation layer stores its
+shared state data (files, events, mutexes, pipes).  By default Mono
+will store the ".wapi" directory in the users's home directory.
 .SH FILES
 On Unix assemblies are loaded from the installation lib directory.  If you set
 `prefix' to /usr, the assemblies will be located in /usr/lib.  On
