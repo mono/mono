@@ -20,3 +20,4 @@ clean:
 	for i in $(DIRS); do 			\
 		(cd $$i; make clean)		\
 	done
+

@@ -164,6 +164,10 @@ PENDING TASKS
 
 	Handle modreq from public apis.
 
+* Emit `pinned' for pinned local variables.
+
+	Both `modreq' and pinned will require special hacks in the compiler.
+
 OPTIMIZATIONS
 -------------
 
