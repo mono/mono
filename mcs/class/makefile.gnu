@@ -9,6 +9,7 @@ DIRS =	corlib				\
 	System.EnterpriseServices	\
 	System.Web			\
 	System.Web.Services		\
+	System.Runtime.Serialization.Formatters.Soap \
 	System.Configuration.Install
 
 #	Microsoft.VisualBasic		\
