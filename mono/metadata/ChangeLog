@@ -1,3 +1,8 @@
+2002-06-26  Dick Porter  <dick@ximian.com>
+
+	* appdomain.c (mono_runtime_cleanup): Close the socket library
+	after all the threads have finished, not before
+
 2002-06-26  Martin Baulig  <martin@gnome.org>
 
 	* debug-symfile.c (mono_debug_find_source_location): Added
