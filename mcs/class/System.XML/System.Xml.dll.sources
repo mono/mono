@@ -75,11 +75,11 @@ System.Xml/DTDValidatingReader.cs
 System.Xml/EntityHandling.cs
 System.Xml/Formatting.cs
 System.Xml/IHasXmlNode.cs
-System.Xml/IXmlDataEvidence.cs
 System.Xml/IXmlLineInfo.cs
 System.Xml/IXmlNamespaceResolver.cs
 System.Xml/MonoFIXAttribute.cs
 System.Xml/NameTable.cs
+System.Xml/NewLineHandling.cs
 System.Xml/ReadState.cs
 System.Xml/TODOAttribute.cs
 System.Xml/ValidationType.cs
@@ -105,7 +105,7 @@ System.Xml/XmlEntityReference.cs
 System.Xml/XmlException.cs
 System.Xml/XmlImplementation.cs
 System.Xml/XmlConvert.cs
-System.Xml/XmlConvertDateTimeSerializationMode.cs
+System.Xml/XmlDateTimeSerializationMode.cs
 System.Xml/XmlLinkedNode.cs
 System.Xml/XmlNameTable.cs
 System.Xml/XmlNamedNodeMap.cs
