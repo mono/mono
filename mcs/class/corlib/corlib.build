@@ -11,6 +11,8 @@
 		<mkdir dir="../lib"/>
 		<csc target="library" output="../lib/corlib.dll" debug="${debug}">
 			<arg value="/nowarn:1595"/>
+			<arg value="/nowarn:0649"/> <!-- field never assigned to -->
+			<arg value="/nowarn:0169"/> <!-- field never used -->
 			<arg value="/unsafe"/>
 			<sources>
 				<includes name="**/*.cs"/> 
@@ -21,6 +23,8 @@
 		</csc>
 		<csc target="library" output="Test/corlib_res.dll" debug="${debug}">
 			<arg value="/nowarn:1595"/>
+			<arg value="/nowarn:0649"/> <!-- field never assigned to -->
+			<arg value="/nowarn:0169"/> <!-- field never used -->
 			<arg value="/unsafe"/>
 			<sources>
 				<includes name="**/*.cs"/>
@@ -54,7 +58,30 @@
 				<excludes name="System.PAL/IOperatingSystem.cs"/>
 			</sources>
 		</csc>
-		<copy file="../lib/corlib.dll" tofile="Test/corlib_res.dll"/>
+		<!-- NUnit can only run under windows right now, so build for windows
+			even though this is inside the linux target -->
+		<csc target="library" output="Test/corlib_res.dll" debug="${debug}">
+			<arg value="/nowarn:1595"/>
+			<arg value="/nowarn:0649"/> <!-- field never assigned to -->
+			<arg value="/nowarn:0169"/> <!-- field never used -->
+			<arg value="/unsafe"/>
+			<sources>
+				<includes name="**/*.cs"/>
+				<excludes name="Test/**"/>
+				<excludes name="Linux/**"/>
+				<excludes name="System/Object.cs"/>
+				<excludes name="System/ValueType.cs"/>
+				<excludes name="System/Type.cs"/>
+				<excludes name="System/Array.cs"/>
+				<excludes name="System/String.cs"/>
+				<excludes name="System/Console.cs"/>
+				<excludes name="System/AppDomain.cs"/>
+				<excludes name="System.Reflection.Emit/**"/>
+				<excludes name="System/RuntimeTypeHandle.cs"/>
+				<excludes name="System.PAL/IOperatingSystem.cs"/>
+				<excludes name="System.Collections/Queue.cs"/>
+			</sources>
+		</csc>
 		<nant basedir="Test" target="build"/>
 	</target>
 
