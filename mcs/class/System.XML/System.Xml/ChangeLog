@@ -8,8 +8,15 @@
 	* XmlInputStream.cs : quick fix for public ctor() BaseURI bug.
 
 2003-06-20  Ben Maurer <bmaurer@users.sourceforge.net>
+	
 	* XmlTextReader.cs: Reduces memory allocation when the reader is
 	not queried for some values.
+	* NameTable.cs: Now uses a custom hashtable to implement. As a
+	result, when Get (char[], int, int) is called, a string is only
+	allocated if it is actually a new entry.
+	(StrEqArray) Compares a string and a char[]
+	(AddEntry) Adds a new entry to the hashtable
+	(Entry) Represents a hashtable entry.
 
 2003-06-20  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
