@@ -1,3 +1,8 @@
+2004-06-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* UTF7EncodingTest.cs: Added 3 more test cases from RFC1642 to decode
+	and re-encode UTF7 from/to unicode.
+
 2004-06-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UTF8EncodingTest.cs : Added TestThrowOnInvalid().

@@ -1,9 +1,14 @@
-﻿// UTF7EncodingTest.cs - NUnit Test Cases for System.Text.UTF7Encoding
 //
-// Patrick Kalkman  kalkman@cistron.nl
+// UTF7EncodingTest.cs - NUnit Test Cases for System.Text.UTF7Encoding
+//
+// Authors
+//	Patrick Kalkman  kalkman@cistron.nl
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Patrick Kalkman
-// 
+// Copyright (C) 2004 Novell (http://www.novell.com)
+//
+ 
 using NUnit.Framework;
 using System;
 using System.Text;
@@ -11,7 +16,7 @@ using System.Text;
 namespace MonoTests.System.Text
 {
         [TestFixture]
-        public class UTF7EncodingTest 
+        public class UTF7EncodingTest : Assertion
         {
                 [Test]
                 public void TestDirectlyEncoded1() 
@@ -125,21 +130,98 @@ namespace MonoTests.System.Text
                         Assertion.AssertEquals ("UTF7 #10", 0x2E, UTF7Bytes [9]);
                 }
         
-                [Test]
-                public void TestDecodeUnicodeShifted1()
-                {
-                        string UniCodeString = "\u0041\u2262\u0391\u002E";
-                        byte[] UTF7Bytes = new byte [] {0x41, 0x2B, 0x49, 0x6D, 0x49, 0x44, 0x6B,  0x51, 0x2D, 0x2E};
-                        
-                        UTF7Encoding UTF7enc = new UTF7Encoding ();
-                        char[] UniCodeChars = UTF7enc.GetChars (UTF7Bytes);
-                        //A+ImIDkQ-. is decoded as "A<NOT IDENTICAL TO><ALPHA>." see RFC 1642
-                        Assertion.AssertEquals ("UTF #1", UniCodeString.ToCharArray() [0], UniCodeChars [0]);
-                        Assertion.AssertEquals ("UTF #2", UniCodeString.ToCharArray() [1], UniCodeChars [1]);
-                        Assertion.AssertEquals ("UTF #3", UniCodeString.ToCharArray() [2], UniCodeChars [2]);
-                        Assertion.AssertEquals ("UTF #4", UniCodeString.ToCharArray() [3], UniCodeChars [3]);
+		[Test]
+		public void RFC1642_Example1 ()
+		{
+			string UniCodeString = "\u0041\u2262\u0391\u002E";
+			char[] expected = UniCodeString.ToCharArray ();
+
+			byte[] UTF7Bytes = new byte [] {0x41, 0x2B, 0x49, 0x6D, 0x49, 0x44, 0x6B,  0x51, 0x2D, 0x2E};
+			UTF7Encoding UTF7enc = new UTF7Encoding ();
+			char[] actual = UTF7enc.GetChars (UTF7Bytes);
+
+			// "A+ImIDkQ-." is decoded as "A<NOT IDENTICAL TO><ALPHA>." see RFC 1642
+			AssertEquals ("UTF #1", expected [0], actual [0]);
+			AssertEquals ("UTF #2", expected [1], actual [1]);
+			AssertEquals ("UTF #3", expected [2], actual [2]);
+			AssertEquals ("UTF #4", expected [3], actual [3]);
+
+			AssertEquals ("GetString", UniCodeString, UTF7enc.GetString (UTF7Bytes));
                 }
-        
+
+		[Test]
+		public void RFC1642_Example2 ()
+		{
+			string UniCodeString = "\u0048\u0069\u0020\u004D\u006F\u004D\u0020\u263A\u0021";
+			char[] expected = UniCodeString.ToCharArray ();
+
+			byte[] UTF7Bytes = new byte[] { 0x48, 0x69, 0x20, 0x4D, 0x6F, 0x4D, 0x20, 0x2B, 0x4A, 0x6A, 0x6F, 0x41, 0x49, 0x51, 0x2D };
+
+			UTF7Encoding UTF7enc = new UTF7Encoding ();
+			char[] actual = UTF7enc.GetChars (UTF7Bytes);
+
+			// "Hi Mom +Jjo-!" is decoded as "Hi Mom <WHITE SMILING FACE>!"
+			AssertEquals ("UTF #1", expected [0], actual [0]);
+			AssertEquals ("UTF #2", expected [1], actual [1]);
+			AssertEquals ("UTF #3", expected [2], actual [2]);
+			AssertEquals ("UTF #4", expected [3], actual [3]);
+			AssertEquals ("UTF #5", expected [4], actual [4]);
+			AssertEquals ("UTF #6", expected [5], actual [5]);
+			AssertEquals ("UTF #7", expected [6], actual [6]);
+			AssertEquals ("UTF #8", expected [7], actual [7]);
+			AssertEquals ("UTF #9", expected [8], actual [8]);
+
+			AssertEquals ("GetString", UniCodeString, UTF7enc.GetString (UTF7Bytes));
+		}
+
+		[Test]
+		public void RFC1642_Example3 ()
+		{
+			string UniCodeString = "\u65E5\u672C\u8A9E";
+			char[] expected = UniCodeString.ToCharArray ();
+
+			byte[] UTF7Bytes = new byte[] { 0x2B, 0x5A, 0x65, 0x56, 0x6E, 0x4C, 0x49, 0x71, 0x65, 0x2D };
+
+			UTF7Encoding UTF7enc = new UTF7Encoding ();
+			char[] actual = UTF7enc.GetChars (UTF7Bytes);
+
+			// "+ZeVnLIqe-" is decoded as Japanese "nihongo"
+			AssertEquals ("UTF #1", expected [0], actual [0]);
+			AssertEquals ("UTF #2", expected [1], actual [1]);
+			AssertEquals ("UTF #3", expected [2], actual [2]);
+
+			AssertEquals ("GetString", UniCodeString, UTF7enc.GetString (UTF7Bytes));
+		}
+
+		[Test]
+		public void RFC1642_Example4 ()
+		{
+			string UniCodeString = "\u0049\u0074\u0065\u006D\u0020\u0033\u0020\u0069\u0073\u0020\u00A3\u0031\u002E";
+			char[] expected = UniCodeString.ToCharArray ();
+
+			byte[] UTF7Bytes = new byte[] { 0x49, 0x74, 0x65, 0x6D, 0x20, 0x33, 0x20, 0x69, 0x73, 0x20, 0x2B, 0x41, 0x4B, 0x4D, 0x2D, 0x31, 0x2E };
+
+			UTF7Encoding UTF7enc = new UTF7Encoding ();
+			char[] actual = UTF7enc.GetChars (UTF7Bytes);
+
+			// "Item 3 is +AKM-1." is decoded as "Item 3 is <POUND SIGN>1."
+			AssertEquals ("UTF #1", expected [0], actual [0]);
+			AssertEquals ("UTF #2", expected [1], actual [1]);
+			AssertEquals ("UTF #3", expected [2], actual [2]);
+			AssertEquals ("UTF #4", expected [3], actual [3]);
+			AssertEquals ("UTF #5", expected [4], actual [4]);
+			AssertEquals ("UTF #6", expected [5], actual [5]);
+			AssertEquals ("UTF #7", expected [6], actual [6]);
+			AssertEquals ("UTF #8", expected [7], actual [7]);
+			AssertEquals ("UTF #9", expected [8], actual [8]);
+			AssertEquals ("UTF #10", expected [9], actual [9]);
+			AssertEquals ("UTF #11", expected [10], actual [10]);
+			AssertEquals ("UTF #12", expected [11], actual [11]);
+			AssertEquals ("UTF #13", expected [12], actual [12]);
+
+			AssertEquals ("GetString", UniCodeString, UTF7enc.GetString (UTF7Bytes));
+		}
+
                 [Test]
                 public void TestMaxCharCount()
                 {
