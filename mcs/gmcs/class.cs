@@ -137,17 +137,9 @@ namespace Mono.CSharp {
 		public TypeContainer (NamespaceEntry ns, TypeContainer parent, string name, Location l)
 			: base (ns, parent, name, l)
 		{
-			string n;
 			types = new ArrayList ();
 
-			if (parent == null)
-				n = "";
-			else 
-				n = parent.Name;
-
 			base_class_name = null;
-
-			//Console.WriteLine ("New class " + name + " inside " + n);
 		}
 
 		public AdditionResult AddConstant (Const constant)
@@ -531,7 +523,6 @@ namespace Mono.CSharp {
 		public bool EmitFieldInitializers (EmitContext ec)
 		{
 			ArrayList fields;
-			ILGenerator ig = ec.ig;
 			Expression instance_expr;
 			
 			if (ec.IsStatic){
@@ -1109,14 +1100,6 @@ namespace Mono.CSharp {
 			if (fields != null)
 				DefineMembers (fields, defined_names);
 
-			if ((RootContext.WarningLevel >= 4) && (fields != null)) {
-				foreach (Field f in fields) {
-					if (((f.ModFlags & Modifiers.READONLY) != 0) && !f.IsAssigned)
-						Report.Warning (649, "Field `" + MakeFQN (Name, f.Name) + "; is never " +
-								"assigned and will ever have its default value");
-				}
-			}
-
 			if (this is Class){
 				if (instance_constructors == null){
 					if (default_constructor == null)
@@ -1248,7 +1231,7 @@ namespace Mono.CSharp {
 		public override MemberList FindMembers (MemberTypes mt, BindingFlags bf,
 							MemberFilter filter, object criteria)
 		{
-			ArrayList members = new ArrayList ();
+			ArrayList members = null;
 
 			int modflags = 0;
 			if ((bf & BindingFlags.Public) != 0)
@@ -1280,35 +1263,52 @@ namespace Mono.CSharp {
 
 			if ((mt & MemberTypes.Field) != 0) {
 				if (fields != null) {
-					foreach (Field f in fields) {
+					int len = fields.Count;
+					for (int i = 0; i < len; i++) {
+						Field f = (Field) fields [i];
+						
 						if ((f.ModFlags & modflags) == 0)
 							continue;
 						if ((f.ModFlags & static_mask) != static_flags)
 							continue;
 
 						FieldBuilder fb = f.FieldBuilder;
-						if (fb != null && filter (fb, criteria) == true)
+						if (fb != null && filter (fb, criteria) == true) {
+							if (members == null)
+								members = new ArrayList ();
+							
 							members.Add (fb);
 					}
 				}
+				}
 
 				if (constants != null) {
-					foreach (Const con in constants) {
+					int len = constants.Count;
+					for (int i = 0; i < len; i++) {
+						Const con = (Const) constants [i];
+						
 						if ((con.ModFlags & modflags) == 0)
 							continue;
 						if ((con.ModFlags & static_mask) != static_flags)
 							continue;
 
 						FieldBuilder fb = con.FieldBuilder;
-						if (fb != null && filter (fb, criteria) == true)
+						if (fb != null && filter (fb, criteria) == true) {
+							if (members == null)
+								members = new ArrayList ();
+							
 							members.Add (fb);
 					}
 				}
 			}
+			}
 
 			if ((mt & MemberTypes.Method) != 0) {
 				if (methods != null) {
-					foreach (Method m in methods) {
+					int len = methods.Count;
+					for (int i = 0; i < len; i++) {
+						Method m = (Method) methods [i];
+						
 						if ((m.ModFlags & modflags) == 0)
 							continue;
 						if ((m.ModFlags & static_mask) != static_flags)
@@ -1316,26 +1316,40 @@ namespace Mono.CSharp {
 						
 						MethodBuilder mb = m.MethodBuilder;
 
-						if (mb != null && filter (mb, criteria) == true)
+						if (mb != null && filter (mb, criteria) == true) {
+							if (members == null)
+								members = new ArrayList ();
+							
 							members.Add (mb);
 					}
 				}
+				}
 
-				if (operators != null){
-					foreach (Operator o in operators) {
+				if (operators != null) {
+					int len = operators.Count;
+					for (int i = 0; i < len; i++) {
+						Operator o = (Operator) operators [i];
+
 						if ((o.ModFlags & modflags) == 0)
 							continue;
 						if ((o.ModFlags & static_mask) != static_flags)
 							continue;
 						
 						MethodBuilder ob = o.OperatorMethodBuilder;
-						if (ob != null && filter (ob, criteria) == true)
+						if (ob != null && filter (ob, criteria) == true) {
+							if (members == null)
+								members = new ArrayList ();
+							
 							members.Add (ob);
 					}
 				}
+				}
 
-				if (properties != null){
-					foreach (Property p in properties){
+				if (properties != null) {
+					int len = properties.Count;
+					for (int i = 0; i < len; i++) {
+						Property p = (Property) properties [i];
+
 						if ((p.ModFlags & modflags) == 0)
 							continue;
 						if ((p.ModFlags & static_mask) != static_flags)
@@ -1344,17 +1358,28 @@ namespace Mono.CSharp {
 						MethodBuilder b;
 
 						b = p.GetBuilder;
-						if (b != null && filter (b, criteria) == true)
+						if (b != null && filter (b, criteria) == true) {
+							if (members == null)
+								members = new ArrayList ();
+							
 							members.Add (b);
+						}
 
 						b = p.SetBuilder;
-						if (b != null && filter (b, criteria) == true)
+						if (b != null && filter (b, criteria) == true) {
+							if (members == null)
+								members = new ArrayList ();
+							
 							members.Add (b);
 					}
 				}
+				}
 				
-				if (indexers != null){
-					foreach (Indexer ix in indexers){
+				if (indexers != null) {
+					int len = indexers.Count;
+					for (int i = 0; i < len; i++) {
+						Indexer ix = (Indexer) indexers [i];
+				
 						if ((ix.ModFlags & modflags) == 0)
 							continue;
 						if ((ix.ModFlags & static_mask) != static_flags)
@@ -1363,33 +1388,52 @@ namespace Mono.CSharp {
 						MethodBuilder b;
 
 						b = ix.GetBuilder;
-						if (b != null && filter (b, criteria) == true)
+						if (b != null && filter (b, criteria) == true) {
+							if (members == null)
+								members = new ArrayList ();
+							
 							members.Add (b);
+						}
 
 						b = ix.SetBuilder;
-						if (b != null && filter (b, criteria) == true)
+						if (b != null && filter (b, criteria) == true) {
+							if (members == null)
+								members = new ArrayList ();
+							
 							members.Add (b);
 					}
 				}
 			}
+			}
 
 			if ((mt & MemberTypes.Event) != 0) {
-				if (events != null)
-				        foreach (Event e in events) {
+				if (events != null) {
+					int len = events.Count;
+					for (int i = 0; i < len; i++) {
+						Event e = (Event) events [i];
+						
 						if ((e.ModFlags & modflags) == 0)
 							continue;
 						if ((e.ModFlags & static_mask) != static_flags)
 							continue;
 
 						MemberInfo eb = e.EventBuilder;
-						if (eb != null && filter (eb, criteria) == true)
+						if (eb != null && filter (eb, criteria) == true) {
+							if (members == null)
+								members = new ArrayList ();
+							
 						        members.Add (e.EventBuilder);
 					}
 			}
+				}
+			}
 			
 			if ((mt & MemberTypes.Property) != 0){
-				if (properties != null)
-					foreach (Property p in properties) {
+				if (properties != null) {
+					int len = properties.Count;
+					for (int i = 0; i < len; i++) {
+						Property p = (Property) properties [i];
+						
 						if ((p.ModFlags & modflags) == 0)
 							continue;
 						if ((p.ModFlags & static_mask) != static_flags)
@@ -1397,12 +1441,19 @@ namespace Mono.CSharp {
 
 						MemberInfo pb = p.PropertyBuilder;
 						if (pb != null && filter (pb, criteria) == true) {
+							if (members == null)
+								members = new ArrayList ();
+							
 							members.Add (p.PropertyBuilder);
 						}
 					}
+				}
 
-				if (indexers != null)
-					foreach (Indexer ix in indexers) {
+				if (indexers != null) {
+					int len = indexers.Count;
+					for (int i = 0; i < len; i++) {
+						Indexer ix = (Indexer) indexers [i];
+
 						if ((ix.ModFlags & modflags) == 0)
 							continue;
 						if ((ix.ModFlags & static_mask) != static_flags)
@@ -1410,75 +1461,116 @@ namespace Mono.CSharp {
 
 						MemberInfo ib = ix.PropertyBuilder;
 						if (ib != null && filter (ib, criteria) == true) {
+							if (members == null)
+								members = new ArrayList ();
+							
 							members.Add (ix.PropertyBuilder);
 						}
 					}
 			}
+			}
 			
 			if ((mt & MemberTypes.NestedType) != 0) {
-				if (types != null){
-					foreach (TypeContainer t in types) {
+				if (types != null) {
+					int len = types.Count;
+					for (int i = 0; i < len; i++) {
+						TypeContainer t = (TypeContainer) types [i];
+						
 						if ((t.ModFlags & modflags) == 0)
 							continue;
 
 						TypeBuilder tb = t.TypeBuilder;
-						if (tb != null && (filter (tb, criteria) == true))
+						if (tb != null && (filter (tb, criteria) == true)) {
+							if (members == null)
+								members = new ArrayList ();
+							
 								members.Add (tb);
 					}
 				}
+				}
 
-				if (enums != null){
-					foreach (Enum en in enums){
+				if (enums != null) {
+					int len = enums.Count;
+					for (int i = 0; i < len; i++) {
+						Enum en = (Enum) enums [i];
+
 						if ((en.ModFlags & modflags) == 0)
 							continue;
 
 						TypeBuilder tb = en.TypeBuilder;
-						if (tb != null && (filter (tb, criteria) == true))
+						if (tb != null && (filter (tb, criteria) == true)) {
+							if (members == null)
+								members = new ArrayList ();
+							
 							members.Add (tb);
 					}
 				}
+				}
 				
-				if (delegates != null){
-					foreach (Delegate d in delegates){
+				if (delegates != null) {
+					int len = delegates.Count;
+					for (int i = 0; i < len; i++) {
+						Delegate d = (Delegate) delegates [i];
+				
 						if ((d.ModFlags & modflags) == 0)
 							continue;
 
 						TypeBuilder tb = d.TypeBuilder;
-						if (tb != null && (filter (tb, criteria) == true))
+						if (tb != null && (filter (tb, criteria) == true)) {
+							if (members == null)
+								members = new ArrayList ();
+							
 							members.Add (tb);
 					}
 				}
+				}
 
-				if (interfaces != null){
-					foreach (Interface iface in interfaces){
+				if (interfaces != null) {
+					int len = interfaces.Count;
+					for (int i = 0; i < len; i++) {
+						Interface iface = (Interface) interfaces [i];
+
 						if ((iface.ModFlags & modflags) == 0)
 							continue;
 
 						TypeBuilder tb = iface.TypeBuilder;
-						if (tb != null && (filter (tb, criteria) == true))
+						if (tb != null && (filter (tb, criteria) == true)) {
+							if (members == null)
+								members = new ArrayList ();
+							
 							members.Add (tb);
 					}
 				}
 			}
+			}
 
 			if ((mt & MemberTypes.Constructor) != 0){
 				if (((bf & BindingFlags.Instance) != 0) && (instance_constructors != null)){
-					foreach (Constructor c in instance_constructors){
+					int len = instance_constructors.Count;
+					for (int i = 0; i < len; i++) {
+						Constructor c = (Constructor) instance_constructors [i];
+						
 						ConstructorBuilder cb = c.ConstructorBuilder;
-						if (cb != null)
-							if (filter (cb, criteria) == true)
+						if (cb != null && filter (cb, criteria) == true) {
+							if (members == null)
+								members = new ArrayList ();
+							
 								members.Add (cb);
 					}
+				}
 				}
 
 				if (((bf & BindingFlags.Static) != 0) && (default_static_constructor != null)){
 					ConstructorBuilder cb =
 						default_static_constructor.ConstructorBuilder;
 					
-					if (cb != null)
-					if (filter (cb, criteria) == true)
+					if (cb != null && filter (cb, criteria) == true) {
+						if (members == null)
+							members = new ArrayList ();
+						
 						members.Add (cb);
 				}
+			}
 			}
 
 			//
@@ -1486,11 +1578,19 @@ namespace Mono.CSharp {
 			//
 			if (((bf & BindingFlags.DeclaredOnly) == 0) && (TypeBuilder.BaseType != null)) {
 				MemberList list = FindMembers (TypeBuilder.BaseType, mt, bf, filter, criteria);
+				if (list.Count > 0) {
+					if (members == null)
+						members = new ArrayList ();
+					
 				members.AddRange (list);
+			}
 			}
 
 			Timer.StopTimer (TimerType.TcFindMembers);
 
+			if (members == null)
+				return MemberList.Empty;
+			else
 			return new MemberList (members);
 		}
 
@@ -1587,10 +1687,10 @@ namespace Mono.CSharp {
 			if (RootContext.WarningLevel >= 3) {
 				if (fields != null){
 					foreach (Field f in fields) {
-						if ((f.ModFlags & Modifiers.PUBLIC) != 0)
+						if ((f.ModFlags & Modifiers.Accessibility) != Modifiers.PRIVATE)
 							continue;
 						
-						if (f.status == 0){
+						if ((f.status & Field.Status.USED) == 0){
 							Report.Warning (
 								169, f.Location, "Private field " +
 								MakeName (f.Name) + " is never used");
@@ -1628,11 +1728,12 @@ namespace Mono.CSharp {
 		
 		public override void CloseType ()
 		{
+			if (Created)
+				return;
+			
 			try {
-				if (!Created){
 					Created = true;
 					TypeBuilder.CreateType ();
-				}
 			} catch (TypeLoadException){
 				//
 				// This is fine, the code still created the type
@@ -1666,6 +1767,29 @@ namespace Mono.CSharp {
 			if (Delegates != null)
 				foreach (Delegate d in Delegates)
 					d.CloseType ();
+			
+			types = null;
+			properties = null;
+			enums = null;
+			delegates = null;
+			fields = null;
+			initialized_fields = null;
+			initialized_static_fields = null;
+			constants = null;
+			interfaces = null;
+			interface_order = null;
+			methods = null;
+			events = null;
+			indexers = null;
+			operators = null;
+			ec = null;
+			default_constructor = null;
+			default_static_constructor = null;
+			type_bases = null;
+			attributes = null;
+			ifaces = null;
+			parent_container = null;
+			member_cache = null;
 		}
 
 		public string MakeName (string n)
@@ -2544,7 +2668,7 @@ namespace Mono.CSharp {
 			// This is used to track the Entry Point,
 			//
 			if (Name == "Main" &&
-			    ((ModFlags & Modifiers.STATIC) != 0) && 
+			    ((ModFlags & Modifiers.STATIC) != 0) && RootContext.NeedsEntryPoint && 
 			    (RootContext.MainClass == null ||
 			     RootContext.MainClass == container.TypeBuilder.FullName)){
                                 if (IsEntryPoint (MethodBuilder, ParameterInfo)) {
@@ -2574,6 +2698,7 @@ namespace Mono.CSharp {
 		{
 			MethodData.Emit (container, Block, this);
 			Block = null;
+			MethodData = null;
 		}
 
 		void IIteratorContainer.SetYields ()
@@ -3440,6 +3565,8 @@ namespace Mono.CSharp {
 
 		protected MethodAttributes flags;
 
+		protected readonly int explicit_mod_flags;
+
 		//
 		// The "short" name of this property / indexer / event.  This is the
 		// name without the explicit interface.
@@ -3483,6 +3610,7 @@ namespace Mono.CSharp {
 				      Attributes attrs, Location loc)
 			: base (name, loc)
 		{
+			explicit_mod_flags = mod;
 			Type = type;
 			ModFlags = Modifiers.Check (allowed_mod, mod, def_mod, loc);
 			OptAttributes = attrs;
@@ -3764,6 +3892,8 @@ namespace Mono.CSharp {
 				if (!container.VerifyImplements (InterfaceType, ShortName, Name, Location))
 					return false;
 				
+				Modifiers.Check (Modifiers.AllowedExplicitImplFlags, explicit_mod_flags, 0, Location);
+				
 				IsExplicitImpl = true;
 			} else
 				IsExplicitImpl = false;
@@ -3802,8 +3932,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool IsAssigned;
-
 		protected readonly Object init;
 		// Private.
 		Expression init_expr;
@@ -3831,6 +3959,11 @@ namespace Mono.CSharp {
 			init_expr_initialized = true;
 
 			return init_expr;
+		}
+
+		public void SetAssigned ()
+		{
+			status |= Status.ASSIGNED;
 		}
 	}
 
@@ -4584,8 +4717,6 @@ namespace Mono.CSharp {
 		//
 		// Are we implementing an interface ?
 		//
-		bool IsImplementing = false;
-		
 		public Indexer (DeclSpace ds, Expression type, string int_type, int flags,
 				Parameters parameters, Accessor get_block, Accessor set_block,
 				Attributes attrs, Location loc)
@@ -4711,11 +4842,6 @@ namespace Mono.CSharp {
 						i + 1, array_param.Attributes, array_param.Name);
 				}
 			}
-
-			if (GetData != null)
-				IsImplementing = GetData.IsImplementing;
-			else if (SetData != null)
-				IsImplementing = SetData.IsImplementing;
 
 			//
 			// Define the PropertyBuilder if one of the following conditions are met:

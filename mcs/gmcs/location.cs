@@ -53,7 +53,6 @@ namespace Mono.CSharp {
 		static int source_bits;
 		static int source_mask;
 		static int source_count;
-		static int module_base;
 		static int current_source;
 
 		public readonly static Location Null;
@@ -63,7 +62,6 @@ namespace Mono.CSharp {
 			source_files = new Hashtable ();
 			source_list = new ArrayList ();
 			current_source = 0;
-			module_base = 0;
 			Null.token = 0;
 		}
 
@@ -140,7 +138,6 @@ namespace Mono.CSharp {
 		static public void Push (SourceFile file)
 		{
 			current_source = file.Index;
-			module_base = current_source << source_bits;
 		}
 
 		// <remarks>

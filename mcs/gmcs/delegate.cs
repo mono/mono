@@ -795,8 +795,6 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			Delegate del = TypeManager.LookupDelegate (InstanceExpr.Type);
-
 			//
 			// Invocation on delegates call the virtual Invoke member
 			// so we are always `instance' calls

@@ -456,7 +456,6 @@ namespace Mono.CSharp {
 				return true;
 
 			string check_type_name = check_type.FullName;
-			string type_name = TypeBuilder.FullName;
 			
 			int cio = check_type_name.LastIndexOf ('+');
 			string container = check_type_name.Substring (0, cio);
@@ -471,108 +470,107 @@ namespace Mono.CSharp {
 		}
 
 		// Access level of a type.
-		enum AccessLevel {
-			Public			= 0,
-			ProtectedInternal	= 1,
-			Internal		= 2,
-			Protected		= 3,
-			Private			= 4
+		const int X = 1;
+		enum AccessLevel { // Each column represents `is this scope larger or equal to Blah scope'
+			// Public    Assembly   Protected
+			Protected           = (0 << 0) | (0 << 1) | (X << 2),
+			Public              = (X << 0) | (X << 1) | (X << 2),
+			Private             = (0 << 0) | (0 << 1) | (0 << 2),
+			Internal            = (0 << 0) | (X << 1) | (0 << 2),
+			ProtectedOrInternal = (0 << 0) | (X << 1) | (X << 2),
 		}
 
-		// Check whether `flags' denotes a more restricted access than `level'
-		// and return the new level.
-		static AccessLevel CheckAccessLevel (AccessLevel level, int flags)
+		static AccessLevel GetAccessLevelFromModifiers (int flags)
 		{
-			AccessLevel old_level = level;
-
 			if ((flags & Modifiers.INTERNAL) != 0) {
-				if ((flags & Modifiers.PROTECTED) != 0) {
-					if ((int) level < (int) AccessLevel.ProtectedInternal)
-						level = AccessLevel.ProtectedInternal;
-				} else {
-					if ((int) level < (int) AccessLevel.Internal)
-						level = AccessLevel.Internal;
-				}
-			} else if ((flags & Modifiers.PROTECTED) != 0) {
-				if ((int) level < (int) AccessLevel.Protected)
-					level = AccessLevel.Protected;
-			} else if ((flags & Modifiers.PRIVATE) != 0)
-				level = AccessLevel.Private;
 
-			return level;
-		}
+				if ((flags & Modifiers.PROTECTED) != 0)
+					return AccessLevel.ProtectedOrInternal;
+				else
+					return AccessLevel.Internal;
 
-		// Return the access level for a new member which is defined in the current
-		// TypeContainer with access modifiers `flags'.
-		AccessLevel GetAccessLevel (int flags)
-		{
-			if ((flags & Modifiers.PRIVATE) != 0)
+			} else if ((flags & Modifiers.PROTECTED) != 0)
+				return AccessLevel.Protected;
+			else if ((flags & Modifiers.PRIVATE) != 0)
 				return AccessLevel.Private;
-
-			AccessLevel level;
-			if (!IsTopLevel && (Parent != null))
-				level = Parent.GetAccessLevel (flags);
 			else
-				level = AccessLevel.Public;
-
-			return CheckAccessLevel (CheckAccessLevel (level, flags), ModFlags);
-		}
-
-		// Return the access level for type `t', but don't give more access than `flags'.
-		static AccessLevel GetAccessLevel (Type t, int flags)
-		{
-			if (((flags & Modifiers.PRIVATE) != 0) || t.IsNestedPrivate)
-				return AccessLevel.Private;
-
-			AccessLevel level;
-			if (TypeManager.IsBuiltinType (t))
 				return AccessLevel.Public;
-			else if ((t.DeclaringType != null) && (t != t.DeclaringType))
-				level = GetAccessLevel (t.DeclaringType, flags);
-			else {
-				level = CheckAccessLevel (AccessLevel.Public, flags);
+		}
+
+		// What is the effective access level of this?
+		// TODO: Cache this?
+		AccessLevel EffectiveAccessLevel {
+			get {
+				AccessLevel myAccess = GetAccessLevelFromModifiers (ModFlags);
+				if (!IsTopLevel && (Parent != null))
+					return myAccess & Parent.EffectiveAccessLevel;
+				return myAccess;
 			}
+		}
 
-			if (t.IsNestedPublic)
-				return level;
+		// Return the access level for type `t'
+		static AccessLevel TypeEffectiveAccessLevel (Type t)
+		{
+			if (t.IsPublic)
+				return AccessLevel.Public;
+			if (t.IsNestedPrivate)
+				return AccessLevel.Private;
+			if (t.IsNotPublic)
+				return AccessLevel.Internal;
 
-			if (t.IsNestedAssembly || t.IsNotPublic) {
-				if ((int) level < (int) AccessLevel.Internal)
-					level = AccessLevel.Internal;
-			}
+			// By now, it must be nested
+			AccessLevel parentLevel = TypeEffectiveAccessLevel (t.DeclaringType);
 
-			if (t.IsNestedFamily) {
-				if ((int) level < (int) AccessLevel.Protected)
-					level = AccessLevel.Protected;
-			}
+ 			if (t.IsNestedPublic)
+				return parentLevel;
+			if (t.IsNestedAssembly)
+				return parentLevel & AccessLevel.Internal;
+			if (t.IsNestedFamily)
+				return parentLevel & AccessLevel.Protected;
+			if (t.IsNestedFamORAssem)
+				return parentLevel & AccessLevel.ProtectedOrInternal;
+			if (t.IsNestedFamANDAssem)
+				throw new NotImplementedException ("NestedFamANDAssem not implemented, cant make this kind of type from c# anyways");
 
-			if (t.IsNestedFamORAssem) {
-				if ((int) level < (int) AccessLevel.ProtectedInternal)
-					level = AccessLevel.ProtectedInternal;
-			}
+			// nested private is taken care of
 
-			return level;
+			throw new Exception ("I give up, what are you?");
 		}
 
 		//
-		// Returns true if `parent' is as accessible as the flags `flags'
-		// given for this member.
+		// This answers `is the type P, as accessible as a member M which has the
+		// accessability @flags which is declared as a nested member of the type T, this declspace'
 		//
-		public bool AsAccessible (Type parent, int flags)
+		public bool AsAccessible (Type p, int flags)
 		{
-			while (parent.IsArray || parent.IsPointer || parent.IsByRef)
-				parent = TypeManager.GetElementType (parent);
-
-			if (parent.IsGenericParameter)
+			if (p.IsGenericParameter)
 				return true; // FIXME
 
-			AccessLevel level = GetAccessLevel (flags);
-			AccessLevel level2 = GetAccessLevel (parent, flags);
+			//
+			// 1) if M is private, its accessability is the same as this declspace.
+			// we already know that P is accessible to T before this method, so we
+			// may return true.
+			//
 
-			return (int) level >= (int) level2;
+			if ((flags & Modifiers.PRIVATE) != 0)
+				return true;
+
+			while (p.IsArray || p.IsPointer || p.IsByRef)
+				p = TypeManager.GetElementType (p);
+
+			AccessLevel pAccess = TypeEffectiveAccessLevel (p);
+			AccessLevel mAccess = this.EffectiveAccessLevel &
+				GetAccessLevelFromModifiers (flags);
+
+			// for every place from which we can access M, we must
+			// be able to access P as well. So, we want
+			// For every bit in M and P, M_i -> P_1 == true
+			// or, ~ (M -> P) == 0 <-> ~ ( ~M | P) == 0
+
+			return ~ (~ mAccess | pAccess) == 0;
 		}
 		
-		static DoubleHash dh = new DoubleHash ();
+		static DoubleHash dh = new DoubleHash (1000);
 
 		Type LookupInterfaceOrClass (string ns, string name, out bool error)
 		{
@@ -583,7 +581,7 @@ namespace Mono.CSharp {
 			error = false;
 
 			if (dh.Lookup (ns, name, out r))
-				t = (Type) r;
+				return (Type) r;
 			else {
 				if (ns != ""){
 					if (Namespace.IsNamespace (ns)){
@@ -595,8 +593,10 @@ namespace Mono.CSharp {
 					t = TypeManager.LookupType (name);
 			}
 			
-			if (t != null)
+			if (t != null) {
+				dh.Insert (ns, name, t);
 				return t;
+			}
 
 			//
 			// In case we are fed a composite name, normalize it.
@@ -608,15 +608,18 @@ namespace Mono.CSharp {
 			}
 			
 			parent = RootContext.Tree.LookupByNamespace (ns, name);
-			if (parent == null)
+			if (parent == null) {
+				dh.Insert (ns, name, null);
 				return null;
+			}
 
 			t = parent.DefineType ();
-			dh.Insert (ns, name, t);
 			if (t == null){
 				error = true;
 				return null;
 			}
+			
+			dh.Insert (ns, name, t);
 			return t;
 		}
 
@@ -654,7 +657,7 @@ namespace Mono.CSharp {
 				Type container_type = containing_ds.TypeBuilder;
 				Type current_type = container_type;
 
-				while (current_type != null) {
+				while (current_type != null && current_type != TypeManager.object_type) {
 					string pre = current_type.FullName;
 
 					t = LookupInterfaceOrClass (pre, name, out error);
@@ -1047,7 +1050,8 @@ namespace Mono.CSharp {
 		public readonly IMemberContainer Container;
 		protected Hashtable member_hash;
 		protected Hashtable method_hash;
-		protected Hashtable interface_hash;
+		
+		Hashtable interface_hash;
 
 		/// <summary>
 		///   Create a new MemberCache for the given IMemberContainer `container'.
@@ -1059,12 +1063,14 @@ namespace Mono.CSharp {
 			Timer.IncrementCounter (CounterType.MemberCache);
 			Timer.StartTimer (TimerType.CacheInit);
 
-			interface_hash = new Hashtable ();
+			
 
 			// If we have a parent class (we have a parent class unless we're
 			// TypeManager.object_type), we deep-copy its MemberCache here.
 			if (Container.IsInterface) {
 				MemberCache parent;
+				interface_hash = new Hashtable ();
+				
 				if (Container.Parent != null)
 					parent = Container.Parent.MemberCache;
 				else
@@ -1104,13 +1110,6 @@ namespace Mono.CSharp {
 			return hash;
 		}
 
-		void AddInterfaces (MemberCache parent)
-		{
-			foreach (Type iface in parent.interface_hash.Keys) {
-				if (!interface_hash.Contains (iface))
-					interface_hash.Add (iface, true);
-			}
-		}
 
 		/// <summary>
 		///   Add the contents of `new_hash' to `hash'.
@@ -1142,7 +1141,8 @@ namespace Mono.CSharp {
 
 				if (interface_hash.Contains (itype))
 					continue;
-				interface_hash.Add (itype, true);
+				
+				interface_hash [itype] = null;
 
 				IMemberContainer iface_container =
 					TypeManager.LookupMemberContainer (itype);
@@ -1150,7 +1150,12 @@ namespace Mono.CSharp {
 				MemberCache iface_cache = iface_container.MemberCache;
 
 				AddHashtable (hash, iface_cache.member_hash);
-				AddInterfaces (iface_cache);
+				
+				if (iface_cache.interface_hash == null)
+					continue;
+				
+				foreach (Type parent_contains in iface_cache.interface_hash.Keys)
+					interface_hash [parent_contains] = null;
 			}
 
 			return hash;
@@ -1191,8 +1196,6 @@ namespace Mono.CSharp {
 		void AddMembers (MemberTypes mt, BindingFlags bf, IMemberContainer container)
 		{
 			MemberList members = container.GetMembers (mt, bf);
-			BindingFlags new_bf = (container == Container) ?
-				bf | BindingFlags.DeclaredOnly : bf;
 
 			foreach (MemberInfo member in members) {
 				string name = member.Name;

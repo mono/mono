@@ -565,15 +565,23 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			Type expr_type = Expr.Type;
 			
 			switch (Oper) {
 			case Operator.UnaryPlus:
 				throw new Exception ("This should be caught by Resolve");
 				
 			case Operator.UnaryNegation:
+				if (ec.CheckState) {
+					ig.Emit (OpCodes.Ldc_I4_0);
+					if (type == TypeManager.int64_type)
+						ig.Emit (OpCodes.Conv_U8);
+					Expr.Emit (ec);
+					ig.Emit (OpCodes.Sub_Ovf);
+				} else {
 				Expr.Emit (ec);
 				ig.Emit (OpCodes.Neg);
+				}
+				
 				break;
 				
 			case Operator.LogicalNot:
@@ -1792,8 +1800,6 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return null;
 
-			int errors = Report.Errors;
-
 			type = ec.DeclSpace.ResolveType (target_type, false, Location);
 			
 			if (type == null)
@@ -2192,8 +2198,6 @@ namespace Mono.CSharp {
 		Expression CheckShiftArguments (EmitContext ec)
 		{
 			Expression e;
-			Type l = left.Type;
-			Type r = right.Type;
 
 			e = ForceConversion (ec, right, TypeManager.int32_type);
 			if (e == null){
@@ -2957,7 +2961,6 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 			Type l = left.Type;
-			Type r = right.Type;
 			OpCode opcode;
 
 			//
@@ -3020,7 +3023,6 @@ namespace Mono.CSharp {
 			right.Emit (ec);
 
 			bool isUnsigned = is_unsigned (left.Type);
-			IntConstant ic;
 			
 			switch (oper){
 			case Operator.Multiply:
@@ -3569,10 +3571,8 @@ namespace Mono.CSharp {
 #endif
 		}
 		
-		public override Expression DoResolve (EmitContext ec)
+		protected Expression DoResolve (EmitContext ec, bool is_lvalue)
 		{
-			DoResolveBase (ec);
-
 			Expression e = Block.GetConstantExpression (Name);
 			if (e != null) {
 				local_info.Used = true;
@@ -3584,10 +3584,20 @@ namespace Mono.CSharp {
 			if ((variable_info != null) && !variable_info.IsAssigned (ec, loc))
 				return null;
 
+			if (!is_lvalue)
+				local_info.Used = true;
+
 			if (local_info.LocalBuilder == null)
 				return ec.RemapLocal (local_info);
 			
 			return this;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			DoResolveBase (ec);
+
+			return DoResolve (ec, false);
 		}
 
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
@@ -3598,7 +3608,7 @@ namespace Mono.CSharp {
 			if (variable_info != null)
 				variable_info.SetAssigned (ec);
 
-			Expression e = DoResolve (ec);
+			Expression e = DoResolve (ec, true);
 
 			if (e == null)
 				return null;
@@ -3629,8 +3639,6 @@ namespace Mono.CSharp {
 		public void EmitAssign (EmitContext ec, Expression source)
 		{
 			ILGenerator ig = ec.ig;
-
-			local_info.Assigned = true;
 
 			source.Emit (ec);
 			ig.Emit (OpCodes.Stloc, local_info.LocalBuilder);
@@ -4225,8 +4233,29 @@ namespace Mono.CSharp {
 
 			int cand_count = candidate_pd.Count;
 
+			//
+			// If there is no best method, than this one
+			// is better, however, if we already found a
+			// best method, we cant tell. This happens
+			// if we have:
+			// 
+			//
+			//	interface IFoo {
+			//		void DoIt ();
+			//	}
+			//	
+			//	interface IBar {
+			//		void DoIt ();
+			//	}
+			//	
+			//	interface IFooBar : IFoo, IBar {}
+			//
+			// We cant tell if IFoo.DoIt is better than IBar.DoIt
+			//
+			// However, we have to consider that
+			// Trim (); is better than Trim (params char[] chars);
 			if (cand_count == 0 && argument_count == 0)
-				return 1;
+				return best == null || best_params ? 1 : 0;
 
 			if (candidate_pd.ParameterModifier (cand_count - 1) != Parameter.Modifier.PARAMS)
 				if (cand_count != argument_count)
@@ -4473,8 +4502,6 @@ namespace Mono.CSharp {
 
 
 			ParameterData pd = GetParameterData (candidate);
-
-			int pd_count = pd.Count;
 
 			if (arg_count != pd.Count)
 				return false;
@@ -4752,8 +4779,6 @@ namespace Mono.CSharp {
 				Parameter.Modifier pm = pd.ParameterModifier (j);
 				
 				if (pm == Parameter.Modifier.PARAMS){
-					Parameter.Modifier am = a.GetParameterModifier ();
-
 					if ((pm & ~Parameter.Modifier.PARAMS) != a.GetParameterModifier ()) {
 						if (!Location.IsNull (loc))
 							Error_InvalidArguments (
@@ -4832,8 +4857,6 @@ namespace Mono.CSharp {
 			//
 			if (expr is BaseAccess)
 				is_base = true;
-
-			Expression old = expr;
 
 			expr = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
 			if (expr == null)
@@ -6820,8 +6843,6 @@ namespace Mono.CSharp {
 			// it will fail to find any members at all
 			//
 
-			int errors = Report.Errors;
-			
 			Type expr_type = expr.Type;
 			if (expr is TypeExpr){
 				if (!ec.DeclSpace.CheckAccessLevel (expr_type)){
@@ -7182,9 +7203,9 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+#if false
 			ExprClass eclass = ea.Expr.eclass;
 
-#if false
 			// As long as the type is valid
 			if (!(eclass == ExprClass.Variable || eclass == ExprClass.PropertyAccess ||
 			      eclass == ExprClass.Value)) {
@@ -7717,8 +7738,6 @@ namespace Mono.CSharp {
 			ArrayList AllSetters = new ArrayList();
 			if (!CommonResolve (ec))
 				return null;
-
-			Type right_type = right_side.Type;
 
 			bool found_any = false, found_any_setters = false;
 

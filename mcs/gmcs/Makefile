@@ -93,5 +93,22 @@ ctest:
 	-rm mcs2.exe mcs3.exe
 	make btest USE_MCS_FLAGS= 
 
+# we need this because bash tries to use its own crappy timer
+FRIENDLY_TIME = $(shell which time) -f'%U seconds'
+
+do-time : mcs.exe
+	@ echo -n "Run 1:   "
+	@ $(FRIENDLY_TIME) $(RUNTIME) ./mcs.exe $(USE_MCS_FLAGS) /target:exe /out:mcs2.exe $(all_sources) > /dev/null || (echo FAILED; exit 1)
+	@ echo -n "Run 2:   "
+	@ $(FRIENDLY_TIME) $(RUNTIME) ./mcs2.exe $(USE_MCS_FLAGS) /target:exe /out:mcs3.exe $(all_sources) > /dev/null || (echo FAILED; exit 1)
+	@ echo -n "corlib:  "
+	@ rm -f ../class/lib/mscorlib.dll
+	@ (cd ../class/corlib ; make BOOTSTRAP_MCS="$(FRIENDLY_TIME) mono ../../mcs/mcs.exe" > /dev/null ) || (echo FAILED; exit 1)
+
+PROFILER=default
+
+profile : mcs.exe
+	$(RUNTIME) --profile=$(PROFILER) ./mcs.exe $(USE_MCS_FLAGS) /target:exe /out:mcs2.exe $(all_sources)
+
 response:
 	echo $(all_sources) > res

@@ -13,6 +13,7 @@ using System;
 using System.Text;
 using System.Collections;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace Mono.CSharp {
 
@@ -68,13 +69,55 @@ namespace Mono.CSharp {
 			}
 		}
 		
+		public static string FriendlyStackTrace (Exception e)
+		{
+			return FriendlyStackTrace (new StackTrace (e, true));
+		}
+		
+		static string FriendlyStackTrace (StackTrace t)
+		{		
+			StringBuilder sb = new StringBuilder ();
+			
+			bool foundUserCode = false;
+			
+			for (int i = 0; i < t.FrameCount; i++) {
+				StackFrame f = t.GetFrame (i);
+				MethodBase mb = f.GetMethod ();
+				
+				if (!foundUserCode && mb.ReflectedType == typeof (Report))
+					continue;
+				
+				foundUserCode = true;
+				
+				sb.Append ("\tin ");
+				
+				if (f.GetFileLineNumber () > 0)
+					sb.AppendFormat ("(at {0}:{1}) ", f.GetFileName (), f.GetFileLineNumber ());
+				
+				sb.AppendFormat ("{0}.{1} (", mb.ReflectedType.Name, mb.Name);
+				
+				bool first = true;
+				foreach (ParameterInfo pi in mb.GetParameters ()) {
+					if (!first)
+						sb.Append (", ");
+					first = false;
+					
+					sb.Append (TypeManager.CSharpName (pi.ParameterType));
+				}
+				sb.Append (")\n");
+			}
+	
+			return sb.ToString ();
+		}
+		
 		static public void RealError (string msg)
 		{
 			Errors++;
 			Console.WriteLine (msg);
 
 			if (Stacktrace)
-				Console.WriteLine (new StackTrace ().ToString ());
+				Console.WriteLine (FriendlyStackTrace (new StackTrace (true)));
+			
 			if (Fatal)
 				throw new Exception (msg);
 		}

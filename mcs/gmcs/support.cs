@@ -206,7 +206,11 @@ namespace Mono.CSharp {
 	}
 
 	class PtrHashtable : Hashtable {
-		class PtrComparer : IComparer {
+		sealed class PtrComparer : IComparer {
+			private PtrComparer () {}
+			
+			public static PtrComparer Instance = new PtrComparer ();
+			
 			public int Compare (object x, object y)
 			{
 				if (x == y)
@@ -218,7 +222,50 @@ namespace Mono.CSharp {
 		
 		public PtrHashtable ()
 		{
-			comparer = new PtrComparer ();
+			comparer = PtrComparer.Instance;
+		}
+	}
+
+	/*
+	 * Hashtable whose keys are character arrays with the same length
+	 */
+	class CharArrayHashtable : Hashtable {
+		sealed class ArrComparer : IComparer {
+			private int len;
+
+			public ArrComparer (int len) {
+				this.len = len;
+			}
+
+			public int Compare (object x, object y)
+			{
+				char[] a = (char[])x;
+				char[] b = (char[])y;
+
+				for (int i = 0; i < len; ++i)
+					if (a [i] != b [i])
+						return 1;
+				return 0;
+			}
+		}
+
+		private int len;
+
+		protected override int GetHash (Object key)
+		{
+			char[] arr = (char[])key;
+			int h = 0;
+
+			for (int i = 0; i < len; ++i)
+				h = (h << 5) - h + arr [i];
+
+			return h;
+		}
+
+		public CharArrayHashtable (int len)
+		{
+			this.len = len;
+			comparer = new ArrComparer (len);
 		}
 	}
 
@@ -330,23 +377,46 @@ namespace Mono.CSharp {
 	}
 
 	public class DoubleHash {
-		Hashtable l = new Hashtable ();
+		const int DEFAULT_INITIAL_BUCKETS = 100;
 		
-		public DoubleHash ()
+		public DoubleHash () : this (DEFAULT_INITIAL_BUCKETS) {}
+		
+		public DoubleHash (int size)
 		{
+			count = size;
+			buckets = new Entry [size];
+		}
+		
+		int count;
+		Entry [] buckets;
+		int size = 0;
+		
+		class Entry {
+			public object key1;
+			public object key2;
+			public int hash;
+			public object value;
+			public Entry next;
+	
+			public Entry (object key1, object key2, int hash, object value, Entry next)
+			{
+				this.key1 = key1;
+				this.key2 = key2;
+				this.hash = hash;
+				this.next = next;
+				this.value = value;
+			}
 		}
 
 		public bool Lookup (object a, object b, out object res)
 		{
-			object r = l [a];
-			if (r == null){
-				res = null;
-				return false;
+			int h = (a.GetHashCode () ^ b.GetHashCode ()) & 0x7FFFFFFF;
+			
+			for (Entry e = buckets [h % count]; e != null; e = e.next) {
+				if (e.hash == h && e.key1.Equals (a) && e.key2.Equals (b)) {
+					res = e.value;
+					return true;
 			}
-			Hashtable ht = (Hashtable) r;
-			if (ht.Contains (b)){
-				res = ht [b];
-				return true;
 			}
 			res = null;
 			return false;
@@ -354,16 +424,37 @@ namespace Mono.CSharp {
 
 		public void Insert (object a, object b, object value)
 		{
-			Hashtable ht;
-			object r = l [a];
-			if (r == null){
-				ht = new Hashtable ();
-				l [a] = ht;
-				ht [b] = value;
-				return;
+			// Is it an existing one?
+		
+			int h = (a.GetHashCode () ^ b.GetHashCode ()) & 0x7FFFFFFF;
+			
+			for (Entry e = buckets [h % count]; e != null; e = e.next) {
+				if (e.hash == h && e.key1.Equals (a) && e.key2.Equals (b))
+					e.value = value;
 			}
-			ht = (Hashtable) r;
-			ht [b] = value;
+			
+			int bucket = h % count;
+			buckets [bucket] = new Entry (a, b, h, value, buckets [bucket]);
+			
+			// Grow whenever we double in size
+			if (size++ == count) {
+				count <<= 1;
+				count ++;
+				
+				Entry [] newBuckets = new Entry [count];
+				foreach (Entry root in buckets) {
+					Entry e = root;
+					while (e != null) {
+						int newLoc = e.hash % count;
+						Entry n = e.next;
+						e.next = newBuckets [newLoc];
+						newBuckets [newLoc] = e;
+						e = n;
+					}
+				}
+
+				buckets = newBuckets;
+			}
 		}
 	}
 }

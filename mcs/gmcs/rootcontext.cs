@@ -64,6 +64,9 @@ namespace Mono.CSharp {
 
 		public static int WarningLevel = 2;
 
+		public static Target Target = Target.Exe;
+		public static string TargetExt = ".exe";
+
 		//
 		// If set, enable C# version 2 features
 		//
@@ -76,6 +79,12 @@ namespace Mono.CSharp {
 			tree = new Tree ();
 			interface_resolve_order = new ArrayList ();
 			type_container_resolve_order = new ArrayList ();
+		}
+
+		public static bool NeedsEntryPoint {
+			get {
+				return RootContext.Target == Target.Exe || RootContext.Target == Target.WinExe;
+			}
 		}
 
 		static public Tree Tree {
@@ -389,8 +398,6 @@ namespace Mono.CSharp {
 		{
 			TypeContainer root = Tree.Types;
 			
-			ArrayList ifaces = root.Interfaces;
-
 			if (root.Enums != null)
 				foreach (Enum en in root.Enums)
 					en.CloseType ();
@@ -431,6 +438,13 @@ namespace Mono.CSharp {
 				foreach (TypeBuilder type_builder in helper_classes)
 					type_builder.CreateType ();
 			}
+			
+			attribute_types = null;
+			interface_resolve_order = null;
+			type_container_resolve_order = null;
+			helper_classes = null;
+			tree = null;
+			TypeManager.CleanUp ();
 		}
 
 		/// <summary>
@@ -461,8 +475,6 @@ namespace Mono.CSharp {
 
 		static Type NamespaceLookup (DeclSpace ds, string name, Location loc)
 		{
-			Type t;
-
 			//
 			// Try in the current namespace and all its implicit parents
 			//
@@ -789,7 +801,6 @@ namespace Mono.CSharp {
 		static public FieldBuilder MakeStaticData (byte [] data)
 		{
 			FieldBuilder fb;
-			int size = data.Length;
 			
 			if (impl_details_class == null){
 				impl_details_class = CodeGen.ModuleBuilder.DefineType (

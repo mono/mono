@@ -1003,7 +1003,6 @@ namespace Mono.CSharp {
 		static public Expression ImplicitConversion (EmitContext ec, Expression expr,
 							     Type target_type, Location loc)
 		{
-			Type expr_type = expr.Type;
 			Expression e;
 
 			if (target_type == null)

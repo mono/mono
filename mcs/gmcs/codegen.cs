@@ -92,7 +92,7 @@ namespace Mono.CSharp {
 			
 			current_domain = AppDomain.CurrentDomain;
 			AssemblyBuilder = current_domain.DefineDynamicAssembly (
-				an, AssemblyBuilderAccess.RunAndSave, Dirname (name));
+				an, AssemblyBuilderAccess.Save, Dirname (name));
 
 			//
 			// Pass a path-less name to DefineDynamicModule.  Wonder how
@@ -321,7 +321,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public bool InEnumContext;
 
-		protected Stack FlowStack;
+		FlowBranching current_flow_branching;
 		
 		public EmitContext (DeclSpace parent, DeclSpace ds, Location l, ILGenerator ig,
 				    Type return_type, int code_flags, bool is_constructor)
@@ -351,8 +351,6 @@ namespace Mono.CSharp {
 			}
 			loc = l;
 
-			FlowStack = new Stack ();
-			
 			if (ReturnType == TypeManager.void_type)
 				ReturnType = null;
 		}
@@ -371,7 +369,7 @@ namespace Mono.CSharp {
 
 		public FlowBranching CurrentBranching {
 			get {
-				return (FlowBranching) FlowStack.Peek ();
+				return current_flow_branching;
 			}
 		}
 
@@ -381,11 +379,8 @@ namespace Mono.CSharp {
 		// </summary>
 		public FlowBranching StartFlowBranching (FlowBranching.BranchingType type, Location loc)
 		{
-			FlowBranching cfb = FlowBranching.CreateBranching (CurrentBranching, type, null, loc);
-
-			FlowStack.Push (cfb);
-
-			return cfb;
+			current_flow_branching = FlowBranching.CreateBranching (CurrentBranching, type, null, loc);
+			return current_flow_branching;
 		}
 
 		// <summary>
@@ -393,7 +388,6 @@ namespace Mono.CSharp {
 		// </summary>
 		public FlowBranching StartFlowBranching (Block block)
 		{
-			FlowBranching cfb;
 			FlowBranching.BranchingType type;
 
 			if (CurrentBranching.Type == FlowBranching.BranchingType.Switch)
@@ -401,22 +395,31 @@ namespace Mono.CSharp {
 			else
 				type = FlowBranching.BranchingType.Block;
 
-			cfb = FlowBranching.CreateBranching (CurrentBranching, type, block, block.StartLocation);
-
-			FlowStack.Push (cfb);
-
-			return cfb;
+			current_flow_branching = FlowBranching.CreateBranching (CurrentBranching, type, block, block.StartLocation);
+			return current_flow_branching;
 		}
 
 		// <summary>
 		//   Ends a code branching.  Merges the state of locals and parameters
 		//   from all the children of the ending branching.
 		// </summary>
-		public FlowBranching.FlowReturns EndFlowBranching ()
+		public FlowBranching.UsageVector DoEndFlowBranching ()
 		{
-			FlowBranching cfb = (FlowBranching) FlowStack.Pop ();
+			FlowBranching old = current_flow_branching;
+			current_flow_branching = current_flow_branching.Parent;
 
-			return CurrentBranching.MergeChild (cfb);
+			return current_flow_branching.MergeChild (old);
+		}
+
+		// <summary>
+		//   Ends a code branching.  Merges the state of locals and parameters
+		//   from all the children of the ending branching.
+		// </summary>
+		public FlowBranching.Reachability EndFlowBranching ()
+		{
+			FlowBranching.UsageVector vector = DoEndFlowBranching ();
+
+			return vector.Reachability;
 		}
 
 		// <summary>
@@ -425,7 +428,7 @@ namespace Mono.CSharp {
 		// </summary>
 		public void KillFlowBranching ()
 		{
-			FlowBranching cfb = (FlowBranching) FlowStack.Pop ();
+			current_flow_branching = current_flow_branching.Parent;
 		}
 
 		public void EmitTopBlock (Block block, InternalParameters ip, Location loc)
@@ -445,34 +448,28 @@ namespace Mono.CSharp {
 					bool old_do_flow_analysis = DoFlowAnalysis;
 					DoFlowAnalysis = true;
 
-					FlowBranching cfb = FlowBranching.CreateBranching (
+					current_flow_branching = FlowBranching.CreateBranching (
 						null, FlowBranching.BranchingType.Block, block, loc);
-					FlowStack.Push (cfb);
 
 					if (!block.Resolve (this)) {
-						FlowStack.Pop ();
+						current_flow_branching = null;
 						DoFlowAnalysis = old_do_flow_analysis;
 						return;
 					}
 
-					cfb = (FlowBranching) FlowStack.Pop ();
-					FlowBranching.FlowReturns returns = cfb.MergeTopBlock ();
+					FlowBranching.Reachability reachability = current_flow_branching.MergeTopBlock ();
+					current_flow_branching = null;
 
 					DoFlowAnalysis = old_do_flow_analysis;
 
-					has_ret = block.Emit (this);
+					block.Emit (this);
 
-					if ((returns == FlowBranching.FlowReturns.Always) ||
-					    (returns == FlowBranching.FlowReturns.Exception) ||
-					    (returns == FlowBranching.FlowReturns.Unreachable))
+					if ((reachability.Returns == FlowBranching.FlowReturns.Always) ||
+					    (reachability.Throws == FlowBranching.FlowReturns.Always) ||
+					    (reachability.Reachable == FlowBranching.FlowReturns.Never))
 						has_ret = true;
-
-					if (Report.Errors == errors){
-						if (RootContext.WarningLevel >= 3)
-							block.UsageWarning ();
 					}
-				}
-			    } catch {
+			    } catch (Exception e) {
 					Console.WriteLine ("Exception caught by the compiler while compiling:");
 					Console.WriteLine ("   Block that caused the problem begin at: " + loc);
 					
@@ -480,7 +477,11 @@ namespace Mono.CSharp {
 						Console.WriteLine ("                     Block being compiled: [{0},{1}]",
 								   CurrentBlock.StartLocation, CurrentBlock.EndLocation);
 					}
-					throw;
+					
+					Console.WriteLine (e.GetType ().FullName + ": " + e.Message);
+					Console.WriteLine (Report.FriendlyStackTrace (e));
+					
+					Environment.Exit (1);
 			    }
 			}
 

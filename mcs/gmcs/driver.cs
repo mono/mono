@@ -18,7 +18,7 @@ namespace Mono.CSharp
 	using System.Text;
 	using System.Globalization;
 
-	enum Target {
+	public enum Target {
 		Library, Exe, Module, WinExe
 	};
 	
@@ -40,6 +40,11 @@ namespace Mono.CSharp
 		//
 		static ArrayList soft_references;
 
+		//
+		// Modules to be linked
+		//
+		static ArrayList modules;
+
 		// Lookup paths
 		static ArrayList link_paths;
 
@@ -50,9 +55,6 @@ namespace Mono.CSharp
 		static bool tokenize = false;
 		
 		static string first_source;
-
-		static Target target = Target.Exe;
-		static string target_ext = ".exe";
 
 		static bool want_debugging_support = false;
 
@@ -145,7 +147,6 @@ namespace Mono.CSharp
 				int token, tokens = 0, errors = 0;
 
 				while ((token = lexer.token ()) != Token.EOF){
-					Location l = lexer.Location;
 					tokens++;
 					if (token == Token.ERROR)
 						errors++;
@@ -309,6 +310,52 @@ namespace Mono.CSharp
 				Report.Error(6, "Cannot load assembly " + f.FusionLog);
 			} catch (ArgumentNullException){
 				Report.Error(6, "Cannot load assembly (null argument)");
+			}
+		}
+
+		static public void LoadModule (MethodInfo adder_method, string module)
+		{
+			Module m;
+			string total_log = "";
+
+			try {
+				try {
+					m = (Module)adder_method.Invoke (CodeGen.AssemblyBuilder, new object [] { module });
+				}
+				catch (TargetInvocationException ex) {
+					throw ex.InnerException;
+				}
+				TypeManager.AddModule (m);
+
+			} 
+			catch (FileNotFoundException){
+				foreach (string dir in link_paths){
+					string full_path = Path.Combine (dir, module);
+					if (!module.EndsWith (".netmodule"))
+						full_path += ".netmodule";
+
+					try {
+						try {
+							m = (Module)adder_method.Invoke (CodeGen.AssemblyBuilder, new object [] { full_path });
+						}
+						catch (TargetInvocationException ex) {
+							throw ex.InnerException;
+						}
+						TypeManager.AddModule (m);
+						return;
+					} catch (FileNotFoundException ff) {
+						total_log += ff.FusionLog;
+						continue;
+					}
+				}
+				Report.Error (6, "Cannot find module `" + module + "'" );
+				Console.WriteLine ("Log: \n" + total_log);
+			} catch (BadImageFormatException f) {
+				Report.Error(6, "Cannot load module (bad file format)" + f.FusionLog);
+			} catch (FileLoadException f){
+				Report.Error(6, "Cannot load module " + f.FusionLog);
+			} catch (ArgumentNullException){
+				Report.Error(6, "Cannot load module (null argument)");
 			}
 		}
 
@@ -703,21 +750,21 @@ namespace Mono.CSharp
 				string type = args [++i];
 				switch (type){
 				case "library":
-					target = Target.Library;
-					target_ext = ".dll";
+					RootContext.Target = Target.Library;
+					RootContext.TargetExt = ".dll";
 					break;
 					
 				case "exe":
-					target = Target.Exe;
+					RootContext.Target = Target.Exe;
 					break;
 					
 				case "winexe":
-					target = Target.WinExe;
+					RootContext.Target = Target.WinExe;
 					break;
 					
 				case "module":
-					target = Target.Module;
-					target_ext = ".dll";
+					RootContext.Target = Target.Module;
+					RootContext.TargetExt = ".dll";
 					break;
 				default:
 					TargetUsage ();
@@ -856,21 +903,21 @@ namespace Mono.CSharp
 			case "/target":
 				switch (value){
 				case "exe":
-					target = Target.Exe;
+					RootContext.Target = Target.Exe;
 					break;
 
 				case "winexe":
-					target = Target.WinExe;
+					RootContext.Target = Target.WinExe;
 					break;
 
 				case "library":
-					target = Target.Library;
-					target_ext = ".dll";
+					RootContext.Target = Target.Library;
+					RootContext.TargetExt = ".dll";
 					break;
 
 				case "module":
-					target = Target.Module;
-					target_ext = ".netmodule";
+					RootContext.Target = Target.Module;
+					RootContext.TargetExt = ".netmodule";
 					break;
 
 				default:
@@ -955,6 +1002,18 @@ namespace Mono.CSharp
 				string [] refs = value.Split (new char [] { ';', ',' });
 				foreach (string r in refs){
 					references.Add (r);
+				}
+				return true;
+			}
+			case "/addmodule": {
+				if (value == ""){
+					Report.Error (5, arg + " requires an argument");
+					Environment.Exit (1);
+				}
+
+				string [] refs = value.Split (new char [] { ';', ',' });
+				foreach (string r in refs){
+					modules.Add (r);
 				}
 				return true;
 			}
@@ -1143,6 +1202,7 @@ namespace Mono.CSharp
 			
 			references = new ArrayList ();
 			soft_references = new ArrayList ();
+			modules = new ArrayList ();
 			link_paths = new ArrayList ();
 
 			SetupDefaultDefines ();
@@ -1265,18 +1325,37 @@ namespace Mono.CSharp
 				int pos = first_source.LastIndexOf ('.');
 
 				if (pos > 0)
-					output_file = first_source.Substring (0, pos) + target_ext;
+					output_file = first_source.Substring (0, pos) + RootContext.TargetExt;
 				else
-					output_file = first_source + target_ext;
+					output_file = first_source + RootContext.TargetExt;
 			}
 
 			CodeGen.Init (output_file, output_file, want_debugging_support);
 
+			if (RootContext.Target == Target.Module) {
+				PropertyInfo module_only = typeof (AssemblyBuilder).GetProperty ("IsModuleOnly", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
+				if (module_only == null) {
+					Report.Error (0, new Location (-1), "Cannot use /target:module on this runtime: try the Mono runtime instead.");
+					Environment.Exit (1);
+				}
+
+				module_only.SetValue (CodeGen.AssemblyBuilder, true, null);
+			}
+
 			TypeManager.AddModule (CodeGen.ModuleBuilder);
 
-			DateTime start = DateTime.Now;
+			if (modules.Count > 0) {
+				MethodInfo adder_method = typeof (AssemblyBuilder).GetMethod ("AddModule", BindingFlags.Instance|BindingFlags.NonPublic);
+				if (adder_method == null) {
+					Report.Error (0, new Location (-1), "Cannot use /addmodule on this runtime: Try the Mono runtime instead.");
+					Environment.Exit (1);
+				}
+
+				foreach (string module in modules)
+					LoadModule (adder_method, module);
+			}
+
 			TypeManager.ComputeNamespaces ();
-			DateTime end = DateTime.Now;
 			
 			//
 			// Before emitting, we need to get the core
@@ -1342,20 +1421,20 @@ namespace Mono.CSharp
 
 			PEFileKinds k = PEFileKinds.ConsoleApplication;
 				
-			if (target == Target.Library || target == Target.Module){
-				k = PEFileKinds.Dll;
+			switch (RootContext.Target) {
+			case Target.Library:
+			case Target.Module:
+				k = PEFileKinds.Dll; break;
+			case Target.Exe:
+				k = PEFileKinds.ConsoleApplication; break;
+			case Target.WinExe:
+				k = PEFileKinds.WindowApplication; break;
+			}
 
-				if (RootContext.MainClass != null)
-					Report.Error (2017, "Can not specify -main: when building module or library");
-			} else if (target == Target.Exe)
-				k = PEFileKinds.ConsoleApplication;
-			else if (target == Target.WinExe)
-				k = PEFileKinds.WindowApplication;
-
-			if (target == Target.Exe || target == Target.WinExe){
+			if (RootContext.NeedsEntryPoint) {
 				MethodInfo ep = RootContext.EntryPoint;
 
-				if (ep == null){
+				if (ep == null) {
 					if (Report.Errors == 0)
 						Report.Error (5001, "Program " + output_file +
 							      " does not have an entry point defined");
@@ -1363,6 +1442,8 @@ namespace Mono.CSharp
 				}
 				
 				CodeGen.AssemblyBuilder.SetEntryPoint (ep, k);
+			} else if (RootContext.MainClass != null) {
+				Report.Error (2017, "Can not specify -main: when building module or library");
 			}
 
 			//
@@ -1388,7 +1469,8 @@ namespace Mono.CSharp
 				object[] margs = new object [2];
 				Type[] argst = new Type [2];
 				argst [0] = argst [1] = typeof (string);
-				MethodInfo embed_res = typeof (AssemblyBuilder).GetMethod ("EmbedResourceFile", argst);
+
+				MethodInfo embed_res = typeof (AssemblyBuilder).GetMethod ("EmbedResourceFile", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic, null, CallingConventions.Any, argst, null);
 				if (embed_res == null) {
 					Report.Warning (0, new Location (-1), "Cannot embed resources on this runtime: try the Mono runtime instead.");
 				} else {

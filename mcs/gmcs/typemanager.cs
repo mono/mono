@@ -175,10 +175,10 @@ public class TypeManager {
 	static Assembly [] assemblies;
 
 	// <remarks>
-	//  Keeps a list of module builders. We used this to do lookups
-	//  on the modulebuilder using GetType -- needed for arrays
+	//  Keeps a list of modules. We used this to do lookups
+	//  on the module using GetType -- needed for arrays
 	// </remarks>
-	static ModuleBuilder [] modules;
+	static Module [] modules;
 
 	// <remarks>
 	//   This is the type_cache from the assemblies to avoid
@@ -239,6 +239,35 @@ public class TypeManager {
 	struct Signature {
 		public string name;
 		public Type [] args;
+	}
+
+	public static void CleanUp ()
+	{
+		// Lets get everything clean so that we can collect before generating code
+		assemblies = null;
+		modules = null;
+		types = null;
+		typecontainers = null;
+		user_types = null;
+		builder_to_declspace = null;
+		builder_to_ifaces = null;
+		method_arguments = null;
+		indexer_arguments = null;
+		method_internal_params = null;
+		builder_to_attr = null;
+		builder_to_method = null;
+		
+		fields = null;
+		references = null;
+		negative_hits = null;
+		attr_to_allowmult = null;
+		builder_to_constant = null;
+		fieldbuilders_to_fields = null;
+		events = null;
+		priv_fields_events = null;
+		properties = null;
+		
+		TypeHandle.CleanUp ();
 	}
 
 	/// <summary>
@@ -348,7 +377,6 @@ public class TypeManager {
 			return;
 		}
 		
-		Location l;
 		tc = builder_to_declspace [t] as TypeContainer;
 		if (tc != null){
 			Report.Warning (
@@ -497,10 +525,10 @@ public class TypeManager {
 	/// <summary>
 	///  Registers a module builder to lookup types from
 	/// </summary>
-	public static void AddModule (ModuleBuilder mb)
+	public static void AddModule (Module mb)
 	{
 		int top = modules != null ? modules.Length : 0;
-		ModuleBuilder [] n = new ModuleBuilder [top + 1];
+		Module [] n = new Module [top + 1];
 
 		if (modules != null)
 			modules.CopyTo (n, 0);
@@ -578,7 +606,7 @@ public class TypeManager {
 			} while (t != null);
 		}
 
-		foreach (ModuleBuilder mb in modules) {
+		foreach (Module mb in modules) {
 			t = mb.GetType (name);
 			if (t != null) 
 				return t;
@@ -611,6 +639,8 @@ public class TypeManager {
 		return t;
 	}
 
+	static readonly char [] dot_array = { '.' };
+
 	/// <summary>
 	///   Returns the Type associated with @name, takes care of the fact that
 	///   reflection expects nested types to be separated from the main type
@@ -632,7 +662,8 @@ public class TypeManager {
 		if (negative_hits.Contains (name))
 			return null;
 
-		string [] elements = name.Split ('.');
+		// Sadly, split takes a param array, so this ends up allocating *EVERY TIME*
+		string [] elements = name.Split (dot_array);
 		int count = elements.Length;
 
 		for (int n = 1; n <= count; n++){
@@ -646,7 +677,7 @@ public class TypeManager {
 			if (t == null){
 				t = LookupTypeReflection (top_level_type);
 				if (t == null){
-					negative_hits [top_level_type] = true;
+					negative_hits [top_level_type] = null;
 					continue;
 				}
 			}
@@ -667,12 +698,12 @@ public class TypeManager {
 			//Console.WriteLine ("Looking up: " + newt + " " + name);
 			t = LookupTypeReflection (newt);
 			if (t == null)
-				negative_hits [name] = true;
+				negative_hits [name] = null;
 			else
 				types [name] = t;
 			return t;
 		}
-		negative_hits [name] = true;
+		negative_hits [name] = null;
 		return null;
 	}
 
@@ -688,7 +719,6 @@ public class TypeManager {
 		//
 		if (assembly_get_namespaces != null){
 			int count = assemblies.Length;
-			int total;
 
 			for (int i = 0; i < count; i++){
 				Assembly a = assemblies [i];
@@ -800,16 +830,19 @@ public class TypeManager {
 	///   Returns the MethodInfo for a method named `name' defined
 	///   in type `t' which takes arguments of types `args'
 	/// </summary>
-	static MethodInfo GetMethod (Type t, string name, Type [] args, bool report_errors)
+	static MethodInfo GetMethod (Type t, string name, Type [] args, bool is_private, bool report_errors)
 	{
 		MemberList list;
 		Signature sig;
+		BindingFlags flags = instance_and_static | BindingFlags.Public;
 
 		sig.name = name;
 		sig.args = args;
 		
-		list = FindMembers (t, MemberTypes.Method, instance_and_static | BindingFlags.Public,
-				    signature_filter, sig);
+		if (is_private)
+			flags |= BindingFlags.NonPublic;
+
+		list = FindMembers (t, MemberTypes.Method, flags, signature_filter, sig);
 		if (list.Count == 0) {
 			if (report_errors)
 				Report.Error (-19, "Can not find the core function `" + name + "'");
@@ -824,6 +857,11 @@ public class TypeManager {
 		}
 
 		return mi;
+	}
+
+	static MethodInfo GetMethod (Type t, string name, Type [] args, bool report_errors)
+	{
+		return GetMethod (t, name, args, false, report_errors);
 	}
 
 	static MethodInfo GetMethod (Type t, string name, Type [] args)
@@ -979,7 +1017,7 @@ public class TypeManager {
 
 			MethodInfo set_corlib_type_builders = GetMethod (
 				system_assemblybuilder_type, "SetCorlibTypeBuilders",
-				system_4_type_arg, false);
+				system_4_type_arg, true, false);
 
 			if (set_corlib_type_builders != null) {
 				object[] args = new object [4];
@@ -993,7 +1031,7 @@ public class TypeManager {
 				// Compatibility for an older version of the class libs.
 				set_corlib_type_builders = GetMethod (
 					system_assemblybuilder_type, "SetCorlibTypeBuilders",
-					system_3_type_arg, true);
+					system_3_type_arg, true, true);
 
 				if (set_corlib_type_builders == null) {
 					Report.Error (-26, "Corlib compilation is not supported in Microsoft.NET due to bugs in it");
@@ -1158,8 +1196,6 @@ public class TypeManager {
 
 	const BindingFlags instance_and_static = BindingFlags.Static | BindingFlags.Instance;
 
-	static Hashtable type_hash = new Hashtable ();
-
 	/// <remarks>
 	///   This is the "old", non-cache based FindMembers() function.  We cannot use
 	///   the cache here because there is no member name argument.
@@ -1235,8 +1271,6 @@ public class TypeManager {
 	private static MemberList MemberLookup_FindMembers (Type t, MemberTypes mt, BindingFlags bf,
 							    string name, out bool used_cache)
 	{
-                bool not_loaded_corlib = (t.Assembly == CodeGen.AssemblyBuilder);
-                
 		//
 		// We have to take care of arrays specially, because GetType on
 		// a TypeBuilder array will return a Type, not a TypeBuilder,
@@ -2259,11 +2293,6 @@ public class TypeManager {
 #region MemberLookup implementation
 	
 	//
-	// Name of the member
-	//
-	static string   closure_name;
-
-	//
 	// Whether we allow private members in the result (since FindMembers
 	// uses NonPublic for both protected and private), we need to distinguish.
 	//
@@ -2273,7 +2302,6 @@ public class TypeManager {
 	// Who is invoking us and which type is being queried currently.
 	//
 	static Type     closure_invocation_type;
-	static Type     closure_queried_type;
 	static Type     closure_qualifier_type;
 
 	//
@@ -2470,7 +2498,6 @@ public class TypeManager {
 		bool skip_iface_check = true, used_cache = false;
 		bool always_ok_flag = false;
 
-		closure_name = name;
 		closure_invocation_type = invocation_type;
 		closure_invocation_assembly = invocation_type != null ? invocation_type.Assembly : null;
 		closure_qualifier_type = qualifier_type;
@@ -2515,7 +2542,6 @@ public class TypeManager {
 				bf = original_bf;
 
 			closure_private_ok = (original_bf & BindingFlags.NonPublic) != 0;
-			closure_queried_type = current_type;
 
 			Timer.StopTimer (TimerType.MemberLookup);
 
@@ -2734,6 +2760,11 @@ public sealed class TypeHandle : IMemberContainer {
 		handle = new TypeHandle (t);
 		type_hash.Add (t, handle);
 		return handle;
+	}
+	
+	public static void CleanUp ()
+	{
+		type_hash = null;
 	}
 
 	/// <summary>

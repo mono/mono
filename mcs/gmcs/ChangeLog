@@ -1,3 +1,310 @@
+2003-12-31 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* report.cs, codegen.cs: Give the real stack trace to
+	the error when an exception is thrown.
+
+2003-12-31 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* decl.cs: only allocate hashtables for ifaces if 
+	it is an iface!
+
+2003-12-31 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* expression.cs: fix the error from cs0121-2.cs
+	(a parent interface has two child interfaces that
+	have a function with the same name and 0 params
+	and the function is called through the parent).
+
+2003-12-30 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* class.cs, rootcontext.cs, typmanager.cs: do not
+	leak pointers.
+
+2003-12-28 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* codegen.cs: remove stack for the ec flow branching.
+	It is already a linked list, so no need.
+
+2003-12-27 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* Makefile: Allow custom profiler here.
+
+2003-12-26 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* typemanager.cs (LookupType):
+	  - Use a static char [], because split takes
+	    a param array for args, so it was allocating
+	    every time.
+	  - Do not store true in a hashtable, it boxes.
+
+2003-12-26 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* flowanalysis.cs: bytify common enums.
+
+2003-12-25 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* modifiers.cs: Add a new set of flags for the
+	flags allowed on explicit interface impls.
+	* cs-parser.jay: catch the use of modifiers in
+	interfaces correctly.
+	* class.cs: catch private void IFoo.Blah ().
+
+	All related to bug #50572.
+
+2003-12-25 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* decl.cs: Rewrite the consistant accessability checking.
+	Accessability is not linear, it must be implemented in
+	a tableish way. Fixes #49704.
+
+2003-12-25 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* expression.cs: Handle negation in a checked context.
+	We must use subtraction from zero. Fixes #38674.
+
+2003-12-23 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* class.cs: Ignore static void main in DLLs.
+	* rootcontext.cs: Handle the target type here,
+	since we are have to access it from class.cs
+	* driver.cs: account for the above.
+
+2003-12-23 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* report.cs: Give line numbers and files if available.
+
+2003-12-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* driver.cs: Implement /addmodule.
+
+	* typemanager.cs:  Change 'modules' field so it now contains Modules not
+	ModuleBuilders.
+
+2003-12-20  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (TypeContainer.DefineMembers): Don't do the CS0649 check here.
+	(FieldBase.IsAssigned): Removed this field.
+	(FieldBase.SetAssigned): New public method.
+	(TypeContainer.Emit): Make the CS0169/CS0649 checks actually work.
+
+2003-12-20  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (LocalVariableReference.DoResolve): Don't set
+	`vi.Used' if we're called from DoResolveLValue().
+
+	* statement.cs (Block.DoResolve): `ec.DoEndFlowBranching()' now
+	returns the usage vector it just merged into the current one -
+	pass this one to UsageWarning().
+	(Block.UsageWarning): Take the `FlowBranching.UsageVector' instead
+	of the `EmitContext', don't call this recursively on our children.
+
+2003-12-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* driver.cs: Implement /target:module.
+
+2003-12-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* support.cs (CharArrayHashtable): New helper class.
+
+	* cs-tokenizer.cs: Store keywords in a hashtable indexed by 
+	char arrays, not strings, so we can avoid creating a string in
+	consume_identifier if the identifier is a keyword.
+
+2003-12-16  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs (LocalInfo.Assigned): Removed this property.
+	(LocalInfo.Flags): Removed `Assigned'.
+	(LocalInfo.IsAssigned): New public method; takes the EmitContext
+	and uses flow analysis.
+	(Block.UsageWarning): Made this method private.
+	(Block.Resolve): Call UsageWarning() if appropriate.
+
+	* expression.cs (LocalVariableReference.DoResolve): Always set
+	LocalInfo.Used here.
+
+2003-12-13  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs (Statement.DoEmit, Statement.Emit): Don't return
+	any value here; we're now using flow analysis to figure out
+	whether a statement/block returns a value.
+
+2003-12-13  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs (UsageVector.MergeFinallyOrigins): Made this
+	working again.
+	(FlowBranching.MergeFinally): Don't call
+	`branching.CheckOutParameters()' here, this is called in
+	MergeTopBlock().
+	(FlowBranchingException.AddSibling): Call MergeFinallyOrigins()
+	when adding the `finally' vector.	
+
+2003-12-13  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs
+	(UsageVector.MergeJumpOrigins, FlowBranching.Label): Make this
+	actually work and also fix #48962.
+
+2003-12-12 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* decl.cs: Do not check System.Object for nested types,
+	since we know it does not have any. Big bang for buck:
+
+	BEFORE:
+	   Run 1:   8.35 seconds
+	   Run 2:   8.32 seconds
+	   corlib:  17.99 seconds
+	AFTER:
+	   Run 1:   8.17 seconds
+	   Run 2:   8.17 seconds
+	   corlib:  17.39 seconds
+
+2003-12-11 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* class.cs (FindMembers): Allocate arraylists on demand. Most of the
+	time we are returning 0 members, so we save alot here.
+
+2003-12-11  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs (UsageVector.MergeResult): Renamed this back to
+	`MergeChild()', also just take the `FlowBranching' as argument;
+	call Merge() on it and return the result.
+	(FlowBranching.Merge): We don't need to do anything if we just
+	have one sibling.
+
+2003-12-11  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs: Use a list of `UsageVector's instead of storing
+	them in an `ArrayList' to reduce memory usage.  Thanks to Ben
+	Maurer for this idea.
+
+2003-12-11  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs (MergeResult): This class is now gone; we now
+	use the `UsageVector' for this.  The reason for this is that if a
+	branching just has one sibling, we don't need to "merge" them at
+	all - that's the next step to do.
+	(FlowBranching.Merge): We now return a `UsageVector' instead of a
+	`MergeResult'.
+
+2003-12-11  Martin Baulig  <martin@ximian.com>
+
+	Reworked flow analyis and made it more precise and bug-free.  The
+	most important change is that we're now using a special `Reachability'
+	class instead of having "magic" meanings of `FlowReturns'.  I'll
+	do some more cleanups and optimizations and also add some more
+	documentation this week.
+
+	* flowanalysis.cs (Reachability): Added `Throws' and `Barrier';
+	largely reworked this class.
+	(FlowReturns): Removed `Unreachable' and `Exception'; we now use
+	the new `Reachability' class instead of having "magic" values here.
+	(FlowBranching): We're now using an instance of `Reachability'
+	instead of having separate `Returns', `Breaks' etc. fields.
+
+	* codegen.cs (EmitContext.EmitTopBlock): Set `has_ret' solely
+	based on flow analysis; ignore the return value of block.Emit ().
+
+2003-12-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* driver.cs typemanager.cs: Find the mono extensions to corlib even
+	if they are private.
+
+2003-12-09  Martin Baulig  <martin@ximian.com>
+
+	* flowanalyis.cs (FlowBranching.Return, Goto, Throw): Removed;
+	call them directly on the UsageVector.
+
+2003-12-09  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs (FlowBranching.MergeChild, MergeTopBlock):
+	Changed return type from `FlowReturns' to `Reachability'.
+
+2003-12-09  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs (FlowBranching.Reachability): New sealed class.
+	(FlowBranching.MergeResult): Replaced the `Returns', `Breaks' and
+	`Reachable' fields with a single `Reachability' one.
+
+2003-12-08 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* class.cs (FindMembers): Remove foreach's.
+
+	Bootstrap times:
+	
+	BEFORE
+		Run 1:   8.74 seconds
+		Run 2:   8.71 seconds
+	
+	AFTER
+		Run 1:   8.64 seconds
+		Run 2:   8.58 seconds
+	
+
+2003-12-08 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* cs-parser.jay:
+	* gen-treedump.cs:
+	* statement.cs:
+	This patch does a few things:
+		1. EmptyStatement is now a singleton, so it is never reallocated.
+		2. All blah is EmptyStatement constructs have been changed to
+		   blah == EmptyStatement.Value, which is much faster and valid
+		   now that EmptyStatement is a singleton.
+		3. When resolving a block, rather than allocating a new array for
+		   the non-empty statements, empty statements are replaced with
+		   EmptyStatement.Value
+		4. Some recursive functions have been made non-recursive.
+	Mainly the performance impact is from (3), however (1) and (2) are needed for
+	this to work. (4) does not make a big difference in normal situations, however
+	it makes the profile look saner.
+
+	Bootstrap times:
+
+	BEFORE
+	9.25user 0.23system 0:10.28elapsed 92%CPU (0avgtext+0avgdata 0maxresident)k
+	9.34user 0.13system 0:10.23elapsed 92%CPU (0avgtext+0avgdata 0maxresident)k
+	Total memory allocated: 56397 KB
+	
+	AFTER
+	9.13user 0.09system 0:09.64elapsed 95%CPU (0avgtext+0avgdata 0maxresident)k
+	8.96user 0.24system 0:10.13elapsed 90%CPU (0avgtext+0avgdata 0maxresident)k
+	Total memory allocated: 55666 KB
+
+2003-12-08 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* support.cs: Rewrite DoubleHash to use its own impl. Is faster
+	than the hashtable in a hashtable version
+
+	* decl.cs: Right now, whenever we try to lookup a type inside a namespace,
+	we always end up concating a string. This results in a huge perf
+	loss, because many strings have to be tracked by the GC. In this
+	patch, we first use a hashtable that works with two keys, so that
+	the strings do not need to be concat'ed.
+
+	Bootstrap times:
+	BEFORE
+		Run 1:   8.74 seconds
+		Run 2:   8.71 seconds
+	
+	AFTER
+		Run 1:   8.65 seconds
+		Run 2:   8.56 seconds
+	
+2003-12-08 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* Makefile: Add a new target `do-time' that does a quick and simple
+	profile, leaving easy to parse output.
+
+2003-12-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* codegen.cs (Init): Create the dynamic assembly with 
+	AssemblyBuilderAccess.Save, to enable some optimizations in the runtime.
+
+2003-12-02 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* support.cs: Make the PtrHashtable use only one
+	instance of its comparer.
+
 2003-11-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* typemanager.cs: Fix lookup of GetNamespaces.

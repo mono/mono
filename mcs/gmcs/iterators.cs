@@ -76,11 +76,9 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected override bool DoEmit (EmitContext ec)
+		protected override void DoEmit (EmitContext ec)
 		{
 			IteratorHandler.Current.MarkYield (ec, expr);
-			
-			return false;
 		}
 	}
 
@@ -96,14 +94,13 @@ namespace Mono.CSharp {
 			if (!Yield.CheckContext (ec, loc))
 				return false;
 
-			ec.CurrentBranching.Goto ();
+			ec.CurrentBranching.CurrentUsageVector.Goto ();
 			return true;
 		}
 
-		protected override bool DoEmit (EmitContext ec)
+		protected override void DoEmit (EmitContext ec)
 		{
 			IteratorHandler.Current.EmitYieldBreak (ec.ig, true);
-			return false;
 		}
 	}
 

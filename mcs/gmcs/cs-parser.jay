@@ -1304,8 +1304,13 @@ interface_member_declaration
 	;
 
 opt_new
-	: /* empty */	{ $$ = false; }
-	| NEW		{ $$ = true; }
+	: opt_modifiers 
+	  {
+		int val = (int) $1;
+		
+		val = Modifiers.Check (Modifiers.NEW, val, 0, lexer.Location);
+		$$ = (bool) (val != 0);
+	  }
 	;
 
 interface_method_declaration
