@@ -147,12 +147,12 @@ namespace System.Xml
 
 		public void WriteStartElement (string localName)
 		{
-			WriteStartElementInternal ("", localName, "");
+			WriteStartElementInternal (null, localName, null);
 		}
 
 		public void WriteStartElement (string localName, string ns)
 		{
-			WriteStartElement ("", localName, ns);
+			WriteStartElement (null, localName, ns);
 		}
 
 		public abstract void WriteStartElement (string prefix, string localName, string ns);

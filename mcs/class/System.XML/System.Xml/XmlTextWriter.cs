@@ -518,9 +518,6 @@ namespace System.Xml
 			if (prefix == null)
 				prefix = String.Empty;
 
-			if (ns == null)
-				ns = String.Empty;
-
 			if ((prefix != String.Empty) && ((ns == null) || (ns == String.Empty)))
 				throw new ArgumentException ("Cannot use a prefix with an empty namespace.");
 
@@ -530,26 +527,28 @@ namespace System.Xml
 			string formatXmlns = "";
 			string formatPrefix = "";
 
-			if (ns != String.Empty) 
+			if(ns != null)
 			{
-				string existingPrefix = namespaceManager.LookupPrefix (ns);
+				if (ns != String.Empty) 
+				{
+					string existingPrefix = namespaceManager.LookupPrefix (ns);
 
-				if (prefix == String.Empty)
-					prefix = existingPrefix;
+					if (prefix == String.Empty)
+						prefix = existingPrefix;
 
-				if (prefix != existingPrefix)
-					formatXmlns = String.Format (" xmlns:{0}={1}{2}{1}", prefix, quoteChar, ns);
-				else if (existingPrefix == String.Empty)
-					formatXmlns = String.Format (" xmlns={0}{1}{0}", quoteChar, ns);
+					if (prefix != existingPrefix)
+						formatXmlns = String.Format (" xmlns:{0}={1}{2}{1}", prefix, quoteChar, ns);
+					else if (existingPrefix == String.Empty)
+						formatXmlns = String.Format (" xmlns={0}{1}{0}", quoteChar, ns);
+				}
+				else if ((prefix == String.Empty) && (namespaceManager.LookupNamespace(prefix) != String.Empty)) {
+					formatXmlns = String.Format (" xmlns={0}{0}", quoteChar);
+				}
+
+				if (prefix != String.Empty) {
+					formatPrefix = prefix + ":";
+				}
 			}
-			else if ((prefix == String.Empty) && (namespaceManager.LookupNamespace(prefix) != String.Empty)) {
-				formatXmlns = String.Format (" xmlns={0}{0}", quoteChar);
-			}
-
-			if (prefix != String.Empty) {
-				formatPrefix = prefix + ":";
-			}
-
 			w.Write ("{0}<{1}{2}{3}", indentFormatting, formatPrefix, localName, formatXmlns);
 
 			openElements.Push (new XmlTextWriterOpenElement (formatPrefix + localName));
@@ -557,8 +556,10 @@ namespace System.Xml
 			openStartElement = true;
 
 			namespaceManager.PushScope ();
-			namespaceManager.AddNamespace (prefix, ns);
-
+			if(ns != null)
+			{
+				namespaceManager.AddNamespace (prefix, ns);
+			}
 			indentLevel++;
 		}
 

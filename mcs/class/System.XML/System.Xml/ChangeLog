@@ -1,3 +1,11 @@
+2002-07-06  Ajay kumar Dwivedi <adwiv@yahoo.com>
+
+	* XmlTextWriter: In WriteStartElement, if namespace is null and 
+		prefix is null|empty do not write out xmlns=""
+	
+	* XmlWriter: WriteStartElement calls the virtual method with null
+		argument instead of empty string.
+
 2002-07-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XmlTextReader.cs: implemented .ctor (Stream).
