@@ -1,3 +1,8 @@
+2005-01-28  Sureshkumar T  <tsureshkumar@novell.com>
+                                                                                                                             
+        * DataTableTest.cs: added test case for checking ImportRow when
+        the row state is detached. Test case by Ankit Jain.
+
 2005-01-19  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataRelationCollectionTest.cs: 

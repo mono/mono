@@ -1355,8 +1355,7 @@ namespace System.Data {
 					}
 					
 					//Saving the current value as the column value
-					row[index] = targetColumn[row._current];
-					
+					row [index] = targetColumn [IndexFromVersion (DataRowVersion.Default)];	
 				}
 			}
 			CopyState(row);

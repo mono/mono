@@ -948,9 +948,13 @@ namespace System.Data {
 		/// </summary>
 		public void ImportRow (DataRow row) 
 		{
+			if (row.RowState == DataRowState.Detached)
+				return;
+
 			DataRow newRow = NewRow();
-			Rows.Add(newRow);
-			row.CopyValuesToRow(newRow);
+			row.CopyValuesToRow (newRow);
+			Rows.Add (newRow);
+			row.CopyState (newRow);
 			
 		}
 
