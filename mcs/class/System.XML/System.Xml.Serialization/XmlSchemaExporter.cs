@@ -19,6 +19,7 @@ namespace System.Xml.Serialization {
 
 		XmlSchemas schemas;
 		Hashtable exportedMaps = new Hashtable();
+		Hashtable exportedElements = new Hashtable();
 		bool encodedFormat = false;
 		XmlDocument xmlDoc;
 		
@@ -109,7 +110,7 @@ namespace System.Xml.Serialization {
 		public void ExportTypeMapping (XmlTypeMapping xmlTypeMapping)
 		{
 			if (!xmlTypeMapping.IncludeInSchema) return;
-			if (IsMapExported (xmlTypeMapping)) return;
+			if (IsElementExported (xmlTypeMapping)) return;
 			
 			if (encodedFormat)
 				ExportClassSchema (xmlTypeMapping);
@@ -119,9 +120,11 @@ namespace System.Xml.Serialization {
 				XmlTypeMapElementInfo einfo = new XmlTypeMapElementInfo (null, xmlTypeMapping.TypeData);
 				einfo.Namespace = xmlTypeMapping.Namespace;
 				einfo.ElementName = xmlTypeMapping.ElementName;
-				einfo.MappedType = xmlTypeMapping;
+				if (xmlTypeMapping.TypeData.IsComplexType)
+					einfo.MappedType = xmlTypeMapping;
 				einfo.IsNullable = false;
 				AddSchemaElement (schema.Items, schema, einfo, false);
+				SetElementExported (xmlTypeMapping);
 			}
 			CompileSchemas ();
 		}
@@ -553,14 +556,31 @@ namespace System.Xml.Serialization {
 
 		bool IsMapExported (XmlTypeMapping map)
 		{
-			if (exportedMaps.Contains (map)) return true;
+			if (exportedMaps.ContainsKey (GetMapKey(map))) return true;
 			if (map.TypeData.Type == typeof(object)) return true;
 			return false;
 		}
 
 		void SetMapExported (XmlTypeMapping map)
 		{
-			exportedMaps.Add (map,map);
+			exportedMaps [GetMapKey(map)] = map;
+		}
+
+		bool IsElementExported (XmlTypeMapping map)
+		{
+			if (exportedElements.ContainsKey (GetMapKey(map))) return true;
+			if (map.TypeData.Type == typeof(object)) return true;
+			return false;
+		}
+
+		void SetElementExported (XmlTypeMapping map)
+		{
+			exportedElements [GetMapKey(map)] = map;
+		}
+		
+		string GetMapKey (XmlTypeMapping map)
+		{
+			return map.TypeData.FullTypeName + " " + map.Namespace;
 		}
 
 		void CompileSchemas ()

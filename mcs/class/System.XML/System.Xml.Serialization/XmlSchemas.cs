@@ -76,12 +76,7 @@ namespace System.Xml.Serialization {
 				return null;
 
 			if (!schema.IsCompiled) {
-				try {
-					schema.Compile (null);
-				} catch (Exception ex) {
-					throw new InvalidOperationException ("Error compiling XmlSchema " + 
-									     name.Namespace);
-				}
+				schema.Compile (null);
 			}
 
 			XmlSchemaObjectTable tbl = null;

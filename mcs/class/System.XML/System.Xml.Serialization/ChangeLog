@@ -1,3 +1,8 @@
+2003-10-04  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* XmlSchemaExporter.cs: Keep track of elements being exported.
+	* XmlSchemas.cs: Removed unneeded catch.
+
 2003-10-01  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SerializationCodeGenerator.cs, XmlSerializationReaderInterpreter.cs: 
