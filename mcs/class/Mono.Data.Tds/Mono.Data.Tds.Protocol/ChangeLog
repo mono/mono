@@ -1,3 +1,16 @@
+2002-10-30  Tim Coleman (tim@timcoleman.com)
+	* TdsColumnSchema.cs:
+		Ditch this in favor of System.Data.Common.SchemaInfo
+	* ITds.cs:
+		Change ColumnInfo to Schema
+	* Tds.cs:
+		Uses new SchemaInfo object
+		Supports TEXT now.	
+	* Tds42.cs:
+	* Tds50.cs:
+	* Tds70.cs:
+		Uses new SchemaInfo object
+
 2002-10-29  Tim Coleman (tim@timcoleman.com)
 	* ITds.cs:
 		Add OutputParameters collection

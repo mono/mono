@@ -10,6 +10,7 @@
 using System;
 using System.Collections;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Net;
@@ -102,8 +103,8 @@ namespace Mono.Data.TdsClient.Internal {
 			get { return databaseProductVersion; }
 		}
 
-		public TdsPacketColumnInfoResult ColumnInfo {
-			get { return columnInfo; }
+		public SchemaInfo[] Schema {
+			get { return columnInfo.Schema; }
 		}
 
 		public TdsPacketRowResult ColumnValues {
@@ -210,7 +211,9 @@ namespace Mono.Data.TdsClient.Internal {
 
 		public void ExecuteQuery (string sql)
 		{
+			moreResults = true;
 			outputParameters.Clear ();
+
 			if (sql.Length > 0) {
 				comm.StartPacket (TdsPacketType.Query);
 				comm.Append (sql);
@@ -221,6 +224,8 @@ namespace Mono.Data.TdsClient.Internal {
 
 		public bool NextResult ()
 		{
+			if (!moreResults)
+				return false;
 			TdsPacketResult result = null;
 			bool done = false;
 			do {
@@ -583,8 +588,10 @@ namespace Mono.Data.TdsClient.Internal {
 
 			if (len >= 0) {
 				if (wideChars)
+					result = comm.GetString (len / 2);
+				else
+					result = comm.GetString (len, false);
 					len /= 2;
-				result = comm.GetString (len);
 
 				if ((byte) tdsVersion < (byte) TdsVersion.tds70 && result == " ")
 					result = "";
@@ -635,8 +642,8 @@ namespace Mono.Data.TdsClient.Internal {
 			TdsPacketRowResult result = new TdsPacketRowResult (context);
 
 			int i = 0;
-			foreach (TdsColumnSchema info in columnInfo) {
-				result.Add (GetColumnValue (info.ColumnType, false, i));
+			foreach (TdsColumnType type in columnInfo.ColumnTypes) {
+				result.Add (GetColumnValue (type, false, i));
 				i += 1;
 			}
 

@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Data.Common;
 
 namespace Mono.Data.TdsClient.Internal {
         internal class Tds50 : Tds, ITds
@@ -260,15 +261,17 @@ namespace Mono.Data.TdsClient.Internal {
 					bytesRead += 1;
 				}
 
-				int index = result.Add (new TdsColumnSchema ());
+				int index = result.Add (new SchemaInfo ());
+				result[index].DataTypeName = columnType.ToString ();
 				result[index].NumericPrecision = precision;
 				result[index].NumericScale = scale;
 				result[index].ColumnSize = bufLength;
 				result[index].ColumnName = ColumnNames[index];
-				result[index].ColumnType = columnType;
 				result[index].TableName = tableName;
 				result[index].Nullable = nullable;
 				result[index].Writable = writable;
+
+				result.Add (columnType);
 			}
 
 			//int skipLength = totalLength - bytesRead;

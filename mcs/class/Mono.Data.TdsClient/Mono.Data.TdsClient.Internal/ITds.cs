@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Data.Common;
 using System.Collections;
 
 namespace Mono.Data.TdsClient.Internal {
@@ -27,7 +28,7 @@ namespace Mono.Data.TdsClient.Internal {
 			get;
 		}
 
-		TdsPacketColumnInfoResult ColumnInfo {
+		SchemaInfo[] Schema {
 			get;
 		}
 
@@ -38,6 +39,7 @@ namespace Mono.Data.TdsClient.Internal {
 		TdsPacketErrorResultCollection Errors {
 			get;
 		}
+
 
 		ArrayList OutputParameters {
 			get;	

@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Data.Common;
 
 namespace Mono.Data.TdsClient.Internal {
         internal class Tds70 : Tds, ITds
@@ -183,7 +184,7 @@ namespace Mono.Data.TdsClient.Internal {
 		{
 			return (columnType == TdsColumnType.NChar || (byte) columnType > 128);
 		}
-
+	
 		protected override TdsPacketColumnInfoResult ProcessColumnInfo ()
 		{
 			TdsPacketColumnInfoResult result = new TdsPacketColumnInfoResult ();
@@ -236,15 +237,17 @@ namespace Mono.Data.TdsClient.Internal {
 				int colNameLength = Comm.GetByte ();
 				string columnName = Comm.GetString (colNameLength);
 
-				int index = result.Add (new TdsColumnSchema ());
+				int index = result.Add (new SchemaInfo ());
+				result[index].DataTypeName = columnType.ToString ();
 				result[index].NumericPrecision = precision;
 				result[index].NumericScale = scale;
 				result[index].ColumnSize = bufLength;
 				result[index].ColumnName = columnName;
-				result[index].ColumnType = columnType;
 				result[index].TableName = tableName;
 				result[index].Nullable = nullable;
 				result[index].Writable = writable;
+
+				result.Add (columnType);
 			}
 
 			return result;
