@@ -1,3 +1,8 @@
+2004-08-05  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* mini-sparc.c: move detection of V9 to mono_arch_cpu_init
+	so it happens when mono is embedded too.
+
 2004-08-05  Duncan Mak  <duncan@ximian.com>
 
 	* mini.c: Renamed CEE_STELEM to CEE_STELEM_ANY and CEE_LDELEM to
