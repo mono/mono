@@ -1189,5 +1189,22 @@ namespace MonoTests.System.Data
 </set>";
 			AssertEquals (result, sr.ReadToEnd ());
 		}
+
+		[Test]
+		public void WtiteXmlEncodedXml ()
+		{
+			string xml = @"<an_x0020_example_x0020_dataset.>
+  <WOW_x0021__x0020_that_x0027_s_x0020_nasty...>
+    <URL_x0020_is_x0020_http_x003A__x002F__x002F_www.go-mono.com>content string.</URL_x0020_is_x0020_http_x003A__x002F__x002F_www.go-mono.com>
+  </WOW_x0021__x0020_that_x0027_s_x0020_nasty...>
+</an_x0020_example_x0020_dataset.>";
+			DataSet ds = new DataSet ("an example dataset.");
+			ds.Tables.Add (new DataTable ("WOW! that's nasty..."));
+			ds.Tables [0].Columns.Add ("URL is http://www.go-mono.com");
+			ds.Tables [0].Rows.Add (new object [] {"content string."});
+			StringWriter sw = new StringWriter ();
+			ds.WriteXml (sw);
+			AssertEquals (xml, sw.ToString ());
+		}
         }
 }

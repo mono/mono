@@ -1,5 +1,9 @@
 2004-05-17  Atsushi Enomoto <atsushi@ximian.com>
 
+	* DataSetTest.cs : Added WriteXmlEncodedXml() test.
+
+2004-05-17  Atsushi Enomoto <atsushi@ximian.com>
+
 	* DataSetAssertion.cs : Enabled "Ordinal" check again, unless the test
 	  value is -1.
 	* DataSetInferXmlSchemaTest.cs,
