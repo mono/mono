@@ -85,7 +85,7 @@ namespace System.ComponentModel
 
 		public virtual Attribute this[int index] {
 			get {
-				return attrList[index];
+				return (Attribute) attrList[index];
 			}
 		}
 	}

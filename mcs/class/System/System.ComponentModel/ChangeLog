@@ -1,3 +1,8 @@
+2002-05-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.ComponentModel/AttributeCollection.cs: added a cast to make
+	it compile.
+
 2002-05-03  Rodrigo Moya <rodrigo@ximian.com>
 
 	* AttributeCollection.cs:

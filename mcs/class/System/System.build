@@ -21,6 +21,9 @@
 				<excludes name="System.CodeDom/Code-X-Collection.cs"/>
 				<excludes name="System.Net/IAuthenticationModule.cs"/>
 				<excludes name="System.Net/AuthenticationManager.cs"/>
+				<excludes name="System.ComponentModel/EventDescriptor.cs"/>
+				<excludes name="System.ComponentModel/EventDescriptorCollection.cs"/>
+				<excludes name="System.ComponentModel/ICustomTypeDescriptor.cs"/>
 			</sources>
 		</csc>
 		<copy file="../lib/System.dll" tofile="Test/System.dll"/>

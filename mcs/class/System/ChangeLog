@@ -1,3 +1,8 @@
+2002-05-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.build: excluded EventDescriptor.cs, 
+	EventDescriptorCollection.cs and ICustomTypeDescriptor.cs.
+
 2002-04-08  Nick Drochak  <ndrochak@gol.com>
 
 	* System.build: Build System.dll with mono's corlib.dll and 
