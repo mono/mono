@@ -816,18 +816,7 @@ namespace System.Xml.XPath
 			return false;
 		}
 		public override XPathNavigator Current { get { return _iter.Current; }}
-		
-		bool Match ()
-		{
-			if (Current.NodeType != matchType && matchType != XPathNodeType.All)
-				return false;
-			
-			if (ns == null)
-				return name == null || (object)name == (object)Current.LocalName;
-			else
-				return (object)ns == (object)Current.NamespaceURI &&
-					(name == null || (object)name == (object)Current.LocalName);
-		}
+
 		public override bool ReverseAxis {
 			get { return _iter.ReverseAxis; }
 		}

@@ -93,7 +93,7 @@ namespace System.Xml.XPath
 			if (arg is bool)
 				return ((bool) arg) ? "true" : "false";
 			if (arg is double)
-				return ((double) arg).ToString ("R", System.Globalization.NumberFormatInfo.InvariantInfo);
+				return ToString ((double) arg);
 			if (arg is BaseIterator)
 			{
 				BaseIterator iter = (BaseIterator) arg;
@@ -106,6 +106,21 @@ namespace System.Xml.XPath
 				return ((XPathNavigator) arg).Value;
 			}
 			throw new ArgumentException ();
+		}
+
+		public static string ToString (double d)
+		{
+			// See XPath 1.0 section 4.2
+			if (d == Double.NegativeInfinity)
+				return "-Infinity";
+			if (d == Double.PositiveInfinity)
+				return "Infinity";
+			// FIXME:
+			// Return string in roundtrip format (currently it
+			// rather breaks things, so we don't use it until
+			// System.Double gets fixed.)
+//			return ((double) d).ToString ("R", System.Globalization.NumberFormatInfo.InvariantInfo);
+			return ((double) d).ToString (System.Globalization.NumberFormatInfo.InvariantInfo);
 		}
 
 		public static double ToNumber (object arg)
@@ -842,8 +857,20 @@ namespace System.Xml.XPath
 		}
 	}
 
+	internal abstract class XPathBooleanFunction : XPathFunction
+	{
+		public XPathBooleanFunction (FunctionArguments args) : base (args)
+		{
+		}
 
-	internal class XPathFunctionBoolean : XPathFunction
+		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
+
+		public override object StaticValue {
+			get { return StaticValueAsBoolean; }
+		}
+	}
+
+	internal class XPathFunctionBoolean : XPathBooleanFunction
 	{
 		Expression arg0;
 		
@@ -856,8 +883,6 @@ namespace System.Xml.XPath
 			}
 		}
 		
-		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
-
 		internal override bool Peer {
 			get { return arg0 != null ? arg0.Peer : true; }
 		}
@@ -876,7 +901,7 @@ namespace System.Xml.XPath
 	}
 
 
-	internal class XPathFunctionNot : XPathFunction
+	internal class XPathFunctionNot : XPathBooleanFunction
 	{
 		Expression arg0;
 		
@@ -887,8 +912,6 @@ namespace System.Xml.XPath
 			arg0 = args.Arg;
 		}
 		
-		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
-
 		internal override bool Peer {
 			get { return arg0.Peer; }
 		}
@@ -905,16 +928,22 @@ namespace System.Xml.XPath
 	}
 
 
-	internal class XPathFunctionTrue : XPathFunction
+	internal class XPathFunctionTrue : XPathBooleanFunction
 	{
 		public XPathFunctionTrue (FunctionArguments args) : base (args)
 		{
 			if (args != null)
 				throw new XPathException ("true takes 0 args");
 		}
-		
-		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
 
+		public override bool HasStaticValue {
+			get { return true; }
+		}
+
+		public override bool StaticValueAsBoolean {
+			get { return true; }
+		}
+		
 		internal override bool Peer {
 			get { return true; }
 		}
@@ -931,14 +960,21 @@ namespace System.Xml.XPath
 	}
 
 
-	internal class XPathFunctionFalse : XPathFunction
+	internal class XPathFunctionFalse : XPathBooleanFunction
 	{
 		public XPathFunctionFalse (FunctionArguments args) : base (args)
 		{
 			if (args != null)
 				throw new XPathException ("false takes 0 args");
 		}
-		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
+
+		public override bool HasStaticValue {
+			get { return true; }
+		}
+
+		public override bool StaticValueAsBoolean {
+			get { return false; }
+		}
 
 		internal override bool Peer {
 			get { return true; }
@@ -966,7 +1002,7 @@ namespace System.Xml.XPath
 				throw new XPathException ("lang takes one arg");
 			arg0 = args.Arg;
 		}
-		
+
 		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
 
 		internal override bool Peer {
@@ -974,6 +1010,11 @@ namespace System.Xml.XPath
 		}
 
 		public override object Evaluate (BaseIterator iter)
+		{
+			return EvaluateBoolean (iter);
+		}
+
+		public override bool EvaluateBoolean (BaseIterator iter)
 		{
 			string lang = arg0.EvaluateString (iter).ToLower (CultureInfo.InvariantCulture);
 			string actualLang = iter.Current.XmlLang.ToLower (CultureInfo.InvariantCulture);
@@ -987,8 +1028,21 @@ namespace System.Xml.XPath
 		}
 	}
 
+	internal abstract class XPathNumericFunction : XPathFunction
+	{
+		internal XPathNumericFunction (FunctionArguments args)
+			: base (args)
+		{
+		}
 
-	internal class XPathFunctionNumber : XPathFunction
+		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
+
+		public override object StaticValue {
+			get { return StaticValueAsNumber; }
+		}
+	}
+
+	internal class XPathFunctionNumber : XPathNumericFunction
 	{
 		Expression arg0;
 		
@@ -1000,8 +1054,24 @@ namespace System.Xml.XPath
 					throw new XPathException ("number takes 1 or zero args");
 			}
 		}
-		
-		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
+
+		public override Expression Optimize ()
+		{
+			if (arg0 == null)
+				return this;
+			arg0 = arg0.Optimize ();
+			return !arg0.HasStaticValue ?
+				(Expression) this :
+				new ExprNumber (StaticValueAsNumber);
+		}
+
+		public override bool HasStaticValue {
+			get { return arg0 != null && arg0.HasStaticValue; }
+		}
+
+		public override double StaticValueAsNumber {
+			get { return arg0 != null ? arg0.StaticValueAsNumber : 0; }
+		}
 
 		internal override bool Peer {
 			get { return arg0 != null ? arg0.Peer : true; }
@@ -1021,7 +1091,7 @@ namespace System.Xml.XPath
 	}
 
 
-	internal class XPathFunctionSum : XPathFunction
+	internal class XPathFunctionSum : XPathNumericFunction
 	{
 		Expression arg0;
 		
@@ -1032,8 +1102,6 @@ namespace System.Xml.XPath
 			arg0 = args.Arg;
 		}
 		
-		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
-
 		internal override bool Peer {
 			get { return arg0.Peer; }
 		}
@@ -1056,7 +1124,7 @@ namespace System.Xml.XPath
 	}
 
 
-	internal class XPathFunctionFloor : XPathFunction
+	internal class XPathFunctionFloor : XPathNumericFunction
 	{
 		Expression arg0;
 		
@@ -1066,9 +1134,15 @@ namespace System.Xml.XPath
 				throw new XPathException ("floor takes one arg");
 			arg0 = args.Arg;
 		}
-		
-		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
 
+		public override bool HasStaticValue {
+			get { return arg0.HasStaticValue; }
+		}
+
+		public override double StaticValueAsNumber {
+			get { return HasStaticValue ? Math.Floor (arg0.StaticValueAsNumber) : 0; }
+		}
+		
 		internal override bool Peer {
 			get { return arg0.Peer; }
 		}
@@ -1085,7 +1159,7 @@ namespace System.Xml.XPath
 	}
 
 
-	internal class XPathFunctionCeil : XPathFunction
+	internal class XPathFunctionCeil : XPathNumericFunction
 	{
 		Expression arg0;
 		
@@ -1095,9 +1169,15 @@ namespace System.Xml.XPath
 				throw new XPathException ("ceil takes one arg");
 			arg0 = args.Arg;
 		}
-		
-		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
 
+		public override bool HasStaticValue {
+			get { return arg0.HasStaticValue; }
+		}
+
+		public override double StaticValueAsNumber {
+			get { return HasStaticValue ? Math.Ceiling (arg0.StaticValueAsNumber) : 0; }
+		}
+		
 		internal override bool Peer {
 			get { return arg0.Peer; }
 		}
@@ -1114,7 +1194,7 @@ namespace System.Xml.XPath
 	}
 
 
-	internal class XPathFunctionRound : XPathFunction
+	internal class XPathFunctionRound : XPathNumericFunction
 	{
 		Expression arg0;
 		
@@ -1125,7 +1205,13 @@ namespace System.Xml.XPath
 			arg0 = args.Arg;
 		}
 		
-		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
+		public override bool HasStaticValue {
+			get { return arg0.HasStaticValue; }
+		}
+
+		public override double StaticValueAsNumber {
+			get { return HasStaticValue ? Round (arg0.StaticValueAsNumber) : 0; }
+		}
 
 		internal override bool Peer {
 			get { return arg0.Peer; }
@@ -1133,7 +1219,11 @@ namespace System.Xml.XPath
 
 		public override object Evaluate (BaseIterator iter)
 		{
-			double arg = arg0.EvaluateNumber (iter);
+			return Round (arg0.EvaluateNumber (iter));
+		}
+
+		private double Round (double arg)
+		{
 			if (arg < -0.5 || arg > 0)
 				return Math.Floor (arg + 0.5);
 			return Math.Round (arg);

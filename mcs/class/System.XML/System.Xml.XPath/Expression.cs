@@ -389,6 +389,36 @@ namespace System.Xml.XPath
 			return this;
 		}
 
+		public virtual bool HasStaticValue {
+			get { return false; }
+		}
+
+		public virtual object StaticValue {
+			get {
+				switch (ReturnType) {
+				case XPathResultType.String:
+					return StaticValueAsString;
+				case XPathResultType.Number:
+					return StaticValueAsNumber;
+				case XPathResultType.Boolean:
+					return StaticValueAsBoolean;
+				}
+				return null;
+			}
+		}
+
+		public virtual string StaticValueAsString {
+			get { return HasStaticValue ? XPathFunctions.ToString (StaticValue) : null; }
+		}
+
+		public virtual double StaticValueAsNumber {
+			get { return HasStaticValue ? XPathFunctions.ToNumber (StaticValue) : 0; }
+		}
+
+		public virtual bool StaticValueAsBoolean {
+			get { return HasStaticValue ? XPathFunctions.ToBoolean (StaticValue) : false; }
+		}
+
 		public abstract object Evaluate (BaseIterator iter);
 
 		public virtual BaseIterator EvaluateNodeSet (BaseIterator iter)
@@ -481,12 +511,7 @@ namespace System.Xml.XPath
 			{
 				case XPathResultType.Number:
 					double d = (double) result;
-					// See XPath 1.0 section 4.2
-					if (d == Double.NegativeInfinity)
-						return "-Infinity";
-					if (d == Double.PositiveInfinity)
-						return "Infinity";
-					return (string) XmlConvert.ToString (d);
+					return XPathFunctions.ToString (d);
 				case XPathResultType.Boolean:
 					return ((bool) result) ? "true" : "false";
 				case XPathResultType.String:
@@ -562,6 +587,18 @@ namespace System.Xml.XPath
 			_left = left;
 			_right = right;
 		}
+
+		public override Expression Optimize ()
+		{
+			_left = _left.Optimize ();
+			_right = _right.Optimize ();
+			return this;
+		}
+
+		public override bool HasStaticValue {
+			get { return _left.HasStaticValue && _right.HasStaticValue; }
+		}
+
 		public override String ToString ()
 		{
 			return _left.ToString () + ' ' + Operator + ' ' + _right.ToString ();
@@ -589,6 +626,18 @@ namespace System.Xml.XPath
 	internal abstract class ExprBoolean : ExprBinary
 	{
 		public ExprBoolean (Expression left, Expression right) : base (left, right) {}
+
+		public override Expression Optimize ()
+		{
+			base.Optimize ();
+			if (!HasStaticValue)
+				return this;
+			else if (StaticValueAsBoolean)
+				return new XPathFunctionTrue (null);
+			else
+				return new XPathFunctionFalse (null);
+		}
+
 		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
 		public override object Evaluate (BaseIterator iter)
 		{
@@ -609,6 +658,11 @@ namespace System.Xml.XPath
 	{
 		public ExprOR (Expression left, Expression right) : base (left, right) {}
 		protected override String Operator { get { return "or"; }}
+
+		public override bool StaticValueAsBoolean {
+			get { return HasStaticValue ? _left.StaticValueAsBoolean || _right.StaticValueAsBoolean : false; }
+		}
+
 		public override bool EvaluateBoolean (BaseIterator iter)
 		{
 			if (_left.EvaluateBoolean (iter))
@@ -621,6 +675,11 @@ namespace System.Xml.XPath
 	{
 		public ExprAND (Expression left, Expression right) : base (left, right) {}
 		protected override String Operator { get { return "and"; }}
+
+		public override bool StaticValueAsBoolean {
+			get { return HasStaticValue ? _left.StaticValueAsBoolean && _right.StaticValueAsBoolean : false; }
+		}
+
 		public override bool EvaluateBoolean (BaseIterator iter)
 		{
 			if (!_left.EvaluateBoolean (iter))
@@ -635,6 +694,20 @@ namespace System.Xml.XPath
 		public EqualityExpr (Expression left, Expression right, bool trueVal) : base (left, right)
 		{
 			this.trueVal = trueVal;
+		}
+
+		public override bool StaticValueAsBoolean {
+			get {
+				if (!HasStaticValue)
+					return false;
+				if (_left.ReturnType == XPathResultType.Boolean | _right.ReturnType == XPathResultType.Boolean)
+					return (_left.StaticValueAsBoolean == _right.StaticValueAsBoolean) == trueVal;
+				if (_left.ReturnType == XPathResultType.Number | _right.ReturnType == XPathResultType.Number)
+					return (_left.StaticValueAsNumber == _right.StaticValueAsNumber) == trueVal;
+				if (_left.ReturnType == XPathResultType.String | _right.ReturnType == XPathResultType.String)
+					return (_left.StaticValueAsString == _right.StaticValueAsString) == trueVal;
+				return _left.StaticValue == _right.StaticValue;
+			}
 		}
 
 		[MonoTODO ("Avoid extraneous evaluation")]
@@ -733,6 +806,11 @@ namespace System.Xml.XPath
 	internal abstract class RelationalExpr : ExprBoolean
 	{
 		public RelationalExpr (Expression left, Expression right) : base (left, right) {}
+
+		public override bool StaticValueAsBoolean {
+			get { return HasStaticValue ? Compare (_left.StaticValueAsNumber, _right.StaticValueAsNumber) : false; }
+		}
+
 		[MonoTODO ("Avoid extraneous evaluation.")]
 		public override bool EvaluateBoolean (BaseIterator iter)
 		{
@@ -858,7 +936,15 @@ namespace System.Xml.XPath
 	{
 		public ExprNumeric (Expression left, Expression right) : base (left, right) {}
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
-		
+
+		public override Expression Optimize ()
+		{
+			base.Optimize ();
+			return !HasStaticValue ?
+				(Expression) this :
+				new ExprNumber (StaticValueAsNumber);
+		}
+
 		public override object Evaluate (BaseIterator iter)
 		{
 			return EvaluateNumber (iter);
@@ -869,6 +955,11 @@ namespace System.Xml.XPath
 	{
 		public ExprPLUS (Expression left, Expression right) : base (left, right) {}
 		protected override String Operator { get { return "+"; }}
+
+		public override double StaticValueAsNumber {
+			get { return HasStaticValue ? _left.StaticValueAsNumber + _right.StaticValueAsNumber: 0; }
+		}
+
 		public override double EvaluateNumber (BaseIterator iter)
 		{
 			return _left.EvaluateNumber (iter) + _right.EvaluateNumber (iter);
@@ -879,6 +970,11 @@ namespace System.Xml.XPath
 	{
 		public ExprMINUS (Expression left, Expression right) : base (left, right) {}
 		protected override String Operator { get { return "-"; }}
+
+		public override double StaticValueAsNumber {
+			get { return HasStaticValue ? _left.StaticValueAsNumber - _right.StaticValueAsNumber: 0; }
+		}
+
 		public override double EvaluateNumber (BaseIterator iter)
 		{
 			return _left.EvaluateNumber (iter) - _right.EvaluateNumber (iter);
@@ -889,6 +985,11 @@ namespace System.Xml.XPath
 	{
 		public ExprMULT (Expression left, Expression right) : base (left, right) {}
 		protected override String Operator { get { return "*"; }}
+
+		public override double StaticValueAsNumber {
+			get { return HasStaticValue ? _left.StaticValueAsNumber * _right.StaticValueAsNumber: 0; }
+		}
+
 		public override double EvaluateNumber (BaseIterator iter)
 		{
 			return _left.EvaluateNumber (iter) * _right.EvaluateNumber (iter);
@@ -899,6 +1000,11 @@ namespace System.Xml.XPath
 	{
 		public ExprDIV (Expression left, Expression right) : base (left, right) {}
 		protected override String Operator { get { return " div "; }}
+
+		public override double StaticValueAsNumber {
+			get { return HasStaticValue ? _left.StaticValueAsNumber / _right.StaticValueAsNumber: 0; }
+		}
+
 		public override double EvaluateNumber (BaseIterator iter)
 		{
 			return _left.EvaluateNumber (iter) / _right.EvaluateNumber (iter);
@@ -909,6 +1015,10 @@ namespace System.Xml.XPath
 	{
 		public ExprMOD (Expression left, Expression right) : base (left, right) {}
 		protected override String Operator { get { return "%"; }}
+
+		public override double StaticValueAsNumber {
+			get { return HasStaticValue ? _left.StaticValueAsNumber % _right.StaticValueAsNumber: 0; }
+		}
 
 		public override double EvaluateNumber (BaseIterator iter)
 		{
@@ -926,8 +1036,24 @@ namespace System.Xml.XPath
 		public override String ToString () { return "- " + _expr.ToString (); }
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
 
+		public override Expression Optimize ()
+		{
+			_expr = _expr.Optimize ();
+			return !HasStaticValue ?
+				(Expression) this :
+				new ExprNumber (StaticValueAsNumber);
+		}
+
 		internal override bool Peer {
 			get { return _expr.Peer; }
+		}
+
+		public override bool HasStaticValue {
+			get { return _expr.HasStaticValue; }
+		}
+
+		public override double StaticValueAsNumber {
+			get { return _expr.HasStaticValue ? -1 * _expr.StaticValueAsNumber : 0; }
 		}
 
 		public override object Evaluate (BaseIterator iter)
@@ -955,12 +1081,20 @@ namespace System.Xml.XPath
 
 	internal class ExprUNION : NodeSet
 	{
-		internal readonly Expression left, right;
+		internal Expression left, right;
 		public ExprUNION (Expression left, Expression right)
 		{
 			this.left = left;
 			this.right = right;
 		}
+
+		public override Expression Optimize ()
+		{
+			left = left.Optimize ();
+			right = right.Optimize ();
+			return this;
+		}
+
 		public override String ToString () { return left.ToString ()+ " | " + right.ToString (); }
 		public override object Evaluate (BaseIterator iter)
 		{
@@ -992,13 +1126,21 @@ namespace System.Xml.XPath
 
 	internal class ExprSLASH : NodeSet
 	{
-		public readonly Expression left;
-		public readonly NodeSet right;
+		public Expression left;
+		public NodeSet right;
 		public ExprSLASH (Expression left, NodeSet right)
 		{
 			this.left = left;
 			this.right = right;
 		}
+
+		public override Expression Optimize ()
+		{
+			left = left.Optimize ();
+			right = (NodeSet) right.Optimize ();
+			return this;
+		}
+
 		public override String ToString () { return left.ToString ()+ "/" + right.ToString (); }
 		public override object Evaluate (BaseIterator iter)
 		{
@@ -1031,8 +1173,8 @@ namespace System.Xml.XPath
 	}
 	
 	internal class ExprSLASH2 : NodeSet {
-		public readonly Expression left;
-		public readonly NodeSet right;
+		public Expression left;
+		public NodeSet right;
 			
 		static NodeTest DescendantOrSelfStar = new NodeTypeTest (Axes.DescendantOrSelf, XPathNodeType.All);
 
@@ -1041,6 +1183,14 @@ namespace System.Xml.XPath
 			this.left = left;
 			this.right = right;
 		}
+
+		public override Expression Optimize ()
+		{
+			left = left.Optimize ();
+			right = (NodeSet) right.Optimize ();
+			return this;
+		}
+
 		public override String ToString () { return left.ToString ()+ "//" + right.ToString (); }
 		public override object Evaluate (BaseIterator iter)
 		{
@@ -1439,12 +1589,19 @@ namespace System.Xml.XPath
 
 	internal class ExprFilter : NodeSet
 	{
-		public readonly Expression expr, pred;
+		internal Expression expr, pred;
 		
 		public ExprFilter (Expression expr, Expression pred)
 		{
 			this.expr = expr;
 			this.pred = pred;
+		}
+
+		public override Expression Optimize ()
+		{
+			expr = expr.Optimize ();
+			pred = pred.Optimize ();
+			return this;
 		}
 		
 		internal Expression LeftHandSide {get{return expr;}}
@@ -1493,6 +1650,14 @@ namespace System.Xml.XPath
 			get { return true; }
 		}
 
+		public override bool HasStaticValue {
+			get { return true; }
+		}
+
+		public override double StaticValueAsNumber {
+			get { return XPathFunctions.ToNumber (_value); }
+		}
+
 		public override object Evaluate (BaseIterator iter)
 		{
 			return _value;
@@ -1505,6 +1670,41 @@ namespace System.Xml.XPath
 
 		internal override bool IsPositional {
 			get { return false; }
+		}
+	}
+
+	internal class BooleanConstant : Expression
+	{
+		bool _value;
+
+		public BooleanConstant (bool value)
+		{
+			_value = value;
+		}
+
+		public override String ToString () { return _value ? "true()" : "false()"; }
+		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
+
+		internal override bool Peer {
+			get { return true; }
+		}
+
+		public override bool HasStaticValue {
+			get { return true; }
+		}
+
+		public override bool StaticValueAsBoolean {
+			get { return _value; }
+		}
+
+		public override object Evaluate (BaseIterator iter)
+		{
+			return _value;
+		}
+		
+		public override bool EvaluateBoolean (BaseIterator iter)
+		{
+			return _value;
 		}
 	}
 
@@ -1521,6 +1721,14 @@ namespace System.Xml.XPath
 
 		internal override bool Peer {
 			get { return true; }
+		}
+
+		public override bool HasStaticValue {
+			get { return true; }
+		}
+
+		public override string StaticValueAsString {
+			get { return _value; }
 		}
 
 		public override object Evaluate (BaseIterator iter)
@@ -1590,7 +1798,28 @@ namespace System.Xml.XPath
 
 		public override Expression Optimize ()
 		{
-			return _expr;
+			_expr.Optimize ();
+			return this;
+		}
+
+		public override bool HasStaticValue {
+			get { return _expr.HasStaticValue; }
+		}
+
+		public override object StaticValue {
+			get { return _expr.StaticValue; }
+		}
+
+		public override string StaticValueAsString {
+			get { return _expr.StaticValueAsString; }
+		}
+
+		public override double StaticValueAsNumber {
+			get { return _expr.StaticValueAsNumber; }
+		}
+
+		public override bool StaticValueAsBoolean {
+			get { return _expr.StaticValueAsBoolean; }
 		}
 
 		public override String ToString () { return "(" + _expr.ToString () + ")"; }
