@@ -120,10 +120,10 @@ namespace Mono.MonoBASIC {
 				Error (code, l, text);
 			else {
 				if (Location.IsNull (l))
-					Console.WriteLine(String.Format("{0} warning BC{2:0000}: {3}",
+					Console.WriteLine(String.Format("{0} warning BC{1:0000}: {2}",
 						l.Name, code, text));
 				else
-					Console.WriteLine(String.Format("{0}({1},{2}) warning BC{2:0000}: {3}",
+					Console.WriteLine(String.Format("{0}({1},{2}) warning BC{3:0000}: {4}",
 						l.Name, l.Row, l.Col, code, text));
 				Warnings++;
 				Check (code);
