@@ -1,5 +1,7 @@
 2002-05-14  Dietmar Maurer  <dietmar@ximian.com>
 
+	* object.c (mono_runtime_invoke): is now able to catch exceptions.
+
 	* threads.c (mono_thread_init): added a callback which is invoked
 	at thread start.
 
