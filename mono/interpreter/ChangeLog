@@ -1,3 +1,7 @@
+2004-07-28  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* interp.c: Use mono_init_from_assembly instead of mono_init.
+
 2004-07-27  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* transform.c (mono_interp_transform_method):
