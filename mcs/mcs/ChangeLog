@@ -1,3 +1,9 @@
+2004-01-20  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs (Statement.ResolveUnreachable): New public method.
+	(If, While): Do the dead-code elimination in Resolve(), not in Emit().
+	(Block.Resolve): Resolve unreachable statements.
+
 2004-01-19 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* expression.cs: We need to fix the case where we do

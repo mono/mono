@@ -21,12 +21,39 @@ namespace Mono.CSharp {
 	public abstract class Statement {
 		public Location loc;
 		
-		///
-		/// Resolves the statement, true means that all sub-statements
-		/// did resolve ok.
-		//
+		/// <summary>
+		///   Resolves the statement, true means that all sub-statements
+		///   did resolve ok.
+		//  </summary>
 		public virtual bool Resolve (EmitContext ec)
 		{
+			return true;
+		}
+
+		/// <summary>
+		///   We already know that the statement is unreachable, but we still
+		///   need to resolve it to catch errors.
+		/// </summary>
+		public virtual bool ResolveUnreachable (EmitContext ec, bool warn)
+		{
+			//
+			// This conflicts with csc's way of doing this, but IMHO it's
+			// the right thing to do.
+			//
+			// If something is unreachable, we still check whether it's
+			// correct.  This means that you cannot use unassigned variables
+			// in unreachable code, for instance.
+			//
+
+			ec.StartFlowBranching (FlowBranching.BranchingType.Block, loc);
+			bool ok = Resolve (ec);
+			ec.KillFlowBranching ();
+
+			if (!ok)
+				return false;
+
+			if (warn)
+				Report.Warning (162, loc, "Unreachable code detected");
 			return true;
 		}
 		
@@ -42,12 +69,7 @@ namespace Mono.CSharp {
 		{
 			ec.Mark (loc, true);
 			DoEmit (ec);
-		}
-		
-		public static void Warning_DeadCodeFound (Location loc)
-		{
-			Report.Warning (162, loc, "Unreachable code detected");
-		}
+		}		
 	}
 
 	public sealed class EmptyStatement : Statement {
@@ -99,28 +121,50 @@ namespace Mono.CSharp {
 			if (expr == null){
 				return false;
 			}
+
+			//
+			// Dead code elimination
+			//
+			if (expr is BoolConstant){
+				bool take = ((BoolConstant) expr).Value;
+
+				if (take){
+					if (!TrueStatement.Resolve (ec))
+						return false;
+
+					if ((FalseStatement != null) &&
+					    !FalseStatement.ResolveUnreachable (ec, true))
+						return false;
+					FalseStatement = null;
+				} else {
+					if (!TrueStatement.ResolveUnreachable (ec, true))
+						return false;
+					TrueStatement = null;
+
+					if ((FalseStatement != null) &&
+					    !FalseStatement.Resolve (ec))
+						return false;
+				}
+
+				return true;
+			}
 			
 			ec.StartFlowBranching (FlowBranching.BranchingType.Conditional, loc);
 			
-			if (!TrueStatement.Resolve (ec)) {
-				ec.KillFlowBranching ();
-				return false;
-			}
+			bool ok = TrueStatement.Resolve (ec);
 
 			is_true_ret = ec.CurrentBranching.CurrentUsageVector.Reachability.IsUnreachable;
 
 			ec.CurrentBranching.CreateSibling (FlowBranching.SiblingType.Conditional);
 
-			if ((FalseStatement != null) && !FalseStatement.Resolve (ec)) {
-				ec.KillFlowBranching ();
-				return false;
-			}
+			if ((FalseStatement != null) && !FalseStatement.Resolve (ec))
+				ok = false;
 					
 			ec.EndFlowBranching ();
 
 			Report.Debug (1, "END IF BLOCK", loc);
 
-			return true;
+			return ok;
 		}
 		
 		protected override void DoEmit (EmitContext ec)
@@ -130,24 +174,18 @@ namespace Mono.CSharp {
 			Label end;
 
 			//
-			// Dead code elimination
+			// If we're a boolean expression, Resolve() already
+			// eliminated dead code for us.
 			//
 			if (expr is BoolConstant){
 				bool take = ((BoolConstant) expr).Value;
 
-				if (take){
-					if (FalseStatement != null){
-						Warning_DeadCodeFound (FalseStatement.loc);
-					}
+				if (take)
 					TrueStatement.Emit (ec);
-					return;
-				} else {
-					Warning_DeadCodeFound (TrueStatement.loc);
-					if (FalseStatement != null) {
-						FalseStatement.Emit (ec);
-						return;
-					}
-				}
+				else if (FalseStatement != null)
+					FalseStatement.Emit (ec);
+
+				return;
 			}
 			
 			expr.EmitBranchable (ec, false_target, false);
@@ -252,7 +290,7 @@ namespace Mono.CSharp {
 	public class While : Statement {
 		public Expression expr;
 		public readonly Statement Statement;
-		bool empty, infinite;
+		bool infinite, empty;
 		
 		public While (Expression boolExpr, Statement statement, Location l)
 		{
@@ -269,8 +307,6 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
-			ec.StartFlowBranching (FlowBranching.BranchingType.LoopBlock, loc);
-
 			//
 			// Inform whether we are infinite or not
 			//
@@ -278,26 +314,21 @@ namespace Mono.CSharp {
 				BoolConstant bc = (BoolConstant) expr;
 
 				if (bc.Value == false){
-					Warning_DeadCodeFound (Statement.loc);
+					if (!Statement.ResolveUnreachable (ec, true))
+						return false;
 					empty = true;
+					return true;
 				} else
 					infinite = true;
-			} else {
-				//
-				// We are not infinite, so the loop may or may not be executed.
-				//
-				ec.CurrentBranching.CreateSibling (FlowBranching.SiblingType.Conditional);
 			}
+
+			ec.StartFlowBranching (FlowBranching.BranchingType.LoopBlock, loc);
 
 			if (!Statement.Resolve (ec))
 				ok = false;
 
-			if (empty)
-				ec.KillFlowBranching ();
-			else {
-				ec.CurrentBranching.Infinite = infinite;
-				ec.EndFlowBranching ();
-			}
+			ec.CurrentBranching.Infinite = infinite;
+			ec.EndFlowBranching ();
 
 			return ok;
 		}
@@ -390,8 +421,13 @@ namespace Mono.CSharp {
 					BoolConstant bc = (BoolConstant) Test;
 
 					if (bc.Value == false){
-						Warning_DeadCodeFound (Statement.loc);
+						if (!Statement.ResolveUnreachable (ec, true))
+							return false;
+						if ((Increment != null) &&
+						    !Increment.ResolveUnreachable (ec, false))
+							return false;
 						empty = true;
+						return true;
 					} else
 						infinite = true;
 				}
@@ -410,12 +446,8 @@ namespace Mono.CSharp {
 					ok = false;
 			}
 
-			if (empty)
-				ec.KillFlowBranching ();
-			else {
-				ec.CurrentBranching.Infinite = infinite;
-				ec.EndFlowBranching ();
-			}
+			ec.CurrentBranching.Infinite = infinite;
+			ec.EndFlowBranching ();
 
 			return ok;
 		}
@@ -456,8 +488,9 @@ namespace Mono.CSharp {
 			//
 			if (Test != null){
 				//
-				// The Resolve code already catches the case for Test == BoolConstant (false)
-				// so we know that this is true
+				// The Resolve code already catches the case for
+				// Test == BoolConstant (false) so we know that
+				// this is true
 				//
 				if (Test is BoolConstant)
 					ig.Emit (OpCodes.Br, loop);
@@ -1662,12 +1695,13 @@ namespace Mono.CSharp {
 			int statement_count = statements.Count;
 			for (int ix = 0; ix < statement_count; ix++){
 				Statement s = (Statement) statements [ix];
-				
+
 				if (unreachable && !(s is LabeledStatement)) {
-					if (!warning_shown && s != EmptyStatement.Value) {
+					if (!s.ResolveUnreachable (ec, !warning_shown))
+						ok = false;
+
+					if (s != EmptyStatement.Value)
 						warning_shown = true;
-						Warning_DeadCodeFound (s.loc);
-					}
 
 					statements [ix] = EmptyStatement.Value;
 					continue;
