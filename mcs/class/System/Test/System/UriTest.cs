@@ -161,6 +161,13 @@ namespace MonoTests.System
 			AssertEquals ("#4c", "file", uri.Scheme);
 			AssertEquals ("#4d", "mymachine", uri.Host);
 			AssertEquals ("#4e", "/cygwin/tmp/hello.txt", uri.AbsolutePath);
+			
+			uri = new Uri ("file://///c:/cygwin/tmp/hello.txt");
+			AssertEquals ("#5a", "file:///c:/cygwin/tmp/hello.txt", uri.ToString ());
+			AssertEquals ("#5b", "c:\\cygwin\\tmp\\hello.txt", uri.LocalPath);
+			AssertEquals ("#5c", "file", uri.Scheme);
+			AssertEquals ("#5d", "", uri.Host);
+			AssertEquals ("#5e", "c:/cygwin/tmp/hello.txt", uri.AbsolutePath);			
 		}
 		
 		public void TestUnc ()

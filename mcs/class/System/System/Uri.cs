@@ -624,6 +624,11 @@ namespace System
 				} catch (Exception) {
 					throw new UriFormatException ("Invalid URI: The hostname could not be parsed");
 				}
+			if (host.Length == 2 && host [1] == ':') {
+				// windows filepath
+				path = host + path;
+				host = String.Empty;
+			}
 		}
 
 				
