@@ -26,6 +26,7 @@ namespace System.Windows.Forms {
 		private const int PanelGap = 2;    // FIXME: get size from StatusBar
 		private const int TextOffset = 3;
 		internal DockStyle dockstyle;
+		private Gtk.Statusbar statusbar;
 
 		public StatusBar() : base()
 		{
@@ -33,6 +34,20 @@ namespace System.Windows.Forms {
 			showPanels = false;
 			sizingGrip = true;
 			base.TabStop = false;
+		}
+
+
+		internal override Gtk.Widget CreateWidget () {
+			statusbar = new Gtk.Statusbar ();
+			ConnectEvents ();
+			return statusbar;
+		}
+
+		[MonoTODO]
+		internal void ConnectEvents () 
+		{
+			// statusbar.TextPopped +=
+			// statusbar.TextPushed +=
 		}
 
 		public override string ToString()
@@ -101,8 +116,8 @@ namespace System.Windows.Forms {
 		}
 
 		public override Image BackgroundImage {
-			get {	return base.BackgroundImage;	}
-			set {	base.BackgroundImage = value;	}
+			get {	return base.BackgroundImage;}
+			set {	base.BackgroundImage = value;}
 		}
 
 		//FIXME:
@@ -123,7 +138,6 @@ namespace System.Windows.Forms {
 		}
 
 		public override Color ForeColor {
-
 			get { return base.ForeColor; }
 			set { base.ForeColor = value; }
 		}
