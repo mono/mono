@@ -320,4 +320,56 @@ namespace System.Reflection
 			}
 		}
 	}
+
+	internal class MonoGenericParam : MonoType
+	{
+		private object refobj;
+		private int index;
+		private string name;
+		private int flags;
+		private Type[] constraints;
+		bool initialized;
+
+		[MonoTODO]
+		internal MonoGenericParam ()
+			: base (null)
+		{
+			// this should not be used
+			throw new InvalidOperationException ();
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern void initialize ();
+
+		public void SetConstraints (Type[] constraints)
+		{
+			this.constraints = constraints;
+			initialize ();
+		}
+
+		public override Type BaseType {
+			get {
+				if (!initialized)
+					throw new InvalidOperationException ();
+				if ((constraints.Length == 0) || constraints [0].IsInterface)
+					return null;
+				else
+					return constraints [0];
+			}
+		}
+
+		public override Type[] GetInterfaces ()
+		{
+			if (!initialized)
+				throw new InvalidOperationException ();
+
+			if ((constraints.Length == 0) || constraints [0].IsInterface)
+				return constraints;
+			else {
+				Type[] ret = new Type [constraints.Length-1];
+				Array.Copy (constraints, 1, ret, 0, constraints.Length-1);
+				return ret;
+			}
+		}
+	}
 }

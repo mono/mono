@@ -1,3 +1,8 @@
+2003-12-08  Martin Baulig  <martin@ximian.com>
+
+	* MonoGenericInst.cs (MonoGenericParam): New internal class;
+	derives from MonoType.	
+
 2003-12-08  Patrik Torstensson <p@rxc.se>
 
 	* Binder.cs: Added internal helpers to get derived level and select the 
