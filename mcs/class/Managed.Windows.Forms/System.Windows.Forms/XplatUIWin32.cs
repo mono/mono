@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.31 $
+// $Revision: 1.32 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.32  2004/08/25 18:33:08  pbartok
+// - Fixed timer handling, now seems to work
+// - Improved error message for window creation
+//
 // Revision 1.31  2004/08/24 17:17:27  pbartok
 // - Implemented SetTimer() and KillTimer()
 //
@@ -158,7 +162,7 @@ namespace System.Windows.Forms {
 
 		internal static bool		themes_enabled;
 		private static Hashtable	handle_data;
-		private ArrayList		timer_list;
+		private Hashtable		timer_list;
 		#endregion	// Local Variables
 
 		#region Private Structs
@@ -519,7 +523,7 @@ namespace System.Windows.Forms {
 			}
 
 			handle_data = new Hashtable ();
-			timer_list = new ArrayList ();
+			timer_list = new Hashtable ();
 		}
 		#endregion	// Constructor & Destructor
 
@@ -662,7 +666,7 @@ namespace System.Windows.Forms {
 			if (WindowHandle==IntPtr.Zero) {
 				uint error = Win32GetLastError();
 
-				Win32MessageBox(IntPtr.Zero, "Error : " + error.ToString(), "Failed to create window", 0);
+				Win32MessageBox(IntPtr.Zero, "Error : " + error.ToString(), "Failed to create window, class '"+cp.ClassName+"'", 0);
 			}
 
 			Win32SetWindowLong(WindowHandle, WindowLong.GWL_USERDATA, (IntPtr)ThemeEngine.Current.DefaultControlBackColor.ToArgb());
@@ -920,8 +924,11 @@ namespace System.Windows.Forms {
 				}
 
 				case Msg.WM_TIMER: {
-					Timer timer = (Timer) timer_list [(int)msg.wParam];
-					timer.FireTick();
+					Timer timer=(Timer)timer_list[(int)msg.wParam];
+
+					if (timer != null) {
+						timer.FireTick();
+					}
 					break;
 				}
 			}
@@ -1038,8 +1045,10 @@ namespace System.Windows.Forms {
 		{
 			int	index;
 
+			index = timer.GetHashCode();
+
 			lock (timer_list) {
-				index = timer_list.Add (timer);
+				timer_list[index]=timer;
 			}
 
 			Win32SetTimer(FosterParent, index, (uint)timer.Interval, IntPtr.Zero);
@@ -1049,13 +1058,12 @@ namespace System.Windows.Forms {
 		{
 			int	index;
 
-			index = timer_list.IndexOf(timer);
-			if (index != -1) {
-				Win32KillTimer(FosterParent, index);
+			index = timer.GetHashCode();
 
-				lock (timer_list) {
-					timer_list.Remove (timer);
-				}
+			Win32KillTimer(FosterParent, index);
+
+			lock (timer_list) {
+				timer_list.Remove(index);
 			}
 		}
 
