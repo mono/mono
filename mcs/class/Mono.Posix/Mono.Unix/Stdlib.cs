@@ -36,18 +36,13 @@ namespace Mono.Unix {
 
 	public delegate void SignalHandler (int signal);
 
-	[StructLayout (LayoutKind.Sequential)]
 	public sealed class FilePosition : IDisposable {
-
-		[DllImport ("MonoPosixHelper",
-				EntryPoint="Mono_Posix_Stdlib_CreateFilePosition")]
-		private static extern IntPtr CreateFilePosition ();
 
 		private HandleRef pos;
 
 		public FilePosition ()
 		{
-			IntPtr p = CreateFilePosition ();
+			IntPtr p = Stdlib.CreateFilePosition ();
 			if (p == IntPtr.Zero)
 				throw new OutOfMemoryException ("Unable to malloc fpos_t!");
 			pos = new HandleRef (this, p);
@@ -85,14 +80,9 @@ namespace Mono.Unix {
 			this.handler = handler;
 		}
 
-		private const string MPH = "MonoPosixHelper";
-
-		[DllImport (MPH, EntryPoint="Mono_Posix_Syscall_InvokeSignalHandler")]
-		private static extern void InvokeSignalHandler (int signum, IntPtr handler);
-
 		public void InvokeSignalHandler (int signum)
 		{
-			InvokeSignalHandler (signum, handler);
+			Stdlib.InvokeSignalHandler (signum, handler);
 		}
 	}
 
@@ -132,14 +122,17 @@ namespace Mono.Unix {
 	//
 	public class Stdlib
 	{
-		private const string LIBC = "libc";
-		private const string MPH = "MonoPosixHelper";
+		internal const string LIBC = "libc";
+		internal const string MPH  = "MonoPosixHelper";
 
 		internal Stdlib () {}
 
 		//
 		// <signal.h>
 		//
+		[DllImport (MPH, EntryPoint="Mono_Posix_Syscall_InvokeSignalHandler")]
+		internal static extern void InvokeSignalHandler (int signum, IntPtr handler);
+
 		[DllImport (MPH, EntryPoint="Mono_Posix_Stdlib_SIG_DFL")]
 		private static extern IntPtr GetDefaultSignal ();
 
@@ -230,6 +223,9 @@ namespace Mono.Unix {
 
 		[DllImport (MPH, EntryPoint="Mono_Posix_Stdlib_BUFSIZ")]
 		private static extern int GetBufferSize ();
+
+		[DllImport (MPH, EntryPoint="Mono_Posix_Stdlib_CreateFilePosition")]
+		internal static extern IntPtr CreateFilePosition ();
 
 		[DllImport (MPH, EntryPoint="Mono_Posix_Stdlib_L_tmpnam")]
 		private static extern int GetTmpnamLength ();

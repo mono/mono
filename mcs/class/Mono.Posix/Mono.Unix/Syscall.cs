@@ -6,7 +6,7 @@
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
 // (C) 2003 Novell, Inc.
-// (C) 2004 Jonathan Pryor
+// (C) 2004-2005 Jonathan Pryor
 //
 // This file implements the low-level syscall interface to the POSIX
 // subsystem.
@@ -1045,8 +1045,6 @@ namespace Mono.Unix {
 	//
 	public sealed class Syscall : Stdlib
 	{
-		private const string LIBC = "libc";
-		private const string MPH = "MonoPosixHelper";
 		private const string CRYPT = "crypt";
 
 		private Syscall () {}

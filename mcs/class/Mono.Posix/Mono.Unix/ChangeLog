@@ -1,5 +1,10 @@
 2005-01-01  Jonathan Pryor <jonpryor@vt.edu>
 
+	* Stdlib.cs, Syscall.cs: Minimize duplicate declarations of
+	  "MonoPosixHelper" for use in DllImport statements.
+
+2005-01-01  Jonathan Pryor <jonpryor@vt.edu>
+
 	* Stdlib.cs: Don't use C# v2 features; fixes build under CSC.EXE.
 
 2004-12-30  Jonathan Pryor <jonpryor@vt.edu>
