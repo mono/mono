@@ -1,3 +1,12 @@
+2005-03-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class-internals.h object-internals.h class.c reflection.c: Extend the
+	mono_lookup_dynamic_token () function to return the class of the
+	token as well. 
+
+	* class.c (mono_ldtoken): Handle MEMBERREFS in the dynamic case as
+	well. Fixes #73848.
+
 2005-03-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* security-manager.c: Skip inheritance checks for intra-corlib
