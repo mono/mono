@@ -1,3 +1,8 @@
+2005-01-02  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* stdio.c: More wrapper functions.  I missed a few macros...  This should
+	  complete all macro's defined in <stdio.h> for C99.
+
 2004-12-30  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* stdio.c: More wrapper functions.  This should complete C89's <stdio.h>

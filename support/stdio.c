@@ -4,7 +4,7 @@
  * Authors:
  *   Jonathan Pryor (jonpryor@vt.edu)
  *
- * Copyright (C) 2004 Jonathan Pryor
+ * Copyright (C) 2004-2005 Jonathan Pryor
  */
 
 #include <stdio.h>
@@ -68,6 +68,24 @@ Mono_Posix_Stdlib_BUFSIZ (void)
 }
 
 gint32
+Mono_Posix_Stdlib_EOF (void)
+{
+	return EOF;
+}
+
+gint32
+Mono_Posix_Stdlib_FOPEN_MAX (void)
+{
+	return FOPEN_MAX;
+}
+
+gint32
+Mono_Posix_Stdlib_FILENAME_MAX (void)
+{
+	return FILENAME_MAX;
+}
+
+gint32
 Mono_Posix_Stdlib_L_tmpnam (void)
 {
 	return L_tmpnam;
@@ -89,6 +107,12 @@ FILE*
 Mono_Posix_Stdlib_stderr (void)
 {
 	return stderr;
+}
+
+gint32
+Mono_Posix_Stdlib_TMP_MAX (void)
+{
+	return TMP_MAX;
 }
 
 gint32
