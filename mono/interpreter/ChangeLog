@@ -1,3 +1,7 @@
+2002-05-20  Miguel de Icaza  <miguel@ximian.com>
+
+	* interp.c: Updated help display.
+
 2002-05-20  Radek Doulik  <rodo@ximian.com>
 
 	* interp.c (dump_stack): print boxed values for --noptr
