@@ -106,6 +106,21 @@ class Y {
 			return 4;
 		return 0;
 	}
+
+	static int arrays ()
+	{
+		int [] a = new int [10];
+		int i;
+		
+		for (i = 0; i < 10; i++)
+			a [i]++;
+
+		for (i = 0; i < 10; i++)
+			if (a [i] != 1)
+				return 100;
+		return 0;
+	}
+	
 	static int Main ()
 	{
 		X x = new X ();
@@ -142,6 +157,8 @@ class Y {
 
 		overload_increment (z);
 
+		arrays ();
+		
 		return 0;
 	}
 	
