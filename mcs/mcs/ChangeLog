@@ -1,5 +1,8 @@
 2002-10-16  Miguel de Icaza  <miguel@ximian.com>
 
+	* driver.cs: Report an error if the resource file is not found
+	instead of crashing.
+
 	* ecore.cs (PropertyExpr.EmitAssign): Pass IsBase instead of
 	false, like Emit does.
 

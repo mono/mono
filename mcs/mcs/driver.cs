@@ -1318,10 +1318,18 @@ namespace Mono.CSharp
 							margs [1] = spec.Substring (0, cp);
 						} else
 							margs [0] = margs [1] = spec;
-						embed_res.Invoke (CodeGen.AssemblyBuilder, margs);
+
+						if (File.Exists ((string) margs [0]))
+							embed_res.Invoke (CodeGen.AssemblyBuilder, margs);
+						else {
+							Report.Error (1566, "Can not find the resource " + margs [0]);
+						}
 					}
 				}
 			}
+
+			if (Report.Errors > 0)
+				return false;
 			
 			CodeGen.Save (output_file);
 			if (timestamps) {
