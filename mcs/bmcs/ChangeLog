@@ -1,3 +1,87 @@
+2005-02-28  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (TypeManager.IsNullableType): New static method.
+	(Nullable): New abstract class.
+	(Nullable.NullLiteral): New public class.
+	(Nullable.LiftedConversion): New public class.
+
+	* cs-parser.jay (non_expression_type): Changed `builtin_types' to
+	`builtin_types opt_nullable'.
+
+	* convert.cs
+	(Convert.ImplicitConversionStandard): Added nullable conversions.
+	(Convert.ExplicitConversionStandard): Likewise.
+	(Convert.ExplicitConversion): Likewise.
+
+2005-02-26  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (ComposedCast.DoResolveAsTypeStep): Allow `dim' to
+	begin with a "?", for instance "?[]".  Don't do a type lookup if
+	`dim' is empty.
+
+2005-02-25  Martin Baulig  <martin@ximian.com>
+
+	The first part of Nullable Types :-)
+
+	* generic.cs (NullableType): New public class.
+	(NullCoalescingOperator): New public class.
+	(TypeArguments.Resolve): Add a CS0306 check.
+
+	* cs-parser.jay (opt_error_modifier): Removed, this was unused.
+	(opt_nullable): New rule.
+	(type): Added `opt_nullable' to `namespace_or_type_name',
+	`builtin_types' and `pointer_type'.
+	(array_type): Added `opt_nullable'.
+	(opt_rank_specifier_or_nullable): New rule; this is the
+	combination of `opt_rank_specifier' and `opt_nullable'.
+	(opt_error): New rule; catch errors here.
+	(nullable_type_or_conditional): New rule; we use this to check for
+	nullable and still detect the conditional operator.
+	(local_variable_type): Use `opt_rank_specifier_or_nullable'
+	instead `opt_rank_specifier'.
+
+	* expression.cs (ComposedCast.DoResolveAsTypeStep): Added support
+	for nullables.
+
+2005-02-24  Martin Baulig  <martin@ximian.com>
+
+	* README, README.Changes: Removed; they're old and obsolete.
+
+2005-02-22  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (TypeParameter.Resolve): If resolving the constraints
+	returned an error, set `constraints' to null to avoid a crash
+	later on.
+	(TypeParameter.ResolveType): Likewise.
+
+2005-02-22  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs
+	(Constraints.ResolveTypes): Protect against being called twice.
+	(Constraints.CheckInterfaceMethod): Don't call ResolveTypes().
+	(TypeParameter.ResolveType): New public method; calls
+	constraints.ResolveTypes().
+	(TypeParameter.DefineType): Moved constraints.ResolveType() out
+	into the new ResolveType().
+	(GenericMethod.Define): Call ResolveType() on all our
+	TypeParameter's.	
+
+2005-02-21  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs
+	(TypeManager.generic_nullable_type): New static public field.
+	(TypeManager.InitGenericCoreType): Lookup "System.Nullable`1".
+
+	* rootcontext.cs
+	(RootContext.ResolveCore): Resolve "System.Nullable`1".
+
+2005-02-15  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (ConstructedType.Constraints): Correctly check
+	constraints if the argument type is a type parameter; fixes
+	#72326.	
+
+
 2005-03-01  Jambunathan K  <kjambunathan.devel@gmail.com>
 
 	* ecore.cs (ImplicitInvocation, ImplicitNew, FloatingToFixedCast): Added

@@ -272,6 +272,9 @@ namespace Mono.CSharp {
 
 		public bool ResolveTypes (EmitContext ec)
 		{
+			if (effective_base_type != null)
+				return true;
+
 			foreach (object obj in constraints) {
 				ConstructedType cexpr = obj as ConstructedType;
 				if (cexpr == null)
@@ -451,9 +454,6 @@ namespace Mono.CSharp {
 
 		public bool CheckInterfaceMethod (EmitContext ec, GenericConstraints gc)
 		{
-			if (!ResolveTypes (ec))
-				return false;
-
 			if (gc.Attributes != attrs)
 				return false;
 
@@ -535,8 +535,12 @@ namespace Mono.CSharp {
 
 		public bool Resolve (DeclSpace ds)
 		{
-			if (constraints != null)
-				return constraints.Resolve (ds.EmitContext);
+			if (constraints != null) {
+				if (!constraints.Resolve (ds.EmitContext)) {
+					constraints = null;
+					return false;
+				}
+			}
 
 			return true;
 		}
@@ -556,6 +560,18 @@ namespace Mono.CSharp {
 				constraints.Define (type);
 		}
 
+		public bool ResolveType (EmitContext ec)
+		{
+			if (constraints != null) {
+				if (!constraints.ResolveTypes (ec)) {
+					constraints = null;
+					return false;
+				}
+			}
+
+			return true;
+		}
+
 		public bool DefineType (EmitContext ec)
 		{
 			return DefineType (ec, null, null, false);
@@ -564,6 +580,9 @@ namespace Mono.CSharp {
 		public bool DefineType (EmitContext ec, MethodBuilder builder,
 					MethodInfo implementing, bool is_override)
 		{
+			if (!ResolveType (ec))
+				return false;
+
 			if (implementing != null) {
 				if (is_override && (constraints != null)) {
 					Report.Error (
@@ -613,11 +632,6 @@ namespace Mono.CSharp {
 					return false;
 				}
 			} else {
-				if (constraints != null) {
-					if (!constraints.ResolveTypes (ec))
-						return false;
-				}
-
 				gc = (GenericConstraints) constraints;
 			}
 
@@ -988,6 +1002,12 @@ namespace Mono.CSharp {
 				if (te is TypeParameterExpr)
 					has_type_args = true;
 
+				if (te.Type.IsPointer) {
+					Report.Error (306, Location, "The type `{0}' may not be used " +
+						      "as a type argument.", TypeManager.CSharpName (te.Type));
+					return false;
+				}
+
 				atypes [i] = te.Type;
 			}
 			return ok;
@@ -1126,17 +1146,31 @@ namespace Mono.CSharp {
 			if (gc == null)
 				return true;
 
+			bool is_class, is_struct;
+			if (atype.IsGenericParameter) {
+				GenericConstraints agc = TypeManager.GetTypeParameterConstraints (atype);
+				if (agc != null) {
+					is_class = agc.HasReferenceTypeConstraint;
+					is_struct = agc.HasValueTypeConstraint;
+				} else {
+					is_class = is_struct = false;
+				}
+			} else {
+				is_class = atype.IsClass;
+				is_struct = atype.IsValueType;
+			}
+
 			//
 			// First, check the `class' and `struct' constraints.
 			//
-			if (gc.HasReferenceTypeConstraint && !atype.IsClass) {
+			if (gc.HasReferenceTypeConstraint && !is_class) {
 				Report.Error (452, loc, "The type `{0}' must be " +
 					      "a reference type in order to use it " +
 					      "as type parameter `{1}' in the " +
 					      "generic type or method `{2}'.",
 					      atype, ptype, DeclarationName);
 				return false;
-			} else if (gc.HasValueTypeConstraint && !atype.IsValueType) {
+			} else if (gc.HasValueTypeConstraint && !is_struct) {
 				Report.Error (453, loc, "The type `{0}' must be " +
 					      "a value type in order to use it " +
 					      "as type parameter `{1}' in the " +
@@ -1427,6 +1461,11 @@ namespace Mono.CSharp {
 			ec = new EmitContext (
 				this, this, Location, null, return_type, ModFlags, false);
 
+			for (int i = 0; i < TypeParameters.Length; i++) {
+				if (!TypeParameters [i].ResolveType (ec))
+					return false;
+			}
+
 			return true;
 		}
 
@@ -1515,6 +1554,36 @@ namespace Mono.CSharp {
 		}
 	}
 
+	public class NullableType : TypeExpr
+	{
+		Expression underlying;
+
+		public NullableType (Expression underlying, Location l)
+		{
+			this.underlying = underlying;
+			loc = l;
+
+			eclass = ExprClass.Type;
+		}
+
+		public override string Name {
+			get { return underlying.ToString (); }
+		}
+
+		public override string FullName {
+			get { return underlying.ToString (); }
+		}
+
+		protected override TypeExpr DoResolveAsTypeStep (EmitContext ec)
+		{
+			TypeArguments args = new TypeArguments (loc);
+			args.Add (underlying);
+
+			ConstructedType ctype = new ConstructedType (TypeManager.generic_nullable_type, args, loc);
+			return ctype.ResolveAsTypeTerminal (ec);
+		}
+	}
+
 	public partial class TypeManager
 	{
 		//
@@ -1524,6 +1593,7 @@ namespace Mono.CSharp {
 		static public Type activator_type;
 		static public Type generic_ienumerator_type;
 		static public Type generic_ienumerable_type;
+		static public Type generic_nullable_type;
 
 		// <remarks>
 		//   Tracks the generic parameters.
@@ -1551,10 +1621,9 @@ namespace Mono.CSharp {
 			new_constraint_attr_type = CoreLookupType (
 				"System.Runtime.CompilerServices.NewConstraintAttribute");
 
-			generic_ienumerator_type = CoreLookupType (
-				MemberName.MakeName ("System.Collections.Generic.IEnumerator", 1));
-			generic_ienumerable_type = CoreLookupType (
-				MemberName.MakeName ("System.Collections.Generic.IEnumerable", 1));
+			generic_ienumerator_type = CoreLookupType ("System.Collections.Generic.IEnumerator", 1);
+			generic_ienumerable_type = CoreLookupType ("System.Collections.Generic.IEnumerable", 1);
+			generic_nullable_type = CoreLookupType ("System.Nullable", 1);
 		}
 
 		static void InitGenericCodeHelpers ()
@@ -1563,6 +1632,11 @@ namespace Mono.CSharp {
 			Type [] type_arg = { type_type };
 			activator_create_instance = GetMethod (
 				activator_type, "CreateInstance", type_arg);
+		}
+
+		static Type CoreLookupType (string name, int arity)
+		{
+			return CoreLookupType (MemberName.MakeName (name, arity));
 		}
 
 		public static void AddTypeParameter (Type t, TypeParameter tparam)
@@ -2142,6 +2216,173 @@ namespace Mono.CSharp {
 
 			method = method.BindGenericParameters (infered_types);
 			return true;
+		}
+
+		public static bool IsNullableType (Type t)
+		{
+			if (!t.IsGenericInstance)
+				return false;
+
+			Type gt = t.GetGenericTypeDefinition ();
+			return gt == generic_nullable_type;
+		}
+	}
+
+	public class NullCoalescingOperator : Expression
+	{
+		Expression left;
+		Expression right;
+
+		public NullCoalescingOperator (Expression left, Expression right, Location loc)
+		{
+			this.left = left;
+			this.right = right;
+			this.loc = loc;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			Error (-1, "The ?? operator is not yet implemented.");
+			return null;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+		}
+	}
+
+	public abstract class Nullable
+	{
+		protected sealed class NullableInfo
+		{
+			public readonly Type Type;
+			public readonly Type UnderlyingType;
+			public readonly MethodInfo HasValue;
+			public readonly MethodInfo Value;
+			public readonly ConstructorInfo Constructor;
+
+			public NullableInfo (Type type)
+			{
+				Type = type;
+				UnderlyingType = TypeManager.GetTypeArguments (type) [0];
+
+				PropertyInfo has_value_pi = type.GetProperty ("HasValue");
+				PropertyInfo value_pi = type.GetProperty ("Value");
+
+				HasValue = has_value_pi.GetGetMethod (false);
+				Value = value_pi.GetGetMethod (false);
+				Constructor = type.GetConstructor (new Type[] { UnderlyingType });
+			}
+		}
+
+		public class NullLiteral : Expression, IMemoryLocation {
+			public NullLiteral (Type target_type, Location loc)
+			{
+				this.type = target_type;
+				this.loc = loc;
+
+				eclass = ExprClass.Value;
+			}
+		
+			public override Expression DoResolve (EmitContext ec)
+			{
+				return this;
+			}
+
+			public override void Emit (EmitContext ec)
+			{
+				LocalTemporary value_target = new LocalTemporary (ec, type);
+
+				value_target.AddressOf (ec, AddressOp.Store);
+				ec.ig.Emit (OpCodes.Initobj, type);
+				value_target.Emit (ec);
+			}
+
+			public void AddressOf (EmitContext ec, AddressOp Mode)
+			{
+				LocalTemporary value_target = new LocalTemporary (ec, type);
+					
+				value_target.AddressOf (ec, AddressOp.Store);
+				ec.ig.Emit (OpCodes.Initobj, type);
+				((IMemoryLocation) value_target).AddressOf (ec, Mode);
+			}
+		}
+
+		public class LiftedConversion : Expression
+		{
+			Expression source;
+			bool is_explicit;
+			NullableInfo source_info, target_info;
+			Expression conversion;
+
+			protected LiftedConversion (Expression source, Type target_type, bool is_explicit,
+						    Location loc)
+			{
+				this.source = source;
+				this.type = target_type;
+				this.is_explicit = is_explicit;
+				this.loc = loc;
+
+				eclass = source.eclass;
+			}
+
+			public static Expression Create (EmitContext ec, Expression source, Type target_type,
+							 bool is_explicit, Location loc)
+			{
+				Expression expr = new LiftedConversion (source, target_type, is_explicit, loc);
+				return expr.Resolve (ec);
+			}
+
+			public override Expression DoResolve (EmitContext ec)
+			{
+				source_info = new NullableInfo (source.Type);
+				target_info = new NullableInfo (type);
+
+				source = source.Resolve (ec);
+				if (source == null)
+					return null;
+
+				if (is_explicit)
+					conversion = Convert.WideningAndNarrowingConversionStandard (
+						ec, new EmptyExpression (source_info.UnderlyingType),
+						target_info.UnderlyingType, loc);
+				else
+					conversion = Convert.WideningConversionStandard (
+						ec, new EmptyExpression (source_info.UnderlyingType),
+						target_info.UnderlyingType, loc);
+
+				if (conversion == null)
+					return null;
+
+				return this;
+			}
+
+			public override void Emit (EmitContext ec)
+			{
+				ILGenerator ig = ec.ig;
+				Label has_value_label = ig.DefineLabel ();
+				Label end_label = ig.DefineLabel ();
+
+				((IMemoryLocation) source).AddressOf (ec, AddressOp.LoadStore);
+				ig.EmitCall (OpCodes.Call, source_info.HasValue, null);
+				ig.Emit (OpCodes.Brtrue, has_value_label);
+
+				LocalTemporary value_target = new LocalTemporary (ec, type);
+				value_target.AddressOf (ec, AddressOp.Store);
+				ig.Emit (OpCodes.Initobj, type);
+				value_target.Emit (ec);
+				value_target.Release (ec);
+				ig.Emit (OpCodes.Br, end_label);
+
+				ig.MarkLabel (has_value_label);
+
+				((IMemoryLocation) source).AddressOf (ec, AddressOp.LoadStore);
+				ig.EmitCall (OpCodes.Call, source_info.Value, null);
+				conversion.Emit (ec);
+				ig.Emit (OpCodes.Newobj, target_info.Constructor);
+
+				ig.MarkLabel (end_label);
+			}
 		}
 	}
 }

@@ -4293,8 +4293,6 @@ namespace Mono.CSharp {
 		// FIXME: only allow expr to be a method invocation or a
 		// delegate invocation (7.5.5)
 		//
-
-		
 		public Invocation (Expression expr, ArrayList arguments, Location l)
 		{
 			this.expr = expr;
@@ -5621,8 +5619,6 @@ namespace Mono.CSharp {
 		}
 	}
 
-
-	
 	public class InvocationOrCast : ExpressionStatement
 	{
 		Expression expr;
@@ -5761,7 +5757,7 @@ namespace Mono.CSharp {
 		Expression value_target;
 		bool value_target_set = false;
 		bool is_type_parameter = false;
-
+		
 		public New (Expression requested_type, ArrayList arguments, Location l)
 		{
 			RequestedType = requested_type;
@@ -6053,7 +6049,6 @@ namespace Mono.CSharp {
 			((IMemoryLocation) value_target).AddressOf (ec, Mode);
 		}
 	}
-
 
 	/// <summary>
 	///   14.5.10.2: Represents an array creation expression.
@@ -8815,6 +8810,13 @@ namespace Mono.CSharp {
 				Report.Error (1547, Location,
 					      "Keyword 'void' cannot be used in this context");
 				return null;
+			}
+
+			if ((dim.Length > 0) && (dim [0] == '?')) {
+				TypeExpr nullable = new NullableType (left, loc);
+				if (dim.Length > 1)
+					nullable = new ComposedCast (nullable, dim.Substring (1), loc);
+				return nullable.ResolveAsTypeTerminal (ec);
 			}
 
 			int pos = 0;
