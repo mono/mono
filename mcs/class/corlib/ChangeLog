@@ -5,6 +5,8 @@
 	changes.  It seems like it always takes me half a day to remember
 	that the linux target comes second.  Old age I guess.
 
+	* .cvsignore: ignore corlib.pdb for times when it's built with debug on.
+
 2002-01-02  Nick Drochak  <ndrochak@gol.com>
 
 	* corlib.build: Removed "exclude CodeAccessPermission.cs"
