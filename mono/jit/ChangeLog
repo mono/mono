@@ -1,3 +1,7 @@
+2002-03-05  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg: use x86_widen_reg for CONV opcodes
+
 2002-03-01  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (MAKE_SPILLED_BI_ALU): remove unnecessary assertions
