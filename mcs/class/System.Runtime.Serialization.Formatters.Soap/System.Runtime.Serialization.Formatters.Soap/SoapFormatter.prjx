@@ -1,0 +1,37 @@
+<Project name="SoapFormatter" description="Creates an empty C# class library" newfilesearch="None" enableviewstate="True" version="1.1" projecttype="C#">
+  <Contents>
+    <File name=".\AssemblyInfo.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\SoapWriter.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\ISoapParser.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\ISoapReader.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\ISoapWriter.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\ObjectReader.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\ObjectWriter.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\SoapCommon.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\SoapFormatter.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\SoapParser.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\SoapReader.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\SoapTypeMapper.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\SoapTypeMapping.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\ObjectManager.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+  </Contents>
+  <References />
+  <DeploymentInformation target="" script="" strategy="File" />
+  <Configuration runwithwarnings="True" name="Debug">
+    <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="0" includedebuginformation="True" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+    <Execution commandlineparameters="" consolepause="False" />
+    <Output directory="..\" assembly="Soap" />
+  </Configuration>
+  <Configurations active="Debug">
+    <Configuration runwithwarnings="True" name="Debug">
+      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="0" includedebuginformation="True" optimize="True" unsafecodeallowed="True" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <Execution commandlineparameters="" consolepause="False" />
+      <Output directory="..\" assembly="Soap" />
+    </Configuration>
+    <Configuration runwithwarnings="True" name="Release">
+      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="0" includedebuginformation="False" optimize="True" unsafecodeallowed="True" generateoverflowchecks="False" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <Execution commandlineparameters="" consolepause="False" />
+      <Output directory=".\" assembly="SoapFormatter" />
+    </Configuration>
+  </Configurations>
+</Project>

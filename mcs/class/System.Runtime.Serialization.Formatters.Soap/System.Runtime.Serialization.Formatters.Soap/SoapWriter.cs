@@ -1,213 +1,364 @@
-/****************************************************/
-/*SoapWritter class implementation                  */
-/*Author: Jes·s M. Rodr­guez de la Vega             */
-/*gsus@brujula.net                                  */
-/****************************************************/
+// created on 07/04/2003 at 17:56
+//
+//	System.Runtime.Serialization.Formatters.Soap.SoapWriter
+//
+//	Authors:
+//		Jean-Marc Andre (jean-marc.andre@polymtl.ca)
+//
 
 using System;
-using System.Text;
-using System.Collections;
-using System.Xml;
 using System.IO;
+using System.Reflection;
+using System.Collections;
+using System.Runtime.Remoting;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters;
+using System.Xml;
+using System.Xml.Serialization;
+using System.Globalization;
 
-namespace System.Runtime.Serialization.Formatters.Soap
-{
+namespace System.Runtime.Serialization.Formatters.Soap {
 	
-		internal class SoapWriter
-		{		
-			/******const section******/
-			const string cNullObject     = "xsi:null=\"1\"/";
-			const string cSoapEnv        = "Body";
-			const string xmlns_SOAP_ENC	= "http://schemas.xmlsoap.org/soap/encoding/";
-			const string xmlns_SOAP_ENV	= "http://schemas.xmlsoap.org/soap/envelope/";
+	internal class SoapWriter: ISoapWriter {
+		public struct EnqueuedObject {
+			public long _id;
+			public object _object;
 			
-			const string cStartTag       = "<";
-			const string cEndTag         = ">";
-			const string cNumber         = "#";
-			const string cEqual          = "=";
-			const string cTwoColon       = ":";
-			const string cAssId          = "a";
-			const string cslash          = "/";	
-			const string cSoapRef        = "href";
-			const string cObjectRef      = "ref-";
-			const string cId             = "id";
-			/******Array's serialization section******/
-			const string cItem           = "item";
-			const string cSoapEncArray   = "SOAP-ENC:Array";
-			const string cSoapArrayType  = "SOAP-ENC:arrayType"; 
-			const string cXsiType        = "xsi:type";
-			/******field's section******/
-			public ArrayList FXmlObjectList;
-			public  int FReferenceNumber;
-			/******method's section******/
-			public string ConcatenateObjectList()
-			{
-				string XmlResult= "";
-				object[] XmlList= FXmlObjectList.ToArray();
-				for(int index= 0; index<= FXmlObjectList.Count - 1; index++)
-					XmlResult= XmlResult + XmlList[index].ToString();
-				return XmlResult;
-			}			 
-
-			private StringBuilder GetXmlObject(int ObjectIndex)
-			{
-				object[] XmlList= FXmlObjectList.ToArray();    
-				string Actstring= XmlList[ObjectIndex - 1].ToString();
-				return new StringBuilder(Actstring);
-			}
-
-			public void WriteObjectToXml(int AssemblyIndex, int ReferenceIndex, string ClassName)
-			{
-				StringBuilder ObjWriter= new StringBuilder();
-				string XmlStartTag= cStartTag + cAssId + AssemblyIndex.ToString() + cTwoColon + ClassName + 
-					' ' + cId + cEqual + '"' + cObjectRef + ReferenceIndex + '"' + cEndTag;   
-				string XmlEndTag= cStartTag + cslash + cAssId + AssemblyIndex.ToString() + cTwoColon + ClassName + cEndTag; 
-				ObjWriter.Append(XmlStartTag);			
-				ObjWriter.Append(XmlEndTag); 
-				FXmlObjectList.Add(ObjWriter.ToString());  
-			}	
-	
-			public void WriteArrayToXml(string XmlSchemaArrayType, int ArrayIndex)
-			{
-				StringBuilder ObjWriter= new StringBuilder();
-				string XmlStartTag= cStartTag + cSoapEncArray + ' ' + cId + cEqual + '"' + 
-					cObjectRef + ArrayIndex + '"' + ' ' + cSoapArrayType +
-					cEqual + XmlSchemaArrayType + cEndTag;
-				string XmlEndTag= cStartTag + cslash + cSoapEncArray + cEndTag;
-				ObjWriter.Append(XmlStartTag);
-				ObjWriter.Append(XmlEndTag);
-				FXmlObjectList.Add(ObjWriter.ToString());
-			}
-
-			public void WriteStringTypeToXml(string StringName, string StringValue, int ParentObjectIndex, int StringIndex)
-			{
-				StringBuilder ObjWriter= GetXmlObject(ParentObjectIndex);
-				string StrFieldStartTag= cStartTag + StringName + ' ' + cId + cEqual + '"' + cObjectRef + StringIndex + '"' + cEndTag;
-				string StrFieldEndTag  = cStartTag + cslash + StringName + cEndTag;
-				int index= ObjWriter.ToString().LastIndexOf(cStartTag);
-				ObjWriter.Insert(index, StrFieldStartTag + StringValue + StrFieldEndTag);  
-				FXmlObjectList.RemoveAt(ParentObjectIndex - 1);
-				FXmlObjectList.Insert(ParentObjectIndex - 1, ObjWriter.ToString());
-			}		
-
-			public void WriteObjectFieldToXml(string FieldName, int ParentObjectIndex, int ObjectIndex)
-			{            
-				StringBuilder ObjWriter= GetXmlObject(ParentObjectIndex);
-				string XmlField= cStartTag + FieldName + ' ' + cSoapRef + cEqual
-					+ '"' + cNumber + cObjectRef + ObjectIndex.ToString() + '"'+ cslash + cEndTag;
-				int index= ObjWriter.ToString().LastIndexOf(cStartTag);
-				ObjWriter.Insert(index, XmlField);
-				FXmlObjectList.RemoveAt(ParentObjectIndex - 1);
-				FXmlObjectList.Insert(ParentObjectIndex - 1, ObjWriter.ToString());
-			}
-
-			public void WriteNullObjectFieldToXml(string FieldName, int ParentObjectIndex)
-			{            
-				StringBuilder ObjWriter= GetXmlObject(ParentObjectIndex);
-				string XmlField= cStartTag + FieldName + ' ' + cNullObject + cEndTag;
-				int index= ObjWriter.ToString().LastIndexOf(cStartTag);
-				ObjWriter.Insert(index, XmlField);
-				FXmlObjectList.RemoveAt(ParentObjectIndex - 1);
-				FXmlObjectList.Insert(ParentObjectIndex - 1, ObjWriter.ToString()); 
-			}
-		
-			public void WriteValueTypeToXml(string FieldName, string FieldValue, int ObjectIndex)
-			{           
-				StringBuilder ObjWriter= GetXmlObject(ObjectIndex);
-				string XmlField= cStartTag + FieldName + cEndTag + FieldValue +
-					cStartTag + cslash + FieldName + cEndTag;
-				int index= ObjWriter.ToString().LastIndexOf(cStartTag);            
-				ObjWriter.Insert(index, XmlField);
-				FXmlObjectList.RemoveAt(ObjectIndex - 1);
-				FXmlObjectList.Insert(ObjectIndex - 1, ObjWriter.ToString());			 
-			}
-
-			public void WriteStructInitTagToXml(string StructName, int ObjectIndex, bool XsiType, int AssemblyIndex, string StructType)
-			{
-				StringBuilder ObjWriter= GetXmlObject(ObjectIndex);
-				string StructInitTag= cStartTag + StructName;
-				if(XsiType)
-					StructInitTag= StructInitTag + ' ' + cXsiType + cEqual + '"' + "a" + AssemblyIndex + cTwoColon + StructType + '"';  
-				StructInitTag= StructInitTag + cEndTag;
-				int index= ObjWriter.ToString().LastIndexOf(cStartTag);            
-				ObjWriter.Insert(index, StructInitTag);
-				FXmlObjectList.RemoveAt(ObjectIndex - 1);
-				FXmlObjectList.Insert(ObjectIndex - 1, ObjWriter.ToString());
-			}
-
-			public void WriteStructEndTagToXml(string StructName, int ObjectIndex)
-			{
-				StringBuilder ObjWriter= GetXmlObject(ObjectIndex);
-				string StructInitTag= cStartTag + cslash + StructName + cEndTag;
-				int index= ObjWriter.ToString().LastIndexOf(cStartTag);            
-				ObjWriter.Insert(index, StructInitTag);
-				FXmlObjectList.RemoveAt(ObjectIndex - 1);
-				FXmlObjectList.Insert(ObjectIndex - 1, ObjWriter.ToString());
-			}
-
-			public void WriteArrayValueItemToXml(string ItemType, string ItemValue, int ArrayIndex, string ArrayItemsType, int AssemblyIndex)
-			{
-				StringBuilder ObjWriter= GetXmlObject(ArrayIndex);
-				string ItemInitTag= cStartTag + cItem;
-				if(ArrayItemsType== "Object")
-				{
-					ItemInitTag= ItemInitTag + ' ' + cXsiType + cEqual + '"' + GenerateXmlSchemaType(ItemType, AssemblyIndex) + '"';
-				}
-				ItemInitTag= ItemInitTag + cEndTag + ItemValue + cStartTag + cslash + cItem + cEndTag;
-				int index= ObjWriter.ToString().LastIndexOf(cStartTag);            
-				ObjWriter.Insert(index, ItemInitTag);
-				FXmlObjectList.RemoveAt(ArrayIndex - 1);
-				FXmlObjectList.Insert(ArrayIndex - 1, ObjWriter.ToString());
-			}
-
-			public void WriteStructTypeToXml(string StructName)
-			{
-			}		
-
-			public string GenerateSchemaArrayType(string ArrayType, int ArrayLength, int AssemblyIndex)
-			{
-				string StrResult= ArrayType;
-				string ArrayItems= ArrayType.Substring(0, ArrayType.IndexOf("["));
-				string XmlSchType= GenerateXmlSchemaType(ArrayItems, AssemblyIndex);		  
-				StrResult=StrResult.Replace(ArrayItems, XmlSchType);
-				StrResult= StrResult.Insert(StrResult.LastIndexOf(']'), ArrayLength.ToString());		  		  
-				StrResult= '"' + StrResult + '"';
-				return StrResult;
-			}
-
-			public string GenerateXmlSchemaType(string TypeName, int AssemblyIndex)
-			{
-				string XmlSchType;
-				switch(TypeName)
-				{
-					case "Int32"    : XmlSchType= "xsd:int";
-						break;
-					case "Int16"    : XmlSchType= "xsd:short";
-						break;
-					case "Int64"    : XmlSchType= "xsd:long";
-						break;
-					case "UInt32"   : XmlSchType= "xsd:unsignedInt";
-						break;
-					case "UInt16"   : XmlSchType= "xsd:unsignedShort";
-						break;
-					case "UInt64"   : XmlSchType= "xsd:unsignedLong";
-						break;
-					case "Byte"     : XmlSchType= "xsd:byte";
-						break;
-					case "Decimal"  : XmlSchType= "xsd:decimal";
-						break;
-					case "Double"   : XmlSchType= "xsd:double";
-						break;
-					case "String"   : XmlSchType= "xsd:string";
-						break;
-					case "Boolean"     : XmlSchType= "xsd:boolean";
-						break;
-					case "DateTime" : XmlSchType= "xsd:dateTime";
-						break;
-					default         : XmlSchType= "a" + AssemblyIndex + cTwoColon + TypeName;
-						break; 					
-				}
-				return XmlSchType;
+			public EnqueuedObject(object currentObject, long id) {
+				_id = id;
+				_object = currentObject;
 			}
 		}
+		
+		private IFormatProvider _format;
+		private XmlTextWriter _xmlWriter;
+		private ObjectWriter _objWriter;
+		private Queue _objectQueue = new Queue();
+		private long _objectCounter = 0;
+		private long _refCounter = 0;
+		private Hashtable _prefixTable = new Hashtable();
+		private Stack _currentArrayType = new Stack();
+		
+		// id -> object
+		private Hashtable _objectRefs = new Hashtable();
+		
+		// object -> id
+		private Hashtable _objectIds = new Hashtable();
+		
+		private long _currentObjectId;
+		
+		private event DoneWithElementEventHandler Done;
+		public event DoneWithElementEventHandler DoneWithElementEvent;
+		public event DoneWithElementEventHandler DoneWithArray;
+		public event DoneWithElementEventHandler GetRootInfo;
+		
+		internal SoapWriter(Stream outStream) {
+			// todo: manage the encoding
+			_xmlWriter = new XmlTextWriter(outStream, null);
+			_xmlWriter.Formatting = Formatting.Indented;
+//			_xmlWriter.WriteComment("My serialization function");
+			_format = new CultureInfo("en-US");
+		}
+		
+		~SoapWriter() {
+		}
+		
+		private SoapSerializationEntry FillEntry(Type defaultObjectType, object objValue) {
+//			SoapTypeMapping mapping = GetTagInfo((objValue != null)?objValue.GetType():defaultObjectType);
+			SoapTypeMapping mapping = GetTagInfo((objValue != null && defaultObjectType == typeof(object))?objValue.GetType():defaultObjectType);
+			
+			SoapSerializationEntry soapEntry = new SoapSerializationEntry();
+			long id;
+			
+			GetPrefix(mapping.TypeNamespace, out soapEntry.prefix);
+			soapEntry.elementName = mapping.TypeName;
+			soapEntry.elementNamespace = mapping.TypeNamespace;
+			soapEntry.CanBeValue = mapping.CanBeValue;
+			
+			soapEntry.getIntoFields = false;
+			if(mapping.CanBeValue || mapping.IsArray) soapEntry.WriteFullEndElement = true;
+			if(defaultObjectType == typeof(object) || _currentArrayType.Count > 0 && _currentArrayType.Peek() == typeof(System.Object)) 
+				soapEntry.SpecifyEncoding = true;
+			
+			if(objValue == null){
+				soapEntry.elementType = ElementType.Null;
+				mapping.IsNull = true;
+			} 
+			else if(mapping.IsValueType) return soapEntry;
+			else if(_objectIds[objValue] != null) {
+				soapEntry.elementType = ElementType.Href;
+				soapEntry.i = (long) _objectIds[objValue];
+				soapEntry.WriteFullEndElement = false;
+			}
+			else if(!mapping.CanBeValue){
+				id = GetNextId();
+				soapEntry.i = id;
+				soapEntry.elementType = ElementType.Href;
+				soapEntry.WriteFullEndElement = false;
+				_objectQueue.Enqueue(new EnqueuedObject(objValue, id));
+				_objectRefs[id] = objValue;
+				_objectIds[objValue] = id;
+			} 
+			else if(mapping.NeedId){ 
+				id = GetNextId();
+				soapEntry.i = id;
+				soapEntry.elementType = ElementType.Id;
+				_objectIds[objValue] = id;
+			}
+			
+			return soapEntry;
+		}
+		
+		private ICollection FormatteAttributes(SoapSerializationEntry entry) {
+			
+			string prefix;
+			bool needNamespace;
+			ArrayList attributeList = new ArrayList();
+			
+			// If the type of the element needs to be specified, do it there
+			if(entry.SpecifyEncoding) {
+				needNamespace = GetPrefix(entry.elementNamespace, out prefix);
+				attributeList.Add(new SoapAttributeStruct("xsi", "type", prefix+":"+ entry.elementName));
+				if(needNamespace) attributeList.Add(new SoapAttributeStruct("xmlns", prefix, entry.elementNamespace));
+			}
+			
+			switch(entry.elementType) {
+				case ElementType.Null:
+					attributeList.Add(new SoapAttributeStruct("xsi", "null", "1"));
+					return attributeList;
+					//break;
+				case ElementType.Id:
+					attributeList.Add(new SoapAttributeStruct(null, "id", "ref-"+entry.i.ToString()));
+					break;
+				case ElementType.Href:
+					attributeList.Add(new SoapAttributeStruct(null, "href", "#ref-"+entry.i.ToString()));
+					return attributeList;
+					//break;
+			}
+			
+			// Add attributes about the type of the array items
+			if(entry.IsArray) {
+				Array array = (Array) _objectRefs[entry.i];
+				Type elementType = array.GetType().GetElementType();
+				SoapTypeMapping elementMapping = GetTagInfo(elementType);
+				string rank = "[";
+				for(int i=0; i < array.Rank; i++){
+					rank += array.GetLength(i)+",";
+				}
+				rank = rank.Substring(0,rank.Length - 1);
+				rank += "]";
+				needNamespace = GetPrefix(elementMapping.TypeNamespace, out prefix);
+				attributeList.Add(new SoapAttributeStruct("SOAP-ENC", "arrayType",prefix+":"+elementMapping.TypeName+rank));
+				if(needNamespace) attributeList.Add(new SoapAttributeStruct("xmlns", prefix, elementMapping.TypeNamespace));
+				
+			}
+			return attributeList;
+		}
+		
+		private string GetNextObjectPrefix() {
+			return "a"+(++_objectCounter);
+		}
+		
+		private long GetNextId() {
+			return ++_refCounter;
+		}
+		
+		private bool GetPrefix(string xmlNamespace, out string prefix) {
+			prefix = _xmlWriter.LookupPrefix(xmlNamespace);
+		    if(prefix == null){ 
+		    	prefix = (string)_prefixTable[xmlNamespace];
+		    	if(prefix == null){
+					prefix = GetNextObjectPrefix();
+		    		_prefixTable[xmlNamespace] = prefix;
+		    	}
+		    	return true;
+			}
+			else
+				return false;
+		}
+		
+		private SoapTypeMapping GetTagInfo(Type tagType) {
+			SoapTypeMapping mapping = SoapTypeMapper.GetSoapType(tagType);
+			mapping.Href = 0;
+			mapping.Id = 0;
+			mapping.IsNull = false;
+			
+			return mapping;
+			
+		}
+		
+		public void WriteArrayItem(Type itemType, object itemValue) {
+			Array currentArray = (Array) _objectRefs[_currentObjectId];
+			SoapSerializationEntry soapEntry;
+			
+			soapEntry = FillEntry(itemType, itemValue);
+			
+			soapEntry.elementAttributes = FormatteAttributes(soapEntry);
+			
+			soapEntry.elementName = "item";
+			soapEntry.prefix = null;
+			soapEntry.elementNamespace = null;
+			if(soapEntry.elementType != ElementType.Href && soapEntry.CanBeValue) soapEntry.elementValue = itemValue.ToString();
+			else if(itemType.IsValueType){
+				// the array item is a struct
+				// so we have to serialize it now
+				soapEntry.getIntoFields = true;
+				soapEntry.elementValue = itemValue;
+				Done = GetRootInfo;
+			} 
+			
+			WriteElement(soapEntry);
+		}
+		
+		public void WriteFields(SerializationInfo info) {
+		//	SoapTypeMapping mapping;
+			ICollection attributeList;
+			SoapSerializationEntry soapEntry;
+			
+			foreach(SerializationEntry entry in info){
+		//		mapping = GetTagInfo(entry.ObjectType);
+				soapEntry = FillEntry(entry.ObjectType, entry.Value);
+				
+				
+				attributeList = FormatteAttributes(soapEntry);
+				soapEntry.elementValue = (soapEntry.elementType != ElementType.Href && soapEntry.CanBeValue)?entry.Value:null;
+				
+				soapEntry.elementAttributes = attributeList;
+				soapEntry.elementName = entry.Name;
+				
+				soapEntry.elementNamespace = null;
+				soapEntry.prefix = null;
+				
+				WriteElement(soapEntry);
+				
+				
+			}
+			
+		}
+		
+		private void WriteElement(SoapSerializationEntry entry) {
+			_xmlWriter.WriteStartElement(entry.prefix, XmlConvert.EncodeNmToken(entry.elementName), entry.elementNamespace);
+			
+			if (entry.elementAttributes != null) foreach(SoapAttributeStruct attr in entry.elementAttributes){
+				_xmlWriter.WriteAttributeString(attr.prefix, attr.attributeName, null, attr.attributeValue);
+			}
+			if(entry.CanBeValue && entry.elementValue != null && !entry.getIntoFields){
+				_xmlWriter.WriteString(String.Format(_format, "{0}", entry.elementValue));
+			}
+			if( entry.getIntoFields && Done != null) Done(this, new DoneWithElementEventArgs(entry.elementValue));			
+			if(entry.WriteFullEndElement) {
+				_xmlWriter.WriteFullEndElement();
+			}else 
+				_xmlWriter.WriteEndElement();
+			
+		}
+		
+		
+		public void WriteRoot(object rootValue, Type rootType, bool getIntoFields) { //EnqueuedObject rootObject) {
+			Done = DoneWithElementEvent;
+			SoapSerializationEntry entry = FillEntry(rootType, rootValue); //new SoapSerializationEntry();
+			if(rootType.IsArray) {
+				Done = DoneWithArray;
+				entry.IsArray = true;
+			}
+			
+			entry.i = _currentObjectId;
+			entry.elementType = ElementType.Id;
+			ICollection attributeList = FormatteAttributes(entry);
+			entry.elementAttributes = attributeList;
+			
+			entry.elementValue = rootValue;
+			entry.getIntoFields = getIntoFields;
+			entry.WriteFullEndElement = true;
+			
+			if(_currentArrayType.Count > 0 )
+				Done(this, new DoneWithElementEventArgs(entry.elementValue));
+			else
+				WriteElement(entry);
+			
+		}
+		
+		
+		public void Run() {
+			WriteEnvelope();
+			_xmlWriter.Flush();
+		}
+		
+		public ObjectWriter Writer {
+			get{ return _objWriter;}
+			set{ _objWriter = value;}
+		}
+		
+		public object TopObject {
+			set {
+				_objectQueue.Enqueue(new EnqueuedObject(value, _currentObjectId = GetNextId()));
+				_objectRefs[_currentObjectId] = value;
+				_objectIds[value] = _currentObjectId;
+				// There isn't object with id="ref-2" in MS Soap messages
+				// Wonder why
+				// So I skip id=2
+				GetNextId();
+			}
+		}
+		
+		private void WriteEnvelope() {
+			ArrayList lstAttr = new ArrayList();
+			_xmlWriter.WriteStartElement("SOAP-ENV", "Envelope",  "http://schemas.xmlsoap.org/soap/envelope/");
+			
+			_xmlWriter.WriteAttributeString("xmlns", "xsi", null, "http://www.w3.org/2001/XMLSchema-instance");
+			_xmlWriter.WriteAttributeString("xmlns", "xsd", null, "http://www.w3.org/2001/XMLSchema" );
+			_xmlWriter.WriteAttributeString("xmlns", "SOAP-ENC", null, "http://schemas.xmlsoap.org/soap/encoding/");
+			_xmlWriter.WriteAttributeString("xmlns", "SOAP-ENV", null, "http://schemas.xmlsoap.org/soap/envelope/");
+			_xmlWriter.WriteAttributeString("xmlns", "clr", null, "http://schemas.microsoft.com/soap/encoding/clr/1.0" );
+			_xmlWriter.WriteAttributeString("SOAP-ENV", "encodingStyle", null, "http://schemas.xmlsoap.org/soap/encoding/");
+			
+			WriteBody();
+			
+			_xmlWriter.WriteEndElement();
+			_xmlWriter.Flush();
+		}
+		
+		private void WriteBody() {
+			_xmlWriter.WriteStartElement("SOAP-ENV", "Body",  "http://schemas.xmlsoap.org/soap/envelope/");
+			
+			EnqueuedObject enqueuedObject;
+			while(_objectQueue.Count > 0){
+				enqueuedObject = (EnqueuedObject) _objectQueue.Dequeue();
+				_currentObjectId = enqueuedObject._id;
+				if(enqueuedObject._object is ISoapMessage)
+					WriteSoapRPC((ISoapMessage) enqueuedObject._object);
+				else
+					GetRootInfo(this, new DoneWithElementEventArgs(enqueuedObject._object)); //WriteRoot(enqueuedObject);
+			}
+			
+			_xmlWriter.WriteEndElement();
+			
+		}
+		
+		private void WriteSoapRPC(ISoapMessage soapMsg) {
+			throw new NotImplementedException();
+			
+			_xmlWriter.WriteStartElement("i2", soapMsg.MethodName, soapMsg.XmlNameSpace);
+			_xmlWriter.WriteAttributeString("id", null, "ref-"+_currentObjectId);
+			SerializationInfo info = new SerializationInfo(soapMsg.GetType(), new FormatterConverter());
+			
+			string typeNamespace, assemblyName;
+			SoapServices.DecodeXmlNamespaceForClrTypeNamespace(soapMsg.XmlNameSpace, out typeNamespace, out assemblyName);
+			
+			Type objType = Type.GetType(typeNamespace);
+			MethodInfo mthInfo = objType.GetMethod(soapMsg.MethodName);
+			
+			for(int i=0; i<soapMsg.ParamNames.Length; i++){
+				info.AddValue(soapMsg.ParamNames[i], soapMsg.ParamValues[i], soapMsg.ParamTypes[i]);
+			}
+			WriteFields(info);
+			
+			_xmlWriter.WriteEndElement();
+			
+		}
+		
+		public Stack CurrentArrayType {
+			get { return _currentArrayType;}
+		}
+	}
 }

@@ -1,90 +1,92 @@
-/****************************************************/
-/*Soapformatter class implementation                */
-/*Author: Jesús M. Rodríguez de la Vega             */
-/*gsus@brujula.net                                  */
-/****************************************************/
+// created on 07/04/2003 at 17:16
+//
+//	System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+//
+//	Authors:
+//		Jean-Marc Andre (jean-marc.andre@polymtl.ca)
+//
 
 using System;
-using System.Reflection;
-using System.Xml;
 using System.IO;
-using System.Runtime.Remoting.Messaging;
 using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters;
+using System.Runtime.Remoting.Messaging;
+using System.Xml.Serialization;
 
 
-namespace System.Runtime.Serialization.Formatters.Soap
-{
-	public class SoapFormatter : IRemotingFormatter, IFormatter
-	{
-		private ObjectSerializer   ObjSerializer;	
-		private ObjectDeserializer ObjDeserializer;
-		/*this is the soapformater's properties               
-		  the Binder, Context and SurrogateSelector properties
-		  have not been declared yet*/
-
-		public FormatterAssemblyStyle AssemblyFormat
-		{
-			get{return AssemblyFormat;}
-			set{AssemblyFormat= value;}
+namespace System.Runtime.Serialization.Formatters.Soap {
+	public class SoapFormatterT: IRemotingFormatter, IFormatter {
+		private ObjectWriter _objWriter;
+		private SoapWriter _soapWriter;
+		private SerializationBinder _binder;
+		private StreamingContext _context;
+		private ISurrogateSelector _selector;
+		
+		public SoapFormatterT() {
 		}
-
-		[MonoTODO]
-		public SerializationBinder Binder {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+		
+		public SoapFormatterT(ISurrogateSelector selector, StreamingContext context):this() {
+			_selector = selector;
+			_context = context;
 		}
-
-		[MonoTODO]
-		public StreamingContext Context {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+		
+		~SoapFormatterT() {
 		}
-
-		[MonoTODO]
+		
+		public object Deserialize(Stream serializationStream) {
+			return Deserialize(serializationStream, null);
+		}
+		
+		public object Deserialize(Stream serializationStream, HeaderHandler handler) {
+			SoapParser parser = new SoapParser(serializationStream);
+			SoapReader soapReader = new SoapReader(parser);
+			ObjectReader reader = new ObjectReader(_selector, _context, soapReader);
+			parser.Run();
+			return reader.TopObject;
+		}
+		
+		
+		public void Serialize(Stream serializationStream, object graph) {
+			Serialize(serializationStream, graph, null);
+		}
+		
+		public void Serialize(Stream serializationStream, object graph, Header[] headers) {
+			if(serializationStream == null)
+				throw new ArgumentNullException("serializationStream");
+			if(!serializationStream.CanWrite)
+				throw new SerializationException("Can't write in the serialization stream");
+			_soapWriter = new SoapWriter(serializationStream);
+			_objWriter = new ObjectWriter((ISoapWriter) _soapWriter, _selector,  new StreamingContext(StreamingContextStates.File));
+			_soapWriter.Writer = _objWriter;
+			_objWriter.Serialize(graph);
+			
+		}
+		
 		public ISurrogateSelector SurrogateSelector {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				return _selector;
+			}
+			set {
+				_selector = value;
+			}
 		}
-
-		public ISoapMessage TopObject
-		{
-			get{return TopObject;}
-			set{TopObject= value;}
+		
+		
+		public SerializationBinder Binder {
+			get {
+				return _binder;
+			}
+			set {
+				_binder = value;
+			}
 		}
-
-		public FormatterTypeStyle TypeFormat
-		{
-			get{return TypeFormat;}
-			set{TypeFormat= value;}
-		}
-
-		//the other constructor are not supplied yet
-		public SoapFormatter()
-		{			
-		}
-        		
-		public void Serialize(Stream serializationStream, object graph)
-		{
-			Serialize (serializationStream, graph, null);
-		}
-
-		public void Serialize(Stream serializationStream, object graph, Header[] headers)
-		{
-			ObjSerializer= new ObjectSerializer(serializationStream);
-			ObjSerializer.BeginWrite();
-			ObjSerializer.Serialize(graph);
-		}
-
-		public object Deserialize(Stream serializationStream)
-		{
-			return Deserialize (serializationStream, null);
-		}
-
-		public object Deserialize(Stream serializationStream, HeaderHandler handler)
-		{
-			ObjDeserializer= new ObjectDeserializer(serializationStream);
-			return ObjDeserializer.Deserialize(serializationStream);
+		
+		public StreamingContext Context {
+			get {
+				return _context;
+			}
+			set {
+				_context = value;
+			}
 		}
 		
 	}
