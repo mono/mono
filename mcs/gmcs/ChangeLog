@@ -1,3 +1,10 @@
+2004-12-09  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs (TypeManager): Make this a partial class.
+
+	* generics.cs
+	(TypeManager): Move the generics part of `TypeManager' here.
+
 2004-12-08  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (TypeContainer.VerifyClsCompliance): Report a CS3003

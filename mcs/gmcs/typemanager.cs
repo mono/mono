@@ -30,7 +30,7 @@ using System.Diagnostics;
 
 namespace Mono.CSharp {
 
-public class TypeManager {
+public partial class TypeManager {
 	//
 	// A list of core types that the compiler requires or uses
 	//
@@ -79,13 +79,11 @@ public class TypeManager {
 	static public Type unverifiable_code_type;
 	static public Type methodimpl_attr_type;
 	static public Type marshal_as_attr_type;
-	static public Type new_constraint_attr_type;
 	static public Type param_array_type;
 	static public Type guid_attr_type;
 	static public Type void_ptr_type;
 	static public Type indexer_name_type;
 	static public Type exception_type;
-	static public Type activator_type;
 	static public Type invalid_operation_exception_type;
 	static public Type not_supported_exception_type;
 	static public Type obsolete_attribute_type;
@@ -99,9 +97,6 @@ public class TypeManager {
 	static public Type struct_layout_attribute_type;
 	static public Type field_offset_attribute_type;
 	static public Type security_attr_type;
-
-	static public Type generic_ienumerator_type;
-	static public Type generic_ienumerable_type;
 
 	//
 	// An empty array of types
@@ -179,7 +174,6 @@ public class TypeManager {
 	static public MethodInfo int_array_get_lower_bound_int;
 	static public MethodInfo int_array_get_upper_bound_int;
 	static public MethodInfo void_array_copyto_array_int;
-	static public MethodInfo activator_create_instance;
 	
 	//
 	// The attribute constructors.
@@ -235,11 +229,6 @@ public class TypeManager {
 	static PtrHashtable builder_to_ifaces;
 
 	// <remarks>
-	//   Tracks the generic parameters.
-	// </remarks>
-	static PtrHashtable builder_to_type_param;
-
-	// <remarks>
 	//   Maps MethodBase.RuntimeTypeHandle to a Type array that contains
 	//   the arguments to the method
 	// </remarks>
@@ -289,7 +278,6 @@ public class TypeManager {
 		indexer_arguments = null;
 		method_internal_params = null;
 		builder_to_method = null;
-		builder_to_type_param = null;
 		
 		fields = null;
 		references = null;
@@ -299,7 +287,8 @@ public class TypeManager {
 		events = null;
 		priv_fields_events = null;
 		properties = null;
-		
+
+		CleanUpGenerics ();		
 		TypeHandle.CleanUp ();
 	}
 
@@ -390,12 +379,12 @@ public class TypeManager {
 		method_internal_params = new PtrHashtable ();
 		indexer_arguments = new PtrHashtable ();
 		builder_to_ifaces = new PtrHashtable ();
-		builder_to_type_param = new PtrHashtable ();
 		
 		NoTypes = new Type [0];
 		NoTypeExprs = new TypeExpr [0];
 
 		signature_filter = new MemberFilter (SignatureFilter);
+		InitGenerics ();
 		InitExpressionTypes ();
 	}
 
@@ -485,12 +474,6 @@ public class TypeManager {
 		return (IMethodData) builder_to_method [builder];
 	}
 
-	public static void AddTypeParameter (Type t, TypeParameter tparam)
-	{
-		if (!builder_to_type_param.Contains (t))
-			builder_to_type_param.Add (t, tparam);
-	}
-
 	/// <summary>
 	///   Returns the DeclSpace whose Type is `t' or null if there is no
 	///   DeclSpace for `t' (ie, the Type comes from a library)
@@ -507,14 +490,6 @@ public class TypeManager {
 	public static TypeContainer LookupTypeContainer (Type t)
 	{
 		return builder_to_declspace [t] as TypeContainer;
-	}
-
-	public static TypeContainer LookupGenericTypeContainer (Type t)
-	{
-		while (t.IsGenericInstance)
-			t = t.GetGenericTypeDefinition ();
-
-		return LookupTypeContainer (t);
 	}
 
 	public static MemberCache LookupMemberCache (Type t)
@@ -574,32 +549,6 @@ public class TypeManager {
 	public static Class LookupClass (Type t)
 	{
 		return (Class) builder_to_declspace [t];
-	}
-
-	public static TypeParameter LookupTypeParameter (Type t)
-	{
-		return (TypeParameter) builder_to_type_param [t];
-	}
-
-	public static bool HasConstructorConstraint (Type t)
-	{
-		GenericConstraints gc = GetTypeParameterConstraints (t);
-		if (gc == null)
-			return false;
-
-		return (gc.Attributes & GenericParameterAttributes.DefaultConstructorConstraint) != 0;
-	}
-
-	public static GenericConstraints GetTypeParameterConstraints (Type t)
-	{
-		if (!t.IsGenericParameter)
-			throw new InvalidOperationException ();
-
-		TypeParameter tparam = LookupTypeParameter (t);
-		if (tparam != null)
-			return tparam.GenericConstraints;
-
-		return new ReflectionConstraints (t);
 	}
 	
 	/// <summary>
@@ -1182,7 +1131,6 @@ public class TypeManager {
 		dllimport_type       = CoreLookupType ("System.Runtime.InteropServices.DllImportAttribute");
 		methodimpl_attr_type = CoreLookupType ("System.Runtime.CompilerServices.MethodImplAttribute");
 		marshal_as_attr_type = CoreLookupType ("System.Runtime.InteropServices.MarshalAsAttribute");
-		new_constraint_attr_type = CoreLookupType ("System.Runtime.CompilerServices.NewConstraintAttribute");
 		param_array_type     = CoreLookupType ("System.ParamArrayAttribute");
 		in_attribute_type    = CoreLookupType ("System.Runtime.InteropServices.InAttribute");
 		typed_reference_type = CoreLookupType ("System.TypedReference");
@@ -1203,7 +1151,6 @@ public class TypeManager {
 		indexer_name_type     = CoreLookupType ("System.Runtime.CompilerServices.IndexerNameAttribute");
 
 		exception_type        = CoreLookupType ("System.Exception");
-		activator_type        = CoreLookupType ("System.Activator");
 		invalid_operation_exception_type = CoreLookupType ("System.InvalidOperationException");
 		not_supported_exception_type = CoreLookupType ("System.NotSupportedException");
 
@@ -1217,12 +1164,7 @@ public class TypeManager {
 		field_offset_attribute_type = CoreLookupType ("System.Runtime.InteropServices.FieldOffsetAttribute");
 		security_attr_type = CoreLookupType ("System.Security.Permissions.SecurityAttribute");
 
-		//
-		// Generic types
-		//
-		generic_ienumerator_type     = CoreLookupType (MemberName.MakeName ("System.Collections.Generic.IEnumerator", 1));
-		generic_ienumerable_type     = CoreLookupType (MemberName.MakeName ("System.Collections.Generic.IEnumerable", 1));
-
+		InitGenericCoreTypes ();
 
 		//
 		// When compiling corlib, store the "real" types here.
@@ -1457,10 +1399,7 @@ public class TypeManager {
 		// Object
 		object_ctor = GetConstructor (object_type, void_arg);
 
-		// Activator
-		Type [] type_arg = { type_type };
-		activator_create_instance = GetMethod (
-			activator_type, "CreateInstance", type_arg);
+		InitGenericCodeHelpers ();
 	}
 
 	const BindingFlags instance_and_static = BindingFlags.Static | BindingFlags.Instance;
@@ -1680,50 +1619,6 @@ public class TypeManager {
 	{
 		return t == null_type;
 	}
-
-	//
-	// Only a quick hack to get things moving, while real runtime support appears
-	//
-	public static bool IsGeneric (Type t)
-	{
-		DeclSpace ds = (DeclSpace) builder_to_declspace [t];
-
-		return ds.IsGeneric;
-	}
-
-	public static bool HasGenericArguments (Type t)
-	{
-		return GetNumberOfTypeArguments (t) > 0;
-	}
-
-	public static int GetNumberOfTypeArguments (Type t)
-	{
-		DeclSpace tc = LookupDeclSpace (t);
-		if (tc != null)
-			return tc.IsGeneric ? tc.CountTypeParameters : 0;
-		else
-			return t.HasGenericArguments ? t.GetGenericArguments ().Length : 0;
-	}
-
-	public static Type[] GetTypeArguments (Type t)
-	{
-		DeclSpace tc = LookupDeclSpace (t);
-		if (tc != null) {
-			if (!tc.IsGeneric)
-				return Type.EmptyTypes;
-
-			TypeParameter[] tparam = tc.TypeParameters;
-			Type[] ret = new Type [tparam.Length];
-			for (int i = 0; i < tparam.Length; i++) {
-				ret [i] = tparam [i].Type;
-				if (ret [i] == null)
-					throw new InternalErrorException ();
-			}
-
-			return ret;
-		} else
-			return t.GetGenericArguments ();
-	}
 	
 	//
 	// Whether a type is unmanaged.  This is used by the unsafe code (25.2)
@@ -1780,220 +1675,6 @@ public class TypeManager {
 			return false;
 
 		return tc.Kind == Kind.Interface;
-	}
-
-	public static bool IsEqual (Type a, Type b)
-	{
-		if (a.Equals (b))
-			return true;
-
-		if ((a is TypeBuilder) && a.IsGenericTypeDefinition && b.IsGenericInstance) {
-			//
-			// `a' is a generic type definition's TypeBuilder and `b' is a
-			// generic instance of the same type.
-			//
-			// Example:
-			//
-			// class Stack<T>
-			// {
-			//     void Test (Stack<T> stack) { }
-			// }
-			//
-			// The first argument of `Test' will be the generic instance
-			// "Stack<!0>" - which is the same type than the "Stack" TypeBuilder.
-			//
-			//
-			// We hit this via Closure.Filter() for gen-82.cs.
-			//
-			if (a != b.GetGenericTypeDefinition ())
-				return false;
-
-			Type[] aparams = a.GetGenericArguments ();
-			Type[] bparams = b.GetGenericArguments ();
-
-			if (aparams.Length != bparams.Length)
-				return false;
-
-			for (int i = 0; i < aparams.Length; i++)
-				if (!IsEqual (aparams [i], bparams [i]))
-					return false;
-
-			return true;
-		}
-
-		if (a.IsGenericParameter && b.IsGenericParameter) {
-			if ((a.DeclaringMethod == null) || (b.DeclaringMethod == null))
-				return false;
-			return a.GenericParameterPosition == b.GenericParameterPosition;
-		}
-
-		if (a.IsArray && b.IsArray) {
-			if (a.GetArrayRank () != b.GetArrayRank ())
-				return false;
-			return IsEqual (a.GetElementType (), b.GetElementType ());
-		}
-
-		if (a.IsGenericInstance && b.IsGenericInstance) {
-			Type at = a.GetGenericTypeDefinition ();
-			Type bt = b.GetGenericTypeDefinition ();
-
-			if (a.GetGenericTypeDefinition () != b.GetGenericTypeDefinition ())
-				return false;
-
-			Type[] aargs = a.GetGenericArguments ();
-			Type[] bargs = b.GetGenericArguments ();
-
-			if (aargs.Length != bargs.Length)
-				return false;
-
-			for (int i = 0; i < aargs.Length; i++) {
-				if (!IsEqual (aargs [i], bargs [i]))
-					return false;
-			}
-
-			return true;
-		}
-
-		return false;
-	}
-
-	public static bool MayBecomeEqualGenericTypes (Type a, Type b, Type[] class_infered, Type[] method_infered)
-	{
-		if (a.IsGenericParameter) {
-			//
-			// If a is an array of a's type, they may never
-			// become equal.
-			//
-			while (b.IsArray) {
-				b = b.GetElementType ();
-				if (a.Equals (b))
-					return false;
-			}
-
-			//
-			// If b is a generic parameter or an actual type,
-			// they may become equal:
-			//
-			//    class X<T,U> : I<T>, I<U>
-			//    class X<T> : I<T>, I<float>
-			// 
-			if (b.IsGenericParameter || !b.IsGenericInstance) {
-				int pos = a.GenericParameterPosition;
-				Type[] args = a.DeclaringMethod != null ? method_infered : class_infered;
-				if (args [pos] == null) {
-					args [pos] = b;
-					return true;
-				}
-
-				return args [pos] == a;
-			}
-
-			//
-			// We're now comparing a type parameter with a
-			// generic instance.  They may become equal unless
-			// the type parameter appears anywhere in the
-			// generic instance:
-			//
-			//    class X<T,U> : I<T>, I<X<U>>
-			//        -> error because you could instanciate it as
-			//           X<X<int>,int>
-			//
-			//    class X<T> : I<T>, I<X<T>> -> ok
-			//
-
-			Type[] bargs = GetTypeArguments (b);
-			for (int i = 0; i < bargs.Length; i++) {
-				if (a.Equals (bargs [i]))
-					return false;
-			}
-
-			return true;
-		}
-
-		if (b.IsGenericParameter)
-			return MayBecomeEqualGenericTypes (b, a, class_infered, method_infered);
-
-		//
-		// At this point, neither a nor b are a type parameter.
-		//
-		// If one of them is a generic instance, let
-		// MayBecomeEqualGenericInstances() compare them (if the
-		// other one is not a generic instance, they can never
-		// become equal).
-		//
-
-		if (a.IsGenericInstance || b.IsGenericInstance)
-			return MayBecomeEqualGenericInstances (a, b, class_infered, method_infered);
-
-		//
-		// If both of them are arrays.
-		//
-
-		if (a.IsArray && b.IsArray) {
-			if (a.GetArrayRank () != b.GetArrayRank ())
-				return false;
-			
-			a = a.GetElementType ();
-			b = b.GetElementType ();
-
-			return MayBecomeEqualGenericTypes (a, b, class_infered, method_infered);
-		}
-
-		//
-		// Ok, two ordinary types.
-		//
-
-		return a.Equals (b);
-	}
-
-	//
-	// Checks whether two generic instances may become equal for some
-	// particular instantiation (26.3.1).
-	//
-	public static bool MayBecomeEqualGenericInstances (Type a, Type b,
-							   Type[] class_infered, Type[] method_infered)
-	{
-		if (!a.IsGenericInstance || !b.IsGenericInstance)
-			return false;
-		if (a.GetGenericTypeDefinition () != b.GetGenericTypeDefinition ())
-			return false;
-
-		Type[] aargs = GetTypeArguments (a);
-		Type[] bargs = GetTypeArguments (b);
-
-		return MayBecomeEqualGenericInstances (
-			GetTypeArguments (a), GetTypeArguments (b), class_infered, method_infered);
-	}
-
-	public static bool MayBecomeEqualGenericInstances (Type[] aargs, Type[] bargs,
-							   Type[] class_infered, Type[] method_infered)
-	{
-		if (aargs.Length != bargs.Length)
-			return false;
-
-		Type[] args = new Type [aargs.Length];
-		for (int i = 0; i < aargs.Length; i++) {
-			if (!MayBecomeEqualGenericTypes (aargs [i], bargs [i], class_infered, method_infered))
-				return false;
-		}
-
-		return true;
-	}
-
-	public static bool IsEqualGenericInstance (Type type, Type parent)
-	{
-		int tcount = GetNumberOfTypeArguments (type);
-		int pcount = GetNumberOfTypeArguments (parent);
-
-		if (type.IsGenericInstance)
-			type = type.GetGenericTypeDefinition ();
-		if (parent.IsGenericInstance)
-			parent = parent.GetGenericTypeDefinition ();
-
-		if (tcount != pcount)
-			return false;
-
-		return type.Equals (parent);
 	}
 
 	public static bool IsSubclassOf (Type type, Type parent)
@@ -2876,19 +2557,6 @@ public class TypeManager {
 		return target_list;
 	}
 
-	static public bool IsGenericMethod (MethodBase mb)
-	{
-		if (mb.DeclaringType is TypeBuilder) {
-			IMethodData method = (IMethodData) builder_to_method [mb];
-			if (method == null)
-				return false;
-
-			return method.GenericMethod != null;
-		}
-
-		return mb.IsGenericMethodDefinition;
-	}
-	
 #region MemberLookup implementation
 	
 	//
