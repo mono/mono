@@ -47,10 +47,12 @@ test-everything:
 	$(MAKE) PROFILE=net_2_0 run-test
 
 run-mcs-tests:
-	@ ./do-tests.pl $(TEST_PROFILE) "$(CSCOMPILE)" "cs*.cs"
+	-rm -f $(TEST_PROFILE).log
+	@ ./do-tests.pl $(TEST_PROFILE) "$(CSCOMPILE)" "cs*.cs" 2>&1 | tee $(TEST_PROFILE).log
 
 run-generics-tests:
-	@ ./do-tests.pl generics "$(GENERICS_COMPILE)" "gcs*.cs"
+	-rm -f generics.log
+	@ ./do-tests.pl generics "$(GENERICS_COMPILE)" "gcs*.cs" 2>&1 | tee generics.log
 
 test-multi-local:
 	@ failed=false; \

@@ -1,3 +1,12 @@
+2004-10-07  Raja R Harinath  <rharinath@novell.com>
+
+	* mcs-ignore-tests: Empty.
+
+	* Makefile (run-mcs-tests): Save log of output to
+	$(TEST_PROFILE).log.
+	(run-generics-tests): Likewise.
+	Report from K Sathyasudha <ksathyasudha@novell.com>.
+
 2004-10-05  John Luke  <john.luke@gmail.com>
 
 	* Makefile: add *.mdb to clean target
