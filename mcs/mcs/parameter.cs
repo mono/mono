@@ -148,6 +148,15 @@ namespace Mono.CSharp {
 			TypeName = type;
 		}
 
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		{
+			if (a.Type == TypeManager.param_array_type) {
+				Report.Error (674, a.Location, "Do not use 'System.ParamArrayAttribute'. Use the 'params' keyword instead");
+				return;
+			}
+			base.ApplyAttributeBuilder (a, cb);
+		}
+
 		// <summary>
 		//   Resolve is used in method definitions
 		// </summary>

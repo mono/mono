@@ -254,6 +254,11 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			if (Type.IsAbstract) {
+				Report.Error (653, Location, "Cannot apply attribute class '{0}' because it is abstract", Name);
+				return null;
+			}
+
 			bool MethodImplAttr = false;
 			bool MarshalAsAttr = false;
 			bool GuidAttr = false;

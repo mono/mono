@@ -827,6 +827,11 @@ namespace Mono.CSharp
 				val = 0ul;
 				return Token.LITERAL_INTEGER;
 			}
+			catch (FormatException) {
+				Report.Error (1013, Location, "Invalid number");
+				val = 0ul;
+				return Token.LITERAL_INTEGER;
+			}
 			
 			return integer_type_suffix (ul, peekChar ());
 		}

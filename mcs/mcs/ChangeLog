@@ -1,3 +1,20 @@
+2004-09-12  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (Attribute.Resolve): Add error 653 report.
+
+	* class.cs (Class.ApplyAttributeBuilder): Add error 641
+	report.
+	(Method.ApplyAttributeBuilder): Add error 685 report.
+	(Operator.Define): Add error 564 report.
+
+	* cs-tokenizer.cs (handle_hex): Add error 1013 report.
+
+	* expression.cs (Invocation.DoResolve): Add error
+	245 and 250 report.
+
+	* parameter.cs (Parameter.ApplyAttributeBuilder): Add
+	error 674 report.
+
 2004-09-11  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs (ConstructorInitializer.Resolve):

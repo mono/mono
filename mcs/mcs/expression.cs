@@ -5004,6 +5004,14 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			if (method.Name == "Finalize" && Arguments == null) {
+				if (is_base)
+					Report.Error (250, loc, "Do not directly call your base class Finalize method. It is called automatically from your destructor");
+				else
+					Report.Error (245, loc, "Destructors and object.Finalize cannot be called directly. Consider calling IDisposable.Dispose if available");
+				return null;
+			}
+
 			if ((method.Attributes & MethodAttributes.SpecialName) != 0){
 				if (TypeManager.IsSpecialMethod (method))
 					Report.Error (571, loc, method.Name + ": can not call operator or accessor");

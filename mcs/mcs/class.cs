@@ -2741,8 +2741,13 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
 		{
-			if (a.UsageAttribute != null)
+			if (a.UsageAttribute != null) {
+				if (base_class_type != TypeManager.attribute_type && !base_class_type.IsSubclassOf (TypeManager.attribute_type) &&
+					TypeBuilder.FullName != "System.Attribute") {
+					Report.Error (641, a.Location, "Attribute '{0}' is only valid on classes derived from System.Attribute", a.Name);
+				}
 				attribute_usage = a.UsageAttribute;
+			}
 
 			base.ApplyAttributeBuilder (a, cb);
 		}
@@ -3472,6 +3477,13 @@ namespace Mono.CSharp {
 				if (MethodData.IsImplementing) {
 					Report.Error (629, Location, "Conditional member '{0}' cannot implement interface member", GetSignatureForError ());
 					return;
+				}
+
+				for (int i = 0; i < parameter_info.Count; ++i) {
+					if ((parameter_info.ParameterModifier (i) & Parameter.Modifier.OUT) != 0) {
+						Report.Error (685, Location, "Conditional method '{0}' cannot have an out parameter", GetSignatureForError ());
+						return;
+					}
 				}
 			}
 
@@ -6710,7 +6722,7 @@ namespace Mono.CSharp {
 				}
 				
 				if (first_arg_type == TypeManager.object_type ||
-				    return_type == TypeManager.object_type){
+					return_type == TypeManager.object_type){
 					Report.Error (
 						-8, Location,
 						"User-defined conversion cannot convert to or from " +
@@ -6733,6 +6745,11 @@ namespace Mono.CSharp {
 						return false;
 					}
 					Report.Error (554, Location, "'{0}' : user defined conversion to/from derived class", GetSignatureForError ());
+					return false;
+				}
+			} else if (OperatorType == OpType.LeftShift || OperatorType == OpType.RightShift) {
+				if (first_arg_type != declaring_type || parameter_types [1] != TypeManager.int32_type) {
+					Report.Error (564, Location, "Overloaded shift operator must have the type of the first operand be the containing type, and the type of the second operand must be int");
 					return false;
 				}
 			} else if (Parameters.FixedParameters.Length == 1) {
