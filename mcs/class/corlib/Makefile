@@ -2,8 +2,6 @@ thisdir = class/corlib
 SUBDIRS =
 include ../../build/rules.make
 
-real_corlib := $(corlib)
-
 # corlib is crazy to build so we skip build/library.make and do stuff
 # ourselves.
 #
@@ -34,7 +32,7 @@ test_flags = /nowarn:0618 /nowarn:0672 /r:$(corlib) /r:$(topdir)/class/lib/NUnit
 cmp_response = $(depsdir)/corlib_cmp.dll.response
 cmp_makefrag = $(depsdir)/corlib_cmp.dll.makefrag
 cmp_stampfile = $(depsdir)/corlib_cmp.dll.stamp
-cmp_flags = /r:$(real_corlib) $(corlib_flags)
+cmp_flags = /r:$(PLATFORM_CORLIB) $(corlib_flags)
 
 # Here, we make all.
 

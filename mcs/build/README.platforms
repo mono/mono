@@ -11,6 +11,10 @@ PLATFORM_RUNTIME
 	The system runtime for executing CLR programs. Blank on Win32,
 	probably $(RUNTIME) (the Mono runtime) on everything else.
 
+PLATFORM_CORLIB
+	The name of the system's corlib. 'mscorlib.dll' for windows,
+	corlib.dll for mono-based.
+
 PLATFORM_MAKE_CORLIB_CMP
 	Define it to something nonempty if corlib_cmp.dll should be built
 	on this platform. Only should be done if the platform provides its
@@ -29,10 +33,6 @@ BOOTSTRAP_MCS
 	The C# compiler used to compile mcs/mcs.exe, and possibly other
 	assemblies if the user is doing a standalone build (that is, not
 	a bootstrap).
-
-corlib
-	The name of corlib.dll. corlib.dll for the Mono runtime, mscorlib.dll
-	on Win32.
 
 hidden_prefix, hidden_suffix
 	Prefix and suffix for hidden/temporary files. Unused right now, I think.

@@ -6,13 +6,10 @@
 PLATFORM_DEBUG_FLAGS = /debug+ /debug:full
 PLATFORM_MCS_FLAGS = /nologo /optimize
 PLATFORM_RUNTIME = 
+PLATFORM_CORLIB = mscorlib.dll
 
 BOOTSTRAP_MCS = csc.exe
 MCS = $(BOOTSTRAP_MCS)
-
-# Never mind -- link our libraries against our corlib
-# corlib = mscorlib.dll
-corlib = corlib.dll
 
 PLATFORM_MAKE_CORLIB_CMP = yes
 PLATFORM_TWEAK_CORLIB_SOURCES=cat - corlib.dll.win32-excludes |sort |uniq -u

@@ -1,5 +1,18 @@
 2003-07-20  Peter Williams  <peter@newton.cx>
 
+	* README.platforms: Update docs for changes below.
+
+	* platforms/win32.make (PLATFORM_CORLIB): Set this variable
+	to 'mscorlib.dll', instead of $(corlib) which everything links
+	against. *Almost* everything should link against our corlib --
+	with the exception of corlib_cmp and corlib_res.
+
+	* platforms/linux.make: Same here: corlib.dll
+
+	* rules.make: Define $(corlib) here.
+
+2003-07-20  Peter Williams  <peter@newton.cx>
+
 	* config-default.make (TEST_RUNTIME): Use the platform runtime
 	to run tests, by default.
 

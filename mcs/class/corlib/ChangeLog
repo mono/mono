@@ -1,3 +1,7 @@
+2003-07-20  Peter Williams  <peter@newton.cx>
+
+	* Makefile: Don't use real_corlib; use $(PLATFORM_CORLIB).
+
 2003-07-18  Peter Williams  <peter@newton.cx>
 
 	* Makefile (dist-local): The fancy shell script was neat, but

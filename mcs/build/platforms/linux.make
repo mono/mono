@@ -6,9 +6,9 @@
 PLATFORM_DEBUG_FLAGS = -g
 PLATFORM_MCS_FLAGS = 
 PLATFORM_RUNTIME = $(RUNTIME)
+PLATFORM_CORLIB = corlib.dll
 
 BOOTSTRAP_MCS = mcs
-corlib = corlib.dll
 
 # Define this if this ever will work on Linux
 # PLATFORM_MAKE_CORLIB_CMP = yes
