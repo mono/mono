@@ -386,7 +386,7 @@ namespace Mono.Xml
 		{
 			if (nextEntityReader != null) {
 				if (DTD == null || DTD.EntityDecls [reader.Name] == null)
-					throw new XmlException ("Entity '" + reader.Name + "' was not declared.");
+					throw NotWFError (String.Format ("Entity '{0}' was not declared.", reader.Name));
 				entityReaderStack.Push (reader);
 				entityReaderNameStack.Push (reader.Name);
 				entityReaderDepthStack.Push (Depth);
@@ -630,6 +630,11 @@ namespace Mono.Xml
 				if (elem != null && !elem.IsInternalSubset && !elem.IsMixedContent && !elem.IsAny && !elem.IsEmpty)
 					HandleError ("In standalone document, whitespace cannot appear in an element whose declaration explicitly contains child content model, not Mixed content.", XmlSeverityType.Error);
 			}
+		}
+
+		private XmlException NotWFError (string message)
+		{
+			return new XmlException (this as IXmlLineInfo, BaseURI, message);
 		}
 
 		private void HandleError (string message, XmlSeverityType severity)
@@ -924,7 +929,7 @@ namespace Mono.Xml
 
 #if NET_2_0
 			if (entity == null)
-					throw new XmlException (this as IXmlLineInfo, String.Format ("Reference to undeclared entity '{0}'.", reader.Name));
+					throw NotWFError (String.Format ("Reference to undeclared entity '{0}'.", reader.Name));
 #endif
 
 			// MS.NET 1.x ignores undeclared entity reference here..

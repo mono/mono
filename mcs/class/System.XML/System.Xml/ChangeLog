@@ -1,3 +1,8 @@
+2004-11-09  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDValidatingReader.cs, XmlTextReader.cs :
+	  needed more changes wrt XmlException.
+
 2004-11-08  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTDObjectModel.cs,

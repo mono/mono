@@ -582,7 +582,7 @@ namespace System.Xml
 				XmlTextReaderImpl entReader = 
 					ParserContext.Dtd.GenerateEntityContentReader (source.Name, ParserContext);
 				if (entReader == null)
-					throw new XmlException (this as IXmlLineInfo, String.Format ("Reference to undeclared entity '{0}'.", source.Name));
+					throw new XmlException (this as IXmlLineInfo, this.BaseURI, String.Format ("Reference to undeclared entity '{0}'.", source.Name));
 				entity = new XmlTextReader (
 					entReader, insideAttribute);
 				entity.CopyProperties (this);
