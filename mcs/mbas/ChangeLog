@@ -1,4 +1,7 @@
-2004-09-14 Anirban Bhattacharjee <banirban@novell.com>
+2004-09-15 Anirban Bhattacharjee <banirban@novell.com>
+	* support.cs: Retrieving default value from another assembly in ReflectionParameters class
+
+2004-09-15 Anirban Bhattacharjee <banirban@novell.com>
 	* class.cs: Support for enum in default constant value for optional parameters
 
 2004-09-14 Anirban Bhattacharjee <banirban@novell.com>

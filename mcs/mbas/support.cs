@@ -68,7 +68,47 @@ namespace Mono.MonoBASIC {
 
 		public Expression DefaultValue (int pos)
 		{
-			return null;
+			Type type = pi [pos].DefaultValue.GetType();
+
+			//
+			// TODO : Enum is not handled here since ParameterInfo
+			// is not returning correct Data type for Enum
+			//
+			switch (Type.GetTypeCode(type)){
+				case TypeCode.Byte:
+					return new ByteConstant ((byte) pi [pos].DefaultValue);
+				case TypeCode.Char:
+					return new CharConstant ((char) pi [pos].DefaultValue);
+				case TypeCode.String:
+					return new StringConstant ((string) pi [pos].DefaultValue);
+				case TypeCode.Int16:
+					return new ShortConstant ((short) pi [pos].DefaultValue);
+				case TypeCode.UInt16:
+					return new UShortConstant ((ushort) pi [pos].DefaultValue);
+				case TypeCode.Int32:
+					return new IntConstant ((int) pi [pos].DefaultValue);
+				case TypeCode.UInt32:
+					return new UIntConstant ((uint) pi [pos].DefaultValue);
+				case TypeCode.Int64:
+					return new LongConstant ((long) pi [pos].DefaultValue);
+				case TypeCode.UInt64:
+					return new ULongConstant ((ulong) pi [pos].DefaultValue);
+				case TypeCode.Boolean:
+					return new BoolConstant ((bool) pi [pos].DefaultValue);
+				case TypeCode.DateTime:
+					return new DateConstant ((DateTime) pi [pos].DefaultValue);
+				case TypeCode.Decimal:
+					return new DecimalConstant ((decimal) pi [pos].DefaultValue);
+				case TypeCode.Double:
+					return new DoubleConstant ((double) pi [pos].DefaultValue);
+				case TypeCode.SByte:
+					return new SByteConstant ((sbyte) pi [pos].DefaultValue);
+				default:
+					Report.Error(-1, 
+					"Internal Error : cannot handle the data type" +
+					"received from ParameterInfo class");
+					return null;
+			}
 #if false
 			if (last_arg_is_params && pos >= pi.Length - 1)
 				return pi [pi.Length - 1].ParameterType;
