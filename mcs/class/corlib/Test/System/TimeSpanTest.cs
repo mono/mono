@@ -496,6 +496,14 @@ public class TimeSpanTest : Assertion {
 		AssertEquals ("MaxValue", "10675199.02:48:05.4775807", TimeSpan.MaxValue.ToString ());
 		AssertEquals ("MinValue", "-10675199.02:48:05.4775808", TimeSpan.MinValue.ToString ());
 	}
+
+	[Test]
+	[ExpectedException (typeof (OverflowException))]
+	public void Parse_InvalidValuesAndFormat_ExceptionOrder () 
+	{
+		// hours should be between 0 and 23 but format is also invalid (too many dots)
+		TimeSpan.Parse ("0.99.99.0");
+	}
 }
 
 }

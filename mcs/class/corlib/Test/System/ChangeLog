@@ -12,6 +12,8 @@
 	* SingleTest.cs: Added tests for default ToString(String.Empty).
 	* StringTest.cs: Added more cases for Join (null separator and null 
 	values).
+	* TimeSpanTest.cs: Added test to verify exception order when a parsed
+	string is both invalid (format) and contains an overflow.
 	* UInt16Test.cs: Added tests for default ToString(String.Empty).
 	* UInt32Test.cs: Added tests for default ToString(String.Empty).
 	* UInt64Test.cs: Added tests for default ToString(String.Empty).
