@@ -49,12 +49,16 @@ namespace Mono.Xml.Xsl.Operations {
 				if (useAttributeSets != null)
 					foreach (XmlQualifiedName s in useAttributeSets)
 						p.ResolveAttributeSet (s).Evaluate (p);
+
+				if (p.CurrentNode.MoveToFirstNamespace (XPathNamespaceScope.Local)) {
+					do {
+						p.Out.WriteNamespaceDecl (p.CurrentNode.LocalName, p.CurrentNode.Value);
+					} while (p.CurrentNode.MoveToNextNamespace (XPathNamespaceScope.Local));
+					p.CurrentNode.MoveToParent ();
+				}
 			
 				if (children != null) children.Evaluate (p);
-				if (p.CurrentNode.IsEmptyElement)
-					p.Out.WriteEndElement ();
-				else
-					p.Out.WriteFullEndElement ();
+				p.Out.WriteFullEndElement ();
 				break;
 			case XPathNodeType.Attribute:
 				p.Out.WriteAttributeString (p.CurrentNode.Prefix, p.CurrentNode.LocalName, p.CurrentNode.NamespaceURI, p.CurrentNode.Value);

@@ -98,6 +98,8 @@ namespace Mono.Xml.Xsl.Operations {
 			if (prefix == "xmlns")
 				prefix = String.Empty;	// Should not be allowed.
 
+			XmlConvert.VerifyName (nm);
+
 			if (value == null)
 				p.Out.WriteAttributeString(prefix, nm, nmsp, "");
 			else {

@@ -1,3 +1,9 @@
+2003-11-21 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XslAttribute.cs : Name verification.
+	* XslElement.cs : Name verification. Consider IsEmptyElement.
+	* XslCopy.cs : copy namespace nodes too.
+
 2003-11-09 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XslAttribute.cs : namespace should be String.Empty if no specification

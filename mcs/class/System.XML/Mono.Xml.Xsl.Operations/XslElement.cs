@@ -64,7 +64,7 @@ namespace Mono.Xml.Xsl.Operations {
 		{
 			string nm, nmsp, localName, prefix;
 			
-			nm = calcName != null ? calcName : name.Evaluate (p);
+			localName = nm = calcName != null ? calcName : name.Evaluate (p);
 			nmsp = calcNs != null ? calcNs : ns != null ? ns.Evaluate (p) : null;
 			prefix = calcPrefix != null ? calcPrefix : String.Empty;
 
@@ -85,7 +85,9 @@ namespace Mono.Xml.Xsl.Operations {
 				}
 			}
 
-			p.Out.WriteStartElement (prefix, nm, nmsp);
+			XmlConvert.VerifyName (nm);
+
+			p.Out.WriteStartElement (prefix, localName, nmsp);
 			
 			p.TryStylesheetNamespaceOutput ();
 			if (useAttributeSets != null)
@@ -94,7 +96,10 @@ namespace Mono.Xml.Xsl.Operations {
 
 			if (value != null) value.Evaluate (p);
 
-			p.Out.WriteFullEndElement ();
+			if (isEmptyElement && useAttributeSets == null)
+				p.Out.WriteEndElement ();
+			else
+				p.Out.WriteFullEndElement ();
 		}
 	}
 }
