@@ -1,4 +1,12 @@
 2002-05-18  Tim Coleman <tim@timcoleman.com>
+	* System.Data/DataRow.cs: Try to reduce memory
+	usage by only creating the original and proposed
+	arrays as required in BeginEdit, and then destroying
+	proposed during EndEdit, and original during AcceptChanges.
+	* System.Data.Common/DbDataAdapter.cs: Make the
+	startRecord and maxRecords parameters work correctly.
+
+2002-05-18  Tim Coleman <tim@timcoleman.com>
 	* System.Data/DataRow.cs: Move the null check in
 	ItemArray set to above the Invalid Cast check, so
 	that we don't get null reference exceptions.

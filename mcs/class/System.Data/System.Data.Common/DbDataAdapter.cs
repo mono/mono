@@ -135,7 +135,12 @@ namespace System.Data.Common
                                 DataRow row;
                                 object[] itemArray = new object[dataReader.FieldCount];
 
-                                while (dataReader.Read () && !(maxRecords > 0 && changeCount > maxRecords && srcTable == tableName))
+				// limit results for first results only.
+				if (srcTable == tableName)
+					for (int k = 0; k < startRecord; k += 1)
+						dataReader.Read ();
+
+                                while (dataReader.Read () && !(maxRecords > 0 && changeCount >= maxRecords && srcTable == tableName))
                                 {
                                         // need to check for existing rows to reconcile if we have key
                                         // information.  skip this step for now

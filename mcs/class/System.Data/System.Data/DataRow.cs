@@ -46,12 +46,10 @@ namespace System.Data
 		{
 			table = builder.Table;
 
-			original = new object[table.Columns.Count];
+			original = null; 
 			proposed = null;
 			current = new object[table.Columns.Count];
 
-			Array.Copy (current, original, table.Columns.Count);
-	
 			versions = new Hashtable ();
 
 			versions[DataRowVersion.Original] = original;
@@ -183,12 +181,14 @@ namespace System.Data
 				{
 					if (table.Columns[i].ReadOnly && value[i] != this[i])
 						throw new ReadOnlyException ();
+
 					if (value[i] == null)
 					{
 						if (!table.Columns[i].AllowDBNull)
 							throw new NoNullAllowedException ();
 						continue;
 					}
+						
 					if (table.Columns[i].DataType != value[i].GetType())
 						throw new InvalidCastException ();
 				}
@@ -234,8 +234,7 @@ namespace System.Data
 		{
 			this.EndEdit ();
 
-			Array.Copy (proposed, current, table.Columns.Count);
-			proposed = null;
+			original = null;
 
 			switch (rowState)
 			{
@@ -257,7 +256,9 @@ namespace System.Data
 		public void BeginEdit() 
 		{
 			proposed = new object[table.Columns.Count];
+			original = new object[table.Columns.Count];
 			Array.Copy (current, proposed, table.Columns.Count);
+			Array.Copy (current, original, table.Columns.Count);
 		}
 
 		/// <summary>
@@ -265,6 +266,7 @@ namespace System.Data
 		/// </summary>
 		public void CancelEdit() 
 		{
+			original = null;
 			proposed = null;
 			rowState = DataRowState.Unchanged;
 		}
@@ -293,6 +295,11 @@ namespace System.Data
 		public void EndEdit() 
 		{
 			rowState = DataRowState.Modified;
+			if (proposed != null)
+			{
+				Array.Copy (proposed, current, table.Columns.Count);
+				proposed = null;
+			}
 		}
 
 		/// <summary>
@@ -503,7 +510,20 @@ namespace System.Data
 		[MonoTODO]
 		public void RejectChanges () 
 		{
+			Array.Copy (original, current, table.Columns.Count);
 			CancelEdit ();
+			switch (rowState)
+			{
+				case DataRowState.Added:
+					table.Rows.Remove (this);
+					break;
+				case DataRowState.Modified:
+					rowState = DataRowState.Unchanged;
+					break;
+				case DataRowState.Deleted:
+					rowState = DataRowState.Unchanged;
+					break;
+			}
 		}
 
 		/// <summary>
