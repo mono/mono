@@ -1,3 +1,14 @@
+2002-03-14  Martin Baulig  <martin@gnome.org>
+
+	* debug-private.h: New private header file.
+
+	* debug-stabs.c: Added the stabs type generation stuff which was
+	previously in debug.c.
+
+	* debug-dwarf.c: Started to implement type support. We're currently
+	only writing this most basic types to the dwarf file, but this will
+	change soon.
+
 2002-03-13  Martin Baulig  <martin@gnome.org>
 
 	* debug-stabs.c, debug-dwarf2.c: New files containing my new
