@@ -171,7 +171,7 @@ namespace System.Xml.Xsl
 				if (xmlDocument == IntPtr.Zero)
 					throw new XmlException ("Error parsing input file");
 
-				resultDocument = ApplyStylesheet (xmlDocument);
+				resultDocument = ApplyStylesheet (xmlDocument, null);
 				/*
 				* If I do this, the <?xml version=... is always present *
 				if (-1 == xsltSaveResultToFilename (outputfile, resultDocument, stylesheet, 0))
@@ -191,12 +191,12 @@ namespace System.Xml.Xsl
 			}
 		}
 
-		IntPtr ApplyStylesheet (IntPtr doc)
+		IntPtr ApplyStylesheet (IntPtr doc, string[] argArr)
 		{
 			if (stylesheet == IntPtr.Zero)
 				throw new XmlException ("No style sheet!");
 
-			IntPtr result = xsltApplyStylesheet (stylesheet, doc, IntPtr.Zero);
+			IntPtr result = xsltApplyStylesheet (stylesheet, doc, argArr);
 			if (result == IntPtr.Zero)
 				throw new XmlException ("Error applying style sheet");
 
@@ -231,9 +231,9 @@ namespace System.Xml.Xsl
 			return result.ReadToEnd ();
 		}
 
-		string ApplyStylesheetAndGetString (IntPtr doc)
+		string ApplyStylesheetAndGetString (IntPtr doc, string[] argArr)
 		{
-			IntPtr xmlOutput = ApplyStylesheet (doc);
+			IntPtr xmlOutput = ApplyStylesheet (doc, argArr);
 			string strOutput = GetStringFromDocument (xmlOutput);
 			xmlFreeDoc (xmlOutput);
 
@@ -251,13 +251,26 @@ namespace System.Xml.Xsl
 			return xmlInput;
 		}
 
-		[MonoTODO("args")]
+		[MonoTODO("Node Set and Node Fragment Parameters and Extension Objects")]
 		// Transforms the XML data in the XPathNavigator using
 		// the specified args and outputs the result to an XmlReader.
 		public XmlReader Transform (XPathNavigator input, XsltArgumentList args)
 		{
 			IntPtr xmlInput = GetDocumentFromNavigator (input);
-			string xslOutputString = ApplyStylesheetAndGetString (xmlInput);
+			string[] argArr = new string[args.parameters.Count * 2 + 1];
+			int index = 0;
+			foreach (object key in args.parameters.Keys) {
+				argArr [index++] = key.ToString();
+				object value = args.parameters [key];
+				if (value is Boolean)
+					argArr [index++] = XmlConvert.ToString((bool) value); // FIXME: How to encode it for libxslt?
+				else if (value is Double)
+					argArr [index++] = XmlConvert.ToString((double) value); // FIXME: How to encode infinity's and Nan?
+				else
+					argArr [index++] = "'" + value.ToString() + "'"; // FIXME: How to encode "'"?
+			}
+			argArr[index] = null;
+			string xslOutputString = ApplyStylesheetAndGetString (xmlInput, argArr);
 			xmlFreeDoc (xmlInput);
 			Cleanup ();
 
@@ -303,6 +316,7 @@ namespace System.Xml.Xsl
 
 		// Transforms the XML data in the XPathNavigator using
 		// the specified args and outputs the result to a TextWriter.
+		[MonoTODO("Node Set and Node Fragment Parameters and Extension Objects")]
 		public void Transform (XPathNavigator input, XsltArgumentList args, TextWriter output)
 		{
 			if (input == null)
@@ -312,7 +326,20 @@ namespace System.Xml.Xsl
 				throw new ArgumentNullException ("output");
 
 			IntPtr inputDoc = GetDocumentFromNavigator (input);
-			string transform = ApplyStylesheetAndGetString (inputDoc);
+			string[] argArr = new string[args.parameters.Count * 2 + 1];
+			int index = 0;
+			foreach (object key in args.parameters.Keys) {
+				argArr [index++] = key.ToString();
+				object value = args.parameters [key];
+				if (value is Boolean)
+					argArr [index++] = XmlConvert.ToString((bool) value); // FIXME: How to encode it for libxslt?
+				else if (value is Double)
+					argArr [index++] = XmlConvert.ToString((double) value); // FIXME: How to encode infinity's and Nan?
+				else
+					argArr [index++] = "'" + value.ToString() + "'"; // FIXME: How to encode "'"?
+			}
+			argArr[index] = null;
+			string transform = ApplyStylesheetAndGetString (inputDoc, argArr);
 			xmlFreeDoc (inputDoc);
 			Cleanup ();
 			output.Write (transform);
@@ -458,7 +485,7 @@ namespace System.Xml.Xsl
 		static extern IntPtr xsltParseStylesheetDoc (IntPtr docPtr);
 
 		[DllImport ("xslt")]
-		static extern IntPtr xsltApplyStylesheet (IntPtr stylePtr, IntPtr DocPtr, IntPtr notused);
+		static extern IntPtr xsltApplyStylesheet (IntPtr stylePtr, IntPtr DocPtr, string[] argPtr);
 
 		[DllImport ("xslt")]
 		static extern int xsltSaveResultToFilename (string URI, IntPtr doc, IntPtr styleSheet, int compression);

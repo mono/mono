@@ -14,8 +14,8 @@ namespace System.Xml.Xsl
 	{
 		#region Fields
 
-		private Hashtable extensionObjects;
-		private Hashtable parameters;
+		internal Hashtable extensionObjects;
+		internal Hashtable parameters;
 
 		#endregion
 
