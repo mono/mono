@@ -242,6 +242,11 @@ test-190.cs
 -----------
 Accessing private field of outer class from which we derive.
 
+tests-191.cs
+------------
+Some accessibility tests that exist in Corlib and System, to probe the new
+functionality in the compiler for accessibility of private nested classes.
+
 verify-1.cs
 -----------
 Test whether we do not jump out of the method in a Try/Finally block.
