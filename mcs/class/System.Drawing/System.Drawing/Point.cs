@@ -10,11 +10,12 @@
 using System;
 
 namespace System.Drawing {
-	
+
+	[Serializable]	
 	public struct Point { 
 		
 		// Private x and y coordinate fields.
-		int cx, cy;
+		int x, y;
 
 		// -----------------------
 		// Public Shared Members
@@ -195,8 +196,8 @@ namespace System.Drawing {
 		
 		public Point (int dw)
 		{
-			cx = dw >> 16;
-			cy = dw & 0xffff;
+			x = dw >> 16;
+			y = dw & 0xffff;
 		}
 
 		/// <summary>
@@ -209,8 +210,8 @@ namespace System.Drawing {
 		
 		public Point (Size sz)
 		{
-			cx = sz.Width;
-			cy = sz.Height;
+			x = sz.Width;
+			y = sz.Height;
 		}
 
 		/// <summary>
@@ -223,8 +224,8 @@ namespace System.Drawing {
 		
 		public Point (int x, int y)
 		{
-			cx = x;
-			cy = y;
+			this.x = x;
+			this.y = y;
 		}
 
 		// -----------------------
@@ -241,7 +242,7 @@ namespace System.Drawing {
 		
 		public bool IsEmpty {
 			get {
-				return ((cx == 0) && (cy == 0));
+				return ((x == 0) && (y == 0));
 			}
 		}
 
@@ -255,10 +256,10 @@ namespace System.Drawing {
 		
 		public int X {
 			get {
-				return cx;
+				return x;
 			}
 			set {
-				cx = value;
+				x = value;
 			}
 		}
 
@@ -272,10 +273,10 @@ namespace System.Drawing {
 		
 		public int Y {
 			get {
-				return cy;
+				return y;
 			}
 			set {
-				cy = value;
+				y = value;
 			}
 		}
 
@@ -305,7 +306,7 @@ namespace System.Drawing {
 		
 		public override int GetHashCode ()
 		{
-			return cx^cy;
+			return x^y;
 		}
 
 		/// <summary>
@@ -318,8 +319,8 @@ namespace System.Drawing {
 
 		public void Offset (int dx, int dy)
 		{
-			cx += dx;
-			cy += dy;
+			x += dx;
+			y += dy;
 		}
 		
 		/// <summary>
@@ -332,7 +333,7 @@ namespace System.Drawing {
 		
 		public override string ToString ()
 		{
-			return String.Format ("[{0},{1}]", cx, cy);
+			return String.Format ("[{0},{1}]", x, y);
 		}
 
 	}
