@@ -1,3 +1,9 @@
+2003-06-24  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* XmlTypeMapElementInfo.cs: no need to compare nesting level in Equals.
+	* XmlReflectionImporter.cs: Changed nullable default. Assign member's namespace to an
+	  array if the namespace is not specified in XmlArrayItemAttribute.
+
 2003-06-17  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* XmlReflectionImporter.cs: Reset internal tables for each ImportMembersMapping call.

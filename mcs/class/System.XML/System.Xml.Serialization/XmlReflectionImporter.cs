@@ -241,7 +241,8 @@ namespace System.Xml.Serialization {
 				Type elemType = (att.Type != null) ? att.Type : itemType;
 				XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (null, TypeTranslator.GetTypeData(elemType));
 				elem.DataType = att.DataType;
-				elem.Namespace = att.Namespace != null ? att.Namespace : "";
+				elem.Namespace = att.Namespace != null ? att.Namespace : defaultNamespace;
+				if (elem.Namespace == null) elem.Namespace = "";
 				elem.Form = att.Form;
 				elem.IsNullable = att.IsNullable;
 				elem.NestingLevel = att.NestingLevel;
@@ -270,7 +271,7 @@ namespace System.Xml.Serialization {
 				else elem.ElementName = TypeTranslator.GetTypeData(itemType).XmlType ;
 
 				elem.Namespace = (defaultNamespace != null) ? defaultNamespace : "";
-				elem.IsNullable = true;	// By default, items are nullable
+				elem.IsNullable = false;
 				list.Add (elem);
 			}
 

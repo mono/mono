@@ -135,7 +135,6 @@ namespace System.Xml.Serialization
 			if (_choiceValue != oinfo._choiceValue) return false;
 			if (_type.Type != oinfo._type.Type) return false;
 			if (_isNullable != oinfo._isNullable) return false;
-			if (_nestingLevel != oinfo._nestingLevel) return false;
 			return true;
 		}
 
