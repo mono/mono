@@ -1,3 +1,10 @@
+2002-05-09  Daniel Morgan <danmorg@sc.rr.com>
+
+	* Single.cs: copied ToString() and Parse() methods from 
+	Double to Single and modified a tiny bit for Single.  
+	There is still a FIXME for Double and Single about
+	passing the format and provider info to the icall too.
+
 2002-05-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Int32.cs:

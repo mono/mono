@@ -8,6 +8,7 @@
 //
 
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace System {
 	
@@ -84,10 +85,68 @@ namespace System {
 		}
 
 		[MonoTODO]
-		public static float Parse (string s, NumberStyles style, IFormatProvider fp)
+		public static float Parse (string s, NumberStyles style, IFormatProvider fp) 
 		{
-			// TODO: Implement me
-			throw new NotImplementedException ();
+			// FIXME: I copied this method from System.Double
+			//        fix it for System.Single
+			
+			if (s == null) throw new ArgumentNullException();
+			if (style > NumberStyles.Any) {
+				throw new ArgumentException();
+			}
+			NumberFormatInfo format = NumberFormatInfo.GetInstance(fp);
+			if (format == null) throw new Exception("How did this happen?");
+			if (s == format.NaNSymbol) return Single.NaN;
+			if (s == format.PositiveInfinitySymbol) return Single.PositiveInfinity;
+			if (s == format.NegativeInfinitySymbol) return Single.NegativeInfinity;
+			string[] sl;
+			long integral = 0;
+			long fraction = 0;
+			long exponent = 1;
+			float retval = 0;
+			if ((style & NumberStyles.AllowLeadingWhite) != 0) {
+				s.TrimStart(null);
+			}
+			if ((style & NumberStyles.AllowTrailingWhite) != 0) {
+				s.TrimEnd(null);
+			}
+			sl = s.Split(new Char[] {'e', 'E'}, 2);
+			if (sl.Length > 1) {
+				if ((style & NumberStyles.AllowExponent) == 0) {
+					throw new FormatException();
+				}
+				exponent = long.Parse(sl[1], NumberStyles.AllowLeadingSign, format);
+			}
+			s = sl[0];
+			sl = s.Split(format.NumberDecimalSeparator.ToCharArray(), 2);
+			if (sl.Length > 1) {
+				if ((style & NumberStyles.AllowDecimalPoint) == 0) {
+					throw new FormatException();
+				}
+				fraction = long.Parse(sl[1], NumberStyles.None, format);
+			}
+			NumberStyles tempstyle = NumberStyles.None;
+			if ((style & NumberStyles.AllowLeadingSign) != 0){
+				tempstyle = NumberStyles.AllowLeadingSign;
+			}
+
+			if (sl[0].Length > 0)
+				integral = long.Parse(sl[0], tempstyle, format);
+			else
+				integral = 0;
+
+			retval = fraction;
+
+			// FIXME: what about the zeros between the decimal point 
+			// and the first non-zero digit?
+			while (retval >1) retval /= 10;
+			if (integral < 0){
+				retval -= integral;
+				retval = -retval;
+			}
+			else retval += integral;
+			if (exponent != 1) retval *= (float) Math.Pow(10, exponent);
+			return retval;
 		}
 
 		public override string ToString ()
@@ -108,9 +167,12 @@ namespace System {
 		[MonoTODO]
 		public string ToString (string format, IFormatProvider fp)
 		{
-			// TODO: Implement me.
-			throw new NotImplementedException ();
+			// FIXME: Need to pass format and provider info to this call too.
+			return ToStringImpl(value);
 		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern string ToStringImpl (float value);
 
 		// ============= IConvertible Methods ============ //
 
