@@ -27,14 +27,10 @@ namespace System.Net.Sockets
 		
 		// constructor
 
-		/* TODO: Code common to all the constructors goes here.  I can't
-		call a constructor from another constructor, for some
-		reason.  Why? */
-		
 		/// <summary>
 		/// Some code that is shared between the constructors.
 		/// </summary>
-		private void common_constructor ()
+		private void Init ()
 		{
 			active = false;
 			server = new Socket(AddressFamily.InterNetwork,
@@ -48,7 +44,7 @@ namespace System.Net.Sockets
 		/// are a web server</param>
 		public TcpListener (int port)
 		{
-			common_constructor();
+			Init();
 			server.Bind(new IPEndPoint(IPAddress.Any, port));
 		}
 
@@ -58,7 +54,7 @@ namespace System.Net.Sockets
 		/// <param name="local_end_point">The endpoint</param>
 		public TcpListener (IPEndPoint local_end_point)
 		{
-			common_constructor();
+			Init();
 			server.Bind(local_end_point);
 		}
 		
@@ -70,7 +66,7 @@ namespace System.Net.Sockets
 		/// <param name="port">The port to listen on</param>
 		public TcpListener (IPAddress listen_ip, int port)
 		{
-			common_constructor();
+			Init();
 			server.Bind(new IPEndPoint(listen_ip, port));
 		}
 
@@ -120,16 +116,9 @@ namespace System.Net.Sockets
 		/// object made from the new socket.</returns>
 		public TcpClient AcceptTcpClient ()
 		{
-			/*	TODO: How do we set the socket in the new client,
-				without having tcpclient as our base class?
-				Does C# have something like 'friend'?
-				
-				The commented code below doesn't work because
-				TcpClient.Client is protected.  If we derive
-				
-			*/
-
 			TcpClient client = new TcpClient();
+			// use internal method SetTcpClient to make a
+			// client with the specified socket
 			client.SetTcpClient(AcceptSocket());
 			return client;
 		}

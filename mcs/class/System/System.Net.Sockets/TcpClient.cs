@@ -29,14 +29,10 @@ namespace System.Net.Sockets
 		
 		// constructor
 
-		/* TODO: Code common to all the constructors goes here.
-		Can anyone tell me why I can't call a constructor from
-		another constructor? */
-		
 		/// <summary>
 		/// Some code that is shared between the constructors.
 		/// </summary>
-		private void common_constructor ()
+		private void Init ()
 		{
 			active = false;
 			client = new Socket(AddressFamily.InterNetwork,
@@ -48,7 +44,7 @@ namespace System.Net.Sockets
 		/// </summary>
 		public TcpClient ()
 		{
-			common_constructor();
+			Init();
 			client.Bind(new IPEndPoint(IPAddress.Any, 0));
 		}
 	
@@ -61,7 +57,7 @@ namespace System.Net.Sockets
 		/// <param name="local_end_point">The aforementioned local endpoint</param>
 		public TcpClient (IPEndPoint local_end_point)
 		{
-			common_constructor();
+			Init();
 			client.Bind(local_end_point);
 		}
 		
@@ -75,7 +71,7 @@ namespace System.Net.Sockets
 		/// <param name="port">The port to connect to, e.g. 80 for HTTP</param>
 		public TcpClient (string hostname, int port)
 		{
-			common_constructor();
+			Init();
 			client.Bind(new IPEndPoint(IPAddress.Any, 0));
 			Connect(hostname, port);
 		}
@@ -223,7 +219,10 @@ namespace System.Net.Sockets
 		// methods
 		
 		/// <summary>
-		/// Closes the socket and disposes of all managed resources
+		/// Closes the socket and disposes of all managed resources.
+		/// 
+		/// Throws SocketException if something goes wrong while
+		/// closing the socket.
 		/// </summary>
 		public void Close ()
 		{
@@ -232,6 +231,9 @@ namespace System.Net.Sockets
 		
 		/// <summary>
 		/// Connects to a specified remote endpoint
+		/// 
+		/// Throws SocketException if something goes wrong while
+		/// connecting.
 		/// </summary>
 		/// <param name="remote_end_point">The aforementioned endpoint</param>
 		public void Connect (IPEndPoint remote_end_point)
@@ -243,6 +245,9 @@ namespace System.Net.Sockets
 		
 		/// <summary>
 		/// Connects to an IP address on a port
+		/// 
+		/// Throws SocketException if something goes wrong while
+		/// connecting.
 		/// </summary>
 		/// <param name="address">The IP address (get it from Dns.GetHostByName)</param>
 		/// <param name="port">The port to connect to, e.g. 80 for HTTP</param>
@@ -254,6 +259,9 @@ namespace System.Net.Sockets
 		/// <summary>
 		/// Resolves a fully qualified domain name to an IP address
 		/// and connects to it on a specified port
+		/// 
+		/// Throws SocketException if something goes wrong while
+		/// connecting.
 		/// </summary>
 		/// <param name="hostname">The hostname, e.g. www.myelin.co.nz</param>
 		/// <param name="port">The port, e.g. 80 for HTTP</param>
@@ -283,6 +291,8 @@ namespace System.Net.Sockets
 		{
 			if (disposed == false) {
 				if (active) {
+					// This closes the socket as well, as the NetworkStream
+					// owns the socket.
 					stream.Close();
 					active = false;
 				}
