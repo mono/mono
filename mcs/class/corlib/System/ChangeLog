@@ -1,3 +1,8 @@
+2004-04-29  Jackson Harper  <jackson@ximian.com>
+
+	* MonoType.cs: 
+	* Type.cs: NET_2_0 now instead of 1_2. 
+	
 2004-04-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Environment.cs: implemented GetLogicalDrives.
