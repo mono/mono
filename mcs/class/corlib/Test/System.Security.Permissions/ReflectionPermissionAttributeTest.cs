@@ -18,6 +18,44 @@ namespace MonoTests.System.Security.Permissions {
 	public class ReflectionPermissionAttributeTest : Assertion {
 
 		[Test]
+		public void Default () 
+		{
+			ReflectionPermissionAttribute a = new ReflectionPermissionAttribute (SecurityAction.Assert);
+			AssertEquals ("Flags", ReflectionPermissionFlag.NoFlags, a.Flags);
+			Assert ("MemberAccess", !a.MemberAccess);
+			Assert ("ReflectionEmit", !a.ReflectionEmit);
+			Assert ("TypeInformation", !a.TypeInformation);
+			AssertEquals ("TypeId", a.ToString (), a.TypeId.ToString ());
+			Assert ("Unrestricted", !a.Unrestricted);
+
+			ReflectionPermission perm = (ReflectionPermission) a.CreatePermission ();
+			AssertEquals ("CreatePermission.Flags", ReflectionPermissionFlag.NoFlags, perm.Flags);
+		}
+
+		[Test]
+		public void Action () 
+		{
+			ReflectionPermissionAttribute a = new ReflectionPermissionAttribute (SecurityAction.Assert);
+			AssertEquals ("Action=Assert", SecurityAction.Assert, a.Action);
+			a.Action = SecurityAction.Demand;
+			AssertEquals ("Action=Demand", SecurityAction.Demand, a.Action);
+			a.Action = SecurityAction.Deny;
+			AssertEquals ("Action=Deny", SecurityAction.Deny, a.Action);
+			a.Action = SecurityAction.InheritanceDemand;
+			AssertEquals ("Action=InheritanceDemand", SecurityAction.InheritanceDemand, a.Action);
+			a.Action = SecurityAction.LinkDemand;
+			AssertEquals ("Action=LinkDemand", SecurityAction.LinkDemand, a.Action);
+			a.Action = SecurityAction.PermitOnly;
+			AssertEquals ("Action=PermitOnly", SecurityAction.PermitOnly, a.Action);
+			a.Action = SecurityAction.RequestMinimum;
+			AssertEquals ("Action=RequestMinimum", SecurityAction.RequestMinimum, a.Action);
+			a.Action = SecurityAction.RequestOptional;
+			AssertEquals ("Action=RequestOptional", SecurityAction.RequestOptional, a.Action);
+			a.Action = SecurityAction.RequestRefuse;
+			AssertEquals ("Action=RequestRefuse", SecurityAction.RequestRefuse, a.Action);
+		}
+
+		[Test]
 		public void Flags () 
 		{
 			ReflectionPermissionAttribute attr = new ReflectionPermissionAttribute (SecurityAction.Assert);
@@ -110,6 +148,17 @@ namespace MonoTests.System.Security.Permissions {
 			ReflectionPermission p = (ReflectionPermission) attr.CreatePermission ();
 			AssertEquals ("AllFlags=ReflectionPermission", ReflectionPermissionFlag.AllFlags, p.Flags);
 			Assert ("AllFlags=Unrestricted", p.IsUnrestricted ());
+		}
+
+		[Test]
+		public void Unrestricted () 
+		{
+			ReflectionPermissionAttribute a = new ReflectionPermissionAttribute (SecurityAction.Assert);
+			a.Unrestricted = true;
+			AssertEquals ("Unrestricted", ReflectionPermissionFlag.NoFlags, a.Flags);
+
+			ReflectionPermission perm = (ReflectionPermission) a.CreatePermission ();
+			AssertEquals ("CreatePermission.Flags", ReflectionPermissionFlag.AllFlags, perm.Flags);
 		}
 	}
 }

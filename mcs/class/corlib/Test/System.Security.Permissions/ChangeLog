@@ -1,3 +1,28 @@
+2003-12-29  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* EnvironmentPermissionAttributeTest.cs: Updated to test default
+	properties, Actions, get for All (1.1) and Unrestricted.
+	* FileDialogPermissionAttributeTest.cs: Updated to test default
+	properties, Actions and Unrestricted.
+	* FileIOPermissionAttributeTest.cs: Updated to test default
+	properties, Actions, get for All (1.1) and Unrestricted.
+	* IsolatedStorageFilePermissionAttributeTest.cs: New.
+	* PermissionSetAttributeTest.cs: New.
+	* PrincipalPermissionAttributeTest.cs: Updated to test default
+	properties, Actions and Unrestricted.
+	* PublisherIdentityPermissionAttributeTest.cs: Updated to test default
+	properties, Actions and Unrestricted.
+	* ReflectionPermissionAttributeTest.cs: Updated to test default
+	properties, Actions and Unrestricted.
+	* RegistryPermissionAttributeTest.cs: New.
+	* SecurityPermissionAttributeTest.cs: New.
+	* SiteIdentityPermissionAttributeTest.cs: New.
+	* StrongNameIdentityPermissionAttributeTest.cs: New.
+	* StrongNamePublicKeyBlobTest.cs: Converted to NUnit2 format.
+	* UIPermissionAttributeTest.cs: New.
+	* UrlIdentityPermissionAttributeTest.cs: New.
+	* ZoneIdentityPermissionAttributeTest.cs: New.
+
 2003-10-21  Nick Drochak <ndrochak@gol.com>
 
 	* FileIOPermissionAttributeTest.cs: Handle Short File Name vs. Long

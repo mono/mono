@@ -27,7 +27,6 @@ namespace MonoTests.System.Security.Permissions {
 		static public string GetLongPathName (string somePath) 
 		{
 			StringBuilder buffer = new StringBuilder(260);
-			StringBuilder temp = new StringBuilder();
 			if (0 != GetLongPathName (somePath, buffer, (uint) buffer.Capacity))
 				return buffer.ToString ();
 			else
@@ -41,15 +40,56 @@ namespace MonoTests.System.Security.Permissions {
 		private static string filename;
 
 		[SetUp]
-		public void SetUp () {
+		public void SetUp () 
+		{
 			Environment.CurrentDirectory = Path.GetTempPath();
 			filename = Path.GetTempFileName ();
 		}
 
 		[TearDown]
-		public void TearDown () {
+		public void TearDown () 
+		{
 			 if (File.Exists (filename))
 				File.Delete (filename);
+		}
+
+		[Test]
+		public void Default () 
+		{
+			FileIOPermissionAttribute a = new FileIOPermissionAttribute (SecurityAction.Assert);
+			AssertNull ("Append", a.Append);
+			AssertNull ("PathDiscovery", a.PathDiscovery);
+			AssertNull ("Read", a.Read);
+			AssertNull ("Write", a.Write);
+			AssertEquals ("TypeId", a.ToString (), a.TypeId.ToString ());
+			Assert ("Unrestricted", !a.Unrestricted);
+
+			FileIOPermission perm = (FileIOPermission) a.CreatePermission ();
+			AssertEquals ("CreatePermission-AllFiles", FileIOPermissionAccess.NoAccess, perm.AllFiles);
+			AssertEquals ("CreatePermission-AllLocalFiles", FileIOPermissionAccess.NoAccess, perm.AllLocalFiles);
+		}
+
+		[Test]
+		public void Action () 
+		{
+			FileIOPermissionAttribute a = new FileIOPermissionAttribute (SecurityAction.Assert);
+			AssertEquals ("Action=Assert", SecurityAction.Assert, a.Action);
+			a.Action = SecurityAction.Demand;
+			AssertEquals ("Action=Demand", SecurityAction.Demand, a.Action);
+			a.Action = SecurityAction.Deny;
+			AssertEquals ("Action=Deny", SecurityAction.Deny, a.Action);
+			a.Action = SecurityAction.InheritanceDemand;
+			AssertEquals ("Action=InheritanceDemand", SecurityAction.InheritanceDemand, a.Action);
+			a.Action = SecurityAction.LinkDemand;
+			AssertEquals ("Action=LinkDemand", SecurityAction.LinkDemand, a.Action);
+			a.Action = SecurityAction.PermitOnly;
+			AssertEquals ("Action=PermitOnly", SecurityAction.PermitOnly, a.Action);
+			a.Action = SecurityAction.RequestMinimum;
+			AssertEquals ("Action=RequestMinimum", SecurityAction.RequestMinimum, a.Action);
+			a.Action = SecurityAction.RequestOptional;
+			AssertEquals ("Action=RequestOptional", SecurityAction.RequestOptional, a.Action);
+			a.Action = SecurityAction.RequestRefuse;
+			AssertEquals ("Action=RequestRefuse", SecurityAction.RequestRefuse, a.Action);
 		}
 
 		[Test]
@@ -67,7 +107,15 @@ namespace MonoTests.System.Security.Permissions {
 			AssertEquals ("All=FileIOPermissionAttribute-Read", FilePathUtil.GetLongPathName (filename), p.GetPathList (FileIOPermissionAccess.Read)[0]);
 			AssertEquals ("All=FileIOPermissionAttribute-Write", FilePathUtil.GetLongPathName (filename), p.GetPathList (FileIOPermissionAccess.Write)[0]);
 		}
-
+#if !NET_1_0
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void All_Get () 
+		{
+			FileIOPermissionAttribute attr = new FileIOPermissionAttribute (SecurityAction.Assert);
+			string s = attr.All;
+		}
+#endif
 		[Test]
 		public void Append ()
 		{
@@ -130,6 +178,18 @@ namespace MonoTests.System.Security.Permissions {
 			AssertNull ("PathDiscovery=FileIOPermissionAttribute-PathDiscovery", p.GetPathList (FileIOPermissionAccess.PathDiscovery));
 			AssertNull ("PathDiscovery=FileIOPermissionAttribute-Read", p.GetPathList (FileIOPermissionAccess.Read));
 			AssertEquals ("PathDiscovery=FileIOPermissionAttribute-Write", FilePathUtil.GetLongPathName (filename), p.GetPathList (FileIOPermissionAccess.Write)[0]);
+		}
+
+		[Test]
+		public void Unrestricted () 
+		{
+			FileIOPermissionAttribute a = new FileIOPermissionAttribute (SecurityAction.Assert);
+			a.Unrestricted = true;
+
+			FileIOPermission perm = (FileIOPermission) a.CreatePermission ();
+			Assert ("CreatePermission.IsUnrestricted", perm.IsUnrestricted ());
+			AssertEquals ("CreatePermission.UsageAllowed", FileIOPermissionAccess.AllAccess, perm.AllFiles);
+			AssertEquals ("CreatePermission.UserQuota", FileIOPermissionAccess.AllAccess, perm.AllLocalFiles);
 		}
 	}
 }
