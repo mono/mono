@@ -1,5 +1,10 @@
 2004-09-09  Marek Safar  <marek.safar@seznam.cz>
 
+	* expression.cs (Argument.Resolve): Added error CS0192 and
+	CS0199 report.
+
+2004-09-09  Marek Safar  <marek.safar@seznam.cz>
+
 	C# 2.0 #pragma warning feature
 
 	* cs-tokenizer.cs (PreProcessPragma): New method; 

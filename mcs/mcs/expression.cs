@@ -3989,6 +3989,16 @@ namespace Mono.CSharp {
 				if (Expr == null)
 					return false;
 
+				if (!ec.IsConstructor) {
+					FieldExpr fe = Expr as FieldExpr;
+					if (fe != null && fe.FieldInfo.IsInitOnly) {
+						if (fe.FieldInfo.IsStatic)
+							Report.Error (199, loc, "A static readonly field cannot be passed ref or out (except in a static constructor)");
+						else
+							Report.Error (192, loc, "A readonly field cannot be passed ref or out (except in a constructor)");
+						return false;
+					}
+				}
 				Expr = Expr.ResolveLValue (ec, Expr);
 			} else if (ArgType == AType.Out)
 				Expr = Expr.ResolveLValue (ec, new EmptyExpression ());
