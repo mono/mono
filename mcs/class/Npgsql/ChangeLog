@@ -1,3 +1,6 @@
+2004-06-18  Francisco Figueiredo Jr. <fxjrlists@yahoo.com.br>
+	* Synchronized files with gborg cvs up to release 0.6.
+
 2004-05-29  Francisco Figueiredo Jr. <fxjrlists@yahoo.com.br>
 	* Npgsql/NpgsqlConnection.cs: Added workaround for redhat server versions.
 	It returns 7.3.4-RH as its server version. Thanks Jaroslaw Kowalski 
