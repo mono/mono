@@ -1,5 +1,9 @@
 2003-06-25  Nick Drochak <ndrochak@gol.com>
 
+	* DateTimeTest.cs: Re-enable test because bug #30030 is fixed.
+
+2003-06-25  Nick Drochak <ndrochak@gol.com>
+
 	* ByteTest.cs: Culture settings can affect where it puts the '%'.
 
 2003-06-23  Nick Drochak <ndrochak@gol.com>

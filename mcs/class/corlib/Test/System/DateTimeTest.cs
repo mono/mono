@@ -280,8 +280,7 @@ public class DateTimeTest : Assertion
 		AssertEquals("B12", "05:25", t1.ToString ("t"));
 		AssertEquals("B13", "05:25:13", t1.ToString ("T"));
 		AssertEquals("B14", "2002-02-25 05:25:13Z", t1.ToString ("u"));
-// FIXME: bugzilla #30030 
-//		AssertEquals("B15", "Sunday, 24 February 2002 11:25:13", t1.ToUniversalTime().ToString ("U"));
+		AssertEquals("B15", "Sunday, 24 February 2002 11:25:13", t1.ToUniversalTime().ToString ("U"));
 		AssertEquals("B16", "2002 February", t1.ToString ("y"));
 		AssertEquals("B17", "2002 February", t1.ToString ("Y"));
 
