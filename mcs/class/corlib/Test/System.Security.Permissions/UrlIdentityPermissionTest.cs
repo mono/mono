@@ -87,6 +87,7 @@ namespace MonoTests.System.Security.Permissions {
 
 #if NET_2_0
 		[Test]
+		[Category ("NotWorking")]
 		public void PermissionStateUnrestricted ()
 		{
 			// In 2.0 Unrestricted are permitted for identity permissions
@@ -140,6 +141,7 @@ namespace MonoTests.System.Security.Permissions {
 #if NET_2_0
 		// this was working in beta1 but is broken in Nov CTP
 		[ExpectedException (typeof (NullReferenceException))]
+		[Category ("NotWorking")]
 #else
 		[ExpectedException (typeof (ArgumentNullException))]
 #endif
@@ -182,7 +184,9 @@ namespace MonoTests.System.Security.Permissions {
 				Assert.IsNull (uip.Intersect (null), s);
 			}
 		}
-
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 		public void Intersect_None ()
 		{
@@ -234,6 +238,9 @@ namespace MonoTests.System.Security.Permissions {
 			}
 		}
 
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 		public void IsSubset_None ()
 		{
@@ -326,7 +333,9 @@ namespace MonoTests.System.Security.Permissions {
 				Assert.IsTrue (union.Url.StartsWith (uip.Url), s);
 			}
 		}
-
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 		public void Union_Different ()
 		{

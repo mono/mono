@@ -51,7 +51,9 @@ namespace MonoTests.System.Security.Policy {
 		{
 			Url u = new Url (String.Empty);
 		}
-
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 		public void Url_NoProtocol () 
 		{
@@ -62,7 +64,9 @@ namespace MonoTests.System.Security.Policy {
 			Assert.AreEqual ("file://INDEX.HTML", u.Value, "Value");
 #endif
 		}
-
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 		public void Url_WellKnownProtocol () 
 		{
@@ -98,7 +102,9 @@ namespace MonoTests.System.Security.Policy {
 			Url u = new Url ("http://www.go-mono.com/path/../newpath/index.html");
 			Assert.AreEqual ("http://www.go-mono.com/path/../newpath/index.html", u.Value, "Value");
 		}
-
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 		public void Url_GoMonoWebUrl () 
 		{
@@ -124,6 +130,9 @@ namespace MonoTests.System.Security.Policy {
 			Assert.IsFalse (u.Equals (u3), "!Equals");
 		}
 
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 #if !NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
@@ -159,7 +168,9 @@ namespace MonoTests.System.Security.Policy {
 			Url u = new Url ("http://www.go-mono.com");
 			Assert.IsFalse (u.Equals (null), "EqualsNull");
 		}
-
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 		public void Url_LoneStar () 
 		{

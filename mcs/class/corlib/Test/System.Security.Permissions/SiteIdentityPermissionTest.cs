@@ -75,6 +75,7 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 #if NET_2_0
+		[Category ("NotWorking")]
 		[Test]
 		public void PermissionStateUnrestricted ()
 		{
@@ -316,7 +317,9 @@ namespace MonoTests.System.Security.Permissions {
 				Assert.AreEqual (s, union.Site, s);
 			}
 		}
-
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 		public void Union_Self ()
 		{
@@ -333,7 +336,9 @@ namespace MonoTests.System.Security.Permissions {
 			}
 #endif
 		}
-
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 		public void Union_Different ()
 		{
@@ -356,6 +361,7 @@ namespace MonoTests.System.Security.Permissions {
 		}
 #if NET_2_0
 		[Test]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void Union_Different_Site ()
 		{

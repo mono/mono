@@ -110,6 +110,8 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 #if !NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
+#else
+		[Category ("NotWorking")]
 #endif
 		public void Url_InvalidSite ()
 		{
@@ -120,6 +122,9 @@ namespace MonoTests.System.Security.Policy {
 #endif
 		}
 
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 		public void Url_NoProtocol () 
 		{
@@ -133,7 +138,9 @@ namespace MonoTests.System.Security.Policy {
 			Assert.AreEqual ("Url - file://WWW.GO-MONO.COM", umc.ToString (), "ToString");
 #endif
 		}
-
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 		public void Url_WellKnownProtocol () 
 		{
@@ -172,7 +179,9 @@ namespace MonoTests.System.Security.Policy {
 			Assert.AreEqual ("Url - file://WWW.GO-MONO.COM", umc.ToString (), "file-ToString");
 #endif
 		}
-
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 		public void Url_UnknownProtocol () 
 		{

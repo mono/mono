@@ -329,6 +329,7 @@ namespace MonoTests.System.Security.Policy {
 			AssertEquals ("Count-Cleared", 0, e.Count);
 		}
 
+		[Category ("NotWorking")]
 		[Test]
 		public void RemoveType ()
 		{

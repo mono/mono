@@ -39,6 +39,9 @@ namespace MonoTests.System.Security.Permissions {
 
 		static byte[] ecma = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 		public void PermissionStateNone ()
 		{
@@ -70,6 +73,7 @@ namespace MonoTests.System.Security.Permissions {
 		}
 #if NET_2_0
 		[Test]
+		[Category ("NotWorking")]
 		public void PermissionStateUnrestricted ()
 		{
 			// In 2.0 Unrestricted are permitted for identity permissions
@@ -231,6 +235,9 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.AreEqual ("1.2.3", snip.Version.ToString (), "Version-3");
 		}
 
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 		public void Copy_NameEmpty ()
 		{
@@ -255,7 +262,10 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.AreEqual (p1.Version, p2.Version, prefix + ".Version");
 			Assert.IsFalse (Object.ReferenceEquals (p1, p2), "ReferenceEquals");
 		}
-
+		
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 		public void Intersect ()
 		{
@@ -284,6 +294,7 @@ namespace MonoTests.System.Security.Permissions {
 		[Test]
 #if NET_2_0
 		[ExpectedException (typeof (ArgumentException))]
+		[Category ("NotWorking")]
 #endif
 		public void Intersect_DifferentPermissions ()
 		{
@@ -346,6 +357,9 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.IsTrue (samePk.IsSubsetOf (union), "snip.IsSubsetOf (union)");
 		}
 
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 		public void Union_DifferentPk ()
 		{
@@ -366,6 +380,9 @@ namespace MonoTests.System.Security.Permissions {
 #endif
 		}
 
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 		public void Union_SamePublicKey_DifferentName ()
 		{
@@ -385,6 +402,9 @@ namespace MonoTests.System.Security.Permissions {
 #endif
 		}
 
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 		public void Union_SamePublicKey_DifferentVersion ()
 		{

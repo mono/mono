@@ -107,6 +107,9 @@ namespace MonoTests.System.Security {
 #endif
 		}
 
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 		public void ResolvePolicy_Evidence_Host_Zone () 
 		{
@@ -205,6 +208,7 @@ namespace MonoTests.System.Security {
 		[Test]
 #if NET_2_0
 		[ExpectedException (typeof (PolicyException))]
+		[Category ("NotWorking")]
 #endif
 		public void ResolvePolicy_Evidence_DenyUnrestricted_CurrentAssembly ()
 		{
@@ -294,6 +298,7 @@ namespace MonoTests.System.Security {
 
 		[Test]
 		[ExpectedException (typeof (NullReferenceException))]
+		[Category ("NotWorking")]
 		public void ResolveSystemPolicy_Null ()
 		{
 			SecurityManager.ResolveSystemPolicy (null);

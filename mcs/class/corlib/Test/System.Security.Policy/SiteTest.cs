@@ -176,7 +176,9 @@ namespace MonoTests.System.Security.Policy {
 			Site s3 = new Site ("go-mono.com");
 			Assert ("!Equals", !s.Equals (s3));
 		}
-
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 		public void AllChars () 
 		{

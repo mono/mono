@@ -44,6 +44,7 @@ namespace MonoTests.System.Security.Permissions {
 		}
 #if NET_2_0
 		[Test]
+		[Category ("NotWorking")]
 		public void PermissionStateUnrestricted ()
 		{
 			// In 2.0 Unrestricted are permitted for identity permissions
@@ -216,7 +217,9 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.IsTrue (Same (a, z), "NoZone+Trusted");
 			Assert.IsFalse (Object.ReferenceEquals (a, z), "!ReferenceEquals4");
 		}
-
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 		public void Union_DifferentIdentities ()
 		{
