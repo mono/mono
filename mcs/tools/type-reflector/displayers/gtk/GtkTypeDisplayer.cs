@@ -4,7 +4,7 @@
 //
 // Author: Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2002 Jonathan Pryor
+// (C) 2002-2003 Jonathan Pryor
 //
 
 // #define TRACE
@@ -24,16 +24,16 @@ using Gtk;
 using GtkSharp;
 using System.Drawing;
 
-namespace Mono.TypeReflector
+namespace Mono.TypeReflector.Displayers
 {
 	delegate void OpenFileSuccess (string filename);
 
-	class OpenFileDialog
+	class OpenFileSelection
 	{
 		private FileSelection file = new FileSelection ("Open an Assembly");
 		private OpenFileSuccess onSuccess;
 
-		public OpenFileDialog (OpenFileSuccess success)
+		public OpenFileSelection (OpenFileSuccess success)
 		{
 			onSuccess = success;
 			file.DeleteEvent += new DeleteEventHandler (delete_event);
@@ -198,7 +198,7 @@ namespace Mono.TypeReflector
 
 		public void on_file_open_activate (object o, EventArgs args)
 		{
-			OpenFileDialog ofd = new OpenFileDialog (new OpenFileSuccess (OpenAssembly));
+			OpenFileSelection ofd = new OpenFileSelection (new OpenFileSuccess (OpenAssembly));
 		}
 
 		private void OpenAssembly (string assembly)

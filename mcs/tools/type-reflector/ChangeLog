@@ -1,4 +1,35 @@
 2003-01-09  Jonathan Pryor <jonpryor@vt.edu>
+  - General: Do the most hackish thing I've ever thought of.  OK, perhaps not
+    the *most*, but it must be up there...
+  - Problem: type-reflector supports multiple GUI toolkits.  However, I don't
+    want to require the existance of any one of them to compile.  Because of
+    this, the default has been to support only console output.  Nothing else
+    was supported by the default build.
+  - Solution: Try to build everything.  Literally.  Due to the wonders of the
+    shell's || operator, if one build fails we can provide another build as a
+    backup.  This boils down to doing the following:
+
+      make gui-all || make gtk || make swf || make console
+
+    The "make console" is to ensure that, at the very least, console-support
+    is built-in.  If no GUI toolkit is available, we'll at least have
+    something.
+  - Good news: this works, and will support as many toolkits as the build
+    platform supports.
+  - Bad news: It may invoke several compilations.  For example, my Windows box
+    doesn't have Gtk# support, so "gui-all" and "gtk" both fail before "swf"
+    successfully compiles.  That's two failed compilation efforts, resulting
+    in additional overhead.
+  * Makefile: provide a MAKEFILE variable so that makefile.core can invoke the
+    correct top-level makefile for its sub-makes (see description above)
+  * makefile.core:
+    - "all" invokes the "gui" target, not "console".  "gui", in turn, 
+      carries out the process described above.  It isn't pretty.
+    - removed support for "linux" target.  This hasn't been used for awhile.
+  * makefile.gnu: provide a MAKEFILE variable so that makefile.core can invoke 
+    the correct top-level makefile for its sub-makes (see description above)
+
+2003-01-09  Jonathan Pryor <jonpryor@vt.edu>
 	* TypeReflectorApp.cs: Remove hard-coded factory initialization and #ifdef
 	  preprocessor use.  Factory information is located in
 	  type-reflector.exe.config now.  This removes dependence on the

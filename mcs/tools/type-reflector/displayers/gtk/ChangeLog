@@ -1,3 +1,9 @@
+2003-01-09  Jonathan Pryor <jonpryor@vt.edu>
+	* GtkTypeDisplayer.cs: Change name of OpenFileDialog class to
+	  OpenFileSelection.  OpenFileDialog is a System.Windows.Forms class, so
+	  this was causing compiler errors when attempting to compile both Gtk# and
+	  System.Windows.Forms support.
+
 2002-12-31  Jonathan Pryor <jonpryor@vt.edu>
   * GtkTypeDisplayer.cs: Remove some debugging messages.
 

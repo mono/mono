@@ -61,11 +61,11 @@ GUI_SWF_LIBS = -r:System.Windows.Forms.dll
 
 GUI_SWF_FLAGS = 
 
-all: console
+MAKE_INVOKE = $(MAKE) -f $(MAKEFILE)
+
+all: gui
 
 console : $(PROGRAM)
-
-gui: gtk
 
 $(PROGRAM) : $(PROGRAM_FILES)
 	$(CSC_INVOKE)
@@ -73,15 +73,23 @@ $(PROGRAM) : $(PROGRAM_FILES)
 
 .PHONY: gtk swf
 
+# Pick the appropriate GUI Toolkit...
+# Fall back on console-only if nothing else compiles.
+gui: 
+	$(MAKE_INVOKE) gui-all || $(MAKE_INVOKE) gtk || $(MAKE_INVOKE) swf || $(MAKE_INVOKE) console
 
+# Compile in support for all GUI front-ends (Gtk#, Swf, and anything else...)
+gui-all: $(PROGRAM_FILES) $(GUI_GTK_FILES) $(GUI_GTK_GLADE_FILE) $(PROGRAM_FILES) $(GUI_SWF_FILES)
+	$(CSC_INVOKE) $(GUI_GTK_FLAGS) $(GUI_SWF_FLAGS) $(GUI_GTK_FILES) $(GUI_SWF_FILES) $(GUI_GTK_LIBS) $(GUI_SWF_LIBS) $(GUI_LIBS)
+	chmod +x $(PROGRAM)
+
+# Gtk# front-end
 gtk: $(PROGRAM_FILES) $(GUI_GTK_FILES) $(GUI_GTK_GLADE_FILE)
-	# $(CSC_INVOKE) $(GUI_GTK_FLAGS) $(GUI_GTK_FILES) $(GUI_GTK_LIBS)
-	# $(CSC) $(CSCFLAGS) $(PROGRAM_FLAGS) $(GUI_GTK_FLAGS) $(PROGRAM_FILES) $(GUI_GTK_FILES) $(GUI_GTK_LIBS) $(GUI_LIBS)
 	$(CSC_INVOKE) $(GUI_GTK_FLAGS) $(GUI_GTK_FILES) $(GUI_GTK_LIBS) $(GUI_LIBS)
 	chmod +x $(PROGRAM)
 
+# System.Windows.Forms front-end
 swf: $(PROGRAM_FILES) $(GUI_SWF_FILES)
-	# $(CSC) $(CSCFLAGS) $(PROGRAM_FLAGS) $(GUI_SWF_FLAGS) $(PROGRAM_FILES) $(GUI_SWF_FILES) $(GUI_SWF_LIBS) $(GUI_LIBS)
 	$(CSC_INVOKE) $(GUI_SWF_FLAGS) $(GUI_SWF_FILES) $(GUI_SWF_LIBS) $(GUI_LIBS)
 	chmod +x $(PROGRAM)
 
@@ -96,9 +104,6 @@ run : $(PROGRAM)
 
 windows:
 	NAnt -buildfile:type-reflector.build
-
-linux: 
-	mcs @unix.args
 
 clean:
 	rm -f *.exe *.pdb *.dll *.dbg *~ gtk/*~ swf/*~
