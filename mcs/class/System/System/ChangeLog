@@ -1,5 +1,12 @@
 2003-12-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Uri.cs : more fixes. More presice UNC handling, opaque part 
+	  handling for non-standard uri (e.g. urn:go-mono.com), ToString()
+	  fix (that returns AbsoluteUri, which is not escaped any more),
+	  and so on.
+
+2003-12-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Uri.cs : Several fixes, including Unc problem, Host and LocalPath
 	  fixes, null reference check for .ctor(Uri, string). This fixes
 	  bug #51844.

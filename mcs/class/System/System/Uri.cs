@@ -6,10 +6,12 @@
 //    Garrett Rooney (rooneg@electricjellyfish.net)
 //    Ian MacLean (ianm@activestate.com)
 //    Ben Maurer (bmaurer@users.sourceforge.net)
+//    Atsushi Enomoto (atsushi@ximian.com)
 //
 // (C) 2001 Garrett Rooney
 // (C) 2003 Ian MacLean
 // (C) 2003 Ben Maurer
+// (C) 2003 Novell inc.
 //
 
 using System.Net;
@@ -34,8 +36,10 @@ namespace System
 		// o  all class variables are in escaped format when they are escapable,
 		//    except cachedToString.
 		// o  UNC is supported, as starts with "\\" for windows,
-		//    or "//" with unix (Mono only)
+		//    or "//" with unix.
 
+		private bool isWindowsFilePath = false;
+		private bool isUnixFilePath = false;
 		private string scheme = String.Empty;
 		private string host = String.Empty;
 		private int port = -1;
@@ -46,6 +50,7 @@ namespace System
 		private bool is_root_path = false;
 		private bool is_wins_dir = true;
 		private bool isUnc = false;
+		private bool isOpaquePart = false;
 
 		private string [] segments;
 		
@@ -87,7 +92,7 @@ namespace System
 			
 			if (userEscaped) 
 				return;
-			
+
 			host = EscapeString (host, false, true, false);
 			path = EscapeString (path);
 			query = EscapeString (query);
@@ -113,6 +118,9 @@ namespace System
 			this.port = baseUri.port;
 			this.userinfo = baseUri.userinfo;
 			this.isUnc = baseUri.isUnc;
+			this.isWindowsFilePath = baseUri.isWindowsFilePath;
+			this.isUnixFilePath = baseUri.isUnixFilePath;
+			this.isOpaquePart = baseUri.isOpaquePart;
 
 			if (relativeUri == null)
 				throw new NullReferenceException ("relativeUri");
@@ -266,7 +274,14 @@ namespace System
 		}
 
 		public UriHostNameType HostNameType { 
-			get { return CheckHostName (host); } 
+			get {
+				UriHostNameType ret = CheckHostName (host);
+				if (ret != UriHostNameType.Unknown)
+					return ret;
+
+				// looks it always returns Basic...
+				return UriHostNameType.Basic; //.Unknown;
+			} 
 		}
 
 		public bool IsDefaultPort { 
@@ -305,10 +320,16 @@ namespace System
 		}
 
 		public string LocalPath { 
-			get { 
-				if (!IsUnc)
-					return path;				
-				
+			get {
+				if (!IsFile)
+					return path;
+				if (!IsUnc) {
+					if (System.IO.Path.DirectorySeparatorChar == '\\')
+						return path.Replace ('/', '\\');
+					else
+						return path;
+				}
+
 				// support *nix and W32 styles
 				if (path.Length > 1 && path [1] == ':')
 					return Unescape (path.Replace ('/', '\\'));
@@ -513,7 +534,7 @@ namespace System
 			int defaultPort;
 			switch (part) {				
 			case UriPartial.Scheme : 
-				return scheme + GetSchemeDelimiter (scheme); 				
+				return scheme + GetOpaqueWiseSchemeDelimiter ();
 			case UriPartial.Authority :
 				if (host == String.Empty ||
 				    scheme == Uri.UriSchemeMailto ||
@@ -522,7 +543,7 @@ namespace System
 					
 				StringBuilder s = new StringBuilder ();
 				s.Append (scheme);
-				s.Append (GetSchemeDelimiter (scheme));
+				s.Append (GetOpaqueWiseSchemeDelimiter ());
 				if (path.Length > 1 && path [1] == ':' && (Uri.UriSchemeFile == scheme)) 
 					s.Append ('/');  // win32 file
 				if (userinfo.Length > 0) 
@@ -535,7 +556,7 @@ namespace System
 			case UriPartial.Path :			
 				StringBuilder sb = new StringBuilder ();
 				sb.Append (scheme);
-				sb.Append (GetSchemeDelimiter (scheme));
+				sb.Append (GetOpaqueWiseSchemeDelimiter ());
 				if (path.Length > 1 && path [1] == ':' && (Uri.UriSchemeFile == scheme)) 
 					sb.Append ('/');  // win32 file
 				if (userinfo.Length > 0) 
@@ -643,9 +664,8 @@ namespace System
 		{
 			if (cachedToString != null) 
 				return cachedToString;
-				
-			cachedToString = Unescape (AbsoluteUri);
-			
+			cachedToString = AbsoluteUri;
+
 			return cachedToString;
 		}
 
@@ -689,6 +709,7 @@ namespace System
 				    (escapeHex && (c == '#')) ||
 				    (escapeBrackets && (c == '[' || c == ']')) ||
 				    (escapeReserved && (";/?:@&=+$,".IndexOf (c) != -1))) {
+					// FIXME: EscapeString should allow wide characters (> 255). HexEscape rejects it.
 					s.Append (HexEscape (c));
 					continue;
 				}
@@ -753,52 +774,65 @@ namespace System
 
 			if (pos == len)
 				throw new UriFormatException ("The format of the URI could not be determined.");
-			
-			bool isUnixFilepath = false;
 
 			if (c == '/') {
 				is_root_path = true;
 			}
 
 			if ((uriString.Length >= 2) &&
-					((uriString [0] == '/') || (uriString [0] == '\\')) &&
-					((uriString [1] == '/') || (uriString [1] == '\\'))) {
+					((uriString [0] == '/') && (uriString [1] == '/')) ||
+					((uriString [0] == '\\') || (uriString [1] == '\\'))) {
 				is_wins_dir = true;
 				is_root_path = true;
 			}
 
 			// 2 scheme
-			if (c == ':') {				
+			if (c == ':') {
 				if (pos == 1) {
 					// a windows filepath
+					isWindowsFilePath = true;
 					scheme = Uri.UriSchemeFile;
 					path = uriString.Replace ('\\', '/');
 					return;
 				}
-					
+
 				scheme = uriString.Substring (0, pos).ToLower ();
 				uriString = uriString.Remove (0, pos + 1);
 			} else if ((c == '/') && (pos == 0)) {
-				// unix bare filepath
 				scheme = Uri.UriSchemeFile;
 				if (uriString.Length > 1 && uriString [1] != '/')
-					isUnixFilepath = true;
-			} else
+					// unix bare filepath
+					isUnixFilePath = true;
+				else
+					// unix UNC (kind of)
+					isUnc = true;
+			} else {
 				scheme = Uri.UriSchemeFile;
-						
+				if (uriString.StartsWith ("\\\\")) {
+					isUnc = true;
+					isWindowsFilePath = true;
+				}
+				if (uriString.Length > 8 && uriString [8] != '/')
+					isUnc = true;
+			}
+
 			// 3
 			if ((uriString.Length >= 2) && 
 			    ((uriString [0] == '/') && (uriString [1] == '/')) ||
 			    ((uriString [0] == '\\') || (uriString [1] == '\\')))  {
-				isUnc = true;
-				if (scheme == Uri.UriSchemeFile) 
+				if (scheme == Uri.UriSchemeFile)
 					uriString = uriString.TrimStart (new char [] {'/', '\\'});
 				else
 				    	uriString = uriString.Remove (0, 2);
+			} else if (!IsPredefinedScheme (scheme)) {
+				path = uriString;
+				isOpaquePart = true;
+				return;
 			}
+
 			// 8 fragment
 			pos = uriString.IndexOf ('#');
-			if (pos != -1) {
+			if (!IsUnc && pos != -1) {
 				fragment = uriString.Substring (pos);
 				uriString = uriString.Substring (0, pos);
 			}
@@ -861,11 +895,13 @@ namespace System
 				// windows filepath
 				path = host + path;
 				host = String.Empty;
-			} else if (isUnixFilepath) {
+			} else if (isUnixFilePath) {
 				uriString = "//" + uriString;
 				host = String.Empty;
 			} else if (host.Length == 0) {
 				throw new UriFormatException ("Invalid URI: The hostname could not be parsed");
+			} else if (scheme == UriSchemeFile) {
+				isUnc = true;
 			}
 		}
 
@@ -911,6 +947,14 @@ namespace System
 			return -1;			
 		}
 
+		private string GetOpaqueWiseSchemeDelimiter ()
+		{
+			if (isOpaquePart)
+				return ":";
+			else
+				return GetSchemeDelimiter (scheme);
+		}
+
 		protected virtual bool IsBadFileSystemCharacter (char ch)
 		{
 			foreach (char c in System.IO.Path.InvalidPathChars)
@@ -931,6 +975,23 @@ namespace System
 			    ch == '}')
 				return true;
 			return false;
+		}
+
+		private static bool IsPredefinedScheme (string scheme)
+		{
+			switch (scheme) {
+			case "http":
+			case "https":
+			case "file":
+			case "ftp":
+			case "nntp":
+			case "gopher":
+			case "mailto":
+			case "news":
+				return true;
+			default:
+				return false;
+			}
 		}
 
 		protected virtual bool IsReservedCharacter (char ch)
