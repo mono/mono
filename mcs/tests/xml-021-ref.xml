@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>xml-021</name>
+    </assembly>
+    <members>
+        <member name="T:Testing.Test.InternalClass">
+            comment for internal class
+        </member>
+        <member name="T:Testing.Test.InternalStruct">
+            comment for internal struct
+        </member>
+    </members>
+</doc>

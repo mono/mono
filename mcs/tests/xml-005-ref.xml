@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>xml-005</name>
+    </assembly>
+    <members>
+        <member name="T:Testing.InterfaceTest">
+            <summary>
+            comment for interface
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "T:Testing.InterfaceTest2" -->
+        <member name="T:Testing.InterfaceTest3">
+            		<summary>
+            		Java style comment for interface
+            		</summary>
+        </member>
+    </members>
+</doc>

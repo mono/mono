@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>xml-007</name>
+    </assembly>
+    <members>
+        <member name="T:Testing.MyDelegate">
+            <summary>
+            comment for delegate type
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "T:Testing.MyDelegate2" -->
+        <member name="T:Testing.MyDelegate3">
+            	<summary>
+            	Javadoc comment for delegate type
+            	</summary>
+        </member>
+    </members>
+</doc>

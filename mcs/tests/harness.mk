@@ -9,6 +9,8 @@ ifeq (default, $(PROFILE))
 MCS = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_MCS)
 endif
 
+XMLDOCDIFF = $(TEST_RUNTIME) ../xmldocdiff.exe
+
 all-local $(STD_TARGETS:=-local):
 
 %.res:
@@ -20,8 +22,17 @@ all-local $(STD_TARGETS:=-local):
 	  if test -f $*.exe; then \
 	    echo '*** $(TEST_RUNTIME) -O=-all ./$*.exe' >> $$testlogfile ; \
 	      if $(TEST_RUNTIME) -O=-all ./$*.exe >> $$testlogfile 2>&1 ; then \
-		echo "PASS: $*" > $@ ; \
-	        rm -f $$testlogfile ; \
+	        if test -f $*.xml; then \
+	          if $(XMLDOCDIFF) ../$*-ref.xml $*.xml >> $$testlogfile ; then \
+	            echo "PASS: $*: xml comparison" > $@ ; \
+	            rm -f $$testlogfile ; \
+	          else \
+	            echo "FAIL: $*: xml comparison" > $@ ; \
+	          fi \
+	        else \
+	          echo "PASS: $*" > $@ ; \
+	          rm -f $$testlogfile ; \
+	        fi \
 	      else \
 		echo "Exit code: $$?" >> $$testlogfile ; \
 		echo "FAIL: $*" > $@ ; \

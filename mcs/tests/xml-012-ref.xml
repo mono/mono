@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>xml-012</name>
+    </assembly>
+    <members>
+        <member name="F:Testing.Test.PrivateField">
+            <summary>
+            comment for private field
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "F:Testing.Test.PrivateField2" -->
+        <member name="F:Testing.Test.PrivateField3">
+            		<summary>
+            		Javadoc comment for private field
+            		</summary>
+        </member>
+    </members>
+</doc>

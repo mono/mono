@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>xml-014</name>
+    </assembly>
+    <members>
+        <member name="P:Testing.Test.PrivateProperty">
+            <summary>
+            comment for private property
+            </summary>
+        </member>
+    </members>
+</doc>

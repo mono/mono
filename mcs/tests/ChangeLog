@@ -1,3 +1,26 @@
+2004-12-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : added lines for /doc test files.
+	* harness.nk : added xmldoc test lines.
+	* xmldocdiff.cs : small test tool for verifying /doc output.
+	* xml-001.cs, xml-001-ref.xml, xml-002.cs, xml-002-ref.xml,
+	  xml-003.cs, xml-003-ref.xml, xml-004.cs, xml-004-ref.xml,
+	  xml-005.cs, xml-005-ref.xml, xml-006.cs, xml-006-ref.xml,
+	  xml-007.cs, xml-007-ref.xml, xml-008.cs, xml-008-ref.xml,
+	  xml-009.cs, xml-009-ref.xml, xml-010.cs, xml-010-ref.xml,
+	  xml-011.cs, xml-011-ref.xml, xml-012.cs, xml-012-ref.xml,
+	  xml-013.cs, xml-013-ref.xml, xml-014.cs, xml-014-ref.xml,
+	  xml-015.cs, xml-015-ref.xml, xml-016.cs, xml-016-ref.xml,
+	  xml-017.cs, xml-017-ref.xml, xml-018.cs, xml-018-ref.xml,
+	  xml-019.cs, xml-019-ref.xml, xml-020.cs, xml-020-ref.xml,
+	  xml-021.cs, xml-021-ref.xml, xml-022.cs, xml-022-ref.xml,
+	  xml-023.cs, xml-023-ref.xml, xml-024.cs, xml-024-ref.xml,
+	  xml-025.cs, xml-025-ref.xml, xml-026.cs, xml-026-ref.xml,
+	  xml-027.cs, xml-027-ref.xml, xml-028.cs, xml-028-ref.xml,
+	  xml-029.cs, xml-029-ref.xml, xml-030.cs, xml-030-ref.xml,
+	  xml-031.cs, xml-031-ref.xml, xml-032.cs, xml-032-ref.xml :
+	  tests for /doc feature.
+
 2004-11-30  Martin Baulig  <martin@ximian.com>
 
 	* Makefile: Enable gen-110; it's about virtual generic methods and
