@@ -145,7 +145,7 @@ if (scalar @{@status_items [($RESULT_UNEXPECTED_CRASH - 1)]} > 0) {
 }
 
 if (scalar @{@status_items [($RESULT_UNEXPECTED_CORRECT_ERROR - 1)]} > 0) {
-    print scalar @{@status_items [($RESULT_UNEXPECTED_CORRECT_ERROR   - 1)]}, " fixed error report, remove it from expect-wrong-error or expect-no-error !\n";
+    print scalar @{@status_items [($RESULT_UNEXPECTED_CORRECT_ERROR   - 1)]}, " fixed error report(s), remove it from expect-wrong-error or expect-no-error !\n";
     print, print "\n" foreach @{@status_items [($RESULT_UNEXPECTED_CORRECT_ERROR - 1)]};
 }
 
@@ -155,7 +155,7 @@ if (scalar @{@status_items [($RESULT_UNEXPECTED_INCORRECT_ERROR - 1)]} > 0) {
 }
 
 if (scalar @{@status_items [($RESULT_UNEXPECTED_NO_ERROR - 1)]} > 0) {
-    print scalar @{@status_items [($RESULT_UNEXPECTED_NO_ERROR        - 1)]}, " new missing error report !\n";
+    print scalar @{@status_items [($RESULT_UNEXPECTED_NO_ERROR        - 1)]}, " new missing error report(s) !\n";
     print, print "\n" foreach @{@status_items [($RESULT_UNEXPECTED_NO_ERROR - 1)]};
 }
 

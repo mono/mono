@@ -1,4 +1,4 @@
-// cs0029.cs: Cannot implicitly conver type 'Helper*' to 'Obsolete*'
+// cs0029.cs: Cannot implicitly convert type 'Helper*' to 'Obsolete*'
 // Line: 18
 // Compiler options: -unsafe
 

@@ -1,3 +1,11 @@
+2004-10-04  John Luke  <john.luke@gmail.com>
+
+	* cs8205.cs: remove, same as cs1624
+	* cs8206.cs: fix yield syntax, and add line number, now passes
+	* cs8207.cs: remove, same as cs1623
+	* cs8208.cs: remove, same as cs1625
+	* cs8209.cs: remove, same as cs1631
+
 2004-10-01  John Luke  <john.luke@gmail.com>
 
 	* *.cs: fix some incorrect tests by either addding a Main method,

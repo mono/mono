@@ -1,4 +1,4 @@
-// cs0029: cannot implicitly conver type `double' to `decimal'
+// cs0029: cannot implicitly convert type `double' to `decimal'
 // Line: 7
 
 class T {
