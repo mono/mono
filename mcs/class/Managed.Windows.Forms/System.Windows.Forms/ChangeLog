@@ -1,3 +1,10 @@
+2005-03-11  Peter Bartok  <pbartok@novell.com>
+
+	* XplatUIX11.cs:
+	  - get_WorkingArea: Need to call X directly, GetWindowPos only
+	    returns cached data now
+	  - Added sanity check to GetWindowPos hwnd usage
+
 2005-03-11  Jackson Harper  <jackson@ximian.com>
 
 	* BindingManagerBase.cs: This method isn't used anymore as

@@ -1195,13 +1195,13 @@ namespace System.Windows.Forms {
 					XFree(prop);
 					return new Rectangle(0, 0, width, height);
 				} else {
-					int	x;
-					int	y;
-					int	client_width;
-					int	client_height;
+					XWindowAttributes	attributes=new XWindowAttributes();
 
-					GetWindowPos(RootWindow, true, out x, out y, out width, out height, out client_width, out client_height);
-					return new Rectangle(x, y, width, height);
+					lock (XlibLock) {
+						XGetWindowAttributes(DisplayHandle, XRootWindow(DisplayHandle, 0), ref attributes);
+					}
+
+					return new Rectangle(0, 0, attributes.width, attributes.height);
 				}
 			}
 		} 
@@ -2317,15 +2317,30 @@ namespace System.Windows.Forms {
 			Rectangle	rect;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
-			rect = hwnd.ClientRect;
 
-			x = hwnd.x;
-			y = hwnd.y;
-			width = hwnd.width;
-			height = hwnd.height;
+			if (hwnd != null) {
+				rect = hwnd.ClientRect;
 
-			client_width = rect.Width;
-			client_height = rect.Height;
+				x = hwnd.x;
+				y = hwnd.y;
+				width = hwnd.width;
+				height = hwnd.height;
+
+				client_width = rect.Width;
+				client_height = rect.Height;
+
+				return;
+			}
+
+			// Should we throw an exception or fail silently?
+			// throw new ArgumentException("Called with an invalid window handle", "handle");
+
+			x = 0;
+			y = 0;
+			width = 0;
+			height = 0;
+			client_width = 0;
+			client_height = 0;
 		}
 
 		internal override FormWindowState GetWindowState(IntPtr handle) {
