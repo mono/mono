@@ -1,3 +1,10 @@
+2004-10-27  Chris Toshok  <toshok@ximian.com>
+
+	* mono-debug-debugger.c (write_class): don't call mono_class_init
+	here, as even with the check for (!klass->init_pending), we get
+	into a situation where we're hitting cycles in class
+	initialization.  Fixes #68816.
+
 2004-10-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* image.c: Avoid overwriting values in the loaded_images_hash when an
