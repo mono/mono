@@ -126,6 +126,18 @@ PropertyInfo
 	JSPropertyInfo
 
 
+Operation evaluation:
+BitwiseBinary.cs:		EvaluateBitwiseBinary
+Equality.cs:			EvaluateEquality
+Eval.cs:			JScriptEvaluate
+NumericBinary.cs:		EvaluateNumericBinary
+NumericUnary.cs:		EvaluateUnary
+Plus.cs:			EvaluatePlus
+PostOrPrefixOperator.cs:	EvaluatePostOrPrefix
+Relational.cs:			EvaluateRelational
+
+Convertion:
+Convert.cs, the not implemented methods.
 
 Thanks!
 
