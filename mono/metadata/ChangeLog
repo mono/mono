@@ -1,3 +1,8 @@
+2004-09-09  Geoff Norton <gnorton@customerndna.com>
+
+	* icall.c (ves_icall_System_Reflection_Assembly_GetTypes):
+	Fix GetTypes() to support dynamically created assemblies.
+
 2004-09-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (reflection_methodbuilder_to_mono_method): Remove TODO.
