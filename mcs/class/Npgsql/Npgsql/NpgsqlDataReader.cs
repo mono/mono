@@ -195,7 +195,7 @@ namespace Npgsql
 	  public String GetDataTypeName(Int32 i)
 	  {
 		  // FIXME: have a type name instead of the oid
-	  	 return (_currentResultset.RowDescription[i].type_id).ToString();
+	  	 return (_currentResultset.RowDescription[i].type_oid).ToString();
 	  }
 	  
 	  public Type GetFieldType(Int32 i)
