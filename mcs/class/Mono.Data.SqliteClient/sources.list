@@ -1,0 +1,5 @@
+Mono.Data.SqlClient/SqliteCommand.cs
+Mono.Data.SqlClient/SqliteConnection.cs
+Mono.Data.SqlClient/SqliteDataReader.cs
+Mono.Data.SqlClient/SqliteParameter.cs
+Mono.Data.SqlClient/SqliteParameterCollection.cs
