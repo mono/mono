@@ -56,7 +56,7 @@ public sealed class SystemEvents : System.EventArgs{
 	
 	
 	[MonoTODO]
-	public static event System.EventHandler PowerModeChanged {
+	public static event  PowerModeChangedEventHandler PowerModeChanged {
 		add 	{ throw new System.NotImplementedException ();}
 		remove 	{ throw new System.NotImplementedException ();}
 	}
@@ -84,21 +84,21 @@ public sealed class SystemEvents : System.EventArgs{
 	
 	
 	[MonoTODO]
-	public static event System.EventHandler TimerElapsed {
+	public static event UserPreferenceChangedEventHandler TimerElapsed {
 		add 	{ throw new System.NotImplementedException ();}
 		remove 	{ throw new System.NotImplementedException ();}
 	}
 	
 	
 	[MonoTODO]
-	public static event System.EventHandler UserPreferenceChanged {
+	public static event UserPreferenceChangedEventHandler UserPreferenceChanged {
 		add 	{ throw new System.NotImplementedException ();}
 		remove 	{ throw new System.NotImplementedException ();}
 	}
 	
 	
 	[MonoTODO]
-	public static event System.EventHandler UserPreferenceChanging {
+	public static event  UserPreferenceChangingEventHandler UserPreferenceChanging {
 		add 	{ throw new System.NotImplementedException ();}
 		remove 	{ throw new System.NotImplementedException ();}
 	}
