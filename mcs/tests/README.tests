@@ -447,3 +447,8 @@ gen-8.cs:
 
 `where' clauses.
 
+gen-9.cs:
+---------
+
+`where T : ICloneable' and then calling t.Clone ().
+
