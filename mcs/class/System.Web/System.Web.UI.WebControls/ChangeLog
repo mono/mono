@@ -1,3 +1,9 @@
+2003-11-18  Todd Berman  <tberman@gentoo.org>
+
+	* ParameterCollection.cs: Implemented
+	* Parameter.cs: Added _owner, SetOwnerCollection and proper handling.
+	ToString () now matches asp.net
+
 2003-11-17 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* ControlParameter.cs:
