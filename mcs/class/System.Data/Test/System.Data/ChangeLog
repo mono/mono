@@ -1,5 +1,15 @@
 2005-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataSetTest.cs : WriteXmlSchema2() and WriteXmlSchema3() didn't pass
+	  on run-test-ondotnet. Removed extraneous Console output.
+	  modified WriteXmlSchema4(),WriteXmlSchema5() and WriteXmlSchema6()
+	  to use xmlserializer-based comparison.
+	  Fixed SerializeDataSet() to use ordinal MS result (it's not simple
+	  to compare results unless we have another WriteXmlSchema() 
+	  implementation.)
+
+2005-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataSetAssertion.cs : forgot one required update for refreshed tests.
 
 2005-01-12  Atsushi Enomoto  <atsushi@ximian.com>

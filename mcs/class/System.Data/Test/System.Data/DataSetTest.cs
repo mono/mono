@@ -1034,8 +1034,7 @@ namespace MonoTests.System.Data
 			// see GetReady() for current culture
 
 			// This is original DataSet.WriteXmlSchema() output
-//			string xml = "<?xml version='1.0' encoding='utf-16'?><DataSet><xs:schema id='DS' xmlns='' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata'><xs:element name='DS' msdata:IsDataSet='true' msdata:Locale='fi-FI'><xs:complexType><xs:choice maxOccurs='unbounded' /></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:diffgr='urn:schemas-microsoft-com:xml-diffgram-v1' /></DataSet>";
-			string xml = "<?xml version='1.0' encoding='utf-16'?><DataSet><xs:schema xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' id='DS' xmlns='' xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element msdata:IsDataSet='true' msdata:Locale='fi-FI' name='DS'><xs:complexType><xs:choice maxOccurs='unbounded' /></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:diffgr='urn:schemas-microsoft-com:xml-diffgram-v1' /></DataSet>";
+			string xml = "<?xml version='1.0' encoding='utf-16'?><DataSet><xs:schema id='DS' xmlns='' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata'><xs:element name='DS' msdata:IsDataSet='true' msdata:Locale='fi-FI'><xs:complexType><xs:choice maxOccurs='unbounded' /></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:diffgr='urn:schemas-microsoft-com:xml-diffgram-v1' /></DataSet>";
 			DataSet ds = new DataSet ();
 			ds.DataSetName = "DS";
 			XmlSerializer ser = new XmlSerializer (typeof (DataSet));
@@ -1077,7 +1076,6 @@ namespace MonoTests.System.Data
 
 			StringWriter sw = new StringWriter ();
 		        ser.Serialize (sw, quota);
-Console.WriteLine (sw);
 
 			DataSet ds = (DataSet) ser.Deserialize (new StringReader (sw.ToString ()));
 		}
@@ -1422,7 +1420,7 @@ Console.WriteLine (sw);
 </xs:schema>";
 */
 			string schema = @"<?xml version='1.0' encoding='utf-16'?>
-<xs:schema xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:mstns='NetFrameWork' xmlns='NetFrameWork' attributeFormDefault='qualified' elementFormDefault='qualified' targetNamespace='NetFrameWork' id='myDataSet' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+<xs:schema xmlns:mstns='NetFrameWork' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns='NetFrameWork' attributeFormDefault='qualified' elementFormDefault='qualified' targetNamespace='NetFrameWork' id='myDataSet' xmlns:xs='http://www.w3.org/2001/XMLSchema'>
   <xs:element msdata:IsDataSet='true' msdata:Locale='fi-FI' name='myDataSet'>
     <xs:complexType>
       <xs:choice maxOccurs='unbounded'>
@@ -1503,7 +1501,7 @@ Console.WriteLine (sw);
 </xs:schema>";
 */
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
-<xs:schema xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" xmlns="""" id=""ExampleDataSet"" xmlns:xs=""http://www.w3.org/2001/XMLSchema"">
+<xs:schema xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" id=""ExampleDataSet"" xmlns:xs=""http://www.w3.org/2001/XMLSchema"">
   <xs:element msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"" name=""ExampleDataSet"">
     <xs:complexType>
       <xs:choice maxOccurs=""unbounded"">
@@ -1547,9 +1545,26 @@ Console.WriteLine (sw);
 		[Test]
 		public void WriteXmlSchema4 ()
 		{
+/*
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
 <xs:schema id=""Example"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
   <xs:element name=""Example"" msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"">
+    <xs:complexType>
+      <xs:choice maxOccurs=""unbounded"">
+        <xs:element name=""MyType"">
+          <xs:complexType>
+            <xs:attribute name=""ID"" type=""xs:int"" use=""required"" />
+            <xs:attribute name=""Desc"" type=""xs:string"" />
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>";
+*/
+			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
+<xs:schema xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" id=""Example"" xmlns:xs=""http://www.w3.org/2001/XMLSchema"">
+  <xs:element msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"" name=""Example"">
     <xs:complexType>
       <xs:choice maxOccurs=""unbounded"">
         <xs:element name=""MyType"">
@@ -1581,7 +1596,8 @@ Console.WriteLine (sw);
 			StringWriter sw = new StringWriter ();
 			ds.WriteXmlSchema (sw);
 
-			string result = sw.ToString ();
+//			string result = sw.ToString ();
+			string result = GetNormalizedSchema (sw.ToString ());
 
 			AssertEquals (xmlschema, result.Replace ("\r\n", "\n"));
 		}
@@ -1590,6 +1606,7 @@ Console.WriteLine (sw);
 		[Test]
 		public void WriteXmlSchema5 ()
 		{
+/*
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
 <xs:schema id=""Example"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
   <xs:element name=""Example"" msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"">
@@ -1621,6 +1638,48 @@ Console.WriteLine (sw);
       <xs:field xpath=""@Number"" />
     </xs:unique>
     <xs:unique name=""PK_Element"" msdata:PrimaryKey=""true"">
+      <xs:selector xpath="".//Element"" />
+      <xs:field xpath=""@Dimension"" />
+      <xs:field xpath=""@Number"" />
+    </xs:unique>
+    <xs:keyref name=""FK_Element_To_Dimension"" refer=""PK_Dimension"">
+      <xs:selector xpath="".//Element"" />
+      <xs:field xpath=""@Dimension"" />
+    </xs:keyref>
+  </xs:element>
+</xs:schema>";
+*/
+			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
+<xs:schema xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" id=""Example"" xmlns:xs=""http://www.w3.org/2001/XMLSchema"">
+  <xs:element msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"" name=""Example"">
+    <xs:complexType>
+      <xs:choice maxOccurs=""unbounded"">
+        <xs:element name=""StandAlone"">
+          <xs:complexType>
+            <xs:attribute name=""ID"" type=""xs:int"" use=""required"" />
+            <xs:attribute name=""Desc"" type=""xs:string"" use=""required"" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name=""Dimension"">
+          <xs:complexType>
+            <xs:attribute msdata:ReadOnly=""true"" name=""Number"" type=""xs:int"" use=""required"" />
+            <xs:attribute name=""Title"" type=""xs:string"" use=""required"" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name=""Element"">
+          <xs:complexType>
+            <xs:attribute msdata:ReadOnly=""true"" name=""Dimension"" type=""xs:int"" use=""required"" />
+            <xs:attribute msdata:ReadOnly=""true"" name=""Number"" type=""xs:int"" use=""required"" />
+            <xs:attribute name=""Title"" type=""xs:string"" use=""required"" />
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+    <xs:unique msdata:PrimaryKey=""true"" name=""PK_Dimension"">
+      <xs:selector xpath="".//Dimension"" />
+      <xs:field xpath=""@Number"" />
+    </xs:unique>
+    <xs:unique msdata:PrimaryKey=""true"" name=""PK_Element"">
       <xs:selector xpath="".//Element"" />
       <xs:field xpath=""@Dimension"" />
       <xs:field xpath=""@Number"" />
@@ -1690,7 +1749,8 @@ Console.WriteLine (sw);
 			StringWriter sw = new StringWriter ();
 			ds.WriteXmlSchema (sw);
 
-			string result = sw.ToString ();
+//			string result = sw.ToString ();
+			string result = GetNormalizedSchema (sw.ToString ());
 
 			AssertEquals (xmlschema, result.Replace ("\r\n", "\n"));
 		}
@@ -1699,9 +1759,31 @@ Console.WriteLine (sw);
 		[Test]
 		public void WriteXmlSchema6 ()
 		{
+/*
 			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
 <xs:schema id=""Example"" xmlns="""" xmlns:xs=""http://www.w3.org/2001/XMLSchema"" xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"">
   <xs:element name=""Example"" msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"">
+    <xs:complexType>
+      <xs:choice maxOccurs=""unbounded"">
+        <xs:element name=""MyType"">
+          <xs:complexType>
+            <xs:attribute name=""Desc"">
+              <xs:simpleType>
+                <xs:restriction base=""xs:string"">
+                  <xs:maxLength value=""32"" />
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>";
+*/
+			string xmlschema = @"<?xml version=""1.0"" encoding=""utf-16""?>
+<xs:schema xmlns:msdata=""urn:schemas-microsoft-com:xml-msdata"" id=""Example"" xmlns:xs=""http://www.w3.org/2001/XMLSchema"">
+  <xs:element msdata:IsDataSet=""true"" msdata:Locale=""fi-FI"" name=""Example"">
     <xs:complexType>
       <xs:choice maxOccurs=""unbounded"">
         <xs:element name=""MyType"">
@@ -1734,7 +1816,8 @@ Console.WriteLine (sw);
 			StringWriter sw = new StringWriter ();
 			ds.WriteXmlSchema (sw);
 
-			string result = sw.ToString ();
+//			string result = sw.ToString ();
+			string result = GetNormalizedSchema (sw.ToString ());
 
 			AssertEquals (xmlschema, result.Replace ("\r\n", "\n"));
 		}
