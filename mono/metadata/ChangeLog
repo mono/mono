@@ -1,3 +1,8 @@
+2004-09-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* loader.c (mono_lookup_pinvoke_call): Add support for stdcall name
+	mangling.
+
 2004-09-16  Lluis Sanchez Gual  <lluis@novell.com>
  
 	* locales.c: nullify the ICU_collator member of CompareInfo when it is
