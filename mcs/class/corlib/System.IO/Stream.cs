@@ -19,7 +19,7 @@ namespace System.IO
 	[Serializable]
 	public abstract class Stream : MarshalByRefObject, IDisposable
 	{
-		public static readonly Stream Null = new NullStream ();;
+		public static readonly Stream Null = new NullStream ();
 
 		protected Stream ()
 		{
