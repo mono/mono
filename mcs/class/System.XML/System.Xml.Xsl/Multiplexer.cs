@@ -37,23 +37,14 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Policy;
 using System.Xml.XPath;
+using Mono.Xml.Xsl;
 
 namespace System.Xml.Xsl {
 	public sealed class XslTransform {
 
+		CompiledStylesheet s;
 		XmlResolver xmlResolver = new XmlUrlResolver ();
-		XslTransformImpl impl;
 
-		#region Constructors
-		public XslTransform ()
-		{
-			if (Environment.GetEnvironmentVariable ("MONO_UNMANAGED_XSLT") == null)
-				impl = new ManagedXslTransform ();
-			else
-				impl = new UnmanagedXslTransform ();
-		}
-		#endregion
-		
 		[MonoTODO ("Security check.")]
 #if NET_1_1
 		[Obsolete ("You should pass XmlResolver to Transform() method", false)]
@@ -155,7 +146,7 @@ namespace System.Xml.Xsl {
 #endif
 		public void Transform (XPathNavigator input, XsltArgumentList args, XmlWriter output)
 		{
-			impl.Transform (input, args, output, xmlResolver);
+			Transform (input, args, output, xmlResolver);
 		}
 #if NET_1_1
 		public void Transform (XPathNavigator input, XsltArgumentList args, XmlWriter output, XmlResolver resolver)
@@ -163,7 +154,12 @@ namespace System.Xml.Xsl {
 		void Transform (XPathNavigator input, XsltArgumentList args, XmlWriter output, XmlResolver resolver)
 #endif
 		{
-			impl.Transform (input, args, output, resolver);
+			if (s == null)
+				throw new XsltException ("No stylesheet was loaded.", null);
+
+			Outputter outputter = new GenericOutputter (output, s.Outputs, null);
+			new XslTransformProcessor (s).Process (input, outputter, args, resolver);
+			output.Flush ();
 		}
 
 #if NET_1_1
@@ -171,7 +167,7 @@ namespace System.Xml.Xsl {
 #endif
 		public void Transform (XPathNavigator input, XsltArgumentList args, Stream output)
 		{
-			impl.Transform (input, args, output, xmlResolver);		
+			Transform (input, args, output, xmlResolver);		
 		}
 #if NET_1_1
 		public void Transform (XPathNavigator input, XsltArgumentList args, Stream output, XmlResolver resolver)
@@ -179,7 +175,8 @@ namespace System.Xml.Xsl {
 		void Transform (XPathNavigator input, XsltArgumentList args, Stream output, XmlResolver resolver)
 #endif
 		{
-			impl.Transform (input, args, output, resolver);
+			XslOutput xslOutput = (XslOutput)s.Outputs[String.Empty];
+			Transform (input, args, new StreamWriter (output, xslOutput.Encoding), resolver);
 		}
 
 #if NET_1_1
@@ -187,15 +184,18 @@ namespace System.Xml.Xsl {
 #endif
 		public void Transform (XPathNavigator input, XsltArgumentList args, TextWriter output)
 		{
-			impl.Transform (input, args, output, xmlResolver);
+			Transform (input, args, output, xmlResolver);
 		}
 #if NET_1_1
 		public void Transform (XPathNavigator input, XsltArgumentList args, TextWriter output, XmlResolver resolver)
 #else
-		void Transform(XPathNavigator input, XsltArgumentList args, TextWriter output, XmlResolver resolver)
+		void Transform (XPathNavigator input, XsltArgumentList args, TextWriter output, XmlResolver resolver)
 #endif
 		{
-			impl.Transform (input, args, output, resolver);
+			Outputter outputter = new GenericOutputter(output, s.Outputs, output.Encoding);			
+			new XslTransformProcessor (s).Process (input, outputter, args, resolver);
+			outputter.Done ();
+			output.Flush ();
 		}
 		
 #if NET_1_1
@@ -203,7 +203,7 @@ namespace System.Xml.Xsl {
 #endif
 		public void Transform (string inputfile, string outputfile)
 		{ 
-			impl.Transform (inputfile, outputfile, xmlResolver);
+			Transform (inputfile, outputfile, xmlResolver);
 		}
 
 #if NET_1_1
@@ -212,7 +212,9 @@ namespace System.Xml.Xsl {
 		void Transform (string inputfile, string outputfile, XmlResolver resolver)
 #endif
 		{
-			impl.Transform (inputfile, outputfile, resolver);
+			using (Stream s = new FileStream (outputfile, FileMode.Create, FileAccess.ReadWrite)) {
+				Transform(new XPathDocument (inputfile).CreateNavigator (), null, s, resolver);
+			}
 		}
 		#endregion
 
@@ -224,7 +226,18 @@ namespace System.Xml.Xsl {
 		
 		public void Load (string url, XmlResolver resolver)
 		{
-			impl.Load (url, resolver);
+			XmlResolver res = resolver;
+			if (res == null)
+				res = new XmlUrlResolver ();
+			Uri uri = res.ResolveUri (null, url);
+			using (Stream s = res.GetEntity (uri, null, typeof (Stream)) as Stream) {
+				XmlTextReader xtr = new XmlTextReader (uri.ToString (), s);
+				xtr.XmlResolver = res;
+				XmlValidatingReader xvr = new XmlValidatingReader (xtr);
+				xvr.XmlResolver = res;
+				xvr.ValidationType = ValidationType.None;
+				Load (new XPathDocument (xvr, XmlSpace.Preserve).CreateNavigator (), resolver, null);
+			}
 		}
 
 #if NET_1_1
@@ -282,7 +295,7 @@ namespace System.Xml.Xsl {
 		internal void Load (IXPathNavigable stylesheet, XmlResolver resolver, Evidence evidence)
 #endif
 		{
-			impl.Load (stylesheet.CreateNavigator(), resolver, evidence);
+			Load (stylesheet.CreateNavigator(), resolver, evidence);
 		}
 
 #if NET_1_1
@@ -291,7 +304,7 @@ namespace System.Xml.Xsl {
 		internal void Load (XPathNavigator stylesheet, XmlResolver resolver, Evidence evidence)
 #endif
 		{
-			impl.Load (stylesheet, resolver, evidence);
+			s = new Compiler ().Compile (stylesheet, resolver, evidence);
 		}
 
 #if NET_1_1
@@ -300,7 +313,7 @@ namespace System.Xml.Xsl {
 		internal void Load (XmlReader stylesheet, XmlResolver resolver, Evidence evidence)
 #endif
 		{
-			impl.Load (stylesheet, resolver, null);
+			Load (new XPathDocument (stylesheet, XmlSpace.Preserve).CreateNavigator (), resolver, evidence);
 		}
 		#endregion
 	}
