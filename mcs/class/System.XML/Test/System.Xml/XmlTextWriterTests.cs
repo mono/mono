@@ -1264,5 +1264,15 @@ namespace MonoTests.System.Xml
 			doc.WriteContentTo (xtw);
 			AssertEquals (@"<root>_  <test>test<foo></foo>string</test>_  <test>string</test>_</root>", sw.ToString ());
 		}
+
+		[Test]
+		public void CloseTwice ()
+		{
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter writer = new XmlTextWriter (sw);
+			writer.Close ();
+			// should not result in an exception
+			writer.Close ();
+		}
 	}
 }

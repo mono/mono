@@ -388,12 +388,12 @@ namespace MonoTests.System.Xml
 			// BTW, as for namespace nodes, Node does not exist
 			// in the tree, so the return value should be
 			// implementation dependent.
-			AssertEquals (XmlNodeType.Attribute, nl [0].NodeType);
-			AssertEquals (XmlNodeType.Attribute, nl [1].NodeType);
-			AssertEquals (XmlNodeType.Attribute, nl [2].NodeType);
-			AssertEquals (XmlNodeType.Attribute, nl [3].NodeType);
-			AssertEquals (XmlNodeType.Attribute, nl [4].NodeType);
-			AssertEquals (XmlNodeType.Attribute, nl [5].NodeType);
+			AssertEquals ("#1", XmlNodeType.Attribute, nl [0].NodeType);
+			AssertEquals ("#2", XmlNodeType.Attribute, nl [1].NodeType);
+			AssertEquals ("#3", XmlNodeType.Attribute, nl [2].NodeType);
+			AssertEquals ("#4", XmlNodeType.Attribute, nl [3].NodeType);
+			AssertEquals ("#5", XmlNodeType.Attribute, nl [4].NodeType);
+			AssertEquals ("#6", XmlNodeType.Attribute, nl [5].NodeType);
 			AssertEquals ("xmlns", nl [0].LocalName);
 			AssertEquals ("xml", nl [1].LocalName);
 			AssertEquals ("xmlns", nl [2].LocalName);

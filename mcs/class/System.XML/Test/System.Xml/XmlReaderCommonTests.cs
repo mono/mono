@@ -1412,30 +1412,5 @@ namespace MonoTests.System.Xml
 			xmlReader.Read ();
 			AssertEquals (String.Empty, xmlReader.ReadInnerXml ());
 		}
-
-#if NET_2_0
-		[Test]
-		public void ReadAsObject ()
-		{
-			string xml = "<root><foo><bar><foo/></bar></foo></root>";
-			XmlReader xr = XmlReader.Create (new StringReader (xml));
-			xr.MoveToContent ();
-			AssertEquals (typeof (XmlDocument), xr.ReadAsObject (typeof (XmlDocument)).GetType ());
-			string xs = "<xs:schema xmlns:xs='" + XmlSchema.Namespace + "'/>";
-			xr = XmlReader.Create (new StringReader (xs));
-			xr.MoveToContent ();
-			AssertEquals (typeof (XmlSchema), xr.ReadAsObject (typeof (XmlSchema)).GetType ());
-		}
-
-		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
-		public void ReadAsObjectError ()
-		{
-			string xs = "<xs:schema xmlns:xs='" + XmlSchema.Namespace + "'/>";
-			XmlReader xr = XmlReader.Create (new StringReader (xs));
-			xr.MoveToContent ();
-			xr.ReadAsObject (typeof (XmlSchemaElement));
-		}
-#endif
 	}
 }

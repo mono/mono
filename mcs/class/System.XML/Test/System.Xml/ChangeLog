@@ -1,3 +1,9 @@
+2004-10-29  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReaderCommonTests.cs : ReadAsObject() is removed.
+	* XmlTextWriterTests.cs : added CloseTwice().
+	* XmlNodeTests.cs : added labels.
+
 2004-09-08  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlWriterSettingsTests.cs : added.
