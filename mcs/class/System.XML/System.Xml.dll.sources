@@ -86,9 +86,7 @@ System.Xml.XPath/Parser.cs
 System.Xml.XPath/Tokenizer.cs
 System.Xml.Xsl/IXsltContextFunction.cs
 System.Xml.Xsl/IXsltContextVariable.cs
-System.Xml.Xsl/UnmanagedXslTransform.cs
 System.Xml.Xsl/XslTransform.cs
-System.Xml.Xsl/XslTransformImpl.cs
 System.Xml.Xsl/XsltArgumentList.cs
 System.Xml.Xsl/XsltCompileException.cs
 System.Xml.Xsl/XsltContext.cs
