@@ -6,6 +6,7 @@
 //
 //	(C)2003 Atsushi Enomoto
 //
+//#define IGNORE_KEYS
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -35,12 +36,22 @@ using System.Xml;
 using System.Xml.Schema;
 using Mono.Xml;
 
+using ContentProc = System.Xml.Schema.XmlSchemaContentProcessing;
+using XsElement = System.Xml.Schema.XmlSchemaElement;
+using XsAttribute = System.Xml.Schema.XmlSchemaAttribute;
+using ComplexType = System.Xml.Schema.XmlSchemaComplexType;
+using SimpleType = System.Xml.Schema.XmlSchemaSimpleType;
+using SimpleTypeRest = System.Xml.Schema.XmlSchemaSimpleTypeRestriction;
+using SimpleTypeList = System.Xml.Schema.XmlSchemaSimpleTypeList;
+using SimpleTypeUnion = System.Xml.Schema.XmlSchemaSimpleTypeUnion;
+using XsDatatype = System.Xml.Schema.XmlSchemaDatatype;
+
 namespace Mono.Xml.Schema
 {
 	internal class XsdValidatingReader : XmlReader, IXmlLineInfo, IHasXmlSchemaInfo, IHasXmlParserContext, IXmlNamespaceResolver
 	{
-		static readonly XmlSchemaAttribute [] emptyAttributeArray =
-			new XmlSchemaAttribute [0];
+		static readonly XsAttribute [] emptyAttributeArray =
+			new XsAttribute [0];
 
 		XmlReader reader;
 		XmlResolver resolver;
@@ -55,26 +66,25 @@ namespace Mono.Xml.Schema
 		ArrayList missingIDReferences;
 		string thisElementId;
 
+#if !IGNORE_KEYS
 		ArrayList keyTables = new ArrayList ();
 		ArrayList currentKeyFieldConsumers;
 		ArrayList tmpKeyrefPool;
+		ArrayList elementQNameStack = new ArrayList ();
+#endif
 
-		XsdValidationStateManager stateManager =
-			new XsdValidationStateManager ();
-		XsdValidationContext context = new XsdValidationContext ();
+		XsdParticleStateManager state = new XsdParticleStateManager ();
 
 		int skipValidationDepth = -1;
 		int xsiNilDepth = -1;
 		StringBuilder storedCharacters = new StringBuilder ();
 		bool shouldValidateCharacters;
 
-		XmlSchemaAttribute [] defaultAttributes = emptyAttributeArray;
+		XsAttribute [] defaultAttributes = emptyAttributeArray;
 		int currentDefaultAttribute = -1;
 		ArrayList defaultAttributesCache = new ArrayList ();
 		bool defaultAttributeConsumed;
 		XmlQualifiedName attrQName;
-
-		ArrayList elementQNameStack = new ArrayList ();
 
 #region .ctor
 		public XsdValidatingReader (XmlReader reader)
@@ -96,6 +106,11 @@ namespace Mono.Xml.Schema
 			}
 		}
 
+		private XsdValidationContext Context {
+			get { return state.Context; }
+		}
+
+#if !IGNORE_KEYS
 		internal ArrayList CurrentKeyFieldConsumers {
 			get {
 				if (currentKeyFieldConsumers == null)
@@ -103,6 +118,7 @@ namespace Mono.Xml.Schema
 				return currentKeyFieldConsumers;
 			}
 		}
+#endif
 
 		private ArrayList MissingIDReferences {
 			get {
@@ -151,14 +167,14 @@ namespace Mono.Xml.Schema
 
 				switch (NodeType) {
 				case XmlNodeType.Element:
-					if (context.ActualType != null)
-						return context.ActualType;
+					if (Context.ActualType != null)
+						return Context.ActualType;
 					else
 						return SourceReaderSchemaType;
 				case XmlNodeType.Attribute:
-					XmlSchemaComplexType ct = context.ActualType as XmlSchemaComplexType;
+					ComplexType ct = Context.ActualType as ComplexType;
 					if (ct != null) {
-						XmlSchemaAttribute attdef = ct.AttributeUses [CurrentQName] as XmlSchemaAttribute;
+						XsAttribute attdef = ct.AttributeUses [CurrentQName] as XsAttribute;
 						if (attdef != null)
 							return attdef.AttributeType;
 					}
@@ -210,8 +226,8 @@ namespace Mono.Xml.Schema
 		public object ReadTypedValue ()
 #endif
 		{
-			XmlSchemaDatatype dt = SchemaType as XmlSchemaDatatype;
-			XmlSchemaSimpleType st = SchemaType as XmlSchemaSimpleType;
+			XsDatatype dt = SchemaType as XsDatatype;
+			SimpleType st = SchemaType as SimpleType;
 			if (st != null)
 				dt = st.Datatype;
 			if (dt == null)
@@ -443,11 +459,6 @@ namespace Mono.Xml.Schema
 
 		// Private Methods
 
-		private XmlQualifiedName QualifyName (string name)
-		{
-			return XmlQualifiedName.Parse (name, this);
-		}
-
 		private void HandleError (string error)
 		{
 			HandleError (error, null);
@@ -488,9 +499,9 @@ namespace Mono.Xml.Schema
 				throw e.Exception;
 		}
 
-		private XmlSchemaElement FindElement (string name, string ns)
+		private XsElement FindElement (string name, string ns)
 		{
-			return (XmlSchemaElement) schemas.GlobalElements [new XmlQualifiedName (name, ns)];
+			return (XsElement) schemas.GlobalElements [new XmlQualifiedName (name, ns)];
 		}
 
 		private XmlSchemaType FindType (XmlQualifiedName qname)
@@ -500,23 +511,26 @@ namespace Mono.Xml.Schema
 
 		private void ValidateStartElementParticle ()
 		{
-			stateManager.CurrentElement = null;
-			context.EvaluateStartElement (reader.LocalName,
+			if (Context.State == null)
+				return;
+			Context.XsiType = null;
+			state.CurrentElement = null;
+			Context.EvaluateStartElement (reader.LocalName,
 				reader.NamespaceURI);
-			if (context.State == XsdValidationState.Invalid)
+			if (Context.State == XsdValidationState.Invalid)
 				HandleError ("Invalid start element: " + reader.NamespaceURI + ":" + reader.LocalName);
 
-			context.SetElement (stateManager.CurrentElement);
+			Context.SetElement (state.CurrentElement);
 		}
 
 		private void ValidateEndElementParticle ()
 		{
-			if (context.State != null) {
-				if (!context.State.EvaluateEndElement ()) {
+			if (Context.State != null) {
+				if (!Context.EvaluateEndElement ()) {
 					HandleError ("Invalid end element: " + reader.Name);
 				}
 			}
-			context.PopScope ();
+			state.PopContext ();
 		}
 
 		// Utility for missing validation completion related to child items.
@@ -531,26 +545,26 @@ namespace Mono.Xml.Schema
 		// Utility for missing validation completion related to child items.
 		private void ValidateEndCharacters ()
 		{
-			if (context.ActualType == null)
+			if (Context.ActualType == null)
 				return;
 
 			string value = storedCharacters.ToString ();
 
 			if (storedCharacters.Length == 0) {
 				// 3.3.4 Element Locally Valid (Element) 5.1.2
-				if (context.Element != null) {
-					if (context.Element.ValidatedDefaultValue != null)
-						value = context.Element.ValidatedDefaultValue;
+				if (Context.Element != null) {
+					if (Context.Element.ValidatedDefaultValue != null)
+						value = Context.Element.ValidatedDefaultValue;
 				}					
 			}
 
-			XmlSchemaDatatype dt = context.ActualType as XmlSchemaDatatype;
-			XmlSchemaSimpleType st = context.ActualType as XmlSchemaSimpleType;
+			XsDatatype dt = Context.ActualType as XsDatatype;
+			SimpleType st = Context.ActualType as SimpleType;
 			if (dt == null) {
 				if (st != null) {
 					dt = st.Datatype;
 				} else {
-					XmlSchemaComplexType ct = context.ActualType as XmlSchemaComplexType;
+					ComplexType ct = Context.ActualType as ComplexType;
 					dt = ct.Datatype;
 					switch (ct.ContentType) {
 					case XmlSchemaContentType.ElementOnly:
@@ -563,12 +577,13 @@ namespace Mono.Xml.Schema
 			}
 			if (dt != null) {
 				// 3.3.4 Element Locally Valid (Element) :: 5.2.2.2. Fixed value constraints
-				if (context.Element != null && context.Element.ValidatedFixedValue != null)
-					if (value != context.Element.ValidatedFixedValue)
+				if (Context.Element != null && Context.Element.ValidatedFixedValue != null)
+					if (value != Context.Element.ValidatedFixedValue)
 						HandleError ("Fixed value constraint was not satisfied.");
 				AssessStringValid (st, dt, value);
 			}
 
+#if !IGNORE_KEYS
 			// Identity field value
 			if (currentKeyFieldConsumers != null) {
 				while (this.currentKeyFieldConsumers.Count > 0) {
@@ -591,26 +606,27 @@ namespace Mono.Xml.Schema
 					this.currentKeyFieldConsumers.RemoveAt (0);
 				}
 			}
+#endif
 
 			shouldValidateCharacters = false;
 		}
 
 		// 3.14.4 String Valid 
-		private void AssessStringValid (XmlSchemaSimpleType st,
-			XmlSchemaDatatype dt, string value)
+		private void AssessStringValid (SimpleType st,
+			XsDatatype dt, string value)
 		{
-			XmlSchemaDatatype validatedDatatype = dt;
+			XsDatatype validatedDatatype = dt;
 			if (st != null) {
 				string normalized = validatedDatatype.Normalize (value);
 				string [] values;
-				XmlSchemaDatatype itemDatatype;
-				XmlSchemaSimpleType itemSimpleType;
+				XsDatatype itemDatatype;
+				SimpleType itemSimpleType;
 				switch (st.DerivedBy) {
 				case XmlSchemaDerivationMethod.List:
-					XmlSchemaSimpleTypeList listContent = st.Content as XmlSchemaSimpleTypeList;
+					SimpleTypeList listContent = st.Content as SimpleTypeList;
 					values = normalized.Split (XmlChar.WhitespaceChars);
-					itemDatatype = listContent.ValidatedListItemType as XmlSchemaDatatype;
-					itemSimpleType = listContent.ValidatedListItemType as XmlSchemaSimpleType;
+					itemDatatype = listContent.ValidatedListItemType as XsDatatype;
+					itemSimpleType = listContent.ValidatedListItemType as SimpleType;
 					for (int vi = 0; vi < values.Length; vi++) {
 						string each = values [vi];
 						if (each == String.Empty)
@@ -629,14 +645,14 @@ namespace Mono.Xml.Schema
 					}
 					break;
 				case XmlSchemaDerivationMethod.Union:
-					XmlSchemaSimpleTypeUnion union = st.Content as XmlSchemaSimpleTypeUnion;
+					SimpleTypeUnion union = st.Content as SimpleTypeUnion;
 					{
 						string each = normalized;
 						// validate against ValidatedItemType
 						bool passed = false;
 						foreach (object eachType in union.ValidatedTypes) {
-							itemDatatype = eachType as XmlSchemaDatatype;
-							itemSimpleType = eachType as XmlSchemaSimpleType;
+							itemDatatype = eachType as XsDatatype;
+							itemSimpleType = eachType as SimpleType;
 							if (itemDatatype != null) {
 								try {
 									itemDatatype.ParseValue (each, NameTable, ParserContext.NamespaceManager);
@@ -661,7 +677,7 @@ namespace Mono.Xml.Schema
 					}
 					break;
 				case XmlSchemaDerivationMethod.Restriction:
-					XmlSchemaSimpleTypeRestriction str = st.Content as XmlSchemaSimpleTypeRestriction;
+					SimpleTypeRest str = st.Content as SimpleTypeRest;
 					// facet validation
 					if (str != null) {
 						/* Don't forget to validate against inherited type's facets 
@@ -669,7 +685,7 @@ namespace Mono.Xml.Schema
 						 * be restriction?
 						 * */
 						 // mmm, will check later.
-						XmlSchemaSimpleType baseType = st.BaseXmlSchemaType as XmlSchemaSimpleType;
+						SimpleType baseType = st.BaseXmlSchemaType as SimpleType;
 						if (baseType != null) {
 							 AssessStringValid(baseType, dt, normalized);
 						}
@@ -694,11 +710,12 @@ namespace Mono.Xml.Schema
 		private object GetXsiType (string name)
 		{
 			object xsiType = null;
-			XmlQualifiedName typeQName = QualifyName (name);
-			if (typeQName == XmlSchemaComplexType.AnyTypeName)
-				xsiType = XmlSchemaComplexType.AnyType;
+			XmlQualifiedName typeQName =
+				XmlQualifiedName.Parse (name, this);
+			if (typeQName == ComplexType.AnyTypeName)
+				xsiType = ComplexType.AnyType;
 			else if (XmlSchemaUtil.IsBuiltInDatatypeName (typeQName))
-				xsiType = XmlSchemaDatatype.FromName (typeQName);
+				xsiType = XsDatatype.FromName (typeQName);
 			else
 				xsiType = FindType (typeQName);
 			return xsiType;
@@ -708,8 +725,8 @@ namespace Mono.Xml.Schema
 		private void AssessLocalTypeDerivationOK (object xsiType, object baseType, XmlSchemaDerivationMethod flag)
 		{
 			XmlSchemaType xsiSchemaType = xsiType as XmlSchemaType;
-			XmlSchemaComplexType baseComplexType = baseType as XmlSchemaComplexType;
-			XmlSchemaComplexType xsiComplexType = xsiSchemaType as XmlSchemaComplexType;
+			ComplexType baseComplexType = baseType as ComplexType;
+			ComplexType xsiComplexType = xsiSchemaType as ComplexType;
 			if (xsiType != baseType) {
 				// Extracted (not extraneous) check for 3.4.6 TypeDerivationOK.
 				if (baseComplexType != null)
@@ -731,7 +748,7 @@ namespace Mono.Xml.Schema
 					HandleError (ex);
 				}
 			else {
-				XmlSchemaSimpleType xsiSimpleType = xsiType as XmlSchemaSimpleType;
+				SimpleType xsiSimpleType = xsiType as SimpleType;
 				if (xsiSimpleType != null) {
 					try {
 						xsiSimpleType.ValidateTypeDerivationOK (baseType, null, null, true);
@@ -740,7 +757,7 @@ namespace Mono.Xml.Schema
 						HandleError (ex);
 					}
 				}
-				else if (xsiType is XmlSchemaDatatype) {
+				else if (xsiType is XsDatatype) {
 					// do nothing
 				}
 				else
@@ -751,16 +768,12 @@ namespace Mono.Xml.Schema
 		// Section 3.3.4 of the spec.
 		private void AssessStartElementSchemaValidity ()
 		{
-			// If the reader is inside xsi:nil (and failed on validation),
-			// then simply skip its content.
+			// If the reader is inside xsi:nil (and failed
+			// on validation), then simply skip its content.
 			if (xsiNilDepth >= 0 && xsiNilDepth < reader.Depth)
 				HandleError ("Element item appeared, while current element context is nil.");
 
-			context.XsiType = null;
-			// If validation state exists, then first assess particle validity.
-			if (context.State != null) {
-				ValidateStartElementParticle ();
-			}
+			ValidateStartElementParticle ();
 
 			string xsiNilValue = reader.GetAttribute ("nil", XmlSchema.InstanceNamespace);
 			if (xsiNilValue != null)
@@ -783,41 +796,43 @@ namespace Mono.Xml.Schema
 					HandleError ("The instance type was not found: " + xsiTypeName + " .");
 				else {
 					XmlSchemaType xsiSchemaType = xsiType as XmlSchemaType;
-					if (xsiSchemaType != null && this.context.Element != null) {
-						XmlSchemaType elemBaseType = context.Element.ElementType as XmlSchemaType;
+					if (xsiSchemaType != null && this.Context.Element != null) {
+						XmlSchemaType elemBaseType = Context.Element.ElementType as XmlSchemaType;
 						if (elemBaseType != null && (xsiSchemaType.DerivedBy & elemBaseType.FinalResolved) != 0)
 							HandleError ("The instance type is prohibited by the type of the context element.");
-						if (elemBaseType != xsiType && (xsiSchemaType.DerivedBy & this.context.Element.BlockResolved) != 0)
+						if (elemBaseType != xsiType && (xsiSchemaType.DerivedBy & this.Context.Element.BlockResolved) != 0)
 							HandleError ("The instance type is prohibited by the context element.");
 					}
-					XmlSchemaComplexType xsiComplexType = xsiType as XmlSchemaComplexType;
+					ComplexType xsiComplexType = xsiType as ComplexType;
 					if (xsiComplexType != null && xsiComplexType.IsAbstract)
 						HandleError ("The instance type is abstract: " + xsiTypeName + " .");
 					else {
 						// If current schema type exists, then this xsi:type must be
 						// valid extension of that type. See 1.2.1.2.4.
-						if (context.Element != null) {
-							AssessLocalTypeDerivationOK (xsiType, context.Element.ElementType, context.Element.BlockResolved);
+						if (Context.Element != null) {
+							AssessLocalTypeDerivationOK (xsiType, Context.Element.ElementType, Context.Element.BlockResolved);
 						}
 						AssessStartElementLocallyValidType (xsiType);	// 1.2.2:
-						context.XsiType = xsiType;
+						Context.XsiType = xsiType;
 					}
 				}
 			}
 
 			// Create Validation Root, if not exist.
 			// [Schema Validity Assessment (Element) 1.1]
-			if (context.Element == null)
-				context.SetElement (FindElement (reader.LocalName, reader.NamespaceURI));
-			if (context.Element != null) {
+			if (Context.Element == null) {
+				state.CurrentElement = FindElement (reader.LocalName, reader.NamespaceURI);
+				Context.SetElement (state.CurrentElement);
+			}
+			if (Context.Element != null) {
 				if (xsiTypeName == null) {
-					AssessElementLocallyValidElement (context.Element, xsiNilValue);	// 1.1.2
+					AssessElementLocallyValidElement (Context.Element, xsiNilValue);	// 1.1.2
 				}
 			} else {
-				switch (stateManager.ProcessContents) {
-				case XmlSchemaContentProcessing.Skip:
+				switch (state.ProcessContents) {
+				case ContentProc.Skip:
 					break;
-				case XmlSchemaContentProcessing.Lax:
+				case ContentProc.Lax:
 					break;
 				default:
 					if (xsiTypeName == null &&
@@ -828,30 +843,31 @@ namespace Mono.Xml.Schema
 				}
 			}
 
+			state.PushContext ();
+
 			XsdValidationState next = null;
-			if (stateManager.ProcessContents
-				== XmlSchemaContentProcessing.Skip)
+			if (state.ProcessContents == ContentProc.Skip)
 				skipValidationDepth = reader.Depth;
 			else {
 				// create child particle state.
-				XmlSchemaComplexType xsComplexType = SchemaType as XmlSchemaComplexType;
+				ComplexType xsComplexType = SchemaType as ComplexType;
 				if (xsComplexType != null)
-					next = stateManager.Create (xsComplexType.ValidatableParticle);
-				else if (stateManager.ProcessContents == XmlSchemaContentProcessing.Lax)
-					next = stateManager.Create (XmlSchemaAny.AnyTypeContent);
+					next = state.Create (xsComplexType.ValidatableParticle);
+				else if (state.ProcessContents == ContentProc.Lax)
+					next = state.Create (XmlSchemaAny.AnyTypeContent);
 				else
-					next = stateManager.Create (XmlSchemaParticle.Empty);
+					next = state.Create (XmlSchemaParticle.Empty);
 			}
+			Context.State = next;
 
+#if !IGNORE_KEYS
 			AssessStartIdentityConstraints ();
+#endif
 
-			context.PushScope ();
-
-			context.State = next;
 		}
 
 		// 3.3.4 Element Locally Valid (Element)
-		private void AssessElementLocallyValidElement (XmlSchemaElement element, string xsiNilValue)
+		private void AssessElementLocallyValidElement (XsElement element, string xsiNilValue)
 		{
 			XmlQualifiedName qname = new XmlQualifiedName (reader.LocalName, reader.NamespaceURI);
 			// 1.
@@ -874,11 +890,11 @@ namespace Mono.Xml.Schema
 			// 4.
 			string xsiType = reader.GetAttribute ("type", XmlSchema.InstanceNamespace);
 			if (xsiType != null) {
-				context.XsiType = GetXsiType (xsiType);
-				AssessLocalTypeDerivationOK (context.XsiType, element.ElementType, element.BlockResolved);
+				Context.XsiType = GetXsiType (xsiType);
+				AssessLocalTypeDerivationOK (Context.XsiType, element.ElementType, element.BlockResolved);
 			}
 			else
-				context.XsiType = null;
+				Context.XsiType = null;
 
 			// 5 Not all things cannot be assessed here.
 			// It is common to 5.1 and 5.2
@@ -898,8 +914,8 @@ namespace Mono.Xml.Schema
 				HandleError ("Schema type does not exist.");
 				return;
 			}
-			XmlSchemaComplexType cType = schemaType as XmlSchemaComplexType;
-			XmlSchemaSimpleType sType = schemaType as XmlSchemaSimpleType;
+			ComplexType cType = schemaType as ComplexType;
+			SimpleType sType = schemaType as SimpleType;
 			if (sType != null) {
 				// 3.1.1.
 				while (reader.MoveToNextAttribute ()) {
@@ -931,7 +947,7 @@ namespace Mono.Xml.Schema
 		}
 
 		// 3.4.4 Element Locally Valid (Complex Type)
-		private void AssessElementLocallyValidComplexType (XmlSchemaComplexType cType)
+		private void AssessElementLocallyValidComplexType (ComplexType cType)
 		{
 			// 1.
 			if (cType.IsAbstract)
@@ -953,7 +969,7 @@ namespace Mono.Xml.Schema
 					XmlSchemaObject attMatch = FindAttributeDeclaration (cType, qname);
 					if (attMatch == null)
 						HandleError ("Attribute declaration was not found for " + qname);
-					XmlSchemaAttribute attdecl = attMatch as XmlSchemaAttribute;
+					XsAttribute attdecl = attMatch as XsAttribute;
 					if (attdecl != null) {
 						AssessAttributeLocallyValidUse (attdecl);
 						AssessAttributeLocallyValid (attdecl);
@@ -965,7 +981,7 @@ namespace Mono.Xml.Schema
 			// Collect default attributes.
 			// 4.
 			foreach (DictionaryEntry entry in cType.AttributeUses) {
-				XmlSchemaAttribute attr = (XmlSchemaAttribute) entry.Value;
+				XsAttribute attr = (XsAttribute) entry.Value;
 				if (reader [attr.QualifiedName.Name, attr.QualifiedName.Namespace] == null) {
 					if (attr.ValidatedUse == XmlSchemaUse.Required && 
 						attr.ValidatedFixedValue == null)
@@ -977,9 +993,9 @@ namespace Mono.Xml.Schema
 			if (defaultAttributesCache.Count == 0)
 				defaultAttributes = emptyAttributeArray;
 			else
-				defaultAttributes = (XmlSchemaAttribute []) 
+				defaultAttributes = (XsAttribute []) 
 					defaultAttributesCache.ToArray (
-						typeof (XmlSchemaAttribute));
+						typeof (XsAttribute));
 			defaultAttributesCache.Clear ();
 			// 5. wild IDs was already checked above.
 		}
@@ -1002,7 +1018,7 @@ namespace Mono.Xml.Schema
 		}
 
 		private XmlSchemaObject FindAttributeDeclaration (
-			XmlSchemaComplexType cType,
+			ComplexType cType,
 			XmlQualifiedName qname)
 		{
 			XmlSchemaObject result = cType.AttributeUses [qname];
@@ -1014,28 +1030,28 @@ namespace Mono.Xml.Schema
 			if (!AttributeWildcardItemValid (cType.AttributeWildcard, qname, reader.NamespaceURI))
 				return null;
 
-			if (cType.AttributeWildcard.ResolvedProcessContents == XmlSchemaContentProcessing.Skip)
+			if (cType.AttributeWildcard.ResolvedProcessContents == ContentProc.Skip)
 				return cType.AttributeWildcard;
-			XmlSchemaAttribute attr = schemas.GlobalAttributes [qname] as XmlSchemaAttribute;
+			XsAttribute attr = schemas.GlobalAttributes [qname] as XsAttribute;
 			if (attr != null)
 				return attr;
-			if (cType.AttributeWildcard.ResolvedProcessContents == XmlSchemaContentProcessing.Lax)
+			if (cType.AttributeWildcard.ResolvedProcessContents == ContentProc.Lax)
 				return cType.AttributeWildcard;
 			else
 				return null;
 		}
 
 		// 3.2.4 Attribute Locally Valid and 3.4.4
-		private void AssessAttributeLocallyValid (XmlSchemaAttribute attr)
+		private void AssessAttributeLocallyValid (XsAttribute attr)
 		{
 			// 2. - 4.
 			if (attr.AttributeType == null)
 				HandleError ("Attribute type is missing for " + attr.QualifiedName);
-			XmlSchemaDatatype dt = attr.AttributeType as XmlSchemaDatatype;
+			XsDatatype dt = attr.AttributeType as XsDatatype;
 			if (dt == null)
-				dt = ((XmlSchemaSimpleType) attr.AttributeType).Datatype;
+				dt = ((SimpleType) attr.AttributeType).Datatype;
 			// It is a bit heavy process, so let's omit as long as possible ;-)
-			if (dt != XmlSchemaSimpleType.AnySimpleType || attr.ValidatedFixedValue != null) {
+			if (dt != SimpleType.AnySimpleType || attr.ValidatedFixedValue != null) {
 				string normalized = dt.Normalize (reader.Value);
 				object parsedValue = null;
 				try {
@@ -1054,7 +1070,7 @@ namespace Mono.Xml.Schema
 
 		// 3.4.4-5 wild IDs
 		private void AssessEachAttributeIdentityConstraint (
-			XmlSchemaDatatype dt, object parsedValue)
+			XsDatatype dt, object parsedValue)
 		{
 			// Validate identity constraints.
 			string str = parsedValue as string;
@@ -1085,7 +1101,7 @@ namespace Mono.Xml.Schema
 			}
 		}
 
-		private void AssessAttributeLocallyValidUse (XmlSchemaAttribute attr)
+		private void AssessAttributeLocallyValidUse (XsAttribute attr)
 		{
 			// This is extra check than spec 3.5.4
 			if (attr.ValidatedUse == XmlSchemaUse.Prohibited)
@@ -1101,6 +1117,7 @@ namespace Mono.Xml.Schema
 				shouldValidateCharacters = false;
 			}
 
+#if !IGNORE_KEYS
 			// 3.3.4 Assess ElementLocallyValidElement 5: value constraints.
 			// 3.3.4 Assess ElementLocallyValidType 3.1.3. = StringValid(3.14.4)
 			// => ValidateEndCharacters().
@@ -1142,21 +1159,23 @@ namespace Mono.Xml.Schema
 					i--;
 				}
 			}
+#endif
 
 			// Reset xsi:nil, if required.
 			if (xsiNilDepth == reader.Depth)
 				xsiNilDepth = -1;
 		}
 
+#if !IGNORE_KEYS
 		// 3.11.4 Identity Constraint Satisfied
 		private void AssessStartIdentityConstraints ()
 		{
 			if (tmpKeyrefPool != null)
 				tmpKeyrefPool.Clear ();
-			if (context.Element != null && context.Element.Constraints.Count > 0) {
+			if (Context.Element != null && Context.Element.Constraints.Count > 0) {
 				// (a) Create new key sequences, if required.
-				for (int i = 0; i < context.Element.Constraints.Count; i++) {
-					XmlSchemaIdentityConstraint ident = (XmlSchemaIdentityConstraint) context.Element.Constraints [i];
+				for (int i = 0; i < Context.Element.Constraints.Count; i++) {
+					XmlSchemaIdentityConstraint ident = (XmlSchemaIdentityConstraint) Context.Element.Constraints [i];
 					XsdKeyTable seq = CreateNewKeyTable (ident);
 					if (ident is XmlSchemaKeyref) {
 						if (tmpKeyrefPool == null)
@@ -1245,6 +1264,7 @@ namespace Mono.Xml.Schema
 						+ String.Join (" / ", errors.ToArray (typeof (string)) as string []));
 			}
 		}
+#endif
 
 		// Overrided Methods
 
@@ -1328,7 +1348,7 @@ namespace Mono.Xml.Schema
 		private int FindDefaultAttribute (string localName, string ns)
 		{
 			for (int i = 0; i < this.defaultAttributes.Length; i++) {
-				XmlSchemaAttribute attr = defaultAttributes [i];
+				XsAttribute attr = defaultAttributes [i];
 				if (attr.QualifiedName.Name == localName &&
 					(ns == null || attr.QualifiedName.Namespace == ns))
 					return i;
@@ -1503,7 +1523,7 @@ namespace Mono.Xml.Schema
 			if (schemaLocation != null) {
 				string [] tmp = null;
 				try {
-					schemaLocation = XmlSchemaDatatype.FromName ("token", XmlSchema.Namespace).Normalize (schemaLocation);
+					schemaLocation = XsDatatype.FromName ("token", XmlSchema.Namespace).Normalize (schemaLocation);
 					tmp = schemaLocation.Split (XmlChar.WhitespaceChars);
 				} catch (Exception ex) {
 					HandleError ("Invalid schemaLocation attribute format.", ex, true);
@@ -1579,9 +1599,7 @@ namespace Mono.Xml.Schema
 			attrQName = null;
 			if (this.checkIdentity)
 				thisElementId = null;
-			defaultAttributes = new XmlSchemaAttribute [0];
-			if (!schemas.IsCompiled)
-				schemas.Compile ();
+			defaultAttributes = emptyAttributeArray;
 
 			bool result = reader.Read ();
 			// 3.3.4 ElementLocallyValidElement 7 = Root Valid.
@@ -1591,19 +1609,23 @@ namespace Mono.Xml.Schema
 					String.Join (" ",
 					this.missingIDReferences.ToArray (typeof (string)) as string []));
 
+			// FIXME: schemaLocation could be specified 
+			// at any Depth.
+			if (reader.Depth == 0 &&
+				reader.NodeType == XmlNodeType.Element)
+				ExamineAdditionalSchema ();
+			if (schemas.Count == 0)
+				return result;
+			if (!schemas.IsCompiled)
+				schemas.Compile ();
+
 			switch (reader.NodeType) {
 			case XmlNodeType.Element:
-				// FIXME: schemaLocation could be specified 
-				// at any Depth.
-				if (reader.Depth == 0)
-					ExamineAdditionalSchema ();
-
+#if !IGNORE_KEYS
 				this.elementQNameStack.Add (new XmlQualifiedName (reader.LocalName, reader.NamespaceURI));
+#endif
 
 				// If there is no schema information, then no validation is performed.
-				if (schemas.Count == 0)
-					break;
-
 				if (skipValidationDepth < 0 || reader.Depth <= skipValidationDepth) {
 					if (shouldValidateCharacters) {
 						ValidateEndCharacters ();
@@ -1631,7 +1653,7 @@ namespace Mono.Xml.Schema
 			case XmlNodeType.CDATA:
 			case XmlNodeType.SignificantWhitespace:
 			case XmlNodeType.Text:
-				XmlSchemaComplexType ct = context.ActualType as XmlSchemaComplexType;
+				ComplexType ct = Context.ActualType as ComplexType;
 				if (ct != null && storedCharacters.Length > 0) {
 					switch (ct.ContentType) {
 					case XmlSchemaContentType.ElementOnly:
@@ -1689,62 +1711,48 @@ namespace Mono.Xml.Schema
 		{
 			reader.ResolveEntity ();
 		}
-
-		internal class XsdValidationContext
-		{
-			Stack contextStack = new Stack ();
-
-			public XsdValidationContext ()
-			{
-			}
-
-			// Some of them might be missing (See the spec section 5.3, and also 3.3.4).
-			public XmlSchemaElement Element;
-			public XsdValidationState State;
-			public object XsiType; // xsi:type
-
-			// Note that it represents current element's type.
-			public object ActualType {
-				get {
-					if (XsiType != null)
-						return XsiType;
-					else
-						return Element != null ? Element.ElementType : null;
-				}
-			}
-
-			public void PushScope ()
-			{
-				contextStack.Push (MemberwiseClone ());
-			}
-
-			public void PopScope ()
-			{
-				// FIXME: this count check should not be required, so check the behavior.
-				if (contextStack.Count > 0) {
-					XsdValidationContext restored = (XsdValidationContext) contextStack.Pop ();
-					this.Element = restored.Element;
-					this.State = restored.State;
-					this.XsiType = restored.XsiType;
-				}
-			}
-
-			public void EvaluateStartElement (
-				string localName, string ns)
-			{
-				State = State.EvaluateStartElement (localName, ns);
-			}
-
-			public void SetElement (XmlSchemaElement element)
-			{
-				Element = element;
-			}
-
-			public void SetState (XsdValidationState state)
-			{
-				State = state;
-			}
-		}
 	}
 
+	internal class XsdValidationContext
+	{
+		public XsdValidationContext ()
+		{
+		}
+
+		// Some of them might be missing (See the spec section 5.3, and also 3.3.4).
+		public XsElement Element;
+		public XsdValidationState State;
+		public object XsiType; // xsi:type
+
+		// Note that it represents current element's type.
+		public object ActualType {
+			get {
+				if (XsiType != null)
+					return XsiType;
+				else
+					return Element != null ? Element.ElementType : null;
+			}
+		}
+
+		public object Clone ()
+		{
+			return MemberwiseClone ();
+		}
+
+		public void EvaluateStartElement (
+			string localName, string ns)
+		{
+			State = State.EvaluateStartElement (localName, ns);
+		}
+
+		public bool EvaluateEndElement ()
+		{
+			return State.EvaluateEndElement ();
+		}
+
+		public void SetElement (XsElement element)
+		{
+			Element = element;
+		}
+	}
 }

@@ -35,30 +35,36 @@ using Mono.Xml;
 
 namespace Mono.Xml.Schema
 {
-	internal class XsdValidationStateManager
+	internal class XsdParticleStateManager
 	{
 		Hashtable table;
-		XmlSchemaElement currentElement;
 		XmlSchemaContentProcessing processContents;
 
-		public XsdValidationStateManager ()
+		public XsdParticleStateManager ()
 		{
 			table = new Hashtable ();
 			processContents = XmlSchemaContentProcessing.Strict; // not Lax
 		}
 
-		public XmlSchemaElement CurrentElement {
-			get { return currentElement; }
-			set { currentElement = value; }
-		}
+		public XmlSchemaElement CurrentElement;
 
-		internal void SetCurrentElement (XmlSchemaElement elt)
-		{
-			this.currentElement = elt;
-		}
+		public Stack ContextStack = new Stack ();
+
+		public XsdValidationContext Context
+			= new XsdValidationContext ();
 
 		public XmlSchemaContentProcessing ProcessContents {
 			get { return processContents; }
+		}
+
+		public void PushContext ()
+		{
+			ContextStack.Push (Context.Clone ());
+		}
+
+		public void PopContext ()
+		{
+			Context = (XsdValidationContext) ContextStack.Pop ();
 		}
 
 		internal void SetProcessContents (XmlSchemaContentProcessing value)
@@ -159,9 +165,9 @@ namespace Mono.Xml.Schema
 
 		int occured;
 		string message;
-		XsdValidationStateManager manager;
+		XsdParticleStateManager manager;
 
-		public XsdValidationState (XsdValidationStateManager manager)
+		public XsdValidationState (XsdParticleStateManager manager)
 		{
 			this.manager = manager;
 		}
@@ -174,7 +180,7 @@ namespace Mono.Xml.Schema
 
 		internal abstract bool EvaluateIsEmptiable ();
 
-		public XsdValidationStateManager Manager {
+		public XsdParticleStateManager Manager {
 			get { return manager; }
 		}
 
@@ -199,7 +205,7 @@ namespace Mono.Xml.Schema
 
 	internal class XsdElementValidationState : XsdValidationState
 	{
-		public XsdElementValidationState (XmlSchemaElement element, XsdValidationStateManager manager)
+		public XsdElementValidationState (XmlSchemaElement element, XsdParticleStateManager manager)
 			: base (manager)
 		{
 			this.element = element;
@@ -233,7 +239,7 @@ namespace Mono.Xml.Schema
 		private XsdValidationState CheckOccurence (XmlSchemaElement maybeSubstituted)
 		{
 			OccuredInternal++;
-			Manager.SetCurrentElement (maybeSubstituted);
+			Manager.CurrentElement = maybeSubstituted;
 			if (Occured > element.ValidatedMaxOccurs) {
 				MessageInternal = "Element occurence excess.";
 				return XsdValidationState.Invalid;
@@ -265,12 +271,12 @@ namespace Mono.Xml.Schema
 		decimal minOccurs;
 		decimal maxOccurs;
 
-		public XsdSequenceValidationState (XmlSchemaSequence sequence, XsdValidationStateManager manager)
+		public XsdSequenceValidationState (XmlSchemaSequence sequence, XsdParticleStateManager manager)
 			: this (sequence, manager, sequence.ValidatedMinOccurs, sequence.ValidatedMaxOccurs, -1)
 		{
 		}
 
-		public XsdSequenceValidationState (XmlSchemaSequence sequence, XsdValidationStateManager manager,
+		public XsdSequenceValidationState (XmlSchemaSequence sequence, XsdParticleStateManager manager,
 			decimal minOccurs, decimal maxOccurs, int current)
 			: base (manager)
 		{
@@ -408,7 +414,7 @@ namespace Mono.Xml.Schema
 		bool emptiable;
 		bool emptiableComputed;
 
-		public XsdChoiceValidationState (XmlSchemaChoice choice, XsdValidationStateManager manager)
+		public XsdChoiceValidationState (XmlSchemaChoice choice, XsdParticleStateManager manager)
 			: base (manager)
 		{
 			this.choice = choice;
@@ -486,7 +492,7 @@ namespace Mono.Xml.Schema
 		XmlSchemaAll all;
 		ArrayList consumed = new ArrayList ();
 
-		public XsdAllValidationState (XmlSchemaAll all, XsdValidationStateManager manager)
+		public XsdAllValidationState (XmlSchemaAll all, XsdParticleStateManager manager)
 			: base (manager)
 		{
 			this.all = all;
@@ -506,7 +512,7 @@ namespace Mono.Xml.Schema
 					if (consumed.Contains (xsElem))
 						return XsdValidationState.Invalid;
 					consumed.Add (xsElem);
-					Manager.SetCurrentElement (xsElem);
+					Manager.CurrentElement = xsElem;
 					OccuredInternal = 1;	// xs:all also occurs 0 or 1 always.
 					return this;
 				}
@@ -547,7 +553,7 @@ namespace Mono.Xml.Schema
 	{
 		XmlSchemaAny any;
 
-		public XsdAnyValidationState (XmlSchemaAny any, XsdValidationStateManager manager)
+		public XsdAnyValidationState (XmlSchemaAny any, XsdParticleStateManager manager)
 			: base (manager)
 		{
 			this.any = any;
@@ -599,7 +605,7 @@ namespace Mono.Xml.Schema
 
 	internal class XsdAppendedValidationState : XsdValidationState
 	{
-		public XsdAppendedValidationState (XsdValidationStateManager manager,
+		public XsdAppendedValidationState (XsdParticleStateManager manager,
 			XsdValidationState head, XsdValidationState rest)
 			: base (manager)
 		{
@@ -645,7 +651,7 @@ namespace Mono.Xml.Schema
 
 	internal class XsdEmptyValidationState : XsdValidationState
 	{
-		public XsdEmptyValidationState (XsdValidationStateManager manager)
+		public XsdEmptyValidationState (XsdParticleStateManager manager)
 			: base (manager)
 		{
 		}
@@ -670,7 +676,7 @@ namespace Mono.Xml.Schema
 
 	internal class XsdInvalidValidationState : XsdValidationState
 	{
-		internal XsdInvalidValidationState (XsdValidationStateManager manager)
+		internal XsdInvalidValidationState (XsdParticleStateManager manager)
 			: base (manager)
 		{
 		}

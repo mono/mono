@@ -1,5 +1,15 @@
 2004-12-09  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XsdValidatingReader.cs,
+	  XsdParticleValidationState.cs : Fixed the previous problem ==
+	  inconsistent start assessment and end assessment.
+	  More refactory: stateManager is just renamed to state, and its type
+	  name is now XsdParticleStateManager.
+	  Now Context is included in state.
+	  Shortened lengthy xsd related type names with usingdecl.
+
+2004-12-09  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XsdValidatingReader.cs : mhm, something is wrong with call to
 	  context.PopScope(). So quick fix and marked as FIXME.
 
