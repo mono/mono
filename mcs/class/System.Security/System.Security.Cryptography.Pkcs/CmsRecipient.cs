@@ -1,11 +1,11 @@
 //
-// RecipientInfo.cs - System.Security.Cryptography.Pkcs.RecipientInfo
+// System.Security.Cryptography.Pkcs.CmsRecipient
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell Inc. (http://www.novell.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,35 +30,47 @@
 #if NET_2_0
 
 using System;
+using System.Collections;
+using System.Security.Cryptography.X509Certificates;
 
 namespace System.Security.Cryptography.Pkcs {
 
-	public abstract class RecipientInfo {
+	public sealed class CmsRecipient {
 
-		private RecipientInfoType _type;
+		private SubjectIdentifierType _recipient;
+		private X509CertificateEx _certificate;
 
-		// constructors
+		// constructor
 
-		// documented as protected at http://longhorn.msdn.microsoft.com
-		// but not present in the 1.2 beta SDK
-		internal RecipientInfo (RecipientInfoType recipInfoType) 
+		public CmsRecipient (X509CertificateEx certificate)
 		{
-			_type = recipInfoType;
+			if (certificate == null)
+				throw new ArgumentNullException ("certificate");
+			_recipient = SubjectIdentifierType.IssuerAndSerialNumber;
+			_certificate = certificate;
+		}
+
+		public CmsRecipient (SubjectIdentifierType recipientIdentifierType, X509CertificateEx certificate)
+		{
+			if (certificate == null)
+				throw new ArgumentNullException ("certificate");
+
+			if (recipientIdentifierType == SubjectIdentifierType.Unknown)
+				_recipient = SubjectIdentifierType.IssuerAndSerialNumber;
+			else
+				_recipient = recipientIdentifierType;
+			_certificate = certificate;
 		}
 
 		// properties
 
-		public abstract byte[] EncryptedKey { get; }
-
-		public abstract AlgorithmIdentifier KeyEncryptionAlgorithm { get; }
-
-		public abstract SubjectIdentifier RecipientIdentifier { get; }
-
-		public RecipientInfoType Type {
-			get { return _type; }
+		public X509CertificateEx Certificate {
+			get { return _certificate; }
 		}
 
-		public abstract int Version { get; }
+		public SubjectIdentifierType RecipientIdentifierType {
+			get { return _recipient; }
+		}
 	}
 }
 

@@ -1,3 +1,31 @@
+2004-07-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ContentInfo.cs: Added finalizer.
+	* CmsRecipient.cs: New. Replace Pkcs7Recipient (from 1.2).
+	* CmsRecipientCollection.cs: New. Replace Pkcs7RecipientCollection
+	(from 1.2).
+	* CmsRecipientEnumerator.cs: New. Replace Pkcs7RecipientEnumerator
+	(from 1.2).
+	* CmsSigner.cs: New. Replace Pkcs7Signer (from 1.2).
+	* EnvelopedCms.cs: New. Replace EnvelopedPkcs7 (from 1.2).
+	* KeyAgreeRecipientInfo.cs: Fixed internal constructor.
+	* Pkcs9Attribute.cs: Now inherit from AsnEncodedData. Fixed 
+	constructors.
+	* Pkcs9DocumentDescription.cs: Sealed class and fixed API.
+	* Pkcs9DocumentName.cs: Sealed class and fixed API.
+	* Pkcs9SigningTime.cs: Sealed class and fixed API.
+	* PublicKeyInfo.cs: Sealed class.
+	* RecipientInfo.cs: Removed protected constructor.
+	* RecipientInfoCollection.cs: Sealed class.
+	* RecipientInfoEnumerator.cs: Sealed class.
+	* SignedCms.cs: New. Replace SignedPkcs7 (from 1.2).
+	* SignerInfo.cs: Sealed class and fixed API.
+	* SignerInfoCollection.cs: Sealed class and fixed CopyTo.
+	* SignerInfoEnumerator.cs: Sealed class.
+	* SubjectIdentifier.cs: Sealed class.
+	* SubjectIdentifierOrKey.cs: Sealed class.
+	* SubjectIdentifierType.cs: Fixed enum and added [Serializable].
+
 2004-07-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AlgorithmIdentifier.cs: Added missing #if NET_2_0.

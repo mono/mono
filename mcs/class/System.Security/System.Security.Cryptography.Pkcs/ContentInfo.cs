@@ -1,5 +1,5 @@
 //
-// ContentInfo.cs - System.Security.Cryptography.Pkcs.ContentInfo
+// System.Security.Cryptography.Pkcs.ContentInfo
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -65,6 +65,10 @@ namespace System.Security.Cryptography.Pkcs {
 
 			_oid = oid;
 			_content = content;
+		}
+
+		~ContentInfo () 
+		{
 		}
 
 		// properties

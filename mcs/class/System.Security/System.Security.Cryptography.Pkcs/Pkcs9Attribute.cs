@@ -2,11 +2,10 @@
 // Pkcs9Attribute.cs - System.Security.Cryptography.Pkcs.Pkcs9Attribute
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
+// Copyright (C) 2004 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,15 +34,33 @@ using System.Collections;
 
 namespace System.Security.Cryptography.Pkcs {
 
-	public class Pkcs9Attribute : CryptographicAttribute {
+	public class Pkcs9Attribute : AsnEncodedData {
 
 		// constructors
 
-		public Pkcs9Attribute (Oid oid) : base (oid) {}
+		public Pkcs9Attribute () 
+			: base ()
+		{
+		}
 
-		public Pkcs9Attribute (Oid oid, ArrayList values) : base (oid, values) {}
+		public Pkcs9Attribute (AsnEncodedData asnEncodedData)
+			: base (asnEncodedData)
+		{
+		}
 
-		public Pkcs9Attribute (Oid oid, object value) : base (oid, value) {}
+		public Pkcs9Attribute (Oid oid, byte[] encodedData) 
+			: base (oid, encodedData)
+		{
+		}
+
+		public Pkcs9Attribute (string oid, byte[] encodedData)
+			: base (oid, encodedData) 
+		{
+		}
+
+		public new Oid Oid {
+			get { return base.Oid; }
+		}
 	}
 }
 

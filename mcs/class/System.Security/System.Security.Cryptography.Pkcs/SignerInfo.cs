@@ -2,11 +2,10 @@
 // SignerInfo.cs - System.Security.Cryptography.Pkcs.SignerInfo
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
+// Copyright (C) 2004 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,14 +34,14 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace System.Security.Cryptography.Pkcs {
 
-	public class SignerInfo {
+	public sealed class SignerInfo {
 
 		private SubjectIdentifier _signer;
 		private X509CertificateEx _certificate;
 		private Oid _digest;
 		private SignerInfoCollection _counter;
-		private Pkcs9AttributeCollection _auth;
-		private Pkcs9AttributeCollection _unauth;
+		private CryptographicAttributeCollection _signed;
+		private CryptographicAttributeCollection _unsigned;
 		private int _version;
 
 		// only accessible from SignedPkcs7.SignerInfos
@@ -51,16 +50,16 @@ namespace System.Security.Cryptography.Pkcs {
 			_digest = new Oid (hashOid);
 			_certificate = certificate;
 			_counter = new SignerInfoCollection ();
-			_auth = new Pkcs9AttributeCollection ();
-			_unauth = new Pkcs9AttributeCollection ();
+			_signed = new CryptographicAttributeCollection ();
+			_unsigned = new CryptographicAttributeCollection ();
 			_signer = new SubjectIdentifier (type, o);
 			_version = version;
 		}
 
 		// properties
 
-		public Pkcs9AttributeCollection AuthenticatedAttributes {
-			get { return _auth; }
+		public CryptographicAttributeCollection SignedAttributes {
+			get { return _signed; }
 		} 
 
 		public X509CertificateEx Certificate {
@@ -79,8 +78,8 @@ namespace System.Security.Cryptography.Pkcs {
 			get { return _signer; }
 		}
 
-		public Pkcs9AttributeCollection UnauthenticatedAttributes {
-			get { return _unauth; }
+		public CryptographicAttributeCollection UnsignedAttributes {
+			get { return _unsigned; }
 		}
 
 		public int Version {
@@ -90,19 +89,39 @@ namespace System.Security.Cryptography.Pkcs {
 		// methods
 
 		[MonoTODO]
-		public void CheckSignature (bool verifySignatureOnly) {}
+		public void CheckHash ()
+		{
+		}
 
 		[MonoTODO]
-		public void CheckSignature (X509CertificateExCollection extraStore, bool verifySignatureOnly) {}
+		public void CheckSignature (bool verifySignatureOnly)
+		{
+		}
 
 		[MonoTODO]
-		public void ComputeCounterSignature () {}
+		public void CheckSignature (X509CertificateExCollection extraStore, bool verifySignatureOnly)
+		{
+		}
 
 		[MonoTODO]
-		public void ComputeCounterSignature (Pkcs7Signer signer) {}
+		public void ComputeCounterSignature ()
+		{
+		}
 
 		[MonoTODO]
-		public void RemoveCounterSignature (SignerInfo counterSignerInfo) {}
+		public void ComputeCounterSignature (CmsSigner signer)
+		{
+		}
+
+		[MonoTODO]
+		public void RemoveCounterSignature (SignerInfo counterSignerInfo)
+		{
+		}
+
+		[MonoTODO]
+		public void RemoveCounterSignature (int index)
+		{
+		}
 	}
 }
 

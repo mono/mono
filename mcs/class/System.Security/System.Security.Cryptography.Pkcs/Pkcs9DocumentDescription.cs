@@ -2,11 +2,10 @@
 // Pkcs9DocumentDescription.cs - System.Security.Cryptography.Pkcs.Pkcs9DocumentDescription
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
+// Copyright (C) 2004 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,15 +30,38 @@
 #if NET_2_0
 
 using System;
+using System.Text;
 
 namespace System.Security.Cryptography.Pkcs {
 
-	public class Pkcs9DocumentDescription : Pkcs9Attribute {
+	public sealed class Pkcs9DocumentDescription : Pkcs9Attribute {
 
 		private const string oid = "1.3.6.1.4.1.311.88.2.2";
 
+		private string _desc;
+
+		[MonoTODO ("encode for RawData using Mono.Security")]
+		public Pkcs9DocumentDescription ()
+			: base (new Oid (oid), null)
+		{
+		}
+
+		[MonoTODO ("encode for RawData using Mono.Security")]
 		public Pkcs9DocumentDescription (string documentDescription)
-			: base (new Oid (oid), documentDescription) {}
+			: base (new Oid (oid), Encoding.Unicode.GetBytes (documentDescription))
+		{
+			_desc = documentDescription;
+		}
+
+		[MonoTODO ("decode using Mono.Security")]
+		public Pkcs9DocumentDescription (byte[] encodedDocumentDescription)
+			: base (new Oid (oid), encodedDocumentDescription)
+		{
+		}
+
+		public string DocumentDescription {
+			get { return _desc; }
+		}
 	}
 }
 

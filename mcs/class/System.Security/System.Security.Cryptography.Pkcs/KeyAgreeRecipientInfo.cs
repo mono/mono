@@ -2,11 +2,10 @@
 // KeyAgreeRecipientInfo.cs - System.Security.Cryptography.Pkcs.KeyAgreeRecipientInfo
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
+// Copyright (C) 2004 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,8 +36,11 @@ namespace System.Security.Cryptography.Pkcs {
 	[MonoTODO]
 	public sealed class KeyAgreeRecipientInfo : RecipientInfo {
 
-		// only accessible from EnvelopedPkcs7.RecipientInfos
-		internal KeyAgreeRecipientInfo () {}
+		// only accessible from EnvelopedCms.RecipientInfos
+		internal KeyAgreeRecipientInfo () 
+			: base (RecipientInfoType.KeyAgreement) 
+		{
+		}
 
 		public DateTime Date {
 			get { return DateTime.MinValue; }

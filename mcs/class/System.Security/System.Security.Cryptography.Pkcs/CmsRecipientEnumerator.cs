@@ -1,11 +1,11 @@
 //
-// RecipientInfo.cs - System.Security.Cryptography.Pkcs.RecipientInfo
+// System.Security.Cryptography.Pkcs.CmsRecipientEnumerator
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell Inc. (http://www.novell.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,35 +30,42 @@
 #if NET_2_0
 
 using System;
+using System.Collections;
 
 namespace System.Security.Cryptography.Pkcs {
 
-	public abstract class RecipientInfo {
+	public sealed class CmsRecipientEnumerator : IEnumerator {
 
-		private RecipientInfoType _type;
+		private IEnumerator enumerator;
 
 		// constructors
 
-		// documented as protected at http://longhorn.msdn.microsoft.com
-		// but not present in the 1.2 beta SDK
-		internal RecipientInfo (RecipientInfoType recipInfoType) 
+		internal CmsRecipientEnumerator (IEnumerable enumerable) 
 		{
-			_type = recipInfoType;
+			enumerator = enumerable.GetEnumerator ();
 		}
 
 		// properties
 
-		public abstract byte[] EncryptedKey { get; }
-
-		public abstract AlgorithmIdentifier KeyEncryptionAlgorithm { get; }
-
-		public abstract SubjectIdentifier RecipientIdentifier { get; }
-
-		public RecipientInfoType Type {
-			get { return _type; }
+		public CmsRecipient Current {
+			get { return (CmsRecipient) enumerator.Current; }
 		}
 
-		public abstract int Version { get; }
+		object IEnumerator.Current {
+			get { return enumerator.Current; }
+		}
+
+		// methods
+
+		public bool MoveNext () 
+		{
+			return enumerator.MoveNext ();
+		}
+
+		public void Reset ()
+		{
+			enumerator.Reset ();
+		}
 	}
 }
 

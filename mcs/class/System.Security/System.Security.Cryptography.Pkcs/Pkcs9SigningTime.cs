@@ -2,11 +2,10 @@
 // Pkcs9SigningTime.cs - System.Security.Cryptography.Pkcs.Pkcs9SigningTime
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
+// Copyright (C) 2004 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,15 +33,36 @@ using System;
 
 namespace System.Security.Cryptography.Pkcs {
 
-	public class Pkcs9SigningTime : Pkcs9Attribute {
+	public sealed class Pkcs9SigningTime : Pkcs9Attribute {
 
 		private const string oid = "1.2.840.113549.1.9.5";
 		private const string name = "Signing Time";
 
-		public Pkcs9SigningTime () : this (DateTime.Now) {}
+		private DateTime _signingTime;
 
-		public Pkcs9SigningTime (DateTime signingTime) 
-			: base (new Oid (oid, name), signingTime)  {}
+		[MonoTODO ("encode for RawData using Mono.Security")]
+		public Pkcs9SigningTime () 
+			: base (new Oid (oid, name), null)
+		{
+			_signingTime = DateTime.Now;
+		}
+
+		[MonoTODO ("encode for RawData using Mono.Security")]
+		public Pkcs9SigningTime (DateTime signingTime)
+			: base (new Oid (oid, name), null)
+		{
+			_signingTime = signingTime;
+		}
+
+		[MonoTODO ("decode using Mono.Security")]
+		public Pkcs9SigningTime (byte[] encodedSigningTime)
+			: base (new Oid (oid, name), null)
+		{
+		}
+
+		public DateTime SigningTime {
+			get { return _signingTime; }
+		}
 	}
 }
 

@@ -1,11 +1,11 @@
 //
-// SignerInfoCollection.cs - System.Security.Cryptography.Pkcs.SignerInfoCollection
+// System.Security.Cryptography.Pkcs.CmsRecipientCollection
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell Inc. (http://www.novell.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,17 +31,32 @@
 
 using System;
 using System.Collections;
+using System.Security.Cryptography.X509Certificates;
 
 namespace System.Security.Cryptography.Pkcs {
 
-	public sealed class SignerInfoCollection : ICollection {
+	public sealed class CmsRecipientCollection : ICollection, IEnumerable {
 
 		private ArrayList _list;
 
-		// only accessible from SignedPkcs7.SignerInfos or SignerInfo.CounterSignerInfos
-		internal SignerInfoCollection () 
+		// constructors
+
+		public CmsRecipientCollection () 
 		{
 			_list = new ArrayList ();
+		}
+
+		public CmsRecipientCollection (CmsRecipient recipient) : base () 
+		{
+			_list.Add (recipient);
+		}
+
+		public CmsRecipientCollection (SubjectIdentifierType recipientIdentifierType, X509CertificateExCollection certificates) : base () 
+		{
+			foreach (X509CertificateEx x509 in certificates) {
+				CmsRecipient p7r = new CmsRecipient (recipientIdentifierType, x509);
+				_list.Add (p7r);
+			}
 		}
 
 		// properties
@@ -54,8 +69,8 @@ namespace System.Security.Cryptography.Pkcs {
 			get { return _list.IsSynchronized; }
 		}
 
-		public SignerInfo this [int index] {
-			get { return (SignerInfo) _list [index]; }
+		public CmsRecipient this [int index] {
+			get { return (CmsRecipient) _list [index]; }
 		}
 
 		public object SyncRoot {
@@ -64,9 +79,9 @@ namespace System.Security.Cryptography.Pkcs {
 
 		// methods
 
-		internal void Add (SignerInfo signer) 
+		public int Add (CmsRecipient recipient) 
 		{
-			_list.Add (signer);
+			return _list.Add (recipient);
 		}
 
 		public void CopyTo (Array array, int index) 
@@ -74,19 +89,24 @@ namespace System.Security.Cryptography.Pkcs {
 			_list.CopyTo (array, index);
 		}
 
-		[MonoTODO]
-		public void CopyTo (SignerInfo[] array, int index)
+		public void CopyTo (CmsRecipient[] array, int index) 
 		{
+			_list.CopyTo (array, index);
 		}
 
-		public SignerInfoEnumerator GetEnumerator ()
+		public CmsRecipientEnumerator GetEnumerator () 
 		{
-			return new SignerInfoEnumerator (_list);
+			return new CmsRecipientEnumerator (_list);
 		}
 
-		IEnumerator IEnumerable.GetEnumerator () 
+		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			return new SignerInfoEnumerator (_list);
+			return new CmsRecipientEnumerator (_list);
+		}
+
+		public void Remove (CmsRecipient recipient) 
+		{
+			_list.Remove (recipient);
 		}
 	}
 }

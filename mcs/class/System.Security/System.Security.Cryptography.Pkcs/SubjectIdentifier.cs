@@ -2,11 +2,10 @@
 // SubjectIdentifier.cs - System.Security.Cryptography.Pkcs.SubjectIdentifier
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
+// Copyright (C) 2004 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,7 +33,7 @@ using System;
 
 namespace System.Security.Cryptography.Pkcs {
 
-	public class SubjectIdentifier {
+	public sealed class SubjectIdentifier {
 
 		private SubjectIdentifierType _type;
 		private object _value;
