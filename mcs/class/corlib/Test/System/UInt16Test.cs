@@ -23,15 +23,15 @@ public class UInt16Test : TestCase
 	private const string MyString3 = "65535";
 	private string[] Formats1 = {"c", "d", "e", "f", "g", "n", "p", "x" };
 	private string[] Formats2 = {"c5", "d5", "e5", "f5", "g5", "n5", "p5", "x5" };
-	private string[] Results1 = {NumberFormatInfo.InvariantInfo.CurrencySymbol+"0.00",
-					"0", "0.000000e+000", "0.00",
-					"0", "0.00", "0.00 %", "0"};
+	private string[] Results1 = {null,
+				     "0", "0.000000e+000", "0.00",
+				     "0", "0.00", "0.00 %", "0"};
+	private string[] Results2 = {null,
+				     "65535", "6.55350e+004", "65535.00000",
+				     "65535", "65,535.00000", "6,553,500.00000 %", "0ffff"};
 	private string[] ResultsNfi1 = {NumberFormatInfo.InvariantInfo.CurrencySymbol+"0.00",
 					"0", "0.000000e+000", "0.00",
 					"0", "0.00", "0.00 %", "0"};
-	private string[] Results2 = {NumberFormatInfo.InvariantInfo.CurrencySymbol+"65,535.00000",
-					"65535", "6.55350e+004", "65535.00000",
-					"65535", "65,535.00000", "6,553,500.00000 %", "0ffff"};
 	private string[] ResultsNfi2 = {NumberFormatInfo.InvariantInfo.CurrencySymbol+"65,535.00000",
 					"65535", "6.55350e+004", "65535.00000",
 					"65535", "65,535.00000", "6,553,500.00000 %", "0ffff"};
@@ -49,6 +49,9 @@ public class UInt16Test : TestCase
 
 		// Set culture to en-US and don't let the user override.
 		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US", false);
+
+		Results1 [0] = NumberFormatInfo.CurrentInfo.CurrencySymbol+"0.00";
+		Results2 [0] = NumberFormatInfo.CurrentInfo.CurrencySymbol+"65,535.00000";
 	}
 
 	protected override void TearDown()
