@@ -1,0 +1,6 @@
+2003-09-29    <cesar@ciencias.unam.mx>
+
+	* VsaEngine.cs: uncommented inheritance from BaseVsaEngine (thanks
+	goes to jackson). Added  constructor, added InitOptions,
+	GetSpecificOption, SetSpecificOption.
+

@@ -9,14 +9,18 @@
 using System;
 using System.Reflection;
 using Microsoft.Vsa;
+using System.Collections;
 
 namespace Microsoft.JScript.Vsa {
 
-	public class VsaEngine : /* BaseVsaEngine, */ IRedirectOutput {
+	public class VsaEngine : BaseVsaEngine,  IRedirectOutput {
+		
+		static private Hashtable options;
 
 		public VsaEngine ()
+			: base ("", "", false)
 		{
-			throw new NotImplementedException ();
+			InitOptions ();
 		}
 
 		public VsaEngine (bool b)
@@ -110,12 +114,13 @@ namespace Microsoft.JScript.Vsa {
 			throw new NotImplementedException ();
 		}
 
-		/*
+
 		public override bool IsValidIdentifier (string ident)
 		{
 			throw new NotImplementedException ();
 		}
-		*/
+
+
 		public LenientGlobalObject LenientGlobalObject {
 			get { throw new NotImplementedException (); }
 		}
@@ -142,6 +147,7 @@ namespace Microsoft.JScript.Vsa {
 		}
 		*/
 
+
 		public virtual void Restart ()
 		{
 			throw new NotImplementedException ();
@@ -165,6 +171,45 @@ namespace Microsoft.JScript.Vsa {
 		public virtual void SetOutputStream (IMessageReceiver output)
 		{
 			throw new NotImplementedException ();
+		}
+
+		internal static void InitOptions ()
+		{
+			options = new Hashtable ();
+		
+			options.Add ("AlwaysGenerateIL", false);
+			options.Add ("CLSCompliant", false);
+			options.Add ("DebugDirectory", "");
+			options.Add ("Defines", new Hashtable ());
+			options.Add ("Fast", true);
+			// FIXME: "ManagedResources"
+			options.Add ("Print", true);
+			options.Add ("UseContextRelativeStatics", false);
+			options.Add ("VersionSafe", false);
+			options.Add ("WarnAsError", false);
+			options.Add ("WarningLevel", 1);
+			options.Add ("Win32Resource", "");
+		}
+
+		protected override object GetSpecificOption (string name)
+		{
+			object opt;
+
+			try {
+				opt = options [name];
+			} catch (NotSupportedException e) {
+				throw new VsaException (VsaError.OptionNotSupported);
+			}
+			return opt;
+		}
+
+		protected override void SetSpecificOption (string name, object val)
+		{
+			try {
+				options [name] = val;
+			} catch (NotSupportedException e) {
+				throw new VsaException (VsaError.OptionNotSupported);
+			}
 		}
 	}
 }
