@@ -1,8 +1,15 @@
 2003-09-03  Zoltan Varga  <vargaz@freemail.hu>
 
-	* reflection.c: Endianness fixes from Bernie Solomon 
+	* reflection.h reflection.c class.h class.c: Delete duplicate 
+	definition of mono_type_get_name () from reflection.c and export the
+	one in class.c.
+
+	* class.c: Class loading fixes from Bernie Solomon 
 	(bernard@ugsolutions.com).
 
+	* reflection.c: Endianness fixes from Bernie Solomon 
+	(bernard@ugsolutions.com).
+	
 2003-09-01  Zoltan Varga  <vargaz@freemail.hu>
 
 	* assembly.h assembly.c: Define a file format version for AOT
