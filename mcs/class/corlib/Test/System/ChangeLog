@@ -1,3 +1,8 @@
+2003-03-09  Nick Drochak <ndrochak@gol.com>
+
+	* ConsoleTest.cs: 
+	* ConvertTest.cs: Re-enable tests. They no longer hang the runtime.
+
 2003-03-03  Nick Drochak <ndrochak@gol.com>
 
 	* StringTest.cs: Catch exception the .NET docs say should not be thrown

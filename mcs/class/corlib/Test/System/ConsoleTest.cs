@@ -175,7 +175,6 @@ public class ConsoleTest : TestCase
 		}
 	}
 
-	[Ignore("set out hangs mono in the tests")]
 	public void TestSetOut() {
 		{
 			bool errorThrown = false;
@@ -200,7 +199,6 @@ public class ConsoleTest : TestCase
 		}
 	}
 
-	[Ignore("Hangs mono right now")]
 	public void TestWrite() {
 		Stream s = new MemoryStream();
 		TextWriter w = new StreamWriter(s);
@@ -242,7 +240,6 @@ public class ConsoleTest : TestCase
 		// TODO - Likewise for char[], decimal, double, int, long, object, single, uint32, uint64
 		// TODO - write with format string
 	}
-	[Ignore("hangs mono right now")]
 	public void TestWriteLine() {
 		Stream s = new MemoryStream();
 		TextWriter w = new StreamWriter(s);
