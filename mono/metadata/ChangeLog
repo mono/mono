@@ -1,6 +1,7 @@
 2002-04-03  Dietmar Maurer  <dietmar@ximian.com>
 
 	* icall.c (ves_icall_InternalExecute): impl. FielSetter
+	(ves_icall_System_Array_SetValueImpl): removed strange MonoArray cast
 
 2002-03-30  Dietmar Maurer  <dietmar@ximian.com>
 
