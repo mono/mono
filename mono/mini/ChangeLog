@@ -1,5 +1,25 @@
 2003-09-04  Zoltan Varga  <vargaz@freemail.hu>
 
+	* aot.c: Move AOT module loading logic here from mono_assembly_open.
+
+	* aot.c: Save the optimization flags used to compile the code into
+	the AOT module.
+
+	* mini.h mini-x86.c mini.c aot.c: Added new types of relocations to
+	support emitting domain specific code.
+	
+	* mini.h mini.c aot.c: Modified the JIT so the generated AOT code is 
+	no longer domain neutral. It can be made domain neutral by compiling 
+	with --optimize=shared.
+
+	* aot.c (mono_aot_get_method_inner): Allow sharing of AOT methods
+	between appdomains.
+
+	* driver.c mini.h mini.c: New --no-aot debugging option which disables
+	loading of AOT code.
+
+	* inssel-x86.brg: Added missing AOTCONST -> OUTARG_VT rule.
+	
 	* tramp-x86.c (x86_magic_trampoline): Avoid patching the calling method
 	if there is no domain neutrality information.
 
