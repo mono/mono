@@ -10,10 +10,10 @@ using System.Collections;
 
 namespace System.Web.UI {
 
-	public sealed class ValidatedCollection : ICollection, IEnumerable
+	public sealed class ValidatorCollection : ICollection, IEnumerable
 	{
 
-		public ValidatedCollection ()
+		public ValidatorCollection ()
 		{
 		}
 

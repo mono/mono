@@ -1,5 +1,10 @@
 2002-05-10  Duncan Mak  <duncan@ximian.com>
 
+	* ValidatorCollection.cs: Fixed typo, ValidatedCollection to ValidatorCollection. 
+
+	* Page.cs (Validators): return type should be ValidatorCollection,
+	not ValidatedCollection.
+
 	* TagPrefixAttribute.cs: Added to CVS.
 
 2002-05-07  Duncan Mak  <duncan@ximian.com>

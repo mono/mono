@@ -157,7 +157,7 @@ namespace System.Web.UI {
 			get { throw new NotImplementedException (); }
 		}
 
-		public ValidatedCollection Validators {
+		public ValidatorCollection Validators {
 			get { throw new NotImplementedException (); }
 		}
 
