@@ -23,7 +23,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		protected Reference reference;
 
 		[SetUp]
-		void SetUp () 
+		public void SetUp () 
 		{
 			reference = new Reference ();
 		}

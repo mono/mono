@@ -24,7 +24,7 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		private KeyInfo info;
 
 		[SetUp]
-		void SetUp () 
+		public void SetUp () 
 		{
 			info = new KeyInfo ();
 		}

@@ -1,3 +1,8 @@
+2004-05-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* KeyInfoTest.cs: SetUp is now public (required for new nunit).
+	* ReferenceTest.cs: SetUp is now public (required for new nunit).
+
 2004-05-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlDsigC14NTransform.cs : Reverted Ingore attribute that does not
