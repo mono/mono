@@ -1,5 +1,9 @@
 2004-04-28  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.c (mono_marshal_load_type_info): Calculate the minimum
+	alignment for the type using the native alignment of its members 
+	instead of using klass->min_align.
+
 	* metadata.c (mono_type_stack_size): Fix size of TYPEDBYREF.
 
 2004-04-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
