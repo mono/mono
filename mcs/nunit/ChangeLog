@@ -3,6 +3,8 @@
 	* makefile.gnu, list.unix: Added makefile.gnu for self-hosting
 	GNU/Linux build.
 
+	* src/NUnitConsole/makefile.gnu, src/NUnitConsole/list.unix: Likewise.
+
 2002-03-08  Nick Drochak  <ndrochak@gol.com>
 
 	* nunit.build: exclude all the obsolete stuff, and prevent csc from
