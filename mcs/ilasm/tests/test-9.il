@@ -15,8 +15,10 @@
 	.class public auto ansi A extends [mscorlib]System.Object 
 	{
 		
-		.method public void .ctor () cil managed
+		.method public instance void .ctor () cil managed
 		{
+			ldstr "In Constructor"
+			call void [mscorlib]System.Console::WriteLine (string)
 			ret		
 		}
 		
@@ -28,6 +30,7 @@
 		.method public static void main (string) cil managed {
 			.entrypoint
 			newobj void Mono.ILASM.Tests.A::.ctor ()
+			pop
 			ret
 		}
 	}

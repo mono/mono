@@ -1,3 +1,8 @@
+2003-03-17 Jackson Harper <jackson@latitudegeo.com>
+
+	* test-9.il: Add output to the constructor so I know it is called, give 
+	the constructor the instance call conv.
+
 2003-03-16 Jackson Harper <jackson@latitudegeo.com>
 
 	* test-9.il: New test, test instaniating a class
