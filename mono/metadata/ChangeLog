@@ -1,3 +1,11 @@
+2002-08-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* object.c:
+	(mono_print_unhandled_exception): changed g_warning by g_printerr
+	because g_log has a 1024 characters limit (yeah, i got a big stack
+	trace). Don't print exception name, that should be in ToString 
+	returned string.
+
 2002-08-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c: added ves_icall_FieldInfo_SetValueInternal.
