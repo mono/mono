@@ -1,3 +1,8 @@
+2004-11-09  Duncan Mak  <duncan@ximian.com>
+
+	* NonEmptyStringConfigurationProperty.cs: Add XML_DEP, this should
+	fix the build.
+
 2004-11-09  Lluis Sanchez Gual <lluis@novell.com>
 
 	* ConfigurationElement.cs: Implemented Equals and GetHashCode.
