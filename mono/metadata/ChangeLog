@@ -1,4 +1,9 @@
 
+Thu Nov 29 18:20:58 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* class.h, class.h: take minimum alignment into consideration so
+	that the fields of a class remain aligned also when in an array.
+
 Tue Nov 27 16:39:01 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* loader.h, loader.c: add mono_method_get_param_names().
