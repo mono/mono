@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.MonthCalendar
+//// System.Windows.Forms.MonthCalendar.cs
 ////
 //// Author:
 ////   stubbed out by Paul Osman (paul.osman@sympatico.ca)

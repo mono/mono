@@ -1,5 +1,5 @@
 //
-// System.IButtonControl.cs
+// System.Windows.Forms.IButtonControl.cs
 //
 // Author:
 //   Dennis hayes (dennish@raytek.com)

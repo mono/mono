@@ -1,5 +1,5 @@
 //
-// System.IContainerControl.cs
+// System.Windows.Forms.IContainerControl.cs
 //
 // Author:
 // William Lamb (wdlamb@notwires.com)

@@ -1,5 +1,5 @@
 //
-// System.IDataObject.cs
+// System.Windows.Forms.IDataObject.cs
 //
 // Author:
 // William Lamb (wdlamb@notwires.com)

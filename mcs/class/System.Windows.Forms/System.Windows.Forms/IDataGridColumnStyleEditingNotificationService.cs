@@ -1,5 +1,5 @@
 //
-// System.IDataGridColumnStyleEditingNotificationService.cs
+// System.Windows.Forms.IDataGridColumnStyleEditingNotificationService.cs
 //
 // Author:
 // William Lamb (wdlamb@notwires.com)

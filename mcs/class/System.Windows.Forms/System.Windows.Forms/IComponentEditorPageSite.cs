@@ -1,5 +1,5 @@
 //
-// System.IComponentEditorPageSite.cs
+// System.Windows.Forms.IComponentEditorPageSite.cs
 //
 // Author:
 // William Lamb (wdlamb@notwires.com)

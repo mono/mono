@@ -131,10 +131,10 @@ namespace System.Windows.Forms {
 		
 		public override bool Equals (object o)
 		{
-			if (!(o is LinkArea))
+			if (!(o is Message))
 				return false;
 
-			return (this == (LinkArea) o);
+			return (this == (Message) o);
 		}
 
 		/// <summary>

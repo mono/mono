@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.Menu
+//// System.Windows.Forms.Menu.cs
 ////
 //// Author:
 ////   stubbed out by Paul Osman (paul.osman@sympatico.ca)

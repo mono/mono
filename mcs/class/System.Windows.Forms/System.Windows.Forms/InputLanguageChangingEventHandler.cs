@@ -1,5 +1,5 @@
 //
-// System.InputLanguageChangingEventHandler.cs
+// System.Windows.Forms.InputLanguageChangingEventHandler.cs
 //
 // Author:
 //   Dennis hayes (dennish@raytek.com)

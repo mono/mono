@@ -1,5 +1,5 @@
 //
-// System.IWindowTarget.cs
+// System.Windows.Forms.IWindowTarget.cs
 //
 // Author:
 // William Lamb (wdlamb@notwires.com)

@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.ImageListStreamer
+// System.Windows.Forms.ImageListStreamer.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.ImageList.ImageCollection
+// System.Windows.Forms.ImageList.ImageCollection.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

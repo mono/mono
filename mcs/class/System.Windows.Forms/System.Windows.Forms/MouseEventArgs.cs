@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.MouseEventArgs
+//// System.Windows.Forms.MouseEventArgs.cs
 ////
 //// Author:
 ////   stubbed out by Paul Osman (paul.osman@sympatico.ca)

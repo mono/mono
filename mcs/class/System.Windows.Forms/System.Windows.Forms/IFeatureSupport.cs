@@ -1,5 +1,5 @@
 //
-// System.IFeatureSupport.cs
+// System.Windows.Forms.IFeatureSupport.cs
 //
 // Author:
 // William Lamb (wdlamb@notwires.com)

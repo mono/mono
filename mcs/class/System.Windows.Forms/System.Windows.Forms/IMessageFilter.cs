@@ -1,5 +1,5 @@
 //
-// System.IMessageFilter.cs
+// System.Windows.Forms.IMessageFilter.cs
 //
 // Author:
 //   Dennis hayes (dennish@raytek.com)

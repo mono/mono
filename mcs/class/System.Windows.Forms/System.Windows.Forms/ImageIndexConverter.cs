@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.ImageIndexConverter
+// System.Windows.Forms.ImageIndexConverter.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

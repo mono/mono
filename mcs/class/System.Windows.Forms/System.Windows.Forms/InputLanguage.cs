@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.InputLanguage
+// System.Windows.Forms.InputLanguage.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

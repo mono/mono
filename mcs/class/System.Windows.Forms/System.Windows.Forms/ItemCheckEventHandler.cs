@@ -1,5 +1,5 @@
 //
-// System.ItemCheckEventHandler.cs
+// System.Wondows.Forms.ItemCheckEventHandler.cs
 //
 // Author:
 //   Dennis hayes (dennish@raytek.com)

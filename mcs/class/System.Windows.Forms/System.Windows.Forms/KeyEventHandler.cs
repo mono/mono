@@ -1,5 +1,5 @@
 //
-// System.KeyEventHandler.cs
+// System.Windows.Forms.KeyEventHandler.cs
 //
 // Author:
 //   Dennis hayes (dennish@raytek.com)

@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.ImageList
+// System.Windows.Forms.ImageList.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

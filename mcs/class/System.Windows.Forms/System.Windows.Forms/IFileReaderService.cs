@@ -1,5 +1,5 @@
 //
-// System.IFileReaderService.cs
+// System.Windows.Forms.IFileReaderService.cs
 //
 // Author:
 // William Lamb (wdlamb@notwires.com)

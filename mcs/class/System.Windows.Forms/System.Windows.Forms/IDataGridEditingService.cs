@@ -1,5 +1,5 @@
 //
-// System.IDataGridEditingService.cs
+// System.Windows.Forms.IDataGridEditingService.cs
 //
 // Author:
 // William Lamb (wdlamb@notwires.com)

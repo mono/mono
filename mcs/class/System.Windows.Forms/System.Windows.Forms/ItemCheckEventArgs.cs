@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.ItemCheckEventArgs
+// System.Windows.Forms.ItemCheckEventArgs.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

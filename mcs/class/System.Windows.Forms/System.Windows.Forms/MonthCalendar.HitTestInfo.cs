@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.MonthCalendar.HitTestInfo
+//// System.Windows.Forms.MonthCalendar.HitTestInfo.cs
 ////
 //// Author:
 ////   stubbed out by Paul Osman (paul.osman@sympatico.ca)

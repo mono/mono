@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.ItemChangedEventArgs
+// System.Windows.Forms.ItemChangedEventArgs.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

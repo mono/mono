@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.KeyPressEventArgs
+// System.Windows.Forms.KeyPressEventArgs.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

@@ -1,5 +1,5 @@
 //
-// System.ICommandExecutor.cs
+// System.Windows.Forms.ICommandExecutor.cs
 //
 // Author:
 // William Lamb (wdlamb@notwires.com)

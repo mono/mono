@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.Menu.MenuItemCollection
+//// System.Windows.Forms.Menu.MenuItemCollection.cs
 ////
 //// Author:
 ////   stubbed out by Paul Osman (paul.osman@sympatico.ca)

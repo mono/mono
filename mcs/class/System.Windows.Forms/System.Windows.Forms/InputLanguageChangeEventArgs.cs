@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.InputLanguageChangeEventArgs
+// System.Windows.Forms.InputLanguageChangeEventArgs.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
