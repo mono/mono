@@ -1,7 +1,8 @@
-MCS = mcs
+MCS =../mcs/mcs.exe
 MCS_FLAGS = /target:exe $(MCS_DEFINES)
 INSTALL = /usr/bin/install
 prefix = /usr
+RUNTIME=mono
 
 COMPILER_SOURCES = \
       AssemblyInfo.cs   \
@@ -40,7 +41,7 @@ COMPILER_SOURCES = \
 all: mbas.exe
 
 mbas.exe: $(COMPILER_SOURCES)
-	$(MCS) $(MCSFLAGS) /r:Mono.GetOptions.dll /out:mbas.exe $(COMPILER_SOURCES)
+	$(RUNTIME) $(MCS) $(MCSFLAGS) /r:Mono.GetOptions.dll /out:mbas.exe $(COMPILER_SOURCES)
 
 clean:
 	rm -f mbas.exe y.output mbas.pdb *~ .*~ mb-parser.cs mbas.log response
