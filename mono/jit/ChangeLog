@@ -1,5 +1,9 @@
 2001-09-10  Miguel de Icaza  <miguel@ximian.com>
 
+	* x86.brg: Use Unix assembly syntax.
+
+	* emit-x86.c: support code, should be moved
+
 	* testjit.c: Use GPtrArrays instead of GLists, as those are very
 	inefficient at appends.
 
