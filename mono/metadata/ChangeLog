@@ -1,3 +1,7 @@
+2002-09-25  Martin Baulig  <martin@gnome.org>
+
+	* debug-mono-symfile.h: Incremented version number.
+
 2002-09-24  Martin Baulig  <martin@gnome.org>
 
 	* class.c (mono_debugger_class_init_func): New global function
