@@ -1,3 +1,8 @@
+2003-02-04  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* MarshalByRefObject.cs: Implemented GetLifetimeService() and 
+	  InitializeLifetimeService().
+
 2003-02-03  Patrik Torstensson
 
 	* AppDomain.cs: New internalcalls for handling domain/context switches

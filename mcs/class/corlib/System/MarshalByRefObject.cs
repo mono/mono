@@ -15,7 +15,7 @@ namespace System {
 
 	[Serializable]
 	public abstract class MarshalByRefObject {
-		private Identity _identity;		// Holds marshalling iformation of the object
+		private ServerIdentity _identity;		// Holds marshalling iformation of the object
 
 		internal Identity GetObjectIdentity(MarshalByRefObject obj, out bool IsClient) {
 			IsClient = false;
@@ -33,7 +33,7 @@ namespace System {
 			return objId;
 		}
 
-		internal Identity ObjectIdentity
+		internal ServerIdentity ObjectIdentity
 		{
 			get { return _identity; }
 			set { _identity = value; }
@@ -48,12 +48,13 @@ namespace System {
 
 		public object GetLifetimeService ()
 		{
-			return null;
+			if (_identity == null) return null;
+			else return _identity.Lease;
 		}
 
 		public virtual object InitializeLifetimeService ()
 		{
-			return null;
+			return new System.Runtime.Remoting.Lifetime.Lease();
 		}
 
 		protected MarshalByRefObject ()
