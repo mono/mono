@@ -224,13 +224,13 @@ namespace System.Xml.XPath
 		public virtual XPathExpression Compile (string xpath)
 		{
 			XPathParser parser = new XPathParser ();
-			return new CompiledExpression (parser.Compile (xpath));
+			return new CompiledExpression (xpath, parser.Compile (xpath));
 		}
 		
 		internal virtual XPathExpression Compile (string xpath, System.Xml.Xsl.IStaticXsltContext ctx)
 		{
 			XPathParser parser = new XPathParser (ctx);
-			return new CompiledExpression (parser.Compile (xpath));
+			return new CompiledExpression (xpath, parser.Compile (xpath));
 		}
 
 		public virtual object Evaluate (string xpath)

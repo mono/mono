@@ -53,15 +53,18 @@ namespace System.Xml.XPath
 		protected NSResolver _nsm;
 		protected Expression _expr;
 		XPathSorters _sorters;
+		string rawExpression;
 
-		public CompiledExpression (Expression expr)
+		public CompiledExpression (string raw, Expression expr)
 		{
 			_expr = expr;
+			rawExpression = raw;
 		}
 		private CompiledExpression (CompiledExpression other)
 		{
 			_nsm = other._nsm;
 			_expr = other._expr;
+			rawExpression = other.rawExpression;
 		}
 #if XPATH_DEBUG
 		public override Test.Xml.XPath.XPathExpression Clone () { return new CompiledExpression (this); }
@@ -84,7 +87,7 @@ namespace System.Xml.XPath
 #endif
 
 		internal NSResolver NamespaceManager { get { return _nsm; } }
-		public override String Expression { get { return _expr.ToString (); }}
+		public override String Expression { get { return rawExpression; }}
 		public override XPathResultType ReturnType { get { return _expr.ReturnType; }}
 
 		public object Evaluate (BaseIterator iter)

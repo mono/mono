@@ -1,5 +1,10 @@
 2004-11-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Expression.cs, XPathNavigator.cs : hold raw expression field for
+	  get_Expression. It is preparation for expression optimization.
+
+2004-11-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Iterator.cs : SimpleIterator._current could be cloned only when
 	  it is required.
 
