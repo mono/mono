@@ -1,3 +1,6 @@
+2004-06-04 Anirban Bhattacharjee <banirban@novell.com>
+	* class.cs: changed exception number in event grammar
+
 2004-06-03 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: RaiseEvent grammar fixed to get it working
 

@@ -4237,7 +4237,7 @@ namespace Mono.MonoBASIC {
 				return false;
 
 			if (!MemberType.IsSubclassOf (TypeManager.delegate_type)) {
-				Report.Error (66, Location, "'" + parent.Name + "." + Name +
+				Report.Error (31044, Location, "'" + parent.Name + "." + Name +
 					      "' : event must be of a delegate type");
 				return false;
 			}
