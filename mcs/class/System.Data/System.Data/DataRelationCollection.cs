@@ -47,7 +47,7 @@ namespace System.Data {
 			{
 				get {
 					int index = IndexOf (name, true);
-					return index < 0 ? null : (DataRelation) list[index];
+					return index < 0 ? null : (DataRelation) List[index];
 				}
 			}
 
@@ -183,7 +183,7 @@ namespace System.Data {
 			{
 				get {
 					int index = IndexOf (name, true);
-					return index < 0 ? null : (DataRelation) list[index];
+					return index < 0 ? null : (DataRelation) List[index];
 				}
 			}
 
@@ -470,9 +470,9 @@ namespace System.Data {
 		private int IndexOf (string name, bool error)
 		{
 			int count = 0, match = -1;
-			for (int i = 0; i < list.Count; i++)
+			for (int i = 0; i < List.Count; i++)
 			{
-				String name2 = ((DataRelation) list[i]).RelationName;
+				String name2 = ((DataRelation) List[i]).RelationName;
 				if (String.Compare (name, name2, true) == 0)
 				{
 					if (String.Compare (name, name2, false) == 0)

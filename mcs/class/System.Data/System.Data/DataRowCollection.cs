@@ -41,7 +41,7 @@ namespace System.Data
 				if (index >= Count)
 					throw new IndexOutOfRangeException ("There is no row at position " + index + ".");
 
-				return (DataRow) list[index]; 
+				return (DataRow) List[index]; 
 			}
 		}
 
@@ -50,7 +50,7 @@ namespace System.Data
 		/// </summary>
 		protected override ArrayList List 
 		{
-			get { return list; }
+			get { return base.List; }
 		}		
 
 		/// <summary>
@@ -75,9 +75,9 @@ namespace System.Data
 				ValidateDataRowInternal(row);
 			
 			row.HasParentCollection = true;
-			list.Add (row);
+			List.Add (row);
 			// Set the row id.
-			row.RowID = list.Count - 1;
+			row.RowID = List.Count - 1;
 			row.AttachRow ();
 			row.Table.ChangedDataRow (row, DataRowAction.Add);
 		}
@@ -112,7 +112,7 @@ namespace System.Data
 					}
 				}
 			}
-			list.Clear ();
+			List.Clear ();
 		}
 
 		/// <summary>
@@ -243,10 +243,10 @@ namespace System.Data
 				// we have to check that the new row doesn't colide with existing row
 				ValidateDataRowInternal(row);
 				
-			if (pos >= list.Count)
-				list.Add (row);
+			if (pos >= List.Count)
+				List.Add (row);
 			else
-				list.Insert (pos, row);
+				List.Insert (pos, row);
 				
 			row.HasParentCollection = true;
 			row.AttachRow ();
@@ -260,11 +260,11 @@ namespace System.Data
 			if (row == null) {
 				throw new IndexOutOfRangeException ("The given datarow is not in the current DataRowCollection.");
 			}
-			int index = list.IndexOf(row);
+			int index = List.IndexOf(row);
 			if (index < 0) {
 				throw new IndexOutOfRangeException ("The given datarow is not in the current DataRowCollection.");
 			}
-			list.RemoveAt(index);
+			List.RemoveAt(index);
 		}
 
 		/// <summary>
@@ -274,7 +274,7 @@ namespace System.Data
 		{
 			if (row == null)
 				throw new IndexOutOfRangeException ("The given datarow is not in the current DataRowCollection.");
-			int index = list.IndexOf(row);
+			int index = List.IndexOf(row);
 			if (index < 0)
 				throw new IndexOutOfRangeException ("The given datarow is not in the current DataRowCollection.");
 			row.Delete();
@@ -289,9 +289,9 @@ namespace System.Data
 		/// </summary>
 		public void RemoveAt (int index) 
 		{			
-			if (index < 0 || index >= list.Count)
+			if (index < 0 || index >= List.Count)
 				throw new IndexOutOfRangeException ("There is no row at position " + index + ".");
-			DataRow row = (DataRow)list [index];
+			DataRow row = (DataRow)List [index];
 			row.Delete();
 			row.AcceptChanges();
 		}

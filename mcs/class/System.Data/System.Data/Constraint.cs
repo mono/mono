@@ -49,7 +49,7 @@ namespace System.Data {
 			_properties = new PropertyCollection();
 		}
 
-		protected internal virtual DataSet _DataSet {
+		protected internal virtual DataSet DataSet {
 			get { return dataSet; }
 		}
 

@@ -39,13 +39,13 @@ namespace System.Data {
 		#region Properties
 
 		public DataTable this[int index] {
-			get { return (DataTable)(list[index]); }
+			get { return (DataTable)(List[index]); }
 		}
 
 		public DataTable this[string name] {
 			get { 
 				int index = IndexOf (name, true);
-				return index < 0 ? null : (DataTable) list[index];
+				return index < 0 ? null : (DataTable) List[index];
 			}
 		}
 
@@ -57,7 +57,7 @@ namespace System.Data {
 #endif
 
 		protected override ArrayList List {
-			get { return list; }
+			get { return base.List; }
 		}
 
 		#endregion
@@ -79,7 +79,7 @@ namespace System.Data {
 				throw new ArgumentNullException("table");
             
 			// check if the list already contains this tabe.
-			if(list.Contains(table))
+			if(List.Contains(table))
 				throw new ArgumentException("DataTable already belongs to this DataSet.");
             
 			// if the table name is null or empty string.
@@ -98,7 +98,7 @@ namespace System.Data {
 					throw new DuplicateNameException("A DataTable named '" + table.TableName + "' already belongs to this DataSet.");
 			}
 	
-			list.Add (table);
+			List.Add (table);
 			table.dataSet = dataSet;
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, table));
 		}
@@ -133,7 +133,7 @@ namespace System.Data {
 
 		public void Clear () 
 		{
-			list.Clear ();
+			List.Clear ();
 		}
 
 		public bool Contains (string name) 
@@ -143,7 +143,7 @@ namespace System.Data {
 
 		public virtual int IndexOf (DataTable table) 
 		{
-			return list.IndexOf (table);
+			return List.IndexOf (table);
 		}
 
 		public virtual int IndexOf (string name) 
@@ -154,7 +154,7 @@ namespace System.Data {
 		public void Remove (DataTable table) 
 		{
 			CanRemove(table, true);
-			list.Remove(table);
+			List.Remove(table);
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, table));
 		}
 
@@ -167,7 +167,7 @@ namespace System.Data {
 		{
 			DataTable t = this[index];
 			CanRemove(t, true);
-			list.RemoveAt (index);
+			List.RemoveAt (index);
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, t));
 		}
 
@@ -194,9 +194,9 @@ namespace System.Data {
 		private int IndexOf (string name, bool error)
 		{
 			int count = 0, match = -1;
-			for (int i = 0; i < list.Count; i++)
+			for (int i = 0; i < List.Count; i++)
 			{
-				String name2 = ((DataTable) list[i]).TableName;
+				String name2 = ((DataTable) List[i]).TableName;
 				if (String.Compare (name, name2, true) == 0)
 				{
 					if (String.Compare (name, name2, false) == 0)

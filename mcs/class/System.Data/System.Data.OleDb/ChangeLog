@@ -1,3 +1,8 @@
+2004-04-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* OleDbPermissionAttribute.cs: missing bits from Gert's patch for
+	CLS compliance.
+
 2004-01-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* OleDbPermission.cs : NET_1_2 fix not to call obsolete .ctor.

@@ -36,7 +36,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTrademark("")]
 
 // FIXME Add once compliance is reached
-//[assembly: CLSCompliant(true)]
+[assembly: CLSCompliant(true)]
 [assembly: AssemblyDefaultAlias("System.Data.dll")]
 [assembly: AssemblyInformationalVersion("0.0.0.1")]
 [assembly: NeutralResourcesLanguage("en-US")]

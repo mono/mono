@@ -26,7 +26,7 @@ namespace System.Data.OleDb
 		#region Constructors 
 
 		[MonoTODO]
-		OleDbPermissionAttribute (SecurityAction action) 
+		public OleDbPermissionAttribute (SecurityAction action) 
 			: base (action)
 		{
 		}

@@ -5,7 +5,7 @@ namespace System.Data
 	/// <summary>
 	/// Summary description for Node.
 	/// </summary>
-	public class Node
+	internal class Node
 	{
 		protected int _iBalance;    // currently, -2 means 'deleted'
 		internal Node _nNext;       // node of next index (nNext==null || nNext.iId=iId+1)

@@ -479,9 +479,9 @@ namespace System.Data {
 		private int IndexOf (string name, bool error)
 		{
 			int count = 0, match = -1;
-			for (int i = 0; i < list.Count; i++)
+			for (int i = 0; i < List.Count; i++)
 			{
-				String name2 = ((DataColumn) list[i]).ColumnName;
+				String name2 = ((DataColumn) List[i]).ColumnName;
 				if (String.Compare (name, name2, true) == 0)
 				{
 					if (String.Compare (name, name2, false) == 0)

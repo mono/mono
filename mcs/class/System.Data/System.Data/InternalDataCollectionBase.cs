@@ -33,8 +33,7 @@ namespace System.Data
 	{
 		#region Fields
 
-		// FIXME: keep list protected until mcs/mono is fixed
-		protected ArrayList list = null;
+		private ArrayList list = null;
 		private bool readOnly = false;
 		private bool synchronized = false; 
 
