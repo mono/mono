@@ -1,3 +1,6 @@
+2001-11-06 Nick Drochak <ndrochak@gol.com>
+	* Queue.cs: Fixes from Ricardardo.  QueueTest also updated.
+
 2001-11-04 Nick Drochak <ndrochak@gol.com>
 	* Queue.cs: Fixed small syntax errors that were preventing the compile.
 	I changed the build file to include Queue.cs as well.

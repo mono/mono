@@ -96,7 +96,9 @@ namespace System.Collections {
 			
 			newQueue = new Queue (); // FIXME: improve this...
 			
-			newQueue.contents = (object[]) this.contents.Clone ();
+			newQueue.contents = new object[this.contents.Length];
+			Array.Copy (this.contents, 0, newQueue.contents, 0,
+				    this.contents.Length);
 			newQueue.head = this.head;
 			newQueue.count = this.count;
 			newQueue.capacity = this.capacity;
@@ -178,7 +180,8 @@ namespace System.Collections {
 		// private methods
 
 		private void grow () {
-			int newCapacity = capacity * 2;
+			int newCapacity = (int) Math.Ceiling
+				(capacity * growFactor);
 			object[] newContents = new object[newCapacity];
 			CopyTo (newContents, 0);
 			contents = newContents;

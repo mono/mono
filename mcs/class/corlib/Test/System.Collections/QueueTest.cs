@@ -18,7 +18,8 @@ namespace Testsuite.System.Collections {
 
 	public class QueueTest : TestCase {
 
-		public QueueTest () : base ("System.Collection.Queue testsuite") {}
+		public QueueTest () 
+			: base ("System.Collection.Queue testsuite") {}
 		public QueueTest (String name) : base (name) {}
 
 		protected Queue q1;
@@ -30,7 +31,7 @@ namespace Testsuite.System.Collections {
 			for (int i = 0; i < 100; i++)
 				q1.Enqueue (i);
 			
-			q2 = new Queue (50, 1.5);
+			q2 = new Queue (50, 1.5f);
 			for (int i = 50; i < 100; i++)
 				q2.Enqueue (i);
 
@@ -42,11 +43,11 @@ namespace Testsuite.System.Collections {
 				return new TestSuite (typeof (QueueTest));
 			}
 		}
-
+		
 		public void TestConstructors () {
 			Assert (q1.Count == 100);
 			Assert (q2.Count == 50);
-			Assert (emptyQueue.Count = 0);
+			Assert (emptyQueue.Count == 0);
 			// TODO: Test Queue (ICollection)
 		}
 
@@ -81,22 +82,22 @@ namespace Testsuite.System.Collections {
 
 		public void TestEnumerator () {
 			int i;
-			IEnumerable e;
+			IEnumerator e;
 			e = q1.GetEnumerator ();
 			i = 0;
 			while (e.MoveNext ()) {
-				Assert (e.Current () == i);
+				Assert (((int) e.Current) == i);
 				i++;
 			}
 			e = q2.GetEnumerator ();
 			i = 50;
 			while (e.MoveNext ()) {
-				Assert (e.Current () == i++);
+				Assert (((int) e.Current) == i++);
 				i++;
 			}
 			e = emptyQueue.GetEnumerator ();
 			while (e.MoveNext ()) {
-				Fail ("Empty Queue enumarator returning elements!");
+				Fail ("Empty Queue enumerator returning elements!");
 			}
 			e = q1.GetEnumerator ();
 			try {
@@ -104,14 +105,14 @@ namespace Testsuite.System.Collections {
 				q1.Enqueue (0);
 				e.MoveNext ();
 				Fail ("Should have thrown InvalidOperationException");
-			} catch	(InvalidOperationException e) {}
+			} catch	(InvalidOperationException) { }
 			e = q1.GetEnumerator ();
 			try {
 				e.MoveNext ();
 				q1.Enqueue (0);
-				object o = e.Current ();
+				object o = e.Current;
 				Fail ("Should have thrown InvalidOperationException");
-			} catch	(InvalidOperationException e) {}
+			} catch	(InvalidOperationException) { } 
 		}
 
 		public void TestClone () {
@@ -147,11 +148,11 @@ namespace Testsuite.System.Collections {
 			int q1size = q1.Count;
 			int q2size = q2.Count;
 			q2.Enqueue (null);
-			Assert (q2.Count = ++q2size);
+			Assert (q2.Count == ++q2size);
 			for (int i = 0; i < 50; i++) {
-				int k = q1.Peek ();
+				int k = (int) q1.Peek ();
 				Assert (q1.Count == q1size);
-				int j = q1.Dequeue ();
+				int j = (int) q1.Dequeue ();
 				Assert (q1.Count == --q1size);
 				Assert (i == j);
 				Assert (j == k);
@@ -172,5 +173,7 @@ namespace Testsuite.System.Collections {
 		}
 		
 		// TODO: test Syncronized operation
+
 	}
 }
+
