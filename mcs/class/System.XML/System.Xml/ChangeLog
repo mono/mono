@@ -1,3 +1,21 @@
+2003-05-18  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlTextWriter.cs : patch by Jonathan Hogg. Flush() does not close
+	  any open attributes or elements. WriteWhitespace() checks state and
+	  closes start tag.  Fixed WriteStringInternal() to replace CR/LF chars
+	  when it is called inside attribute value.
+	* XmlException.cs : added .NET 1.1 .ctor.
+	* added XmlSecureResolver.cs (only stubbing).
+	* XmlAttribute.cs : set_InnerXml() should remove children.
+	* XmlAttribute.cs,
+	  XmlElement.cs,
+	  XmlDocumentFragment.cs,
+	  XmlDocument.cs : removed XmlTextReader reuse (It was buggy stuff).
+	* XmlNode.cs : RemoveAll() should also remove all attributes.
+	* XmlTextRader.cs : .ctor() for attribute value reader should add
+	  quotations at initialization, since it requires quote chars.
+	* XmlWriter.cs : WriteAttributeString() more correct xmlns check.
+
 2003-05-16  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* changed XPathNodeType modifier to internal *protected* override.

@@ -282,7 +282,7 @@ namespace System.Xml
 
 		public override void Flush ()
 		{
-                        CloseOpenAttributeAndElements ();
+//			CloseOpenAttributeAndElements ();
 			w.Flush ();
 		}
 
@@ -663,6 +663,11 @@ namespace System.Xml
 			WriteStringInternal (text, true);
 		}
 
+		private string NormalizeAttributeString (string value)
+		{
+			return value.Replace ("\r", "&#xD;").Replace ("\n", "&#xA;");
+		}
+
 		private void WriteStringInternal (string text, bool entitize)
 		{
 			if (text == null)
@@ -683,6 +688,7 @@ namespace System.Xml
 							text = text.Replace ("\"", "&quot;");
 						else
 							text = text.Replace ("'", "&apos;");
+						text = NormalizeAttributeString (text);
 					}
 				}
 
@@ -727,6 +733,13 @@ namespace System.Xml
 			foreach (char c in ws) {
 				if ((c != ' ') && (c != '\t') && (c != '\r') && (c != '\n'))
 					throw new ArgumentException ();
+			}
+
+			CheckState ();
+
+			if (!openAttribute) {
+				IndentingOverriden = true;
+				CloseStartElement ();
 			}
 
 			w.Write (ws);

@@ -397,6 +397,8 @@ namespace System.Xml
 
 		public virtual void RemoveAll ()
 		{
+			if (Attributes != null)
+				Attributes.RemoveAll ();
 			XmlNode next = null;
 			for (XmlNode node = FirstChild; node != null; node = next) {
 				next = node.NextSibling;

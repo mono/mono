@@ -34,7 +34,6 @@ namespace System.Xml
 		string baseURI = String.Empty;
 		XmlImplementation implementation;
 		bool preserveWhitespace = false;
-		WeakReference reusableXmlTextReader;
 		XmlResolver resolver;
 
 		#endregion
@@ -82,19 +81,6 @@ namespace System.Xml
 		public override string BaseURI {
 			get {
 				return baseURI;
-			}
-		}
-
-		// Used to read 'InnerXml's for its descendants at any place.
-		internal XmlTextReader ReusableReader {
-			get {
-				if(reusableXmlTextReader == null)
-					reusableXmlTextReader = new WeakReference (null);
-				if(!reusableXmlTextReader.IsAlive) {
-					XmlTextReader reader = new XmlTextReader ((TextReader)null);
-					reusableXmlTextReader.Target = reader;
-				}
-				return (XmlTextReader)reusableXmlTextReader.Target;
 			}
 		}
 
@@ -683,7 +669,7 @@ namespace System.Xml
 					attribute.AppendChild (CreateEntityReference (reader.Name));
 				// FIXME: else if(NodeType == EndEntity) -- reset BaseURI and so on -- ;
 				else
-					// (IMHO) Children of Attribute is likely restricted to Text and EntityReference.
+					// Children of Attribute is restricted to CharacterData and EntityReference (Comment is not allowed).
 					attribute.AppendChild (CreateTextNode (reader.Value));
 			}
 		}

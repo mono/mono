@@ -94,11 +94,10 @@ namespace System.Xml
 			}
 
 			set {
+				RemoveAll ();
 				XmlNamespaceManager nsmgr = ConstructNamespaceManager ();
 				XmlParserContext ctx = new XmlParserContext (OwnerDocument.NameTable, nsmgr, XmlLang, this.XmlSpace);
-				XmlTextReader xtr = OwnerDocument.ReusableReader;
-				xtr.Initialize (BaseURI, ctx, new System.IO.StringReader ("'" + value.Replace ("'", "&apos;") + "'"), XmlNodeType.Attribute);
-
+				XmlTextReader xtr = new XmlTextReader (value, XmlNodeType.Attribute, ctx);
 				OwnerDocument.ReadAttributeNodeValue (xtr, this);
 			}
 		}

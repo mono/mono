@@ -92,8 +92,7 @@ namespace System.Xml
 				XmlNameTable nt = this.OwnerDocument.NameTable;
 				XmlNamespaceManager nsmgr = this.ConstructNamespaceManager ();
 				XmlParserContext ctx = new XmlParserContext (nt, nsmgr, XmlLang, this.XmlSpace);
-				XmlTextReader xmlReader = OwnerDocument.ReusableReader;
-				xmlReader.Initialize (String.Empty, ctx, new StringReader (value), XmlNodeType.Element);
+				XmlTextReader xmlReader = new XmlTextReader (value, XmlNodeType.Element, ctx);
 
 				do {
 					XmlNode n = OwnerDocument.ReadNode (xmlReader);

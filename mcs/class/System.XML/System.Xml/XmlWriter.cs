@@ -79,19 +79,14 @@ namespace System.Xml
 
 		public void WriteAttributeString (string prefix, string localName, string ns, string value)
 		{
-			if ((prefix == "xmlns") || (localName == "xmlns"))
+			if ((prefix == "xmlns") || (prefix == "" && localName == "xmlns"))
 			  {
 				ns = value;
 				
 				if (prefix == "xmlns" && namespaceManager.HasNamespace (localName))
 				  	return;
-				
-				/* Users need to be able to re-declare the default namespace for subnodes
-				else if (localName == "xmlns" && namespaceManager.HasNamespace (String.Empty))
-				  	return;
-				*/
-			  }
-			
+			}
+
 			WriteStartAttribute (prefix, localName, ns);
 			WriteString (value);
 			WriteEndAttribute ();

@@ -711,7 +711,7 @@ namespace System.Xml
 
 			switch (fragType) {
 			case XmlNodeType.Attribute:
-				value = fragment.ReadToEnd ();
+				value = String.Format ("{0}{1}{0}", "'", fragment.ReadToEnd ().Replace ("'", "&apos;"));
 				break;
 			case XmlNodeType.Element:
 				allowMultipleRoot = true;
