@@ -23,7 +23,7 @@ local_objs = bitmap.o \
 	image.o \
 	pen.o \
 	solidbrush.o \
- 	gdip_win32.o
+	gdip_win32.o
 
 
 all-local: $(gdiplus)
@@ -31,15 +31,17 @@ all-local: $(gdiplus)
 clean-local:
 	rm -f *.o
 	rm -f $(gdiplus)
-	
+
 install-local:
 	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib
 	$(INSTALL_LIB) $(gdiplus) $(DESTDIR)$(prefix)/lib
-	
+
 dist-local: dist-default
-	
+
 $(gdiplus) : $(local_sources:.c=.o)
 	gcc -shared -Wl,-soname,libgdiplus.dll.so -o $(gdiplus) $(local_objs) $(LOCAL_LDFLAGS)
 
 %.o: %.c
 	$(CCOMPILE) -c -o $@ $^
+
+test-local: 
