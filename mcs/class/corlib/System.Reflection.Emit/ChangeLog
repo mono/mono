@@ -1,3 +1,12 @@
+
+Sat Jan 5 15:59:05 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* ILGenerator.cs: fix emission of two-bytes opcodes.
+	Missing slot for locals array. Throw exceptions on unimplemented
+	methods.
+	* OpCode.cs: add a comment: the Value property is useless.
+	* OpCodes.cs: fix name of tail opcode (Tail -> Tailcall).
+
 2002-01-05  Ravi Pratap  <ravi@ximian.com>
 
 	* ConstructorBuilder.cs : Use the MonoTODO attribute.

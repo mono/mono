@@ -35,6 +35,7 @@ namespace System.Reflection.Emit {
 				for (int i=0; i < 64; ++i)
 					table_indexes [i] = 1;
 			}
+			// Console.WriteLine ("getindex for table "+table.ToString()+" got "+table_indexes [table].ToString());
 			if (inc)
 				return table_indexes [table]++;
 			return table_indexes [table];

@@ -79,7 +79,8 @@ namespace System {
 		
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			//throw new NotImplementedException ();
+			return "Enum::ToString()";
 		}
 
 		public string ToString (IFormatProvider provider)

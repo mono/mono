@@ -1,3 +1,11 @@
+
+Sat Jan 5 15:53:50 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Enum.cs: dummy ToString impl.
+	* String.cs: dummy format implementations to get compiler errors
+	somewhat working.
+	* Type.cs: implemented filter delegates. FindMembers runs the filter, now.
+
 2002-01-05  Ravi Pratap  <ravi@ximian.com>
 
 	* TODOAttribute.cs : Augment some more; provide two constructors

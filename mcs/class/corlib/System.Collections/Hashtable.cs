@@ -327,7 +327,7 @@ namespace System.Collections {
 
 		public virtual IDictionaryEnumerator GetEnumerator ()
 		{
-			return new Enumerator (this, EnumeratorMode.KEY_MODE);
+			return new Enumerator (this, EnumeratorMode.ENTRY_MODE);
 		}
 
 		public virtual void Remove (Object key)
@@ -390,6 +390,7 @@ namespace System.Collections {
 
 			return ht;
 		}
+
 
 
 		//[MonoTODO]
@@ -670,7 +671,7 @@ namespace System.Collections {
 		// Inner classes
 		//
 
-		public enum EnumeratorMode : int {KEY_MODE = 0, VALUE_MODE};
+		public enum EnumeratorMode : int {KEY_MODE = 0, VALUE_MODE, ENTRY_MODE};
 
 		protected sealed class Enumerator : IDictionaryEnumerator, IEnumerator {
 
@@ -759,9 +760,15 @@ namespace System.Collections {
 			public Object Current {
 				get {
 					FailFast ();
-					return (mode == EnumeratorMode.KEY_MODE)
-					        ? currentKey
-					        : currentValue;
+					switch (mode) {
+					case EnumeratorMode.KEY_MODE:
+						return currentKey;
+					case EnumeratorMode.VALUE_MODE:
+						return currentValue;
+					case EnumeratorMode.ENTRY_MODE:
+						return new DictionaryEntry (currentKey, currentValue);
+					}
+					throw new Exception ("should never happen");
 				}
 			}
 		}
@@ -983,7 +990,7 @@ namespace System.Collections {
 
 			public override IDictionaryEnumerator GetEnumerator ()
 			{
-				return new Enumerator (host, EnumeratorMode.KEY_MODE);
+				return new Enumerator (host, EnumeratorMode.ENTRY_MODE);
 			}
 
 			public override void Remove (Object key)

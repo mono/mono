@@ -65,12 +65,10 @@ namespace System.Reflection.Emit {
 			/* 
 			 * there is already enough room allocated in code.
 			 */
-			if (opcode.Size == 1) {
-				code [code_len++] = (byte)opcode.Value;
-			} else {
-				code [code_len++] = (byte)(opcode.Value & 0xFF);
-				code [code_len++] = (byte)(opcode.Value >> 8);
-			}
+			// access op1 and op2 directly since the Value property is useless
+			if (opcode.Size == 2)
+				code [code_len++] = opcode.op1;
+			code [code_len++] = opcode.op2;
 			/*
 			 * We should probably keep track of stack needs here.
 			 * Or we may want to run the verifier on the code before saving it
@@ -130,16 +128,28 @@ namespace System.Reflection.Emit {
 			return 1;
 		}
 
-		public virtual void BeginCatchBlock (Type exceptionType) {}
-		public virtual void BeginExceptFilterBlock () {}
-		public virtual void BeginExceptionBlock () {}
-		public virtual void BeginFaultBlock() {}
-		public virtual void BeginFinallyBlock() {}
-		public virtual void BeginScope () {}
+		public virtual void BeginCatchBlock (Type exceptionType) {
+			throw new NotImplementedException ();
+		}
+		public virtual void BeginExceptFilterBlock () {
+			throw new NotImplementedException ();
+		}
+		public virtual void BeginExceptionBlock () {
+			throw new NotImplementedException ();
+		}
+		public virtual void BeginFaultBlock() {
+			throw new NotImplementedException ();
+		}
+		public virtual void BeginFinallyBlock() {
+			throw new NotImplementedException ();
+		}
+		public virtual void BeginScope () {
+			throw new NotImplementedException ();
+		}
 		public virtual LocalBuilder DeclareLocal (Type localType) {
 			LocalBuilder res = new LocalBuilder (localType);
 			if (locals != null) {
-				LocalBuilder[] new_l = new LocalBuilder [locals.Length];
+				LocalBuilder[] new_l = new LocalBuilder [locals.Length + 1];
 				System.Array.Copy (locals, new_l, locals.Length);
 				new_l [locals.Length] = res;
 				locals = new_l;
@@ -174,7 +184,9 @@ namespace System.Reflection.Emit {
 			ll_emit (opcode);
 			emit_int (token);
 		}
-		public virtual void Emit (OpCode opcode, Double val) {}
+		public virtual void Emit (OpCode opcode, Double val) {
+			throw new NotImplementedException ();
+		}
 		public virtual void Emit (OpCode opcode, FieldInfo field) {
 			int token = abuilder.GetToken (field);
 			make_room (6);
@@ -192,7 +204,18 @@ namespace System.Reflection.Emit {
 			ll_emit (opcode);
 			emit_int (val);
 		}
-		public virtual void Emit (OpCode opcode, Int64 val) {}
+		public virtual void Emit (OpCode opcode, Int64 val) {
+			make_room (10);
+			ll_emit (opcode);
+			code [code_len++] = (byte) (val & 0xFF);
+			code [code_len++] = (byte) ((val >> 8) & 0xFF);
+			code [code_len++] = (byte) ((val >> 16) & 0xFF);
+			code [code_len++] = (byte) ((val >> 24) & 0xFF);
+			code [code_len++] = (byte) ((val >> 32) & 0xFF);
+			code [code_len++] = (byte) ((val >> 40) & 0xFF);
+			code [code_len++] = (byte) ((val >> 48) & 0xFF);
+			code [code_len++] = (byte) ((val >> 56) & 0xFF);
+		}
 		public virtual void Emit (OpCode opcode, Label label) {
 			int tlen = target_len (opcode);
 			make_room (6);
@@ -256,24 +279,42 @@ namespace System.Reflection.Emit {
 			ll_emit (opcode);
 			emit_int (token);
 		}
-		public virtual void Emit (OpCode opcode, float val) {}
+		public virtual void Emit (OpCode opcode, float val) {
+			throw new NotImplementedException ();
+		}
 		public virtual void Emit (OpCode opcode, string val) {
 			int token = abuilder.GetToken (val);
 			make_room (3);
 			ll_emit (opcode);
 			emit_int (token);
 		}
-		public virtual void Emit (OpCode opcode, Type type) {}
+		public virtual void Emit (OpCode opcode, Type type) {
+			throw new NotImplementedException ();
+		}
 
-		public void EmitCall (OpCode opcode, MethodInfo methodinfo, Type[] optionalParamTypes) {}
-		public void EmitCalli (OpCode opcode, CallingConventions call_conv, Type returnType, Type[] paramTypes, Type[] optionalParamTypes) {}
+		public void EmitCall (OpCode opcode, MethodInfo methodinfo, Type[] optionalParamTypes) {
+			throw new NotImplementedException ();
+		}
+		public void EmitCalli (OpCode opcode, CallingConventions call_conv, Type returnType, Type[] paramTypes, Type[] optionalParamTypes) {
+			throw new NotImplementedException ();
+		}
 
-		public virtual void EmitWriteLine (FieldInfo field) {}
-		public virtual void EmitWriteLine (LocalBuilder lbuilder) {}
-		public virtual void EmitWriteLine (string val) {}
+		public virtual void EmitWriteLine (FieldInfo field) {
+			throw new NotImplementedException ();
+		}
+		public virtual void EmitWriteLine (LocalBuilder lbuilder) {
+			throw new NotImplementedException ();
+		}
+		public virtual void EmitWriteLine (string val) {
+			throw new NotImplementedException ();
+		}
 
-		public virtual void EndExceptionBlock () {}
-		public virtual void EndScope () {}
+		public virtual void EndExceptionBlock () {
+			throw new NotImplementedException ();
+		}
+		public virtual void EndScope () {
+			throw new NotImplementedException ();
+		}
 		public virtual void MarkLabel (Label loc) {
 			if (loc.label < 0 || loc.label >= num_labels)
 				throw new System.ArgumentException ("The label is not valid");
@@ -281,9 +322,15 @@ namespace System.Reflection.Emit {
 				throw new System.ArgumentException ("The label was already defined");
 			label_to_addr [loc.label] = code_len;
 		}
-		public virtual void MarkSequencePoint (ISymbolDocumentWriter document, int startLine, int startColumn, int endLine, int EndColumn) {}
-		public virtual void ThrowException (Type exceptionType) {}
-		public virtual void UsingNamespace (String usingNamespace) {}
+		public virtual void MarkSequencePoint (ISymbolDocumentWriter document, int startLine, int startColumn, int endLine, int EndColumn) {
+			throw new NotImplementedException ();
+		}
+		public virtual void ThrowException (Type exceptionType) {
+			throw new NotImplementedException ();
+		}
+		public virtual void UsingNamespace (String usingNamespace) {
+			throw new NotImplementedException ();
+		}
 
 		internal void label_fixup () {
 			int i;

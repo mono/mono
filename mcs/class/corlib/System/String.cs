@@ -721,14 +721,24 @@ namespace System {
 		public static string Format (string format, object arg0)
 		{
 			// FIXME: implement me
-			return null;
+			return format+arg0.ToString();
 		}
 
 		[MonoTODO]
 		public static string Format (string format, params object[] args)
 		{
 			// FIXME: implement me
-			return null;
+			Console.WriteLine (args[0].ToString());
+			if (args.Length == 1)
+				return format+args[0].ToString();
+			if (args.Length == 2)
+				return format+args[0].ToString()+args[1].ToString();
+			if (args.Length == 3)
+				return format+args[0].ToString()+args[1].ToString()+args[2].ToString();
+			if (args.Length == 4)
+				return format+args[0].ToString()+args[1].ToString()+args[2].ToString()+args[3].ToString();
+			Console.WriteLine ("String.Format with args: "+args.Length.ToString());
+			return format;
 		}
 		
 		[MonoTODO]
@@ -742,14 +752,14 @@ namespace System {
 		public static string Format (string format, object arg0, object arg1)
 		{
 			// FIXME: implement me
-			return null;
+			return format+arg0.ToString()+arg1.ToString();
 		}
 
 		[MonoTODO]
 		public static string Format (string format, object arg0, object arg1, object arg2)
 		{
 			// FIXME: implement me
-			return null;
+			return format+arg0.ToString()+arg1.ToString()+arg2.ToString();
 		}
 
 		//public CharEnumerator GetEnumerator ()

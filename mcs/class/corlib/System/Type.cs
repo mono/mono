@@ -10,6 +10,7 @@
 //
 
 using System.Reflection;
+using System.Collections;
 using System.Runtime.CompilerServices;
 
 namespace System {
@@ -25,10 +26,25 @@ namespace System {
 
 		public static readonly char Delimiter = '.';
 		public static readonly Type[] EmptyTypes = {};
-		public static readonly MemberFilter FilterAttribute;
-		public static readonly MemberFilter FilterName;
-		public static readonly MemberFilter FilterNameIgnoreCase;
+		public static readonly MemberFilter FilterAttribute = new MemberFilter (FilterAttribute_impl);
+		public static readonly MemberFilter FilterName = new MemberFilter (FilterName_impl);
+		public static readonly MemberFilter FilterNameIgnoreCase = new MemberFilter (FilterNameIgnoreCase_impl);
 		public static readonly object Missing;
+
+		/* implementation of the delegates for MemberFilter */
+		static bool FilterName_impl (MemberInfo m, object filterCriteria) {
+			string name = (string) filterCriteria;
+			return name.Equals (m.Name);
+		}
+		
+		static bool FilterNameIgnoreCase_impl (MemberInfo m, object filterCriteria) {
+			string name = (string) filterCriteria;
+			return String.Compare (name, m.Name, true) == 0;
+		}
+		
+		static bool FilterAttribute_impl (MemberInfo m, object filterCriteria) {
+			throw new NotImplementedException ("FilterAttribute_impl");
+		}
 
 		/// <summary>
 		///   The assembly where the type is defined.
@@ -307,8 +323,22 @@ namespace System {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public virtual extern MemberInfo[] FindMembers( MemberTypes memberType, BindingFlags bindingAttr,
-							 MemberFilter filter, object filterCriteria);
+		internal extern MemberInfo[] FindMembers( MemberTypes memberType, BindingFlags bindingAttr);
+
+		public virtual MemberInfo[] FindMembers( MemberTypes memberType, BindingFlags bindingAttr,
+							 MemberFilter filter, object filterCriteria) {
+			MemberInfo[] result = FindMembers(memberType, bindingAttr);
+			if (filter == null)
+				return result;
+			ArrayList l = new ArrayList (result.Length);
+			foreach (MemberInfo m in result) {
+				if (filter (m, filterCriteria))
+					l.Add (m);
+			}
+			result = new MemberInfo [l.Count];
+			l.CopyTo (result);
+			return result;
+		}
 
 		public static TypeCode GetTypeCode( Type type)
 		{

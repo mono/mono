@@ -46,6 +46,7 @@ namespace System.Reflection.Emit {
 			}
 			type = tb;
 			table_idx = get_next_table_index (0x06, true);
+			//Console.WriteLine ("index for "+name+" set to "+table_idx.ToString());
 		}
 
 		internal MethodBuilder (TypeBuilder tb, string name, MethodAttributes attributes, 

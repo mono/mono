@@ -227,7 +227,7 @@ namespace System.Reflection.Emit {
   		public static readonly OpCode Sub_Ovf;
   		public static readonly OpCode Sub_Ovf_Un;
   		public static readonly OpCode Switch;
-  		public static readonly OpCode Tail;
+  		public static readonly OpCode Tailcall;
   		public static readonly OpCode Throw;
   		public static readonly OpCode Unaligned;
   		public static readonly OpCode Unbox;
@@ -251,7 +251,7 @@ namespace System.Reflection.Emit {
   			Stloc_S = new OpCode("stloc.s", 1, OpCodeType.Macro, OperandType.ShortInlineVar, StackBehaviour.Pop1, StackBehaviour.Push0, FlowControl.Next, 0xFF, 0x13);
   			Volatile = new OpCode("volatile.", 2, OpCodeType.Prefix, OperandType.InlineNone, StackBehaviour.Pop0, StackBehaviour.Push0, FlowControl.Meta, 0xFE, 0x13);
   			Ldnull = new OpCode("ldnull", 1, OpCodeType.Primitive, OperandType.InlineNone, StackBehaviour.Pop0, StackBehaviour.Pushref, FlowControl.Next, 0xFF, 0x14);
-  			Tail = new OpCode("tail.", 2, OpCodeType.Prefix, OperandType.InlineNone, StackBehaviour.Pop0, StackBehaviour.Push0, FlowControl.Meta, 0xFE, 0x14);
+  			Tailcall = new OpCode("tail.", 2, OpCodeType.Prefix, OperandType.InlineNone, StackBehaviour.Pop0, StackBehaviour.Push0, FlowControl.Meta, 0xFE, 0x14);
   			Ldc_I4_M1 = new OpCode("ldc.i4.m1", 1, OpCodeType.Macro, OperandType.InlineNone, StackBehaviour.Pop0, StackBehaviour.Pushi, FlowControl.Next, 0xFF, 0x15);
   			Initobj = new OpCode("initobj", 2, OpCodeType.Objmodel, OperandType.InlineType, StackBehaviour.Popi, StackBehaviour.Push0, FlowControl.Next, 0xFE, 0x15);
   			Ldc_I4_0 = new OpCode("ldc.i4.0", 1, OpCodeType.Macro, OperandType.InlineNone, StackBehaviour.Pop0, StackBehaviour.Pushi, FlowControl.Next, 0xFF, 0x16);
