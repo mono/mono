@@ -1,3 +1,10 @@
+2003-01-16  Lluis Sanchez Gual <lsg@ctv.es>
+
+    * BinaryFormatter.cs: implemented Serialize and Deserialize methods.
+    * ObjectReader.cs: added.
+    * ObjectWriter.cs: added.
+    * BinaryCommon.cs. added.
+
 2002-08-22  Nick Drochak  <ndrochak@gol.com>
 
 	* BinaryArrayTypeEnum.cs: Removed Non-existent enum (must have been

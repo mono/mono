@@ -2,6 +2,7 @@
 //
 // Author:
 //	Dick Porter (dick@ximian.com)
+//  Lluis Sanchez Gual (lsg@ctv.es)
 //
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 
@@ -83,7 +84,6 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 			}
 		}
 
-		[MonoTODO]
 		public object Deserialize(Stream serializationStream)
 		{
 			if(serializationStream==null) {
@@ -93,8 +93,10 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 			   serializationStream.Length==0) {
 				throw new SerializationException("serializationStream supports seeking, but its length is 0");
 			}
-			
-			return(null);
+
+			ObjectReader serializer = new ObjectReader (surrogate_selector, context);
+			BinaryReader reader = new BinaryReader (serializationStream);
+			return serializer.ReadObjectGraph (reader);
 		}
 
 		[MonoTODO]
@@ -125,39 +127,16 @@ namespace System.Runtime.Serialization.Formatters.Binary {
 			return(null);
 		}
 
-		[MonoTODO]
 		public void Serialize(Stream serializationStream, object graph)
 		{
 			if(serializationStream==null) {
 				throw new ArgumentNullException("serializationStream is null");
 			}
 
-			ISerializable ser = graph as ISerializable;
-
-			StreamingContext context = new StreamingContext (StreamingContextStates.Remoting);
-			object [] oa;
-			
-			if (ser != null) {
-				SerializationInfo info = new SerializationInfo (graph.GetType (), new FormatterConverter ());
-				ser.GetObjectData (info, context);
-				SerializationInfoEnumerator e = info.GetEnumerator ();
-				oa = new object [info.MemberCount];
-				int i = 0;
-				while (e.MoveNext ()) {
-					oa [i++] = e.Current;
-				}
-				Console.WriteLine ("SERIALIZABLE" + info.MemberCount);
-			} else {
-				MemberInfo [] members = FormatterServices.GetSerializableMembers (graph.GetType (), context);
-				oa = FormatterServices.GetObjectData (graph, members);
-				Console.WriteLine ("NOT SERIALIZABLE" + oa.Length);
-			}
-
-			foreach (object o in oa) {
-				Console.WriteLine ("OBJ" + o);
-			}
-			
-			throw new NotImplementedException ();
+			ObjectWriter serializer = new ObjectWriter (surrogate_selector, context);
+			BinaryWriter writer = new BinaryWriter (serializationStream);
+			serializer.WriteObjectGraph (writer, graph);
+			writer.Flush();
 		}
 
 		[MonoTODO]
