@@ -1,3 +1,22 @@
+2004-05-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Makefile.am: link to ../os/libmonoos.la on windows.
+
+	* assembly.c:
+		-If MONO_DEBUG, warn about non-existing directories in
+		MONO_PATH.
+		-Added mono_assembly_getrootdir() that replaces MONO_ASSEMBLIES
+		compile time variable.
+		-Removed init_default_path and call mono_set_rootdir from
+		libmonoos.a instead (windows only).
+
+	* assembly.h: declare mono_assembly_getrootdir().
+
+	* domain.c:
+	* icall.c: use mono_assembly_getrootdir() instead of MONO_ASSEMBLIES.
+
+	* loader.c: s/getenv/g_getenv/
+
 2004-05-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.{h,c}: Add support for UnmanagedType.AsAny.
@@ -6,17 +25,18 @@
 
 	* metadata.h: Add new marshalling conversions.
 
-	* metadata.h metadata.c (mono_metadata_signature_dup): New helper function.
+	* metadata.h metadata.c (mono_metadata_signature_dup): New helper
+	function.
 
 	* reflection.c (mono_reflection_get_type): Lookup the type in all
 	modules of a multi-module assembly. Fixes #58291.
 
 2004-05-11  Lluis Sanchez Gual  <lluis@ximian.com>
 
-	* threads.c: Before aborting a background, set the StopRequested state (this
-	avoids throwing the Abort exception).
-	In mono_thread_manage, don't continue with the shutdown until all aborted
-	threads have actually stopped.
+	* threads.c: Before aborting a background, set the StopRequested
+	state.  This avoids throwing the Abort exception.
+	In mono_thread_manage, don't continue with the shutdown until all
+	aborted threads have actually stopped.
 
 2004-05-10  Jackson Harper  <jackson@ximian.com>
 
