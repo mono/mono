@@ -1,3 +1,11 @@
+2004-03-20  Martin Baulig  <martin@ximian.com>
+
+	* cs-tokenizer.cs (xtoken): Return a special
+	Token.DEFAULT_OPEN_PARENS for "`default' followed by open parens".
+
+	* cs-parser.jay (default_value_expression): Switch to the new
+	syntax (14.5.13).
+
 2004-03-19  Martin Baulig  <martin@ximian.com>
 
 	* decl.cs (MemberName): New class.  We use this to "construct"

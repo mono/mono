@@ -259,6 +259,7 @@ namespace Mono.CSharp
 %token CLOSE_PARENS_NO_CAST
 %token CLOSE_PARENS_OPEN_PARENS
 %token CLOSE_PARENS_MINUS
+%token DEFAULT_OPEN_PARENS
 
 /* Add precedence rules to solve dangling else s/r conflict */
 %nonassoc LOWPREC
@@ -2638,13 +2639,9 @@ anonymous_method_parameter
 	;
 
 default_value_expression
-	: primary_expression DOT DEFAULT
+	: DEFAULT_OPEN_PARENS type CLOSE_PARENS
 	  {
-		$$ = new DefaultValueExpression ((Expression) $1, lexer.Location);
-	  }
-	| predefined_type DOT DEFAULT
-	  {
-		$$ = new DefaultValueExpression ((Expression) $1, lexer.Location);
+		$$ = new DefaultValueExpression ((Expression) $2, lexer.Location);
 	  }
 	;
 

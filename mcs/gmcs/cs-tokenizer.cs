@@ -1174,7 +1174,19 @@ namespace Mono.CSharp
 		public int token ()
                 {
 			current_token = xtoken ();
-                        return current_token;
+
+			if (current_token != Token.DEFAULT)
+				return current_token;
+
+			int c = consume_whitespace ();
+			if (c == -1)
+				current_token = Token.ERROR;
+			else if (c == '(')
+				current_token = Token.DEFAULT_OPEN_PARENS;
+			else
+				putback (c);
+
+			return current_token;
                 }
 
 		static StringBuilder static_cmd_arg = new System.Text.StringBuilder ();
@@ -1790,8 +1802,8 @@ namespace Mono.CSharp
 
 			return Token.IDENTIFIER;
 		}
-		
-		public int xtoken ()
+
+		int consume_whitespace ()
 		{
 			int t;
 			bool doread = false;
@@ -1861,22 +1873,7 @@ namespace Mono.CSharp
 					goto is_punct_label;
 				}
 
-				
-				if (is_identifier_start_character ((char)c)){
-					tokens_seen = true;
-					return consume_identifier (c, false);
-				}
-
 			is_punct_label:
-				if ((t = is_punct ((char)c, ref doread)) != Token.ERROR){
-					tokens_seen = true;
-					if (doread){
-						getChar ();
-						col++;
-					}
-					return t;
-				}
-
 				// white space
 				if (c == '\n'){
 					line++;
@@ -1887,19 +1884,6 @@ namespace Mono.CSharp
 					continue;
 				}
 
-				if (c >= '0' && c <= '9'){
-					tokens_seen = true;
-					return is_number (c);
-				}
-
-				if (c == '.'){
-					tokens_seen = true;
-					int peek = peekChar ();
-					if (peek >= '0' && peek <= '9')
-						return is_number (c);
-					return Token.DOT;
-				}
-				
 				/* For now, ignore pre-processor commands */
 				// FIXME: In C# the '#' is not limited to appear
 				// on the first column.
@@ -1936,72 +1920,115 @@ namespace Mono.CSharp
 						Report.Error (1027, Location, "#endif/#endregion expected");
 					continue;
 				}
-				
-				if (c == '"') 
-					return consume_string (false);
 
+				return c;
+			}
+
+			return -1;
+		}
+		
+		public int xtoken ()
+		{
+			int t;
+			bool doread = false;
+			int c;
+
+			val = null;
+			// optimization: eliminate col and implement #directive semantic correctly.
+
+			c = consume_whitespace ();
+			if (c == -1)
+				return Token.EOF;
+
+			if (is_identifier_start_character ((char)c)){
+				tokens_seen = true;
+				return consume_identifier (c, false);
+			}
+
+		is_punct_label:
+			if ((t = is_punct ((char)c, ref doread)) != Token.ERROR){
+				tokens_seen = true;
+				if (doread){
+					getChar ();
+					col++;
+				}
+				return t;
+			}
+
+			if (c >= '0' && c <= '9'){
+				tokens_seen = true;
+				return is_number (c);
+			}
+
+			if (c == '.'){
+				tokens_seen = true;
+				int peek = peekChar ();
+				if (peek >= '0' && peek <= '9')
+					return is_number (c);
+				return Token.DOT;
+			}
+
+			if (c == '"') 
+				return consume_string (false);
+
+			if (c == '\''){
+				c = getChar ();
+				tokens_seen = true;
 				if (c == '\''){
-					c = getChar ();
-					tokens_seen = true;
-					if (c == '\''){
-						error_details = "Empty character literal";
-						Report.Error (1011, Location, error_details);
-						return Token.ERROR;
-					}
-					c = escape (c);
-					if (c == -1)
-						return Token.ERROR;
-					val = new System.Char ();
-					val = (char) c;
-					c = getChar ();
-
-					if (c != '\''){
-						error_details = "Too many characters in character literal";
-						Report.Error (1012, Location, error_details);
-
-						// Try to recover, read until newline or next "'"
-						while ((c = getChar ()) != -1){
-							if (c == '\n' || c == '\''){
-								line++;
-								ref_line++;
-								col = 0;
-								break;
-							} else
-								col++;
-							
-						}
-						return Token.ERROR;
-					}
-					return Token.LITERAL_CHARACTER;
-				}
-				
-				if (c == '@') {
-					c = getChar ();
-					if (c == '"') {
-						tokens_seen = true;
-						return consume_string (true);
-					} else if (is_identifier_start_character ((char) c)){
-						return consume_identifier (c, true);
-					} else {
-						Report.Error (1033, Location, "'@' must be followed by string constant or identifier");
-					}
-				}
-
-				if (c == '#') {
-					error_details = "Preprocessor directives must appear as the first non-whitespace " +
-						"character on a line.";
-
-					Report.Error (1040, Location, error_details);
-
+					error_details = "Empty character literal";
+					Report.Error (1011, Location, error_details);
 					return Token.ERROR;
 				}
+				c = escape (c);
+				if (c == -1)
+					return Token.ERROR;
+				val = new System.Char ();
+				val = (char) c;
+				c = getChar ();
 
-				error_details = ((char)c).ToString ();
+				if (c != '\''){
+					error_details = "Too many characters in character literal";
+					Report.Error (1012, Location, error_details);
+
+					// Try to recover, read until newline or next "'"
+					while ((c = getChar ()) != -1){
+						if (c == '\n' || c == '\''){
+							line++;
+							ref_line++;
+							col = 0;
+							break;
+						} else
+							col++;
+					}
+					return Token.ERROR;
+				}
+				return Token.LITERAL_CHARACTER;
+			}
 				
+			if (c == '@') {
+				c = getChar ();
+				if (c == '"') {
+					tokens_seen = true;
+					return consume_string (true);
+				} else if (is_identifier_start_character ((char) c)){
+					return consume_identifier (c, true);
+				} else {
+					Report.Error (1033, Location, "'@' must be followed by string constant or identifier");
+				}
+			}
+
+			if (c == '#') {
+				error_details = "Preprocessor directives must appear as the first non-whitespace " +
+					"character on a line.";
+
+				Report.Error (1040, Location, error_details);
+
 				return Token.ERROR;
 			}
 
-			return Token.EOF;
+			error_details = ((char)c).ToString ();
+
+			return Token.ERROR;
 		}
 
 		public void cleanup ()
