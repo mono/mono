@@ -26,6 +26,8 @@ namespace Mono.CSharp {
 		//   (long, long)
 		//   (uint, uint)
 		//   (int, int)
+		//   (short, short)   (Happens with enumerations with underlying short type)
+		//   (ushort, ushort) (Happens with enumerations with underlying short type)
 		//
 		static void DoConstantNumericPromotions (EmitContext ec, Binary.Operator oper,
 							 ref Constant left, ref Constant right,
@@ -241,6 +243,26 @@ namespace Mono.CSharp {
 						return v;
 					else
 						return new EnumConstant (v, result_type);
+				} else if (left is UShortConstant){
+					UShortConstant v;
+					ushort res = (ushort) (((UShortConstant)left).Value |
+							       ((UShortConstant)right).Value);
+					
+					v = new UShortConstant (res);
+					if (result_type == null)
+						return v;
+					else
+						return new EnumConstant (v, result_type);
+				} else if (left is ShortConstant){
+					ShortConstant v;
+					short res = (short) (((ShortConstant)left).Value |
+							     ((ShortConstant)right).Value);
+					
+					v = new ShortConstant (res);
+					if (result_type == null)
+						return v;
+					else
+						return new EnumConstant (v, result_type);
 				}
 				break;
 				
@@ -286,6 +308,26 @@ namespace Mono.CSharp {
 						return v;
 					else
 						return new EnumConstant (v, result_type);
+				} else if (left is UShortConstant){
+					UShortConstant v;
+					ushort res = (ushort) (((UShortConstant)left).Value &
+							       ((UShortConstant)right).Value);
+					
+					v = new UShortConstant (res);
+					if (result_type == null)
+						return v;
+					else
+						return new EnumConstant (v, result_type);
+				} else if (left is ShortConstant){
+					ShortConstant v;
+					short res = (short) (((ShortConstant)left).Value &
+							     ((ShortConstant)right).Value);
+					
+					v = new ShortConstant (res);
+					if (result_type == null)
+						return v;
+					else
+						return new EnumConstant (v, result_type);
 				}
 				break;
 
@@ -327,6 +369,26 @@ namespace Mono.CSharp {
 						((ULongConstant)right).Value;
 					
 					v = new ULongConstant (res);
+					if (result_type == null)
+						return v;
+					else
+						return new EnumConstant (v, result_type);
+				} else if (left is UShortConstant){
+					UShortConstant v;
+					ushort res = (ushort) (((UShortConstant)left).Value ^
+							       ((UShortConstant)right).Value);
+					
+					v = new UShortConstant (res);
+					if (result_type == null)
+						return v;
+					else
+						return new EnumConstant (v, result_type);
+				} else if (left is ShortConstant){
+					ShortConstant v;
+					short res = (short)(((ShortConstant)left).Value ^
+							    ((ShortConstant)right).Value);
+					
+					v = new ShortConstant (res);
 					if (result_type == null)
 						return v;
 					else

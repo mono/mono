@@ -1,3 +1,23 @@
+Anonymous Methods
+-----------------
+
+	Plan:
+
+		* Resolve anonymous methods before.
+		* Each time a Local matches, if the mode is `InAnonymous', flag
+	  	  the VariableInfo for `proxying'.
+		* During Resolve track the depth required for local variables.
+		* Before Emit, create proxy classes with proper depth.
+		* Emit.
+
+	Return Type:
+		During Resolve, track all the return types.
+		Allow for ec.ReturnType to be null, indicating `Pending Return Evaluation' 
+
+
+	Open question:
+		Create a toplevel block for anonymous methods?	
+
 EmitContext.ResolveTypeTree
 ---------------------------
 
@@ -44,32 +64,6 @@ Notes on memory allocation
 	LookupType.  
 
 	See the notes on current_container problems below on memory usage.  
-
-GetNamespaces
--------------
-
-	Obtaining the list of namespaces is an expensive process because
-	Reflection.Emit does not provide a quick way of pulling the data out,
-	and it is too slow to load it.
-
-	Calling GetNamespaces on my machine (1Ghz):
-
-		* Takes half a second with the standard assemblies (corlib + System);
-		  Fetching the types from it takes 0.0028650 seconds. 
-
-		* Loading the top 10 largest assemblies we ship with Mono makes MCS take 
-		  8 seconds to startup the first time, subsequent invocations take 2 seconds.
-
-		  Fetching all the types (Assembly.GetTypes ()) for all the assemblies takes
- 		  0.0069170 seconds.
-
-	So pulling all the types takes very little time, maybe we should look into our
-	Hashtable implementation to make it more optimal.
-
-	This prohibits re-writting SimpleName to take advantage of
-	knowing the namespace names in advance.  Knowing the namespaces in advance
-	would allow me to reduce the guesswork in which we are currently engaged
-	to find a type definition.
 
 LookupTypeReflection:
 ---------------------
@@ -332,13 +326,6 @@ OPTIMIZATIONS
 	To produce optimal code, it is necessary for UnaryMutator to know 
 	that it is being assigned to a variable (the way the stack is laid
 	out using dup requires the store to happen inside UnaryMutator).
-
-* Emitcontext
-
-	Do we really need to instanciate this variable all the time?
-
-	It could be static for all we care, and just use it for making
-	sure that there are no recursive invocations on it.
 
 * Tests
 

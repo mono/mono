@@ -182,6 +182,11 @@ namespace Mono.CSharp {
 				ns.DefineNamespace (symwriter);
 		}
 
+		static void Msgtry (string s)
+		{
+			Console.WriteLine ("    Try using -r:" + s);
+		}
+		
 		/// <summary>
 		///   Used to validate that all the using clauses are correct
 		///   after we are finished parsing all the files.  
@@ -198,6 +203,40 @@ namespace Mono.CSharp {
 						
 						Report.Error (246, ue.Location, "The namespace `" + ue.Name +
 							      "' can not be found (missing assembly reference?)");
+
+						switch (ue.Name){
+						case "Gtk": case "GtkSharp":
+							Msgtry ("gtk-sharp");
+							break;
+							
+						case "Gdk": case "GdkSharp":
+							Msgtry ("gdk-sharp");
+							break;
+
+						case "Glade": case "GladeSharp":
+							Msgtry ("glade-sharp");
+							break;
+							
+						case "System.Drawing":
+							Msgtry ("System.Drawing");
+							break;
+							
+						case "System.Web.Services":
+							Msgtry ("System.Web.Services");
+							break;
+
+						case "System.Web":
+							Msgtry ("System.Web");
+							break;
+							
+						case "System.Data":
+							Msgtry ("System.Data");
+							break;
+
+						case "System.Windows.Forms":
+							Msgtry ("System.Windows.Forms");
+							break;
+						}
 					}
 				}
 

@@ -2626,6 +2626,8 @@ namespace Mono.CSharp {
 				if (l == r){
 					if (!((l == TypeManager.int32_type) ||
 					      (l == TypeManager.uint32_type) ||
+					      (l == TypeManager.short_type) ||
+					      (l == TypeManager.ushort_type) ||
 					      (l == TypeManager.int64_type) ||
 					      (l == TypeManager.uint64_type)))
 						type = l;
