@@ -5111,6 +5111,9 @@ namespace Mono.CSharp {
 
 		protected virtual bool DoDefineBase ()
 		{
+			EmitContext ec = new EmitContext (Parent, Location, null, null, 0);
+			ec.InUnsafe = InUnsafe;
+
 			if (Name == null)
 				throw new InternalErrorException ();
 
@@ -5136,6 +5139,9 @@ namespace Mono.CSharp {
 
 		protected virtual bool DoDefine (DeclSpace decl)
 		{
+			EmitContext ec = new EmitContext (Parent, Location, null, null, 0);
+			ec.InUnsafe = InUnsafe;
+
 			// Lookup Type, verify validity
 			MemberType = decl.ResolveType (Type, false, Location);
 			if (MemberType == null)
@@ -5183,11 +5189,12 @@ namespace Mono.CSharp {
 				return false;
 
 			if (IsExplicitImpl) {
-				Expression iface_expr = ExplicitInterfaceName.GetTypeExpression (Location);
-
-				InterfaceType = Parent.ResolveType (iface_expr, false, Location);
-				if (InterfaceType == null)
+				Expression expr = ExplicitInterfaceName.GetTypeExpression (Location);
+				expr = expr.ResolveAsTypeTerminal (ec, false);
+				if (expr == null)
 					return false;
+
+				InterfaceType = expr.Type;
 
 				if (InterfaceType.IsClass) {
 					Report.Error (538, Location, "'{0}' in explicit interface declaration is not an interface", ExplicitInterfaceName);
@@ -5444,10 +5451,14 @@ namespace Mono.CSharp {
 
 		public override bool Define()
 		{
-			MemberType = Parent.ResolveType (Type, false, Location);
+			EmitContext ec = new EmitContext (Parent, Location, null, null, 0);
+			ec.InUnsafe = InUnsafe;
 			
-			if (MemberType == null)
+			Type = Type.ResolveAsTypeTerminal (ec, false);
+			if (Type == null)
 				return false;
+
+			MemberType = Type.Type;
 
 			if (!CheckBase ())
 				return false;

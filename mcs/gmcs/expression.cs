@@ -6409,11 +6409,12 @@ namespace Mono.CSharp {
 			//
 			Expression array_type_expr;
 			array_type_expr = new ComposedCast (requested_base_type, array_qualifier.ToString (), loc);
-			type = ec.DeclSpace.ResolveType (array_type_expr, false, loc);
-
-			if (type == null)
+			array_type_expr = array_type_expr.ResolveAsTypeTerminal (ec, false);
+			if (array_type_expr == null)
 				return false;
 
+			type = array_type_expr.Type;
+			
 			if (!type.IsArray) {
 				Error (622, "Can only use array initializer expressions to assign to array types. Try using a new expression instead.");
 				return false;
@@ -7201,8 +7202,8 @@ namespace Mono.CSharp {
 				return null;
 			}
 				
-			QueriedType = ec.DeclSpace.ResolveTypeExpr (QueriedType, false, loc);
-			if (QueriedType == null || QueriedType.Type == null)
+			QueriedType = QueriedType.ResolveAsTypeTerminal (ec, false);
+			if (QueriedType == null)
 				return null;
 
 			if (QueriedType is TypeParameterExpr){
@@ -7211,8 +7212,6 @@ namespace Mono.CSharp {
 			}
 
 			type_queried = QueriedType.Type;
-			if (type_queried == null)
-				return null;
 
 			CheckObsoleteAttribute (type_queried);
 
@@ -8855,9 +8854,11 @@ namespace Mono.CSharp {
 
 		public override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
-			Type ltype = ec.DeclSpace.ResolveType (left, false, loc);
-			if (ltype == null)
+			left = left.ResolveAsTypeTerminal (ec, false);
+			if (left == null)
 				return null;
+
+			Type ltype = left.Type;
 
 			if ((ltype == TypeManager.void_type) && (dim != "*")) {
 				Report.Error (1547, Location,
@@ -9050,10 +9051,11 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			otype = ec.DeclSpace.ResolveType (t, false, loc);
-
-			if (otype == null)
+			t = t.ResolveAsTypeTerminal (ec, false);
+			if (t == null)
 				return null;
+
+			otype = t.Type;
 
 			if (!TypeManager.VerifyUnManaged (otype, loc))
 				return null;

@@ -2566,7 +2566,7 @@ base_access
 		$$ = new BaseIndexerAccess ((ArrayList) $3, lexer.Location);
 	  }
 	| BASE error {
-		Report.Error (175, "Use of keyword `base' is not valid in this context");
+		Report.Error (175, lexer.Location, "Use of keyword `base' is not valid in this context");
 		$$ = null;
 	  }
 	;

@@ -2097,10 +2097,10 @@ namespace Mono.CSharp {
 				}
 			}
 
-			//
-			// First, the using aliases
-			//
-			if (alias_value != null){
+			if ((t = RootContext.LookupType (ds, Name, true, loc)) != null)
+				return t;
+
+			if (alias_value != null) {
 				if (alias_value.IsType)
 					return alias_value.Type;
 				if ((t = RootContext.LookupType (ds, alias_value.Name, true, loc)) != null)
@@ -2110,14 +2110,6 @@ namespace Mono.CSharp {
 				return new SimpleName (alias_value.Name, loc);
 			}
 
-			//
-			// Stage 2: Lookup up if we are an alias to a type
-			// or a namespace.
-			//
-
-			if ((t = RootContext.LookupType (ds, Name, true, loc)) != null)
-				return t;
-				
 			// No match, maybe our parent can compose us
 			// into something meaningful.
 			return this;
@@ -2339,7 +2331,7 @@ namespace Mono.CSharp {
 
 		override public Expression DoResolve (EmitContext ec)
 		{
-			return ResolveAsTypeTerminal (ec, true);
+			return ResolveAsTypeTerminal (ec, false);
 		}
 
 		override public void Emit (EmitContext ec)

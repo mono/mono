@@ -311,6 +311,12 @@ namespace Mono.CSharp {
 			VerifyClsCompliance (Parent);
 		}
 
+		public bool InUnsafe {
+			get {
+				return ((ModFlags & Modifiers.UNSAFE) != 0) || Parent.UnsafeContext;
+			}
+		}
+
 		// 
 		// Whehter is it ok to use an unsafe pointer in this type container
 		//
@@ -671,8 +677,9 @@ namespace Mono.CSharp {
 		}
 
 		// <summary>
-		//    Looks up the type, as parsed into the expression `e' 
+		//    Looks up the type, as parsed into the expression `e'.
 		// </summary>
+		//[Obsolete ("This method is going away soon")]
 		public Type ResolveType (Expression e, bool silent, Location loc)
 		{
 			TypeExpr d = ResolveTypeExpr (e, silent, loc);
@@ -718,7 +725,7 @@ namespace Mono.CSharp {
 
 		// <summary>
 		//    Resolves the expression `e' for a type, and will recursively define
-		//    types. 
+		//    types.  This should only be used for resolving base types.
 		// </summary>
 		public TypeExpr ResolveTypeExpr (Expression e, bool silent, Location loc)
 		{

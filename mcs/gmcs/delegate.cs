@@ -213,7 +213,7 @@ namespace Mono.CSharp {
 					return false;
 			}
 			
- 			ReturnType = ResolveTypeExpr (ReturnType, false, Location);
+ 			ReturnType = ReturnType.ResolveAsTypeTerminal (ec, false);
                         if (ReturnType == null)
                             return false;
                         
