@@ -164,10 +164,6 @@ namespace MonoTests.System
 				Assertion.AssertEquals("#22", "http://www.contoso.com/foo/bar/index.html?x=0", uri.ToString ());
 			} catch (NullReferenceException) {
 			}			
-			try {
-				uri = new Uri ("http://www.contoso.com:12345678/foo/bar/");
-				Assertion.Fail ("#30: known to fail with ms.net, should have failed because of invalid port");
-			} catch (UriFormatException) { }
 		}
 		
 		[Test]
@@ -599,6 +595,23 @@ namespace MonoTests.System
 			Assertion.AssertEquals ("#03", "/", segments [1]);
 			Assertion.AssertEquals ("#04", "hello", segments [2]);
 			
+		}
+
+		[Test]
+		[ExpectedException (typeof (UriFormatException))]
+		public void EmptyScheme ()
+		{
+			new Uri ("hey");
+		}
+
+		[Test]
+		public void InvalidPortsThatWorkWithMS ()
+		{
+			new Uri ("http://www.contoso.com:12345678/foo/bar/");
+			// UInt32.MaxValue gives port == -1 !!!
+			new Uri ("http://www.contoso.com:4294967295/foo/bar/");
+			// ((uint) Int32.MaxValue + (uint) 1) gives port == -2147483648 !!!
+			new Uri ("http://www.contoso.com:2147483648/foo/bar/");
 		}
 
 		public static void Print (Uri uri)
