@@ -1,0 +1,3 @@
+#!/bin/sh
+# I could find no versions of autoconf that don't invoke ltconfig, but
+# libtool no longer includes an ltconfig.  Yuch.
