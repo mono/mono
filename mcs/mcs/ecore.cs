@@ -4118,6 +4118,7 @@ namespace Mono.CSharp {
 		public bool IsBase;
 		MethodInfo getter, setter;
 		bool is_static;
+		bool must_do_cs1540_check;
 		
 		Expression instance_expr;
 
@@ -4182,38 +4183,86 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		MethodInfo GetAccessor (Type invocation_type, string accessor_name)
+		{
+			BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic |
+				BindingFlags.Static | BindingFlags.Instance;
+			MemberInfo[] group;
+
+			group = TypeManager.MemberLookup (
+				PropertyInfo.DeclaringType, PropertyInfo.DeclaringType,
+				MemberTypes.Method, flags, accessor_name + "_" + PropertyInfo.Name);
+
+			//
+			// The first method is the closest to us
+			//
+			if (group == null)
+				return null;
+
+			foreach (MethodInfo mi in group) {
+				MethodAttributes ma = mi.Attributes & MethodAttributes.MemberAccessMask;
+
+				// If only accessible to the current class.
+				if (ma == MethodAttributes.Private) {
+					if (mi.DeclaringType != invocation_type)
+						continue;
+					else
+						return mi;
+				}
+
+				//
+				// FamAndAssem requires that we not only derivate, but we are on the
+				// same assembly.  
+				//
+				if (ma == MethodAttributes.FamANDAssem){
+					if (mi.DeclaringType.Assembly != invocation_type.Assembly)
+						continue;
+					else
+						return mi;
+				}
+
+				// Assembly and FamORAssem succeed if we're in the same assembly.
+				if ((ma == MethodAttributes.Assembly) || (ma == MethodAttributes.FamORAssem)){
+					if (mi.DeclaringType.Assembly != invocation_type.Assembly)
+						continue;
+					else
+						return mi;
+				}
+
+				// We already know that we aren't in the same assembly.
+				if (ma == MethodAttributes.Assembly)
+					continue;
+
+				// Family and FamANDAssem require that we derive.
+				if ((ma == MethodAttributes.Family) || (ma == MethodAttributes.FamANDAssem)){
+					if (!TypeManager.IsSubclassOrNestedChildOf (invocation_type, mi.DeclaringType))
+						continue;
+					else {
+						must_do_cs1540_check = true;
+
+						return mi;
+					}
+				}
+
+				return mi;
+			}
+
+			return null;
+		}
+
 		//
 		// We also perform the permission checking here, as the PropertyInfo does not
 		// hold the information for the accessibility of its setter/getter
 		//
 		void ResolveAccessors (EmitContext ec)
 		{
-			BindingFlags flags = BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
-			MemberInfo [] group;
-			
-			group = TypeManager.MemberLookup (ec.ContainerType, PropertyInfo.DeclaringType,
-							  MemberTypes.Method, flags, "get_" + PropertyInfo.Name);
+			getter = GetAccessor (ec.ContainerType, "get");
+			if ((getter != null) && getter.IsStatic)
+				is_static = true;
 
-			//
-			// The first method is the closest to us
-			//
-			if (group != null && group.Length > 0){
-				getter = (MethodInfo) group [0];
-
-				if (getter.IsStatic)
-					is_static = true;
-			} 			
-
-			//
-			// The first method is the closest to us
-			//
-			group = TypeManager.MemberLookup (ec.ContainerType, PropertyInfo.DeclaringType,
-							  MemberTypes.Method, flags, "set_" + PropertyInfo.Name);
-			if (group != null && group.Length > 0){
-				setter = (MethodInfo) group [0];
-				if (setter.IsStatic)
-					is_static = true;
-			}
+			setter = GetAccessor (ec.ContainerType, "set");
+			if ((setter != null) && setter.IsStatic)
+				is_static = true;
 
 			if (setter == null && getter == null){
 				Error (122, "`" + PropertyInfo.Name + "' " +
@@ -4233,6 +4282,20 @@ namespace Mono.CSharp {
 				instance_expr = instance_expr.DoResolve (ec);
 				if (instance_expr == null)
 					return false;
+			}
+
+			if (must_do_cs1540_check && (instance_expr != null)) {
+				if ((instance_expr.Type != ec.ContainerType) &&
+				    ec.ContainerType.IsSubclassOf (instance_expr.Type)) {
+					Report.Error (1540, loc, "Cannot access protected member `" +
+						      PropertyInfo.DeclaringType + "." + PropertyInfo.Name + 
+						      "' via a qualifier of type `" +
+						      TypeManager.CSharpName (instance_expr.Type) +
+						      "'; the qualifier must be of type `" +
+						      TypeManager.CSharpName (ec.ContainerType) +
+						      "' (or derived from it)");
+					return false;
+				}
 			}
 
 			return true;

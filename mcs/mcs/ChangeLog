@@ -1,5 +1,13 @@
 2002-11-16  Martin Baulig  <martin@ximian.com>
 
+	* typemanager.cs (RealMemberLookup): Reverted Miguel's patch from
+	October 22nd; don't do the cs1540 check for static members.
+
+	* ecore.cs (PropertyExpr.ResolveAccessors): Rewrote this; we're
+	now using our own filter here and doing the cs1540 check again.
+
+2002-11-16  Martin Baulig  <martin@ximian.com>
+
 	* support.cs (InternalParameters): Don't crash if we don't have
 	any fixed parameters.  Fixes #33532.
 

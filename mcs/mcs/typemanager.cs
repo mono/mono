@@ -1994,6 +1994,12 @@ public class TypeManager {
 				if (!IsSubclassOrNestedChildOf (closure_invocation_type, mb.DeclaringType))
 					return false;
 
+				// Although a derived class can access protected members of its base class
+				// it cannot do so through an instance of the base class (CS1540).
+				if (!mb.IsStatic && (closure_invocation_type != closure_start_type) &&
+				    closure_invocation_type.IsSubclassOf (closure_start_type))
+					return false;
+
 				return true;
 			}
 
@@ -2037,7 +2043,7 @@ public class TypeManager {
 
 				// Although a derived class can access protected members of its base class
 				// it cannot do so through an instance of the base class (CS1540).
-				if ((closure_invocation_type != closure_start_type) &&
+				if (!fi.IsStatic && (closure_invocation_type != closure_start_type) &&
 				    closure_invocation_type.IsSubclassOf (closure_start_type))
 					return false;
 
@@ -2133,7 +2139,7 @@ public class TypeManager {
 				} else
 					private_ok = always_ok_flag;
 
-				if (invocation_type.IsSubclassOf (current_type))
+				if (private_ok || invocation_type.IsSubclassOf (current_type))
 					bf = original_bf | BindingFlags.NonPublic;
 			} else {
 				private_ok = false;
