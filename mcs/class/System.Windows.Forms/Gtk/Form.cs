@@ -91,14 +91,13 @@ namespace System.Windows.Forms {
 		//	}
 		//}
 		// [MonoTODO]
-		//public virtual Size AutoScaleBaseSize {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		public virtual Size AutoScaleBaseSize {
+			get {
+				return new Size ();
+			}
+			set {
+			}
+		}
 		// [MonoTODO]
 		// public override bool AutoScroll {
 		//	get {
