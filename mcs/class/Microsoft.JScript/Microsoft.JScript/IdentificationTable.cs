@@ -1,5 +1,5 @@
 //
-// Table.cs: Implementation of environments for jscript. Using a
+// IdentificationTable.cs: Implementation of environments for jscript. Using a
 // modified version of the algorithm and date structure presented by
 // Andrew W. Appel in his book Modern compiler implementation in Java,
 // second edition.
