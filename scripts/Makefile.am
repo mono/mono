@@ -49,3 +49,12 @@ wsdl: wsdl.in
 genxs: genxs.in
 	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' < $(srcdir)/genxs.in > genxs.tmp \
 	&& mv genxs.tmp genxs
+
+chktrust: chktrust.in
+	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' < $(srcdir)/chktrust.in > chktrust.tmp \
+	&& mv chktrust.tmp chktrust
+
+signcode: signcode.in
+	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' < $(srcdir)/signcode.in > signcode.tmp \
+	&& mv signcode.tmp signcode
+
