@@ -17,7 +17,7 @@ DISTFILES = \
 
 all-local: $(SECURITY_PROGRAMS)
 
-install-local:
+install-local: $(SECURITY_PROGRAMS)
 	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/bin
 	for p in $(SECURITY_PROGRAMS) ; do \
 	    $(INSTALL_BIN) $$p $(DESTDIR)$(prefix)/bin ; \
