@@ -74,7 +74,7 @@ public class TestAccessToProtectedOnChildInstanceFromParent {
 
 		static int x;
 		
-		Parent ()
+		protected Parent ()
 		{
 			a = x++;
 		}
