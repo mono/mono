@@ -1,3 +1,14 @@
+2003-06-15  Nick Drochak <ndrochak@gol.com>
+
+	* basic-long.cs: tests for negative values for bigmul, and unsigned.
+	* cpu-g4.md: add op_bigmul and op_bigmul_un
+	* cpu_pentium.md: add op_bigmul_un
+	* inssel-long32.brg: add rule for unsigned bigmul
+	* mini-ops.h: define OP_BIGMUL_UN
+	* mini-x86.c: THE BUG: handle (un)signed properly
+	* mini.c: choose unsigned opcode if needed.
+	This set of patches fixes bug #44291
+
 2003-06-13  Dietmar Maurer  <dietmar@ximian.com>
 
 	* mini.c (optimize_branches): improved to handle all kinds of
