@@ -259,8 +259,6 @@ namespace System.Web.Util
 
 		public static string Reduce (string path)
 		{
-			if (path == "//Test.aspx")
-				throw new Exception ();
 			path = path.Replace ('\\','/');
 
 			string [] parts = path.Split ('/');
