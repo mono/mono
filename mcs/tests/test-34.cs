@@ -39,6 +39,16 @@ public class Blah {
 	{
 		In (ref a);
 	}
+
+	static int AddArray (params int [] valores)
+	{
+		int total = 0;
+		
+		for (int i = 0; i < valores.Length; i++)
+			total += valores [i];
+
+		return total;
+	}
 	
 	public static int Main ()
 	{
@@ -69,6 +79,11 @@ public class Blah {
 		Out (ref k);
 		if (k != 11)
 			return 10;
+
+		int [] arr2 = new int [2] {1, 2};
+
+		if (AddArray (arr2) != 3)
+			return 11;
 		
 		return  0;
 	}
