@@ -381,7 +381,7 @@ namespace Mono.Tools
 
 			sb.Append ("Usage: gacutil.exe <commands> [ <options> ]\n");
 			sb.Append ("Commands:\n");
-			sb.Append ("  -i <assembly_path> [ -f ] [ --root ROOTDIR]\n");
+			sb.Append ("  -i <assembly_path> [ -f ] [-package NAME] [-root ROOTDIR]\n");
 			if (detailed == false) {
 				sb.Append ("    Installs an assembly into the global assembly cache\n");
 			} else {
@@ -404,7 +404,7 @@ namespace Mono.Tools
 
 			sb.Append ("\n");
 
-			sb.Append ("  -u <assembly_display_name>\n");
+			sb.Append ("  -u <assembly_display_name> [-package NAME] [-root ROOTDIR]\n");
 			if (detailed == false) {
 				sb.Append ("    Uninstalls an assembly from the global assembly cache\n");
 			} else {
