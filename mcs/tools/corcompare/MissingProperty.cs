@@ -20,9 +20,9 @@ namespace Mono.Util.CorCompare {
 	class MissingProperty 
 	{
 		// e.g. <property name="Length" status="missing"/>
-		PropertyInfo info;
+		MemberInfo info;
 
-		public MissingProperty(PropertyInfo pInfo) {
+		public MissingProperty(MemberInfo pInfo) {
 			info = pInfo;
 		}
 

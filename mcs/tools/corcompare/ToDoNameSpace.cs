@@ -134,6 +134,8 @@ namespace Mono.Util.CorCompare {
 			bool foundIt = false;
 			Object[] myAttributes;
 
+			int index;
+
 			// look at all the existing types in this namespace for MonoTODO attrib
 			foreach(Type t in existingTypes) {
 				// assume we won't find it
@@ -159,11 +161,14 @@ namespace Mono.Util.CorCompare {
 						if (o.ToString() == "System.MonoTODOAttribute") {
 							// the first time we find one for this type add the type to the list
 							if (!foundIt) {
-								ToDoTypes.Add(new ToDoType(t));
+								index = ToDoType.IndexOf(t, ToDoTypes);
+								if (index < 0) {
+									ToDoTypes.Add(new ToDoType(t));
+								}
 								foundIt = true;
 							}
 							// add any todo member infos to the todo type
-							((ToDoType)(ToDoTypes[ToDoTypes.Count-1])).AddToDoMember(mi);
+							((ToDoType)(ToDoTypes[ToDoTypes.Count-1])).AddToDoMember(t, mi);
 						}
 					}
 				}
@@ -171,10 +176,9 @@ namespace Mono.Util.CorCompare {
 			// find types with missing members
 			foreach (Type t in referenceTypes) {
 				bool addedIt = false;
-				int index = -1;
 
 				foreach (MemberInfo mi in t.GetMembers()) {
-					if (IsMissingMember(mi, t.Name, existingTypes)) {
+					if (t.Name == mi.DeclaringType.Name && IsMissingMember(mi, t.Name, existingTypes)) {
 						if (!addedIt) {
 							index = ToDoType.IndexOf(t, ToDoTypes);
 							if (index >= 0) {
@@ -184,8 +188,8 @@ namespace Mono.Util.CorCompare {
 								index = ToDoTypes.Add(new ToDoType(t));
 								addedIt = true;
 							}
+							((ToDoType)(ToDoTypes[index])).AddMissingMember(mi);
 						}
-						((ToDoType)(ToDoTypes[index])).AddMissingMember(mi);
 					}
 				}					
 			}
@@ -202,9 +206,6 @@ namespace Mono.Util.CorCompare {
 								if (IsParameterListEqual(((MethodInfo)mi).GetParameters(), ((MethodInfo)trialMI).GetParameters())) {
 									return false;
 								}
-								else {
-									return true;
-								}
 							}
 							else {
 								return false;
@@ -213,7 +214,7 @@ namespace Mono.Util.CorCompare {
 					}
 				}
 			}
-			return false;
+			return true;
 		}
 
 		static bool IsParameterListEqual(ParameterInfo[] piArray1, ParameterInfo[] piArray2) {

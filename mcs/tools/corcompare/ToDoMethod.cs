@@ -22,9 +22,9 @@ namespace Mono.Util.CorCompare {
 		// e.g. <method name="ToString" status="todo" note="this is the note from MonoTODO"/>
 		string todoNote = "";
 
-		public ToDoMethod(MethodInfo info) : base(info) {
+		public ToDoMethod(MemberInfo info) : base(info) {
 		}
-		public ToDoMethod(MethodInfo info, string note) :base(info) {
+		public ToDoMethod(MemberInfo info, string note) :base(info) {
 			todoNote = note;
 		}
 		public string Note {

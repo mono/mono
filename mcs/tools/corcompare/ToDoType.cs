@@ -23,31 +23,23 @@ namespace Mono.Util.CorCompare {
 		// e.g. <class name="System.Array" status="todo" missing="5" todo="6" complete="45">
 		
 		ArrayList missingMethodList = new ArrayList();
-		public MissingMethod[] MissingMethods {
+		public ArrayList MissingMethods {
 			get {
-				return (MissingMethod[])missingMethodList.ToArray(typeof(MissingMethod));
+				return missingMethodList;
 			}
 		}
 
 		ArrayList todoMethodList = new ArrayList();
 		public ToDoMethod[] ToDoMethods {
 			get {
-				return (ToDoMethod[])todoMethodList.ToArray(typeof(ToDoMethod));
+				Array retVal=Array.CreateInstance( typeof(ToDoMethod), todoMethodList.Count );
+				todoMethodList.CopyTo(retVal);
+				return (ToDoMethod[])retVal;
 			}
 		}
 
 		ArrayList missingPropertyList = new ArrayList();
-		public MissingProperty[] MissingProperties {
-			get {
-				return (MissingProperty[])missingPropertyList.ToArray(typeof(MissingProperty));
-			}
-		}
 		ArrayList todoPropertyList = new ArrayList();
-		public ToDoProperty[] ToDoProperties {
-			get {
-				return (ToDoProperty[])todoPropertyList.ToArray(typeof(ToDoProperty));
-			}
-		}
 
 		int complete;
 
@@ -56,13 +48,13 @@ namespace Mono.Util.CorCompare {
 
 		public int MissingCount {
 			get {
-				return MissingMethods.Length + MissingProperties.Length;
+				return missingMethodList.Count + missingPropertyList.Count;
 			}
 		}
 
 		public int ToDoCount {
 			get {
-				return ToDoMethods.Length + ToDoProperties.Length;
+				return todoMethodList.Count + todoPropertyList.Count;
 			}
 		}
 		
@@ -103,13 +95,13 @@ namespace Mono.Util.CorCompare {
 			}
 		}
 
-		public void AddToDoMember(MemberInfo info){
+		public void AddToDoMember(Type t, MemberInfo info){
 			switch (info.MemberType){
 				case MemberTypes.Method:
-					todoMethodList.Add(info);
+					todoMethodList.Add(new ToDoMethod(info));
 					break;
 				case MemberTypes.Property:
-					todoPropertyList.Add(info);
+					todoPropertyList.Add(new ToDoProperty(info));
 					break;
 				default:
 					break;
@@ -120,13 +112,14 @@ namespace Mono.Util.CorCompare {
 		public void AddMissingMember(MemberInfo info){
 			switch (info.MemberType){
 				case MemberTypes.Method:
-					missingMethodList.Add(info);
+					missingMethodList.Add(new MissingMethod(info));
 					break;
 				case MemberTypes.Property:
-					missingPropertyList.Add(info);
+					missingPropertyList.Add(new MissingProperty(info));
 					break;
 				default:
-					throw new Exception("Didn't code that member type yet");
+					break;
+					//throw new Exception("Didn't code that member type yet");
 			}
 		}
 	}

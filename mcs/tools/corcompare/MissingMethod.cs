@@ -7,6 +7,7 @@
 
 using System;
 using System.Reflection;
+using System.Text;
 
 namespace Mono.Util.CorCompare {
 
@@ -20,15 +21,17 @@ namespace Mono.Util.CorCompare {
 	class MissingMethod 
 	{
 		// e.g. <method name="Equals" status="missing"/>
-		MethodInfo mInfo;
+		MemberInfo mInfo;
 
-		public MissingMethod(MethodInfo info) {
+		public MissingMethod(MemberInfo info) {
 			mInfo = info;
 		}
 
 		public string Name {
 			get {
-				return mInfo.Name;
+				string s = mInfo.ToString();
+				int index = s.IndexOf(' ');
+				return s.Substring(index + 1);
 			}
 		}
 		public virtual string Status {

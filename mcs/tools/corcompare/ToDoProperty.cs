@@ -22,9 +22,9 @@ namespace Mono.Util.CorCompare {
 		// e.g. <property name="Count" status="todo" note="another note"/>
 		string todoNote = "";
 
-		public ToDoProperty(PropertyInfo pInfo) : base(pInfo) {
+		public ToDoProperty(MemberInfo pInfo) : base(pInfo) {
 		}
-		public ToDoProperty(PropertyInfo pInfo, string note) :base(pInfo) {
+		public ToDoProperty(MemberInfo pInfo, string note) :base(pInfo) {
 			todoNote = note;
 		}
 		public string Note {

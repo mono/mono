@@ -217,6 +217,8 @@ namespace Mono.Util.CorCompare {
 				XmlElement namespaceElem;
 				XmlElement classesElem;
 				XmlElement classElem;
+				XmlElement methodsElem;
+				XmlElement methodElem;
 				foreach (ToDoNameSpace ns in todoNameSpaces) {
 					namespaceElem = outDoc.CreateElement("namespace");
 					namespaceElem.SetAttribute("name", ns.name);
@@ -246,7 +248,19 @@ namespace Mono.Util.CorCompare {
 							classElem = outDoc.CreateElement("class");
 							classElem.SetAttribute("name", type.Name);
 							classElem.SetAttribute("status", type.Status);
+							classElem.SetAttribute("missing", type.MissingCount.ToString());
+							classElem.SetAttribute("todo", type.ToDoCount.ToString());
 							classesElem.AppendChild(classElem);
+							if (type.MissingMethods.Count > 0) {
+								methodsElem = outDoc.CreateElement("methods");
+								classElem.AppendChild(methodsElem);
+								foreach (MissingMethod m in type.MissingMethods) {
+									methodElem = outDoc.CreateElement("method");
+									methodElem.SetAttribute("name", ((MissingMethod)m).Name);
+									methodElem.SetAttribute("status", ((MissingMethod)m).Status);
+									methodsElem.AppendChild(methodElem);
+								}
+							}
 						}
 						namespaceElem.SetAttribute("todo", ns.ToDoCount.ToString());
 					}
