@@ -37,7 +37,7 @@ namespace System.Runtime.Remoting
 		static RemotingServices ()
 		{
 			RegisterInternalChannels ();
-			app_id = "/" + Guid.NewGuid().ToString().Replace('-', '_') + "/";
+			app_id = Guid.NewGuid().ToString().Replace('-', '_') + "/";
 			CreateWellKnownServerIdentity (typeof(RemoteActivator), "RemoteActivationService.rem", WellKnownObjectMode.Singleton);
 		}
 	
@@ -231,7 +231,7 @@ namespace System.Runtime.Remoting
 			}
 			else
 			{
-				ClientActivatedIdentity identity = GetIdentityForUri (uri) as ClientActivatedIdentity;
+				ClientActivatedIdentity identity = GetIdentityForUri ("/" + uri) as ClientActivatedIdentity;
 				if (identity == null || obj != identity.GetServerObject()) 
 					CreateClientActivatedServerIdentity (obj, requested_type, uri);
 			}
@@ -393,7 +393,7 @@ namespace System.Runtime.Remoting
 		{
 			lock (uri_hash)
 			{
-				return (Identity)uri_hash [uri];
+				return (Identity)uri_hash [GetNormalizedUri(uri)];
 			}
 		}
 
@@ -405,7 +405,7 @@ namespace System.Runtime.Remoting
 				return obj.ObjectIdentity;
 		}
 
-		internal static ClientIdentity GetOrCreateClientIdentity(ObjRef objRef, Type proxyType)
+		internal static ClientIdentity GetOrCreateClientIdentity(ObjRef objRef, Type proxyType, out object clientProxy)
 		{
 			// This method looks for an identity for the given url. 
 			// If an identity is not found, it creates the identity and 
@@ -424,23 +424,36 @@ namespace System.Runtime.Remoting
 
 			lock (uri_hash)
 			{
-				ClientIdentity identity = uri_hash [objRef.URI] as ClientIdentity;
-				if (identity != null) 
-					return identity;	// Object already registered
+				clientProxy = null;
+				string uri = GetNormalizedUri (objRef.URI);
+				
+				ClientIdentity identity = uri_hash [uri] as ClientIdentity;
+				if (identity != null)
+				{
+					// Object already registered
+					clientProxy = identity.ClientProxy;
+					if (clientProxy != null) return identity;
+					
+					// The proxy has just been GCed, so its identity cannot
+					// be reused. Just dispose it.
+					DisposeIdentity (identity);
+				}
 
 				// Creates an identity and a proxy for the remote object
 
 				identity = new ClientIdentity (objectUri, objRef);
 				identity.ChannelSink = sink;
 
+				// Registers the identity
+				uri_hash [uri] = identity;
+				
 				if (proxyType != null)
 				{
 					RemotingProxy proxy = new RemotingProxy (proxyType, identity);
-					identity.ClientProxy = (MarshalByRefObject) proxy.GetTransparentProxy();
+					clientProxy = proxy.GetTransparentProxy();
+					identity.ClientProxy = (MarshalByRefObject) clientProxy;
 				}
 
-				// Registers the identity
-				uri_hash [objRef.URI] = identity;
 				return identity;
 			}
 		}
@@ -513,8 +526,9 @@ namespace System.Runtime.Remoting
 
 		internal static object GetRemoteObject(ObjRef objRef, Type proxyType)
 		{
-			ClientIdentity id = GetOrCreateClientIdentity (objRef, proxyType);
-			return id.ClientProxy;
+			object proxy;
+			GetOrCreateClientIdentity (objRef, proxyType, out proxy);
+			return proxy;
 		}
 
 		internal static object GetDomainProxy(AppDomain domain) 
@@ -543,11 +557,14 @@ namespace System.Runtime.Remoting
 			CrossAppDomainChannel.RegisterCrossAppDomainChannel();
 		}
 	        
-		internal static void DisposeIdentity (ServerIdentity ident)
+		internal static void DisposeIdentity (Identity ident)
 		{
 			lock (uri_hash)
 			{
-				uri_hash.Remove (ident.ObjectUri);
+				if (!ident.Disposed) {
+					uri_hash.Remove (ident.ObjectUri);
+					ident.Disposed = true;
+				}
 			}
 		}
 
@@ -560,7 +577,8 @@ namespace System.Runtime.Remoting
 
 			lock (uri_hash)
 			{
-				return uri_hash [((IMethodMessage)msg).Uri] as ServerIdentity;
+				string uri = GetNormalizedUri (((IMethodMessage)msg).Uri);
+				return uri_hash [uri] as ServerIdentity;
 			}
 		}
 
@@ -593,6 +611,12 @@ namespace System.Runtime.Remoting
 				}
 			}
 			return false;
+		}
+		
+		static string GetNormalizedUri (string uri)
+		{
+			if (uri.StartsWith ("/")) return uri.Substring (1);
+			else return uri;
 		}
 
 		#endregion

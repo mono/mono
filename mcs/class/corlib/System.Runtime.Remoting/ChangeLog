@@ -1,3 +1,12 @@
+2003-10-08  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* Identity.cs, RemotingServices.cs: Fixed memory leak. I Changed reference 
+	  to proxy in ClientIdentity to a WeakReference. This fixes a memory leak.
+	* RemotingServices.cs: Ignore first "/" char in uris when looking for
+	  and object. 
+	  Take into account that identity now has a weak reference
+	  of the proxy.
+
 2003-09-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ObjectHandle.cs: simplified and fix InitializeLifetimeService.

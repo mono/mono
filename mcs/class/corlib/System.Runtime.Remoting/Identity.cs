@@ -36,6 +36,11 @@ namespace System.Runtime.Remoting
 
 		// The ObjRef 
 		protected ObjRef _objRef;
+		
+		// This flag is set when the identity is removed from the uri table.
+		// It is needed because in some scenarios the runtime may try to
+		// dispose the identity twice.
+		bool _disposed = false;
 
 		public Identity(string objectUri, Type objectType)
 		{
@@ -79,6 +84,12 @@ namespace System.Runtime.Remoting
 		{
 			get { return _objectUri != null; }
 		}
+		
+		public bool Disposed
+		{
+			get { return _disposed; }
+			set { _disposed = true; }
+		}
 
 		public DynamicPropertyCollection ClientDynamicProperties
 		{
@@ -121,7 +132,7 @@ namespace System.Runtime.Remoting
 
 	internal class ClientIdentity : Identity
 	{
-		MarshalByRefObject _proxyObject;
+		WeakReference _proxyReference;
 
 		public ClientIdentity (string objectUri, ObjRef objRef): base (objectUri, Type.GetType (objRef.TypeInfo.TypeName,true))
 		{
@@ -131,9 +142,9 @@ namespace System.Runtime.Remoting
 
 		public MarshalByRefObject ClientProxy
 		{
-			get	{ return _proxyObject; }
-			set { _proxyObject = value; }
-		}	
+			get	{ return (MarshalByRefObject) _proxyReference.Target; }
+			set { _proxyReference = new WeakReference (value); }
+		}
 
 		public override ObjRef CreateObjRef (Type requestedType)
 		{
