@@ -19,6 +19,11 @@ namespace System.Windows.Forms {
 		internal Window win;
 		string caption;
 		Size csize;
+		// if the application has a menu and/or a statusbar
+		// then this menu should be added to the vbox before
+		// the layout and the statusbar after the layout
+		Gtk.VBox vbox = null;
+		Control menu = null;
 
 		public Form () : base ()
 		{
@@ -46,7 +51,10 @@ namespace System.Windows.Forms {
 
 			win.DeleteEvent += new DeleteEventHandler (delete_cb);
 			win.Title = Text;
-			win.Add (contents);
+			vbox = new Gtk.VBox(false, 0);
+			win.Add (vbox);
+			vbox.Show ();
+			vbox.PackStart(contents, true, true, 0);
 			return (Widget) win;
 		}
 
@@ -257,10 +265,16 @@ namespace System.Windows.Forms {
 		// [MonoTODO]
 		public Control Menu {
 			get {
-				throw new NotImplementedException ();
+				return this.menu;
 			}
 			set {
-				Control.Controls.Add(value);
+				this.menu = value;
+				MainMenu m = (MainMenu)value;
+				this.vbox.PackStart(m.mb, false, false, 0);
+
+				m.mb.Show();
+				this.vbox.ReorderChild (m.mb, 0);
+				Control.Controls.Add(this.menu, false);
 			}
 		}
 		// [MonoTODO]

@@ -26,49 +26,50 @@ namespace demo2
 		private MenuItem menuItem4 = new MenuItem();
 		private MenuItem menuItem5 = new MenuItem();
  
-	    	private void InitializeWidgets()
-	    	{
-    		  	button1.Location = new Point(150, 28);
-       	  	button1.Name = "button1";
-    	  	  	button1.Size = new Size(128, 44);
-       	 	button1.Text = "Color";
-    	  		button1.Click += new EventHandler(this.button1_Click);    
-         	button1.Enabled = true;
+		private void InitializeWidgets()
+		{
+			button1.Location = new Point(150, 28);
+			button1.Name = "button1";
+			button1.Size = new Size(128, 44);
+			button1.Text = "Color";
+			button1.Click += new EventHandler(this.button1_Click);    
+		 	button1.Enabled = true;
 
-  			button2.Location = new Point(150, 80);
-       	  	button2.Name = "button2";
-    	  	  	button2.Size = new Size(128, 44);
-       	 	button2.Text = "Add to ComboBox";
-    	  		button2.Click += new EventHandler(this.button2_Click);    
-         	button2.Enabled = true;
+			button2.Location = new Point(150, 80);
+			button2.Name = "button2";
+			button2.Size = new Size(128, 44);
+			button2.Text = "Add to ComboBox";
+			button2.Click += new EventHandler(this.button2_Click);    
+		 	button2.Enabled = true;
 
-		menuItem1.Text = "File";
-		menuItem2.Text = "Exit";
-		menuItem3.Text = "Edit";
-		menuItem4.Text = "Stop";
-		menuItem5.Text = "Start";
-		menuItem1.MenuItems.Add(menuItem2);
-		menuItem3.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {menuItem4,
-							   menuItem5});	
-   		mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {menuItem1,
-							menuItem3});
+			menuItem1.Text = "File";
+			menuItem2.Text = "Exit";
+			menuItem3.Text = "Edit";
+			menuItem4.Text = "Stop";
+			menuItem5.Text = "Start";
+			menuItem1.MenuItems.Add(menuItem2);
+			menuItem3.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {menuItem4,
+							       menuItem5});	
+			mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {menuItem1,
+							    menuItem3});
+    
+			combo1.Location = new Point(150, 150);
+			this.combo1.Items.AddRange(new object[] {"Item 1",
+				"Item 2",
+				"Item 3",
+				"Item 4",
+				"Item 5"});
 
-		combo1.Location = new Point(150, 150);
-		this.combo1.Items.AddRange(new object[] {"Item 1",
-                        "Item 2",
-                        "Item 3",
-                        "Item 4",
-                        "Item 5"});
-		
-          	this.Controls.AddRange(new System.Windows.Forms.Control[] { 
-									this.button1,
-									this.button2,
-									this.color1,
-									this.combo1});
-          	this.Size = new Size(512, 250);
-		this.Menu = mainMenu1;	
-    		}
-    	
+			this.Controls.AddRange(new System.Windows.Forms.Control[] { 
+									    this.button1,
+									    this.button2,
+									    this.color1,
+									    this.combo1});
+
+			this.Size = new Size(512, 250);
+			this.Menu = mainMenu1;
+		}
+
     	public GtkForm()
     	{
     	   	InitializeWidgets();

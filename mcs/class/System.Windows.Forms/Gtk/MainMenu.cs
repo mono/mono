@@ -14,7 +14,7 @@ namespace System.Windows.Forms{
 
 		public MenuItemCollection MenuItems;
 		String text;
-		Gtk.MenuBar mb;
+		internal Gtk.MenuBar mb;
 
 		public class MenuItemCollection{
 
@@ -41,13 +41,13 @@ namespace System.Windows.Forms{
 		}
 
 		public MainMenu() : base (){
+
 			this.MenuItems = new MenuItemCollection(this);
 
 			CreateMenuBar();
 		}
 
 		internal override Gtk.Widget CreateWidget () {
-			
 			return mb;
 		}
 
@@ -55,8 +55,10 @@ namespace System.Windows.Forms{
 		private void CreateMenuBar (){
 			
 			mb = new Gtk.MenuBar ();
-			this.Location = new Point(0, 0);
-			this.Size = new Size(1024, 27);
+			// you cannot call this because then locationchanged gets triggered
+			// and that means that a parent will be set for this widget
+			//this.Location = new Point(0, 0);
+			//this.Size = new Size(1024, 27);
 		}
 
 	}

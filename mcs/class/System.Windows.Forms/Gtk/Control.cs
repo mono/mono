@@ -26,7 +26,7 @@ namespace System.Windows.Forms {
 		Point location = new System.Drawing.Point (0, 0);
 		Gtk.Layout layout = null;
 		AnchorStyles anchor = AnchorStyles.Top|AnchorStyles.Left;
-		
+
 		static int init_me;
 
 		public class ControlCollection : IList, ICollection, IEnumerable, ICloneable 
@@ -44,13 +44,20 @@ namespace System.Windows.Forms {
 			}
 
 			// ControlCollection
+			public virtual void Add (Control value, bool doevent) {
+				if (doevent == true) {
+					this.Add (value);
+					return;
+				}
+				list.Add(value);
+			}
 			public virtual void Add (Control value) {
 				list.Add (value);
 				owner.OnControlAdded (new ControlEventArgs (value));
 			}
 			public virtual void AddRange (Control[] controls) {
 				list.AddRange (controls);
-				foreach (Control c in controls)
+				foreach (Control c in controls) 
 					owner.OnControlAdded (new ControlEventArgs (c));
 			}
 			
@@ -179,24 +186,25 @@ namespace System.Windows.Forms {
 
 
 		public virtual string Name {
-     	get {
-           		return name;	
-       }
-         
-       set { 
-						name = value;
-			 			Widget.Name = value;
+			get {
+				return name;
 			}
-     }
-		
+
+			set {
+				name = value;
+				Widget.Name = value;
+			}
+		}
+
 		public bool Enabled {
 			get {
-					return Widget.Sensitive;
+				return Widget.Sensitive;
 			}
 			set {
-						Widget.Sensitive = value;
-			}						
-		}		
+				Widget.Sensitive = value;
+			}
+		}
+
 		public Size Size {
 			get { 
 				return size;
@@ -213,17 +221,17 @@ namespace System.Windows.Forms {
 			}
 			set {
 				tabindex = value;
-			}			
-		}	
-				
+			}
+		}
+
 		public int Index {
 			get { 
 				return index;
 			}
 			set {
 				index = value;
-			}			
-		}	
+			}
+		}
 
 		public void Show ()
 		{
@@ -310,6 +318,6 @@ namespace System.Windows.Forms {
 		public virtual AnchorStyles Anchor {
 			get { return anchor; }
 			set { anchor=value; }
-    }
+		}
 	}
 }
