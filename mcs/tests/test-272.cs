@@ -2,6 +2,7 @@ enum Foo { Bar };
 
 class BazAttribute : System.Attribute 
 {
+	public BazAttribute () {}
 	public BazAttribute (Foo foo1) {}
 	public Foo foo2;
 	public Foo foo3 { set {} }
