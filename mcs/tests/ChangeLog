@@ -1,3 +1,8 @@
+2002-06-08  Ravi Pratap  <ravi@ximian.com>
+
+	* test-128.cs : Add. This ensures we apply attributes to accessors
+	of events and properties.
+
 2002-06-08  Martin Baulig  <martin@gnome.org>
 
 	* test-127.cs: New test for Enum.IsDefined().
