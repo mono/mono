@@ -195,6 +195,11 @@ namespace Mono.Data.Tds.Protocol {
 			comm.Close ();
 			connected = false;
 		}
+		
+		public virtual bool Reset ()
+		{
+			return true;
+		}
 
 		public void Execute (string sql)
 		{

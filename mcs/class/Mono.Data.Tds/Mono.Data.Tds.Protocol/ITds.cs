@@ -27,7 +27,7 @@ namespace Mono.Data.Tds.Protocol {
 		bool IsConnected {
 			get;
 		}
-
+		
 		string ServerVersion {
 			get;
 		}
@@ -57,6 +57,7 @@ namespace Mono.Data.Tds.Protocol {
 		void Cancel ();
 		bool Connect (TdsConnectionParameters connectionParameters);
 		void Disconnect ();
+		bool Reset ();
 
 		void Execute (string commandText);
 		void ExecProc (string procedure);

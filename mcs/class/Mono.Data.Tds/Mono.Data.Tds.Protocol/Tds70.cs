@@ -330,6 +330,20 @@ namespace Mono.Data.Tds.Protocol {
 			return new String (chars);
 		}
 
+		public override bool Reset ()
+		{
+			try
+			{
+				ExecProc ("exec sp_reset_connection");
+				return true;
+			}
+			catch
+			{
+				Console.WriteLine ("Error reseting");
+				return false;
+			}
+		}
+
 		public override void ExecPrepared (string commandText, TdsMetaParameterCollection parameters, int timeout, bool wantResults)
 		{
 			Parameters = parameters;
