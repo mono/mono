@@ -461,7 +461,6 @@ namespace Mono.CSharp.Debugger
 		int file_offset;
 		string name;
 		string full_name;
-		MethodIndexEntry index_entry;
 
 		public readonly int Index;
 		public readonly SourceFileEntry SourceFile;
@@ -694,8 +693,6 @@ namespace Mono.CSharp.Debugger
 				LexicalBlocks [i].Write (bw);
 			file_offset = (int) bw.BaseStream.Position;
 
-			index_entry = new MethodIndexEntry (file_offset, FullNameOffset, Token);
-
 			bw.Write (SourceFileIndex);
 			bw.Write (Token);
 			bw.Write (StartRow);
@@ -719,7 +716,7 @@ namespace Mono.CSharp.Debugger
 
 		internal void WriteIndex (BinaryWriter bw)
 		{
-			index_entry.Write (bw);
+			new MethodIndexEntry (file_offset, FullNameOffset, Token).Write (bw);
 		}
 
 		public override string ToString ()

@@ -1,5 +1,11 @@
 2003-12-28 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* MonoSymbolTable.cs: Done make the MethodIndexEntry
+	part of the method entry class, because it just
+	takes up extra space.
+
+2003-12-28 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* MonoSymbolTable.cs, MonoSymbolWriter.cs: Use
 	fewer arrays, dont use arraylists with structs.
 
