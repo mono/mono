@@ -1,3 +1,8 @@
+
+Sat Jun 22 11:37:25 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: fix off-by-one in Assembly.GetTypes() reported by bob@karr.ath.cx.
+
 2002-06-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* image.c (do_mono_image_open): Initialize reference count,
