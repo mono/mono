@@ -1,4 +1,6 @@
-' BC30616: Variable 'a' hides a variable in an enclosing block.
+REM LineNo: 12
+REM ExpectedError: BC30616
+REM ErrorMessage: Variable 'a' hides a variable in an enclosing block.
 
 Imports System
 

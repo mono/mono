@@ -1,5 +1,7 @@
-' BC30756: 'GoTo labelA' is not valid because 'labelA' is inside a 'With' statement 
-' that does not contain  this statement.
+REM LineNo: 21
+REM ExpectedError: BC30756
+REM ErrorMessage: 'GoTo labelA' is not valid because 'labelA' is inside a 'With' statement
+REM 		   that does not contain  this statement.
 
 Imports System
 

@@ -1,4 +1,7 @@
-' BC30456: 'a1' is not a member of 'WithStatementC1.C2'.
+REM LineNo: 23
+REM ExpectedError: BC30456
+REM ErrorMessage: 'a1' is not a member of 'WithStatementC1.C2'. 
+
 Imports System
 
 Module WithStatementC1

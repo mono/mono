@@ -1,4 +1,6 @@
-' BC30290: Local variable cannot have the same name as the function containing it.
+REM LineNo: 10
+REM ExpectedError: BC30290
+REM ErrorMessage: Local variable cannot have the same name as the function containing it.
 
 Imports System
 
