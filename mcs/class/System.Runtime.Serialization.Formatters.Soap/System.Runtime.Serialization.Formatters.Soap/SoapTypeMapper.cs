@@ -313,8 +313,28 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			element = new Element("string", SoapEncodingNamespace);
 			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
 
+			element = new Element("boolean", XmlSchema.Namespace);
+			elementType = typeof(bool);
+			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
+			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
+
+			element = new Element("byte", XmlSchema.Namespace);
+			elementType = typeof(sbyte);
+			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
+			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
+
+			element = new Element("unsignedByte", XmlSchema.Namespace);
+			elementType = typeof(byte);
+			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
+			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
+
 			element = new Element("long", XmlSchema.Namespace);
 			elementType = typeof(long);
+			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
+			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
+
+			element = new Element("unsignedLong", XmlSchema.Namespace);
+			elementType = typeof(ulong);
 			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
 			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
 
@@ -323,8 +343,18 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
 			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
 
+			element = new Element("unsignedInt", XmlSchema.Namespace);
+			elementType = typeof(uint);
+			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
+			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
+
 			element = new Element("float", XmlSchema.Namespace);
 			elementType = typeof(float);
+			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
+			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
+
+			element = new Element("double", XmlSchema.Namespace);
+			elementType = typeof(double);
 			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
 			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
 
@@ -335,6 +365,11 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 
 			element = new Element("short", XmlSchema.Namespace);
 			elementType = typeof(short);
+			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
+			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
+
+			element = new Element("unsignedShort", XmlSchema.Namespace);
+			elementType = typeof(ushort);
 			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
 			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
 
@@ -380,6 +415,9 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			}
 			else if (value is TimeSpan) {
 				return SoapDuration.ToString ((TimeSpan)value);
+			}
+			else if (value is bool) {
+				return ((bool) value) ? "true" : "false";
 			}
 			else {
 				return value.ToString ();

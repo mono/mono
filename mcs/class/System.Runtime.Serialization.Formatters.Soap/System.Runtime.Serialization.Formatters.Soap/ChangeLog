@@ -1,3 +1,9 @@
+2005-05-05  Lluis Sanchez Gual <lluis@novell.com>
+
+	* SoapTypeMapper.cs: Added missing maps for primitive types and
+	fixed bool conversion to string. This patch by Luke Ravitch
+	fixes bug #74295.
+
 2005-02-10  Lluis Sanchez Gual <lluis@novell.com>
 
 	* SoapFormatter.cs: Don't store the SoapWriter in an instance field,
