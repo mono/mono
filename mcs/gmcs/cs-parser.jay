@@ -2566,7 +2566,7 @@ base_access
 		$$ = new BaseIndexerAccess ((ArrayList) $3, lexer.Location);
 	  }
 	| BASE error {
-		Report.Error (175, lexer.Location, "Use of keyword `base' is not valid in this context");
+		Report.Error (175, "Use of keyword `base' is not valid in this context");
 		$$ = null;
 	  }
 	;
@@ -4016,7 +4016,7 @@ try_statement
 		// Now s contains the list of specific catch clauses
 		// and g contains the general one.
 		
-		$$ = new Try ((Block) $2, c, g, null, ((Block) $2).loc);
+		$$ = new Try ((Block) $2, c, g, null, lexer.Location);
 	}
 	| TRY block opt_catch_clauses FINALLY block
 	  {
@@ -4033,7 +4033,7 @@ try_statement
 			}
 		}
 
-		$$ = new Try ((Block) $2, s, g, (Block) $5, ((Block) $2).loc);
+		$$ = new Try ((Block) $2, s, g, (Block) $5, lexer.Location);
 	  }
 	| TRY block error 
 	  {
@@ -4110,7 +4110,7 @@ catch_clause
 		}
 
 
-		$$ = new Catch (type, id , (Block) $4, ((Block) $4).loc);
+		$$ = new Catch (type, id , (Block) $4, lexer.Location);
 	}
         ;
 
