@@ -1,3 +1,7 @@
+2004-04-29  Martin Baulig  <martin@ximian.com>
+
+	* test-245.cs: New test for #53255.
+
 2004-04-28  Martin Baulig  <martin@ximian.com>
 
 	* test-244.cs: New test for #52588.
