@@ -905,6 +905,15 @@ namespace System.Reflection.Emit {
 			0xFE << 0 | 0x1D << 8 | (byte) StackBehaviour.Pushi << 16 | (byte) StackBehaviour.Pop1 << 24,
 			2 << 0 | (byte) OpCodeType.Primitive << 8 | (byte) OperandType.InlineNone << 16 | (byte) FlowControl.Next << 24);
 
-
+                public static bool TakesSingleByteArgument (OpCode inst)
+                {
+                       OperandType t = inst.OperandType;
+                       
+                       // check for short-inline instructions
+                       return t == OperandType.ShortInlineBrTarget
+                       || t == OperandType.ShortInlineI
+                           || t == OperandType.ShortInlineR
+                           || t == OperandType.ShortInlineVar;
+               }
 	}
 }

@@ -1,5 +1,9 @@
 2004-08-05  Duncan Mak  <duncan@ximian.com>
 
+	* OpCodes.cs (TakesSingleByteArgument): Add this back.
+
+2004-08-05  Duncan Mak  <duncan@ximian.com>	
+
 	This patch is based on an idea of Ben's to reduce the code size
 	in MCS. 
 
