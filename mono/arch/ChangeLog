@@ -1,4 +1,9 @@
 
+Mon Jan 14 11:50:16 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* x86/x86-codegen.c: added overflow condition code and some aliases
+	for the other ccs.
+
 Thu Jan 10 21:01:08 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* x86/tramp.c: mono_create_trampoline (): the runtime argument is
