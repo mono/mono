@@ -2,25 +2,13 @@ using System;
 
 public class Test
 {
-	public int Length {
-		get {
-			return 1;
-		}
-	}
-
-	public static implicit operator object[] (Test test)
+	public static int IndexOf (Array array, object value)
 	{
-		return new object[1] { test };
-	}
-
-	public static int IndexOf (Test array, object value)
-	{
-		// The non-generic function is better than the generic one whose type
-		// arguments have been infered.
+		// This is picking the non-generic version.
 		return IndexOf (array, value, 0, array.Length);
 	}
 
-	public static int IndexOf (Test array, object value, int startIndex, int count)
+	public static int IndexOf (Array array, object value, int startIndex, int count)
 	{
 		return 2;
 	}
@@ -36,10 +24,18 @@ class X
 	static int Main ()
 	{
 		Test test = new Test ();
-		int result = Test.IndexOf (test, test);
-		if (result == 2)
-			return 0;
-		else
+		string[] array = new string [] { "Hello" };
+
+		int result = Test.IndexOf (array, array);
+		if (result != 2)
 			return 1;
+
+		string hello = "Hello World";
+		// This is picking the generic version.
+		result = Test.IndexOf (array, hello, 1, 2);
+		if (result != 1)
+			return 2;
+
+		return 0;
 	}
 }
