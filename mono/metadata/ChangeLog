@@ -1,3 +1,8 @@
+2004-12-09  Martin Baulig  <martin@ximian.com>
+
+	* metadata.h, loader.h: Use `idx' instead of `index' in parameter
+	names to get rid of compiler warnings.
+
 2004-12-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (mono_marshal_get_struct_to_ptr): Call 
