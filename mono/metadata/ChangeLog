@@ -1,3 +1,11 @@
+2005-01-24  Ben Maurer  <bmaurer@ximian.com>
+
+	* marshal.c (mono_string_utf8_to_builder)
+	(mono_string_builder_to_utf16): We might not have ownership of the
+	string. In thise case, we need to create a new buffer.
+
+	* object-internals.h (mono_stringbuilder_capacity): sb->str might
+	be null, in which case, use the default capacity.
 
 Mon Jan 24 16:42:29 CET 2005 Paolo Molaro <lupus@ximian.com>
 
