@@ -358,19 +358,9 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
-				// This is a child control, so it must have a parent for creation
-				if( Parent != null) {
-					CreateParams createParams = new CreateParams ();
-					createParams.Caption = Text;
+					CreateParams createParams = base.CreateParams;
 					createParams.ClassName = "LISTBOX";
-					createParams.X = Left;
-					createParams.Y = Top;
-					createParams.Width = Width;
-					createParams.Height = Height;
-					createParams.ClassStyle = 0;
 					createParams.ExStyle = (int)WindowExStyles.WS_EX_CLIENTEDGE;
-					createParams.Param = 0;
-					createParams.Parent = Parent.Handle;
 					createParams.Style = (int) (
 						WindowStyles.WS_CHILD | 
 						WindowStyles.WS_VISIBLE |
@@ -398,8 +388,6 @@ namespace System.Windows.Forms {
 						createParams.Style |= (int)WindowStyles.WS_VSCROLL;
 					}
 					return createParams;
-				}
-				return null;
 			}		
 		}
 

@@ -1,4 +1,20 @@
 2003-05-27  Aleksey Ryabchuk <ryabchuk@yahoo.com>
+        * Button.cs
+	* CheckBox.cs
+	* CheckedListBox.cs
+	* ComboBox.cs
+	* HScrollBar.cs
+	* ListBox.cs
+	* ListView.cs
+	* PrintPreviewControl.cs
+	* RichTextBox.cs
+	* ScrollBar.cs
+	* Splitter.cs
+	* ToolBar.cs
+	* TreeView.cs
+	* VScrollBar.cs : changed to use base implementation of CreateParams
+
+2003-05-27  Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* Control.cs : implemented GetChildIndex, BringToFront, UpdateZOrder, update z-order when recreating handle,
 	* win32Strcuts.cs
 	* win32Enums.cs : use ansi CharSet for tooltips

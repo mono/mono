@@ -37,38 +37,22 @@ namespace System.Windows.Forms {
 		// --- Properties ---
 		protected override CreateParams CreateParams {
 			get {
-				// This is a child control, so it must have a parent for creation
-				if( Parent != null) {
-					CreateParams createParams = new CreateParams ();
-					// CHECKME: here we must not overwrite window
-					if( window == null) {
-						window = new ControlNativeWindow (this);
-					}
+				CreateParams createParams = base.CreateParams;
 
-					createParams.Caption = Text;
-					createParams.ClassName = "BUTTON";
-					createParams.X = Left;
-					createParams.Y = Top;
-					createParams.Width = Width;
-					createParams.Height = Height;
-					createParams.ClassStyle = 0;
-					createParams.ExStyle = 0;
-					createParams.Param = 0;
-					createParams.Parent = Parent.Handle;
-					createParams.Style = (int) (
-						WindowStyles.WS_CHILD | 
-						WindowStyles.WS_VISIBLE |
-						WindowStyles.WS_CLIPSIBLINGS );
-					if(FlatStyle != FlatStyle.System) {
-						createParams.Style |= (int) ButtonStyles.BS_OWNERDRAW;
-					}
-					createParams.Style |= (int)Win32.ContentAlignment2SystemButtonStyle(TextAlign);
-					// CHECKME : this call is commented because (IMHO) Control.CreateHandle suppose to do this
-					// and this function is CreateParams, not CreateHandle
-					// window.CreateHandle (createParams);
-					return createParams;
+				createParams.ClassName = "BUTTON";
+
+				createParams.Style = (int) (
+					WindowStyles.WS_CHILD | 
+					WindowStyles.WS_VISIBLE |
+					WindowStyles.WS_CLIPSIBLINGS );
+				if(FlatStyle != FlatStyle.System) {
+					createParams.Style |= (int) ButtonStyles.BS_OWNERDRAW;
 				}
-				return null;
+				createParams.Style |= (int)Win32.ContentAlignment2SystemButtonStyle(TextAlign);
+				// CHECKME : this call is commented because (IMHO) Control.CreateHandle suppose to do this
+				// and this function is CreateParams, not CreateHandle
+				// window.CreateHandle (createParams);
+				return createParams;
 			}
 		}
 		

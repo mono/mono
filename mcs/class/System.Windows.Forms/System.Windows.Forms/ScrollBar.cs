@@ -184,24 +184,10 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
-				CreateParams createParams = new CreateParams ();
+				CreateParams createParams = base.CreateParams;
 				createParams.Caption = "";
 				createParams.ClassName = "SCROLLBAR";
-				createParams.X = Left;
-				createParams.Y = Top;
-				createParams.Width = Width;
-				createParams.Height = Height;
-				createParams.ClassStyle = 0;
-				createParams.ExStyle = 0;
-				createParams.Param = 0;
-  				
-				//if (parent != null)
-				//	createParams.Parent = parent.Handle;
-				//else 
-				createParams.Parent = (IntPtr) 0;
-	  
 				createParams.Style = (int) WindowStyles.WS_OVERLAPPEDWINDOW;
-	  
 				return createParams;
 			}
 		}

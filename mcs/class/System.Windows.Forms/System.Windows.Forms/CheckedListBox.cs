@@ -74,13 +74,10 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
-				if( Parent != null) {
-					CreateParams createParams = base.CreateParams;
-					// set ownerDraw flag to be able to paint check-boxes
-					createParams.Style |= (int)ListBoxStyles.LBS_OWNERDRAWFIXED;
-					return createParams;
-				}
-				return null;
+				CreateParams createParams = base.CreateParams;
+				// set ownerDraw flag to be able to paint check-boxes
+				createParams.Style |= (int)ListBoxStyles.LBS_OWNERDRAWFIXED;
+				return createParams;
 			}		
 		}
 		

@@ -105,27 +105,19 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
-				if( Parent != null) {
-					CreateParams createParams = new CreateParams ();
-					if( window == null) {
-						window = new ControlNativeWindow (this);
-					}
+					CreateParams createParams = base.CreateParams;
 
-					createParams.Caption = Text;
 					createParams.ClassName = "ComboBox";
-					createParams.X = Left;
-					createParams.Y = Top;
-					createParams.Width = Width;
+
 					if( DropDownStyle == ComboBoxStyle.Simple) {
 						createParams.Height = Height;
 					}
 					else {
 						createParams.Height = getDropDownHeight();
 					}
-					createParams.ClassStyle = 0;
+
 					createParams.ExStyle = (int)( WindowExStyles.WS_EX_RIGHTSCROLLBAR | WindowExStyles.WS_EX_NOPARENTNOTIFY);
-					createParams.Param = 0;
-					createParams.Parent = Parent.Handle;
+
 					createParams.Style = (int) (
 						(int)WindowStyles.WS_CHILD | 
 						(int)WindowStyles.WS_VISIBLE |
@@ -163,8 +155,6 @@ namespace System.Windows.Forms {
 					}
 */
 					return createParams;
-				}
-				return null;
 			}		
 		}
 		
