@@ -71,57 +71,6 @@ namespace System.Drawing {
 		{
 			Dispose (false);
 		}
-
-		internal Exception GetException (Status status)
-		{
-			String message;
-
-			switch (status) {
-				// TODO: Test and add more status code mappings here
-				case Status.GenericError:
-					message = String.Format ("Generic Error.");
-					return new Exception (message);
-
-				case Status.InvalidParameter:
-					message = String.Format ("Invalid Parameter.");
-					return new ArgumentException (message);
-
-				case Status.OutOfMemory:
-					message = String.Format ("Out of memory.");
-					return new OutOfMemoryException (message);
-
-				case Status.ObjectBusy:
-					message = String.Format ("Object busy.");
-					return new MemberAccessException (message);
-
-				case Status.InsufficientBuffer:
-					message = String.Format ("Insufficient buffer.");
-					return new IO.InternalBufferOverflowException (message);
-
-				case Status.PropertyNotSupported:
-					message = String.Format ("Property not supported.");
-					return new NotSupportedException (message);
-
-				case Status.FileNotFound:
-					message = String.Format ("File not found.");
-					return new IO.FileNotFoundException (message);
-
-				case Status.AccessDenied:
-					message = String.Format ("Access denied.");
-					return new UnauthorizedAccessException (message);
-
-				case Status.UnknownImageFormat:
-					message = String.Format ("Unknown image format.");
-					return new NotSupportedException (message);
-
-				case Status.NotImplemented:
-					message = String.Format ("Feature not implemented.");
-					return new NotImplementedException (message);
-
-				default:
-					return new Exception ("Unknown Error.");
-			}
-		}
 	}
 }
 

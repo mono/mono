@@ -29,8 +29,7 @@ namespace System.Drawing
 			// image could be Bitmap or Metafile
 			IntPtr img;
 			Status status = GDIPlus.GdipGetTextureImage (nativeObject, out img);
-			if (status != Status.Ok)
-				throw GetException (status);
+			GDIPlus.CheckStatus (status);
 			image = new Bitmap (img);
 			matrix = new Matrix ();
 		}
@@ -43,9 +42,7 @@ namespace System.Drawing
 		{
 			this.image = image;
 			Status status = GDIPlus.GdipCreateTextureIAI (image.nativeObject, IntPtr.Zero, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
-			if (status != Status.Ok)
-				throw GetException (status);
-
+			GDIPlus.CheckStatus (status);
 			matrix = new Matrix ();
 		}
 
@@ -53,9 +50,7 @@ namespace System.Drawing
 		{
 			this.image = image;
 			Status status = GDIPlus.GdipCreateTextureIA (image.nativeObject, IntPtr.Zero, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
-			if (status != Status.Ok)
-				throw GetException (status);
-
+			GDIPlus.CheckStatus (status);
 			matrix = new Matrix ();
 		}
 
@@ -63,9 +58,7 @@ namespace System.Drawing
 		{
 			this.image = image;
 			Status status = GDIPlus.GdipCreateTexture (image.nativeObject, wrapMode, out nativeObject);
-			if (status != Status.Ok)
-				throw GetException (status);
-
+			GDIPlus.CheckStatus (status);
 			matrix = new Matrix ();
 		}
 
@@ -73,9 +66,7 @@ namespace System.Drawing
 		{
 			this.image = image;
 			Status status = GDIPlus.GdipCreateTextureIAI (image.nativeObject, imageAttr.NativeObject, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
-			if (status != Status.Ok)
-				throw GetException (status);
-
+			GDIPlus.CheckStatus (status);
 			matrix = new Matrix ();
 		}
 
@@ -83,9 +74,7 @@ namespace System.Drawing
 		{
 			this.image = image;
 			Status status = GDIPlus.GdipCreateTextureIA (image.nativeObject, imageAttr.NativeObject, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
-			if (status != Status.Ok)
-				throw GetException (status);
-
+			GDIPlus.CheckStatus (status);
 			matrix = new Matrix ();
 		}
 
@@ -93,9 +82,7 @@ namespace System.Drawing
 		{
 			this.image = image;
 			Status status = GDIPlus.GdipCreateTexture2I (image.nativeObject, wrapMode, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
-			if (status != Status.Ok)
-				throw GetException (status);
-
+			GDIPlus.CheckStatus (status);
 			matrix = new Matrix ();
 		}
 
@@ -103,9 +90,7 @@ namespace System.Drawing
 		{
 			this.image = image;
 			Status status = GDIPlus.GdipCreateTexture2 (image.nativeObject, wrapMode, dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height, out nativeObject);
-			if (status != Status.Ok)
-				throw GetException (status);
-
+			GDIPlus.CheckStatus (status);
 			matrix = new Matrix ();
 		}
 
@@ -116,8 +101,7 @@ namespace System.Drawing
 				if (image == null) {
 					IntPtr img;
 					Status status = GDIPlus.GdipGetTextureImage (nativeObject, out img);
-					if (status != Status.Ok)
-						throw GetException (status);
+					GDIPlus.CheckStatus (status);
 					image = new Bitmap (img);
 				}
 				return image;
@@ -129,17 +113,14 @@ namespace System.Drawing
 				if (matrix == null) {
 					IntPtr m;
 					Status status =	GDIPlus.GdipGetTextureTransform (nativeObject, out m);
-					if (status == Status.Ok)
-						matrix = new Matrix (m);
-					else
-						throw GetException (status);
+					GDIPlus.CheckStatus (status);
+					matrix = new Matrix (m);
 				}
 				return matrix;
 			}
 			set {
 				Status status = GDIPlus.GdipSetTextureTransform (nativeObject, value.nativeMatrix);
-				if (status != Status.Ok)
-					throw GetException (status);
+				GDIPlus.CheckStatus (status);
 			}
 		}
 
@@ -147,15 +128,12 @@ namespace System.Drawing
 			get {
 				WrapMode mode = WrapMode.Tile;
 				Status status = GDIPlus.GdipGetTextureWrapMode (nativeObject, out mode);
-				if (status == Status.Ok)
-					return mode;
-				else
-					throw GetException (status);
+				GDIPlus.CheckStatus (status);
+				return mode;
 			}
 			set {
 				Status status = GDIPlus.GdipSetTextureWrapMode (nativeObject, value);
-				if (status != Status.Ok)
-					throw GetException (status);
+				GDIPlus.CheckStatus (status);
 			}
 		}
 
@@ -174,15 +152,13 @@ namespace System.Drawing
 		public void MultiplyTransform (Matrix matrix, MatrixOrder order)
 		{
 			Status status = GDIPlus.GdipMultiplyTextureTransform (nativeObject, matrix.nativeMatrix, order);
-			if (status != Status.Ok)
-				throw GetException (status);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public void ResetTransform ()
 		{
 			Status status = GDIPlus.GdipResetTextureTransform (nativeObject);
-			if (status != Status.Ok)
-				throw GetException (status);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public void RotateTransform (float angle)
@@ -193,8 +169,7 @@ namespace System.Drawing
 		public void RotateTransform (float angle, MatrixOrder order)
 		{
 			Status status = GDIPlus.GdipRotateTextureTransform (nativeObject, angle, order);
-			if (status != Status.Ok)
-				throw GetException (status);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public void ScaleTransform (float sx, float sy)
@@ -205,8 +180,7 @@ namespace System.Drawing
 		public void ScaleTransform (float sx, float sy, MatrixOrder order)
 		{
 			Status status = GDIPlus.GdipScaleTextureTransform (nativeObject, sx, sy, order);
-			if (status != Status.Ok)
-				throw GetException (status);
+			GDIPlus.CheckStatus (status);
 		}
 
 		public void TranslateTransform (float dx, float dy)
@@ -217,8 +191,7 @@ namespace System.Drawing
 		public void TranslateTransform (float dx, float dy, MatrixOrder order)
 		{
 			Status status = GDIPlus.GdipTranslateTextureTransform (nativeObject, dx, dy, order);
-			if (status != Status.Ok)
-				throw GetException (status);
+			GDIPlus.CheckStatus (status);
 		}
 	}
 }

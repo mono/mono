@@ -1,3 +1,12 @@
+2004-02-06  Ravindra  <rkumar@novell.com>
+
+	* Brush.cs: Renamed GetException method to CheckStatus
+	and moved it to gdipFunctions.cs.
+	* gdipFunctions.cs: Added CheckStatus method.
+	* SolidBrush.cs: Using CheckStatus method.
+	* TextureBrush.cs: Using CheckStatus method.
+	* gdipEnums.cs: Added a missing value.
+
 2004-02-05  Ravindra  <rkumar@novell.com>
 
 	* Brush.cs: Added a missing namespace.

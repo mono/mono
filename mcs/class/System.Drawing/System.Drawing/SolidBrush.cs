@@ -23,9 +23,7 @@ namespace System.Drawing
                 {
 			int val;
 			Status status = GDIPlus.GdipGetSolidFillColor (ptr, out val);
-			if (status != Status.Ok)
-				throw GetException (status);
-
+			GDIPlus.CheckStatus (status);
 			color = Color.FromArgb (val);
                 }
 
@@ -34,9 +32,7 @@ namespace System.Drawing
 			this.color = color;
 			int brush;
 			Status status = GDIPlus.GdipCreateSolidFill (color.ToArgb (), out brush);
-			if (status != Status.Ok)
-				throw GetException (status);
-
+			GDIPlus.CheckStatus (status);
 			nativeObject = (IntPtr) brush;
 		}
 
@@ -48,8 +44,7 @@ namespace System.Drawing
 				if (isModifiable) {
 					color = value;
 					Status status = GDIPlus.GdipSetSolidFillColor (nativeObject, value.ToArgb ());
-					if (status != Status.Ok)
-						throw GetException (status);
+					GDIPlus.CheckStatus (status);
 				}
 				else
 					throw new ArgumentException ("You may not change this Brush because it does not belong to you.");
@@ -65,8 +60,7 @@ namespace System.Drawing
 		{
 			if (isModifiable) {
 				Status status = GDIPlus.GdipDeleteBrush (nativeObject);
-				if (status != Status.Ok)
-					throw GetException (status);
+				GDIPlus.CheckStatus (status);
 			}
 			else
 				throw new ArgumentException ("You may not change this Brush because it does not belong to you.");

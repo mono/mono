@@ -88,6 +88,51 @@ namespace System.Drawing {
 			return dest;			
 		}
 
+		// Converts a status into exception
+		static internal void CheckStatus (Status status)
+		{
+			switch (status) {
+
+				case Status.Ok:
+					return;
+
+				// TODO: Add more status code mappings here
+
+				case Status.GenericError:
+					throw new Exception ("Generic Error.");
+
+				case Status.InvalidParameter:
+					throw new ArgumentException ("Invalid Parameter.");
+
+				case Status.OutOfMemory:
+					throw new OutOfMemoryException ("Out of memory.");
+
+				case Status.ObjectBusy:
+					throw new MemberAccessException ("Object busy.");
+
+				case Status.InsufficientBuffer:
+					throw new IO.InternalBufferOverflowException ("Insufficient buffer.");
+
+				case Status.PropertyNotSupported:
+					throw new NotSupportedException ("Property not supported.");
+
+				case Status.FileNotFound:
+					throw new IO.FileNotFoundException ("File not found.");
+
+				case Status.AccessDenied:
+					throw new UnauthorizedAccessException ("Access denied.");
+
+				case Status.UnknownImageFormat:
+					throw new NotSupportedException ("Unknown image format.");
+
+				case Status.NotImplemented:
+					throw new NotImplementedException ("Feature not implemented.");
+
+				default:
+					throw new Exception ("Unknown Error.");
+			}
+		}
+
 		// Memory functions
 		[DllImport("gdiplus.dll")]
 		static internal extern IntPtr GdipAlloc (int size);
