@@ -1,3 +1,8 @@
+2002-03-14  Dietmar Maurer  <dietmar@ximian.com>
+
+	* MonoMethod.cs (Invoke): call InternalInvoke
+
+	* MethodBase.cs (Invoke): call virtual invoke function 
 
 Thu Mar 7 17:14:20 CET 2002 Paolo Molaro <lupus@ximian.com>
 

@@ -69,7 +69,8 @@ namespace System.Reflection {
 		
 		[MonoTODO]
 		public override Object Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {
-			throw new NotImplementedException ();
+			// fixme: consider all other parameters
+			return InternalInvoke (obj, parameters);
 		}
 
 		public override RuntimeMethodHandle MethodHandle { 

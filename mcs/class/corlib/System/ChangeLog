@@ -1,3 +1,8 @@
+2002-03-14  Dietmar Maurer  <dietmar@ximian.com>
+
+	* Delegate.cs (Equals): also compare method_ptr 
+	(GetHashCode): returm method_ptr as hash
+
 2002-03-13  Duco Fijma  <duco@lorentz.xs4all.n>
 	* TimeSpan.cs: removed the use of Custom Numeric Format Strings,
 	such as 42.ToString("0000000"), as these are (currently) not implemented

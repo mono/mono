@@ -95,7 +95,8 @@ namespace System {
 			Delegate d = (Delegate) o;
 			if ((d.target_type == target_type) &&
 			    (d.m_target == m_target) &&
-			    (d.method_name == method_name))
+			    (d.method_name == method_name) &&
+			    (d.method_ptr == method_ptr))
 				return true;
 
 			return false;
@@ -103,7 +104,7 @@ namespace System {
 
 		public override int GetHashCode ()
 		{
-			return method_name.GetHashCode ();
+			return (int)method_ptr;
 		}
 
 		// This is from ISerializable
@@ -178,7 +179,7 @@ namespace System {
 
 		public static bool operator ==( Delegate a, Delegate b )
 		{
-			if ( (object)a == null ) {
+			if ((object)a == null) {
 				if ((object)b == null)
 					return true;
 				return false;

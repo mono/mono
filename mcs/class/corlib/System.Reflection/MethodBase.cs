@@ -30,7 +30,7 @@ namespace System.Reflection {
 		public abstract ParameterInfo[] GetParameters();
 		
 		public Object Invoke(Object obj, Object[] parameters) {
-			return null;
+			return Invoke (obj, 0, null, parameters, null);
 		}
 
 		public abstract Object Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture);
