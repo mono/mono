@@ -33,8 +33,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("(c) 2003 Various Authors")]
 [assembly: AssemblyTrademark("")]
 
-// FIXME add this if this assembly becomes CLSCompliant
-//[assembly: CLSCompliant(true)]
+[assembly: CLSCompliant(true)]
 [assembly: AssemblyDefaultAlias("System.Xml.dll")]
 [assembly: AssemblyInformationalVersion("0.0.0.1")]
 [assembly: NeutralResourcesLanguage("en-US")]
