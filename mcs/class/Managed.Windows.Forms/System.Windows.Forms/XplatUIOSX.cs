@@ -37,22 +37,39 @@ using System.Runtime.InteropServices;
 /// OSX Version
 namespace System.Windows.Forms {
 
-	delegate int ViewEventHandler (IntPtr inCallRef, IntPtr inEvent, IntPtr userData);
+	delegate int CarbonEventHandler (IntPtr inCallRef, IntPtr inEvent, IntPtr userData);
 
 	internal class XplatUIOSX : XplatUIDriver {
 		
 		private static XplatUIOSX instance;
 		private static int ref_count;
 
+		internal static MouseButtons mouse_state;
+		internal static Point mouse_position;
+
+		internal static IntPtr mouseInWindow;
 		private static Hashtable handle_data;
 		private static Queue carbonEvents;
-		private ViewEventHandler viewEventHandler;
+		private CarbonEventHandler viewEventHandler;
+		private CarbonEventHandler windowEventHandler;
 		private static Hashtable view_window_mapping;
 		private static IntPtr cgContext;
+		private static IntPtr grabWindow;
 
 		private static EventTypeSpec [] viewEvents = new EventTypeSpec [] {
 									new EventTypeSpec (1668183148, 4) 
 									};
+		private static EventTypeSpec [] windowEvents = new EventTypeSpec[] {
+									new EventTypeSpec (1836021107, 1),
+									new EventTypeSpec (1836021107, 2),
+									new EventTypeSpec (1836021107, 5),
+									new EventTypeSpec (1836021107, 6),
+									new EventTypeSpec (1836021107, 10),
+									new EventTypeSpec (2003398244, 27)
+									};
+
+		private ArrayList timer_list;
+
 		[MonoTODO]
 		internal override Keys ModifierKeys {
 			get {
@@ -62,13 +79,13 @@ namespace System.Windows.Forms {
 
 		internal override MouseButtons MouseButtons {
 			get {
-				throw new NotImplementedException ();
+				return mouse_state;
 			}
 		}
 
 		internal override Point MousePosition {
 			get {
-				throw new NotImplementedException ();
+				return mouse_position;
 			}
 		}
 
@@ -83,12 +100,18 @@ namespace System.Windows.Forms {
 		}
 
 		private XplatUIOSX() {
-			Console.WriteLine ("creating Queue()");
-			viewEventHandler = new ViewEventHandler (ViewHandler);
+			viewEventHandler = new CarbonEventHandler (ViewHandler);
+			windowEventHandler = new CarbonEventHandler (WindowHandler);
 			ref_count = 0;
+			mouseInWindow = IntPtr.Zero;
 			handle_data = new Hashtable ();
 			carbonEvents = new Queue ();
+			grabWindow = IntPtr.Zero;
 			view_window_mapping = new Hashtable ();
+			mouse_state=MouseButtons.None;
+			mouse_position=Point.Empty;
+			
+			timer_list = new ArrayList ();
 		}
 
 		[MonoTODO]
@@ -156,7 +179,6 @@ namespace System.Windows.Forms {
 			IntPtr parentHnd = cp.Parent;
 			bool realWindow = false;
 			
-Console.WriteLine ("CreateWindow call parent dump: {0:x}", (int)parentHnd);
 			if (parentHnd == IntPtr.Zero) {
 				if ((cp.Style & (int)(WindowStyles.WS_CHILD))!=0) {
 					// This is a child view that is going to be parentless;
@@ -166,8 +188,8 @@ Console.WriteLine ("CreateWindow call parent dump: {0:x}", (int)parentHnd);
 					realWindow = true;
 				} else {
 					// This is a real root window too
-					if (cp.X < 1) cp.X = 50;
-					if (cp.Y < 1) cp.Y = 50;
+					if (cp.X < 1) cp.X = 0;
+					if (cp.Y < 1) cp.Y = 0;
 					realWindow = true;
 				}
 			} else {
@@ -179,28 +201,30 @@ Console.WriteLine ("CreateWindow call parent dump: {0:x}", (int)parentHnd);
 				IntPtr viewHnd = IntPtr.Zero;
 				SetRect (ref rect, (short)cp.X, (short)cp.Y, (short)(cp.Width+cp.X), (short)(cp.Height+cp.Y));
 				CheckError (CreateNewWindow (6, 33554432 | 31 | 524288, ref rect, ref windowHnd), "CreateNewWindow ()");
+				CheckError (InstallEventHandler (GetWindowEventTarget (windowHnd), windowEventHandler, (uint)windowEvents.Length, windowEvents, windowHnd, IntPtr.Zero), "InstallEventHandler ()");
 				CheckError (HIViewFindByID (HIViewGetRoot (windowHnd), new HIViewID (2003398244, 1), ref viewHnd), "HIViewFindByID ()");
 				parentHnd = viewHnd;
 			}
-			HIRect r = new HIRect (cp.X, cp.Y, cp.Width, cp.Height);
-			Console.WriteLine ("Creating a view @ {0} {1} of {2} {3}", cp.X, cp.Y, cp.Width, cp.Height);
+			HIRect r = new HIRect (0, 0, cp.Width, cp.Height);
 			CheckError (HIObjectCreate (__CFStringMakeConstantString ("com.apple.hiview"), 0, ref hWnd), "HIObjectCreate ()");
 			CheckError (InstallEventHandler (GetControlEventTarget (hWnd), viewEventHandler, (uint)viewEvents.Length, viewEvents, hWnd, IntPtr.Zero), "InstallEventHandler ()");
 			CheckError (HIViewChangeFeatures (hWnd, 1 << 1, 0), "HIViewChangeFeatures ()");
 			CheckError (HIViewSetFrame (hWnd, ref r), "HIViewSetFrame ()");
-			CheckError (HIViewSetVisible (hWnd, true), "HIViewSetVisible ()");
 			if (parentHnd != IntPtr.Zero && parentHnd != hWnd) {
-				Console.WriteLine ("Adding a subview to {0:x} of {1:x}", (int)parentHnd, (int)hWnd);
 				CheckError (HIViewAddSubview (parentHnd, hWnd), "HIViewAddSubview ()");
+				if ((cp.Style & (int)(WindowStyles.WS_VISIBLE))!=0) {
+					CheckError (HIViewSetVisible (hWnd, true), "HIViewSetVisible ()");
+				} else {
+					CheckError (HIViewSetVisible (hWnd, IsVisible (parentHnd)), "HIViewSetVisible ()");
+				}
 			}
 			if (realWindow) {
 				view_window_mapping [hWnd] = windowHnd;
-				CheckError (ShowWindow (windowHnd));
-				Console.Write ("WINDOW VIEW: ");
-			} else {
-				Console.Write ("VIEW: ");
+				if ((cp.Style & (int)(WindowStyles.WS_VISIBLE))!=0) {
+					CheckError (ShowWindow (windowHnd));
+					CheckError (HIViewSetVisible (hWnd, true), "HIViewSetVisible ()");
+				}
 			}
-			Console.WriteLine ("Returning a new window/view of {0:x}", (int)hWnd);
 			return hWnd;
 		}
 
@@ -229,10 +253,13 @@ Console.WriteLine ("CreateWindow call parent dump: {0:x}", (int)parentHnd);
 
 		[MonoTODO]
 		internal override void RefreshWindow(IntPtr handle) {
-			// FIXME
+			IntPtr outEvent = IntPtr.Zero;
+			HIViewSetNeedsDisplay (handle, true);
+//                        CheckError (CreateEvent (IntPtr.Zero, 1668183148, 4, 0, 0, ref outEvent));
+//			ViewHandler (IntPtr.Zero, outEvent, handle);
 		}
 
-		[MonoTODO]
+		[MonoTODO("Find a way to make all the views do this; not just the window view")]
 		internal override void SetWindowBackground(IntPtr handle, Color color) {
 			if (view_window_mapping [handle] != null) {
 				RGBColor backColor = new RGBColor ();
@@ -242,6 +269,7 @@ Console.WriteLine ("CreateWindow call parent dump: {0:x}", (int)parentHnd);
 
 				CheckError (SetWindowContentColor ((IntPtr) view_window_mapping [handle], ref backColor));
 			}
+
 		}
 
 		[MonoTODO]
@@ -257,7 +285,13 @@ Console.WriteLine ("CreateWindow call parent dump: {0:x}", (int)parentHnd);
 			HIViewGetBounds (handle, ref bounds); 
 			CGContextTranslateCTM (cgContext, 0, bounds.size.height);
 			CGContextScaleCTM (cgContext, 1.0, -1.0);
-			data.DeviceContext = Graphics.FromHwndWithSize (cgContext, (int)bounds.size.width, (int)bounds.size.height);
+			IntPtr gHnd = IntPtr.Zero;
+			QuartzContext qc = new QuartzContext (cgContext, (int)bounds.size.width, (int)bounds.size.height);
+			gHnd = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (QuartzContext)));
+			Marshal.StructureToPtr (qc, gHnd, true);
+			data.DeviceContext = Graphics.FromHwnd (gHnd);
+			Marshal.DestroyStructure (gHnd, typeof (QuartzContext));
+			Marshal.FreeHGlobal (gHnd);
 			paint_event = new PaintEventArgs((Graphics)data.DeviceContext, data.InvalidArea);
 
 			return paint_event;
@@ -265,7 +299,6 @@ Console.WriteLine ("CreateWindow call parent dump: {0:x}", (int)parentHnd);
 
 		[MonoTODO]
 		internal override void PaintEventEnd(IntPtr handle) {
-			Console.WriteLine ("Paint on {0:x} finished", (int)handle);
 			HandleData data = (HandleData) handle_data [handle];
 			if (data == null)
 				throw new Exception ("null data on PaintEventEnd");
@@ -273,22 +306,37 @@ Console.WriteLine ("CreateWindow call parent dump: {0:x}", (int)parentHnd);
 			Graphics g = (Graphics) data.DeviceContext;
 			g.Flush ();
 			g.Dispose ();
-			CGContextRestoreGState (cgContext);
                 }
 
 		internal override void SetWindowPos(IntPtr handle, int x, int y, int width, int height) {
 			if (view_window_mapping [handle] != null) {
+				if (x == 0 && y == 0) {
+					Rect bounds = new Rect ();
+					CheckError (GetWindowBounds ((IntPtr) view_window_mapping [handle], 32, ref bounds), "GetWindowBounds ()");
+					x += bounds.left;
+					y += bounds.top;
+				}
 				IntPtr rect = IntPtr.Zero;
 				SetRect (ref rect, (short)x, (short)y, (short)(x+width), (short)(y+height));
 				CheckError (SetWindowBounds ((IntPtr) view_window_mapping [handle], 32, ref rect), "SetWindowBounds ()");
+				HIRect r = new HIRect (0, 0, width, height);
+				CheckError (HIViewSetFrame (handle, ref r), "HIViewSetFrame ()");
+			} else {
+				HIRect r = new HIRect (x, y, width, height);
+				CheckError (HIViewSetFrame (handle, ref r), "HIViewSetFrame ()");
 			}
-			HIRect r = new HIRect (x, y, width, height);
-                        CheckError (HIViewSetFrame (handle, ref r), "HIViewSetFrame ()");
 		}
 
 		[MonoTODO]
 		internal override void GetWindowPos(IntPtr handle, out int x, out int y, out int width, out int height, out int client_width, out int client_height) {
-			throw new NotImplementedException ();
+			HIRect r = new HIRect ();
+			CheckError (HIViewGetFrame (handle, ref r), "HIViewGetFrame ()");
+			x = (int)r.origin.x;
+			y = (int)r.origin.y;
+			width = (int)r.size.width;
+			height = (int)r.size.height;
+			client_width = width;
+			client_height = height;
 		}
 
 		[MonoTODO]
@@ -298,7 +346,7 @@ Console.WriteLine ("CreateWindow call parent dump: {0:x}", (int)parentHnd);
 
 		[MonoTODO]
 		internal override void EnableWindow(IntPtr handle, bool Enable) {
-			throw new NotImplementedException ();
+			//throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -333,33 +381,219 @@ Console.WriteLine ("CreateWindow call parent dump: {0:x}", (int)parentHnd);
 			throw new NotImplementedException ();
 		}
 
+		internal int WindowHandler (IntPtr inCallRef, IntPtr inEvent, IntPtr controlHnd) {
+			int eventClass = GetEventClass (inEvent);
+			int eventKind = GetEventKind (inEvent);
+			MSG msg = new MSG ();
+			msg.hwnd = IntPtr.Zero; 
+			lock (carbonEvents) {
+				switch (eventClass) {
+					case 2003398244: {
+						switch (eventKind) {
+							case 27: {
+								// This is our real window; so we have to resize the corresponding view as well
+								IDictionaryEnumerator e = view_window_mapping.GetEnumerator ();
+								while (e.MoveNext ()) {
+									if ((IntPtr)e.Value == controlHnd) {
+										Rect bounds = new Rect ();
+										CheckError (GetWindowBounds (controlHnd, 32, ref bounds), "GetWindowBounds ()");
+										HIRect r = new HIRect ();
+										CheckError (HIViewGetFrame ((IntPtr)e.Key, ref r), "HIViewGetFrame ()");
+										r.size.width = bounds.right-bounds.left;
+										r.size.height = bounds.bottom-bounds.top;
+                        							CheckError (HIViewSetFrame ((IntPtr)e.Key, ref r), "HIViewSetFrame ()");
+										msg.message = Msg.WM_WINDOWPOSCHANGED;
+										msg.hwnd = (IntPtr)e.Key;
+										msg.wParam = IntPtr.Zero;
+										msg.lParam = IntPtr.Zero;
+										carbonEvents.Enqueue (msg);
+										return -9874;
+									}
+								}
+								break;
+							}
+						}
+						break;
+					}
+					case 1836021107: {
+						switch (eventKind) {
+							case 1: 
+							case 2: {
+								QDPoint point = new QDPoint ();
+								IntPtr pView = IntPtr.Zero;
+								IntPtr rView = IntPtr.Zero;
+								int wParam = 0;
+								ushort btn = 0;
+								GetEventParameter (inEvent, 1835168878, 1835168878, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (ushort)), IntPtr.Zero, ref btn);
+								CheckError (GetEventParameter (inEvent, 1835822947, 1363439732, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (QDPoint)), IntPtr.Zero, ref point), "GetEventParameter() MouseLocation");
+								SetPortWindowPort (controlHnd);
+								GlobalToLocal (ref point);
+								// Translate this point
+								Rect bounds = new Rect ();
+								CheckError (GetWindowBounds (controlHnd, 32, ref bounds), "GetWindowBounds ()");
+								// Swizzle it so its pointed at the right control
+								CGPoint hiPoint = new CGPoint (point.y, point.x);
+								CheckError (HIViewFindByID (HIViewGetRoot (controlHnd), new HIViewID (2003398244, 1), ref pView), "HIViewFindByID ()");
+								CheckError (HIViewGetSubviewHit (pView, ref hiPoint, true, ref rView));
+								HIViewConvertPoint (ref hiPoint, pView, rView);
+								if (grabWindow == IntPtr.Zero)
+									msg.hwnd = rView;
+								else
+									msg.hwnd = grabWindow;
+								switch (btn) {
+									case 1:
+										if (eventKind == 1) {
+											mouse_state |= MouseButtons.Left;
+											msg.message = Msg.WM_LBUTTONDOWN;
+											wParam |= (int)MsgButtons.MK_LBUTTON;
+										} else {
+											mouse_state &= MouseButtons.Left;
+											msg.message = Msg.WM_LBUTTONUP;
+											wParam |= (int)MsgButtons.MK_LBUTTON;
+										}
+										break;
+									case 2:
+										if (eventKind == 1) {
+											mouse_state |= MouseButtons.Middle;
+											msg.message = Msg.WM_MBUTTONDOWN;
+											wParam |= (int)MsgButtons.MK_MBUTTON;
+										} else {
+											mouse_state &= MouseButtons.Middle;
+											msg.message = Msg.WM_MBUTTONUP;
+											wParam |= (int)MsgButtons.MK_MBUTTON;
+										}
+										break;
+									case 3:
+										if (eventKind == 1) {
+											mouse_state |= MouseButtons.Right;
+											msg.message = Msg.WM_RBUTTONDOWN;
+											wParam |= (int)MsgButtons.MK_RBUTTON;
+										} else {
+											mouse_state &= MouseButtons.Right;
+											msg.message = Msg.WM_RBUTTONUP;
+											wParam |= (int)MsgButtons.MK_RBUTTON;
+										}
+										break;
+								}
+								msg.wParam = (IntPtr)wParam;
+								msg.lParam = (IntPtr) ((short)hiPoint.y << 16 | (short)hiPoint.x);
+								mouse_position.X = (int)hiPoint.x;
+								mouse_position.Y = (int)hiPoint.y;
+								carbonEvents.Enqueue (msg);
+								return -9874;
+							}
+							case 5: {
+								QDPoint point = new QDPoint ();
+								IntPtr pView = IntPtr.Zero;
+								IntPtr rView = IntPtr.Zero;
+								int wParam = 0;
+								ushort btn = 0;
+								GetEventParameter (inEvent, 1835168878, 1835168878, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (ushort)), IntPtr.Zero, ref btn);
+								CheckError (GetEventParameter (inEvent, 1835822947, 1363439732, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (QDPoint)), IntPtr.Zero, ref point), "GetEventParameter() MouseLocation");
+								SetPortWindowPort (controlHnd);
+								GlobalToLocal (ref point);
+								// Translate this point
+								Rect bounds = new Rect ();
+								CheckError (GetWindowBounds (controlHnd, 32, ref bounds), "GetWindowBounds ()");
+								// Swizzle it so its pointed at the right control
+								CGPoint hiPoint = new CGPoint (point.y, point.x);
+								CheckError (HIViewFindByID (HIViewGetRoot (controlHnd), new HIViewID (2003398244, 1), ref pView), "HIViewFindByID ()");
+								CheckError (HIViewGetSubviewHit (pView, ref hiPoint, true, ref rView));
+								HIViewConvertPoint (ref hiPoint, pView, rView);
+								if (mouseInWindow != rView && grabWindow != IntPtr.Zero) {
+									msg.hwnd = mouseInWindow;
+									msg.message = Msg.WM_MOUSE_LEAVE;
+									carbonEvents.Enqueue (msg);
+									msg.hwnd = rView;
+									msg.message = Msg.WM_MOUSE_ENTER;
+									carbonEvents.Enqueue (msg);
+									mouseInWindow = rView;
+									return -9874;
+								}
+								return -9874;
+							}
+							case 6: {
+								QDPoint point = new QDPoint ();
+								IntPtr pView = IntPtr.Zero;
+								IntPtr rView = IntPtr.Zero;
+								int wParam = 0;
+								ushort btn = 0;
+								GetEventParameter (inEvent, 1835168878, 1835168878, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (ushort)), IntPtr.Zero, ref btn);
+								CheckError (GetEventParameter (inEvent, 1835822947, 1363439732, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (QDPoint)), IntPtr.Zero, ref point), "GetEventParameter() MouseLocation");
+								SetPortWindowPort (controlHnd);
+								GlobalToLocal (ref point);
+								// Translate this point
+								Rect bounds = new Rect ();
+								CheckError (GetWindowBounds (controlHnd, 32, ref bounds), "GetWindowBounds ()");
+								// Swizzle it so its pointed at the right control
+								CGPoint hiPoint = new CGPoint (point.y, point.x);
+								CheckError (HIViewFindByID (HIViewGetRoot (controlHnd), new HIViewID (2003398244, 1), ref pView), "HIViewFindByID ()");
+								CheckError (HIViewGetSubviewHit (pView, ref hiPoint, true, ref rView));
+								HIViewConvertPoint (ref hiPoint, pView, rView);
+								if (mouseInWindow != rView && grabWindow != IntPtr.Zero) {
+									msg.hwnd = mouseInWindow;
+									msg.message = Msg.WM_MOUSE_LEAVE;
+									carbonEvents.Enqueue (msg);
+									msg.hwnd = rView;
+									msg.message = Msg.WM_MOUSE_ENTER;
+									carbonEvents.Enqueue (msg);
+									mouseInWindow = rView;
+									return -9874;
+								}
+								if (grabWindow == IntPtr.Zero)
+									msg.hwnd = rView;
+								else
+									msg.hwnd = grabWindow;
+								msg.message = Msg.WM_MOUSEMOVE;
+								msg.lParam = (IntPtr) ((short)hiPoint.y << 16 | (short)hiPoint.x);
+								msg.wParam = GetMousewParam (0);
+								mouse_position.X = (int)hiPoint.x;
+								mouse_position.Y = (int)hiPoint.y;
+								carbonEvents.Enqueue (msg);
+								return -9874;
+							}
+							default:
+								Console.WriteLine (eventKind);
+								break;
+						}
+						break;
+					}
+				}
+				msg.message = Msg.WM_ENTERIDLE;
+				carbonEvents.Enqueue (msg);
+			}
+			return -9874;
+		}
 		internal int ViewHandler (IntPtr inCallRef, IntPtr inEvent, IntPtr controlHnd) {
-			Console.WriteLine ("ViewEvent on {0:x} {1} {2}", (int)controlHnd, GetEventClass (inEvent), GetEventKind (inEvent));
-			GetEventParameter (inEvent, 1668183160, 1668183160, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (IntPtr)), IntPtr.Zero, ref cgContext);
-			Console.WriteLine ("\tcgContext: {0:x}", (int)cgContext);
-			CGContextSaveGState (cgContext);
 			int eventClass = GetEventClass (inEvent);
 			int eventKind = GetEventKind (inEvent);
 			MSG msg = new MSG ();
 			msg.hwnd = controlHnd;
 			lock (carbonEvents) {
-				if (eventClass == 1668183148 && eventKind == 4) {
-					if (handle_data [controlHnd] == null) {
-						handle_data [controlHnd] = new HandleData ();
-						HIRect bounds = new HIRect ();
-						HIViewGetBounds (controlHnd, ref bounds); 
-						((HandleData) handle_data [controlHnd]).AddToInvalidArea ((int)bounds.origin.x, (int)bounds.origin.y, (int)bounds.size.width, (int)bounds.size.height);
-					}
-					msg.message = Msg.WM_PAINT;
-					msg.wParam = IntPtr.Zero;
-					msg.lParam = IntPtr.Zero;
-					DispatchMessage (ref msg);
-					return 0;
-				} else {
-					msg.message = Msg.WM_ENTERIDLE;
+				switch (eventClass) {
+					case 1668183148:
+						switch (eventKind) {
+							case 4: {
+								if (handle_data [controlHnd] == null)
+									handle_data [controlHnd] = new HandleData ();
+								HIRect bounds = new HIRect ();
+								HIViewGetBounds (controlHnd, ref bounds); 
+								((HandleData) handle_data [controlHnd]).AddToInvalidArea ((int)bounds.origin.x, (int)bounds.origin.y, (int)bounds.size.width, (int)bounds.size.height);
+								msg.message = Msg.WM_PAINT;
+								msg.wParam = IntPtr.Zero;
+								msg.lParam = IntPtr.Zero;
+								cgContext = IntPtr.Zero;
+								GetEventParameter (inEvent, 1668183160, 1668183160, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (IntPtr)), IntPtr.Zero, ref cgContext);
+								CGContextSaveGState (cgContext);
+								DispatchMessage (ref msg);
+								CGContextRestoreGState (cgContext);
+								return 0;
+							}
+						}
+						break;
 				}
+				msg.message = Msg.WM_ENTERIDLE;
 				carbonEvents.Enqueue (msg);
-				Console.WriteLine ("queue: {0}", carbonEvents.Count);
 			}
 			
 			return 0;
@@ -369,7 +603,8 @@ Console.WriteLine ("CreateWindow call parent dump: {0:x}", (int)parentHnd);
 		internal override bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {
 			IntPtr evtRef = IntPtr.Zero;
 			IntPtr target = GetEventDispatcherTarget();
-			ReceiveNextEvent (0, IntPtr.Zero, 1, true, ref evtRef);
+			CheckTimers (DateTime.Now);
+			ReceiveNextEvent (0, IntPtr.Zero, 0, true, ref evtRef);
 			if (evtRef != IntPtr.Zero && target != IntPtr.Zero) {
 				SendEventToEventTarget (evtRef, target);
 				ReleaseEvent (evtRef);
@@ -381,20 +616,7 @@ Console.WriteLine ("CreateWindow call parent dump: {0:x}", (int)parentHnd);
 					msg.message = Msg.WM_ENTERIDLE;
 					return true;
                                 }
-				MSG viewEvent = (MSG) carbonEvents.Dequeue ();
-				msg.hwnd = viewEvent.hwnd;
-				switch (viewEvent.message) {
-					case Msg.WM_PAINT:
-						NativeWindow.WndProc (msg.hwnd, Msg.WM_ERASEBKGND, msg.hwnd, IntPtr.Zero);
-						msg.message = Msg.WM_PAINT;
-						msg.wParam = IntPtr.Zero;
-						msg.lParam = IntPtr.Zero;
-						break;
-					default:
-						Console.WriteLine ("WARNING: Unknown view event kind on {0:x}: {1}", (int)msg.hwnd, viewEvent.message);
-						msg.message = Msg.WM_ENTERIDLE;
-						break;
-				}
+				msg = (MSG) carbonEvents.Dequeue ();
 			}
 			return true;
 		}
@@ -404,8 +626,6 @@ Console.WriteLine ("CreateWindow call parent dump: {0:x}", (int)parentHnd);
 		}
 
 		internal override IntPtr DispatchMessage(ref MSG msg) {
-			if (msg.message == Msg.WM_PAINT)
-				Console.WriteLine ("Dispatching a WM_PAINT on {0:x}", (int)msg.hwnd);
 			return NativeWindow.WndProc(msg.hwnd, msg.message, msg.wParam, msg.lParam);
 		}
 
@@ -442,9 +662,16 @@ Console.WriteLine ("CreateWindow call parent dump: {0:x}", (int)parentHnd);
 				data = new HandleData ();
 				handle_data [handle] = data;
 			}
+			if (view_window_mapping [handle] != null && visible == true) {
+				ShowWindow ((IntPtr) view_window_mapping [handle]);
+			}
+			if (view_window_mapping [handle] != null && visible == false) {
+				HideWindow ((IntPtr) view_window_mapping [handle]);
+			}
 			data.IsVisible = visible;
 
 			CheckError (HIViewSetVisible (handle, visible));
+			// We have to manually reset all children as well
 			
 			return true;
 		}
@@ -461,9 +688,8 @@ Console.WriteLine ("CreateWindow call parent dump: {0:x}", (int)parentHnd);
 		internal override IntPtr SetParent(IntPtr handle, IntPtr parent) {
 			if (HIViewGetSuperview (handle) != IntPtr.Zero)
 				CheckError (HIViewRemoveFromSuperview (handle), "HIViewRemoveFromSuperview ()");
-			HIViewSetVisible (handle, true);
 			HIViewAddSubview (parent, handle);
-			Console.WriteLine ("Reparented {0:x} to {1:x}", (int)handle, (int)parent);
+			SetVisible (handle, IsVisible (parent));
 			return IntPtr.Zero;
 		}
 
@@ -473,7 +699,7 @@ Console.WriteLine ("CreateWindow call parent dump: {0:x}", (int)parentHnd);
 
 		[MonoTODO]
 		internal override void GrabWindow(IntPtr hWnd, IntPtr confine_hwnd) {
-			throw new NotImplementedException ();
+			grabWindow = hWnd;
 		}
 
 		[MonoTODO]
@@ -481,9 +707,8 @@ Console.WriteLine ("CreateWindow call parent dump: {0:x}", (int)parentHnd);
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		internal override void ReleaseWindow(IntPtr hWnd) {
-			throw new NotImplementedException ();
+			grabWindow = IntPtr.Zero;
 		}
 
 		internal override bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, bool HasMenu, out Rectangle WindowRect) {
@@ -496,19 +721,19 @@ Console.WriteLine ("CreateWindow call parent dump: {0:x}", (int)parentHnd);
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		internal override void GetCursorPos(IntPtr handle, out int x, out int y) {
-			throw new NotImplementedException ();
+			x = mouse_position.X;
+			y = mouse_position.Y;
 		}
 
 		[MonoTODO]
 		internal override void ScreenToClient(IntPtr handle, ref int x, ref int y) {
-			throw new NotImplementedException ();
+//			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		internal override void ClientToScreen(IntPtr handle, ref int x, ref int y) {
-			throw new NotImplementedException ();
+//			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -516,15 +741,51 @@ Console.WriteLine ("CreateWindow call parent dump: {0:x}", (int)parentHnd);
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		internal override void SetTimer (Timer timer) {
-			throw new NotImplementedException ();
+		private IntPtr GetMousewParam(int Delta) {
+			int     result = 0;
+
+			if ((mouse_state & MouseButtons.Left) != 0) {
+				result |= (int)MsgButtons.MK_LBUTTON;
+			}
+
+			if ((mouse_state & MouseButtons.Middle) != 0) {
+				result |= (int)MsgButtons.MK_MBUTTON;
+			}
+
+			if ((mouse_state & MouseButtons.Right) != 0) {
+				result |= (int)MsgButtons.MK_RBUTTON;
+			}
+
+			return (IntPtr)result;
+                }
+
+		private void CheckTimers (DateTime now)
+                {
+			lock (timer_list) {
+				int count = timer_list.Count;
+				if (count == 0)
+					return;
+				for (int i = 0; i < timer_list.Count; i++) {
+					Timer timer = (Timer) timer_list [i];
+					if (timer.Enabled && timer.Expires <= now) {
+						timer.FireTick ();
+						timer.Update (now);
+					}
+				}
+			}
 		}
 
-		[MonoTODO]
+		internal override void SetTimer (Timer timer) {
+			lock (timer_list) {
+				timer_list.Add (timer);
+			}
+		}
+
 		internal override void KillTimer (Timer timer)
 		{
-			throw new NotImplementedException ();
+			lock (timer_list) {
+				timer_list.Remove (timer);
+			}
 		}
 
 		[MonoTODO]
@@ -551,6 +812,10 @@ Console.WriteLine ("CreateWindow call parent dump: {0:x}", (int)parentHnd);
 		}
 
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int HIViewGetSubviewHit (IntPtr contentView, ref CGPoint point, bool tval, ref IntPtr outPtr);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int HIViewConvertPoint (ref CGPoint point, IntPtr pView, IntPtr cView);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int HIViewChangeFeatures (IntPtr aView, ulong bitsin, ulong bitsout);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int HIViewFindByID (IntPtr rootWnd, HIViewID id, ref IntPtr outPtr);
@@ -559,9 +824,17 @@ Console.WriteLine ("CreateWindow call parent dump: {0:x}", (int)parentHnd);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int HIObjectCreate (IntPtr cfStr, uint what, ref IntPtr hwnd);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int HIViewSetNeedsDisplay (IntPtr viewHnd, bool update);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int HIViewGetFrame (IntPtr viewHnd, ref HIRect rect);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int HIViewSetFrame (IntPtr viewHnd, ref HIRect rect);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int HIViewAddSubview (IntPtr parentHnd, IntPtr childHnd);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern IntPtr HIViewGetNextView (IntPtr aView);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern IntPtr HIViewGetPreviousView (IntPtr aView);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern IntPtr HIViewGetSuperview (IntPtr aView);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
@@ -577,7 +850,11 @@ Console.WriteLine ("CreateWindow call parent dump: {0:x}", (int)parentHnd);
 		internal static extern void SetRect (ref IntPtr r, short left, short top, short right, short bottom);
 
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
-                static extern int InstallEventHandler (IntPtr window, ViewEventHandler handlerProc, uint numtypes, EventTypeSpec [] typeList, IntPtr userData, IntPtr handlerRef);
+		static extern int CreateEvent (IntPtr allocator, uint classid, uint kind, double when, uint attributes, ref IntPtr outEvent);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+                static extern int InstallEventHandler (IntPtr window, CarbonEventHandler handlerProc, uint numtypes, EventTypeSpec [] typeList, IntPtr userData, IntPtr handlerRef);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern IntPtr GetWindowEventTarget (IntPtr window);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern IntPtr GetControlEventTarget (IntPtr aControl);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
@@ -594,14 +871,26 @@ Console.WriteLine ("CreateWindow call parent dump: {0:x}", (int)parentHnd);
 		static extern int GetEventKind (IntPtr eventRef);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int GetEventParameter (IntPtr evt, uint inName, uint inType, IntPtr outActualType, uint bufSize, IntPtr outActualSize, ref IntPtr outData);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		static extern int GetEventParameter (IntPtr evt, uint inName, uint inType, IntPtr outActualType, uint bufSize, IntPtr outActualSize, ref ushort outData);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		static extern int GetEventParameter (IntPtr evt, uint inName, uint inType, IntPtr outActualType, uint bufSize, IntPtr outActualSize, ref QDPoint outData);
 
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		static extern int SetPortWindowPort (IntPtr hWnd);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		static extern int GlobalToLocal (ref QDPoint outData);
 
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int CreateNewWindow (int klass, uint attributes, ref IntPtr r, ref IntPtr window);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int ShowWindow (IntPtr wHnd);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int HideWindow (IntPtr wHnd);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int SetWindowBounds (IntPtr wHnd, uint reg, ref IntPtr rect);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int GetWindowBounds (IntPtr wHnd, uint reg, ref Rect rect);
 
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int SetControlTitleWithCFString (IntPtr hWnd, IntPtr titleCFStr);
@@ -633,6 +922,15 @@ Console.WriteLine ("CreateWindow call parent dump: {0:x}", (int)parentHnd);
 		}
 	}
 
+	internal struct QDPoint {
+		public short x;
+		public short y;
+
+		public QDPoint (short x, short y) {
+			this.x = x;
+			this.y = y;
+		}
+	}
 	internal struct CGPoint {
 		public float x;
 		public float y;
@@ -692,5 +990,26 @@ Console.WriteLine ("CreateWindow call parent dump: {0:x}", (int)parentHnd);
 		public short red;
 		public short green;
 		public short blue;
+	}
+
+	internal struct Rect
+	{
+		public short top;
+		public short left;
+		public short bottom;
+		public short right;
+	}
+
+	internal struct QuartzContext
+	{
+		public IntPtr cgContext;
+		public int width;
+		public int height;
+
+		public QuartzContext (IntPtr cgContext, int width, int height) {
+			this.cgContext = cgContext;
+			this.width = width;
+			this.height = height;
+		}
 	}
 }	
