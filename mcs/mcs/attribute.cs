@@ -156,12 +156,6 @@ namespace Mono.CSharp {
 			if (Type == null)
 				return null;
 
-			if (!ec.DeclSpace.CheckAccessLevel (Type)){
-				Report.	Error (122, Location,  "`" + Type + "' " +
-					       "is inaccessible because of its protection level");
-				return null;
-			}
-			
 			bool MethodImplAttr = false;
 			bool MarshalAsAttr = false;
 			bool GuidAttr = false;

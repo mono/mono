@@ -1,3 +1,7 @@
+2003-07-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* attribute.cs: And this test is onger needed.
+
 2003-07-08  Martin Baulig  <martin@ximian.com>
 
 	Rewrote the handling of namespaces to fix a lot of the issues
