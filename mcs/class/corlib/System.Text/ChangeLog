@@ -1,3 +1,8 @@
+2002-10-30  Miguel de Icaza  <miguel@ximian.com>
+
+	* Encoding.cs (UTF8Unmarked): New static property, used to return
+	a no-markers UTf8 encoder, used in a few places in the class library.
+
 2002-09-06  Miguel de Icaza  <miguel@ximian.com>
 
 	* Encoding.cs (UTF8, Unicode): Create with a preamble, that is

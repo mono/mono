@@ -2,6 +2,7 @@
  * Encoding.cs - Implementation of the "System.Text.Encoding" class.
  *
  * Copyright (c) 2001, 2002  Southern Storm Software, Pty Ltd
+ * Copyright (c) 2002, Ximian, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the "Software"),
@@ -547,7 +548,8 @@ public abstract class Encoding
 	private static Encoding bigEndianEncoding = null;
 	private static Encoding defaultEncoding = null;
 	private static Encoding utf7Encoding = null;
-	private static Encoding utf8Encoding = null;
+	private static Encoding utf8EncodingWithMarkers = null;
+	private static Encoding utf8EncodingWithoutMarkers = null;
 	private static Encoding unicodeEncoding = null;
 	private static Encoding isoLatin1Encoding = null;
 	private static Encoding unixConsoleEncoding = null;
@@ -637,14 +639,29 @@ public abstract class Encoding
 	{
 		get {
 			lock (typeof(Encoding)) {
-				if (utf8Encoding == null) {
-					utf8Encoding = new UTF8Encoding (true);
+				if (utf8EncodingWithMarkers == null) {
+					utf8EncodingWithMarkers = new UTF8Encoding (true);
 				}
-				return utf8Encoding;
+				return utf8EncodingWithMarkers;
 			}
 		}
 	}
 
+	//
+	// Only internal, to be used by the class libraries
+	//
+	internal static Encoding UTF8Unmarked {
+		get {
+			lock (typeof (Encoding)){
+				if (utf8EncodingWithoutMarkers == null){
+					utf8EncodingWithoutMarkers = new UTF8Encoding (false, true);
+				}
+
+				return utf8EncodingWithoutMarkers;
+			}
+		}
+	}
+	
 	// Get the standard little-endian Unicode encoding object.
 	public static Encoding Unicode
 	{
