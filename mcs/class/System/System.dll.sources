@@ -167,6 +167,7 @@ System.ComponentModel/EventHandlerList.cs
 System.ComponentModel/ExpandableObjectConverter.cs
 System.ComponentModel/ExtenderProvidedPropertyAttribute.cs
 System.ComponentModel/IBindingList.cs
+System.ComponentModel/IChangeTracking.cs
 System.ComponentModel/IComponent.cs
 System.ComponentModel/IComNativeDescriptorHandler.cs
 System.ComponentModel/IContainer.cs
@@ -177,6 +178,7 @@ System.ComponentModel/IExtenderProvider.cs
 System.ComponentModel/IListSource.cs
 System.ComponentModel/Int32Converter.cs
 System.ComponentModel/InvalidEnumArgumentException.cs
+System.ComponentModel/IRevertibleChangeTracking.cs
 System.ComponentModel/ISite.cs
 System.ComponentModel/ISupportInitialize.cs
 System.ComponentModel/ISynchronizeInvoke.cs
