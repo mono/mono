@@ -2,7 +2,7 @@
 // DataViewTest.cs
 //
 // Author:
-//	Patrick Kalkman  kalkman@cistron.nl
+//	Patrick Kalkman	 kalkman@cistron.nl
 //
 // (C) 2003 Patrick Kalkman
 //
@@ -89,6 +89,15 @@ namespace MonoTests.System.Data {
 			TestView.AllowNew = false;
 			DataRowView TestDr = TestView.AddNew ();
 		}
+
+		[Test]
+		[ExpectedException (typeof (DataException))]
+		public void TestAddNew3 ()
+		{
+			DataView TestView = new DataView (TestTable);
+			TestView.Dispose (); // Only way I know of closing the table
+			DataRowView row = TestView.AddNew ();
+		}
 		
 		[Test]
 		public void TestFindRows ()
@@ -98,6 +107,41 @@ namespace MonoTests.System.Data {
 			DataRowView[] Result = TestView.FindRows ("pk03");
 			Assertion.AssertEquals ("Dv #1", 1, Result.Length);
 			Assertion.AssertEquals ("Dv #2", "pk03", Result [0]["ID"]);
+		}
+
+		[Test]
+		public void TestDelete ()
+		{
+			DataView TestView = new DataView (TestTable);
+			TestView.Delete (0);
+			DataRow r = TestView.Table.Rows [0];
+			Assertion.Assert ("Dv #1", !(r ["ID"] == "pk00"));
+		}
+
+		[Test]
+		[ExpectedException (typeof (IndexOutOfRangeException))]		       
+		public void TestDeleteOutOfBounds ()
+		{
+			DataView TestView = new DataView (TestTable);
+			TestView.Delete (100);
+		}
+
+		[Test]
+		[ExpectedException (typeof (DataException))]
+		public void TestDeleteNotAllowed ()
+		{
+			DataView TestView = new DataView (TestTable);
+			TestView.AllowDelete = false;
+			TestView.Delete (0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (DataException))]
+		public void TestDeleteClosed ()
+		{
+			DataView TestView = new DataView (TestTable);
+			TestView.Dispose (); // Close the table
+			TestView.Delete (0);
 		}
 	}
 }
