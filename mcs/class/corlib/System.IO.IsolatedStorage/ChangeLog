@@ -1,5 +1,8 @@
 2003-07-30  Duncan Mak  <duncan@ximian.com>
 
+	* IsolatedStorageInfo.cs (CreateAssemblyFilename):
+	(CreateDomainFilename): Replace String.Format with Path.Combine.
+	
 	* IsolatedStorageFile.cs:
 	(GetStore): Update storage_scope accordingly.
 	(GetUseStoreForAssembly): Include IsolatedStorageScope.User.

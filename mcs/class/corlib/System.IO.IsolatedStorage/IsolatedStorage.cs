@@ -23,6 +23,7 @@ namespace System.IO.IsolatedStorage
                 protected static IsolatedStorageScope storage_scope;
 
 		// Properties
+                [MonoTODO]
 		public object AssemblyIdentity {
 			get {return null;}                        
 		}

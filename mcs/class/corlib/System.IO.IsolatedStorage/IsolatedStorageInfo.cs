@@ -12,7 +12,7 @@ namespace System.IO.IsolatedStorage {
 	internal sealed class IsolatedStorageInfo {
 		
 		[MonoTODO("Unix Specific; generalize for Win32")]
-		public static string GetIsolatedStorageDirectory ()
+		internal static string GetIsolatedStorageDirectory ()
 		{
 			string home = Environment.GetEnvironmentVariable ("HOME");
 
@@ -22,19 +22,17 @@ namespace System.IO.IsolatedStorage {
 			return home + "/.mono/isolated-storage";
 		}
 
-		public static string CreateAssemblyFilename (object assembly)
+		internal static string CreateAssemblyFilename (object assembly)
 		{
-			return string.Format ("{0}/{1}", GetIsolatedStorageDirectory (),
-					assembly.ToString());
+                        return Path.Combine (GetIsolatedStorageDirectory (), assembly.ToString ());
 		}
 
-		public static string CreateDomainFilename (object assembly, object domain)
+		internal static string CreateDomainFilename (object assembly, object domain)
 		{
-			return string.Format ("{0}/{1}/{2}", GetIsolatedStorageDirectory (),
-					assembly.ToString(), domain.ToString());
+			return Path.Combine (CreateAssemblyFilename (assembly), domain.ToString());
 		}
 
-		public static ulong GetDirectorySize (DirectoryInfo di)
+		internal static ulong GetDirectorySize (DirectoryInfo di)
 		{
 			ulong size = 0;
 
