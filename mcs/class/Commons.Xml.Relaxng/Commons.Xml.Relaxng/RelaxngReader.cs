@@ -49,6 +49,7 @@ namespace Commons.Xml.Relaxng
 				RelaxngPattern.Read (relaxngXmlReader);
 		}
 
+		[Obsolete] // incorrectly introduced
 		public static string RelaxngNS = "http://relaxng.org/ns/structure/1.0";
 		public static RelaxngPattern GrammarForRelaxng {
 			get { return grammarForRelaxng; }
@@ -137,7 +138,7 @@ namespace Commons.Xml.Relaxng
 						loop = false;
 					break;
 				default:
-					if (NamespaceURI != RelaxngNS) {
+					if (NamespaceURI != RelaxngGrammar.NamespaceURI) {
 						Reader.Skip ();
 						skipRead = true;
 					}

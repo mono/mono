@@ -1,5 +1,10 @@
 2005-03-01  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RelaxngReader.cs : there was two public namespace constant. One
+	  should be obsoleted.
+
+2005-03-01  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RelaxngPattern.cs : RdpUnresolvedRef should process empty/notAllowed
 	  elimination on its referenced pattern.
 
