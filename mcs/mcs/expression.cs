@@ -1452,7 +1452,13 @@ namespace CIR {
 			}
 		}
 	}
-	
+
+	// <summary>
+	//   This represents a typecast in the source language.
+	//
+	//   FIXME: Cast expressions have an unusual set of parsing
+	//   rules, we need to figure those out.
+	// </summary>
 	public class Cast : Expression {
 		string target_type;
 		Expression expr;
