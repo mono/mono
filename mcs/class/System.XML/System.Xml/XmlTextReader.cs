@@ -1534,16 +1534,18 @@ namespace System.Xml
 				false // clearAttributes
 			);
 
-			if (LookupNamespace (Prefix) == null)
-				throw new XmlException (String.Format ("'{0}' is undeclared namespace.", Prefix));
-			try {
-				for (int i = 0; i < attributeCount; i++) {
-					MoveToAttribute (i);
-					if (LookupNamespace (Prefix) == null)
-						throw new XmlException (String.Format ("'{0}' is undeclared namespace.", Prefix));
+			if (Namespaces) {
+				if (NamespaceURI == null)
+					throw new XmlException (String.Format ("'{0}' is undeclared namespace.", Prefix));
+				try {
+					for (int i = 0; i < attributeCount; i++) {
+						MoveToAttribute (i);
+						if (NamespaceURI == null)
+							throw new XmlException (String.Format ("'{0}' is undeclared namespace.", Prefix));
+					}
+				} finally {
+					MoveToElement ();
 				}
-			} finally {
-				MoveToElement ();
 			}
 
 			if (IsEmptyElement)
