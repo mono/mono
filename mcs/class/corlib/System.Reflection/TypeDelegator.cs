@@ -230,19 +230,19 @@ namespace System.Reflection {
 			//return typeImpl.IsValueTypeImpl ();
 		}
 #if GENERICS
-		public override bool HasGenericParameters {
+		public override bool HasGenericArguments {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
 
-		public override bool HasUnboundGenericParameters {
+		public override bool ContainsGenericParameters {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
 
-		public override bool IsUnboundGenericParameter {
+		public override bool IsGenericParameter {
 			get {
 				throw new NotImplementedException ();
 			}

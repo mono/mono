@@ -1006,26 +1006,26 @@ namespace System.Reflection.Emit {
 			return base.GetGenericTypeDefinition ();
 		}
 
-		public override bool HasGenericParameters {
+		public override bool HasGenericArguments {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
 
-		public override bool HasUnboundGenericParameters {
+		public override bool ContainsGenericParameters {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
 
-		public extern override bool IsUnboundGenericParameter {
+		public extern override bool IsGenericParameter {
 			[MethodImplAttribute(MethodImplOptions.InternalCall)]
 			get;
 		}
 
 		public override int GenericParameterPosition {
 			get {
-				throw new Exception ("Unimplemented");
+				throw new NotImplementedException ();
 			}
 		}
 

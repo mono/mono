@@ -1,3 +1,18 @@
+2003-10-14  Martin Baulig  <martin@ximian.com>
+
+	The generics API has changed in the spec since it was added here;
+	these modifications make it match the spec again.
+
+	* Type.cs
+	(GetGenericParameters): Renamed to `GetGenericArguments'.
+	(HasGenericParameters): Renamed to `HasGenericArguments'.
+	(HasUnboundGenericParameters): Renamed to `ContainsGenericParameters'.
+	(IsGenericTypeDefinition): New property.
+	(IsUnboundGenericParameter): Renamed to `IsGenericParameter'.
+
+	* MonoType.cs (ContainsGenericParameters): Implement this here;
+	this is no interncall anymore.
+
 2003-10-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Delegate.cs: add the method name to the exception when it cannot be

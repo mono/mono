@@ -539,17 +539,30 @@ namespace System
 		}
 
 #if GENERICS
-		public extern override bool HasGenericParameters {
+		public extern override bool HasGenericArguments {
 			[MethodImplAttribute(MethodImplOptions.InternalCall)]
 			get;
 		}
 
-		public extern override bool HasUnboundGenericParameters {
-			[MethodImplAttribute(MethodImplOptions.InternalCall)]
-			get;
+		public override bool ContainsGenericParameters {
+			get {
+				if (IsGenericParameter)
+					return true;
+
+				if (HasGenericArguments) {
+					foreach (Type arg in GetGenericArguments ())
+						if (arg.ContainsGenericParameters)
+							return true;
+				}
+
+				if (HasElementType)
+					return GetElementType ().ContainsGenericParameters;
+
+				return false;
+			}
 		}
 
-		public extern override bool IsUnboundGenericParameter {
+		public extern override bool IsGenericParameter {
 			[MethodImplAttribute(MethodImplOptions.InternalCall)]
 			get;
 		}

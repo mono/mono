@@ -266,19 +266,19 @@ namespace System.Reflection.Emit {
 		}
 
 #if GENERICS
-		public override bool HasGenericParameters {
+		public override bool HasGenericArguments {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
 
-		public override bool HasUnboundGenericParameters {
+		public override bool ContainsGenericParameters {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
 
-		public override bool IsUnboundGenericParameter {
+		public override bool IsGenericParameter {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -286,7 +286,7 @@ namespace System.Reflection.Emit {
 
 		public override int GenericParameterPosition {
 			get {
-				throw new Exception ("Unimplemented");
+				throw new NotImplementedException ();
 			}
 		}
 #endif

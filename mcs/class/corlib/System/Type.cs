@@ -931,24 +931,30 @@ namespace System {
 
 #if GENERICS
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern Type [] GetGenericParameters ();
+		public extern Type [] GetGenericArguments ();
 
-		public abstract bool HasGenericParameters {
+		public abstract bool HasGenericArguments {
 			get;
 		}
 
-		public abstract bool HasUnboundGenericParameters {
+		public abstract bool ContainsGenericParameters {
+			get;
+		}
+
+		public extern bool IsGenericTypeDefinition {
+			[MethodImplAttribute(MethodImplOptions.InternalCall)]
 			get;
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		static extern Type GetGenericTypeDefinition (Type t);
+		extern Type GetGenericTypeDefinition_impl ();
 
 		public virtual Type GetGenericTypeDefinition ()
 		{
-			Type res = GetGenericTypeDefinition (this);
+			Type res = GetGenericTypeDefinition_impl ();
 			if (res == null)
-				throw new ArgumentException ();
+				throw new InvalidOperationException ();
+
 			return res;
 		}
 
@@ -974,7 +980,7 @@ namespace System {
 			return res;
 		}
 
-		public abstract bool IsUnboundGenericParameter {
+		public abstract bool IsGenericParameter {
 			get;
 		}
 
@@ -985,7 +991,7 @@ namespace System {
 			get {
 				int res = GetGenericParameterPosition ();
 				if (res < 0)
-					throw new ArgumentException ();
+					throw new InvalidOperationException ();
 				return res;
 			}
 		}
