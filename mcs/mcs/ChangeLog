@@ -1,3 +1,8 @@
+2002-02-14  Miguel de Icaza  <miguel@ximian.com>
+
+	* driver.cs (GetSystemDir): Use CodeBase instead of FullName for
+	locating our system dir.  Sorry about this.
+
 2002-02-13  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs (GetSystemDir): Compute correctly the location of our

@@ -282,10 +282,9 @@ namespace Mono.CSharp
 			Assembly [] assemblies = AppDomain.CurrentDomain.GetAssemblies ();
 
 			foreach (Assembly a in assemblies){
-				if (a.FullName.EndsWith ("corlib.dll")){
-					string s = a.CodeBase;
-				
-					return s.Substring (0, s.LastIndexOf ("/"));
+				string codebase = a.CodeBase;
+				if (codebase.EndsWith ("corlib.dll")){
+					return codebase.Substring (0, codebase.LastIndexOf ("/"));
 				}
 			}
 
