@@ -1,5 +1,10 @@
 2005-01-18  Peter Bartok  <pbartok@novell.com>
 
+	* Form.cs: Removed debug output
+	* Button.cs: Added support for DoubleClick method
+
+2005-01-18  Peter Bartok  <pbartok@novell.com>
+
 	* Form.cs: 
 	  - Added method to parent window that allows triggering size
 	    calculations when a menu is added/removed

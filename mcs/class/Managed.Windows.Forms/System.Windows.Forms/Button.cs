@@ -39,6 +39,9 @@ namespace System.Windows.Forms {
 		#region Public Constructors
 		public Button() {
 			dialog_result = DialogResult.None;
+
+			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+			SetStyle(ControlStyles.UserPaint, true);
 		}
 		#endregion	// Public Constructors
 
@@ -57,9 +60,6 @@ namespace System.Windows.Forms {
 		#region Protected Instance Properties
 		protected override CreateParams CreateParams {
 			get {
-				SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-				SetStyle(ControlStyles.UserPaint, true);
-
 				return base.CreateParams;
 			}
 		}
@@ -96,7 +96,6 @@ namespace System.Windows.Forms {
 		}
 
 		protected override bool ProcessMnemonic(char charCode) {
-			
 			if (IsMnemonic(charCode, Text) == true) {
 				PerformClick();
 				return true;
@@ -106,9 +105,28 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void WndProc(ref Message m) {
+			switch((Msg)m.Msg) {
+				case Msg.WM_LBUTTONDBLCLK: {
+					if (DoubleClick != null) DoubleClick(this, EventArgs.Empty);
+					break;
+				}
+
+				case Msg.WM_MBUTTONDBLCLK: {
+					if (DoubleClick != null) DoubleClick(this, EventArgs.Empty);
+					break;
+				}
+
+				case Msg.WM_RBUTTONDBLCLK: {
+					if (DoubleClick != null) DoubleClick(this, EventArgs.Empty);
+					break;
+				}
+			}
 			base.WndProc (ref m);
 		}
 		#endregion	// Protected Instance Methods
 
+		#region Events
+		public event EventHandler DoubleClick;
+		#endregion	// Events
 	}
 }

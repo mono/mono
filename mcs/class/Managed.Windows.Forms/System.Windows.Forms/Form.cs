@@ -913,7 +913,6 @@ Console.WriteLine("ParentForm got focus");
 				}
 
 				case Msg.WM_SETFOCUS: {
-Console.WriteLine("Child form got focus");
 					if (this.ActiveControl != null) {
 						ActiveControl.Focus();
 					}
