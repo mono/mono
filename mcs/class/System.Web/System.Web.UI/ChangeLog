@@ -1,3 +1,8 @@
+2004-03-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs: return HttpContext.Current if _context has not yet been
+	assigned to. Fixes bug #55245.
+
 2004-03-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateParser.cs: don't add import statement or assemblies from

@@ -126,7 +126,12 @@ public class Page : TemplateControl, IHttpHandler
 
 	protected override HttpContext Context
 	{
-		get { return _context; }
+		get {
+			if (_context == null)
+				return HttpContext.Current;
+
+			return _context;
+		}
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
