@@ -1,3 +1,8 @@
+2004-10-02  Ben Maurer  <bmaurer@ximian.com>
+
+	* threadpool.c: the ares hashtable needs a critical section around it.
+	this prevents some nasty segfaults
+
 2004-09-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* threads.c: don't call mono_thread_detach() in start_wrapper(),
