@@ -40,7 +40,7 @@ namespace System.Web.SessionState {
 
 		public void UpdateHandler (HttpContext context, SessionStateModule module)
 		{
-			if (context.Session == null)
+			if (context.Session == null || context.Session.IsReadOnly)
 				return;
 			
 			string id = context.Session.SessionID;
@@ -49,8 +49,12 @@ namespace System.Web.SessionState {
 			state_server.Update (id, dict.ToByteArray (), sobjs.ToByteArray ());
 		}
 
-		public bool UpdateContext (HttpContext context, SessionStateModule module)
+		public HttpSessionState UpdateContext (HttpContext context, SessionStateModule module,
+							bool required, bool read_only, ref bool isNew)
 		{
+			if (!required)
+				return null;
+
 			StateServerItem item = null;
 			HttpSessionState session = null;
 			SessionDictionary dict = null;
@@ -62,11 +66,12 @@ namespace System.Web.SessionState {
 				if (item != null) {
 					dict = SessionDictionary.FromByteArray (item.DictionaryData);
 					sobjs = HttpStaticObjectsCollection.FromByteArray (item.StaticObjectsData);
-					session = new HttpSessionState (id, dict, HttpApplicationFactory.ApplicationState.SessionObjects,
+					session = new HttpSessionState (id, dict,
+							HttpApplicationFactory.ApplicationState.SessionObjects,
 							config.Timeout, false, config.CookieLess,
-							SessionStateMode.StateServer, module.IsReadOnly);
-					context.SetSession (session);
-					return false;
+							SessionStateMode.StateServer, read_only);
+
+					return session;
 				}
 			}
 			
@@ -77,12 +82,12 @@ namespace System.Web.SessionState {
 			
 			state_server.Insert (id, item);
 
-			session = new HttpSessionState (id, dict, sobjs, config.Timeout,
-					true, config.CookieLess, SessionStateMode.StateServer, module.IsReadOnly);
+			session = new HttpSessionState (id, dict, sobjs, config.Timeout, true,
+							config.CookieLess, SessionStateMode.StateServer,
+							read_only);
 			
-			context.SetSession (session);
-			
-			return true;
+			isNew = true;
+			return session;
 		}
 
 		private string GetId (HttpContext context)

@@ -62,7 +62,7 @@ namespace System.Web.SessionState {
 
 		public void UpdateHandler (HttpContext context, SessionStateModule module)
 		{
-			if (context.Session == null)
+			if (context.Session == null || context.Session.IsReadOnly)
 				return;
 
 			string id = context.Session.SessionID;
@@ -71,28 +71,29 @@ namespace System.Web.SessionState {
 			UpdateSession (id, dict);
 		}
 
-		public bool UpdateContext (HttpContext context, SessionStateModule module)
+		public HttpSessionState UpdateContext (HttpContext context, SessionStateModule module,
+							bool required, bool read_only, ref bool isNew)
 		{
+			if (!required)
+				return null;
+
 			HttpSessionState session = null;
 			string id = SessionId.Lookup (context.Request, config.CookieLess);
 
 			if (id != null) {
-				session = SelectSession (id, module.IsReadOnly);
-				if (session != null) {
-					context.SetSession (session);
-					return false;
-				}
+				session = SelectSession (id, read_only);
+				if (session != null)
+					return session;
 			}
 
 			id = SessionId.Create (module.Rng);
 			session = new HttpSessionState (id, new SessionDictionary (),
-					HttpApplicationFactory.ApplicationState.SessionObjects, config.Timeout, true,
-					config.CookieLess, SessionStateMode.SQLServer, module.IsReadOnly);
+					HttpApplicationFactory.ApplicationState.SessionObjects, config.Timeout,
+					true, config.CookieLess, SessionStateMode.SQLServer, read_only);
 
 			InsertSession (session, config.Timeout);
-			context.SetSession (session);
-
-			return true;
+			isNew = true;
+			return session;
 		}
 
 		private void GetConnectionData (out string providerAssembly,

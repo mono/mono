@@ -15,7 +15,6 @@ using System.Security.Cryptography;
 
 namespace System.Web.SessionState
 {
-	[MonoTODO]
 	public sealed class SessionStateModule : IHttpModule
 	{
 		internal static readonly string CookieName = "ASPSESSION";
@@ -24,7 +23,6 @@ namespace System.Web.SessionState
 		static SessionConfig config;
 		static Type handlerType;
 		ISessionHandler handler;
-		bool read_only;
 		
 		private RandomNumberGenerator rng;
 		
@@ -37,18 +35,12 @@ namespace System.Web.SessionState
 			get { return rng; }
 		}
 
-		internal bool IsReadOnly
-		{
-			get { return read_only; }
-		}
-		
 		public void Dispose ()
 		{
 		    if (handler!=null)
 			handler.Dispose();
 		}
 
-		[MonoTODO]
 		public void Init (HttpApplication app)
 		{
 			if (config == null) {
@@ -119,22 +111,34 @@ namespace System.Web.SessionState
 			HttpApplication application = (HttpApplication) o;
 			HttpContext context = application.Context;
 
-			read_only = (context.Handler is IReadOnlySessionState);
+			bool required = (context.Handler is IRequiresSessionState);
+			bool read_only = (context.Handler is IReadOnlySessionState);
 			
 			bool isNew = false;
+			HttpSessionState session = null;
 			if (handler != null)
-			    isNew = handler.UpdateContext (context, this);
+				session = handler.UpdateContext (context, this, required, read_only, ref isNew);
 
-			if (isNew && config.CookieLess) {
-				string id = context.Session.SessionID;
-				context.Request.SetHeader (HeaderName, id);
-				context.Response.Redirect (UrlUtils.InsertSessionId (id,
-						context.Request.FilePath));
-			} else if (isNew) {
-				string id = context.Session.SessionID;
-				HttpCookie cookie = new HttpCookie (CookieName, id);
-				cookie.Path = UrlUtils.GetDirectory (context.Request.Path);
-				context.Response.AppendCookie (cookie);
+			if (session != null) {
+				if (isNew)
+					session.SetNewSession (true);
+
+				if (read_only)
+					session = session.Clone ();
+					
+				context.SetSession (session);
+
+				if (isNew && config.CookieLess) {
+					string id = context.Session.SessionID;
+					context.Request.SetHeader (HeaderName, id);
+					context.Response.Redirect (UrlUtils.InsertSessionId (id,
+								   context.Request.FilePath));
+				} else if (isNew) {
+					string id = context.Session.SessionID;
+					HttpCookie cookie = new HttpCookie (CookieName, id);
+					cookie.Path = UrlUtils.GetDirectory (context.Request.Path);
+					context.Response.AppendCookie (cookie);
+				}
 			}
 			
 			// In the future, we might want to move the Async stuff down to

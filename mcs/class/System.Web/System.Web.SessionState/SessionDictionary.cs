@@ -21,6 +21,18 @@ internal class SessionDictionary : NameObjectCollectionBase
 	{
 	}
 
+	internal SessionDictionary Clone ()
+	{
+		SessionDictionary sess = new SessionDictionary ();
+		int last = sess.Count;
+		for (int i = 0; i < last; i++) {
+			string key = GetKey (i);
+			sess [key] = this [key];
+		}
+
+		return sess;
+	}
+	
 	internal void Clear ()
 	{
 		_dirty = true;

@@ -12,10 +12,12 @@ namespace System.Web.SessionState
 {
 	internal interface ISessionHandler
 	{
-	      void Dispose ();
-	      void Init (HttpApplication context, SessionConfig config);
-	      bool UpdateContext (HttpContext context, SessionStateModule module);
-	      void UpdateHandler (HttpContext context, SessionStateModule module);
+		void Dispose ();
+		void Init (HttpApplication context, SessionConfig config);
+		HttpSessionState UpdateContext (HttpContext context, SessionStateModule module, bool required,
+						bool read_only, ref bool isNew);
+
+		void UpdateHandler (HttpContext context, SessionStateModule module);
 	}
 }
 

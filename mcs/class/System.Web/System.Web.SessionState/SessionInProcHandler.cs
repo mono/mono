@@ -79,7 +79,8 @@ namespace System.Web.SessionState
 		}
 
 		//this is the code that actually do stuff.
-		public bool UpdateContext (HttpContext context, SessionStateModule module)
+		public HttpSessionState UpdateContext (HttpContext context, SessionStateModule module,
+							bool required, bool read_only, ref bool isNew)
 		{
 			SessionContainer container = null;
 			string id = SessionId.Lookup (context.Request, config.CookieLess);
@@ -90,39 +91,40 @@ namespace System.Web.SessionState
 				container = (SessionContainer) _sessionTable [id];
 
 				// if we have a session, and it is not expired, set isNew to false and return it.
-				if (container!=null && container.SessionState!=null && !container.SessionState.IsAbandoned) {
-					// Can we do this? It feels safe, but what do I know.
-					container.SessionState.SetNewSession (false);
+				if (container != null && container.SessionState != null && 
+				    !container.SessionState.IsAbandoned) {
+					if (required)
+						container.SessionState.SetNewSession (false);
 					// update the timestamp.
 					container.Touch ();
-					 // Can we do this? It feels safe, but what do I know.
-					context.SetSession (container.SessionState);
-					return false; // and we're done
-				} else if(container!=null) {
+					if (required)
+						return container.SessionState;
+
+					return null;
+				} else if (container!=null) {
 					_sessionTable.Remove (id);
 				}
 			}
 
+			if (!required)
+				return null;
+
 			// else we create a new session.
 			string sessionID = SessionId.Create (module.Rng);
-			container = new SessionContainer (new HttpSessionState (sessionID, // unique identifier
-										new SessionDictionary(), // dictionary
-										HttpApplicationFactory.ApplicationState.SessionObjects,
-										SESSION_LIFETIME, //lifetime befor death.
-										true, //new session
-										false, // is cookieless
-										SessionStateMode.InProc,
-										module.IsReadOnly)); //readonly
-			// puts it in the table.
+			HttpSessionState state = new HttpSessionState (sessionID, // unique identifier
+							new SessionDictionary(), // dictionary
+							HttpApplicationFactory.ApplicationState.SessionObjects,
+							SESSION_LIFETIME, //lifetime before death.
+							true, //new session
+							false, // is cookieless
+							SessionStateMode.InProc,
+							read_only); //readonly
+
+			container = new SessionContainer (state);
 			_sessionTable [sessionID]=container;
 			AppDomain.CurrentDomain.SetData (".MonoSessionInProc", _sessionTable);
-
-			// and returns it.
-			context.SetSession (container.SessionState);
-			context.Session.SetNewSession (true);
-
-			// And we're done!
-			return true;
+			isNew = true;
+			return container.SessionState;
 		}
 	}
 }

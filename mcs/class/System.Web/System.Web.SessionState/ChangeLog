@@ -1,3 +1,26 @@
+2004-05-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpSessionState.cs: added Clone (), which makes and exact copy but
+	with a cloned SessionDictionary. When EnableSessionState is set to
+	ReadOnly, we can modify the collection, but changes are not propagated.
+
+	* ISessionHandler.cs: changed signature of UpdateContext().
+
+	* SessionDictionary.cs: added Clone.
+
+	* SessionInProcHandler.cs:
+	* SessionSQLServerHandler.cs:
+	* SessionStateServerHandler.cs: don't create a new session if the handler
+	do not require it. UpdateContext() now returns an HttpSessionState to
+	the module.
+
+	* SessionStateModule.cs: removed IsReadOnly as it is now passed as a 
+	parameter to the session handler. If the session is read-only, clone
+	it so that it can be changed but changes are not kept.
+
+	In short, we don't create session objects when not required and we
+	honor the ReadOnly sessions.
+
 2004-02-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SessionInProcHandler.cs:
