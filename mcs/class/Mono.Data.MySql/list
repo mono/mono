@@ -3,3 +3,5 @@ Mono.Data.MySql/MySqlCommand.cs
 Mono.Data.MySql/MySqlConnection.cs
 Mono.Data.MySql/MySql.cs
 Mono.Data.MySql/TODOAttribute.cs
+Mono.Data.MySql/MySqlDataReader.cs
+Mono.Data.MySql/MySqlTypes.cs

@@ -1,3 +1,11 @@
+2002-10-10  Rodrigo Moya <rodrigo@ximian.com>
+
+	* makefile.gnu: added makefile for linux build.
+
+	* list: updated to contain all missing files.
+
+	* Mono.Data.MySql/makefile: removed unneeded makefile.
+
 2002-10-09  Daniel Morgan <danmorg@sc.rr.com>
 
 	* Mono.Data.MySql/MySqlDataReader.cs: added
