@@ -10,15 +10,19 @@
 
 using System;
 using System.Collections;
+using System.Reflection;
+using System.Reflection.Emit;
 
 namespace CIR {
 
 	public class Enum : DeclSpace {
+
 		ArrayList ordered_enums;
 		string type;
 		string name;
 		int mod_flags;
-
+		public EnumBuilder EnumBuilder;
+		
 		public const int AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
@@ -48,6 +52,15 @@ namespace CIR {
 
 			ordered_enums.Add (name);
 			return AdditionResult.Success;
+		}
+
+		public void Define (TypeContainer parent)
+		{
+			TypeAttributes attr = Modifiers.TypeAttr (ModFlags);
+
+			Type t = System.Type.GetType (type);
+
+			EnumBuilder = parent.RootContext.CodeGen.ModuleBuilder.DefineEnum (name, attr, t);
 		}
 
 		public string Type {

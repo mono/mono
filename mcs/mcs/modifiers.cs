@@ -109,6 +109,18 @@ namespace CIR {
 
 			return ma;
 		}
+
+		public static EventAttributes EventAttr (int mod_flags)
+		{
+			EventAttributes ea = 0;
+
+			// FIXME : Somebody please help me with this !! What happens to
+			// public, static etc modifiers ?
+
+			ea = EventAttributes.RTSpecialName | EventAttributes.SpecialName;
+			
+			return ea;
+		}
 		
 		// <summary>
 		//   Checks the object @mod modifiers to be in @allowed.

@@ -389,6 +389,12 @@ namespace CIR {
 			}
 		}
 
+		public ArrayList Events {
+			get {
+				return events;
+			}
+		}
+		
 		public ArrayList Enums {
 			get {
 				return enums;
@@ -561,6 +567,21 @@ namespace CIR {
 			if (Methods != null){
 				foreach (Method m in Methods)
 					m.Define (this);
+			}
+
+			if (Properties != null) {
+				foreach (Property p in Properties)
+					p.Define (this);
+			}
+
+			if (Enums != null) {
+				foreach (Enum e in Enums)
+					e.Define (this);
+			}
+
+			if (Events != null) {
+				foreach (Event e in Events)
+					e.Define (this);
 			}
 		}
 
@@ -989,11 +1010,13 @@ namespace CIR {
 	}
 
 	public class Property {
-		string type;
-		string name;
-		int mod_flags;
-		Block get_block, set_block;
-
+		
+		public readonly string Type;
+		public readonly string Name;
+		public readonly int    ModFlags;
+		public Block           Get, Set;
+		public PropertyBuilder PropertyBuilder;
+		
 		const int AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
@@ -1008,46 +1031,57 @@ namespace CIR {
 		
 		public Property (string type, string name, int mod_flags, Block get_block, Block set_block)
 		{
-			this.type = type;
-			this.name = name;
-			this.mod_flags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PRIVATE);
-			this.get_block = get_block;
-			this.set_block = set_block;
+			Type = type;
+			Name = name;
+			ModFlags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PRIVATE);
+			Get = get_block;
+			Set = set_block;
 		}
 
-		public string Type {
-			get {
-				return type;
-			}
-		}
+		public void Define (TypeContainer parent)
+		{
 
-		public string Name {
-			get {
-				return name;
-			}
-		}
+			MethodAttributes method_attr = Modifiers.MethodAttr(ModFlags);
+					
+			// FIXME - Right now using Modifiers.MethodAttributes
+			// Guess we need to add a special method for ProprtyAttributes
+			// in modifiers.cs - when we get final comments from miguel
+			// abt why access modifiers like new internal etc are not handled
+			// in modifiers.cs
+
+			// FIXME - how to handle PropertyAttributes.HasDefault
+
+			PropertyAttributes prop_attr = PropertyAttributes.RTSpecialName |
+				                       PropertyAttributes.SpecialName;
 		
-		public int ModFlags {
-			get {
-				return mod_flags;
+		
+			Type tp = System.Type.GetType(Type);
+			Type [] prop_type = new Type [1];
+			prop_type [0] = tp;
+
+			MethodBuilder mb;
+			
+			PropertyBuilder = parent.TypeBuilder.DefineProperty(Name, prop_attr, tp, null);
+					
+			if (Get != null)
+			{
+				mb = parent.TypeBuilder.DefineMethod("get_" + Name, method_attr, tp, null);
+				PropertyBuilder.SetGetMethod (mb);
 			}
+			
+			if (Set != null)
+			{
+				mb = parent.TypeBuilder.DefineMethod("set_" + Name, method_attr, null, prop_type);
+				mb.DefineParameter(1, ParameterAttributes.None, "value"); 
+				PropertyBuilder.SetSetMethod (mb);
+			}
+
 		}
 
-		public Block Get {
-			get {
-				return get_block;
-			}
-		}
-
-		public Block Set {
-			get {
-				return set_block;
-			}
-		}
 	}
 
 	public class Event {
-
+		
 		const int AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
@@ -1066,6 +1100,7 @@ namespace CIR {
 		public readonly int       ModFlags;
 		public readonly Block     Add;
 		public readonly Block     Remove;
+		public EventBuilder       EventBuilder;
 
 		public Event (string type, string name, Object init, int flags, Block add_block, Block rem_block)
 		{
@@ -1076,6 +1111,34 @@ namespace CIR {
 			Add = add_block;
 			Remove = rem_block;
 		}
+
+		public void Define (TypeContainer parent)
+		{
+			MethodAttributes m_attr = Modifiers.MethodAttr (ModFlags);
+
+			EventAttributes e_attr = EventAttributes.RTSpecialName | EventAttributes.SpecialName;
+			
+			MethodBuilder mb;
+
+			Type t = System.Type.GetType (Type);
+			Type [] p_type = new Type [1];
+			p_type [0] = t;
+			
+			EventBuilder = parent.TypeBuilder.DefineEvent (Name, e_attr, t);
+			
+			if (Add != null) {
+				mb = parent.TypeBuilder.DefineMethod ("add_" + Name, m_attr, null, p_type);
+				mb.DefineParameter (1, ParameterAttributes.None, "value");
+				EventBuilder.SetAddOnMethod (mb);
+			}
+
+			if (Remove != null) {
+				mb = parent.TypeBuilder.DefineMethod ("remove_" + Name, m_attr, null, p_type);
+				mb.DefineParameter (1, ParameterAttributes.None, "value");
+				EventBuilder.SetRemoveOnMethod (mb);
+			}
+		}
+		
 	}
 
 	public class Indexer {
@@ -1213,5 +1276,6 @@ namespace CIR {
 		}
 
 	}
+
 }
 

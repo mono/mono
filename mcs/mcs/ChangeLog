@@ -1,3 +1,28 @@
+2001-09-01  Ravi Pratap  <ravi@che.iitm.ac.in>
+
+	* class.cs (Event::Define): Implement.
+	(Event.EventBuilder): New member.
+
+	* class.cs (TypeContainer::Populate): Update to define all enums and events
+	we have.
+	(Events): New property for the events arraylist we hold. Shouldn't we move to using
+	readonly fields for all these cases ?
+
+2001-08-31  Ravi Pratap  <ravi@che.iitm.ac.in>
+
+	* class.cs (Property): Revamp to use the convention of making fields readonly.
+	Accordingly modify code elsewhere.
+
+	* class.cs : Apply patch from Mr. Mandar <go_mono@hotmail.com> for implementing
+	the Define method of the Property class.
+
+	* class.cs : Clean up applied patch and update references to variables etc. Fix 
+	trivial bug.
+	(TypeContainer::Populate): Update to define all the properties we have. Also
+	define all enumerations.
+
+	* enum.cs (Define): Implement.
+	
 2001-08-31  Ravi Pratap  <ravi@che.iitm.ac.in>
 
 	* cs-parser.jay (overloadable_operator): The semantic value is an
