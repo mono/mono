@@ -44,6 +44,8 @@ namespace System.Security.Cryptography.Xml {
 		object inputObj;
 		ArrayList exceptUris;
 		XmlNodeList innerXml;
+		object lockObject;
+
 		const string NamespaceUri = "http://www.w3.org/2002/07/decrypt#";
 
 		#endregion // Fields
@@ -54,7 +56,9 @@ namespace System.Security.Cryptography.Xml {
 			: base ()
 		{
 			Algorithm = XmlSignature.AlgorithmNamespaces.XmlDecryptionTransform;
+			encryptedXml = new EncryptedXml ();
 			exceptUris = new ArrayList ();
+			lockObject = new object ();
 		}
 	
 		#endregion // Constructors
@@ -69,7 +73,7 @@ namespace System.Security.Cryptography.Xml {
 		public override Type[] InputTypes {
 			get { 
 				if (inputTypes == null) {
-					lock (this) {
+					lock (lockObject) {
 						inputTypes = new Type [2] {typeof (System.IO.Stream), typeof (System.Xml.XmlDocument)}; 
 					}
 				}
@@ -80,7 +84,7 @@ namespace System.Security.Cryptography.Xml {
 		public override Type[] OutputTypes {
 			get { 
 				if (outputTypes == null) {
-					lock (this) {
+					lock (lockObject) {
 						outputTypes = new Type [1] {typeof (System.Xml.XmlDocument)};
 					}
 				}
@@ -106,6 +110,8 @@ namespace System.Security.Cryptography.Xml {
 		protected override XmlNodeList GetInnerXml ()
 		{
 			XmlDocument doc = new XmlDocument ();
+			doc.AppendChild (doc.CreateElement ("DecryptionTransform"));
+
 			foreach (object o in exceptUris) {
 				XmlElement element = doc.CreateElement ("Except", NamespaceUri);
 				element.Attributes.Append (doc.CreateAttribute ("URI", NamespaceUri));
@@ -118,28 +124,30 @@ namespace System.Security.Cryptography.Xml {
 		[MonoTODO ("Include processing of ExceptURIs")]
 		public override object GetOutput ()
 		{
-			XmlDocument doc;
+			XmlDocument document;
 			if (inputObj is Stream) {
-				doc = new XmlDocument ();
-				doc.PreserveWhitespace = true;
+				document = new XmlDocument ();
+				document.PreserveWhitespace = true;
 #if NET_1_1
-				doc.XmlResolver = GetResolver ();
+				document.XmlResolver = GetResolver ();
 #endif
-				doc.Load (inputObj as Stream);
+				document.Load (inputObj as Stream);
 			}
 			else if (inputObj is XmlDocument) {
-				doc = inputObj as XmlDocument;
+				document = inputObj as XmlDocument;
 			}
 			else
 				throw new NullReferenceException ();
 
-			EncryptedXml exml = new EncryptedXml (doc);
+			XmlNodeList nodes = document.GetElementsByTagName ("EncryptedData", EncryptedXml.XmlEncNamespaceUrl);
+			foreach (XmlNode node in nodes) {
+				EncryptedData encryptedData = new EncryptedData ();
+				encryptedData.LoadXml ((XmlElement) node);
+				SymmetricAlgorithm symAlg = EncryptedXml.GetDecryptionKey (encryptedData, encryptedData.EncryptionMethod.KeyAlgorithm);
+				EncryptedXml.ReplaceData ((XmlElement) node, EncryptedXml.DecryptData (encryptedData, symAlg));
+			}
 
-			// Need to copy this from the other EncryptedXml so that we can get the keys.
-			exml.keyNameMapping = encryptedXml.keyNameMapping;
-			exml.DecryptDocument ();
-
-			return doc;
+			return document;
 		}
 
 		public override object GetOutput (Type type)

@@ -102,7 +102,9 @@ namespace System.Security.Cryptography.Xml {
 			public const string XmlDsigXPathTransform = "http://www.w3.org/TR/1999/REC-xpath-19991116";
 			public const string XmlDsigXsltTransform =  "http://www.w3.org/TR/1999/REC-xslt-19991116";
 #if NET_2_0
-			public const string XmlDecryptionTransform = "http://www.w3.org/TR/2002/07/decrypt#XML";
+			public const string XmlDsigExcC14NTransform = "http://www.w3.org/2001/10/xml-exc-c14n#";
+			public const string XmlDsigExcC14NWithCommentsTransform = "http://www.w3.org/2001/10/xml-exc-c14n#WithComments";
+			public const string XmlDecryptionTransform = "http://www.w3.org/2002/07/decrypt#XML";
 #endif
 		}
 

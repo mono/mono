@@ -46,6 +46,7 @@ namespace System.Security.Cryptography.Xml {
 		[MonoTODO]
 		public XmlDsigExcC14NTransform ()
 		{
+			Algorithm = XmlSignature.AlgorithmNamespaces.XmlDsigExcC14NTransform;
 		}
 
 		[MonoTODO]

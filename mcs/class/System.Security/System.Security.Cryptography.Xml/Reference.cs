@@ -200,6 +200,9 @@ namespace System.Security.Cryptography.Xml {
 						case "http://www.w3.org/TR/1999/REC-xslt-19991116":
 							t = new XmlDsigXsltTransform ();
 							break;
+						case "http://www.w3.org/2002/07/decrypt#XML":
+							t = new XmlDecryptionTransform ();
+							break;
 						default:
 							throw new NotSupportedException ();
 					}

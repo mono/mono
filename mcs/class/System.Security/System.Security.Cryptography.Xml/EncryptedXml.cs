@@ -206,12 +206,18 @@ namespace System.Security.Cryptography.Xml {
 			symAlg.GenerateKey ();
 			symAlg.GenerateIV ();
 
-			SymmetricAlgorithm keyAlg = (SymmetricAlgorithm) keyNameMapping [keyName];
 			EncryptedData encryptedData = new EncryptedData ();
-
 			EncryptedKey encryptedKey = new EncryptedKey();
+
+			object keyAlg = keyNameMapping [keyName];
+
 			encryptedKey.EncryptionMethod = new EncryptionMethod (GetKeyWrapAlgorithmUri (keyAlg));
-			encryptedKey.CipherData = new CipherData (EncryptKey (symAlg.Key, keyAlg));
+
+			if (keyAlg is RSA)
+				encryptedKey.CipherData = new CipherData (EncryptKey (symAlg.Key, (RSA) keyAlg, false));
+			else
+				encryptedKey.CipherData = new CipherData (EncryptKey (symAlg.Key, (SymmetricAlgorithm) keyAlg));
+
 			encryptedKey.KeyInfo = new KeyInfo();
 			encryptedKey.KeyInfo.AddClause (new KeyInfoName (keyName));
 			
@@ -333,11 +339,11 @@ namespace System.Security.Cryptography.Xml {
 			throw new ArgumentException ("symAlg");
 		}
 
-		private static string GetKeyWrapAlgorithmUri (SymmetricAlgorithm symAlg)
+		private static string GetKeyWrapAlgorithmUri (object keyAlg)
 		{
-			if (symAlg is Rijndael)
+			if (keyAlg is Rijndael)
 			{
-				switch (symAlg.KeySize) {
+				switch (((Rijndael) keyAlg).KeySize) {
 				case 128:
 					return XmlEncAES128KeyWrapUrl;
 				case 192:
@@ -346,10 +352,12 @@ namespace System.Security.Cryptography.Xml {
 					return XmlEncAES256KeyWrapUrl;
 				}
 			}
-			else if (symAlg is TripleDES)
+			else if (keyAlg is RSA) 
+				return XmlEncRSA1_5Url;
+			else if (keyAlg is TripleDES)
 				return XmlEncTripleDESKeyWrapUrl;
 
-			throw new ArgumentException ("symAlg");
+			throw new ArgumentException ("keyAlg");
 		}
 
 		public virtual byte[] GetDecryptionIV (EncryptedData encryptedData, string symAlgUri)

@@ -695,6 +695,17 @@ namespace System.Security.Cryptography.Xml {
 
 			signatureElement = value;
 			m_signature.LoadXml (value);
+#if NET_2_0
+			// Need to give the EncryptedXml object to the 
+			// XmlDecryptionTransform to give it a fighting 
+			// chance at decrypting the document.
+			foreach (Reference r in m_signature.SignedInfo.References) {
+				foreach (Transform t in r.TransformChain) {
+					if (t is XmlDecryptionTransform) 
+						((XmlDecryptionTransform) t).EncryptedXml = EncryptedXml;
+				}
+			}
+#endif
 		}
 
 #if NET_1_1
