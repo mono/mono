@@ -1,5 +1,346 @@
 Hello everyone!
 
+    The Mono Team introduces the best Mono release so far we have
+done.  Thanks to everyone who contributed fixes, code, ideas, and bug
+reports.  
+
+    Mono 0.20 has been released, it is available at the usual location:
+
+	http://www.go-mono.com/download.html
+
+    This is a truly heroic release of Mono.  Major architectural
+chunks that were missing, or were miss-implemented have been fixed in
+this release, and we are very proud of it.  Please see the list of
+features, because there is no short way of introducing just how good
+this release is.  A big thanks goes to Piers for setting up a
+Tinderbox that monitors problems with the Mono CVS repository.
+
+    We released packages for SuSE 8.0, Mandrake 8.2, and various
+Red Hat releases.  It is also available from Red Carpet on the Mono
+channel.
+
+   Source code for Mono, MCS, the Mono Debugger, XSP is available as
+well from that web page.  The sources are:
+
+     MCS package (Class Libraries, C# and VB.NET compiler and managed tools):
+
+	http://www.go-mono.com/archive/mcs-0.20.tar.gz
+
+     Mono package (Runtime engine, JIT compiler):
+
+	http://www.go-mono.com/archive/mono-0.20.tar.gz
+
+     XSP package (XSP test web server for ASP.NET webforms):
+
+	http://www.go-mono.com/archive/xsp-0.3.tar.gz
+
+    This release is brought to you by: Alvaro del Castillo, Alan Tam,
+Alp Toker, Alejandro Sánchez, Alexandre Pigolkin, Atsushi Enomoto,
+Brian Ritchie, Christopher Bockner, Daniel Lopez, Daniel Morgan,
+Dennis Hayes, Dick Porter, Dietmar Maurer, Duncan Mak, Gaurav Vaish,
+Gonzalo Paniagua, Jackson Harper, Jaime Anguiano, Jeff Stedfast,
+Johannes Roith, John Sohn, Jonathan Pryor, "Lee Mallabone, "Lluis
+Sanchez, "Marco Ridoni, Mark Crichton, Martin Baulig, Martin Willemoes
+Hansen, Miguel de Icaza, Mike Kestner, Nick Drochak, Paolo Molaro,
+Patrik Torstensson, Pedro Martinez, Per Arneng, Peter Williams, Petr
+Danecek, Piers Haken, Radek Doulik, Rafael Teixeira, Rodrigo Moya,
+Sebastien Pouliot, Tim Coleman, Ville Palo, and Zoltan Varga.
+
+   They commited 1810 changes to CVS patches in the past 33 days.
+
+* New in this release
+
+      * Zoltan and IKVM
+
+	Zoltan's patches to run Jeroen's IKVM (the Java VM that
+	translates JVM bytecodes into .NET bytecodes) are in.  
+
+      * Remoting.
+
+	The remoting team's patches that were held off on the previous
+	release are here.  Lluis and Patrik have done a fantastic job
+	in getting remoting to work.  Many low-level runtime engine
+	changes, and plenty of work on the class-library stuff.
+	
+	Lluis has posted a couple of sample applications to the
+	mailing list, you can try those out.
+
+	The new release includes a working BinaryFormatter and
+	BinaryFormatterSink.  It means that together with TcpChannel
+	it is possible to make remote calls with any type of
+	parameters and return values, including value types,
+	MarshalByRefObject types (that are properly
+	marshalled/unmarshalled), delegates, enums, etc.
+
+	RemotingConfiguration is partially implemented. It cannot read
+	from config files, but manual configuration using the api is
+	fully working.
+
+	Implemented full support for client activated types and for
+	well known objects (both singleton and single call).
+
+	Lease manager fully working (it manages the lifetime of server
+	objects).
+
+	Implemented interception of the new operator, so it is
+	possible to create a remote object using "new", if the type is
+	properly registered in RemotingConfiguration.
+
+	In Lluis' words: `Basically, 0.20 will have almost all needed
+	for a distributed application with Remoting'
+
+      * New threading semantics, IO-layer
+
+	Dick Porter in a couple of weeks has heroically redone much of
+	the threading support to match the .NET behavior (details are
+	on the .NET threading book as posted on the Mono site).
+
+	He also did a lot of bug fixes in the IO/threading space.  The
+	threading implementation now contains a new and faster Monitor
+	implementation, as well as a correct Pulse()/Wait()
+	implementation. 
+
+	GC thread finalization has been re-enabled.  This means that
+	finalizers will be ran on a separate thread, as done in the
+	Microsoft.NET Framework.  This might expose some bugs on
+	existing finalizer code.
+
+      * Moved to NUnit2
+
+	Nick and Gonzalo helped us move to the new NUnit2 platform for 
+	all of our tests.   A big applause goes to them.
+
+     * Cross Appdomain invocations work now.
+
+        ASP.NET and NUnit2 both used cross appdomain invocations, we
+        have fixed a number of problems, and they are now functional.
+
+	The AppDomain fixes and the Remoting fixes have allowed us to
+	remove a number of hacks in the ASP.NET implementation that
+        were previously there.
+
+	Implemented CrossAppDomainChannel, for calls between domains.
+
+     * C# Compiler and Debugging.
+
+	When generating debugging information in the compiler (with
+        -debug, -g or -debug+) the compiler will embed the debugging
+        information into the resulting executable instead of
+        generating a separate file.  Very nice.
+
+	Generating debugging information has also improved vastly
+        performance-wise, and now it is possible to always use
+        debugging builds for software development.
+
+	A number of bugs were fixed on the compiler as well and
+	by using the Mono profiler we have reduced the memory
+	consumption and accelerated the compiler.
+
+	Thanks to Jackson, Martin, Paolo and for helping here.
+
+      * VB.NET Compiler.
+
+	Plenty of new features are included in the compiler in our
+        path to conformance.  See <FIXME:get-url-for-posting> for
+        details on the status of the compiler, and the pieces missing.
+
+      * ILasm and Mono.PEToolkit.
+
+	Work on the IL assembler has resumed, but it is not yet ready
+        for production use.  The Mono IL Assembler uses the
+        Mono.PEToolkit library done by Sergey and Jackson to
+        manipulate CIL image files.
+
+      * Cryptographic work.
+
+	Sebastien has provided a cert2spc and secutil tools for
+	certificate management.  This is the first release that ships
+	an assembly for System.Security
+
+	Also a new internal assembly used only on Windows allows Mono
+	users to use the unmanaged crypto providers.
+
+      * System.XML
+
+	Atsushi has continued to improve the work on our XML
+        implementation: fixing bugs and more closely matching the
+        Microsoft implementation.
+
+      * More PowerPC/Alpha support.
+
+	Taylor Christopher has contributed more code generation macros
+	for PPC and Laramie Leavitt for Alpha.
+
+      * System.XML.Xsl
+
+	Gonzalo continued the implementation of our XSLT transformation
+        API (custom .NET functions are still missing though).  It no
+        longer uses temporary files to apply transformations.  Thanks
+        to an idea from Zdravko Tashev.  Xslt Web controls work as
+        part of this fix.
+
+      * ASP.NET
+
+	Gonzalo has cleaned up a lot the code base, and now our test
+	server supports a --root and --virtual command line options
+	for better control. 
+
+	Also, now we generate a much nicer error page on errors.  We
+	are looking for volunteers to improve the default look of this
+	page.
+
+	Authentication is now supported
+
+      * Mobile Controls.
+
+	Gaurav Vaish continues on his quest to complete the
+	implementation of the Mobile controls.  These controls are
+	required to run a stock IBuySpy application.
+
+      * Class Libraries:
+
+	New Mono.Posix class library that contains classes for working
+	on a Posix systems.  Things like Unix domain sockets are here.
+
+      * System.Windows.Forms
+
+	Alexandre Pigolkine continues to contribute more code to our
+	Windows.Forms implementation.  Currently it only runs on
+	Windows (or in Linux without GC enabled, due to the
+	pthread/Wine threading library mismatch.  This is being
+	actively addressed as part of the Wine work due to the
+	movement to the new thread implementation available in RH 8.1).
+
+      * Database providers
+
+	Christopher Bockner has updated his DB2 database provider (now
+	with prepared statement functionality) and Tim Coleman has
+	continued work on the Oracle database provider (welcome back
+	Tim!)
+
+      * Database code.
+
+	Dan Morgan continues to develop core components in System.Data
+	(and now we welcome Alan Tam to the System.Data core hackers)
+
+	The SQL# tool now supports MySQLNet, Npgsql, DB2Client, and
+	Oracle clients.
+
+      * Runtime
+
+	mono --profile now performs memory allocation profiling too.
+
+      * Runtime fixes.
+
+	We now support multi-module with external file reference
+	assemblies.  
+
+	The above in English means that we can now run Eiffel.NET code
+	in Mono.
+
+      * Monograph:
+
+	More statistics supported now.
+
+      * System.Web.Mail
+
+	Per has contributed the code for this namespace.
+
+* Bugs 
+
+	Plenty of bugs were closed.  
+-------------------------------------------------------------------------
+Hello everyone!
+
+   We have made a new release of Mono available.  Despite the fact
+that we just did Mono 0.18, this release is packed with new features.
+
+* Availability.
+
+   Mono 0.19 is available in package format from:
+
+	http://www.go-mono.com/download.html
+
+   We released packages for SuSE 8.0, Mandrake 8.2, Debian and various
+Red Hat releases.  It is also available from Red Carpet on the Mono
+channel.
+
+   Source code for Mono, MCS, the Mono Debugger, XSP is available as
+well from that web page. 
+
+* New in this release
+
+	* Remoting news:
+
+		Lluis has implemented and documented the Binary formatter
+		Woohoo!  He has done a lot of work as well to support
+		remoting.
+
+		Patrik has also been working heavily on fixing a
+		number of remoting related bugs and missing features.
+
+		Ajay also implemented 1-d array serialization in System.Xml
+
+	* New database provider: IBM DB2
+
+		Christopher Bockner has contributed a DB2 data
+		provider for System.Data.  We have a very complete
+		range of data providers.
+		
+	* System.Web.Mobile
+
+		Gaurav has started work on this assembly, this will
+		allow us to run the unmodified reference ASP.NET
+		applications that were designed to support Mobile
+		browsing.
+
+	* System.Data and System.XML:
+
+		More implementation work on XmlDataDocument from Ville
+		and plenty of fixes from Atsushi.
+
+	* MacOS patches:
+
+		Paolo integrated John Duncan's and Benjamin Reed
+		patches to make Mono run on MacOS X out of the box.
+
+	* IsolatedStorage
+
+		The initial implementation of it was done by Jonathan
+		Pryor and included in this release.
+
+	* Compilers:
+
+		More work on the Mono Visual Basic compiler (it is now
+		included in the packages).
+
+		Plenty of bug fixes from Jackson, Miguel to the C#
+		compiler.
+
+		Patches from Francesco and Daniel to the VB.NET
+		support runtime.
+
+	* Debugger support
+
+		Plenty of updates to run the new Mono Debugger from Martin.
+
+* Main missing bits:
+
+   Some of everyone's favorite patches or code chunks have not yet
+been integrated, hopefully Mono 0.20 will have them:
+
+	* Zoltan's patch to run IKVM is not yet on this release
+
+	* Some parts of Patrik's remoting code did not make it to the
+	  release either.
+
+	* Reggie's MySQL native provider is also missing.
+
+Enjoy!
+Miguel.
+-------------------------------------------------------------------------
+Hello everyone!
+
    We have made a new release of Mono available.  Despite the fact
 that we just did Mono 0.18, this release is packed with new features.
 
