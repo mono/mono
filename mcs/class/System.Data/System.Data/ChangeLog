@@ -1,6 +1,6 @@
 2005-01-21  Atsushi Enomoto  <atsushi@ximian.com>
 
-	* DataRow.cs : more Detached -> Default fixes. Check if it should throw
+	* DataRow.cs : more Current -> Default fixes. Check if it should throw
 	  VersionNotFoundException. Patch by Ankit Jain.
 
 2005-01-21  Atsushi Enomoto  <atsushi@ximian.com>
