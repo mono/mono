@@ -1,3 +1,7 @@
+2004-08-14  Jackson Harper  <jackson@ximian.com>
+
+	* Container.cs: Release all when we are supposed to release all.
+
 2004-07-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Added IChangeTracking.cs and IRevertibleChangeTracking.cs.

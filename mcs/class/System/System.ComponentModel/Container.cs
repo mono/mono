@@ -161,7 +161,8 @@ namespace System.ComponentModel {
 			disposed = true;
 
 			if (release_all){
-				//??
+				foreach (IComponent component in c)
+					component.Dispose ();
 			}
 
 			c = null;
