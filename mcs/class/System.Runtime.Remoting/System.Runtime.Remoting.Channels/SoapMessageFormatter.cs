@@ -99,7 +99,7 @@ namespace System.Runtime.Remoting.Channels {
 			}
 			else {
 				object rtnObject = null;
-				RemMessageType messageType;
+				//RemMessageType messageType;
 				
 				// Get the output of the function if it is not *void*
 				if(_methodCallInfo.ReturnType != typeof(void)){
@@ -155,7 +155,7 @@ namespace System.Runtime.Remoting.Channels {
 
 			// Format the SoapMessage that will be used to create the RPC
 			soapMsg.MethodName = mcm.MethodName;
-			int count = mcm.ArgCount;
+			//int count = mcm.ArgCount;
 			ArrayList paramNames = new ArrayList(_methodCallParameters.Length);
 			ArrayList paramTypes = new ArrayList(_methodCallParameters.Length);
 			ArrayList paramValues = new ArrayList(_methodCallParameters.Length);
@@ -195,7 +195,7 @@ namespace System.Runtime.Remoting.Channels {
 			headersList.Add(new Header("__Uri", uri));
 			headersList.Add(new Header("__MethodName", soapMessage.MethodName));
 			string typeNamespace, assemblyName;
-			bool b = SoapServices.DecodeXmlNamespaceForClrTypeNamespace(soapMessage.XmlNameSpace, out typeNamespace, out assemblyName);
+			SoapServices.DecodeXmlNamespaceForClrTypeNamespace(soapMessage.XmlNameSpace, out typeNamespace, out assemblyName);
 
 			_serverType = RemotingServices.GetServerTypeForUri(uri);
 			headersList.Add(new Header("__TypeName", _serverType.FullName, false));
@@ -209,7 +209,7 @@ namespace System.Runtime.Remoting.Channels {
 			}
 			
 			_xmlNamespace = soapMessage.XmlNameSpace;
-			RemMessageType messageType;
+			//RemMessageType messageType;
 			
 			BindingFlags bflags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 			

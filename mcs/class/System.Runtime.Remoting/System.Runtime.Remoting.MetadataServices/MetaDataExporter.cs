@@ -559,7 +559,6 @@ namespace System.Runtime.Remoting.MetadataServices
 		
 		void FindTypes (ServiceType[] servicetypes, Hashtable dataTypes, ArrayList services)
 		{
-			Hashtable types = new Hashtable ();
 			ArrayList mbrTypes = new ArrayList();
 			
 			foreach (ServiceType st in servicetypes)
