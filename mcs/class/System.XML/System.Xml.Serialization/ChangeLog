@@ -1,5 +1,9 @@
 2003-10-15  Lluis Sanchez Gual <lluis@ximian.com>
 
+	* MapCodeGenerator.cs: Made MapCodeGenerator internal.
+
+2003-10-15  Lluis Sanchez Gual <lluis@ximian.com>
+
 	* MapCodeGenerator.cs: New file. Moved here all code that is common
 	  between XmlCodeExporter and SoapCodeExporter.
 	* SoapCodeExporter.cs: Implemented.

@@ -12,7 +12,7 @@ using System.Collections;
 using System.Xml.Schema;
 
 namespace System.Xml.Serialization {
-	public class MapCodeGenerator {
+	internal class MapCodeGenerator {
 
 		CodeNamespace codeNamespace;
 		CodeCompileUnit codeCompileUnit;
