@@ -563,6 +563,31 @@ namespace CIR {
 			}
 		}
 
+		public void RegisterRequiredImplementations ()
+		{
+			Type [] ifaces = TypeBuilder.GetInterfaces ();
+			
+			if (ifaces != null)
+				SetRequiredInterfaces (ifaces);
+
+			if (TypeBuilder.BaseType.IsAbstract){
+				MemberInfo [] abstract_methods;
+
+				abstract_methods = FindMembers (
+					TypeBuilder.BaseType,
+					MemberTypes.Method, BindingFlags.Public,
+					abstract_method_filter, null);
+
+				if (abstract_methods != null){
+					MethodInfo [] mi = new MethodInfo [abstract_methods.Length];
+
+					abstract_methods.CopyTo (mi, 0);
+					RequireMethods (mi);
+				}
+			}
+			
+		}
+		
 		//
 		// Populates our TypeBuilder with fields and methods
 		//
@@ -599,25 +624,42 @@ namespace CIR {
 				if (initialized_fields != null)
 					ReportStructInitializedInstanceError ();
 			}
+
+			ArrayList remove_list = new ArrayList ();
 			
-			if (Constructors != null){
-				foreach (Constructor c in Constructors){
-					c.Define (this);
+			if (constructors != null){
+				foreach (Constructor c in constructors){
+					object key = c.Define (this);
 					if (method_builders_to_methods == null)
 						method_builders_to_methods = new Hashtable ();
-					object key = c.ConstructorBuilder;
-					if (key != null)
+					
+					if (key == null)
+						remove_list.Add (c);
+					else
 						method_builders_to_methods.Add (key, c);
 				}
+
+				foreach (object o in remove_list)
+					constructors.Remove (o);
+				
+				remove_list.Clear ();
 			} 
 
 			if (Methods != null){
-				foreach (Method m in Methods){
-					m.Define (this);
+				foreach (Method m in methods){
+					object key = m.Define (this);
 					if (method_builders_to_methods == null)
 						method_builders_to_methods = new Hashtable ();
-					method_builders_to_methods.Add (m.MethodBuilder, m);
+
+					if (key == null)
+						remove_list.Add (m);
+					else
+						method_builders_to_methods.Add (key, m);
 				}
+				foreach (object o in remove_list)
+					methods.Remove (o);
+				
+				remove_list.Clear ();
 			}
 
 			if (Properties != null) {
@@ -645,6 +687,7 @@ namespace CIR {
 					o.Define (this);
 					if (method_builders_to_methods == null)
 						method_builders_to_methods = new Hashtable ();
+					
 					method_builders_to_methods.Add (o.OperatorMethodBuilder, o.OperatorMethod);
 				}
 			}
@@ -653,6 +696,8 @@ namespace CIR {
 				foreach (Delegate d in Delegates)
 					d.Define (this);
 			}
+
+			RegisterRequiredImplementations ();
 		}
 
 		//
@@ -665,49 +710,6 @@ namespace CIR {
 			return (MethodCore) method_builders_to_methods [mb];
 		}
 		
-		//
-		// Emits the code, this step is performed after all
-		// the types, enumerations, constructors
-		//
-		public void Emit ()
-		{
-			if (Constructors != null)
-				foreach (Constructor c in Constructors)
-					c.Emit (this);
-			
-			if (methods != null)
-				foreach (Method m in methods)
-					m.Emit (this);
-
-			if (operators != null)
-				foreach (Operator o in operators)
-					o.Emit (this);
-
-			if (properties != null)
-				foreach (Property p in properties)
-					p.Emit (this);
-
-			
-		}
-		
-		public delegate void ExamineType (TypeContainer container, object cback_data);
-
-		void WalkTypesAt (TypeContainer root, ExamineType visit, object cback_data)
-		{
-			if (root == null)
-				return;
-
-			foreach (TypeContainer type in root.Types){
-				visit (type, cback_data);
-				WalkTypesAt (type, visit, cback_data);
-			}
-		}
-
-		public void WalkTypes (ExamineType visit, object cback)
-		{
-			WalkTypesAt (this, visit, cback);
-		}
-
 		public Type LookupType (string name, bool silent)
 		{
 			return RootContext.LookupType (this, name, silent);
@@ -722,13 +724,30 @@ namespace CIR {
 		}
 		
 		//
+		static bool IsAbstractMethod (MemberInfo m, object filter_criteria)
+		{
+			MethodInfo mi = (MethodInfo) m;
+
+			Console.WriteLine ("Is abstract " + m.Name);
+			Console.WriteLine ("        ==> " + mi.IsAbstract);
+
+			return mi.IsAbstract;
+		}
+
 		// This filter is used by FindMembers, and we just keep
 		// a global for the filter to `AlwaysAccept'
 		//
 		static MemberFilter accepting_filter;
 		
+		// <summary>
+		//    This delegate is a MemberFilter used to extract the 
+		//    abstact methods from a type.  
+		// </summary>
+		static MemberFilter abstract_method_filter;
+
 		static TypeContainer ()
 		{
+			abstract_method_filter = new MemberFilter (IsAbstractMethod);
 			accepting_filter = new MemberFilter (AlwaysAccept);
 		}
 		
@@ -751,18 +770,24 @@ namespace CIR {
 						members.Add (f.FieldBuilder);
 				}
 			}
-			
-			if ((mt & MemberTypes.Method) != 0) {				if (Methods != null){
+
+			if ((mt & MemberTypes.Method) != 0) {
+				if (Methods != null){
 					foreach (Method m in Methods) {
-						if (filter (m.MethodBuilder, criteria) == true)
-							members.Add (m.MethodBuilder);
+						MethodBuilder mb = m.MethodBuilder;
+
+						Console.WriteLine (m.Name);
+						if (filter (mb, criteria) == true)
+							members.Add (mb);
 					}
 				}
 
 				if (Operators != null){
 					foreach (Operator o in Operators) {
-						if (filter (o.OperatorMethodBuilder, criteria) == true)
-							members.Add (o.OperatorMethodBuilder);
+						MethodBuilder ob = o.OperatorMethodBuilder;
+
+						if (filter (ob, criteria) == true)
+							members.Add (ob);
 					}
 				}
 			}
@@ -793,12 +818,26 @@ namespace CIR {
 
 			if ((mt & MemberTypes.Constructor) != 0){
 				if (Constructors != null){
-					foreach (Constructor c in Constructors)
-						if (filter (c.ConstructorBuilder, criteria) == true)
-							members.Add (c.ConstructorBuilder);
+					foreach (Constructor c in Constructors){
+						ConstructorBuilder cb = c.ConstructorBuilder;
+
+						if (filter (cb, criteria) == true)
+							members.Add (cb);
+					}
 				}
 			}
 
+			//
+			// Lookup members in parent if requested.
+			//
+			if ((bf & BindingFlags.DeclaredOnly) == 0){
+				MemberInfo [] mi;
+
+				mi = FindMembers (TypeBuilder.BaseType, mt, bf, filter, criteria);
+				if (mi != null)
+					members.AddRange (mi);
+			}
+			
 			int count = members.Count;
 			if (count > 0){
 				MemberInfo [] mi = new MemberInfo [count];
@@ -808,6 +847,187 @@ namespace CIR {
 
 			return null;
 		}
+
+		public MemberInfo [] FindMembers (Type t, MemberTypes mt, BindingFlags bf,
+						  MemberFilter filter, object criteria)
+		{
+			TypeContainer tc = RootContext.TypeManager.LookupTypeContainer (t);
+
+			if (tc != null)
+				return tc.FindMembers (mt, bf, filter, criteria);
+			else
+				return t.FindMembers (mt, bf, filter, criteria);
+		}
+		
+		struct PendingMethod {
+			public string Name;
+			public Type RetType;
+			public Type [] Parameters;
+
+			public PendingMethod (string name, Type ret_type, Type [] parameters)
+			{
+				Name = name;
+				RetType = ret_type;
+				Parameters = parameters;
+			}
+
+			public override int GetHashCode ()
+			{
+				return Name.GetHashCode ();
+			}
+
+			//
+			// We cheat to avoid a null compare and a Type compare.
+			//
+			// we know that we will be used in a Hashtable
+			// that only contains `PendingMethods'
+			// 
+			public override bool Equals (Object o)
+			{
+				PendingMethod other = (PendingMethod) o;
+
+				if (other.Name != Name)
+					return false;
+				if (other.RetType != RetType)
+					return false;
+
+				if (Parameters == null){
+					if (other.Parameters == null)
+						return true;
+					return false;
+				}
+				if (other.Parameters == null)
+					return false;
+
+				int c = Parameters.Length;
+				if (other.Parameters.Length != c)
+					return false;
+
+				for (int i = 0; i < c; i++)
+					if (other.Parameters [i] != Parameters [i])
+						return false;
+
+				return true;
+			}
+			
+		}
+
+		Hashtable pending_implementations;
+
+		// <summary>
+		//   Requires that the methods in `mi' be implemented for this
+		//   class
+		// </summary>
+		public void RequireMethods (MethodInfo [] mi)
+		{
+			if (pending_implementations == null)
+				pending_implementations = new Hashtable ();
+
+			foreach (MethodInfo m in mi){
+				ParameterInfo [] pi = m.GetParameters ();
+				int c = pi.Length;
+				Type [] types = new Type [c];
+				
+				for (int i = 0; i < c; i++)
+					types [i] = pi [i].ParameterType;
+				
+				pending_implementations.Add (new PendingMethod
+					(m.Name, m.ReturnType, types), null);
+			}
+		}
+
+		// <summary>
+		//   Used to set the list of interfaces that this typecontainer
+		//   must implement.
+		// </summary>
+		//
+		// <remarks>
+		//   For each element exposed by the type, we create a PendingMethod
+		//   struct that we will label as `implemented' as we define the various
+		//   methods.
+		// </remarks>
+		public void SetRequiredInterfaces (Type [] ifaces)
+		{
+			//foreach (Type t in ifaces){
+			// MethodInfo [] mi;
+
+			//				mi = t.GetMethods ();
+				// RequireMethods (mi);
+			//}
+		}
+
+		// <summary>
+		//   If a method with name `Name', return type `ret_type' and
+		//   arguments `args' implements an interface, this method will
+		//   return true.
+		//
+		//   This will remove the method from the list of "pending" methods
+		//   that are required to be implemented for this class as a side effect.
+		// 
+		// </summary>
+		public bool IsInterfaceMethod (string Name, Type ret_type, Type [] args)
+		{
+			PendingMethod query;
+
+			if (pending_implementations == null)
+				return false;
+			
+			query = new PendingMethod (Name, ret_type, args);
+
+			if (pending_implementations.Contains (query)){
+				//x = (PendingMethod) o;
+				return true;
+			} 
+
+			return false;
+		}
+
+		// <summary>
+		//   Verifies that any pending abstract methods or interface methods
+		//   were implemented.
+		// </summary>
+		void VerifyPendingMethods ()
+		{
+			int pending = 0;
+			
+			foreach (object m in pending_implementations){
+				DictionaryEntry de = (DictionaryEntry) m;
+				
+				pending++;
+
+				PendingMethod method = (PendingMethod) de.Key;
+				
+				Console.WriteLine ("Missing implementations: " + method.Name);
+				RootContext.Report.Error (1, "Blah");
+			}
+		}
+		
+		// <summary>
+		//   Emits the code, this step is performed after all
+		//   the types, enumerations, constructors
+		// </summary>
+		public void Emit ()
+		{
+			if (Constructors != null)
+				foreach (Constructor c in Constructors)
+					c.Emit (this);
+			
+			if (methods != null)
+				foreach (Method m in methods)
+					m.Emit (this);
+
+			if (operators != null)
+				foreach (Operator o in operators)
+					o.Emit (this);
+
+			if (properties != null)
+				foreach (Property p in properties)
+					p.Emit (this);
+
+			if (pending_implementations != null)
+				VerifyPendingMethods ();
+		}
+		
 	}
 
 	public class Class : TypeContainer {
@@ -962,7 +1182,6 @@ namespace CIR {
 			
 			return cc;
 		}
-
 	}
 	
 	public class Method : MethodCore {
@@ -1024,10 +1243,11 @@ namespace CIR {
 		//
 		// Creates the type
 		// 
-		public void Define (TypeContainer parent)
+		public MethodBuilder Define (TypeContainer parent)
 		{
 			Type ret_type = GetReturnType (parent);
 			Type [] parameters = ParameterTypes (parent);
+			MethodAttributes flags;
 
 			//
 			// Create the method
@@ -1058,12 +1278,51 @@ namespace CIR {
 				} else if ((ModFlags & Modifiers.NEW) != 0)
 					WarningNotHiding (parent);
 			} 
-			
+
+			flags = Modifiers.MethodAttr (ModFlags);
+
+			//
+			// Catch invalid attributes for methods
+			//
+			if (parent.IsInterfaceMethod (Name, ret_type, parameters))
+				flags |= MethodAttributes.Virtual | MethodAttributes.Abstract;
+
+			int av = ModFlags & (Modifiers.VIRTUAL | Modifiers.ABSTRACT);
+			if (av != 0){
+				bool error = false;
+				
+				if (av == (Modifiers.VIRTUAL | Modifiers.ABSTRACT)){
+					parent.RootContext.Report.Error (
+						503, Location, "The abstract method `" +
+						parent.Name + "." + Name + "' " + 
+						"can not be marked virtual");
+					error = true;
+				}
+
+				if ((ModFlags & Modifiers.ABSTRACT) != 0){
+					if ((parent.ModFlags & Modifiers.ABSTRACT) == 0){
+						parent.RootContext.Report.Error (
+							513, Location, "`" + parent.Name + "." +
+							Name + "' is abstract but its container class is not");
+						error = true;
+					}
+				}
+				
+				if ((ModFlags & Modifiers.PRIVATE) != 0){
+					parent.RootContext.Report.Error (
+						621, Location, "`" + parent.Name + "." + Name + "' " + 
+						"virtual or abstract members can not be private");
+					error = true;
+				}
+				if (error)
+					return null;
+			}
+
 			MethodBuilder = parent.TypeBuilder.DefineMethod (
-				Name, Modifiers.MethodAttr (ModFlags),
+				Name, flags,
 				GetCallingConvention (parent is Class),
 				ret_type, parameters);
-
+			
 			ParameterInfo = new InternalParameters (parameters);
 
 			//
@@ -1092,6 +1351,8 @@ namespace CIR {
 				if (i != parameters.Length)
 					Console.WriteLine ("Implement the type definition for params");
 			}
+
+			return MethodBuilder;
 		}
 
 		//
@@ -1215,7 +1476,7 @@ namespace CIR {
 		//
 		// Creates the ConstructorBuilder
 		//
-		public void Define (TypeContainer parent)
+		public ConstructorBuilder Define (TypeContainer parent)
 		{
 			MethodAttributes ca = (MethodAttributes.RTSpecialName |
 					       MethodAttributes.SpecialName);
@@ -1226,7 +1487,7 @@ namespace CIR {
 				parent.RootContext.Report.Error (
 					568, Location, 
 					"Structs can not contain explicit parameterless constructors");
-				return;
+				return null;
 			}
 
 			if ((ModFlags & Modifiers.STATIC) != 0)
@@ -1237,6 +1498,8 @@ namespace CIR {
 				parameters);
 
 			ParameterInfo = new InternalParameters (parameters);
+
+			return ConstructorBuilder;
 		}
 
 		//
@@ -1510,7 +1773,7 @@ namespace CIR {
 
 			GetMethodBuilder = parent.TypeBuilder.DefineMethod ("get_Item", attr, ret_type, param_types);
 			SetMethodBuilder = parent.TypeBuilder.DefineMethod ("set_Item", attr, ret_type, param_types);
-			
+
 			Parameter [] p = FormalParameters.FixedParameters;
 
 			if (p != null) {

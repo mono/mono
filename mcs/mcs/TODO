@@ -92,6 +92,18 @@
 	Where B is a class defined in the source code, my guess is that
 	the look for ".ctor" fails
 
+* Pending implementations
 
+	It seems like I wont be able to do the `Pending
+	Implementations' trick using MethodBases because the stupid
+	Hashtable fails miserably to locate objects it has added using
+	MethodBase as the key.
 
-	
+	Total frustration.
+
+	So I think I should use RequirePendingByMethodBases () for when
+	the MethodBase comes from a type that comes from a library.
+
+	And I should register independentyly in the code that defines
+	abstract methods and interfaces the signature
+

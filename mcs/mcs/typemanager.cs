@@ -71,24 +71,40 @@ public class TypeManager {
 	// </remarks>
 	ArrayList user_types;
 
+	// <remarks>
+	//   Keeps a mapping between TypeBuilders and their TypeContainers
+	// </remarks>
+	Hashtable builder_to_container;
+
 	public TypeManager ()
 	{
 		assemblies = new ArrayList ();
 		user_types = new ArrayList ();
 		types = new Hashtable ();
-		typecontainers = new Hashtable ();    
+		typecontainers = new Hashtable ();
+		builder_to_container = new Hashtable ();
 	}
 
 	public void AddUserType (string name, TypeBuilder t, TypeContainer tc)
 	{
 		types.Add (t.FullName, t);
 		user_types.Add (t);
+		builder_to_container.Add (t, tc);
 		typecontainers.Add (t.FullName, tc);
 	}
 
 	public void AddUserType (string name, TypeBuilder t)
 	{
 		this.AddUserType (name, t, null);
+	}
+
+	// <summary>
+	//   Returns the TypeContainer whose Type is `t' or null if there is no
+	//   TypeContainer for `t' (ie, the Type comes from a library)
+	// </summary>
+	public TypeContainer LookupTypeContainer (Type t)
+	{
+		return (TypeContainer) builder_to_container [t];
 	}
 	
 	// <summary>

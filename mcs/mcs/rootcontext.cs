@@ -55,6 +55,18 @@ namespace CIR {
 		// have a parent or not.
 		//
 		bool stdlib = true;
+
+		//
+		// This keeps track of the order in which classes were defined
+		// so that we can poulate them in that order.
+		//
+		// Order is important, because we need to be able to tell by
+		// examining the parent's list of methods which ones are virtual
+		// or abstract as well as the parent names (to implement new, 
+		// override).
+		//
+		ArrayList type_container_resolve_order;
+		ArrayList interface_resolve_order;
 		
 		public RootContext ()
 		{
@@ -129,7 +141,7 @@ namespace CIR {
 				report.Error (527, "`"+name+"' " + cause + ", need an interface instead");
 				return null;
 			}
-			
+
 			t = CreateInterface ((Interface) parent);
 			if (t == null){
 				report.Error (529,
@@ -212,6 +224,8 @@ namespace CIR {
 					    ifaces);
 			iface.TypeBuilder = tb;
 
+			interface_resolve_order.Add (iface);
+			
 			TypeManager.AddUserType (name, tb);
 
 			iface.InTransit = false;
@@ -441,12 +455,14 @@ namespace CIR {
 			if (error)
 				return null;
 
+			type_container_resolve_order.Add (tc);
+			
 			tb = mb.DefineType (name,
 					    tc.TypeAttr | TypeAttributes.Class,
 					    parent,
 					    ifaces);
-
 			tc.TypeBuilder = tb;
+
 			TypeManager.AddUserType (name, tb, tc);
 			tc.InTransit = false;
 			
@@ -464,6 +480,8 @@ namespace CIR {
 		{
 			Hashtable ifaces, classes, structs;
 
+			type_container_resolve_order = new ArrayList ();
+			
 			//
 			// Interfaces are processed first, as classes and
 			// structs might inherit from an object or implement
@@ -472,6 +490,8 @@ namespace CIR {
 			//
 			ifaces = tree.Interfaces;
 			if (ifaces != null){
+				interface_resolve_order = new ArrayList ();
+				
 				foreach (DictionaryEntry de in ifaces)
 					CreateInterface ((Interface) de.Value);
 			}
@@ -573,7 +593,7 @@ namespace CIR {
 
 			return false;
 		}
-		
+
 		// <summary>
 		//   Populates the structs and classes with fields and methods
 		// </summary>
@@ -582,31 +602,13 @@ namespace CIR {
 		// have been defined through `ResolveTree' 
 		public void PopulateTypes ()
 		{
-			Hashtable ifaces, classes, structs;
-			
-			if ((ifaces = tree.Interfaces) != null){
-				foreach (DictionaryEntry de in ifaces){
-					Interface iface = (Interface) de.Value;
-
+			if (interface_resolve_order != null)
+				foreach (Interface iface in interface_resolve_order)
 					iface.Populate ();
-				}
-			}
 
-			if ((classes = tree.Classes) != null){
-				foreach (DictionaryEntry de in classes){
-					TypeContainer tc = (TypeContainer) de.Value;
-
+			if (type_container_resolve_order != null)
+				foreach (TypeContainer tc in type_container_resolve_order)
 					tc.Populate ();
-				}
-			}
-
-			if ((structs = tree.Structs) != null){
-				foreach (DictionaryEntry de in structs){
-					TypeContainer tc = (TypeContainer) de.Value;
-
-					tc.Populate ();
-				}
-			}
 		}
 
 		public void EmitCode ()

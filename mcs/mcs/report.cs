@@ -13,8 +13,29 @@ namespace CIR {
 	public class Report {
 		int errors;
 		int warnings;
+
+		//
+		// whether errors are fatal (they throw an exception), useful
+		// for debugging the compiler
+		//
 		bool fatal;
 
+		//
+		// If the error code is reported on the given line,
+		// then the process exits with a unique error code.
+		//
+		// Used for the test suite to excercise the error codes
+		//
+		int probe_error = 0;
+		int probe_line = 0;
+		
+		void Check (int code)
+		{
+			if (code ==  probe_error){
+				Environment.Exit (123);
+			}
+		}
+		
 		public void RealError (string msg)
 		{
 			errors++;
@@ -30,6 +51,7 @@ namespace CIR {
 				"): Error CS"+code+": " + text;
 
 			RealError (msg);
+			Check (code);
 		}
 
 		public void Warning (int code, Location l, string text)
@@ -37,6 +59,7 @@ namespace CIR {
 			Console.WriteLine (l.Name + "(" + l.Row + 
 					   "): Warning CS"+code+": " + text);
 			warnings++;
+			Check (code);
 		}
 		
 		public void Error (int code, string text)
@@ -44,12 +67,14 @@ namespace CIR {
 			string msg = "Error CS"+code+": "+text;
 
 			RealError (msg);
+			Check (code);
 		}
 
 		public void Warning (int code, string text)
 		{
 			Console.WriteLine ("Warning CS"+code+": "+text);
 			warnings++;
+			Check (code);
 		}
 
 		public void Message (Message m)
@@ -59,7 +84,13 @@ namespace CIR {
 			else
 				Warning (m.code, m.text);
 		}
-			
+
+		public void SetProbe (int code, int line)
+		{
+			probe_error = code;
+			probe_line = line;
+		}
+	
 		public int Errors {
 			get {
 				return errors;

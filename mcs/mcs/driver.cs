@@ -79,15 +79,16 @@ namespace CIR
 		{
 			Console.WriteLine (
 				"compiler [options] source-files\n\n" +
-				"-v         Verbose parsing\n"+
-				"-o         Specifies output file\n" +
-				"-L         Specifies path for loading assemblies\n" +
-				"--fatal    Makes errors fatal\n" + 
-				"--nostdlib Does not load core libraries\n" +
-				"--target   Specifies the target (exe, winexe, library, module)\n" +
-				"--dumper   Specifies a tree dumper\n" +
-				"--parse    Only parses the source file\n" +
-				"-r         References an assembly\n");
+				"-v           Verbose parsing\n"+
+				"-o           Specifies output file\n" +
+				"-L           Specifies path for loading assemblies\n" +
+				"--fatal      Makes errors fatal\n" + 
+				"--nostdlib   Does not load core libraries\n" +
+				"--target     Specifies the target (exe, winexe, library, module)\n" +
+				"--dumper     Specifies a tree dumper\n" +
+				"--parse      Only parses the source file\n" +
+				"--probe X L  Probes for the source to generate code X on line L\n" +
+				"-r           References an assembly\n");
 			
 		}
 
@@ -187,84 +188,98 @@ namespace CIR
 			
 			for (i = 0; i < args.Length; i++){
 				string arg = args [i];
-				
-				if (arg.StartsWith ("-")){
-					if (arg == "-v"){
-						yacc_verbose = true;
-						continue;
-					}
 
-					if (arg.StartsWith ("--dumper")){
-						generator = lookup_dumper (args [++i]);
-						continue;
-					}
-
-					if (arg == "--parse"){
-						parse_only = true;
-						continue;
-					}
-					
-					if (arg == "-z"){
-						generator.ParseOptions (args [++i]);
-						continue;
-					}
-					
-					if (arg == "-o"){
-						try {
-							output_file = args [++i];
-						} catch (Exception){
-							error ("Could not write to `"+args [i]);
-							error_count++;
-							return;
+				try {
+					if (arg.StartsWith ("-")){
+						if (arg == "-v"){
+							yacc_verbose = true;
+							continue;
 						}
-						continue;
-					}
-
-					if (arg == "--target"){
-						string type = args [++i];
-
-						switch (type){
-						case "library":
-							target = Target.Library;
-							target_ext = ".dll";
-							break;
-							
-						case "exe":
-							target = Target.Exe;
-							break;
-
-						case "winexe":
-							target = Target.WinExe;
-							break;
-							
-						case "module":
-							target = Target.Module;
-							target_ext = ".dll";
-							break;
+						
+						if (arg.StartsWith ("--dumper")){
+							generator = lookup_dumper (args [++i]);
+							continue;
 						}
-						continue;
+						
+						if (arg == "--parse"){
+							parse_only = true;
+							continue;
+						}
+						
+						if (arg == "--probe"){
+							int code, line;
+							
+							code = Int32.Parse (args [++i], 0);
+							line = Int32.Parse (args [++i], 0);
+							context.Report.SetProbe (code, line);
+							continue;
+						}
+						
+						if (arg == "-z"){
+							generator.ParseOptions (args [++i]);
+							continue;
+						}
+						
+						if (arg == "-o"){
+							try {
+								output_file = args [++i];
+							} catch (Exception){
+								error ("Could not write to `"+args [i]);
+								error_count++;
+								return;
+							}
+							continue;
+						}
+						
+						if (arg == "--target"){
+							string type = args [++i];
+							
+							switch (type){
+							case "library":
+								target = Target.Library;
+								target_ext = ".dll";
+								break;
+								
+							case "exe":
+								target = Target.Exe;
+								break;
+								
+							case "winexe":
+								target = Target.WinExe;
+								break;
+								
+							case "module":
+								target = Target.Module;
+								target_ext = ".dll";
+								break;
+							}
+							continue;
+						}
+						
+						if (arg == "-r"){
+							references.Add (args [++i]);
+							continue;
+						}
+						
+						if (arg == "-L"){
+							link_paths.Add (args [++i]);
+							continue;
+						}
+						
+						if (arg == "--nostdlib"){
+							context.StdLib = false;
+							continue;
+						}
+						
+						if (arg == "--fatal"){
+							context.Report.Fatal = true;
+							continue;
+						}
+						Usage ();
+						error_count++;
+						return;
 					}
-					
-					if (arg == "-r"){
-						references.Add (args [++i]);
-						continue;
-					}
-
-					if (arg == "-L"){
-						link_paths.Add (args [++i]);
-						continue;
-					}
-
-					if (arg == "--nostdlib"){
-						context.StdLib = false;
-						continue;
-					}
-
-					if (arg == "--fatal"){
-						context.Report.Fatal = true;
-						continue;
-					}
-
+				} catch (System.IndexOutOfRangeException){
 					Usage ();
 					error_count++;
 					return;

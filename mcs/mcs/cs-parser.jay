@@ -684,6 +684,15 @@ method_declaration
 	  method_body
 	  {
 		Method method = (Method) $1;
+		Block b = (Block) $2;
+		
+		if (b == null){
+			if ((method.ModFlags & (Modifiers.EXTERN | Modifiers.ABSTRACT)) == 0){
+				rc.Report.Error (501, lexer.Location, "`" + 
+					current_container.Name + "." + method.Name + "'" +
+					"must declare a body because it is not marked abstract or extern");
+			}
+		}
 
 		method.Block = (Block) $2;
 		CheckDef (current_container.AddMethod (method), method.Name);

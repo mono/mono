@@ -1,4 +1,37 @@
+2001-10-03  Miguel de Icaza  <miguel@ximian.com>
+
+	* rootcontext.cs (RootContext::PopulateTypes): Populate containers
+	in order from base classes to child classes, so that we can in
+	child classes look up in our parent for method names and
+	attributes (required for handling abstract, virtual, new, override
+	constructs: we need to instrospect our base class, and if we dont
+	populate the classes in order, the introspection might be
+	incorrect.  For example, a method could query its parent before
+	the parent has any methods and would determine that the parent has
+	no abstract methods (while it could have had them)).
+
+	(RootContext::CreateType): Record the order in which we define the
+	classes.
+
 2001-10-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (TypeContainer::Populate): Also method definitions can
+	fail now, keep track of this.
+
+	(TypeContainer::FindMembers): Implement support for
+	DeclaredOnly/noDeclaredOnly flag.
+
+	(Constructor::Emit) Return the ConstructorBuilder.
+
+	(Method::Emit) Return the MethodBuilder. 
+	Check for abstract or virtual methods to be public.
+
+	* rootcontext.cs (RootContext::CreateType): Register all the
+	abstract methods required for the class to be complete and the
+	interface methods that must be implemented. 
+
+	* cs-parser.jay: Report error 501 (method requires body if it is
+	not marked abstract or extern).
 
 	* expression.cs (TypeOf::Emit): Implement.
 
