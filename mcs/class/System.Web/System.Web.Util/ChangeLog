@@ -1,3 +1,8 @@
+2004-02-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UrlUtils.cs:
+	(Combine): handle subdirectories and tilde. Fixes bug 54231.
+
 2004-02-01  Alon Gazit <along@mainsoft.com>
 
 	* UrlUtils.cs: little fix in GetDirectory ().

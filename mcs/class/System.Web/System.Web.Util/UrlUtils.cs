@@ -123,15 +123,17 @@ namespace System.Web.Util
 				if (basePath == null || (basePath.Length == 1 && basePath [0] == '/'))
 					basePath = String.Empty;
 
+				string slash = (first == '/') ? "" : "/";
 				if (first == '~') {
 					if (rlength == 1) {
 						relPath = "";
 					} else if (rlength > 1 && relPath [1] == '/') {
-						relPath = relPath.Substring (2);
+						relPath = relPath.Substring (1);
+						basePath = "";
+						slash = "";
 					}
 				}
 
-				string slash = (first == '/') ? "" : "/";
 				return Reduce (basePath + slash + relPath);
 			}
 
