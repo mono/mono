@@ -612,5 +612,48 @@ namespace System.Xml.Schema
 			}
 			return null;
 		}
+
+		public static XmlSchemaObject FindAttributeDeclaration (
+			string ns,
+			XmlSchemaSet schemas,
+			XmlSchemaComplexType cType,
+			XmlQualifiedName qname)
+		{
+			XmlSchemaObject result = cType.AttributeUses [qname];
+			if (result != null)
+				return result;
+			if (cType.AttributeWildcard == null)
+				return null;
+
+			if (!AttributeWildcardItemValid (cType.AttributeWildcard, qname, ns))
+				return null;
+
+			if (cType.AttributeWildcard.ResolvedProcessContents == XmlSchemaContentProcessing.Skip)
+				return cType.AttributeWildcard;
+			XmlSchemaAttribute attr = schemas.GlobalAttributes [qname] as XmlSchemaAttribute;
+			if (attr != null)
+				return attr;
+			if (cType.AttributeWildcard.ResolvedProcessContents == XmlSchemaContentProcessing.Lax)
+				return cType.AttributeWildcard;
+			else
+				return null;
+		}
+
+		// Spec 3.10.4 Item Valid (Wildcard)
+		private static bool AttributeWildcardItemValid (XmlSchemaAnyAttribute anyAttr, XmlQualifiedName qname, string ns)
+		{
+			if (anyAttr.HasValueAny)
+				return true;
+			if (anyAttr.HasValueOther && (anyAttr.TargetNamespace == "" || ns != anyAttr.TargetNamespace))
+				return true;
+			if (anyAttr.HasValueTargetNamespace && ns == anyAttr.TargetNamespace)
+				return true;
+			if (anyAttr.HasValueLocal && ns == "")
+				return true;
+			for (int i = 0; i < anyAttr.ResolvedNamespaces.Count; i++)
+				if (anyAttr.ResolvedNamespaces [i] == ns)
+					return true;
+			return false;
+		}
 	}
 }

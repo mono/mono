@@ -36,6 +36,13 @@ using System.Xml;
 using System.Xml.Schema;
 using Mono.Xml;
 
+#if NET_2_0
+using ValException = System.Xml.Schema.XmlSchemaValidationException;
+#else
+using ValException = System.Xml.Schema.XmlSchemaException;
+#endif
+
+using QName = System.Xml.XmlQualifiedName;
 using ContentProc = System.Xml.Schema.XmlSchemaContentProcessing;
 using XsElement = System.Xml.Schema.XmlSchemaElement;
 using XsAttribute = System.Xml.Schema.XmlSchemaAttribute;
@@ -63,9 +70,7 @@ namespace Mono.Xml.Schema
 
 #region ID Constraints
 		bool checkIdentity = true;
-		Hashtable idList = new Hashtable ();
-		ArrayList missingIDReferences;
-		string thisElementId;
+		XsdIDManager idManager = new XsdIDManager ();
 #endregion
 
 #region Key Constraints
@@ -73,8 +78,8 @@ namespace Mono.Xml.Schema
 		ArrayList keyTables = new ArrayList ();
 		ArrayList currentKeyFieldConsumers;
 		ArrayList tmpKeyrefPool;
-		ArrayList elementQNameStack = new ArrayList ();
 #endregion
+		ArrayList elementQNameStack = new ArrayList ();
 
 		XsdParticleStateManager state = new XsdParticleStateManager ();
 
@@ -116,14 +121,6 @@ namespace Mono.Xml.Schema
 			}
 		}
 #endregion
-
-		private ArrayList MissingIDReferences {
-			get {
-				if (missingIDReferences == null)
-					missingIDReferences = new ArrayList ();
-				return missingIDReferences;
-			}
-		}
 
 		// Public Non-overrides
 
@@ -168,7 +165,7 @@ namespace Mono.Xml.Schema
 					if (currentAttrType == null) {
 						ComplexType ct = Context.ActualType as ComplexType;
 						if (ct != null) {
-							XsAttribute attdef = ct.AttributeUses [new XmlQualifiedName (LocalName, NamespaceURI)] as XsAttribute;
+							XsAttribute attdef = ct.AttributeUses [new QName (LocalName, NamespaceURI)] as XsAttribute;
 							if (attdef != null)
 								currentAttrType = attdef.AttributeType;
 							return currentAttrType;
@@ -362,7 +359,7 @@ namespace Mono.Xml.Schema
 				if (defaultAttributeConsumed)
 					return String.Empty;
 
-				XmlQualifiedName qname = defaultAttributes [currentDefaultAttribute].QualifiedName;
+				QName qname = defaultAttributes [currentDefaultAttribute].QualifiedName;
 				string prefix = Prefix;
 				if (prefix == String.Empty)
 					return qname.Name;
@@ -405,7 +402,7 @@ namespace Mono.Xml.Schema
 					return reader.Prefix;
 				if (defaultAttributeConsumed)
 					return String.Empty;
-				XmlQualifiedName qname = defaultAttributes [currentDefaultAttribute].QualifiedName;
+				QName qname = defaultAttributes [currentDefaultAttribute].QualifiedName;
 				string prefix = this.ParserContext.NamespaceManager.LookupPrefix (qname.Namespace, false);
 				if (prefix == null)
 					return String.Empty;
@@ -480,17 +477,17 @@ namespace Mono.Xml.Schema
 			if (ValidationType == ValidationType.None)	// extra quick check
 				return;
 
-			XmlSchemaException schemaException = new XmlSchemaException (error, 
+			ValException schemaException = new ValException (error, 
 					this, this.BaseURI, null, innerException);
 			HandleError (schemaException, isWarning);
 		}
 
-		private void HandleError (XmlSchemaException schemaException)
+		private void HandleError (ValException schemaException)
 		{
 			HandleError (schemaException, false);
 		}
 
-		private void HandleError (XmlSchemaException schemaException, bool isWarning)
+		private void HandleError (ValException schemaException, bool isWarning)
 		{
 			if (ValidationType == ValidationType.None)
 				return;
@@ -507,10 +504,10 @@ namespace Mono.Xml.Schema
 
 		private XsElement FindElement (string name, string ns)
 		{
-			return (XsElement) schemas.GlobalElements [new XmlQualifiedName (name, ns)];
+			return (XsElement) schemas.GlobalElements [new QName (name, ns)];
 		}
 
-		private XmlSchemaType FindType (XmlQualifiedName qname)
+		private XmlSchemaType FindType (QName qname)
 		{
 			return (XmlSchemaType) schemas.GlobalTypes [qname];
 		}
@@ -550,15 +547,15 @@ namespace Mono.Xml.Schema
 		}
 
 		// Utility for missing validation completion related to child items.
-		private void ValidateEndCharacters ()
+		private void ValidateEndSimpleContent ()
 		{
 			if (shouldValidateCharacters)
-				ValidateEndCharactersCore ();
+				ValidateEndSimpleContentCore ();
 			shouldValidateCharacters = false;
 			storedCharacters.Length = 0;
 		}
 
-		private void ValidateEndCharactersCore ()
+		private void ValidateEndSimpleContentCore ()
 		{
 			if (Context.ActualType == null)
 				return;
@@ -605,35 +602,6 @@ namespace Mono.Xml.Schema
 
 			shouldValidateCharacters = false;
 		}
-
-#region Key Constraints
-		private void ValidateSimpleContentIdentity (
-			XmlSchemaDatatype dt, string value)
-		{
-			// Identity field value
-			if (currentKeyFieldConsumers != null) {
-				while (this.currentKeyFieldConsumers.Count > 0) {
-					XsdKeyEntryField field = this.currentKeyFieldConsumers [0] as XsdKeyEntryField;
-					if (field.Identity != null)
-						HandleError ("Two or more identical field was found. Former value is '" + field.Identity + "' .");
-					object identity = null; // This means empty value
-					if (dt != null) {
-						try {
-							identity = dt.ParseValue (value, NameTable, ParserContext.NamespaceManager);
-						} catch (Exception ex) { // FIXME: (wishlist) This is bad manner ;-(
-							HandleError ("Identity value is invalid against its data type " + dt.TokenizedType, ex);
-						}
-					}
-					if (identity == null)
-						identity = value;
-
-					if (!field.SetIdentityField (identity, reader.Depth == xsiNilDepth, dt as XsdAnySimpleType, this.Depth, (IXmlLineInfo) this))
-						HandleError ("Two or more identical key value was found: '" + value + "' .");
-					this.currentKeyFieldConsumers.RemoveAt (0);
-				}
-			}
-		}
-#endregion
 
 		// 3.14.4 String Valid 
 		private void AssessStringValid (SimpleType st,
@@ -687,7 +655,7 @@ namespace Mono.Xml.Schema
 							else {
 								try {
 									AssessStringValid (itemSimpleType, itemSimpleType.Datatype, each);
-								} catch (XmlSchemaException) {
+								} catch (ValException) {
 									continue;
 								}
 							}
@@ -734,8 +702,7 @@ namespace Mono.Xml.Schema
 		private object GetXsiType (string name)
 		{
 			object xsiType = null;
-			XmlQualifiedName typeQName =
-				XmlQualifiedName.Parse (name, this);
+			QName typeQName = QName.Parse (name, this);
 			if (typeQName == ComplexType.AnyTypeName)
 				xsiType = ComplexType.AnyType;
 			else if (XmlSchemaUtil.IsBuiltInDatatypeName (typeQName))
@@ -767,7 +734,7 @@ namespace Mono.Xml.Schema
 			if (xsiComplexType != null)
 				try {
 					xsiComplexType.ValidateTypeDerivationOK (baseType, null, null);
-				} catch (XmlSchemaException ex) {
+				} catch (ValException ex) {
 //					HandleError ("Locally specified schema complex type derivation failed. " + ex.Message, ex);
 					HandleError (ex);
 				}
@@ -776,7 +743,7 @@ namespace Mono.Xml.Schema
 				if (xsiSimpleType != null) {
 					try {
 						xsiSimpleType.ValidateTypeDerivationOK (baseType, null, null, true);
-					} catch (XmlSchemaException ex) {
+					} catch (ValException ex) {
 //						HandleError ("Locally specified schema simple type derivation failed. " + ex.Message, ex);
 						HandleError (ex);
 					}
@@ -849,8 +816,8 @@ namespace Mono.Xml.Schema
 				Context.SetElement (state.CurrentElement);
 			}
 			if (Context.Element != null) {
-				if (xsiTypeName == null) {
-					AssessElementLocallyValidElement (Context.Element, xsiNilValue);	// 1.1.2
+				if (Context.XsiType == null) {
+					AssessElementLocallyValidElement (xsiNilValue);	// 1.1.2
 				}
 			} else {
 				switch (state.ProcessContents) {
@@ -895,9 +862,10 @@ namespace Mono.Xml.Schema
 		}
 
 		// 3.3.4 Element Locally Valid (Element)
-		private void AssessElementLocallyValidElement (XsElement element, string xsiNilValue)
+		private void AssessElementLocallyValidElement (string xsiNilValue)
 		{
-			XmlQualifiedName qname = new XmlQualifiedName (reader.LocalName, reader.NamespaceURI);
+			XsElement element = Context.Element;
+			QName qname = new QName (reader.LocalName, reader.NamespaceURI);
 			// 1.
 			if (element == null)
 				HandleError ("Element declaration is required for " + qname);
@@ -908,15 +876,14 @@ namespace Mono.Xml.Schema
 			if (!element.ActualIsNillable && xsiNilValue != null)
 				HandleError ("This element declaration is not nillable: " + qname);
 			// 3.2.
-			// Note that 3.2.1 xsi:nil constraints are to be validated in
+			// Note that 3.2.1 xsi:nil constraints are to be 
+			// validated in AssessElementSchemaValidity() and 
+			// ValidateCharacters().
 			else if (xsiNilValue == "true") {
-				// AssessElementSchemaValidity() and ValidateCharacters()
-
 				if (element.ValidatedFixedValue != null)
 					HandleError ("Schema instance nil was specified, where the element declaration for " + qname + "has fixed value constraints.");
 			}
-			// 4.
-			// FIXME: Actually xsi:type is handled in AssessElementSchemaValidity(). So it should be double-checked if it is really required.
+			// 4. xsi:type (it takes precedence than element type)
 			string xsiType = reader.GetAttribute ("type", XmlSchema.InstanceNamespace);
 			if (xsiType != null) {
 				Context.XsiType = GetXsiType (xsiType);
@@ -994,8 +961,9 @@ namespace Mono.Xml.Schema
 					case XmlSchema.InstanceNamespace:
 						continue;
 					}
-					XmlQualifiedName qname = new XmlQualifiedName (reader.LocalName, reader.NamespaceURI);
-					XmlSchemaObject attMatch = FindAttributeDeclaration (cType, qname);
+					QName qname = new QName (reader.LocalName, reader.NamespaceURI);
+					// including 3.10.4 Item Valid (Wildcard)
+					XmlSchemaObject attMatch = XmlSchemaUtil.FindAttributeDeclaration (reader.NamespaceURI, schemas, cType, qname);
 					if (attMatch == null)
 						HandleError ("Attribute declaration was not found for " + qname);
 					XsAttribute attdecl = attMatch as XsAttribute;
@@ -1029,47 +997,6 @@ namespace Mono.Xml.Schema
 			// 5. wild IDs was already checked above.
 		}
 
-		// Spec 3.10.4 Item Valid (Wildcard)
-		private static bool AttributeWildcardItemValid (XmlSchemaAnyAttribute anyAttr, XmlQualifiedName qname, string ns)
-		{
-			if (anyAttr.HasValueAny)
-				return true;
-			if (anyAttr.HasValueOther && (anyAttr.TargetNamespace == "" || ns != anyAttr.TargetNamespace))
-				return true;
-			if (anyAttr.HasValueTargetNamespace && ns == anyAttr.TargetNamespace)
-				return true;
-			if (anyAttr.HasValueLocal && ns == "")
-				return true;
-			for (int i = 0; i < anyAttr.ResolvedNamespaces.Count; i++)
-				if (anyAttr.ResolvedNamespaces [i] == ns)
-					return true;
-			return false;
-		}
-
-		private XmlSchemaObject FindAttributeDeclaration (
-			ComplexType cType,
-			XmlQualifiedName qname)
-		{
-			XmlSchemaObject result = cType.AttributeUses [qname];
-			if (result != null)
-				return result;
-			if (cType.AttributeWildcard == null)
-				return null;
-
-			if (!AttributeWildcardItemValid (cType.AttributeWildcard, qname, reader.NamespaceURI))
-				return null;
-
-			if (cType.AttributeWildcard.ResolvedProcessContents == ContentProc.Skip)
-				return cType.AttributeWildcard;
-			XsAttribute attr = schemas.GlobalAttributes [qname] as XsAttribute;
-			if (attr != null)
-				return attr;
-			if (cType.AttributeWildcard.ResolvedProcessContents == ContentProc.Lax)
-				return cType.AttributeWildcard;
-			else
-				return null;
-		}
-
 		// 3.2.4 Attribute Locally Valid and 3.4.4
 		private void AssessAttributeLocallyValid (XsAttribute attr)
 		{
@@ -1093,42 +1020,12 @@ namespace Mono.Xml.Schema
 					parsedValue = dt.ParseValue (attr.ValidatedFixedValue, reader.NameTable, this.ParserContext.NamespaceManager);
 				}
 #region ID Constraints
-				if (this.checkIdentity)
-					AssessEachAttributeIdentityConstraint (dt, parsedValue);
-#endregion
-			}
-		}
-
-		// 3.4.4-5 wild IDs
-		private void AssessEachAttributeIdentityConstraint (
-			XsDatatype dt, object parsedValue)
-		{
-			// Validate identity constraints.
-			string str = parsedValue as string;
-			switch (dt.TokenizedType) {
-			case XmlTokenizedType.ID:
-				if (thisElementId != null)
-					HandleError ("ID type attribute was already assigned in the containing element.");
-				thisElementId = str;
-				if (idList.Contains (str))
-					HandleError ("Duplicate ID value was found.");
-				else
-					idList.Add (str, str);
-				if (MissingIDReferences.Contains (str))
-					MissingIDReferences.Remove (str);
-				break;
-			case XmlTokenizedType.IDREF:
-				if (!idList.Contains (str))
-					MissingIDReferences.Add (str);
-				break;
-			case XmlTokenizedType.IDREFS:
-				string [] idrefs = (string []) parsedValue;
-				for (int i = 0; i < idrefs.Length; i++) {
-					string id = idrefs [i];
-					if (!idList.Contains (id))
-						MissingIDReferences.Add (id);
+				if (this.checkIdentity) {
+					string error = idManager.AssessEachAttributeIdentityConstraint (dt, parsedValue, ((QName) elementQNameStack [elementQNameStack.Count - 1]).Name);
+					if (error != null)
+						HandleError (error);
 				}
-				break;
+#endregion
 			}
 		}
 
@@ -1143,11 +1040,11 @@ namespace Mono.Xml.Schema
 		{
 			ValidateEndElementParticle ();	// validate against childrens' state.
 
-			ValidateEndCharacters ();
+			ValidateEndSimpleContent ();
 
 			// 3.3.4 Assess ElementLocallyValidElement 5: value constraints.
 			// 3.3.4 Assess ElementLocallyValidType 3.1.3. = StringValid(3.14.4)
-			// => ValidateEndCharacters().
+			// => ValidateEndSimpleContent().
 
 #region Key Constraints
 			if (checkKeyConstraints)
@@ -1239,7 +1136,7 @@ namespace Mono.Xml.Schema
 				for (int j = 0; j < seq.Entries.Count; j++) {
 					try {
 						ProcessKeyEntry (seq.Entries [j]);
-					} catch (XmlSchemaException ex) {
+					} catch (ValException ex) {
 						HandleError (ex);
 					}
 				}
@@ -1249,7 +1146,7 @@ namespace Mono.Xml.Schema
 		private void ProcessKeyEntry (XsdKeyEntry entry)
 		{
 			bool isNil = XsiNilDepth == Depth;
-			bool found = entry.ProcessMatch (false, elementQNameStack, this, NameTable, BaseURI, SchemaType, ParserContext.NamespaceManager, this as IXmlLineInfo, Depth, null, null, null, isNil, CurrentKeyFieldConsumers);
+			entry.ProcessMatch (false, elementQNameStack, this, NameTable, BaseURI, SchemaType, ParserContext.NamespaceManager, this as IXmlLineInfo, Depth, null, null, null, isNil, CurrentKeyFieldConsumers);
 			if (MoveToFirstAttribute ()) {
 				try {
 					do {
@@ -1258,7 +1155,7 @@ namespace Mono.Xml.Schema
 						case XmlSchema.InstanceNamespace:
 							continue;
 						}
-						found = entry.ProcessMatch (true, elementQNameStack, this, NameTable, BaseURI, SchemaType, ParserContext.NamespaceManager, this as IXmlLineInfo, Depth, LocalName, NamespaceURI, Value, false, CurrentKeyFieldConsumers);
+						entry.ProcessMatch (true, elementQNameStack, this, NameTable, BaseURI, SchemaType, ParserContext.NamespaceManager, this as IXmlLineInfo, Depth, LocalName, NamespaceURI, Value, false, CurrentKeyFieldConsumers);
 					} while (MoveToNextAttribute ());
 				} finally {
 					MoveToElement ();
@@ -1272,6 +1169,33 @@ namespace Mono.Xml.Schema
 			seq.StartDepth = reader.Depth;
 			this.keyTables.Add (seq);
 			return seq;
+		}
+
+		private void ValidateSimpleContentIdentity (
+			XmlSchemaDatatype dt, string value)
+		{
+			// Identity field value
+			if (currentKeyFieldConsumers != null) {
+				while (this.currentKeyFieldConsumers.Count > 0) {
+					XsdKeyEntryField field = this.currentKeyFieldConsumers [0] as XsdKeyEntryField;
+					if (field.Identity != null)
+						HandleError ("Two or more identical field was found. Former value is '" + field.Identity + "' .");
+					object identity = null; // This means empty value
+					if (dt != null) {
+						try {
+							identity = dt.ParseValue (value, NameTable, ParserContext.NamespaceManager);
+						} catch (Exception ex) { // FIXME: (wishlist) This is bad manner ;-(
+							HandleError ("Identity value is invalid against its data type " + dt.TokenizedType, ex);
+						}
+					}
+					if (identity == null)
+						identity = value;
+
+					if (!field.SetIdentityField (identity, reader.Depth == xsiNilDepth, dt as XsdAnySimpleType, this.Depth, (IXmlLineInfo) this))
+						HandleError ("Two or more identical key value was found: '" + value + "' .");
+					this.currentKeyFieldConsumers.RemoveAt (0);
+				}
+			}
 		}
 
 		private void EndIdentityValidation (XsdKeyTable seq)
@@ -1368,19 +1292,19 @@ namespace Mono.Xml.Schema
 			if (value != null)
 				return value;
 
-			XmlQualifiedName qname = SplitQName (name);
+			QName qname = SplitQName (name);
 			return GetDefaultAttribute (qname.Name, qname.Namespace);
 		}
 
-		private XmlQualifiedName SplitQName (string name)
+		private QName SplitQName (string name)
 		{
 			if (!XmlChar.IsName (name))
 				throw new ArgumentException ("Invalid name was specified.", "name");
 
 			Exception ex = null;
-			XmlQualifiedName qname = XmlSchemaUtil.ToQName (reader, name, out ex);
+			QName qname = XmlSchemaUtil.ToQName (reader, name, out ex);
 			if (ex != null)
-				return XmlQualifiedName.Empty;
+				return QName.Empty;
 			else
 				return qname;
 		}
@@ -1657,12 +1581,6 @@ namespace Mono.Xml.Schema
 				schemas.Compile ();
 		}
 
-		private bool HasMissingIDReferences ()
-		{
-			return missingIDReferences != null
-				&& missingIDReferences.Count > 0;
-		}
-
 		public override bool Read ()
 		{
 			currentDefaultAttribute = -1;
@@ -1670,7 +1588,7 @@ namespace Mono.Xml.Schema
 			currentAttrType = null;
 #region ID Constraints
 			if (this.checkIdentity)
-				thisElementId = null;
+				idManager.OnStartElement ();
 #endregion
 			defaultAttributes = emptyAttributeArray;
 
@@ -1678,10 +1596,8 @@ namespace Mono.Xml.Schema
 #region ID Constraints
 			// 3.3.4 ElementLocallyValidElement 7 = Root Valid.
 			if (!result && this.checkIdentity &&
-				HasMissingIDReferences ())
-				HandleError ("There are missing ID references: " +
-					String.Join (" ",
-					this.missingIDReferences.ToArray (typeof (string)) as string []));
+				idManager.HasMissingIDReferences ())
+				HandleError ("There are missing ID references: " + idManager.GetMissingIDString ());
 #endregion
 
 			// FIXME: schemaLocation could be specified 
@@ -1698,12 +1614,12 @@ namespace Mono.Xml.Schema
 			case XmlNodeType.Element:
 #region Key Constraints
 				if (checkKeyConstraints)
-					this.elementQNameStack.Add (new XmlQualifiedName (reader.LocalName, reader.NamespaceURI));
+					this.elementQNameStack.Add (new QName (reader.LocalName, reader.NamespaceURI));
 #endregion
 
 				// If there is no schema information, then no validation is performed.
 				if (skipValidationDepth < 0 || reader.Depth <= skipValidationDepth) {
-					ValidateEndCharacters ();
+					ValidateEndSimpleContent ();
 					AssessStartElementSchemaValidity ();
 				}
 
@@ -1830,6 +1746,83 @@ namespace Mono.Xml.Schema
 		public void SetElement (XsElement element)
 		{
 			Element = element;
+		}
+	}
+
+	internal class XsdIDManager
+	{
+		public XsdIDManager ()
+		{
+		}
+
+		Hashtable idList = new Hashtable ();
+		ArrayList missingIDReferences;
+		string thisElementId;
+
+		private ArrayList MissingIDReferences {
+			get {
+				if (missingIDReferences == null)
+					missingIDReferences = new ArrayList ();
+				return missingIDReferences;
+			}
+		}
+
+		public void OnStartElement ()
+		{
+			thisElementId = null;
+		}
+
+		// 3.4.4-5 wild IDs
+		public string AssessEachAttributeIdentityConstraint (
+			XsDatatype dt, object parsedValue, string elementName)
+		{
+			// Validate identity constraints.
+			string str = parsedValue as string;
+			switch (dt.TokenizedType) {
+			case XmlTokenizedType.ID:
+				if (thisElementId != null)
+					return "ID type attribute was already assigned in the containing element.";
+				else
+					thisElementId = str;
+				if (idList.ContainsKey (str))
+					return "Duplicate ID value was found.";
+				else
+					idList.Add (str, elementName);
+				if (MissingIDReferences.Contains (str))
+					MissingIDReferences.Remove (str);
+				break;
+			case XmlTokenizedType.IDREF:
+				if (!idList.Contains (str))
+					MissingIDReferences.Add (str);
+				break;
+			case XmlTokenizedType.IDREFS:
+				string [] idrefs = (string []) parsedValue;
+				for (int i = 0; i < idrefs.Length; i++) {
+					string id = idrefs [i];
+					if (!idList.Contains (id))
+						MissingIDReferences.Add (id);
+				}
+				break;
+			}
+			return null;
+		}
+
+		public object FindID (string name)
+		{
+			return idList [name];
+		}
+
+		public bool HasMissingIDReferences ()
+		{
+			return missingIDReferences != null
+				&& missingIDReferences.Count > 0;
+		}
+
+		public string GetMissingIDString ()
+		{
+			return String.Join (" ",
+				MissingIDReferences.ToArray (typeof (string))
+					as string []);
 		}
 	}
 }

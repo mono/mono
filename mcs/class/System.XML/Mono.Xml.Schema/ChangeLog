@@ -1,3 +1,15 @@
+2004-12-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdIdentityState.cs : use validation exception for 2.0.
+	  ProcessMatch() does not have to return bool. Use break and continue
+	  and reduced indentation.
+	* XsdValidatingReader.cs : use validation exception for 2.0.
+	  Added new XsdIDManager class and id handling is delegated to it.
+	  XmlQualifiedName -> QName. AssessElementLocallyValidElement() does
+	  not need XmlSchemaElement (it is context). Moved some static
+	  methods to XmlSchemaUtil.cs. Collected key constraints stuff to a
+	  region.
+
 2004-12-13  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdKeyTable.cs : eliminated XmlReader dependency.

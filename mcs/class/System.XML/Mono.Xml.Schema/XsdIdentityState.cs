@@ -40,8 +40,10 @@ using System.Xml.Schema;
 
 #if NET_2_0
 using NSResolver = System.Xml.IXmlNamespaceResolver;
+using ValException = System.Xml.Schema.XmlSchemaValidationException;
 #else
 using NSResolver = System.Xml.XmlNamespaceManager;
+using ValException = System.Xml.Schema.XmlSchemaException;
 #endif
 
 namespace Mono.Xml.Schema
@@ -175,7 +177,7 @@ namespace Mono.Xml.Schema
 		private void FillAttributeFieldValue (object sender, XmlNameTable nameTable, string sourceUri, object schemaType, NSResolver nsResolver, string value, IXmlLineInfo lineInfo, int depth)
 		{
 			if (this.FieldFound)
-				throw new XmlSchemaException ("The key value was already found."
+				throw new ValException ("The key value was already found."
 					+ (this.FieldHasLineInfo ?
 						String.Format (CultureInfo.InvariantCulture, " At line {0}, position {1}.", FieldLineNumber, FieldLinePosition) :
 						""),
@@ -191,14 +193,14 @@ namespace Mono.Xml.Schema
 				if (identity == null)
 					identity = value;
 				if (!this.SetIdentityField (identity, false, dt as XsdAnySimpleType, depth, lineInfo))
-					throw new XmlSchemaException ("Two or more identical field was found.",
+					throw new ValException ("Two or more identical field was found.",
 						sender, sourceUri, entry.OwnerSequence.SourceSchemaIdentity, null);
-				// HACK: This is not logical. Attributes never be cosuming,
-				// so I used it as a temporary mark to sign it is *just* validated now.
+				// HACK: This is not logical. Attributes will never be "cosuming",
+				// so I used it as a temporary mark to sign it is validated *just now*.
 				this.Consuming = true;
 				this.FieldFound = true;
 			} catch (Exception ex) {
-				throw new XmlSchemaException ("Failed to read typed value.", sender, sourceUri, entry.OwnerSequence.SourceSchemaIdentity, ex);
+				throw new ValException ("Failed to read typed value.", sender, sourceUri, entry.OwnerSequence.SourceSchemaIdentity, ex);
 			}
 		}
 	}
@@ -221,8 +223,6 @@ namespace Mono.Xml.Schema
 	{
 		public int StartDepth;
 
-//		public bool ConsumptionTargetIsKey;
-
 		public int SelectorLineNumber;
 		public int SelectorLinePosition;
 		public bool SelectorHasLineInfo;
@@ -230,9 +230,6 @@ namespace Mono.Xml.Schema
 		public XsdKeyEntryFieldCollection KeyFields;
 
 		public bool KeyRefFound;
-//		public int KeyRefSelectorLineNumber;
-//		public int KeyRefSelectorLinePosition;
-//		public bool KeyRefSelectorHasLineInfo;
 
 		public XsdKeyTable OwnerSequence;
 		private bool keyFound = false;
@@ -290,48 +287,44 @@ namespace Mono.Xml.Schema
 
 		// In this method, attributes are ignored.
 		// It might throw Exception.
-		public bool ProcessMatch (bool isAttribute, ArrayList qnameStack, object sender, XmlNameTable nameTable, string sourceUri, object schemaType, NSResolver nsResolver, IXmlLineInfo li, int depth, string attrName, string attrNS, string attrValue, bool isXsiNil, ArrayList currentKeyFieldConsumers)
+		public void ProcessMatch (bool isAttribute, ArrayList qnameStack, object sender, XmlNameTable nameTable, string sourceUri, object schemaType, NSResolver nsResolver, IXmlLineInfo li, int depth, string attrName, string attrNS, string attrValue, bool isXsiNil, ArrayList currentKeyFieldConsumers)
 		{
-			bool found = false;
 			for (int i = 0; i < KeyFields.Count; i++) {
 				XsdKeyEntryField keyField = KeyFields [i];
 				XsdIdentityPath path = keyField.Matches (isAttribute, sender, nameTable, qnameStack, sourceUri, schemaType, nsResolver, li, depth, attrName, attrNS, attrValue);
-				if (path != null) {
-					if (keyField.FieldFound) {
-						// HACK: This is not logical by nature. Attributes never be cosuming,
-						// so I used it as a temporary mark to sign it is *just* validated now.
-						// FIXME: This hack seems harmful here.
-						if (!keyField.Consuming)
-							throw new XmlSchemaException ("Two or more matching field was found.",
-								sender, sourceUri, this.OwnerSequence.SourceSchemaIdentity, null);
-						else
-							keyField.Consuming = false;
-					}
-					if (!keyField.Consumed) {
-						if (isXsiNil && !keyField.SetIdentityField (Guid.Empty, true, XsdAnySimpleType.Instance, depth, li))
-							throw new XmlSchemaException ("Two or more identical field was found.", sender, sourceUri, OwnerSequence.SourceSchemaIdentity, null);
-						else {
-							XmlSchemaComplexType ct = schemaType as XmlSchemaComplexType;
-							if (ct != null && 
-								(ct.ContentType == XmlSchemaContentType.Empty || ct.ContentType == XmlSchemaContentType.ElementOnly) && 
-								schemaType != XmlSchemaComplexType.AnyType)
-								throw new XmlSchemaException ("Specified schema type is complex type, which is not allowed for identity constraints.", sender, sourceUri, OwnerSequence.SourceSchemaIdentity, null);
-							keyField.FieldFound = true;
-							keyField.FieldFoundPath = path;
-							keyField.FieldFoundDepth = depth;
-							keyField.Consuming = true;
-							if (li != null && li.HasLineInfo ()) {
-								keyField.FieldHasLineInfo = true;
-								keyField.FieldLineNumber = li.LineNumber;
-								keyField.FieldLinePosition = li.LinePosition;
-							}
-							currentKeyFieldConsumers.Add (keyField);
-						}
-					}
+				if (path == null)
+					continue;
+
+				if (keyField.FieldFound) {
+					// HACK: This is not logical by nature. Attributes never be cosuming,
+					// so I used it as a temporary mark to sign it is *just* validated now.
+					if (!keyField.Consuming)
+						throw new ValException ("Two or more matching field was found.",
+							sender, sourceUri, this.OwnerSequence.SourceSchemaIdentity, null);
+					else
+						keyField.Consuming = false;
 				}
-				found |= keyField.Consumed;
+				if (keyField.Consumed) 
+					continue;
+
+				if (isXsiNil && !keyField.SetIdentityField (Guid.Empty, true, XsdAnySimpleType.Instance, depth, li))
+					throw new ValException ("Two or more identical field was found.", sender, sourceUri, OwnerSequence.SourceSchemaIdentity, null);
+				XmlSchemaComplexType ct = schemaType as XmlSchemaComplexType;
+				if (ct != null && 
+					(ct.ContentType == XmlSchemaContentType.Empty || ct.ContentType == XmlSchemaContentType.ElementOnly) && 
+					schemaType != XmlSchemaComplexType.AnyType)
+					throw new ValException ("Specified schema type is complex type, which is not allowed for identity constraints.", sender, sourceUri, OwnerSequence.SourceSchemaIdentity, null);
+				keyField.FieldFound = true;
+				keyField.FieldFoundPath = path;
+				keyField.FieldFoundDepth = depth;
+				keyField.Consuming = true;
+				if (li != null && li.HasLineInfo ()) {
+					keyField.FieldHasLineInfo = true;
+					keyField.FieldLineNumber = li.LineNumber;
+					keyField.FieldLinePosition = li.LinePosition;
+				}
+				currentKeyFieldConsumers.Add (keyField);
 			}
-			return found;
 		}
 	}
 }
