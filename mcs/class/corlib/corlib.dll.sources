@@ -7,6 +7,7 @@ Microsoft.Win32/Registry.cs
 Microsoft.Win32/RegistryHive.cs
 Microsoft.Win32/Win32RegistryApi.cs
 Microsoft.Win32/Win32ResultCode.cs
+Microsoft.Win32.SafeHandles/SafeFileHandle.cs
 Mono/Runtime.cs
 Mono.Math/BigInteger.cs
 Mono.Math.Prime/ConfidenceFactor.cs
@@ -333,7 +334,7 @@ System.IO.IsolatedStorage/INormalizeForIsolatedStorage.cs
 System.IO.IsolatedStorage/IsolatedStorage.cs
 System.IO.IsolatedStorage/IsolatedStorageException.cs
 System.IO.IsolatedStorage/IsolatedStorageFile.cs
-System.IO.IsolatedStorage/IsolatedStorageInfo.cs
+System.IO.IsolatedStorage/IsolatedStorageFileEnumerator.cs
 System.IO.IsolatedStorage/IsolatedStorageFileStream.cs
 System.IO.IsolatedStorage/IsolatedStorageScope.cs
 System.Reflection/AmbiguousMatchException.cs

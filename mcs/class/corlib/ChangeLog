@@ -1,3 +1,9 @@
+2005-01-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib.dll.source: Added Microsoft.Win32.SafeHandles.SafeFileHandle,
+	removed IsolatedStorageInfo and added IsolatedStorageFileEnumerator to
+	the build.
+
 2005-01-31  Kazuki Oikawa <kazuki@panicode.com>
 
 	* Patch from Kazuki Oikawa <kazuki@panicode.com> that replaces the
