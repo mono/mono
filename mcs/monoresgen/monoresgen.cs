@@ -3,7 +3,9 @@
  *
  * Copyright (c) 2002 Ximian, Inc
  *
- * Author: Paolo Molaro (lupus@ximian.com)
+ * Authors:
+ *	Paolo Molaro (lupus@ximian.com)
+ *	Gonzalo Paniagua Javier (gonzalo@ximian.com)
  */
 
 /*
@@ -290,25 +292,54 @@ class PoResourceReader : IResourceReader {
 	void Load ()
 	{
 		StreamReader reader = new StreamReader (s);
-		string line, msgstr;
+		string line;
 		string msgid = null;
-		bool haveID = false;
+		string msgstr = null;
 
 		while ((line = reader.ReadLine ()) != null) {
 			line_num++;
 			line = line.Trim ();
 			if (line.Length == 0 || line [0] == '#' ||
-			    line [0] == ';' || line [0] == '"')
+			    line [0] == ';')
 				continue;
 
-			if (!haveID) {
+			if (line.StartsWith ("msgid ")) {
+				if (msgid == null && msgstr != null)
+					throw new FormatException ("Found 2 consecutive msgid. Line: " + line_num);
+
+				if (msgstr != null) {
+					data.Add (msgid, msgstr);
+					msgid = null;
+					msgstr = null;
+				}
+
 				msgid = GetValue (line);
-				haveID = true;
 				continue;
 			}
 
-			msgstr = GetValue (line);
-			haveID = false;
+			if (line.StartsWith ("msgstr ")) {
+				if (msgid == null)
+					throw new FormatException ("msgstr with no msgid. Line: " + line_num);
+
+				msgstr = GetValue (line);
+				continue;
+			}
+
+			if (line [0] == '"') {
+				if (msgid == null || msgstr == null)
+					throw new FormatException ("Invalid format. Line: " + line_num);
+
+				msgstr += GetValue (line);
+				continue;
+			}
+
+			throw new FormatException ("Unexpected data. Line: " + line_num);
+		}
+
+		if (msgid != null) {
+			if (msgstr == null)
+				throw new FormatException ("Expecting msgstr. Line: " + line_num);
+
 			data.Add (msgid, msgstr);
 		}
 	}
@@ -333,6 +364,7 @@ class PoResourceReader : IResourceReader {
 class PoResourceWriter : IResourceWriter
 {
 	TextWriter s;
+	bool headerWritten;
 	
 	public PoResourceWriter (Stream stream)
 	{
@@ -355,11 +387,33 @@ class PoResourceWriter : IResourceWriter
 	
 	public void AddResource (string name, string value)
 	{
+		if (!headerWritten) {
+			headerWritten = true;
+			WriteHeader ();
+		}
+		
 		s.WriteLine ("msgid \"{0}\"", name);
 		s.WriteLine ("msgstr \"{0}\"", value);
 		s.WriteLine ();
 	}
 	
+	void WriteHeader ()
+	{
+		s.WriteLine ("msgid \"\"");
+		s.WriteLine ("msgstr \"\"");
+		s.WriteLine ("\"MIME-Version: 1.0\\n\"");
+		s.WriteLine ("\"Content-Type: text/plain; charset=UTF-8\\n\"");
+		s.WriteLine ("\"Content-Transfer-Encoding: 8bit\\n\"");
+		s.WriteLine ("\"X-Generator: monoresgen 0.1\\n\"");
+		s.WriteLine ("#\"Project-Id-Version: FILLME\\n\"");
+		s.WriteLine ("#\"POT-Creation-Date: yyyy-MM-dd HH:MM+zzzz\\n\"");
+		s.WriteLine ("#\"PO-Revision-Date: yyyy-MM-dd HH:MM+zzzz\\n\"");
+		s.WriteLine ("#\"Last-Translator: FILLME\\n\"");
+		s.WriteLine ("#\"Language-Team: FILLME\\n\"");
+		s.WriteLine ("#\"Report-Msgid-Bugs-To: \\n\"");
+		s.WriteLine ();
+	}
+
 	public void Close ()
 	{
 		s.Close ();
@@ -369,3 +423,4 @@ class PoResourceWriter : IResourceWriter
 	
 	public void Generate () {}
 }
+

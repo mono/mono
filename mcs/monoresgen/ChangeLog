@@ -1,3 +1,6 @@
+2003-12-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* monoresgen.cs: generate valid .po files. Fixes bug #52106.
 
 2003-05-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
