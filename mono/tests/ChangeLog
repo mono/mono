@@ -1,5 +1,10 @@
 2003-10-31  Zoltan Varga  <vargaz@freemail.hu>
 
+	* appdomain-unload.cs: New file. AppDomain Unloading tests.
+
+	* Makefile: Add new test + enable IL tests now that we have a working
+	ilasm.
+	
 	* delegate7.cs: Convert it to use the test driver + add regression test
 	for #50366.
 
