@@ -1,5 +1,9 @@
 2004-10-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* appdomain.c: Bump corlib version number.
+
+	* object-internals.h: Reorganize layout of LocalBuilder.
+
 	* class-internals.h class.c (mono_class_get_implemented_interfaces): 
 	New helper function.
 
