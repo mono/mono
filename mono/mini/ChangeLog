@@ -1,3 +1,11 @@
+2004-03-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_resolve_patch_target): New function which contains the
+	arch independent part of the patching process.
+
+	* mini-x86.c (mono_arch_patch_code): Move arch independent parts of the
+	patching code to a separate function.
+
 2004-03-09  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* mini.c (add_signal_handler): ifdef out on Windows
