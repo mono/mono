@@ -1,3 +1,10 @@
+2004-09-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspParser.cs:
+	* AspTokenizer.cs: prevent quotes from being swallowed when we're 
+	inside a server tag and they are the next non-whitespace character.
+	Fixes bug #63451.
+
 2004-09-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CachingCompiler.cs: don't try to watch for changes in system

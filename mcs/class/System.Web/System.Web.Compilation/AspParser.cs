@@ -382,8 +382,11 @@ namespace System.Web.Compilation
 		void GetServerTag (out TagType tagtype, out string id, out TagAttributes attributes)
 		{
 			string inside_tags;
+			bool old = tokenizer.ExpectAttrValue;
 
+			tokenizer.ExpectAttrValue = false;
 			if (Eat ('@')){
+				tokenizer.ExpectAttrValue = old;
 				tagtype = TagType.Directive;
 				id = "";
 				if (Eat (Token.DIRECTIVE))
@@ -397,6 +400,7 @@ namespace System.Web.Compilation
 			}
 			
 			if (Eat (Token.DOUBLEDASH)) {
+				tokenizer.ExpectAttrValue = old;
 				tokenizer.Verbatim = true;
 				inside_tags = GetVerbatim (tokenizer.get_token (), "--%>");
 				tokenizer.Verbatim = false;
@@ -406,6 +410,7 @@ namespace System.Web.Compilation
 				return;
 			}
 
+			tokenizer.ExpectAttrValue = old;
 			bool varname;
 			bool databinding;
 			varname = Eat ('=');

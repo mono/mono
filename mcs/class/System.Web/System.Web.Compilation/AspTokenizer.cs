@@ -55,6 +55,7 @@ namespace System.Web.Compilation
 		int begcol, begline;
 		int position;
 		bool inTag;
+		bool expectAttrValue;
 		bool hasPutBack;
 		bool verbatim;
 		bool have_value;
@@ -210,7 +211,7 @@ namespace System.Web.Compilation
 					return c;
 				}
 
-				if (inTag && (c == '"' || c == '\''))
+				if (inTag && expectAttrValue && (c == '"' || c == '\''))
 					return ReadAttValue (c);
 				
 				if (c == '<'){
@@ -297,6 +298,12 @@ namespace System.Web.Compilation
 		public bool InTag {
 			get { return inTag; }
 			set { inTag = value; }
+		}
+
+		// Hack for preventing confusion with VB comments (see bug #63451)
+		public bool ExpectAttrValue {
+			get { return expectAttrValue; }
+			set { expectAttrValue = value; }
 		}
 		
 		public int BeginLine {
