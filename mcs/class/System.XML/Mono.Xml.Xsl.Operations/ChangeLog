@@ -1,5 +1,10 @@
 2005-02-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XslNumber.cs : We must round double value before formatting it as
+	  alphabets or roman numbers.
+
+2005-02-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XslAttribute.cs : It does not have to probe prefix at run time.
 
 2005-02-17  Atsushi Enomoto  <atsushi@ximian.com>

@@ -63,7 +63,13 @@ namespace Mono.Xml.Xsl.Operations {
 		XslAvt groupingSize;
 		
 		public XslNumber (Compiler c) : base (c) {}
-		
+
+		public static double Round (double n)
+		{
+			double f = System.Math.Floor (n);
+			return (n - f >= 0.5) ? f + 1.0 : f;
+		}
+
 		protected override void Compile (Compiler c)
 		{
 			switch (c.GetAttribute ("level"))
@@ -421,9 +427,12 @@ namespace Mono.Xml.Xsl.Operations {
 				}
 				
 				static void alphaSeq (StringBuilder b, double n, char [] alphabet) {
+					n = XslNumber.Round (n);
+					if (n == 0)
+						return;
 					if (n > alphabet.Length)
-						alphaSeq (b, (n-1) / alphabet.Length, alphabet);
-					b.Append (alphabet [((int)n-1) % alphabet.Length]); 
+						alphaSeq (b, System.Math.Floor ((n - 1) / alphabet.Length), alphabet);
+					b.Append (alphabet [((int) n - 1) % alphabet.Length]); 
 				}
 			}
 			
@@ -446,7 +455,7 @@ namespace Mono.Xml.Xsl.Operations {
 						b.Append (num);
 						return;
 					}
-					
+					num = XslNumber.Round (num);
 					for (int i = 0; i < decValues.Length; i++) {
 						while (decValues [i] <= num) {
 							if (uc)
