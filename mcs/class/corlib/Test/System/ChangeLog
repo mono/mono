@@ -1,3 +1,11 @@
+2002/06/10  Nick Drochak <ndrochak@gol.com>
+
+	* DecimalTest.cs: More culture indepenence. Fixes the problems we were
+	having with tests failing against MS.NET.
+	* Int64Test.cs: Same plus some formatting fixes.
+	* RandomTest.cs: Split Assert into two to figure out which one part is
+	failing.
+
 2002-06-09  Lawrence Pit  <loz@cable.a2000.nl>
 
 	* DateTimeTest.cs: Making tests culture independent

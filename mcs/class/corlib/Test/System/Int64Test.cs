@@ -27,7 +27,7 @@ public class Int64Test : TestCase
 	private const string MyString3 = "9223372036854775807";
 	private string[] Formats1 = {"c", "d", "e", "f", "g", "n", "p", "x" };
 	private string[] Formats2 = {"c5", "d5", "e5", "f5", "g5", "n5", "p5", "x5" };
-	private string[] Results1 = {"("+NumberFormatInfo.CurrentInfo.CurrencySymbol+"9,223,372,036,854,775,808.00)", "-9223372036854775808", "-9.223372e+018", "-9223372036854775808.00",
+	private string[] Results1 = {"", "-9223372036854775808", "-9.223372e+018", "-9223372036854775808.00",
 	                                  "-9223372036854775808", "-9,223,372,036,854,775,808.00", "-922,337,203,685,477,580,800.00 %", "8000000000000000"};
 	private string[] Results2 = {NumberFormatInfo.CurrentInfo.CurrencySymbol+"9,223,372,036,854,775,807.00000", "9223372036854775807", "9.22337e+018", "9223372036854775807.00000",
 	                                  "9.2234e+18", "9,223,372,036,854,775,807.00000", "922,337,203,685,477,580,700.00000 %", "7fffffffffffffff"};
@@ -46,50 +46,55 @@ public class Int64Test : TestCase
 	private long[] vals
 		= { 0, Int64.MaxValue, Int64.MinValue };
 
-    private const long val1 = -1234567L;
-    private const long val2 = 1234567L;
-    private const string sval1Test1 = "  -1,234,567   ";
-    private const string sval1Test2 = "  -1234567   ";
-    //private const string sval1Test3 = "  -12345,,,,67   "; // interesting: this case works on SDK Beta2, but the specification says nothing about this case
-    private const string sval1Test4 = "  -12345 67   ";
-    private  string sval1Test5 = "  -"+NumberFormatInfo.InvariantInfo.CurrencySymbol+"1,234,567.00 ";
-    private  string sval1Test6 = "("+NumberFormatInfo.InvariantInfo.CurrencySymbol+"1,234,567.00)";
-    private const string sval1Test7 = "-1,234,567.00";
-    private const string sval1UserCur1 = "1234/5/67:000 XYZ-";
-    private const string sval2UserCur1 = "1234/5/67:000 XYZ";
-    private const string sval1UserPercent1 = "-%%%1~2~3~4~5~6~7~0~0;0";
-    private const string sval2UserPercent1 = "%%%1~2~3~4~5~6~7~0~0;0";
-    private const NumberStyles style1 =  NumberStyles.AllowLeadingWhite | NumberStyles.AllowLeadingSign
-        | NumberStyles.AllowTrailingWhite | NumberStyles.AllowThousands;
-    private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
-    private NumberFormatInfo NfiUser;
+	private const long val1 = -1234567L;
+	private const long val2 = 1234567L;
+	private const string sval1Test1 = "  -1,234,567   ";
+	private const string sval1Test2 = "  -1234567   ";
+	//private const string sval1Test3 = "  -12345,,,,67   "; // interesting: this case works on SDK Beta2, but the specification says nothing about this case
+	private const string sval1Test4 = "  -12345 67   ";
+	private  string sval1Test5 = "  -"+NumberFormatInfo.InvariantInfo.CurrencySymbol+"1,234,567.00 ";
+	private  string sval1Test6 = "("+NumberFormatInfo.InvariantInfo.CurrencySymbol+"1,234,567.00)";
+	private const string sval1Test7 = "-1,234,567.00";
+	private const string sval1UserCur1 = "1234/5/67:000 XYZ-";
+	private const string sval2UserCur1 = "1234/5/67:000 XYZ";
+	private const string sval1UserPercent1 = "-%%%1~2~3~4~5~6~7~0~0;0";
+	private const string sval2UserPercent1 = "%%%1~2~3~4~5~6~7~0~0;0";
+	private const NumberStyles style1 =  NumberStyles.AllowLeadingWhite | NumberStyles.AllowLeadingSign
+					| NumberStyles.AllowTrailingWhite | NumberStyles.AllowThousands;
+	private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
+	private NumberFormatInfo NfiUser;
 
-    public Int64Test() : base("MonoTests.System.Int64Test") {}
-    public Int64Test(string name) : base(name) {}
+	public Int64Test() : base("MonoTests.System.Int64Test") {}
+	public Int64Test(string name) : base(name) {}
 
-    public static ITest Suite 
-    {
-        get { return new TestSuite(typeof(Int64Test)); }
-    }
+	public static ITest Suite 
+	{
+		get { return new TestSuite(typeof(Int64Test)); }
+	}
 
-    protected override void SetUp() 
-    {
-        NfiUser = new NumberFormatInfo();
-        NfiUser.CurrencyDecimalDigits = 3;
-        NfiUser.CurrencyDecimalSeparator = ":";
-        NfiUser.CurrencyGroupSeparator = "/";
-        NfiUser.CurrencyGroupSizes = new int[] { 2,1,0 };
-        NfiUser.CurrencyNegativePattern = 10;  // n $-
-        NfiUser.CurrencyPositivePattern = 3;  // n $
-        NfiUser.CurrencySymbol = "XYZ";
-        NfiUser.PercentDecimalDigits = 1;
-        NfiUser.PercentDecimalSeparator = ";";
-        NfiUser.PercentGroupSeparator = "~";
-        NfiUser.PercentGroupSizes = new int[] {1};
-        NfiUser.PercentNegativePattern = 2;
-        NfiUser.PercentPositivePattern = 2;
-        NfiUser.PercentSymbol = "%%%";
-    }
+	protected override void SetUp() 
+	{
+		int cdd = NumberFormatInfo.CurrentInfo.CurrencyDecimalDigits;
+		string csym = NumberFormatInfo.CurrentInfo.CurrencySymbol;
+		string csuffix = (cdd > 0 ? "." : "").PadRight(cdd + (cdd > 0 ? 1 : 0), '0');
+		Results1[0] = "(" + csym + "9,223,372,036,854,775,808" + csuffix + ")";
+
+		NfiUser = new NumberFormatInfo();
+		NfiUser.CurrencyDecimalDigits = 3;
+		NfiUser.CurrencyDecimalSeparator = ":";
+		NfiUser.CurrencyGroupSeparator = "/";
+		NfiUser.CurrencyGroupSizes = new int[] { 2,1,0 };
+		NfiUser.CurrencyNegativePattern = 10;  // n $-
+		NfiUser.CurrencyPositivePattern = 3;  // n $
+		NfiUser.CurrencySymbol = "XYZ";
+		NfiUser.PercentDecimalDigits = 1;
+		NfiUser.PercentDecimalSeparator = ";";
+		NfiUser.PercentGroupSeparator = "~";
+		NfiUser.PercentGroupSizes = new int[] {1};
+		NfiUser.PercentNegativePattern = 2;
+		NfiUser.PercentPositivePattern = 2;
+		NfiUser.PercentSymbol = "%%%";
+	}
 
 	public void TestMinMax()
 	{

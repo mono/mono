@@ -71,7 +71,8 @@ public class RandomTest : TestCase
                 for (i=0; i<20; i++)
                 {
                         c = r.Next(1, 10);
-                        Assert (c < 10 && c >= 1);
+			Assert ("At i=" + i + " c < 10 failed", c < 10);
+                        Assert ("At i=" + i + " c >= 1 failed", c >= 1);
                 }
         }
 }

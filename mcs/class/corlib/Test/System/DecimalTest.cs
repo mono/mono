@@ -11,6 +11,7 @@ using S = System; // for implementation switching only
 
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace MonoTests.System {
     internal struct ParseTest
@@ -85,30 +86,42 @@ namespace MonoTests.System {
         private int [] parts6 = {1234, 5678, 8888, negativeScale4Value};
         private NumberFormatInfo NfiUser;
 
-        protected override void SetUp() 
-        {
-            NfiUser = new NumberFormatInfo();
-            NfiUser.CurrencyDecimalDigits = 3;
-            NfiUser.CurrencyDecimalSeparator = ",";
-            NfiUser.CurrencyGroupSeparator = "_";
-            NfiUser.CurrencyGroupSizes = new int[] { 2,1,0 };
-            NfiUser.CurrencyNegativePattern = 10;
-            NfiUser.CurrencyPositivePattern = 3;
-            NfiUser.CurrencySymbol = "XYZ";
-            NfiUser.NumberDecimalSeparator = "##";
-            NfiUser.NumberDecimalDigits = 4;
-            NfiUser.NumberGroupSeparator = "__";
-            NfiUser.NumberGroupSizes = new int[] { 2,1 };
-            NfiUser.PercentDecimalDigits = 1;
-            NfiUser.PercentDecimalSeparator = ";";
-            NfiUser.PercentGroupSeparator = "~";
-            NfiUser.PercentGroupSizes = new int[] {1};
-            NfiUser.PercentNegativePattern = 2;
-            NfiUser.PercentPositivePattern = 2;
-            NfiUser.PercentSymbol = "%%%";
+	private CultureInfo old_culture;
+
+	protected override void SetUp() 
+	{
+		old_culture = Thread.CurrentThread.CurrentCulture;
+
+		// Set culture to en-US and don't let the user override.
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US", false);
+
+		NfiUser = new NumberFormatInfo();
+		NfiUser.CurrencyDecimalDigits = 3;
+		NfiUser.CurrencyDecimalSeparator = ",";
+		NfiUser.CurrencyGroupSeparator = "_";
+		NfiUser.CurrencyGroupSizes = new int[] { 2,1,0 };
+		NfiUser.CurrencyNegativePattern = 10;
+		NfiUser.CurrencyPositivePattern = 3;
+		NfiUser.CurrencySymbol = "XYZ";
+		NfiUser.NumberDecimalSeparator = "##";
+		NfiUser.NumberDecimalDigits = 4;
+		NfiUser.NumberGroupSeparator = "__";
+		NfiUser.NumberGroupSizes = new int[] { 2,1 };
+		NfiUser.PercentDecimalDigits = 1;
+		NfiUser.PercentDecimalSeparator = ";";
+		NfiUser.PercentGroupSeparator = "~";
+		NfiUser.PercentGroupSizes = new int[] {1};
+		NfiUser.PercentNegativePattern = 2;
+		NfiUser.PercentPositivePattern = 2;
+		NfiUser.PercentSymbol = "%%%";
         }
 
-        public void TestToString()
+	protected override void TearDown()
+	{
+		Thread.CurrentThread.CurrentCulture = old_culture;
+	}
+
+	public void TestToString()
         {
             ToStringTest[] tab = {
                 new ToStringTest("F", 12.345678m, "12.35"),
@@ -179,12 +192,15 @@ namespace MonoTests.System {
                 new ToStringTest("E28", S.Decimal.MinValue, "-7.9228162514264337593543950335E+028"),
                 new ToStringTest("E30", S.Decimal.MinValue, "-7.922816251426433759354395033500E+028"),
                 new ToStringTest("E0", S.Decimal.MinValue, "-8E+028"),
-                new ToStringTest("N3", S.Decimal.MinValue, "(79,228,162,514,264,337,593,543,950,335.000)"),
-                new ToStringTest("N0", S.Decimal.MinValue, "(79,228,162,514,264,337,593,543,950,335)"),
-                new ToStringTest("N", S.Decimal.MinValue, "(79,228,162,514,264,337,593,543,950,335.00)"),
-                new ToStringTest("C", 123456.7890m, "$123,456.79"),
-                new ToStringTest("C", -123456.7890m, "($123,456.79)"),
-                new ToStringTest("C3", 1123456.7890m, "$1,123,456.789"),
+                new ToStringTest("N3", S.Decimal.MinValue, "-79,228,162,514,264,337,593,543,950,335.000"),
+                new ToStringTest("N0", S.Decimal.MinValue, "-79,228,162,514,264,337,593,543,950,335"),
+                new ToStringTest("N", S.Decimal.MinValue, "-79,228,162,514,264,337,593,543,950,335.00"),
+                new ToStringTest("n3", S.Decimal.MinValue, "-79,228,162,514,264,337,593,543,950,335.000"),
+                new ToStringTest("n0", S.Decimal.MinValue, "-79,228,162,514,264,337,593,543,950,335"),
+                new ToStringTest("n", S.Decimal.MinValue, "-79,228,162,514,264,337,593,543,950,335.00"),
+                new ToStringTest("C", 123456.7890m, NumberFormatInfo.InvariantInfo.CurrencySymbol + "123,456.79"),
+                new ToStringTest("C", -123456.7890m, "(" + NumberFormatInfo.InvariantInfo.CurrencySymbol + "123,456.79)"),
+                new ToStringTest("C3", 1123456.7890m, NumberFormatInfo.InvariantInfo.CurrencySymbol + "1,123,456.789"),
                 new ToStringTest("P", 123456.7891m, "12,345,678.91 %"),
                 new ToStringTest("P", -123456.7892m, "-12,345,678.92 %"),
                 new ToStringTest("P3", 1234.56789m, "123,456.789 %"),
@@ -203,6 +219,9 @@ namespace MonoTests.System {
                 {
                     Fail(tab[i].d.ToString(tab[i].format, nfi) + " (format = '" + tab[i].format + "'): unexpected exception !");
                 }
+		catch (NUnit.Framework.AssertionFailedError e) {
+			throw e;
+		}
 		catch (Exception e) {
 			Fail ("Unexpected Exception when i = " + i + ". e = " + e);
 		}
@@ -251,17 +270,13 @@ namespace MonoTests.System {
             NumberFormatInfo nfi2 = (NumberFormatInfo)NfiUser.Clone();
             S.Decimal d = -1234.89765m;
             string[] ergNumberNegativePattern = new String[5] {
-                "(1__2__34##8976)", "-1__2__34##8976", "- 1__2__34##8976", "1__2__34##8976-", "1__2__34##8976 -",
+                "(1__2__34##8977)", "-1__2__34##8977", "- 1__2__34##8977", "1__2__34##8977-", "1__2__34##8977 -",
             };
 
             for (int i = 0; i < ergNumberNegativePattern.Length; i++) 
             {
                 nfi2.NumberNegativePattern = i;
-                if (d.ToString("N", nfi2) != ergNumberNegativePattern[i]) 
-                {
-                    Fail("NumberNegativePattern #" + i + " failed: " +
-                        d.ToString("N", nfi2) + " != " + ergNumberNegativePattern[i]);
-                }
+		AssertEquals ("NumberNegativePattern #" + i, ergNumberNegativePattern[i], d.ToString("N", nfi2));
             }
         }
         
