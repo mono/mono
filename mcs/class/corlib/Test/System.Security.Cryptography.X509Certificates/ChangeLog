@@ -1,3 +1,8 @@
+2003-05-16  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* X509CertificateTest.cs: Added DSA certificate without any key 
+	parameters (shared group is available in the issuer certificate).
+
 2003-04-21  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* X509CertificateTest.cs: Fixed DateTime issue by setting 
