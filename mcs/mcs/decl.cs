@@ -63,6 +63,21 @@ namespace Mono.CSharp {
 			caching_flags = Flags.Obsolete_Undetected | Flags.ClsCompliance_Undetected | Flags.HasCompliantAttribute_Undetected;
 		}
 
+		/// <summary>
+		/// Tests presence of ObsoleteAttribute and report proper error
+		/// </summary>
+		protected void CheckUsageOfObsoleteAttribute (Type type)
+		{
+			if (type == null)
+				return;
+
+			ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (type);
+			if (obsolete_attr == null)
+				return;
+
+			AttributeTester.Report_ObsoleteMessage (obsolete_attr, type.FullName, Location);
+		}
+
 		public abstract bool Define (TypeContainer parent);
 
 		// 
@@ -78,6 +93,8 @@ namespace Mono.CSharp {
 		/// </summary>
 		public virtual void Emit (TypeContainer container)
 		{
+			VerifyObsoleteAttribute ();
+
 			if (!RootContext.VerifyClsCompliance)
 				return;
 
@@ -293,6 +310,8 @@ namespace Mono.CSharp {
 
 			return true;
 		}
+
+		protected abstract void VerifyObsoleteAttribute ();
 
 	}
 

@@ -627,6 +627,15 @@ namespace Mono.CSharp {
 				return AttributeTargets.Delegate | AttributeTargets.ReturnValue;
 			}
 		}
+
+		protected override void VerifyObsoleteAttribute()
+		{
+			CheckUsageOfObsoleteAttribute (ret_type);
+
+			foreach (Type type in param_types) {
+				CheckUsageOfObsoleteAttribute (type);
+			}
+		}
 	}
 
 	//

@@ -1118,6 +1118,8 @@ namespace Mono.CSharp {
 			if (probe_type == null)
 				return null;
 
+			CheckObsoleteAttribute (probe_type);
+
 			expr = expr.Resolve (ec);
 			if (expr == null)
 				return null;
@@ -1853,6 +1855,8 @@ namespace Mono.CSharp {
 			
 			if (type == null)
 				return null;
+
+			CheckObsoleteAttribute (type);
 
 			eclass = ExprClass.Value;
 
@@ -3705,6 +3709,8 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			CheckObsoleteAttribute (e.Type);
+
 			if (local_info.LocalBuilder == null)
 				return ec.RemapLocalLValue (local_info, right_side);
 			
@@ -5227,6 +5233,11 @@ namespace Mono.CSharp {
 				AttributeTester.Report_ObsoleteMessage (oa, TypeManager.CSharpSignature (method), loc);
 
 
+			oa = AttributeTester.GetObsoleteAttribute (method.DeclaringType);
+			if (oa != null) {
+				AttributeTester.Report_ObsoleteMessage (oa, method.DeclaringType.FullName, loc);
+			}
+
 			//
 			// This checks the `ConditionalAttribute' on the method
 			//
@@ -5529,6 +5540,8 @@ namespace Mono.CSharp {
 			if (type == null)
 				return null;
 			
+			CheckObsoleteAttribute (type);
+
 			bool IsDelegate = TypeManager.IsDelegateType (type);
 			
 			if (IsDelegate){
@@ -6654,6 +6667,8 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			CheckObsoleteAttribute (typearg);
+
 			type = TypeManager.type_type;
 			eclass = ExprClass.Type;
 			return this;
@@ -6713,6 +6728,8 @@ namespace Mono.CSharp {
 			type_queried = ec.DeclSpace.ResolveType (QueriedType, false, loc);
 			if (type_queried == null)
 				return null;
+
+			CheckObsoleteAttribute (type_queried);
 
 			if (!TypeManager.IsUnmanagedType (type_queried)){
 				Report.Error (208, loc, "Cannot take the size of an unmanaged type (" + TypeManager.CSharpName (type_queried) + ")");
@@ -7009,8 +7026,22 @@ namespace Mono.CSharp {
 						object value = en.LookupEnumValue (ec, Identifier, loc);
 						
 						if (value != null){
+							ObsoleteAttribute oa = en.GetObsoleteAttribute (ec, Identifier);
+							if (oa != null) {
+								AttributeTester.Report_ObsoleteMessage (oa, en.GetSignatureForError (), Location);
+							}
+
 							Constant c = Constantify (value, en.UnderlyingType);
 							return new EnumConstant (c, expr_type);
+						}
+					} else {
+						CheckObsoleteAttribute (expr_type);
+
+						FieldInfo fi = expr_type.GetField (Identifier);
+						if (fi != null) {
+							ObsoleteAttribute oa = AttributeTester.GetMemberObsoleteAttribute (fi);
+							if (oa != null)
+								AttributeTester.Report_ObsoleteMessage (oa, TypeManager.GetFullNameSignature (fi), Location);
 						}
 					}
 				}
