@@ -1,3 +1,9 @@
+2003-08-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_type_blittable): OBJECT is not blittable.
+	(mono_method_blittable): Methods which have marshalling descriptors
+	are not blittable either. Fixes #47842.
+
 2003-08-22  Zoltan Varga  <vargaz@freemail.hu>
 
 	* driver.c mini.c: Use an environment variable instead of a global 

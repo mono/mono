@@ -1,3 +1,8 @@
+2003-08-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* loader.h loader.c (mono_method_hash_marhal_info): New function which
+	determines whenever a method has marshalling info.
+
 2003-08-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* assembly.c: fix the build on windows.
