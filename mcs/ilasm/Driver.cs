@@ -62,6 +62,11 @@ namespace Mono.ILASM {
 
 			private void ProcessFile (string file_path)
 			{
+				if (!File.Exists (file_path)) {
+					Console.WriteLine ("File does not exist: {0}",
+						file_path);
+					Environment.Exit (2);
+				}
 				StreamReader reader = File.OpenText (file_path);
 				ILTokenizer scanner = new ILTokenizer (reader);
 				
