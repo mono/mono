@@ -1,3 +1,7 @@
+2005-03-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (mono_arch_emit_exceptions): Emit a near call here too.
+
 2005-03-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* cpu-amd64.md (store_membase_reg): Fix length of storer8 opcodes.
