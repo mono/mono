@@ -37,6 +37,7 @@ using System.Runtime.Serialization;
 
 namespace System.Xml.Query
 {
+	[Serializable]
 	public class XmlQueryCompileException : XmlQueryException
 	{
 		#region Constructors
@@ -67,16 +68,6 @@ namespace System.Xml.Query
 		}
 
 		#endregion // Constructors
-
-		#region Methods
-
-		[MonoTODO]
-		public override void GetObjectData (SerializationInfo info, StreamingContext context)
-		{
-			throw new NotImplementedException();
-		}
-
-		#endregion // Methods
 	}
 }
 

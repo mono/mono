@@ -33,6 +33,7 @@
 #if NET_2_0
 
 using System.IO;
+using System.Security.Policy;
 using System.Text;
 using System.Xml;
 using System.Xml.XPath;
@@ -47,32 +48,65 @@ namespace System.Xml.Query
 		}
 
 		[MonoTODO]
-		public event QueryEventHandler OnProcessingEvent;
+		public event QueryEventHandler OnMessageEvent;
 
 		// Compile
 
 		[MonoTODO]
-		public void Compile (string stylesheetUri, XmlResolver resolver)
+		public void Compile (string stylesheetUri)
 		{ 
-			throw new NotImplementedException ();
+			Compile (stylesheetUri, new XmlUrlResolver (), null);
 		}
 
 		[MonoTODO]
-		public void Compile (string stylesheetUri)
-		{ 
+		public void Compile (string stylesheetUri, XmlResolver resolver)
+		{
+			Compile (stylesheetUri, resolver, null);
+		}
+
+		[MonoTODO]
+		public void Compile (string stylesheetUri, XmlResolver resolver, Evidence evidence)
+		{
+			using (XmlReader reader = XmlReader.Create (stylesheetUri)) {
+				Compile (reader, resolver, evidence);
+			}
+		}
+
+		[MonoTODO]
+		public void Compile (XmlReader reader)
+		{
+			Compile (reader, new XmlUrlResolver ());
+		}
+
+		[MonoTODO]
+		public void Compile (XmlReader reader, XmlResolver resolver)
+		{
+			Compile (reader, resolver, null);
+		}
+
+		[MonoTODO]
+		public void Compile (XmlReader reader, XmlResolver resolver, Evidence evidence)
+		{
 			throw new NotImplementedException ();
 		}
 
 		// Execute
+
+		[MonoTODO]
+		public void Execute (string contextDocumentUri, XmlWriter results)
+		{
+			Execute (contextDocumentUri, new XmlUrlResolver (), null, results);
+		}
 
 		[MonoTODO ("Null args allowed?")]
 		public void Execute (
 			IXPathNavigable contextDocument,
 			XmlWriter results)
 		{
-			Execute (contextDocument, null, null, results);
+			Execute (contextDocument, new XmlUrlResolver (), null, results);
 		}
 
+		[MonoTODO]
 		public void Execute (string contextDocumentUri, string resultDocumentUri)
 		{
 			XmlTextWriter xw = new XmlTextWriter (resultDocumentUri, null);
@@ -86,19 +120,21 @@ namespace System.Xml.Query
 		[MonoTODO]
 		public void Execute (
 			IXPathNavigable contextDocument,
+			XmlResolver resolver,
 			XmlArgumentList argList,
-			XmlWriter results)
+			Stream results)
 		{
-			Execute (contextDocument, null, argList, results);
+			Execute (contextDocument, resolver, argList, results);
 		}
 
 		[MonoTODO]
 		public void Execute (
+			IXPathNavigable contextDocument,
 			XmlResolver dataSources,
 			XmlArgumentList argList,
-			XmlWriter results)
+			TextWriter results)
 		{ 
-			Execute (dataSources, argList, results);
+			Execute (contextDocument, dataSources, argList, results);
 		}
 
 		[MonoTODO]
@@ -111,6 +147,7 @@ namespace System.Xml.Query
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void Execute (
 			string contextDocumentUri, 
 			XmlResolver dataSources, 
@@ -121,6 +158,7 @@ namespace System.Xml.Query
 			Execute (contextDocumentUri, dataSources, argList, w);
 		}
 
+		[MonoTODO]
 		public void Execute (
 			string contextDocumentUri, 
 			XmlResolver dataSources, 
