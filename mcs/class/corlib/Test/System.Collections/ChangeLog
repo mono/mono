@@ -1,5 +1,7 @@
 2004-06-14  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* HashtableTest.cs: Added new case to CopyTo(Array,int) an empty 
+	hashtable.
 	* SortedListTest.cs: Un-ignored TestCapacity4 test case as it now 
 	works correctly under Mono.
 

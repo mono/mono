@@ -666,6 +666,15 @@ public class HashtableTest : Assertion {
 		ht.CopyTo(entries,0);
 		Assert("Not an entry.",entries[0] is DictionaryEntry);
 	}
+
+	[Test]
+	public void CopyTo_Empty ()
+	{
+		Hashtable ht = new Hashtable ();
+		AssertEquals ("Count", 0, ht.Count);
+		object[] array = new object [ht.Count];
+		ht.CopyTo (array, 0);
+	}
 	
         [Test]	
 	public void TestUnderHeavyLoad() {
