@@ -1,3 +1,7 @@
+2003-12-16  Jackson Harper <jackson@ximian.com>
+
+	* TraceContext.cs: Add incomplete render method.
+	
 2003-12-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CapabilitiesLoader.cs: loads browser detection and capabilities data
