@@ -54,7 +54,7 @@ namespace System.Web.Caching {
 			key = varyby.CreateKey (vary_key, context);
 			c = context.Cache [key] as CachedRawResponse;
 			
-			if (c != null && context.Timestamp < c.Policy.Expires) {
+			if (c != null) {
 				
 				context.Response.ClearContent ();
 				context.Response.BinaryWrite (c.GetData (), 0, c.ContentLength);
@@ -123,14 +123,18 @@ namespace System.Web.Caching {
 			if (lookup)
 				prev = context.Cache [key] as CachedRawResponse;
 			
-			if (IsExpired (context, prev)) {
+			if (prev == null) {
 				CachedRawResponse c = context.Response.GetCachedResponse ();
 				string [] files = new string [0];
 				string [] keys = new string [] { vary_key };
+				bool sliding = context.Response.Cache.Sliding;
 
 				context.Cache.InsertPrivate (key, c, new CacheDependency (files, keys),
-						context.Response.Cache.Expires,
-						Cache.NoSlidingExpiration,
+						(sliding ? Cache.NoAbsoluteExpiration :
+								context.Response.Cache.Expires),
+						(sliding ? TimeSpan.FromSeconds (
+							context.Response.Cache.Duration) :
+								Cache.NoSlidingExpiration),
 						CacheItemPriority.Normal, response_removed);
 				c.VaryBy = varyby;
 				varyby.ItemList.Add (key);
@@ -147,13 +151,6 @@ namespace System.Web.Caching {
 			
 			Cache cache = HttpRuntime.Cache;
 			cache.Remove (c.VaryBy.Key);
-		}
-		
-		private bool IsExpired (HttpContext context, CachedRawResponse crr)
-		{
-			if (crr == null || context.Timestamp > crr.Policy.Expires)
-				return true;
-			return false;
 		}
 	}
 }

@@ -531,9 +531,7 @@ namespace System.Web.Caching
 					if (objEntry.HasAbsoluteExpiration || objEntry.HasSlidingExpiration)
 						_objExpires.Remove (objEntry);
 				}
-
-				// Return the entry, it's not up to the UpdateCache to call Close on the entry
-				return objEntry;
+				return null;
 			}
 
 			// If we have sliding expiration and we have a correct hit, update the expiration manager
