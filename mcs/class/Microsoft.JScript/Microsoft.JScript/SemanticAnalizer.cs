@@ -142,5 +142,11 @@ namespace Microsoft.JScript {
 		{
 			label_set.Remove (name);
 		}
+
+		internal static void assert_type (object thisObj, Type expType)
+		{
+			if (thisObj == null || thisObj.GetType () != expType)
+				throw new Exception ("Type error");
+		}
 	}
 }

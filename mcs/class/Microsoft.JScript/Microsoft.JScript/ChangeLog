@@ -1,3 +1,8 @@
+2005-01-10  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* BooleanPrototype.cs: update to assert_type.
+	* SemanticAnalizer.cs: move BooleanPrototype.AssertType here, rename it to assert_type.
+
 2005-01-06  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* BooleanObject.cs: implement ctr's.

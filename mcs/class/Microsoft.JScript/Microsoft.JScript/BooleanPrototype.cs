@@ -41,7 +41,7 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Boolean_toString)]
 		public static string toString (object thisObj)
 		{
-			AssertType (thisObj);
+			SemanticAnalyser.assert_type (thisObj, typeof (BooleanObject));
 			BooleanObject bo = thisObj as BooleanObject;
 			return bo.value ? "true" : "false";
 		}
@@ -49,15 +49,9 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Boolean_valueOf)]
 		public static object valueOf (object thisObj)
 		{
-			AssertType (thisObj);
+			SemanticAnalyser.assert_type (thisObj, typeof (BooleanObject));
 			BooleanObject bo = thisObj as BooleanObject;
 			return bo.value;
-		}
-
-		internal static void AssertType (object thisObj)
-		{
-			if (thisObj == null || thisObj.GetType () != typeof (BooleanObject))
-				throw new Exception ("Type error");
 		}
 	}
 }
