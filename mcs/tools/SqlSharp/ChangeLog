@@ -1,3 +1,8 @@
+2002-10-26  Daniel Morgan <danmorg@sc.rr.com>
+
+	* SqlSharpCli.cs: just write to the console
+	the Message from the exception, not the entire trace.
+
 2002-10-25  Daniel Morgan <danmorg@sc.rr.com>
 
 	* SqlSharpCli.cs: added support for

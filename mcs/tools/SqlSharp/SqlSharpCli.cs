@@ -515,6 +515,7 @@ namespace Mono.Data.SqlSharp {
 
 		// ExecuteSql - Execute the SQL Command(s) and/or Query(ies)
 		public void ExecuteSql(string sql) {
+			string msg = "";
 			
 			Console.WriteLine("Execute SQL: " + sql);
 
@@ -542,7 +543,8 @@ namespace Mono.Data.SqlSharp {
 				reader = null;
 			}
 			catch(Exception e) {
-				Console.WriteLine("Exception Caught Executing SQL: " + e);
+				msg = "Error: " + e.Message;
+				Console.WriteLine(msg);
 				//if(reader != null) {
 				//	if(reader.IsClosed == false)
 				//		reader.Close();
@@ -557,7 +559,8 @@ namespace Mono.Data.SqlSharp {
 
 		// ExecuteSql - Execute the SQL Commands (no SELECTs)
 		public void ExecuteSqlNonQuery(string sql) {
-			
+			string msg = "";
+
 			Console.WriteLine("Execute SQL Non Query: " + sql);
 
 			IDbCommand cmd = null;
@@ -578,7 +581,8 @@ namespace Mono.Data.SqlSharp {
 				Console.WriteLine("Rows affected: " + rowsAffected);
 			}
 			catch(Exception e) {
-				Console.WriteLine("Exception Caught Executing SQL: " + e);
+				msg = "Error: " + e.Message;
+				Console.WriteLine(msg);
 			}
 			finally {
 				// cmd.Dispose();
@@ -587,6 +591,8 @@ namespace Mono.Data.SqlSharp {
 		}
 
 		public void ExecuteSqlScalar(string sql) {
+			string msg = "";
+
 			Console.WriteLine("Execute SQL Scalar: " + sql);
 
 			IDbCommand cmd = null;
@@ -606,7 +612,8 @@ namespace Mono.Data.SqlSharp {
 				Console.WriteLine("Retrieved value: " + retrievedValue);
 			}
 			catch(Exception e) {
-				Console.WriteLine("Exception Caught Executing SQL: " + e);
+				msg = "Error: " + e.Message;
+				Console.WriteLine(msg);
 			}
 			finally {
 				// cmd.Dispose();
@@ -701,6 +708,7 @@ namespace Mono.Data.SqlSharp {
 
 		// OpenDataSource - open connection to the data source
 		public void OpenDataSource() {
+			string msg = "";
 			
 			Console.WriteLine("Attempt to open connection...");
 
@@ -725,7 +733,9 @@ namespace Mono.Data.SqlSharp {
 				}
 			}
 			catch(Exception e) {
-				Console.WriteLine("Error: Unable to create Connection object. " + e);
+				msg = "Error: Unable to create Connection object because: " + 
+					e.Message;
+				Console.WriteLine(msg);
 				return;
 			}
 
@@ -737,13 +747,15 @@ namespace Mono.Data.SqlSharp {
 					Console.WriteLine("Open was successfull.");
 			}
 			catch(Exception e) {
-				Console.WriteLine("Exception Caught Opening. " + e);
+				msg = "Exception Caught Opening. " + e.Message;
+				Console.WriteLine(msg);
 				conn = null;
 			}
 		}
 
 		// CloseDataSource - close the connection to the data source
 		public void CloseDataSource() {
+			string msg = "";
 			
 			if(conn != null) {
 				Console.WriteLine("Attempt to Close...");
@@ -752,7 +764,8 @@ namespace Mono.Data.SqlSharp {
 					Console.WriteLine("Close was successfull.");
 				}
 				catch(Exception e) {
-					Console.WriteLine("Exeception Caught Closing. " + e);
+					msg = "Exeception Caught Closing. " + e.Message;
+					Console.WriteLine(msg);
 				}
 				conn = null;
 			}
@@ -851,7 +864,8 @@ namespace Mono.Data.SqlSharp {
 				outputFilestream = new StreamWriter(parms[1]);
 			}
 			catch(Exception e) {
-				Console.WriteLine("Error: Unable to setup output results file. " + e);
+				Console.WriteLine("Error: Unable to setup output results file. " + 
+					e.Message);
 				return;
 			}
 		}
@@ -865,7 +879,8 @@ namespace Mono.Data.SqlSharp {
 				inputFilestream = new StreamReader(parms[1]);
 			}
 			catch(Exception e) {
-				Console.WriteLine("Error: Unable to setup input commmands file. " + e);
+				Console.WriteLine("Error: Unable to setup input commmands file. " + 
+					e.Message);
 				return;
 			}	
 		}
@@ -892,7 +907,8 @@ namespace Mono.Data.SqlSharp {
 				build.Append(buff);
 			}
 			catch(Exception e) {
-				Console.WriteLine("Error: Unable to read file into SQL Buffer. " + e);
+				Console.WriteLine("Error: Unable to read file into SQL Buffer. " + 
+					e.Message);
 			}
 		}
 
@@ -908,7 +924,8 @@ namespace Mono.Data.SqlSharp {
 				sw.Close();
 			}
 			catch(Exception e) {
-				Console.WriteLine("Error: Could not save SQL Buffer to file." + e);
+				Console.WriteLine("Error: Could not save SQL Buffer to file." + 
+					e.Message);
 			}
 		}
 
@@ -1031,6 +1048,7 @@ namespace Mono.Data.SqlSharp {
 		}
 
 		public bool LoadExternalProvider() {
+			string msg = "";
 			
 			bool success = false;
 
@@ -1056,8 +1074,16 @@ namespace Mono.Data.SqlSharp {
 				Console.Out.Flush();
 			}
 			catch(FileNotFoundException f) {
-				Console.WriteLine("Error: unable to load the assembly of the provider: " + 
-					providerAssembly + " : " + f.Message);
+				msg = "Error: unable to load the assembly of the provider: " + 
+					providerAssembly + 
+					" : " + f.Message;
+				Console.WriteLine(msg);
+			}
+			catch(Exception e) {
+				msg = "Error: unable to load the assembly of the provider: " + 
+					providerAssembly + 
+					" : " + e.Message;
+				Console.WriteLine(msg);
 			}
 			return success;
 		}
