@@ -146,8 +146,6 @@ namespace System.Data
 
 	internal class XmlDataInferenceLoader
 	{
-		const string XmlnsNS = "http://www.w3.org/2000/xmlns/";
-
 		public static void Infer (DataSet dataset, XmlDocument document, XmlReadMode mode, string [] ignoredNamespaces)
 		{
 			new XmlDataInferenceLoader (dataset, document, mode, ignoredNamespaces).ReadXml ();
@@ -348,7 +346,7 @@ namespace System.Data
 			bool hasText = false;
 
 			foreach (XmlAttribute attr in el.Attributes) {
-				if (attr.NamespaceURI == XmlnsNS)
+				if (attr.NamespaceURI == XmlConstants.XmlnsNS)
 					continue;
 				if (ignoredNamespaces.Contains (attr.NamespaceURI))
 					continue;
@@ -460,7 +458,7 @@ namespace System.Data
 		private ElementMappingType GetElementMappingType (XmlElement el)
 		{
 			foreach (XmlAttribute attr in el.Attributes) {
-				if (attr.NamespaceURI == XmlnsNS)
+				if (attr.NamespaceURI == XmlConstants.XmlnsNS)
 					continue;
 				if (ignoredNamespaces.Contains (attr.NamespaceURI))
 					continue;
@@ -481,7 +479,7 @@ namespace System.Data
 		{
 			XmlElement top = document.DocumentElement;
 			foreach (XmlAttribute attr in top.Attributes) {
-				if (attr.NamespaceURI == XmlnsNS)
+				if (attr.NamespaceURI == XmlConstants.XmlnsNS)
 					continue;
 				if (ignoredNamespaces.Contains (attr.NamespaceURI))
 					continue;
@@ -504,7 +502,7 @@ namespace System.Data
 		private bool IsPossibleColumnElement (XmlElement el)
 		{
 			foreach (XmlAttribute attr in el.Attributes) {
-				if (attr.NamespaceURI == "http://www.w3.org/2000/xmlns/")
+				if (attr.NamespaceURI == XmlConstants.XmlnsNS)
 					continue;
 				return false;
 			}

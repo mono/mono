@@ -1,3 +1,10 @@
+2004-01-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConstants.cs,
+	  XmlDataInferenceLoader.cs, 
+	  XmlDataReader.cs : use common const for http://www.w3.org/2000/xmlns/.
+	* XmlDiffLoader.cs : It was not handling attributes. Fixed bug #70961.
+
 2005-01-18  Sureshkumar T  <tsureshkumar@novell.com>
 
 	Fix for bug #66838. This patch is submitted by "Ankit Jain"

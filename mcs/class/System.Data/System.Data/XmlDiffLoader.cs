@@ -211,8 +211,36 @@ namespace System.Data {
 			reader.ReadEndElement ();
 		}
 
-		private void LoadColumns (DataTable Table, DataRow Row, XmlReader reader, DataRowVersion loadType) 
+		private void LoadColumns (DataTable Table, DataRow Row, 
+			XmlReader reader, DataRowVersion loadType)
 		{
+			// attributes
+			LoadColumnAttributes (Table, Row, reader, loadType);
+			LoadColumnChildren (Table, Row, reader, loadType);
+		}
+
+		private void LoadColumnAttributes (DataTable Table, DataRow Row,
+			XmlReader reader, DataRowVersion loadType)
+		{
+			if (!reader.MoveToFirstAttribute ())
+				return;
+			do {
+				if (reader.NamespaceURI == XmlConstants.XmlnsNS)
+					continue;
+				DataColumn c = Table.Columns [reader.LocalName];
+				if (c == null ||
+					c.ColumnMapping != MappingType.Attribute)					continue;
+				if (c.Namespace == null && reader.NamespaceURI == String.Empty ||
+					c.Namespace == reader.NamespaceURI)
+					Row [c] = reader.Value;
+			} while (reader.MoveToNextAttribute ());
+			reader.MoveToElement ();
+		}
+
+		private void LoadColumnChildren (DataTable Table, DataRow Row,
+			XmlReader reader, DataRowVersion loadType) 
+		{
+			// children
 			if (reader.IsEmptyElement) {
 				reader.Skip ();
 				return;
