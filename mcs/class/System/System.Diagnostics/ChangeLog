@@ -1,3 +1,7 @@
+2002-04-08  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Debugger.cs: Added new file; used by DefaultTraceListener
+
 2002-04-07  Jonathan Pryor <jonpryor@vt.edu>
 
 	* TraceListener.cs: Fix stack overflow bug
