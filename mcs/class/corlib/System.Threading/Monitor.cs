@@ -8,6 +8,7 @@
 //
 
 using System.Runtime.CompilerServices;
+using System.Runtime.Remoting.Contexts;
 
 namespace System.Threading
 {
@@ -185,31 +186,24 @@ namespace System.Threading
 			return(Monitor_wait(obj, ms));
 		}
 
-		[MonoTODO]
 		public static bool Wait(object obj, int millisecondsTimeout, bool exitContext) {
-			if(obj==null) {
-				throw new ArgumentNullException("Object is null");
+			try {
+				if (exitContext) SynchronizationAttribute.ExitContext ();
+				return Wait (obj, millisecondsTimeout);
 			}
-			// FIXME when I understand what a
-			// "synchronisation domain" is and does
-			return(false);
+			finally {
+				if (exitContext) SynchronizationAttribute.EnterContext ();
+			}
 		}
 
-		[MonoTODO]
 		public static bool Wait(object obj, TimeSpan timeout, bool exitContext) {
-			if(obj==null) {
-				throw new ArgumentNullException("Object is null");
+			try {
+				if (exitContext) SynchronizationAttribute.ExitContext ();
+				return Wait (obj, timeout);
 			}
-			// LAMESPEC: says to throw ArgumentException too
-			int ms=Convert.ToInt32(timeout.TotalMilliseconds);
-			
-			if(ms < 0 || ms > Int32.MaxValue) {
-				throw new ArgumentOutOfRangeException("timeout out of range");
+			finally {
+				if (exitContext) SynchronizationAttribute.EnterContext ();
 			}
-			
-			// FIXME when I understand what a
-			// "synchronisation domain" is and does
-			return(false);
 		}
 	}
 }

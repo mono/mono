@@ -1,5 +1,10 @@
 2004-04-06  Lluis Sanchez Gual <lluis@ximian.com>
 
+	* Monitor.cs: In Wait(), release the synchronization context when 
+	  exitContext is true.
+
+2004-04-06  Lluis Sanchez Gual <lluis@ximian.com>
+
 	* LockCookie.cs: Keep in this class the count of reader or writer locks
 	  for a thread, not only whether it has locks or not.
 	* LockQueue.cs: Added property for checking if a thread is waiting in
