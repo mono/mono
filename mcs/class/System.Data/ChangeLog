@@ -1,3 +1,11 @@
+2005-04-04  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* System.Data_test.dll.sources: Added
+	Test/System.Data.Common/DbConnectionStringBuilderTest.cs
+
+	* System.Data.dll.sources: Added
+	System.Data.Common/DbConnectionStringBuilder.cs
+
 2005-03-10  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* System.Data.dll.sources: Added

@@ -1,3 +1,10 @@
+2005-04-04  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DbConnectionStringBuilderTest.cs: few more tests ignored for now
+	because of gmcs incompatiability with csc. generic types are not
+	being able to be assigned to non-generic types though implements
+	non-generic interface.
+
 2005-02-22  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* ConnectionStringsSectionTest.cs: Added file. Tests for

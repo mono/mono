@@ -141,6 +141,7 @@ System.Data.Common/DataTableMappingCollection.cs
 System.Data.Common/DataTableMapping.cs
 System.Data.Common/DataTableMappingConverter.cs
 System.Data.Common/DbCommandBuilder.cs
+System.Data.Common/DbConnectionStringBuilder.cs
 System.Data.Common/DbCommand.cs
 System.Data.Common/DbCommandOptionalFeatures.cs
 System.Data.Common/DbCommandSet.cs
