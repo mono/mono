@@ -51,13 +51,13 @@ namespace Cairo {
                 
                 public Cairo.Status Status {
                         get {
-                                return CairoAPI.cairo_get_status (state);
+                                return CairoAPI.cairo_status (state);
                         }
                 }
 
                 public string StatusString {
                         get {
-                                return CairoAPI.cairo_get_status_string (state);
+                                return CairoAPI.cairo_status_string (state);
                         }
                 }
 
@@ -73,7 +73,7 @@ namespace Cairo {
                         }
 
                         get {
-                                return CairoAPI.cairo_get_operator (state);
+                                return CairoAPI.cairo_current_operator (state);
                         }
                 }
                 
@@ -88,7 +88,7 @@ namespace Cairo {
                         }
 
                         get {
-                                return CairoAPI.cairo_get_tolerence (state);
+                                return CairoAPI.cairo_current_tolerence (state);
                         }
                 }                                
 
@@ -98,7 +98,7 @@ namespace Cairo {
                         }
 
                         get {
-                                return CairoAPI.cairo_get_alpha (state);
+                                return CairoAPI.cairo_current_alpha (state);
                         }
                 }
                 
@@ -108,7 +108,7 @@ namespace Cairo {
                         }
 
                         get {
-                                return CairoAPI.cairo_get_fill_rule (state);
+                                return CairoAPI.cairo_current_fill_rule (state);
                         }
                 }
                                         
@@ -118,7 +118,7 @@ namespace Cairo {
                         }
 
                         get {
-                                return CairoAPI.cairo_get_line_width (state);
+                                return CairoAPI.cairo_current_line_width (state);
                         }
                 }
 
@@ -128,7 +128,7 @@ namespace Cairo {
                         }
 
                         get {
-                                return CairoAPI.cairo_get_line_cap (state);
+                                return CairoAPI.cairo_current_line_cap (state);
                         }
                 }
 
@@ -138,7 +138,7 @@ namespace Cairo {
                         }
 
                         get {
-                                return CairoAPI.cairo_get_line_join (state);
+                                return CairoAPI.cairo_current_line_join (state);
                         }
                 }
 
@@ -159,19 +159,19 @@ namespace Cairo {
                         }
 
                         get {
-                                return CairoAPI.cairo_get_miter_limit (state);
+                                return CairoAPI.cairo_current_miter_limit (state);
                         }
                 }
 
                 public void GetCurrentPoint (out double x, out double y)
                 {
-                        CairoAPI.cairo_get_current_point (state, out x, out y);
+                        CairoAPI.cairo_current_point (state, out x, out y);
                 }
 
                 public Point CurrentPoint {
                         get {
                                 double x, y;
-                                CairoAPI.cairo_get_current_point (state, out x, out y);
+                                CairoAPI.cairo_current_point (state, out x, out y);
                                 return new Point ((int) x, (int) y);
                         }
                 }

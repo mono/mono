@@ -44,6 +44,8 @@ namespace Cairo {
                 public static extern void cairo_set_target_image (
                         IntPtr cr, string data, Cairo.Format format, int width, int height, int stride);
 
+                public static extern void cairo_set_target_drawble (IntPtr cr, IntPtr dpy, ulong drawable);
+
 		[DllImport (CairoImp)]
 		public static extern void cairo_set_operator (IntPtr cr, Cairo.Operator op);
 
@@ -187,55 +189,55 @@ namespace Cairo {
                 // query
                 //                                
                 [DllImport (CairoImp)]
-		public static extern Cairo.Operator cairo_get_operator (IntPtr cr);
+		public static extern Cairo.Operator cairo_current_operator (IntPtr cr);
 
                 [DllImport (CairoImp)]
-                public static extern void cairo_get_rgb_color (
+                public static extern void cairo_current_rgb_color (
                         IntPtr cr, out double red, out double green, out double blue);
 
                 [DllImport (CairoImp)]
-                public static extern double cairo_get_alpha (IntPtr cr);
+                public static extern double cairo_current_alpha (IntPtr cr);
 
 		[DllImport (CairoImp)]
-		public static extern double cairo_get_tolerence (IntPtr cr);
+		public static extern double cairo_current_tolerence (IntPtr cr);
 
 		[DllImport (CairoImp)]
-		public static extern void cairo_get_current_point (
+		public static extern void cairo_current_point (
                         IntPtr cr, out double x, out double y);
 
 		[DllImport (CairoImp)]
-		public static extern Cairo.FillRule cairo_get_fill_rule (IntPtr cr);
+		public static extern Cairo.FillRule cairo_current_fill_rule (IntPtr cr);
 
                 [DllImport (CairoImp)]
-		public static extern double cairo_get_line_width (IntPtr cr);
+		public static extern double cairo_current_line_width (IntPtr cr);
 
                 [DllImport (CairoImp)]
-		public static extern LineCap cairo_get_line_cap (IntPtr cr);
+		public static extern LineCap cairo_current_line_cap (IntPtr cr);
 
        		[DllImport (CairoImp)]
-		public static extern LineJoin cairo_get_line_join (IntPtr cr);
+		public static extern LineJoin cairo_current_line_join (IntPtr cr);
 
 		[DllImport (CairoImp)]
-		public static extern double cairo_get_miter_limit (IntPtr cr);
+		public static extern double cairo_current_miter_limit (IntPtr cr);
 
                 [DllImport (CairoImp)]
-                public static extern void cairo_get_matrix (
+                public static extern void cairo_current_matrix (
                         IntPtr cr,
                         out double a, out double b,
                         out double c, out double d,
                         out double tx, out double ty);
 
                 [DllImport (CairoImp)]
-                public static extern void cairo_get_target_surface (IntPtr cr);
+                public static extern void cairo_current_target_surface (IntPtr cr);
 
                 //
                 // Error status queries
                 //
                 [DllImport (CairoImp)]
-                public static extern Cairo.Status cairo_get_status (IntPtr cr);
+                public static extern Cairo.Status cairo_status (IntPtr cr);
 
                 [DllImport (CairoImp)]
-                public static extern string cairo_get_status_string (IntPtr cr);
+                public static extern string cairo_status_string (IntPtr cr);
 
                 //
                 // Surface Manipulation
@@ -245,10 +247,9 @@ namespace Cairo {
                 // This is commented out because we don't have access
                 // to the X11 Drawable and Visual types.
                 //                
-//              [DllImport (CairoImp)]
-//              public static extern IntPtr cairo_surface_create_for_drawable (
-//                      IntPtr display, Drawable drawable, IntPtr visual,
-//                      Cairo.Format format, Colormap colormap);
+                [DllImport (CairoImp)]
+                public static extern IntPtr cairo_surface_create_for_drawable (
+                        IntPtr display, ulong drawable, IntPtr visual, Cairo.Format format, ulong colormap);
 
                 [DllImport (CairoImp)]                
                 public static extern IntPtr cairo_surface_create_for_image (

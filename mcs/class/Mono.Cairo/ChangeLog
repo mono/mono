@@ -1,3 +1,11 @@
+2003-09-04  Duncan Mak  <duncan@ximian.com>
+
+	* Mono.Cairo/Cairo.cs: Update to the new API in CVS. Change all
+	*_get_* to *_current_*.
+
+	* Mono.Cairo/Object.cs: Update binding to reflect changes in the
+	API.
+
 2003-08-12  Duncan Mak  <duncan@ximian.com>
 
 	* Mono.Cairo/Cairo.cs: csc was having trouble resolving the type
