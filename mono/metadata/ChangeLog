@@ -1,3 +1,7 @@
+2001-08-28  Dietmar Maurer  <dietmar@ximian.com>
+
+	* class.c (mono_class_metadata_init): delayed computing of the
+	class size to mono_class_metadata_init ()
 
 Tue Aug 28 15:47:15 CEST 2001 Paolo Molaro <lupus@ximian.com>
 

@@ -1,3 +1,9 @@
+2001-08-28  Dietmar Maurer  <dietmar@ximian.com>
+
+	* interp.c (ves_exec_method): better check for value types (get
+	the class to detect if we have a value type), implemented CEE_CONV_U1,
+	CEE_CONV_U2, CEE_CEQ
+	
 
 Mon Aug 27 21:30:30 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
