@@ -25,12 +25,16 @@ class MonoP {
 	
 	static readonly string [] common_assemblies = {
 		"System.Xml.dll",
-		"System.Web.dll"
+		"System.Web.dll",
+		"gtk-sharp.dll",
+		"glib-sharp.dll"
 	};
 	
 	static readonly string [] common_ns = {
 		"System.Xml",
-		"System.Web"
+		"System.Web",
+		"Gtk",
+		"GLib"
 	};
 	
 	static IndentedTextWriter o = new IndentedTextWriter (Console.Out, "    ");
@@ -55,16 +59,19 @@ class MonoP {
 		
 		if (t == null) {
 			foreach (string assm in common_assemblies) {
-				Assembly a = Assembly.Load (assm);
-				t = a.GetType (tname, false, true);
-				if (t != null)
-					goto found;
-				foreach (string ns in common_ns) {
-					t = a.GetType (ns + "." + tname, false, true);
-					if (t != null) {
-						Console.WriteLine ("(using class from {0})", ns);
+				try {
+					Assembly a = Assembly.Load (assm);
+					t = a.GetType (tname, false, true);
+					if (t != null)
 						goto found;
+					foreach (string ns in common_ns) {
+						t = a.GetType (ns + "." + tname, false, true);
+						if (t != null) {
+							Console.WriteLine ("(using class from {0})", ns);
+							goto found;
+						}
 					}
+				} catch {
 				}
 			}
 		}
