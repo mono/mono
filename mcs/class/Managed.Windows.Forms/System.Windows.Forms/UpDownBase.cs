@@ -27,8 +27,14 @@
 
 TODO:
 
+	- Actually paint the border, could not get it to work.
+
+	- Implement ContextMenu property.
+	
 	- Force the size of the entry: it can not be resized vertically
 	  ever, the size is set by the size of the font
+
+	- Add defaults with [DefautValue ]
 
 */
 using System;
@@ -219,11 +225,13 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		BorderStyle border_style = BorderStyle.Fixed3D;
 		int desired_height = 0;
 		TextBox entry;
 		Spinner spinner;
-
+		int border;
 		int scrollbar_button_size = ThemeEngine.Current.ScrollBarButtonSize;
+		bool changing_text = false;
 		
 		public UpDownBase () : base ()
 		{
@@ -231,16 +239,31 @@ namespace System.Windows.Forms {
 
 			entry = new TextBox ();
 			entry.Font = Font;
-			entry.Size = new Size (120, Font.Height + 4);
-			entry.Location = new Point (0, 0);
+			entry.Size = new Size (120, Font.Height);
 			Controls.Add (entry);
 
 			spinner = new Spinner (this);
 			Controls.Add (spinner);
-			
+
+			ComputeSizeAndLocation ();
 			ResumeLayout ();
-			
 		}
+		
+
+		void ComputeSizeAndLocation ()
+		{
+			if (BorderStyle == BorderStyle.Fixed3D)
+				border = 2;
+			else if (BorderStyle == BorderStyle.FixedSingle)
+				border = 1;
+			else
+				border = 0;
+				
+			Size = (entry.Size + spinner.Size + new Size (border, border));
+			
+			entry.Location = new Point (border, border);
+		}
+		
 
 #region UpDownBase overwritten methods
 		
@@ -289,6 +312,8 @@ namespace System.Windows.Forms {
 		protected override void OnPaint (PaintEventArgs e)
 		{
 			base.OnPaint (e);
+			ThemeEngine.Current.CPDrawBorderStyle (e.Graphics, ClientRectangle, BorderStyle.Fixed3D);
+			e.Graphics.DrawImage (ImageBuffer, 0, 0);
 		}
 
 		protected override void SetVisibleCore (bool state)
@@ -355,6 +380,109 @@ namespace System.Windows.Forms {
 		}
 #endregion
 
+#region UpDownBase Properties
+
+		/* FIXME: Do not know what Autoscroll should do */
+		public virtual bool AutoScroll {
+			get {
+				return base.AutoScroll;
+			}
+
+			set {
+				base.AutoScroll = value;
+			}
+		}
+
+		/* FIXME: Do not know what AutoscrollMargin does */
+		public new Size AutoScrollMargin {
+			get {
+				return base.AutoScrollMargin;
+			}
+
+			set {
+				base.AutoScrollMargin = value;
+			}
+		}
+
+		/* FIXME: Do not know what AutoscrollMinSize does */
+		public new Size AutoScrollMinSize {
+			get {
+				return base.AutoScrollMinSize;
+			}
+
+			set {
+				base.AutoScrollMinSize = value;
+			}
+		}
+
+		public override Color BackColor {
+			get {
+				return base.BackColor;
+			}
+
+			set {
+				entry.BackColor = value;
+			}
+		}
+
+		public override Image BackgroundImage {
+			get {
+				return entry.BackgroundImage;
+			}
+
+			set {
+				entry.BackgroundImage = value;
+			}
+		}
+
+		public BorderStyle BorderStyle {
+			get {
+				return border_style;
+			}
+
+			set {
+				border_style = value;
+
+				SuspendLayout ();
+				ComputeSizeAndLocation ();
+				ResumeLayout ();
+			}
+		}
+
+		//
+		// Used internally to flag when the derivative classes are changing
+		// the Text property as opposed to the user
+		//
+		protected bool ChangingText {
+			get {
+				return changing_text;
+			}
+
+			set {
+				changing_text = value;
+			}
+		}
+
+		// TODO: What should this do?
+		public override ContextMenu ContextMenu {
+			get {
+				return null;
+			}
+
+			set {
+				/* */
+			}
+		}
+
+		protected override CreateParams CreateParams {
+			get {
+				return base.CreateParams;
+			}
+		}
+
+		
+#endregion
+		
 #region UpDownBase standard methods
 		public void Select (int start, int length)
 		{
