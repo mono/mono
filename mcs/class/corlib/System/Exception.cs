@@ -165,9 +165,13 @@ namespace System
 						else
 							sb.Append (newline);
 
-						if (frame.GetMethod () == null)
-							sb.Append (unknown);
-						else {
+						if (frame.GetMethod () == null) {
+							string internal_name = frame.GetInternalMethodName ();
+							if (internal_name != null)
+								sb.Append (internal_name);
+							else
+								sb.AppendFormat ("<0x{0:x5}> {1}", frame.GetNativeOffset (), unknown);
+						} else {
 							if (frame.GetILOffset () == -1)
 								sb.AppendFormat ("<0x{0:x5}> ", frame.GetNativeOffset ());
 							else

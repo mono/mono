@@ -53,13 +53,13 @@ namespace System {
 		/*
 		 * This is the version number of the corlib-runtime interface. When
 		 * making changes to this interface (by changing the layout
-		 * of classes the runtime knows about, changing icall semantics etc),
-		 * increment this variable. Also increment the
+		 * of classes the runtime knows about, changing icall signature or
+		 * semantics etc), increment this variable. Also increment the
 		 * pair of this variable in the runtime in metadata/appdomain.c.
 		 * Changes which are already detected at runtime, like the addition
 		 * of icalls, do not require an increment.
 		 */
-		private const int mono_corlib_version = 32;
+		private const int mono_corlib_version = 33;
                
 		[MonoTODO]
 		public enum SpecialFolder
