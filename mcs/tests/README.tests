@@ -39,7 +39,7 @@ Test cases listed by Category:
 
 * Flow Analysis
 
-  test-154.cs
+  test-154.cs test-162.cs
 
 * Type Containers
 
@@ -122,6 +122,10 @@ test-161.cs
 -----------
 ResolveMemberLookup: Field initializer references `DateTime.Now' when there's
 an instance property/field `DateTime'.
+
+test-162.cs
+-----------
+Control Flow Analysis wrt. structs.
 
 verify-1.cs
 -----------
