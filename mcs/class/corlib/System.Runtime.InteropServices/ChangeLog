@@ -1,3 +1,6 @@
+2003-03-03  Tim Coleman <tim@timcoleman.com>
+	* HandleRef.cs: Add this struct
+
 2003-01-05  Sebastien Pouliot <spouliot@videotron.ca>
 
 	* COMException.cs: New. Minimal (incomplete - i'm not using COM)
