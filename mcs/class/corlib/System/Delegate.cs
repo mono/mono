@@ -43,7 +43,7 @@ namespace System {
 
 		protected Delegate (Type target_type, string method)
 		{
-			if (m_target == null)
+			if (target_type == null)
 				throw new ArgumentNullException (Locale.GetText ("Target type is null"));
 
 			if (method == null)
@@ -117,7 +117,7 @@ namespace System {
 				throw new ArgumentNullException (Locale.GetText ("method string is null"));
 
 			if (!type.IsSubclassOf (typeof (MulticastDelegate)))
-				throw new ArgumentException ("type");
+				throw new ArgumentException ("type is not subclass of MulticastDelegate");
 
 			ParameterInfo[] delargs = type.GetMethod ("Invoke").GetParameters ();
 			Type[] delargtypes = new Type [delargs.Length];

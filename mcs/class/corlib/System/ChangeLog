@@ -1,5 +1,8 @@
 2003-04-14  Miguel de Icaza  <miguel@ximian.com>
 
+	* Delegate.cs (Delegate): Seems like a typo, we were checking the
+	wrong variable.
+
 	* MonoType.cs: Make GetNestedType an external method implementation.
 
 2003-04-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
