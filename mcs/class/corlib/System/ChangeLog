@@ -1,3 +1,8 @@
+2004-08-29 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+       * Activator.cs (CreateInstance): If an argument is null,
+       do not call GetType () on it. #63852
+
 2004-09-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Environment.cs: (ExpandEnvironmentVariables) don't nullify the case
