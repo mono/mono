@@ -54,6 +54,8 @@ namespace Mono.ILASM {
                 private bool is_dll;
                 private bool is_assembly;
 
+                private string module_name;
+
                 public CodeGen (string output_file, bool is_dll, bool is_assembly, Report report)
                 {
                         this.output_file = output_file;
@@ -127,6 +129,11 @@ namespace Mono.ILASM {
                 public void SetAssemblyName (string name)
                 {
                         assembly_name = name;
+                }
+
+                public void SetModuleName (string module_name)
+                {
+                        this.module_name = module_name;
                 }
 
                 public bool IsThisAssembly (string name)
@@ -269,7 +276,8 @@ namespace Mono.ILASM {
 
                         try {
                                 out_stream = new FileStream (output_file, FileMode.Create, FileAccess.Write);
-                                pefile = new PEFile (assembly_name, is_dll, is_assembly, out_stream);
+                                pefile = new PEFile (assembly_name, module_name, is_dll, is_assembly, out_stream);
+
                                 extern_table.Resolve (this);
                                 type_manager.DefineAll ();
 
