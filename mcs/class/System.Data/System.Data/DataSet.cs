@@ -672,11 +672,11 @@ namespace System.Data {
 			}
 			
 			// It should not write when there is no content to be written
-			bool hasContent = (mode == XmlWriteMode.WriteSchema);
-			for (int n=0; n<tableCollection.Count && !hasContent; n++)
-				hasContent = tableCollection[n].Rows.Count > 0;
+			bool shouldOutputContent = (mode != XmlWriteMode.DiffGram);
+			for (int n=0; n<tableCollection.Count && !shouldOutputContent; n++)
+				shouldOutputContent = tableCollection [n].Rows.Count > 0;
 				
-			if (hasContent) {
+			if (shouldOutputContent) {
 				WriteStartElement (writer, mode, Namespace, Prefix, XmlConvert.EncodeName (DataSetName));
 				
 				if (mode == XmlWriteMode.WriteSchema)

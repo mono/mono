@@ -1,5 +1,9 @@
 2004-05-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataSet.cs : Ignore empty content only when output type is diffgram.
+
+2004-05-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CustomDataClassGenerator.cs : Modified that DataSet contains each
 	  DataTable field so that each table property can access them directly.
 	  (plus, modified standalone code driver code: shouldn't affect)
