@@ -46,6 +46,7 @@ public class Page : TemplateControl, IHttpHandler
 	private ArrayList requiresPostDataChanged;
 	private ArrayList requiresRaiseEvent;
 	private NameValueCollection secondPostData;
+	private bool requiresPostBackScript = false;
 
 	#region Fields
 	 	protected const string postEventArgumentID = ""; //FIXME
@@ -308,26 +309,15 @@ public class Page : TemplateControl, IHttpHandler
 		return GetPostBackEventReference (control, "");
 	}
 	
-	[MonoTODO]
 	public string GetPostBackEventReference (Control control, string argument)
 	{
-		// We should generate something like that for some controls.
-		//<form name="_ctl0" method="post" action="web_linkbutton.aspx" id="_ctl0">
-		//<input type="hidden" name="__EVENTTARGET" value="" />
-		//<input type="hidden" name="__EVENTARGUMENT" value="" />
-		//<input type="hidden" name="__VIEWSTATE" value="dDwtMTQ0OTU5MDMyOzs+QVNcmTndkSoEzsv+d4Wt7Jj8X0c=" />
-		//<script language="javascript">
-		//<!--
-		//	function __doPostBack(eventTarget, eventArgument) {
-		//		var theform = document._ctl0;
-		//		theform.__EVENTTARGET.value = eventTarget;
-		//		theform.__EVENTARGUMENT.value = eventArgument;
-		//		theform.submit();
-		//	}
-		// -->
-		//</script>
-		//
-		return String.Format ("GetPostBackEventReference ('{0}', '{1}')", control.ID, argument);
+		RequiresPostBackScript ();
+		return String.Format ("__doPostBack ('{0}', '{1}')", control.ID, argument);
+	}
+
+	internal void RequiresPostBackScript ()
+	{
+		requiresPostBackScript = true;
 	}
 
 	public virtual int GetTypeHashCode ()
@@ -385,9 +375,24 @@ public class Page : TemplateControl, IHttpHandler
 			throw new HttpException ("Only 1 HtmlForm is allowed per page.");
 
 		renderingForm = true;
-		writer.WriteLine();
-		writer.Write("<input type=\"hidden\" name=\"__VIEWSTATE\" ");
-		writer.WriteLine("value=\"{0}\" />", GetViewStateString ());
+		writer.WriteLine ();
+		writer.Write ("<input type=\"hidden\" name=\"__VIEWSTATE\" ");
+		writer.WriteLine ("value=\"{0}\" />", GetViewStateString ());
+		if (requiresPostBackScript) {
+			writer.WriteLine ("<input type=\"hidden\" name=\"__EVENTTARGET\" value=\"\" />");
+			writer.WriteLine ("<input type=\"hidden\" name=\"__EVENTARGUMENT\" value=\"\" />");
+			writer.WriteLine ();
+			writer.WriteLine ("<script language=\"javascript\">");
+			writer.WriteLine ("<!--");
+			writer.WriteLine ("\tfunction __doPostBack(eventTarget, eventArgument) {");
+			writer.WriteLine ("\t\tvar theform = document.{0};", formUniqueID);
+			writer.WriteLine ("\t\ttheform.__EVENTTARGET.value = eventTarget;");
+			writer.WriteLine ("\t\ttheform.__EVENTARGUMENT.value = eventArgument;");
+			writer.WriteLine ("\t\ttheform.submit();");
+			writer.WriteLine ("\t}");
+			writer.WriteLine ("// -->");
+			writer.WriteLine ("</script>");
+		}
 	}
 
 	public string GetViewStateString ()
@@ -499,10 +504,20 @@ public class Page : TemplateControl, IHttpHandler
 
 	internal void RaisePostBackEvents ()
 	{
+		NameValueCollection postdata = DeterminePostBackMode ();
+		string eventTarget = postdata ["__EVENTTARGET"];
+		if (eventTarget != null && eventTarget.Length > 0) {
+			Control target = FindControl (eventTarget);
+			if (!(target is IPostBackEventHandler))
+				return;
+			string eventArgument = postdata ["__EVENTARGUMENT"];
+			RaisePostBackEvent ((IPostBackEventHandler) target, eventArgument);
+			return;
+		}
+
 		if (requiresRaiseEvent == null)
 			return;
 
-		NameValueCollection postdata = DeterminePostBackMode ();
 		foreach (Control c in requiresRaiseEvent)
 			RaisePostBackEvent ((IPostBackEventHandler) c, postdata [c.ID]);
 		requiresRaiseEvent.Clear ();

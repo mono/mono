@@ -1,3 +1,8 @@
+2002-07-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs: improved event raising to allow client postback for a wider
+	variety of actions (clicking an hyperlink, ...).
+
 2002-07-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UserControl.cs: implemented Load/SaveViewState.
