@@ -77,12 +77,9 @@ namespace System.Data
 		[DataSysDescription ("Indicates whether this DataView and the user interface associated with it allows deletes.")]
 		[DefaultValue (true)]
 		public bool AllowDelete {
-			[MonoTODO]
 			get {
 				return allowDelete;
 			}
-			
-			[MonoTODO]
 			set {
 				allowDelete = value;
 			}
@@ -92,12 +89,9 @@ namespace System.Data
 		[DataSysDescription ("Indicates whether this DataView and the user interface associated with it allows edits.")]
 		[DefaultValue (true)]
 		public bool AllowEdit {
-			[MonoTODO]
 			get {
 				return allowEdit;
 			}
-			
-			[MonoTODO]
 			set {
 				allowEdit = value;
 			}
@@ -107,12 +101,10 @@ namespace System.Data
 		[DataSysDescription ("Indicates whether this DataView and the user interface associated with it allows new rows to be added.")]
 		[DefaultValue (true)]
 		public bool AllowNew {
-			[MonoTODO]
 			get {
 				return allowNew;
 			}
 			
-			[MonoTODO]
 			set {
 				allowNew = value;
 			}
