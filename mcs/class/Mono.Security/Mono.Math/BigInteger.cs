@@ -4,7 +4,8 @@
 // Authors:
 //	Ben Maurer
 //	Chew Keong TAN
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
+//	Pieter Philippaerts <Pieter@mentalis.org>
 //
 // Copyright (c) 2003 Ben Maurer
 // All rights reserved
@@ -192,7 +193,7 @@ namespace Mono.Math {
 					(inData [i-3] << (3*8)) |
 					(inData [i-2] << (2*8)) |
 					(inData [i-1] << (1*8)) |
-					(inData [i-0] << (0*8))
+					(inData [i])
 					);
 			}
 
@@ -244,6 +245,51 @@ namespace Mono.Math {
 		public static implicit operator BigInteger (ulong value)
 		{
 			return (new BigInteger (value));
+		}
+
+		/* This is the BigInteger.Parse method I use. This method works
+		because BigInteger.ToString returns the input I gave to Parse. */
+		public static BigInteger Parse (string number) 
+		{
+			if (number == null)
+				throw new ArgumentNullException ("number");
+
+			int i = 0, len = number.Length;
+			char c;
+			bool digits_seen = false;
+			BigInteger val = new BigInteger (0);
+			if (number [i] == '+') {
+				i++;
+			} 
+			else if (number [i] == '-') {
+				throw new FormatException (WouldReturnNegVal);
+			}
+
+			for (; i < len; i++) {
+				c = number [i];
+				if (c == '\0') {
+					i = len;
+					continue;
+				}
+				if (c >= '0' && c <= '9') {
+					val = val * 10 + (c - '0');
+					digits_seen = true;
+				} 
+				else {
+					if (Char.IsWhiteSpace (c)) {
+						for (i++; i < len; i++) {
+							if (!Char.IsWhiteSpace (number [i]))
+								throw new FormatException ();
+						}
+						break;
+					} 
+					else
+						throw new FormatException ();
+				}
+			}
+			if (!digits_seen)
+				throw new FormatException ();
+			return val;
 		}
 
 		#endregion
@@ -725,22 +771,13 @@ namespace Mono.Math {
 				if (this % smallPrimes [p] == 0)
 					return this == smallPrimes [p];
 			}
-
-			return
-				PrimalityTests.SmallPrimeSppTest (this, Prime.ConfidenceFactor.Medium);
-		}
-
-		[Obsolete]
-		public bool isProbablePrime (int notUsed)
-		{
-
 			for (int p = 0; p < smallPrimes.Length; p++) {
+				if (this == smallPrimes [p])
+					return true;
 				if (this % smallPrimes [p] == 0)
-					return this == smallPrimes [p];
+					return false;
 			}
-
-			return
-				PrimalityTests.SmallPrimeSppTest (this, Prime.ConfidenceFactor.Medium);
+			return PrimalityTests.RabinMillerTest (this, Prime.ConfidenceFactor.Medium);
 		}
 
 		#endregion
@@ -2083,7 +2120,7 @@ namespace Mono.Math {
 							(*++tP3)++;
 
 							// Keep adding until no carry
-							while ((*tP3++) == 0x0)
+							while ((*tP3++) == 0)
 								(*tP3)++;
 						}
 

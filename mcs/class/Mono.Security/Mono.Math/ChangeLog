@@ -1,3 +1,10 @@
+2004-02-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BigInteger.cs: Fixed isProbablePrime() and added Parse method from
+	patch provided by Pieter (#51229). Changed SmallPrimeSppTest to 
+	RabinMillerTest (#51229, #54262). Removed obsoleted method
+	isProbablePrime(int).
+
 2004-02-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BigInteger.cs: New. Copied from corlib. Required for PKCS1 and
