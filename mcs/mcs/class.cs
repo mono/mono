@@ -49,6 +49,12 @@ namespace CIR {
 		// Holds the methods.
 		ArrayList methods;
 
+		// Holds the events
+		ArrayList events;
+
+		// Holds the indexers
+		ArrayList indexers;
+
 		//
 		// Pointers to the default constructor and the default static constructor
 		//
@@ -269,6 +275,37 @@ namespace CIR {
 
 			properties.Add (prop);
 			DefineName (name, prop);
+
+			return AdditionResult.Success;
+		}
+
+		public AdditionResult AddEvent (Event e)
+		{
+			AdditionResult res;
+			string name = e.Name;
+
+			if ((res = IsValid (name)) != AdditionResult.Success)
+				return res;
+
+			if (events == null)
+				events = new ArrayList ();
+			
+			events.Add (e);
+			DefineName (name, e);
+
+			return AdditionResult.Success;
+		}
+
+		public AdditionResult AddIndexer (Indexer i)
+		{
+			if (indexers == null)
+				indexers = new ArrayList ();
+
+			indexers.Add (i);
+
+			// FIXME: We don't really keep a list of signatures already defined
+			// so there is no checking here if there already is something
+			// with the same signature
 
 			return AdditionResult.Success;
 		}
@@ -997,6 +1034,71 @@ namespace CIR {
 			get {
 				return set_block;
 			}
+		}
+	}
+
+	public class Event {
+
+		const int AllowedModifiers =
+			Modifiers.NEW |
+			Modifiers.PUBLIC |
+			Modifiers.PROTECTED |
+			Modifiers.INTERNAL |
+			Modifiers.PRIVATE |
+			Modifiers.STATIC |
+			Modifiers.VIRTUAL |
+			Modifiers.SEALED |
+			Modifiers.OVERRIDE |
+			Modifiers.ABSTRACT;
+
+		public readonly string    Type;
+		public readonly string    Name;
+		public readonly Object    Initializer;
+		public readonly int       ModFlags;
+		public readonly Block     Add;
+		public readonly Block     Remove;
+
+		public Event (string type, string name, Object init, int flags, Block add_block, Block rem_block)
+		{
+			Type = type;
+			Name = name;
+			Initializer = init;
+			ModFlags = Modifiers.Check (AllowedModifiers, flags, Modifiers.PRIVATE);  
+			Add = add_block;
+			Remove = rem_block;
+		}
+	}
+
+	public class Indexer {
+
+		const int AllowedModifiers =
+			Modifiers.NEW |
+			Modifiers.PUBLIC |
+			Modifiers.PROTECTED |
+			Modifiers.INTERNAL |
+			Modifiers.PRIVATE |
+			Modifiers.VIRTUAL |
+			Modifiers.SEALED |
+			Modifiers.OVERRIDE |
+			Modifiers.ABSTRACT;
+
+		public readonly string     Type;
+		public readonly string     InterfaceType;
+		public readonly Parameters FormalParameters;
+		public readonly int        ModFlags;
+		public readonly Block      Get;
+		public readonly Block      Set;
+
+		public Indexer (string type, string int_type, int flags, Parameters parms,
+				Block get_block, Block set_block)
+		{
+
+			Type = type;
+			InterfaceType = int_type;
+			ModFlags = Modifiers.Check (AllowedModifiers, flags, Modifiers.PRIVATE);
+			FormalParameters = parms;
+			Get = get_block;
+			Set = set_block;
 		}
 	}
 }

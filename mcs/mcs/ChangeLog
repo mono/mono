@@ -1,3 +1,33 @@
+2001-08-28  Ravi Pratap  <ravi@che.iitm.ac.in>
+
+	* cs-parser.jay (IndexerDeclaration): New helper class to hold
+	information about indexer_declarator.
+	(indexer_declarator): Implement actions.
+	(parsing_indexer): New local boolean used to keep track of whether
+	we are parsing indexers or properties. This is necessary because 
+	implicit_parameters come into picture even for the get accessor in the 
+	case of an indexer.
+	(get_accessor_declaration, set_accessor_declaration): Correspondingly modified.
+
+	* class.cs (Indexer): New class for indexer declarations.
+	(TypeContainer::AddIndexer): New method to add an indexer to a type.
+	(TypeContainer::indexers): New member to hold list of indexers for the
+	type.
+
+2001-08-27  Ravi Pratap  <ravi@che.iitm.ac.in>
+
+	* cs-parser.jay (add_accessor_declaration): Implement action.
+	(remove_accessor_declaration): Implement action.
+	(event_accessors_declaration): Implement
+	(variable_declarators): swap statements for first rule - trivial.
+
+	* class.cs (Event): New class to hold information about event
+	declarations.
+	(TypeContainer::AddEvent): New method to add an event to a type
+	(TypeContainer::events): New member to hold list of events.
+
+	* cs-parser.jay (event_declaration): Implement actions.
+
 2001-08-27  Ravi Pratap  <ravi@che.iitm.ac.in>
 
 	* cs-parser.jay (dim_separators): Implement. Make it a string

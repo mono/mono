@@ -68,6 +68,12 @@ namespace CIR
 		Parameter [] implicit_value_parameters;
 
 		// <summary>
+		//   Used to determine if we are parsing the get/set pair
+		//   of an indexer or a property
+		// </summmary>
+		bool  parsing_indexer;
+
+		// <summary>
 		//   Used to record all types defined
 		// </summary>
 		Tree tree;
@@ -467,8 +473,8 @@ class_member_declaration
 	| field_declaration			// done
 	| method_declaration			// done
 	| property_declaration			// done
-	| event_declaration			// finishme
-	| indexer_declaration			// finishme
+	| event_declaration			// done
+	| indexer_declaration			// done
 	| operator_declaration			// finishme
 	| constructor_declaration		// done
 	| destructor_declaration		// done
@@ -605,8 +611,8 @@ variable_declarators
 	: variable_declarator 
 	  {
 		ArrayList decl = new ArrayList ();
-		$$ = decl;
 		decl.Add ($1);
+		$$ = decl;
 	  }
 	| variable_declarators COMMA variable_declarator
 	  {
@@ -823,16 +829,27 @@ opt_set_accessor_declaration
 	;
 
 get_accessor_declaration
-	: opt_attributes GET accessor_body 
+	: opt_attributes GET
 	  {
-		$$ = $3;
+		// If this is not the case, then current_local_parameters has already
+		// been set in indexer_declaration
+		  if (parsing_indexer == false)
+			  current_local_parameters = new Parameters (implicit_value_parameters, null);
+
+		
+	  }
+          accessor_body
+	  {
+		$$ = $4;
+		current_local_parameters = null;
 	  }
 	;
 
 set_accessor_declaration
 	: opt_attributes SET 
-	  { 
-		current_local_parameters = new Parameters (implicit_value_parameters, null);
+	  {
+		  if (parsing_indexer == false)  
+			  current_local_parameters = new Parameters (implicit_value_parameters, null);
 	  }
 	  accessor_body
 	  {
@@ -1140,44 +1157,113 @@ event_declaration
 	: opt_attributes
 	  opt_modifiers
 	  EVENT type variable_declarators SEMICOLON
-	  { note ("validate that the flags only contain new public protected internal private static virtual sealed override abstract"); }
+	  {
+		foreach (VariableDeclaration var in (ArrayList) $5) {
+
+			// FIXME : Is this right ?
+			Event e = new Event ((string) $4, var.identifier, var.expression_or_array_initializer,
+					     (int) $2, null, null);
+
+			CheckDef (current_container.AddEvent (e), e.Name);
+				       
+		}
+	  }
 	| opt_attributes
 	  opt_modifiers
 	  EVENT type member_name 
-	  OPEN_BRACE event_accesor_declarations CLOSE_BRACE SEMICOLON
-	  { note ("validate that the flags only contain new public protected internal private static virtual sealed override abstract"); }
+	  OPEN_BRACE event_accessor_declarations CLOSE_BRACE SEMICOLON
+	{
+		DictionaryEntry pair = (DictionaryEntry) $7;
+		Block add_block = null;
+		Block rem_block = null;
+
+		if (pair.Key != null)
+			add_block = (Block) pair.Key;
+		if (pair.Value != null)
+			rem_block = (Block) pair.Value;
+		
+		Event e = new Event ((string) $4, (string) $5, null, (int) $2, add_block, rem_block);
+		
+		CheckDef (current_container.AddEvent (e), e.Name);
+	}
 	;
 
-event_accesor_declarations
+event_accessor_declarations
 	: add_accessor_declaration remove_accessor_declaration
+	{
+		$$ = new DictionaryEntry ($1, $2);
+	}
 	| remove_accessor_declaration add_accessor_declaration
+	{
+		$$ = new DictionaryEntry ($2, $2);
+	}	
 	;
 
 add_accessor_declaration
 	: opt_attributes ADD block
+	  {
+		$$ = $3;
+	  }
 	;
 
 remove_accessor_declaration
 	: opt_attributes REMOVE block
+	{
+		$$ = $3;
+	}
 	;
 
 indexer_declaration
 	: opt_attributes opt_modifiers indexer_declarator 
 	  OPEN_BRACE 
-	  { lexer.properties = true; }
-	  accessor_declarations 
-	  { lexer.properties = false; }
+	  {
+		IndexerDeclaration decl = (IndexerDeclaration) $3;
+		  
+		lexer.properties = true;
+		parsing_indexer  = true;
+		
+		current_local_parameters = decl.param_list;
+	  }
+          accessor_declarations 
+	  {
+		  lexer.properties = false;
+		  parsing_indexer  = false;
+	  }
 	  CLOSE_BRACE
 	  { 
 		// The signature is computed from the signature of the indexer.  Look
 	 	// at section 3.6 on the spec
-		note ("verify modifiers are NEW PUBLIC PROTECTED INTERNAL PRIVATE VIRTUAL SEALED OVERRIDE ABSTRACT"); 
+
+		Indexer indexer;
+		IndexerDeclaration decl = (IndexerDeclaration) $3;
+		DictionaryEntry pair = (DictionaryEntry) $6;
+		Block get_block = null;
+		Block set_block = null;
+
+		if (pair.Key != null)
+			get_block = (Block) pair.Key;
+		if (pair.Value != null)
+			set_block = (Block) pair.Value;
+
+		indexer = new Indexer (decl.type, decl.interface_type, (int) $2, decl.param_list,
+				       get_block, set_block);
+
+		// Note that there is no equivalent of CheckDef for this case
+		// We shall handle this in semantic analysis
+		
+		current_local_parameters = null;
 	  }
 	;
 
 indexer_declarator
 	: type THIS OPEN_BRACKET formal_parameter_list CLOSE_BRACKET
+	  {
+		$$ = new IndexerDeclaration ((string) $1, null, (Parameters) $4);
+	  }
 	| type interface_type DOT THIS OPEN_BRACKET formal_parameter_list CLOSE_BRACKET
+	  {
+		$$ = new IndexerDeclaration ((string) $1, (string) $2, (Parameters) $6);
+	  }
 	;
 
 enum_declaration
@@ -2654,6 +2740,24 @@ public class VariableDeclaration {
 		this.expression_or_array_initializer = eoai;
 	}
 }
+
+// <summary>
+//   A class used to hold info about an indexer declarator
+// </summary>
+
+public class IndexerDeclaration {
+	public string type;
+	public string interface_type;
+	public Parameters param_list;
+
+	public IndexerDeclaration (string type, string interface_type, Parameters param_list)
+	{
+		this.type = type;
+		this.interface_type = interface_type;
+		this.param_list = param_list;
+	}
+}
+
 
 // <summary>
 //   Given the @class_name name, it creates a fully qualified name
