@@ -533,6 +533,7 @@ System.Web.UI/ControlBuilder.cs
 System.Web.UI/ControlBuilderAttribute.cs
 System.Web.UI/ControlCollection.cs
 System.Web.UI/ControlSkinProc.cs
+System.Web.UI/ControlValuePropertyAttribute.cs
 System.Web.UI/CssStyleCollection.cs
 System.Web.UI/DataBinder.cs
 System.Web.UI/DataBinding.cs
