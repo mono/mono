@@ -1,3 +1,10 @@
+2002-06-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs:
+	(FileDependencies): now is public public.
+	(EnableViewStateMAC): uncommented and made protected. 
+	(GetTypeHashCode): added method.
+	
 2002-05-24  Duncan Mak  <duncan@ximian.com>
 
 	* TemplateControl.cs (SetStringResourcePointer): Fixed typo.

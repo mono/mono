@@ -15,7 +15,7 @@ namespace System.Web.UI.HtmlControls{
 		
 		public HtmlForm(): base("form"){}
 				
-		protected new void RenderAttributes(HtmlTextWriter writer){
+		protected override void RenderAttributes(HtmlTextWriter writer){
 			writer.WriteAttribute("name",RenderedName);
 			Attributes.Remove("name");
 			writer.WriteAttribute("method",Method);
@@ -134,6 +134,9 @@ namespace System.Web.UI.HtmlControls{
 					return attr;
 				}
 				return String.Empty;
+			}
+			set {
+				Attributes ["Name"] = value;
 			}
 		}
 		

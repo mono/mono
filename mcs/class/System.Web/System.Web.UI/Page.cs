@@ -73,17 +73,17 @@ namespace System.Web.UI {
 			set { throw new NotImplementedException (); }
 		}
 
-// 		public override bool EnableViewStateMac {
-// 			get { throw new NotImplementedException (); }
-// 			set { throw new NotImplementedException (); }
-// 		}
+ 		protected bool EnableViewStateMac {
+ 			get { throw new NotImplementedException (); }
+ 			set { throw new NotImplementedException (); }
+ 		}
 
 		public string ErrorPage {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
-		ArrayList FileDependencies {
+		public ArrayList FileDependencies {
 			set { throw new NotImplementedException (); }
 		}
 
@@ -223,6 +223,10 @@ namespace System.Web.UI {
 		{
 		}
 
+		public virtual int GetTypeHashCode ()
+		{
+			return this.GetHashCode ();
+		}
 		#endregion
 	}
 }

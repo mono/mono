@@ -1,3 +1,8 @@
+2002-06-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebControl.cs: added attributes PersistChildrenAttribute and 
+	ParseChildrenAttribute.
+
 2002-05-24  Duncan Mak  <duncan@ximian.com>
 
 	* DataGridItem.cs (SetItemType): Changed function signature to

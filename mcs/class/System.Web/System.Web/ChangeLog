@@ -1,3 +1,7 @@
+2002-06-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpBrowserCapabilities.cs: stubbed out.
+
 2002-05-18  Miguel de Icaza  <miguel@ximian.com>
 
 	* HttpRuntime.cs: Reformat file.

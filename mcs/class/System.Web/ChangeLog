@@ -1,3 +1,8 @@
+2002-06-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Web.Security:
+	* System.Web.SessionState: new directories.
+
 2002-05-17  Duncan Mak  <duncan@ximian.com>
 
 	* System.Web.build: Added new arguments: "/noconfig",
