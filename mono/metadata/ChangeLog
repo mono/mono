@@ -1,3 +1,8 @@
+2001-07-20  Miguel de Icaza  <miguel@ximian.com>
+
+	* metadata.c (mono_metadata_parse_mh): Correct the implementation,
+	as Jan Gray found out, it is incorrect. 
+
 2001-07-18  Miguel de Icaza  <miguel@ximian.com>
 
 	* assembly.c: Implement asssembly loading.  This loads an image
