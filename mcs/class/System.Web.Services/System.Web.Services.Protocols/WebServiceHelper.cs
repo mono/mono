@@ -106,7 +106,8 @@ namespace System.Web.Services.Protocols
 			SoapHeaderCollection headers = new SoapHeaderCollection ();
 			while (! (xmlReader.NodeType == XmlNodeType.Element && xmlReader.LocalName == "Body" && xmlReader.NamespaceURI == WebServiceHelper.SoapEnvelopeNamespace))
 			{
-				if (xmlReader.NodeType == XmlNodeType.Element && xmlReader.LocalName == "Header" && xmlReader.NamespaceURI == WebServiceHelper.SoapEnvelopeNamespace)
+				if (xmlReader.NodeType == XmlNodeType.Element && xmlReader.LocalName == "Header" 
+				    && xmlReader.NamespaceURI == WebServiceHelper.SoapEnvelopeNamespace && !xmlReader.IsEmptyElement)
 				{
 					xmlReader.ReadStartElement ();
 					xmlReader.MoveToContent ();
