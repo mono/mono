@@ -1,3 +1,8 @@
+2003-12-20  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* XmlTextWriter.cs :
+	  Element's namespace should be escaped as usual attribute.
+
 2003-12-18  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* XmlTextWriter.cs : Indentation between xmldecl and doctype.

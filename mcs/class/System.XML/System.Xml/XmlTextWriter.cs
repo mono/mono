@@ -48,6 +48,7 @@ namespace System.Xml
 		bool hasRoot = false;
 		Hashtable newAttributeNamespaces = new Hashtable ();
 		Hashtable userWrittenNamespaces = new Hashtable ();
+		StringBuilder cachedStringBuilder;
 
 		XmlNamespaceManager namespaceManager = new XmlNamespaceManager (new NameTable ());
 		string savingAttributeValue = String.Empty;
@@ -205,9 +206,9 @@ namespace System.Xml
 					if (existingPrefix != prefix)
 					{
 						if (prefix != string.Empty)
-							formatXmlns = String.Format ("xmlns:{0}={1}{2}{1}", prefix, quoteChar, ns);
+							formatXmlns = String.Format ("xmlns:{0}={1}{2}{1}", prefix, quoteChar, EscapeString (ns, false));
 						else
-							formatXmlns = String.Format ("xmlns={0}{1}{0}", quoteChar, ns);
+							formatXmlns = String.Format ("xmlns={0}{1}{0}", quoteChar, EscapeString (ns, false));
 						namespaceManager.AddNamespace (prefix, ns);
 					}
 				} 
@@ -233,7 +234,7 @@ namespace System.Xml
 					if (namespaceManager.LookupNamespace (aprefix) == ans)
 						continue;
 	
-					string formatXmlns = String.Format (" xmlns:{0}={1}{2}{1}", aprefix, quoteChar, ans);
+					string formatXmlns = String.Format (" xmlns:{0}={1}{2}{1}", aprefix, quoteChar, EscapeString (ans, false));
 					w.Write(formatXmlns);
 				}
 			}
@@ -807,9 +808,49 @@ namespace System.Xml
 				savingAttributeValue += text;
 		}
 
-		private string NormalizeAttributeString (string value)
+		private string EscapeString (string source, bool skipQuotations)
 		{
-			return value.Replace ("\r", "&#xD;").Replace ("\n", "&#xA;");
+			string [] replacements = new string [] {
+				"&amp;", "&lt;", "&gt;", "&quot;", "&apos;",
+				"&#xD;", "&#xA;"};
+			int start = 0;
+			int pos = 0;
+			int count = source.Length;
+			for (int i = 0; i < count; i++) {
+				switch (source [i]) {
+				case '&':  pos = 0; break;
+				case '<':  pos = 1; break;
+				case '>':  pos = 2; break;
+				case '\"':
+					if (skipQuotations) continue;
+					if (QuoteChar == '\'') continue;
+					pos = 3; break;
+				case '\'':
+					if (skipQuotations) continue;
+					if (QuoteChar == '\"') continue;
+					pos = 4; break;
+				case '\r':
+					if (skipQuotations) continue;
+					pos = 5; break;
+				case '\n':
+					if (skipQuotations) continue;
+					pos = 6; break;
+				default:
+					continue;
+				}
+				if (cachedStringBuilder == null)
+					cachedStringBuilder = new StringBuilder ();
+				cachedStringBuilder.Append (source.Substring (start, i - start));
+				cachedStringBuilder.Append (replacements [pos]);
+				start = i + 1;
+			}
+			if (start == 0)
+				return source;
+			else if (start < count)
+				cachedStringBuilder.Append (source.Substring (start, count - start));
+			string s = cachedStringBuilder.ToString ();
+			cachedStringBuilder.Length = 0;
+			return s;
 		}
 
 		private void WriteStringInternal (string text, bool entitize)
@@ -821,20 +862,7 @@ namespace System.Xml
 				CheckState ();
 
 				if (entitize)
-				{
-					text = text.Replace ("&", "&amp;");
-					text = text.Replace ("<", "&lt;");
-					text = text.Replace (">", "&gt;");
-					
-					if (openAttribute) 
-					{
-						if (quoteChar == '"')
-							text = text.Replace ("\"", "&quot;");
-						else
-							text = text.Replace ("'", "&apos;");
-						text = NormalizeAttributeString (text);
-					}
-				}
+					text = EscapeString (text, !openAttribute);
 
 				if (!openAttribute)
 				{
