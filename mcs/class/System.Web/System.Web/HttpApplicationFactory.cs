@@ -7,6 +7,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Reflection;
 using System.Web;
 using System.Web.SessionState;
 
@@ -27,6 +28,8 @@ namespace System.Web {
 		static private int	_appMaxFreePublicInstances = 32;
 
 		private HttpApplicationState _state;
+		MethodInfo [] appTypeEventHandlers;
+		static IHttpHandler custApplication;
 
 		static private HttpApplicationFactory s_Factory = new HttpApplicationFactory();
 
@@ -49,12 +52,64 @@ namespace System.Web {
 				// Setup filemonitor for all filedepend also.
 
 				// tmp
+				_state = new HttpApplicationState (); // FIXME: should get it from compiled app file.
 				_appType = Type.GetType("System.Web.HttpApplication");
 			} else {
-				_appType = Type.GetType("System.Web.HttpApplication");
+				_appType = typeof (System.Web.HttpApplication);
+				_state = new HttpApplicationState ();
 			}
 
-			// TODO: Use reflection to find the Session/Application/Custom Module events
+			GetApplicationTypeEvents ();
+		}
+
+		private bool IsEventHandler (MethodInfo m)
+		{
+			//Anything else?
+			ParameterInfo [] pi = m.GetParameters ();
+			if (pi.Length != 2)
+				return false;
+
+			if (pi [0].ParameterType != typeof (object) ||
+			    pi [1].ParameterType != typeof (EventArgs))
+				return false;
+				
+			if (!m.Name.EndsWith ("Application_OnStart") &&
+			    !m.Name.EndsWith ("Application_OnEnd") &&
+			    !m.Name.EndsWith ("Session_OnStart") &&
+			    !m.Name.EndsWith ("Session_OnEnd"))
+				return false;
+
+			return true;
+
+		}
+
+		private void GetApplicationTypeEvents ()
+		{
+			ArrayList evtMethods = new ArrayList ();
+			BindingFlags flags = BindingFlags.Public    |
+					     BindingFlags.NonPublic | 
+					     BindingFlags.DeclaredOnly;
+
+			MethodInfo [] methods = _appType.GetMethods (flags);
+			foreach (MethodInfo m in methods) {
+				if (IsEventHandler (m))
+					evtMethods.Add (m);
+			}
+
+			Type baseType = _appType.BaseType;
+			if (baseType != typeof (HttpApplication)) {
+				flags = BindingFlags.NonPublic |
+				        BindingFlags.Static    | 
+				        BindingFlags.Instance;
+
+				methods = _appType.GetMethods (flags);
+				foreach (MethodInfo m in methods) {
+					if (IsEventHandler (m))
+						evtMethods.Add (m);
+				}
+			}
+
+			appTypeEventHandlers = (MethodInfo []) evtMethods.ToArray (typeof (MethodInfo));
 		}
 
 		[MonoTODO("FireOnAppStart(HttpContext context)")]
@@ -108,7 +163,7 @@ namespace System.Web {
 			}
 		}
 
-		static public IHttpHandler GetInstance(HttpContext context) {
+		internal static IHttpHandler GetInstance(HttpContext context) {
 			if (!s_Factory._appInitialized) {
 				lock (s_Factory) {
 					if (!s_Factory._appInitialized) {
@@ -121,7 +176,7 @@ namespace System.Web {
 			return s_Factory.GetPublicInstance(context);
 		}
 
-		static public void RecycleInstance(HttpApplication app) {
+		internal static void RecycleInstance(HttpApplication app) {
 			if (!s_Factory._appInitialized)
 				throw new InvalidOperationException("Factory not intialized");
 
@@ -149,7 +204,7 @@ namespace System.Web {
 			return (IHttpHandler) app;
 		}
 
-		public void RecyclePublicInstance(HttpApplication app) {
+		internal void RecyclePublicInstance(HttpApplication app) {
 			lock (_appFreePublicList) {
 				if (_appFreePublicInstances < _appMaxFreePublicInstances) {
 					_appFreePublicList.Push(app);
@@ -174,16 +229,21 @@ namespace System.Web {
 			}
 		}
 
-		static public void EndApplication() {
+		internal static void EndApplication() {
 			s_Factory.Dispose();
 		}
 
-		static public void StartSession(HttpSessionState state, object source, EventArgs args) {
+		internal static void StartSession(HttpSessionState state, object source, EventArgs args) {
 			s_Factory.FireOnSessionStart(state, source, args);
 		}
 
 		static void EndSession(HttpSessionState state, object source, EventArgs args) {
 			s_Factory.FireOnSessionEnd(state, source, args);
+		}
+
+		public static void SetCustomApplication (IHttpHandler customApplication)
+		{
+			custApplication = customApplication;
 		}
 	}
 }

@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace System.Web
 {
-	public class HttpAsyncResult : IAsyncResult
+	internal class HttpAsyncResult : IAsyncResult
 	{
 		private object _result;
 		private object _asyncState;
@@ -19,12 +19,12 @@ namespace System.Web
 		private bool _ready;
 		private bool _readySync;
 
-		public HttpAsyncResult(AsyncCallback callback, object state) {
+		internal HttpAsyncResult(AsyncCallback callback, object state) {
 			_callback = callback;
 			_asyncState = state;
 		}
 
-		public void Complete(bool sync, object result, Exception error) {
+		internal void Complete(bool sync, object result, Exception error) {
 			_ready = true;
 			_readySync = sync;
 			_result = result;
@@ -34,7 +34,7 @@ namespace System.Web
 			}
 		}
 
-		public Exception Error {
+		internal Exception Error {
 			get {
 				return null;
 			}

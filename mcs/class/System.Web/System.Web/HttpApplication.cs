@@ -46,6 +46,7 @@ namespace System.Web {
 		static object ResolveRequestCacheId = new Object();
 		static object ReleaseRequestStateId = new Object();
 		static object PreSendRequestContentId = new Object();
+		static object PreSendRequestHeadersId = new Object();
 		static object PreRequestHandlerExecuteId = new Object();
 		static object PostRequestHandlerExecuteId = new Object();
 		static object ErrorId = new Object();
@@ -116,6 +117,16 @@ namespace System.Web {
 		public event EventHandler UpdateRequestCache {
 			add			{ Events.AddHandler(UpdateRequestCacheId, value); }
 			remove	{ Events.RemoveHandler(UpdateRequestCacheId, value); }
+		}
+	
+		public event EventHandler PreSendRequestHeaders
+		{
+			add {
+				Events.AddHandler (PreSendRequestHeadersId, value);
+			}
+			remove {
+				Events.RemoveHandler (PreSendRequestHeadersId, value);
+			}
 		}
 	
 		public void AddOnAcquireRequestStateAsync(BeginEventHandler beg, EndEventHandler end) {
@@ -869,7 +880,7 @@ namespace System.Web {
 			}
 		}
 
-		public EventHandlerList Events {
+		protected EventHandlerList Events {
 			get {
 				if (null == _Events) {
 					_Events = new EventHandlerList();

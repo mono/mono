@@ -1,3 +1,10 @@
+2002-09-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: added some missing methods.
+	* HttpApplicationFactory.cs: get event handlers for the application.
+	* HttpAsyncResult.cs: little fixes.
+	* HttpRequest.cs: make Encoding work even with no worker request.
+
 2002-08-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWorkerRequest.cs: mcs doesn't go crazy. It's just me, that forgot

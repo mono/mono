@@ -317,16 +317,17 @@ namespace System.Web {
 		{
 			get {
 				if (_oContentEncoding == null) {
-					if (!_WorkerRequest.HasEntityBody () || ContentType != String.Empty)
-						return null;
-
-					string charset = GetValueFromHeader (_sContentType, "charset");
-					if (charset == null)
-						return null;
-
-					try {
-						_oContentEncoding = Encoding.GetEncoding (charset);
-					} catch {
+					if (_WorkerRequest != null && 
+					    (!_WorkerRequest.HasEntityBody () || ContentType != String.Empty)) {
+						_oContentEncoding = Encoding.Default;
+					} else  {
+						string charset;
+						charset = GetValueFromHeader (_sContentType, "charset");
+						try {
+							_oContentEncoding = Encoding.GetEncoding (charset);
+						} catch {
+							_oContentEncoding = Encoding.Default;
+						}
 					}
 				}
 
