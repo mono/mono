@@ -9,7 +9,7 @@
 // (C) 2001 Ximian, Inc (http://www.ximian.com)
 //
 //
-#undef BROKEN_RUNTIME
+#define BROKEN_RUNTIME
 
 using System;
 using System.Globalization;
