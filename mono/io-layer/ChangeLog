@@ -1,3 +1,7 @@
+2003-09-15  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* daemon.c: In compare_process(), discard handles already signalled.
+
 2003-09-02  Dick Porter  <dick@ximian.com>
 
 	* io.c: Work around glib brain-dead assumptions about utf8-encoded
@@ -1004,5 +1008,3 @@ Mon Feb 18 15:50:59 CET 2002 Paolo Molaro <lupus@ximian.com>
 	* Initial checkin.
 
 	This is a library emulating the win32 threading and IO API.
-
-
