@@ -219,7 +219,9 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			// Check if the object is marked with the Serializable attribute
 
 			if (!metadata.InstanceType.IsSerializable)
-				throw new SerializationException("Serializable objects must be marked with the Serializable attribute");
+				throw new SerializationException ("Type " + metadata.InstanceType +
+								  " is not marked as Serializable " + 
+								  "and does not implement ISerializable.");
 
 			ISerializable ser = obj as ISerializable;
 
