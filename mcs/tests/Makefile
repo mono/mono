@@ -7,6 +7,13 @@ include ../build/rules.make
 
 DISTFILES = README.tests $(wildcard *.cs)
 
+ifeq (default, $(PROFILE))
+# force this, we don't case if CSC is broken. This also
+# means we can use --options, yay.
+
+MCS = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_MCS)
+endif
+
 # We don't want debugging info :-)
 
 USE_MCS_FLAGS :=
@@ -15,18 +22,18 @@ USE_MCS_FLAGS :=
 # If you add any tests here, please do also add them to README.Tests !
 #
 
-TEST_SOURCES = \
-	test-1   test-2   test-3   test-4   test-5   test-6   test-7   test-8   test-9   test-10 \
-	test-11  test-12  test-13  test-14  test-15  test-16  test-17  test-18  test-19  test-20 \
-	test-21  test-22  test-23  test-24  test-25  test-26  test-27  test-28  test-29  test-30 \
-	test-31  test-32  test-33  test-34  test-35  test-36  test-37  test-38  test-39  test-40 \
-	test-41  test-42  test-43  test-44  test-45  test-46  test-47  test-48  test-49  	 \
-	test-51  test-52  test-53  test-54  test-55  test-56  test-57  	        test-59  test-60 \
-	test-61	 test-62  test-63  test-64  test-65  test-66           test-68  test-69  test-70 \
-	test-71  test-72  test-73  test-74  test-75  test-76  test-77  test-78  test-79  test-80 \
-	test-81  test-82  test-83  test-84  test-85  test-86  test-87  test-88  test-89  test-90 \
-	test-91  test-92  test-93  test-94  test-95  test-96  test-97  test-98  test-99  test-100\
-	test-101 test-102 test-103 test-104          test-106 test-107 test-108 test-109 test-110\
+TEST_SOURCES_all = \
+	test-1   test-2   test-3   test-4   test-5   test-6   test-7   test-8   test-9   test-10  \
+	test-11  test-12  test-13  test-14  test-15  test-16  test-17  test-18  test-19  test-20  \
+	test-21  test-22  test-23  test-24  test-25  test-26  test-27  test-28  test-29  test-30  \
+	test-31  test-32  test-33  test-34  test-35  test-36  test-37  test-38  test-39  test-40  \
+	test-41  test-42  test-43  test-44  test-45  test-46  test-47  test-48  test-49  	  \
+	test-51  test-52  test-53  test-54  test-55  test-56  test-57  	        test-59  test-60  \
+	test-61	 test-62  test-63  test-64  test-65  test-66           test-68  test-69  test-70  \
+	test-71  test-72  test-73  test-74  test-75  test-76  test-77  test-78  test-79  test-80  \
+	test-81  test-82  test-83  test-84  test-85  test-86  test-87  test-88  test-89  test-90  \
+	test-91  test-92  test-93  test-94  test-95  test-96  test-97  test-98  test-99  test-100 \
+	test-101 test-102 test-103 test-104          test-106 test-107 test-108 test-109 test-110 \
 	test-111 test-112 test-113 test-114 test-115 test-116 test-117 test-118 test-119 	  \
 	test-121 test-122 test-123          test-125 test-126 test-127 test-128 test-129 test-130 \
 	test-131                   test-134 test-135 test-136 test-137 test-138 test-139 test-140 \
@@ -48,7 +55,17 @@ TEST_SOURCES = \
 	test-291 test-292 test-293 \
 	cls-test-0 cls-test-1 cls-test-2 cls-test-3 cls-test-5 cls-test-6 cls-test-7 cls-test-10  \
 	cls-test-11 cls-test-14 cls-test-15 cls-test-16 \
-	mtest-1-dll mtest-1-exe
+	mtest-1-dll mtest-1-exe \
+	dll-1 prog-1 \
+	dll-2 prog-2 \
+	conv-lib conv-main \
+	vararg-lib vararg-exe \
+	module-1 module-2 module-3 \
+	ns0 ns
+
+net_2_0_KNOWN_FAILURES = test-55 test-290 test-292
+
+TEST_SOURCES = $(filter-out $($(PROFILE)_KNOWN_FAILURES), $(TEST_SOURCES_all))
 
 GENERIC_SOURCES = \
 	gen-1   gen-2   gen-3   gen-4   gen-5   gen-6   gen-7   gen-8   gen-9   gen-10 \
@@ -114,7 +131,9 @@ test-local:
 
 run-test-local: test-compiler-jit test-unsafe-compiler-jit test-casts test-2
 
-test-everything: run-test-local test-generic test-generic-2 test-generic-3
+ifeq (net_2_0, $(PROFILE))
+run-test-local: test-generic-3 test-generic-4
+endif
 
 clean-local:
 	rm -f *.exe *.netmodule *.out *.pdb casts.cs
@@ -124,18 +143,18 @@ dist-local: dist-default
 
 test-compiler-jit: multi test-compiler-jit-real
 
-TEST_TAG = mcs
+TEST_TAG = $(PROFILE)
 
 test-compiler-jit-real:
-	@rm -f *.exe *.dll $(TEST_TAG).log $(TEST_TAG)-*.log ; \
+	@rm -f *.exe *.dll *.netmodule $(TEST_TAG).log $(TEST_TAG)-*.log ; \
 	logfile="$(TEST_TAG).log" ; \
 	echo 'Running $(TEST_TAG) tests with flags "$(TEST_RUNTIME)" ... ' ; \
 	for i in $(TEST_SOURCES) ; do \
 	    options=`sed -n 's,^// Compiler options:,,p' $$i.cs`; \
 	    testlogfile="$(TEST_TAG)-$$i.log" ; \
 	    echo -n "$$i: "; \
-	    echo "*** $(MONO_PATH) $(INTERNAL_MCS) $$options $$i.cs" > $$testlogfile ; \
-	    if $(INTERNAL_MCS) $$options $$i.cs >> $$testlogfile 2>&1 ; then \
+	    echo "*** $(CSCOMPILE) $$options $$i.cs" > $$testlogfile ; \
+	    if $(CSCOMPILE) $$options $$i.cs >> $$testlogfile 2>&1 ; then \
 	        if test -f $$i.exe; then \
 	            echo "*** $(TEST_RUNTIME) ./$$i.exe" >> $$testlogfile ; \
 	            if $(TEST_RUNTIME) ./$$i.exe >> $$testlogfile 2>&1 ; then \
@@ -160,90 +179,26 @@ test-compiler-jit-real:
 	done ; \
 	if test -z "$$failed"; then :; else echo "Failing tests: $$failed"; exit 1; fi
 
-test-compiler-jit-multi:
-	@rm -f *.exe *.dll $(TEST_TAG).log $(TEST_TAG)-*.log ; \
-	logfile="$(TEST_TAG).log" ; \
-	echo 'Running $(TEST_TAG) tests with flags "$(TEST_RUNTIME)" ... ' ; \
-	for i in $(TEST_SOURCES) ; do \
-	    options=`sed -n 's,^// Compiler options:,,p' $$i-dll.cs`; \
-	    testlogfile="$(TEST_TAG)-$$i-dll.log" ; \
-	    echo -n "$$i: "; \
-	    echo "*** $(MONO_PATH) $(INTERNAL_MCS) $$options /target:library $$i-dll.cs" > $$testlogfile ; \
-	    if $(INTERNAL_MCS) $$options /target:library $$i-dll.cs >> $$testlogfile 2>&1 ; then \
-		: ; \
-	    else \
-		echo "Exit code: $$?" >> $$testlogfile ; \
-		failed="$$failed $$i" ; \
-		echo "FAIL: $$i: compilation" >> $$logfile ; \
-	        echo FAILED COMPILATION ; cat $$testlogfile ; \
-	    fi ; \
-	    if test -f $$i-dll.dll; then \
-		options=`sed -n 's,^// Compiler options:,,p' $$i-exe.cs`; \
-		testlogfile="$(TEST_TAG)-$$i-exe.log" ; \
-		echo "*** $(MONO_PATH) $(INTERNAL_MCS) $$options /r:$$i-dll.dll $$i-exe.cs" > $$testlogfile ; \
-		if $(INTERNAL_MCS) $$options /r:$$i-dll.dll $$i-exe.cs >> $$testlogfile 2>&1 ; then \
-		    : ; \
-		else \
-		    echo "Exit code: $$?" >> $$testlogfile ; \
-		    failed="$$failed $$i" ; \
-		    echo "FAIL: $$i: compilation" >> $$logfile ; \
-		    echo FAILED COMPILATION ; cat $$testlogfile ; \
-		fi ; \
-	    fi ; \
-	    if test -f $$i-exe.exe; then \
-	        echo "*** $(TEST_RUNTIME) ./$$i-exe.exe" >> $$testlogfile ; \
-	        if $(TEST_RUNTIME) ./$$i-exe.exe >> $$testlogfile 2>&1 ; then \
-		    echo "PASS: $$i" >> $$logfile ; \
-	            echo OK ; rm -f $$testlogfile ; \
-	        else \
-		    echo "Exit code: $$?" >> $$testlogfile ; \
-		    failed="$$failed $$i" ; \
-		    echo "FAIL: $$i" >> $$logfile ; \
-	            echo FAILED ; cat $$testlogfile ; \
-		fi ; \
-	    fi ; \
-	done ; \
-	if test -z "$$failed"; then :; else echo "Failing tests: $$failed"; exit 1; fi
-
-GENERIC_KNOWN_FAILURES = test-55 test-289
-
-# 
-# Tests the generics compiler, and excludes GENERIC_KNOWN_FAILURES from the build
-#
-test-generic: test-generic-1 test-generic-2 test-generic-3 test-generic-4
-
-test-generic-1:
-	sources=`echo $(TEST_SOURCES) | tr ' ' '\n' | grep -v $(GENERIC_KNOWN_FAILURES)| tr '\n' ' ' `;  \
-	make MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" TEST_RUNTIME="MONO_PATH=$$MONO_PATH $(RUNTIME) --debug" INTERNAL_MCS="mono ../gmcs/gmcs.exe" test-compiler-jit-real TEST_SOURCES="$$sources" TEST_TAG=gmcs
-
-test-generic-2:
-	make MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" TEST_RUNTIME="MONO_PATH=$$MONO_PATH $(RUNTIME) --debug" INTERNAL_MCS="mono ../gmcs/gmcs.exe" test-compiler-jit-real TEST_SOURCES="$(TEST2_SOURCES)" TEST_TAG=gmcs-v2
-
-test-generic-3:
-	make MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" TEST_RUNTIME="MONO_PATH=$$MONO_PATH $(RUNTIME) --debug" INTERNAL_MCS="mono ../gmcs/gmcs.exe" test-compiler-jit-real TEST_SOURCES="$(GENERIC_SOURCES)" TEST_TAG=gmcs-v3
-
-test-generic-4:
-	make MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" TEST_RUNTIME="MONO_PATH=$$MONO_PATH $(RUNTIME) --debug" INTERNAL_MCS="mono ../gmcs/gmcs.exe" test-compiler-jit-multi TEST_SOURCES="$(GENERIC_MULTI_SOURCES)" TEST_TAG=gmcs-v4
-
 #
 # Tests the 2.0 features
 #
 test-2:
-	make INTERNAL_MCS="mono ../mcs/mcs.exe /langversion:default" test-compiler-jit-real TEST_SOURCES="$(TEST2_SOURCES)" TEST_TAG=mcs-v2
+	make CSCOMPILE="$(CSCOMPILE) /langversion:default" test-compiler-jit-real TEST_SOURCES="$(TEST2_SOURCES)" TEST_TAG=$(PROFILE)-v2
 
 test-unsafe-compiler-jit:
-	make INTERNAL_MCS="$(INTERNAL_MCS) /unsafe" test-compiler-jit-real TEST_SOURCES="$(UNSAFE_SOURCES)" TEST_TAG=mcs-unsafe
+	make CSCOMPILE="$(CSCOMPILE) /unsafe" test-compiler-jit-real TEST_SOURCES="$(UNSAFE_SOURCES)" TEST_TAG=$(PROFILE)-unsafe
+
+test-generic-3:
+	make test-compiler-jit-real TEST_SOURCES="$(GENERIC_SOURCES)" TEST_TAG=$(PROFILE)-v3
+
+test-generic-4:
+	make test-compiler-jit-real TEST_SOURCES="$(GENERIC_MULTI_SOURCES:=-dll) $(GENERIC_MULTI_SOURCES:=-exe)" TEST_TAG=$(PROFILE)-v4
 
 #
 # Tests that require separate compilation
 #
-multi: multi-1 multi-2 multi-3 multi-5 multi-6 ilasm
+multi: multi-2 ilasm
 	echo Multi-assembly test passes
-
-multi-1:
-	$(INTERNAL_MCS) -target:library dll-1.cs
-	$(INTERNAL_MCS) -r:dll-1.dll prog-1.cs /out:prog-1.exe
-	$(TEST_RUNTIME) prog-1.exe
 
 #
 # Tests that the order for internal/public in external 
@@ -252,37 +207,12 @@ multi-1:
 # in a library. (eg, that it is not confused by two Main methods)
 #
 multi-2:
-	$(INTERNAL_MCS) -target:library pi.cs
-	$(INTERNAL_MCS) -target:library pp.cs
-	$(INTERNAL_MCS) pu.cs -r:pi.dll -r:pp.dll
-	$(INTERNAL_MCS) pu.cs -r:pp.dll -r:pi.dll
-
-multi-3:
-	$(INTERNAL_MCS) -target:library conv-lib.cs
-	$(INTERNAL_MCS) -r:conv-lib.dll conv-main.cs
-	$(TEST_RUNTIME) conv-main.exe
-
-multi-4:
-	$(INTERNAL_MCS) -target:module module-1.cs
-	$(INTERNAL_MCS) -target:module module-2.cs
-	$(INTERNAL_MCS) /addmodule:module-1.netmodule /addmodule:module-2.netmodule module-3.cs
-	$(TEST_RUNTIME) module-3.exe
-
-multi-5:
-	$(INTERNAL_MCS) -target:library dll-2.cs
-	$(INTERNAL_MCS) -r:dll-2.dll prog-2.cs /out:prog-2.exe
-	$(TEST_RUNTIME) prog-2.exe
-
-multi-6:
-	$(INTERNAL_MCS) -target:library ns0.cs
-	$(INTERNAL_MCS) ns.cs -r:ns0.dll
-
-multi-7:
-	$(INTERNAL_MCS) -target:library vararg-lib.cs
-	$(INTERNAL_MCS) vararg-exe.cs -r:vararg-lib.dll
-	$(TEST_RUNTIME) vararg-exe.exe
+	$(CSCOMPILE) -target:library pi.cs
+	$(CSCOMPILE) -target:library pp.cs
+	$(CSCOMPILE) pu.cs -r:pi.dll -r:pp.dll
+	$(CSCOMPILE) pu.cs -r:pp.dll -r:pi.dll
 
 ilasm:
 	$(INTERNAL_ILASM) /dll property-il.il
-	$(INTERNAL_MCS) /r:property-il.dll property-main.cs /out:property-main.exe
+	$(CSCOMPILE) /r:property-il.dll property-main.cs /out:property-main.exe
 	$(TEST_RUNTIME) property-main.exe

@@ -1,3 +1,27 @@
+2004-09-14  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (MCS) [PROFILE=default]: Force testing of 'mcs'.
+	(TEST_SOURCES): Allow a profile to eliminate some tests.
+	(net_2_0_KNOWN_FAILURES): Rename from GENERICS_KNOWN_FAILURES.
+	(TEST_SOURCES_all): Rename from TESTS_SOURCES.
+	Move several multi-file tests from ...
+	(multi-1, multi-3, multi-4, multi-5, multi-6, multi-7): ... here.
+	(multl-2, ilasm): Use $(CSCOMPILE), instead of $(INTERNAL_MCS).
+	(multi): Update.
+	(test-everything): Remove.
+	(run-test-local) [PROFILE=net_2_0]: Run additional 'generics'
+	tests.
+	(test-compiler-jit-real): Remove *.netmodule too.
+	(test-compiler-jit-multi): Remove.
+	(test-generics-1, test-generics-2): Remove.
+	(test-generics-3, test-generics-4): Update.
+	* conv-lib.cs, conv-main.cs, dll-1.cs, dll-2.cs, prog-1.cs,
+	  prog-2.cs, module-1.cs, module2.cs, module-3.cs, ns.cs, ns0.cs,
+	  gen-13-dll.cs, gen-13-exe.cs, gen-17-dll.cs, gen-17-exe.cs,
+	  gen-31-dll.cs, gen-31-exe.cs, gen-47-dll.cs, gen-47-exe.cs,
+	  vararg-exe.cs, vararg-lib.cs:
+	Use "Compiler options:" for multi-file testing.
+	
 2004-09-13  Marek Safar <marek.safar@seznam.cz>
 
 	* test-293.cs: New test for bug #65757.

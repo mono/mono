@@ -1,3 +1,5 @@
+// Compiler options: -t:library
+
 public class Stack
 {
 	public Stack ()

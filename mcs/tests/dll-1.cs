@@ -1,3 +1,5 @@
+// Compiler options: -t:library
+
 namespace Qt
 {
 	public class QtSupport

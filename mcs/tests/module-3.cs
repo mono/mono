@@ -1,3 +1,4 @@
+// Compiler options: -addmodule:module-1.netmodule -addmodule:module-2.netmodule
 
 using System;
 

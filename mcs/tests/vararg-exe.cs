@@ -1,3 +1,5 @@
+// Compiler options: -r:vararg-lib.dll
+
 using System;
 
 class TestVararg

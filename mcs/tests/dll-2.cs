@@ -1,3 +1,5 @@
+// Compiler options: -t:library
+
 using System;
 using System.Runtime.InteropServices;
 

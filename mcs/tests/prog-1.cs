@@ -1,3 +1,5 @@
+// Compiler options: -r:dll-1.dll
+
 namespace QtSamples
 {
 	using Qt;

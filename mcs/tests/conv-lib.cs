@@ -1,3 +1,5 @@
+// Compiler options: -t:library
+
 public class A
 {
 	public static bool operator==(A a1, A a2)

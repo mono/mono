@@ -1,3 +1,5 @@
+// Compiler options: -r:dll-2.dll
+
 using System;
 using System.Runtime.InteropServices;
 

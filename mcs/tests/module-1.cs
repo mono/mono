@@ -1,3 +1,4 @@
+// Compiler options: -t:module
 
 using System;
 

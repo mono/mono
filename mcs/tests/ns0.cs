@@ -1,3 +1,5 @@
+// Compiler options: -t:library
+
 namespace Foo {
 namespace Bar {
         public class Baz {

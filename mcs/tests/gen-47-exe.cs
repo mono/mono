@@ -1,3 +1,5 @@
+// Compiler options: -r:gen-47-dll.dll
+
 // Important test: verify our namespace lookup rules
 //
 // There's a generic and a non-generic `List' type in two

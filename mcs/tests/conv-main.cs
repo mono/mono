@@ -1,3 +1,5 @@
+// Compiler options: -r:conv-lib.dll
+
 public class MainClass
 {
 	public static int Main ()
