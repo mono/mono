@@ -92,7 +92,7 @@ wc:
 	wc -l $(all_sources)
 
 ctest: 
-	-rm mcs2.exe mcs3.exe
+	rm -f mcs2.exe mcs3.exe
 	make btest USE_MCS_FLAGS= 
 
 # we need this because bash tries to use its own crappy timer
