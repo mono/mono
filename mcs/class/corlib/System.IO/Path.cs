@@ -209,8 +209,14 @@ namespace System.IO
 		
 		public static string GetPathRoot (string path)
 		{
-			if (path == null) return null;
-			if (!IsPathRooted (path)) return String.Empty;
+			if (path == null)
+				return null;
+
+			if (path == String.Empty)
+				throw new ArgumentException ("This specified path is invalid.");
+
+			if (!IsPathRooted (path))
+				return String.Empty;
 			
 			if (DirectorySeparatorChar == '/') {
 				// UNIX

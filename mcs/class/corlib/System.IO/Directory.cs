@@ -204,11 +204,13 @@ namespace System.IO
 		
 		public static string [] GetFiles (string path)
 		{
+                        Console.WriteLine ("Entering GetFiles (string path = {0})", path);
 			return GetFiles (path, "*");
 		}
 		
 		public static string [] GetFiles (string path, string pattern)
 		{
+                        Console.WriteLine ("Entering GetFiles (string path = {0}, string pattern = {1})", path, pattern);
 			return GetFileSystemEntries (path, pattern, FileAttributes.Directory, 0);
 		}
 
@@ -340,16 +342,41 @@ namespace System.IO
 				throw new ArgumentException ("Path contains invalid chars");
 		}
 
+		//
+		// Returns true if it is the empty string, or contains
+		// only whitespace characters
+		//
+		private static bool IsEmptyString (string s)
+		{
+			if (s == "")
+				return true;
+			
+			int length = s.Length;
+
+			for (int i = 0; i < length; i++)
+				if (!Char.IsWhiteSpace (s, i))
+					return false;
+
+			return true;
+		}
+
 		private static string [] GetFileSystemEntries (string path, string pattern, FileAttributes mask, FileAttributes attrs)
 		{
 			MonoIOStat stat;
 			IntPtr find;
 
+                        Console.WriteLine ("Reached GetFileSystemEntries, {0},  {1},  {2},  {3}", path, pattern, mask, attrs);
+
 			if (path == null || pattern == null)
 				throw new ArgumentNullException ();
-                        
-			if (path == "")
-				throw new ArgumentException ("The Path do not have a valid format");
+
+			if (pattern == String.Empty) {
+                                Console.WriteLine ("Pattern is empty.  Woo.");
+				return new string [] {};
+                        }
+			
+			if (IsEmptyString (path))
+				throw new ArgumentException ("The Path does not have a valid format");
 
 			string wild = Path.Combine (path, pattern);
 			string wildpath = Path.GetDirectoryName (wild);

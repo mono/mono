@@ -10,8 +10,11 @@
 
 	* Directory.cs: Reformat the whole file to use Unix line endings
 	for consistency.
-
-2004-05-22  Duncan Mak  <duncan@ximian.com>	
+	(GetFileSystemEntries): If pattern is String.Empty, always
+	return an empty string array. Throw the ArgumentException if path
+	is an empty string (determined using the new helper method)
+	(IsEmptyString): Returns true on an empty string or a string with
+	only whitespace characters.
 
 	* Path.cs (GetPathRoot): Throw an ArgumentException if the path
 	argument is String.Empty.
