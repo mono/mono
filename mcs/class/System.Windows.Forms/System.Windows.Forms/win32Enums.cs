@@ -2730,28 +2730,32 @@ namespace System.Windows.Forms{
 		CW_USEDEFAULT = -2147483648
 	}
 
-	internal enum DrawFrameControl : uint {
+	internal enum DrawFrameControlTypes : uint {
 		DFC_CAPTION             =1,      
 		DFC_MENU                =2,      
 		DFC_SCROLL              =3,      
-		DFC_BUTTON              =4,
+		DFC_BUTTON              =4
+	}
+
+	internal enum DrawFrameControlStates : uint {
 		DFCS_BUTTONCHECK        =0x0000, 
 		DFCS_BUTTONRADIOIMAGE   =0x0001, 
 		DFCS_BUTTONRADIOMASK    =0x0002,	
 		DFCS_BUTTONRADIO        =0x0004, 
 		DFCS_BUTTON3STATE       =0x0008, 
-		DFCS_BUTTONPUSH         =0x0010, 
-	}
-/*
+		DFCS_BUTTONPUSH         =0x0010,
+
 		DFCS_CAPTIONCLOSE       =0x0000, 
 		DFCS_CAPTIONMIN         =0x0001, 
 		DFCS_CAPTIONMAX         =0x0002, 
 		DFCS_CAPTIONRESTORE     =0x0003, 
 		DFCS_CAPTIONHELP        =0x0004,	
+
 		DFCS_MENUARROW          =0x0000, 
 		DFCS_MENUCHECK          =0x0001, 
 		DFCS_MENUBULLET         =0x0002, 
 		DFCS_MENUARROWRIGHT     =0x0004, 
+
 		DFCS_SCROLLUP            =0x0000,
 		DFCS_SCROLLDOWN          =0x0001,
 		DFCS_SCROLLLEFT          =0x0002,
@@ -2759,6 +2763,7 @@ namespace System.Windows.Forms{
 		DFCS_SCROLLCOMBOBOX      =0x0005,
 		DFCS_SCROLLSIZEGRIP      =0x0008,
 		DFCS_SCROLLSIZEGRIPRIGHT =0x0010,
+
 		DFCS_INACTIVE           =0x0100, 
 		DFCS_PUSHED             =0x0200, 
 		DFCS_CHECKED            =0x0400, 
@@ -2768,7 +2773,7 @@ namespace System.Windows.Forms{
 		DFCS_FLAT               =0x4000, 
 		DFCS_MONO               =0x8000 
 	}
-*/	
+
 	internal enum KeyStatusFlags : int {
 		MK_LBUTTON	    = 0x0001,
 		MK_RBUTTON	    = 0x0002,
