@@ -827,12 +827,15 @@ namespace Mono.CSharp {
 
 			ias.ApplyAttributeBuilder (this, cb);
 
+			// Because default target is null (we save some space). We need to transform it here
+			// for distinction between "default" and "doesn't exist"
+			string target = Target == null ? "default" : Target;
 			string emitted = emitted_attr [Type] as string;
-			if (Target != null && emitted == Target && !usage_attr.AllowMultiple) {
+			if (emitted == target && !usage_attr.AllowMultiple) {
 				Report.Error (579, Location, "Duplicate '" + Name + "' attribute");
 			}
 
-			emitted_attr [Type] = Target;
+			emitted_attr [Type] = target;
 
 			// Here we are testing attribute arguments for array usage (error 3016)
 			if (ias.IsClsCompliaceRequired (ec.DeclSpace)) {
