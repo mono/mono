@@ -73,6 +73,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 							if(_xmlReader.Depth == 0 || _xmlReader.Name == "SOAP-ENV:Envelope") return;
 							break;
 						case XmlNodeType.Text:
+							if (entry == null) throw new SerializationException ("Invalid SOAP message");
 							entry.elementValue = _xmlReader.Value;
 							break;
 						case XmlNodeType.Attribute:

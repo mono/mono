@@ -72,6 +72,9 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			}
 			Type objType = Type.GetType(_serializationInfo.FullTypeName);
 			
+			// FIXME: we should store the type name returned by FullTypeName, no need to
+			// get the type again!! (Lluis)
+			
 			//if objType == null
 			// try to load the proper assembly
 			if(objType == null)	objType = FormatterServices.GetTypeFromAssembly(currentType.Assembly, _serializationInfo.FullTypeName);
