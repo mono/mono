@@ -139,25 +139,22 @@ namespace Mono.CSharp {
 			//
 			TypeContainer root = Tree.Types;
 
-			ArrayList list = root.InterfaceList;
-			if (list != null){
-				foreach (Interface i in list) 
+			ArrayList ifaces = root.Interfaces;
+			if (ifaces != null){
+				foreach (Interface i in ifaces) 
 					i.DefineType ();
 			}
 
-			list = root.TypeList;
-			if (list != null)
-				foreach (TypeContainer tc in list) 
-					tc.DefineType ();
+			
+			foreach (TypeContainer tc in root.Types) 
+				tc.DefineType ();
 
-			list = root.DelegateList;
-			if (list != null)
-				foreach (Delegate d in list) 
+			if (root.Delegates != null)
+				foreach (Delegate d in root.Delegates) 
 					d.DefineType ();
 
-			list = root.EnumList;
-			if (list != null)
-				foreach (Enum e in list)
+			if (root.Enums != null)
+				foreach (Enum e in root.Enums)
 					e.DefineType ();
 			
 		}
@@ -386,6 +383,8 @@ namespace Mono.CSharp {
 		{
 			TypeContainer root = Tree.Types;
 			
+			ArrayList ifaces = root.Interfaces;
+
 			if (root.Enums != null)
 				foreach (Enum en in root.Enums)
 					en.CloseType ();
@@ -675,7 +674,7 @@ namespace Mono.CSharp {
 				} 
 			}
 
-			ArrayList delegates = root.DelegateList;
+			ArrayList delegates = root.Delegates;
 			if (delegates != null){
 				foreach (Delegate d in delegates)
 					if ((d.ModFlags & Modifiers.NEW) == 0)
@@ -684,7 +683,7 @@ namespace Mono.CSharp {
 						Report1530 (d.Location);
 			}
 
-			ArrayList enums = root.EnumList;
+			ArrayList enums = root.Enums;
 			if (enums != null){
 				foreach (Enum en in enums)
 					if ((en.ModFlags & Modifiers.NEW) == 0)
@@ -724,14 +723,14 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ArrayList delegates = root.DelegateList;
+			ArrayList delegates = root.Delegates;
 			if (delegates != null){
 				foreach (Delegate d in delegates)
 					if ((d.ModFlags & Modifiers.NEW) == 0)
 						d.Define (root);
 			}
 
-			ArrayList enums = root.EnumList;
+			ArrayList enums = root.Enums;
 			if (enums != null){
 				foreach (Enum en in enums)
 					if ((en.ModFlags & Modifiers.NEW) == 0)
