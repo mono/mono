@@ -55,7 +55,7 @@ namespace System.Web.Services.Protocols {
 			object[] parameters = new object[methodInfo.MethodInfo.Parameters.Length];
 			ParameterInfo[] inParams = methodInfo.MethodInfo.InParameters;
 			for (int n=0; n<inParams.Length; n++)
-				parameters [inParams[n].Position - 1] = requestMessage.InParameters [n];
+				parameters [inParams[n].Position] = requestMessage.InParameters [n];
 
 			// Invoke the method
 
