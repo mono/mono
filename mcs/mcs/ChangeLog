@@ -1,5 +1,8 @@
 2002-11-06  Miguel de Icaza  <miguel@ximian.com>
 
+	But a bogus return here to keep the semantics of the old code
+	until the Mono runtime is fixed.
+	
 	* pending.cs (GetMissingInterfaces): New method used to remove all
 	the interfaces that are already implemented by our parent
 	classes from the list of pending methods. 

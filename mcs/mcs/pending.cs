@@ -196,6 +196,11 @@ namespace Mono.CSharp {
 			Type [] implementing_ifaces = type_builder.GetInterfaces ();
 			int count = implementing_ifaces.Length;
 
+			//
+			// Remove the return below to expose the bug, for now, we need the runtime to be fixed.
+			//
+			return implementing_ifaces;
+
 			if (count == 0)
 				return new Type [0];
 			
