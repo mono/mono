@@ -118,7 +118,10 @@ namespace Microsoft.JScript {
 
 		public static string ToString (object value, bool explicitOK)
 		{
-			throw new NotImplementedException ();
+			if (value is String)
+				return (string) value;
+			else
+				throw new NotImplementedException ();
 		}
 
 
