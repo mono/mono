@@ -27,7 +27,6 @@ assemblies_DATA =	\
 	Novell.Directory.Ldap.dll					\
 	Mono.GetOptions.dll					\
 	Mono.Http.dll						\
-	Mono.PEToolkit.dll					\
 	Mono.Posix.dll						\
 	Mono.Security.dll					\
 	Mono.Security.Win32.dll					\
