@@ -354,7 +354,7 @@ namespace System.IO {
 			if( position + count > capacity ) {
 				if( expandable ) {
 					// expand the buffer
-					SetLength( position + count );                       
+					SetLength( (position + count) * 2 );
 				} else {
 					// only write as many bytes as will fit
 					count = (int)((long)capacity - position);
@@ -364,7 +364,7 @@ namespace System.IO {
 			// internal buffer may not be allocated all the way up to capacity
 			// count will already be limited to capacity above if non-expandable
 			if( position + count >= internalBuffer.Length )
-				SetLength( position + count );
+				SetLength ((position + count) * 2);
 
 			Buffer.BlockCopyInternal (buffer, offset, internalBuffer, (int)position, count);
                         position += count;
@@ -378,7 +378,7 @@ namespace System.IO {
                                 throw new NotSupportedException();
 
 			if( position >= internalBuffer.Length )
-				SetLength ( position + 1 );
+				SetLength ((position + 1) * 2);
 
 			internalBuffer[ position++ ] = value;
                 }

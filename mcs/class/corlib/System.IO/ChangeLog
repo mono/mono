@@ -1,3 +1,9 @@
+
+Tue Feb 25 11:55:35 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* MemoryStream.cs: make it behave sanely when the stream is
+	incrementally expanded.
+
 2003-02-21  Dick Porter  <dick@ximian.com>
 
 	* FileStream.cs: Use locks around buffer manipulations.  Fixes bug
