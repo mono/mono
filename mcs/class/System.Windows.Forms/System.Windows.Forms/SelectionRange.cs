@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.SelectionRange
+// System.Windows.Forms.SelectionRange.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.NodeLabelEditEventArgs
+//// System.Windows.Forms.NodeLabelEditEventArgs.cs
 ////
 //// Author:
 ////   stubbed out by Paul Osman (paul.osman@sympatico.ca)

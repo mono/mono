@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.PageSetupDialog
+//// System.Windows.Forms.PageSetupDialog.cs
 ////
 //// Author:
 ////   stubbed out by Paul Osman (paul.osman@sympatico.ca)

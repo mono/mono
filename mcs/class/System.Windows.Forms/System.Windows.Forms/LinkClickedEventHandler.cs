@@ -1,5 +1,5 @@
 //
-// System.LinkClickEventHandler.cs
+// System.LinkClickedEventHandler.cs
 //
 // Author:
 //   Dennis hayes (dennish@raytek.com)
@@ -9,8 +9,8 @@
 
 namespace System.Windows.Forms  {
 	[Serializable]
-	public delegate void LinkClickEventHandler (
+	public delegate void LinkClickedEventHandler (
 	object sender,
-	LinkClickEventArgs e
+	LinkClickedEventArgs e
 	);
 }

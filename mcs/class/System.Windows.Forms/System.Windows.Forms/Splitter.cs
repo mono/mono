@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.Splitter
+// System.Windows.Forms.Splitter.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

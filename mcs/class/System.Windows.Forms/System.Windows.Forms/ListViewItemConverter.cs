@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.ListViewItemConverter
+// System.Windows.Forms.ListViewItemConverter.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

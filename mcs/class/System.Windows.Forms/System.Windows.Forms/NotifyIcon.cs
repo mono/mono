@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.NotifyIcon
+//// System.Windows.Forms.NotifyIcon.cs
 ////
 //// Author:
 ////   stubbed out by Paul Osman (paul.osman@sympatico.ca)

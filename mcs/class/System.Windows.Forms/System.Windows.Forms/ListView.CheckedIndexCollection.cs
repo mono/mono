@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.ListView.CheckedIndexCollection
+// System.Windows.Forms.ListView.CheckedIndexCollection.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.OpenFileDialog
+//// System.Windows.Forms.OpenFileDialog.cs
 ////
 //// Author:
 ////   stubbed out by Paul Osman (paul.osman@sympatico.ca)

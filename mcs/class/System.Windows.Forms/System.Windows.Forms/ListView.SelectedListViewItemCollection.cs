@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.ListView.SelectedListViewItemCollection
+// System.Windows.Forms.ListView.SelectedListViewItemCollection.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

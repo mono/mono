@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.ListBox.ObjectCollection
+// System.Windows.Forms.ListBox.ObjectCollection.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

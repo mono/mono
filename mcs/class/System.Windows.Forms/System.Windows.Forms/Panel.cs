@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.Panel
+//// System.Windows.Forms.Panel.cs
 ////
 //// Author:
 ////   stubbed out by Paul Osman (paul.osman@sympatico.ca)

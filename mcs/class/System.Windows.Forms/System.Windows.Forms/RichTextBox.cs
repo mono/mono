@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.RichTextBox
+// System.Windows.Forms.RichTextBox.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

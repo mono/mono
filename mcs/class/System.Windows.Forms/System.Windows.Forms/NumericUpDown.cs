@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.NumericUpDown
+//// System.Windows.Forms.NumericUpDown.cs
 ////
 //// Author:
 ////   stubbed out by Paul Osman (paul.osman@sympatico.ca)

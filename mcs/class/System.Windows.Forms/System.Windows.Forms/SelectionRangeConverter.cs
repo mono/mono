@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.SelectionRangeConverter
+// System.Windows.Forms.SelectionRangeConverter.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.LabelEditEventArgs
+// System.Windows.Forms.LabelEditEventArgs.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

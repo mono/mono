@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.LinkLabel
+// System.Windows.Forms.LinkLabel.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

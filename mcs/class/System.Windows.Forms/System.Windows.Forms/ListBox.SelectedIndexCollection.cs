@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.ListBox.SelectedIndexCollection
+// System.Windows.Forms.ListBox.SelectedIndexCollection.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

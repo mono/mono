@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.OpacityConverter
+//// System.Windows.Forms.OpacityConverter.cs
 ////
 //// Author:
 ////   stubbed out by Paul Osman (paul.osman@sympatico.ca)

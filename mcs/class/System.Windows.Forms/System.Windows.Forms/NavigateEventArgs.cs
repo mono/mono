@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.NavigateEventArgs
+//// System.Windows.Forms.NavigateEventArgs.cs
 ////
 //// Author:
 ////   stubbed out by Paul Osman (paul.osman@sympatico.ca)

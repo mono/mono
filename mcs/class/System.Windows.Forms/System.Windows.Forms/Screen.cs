@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.Screen
+// System.Windows.Forms.Screen.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.LinkArea.LinkAreaConverter
+// System.Windows.Forms.LinkArea.LinkAreaConverter.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

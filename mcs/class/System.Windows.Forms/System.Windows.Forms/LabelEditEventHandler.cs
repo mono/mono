@@ -1,5 +1,5 @@
 //
-// System.LabelEditEventHandler.cs
+// System.Windows.Forms.LabelEditEventHandler.cs
 //
 // Author:
 //   Dennis hayes (dennish@raytek.com)

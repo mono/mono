@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.QueryContinueDragEventArgs
+// System.Windows.Forms.QueryContinueDragEventArgs.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

@@ -1,5 +1,5 @@
 ////
-//// System.Windows.Forms.OSFeature
+//// System.Windows.Forms.OSFeature.cs
 ////
 //// Author:
 ////   stubbed out by Paul Osman (paul.osman@sympatico.ca)

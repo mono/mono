@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.ScrollableControl.DockPaddingEdges
+// System.Windows.Forms.ScrollableControl.DockPaddingEdges.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

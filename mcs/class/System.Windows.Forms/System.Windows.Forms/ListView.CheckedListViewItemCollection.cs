@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.ListView.CheckedListViewItemCollection
+// System.Windows.Forms.ListView.CheckedListViewItemCollection.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

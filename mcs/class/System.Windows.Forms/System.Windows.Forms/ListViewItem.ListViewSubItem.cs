@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.ListViewItem.ListViewSubItem
+// System.Windows.Forms.ListViewItem.ListViewSubItem.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

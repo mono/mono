@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.ListBox.SelectedObjectCollection
+// System.Windows.Forms.ListBox.SelectedObjectCollection.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.RadioButton
+// System.Windows.Forms.RadioButton.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

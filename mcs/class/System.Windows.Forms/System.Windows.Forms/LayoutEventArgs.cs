@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.LayoutEventArgs
+// System.Windows.Forms.LayoutEventArgs.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)

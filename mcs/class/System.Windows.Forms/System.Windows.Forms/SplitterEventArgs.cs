@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.SplitterEventArgs
+// System.Windows.Forms.SplitterEventArgs.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
@@ -14,7 +14,8 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //[ComVisible(true)] public class SplitterEventArgs : EventArgs {
+        //[ComVisible(true)]
+		//public class SplitterEventArgs : EventArgs {
 
 		//
 		//  --- Constructor

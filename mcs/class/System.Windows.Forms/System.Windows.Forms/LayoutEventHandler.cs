@@ -1,5 +1,5 @@
 //
-// System.LayoutEventHandler.cs
+// System.Windows.Forms.LayoutEventHandler.cs
 //
 // Author:
 //   Dennis hayes (dennish@raytek.com)

@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.ListBindingConverter
+// System.Windows.Forms.ListBindingConverter.cs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
