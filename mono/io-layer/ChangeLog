@@ -1,3 +1,9 @@
+2004-12-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* processes.c: unquote the cmd path, allow for ' or " when quoting and
+	pass the quoted program name to the daemon, otherwise the call to
+	g_shell_unquote in the daemon will break things up.
+
 2004-10-14  Dick Porter  <dick@ximian.com>
 
 	* sockets.c (_wapi_accept): Revert the previous change.  We now
