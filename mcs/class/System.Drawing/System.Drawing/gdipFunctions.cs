@@ -872,7 +872,7 @@ namespace System.Drawing {
 		//This following functions are for *IX only as currently there is
 		//nothing known to me as to how to marshal guid's. (Sanjay)
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipGetImageRawFormat ( IntPtr image, out byte [] format );
+		internal static extern Status GdipGetImageRawFormat ( IntPtr image, [In, Out] byte [] format );
 
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipImageGetFrameCount (IntPtr image, byte [] guidDimension, out int count );

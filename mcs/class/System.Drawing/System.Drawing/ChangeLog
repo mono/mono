@@ -1,3 +1,8 @@
+2004-04-26  Sanjay Gupta  <gsanjay@novell.com>
+
+	* Image.cs: Corrected implementation of Property RawFormat.
+	* gdipFunctions.cs: Corrected declaration of GdipGetImageRawFormat.
+
 2004-04-25  Sanjay Gupta  <gsanjay@novell.com>
 
 	* Bitmap.cs: Resolved a compile time error.

@@ -5,6 +5,7 @@
 // Author: 	Christian Meyer (Christian.Meyer@cs.tum.edu)
 // 		Alexandre Pigolkine (pigolkine@gmx.de)
 //		Jordi Mas i Hernandez (jordi@ximian.com)
+//		Sanjay Gupta (gsanjay@novell.com)
 //
 namespace System.Drawing {
 
@@ -430,7 +431,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 			Guid guid;
 			if (Environment.OSVersion.Platform == (PlatformID) 128) {
 				byte[] g = new byte [16];
-				st = GDIPlus.GdipGetImageRawFormat (nativeObject, out g);
+				st = GDIPlus.GdipGetImageRawFormat (nativeObject, g);
 				GDIPlus.CheckStatus (st);
 				guid = new Guid (g);
 
