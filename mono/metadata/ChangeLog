@@ -1,3 +1,9 @@
+2004-10-21  Chris Toshok  <toshok@ximian.com>
+
+	* mono-debug-debugger.c (do_write_class): add instance/static
+	event support.  We don't expose "raise" or "other" yet.
+	(event_is_static): new method.
+
 2004-10-20  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* mono-debug-debugger.c
