@@ -35,7 +35,6 @@ namespace System.Windows.Forms {
 		internal Appearance		appearance;
 		internal bool			auto_check;
 		internal ContentAlignment	check_alignment;
-		internal ContentAlignment	text_alignment;
 		internal CheckState		check_state;
 		internal bool			three_state;
 		#endregion	// Local Variables

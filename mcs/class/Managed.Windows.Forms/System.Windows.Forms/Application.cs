@@ -47,7 +47,6 @@ namespace System.Windows.Forms {
 		private static string			safe_caption_format;
 		private static ArrayList		message_filters;
 		private static ApplicationContext	app_context;
-		private static Form			main_form;
 
 		private Application () {
 			input_language	= InputLanguage.CurrentInputLanguage;
@@ -310,6 +309,10 @@ namespace System.Windows.Forms {
 			}
 
 			messageloop_started = false;
+
+			if (ThreadExit != null) {
+				ThreadExit(null, EventArgs.Empty);
+			}
 
 			if (ApplicationExit != null) {
 				ApplicationExit(null, EventArgs.Empty);

@@ -200,7 +200,7 @@ namespace System.Windows.Forms {
 		#endregion	// Private Classes
 
 		#region Public Classes
-		public class ControlCollection : Control.ControlCollection {
+		public new class ControlCollection : Control.ControlCollection {
 			Form	form_owner;
 
 			public ControlCollection(Form owner) : base(owner) {
@@ -621,6 +621,8 @@ namespace System.Windows.Forms {
 			if (Visible) {
 				throw new InvalidOperationException("Already visible forms cannot be displayed as a modal dialog. Set the Visible property to 'false' prior to calling Form.ShowDialog.");
 			}
+
+			form_parent_window.Parent = owner;
 
 			if (!IsHandleCreated) {
 				CreateControl();

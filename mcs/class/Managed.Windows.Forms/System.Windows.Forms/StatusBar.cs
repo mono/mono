@@ -49,7 +49,7 @@ namespace System.Windows.Forms {
 			Anchor = AnchorStyles.Top | AnchorStyles.Left;
 		}
 
-		public string Text {
+		public override string Text {
 			get { return base.Text; }
 			set {
 				if (value == Text)

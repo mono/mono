@@ -1517,7 +1517,7 @@ namespace System.Windows.Forms
 				if (date < mc.SelectionEnd) 
 				{
 					// use rectangle instead of rectangle to go all the way to edge of rect
-					selection_rect.X = (int) Math.Floor(rectangle.X + rectangle.Width / 2);
+					selection_rect.X = (int) Math.Floor((double)(rectangle.X + rectangle.Width / 2));
 					selection_rect.Width = Math.Max(rectangle.Right - selection_rect.X, 0);
 					dc.FillRectangle (ResPool.GetSolidBrush (mc.TitleBackColor), selection_rect);
 				}

@@ -1,3 +1,38 @@
+2005-01-04  Peter Bartok <pbartok@novell.com>
+
+	* Form.cs (ShowDialog): Set parent to owner, if provided
+	* GroupBox.cs: Removed unused vars
+	* TextControl.cs: 
+	  - Added GetHashCode() for Document and LineTag classes
+	  - Removed unused variables
+	  - Added CharIndexToLineTag() and LineTagToCharIndex() methods
+	    to allow translation between continuous char position and line/pos
+	* CheckBox.cs: Removed vars that are provided by base class
+	* RadioButton.cs: Removed vars that are provided by base class, added
+	  new keyword where required
+	* LinkLabel.cs: Added new keyword where required
+	* Control.cs (WndProc): Removed unused variable
+	* TextBoxBase.cs: 
+	  - Finished SelectionLength property
+	  - Implemented SelectionStart property
+	  - Implemented Text property
+	  - Removed unused vars
+	* MessageBox.cs: Added new keyword where required
+	* TextBox.cs: Removed Text property code (now in TextBoxBase), fixed
+	  WndProc signature
+	* MenuAPI.cs: Added new keyword where required
+	* ButtonBase.cs: Removed vars that are provided by base class, added
+	  new keyword where required
+	* ThemeWin32Classic.cs (DrawMonthCalendarDate): Now cast Math.Floor
+	  argument to double, to allow compiling with csc 2.0 (Atsushi ran
+	  into this)
+	* Application.cs (Run): Now triggers the ThreadExit event
+	* CommonDialog.cs: Added new keyword where required; now properly sets
+	  parent (owner) for dialog
+	* XplatUIX11.cs: Commented out unused vars
+	* StatusBar.cs: Fixed signature for Text property
+	* TabPage.cs: Undid Jordi's removal of unused var, now using the var
+
 2005-01-04  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ComboBox.cs, TabPage.cs, MenuAPI.cs, ThemeWin32Classic.cs,
@@ -26,9 +61,6 @@
 	  - Fixed Keys.Enter logic
 	  - Added SetBoundsCore override
 	  - Fixed mouse selection handling
-	* ThemeWin32Classic.cs (DrawMonthCalendarDate): Now cast Math.Floor
-	  argument to double, to allow compiling with csc 2.0 (Atsushi ran
-	  into this)
 
 2005-01-03  Jackson Harper  <jackson@ximian.com>
 

@@ -31,7 +31,7 @@ namespace System.Windows.Forms {
 		#region DialogForm
 		internal class DialogForm : Form {
 			#region FormParentWindow Override
-			internal class FormParentWindow : Form.FormParentWindow {
+			internal new class FormParentWindow : Form.FormParentWindow {
 				internal FormParentWindow(Form owner) : base(owner) {
 				}
 
@@ -47,6 +47,7 @@ namespace System.Windows.Forms {
 
 						cp = base.CreateParams;
 
+						// FIXME - I need to rethink this a bit, we're loosing any cp.Style set in base; might not matter though
 						cp.Style = (int)(WindowStyles.WS_POPUP | WindowStyles.WS_CAPTION | WindowStyles.WS_SYSMENU);
 						return cp;
 					}
@@ -138,6 +139,8 @@ namespace System.Windows.Forms {
 			if (!form.IsHandleCreated) {
 				form.CreateControl();
 			}
+
+			form.form_parent_window.Parent = owner;
 
 			XplatUI.SetModal(form.form_parent_window.Handle, true);
 

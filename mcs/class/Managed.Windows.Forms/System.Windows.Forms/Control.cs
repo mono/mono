@@ -2480,8 +2480,6 @@ namespace System.Windows.Forms
 
 		[MonoTODO]
 		protected virtual void WndProc(ref Message m) {
-			EventArgs	e = new EventArgs();
-
 #if debug
 			Console.WriteLine("Received message {0}", m);
 #endif

@@ -38,11 +38,8 @@ namespace System.Windows.Forms {
 		internal ImageList		image_list;
 		internal ContentAlignment	image_alignment;
 		internal ContentAlignment	text_alignment;
-		private ImeMode			ime_mode;
 		private bool			is_default;
-		internal bool			has_focus;
 		internal bool			is_pressed;
-		internal bool			is_entered;
 		internal bool			redraw;
 		internal StringFormat		text_format;
 		#endregion	// Local Variables
@@ -198,7 +195,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public ImeMode ImeMode {
+		public new ImeMode ImeMode {
 			get {
 				return ime_mode;
 			}

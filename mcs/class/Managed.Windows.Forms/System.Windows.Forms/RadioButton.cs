@@ -34,7 +34,6 @@ namespace System.Windows.Forms {
 		internal Appearance		appearance;
 		internal bool			auto_check;
 		internal ContentAlignment	radiobutton_alignment;
-		internal ContentAlignment	text_alignment;
 		internal CheckState		check_state;
 		private bool			is_tabstop;
 		#endregion	// Local Variables
@@ -167,7 +166,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public bool TabStop {
+		public new bool TabStop {
 			get {
 				return is_tabstop;
 			}

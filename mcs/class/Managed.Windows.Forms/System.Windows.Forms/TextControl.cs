@@ -449,6 +449,9 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
+		public override int GetHashCode() {
+			return base.GetHashCode ();
+		}
 
 		public override string ToString() {
 			return "Line " + line_no;
@@ -841,11 +844,6 @@ namespace System.Windows.Forms {
 
 
 		public void UpdateView(Line line, int pos) {
-			int	prev_width;
-
-			// This is an optimization; we need to invalidate 
-			prev_width = (int)line.widths[line.text.Length];
-
 			if (RecalculateDocument(owner.CreateGraphics(), line.line_no, line.line_no, true)) {
 				// Lineheight changed, invalidate the rest of the document
 				if ((line.Y - viewport_y) >=0 ) {
@@ -863,11 +861,6 @@ namespace System.Windows.Forms {
 
 		// Update display from line, down line_count lines; pos is unused, but required for the signature
 		public void UpdateView(Line line, int line_count, int pos) {
-			int	prev_width;
-
-			// This is an optimization; we need to invalidate 
-			prev_width = (int)line.widths[line.text.Length];
-
 			if (RecalculateDocument(owner.CreateGraphics(), line.line_no, line.line_no + line_count - 1, true)) {
 				// Lineheight changed, invalidate the rest of the document
 				if ((line.Y - viewport_y) >=0 ) {
@@ -1048,10 +1041,6 @@ namespace System.Windows.Forms {
 
 				case CaretDirection.WordBack: {
 					if (caret.pos > 0) {
-						int	len;
-
-						len = caret.line.text.Length;
-
 						caret.pos--;
 
 						while ((caret.pos > 0) && (caret.line.text.ToString(caret.pos, 1) == " ")) {
@@ -1187,7 +1176,6 @@ namespace System.Windows.Forms {
 								g.FillRectangle(tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift - viewport_y, line.widths[tag.start + tag.length - 1], tag.height);
 								g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.BackColor), tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
 							} else {
-								int	middle;
 								bool	highlight;
 								bool	partial;
 
@@ -1211,7 +1199,7 @@ namespace System.Windows.Forms {
 									partial = true;
 
 									// The highlighted part
-									g.FillRectangle(tag.color, line.widths[selection_start.pos] + line.align_shift, line.Y + tag.shift - viewport_y, line.widths[tag.start + tag.length - 1], tag.height);
+									g.FillRectangle(tag.color, line.widths[selection_start.pos] + line.align_shift, line.Y + tag.shift - viewport_y, line.widths[tag.start + tag.length - 1] - line.widths[selection_start.pos], tag.height);
 									g.DrawString(s.Substring(selection_start.pos, tag.length - selection_start.pos), tag.font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.BackColor), line.widths[selection_start.pos] + line.align_shift - viewport_x, line.Y + tag.shift - viewport_y, StringFormat.GenericTypographic);
 
 									// The regular part
@@ -2004,11 +1992,11 @@ if (end != null) {
 				start = selection_start.line.line_no;
 				end = selection_end.line.line_no;
 
-				sb.Append(selection_start.line.text.ToString(selection_start.pos, selection_start.line.text.Length - selection_start.pos) + "\n");
+				sb.Append(selection_start.line.text.ToString(selection_start.pos, selection_start.line.text.Length - selection_start.pos) + Environment.NewLine);
 
 				if ((start + 1) < end) {
 					for (i = start + 1; i < end; i++) {
-						sb.Append(GetLine(i).text.ToString() + "\n");
+						sb.Append(GetLine(i).text.ToString() + Environment.NewLine);
 					}
 				}
 
@@ -2058,6 +2046,12 @@ if (end != null) {
 
 				ins = s.Split(new char[] {'\n'});
 
+				for (int j = 0; j < ins.Length; j++) {
+					if (ins[j].EndsWith("\r")) {
+						ins[j] = ins[j].Substring(0, ins[j].Length - 1);
+					}
+				}
+
 				insert_lines = ins.Length;
 
 				// Bump the text at insertion point a line down if we're inserting more than one line
@@ -2092,6 +2086,81 @@ if (end != null) {
 			InvalidateSelectionArea();
 		}
 
+		public void CharIndexToLineTag(int index, out Line line_out, out LineTag tag_out, out int pos) {
+			Line	line;
+			LineTag	tag;
+			int	i;
+			int	chars;
+			int	start;
+
+			chars = 0;
+
+			for (i = 1; i < lines; i++) {
+				line = GetLine(i);
+
+				start = chars;
+				chars += line.text.Length + 2;	// We count the trailing \n as a char
+
+				if (index <= chars) {
+					// we found the line
+					tag = line.tags;
+
+					while (tag != null) {
+						if (index < (start + tag.start + tag.length)) {
+							line_out = line;
+							tag_out = tag;
+							pos = index - start;
+							return;
+						}
+						if (tag.next == null) {
+							Line	next_line;
+
+							next_line = GetLine(line.line_no + 1);
+
+							if (next_line != null) {
+								line_out = next_line;
+								tag_out = next_line.tags;
+								pos = 0;
+								return;
+							} else {
+								line_out = line;
+								tag_out = tag;
+								pos = line_out.text.Length;
+								return;
+							}
+						}
+						tag = tag.next;
+					}
+				}
+			}
+
+			line_out = GetLine(lines);
+			tag = line_out.tags;
+			while (tag.next != null) {
+				tag = tag.next;
+			}
+			tag_out = tag;
+			pos = line_out.text.Length;
+		}
+
+		public int LineTagToCharIndex(Line line, int pos) {
+			int	i;
+			int	length;
+
+			// Count first and last line
+			length = 0;
+
+			// Count the lines in the middle
+
+			for (i = 1; i < line.line_no; i++) {
+				length += GetLine(i).text.Length + 2;	// Add one for the \n at the end of the line
+			}
+
+			length += pos;
+
+			return length;
+		}
+
 		public int SelectionLength() {
 			if ((selection_start.pos == selection_end.pos) && (selection_start.line == selection_end.line)) {
 				return 0;
@@ -2104,7 +2173,6 @@ if (end != null) {
 				int	start;
 				int	end;
 				int	length;
-				Line	line;
 
 				// Count first and last line
 				length = selection_start.line.text.Length - selection_start.pos + selection_end.pos;
@@ -2327,7 +2395,9 @@ if (end != null) {
 					Y += line.height;
 				}
 
-				RecalculateAlignments();
+				if (alignment_recalc) {
+					RecalculateAlignments();
+				}
 
 				return changed;
 			} else {
@@ -2446,10 +2516,7 @@ if (end != null) {
 		public static bool FormatText(Line line, int start, int length, Font font, Brush color) {
 			LineTag	tag;
 			LineTag	start_tag;
-			LineTag	end_tag;
 			int	end;
-			int	state;
-			int	left;
 			bool	retval = false;		// Assume line-height doesn't change
 
 			// Too simple?
@@ -2465,7 +2532,6 @@ if (end != null) {
 
 			tag = line.tags;
 			end = start + length;
-			state = 0;
 
 			// Common special case
 			if ((start == 1) && (length == tag.length)) {
@@ -2476,7 +2542,6 @@ if (end != null) {
 			}
 
 			start_tag = FindTag(line, start);
-			end_tag = FindTag(line, end);
 
 			tag = new LineTag(line, start, length);
 			tag.font = font;
@@ -2633,6 +2698,10 @@ if (end != null) {
 			}
 
 			return false;
+		}
+
+		public override int GetHashCode() {
+			return base.GetHashCode ();
 		}
 
 		public override string ToString() {

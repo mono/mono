@@ -39,8 +39,6 @@ namespace System.Windows.Forms
 	public class GroupBox : Control
 	{
 		private FlatStyle flat_style;
-		private Bitmap bmp_mem = null;
-		private Graphics dc_mem = null;
 		private Rectangle display_rectangle = new Rectangle ();
 
 		#region Events

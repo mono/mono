@@ -44,7 +44,7 @@ namespace System.Windows.Forms
 		private class MessageBoxForm : Form
 		{
 			#region FormParentWindow Override
-			internal class FormParentWindow : Form.FormParentWindow {
+			internal new class FormParentWindow : Form.FormParentWindow {
 				internal FormParentWindow(Form owner) : base(owner) {
 				}
 

@@ -1054,7 +1054,7 @@ namespace System.Windows.Forms
 			Refresh ();
 		}
 		
-		public void LostFocus ()
+		public new void LostFocus ()
 		{			
 			Capture = false;
 		}

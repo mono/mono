@@ -33,7 +33,6 @@ namespace System.Windows.Forms {
 	public class TextBox : TextBoxBase {
 		#region Local Variables
 		internal char			password_char;
-		internal ScrollBars		scrollbars;
 		#endregion	// Local Variables
 
 		#region Public Constructors
@@ -100,29 +99,6 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				Line	line;
-
-				if (multiline) {
-					string[]	lines;
-
-					lines = value.Split(new char[] {'\n'});
-					this.Lines = lines;
-
-					line = document.GetLine(1);
-					document.SetSelectionStart(line, 0);
-
-					line = document.GetLine(document.Lines);
-					document.SetSelectionEnd(line, line.text.Length);
-					document.PositionCaret(line, line.text.Length);
-				} else {
-					document.Clear();
-					document.Add(1, CaseAdjust(value), alignment, font, ThemeEngine.Current.ResPool.GetSolidBrush(ForeColor));
-					document.RecalculateDocument(CreateGraphics());
-					line = document.GetLine(1);
-					document.SetSelectionStart(line, 0);
-					document.SetSelectionEnd(line, value.Length);
-					document.PositionCaret(line, value.Length);
-				}
 				base.Text = value;
 			}
 		}
@@ -134,8 +110,6 @@ namespace System.Windows.Forms {
 
 			set {
 				if (value != alignment) {
-					Line	line;
-
 					alignment = value;
 					for (int i = 1; i <= document.Lines; i++) {
 						document.GetLine(i).Alignment = value;
@@ -184,7 +158,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		protected virtual void WndProc(ref Message m) {
+		protected override void WndProc(ref Message m) {
 			base.WndProc(ref m);
 		}
 		#endregion	// Protected Instance Methods

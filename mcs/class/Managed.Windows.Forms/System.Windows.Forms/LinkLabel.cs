@@ -361,7 +361,7 @@ namespace System.Windows.Forms
 			base.Select (directed, forward);
 		}
 
-		public void Select ()
+		public new void Select ()
 		{
 			base.Select ();
 		}
@@ -494,7 +494,7 @@ namespace System.Windows.Forms
 			return color;
 		}
 
-		internal void Draw ()
+		internal new void Draw ()
 		{
 			Color color;
 

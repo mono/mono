@@ -324,9 +324,98 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				// FIXME
+				if (value != 0) {
+					int	start;
+					Line	line;
+					LineTag	tag;
+					int	pos;
+
+					start = document.LineTagToCharIndex(document.selection_start.line, document.selection_start.pos);
+
+					document.CharIndexToLineTag(start + value, out line, out tag, out pos);
+					document.SetSelectionEnd(line, pos);
+					document.PositionCaret(line, pos);
+				} else {
+					document.SetSelectionEnd(document.selection_start.line, document.selection_start.pos);
+					document.PositionCaret(document.selection_start.line, document.selection_start.pos);
+				}
 			}
 		}
+
+		public int SelectionStart {
+			get {
+				int index;
+
+				index = document.LineTagToCharIndex(document.selection_start.line, document.selection_start.pos);
+
+				return index;
+			}
+
+			set {
+				Line	line;
+				LineTag	tag;
+				int	pos;
+
+				document.CharIndexToLineTag(value, out line, out tag, out pos);
+				document.SetSelectionStart(line, pos);
+			}
+		}
+
+		public override string Text {
+			get {
+				if (document == null || document.Root == null || document.Root.text == null) {
+					return string.Empty;
+				}
+
+				if (!multiline) {
+					return document.Root.text.ToString();
+				} else {
+					StringBuilder	sb;
+					int		i;
+
+					sb = new StringBuilder();
+
+					for (i = 1; i < document.Lines; i++) {
+						sb.Append(document.GetLine(i).text.ToString() + Environment.NewLine);
+					}
+
+					return sb.ToString();
+				}
+			}
+
+			set {
+				Line	line;
+
+				if (multiline) {
+					string[]	lines;
+
+					lines = value.Split(new char[] {'\n'});
+					for (int i = 0; i < lines.Length; i++) {
+						if (lines[i].EndsWith("\r")) {
+							lines[i] = lines[i].Substring(0, lines[i].Length - 1);
+						}
+					}
+					this.Lines = lines;
+
+					line = document.GetLine(1);
+					document.SetSelectionStart(line, 0);
+
+					line = document.GetLine(document.Lines);
+					document.SetSelectionEnd(line, line.text.Length);
+					document.PositionCaret(line, line.text.Length);
+				} else {
+					document.Clear();
+					document.Add(1, CaseAdjust(value), alignment, font, ThemeEngine.Current.ResPool.GetSolidBrush(ForeColor));
+					document.RecalculateDocument(CreateGraphics());
+					line = document.GetLine(1);
+					document.SetSelectionStart(line, 0);
+					document.SetSelectionEnd(line, value.Length);
+					document.PositionCaret(line, value.Length);
+				}
+				base.Text = value;
+			}
+		}
+
 
 		public bool WordWrap {
 			get {
@@ -757,7 +846,6 @@ static int current;
 				int		end;
 				Line		line;
 				int		line_no;
-				LineTag		tag;
 				Pen		p;
 
 				p = new Pen(Color.Red, 1);
@@ -801,6 +889,12 @@ static int current;
 				if (e.Button == MouseButtons.Right) {
 					draw_lines = !draw_lines;
 					this.Invalidate();
+					Console.WriteLine("SelectedText: {0}, length {1}", this.SelectedText, this.SelectionLength);
+					Console.WriteLine("Selection start: {0}", this.SelectionStart);
+
+					this.SelectionStart = 10;
+					this.SelectionLength = 5;
+
 					return;
 				}
 

@@ -328,7 +328,7 @@ namespace System.Windows.Forms {
 
 		internal static void SetDisplay(IntPtr display_handle) {
 			if (display_handle != IntPtr.Zero) {
-				IntPtr	Screen;
+				//IntPtr	Screen;
 
 				if (FosterParent != IntPtr.Zero) {
 					XDestroyWindow(DisplayHandle, FosterParent);
@@ -346,7 +346,7 @@ namespace System.Windows.Forms {
 				// Create a few things
 				mouse_state = MouseButtons.None;
 				mouse_position = Point.Empty;
-				Screen = XDefaultScreenOfDisplay(DisplayHandle);
+				//Screen = XDefaultScreenOfDisplay(DisplayHandle);
 				//screen_num = XScreenNumberOfScreen(DisplayHandle, Screen);
 				screen_num = 0;
 				root_window = XRootWindow(display_handle, screen_num);
