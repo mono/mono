@@ -26,8 +26,11 @@ class X {
 			return 2;
 
 		Y y = new Y ();
-		if (y.value.ToString () != "3")
+		if (y.value.ToString () != "3"){
+			string x = y.value.ToString ();
+			Console.WriteLine ("Got: {0} expected 3", x);
 			return 3;		
+		}
 		Console.WriteLine ("Test ok");
 		return 0;
 	}
