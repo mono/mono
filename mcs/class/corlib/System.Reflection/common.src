@@ -10,7 +10,9 @@ ICustomAttributeProvider.cs
 MemberInfo.cs
 MemberTypes.cs
 MethodAttributes.cs
+MethodBase.cs
 MethodImplAttributes.cs
+MethodInfo.cs
 ParameterAttributes.cs
 PropertyAttributes.cs
 ResourceAttributes.cs
