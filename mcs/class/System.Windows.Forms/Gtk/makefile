@@ -1,5 +1,5 @@
 CSC=mcs
-SWFF=-r gdk-sharp -r gtk-sharp -r glib-sharp -r System.Drawing 
+SWFF=-r gdk-sharp -r gtk-sharp -r glib-sharp -r System.Drawing -r gnome-sharp 
 
 SOURCES = \
 	AnchorStyles.cs		\
@@ -25,11 +25,12 @@ SOURCES = \
 	ProgressBar.cs	\
 	PictureBox.cs	\
 	FileDialog.cs	\
+	FontDialog.cs	\
 	ColorDialog.cs	\
 	ComboBox.cs	\
 	ScrollableControl.cs
 
-all: demo.exe
+all: demo.exe 
 
 demo.exe: demo.cs System.Windows.Forms.dll
 	$(CSC) demo.cs -r System.Windows.Forms.dll -r System.Drawing 
