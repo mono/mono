@@ -1,4 +1,9 @@
 
+Tue Apr 29 19:15:10 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: use the right array element type and handle
+	a null for a Type argument, too.
+
 Tue Apr 29 15:46:00 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: handle arrays as arguments to custom attributes.
