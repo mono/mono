@@ -51,12 +51,12 @@ namespace Mono.ILASM {
 				}
 				if (output_file == null)
 					output_file = CreateOutputFile ();
-				codegen = new CodeGen (output_file);
+				codegen = new CodeGen (output_file, target == Target.Dll, true);
 				foreach (string file_path in il_file_list)
 					ProcessFile (file_path);
 				if (scan_only)
 					return;
-				codegen.Emit ();
+				codegen.PEFile.WritePEFile ();
 			}
 
 			private void ProcessFile (string file_path)
@@ -137,8 +137,8 @@ namespace Mono.ILASM {
 				if (ext_index == -1)
 					ext_index = file_name.Length;
 				
-				return String.Format ("{0}.{1}", file_name.Substring (0, ext_index),
-					target.ToString ().ToLower ());			
+				return String.Format ("{0}.{1}", file_name.Substring (0, ext_index), 
+					target.ToString ().ToLower ());
 			}
 
 			private void Usage ()
