@@ -3532,12 +3532,31 @@ namespace Mono.CSharp {
 					
 				} else if (underlying_type == TypeManager.float_type) {
 
-					// FIXME : How does one get the bits out ?
+					unsafe {
+						float val = 0;
+
+						if (!(ArrayData [i] is Expression))
+							val = (float) ArrayData [i];
+
+						byte *ptr = (byte *) &val;
+						
+						for (int j = 0; j < factor; ++j)
+							data [(i * factor) + j] = (byte) ptr [j];
+					}
 					
 				} else if (underlying_type == TypeManager.double_type) {
 
-					// FIXME : Same here. '&' and '>>' don't work !
-				  
+					unsafe {
+						double val = 0;
+
+						if (!(ArrayData [i] is Expression))
+							val = (double) ArrayData [i];
+
+						byte *ptr = (byte *) &val;
+						
+						for (int j = 0; j < factor; ++j)
+							data [(i * factor) + j] = (byte) ptr [j];
+					}
 				  
 				} else {
 

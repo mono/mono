@@ -23,6 +23,10 @@
 
 	* expression.cs (Invocation::OverloadResolve): Handle error # 121.
 
+	(ArrayCreation::MakeByteBlob): Handle floats and doubles.
+
+	* makefile: Pass in /unsafe.
+
 2001-12-13  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (TypeContainer.Define): Correctly define explicit
