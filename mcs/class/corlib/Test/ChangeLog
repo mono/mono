@@ -1,3 +1,10 @@
+2002-02-10  Nick Drochak  <ndrochak@gol.com>
+
+	* corlib_test.build: Remove duplicate excludes for 
+	* AllTests.cs: Add System.Security.Policy tests.  However, commented
+	this out because NUnit is throwing an exception.  Need to figure
+	that out first.
+	
 2002-02-09  Nick Drochak  <ndrochak@gol.com>
 
 	* corlib_test.build: compile with mscorlib to test the tests.  This
