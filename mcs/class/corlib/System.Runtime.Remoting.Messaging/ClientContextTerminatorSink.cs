@@ -52,10 +52,18 @@ namespace System.Runtime.Remoting.Messaging
 				Context.NotifyGlobalDynamicSinks (true, msg, true, true);
 				_context.NotifyDynamicSinks (true, msg, true, true);
 
-				replySink = new ClientContextReplySink (_context, replySink);
+				// replySink is null when calling a one way method
+				if (replySink != null) replySink = new ClientContextReplySink (_context, replySink);
 			}
 			Identity identity = RemotingServices.GetMessageTargetIdentity (msg);
-			return identity.ChannelSink.AsyncProcessMessage (msg, replySink);
+			IMessageCtrl res = identity.ChannelSink.AsyncProcessMessage (msg, replySink);
+
+			if (replySink == null && (_context.HasDynamicSinks || Context.HasGlobalDynamicSinks))
+			{
+				Context.NotifyGlobalDynamicSinks (false, msg, true, true);
+				_context.NotifyDynamicSinks (false, msg, true, true);
+			}
+			return res;
 		}
 
 		public IMessageSink NextSink 

@@ -38,10 +38,15 @@ namespace System.Runtime.Remoting.Messaging
 			if (identity.HasServerDynamicSinks)
 			{
 				identity.NotifyServerDynamicSinks (true, msg, false, true);
-				IMessage res = _nextSink.SyncProcessMessage (msg);
-				replySink = new ServerObjectReplySink(identity, replySink);
+				if (replySink != null) replySink = new ServerObjectReplySink(identity, replySink);
 			}
-			return _nextSink.AsyncProcessMessage (msg, replySink);
+			
+			IMessageCtrl res = _nextSink.AsyncProcessMessage (msg, replySink);
+
+			if (replySink == null)
+				identity.NotifyServerDynamicSinks (false, msg, true, true);
+
+			return res;
 		}
 
 		public IMessageSink NextSink 

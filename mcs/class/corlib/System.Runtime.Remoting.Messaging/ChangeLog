@@ -1,3 +1,10 @@
+2003-04-10  Lluis Sanchez Gual <lluis@ideary.com>
+	
+	* AsyncResult.cs: implemented some methods.
+	* ClientContextTerminatorSink.cs: Improved support for Async and OneWay messages.
+	* MonoMethodMessage.cs: Added member needed to support Async messages.
+	* ServerObjectTerminatorSink.cs: Improved support for Async and OneWay messages.
+
 2003-03-21  Lluis Sanchez Gual <lluis@ideary.com>
 	
 	* CADMessages.cs: removed some warnings.

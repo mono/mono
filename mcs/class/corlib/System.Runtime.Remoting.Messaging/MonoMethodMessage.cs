@@ -32,6 +32,8 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public Exception exc;
 
+		AsyncResult asyncResult;
+
 		string uri;
 
 		MethodCallDictionary properties;
@@ -294,6 +296,16 @@ namespace System.Runtime.Remoting.Messaging {
 		{
 			get { return identity; }
 			set { identity = value; }
+		}
+
+		public bool IsAsync
+		{
+			get { return asyncResult != null; }
+		}
+
+		public AsyncResult AsyncResult
+		{
+			get { return asyncResult; }
 		}
 	}
 }
