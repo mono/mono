@@ -46,7 +46,7 @@ namespace Microsoft.JScript.Tmp
 		public new Object splice;
 		public new Object unshift;
 		public new Object toLocaleString;
-		public Object toString;
+		public new Object toString;
 	}
 }
 
