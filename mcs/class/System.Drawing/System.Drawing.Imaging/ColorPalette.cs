@@ -8,7 +8,7 @@
 //
 
 using System;
-
+using System.Drawing;
 namespace System.Drawing.Imaging
 {
 	public sealed class ColorPalette {

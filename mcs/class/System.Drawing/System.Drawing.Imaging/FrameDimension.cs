@@ -4,6 +4,7 @@
 //
 // Author: Christian Meyer
 // eMail: Christian.Meyer@cs.tum.edu
+// Dennis Hayes (dennish@raytek.com)
 //
 
 namespace System.Drawing.Imaging {
