@@ -660,6 +660,12 @@
 
 	* compiler.csproj: Updated AssemblyName to mcs.
 
+2004-04-08  Martin Baulig  <martin@ximian.com>
+
+	Merged latest changes into gmcs.  Please keep this comment in
+	here, it makes it easier for me to see what changed in MCS since
+	the last time I merged.
+
 2004-04-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* rootcontext.cs: Add new types to the boot resolution.
@@ -946,12 +952,6 @@
 2004-03-19  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (TypExpr.GetHashCode): implement this overload. 
-
-2004-03-19  Martin Baulig  <martin@ximian.com>
-
-	Merged latest changes into gmcs.  Please keep this comment in
-	here, it makes it easier for me to see what changed in MCS since
-	the last time I merged.
 
 2004-03-19  Martin Baulig  <martin@ximian.com>
 
