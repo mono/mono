@@ -146,19 +146,29 @@ namespace System.Web.Services.Description {
 				SoapOperationBinding soapOper = OperationBinding.Extensions.Find (typeof (SoapOperationBinding)) as SoapOperationBinding;
 				if (soapOper == null) throw new InvalidOperationException ("Soap operation binding not found");
 
-				SoapBodyBinding isbb = OperationBinding.Input.Extensions.Find (typeof(SoapBodyBinding)) as SoapBodyBinding;
-				if (isbb == null) throw new InvalidOperationException ("Soap body binding not found");
-				
-				SoapBodyBinding osbb = OperationBinding.Output.Extensions.Find (typeof(SoapBodyBinding)) as SoapBodyBinding;
-				if (osbb == null) throw new InvalidOperationException ("Soap body binding not found");
-				
 				SoapBindingStyle style = soapOper.Style != SoapBindingStyle.Default ? soapOper.Style : soapBinding.Style;
 			
-				XmlMembersMapping inputMembers = ImportMembersMapping (InputMessage, isbb, style, false);
+				SoapBodyBinding isbb = null;
+				XmlMembersMapping inputMembers = null;
+				
+				isbb = OperationBinding.Input.Extensions.Find (typeof(SoapBodyBinding)) as SoapBodyBinding;
+				if (isbb == null) throw new InvalidOperationException ("Soap body binding not found");
+			
+				inputMembers = ImportMembersMapping (InputMessage, isbb, style, false);
 				if (inputMembers == null) throw new InvalidOperationException ("Input message not declared");
+				
+				// If OperationBinding.Output is null, it is an OneWay operation
+				
+				SoapBodyBinding osbb = null;
+				XmlMembersMapping outputMembers = null;
+				
+				if (OperationBinding.Output != null) {
+					osbb = OperationBinding.Output.Extensions.Find (typeof(SoapBodyBinding)) as SoapBodyBinding;
+					if (osbb == null) throw new InvalidOperationException ("Soap body binding not found");
 
-				XmlMembersMapping outputMembers = ImportMembersMapping (OutputMessage, osbb, style, true);
-				if (outputMembers == null) throw new InvalidOperationException ("Output message not declared");
+					outputMembers = ImportMembersMapping (OutputMessage, osbb, style, true);
+					if (outputMembers == null) throw new InvalidOperationException ("Output message not declared");
+				}
 				
 				CodeMemberMethod met = GenerateMethod (memberIds, soapOper, isbb, inputMembers, outputMembers);
 				
@@ -167,11 +177,13 @@ namespace System.Web.Services.Description {
 				else
 					soapExporter.ExportMembersMapping (inputMembers);
 				
-				if (osbb.Use == SoapBindingUse.Literal)
-					xmlExporter.ExportMembersMapping (outputMembers);
-				else
-					soapExporter.ExportMembersMapping (outputMembers);
-
+				if (osbb != null) {
+					if (osbb.Use == SoapBindingUse.Literal)
+						xmlExporter.ExportMembersMapping (outputMembers);
+					else
+						soapExporter.ExportMembersMapping (outputMembers);
+				}
+				
 				foreach (SoapExtensionImporter eximporter in extensionImporters)
 				{
 					eximporter.ImportContext = this;
@@ -257,8 +269,9 @@ namespace System.Web.Services.Description {
 			for (int n=0; n<inputMembers.Count; n++)
 				pids.AddUnique (inputMembers[n].MemberName, inputMembers[n]);
 
-			for (int n=0; n<outputMembers.Count; n++)
-				pids.AddUnique (outputMembers[n].MemberName, outputMembers[n]);
+			if (outputMembers != null)
+				for (int n=0; n<outputMembers.Count; n++)
+					pids.AddUnique (outputMembers[n].MemberName, outputMembers[n]);
 				
 			string varAsyncResult = pids.AddUnique ("asyncResult","asyncResult");
 			string varResults = pids.AddUnique ("results","results");
@@ -277,7 +290,7 @@ namespace System.Web.Services.Description {
 			methodEnd.Parameters.Add (new CodeParameterDeclarationExpression (typeof (IAsyncResult),varAsyncResult));
 
 			CodeExpression[] paramArray = new CodeExpression [inputMembers.Count];
-			CodeParameterDeclarationExpression[] outParams = new CodeParameterDeclarationExpression [outputMembers.Count];
+			CodeParameterDeclarationExpression[] outParams = new CodeParameterDeclarationExpression [outputMembers != null ? outputMembers.Count : 0];
 
 			for (int n=0; n<inputMembers.Count; n++)
 			{
@@ -288,39 +301,42 @@ namespace System.Web.Services.Description {
 				paramArray [n] = new CodeVariableReferenceExpression (param.Name);
 			}
 
-			for (int n=0; n<outputMembers.Count; n++)
+			if (outputMembers != null)
 			{
-				CodeParameterDeclarationExpression cpd = GenerateParameter (outputMembers[n], FieldDirection.Out);
-				outParams [n] = cpd;
-				
-				bool found = false;
-				foreach (CodeParameterDeclarationExpression ip in method.Parameters)
+				for (int n=0; n<outputMembers.Count; n++)
 				{
-					if (ip.Name == cpd.Name && ip.Type.BaseType == cpd.Type.BaseType) {
-						ip.Direction = FieldDirection.Ref;
-						methodEnd.Parameters.Add (GenerateParameter (outputMembers[n], FieldDirection.Out));
-						found = true;
-						break;
+					CodeParameterDeclarationExpression cpd = GenerateParameter (outputMembers[n], FieldDirection.Out);
+					outParams [n] = cpd;
+					
+					bool found = false;
+					foreach (CodeParameterDeclarationExpression ip in method.Parameters)
+					{
+						if (ip.Name == cpd.Name && ip.Type.BaseType == cpd.Type.BaseType) {
+							ip.Direction = FieldDirection.Ref;
+							methodEnd.Parameters.Add (GenerateParameter (outputMembers[n], FieldDirection.Out));
+							found = true;
+							break;
+						}
 					}
+					
+					if (found) continue;
+	
+					if ((outputMembers [n].ElementName == Operation.Name + "Result") || 
+						(outputMembers.Count==1)) 
+					{
+						method.ReturnType = cpd.Type;
+						methodEnd.ReturnType = cpd.Type;
+						GenerateReturnAttributes (outputMembers, outputMembers[n], bodyBinding.Use, method);
+						outParams [n] = null;
+						continue;
+					}
+					
+					method.Parameters.Add (cpd);
+					GenerateMemberAttributes (outputMembers, outputMembers[n], bodyBinding.Use, cpd);
+					methodEnd.Parameters.Add (GenerateParameter (outputMembers[n], FieldDirection.Out));
 				}
-				
-				if (found) continue;
-
-				if ((outputMembers [n].ElementName == Operation.Name + "Result") || 
-					(outputMembers.Count==1)) 
-				{
-					method.ReturnType = cpd.Type;
-					methodEnd.ReturnType = cpd.Type;
-					GenerateReturnAttributes (outputMembers, outputMembers[n], bodyBinding.Use, method);
-					outParams [n] = null;
-					continue;
-				}
-				
-				method.Parameters.Add (cpd);
-				GenerateMemberAttributes (outputMembers, outputMembers[n], bodyBinding.Use, cpd);
-				methodEnd.Parameters.Add (GenerateParameter (outputMembers[n], FieldDirection.Out));
 			}
-
+			
 			methodBegin.Parameters.Add (new CodeParameterDeclarationExpression (typeof (AsyncCallback),varCallback));
 			methodBegin.Parameters.Add (new CodeParameterDeclarationExpression (typeof (object),varAsyncState));
 			methodBegin.ReturnType = new CodeTypeReference (typeof(IAsyncResult));
@@ -361,7 +377,7 @@ namespace System.Web.Services.Description {
 			CodeVariableDeclarationStatement dec;
 
 			inv = new CodeMethodInvokeExpression (ethis, "Invoke", varMsgName, methodParams);
-			if (outputMembers.Count > 0)
+			if (outputMembers != null && outputMembers.Count > 0)
 			{
 				dec = new CodeVariableDeclarationStatement (typeof(object[]), varResults, inv);
 				method.Statements.Add (dec);
@@ -381,7 +397,7 @@ namespace System.Web.Services.Description {
 			
 			CodeExpression varAsyncr = new CodeVariableReferenceExpression (varAsyncResult);
 			inv = new CodeMethodInvokeExpression (ethis, "EndInvoke", varAsyncr);
-			if (outputMembers.Count > 0)
+			if (outputMembers != null && outputMembers.Count > 0)
 			{
 				dec = new CodeVariableDeclarationStatement (typeof(object[]), varResults, inv);
 				methodEnd.Statements.Add (dec);
@@ -403,27 +419,30 @@ namespace System.Web.Services.Description {
 				att = new CodeAttributeDeclaration ("System.Web.Services.Protocols.SoapRpcMethodAttribute");
 				att.Arguments.Add (GetArg (soapOper.SoapAction));
 				if (inputMembers.ElementName != method.Name) att.Arguments.Add (GetArg ("RequestElementName", inputMembers.ElementName));
-				if (outputMembers.ElementName != (method.Name + "Response")) att.Arguments.Add (GetArg ("ResponseElementName", outputMembers.ElementName));
+				if (outputMembers != null && outputMembers.ElementName != (method.Name + "Response")) att.Arguments.Add (GetArg ("ResponseElementName", outputMembers.ElementName));
 				att.Arguments.Add (GetArg ("RequestNamespace", inputMembers.Namespace));
-				att.Arguments.Add (GetArg ("ResponseNamespace", outputMembers.Namespace));
+				if (outputMembers != null) att.Arguments.Add (GetArg ("ResponseNamespace", outputMembers.Namespace));
+				if (outputMembers == null) att.Arguments.Add (GetArg ("OneWay", true));
 			}
 			else
 			{
-				if (inputMembers.ElementName == "" && outputMembers.ElementName != "" || 
-					inputMembers.ElementName != "" && outputMembers.ElementName == "")
+				if (outputMembers != null && (inputMembers.ElementName == "" && outputMembers.ElementName != "" || 
+					inputMembers.ElementName != "" && outputMembers.ElementName == ""))
 					throw new InvalidOperationException ("Parameter style is not the same for the input message and output message");
 	
 				att = new CodeAttributeDeclaration ("System.Web.Services.Protocols.SoapDocumentMethodAttribute");
 				att.Arguments.Add (GetArg (soapOper.SoapAction));
 				if (inputMembers.ElementName != "") {
 					if (inputMembers.ElementName != method.Name) att.Arguments.Add (GetArg ("RequestElementName", inputMembers.ElementName));
-					if (outputMembers.ElementName != (method.Name + "Response")) att.Arguments.Add (GetArg ("ResponseElementName", outputMembers.ElementName));
+					if (outputMembers != null && outputMembers.ElementName != (method.Name + "Response")) att.Arguments.Add (GetArg ("ResponseElementName", outputMembers.ElementName));
 					att.Arguments.Add (GetArg ("RequestNamespace", inputMembers.Namespace));
-					att.Arguments.Add (GetArg ("ResponseNamespace", outputMembers.Namespace));
+					if (outputMembers != null) att.Arguments.Add (GetArg ("ResponseNamespace", outputMembers.Namespace));
 					att.Arguments.Add (GetEnumArg ("ParameterStyle", "System.Web.Services.Protocols.SoapParameterStyle", "Wrapped"));
 				}
 				else
 					att.Arguments.Add (GetEnumArg ("ParameterStyle", "System.Web.Services.Protocols.SoapParameterStyle", "Bare"));
+					
+				if (outputMembers == null) att.Arguments.Add (GetArg ("OneWay", true));
 					
 				att.Arguments.Add (GetEnumArg ("Use", "System.Web.Services.Description.SoapBindingUse", bodyBinding.Use.ToString()));
 			}
@@ -472,6 +491,8 @@ namespace System.Web.Services.Description {
 					ImportHeader (method, hb, SoapHeaderDirection.In);
 			}
 			
+			if (OperationBinding.Output == null) return;
+			
 			foreach (object ob in OperationBinding.Output.Extensions)
 			{
 				SoapHeaderBinding hb = ob as SoapHeaderBinding;
@@ -483,6 +504,8 @@ namespace System.Web.Services.Description {
 		
 		bool HasHeader (MessageBinding msg, SoapHeaderBinding hb)
 		{
+			if (msg == null) return false;
+			
 			foreach (object ob in msg.Extensions) 
 			{
 				SoapHeaderBinding mhb = ob as SoapHeaderBinding;

@@ -90,7 +90,19 @@ namespace System.Web.Services.Description {
 				
 				if (method.Use == SoapBindingUse.Literal)
 				{
-					XmlTypeMapping mapping = ReflectionImporter.ImportTypeMapping (hf.HeaderType, TypeInfo.LogicalType.WebServiceLiteralNamespace);
+					// MS.NET reflects header classes in a weird way. The root element
+					// name is the CLR class name unless it is specified in an XmlRootAttribute.
+					// The usual is to use the xml type name by default, but not in this case.
+				
+					XmlRootAttribute root;
+					XmlAttributes ats = new XmlAttributes (hf.HeaderType);
+					if (ats.XmlRoot != null) root = ats.XmlRoot;
+					else root = new XmlRootAttribute (hf.HeaderType.Name);
+					
+					if (root.Namespace == null) root.Namespace = TypeInfo.LogicalType.WebServiceLiteralNamespace;
+					if (root.ElementName == null) root.ElementName = hf.HeaderType.Name;
+					
+					XmlTypeMapping mapping = ReflectionImporter.ImportTypeMapping (hf.HeaderType, root);
 					part.Element = new XmlQualifiedName (mapping.ElementName, mapping.Namespace);
 					SchemaExporter.ExportTypeMapping (mapping);
 				}

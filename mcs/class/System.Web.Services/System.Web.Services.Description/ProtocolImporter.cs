@@ -251,8 +251,19 @@ namespace System.Web.Services.Description {
 
 		Operation FindPortOperation ()
 		{
-			string inMessage = (operationBinding.Input.Name != null) ? operationBinding.Input.Name : operationBinding.Name;
-			string outMessage = (operationBinding.Output.Name != null) ? operationBinding.Output.Name : operationBinding.Name;
+			string inMessage = null;
+			string outMessage = null;
+			int numMsg = 1;
+			
+			if (operationBinding.Input == null) throw new InvalidOperationException ("Input operation binding not found");
+			inMessage = (operationBinding.Input.Name != null) ? operationBinding.Input.Name : operationBinding.Name;
+			numMsg++;
+				
+			if (operationBinding.Output != null) {
+				outMessage = (operationBinding.Output.Name != null) ? operationBinding.Output.Name : operationBinding.Name;
+				numMsg++;
+			}
+			
 			string operName = operationBinding.Name;
 			
 			Operation foundOper = null;
@@ -266,7 +277,7 @@ namespace System.Web.Services.Description {
 						if (omsg is OperationInput && GetOperMessageName (omsg, operName) == inMessage) hits++;
 						if (omsg is OperationOutput && GetOperMessageName (omsg, operName) == outMessage) hits++;
 					}
-					if (hits == 2) return oper;
+					if (hits == numMsg) return oper;
 					foundOper = oper;
 				}
 			}

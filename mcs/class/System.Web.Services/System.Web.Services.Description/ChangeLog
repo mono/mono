@@ -1,3 +1,10 @@
+2004-01-14  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ProtocolImporter.cs, SoapProtocolImporter.cs: Added support for OneWay
+	operations (those don't	have output message).
+	* SoapProtocolReflector.cs: Set the correct element name and
+	namespace for headers (those are not managed like other data classes).
+
 2004-01-13  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ProtocolReflector.cs: in the case a new ServiceDescription is created, 
