@@ -2,6 +2,7 @@
 
 	* jit.c (mono_analyze_stack): avoid recursive call of virtual
 	methods: fixes Bug #23778 
+	(mono_analyze_stack): emit right CONV_UX opcodes: fixes bug 23547
 
 	* exception.c (arch_handle_exception): only g_assert(cleanup) if
 	we really need it.
