@@ -1,4 +1,7 @@
+2003-01-13 Jackson Harper <jackson@latitudegeo.com>
 
+	* cs-tokenizer.cs: Add Cleanup method, also fix #region error messages.
+	
 Sun Jan 12 19:58:42 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* attribute.cs: only set GuidAttr to true when we have a
