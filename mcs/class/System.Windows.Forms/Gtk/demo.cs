@@ -41,12 +41,14 @@ namespace demo
 			this.vScrollBar1.Name = "vScrollBar1";
 			this.vScrollBar1.Size = new Size(24, 200);
 			this.vScrollBar1.TabIndex = 0;
+			this.vScrollBar1.ValueChanged += new EventHandler(this.vScrollBar1_ValueChanged);
 
 			this.hScrollBar1.Location = new System.Drawing.Point(50, 60);
 			this.hScrollBar1.Maximum = 200;
 			this.hScrollBar1.Minimum = 10;
 			this.hScrollBar1.Name = "hScrollBar1";
 			this.hScrollBar1.Size = new System.Drawing.Size(360, 24);
+			this.hScrollBar1.ValueChanged += new EventHandler(this.hScrollBar1_ValueChanged);
 
 			this.button1.Location = new Point(150, 28);
 			this.button1.Name = "button1";
@@ -145,6 +147,19 @@ namespace demo
 		{
 			InitializeWidgets();
 		}
+
+		private void set_Text1_to_scrollbarvalues() {
+			this.text1.Text = String.Format ("{0}, {1}", this.vScrollBar1.Value, this.hScrollBar1.Value);
+		}
+
+		private void vScrollBar1_ValueChanged (object sender, EventArgs e) { 
+			this.set_Text1_to_scrollbarvalues ();
+		}
+
+		private void hScrollBar1_ValueChanged (object sender, EventArgs e) { 
+			this.set_Text1_to_scrollbarvalues ();
+		}
+
 
 		private void copybutton_Click(object sender, EventArgs e){ 
 			//text1.Select (1, 4);
