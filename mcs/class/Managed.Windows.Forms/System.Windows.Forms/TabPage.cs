@@ -33,6 +33,7 @@ namespace System.Windows.Forms {
 		private int image_index = -1;
 		private string tooltip_text = String.Empty;
 		private Rectangle tab_bounds;
+		private int row;
 		
 		public TabPage ()
 		{
@@ -150,6 +151,11 @@ namespace System.Windows.Forms {
 		internal Rectangle TabBounds {
 			get { return tab_bounds; }
 			set { tab_bounds = value; }
+		}
+
+		internal int Row {
+			get { return row; }
+			set { row = value; }
 		}
 
 		private void UpdateOwner ()
