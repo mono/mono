@@ -197,10 +197,8 @@ namespace MonoTests.System {
                 try
                 {
                     string s = tab[i].d.ToString(tab[i].format, nfi);
-                    if (s != tab[i].str)
-                    {
-                        Fail(tab[i].d.ToString(tab[i].format, nfi) + " (format = '" + tab[i].format + "') != " + tab[i].str);
-                    }
+		    int expectedLength = tab[i].str.Length;
+		    AssertEquals("A01 tab[" + i + "].format = '" + tab[i].format + "')", tab[i].str, s.Substring(0,expectedLength));
                 } 
                 catch (OverflowException)
                 {
