@@ -27,6 +27,7 @@ namespace System.Runtime.CompilerServices
 			}
 		}
 
+#if NET_1_1
 		public static int GetHashCode (object o) {
 			return Object.InternalGetHashCode (o);
 		}
@@ -45,6 +46,7 @@ namespace System.Runtime.CompilerServices
 			else
 				return Object.Equals (o1, o2);
 		}
+#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public static extern object GetObjectValue (object obj);

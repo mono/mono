@@ -1,3 +1,7 @@
+2003-06-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* RuntimeHelpers.cs: Wrap NET 1.1 methods with #if NET_1_1.
+
 2003-04-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* RuntimeHelpers.cs: Remove workaround for bug #41550 since it is fixed
