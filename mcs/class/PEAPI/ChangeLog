@@ -1,3 +1,16 @@
+2003-07-20 Jackson Harper <jackson@latitudegeo.com>
+
+	* PEAPI.cs: Add methods to PEFile to allow fields and methods to
+	be added to type specs. This fixing bah-zillions of little
+	problems in ilasm. We can now add fields and methods to arrays,
+	reference types, and most importantly generics.
+
+	Add the GenericTypeInst class. This is an instance of a generic
+	type. ie Hash<int32, string>. GenericTypeSpecs now write their id
+	number as a compressed number, this matches the way the runtime
+	loads them and will allow generic types to have more then 255 type
+	parameters.
+	
 2003-07-17 Jackson Harper <jackson@latitudegeo.com>
 
 	* PEAPI.cs: Add GenericTypeSpec so generic members can be

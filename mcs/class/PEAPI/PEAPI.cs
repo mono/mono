@@ -101,14 +101,37 @@ namespace PEAPI
 
             public GenericTypeSpec (int index) : base (0x13) {
                     this.index = index;
+                    tabIx = MDTable.TypeSpec;
             }
 
             internal sealed override void TypeSig(MemoryStream str) {
                     str.WriteByte(typeIndex);
-                    str.WriteByte ((byte) index);
+                    MetaData.CompressNum ((uint) index, str);
             }
+            }
+
+
+  public class GenericTypeInst : Type {
+
+          private Type gen_type;
+          private Type[] gen_param;
+
+          public GenericTypeInst (Type gen_type, Type[] gen_param) : base (0x15)
+          {
+                  typeIndex = 0x15;
+                  this.gen_type = gen_type;
+                  this.gen_param = gen_param;
+                  tabIx = MDTable.TypeSpec;
   }
 
+          internal sealed override void TypeSig(MemoryStream str) {
+                  str.WriteByte(typeIndex);
+                  gen_type.TypeSig (str);
+                  MetaData.CompressNum ((uint) gen_param.Length, str);
+                  foreach (Type param in gen_param)
+                          param.TypeSig (str);
+            }
+  }
 
 	/// <summary>
 	/// The IL Array type
@@ -5956,6 +5979,25 @@ namespace PEAPI
     /// <returns>a descriptor for this new "global" method</returns>
     public MethodDef AddMethod(MethAttr mAtts, ImplAttr iAtts, string name, Type retType, Param[] pars) {
       return moduleClass.AddMethod(mAtts,iAtts,name,retType,pars);
+    }
+
+    public MethodRef AddMethodToTypeSpec (Type item, string name, Type retType, Type[] pars) {
+            MethodRef meth = new MethodRef (item.GetTypeSpec (metaData), name, retType, pars, false, null);
+            metaData.AddToTable (MDTable.MemberRef,meth);
+            return meth;
+    }
+
+    public MethodRef AddVarArgMethodToTypeSpec (Type item, string name, Type retType,
+                    Type[] pars, Type[] optPars) {
+            MethodRef meth = new MethodRef(item.GetTypeSpec (metaData), name,retType,pars,true,optPars);
+            metaData.AddToTable(MDTable.MemberRef,meth);
+            return meth;
+    }
+
+    public FieldRef AddFieldToTypeSpec (Type item, string name, Type fType) {
+            FieldRef field = new FieldRef (item.GetTypeSpec (metaData), name,fType);
+            metaData.AddToTable (MDTable.MemberRef,field);
+            return field;
     }
 
     /// <summary>
