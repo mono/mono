@@ -263,13 +263,16 @@ namespace System.Web.Services.Protocols {
 			
 			// Deserialize the response
 
-			StreamReader reader = new StreamReader (stream, encoding, false);
-			XmlTextReader xml_reader = new XmlTextReader (reader);
-
 			SoapHeaderCollection headers;
 			object content;
 
-			WebServiceHelper.ReadSoapMessage (xml_reader, type_info, msi.Use, msi.ResponseSerializer, out content, out headers);
+			using (StreamReader reader = new StreamReader (stream, encoding, false)) {
+				XmlTextReader xml_reader = new XmlTextReader (reader);
+
+				WebServiceHelper.ReadSoapMessage (xml_reader, type_info, msi.Use, msi.ResponseSerializer,
+								out content, out headers);
+			}
+
 			
 			if (content is Fault)
 			{
