@@ -1,3 +1,9 @@
+2004-04-22  Juraj Skripsky <juraj@hotfeet.ch>
+
+	* Parser.jay: Allow computed expressions on left-hand side of
+	"like" operator.
+	Correct ordering for "is null" rule ("NOT IS NULL" => "IS NOT NULL"). 
+
 2004-04-20  Juraj Skripsky <juraj@hotfeet.ch>
 
 	* Tokenizer.cs (ReadNumber): Correctly consume decimal point

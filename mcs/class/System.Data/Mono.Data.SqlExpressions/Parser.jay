@@ -274,18 +274,18 @@ IsPredicate
 	{
 		$$ = new Comparison (Operation.EQ, (IExpression)$1, new Literal (null));
 	}
-	| ColumnValue NOT IS NULL
+	| ColumnValue IS NOT NULL
 	{
 		$$ = new Comparison (Operation.NE, (IExpression)$1, new Literal (null));
 	}
 	;
 
 LikePredicate
-	: ColumnValue LIKE StringLiteral
+	: ArithExpr LIKE StringLiteral
 	{
 		$$ = new Like ((IExpression)$1, (string)$3);
 	}
-	| ColumnValue NOT LIKE StringLiteral
+	| ArithExpr NOT LIKE StringLiteral
 	{
 		$$ = new Negation (new Like ((IExpression)$1, (string)$3));
 	}
