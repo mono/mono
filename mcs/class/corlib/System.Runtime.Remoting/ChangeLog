@@ -1,3 +1,9 @@
+2003-09-11  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* RemotingServices.cs: Collect value of parameters with the Out flag into
+	  the return message. Also set and reset CallContext. 
+	  Added method UpdateOutArgObject.
+
 2003-08-25  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* RemotingServices.cs: Some small fixes.
@@ -223,4 +229,3 @@
 2001-09-02  Miguel de Icaza  <miguel@ximian.com>
 
 	* ObjRef.cs: Include System.Runtime.Serialization
-

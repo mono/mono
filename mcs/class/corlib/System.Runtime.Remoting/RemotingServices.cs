@@ -10,6 +10,7 @@
 //
 
 using System;
+using System.Text;
 using System.Reflection;
 using System.Threading;
 using System.Collections;
@@ -55,17 +56,36 @@ namespace System.Runtime.Remoting
 			ReturnMessage result;
 			
 			MonoMethod method = (MonoMethod) target.GetType().GetMethod(reqMsg.MethodName, BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance, null, (Type[]) reqMsg.MethodSignature, null);
-
-			try {
+			object oldContext = CallContext.SetCurrentCallContext (reqMsg.LogicalCallContext);
+			
+			try 
+			{
 				object [] out_args;
 				object rval = InternalExecute (method, target, reqMsg.Args, out out_args);
-				result = new ReturnMessage (rval, out_args, out_args.Length,
-							    reqMsg.LogicalCallContext, reqMsg);
 			
-			} catch (Exception e) {
+				// Collect parameters with Out flag from the request message
+
+				ParameterInfo[] parameters = method.GetParameters();
+				object[] returnArgs = new object [parameters.Length];
+				
+				int n = 0;
+				int noa = 0;
+				foreach (ParameterInfo par in parameters)
+				{
+					if (par.IsOut && !par.ParameterType.IsByRef) 
+						returnArgs [n++] = reqMsg.GetArg (par.Position);
+					else if (par.ParameterType.IsByRef)
+						returnArgs [n++] = out_args [noa++]; 
+				}
+				
+				result = new ReturnMessage (rval, returnArgs, n, CallContext.CreateLogicalCallContext(), reqMsg);
+			} 
+			catch (Exception e) 
+			{
 				result = new ReturnMessage (e, reqMsg);
 			}
-
+			
+			CallContext.RestoreCallContext (oldContext);
 			return result;
 		}
 
@@ -548,6 +568,31 @@ namespace System.Runtime.Remoting
 		{
 			if (msg is IInternalMessage) 
 				((IInternalMessage)msg).TargetIdentity = ident;
+		}
+		
+		internal static bool UpdateOutArgObject (ParameterInfo pi, object local, object remote)
+		{
+			if (local is StringBuilder) 
+			{
+				StringBuilder sb = local as StringBuilder;
+				sb.Remove (0, sb.Length);
+				sb.Append (remote.ToString());
+				return true;
+			}
+			else if (pi.ParameterType.IsArray && ((Array)local).Rank == 1)
+			{
+				Array alocal = (Array) local;
+				if (alocal.Rank == 1)
+				{
+					Array.Copy ((Array) remote, alocal, alocal.Length);
+					return true;
+				}
+				else
+				{
+					// TODO
+				}
+			}
+			return false;
 		}
 
 		#endregion
