@@ -13,6 +13,7 @@ using System.Text;
 namespace MonoTests.System.IO
 {
 
+[TestFixture]
 public class StreamWriterTest : Assertion
 {
 

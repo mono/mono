@@ -13,6 +13,7 @@ using System.Text;
 namespace MonoTests.System.IO
 {
 
+[TestFixture]
 public class StreamReaderTest : Assertion
 {
 	static string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
