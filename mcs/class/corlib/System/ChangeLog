@@ -1,3 +1,9 @@
+2004-06-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Decimal.cs: Fixed regression in System.Data caused by the recent 
+	changes. Adapted (and moved) the code to correct the scale from 
+	SqlMoney.
+
 2004-06-17  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Activator.cs: In CreateInstance(), use Public|Instance if access binding

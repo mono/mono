@@ -66,6 +66,8 @@ namespace System
 	[DecimalConstantAttribute(0, 0, 0, 0, 0)]
         public static readonly Decimal Zero = new Decimal(0, 0, 0, false, 0);
 
+	private static readonly Decimal MaxValueDiv10 = MaxValue / 10;
+
         // maximal decimal value as double
         private static readonly double dDecMaxValue = 7.922816251426433759354395033e28;
         // epsilon decimal value as double
@@ -163,20 +165,32 @@ namespace System
             }
         }
 
-        public Decimal(float val) 
+        public Decimal (float val) 
         {
-            if (double2decimal(out this, val, 7) != 0) 
-            {
-                throw new OverflowException();
-            }
+		if (val > (float)Decimal.MaxValue || val < (float)Decimal.MinValue) {
+			throw new OverflowException (Locale.GetText (
+				"Value is greater than Decimal.MaxValue or less than Decimal.MinValue"));
+		}
+		// we must respect the precision (double2decimal doesn't)
+		Decimal d = Decimal.Parse (val.ToString (CultureInfo.InvariantCulture), NumberStyles.Float);
+		ss32 = d.ss32;
+		hi32 = d.hi32;
+		lo32 = d.lo32;
+		mid32 = d.mid32;
         }
 
-        public Decimal(double val) 
-        {
-            if (double2decimal(out this, val, 15) != 0) 
-            {
-                throw new OverflowException();
-            }
+	public Decimal (double val) 
+	{
+		if (val > (double)Decimal.MaxValue || val < (double)Decimal.MinValue) {
+			throw new OverflowException (Locale.GetText (
+				"Value is greater than Decimal.MaxValue or less than Decimal.MinValue"));
+		}
+		// we must respect the precision (double2decimal doesn't)
+		Decimal d = Decimal.Parse (val.ToString (CultureInfo.InvariantCulture), NumberStyles.Float);
+		ss32 = d.ss32;
+		hi32 = d.hi32;
+		lo32 = d.lo32;
+		mid32 = d.mid32;
         }
 
         public Decimal(int[] bits) 
@@ -535,9 +549,27 @@ namespace System
 		dec_part = Math.Round (dec_part);
 		dec_part /= p;
 		decimal result = int_part + dec_part;
+
 		// that fixes the precision/scale (which we must keep for output)
-		result /= (10000000000000000000000000000M / p);
-		result.ss32 = (uint)(decimals << SCALE_SHIFT);
+		// (moved and adapted from System.Data.SqlTypes.SqlMoney)
+		long scaleDiff = decimals - ((result.ss32 & 0x7FFF0000) >> 16);
+		// integrify
+		if (scaleDiff > 0) {
+			// note: here we always work with positive numbers
+			while (scaleDiff > 0) {
+				if (result > MaxValueDiv10)
+					break;
+				result *= 10;
+				scaleDiff--;
+			}
+		}
+		else if (scaleDiff < 0) {
+			while (scaleDiff < 0) {
+				result /= 10;
+				scaleDiff++;
+			}
+		}
+		result.ss32 = (uint)((decimals - scaleDiff) << SCALE_SHIFT);
 
 		if (negative)
 			result.ss32 ^= SIGN_FLAG;
