@@ -14,8 +14,12 @@ public class Blah {
 		
 		int [] a = { 4, 5, 6, 7 };
 
-		// int foo = 1;
-		// int [] k = new int [] { foo };
+		int [,,] m = new int [2,3,2] {{{0,1}, {2,3}, {4,5}}, {{6,7}, {8,9}, {10,11}}};
+
+		int foo = 1;
+		int [] k = new int [] { foo, foo+1, foo+4 };
+
+		int [,] boo = new int [,] {{foo, foo+10}, {foo+3, foo+10}};
 
 		if (i [2] != 2)
 			return 1;
@@ -32,6 +36,15 @@ public class Blah {
 		}
 
 		if (bar [2,1] != 20)
+			return 1;
+
+		if (k [2] != 5)
+			return 1;
+
+		if (m [1,1,1] != 9)
+			return 1;
+
+		if (boo [0,1] != 11)
 			return 1;
 		
 		Console.WriteLine ("Array initialization test okay.");
