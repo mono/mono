@@ -1,3 +1,8 @@
+2004-05-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StringBuilderTest.cs: Added unit tests to be sure integer overflows
+	are catched.
+
 2004-05-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* UTF7EncodingTest.cs, UnicodeEncodingTest.cs: Removed unused SetUp 

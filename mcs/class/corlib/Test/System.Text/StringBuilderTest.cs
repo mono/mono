@@ -26,7 +26,8 @@ using System;
 
 namespace MonoTests.System.Text {
 
-	public class StringBuilderTest : TestCase {
+	[TestFixture]
+	public class StringBuilderTest : Assertion {
 
 		private StringBuilder sb;
 
@@ -293,6 +294,132 @@ namespace MonoTests.System.Text {
 			sb.Insert (1, null, 1, 1);
 			Assertion.Fail ("#04: Value must not be null if startIndex and charCount > 0");
 		} catch (ArgumentNullException) {}
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void Constructor_StartIndexOverflow () 
+	{
+		new StringBuilder ("Mono", Int32.MaxValue, 1, 0);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void Constructor_LengthOverflow () 
+	{
+		new StringBuilder ("Mono", 1, Int32.MaxValue, 0);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void ToString_StartIndexOverflow () 
+	{
+		StringBuilder sb = new StringBuilder ("Mono");
+		sb.ToString (Int32.MaxValue, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void ToString_LengthOverflow () 
+	{
+		StringBuilder sb = new StringBuilder ("Mono");
+		sb.ToString (1, Int32.MaxValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void Remove_StartIndexOverflow () 
+	{
+		StringBuilder sb = new StringBuilder ("Mono");
+		sb.Remove (Int32.MaxValue, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void Remove_LengthOverflow () 
+	{
+		StringBuilder sb = new StringBuilder ("Mono");
+		sb.Remove (1, Int32.MaxValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void ReplaceChar_StartIndexOverflow () 
+	{
+		StringBuilder sb = new StringBuilder ("Mono");
+		sb.Replace ('o', '0', Int32.MaxValue, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void ReplaceChar_CountOverflow () 
+	{
+		StringBuilder sb = new StringBuilder ("Mono");
+		sb.Replace ('0', '0', 1, Int32.MaxValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void ReplaceString_StartIndexOverflow () 
+	{
+		StringBuilder sb = new StringBuilder ("Mono");
+		sb.Replace ("o", "0", Int32.MaxValue, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void ReplaceString_CountOverflow () 
+	{
+		StringBuilder sb = new StringBuilder ("Mono");
+		sb.Replace ("o", "0", 1, Int32.MaxValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void AppendCharArray_StartIndexOverflow () 
+	{
+		StringBuilder sb = new StringBuilder ("Mono");
+		sb.Append (new char[2], Int32.MaxValue, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void AppendCharArray_CharCountOverflow () 
+	{
+		StringBuilder sb = new StringBuilder ("Mono");
+		sb.Append (new char[2], 1, Int32.MaxValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void AppendString_StartIndexOverflow () 
+	{
+		StringBuilder sb = new StringBuilder ("Mono");
+		sb.Append ("!", Int32.MaxValue, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void AppendString_CountOverflow () 
+	{
+		StringBuilder sb = new StringBuilder ("Mono");
+		sb.Append ("!", 1, Int32.MaxValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void InsertCharArray_StartIndexOverflow () 
+	{
+		StringBuilder sb = new StringBuilder ("Mono");
+		sb.Insert (0, new char[2], Int32.MaxValue, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void InsertCharArray_CharCountOverflow () 
+	{
+		StringBuilder sb = new StringBuilder ("Mono");
+		sb.Insert (0, new char[2], 1, Int32.MaxValue);
 	}
 }
 
