@@ -4,10 +4,6 @@
 // Author:
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -414,7 +410,7 @@ namespace Mono.Security.Cryptography {
 
 			SecurityElement root = sp.ToXml ();
 			if (root.Tag == "KeyPair") {
-				SecurityElement prop = root.SearchForChildByTag ("Properties");
+				//SecurityElement prop = root.SearchForChildByTag ("Properties");
 				SecurityElement keyv = root.SearchForChildByTag ("KeyValue");
 				if (keyv.Children.Count > 0)
 					_keyvalue = keyv.Children [0].ToString ();

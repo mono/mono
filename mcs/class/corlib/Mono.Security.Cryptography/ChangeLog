@@ -1,3 +1,9 @@
+2004-09-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConvert.cs: Fixed warning (l4) for unused variables.
+	* KeyPairPersistence.cs: Fixed warning (l4) for unused variable.
+	* PKCS1.cs: Added empty {} to fix warning about possible empty stmnt.
+
 2004-07-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MACAlgorithm.cs: Removed the hardcoded PaddingMode.Zeros as this is 

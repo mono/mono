@@ -1,3 +1,8 @@
+2004-09-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate.cs: Fixed warning (l4) for unused variable.
+	* X509Extension.cs: Fixed warning (l4) for unused variable.
+
 2004-09-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Chain.cs: Merge from Mono.Security. Fix two bugs (chain 

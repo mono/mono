@@ -127,7 +127,8 @@ namespace Mono.Security.X509 {
 				Array.Reverse (serialnumber, 0, serialnumber.Length);
 		
 				// Certificate / TBSCertificate / AlgorithmIdentifier
-				ASN1 signatureAlgo = tbsCertificate.Element (tbs++, 0x30); 
+				tbs++;
+				// ASN1 signatureAlgo = tbsCertificate.Element (tbs++, 0x30); 
 		
 				ASN1 issuer = tbsCertificate.Element (tbs++, 0x30); 
 				m_issuername = X501.ToString (issuer);

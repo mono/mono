@@ -2,12 +2,9 @@
 // PKCS1.cs - Implements PKCS#1 primitives.
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -109,7 +106,9 @@ namespace Mono.Security.Cryptography {
 		public static byte[] OS2IP (byte[] x) 
 		{
 			int i = 0;
-			while ((x [i++] == 0x00) && (i < x.Length));
+			while ((x [i++] == 0x00) && (i < x.Length)) {
+				// confuse compiler into reporting a warning with {}
+			}
 			i--;
 			if (i > 0) {
 				byte[] result = new byte [x.Length - i];
