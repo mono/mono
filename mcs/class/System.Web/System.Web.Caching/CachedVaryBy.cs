@@ -42,6 +42,7 @@ namespace System.Web.Caching {
 		private string custom;
 		private string key;
 		private ArrayList item_list;
+		private bool wildCardParams;
 		
 		internal CachedVaryBy (HttpCachePolicy policy, string key)
 		{
@@ -50,6 +51,7 @@ namespace System.Web.Caching {
 			custom = policy.GetVaryByCustom ();
 			this.key = key;
 			item_list = new ArrayList ();
+			wildCardParams = policy.VaryByParams ["*"];
 		}
 
 		internal ArrayList ItemList {
@@ -80,6 +82,14 @@ namespace System.Web.Caching {
 					builder.Append (prms [i]);
 					builder.Append ('=');
 					builder.Append (request.Params [prms [i]]);
+					builder.Append ('\n');
+				}
+			} else if (wildCardParams) {
+				foreach (string p in request.Params) {
+					builder.Append ("VP:");
+					builder.Append (p);
+					builder.Append ('=');
+					builder.Append (request.Params [p]);
 					builder.Append ('\n');
 				}
 			}

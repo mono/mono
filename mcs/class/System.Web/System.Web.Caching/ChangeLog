@@ -1,3 +1,8 @@
+2005-04-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CachedVaryBy.cs: fixed VaryByParam and wildcard (*). Patch by Ilya
+	Kharmatsky (Mainsoft) that fixes bug #73981.
+
 2005-04-01  Lluis Sanchez Gual <lluis@novell.com>
 
 	* CachedRawResponse.cs: Fix warning.
