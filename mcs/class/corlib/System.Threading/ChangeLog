@@ -1,3 +1,9 @@
+2004-07-27  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* ExecutionContext.cs, ExecutionContextSwitcher.cs, 
+	  SynchronizationContext.cs, SynchronizationContextSwitcher.cs: Added 2.0
+	  stubs.
+
 2004-07-15  Dick Porter  <dick@ximian.com>
 
 	* Thread.cs: Hold a lock in GetNamedDataSlot.  Fixes bug 61582,
