@@ -1,4 +1,4 @@
-2004-09-08  Raja R Harinath  <rharinath@novell.com>
+2004-09-28  Raja R Harinath  <rharinath@novell.com>
 
 	* metadata-internals.h (MonoImage): Add module_count field.
 	* image.c (load_modules): Set image->module_count.
