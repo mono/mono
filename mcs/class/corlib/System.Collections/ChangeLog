@@ -1,3 +1,8 @@
+2001-07-31 Garrett Rooney <rooneg@electricjellyfish.net>
+
+	* StackTest.cs: Add Test case for System.Collections.Stack.  
+	Contributed by Chris Hynes <chrish@assistedsolutions.com>
+
 2001-07-30 Garrett Rooney <rooneg@electricjellyfish.net>
 
 	* Stack.cs: Clone() doesn't need to check if it's synchronized, since 
