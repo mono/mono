@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.7 $
+// $Revision: 1.8 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.8  2004/08/09 15:53:12  jackson
+// Themes now handle default control properties so coloring will be consistent
+//
 // Revision 1.7  2004/08/08 22:54:21  jordi
 // Label BorderStyles
 //
@@ -264,6 +267,18 @@ namespace System.Windows.Forms
 
 		public Color ColorGradientInactiveTitle {
 			get {return Color.FromArgb (255, 181, 181, 181);}
+		}
+
+		public Color DefaultBackColor {
+			get { return Color.FromArgb (255, 0, 128, 128); }
+		}
+
+		public Color DefaultForeColor {
+			get { return Color.FromArgb (255, 0, 0, 0); }
+		}
+
+		public Font DefaultFont {
+			get { return new Font (FontFamily.GenericSansSerif, 8.25f); }
 		}
 
 		private enum DrawFrameControlStates
