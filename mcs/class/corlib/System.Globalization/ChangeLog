@@ -1,3 +1,8 @@
+2002-05-07  Rodrigo Moya <rodrigo@ximian.com>
+
+	* CompareInfo.cs: new basic stub (compiles on Linux, so I assume
+	it does not break the build on windows. Sorry if it does).
+
 2002-04-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* NumberFormatInfo.cs: always set the values for the invariant culture
