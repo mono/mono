@@ -1,3 +1,17 @@
+2002-01-24  Miguel de Icaza  <miguel@ximian.com>
+
+	* StructLayoutAttribute.cs: Flag attribute as targetting structs
+	or classes. 
+	
+	* InAttribute.cs: Flag attribute as targettting a paramter
+
+	* OutAttribute.cs: ditto.
+	
+	* DllImportAttribute.cs: Flag attribute as targetting methods.
+	
+	* MarshalAsAttribute.cs: Flag attribute as targetting fields,
+	parameters and returnvalues.
+
 2002-01-23  Dick Porter  <dick@ximian.com>
 
 	* Marshal.cs: Added GetLastWin32Error()

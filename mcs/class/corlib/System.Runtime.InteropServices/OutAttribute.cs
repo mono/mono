@@ -9,7 +9,7 @@
 
 namespace System.Runtime.InteropServices {
 
-	[MonoTODO]
+	[AttributeUsage (AttributeTargets.Parameter)]
 	public sealed class OutAttribute : Attribute {
 
 		public OutAttribute ()

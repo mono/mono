@@ -1,6 +1,8 @@
 using System;
 
 namespace System.Runtime.InteropServices {
+
+	[AttributeUsage (AttributeTargets.Field)]
 	public sealed class FieldOffsetAttribute : Attribute {
 		private int val;
 		

@@ -1,6 +1,8 @@
 using System;
 
 namespace System.Runtime.InteropServices {
+
+	[AttributeUsage (AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue)]
 	public sealed class MarshalAsAttribute : Attribute {
 		private UnmanagedType utype;
 		public UnmanagedType ArraySubType;

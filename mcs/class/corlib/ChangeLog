@@ -1,5 +1,7 @@
 2002-01-23  Miguel de Icaza  <miguel@ximian.com>
 
+	* Unix/Errno.cs: Added
+
 	* Unix/Wrapper.cs: Updated to new Wrapper
 
 2002-01-19  Nick Drochak  <ndrochak@gol.com>
