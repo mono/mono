@@ -1,6 +1,6 @@
 /**
  * Namespace: System.Web.UI.WebUtils
- * Class:     DataSourceUtils
+ * Class:     DataSourceHelper
  *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
@@ -16,7 +16,7 @@ using System.ComponentModel;
 
 namespace System.Web.UI.WebUtils
 {
-	internal class DataSourceUtils
+	internal class DataSourceHelper
 	{
 		public static IEnumerable ResolveDataSource(object source, string member)
 		{

@@ -1,7 +1,12 @@
+2001-11-30
+		Gaurav Vaish <gvaish@iitk.ac.in>
+	DataSourceHelper.cs      - Resolving DataSource objects
 
-
-2001-11-09	Gaurav Vaish <gvaish@iitk.ac.in>
+2001-11-09
+		Gaurav Vaish <gvaish@iitk.ac.in>
 	UrlUtil.cs               - Some basic functions
 
-2001-11-08	Gaurav Vaish <gvaish@iitk.ac.in>
-	Namespace    - Created the namespace for commonly used, otherwise not available functions
+2001-11-08
+		Gaurav Vaish <gvaish@iitk.ac.in>
+	Namespace    - Created the namespace for commonly used,
+                             otherwise not available functions
