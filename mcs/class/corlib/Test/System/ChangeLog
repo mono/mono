@@ -1,3 +1,7 @@
+2005-01-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ArrayTest.cs: Add AsReadOnly tests.
+
 2005-01-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AppDomainTest.cs: Removed tests for Activate and ActivateNewProcess

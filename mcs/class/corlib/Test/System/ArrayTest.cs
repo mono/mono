@@ -12,6 +12,10 @@ using System;
 using System.Collections;
 using System.Globalization;
 
+#if NET_2_0
+using System.Collections.Generic;
+#endif
+
 namespace MonoTests.System
 {
 
@@ -2581,6 +2585,120 @@ public class ArrayTest : Assertion
 		byte[] array = new byte [16];
 		Array.Reverse (array, 8, Int32.MaxValue);
 	}
+
+#if NET_2_0
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void AsReadOnly_NullArray ()
+	{
+		Array.AsReadOnly <int> (null);
+	}
+
+	[Test]
+	[ExpectedException (typeof (NotSupportedException))]
+	public void ReadOnly_Add ()
+	{
+		Array.AsReadOnly (new int [10]).Add (5);
+	}
+
+
+	[Test]
+	[ExpectedException (typeof (NotSupportedException))]
+	public void ReadOnly_Remove ()
+	{
+		Array.AsReadOnly (new int [10]).Remove (5);
+	}
+
+	[Test]
+	[ExpectedException (typeof (NotSupportedException))]
+	public void ReadOnly_Clear ()
+	{
+		Array.AsReadOnly (new int [10]).Clear ();
+	}
+
+	[Test]
+	[ExpectedException (typeof (NotSupportedException))]
+	public void ReadOnly_Insert ()
+	{
+		Array.AsReadOnly (new int [10]).Insert (0, 5);
+	}
+
+	[Test]
+	[ExpectedException (typeof (NotSupportedException))]
+	public void ReadOnly_RemoveAt ()
+	{
+		Array.AsReadOnly (new int [10]).RemoveAt (5);
+	}
+
+	[Test]
+	public void ReadOnly_IsReadOnly ()
+	{
+		Assert (Array.AsReadOnly (new int [10]).IsReadOnly);
+	}
+
+	[Test]
+	public void ReadOnly_Count ()
+	{
+		AssertEquals (10, Array.AsReadOnly (new int [10]).Count);
+	}
+
+	[Test]
+	public void ReadOnly_Contains ()
+	{
+		int[] arr = new int [2];
+		arr [0] = 3;
+		arr [1] = 5;
+		IList<int> a = Array.AsReadOnly (arr);
+
+		Assert (a.Contains (3));
+		Assert (!a.Contains (6));
+	}
+
+	[Test]
+	public void ReadOnly_IndexOf ()
+	{
+		int[] arr = new int [2];
+		arr [0] = 3;
+		arr [1] = 5;
+		IList<int> a = Array.AsReadOnly (arr);
+
+		AssertEquals (0, a.IndexOf (3));
+		AssertEquals (1, a.IndexOf (5));
+		AssertEquals (-1, a.IndexOf (6));
+	}
+
+	[Test]
+	public void ReadOnly_Indexer ()
+	{
+		int[] arr = new int [2];
+		arr [0] = 3;
+		arr [1] = 5;
+		IList<int> a = Array.AsReadOnly (arr);
+
+		AssertEquals (3, a [0]);
+		AssertEquals (5, a [1]);
+
+		/* Check that modifications to the original array are visible */
+		arr [0] = 6;
+		AssertEquals (6, a [0]);
+	}
+
+	[Test]
+	public void ReadOnly_Enumerator ()
+	{
+		int[] arr = new int [10];
+
+		for (int i = 0; i < 10; ++i)
+			arr [i] = i;
+
+		int sum = 0;
+		foreach (int i in Array.AsReadOnly (arr))
+			sum += i;
+
+		AssertEquals (45, sum);
+	}
+
+#endif
 }
 
 }
