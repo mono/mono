@@ -1,5 +1,12 @@
 2004-09-22  Martin Baulig  <martin@ximian.com>
 
+	Thanks to Peter Sestoft for this bug report.
+
+	* expression.cs (Conditional): If both the `trueExpr' and the
+	`falseExpr' is a NullLiteral, return a NullLiteral.
+
+2004-09-22  Martin Baulig  <martin@ximian.com>
+
 	* statement.cs (Foreach.EmitCollectionForeach): If we're in an
 	iterator, use `enumerator.EmitThis()' instead of `ec.EmitThis()'
 	for the "get_Current" call.

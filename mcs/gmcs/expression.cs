@@ -3484,6 +3484,9 @@ namespace Mono.CSharp {
 			if (trueExpr == null || falseExpr == null)
 				return null;
 
+			if ((trueExpr is NullLiteral) && (falseExpr is NullLiteral))
+				return trueExpr;
+
 			eclass = ExprClass.Value;
 			if (trueExpr.Type == falseExpr.Type)
 				type = trueExpr.Type;
