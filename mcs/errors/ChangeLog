@@ -1,3 +1,8 @@
+2004-09-07  Martin Baulig  <martin@ximian.com>
+
+	* mcs-expect-no-error: I'm slowly getting annoyed.  Is it really
+	so hard to add new tests here ?
+
 2004-09-07  Raja R Harinath  <rharinath@novell.com>
 
 	* cs0571-3.cs, CS0571-3-lib.cs: New tests for #59980.
