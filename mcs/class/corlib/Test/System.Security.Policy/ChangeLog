@@ -1,5 +1,18 @@
 2004-09-01  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* HashTest.cs: Fixed tests so they execute without errors on both
+	Fx 1.1 and Fx 2.0 (beta 1).
+	* PublisherTest.cs: Fixed tests so they execute without errors on both
+	Fx 1.1 and Fx 2.0 (beta 1). Converted tests to NUnit 2.2 format.
+	* SiteTest.cs: Fixed tests so they execute without errors on both Fx 
+	1.1 and Fx 2.0 (beta 1).
+	* StrongNameTest.cs: Fixed tests so they execute without errors on 
+	both Fx 1.1 and Fx 2.0 (beta 1). Converted tests to NUnit 2.2 format.
+	* UrlTest.cs: Fixed tests so they execute without errors on both Fx 
+	1.1 and Fx 2.0 (beta 1). Converted tests to NUnit 2.2 format.
+
+2004-09-01  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* ZoneTest.cs: Added test to check that NoZone isn't included in the 
 	permission XML (returned by CreateIdentityPermission).
 

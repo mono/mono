@@ -79,11 +79,15 @@ namespace MonoTests.System.Security.Policy {
 		[TestFixtureSetUp]
 		public void FixtureSetUp ()
 		{
-			using (FileStream fs = File.OpenWrite ("helloworld.exe")) {
-				location = Path.GetFullPath (fs.Name);
-				fs.Write (helloWorldAssemby, 0, helloWorldAssemby.Length);
-				fs.Close ();
+			if (!File.Exists ("helloworld.exe")) {
+				using (FileStream fs = File.OpenWrite ("helloworld.exe")) {
+					location = Path.GetFullPath (fs.Name);
+					fs.Write (helloWorldAssemby, 0, helloWorldAssemby.Length);
+					fs.Close ();
+				}
 			}
+			else
+				location = Path.GetFullPath ("helloworld.exe");
 			wellKnownAssembly = Assembly.LoadFile (location);
 		}
 
@@ -104,6 +108,9 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
+#if !NET_2_0
+		[Ignore ("Current hashing is compatible with Fx 2.0 but not with Fx 1.0/1.1")]
+#endif
 		public void MD5_Property ()
 		{
 			Hash h = new Hash (wellKnownAssembly);
@@ -111,6 +118,9 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
+#if !NET_2_0
+		[Ignore ("Current hashing is compatible with Fx 2.0 but not with Fx 1.0/1.1")]
+#endif
 		public void SHA1_Property ()
 		{
 			Hash h = new Hash (wellKnownAssembly);
@@ -118,6 +128,9 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
+#if !NET_2_0
+		[Ignore ("Current hashing is compatible with Fx 2.0 but not with Fx 1.0/1.1")]
+#endif
 		public void GenerateHash_MD5 ()
 		{
 			Hash h = new Hash (wellKnownAssembly);
@@ -126,6 +139,9 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
+#if !NET_2_0
+		[Ignore ("Current hashing is compatible with Fx 2.0 but not with Fx 1.0/1.1")]
+#endif
 		public void GenerateHash_SHA1 ()
 		{
 			Hash h = new Hash (wellKnownAssembly);
@@ -134,6 +150,9 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
+#if !NET_2_0
+		[Ignore ("Current hashing is compatible with Fx 2.0 but not with Fx 1.0/1.1")]
+#endif
 		public void GenerateHash_SHA256 ()
 		{
 			Hash h = new Hash (wellKnownAssembly);
@@ -142,6 +161,9 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
+#if !NET_2_0
+		[Ignore ("Current hashing is compatible with Fx 2.0 but not with Fx 1.0/1.1")]
+#endif
 		public void GenerateHash_SHA384 ()
 		{
 			Hash h = new Hash (wellKnownAssembly);
@@ -150,6 +172,9 @@ namespace MonoTests.System.Security.Policy {
 		}
 
 		[Test]
+#if !NET_2_0
+		[Ignore ("Current hashing is compatible with Fx 2.0 but not with Fx 1.0/1.1")]
+#endif
 		public void GenerateHash_SHA512 ()
 		{
 			Hash h = new Hash (wellKnownAssembly);

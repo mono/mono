@@ -29,6 +29,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Globalization;
 using System.Security;
 using System.Security.Permissions;
 using System.Security.Policy;
@@ -78,8 +79,11 @@ namespace MonoTests.System.Security.Policy {
 		{
 			Site s = new Site ("www.go-mono.com");
 			AssertEquals ("Name", "www.go-mono.com", s.Name);
+#if NET_2_0
+			AssertEquals ("ToString", "<System.Security.Policy.Site version=\"1\">" + Environment.NewLine + "<Name>www.go-mono.com</Name>" + Environment.NewLine + "</System.Security.Policy.Site>" + Environment.NewLine, s.ToString ());
+#else
 			AssertEquals ("ToString", "<System.Security.Policy.Site version=\"1\">" + Environment.NewLine + "   <Name>www.go-mono.com</Name>" + Environment.NewLine + "</System.Security.Policy.Site>" + Environment.NewLine, s.ToString ());
-
+#endif
 			Site s2 = (Site) s.Copy ();
 			AssertEquals ("Copy.Name", s.Name, s2.Name);
 			AssertEquals ("Copy.GetHashCode", s.GetHashCode (), s2.GetHashCode ());
@@ -97,8 +101,11 @@ namespace MonoTests.System.Security.Policy {
 		{
 			Site s = new Site ("*.go-mono.com");
 			AssertEquals ("Name", "*.go-mono.com", s.Name);
+#if NET_2_0
+			AssertEquals ("ToString", "<System.Security.Policy.Site version=\"1\">" + Environment.NewLine + "<Name>*.go-mono.com</Name>" + Environment.NewLine + "</System.Security.Policy.Site>" + Environment.NewLine, s.ToString ());
+#else
 			AssertEquals ("ToString", "<System.Security.Policy.Site version=\"1\">" + Environment.NewLine + "   <Name>*.go-mono.com</Name>" + Environment.NewLine + "</System.Security.Policy.Site>" + Environment.NewLine, s.ToString ());
-
+#endif
 			Site s2 = (Site) s.Copy ();
 			AssertEquals ("Copy.Name", s.Name, s2.Name);
 			AssertEquals ("Copy.GetHashCode", s.GetHashCode (), s2.GetHashCode ());
@@ -153,8 +160,11 @@ namespace MonoTests.System.Security.Policy {
 		{
 			Site s = new Site ("*");
 			AssertEquals ("Name", "*", s.Name);
+#if NET_2_0
+			AssertEquals ("ToString", "<System.Security.Policy.Site version=\"1\">" + Environment.NewLine + "<Name>*</Name>" + Environment.NewLine + "</System.Security.Policy.Site>" + Environment.NewLine, s.ToString ());
+#else
 			AssertEquals ("ToString", "<System.Security.Policy.Site version=\"1\">" + Environment.NewLine + "   <Name>*</Name>" + Environment.NewLine + "</System.Security.Policy.Site>" + Environment.NewLine, s.ToString ());
-
+#endif
 			Site s2 = (Site) s.Copy ();
 			AssertEquals ("Copy.Name", s.Name, s2.Name);
 			AssertEquals ("Copy.GetHashCode", s.GetHashCode (), s2.GetHashCode ());
@@ -217,7 +227,10 @@ namespace MonoTests.System.Security.Policy {
 		string[] valid_urls = {
 			"http://www.go-mono.com",
 			"http://*.go-mono.com",
-			"http://www.go-mono.com:8080/index.html"
+			"http://www.go-mono.com:8080/index.html",
+#if !NET_2_0
+			"file://mono/index.html",	// file:// is supported as a site (1.0/1.1)
+#endif
 		};
 
 		[Test]
@@ -225,11 +238,13 @@ namespace MonoTests.System.Security.Policy {
 		{
 			foreach (string url in valid_urls) {
 				Site s = Site.CreateFromUrl (url);
+				Assert (s.Name, (s.Name.ToUpper (CultureInfo.InvariantCulture).IndexOf ("MONO") != -1));
 			}
 		}
 
+#if NET_2_0
 		string[] invalid_urls = {
-			"file://mono/index.html",	// file:// isn't supported as a site
+			"file://mono/index.html",	// file:// isn't supported as a site (2.0)
 		};
 
 		[Test]
@@ -254,5 +269,6 @@ namespace MonoTests.System.Security.Policy {
 				}
 			}
 		}
+#endif
 	}
 }
