@@ -21,11 +21,6 @@
 // at http://www.opensource.org/licenses/mit-license.html
 //
 
-// #define MYSQL_CANDO_QUERY if the runtime can do a query
-// define MYSQL_CANDO_THREADS if the runtime can use mysql_thread_* functions
-#define MYSQL_CANDO_QUERY
-#define MYSQL_CANDO_THREADS
-
 using System;
 using System.Runtime.InteropServices;
 using Mono.Data.MySql;
@@ -60,7 +55,7 @@ public class Test {
 	public static int Main() {
 		Console.WriteLine("Test for MySQL C# Bindings started...");
 		Console.Out.Flush();
-        int rcq;
+		int rcq;
 
 		string myDb = "test";
 		string myStmt = "SELECT * FROM sometable";
@@ -111,7 +106,6 @@ public class Test {
 			return 1;
 		}
 		
-#if MYSQL_CANDO_QUERY
 		Console.WriteLine("Query:  "+myStmt);
 		Console.Out.Flush();
 		rcq = MySql.Query(db, myStmt);
@@ -140,7 +134,6 @@ public class Test {
 		Console.WriteLine("List Tables...");
 		Console.Out.Flush();
 		listTables(db);
-#endif // MYSQL_CANDO_QUERY
 
 		Console.WriteLine("MySql Stat...");
 		Console.Out.Flush();
@@ -149,18 +142,17 @@ public class Test {
 		Console.WriteLine("MySql Close...");
 		Console.Out.Flush();
 		MySql.Close(db);
-#if MYSQL_CANDO_THREADS
+
 		Console.WriteLine("MySql Thread End...");
 		Console.Out.Flush();
 		MySql.ThreadEnd();
-#endif // MYSQL_CANDO_THREADS
+
 		Console.WriteLine("Exiting...");
 		Console.Out.Flush();
 
 		return 0;
 	}
 
-#if MYSQL_CANDO_QUERY
 	static void procResults(IntPtr db) {
 		IntPtr res = MySql.StoreResult(db);
 		int numRows = MySql.NumRows(res);
@@ -243,5 +235,4 @@ public class Test {
 		}
 		MySql.FreeResult(res);
 	}
-#endif // MYSQL_CANDO_QUERY
 }

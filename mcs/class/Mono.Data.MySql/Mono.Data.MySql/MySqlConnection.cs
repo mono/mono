@@ -28,7 +28,7 @@ namespace Mono.Data.MySql {
 		private string connectionString = "";    
 		private string mysqlConnectionString = ""; 
 		
-		//private MySqlTransaction trans = null;
+		private MySqlTransaction trans = null;
 		private int connectionTimeout = 15;     
 		// default for 15 seconds
 
@@ -88,38 +88,50 @@ namespace Mono.Data.MySql {
 		#region Public Methods
 
 		IDbTransaction IDbConnection.BeginTransaction () {
-			// return BeginTransaction ();
-			return null;
+			return BeginTransaction ();
 		}
 
-		//public MySqlTransaction BeginTransaction () {
-		//	return TransactionBegin (); // call private method
-		//}
+		public MySqlTransaction BeginTransaction () {
+			return TransactionBegin (); // call private method
+		}
 
 		IDbTransaction IDbConnection.BeginTransaction (IsolationLevel 
 			il) {
-			//return BeginTransaction (il);
-			return null;
+			return BeginTransaction (il);
 		}
 
-		//public MySqlTransaction BeginTransaction (IsolationLevel il) {
-		//	return TransactionBegin (il); // call private method
-		//}
+		public MySqlTransaction BeginTransaction (IsolationLevel il) {
+			return TransactionBegin (il); // call private method
+		}
 
-		//[MonoTODO]
-		//public MySqlTransaction BeginTransaction(string transactionName) {
-		//	return TransactionBegin (); // call private method
-		//}
+		[MonoTODO]
+		public MySqlTransaction BeginTransaction(string transactionName) {
 
-		//[MonoTODO]
-		//public MySqlTransaction BeginTransaction(IsolationLevel iso,
-		//	string transactionName) {
-		//	return TransactionBegin (iso); // call private method
-		//}
+			// FIXME: Can MySQL handle named transactions?
+			return TransactionBegin (); // call private method
+		}
+
+		[MonoTODO]
+		public MySqlTransaction BeginTransaction(IsolationLevel iso,
+			string transactionName) {
+
+			// FIXME: Can MySQL handle named transactions?
+			return TransactionBegin (iso); // call private method
+		}
 
 		[MonoTODO]
 		public void ChangeDatabase (string databaseName) {
-			throw new NotImplementedException ();
+			dbname = databaseName;
+			Console.WriteLine("MySql Selecting Database: " + dbname + "...");
+			Console.Out.Flush();
+			int sdb = MySql.SelectDb(mysqlInitStruct, dbname);
+			if (sdb != 0) {
+				Console.WriteLine("Error: Can not select the "+dbname+" database.");
+				Console.Out.Flush();
+				Console.WriteLine("MySql Error: " + MySql.Error(mysqlInitStruct));
+				Console.Out.Flush();
+				return;
+			}
 		}
 		
 		object ICloneable.Clone() {
@@ -192,16 +204,7 @@ namespace Mono.Data.MySql {
 				return;
 			}
 
-			Console.WriteLine("MySql Selecting Database: " + dbname + "...");
-			Console.Out.Flush();
-			int sdb = MySql.SelectDb(mysqlInitStruct, dbname);
-			if (sdb != 0) {
-				Console.WriteLine("Error: Can not select the "+dbname+" database.");
-				Console.Out.Flush();
-				Console.WriteLine("MySql Error: " + MySql.Error(mysqlInitStruct));
-				Console.Out.Flush();
-				return;
-			}
+			this.ChangeDatabase (dbname);
 		
 			// Successfully Connected
 			SetupConnection();
@@ -278,9 +281,8 @@ namespace Mono.Data.MySql {
 		}
 
 		private string GetDatabaseServerVersion() {
-			//MySqlCommand cmd = new MySqlCommand("select version()",this);
-			//return (string) cmd.ExecuteScalar();
-			return "";
+			MySqlCommand cmd = new MySqlCommand("select version()",this);
+			return (string) cmd.ExecuteScalar();
 		}
 
 		private void CloseDataSource () {
@@ -408,11 +410,10 @@ namespace Mono.Data.MySql {
 			return addParm;
 		}
 
-		/*
 		private MySqlTransaction TransactionBegin () {
 			// FIXME: need to keep track of 
 			// transaction in-progress
-			trans = new SqlTransaction ();
+			trans = new MySqlTransaction ();
 			// using internal methods of SqlTransaction
 			trans.SetConnection (this);
 			trans.Begin();
@@ -423,13 +424,15 @@ namespace Mono.Data.MySql {
 		private MySqlTransaction TransactionBegin (IsolationLevel il) {
 			// FIXME: need to keep track of 
 			// transaction in-progress
-			TransactionBegin();
+			trans = new MySqlTransaction ();
+			// using internal methods of MySqlTransaction
+			trans.SetConnection (this);
 			trans.SetIsolationLevel (il);
-			
+			trans.Begin();
+
 			return trans;
 		}
-		*/
-
+		
 		#endregion
 
 		#region Public Properties

@@ -1,3 +1,32 @@
+2002-10-11  Daniel Morgan <danmorg@sc.rr.com>
+
+	* Mono.Data.MySql/MySqlTransaction.cs: added to
+	  support transactions (BEGIN, COMMIT/ROLLBACK).
+	  
+	* Mono.Data.MySql.build: included MySqlTransaction 
+	  in build on Windows
+	  
+	* list: included MySqlTransaction
+	  in build on Linux
+	  
+	* Mono.Data.MySql/MySql.cs: the mysql thread functions
+	  were misnamed and prevented them from being loaded
+	  by the mono JIT - my_thread_init() and my_thread_end().
+	  Now, threading should work in the MySQL provider and
+	  less memory leaks too.
+	  
+	* Mono.Data.MySql/Test.cs: remove conditional comiliation
+	  since everything compiles fine on Mono now
+	  
+	* Mono.Data.MySql/MySqlCommand.cs: remove Console.WriteLine()
+	
+	* Mono.Data.MySql/MySqlConnection.cs: added transaction 
+	  support, implemented method ChangeDatabase(), implemented
+	  property ServerVersion
+	  
+	* Test/TestMySqlInsert.cs: modified test 
+	  to handle transactions
+
 2002-10-10  Rodrigo Moya <rodrigo@ximian.com>
 
 	* makefile.gnu: added makefile for linux build.

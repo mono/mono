@@ -99,8 +99,6 @@ namespace Mono.Data.MySql {
 			//      this is just something quick
 			//      thrown together to see if we can
 			//      execute a SQL Command
-			Console.WriteLine("Insert SQL:  " + sql);
-			Console.Out.Flush();
 			int rcq = MySql.Query(conn.NativeMySqlInitStruct, sql);
 			if (rcq != 0) {
 				// TODO: throw an exception here?

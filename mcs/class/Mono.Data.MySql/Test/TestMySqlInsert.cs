@@ -1,18 +1,19 @@
 //
 // TestSqlInsert.cs
 //
-// To Test MySqlConnection and MySqlCommand by connecting
-// to a MySQL database 
-// and then executing an INSERT SQL statement
+// To Test MySqlConnection, MySqlCommand, and MySqlTransaction 
+// by connecting to a MySQL database 
+// and then executing some SQL statements
 //
 // To use:
 //   change strings to your database, userid, tables, etc...:
 //        connectionString
 //        insertStatement
+//        sqlToBeRolledBack
 //
 // To test:
-//   mcs TestMySqlInsert.cs -r Mono.Data.MySql.dll
-//   mint TestMySqlInsert.exe
+//   mcs TestMySqlInsert.cs -r System.Data.dll -r Mono.Data.MySql.dll
+//   mono TestMySqlInsert.exe
 //
 // Author:
 //   Daniel Morgan (danmorg@sc.rr.com)
@@ -33,7 +34,7 @@ namespace TestMonoDataMysql
 		{
 			MySqlConnection conn;
 			MySqlCommand cmd;
-			//MySqlTransaction trans;
+			MySqlTransaction trans;
 
 			int rowsAffected;
 
@@ -59,13 +60,12 @@ namespace TestMonoDataMysql
 			conn.Open();
 
 			// begin transaction
-			//Console.WriteLine ("Begin Transaction...");
-			//trans = conn.BeginTransaction();
+			Console.WriteLine ("Begin Transaction...");
+			trans = conn.BeginTransaction();
 
 			// create SQL DELETE command
 			Console.WriteLine ("Create Command initializing " +
 				"with an DELETE statement...");
-			//cmd = new MySqlCommand (deleteStatement, conn);
 			cmd = new MySqlCommand (deleteStatement, conn);
 
 			// execute the DELETE SQL command
@@ -87,8 +87,30 @@ namespace TestMonoDataMysql
 			// trans.Rollback();
 			// FIXME: need to have exceptions working in
 			//        Mono.Data.MySql classes before you can do rollback
-			//Console.WriteLine ("Commit transaction...");
-			//trans.Commit();
+			Console.WriteLine ("Commit transaction...");
+			trans.Commit();
+
+			cmd = null;
+			trans = null;
+
+			string sqlToBeRolledBack = 
+				"insert into sometable " +
+				"(tid, tdesc) " +
+				"values ('beer', 'Will not be committed!') ";
+
+			Console.WriteLine("Create new command to be rolled back");
+			cmd = conn.CreateCommand();
+			cmd.CommandText = sqlToBeRolledBack;
+
+			Console.WriteLine("Test Begin Transaction");
+			trans = conn.BeginTransaction();
+
+			Console.WriteLine("Execute INSERT SQL...");
+			rowsAffected = cmd.ExecuteNonQuery();
+			Console.WriteLine ("Rows Affected: " + rowsAffected);
+
+			Console.WriteLine("Rollback Transaction...");
+			trans.Rollback();
 
 			// Close connection to database
 			Console.WriteLine ("Close database connection...");

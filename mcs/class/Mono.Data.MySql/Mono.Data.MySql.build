@@ -36,7 +36,6 @@
 				<excludes name="Mono.Data.MySql/MySqlRowUpdatedEventHandler.cs"/>
 				<excludes name="Mono.Data.MySql/MySqlRowUpdatingEventArgs.cs"/>
 				<excludes name="Mono.Data.MySql/MySqlRowUpdatingEventHandler.cs"/>
-				<excludes name="Mono.Data.MySql/MySqlTransaction.cs"/>
 				
 			</sources>
 			<references>

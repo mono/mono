@@ -24,27 +24,11 @@
 
 // Things to do:
 // =============
-// FIXME: mysql_thread_init() and mysql_thread_end()
-//        for some reason can not be loaded from the libMySQL.dll
-//        using Mono.  Until this is fixed, there will be a
-//        resource leak.
-//
-// TODO: method IntPtr PtrToStructure(IntPtr, Type) needs to
-//       be implemented in assembly corlib.dll 
-//       in class System.Runtime.InteropServices.Marshal
-//       which requires also an internal call in the runtime
-//       for it too.
-//       This is so we can retrieve Field data from MySQL.
 //
 // TODO: more functions in the MySQL C Client API
 //       (libmysqlclient.so on linux and libmySQL.dll on cygwin)
 //       need to be added here as C# pinvoke methods.
 //       Other data structures may need to be added as well.
-//
-// TODO: handle the name of the MySQL client library for
-//       different platforms because it is named differently
-//       on each platform.
-//       We maybe using a config file for this.
 //
 
 namespace Mono.Data.MySql {
@@ -250,7 +234,7 @@ namespace Mono.Data.MySql {
 		///</summary>
 		[DllImport("libmySQL",
 			 CharSet=System.Runtime.InteropServices.CharSet.Ansi,
-			 EntryPoint="mysql_thread_end", ExactSpelling=true)]
+			 EntryPoint="my_thread_end", ExactSpelling=true)]
 		public static extern void ThreadEnd();
 
 		///<summary>
@@ -264,7 +248,7 @@ namespace Mono.Data.MySql {
 		///</summary>
 		[DllImport("libmySQL",
 			 CharSet=System.Runtime.InteropServices.CharSet.Ansi,
-			 EntryPoint="mysql_thread_init", ExactSpelling=true)]
+			 EntryPoint="my_thread_init", ExactSpelling=true)]
 		public static extern void ThreadInit();
 	}
 }
