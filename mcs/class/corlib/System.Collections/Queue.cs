@@ -157,10 +157,11 @@ namespace System.Collections {
 
 		public virtual void Enqueue (object obj) {
 			modCount++;
-			if (count == contents.Length) 
+			if (count == capacity) 
 				grow ();
-			contents[(head + count) % contents.Length] = obj;
+			contents[(head + count) % capacity] = obj;
 			count++;
+
 		}
 
 		public virtual object Peek () {
@@ -196,7 +197,8 @@ namespace System.Collections {
 			object[] newContents = new object[newCapacity];
 			CopyTo (newContents, 0);
 			contents = newContents;
-			head = 0;
+                        capacity = newCapacity;
+                        head = 0;
 		}
 
 		// private classes

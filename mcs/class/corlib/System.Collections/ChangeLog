@@ -1,3 +1,9 @@
+2002-10-15  Vladimir Vukicevic  <vladimir@pobox.com>
+
+	* Queue.cs: update new capacity in grow(), preventing queue from
+	constantly looping over old elements in Dequeue(). Also use
+	capacity instead of contents.Length in Enqueue().
+
 2002-09-24  Nick Drochak  <ndrochak@gol.com>
 
 	* ArrayList.cs: Make enumerator throw exception if the ArrayList is
