@@ -1,3 +1,8 @@
+2005-02-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (encode_marshal_blob): Encode param_num field as well.
+
+	* object-internals.h (MonoReflectionMarshal): Add param_num field.
 
 Mon Feb 28 11:59:42 CET 2005 Paolo Molaro <lupus@ximian.com>
 
