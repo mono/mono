@@ -269,6 +269,8 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
+		// MS fails to validate nondeterministic content validation.
 		public void TestNonDeterministicContent ()
 		{
 			string intSubset = "<!ELEMENT root ((foo, bar)|(foo,baz))><!ELEMENT foo EMPTY><!ELEMENT bar EMPTY><!ELEMENT baz EMPTY>";
@@ -290,6 +292,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void TestAttributes ()
 		{
 			// simple content and attributes are required

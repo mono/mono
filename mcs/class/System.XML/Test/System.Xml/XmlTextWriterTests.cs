@@ -89,6 +89,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void AttributeNamespacesXmlnsXmlns ()
 		{
 			xtw.WriteStartElement ("foo");
@@ -364,11 +365,12 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void ElementXmlnsNeedEscape ()
 		{
 			xtw.WriteStartElement ("test", "foo", "'");
 			xtw.WriteEndElement ();
-			// MS.NET fails this case.
+			// MS.NET output is : xmlns:test='''
 			AssertEquals ("<test:foo xmlns:test='&apos;' />", StringWriterText);
 		}
 
@@ -899,12 +901,16 @@ namespace MonoTests.System.Xml
 			AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>baz<quux xml:lang='", StringWriterText);
 			
 			xtw.WriteString("langbar");
-			AssertEquals ("langfoo", xtw.XmlLang);
-			AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>baz<quux xml:lang='", StringWriterText);
+			// Commented out there: it is implementation-dependent.
+			// and incompatible between .NET 1.0 and 1.1
+//			AssertEquals ("langfoo", xtw.XmlLang);
+//			AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>baz<quux xml:lang='", StringWriterText);
 			
 			xtw.WriteEndAttribute ();
-			AssertEquals ("langbar", xtw.XmlLang);
-			AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>baz<quux xml:lang='langbar'", StringWriterText);
+			// Commented out there: it is implementation-dependent.
+			// and incompatible between .NET 1.0 and 1.1
+//			AssertEquals ("langbar", xtw.XmlLang);
+//			AssertEquals ("<foo xml:lang='langfoo' boo='yah'><bar>baz</bar>baz<quux xml:lang='langbar'", StringWriterText);
 
 			// check if xml:lang repeats output even if same as current scope.
 			xtw.WriteStartElement ("joe");
@@ -951,9 +957,11 @@ namespace MonoTests.System.Xml
 			AssertEquals (XmlSpace.Preserve, xtw.XmlSpace);
 			AssertEquals ("<foo><bar xml:space='preserve'><baz xml:space='preserve'><quux xml:space='", StringWriterText);
 
+			// Commented out there: it is implementation-dependent
+			// and incompatible between .NET 1.0 and 1.1
 			xtw.WriteString ("default");
-			AssertEquals (XmlSpace.Preserve, xtw.XmlSpace);
-			AssertEquals ("<foo><bar xml:space='preserve'><baz xml:space='preserve'><quux xml:space='", StringWriterText);
+//			AssertEquals (XmlSpace.Preserve, xtw.XmlSpace);
+//			AssertEquals ("<foo><bar xml:space='preserve'><baz xml:space='preserve'><quux xml:space='", StringWriterText);
 			
 			xtw.WriteEndAttribute ();
 			AssertEquals (XmlSpace.Default, xtw.XmlSpace);
@@ -997,8 +1005,10 @@ namespace MonoTests.System.Xml
 			AssertEquals ("<foo xml:space='", StringWriterText);
 
 			xtw.WriteString ("default");
-			AssertEquals (XmlSpace.None, xtw.XmlSpace);
-			AssertEquals ("<foo xml:space='", StringWriterText);
+			// Commented out there: it is implementation-dependent
+			// and incompatible between .NET 1.0 and 1.1
+//			AssertEquals (XmlSpace.None, xtw.XmlSpace);
+//			AssertEquals ("<foo xml:space='", StringWriterText);
 
 			xtw.WriteEndAttribute ();
 			AssertEquals (XmlSpace.Default, xtw.XmlSpace);

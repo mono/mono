@@ -33,6 +33,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void FileUri2 ()
 		{
 			AssertEquals ("file://usr/local/src", resolver.ResolveUri (new Uri ("file://usr/local/src"), null).ToString ());
@@ -55,7 +56,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
+		[ExpectedException (typeof (ArgumentException))]
 		public void ResolveUriWithNullArgs ()
 		{
 			resolver.ResolveUri (null, null);

@@ -1219,7 +1219,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Ignore ("XmlNodeReader never moves to xml declaration.")]
+		[Category ("NotDotNet")] // MS XmlNodeReader never moves to xml declaration.
 		public void MoveToXmlDeclAttributes ()
 		{
 			string xml = "<?xml version=\"1.0\" standalone=\"yes\"?><root/>";
@@ -1308,6 +1308,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void IndexerAndAttributes ()
 		{
 			string xml = @"<?xml version='1.0' standalone='no'?><foo _1='1' _2='2' _3='3' />";
