@@ -99,6 +99,8 @@ System.Windows.Forms/LinkLabelLinkClickedEventHandler.cs
 System.Windows.Forms/LinkState.cs
 System.Windows.Forms/ListViewAlignment.cs
 System.Windows.Forms/GroupBox.cs
+System.Windows.Forms/MeasureItemEventHandler.cs
+System.Windows.Forms/MeasureItemEventArgs.cs
 System.Windows.Forms/MenuGlyph.cs
 System.Windows.Forms/MenuMerge.cs
 System.Windows.Forms/MessageBoxButtons.cs
