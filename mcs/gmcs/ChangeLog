@@ -1,3 +1,32 @@
+2004-11-10  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (TypeContainer.DefineType): Call
+	TypeBuilder.DefineGenericParameters() before resolving the type
+	parameters.
+	(MethodData.parent_method): New protected field.
+	(MethodData..ctor): Added `MethodInfo parent_method' argument.
+	(MethodData.Define): Compute `parent_method'.
+
+	* decl.cs
+	(MemberCore.GetObsoleteAttribute): Don't create a new EmitContext.
+	(MemberCore.GetClsCompliantAttributeValue): Likewise.
+	(DeclSpace.ec): New protected field; store the EmitContext here.
+	(DeclSpace.EmitContext): New public property.
+	(DeclSpace.ResolveType): Un-comment from the [Obsolte] attribute.
+	(DeclSpace.ResolveNestedType): New public method.
+	(DeclSpace.ResolveTypeExpr): Just call ResolveAsTypeTerminal() here.
+	(DeclSpace.NestedAccessible): Added `Type tb' argument.
+	(DeclSpace.FamilyAccessible): Likewise.
+	(DeclSpace.FindType): Call ResolveNestedType() for nested types.
+	(DeclSpace.GetClsCompliantAttributeValue): Don't create a new
+	EmitContext.
+
+	* delegate.cs (Delegate.Define): Store the EmitContext in the `ec'
+	field.
+
+	* enum.cs (Enum.Define): Store the EmitContext in the `ec' field.
+	(Enum.Emit): Don't create a new EmitContext.
+
 2004-10-18  Martin Baulig  <martin@ximian.com>
 
 	* statement.cs (Fixed.Resolve): Don't access the TypeExpr's

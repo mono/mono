@@ -1210,7 +1210,17 @@ namespace Mono.CSharp {
 			TypeManager.AddUserType (Name, TypeBuilder, this);
 
 			if (IsGeneric) {
+				string[] param_names = new string [TypeParameters.Length];
+				for (int i = 0; i < TypeParameters.Length; i++)
+					param_names [i] = TypeParameters [i].Name;
+
+				GenericTypeParameterBuilder[] gen_params;
+				gen_params = TypeBuilder.DefineGenericParameters (param_names);
+
 				int offset = CountTypeParameters - CurrentTypeParameters.Length;
+				for (int i = offset; i < gen_params.Length; i++)
+					CurrentTypeParameters [i - offset].Define (gen_params [i]);
+
 				foreach (TypeParameter type_param in CurrentTypeParameters) {
 					if (!type_param.Resolve (this)) {
 						error = true;
@@ -1218,19 +1228,10 @@ namespace Mono.CSharp {
 					}
 				}
 
-				CurrentType = new ConstructedType (
-					Name, TypeParameters, Location);
-
-				string[] param_names = new string [TypeParameters.Length];
-				for (int i = 0; i < TypeParameters.Length; i++)
-					param_names [i] = TypeParameters [i].Name;
-
-				GenericTypeParameterBuilder[] gen_params;
-				
-				gen_params = TypeBuilder.DefineGenericParameters (param_names);
-
 				for (int i = offset; i < gen_params.Length; i++)
-					CurrentTypeParameters [i - offset].Define (gen_params [i]);
+					CurrentTypeParameters [i - offset].DefineConstraints ();
+
+				CurrentType = new ConstructedType (Name, TypeParameters, Location);
 			}
 
 			if (IsGeneric) {
@@ -3828,7 +3829,7 @@ namespace Mono.CSharp {
 				flags |= MethodAttributes.SpecialName | MethodAttributes.HideBySig;
 
 			MethodData = new MethodData (this, ParameterInfo, ModFlags, flags,
-						     this, mb, GenericMethod);
+						     this, mb, GenericMethod, parent_method);
 
 			if (!MethodData.Define (Parent))
 				return false;
@@ -4614,6 +4615,7 @@ namespace Mono.CSharp {
 		protected int modifiers;
 		protected MethodAttributes flags;
 		protected Type declaring_type;
+		protected MethodInfo parent_method;
 
 		EmitContext ec;
 
@@ -4644,11 +4646,12 @@ namespace Mono.CSharp {
 		public MethodData (MemberBase member, InternalParameters parameters,
 				   int modifiers, MethodAttributes flags, 
 				   IMethodData method, MethodBuilder builder,
-				   GenericMethod generic)
+				   GenericMethod generic, MethodInfo parent_method)
 			: this (member, parameters, modifiers, flags, method)
 		{
 			this.builder = builder;
 			this.GenericMethod = generic;
+			this.parent_method = parent_method;
 		}
 
 		static string RemoveArity (string name)
@@ -4811,10 +4814,10 @@ namespace Mono.CSharp {
 				bool is_override = member.IsExplicitImpl |
 					((modifiers & Modifiers.OVERRIDE) != 0);
 
-				is_override &= IsImplementing;
+				if (implementing != null)
+					parent_method = implementing;
 
-				if (!GenericMethod.DefineType (
-					    ec, builder, implementing, is_override))
+				if (!GenericMethod.DefineType (ec, builder, parent_method, is_override))
 					return false;
 			}
 
@@ -5213,6 +5216,8 @@ namespace Mono.CSharp {
 					return false;
 
 				InterfaceType = iface_texpr.ResolveType (ec);
+				if (InterfaceType == null)
+					return false;
 
 				if (InterfaceType.IsClass) {
 					Report.Error (538, Location, "'{0}' in explicit interface declaration is not an interface", ExplicitInterfaceName);
@@ -5481,6 +5486,8 @@ namespace Mono.CSharp {
 
 			MemberType = texpr.ResolveType (ec);
 			ec.InUnsafe = old_unsafe;
+			if (MemberType == null)
+				return false;
 
 			if (!CheckBase ())
 				return false;
@@ -6867,9 +6874,7 @@ namespace Mono.CSharp {
 				
 				return new InternalParameters (types, set_formal_params);
 			}
-
 		}
-
 
 		const int AllowedModifiers =
 			Modifiers.NEW |
