@@ -1,3 +1,7 @@
+2003-02-27  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs: Also track the state in the Resolve phase.
+
 2003-02-27  Martin Baulig  <martin@ximian.com>
 
 	* ecore.cs (Expression.MemberLookup): Don't create a
