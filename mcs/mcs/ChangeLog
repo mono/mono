@@ -1,3 +1,7 @@
+2003-10-20  Nick Drochak <ndrochak@gol.com>
+
+	* ecore.cs: Fix typo and build.  Needed another right paren.
+
 2003-10-19  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs: Applied fix from Ben Maurer.   We were handling in the

@@ -2849,7 +2849,7 @@ namespace Mono.CSharp {
 					continue;
 
 				// Family and FamANDAssem require that we derive.
-				if ((ma == MethodAttributes.Family) || (ma == MethodAttributes.FamANDAssem) || (ma == MethodAttributes.FamORAssem){
+				if ((ma == MethodAttributes.Family) || (ma == MethodAttributes.FamANDAssem) || (ma == MethodAttributes.FamORAssem)){
 					if (!TypeManager.IsSubclassOrNestedChildOf (invocation_type, mi.DeclaringType))
 						continue;
 					else {
