@@ -329,7 +329,7 @@ namespace System.Xml
 		/// Return an XPathNavigator for navigating this node
 		/// </summary>
 		/// <returns></returns>
-		public XPathNavigator CreateNavigator()
+		public System.Xml.XPath.XPathNavigator CreateNavigator()
 		{
 			// TODO - implement CreateNavigator()
 			throw new NotImplementedException();
