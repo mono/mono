@@ -259,6 +259,7 @@ class MonoP {
 			return;
 		}
 
+		string message = null;
 		string tname = args [i];
 		Type t = GetType (tname);
 
@@ -271,7 +272,6 @@ class MonoP {
 			}
 		}
 
-		string message = null;
 		if (t == null) {
 			foreach (string assm in GetAssemblyNamesFromGAC ()) {
 				try {

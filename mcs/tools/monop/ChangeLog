@@ -1,3 +1,7 @@
+2004-12-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* monop.cs : csc build fix. See bug #70185 for details.
+
 2004-11-30  Duncan Mak  <duncan@ximian.com>
 
 	* monop.cs (GetAssemblyNamesFromGAC): New method, calls out to
