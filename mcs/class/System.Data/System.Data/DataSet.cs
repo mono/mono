@@ -233,6 +233,8 @@ namespace System.Data {
 			get { return _namespace; } 
 			set {
 				//TODO - trigger an event if this happens?
+				if (value == null)
+					value = String.Empty;
 				 if (value != this._namespace)
                                         RaisePropertyChanging ("Namespace");
  				_namespace = value;
@@ -245,6 +247,8 @@ namespace System.Data {
 		public string Prefix {
 			get { return prefix; } 
 			set {
+				if (value == null)
+					value = String.Empty;
                               // Prefix cannot contain any special characters other than '_' and ':'
                                for (int i = 0; i < value.Length; i++) {
                                        if (!(Char.IsLetterOrDigit (value [i])) && (value [i] != '_') && (value [i] != ':'))
@@ -479,8 +483,6 @@ namespace System.Data {
 		public string GetXml ()
 		{
 			StringWriter Writer = new StringWriter ();
-
-			// Sending false for not printing the Processing instruction
 			WriteXml (Writer, XmlWriteMode.IgnoreSchema);
 			return Writer.ToString ();
 		}
@@ -525,6 +527,9 @@ namespace System.Data {
 		[MonoTODO ("Consider ignored namespace array")]
 		public void InferXmlSchema (XmlReader reader, string[] nsArray)
 		{
+			if (reader == null)
+				return;
+
 			XmlDataLoader Loader = new XmlDataLoader (this);
 			Loader.LoadData (reader, XmlReadMode.InferSchema);
 		}
@@ -666,10 +671,8 @@ namespace System.Data {
 				SetRowsID();
 				WriteDiffGramElement(writer);
 			}
-
-			string ns = Namespace == null ? String.Empty : Namespace;
-
-			WriteStartElement (writer, mode, ns, Prefix, XmlConvert.EncodeName (DataSetName));
+			// FIXME: It should not write when there is no content to be written.
+			WriteStartElement (writer, mode, Namespace, Prefix, XmlConvert.EncodeName (DataSetName));
 			
 			if (mode == XmlWriteMode.WriteSchema) {
 				DoWriteXmlSchema (writer);
@@ -680,7 +683,7 @@ namespace System.Data {
 				writer.WriteEndElement (); //DataSet name
 				if (HasChanges(DataRowState.Modified | DataRowState.Deleted)) {
 
-					DataSet beforeDS = GetChanges (DataRowState.Modified | DataRowState.Deleted);	
+					DataSet beforeDS = GetChanges (DataRowState.Modified | DataRowState.Deleted);
 					WriteStartElement (writer, XmlWriteMode.DiffGram, XmlConstants.DiffgrNamespace, XmlConstants.DiffgrPrefix, "before");
 					WriteTables (writer, mode, beforeDS.Tables, DataRowVersion.Original);
 					writer.WriteEndElement ();
@@ -699,12 +702,11 @@ namespace System.Data {
 		public void WriteXmlSchema (string fileName)
 		{
 			XmlTextWriter writer = new XmlTextWriter (fileName, null);
-			writer.Formatting = Formatting.Indented;
-			writer.WriteStartDocument (true);
 			try {
+				writer.Formatting = Formatting.Indented;
+				writer.WriteStartDocument (true);
 				WriteXmlSchema (writer);
-			}
-			finally {
+			} finally {
 				writer.WriteEndDocument ();
 				writer.Close ();
 			}
@@ -713,8 +715,14 @@ namespace System.Data {
 		public void WriteXmlSchema (TextWriter writer)
 		{
 			XmlTextWriter xwriter = new XmlTextWriter (writer);
-			xwriter.Formatting = Formatting.Indented;
-			WriteXmlSchema (xwriter);
+			try {
+				xwriter.Formatting = Formatting.Indented;
+//				xwriter.WriteStartDocument ();
+				WriteXmlSchema (xwriter);
+			} finally {
+//				xwriter.WriteEndDocument ();
+				xwriter.Close ();
+			}
 		}
 
 		public void WriteXmlSchema (XmlWriter writer)
@@ -1111,7 +1119,7 @@ namespace System.Data {
 				}
 				else {					
 					foreach (DataColumn col in elements) {
-						WriteColumnAsElement (writer, mode, nspc, col, row, version);
+						WriteColumnAsElement (writer, mode, col, row, version);
 					}
 				}
 				
@@ -1126,17 +1134,16 @@ namespace System.Data {
 
 		}
 
-		private void WriteColumnAsElement (XmlWriter writer, XmlWriteMode mode, string nspc, DataColumn col, DataRow row, DataRowVersion version)
+		private void WriteColumnAsElement (XmlWriter writer, XmlWriteMode mode, DataColumn col, DataRow row, DataRowVersion version)
 		{
-			string colnspc = nspc;
+			string colnspc = null;
 			object rowObject = row [col, version];
 									
 			if (rowObject == null || rowObject == DBNull.Value)
 				return;
 
-			if (col.Namespace != null) {
+			if (col.Namespace != String.Empty)
 				colnspc = col.Namespace;
-			}
 	
 			//TODO check if I can get away with write element string
 			WriteStartElement (writer, mode, colnspc, col.Prefix, col.ColumnName);
@@ -1234,14 +1241,25 @@ namespace System.Data {
 			schema.Namespaces.Add("xs", XmlSchema.Namespace);
 			schema.Namespaces.Add(XmlConstants.MsdataPrefix, XmlConstants.MsdataNamespace);
 			
-			if (Namespace != "" && Namespace != null) {
+			if (Namespace != "") {
 				schema.AttributeFormDefault = XmlSchemaForm.Qualified;
 				schema.ElementFormDefault = XmlSchemaForm.Qualified;
 				schema.TargetNamespace = Namespace;
 				schema.Namespaces.Add(XmlConstants.TnsPrefix, Namespace);
 				constraintPrefix = XmlConstants.TnsPrefix + ":";
 			}
-				
+
+			// Namespaces defined in tables and columns	
+			// FIXME: What if the same prefix is mapped? Create another
+			//        prefix and apply them. (But how?)
+			foreach (DataTable dt in tables) {
+				if (dt.Namespace != String.Empty)
+					schema.Namespaces.Add (dt.Prefix, dt.Namespace);
+				foreach (DataColumn col in dt.Columns)
+					if (col.Namespace != String.Empty)
+						schema.Namespaces.Add (col.Prefix, col.Namespace);
+			}
+
 			// set the schema id
 			schema.Id = DataSetName;
 			XmlDocument doc = new XmlDocument ();

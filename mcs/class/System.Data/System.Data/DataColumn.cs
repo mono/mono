@@ -434,6 +434,8 @@ namespace System.Data {
 				return nameSpace;
 			}
 			set {
+				if (value == null)
+					value = String.Empty;
 				nameSpace = value;
 			}
 		}
@@ -465,6 +467,8 @@ namespace System.Data {
 				return prefix;
 			}
 			set {
+				if (value == null)
+					value = String.Empty;
 				prefix = value;
 			}
 		}

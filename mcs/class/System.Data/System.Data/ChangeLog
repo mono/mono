@@ -1,3 +1,15 @@
+2004-04-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSet.cs : 
+	  Never set null string for Prefix and Namespace.
+	  In InferXmlSchema() when null XmlReader is passed, just do nothing.
+	  In WriteXmlSchema(string), earlier try block.
+	  In BuildSchema(), try to add serialization namespaces for each
+	  namespaces in DataSet/DataTable/DataColumn.
+	  Removed namespace argument from WriteColumnAsElement() and don't
+	  overwrite when namespace is "". This fixes bug #57330.
+	* DataColumn.cs : For Namespace and Prefix, never set null.
+
 2004-04-21  Boris Kirzner <borisk@mainsoft.com>
 
 	* XmlSchemaMapper.cs : Check for not null unique constraint in ReadXmlSchemaKeyref()
