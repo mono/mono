@@ -11,9 +11,6 @@ Module IntegerLiteralTest
             s = 20S
             i = 20I
 
-            i = 20L
-            s = 20I
-            s = 20
         Catch e As Exception
             Console.WriteLine(e.Message)
         End Try

@@ -1,5 +1,6 @@
 thisdir = btests
 SUBDIRS = 
+TEST_RUNTIME = mono
 COMPILER_FLAGS = /libpath:../class/lib /imports:System
 INTERNAL_MBAS = $(TEST_RUNTIME) --debug ../mbas/mbas.exe --stacktrace $(COMPILER_FLAGS)
 #INTERNAL_MBAS = vbc $(COMPILER_FLAGS)

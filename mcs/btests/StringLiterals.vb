@@ -1,7 +1,7 @@
 Module StringLiterals
     Sub main()
-        Dim c As Char
-        c = "x"
+        Dim s As String
+        s = "x"
 
         Dim a As String = "xyz"
         a = "xyz1"

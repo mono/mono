@@ -1,6 +1,6 @@
 Imports System
 Module BoolLiteralTest
-    Sub Main()
+    Sub main()
         Try
             Dim b As Boolean
             b = True

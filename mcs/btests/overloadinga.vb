@@ -1,22 +1,34 @@
 'Testing overloading in different classes
 Class B
-    Function F()
+    Public Function F()
     End Function
 
-    Function F(ByVal i As Integer)
+    Public Function F(ByVal i As Integer)
     End Function
 
-    Function F1()
+    Public Function F(ByVal s As String)
     End Function
 
-    Function F1(ByVal i As Integer)
+    Public overridable Function F1()
+    End Function
+
+    Public Function F1(ByVal i As Integer)
     End Function
 End Class
 
 Class D
     Inherits B
 
-    Overloads Function F()
+    Public Function F()
+    End Function
+
+    Public overloads Function F(ByVal s as Integer)
+    End Function
+
+    Public overloads Function F(ByVal s As String)
+    End Function
+
+    Public Function F1()
     End Function
 End Class
 
