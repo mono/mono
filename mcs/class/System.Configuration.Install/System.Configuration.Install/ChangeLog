@@ -1,3 +1,9 @@
+2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* AssemblyInstaller.cs: stubbed
+	* ManagedInstallerClass.cs: stubbed
+	* TransactedInstaller.cs: stubbed
+
 2004-05-16  Gert Driesen (drieseng@users.sourceforge.net)
 
 	* IManagedInstaller.cs: fixed signature
