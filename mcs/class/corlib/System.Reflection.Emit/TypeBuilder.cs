@@ -680,6 +680,11 @@ namespace System.Reflection.Emit {
 			throw new NotImplementedException ();
 		}
 
+		public TypeToken TypeToken {
+			get {
+				return new TypeToken (0x02000000 | table_idx);
+			}
+		}
 		public void SetParent (Type parentType) {
 			parent = parentType;
 		}

@@ -1,3 +1,7 @@
+2002-05-25  Martin Baulig  <martin@gnome.org>
+
+	* TypeBuilder.cs (TypeToken): Implemented.
+
 2002-05-24  Martin Baulig  <martin@gnome.org>
 
 	* ModuleBuilder.cs (symwriter_define_local): New private variable.
