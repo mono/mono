@@ -35,15 +35,11 @@ profiles-do--%:
 profile-do--%:
 	$(MAKE) PROFILE=$(subst --, ,$*)
 
+# We don't want to run the tests in parallel.  We want behaviour like -k.
 profiles-do--run-test:
-	ret=:; \
-	$(MAKE) PROFILE=default run-test || ret=false; \
-	$(MAKE) PROFILE=net_2_0 run-test && $$ret
+	ret=:; $(foreach p,$(PROFILES), { $(MAKE) PROFILE=$(p) run-test || ret=false; }; ) $$ret
 
 # Orchestrate the bootstrap here.
-profiles-do--all: profile-do--net_2_0--all
-	@:
-
 profile-do--net_2_0--all: profile-do--net_2_0_bootstrap--all
 profile-do--net_2_0_bootstrap--all: profile-do--default--all
 

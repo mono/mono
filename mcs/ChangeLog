@@ -1,3 +1,9 @@
+2004-11-24  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (profiles-do--run-test): Allow list of profiles to be
+	overriden.
+	(profiles-do--all): Remove.  The default pattern build suffices.
+
 2004-11-22  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (OVERRIDE_TARGET_ALL): Remove.
