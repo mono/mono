@@ -1,3 +1,12 @@
+2004-12-16  Peter Bartok  <pbartok@novell.com>
+
+	* XplatUI.cs: Added GetFontMetrics() method
+	* XplatUIDriver.cs: Added GetFontMetrics() abstract
+	* XplatUIX11.cs: Implemented GetFontMetrics() method, now calls
+	  into libgdiplus, our private GetFontMetrics function
+	* XplatUIOSX.cs: Implemented GetFontMetrics() method, same as X11
+	* XplatUIWin32.cs: Implemented GetFontMetrics() method
+
 2004-12-16  Jackson Harper  <jackson@ximain.com>
 
 	* XplatUIStruct.cs: Add enum for dead keys

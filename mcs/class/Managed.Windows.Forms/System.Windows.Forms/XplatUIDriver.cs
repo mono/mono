@@ -233,6 +233,8 @@ namespace System.Windows.Forms {
 		internal abstract void SetCaretPos(IntPtr hwnd, int x, int y);
 		internal abstract void CaretVisible(IntPtr hwnd, bool visible);
 
+		internal abstract bool GetFontMetrics(Graphics g, Font font, out int ascent, out int descent);
+
 		// System information
 
 		internal abstract int KeyboardSpeed { get; } 

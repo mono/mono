@@ -85,9 +85,7 @@ namespace System.Windows.Forms {
 		private static int		atom;			// X Atom
 		private static int		net_wm_state;		// X Atom
 		private static int		async_method;
-
 		private static int		post_message;
-
 		private static uint		default_colormap;	// X Colormap ID
 		internal static Keys		key_state;
 		internal static MouseButtons	mouse_state;
@@ -1611,6 +1609,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal override bool GetFontMetrics(Graphics g, Font font, out int ascent, out int descent) {
+			return GetFontMetrics(g.GetHdc(), font.ToHfont(), out ascent, out descent);
+		}
+
+
 		// Santa's little helper
 		static void Where() 
 		{
@@ -1808,6 +1811,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XGetKeyboardControl")]
 		internal extern static int XGetKeyboardControl (IntPtr display, out XKeyBoardState state);
+
+		[DllImport ("gdiplus", EntryPoint="GetFontMetrics")]
+		internal extern static bool GetFontMetrics(IntPtr graphicsObject, IntPtr nativeObject, out int ascent, out int descent);
 
 		// Drawing
 		[DllImport ("libX11", EntryPoint="XCreateGC")]

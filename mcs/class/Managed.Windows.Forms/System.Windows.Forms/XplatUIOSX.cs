@@ -794,6 +794,9 @@ namespace System.Windows.Forms {
 		internal override void CaretVisible(IntPtr hwnd, bool visible) {
 		}
 
+		internal override bool GetFontMetrics(Graphics g, Font font, out int ascent, out int descent) {
+			return GetFontMetrics(g.GetHdc(), font.ToHfont(), out ascent, out descent);
+		}
 
 		[MonoTODO]
 		internal override int KeyboardSpeed {
@@ -919,6 +922,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int SetWindowContentColor (IntPtr hWnd, ref RGBColor backColor);
+
+		[DllImport ("gdiplus", EntryPoint="GetFontMetrics")]
+		internal extern static bool GetFontMetrics(IntPtr graphicsObject, IntPtr nativeObject, out int ascent, out int descent);
 	}
 
 	internal struct CGSize {

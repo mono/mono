@@ -401,6 +401,10 @@ namespace System.Windows.Forms {
 			driver.CaretVisible(hwnd, visible);
 		}
 
+		internal static bool GetFontMetrics(Graphics g, Font font, out int ascent, out int descent) {
+			return driver.GetFontMetrics(g, font, out ascent, out descent);
+		}
+			
 		internal static void SetTimer (Timer timer)
 		{
 			driver.SetTimer (timer);

@@ -447,6 +447,31 @@ namespace System.Windows.Forms {
 			internal COLORREF		lbColor;
 			internal LogBrushHatch		lbHatch;
 		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		internal struct TEXTMETRIC { 
+			internal int			tmHeight;
+			internal int			tmAscent;
+			internal int			tmDescent;
+			internal int			tmInternalLeading;
+			internal int			tmExternalLeading;
+			internal int			tmAveCharWidth;
+			internal int			tmMaxCharWidth;
+			internal int			tmWeight;
+			internal int			tmOverhang;
+			internal int			tmDigitizedAspectX;
+			internal int			tmDigitizedAspectY;
+			internal byte			tmFirstChar; 
+			internal byte			tmLastChar; 
+			internal byte			tmDefaultChar; 
+			internal byte			tmBreakChar; 
+			internal byte			tmItalic; 
+			internal byte			tmUnderlined; 
+			internal byte			tmStruckOut; 
+			internal byte			tmPitchAndFamily; 
+			internal byte			tmCharSet; 
+		} 
+
 		#endregion
 
 		#region Constructor & Destructor
@@ -1114,6 +1139,28 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal override bool GetFontMetrics(Graphics g, Font font, out int ascent, out int descent) {
+			IntPtr		dc;
+			TEXTMETRIC	tm;
+
+			tm = new TEXTMETRIC();
+
+			dc = Win32GetDC(IntPtr.Zero);
+			Win32SelectObject(dc, font.ToHfont());
+			if (Win32GetTextMetrics(dc, ref tm) == false) {
+				Win32ReleaseDC(IntPtr.Zero, dc);
+				ascent = 0;
+				descent = 0;
+				return false;
+			}
+			Win32ReleaseDC(IntPtr.Zero, dc);
+
+			ascent = tm.tmAscent;
+			descent = tm.tmDescent;
+
+			return true;
+		}
+
 		internal override int KeyboardSpeed {
 			get {
 				Console.WriteLine ("KeyboardSpeed: need to query Windows");
@@ -1325,6 +1372,12 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="GetCaretBlinkTime", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		internal extern static uint Win32GetCaretBlinkTime();
+
+		[DllImport ("gdi32.dll", EntryPoint="GetTextMetricsA", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		internal extern static bool Win32GetTextMetrics(IntPtr hdc, ref TEXTMETRIC tm);
+
+		[DllImport ("gdi32.dll", EntryPoint="SelectObject", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		internal extern static bool Win32SelectObject(IntPtr hdc, IntPtr hgdiobject);
 		#endregion
 	}
 }
