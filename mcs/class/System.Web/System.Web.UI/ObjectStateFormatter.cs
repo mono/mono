@@ -765,7 +765,7 @@ namespace System.Web.UI {
 			
 			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
 			{
-				return FontUnit.Parse ((string) base.Read (token, r, ctx));
+				return Unit.Parse ((string) base.Read (token, r, ctx));
 			}
 			
 			protected override Type Type {
