@@ -79,6 +79,8 @@ numbers, as they look nicer on the debugging output.
 
 -26     Corlib compilation is not supported in MS.NET
 
+-27	Attribute resolved to two different types
+
 ----------
 
 Errors that we have allocated that will have corresponding errors in
