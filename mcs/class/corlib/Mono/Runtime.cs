@@ -14,7 +14,7 @@ namespace Mono {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern void mono_runtime_install_handlers ();
 		
-		public void InstallSignalHandlers ()
+		static public void InstallSignalHandlers ()
 		{
 			mono_runtime_install_handlers ();
 		}
