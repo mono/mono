@@ -23,9 +23,12 @@
 //		Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 // $Modtime: $
 // $Log: ProgressBar.cs,v $
+// Revision 1.3  2004/07/09 17:25:23  pbartok
+// - Removed usage of Rectangle for drawing. Miguel pointed out it's faster
+//
 // Revision 1.2  2004/07/09 17:17:46  miguel
 // 2004-07-09  Miguel de Icaza  <miguel@ximian.com>
 //
@@ -64,23 +67,24 @@ namespace System.Windows.Forms
 		static public void DrawProgressBar (Graphics dc, Rectangle area, 
 						    Rectangle client_area, int barpos_pixels, int block_width)
 		{	
-			Rectangle rect = new Rectangle (client_area.X, client_area.Y, block_width, client_area.Height);	
 			int increment = block_width + space_betweenblocks;
+			int x = client_area.X;
 			
 			/* Background*/
 			dc.FillRectangle (br_main, area);				
 			
 			/* Draw background*/
-			while ((rect.X - client_area.X) < barpos_pixels) {
-                		dc.FillRectangle (br_bar, rect);
-                		rect.X  = rect.X + increment;
-            		}			
+
+			while ((x - client_area.X) < barpos_pixels) {            		        
+				dc.FillRectangle (br_bar, x, client_area.Y, bloc_width, client_area.Height);
+				x  = x + bloc_width + space_betweenblocs;
+			}			
             		
-            		/* Draw border */
-            		dc.FillRectangle (br_shadow, area.X, area.Y, area.Width, 1);
-            		dc.FillRectangle (br_shadow, area.X, area.Y, 1, area.Height);
-            		dc.FillRectangle (br_light, area.X, area.Y + area.Height - 1, area.Width, 1);
-            		dc.FillRectangle (br_light, area.X + area.Width - 1, area.Y, 1, area.Height);
+			/* Draw border */
+			dc.FillRectangle (br_shadow, area.X, area.Y, area.Width, 1);
+			dc.FillRectangle (br_shadow, area.X, area.Y, 1, area.Height);
+			dc.FillRectangle (br_light, area.X, area.Y + area.Height - 1, area.Width, 1);
+			dc.FillRectangle (br_light, area.X + area.Width - 1, area.Y, 1, area.Height);
 		}
 
 	}
