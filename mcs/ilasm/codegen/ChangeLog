@@ -1,3 +1,7 @@
+2003-04-07 Jackson Harper <jackson@latitudegeo.com>
+
+	* TypeRef.cs: Return FieldDef when adding a field def to a class
+		
 2003-04-01 Jackson Harper <jackson@latitudegeo.com>
 
 	* TypeRef.cs: Add flag for making types pinned
