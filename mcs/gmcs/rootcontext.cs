@@ -467,87 +467,14 @@ namespace Mono.CSharp {
 			// Try in the current namespace and all its implicit parents
 			//
 			for (NamespaceEntry ns = ds.Namespace; ns != null; ns = ns.ImplicitParent) {
-				t = TypeManager.LookupType (MakeFQN (ns.Name, name));
-				if (t != null) {
-					if (!ds.CheckAccessLevel (t))
-						t = null;
-				}
-				if (t != null)
-					return t;
-			}
-			
-			//
-			// It's possible that name already is fully qualified. So we do
-			// a simple direct lookup without adding any namespace names
-			//
-			t = TypeManager.LookupType (name); 
-			if (t != null)
-				return t;
+				object result = ns.Lookup (ds, name, loc);
+				if (result == null)
+					continue;
 
-			//
-			// Try the aliases in the current namespace
-			//
-			string alias = ds.Namespace.LookupAlias (name);
+				if (result is Type)
+					return (Type) result;
 
-			if (alias != null) {
-				t = TypeManager.LookupType (alias);
-				if (t != null)
-					return t;
-
-				t = TypeManager.LookupType (MakeFQN (alias, name));
-				if (t != null)
-					return t;
-			}
-			
-			for (NamespaceEntry ns = ds.Namespace; ns != null; ns = ns.Parent) {
-				//
-				// Look in the namespace ns
-				//
-				t = TypeManager.LookupType (MakeFQN (ns.Name, name));
-				if (t != null) {
-					if (!ds.CheckAccessLevel (t))
-						t = null;
-				}
-				if (t != null)
-					return t;
-				
-				//
-				// Then try with the using clauses
-				//
-				Type match = null;
-				foreach (Namespace using_ns in ns.GetUsingTable ()) {
-					string full_name = DeclSpace.MakeFQN (using_ns.Name, name);
-					match = TypeManager.LookupType (full_name);
-					if (match != null){
-						if (t != null) {
-							if (ds.CheckAccessLevel (match)) {
-								DeclSpace.Error_AmbiguousTypeReference (loc, name, t, match);
-								return null;
-							}
-							continue;
-						} else {
-							if (ds.CheckAccessLevel (match))
-								t = match;
-						}
-					}
-				}
-
-				if (t != null)
-					return t;
-
-				//
-				// Try with aliases
-				//
-				string a = ns.LookupAlias (name);
-				if (a != null) {
-					t = TypeManager.LookupType (a);
-					if (t != null)
-						return t;
-
-					t = TypeManager.LookupType (MakeFQN (a, name));
-					if (t != null)
-						return t;
-				}
+				return null;
 			}
 
 			return null;

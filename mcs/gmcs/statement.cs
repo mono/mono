@@ -2769,7 +2769,7 @@ namespace Mono.CSharp {
 		public bool Used;
 		public bool Assigned;
 		public bool ReadOnly;
-		public bool IsFixed;
+		public bool is_fixed;
 		
 		public LocalInfo (Expression type, string name, Block block, Location l)
 		{
@@ -2814,9 +2814,18 @@ namespace Mono.CSharp {
 		public void MakePinned ()
 		{
 			TypeManager.MakePinned (LocalBuilder);
-			IsFixed = true;
+			is_fixed = true;
 		}
 
+		public bool IsFixed {
+			get {
+ 				if (is_fixed || TypeManager.IsValueType (VariableType))
+ 					return true;
+				
+ 				return false;
+			}
+		}
+		
 		public override string ToString ()
 		{
 			return String.Format ("LocalInfo ({0},{1},{2},{3})",

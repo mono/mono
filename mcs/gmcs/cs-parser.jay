@@ -2039,9 +2039,16 @@ integer_literal
 	: LITERAL_INTEGER       { 
 		object v = lexer.Value;
 
-		if (v is int)
-			$$ = new IntLiteral ((Int32) v); 
-		else if (v is uint)
+		if (v is int){
+			int i = (int) v;
+
+			if (i == 0)
+				$$ = IntLiteral.Zero;
+			else if (i == 1)
+				$$ = IntLiteral.One;
+			else
+				$$ = new IntLiteral (i);
+		} else if (v is uint)
 			$$ = new UIntLiteral ((UInt32) v);
 		else if (v is long)
 			$$ = new LongLiteral ((Int64) v);

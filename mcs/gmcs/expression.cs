@@ -3596,7 +3596,7 @@ namespace Mono.CSharp {
 
 		public bool VerifyFixed (bool is_expression)
 		{
-			return !is_expression;
+			return !is_expression || TypeManager.IsValueType (type);
 		}
 
 		public bool IsAssigned (EmitContext ec, Location loc)
@@ -4463,6 +4463,12 @@ namespace Mono.CSharp {
                         // go down to find applicable methods
                         //
                         applicable_type = me.DeclaringType;
+                        
+                        if (me.Name == "Invoke" && TypeManager.IsDelegateType (applicable_type)) {
+                                Error_InvokeOnDelegate (loc);
+                                return null;
+                        }
+
 
                         bool found_applicable = false;
 			foreach (MethodBase candidate in me.Methods) {
@@ -4616,6 +4622,12 @@ namespace Mono.CSharp {
                                       arg_count + "' arguments");
                 }
 
+                static void Error_InvokeOnDelegate (Location loc)
+                {
+                        Report.Error (1533, loc,
+                                      "Invoke cannot be called directly on a delegate");
+                }
+                        
 		static void Error_InvalidArguments (Location loc, int idx, MethodBase method,
                                                     Type delegate_type, string arg_sig, string par_desc)
 		{
@@ -6212,7 +6224,10 @@ namespace Mono.CSharp {
 
 		public bool VerifyFixed (bool is_expression)
 		{
-			return variable_info.LocalInfo.IsFixed;
+			if ((variable_info == null) || (variable_info.LocalInfo == null))
+				return false;
+			else
+				return variable_info.LocalInfo.IsFixed;
 		}
 
 		public bool ResolveBase (EmitContext ec)
@@ -7371,8 +7386,20 @@ namespace Mono.CSharp {
 
 	
 	class Indexers {
-		public ArrayList properties;
+		public ArrayList Properties;
 		static Hashtable map;
+
+		public struct Indexer {
+			public readonly Type Type;
+			public readonly MethodInfo Getter, Setter;
+
+			public Indexer (Type type, MethodInfo get, MethodInfo set)
+			{
+				this.Type = type;
+				this.Getter = get;
+				this.Setter = set;
+			}
+		}
 
 		static Indexers ()
 		{
@@ -7381,7 +7408,7 @@ namespace Mono.CSharp {
 
 		Indexers ()
 		{
-			properties = new ArrayList ();
+			Properties = new ArrayList ();
 		}
 				
 		void Append (MemberInfo [] mi)
@@ -7391,7 +7418,7 @@ namespace Mono.CSharp {
 				
 				get = property.GetGetMethod (true);
 				set = property.GetSetMethod (true);
-				properties.Add (new Pair (get, set));
+				Properties.Add (new Indexer (property.PropertyType, get, set));
 			}
 		}
 
@@ -7413,7 +7440,7 @@ namespace Mono.CSharp {
 		static public Indexers GetIndexersForType (Type caller_type, Type lookup_type, Location loc) 
 		{
 			Indexers ix = (Indexers) map [lookup_type];
-			
+
 			if (ix != null)
 				return ix;
 
@@ -7429,6 +7456,22 @@ namespace Mono.CSharp {
 				}
 					
 				copy = copy.BaseType;
+			}
+
+			if (!lookup_type.IsInterface)
+				return ix;
+
+			Type [] ifaces = TypeManager.GetInterfaces (lookup_type);
+			if (ifaces != null) {
+				foreach (Type itype in ifaces) {
+					MemberInfo [] mi = GetIndexersForTypeOrInterface (caller_type, itype);
+					if (mi != null){
+						if (ix == null)
+							ix = new Indexers ();
+					
+						ix.Append (mi);
+					}
+				}
 			}
 
 			return ix;
@@ -7493,10 +7536,10 @@ namespace Mono.CSharp {
 			ilist = Indexers.GetIndexersForType (current_type, lookup_type, loc);
 			if (ilist != null) {
 				found_any = true;
-				if (ilist.properties != null) {
-					foreach (Pair o in ilist.properties) {
-						if (o.First != null)
-							AllGetters.Add(o.First);
+				if (ilist.Properties != null) {
+					foreach (Indexers.Indexer ix in ilist.Properties) {
+						if (ix.Getter != null)
+							AllGetters.Add(ix.Getter);
 					}
 				}
 			}
@@ -7557,10 +7600,10 @@ namespace Mono.CSharp {
 			Indexers ilist = Indexers.GetIndexersForType (current_type, indexer_type, loc);
 			if (ilist != null) {
 				found_any = true;
-				if (ilist.properties != null) {
-					foreach (Pair o in ilist.properties) {
-						if (o.Second != null)
-							AllSetters.Add(o.Second);
+				if (ilist.Properties != null) {
+					foreach (Indexers.Indexer ix in ilist.Properties) {
+						if (ix.Setter != null)
+							AllSetters.Add(ix.Setter);
 					}
 				}
 			}
@@ -7604,10 +7647,9 @@ namespace Mono.CSharp {
 			// Now look for the actual match in the list of indexers to set our "return" type
 			//
 			type = TypeManager.void_type;	// default value
-			foreach (Pair t in ilist.properties){
-				if (t.Second == set){
-					if (t.First != null)
-						type = ((MethodInfo) t.First).ReturnType;
+			foreach (Indexers.Indexer ix in ilist.Properties){
+				if (ix.Setter == set){
+					type = ix.Type;
 					break;
 				}
 			}

@@ -896,22 +896,27 @@ namespace Mono.CSharp {
 			remove_list.Clear ();
 
 			foreach (MemberCore mc in list){
-				if (!mc.Define (this)){
-					remove_list.Add (mc);
-					continue;
-				}
-						
-				if (defined_names == null)
-					continue;
 
-				idx = Array.BinarySearch (defined_names, mc.Name, mif_compare);
+				if (defined_names != null)
+					idx = Array.BinarySearch (defined_names, mc.Name, mif_compare);
+				else
+					idx = -1;
+
 				if (idx < 0){
 					if (RootContext.WarningLevel >= 4){
 						if ((mc.ModFlags & Modifiers.NEW) != 0)
 							Warning_KewywordNewNotRequired (mc.Location, mc);
 					}
+				} else if (mc is MethodCore)
+					((MethodCore) mc).OverridesSomething = true;
+
+				if (!mc.Define (this)){
+					remove_list.Add (mc);
 					continue;
 				}
+						
+				if (idx < 0)
+					continue;
 
 				MemberInfo match = defined_names [idx];
 
@@ -1044,7 +1049,7 @@ namespace Mono.CSharp {
 				Type ptype = null;
 				Type t = pclass.TypeBuilder.BaseType;
 				while ((t != null) && (ptype == null)) {
-					pname = MakeFQN (t.Name, Basename);
+					pname = MakeFQN (t.FullName, Basename);
 					ptype = RootContext.LookupType (this, pname, true, Location.Null);
 					t = t.BaseType;
 				}
@@ -1066,6 +1071,14 @@ namespace Mono.CSharp {
 
 			if (fields != null)
 				DefineMembers (fields, defined_names);
+
+			if ((RootContext.WarningLevel >= 4) && (fields != null)) {
+				foreach (Field f in fields) {
+					if (((f.ModFlags & Modifiers.READONLY) != 0) && !f.IsAssigned)
+						Report.Warning (649, "Field `" + MakeFQN (Name, f.Name) + "; is never " +
+								"assigned and will ever have its default value");
+				}
+			}
 
 			if (this is Class){
 				if (instance_constructors == null){
@@ -2179,6 +2192,11 @@ namespace Mono.CSharp {
 		protected InternalParameters parameter_info;
 		protected Type [] parameter_types;
 
+		// <summary>
+		//   This is set from TypeContainer.DefineMembers if this method overrides something.
+		// </summary>
+		public bool OverridesSomething;
+
 		public MethodCore (Expression type, int mod, int allowed_mod, string name,
 				   Attributes attrs, Parameters parameters, Location loc)
 			: base (type, mod, allowed_mod, name, attrs, loc)
@@ -2508,7 +2526,7 @@ namespace Mono.CSharp {
 						}
 					}
 				} else {
-					if ((ModFlags & Modifiers.NEW) != 0)
+					if (!OverridesSomething && ((ModFlags & Modifiers.NEW) != 0))
 						WarningNotHiding (container);
 
 					if ((ModFlags & Modifiers.OVERRIDE) != 0){
@@ -3647,6 +3665,8 @@ namespace Mono.CSharp {
 				return init != null;
 			}
 		}
+
+		public bool IsAssigned;
 
 		protected readonly Object init;
 		// Private.

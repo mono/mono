@@ -1400,9 +1400,15 @@ namespace Mono.CSharp {
 		///   The lookup process will automatically restart itself in method-only
 		///   search mode if it discovers that it's about to return methods.
 		/// </summary>
+		ArrayList global = new ArrayList ();
+		bool using_global = false;
+		
 		public MemberList FindMembers (MemberTypes mt, BindingFlags bf, string name,
 					       MemberFilter filter, object criteria)
 		{
+			if (using_global)
+				throw new Exception ();
+			
 			bool declared_only = (bf & BindingFlags.DeclaredOnly) != 0;
 			bool method_search = mt == MemberTypes.Method;
 			// If we have a method cache and we aren't already doing a method-only search,
@@ -1430,7 +1436,8 @@ namespace Mono.CSharp {
 			// Strange: from 25,000 calls, only 1,800
 			// are above 2.  Why does this impact it?
 			//
-			ArrayList list = new ArrayList ();
+			global.Clear ();
+			using_global = true;
 
 			Timer.StartTimer (TimerType.CachedLookup);
 
@@ -1452,7 +1459,7 @@ namespace Mono.CSharp {
 				// iteration of this loop if there are no members with the name we're
 				// looking for in the current class).
 				if (entry.Container != current) {
-					if (declared_only || DoneSearching (list))
+					if (declared_only || DoneSearching (global))
 						break;
 
 					current = entry.Container;
@@ -1470,7 +1477,7 @@ namespace Mono.CSharp {
 				if (filter (entry.Member, criteria)) {
 					if ((entry.EntryType & EntryType.MaskType) != EntryType.Method)
 						do_method_search = false;
-					list.Add (entry.Member);
+					global.Add (entry.Member);
 				}
 			}
 
@@ -1480,11 +1487,16 @@ namespace Mono.CSharp {
 			// search, we restart in method-only search mode if the first match is
 			// a method.  This ensures that we return a MemberInfo with the correct
 			// ReflectedType for inherited methods.
-			if (do_method_search && (list.Count > 0)){
+			if (do_method_search && (global.Count > 0)){
+				using_global = false;
+
 				return FindMembers (MemberTypes.Method, bf, name, filter, criteria);
 			}
 
-			return new MemberList (list);
+			using_global = false;
+			MemberInfo [] copy = new MemberInfo [global.Count];
+			global.CopyTo (copy);
+			return new MemberList (copy);
 		}
 	}
 }

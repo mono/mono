@@ -567,13 +567,26 @@ public class TypeManager {
 			if (t == null)
 				continue;
 
-			TypeAttributes ta = t.Attributes & TypeAttributes.VisibilityMask;
-			if (ta == TypeAttributes.NotPublic ||
-			    ta == TypeAttributes.NestedPrivate ||
-			    ta == TypeAttributes.NestedAssembly ||
-			    ta == TypeAttributes.NestedFamANDAssem)
-				continue;
-			return t;
+			do {
+				TypeAttributes ta = t.Attributes & TypeAttributes.VisibilityMask;
+				if (ta == TypeAttributes.NotPublic ||
+				    ta == TypeAttributes.NestedPrivate ||
+				    ta == TypeAttributes.NestedAssembly ||
+				    ta == TypeAttributes.NestedFamANDAssem){
+					
+					//
+					// In .NET pointers turn out to be private, even if their
+					// element type is not
+					//
+					
+					if (t.IsPointer){
+						t = t.GetElementType ();
+						continue;
+					} else
+						t = null;
+				} else
+					return t;
+			} while (t != null);
 		}
 
 		foreach (ModuleBuilder mb in modules) {
@@ -1412,8 +1425,8 @@ public class TypeManager {
 	}
 
         //
-        // Do the right thing when returning the element type of
-        // an array type based on whether we 
+        // Do the right thing when returning the element type of an
+        // array type based on whether we are compiling corlib or not
         //
         public static Type GetElementType (Type t)
         {
@@ -2716,11 +2729,15 @@ public sealed class TypeHandle : IMemberContainer {
 
 	public MemberList GetMembers (MemberTypes mt, BindingFlags bf)
 	{
+                MemberInfo [] members;
 		if (mt == MemberTypes.Event)
-			return new MemberList (type.GetEvents (bf | BindingFlags.DeclaredOnly));
-		else
-			return new MemberList (type.FindMembers (mt, bf | BindingFlags.DeclaredOnly,
-								 null, null));
+                        members = type.GetEvents (bf | BindingFlags.DeclaredOnly);
+                else
+                        members = type.FindMembers (mt, bf | BindingFlags.DeclaredOnly,
+                                                    null, null);
+                Array.Reverse (members);
+
+                return new MemberList (members);
 	}
 
 	// IMemberFinder methods

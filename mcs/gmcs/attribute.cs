@@ -531,7 +531,6 @@ namespace Mono.CSharp {
 			TypeContainer attr = TypeManager.LookupAttr (a.Type);
 			AttributeTargets targets = 0;
 
-			
 			if (attr == null) {
 				System.Attribute [] attrs = null;
 				
@@ -546,8 +545,10 @@ namespace Mono.CSharp {
 				}
 					
 				foreach (System.Attribute tmp in attrs)
-					if (tmp is AttributeUsageAttribute) 
+					if (tmp is AttributeUsageAttribute) { 
 						targets = ((AttributeUsageAttribute) tmp).ValidOn;
+                                                break;
+                                        }
 			} else
 				targets = attr.Targets;
 
@@ -592,7 +593,8 @@ namespace Mono.CSharp {
 					return true;
 				else
 					return false;
-			} else if (element is Method || element is Operator || element is InterfaceMethod || element is Accessor) {
+			} else if (element is Method || element is Operator ||
+                                   element is InterfaceMethod || element is Accessor) {
 				if ((targets & AttributeTargets.Method) != 0)
 					return true;
 				else
@@ -1072,6 +1074,8 @@ namespace Mono.CSharp {
 
 			if (entry_point == null)
 				entry_point = name;
+			if (set_last_err)
+				charset = (CharSet)((int)charset | 0x40);
 			
 			MethodBuilder mb = builder.DefinePInvokeMethod (
 				name, dll_name, entry_point, flags | MethodAttributes.HideBySig,

@@ -1765,6 +1765,15 @@ namespace Mono.CSharp
 					}
 				}
 
+				if (c == '#') {
+					error_details = "Preprocessor directives must appear as the first non-whitespace " +
+						"character on a line.";
+
+					Report.Error (1040, Location, error_details);
+
+					return Token.ERROR;
+				}
+
 				error_details = ((char)c).ToString ();
 				
 				return Token.ERROR;

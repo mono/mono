@@ -78,6 +78,19 @@ namespace Mono.CSharp {
 			return Root.GetNamespace (name, create);
 		}
 
+		public object Lookup (DeclSpace ds, string name)
+		{
+			Namespace ns = GetNamespace (name, false);
+			if (ns != null)
+				return ns;
+
+			Type t = TypeManager.LookupType (DeclSpace.MakeFQN (fullname, name));
+			if ((t == null) || ((ds != null) && !ds.CheckAccessLevel (t)))
+				return null;
+
+			return t;
+		}
+
 		public void AddNamespaceEntry (NamespaceEntry entry)
 		{
 			entries.Add (entry);
@@ -207,15 +220,9 @@ namespace Mono.CSharp {
 				if (resolved != null)
 					return resolved;
 
-				int pos = Alias.IndexOf ('.');
-				if (pos >= 0) {
-					string first = Alias.Substring (0, pos);
-				}
-
 				NamespaceEntry curr_ns = NamespaceEntry;
 				while ((curr_ns != null) && (resolved == null)) {
-					string full_name = DeclSpace.MakeFQN (curr_ns.Name, Alias);
-					resolved = curr_ns.LookupName (Alias);
+					resolved = curr_ns.Lookup (null, Alias, Location);
 
 					if (resolved == null)
 						curr_ns = curr_ns.Parent;
@@ -348,40 +355,81 @@ namespace Mono.CSharp {
 				return ((Type) resolved).FullName;
 		}
 
-		public object LookupName (string name)
+		public object Lookup (DeclSpace ds, string name, Location loc)
 		{
-			Namespace ns = Namespace.LookupNamespace (name, false);
-			if (ns != null)
-				return ns;
+			object o;
+			Namespace ns;
 
+			//
+			// If name is of the form `N.I', first lookup `N', then search a member `I' in it.
+			//
 			int pos = name.IndexOf ('.');
-			AliasEntry alias = null;
 			if (pos >= 0) {
 				string first = name.Substring (0, pos);
 				string last = name.Substring (pos + 1);
 
-				alias = GetAliasEntry (first);
-				if (alias != null)
-					return LookupName (DeclSpace.MakeFQN (alias.Alias, last));
+				o = Lookup (ds, first, loc);
+				if (o == null)
+					return null;
+
+				ns = o as Namespace;
+				if (ns != null)
+					return ns.Lookup (ds, last);
+
+				Type nested = TypeManager.LookupType (DeclSpace.MakeFQN (((Type) o).Name, last));
+				if ((nested == null) || ((ds != null) && !ds.CheckAccessLevel (nested)))
+					return null;
+
+				return nested;
 			}
 
-			Type t = TypeManager.LookupType (name);
-			if (t != null)
-				return t;
+			//
+			// Check whether it's a namespace.
+			//
+			o = NS.Lookup (ds, name);
+			if (o != null)
+				return o;
 
-			alias = GetAliasEntry (name);
-			if (alias != null)
-				return LookupName (alias.Alias);
+			//
+			// Check aliases.
+			//
+			AliasEntry entry = GetAliasEntry (name);
+			if (entry != null) {
+				o = entry.Resolve ();
+				if (o != null)
+					return o;
+			}
 
-			return null;
+			//
+			// Check using entries.
+			//
+			Type t = null, match = null;
+			foreach (Namespace using_ns in GetUsingTable ()) {
+				match = using_ns.Lookup (ds, name) as Type;
+				if (match != null){
+					if (t != null) {
+						DeclSpace.Error_AmbiguousTypeReference (loc, name, t, match);
+						return null;
+					} else {
+						t = match;
+					}
+				}
+			}
+
+			return t;
 		}
-		
+
+		// Our cached computation.
+		Namespace [] namespace_using_table;
 		public Namespace[] GetUsingTable ()
 		{
-			ArrayList list = new ArrayList ();
-
+			if (namespace_using_table != null)
+				return namespace_using_table;
+			
 			if (using_clauses == null)
 				return new Namespace [0];
+
+			ArrayList list = new ArrayList (using_clauses.Count);
 
 			foreach (UsingEntry ue in using_clauses) {
 				Namespace using_ns = ue.Resolve ();
@@ -391,9 +439,9 @@ namespace Mono.CSharp {
 				list.Add (using_ns);
 			}
 
-			Namespace[] retval = new Namespace [list.Count];
-			list.CopyTo (retval, 0);
-			return retval;
+			namespace_using_table = new Namespace [list.Count];
+			list.CopyTo (namespace_using_table, 0);
+			return namespace_using_table;
 		}
 
 		public void DefineNamespace (SymbolWriter symwriter)

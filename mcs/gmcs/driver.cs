@@ -111,9 +111,6 @@ namespace Mono.CSharp
 			Console.WriteLine (
 				"[{0:00}:{1:000}] {2}",
 				(int) span.TotalSeconds, span.Milliseconds, msg);
-
-			if (pause)
-				Console.ReadLine ();
 		}
 
 		public static void ShowTotalTime (string msg)
@@ -260,6 +257,8 @@ namespace Mono.CSharp
 					Console.WriteLine ("Counter1: " + counter1);
 					Console.WriteLine ("Counter2: " + counter2);
 				}
+				if (pause)
+					Console.ReadLine ();
 				return 0;
 			} else {
 				Console.WriteLine("Compilation failed: {0} error(s), {1} warnings",
