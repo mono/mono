@@ -7,6 +7,10 @@
 // (C) 2003, Cesar Lopez Nataren
 //
 
+header {
+	using System.Collections;
+}
+
 options {
 	language = "CSharp";
 	namespace = "Microsoft.JScript";
@@ -110,7 +114,7 @@ statement [AST parent] returns [AST stm]
 	| stm = break_stm
 	| stm = return_stm [parent]
 	| stm = with_stm [parent]
-	| switch_stm [parent]
+	| stm = switch_stm [parent]
 	| stm = throw_stm [parent]
 	| stm = try_stm [parent]
 	;
@@ -149,24 +153,54 @@ throw_stm [AST parent] returns [AST t]
 	  }
 	;
 
-switch_stm [AST parent]
-	: "switch"  OPEN_PARENS expr [parent] CLOSE_PARENS case_block
+switch_stm [AST parent] returns [Switch sw]
+{
+	sw = new Switch (parent);
+	AST exp = null;
+	ArrayList [] clauses = null;
+}
+	: "switch"  OPEN_PARENS exp = expr [parent] CLOSE_PARENS clauses = case_block [parent]
+	  {
+		  sw.exp = exp;
+		  sw.case_clauses = clauses [0];
+		  sw.default_clauses = clauses [1];
+		  sw.sec_case_clauses = clauses [2];
+	  }
 	;
 
-case_block
-	: OPEN_BRACE case_clauses  default_clause case_clauses CLOSE_BRACE
+case_block [AST parent] returns [ArrayList [] clauses]
+{ 
+	clauses = new ArrayList [3]; 
+	ArrayList c1_clauses, def_clauses, c2_clauses;
+	c1_clauses = def_clauses = c2_clauses = null;
+}
+	: OPEN_BRACE c1_clauses = case_clauses [parent] def_clauses = default_clause [parent] c2_clauses = case_clauses [parent] CLOSE_BRACE
+	  {
+		  clauses [0] = c1_clauses;
+		  clauses [1] = def_clauses;
+		  clauses [2] = c2_clauses;
+	  }
 	;
 
-default_clause
-	: "default" COLON statement_list
+default_clause [AST parent] returns [ArrayList def_clause]
+	: "default" COLON def_clause = statement_list [parent]
 	;
 
-case_clauses
-	: (case_clause)*
+case_clauses [AST parent] returns [ArrayList clauses]
+{ 
+	clauses = new ArrayList (); 
+	Clause clause = null;
+}
+	: (clause = case_clause [parent] { if (clause != null) clauses.Add (clause); })*
 	;
 
-case_clause
-	: "case" expr [null] COLON statement_list
+case_clause [AST parent] returns [Clause clause]
+{
+	clause = new Clause (parent);
+	AST exp = null;
+	ArrayList stm_list = null;
+}
+	: "case" exp = expr [parent] { clause.exp = exp; } COLON stm_list = statement_list [parent] { clause.stm_list = stm_list; }
 	;
 
 with_stm [AST parent] returns [AST with]
@@ -177,7 +211,7 @@ with_stm [AST parent] returns [AST with]
 }
 	: "with" OPEN_PARENS exp = expr [parent] CLOSE_PARENS stm = statement [null]
 	  {
-		  with = new With (exp, stm);  
+		  with = new With (parent, exp, stm);  
 	  }	
 	;
 
@@ -232,14 +266,18 @@ inside_for [AST parent] returns [AST [] exprs]
 	AST exp1, exp2, exp3;
 	exprs = null;
 	exp1 = exp2 = exp3 = null;
+	VariableStatement v_stm = new VariableStatement ();
 }
 	: (exp1 = expr [parent] | ) SEMI_COLON (exp2 = expr [parent] | ) SEMI_COLON (exp3 = expr [parent] | )
 	  {
 		  exprs = new AST [] {exp1, exp2, exp3};
 	  }		  
-	| "var" (var_decl_list [null, null]
-		  ( SEMI_COLON (expr [parent] | ) SEMI_COLON (expr [parent] | )
-		  | IN expr [parent]))
+	| "var" (var_decl_list [v_stm, parent]
+		  ( SEMI_COLON (exp2 = expr [parent] | ) SEMI_COLON (exp3 = expr [parent] | )
+	  {
+		  exprs = new AST [] {v_stm, exp2, exp3};
+	  }
+		  | IN exp3 = expr [parent]))
 	// FIXME: left_hand_side_expr in exp rule, missing
 	;
 	
@@ -314,8 +352,12 @@ expr_stm [AST parent] returns [AST e]
    	;
 
 
-statement_list
-	: (statement [null])*
+statement_list [AST parent] returns [ArrayList stms]
+{
+	stms = new ArrayList ();
+	AST stm = null;
+}
+	: (stm = statement [null] { if (stm != null) stms.Add (stm); })*
 	;
 
 expr [AST parent] returns [Expression e]

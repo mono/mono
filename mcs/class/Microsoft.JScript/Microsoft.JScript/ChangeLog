@@ -1,5 +1,10 @@
 2004-05-24  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* jscript-lexer-parser.g: added 'using' for
+	System.Collections. Allow 'switch' statement building of its
+	ast. Added parent parameter to constructor of With. Build
+	inside_for ast.	
+
 	* With.cs: code generation support for 'with' stm.
 
 2004-05-21  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
