@@ -1,3 +1,8 @@
+2004-06-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UriBuilderTest.cs: Please don't hardcode non-ASCII/non-UTF8
+	  character in the sources.
+
 2004-04-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UriBuilderTest.cs: added tests for bug #57082.
