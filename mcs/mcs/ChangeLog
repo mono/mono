@@ -1,3 +1,17 @@
+2001-10-18  Ravi Pratap  <ravi@ximian.com>
+
+	* delegate.cs (NewDelegate): New class to take care of delegate
+	instantiation.
+
+	* expression.cs (New): Split the delegate related code out into 
+	the NewDelegate class.
+
+	* delegate.cs (DelegateInvocation): New class to handle delegate 
+	invocation.
+
+	* expression.cs (Invocation): Split out delegate related code into
+	the DelegateInvocation class.
+
 2001-10-17  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (New::DoResolve): Implement delegate creation fully

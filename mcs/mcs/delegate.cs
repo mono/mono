@@ -283,5 +283,140 @@ namespace CIR {
 			}
 		}
 	}
-	
+
+	public class NewDelegate : Expression {
+
+		public ArrayList Arguments;
+
+		MethodBase constructor_method;
+		MethodBase delegate_method;
+		Expression delegate_instance_expr;
+
+		Location Location;
+		
+		public NewDelegate (Type type, ArrayList Arguments, Location loc)
+		{
+			this.type = type;
+			this.Arguments = Arguments;
+			this.Location  = loc; 
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			Delegate del = TypeManager.LookupDelegate (type);
+			constructor_method = del.ConstructorBuilder;
+			
+			if (Arguments == null) {
+				Report.Error (-11, Location,
+					      "Delegate creation expression takes only one argument");
+				return null;
+			}
+			
+			if (Arguments.Count != 1) {
+				Report.Error (-11, Location,
+					      "Delegate creation expression takes only one argument");
+				return null;
+			}
+			
+			Argument a = (Argument) Arguments [0];
+			
+			if (!a.Resolve (ec))
+				return null;
+			
+			Expression e = a.Expr;
+			
+			if (e is MethodGroupExpr) {
+				MethodGroupExpr mg = (MethodGroupExpr) e;
+				
+				delegate_method  = del.VerifyMethod (mg.Methods [0], Location);
+				
+				if (delegate_method == null)
+					return null;
+				
+				if (mg.InstanceExpression != null)
+					delegate_instance_expr = mg.InstanceExpression.Resolve (ec);
+				else
+					delegate_instance_expr = null;
+				
+				if (delegate_instance_expr != null)
+					if (delegate_instance_expr.Type.IsValueType)
+						delegate_instance_expr = new BoxedCast (delegate_instance_expr);
+				
+				
+				del.InstanceExpression = delegate_instance_expr;
+				del.TargetMethod = delegate_method;
+				
+				eclass = ExprClass.Value;
+				return this;
+			} else {
+				Report.Error (-200, Location, "Cannot handle delegate instantiation from other delegates");
+				return null;
+			}
+		}
+		
+		public override void Emit (EmitContext ec)
+		{
+			if (delegate_instance_expr == null)
+				ec.ig.Emit (OpCodes.Ldnull);
+			else
+				delegate_instance_expr.Emit (ec);
+			
+			ec.ig.Emit (OpCodes.Ldftn, (MethodInfo) delegate_method);
+			ec.ig.Emit (OpCodes.Newobj, (ConstructorInfo) constructor_method);
+		}
+	}
+
+	public class DelegateInvocation : Expression {
+
+		public Expression InstanceExpr;
+		public ArrayList  Arguments;
+		public Location   Location;
+
+		MethodBase method;
+		
+		public DelegateInvocation (Expression instance_expr, ArrayList args, Location loc)
+		{
+			this.InstanceExpr = instance_expr;
+			this.Arguments = args;
+			this.Location = loc;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			Delegate del = TypeManager.LookupDelegate (InstanceExpr.Type);
+
+			if (del == null)
+				return null;
+
+			if (del.TargetMethod == null)
+				return null;
+			
+			if (Arguments != null){
+				for (int i = Arguments.Count; i > 0;){
+					--i;
+					Argument a = (Argument) Arguments [i];
+					
+					if (!a.Resolve (ec))
+						return null;
+				}
+			}
+			
+			if (!del.VerifyApplicability (ec, Arguments, Location))
+				return null;
+			
+			method = del.InvokeBuilder;
+			type = ((MethodInfo) method).ReturnType;
+			
+			eclass = ExprClass.Value;
+			
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			Delegate del = TypeManager.LookupDelegate (InstanceExpr.Type);
+			Invocation.EmitCall (ec, del.TargetMethod.IsStatic, InstanceExpr, method, Arguments);
+		}
+
+	}
 }
