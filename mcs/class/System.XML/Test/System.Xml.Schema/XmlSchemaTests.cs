@@ -11,6 +11,7 @@ using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Schema;
+using System.Xml.Serialization;
 using NUnit.Framework;
 
 namespace MonoTests.System.Xml
@@ -250,6 +251,39 @@ namespace MonoTests.System.Xml
 			xs.Write (xw);
 			doc.LoadXml (sw.ToString ());
 			AssertEquals ("#7", "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" />", doc.DocumentElement.OuterXml);
+		}
+
+		[Test]
+		public void TestWriteNamespaces2 ()
+		{
+			string xmldecl = "<?xml version=\"1.0\" encoding=\"utf-16\"?>";
+			XmlSchema xs = new XmlSchema ();
+			XmlSerializerNamespaces nss =
+				new XmlSerializerNamespaces ();
+			StringWriter sw;
+			sw = new StringWriter ();
+			xs.Write (new XmlTextWriter (sw));
+			AssertEquals (xmldecl + "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" />", sw.ToString ());
+
+			xs.Namespaces = nss;
+			sw = new StringWriter ();
+			xs.Write (new XmlTextWriter (sw));
+			AssertEquals (xmldecl + "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" />", sw.ToString ());
+
+			nss.Add ("foo", "urn:foo");
+			sw = new StringWriter ();
+			xs.Write (new XmlTextWriter (sw));
+			AssertEquals (xmldecl + "<schema xmlns:foo=\"urn:foo\" xmlns=\"http://www.w3.org/2001/XMLSchema\" />", sw.ToString ());
+
+			nss.Add ("", "urn:foo");
+			sw = new StringWriter ();
+			xs.Write (new XmlTextWriter (sw));
+			AssertEquals (xmldecl + "<q1:schema xmlns:foo=\"urn:foo\" xmlns=\"urn:foo\" xmlns:q1=\"http://www.w3.org/2001/XMLSchema\" />", sw.ToString ());
+
+			nss.Add ("q1", "urn:q1");
+			sw = new StringWriter ();
+			xs.Write (new XmlTextWriter (sw));
+			AssertEquals (xmldecl + "<q2:schema xmlns:foo=\"urn:foo\" xmlns:q1=\"urn:q1\" xmlns=\"urn:foo\" xmlns:q2=\"http://www.w3.org/2001/XMLSchema\" />", sw.ToString ());
 		}
 	}
 }
