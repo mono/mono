@@ -1,3 +1,17 @@
+2002-10-22  Tim Coleman (tim@timcoleman.com)
+	* Tds.cs :
+		More implementation.  Does some
+		query stuff now.  Can also change
+		database.
+	* TdsConnectionParameters.cs:
+		Rename Host to DataSource, and
+		add Hostname for the local hostname.
+	* TdsPacketEndTokenResult.cs:
+		Change TODO attribute
+	* TODOAttribute.cs:
+		New class added
+	
+
 2002-10-21  Tim Coleman (tim@timcoleman.com)
 	* Tds.cs
 	* TdsComm.cs:

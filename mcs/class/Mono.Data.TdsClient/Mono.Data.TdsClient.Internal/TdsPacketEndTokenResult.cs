@@ -67,7 +67,7 @@ namespace Mono.Data.TdsClient.Internal {
 
 		#region Methods
 
-		[System.MonoTODO]
+		[MonoTODO]
 		public override string ToString ()
 		{
 			throw new NotImplementedException ();

@@ -12,8 +12,9 @@ namespace Mono.Data.TdsClient.Internal {
 	{
 		public string ApplicationName = "Mono";
 		public string Database;
+		public string DataSource;
 		public string Encoding = "iso-8859-1";
-		public string Host;
+		public string Hostname = "localhost";
 		public string Language = "us_english";
 		public string LibraryName = "Mono";
 		public int PacketSize;

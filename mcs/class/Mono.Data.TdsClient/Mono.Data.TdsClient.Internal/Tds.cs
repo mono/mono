@@ -24,12 +24,13 @@ namespace Mono.Data.TdsClient.Internal {
 		string database = String.Empty;
 		string connectDB;
 		string charset;
-		string hostname = "tux";
+		string hostname;
 		string server;
 		string language;
 		string libraryName;
 		int packetSize;
 		string password;
+		int port;
 		string progName;
 		string user;
 
@@ -51,7 +52,7 @@ namespace Mono.Data.TdsClient.Internal {
 		//TdsCommand command;
 		IsolationLevel isolationLevel;
 		bool autoCommit;
-                Socket socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
+                Socket socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
 		#endregion // Fields
 
@@ -81,22 +82,24 @@ namespace Mono.Data.TdsClient.Internal {
 			connectDB = parms.Database;
 			encoder = Encoding.GetEncoding (parms.Encoding);
 			charset = parms.Encoding;
-			server = parms.Host;
+			hostname = parms.Hostname;
+			server = parms.DataSource;
 			language = parms.Language;
 			libraryName = parms.LibraryName;
 			packetSize = parms.PacketSize;
 			password = parms.Password;
+			port = parms.Port;
 			progName = parms.ProgName;
 			tdsVersion = parms.TdsVersion;
 			user = parms.User;
 
-			IPHostEntry hostEntry = Dns.GetHostByName (parms.Host);
+			IPHostEntry hostEntry = Dns.Resolve (server);
 			IPAddress[] addresses = hostEntry.AddressList;
 
 			IPEndPoint endPoint;
 
 			foreach (IPAddress address in addresses) {
-				endPoint = new IPEndPoint (address, parms.Port);
+				endPoint = new IPEndPoint (address, port);
 				socket.Connect (endPoint);
 
 				if (socket.Connected)
@@ -109,13 +112,26 @@ namespace Mono.Data.TdsClient.Internal {
 		#endregion // Constructors
 
 		#region Methods
-
+		
+		public void BeginTransaction ()
+		{
+			SubmitProcedure ("BEGIN TRANSACTION");
+		}
 		public void ChangeDatabase (string databaseName)
 		{
+			TdsPacketResult result;
+			bool isOkay;
+
 			string query = String.Format ("use {0}", databaseName);
 			comm.StartPacket (TdsPacketType.Query);
 			comm.Append (query);
 			comm.SendPacket ();
+
+			while (!((result = ProcessSubPacket ()) is TdsPacketEndTokenResult)) {
+				if (result is TdsPacketErrorResult) {
+					isOkay = false;
+				}
+			}
 		}
 
 		public void ChangeSettings (bool autoCommit, IsolationLevel isolationLevel)
@@ -150,6 +166,48 @@ namespace Mono.Data.TdsClient.Internal {
 			return isOkay;
 		}
 
+		public void CommitTransaction ()
+		{
+			string sql = "IF @@TRANCOUNT>0 COMMIT TRAN";
+			SubmitProcedure (sql);
+		}
+
+		[MonoTODO ("fixme")]
+		public int ExecuteNonQuery (string sql)
+		{
+			TdsPacketResult result;
+			bool done = false;
+
+			if (sql.Length > 0) {
+				comm.StartPacket (TdsPacketType.Query);
+				comm.Append (sql);
+				moreResults2 = true;
+				comm.SendPacket ();
+			}
+
+			do {
+				result = ProcessSubPacket ();
+				if (result is TdsPacketMessageResult) {
+					Console.WriteLine (((TdsPacketMessageResult) result).Message);
+				}
+				done = (result is TdsPacketEndTokenResult) && (!((TdsPacketEndTokenResult) result).MoreResults);
+				
+			} while (!done);
+
+			return -1;
+		}
+
+		[MonoTODO ("fixme")]
+		public void ExecuteQuery (string sql)
+		{
+			if (sql.Length > 0) {
+				comm.StartPacket (TdsPacketType.Query);
+				comm.Append (sql);
+				moreResults2 = true;
+				comm.SendPacket ();
+			}
+		}
+
 		private object GetCharValue (bool wideChars, bool outputParam)
 		{
 			object result = null;
@@ -164,7 +222,7 @@ namespace Mono.Data.TdsClient.Internal {
 				else
 					result = encoder.GetString (comm.GetBytes (len, false), 0, len);
 
-				if ((byte) tdsVersion < (byte) TdsVersion.tds70 && result == " ")
+				if (tdsVersion < TdsVersion.tds70 && ((string) result).Equals (" "))
 					result = "";
 			}
 			else
@@ -172,13 +230,13 @@ namespace Mono.Data.TdsClient.Internal {
 			return result;
 		}
 
-		[System.MonoTODO]
+		[MonoTODO]
 		private object GetDecimalValue (int scale)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[System.MonoTODO]
+		[MonoTODO]
 		private object GetDateTimeValue (TdsColumnType type)
 		{
 			throw new NotImplementedException ();
@@ -242,7 +300,7 @@ namespace Mono.Data.TdsClient.Internal {
 			return result;
 		}
 
-		[System.MonoTODO]
+		[MonoTODO]
 		private object GetMoneyValue (TdsColumnType type)
 		{
 			int len;
@@ -340,7 +398,7 @@ namespace Mono.Data.TdsClient.Internal {
 			}
 		}
 
-		[System.MonoTODO]
+		[MonoTODO]
 		private TdsPacketRowResult LoadRow (TdsPacketRowResult result)
 		{
 			throw new NotImplementedException ();
@@ -494,7 +552,7 @@ namespace Mono.Data.TdsClient.Internal {
 			return new TdsPacketColumnInfoResult (table.Columns);
 		}
 
-		[System.MonoTODO]
+		[MonoTODO]
 		private TdsPacketEndTokenResult ProcessEndToken (TdsPacketSubType type)
 		{
 			byte status = comm.GetByte ();
@@ -509,6 +567,8 @@ namespace Mono.Data.TdsClient.Internal {
 				rowCount = -1;
 
 			TdsPacketEndTokenResult result = new TdsPacketEndTokenResult (type, status, rowCount);
+
+			Console.WriteLine ("Row count {0}", rowCount);
 
 			moreResults = result.MoreResults;
 
@@ -640,6 +700,7 @@ namespace Mono.Data.TdsClient.Internal {
 			comm.GetString (comm.GetByte () & 0xff);
 			comm.Skip (5);
 			TdsColumnType colType = (TdsColumnType) comm.GetByte ();
+			int len;
 
 			object element = null;
 			switch (colType) {
@@ -671,7 +732,7 @@ namespace Mono.Data.TdsClient.Internal {
 				break;
 			case TdsColumnType.BigVarBinary :
 				comm.GetTdsShort ();
-				int len = comm.GetTdsShort ();
+				len = comm.GetTdsShort ();
 				element = comm.GetBytes (len, true);
 				break;
 			case TdsColumnType.BigVarChar :
@@ -718,7 +779,7 @@ namespace Mono.Data.TdsClient.Internal {
 			case TdsColumnType.VarBinary :
 			case TdsColumnType.Binary :
 				comm.GetByte ();
-				int len = (comm.GetByte () & 0xff);
+				len = (comm.GetByte () & 0xff);
 				element = comm.GetBytes (len, true);
 				break;
 			case TdsColumnType.BitN :
@@ -733,8 +794,8 @@ namespace Mono.Data.TdsClient.Internal {
 				element = (columnSize != 0);
 				break;
 			case TdsColumnType.UniqueIdentifier :
-				int len = comm.GetByte () & 0xff;
-				element = (len == 0 ? null : new Guid (comm.GetBytes (len, false)));
+				len = comm.GetByte () & 0xff;
+				//element = (len == 0 ? null : new Guid (comm.GetBytes (len, false)));
 				break;
 			default :
 				throw new TdsException ("");
@@ -754,7 +815,7 @@ namespace Mono.Data.TdsClient.Internal {
 			return new TdsPacketRetStatResult (comm.GetTdsInt ());
 		}
 
-		[System.MonoTODO]
+		[MonoTODO]
 		private TdsPacketResult ProcessSubPacket ()
 		{
 			TdsPacketResult result = null;
@@ -764,58 +825,73 @@ namespace Mono.Data.TdsClient.Internal {
 
 			switch (subType) {
 			case TdsPacketSubType.EnvChange :
+Console.WriteLine ("Environment change");
 				result = ProcessEnvChange ();
 				break;
 			case TdsPacketSubType.Error :
 			case TdsPacketSubType.Info :
 			case TdsPacketSubType.Msg50Token :
+Console.WriteLine ("Error/info/message");
 				result = ProcessMessage (subType);
 				break;
 			case TdsPacketSubType.Param :
+Console.WriteLine ("Param");
 				result = ProcessOutputParam ();
 				break;
 			case TdsPacketSubType.LoginAck :
+Console.WriteLine ("Login Ack");
 				result = ProcessLoginAck ();
 				break;
 			case TdsPacketSubType.ReturnStatus :
+Console.WriteLine ("Return Status");
 				result = ProcessReturnStatus ();
 				break;
 			case TdsPacketSubType.ProcId :
+Console.WriteLine ("Proc Id");
 				result = ProcessProcId ();
 				break;
 			case TdsPacketSubType.Done :
 			case TdsPacketSubType.DoneProc :
 			case TdsPacketSubType.DoneInProc :
+Console.WriteLine ("Done");
 				result = ProcessEndToken (subType);
 				moreResults2 = ((TdsPacketEndTokenResult) result).MoreResults;
 				break;
 			case TdsPacketSubType.ColumnNameToken :
+Console.WriteLine ("Column Name");
 				result = ProcessColumnNames ();
 				break;
 			case TdsPacketSubType.ColumnInfoToken :
+Console.WriteLine ("Column Info");
 				result = ProcessColumnInfo ();
 				break;
 			case TdsPacketSubType.Unknown0xA5 :
 			case TdsPacketSubType.Unknown0xA7 :
 			case TdsPacketSubType.Unknown0xA8 :
+Console.WriteLine ("Unknown");
 				comm.Skip (comm.GetTdsShort ());
 				result = new TdsPacketUnknown (subType);
 				break;
 			case TdsPacketSubType.TableName :
+Console.WriteLine ("Table Name");
 				result = ProcessTableName ();
 				break;
 			case TdsPacketSubType.Order :
+Console.WriteLine ("Order");
 				comm.Skip (comm.GetTdsShort ());
 				result = new TdsPacketColumnOrderResult ();
 				break;
 			case TdsPacketSubType.Control :
+Console.WriteLine ("Control");
 				comm.Skip (comm.GetTdsShort ());
 				result = new TdsPacketControlResult ();
 				break;
 			case TdsPacketSubType.Row :
+Console.WriteLine ("Row");
 				result = LoadRow (new TdsPacketRowResult (null));
 				break;
 			case TdsPacketSubType.ColumnMetadata :
+Console.WriteLine ("Column Metadata");
 				result = ProcessTds7Result ();
 				break;
 			default:
@@ -832,7 +908,7 @@ namespace Mono.Data.TdsClient.Internal {
 			return new TdsPacketTableNameResult ();
 		}
 
-		[System.MonoTODO ("complete")]
+		[MonoTODO ("complete")]
 		private TdsPacketResult ProcessTds7Result ()
 		{
 			int numColumns = comm.GetTdsShort ();
@@ -864,6 +940,19 @@ namespace Mono.Data.TdsClient.Internal {
 			return tmp;
 		}
 
+		[MonoTODO]
+		public void RollbackTransaction ()
+		{
+			SubmitProcedure ("IF @@TRANCOUNT>0 ROLLBACK TRAN");
+		}
+
+		[MonoTODO]
+		public void SaveTransaction (string savePointName)
+		{
+			string sql = String.Format ("SAVE TRAN {0}", savePointName);
+			SubmitProcedure (sql);
+		}
+
 		private void SetCharset (string charset)
 		{
 			if (charset == null || charset.Length > 30)
@@ -872,6 +961,21 @@ namespace Mono.Data.TdsClient.Internal {
 				encoder = Encoding.GetEncoding (charset);
 				this.charset = charset;
 			}
+		}
+
+		public void SubmitProcedure (string sql)
+		{
+			TdsPacketResult result;
+			ExecuteQuery (sql);
+			bool done;
+			do {
+				result = ProcessSubPacket ();
+				if (result is TdsPacketMessageResult) {
+					Console.WriteLine (((TdsPacketMessageResult) result).Message);
+				}
+				done = (result is TdsPacketEndTokenResult) && (!((TdsPacketEndTokenResult) result).MoreResults);
+				
+			} while (!done);
 		}
 
 		public bool Logon (TdsConnectionParameters parms)
@@ -1186,7 +1290,7 @@ namespace Mono.Data.TdsClient.Internal {
 			return result;
 		}
 
-		[System.MonoTODO]
+		[MonoTODO]
 		private string SqlStatementToSetIsolationLevel ()
 		{
 			string result = "";
