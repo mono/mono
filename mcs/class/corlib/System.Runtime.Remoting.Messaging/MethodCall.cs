@@ -29,6 +29,8 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public MethodCall (Header [] headers)
 		{
+			Init();
+
 			if (headers == null || headers.Length == 0) return;
 
 			foreach (Header header in headers)
@@ -40,6 +42,7 @@ namespace System.Runtime.Remoting.Messaging {
 					case "__MethodSignature" : _methodSignature = (Type[])header.Value; break;
 					case "__Args" : _args = (object[])header.Value; break;
 					case "__CallContext" : _callContext = (LogicalCallContext)header.Value; break;
+					default: _properties [header.Name] = header.Value; break;
 				}
 			}
 

@@ -29,7 +29,13 @@ namespace System.Runtime.Remoting.Messaging
 			get 
 			{
 				if (null != _internalProperties)
-					return true;
+				{
+					// MethodCallMessageWrapper uses a nested MethodDictionary
+					if (_internalProperties is MethodDictionary)
+						return ((MethodDictionary)_internalProperties).HasInternalProperties;
+					else 
+						return _internalProperties.Count > 0;
+				}
 				return false;
 			}
 		}
@@ -38,6 +44,11 @@ namespace System.Runtime.Remoting.Messaging
 		{
 			get 
 			{
+				if (null != _internalProperties)
+				{
+					if (_internalProperties is MethodDictionary)
+						return ((MethodDictionary)_internalProperties).InternalProperties;
+				}
 				return _internalProperties;
 			}
 		}
@@ -253,7 +264,7 @@ namespace System.Runtime.Remoting.Messaging
 
 			public DictionaryEnumerator (MethodDictionary methodDictionary)
 			{
-				_methodDictionary = _methodDictionary;
+				_methodDictionary = methodDictionary;
 				_hashtableEnum = (_methodDictionary._internalProperties != null) ? _methodDictionary._internalProperties.GetEnumerator() : null;
 				_posMethod = -1;
 			}
@@ -292,7 +303,7 @@ namespace System.Runtime.Remoting.Messaging
 			{
 				get
 				{
-					if (_posMethod != -2) 
+					if (_posMethod >= 0) 
 						return new DictionaryEntry (_methodDictionary._methodKeys[_posMethod], _methodDictionary.GetMethodProperty(_methodDictionary._methodKeys[_posMethod]));
 					else if (_posMethod == -1 || _hashtableEnum == null) 
 						throw new InvalidOperationException ("The enumerator is positioned before the first element of the collection or after the last element");

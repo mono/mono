@@ -288,13 +288,10 @@ namespace System.Runtime.Remoting.Messaging {
 		}
 
 		[Serializable]
-		class InternalDictionary : MethodDictionary
+		class InternalDictionary : MethodCallDictionary
 		{
-			static string[] _keys = new string[] {"__Uri", "__MethodName", "__TypeName", "__MethodSignature", "__Args", "__OutArgs", "__Return", "__CallContext"};
-
 			public InternalDictionary(MonoMethodMessage message) : base (message) 
 			{ 
-				MethodKeys = _keys;
 			}
 
 			protected override void SetMethodProperty (string key, object value)

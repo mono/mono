@@ -12,15 +12,15 @@ namespace System.Runtime.Remoting.Messaging
 {
 	internal class MethodReturnDictionary : MethodDictionary
 	{
-		static string[] _normalKeys = new string[] {"__Uri", "__MethodName", "__TypeName", "__MethodSignature", "__OutArgs", "__Return", "__CallContext"};
-		static string[] _exceptionKeys = new string[] {"__CallContext"};
+		public static string[] InternalReturnKeys = new string[] {"__Uri", "__MethodName", "__TypeName", "__MethodSignature", "__OutArgs", "__Return", "__CallContext"};
+		public static string[] InternalExceptionKeys = new string[] {"__CallContext"};
 
 		public MethodReturnDictionary (IMethodReturnMessage message) : base (message)
 		{
 			if (message.Exception == null)
-				MethodKeys = _normalKeys;
+				MethodKeys = InternalReturnKeys;
 			else
-				MethodKeys = _exceptionKeys;
+				MethodKeys = InternalExceptionKeys;
 		}
 	}
 }

@@ -16,143 +16,149 @@ namespace System.Runtime.Remoting.Messaging {
 	[Serializable]
 	public class ReturnMessage : IMethodReturnMessage, IMethodMessage 
 	{
-		MonoMethodMessage msg;
-		IMethodCallMessage request;
-		
+		object[] _outArgs;
+		LogicalCallContext _callCtx;
+		object _returnValue;
+		string _uri;
+		Exception _exception;
+		MethodBase _methodBase;
+		string _methodName;
+		object _methodSignature;
+		string _typeName;
+		InternalDictionary _properties;
+
 		public ReturnMessage (object returnValue, object [] outArgs,
 			       int outArgCount, LogicalCallContext callCtx,
 			       IMethodCallMessage request)
 		{
-			// fixme: request can be null
 			// fixme: why do we need outArgCount?
-			msg = new MonoMethodMessage (request.MethodBase as MonoMethod, outArgs);
-			this.request = request;
-			msg.rval = returnValue;
-			msg.ctx = callCtx;
-			msg.Uri = request.Uri;
+
+			_returnValue = returnValue;
+			_callCtx = callCtx;
+			_uri = request.Uri;
+			_outArgs = outArgs;
+			_methodBase = request.MethodBase;
+			_methodName = request.MethodName;
+			_methodSignature = request.MethodSignature;
+			_typeName = request.TypeName;
 		}
 
 		public ReturnMessage (Exception exc, IMethodCallMessage request)
 		{
-			if (null != request) {
-				msg = new MonoMethodMessage (request.MethodBase as MonoMethod, null);
-				msg.ctx = request.LogicalCallContext;
-			}
-			else
-				msg = new MonoMethodMessage (null, null);
-
-			this.request = request;
-			msg.exc = exc;
+			_exception = exc;
+			_methodBase = request.MethodBase;
+			_methodName = request.MethodName;
+			_methodSignature = request.MethodSignature;
+			_typeName = request.TypeName;
 		}
 		
 		public int ArgCount {
 			get {
-				return msg.ArgCount;
+				return (_outArgs != null) ? _outArgs.Length : 0;
 			}
 		}
 		
 		public object [] Args {
 			get {
-				return msg.Args;
+				return _outArgs;
 			}
 		}
 		
 		public bool HasVarArgs {
 			get {
-				return msg.HasVarArgs;
+				return false;	//todo: complete
 			}
 		}
 
 		public LogicalCallContext LogicalCallContext {
 			get {
-				if (null == msg)
-					return null;
-				return msg.ctx;
+				return _callCtx;
 			}
 		}
 
 		public MethodBase MethodBase {
 			get {
-				return msg.MethodBase;
+				return _methodBase;
 			}
 		}
 
 		public string MethodName {
 			get {
-				return msg.MethodName;
+				return _methodName;
 			}
 		}
 
 		public object MethodSignature {
 			get {
-				return msg.MethodSignature;
+				return _methodSignature;
 			}
 		}
 
 		public virtual IDictionary Properties {
 			get {
-				return msg.Properties;
+				if (_properties == null) _properties = new InternalDictionary (this);
+				return _properties;
 			}
 		}
 
 		public string TypeName {
 			get {
-				return msg.TypeName;
+				return _typeName;
 			}
 		}
 
 		public string Uri {
 			get {
-				return msg.Uri;
+				return _uri;
 			}
 
 			set {
-				msg.Uri = value;
+				_uri = value;
 			}
 		}
 
 		public object GetArg (int arg_num)
 		{
-			return msg.GetArg (arg_num);
+			return _outArgs [arg_num];
 		}
 		
 		public string GetArgName (int arg_num)
 		{
-			return msg.GetArgName (arg_num);
+			return _methodBase.GetParameters()[arg_num].Name;
 		}
 
 		public Exception Exception {
 			get {
-				return msg.exc;
+				return _exception;
 			}
 		}
 
 		public int OutArgCount {
 			get {
-				return msg.OutArgCount;
+				return (_outArgs != null) ? _outArgs.Length : 0;
 			}
 		}
 
 		public object [] OutArgs {
 			get {
-				return msg.OutArgs;
+				return _outArgs;
 			}
 		}
 
 		public virtual object ReturnValue {
 			get {
-				return msg.rval;
+				return _returnValue;
 			}
 		}
 
 		public object GetOutArg (int arg_num)
 		{
-			return msg.GetOutArg (arg_num);
+			return _outArgs[arg_num];
 		}
 
 		public string GetOutArgName (int arg_num)
 		{
-			return msg.GetOutArgName (arg_num);
+			return _methodBase.GetParameters()[arg_num].Name;
 		}
 
 

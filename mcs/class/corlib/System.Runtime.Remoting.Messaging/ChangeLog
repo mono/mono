@@ -1,3 +1,13 @@
+2003-02-04  Lluis Sanchez Gual <lluis@ideary.com>
+	
+	* ServerContextTerminatorSink.cs: Modified to work with new types of identities.
+	* ReturnMessage.cs: Removed internal dependence to MonoMethodMessage. It is not needed now.
+	* MonoMethodMessage.cs: Now only has method call keys in the dictionary. 
+	* MethodReturnDictionary.cs, MethodCallDictionary.cs: Made public the list of 
+	  method keys. This list is used in MessageFormatter.
+	* MethodDictionary.cs: Corrected some minor bugs.
+	* MethodCall.cs: minor correction on constructor.
+
 2003-02-03 Patrik Torstensson
 
 	* MethodResponse.cs: Implemented
