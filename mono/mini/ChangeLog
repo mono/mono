@@ -1,4 +1,8 @@
 
+Tue Jul 22 15:21:24 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c: make vararg calls work for instance methods.
+
 Fri Jul 18 19:26:20 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c, mini.h, mini-x86.c, mini-ppc.c: mono_arch_call_opcode()
