@@ -1,34 +1,39 @@
 //
 // System.TypedReference.cs
 //
-// Author:
+// Authors:
 //   Dick Porter (dick@ximian.com)
+//   Paolo Molaro (lupus@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace System 
 {
 	[CLSCompliant(false)]
 	public struct TypedReference 
 	{
+		RuntimeTypeHandle type;
+		IntPtr value;
+		
 		public override bool Equals(object o)
 		{
 			throw new NotSupportedException("This operation is not supported for this type");
 		}
 
-		[MonoTODO]
 		public override int GetHashCode()
 		{
-			throw new NotImplementedException();
+			if (type.Value == IntPtr.Zero)
+				return 0;
+			return Type.GetTypeFromHandle (type).GetHashCode ();
 		}
 
-		[MonoTODO]
-		public static Type GetTargetType(TypedReference value)
+		public static Type GetTargetType (TypedReference value)
 		{
-			throw new NotImplementedException();
+			return Type.GetTypeFromHandle (value.type);
 		}
 
 		[MonoTODO]
@@ -46,6 +51,7 @@ namespace System
 			throw new NotImplementedException();
 		}
 
+		/* how can we set something in value if it's passed by value? */
 		[MonoTODO]
 		public static void SetTypedReference(TypedReference target,
 						     object value) 
@@ -56,16 +62,12 @@ namespace System
 			throw new NotImplementedException();
 		}
 		
-		[MonoTODO]
-		public static RuntimeTypeHandle TargetTypeToken(TypedReference value)
+		public static RuntimeTypeHandle TargetTypeToken (TypedReference value)
 		{
-			throw new NotImplementedException();
+			return value.type;
 		}
 
-		[MonoTODO]
-		public static object ToObject(TypedReference value)
-		{
-			throw new NotImplementedException();
-		}
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		public extern static object ToObject (TypedReference value);
 	}
 }

@@ -1,71 +1,94 @@
 //
 // System.ArgIterator.cs
 //
-// Author:
+// Authors:
 //   Dick Porter (dick@ximian.com)
+//   Paolo Molaro (lupus@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
+
+using System.Runtime.CompilerServices;
 
 namespace System 
 {
 	public struct ArgIterator
 	{
-		[MonoTODO]
-		public ArgIterator(RuntimeArgumentHandle arglist)
+		IntPtr sig;
+		IntPtr args;
+		int    next_arg;
+		int    num_args;
+
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		extern void Setup (IntPtr argsp, IntPtr start);
+
+		public ArgIterator (RuntimeArgumentHandle arglist)
 		{
-			throw new NotImplementedException();
+			sig = IntPtr.Zero;
+			args = IntPtr.Zero;
+			next_arg = num_args = 0;
+			Setup (arglist.args, IntPtr.Zero);
 		}
 
-		[MonoTODO]
-		[CLSCompliant(false)]
-		unsafe public ArgIterator(RuntimeArgumentHandle arglist,
-					  void *ptr)
+		[CLSCompliant (false)]
+		unsafe public ArgIterator (RuntimeArgumentHandle arglist, void *ptr)
 		{
-			throw new NotImplementedException();
+			sig = IntPtr.Zero;
+			args = IntPtr.Zero;
+			next_arg = num_args = 0;
+			Setup (arglist.args, (IntPtr) ptr);
 		}
 
-		[MonoTODO]
-		public void End()
+		public void End ()
 		{
-			throw new NotImplementedException();
+			next_arg = num_args;
 		}
 
-		public override bool Equals(object o)
+		public override bool Equals (object o)
 		{
 			throw new NotSupportedException("This operation is not supported for this type");
 		}
 
-		[MonoTODO]
-		public override int GetHashCode()
+		public override int GetHashCode ()
 		{
-			throw new NotImplementedException();
+			return sig.GetHashCode ();
 		}
 
-		[MonoTODO]
-		[CLSCompliant(false)]
-		public TypedReference GetNextArg()
+		[CLSCompliant (false)]
+		public TypedReference GetNextArg ()
 		{
-			throw new NotImplementedException();
+			if (num_args == next_arg)
+				throw new InvalidOperationException ("invalid iterator position");
+			return IntGetNextArg ();
 		}
 
-		[MonoTODO]
-		[CLSCompliant(false)]
-		public TypedReference GetNextArg(RuntimeTypeHandle rth)
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		extern TypedReference IntGetNextArg ();
+
+		[CLSCompliant (false)]
+		public TypedReference GetNextArg (RuntimeTypeHandle rth)
 		{
-			throw new NotImplementedException();
+			if (num_args == next_arg)
+				throw new InvalidOperationException ("invalid iterator position");
+			return IntGetNextArg (rth);
 		}
 
-		[MonoTODO]
-		public RuntimeTypeHandle GetNextArgType()
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		extern TypedReference IntGetNextArg (RuntimeTypeHandle rth);
+
+		public RuntimeTypeHandle GetNextArgType ()
 		{
-			throw new NotImplementedException();
+			if (num_args == next_arg)
+				throw new InvalidOperationException ("invalid iterator position");
+			return new RuntimeTypeHandle (IntGetNextArgType ());
 		}
 
-		[MonoTODO]
-		public int GetRemainingCount()
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		extern IntPtr IntGetNextArgType ();
+
+		public int GetRemainingCount ()
 		{
-			throw new NotImplementedException();
+			return num_args - next_arg;
 		}
 	}
 }

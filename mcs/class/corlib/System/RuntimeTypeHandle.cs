@@ -15,7 +15,12 @@ namespace System {
 	[Serializable]
 	public struct RuntimeTypeHandle : ISerializable {
 		IntPtr value;
-		
+
+		internal RuntimeTypeHandle (IntPtr val)
+		{
+			value = val;
+		}
+
 		public IntPtr Value {
 			get {
 				return (IntPtr) value;

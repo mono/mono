@@ -1,3 +1,10 @@
+
+Wed Jun 4 16:59:39 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* ArgIterator.cs, TypedReference.cs, RuntimeArgumentHandle.cs,
+	RuntimeTypeHandle.cs: implemented the needed stuff to handle
+	vararg calls.
+
 2003-06-02  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Random.cs: New implementation based on Knuth ran3 to fix #43597.
