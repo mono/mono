@@ -12,3 +12,6 @@ clean:
 windows: jay
 
 linux: jay
+
+install:
+	make -f makefile.gnu install
