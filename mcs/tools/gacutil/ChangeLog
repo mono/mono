@@ -1,3 +1,7 @@
+2004-04-30  Jackson Harper  <jackson@ximian.com>
+
+	* gacutil.cs: Use invariant culture for ToLower. Patch from Urs Muff.
+	
 2004-04-30  Todd Berman  <tberman@sevenl.net>
 
 	* gacutil.cs: Add a missing .Trim ()

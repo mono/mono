@@ -9,6 +9,7 @@ using System.IO;
 using System.Text;
 using System.Reflection;
 using System.Collections;
+using System.Globalization;
 
 using Mono.Security;
 
@@ -149,7 +150,7 @@ namespace Mono.Tools
 				if(pieces.Length == 1)
 					paramInfo["assembly"] = pieces[0];
 				else
-					paramInfo[pieces[0].Trim ().ToLower ()] = pieces[1];
+					paramInfo[pieces[0].Trim ().ToLower (CultureInfo.InvariantCulture)] = pieces[1];
 			}
 
 			if (!Directory.Exists (Path.Combine (gac_path, (string) paramInfo["assembly"]))) {
@@ -268,7 +269,7 @@ namespace Mono.Tools
                                 gac_path = args [3];
 		
 			string version_token = an.Version + "_" +
-				an.CultureInfo.Name.ToLower () +
+				an.CultureInfo.Name.ToLower (CultureInfo.InvariantCulture) +
 				"_" + GetStringToken (an.GetPublicKeyToken ());
                         
 			string fullPath = String.Format ("{0}{3}{1}{3}{2}{3}", gac_path, an.Name, version_token, Path.DirectorySeparatorChar);
