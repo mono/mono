@@ -99,6 +99,44 @@ namespace System.Web.Compilation {
 			return c;
 		}
 
+		private int ReadAttValue (int start)
+		{
+			int quoteChar = 0;
+			bool quoted = false;
+
+			if (start == '"' || start == '\'') {
+				quoteChar = start;
+				quoted = true;
+			} else {
+				sb.Append ((char) start);
+			}
+
+			int c;
+			int last = 0;
+			bool inServerTag = false;
+			
+			while ((c = sr.Peek ()) != -1) {
+				if (c == '%' && last == '<') {
+					inServerTag = true;
+				} else if (inServerTag && c == '>' && last == '%') {
+					inServerTag = false;
+				} else if (!inServerTag) {
+					if (!quoted && (c == '/' || c == '>' || Char.IsWhiteSpace ((char) c))) {
+						break;
+					} else if (quoted && c == quoteChar && last != '\\') {
+						read_char ();
+						break;
+					}
+				}
+
+				sb.Append ((char) c);
+				read_char ();
+				last = c;
+			}
+
+			return Token.ATTVALUE;
+		}
+
 		private int NextToken ()
 		{
 			int c;
@@ -111,22 +149,8 @@ namespace System.Web.Compilation {
 					return c;
 				}
 
-				if (inTag && (c == '"' || c == '\'')){
-					int previous;
-					int start = c;
-
-					previous = 0;
-					while ((c = sr.Peek ()) != -1) {
-						if (c == start && previous != '\\'){
-							read_char ();
-							break;
-						}
-						sb.Append ((char) read_char ());
-						previous = c;
-					}
-					
-					return Token.ATTVALUE;
-				}
+				if (inTag && (c == '"' || c == '\''))
+					return ReadAttValue (c);
 				
 				if (c == '<'){
 					inTag = true;
@@ -164,16 +188,8 @@ namespace System.Web.Compilation {
 					return (c != -1 || sb.Length > 0) ? Token.TEXT : Token.EOF;
 				}
 
-				if (inTag && current_token == '=' && !Char.IsWhiteSpace ((char) c)){ 
-					sb.Append ((char) c);
-					while ((c = sr.Peek ()) != -1) {
-						if (Char.IsWhiteSpace ((char) c) || c == '/' || c == '>')
-							break;
-						sb.Append ((char) read_char ());
-					}
-
-					return Token.ATTVALUE;
-				}
+				if (inTag && current_token == '=' && !Char.IsWhiteSpace ((char) c))
+					return ReadAttValue (c);
 
 				if (inTag && is_identifier_start_character ((char) c)){
 					sb.Append ((char) c);

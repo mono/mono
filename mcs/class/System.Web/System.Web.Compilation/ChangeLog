@@ -1,3 +1,11 @@
+2003-03-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspTokenizer.cs: allow quotes inside server tags that are part of
+	attribute values.
+	
+	* CachingCompiler.cs: no more 'FileNotFound' exceptions when the
+	compilation fails.
+
 2003-03-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: generate correct appbase path. It was working with
