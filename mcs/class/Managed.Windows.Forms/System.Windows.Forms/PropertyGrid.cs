@@ -60,11 +60,6 @@ namespace System.Windows.Forms
 		internal GridItemCollection grid_items;
 		private object[] selected_objects;
 		private PropertyTab selected_tab;
-		private Color view_back_color;
-		private Color view_fore_color;
-		private Color help_back_color;
-		private Color help_fore_color;
-		private bool help_visible;
 
 		private ImageList toolbar_imagelist;
 		private ToolBarButton categorized_toolbarbutton;
@@ -72,16 +67,15 @@ namespace System.Windows.Forms
 		private ToolBarButton separator_toolbarbutton;
 		private ToolBarButton propertypages_toolbarbutton;
 
-		private ToolBar toolbar;
-		private Label help_title_label;
-		private Label help_label;
+		internal ToolBar toolbar;
+		internal PropertyGridView property_grid_view;
+		internal Splitter splitter;
+		internal Panel help_panel;
+		internal Label help_title_label;
+		internal Label help_description_label;
 		private ContextMenu context_menu;
 		private MenuItem reset_menuitem;
 		private MenuItem description_menuitem;
-		private TextBox grid_textbox;
-		private int dividerY;
-		private int grid_divider_X;
-		internal bool			redraw;
 
 
 		#endregion	// Private Members
@@ -89,37 +83,41 @@ namespace System.Windows.Forms
 		#region Contructors
 		public PropertyGrid()
 		{
+			line_color = SystemColors.ScrollBar;
 			browsable_attributes = new AttributeCollection(new Attribute[] {});
+			commands_visible_if_available = true;
+			property_sort = PropertySort.CategorizedAlphabetical;
 
-			dividerY = 227;
-			help_label = new Label();
+			property_grid_view = new PropertyGridView(this);
+			property_grid_view.Dock = DockStyle.Fill;
+
+			splitter = new Splitter();
+			splitter.Dock = DockStyle.Bottom;
+
+			help_panel = new Panel();
+			help_panel.Dock = DockStyle.Bottom;
+			help_panel.Height = 50;
+
+			help_description_label = new Label();
+			help_description_label.Dock = DockStyle.Fill;
+			help_description_label.Name = "help_description_label";
+			help_description_label.Font = this.Font;
+
 			help_title_label = new Label();
+			help_title_label.Dock = DockStyle.Top;
+			help_title_label.Name = "help_title_label";
+			help_description_label.Font = new Font(this.Font,FontStyle.Bold);
+
+			help_panel.Controls.Add(help_description_label);
+			help_panel.Controls.Add(help_title_label);
+
 			toolbar = new ToolBar();
+			toolbar.Dock = DockStyle.Top;
 			categorized_toolbarbutton = new ToolBarButton();
 			alphabetic_toolbarbutton = new ToolBarButton();
 			separator_toolbarbutton = new ToolBarButton();
 			propertypages_toolbarbutton = new ToolBarButton();
 			context_menu = new ContextMenu();
-			grid_textbox = new TextBox();
-
-			grid_textbox.Visible = false;
-			grid_textbox.Font = new Font(this.Font,FontStyle.Bold);
-			grid_textbox.BorderStyle = BorderStyle.None;
-			grid_textbox.BackColor = ThemeEngine.Current.ColorWindow;
-			grid_textbox.Validated += new EventHandler(grid_textbox_Validated);
-
-			view_back_color = ThemeEngine.Current.ColorWindow;
-			view_fore_color = ThemeEngine.Current.ColorWindowText;
-
-			help_visible = true;
-			help_back_color = ThemeEngine.Current.ColorButtonFace;
-			help_fore_color = ThemeEngine.Current.ColorButtonText;
-
-			//help_label.Dock = DockStyle.Fill;
-			help_label.Name = "help_label";
-			help_label.Location = new Point(2,2);
-			help_label.Size = new Size(20,20);
-
 
 			//help_title_label.Dock = DockStyle.Top;
 			help_title_label.Name = "help_title_label";
@@ -173,17 +171,12 @@ namespace System.Windows.Forms
 			this.ContextMenu = context_menu;
 			toolbar.ContextMenu = context_menu;
 
+			this.Controls.Add(property_grid_view);
 			this.Controls.Add(toolbar);
-			this.Controls.Add(help_title_label);
-			this.Controls.Add(help_label);
-			this.Controls.Add(grid_textbox);
+			this.Controls.Add(splitter);
+			this.Controls.Add(help_panel);
 			this.Name = "PropertyGrid";
 			this.Size = new System.Drawing.Size(256, 400);
-
-			grid_divider_X = (this.Width - GRID_LEFT_COLUMN_WIDTH)/2;
-
-			this.MouseDown +=new MouseEventHandler(PropertyGrid_MouseDown);
-			this.KeyDown +=new KeyEventHandler(PropertyGrid_KeyDown);
 
 			selected_objects = new object[1];
 			grid_items = new GridItemCollection();
@@ -191,10 +184,10 @@ namespace System.Windows.Forms
 			has_focus = false;
 
 			//TextChanged+=new System.EventHandler(RedrawEvent);
-			ForeColorChanged+=new EventHandler(RedrawEvent);
-			BackColorChanged+=new System.EventHandler(RedrawEvent);
-			FontChanged+=new EventHandler(RedrawEvent);
-			SizeChanged+=new EventHandler(RedrawEvent);
+			//ForeColorChanged+=new EventHandler(RedrawEvent);
+			//BackColorChanged+=new System.EventHandler(RedrawEvent);
+			//FontChanged+=new EventHandler(RedrawEvent);
+			//SizeChanged+=new EventHandler(RedrawEvent);
 
 			
 			SetStyle(ControlStyles.UserPaint, true);
@@ -207,6 +200,8 @@ namespace System.Windows.Forms
 		#region Public Instance Properties
 
 		[BrowsableAttribute(false)]
+		[EditorBrowsableAttribute()]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Visible)]
 		public AttributeCollection BrowsableAttributes
 		{
 			get {
@@ -238,6 +233,7 @@ namespace System.Windows.Forms
 
 
 		[BrowsableAttribute(false)]
+		[EditorBrowsableAttribute()]
 		public virtual bool CanShowCommands 
 		{
 			get {
@@ -276,6 +272,8 @@ namespace System.Windows.Forms
 		}
 
 		[CategoryAttribute("Appearance")]
+		[BrowsableAttribute(true)]
+		[EditorBrowsableAttribute()]
 		public virtual bool CommandsVisible 
 		{
 			get {
@@ -284,6 +282,7 @@ namespace System.Windows.Forms
 		}
 
 		[CategoryAttribute("Appearance")]
+		[DefaultValue(true)]
 		public virtual bool CommandsVisibleIfAvailable 
 		{
 			get {
@@ -299,6 +298,8 @@ namespace System.Windows.Forms
 		}
 
 		[BrowsableAttribute(false)]
+		[EditorBrowsableAttribute()]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Visible)]
 		public Point ContextMenuDefaultLocation
 		{
 			get {
@@ -311,17 +312,16 @@ namespace System.Windows.Forms
 		{
 			get
 			{
-				return help_back_color;
+				return help_panel.BackColor;
 			}
 
 			set
 			{
-				if (help_back_color == value) {
+				if (help_panel.BackColor == value) {
 					return;
 				}
 
-				help_back_color = value;
-				Redraw();
+				help_panel.BackColor = value;
 			}
 		}
 
@@ -329,33 +329,33 @@ namespace System.Windows.Forms
 		public Color HelpForeColor
 		{
 			get {
-				return help_fore_color;
+				return help_panel.ForeColor;
 			}
 
 			set {
-				if (help_fore_color == value) {
+				if (help_panel.ForeColor == value) {
 					return;
 				}
 
-				help_fore_color = value;
-				Redraw();
+				help_panel.ForeColor = value;
 			}
 		}
 
 		[CategoryAttribute("Appearance")]
+		[DefaultValue(true)]
+		[Localizable(true)]
 		public virtual bool HelpVisible
 		{
 			get {
-				return help_visible;
+				return help_panel.Visible;
 			}
 
 			set {
-				if (help_visible == value) {
+				if (help_panel.Visible == value) {
 					return;
 				}
 
-				help_visible = value;
-				Redraw();
+				help_panel.Visible = value;
 			}
 		}
 
@@ -392,6 +392,7 @@ namespace System.Windows.Forms
 		}
 
 		[CategoryAttribute("Appearance")]
+		[DefaultValue(PropertySort.CategorizedAlphabetical)]
 		public PropertySort PropertySort
 		{
 			get {
@@ -408,11 +409,12 @@ namespace System.Windows.Forms
 				}
 
 				property_sort = value;
-				Redraw();
 			}
 		}
 
 		[BrowsableAttribute(false)]
+		[EditorBrowsableAttribute()]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Visible)]
 		public PropertyTabCollection PropertyTabs
 		{
 			get {
@@ -421,6 +423,8 @@ namespace System.Windows.Forms
 		}
 
 		[BrowsableAttribute(false)]
+		[EditorBrowsableAttribute()]
+		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Visible)]
 		public GridItem SelectedGridItem
 		{
 			get {
@@ -433,6 +437,10 @@ namespace System.Windows.Forms
 				}
 
 				selected_grid_item = value;
+				this.help_title_label.Text = selected_grid_item.PropertyDescriptor.Name;
+				this.help_description_label.Text = selected_grid_item.PropertyDescriptor.Description;
+				property_grid_view.Redraw();
+		
 			}
 		}
 
@@ -446,7 +454,7 @@ namespace System.Windows.Forms
 			set {
 				selected_objects = new object[] {value};
 				ReflectObjects();
-				Redraw();
+				property_grid_view.Redraw();
 			}
 		}
 
@@ -484,6 +492,7 @@ namespace System.Windows.Forms
 
 
 		[CategoryAttribute("Appearance")]
+		[DefaultValue(true)]
 		public virtual bool ToolbarVisible 
 		{
 			get {
@@ -503,15 +512,15 @@ namespace System.Windows.Forms
 		public Color ViewBackColor
 		{
 			get {
-				return view_back_color;
+				return property_grid_view.BackColor;
 			}
 
 			set {
-				if (view_back_color == value) {
+				if (property_grid_view.BackColor == value) {
 					return;
 				}
 
-				view_back_color = value;
+				property_grid_view.BackColor = value;
 			}
 		}
 
@@ -519,15 +528,15 @@ namespace System.Windows.Forms
 		public Color ViewForeColor
 		{
 			get {
-				return view_fore_color;
+				return property_grid_view.ForeColor;
 			}
 
 			set {
-				if (view_fore_color == value) {
+				if (property_grid_view.ForeColor == value) {
 					return;
 				}
 
-				view_fore_color = value;
+				property_grid_view.ForeColor = value;
 			}
 		}
 
@@ -607,7 +616,6 @@ namespace System.Windows.Forms
 		protected override void OnGotFocus(EventArgs e) 
 		{
 			has_focus=true;
-			Redraw();
 			base.OnGotFocus(e);
 		}
 
@@ -624,7 +632,6 @@ namespace System.Windows.Forms
 		protected override void OnLostFocus(EventArgs e) 
 		{
 			has_focus=false;
-			Redraw();
 			base.OnLostFocus(e);
 		}
 
@@ -645,89 +652,7 @@ namespace System.Windows.Forms
 
 		protected override void OnPaint(PaintEventArgs pevent)
 		{
-			this.grid_textbox.Visible = false;
-			this.help_title_label.Visible = false;
-			this.help_label.Visible = false;
-			Draw(pevent);
-			pevent.Graphics.DrawImage(this.ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
-			this.grid_textbox.Visible = true;
-			this.help_title_label.Visible = true;
-			this.help_label.Visible = true;
 			base.OnPaint (pevent);
-		}
-
-		// Derived classes should override Draw method and we dont want
-		// to break the control signature, hence this approach.
-		internal virtual void Draw (PaintEventArgs e) 
-		{
-			if (redraw) {
-				Rectangle grid_rect = new Rectangle(0,toolbar.Height,this.Width-1,dividerY-DIVIDER_PADDING-toolbar.Height);
-				Rectangle help_rect = new Rectangle(0,dividerY+DIVIDER_PADDING,this.Width-1,this.Height-1-dividerY-DIVIDER_PADDING);
-
-				Rectangle grid_left_rect = new Rectangle(grid_rect.Left+1,grid_rect.Top+1,GRID_LEFT_COLUMN_WIDTH,GRID_ITEM_HEIGHT);
-				Rectangle grid_label_rect = new Rectangle(grid_left_rect.Right,grid_rect.Top+1,grid_divider_X-GRID_LEFT_COLUMN_WIDTH,GRID_ITEM_HEIGHT);
-				Rectangle grid_value_rect = new Rectangle(grid_label_rect.Right,grid_rect.Top+1,grid_rect.Right-grid_divider_X,GRID_ITEM_HEIGHT);
-
-				// draw grid outline
-				e.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(ViewBackColor),grid_rect);
-				e.Graphics.DrawRectangle(ThemeEngine.Current.ResPool.GetPen(ThemeEngine.Current.ColorButtonShadow),grid_rect);
-
-				// draw items
-				Brush label_brush = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorWindowText);
-				Brush control_brush = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorButtonFace);
-				Pen control_pen = ThemeEngine.Current.ResPool.GetPen(ThemeEngine.Current.ColorButtonFace);
-				for (int i = 0; i < grid_items.Count; i++)
-				{
-					GridItem grid_item = grid_items[i];
-					
-					label_brush = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorWindowText);
-					if (grid_item == selected_grid_item)
-					{
-						e.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorHilight),grid_label_rect);
-						label_brush = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorHilightText);
-						grid_textbox.Size = new Size(grid_value_rect.Size.Width-6,grid_value_rect.Size.Height);
-						grid_textbox.Location = new Point(grid_value_rect.Location.X+4,grid_value_rect.Location.Y+1);
-
-						// PDB - added check to prevent crash with test app
-						if (grid_item.Value != null) {
-							grid_textbox.Text = grid_item.Value.ToString();
-						} else {
-							grid_textbox.Text = string.Empty;
-						}
-						grid_textbox.Visible = true;
-
-						help_title_label.Text = grid_item.Label;
-						help_label.Text = grid_item.PropertyDescriptor.Description;
-					}
-
-					e.Graphics.FillRectangle(control_brush,grid_left_rect);
-					e.Graphics.DrawRectangle(control_pen,grid_label_rect);
-					e.Graphics.DrawRectangle(control_pen,grid_value_rect);
-
-					e.Graphics.DrawString(grid_item.Label,this.Font,label_brush,grid_label_rect.Left + 5,grid_label_rect.Top+1);
-					
-					// PDB - added check to prevent crash with test app
-					if (grid_item.Value != null) {
-						e.Graphics.DrawString(grid_item.Value.ToString(),new Font(this.Font,FontStyle.Bold),ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorWindowText),grid_value_rect.Left + 2,grid_value_rect.Top+1);
-					}
-					
-					// shift down for next item
-					grid_left_rect.Y = grid_label_rect.Y = grid_value_rect.Y = grid_left_rect.Y + GRID_ITEM_HEIGHT;
-				}
-
-				// draw help
-				if (help_visible)
-				{
-					e.Graphics.DrawRectangle(ThemeEngine.Current.ResPool.GetPen(ThemeEngine.Current.ColorButtonShadow),help_rect);
-					help_title_label.Location = new Point(help_rect.Left+1,help_rect.Top+1);
-					help_title_label.Size = new Size(help_rect.Width-1,help_title_label.Height);
-					help_label.Location = new Point(help_rect.Left+1,help_title_label.Bottom);
-					help_label.Size = new Size(help_rect.Width-1,help_rect.Height-help_title_label.Height-1);
-				}
-
-				UpdateToolBarButtons();
-				redraw = false;
-			}
 		}
 
 		[MonoTODO]
@@ -799,8 +724,7 @@ namespace System.Windows.Forms
 			[MonoTODO]
 			public PropertyTab this[int index]
 			{
-				get
-				{
+				get {
 					throw new NotImplementedException();
 				}
 			}
@@ -809,8 +733,7 @@ namespace System.Windows.Forms
 			[MonoTODO]
 			public bool IsSynchronized
 			{
-				get
-				{
+				get {
 					// TODO:  Add PropertyTabCollection.IsSynchronized getter implementation
 					return false;
 				}
@@ -825,8 +748,7 @@ namespace System.Windows.Forms
 			[MonoTODO]
 			public object SyncRoot
 			{
-				get
-				{
+				get {
 					// TODO:  Add PropertyTabCollection.SyncRoot getter implementation
 					return null;
 				}
@@ -848,8 +770,7 @@ namespace System.Windows.Forms
 			[MonoTODO]
 			public int Count
 			{
-				get
-				{
+				get {
 					// TODO:  Add PropertyTabCollection.Count getter implementation
 					return 0;
 				}
@@ -862,44 +783,24 @@ namespace System.Windows.Forms
 
 		#region Private Helper Methods
 
-		internal void Redraw() 
-		{
-			redraw = true;
-			Refresh ();
-		}
-
-		private void RedrawEvent(object sender, System.EventArgs e) 
-		{
-			Redraw();
-		}
-
 		private void toolbar_ButtonClick(object sender, ToolBarButtonClickEventArgs e)
 		{
-			if (e.Button == alphabetic_toolbarbutton)
-			{
+			if (e.Button == alphabetic_toolbarbutton) {
 				this.PropertySort = PropertySort.Alphabetical;
-			}
-			else if (e.Button == categorized_toolbarbutton)
-			{
+			} else if (e.Button == categorized_toolbarbutton) {
 				this.PropertySort = PropertySort.Categorized;
 			}
-			Redraw();
 		}
 
 		internal void UpdateToolBarButtons()
 		{
-			if (PropertySort == PropertySort.Alphabetical)
-			{
+			if (PropertySort == PropertySort.Alphabetical) {
 				categorized_toolbarbutton.Pushed = false;
 				alphabetic_toolbarbutton.Pushed = true;
-			}
-			else if (PropertySort == PropertySort.Categorized)
-			{
+			} else if (PropertySort == PropertySort.Categorized) {
 				categorized_toolbarbutton.Pushed = true;
 				alphabetic_toolbarbutton.Pushed = false;
-			}
-			else
-			{
+			} else {
 				categorized_toolbarbutton.Pushed = false;
 				alphabetic_toolbarbutton.Pushed = false;
 			}
@@ -920,10 +821,8 @@ namespace System.Windows.Forms
 		private void ReflectObjects()
 		{
 			grid_items = new GridItemCollection();
-			foreach (object obj in selected_objects)
-			{
-				if (obj != null)
-				{
+			foreach (object obj in selected_objects) {
+				if (obj != null) {
 					PopulateGridItemCollection(obj,grid_items);
 				}
 			}
@@ -932,41 +831,14 @@ namespace System.Windows.Forms
 		private void PopulateGridItemCollection(object obj, GridItemCollection grid_item_coll)
 		{
 			PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(obj);
-			for (int i = 0; i < properties.Count;i++)
-			{
+			for (int i = 0; i < properties.Count;i++) {
 				bool not_browseable = properties[i].Attributes.Contains(new Attribute[] {new BrowsableAttribute(false)});
-				if (!not_browseable)
-				{
+				if (!not_browseable) {
 					GridEntry grid_entry = new GridEntry(obj, properties[i]);
-					object test = grid_item_coll["Length"];
+					//object test = grid_item_coll["Length"];
 					grid_item_coll.Add(properties[i].Name,grid_entry);
 					//PopulateGridItemCollection(grid_entry.Value,grid_entry.GridItems);
 				}
-			}
-		}
-
-		private void grid_textbox_Validated(object sender, EventArgs e)
-		{
-			selected_grid_item.PropertyDescriptor.SetValue(selected_objects[0],selected_grid_item.PropertyDescriptor.Converter.ConvertTo(((TextBox)sender).Text,selected_grid_item.PropertyDescriptor.PropertyType));
-		}
-
-		private void PropertyGrid_MouseDown(object sender, MouseEventArgs e)
-		{
-
-			if (e.Button == MouseButtons.Left)
-			{
-				int index = (e.Y-toolbar.Height)/GRID_ITEM_HEIGHT;
-				if (index < grid_items.Count)
-					selected_grid_item = grid_items[index];
-				Redraw();
-			}
-		}
-
-		private void PropertyGrid_KeyDown(object sender, KeyEventArgs e)
-		{
-			if (selected_grid_item != null)
-			{
-				grid_textbox.Focus();
 			}
 		}
 		#endregion	// Private Helper Methods

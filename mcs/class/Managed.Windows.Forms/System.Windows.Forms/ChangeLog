@@ -1,3 +1,7 @@
+2005-02-05  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* PropertyGrid.cs: Updated. Patch by Jonathan Chambers
+
 2005-02-04  Jackson Harper  <jackson@ximian.com>
 
 	* ThemeWin32Classic.cs: Respect the clipping rect when
