@@ -1,4 +1,6 @@
 2002-01-04  John R. Hicks <angryjohn69@nc.rr.com>
+	* Added preliminary TraceListenerCollection.cs to the build.
+2002-01-04  John R. Hicks <angryjohn69@nc.rr.com>
 	* Added TraceListener.cs, TextWriterTraceListener.cs, and
 	DefaultTraceListener.cs to the build and moved them into the
 	proper assembly.
