@@ -1453,7 +1453,7 @@ namespace Mono.CSharp {
 				if (Pending.VerifyPendingMethods ())
 					return;
 			
-			Attribute.ApplyAttributes (ec, TypeBuilder, this, OptAttributes, Location);
+			Attribute.ApplyAttributes (ec, TypeBuilder, this, OptAttributes);
 
 			//
 			// Check for internal or private fields that were never assigned
@@ -2143,7 +2143,7 @@ namespace Mono.CSharp {
 					
 					Attributes attr = p [i].OptAttributes;
 					if (attr != null)
-						Attribute.ApplyAttributes (ec, pb, pb, attr, Location);
+						Attribute.ApplyAttributes (ec, pb, pb, attr);
 				}
 			}
 
@@ -2170,18 +2170,25 @@ namespace Mono.CSharp {
 			// And now for the return type attribute decoration
 			//
 			ParameterBuilder ret_pb;
-			
+			Attributes ret_attrs = null;
+				
 			if (mb == null || method_attrs == null)
 				return;
 
-			//
-			// This code is incomplete - it doesn't work although
-			// this is what Lupus told me to do
-			//
+		 	ret_pb = mb.DefineParameter (0, ParameterAttributes.None, "");
 
-		// 	ret_pb = mb.DefineParameter (0, ParameterAttributes.None, "");
-		//	Attribute.ApplyAttributes (ec, ret_pb, ret_pb, method_attrs, Location);
+			foreach (AttributeSection asec in method_attrs.AttributeSections) {
 
+				if (asec.Target != "return")
+					continue;
+
+				if (ret_attrs == null)
+					ret_attrs = new Attributes (asec);
+				else
+					ret_attrs.AddAttributeSection (asec);
+			}
+
+			Attribute.ApplyAttributes (ec, ret_pb, ret_pb, ret_attrs);
 		}
 	}
 	
@@ -2670,7 +2677,7 @@ namespace Mono.CSharp {
 			if ((ModFlags & Modifiers.STATIC) != 0)
 				parent.EmitFieldInitializers (ec);
 
-			Attribute.ApplyAttributes (ec, ConstructorBuilder, this, OptAttributes, Location);
+			Attribute.ApplyAttributes (ec, ConstructorBuilder, this, OptAttributes);
 
 			// If this is a non-static `struct' constructor and doesn't have any
 			// initializer, it must initialize all of the struct's fields.
@@ -3066,7 +3073,7 @@ namespace Mono.CSharp {
 			ec = new EmitContext (parent, Location, ig, ReturnType, modifiers);
 
 			if (OptAttributes != null)
-				Attribute.ApplyAttributes (ec, builder, kind, OptAttributes, Location);
+				Attribute.ApplyAttributes (ec, builder, kind, OptAttributes);
 
 			if (member is MethodCore)
 				((MethodCore) member).LabelParameters (ec, MethodBuilder, OptAttributes);
@@ -3499,7 +3506,7 @@ namespace Mono.CSharp {
 			EmitContext ec = new EmitContext (tc, Location, null,
 							  FieldBuilder.FieldType, ModFlags);
 
-			Attribute.ApplyAttributes (ec, FieldBuilder, this, OptAttributes, Location);
+			Attribute.ApplyAttributes (ec, FieldBuilder, this, OptAttributes);
 		}
 	}
 
@@ -3674,7 +3681,7 @@ namespace Mono.CSharp {
 			// put the attribute
 			//
 			if (PropertyBuilder != null)
-				Attribute.ApplyAttributes (ec, PropertyBuilder, this, OptAttributes, Location);
+				Attribute.ApplyAttributes (ec, PropertyBuilder, this, OptAttributes);
 
 			if (GetData != null)
 				GetData.Emit (tc, Get.Block, Get);
@@ -4069,7 +4076,7 @@ namespace Mono.CSharp {
 			EmitContext ec;
 
 			ec = new EmitContext (tc, Location, null, MemberType, ModFlags);
-			Attribute.ApplyAttributes (ec, EventBuilder, this, OptAttributes, Location);
+			Attribute.ApplyAttributes (ec, EventBuilder, this, OptAttributes);
 
 			if (Add != null)
 				AddData.Emit (tc, Add.Block, Add);
@@ -4497,7 +4504,7 @@ namespace Mono.CSharp {
 		public void Emit (TypeContainer parent)
 		{
 			EmitContext ec = new EmitContext (parent, Location, null, null, ModFlags);
-			Attribute.ApplyAttributes (ec, OperatorMethodBuilder, this, OptAttributes, Location);
+			Attribute.ApplyAttributes (ec, OperatorMethodBuilder, this, OptAttributes);
 
 			//
 			// abstract or extern methods have no bodies

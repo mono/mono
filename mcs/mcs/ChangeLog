@@ -1,3 +1,22 @@
+2002-12-18  Ravi Pratap  <ravi@ximian.com>
+
+	* attribute.cs (Attributes.AddAttributeSection): Rename to this
+	since it makes much more sense.
+
+	(Attributes.ctor): Don't require a Location parameter.
+	
+	* rootcontext.cs (AddGlobalAttributeSection): Rename again.
+
+	* attribute.cs (ApplyAttributes): Remove extra Location parameters
+	since we already have that information per attribute.
+
+	* everywhere : make appropriate changes.
+
+	* class.cs (LabelParameters): Write the code which actually
+	applies attributes to the return type. We can't do this on the MS
+	.NET runtime so we flag a warning in the case an exception is
+	thrown.
+
 2002-12-18  Miguel de Icaza  <miguel@ximian.com>
 
 	* const.cs: Handle implicit null conversions here too.
