@@ -1,3 +1,9 @@
+2003-12-23  Jaroslaw Kowalski <jaak@zd.com.pl>
+
+	* CodeAttributeDeclaration.cs:
+	* CodeDelegateInvokeExpression:
+	  -Added "params" keyword to constructors
+
 2003-08-15  Jaroslaw Kowalski <jarek@atm.com.pl>
 
 	* CodeTypeDeclaration.cs:

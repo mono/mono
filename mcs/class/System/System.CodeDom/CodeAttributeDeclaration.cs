@@ -32,7 +32,7 @@ namespace System.CodeDom
 			this.name = name;
 		}
 
-		public CodeAttributeDeclaration (string name, CodeAttributeArgument [] arguments)
+		public CodeAttributeDeclaration (string name, params CodeAttributeArgument [] arguments)
 		{
 			this.name = name;
 			Arguments.AddRange (arguments);
