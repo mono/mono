@@ -1,3 +1,11 @@
+2004-08-27  Chris Toshok  <toshok@ximian.com>
+
+	* MonoSymbolFile.cs (MonoSymbolFile.ReadSymbolFile): pass name to
+	MonoSymbolFile.ctor, not filename, so we load the .mdb file
+	instead of the .dll.
+	(MonoSymbolFile.ctor): pass FileAccess.Read to the FileStream
+	ctor.
+
 2004-08-27  Martin Baulig  <martin@ximian.com>
 
 	* MonoSymbolFile.cs (MonoDebuggerSupport.GetGuid): The function is

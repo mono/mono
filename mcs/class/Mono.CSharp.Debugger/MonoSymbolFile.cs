@@ -439,7 +439,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		{
 			this.assembly = assembly;
 
-			FileStream stream = new FileStream (filename, FileMode.Open);
+			FileStream stream = new FileStream (filename, FileMode.Open, FileAccess.Read);
 			reader = new MyBinaryReader (stream);
 
 			try {
@@ -478,7 +478,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			string filename = assembly.Location;
 			string name = filename + ".mdb";
 
-			return new MonoSymbolFile (filename, assembly);
+			return new MonoSymbolFile (name, assembly);
 		}
 
 		public Assembly Assembly {
