@@ -1,5 +1,8 @@
 2003-03-28  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs (TypeContainer.CheckPairedOperators): Report error for missmatch on
+	operator true/false as required by the spec.
+
 	* expression.cs (Unary.ResolveOperator): In LogicalNot, do an
 	implicit conversion to boolean.
 

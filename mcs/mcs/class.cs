@@ -1874,13 +1874,16 @@ namespace Mono.CSharp {
 		//  == and !=
 		// > and <
 		// >= and <=
+		// true and false
 		//
 		// They are matched based on the return type and the argument types
 		//
 		void CheckPairedOperators ()
 		{
 			Hashtable pairs = new Hashtable (null, null);
-
+			Operator true_op = null;
+			Operator false_op = null;
+			
 			// Register all the operators we care about.
 			foreach (Operator op in operators){
 				int reg = 0;
@@ -1890,6 +1893,13 @@ namespace Mono.CSharp {
 					reg = 1; break;
 				case Operator.OpType.Inequality:
 					reg = 2; break;
+
+				case Operator.OpType.True:
+					true_op = op;
+					break;
+				case Operator.OpType.False:
+					false_op = op;
+					break;
 					
 				case Operator.OpType.GreaterThan:
 					reg = 1; break;
@@ -1915,6 +1925,12 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (true_op != null){
+				if (false_op == null)
+					Report.Error (216, true_op.Location, "operator true requires a matching operator false");
+			} else if (false_op != null)
+				Report.Error (216, false_op.Location, "operator false requires a matching operator true");
+			
 			//
 			// Look for the mistakes.
 			//
