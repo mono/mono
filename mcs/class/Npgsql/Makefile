@@ -31,7 +31,8 @@ LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Xml.dll \
 		-resource:NpgsqlTypes/NpgsqlTypesHelper.resources,NpgsqlTypes.NpgsqlTypesHelper.resources \
 		-resource:Npgsql/Design/ConnectionStringEditorForm.resources,Npgsql.Design.ConnectionStringEditorForm.resources
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
+TEST_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Xml.dll \
+		 /r:System.Web.dll /r:System.Data.dll
 
 LIB_MCS_FLAGS_RESOURCES = $(LIB_MCS_FLAGS) 
 
@@ -62,5 +63,11 @@ install: install-recursive install-local
 
 uninstall: uninstall-recursive uninstall-local
 
-test:
+test: test-recursive test-local
+
+run-test: run-test-recursive test-local run-test-local
+
+clean: clean-recursive clean-local
+
+uninstall: uninstall-recursive uninstall-local
 
