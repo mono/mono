@@ -1,5 +1,9 @@
 2003-11-26  Miguel de Icaza  <miguel@ximian.com>
 
+	* statement.cs (Block.LookupLabel): Also look for the label on the
+	children blocks.  Use a hash table to keep track of visited
+	nodes. 
+
 	* cfold.cs (IntConstant to UIntConstant mapping): Only return if
 	we actually did transform the other operand, otherwise fall back
 	to the common codepath that casts to long.

@@ -1280,16 +1280,39 @@ namespace Mono.CSharp {
 
 		public LabeledStatement LookupLabel (string name)
 		{
-			if (switch_block != null)
-				return switch_block.LookupLabel (name);
+			Hashtable l = new Hashtable ();
+			
+			return LookupLabel (name, l);
+		}
 
-			if (labels != null){
+		//
+		// Lookups a label in the current block, parents and children.
+		// It skips during child recurssion on `source'
+		//
+		LabeledStatement LookupLabel (string name, Hashtable seen)
+		{
+			if (switch_block != null)
+				return switch_block.LookupLabel (name, seen);
+
+			if (seen [this] != null)
+				return null;
+
+			seen [this] = this;
+			
+			if (labels != null)
 				if (labels.Contains (name))
 					return ((LabeledStatement) labels [name]);
+
+			if (children != null){
+				foreach (Block b in children){
+					LabeledStatement s = b.LookupLabel (name, seen);
+					if (s != null)
+						return s;
+				}
 			}
 
 			if (Parent != null)
-				return Parent.LookupLabel (name);
+				return Parent.LookupLabel (name, seen);
 
 			return null;
 		}
