@@ -1,3 +1,8 @@
+2004-11-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsdValidatingReader.cs : optimized some ArrayList fields; create them
+	  only when required.
+
 2004-08-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsdValidatingReader.cs : ReadTypedValue() is override under 2_0.

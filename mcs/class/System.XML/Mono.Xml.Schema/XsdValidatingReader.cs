@@ -57,11 +57,11 @@ namespace Mono.Xml.Schema
 		bool namespaces = true;
 
 		Hashtable idList = new Hashtable ();
-		ArrayList missingIDReferences = new ArrayList ();
+		ArrayList missingIDReferences;
 		string thisElementId;
 
 		ArrayList keyTables = new ArrayList ();
-		ArrayList currentKeyFieldConsumers = new ArrayList ();
+		ArrayList currentKeyFieldConsumers;
 
 		XsdValidationStateManager stateManager = new XsdValidationStateManager ();
 		XsdValidationContext context = new XsdValidationContext ();
@@ -84,8 +84,8 @@ namespace Mono.Xml.Schema
 		bool defaultAttributeConsumed;
 
 		// Validation engine cached object
-		ArrayList defaultAttributesCache = new ArrayList ();
-		ArrayList tmpKeyrefPool = new ArrayList ();
+		ArrayList defaultAttributesCache;
+		ArrayList tmpKeyrefPool;
 
 #region .ctor
 		public XsdValidatingReader (XmlReader reader)
@@ -115,7 +115,27 @@ namespace Mono.Xml.Schema
 		}
 
 		internal ArrayList CurrentKeyFieldConsumers {
-			get { return currentKeyFieldConsumers; }
+			get {
+				if (currentKeyFieldConsumers == null)
+					currentKeyFieldConsumers = new ArrayList ();
+				return currentKeyFieldConsumers;
+			}
+		}
+
+		private ArrayList DefaultAttributesCache {
+			get {
+				if (defaultAttributesCache == null)
+					defaultAttributesCache = new ArrayList ();
+				return defaultAttributesCache;
+			}
+		}
+
+		private ArrayList MissingIDReferences {
+			get {
+				if (missingIDReferences == null)
+					missingIDReferences = new ArrayList ();
+				return missingIDReferences;
+			}
 		}
 
 		// Public Non-overrides
@@ -589,24 +609,26 @@ namespace Mono.Xml.Schema
 			}
 
 			// Identity field value
-			while (this.currentKeyFieldConsumers.Count > 0) {
-				XsdKeyEntryField field = this.currentKeyFieldConsumers [0] as XsdKeyEntryField;
-				if (field.Identity != null)
-					HandleError ("Two or more identical field was found. Former value is '" + field.Identity + "' .");
-				object identity = null; // This means empty value
-				if (dt != null) {
-					try {
-						identity = dt.ParseValue (value, NameTable, ParserContext.NamespaceManager);
-					} catch (Exception ex) { // FIXME: (wishlist) This is bad manner ;-(
-						HandleError ("Identity value is invalid against its data type " + dt.TokenizedType, ex);
+			if (currentKeyFieldConsumers != null) {
+				while (this.currentKeyFieldConsumers.Count > 0) {
+					XsdKeyEntryField field = this.currentKeyFieldConsumers [0] as XsdKeyEntryField;
+					if (field.Identity != null)
+						HandleError ("Two or more identical field was found. Former value is '" + field.Identity + "' .");
+					object identity = null; // This means empty value
+					if (dt != null) {
+						try {
+							identity = dt.ParseValue (value, NameTable, ParserContext.NamespaceManager);
+						} catch (Exception ex) { // FIXME: (wishlist) This is bad manner ;-(
+							HandleError ("Identity value is invalid against its data type " + dt.TokenizedType, ex);
+						}
 					}
-				}
-				if (identity == null)
-					identity = value;
+					if (identity == null)
+						identity = value;
 
-				if (!field.SetIdentityField (identity, reader.Depth == xsiNilDepth, dt as XsdAnySimpleType, this))
-					HandleError ("Two or more identical key value was found: '" + value + "' .");
-				this.currentKeyFieldConsumers.RemoveAt (0);
+					if (!field.SetIdentityField (identity, reader.Depth == xsiNilDepth, dt as XsdAnySimpleType, this))
+						HandleError ("Two or more identical key value was found: '" + value + "' .");
+					this.currentKeyFieldConsumers.RemoveAt (0);
+				}
 			}
 
 			shouldValidateCharacters = false;
@@ -1000,15 +1022,16 @@ namespace Mono.Xml.Schema
 						attr.ValidatedFixedValue == null)
 						HandleError ("Required attribute " + attr.QualifiedName + " was not found.");
 					else if (attr.ValidatedDefaultValue != null)
-						defaultAttributesCache.Add (attr);
+						DefaultAttributesCache.Add (attr);
 					else if (attr.ValidatedFixedValue != null)
-						defaultAttributesCache.Add (attr);
+						DefaultAttributesCache.Add (attr);
 				}
 			}
 			defaultAttributes = (XmlSchemaAttribute []) 
-				defaultAttributesCache.ToArray (typeof (XmlSchemaAttribute));
+				DefaultAttributesCache.ToArray (typeof (XmlSchemaAttribute));
 			context.DefaultAttributes = defaultAttributes;
-			defaultAttributesCache.Clear ();
+			if (defaultAttributesCache != null)
+				defaultAttributesCache.Clear ();
 			// 5. wild IDs was already checked above.
 		}
 
@@ -1114,19 +1137,19 @@ namespace Mono.Xml.Schema
 					HandleError ("Duplicate ID value was found.");
 				else
 					idList.Add (normalized, normalized);
-				if (missingIDReferences.Contains (normalized))
-					missingIDReferences.Remove (normalized);
+				if (MissingIDReferences.Contains (normalized))
+					MissingIDReferences.Remove (normalized);
 				break;
 			case XmlTokenizedType.IDREF:
 				if (!idList.Contains (normalized))
-					missingIDReferences.Add (normalized);
+					MissingIDReferences.Add (normalized);
 				break;
 			case XmlTokenizedType.IDREFS:
 				string [] idrefs = (string []) parsedValue;
 				for (int i = 0; i < idrefs.Length; i++) {
 					string id = idrefs [i];
 					if (!idList.Contains (id))
-						missingIDReferences.Add (id);
+						MissingIDReferences.Add (id);
 				}
 				break;
 			}
@@ -1200,14 +1223,18 @@ namespace Mono.Xml.Schema
 		// 3.11.4 Identity Constraint Satisfied
 		private void AssessStartIdentityConstraints ()
 		{
-			tmpKeyrefPool.Clear ();
+			if (tmpKeyrefPool != null)
+				tmpKeyrefPool.Clear ();
 			if (context.Element != null && context.Element.Constraints.Count > 0) {
 				// (a) Create new key sequences, if required.
 				for (int i = 0; i < context.Element.Constraints.Count; i++) {
 					XmlSchemaIdentityConstraint ident = (XmlSchemaIdentityConstraint) context.Element.Constraints [i];
 					XsdKeyTable seq = CreateNewKeyTable (ident);
-					if (ident is XmlSchemaKeyref)
+					if (ident is XmlSchemaKeyref) {
+						if (tmpKeyrefPool == null)
+							tmpKeyrefPool = new ArrayList ();
 						tmpKeyrefPool.Add (seq);
+					}
 				}
 			}
 
@@ -1612,6 +1639,12 @@ namespace Mono.Xml.Schema
 				schemas.Compile ();
 		}
 
+		private bool HasMissingIDReferences ()
+		{
+			return missingIDReferences != null
+				&& missingIDReferences.Count > 0;
+		}
+
 		public override bool Read ()
 		{
 			nonDefaultAttributeCount = 0;
@@ -1627,7 +1660,7 @@ namespace Mono.Xml.Schema
 
 			bool result = reader.Read ();
 			// 3.3.4 ElementLocallyValidElement 7 = Root Valid.
-			if (!result && missingIDReferences.Count > 0)
+			if (!result && HasMissingIDReferences ())
 				HandleError ("There are missing ID references: " +
 					String.Join (" ",
 					this.missingIDReferences.ToArray (typeof (string)) as string []));
