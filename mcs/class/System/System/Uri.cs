@@ -412,7 +412,7 @@ namespace System
 			int len = schemeName.Length;
 			for (int i = 1; i < len; i++) {
 				char c = schemeName [i];
-				if (!Char.IsLetterOrDigit (c) || c != ',' || c != '+' || c != '-')
+				if (!Char.IsLetterOrDigit (c) && c != '.' && c != '+' && c != '-')
 					return false;
 			}
 			

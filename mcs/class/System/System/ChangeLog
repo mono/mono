@@ -1,3 +1,8 @@
+2003-03-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Uri.cs:
+	(CheckSchemeName): fixed bug #28549. Thanks to Eric Runquist.
+
 2003-02-01  Miguel de Icaza  <miguel@ximian.com>
 
 	* Uri.cs (LocalPath): Local path should return un-escaped
