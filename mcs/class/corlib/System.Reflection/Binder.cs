@@ -139,7 +139,7 @@ namespace System.Reflection
 					case TypeCode.Double:
 						return true;
 					}
-					return to == typeof (object);
+					return to == typeof (object) || (from.IsEnum && to == typeof (Enum));
 				case TypeCode.SByte:
 					switch (tot) {
 					case TypeCode.Int16:
@@ -149,7 +149,7 @@ namespace System.Reflection
 					case TypeCode.Double:
 						return true;
 					}
-					return to == typeof (object);
+					return to == typeof (object) || (from.IsEnum && to == typeof (Enum));
 				case TypeCode.UInt16:
 					switch (tot) {
 					case TypeCode.UInt32:
@@ -160,7 +160,7 @@ namespace System.Reflection
 					case TypeCode.Double:
 						return true;
 					}
-					return to == typeof (object);
+					return to == typeof (object) || (from.IsEnum && to == typeof (Enum));
 				case TypeCode.Int16:
 					switch (tot) {
 					case TypeCode.Int32:
@@ -169,7 +169,7 @@ namespace System.Reflection
 					case TypeCode.Double:
 						return true;
 					}
-					return to == typeof (object);
+					return to == typeof (object) || (from.IsEnum && to == typeof (Enum));
 				case TypeCode.UInt32:
 					switch (tot) {
 					case TypeCode.UInt64:
@@ -178,7 +178,7 @@ namespace System.Reflection
 					case TypeCode.Double:
 						return true;
 					}
-					return to == typeof (object);
+					return to == typeof (object) || (from.IsEnum && to == typeof (Enum));
 				case TypeCode.Int32:
 					switch (tot) {
 					case TypeCode.Int64:
@@ -186,7 +186,7 @@ namespace System.Reflection
 					case TypeCode.Double:
 						return true;
 					}
-					return to == typeof (object);
+					return to == typeof (object) || (from.IsEnum && to == typeof (Enum));
 				case TypeCode.UInt64:
 				case TypeCode.Int64:
 					switch (tot) {
@@ -194,7 +194,7 @@ namespace System.Reflection
 					case TypeCode.Double:
 						return true;
 					}
-					return to == typeof (object);
+					return to == typeof (object) || (from.IsEnum && to == typeof (Enum));
 				case TypeCode.Single:
 					return tot == TypeCode.Double || to == typeof (object);
 				default:
