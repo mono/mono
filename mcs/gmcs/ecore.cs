@@ -270,7 +270,7 @@ namespace Mono.CSharp {
 		// value will be returned if the expression is not a type
 		// reference
 		//
-		public TypeExpr ResolveAsTypeTerminal (EmitContext ec)
+		public virtual TypeExpr ResolveAsTypeTerminal (EmitContext ec)
 		{
 			int errors = Report.Errors;
 

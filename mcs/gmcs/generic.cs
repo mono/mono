@@ -153,8 +153,10 @@ namespace Mono.CSharp {
 		Type[] iface_constraint_types;
 		Type effective_base_type;
 
-		public bool Resolve (DeclSpace ds)
+		public bool Resolve (EmitContext ec)
 		{
+			DeclSpace ds = ec.DeclSpace;
+
 			iface_constraints = new ArrayList ();
 			type_param_constraints = new ArrayList ();
 
@@ -195,7 +197,15 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				TypeExpr expr = ds.ResolveTypeExpr ((Expression) obj, loc);
+				TypeExpr expr;
+				if (obj is ConstructedType) {
+					ConstructedType cexpr = (ConstructedType) obj;
+					if (!cexpr.ResolveConstructedType (ec))
+						return false;
+					expr = cexpr;
+				} else
+					expr = ((Expression) obj).ResolveAsTypeTerminal (ec);
+
 				if (expr == null)
 					return false;
 
@@ -260,6 +270,15 @@ namespace Mono.CSharp {
 
 		public bool ResolveTypes (EmitContext ec)
 		{
+			foreach (object obj in constraints) {
+				ConstructedType cexpr = obj as ConstructedType;
+				if (cexpr == null)
+					continue;
+
+				if (!cexpr.CheckConstraints (ec))
+					return false;
+			}
+
 			foreach (TypeParameterExpr expr in type_param_constraints) {
 				Hashtable seen = new Hashtable ();
 				if (!CheckTypeParameterConstraints (expr.TypeParameter, seen))
@@ -515,7 +534,7 @@ namespace Mono.CSharp {
 		public bool Resolve (DeclSpace ds)
 		{
 			if (constraints != null)
-				return constraints.Resolve (ds);
+				return constraints.Resolve (ds.EmitContext);
 
 			return true;
 		}
@@ -1165,8 +1184,37 @@ namespace Mono.CSharp {
 
 		public override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
+			if (!ResolveConstructedType (ec))
+				return null;
+
+			return this;
+		}
+
+		public bool CheckConstraints (EmitContext ec)
+		{
+			for (int i = 0; i < gen_params.Length; i++) {
+				if (!CheckConstraints (ec, i))
+					return false;
+			}
+
+			return true;
+		}
+
+		public override TypeExpr ResolveAsTypeTerminal (EmitContext ec)
+		{
+			if (base.ResolveAsTypeTerminal (ec) == null)
+				return null;
+
+			if (!CheckConstraints (ec))
+				return null;
+
+			return this;
+		}
+
+		public bool ResolveConstructedType (EmitContext ec)
+		{
 			if (type != null)
-				return this;
+				return true;
 			if (gt != null)
 				return DoResolveType (ec);
 
@@ -1195,13 +1243,13 @@ namespace Mono.CSharp {
 			SimpleName sn = new SimpleName (name, loc);
 			TypeExpr resolved = sn.ResolveAsTypeTerminal (ec);
 			if (resolved == null)
-				return null;
+				return false;
 
 			t = resolved.Type;
 			if (t == null) {
 				Report.Error (246, loc, "Cannot find type `{0}'<...>",
 					      Basename);
-				return null;
+				return false;
 			}
 
 			num_args = TypeManager.GetNumberOfTypeArguments (t);
@@ -1210,20 +1258,20 @@ namespace Mono.CSharp {
 					      "The non-generic type `{0}' cannot " +
 					      "be used with type arguments.",
 					      TypeManager.CSharpName (t));
-				return null;
+				return false;
 			}
 
 			gt = t.GetGenericTypeDefinition ();
 			return DoResolveType (ec);
 		}
 
-		TypeExpr DoResolveType (EmitContext ec)
+		bool DoResolveType (EmitContext ec)
 		{
 			//
 			// Resolve the arguments.
 			//
 			if (args.Resolve (ec) == false)
-				return null;
+				return false;
 
 			gen_params = gt.GetGenericArguments ();
 			atypes = args.Arguments;
@@ -1234,19 +1282,14 @@ namespace Mono.CSharp {
 					      "requires {1} type arguments",
 					      TypeManager.GetFullName (gt),
 					      gen_params.Length);
-				return null;
-			}
-
-			for (int i = 0; i < gen_params.Length; i++) {
-				if (!CheckConstraints (ec, i))
-					return null;
+				return false;
 			}
 
 			//
 			// Now bind the parameters.
 			//
 			type = gt.BindGenericParameters (atypes);
-			return this;
+			return true;
 		}
 
 		public Expression GetSimpleName (EmitContext ec)

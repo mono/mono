@@ -1,5 +1,22 @@
 2004-11-18  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (Constraints.Resolve): Take an `EmitContext' instead
+	of a `DeclSpace'.  If one of our constraints is a `ConstructedType',
+	call ResolveConstructedType() on it to resolve it without checking
+	constraints.
+	(Constraints.ResolveTypes): Check them here.
+	(ConstructedType.DoResolveAsTypeStep): Fully resolve ourselves,
+	but don't check constraints.
+	(ConstructedType.ResolveAsTypeTerminal): Override this and also
+	check constraints here.
+	(ConstructedType.ResolveConstructedType): New public method.  This
+	is called from DoResolveAsTypeStep() and Constraints.Resolve() to
+	resolve ourselves without checking constraints.
+
+	* ecore.cs (Expression.ResolveAsTypeTerminal): Make this virtual.
+
+2004-11-18  Martin Baulig  <martin@ximian.com>
+
 	* decl.cs
 	(DeclSpace.CurrentType): Changed type from `TypeExpr' to `Type'.
 
