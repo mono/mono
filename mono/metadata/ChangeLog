@@ -1,3 +1,8 @@
+2003-10-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* image.c:
+	(mono_image_open): increment the ref_count inside the critical section.
+
 2003-10-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* image.c (mono_image_open): Fix reference counting bug.
