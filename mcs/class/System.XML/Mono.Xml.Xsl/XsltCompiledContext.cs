@@ -506,7 +506,7 @@ namespace Mono.Xml.Xsl.Functions {
 			}
 		}
 		
-		public override XPathResultType ReturnType { get { return XPathResultType.NodeSet; }}
+		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
 		public override object Evaluate (BaseIterator iter)
 		{
 			XPathNavigator n;
@@ -661,7 +661,18 @@ namespace Mono.Xml.Xsl.Functions {
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
 		public override object Evaluate (BaseIterator iter)
 		{
-			throw new NotImplementedException ();
+			IHasXmlNode xn = iter.Current as IHasXmlNode;
+			if (xn == null)
+				return String.Empty;
+			XmlNode n = xn.GetNode ();
+			XmlDocumentType doctype = n.OwnerDocument.DocumentType;
+			if (doctype == null)
+				return String.Empty;
+			XmlEntity ent = doctype.Entities.GetNamedItem (arg0.EvaluateString (iter)) as XmlEntity;
+			if (ent == null)
+				return String.Empty;
+			else
+				return ent.BaseURI;
 		}
 	}
 }

@@ -71,16 +71,14 @@ namespace Mono.Xml.Xsl
 				
 				case OutputMethod.HTML:
 					Console.WriteLine ("WARNING: HTML output not fully supported, using XML output");
-					htmlEmulation = true;
-					goto case OutputMethod.XML;
+					_emitter = new HtmlEmitter (writer, xslOutput);
+					break;
 				case OutputMethod.Unknown: //TODO: handle xml vs html
 				case OutputMethod.XML:
 					//TODO: XmlTextEmitter goes here
 					//_emitter = new XmlTextEmitter (writer);
 					XmlTextWriter w = new XmlTextWriter (writer);
-					if (_currentOutput.Indent)
-						w.Formatting = Formatting.Indented;
-					if (htmlEmulation)
+					if (xslOutput.Indent == "yes")
 						w.Formatting = Formatting.Indented;
 					_emitter = new XmlWriterEmitter (w);					
 					break;
@@ -141,6 +139,7 @@ namespace Mono.Xml.Xsl
 			_emitter.WriteEndDocument ();				
 		}
 
+		int _nsCount;
 		public override void WriteStartElement (string prefix, string localName, string nsURI)
 		{
 			if (_state == WriteState.Prolog) {
@@ -179,7 +178,15 @@ namespace Mono.Xml.Xsl
 		}
 
 		public override void WriteAttributeString (string prefix, string localName, string nsURI, string value)
-		{										
+		{
+			if (prefix == String.Empty && nsURI != String.Empty) {
+				prefix = "xp_" + _nsCount;
+				_nsManager.AddNamespace (prefix, nsURI);
+				_currentNsPrefixes.Add (prefix);
+				_currentNamespaceDecls.Add (prefix, nsURI);
+				_nsCount++;
+			}
+
 			//Put attribute to pending attributes collection, replacing namesake one
 			for (int i = 0; i < pendingAttributesPos; i++) {
 				Attribute attr = pendingAttributes [i];

@@ -50,7 +50,7 @@ namespace Mono.Xml.Xsl
 		string doctypePublic;
 		string doctypeSystem;
 		QName [] cdataSectionElements;
-		bool indent;
+		string indent;
 		string mediaType;
 		bool escapeUriAttributes;
 		bool includeContentType;
@@ -105,7 +105,7 @@ namespace Mono.Xml.Xsl
 			}
 		}
 
-		public bool Indent {
+		public string Indent {
 			get { return indent; }
 		}
 
@@ -200,7 +200,7 @@ namespace Mono.Xml.Xsl
 
 			att = nav.GetAttribute ("indent", "");
 			if (att != String.Empty)
-				this.indent = att == "yes";
+				this.indent = att;
 		}
 	}
 

@@ -96,7 +96,7 @@ namespace Mono.Xml.Xsl {
 			}
 
 			XmlReader rdr = new XmlTextReader (uri.ToString(), (Stream) resolver.GetEntity (uri, null, null));
-			result = new XPathDocument (rdr).CreateNavigator ();
+			result = new XPathDocument (rdr, XmlSpace.Preserve).CreateNavigator ();
 			rdr.Close ();
 			
 			docCache [uri] = result.Clone ();
@@ -266,6 +266,16 @@ namespace Mono.Xml.Xsl {
 					if (style.ExcludeResultPrefixes != null) {
 						bool exclude = false;
 						foreach (XmlQualifiedName exc in style.ExcludeResultPrefixes)
+							if (exc.Name == "#default" && prefix == String.Empty || exc.Name == prefix) {
+								exclude = true;
+								break;
+							}
+						if (exclude)
+							continue;
+					}
+					if (style.ExtensionElementPrefixes != null) {
+						bool exclude = false;
+						foreach (XmlQualifiedName exc in style.ExtensionElementPrefixes)
 							if (exc.Name == "#default" && prefix == String.Empty || exc.Name == prefix) {
 								exclude = true;
 								break;

@@ -1,3 +1,14 @@
+2003-11-13 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* GenericOutputter.cs : Added HTML output support. Closer xmlns handling
+	  to Xalan tests and MS.NET implementation (only for test convenience).
+	* XslOutput.cs : Indent holds string rathen than bool. Its default value
+	  varies in the context. When method="html", then default is "yes".
+	* XslTransformProcessor.cs : Extension element prefixes should not 
+	  be written as stylesheet namespaces.
+	* XsltCompiledContext.cs : Return type of generate-id() is string.
+	  Implemented unparsed-entity-uri().
+
 2003-11-02 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* Compiler.cs : More complete attribute set gathering.
