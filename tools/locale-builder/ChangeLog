@@ -1,5 +1,9 @@
 2004-06-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DateTimeFormatEntry.cs : Use "{0}" for empty array.
+
+2004-06-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DateTimeFormatEntry.cs : Added "all datetime patterns" support.
 	* Driver.cs : Added "all datetime patterns" support and fixed some
 	  XPathNavigator use to strictly navigate to "pattern" element.

@@ -98,6 +98,8 @@ namespace Mono.Tools.LocaleBuilder {
                                 if (i + 1 < patterns.Length)
                                         builder.Append (',');
                         }
+                        if (patterns.Length == 0)
+                                builder.Append ('0');
                         builder.Append ('}');
                 }
 
