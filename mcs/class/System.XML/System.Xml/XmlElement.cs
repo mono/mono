@@ -75,17 +75,13 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO ("Setter is immature")]
 		public override string InnerXml {
 			get {
-				// Not sure why this is an override.  Passing through for now.
 				return base.InnerXml;
 			}
 			set {
 				foreach(XmlNode n in ChildNodes)
-				{
 					this.RemoveChild(n);
-				}		  
 
 				// I hope there are any well-performance logic...
 				XmlNameTable nt = this.OwnerDocument.NameTable;
@@ -107,9 +103,8 @@ namespace System.Xml
 			get { return isEmpty; }
 
 			set {
-				if(value) {
+				if(value)
 					RemoveAll();
-				}
 				isEmpty = value;
 			}
 		}
@@ -357,22 +352,22 @@ namespace System.Xml
 				childNode.WriteTo(w);
 		}
 
-		[MonoTODO("indenting feature is incomplete.")]
+		[MonoTODO]
 		public override void WriteTo (XmlWriter w)
 		{
 			w.WriteStartElement(Prefix, LocalName, NamespaceURI);
 
 			// write namespace declarations(if not exist)
-			if(Prefix != null && Prefix != String.Empty && w.LookupPrefix(Prefix) != NamespaceURI)
-				w.WriteAttributeString("xmlns", Prefix, "http://www.w3.org/2000/xmlns/", NamespaceURI);
+			if(Prefix != null && w.LookupPrefix (Prefix) != NamespaceURI)
+				w.WriteAttributeString ("xmlns", Prefix, "http://www.w3.org/2000/xmlns/", NamespaceURI);
 
 			foreach(XmlNode attributeNode in Attributes)
 			{
 				attributeNode.WriteTo(w);
 				// write namespace declarations(if not exist)
-				if(attributeNode.Prefix != null && attributeNode.Prefix != String.Empty &&
-				   w.LookupPrefix(attributeNode.Prefix) != attributeNode.NamespaceURI &&
-				   attributeNode.Prefix != "xmlns")
+				if(attributeNode.Prefix != null && attributeNode.Prefix != "" &&
+					w.LookupPrefix(attributeNode.Prefix) != attributeNode.NamespaceURI &&
+					attributeNode.Prefix != "xmlns")
 					w.WriteAttributeString("xmlns", attributeNode.Prefix, "http://www.w3.org/2000/xmlns/", attributeNode.NamespaceURI);
 			}
 

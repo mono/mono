@@ -173,7 +173,6 @@ namespace System.Xml
 			get { return null; }
 		}
 
-		[MonoTODO("check its behavior")]
 		public bool PreserveWhitespace {
 			get { return preserveWhitespace; }
 			set { preserveWhitespace = value; }
@@ -577,8 +576,7 @@ namespace System.Xml
 			// like properties we have, etc.
 			RemoveAll ();
 
-			XmlNode currentNode = this;
-
+			// create all contents with use of ReadNode()
 			do {
 				XmlNode n = ReadNode (xmlReader);
 				if(n == null) break;
@@ -729,11 +727,6 @@ namespace System.Xml
 
 					// set the element's attributes.
 					while (reader.MoveToNextAttribute ()) {
-/*
-						XmlAttribute attribute = CreateAttribute (reader.Prefix, reader.LocalName, reader.NamespaceURI);
-						attribute.Value = reader.Value;
-						element.SetAttributeNode (attribute);
-*/
 						element.SetAttributeNode (ReadAttributeNode (reader));
 					}
 
@@ -856,9 +849,6 @@ namespace System.Xml
 		{
 			foreach(XmlNode childNode in ChildNodes) {
 				childNode.WriteTo (w);
-				if(!PreserveWhitespace) {
-					w.WriteRaw ("\n");
-				}
 			}
 		}
 

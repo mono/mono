@@ -39,10 +39,10 @@ namespace System.Xml
 
 		public override string Value {
 			get { return Data; }
-			[MonoTODO]
 			set {
 				if (IsValidWhitespaceChar (value) == false)
 					throw new ArgumentException ("Invalid whitespace characters.");
+				Data = value;
 			}
 		}
 
@@ -57,7 +57,8 @@ namespace System.Xml
 
 		public override void WriteTo (XmlWriter w)
 		{
-			w.WriteWhitespace (Data);
+			if(OwnerDocument.PreserveWhitespace)
+				w.WriteWhitespace (Data);
 		}
 
 		private bool IsValidWhitespaceChar (string text)
