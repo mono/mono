@@ -627,16 +627,7 @@ namespace System.Security {
 		[ComVisible (false)]
 		public override int GetHashCode ()
 		{
-			if (list.Count == 0)
-				return (int) state;
-
-			if (_hashcode == 0) {
-				_hashcode = state.GetHashCode ();
-				foreach (IPermission p in list)	{
-					_hashcode ^= p.GetHashCode ();
-				}
-			}
-			return _hashcode;
+			return (list.Count == 0) ? (int) state : base.GetHashCode ();
 		}
 
 		[MonoTODO ("what's it doing here?")]

@@ -1,3 +1,9 @@
+2005-01-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PermissionSet.cs: Simplified GetHashCode as two exact copies may 
+	have different hash codes (documented as such). This fix some unit
+	tests for 2.0.
+
 2005-01-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HostSecurityManager.cs: Fix signature as DetermineApplicationTrust
