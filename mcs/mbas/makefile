@@ -25,6 +25,7 @@ COMPILER_SOURCES = \
 	mb-parser.cs 		\
 	mb-tokenizer.cs 	\
 	modifiers.cs 		\
+	module.cs			\
 	namespace.cs		\
 	parameter.cs		\
 	report.cs		\
@@ -36,6 +37,8 @@ COMPILER_SOURCES = \
 	typemanager.cs
 
 all: mbas.exe
+
+parser: mb-parser.cs
 
 mbas.exe: $(COMPILER_SOURCES)
 	$(CSC) $(CSCFLAGS) $(COMPILER_SOURCES)

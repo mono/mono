@@ -248,7 +248,7 @@ namespace Mono.CSharp {
 				                members.Add (pb);
 			}
 
-			if ((bf & BindingFlags.DeclaredOnly) == 0){
+			if (((bf & BindingFlags.DeclaredOnly) == 0) && (TypeBuilder.BaseType != null)) {
 				MemberInfo [] parent_mi;
 				
 				parent_mi = TypeContainer.FindMembers (

@@ -359,6 +359,7 @@ namespace Mono.CSharp {
 				"System.Runtime.InteropServices.MarshalAsAttribute",
 				"System.ParamArrayAttribute",
 				"System.Security.UnverifiableCodeAttribute",
+				"System.Runtime.CompilerServices.IndexerNameAttribute",
 			};
 			
 			foreach (string cname in classes_second_stage)

@@ -593,8 +593,10 @@ public class TypeManager {
 		void_ptr_type         = CoreLookupType ("System.Void*");
 
 		indexer_name_type     = CoreLookupType ("System.Runtime.CompilerServices.IndexerNameAttribute");
-		trace_type            = CoreLookupType ("System.Diagnostics.Trace");
-		debug_type            = CoreLookupType ("System.Diagnostics.Debug");
+		if (RootContext.StdLib) {
+			trace_type    = CoreLookupType ("System.Diagnostics.Trace");
+			debug_type    = CoreLookupType ("System.Diagnostics.Debug");
+		}
 	}
 
 	//

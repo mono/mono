@@ -10,7 +10,7 @@ End Module
 Module WriteOK2
 
     Sub [Sub]() ' Escaped identifier
-        Console.WriteLine("OK!")
+        Console.WriteLine("Sub:OK!")
     End Sub
 
 End Module

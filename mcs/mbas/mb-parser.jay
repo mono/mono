@@ -399,31 +399,38 @@ class_declaration
 	  }
 	;
 
+opt_module_modifiers
+	: /* empty */	{ $$ = (int) 0; }
+	| PUBLIC		{ $$ = Modifiers.PUBLIC; }
+	| FRIEND		{ $$ = Modifiers.INTERNAL; }
+	;
+
 module_declaration
-	: /* opt_attributes opt_modifiers */
+	: opt_attributes opt_module_modifiers
 	  MODULE IDENTIFIER EOL
 	  { 
-		Class new_class;
+		Module new_module;
 		string name;
 
-		name = MakeName ((string) $2);
-
-		// TODO: Add 'Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute' to Attributes collection
-		new_class = new Class (current_container, name, Modifiers.PUBLIC, 
-				       /*(Attributes) $1*/ null, lexer.Location);
-		current_container = new_class;
+		name = MakeName((string) $4);
+		new_module = new Module(current_container, 
+								name, 
+								(int) $2, 
+								(Attributes) $1,
+								lexer.Location);
+		current_container = new_module;
 		current_container.Namespace = current_namespace;
-		RootContext.Tree.RecordDecl (name, new_class);
+		RootContext.Tree.RecordDecl(name, new_module);
 	  }
 	  opt_class_member_declarations
 	  END MODULE EOL
 	  {
-		Class new_class = (Class) current_container;
+		Module new_module = (Module)current_container;
 
 		current_container = current_container.Parent;
-		CheckDef (current_container.AddClass (new_class), new_class.Name, new_class.Location);
+		CheckDef (current_container.AddClass(new_module), new_module.Name, new_module.Location);
 
-		$$ = new_class;
+		$$ = new_module;
 	  }
 	;
 

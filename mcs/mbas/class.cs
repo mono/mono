@@ -677,7 +677,7 @@ namespace Mono.CSharp {
 			//
 			// We also pre-compute the methods.
 			//
-			bool implementing_abstract = (b.IsAbstract && !TypeBuilder.IsAbstract);
+			bool implementing_abstract = ((b != null) && b.IsAbstract && !TypeBuilder.IsAbstract);
 			ArrayList abstract_methods = null;
 
 			if (implementing_abstract){
@@ -1396,7 +1396,7 @@ namespace Mono.CSharp {
 			//
 			// Lookup members in parent if requested.
 			//
-			if ((bf & BindingFlags.DeclaredOnly) == 0){
+			if (((bf & BindingFlags.DeclaredOnly) == 0) && (TypeBuilder.BaseType != null)) {
 				MemberInfo [] mi;
 
 				mi = FindMembers (TypeBuilder.BaseType, mt, bf, filter, criteria);
@@ -2527,7 +2527,6 @@ namespace Mono.CSharp {
 			
 			Label finish = ig.DefineLabel ();
 			bool old_in_try = ec.InTry;
-			Expression member_lookup;
 			
 			ig.BeginExceptionBlock ();
 			ec.InTry = true;
@@ -2540,15 +2539,17 @@ namespace Mono.CSharp {
 			ec.InFinally = true;
 			ig.BeginFinallyBlock ();
 			
-			member_lookup = Expression.MemberLookup (
-				ec, ec.ContainerType.BaseType, "Finalize",
-				MemberTypes.Method, Expression.AllBindingFlags, Location);
+			if (ec.ContainerType.BaseType != null) {
+				Expression member_lookup = Expression.MemberLookup (
+					ec, ec.ContainerType.BaseType, "Finalize",
+					MemberTypes.Method, Expression.AllBindingFlags, Location);
 
-			if (member_lookup != null){
-				MethodGroupExpr parent_destructor = ((MethodGroupExpr) member_lookup);
+				if (member_lookup != null){
+					MethodGroupExpr parent_destructor = ((MethodGroupExpr) member_lookup);
 				
-				ig.Emit (OpCodes.Ldarg_0);
-				ig.Emit (OpCodes.Call, (MethodInfo) parent_destructor.Methods [0]);
+					ig.Emit (OpCodes.Ldarg_0);
+					ig.Emit (OpCodes.Call, (MethodInfo) parent_destructor.Methods [0]);
+				}
 			}
 			ec.InFinally = old_in_finally;
 			
@@ -2587,9 +2588,12 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (this is ConstructorBaseInitializer)
+			if (this is ConstructorBaseInitializer) {
+				if (ec.ContainerType.BaseType == null)
+					return true;
+
 				t = ec.ContainerType.BaseType;
-			else
+			} else
 				t = ec.ContainerType;
 			
 			parent_constructor_group = Expression.MemberLookup (
@@ -2621,7 +2625,8 @@ namespace Mono.CSharp {
 			ec.ig.Emit (OpCodes.Ldarg_0);
 			if (argument_list != null)
 				Invocation.EmitArguments (ec, null, argument_list);
-			ec.ig.Emit (OpCodes.Call, parent_constructor);
+			if (parent_constructor != null)
+				ec.ig.Emit (OpCodes.Call, parent_constructor);
 		}
 	}
 

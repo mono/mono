@@ -382,16 +382,18 @@ Options:
 			// For now the "default config" is harcoded into the compiler
 			// we can move this outside later
 			//
-			string [] default_config = {
+			string [] default_config = 
+			{
 				"System",
+				"System.Data",
 				"System.Xml",
+				"Microsoft.VisualBasic", // just for now
 #if false
 				//
 				// Is it worth pre-loading all this stuff?
 				//
 				"Accessibility",
 				"System.Configuration.Install",
-				"System.Data",
 				"System.Design",
 				"System.DirectoryServices",
 				"System.Drawing.Design",
@@ -861,17 +863,17 @@ Options:
 			else if (target == Target.WinExe)
 				k = PEFileKinds.WindowApplication;
 
-			if (target == Target.Exe || target == Target.WinExe){
-				MethodInfo ep = RootContext.EntryPoint;
-
-				if (ep == null){
-					Report.Error (5001, "Program " + output_file +
-							      " does not have an entry point defined");
-					return;
-				}
-				
-				CodeGen.AssemblyBuilder.SetEntryPoint (ep, k);
-			}
+//			if (target == Target.Exe || target == Target.WinExe){
+//				MethodInfo ep = RootContext.EntryPoint;
+//
+//				if (ep == null){
+//					Report.Error (5001, "Program " + output_file +
+//							      " does not have an entry point defined");
+//					return;
+//				}
+//				
+//				CodeGen.AssemblyBuilder.SetEntryPoint (ep, k);
+//			}
 
 			//
 			// Add the resources
