@@ -98,10 +98,62 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void ValidInnerText ()
+		{
+			declaration.InnerText = "version='1.0'";
+
+			declaration.InnerText = "version='1.0' encoding='euc-jp'";
+
+			declaration.InnerText = "version='1.0'   standalone='no'";
+
+			declaration.InnerText = "version='1.0' encoding='iso-8859-1' standalone=\"yes\"";
+
+			declaration.InnerText = @"version = '1.0' encoding	=
+				'euc-jp'  standalone	 =	'yes'    ";
+
+			declaration.InnerText = "  version = '1.0'";
+		}
+
+		[Test]
 		[ExpectedException (typeof (XmlException))]
 		public void InvalidInnerText ()
 		{
 			declaration.InnerText = "version='1.0a'";
+		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void InvalidInnerText2 ()
+		{
+			declaration.InnerText = "version='1.0'  encoding='euc-kr\"";
+		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void InvalidInnerText3 ()
+		{
+			declaration.InnerText = "version='2.0'";
+		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void InvalidInnerText4 ()
+		{
+			declaration.InnerText = "version='1.0' standalone='Yeah!!!!!'";
+		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void InvalidInnerText5 ()
+		{
+			declaration.InnerText = "version='1.0'standalone='yes'";
+		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void InvalidInnerText6 ()
+		{
+			declaration.InnerText = "version='1.0'standalone='yes' encoding='utf-8'";
 		}
 
 		[Test]
