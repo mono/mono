@@ -35,17 +35,17 @@ namespace TestSystemDataSqlClient
 						
 			sqlQuery = "select * from pg_tables";
 
-			try {
-				System.Console.WriteLine ("new SqlDataAdapter...");
-				adapter = new SqlDataAdapter (sqlQuery, 
-						connectionString);
+			System.Console.WriteLine ("new SqlDataAdapter...");
+			adapter = new SqlDataAdapter (sqlQuery, 
+					connectionString);
 
-				System.Console.WriteLine ("open connection...");
-				adapter.SelectCommand.Connection.Open ();
+			System.Console.WriteLine ("open connection...");
+			adapter.SelectCommand.Connection.Open ();
 				
-				System.Console.WriteLine ("new DataSet...");
-				dataSet = new DataSet ();
+			System.Console.WriteLine ("new DataSet...");
+			dataSet = new DataSet ();
 
+			try {
 				System.Console.WriteLine("Fill...");
 				adapter.Fill (dataSet);
 
@@ -55,7 +55,7 @@ namespace TestSystemDataSqlClient
 			}		
 			
 			System.Console.WriteLine ("get row...");
-			if (null != dataSet) {
+			if (dataSet != null) {
 				foreach (DataRow row in dataSet.Tables["Table"].Rows)
 					Console.WriteLine("tablename: " + row["tablename"]);
 				System.Console.WriteLine("Done.");

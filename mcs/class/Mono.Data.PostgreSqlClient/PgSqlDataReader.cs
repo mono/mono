@@ -41,7 +41,7 @@ namespace System.Data.SqlClient {
 		#region Fields
 
 		private SqlCommand cmd;
-		private DataTable table;
+		private DataTable table = null;
 
 		// columns in a row
 		private object[] fields; // data value in a .NET type
@@ -62,16 +62,9 @@ namespace System.Data.SqlClient {
 
 		#region Constructors
 
-		internal SqlDataReader (SqlCommand sqlCmd, 
-			DataTable dataTableSchema, IntPtr pg_result,
-			int rowCount, int fieldCount, string[] pgtypes) {
+		internal SqlDataReader (SqlCommand sqlCmd) {
 
 			cmd = sqlCmd;
-			table = dataTableSchema;
-			pgResult = pg_result;
-			rows = rowCount;
-			cols = fieldCount;
-			types = pgtypes;
 			open = true;
 		}
 
@@ -94,22 +87,32 @@ namespace System.Data.SqlClient {
 
 		[MonoTODO]
 		public bool NextResult() {
-			throw new NotImplementedException ();
+			SqlResult res;
+			currentRow = -1;
+			
+			res = cmd.NextResult();
+
+			if(res.ResultReturned == true) {
+				table = res.Table;
+				pgResult = res.PgResult;
+				rows = res.RowCount;
+				cols = res.FieldCount;
+				types = res.PgTypes;
+			}
+
+			return res.ResultReturned;
 		}
 
 		[MonoTODO]
 		public bool Read() {
+			
 			string dataValue;
 			int c = 0;
 			
-			//Console.WriteLine("if current row: " + currentRow + " rows: " + rows); 
 			if(currentRow < rows - 1)  {
 				
-				//Console.WriteLine("currentRow++: ");
 				currentRow++;
-
-				//Console.WriteLine("re-init row --- cols: " + cols);
-
+			
 				// re-init row
 				fields = new object[cols];
 				//dbTypes = new DbType[cols];

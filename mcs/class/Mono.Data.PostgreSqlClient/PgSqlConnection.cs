@@ -43,7 +43,8 @@ namespace System.Data.SqlClient {
 	//public sealed class SqlConnection : Component, IDbConnection,
 	//	ICloneable
 
-	public sealed class SqlConnection : IDbConnection {
+	public sealed class SqlConnection : IDbConnection, IDisposable
+	{
 		// FIXME: Need to implement class Component, 
 		// and interfaces: ICloneable and IDisposable	
 
@@ -201,28 +202,6 @@ namespace System.Data.SqlClient {
 
 		[MonoTODO]
 		public void Open () {
-			OpenDataSource ();
-		}
-
-		#endregion // Public Methods
-
-		#region Protected Methods
-
-		// FIXME: protected override void Dispose overrides Component
-		//        however, including Component causes other problems
-		/*
-		[MonoTODO]
-		protected override void Dispose (bool disposing)
-		{
-			throw new NotImplementedException ();
-		}
-		*/
-
-		#endregion
-
-		#region Private Methods
-
-		private void OpenDataSource () {
 			if(dbname.Equals(""))
 				throw new InvalidOperationException(
 					"dbname missing");
@@ -260,6 +239,24 @@ namespace System.Data.SqlClient {
 			}
 		}
 
+		#endregion // Public Methods
+
+		#region Protected Methods
+
+		// FIXME: protected override void Dispose overrides Component
+		//        however, including Component causes other problems
+		/*
+		[MonoTODO]
+		protected override void Dispose (bool disposing)
+		{
+			throw new NotImplementedException ();
+		}
+		*/
+
+		#endregion
+
+		#region Private Methods
+
 		private void SetupConnection() {
 			conState = ConnectionState.Open;
 
@@ -278,6 +275,7 @@ namespace System.Data.SqlClient {
 			// FIXME: just a quick hack
 			conState = ConnectionState.Closed;
 			PostgresLibrary.PQfinish (pgConn);
+			pgConn = IntPtr.Zero;
 		}
 
 		private void SetConnectionString (string connectionString) {

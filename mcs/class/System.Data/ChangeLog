@@ -1,3 +1,25 @@
+2002-05-17  Daniel Morgan <danmorg@sc.rr.com>
+
+	* System.Data.SqlClient/PostgresLibrary.cs: handle
+	data value from database being NULL
+	
+	* System.Data.SqlClient/SqlCommand.cs: for ExecuteReader, 
+	allow multiple result sets.  Added new internal class
+	SqlResult to pass result set data from SqlCommand
+	to SqlDataReader.
+	
+	* System.Data.SqlClient/SqlDataReader.cs: allow
+	multiple result sets.
+	
+	* System.Data.SqlClient/SqlConnection.cs: moved 
+	things around.  Implement IDisposable.
+	
+	* Test/TestSqlDataReader.cs: test for execution
+	of multiple result sets and display the results
+	of these multiple results sets
+	
+	* Test/TestSqlDataAdapter.cs: tweaks
+
 2002-05-17  Tim Coleman <tim@timcoleman.com>
 	* System.Data.Common/DbDataAdapter.cs:
 		- More implementation of Fill methods

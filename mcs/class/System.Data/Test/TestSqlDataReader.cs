@@ -16,10 +16,8 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace TestSystemDataSqlClient
-{
-	class TestSqlDataReader
-	{
+namespace TestSystemDataSqlClient {
+	class TestSqlDataReader {
 
 		static void Test() { 
 			SqlConnection con = null;
@@ -28,69 +26,78 @@ namespace TestSystemDataSqlClient
 			
 			String connectionString = null;
 			String sql = null;
+			int c;
+			int results = 0;
 
 			connectionString = 
 				"host=localhost;" +
 				"dbname=test;" +
 				"user=postgres";
 				
-			sql = 	"select tid, tdesc, aint4, abpchar " + 
-				"from sometable";
-			
+			sql = 	"select * from pg_user;" + 
+				"select * from pg_tables;" + 
+				"select * from pg_database;";
+							
 			con = new SqlConnection(connectionString);
 			con.Open();
 
 			Console.WriteLine("sql: " +
-				     sql);
+				sql);
 
 			cmd = new SqlCommand(sql, con);
+			Console.WriteLine("ExecuteReader...");
 			rdr = cmd.ExecuteReader();
 
-                        // get the DataTable that holds
-			// the schema
-			DataTable dt = rdr.GetSchemaTable();
-			
-			// number of columns in the table
-			Console.WriteLine("dt.Columns.Count: " +
-				dt.Columns.Count);
+			do {
+				results++;
+				Console.WriteLine("Result Set " + results + "...");
 
-			// display the schema
-			for(int c = 0; c < dt.Columns.Count; c++) {
-				Console.WriteLine("* Column Name: " + 
-					dt.Columns[c].ColumnName);
-				Console.WriteLine("         MaxLength: " +
-					dt.Columns[c].MaxLength);
-				Console.WriteLine("         Type: " +
-					dt.Columns[c].DataType);
-			}
-			int nRows = 0;
-			// Read and display the rows
-			while(rdr.Read()) {
-				Console.WriteLine("Row: " +
-					rdr["tid"].ToString() + ", " + 
-					rdr["tdesc"].ToString() + ", " + 
-					rdr["aint4"].ToString() + ", " + 
-					rdr["abpchar"].ToString()
-					);
+				// get the DataTable that holds
+				// the schema
+				DataTable dt = rdr.GetSchemaTable();
+                        			
+				// number of columns in the table
+				Console.WriteLine("   Total Columns: " +
+					dt.Columns.Count);
 
-				Console.WriteLine("1: " + rdr.GetString(0));
-				Console.WriteLine("2: " + rdr.GetString(1));
-				Console.WriteLine("3: " + rdr.GetInt32(2));
-				Console.WriteLine("4: " + rdr.GetString(3));
-				nRows++;
-			}
-			Console.WriteLine("Rows: " + 
-				nRows);
+				// display the schema
+				for(c = 0; c < dt.Columns.Count; c++) {
+					Console.WriteLine("   Column Name: " + 
+						dt.Columns[c].ColumnName);
+					Console.WriteLine("          MaxLength: " +
+						dt.Columns[c].MaxLength);
+					Console.WriteLine("          Type: " +
+						dt.Columns[c].DataType);
+				}
+				int nRows = 0;
+
+				// Read and display the rows
+				while(rdr.Read()) {
+					Console.WriteLine("   Row " + nRows + ": ");
+
+					for(c = 0; c < rdr.FieldCount; c++) {
+						if(rdr.IsDBNull(c) == true)
+							Console.WriteLine("      " + 
+								rdr.GetName(c) + " is DBNull");
+						else
+							Console.WriteLine("      " + 
+								rdr.GetName(c) + ": " +
+								rdr[c].ToString());
+					}
+					nRows++;
+				}
+				Console.WriteLine("   Total Rows: " + 
+					nRows);
+			} while(rdr.NextResult());
+			Console.WriteLine("Total Result sets: " + results);
 			
 			rdr.Close();
 			con.Close();
 		}
 
 		[STAThread]
-		static void Main(string[] args)
-		{
+		static void Main(string[] args) {
 			Test();
 		}
-
 	}
 }

@@ -30,6 +30,8 @@ namespace System.Data
 		private bool caseSensitive;
 		private bool enforceConstraints;
 		private DataTableCollection tableCollection;
+		// private DataTableRelationCollection relationCollection;
+		private PropertyCollection properties;
 		
 		#region Constructors
 
@@ -96,7 +98,7 @@ namespace System.Data
 		public PropertyCollection ExtendedProperties {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return properties;
 			}
 		}
 
@@ -146,7 +148,8 @@ namespace System.Data
 		public DataRelationCollection Relations {
 			[MonoTODO]
 			get{
-				throw new NotImplementedException ();
+				//return relationCollection;
+				throw new NotImplementedException();
 			}
 		}
 

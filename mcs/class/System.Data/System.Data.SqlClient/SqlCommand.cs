@@ -40,18 +40,24 @@ namespace System.Data.SqlClient {
 
 		#region Fields
 
-		string sql = "";
-		int timeout = 30; 
+		private string sql = "";
+		private int timeout = 30; 
 		// default is 30 seconds 
 		// for command execution
 
-		SqlConnection conn = null;
-		SqlTransaction trans = null;
-		CommandType cmdType = CommandType.Text;
-		bool designTime = false;
-		SqlParameterCollection parmCollection = new 
+		private SqlConnection conn = null;
+		private SqlTransaction trans = null;
+		private CommandType cmdType = CommandType.Text;
+		private bool designTime = false;
+		private SqlParameterCollection parmCollection = new 
 			SqlParameterCollection();
 
+		// SqlDataReader state data for ExecuteReader()
+		private SqlDataReader dataReader = null;
+		private string[] queries; 
+		private int currentQuery;
+		CommandBehavior cmdBehavior = CommandBehavior.Default;
+		
 		#endregion // Fields
 
 		#region Constructors
@@ -165,19 +171,58 @@ namespace System.Data.SqlClient {
 		}
 
 		[MonoTODO]
-		public SqlDataReader ExecuteReader (CommandBehavior behavior) {
-			// FIXME: currently only works for a 
-			//        single result set
-			//        ExecuteReader can be used 
-			//        for multiple result sets
-			SqlDataReader dataReader = null;
-			
-			IntPtr pgResult; // PGresult
+		public SqlDataReader ExecuteReader (CommandBehavior behavior) 
+		{
+			if(conn.State != ConnectionState.Open)
+				throw new InvalidOperationException(
+					"ConnectionState is not Open");
+
+			cmdBehavior = behavior;
+
+			queries = null;
+			currentQuery = -1;
+			dataReader = new SqlDataReader(this);
+
+			if((behavior & CommandBehavior.SingleResult) == CommandBehavior.SingleResult) {
+				queries = new String[1];
+				queries[0] = sql;
+			}
+			else {
+				queries = sql.Split(new Char[] {';'});			
+			}
+
+			dataReader.NextResult();
+					
+			return dataReader;
+		}
+
+		internal SqlResult NextResult() 
+		{
+			SqlResult res = new SqlResult();
+			res.Connection = this.Connection;
+		
+			currentQuery++;
+
+			if(currentQuery < queries.Length && queries[currentQuery].Equals("") == false) {
+				ExecuteQuery(queries[currentQuery], res);
+				res.ResultReturned = true;
+			}
+			else {
+				res.ResultReturned = false;
+			}
+
+			return res;
+		}
+
+		private void ExecuteQuery (string query, SqlResult res)
+		{			
+			IntPtr pgResult;
+		
 			ExecStatusType execStatus;	
 
 			if(conn.State != ConnectionState.Open)
 				throw new InvalidOperationException(
-					"ConnnectionState is not Open");
+					"ConnectionState is not Open");
 
 			// FIXME: PQexec blocks 
 			// while PQsendQuery is non-blocking
@@ -188,23 +233,13 @@ namespace System.Data.SqlClient {
 			// execute SQL command
 			// uses internal property to get the PGConn IntPtr
 			pgResult = PostgresLibrary.
-				PQexec (conn.PostgresConnection, sql);
+				PQexec (conn.PostgresConnection, query);
 
 			execStatus = PostgresLibrary.
 				PQresultStatus (pgResult);
 			
 			if(execStatus == ExecStatusType.PGRES_TUPLES_OK) {
-				DataTable dt = null;
-				int rows, cols;
-				string[] types;
-				
-				// FIXME: maybe i should move the
-				//        BuildTableSchema code
-				//        to the SqlDataReader?
-				dt = BuildTableSchema(pgResult, 
-					out rows, out cols, out types);
-				dataReader = new SqlDataReader(this, dt, pgResult,
-					rows, cols, types);
+				res.BuildTableSchema(pgResult);
 			}
 			else {
 				String errorMessage;
@@ -219,61 +254,6 @@ namespace System.Data.SqlClient {
 					errorMessage, 0, "",
 					conn.DataSource, "SqlCommand", 0);
 			}
-					
-			return dataReader;
-		}
-
-		internal DataTable BuildTableSchema (IntPtr pgResult, 
-			out int nRows, 
-			out int nFields, 
-			out string[] types) {
-
-			int nCol;
-			
-			DataTable dt = new DataTable();
-
-			nRows = PostgresLibrary.
-				PQntuples(pgResult);
-
-			nFields = PostgresLibrary.
-				PQnfields(pgResult);
-			
-			int oid;
-			types = new string[nFields];
-			
-			for(nCol = 0; nCol < nFields; nCol++) {						
-				
-				DbType dbType;
-
-				// get column name
-				String fieldName;
-				fieldName = PostgresLibrary.
-					PQfname(pgResult, nCol);
-
-				// get PostgreSQL data type (OID)
-				oid = PostgresLibrary.
-					PQftype(pgResult, nCol);
-				types[nCol] = PostgresHelper.
-					OidToTypname (oid, conn.Types);
-				
-				int definedSize;
-				// get defined size of column
-				definedSize = PostgresLibrary.
-					PQfsize(pgResult, nCol);
-								
-				// build the data column and add it the table
-				DataColumn dc = new DataColumn(fieldName);
-
-				dbType = PostgresHelper.
-						TypnameToSqlDbType(types[nCol]);
-				dc.DataType = PostgresHelper.
-						DbTypeToSystemType(dbType);
-				dc.MaxLength = definedSize;
-				dc.SetTable(dt);
-				
-				dt.Columns.Add(dc);
-			}
-			return dt;
 		}
 
 		[MonoTODO]
@@ -538,6 +518,10 @@ namespace System.Data.SqlClient {
 
 		#endregion // Properties
 
+		#region Inner Classes
+
+		#endregion // Inner Classes
+
 		#region Destructors
 
 		[MonoTODO]
@@ -553,5 +537,113 @@ namespace System.Data.SqlClient {
 		}
 
 		#endregion //Destructors
+	}
+
+	// SqlResult is used for passing Result Set data 
+	// from SqlCommand to SqlDataReader
+	internal class SqlResult {
+
+		private DataTable dataTableSchema; // only will contain the schema
+		private IntPtr pg_result; // native PostgreSQL PGresult
+		private int rowCount; 
+		private int fieldCount;
+		private string[] pgtypes; // PostgreSQL types (typname)
+		private bool resultReturned = false;
+		private SqlConnection con;
+
+		internal SqlConnection Connection {
+			set {
+				con = value;
+			}
+		}
+
+		internal bool ResultReturned {
+			get {
+				return resultReturned;
+			}
+			set {
+				resultReturned = value;
+			}
+		}
+
+		internal DataTable Table {
+			get { 
+				return dataTableSchema;
+			}
+		}
+
+		internal IntPtr PgResult {
+			get {
+				return pg_result;
+			}
+		}
+
+		internal int RowCount {
+			get {
+				return rowCount;
+			}
+		}
+
+		internal int FieldCount {
+			get {
+				return fieldCount;
+			}
+		}
+
+		internal string[] PgTypes {
+			get {
+				return pgtypes;
+			}
+		}
+
+		internal void BuildTableSchema (IntPtr pgResult) {
+			pg_result = pgResult;
+
+			int nCol;
+			
+			dataTableSchema = new DataTable();
+
+			rowCount = PostgresLibrary.
+				PQntuples(pgResult);
+
+			fieldCount = PostgresLibrary.
+				PQnfields(pgResult);
+			
+			int oid;
+			pgtypes = new string[fieldCount];
+			
+			for(nCol = 0; nCol < fieldCount; nCol++) {
+				
+				DbType dbType;
+
+				// get column name
+				String fieldName;
+				fieldName = PostgresLibrary.
+					PQfname(pgResult, nCol);
+
+				// get PostgreSQL data type (OID)
+				oid = PostgresLibrary.
+					PQftype(pgResult, nCol);
+				pgtypes[nCol] = PostgresHelper.
+					OidToTypname (oid, con.Types);
+				
+				int definedSize;
+				// get defined size of column
+				definedSize = PostgresLibrary.
+					PQfsize(pgResult, nCol);
+								
+				// build the data column and add it the table
+				DataColumn dc = new DataColumn(fieldName);
+
+				dbType = PostgresHelper.
+					TypnameToSqlDbType(pgtypes[nCol]);
+				dc.DataType = PostgresHelper.
+					DbTypeToSystemType(dbType);
+				dc.MaxLength = definedSize;
+				dc.SetTable(dataTableSchema);
+				
+				dataTableSchema.Columns.Add(dc);
+			}
+		}
 	}
 }

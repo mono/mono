@@ -246,26 +246,20 @@ namespace System.Data.SqlClient {
 			// FIXME: need to handle a NULL for each type
 			//       maybe setting obj to System.DBNull.Value ?
 
-//
-//			if(value == null) {
-//#if DEBUG_PostgresLibrary
-//				Console.WriteLine("column is NULL");
-//#endif // DEBUG_PostgresLibrary
-//				return null;
-//			}
-//			else if(value.Equals("")) {
-//#if DEBUG_PostgresLibrary
-//				Console.WriteLine("column has a NULL");
-//#endif // DEBUG_PostgresLibrary
-//
-//				return null;
-//			}
-//
-//#if DEBUG_PostgresLibrary
-//			Console.WriteLine("ConvertDbTypeToSystem typ: " + 
-//				typ + "  value: " + value);
-//#endif // DEBUG_PostgresLibrary
-//
+			
+			if(value == null) {
+				//Console.WriteLine("ConvertDbTypeToSystemDbType typ: " +
+				//	typ + " value is null");
+				return null;
+			}
+			else if(value.Equals("")) {
+				//Console.WriteLine("ConvertDbTypeToSystemDbType typ: " +
+				//	typ + " value is string empty");
+				return null;
+			}
+			
+			//Console.WriteLine("ConvertDbTypeToSystemDbType typ: " +
+			//	typ + " value: " + value);
 
 			// Date, Time, and DateTime 
 			// are parsed based on ISO format
