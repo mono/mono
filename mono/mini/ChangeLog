@@ -1,3 +1,7 @@
+2004-09-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* trace.c (is_filenamechar): Allow 0..9 in strings. Fixes #65094.
+	
 2004-09-02  Martin Baulig  <martin@ximian.com>
 
 	* mini.c (mono_method_to_ir): When initializing the locals, call
