@@ -684,14 +684,14 @@ public abstract class Encoding
 	}
 
 	//
-	// Only internal, to be used by the class libraries
+	// Only internal, to be used by the class libraries: Unmarked and non-input-validating
 	//
 	internal static Encoding UTF8Unmarked {
 		get {
 			if (utf8EncodingWithoutMarkers == null) {
 				lock (typeof (Encoding)){
 					if (utf8EncodingWithoutMarkers == null){
-						utf8EncodingWithoutMarkers = new UTF8Encoding (false, true);
+						utf8EncodingWithoutMarkers = new UTF8Encoding (false, false);
 					}
 				}
 			}
