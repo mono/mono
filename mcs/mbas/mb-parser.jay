@@ -2107,6 +2107,7 @@ embedded_statement
 	| selection_statement
 	| iteration_statement
 	| try_statement
+	| synclock_statement
 	| jump_statement
 	| array_handling_statement 
 	;
@@ -2347,7 +2348,17 @@ yield_statement
 	  }
 	;
 
-
+synclock_statement
+	: SYNCLOCK expression end_of_stmt
+	  {   
+		start_block();  
+	  }
+	  opt_statement_list 
+	  END SYNCLOCK
+	  {
+		$$ = new Lock ((Expression) $2, (Statement) (Block) end_block(), lexer.Location);
+	  }
+	;
 
 try_statement
 	: try_catch

@@ -1,3 +1,6 @@
+2004/07/26  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* mb-parser.jay : First try at SyncLock Statement #53230
+
 2004-07-22 Anirban Bhattacharjee <banirban@novell.com>
 	* argument.cs:
 	* expression.cs:
