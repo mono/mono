@@ -323,6 +323,7 @@ namespace Mono.CSharp.Debugger
 
 		Hashtable method_token_hash;
 		Hashtable method_name_hash;
+		Hashtable method_full_name_hash;
 		Hashtable source_name_hash;
 
 		protected MonoSymbolFile (Assembly assembly, Stream stream)
@@ -427,7 +428,7 @@ namespace Mono.CSharp.Debugger
 				method_token_hash = new Hashtable ();
 
 				for (int i = 0; i < MethodCount; i++) {
-					MethodIndexEntry ie = GetMethodIndexEntry (i);
+					MethodIndexEntry ie = GetMethodIndexEntry (i + 1);
 
 					method_token_hash.Add (ie.Token, i);
 				}
@@ -506,21 +507,55 @@ namespace Mono.CSharp.Debugger
 			if (reader == null)
 				throw new InvalidOperationException ();
 
+			if (method_full_name_hash == null) {
+				method_full_name_hash = new Hashtable ();
+
+				for (int i = 0; i < ot.MethodCount; i++) {
+					MethodIndexEntry ie = GetMethodIndexEntry (i + 1);
+					string name = ReadString (ie.FullNameOffset);
+
+					method_full_name_hash.Add (name, i + 1);
+				}
+			}
+
+			object value = method_full_name_hash [full_name];
+			if (value == null)
+				return -1;
+			return (int) value;
+		}
+
+		public int[] MethodLookup (string query)
+		{
+			if (reader == null)
+				throw new InvalidOperationException ();
+
 			if (method_name_hash == null) {
 				method_name_hash = new Hashtable ();
 
 				for (int i = 0; i < ot.MethodCount; i++) {
-					MethodIndexEntry ie = GetMethodIndexEntry (i);
-					string name = ReadString (ie.FullNameOffset);
+					MethodIndexEntry ie = GetMethodIndexEntry (i + 1);
+					string full_name = ReadString (ie.FullNameOffset);
 
-					method_name_hash.Add (name, i + 1);
+					int pos = full_name.IndexOf ('(');
+					string name = full_name.Substring (0, pos);
+
+					ArrayList list = method_name_hash [name] as ArrayList;
+					if (list == null) {
+						list = new ArrayList ();
+						method_name_hash.Add (name, list);
+					}
+
+					list.Add (i + 1);
 				}
 			}
 
-			object value = method_name_hash [full_name];
-			if (value == null)
-				return -1;
-			return (int) value;
+			ArrayList list = method_name_hash [query] as ArrayList;
+			if (list == null)
+				return new int [0];
+
+			int[] retval = new int [list.Count];
+			list.CopyTo (retval, 0);
+			return retval;
 		}
 
 		public int FindSource (string file_name)
