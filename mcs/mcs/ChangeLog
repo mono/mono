@@ -1,5 +1,11 @@
 2004-03-30  Miguel de Icaza  <miguel@ximian.com>
 
+	* ecore.cs (PropertyExpr.GetAccessor): Apply patch from Patrik Reali
+	which removes the hardcoded get_/set_ prefixes for properties, as
+	IL allows for the properties to be named something else.  
+
+	Bug #56013
+
 	* expression.cs: Do not override operand before we know if it is
 	non-null.  Fix 56207
 
