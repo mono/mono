@@ -275,6 +275,10 @@ managed implementation on error.
 .I "MONO_CODEDOM_NODELETE"
 If set to any value, the C# CodeDom compiler will not remove the temporary
 source files generated.
+.TP
+.I "MONO_DISABLE_AIO"
+If set, tells mono NOT to attempt using native asynchronous I/O services. In
+that case, the threadpool is used for asynchronous I/O on files and sockets.
 .SH FILES
 On Unix assemblies are loaded from the installation lib directory.  If you set
 `prefix' to /usr, the assemblies will be located in /usr/lib.  On
