@@ -59,25 +59,11 @@ else
 TEST_SUPPORT_FILES = $(tmpinst)/bin/mono $(tmpinst)/bin/mcs $(tmpinst)/bin/mbas $(tmpinst)/bin/ilasm
 endif
 
-# List of NUnit testcases that should be 100% pass
-centum_nunit_tests = \
-	class/corlib \
-	class/Commons.Xml.Relaxng \
-	class/Cscompmgd \
-	class/Microsoft.JScript \
-	class/Mono.Posix \
-	class/Mono.Security \
-	class/System \
-	class/System.Configuration.Install \
-	class/System.Runtime.Remoting \
-	class/System.Runtime.Serialization.Formatters.Soap \
-	class/System.Web.Services
-
 # now a misnomer, but it'll go away soon enough.
 if ENABLE_NUNIT_TESTS
 test_select =
 else
-test_select = TEST_SUBDIRS='$(centum_nunit_tests) tests errors'
+test_select = ONLY_CENTUM_TESTS=yes
 endif
 
 mcs-do-test-profiles:
