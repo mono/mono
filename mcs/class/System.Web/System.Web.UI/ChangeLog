@@ -1,3 +1,28 @@
+2004-08-06 Sanjay Gupta <gsanjay@novell.com>
+
+	* IBindableTemplate.cs:
+	* ICallbackEventHandler.cs:
+	* IControlBuilderAccessor.cs:
+	* IControlDesignerAccessor.cs:
+	* IControlTypeFilter.cs:
+	* IDataItemContainer.cs:
+	* IDataSourceViewSchemaAccessor.cs:
+	* IDReferencePropertyAttribute.cs:
+	* IExpressionsAccessor.cs:
+	* IFilterResolutionService.cs:
+	* IItemPaginationInfo.cs:
+	* IMobileTextWriter.cs:
+	* IPageHeader.cs:
+	* IPaginationContainer.cs:
+	* IPaginationInfo.cs:
+	* IResourceResolutionService.cs:
+	* IResourceUrlGenerator.cs:
+	* IStateFormatter.cs:
+	* IStyleSheet.cs:
+	* IThemeResolutionService.cs:
+	* IUrlResolutionService.cs:
+	* IUserControlTypeResolutionService.cs: Added new files for Interfaces.
+
 2004-08-05 Sanjay Gupta <gsanjay@novell.com>
 
 	* PostBackOptions.cs: Added new file and implemented the class.
