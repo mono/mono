@@ -208,7 +208,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		public virtual byte[] GetCertHash () 
 		{
 			// we'll hash the cert only once and only if required
-			if ((cachedCertificateHash == null) && (x509.RawData != null)) {
+			if ((cachedCertificateHash == null) && (x509 != null)) {
 				SHA1 sha = SHA1.Create ();
 				cachedCertificateHash = sha.ComputeHash (x509.RawData);
 			}
