@@ -1,11 +1,7 @@
 Major tasks:
 ------------
 
-	Apply the method verification process to indexers and properties as well.
-
 	Properties and 17.6.3: Finish it.
-
-	Finish pre-processor (and, or and nested expressions not yet supported).
 
 	Implement base indexer access.
 

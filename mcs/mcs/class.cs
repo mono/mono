@@ -1082,9 +1082,6 @@ namespace Mono.CSharp {
 			if (events != null)
 				DefineMembers (events, defined_names);
 
-			//
-			// FIXME: Make Indexers MemberCores?
-			//
 			if (indexers != null) {
 				foreach (Indexer i in Indexers)
 					i.Define (this);
@@ -1093,10 +1090,6 @@ namespace Mono.CSharp {
 			if (operators != null)
 				DefineMembers (operators, null);
 
-			//
-			// FIXME: I think we want to make Enums (hence DeclSpace)
-			// a MemberCore so we can report 108 and 109 here.
-			//
 			if (enums != null)
 				DefineMembers (enums, defined_names);
 			
