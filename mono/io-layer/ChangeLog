@@ -1,3 +1,8 @@
+2002-07-15  Dick Porter  <dick@ximian.com>
+
+	* io.c: Removed bogus console_flush() method, that was just cut
+	and pasted from file_flush when I separated the two handle types.
+
 2002-07-12  Dick Porter  <dick@ximian.com>
 
 	* io.c (convert_from_flags): Fixed misunderstanding wrt fcntl
