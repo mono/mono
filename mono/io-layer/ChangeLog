@@ -1,3 +1,8 @@
+2002-05-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* handles.c (shared_init): Disable SHM for now, people have too
+	many problems with this, and the diagnostics are not helping.
+
 2002-05-06  Dan Lewis  <dihlewis@yahoo.co.uk>
 
 	* io.c: CreateFile sets win32 last error.
