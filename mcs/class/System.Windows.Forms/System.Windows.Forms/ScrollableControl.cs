@@ -124,7 +124,7 @@ namespace System.Windows.Forms {
 				//else 
 				createParams.Parent = (IntPtr) 0;
 	  
-				createParams.Style = (int) WindowStyles.WS_OVERLAPPEDWINDOW;
+				createParams.Style = (int) (WindowStyles.WS_OVERLAPPEDWINDOW);
 				//test version with scroll bars.
 				//createParams.Style = (int) (WindowStyles.WS_OVERLAPPEDWINDOW | WindowStyles.WS_HSCROLL | WindowStyles.WS_VSCROLL);
 	  

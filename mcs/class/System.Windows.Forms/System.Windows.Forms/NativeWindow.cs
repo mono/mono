@@ -157,7 +157,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual void OnThreadException (Exception e) 
 		{
-			throw new NotImplementedException ();
+			Application.OnThreadException(e);
+			//Console.WriteLine(e.Message + "\n" + ex.StackTrace);
 		}
 
 		protected virtual void WndProc (ref Message m) 
@@ -179,14 +180,14 @@ namespace System.Windows.Forms {
 			IntPtr hWnd, Msg msg, IntPtr wParam, IntPtr lParam) 
 		{
  			Message message = new Message ();
+ 			NativeWindow window = null;
 			// CHECKME: This try/catch is implemented to keep Message Handlers "Exception safe"
 			try {
 				// windowCollection is a collection of all the 
 				// NativeWindow(s) that have been created.
 				// Dispatch the current message to the approriate
 				// window.
-	 			NativeWindow window = 
-				        (NativeWindow) windowCollection[hWnd];
+				window = (NativeWindow) windowCollection[hWnd];
 				message.HWnd = hWnd;
 				message.Msg = msg;
 				message.WParam = wParam;
@@ -197,8 +198,9 @@ namespace System.Windows.Forms {
 					Console.WriteLine ("WM_CREATE (static)");
 					
 	 			if (window != null) {
-				if (msg == Msg.WM_CREATE)
-					Console.WriteLine ("WM_CREATE (static != null)");
+					if (msg == Msg.WM_CREATE) {
+						Console.WriteLine ("WM_CREATE (static != null)");
+					}
 	 				window.WndProc(ref message);
 	 			} else {
 					Console.WriteLine ("no window, defwndproc");
@@ -209,8 +211,8 @@ namespace System.Windows.Forms {
 	 			}
 			}
 			catch( System.Exception ex) {
-				Application.OnThreadException(ex);
-				//Console.WriteLine(ex.Message + "\n" + ex.StackTrace);
+				if( window != null)
+					window.OnThreadException(ex);
 			}
  			return message.Result;
  		}

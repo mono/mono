@@ -306,21 +306,22 @@ namespace System.Windows.Forms {
 					createParams.Parent = Parent.Handle;
 					createParams.Style = (int) (
 						WindowStyles.WS_CHILD | 
-						WindowStyles.WS_VISIBLE );
-					createParams.Style |= (int) (LBS_.LBS_NOTIFY | 
-						LBS_.LBS_HASSTRINGS );
+						WindowStyles.WS_VISIBLE |
+						WindowStyles.WS_CLIPSIBLINGS);
+					createParams.Style |= (int) (ListBoxStyles.LBS_NOTIFY | 
+						ListBoxStyles.LBS_HASSTRINGS );
 					if( !IntegralHeight_) {
-						createParams.Style |= (int)LBS_.LBS_NOINTEGRALHEIGHT;
+						createParams.Style |= (int)ListBoxStyles.LBS_NOINTEGRALHEIGHT;
 					}
 					if( UseTabStops_ ) {
-						createParams.Style |= (int)LBS_.LBS_USETABSTOPS;
+						createParams.Style |= (int)ListBoxStyles.LBS_USETABSTOPS;
 					}
 					switch( DrawMode_){
 						case DrawMode.OwnerDrawFixed:
-							createParams.Style |= (int)LBS_.LBS_OWNERDRAWFIXED;
+							createParams.Style |= (int)ListBoxStyles.LBS_OWNERDRAWFIXED;
 							break;
 						case DrawMode.OwnerDrawVariable:
-							createParams.Style |= (int)LBS_.LBS_OWNERDRAWVARIABLE;
+							createParams.Style |= (int)ListBoxStyles.LBS_OWNERDRAWVARIABLE;
 							break;
 					}
 					// CHECKME : this call is commented because (IMHO) Control.CreateHandle supposed to do this
@@ -333,7 +334,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal void SafeAddItemToListControl( object item) {
-			int res = Win32.SendMessage(Handle, (int)LB_.LB_ADDSTRING, 0, item.ToString());
+			int res = Win32.SendMessage(Handle, (int)ListBoxMessages.LB_ADDSTRING, 0, item.ToString());
 		}
 		
 		internal void AddItemToListControl( object item) {
@@ -350,43 +351,11 @@ namespace System.Windows.Forms {
 					SafeAddItemToListControl(item);	
 				}
 				if( ColumnWidth_ != 0) {
-					Win32.SendMessage( Handle, (int)LB_.LB_SETCOLUMNWIDTH, ColumnWidth_, 0);
+					Win32.SendMessage( Handle, (int)ListBoxMessages.LB_SETCOLUMNWIDTH, ColumnWidth_, 0);
 				}
 			}
 		}
 
-		protected override bool ReflectMessageHelper( ref Message m) {
-			bool		result = false;
-			switch (m.Msg) {
-				case Msg.WM_MEASUREITEM: {
-					MEASUREITEMSTRUCT mis = new MEASUREITEMSTRUCT();
-					Win32.CopyMemory(ref mis, m.LParam, 24);
-					MeasureItemEventArgs args = new MeasureItemEventArgs(CreateGraphics(),mis.itemID);
-					args.ItemHeight = mis.itemHeight;
-					args.ItemWidth = mis.itemWidth;
-					OnMeasureItem( args);
-					mis.itemHeight = args.ItemHeight;
-					mis.itemWidth = args.ItemWidth;
-					Win32.CopyMemory(m.LParam, ref mis, 24);
-					result = true;
-				}
-				break;
-				case Msg.WM_DRAWITEM: {
-					DRAWITEMSTRUCT dis = new DRAWITEMSTRUCT();
-					Win32.CopyMemory(ref dis, m.LParam, 48);
-					Rectangle	rect = new Rectangle(dis.rcItem.left, dis.rcItem.top, dis.rcItem.right - dis.rcItem.left, dis.rcItem.bottom - dis.rcItem.top);
-					DrawItemEventArgs args = new DrawItemEventArgs(Graphics.FromHdc(dis.hDC), Font,
-						rect, dis.itemID, (DrawItemState)dis.itemState);
-					OnDrawItem( args);
-					Win32.CopyMemory(m.LParam, ref dis, 48);
-					result = true;
-				}
-				break;
-			}
-			return result;
-		}
-
-		
 		[MonoTODO]
 		protected override Size DefaultSize {
 			get {
@@ -488,9 +457,34 @@ namespace System.Windows.Forms {
 			//FIXME:
 		}
 		[MonoTODO]
-		protected override void WndProc(ref Message msg) {
-			//FIXME:
-			base.WndProc(ref msg);
+		protected override void WndProc(ref Message m) {
+			switch (m.Msg) {
+				case Msg.WM_MEASUREITEM: {
+					MEASUREITEMSTRUCT mis = new MEASUREITEMSTRUCT();
+					Win32.CopyMemory(ref mis, m.LParam, 24);
+					MeasureItemEventArgs args = new MeasureItemEventArgs(CreateGraphics(),mis.itemID);
+					args.ItemHeight = mis.itemHeight;
+					args.ItemWidth = mis.itemWidth;
+					OnMeasureItem( args);
+					mis.itemHeight = args.ItemHeight;
+					mis.itemWidth = args.ItemWidth;
+					Win32.CopyMemory(m.LParam, ref mis, 24);
+					}
+					break;
+				case Msg.WM_DRAWITEM: {
+					DRAWITEMSTRUCT dis = new DRAWITEMSTRUCT();
+					Win32.CopyMemory(ref dis, m.LParam, 48);
+					Rectangle	rect = new Rectangle(dis.rcItem.left, dis.rcItem.top, dis.rcItem.right - dis.rcItem.left, dis.rcItem.bottom - dis.rcItem.top);
+					DrawItemEventArgs args = new DrawItemEventArgs(Graphics.FromHdc(dis.hDC), Font,
+						rect, dis.itemID, (DrawItemState)dis.itemState);
+					OnDrawItem( args);
+					Win32.CopyMemory(m.LParam, ref dis, 48);
+					}
+					break;
+				default:
+					base.WndProc(ref m);
+					break;
+			}
 		}
 
 		//

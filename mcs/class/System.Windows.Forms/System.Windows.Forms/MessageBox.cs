@@ -30,7 +30,7 @@ namespace System.Windows.Forms {
 		public static DialogResult Show(string text) 
 		{
 			return (DialogResult) 
-			    Win32.MessageBoxA ((IntPtr) 0, text, "", (uint)WB_MessageBox_Types.MB_OK);
+			    Win32.MessageBoxA ((IntPtr) 0, text, "", (uint)(WB_MessageBox_Types.MB_OK | WB_MessageBox_Types.MB_TASKMODAL));
 		}
                 
 		public static DialogResult Show (IWin32Window w, string text) 

@@ -57,6 +57,7 @@ namespace System.Windows.Forms{
 		internal delegate IntPtr HookProc(int nCode, IntPtr wParam, IntPtr lParam);
 		internal delegate int CompareFunc(IntPtr param1, IntPtr param2, IntPtr sortParam);
 		internal delegate int WinProc(IntPtr hWnd, int message, int wParam, int lParam);
+		internal delegate int WinProcMsg(IntPtr hWnd, Msg message, int wParam, int lParam);
 		#endregion
 
 		#region Kernel32.dll functions
@@ -86,7 +87,26 @@ namespace System.Windows.Forms{
 		internal static extern void CopyMemory(IntPtr ptr, ref DRAWITEMSTRUCT mis, int Size);
 		[DllImport("kernel32.dll")]
 		internal static extern void CopyMemory(ref DRAWITEMSTRUCT mis, IntPtr ptr, int Size);
-		#endregion
+		[DllImport("kernel32.dll")]
+		internal static extern void CopyMemory(ref PAINTSTRUCT ps, IntPtr ptr, int Size);
+
+		[DllImport ("kernel32.dll", CallingConvention = CallingConvention.StdCall,
+			 CharSet = CharSet.Auto)]
+		internal extern static uint GetLastError ();
+		
+		[DllImport ("kernel32.dll", CallingConvention = CallingConvention.StdCall,
+			 CharSet = CharSet.Auto)]
+		internal extern static uint  FormatMessage (
+			uint flags, IntPtr lpSource,uint messageId, uint languageId,
+			StringBuilder lpBuffer, int nSize, IntPtr Arguments);
+				
+		internal static string FormatMessage(uint error) {
+			StringBuilder sb = new StringBuilder(2048);
+			Win32.FormatMessage( (uint)(FM_.FORMAT_MESSAGE_FROM_SYSTEM | FM_.FORMAT_MESSAGE_IGNORE_INSERTS),
+				IntPtr.Zero, error, 0, sb, sb.Capacity, IntPtr.Zero);
+			return sb.ToString();
+		}
+	#endregion
 	
 		#region Gdi32.dll functions
 		[DllImport("gdi32.dll")]
@@ -294,7 +314,10 @@ namespace System.Windows.Forms{
 		internal static extern int SetWindowLong(IntPtr hWnd, GetWindowLongFlag flag, int dwNewLong);
 
 		[DllImport("User32.dll", CharSet=CharSet.Auto)]
-		internal static extern int SetWindowLong(IntPtr hWnd, GetWindowLongFlag flag, WinProc winProc);
+		internal static extern IntPtr SetWindowLong(IntPtr hWnd, GetWindowLongFlag flag, WinProc winProc);
+
+		[DllImport("User32.dll", CharSet=CharSet.Auto)]
+		internal static extern IntPtr SetWindowLong(IntPtr hWnd, GetWindowLongFlag flag, WndProc winProc);
 
 		[DllImport("User32.dll", CharSet=CharSet.Auto)]
 		internal static extern IntPtr GetDCEx(IntPtr hWnd, IntPtr hRegion, int flags);
@@ -374,6 +397,40 @@ namespace System.Windows.Forms{
 
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
         static internal extern IntPtr LoadCursor(IntPtr hInstance, LC_ standardCursor);
+
+		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		static internal extern int RegisterWindowMessage( string message_name);
+
+		[DllImport ("user32.dll", CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Auto)]
+		internal static extern IntPtr GetMenu (IntPtr hWnd);
+		
+		[DllImport ("user32.dll", CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Auto)]
+		internal static extern int SetMenu (IntPtr hWnd, IntPtr hMenu);
+
+		[DllImport ("user32.dll", CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Ansi)]
+		internal static extern int InsertMenuA(IntPtr hMenu, uint pos, uint uflags, IntPtr NewItem, string item);
+		
+		[DllImport ("user32.dll", CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Ansi)]
+		internal static extern int RemoveMenu(IntPtr hMenu, uint pos, uint uflags);
+		
+		[DllImport ("user32.dll", CallingConvention = CallingConvention.StdCall)]
+		internal static extern int DrawMenuBar (IntPtr hWnd);
+		
+		[DllImport ("user32.dll", CallingConvention = CallingConvention.StdCall)]
+		internal static extern int SetMenuDefaultItem(IntPtr hMenu, int uItem, int fByPos );
+
+		[DllImport ("user32.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Auto)]
+		internal extern static int AdjustWindowRect( ref RECT rc, int dwStyle, int bMenu);
+
+		[DllImport("user32.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Auto)]
+		internal static extern int DrawEdge(IntPtr hdc, ref RECT rc, Border3DStyle edge, Border3DSide flags);
+
+		[DllImport("user32.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Auto)]
+		internal static extern int DrawFrameControl(IntPtr hdc, ref RECT rc, uint uType, uint uState);
 
 		#endregion
 
@@ -571,7 +628,6 @@ namespace System.Windows.Forms{
 			return 0x0000FFFF & res;
 		}
 		#endregion
-
 
 		#region Mono win32 Fuinctions
 
@@ -791,7 +847,7 @@ namespace System.Windows.Forms{
 			 CallingConvention = CallingConvention.StdCall, 
 			 CharSet = CharSet.Auto)]
 		internal static extern int GetWindowTextA (
-			IntPtr hWnd, ref String lpString, int nMaxCount);
+			IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
 		[DllImport ("user32.dll", 
 			 CallingConvention = CallingConvention.StdCall, 
@@ -805,63 +861,6 @@ namespace System.Windows.Forms{
 
 		#endregion
 
-		[DllImport ("user32.dll", 
-			 CallingConvention = CallingConvention.StdCall, 
-			 CharSet = CharSet.Auto)]
-		internal static extern IntPtr GetMenu (IntPtr hWnd);
-		
-		[DllImport ("user32.dll", 
-			 CallingConvention = CallingConvention.StdCall, 
-			 CharSet = CharSet.Auto)]
-		internal static extern int SetMenu (IntPtr hWnd, IntPtr hMenu);
-
-		[DllImport ("user32.dll", 
-			 CallingConvention = CallingConvention.StdCall, 
-			 CharSet = CharSet.Ansi)]
-		internal static extern int InsertMenuA(IntPtr hMenu, uint pos, uint uflags, IntPtr NewItem, string item);
-		
-		[DllImport ("user32.dll", 
-			 CallingConvention = CallingConvention.StdCall, 
-			 CharSet = CharSet.Ansi)]
-		internal static extern int RemoveMenu(IntPtr hMenu, uint pos, uint uflags);
-		
-		[DllImport ("user32.dll", 
-			 CallingConvention = CallingConvention.StdCall)]
-		internal static extern int DrawMenuBar (IntPtr hWnd);
-		
-		[DllImport ("user32.dll", 
-			 CallingConvention = CallingConvention.StdCall)]
-		internal static extern int SetMenuDefaultItem(IntPtr hMenu, int uItem, int fByPos );
-
-
-		[DllImport ("user32.dll", CallingConvention = 
-			 CallingConvention.StdCall,
-			 CharSet = CharSet.Auto)]
-		internal extern static int AdjustWindowRect (
-			ref RECT rc, int dwStyle, int bMenu);
-
-
-
-		[DllImport ("kernel32.dll", CallingConvention = 
-			 CallingConvention.StdCall,
-			 CharSet = CharSet.Auto)]
-		internal extern static uint GetLastError ();
-		
-		[DllImport ("kernel32.dll", CallingConvention = 
-			 CallingConvention.StdCall,
-			 CharSet = CharSet.Auto)]
-		internal extern static uint  FormatMessage (
-			uint flags, IntPtr lpSource,
-			uint messageId, uint languageId,
-			StringBuilder lpBuffer, int nSize,
-			IntPtr Arguments);
-				
-		internal static string FormatMessage(uint error) {
-			StringBuilder sb = new StringBuilder(2048);
-			Win32.FormatMessage( (uint)(FM_.FORMAT_MESSAGE_FROM_SYSTEM | FM_.FORMAT_MESSAGE_IGNORE_INSERTS),
-				IntPtr.Zero, error, 0, sb, sb.Capacity, IntPtr.Zero);
-			return sb.ToString();
-		}
 	}
 
 }

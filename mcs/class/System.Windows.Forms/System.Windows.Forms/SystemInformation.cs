@@ -52,7 +52,9 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public static int CaptionHeight {
 
-			get{ throw new NotImplementedException (); }
+			get{ 
+				return Win32.GetSystemMetrics(SystemMetricsCodes.SM_CYCAPTION); 
+			}
 		}
 		[MonoTODO]
 		public static string ComputerName {

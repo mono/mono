@@ -51,6 +51,7 @@ namespace System.Windows.Forms {
 		public void Dispose()
 		{
 			//
+			mgraphics.Dispose();
 		}
 
 		#endregion

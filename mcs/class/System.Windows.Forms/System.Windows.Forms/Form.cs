@@ -39,7 +39,10 @@
 			public Form () : base ()
     		{
 				opacity = 0;
-
+				Left = (int)CreateWindowCoordinates.CW_USEDEFAULT;
+				Top = (int)CreateWindowCoordinates.CW_USEDEFAULT;
+				Width = 300;
+				Height = 300;
     		}
     		
     		static Form ()
@@ -614,9 +617,11 @@
     		protected override void CreateHandle ()
     		{
     			base.CreateHandle ();
-    
+/*
+ *	This is called in base class    
     			if (IsHandleCreated)
     				OnHandleCreated (new EventArgs());
+*/					
     		}
     
     		protected override void DefWndProc (ref Message m)
@@ -650,10 +655,10 @@
     
     		protected override void OnHandleCreated (EventArgs e)
     		{
-    			Console.WriteLine ("OnHandleCreated");
-					assignMenu();
     			base.OnHandleCreated (e);
-    		}
+				Console.WriteLine ("OnHandleCreated");
+				assignMenu();
+			}
     
     		protected override void OnHandleDestroyed (EventArgs e)
     		{
@@ -746,42 +751,38 @@
 
     		protected virtual IntPtr OnMenuCommand (uint id)
     		{
-    			//base.OnVisibleChanged (e);
-					System.Console.WriteLine("Form on command {0}", id);
-					if(Menu != null) {
-						MenuItem mi = Menu.GetMenuItemByID( id);
-						if( mi != null) {
-							mi.PerformClick();
-						}
+				IntPtr result = (IntPtr)1;
+				System.Console.WriteLine("Form on command {0}", id);
+				if(Menu != null) {
+					MenuItem mi = Menu.GetMenuItemByID( id);
+					if( mi != null) {
+						mi.PerformClick();
+						result = IntPtr.Zero;
 					}
-					return IntPtr.Zero;
+				}
+				return result;
     		}
 
- 				protected virtual IntPtr OnWmCommand (ref Message m)
-				{
-					uint wNotifyCode = (uint) ( ((uint)m.WParam.ToInt32() & 0xFFFF0000) >> 16);
-					uint wID = (uint)(m.WParam.ToInt32() & 0x0000FFFFL);
-					if( m.LParam.ToInt32() == 0) {
-						if( wNotifyCode == 0) {
-							// Menu
-							return OnMenuCommand(wID);
-						}
-						else if( wNotifyCode == 1) {
-							// Accelerator
-						}
+ 			protected override void OnWmCommand (ref Message m)
+			{
+				uint wNotifyCode = (uint) ( ((uint)m.WParam.ToInt32() & 0xFFFF0000) >> 16);
+				uint wID = (uint)(m.WParam.ToInt32() & 0x0000FFFFL);
+				if( m.LParam.ToInt32() == 0) {
+					if( wNotifyCode == 0) {
+						// Menu
+						m.Result = OnMenuCommand(wID);
 					}
-					else {
-						// Control notification
-						System.Console.WriteLine("Control notification Code {0} Id {1} Hwnd {2}", wNotifyCode, wID, m.LParam.ToInt32());
-						Control ctrl = Control.FromHandle(m.LParam);
-						if( ctrl != null) {
-							ctrl.OnWmCommand(wNotifyCode, wID, m.LParam);
-						}
+					else if( wNotifyCode == 1) {
+						// Accelerator
+						m.Result = (IntPtr)1;
 					}
-					return new IntPtr(1);
 				}
+				else {
+					base.OnWmCommand(ref m);
+				}
+			}
 
- 				protected override bool ProcessCmdKey (	ref Message msg, Keys keyData)
+ 			protected override bool ProcessCmdKey (	ref Message msg, Keys keyData)
     		{
     			return base.ProcessCmdKey (ref msg, keyData);
     		}
@@ -825,8 +826,6 @@
 
     		protected override void WndProc (ref Message m)
     		{
-    			base.WndProc (ref m);
-    
     			switch (m.Msg) {
     			case Msg.WM_CLOSE:
     				EventArgs closeArgs = new EventArgs();
@@ -884,10 +883,14 @@
     				// case ?:
     				// OnMinimumSizeChanged(EventArgs e)
     				// break;
-    			case Msg.WM_PAINT:
-    				//PaintEventArgs paintArgs = new PaintEventArgs();
-    				//OnPaint (paintArgs);
-    				break;
+/*
+				case Msg.WM_PAINT: {
+					Rectangle rect = new Rectangle();
+					PaintEventArgs paintArgs = new PaintEventArgs(CreateGraphics(), rect);
+					OnPaint (paintArgs);
+					paintArgs.Dispose();
+					}
+						break;
     			case Msg.WM_SIZE:
     				EventArgs resizeArgs = new EventArgs();
     				OnResize (resizeArgs);
@@ -903,9 +906,7 @@
     				EventArgs visibleChangedArgs = new EventArgs();
     				OnVisibleChanged (visibleChangedArgs);
     				break;
-    			case Msg.WM_COMMAND:
-    				OnWmCommand (ref m);
-    				break;
+*/					
 				case Msg.WM_INITMENU:
 					OnWmInitMenu (ref m);
 					break;
@@ -915,12 +916,9 @@
 				case Msg.WM_CTLCOLORLISTBOX:
 					Control.ReflectMessage( m.LParam, ref m);
 					break;
-				case Msg.WM_MEASUREITEM:
-					Control.ReflectMessage( m.WParam, ref m);
-					break;
-				case Msg.WM_DRAWITEM:
-					Control.ReflectMessage( m.WParam, ref m);
-					break;
+				default:
+					base.WndProc (ref m);
+					break;    
 				}
     		}
     		

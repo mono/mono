@@ -66,7 +66,7 @@ namespace System.Windows.Forms
 	[StructLayout(LayoutKind.Sequential, Pack=1)]
 	internal class INITCOMMONCONTROLSEX 
 	{
-		internal int dwSize;
+		internal int dwSize = 8;
 		internal CommonControlInitFlags dwICC;
 	}
 	#endregion
@@ -382,7 +382,7 @@ namespace System.Windows.Forms
 	{
 		internal IntPtr hdc;
 		internal int fErase;
-		internal Rectangle rcPaint;
+		internal RECT rcPaint;
 		internal int fRestore;
 		internal int fIncUpdate;
 		internal int Reserved1;

@@ -42,7 +42,7 @@
 				// Defaults in the Spec
 				autoSize = false;
 				borderStyle = BorderStyle.None;
-
+	
 				//Defaults not in the spec
 				Image backgroundImage;
 				Image image;
@@ -56,6 +56,7 @@
 				ContentAlignment textAlign;
 				bool useMnemonic;
 
+				SubClassWndProc_ = true;
     		}
     		
     		//
@@ -194,24 +195,31 @@
     
     		protected override CreateParams CreateParams {
     			get {
- 				CreateParams createParams = new CreateParams ();
- 				window = new ControlNativeWindow (this);
- 
- 				createParams.Caption = Text;
- 				createParams.ClassName = "STATIC";
- 				createParams.X = Left;
- 				createParams.Y = Top;
- 				createParams.Width = Width;
- 				createParams.Height = Height;
- 				createParams.ClassStyle = 0;
- 				createParams.ExStyle = 0;
- 				createParams.Param = 0;
- 		//		createParams.Parent = Parent.Handle;
- 				createParams.Style = (int) (
- 					(int)WindowStyles.WS_CHILD | 
- 					(int)WindowStyles.WS_VISIBLE | (int)SS_Static_Control_Types.SS_LEFT );
- 				window.CreateHandle (createParams);
-    				return createParams;
+					if( Parent != null) {
+						CreateParams createParams = new CreateParams ();
+
+						if(window == null) {
+							window = new ControlNativeWindow (this);
+						}
+		 
+						createParams.Caption = Text;
+						createParams.ClassName = "Static";
+						createParams.X = Left;
+						createParams.Y = Top;
+						createParams.Width = Width;
+						createParams.Height = Height;
+						createParams.ClassStyle = 0;
+						createParams.ExStyle = 0;
+						createParams.Param = 0;
+						createParams.Parent = Parent.Handle;
+						createParams.Style = (int) (
+							(int)WindowStyles.WS_CHILD | 
+							(int)WindowStyles.WS_VISIBLE | 
+							(int)SS_Static_Control_Types.SS_LEFT );
+						window.CreateHandle (createParams);
+						return createParams;
+					}
+					return null;
     			}
     		}
     

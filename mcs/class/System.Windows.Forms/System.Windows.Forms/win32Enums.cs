@@ -43,8 +43,7 @@ namespace System.Windows.Forms{
 	/// </summary>
 	
 	#region Peek Message Flags
-	internal enum PeekMessageFlags
-	{
+	internal enum PeekMessageFlags {
 		PM_NOREMOVE		= 0,
 		PM_REMOVE		= 1,
 		PM_NOYIELD		= 2
@@ -52,8 +51,7 @@ namespace System.Windows.Forms{
 	#endregion
 	
 	#region Windows Messages
-	public enum Msg
-	{
+	public enum Msg {
 		WM_NULL                   = 0x0000,
 		WM_CREATE                 = 0x0001,
 		WM_DESTROY                = 0x0002,
@@ -62,7 +60,7 @@ namespace System.Windows.Forms{
 		WM_ACTIVATE               = 0x0006,
 		WM_SETFOCUS               = 0x0007,
 		WM_KILLFOCUS              = 0x0008,
-//		public const uint WM_SETVISIBLE           = 0x0009;
+		//		public const uint WM_SETVISIBLE           = 0x0009;
 		WM_ENABLE                 = 0x000A,
 		WM_SETREDRAW              = 0x000B,
 		WM_SETTEXT                = 0x000C,
@@ -76,7 +74,7 @@ namespace System.Windows.Forms{
 		WM_ERASEBKGND             = 0x0014,
 		WM_SYSCOLORCHANGE         = 0x0015,
 		WM_ENDSESSION             = 0x0016,
-//		public const uint WM_SYSTEMERROR          = 0x0017;
+		//		public const uint WM_SYSTEMERROR          = 0x0017;
 		WM_SHOWWINDOW             = 0x0018,
 		WM_CTLCOLOR               = 0x0019,
 		WM_WININICHANGE           = 0x001A,
@@ -94,7 +92,7 @@ namespace System.Windows.Forms{
 		WM_PAINTICON              = 0x0026,
 		WM_ICONERASEBKGND         = 0x0027,
 		WM_NEXTDLGCTL             = 0x0028,
-//		public const uint WM_ALTTABACTIVE         = 0x0029;
+		//		public const uint WM_ALTTABACTIVE         = 0x0029;
 		WM_SPOOLERSTATUS          = 0x002A,
 		WM_DRAWITEM               = 0x002B,
 		WM_MEASUREITEM            = 0x002C,
@@ -105,16 +103,16 @@ namespace System.Windows.Forms{
 		WM_GETFONT                = 0x0031,
 		WM_SETHOTKEY              = 0x0032,
 		WM_GETHOTKEY              = 0x0033,
-//		public const uint WM_FILESYSCHANGE        = 0x0034;
-//		public const uint WM_ISACTIVEICON         = 0x0035;
-//		public const uint WM_QUERYPARKICON        = 0x0036;
+		//		public const uint WM_FILESYSCHANGE        = 0x0034;
+		//		public const uint WM_ISACTIVEICON         = 0x0035;
+		//		public const uint WM_QUERYPARKICON        = 0x0036;
 		WM_QUERYDRAGICON          = 0x0037,
 		WM_COMPAREITEM            = 0x0039,
-//		public const uint WM_TESTING              = 0x003a;
-//		public const uint WM_OTHERWINDOWCREATED	= 0x003c;
+		//		public const uint WM_TESTING              = 0x003a;
+		//		public const uint WM_OTHERWINDOWCREATED	= 0x003c;
 		WM_GETOBJECT              = 0x003D,
-//			public const uint WM_ACTIVATESHELLWINDOW	= 0x003e;
-	WM_COMPACTING             = 0x0041,
+		//			public const uint WM_ACTIVATESHELLWINDOW	= 0x003e;
+		WM_COMPACTING             = 0x0041,
 		WM_COMMNOTIFY             = 0x0044 ,
 		WM_WINDOWPOSCHANGING      = 0x0046,
 		WM_WINDOWPOSCHANGED       = 0x0047,
@@ -142,7 +140,7 @@ namespace System.Windows.Forms{
 		WM_NCACTIVATE             = 0x0086,
 		WM_GETDLGCODE             = 0x0087,
 		WM_SYNCPAINT              = 0x0088,
-//		public const uint WM_SYNCTASK	    = 0x0089;
+		//		public const uint WM_SYNCTASK	    = 0x0089;
 		WM_NCMOUSEMOVE            = 0x00A0,
 		WM_NCLBUTTONDOWN          = 0x00A1,
 		WM_NCLBUTTONUP            = 0x00A2,
@@ -153,9 +151,9 @@ namespace System.Windows.Forms{
 		WM_NCMBUTTONDOWN          = 0x00A7,
 		WM_NCMBUTTONUP            = 0x00A8,
 		WM_NCMBUTTONDBLCLK        = 0x00A9,
-//		public const uint WM_NCXBUTTONDOWN    = 0x00ab;
-//		public const uint WM_NCXBUTTONUP      = 0x00ac;
-//		public const uint WM_NCXBUTTONDBLCLK  = 0x00ad;
+		//		public const uint WM_NCXBUTTONDOWN    = 0x00ab;
+		//		public const uint WM_NCXBUTTONUP      = 0x00ac;
+		//		public const uint WM_NCXBUTTONDBLCLK  = 0x00ad;
 		WM_KEYDOWN                = 0x0100,
 		WM_KEYUP                  = 0x0101,
 		WM_CHAR                   = 0x0102,
@@ -177,7 +175,7 @@ namespace System.Windows.Forms{
 		WM_VSCROLL                = 0x0115,
 		WM_INITMENU               = 0x0116,
 		WM_INITMENUPOPUP          = 0x0117,
-//		public const uint WM_SYSTIMER	    = 0x0118;
+		//		public const uint WM_SYSTIMER	    = 0x0118;
 		WM_MENUSELECT             = 0x011F,
 		WM_MENUCHAR               = 0x0120,
 		WM_ENTERIDLE              = 0x0121,
@@ -186,11 +184,11 @@ namespace System.Windows.Forms{
 		WM_MENUGETOBJECT          = 0x0124,
 		WM_UNINITMENUPOPUP        = 0x0125,
 		WM_MENUCOMMAND            = 0x0126,
-//		public const uint WM_CHANGEUISTATE    = 0x0127;
-//		public const uint WM_UPDATEUISTATE    = 0x0128;
-//		public const uint WM_QUERYUISTATE     = 0x0129;
+		//		public const uint WM_CHANGEUISTATE    = 0x0127;
+		//		public const uint WM_UPDATEUISTATE    = 0x0128;
+		//		public const uint WM_QUERYUISTATE     = 0x0129;
 
-//		public const uint WM_LBTRACKPOINT     = 0x0131;
+		//		public const uint WM_LBTRACKPOINT     = 0x0131;
 		WM_CTLCOLORMSGBOX         = 0x0132,
 		WM_CTLCOLOREDIT           = 0x0133,
 		WM_CTLCOLORLISTBOX        = 0x0134,
@@ -209,9 +207,9 @@ namespace System.Windows.Forms{
 		WM_MBUTTONUP              = 0x0208,
 		WM_MBUTTONDBLCLK          = 0x0209,
 		WM_MOUSEWHEEL             = 0x020A,
-//		public const uint WM_XBUTTONDOWN      = 0x020B;
-//		public const uint WM_XBUTTONUP        = 0x020C;
-//		public const uint WM_XBUTTONDBLCLK    = 0x020D;
+		//		public const uint WM_XBUTTONDOWN      = 0x020B;
+		//		public const uint WM_XBUTTONUP        = 0x020C;
+		//		public const uint WM_XBUTTONDBLCLK    = 0x020D;
 		WM_PARENTNOTIFY           = 0x0210,
 		WM_ENTERMENULOOP          = 0x0211,
 		WM_EXITMENULOOP           = 0x0212,
@@ -219,7 +217,7 @@ namespace System.Windows.Forms{
 		WM_SIZING                 = 0x0214,
 		WM_CAPTURECHANGED         = 0x0215,
 		WM_MOVING                 = 0x0216,
-//		public const uint WM_POWERBROADCAST   = 0x0218;
+		//		public const uint WM_POWERBROADCAST   = 0x0218;
 		WM_DEVICECHANGE           = 0x0219,
 		WM_MDICREATE              = 0x0220,
 		WM_MDIDESTROY             = 0x0221,
@@ -232,12 +230,12 @@ namespace System.Windows.Forms{
 		WM_MDIICONARRANGE         = 0x0228,
 		WM_MDIGETACTIVE           = 0x0229,
 		/* D&D messages */
-//		public const uint WM_DROPOBJECT	    = 0x022A;
-//		public const uint WM_QUERYDROPOBJECT  = 0x022B;
-//		public const uint WM_BEGINDRAG	    = 0x022C;
-//		public const uint WM_DRAGLOOP	    = 0x022D;
-//		public const uint WM_DRAGSELECT	    = 0x022E;
-//		public const uint WM_DRAGMOVE	    = 0x022F;
+		//		public const uint WM_DROPOBJECT	    = 0x022A;
+		//		public const uint WM_QUERYDROPOBJECT  = 0x022B;
+		//		public const uint WM_BEGINDRAG	    = 0x022C;
+		//		public const uint WM_DRAGLOOP	    = 0x022D;
+		//		public const uint WM_DRAGSELECT	    = 0x022E;
+		//		public const uint WM_DRAGMOVE	    = 0x022F;
 		WM_MDISETMENU             = 0x0230,
 		WM_ENTERSIZEMOVE          = 0x0231,
 		WM_EXITSIZEMOVE           = 0x0232,
@@ -289,8 +287,7 @@ namespace System.Windows.Forms{
 
 	#region Window Styles
 	[Flags]
-	public enum WindowStyles : long
-	{
+	public enum WindowStyles : long {
 		WS_OVERLAPPED       = 0x00000000,
 		WS_POPUP            = 0x80000000,
 		WS_CHILD            = 0x40000000,
@@ -316,18 +313,17 @@ namespace System.Windows.Forms{
 		WS_SIZEBOX          = 0x00040000,
 		WS_POPUPWINDOW      = 0x80880000,
 		WS_OVERLAPPEDWINDOW = 0x00CF0000,
-//this OR option is perferred
-//		public const uint WS_OVERLAPPEDWINDOW = WS_OVERLAPPED | 
-//		  WS_CAPTION | WS_SYSMENU | WS_THICKFRAME| 
-//		  WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
+		//this OR option is perferred
+		//		public const uint WS_OVERLAPPEDWINDOW = WS_OVERLAPPED | 
+		//		  WS_CAPTION | WS_SYSMENU | WS_THICKFRAME| 
+		//		  WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
 		WS_TILEDWINDOW      = 0x00CF0000,
 		WS_CHILDWINDOW      = 0x40000000
 	}
 	#endregion
 
 	#region Window Extended Styles
-	public enum WindowExStyles
-	{
+	public enum WindowExStyles {
 		WS_EX_DLGMODALFRAME     = 0x00000001,
 		WS_EX_NOPARENTNOTIFY    = 0x00000004,
 		WS_EX_TOPMOST           = 0x00000008,
@@ -354,8 +350,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region ShowWindow Styles
-	public enum ShowWindowStyles : short
-	{
+	public enum ShowWindowStyles : short {
 		SW_HIDE             = 0,
 		SW_SHOWNORMAL       = 1,
 		SW_NORMAL           = 1,
@@ -371,25 +366,23 @@ namespace System.Windows.Forms{
 		SW_SHOWDEFAULT      = 10,
 		SW_FORCEMINIMIZE    = 11,
 		SW_MAX              = 11
-//		public const uint SW_NORMALNA         = 0xCC;
+		//		public const uint SW_NORMALNA         = 0xCC;
 	}
 	#endregion
 
 	#region SetWindowPos Z Order
-	public enum SetWindowPosZOrder
-	{
+	public enum SetWindowPosZOrder {
 		HWND_TOP        = 0,
 		HWND_BOTTOM     = 1,
 		HWND_TOPMOST    = -1,
 		HWND_NOTOPMOST  = -2
-//		public const int HWND_MESSAGE = -3;
-}
+		//		public const int HWND_MESSAGE = -3;
+	}
 	#endregion
 
 	#region SetWindowPosFlags
 	[Flags]
-	public enum SetWindowPosFlags
-	{
+	public enum SetWindowPosFlags {
 		SWP_NOSIZE          = 0x0001,
 		SWP_NOMOVE          = 0x0002,
 		SWP_NOZORDER        = 0x0004,
@@ -409,8 +402,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Virtual Keys
-	public enum VirtualKeys
-	{
+	public enum VirtualKeys {
 		VK_LBUTTON		= 0x01,
 		VK_CANCEL		= 0x03,
 		VK_BACK			= 0x08,
@@ -509,8 +501,7 @@ namespace System.Windows.Forms{
 	#endregion
 		
 	#region PatBlt Types
-	public enum PatBltTypes
-	{
+	public enum PatBltTypes {
 		SRCCOPY          =   0x00CC0020,
 		SRCPAINT         =   0x00EE0086,
 		SRCAND           =   0x008800C6,
@@ -530,8 +521,7 @@ namespace System.Windows.Forms{
 	#endregion
 	
 	#region Clipboard Formats
-	public enum ClipboardFormats 
-	{			
+	public enum ClipboardFormats {			
 		CF_TEXT             = 1,
 		CF_BITMAP           = 2,
 		CF_METAFILEPICT     = 3,
@@ -562,8 +552,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Common Controls Initialization flags
-	public enum CommonControlInitFlags
-	{
+	public enum CommonControlInitFlags : int {
 		ICC_LISTVIEW_CLASSES   = 0x00000001, 
 		ICC_TREEVIEW_CLASSES   = 0x00000002, 
 		ICC_BAR_CLASSES        = 0x00000004, 
@@ -583,8 +572,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Common Controls Styles
-	public  enum CommonControlStyles
-	{
+	public  enum CommonControlStyles {
 		CCS_TOP                 = 0x00000001,
 		CCS_NOMOVEY             = 0x00000002,
 		CCS_BOTTOM              = 0x00000003,
@@ -600,8 +588,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region ToolBar Styles
-	public enum ToolBarStyles
-	{
+	public enum ToolBarStyles {
 		TBSTYLE_BUTTON          = 0x0000,
 		TBSTYLE_SEP             = 0x0001,
 		TBSTYLE_CHECK           = 0x0002,
@@ -623,8 +610,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region ToolBar Ex Styles
-	public enum ToolBarExStyles
-	{
+	public enum ToolBarExStyles {
 		TBSTYLE_EX_DRAWDDARROWS			= 0x1,
 		TBSTYLE_EX_HIDECLIPPEDBUTTONS	= 0x10,
 		TBSTYLE_EX_DOUBLEBUFFER			= 0x80
@@ -632,8 +618,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region ToolBar Messages
-	public enum ToolBarMessages
-	{
+	public enum ToolBarMessages {
 		WM_USER                 =  0x0400,
 		TB_ENABLEBUTTON         = (WM_USER + 1),
 		TB_CHECKBUTTON          = (WM_USER + 2),
@@ -724,8 +709,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region ToolBar Notifications
-	public enum ToolBarNotifications
-	{
+	public enum ToolBarNotifications {
 		TTN_NEEDTEXTA		= ((0-520)-0),
 		TTN_NEEDTEXTW		= ((0-520)-10),
 		TBN_QUERYINSERT		= ((0-700)-6),
@@ -735,8 +719,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Reflected Messages
-	public enum ReflectedMessages
-	{
+	public enum ReflectedMessages {
 		OCM__BASE				= (Msg.WM_USER+0x1c00),
 		OCM_COMMAND				= (OCM__BASE + Msg.WM_COMMAND),
 		OCM_CTLCOLORBTN			= (OCM__BASE + Msg.WM_CTLCOLORBTN),
@@ -761,8 +744,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Notification Messages
-	public enum NotificationMessages
-	{
+	public enum NotificationMessages {
 		NM_FIRST      = (0-0),
 		NM_CUSTOMDRAW = (NM_FIRST-12),
 		NM_NCHITTEST  = (NM_FIRST-14) 
@@ -770,8 +752,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region ToolTip Flags
-	public enum ToolTipFlags
-	{
+	public enum ToolTipFlags {
 		TTF_CENTERTIP           = 0x0002,
 		TTF_RTLREADING          = 0x0004,
 		TTF_SUBCLASS            = 0x0010,
@@ -783,8 +764,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Custom Draw Return Flags
-	public enum CustomDrawReturnFlags
-	{
+	public enum CustomDrawReturnFlags {
 		CDRF_DODEFAULT          = 0x00000000,
 		CDRF_NEWFONT            = 0x00000002,
 		CDRF_SKIPDEFAULT        = 0x00000004,
@@ -796,8 +776,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Custom Draw Item State Flags
-	public enum CustomDrawItemStateFlags 
-	{
+	public enum CustomDrawItemStateFlags {
 		CDIS_SELECTED       = 0x0001,
 		CDIS_GRAYED         = 0x0002,
 		CDIS_DISABLED       = 0x0004,
@@ -811,8 +790,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Custom Draw Draw State Flags
-	public enum CustomDrawDrawStateFlags
-	{
+	public enum CustomDrawDrawStateFlags {
 		CDDS_PREPAINT           = 0x00000001,
 		CDDS_POSTPAINT          = 0x00000002,
 		CDDS_PREERASE           = 0x00000003,
@@ -827,8 +805,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Toolbar button info flags
-	public enum ToolBarButtonInfoFlags 
-	{
+	public enum ToolBarButtonInfoFlags {
 		TBIF_IMAGE             = 0x00000001,
 		TBIF_TEXT              = 0x00000002,
 		TBIF_STATE             = 0x00000004,
@@ -842,8 +819,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Toolbar button styles
-	public enum ToolBarButtonStyles
-	{
+	public enum ToolBarButtonStyles {
 		TBSTYLE_BUTTON          = 0x0000,
 		TBSTYLE_SEP             = 0x0001,
 		TBSTYLE_CHECK           = 0x0002,
@@ -865,8 +841,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Toolbar button state
-	public enum ToolBarButtonStates
-	{
+	public enum ToolBarButtonStates {
 		TBSTATE_CHECKED         = 0x01,
 		TBSTATE_PRESSED         = 0x02,
 		TBSTATE_ENABLED         = 0x04,
@@ -879,8 +854,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Windows Hook Codes
-	public enum WindowsHookCodes
-	{
+	public enum WindowsHookCodes {
 		WH_MSGFILTER        = (-1),
 		WH_JOURNALRECORD    = 0,
 		WH_JOURNALPLAYBACK  = 1,
@@ -902,8 +876,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Mouse Hook Filters
-	public enum MouseHookFilters
-	{
+	public enum MouseHookFilters {
 		MSGF_DIALOGBOX      = 0,
 		MSGF_MESSAGEBOX     = 1,
 		MSGF_MENU           = 2,
@@ -914,8 +887,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Draw Text format flags
-	public enum DrawTextFormatFlags
-	{
+	public enum DrawTextFormatFlags {
 		DT_TOP              = 0x00000000,
 		DT_LEFT             = 0x00000000,
 		DT_CENTER           = 0x00000001,
@@ -942,8 +914,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Rebar Styles
-	public enum RebarStyles
-	{
+	public enum RebarStyles {
 		RBS_TOOLTIPS        = 0x0100,
 		RBS_VARHEIGHT       = 0x0200,
 		RBS_BANDBORDERS     = 0x0400,
@@ -956,8 +927,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Rebar Notifications
-	public enum RebarNotifications 
-	{
+	public enum RebarNotifications {
 		RBN_FIRST           = (0-831),
 		RBN_HEIGHTCHANGE    = (RBN_FIRST - 0),
 		RBN_GETOBJECT       = (RBN_FIRST - 1),
@@ -973,8 +943,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Rebar Messages
-	public enum RebarMessages
-	{
+	public enum RebarMessages {
 		CCM_FIRST           =    0x2000,
 		WM_USER             =    0x0400,
 		RB_INSERTBANDA		=	(WM_USER +  1),
@@ -1021,8 +990,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Rebar Info Mask
-	public enum RebarInfoMask
-	{
+	public enum RebarInfoMask {
 		RBBIM_STYLE         = 0x00000001,
 		RBBIM_COLORS        = 0x00000002,
 		RBBIM_TEXT          = 0x00000004,
@@ -1039,8 +1007,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Rebar Styles
-	public enum RebarStylesEx
-	{
+	public enum RebarStylesEx {
 		RBBS_BREAK			=	0x1,
 		RBBS_CHILDEDGE		=	0x4,
 		RBBS_FIXEDBMP		=	0x20,
@@ -1050,8 +1017,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Object types
-	public enum ObjectTypes
-	{
+	public enum ObjectTypes {
 		OBJ_PEN             = 1,
 		OBJ_BRUSH           = 2,
 		OBJ_DC              = 3,
@@ -1069,8 +1035,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region WM_MENUCHAR return values
-	public enum MenuCharReturnValues
-	{
+	public enum MenuCharReturnValues {
 		MNC_IGNORE  = 0,
 		MNC_CLOSE   = 1,
 		MNC_EXECUTE = 2,
@@ -1079,16 +1044,14 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Background Mode
-	public enum BackgroundMode
-	{
+	public enum BackgroundMode {
 		TRANSPARENT = 1,
 		OPAQUE = 2
 	}
 	#endregion
 
 	#region ListView Messages
-	public enum ListViewMessages
-	{
+	public enum ListViewMessages {
 		LVM_FIRST           =    0x1000,
 		LVM_GETSUBITEMRECT  = (LVM_FIRST + 56),
 		LVM_GETITEMSTATE    = (LVM_FIRST + 44),
@@ -1097,8 +1060,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Header Control Messages
-	public enum HeaderControlMessages 
-	{
+	public enum HeaderControlMessages {
 		HDM_FIRST        =  0x1200,
 		HDM_GETITEMRECT  = (HDM_FIRST + 7),
 		HDM_HITTEST      = (HDM_FIRST + 6),
@@ -1109,8 +1071,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Header Control Notifications
-	public enum HeaderControlNotifications
-	{
+	public enum HeaderControlNotifications {
 		HDN_FIRST			 =	(0-300),
 		HDN_ITEMCLICKW		 =	(HDN_FIRST-22),
 		HDN_ITEMDBLCLICKW	 =	(HDN_FIRST-23),
@@ -1121,8 +1082,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Header Control HitTest Flags
-	public enum HeaderControlHitTestFlags 
-	{
+	public enum HeaderControlHitTestFlags {
 		HHT_NOWHERE             = 0x0001,
 		HHT_ONHEADER            = 0x0002,
 		HHT_ONDIVIDER           = 0x0004,
@@ -1135,8 +1095,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region List View sub item portion
-	public enum SubItemPortion
-	{
+	public enum SubItemPortion {
 		LVIR_BOUNDS = 0,
 		LVIR_ICON   = 1,
 		LVIR_LABEL  = 2
@@ -1144,8 +1103,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Cursor Type
-	public enum CursorType
-	{
+	public enum CursorType {
 		IDC_ARROW		= 32512,
 		IDC_IBEAM       = 32513,
 		IDC_WAIT        = 32514,
@@ -1166,8 +1124,7 @@ namespace System.Windows.Forms{
 	#endregion
 	
 	#region Tracker Event Flags
-	public enum TrackerEventFlags : long
-	{
+	public enum TrackerEventFlags : long {
 		TME_HOVER	= 0x00000001,
 		TME_LEAVE	= 0x00000002,
 		TME_QUERY	= 0x40000000,
@@ -1176,8 +1133,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Mouse Activate Flags
-	public enum MouseActivateFlags
-	{
+	public enum MouseActivateFlags {
 		MA_ACTIVATE			= 1,
 		MA_ACTIVATEANDEAT   = 2,
 		MA_NOACTIVATE       = 3,
@@ -1186,8 +1142,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Dialog Codes
-	public enum DialogCodes
-	{
+	public enum DialogCodes {
 		DLGC_WANTARROWS			= 0x0001,
 		DLGC_WANTTAB			= 0x0002,
 		DLGC_WANTALLKEYS		= 0x0004,
@@ -1203,8 +1158,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Update Layered Windows Flags
-	public enum UpdateLayeredWindowFlags
-	{
+	public enum UpdateLayeredWindowFlags {
 		ULW_COLORKEY = 0x00000001,
 		ULW_ALPHA    = 0x00000002,
 		ULW_OPAQUE   = 0x00000004
@@ -1212,23 +1166,73 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Blend Flags
-	public enum BlendFlags : byte
-	{
+	public enum BlendFlags : byte {
 		AC_SRC_OVER  = 0x00,
 		AC_SRC_ALPHA = 0x01
 	}
 	#endregion
 
+	#region ComboBox styles
+	internal enum ComboBoxStyles : uint {
+		CBS_SIMPLE            =0x0001,
+		CBS_DROPDOWN          =0x0002,
+		CBS_DROPDOWNLIST      =0x0003,
+		CBS_OWNERDRAWFIXED    =0x0010,
+		CBS_OWNERDRAWVARIABLE =0x0020,
+		CBS_AUTOHSCROLL       =0x0040,
+		CBS_OEMCONVERT        =0x0080,
+		CBS_SORT              =0x0100,
+		CBS_HASSTRINGS        =0x0200,
+		CBS_NOINTEGRALHEIGHT  =0x0400,
+		CBS_DISABLENOSCROLL   =0x0800,
+		CBS_UPPERCASE         =0x2000,
+		CBS_LOWERCASE         =0x4000 
+	}
+	#endregion
+
 	#region ComboBox messages
-	public enum ComboBoxMessages
-	{
-		CB_GETDROPPEDSTATE = 0x0157
+	public enum ComboBoxMessages {
+		CB_GETEDITSEL            =0x140,
+		CB_LIMITTEXT             =0x141,
+		CB_SETEDITSEL            =0x142,
+		CB_ADDSTRING             =0x143,
+		CB_DELETESTRING          =0x144,
+		CB_DIR                   =0x145,
+		CB_GETCOUNT              =0x146,
+		CB_GETCURSEL             =0x147,
+		CB_GETLBTEXT             =0x148,
+		CB_GETLBTEXTLEN          =0x149,
+		CB_INSERTSTRING          =0x14A,
+		CB_RESETCONTENT          =0x14B,
+		CB_FINDSTRING            =0x14C,
+		CB_SELECTSTRING          =0x14D,
+		CB_SETCURSEL             =0x14E,
+		CB_SHOWDROPDOWN          =0x14F,
+		CB_GETITEMDATA           =0x150,
+		CB_SETITEMDATA           =0x151,
+		CB_GETDROPPEDCONTROLRECT =0x152,
+		CB_SETITEMHEIGHT         =0x153,
+		CB_GETITEMHEIGHT         =0x154,
+		CB_SETEXTENDEDUI         =0x155,
+		CB_GETEXTENDEDUI         =0x156,
+		CB_GETDROPPEDSTATE       =0x157,
+		CB_FINDSTRINGEXACT       =0x158,
+		CB_SETLOCALE             =0x159,
+		CB_GETLOCALE             =0x15A,
+		CB_GETTOPINDEX           =0x15b,
+		CB_SETTOPINDEX           =0x15c,
+		CB_GETHORIZONTALEXTENT   =0x15d,
+		CB_SETHORIZONTALEXTENT   =0x15e,
+		CB_GETDROPPEDWIDTH       =0x15f,
+		CB_SETDROPPEDWIDTH       =0x160,
+		CB_INITSTORAGE           =0x161,
+		CB_MSGMAX                =0x162,
+		CB_MSGMAX_351            =0x15B
 	}
 	#endregion
 
 	#region TreeView Messages
-	public enum TreeViewMessages
-	{
+	public enum TreeViewMessages {
 		TV_FIRST			=  0x1100,
 		TVM_GETITEMRECT		= (TV_FIRST + 4),
 		TVM_SETIMAGELIST	= (TV_FIRST + 9),
@@ -1241,8 +1245,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region TreeViewImageListFlags
-	public enum TreeViewImageListFlags
-	{
+	public enum TreeViewImageListFlags {
 		TVSIL_NORMAL  = 0,
 		TVSIL_STATE   = 2
 	}
@@ -1250,8 +1253,7 @@ namespace System.Windows.Forms{
 
 	#region TreeViewItem Flags
 	[Flags]
-	public enum TreeViewItemFlags
-	{
+	public enum TreeViewItemFlags {
 		TVIF_NONE               = 0x0000,
 		TVIF_TEXT               = 0x0001,
 		TVIF_IMAGE              = 0x0002,
@@ -1269,8 +1271,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region ListViewItem flags
-	public enum ListViewItemFlags
-	{
+	public enum ListViewItemFlags {
 		LVIF_TEXT               = 0x0001,
 		LVIF_IMAGE              = 0x0002,
 		LVIF_PARAM              = 0x0004,
@@ -1281,8 +1282,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region HeaderItem flags
-	public enum HeaderItemFlags
-	{
+	public enum HeaderItemFlags {
 		HDI_WIDTH               = 0x0001,
 		HDI_HEIGHT              = HDI_WIDTH,
 		HDI_TEXT                = 0x0002,
@@ -1296,8 +1296,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region GetDCExFlags
-	public enum GetDCExFlags
-	{
+	public enum GetDCExFlags {
 		DCX_WINDOW           = 0x00000001,
 		DCX_CACHE            = 0x00000002,
 		DCX_NORESETATTRS     = 0x00000004,
@@ -1314,8 +1313,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region HitTest 
-	public enum HitTest
-	{
+	public enum HitTest {
 		HTERROR             = (-2),
 		HTTRANSPARENT       = (-1),
 		HTNOWHERE           =   0,
@@ -1349,8 +1347,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region ActivateFlags
-	public enum ActivateState
-	{
+	public enum ActivateState {
 		WA_INACTIVE     = 0,
 		WA_ACTIVE       = 1,
 		WA_CLICKACTIVE  = 2
@@ -1358,8 +1355,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region StrechModeFlags
-	public enum StrechModeFlags
-	{
+	public enum StrechModeFlags {
 		BLACKONWHITE		= 1,
 		WHITEONBLACK        = 2,
 		COLORONCOLOR        = 3,
@@ -1369,8 +1365,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region ScrollBarFlags
-	public enum ScrollBarFlags
-	{
+	public enum ScrollBarFlags {
 		SBS_HORZ                    = 0x0000,
 		SBS_VERT                    = 0x0001,
 		SBS_TOPALIGN                = 0x0002,
@@ -1385,8 +1380,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region System Metrics Codes
-	public enum SystemMetricsCodes
-	{
+	public enum SystemMetricsCodes {
 		SM_CXSCREEN             = 0,
 		SM_CYSCREEN             = 1,
 		SM_CXVSCROLL            = 2,
@@ -1475,8 +1469,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region ScrollBarTypes
-	public enum ScrollBarTypes
-	{
+	public enum ScrollBarTypes {
 		SB_HORZ  = 0,
 		SB_VERT  = 1,
 		SB_CTL   = 2,
@@ -1485,8 +1478,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region SrollBarInfoFlags
-	public enum ScrollBarInfoFlags
-	{
+	public enum ScrollBarInfoFlags {
 		SIF_RANGE           = 0x0001,
 		SIF_PAGE            = 0x0002,
 		SIF_POS             = 0x0004,
@@ -1497,8 +1489,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Enable ScrollBar flags
-	public enum EnableScrollBarFlags
-	{
+	public enum EnableScrollBarFlags {
 		ESB_ENABLE_BOTH     = 0x0000,
 		ESB_DISABLE_BOTH    = 0x0003,
 		ESB_DISABLE_LEFT    = 0x0001,
@@ -1511,8 +1502,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Scroll Requests
-	public enum ScrollBarRequests
-	{
+	public enum ScrollBarRequests {
 		SB_LINEUP           = 0,
 		SB_LINELEFT         = 0,
 		SB_LINEDOWN         = 1,
@@ -1532,8 +1522,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region SrollWindowEx flags
-	public enum ScrollWindowExFlags
-	{
+	public enum ScrollWindowExFlags {
 		SW_SCROLLCHILDREN   = 0x0001,  
 		SW_INVALIDATE       = 0x0002,  
 		SW_ERASE            = 0x0004,  
@@ -1542,8 +1531,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region ImageListFlags
-	public enum  ImageListFlags
-	{
+	public enum  ImageListFlags {
 		ILC_MASK             = 0x0001,
 		ILC_COLOR            = 0x0000,
 		ILC_COLORDDB         = 0x00FE,
@@ -1557,8 +1545,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region ImageListDrawFlags
-	public enum ImageListDrawFlags 
-	{
+	public enum ImageListDrawFlags {
 		ILD_NORMAL              = 0x0000,
 		ILD_TRANSPARENT         = 0x0001,
 		ILD_MASK                = 0x0010,
@@ -1571,8 +1558,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region List View Notifications
-	public enum ListViewNotifications
-	{
+	public enum ListViewNotifications {
 		LVN_FIRST             =  (0-100),
 		LVN_GETDISPINFOW      = (LVN_FIRST-77),
 		LVN_SETDISPINFOA      = (LVN_FIRST-51)
@@ -1580,8 +1566,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Drive Type
-	public enum DriveType
-	{
+	public enum DriveType {
 		DRIVE_UNKNOWN     = 0,
 		DRIVE_NO_ROOT_DIR = 1,
 		DRIVE_REMOVABLE   = 2,
@@ -1593,8 +1578,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Shell File Info Flags
-	public enum ShellFileInfoFlags
-	{
+	public enum ShellFileInfoFlags {
 		SHGFI_ICON              = 0x000000100,
 		SHGFI_DISPLAYNAME       = 0x000000200,     
 		SHGFI_TYPENAME          = 0x000000400,    
@@ -1615,8 +1599,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Shell Special Folder
-	public enum ShellSpecialFolder
-	{
+	public enum ShellSpecialFolder {
 		CSIDL_DESKTOP                   = 0x0000,
 		CSIDL_INTERNET                  = 0x0001,
 		CSIDL_PROGRAMS                  = 0x0002,
@@ -1652,8 +1635,7 @@ namespace System.Windows.Forms{
 
 	#region ShellEnumFlags
 	[Flags]
-	public enum ShellEnumFlags
-	{
+	public enum ShellEnumFlags {
 		SHCONTF_FOLDERS         = 32,      // for shell browser
 		SHCONTF_NONFOLDERS      = 64,      // for default view
 		SHCONTF_INCLUDEHIDDEN   = 128,     // for hidden/system objects
@@ -1662,8 +1644,7 @@ namespace System.Windows.Forms{
 
 	#region ShellGetDisplayNameOfFlags
 	[Flags]
-	public enum ShellGetDisplayNameOfFlags
-	{
+	public enum ShellGetDisplayNameOfFlags {
 		SHGDN_NORMAL            = 0,        // default (display purpose)
 		SHGDN_INFOLDER          = 1,        // displayed under a folder (relative)
 		SHGDN_INCLUDE_NONFILESYS = 0x2000,  // if not set, display names for shell name space items that are not in the file system will fail.
@@ -1674,8 +1655,7 @@ namespace System.Windows.Forms{
 
 	#region STRRETFlags
 	[Flags]
-	public enum STRRETFlags
-	{
+	public enum STRRETFlags {
 		STRRET_WSTR     = 0x0000,			// Use STRRET.pOleStr
 		STRRET_OFFSET   = 0x0001,			// Use STRRET.uOffset to Ansi
 		STRRET_CSTR     = 0x0002			// Use STRRET.cStr
@@ -1684,8 +1664,7 @@ namespace System.Windows.Forms{
 
 	#region GetAttributeOfFlags
 	[Flags]
-	public enum GetAttributeOfFlags : long
-	{
+	public enum GetAttributeOfFlags : long {
 		DROPEFFECT_NONE	       = 0,
 		DROPEFFECT_COPY	       = 1,
 		DROPEFFECT_MOVE		   = 2,
@@ -1720,8 +1699,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region ListViewItemState
-	public enum ListViewItemState
-	{
+	public enum ListViewItemState {
 		LVIS_FOCUSED            = 0x0001,
 		LVIS_SELECTED           = 0x0002,
 		LVIS_CUT                = 0x0004,
@@ -1733,8 +1711,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region TreeViewItemInsertPosition
-	public enum TreeViewItemInsertPosition : long
-	{
+	public enum TreeViewItemInsertPosition : long {
 		TVI_ROOT                = 0xFFFF0000,
 		TVI_FIRST               = 0xFFFF0001,
 		TVI_LAST                = 0xFFFF0002,
@@ -1743,8 +1720,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region TreeViewNotifications
-	public enum TreeViewNotifications 
-	{
+	public enum TreeViewNotifications {
 		TVN_FIRST               =  -400, 
 		TVN_SELCHANGINGA        =(TVN_FIRST-1),
 		TVN_SELCHANGINGW        =(TVN_FIRST-50),
@@ -1776,8 +1752,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region TreeViewItemExpansion
-	public enum TreeViewItemExpansion
-	{
+	public enum TreeViewItemExpansion {
 		TVE_COLLAPSE            = 0x0001,
 		TVE_EXPAND              = 0x0002,
 		TVE_TOGGLE              = 0x0003,
@@ -1787,15 +1762,13 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region WinErrors
-	public enum WinErrors
-	{
+	public enum WinErrors {
 		NOERROR = 0x00000000
 	}
 	#endregion
 
 	#region TreeViewHitTest
-	public enum TreeViewHitTestFlags
-	{
+	public enum TreeViewHitTestFlags {
 		TVHT_NOWHERE           = 0x0001,
 		TVHT_ONITEMICON        = 0x0002,
 		TVHT_ONITEMLABEL       = 0x0004,
@@ -1812,8 +1785,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region TreeViewItemState
-	public enum TreeViewItemState
-	{
+	public enum TreeViewItemState {
 		TVIS_SELECTED           = 0x0002,
 		TVIS_CUT                = 0x0004,
 		TVIS_DROPHILITED        = 0x0008,
@@ -1828,8 +1800,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region Windows System Objects
-	public enum SystemObject : long
-	{
+	public enum SystemObject : long {
 		// Reserved IDs for system objects
 		OBJID_WINDOW        = 0x00000000,
 		OBJID_SYSMENU       = 0xFFFFFFFF,
@@ -1847,8 +1818,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region SystemState
-	public enum SystemState
-	{
+	public enum SystemState {
 		STATE_SYSTEM_UNAVAILABLE        = 0x00000001, // Disabled
 		STATE_SYSTEM_SELECTED           = 0x00000002,
 		STATE_SYSTEM_FOCUSED            = 0x00000004,
@@ -1883,8 +1853,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region QueryContextMenuFlags
-	public enum QueryContextMenuFlags : long
-	{
+	public enum QueryContextMenuFlags : long {
 		CMF_NORMAL              = 0x00000000,
 		CMF_DEFAULTONLY         = 0x00000001,
 		CMF_VERBSONLY           = 0x00000002,
@@ -1898,8 +1867,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region GetWindowLongFlag
-	public enum GetWindowLongFlag
-	{
+	public enum GetWindowLongFlag {
 		GWL_WNDPROC         = (-4),
 		GWL_HINSTANCE       = (-6),
 		GWL_HWNDPARENT      = (-8),
@@ -1911,8 +1879,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region CommonControlMessages
-	public enum CommonControlMessages
-	{
+	public enum CommonControlMessages {
 		CCM_FIRST               = 0x2000,			// Common control shared messages
 		CCM_SETBKCOLOR          = (CCM_FIRST + 1),	// lParam is bkColor
 		CCM_SETCOLORSCHEME      = (CCM_FIRST + 2),	// lParam is color scheme
@@ -1925,8 +1892,7 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region PenStyle
-	public enum PenStyle
-	{
+	public enum PenStyle {
 		PS_SOLID            = 0,
 		PS_DASH             = 1,      
 		PS_DOT              = 2,     
@@ -1952,24 +1918,21 @@ namespace System.Windows.Forms{
 	#endregion
 
 	#region ImageListDrawColor
-	public enum ImageListDrawColor
-	{
+	public enum ImageListDrawColor {
 		None,		
 		Default     
 	}
 	#endregion
 
 	#region ImageList Draw Colors
-	internal enum ImageListDrawColors : uint
-	{
+	internal enum ImageListDrawColors : uint {
 		CLR_NONE		= 0xFFFFFFFF,
 		CLR_DEFAULT     = 0xFF000000
 	}
 	#endregion
 
 	#region WM_SIZE_Param_Values
-	public enum WM_SIZE_Param_Values
-	{
+	public enum WM_SIZE_Param_Values {
 		SIZE_RESTORED       = 0,
 		SIZE_MINIMIZED      = 1,
 		SIZE_MAXIMIZED      = 2,
@@ -1989,22 +1952,22 @@ namespace System.Windows.Forms{
 		WMSZ_BOTTOM         = 6,
 		WMSZ_BOTTOMLEFT     = 7,
 		WMSZ_BOTTOMRIGHT    = 8
-}
+	}
 	#endregion WMSizingMessage
 
 	/* Win32 4.0 messages for IME */
-//	internal const uint IME_SETCONTEXT           = 0x0281;
-//	internal const uint IME_NOTIFY               = 0x0282;
-//	internal const uint IME_CONTROL              = 0x0283;
-//	internal const uint IME_COMPOSITIONFULL      = 0x0284;
-//	internal const uint IME_SELECT               = 0x0285;
-//	internal const uint IME_CHAR                 = 0x0286;
-//	/* Win32 5.0 messages for IME */
-//	internal const uint IME_REQUEST              = 0x0288;
-//
-//	/* Win32 4.0 messages for IME */
-//	internal const uint IME_KEYDOWN              = 0x0290;
-//	internal const uint IME_KEYUP                = 0x0291;
+	//	internal const uint IME_SETCONTEXT           = 0x0281;
+	//	internal const uint IME_NOTIFY               = 0x0282;
+	//	internal const uint IME_CONTROL              = 0x0283;
+	//	internal const uint IME_COMPOSITIONFULL      = 0x0284;
+	//	internal const uint IME_SELECT               = 0x0285;
+	//	internal const uint IME_CHAR                 = 0x0286;
+	//	/* Win32 5.0 messages for IME */
+	//	internal const uint IME_REQUEST              = 0x0288;
+	//
+	//	/* Win32 4.0 messages for IME */
+	//	internal const uint IME_KEYDOWN              = 0x0290;
+	//	internal const uint IME_KEYUP                = 0x0291;
 
 	#region CS_Types
 	[Flags]
@@ -2044,7 +2007,11 @@ namespace System.Windows.Forms{
 		MB_YESNOCANCEL          = 0x00000003,
 		MB_YESNO                = 0x00000004,
 		MB_RETRYCANCEL          = 0x00000005,
-		MB_TYPEMASK             = 0x0000000F
+		MB_TYPEMASK             = 0x0000000F,
+		MB_APPLMODAL			= 0x00000000,
+		MB_SYSTEMMODAL			= 0x00001000,
+		MB_TASKMODAL			= 0x00002000,
+		MB_MODEMASK				= 0x00003000
 	}
 	#endregion 
 
@@ -2197,6 +2164,35 @@ namespace System.Windows.Forms{
 		COLOR_BTNHILIGHT        =20
 	}
 	
+	internal enum ButtonStyles : uint {
+		BS_PUSHBUTTON       =0,
+		BS_DEFPUSHBUTTON    =1,
+		BS_CHECKBOX         =2,
+		BS_AUTOCHECKBOX     =3,
+		BS_RADIOBUTTON      =4,
+		BS_3STATE           =5,
+		BS_AUTO3STATE       =6,
+		BS_GROUPBOX         =7,
+		BS_USERBUTTON       =8,
+		BS_AUTORADIOBUTTON  =9,
+		BS_OWNERDRAW        =11,
+		BS_LEFTTEXT         =0x20,
+		BS_TEXT             =0,
+		BS_ICON             =0x40,
+		BS_BITMAP           =0x80,
+		BS_LEFT             =0x100,
+		BS_RIGHT            =0x200,
+		BS_CENTER           =0x300,
+		BS_TOP              =0x400,
+		BS_BOTTOM           =0x800,
+		BS_VCENTER          =0xC00,
+		BS_PUSHLIKE         =0x1000,
+		BS_MULTILINE        =0x2000,
+		BS_NOTIFY           =0x4000,
+		BS_FLAT             =0x8000,
+		BS_RIGHTBUTTON      =0x20
+	}
+
 	internal enum ButtonNotification : uint {
 		BN_CLICKED          =0,
 		BN_PAINT            =1,
@@ -2211,7 +2207,21 @@ namespace System.Windows.Forms{
 		BN_KILLFOCUS        =7
 	}
 
-	internal enum LB_ {
+	internal enum ComboBoxNotification : int {
+		CBN_ERRSPACE        =-1,
+		CBN_SELCHANGE       =1,
+		CBN_DBLCLK          =2,
+		CBN_SETFOCUS        =3,
+		CBN_KILLFOCUS       =4,
+		CBN_EDITCHANGE      =5,
+		CBN_EDITUPDATE      =6,
+		CBN_DROPDOWN        =7,
+		CBN_CLOSEUP         =8,
+		CBN_SELENDOK        =9,
+		CBN_SELENDCANCEL    =10
+	}
+
+	internal enum ListBoxMessages {
 		LB_ADDSTRING            =0x0180,
 		LB_INSERTSTRING         =0x0181,
 		LB_DELETESTRING         =0x0182,
@@ -2256,7 +2266,7 @@ namespace System.Windows.Forms{
 		LB_MSGMAX_351           =0x01A8
 	}
 
-	internal enum LBS_ : long {
+	internal enum ListBoxStyles : long {
 		LBS_NOTIFY            = 0x0001,
 		LBS_SORT              = 0x0002,
 		LBS_NOREDRAW          = 0x0004,
@@ -2275,13 +2285,78 @@ namespace System.Windows.Forms{
 		LBS_STANDARD          = 0x03 | WindowStyles.WS_VSCROLL | WindowStyles.WS_BORDER
 	}
 
-	internal enum ODT_ : int {
-		ODT_COMBOBOX,
-		ODT_LISTBOX,
-		ODT_LISTVIEW,
-		ODT_MENU,
-		ODT_BUTTON,
-		ODT_STATIC,
-		ODT_TAB
+	internal enum OwnerDrawTypes : int {
+		ODT_COMBOBOX = 3,
+		ODT_LISTBOX = 2,
+		ODT_LISTVIEW = 102,
+		ODT_MENU = 1,
+		ODT_BUTTON = 4,
+		ODT_STATIC = 5,
+		ODT_TAB = 101,
+		ODT_HEADER = 100
 	}
+
+	internal enum PBS_ : int {
+		PBS_MARQUEE,
+		PBS_SMOOTH,
+		PBS_VERTICAL
+	}
+
+	internal enum ProgressBarMessages : int {
+		WM_USER            = 0x0400,
+		PBM_SETRANGE       = WM_USER+1,
+		PBM_SETPOS         = WM_USER+2,
+		PBM_DELTAPOS       = WM_USER+3,
+		PBM_SETSTEP        = WM_USER+4,
+		PBM_STEPIT         = WM_USER+5,
+		PBM_SETRANGE32     = WM_USER+6,
+		PBM_GETRANGE       = WM_USER+7,
+		PBM_GETPOS         = WM_USER+8,
+		PBM_SETBARCOLOR    = WM_USER+9,
+		PBM_SETBKCOLOR     = CommonControlMessages.CCM_SETBKCOLOR
+	}
+
+	internal enum CreateWindowCoordinates : int {
+		CW_USEDEFAULT = -2147483648
+	}
+
+	internal enum DrawFrameControl : uint {
+		DFC_CAPTION             =1,      
+		DFC_MENU                =2,      
+		DFC_SCROLL              =3,      
+		DFC_BUTTON              =4,
+		DFCS_BUTTONCHECK        =0x0000, 
+		DFCS_BUTTONRADIOIMAGE   =0x0001, 
+		DFCS_BUTTONRADIOMASK    =0x0002,	
+		DFCS_BUTTONRADIO        =0x0004, 
+		DFCS_BUTTON3STATE       =0x0008, 
+		DFCS_BUTTONPUSH         =0x0010, 
+	}
+/*
+		DFCS_CAPTIONCLOSE       =0x0000, 
+		DFCS_CAPTIONMIN         =0x0001, 
+		DFCS_CAPTIONMAX         =0x0002, 
+		DFCS_CAPTIONRESTORE     =0x0003, 
+		DFCS_CAPTIONHELP        =0x0004,	
+		DFCS_MENUARROW          =0x0000, 
+		DFCS_MENUCHECK          =0x0001, 
+		DFCS_MENUBULLET         =0x0002, 
+		DFCS_MENUARROWRIGHT     =0x0004, 
+		DFCS_SCROLLUP            =0x0000,
+		DFCS_SCROLLDOWN          =0x0001,
+		DFCS_SCROLLLEFT          =0x0002,
+		DFCS_SCROLLRIGHT         =0x0003,
+		DFCS_SCROLLCOMBOBOX      =0x0005,
+		DFCS_SCROLLSIZEGRIP      =0x0008,
+		DFCS_SCROLLSIZEGRIPRIGHT =0x0010,
+		DFCS_INACTIVE           =0x0100, 
+		DFCS_PUSHED             =0x0200, 
+		DFCS_CHECKED            =0x0400, 
+		DFCS_TRANSPARENT        =0x0800, 
+		DFCS_HOT                =0x1000, 
+		DFCS_ADJUSTRECT         =0x2000,	
+		DFCS_FLAT               =0x4000, 
+		DFCS_MONO               =0x8000 
+	}
+*/	
 }

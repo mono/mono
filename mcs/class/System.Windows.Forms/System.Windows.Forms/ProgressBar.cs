@@ -33,10 +33,14 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public ProgressBar() 
 		{
-			maximum=100;
-			minimum=0;
-			step=10;
-			value=0;
+			maximum = 100;
+			minimum = 0;
+			step = 10;
+			value = 0;
+
+			INITCOMMONCONTROLSEX	initEx = new INITCOMMONCONTROLSEX();
+			initEx.dwICC = CommonControlInitFlags.ICC_PROGRESS_CLASS;
+			Win32.InitCommonControlsEx(initEx);
 		}
 		#endregion
 		
@@ -77,24 +81,28 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
-				CreateParams createParams = new CreateParams ();
-				window = new ControlNativeWindow (this);
+				if( Parent != null) {
+					CreateParams createParams = new CreateParams ();
+					if( window == null) {
+						window = new ControlNativeWindow (this);
+					}
 
-				createParams.Caption = Text;
-				createParams.ClassName = "PROGRESSBAR";
-				createParams.X = Left;
-				createParams.Y = Top;
-				createParams.Width = Width;
-				createParams.Height = Height;
-				createParams.ClassStyle = 0;
-				createParams.ExStyle = 0;
-				createParams.Param = 0;
-				//			createParams.Parent = Parent.Handle;
-				createParams.Style = (int) (
-					WindowStyles.WS_CHILD | 
-					WindowStyles.WS_VISIBLE);
-				window.CreateHandle (createParams);
-				return createParams;
+					createParams.Caption = Text;
+					createParams.ClassName = "msctls_progress32";
+					createParams.X = Left;
+					createParams.Y = Top;
+					createParams.Width = Width;
+					createParams.Height = Height;
+					createParams.ClassStyle = 0;
+					createParams.ExStyle = 0;
+					createParams.Param = 0;
+					createParams.Parent = Parent.Handle;
+					createParams.Style = (int) (
+						WindowStyles.WS_CHILD | 
+						WindowStyles.WS_VISIBLE);
+					return createParams;
+				}
+				return null;
 			}		
 		}
 
@@ -115,10 +123,10 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override Font Font {
 			get {
-				throw new NotImplementedException ();
+				return base.Font;
 			}
 			set {
-				throw new NotImplementedException ();
+				base.Font = value;
 			}
 		}
 		
@@ -208,13 +216,14 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void OnHandleCreated(EventArgs e) 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			base.OnHandleCreated(e);
 		}
 		
 		[MonoTODO]
 		public void PerformStep() 
 		{
-			throw new NotImplementedException ();
+			Win32.SendMessage(Handle, (int)ProgressBarMessages.PBM_STEPIT, 0, 0);
 		}
 		
 		[MonoTODO]
