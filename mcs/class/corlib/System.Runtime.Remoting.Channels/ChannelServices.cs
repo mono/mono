@@ -10,6 +10,7 @@
 
 using System.Collections;
 using System.Runtime.Remoting.Messaging;
+using System.Runtime.Remoting.Contexts;
 
 namespace System.Runtime.Remoting.Channels
 {
@@ -43,9 +44,17 @@ namespace System.Runtime.Remoting.Channels
 	public sealed class ChannelServices
 	{
 		private static ArrayList registeredChannels = new ArrayList ();
+		private static CrossContextChannel _crossContextSink = new CrossContextChannel();
 		
+		internal static string CrossContextUrl = "__CrossContext";
+
 		private ChannelServices ()
 		{
+		}
+
+		internal static CrossContextChannel CrossContextChannel
+		{
+			get { return _crossContextSink; }
 		}
 
 		public static IMessageSink CreateClientChannelSinkChain(string url, object remoteChannelData, out string objectUri)
@@ -154,15 +163,13 @@ namespace System.Runtime.Remoting.Channels
 			registeredChannels.Add (chnl);
 		}
 
-		[MonoTODO]
 		public static IMessage SyncDispatchMessage (IMessage msg)
 		{
-			// TODO: put Identity in message
-
 			IMethodMessage call = (IMethodMessage)msg;
 			ServerIdentity identity = RemotingServices.GetIdentityForUri(call.Uri) as ServerIdentity;
 			if (identity == null) return new ReturnMessage (new RemotingException ("No receiver for uri " + call.Uri), (IMethodCallMessage) msg);
 
+			RemotingServices.SetMessageTargetIdentity (msg, identity);
 			return identity.Context.GetServerContextSinkChain().SyncProcessMessage (msg);
 		}
 

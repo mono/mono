@@ -1,3 +1,7 @@
+2003-02-18  Lluis Sanchez Gual  <lluis@ideary.com>
+
+	* ChannelServices.cs: Added static property for getting the CrossContextChannel.
+
 2003-02-05  Lluis Sanchez Gual  <lluis@ideary.com>
 
 	* ChannelServices.cs: Added new constructor in ChannelInfoStore, that is used by
