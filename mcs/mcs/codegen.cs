@@ -757,6 +757,13 @@ namespace Mono.CSharp {
 		public void EmitThis ()
 		{
 			ig.Emit (OpCodes.Ldarg_0);
+			if (InIterator && !IsStatic){
+				FieldBuilder this_field = CurrentIterator.this_field.FieldBuilder;
+				if (TypeManager.IsValueType (this_field.FieldType))
+					ig.Emit (OpCodes.Ldflda, this_field);
+				else
+					ig.Emit (OpCodes.Ldfld, this_field);
+			}
 		}
 
 		public Expression GetThis (Location loc)

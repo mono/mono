@@ -424,10 +424,10 @@ namespace Mono.CSharp {
 
 
 		Field pc_field;
-		Field this_field;
 		Field current_field;
 		Method dispose;
 
+		public Field this_field;
 		public Field[] parameter_fields;
 
 		void Create_Block ()
@@ -438,7 +438,7 @@ namespace Mono.CSharp {
 			if (!is_static) {
 				Type t = container.TypeBuilder;
 				args.Add (new Argument (
-					new SimpleParameterReference (t, 0, Location)));
+					new ThisParameterReference (t, 0, Location)));
 			}
 
 			args.Add (new Argument (new BoolLiteral (false)));
@@ -676,7 +676,26 @@ namespace Mono.CSharp {
 
 			public override void Emit (EmitContext ec)
 			{
+				DoEmit (ec);
+			}
+
+			protected virtual void DoEmit (EmitContext ec)
+			{
 				ParameterReference.EmitLdArg (ec.ig, idx);
+			}
+		}
+
+		protected class ThisParameterReference : SimpleParameterReference
+		{
+			public ThisParameterReference (Type type, int idx, Location loc)
+				: base (type, idx, loc)
+			{ }
+
+			protected override void DoEmit (EmitContext ec)
+			{
+				base.DoEmit (ec);
+				if (ec.TypeContainer is Struct)
+					ec.ig.Emit (OpCodes.Ldobj, type);
 			}
 		}
 
