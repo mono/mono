@@ -1,3 +1,8 @@
+2004-08-11 Bernie Solomon <bernard@ugsolutions.com>
+	* expression.cs:
+	* ecore.cs: More enum changes to handle
+	implicit conversions better
+
 2004-08-11 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: Interface inheritance made better
 

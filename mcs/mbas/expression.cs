@@ -5763,16 +5763,12 @@ namespace Mono.MonoBASIC {
 						Enum en = TypeManager.LookupEnum (decl_type);
 
 						Constant c;
-						if (en != null) {
+						if (en != null)
 							c = Constantify (o, en.UnderlyingType);
-							return new EnumConstant (c, en.UnderlyingType);
-						}
-						else {
+						else
 							c = Constantify (o, enum_member.Type);
-							return new EnumConstant (c, enum_member.Type);
-						}
-						
-						
+
+						return new EnumConstant (c, decl_type);
 					}
 					
 					Expression exp = Constantify (o, t);
@@ -5921,6 +5917,28 @@ namespace Mono.MonoBASIC {
 			
 			Type expr_type = expr.Type;
 
+			if (expr is TypeExpr){
+				//FIXME: add access level check
+				//if (!ec.DeclSpace.CheckAccessLevel (expr_type)) {
+				//		Error (30390, "'" + TypeManager.MonoBASIC_Name (expr_type) + "' " +
+				//		       "is inaccessible because of its protection level");
+				//	return null;
+				//}
+
+				if (expr_type == TypeManager.enum_type || expr_type.IsSubclassOf (TypeManager.enum_type)){
+					Enum en = TypeManager.LookupEnum (expr_type);
+
+					if (en != null) {
+						object value = en.LookupEnumValue (ec, Identifier, loc);
+						
+						if (value != null){
+							Constant c = Constantify (value, en.UnderlyingType);
+							return new EnumConstant (c, expr_type);
+						}
+					}
+				}
+			}
+			
 			if (expr_type.IsPointer){
 				Error (23, "The '.' operator can not be applied to pointer operands (" +
 				       TypeManager.MonoBASIC_Name (expr_type) + ")");

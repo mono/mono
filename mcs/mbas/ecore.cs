@@ -1047,6 +1047,13 @@ namespace Mono.MonoBASIC {
 			if (expr_type == target_type)
 				return true;
 
+			// Conversions from enum to underlying type are widening.
+			if (expr_type.IsSubclassOf (TypeManager.enum_type))
+				expr_type = TypeManager.EnumToUnderlying (expr_type);
+
+			if (expr_type == target_type)
+				return true;
+
 			// First numeric conversions 
 
 			if (expr_type == TypeManager.sbyte_type){
@@ -1789,11 +1796,14 @@ namespace Mono.MonoBASIC {
 			if (e != null)
 				return e;
 
-			if (target_type.IsSubclassOf (TypeManager.enum_type) && expr is IntLiteral){
-				IntLiteral i = (IntLiteral) expr;
-
-				if (i.Value == 0)
-					return new EmptyCast (expr, target_type);
+			if (expr.Type.IsSubclassOf (TypeManager.enum_type)) {
+				expr_type = TypeManager.EnumToUnderlying (expr.Type);
+				expr = new EmptyCast (expr, expr_type);
+				if (expr_type == target_type)
+					return expr;
+				e = ImplicitNumericConversion (ec, expr, target_type, loc);
+				if (e != null)
+					return e;
 			}
 
 			if (ec.InUnsafe) {
