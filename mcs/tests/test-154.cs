@@ -431,4 +431,18 @@ public class X
 		}
 		value = null;
 	}
+
+	//
+	// Bug #47095
+	//
+	static bool method (out int a)
+	{
+		try {
+			a = 0;
+			return true;
+		} catch (System.Exception) {
+			a = -1;
+			return false;
+		}
+	}
 }

@@ -1,3 +1,7 @@
+2003-08-22  Martin Baulig  <martin@ximian.com>
+
+	* test-154.cs: Added testcase for bug #47095.
+
 2003-08-04  Martin Baulig  <martin@ximian.com>
 
 	* Makefile: Put back test-211.cs.
