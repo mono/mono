@@ -1,3 +1,7 @@
+2003-10-21  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Makefile: Added disco directory.
+
 2003-09-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Makefile: added SqlSharp to the build.
