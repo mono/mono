@@ -1,3 +1,7 @@
+2002-03-18  Dan Lewis <dihlewis@yahoo.co.uk>
+	
+	* Math.cs: changed to use icall instead of PAL.
+
 2002-03-18  Dietmar Maurer  <dietmar@ximian.com>
 
 	* Double.cs: added check for NaN (Bug [22082])

@@ -3,14 +3,14 @@
 //
 // Author:
 //   Bob Smith (bob@thestuff.net)
+//   Dan Lewis (dihlewis@yahoo.co.uk)
 //
 // (C) 2001 Bob Smith.  http://www.thestuff.net
 //
 
 using System;
-using System.PAL;
 using System.Globalization;
-using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace System
 {
@@ -56,49 +56,11 @@ namespace System
                         return (short)((value < 0)? -value: value);
                 }
 
-                public static double Acos(double d)
-                {
-                        if (d < -1 || d > 1) return Double.NaN;
-                        return OpSys.Acos(d);
-                }
-
-                public static double Asin(double d)
-                {
-                        if (d < -1 || d > 1) return Double.NaN;
-                        return OpSys.Asin(d);
-                }
-
-                public static double Atan(double d)
-		{
-			return OpSys.Atan(d);
-		}
-
-                public static double Atan2(double y, double x)
-		{
-			return OpSys.Atan2(y, x);
-		}
-
                 public static double Ceiling(double a)
                 {
                         double b = (double)((long)a);
                         return (b < a)? b+1: b;
                 }
-
-                public static double Cos(double d)
-		{
-			return OpSys.Cos(d);
-		}
-
-                public static double Cosh(double value)
-		{
-			return OpSys.Cosh(value);
-		}
-
-                public static double Exp(double d)
-		{
-			return OpSys.Exp(d);
-		}
-
                 public static double Floor(double d) {
 		    return (double)((long)d) ;
                 }
@@ -110,26 +72,13 @@ namespace System
                         if (r != 0) return r;
                         return (x > 0)? 0: -0;
                 }
-
-                public static double Log(double d)
-                {
-                        if (d == 0) return Double.NegativeInfinity;
-                        else if (d < 0) return Double.NaN;
-                        return OpSys.Log(d);
-                }
                 public static double Log(double a, double newBase)
                 {
                         if (a == 0) return Double.NegativeInfinity;
                         else if (a < 0) return Double.NaN;
-                        return OpSys.Log(a)/OpSys.Log(newBase);
+                        return Log(a)/Log(newBase);
                 }
 
-                public static double Log10(double d)
-                {
-                        if (d == 0) return Double.NegativeInfinity;
-                        else if (d < 0) return Double.NaN;
-                        return OpSys.Log10(d);
-                }
                 public static byte Max(byte val1, byte val2)
                 {
                         return (val1 > val2)? val1: val2;
@@ -218,11 +167,6 @@ namespace System
                 {
                         return (val1 < val2)? val1: val2;
                 }
-
-                public static double Pow(double x, double y)
-		{
-			return OpSys.Pow(x, y);
-		}
 
                 public static decimal Round(decimal d)
                 {
@@ -315,30 +259,51 @@ namespace System
                         return (value == 0)? 0: -1;
                 }
 
-                public static double Sin(double a)
-		{
-			return OpSys.Sin(a);
-		}
+		// internal calls 
 
-                public static double Sinh(double value)
-		{
-			return OpSys.Sinh(value);
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+                public extern static double Sin (double x);
 
-                public static double Sqrt(double d) 
-                {
-                        if (d < 0) return Double.NaN;
-                        return OpSys.Sqrt(d);
-                }
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+                public extern static double Cos (double x);
 
-                public static double Tan(double a)
-		{
-			return OpSys.Tan(a);
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+                public extern static double Tan (double x);
 
-                public static double Tanh(double value)
-		{
-			return OpSys.Tanh(value);
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+                public extern static double Sinh (double x);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+                public extern static double Cosh (double x);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+                public extern static double Tanh (double x);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+                public extern static double Acos (double x);
+		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+                public extern static double Asin (double x);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+                public extern static double Atan (double x);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+                public extern static double Atan2 (double y, double x);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+                public extern static double Exp (double x);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+                public extern static double Log (double x);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+                public extern static double Log10 (double x);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+                public extern static double Pow (double x, double y);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+                public extern static double Sqrt (double x);
         }
 }

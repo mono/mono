@@ -480,50 +480,5 @@ namespace System.PAL
 
 		[DllImport("libc", EntryPoint="getpid")]
 		private unsafe static extern int _getPid();
-
-		[ DllImport("libm", EntryPoint="acos") ]
-		public extern static double Acos(double d);
-
-		[ DllImport("libm", EntryPoint="asin") ]
-		public extern static double Asin(double d);
-
-		[ DllImport("libm", EntryPoint="atan") ]
-		public extern static double Atan(double d);
-
-		[ DllImport("libm", EntryPoint="atan2") ]
-		public extern static double Atan2(double y, double x);
-
-		[ DllImport("libm", EntryPoint="cos") ]
-		public extern static double Cos(double d);
-
-		[ DllImport("libm", EntryPoint="cosh") ]
-		public extern static double Cosh(double d);
-
-		[ DllImport("libm", EntryPoint="exp") ]
-		public extern static double Exp(double d);
-
-		[ DllImport("libm", EntryPoint="log") ]
-		public extern static double Log(double d);
-
-		[ DllImport("libm", EntryPoint="log10") ]
-		public extern static double Log10(double d);
-
-		[ DllImport("libm", EntryPoint="pow") ]
-		public extern static double Pow(double x, double y);
-
-		[ DllImport("libm", EntryPoint="sin") ]
-		public extern static double Sin(double d);
-
-		[ DllImport("libm", EntryPoint="sinh") ]
-		public extern static double Sinh(double d);
-
-		[ DllImport("libm", EntryPoint="sqrt") ]
-		public extern static double Sqrt(double d);
-
-		[ DllImport("libm", EntryPoint="tan") ]
-		public extern static double Tan(double d);
-
-		[ DllImport("libm", EntryPoint="tanh") ]
-		public extern static double Tanh(double d);
 	}
 }

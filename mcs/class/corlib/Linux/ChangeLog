@@ -1,3 +1,7 @@
+2002-03-18  Dan Lewis <dihlewis@yahoo.co.uk>
+
+	* Linux.cs: Removed math methods (now in System.Math).
+
 2002-01-23  Dick Porter  <dick@ximian.com>
 
 	* Linux.cs: GetFileTime and SetFileTime need to be static
