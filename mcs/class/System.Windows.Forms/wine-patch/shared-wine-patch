@@ -1,7 +1,7 @@
-diff -ruN wine/configure.ac wine-mono/configure.ac
---- wine/configure.ac	2004-03-01 23:48:48.000000000 -0700
-+++ wine-mono/configure.ac	2004-03-03 07:01:14.000000000 -0700
-@@ -1670,6 +1671,7 @@
+diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/configure.ac wine-patched/configure.ac
+--- wine/configure.ac	2004-02-13 15:47:08.000000000 -0500
++++ wine-patched/configure.ac	2004-03-03 17:40:25.000000000 -0500
+@@ -1644,6 +1644,7 @@
  programs/uninstaller/Makefile
  programs/view/Makefile
  programs/wcmd/Makefile
@@ -9,9 +9,9 @@ diff -ruN wine/configure.ac wine-mono/configure.ac
  programs/wineboot/Makefile
  programs/winebrowser/Makefile
  programs/winecfg/Makefile
-diff -ruN wine/dlls/kernel/process.c wine-mono/dlls/kernel/process.c
---- wine/dlls/kernel/process.c	2004-02-20 13:19:24.000000000 -0700
-+++ wine-mono/dlls/kernel/process.c	2004-03-03 09:03:34.000000000 -0700
+diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/dlls/kernel/process.c wine-patched/dlls/kernel/process.c
+--- wine/dlls/kernel/process.c	2004-02-11 19:00:55.000000000 -0500
++++ wine-patched/dlls/kernel/process.c	2004-03-03 17:40:36.000000000 -0500
 @@ -756,8 +756,12 @@
  
          SetLastError( 0 );  /* clear error code */
@@ -52,10 +52,10 @@ diff -ruN wine/dlls/kernel/process.c wine-mono/dlls/kernel/process.c
  
   error:
      ExitProcess( GetLastError() );
-diff -ruN wine/dlls/ntdll/loader.c wine-mono/dlls/ntdll/loader.c
---- wine/dlls/ntdll/loader.c	2004-02-23 18:25:03.000000000 -0700
-+++ wine-mono/dlls/ntdll/loader.c	2004-03-03 06:07:50.000000000 -0700
-@@ -1951,7 +1951,9 @@
+diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/dlls/ntdll/loader.c wine-patched/dlls/ntdll/loader.c
+--- wine/dlls/ntdll/loader.c	2004-02-06 20:11:54.000000000 -0500
++++ wine-patched/dlls/ntdll/loader.c	2004-03-03 17:40:36.000000000 -0500
+@@ -1954,7 +1954,9 @@
      WINE_MODREF *wm;
      NTSTATUS status;
      ANSI_STRING func_name;
@@ -66,9 +66,9 @@ diff -ruN wine/dlls/ntdll/loader.c wine-mono/dlls/ntdll/loader.c
      extern void __wine_dbg_ntdll_init(void);
  
      thread_init();
-diff -ruN wine/include/wine/library.h wine-mono/include/wine/library.h
---- wine/include/wine/library.h	2004-01-02 14:08:05.000000000 -0700
-+++ wine-mono/include/wine/library.h	2004-03-03 06:45:54.000000000 -0700
+diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/include/wine/library.h wine-patched/include/wine/library.h
+--- wine/include/wine/library.h	2004-01-02 16:08:05.000000000 -0500
++++ wine-patched/include/wine/library.h	2004-03-03 17:40:36.000000000 -0500
 @@ -49,6 +49,7 @@
  extern void wine_dll_unload( void *handle );
  extern int wine_dll_get_owner( const char *name, char *buffer, int size, int *file_exists );
@@ -77,9 +77,9 @@ diff -ruN wine/include/wine/library.h wine-mono/include/wine/library.h
  extern int __wine_main_argc;
  extern char **__wine_main_argv;
  extern WCHAR **__wine_main_wargv;
-diff -ruN wine/libs/wine/loader.c wine-mono/libs/wine/loader.c
---- wine/libs/wine/loader.c	2004-01-02 14:08:05.000000000 -0700
-+++ wine-mono/libs/wine/loader.c	2004-03-03 06:47:28.000000000 -0700
+diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/libs/wine/loader.c wine-patched/libs/wine/loader.c
+--- wine/libs/wine/loader.c	2004-01-02 16:08:05.000000000 -0500
++++ wine-patched/libs/wine/loader.c	2004-03-03 17:40:36.000000000 -0500
 @@ -46,6 +46,7 @@
  char **__wine_main_argv = NULL;
  WCHAR **__wine_main_wargv = NULL;
@@ -88,9 +88,9 @@ diff -ruN wine/libs/wine/loader.c wine-mono/libs/wine/loader.c
  
  struct dll_path_context
  {
-diff -ruN wine/libs/wine/wine.def wine-mono/libs/wine/wine.def
---- wine/libs/wine/wine.def	2004-02-04 19:01:35.000000000 -0700
-+++ wine-mono/libs/wine/wine.def	2004-03-03 08:44:10.000000000 -0700
+diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/libs/wine/wine.def wine-patched/libs/wine/wine.def
+--- wine/libs/wine/wine.def	2004-02-04 21:01:35.000000000 -0500
++++ wine-patched/libs/wine/wine.def	2004-03-03 17:40:36.000000000 -0500
 @@ -9,6 +9,7 @@
      __wine_dbgstr_an
      __wine_dbgstr_wn
@@ -99,9 +99,9 @@ diff -ruN wine/libs/wine/wine.def wine-mono/libs/wine/wine.def
      __wine_main_argc
      __wine_main_argv
      __wine_main_environ
-diff -ruN wine/libs/wine/wine.map wine-mono/libs/wine/wine.map
---- wine/libs/wine/wine.map	2004-02-12 15:54:00.000000000 -0700
-+++ wine-mono/libs/wine/wine.map	2004-03-03 08:44:02.000000000 -0700
+diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/libs/wine/wine.map wine-patched/libs/wine/wine.map
+--- wine/libs/wine/wine.map	2004-02-12 17:54:00.000000000 -0500
++++ wine-patched/libs/wine/wine.map	2004-03-03 17:40:36.000000000 -0500
 @@ -9,6 +9,7 @@
      __wine_dbgstr_an;
      __wine_dbgstr_wn;
@@ -110,9 +110,9 @@ diff -ruN wine/libs/wine/wine.map wine-mono/libs/wine/wine.map
      __wine_main_argc;
      __wine_main_argv;
      __wine_main_environ;
-diff -ruN wine/programs/Makefile.in wine-mono/programs/Makefile.in
---- wine/programs/Makefile.in	2004-01-06 13:49:59.000000000 -0700
-+++ wine-mono/programs/Makefile.in	2004-03-03 06:14:56.000000000 -0700
+diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/programs/Makefile.in wine-patched/programs/Makefile.in
+--- wine/programs/Makefile.in	2004-01-06 15:49:59.000000000 -0500
++++ wine-patched/programs/Makefile.in	2004-03-03 17:40:36.000000000 -0500
 @@ -11,6 +11,7 @@
  	cmdlgtst \
  	control \
@@ -147,10 +147,10 @@ diff -ruN wine/programs/Makefile.in wine-mono/programs/Makefile.in
  notepad/notepad.exe$(DLLEXT): notepad
  progman/progman.exe$(DLLEXT): progman
  regedit/regedit.exe$(DLLEXT): regedit
-diff -ruN wine/programs/wine-sharedlib/Makefile.in wine-mono/programs/wine-sharedlib/Makefile.in
---- wine/programs/wine-sharedlib/Makefile.in	1969-12-31 17:00:00.000000000 -0700
-+++ wine-mono/programs/wine-sharedlib/Makefile.in	2004-03-03 07:37:45.000000000 -0700
-@@ -0,0 +1,26 @@
+diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/programs/wine-sharedlib/Makefile.in wine-patched/programs/wine-sharedlib/Makefile.in
+--- wine/programs/wine-sharedlib/Makefile.in	1969-12-31 19:00:00.000000000 -0500
++++ wine-patched/programs/wine-sharedlib/Makefile.in	2004-03-03 21:17:46.000000000 -0500
+@@ -0,0 +1,27 @@
 +TOPSRCDIR = @top_srcdir@
 +TOPOBJDIR = ../..
 +SRCDIR    = @srcdir@
@@ -160,8 +160,8 @@ diff -ruN wine/programs/wine-sharedlib/Makefile.in wine-mono/programs/wine-share
 +IMPORTS   = kernel32
 +DELAYIMPORTS = user32
 +EXTRAINCL = 
-+EXTRADEFS =
-+
++EXTRADEFS = -DDLLPATH=\"${exec_prefix}/lib/wine\" LIBPATH=\"${exec_prefix}/lib\"
++EXTRALIBS = -ldl -lpthread
 +C_SRCS = \
 +	wine-sharedlib.c \
 +	../../loader/pthread.c
@@ -176,11 +176,12 @@ diff -ruN wine/programs/wine-sharedlib/Makefile.in wine-mono/programs/wine-share
 +
 +@MAKE_PROG_RULES@
 +
++dlldir = ${exec_prefix}/lib
 +### Dependencies:
-diff -ruN wine/programs/wine-sharedlib/wine-sharedlib.c wine-mono/programs/wine-sharedlib/wine-sharedlib.c
---- wine/programs/wine-sharedlib/wine-sharedlib.c	1969-12-31 17:00:00.000000000 -0700
-+++ wine-mono/programs/wine-sharedlib/wine-sharedlib.c	2004-03-03 09:43:04.000000000 -0700
-@@ -0,0 +1,109 @@
+diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/programs/wine-sharedlib/wine-sharedlib.c wine-patched/programs/wine-sharedlib/wine-sharedlib.c
+--- wine/programs/wine-sharedlib/wine-sharedlib.c	1969-12-31 19:00:00.000000000 -0500
++++ wine-patched/programs/wine-sharedlib/wine-sharedlib.c	2004-03-03 20:24:28.000000000 -0500
+@@ -0,0 +1,111 @@
 +/*
 + * wine-sharedlib code
 + *
@@ -251,10 +252,10 @@ diff -ruN wine/programs/wine-sharedlib/wine-sharedlib.c wine-mono/programs/wine-
 +SharedWineInit(void)
 +{
 +	unsigned char	Error[1024]="";
-+	char				*WineArguments[] = {"sharedapp", "/usr/local/lib/wine/wine-sharedlib.exe.so", NULL};
++	char				*WineArguments[] = {"sharedapp", LIBPATH "/wine-sharedlib.exe.so", NULL};
 +	void				*hModule;
 +	int				FileExists;
-+
++	
 +	__wine_shared_lib=1;
 +	
 +	wine_init(2, WineArguments, Error, sizeof(Error));
@@ -262,6 +263,8 @@ diff -ruN wine/programs/wine-sharedlib/wine-sharedlib.c wine-mono/programs/wine-
 +		printf("Wine initialization error:%s\n", Error);
 +		exit(-1);
 +	}
++
++	putenv ("_WINE_SHAREDLIB_PATH=" DLLPATH);
 +
 +   /* Now load kernel32 go get the pointers for LoadLibraryA and GetProcAddress */
 +   hModule=wine_dll_load("kernel32.dll", Error, sizeof(Error), &FileExists);
@@ -290,9 +293,9 @@ diff -ruN wine/programs/wine-sharedlib/wine-sharedlib.c wine-mono/programs/wine-
 +	LoadLibraryF("user32.dll");
 +}
 +
-diff -ruN wine/tools/winebuild/spec32.c wine-mono/tools/winebuild/spec32.c
---- wine/tools/winebuild/spec32.c	2004-02-16 13:24:32.000000000 -0700
-+++ wine-mono/tools/winebuild/spec32.c	2004-03-03 06:48:28.000000000 -0700
+diff -ruN --exclude=Makefile --exclude='*rules' --exclude='config.*' wine/tools/winebuild/spec32.c wine-patched/tools/winebuild/spec32.c
+--- wine/tools/winebuild/spec32.c	2004-02-13 17:42:13.000000000 -0500
++++ wine-patched/tools/winebuild/spec32.c	2004-03-03 17:40:36.000000000 -0500
 @@ -568,6 +568,7 @@
      fprintf( outfile, "extern int __wine_main_argc;\n" );
      fprintf( outfile, "extern char **__wine_main_argv;\n" );
