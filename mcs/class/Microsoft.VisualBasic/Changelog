@@ -1,0 +1,8 @@
+2002-05-12  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+
+	* Microsoft.VisualBasic.Strings: Strings.cs - Merged all method implementations provided 
+          by Martin Adoue, with method signatures (specially attributes) provided 
+          by Chris J. Breisch. Some tweaking for the Mid member (two overloads versus third optional parameter).
+
+
+
