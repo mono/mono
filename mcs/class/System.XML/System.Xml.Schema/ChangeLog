@@ -1,3 +1,7 @@
+2003-07-24  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* XmlSchema.cs : Read() now uses XmlSerializer.Deserialize().
+
 2003-07-21  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* XmlSchema.cs, XmlSchemaElement.cs :

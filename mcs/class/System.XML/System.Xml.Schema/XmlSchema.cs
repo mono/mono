@@ -479,11 +479,13 @@ namespace System.Xml.Schema
                         return Read(new XmlTextReader(stream),validationEventHandler);
                 }
 
+		[MonoTODO ("Use ValidationEventHandler")]
                 public static XmlSchema Read(XmlReader rdr, ValidationEventHandler validationEventHandler)
                 {
-                        //XmlSerializer xser = new XmlSerializer(typeof(XmlSchema));
-                        //return (XmlSchema) xser.Deserialize(reader);
-                        XmlSchemaReader reader = new XmlSchemaReader(rdr, validationEventHandler);
+                        XmlSerializer xser = new XmlSerializer (typeof (XmlSchema));
+                        return (XmlSchema) xser.Deserialize (rdr);
+/*
+			XmlSchemaReader reader = new XmlSchemaReader(rdr, validationEventHandler);
 
                         while(reader.ReadNextElement())
                         {
@@ -519,6 +521,7 @@ namespace System.Xml.Schema
                                 }
                         }
                         throw new XmlSchemaException("The top level schema must have namespace "+XmlSchema.Namespace, null);
+*/
                 }
 
                 private static void ReadAttributes(XmlSchema schema, XmlSchemaReader reader, ValidationEventHandler h)
