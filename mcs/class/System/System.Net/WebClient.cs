@@ -296,11 +296,11 @@ namespace System.Net
 					return new Uri (path);
 				}
 				catch (System.UriFormatException ufe) {
-					if (path[0] == '/') {
+					if ((path[0] == Path.DirectorySeparatorChar) || (path[1] == ':' && Char.ToLower(path[0]) > 'a' && Char.ToLower(path[0]) < 'z')) {
 						return new Uri ("file://" + path);
 					}
 					else {
-						return new Uri ("file://" + Environment.CurrentDirectory + "/" + path);
+						return new Uri ("file://" + Environment.CurrentDirectory + Path.DirectorySeparatorChar + path);
 					}
 				}
 			}

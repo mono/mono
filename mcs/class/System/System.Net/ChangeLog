@@ -1,3 +1,9 @@
+2003-10-17  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* WebClient.cs: use Path.DirectorySeparator instead of "/" for
+	windows compatibility. Add some checks for file paths like
+	"C:/xxx/yyy/..." and like "/home/xxx/...".
+
 2003-10-16  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* WebClient.cs: added a slash between directory and file names.
