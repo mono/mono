@@ -12,10 +12,6 @@ LOCAL_MCS_FLAGS= \
 	-r:System.Xml.dll /d:MONO /d:StronglyNamedAssembly -debug
 NO_TEST = yo
 
-ifeq (net_2_0, $(PROFILE))
-NO_INSTALL = yes
-endif
-
 RESX_RES = Transform.resources
 
 EXTRA_DISTFILES = \

@@ -1,3 +1,9 @@
+2004-12-27  Ben Maurer  <bmaurer@ximian.com>
+
+	* Changelog: rename to ChangeLog
+	* */Makefile.am: build for 2.0
+	* */AssemblyInfo.cs: Different version for 2.0 to make the GAC happy.
+
 2004-10-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Updated to NUnit 2.2.0 Final Release.
