@@ -1,3 +1,13 @@
+2003-12-19  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* embed.h, main.c: new files to enable embedding
+	the interpreter
+
+        * interp.c: make main callable from main.c
+	rearrange main for embedding
+
+	* Makefile.am: changes now most code is in a library
+
 2003-11-21  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* interp.c: Added support for context static fields.
