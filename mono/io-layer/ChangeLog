@@ -1,3 +1,8 @@
+2004-04-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* io.c: Add scandir implementation for platforms which do not have
+	it, like solaris.
+
 2004-04-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* io.[ch]: implemented GetLogicalDriveStrings.
