@@ -17,7 +17,6 @@ using System.Xml.Xsl;
 
 namespace Mono.Xml.Xsl.Operations {	
 	public class XslLiteralElement : XslCompiledElement {
-		static char [] wsChars = new char [] {' ', '\t', '\n', '\r'};
 		XslOperation children;
 		string localname, prefix, nsUri;
 		bool isEmptyElement;
@@ -84,9 +83,8 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		public override void Evaluate (XslTransformProcessor p)
 		{
-			bool cdataStarted = false;
-			if (!p.InsideCDataElement && p.PushCDataState (localname, nsUri))
-				cdataStarted = true;
+			bool isCData = p.InsideCDataElement;
+			p.PushCDataState (localname, nsUri);
 			p.Out.WriteStartElement (prefix, localname, nsUri);
 
 			if (useAttributeSets != null)
@@ -99,7 +97,7 @@ namespace Mono.Xml.Xsl.Operations {
 					((XslLiteralAttribute)attrs [i]).Evaluate (p);
 			}
 			
-			p.TryStylesheetNamespaceOutput (new ArrayList (excludeResultPrefixes.Split (wsChars)));
+			p.TryStylesheetNamespaceOutput (new ArrayList (excludeResultPrefixes.Split (XmlChar.WhitespaceChars)));
 			if (nsDecls != null)
 				foreach (DictionaryEntry de in nsDecls)
 					p.Out.WriteNamespaceDecl ((string)de.Key, (string)de.Value);
@@ -111,8 +109,7 @@ namespace Mono.Xml.Xsl.Operations {
 			else
 				p.Out.WriteFullEndElement ();
 
-			if (cdataStarted)
-				p.PopCDataState ();
+			p.PopCDataState (isCData);
 		}
 	}
 }

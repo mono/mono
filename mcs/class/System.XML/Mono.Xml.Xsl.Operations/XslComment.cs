@@ -36,7 +36,8 @@ namespace Mono.Xml.Xsl.Operations {
 			StringWriter s = new StringWriter ();
 			Outputter outputter = new TextOutputter(s, true);			
 			p.PushOutput (outputter);
-			value.Evaluate (p);
+			if (value != null)
+				value.Evaluate (p);
 			p.PopOutput ();
 			
 			p.Out.WriteComment (s.ToString ());

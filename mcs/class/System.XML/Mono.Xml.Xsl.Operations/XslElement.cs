@@ -39,11 +39,12 @@ namespace Mono.Xml.Xsl.Operations {
 			
 			calcName = XslAvt.AttemptPreCalc (ref name);
 			
-			if (calcName != null && ns == null) {
+			if (calcName != null) {
 				int colonAt = calcName.IndexOf (':');
 				calcPrefix = colonAt < 0 ? String.Empty : calcName.Substring (0, colonAt);
 				calcName = colonAt < 0 ? calcName : calcName.Substring (colonAt + 1, calcName.Length - colonAt - 1);
-				calcNs = c.Input.GetNamespace (calcPrefix);
+				if (ns == null)
+					calcNs = c.Input.GetNamespace (calcPrefix);
 			} else if (ns != null)
 				calcNs = XslAvt.AttemptPreCalc (ref ns);
 			
@@ -77,23 +78,24 @@ namespace Mono.Xml.Xsl.Operations {
 			}
 			prefix = calcPrefix != null ? calcPrefix : String.Empty;
 
+#if false
 			if (calcPrefix == String.Empty) {
 				if (nav.MoveToFirstNamespace (XPathNamespaceScope.ExcludeXml)) {
 					do {
 						if (nav.Value == nmsp) {
-							prefix = nav.Name;
+//							prefix = nav.Name;
 							break;
 						}
 					} while (nav.MoveToNextNamespace (XPathNamespaceScope.ExcludeXml));
 					nav.MoveToParent ();
 				}
 			}
+#endif
 
 			XmlConvert.VerifyName (nm);
 
-			bool cdataStarted = false;
-			if (!p.InsideCDataElement && p.PushCDataState (localName, nmsp))
-				cdataStarted = true;
+			bool isCData = p.InsideCDataElement;
+			p.PushCDataState (localName, nmsp);
 			p.Out.WriteStartElement (prefix, localName, nmsp);
 			p.TryStylesheetNamespaceOutput (null);
 
@@ -107,8 +109,7 @@ namespace Mono.Xml.Xsl.Operations {
 				p.Out.WriteEndElement ();
 			else
 				p.Out.WriteFullEndElement ();
-			if (cdataStarted)
-				p.PopCDataState ();
+			p.PopCDataState (isCData);
 		}
 	}
 }

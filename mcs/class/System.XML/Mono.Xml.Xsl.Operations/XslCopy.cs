@@ -43,9 +43,8 @@ namespace Mono.Xml.Xsl.Operations {
 				if (children != null) children.Evaluate (p);
 				break;
 			case XPathNodeType.Element:
-				bool cdataStarted = false;
-				if (!p.InsideCDataElement && p.PushCDataState (p.CurrentNode.LocalName, p.CurrentNode.NamespaceURI))
-					cdataStarted = true;
+				bool isCData = p.InsideCDataElement;
+				p.PushCDataState (p.CurrentNode.LocalName, p.CurrentNode.NamespaceURI);
 				p.Out.WriteStartElement (p.CurrentNode.Prefix, p.CurrentNode.LocalName, p.CurrentNode.NamespaceURI);
 				
 				p.TryStylesheetNamespaceOutput (null);
@@ -63,8 +62,7 @@ namespace Mono.Xml.Xsl.Operations {
 				if (children != null) children.Evaluate (p);
 
 				p.Out.WriteFullEndElement ();
-				if (cdataStarted)
-					p.PopCDataState ();
+				p.PopCDataState (isCData);
 				break;
 			case XPathNodeType.Attribute:
 				p.Out.WriteAttributeString (p.CurrentNode.Prefix, p.CurrentNode.LocalName, p.CurrentNode.NamespaceURI, p.CurrentNode.Value);

@@ -39,14 +39,15 @@ namespace Mono.Xml.Xsl.Operations {
 			calcName = XslAvt.AttemptPreCalc (ref name);
 			calcPrefix = String.Empty;
 
-			if (calcName != null && ns == null) {
+			if (calcName != null) {
 				int colonAt = calcName.IndexOf (':');
 				calcPrefix = colonAt < 0 ? String.Empty : calcName.Substring (0, colonAt);
 				calcName = colonAt < 0 ? calcName : calcName.Substring (colonAt + 1, calcName.Length - colonAt - 1);
-				calcNs = nav.GetNamespace (calcPrefix);
-			} else if (ns != null) {
-				calcNs = XslAvt.AttemptPreCalc (ref ns);
 			}
+			if (calcPrefix != String.Empty && ns == null)
+				calcNs = nav.GetNamespace (calcPrefix);
+			else if (ns != null)
+				calcNs = XslAvt.AttemptPreCalc (ref ns);
 
 			if (calcNs ==null && calcPrefix != String.Empty) {
 				string test = c.CurrentStylesheet.PrefixInEffect (calcPrefix, null);
@@ -84,9 +85,10 @@ namespace Mono.Xml.Xsl.Operations {
 
 			int colonAt = nm.IndexOf (':');
 			// local attribute
-			prefix = colonAt < 0 ? String.Empty : nm.Substring (0, colonAt);
-			nm = colonAt < 0 ? nm : nm.Substring (colonAt + 1, nm.Length - colonAt - 1);
 			if (colonAt > 0) {
+				prefix = nm.Substring (0, colonAt);
+				nm = nm.Substring (colonAt + 1, nm.Length - colonAt - 1);
+
 				// global attribute
 				if (nmsp == null) {
 					QName q = XslNameUtil.FromString (nm, nsm);

@@ -25,16 +25,19 @@ namespace Mono.Xml.Xsl.Operations {
 			select = c.CompileExpression (c.GetAttribute ("select"));
 		}
 			
-		void CopyNode (Outputter outputter, XPathNavigator nav)
+		void CopyNode (XslTransformProcessor p, XPathNavigator nav)
 		{
+			Outputter outputter = p.Out;
 			switch (nav.NodeType) {
 			case XPathNodeType.Root:
 				XPathNodeIterator itr = nav.SelectChildren (XPathNodeType.All);
 				while (itr.MoveNext ())
-					CopyNode (outputter, itr.Current);
+					CopyNode (p, itr.Current);
 				break;
 				
 			case XPathNodeType.Element:
+				bool isCData = p.InsideCDataElement;
+				p.PushCDataState (nav.LocalName, nav.NamespaceURI);
 				outputter.WriteStartElement (nav.Prefix, nav.LocalName, nav.NamespaceURI);
 				
 				if (nav.MoveToFirstNamespace (XPathNamespaceScope.Local))
@@ -55,7 +58,7 @@ namespace Mono.Xml.Xsl.Operations {
 				
 				if (nav.MoveToFirstChild ()) {
 					do {
-						CopyNode (outputter, nav);
+						CopyNode (p, nav);
 					} while (nav.MoveToNext ());
 					nav.MoveToParent ();
 				}
@@ -64,6 +67,8 @@ namespace Mono.Xml.Xsl.Operations {
 					outputter.WriteEndElement ();
 				else
 					outputter.WriteFullEndElement ();
+
+				p.PopCDataState (isCData);
 				break;
 				
 			case XPathNodeType.Namespace:
@@ -93,7 +98,7 @@ namespace Mono.Xml.Xsl.Operations {
 			{
 				XPathNodeIterator itr = (XPathNodeIterator)o;
 				while (itr.MoveNext ())
-					CopyNode (p.Out, itr.Current);
+					CopyNode (p, itr.Current);
 			} else {
 				p.Out.WriteString (XPathFunctions.ToString (o));
 			}

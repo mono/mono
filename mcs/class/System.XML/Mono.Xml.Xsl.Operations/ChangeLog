@@ -1,3 +1,11 @@
+2003-12-02 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XslElement.cs, XslCopy.cs, XslCopyOf.cs, XslLiteralElement.cs :
+	  Modified cdata-section-elements handling.
+	* XslAttribute.cs, XslElement.cs : Fixed incorrect prefix handling.
+	* XslComment.cs : In case of empty value, don't call value.Evaluate().
+	* XslCopyOf.cs : Element node should consider cdata-section elements.
+
 2003-11-28 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XslCopy.cs, XslCopyOf.cs : namespace nodes should be written.
