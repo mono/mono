@@ -1,3 +1,8 @@
+2004-12-03  Martin Baulig  <martin@ximian.com>
+
+	* delegate.cs (NewDelegate.DoResolve): If we have an anonymous
+	method as our child, call AnonymousMethod.Compatible() on it.
+
 2004-12-02  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (FieldBase): Use an unused bit field from the field to
