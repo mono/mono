@@ -249,6 +249,10 @@ namespace System.Xml.Schema
 			// If this is already compiled this time, simply skip.
 			if (this.IsComplied (schema.CompilationId))
 				return 0;
+#if NET_2_0
+			if (Content != null)
+				Content.Parent = this;
+#endif
 
 			errorCount = 0;
 

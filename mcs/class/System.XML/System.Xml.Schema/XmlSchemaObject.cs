@@ -51,6 +51,11 @@ namespace System.Xml.Schema
 		internal bool isRedefinedComponent;
 		internal XmlSchemaObject redefinedObject;
 
+#if NET_2_0
+		private XmlSchemaObject parent;
+#endif
+
+
 		protected XmlSchemaObject()
 		{
 			namespaces = new XmlSerializerNamespaces();
@@ -76,6 +81,14 @@ namespace System.Xml.Schema
 			get{ return sourceUri; } 
 			set{ sourceUri = value; } 
 		}
+
+#if NET_2_0
+		[XmlIgnore]
+		public XmlSchemaObject Parent {
+			get { return parent; }
+			set { parent = value; }
+		}
+#endif
 
 		// Undocumented Property
 		[XmlNamespaceDeclarations]

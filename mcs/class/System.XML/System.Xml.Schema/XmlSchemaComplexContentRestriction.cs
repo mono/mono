@@ -94,6 +94,15 @@ namespace System.Xml.Schema
 			if (this.IsComplied (schema.CompilationId))
 				return 0;
 
+#if NET_2_0
+			if (Particle != null)
+				Particle.Parent = this;
+			if (AnyAttribute != null)
+				AnyAttribute.Parent = this;
+			foreach (XmlSchemaObject obj in Attributes)
+				obj.Parent = this;
+#endif
+
 			if (this.isRedefinedComponent) {
 				if (Annotation != null)
 					Annotation.isRedefinedComponent = true;

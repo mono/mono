@@ -132,11 +132,18 @@ namespace System.Xml.Schema
 			
 			if(this.AnyAttribute != null)
 			{
+#if NET_2_0
+				this.AnyAttribute.Parent = this;
+#endif
 				errorCount += this.AnyAttribute.Compile(h, schema);
 			}
 			
 			foreach(XmlSchemaObject obj in Attributes)
 			{
+#if NET_2_0
+				obj.Parent = this;
+#endif
+
 				if(obj is XmlSchemaAttribute)
 				{
 					XmlSchemaAttribute attr = (XmlSchemaAttribute) obj;

@@ -68,6 +68,11 @@ namespace System.Xml.Schema
 			if (this.IsComplied (schema.CompilationId))
 				return 0;
 
+#if NET_2_0
+				if (Content != null)
+					Content.Parent = this;
+#endif
+
 			if (isRedefinedComponent) {
 				if (Annotation != null)
 					Annotation.isRedefinedComponent = true;

@@ -88,6 +88,13 @@ namespace System.Xml.Schema
 			if (this.IsComplied (schema.CompilationId))
 				return 0;
 
+#if NET_2_0
+			if (Selector != null)
+				Selector.Parent = this;
+			foreach (XmlSchemaObject obj in Fields)
+				obj.Parent = this;
+#endif
+
 			if(Name == null)
 				error(h,"Required attribute name must be present");
 			else if(!XmlSchemaUtil.CheckNCName(this.name)) 

@@ -81,6 +81,11 @@ namespace System.Xml.Schema
 			if (this.IsComplied (schema.CompilationId))
 				return 0;
 
+#if NET_2_0
+			foreach (XmlSchemaObject obj in BaseTypes)
+				obj.Parent = this;
+#endif
+
 			errorCount = 0;
 
 			int count = BaseTypes.Count;

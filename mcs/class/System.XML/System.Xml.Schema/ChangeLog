@@ -1,5 +1,33 @@
 2004-12-04  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaObject.cs : added Parent.
+	* XmlSchema.cs,
+	  XmlSchemaElement.cs,
+	  XmlSchemaAttribute.cs,
+	  XmlSchemaAttributeGroup.cs,
+	  XmlSchemaGroup.cs,
+	  XmlSchemaComplexType.cs,
+	  XmlSchemaSequence.cs,
+	  XmlSchemaChoice.cs,
+	  XmlSchemaAll.cs,
+	  XmlSchemaIdentityConstraint.cs,
+	  XmlSchemaComplexContent.cs,
+	  XmlSchemaSimpleContent.cs,
+	  XmlSchemaSimpleContentExtension.cs,
+	  XmlSchemaSimpleContentRestriction.cs,
+	  XmlSchemaComplexContentExtension.cs,
+	  XmlSchemaComplexContentRestriction.cs,
+	  XmlSchemaSimpleType.cs,
+	  XmlSchemaSimpleTypeRestriction.cs,
+	  XmlSchemaSimpleTypeList.cs,
+	  XmlSchemaSimpleTypeUnion.cs : Fill Parent on Compilation.
+
+	* XmlSchemaException.cs,
+	  XmlSchemaInferenceException.cs,
+	  XmlSchemaValidationException.cs : added SecurityPermissionAttribute.
+
+2004-12-04  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaComplexType.cs : simplify Compile().
 
 2004-11-25  Atsushi Enomoto <atsushi@ximian.com>

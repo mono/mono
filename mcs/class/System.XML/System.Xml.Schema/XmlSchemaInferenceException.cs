@@ -32,6 +32,7 @@
 
 using System;
 using System.Runtime.Serialization;
+using System.Security.Permissions;
 using System.Xml;
 
 namespace System.Xml.Schema
@@ -67,6 +68,10 @@ namespace System.Xml.Schema
 		{
 		}
 
+#if NET_2_0
+		[SecurityPermission (SecurityAction.LinkDemand,
+			Flags=SecurityPermissionFlag.SerializationFormatter)]
+#endif
 		public override void GetObjectData (
 			SerializationInfo info, StreamingContext context)
 		{

@@ -82,6 +82,10 @@ namespace System.Xml.Schema
 
 			foreach(XmlSchemaObject obj in Items)
 			{
+#if NET_2_0
+				obj.Parent = this;
+#endif
+
 				XmlSchemaElement elem = obj as XmlSchemaElement;
 				if(elem != null)
 				{

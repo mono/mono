@@ -227,6 +227,17 @@ namespace System.Xml.Schema
 			if (this.IsComplied (schema.CompilationId))
 				return errorCount;
 
+#if NET_2_0
+			if (ContentModel != null)
+				ContentModel.Parent = this;
+			if (Particle != null)
+				Particle.Parent = this;
+			if (AnyAttribute != null)
+				AnyAttribute.Parent = this;
+			foreach (XmlSchemaObject obj in Attributes)
+				obj.Parent = this;
+#endif
+
 			ValidatedIsAbstract = isAbstract;
 
 			if (isRedefinedComponent) {

@@ -105,6 +105,13 @@ namespace System.Xml.Schema
 			if (this.IsComplied (schema.CompilationId))
 				return 0;
 
+#if NET_2_0
+			if (BaseType != null)
+				BaseType.Parent = this;
+			foreach (XmlSchemaObject obj in Facets)
+				obj.Parent = this;
+#endif
+
 			errorCount = 0;
 
 			if(this.baseType != null && !this.BaseTypeName.IsEmpty)

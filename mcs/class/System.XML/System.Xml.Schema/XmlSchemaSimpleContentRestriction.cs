@@ -105,6 +105,14 @@ namespace System.Xml.Schema
 			// If this is already compiled this time, simply skip.
 			if (this.IsComplied (schema.CompilationId))
 				return 0;
+#if NET_2_0
+			if (BaseType != null)
+				BaseType.Parent = this;
+			if (AnyAttribute != null)
+				AnyAttribute.Parent = this;
+			foreach (XmlSchemaObject obj in Attributes)
+				obj.Parent = this;
+#endif
 
 			if (this.isRedefinedComponent) {
 				if (Annotation != null)

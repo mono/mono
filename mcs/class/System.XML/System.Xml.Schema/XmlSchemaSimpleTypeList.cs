@@ -90,6 +90,11 @@ namespace System.Xml.Schema
 			if (this.IsComplied (schema.CompilationId))
 				return 0;
 
+#if NET_2_0
+			if (ItemType != null)
+				ItemType.Parent = this;
+#endif
+
 			errorCount = 0;
 
 			if(ItemType != null && !ItemTypeName.IsEmpty)

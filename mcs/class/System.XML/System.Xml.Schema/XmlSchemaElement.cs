@@ -354,6 +354,12 @@ namespace System.Xml.Schema
 				return 0;
 			InitPostCompileInformations ();
 			this.schema = schema;
+#if NET_2_0
+			if (SchemaType != null)
+				SchemaType.Parent = this;
+			foreach (XmlSchemaObject obj in Constraints)
+				obj.Parent = this;
+#endif
 
 			if(this.defaultValue != null && this.fixedValue != null)
 				error(h,"both default and fixed can't be present");

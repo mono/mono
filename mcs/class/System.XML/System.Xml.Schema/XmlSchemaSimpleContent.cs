@@ -66,6 +66,9 @@ namespace System.Xml.Schema
 			}
 			else
 			{
+#if NET_2_0
+				Content.Parent = this;
+#endif
 				if(Content is XmlSchemaSimpleContentRestriction)
 				{
 					XmlSchemaSimpleContentRestriction xscr = (XmlSchemaSimpleContentRestriction) Content;

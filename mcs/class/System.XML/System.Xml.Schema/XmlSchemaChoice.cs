@@ -68,6 +68,10 @@ namespace System.Xml.Schema
 
 			foreach(XmlSchemaObject obj in Items)
 			{
+#if NET_2_0
+				obj.Parent = this;
+#endif
+
 				if(obj is XmlSchemaElement ||
 					obj is XmlSchemaGroupRef ||
 					obj is XmlSchemaChoice ||

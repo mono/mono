@@ -342,14 +342,21 @@ namespace System.Xml.Schema
 			// Compile the content of this schema
 
 			compilationItems = new XmlSchemaObjectCollection ();
-			for (int i = 0; i < Items.Count; i++)
+			for (int i = 0; i < Items.Count; i++) {
+#if NET_2_0
+				Items [i].Parent = this;
+#endif
 				compilationItems.Add (Items [i]);
+			}
 			if (this == rootSchema)
 				handledUris = new Hashtable ();
 
 			// First, we run into inclusion schemas to collect 
 			// compilation target items into compiledItems.
 			for (int i = 0; i < Includes.Count; i++) {
+#if NET_2_0
+				Includes [i].Parent = this;
+#endif
 				XmlSchemaExternal ext = Includes [i] as XmlSchemaExternal;
 				if (ext == null) {
 					error (handler, String.Format ("Object of Type {0} is not valid in Includes Property of XmlSchema", Includes [i].GetType().Name));
