@@ -1,5 +1,10 @@
 2004-05-06  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mono_runtime_install_handlers): Use SA_ONSTACK since it is
+	more portable.
+
+	* mini.c (mono_method_to_ir): Handle opcode emulation for *_OVF opcodes.
+
 	* mini-x86.c (mono_arch_local_regalloc): Free new_dest register when it
 	is no longer used.
 
