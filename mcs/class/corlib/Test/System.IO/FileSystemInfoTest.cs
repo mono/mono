@@ -289,20 +289,20 @@ namespace MonoTests.System.IO
 				AssertEquals ("test#03", 1, time.Day);
 				AssertEquals ("test#04", 1, time.Hour);
 				
-				time = TimeZone.CurrentTimeZone.ToLocalTime (info.LastWriteTimeUtc);
+				time = info.LastWriteTimeUtc.ToLocalTime ();
 				AssertEquals ("test#05", 2000, time.Year);
 				AssertEquals ("test#06", 1, time.Month);
 				AssertEquals ("test#07", 1, time.Day);
 				AssertEquals ("test#08", 1, time.Hour);
-				
+
 				info.LastWriteTimeUtc = new DateTime (2000, 1, 1, 1, 1, 1);
-				time = TimeZone.CurrentTimeZone.ToUniversalTime (info.LastWriteTime);
+				time = info.LastWriteTimeUtc;
 				AssertEquals ("test#09", 2000, time.Year);
 				AssertEquals ("test#10", 1, time.Month);
 				AssertEquals ("test#11", 1, time.Day);
 				AssertEquals ("test#12", 1, time.Hour);
 
-				time = info.LastWriteTimeUtc;
+				time = info.LastWriteTime.ToUniversalTime ();
 				AssertEquals ("test#13", 2000, time.Year);
 				AssertEquals ("test#14", 1, time.Month);
 				AssertEquals ("test#15", 1, time.Day);
