@@ -1,3 +1,16 @@
+2002-08-14  Daniel Morgan <danmorg@sc.rr.com>
+
+	* SqlSharpCli.cs: modified
+	  - implemented the following commands:
+	    \f FILENAME to read a batch of Sql# commands/queries from file.");
+		\o FILENAME to write out the result of Sql# commands executed to file.");
+		\load FILENAME to load from file SQL commands into SQL buffer.");
+		\save FILENAME to save SQL commands from SQL buffer to file.
+		\print - show what's in the SQL buffer now.
+	  - can save output of result to an html file or text
+	  - entering command "\provider mysql" will dynamically load mysql provider
+	    from its assembly Mono.Data.MySql.dll
+
 2002-08-13  Daniel Morgan <danmorg@sc.rr.com>
 
 	* Test/SqlSharpCli.cs: modified

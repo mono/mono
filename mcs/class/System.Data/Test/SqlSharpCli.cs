@@ -31,25 +31,32 @@
 // (C)Copyright 2002 Daniel Morgan
 //
 
-//using Mono.Data.MySql;
-using System.Data.OleDb;
 using System;
 using System.Collections;
 using System.Data;
 using System.Data.Common;
+using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.IO;
+using System.Reflection;
 using System.Runtime.Remoting;
 using System.Text;
-using System.Reflection;
 
 namespace Mono.Data.SqlSharp {
-	
+
+	public enum FileFormat {
+		Html,
+		Xml,
+		CommaSeparatedValues,
+		TabSeparated,
+		Normal
+	}
+
 	// SQL Sharp - Command Line Interface
 	public class SqlSharpCli {
 	
 		private IDbConnection conn = null;
-
+		
 		private string provider = "POSTGRESQL"; // name of internal provider
 		// {OleDb,SqlClient,MySql,Odbc,Oracle,PostgreSql} however, it
 		// can be set to LOADEXTPROVIDER to load an external provider
@@ -60,14 +67,20 @@ namespace Mono.Data.SqlSharp {
 		// interface.  for example: "Mono.Data.MySql.MySqlConnection"
 
 		private StringBuilder build = null; // SQL string to build
+		private string buff = ""; // SQL string buffer
 
 		private string connectionString = 
 			"host=localhost;dbname=test;user=postgres";
 
 		private string inputFilename = "";
 		private string outputFilename = "";
+		private StreamReader inputFilestream = null;
+		private StreamWriter outputFilestream = null;
+
+		private FileFormat outputFileFormat = FileFormat.Html;
 
 		private bool silent = false;
+		private bool showHeader = true;
 
 		private Hashtable internalVariables = new Hashtable();
 		
@@ -92,9 +105,9 @@ namespace Mono.Data.SqlSharp {
 			line = new StringBuilder();
 			hdrUnderline = new StringBuilder();
 
-			Console.WriteLine("Fields in Query Result: " + 
-						reader.FieldCount);
-			Console.WriteLine();
+			OutputLine("Fields in Query Result: " + 
+				reader.FieldCount);
+			OutputLine("");
 			
 			for(c = 0; c < schemaTable.Rows.Count; c++) {
 							
@@ -126,11 +139,11 @@ namespace Mono.Data.SqlSharp {
 				line.Append(" ");
 				hdrUnderline.Append(" ");
 			}
-			Console.WriteLine(line.ToString());
+			OutputHeader(line.ToString());
 			line = null;
 			
-			Console.WriteLine(hdrUnderline);
-			Console.WriteLine();
+			OutputHeader(hdrUnderline.ToString());
+			OutputHeader("");
 			hdrUnderline = null;
 			
 			// DEBUG - need to know the columnSize
@@ -200,12 +213,68 @@ namespace Mono.Data.SqlSharp {
 					}
 						
 				}
-				Console.WriteLine(line.ToString());
+				OutputData(line.ToString());
 				line = null;
 			}
-			Console.WriteLine("\nRows retrieved: " + rows);
+			OutputLine("\nRows retrieved: " + rows.ToString());
 		}
+		
+		public void OutputDataToHtmlFile(IDataReader rdr, DataTable dt) {
+                        		
+			StringBuilder strHtml = new StringBuilder();
 
+			strHtml.Append("<html> \n <head> <title>");
+			strHtml.Append("Results");
+			strHtml.Append("</title> </head>");
+			strHtml.Append("<body>");
+			strHtml.Append("<h1> Results </h1>");
+			strHtml.Append("<table border=1>");
+		
+			outputFilestream.WriteLine(strHtml.ToString());
+
+			strHtml = null;
+			strHtml = new StringBuilder();
+
+			strHtml.Append("<tr>");
+			foreach (DataRow schemaRow in dt.Rows) {
+				strHtml.Append("<td> <b>");
+				object dataObj = schemaRow["ColumnName"];
+				string sColumnName = dataObj.ToString();
+				strHtml.Append(sColumnName);
+				strHtml.Append("</b> </td>");
+			}
+			strHtml.Append("</tr>");
+			outputFilestream.WriteLine(strHtml.ToString());
+			strHtml = null;
+
+			int col = 0;
+			string dataValue = "";
+			
+			while(rdr.Read()) {
+				strHtml = new StringBuilder();
+
+				strHtml.Append("<tr>");
+				for(col = 0; col < rdr.FieldCount; col++) {
+						
+					// column data
+					if(rdr.IsDBNull(col) == true)
+						dataValue = "NULL";
+					else {
+						object obj = rdr.GetValue(col);
+						dataValue = obj.ToString();
+					}
+					strHtml.Append("<td>");
+					strHtml.Append(dataValue);
+					strHtml.Append("</td>");
+				}
+				strHtml.Append("\t\t</tr>");
+				outputFilestream.WriteLine(strHtml.ToString());
+				strHtml = null;
+			}
+			outputFilestream.WriteLine(" </table> </body> \n </html>");
+			strHtml = null;
+		}
+		
 		// DisplayData - used to display any Result Sets
 		//                 from execution of SQL SELECT Query or Queries
 		//                 called by DisplayData. 
@@ -217,14 +286,14 @@ namespace Mono.Data.SqlSharp {
 			DataTable schemaTable = null;
 			int ResultSet = 0;
 
-			Console.WriteLine("Display any result sets...");
+			OutputLine("Display any result sets...");
 
 			do {
 				// by Default, SqlDataReader has the 
 				// first Result set if any
 
 				ResultSet++;
-				Console.WriteLine("Display the result set " + ResultSet);
+				OutputLine("Display the result set " + ResultSet);
 				
 				schemaTable = reader.GetSchemaTable();
 				
@@ -241,11 +310,30 @@ namespace Mono.Data.SqlSharp {
 				else {
 					// SQL Query (SELECT)
 					// RecordsAffected -1 and DataTable has a reference
-					DisplayResult(reader, schemaTable);
+					OutputQueryResult(reader, schemaTable);
 				}
 
-			// get next result set (if anymore is left)
+				// get next result set (if anymore is left)
 			} while(reader.NextResult());
+		}
+
+		public void OutputQueryResult(IDataReader dreader, DataTable dtable) {
+			if(outputFilestream == null) {
+				DisplayResult(dreader, dtable);
+			}
+			else {
+				switch(outputFileFormat) {
+				case FileFormat.Normal:
+					DisplayResult(dreader, dtable);
+					break;
+				case FileFormat.Html:
+					OutputDataToHtmlFile(dreader, dtable);
+					break;
+				default:
+					Console.WriteLine("Error: Output data file format not supported.");
+					break;
+				}
+			}
 		}
 
 		// ExecuteSql - Execute the SQL Command(s) and/or Query(ies)
@@ -372,19 +460,24 @@ namespace Mono.Data.SqlSharp {
 			Console.WriteLine(@"       \Execute to execute SQL command(s)/queries(s)");
 			Console.WriteLine(@"       \exenonquery execute an SQL non query (not a SELECT).");
 			Console.WriteLine(@"       \exescalar execute SQL to get a single row/single column result.");
-			Console.WriteLine(@"       \f FILENAME to read a batch of commands from");
-			Console.WriteLine(@"       \o FILENAME to read a batch of commands from");
+			Console.WriteLine(@"       \f FILENAME to read a batch of Sql# commands/queries from.");
+			Console.WriteLine(@"       \o FILENAME to write out the result of commands executed.");
+			Console.WriteLine(@"       \load FILENAME to load from file SQL commands into SQL buffer.");
+			Console.WriteLine(@"       \save FILENAME to save SQL commands from SQL buffer to file.");
 			Console.WriteLine(@"       \h to show this help.");
-			Console.WriteLine(@"       \defaults to show default variables.");
+			Console.WriteLine(@"       \defaults to show default variables, such as,");
+			Console.WriteLine(@"            Provider and ConnectionString.");
 			Console.WriteLine(@"       \s {TRUE, FALSE} to silent messages.");
 			Console.WriteLine(@"       \r reset (clear) the query buffer.");
 			Console.WriteLine(@"       \set NAME VALUE - set an internal variable.");
 			Console.WriteLine(@"       \unset NAME - remove an internal variable.");
 			Console.WriteLine(@"       \variable NAME - display the value of an internal variable.");
-			Console.WriteLine(@"       \loadprovider CLASS - load the provider" + 
-				"- use the complete name of its connection class.");
-			Console.WriteLine(@"       \loadextprovider ASSEMBLY CLASS - load the provider" + 
-				"- use the complete name of its assembly and its xxxConnection class.");
+			Console.WriteLine(@"       \loadprovider CLASS - load the provider");
+			Console.WriteLine(@"            use the complete name of its connection class.");
+			Console.WriteLine(@"       \loadextprovider ASSEMBLY CLASS - load the provider"); 
+			Console.WriteLine(@"            use the complete name of its assembly and");
+			Console.WriteLine(@"            its Connection class.");
+			Console.WriteLine(@"       \print - show what's in the SQL buffer now.");
 			Console.WriteLine();
 		}
 
@@ -392,6 +485,12 @@ namespace Mono.Data.SqlSharp {
 		public void ShowDefaults() {
 			Console.WriteLine();
 			Console.WriteLine("The default Provider is " + provider);
+			if(provider.Equals("LOADEXTPROVIDER")) {
+				Console.WriteLine("          Assembly: " + 
+					providerAssembly);
+				Console.WriteLine("  Connection Class: " + 
+					providerConnectionClass);
+			}
 			Console.WriteLine();
 			Console.WriteLine("The default ConnectionString is: ");
 			Console.WriteLine("    \"" + connectionString + "\"");
@@ -403,22 +502,26 @@ namespace Mono.Data.SqlSharp {
 			
 			Console.WriteLine("Attempt to Open...");
 
-			switch(provider) {
-			case "OLEDB":
-				conn = new OleDbConnection();
-				break;
-			//case "MYSQL":
-			//	conn = new MySqlConnection();
-			//	break;
-			case "POSTGRESQL":
-				conn = new SqlConnection();
-				break;
-			case "LOADEXTPROVIDER":
-				LoadExternalProvider();
-				break;
-			default:
-				Console.WriteLine("Error: Bad argument or provider not supported.");
-				break;
+			try {
+				switch(provider) {
+				case "OLEDB":
+					conn = new OleDbConnection();
+					break;
+				case "POSTGRESQL":
+					conn = new SqlConnection();
+					break;
+				case "LOADEXTPROVIDER":
+					if(LoadExternalProvider() == false)
+						return;
+					break;
+				default:
+					Console.WriteLine("Error: Bad argument or provider not supported.");
+					return;
+				}
+			}
+			catch(Exception e) {
+				Console.WriteLine("Error: Unable to create Connection object. " + e);
+				return;
 			}
 
 			conn.ConnectionString = connectionString;
@@ -426,7 +529,7 @@ namespace Mono.Data.SqlSharp {
 			try {
 				conn.Open();
 				if(conn.State == ConnectionState.Open)
-					Console.WriteLine("Open was successfully.");
+					Console.WriteLine("Open was successfull.");
 			}
 			catch(Exception e) {
 				Console.WriteLine("Exception Caught Opening. " + e);
@@ -437,16 +540,13 @@ namespace Mono.Data.SqlSharp {
 		// CloseDataSource - close the connection to the data source
 		public void CloseDataSource() {
 			
-			if(conn != null) 
-			{
+			if(conn != null) {
 				Console.WriteLine("Attempt to Close...");
-				try 
-				{
+				try {
 					conn.Close();
 					Console.WriteLine("Close was successfull.");
 				}
-				catch(Exception e) 
-				{
+				catch(Exception e) {
 					Console.WriteLine("Exeception Caught Closing. " + e);
 				}
 				conn = null;
@@ -461,15 +561,22 @@ namespace Mono.Data.SqlSharp {
 				switch(parm) {
 				case "ORACLE":
 				case "ODBC":
-				case "GDA":
 					Console.WriteLine("Error: Provider not currently supported.");
 					break;
+				case "MYSQL":
+					string[] extp = new string[3] {
+									      "\\loadextprovider",
+									      "Mono.Data.MySql",
+									      "Mono.Data.MySql.MySqlConnection"};
+					SetupExternalProvider(extp);
+					break;		
 				case "SQLCLIENT":
 					provider = "POSTGRESQL";
 					Console.WriteLine("Warning: Currently, the SqlClient provider is the PostgreSQL provider.");
 					break;
-				
-				//case "MYSQL":
+				case "GDA":
+					provider = "OLEDB";
+					break;
 				case "OLEDB":
 				case "POSTGRESQL":
 					provider = parm;
@@ -478,7 +585,13 @@ namespace Mono.Data.SqlSharp {
 					Console.WriteLine("Error: " + "Bad argument or Provider not supported.");
 					break;
 				}
-				Console.WriteLine("Provider: " + provider);
+				Console.WriteLine("The default Provider is " + provider);
+				if(provider.Equals("LOADEXTPROVIDER")) {
+					Console.WriteLine("          Assembly: " + 
+						providerAssembly);
+					Console.WriteLine("  Connection Class: " + 
+						providerConnectionClass);
+				}
 			}
 			else
 				Console.WriteLine("Error: provider only has one parameter.");
@@ -493,29 +606,76 @@ namespace Mono.Data.SqlSharp {
 				connectionString = "";
 		}
 
-		public void SetupInputFile(string[] parms) {
-			if(parms.Length >= 2) {
+		public void ReadCommandsFromFile(StreamReader inCmds) {
+		}
+
+		public void SetupOutputResultsFile(string[] parms) {
+			if(parms.Length != 2) {
 				Console.WriteLine("Error: wrong number of parameters");
 				return;
 			}
-			inputFilename = parms[1];
-			// TODO:
-			// open input file
-			// while each line, do the SqlSharpCli command or SQL
-			// close input file
+			try {
+				outputFilestream = new StreamWriter(parms[1]);
+			}
+			catch(Exception e) {
+				Console.WriteLine("Error: Unable to setup output results file. " + e);
+				return;
+			}
 		}
 
-		public void SetupOutputFile(string[] parms) {
-			if(parms.Length == 1) {
-				outputFilename = "";
-				// TODO: close the output file
-			}
-			else if(parms.Length > 2) {
+		public void SetupInputCommandsFile(string[] parms) {
+			if(parms.Length != 2) {
 				Console.WriteLine("Error: wrong number of parameters");
+				return;
 			}
-			else {
-				outputFilename = parms[1];
-				// TODO: open the output file
+			try {
+				inputFilestream = new StreamReader(parms[1]);
+			}
+			catch(Exception e) {
+				Console.WriteLine("Error: Unable to setup input commmands file. " + e);
+				return;
+			}	
+		}
+
+		public void LoadBufferFromFile(string[] parms) {
+			if(parms.Length != 2) {
+				Console.WriteLine("Error: wrong number of parameters");
+				return;
+			}
+			string inFilename = parms[1];
+			try {
+				StreamReader sr = new StreamReader( inFilename);
+				StringBuilder buffer = new StringBuilder();
+				string NextLine;
+			
+				while((NextLine = sr.ReadLine()) != null) {
+					buffer.Append(NextLine);
+					buffer.Append("\n");
+				}
+				sr.Close();
+				buff = buffer.ToString();
+				build = null;
+				build = new StringBuilder();
+				build.Append(buff);
+			}
+			catch(Exception e) {
+				Console.WriteLine("Error: Unable to read file into SQL Buffer. " + e);
+			}
+		}
+
+		public void SaveBufferToFile(string[] parms) {
+			if(parms.Length != 2) {
+				Console.WriteLine("Error: wrong number of parameters");
+				return;
+			}
+			string outFilename = parms[1];
+			try {
+				StreamWriter sw = new StreamWriter(outFilename);
+				sw.WriteLine(buff);
+				sw.Close();
+			}
+			catch(Exception e) {
+				Console.WriteLine("Error: Could not save SQL Buffer to file." + e);
 			}
 		}
 
@@ -533,10 +693,8 @@ namespace Mono.Data.SqlSharp {
 				Console.WriteLine("Error: invalid parameter.");
 		}
 
-		public void SetInternalVariable(string[] parms) 
-		{
-			if(parms.Length < 2)
-			{
+		public void SetInternalVariable(string[] parms) {
+			if(parms.Length < 2) {
 				Console.WriteLine("Error: wrong number of parameters.");
 				return;
 			}
@@ -549,31 +707,25 @@ namespace Mono.Data.SqlSharp {
 			internalVariables[parm] = ps.ToString();
 		}
 
-		public void UnSetInternalVariable(string[] parms)
-		{
-			if(parms.Length != 2)
-			{
+		public void UnSetInternalVariable(string[] parms) {
+			if(parms.Length != 2) {
 				Console.WriteLine("Error: wrong number of parameters.");
 				return;
 			}
 			string parm = parms[1].ToUpper();
 
-			try 
-			{
+			try {
 				internalVariables.Remove(parm);
 			}
-			catch(Exception e)
-			{
+			catch(Exception e) {
 				Console.WriteLine("Error: internal variable does not exist.");
 			}
 		}
 
-		public void ShowInternalVariable(string[] parms)
-		{
+		public void ShowInternalVariable(string[] parms) {
 			string internalVariableValue = "";
 
-			if(parms.Length != 2)
-			{
+			if(parms.Length != 2) {
 				Console.WriteLine("Error: wrong number of parameters.");
 				return;
 			}
@@ -585,13 +737,11 @@ namespace Mono.Data.SqlSharp {
 					parm + "  Value: " + internalVariableValue);
 		}
 
-		public bool GetInternalVariable(string name, out string sValue)
-		{
+		public bool GetInternalVariable(string name, out string sValue) {
 			sValue = "";
 			bool valueReturned = false;
 
-			try 
-			{
+			try {
 				if(internalVariables.ContainsKey(name) == true) {
 					sValue = (string) internalVariables[name];
 					valueReturned = true;
@@ -623,8 +773,10 @@ namespace Mono.Data.SqlSharp {
 			providerConnectionClass = parms[2];
 		}
 
-		public void LoadExternalProvider() {
+		public bool LoadExternalProvider() {
 			
+			bool success = false;
+
 			// For example: for the MySQL provider in Mono.Data.MySql
 			//   \LoadExtProvider Mono.Data.MySql Mono.Data.MySql.MySqlConnection
 			//   \ConnectionString dbname=test
@@ -634,39 +786,52 @@ namespace Mono.Data.SqlSharp {
 			//   \close
 			//   \quit
 
-			Console.WriteLine("Load the assembly of the provider...");
-			Console.Out.Flush();
-			Assembly ps = Assembly.Load(providerAssembly);
+			try {
+				Console.WriteLine("Loading external provider...");
+				Console.Out.Flush();
 
-			Console.WriteLine("Get Connection type of provider...");
-			Console.Out.Flush();
-			Type typ = ps.GetType(providerConnectionClass);
-
-			Console.WriteLine("Create new instance of provider Connection type...");
-			Console.Out.Flush();
-			conn = (IDbConnection) Activator.CreateInstance(typ);
-
-			Console.WriteLine("Connection object created.");
-			Console.Out.Flush();
+				Assembly ps = Assembly.Load(providerAssembly);
+				Type typ = ps.GetType(providerConnectionClass);
+				conn = (IDbConnection) Activator.CreateInstance(typ);
+				success = true;
+				
+				Console.WriteLine("External provider loaded.");
+				Console.Out.Flush();
+			}
+			catch(FileNotFoundException f) {
+				Console.WriteLine("Error: unable to load the assembly of the provider: " + 
+					providerAssembly);
+			}
+			return success;
 		}
 
+		// used for outputting message, but if silent is set,
+		// don't display
 		public void OutputLine(string line) {
 			if(silent == false)
-				Console.WriteLine(line);
+				OutputData(line);
 		}
 
-		public void ExecuteBatch() {
-			// TODO:
-			Console.WriteLine("Error: Execution of Batch Commands not implemented yet");
+		// used for outputting the header columns of a result
+		public void OutputHeader(string line) {
+			if(showHeader == true)
+				OutputData(line);
+		}
+
+		// OutputData() - used for outputting data
+		//  if an output filename is set, then the data will
+		//  go to a file; otherwise, it will go to the Console.
+		public void OutputData(string line) {
+			if(outputFilestream == null)
+				Console.WriteLine(line);
+			else
+				outputFilestream.WriteLine(line);
 		}
 
 		// HandleCommand - handle SqlSharpCli commands entered
-		public void HandleCommand(string entry) 
-		{
-			
+		public void HandleCommand(string entry) {		
 			string[] parms;
 			
-			// maybe a SQL# Command was found
 			parms = entry.Split(new char[1] {' '});
 			string userCmd = parms[0].ToUpper();
 
@@ -704,7 +869,8 @@ namespace Mono.Data.SqlSharp {
 					if(build == null)
 						Console.WriteLine("Error: SQL Buffer is empty.");
 					else {
-						ExecuteSql(build.ToString());
+						buff = build.ToString();
+						ExecuteSql(buff);
 					}
 					build = null;
 				}
@@ -718,7 +884,8 @@ namespace Mono.Data.SqlSharp {
 					if(build == null)
 						Console.WriteLine("Error: SQL Buffer is empty.");
 					else {
-						ExecuteSqlNonQuery(build.ToString());
+						buff = build.ToString();
+						ExecuteSqlNonQuery(buff);
 					}
 					build = null;
 				}
@@ -732,19 +899,25 @@ namespace Mono.Data.SqlSharp {
 					if(build == null)
 						Console.WriteLine("Error: SQL Buffer is empty.");
 					else {
-						ExecuteSqlScalar(build.ToString());
+						buff = build.ToString();
+						ExecuteSqlScalar(buff);
 					}
 					build = null;
 				}
 				break;
 			case "\\F":
-				// Batch Input File: \f FILENAME
-				SetupInputFile(parms);
-				ExecuteBatch();
+				SetupInputCommandsFile(parms);
 				break;
 			case "\\O":
-				// Batch Output File: \o FILENAME
-				SetupOutputFile(parms);
+				SetupOutputResultsFile(parms);
+				break;
+			case "\\LOAD":
+				// Load file into SQL buffer: \load FILENAME
+				LoadBufferFromFile(parms);
+				break;
+			case "\\SAVE":
+				// Save SQL buffer to file: \save FILENAME
+				SaveBufferToFile(parms);
 				break;
 			case "\\H":
 			case "\\HELP":
@@ -776,6 +949,11 @@ namespace Mono.Data.SqlSharp {
 			case "\\VARIABLE":
 				ShowInternalVariable(parms);
 				break;
+			case "\\PRINT":
+				if(build == null)
+					Console.WriteLine("SQL Buffer is empty.");
+				else
+					Console.WriteLine("SQL Bufer\n" + buff);
 			default:
 				// Error
 				Console.WriteLine("Error: Unknown user command.");
@@ -796,14 +974,16 @@ namespace Mono.Data.SqlSharp {
 							Console.WriteLine("Error: Missing FILENAME for -f switch");
 						else {
 							inputFilename = args[a + 1];
-							ExecuteBatch();
+							inputFilestream = new StreamReader(inputFilename);
 						}
 						break;
 					case "O":
 						if(a + 1 >= args.Length)
 							Console.WriteLine("Error: Missing FILENAME for -o switch");
-						else
+						else {
 							outputFilename = args[a + 1];
+							outputFilestream = new StreamWriter(outputFilename);
+						}
 						break;
 					default:
 						Console.WriteLine("Error: Unknow switch: " + args[a]);
@@ -811,6 +991,29 @@ namespace Mono.Data.SqlSharp {
 					}
 				}
 			}
+		}
+		
+		public string ReadSqlSharpCommand() {
+			string entry = "";
+
+			if(inputFilestream == null) {
+				Console.Write("\nSQL# ");
+				entry = Console.ReadLine();		
+			}
+			else {
+				try {
+					entry = inputFilestream.ReadLine();
+					if(entry == null) {
+						Console.WriteLine("Executing SQL# Commands from file done.");
+					}
+				}
+				catch(Exception e) {
+					Console.WriteLine("Error: Reading command from file.");
+				}
+				Console.Write("\nSQL# ");
+				entry = Console.ReadLine();
+			}
+			return entry;
 		}
 		
 		public void Run(string[] args) {
@@ -831,10 +1034,7 @@ namespace Mono.Data.SqlSharp {
 			while(entry.ToUpper().Equals("\\Q") == false &&
 				entry.ToUpper().Equals("\\QUIT") == false) {
 				
-				Console.Write("\nSQL# ");
-				entry = Console.ReadLine();
-
-				Console.WriteLine("Entered: " + entry);
+				entry = ReadSqlSharpCommand();			
 				
 				if(entry.Substring(0,1).Equals("\\")) {
 					HandleCommand(entry);
@@ -851,7 +1051,9 @@ namespace Mono.Data.SqlSharp {
 							build = new StringBuilder();
 						}
 						build.Append(entry);
-						ExecuteSql(build.ToString());
+						build.Append("\n");
+						buff = build.ToString();
+						ExecuteSql(buff);
 						build = null;
 					}
 				}
@@ -861,15 +1063,17 @@ namespace Mono.Data.SqlSharp {
 					if(build == null) {
 						build = new StringBuilder();
 					}
-					build.Append(entry + " ");
+					build.Append(entry + "\n");
+					buff = build.ToString();
 				}
 			}			
 			CloseDataSource();
+			if(outputFilestream != null)
+				outputFilestream.Close();
 		}
 	}
 
 	public class SqlSharpDriver {
-
 		public static void Main(string[] args) {
 			SqlSharpCli sqlCommandLineEngine = new SqlSharpCli();
 			sqlCommandLineEngine.Run(args);
