@@ -1,7 +1,10 @@
 AssemblyBuilderAccess.cs
 FlowControl.cs
+IlGenerator.cs
+Label.cs
 OpCode.cs
 OpCodeType.cs
 OpCodes.cs
 OperandType.cs
+PEFileKinds.cs
 StackBehaviour.cs
