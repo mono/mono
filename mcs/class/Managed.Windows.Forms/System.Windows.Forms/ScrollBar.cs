@@ -26,9 +26,14 @@
 //	Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.24 $
+// $Revision: 1.25 $
 // $Modtime: $
 // $Log: ScrollBar.cs,v $
+// Revision 1.25  2004/11/04 12:03:49  ravindra
+// 	- We need to recalculate the Thumb area when LargeChange/maximum/minimum values are changed.
+// 	- We set the 'pos' in UpdatePos() method to minimum, if it's less than minimum. This is required to handle the case if large_change is more than max, and use LargeChange property instead of large_change variable.
+// 	- We return max+1 when large_change is more than max, like MS does.
+//
 // Revision 1.24  2004/10/17 22:11:49  jordi
 // disabled scrollbar should not honor any keyboard or mouse event
 //
@@ -332,13 +337,22 @@ namespace System.Windows.Forms
 		}
 
 		public int LargeChange {
-			get { return large_change; }
+			get {
+				if (large_change > maximum)
+					return (maximum + 1);
+				else
+					return large_change;
+			}
 			set {
 				if (value < 0)
 					throw new Exception( string.Format("Value '{0}' must be greater than or equal to 0.", value));
 
 				if (large_change != value) {
 					large_change = value;
+
+					// thumb area depends on large change value,
+					// so we need to recalculate it.
+					CalcThumbArea ();
 					Refresh ();
 				}
 			}
@@ -352,6 +366,9 @@ namespace System.Windows.Forms
 				if (maximum < minimum)
 					minimum = maximum;
 
+				// thumb area depends on maximum value,
+				// so we need to recalculate it.
+				CalcThumbArea ();
 				Refresh ();
 			}
 		}
@@ -364,6 +381,9 @@ namespace System.Windows.Forms
 				if (minimum > maximum)
 					maximum = minimum;
 
+				// thumb area depends on minimum value,
+				// so we need to recalculate it.
+				CalcThumbArea ();
 				Refresh ();
 			}
 		}
@@ -506,7 +526,7 @@ namespace System.Windows.Forms
 				if (Height < scrollbutton_height * 2)
 					thumb_size = 0;
 				else {
-					double per =  ((double) large_change / (double)((1 + maximum - minimum)));
+					double per =  ((double) this.LargeChange / (double)((1 + maximum - minimum)));
 					thumb_size = 1 + (int) (thumb_area.Height * per);
 
 					if (thumb_size < thumb_min_size)
@@ -514,7 +534,7 @@ namespace System.Windows.Forms
 				}
 
 
-				pixel_per_pos = ((float)(thumb_area.Height - thumb_size) / (float) ((maximum - minimum - large_change) + 1));
+				pixel_per_pos = ((float)(thumb_area.Height - thumb_size) / (float) ((maximum - minimum - this.LargeChange) + 1));
 
 			} else	{
 
@@ -526,13 +546,13 @@ namespace System.Windows.Forms
 				if (Width < scrollbutton_width * 2)
 					thumb_size = 0;
 				else {
-					double per =  ((double) large_change / (double)((1 + maximum - minimum)));
+					double per =  ((double) this.LargeChange / (double)((1 + maximum - minimum)));
 					thumb_size = 1 + (int) (thumb_area.Width * per);
 
 					if (thumb_size < thumb_min_size)
 						thumb_size = thumb_min_size;
 				}
-				pixel_per_pos = ((float)(thumb_area.Width - thumb_size) / (float) ((maximum - minimum - large_change) + 1));
+				pixel_per_pos = ((float)(thumb_area.Width - thumb_size) / (float) ((maximum - minimum - this.LargeChange) + 1));
 			}
 		}
 		
@@ -961,6 +981,10 @@ namespace System.Windows.Forms
     					pos = maximum + 1 - large_change;
     					else
     						pos = newPos;
+
+			// pos can't be less than minimum
+			if (pos < minimum)
+				pos = minimum;
 
 			if (update_thumbpos) {
 				if (vert)
