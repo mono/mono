@@ -1,3 +1,7 @@
+2004-04-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* mini.c: removed a few unused vars and extra whitespace.
+
 2004-04-05 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* inssel.brg (MONO_EMIT_BOUNDS_CHECK): a new macro to emit bounds
