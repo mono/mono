@@ -115,12 +115,13 @@ namespace System.Configuration
 							    string nameAtt,
 							    string valueAtt)
 		{
-			if (region.Attributes.Count != 0)
+			if (region.Attributes != null && region.Attributes.Count != 0)
 				throw new ConfigurationException ("Unknown attribute", region);
 
 			XmlNode keyNode;
 			XmlNode valueNode;
-			foreach (XmlNode node in region.ChildNodes) {
+			XmlNodeList childs = region.ChildNodes;
+			foreach (XmlNode node in childs) {
 				XmlNodeType ntype = node.NodeType;
 				if (ntype == XmlNodeType.Whitespace || ntype == XmlNodeType.Comment)
 					continue;
@@ -130,12 +131,15 @@ namespace System.Configuration
 					
 				string nodeName = node.Name;
 				if (nodeName == "clear") {
-					if (node.Attributes.Count != 0)
+					if (node.Attributes != null && node.Attributes.Count != 0)
 						throw new ConfigurationException ("Unknown attribute", node);
 
 					result.Clear ();
 				} else if (nodeName == "remove") {
-					keyNode = node.Attributes.RemoveNamedItem (nameAtt);
+					keyNode = null;
+					if (node.Attributes != null)
+						keyNode = node.Attributes.RemoveNamedItem (nameAtt);
+
 					if (keyNode == null)
 						throw new ConfigurationException ("Required attribute not found",
 										  node);
@@ -148,7 +152,10 @@ namespace System.Configuration
 					
 					result.Remove (keyNode.Value);
 				} else if (nodeName == "add") {
-					keyNode = node.Attributes.RemoveNamedItem (nameAtt);
+					keyNode = null;
+					if (node.Attributes != null)
+						keyNode = node.Attributes.RemoveNamedItem (nameAtt);
+
 					if (keyNode == null)
 						throw new ConfigurationException ("Required attribute not found",
 										  node);

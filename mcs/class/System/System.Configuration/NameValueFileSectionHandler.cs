@@ -18,17 +18,17 @@ namespace System.Configuration
 	{
 		public object Create (object parent, object configContext, XmlNode section)
 		{
-			if (section.Attributes == null)
-				return null;
-			
-			XmlNode file = section.Attributes.RemoveNamedItem ("file");
+			XmlNode file = null;
+			if (section.Attributes != null)
+				file = section.Attributes.RemoveNamedItem ("file");
+
 			NameValueCollection pairs = ConfigHelper.GetNameValueCollection (
 									parent as NameValueCollection,
 									section,
 									"key",
 									"value");
 
-			if (pairs == null && file.Value == String.Empty) {
+			if (file != null && file.Value == String.Empty) {
 				if (!(file is IConfigXmlNode))
 					return null;
 

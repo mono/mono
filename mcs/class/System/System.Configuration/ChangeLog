@@ -1,3 +1,8 @@
+2002-10-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ConfigHelper.cs:
+	* NameValueFileSectionHandler.cs: check that Attributes is not null.
+
 2002-10-09  Miguel de Icaza  <miguel@ximian.com>
 
 	* NameValueFileSectionHandler.cs: For now if a section is not
