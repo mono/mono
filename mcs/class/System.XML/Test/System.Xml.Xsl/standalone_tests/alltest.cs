@@ -10,7 +10,6 @@ namespace simpleTests
 	class TestRunner
 	{
 		static ArrayList excludedTests = new ArrayList (new string [] {
-"Keys_PerfRepro3",
 });
 
 		static void Process (string id, string path, string data,
