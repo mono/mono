@@ -126,11 +126,12 @@ namespace System
 			return CreateDelegate_internal (type, null, method);
 		}
 
-		//
-		// This method is internal because this exact signature does 
-		// not exist on the framework.
-		//
-		internal static Delegate CreateDelegate (Type type, object target, MethodInfo method)
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		static Delegate CreateDelegate (Type type, object target, MethodInfo method)
 		{
 			if (type == null)
 				throw new ArgumentNullException ("type");
