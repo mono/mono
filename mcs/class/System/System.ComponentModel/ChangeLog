@@ -1,3 +1,8 @@
+2002-11-19  Alejandro Sánchez Acosta <raciel@es.gnu.org>
+
+	* EditorAttribute: implemented.
+	* DesignerAttribute: implemented.
+
 2002-11-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Win32Exception.cs: added 10107 -> WASSYSCALLFAILURE.
