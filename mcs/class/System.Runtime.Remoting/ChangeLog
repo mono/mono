@@ -1,3 +1,7 @@
+2003-12-03  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* Makefile : added reference to System.Web.Services.dll
+
 2003-12-03  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* System.Runtime.Remoting.dll.sources: Added:
