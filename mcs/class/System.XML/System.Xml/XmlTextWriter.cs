@@ -345,8 +345,10 @@ namespace System.Xml
 
 			CheckState ();
 			CloseStartElement ();
-
-			w.Write("<![CDATA[{0}]]>", text);
+			
+			w.Write ("<![CDATA[");
+			w.Write (text);
+			w.Write ("]]>");
 		}
 
 		public override void WriteCharEntity (char ch)
@@ -376,7 +378,9 @@ namespace System.Xml
 			CheckState ();
 			CloseStartElement ();
 
-			w.Write ("<!--{0}-->", text);
+			w.Write ("<!--");
+			w.Write (text);
+			w.Write ("-->");
 		}
 
 		public override void WriteDocType (string name, string pubid, string sysid, string subset)
@@ -387,14 +391,27 @@ namespace System.Xml
 			w.Write ("<!DOCTYPE ");
 			w.Write (name);
 			if (pubid != null) {
-				w.Write (String.Format (" PUBLIC {0}{1}{0} {0}{2}{0}", quoteChar, pubid, sysid));
+				w.Write (" PUBLIC ");
+				w.Write (quoteChar);
+				w.Write (pubid);
+				w.Write (quoteChar);
+				
+				w.Write (quoteChar);
+				w.Write (sysid);
+				w.Write (quoteChar);
 			} else if (sysid != null) {
-				w.Write (String.Format (" SYSTEM {0}{1}{0}", quoteChar, sysid));
+				w.Write (" SYSTEM ");
+				w.Write (quoteChar);
+				w.Write (sysid);
+				w.Write (quoteChar);
 			}
 
-			if (subset != null)
-				w.Write ("[" + subset + "]");
-
+			if (subset != null) {
+				w.Write ('[');
+				w.Write (subset);
+				w.Write (']');
+			}
+			
 			w.Write('>');
 		}
 
@@ -418,7 +435,7 @@ namespace System.Xml
 				((XmlTextWriterOpenElement)openElements.Peek()).XmlSpace = xmlSpace;
 			}
 
-			w.Write ("{0}", quoteChar);
+			w.Write (quoteChar);
 
 			openAttribute = false;
 
@@ -460,15 +477,20 @@ namespace System.Xml
 			if (openStartElement) {
 				if (openAttribute)
 					WriteEndAttribute ();
-				if (fullEndElement)
-					w.Write ("></{0}>", ((XmlTextWriterOpenElement)openElements.Peek ()).Name);
-				else
+				if (fullEndElement) {
+					w.Write ("></");
+					w.Write (((XmlTextWriterOpenElement)openElements.Peek ()).Name);
+					w.Write ('>');
+				} else
 					w.Write (" />");
 
 				openElements.Pop ();
 				openStartElement = false;
 			} else {
-				w.Write ("{0}</{1}>", indentFormatting, openElements.Pop ());
+				w.Write (indentFormatting);
+				w.Write ("</");
+				w.Write (openElements.Pop ());
+				w.Write ('>');
 			}
 
 			namespaceManager.PopScope();
@@ -519,7 +541,12 @@ namespace System.Xml
 			CheckState ();
 			CloseStartElement ();
 
-			w.Write ("{0}<?{1} {2}?>", indentFormatting, name, text);
+			w.Write (indentFormatting);
+			w.Write ("<?");
+			w.Write (name);
+			w.Write (' ');
+			w.Write (text);
+			w.Write ("?>");
 		}
 
 		[MonoTODO]
@@ -532,8 +559,9 @@ namespace System.Xml
 			if (!openAttribute)
 				CloseStartElement ();
 
-			string prefix = namespaceManager.LookupPrefix (ns);
-			w.Write ("{0}:{1}", prefix, localName);
+			w.Write (namespaceManager.LookupPrefix (ns));
+			w.Write (':');
+			w.Write (localName);
 		}
 
 		public override void WriteRaw (string data)
@@ -605,7 +633,11 @@ namespace System.Xml
 //				writtenAttributes.Contains (formatPrefix + localName))
 //				return;
 
-			w.Write ("{0}{1}{2}={3}", formatSpace, formatPrefix, localName, quoteChar);
+			w.Write (formatSpace);
+			w.Write (formatPrefix);
+			w.Write (localName);
+			w.Write ('=');
+			w.Write (quoteChar);
 			if (checkMultipleAttributes)
 				writtenAttributes.Add (formatPrefix + localName, formatPrefix + localName);
 
@@ -682,16 +714,16 @@ namespace System.Xml
 			if (prefix == null)
 				prefix = String.Empty;
 
-			string formatPrefix = "";
+			string formatName = localName;
 
-			if(ns != null) {
-				if (prefix != String.Empty)
-					formatPrefix = prefix + ":";
-			}
+			if (ns != null && prefix != String.Empty)
+					formatName = prefix + ":" + localName;
+			
+			w.Write (indentFormatting);
+			w.Write ('<');
+			w.Write (formatName);
 
-			w.Write ("{0}<{1}{2}", indentFormatting, formatPrefix, localName);
-
-			openElements.Push (new XmlTextWriterOpenElement (formatPrefix + localName));
+			openElements.Push (new XmlTextWriterOpenElement (formatName));
 			ws = WriteState.Element;
 			openStartElement = true;
 			openElementNS = ns;

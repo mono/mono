@@ -1,3 +1,10 @@
+2003-08-18 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* XmlTextWriter.cs: Begin diet. String.Format has too much
+	saturated fat, lets replace with the fat-free .Write ()
+	calls. Effects best seen when Paolo's StreamWriter patch is
+	applied.
+
 2003-08-14  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlNodeReader.cs : Fixed ReadAttributeValue() that might result in
