@@ -1,3 +1,9 @@
+2004-05-07  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (corlib_net_2_0_bootstrap): Copy System.dll and
+	System.Xml.dll from 'default' profile build.
+	($(gmcs)): Always go to 'gmcs' directory.
+
 2004-05-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib_test.dll.sources: Added SymmetricAlgorithm2Test, 

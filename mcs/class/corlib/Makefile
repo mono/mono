@@ -165,9 +165,12 @@ corlib_net_2_0_compile: corlib_net_2_0_bootstrap $(net_2_0_makefrag) $(net_2_0_r
 
 corlib_net_2_0_bootstrap: $(net_2_0_bootstrap_response) $(net_2_0_bootstrap_stampfile)
 	$(BOOTSTRAP_MCS) /nowarn:649 /nowarn:169 /define:INSIDE_CORLIB /define:NET_1_1 /define:BOOTSTRAP_NET_2_0 $(corlib_flags) /target:library /out:../lib/net_2_0_bootstrap/mscorlib.dll @$(net_2_0_bootstrap_response)
+	cp ../lib/default/System.dll ../lib/default/System.Xml.dll ../lib/net_2_0_bootstrap
 
-$(gmcs):
-	cd $(topdir)/gmcs/ && $(MAKE) ;
+# make sure that $(gmcs) is up-to-date
+FORCE:
+$(gmcs): FORCE
+	cd $(topdir)/gmcs && $(MAKE) ;
 
 $(response): $(sourcefile)
 	@echo Creating $@ ...
