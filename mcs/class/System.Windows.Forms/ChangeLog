@@ -1,4 +1,7 @@
 2003-08-31  Jerome Laban <jlaban@wanadoo.fr>
+	* Label.cs: Fixed Text property not redrawing the label correctly.
+
+2003-08-31  Jerome Laban <jlaban@wanadoo.fr>
 	* win32functions.cs: Added GetUpdateRect function. 
 	* Control.cs: Make sure to call OnPaint even if UserPaint style is not
 	enabled. Get the appropriate DC for WM_PAINT operations.

@@ -194,6 +194,7 @@ namespace System.Windows.Forms {
 					(int)SS_Static_Control_Types.SS_LEFT |
 					(int)WindowStyles.WS_CLIPCHILDREN |
 					(int)WindowStyles.WS_CLIPSIBLINGS |
+					(int)SS_Static_Control_Types.SS_OWNERDRAW |
 					bs);
 
 				return createParams;
@@ -345,8 +346,9 @@ namespace System.Windows.Forms {
     
  			//Compact Framework
     		protected override void OnTextChanged (EventArgs e) {
-				//FIXME:
 				base.OnTextChanged (e);
+				Invalidate ();
+				Refresh ();
     		}
     
     		protected override void OnVisibleChanged (EventArgs e)
