@@ -141,10 +141,11 @@ namespace System.Web.Compilation
 				if (item != null)
 					return item.Result;
 
-				CompilerParameters options = GetOptions (compiler.Parser.Assemblies);
-				options.IncludeDebugInformation = compiler.Parser.Debug;
+				SimpleWebHandlerParser parser = compiler.Parser;
+				CompilerParameters options = GetOptions (parser.Assemblies);
+				options.IncludeDebugInformation = parser.Debug;
 				results = compiler.Compiler.CompileAssemblyFromFile (options, file);
-				cache [key] = new CompilationCacheItem (results, compiler.Parser.Dependencies);
+				cache [key] = new CompilationCacheItem (results, parser.Dependencies);
 			}
 
 			return results;

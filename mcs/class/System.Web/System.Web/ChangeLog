@@ -1,3 +1,7 @@
+2003-09-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: small fix needed when reading big POST data.
+
 2003-09-04  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* HttpRequest.cs: Url property: use GetLocalAddress() to get the address

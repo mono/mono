@@ -42,6 +42,7 @@ namespace System.Web.UI
 			this.context = context;
 			this.vPath = virtualPath;
 			this.physPath = physicalPath;
+			AddDependency (physicalPath);
 
 			assemblies = new ArrayList ();
 			assemblies.Add ("System.dll");

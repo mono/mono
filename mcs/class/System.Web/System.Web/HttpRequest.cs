@@ -268,7 +268,12 @@ namespace System.Web {
 				ms.Write (arrBuffer, 0, read);
 			}
 
-			_arrRawContent = ms.GetBuffer ();
+			byte [] msBuffer = ms.GetBuffer ();
+			if (msBuffer.Length == length)
+				_arrRawContent = msBuffer;
+			else
+				_arrRawContent = ms.ToArray ();
+
 			return _arrRawContent;
 		}
 
