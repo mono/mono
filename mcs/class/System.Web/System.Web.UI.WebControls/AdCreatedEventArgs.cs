@@ -38,14 +38,14 @@ namespace System.Web.UI.WebControls
 				alternateText = (string)adProperties.Item["AlternateText"];
 			}
 		}
-		
+
 		private void Initialize()
 		{
 			alternateText = string.Empty;
 			imageUrl      = string.Empty;
 			navigateUrl   = string.Empty;
 		}
-		
+
 		public IDictionary AdProperties
 		{
 			get

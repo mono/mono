@@ -6,7 +6,7 @@
 * Maintainer: gvaish@iitk.ac.in
 * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
 * Implementation: yes
-* Status:  0%
+* Status:  80%
 *
 * (C) Gaurav Vaish (2001)
 */

@@ -14,6 +14,8 @@
 using System;
 using System.Collections;
 using System.Globalization;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.UI;
 
@@ -79,6 +81,27 @@ namespace System.Web.UI.WebControls
 			if(base.RenderUplevel)
 			{
 				// TODO: The Lost World
+			}
+			throw new NotImplementedException();
+		}
+		
+		// Undocumented
+		protected bool Compare(string leftText, string rightText, ValidationCompareOperator op, ValidationDataType type)
+		{
+			throw new NotImplementedException();
+		}
+		
+		// Uncodumented
+		protected bool Convert(string text, ValidationDataType type, out object convertedValue)
+		{
+			throw new NotImplementedException();
+			convertedValue = null;
+			try
+			{
+				switch(type)
+				{
+					case
+				}
 			}
 		}
 	}
