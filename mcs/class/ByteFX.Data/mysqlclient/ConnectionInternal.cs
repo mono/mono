@@ -40,7 +40,7 @@ namespace ByteFX.Data.MySqlClient
 			Packet packet;
 			try 
 			{
-				byte[] bytes = driver.Encoding.GetBytes("show status like 'uptime'");
+				byte[] bytes = driver.Encoding.GetBytes("select @@version");
 				packet = driver.SendSql( bytes );
 				// we have to read for two last packets since MySql sends
 				// us a last packet after schema and again after rows
@@ -48,13 +48,17 @@ namespace ByteFX.Data.MySqlClient
 				// return schema in one very large packet.
 				while (! packet.IsLastPacket())
 					packet = driver.ReadPacket();
+
+				// now read off the resultset
+				packet = driver.ReadPacket();
+				while (! packet.IsLastPacket())
+					packet = driver.ReadPacket();
+				return true;
 			}
 			catch
 			{
 				return false;
 			}
-			
-			return true;
 		}
 
 		public bool IsTooOld() 
