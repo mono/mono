@@ -1180,6 +1180,7 @@ namespace Mono.CSharp
 			if (!RootContext.StdLib)
 				RootContext.BootCorlib_PopulateCoreTypes ();
 			RootContext.PopulateTypes ();
+			RootContext.DefineTypes ();
 			
 			TypeManager.InitCodeHelpers ();
 				

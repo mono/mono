@@ -168,42 +168,12 @@ public class MemberList : IList {
 }
 
 /// <summary>
-///   This interface provides a cache-based member lookup.	
-/// </summary>	
-public interface IMemberFinder {
-	/// <summary>
-	///   Looks up members with name `name'.  If you provide an optional
-	///   filter function, it'll only be called with members matching the
-	///   requested member name.
-	///
-	///   This method will try to use the cache to do the lookup if possible.
-	///
-	///   Unlike other FindMembers implementations, this method will always
-	///   check all inherited members - even when called on an interface type.
-	/// </summary>
-	/// <remarks>
-	///   When implementing this function, you must manually check for the
-	///   member name and only call the filter function on members with the
-	///   requested name.
-	/// </remarks>
-	MemberList FindMembers (MemberTypes mt, BindingFlags bf, string name,
-				MemberFilter filter, object criteria);
-
-	/// <summary>
-	///   If we have a MemberCache, return it.
-	/// </summary>
-	MemberCache MemberCache {
-		get;
-	}
-}
-
-/// <summary>
 ///   This interface is used to get all members of a class when creating the
 ///   member cache.  It must be implemented by all DeclSpace derivatives which
 ///   want to support the member cache and by TypeHandle to get caching of
 ///   non-dynamic types.
 /// </summary>
-public interface IMemberContainer : IMemberFinder {
+public interface IMemberContainer {
 	/// <summary>
 	///   The name of the IMemberContainer.  This is only used for
 	///   debugging purposes.
@@ -249,6 +219,13 @@ public interface IMemberContainer : IMemberFinder {
 	///   this method is called multiple times with different BindingFlags.
 	/// </remarks>
 	MemberList GetMembers (MemberTypes mt, BindingFlags bf);
+
+	/// <summary>
+	///   Return the container's member cache.
+	/// </summary>
+	MemberCache MemberCache {
+		get;
+	}
 }
 
 public class TypeManager {
@@ -1178,6 +1155,10 @@ public class TypeManager {
 			DeclSpace decl = (DeclSpace) builder_to_declspace [t];
 			MemberCache cache = decl.MemberCache;
 
+			//
+			// If this DeclSpace has a MemberCache, use it.
+			//
+
 			if (cache != null) {
 				used_cache = true;
 				return cache.FindMembers (
@@ -1200,10 +1181,10 @@ public class TypeManager {
 		// type, TypeHandle.GetTypeHandle() will either return it or create a new one
 		// if it didn't already exist.
 		//
-		IMemberFinder finder = TypeHandle.GetTypeHandle (t);
+		TypeHandle handle = TypeHandle.GetTypeHandle (t);
 
 		used_cache = true;
-		return finder.FindMembers (mt, bf, name, FilterWithClosure_delegate, null);
+		return handle.MemberCache.FindMembers (mt, bf, name, FilterWithClosure_delegate, null);
 	}
 
 	public static bool IsBuiltinType (Type t)
@@ -2598,6 +2579,16 @@ public class MemberCache {
 		return false;
 	}
 
+	/// <summary>
+	///   Looks up members with name `name'.  If you provide an optional
+	///   filter function, it'll only be called with members matching the
+	///   requested member name.
+	///
+	///   This method will try to use the cache to do the lookup if possible.
+	///
+	///   Unlike other FindMembers implementations, this method will always
+	///   check all inherited members - even when called on an interface type.
+	/// </summary>
 	public MemberList FindMembers (MemberTypes mt, BindingFlags bf, string name,
 				       MemberFilter filter, object criteria)
 	{

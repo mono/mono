@@ -1,3 +1,24 @@
+2002-08-16  Martin Baulig  <martin@gnome.org>
+
+	* decl.cs (DeclSpace.Define): Splitted this in Define and
+	DefineMembers.  DefineMembers is called first and initializes the
+	MemberCache.
+
+	* rootcontext.cs (RootContext.DefineMembers): New function.  Calls
+	DefineMembers() on all our DeclSpaces.
+
+	* class.cs (TypeContainer.Define): Moved all code to DefineMembers(),
+	but call DefineMembers() on all nested interfaces.  We call their
+	Define() in our new Define() function.
+
+	* interface.cs (Interface): Implement IMemberContainer.
+	(Interface.Define): Moved all code except the attribute stuf to
+	DefineMembers().
+	(Interface.DefineMembers): Initialize the member cache.
+
+	* typemanager.cs (IMemberFinder): Removed this interface, we don't
+	need this anymore since we can use MemberCache.FindMembers directly.
+
 2002-08-19  Martin Baulig  <martin@gnome.org>
 
 	* typemanager.cs (MemberCache): When creating the cache for an

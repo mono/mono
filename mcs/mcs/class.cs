@@ -956,14 +956,14 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Populates our TypeBuilder with fields and methods
 		/// </summary>
-		public override bool Define (TypeContainer parent)
+		public override bool DefineMembers (TypeContainer parent)
 		{
 			MemberInfo [] defined_names = null;
 
 			if (interface_order != null){
 				foreach (Interface iface in interface_order)
 					if ((iface.ModFlags & Modifiers.NEW) == 0)
-						iface.Define (this);
+						iface.DefineMembers (this);
 					else
 						Report1530 (iface.Location);
 			}
@@ -1049,6 +1049,17 @@ namespace Mono.CSharp {
 			
 			if (delegates != null)
 				DefineMembers (delegates, defined_names);
+
+			return true;
+		}
+
+		public override bool Define (TypeContainer parent)
+		{
+			if (interface_order != null){
+				foreach (Interface iface in interface_order)
+					if ((iface.ModFlags & Modifiers.NEW) == 0)
+						iface.Define (this);
+			}
 
 			return true;
 		}

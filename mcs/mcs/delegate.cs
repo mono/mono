@@ -85,6 +85,11 @@ namespace Mono.CSharp {
 			return TypeBuilder;
 		}
 
+ 		public override bool DefineMembers (TypeContainer container)
+		{
+			return true;
+		}
+
  		public override bool Define (TypeContainer container)
 		{
 			MethodAttributes mattr;

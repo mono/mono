@@ -351,6 +351,12 @@ namespace Mono.CSharp {
 		/// <remarks>
 		public abstract TypeBuilder DefineType ();
 		
+		/// <summary>
+		///   Define all members, but don't apply any attributes or do anything which may
+		///   access not-yet-defined classes.  This method also creates the MemberCache.
+		/// </summary>
+		public abstract bool DefineMembers (TypeContainer parent);
+
 		//
 		// Whether this is an `unsafe context'
 		//

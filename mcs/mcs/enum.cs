@@ -366,6 +366,11 @@ namespace Mono.CSharp {
 			
 			return default_value;
 		}
+
+		public override bool DefineMembers (TypeContainer parent)
+		{
+			return true;
+		}
 		
 		public override bool Define (TypeContainer parent)
 		{
