@@ -1,3 +1,9 @@
+2005-01-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DataProtectionPermission.cs: Moved from corlib.
+	* DataProtectionPermissionAttribute.cs: Moved from corlib.
+	* DataProtectionPermissionFlags.cs: Moved from corlib.
+
 2004-07-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StorePermissionFlags.cs: Fixed flags values. Added [Serializable]
