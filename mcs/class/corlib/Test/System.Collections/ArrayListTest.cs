@@ -190,6 +190,60 @@ public class ArrayListTest : TestCase {
 				AssertEquals("adapter not adapting", list[i], al1[i]);
 			}
 		}
+		// Test Binary Search
+		{
+		bool errorThrown = false;
+		try {
+			
+			String[] s1 = {"This", "is", "a", "test"};
+			ArrayList al1 = ArrayList.Adapter (s1);
+			al1.BinarySearch(42);
+		} catch (InvalidOperationException) {
+			// this is what .NET throws
+			errorThrown = true;
+		} catch (ArgumentException) {
+			// this is what the docs say it should throw
+			errorThrown = true;
+		} catch (Exception e) {
+			Fail ("Incorrect exception thrown at 1: " + e.ToString());
+		}
+		Assert("search-for-wrong-type error not thrown", 
+		       errorThrown);
+		}
+		
+		{
+			char[] arr = {'a', 'b', 'b', 'c', 'c', 'c', 'd', 'd'};
+			ArrayList al1 = ArrayList.Adapter (arr);
+			Assert("couldn't find elem #1", 
+			       al1.BinarySearch('c') >= 3);
+			Assert("couldn't find elem #2", 
+			       al1.BinarySearch('c') < 6);
+		}
+		{
+			char[] arr = {'a', 'b', 'b', 'd', 'd', 'd', 'e', 'e'};
+			ArrayList al1 = ArrayList.Adapter (arr);
+			AssertEquals("couldn't find next-higher elem", 
+				     -4, al1.BinarySearch('c'));
+		}
+		{
+			char[] arr = {'a', 'b', 'b', 'c', 'c', 'c', 'd', 'd'};
+			ArrayList al1 = ArrayList.Adapter (arr);
+			AssertEquals("couldn't find end", 
+				     -9, al1.BinarySearch('e'));
+		}
+		// Sort
+		{
+			char[] starter = {'d', 'b', 'f', 'e', 'a', 'c'};
+			ArrayList al1 = ArrayList.Adapter (starter);
+			al1.Sort();
+			AssertEquals("Should be sorted", 'a', al1[0]);
+			AssertEquals("Should be sorted", 'b', al1[1]);
+			AssertEquals("Should be sorted", 'c', al1[2]);
+			AssertEquals("Should be sorted", 'd', al1[3]);
+			AssertEquals("Should be sorted", 'e', al1[4]);
+			AssertEquals("Should be sorted", 'f', al1[5]);
+		}
+
 		// TODO - test other adapter types?
 	}
 

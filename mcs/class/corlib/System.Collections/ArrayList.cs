@@ -4,10 +4,12 @@
 // Author:
 //    Vladimir Vukicevic (vladimir@pobox.com)
 //    Duncan Mak (duncan@ximian.com)
-//		Patrik Torstensson (totte@crepundia.net)
+//    Patrik Torstensson (totte@crepundia.net)
+//    Ben Maurer (bmaurer@users.sf.net)
 //
 // (C) 2001 Vladimir Vukicevic
 // (C) 2002 Ximian, Inc.
+// (C) 2003 Ben Maurer
 //
 
 using System;
@@ -153,38 +155,68 @@ namespace System.Collections {
 				this.list = list;
 				count = ((ICollection) list).Count;
 			}
-			
+
 			// ArrayList
-			[MonoTODO]
 			public override int Capacity {
 				get { return list.Count; }
-				set { throw new NotSupportedException (); }
+				set {
+					// MS seems to do this
+					if (value < list.Count) {
+						throw new ArgumentOutOfRangeException
+						("ArrayList Capacity being set to less than Count");
+					}
+					// There is no idiom for Capacity for
+					// IList, so we do nothing, as MS does.
+				}
 			}
 
-			[MonoTODO]
 			public override void AddRange (ICollection collection) {
 				if (collection == null)
 					throw new ArgumentNullException ("colllection");
+				
 				if (IsFixedSize || IsReadOnly)
 					throw new NotSupportedException ();
+
+				InsertRange (Count, collection);
+				
 			}
 
-			[MonoTODO]
 			public override int BinarySearch (object value) {
-				throw new NotImplementedException ();
+				return BinarySearch (value, null);
 			}
 
-			[MonoTODO]
 			public override int BinarySearch (object value, IComparer comparer) {
-				throw new NotImplementedException ();
+				return BinarySearch (0, Count, value, comparer);
 			}
 
-			[MonoTODO]
 			public override int BinarySearch (int index, int count, object value,
 				IComparer comparer) {
-				throw new NotImplementedException ();
-			}
 
+				if ((index < 0) || (count < 0))
+					throw new ArgumentOutOfRangeException ();
+				if ((index > Count) || (index + count) > Count)
+					throw new ArgumentException ();
+				
+				if (comparer == null)
+					comparer = Comparer.Default;
+                
+				int low = index;
+				int hi = index + count - 1;
+				int mid;
+				while (low <= hi) {
+					mid = (low + hi) / 2;
+					int r = comparer.Compare (value, list [mid]);
+					if (r == 0)
+						return mid;
+					if (r < 0)
+						hi = mid-1;
+					else 
+						low = mid+1;
+				}
+
+				return ~low;
+			}
+			
 			public override void CopyTo (Array array) {
 				if (null == array)
 					throw new ArgumentNullException("array");
@@ -194,7 +226,6 @@ namespace System.Collections {
 				CopyTo (array, 0);
 			}
 
-			[MonoTODO]
 			public override void CopyTo (int index, Array array,
 				int arrayIndex, int count) {
 				if (array == null)
@@ -203,7 +234,9 @@ namespace System.Collections {
 					throw new ArgumentOutOfRangeException ();
 				if (array.Rank > 1 || index >= Count || Count > (array.Length - arrayIndex))
 					throw new ArgumentException ();
-				// FIXME: handle casting error here
+				
+				for (int i = index; i < index + count; i++)
+					array.SetValue(list [i], arrayIndex++);
 			}
 
 			public override ArrayList GetRange (int index, int count) {
@@ -220,7 +253,6 @@ namespace System.Collections {
 				return result;
 			}
 
-			[MonoTODO]
 			public override void InsertRange (int index, ICollection col) {
 				if (col == null)
 					throw new ArgumentNullException ();
@@ -231,19 +263,8 @@ namespace System.Collections {
 
 				if (index == Count) {
 					foreach (object element in col)
-						list.Add (element);
-
-				} //else if ((index + count) < Count) {
-				// 					for (int i = index; i < (index + count); i++)
-				// 						list [i] = col [i];
-
-				// 				} else {
-				// 					int added = Count - (index + count);
-				// 					for (int i = index; i < Count; i++)
-				// 						list [i] = col [i];
-				// 					for (int i = 0; i < added; i++)
-				// 						list.Add (col [Count +i]);
-				// 				}
+						list.Insert (index++, element);
+				}
 			}
 
 			public override int LastIndexOf (object value) {
@@ -316,16 +337,28 @@ namespace System.Collections {
 						list [i] = o;
 			}
 
-			[MonoTODO]
 			public override void Sort () {
+				Sort (null);
 			}
 
-			[MonoTODO]
 			public override void Sort (IComparer comparer) {
+				Sort (0, Count, comparer);
 			}
 
-			[MonoTODO]
 			public override void Sort (int index, int count, IComparer comparer) {
+				if ((index < 0) || (count < 0))
+					throw new ArgumentOutOfRangeException ();
+				if ((index > Count) || (index + count) > Count)
+					throw new ArgumentException ();
+				if (IsReadOnly)
+					throw new NotSupportedException ();
+				
+				// TODO: do some real sorting
+				object [] tmpArr = new Object [count];
+				CopyTo (index, tmpArr, 0, count);
+				Array.Sort (tmpArr, 0, count, comparer);
+				for (int i = 0; i < count; i++)
+					list [i + index] = tmpArr [i];
 			}
 
 			public override object [] ToArray () {
@@ -342,8 +375,8 @@ namespace System.Collections {
 				return result;
 			}
 
-			[MonoTODO]
 			public override void TrimToSize () {
+				// Microsoft does not implement this method
 			}
 
 			// IList
@@ -415,8 +448,7 @@ namespace System.Collections {
 				return ((IEnumerable) list).GetEnumerator ();
 			}
 		}
-
-		[MonoTODO]
+		
 		public static ArrayList Adapter (IList list) {
 			return new ListWrapper (list);
 		}
