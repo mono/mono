@@ -293,9 +293,9 @@ namespace System.Web.UI.WebControls
 			if (PostBackUrl != "")
 				ops.ActionUrl = PostBackUrl;
 			ops.PerformValidation = Page.Validators.Count > 0 && CausesValidation;
-			if (ops.PerformValidation)
+			if (ops.PerformValidation && ValidationGroup != "")
 				ops.ValidationGroup = ValidationGroup;
-			ops.ClientSubmit = UseSubmitBehavior;
+			ops.ClientSubmit = !UseSubmitBehavior;
 			ops.RequiresJavaScriptProtocol = false;
 			return ops;
 		}
@@ -317,17 +317,19 @@ namespace System.Web.UI.WebControls
 				if (script.Length > 0) script += ";";
 				
 				PostBackOptions ops = GetPostBackOptions ();
-				if (ops != null && ops.RequiresSpecialPostBack) {
-					script += Page.GetPostBackEventReference (ops);
+				bool submitBehavior = UseSubmitBehavior && !ops.ClientSubmit;
+				
+				if (ops.RequiresSpecialPostBack) {
+					script += Page.ClientScript.GetPostBackEventReference (ops);
 				}
 				else if (CausesValidation && Page.Validators.Count > 0) {
-					if (UseSubmitBehavior)
+					if (submitBehavior)
 						script += Utils.GetClientValidatedEvent (Page);
 					else
 						script += Utils.GetClientValidatedPostBack (this);
 				}
-				else if (!UseSubmitBehavior) {
-					script += Page.GetPostBackClientEvent (this,"");
+				else if (!submitBehavior) {
+					script += Page.ClientScript.GetPostBackClientEvent (this,"");
 				}
 #else
 				if (CausesValidation && Page.Validators.Count > 0) {

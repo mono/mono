@@ -1375,7 +1375,7 @@ namespace System.Web.UI.WebControls
 			if (isLink) {
 				StringBuilder dispVal = new StringBuilder ();
 				dispVal.Append ("<a href=\"");
-				dispVal.Append (Page.GetPostBackClientHyperlink (this, eventArg));
+				dispVal.Append (Page.ClientScript.GetPostBackClientHyperlink (this, eventArg));
 				dispVal.Append ("\" style=\"color: ");
 				if (foreground.IsEmpty) {
 					dispVal.Append (ColorTranslator.ToHtml (defaultTextColor));

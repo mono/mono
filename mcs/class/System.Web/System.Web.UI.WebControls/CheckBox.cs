@@ -429,7 +429,7 @@ namespace System.Web.UI.WebControls
 
 			if (AutoPostBack){
 				writer.AddAttribute (HtmlTextWriterAttribute.Onclick,
-						     Page.GetPostBackClientEvent (this, String.Empty));
+						     Page.ClientScript.GetPostBackClientEvent (this, String.Empty));
 				writer.AddAttribute ("language", "javascript");
 			}
 

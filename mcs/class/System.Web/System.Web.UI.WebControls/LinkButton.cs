@@ -184,7 +184,7 @@ namespace System.Web.UI.WebControls
 			if (PostBackUrl != "")
 				ops.ActionUrl = PostBackUrl;
 			ops.PerformValidation = Page.Validators.Count > 0 && CausesValidation;
-			if (ops.PerformValidation)
+			if (ops.PerformValidation && ValidationGroup != "")
 				ops.ValidationGroup = ValidationGroup;
 			ops.RequiresJavaScriptProtocol = false;
 			return ops;
@@ -260,20 +260,21 @@ namespace System.Web.UI.WebControls
 			base.AddAttributesToRender (writer);
 #if NET_2_0
 			if (Page != null && Enabled) {
+				
+				if (OnClientClick != "")
+					writer.AddAttribute (HtmlTextWriterAttribute.Onclick, OnClientClick);
+
 				string script = "";
-				
-				script = OnClientClick;
-				if (script.Length > 0) script += ";";
-				
+
 				PostBackOptions ops = GetPostBackOptions ();
-				if (ops != null && ops.RequiresSpecialPostBack) {
-					script += Page.GetPostBackEventReference (ops);
+				if (ops.RequiresSpecialPostBack || ops.ClientSubmit) {
+					script = Page.ClientScript.GetPostBackEventReference (ops);
 				}
 				else if (CausesValidation && Page.Validators.Count > 0) {
-					script += Utils.GetClientValidatedPostBack (this);
+					script = Utils.GetClientValidatedPostBack (this);
 				}
 				else {
-					script += Page.GetPostBackClientEvent (this,"");
+					script = Page.ClientScript.GetPostBackClientEvent (this,"");
 				}			
 				if (script != "")
 					writer.AddAttribute (HtmlTextWriterAttribute.Href, "javascript:" + script);
@@ -288,7 +289,7 @@ namespace System.Web.UI.WebControls
 					return;
 				}
 				writer.AddAttribute (HtmlTextWriterAttribute.Href,
-						     Page.GetPostBackClientHyperlink (this, ""));
+						     Page.ClientScript.GetPostBackClientHyperlink (this, ""));
 			}
 #endif
 		}

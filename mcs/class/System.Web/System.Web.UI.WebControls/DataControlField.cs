@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Sanjay Gupta (gsanjay@novell.com)
+//	Lluis Sanchez Gual (lluis@novell.com)
 //
 // (C) 2004 Novell, Inc. (http://www.novell.com)
 //
@@ -81,55 +82,13 @@ namespace System.Web.UI.WebControls {
 		public virtual void InitializeCell (DataControlFieldCell cell,
 			DataControlCellType cellType, DataControlRowState rowState, int rowIndex)
 		{
-			bool isDataControl = control is DataBoundControl;
-			
 			if (cellType == DataControlCellType.Header && ShowHeader)
 			{
-				if (HeaderImageUrl != "")
-				{
-					if (sortingEnabled && SortExpression != "") {
-						if (isDataControl) {
-							HyperLink link = new HyperLink ();
-							link.ImageUrl = HeaderImageUrl;
-							link.NavigateUrl = control.Page.GetPostBackClientHyperlink (control, "sort$" + SortExpression);
-							if (HeaderText != "")
-								link.Text = HeaderText;
-							cell.Controls.Add (link);
-						} else {
-							ImageButton img = new ImageButton ();
-							img.CommandName = "Sort";
-							img.CommandArgument = SortExpression;
-							img.ImageUrl = HeaderImageUrl;
-							if (HeaderText != "")
-								img.AlternateText = HeaderText;
-							cell.Controls.Add (img);
-						}
-					}
-					else {
-						Image img = new Image ();
-						img.ImageUrl = HeaderImageUrl;
-						if (HeaderText != "")
-							img.AlternateText = HeaderText;
-						cell.Controls.Add (img);
-					}
-				}
-				else if (sortingEnabled && SortExpression != "")
-				{
-					if (isDataControl) {
-						HyperLink link = new HyperLink ();
-						link.Text = HeaderText;
-						link.NavigateUrl = control.Page.GetPostBackClientHyperlink (control, "sort$" + SortExpression);
-						cell.Controls.Add (link);
-					} else {
-						LinkButton btn = new LinkButton ();
-						btn.Text = HeaderText;
-						btn.CommandName = "Sort";
-						btn.CommandArgument = SortExpression;
-						cell.Controls.Add (btn);
-					}
-				}
-				else {
-					cell.Text = HeaderText;
+				if (HeaderText != "" || HeaderImageUrl != "") {
+					if (sortingEnabled)
+						cell.Controls.Add (new DataControlButton (control, HeaderText, HeaderImageUrl, "Sort", SortExpression, true));
+					else
+						cell.Controls.Add (new DataControlButton (control, HeaderText, HeaderImageUrl, "", "", true));
 				}
 			}
 			else if (cellType == DataControlCellType.Footer) {
@@ -191,10 +150,9 @@ namespace System.Web.UI.WebControls {
 			tracking = true;			
 		}
 		
-		[MonoTODO]
 		public virtual void ValidateSupportsCallback ()
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ("Callback not supported");
 		}
 
 		void IStateManager.LoadViewState(object savedState)

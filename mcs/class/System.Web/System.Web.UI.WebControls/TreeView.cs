@@ -887,7 +887,7 @@ namespace System.Web.UI.WebControls
 			base.OnPreRender (e);
 			
 			if (EnableClientScript && !Page.ClientScript.IsClientScriptIncludeRegistered (typeof(TreeView), "TreeView.js")) {
-				string url = Page.GetWebResourceUrl (typeof(TreeView), "TreeView.js");
+				string url = Page.ClientScript.GetWebResourceUrl (typeof(TreeView), "TreeView.js");
 				Page.ClientScript.RegisterClientScriptInclude (typeof(TreeView), "TreeView.js", url);
 				
 				string ctree = ClientID + "_data";
@@ -908,15 +908,15 @@ namespace System.Web.UI.WebControls
 				script += string.Format ("{0}.populateFromClient = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (PopulateNodesFromClient));
 				script += string.Format ("{0}.expandAlt = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageToolTip (true, null)));
 				script += string.Format ("{0}.collapseAlt = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageToolTip (false, null)));
-				Page.ClientScript.RegisterStartupScript (typeof(TreeView), "", script, true);
+				Page.ClientScript.RegisterStartupScript (typeof(TreeView), this.UniqueID, script, true);
 			}
 
 			if (EnableClientScript) {
 				Page.ClientScript.RegisterHiddenField (ClientID + "_ExpandStates", GetExpandStates ());
 				
 				// Make sure the basic script infrastructure is rendered
-		        Page.GetCallbackEventReference (this, "null", "", "null");
-				Page.GetPostBackClientHyperlink (this, "");
+		        Page.ClientScript.GetCallbackEventReference (this, "null", "", "null");
+				Page.ClientScript.GetPostBackClientHyperlink (this, "");
 			}
 			
 			if (dataBindings != null && dataBindings.Count > 0) {
@@ -1271,7 +1271,7 @@ namespace System.Web.UI.WebControls
 		
 		string GetClientEvent (TreeNode node, string ev)
 		{
-			return Page.GetPostBackClientHyperlink (this, ev + "|" + node.Path);
+			return Page.ClientScript.GetPostBackClientHyperlink (this, ev + "|" + node.Path);
 		}
 		
 		string GetClientExpandEvent (TreeNode node)

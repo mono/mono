@@ -88,7 +88,7 @@ namespace System.Web.UI.WebControls
 
 			if (AutoPostBack){
 				writer.AddAttribute (HtmlTextWriterAttribute.Onclick,
-						     Page.GetPostBackClientEvent (this, ""));
+						     Page.ClientScript.GetPostBackClientEvent (this, ""));
 				writer.AddAttribute ("language", "javascript");
 			}
 

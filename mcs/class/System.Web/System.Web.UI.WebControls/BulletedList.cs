@@ -135,7 +135,7 @@ namespace System.Web.UI.WebControls {
 
 				case BulletedListDisplayMode.LinkButton:
 					//if (cacheIsEnabled && item.Enabled)
-						writer.AddAttribute (HtmlTextWriterAttribute.Href, Page.GetPostBackClientHyperlink (this, (index.ToString (CultureInfo.InvariantCulture))));
+						writer.AddAttribute (HtmlTextWriterAttribute.Href, Page.ClientScript.GetPostBackClientHyperlink (this, (index.ToString (CultureInfo.InvariantCulture))));
 					//else
 					//	writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
 					writer.RenderBeginTag (HtmlTextWriterTag.A);

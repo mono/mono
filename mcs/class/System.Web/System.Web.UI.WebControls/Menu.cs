@@ -806,7 +806,7 @@ namespace System.Web.UI.WebControls
 			base.OnPreRender (e);
 			
 			if (!Page.ClientScript.IsClientScriptIncludeRegistered (typeof(Menu), "Menu.js")) {
-				string url = Page.GetWebResourceUrl (typeof(Menu), "Menu.js");
+				string url = Page.ClientScript.GetWebResourceUrl (typeof(Menu), "Menu.js");
 				Page.ClientScript.RegisterClientScriptInclude (typeof(Menu), "Menu.js", url);
 			}
 			
@@ -929,7 +929,7 @@ namespace System.Web.UI.WebControls
 			writer.AddAttribute ("onmouseout", string.Format ("javascript:Menu_OutScrollBtn ('{0}','{1}','{2}')", ClientID, item.Path, "u"));
 			writer.RenderBeginTag (HtmlTextWriterTag.Div);
 			
-			string src = ScrollUpImageUrl != "" ? ScrollUpImageUrl : Page.GetWebResourceUrl (typeof(Menu), "arrow_up.gif");
+			string src = ScrollUpImageUrl != "" ? ScrollUpImageUrl : Page.ClientScript.GetWebResourceUrl (typeof(Menu), "arrow_up.gif");
 			writer.AddAttribute ("src", src);
 			writer.AddAttribute ("alt", ScrollUpText);
 			writer.RenderBeginTag (HtmlTextWriterTag.Img);
@@ -955,7 +955,7 @@ namespace System.Web.UI.WebControls
 			writer.AddAttribute ("onmouseout", string.Format ("javascript:Menu_OutScrollBtn ('{0}','{1}','{2}')", ClientID, item.Path, "d"));
 			writer.RenderBeginTag (HtmlTextWriterTag.Div);
 			
-			src = ScrollDownImageUrl != "" ? ScrollDownImageUrl : Page.GetWebResourceUrl (typeof(Menu), "arrow_down.gif");
+			src = ScrollDownImageUrl != "" ? ScrollDownImageUrl : Page.ClientScript.GetWebResourceUrl (typeof(Menu), "arrow_down.gif");
 			writer.AddAttribute ("src", src);
 			writer.AddAttribute ("alt", ScrollDownText);
 			writer.RenderBeginTag (HtmlTextWriterTag.Img);
@@ -1276,7 +1276,7 @@ namespace System.Web.UI.WebControls
 							
 		string GetClientEvent (MenuItem item)
 		{
-			return Page.GetPostBackClientHyperlink (this, item.Path);
+			return Page.ClientScript.GetPostBackClientHyperlink (this, item.Path);
 		}
 	}
 }

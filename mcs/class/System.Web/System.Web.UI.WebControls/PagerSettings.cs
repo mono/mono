@@ -262,13 +262,13 @@ namespace System.Web.UI.WebControls
 			{
 				if (currentPage > 0) {
 					if (Mode == PagerButtons.NextPreviousFirstLast)
-						row.Cells.Add (CreateCell (FirstPageText, FirstPageImageUrl, "page$first"));
-					row.Cells.Add (CreateCell (PreviousPageText, PreviousPageImageUrl, "page$prev"));
+						row.Cells.Add (CreateCell (FirstPageText, FirstPageImageUrl, "Page", "First"));
+					row.Cells.Add (CreateCell (PreviousPageText, PreviousPageImageUrl, "Page", "Prev"));
 				}
 				if (currentPage < pageCount - 1) {
-					row.Cells.Add (CreateCell (NextPageText, NextPageImageUrl, "page$next"));
+					row.Cells.Add (CreateCell (NextPageText, NextPageImageUrl, "Page", "Next"));
 					if (Mode == PagerButtons.NextPreviousFirstLast)
-						row.Cells.Add (CreateCell (LastPageText, LastPageImageUrl, "page$last"));
+						row.Cells.Add (CreateCell (LastPageText, LastPageImageUrl, "Page", "Last"));
 				}
 			}
 			else if (Mode == PagerButtons.Numeric || Mode == PagerButtons.NumericFirstLast)
@@ -279,35 +279,26 @@ namespace System.Web.UI.WebControls
 				
 				if (first > 0) {
 					if (Mode == PagerButtons.NumericFirstLast)
-						row.Cells.Add (CreateCell (FirstPageText, FirstPageImageUrl, "page$first"));
-					row.Cells.Add (CreateCell (PreviousPageText, PreviousPageImageUrl, "page$prev"));
+						row.Cells.Add (CreateCell (FirstPageText, FirstPageImageUrl, "Page", "First"));
+					row.Cells.Add (CreateCell (PreviousPageText, PreviousPageImageUrl, "Page", "Prev"));
 				}
 				
 				for (int n = first; n < last; n++)
-					row.Cells.Add (CreateCell (n.ToString(), string.Empty, (n != currentPage) ? "page$" + n : null));
+					row.Cells.Add (CreateCell (n.ToString(), string.Empty, (n != currentPage) ? "Page" + n : "", n.ToString()));
 				
 				if (last < pageCount - 1) {
-					row.Cells.Add (CreateCell (NextPageText, NextPageImageUrl, "page$next"));
+					row.Cells.Add (CreateCell (NextPageText, NextPageImageUrl, "Page", "Next"));
 					if (Mode == PagerButtons.NumericFirstLast)
-						row.Cells.Add (CreateCell (LastPageText, LastPageImageUrl, "page$last"));
+						row.Cells.Add (CreateCell (LastPageText, LastPageImageUrl, "Page", "Last"));
 				}
 			}
 			return table;
 		}
 		
-		TableCell CreateCell (string text, string image, string theEvent)
+		TableCell CreateCell (string text, string image, string command, string argument)
 		{
 			TableCell cell = new TableCell ();
-			if (theEvent != null) {
-				HyperLink link = new HyperLink ();
-				link.ImageUrl = image;
-				link.Text = text;
-				link.NavigateUrl = ctrl.Page.GetPostBackClientHyperlink (ctrl, theEvent);
-				cell.Controls.Add (link);
-			} else {
-				// Only numbers don't have an event
-				cell.Text = text;
-			}
+			cell.Controls.Add (new DataControlButton (ctrl, text, image, command, argument, true));
 			return cell;
 		}
 	}
