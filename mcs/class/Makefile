@@ -27,14 +27,10 @@ SUBDIRS = \
 	System.Configuration.Install 	\
 	System.Management		\
 	$(MONO_CSHARP_DEBUGGER)         \
-	Mono.Data.DB2Client		\
-	Mono.Data.MySql			\
-	Mono.Data.PostgreSqlClient	\
 	Mono.Data.SqliteClient		\
 	Mono.Data.SybaseClient		\
 	Mono.Data.TdsClient		\
 	System.Data.OracleClient	\
-	Mono.PEToolkit			\
 	$(MONO_POSIX)			\
 	Accessibility			\
 	Microsoft.VisualBasic		\
