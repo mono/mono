@@ -67,6 +67,73 @@ public class WebProxyTest : TestCase
 
 		p = new WebProxy ("file://webserver");
 		AssertEquals ("#10", new Uri ("file://webserver"), p.Address);		
+		
+		p = new WebProxy ("http://www.contoso.com", true, null, null);
+		AssertEquals ("#11", 0, p.BypassList.Length);
+		AssertEquals ("#12", 0, p.BypassArrayList.Count);
+		
+		try {
+			p = new WebProxy ("http://contoso.com", true, 
+				new string [] {"?^!@#$%^&}{]["}, null);
+			Fail ("#13: illegal regular expression");
+		} catch (ArgumentException) {
+		}
+	}
+	
+	public void TestBypassArrayList ()
+	{
+		Uri proxy1 = new Uri("http://proxy.contoso.com");
+		Uri proxy2 = new Uri ("http://proxy2.contoso.com");
+		
+		WebProxy p = new WebProxy (proxy1, true);
+		p.BypassArrayList.Add ("http://proxy2.contoso.com");
+		p.BypassArrayList.Add ("http://proxy2.contoso.com");		
+		AssertEquals ("#1", 2, p.BypassList.Length);
+		Assert ("#2", !p.IsBypassed (new Uri ("http://www.google.com")));
+		Assert ("#3", p.IsBypassed (proxy2));
+		AssertEquals ("#4", proxy2, p.GetProxy (proxy2));
+
+		p.BypassArrayList.Add ("?^!@#$%^&}{][");
+		AssertEquals ("#10", 3, p.BypassList.Length);
+		try {
+			Assert ("#11", !p.IsBypassed (proxy2));
+			Assert ("#12", !p.IsBypassed (new Uri ("http://www.x.com")));		
+			AssertEquals ("#13", proxy1, p.GetProxy (proxy2));
+			// hmm... although #11 and #13 succeeded before (#3 resp. #4), 
+			// it now fails to bypass, and the IsByPassed and GetProxy 
+			// methods do not fail.. so when an illegal regular 
+			// expression is added through this property it's ignored. 
+			// probably an ms.net bug?? :(
+		} catch (ArgumentException) {
+			Fail ("#15: illegal regular expression");
+		}		
+	}
+	
+	public void TestBypassList ()
+	{
+		Uri proxy1 = new Uri("http://proxy.contoso.com");
+		Uri proxy2 = new Uri ("http://proxy2.contoso.com");
+		
+		WebProxy p = new WebProxy (proxy1, true);
+		try {
+			p.BypassList = new string [] {"http://proxy2.contoso.com", "?^!@#$%^&}{]["};		
+			Fail ("#1");
+		} catch (ArgumentException) {
+			// weird, this way invalid regex's fail again..
+		}
+		
+		AssertEquals ("#2", 2, p.BypassList.Length);
+		// but it did apparenly store the regex's !
+
+		p.BypassList = new string [] {"http://www.x.com"};		
+		AssertEquals ("#3", 1, p.BypassList.Length);
+
+		try {
+			p.BypassList = null;
+			Fail ("#4");
+		} catch (ArgumentNullException) {}
+		
+		AssertEquals ("#4", 1, p.BypassList.Length);		
 	}
 	
 	public void TestGetProxy ()
@@ -102,6 +169,10 @@ public class WebProxyTest : TestCase
 		Assert ("#22", p.IsBypassed (new Uri ("http://www.contoso.com:8080/foo/bar/index.html")));
 		Assert ("#23", !p.IsBypassed (new Uri ("http://www.contoso2.com:8080/foo/bar/index.html")));
 		Assert ("#24", !p.IsBypassed (new Uri ("http://www.foo.com:8080/contoso.com.html")));
+		
+		p.BypassList = new string [] { "https" };		
+		Assert ("#30", !p.IsBypassed (new Uri ("http://www.google.com")));
+		Assert ("#31", p.IsBypassed (new Uri ("https://www.google.com")));
 	}
 }
 

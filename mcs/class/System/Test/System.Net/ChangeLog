@@ -1,6 +1,7 @@
 2002-05-21  Lawrence Pit <loz@cable.a2000.nl>
 
-	* WebProxyTest.cs: added more ctor tests
+	* WebClientTest.cs: added
+	* WebProxyTest.cs: more tests
 
 2002-05-20  Lawrence Pit <loz@cable.a2000.nl>
 

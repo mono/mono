@@ -1,7 +1,9 @@
 2002-05-21  Lawrence Pit <loz@cable.a2000.nl>
 
 	* WebClient.cs: stubbed
-	* WebProxy.cs: fixed bug
+	* WebProxy.cs: fixed bug; had to change internal representation
+	of bypasslist to ArrayList, different implementation of checking
+	regex's.
 
 2002-05-20  Lawrence Pit <loz@cable.a2000.nl>
 

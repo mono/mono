@@ -17,10 +17,8 @@ namespace System.Net
 	{		
 		private Uri address;
 		private bool bypassOnLocal;
-		private string [] bypassList;
+		private ArrayList bypassList;
 		private ICredentials credentials;
-		
-		private Regex [] bypassRegexList;
 	
 		// Constructors
 	
@@ -59,9 +57,9 @@ namespace System.Net
 			this.bypassOnLocal = bypassOnLocal;
 			if (bypassList == null)
 				bypassList = new string [] {};
-			this.bypassList = bypassList;
+			this.bypassList = new ArrayList (bypassList);
 			this.credentials = credentials;
-			CreateBypassRegexList ();
+			CheckBypassList ();
 		}
 		
 		[MonoTODO]
@@ -79,17 +77,17 @@ namespace System.Net
 		
 		public ArrayList BypassArrayList {
 			get { 
-				return new ArrayList (bypassList);
+				return bypassList;
 			}
 		}
 		
-		public string[] BypassList {
-			get { return bypassList; }
+		public string [] BypassList {
+			get { return (string []) bypassList.ToArray (typeof (string)); }
 			set { 
 				if (value == null)
 					throw new ArgumentNullException ();
-				bypassList = value; 
-				CreateBypassRegexList ();
+				bypassList = new ArrayList (value); 
+				CheckBypassList ();
 			}
 		}
 		
@@ -138,12 +136,31 @@ namespace System.Net
 			if (bypassOnLocal && host.Host.IndexOf ('.') == -1)
 				return true;
 				
-			string hostStr = host.Scheme + "://" + host.Authority;				
-			for (int i = 0; i < bypassRegexList.Length; i++) 
-				if (bypassRegexList [i].IsMatch (hostStr))
-					return true;
-			
-			return false;
+			try {				
+				string hostStr = host.Scheme + "://" + host.Authority;				
+				int i = 0;
+				for (; i < bypassList.Count; i++) {
+					Regex regex = new Regex ((string) bypassList [i], 
+						// TODO: RegexOptions.Compiled |  // not implemented yet by Regex
+						RegexOptions.IgnoreCase |
+						RegexOptions.Singleline);
+
+					if (regex.IsMatch (hostStr))
+						break;
+				}
+
+				if (i == bypassList.Count)
+					return false;
+
+				// continue checking correctness of regular expressions..
+				// will throw expression when an invalid one is found
+				for (; i < bypassList.Count; i++)
+					new Regex ((string) bypassList [i]);
+
+				return true;
+			} catch (ArgumentException) {
+				return false;
+			}
 		}
 
 		[MonoTODO]		
@@ -155,14 +172,12 @@ namespace System.Net
 		
 		// Private Methods
 		
-		private void CreateBypassRegexList ()
+		// this compiles the regular expressions, and will throw
+		// an exception when an invalid one is found.
+		private void CheckBypassList ()
 		{			
-			bypassRegexList	= new Regex [bypassList.Length];
-			for (int i = 0; i < bypassList.Length; i++)
-				bypassRegexList [i] = new Regex (bypassList [i], 
-							// TODO: RegexOptions.Compiled |  // not implemented yet by Regex
-							RegexOptions.IgnoreCase |
-							RegexOptions.Singleline);
+			for (int i = 0; i < bypassList.Count; i++)
+				new Regex ((string) bypassList [i]);
 		}
 		
 		private static Uri ToUri (string address)
