@@ -1,5 +1,8 @@
 2002-09-16  Miguel de Icaza  <miguel@ximian.com>
 
+	* statement.cs (Foreach.Resolve): Indexers are just like variables
+	or PropertyAccesses.
+
 	* cs-tokenizer.cs (consume_string): Track line numbers and columns
 	inside quoted strings, we were not doing this before.
 
