@@ -13,7 +13,7 @@ using System.Reflection.Emit;
 using System.Diagnostics.SymbolStore;
 
 namespace Mono.CSharp.Debugger {
-	internal interface IMonoSymbolWriter : ISymbolWriter {
+	public interface IMonoSymbolWriter : ISymbolWriter {
 		byte[] CreateSymbolFile (AssemblyBuilder assembly_builder);
 
 		void MarkSequencePoint (int offset, int line, int column);

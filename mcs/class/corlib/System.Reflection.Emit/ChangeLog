@@ -1,7 +1,3 @@
-2004-01-15  Martin Baulig  <martin@ximian.com>
-
-	* IMonoSymbolWriter.cs (IMonoSymbolWriter): Make this interface internal.
-
 2004-01-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyBuilder.cs (DefineVersionInfoResource): Set more 
