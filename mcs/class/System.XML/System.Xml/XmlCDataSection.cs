@@ -39,7 +39,7 @@ namespace System.Xml
 
 		public override XmlNode CloneNode (bool deep)
 		{
-			return null;
+			return new XmlCDataSection (Data, OwnerDocument); // CDATA nodes have no children.
 		}
 
 		public override void WriteContentTo (XmlWriter w) {	}

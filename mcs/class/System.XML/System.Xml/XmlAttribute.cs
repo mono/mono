@@ -149,7 +149,10 @@ namespace System.Xml
 		[MonoTODO]
 		public override XmlNode CloneNode (bool deep)
 		{
-			throw new NotImplementedException ();
+			if (deep) { // recursively clone the subtree
+				throw new NotImplementedException ();
+			} else
+				return new XmlAttribute (prefix, localName, namespaceURI, OwnerDocument);
 		}
 
 		internal void SetOwnerElement (XmlElement ownerElement)

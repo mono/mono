@@ -34,15 +34,14 @@ namespace System.Xml
 
 		[MonoTODO]
 		public override string Value {
-			get { return null; }
+			get { return Data; }
 			set {}
 		}
 
 		// Methods
-		[MonoTODO]
 		public override XmlNode CloneNode (bool deep)
 		{
-			return null;
+			return new XmlSignificantWhitespace (Data, OwnerDocument);
 		}
 
 		[MonoTODO]

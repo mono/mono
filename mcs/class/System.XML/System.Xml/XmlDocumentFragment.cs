@@ -1,96 +1,73 @@
-// -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 //
 // System.Xml.XmlDocumentFragment
 //
 // Author:
-//   Daniel Weber (daniel-weber@austin.rr.com)
+//   Duncan Mak  (duncan@ximian.com)
 //
-// (C) 2001 Daniel Weber
+// (C), Ximian, Inc
+//
 using System;
 
 namespace System.Xml
 {
-	/// <summary>
-	/// 
-	/// </summary>
 	public class XmlDocumentFragment : XmlNode
 	{
-		// Private data members
+		#region Constructor
 
-		// public properties
-		//===========================================================================
-		/// <summary>
-		/// Returns the local name of the node with.  For document fragments, it returns "#document-fragment"
-		/// </summary>
-		public override string LocalName 
+		internal XmlDocumentFragment (XmlDocument doc)
+			: base (doc)
 		{
-			get
-			{
-				return "#document-fragment";
-			}
-		}
-
-
-		/// <summary>
-		/// Get the node name.  Document fragments return "#document-fragment".
-		/// </summary>
-		public override string Name 
-		{ 
-			get
-			{
-				return "#document-fragment";
-			}
-		}
-
-		/// <summary>
-		/// Overridden.  Returns XmlNodeType.DocumentFragment.
-		/// </summary>
-		public override XmlNodeType NodeType 
-		{
-			get
-			{
-				return XmlNodeType.DocumentFragment;
-			}
 		}
 		
-		// Public Methods
-		//===========================================================================
-		/// <summary>
-		/// Return a clone of the node
-		/// </summary>
-		/// <param name="deep">Make copy of all children</param>
-		/// <returns>Cloned node</returns>
-		public override XmlNode CloneNode( bool deep)
-		{
-			// TODO - implement CloneNode()
-			throw new NotImplementedException();
+		#endregion
+		#region Properties
+
+		[MonoTODO]
+		public override string InnerXml {
+			get {throw new NotImplementedException(); }
+		}
+		
+		public override string LocalName {
+			get { return "#document-fragment"; }
 		}
 
-		/// <summary>
-		/// Saves all children of the current node to the passed writer
-		/// </summary>
-		/// <param name="w"></param>
-		public override void WriteContentTo(XmlWriter w)
-		{
-			// TODO - implement WriteContentsTo(XmlWriter)
-			throw new NotImplementedException();
+
+		public override string Name { 
+			get { return "#document-fragment"; }
 		}
 
-		/// <summary>
-		/// Saves the current node to writer w
-		/// </summary>
-		/// <param name="w"></param>
-		public override void WriteTo(XmlWriter w)
-		{
-			// TODO - implement WriteTo(XmlWriter)
-			throw new NotImplementedException();
+		public override XmlNodeType NodeType {
+			get { return XmlNodeType.DocumentFragment; }
 		}
 
-		// Constructors
-		//===========================================================================
-		internal XmlDocumentFragment ( XmlDocument aOwner ) : base (aOwner)
-		{
+		public override XmlDocument OwnerDocument {
+			get { return base.OwnerDocument; }
 		}
 
+		public override XmlNode ParentNode {
+			get { return null; } // it's always null here.
+		}
+
+		#endregion
+
+		#region Methods		
+		public override XmlNode CloneNode (bool deep)
+		{
+			return new XmlDocumentFragment (OwnerDocument);
+		}
+
+		[MonoTODO]
+		public override void WriteContentTo (XmlWriter w)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override void WriteTo (XmlWriter w)
+		{
+			throw new NotImplementedException ();
+		}
+
+		#endregion
 	}
 }

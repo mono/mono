@@ -15,7 +15,10 @@ namespace System.Xml
 	{
 		#region Constructors
 
-		protected internal XmlComment (string comment, XmlDocument doc) : base(comment, doc) { }
+		protected internal XmlComment (string comment, XmlDocument doc)
+			: base (comment, doc)
+		{
+		}
 
 		#endregion
 
@@ -39,7 +42,8 @@ namespace System.Xml
 
 		public override XmlNode CloneNode (bool deep)
 		{
-			return new XmlComment(Value, OwnerDocument);
+			// discard deep because Comments have no children.
+			return new XmlComment(Value, OwnerDocument); 
 		}
 
 		public override void WriteContentTo (XmlWriter w) { }

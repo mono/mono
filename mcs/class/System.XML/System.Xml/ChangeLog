@@ -1,3 +1,18 @@
+2002-03-19  Duncan Mak  <duncan@ximian.com>
+
+	* XmlAttribute.cs (CloneNode): First crack at the CloneNode method.
+
+	* XmlCDataSection.cs (CloneNode): Implemented.
+
+	* XmlDocumentFragment.cs: Reformatted and added the missing properties
+	(InnerXml, OwnerDocument, ParentNode).
+	(CloneNode): Implemented.
+
+	* XmlSignificantWhitespace.cs (CloneNode): Implemented.
+	(Value) Implemented the 'get' property.
+
+	* XmlWhitespace.cs (Module): implemented.
+
 2002-03-19  Jason Diamond <jason@injektilo.org>
 
 	* XmlDocument.cs: Fixed typo in Load that was duplicating the LocalName

@@ -39,10 +39,10 @@ namespace System.Xml
 		}
 
 		// Methods
-		[MonoTODO]
 		public override XmlNode CloneNode (bool deep)
 		{
-			return null;
+			// always return the data value
+			return new XmlWhitespace (Data, OwnerDocument); 
 		}
 
 		[MonoTODO]
