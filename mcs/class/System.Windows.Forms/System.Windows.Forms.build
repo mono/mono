@@ -21,6 +21,7 @@
 			<arg value="/r:Accessibility.dll"/>
 			<arg value="/r:System.dll"/>
 			<arg value="/r:System.Drawing.dll"/>
+			<arg value="/unsafe"/>
 			<sources>
 				<includes name="**/*.cs"/> 
 				<excludes name="Test/**"/>

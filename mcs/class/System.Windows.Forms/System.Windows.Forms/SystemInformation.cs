@@ -8,6 +8,9 @@
 // (C) Ximian, Inc., 2002
 //
 using System.Drawing;
+using System.Runtime.InteropServices;
+using System.Text;
+
 namespace System.Windows.Forms {
 
 	// <summary>

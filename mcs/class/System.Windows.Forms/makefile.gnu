@@ -4,7 +4,7 @@ TEST_DIR = Test
 LIBRARY = $(topdir)/class/lib/System.Windows.Forms.dll
 
 LIB_LIST = list.unix
-LIB_FLAGS = -r corlib -r System -r System.Drawing -r Accessibility /nowarn:0114 /nowarn:0108
+LIB_FLAGS = --unsafe -r corlib -r System -r System.Drawing -r Accessibility /nowarn:0114 /nowarn:0108
 
 SOURCES_INCLUDE=*.cs
 SOURCES_EXCLUDE=\
