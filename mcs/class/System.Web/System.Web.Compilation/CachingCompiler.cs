@@ -139,7 +139,8 @@ namespace System.Web.Compilation
 				ICodeCompiler compiler = provider.CreateCompiler ();
 				CompilerParameters options = GetOptions (assemblies);
 				results = compiler.CompileAssemblyFromFile (options, file);
-				ArrayList realdeps = new ArrayList (assemblies.Count);
+				ArrayList realdeps = new ArrayList (assemblies.Count + 1);
+				realdeps.Add (file);
 				for (int i = assemblies.Count - 1; i >= 0; i--) {
 					string current = (string) assemblies [i];
 					if (Path.IsPathRooted (current))
