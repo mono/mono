@@ -67,6 +67,7 @@ namespace System.Reflection.Emit {
 		internal Type corlib_void_type = typeof (void);
 		ArrayList resource_writers = null;
 		bool created;
+		bool is_module_only;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (AssemblyBuilder ab);
@@ -230,6 +231,9 @@ namespace System.Reflection.Emit {
 
 			ModuleBuilder r = new ModuleBuilder (this, name, fileName, emitSymbolInfo, transient);
 
+			if ((modules != null) && is_module_only)
+				throw new InvalidOperationException ("A module-only assembly can only contain one module.");
+
 			if (modules != null) {
 				ModuleBuilder[] new_modules = new ModuleBuilder [modules.Length + 1];
 				System.Array.Copy(modules, new_modules, modules.Length);
@@ -351,6 +355,20 @@ namespace System.Reflection.Emit {
 			}
 		}
 
+		/*
+		 * Mono extension. If this is set, the assembly can only contain one
+		 * module, access should be Save, and the saved image will not contain an
+		 * assembly manifest.
+		 */
+		internal bool IsModuleOnly {
+			get {
+				return is_module_only;
+			}
+			set {
+				is_module_only = value;
+			}
+		}
+
 		public void Save (string assemblyFileName)
 		{
 			if (resource_writers != null) {
@@ -368,7 +386,8 @@ namespace System.Reflection.Emit {
 			if (mainModule == null)
 				mainModule = DefineDynamicModule ("RefEmit_OnDiskManifestModule", assemblyFileName);
 
-			mainModule.IsMain = true;
+			if (!is_module_only)
+				mainModule.IsMain = true;
 
 			foreach (ModuleBuilder module in modules)
 				if (module != mainModule)

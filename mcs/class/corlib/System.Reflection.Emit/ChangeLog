@@ -1,3 +1,8 @@
+2003-12-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AssemblyBuilder.cs: New internal property to support /target:module in
+	mcs.
+
 2003-12-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ILGenerator.cs: Applied patch from Ben Maurer 
