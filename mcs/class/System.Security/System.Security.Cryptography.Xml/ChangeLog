@@ -1,5 +1,9 @@
 2004-03-09  Atsushi Enomoto <atsushi@ximian.com>
 
+	* KeyInfoX509Data.cs : trivial local var name fix.
+
+2004-03-09  Atsushi Enomoto <atsushi@ximian.com>
+
 	* KeyInfoX509Data.cs,
 	  Reference.cs,
 	  SignedInfo.cs,

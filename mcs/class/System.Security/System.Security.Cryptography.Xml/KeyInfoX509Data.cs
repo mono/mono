@@ -199,9 +199,9 @@ namespace System.Security.Cryptography.Xml {
 				}
 			}
 			// only one <X509CRL> 
-			XmlElement x509crl = XmlSignature.GetChildElement (element, XmlSignature.ElementNames.X509CRL, XmlSignature.NamespaceURI);
-			if (x509crl != null) {
-				x509crl = Convert.FromBase64String (x509crl.InnerXml);
+			XmlElement x509el = XmlSignature.GetChildElement (element, XmlSignature.ElementNames.X509CRL, XmlSignature.NamespaceURI);
+			if (x509el != null) {
+				x509crl = Convert.FromBase64String (x509el.InnerXml);
 			}
 		}
 	}
