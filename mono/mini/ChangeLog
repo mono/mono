@@ -1,3 +1,7 @@
+2004-01-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* jit-icalls.c (mono_fconv_ovf_i8): Call truncl before comparison, so
+	we don't throw exceptions when converting 1.1 to a long. Fixes #53250.
 
 Fri Jan 23 17:12:08 CET 2004 Paolo Molaro <lupus@ximian.com>
 
