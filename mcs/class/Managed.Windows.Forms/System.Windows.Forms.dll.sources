@@ -199,6 +199,7 @@ System.Windows.Forms/UserControl.cs
 System.Windows.Forms/View.cs
 System.Windows.Forms/VScrollBar.cs
 System.Windows.Forms/X11Structs.cs
+System.Windows.Forms/XEventQueue.cs
 System.Windows.Forms/XplatUI.cs
 System.Windows.Forms/XplatUIDriver.cs
 System.Windows.Forms/XplatUIStructs.cs

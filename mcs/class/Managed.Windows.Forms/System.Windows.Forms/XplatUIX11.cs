@@ -66,7 +66,7 @@ namespace System.Windows.Forms {
 		internal static	bool		is_visible;
 
 		private static Hashtable	handle_data;
-		private Queue message_queue;
+		private XEventQueue message_queue;
 
 		private ArrayList timer_list;
 		private Thread timer_thread;
@@ -129,7 +129,7 @@ namespace System.Windows.Forms {
 			// Handle singleton stuff first
 			ref_count=0;
 
-			message_queue = new Queue ();
+			message_queue = new XEventQueue ();
 			timer_list = new ArrayList ();
 
 			// Now regular initialization
@@ -677,9 +677,7 @@ namespace System.Windows.Forms {
 							xevent.ExposeEvent.width, xevent.ExposeEvent.height);
 				   
 					if (!data.HasExpose) {
-						lock (message_queue) {
-							message_queue.Enqueue (xevent);
-						}
+						message_queue.Enqueue (xevent);
 						data.HasExpose = true;
 					}
 					break;
@@ -695,9 +693,7 @@ namespace System.Windows.Forms {
 				case XEventName.FocusIn:
 				case XEventName.FocusOut:
 				case XEventName.ClientMessage:
-					lock (message_queue) {
-						message_queue.Enqueue (xevent);
-					}
+					message_queue.Enqueue (xevent);
 					break;
 				}
 
@@ -1140,9 +1136,7 @@ namespace System.Windows.Forms {
 			xevent.ClientMessageEvent.format = 32;
 			xevent.ClientMessageEvent.ptr1 = (IntPtr) GCHandle.Alloc (method);
 
-			lock (message_queue) {
-				message_queue.Enqueue (xevent);
-			}
+			message_queue.EnqueueLocked (xevent);
 
 			WakeupMain ();
 		}
