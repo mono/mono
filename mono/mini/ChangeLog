@@ -1,3 +1,10 @@
+
+Thu Feb 10 15:49:44 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, jit-icalls.c: use the managed implementation of
+	memset for initobj and memset, to avoid managed <-> unmanaged
+	transitions.
+
 2005-02-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* inssel.brg (mini_emit_virtual_call): Disable the virtual->nonvirtual
