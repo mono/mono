@@ -31,7 +31,7 @@
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Windows.Forms;
-using System.Windows.Forms.Design;
+//using System.Windows.Forms.Design;
 
 namespace System.Messaging.Design
 {
@@ -45,7 +45,7 @@ namespace System.Messaging.Design
 		}
 
 		[MonoTODO]
-		public QueuePathDialog (IUIService uiService)
+		public QueuePathDialog ()//IUIService uiService)
 		{
 			throw new NotImplementedException ();
 		}
