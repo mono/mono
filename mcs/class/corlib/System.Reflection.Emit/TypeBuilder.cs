@@ -1290,6 +1290,12 @@ namespace System.Reflection.Emit {
 			return base.IsInstanceOfType (o);
 		}
 
+		[MonoTODO]
+		public override bool IsSubclassOf (Type c)
+		{
+			return base.IsSubclassOf (c);
+		}
+
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 		public override Type[] GetGenericArguments ()
 		{
