@@ -35,6 +35,6 @@ namespace Microsoft.VisualBasic.CompilerServices {
 	public interface IVbHost {
 		// Methods
 		string GetWindowTitle ();
-		// IWin32Window GetParentWindow ();
+		System.Windows.Forms.IWin32Window GetParentWindow ();
 	};
 }

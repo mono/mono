@@ -1,3 +1,6 @@
+2004-10-11  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* IVbHost.cs: Completed API (needed to reference SWF for that).
+
 2004-09-11  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* Utils.cs: Wrong return type in CopyArray Signature. Bug #65651
 
