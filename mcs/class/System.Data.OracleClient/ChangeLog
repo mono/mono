@@ -1,3 +1,8 @@
+2003-04-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* System.Data.OracleClient/OracleConnection.cs: Apply fix from
+	David Pickens <dsp@rci.rutgers.edu>
+
 2003-03-08  Tim Coleman <tim@timcoleman.com>
 	* System.Data.OracleClient.Oci/OciRowIdDescriptor.cs:
 	* list:

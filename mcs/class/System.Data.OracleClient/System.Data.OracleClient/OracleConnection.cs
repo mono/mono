@@ -63,7 +63,7 @@ namespace System.Data.OracleClient
 		public OracleConnection (string connectionString) 
 			: this() 
 		{
-			this.connectionString = connectionString;
+			SetConnectionString (connectionString);
 		}
 
 		#endregion // Constructors
