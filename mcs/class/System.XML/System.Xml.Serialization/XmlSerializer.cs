@@ -6,9 +6,11 @@
 //   John Donagher (john@webmeta.com)
 //   Ajay kumar Dwivedi (adwiv@yahoo.com)
 //   Tim Coleman (tim@timcoleman.com)
+//   Elan Feingold (ef10@cornell.edu)
 //
 // (C) 2002 John Donagher, Ajay kumar Dwivedi
 // Copyright (C) Tim Coleman, 2002
+// (C) 2003 Elan Feingold
 // 
 
 using System;
@@ -17,6 +19,7 @@ using System.IO;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Schema;
+using System.Text;
 
 namespace System.Xml.Serialization {	
 	/// <summary>
@@ -80,10 +83,10 @@ namespace System.Xml.Serialization {
 		}
 
 		public XmlSerializer (Type type,
-				      XmlAttributeOverrides overrides,
-				      Type [] extraTypes,
-				      XmlRootAttribute root,
-				      string defaultNamespace)
+					  XmlAttributeOverrides overrides,
+					  Type [] extraTypes,
+					  XmlRootAttribute root,
+					  string defaultNamespace)
 		{
 			if (type == null)
 				throw new ArgumentNullException ("type");
@@ -162,21 +165,207 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public object Deserialize (Stream stream)
 		{
-			throw new NotImplementedException ();
+			XmlTextReader xmlReader = new XmlTextReader(stream);
+			return Deserialize(xmlReader);
 		}
-		[MonoTODO]
+
 		public object Deserialize (TextReader textReader)
 		{
-			throw new NotImplementedException ();
+			XmlTextReader xmlReader = new XmlTextReader(textReader);
+			return Deserialize(xmlReader);
 		}
-		[MonoTODO]
-		public object Deserialize (XmlReader xmlReader)
+
+		public bool DeserializeComposite(XmlReader xmlReader, ref Object theObject)
 		{
-			throw new NotImplementedException ();
+			Type objType = theObject.GetType();
+			bool retVal	 = true;
+
+			//Console.WriteLine("DeserializeComposite({0})", objType);
+			
+			// Are we at an empty element?
+			if (xmlReader.IsEmptyElement == true)
+				return retVal;
+
+			// Read each field, counting how many we find.
+			for (int numFields=0; xmlReader.Read(); )
+			{
+				XmlNodeType xmlNodeType = xmlReader.NodeType;
+				bool		isEmpty		= xmlReader.IsEmptyElement;
+				
+				if (xmlNodeType == XmlNodeType.Element)
+				{
+					// Read the field.
+					DeserializeField(xmlReader, ref theObject, xmlReader.Name);
+					numFields++;
+				}
+				else if (xmlNodeType == XmlNodeType.EndElement)
+				{
+					if (numFields == 0)
+					{
+						//Console.WriteLine("Empty object deserialized, ignoring.");
+						retVal = false;
+					}
+					
+					return retVal;
+				}
+			}
+
+			return retVal;
 		}
+
+		public void DeserializeField(XmlReader	xmlReader,
+									 ref Object theObject,
+									 String		fieldName)
+		{
+			// Get the type
+			FieldInfo fieldInfo	   = theObject.GetType().GetField(fieldName);
+			Type	  fieldType	   = fieldInfo.FieldType;
+			Object	  value		   = null;
+			bool	  isEmptyField = xmlReader.IsEmptyElement;
+
+			//Console.WriteLine("DeserializeField({0} of type {1}", fieldName, fieldType);
+
+			if (fieldType.IsArray && fieldType != typeof(System.Byte[]))
+			{
+				// Create an empty array list.
+				ArrayList list = new ArrayList();
+
+				// Call out to deserialize it.
+				DeserializeArray(xmlReader, list, fieldType.GetElementType());
+				value = list.ToArray(fieldType.GetElementType());
+			}
+			else if (isEmptyField == true && fieldType.IsArray)
+			{
+				// Must be a byte array, just create an empty one.
+				value = new byte[0];
+			}
+			else if (isEmptyField == false && 
+					 (IsInbuiltType(fieldType) || fieldType.IsEnum || fieldType.IsArray))
+			{
+				// Built in, set it.
+				while (xmlReader.Read())
+				{
+					if (xmlReader.NodeType == XmlNodeType.Text)
+					{
+						//Console.WriteLine(" -> value is '{0}'", xmlReader.Value);
+						
+						if (fieldType == typeof(Guid))
+							value = XmlConvert.ToGuid(xmlReader.Value);
+						else if (fieldType == typeof(Boolean))
+							value = XmlConvert.ToBoolean(xmlReader.Value);
+						else if (fieldType == typeof(String))
+							value = xmlReader.Value;
+						else if (fieldType == typeof(Int64))
+							value = XmlConvert.ToInt64(xmlReader.Value);
+						else if (fieldType == typeof(DateTime))
+							value = XmlConvert.ToDateTime(xmlReader.Value);
+						else if (fieldType.IsEnum)
+							value = Enum.Parse(fieldType, xmlReader.Value);
+						else if (fieldType == typeof(System.Byte[]))
+							value = XmlCustomFormatter.ToByteArrayBase64(xmlReader.Value);
+						else
+							Console.WriteLine("Error (type is '{0})'", fieldType);
+						
+						break;
+					}
+				}
+			}
+			else
+			{
+				//Console.WriteLine("Creating new {0}", fieldType);
+
+				// Create the new complex object.
+				value = System.Activator.CreateInstance(fieldType);
+
+				// Recurse, allowing the method to whack the object if it's empty.
+				DeserializeComposite(xmlReader, ref value);
+			}
+
+			//Console.WriteLine(" Setting {0} to '{1}'", fieldName, value);
+
+			// Set the field value.
+			theObject.GetType().InvokeMember(fieldName,
+											 BindingFlags.SetField, 
+											 null,
+											 theObject, 
+											 new Object[] { value },
+											 null, null, null);
+
+			// We need to munch the end.
+			if (IsInbuiltType(fieldType) || 
+				fieldType.IsEnum		 || 
+				fieldType == typeof(System.Byte[]))
+			{
+				if (isEmptyField == false)
+					while (xmlReader.Read() && xmlReader.NodeType != XmlNodeType.EndElement)
+						;
+			}
+			
+		}
+
+		public void DeserializeArray(XmlReader xmlReader, ArrayList theList, Type theType)
+		{
+			//Console.WriteLine(" DeserializeArray({0})", theType);
+
+			if (xmlReader.IsEmptyElement)
+			{
+				//Console.WriteLine("  DeserializeArray -> empty, nothing to do here");
+				return;
+			}
+
+			while (xmlReader.Read())
+			{
+				XmlNodeType xmlNodeType = xmlReader.NodeType;
+				bool		isEmpty		= xmlReader.IsEmptyElement;
+
+				if (xmlNodeType == XmlNodeType.Element)
+				{
+					// Must be an element of the array, create it.
+					Object obj = System.Activator.CreateInstance(theType);
+
+					//Console.WriteLine("  created obj of type '{0}'", obj.GetType());
+
+					// Deserialize and add.
+					if (DeserializeComposite(xmlReader, ref obj))
+					{
+						theList.Add(obj);
+					}
+				}
+				
+				if ((xmlNodeType == XmlNodeType.Element && isEmpty) ||
+					(xmlNodeType == XmlNodeType.EndElement))
+				{
+					return;
+				}
+			}
+		}
+
+		public object Deserialize(XmlReader xmlReader)
+		{
+			Object obj = null;
+
+			// Read each node in the tree.
+			while (xmlReader.Read())
+			{
+				if (xmlReader.NodeType == XmlNodeType.Element)
+				{
+					// Create the top level object.
+					//Console.WriteLine("Creating '{0}'", xsertype.FullName);
+					obj = System.Activator.CreateInstance(xsertype);
+
+					// Deserialize it.
+					DeserializeComposite(xmlReader, ref obj);
+				}
+				else if (xmlReader.NodeType == XmlNodeType.EndElement)
+				{
+					return obj;
+				}
+			}				   
+
+			return obj;
+		}  
 
 		protected virtual object Deserialize (XmlSerializationReader reader)
 		{
@@ -266,7 +455,7 @@ namespace System.Xml.Serialization {
 			object [] memberObj = (object []) typeTable [objType];
 			if (memberObj == null)
 				throw new Exception ("Unknown Type " + objType +
-						     " encountered during Serialization");
+							 " encountered during Serialization");
 
 			Hashtable memberTable = (Hashtable) memberObj [0];
 			XmlAttributes xmlAttributes = (XmlAttributes) memberTable [""];
@@ -420,7 +609,7 @@ namespace System.Xml.Serialization {
 
 				attributeName = xmlAttributes.GetAttributeName (attributeType, member.Name);
 				attributeNs = xmlAttributes.GetAttributeNamespace (attributeType);
-			
+
 				if (attributeValue is XmlQualifiedName) {
 					XmlQualifiedName qname = (XmlQualifiedName) attributeValue;
 
@@ -474,12 +663,12 @@ namespace System.Xml.Serialization {
 					elementValue = fieldInfo.GetValue (o);
 				}
 				else {
-					elementType  = propertyInfo.PropertyType;
+					elementType	 = propertyInfo.PropertyType;
 					elementValue = propertyInfo.GetValue (o, null);
 				}
-
 				elementName = xmlElements.GetElementName (elementType, member.Name);
 				elementNs = xmlElements.GetElementNamespace (elementType);
+
 				WriteElement (writer, xmlElements, elementName, elementNs, elementType, elementValue);
 			}
 		}
@@ -539,7 +728,7 @@ namespace System.Xml.Serialization {
 					for (int i = 0; i < count; i++) 
 					{
 						object itemValue = itemInfo.GetValue (value, new object[1] {i});
-						Type   itemType  = itemInfo.PropertyType;
+						Type   itemType	 = itemInfo.PropertyType;
 
 						if (itemValue != null) 
 						{
@@ -558,7 +747,7 @@ namespace System.Xml.Serialization {
 			}
 			else if (type.IsEnum) 
 			{
-				// FIXME
+				writer.WriteString(GetXmlValue(value));
 			}
 			else
 			{ //Complex Type
@@ -581,9 +770,8 @@ namespace System.Xml.Serialization {
 			string arrayTypeName = TypeTranslator.GetTypeData(arrayType).ElementName;
 			
 			TypeData td = TypeTranslator.GetTypeData (arrayType);
-			writer.WriteStartElement (td.ElementName);
-			Console.WriteLine(td.ElementName);
-			//Special Treatment for Byte array
+
+			// Special Treatment for Byte array
 			if(arrayType.Equals(typeof(byte)))
 			{
 				WriteBuiltinValue(writer,o);
@@ -592,6 +780,7 @@ namespace System.Xml.Serialization {
 			{
 				for(int i=0; i< arr.Length; i++)
 				{
+					writer.WriteStartElement (td.ElementName);
 					object value = arr.GetValue(i);
 					if (IsInbuiltType (arrayType)) 
 					{
@@ -601,9 +790,10 @@ namespace System.Xml.Serialization {
 					{
 						SerializeMembers(writer, value, false);
 					}
+
+					writer.WriteEndElement();
 				}
 			}
-			writer.WriteEndElement();
 		}
 
 		/// <summary>
@@ -615,6 +805,7 @@ namespace System.Xml.Serialization {
 		[MonoTODO ("Remove FIXMEs")]
 		private void FillTypeTable (Type type)
 		{
+			// If it's already in the table, don't add it again.
 			if (typeTable.Contains (type))
 				return;
 
@@ -634,8 +825,8 @@ namespace System.Xml.Serialization {
 			}
 			else {
 				//There must be a public constructor
-				if (!HasDefaultConstructor (type))
-					throw new Exception ("Can't Serialize Type " + type.Name + " since it does not have default Constructor");
+				//if (!HasDefaultConstructor (type))
+				//throw new Exception ("Can't Serialize Type " + type.Name + " since it does not have default Constructor");
 
 				if (type.GetInterface ("ICollection") == typeof (System.Collections.ICollection)) {
 					FillICollectionType (type);
@@ -681,6 +872,7 @@ namespace System.Xml.Serialization {
 					continue;
 
 				if (fieldInfo != null) {
+
 					//If field is readOnly or const, do not serialize it.
 					if (fieldInfo.IsLiteral || fieldInfo.IsInitOnly)
 						continue;
@@ -724,11 +916,15 @@ namespace System.Xml.Serialization {
 						FillTypeTable (fieldInfo.FieldType);
 				} 
 				else if (propertyInfo != null) {
+
 					//If property is readonly or writeonly, do not serialize it.
 					//Exceptions are properties whose return type is array, ICollection or IEnumerable
 					//Indexers are not serialized unless the class Implements ICollection.
-					if (!(propertyInfo.PropertyType.IsArray || Implements (propertyInfo.PropertyType, typeof (ICollection)) || 
-						(propertyInfo.PropertyType != typeof (string) && Implements (propertyInfo.PropertyType, typeof (IEnumerable))))) {
+					if (!(propertyInfo.PropertyType.IsArray || 
+						  Implements (propertyInfo.PropertyType, typeof (ICollection)) || 
+						  (propertyInfo.PropertyType != typeof (string) && 
+						   Implements (propertyInfo.PropertyType, typeof (IEnumerable)))))
+					{
 						if(!(propertyInfo.CanRead && propertyInfo.CanWrite) || propertyInfo.GetIndexParameters ().Length != 0)
 							continue;
 					}
@@ -858,9 +1054,12 @@ namespace System.Xml.Serialization {
 		{
 			if (type.IsEnum)
 				return false;
-			if (type.IsValueType || type == typeof (string) || type.IsPrimitive)
+			if (/* type.IsValueType || */type == typeof (string) || type.IsPrimitive)
 				return true;
-			if (type == typeof (DateTime) || type == typeof (XmlNode) || type.IsSubclassOf (typeof (XmlNode)))
+			if (type == typeof (DateTime) || 
+				type == typeof (Guid)	  ||
+				type == typeof (XmlNode)  || 
+				type.IsSubclassOf (typeof (XmlNode)))
 				return true;
 				
 			return false;
@@ -931,7 +1130,7 @@ namespace System.Xml.Serialization {
 			}
 			#endregion
 			if (value is byte[])
-				return XmlCustomFormatter.FromByteArrayHex((byte[])value);
+				return XmlCustomFormatter.FromByteArrayBase64((byte[])value);
 			if (value is Guid)
 				return XmlConvert.ToString((Guid)value);
 			if(value is DateTime)

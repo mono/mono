@@ -1,3 +1,8 @@
+2003-03-12  Elan Feingold <efeingold@mn.rr.com>
+
+	* XmlTextReader.cs: When throwing a ReaderException, show what
+	character was the culprit
+
 2003-03-05  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlDocumentFragment.cs, XmlElement.cs :

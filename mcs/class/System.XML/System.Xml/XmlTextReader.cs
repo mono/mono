@@ -1621,7 +1621,7 @@ namespace System.Xml
 		private string ReadName ()
 		{
 			if (!XmlConstructs.IsNameStart (PeekChar ()))
-				throw ReaderError ("a name did not start with a legal character");
+				throw ReaderError ("a name did not start with a legal character" + PeekChar ());
 
 			nameLength = 0;
 

@@ -84,7 +84,7 @@ namespace System.Xml.Serialization {
 			return new InvalidOperationException (message);
 		}
 
-		protected static byte[] FromByteArrayBase64 (byte[] value)
+		protected static string FromByteArrayBase64 (byte[] value)
 		{
 			return XmlCustomFormatter.FromByteArrayBase64 (value);
 		}

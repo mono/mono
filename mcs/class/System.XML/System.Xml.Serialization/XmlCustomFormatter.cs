@@ -16,10 +16,9 @@ namespace System.Xml.Serialization {
 
 		#region Methods
 
-		[MonoTODO]
-		internal static byte[] FromByteArrayBase64 (byte[] value)
+		internal static string FromByteArrayBase64 (byte[] value)
 		{
-			throw new NotImplementedException ();
+			return Convert.ToBase64String(value);
 		}
 
 		internal static string FromByteArrayHex (byte[] value)
@@ -86,6 +85,11 @@ namespace System.Xml.Serialization {
 			foreach (string token in tokens)
 				output.Append (FromXmlNmToken (token));
 			return output.ToString ();
+		}
+
+		internal static byte[] ToByteArrayBase64 (string value)
+		{
+			return Convert.FromBase64String(value);
 		}
 
 		internal static char ToChar (string value)
