@@ -1,3 +1,9 @@
+
+Tue Aug 19 18:22:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* loader.h: portability fix by Bernie Solomon
+	* <bernard@ugsolutions.com>.
+
 2003-08-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.h reflection.c (mono_param_get_objects): Changed this to 
