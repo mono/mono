@@ -1,3 +1,9 @@
+2003-03-08: Jackson Harper <jackson@latitudegeo.com>
+
+	* CodeGen.cs: Add ExternTable property
+	* ExternTable.cs: New file, this will is used for pulling 
+	types and methods from external assemblies.
+
 2003-03-06 Jackson Harper <jackson@latitudegeo.com>
 
 	* ClassTable.cs, CodeGen.cs: Add methods to allow types to inherit from another type.

@@ -26,11 +26,13 @@ namespace Mono.ILASM {
 		private MethodDef current_method;
 		
 		private ClassTable class_table;
+		private ExternTable extern_table;
 
 		public CodeGen (string output_file, bool is_dll, bool is_assembly)
 		{
 			pefile = new PEFile (output_file, is_dll, is_assembly);
 			class_table = new ClassTable (pefile);
+			extern_table = new ExternTable (pefile);
 		}
 	
 		public PEFile PEFile {
@@ -54,7 +56,10 @@ namespace Mono.ILASM {
 
 		public ClassTable ClassTable {
 			get { return class_table; }
-			set { class_table = value; }
+		}
+
+		public ExternTable ExternTable {
+			get { return extern_table; }
 		}
 
 		public void AddClass (TypeAttr at, string name, Location location)
@@ -64,7 +69,8 @@ namespace Mono.ILASM {
 		
 		public void AddClass (TypeAttr at, string name, Class parent, Location location)
 		{
-		 	current_class = class_table.AddDefinition (current_namespace, name, at, parent, location);
+		 	current_class = class_table.AddDefinition (current_namespace, name, 
+				at, parent, location);
 		}
 	}
 
