@@ -1,3 +1,9 @@
+2002-04-22  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (Argument.Type): Ensure that we return the correct
+	type when we have out or ref parameters [in which case we 
+	append a "&"].
+	
 2002-04-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (Property, Indexer): Allow extern modifier in there. 

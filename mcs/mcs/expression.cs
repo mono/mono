@@ -2774,7 +2774,10 @@ namespace Mono.CSharp {
 
 		public Type Type {
 			get {
-				return expr.Type;
+				if (ArgType == AType.Ref || ArgType == AType.Out)
+					return Type.GetType (expr.Type.ToString () + "&");
+				else
+					return expr.Type;
 			}
 		}
 
@@ -3049,7 +3052,6 @@ namespace Mono.CSharp {
 			ParameterData best_pd;
 			int argument_count;
 		
-
 			if (args == null)
 				argument_count = 0;
 			else
@@ -3297,7 +3299,6 @@ namespace Mono.CSharp {
 				Parameter.Modifier p_mod = pd.ParameterModifier (i);
 
 				if (a_mod == p_mod) {
-					
 					if (a_mod == Parameter.Modifier.NONE)
 						if (!StandardConversionExists (a.Expr, pd.ParameterType (i)))
 							return false;
@@ -3350,7 +3351,7 @@ namespace Mono.CSharp {
 					continue;
 
 				candidates.Add (candidate);
-
+						  
 				x = BetterFunction (ec, Arguments, candidate, method, false, loc);
 				
 				if (x == 0)
@@ -3401,7 +3402,6 @@ namespace Mono.CSharp {
 			// Now we see if we can at least find a method with the same number of arguments
 			//
 			ParameterData pd;
- 			int method_count = 0;
 
 			if (best_match_idx == -1) {
 
@@ -3413,7 +3413,6 @@ namespace Mono.CSharp {
 					if (pd.Count == argument_count) {
 						best_match_idx = i;
 						method = me.Methods [best_match_idx];
-						method_count++;
 					} else
 						continue;
 				}
