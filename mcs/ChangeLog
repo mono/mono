@@ -1,3 +1,12 @@
+2003-07-22  Peter Williams  <peter@newton.cx>
+
+	* README: INSTALL.txt, not INSTALL.
+
+2003-07-20  Peter Williams  <peter@newton.cx>
+
+	* nunit20/nunit-console/Makefile (PROGRAM): Put nunit-console.exe
+	in $(topdir)/class/lib so we can find our DLL's.
+
 2003-07-18  Peter Williams  <peter@newton.cx>
 
 	* build/library.make (dist-local): Fancy make dist magic gives
