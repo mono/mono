@@ -1,3 +1,8 @@
+2004-05-29  Gert Driesen  (drieseng@users.sourceforge.net)
+
+	* corlib.dll.sources: added SetWin32ContextInIDispatchAttribute
+	and VariantWrapper
+
 2004-05-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Makefile: changed case on nunit.framework.dll (lowercase)
