@@ -88,9 +88,19 @@ namespace System.Threading
 		}
 
 		// Stores a hash keyed by strings of LocalDataStoreSlot objects
-		static Hashtable datastorehash = Hashtable.Synchronized(new Hashtable());
+		static Hashtable datastorehash;
+
+		private static void InitDataStoreHash () {
+			lock (typeof (Thread)) {
+				if (datastorehash == null) {
+					datastorehash = Hashtable.Synchronized(new Hashtable());
+				}
+			}
+		}
 		
 		public static LocalDataStoreSlot AllocateNamedDataSlot(string name) {
+			if (datastorehash == null)
+				InitDataStoreHash ();
 			LocalDataStoreSlot slot = (LocalDataStoreSlot)datastorehash[name];
 			if(slot!=null) {
 				// This exception isnt documented (of
@@ -106,6 +116,8 @@ namespace System.Threading
 		}
 
 		public static void FreeNamedDataSlot(string name) {
+			if (datastorehash == null)
+				InitDataStoreHash ();
 			LocalDataStoreSlot slot=(LocalDataStoreSlot)datastorehash[name];
 
 			if(slot!=null) {
@@ -126,6 +138,8 @@ namespace System.Threading
 		public extern static int GetDomainID();
 
 		public static LocalDataStoreSlot GetNamedDataSlot(string name) {
+			if (datastorehash == null)
+				InitDataStoreHash ();
 			LocalDataStoreSlot slot=(LocalDataStoreSlot)datastorehash[name];
 
 			if(slot==null) {

@@ -1,3 +1,8 @@
+
+Tue Jan 28 17:55:59 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* Thread.cs: delay-init datastorehash.
+
 2003-01-10  Patrik Torstensson  <totte@race-x-change.com>
 
 	* ThreadPool.cs: Temporary removed the usage of monitor thread, implemented a 
