@@ -176,5 +176,80 @@ namespace MonoTests.System.Xml
 			elp = seq.Items [0] as XmlSchemaElement;
 			AssertEquals (QName ("Bar", "urn:bar"), elp.QualifiedName);
 		}
+
+		[Test]
+		public void TestWriteNamespaces ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			XmlSchema xs;
+			StringWriter sw;
+			XmlTextWriter xw;
+
+			// empty
+			xs = new XmlSchema ();
+			sw = new StringWriter ();
+			xw = new XmlTextWriter (sw);
+			xs.Write (xw);
+			doc.LoadXml (sw.ToString ());
+			AssertEquals ("#1", "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" />", doc.DocumentElement.OuterXml);
+
+			// TargetNamespace
+			xs = new XmlSchema ();
+			sw = new StringWriter ();
+			xw = new XmlTextWriter (sw);
+			xs.TargetNamespace = "urn:foo";
+			xs.Write (xw);
+			Console.WriteLine ("#2", "<xs:schema xmlns:tns=\"urn:foo\" targetNamespace=\"urn:foo\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" />", doc.DocumentElement.OuterXml);
+
+			// XmlSerializerNamespaces
+			xs = new XmlSchema ();
+			sw = new StringWriter ();
+			xw = new XmlTextWriter (sw);
+			xs.Namespaces.Add ("hoge", "urn:hoge");
+			xs.Write (xw);
+			doc.LoadXml (sw.ToString ());
+			AssertEquals ("#3", "<schema xmlns:hoge=\"urn:hoge\" xmlns=\"http://www.w3.org/2001/XMLSchema\" />", doc.DocumentElement.OuterXml);
+
+			// TargetNamespace + XmlSerializerNamespaces
+			xs = new XmlSchema ();
+			sw = new StringWriter ();
+			xw = new XmlTextWriter (sw);
+			xs.TargetNamespace = "urn:foo";
+			xs.Namespaces.Add ("hoge", "urn:hoge");
+			xs.Write (xw);
+			doc.LoadXml (sw.ToString ());
+			AssertEquals ("#4", "<schema xmlns:hoge=\"urn:hoge\" targetNamespace=\"urn:foo\" xmlns=\"http://www.w3.org/2001/XMLSchema\" />", doc.DocumentElement.OuterXml);
+
+			// Add XmlSchema.Namespace to XmlSerializerNamespaces
+			xs = new XmlSchema ();
+			sw = new StringWriter ();
+			xw = new XmlTextWriter (sw);
+			xs.Namespaces.Add ("a", XmlSchema.Namespace);
+			xs.Write (xw);
+			doc.LoadXml (sw.ToString ());
+			AssertEquals ("#5", "<a:schema xmlns:a=\"http://www.w3.org/2001/XMLSchema\" />", doc.DocumentElement.OuterXml);
+
+			// UnhandledAttributes + XmlSerializerNamespaces
+			xs = new XmlSchema ();
+			sw = new StringWriter ();
+			xw = new XmlTextWriter (sw);
+			XmlAttribute attr = doc.CreateAttribute ("hoge");
+			xs.UnhandledAttributes = new XmlAttribute [] {attr};
+			xs.Namespaces.Add ("hoge", "urn:hoge");
+			xs.Write (xw);
+			doc.LoadXml (sw.ToString ());
+			AssertEquals ("#6", "<schema xmlns:hoge=\"urn:hoge\" hoge=\"\" xmlns=\"http://www.w3.org/2001/XMLSchema\" />", doc.DocumentElement.OuterXml);
+
+			// Adding xmlns to UnhandledAttributes -> no output
+			xs = new XmlSchema ();
+			sw = new StringWriter ();
+			xw = new XmlTextWriter (sw);
+			attr = doc.CreateAttribute ("xmlns");
+			attr.Value = "urn:foo";
+			xs.UnhandledAttributes = new XmlAttribute [] {attr};
+			xs.Write (xw);
+			doc.LoadXml (sw.ToString ());
+			AssertEquals ("#7", "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" />", doc.DocumentElement.OuterXml);
+		}
 	}
 }
