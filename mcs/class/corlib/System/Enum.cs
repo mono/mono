@@ -301,6 +301,9 @@ namespace System {
 
 		public override bool Equals (object obj)
 		{
+			if (null == obj)
+				return false;
+
 			if (obj.GetType() != this.GetType())
 				return false;
 
@@ -319,7 +322,19 @@ namespace System {
 		[MonoTODO]
 		public static string Format (Type enumType, object value, string format)
 		{
-			// fixme: consider format
+			if (null == enumType)
+				throw new ArgumentNullException("enumType cannot be null");
+			if (null == value)
+				throw new ArgumentNullException("value cannot be null");
+			if (null == format)
+				throw new ArgumentNullException("format cannot be null");
+
+			if (enumType != typeof(Enum))
+				throw new ArgumentException("enumType is not an Enum Type");
+
+			// FIXME: other tests for ArgumentException
+
+			// fixme: consider format, including test and throw FormatException
 			return GetName (enumType, value);
 		}
 	}

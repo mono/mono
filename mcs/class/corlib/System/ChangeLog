@@ -1,3 +1,9 @@
+2002-03-19  Nick Drochak  <ndrochak@gol.com>
+
+	* Enum.cs (Equals): check for null and throw if it is.
+	* Enum.cs (Format): check for null parameters and throw if necessary.
+	This method still needs more argument checking.
+
 2002-03-18  Dietmar Maurer  <dietmar@ximian.com>
 
 	* Enum.cs (Equals): check if Enums are of the same type
