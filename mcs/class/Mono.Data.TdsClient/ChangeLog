@@ -1,6 +1,11 @@
+2002-12-01  Tim Coleman <tim@timcoleman.com>
+        * Mono.Data.TdsClient/TdsDataReader.cs:
+                Change to reflect TdsSchemaInfo -> TdsDataColumnCollection
+                shift.
+
 2002-11-26  Tim Coleman <tim@timcoleman.com>
 	* Mono.Data.TdsClient.build:
-	* makefile.gnu
+	* makefile.gnu:
 		Add System.EnterpriseServices to build.
 	* Mono.Data.TdsClient/TdsCommand.cs:
 	* Mono.Data.TdsClient/TdsConnection.cs:

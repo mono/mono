@@ -291,7 +291,7 @@ namespace Mono.Data.TdsClient {
 
 			dataTypeNames = new ArrayList ();
 
-			foreach (TdsSchemaInfo schema in command.Tds.Schema) {
+			foreach (TdsDataColumn schema in command.Tds.Columns) {
 				DataRow row = schemaTable.NewRow ();
 
 				row ["ColumnName"]		= GetSchemaValue (schema, "ColumnName");
@@ -466,7 +466,7 @@ namespace Mono.Data.TdsClient {
 			return schemaTable;
 		}		
 
-		private static object GetSchemaValue (TdsSchemaInfo schema, object key)
+		private static object GetSchemaValue (TdsDataColumn schema, object key)
 		{
 			if (schema.ContainsKey (key) && schema [key] != null)
 				return schema [key];
