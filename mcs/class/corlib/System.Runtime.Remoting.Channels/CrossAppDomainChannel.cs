@@ -12,6 +12,7 @@ using System.Threading;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Messaging;   
 using System.Runtime.Remoting.Channels; 
+using System.Runtime.Remoting.Contexts; 
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -167,8 +168,9 @@ namespace System.Runtime.Remoting.Channels
 					arrRequest = reqMsgStream.GetBuffer();
 				}
 
-				// TODO: Use Contexts instead of domain id only
+				Context currentContext = Thread.CurrentContext;
 				AppDomain currentDomain = AppDomain.InternalSetDomainByID ( _domainID );
+
 				try 
 				{
 					IMessage reqDomMsg;
@@ -195,6 +197,7 @@ namespace System.Runtime.Remoting.Channels
 				finally 
 				{
 					AppDomain.InternalSetDomain (currentDomain);
+					AppDomain.InternalSetContext (currentContext);
 				}
 				
 				if (null != arrResponse) {

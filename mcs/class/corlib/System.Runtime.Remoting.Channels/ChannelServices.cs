@@ -57,7 +57,7 @@ namespace System.Runtime.Remoting.Channels
 			get { return _crossContextSink; }
 		}
 
-		public static IMessageSink CreateClientChannelSinkChain(string url, object remoteChannelData, out string objectUri)
+		internal static IMessageSink CreateClientChannelSinkChain(string url, object remoteChannelData, out string objectUri)
 		{
 			// Locate a channel that can parse the url. This channel will be used to
 			// create the sink chain.
@@ -170,7 +170,7 @@ namespace System.Runtime.Remoting.Channels
 			if (identity == null) return new ReturnMessage (new RemotingException ("No receiver for uri " + call.Uri), (IMethodCallMessage) msg);
 
 			RemotingServices.SetMessageTargetIdentity (msg, identity);
-			return identity.Context.GetServerContextSinkChain().SyncProcessMessage (msg);
+			return _crossContextSink.SyncProcessMessage (msg);
 		}
 
 		public static void UnregisterChannel (IChannel chnl)

@@ -1,3 +1,8 @@
+2003-03-03  Lluis Sanchez Gual  <lluis@ideary.com>
+
+	* ChannelServices.cs: Minor corrections.
+	* CrossAppDomainChannel.cs: Context is now restored when exiting the domain.
+
 2003-02-18  Lluis Sanchez Gual  <lluis@ideary.com>
 
 	* ChannelServices.cs: Added static property for getting the CrossContextChannel.
