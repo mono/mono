@@ -1,3 +1,8 @@
+2004-04-21  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* mini-sparc.h: fix implementations of __builtin
+	functions for Sun compiler for V9.
+
 2004-07-16  Ben Maurer  <bmaurer@ximain.com>
 
 	* mini.c: use the new stelem.ref wrapper
