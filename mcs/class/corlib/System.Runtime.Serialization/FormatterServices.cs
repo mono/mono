@@ -10,6 +10,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization.Formatters;
 
 namespace System.Runtime.Serialization
 {
@@ -142,5 +143,38 @@ namespace System.Runtime.Serialization
 
 			return obj;
 		}
+		
+#if NET_1_1
+
+		public static void CheckTypeSecurity (Type t, TypeFilterLevel securityLevel)
+		{
+			if (securityLevel == TypeFilterLevel.Full) return;
+			CheckNotAssignable (typeof(System.DelegateSerializationHolder), t);
+			CheckNotAssignable (typeof(System.Runtime.Remoting.Lifetime.ISponsor), t);
+			CheckNotAssignable (typeof(System.Runtime.Remoting.IEnvoyInfo), t);
+			CheckNotAssignable (typeof(System.Runtime.Remoting.ObjRef), t);
+		}
+		
+		static void CheckNotAssignable (Type basetype, Type type)
+		{
+			if (basetype.IsAssignableFrom (type)) {
+				string msg = "Type " + basetype + " and the types derived from it";
+				msg += " (such as " + type + ") are not permitted to be deserialized at this security level";
+				throw new System.Security.SecurityException (msg);
+			}
+		}
+
+		public static object GetSafeUninitializedObject (Type type)
+		{
+			// FIXME: MS.NET uses code access permissions to check if the caller is
+			// allowed to create an instance of this type. We can't support this
+			// because it is not implemented in mono.
+			
+			// In concrete, the it will request a SecurityPermission of 
+			// type "Infrastructure".
+			
+			return GetUninitializedObject (type);
+		}
+#endif
 	}
 }

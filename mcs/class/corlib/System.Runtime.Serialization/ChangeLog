@@ -1,3 +1,8 @@
+2003-11-21  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* FormatterServices.cs: Added CheckTypeSecurity() and
+	  GetSafeUninitializedObject().
+
 2003-11-18  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* ObjectManager.cs: Fixed header, internalized enum
