@@ -1,3 +1,8 @@
+2004-02-05  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlConvert.cs : ToSingle() and ToDouble() should be culture 
+	  independent. Patch by Rodolfo Campero.
+
 2004-02-04  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTDObjectModel.cs : Never expand entity on ScanEntityValue().

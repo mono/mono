@@ -247,7 +247,7 @@ namespace System.Xml {
 				return Double.NegativeInfinity;
 			if (s == "NaN")
 				return Double.NaN;
-			return Double.Parse (s, floatStyle);
+			return Double.Parse (s, floatStyle, CultureInfo.InvariantCulture);
 		}
 
 		public static Guid ToGuid(string s)
@@ -286,7 +286,7 @@ namespace System.Xml {
 				return Single.NegativeInfinity;
 			if (s == "NaN")
 				return Single.NaN;
-			return Single.Parse(s, floatStyle);
+			return Single.Parse(s, floatStyle, CultureInfo.InvariantCulture);
 		}
 
 		public static string ToString(Guid value)
