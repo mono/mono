@@ -116,10 +116,8 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public static void DestroyStructure (IntPtr ptr, Type structuretype) {
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static void DestroyStructure (IntPtr ptr, Type structuretype);
 
 		[MonoTODO]
 		public static void FreeBSTR (IntPtr ptr) {
