@@ -34,7 +34,7 @@ gacutil = $(topdir)/tools/gacutil/gacutil.exe
 all-local: $(the_lib)
 
 install-local: $(the_lib) $(gacutil)
-	echo $(RUNTIME)  $(gacutil) -i $(the_lib) -f /root $(DESTDIR)$(prefix)/lib || exit 1 ; \
+	$(RUNTIME)  $(gacutil) -i $(the_lib) -f /root $(DESTDIR)$(prefix)/lib || exit 1 ; \
 
 uninstall-local: $(gacutil)
 	$(RUNTIME)  $(gacutil) /u $$(basename $(the_lib) .dll) ; \
