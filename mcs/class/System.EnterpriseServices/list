@@ -36,6 +36,10 @@ System.EnterpriseServices/PrivateComponentAttribute.cs
 System.EnterpriseServices/PropertyLockMode.cs
 System.EnterpriseServices/PropertyReleaseMode.cs
 System.EnterpriseServices/ObjectPoolingAttribute.cs
+System.EnterpriseServices/RegistrationErrorInfo.cs
+System.EnterpriseServices/RegistrationException.cs
+System.EnterpriseServices/RegistrationHelper.cs
+System.EnterpriseServices/ServicedComponent.cs
 System.EnterpriseServices.CompensatingResourceManager/TransactionState.cs
 System.EnterpriseServices.CompensatingResourceManager/LogRecordFlags.cs
 System.EnterpriseServices.CompensatingResourceManager/CompensatorOptions.cs
