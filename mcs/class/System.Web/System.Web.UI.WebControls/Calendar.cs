@@ -51,6 +51,9 @@ namespace System.Web.UI.WebControls
 		private System.Globalization.Calendar globCal;
 		private DateTimeFormatInfo infoCal = DateTimeFormatInfo.CurrentInfo;
 
+		private static readonly DateTime begin_date = new DateTime (2000,01,01,0,0,0,0);
+				
+
 		private static int MASK_WEEKEND  = (0x01 << 0);
 		private static int MASK_OMONTH   = (0x01 << 1);
 		private static int MASK_TODAY    = (0x01 << 2);
@@ -633,56 +636,26 @@ namespace System.Web.UI.WebControls
 		/// </remarks>
 		void IPostBackEventHandler.RaisePostBackEvent(string eventArgument)
 		{
+			// initialize the calendar...TODO: find out why this isn't done in the constructor
+			// if the culture is changed between rendering and postback this will be broken
 			globCal = DateTimeFormatInfo.CurrentInfo.Calendar;
-			DateTime visDate = GetEffectiveVisibleDate();
-			if(eventArgument == "nextMonth")
-			{
-				VisibleDate = globCal.AddMonths(visDate, 1);
-				OnVisibleMonthChanged(VisibleDate, visDate);
-				return;
-			}
-			if(eventArgument == "prevMonth")
-			{
-				VisibleDate = globCal.AddMonths(visDate, -1);
-				OnVisibleMonthChanged(VisibleDate, visDate);
-				return;
-			}
-			if(eventArgument == "selectMonth")
-			{
-				DateTime oldDate = new DateTime(globCal.GetYear(visDate), globCal.GetMonth(visDate), 1, globCal);
-				SelectRangeInternal(oldDate, globCal.AddDays(globCal.AddMonths(oldDate, 1), -1), visDate);
-				return;
-			}
-			if(String.Compare(eventArgument, 0, "selectWeek", 0, "selectWeek".Length)==0)
-			{
-				int week = -1;
-				try
-				{
-					week = Int32.Parse(eventArgument.Substring("selectWeek".Length));
-				} catch(Exception e)
-				{
-				}
-				if(week >= 0 && week <= 5)
-				{
-					DateTime weekStart = globCal.AddDays(GetFirstCalendarDay(visDate), week * 7);
-					SelectRangeInternal(weekStart, globCal.AddDays(weekStart, 6), visDate);
-				}
-				return;
-			}
-			if(String.Compare(eventArgument, 0, "selectDay", 0, "selectDay".Length)==0)
-			{
-				int day = -1;
-				try
-				{
-					day = Int32.Parse(eventArgument.Substring("selectDay".Length));
-				} catch(Exception e)
-				{
-				}
-				if(day >= 0 && day <= 42)
-				{
-					DateTime dayStart = globCal.AddDays(GetFirstCalendarDay(visDate), day);
-					SelectRangeInternal(dayStart, dayStart, visDate);
-				}
+
+			// TODO: Find out what kind of exceptions to throw when we get bad data
+			if (eventArgument.StartsWith ("V")) {
+				TimeSpan mod = new TimeSpan (Int32.Parse (eventArgument.Substring (1)), 0, 0, 0);
+				DateTime new_date = begin_date + mod;
+				VisibleDate = new_date;
+				OnVisibleMonthChanged (VisibleDate, new_date);
+			} else if (eventArgument.StartsWith ("R")) {
+				TimeSpan mod = new TimeSpan (Int32.Parse (eventArgument.Substring (1,
+											  eventArgument.Length - 3)), 0, 0, 0);
+				DateTime range_begin = begin_date + mod;
+				int sel_days = Int32.Parse (eventArgument.Substring (eventArgument.Length - 2));
+				SelectRangeInternal (range_begin, range_begin.AddDays (sel_days - 1), GetEffectiveVisibleDate ());
+			} else {
+				TimeSpan mod = new TimeSpan (Int32.Parse (eventArgument), 0, 0, 0);
+				DateTime day = begin_date + mod;
+				SelectRangeInternal (day, day, GetEffectiveVisibleDate ());
 			}
 		}
 
@@ -882,11 +855,13 @@ namespace System.Web.UI.WebControls
 			bool isCalendar = GetType () == typeof (Calendar);
 			int month = globCal.GetMonth (activeDate);
 			DateTime currentDay = firstDay;
+			int begin = (int) (firstDay - begin_date).TotalDays;
 			for (int crr = 0; crr < 6; crr++) {
 				writer.Write ("<tr>");
 				if (isWeekMode) {
+					int week_offset = begin + crr * 7;
 					string cellText = GetCalendarLinkText (
-								"selectWeek" + crr.ToString (),
+								"R" + week_offset + "07",
 								SelectWeekText, 
 								weeksCell.ForeColor,
 								isActive);
@@ -944,7 +919,7 @@ namespace System.Web.UI.WebControls
 					OnDayRender (dayCell, calDay);
 					if (calDay.IsSelectable)
 						dayCell.Text = GetCalendarLinkText (
-									"selectDay" + (crr * 7 + weekDay),
+									(begin + (crr * 7 + weekDay)).ToString (),
 									dayString,
 									dayCell.ForeColor,
 									isActive);
@@ -990,8 +965,13 @@ namespace System.Web.UI.WebControls
 			string selMthText = String.Empty;
 			if (isWeekMode) {
 				if (mode == CalendarSelectionMode.DayWeekMonth) {
+					DateTime visDate = GetEffectiveVisibleDate ();
+					DateTime sel_month = new DateTime (visDate.Year, visDate.Month, 1);
+					int month_offset = (int) (sel_month - begin_date).TotalDays;
 					headerCell.ApplyStyle (SelectorStyle);
-					selMthText = GetCalendarLinkText ("selectMonth",
+					selMthText = GetCalendarLinkText ("R" + month_offset +
+							globCal.GetDaysInMonth (sel_month.Year,
+									sel_month.Month).ToString ("d2"), // maybe there are calendars with less then 10 days in a month
 									  SelectMonthText,
 									  SelectorStyle.ForeColor,
 									  isActive);
@@ -1070,10 +1050,13 @@ namespace System.Web.UI.WebControls
 					else
 						prevContent = infoCal.GetAbbreviatedMonthName (pMthInt);
 				}
+				DateTime prev_month = visibleDate.AddMonths (-1);
+				int prev_offset = (int) (new DateTime (prev_month.Year,
+									  prev_month.Month, 1) - begin_date).TotalDays;
 				prevCell.ApplyStyle (NextPrevStyle);
 				RenderCalendarCell (writer,
 						    prevCell,
-						    GetCalendarLinkText ("prevMonth",
+						    GetCalendarLinkText ("V" + prev_offset,
 							    		 prevContent,
 									 NextPrevStyle.ForeColor,
 									 isActive)
@@ -1115,10 +1098,13 @@ namespace System.Web.UI.WebControls
 					else
 						nextContent = infoCal.GetAbbreviatedMonthName(nMthInt);
 				}
+				DateTime next_month = visibleDate.AddMonths (1);
+				int next_offset = (int) (new DateTime (next_month.Year,
+									  next_month.Month, 1) - begin_date).TotalDays;
 				nextCell.ApplyStyle(NextPrevStyle);
 				RenderCalendarCell (writer,
 						    nextCell,
-						    GetCalendarLinkText ("nextMonth",
+						    GetCalendarLinkText ("V" + next_offset,
 									 nextContent,
 									 NextPrevStyle.ForeColor,
 									 isActive)

@@ -1,3 +1,8 @@
+2004-02-13  Jackson Harper  <jackson@ximian.com>
+
+	* Calendar.cs: Match MS postback data. This allows sites that
+	parse the postback data manually to work.
+	
 2004-02-04 Alon Gazit <along@mainsoft.com>
 	* EditCommandColumn.cs: fixed InitializeCell().
 	The rendered LiteralControl should contain "&nbsp;" and not " ".
