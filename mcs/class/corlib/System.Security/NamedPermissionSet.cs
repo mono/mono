@@ -17,6 +17,9 @@ namespace System.Security {
 	[Serializable]
 	public sealed class NamedPermissionSet : PermissionSet {
 
+		// for PolicyLevel (to avoid validation duplication)
+		internal NamedPermissionSet () : base () {}
+
 		public NamedPermissionSet (string name, PermissionSet set) : base (set) 
 		{
 			Name = name;
@@ -30,9 +33,6 @@ namespace System.Security {
 		public NamedPermissionSet (NamedPermissionSet set) : this (set.name, set) {}
 
 		public NamedPermissionSet (string name) : this (name, PermissionState.None) {}
-
-		// for PolicyLevel (to avoid validation duplication)
-		internal NamedPermissionSet (SecurityElement e) : base (e) {}
 
 		// properties
 

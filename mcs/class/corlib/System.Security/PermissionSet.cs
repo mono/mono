@@ -25,6 +25,12 @@ namespace System.Security {
 
 		// constructors
 
+		// for PolicyLevel (to avoid validation duplication)
+		internal PermissionSet () 
+		{
+			list = new ArrayList ();
+		}
+
 		public PermissionSet (PermissionState state)
 		{
 			if (!Enum.IsDefined(typeof(System.Security.Permissions.PermissionState), state))
@@ -44,13 +50,6 @@ namespace System.Security {
 				foreach (IPermission p in permSet.list)
 					list.Add (p);
 			}
-		}
-
-		// for PolicyLevel (to avoid validation duplication)
-		internal PermissionSet (SecurityElement e) 
-		{
-			list = new ArrayList ();
-			FromXml (e);
 		}
 
 		// methods

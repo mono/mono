@@ -1,3 +1,10 @@
+2004-01-26  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* NamedPermissionSet.cs: Changed internal constructor 
+	NamedPermissionSet (SecurityElement e) to NamedPermissionSet ().
+	* PermissionSet.cs: Changed internal constructor 
+	PermissionSet (SecurityElement e) to PermissionSet ().
+
 2004-01-24  David Sheldon <dave-mono@earth.li>
 
        * SecurityElement.cs: Changed indentation in ToString, it seems
