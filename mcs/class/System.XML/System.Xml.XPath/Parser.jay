@@ -97,6 +97,8 @@ namespace Mono.Xml.XPath
 %token PROCESSING_INSTRUCTION	"processing-instruction"
 %token NODE						"node"
 
+%token MULTIPLY			"*"
+
 %token NUMBER
 %token LITERAL
 %token NCName
@@ -188,7 +190,7 @@ AdditiveExpr
 
 MultiplicativeExpr
 	: UnaryExpr 
-	| MultiplicativeExpr ASTERISK UnaryExpr 
+	| MultiplicativeExpr MULTIPLY UnaryExpr 
 	{
 		$$ = new ExprMULT ((Expression) $1, (Expression) $3);
 	}

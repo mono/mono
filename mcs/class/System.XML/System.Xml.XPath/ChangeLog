@@ -1,3 +1,7 @@
+2003-04-28  Piers Haken  <piersh@friskit.com>
+
+	* Parser.jay, Tokenizer.cs: more compliant lexical parsing of ambiguous tokens
+
 2003-03-07  Piers Haken  <piersh@friskit.com>
 
 	* Tokenizer.cs: allow '.'s in NCNames

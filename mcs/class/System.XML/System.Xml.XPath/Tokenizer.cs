@@ -21,8 +21,10 @@ namespace System.Xml.XPath
 		private int m_ich;
 		private int m_cch;
 		private int m_iToken;
+		private int m_iTokenPrev = Token.EOF;
 		private Object m_objToken;
-		private bool m_fPrevWasSpecial = false;
+		private bool m_fPrevWasOperator = false;
+		private bool m_fThisIsOperator = false;
 		private static readonly Hashtable s_mapTokens = new Hashtable ();
 		private static readonly Object [] s_rgTokenMap =
 		{
@@ -48,43 +50,12 @@ namespace System.Xml.XPath
 		   Token.PROCESSING_INSTRUCTION, "processing-instruction",
 		   Token.NODE, "node",
 		};
-		private static readonly Hashtable s_mapfPrevWasSpecial = new Hashtable ();
-		private static readonly int [] s_rgfPrevWasSpecial =
-		{
-			Token.AT,
-			Token.COLON2,
-			Token.PAREN_OPEN,
-			Token.BRACKET_OPEN,
-			Token.COMMA,
-
-			Token.AND,
-			Token.OR,
-			Token.DIV,
-			Token.MOD,
-
-			Token.SLASH,
-			Token.SLASH2,
-			Token.BAR,
-			Token.PLUS,
-			Token.MINUS,
-			Token.EQ,
-			Token.NE,
-			Token.LE,
-			Token.LT,
-			Token.GE,
-			Token.GT,
-
-			Token.ASTERISK,
-		};
 		private const char EOL = '\0';
 
 		static Tokenizer ()
 		{
 			for (int i = 0; i < s_rgTokenMap.Length; i += 2)
 				s_mapTokens.Add (s_rgTokenMap [i + 1], s_rgTokenMap [i]);
-			object objTmp = new Object ();
-			for (int i = 0; i < s_rgfPrevWasSpecial.Length; i++)
-				s_mapfPrevWasSpecial.Add (s_rgfPrevWasSpecial [i], null);
 		}
 
 		public Tokenizer (string strInput)
@@ -160,7 +131,7 @@ namespace System.Xml.XPath
 			while ((ch = Peek ()) != chInit)
 			{
 				if (ch == EOL)
-					return Token.ERROR;
+					throw new XPathException ("unmatched "+chInit+" in expression");
 				sb.Append ((char) GetChar ());
 			}
 			GetChar ();
@@ -179,26 +150,54 @@ namespace System.Xml.XPath
 			String strToken = sb.ToString ();
 			Object objToken = s_mapTokens [strToken];
 
-			if (!m_fPrevWasSpecial && objToken != null)
-				return (int) objToken;
+			int iToken = (objToken != null) ? (int) objToken : Token.NCName;
+			m_objToken = strToken;
+
+			if (!IsFirstToken)
+			{
+				// the second half of a QName is always an NCName
+				if (m_iTokenPrev == Token.COLON)
+					return Token.NCName;
+
+				// If there is a preceding token and the preceding
+				// token is not one of @, ::, (, [, , or an Operator,
+				// then a * must be recognized as a MultiplyOperator
+				// and an NCName must be recognized as an OperatorName.
+				if (!m_fPrevWasOperator)
+				{
+					if (objToken == null || !IsOperatorName (iToken))
+						throw new XPathException ("invalid operator name: '"+strToken+"'");
+					return iToken;
+				}
+			}
 
 			SkipWhitespace ();
 
 			ch = Peek ();
 			if (ch == '(')					
 			{
-				if (objToken != null)
-					return (int) objToken;
-				m_objToken = strToken;
-				return Token.FUNCTION_NAME;
+				// If the character following an NCName (possibly
+				// after intervening ExprWhitespace) is (, then the
+				// token must be recognized as a NodeType or a FunctionName.
+				if (objToken == null)
+					return Token.FUNCTION_NAME;
+				if (IsNodeType (iToken))
+					return iToken;
+				throw new XPathException ("invalid function name: '"+strToken+"'");
 			}
 			else if (ch == ':' && Peek (1) == ':')
 			{
-				if (objToken != null)
-					return (int) objToken;
+				// If the two characters following an NCName (possibly
+				// after intervening ExprWhitespace) are ::, then the
+				// token must be recognized as an AxisName.
+				if (objToken == null || !IsAxisName (iToken))
+					throw new XPathException ("invalid axis name: '"+strToken+"'");
+				return iToken;
 			}
 
-			m_objToken = strToken;
+			// Otherwise, the token must not be recognized as a
+			// MultiplyOperator, an OperatorName, a NodeType,
+			// a FunctionName, or an AxisName.
 			return Token.NCName;
 		}
 
@@ -224,6 +223,7 @@ namespace System.Xml.XPath
 					return Token.EOF;
 
 				case '/':
+					m_fThisIsOperator = true;
 					GetChar ();
 					if (Peek () == '/')
 					{
@@ -250,20 +250,24 @@ namespace System.Xml.XPath
 					GetChar ();
 					if (Peek () == ':')
 					{
+						m_fThisIsOperator = true;
 						GetChar ();
 						return Token.COLON2;
 					}
 					return Token.COLON;
 
 				case ',':
+					m_fThisIsOperator = true;
 					GetChar ();
 					return Token.COMMA;
 
 				case '@':
+					m_fThisIsOperator = true;
 					GetChar ();
 					return Token.AT;
 
 				case '[':
+					m_fThisIsOperator = true;
 					GetChar ();
 					return Token.BRACKET_OPEN;
 
@@ -272,6 +276,7 @@ namespace System.Xml.XPath
 					return Token.BRACKET_CLOSE;
 
 				case '(':
+					m_fThisIsOperator = true;
 					GetChar ();
 					return Token.PAREN_OPEN;
 
@@ -280,15 +285,22 @@ namespace System.Xml.XPath
 					return Token.PAREN_CLOSE;
 
 				case '+':
+					m_fThisIsOperator = true;
 					GetChar ();
 					return Token.PLUS;
 
 				case '-':
+					m_fThisIsOperator = true;
 					GetChar ();
 					return Token.MINUS;
 
 				case '*':
 					GetChar ();
+					if (!IsFirstToken && !m_fPrevWasOperator)
+					{
+						m_fThisIsOperator = true;
+						return Token.MULTIPLY;
+					}
 					return Token.ASTERISK;
 
 				case '$':
@@ -296,10 +308,12 @@ namespace System.Xml.XPath
 					return Token.DOLLAR;
 
 				case '|':
+					m_fThisIsOperator = true;
 					GetChar ();
 					return Token.BAR;
 
 				case '=':
+					m_fThisIsOperator = true;
 					GetChar ();
 					return Token.EQ;
 
@@ -307,12 +321,14 @@ namespace System.Xml.XPath
 					GetChar ();
 					if (Peek () == '=')
 					{
+						m_fThisIsOperator = true;
 						GetChar ();
 						return Token.NE;
 					}
 					break;
 
 				case '>':
+					m_fThisIsOperator = true;
 					GetChar ();
 					if (Peek () == '=')
 					{
@@ -322,6 +338,7 @@ namespace System.Xml.XPath
 					return Token.GT;
 
 				case '<':
+					m_fThisIsOperator = true;
 					GetChar ();
 					if (Peek () == '=')
 					{
@@ -337,19 +354,20 @@ namespace System.Xml.XPath
 					return ParseLiteral ();
 
 				default:
+					if (IsDigit (ch))
 					{
-						if (IsDigit (ch))
-						{
-							return ParseNumber ();
-						}
-						else if (Char.IsLetter (ch) || ch == '_')	 // NCName
-						{
-							return ParseIdentifier ();
-						}
-						break;
+						return ParseNumber ();
 					}
+					else if (Char.IsLetter (ch) || ch == '_')	 // NCName
+					{
+						int iToken = ParseIdentifier ();
+						if (IsOperatorName (iToken))
+							m_fThisIsOperator = true;
+						return iToken;
+					}
+					break;
 			}
-			return Token.ERROR;
+			throw new XPathException ("invalid token: '"+ch+"'");
 		}
 
 		///////////////////////////
@@ -362,10 +380,12 @@ namespace System.Xml.XPath
 		  */
 		public bool advance ()
 		{
+			m_fThisIsOperator = false;
 			m_objToken = null;
 			m_iToken = ParseToken ();
 			bool fWhitespace = SkipWhitespace ();
-			m_fPrevWasSpecial = (!fWhitespace && s_mapfPrevWasSpecial.Contains (m_iToken));
+			m_iTokenPrev = m_iToken;
+			m_fPrevWasOperator = m_fThisIsOperator;
 			return (m_iToken != Token.EOF);
 		}
 
@@ -385,6 +405,56 @@ namespace System.Xml.XPath
 		public Object value ()
 		{
 			return m_objToken;
+		}
+		private bool IsFirstToken { get { return m_iTokenPrev == Token.EOF; } }
+
+		private bool IsNodeType (int iToken)
+		{
+			switch (iToken)
+			{
+				case Token.COMMENT:
+				case Token.TEXT:
+				case Token.PROCESSING_INSTRUCTION:
+				case Token.NODE:
+					return true;
+				default:
+					return false;
+			}
+		}
+		private bool IsOperatorName (int iToken)
+		{
+			switch (iToken)
+			{
+				case Token.AND:
+				case Token.OR:
+				case Token.MOD:
+				case Token.DIV:
+					return true;
+				default:
+					return false;
+			}
+		}
+		private bool IsAxisName (int iToken)
+		{
+			switch (iToken)
+			{
+				case Token.ATTRIBUTE:
+				case Token.ANCESTOR:
+				case Token.ANCESTOR_OR_SELF:
+				case Token.CHILD:
+				case Token.DESCENDANT:
+				case Token.DESCENDANT_OR_SELF:
+				case Token.FOLLOWING:
+				case Token.FOLLOWING_SIBLING:
+				case Token.NAMESPACE:
+				case Token.PARENT:
+				case Token.PRECEDING:
+				case Token.PRECEDING_SIBLING:
+				case Token.SELF:
+					return true;
+				default:
+					return false;
+			}
 		}
 	}
 }
