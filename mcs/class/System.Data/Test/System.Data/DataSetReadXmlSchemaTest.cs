@@ -36,9 +36,50 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		public void SingleElementTreatmentDifference ()
+		{
+			// This is one of the most complicated case. When the content
+			// type particle of 'Root' element is a complex element, it
+			// is DataSet element. Otherwise, it is just a data table.
+			//
+			// But also note that there is another test named
+			// LocaleOnRootWithoutIsDataSet(), that tests if locale on
+			// the (mere) data table modifies *DataSet's* locale.
+			string xsbase = @"<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' id='hoge'>
+	<xs:element name='Root'> <!-- becomes table -->
+		<xs:complexType>
+			<xs:choice maxOccurs='unbounded'>
+				{0}
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>";
+			string simple = "<xs:element name='Child' type='xs:string' />";
+			string complex = @"<xs:element name='Child'>
+					<xs:complexType>
+						<xs:attribute name='a1' />
+						<xs:attribute name='a2'/>
+					</xs:complexType>
+				</xs:element>";
+
+			DataSet ds = new DataSet ();
+
+			string xs = String.Format (xsbase, simple);
+			ds.ReadXmlSchema (new StringReader (xs));
+			AssertDataSet ("simple", ds, "hoge", 1);
+			AssertDataTable ("simple", ds.Tables [0], "Root", 1, 0);
+
+			ds = new DataSet ();
+			xs = String.Format (xsbase, complex);
+			ds.ReadXmlSchema (new StringReader (xs));
+			AssertDataSet ("complex", ds, "Root", 1);
+			AssertDataTable ("complex", ds.Tables [0], "Child", 2, 0);
+		}
+
+		[Test]
 		public void UnusedComplexTypesIgnored ()
 		{
-			string xs = @"<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+			string xs = @"<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' id='hoge'>
 	<xs:element name='Root'>
 		<xs:complexType>
 			<xs:sequence>
@@ -48,7 +89,7 @@ namespace MonoTests.System.Data
 	</xs:element>
 	<xs:complexType name='unusedType'>
 		<xs:sequence>
-			<xs:element name='Child' type='xs:string' />
+			<xs:element name='Orphan' type='xs:string' />
 		</xs:sequence>
 	</xs:complexType>
 </xs:schema>";
@@ -56,7 +97,7 @@ namespace MonoTests.System.Data
 			DataSet ds = new DataSet ();
 			ds.ReadXmlSchema (new StringReader (xs));
 			// Here "unusedType" table is never imported.
-			AssertDataSet ("ds", ds, "NewDataSet", 1);
+			AssertDataSet ("ds", ds, "hoge", 1);
 			AssertDataTable ("dt", ds.Tables [0], "Root", 1, 0);
 		}
 
@@ -106,7 +147,7 @@ namespace MonoTests.System.Data
 
 		[Test]
 		[ExpectedException (typeof (DataException))]
-		public void DataSetElementCannotBeReferenced ()
+		public void NestedReferenceNotAllowed ()
 		{
 			string xs = @"<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata'>
 	<xs:element name='Root' type='unusedType' msdata:IsDataSet='true'>
@@ -154,10 +195,10 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void ReadElemAttrPattern ()
+		public void LocaleOnRootWithoutIsDataSet ()
 		{
-			string xs = @"<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>
-	<xs:element name='Root'>
+			string xs = @"<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata'>
+	<xs:element name='Root' msdata:Locale='ja-JP'>
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name='Child' type='xs:string' />
@@ -170,10 +211,11 @@ namespace MonoTests.System.Data
 			DataSet ds = new DataSet ();
 			ds.ReadXmlSchema (new StringReader (xs));
 			AssertDataSet ("ds", ds, "NewDataSet", 1);
+			AssertEquals ("ja-JP", ds.Locale.Name);
 			DataTable dt = ds.Tables [0];
 			AssertDataTable ("dt", dt, "Root", 2, 0);
-			AssertDataColumn ("col1", dt.Columns [0], "Attr", true, false, 0, 1, "Attr", MappingType.Attribute, typeof (Int64), null, null, -1, String.Empty, 0, String.Empty, false, false);
-			AssertDataColumn ("col2", dt.Columns [1], "Child", false, false, 0, 1, "Child", MappingType.Element, typeof (string), null, null, -1, String.Empty, 1, String.Empty, false, false);
+			AssertDataColumn ("col1", dt.Columns [0], "Attr", true, false, 0, 1, "Attr", MappingType.Attribute, typeof (Int64), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
+			AssertDataColumn ("col2", dt.Columns [1], "Child", false, false, 0, 1, "Child", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 1, String.Empty, false, false);
 		}
 
 
@@ -233,6 +275,63 @@ namespace MonoTests.System.Data
 			ds = new DataSet ();
 			ds.ReadXmlSchema (new StringReader (xs));
 			AssertEquals (0, ds.Relations.Count);
+		}
+
+		[Test]
+		public void PrefixedTargetNS ()
+		{
+			string xs = @"<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:x='urn:foo' targetNamespace='urn:foo' elementFormDefault='qualified'>
+	<xs:element name='DS' msdata:IsDataSet='true'>
+		<xs:complexType>
+			<xs:choice>
+				<xs:element ref='x:R1' />
+				<xs:element ref='x:R2' />
+			</xs:choice>
+		</xs:complexType>
+		<xs:key name='key'>
+			<xs:selector xpath='./any/string_is_OK/x:R1'/>
+			<xs:field xpath='x:Child2'/>
+		</xs:key>
+		<xs:keyref name='kref' refer='x:key'>
+			<xs:selector xpath='.//x:R2'/>
+			<xs:field xpath='x:Child2'/>
+		</xs:keyref>
+	</xs:element>
+	<xs:element name='R3' type='x:RootType' />
+	<xs:complexType name='extracted'>
+		<xs:choice>
+			<xs:element ref='x:R1' />
+			<xs:element ref='x:R2' />
+		</xs:choice>
+	</xs:complexType>
+	<xs:element name='R1' type='x:RootType'>
+		<xs:unique name='Rkey'>
+			<xs:selector xpath='.//x:Child1'/>
+			<xs:field xpath='.'/>
+		</xs:unique>
+		<xs:keyref name='Rkref' refer='x:Rkey'>
+			<xs:selector xpath='.//x:Child2'/>
+			<xs:field xpath='.'/>
+		</xs:keyref>
+	</xs:element>
+	<xs:element name='R2' type='x:RootType'>
+	</xs:element>
+	<xs:complexType name='RootType'>
+		<xs:choice>
+			<xs:element name='Child1' type='xs:string'>
+			</xs:element>
+			<xs:element name='Child2' type='xs:string' />
+		</xs:choice>
+		<xs:attribute name='Attr' type='xs:integer' />
+	</xs:complexType>
+</xs:schema>";
+			// No prefixes on tables and columns
+			DataSet ds = new DataSet ();
+			ds.ReadXmlSchema (new StringReader (xs));
+			AssertDataSet ("ds", ds, "DS", 3);
+			DataTable dt = ds.Tables [0];
+			AssertDataTable ("R3", dt, "R3", 3, 0);
+			AssertDataColumn ("col1", dt.Columns [0], "Attr", true, false, 0, 1, "Attr", MappingType.Attribute, typeof (Int64), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
 		}
 
 		[Test]

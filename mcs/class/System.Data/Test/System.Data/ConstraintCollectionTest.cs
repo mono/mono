@@ -382,6 +382,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[Ignore ("This never works on MS.NET (and it should not)")]
 		public void CanRemove()
 		{
 			AssertEquals ("A1", false, _table.Constraints.CanRemove (_table.Constraints [0]));
@@ -394,6 +395,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[Ignore ("MS.NET fails this test (and it should fail)")]
 		public void RemoveAt()
 		{
 			 _table2.Constraints.RemoveAt (1); //Remove constraint and again add it
@@ -405,6 +407,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		[Ignore ("MS.NET fails this test (and it should fail)")]
 		public void Remove()
 		{
 			_table2.Constraints.Remove (_table2.Constraints [1]); //Remove constraint and again add it
@@ -426,7 +429,7 @@ namespace MonoTests.System.Data
                         catch (Exception e) {
                                 if (e.GetType ()!= typeof (AssertionException)) {
                                         AssertEquals ("A2",
-                                                "Cannot remove UniqueConstraint because the ForeignKeyConstraint FK2 exists",e.Message);
+                                                "Cannot remove UniqueConstraint because the ForeignKeyConstraint FK2 exists.",e.Message);
                                 }
                         }
                 }

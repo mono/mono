@@ -838,24 +838,24 @@ namespace MonoTests.System.Data
                         set.Tables.Add (table);
                         set.Tables.Add (table1);                         DataColumn col = new DataColumn ();
                         col.ColumnName = "Id";
-                        col.DataType = System.Type.GetType ("System.Int32");
+                        col.DataType = Type.GetType ("System.Int32");
                         table.Columns.Add (col);
                         UniqueConstraint uc = new UniqueConstraint ("UK1", table.Columns[0] );
                         table.Constraints.Add (uc);
                                                                                                     
                         col = new DataColumn ();
                         col.ColumnName = "Name";
-                        col.DataType = System.Type.GetType ("System.String");
+                        col.DataType = Type.GetType ("System.String");
                         table.Columns.Add (col);
                                                                                                     
                         col = new DataColumn ();
                         col.ColumnName = "Id";
-                        col.DataType = System.Type.GetType ("System.Int32");
+                        col.DataType = Type.GetType ("System.Int32");
                         table1.Columns.Add (col);
                                                                                                     
                         col = new DataColumn ();
                         col.ColumnName = "Name";
-                        col.DataType = System.Type.GetType ("System.String");
+                        col.DataType = Type.GetType ("System.String");
 		        table1.Columns.Add (col);
 			  ForeignKeyConstraint fc = new ForeignKeyConstraint ("FK1", table.Columns[0], table1.Columns[0] );
                         table1.Constraints.Add (fc);

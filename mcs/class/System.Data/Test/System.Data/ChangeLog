@@ -1,7 +1,26 @@
+2004-04-19  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Added missing ChangeLog entry.
+	* ConstraintCollectionTest.cs :
+	  Ignore some tests that should fail (They also fail under MS.NET).
+	* DataSetReadXmlSchemaTest.cs : 
+	  - Added SingleElementTreatmentDifference() and PrefixedTargetNS().
+	  - Modified UnusedComplexTypesInored() to make sure DataSetName is set.
+	  - Renamed DataSetElementCannotBeReferenced() to 
+	    NestedReferenceNotAllowed().
+	  - Modified ReadElemAttrPattern() to LocaleOnRootWithoutIsDataSet() 
+	    to test msdata:Locale.
+	* DataSetTest.cs : Due to mcs bug #57200, csc does not allow 
+	  System.Type.GetType(), so modified them all.
+
 2004-04-16  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DataSetAssertion.cs : Added AssertDataColumn().
 	* DataSetReadXmlSchemaTest.cs : Added more strange cases.
+
+2004-04-15	Umadevi S (sumadevi@novell.com)
+		* ForeignKeyConstraintTest - constructor testing,
+		* DataSet - test for Clone and Copy methods.
 
 2004-04-15  Atsushi Enomoto <atsushi@ximian.com>
 
