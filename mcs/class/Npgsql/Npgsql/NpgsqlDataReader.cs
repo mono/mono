@@ -73,7 +73,9 @@ namespace Npgsql
             //NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "CanRead");
             /*if (_currentResultset == null)
             	return false;*/
-            return ((_currentResultset != null) && (_currentResultset.Count > 0));
+            return ((_currentResultset != null) && 
+                    (_currentResultset.Count > 0) && 
+                    (_rowIndex < _currentResultset.Count));
 
         }
 
@@ -127,9 +129,9 @@ namespace Npgsql
                 if (CanRead())
                     return -1;
 
-                String[] ret_string_tokens = ((String)_responses[_resultsetIndex]).Split(null);	// whitespace separator.
+                String[] _returnStringTokens = ((String)_responses[_resultsetIndex]).Split(null);	// whitespace separator.
 
-                return Int32.Parse(ret_string_tokens[ret_string_tokens.Length - 1]);
+                return Int32.Parse(_returnStringTokens[_returnStringTokens.Length - 1]);
             }
 
         }
@@ -147,14 +149,7 @@ namespace Npgsql
         public Boolean NextResult()
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "NextResult");
-            //throw new NotImplementedException();
-
-            //[FIXME] Should the currentResultset not be modified
-            // in case there aren't any more resultsets?
-            // SqlClient modify to a invalid resultset and throws exceptions
-            // when trying to access any data.
-
-
+            
             if((_resultsetIndex + 1) < _resultsets.Count)
             {
                 _resultsetIndex++;
@@ -171,11 +166,13 @@ namespace Npgsql
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Read");
 
+            _rowIndex++;
+            
             if (!CanRead())
                 return false;
+            else
+                return true;
 
-            _rowIndex++;
-            return (_rowIndex < _currentResultset.Count);
         }
 
         public DataTable GetSchemaTable()
