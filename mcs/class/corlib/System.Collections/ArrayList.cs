@@ -14,6 +14,11 @@ namespace System.Collections {
 	[MonoTODO ("add versioning, changing the arraylist should invalidate all enumerators")]
 	[Serializable]
 	public class ArrayList : IList, ICollection, IEnumerable, ICloneable {
+
+		// Keep these three fields in sync with mono-reflection.h.
+		private int count = 0;
+		private int capacity = defaultCapacity;
+		private object[] dataArray;
 		
 		// constructors
 		public ArrayList () {
@@ -149,11 +154,7 @@ namespace System.Collections {
 		private long version = 0;
 		private ArrayList source = null;
 
-		private int count = 0;
 		private const int defaultCapacity = 16;
-		private int capacity = defaultCapacity;
-
-		private object[] dataArray;
 
 		private void copyDataArray (object[] outArray) {
 			for (int i = 0; i < count; i++) {
