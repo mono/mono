@@ -445,6 +445,7 @@ namespace Mono.CSharp {
 						return null;
 					}
 					lr.local_info.AddressTaken = true;
+					lr.local_info.Used = true;
 				}
 
 				// According to the specs, a variable is considered definitely assigned if you take
@@ -3609,7 +3610,11 @@ namespace Mono.CSharp {
 		{
 			if (local_info == null) {
 				local_info = Block.GetLocalInfo (Name);
-				local_info.Used = lvalue_right_side == EmptyExpression.Null;
+
+				// is out param
+				if (lvalue_right_side == EmptyExpression.Null)
+					local_info.Used = true;
+
 				is_readonly = local_info.ReadOnly;
 			}
 

@@ -36,8 +36,6 @@ namespace Mono.CSharp {
 		public Attributable(Attributes attrs)
 		{
 			attributes = attrs;
-			if (attributes != null)
-				attributes.CheckTargets (this);
 		}
 
 		public Attributes OptAttributes 
@@ -47,8 +45,6 @@ namespace Mono.CSharp {
 			}
 			set {
 				attributes = value;
-				if (attributes != null)
-					attributes.CheckTargets (this);
 			}
 		}
 
@@ -1201,7 +1197,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Checks whether attribute target is valid for the current element
 		/// </summary>
-		public void CheckTargets (Attributable member)
+		public bool CheckTargets (Attributable member)
 		{
 			string[] valid_targets = member.ValidAttributeTargets;
 			foreach (Attribute a in Attrs) {
@@ -1228,8 +1224,10 @@ namespace Mono.CSharp {
 					sb.Append (", ");
 				}
 				sb.Remove (sb.Length - 2, 2);
-				Report.Error (657, a.Location, "'{0}' is not a valid attribute location for this declaration. Valid attribute locations for this declaration are '{1}'", a.Target, sb.ToString ());
+				Report.Error (657, a.Location, "'{0}' is not a valid attribute location for this declaration. Valid attribute locations for this declaration are '{1}'", a.ExplicitTarget, sb.ToString ());
+				return false;
 			}
+			return true;
 		}
 
 		private Attribute Search (Type t, EmitContext ec, bool complain)
@@ -1266,6 +1264,9 @@ namespace Mono.CSharp {
 
 		public void Emit (EmitContext ec, Attributable ias)
 		{
+			if (!CheckTargets (ias))
+				return;
+
 			ListDictionary ld = new ListDictionary ();
 
 			foreach (Attribute a in Attrs)

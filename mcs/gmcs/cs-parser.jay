@@ -1521,12 +1521,14 @@ interface_property_declaration
 	;
 
 interface_accessors
-	: opt_attributes GET SEMICOLON		{ $$ = new InterfaceAccessorInfo (true, false, (Attributes) $1, null, lexer.Location, lexer.Location); }
-	| opt_attributes SET SEMICOLON		{ $$ = new InterfaceAccessorInfo (false, true, null, (Attributes) $1, lexer.Location, lexer.Location); }
-	| opt_attributes GET SEMICOLON opt_attributes SET SEMICOLON 
-	  { $$ = new InterfaceAccessorInfo (true, true, (Attributes) $1, (Attributes) $3, lexer.Location, lexer.Location); }
-	| opt_attributes SET SEMICOLON opt_attributes GET SEMICOLON
-	  { $$ = new InterfaceAccessorInfo (true, true, (Attributes) $3, (Attributes) $1, lexer.Location, lexer.Location); }
+	: opt_attributes opt_modifiers GET SEMICOLON	
+	{ $$ = new InterfaceAccessorInfo (true, false, (Attributes) $1, null, (int) $2, 0, lexer.Location, lexer.Location); }
+	| opt_attributes opt_modifiers SET SEMICOLON		
+	{ $$ = new InterfaceAccessorInfo (false, true, null, (Attributes) $1, 0, (int) $2, lexer.Location, lexer.Location); }
+	| opt_attributes opt_modifiers GET SEMICOLON opt_attributes opt_modifiers SET SEMICOLON 
+	  { $$ = new InterfaceAccessorInfo (true, true, (Attributes) $1, (Attributes) $5, (int) $2, (int) $6, lexer.Location, lexer.Location); }
+	| opt_attributes opt_modifiers SET SEMICOLON opt_attributes opt_modifiers GET SEMICOLON
+	  { $$ = new InterfaceAccessorInfo (true, true, (Attributes) $5, (Attributes) $1, (int) $6, (int) $2, lexer.Location, lexer.Location); }
 	;
 
 interface_event_declaration
@@ -4382,13 +4384,19 @@ public class InterfaceAccessorInfo {
         public readonly Accessor Get, Set;
 
         public InterfaceAccessorInfo (bool has_get, bool has_set,
-                                      Attributes get_attrs, Attributes set_attrs, Location get_loc, Location set_loc)
+                                      Attributes get_attrs, Attributes set_attrs, int get_mod, int set_mod, Location get_loc, Location set_loc)
         {
+		if (get_mod != 0)
+			Report.Error (275, get_loc, "Accessibility modifiers can not be used on accessors in interfaces");
+		if (set_mod != 0)
+			Report.Error (275, set_loc, "Accessibility modifiers can not be used on accessors in interfaces");
+			
 		if (has_get)
 			Get = new Accessor (null, 0, get_attrs, get_loc);
 		if (has_set)
 			Set = new Accessor (null, 0, set_attrs, set_loc);
         }
+
 }
 
 

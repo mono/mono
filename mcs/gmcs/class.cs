@@ -5862,7 +5862,7 @@ namespace Mono.CSharp {
 
 		public override bool Define()
 		{
-			return false;
+			throw new NotSupportedException ();
 		}
 
 		public virtual void Emit (TypeContainer container)
@@ -6637,6 +6637,7 @@ namespace Mono.CSharp {
 	public class EventField: Event {
 
 		static string[] attribute_targets = new string [] { "event", "field", "method" };
+		static string[] attribute_targets_interface = new string[] { "event", "method" };
 
 		public EventField (TypeContainer parent, Expression type, int mod_flags,
 				   bool is_iface, MemberName name, Object init,
@@ -6665,7 +6666,7 @@ namespace Mono.CSharp {
 
 		public override string[] ValidAttributeTargets {
 			get {
-				return attribute_targets;
+				return IsInterface ? attribute_targets_interface : attribute_targets;
 			}
 		}
 	}
