@@ -4,8 +4,10 @@
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
 //	Atsushi Enomoto (atsushi@ximian.com)
+//      Tim Coleman (tim@timcoleman.com)
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) Tim Coleman, 2004
 // (C) 2004 Novell Inc.
 //
 
@@ -45,7 +47,9 @@ namespace System.Security.Cryptography.Xml {
 			public const string DigestMethod = "DigestMethod";
 			public const string DigestValue = "DigestValue";
 			public const string DSAKeyValue = "DSAKeyValue";
+#if NET_2_0
 			public const string EncryptedKey = "EncryptedKey";
+#endif
 			public const string HMACOutputLength = "HMACOutputLength";
 			public const string KeyInfo = "KeyInfo";
 			public const string KeyName = "KeyName";

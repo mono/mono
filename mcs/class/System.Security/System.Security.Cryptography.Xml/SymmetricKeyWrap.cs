@@ -126,7 +126,6 @@ namespace System.Security.Cryptography.Xml {
 		[MonoTODO]
 		public static byte[] TripleDESKeyWrapEncrypt (byte[] rgbKey, byte[] rgbWrappedKeyData)
 		{
-			RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider ();
 			SymmetricAlgorithm symAlg = SymmetricAlgorithm.Create ("TripleDES");
 
 			// Algorithm from http://www.w3.org/TR/xmlenc-core/#sec-Alg-SymmetricKeyWrap
@@ -147,17 +146,19 @@ namespace System.Security.Cryptography.Xml {
 			byte[] wkcks = Concatenate (rgbWrappedKeyData, cks);
 
 			// 4. Generate 8 random octets and call this IV.
-			byte[] iv = new Byte[8];
-			rng.GetBytes (iv);
+			symAlg.GenerateIV ();
 
 			// 5. Encrypt WKCKS in CBC mode using KEK as the key and IV as the initialization vector.
 			//    Call the results TEMP1.
 
-			byte[] temp1 = Transform (wkcks, symAlg.CreateEncryptor (rgbKey, iv), true);
+			symAlg.Mode = CipherMode.CBC;
+			symAlg.Padding = PaddingMode.None;
+			symAlg.Key = rgbKey;
+			byte[] temp1 = Transform (wkcks, symAlg.CreateEncryptor ());
 
 			// 6. Let TEMP2 = IV || TEMP1.
 
-			byte[] temp2 = Concatenate (iv, temp1);
+			byte[] temp2 = Concatenate (symAlg.IV, temp1);
 
 			// 7. Reverse the order of the octets in TEMP2 and call the result TEMP3.
 
@@ -167,9 +168,9 @@ namespace System.Security.Cryptography.Xml {
 			//    The resulting cipher text is the desired result.  It is 40 octets long if a 168 bit key
 			//    is being wrapped.
 
-			iv = new Byte[8] {0x4a, 0xdd, 0xa2, 0x2c, 0x79, 0xe8, 0x21, 0x05};
+			symAlg.IV = new Byte [8] {0x4a, 0xdd, 0xa2, 0x2c, 0x79, 0xe8, 0x21, 0x05};
 
-			byte[] rtnval = Transform (temp2, symAlg.CreateEncryptor (rgbKey, iv), true);
+			byte[] rtnval = Transform (temp2, symAlg.CreateEncryptor ());
 
 			return rtnval;
 		}
@@ -190,8 +191,12 @@ namespace System.Security.Cryptography.Xml {
 			// 2. Decrypt the cipher text with TRIPLEDES in CBC mode using the KEK and an initialization
 			//    vector (IV) of 0x4adda22c79e82105.  Call the output TEMP3.
 
-			byte[] iv = new Byte[8] {0x4a, 0xdd, 0xa2, 0x2c, 0x79, 0xe8, 0x21, 0x05};
-			byte[] temp3 = Transform (rgbEncryptedWrappedKeyData, symAlg.CreateDecryptor (rgbKey, iv), true);
+			symAlg.Mode = CipherMode.CBC;
+			symAlg.Padding = PaddingMode.None;
+			symAlg.Key = rgbKey;
+			symAlg.IV = new Byte [8] {0x4a, 0xdd, 0xa2, 0x2c, 0x79, 0xe8, 0x21, 0x05};
+
+			byte[] temp3 = Transform (rgbEncryptedWrappedKeyData, symAlg.CreateDecryptor ());
 
 			// 3. Reverse the order of the octets in TEMP3 and call the result TEMP2.
 
@@ -200,6 +205,7 @@ namespace System.Security.Cryptography.Xml {
 			// 4. Decompose TEMP2 into IV, the first 8 octets, and TEMP1, the remaining octets.
 
 			byte[] temp1 = new Byte [temp3.Length - 8];
+			byte[] iv = new Byte [8];
 
 			Buffer.BlockCopy (temp3, 0, iv, 0, 8);
 			Buffer.BlockCopy (temp3, 8, temp1, 0, temp1.Length);
@@ -207,44 +213,39 @@ namespace System.Security.Cryptography.Xml {
 			// 5. Decrypt TEMP1 using TRIPLEDES in CBC mode using the KEK and the IV found in the previous step.
 			//    Call the result WKCKS.
 
-			byte[] wkcks = Transform (temp1, symAlg.CreateDecryptor (rgbKey, iv), true);
+			symAlg.IV = iv;
+			byte[] wkcks = Transform (temp1, symAlg.CreateDecryptor ());
 
 			// 6. Decompose WKCKS.  CKS is the last 8 octets and WK, the wrapped key, are those octets before
 			//    the CKS.
 
 			byte[] cks = new byte [8];
-			byte[] wk = new byte [temp1.Length - 8];
+			byte[] wk = new byte [wkcks.Length - 8];
 
-			Buffer.BlockCopy (temp1, 0, wk, 0, wk.Length);
-			Buffer.BlockCopy (temp1, wk.Length, cks, 0, 8);
+			Buffer.BlockCopy (wkcks, 0, wk, 0, wk.Length);
+			Buffer.BlockCopy (wkcks, wk.Length, cks, 0, 8);
 
 			// 7. Calculate the CMS key checksum over the WK and compare with the CKS extracted in the above
 			//    step. If they are not equal, return error.
 
 			// 8. WK is the wrapped key, now extracted for use in data decryption.
-
 			return wk;
 		}
 
-		private static byte[] Transform (byte[] data, ICryptoTransform t, bool flush)
+		private static byte[] Transform (byte[] data, ICryptoTransform t)
 		{
 			MemoryStream output = new MemoryStream ();
 			CryptoStream crypto = new CryptoStream (output, t, CryptoStreamMode.Write);
+
 			crypto.Write (data, 0, data.Length);
+			crypto.FlushFinalBlock ();
 
-			byte[] buf;
+			byte[] result = output.ToArray ();
+			
+			output.Close ();
+			crypto.Close ();
 
-			if (flush) {
-				crypto.Close ();
-				output.Close ();
-				buf = output.ToArray ();
-			} else {
-				buf = output.ToArray ();
-				crypto.Close ();
-				output.Close ();
-			}
-
-			return buf;
+			return result; 
                 }
 
 		private static byte[] ComputeCMSKeyChecksum (byte[] data)

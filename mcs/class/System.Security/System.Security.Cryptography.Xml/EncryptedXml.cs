@@ -148,59 +148,64 @@ namespace System.Security.Cryptography.Xml {
 		{
 			XmlNodeList nodes = document.GetElementsByTagName ("EncryptedData", XmlEncNamespaceUrl);
 			foreach (XmlNode node in nodes) {
-				EncryptedData data = new EncryptedData ();
-				data.LoadXml ((XmlElement) node);
-				SymmetricAlgorithm symAlg = GetAlgorithm (data.EncryptionMethod.KeyAlgorithm);
-
-				KeyInfo keyInfo = data.KeyInfo;
-
-				foreach (KeyInfoClause clause in keyInfo)
-				{
-					System.Console.WriteLine (clause.GetType ());
-					if (clause is KeyInfoEncryptedKey) {
-						EncryptedKey key = ((KeyInfoEncryptedKey) clause).EncryptedKey;
-						System.Console.WriteLine (key.EncryptionMethod.KeyAlgorithm);
-						symAlg.Key = DecryptKey (key.CipherData.CipherValue, GetAlgorithm (key.EncryptionMethod.KeyAlgorithm));
-					}
-				}
-
-				ReplaceData ((XmlElement) node, DecryptData (data, symAlg));
+				EncryptedData encryptedData = new EncryptedData ();
+				encryptedData.LoadXml ((XmlElement) node);
+				SymmetricAlgorithm symAlg = GetDecryptionKey (encryptedData, encryptedData.EncryptionMethod.KeyAlgorithm);
+				ReplaceData ((XmlElement) node, DecryptData (encryptedData, symAlg));
 			}
 		}
 
-		[MonoTODO]
 		public virtual byte[] DecryptEncryptedKey (EncryptedKey encryptedKey)
 		{
-			throw new NotImplementedException ();
+			SymmetricAlgorithm keyAlg = null;
+			foreach (KeyInfoClause innerClause in encryptedKey.KeyInfo) {
+				if (innerClause is KeyInfoName) {
+					keyAlg = (SymmetricAlgorithm) keyNameMapping [((KeyInfoName) innerClause).Value];
+					break;
+				}
+			}
+			return DecryptKey (encryptedKey.CipherData.CipherValue, keyAlg);
 		}
 
-		[MonoTODO]
 		public static byte[] DecryptKey (byte[] keyData, SymmetricAlgorithm symAlg)
 		{
 			if (symAlg is TripleDES)
 				return SymmetricKeyWrap.TripleDESKeyWrapDecrypt (symAlg.Key, keyData);
 			if (symAlg is Rijndael)
 				return SymmetricKeyWrap.AESKeyWrapDecrypt (symAlg.Key, keyData);
-
 			throw new CryptographicException ("The specified cryptographic transform is not supported.");
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Test this.")]
 		public static byte[] DecryptKey (byte[] keyData, RSA rsa, bool fOAEP)
 		{
-			throw new NotImplementedException ();
+			AsymmetricKeyExchangeDeformatter deformatter = null;
+			if (fOAEP) 
+				deformatter = new RSAOAEPKeyExchangeDeformatter (rsa);
+			else
+				deformatter = new RSAPKCS1KeyExchangeDeformatter (rsa);
+			return deformatter.DecryptKeyExchange (keyData);
 		}
 
 		public EncryptedData Encrypt (XmlElement inputElement, string keyName)
 		{
-			SymmetricAlgorithm symAlg = (SymmetricAlgorithm) keyNameMapping [keyName];
+			// There are two keys of note here.
+			// 1) KeyAlg: the key-encryption-key is used to wrap a key.  The keyName
+			//    parameter will give us the KEK.
+			// 2) SymAlg: A 256-bit AES key will be generated to encrypt the contents.
+			//    This key will be wrapped using the KEK.
+
+			SymmetricAlgorithm symAlg = SymmetricAlgorithm.Create ("Rijndael");
+			symAlg.KeySize = 256;
+			symAlg.GenerateKey ();
+			symAlg.GenerateIV ();
+
+			SymmetricAlgorithm keyAlg = (SymmetricAlgorithm) keyNameMapping [keyName];
 			EncryptedData encryptedData = new EncryptedData ();
 
-			EncryptionMethod encryptionMethod = new EncryptionMethod (GetAlgorithmUri (symAlg));
-
 			EncryptedKey encryptedKey = new EncryptedKey();
-			encryptedKey.EncryptionMethod = new EncryptionMethod (GetKeyWrapAlgorithmUri (symAlg));
-			encryptedKey.CipherData = new CipherData (EncryptKey (symAlg.Key, symAlg));
+			encryptedKey.EncryptionMethod = new EncryptionMethod (GetKeyWrapAlgorithmUri (keyAlg));
+			encryptedKey.CipherData = new CipherData (EncryptKey (symAlg.Key, keyAlg));
 			encryptedKey.KeyInfo = new KeyInfo();
 			encryptedKey.KeyInfo.AddClause (new KeyInfoName (keyName));
 
@@ -219,21 +224,19 @@ namespace System.Security.Cryptography.Xml {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public byte[] EncryptData (byte[] plainText, SymmetricAlgorithm symAlg)
 		{
-			throw new NotImplementedException ();
+			return Transform (plainText, symAlg.CreateEncryptor ());
 		}
 
 		public byte[] EncryptData (XmlElement inputElement, SymmetricAlgorithm symAlg, bool content)
 		{
 			if (content)
-				return Transform (Encoding.GetBytes (inputElement.InnerXml), symAlg.CreateEncryptor ());
+				return EncryptData (Encoding.GetBytes (inputElement.InnerXml), symAlg);
 			else
-				return Transform (Encoding.GetBytes (inputElement.OuterXml), symAlg.CreateEncryptor ());
+				return EncryptData (Encoding.GetBytes (inputElement.OuterXml), symAlg);
 		}
 
-		[MonoTODO ("Do we need to support more algorithms?")]
 		public static byte[] EncryptKey (byte[] keyData, SymmetricAlgorithm symAlg)
 		{
 			if (symAlg is TripleDES)
@@ -244,10 +247,15 @@ namespace System.Security.Cryptography.Xml {
 			throw new CryptographicException ("The specified cryptographic transform is not supported.");
 		}
 
-		[MonoTODO ("Not sure what this is for.")]
+		[MonoTODO ("Test this.")]
 		public static byte[] EncryptKey (byte[] keyData, RSA rsa, bool fOAEP)
 		{
-			throw new NotImplementedException ();
+			AsymmetricKeyExchangeFormatter formatter = null;
+			if (fOAEP) 
+				formatter = new RSAOAEPKeyExchangeFormatter (rsa);
+			else
+				formatter = new RSAPKCS1KeyExchangeFormatter (rsa);
+			return formatter.CreateKeyExchange (keyData);
 		}
 
 		private static SymmetricAlgorithm GetAlgorithm (string symAlgUri)
@@ -294,7 +302,7 @@ namespace System.Security.Cryptography.Xml {
 				case 192:
 					return XmlEncAES192Url;
 				case 256:
-					return XmlEncAES192Url;
+					return XmlEncAES256Url;
 				}
 			}
 			else if (symAlg is DES)
@@ -327,8 +335,6 @@ namespace System.Security.Cryptography.Xml {
 		[MonoTODO]
 		public virtual byte[] GetDecryptionIV (EncryptedData encryptedData, string symAlgUri)
 		{
-			SymmetricAlgorithm symAlg = GetAlgorithm (symAlgUri);
-
 			throw new NotImplementedException ();
 		}
 
@@ -336,8 +342,16 @@ namespace System.Security.Cryptography.Xml {
 		public virtual SymmetricAlgorithm GetDecryptionKey (EncryptedData encryptedData, string symAlgUri)
 		{
 			SymmetricAlgorithm symAlg = GetAlgorithm (symAlgUri);
+			KeyInfo keyInfo = encryptedData.KeyInfo;
 
-			throw new NotImplementedException ();
+			foreach (KeyInfoClause clause in keyInfo) {
+				if (clause is KeyInfoEncryptedKey) {
+					symAlg.Key = DecryptEncryptedKey (((KeyInfoEncryptedKey) clause).EncryptedKey);
+					break;
+				}
+			}
+
+			return symAlg;
 		}
 
 		public virtual XmlElement GetIdElement (XmlDocument document, string idValue)
@@ -351,17 +365,15 @@ namespace System.Security.Cryptography.Xml {
 			return xel;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Verify")]
 		public void ReplaceData (XmlElement inputElement, byte[] decryptedData)
 		{
-			System.Console.WriteLine (new UTF8Encoding ().GetString (decryptedData, 0, decryptedData.Length));
 			XmlDocument temp = new XmlDocument ();
-			temp.LoadXml (new UTF8Encoding ().GetString (decryptedData, 0, decryptedData.Length));
+			temp.LoadXml (Encoding.GetString (decryptedData, 0, decryptedData.Length));
 			XmlElement root = temp.DocumentElement;
 
 			XmlDocument owner = inputElement.OwnerDocument;
 			owner.DocumentElement.ReplaceChild (root, inputElement);
-			//throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -377,10 +389,15 @@ namespace System.Security.Cryptography.Xml {
 			MemoryStream output = new MemoryStream ();
 			CryptoStream crypto = new CryptoStream (output, transform, CryptoStreamMode.Write);
 			crypto.Write (data, 0, data.Length);
+
+			crypto.FlushFinalBlock ();
+
+			byte[] result = output.ToArray ();
+
 			crypto.Close ();
 			output.Close ();
 
-			return output.ToArray ();
+			return result;
 		}
 
 		#endregion // Methods

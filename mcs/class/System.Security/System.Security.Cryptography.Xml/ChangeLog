@@ -1,3 +1,8 @@
+2004-08-30  Tim Coleman <tim@timcoleman.com>
+	* EncryptedXml.cs: Implement lots of XML Encryption code.
+	* SymmetricKeyWrap.cs: Fix TripleDES keywrap algorithm.
+	* XmlSignature.cs: Add NET_2_0 check around EncryptedKey
+
 2004-08-30  Atsushi Enomoto <atsushi@ximian.com>
 
 	* KeyInfo.cs : NET_1_1 build fix.
