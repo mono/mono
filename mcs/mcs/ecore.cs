@@ -3589,15 +3589,16 @@ namespace Mono.CSharp {
 				alias_value = ns.LookupAlias (Name);
 			else
 				alias_value = null;
-				
+
 			if (ec.ResolvingTypeTree){
 				if (alias_value != null){
 					if ((t = RootContext.LookupType (ds, alias_value, true, loc)) != null)
 						return new TypeExpr (t, loc);
 				}
-				
+
 				int errors = Report.Errors;
 				Type dt = ec.DeclSpace.FindType (loc, Name);
+				
 				if (Report.Errors != errors)
 					return null;
 				
@@ -3620,7 +3621,7 @@ namespace Mono.CSharp {
 			// Stage 2: Lookup up if we are an alias to a type
 			// or a namespace.
 			//
-				
+
 			if ((t = RootContext.LookupType (ds, Name, true, loc)) != null)
 				return new TypeExpr (t, loc);
 				

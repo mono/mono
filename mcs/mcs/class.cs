@@ -172,7 +172,7 @@ namespace Mono.CSharp {
 		{
 			AdditionResult res;
 
-			if ((res = IsValid (e.Basename, e.Basename)) != AdditionResult.Success)
+			if ((res = IsValid (e.Basename, e.Name)) != AdditionResult.Success)
 				return res;
 
 			if (enums == null)
@@ -189,7 +189,7 @@ namespace Mono.CSharp {
 			AdditionResult res;
 			string name = c.Basename;
 			
-			if ((res = IsValid (name, name)) != AdditionResult.Success)
+			if ((res = IsValid (name, c.Name)) != AdditionResult.Success)
 				return res;
 
 			DefineName (c.Name, c);
@@ -203,7 +203,7 @@ namespace Mono.CSharp {
 			AdditionResult res;
 			string name = s.Basename;
 			
-			if ((res = IsValid (name, name)) != AdditionResult.Success)
+			if ((res = IsValid (name, s.Name)) != AdditionResult.Success)
 				return res;
 
 			DefineName (s.Name, s);
@@ -217,7 +217,7 @@ namespace Mono.CSharp {
 			AdditionResult res;
 			string name = d.Basename;
 			
-			if ((res = IsValid (name, name)) != AdditionResult.Success)
+			if ((res = IsValid (name, d.Name)) != AdditionResult.Success)
 				return res;
 
 			if (delegates == null)
@@ -293,7 +293,7 @@ namespace Mono.CSharp {
 			AdditionResult res;
 			string name = iface.Basename;
 			
-			if ((res = IsValid (name, name)) != AdditionResult.Success)
+			if ((res = IsValid (name, iface.Name)) != AdditionResult.Success)
 				return res;
 			
 			if (interfaces == null)
@@ -793,6 +793,9 @@ namespace Mono.CSharp {
 
 			// if (parent_builder is ModuleBuilder) {
 			if (IsTopLevel){
+				if (TypeManager.NamespaceClash (Name))
+					return null;
+				
 				ModuleBuilder builder = CodeGen.ModuleBuilder;
 				TypeBuilder = builder.DefineType (
 					Name, type_attributes, parent, ifaces);

@@ -246,7 +246,7 @@ namespace Mono.CSharp
 				Console.Write("Compilation succeeded");
 				if (Report.Warnings > 0) {
 					Console.Write(" - {0} warning(s)", Report.Warnings);
-				} 
+				}
 				Console.WriteLine();
 				return 0;
 			} else {

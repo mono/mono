@@ -764,6 +764,9 @@ namespace Mono.CSharp {
 				return null;
 
 			if (IsTopLevel) {
+				if (TypeManager.NamespaceClash (Name))
+					return null;
+				
 				ModuleBuilder builder = CodeGen.ModuleBuilder;
 
 				TypeBuilder = builder.DefineType (

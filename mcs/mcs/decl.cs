@@ -557,6 +557,7 @@ namespace Mono.CSharp {
 			error = false;
 
 			name = MakeFQN (ns, name);
+
 			t  = TypeManager.LookupType (name);
 			if (t != null)
 				return t;
@@ -626,7 +627,6 @@ namespace Mono.CSharp {
 			// Attempt to lookup the class on our namespace and all it's implicit parents
 			//
 			for (string ns = Namespace.Name; ns != null; ns = RootContext.ImplicitParent (ns)) {
-
 				t = LookupInterfaceOrClass (ns, name, out error);
 				if (error)
 					return null;

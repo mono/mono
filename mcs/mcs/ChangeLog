@@ -1,5 +1,33 @@
 2003-04-20  Miguel de Icaza  <miguel@ximian.com>
 
+	* typemanager.cs (TypeManager.NamespaceClash): Use to check if
+	there is already a namespace defined with this name.
+
+	(TypeManager.InitCoreTypes): Remove the temporary workaround, as
+	people upgraded their corlibs.
+
+	(TypeManager.CoreLookupType): Use LookupTypeDirect, as we
+	always use fully qualified types, no need to use the compiler
+	front end.
+
+	(TypeManager.IsNamespace): Use binarysearch.
+	
+	* class.cs (AddClass, AddStruct, AddInterface, AddEvent,
+	AddDelegate): I did not quite use the new IsValid API properly: I
+	have to pass the short-name and the fullname.  I was passing only
+	the basename instead of the fullname sometimes. 
+
+	(TypeContainer.DefineType): call NamespaceClash.
+
+	* interface.cs (Interface.DefineType): use NamespaceClash before
+	defining the type.
+
+	* delegate.cs (Delegate.DefineType): use NamespaceClash before
+	defining the type.
+
+	* enum.cs: (Enum.DefineType): use NamespaceClash before
+	defining the type.
+
 	* typemanager.cs (: 3-line patch that gives us some tasty 11%
 	speed increase.  First, use the negative_hits cache when we get a
 	negative.  Second, add the type with its full original name

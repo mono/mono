@@ -147,6 +147,9 @@ namespace Mono.CSharp {
 			}
 
 			if (IsTopLevel) {
+				if (TypeManager.NamespaceClash (Name))
+					return null;
+				
 				ModuleBuilder builder = CodeGen.ModuleBuilder;
 
 				TypeBuilder = builder.DefineType (Name, attr, TypeManager.enum_type);

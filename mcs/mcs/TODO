@@ -1,3 +1,19 @@
+EmitContext.ResolveTypeTree
+---------------------------
+
+	We should investigate its usage.  The problem is that by default
+	this will be set when calling FindType, that triggers a more expensive
+	lookup.
+
+	I believe we should pass the current EmitContext (which has this turned off
+	by default) to ResolveType/REsolveTypeExpr and then have the routines that
+	need ResolveType to pass null as the emit context.
+
+Idea
+----
+
+	Keep a cache of name lookups at the DeclSpace level
+
 Large project:
 --------------
 

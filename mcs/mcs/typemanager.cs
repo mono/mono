@@ -568,11 +568,16 @@ public class TypeManager {
 	}
 
 	//
-	// This version tries to reduce the impact of calling LookupType by validating if
-	// the namespace exists
+	// UNUSED: This version tries to reduce the impact of calling LookupType by validating if
+	// UNUSED: the namespace exists
 	//
-	public static Type LookupType (string ns, string name, out string res)
+	public static Type xLookupType (string ns, string name, out string res)
 	{
+		// CURRENTLY UNUSED
+		// CURRENTLY UNUSED
+		// CURRENTLY UNUSED
+		// CURRENTLY UNUSED
+		
 		if (!IsNamespace (ns)){
 			res = null;
 			return null;
@@ -580,8 +585,13 @@ public class TypeManager {
 
 		res = DeclSpace.MakeFQN (ns, name);
 		return LookupType (res);
+		// CURRENTLY UNUSED
+		// CURRENTLY UNUSED
+		// CURRENTLY UNUSED
+		// CURRENTLY UNUSED
+		// CURRENTLY UNUSED
 	}
-	
+
 	/// <summary>
 	///   Returns the Type associated with @name, takes care of the fact that
 	///   reflection expects nested types to be separated from the main type
@@ -599,22 +609,27 @@ public class TypeManager {
 		if (t != null)
 			return t;
 
-#if SIMPLE_SPEEDUP
+		// Two thirds of the failures are caught here.
 		if (negative_hits.Contains (name))
 			return null;
-#endif
-		
+
 		string [] elements = name.Split ('.');
 		int count = elements.Length;
 
 		for (int n = 1; n <= count; n++){
 			string top_level_type = String.Join (".", elements, 0, n);
 
+			// One third of the failures are caught here.
+			if (negative_hits.Contains (top_level_type))
+				continue;
+			
 			t = (Type) types [top_level_type];
 			if (t == null){
 				t = LookupTypeReflection (top_level_type);
-				if (t == null)
+				if (t == null){
+					negative_hits [top_level_type] = true;
 					continue;
+				}
 			}
 			
 			if (count == n){
@@ -638,10 +653,7 @@ public class TypeManager {
 				types [name] = t;
 			return t;
 		}
-
-#if SIMPLE_SPEEDUP
 		negative_hits [name] = true;
-#endif
 		return null;
 	}
 
@@ -751,11 +763,19 @@ public class TypeManager {
 
 	public static bool IsNamespace (string name)
 	{
-		foreach (string ns in namespaces){
-			if (name == ns)
-				return true;
-		}
-		return false;
+		if (Array.BinarySearch (namespaces, name) < 0)
+			return false;
+		
+		return true;
+	}
+
+	public static bool NamespaceClash (string name)
+	{
+		if (Array.BinarySearch (namespaces, name) < 0)
+			return false;
+
+		Report.Error (519, String.Format ("`{0}' clashes with a predefined namespace", name));
+		return true;
 	}
 
 	/// <summary>
@@ -822,7 +842,7 @@ public class TypeManager {
 	/// </summary>
 	static Type CoreLookupType (string name)
 	{
-		Type t = LookupType (name);
+		Type t = LookupTypeDirect (name);
 
 		if (t == null){
 			Report.Error (518, "The predefined type `" + name + "' is not defined or imported");
@@ -949,13 +969,7 @@ public class TypeManager {
 		param_array_type     = CoreLookupType ("System.ParamArrayAttribute");
 		in_attribute_type    = CoreLookupType ("System.Runtime.InteropServices.InAttribute");
 
-		//
-		// Temporary while people upgrade their corlibs
-		//
-		//
-		// Change from LookupType to CoreLookupType before release
-		//
-		guid_attr_type        = LookupType ("System.Runtime.InteropServices.GuidAttribute");
+		guid_attr_type        = CoreLookupType ("System.Runtime.InteropServices.GuidAttribute");
 
 		unverifiable_code_type= CoreLookupType ("System.Security.UnverifiableCodeAttribute");
 

@@ -67,6 +67,9 @@ namespace Mono.CSharp {
 				return TypeBuilder;
 			
 			if (IsTopLevel) {
+				if (TypeManager.NamespaceClash (Name))
+					return null;
+				
 				ModuleBuilder builder = CodeGen.ModuleBuilder;
 				attr = TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Sealed;
 
