@@ -20,7 +20,7 @@ using System.IO;
 	
 namespace Mono.CSharp.Debugger
 {
-	public class SourceFile : ISourceFile
+	internal class SourceFile : ISourceFile
 	{
 		private ArrayList _methods = new ArrayList ();
 		private string _file_name;
@@ -57,7 +57,7 @@ namespace Mono.CSharp.Debugger
 		}
 	}
 
-	public class SourceBlock : ISourceBlock
+	internal class SourceBlock : ISourceBlock
 	{
 		static private int next_index;
 		private readonly int _index;
@@ -140,7 +140,7 @@ namespace Mono.CSharp.Debugger
 		}
 	}
 
-	public class SourceLine : ISourceLine
+	internal class SourceLine : ISourceLine
 	{
 		public SourceLine (int row, int column)
 			: this (0, row, column)
@@ -197,7 +197,7 @@ namespace Mono.CSharp.Debugger
 		}
 	}
 
-	public class Variable : IVariable
+	internal class Variable : IVariable
 	{
 		public Variable (string name, ITypeHandle handle, ISourceMethod method, int index)
 			: this (name, handle, method, index, null)
@@ -252,7 +252,7 @@ namespace Mono.CSharp.Debugger
 		}
 	}
 
-	public class LocalVariable : Variable, ILocalVariable
+	internal class LocalVariable : Variable, ILocalVariable
 	{
 		public LocalVariable (string name, ITypeHandle handle, ISourceMethod method,
 				      int index, ISourceLine line)
@@ -265,7 +265,7 @@ namespace Mono.CSharp.Debugger
 		}
 	}
 
-	public class SourceMethod : ISourceMethod
+	internal class SourceMethod : ISourceMethod
 	{
 		private ArrayList _lines = new ArrayList ();
 		private ArrayList _blocks = new ArrayList ();
@@ -445,7 +445,7 @@ namespace Mono.CSharp.Debugger
 		protected Hashtable sources = null;
 		private ArrayList mbuilder_array = null;
 
-		public ISourceMethod[] Methods {
+		internal ISourceMethod[] Methods {
 			get {
 				ISourceMethod[] retval = new ISourceMethod [methods.Count];
 				methods.CopyTo (retval);
@@ -453,7 +453,7 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		public ISourceFile[] Sources {
+		internal ISourceFile[] Sources {
 			get {
 				ISourceFile[] retval = new ISourceFile [sources.Count];
 				sources.Values.CopyTo (retval, 0);

@@ -20,18 +20,10 @@ namespace Mono.CSharp.Debugger
 {
 	public interface IMonoSymbolWriter : ISymbolWriter
 	{
-		ISourceMethod[] Methods {
-			get;
-		}
-
-		ISourceFile[] Sources {
-			get;
-		}
-
 		void Initialize (string assembly_filename, string filename, string[] args);
 	}
 
-	public interface ISourceFile
+	internal interface ISourceFile
 	{
 		string FileName {
 			get;
@@ -44,7 +36,7 @@ namespace Mono.CSharp.Debugger
 		void AddMethod (ISourceMethod method);
 	}
 
-	public interface ISourceMethod
+	internal interface ISourceMethod
 	{
 		ISourceLine[] Lines {
 			get;
@@ -96,7 +88,7 @@ namespace Mono.CSharp.Debugger
 		}
 	}
 
-	public interface ISourceBlock
+	internal interface ISourceBlock
 	{
 		ISourceMethod SourceMethod {
 			get;
@@ -127,7 +119,7 @@ namespace Mono.CSharp.Debugger
 		}
 	}
 
-	public enum SourceOffsetType
+	internal enum SourceOffsetType
 	{
 		OFFSET_NONE,
 		OFFSET_IL,
@@ -135,7 +127,7 @@ namespace Mono.CSharp.Debugger
 		OFFSET_PARAMETER
 	}
 
-	public interface ISourceLine
+	internal interface ISourceLine
 	{
 		SourceOffsetType OffsetType {
 			get;
@@ -154,7 +146,7 @@ namespace Mono.CSharp.Debugger
 		}
 	}
 
-	public interface ITypeHandle
+	internal interface ITypeHandle
 	{
 		string Name {
 			get;
@@ -169,7 +161,7 @@ namespace Mono.CSharp.Debugger
 		}
 	}
 
-	public interface IVariable
+	internal interface IVariable
 	{
 		string Name {
 			get;
@@ -192,9 +184,9 @@ namespace Mono.CSharp.Debugger
 		}
 	}
 
-	public interface ILocalVariable : IVariable
+	internal interface ILocalVariable : IVariable
 	{ }
 
-	public interface IMethodParameter : IVariable
+	internal interface IMethodParameter : IVariable
 	{ }
 }

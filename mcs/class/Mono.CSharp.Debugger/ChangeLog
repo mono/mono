@@ -1,5 +1,10 @@
 2002-09-14  Martin Baulig  <martin@gnome.org>
 
+	* MonoSymbolWriter.cs, IMonoSymbolWriter.cs, MonoSymbolTableWriter.cs:
+	Make all classes and interfaces which don't need to be public internal.
+
+2002-09-14  Martin Baulig  <martin@gnome.org>
+
 	* MonoSymbolTable.cs: Use only CLS-compliant types here, bumped version
 	number to 19.
 

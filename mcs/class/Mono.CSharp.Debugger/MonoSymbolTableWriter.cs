@@ -16,7 +16,7 @@ using System.IO;
 	
 namespace Mono.CSharp.Debugger
 {
-	public class MonoSymbolTableWriter : IDisposable
+	internal class MonoSymbolTableWriter : IDisposable
 	{
 		BinaryWriter bw;
 
@@ -26,7 +26,7 @@ namespace Mono.CSharp.Debugger
 			bw = new BinaryWriter (stream);
 		}
 
-		public void WriteSymbolTable (IMonoSymbolWriter symwriter)
+		public void WriteSymbolTable (MonoSymbolWriter symwriter)
 		{
 			// Magic number and file version.
 			bw.Write (OffsetTable.Magic);
