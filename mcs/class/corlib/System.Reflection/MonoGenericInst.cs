@@ -562,6 +562,11 @@ namespace System.Reflection
 			}
 		}
 
+		public override bool IsSubclassOf (Type c)
+		{
+			return BaseType == c || BaseType.IsSubclassOf (c);
+		}
+
 		public override Type[] GetInterfaces ()
 		{
 			if (!initialized)
