@@ -228,8 +228,7 @@ public class TypeConverter
 		throw new NotImplementedException ();
 	}
 
-	//public class StandardValuesCollection : ICollection, IEnumerable
-	public class StandardValuesCollection : IEnumerable
+	public class StandardValuesCollection : ICollection, IEnumerable
 	{
 		private ICollection values;
 		
@@ -248,22 +247,20 @@ public class TypeConverter
 			return values.GetEnumerator ();
 		}
 
-		/*
-		bool ICollection.IsSynchronized ()
+		bool ICollection.IsSynchronized
 		{
-			return false;
+			get { return false; }
 		}
 
-		bool ICollection.SyncRoot ()
+		object ICollection.SyncRoot
 		{
-			return false;
+			get { return null; }
 		}
 
-		bool ICollection.Count
+		int ICollection.Count
 		{
 			get { return this.Count; }
 		}
-		*/
 
 		public int Count
 		{
