@@ -63,6 +63,12 @@ namespace Microsoft.JScript {
 			return true;			
 		}
 
+		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		{
+			this.no_effect = no_effect;
+			return Resolve (context);
+		}
+
 		internal override void Emit (EmitContext ec)
 		{
 			throw new NotImplementedException ();

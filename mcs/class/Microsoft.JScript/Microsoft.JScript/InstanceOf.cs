@@ -23,6 +23,11 @@ namespace Microsoft.JScript.Tmp {
 			throw new NotImplementedException ();
 		}
 
+		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		{
+			throw new NotImplementedException ();
+		}
+
 		internal override void Emit (EmitContext ec)
 		{
 			throw new NotImplementedException ();
