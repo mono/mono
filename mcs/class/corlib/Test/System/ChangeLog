@@ -1,5 +1,9 @@
 2004-05-25  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* ArrayTest.cs: Added tests to check for integer overflow in Clear,
+	Copy and Reverse.
+	* BitConverterTest.cs: Added test to check for possible integer 
+	overflow in ToString (byte,int,int)
 	* ConvertTest.cs: New tests for prefixed hexadecimal strings and
 	negative byte convertion.
 	* StringTest.cs: Added new tests for integer overflow and negatives.

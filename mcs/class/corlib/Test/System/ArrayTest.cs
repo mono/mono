@@ -2491,6 +2491,62 @@ public class ArrayTest : Assertion
 		byte[,] matrix = new byte [2,2] { {1, 1}, {2, 2} };
 		Array.Clear (matrix, 0, 5);
 	}
+
+	[Test]
+	[ExpectedException (typeof (IndexOutOfRangeException))]
+	public void Clear_IndexOverflow () 
+	{
+		byte[] array = new byte [16];
+		Array.Clear (array, 4, Int32.MaxValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (IndexOutOfRangeException))]
+	public void Clear_LengthOverflow () 
+	{
+		byte[] array = new byte [16];
+		Array.Clear (array, Int32.MaxValue, 4);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void Copy_SourceIndexOverflow () 
+	{
+		byte[] array = new byte [16];
+		Array.Copy (array, Int32.MaxValue, array, 8, 8);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void Copy_DestinationIndexOverflow () 
+	{
+		byte[] array = new byte [16];
+		Array.Copy (array, 8, array, Int32.MaxValue, 8);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void Copy_LengthOverflow () 
+	{
+		byte[] array = new byte [16];
+		Array.Copy (array, 8, array, 8, Int32.MaxValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void Reverse_IndexOverflow () 
+	{
+		byte[] array = new byte [16];
+		Array.Reverse (array, Int32.MaxValue, 8);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void Reverse_LengthOverflow () 
+	{
+		byte[] array = new byte [16];
+		Array.Reverse (array, 8, Int32.MaxValue);
+	}
 }
 
 }

@@ -530,6 +530,22 @@ public class BitConverterTest : Assertion {
 
 	[Test]
 	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void ToString_StartIndexOverflow () 
+	{
+		byte[] array = new byte [4];
+		BitConverter.ToString (array, Int32.MaxValue, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void ToString_LengthOverflow () 
+	{
+		byte[] array = new byte [4];
+		BitConverter.ToString (array, 1, Int32.MaxValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
 	public void ToUpperLimit () 
 	{
 		byte[] array = new byte [4];
