@@ -33,7 +33,7 @@
 
 #if NET_2_0
 
-using System;
+using System.Runtime.Serialization;
 
 namespace System.Data.Sql {
 	public sealed class InvalidUdtException : SystemException
