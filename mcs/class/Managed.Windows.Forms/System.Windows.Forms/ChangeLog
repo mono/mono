@@ -1,5 +1,10 @@
 2004-11-10  Jackson Harper  <jackson@ximian.com>
 
+	* ThemeWin32Classic.cs: Do not draw the selected tab if its not in
+	the clip area.
+	
+2004-11-10  Jackson Harper  <jackson@ximian.com>
+
 	* ThemeWin32Classic.cs: Don't bother drawing tabs outside of the
 	clip area.
 	

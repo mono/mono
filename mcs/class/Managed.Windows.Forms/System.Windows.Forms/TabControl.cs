@@ -664,7 +664,7 @@ namespace System.Windows.Forms {
 				if (width < MinimumTabWidth)
 					width = MinimumTabWidth;
 				if (page.Row != prev_row)
-                                        xpos = 4 + size;
+                                        xpos = 4 + (slider_pos * size);
 
 				page.TabBounds = new Rectangle (xpos,
 						ypos + (row_count - page.Row) * (item_size.Height + spacing.Height),
