@@ -11,6 +11,10 @@ all:
 	$(MAKE) PROFILE=default all-profile
 	$(MAKE) PROFILE=net_2_0 all-profile
 
+clean:
+	$(MAKE) PROFILE=default clean-profile
+	$(MAKE) PROFILE=net_2_0 clean-profile
+
 all-profile: platform-check profile-check all-recursive
 
 install: platform-check profile-check install-recursive #install-local
@@ -21,7 +25,7 @@ test: platform-check profile-check test-recursive #test-local
 
 run-test: run-test-recursive #run-test-local
 
-clean: clean-recursive #clean-local
+clean-profile: clean-recursive #clean-local
 
 # fun specialty targets
 

@@ -2,6 +2,7 @@
 
 	* Makefile (SUBDIRS): Remove 'gmcs' for now.
 	(all): Simplify.
+	(clean): Quick hack to get 'make clean' to work better.
 
 2004-04-29  Jackson Harper  <jackson@ximian.com>
 
