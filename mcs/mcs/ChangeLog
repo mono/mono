@@ -1,3 +1,12 @@
+2004-12-01  Miguel de Icaza  <miguel@ximian.com>
+
+	* cfold.cs (ConstantFold.DoConstantNumericPromotions): After
+	unwrapping the enumeration values, chain to
+	DoConstantNumericPromotions again, so we can promote things to the
+	fundamental types (takes care of enums that are bytes, sbytes).
+
+	Fixes bug #62054.
+
 2004-12-01  Raja R Harinath  <rharinath@novell.com>
 
 	* attribute.cs (Attribute.CheckAttributeType): Remove complain flag.
