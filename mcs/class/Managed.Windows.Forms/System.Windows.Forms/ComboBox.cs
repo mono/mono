@@ -1324,7 +1324,8 @@ namespace System.Windows.Forms
 				public void FireMouseMove (MouseEventArgs e) 
 				{
 					OnMouseMove (e);
-				}
+				}			
+				
 			}
 
 			public ComboListBox (ComboBox owner) : base ()
@@ -1341,8 +1342,7 @@ namespace System.Windows.Forms
 				KeyDown += new KeyEventHandler (OnKeyDownPUW);
 				Paint += new PaintEventHandler (OnPaintPUW);				
 				SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
-				SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
-				
+				SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);				
 			}
 
 			protected override CreateParams CreateParams
@@ -1408,29 +1408,31 @@ namespace System.Windows.Forms
 				if (owner.Items.Count <= owner.MaxDropDownItems) {					
 					
 					/* Does not need vertical scrollbar*/
-					if (vscrollbar_ctrl != null) {
-						vscrollbar_ctrl.Dispose ();
-						Controls.Remove (vscrollbar_ctrl);
-						vscrollbar_ctrl = null;
+					if (vscrollbar_ctrl != null) {						
+						vscrollbar_ctrl.Visible = false;						
 					}					
 				}
 				else {
 					/* Need vertical scrollbar */
-					vscrollbar_ctrl = new VScrollBarLB ();
-					vscrollbar_ctrl.Minimum = 0;
-					vscrollbar_ctrl.SmallChange = 1;
-					vscrollbar_ctrl.LargeChange = 1;
-					vscrollbar_ctrl.Maximum = 0;
-					vscrollbar_ctrl.ValueChanged += new EventHandler (VerticalScrollEvent);
+					if (vscrollbar_ctrl == null) {
+						vscrollbar_ctrl = new VScrollBarLB ();
+						vscrollbar_ctrl.Minimum = 0;
+						vscrollbar_ctrl.SmallChange = 1;
+						vscrollbar_ctrl.LargeChange = 1;
+						vscrollbar_ctrl.Maximum = 0;
+						vscrollbar_ctrl.ValueChanged += new EventHandler (VerticalScrollEvent);
+						
+						vscrollbar_ctrl.Height = height - ThemeEngine.Current.DrawComboListBoxDecorationBottom (owner.DropDownStyle) -
+							ThemeEngine.Current.DrawComboListBoxDecorationTop (owner.DropDownStyle);
+							
+						vscrollbar_ctrl.Location = new Point (width - vscrollbar_ctrl.Width - ThemeEngine.Current.DrawComboListBoxDecorationRight (owner.DropDownStyle), 
+							ThemeEngine.Current.DrawComboListBoxDecorationTop (owner.DropDownStyle));
+						Controls.Add (vscrollbar_ctrl);
+					}
 					
-					vscrollbar_ctrl.Height = height - ThemeEngine.Current.DrawComboListBoxDecorationBottom (owner.DropDownStyle) -
-						ThemeEngine.Current.DrawComboListBoxDecorationTop (owner.DropDownStyle);
-						
-					vscrollbar_ctrl.Location = new Point (width - vscrollbar_ctrl.Width - ThemeEngine.Current.DrawComboListBoxDecorationRight (owner.DropDownStyle), 
-						ThemeEngine.Current.DrawComboListBoxDecorationTop (owner.DropDownStyle));					
-						
 					vscrollbar_ctrl.Maximum = owner.Items.Count - owner.MaxDropDownItems;
-					Controls.Add (vscrollbar_ctrl);
+					vscrollbar_ctrl.Visible = true;						
+					
 				}
 				
 				Size = new Size (width, height);
@@ -1445,9 +1447,10 @@ namespace System.Windows.Forms
 				textarea_drawable.Width -= ThemeEngine.Current.DrawComboListBoxDecorationLeft (owner.DropDownStyle);
 				textarea_drawable.Height -= ThemeEngine.Current.DrawComboListBoxDecorationBottom (owner.DropDownStyle);				
 				textarea_drawable.Height -= ThemeEngine.Current.DrawComboListBoxDecorationTop (owner.DropDownStyle);
+								
 				
-				if (vscrollbar_ctrl != null)
-					textarea_drawable.Width -= vscrollbar_ctrl.Width;
+				if (vscrollbar_ctrl != null && vscrollbar_ctrl.Visible)
+					textarea_drawable.Width -= vscrollbar_ctrl.Width;				
 
 				last_item = LastVisibleItem ();				
 				page_size = textarea_drawable.Height / (item_height - 2);				
@@ -1456,14 +1459,14 @@ namespace System.Windows.Forms
 			private void Draw (Rectangle clip)
 			{	
 				DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
-					(owner.BackColor), ClientRectangle);
+					(owner.BackColor), ClientRectangle);				
 
 				if (owner.Items.Count > 0) {
 					Rectangle item_rect;
 					DrawItemState state = DrawItemState.None;
 					
 					for (int i = top_item; i <= last_item; i++) {
-						item_rect = GetItemDisplayRectangle (i, top_item);
+						item_rect = GetItemDisplayRectangle (i, top_item);						
 
 						if (clip.IntersectsWith (item_rect) == false)
 							continue;
