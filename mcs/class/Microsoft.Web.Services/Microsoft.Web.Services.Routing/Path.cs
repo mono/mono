@@ -39,6 +39,7 @@ namespace Microsoft.Web.Services.Routing {
                         if (document == null)
                                 throw new ArgumentNullException (
                                         Locale.GetText ("Argument is null."));
+			throw new NotImplementedException ();
                 }
 
                 [MonoTODO]

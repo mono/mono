@@ -1,4 +1,5 @@
 2003-09-04  Sebastien Pouliot  <spouliot@videotron.ca>
 
+	* Path.cs: Corrected typos to fix compilation.
 	* Via.cs: Corrected typos to fix compilation.
 	* ViaCollection.cs: Corrected typos to fix compilation.
