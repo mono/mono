@@ -217,6 +217,19 @@ Added delegates. All delegates in System.Windows.Forms done
 * have bad extra byte from old skeleton, need new corrected version.
 * MonthCalendar.HitTestInfo.cs needs to be incorporated into MonthCalendar.
 
+2002-5-27 DennisHayes <dennish@raytek.com>
+		Check in for Paul Osman <paul.osman@sympatico.ca>
+* Menu.cs
+* Menu.MenuItemCollection.cs
+* MenuItem.cs
+* MessageBox.cs
+* MonthCalendar.cs
+* Stubbed and commented out
+* MonthCalendar.cs has bad extra byte from old skeleton, need new corrected version.
+* MonthCalendar.HitTestInfo.cs needs to be incorporated into MonthCalendar.
+* Menu.MenuItemCollection.cs needs to be incorporated into Menu.cs.
+
+
 
 
 
