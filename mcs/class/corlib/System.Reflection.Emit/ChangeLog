@@ -1,5 +1,8 @@
 2004-01-15  Zoltan Varga  <vargaz@freemail.hu>
 
+	* AssemblyBuilder.cs (Save): Handle entry points with an int return
+	type as well.
+	
 	* AssemblyBuilder.cs (Save): If the entry point is in a module, create
 	a new entry point which calls the real one, since the entry point must
 	be in the module which contains the manifest.

@@ -548,7 +548,7 @@ namespace System.Reflection.Emit {
 				else
 					paramTypes = new Type [0];
 
-				MethodBuilder mb = mainModule.DefineGlobalMethod ("__EntryPoint$", MethodAttributes.Static|MethodAttributes.PrivateScope, typeof (void), paramTypes);
+				MethodBuilder mb = mainModule.DefineGlobalMethod ("__EntryPoint$", MethodAttributes.Static|MethodAttributes.PrivateScope, entry_point.ReturnType, paramTypes);
 				ILGenerator ilgen = mb.GetILGenerator ();
 				if (paramTypes.Length == 1)
 					ilgen.Emit (OpCodes.Ldarg_0);
