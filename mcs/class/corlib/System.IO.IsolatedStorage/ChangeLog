@@ -1,3 +1,13 @@
+2005-03-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IsolatedStorageFile.cs: Added CAS demands (imperative when possible)
+	for IsolatedStoragePermission. The security attributes for NET_2_0 are
+	commented until #73046 is fixed.
+	* IsolatedStorageFileStream.cs: Now use StackFrame(2) to find which
+	assembly is really calling the IsolatedStorageFileStream when no 
+	default is supplied. Throw DirectoryNotFoundException when a directory
+	inside the isolated storage is missing.
+
 2005-01-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IsolatedStorage.cs: Added checks to get identities.

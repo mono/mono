@@ -28,8 +28,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
+using System.Security;
+using System.Security.Permissions;
 
 #if NET_2_0
 using Microsoft.Win32.SafeHandles;
@@ -39,20 +42,37 @@ namespace System.IO.IsolatedStorage {
 
 	public class IsolatedStorageFileStream : FileStream {
 
+		[ReflectionPermission (SecurityAction.Assert, TypeInformation = true)]
 		private static string CreateIsolatedPath (IsolatedStorageFile isf, string path)
 		{
 			if (path == null)
 				throw new ArgumentNullException ("path");
 
-			if (isf == null)
-				isf = IsolatedStorageFile.GetUserStoreForDomain (); 
+			if (isf == null) {
+				// we can't call GetUserStoreForDomain here because it depends on 
+				// Assembly.GetCallingAssembly (), which would be our constructor,
+				// i.e. the result would always be mscorlib.dll. So we need to do 
+				// a small stack walk to find who's calling the constructor
 
-			string file = Path.Combine (isf.Root, path);
+				StackFrame sf = new StackFrame (2); // skip self and constructor
+				isf = IsolatedStorageFile.GetStore (IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly,
+					IsolatedStorageFile.GetDomainIdentityFromEvidence (AppDomain.CurrentDomain.Evidence), 
+					IsolatedStorageFile.GetAssemblyIdentityFromEvidence (sf.GetMethod ().ReflectedType.Assembly.Evidence));
+			}
 
-			// Ensure that the file can be created.
-			FileInfo fi = new FileInfo (file);
+			// ensure that the _root_ isolated storage can be (and is) created.
+			FileInfo fi = new FileInfo (isf.Root);
 			if (!fi.Directory.Exists)
 				fi.Directory.Create ();
+
+			// other directories (provided by 'path') must already exists
+			string file = Path.Combine (isf.Root, path);
+			fi = new FileInfo (file);
+			if (!fi.Directory.Exists) {
+				// don't leak the path information for isolated storage
+				string msg = Locale.GetText ("Could not find a part of the path \"{0}\".");
+				throw new DirectoryNotFoundException (String.Format (msg, path));
+			}
 
 			// FIXME: this is probably a good place to Assert our security
 			// needs (once Mono supports imperative security stack modifiers)

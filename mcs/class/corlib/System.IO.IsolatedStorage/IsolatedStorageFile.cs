@@ -47,6 +47,8 @@ namespace System.IO.IsolatedStorage {
 
 		public static IEnumerator GetEnumerator (IsolatedStorageScope scope)
 		{
+			Demand (scope);
+
 			switch (scope) {
 			case IsolatedStorageScope.User:
 			case IsolatedStorageScope.User | IsolatedStorageScope.Roaming:
@@ -66,6 +68,8 @@ namespace System.IO.IsolatedStorage {
 			Evidence domainEvidence, Type domainEvidenceType,
 			Evidence assemblyEvidence, Type assemblyEvidenceType)
 		{
+			Demand (scope);
+
 			bool domain = ((scope & IsolatedStorageScope.Domain) != 0);
 			if (domain && (domainEvidence == null))
 				throw new ArgumentNullException ("domainEvidence");
@@ -103,6 +107,8 @@ namespace System.IO.IsolatedStorage {
 
 		public static IsolatedStorageFile GetStore (IsolatedStorageScope scope, object domainIdentity, object assemblyIdentity)
 		{
+			Demand (scope);
+
 			if (((scope & IsolatedStorageScope.Domain) != 0) &&  (domainIdentity == null))
 				throw new ArgumentNullException ("domainIdentity");
 
@@ -118,6 +124,7 @@ namespace System.IO.IsolatedStorage {
 
 		public static IsolatedStorageFile GetStore (IsolatedStorageScope scope, Type domainEvidenceType, Type assemblyEvidenceType)
 		{
+			Demand (scope);
 			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
 			if ((scope & IsolatedStorageScope.Domain) != 0) {
 				storageFile._domainIdentity = GetTypeFromEvidence (AppDomain.CurrentDomain.Evidence, domainEvidenceType);
@@ -131,6 +138,7 @@ namespace System.IO.IsolatedStorage {
 #if NET_2_0
 		public static IsolatedStorageFile GetStore (IsolatedStorageScope scope, object applicationIdentity)
 		{
+			Demand (scope);
 			if (applicationIdentity == null)
 				throw new ArgumentNullException ("applicationIdentity");
 
@@ -142,12 +150,15 @@ namespace System.IO.IsolatedStorage {
 
 		public static IsolatedStorageFile GetStore (IsolatedStorageScope scope, Type applicationEvidenceType)
 		{
+			Demand (scope);
 			IsolatedStorageFile storageFile = new IsolatedStorageFile (scope);
 			storageFile.InitStore (scope, applicationEvidenceType);
 			storageFile.PostInit ();
 			return storageFile;
 		}
 
+// waiting for fix to http://bugzilla.ximian.com/show_bug.cgi?id=73046
+//		[IsolatedStorageFilePermission (SecurityAction.Demand, UsageAllowed = IsolatedStorageContainment.ApplicationIsolationByMachine)]
 		public static IsolatedStorageFile GetMachineStoreForApplication ()
 		{
 			IsolatedStorageScope scope = IsolatedStorageScope.Machine | IsolatedStorageScope.Application;
@@ -157,6 +168,8 @@ namespace System.IO.IsolatedStorage {
 			return storageFile;
 		}
 
+// waiting for fix to http://bugzilla.ximian.com/show_bug.cgi?id=73046
+//		[IsolatedStorageFilePermission (SecurityAction.Demand, UsageAllowed = IsolatedStorageContainment.AssemblyIsolationByMachine)]
 		public static IsolatedStorageFile GetMachineStoreForAssembly ()
 		{
 			IsolatedStorageScope scope = IsolatedStorageScope.Machine | IsolatedStorageScope.Assembly;
@@ -166,6 +179,8 @@ namespace System.IO.IsolatedStorage {
 			return storageFile;
 		}
 
+// waiting for fix to http://bugzilla.ximian.com/show_bug.cgi?id=73046
+//		[IsolatedStorageFilePermission (SecurityAction.Demand, UsageAllowed = IsolatedStorageContainment.DomainIsolationByMachine)]
 		public static IsolatedStorageFile GetMachineStoreForDomain ()
 		{
 			IsolatedStorageScope scope = IsolatedStorageScope.Machine | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly;
@@ -176,6 +191,8 @@ namespace System.IO.IsolatedStorage {
 			return storageFile;
 		}
 
+// waiting for fix to http://bugzilla.ximian.com/show_bug.cgi?id=73046
+//		[IsolatedStorageFilePermission (SecurityAction.Demand, UsageAllowed = IsolatedStorageContainment.ApplicationIsolationByUser)]
 		public static IsolatedStorageFile GetUserStoreForApplication ()
 		{
 			IsolatedStorageScope scope = IsolatedStorageScope.User | IsolatedStorageScope.Application;
@@ -185,6 +202,7 @@ namespace System.IO.IsolatedStorage {
 			return storageFile;
 		}
 #endif
+		[IsolatedStorageFilePermission (SecurityAction.Demand, UsageAllowed = IsolatedStorageContainment.AssemblyIsolationByUser)]
 		public static IsolatedStorageFile GetUserStoreForAssembly ()
 		{
 			IsolatedStorageScope scope = IsolatedStorageScope.User | IsolatedStorageScope.Assembly;
@@ -194,6 +212,7 @@ namespace System.IO.IsolatedStorage {
 			return storageFile;
 		}
 
+		[IsolatedStorageFilePermission (SecurityAction.Demand, UsageAllowed = IsolatedStorageContainment.DomainIsolationByUser)]
 		public static IsolatedStorageFile GetUserStoreForDomain ()
 		{
 			IsolatedStorageScope scope = IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly;
@@ -240,6 +259,45 @@ namespace System.IO.IsolatedStorage {
 			}
 
 			return Path.Combine (root, ".isolated-storage");
+		}
+
+		private static void Demand (IsolatedStorageScope scope)
+		{
+			if (SecurityManager.SecurityEnabled) {
+				IsolatedStorageFilePermission isfp = new IsolatedStorageFilePermission (PermissionState.None);
+				isfp.UsageAllowed = ScopeToContainment (scope);
+				// TODO: quota
+				isfp.Demand ();
+			}
+		}
+
+		private static IsolatedStorageContainment ScopeToContainment (IsolatedStorageScope scope)
+		{
+			switch (scope) {
+			case IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly | IsolatedStorageScope.User:
+				return IsolatedStorageContainment.DomainIsolationByUser;
+			case IsolatedStorageScope.Assembly | IsolatedStorageScope.User:
+				return IsolatedStorageContainment.AssemblyIsolationByUser;
+			case IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly | IsolatedStorageScope.User | IsolatedStorageScope.Roaming:
+				return IsolatedStorageContainment.DomainIsolationByRoamingUser;
+			case IsolatedStorageScope.Assembly | IsolatedStorageScope.User | IsolatedStorageScope.Roaming:
+				return IsolatedStorageContainment.AssemblyIsolationByRoamingUser;
+#if NET_2_0
+			case IsolatedStorageScope.Application | IsolatedStorageScope.User:
+				return IsolatedStorageContainment.ApplicationIsolationByUser;
+			case IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly | IsolatedStorageScope.Machine:
+				return IsolatedStorageContainment.DomainIsolationByMachine;
+			case IsolatedStorageScope.Assembly | IsolatedStorageScope.Machine:
+				return IsolatedStorageContainment.AssemblyIsolationByMachine;
+			case IsolatedStorageScope.Application | IsolatedStorageScope.Machine:
+				return IsolatedStorageContainment.ApplicationIsolationByMachine;
+			case IsolatedStorageScope.Application | IsolatedStorageScope.User | IsolatedStorageScope.Roaming:
+				return IsolatedStorageContainment.ApplicationIsolationByRoamingUser;
+#endif
+			default:
+				// unknown ?!?! then ask for maximum (unrestricted)
+				return IsolatedStorageContainment.UnrestrictedIsolatedStorage;
+			}
 		}
 
 		internal static ulong GetDirectorySize (DirectoryInfo di)
@@ -331,7 +389,7 @@ namespace System.IO.IsolatedStorage {
 
 		public void CreateDirectory (string dir)
 		{
-			directory.CreateSubdirectory (dir);
+			directory.CreateSubdirectory (dir);	
 		}
 
 		public void DeleteDirectory (string dir)
@@ -405,7 +463,7 @@ namespace System.IO.IsolatedStorage {
 			return null;
 		}
 
-		private static object GetAssemblyIdentityFromEvidence (Evidence e)
+		internal static object GetAssemblyIdentityFromEvidence (Evidence e)
 		{
 			// we prefer...
 			// a. a Publisher evidence
@@ -420,7 +478,7 @@ namespace System.IO.IsolatedStorage {
 			return GetTypeFromEvidence (e, typeof (Url));
 		}
 
-		private static object GetDomainIdentityFromEvidence (Evidence e)
+		internal static object GetDomainIdentityFromEvidence (Evidence e)
 		{
 			// we prefer...
 			// a. a ApplicationDirectory evidence
