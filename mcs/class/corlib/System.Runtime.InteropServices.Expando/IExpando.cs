@@ -12,7 +12,7 @@ using System.Reflection.Emit;
 
 namespace System.Runtime.InteropServices.Expando
 {
-	[Guid("")]
+	//[Guid("")]
 	public interface IExpando : IReflect
 	{
 		FieldInfo AddField (string name);
