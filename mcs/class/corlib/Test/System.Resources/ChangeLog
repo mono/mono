@@ -1,3 +1,9 @@
+2004-02-18  Jackson Harper <jackson@ximian.com>
+
+	* ResourceReaderTest.cs: Add a little logic for finding
+	resources. This works on MS and with mono and fixes these tests
+	for 'make run-test'.
+	
 2003-06-23  Nick Drochak <ndrochak@gol.com>
 
         * ResourceReaderTest.cs: Put it back the way it was, doesn't work on 

@@ -19,9 +19,18 @@ namespace MonoTests.System.Resources {
 
 	[TestFixture]
 	public class ResourceReaderTest : Assertion {
-		private static string m_Path = "resources" + Path.DirectorySeparatorChar;
-		private static string m_ResourceFile = m_Path + "MyResources.resources";
-		private static string m_BadResourceFile = m_Path + "Empty.resources";
+		private static string m_ResourceFile;
+		private static string m_BadResourceFile;
+
+		static ResourceReaderTest ()
+		{
+			FileInfo code_base = new FileInfo (Assembly.GetExecutingAssembly ().Location);
+			char ds = Path.DirectorySeparatorChar;
+			string base_path = code_base.Directory.FullName + ds + "Test" + ds + "resources" + ds;
+
+			m_ResourceFile = base_path + "MyResources.resources";
+			m_BadResourceFile = base_path + "Empty.resources";
+		}
 
 		[Test]
 		public void TestConstructorStringExceptions() {
