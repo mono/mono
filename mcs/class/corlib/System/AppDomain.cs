@@ -593,7 +593,24 @@ namespace System {
 			return getFriendlyName ();
 		}
 
+		// This methods called from the runtime. Don't change signature.
+		private void DoAssemblyLoad (Assembly assembly)
+		{
+			if (AssemblyLoad == null)
+				return;
 
+			AssemblyLoad (this, new AssemblyLoadEventArgs (assembly));
+		}
+
+		private Assembly DoAssemblyResolve (string name)
+		{
+			if (AssemblyResolve == null)
+				return null;
+
+			return AssemblyResolve (this, new ResolveEventArgs (name));
+		}
+		// End of methods called from the runtime
+		
 		public event AssemblyLoadEventHandler AssemblyLoad;
 		
 		public event ResolveEventHandler AssemblyResolve;

@@ -1,3 +1,8 @@
+2002-11-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AppDomain.cs: implemented a couple of methods called from the runtime
+	to fire AssemblyLoad and AssemblyResolve events.
+
 2002-10-31  Dick Porter  <dick@ximian.com>
 
 	* Environment.cs: MonoIO methods now have an error parameter
