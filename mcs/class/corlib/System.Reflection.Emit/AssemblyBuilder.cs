@@ -85,6 +85,7 @@ namespace System.Reflection.Emit {
 		Win32VersionResource version_res;
 		bool created;
 		bool is_module_only;
+		string keyfile_name;
 		private Mono.Security.StrongName sn;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -566,6 +567,19 @@ namespace System.Reflection.Emit {
 
 			if (version_res != null)
 				DefineVersionInfoResourceImpl (assemblyFileName);
+
+			if ((keyfile_name != null) && (keyfile_name != String.Empty)) {
+				using (FileStream fs = new FileStream (keyfile_name, FileMode.Open)) {
+					byte[] snkeypair = new byte [fs.Length];
+					fs.Read (snkeypair, 0, snkeypair.Length);
+
+					// this will import public or private/public keys
+					RSA rsa = CryptoConvert.FromCapiKeyBlob (snkeypair);
+					// and export only the public part
+					sn = new Mono.Security.StrongName (rsa);
+					public_key = sn.PublicKey;
+				}
+			}
 			
 			foreach (ModuleBuilder module in modules)
 				if (module != mainModule)
@@ -612,19 +626,7 @@ namespace System.Reflection.Emit {
 				version = create_assembly_version (customBuilder.string_arg ());
 				return;
 			} else if (attrname == "System.Reflection.AssemblyKeyFileAttribute") {
-				string keyfile_name = customBuilder.string_arg ();
-				if (keyfile_name == String.Empty)
-					return;
-				using (FileStream fs = new FileStream (keyfile_name, FileMode.Open)) {
-					byte[] snkeypair = new byte [fs.Length];
-					fs.Read (snkeypair, 0, snkeypair.Length);
-
-					// this will import public or private/public keys
-					RSA rsa = CryptoConvert.FromCapiKeyBlob (snkeypair);
-					// and export only the public part
-					sn = new Mono.Security.StrongName (rsa);
-					public_key = sn.PublicKey;
-				}
+				keyfile_name = customBuilder.string_arg ();
 				return;
 			} else if (attrname == "System.Reflection.AssemblyKeyNameAttribute") {
 				string key_name = customBuilder.string_arg ();
