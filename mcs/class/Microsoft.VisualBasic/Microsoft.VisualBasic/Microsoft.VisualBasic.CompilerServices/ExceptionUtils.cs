@@ -32,7 +32,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
 	[System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Auto)] 
-	sealed abstract public class ExceptionUtils {
+	sealed public class ExceptionUtils {
 
 		internal const int E_NOTIMPL = -2147467263;
 		internal const int E_NOINTERFACE = -2147467262;

@@ -1,3 +1,8 @@
+2004-06-24  Duncan Mak  <duncan@ximian.com>
+
+	* ExceptionUtils.cs: Remove the keyword "abstract" to fix the
+	build.
+
 2004-06-24  Jambunathan K  <kjambunathan@novell.com>
 	* Utils.cs: 
 	* StringType.cs: corcompare based fixes
