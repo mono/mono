@@ -35,8 +35,9 @@ namespace Mono.Doc.Gui
 		private System.Windows.Forms.PictureBox pictureBoxExplosion;
 		private System.Windows.Forms.Label labelErrorExplanation;
 		private System.Windows.Forms.TextBox textBoxErrorMessage;
-		private System.Windows.Forms.Button buttonExit;
 		private System.Windows.Forms.Button buttonSendErrorReport;
+		private System.Windows.Forms.Button buttonQuit;
+		private System.Windows.Forms.Button buttonContinue;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -96,8 +97,9 @@ namespace Mono.Doc.Gui
 			this.pictureBoxExplosion = new System.Windows.Forms.PictureBox();
 			this.labelErrorExplanation = new System.Windows.Forms.Label();
 			this.textBoxErrorMessage = new System.Windows.Forms.TextBox();
-			this.buttonExit = new System.Windows.Forms.Button();
+			this.buttonQuit = new System.Windows.Forms.Button();
 			this.buttonSendErrorReport = new System.Windows.Forms.Button();
+			this.buttonContinue = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// pictureBoxExplosion
@@ -115,7 +117,7 @@ namespace Mono.Doc.Gui
 			this.labelErrorExplanation.Name = "labelErrorExplanation";
 			this.labelErrorExplanation.Size = new System.Drawing.Size(216, 64);
 			this.labelErrorExplanation.TabIndex = 1;
-			this.labelErrorExplanation.Text = "Kaboom!  Monodoc has caught an unexpected exception.  Seeing as we\'re in heavy de" +
+			this.labelErrorExplanation.Text = "Kaboom!  Monodoc has thrown an unexpected exception.  Seeing as we\'re in heavy de" +
 				"velopment, this is hardly surprising.  Relevant debugging information follows.";
 			// 
 			// textBoxErrorMessage
@@ -130,34 +132,44 @@ namespace Mono.Doc.Gui
 			this.textBoxErrorMessage.TabIndex = 2;
 			this.textBoxErrorMessage.Text = "";
 			// 
-			// buttonExit
+			// buttonQuit
 			// 
-			this.buttonExit.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.buttonExit.Location = new System.Drawing.Point(104, 312);
-			this.buttonExit.Name = "buttonExit";
-			this.buttonExit.TabIndex = 3;
-			this.buttonExit.Text = "Exit";
-			this.buttonExit.Click += new System.EventHandler(this.buttonExit_Click);
+			this.buttonQuit.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.buttonQuit.Location = new System.Drawing.Point(144, 312);
+			this.buttonQuit.Name = "buttonQuit";
+			this.buttonQuit.TabIndex = 3;
+			this.buttonQuit.Text = "Quit";
+			this.buttonQuit.Click += new System.EventHandler(this.buttonExit_Click);
 			// 
 			// buttonSendErrorReport
 			// 
 			this.buttonSendErrorReport.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.buttonSendErrorReport.Location = new System.Drawing.Point(192, 312);
+			this.buttonSendErrorReport.Location = new System.Drawing.Point(8, 312);
 			this.buttonSendErrorReport.Name = "buttonSendErrorReport";
 			this.buttonSendErrorReport.Size = new System.Drawing.Size(117, 23);
 			this.buttonSendErrorReport.TabIndex = 4;
 			this.buttonSendErrorReport.Text = "Send Error Report";
 			this.buttonSendErrorReport.Click += new System.EventHandler(this.buttonSendErrorReport_Click);
 			// 
+			// buttonContinue
+			// 
+			this.buttonContinue.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.buttonContinue.Location = new System.Drawing.Point(232, 312);
+			this.buttonContinue.Name = "buttonContinue";
+			this.buttonContinue.TabIndex = 5;
+			this.buttonContinue.Text = "Continue";
+			this.buttonContinue.Click += new System.EventHandler(this.buttonContinue_Click);
+			// 
 			// UnexpectedErrorForm
 			// 
-			this.AcceptButton = this.buttonExit;
+			this.AcceptButton = this.buttonQuit;
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.CancelButton = this.buttonExit;
+			this.CancelButton = this.buttonContinue;
 			this.ClientSize = new System.Drawing.Size(320, 341);
 			this.Controls.AddRange(new System.Windows.Forms.Control[] {
+																		  this.buttonContinue,
 																		  this.buttonSendErrorReport,
-																		  this.buttonExit,
+																		  this.buttonQuit,
 																		  this.textBoxErrorMessage,
 																		  this.labelErrorExplanation,
 																		  this.pictureBoxExplosion});
@@ -173,7 +185,7 @@ namespace Mono.Doc.Gui
 
 		private void buttonExit_Click(object sender, System.EventArgs e)
 		{
-			this.Close();
+			Application.Exit();
 		}
 
 		private void buttonSendErrorReport_Click(object sender, System.EventArgs e)
@@ -181,6 +193,11 @@ namespace Mono.Doc.Gui
 			MessageBox.Show("TODO: This is coming, as soon as I figure out the best " +
 				"delivery mechanism.  Promise.", "Unimplemented Feature"
 				);
+		}
+
+		private void buttonContinue_Click(object sender, System.EventArgs e)
+		{
+			MessageBox.Show("TODO: implement continue.", "Unimplemented Feature");
 		}
 	}
 }

@@ -11,12 +11,12 @@ Global
 	GlobalSection(ProjectDependencies) = postSolution
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
-		{B76CBA27-ABBD-45FE-AFC3-A629BC13BAAE}.Debug.ActiveCfg = Debug|.NET
-		{B76CBA27-ABBD-45FE-AFC3-A629BC13BAAE}.Debug.Build.0 = Debug|.NET
+		{B76CBA27-ABBD-45FE-AFC3-A629BC13BAAE}.Debug.ActiveCfg = Release|.NET
+		{B76CBA27-ABBD-45FE-AFC3-A629BC13BAAE}.Debug.Build.0 = Release|.NET
 		{B76CBA27-ABBD-45FE-AFC3-A629BC13BAAE}.Release.ActiveCfg = Release|.NET
 		{B76CBA27-ABBD-45FE-AFC3-A629BC13BAAE}.Release.Build.0 = Release|.NET
-		{73F5A60D-A5E3-4852-B4C6-478275E733F9}.Debug.ActiveCfg = Debug|.NET
-		{73F5A60D-A5E3-4852-B4C6-478275E733F9}.Debug.Build.0 = Debug|.NET
+		{73F5A60D-A5E3-4852-B4C6-478275E733F9}.Debug.ActiveCfg = Release|.NET
+		{73F5A60D-A5E3-4852-B4C6-478275E733F9}.Debug.Build.0 = Release|.NET
 		{73F5A60D-A5E3-4852-B4C6-478275E733F9}.Release.ActiveCfg = Release|.NET
 		{73F5A60D-A5E3-4852-B4C6-478275E733F9}.Release.Build.0 = Release|.NET
 	EndGlobalSection

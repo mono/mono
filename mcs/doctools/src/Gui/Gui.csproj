@@ -49,7 +49,7 @@
                     FileAlignment = "4096"
                     IncrementalBuild = "false"
                     Optimize = "true"
-                    OutputPath = "bin\Release\"
+                    OutputPath = "..\..\build\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
                     TreatWarningsAsErrors = "false"
@@ -129,6 +129,16 @@
                 <File
                     RelPath = "EditPropertyForm.resx"
                     DependentUpon = "EditPropertyForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "ExampleCodeEditorForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ExampleCodeEditorForm.resx"
+                    DependentUpon = "ExampleCodeEditorForm.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File

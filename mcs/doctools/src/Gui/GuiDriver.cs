@@ -31,6 +31,8 @@ namespace Mono.Doc.Gui
 		{
 			try
 			{
+				// DEBUG: testing UnexpectedErrorForm
+				//throw new ApplicationException("test exception");
 				Application.Run(new MainForm((args.Length > 0) ? args[0] : null));
 			}
 			catch (Exception e)

@@ -28,13 +28,23 @@ namespace Mono.Doc.Gui
 {
 	public class MdiToolBar : ToolBar
 	{
+		#region Private Instance Fields
+
 		private Hashtable mdiChildren     = null;
 		private Form      currentMdiChild = null;
+
+		#endregion // Private Instance Fields
+
+		#region Constructors and Destructors
 
 		public MdiToolBar() : base()
 		{
 			this.mdiChildren = new Hashtable();
 		}
+
+		#endregion // Constructors and Destructors
+
+		#region Event Handlers
 
 		private void mdiParent_MdiChildActivate(object sender, EventArgs args)
 		{
@@ -134,6 +144,10 @@ namespace Mono.Doc.Gui
 			this.mdiChildren.Remove(sender);
 		}
 
+		#endregion // Event Handlers
+
+		#region Overridden Event Handlers
+
 		protected override void OnButtonClick(ToolBarButtonClickEventArgs args)
 		{
 			base.OnButtonClick(args);
@@ -162,6 +176,8 @@ namespace Mono.Doc.Gui
 					+= new EventHandler(this.mdiParent_MdiChildActivate);
 			}
 		}
+
+		#endregion // Overridden Event Handlers
 
 		#region Private Instance Properties
 

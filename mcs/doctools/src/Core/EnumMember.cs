@@ -25,29 +25,31 @@ namespace Mono.Doc.Core
 {
 	public class EnumMember
 	{
-		private string name = null;
-		private string description = null;
+		private string name;
+		private string description;
 
 		public EnumMember()
 		{
+			this.name        = string.Empty;
+			this.description = string.Empty;
 		}
 
-		public EnumMember(string pName, string pDescription)
+		public EnumMember(string name, string description)
 		{
-			name = pName;
-			description = pDescription;
+			this.name        = name;
+			this.description = description;
 		}
 
 		public string Name
 		{
-			get { return name;  }
-			set { name = value; }
+			get { return this.name;  }
+			set { this.name = value; }
 		}
 
 		public string Description
 		{
-			get { return description;  }
-			set { description = value; }
+			get { return this.description;  }
+			set { this.description = value; }
 		}
 	}
 }

@@ -29,7 +29,13 @@ namespace Mono.Doc.Core
 {
 	public class DocProject
 	{
+		# region Public Static Fields
+
 		public static string UntitledProjectName = "Untitled"; // TODO: i18n
+
+		#endregion // Public Static Fields
+
+		#region Private Instance Fields
 
 		private ArrayList assemblyFiles;
 		private ArrayList xmlDirectories;
@@ -37,6 +43,10 @@ namespace Mono.Doc.Core
 		private bool      isModified;
 		private bool      isNewProject;
 		private string    projectFileName;
+
+		#endregion // Private Instace Fields
+
+		#region Public Events
 
 		public event EventHandler Modified;
 
@@ -49,6 +59,8 @@ namespace Mono.Doc.Core
 			isNewProject    = true;
 			projectFileName = DocProject.UntitledProjectName;
 		}
+
+		#endregion // Public Events
 
 		#region Public Instance Methods
 		

@@ -49,7 +49,7 @@
                     FileAlignment = "4096"
                     IncrementalBuild = "false"
                     Optimize = "true"
-                    OutputPath = "bin\Release\"
+                    OutputPath = "..\..\build\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
                     TreatWarningsAsErrors = "false"
@@ -172,12 +172,22 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "OperatorDoc.cs"
+                    RelPath = "NotifyArrayList.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ParameterDoc.cs"
+                    RelPath = "NotifyCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "NotifyHashtable.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "OperatorDoc.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -203,6 +213,11 @@
                 />
                 <File
                     RelPath = "TypeNameHelper.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ValueConstrainedArrayList.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
