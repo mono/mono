@@ -195,6 +195,15 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool HasConstructorConstraint {
+			get {
+				if (constraints != null)
+					return constraints.HasConstructorConstraint;
+
+				return false;
+			}
+		}
+
 		public Type Type {
 			get {
 				return type;
@@ -212,12 +221,14 @@ namespace Mono.CSharp {
 		public Type Define (TypeBuilder tb)
 		{
 			type = tb.DefineGenericParameter (name);
+			TypeManager.AddTypeParameter (type, this);
 			return type;
 		}
 
 		public Type DefineMethod (MethodBuilder mb)
 		{
 			type = mb.DefineGenericParameter (name);
+			TypeManager.AddTypeParameter (type, this);
 			return type;
 		}
 
@@ -475,13 +486,28 @@ namespace Mono.CSharp {
 			get { return args; }
 		}
 
-		protected bool CheckConstraints (int index)
+		protected string DeclarationName {
+			get {
+				StringBuilder sb = new StringBuilder ();
+				sb.Append (gt.FullName);
+				sb.Append ("<");
+				for (int i = 0; i < gen_params.Length; i++) {
+					if (i > 0)
+						sb.Append (",");
+					sb.Append (gen_params [i]);
+				}
+				sb.Append (">");
+				return sb.ToString ();
+			}
+		}
+
+		protected bool CheckConstraints (EmitContext ec, int index)
 		{
 			Type atype = atypes [index];
 			Type ptype = gen_params [index];
 
-			//// FIXME
-			return true;
+			if (atype == ptype)
+				return true;
 
 			//
 			// First, check parent class.
@@ -504,6 +530,37 @@ namespace Mono.CSharp {
 				Report.Error (-219, loc, "Cannot create constructed type `{0}: " +
 					      "type argument `{1}' must implement interface `{2}'.",
 					      full_name, atype, itype);
+				return false;
+			}
+
+			//
+			// Finally, check the constructor constraint.
+			//
+
+			bool has_ctor_constraint;
+			TypeParameter tparam = TypeManager.LookupTypeParameter (ptype);
+			if (tparam != null)
+				has_ctor_constraint = tparam.HasConstructorConstraint;
+			else {
+				object[] attrs = ptype.GetCustomAttributes (
+					TypeManager.new_constraint_attr_type, false);
+
+				has_ctor_constraint = attrs.Length > 0;
+			}
+
+			if (!has_ctor_constraint)
+				return true;
+
+			MethodGroupExpr mg = Expression.MemberLookup (
+				ec, atype, ".ctor", MemberTypes.Constructor,
+				BindingFlags.Public | BindingFlags.Instance, loc)
+				as MethodGroupExpr;
+
+			if ((mg == null) || mg.IsInstance) {
+				Report.Error (310, loc, "The type `{0}' must have a public " +
+					      "parameterless constructor in order to use it " +
+					      "as parameter `{1}' in the generic type or " +
+					      "method `{2}'", atype, ptype, DeclarationName);
 				return false;
 			}
 
@@ -595,7 +652,7 @@ namespace Mono.CSharp {
 			}
 
 			for (int i = 0; i < gen_params.Length; i++) {
-				if (!CheckConstraints (i))
+				if (!CheckConstraints (ec, i))
 					return null;
 			}
 

@@ -1,5 +1,18 @@
 2004-03-30  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs
+	(TypeParameter.Define, TypeParameter.DefineMethod): Call
+	TypeManager.AddTypeParameter().
+	(ConstructedType.CheckConstraints): Re-enable this and actually
+	check whether we have a constructor constraint.
+
+	* typemanager.cs
+	(TypeManager.builder_to_type_param): New static field.
+	(TypeManager.AddTypeParameter): New static method.
+	(TypeManager.LookupTypeParameter): New public method.
+
+2004-03-30  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs (TypeParameter.DefineType): Return a boolean and use
 	the new API to actually define the constructor constraint.
 

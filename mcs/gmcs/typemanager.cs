@@ -208,6 +208,11 @@ public class TypeManager {
 	static PtrHashtable builder_to_ifaces;
 
 	// <remarks>
+	//   Tracks the generic parameters.
+	// </remarks>
+	static PtrHashtable builder_to_type_param;
+
+	// <remarks>
 	//   Maps MethodBase.RuntimeTypeHandle to a Type array that contains
 	//   the arguments to the method
 	// </remarks>
@@ -257,6 +262,7 @@ public class TypeManager {
 		method_internal_params = null;
 		builder_to_attr = null;
 		builder_to_method = null;
+		builder_to_type_param = null;
 		
 		fields = null;
 		references = null;
@@ -357,6 +363,7 @@ public class TypeManager {
 		method_internal_params = new PtrHashtable ();
 		indexer_arguments = new PtrHashtable ();
 		builder_to_ifaces = new PtrHashtable ();
+		builder_to_type_param = new PtrHashtable ();
 		
 		NoTypes = new Type [0];
 		NoTypeExprs = new TypeExpr [0];
@@ -460,6 +467,11 @@ public class TypeManager {
 		builder_to_attr.Add (t, tc);
 	}
 
+	public static void AddTypeParameter (Type t, TypeParameter tparam)
+	{
+		builder_to_type_param.Add (t, tparam);
+	}
+
 	/// <summary>
 	///   Returns the DeclSpace whose Type is `t' or null if there is no
 	///   DeclSpace for `t' (ie, the Type comes from a library)
@@ -507,6 +519,11 @@ public class TypeManager {
 	public static TypeContainer LookupAttr (Type t)
 	{
 		return (TypeContainer) builder_to_attr [t];
+	}
+
+	public static TypeParameter LookupTypeParameter (Type t)
+	{
+		return (TypeParameter) builder_to_type_param [t];
 	}
 	
 	/// <summary>
