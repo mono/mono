@@ -135,7 +135,7 @@ namespace System.Globalization {
 					// decimal digit side
 					numberDecimalDigits = 0;					
 					for (int i = 0; i < partOne [1].Length; i ++) {						
-						if (partOne [1][i] == zeroPattern [0]) {
+						if (partOne [1][i] == digitPattern [0]) {
 							numberDecimalDigits ++;							
 						} else
 							break;						

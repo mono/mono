@@ -1,3 +1,9 @@
+2004-01-27  David Sheldon <dave-mono@earth.li>
+
+  * NumberFormatInfo.cs: InitPatterns: it seems that the patterns in 
+   ICU use digitPattern, not zeroPattern for the spaces after the 
+   decimal point. 
+
 2004-01-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CultureInfo.cs: Parent returns null when lcid == parent_lcid. Fixes
