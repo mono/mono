@@ -35,7 +35,9 @@ install: install-exec install-data
 
 # override automake
 install-exec:
-	d=`pwd`; cd $(mcs_topdir) && $(MAKE) RUNTIME=$$d/mono-wrapper prefix=$(exec_prefix) PROFILES='$(build_profiles)' install-profiles
+	d=`pwd`; \
+	cd $(mcs_topdir) && $(MAKE) prefix='$(exec_prefix)' PROFILES='$(build_profiles)' \
+				    RUNTIME=$$d/mono-wrapper RUNTIME_HAS_CONSISTENT_GACDIR=yes install-profiles
 
 # override automake
 install-data:
