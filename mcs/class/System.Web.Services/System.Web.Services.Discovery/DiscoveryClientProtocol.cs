@@ -14,6 +14,15 @@ using System.Web.Services.Protocols;
 namespace System.Web.Services.Discovery {
 	public class DiscoveryClientProtocol : HttpWebClientProtocol {
 
+		#region Fields
+
+		private IList additionalInformation;
+		private DiscoveryClientDocumentCollection documents;
+		private DiscoveryExceptionDictionary errors;
+		private DiscoveryClientReferenceCollection references;
+
+		#endregion // Fields
+
 		#region Constructors
 
 		[MonoTODO]
@@ -27,23 +36,19 @@ namespace System.Web.Services.Discovery {
 		#region Properties
 
 		public IList AdditionalInformation {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return additionalInformation; }
 		}
 		
 		public DiscoveryClientDocumentCollection Documents {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return documents; }
 		}
 		
 		public DiscoveryExceptionDictionary Errors {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return errors; }
 		}
 
 		public DiscoveryClientReferenceCollection References {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return references; }
 		}		
 		
 		#endregion // Properties
@@ -98,6 +103,12 @@ namespace System.Web.Services.Discovery {
 		
 		public sealed class DiscoveryClientResultsFile {
 			
+			#region Fields
+			
+			private DiscoveryClientResultCollection results;
+
+			#endregion // Fields
+
 			#region Contructors
 			
 			[MonoTODO]
@@ -110,9 +121,8 @@ namespace System.Web.Services.Discovery {
 			
 			#region Properties
 		
-			public DiscoveryClientResultCollection Results {
-				[MonoTODO]
-				get { throw new NotImplementedException (); }
+			public DiscoveryClientResultCollection Results {				
+				get { return results; }
 			}
 			
 			#endregion // Properties

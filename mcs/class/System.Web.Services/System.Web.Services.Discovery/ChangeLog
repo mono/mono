@@ -1,3 +1,21 @@
+2002-08-04  Dave Bettin <javabettin@yahoo.com>
+		* ContractSearchPattern.cs
+		* DiscoveryClientDocumentCollection.cs
+		* DiscoveryClientProtocol.cs
+		* DiscoveryClientResult.cs
+		* DiscoveryDocument.cs
+		* DiscoveryDocumentLinksPattern.cs
+		* DiscoveryDocumentReference.cs
+		* DiscoveryDocumentSearchPattern.cs
+		* DiscoveryReference.cs
+		* DiscoveryRequestHandler.cs
+		* DiscoverySearchPattern.cs
+		* DynamicDiscoveryDocument.cs
+		* SchemaReference.cs
+		* SoapBinding.cs
+		* XmlSchemaSearchPattern.cs
+			[ Added attributes and some basic implementation]
+			
 2002-08-03  Tim Coleman <tim@timcoleman.com>
 	* DiscoveryDocument.cs:
 		Added XmlIgnore attribute to References property

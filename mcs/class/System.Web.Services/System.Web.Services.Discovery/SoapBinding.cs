@@ -8,13 +8,19 @@
 //
 
 using System.Xml;
+using System.Xml.Serialization;
 
 namespace System.Web.Services.Discovery {
+
+	[XmlRootAttribute("soap", Namespace="http://schemas/xmlsoap.org/disco/schema/soap/", IsNullable=true)]
 	public sealed class SoapBinding  {
 
 		#region Fields
 		
 		public const string Namespace = "http://schemas/xmlsoap.org/disco/schema/soap/";
+
+		private string address;
+		private XmlQualifiedName binding;
 		
 		#endregion // Fields
 		
@@ -30,22 +36,16 @@ namespace System.Web.Services.Discovery {
 
 		#region Properties
 		
-		[MonoTODO]
+		[XmlAttribute("address")]
 		public string Address {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-			
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			get { return address; }
+			set { address = value; }
 		}
 		
-		[MonoTODO]
+		[XmlAttribute("binding")]
 		public XmlQualifiedName Binding {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-			
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			get { return binding; }
+			set { binding = value; }
 		}
 		
 		#endregion // Properties

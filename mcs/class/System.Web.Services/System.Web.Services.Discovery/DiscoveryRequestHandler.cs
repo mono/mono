@@ -1,5 +1,5 @@
 // 
-// System.Web.Services.Protocols.DiscoveryRequestHandler.cs
+// System.Web.Services.Discovery.DiscoveryRequestHandler.cs
 //
 // Author:
 //   Dave Bettin (javabettin@yahoo.com)
@@ -11,6 +11,12 @@ using System.Web;
 
 namespace System.Web.Services.Discovery {
 	public sealed class DiscoveryRequestHandler : IHttpHandler {
+		
+		#region Fields
+
+		private bool isReusable = true;
+
+		#endregion // Fields
 
 		#region Constructors
 
@@ -25,8 +31,7 @@ namespace System.Web.Services.Discovery {
 		#region Properties
 
 		public bool IsReusable {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }			
+			get { return isReusable; }			
 		}
 		
 		#endregion // Properties

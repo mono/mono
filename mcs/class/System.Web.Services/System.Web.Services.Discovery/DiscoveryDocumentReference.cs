@@ -1,5 +1,5 @@
 // 
-// System.Web.Services.Protocols.DiscoveryDocumentReference.cs
+// System.Web.Services.Discovery.DiscoveryDocumentReference.cs
 //
 // Author:
 //   Dave Bettin (javabettin@yahoo.com)
@@ -14,11 +14,16 @@ using System.Web.Services.Description;
 using System.Xml.Serialization;
 
 namespace System.Web.Services.Discovery {
+
+	[XmlRootAttribute("discoveryRef", Namespace="http://schemas.xmlsoap.org/disco/", IsNullable=true)]
 	public sealed class DiscoveryDocumentReference : DiscoveryReference {
-
+		
 		#region Fields
-
-		string href;
+		
+		private DiscoveryDocument document;
+		private string defaultFilename;
+		private string href;
+		private string url;
 
 		#endregion // Fields
 
@@ -39,21 +44,17 @@ namespace System.Web.Services.Discovery {
 
 		#region Properties
 		
-		[MonoTODO]
 		[XmlIgnore]
 		public DiscoveryDocument Document {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return Document; }
 		}
 		
-		[MonoTODO]
 		[XmlIgnore]
 		public override string DefaultFilename {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return defaultFilename; }
 		}
-	
-		[MonoTODO ("Set the XmlAttribute on this.")]
+		
+		[XmlAttribute("ref")]
 		public string Ref {
 			get { return href; }
 			set { href = value; }
@@ -61,8 +62,8 @@ namespace System.Web.Services.Discovery {
 		
 		[XmlIgnore]
 		public override string Url {
-			get { return Ref; }
-			set { Ref = value; }
+			get { return url; }
+			set { url = value; }
 		}
 		
 		#endregion // Properties

@@ -10,6 +10,12 @@
 namespace System.Web.Services.Discovery {
 	public sealed class ContractSearchPattern : DiscoverySearchPattern {
 
+		#region Fields
+
+		private string pattern = "*.asmx";
+
+		#endregion // Fields
+
 		#region Constructors
 
 		[MonoTODO]
@@ -23,8 +29,7 @@ namespace System.Web.Services.Discovery {
 		#region Properties
 
 		public override string Pattern {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return pattern; }
 		}
 
 		#endregion // Properties

@@ -8,8 +8,11 @@
 //
 
 using System.IO;
+using System.Xml.Serialization;
 
 namespace System.Web.Services.Discovery {
+
+	[XmlRootAttribute("dynamicDiscovery", Namespace="urn:schemas-dynamicdiscovery:disco.2000-03-17", IsNullable=true)]
 	public sealed class DynamicDiscoveryDocument {
 
 		#region Fields
@@ -30,6 +33,7 @@ namespace System.Web.Services.Discovery {
 
 		#region Properties
 		
+		[XmlElement("exclude", typeof(ExcludePathInfo))]
 		public ExcludePathInfo[] ExcludePaths {
 			[MonoTODO]
 			get { throw new NotImplementedException (); }

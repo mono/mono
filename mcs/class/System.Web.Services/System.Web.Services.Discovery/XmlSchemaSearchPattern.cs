@@ -1,5 +1,5 @@
 // 
-// System.Web.Services.Protocols.XmlSchemaSearchPattern.cs
+// System.Web.Services.Discovery.XmlSchemaSearchPattern.cs
 //
 // Author:
 //   Dave Bettin (javabettin@yahoo.com)
@@ -9,6 +9,12 @@
 
 namespace System.Web.Services.Discovery {
 	public sealed class XmlSchemaSearchPattern : DiscoverySearchPattern {
+		
+		#region Fields
+		
+		private string pattern = "*.xsd";
+
+		#endregion // Fields
 
 		#region Constructors
 
@@ -23,8 +29,7 @@ namespace System.Web.Services.Discovery {
 		#region Properties
 
 		public override string Pattern {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return pattern; }
 		}
 
 		#endregion // Properties

@@ -9,6 +9,12 @@
 
 namespace System.Web.Services.Discovery {
 	public class DiscoveryDocumentLinksPattern : DiscoverySearchPattern {
+		
+		#region Fields
+		
+		private string pattern = "*.disco";
+
+		#endregion // Fields
 
 		#region Constructors
 
@@ -23,8 +29,7 @@ namespace System.Web.Services.Discovery {
 		#region Properties
 
 		public override string Pattern {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return pattern; }
 		}
 
 		#endregion // Properties

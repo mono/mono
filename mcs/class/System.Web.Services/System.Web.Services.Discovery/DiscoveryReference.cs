@@ -1,5 +1,5 @@
 // 
-// System.Web.Services.Protocols.DiscoveryReference.cs
+// System.Web.Services.Discovery.DiscoveryReference.cs
 //
 // Author:
 //   Dave Bettin (javabettin@yahoo.com)
@@ -12,6 +12,13 @@ using System.Xml.Serialization;
 
 namespace System.Web.Services.Discovery {
 	public abstract class DiscoveryReference {
+		
+		#region Fields
+
+		private string defaultFilename;
+		private DiscoveryClientProtocol clientProtocol;
+
+		#endregion // Fields
 
 		#region Constructors
 
@@ -27,18 +34,14 @@ namespace System.Web.Services.Discovery {
 
 		[XmlIgnore]
 		public DiscoveryClientProtocol ClientProtocol {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-			
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			get { return clientProtocol; }			
+			set { clientProtocol = value; }
 			
 		}
 		
 		[XmlIgnore]
 		public virtual string DefaultFilename {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }			
+			get { return defaultFilename; }			
 		}
 		
 		[XmlIgnore]

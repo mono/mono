@@ -7,9 +7,20 @@
 // Copyright (C) Dave Bettin, 2002
 //
 
+
+using System.Xml.Serialization;
+
 namespace System.Web.Services.Discovery {
 	public sealed class DiscoveryClientResult {
-		
+	
+		#region Fields
+
+		private string filename;
+		private string referenceTypeName;
+		private string url;
+
+		#endregion // Fields
+
 		#region Constructors
 
 		[MonoTODO]
@@ -26,32 +37,24 @@ namespace System.Web.Services.Discovery {
 		
 		#endregion // Constructors
 
-		#region Properties		
-		[MonoTODO]
+		#region Properties	
+	
+		[XmlAttribute("filename")]
 		public string Filename {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-			
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			get { return filename; }
+			set { filename = value; }
 		}
 		
-		[MonoTODO]
+		[XmlAttribute("referenceType")]
 		public string ReferenceTypeName {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-			
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			get { return referenceTypeName; }
+			set { referenceTypeName = value; }
 		}
 		
-		[MonoTODO]
+		[XmlAttribute("url")]
 		public string Url {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-			
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			get { return url; }
+			set { url = value; }
 		}
 		
 		#endregion // Properties

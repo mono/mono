@@ -7,15 +7,26 @@
 // Copyright (C) Dave Bettin, 2002
 //
 
+
+using System.ComponentModel;
 using System.IO;
 using System.Xml.Schema;
+using System.Xml.Serialization;
 
 namespace System.Web.Services.Discovery {
+
+	[XmlRootAttribute("schemaRef", Namespace="http://schemas/xmlsoap.org/disco/schema/", IsNullable=true)]
 	public sealed class SchemaReference : DiscoveryReference {
 
 		#region Fields
 		
 		public const string Namespace = "http://schemas/xmlsoap.org/disco/schema/";
+
+		private string defaultFilename;
+		private string href;
+		private string url;
+		private string targetNamespace;
+		private XmlSchema schema;
 		
 		#endregion // Fields
 		
@@ -36,44 +47,34 @@ namespace System.Web.Services.Discovery {
 		#endregion // Constructors
 
 		#region Properties
-		
-		[MonoTODO]
+
+		[XmlIgnore]
 		public override string DefaultFilename {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return defaultFilename; }
 		}
 		
-		[MonoTODO]
+		[XmlAttribute("ref")]
 		public string Ref {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-			
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			get { return href; }
+			set { href = value; }
 		}
 		
-		[MonoTODO]
+		[XmlIgnore]
 		public override string Url {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-			
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			get { return url; }
+			set { url = value; }
 		}
 		
-		[MonoTODO]
+		[DefaultValue("")]
+		[XmlAttribute("targetNamespace")]
 		public string TargetNamespace {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-			
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			get { return targetNamespace; }
+			set { targetNamespace = targetNamespace; }
 		}
-		
-		[MonoTODO]
+
+		[XmlIgnore]
 		public XmlSchema Schema {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return schema; }
 			
 		}
 		

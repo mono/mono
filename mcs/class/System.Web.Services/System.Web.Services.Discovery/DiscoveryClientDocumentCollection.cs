@@ -1,5 +1,5 @@
 // 
-// System.Web.Services.Protocols.DiscoveryClientDocumentCollection.cs
+// System.Web.Services.Discovery.DiscoveryClientDocumentCollection.cs
 //
 // Author:
 //   Dave Bettin (javabettin@yahoo.com)
@@ -10,9 +10,10 @@
 using System.Collections;
 
 namespace System.Web.Services.Discovery {
+
 	public sealed class DiscoveryClientDocumentCollection : DictionaryBase {
 
-		#region Constructors
+		#region Constructors 
 
 		[MonoTODO]
 		public DiscoveryClientDocumentCollection () 

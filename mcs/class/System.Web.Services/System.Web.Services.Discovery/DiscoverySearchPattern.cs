@@ -1,5 +1,5 @@
 // 
-// System.Web.Services.Protocols.DiscoverySearchPattern.cs
+// System.Web.Services.Discovery.DiscoverySearchPattern.cs
 //
 // Author:
 //   Dave Bettin (javabettin@yahoo.com)
@@ -12,12 +12,8 @@ namespace System.Web.Services.Discovery {
 
 		#region Constructors
 
-		[MonoTODO]
-		protected DiscoverySearchPattern () 
-		{
-			throw new NotImplementedException ();
-		}
-		
+		protected DiscoverySearchPattern () {}
+	
 		#endregion // Constructors
 
 		#region Properties
@@ -30,7 +26,6 @@ namespace System.Web.Services.Discovery {
 
 		#region Methods
 
-		[MonoTODO]
 		public abstract DiscoveryReference GetDiscoveryReference (string filename);
 
 		#endregion // Methods

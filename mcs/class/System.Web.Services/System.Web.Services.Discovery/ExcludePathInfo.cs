@@ -7,9 +7,17 @@
 // Copyright (C) Dave Bettin, 2002
 //
 
+using System.Xml.Serialization;
+
 namespace System.Web.Services.Discovery {
 	public sealed class ExcludePathInfo {
 		
+		#region Fields
+		
+		private string path;
+
+		#endregion // Fields
+
 		#region Constructors
 
 		[MonoTODO]
@@ -27,11 +35,10 @@ namespace System.Web.Services.Discovery {
 
 		#region Properties
 		
+		[XmlAttribute("path")]
 		public string Path {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			get { return path; }
+			set { path = value; }
 		}
 		
 		#endregion // Properties
