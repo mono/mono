@@ -812,6 +812,11 @@ namespace Mono.CSharp {
 			return (bool)pos_values [0];
 		}
 
+		public object GetPositionalValue (int i)
+		{
+			return (pos_values == null) ? null : pos_values[i];
+		}
+
 		object GetFieldValue (string name)
                 {
 			int i;

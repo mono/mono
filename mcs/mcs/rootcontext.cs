@@ -376,6 +376,8 @@ namespace Mono.CSharp {
 				"System.Security.UnverifiableCodeAttribute",
 				"System.Runtime.CompilerServices.IndexerNameAttribute",
 				"System.Runtime.InteropServices.InAttribute",
+				"System.Runtime.InteropServices.StructLayoutAttribute",
+				"System.Runtime.InteropServices.FieldOffsetAttribute",
 				"System.InvalidOperationException",
 				"System.MarshalByRefObject"
 			};

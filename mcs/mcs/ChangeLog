@@ -1,3 +1,22 @@
+2004-05-11  Raja R Harinath  <rharinath@novell.com>
+
+	Fix bug #57151.
+	* attribute.cs (Attribute.GetPositionalValue): New function.
+	* class.cs (TypeContainer.VerifyMembers): New function.
+	(TypeContainer.Emit): Use it.
+	(ClassOrStruct): New base class for Class and Struct.
+	(ClassOrStruct.ApplyAttributeBuilder): New function.  Note if 
+	StructLayout(LayoutKind.Explicit) was ascribed to the struct or
+	class.
+	(ClassOrStruct.VerifyMembers): If the struct is explicitly laid out,
+	then each non-static field should have a FieldOffset attribute.
+	Otherwise, none of the fields should have a FieldOffset attribute.
+	* rootcontext.cs (RootContext.ResolveCore): Resolve StructLayout 
+	and FieldOffset attributes.
+	* typemanager.cs (TypeManager.struct_layout_attribute_type)
+	(TypeManager.field_offset_attribute_type): New core types.
+	(TypeManager.InitCoreTypes): Initialize them.
+
 2004-05-11  Michal Moskal  <malekith@pld-linux.org>
 
 	* class.cs (Event.RemoveDelegateMethod.DelegateMethodInfo):

@@ -88,6 +88,8 @@ public class TypeManager {
 	static public Type typed_reference_type;
 	static public Type arg_iterator_type;
 	static public Type mbr_type;
+	static public Type struct_layout_attribute_type;
+	static public Type field_offset_attribute_type;
 
 	//
 	// An empty array of types
@@ -1069,6 +1071,8 @@ public class TypeManager {
 		obsolete_attribute_type = CoreLookupType ("System.ObsoleteAttribute");
 		conditional_attribute_type = CoreLookupType ("System.Diagnostics.ConditionalAttribute");
 		cls_compliant_attribute_type = CoreLookupType ("System.CLSCompliantAttribute");
+		struct_layout_attribute_type = CoreLookupType ("System.Runtime.InteropServices.StructLayoutAttribute");
+		field_offset_attribute_type = CoreLookupType ("System.Runtime.InteropServices.FieldOffsetAttribute");
 
 		//
 		// When compiling corlib, store the "real" types here.
