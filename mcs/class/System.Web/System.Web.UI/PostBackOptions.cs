@@ -44,13 +44,13 @@ namespace System.Web.UI
 		private bool performValidation;
 		private string validationGroup;
 		
-		public PostBackOptions (Control control) : this (control, string.Empty, string.Empty, false, false, false, 
-								false, false, string.Empty)
+		public PostBackOptions (Control control) : this (control, null, null, false, false, false, 
+								false, false, null)
 		{
 		}
 
-		public PostBackOptions (Control control, string argument) : this (control, argument, string.Empty, false, 
-										false, false, false, false, string.Empty)
+		public PostBackOptions (Control control, string argument) : this (control, argument, null, false, 
+										false, false, false, false, null)
 		{
 		}
 
@@ -121,11 +121,11 @@ namespace System.Web.UI
 		// client script.
 		internal bool RequiresSpecialPostBack {
 			get { 
-				return actionUrl != "" || 
-						(validationGroup != "") || 
+				return actionUrl != null || 
+						validationGroup != null || 
 						trackFocus || 
 						autoPostBack || 
-						argument != "";
+						argument != null;
 			}
 		}
 	}

@@ -50,11 +50,95 @@ namespace System.Web.UI
 		Hashtable hiddenFields;
 		internal Hashtable submitStatements;
 		Hashtable scriptIncludes;
+		Page page;
 	
-		internal ClientScriptManager ()
+		internal ClientScriptManager (Page page)
 		{
+			this.page = page;
 		}
 	
+		public string GetPostBackClientEvent (Control control, string argument)
+		{
+			return GetPostBackEventReference (control, argument);
+		}
+	
+		public string GetPostBackClientHyperlink (Control control, string argument)
+		{
+			return "javascript:" + GetPostBackEventReference (control, argument);
+		}
+	
+		public string GetPostBackEventReference (Control control)
+		{
+			return GetPostBackEventReference (control, "");
+		}
+	
+		public string GetPostBackEventReference (Control control, string argument)
+		{
+			page.RequiresPostBackScript ();
+			return String.Format ("__doPostBack('{0}','{1}')", control.UniqueID, argument);
+		}
+		
+#if NET_2_0
+		public string GetPostBackEventReference (PostBackOptions options)
+		{
+			if (options.ActionUrl == null && options.ValidationGroup == null && !options.TrackFocus && 
+				!options.AutoPostBack && !options.PerformValidation)
+			{
+				if (options.RequiresJavaScriptProtocol)
+					return GetPostBackClientHyperlink (options.TargetControl, options.Argument);
+				else
+					return GetPostBackEventReference (options.TargetControl, options.Argument);
+			}
+			
+			if (!IsClientScriptIncludeRegistered (typeof(Page), "webform")) {
+				RegisterClientScriptInclude (typeof(Page), "webform", GetWebResourceUrl (typeof(Page), "webform.js"));
+			}
+			
+			if (options.ActionUrl != null)
+				RegisterHiddenField (page.PreviousPageID, page.Request.FilePath);
+			
+			if (options.ClientSubmit || options.ActionUrl != null)
+				page.RequiresPostBackScript ();
+			
+			return String.Format ("{0}WebForm_DoPostback({1},{2},{3},{4},{5},{6},{7},{8})", 
+					options.RequiresJavaScriptProtocol ? "javascript:" : "",
+					ClientScriptManager.GetScriptLiteral (options.TargetControl.UniqueID), 
+					ClientScriptManager.GetScriptLiteral (options.Argument),
+					ClientScriptManager.GetScriptLiteral (options.ActionUrl),
+					ClientScriptManager.GetScriptLiteral (options.AutoPostBack),
+					ClientScriptManager.GetScriptLiteral (options.PerformValidation),
+					ClientScriptManager.GetScriptLiteral (options.TrackFocus),
+					ClientScriptManager.GetScriptLiteral (options.ClientSubmit),
+					ClientScriptManager.GetScriptLiteral (options.ValidationGroup)
+				);
+		}
+		
+		public string GetCallbackEventReference (Control control, string argument, string clientCallback, string context)
+		{
+			return GetCallbackEventReference (control, argument, clientCallback, context, null);
+		}
+		
+		public string GetCallbackEventReference (Control control, string argument, string clientCallback, string context, string clientErrorCallback)
+		{
+			if (!IsClientScriptIncludeRegistered (typeof(Page), "callback"))
+				RegisterClientScriptInclude (typeof(Page), "callback", GetWebResourceUrl (typeof(Page), "callback.js"));
+			
+			return string.Format ("WebForm_DoCallback ('{0}', {1}, {2}, {3}, {4})", control.UniqueID, argument, clientCallback, context, clientErrorCallback);
+		}
+		
+		public string GetWebResourceUrl(Type type, string resourceName)
+		{
+			if (type == null)
+				throw new ArgumentNullException ("type");
+		
+			if (resourceName == null || resourceName.Length == 0)
+				throw new ArgumentNullException ("type");
+		
+			return System.Web.Handlers.AssemblyResourceLoader.GetResourceUrl (type, resourceName); 
+		}
+		
+#endif
+
 		public bool IsClientScriptBlockRegistered (string key)
 		{
 			return IsScriptRegistered (clientScriptBlocks, GetType(), key);
@@ -271,7 +355,9 @@ namespace System.Web.UI
 		
 		internal static string GetScriptLiteral (object ob)
 		{
-			if (ob is string) {
+			if (ob == null)
+				return "null";
+			else if (ob is string) {
 				string s = (string)ob;
 				s = s.Replace ("\"", "\\\"");
 				return "\"" + s + "\"";

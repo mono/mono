@@ -1041,7 +1041,7 @@ namespace System.Web.UI
 #if NET_2_0
 		protected string GetWebResourceUrl (string resourceName)
 		{
-			return Page.GetWebResourceUrl (GetType(), resourceName); 
+			return Page.ClientScript.GetWebResourceUrl (GetType(), resourceName); 
 		} 
 
 		string IUrlResolutionService.ResolveClientUrl (string url)

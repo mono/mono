@@ -62,7 +62,7 @@ namespace System.Web.UI
 		internal static string GetClientValidatedPostBack(Control control)
 		{
 			return (" { if (typeof(Page_ClientValidate) != 'function' || Page_ClientValidate()) " +
-			        control.Page.GetPostBackEventReference(control) +
+			        control.Page.ClientScript.GetPostBackEventReference(control) +
 			        " } " );
 		}
 		

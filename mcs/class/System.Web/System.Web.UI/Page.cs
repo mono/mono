@@ -82,7 +82,7 @@ public class Page : TemplateControl, IHttpHandler
 	string viewStateUserKey;
 	NameValueCollection _requestValueCollection;
 	string clientTarget;
-	ClientScriptManager scriptManager = new ClientScriptManager ();
+	ClientScriptManager scriptManager;
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected const string postEventArgumentID = "__EVENTARGUMENT";
@@ -90,9 +90,9 @@ public class Page : TemplateControl, IHttpHandler
 	protected const string postEventSourceID = "__EVENTTARGET";
 
 #if NET_2_0
-	private const string callbackArgumentID = "__CALLBACKARGUMENT";
-	private const string callbackSourceID = "__CALLBACKTARGET";
-	private const string previousPageID = "__PREVIOUSPAGE";
+	internal const string CallbackArgumentID = "__CALLBACKARGUMENT";
+	internal const string CallbackSourceID = "__CALLBACKTARGET";
+	internal const string PreviousPageID = "__PREVIOUSPAGE";
 	
 	IPageHeader htmlHeader;
 	
@@ -109,6 +109,7 @@ public class Page : TemplateControl, IHttpHandler
 	#region Constructor
 	public Page ()
 	{
+		scriptManager = new ClientScriptManager (this);
 		Page = this;
 	}
 
@@ -535,30 +536,41 @@ public class Page : TemplateControl, IHttpHandler
 
 		return coll;
 	}
-	
+
+#if NET_2_0
+	[Obsolete]
+#endif
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public string GetPostBackClientEvent (Control control, string argument)
 	{
-		return GetPostBackEventReference (control, argument);
+		return scriptManager.GetPostBackClientEvent (control, argument);
 	}
 
+#if NET_2_0
+	[Obsolete]
+#endif
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public string GetPostBackClientHyperlink (Control control, string argument)
 	{
-		return "javascript:" + GetPostBackEventReference (control, argument);
+		return scriptManager.GetPostBackClientHyperlink (control, argument);
 	}
 
+#if NET_2_0
+	[Obsolete]
+#endif
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public string GetPostBackEventReference (Control control)
 	{
-		return GetPostBackEventReference (control, "");
+		return scriptManager.GetPostBackEventReference (control);
 	}
 
+#if NET_2_0
+	[Obsolete]
+#endif
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public string GetPostBackEventReference (Control control, string argument)
 	{
-		RequiresPostBackScript ();
-		return String.Format ("__doPostBack('{0}','{1}')", control.UniqueID, argument);
+		return scriptManager.GetPostBackEventReference (control, argument);
 	}
 
 	internal void RequiresPostBackScript ()
@@ -1265,17 +1277,6 @@ public class Page : TemplateControl, IHttpHandler
 		_form = form;
 	}
 	
-	public string GetWebResourceUrl(Type type, string resourceName)
-	{
-		if (type == null)
-			throw new ArgumentNullException ("type");
-	
-		if (resourceName == null || resourceName.Length == 0)
-			throw new ArgumentNullException ("type");
-	
-		return System.Web.Handlers.AssemblyResourceLoader.GetResourceUrl (type, resourceName); 
-	}
-	
 	Stack dataItemCtx;
 	
 	internal void PushDataItemContext (object o)
@@ -1328,47 +1329,6 @@ public class Page : TemplateControl, IHttpHandler
 		return XPathBinder.Select (CurrentDataItem, xpathexpression);
 	}
 	
-	[EditorBrowsable (EditorBrowsableState.Advanced)]
-	public string GetCallbackEventReference (Control control, string argument, string clientCallback, string context)
-	{
-		return GetCallbackEventReference (control, argument, clientCallback, context, null);
-	}
-	
-	[EditorBrowsable (EditorBrowsableState.Advanced)]
-	public string GetCallbackEventReference (Control control, string argument, string clientCallback, string context, string clientErrorCallback)
-	{
-		if (!ClientScript.IsClientScriptIncludeRegistered (typeof(Page), "callback"))
-			ClientScript.RegisterClientScriptInclude (typeof(Page), "callback", GetWebResourceUrl (typeof(Page), "callback.js"));
-		
-		return string.Format ("WebForm_DoCallback ('{0}', {1}, {2}, {3}, {4})", control.UniqueID, argument, clientCallback, context, clientErrorCallback);
-	}
-	
-	[EditorBrowsable (EditorBrowsableState.Advanced)]
-	public string GetPostBackEventReference (PostBackOptions options)
-	{
-		if (!ClientScript.IsClientScriptIncludeRegistered (typeof(Page), "webform")) {
-			ClientScript.RegisterClientScriptInclude (typeof(Page), "webform", GetWebResourceUrl (typeof(Page), "webform.js"));
-		}
-		
-		if (options.ActionUrl != null)
-			ClientScript.RegisterHiddenField (previousPageID, _context.Request.FilePath);
-		
-		if (options.ClientSubmit || options.ActionUrl != null)
-			RequiresPostBackScript ();
-		
-		return String.Format ("{0}WebForm_DoPostback({1},{2},{3},{4},{5},{6},{7},{8})", 
-				options.RequiresJavaScriptProtocol ? "javascript:" : "",
-				ClientScriptManager.GetScriptLiteral (options.TargetControl.UniqueID), 
-				ClientScriptManager.GetScriptLiteral (options.Argument),
-				ClientScriptManager.GetScriptLiteral (options.ActionUrl),
-				ClientScriptManager.GetScriptLiteral (options.AutoPostBack),
-				ClientScriptManager.GetScriptLiteral (options.PerformValidation),
-				ClientScriptManager.GetScriptLiteral (options.TrackFocus),
-				ClientScriptManager.GetScriptLiteral (options.ClientSubmit),
-				ClientScriptManager.GetScriptLiteral (options.ValidationGroup)
-			);
-	}
-	
     [BrowsableAttribute (false)]
     [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	public Page PreviousPage {
@@ -1379,7 +1339,7 @@ public class Page : TemplateControl, IHttpHandler
     [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
     [BrowsableAttribute (false)]
 	public bool IsCallback {
-		get { return _requestValueCollection != null && _requestValueCollection [callbackArgumentID] != null; }
+		get { return _requestValueCollection != null && _requestValueCollection [CallbackArgumentID] != null; }
 	}
 	
     [BrowsableAttribute (false)]
@@ -1390,7 +1350,7 @@ public class Page : TemplateControl, IHttpHandler
 	
 	string ProcessCallbackData ()
 	{
-		string callbackTarget = _requestValueCollection [callbackSourceID];
+		string callbackTarget = _requestValueCollection [CallbackSourceID];
 		if (callbackTarget == null || callbackTarget.Length == 0)
 			throw new HttpException ("Callback target not provided.");
 
@@ -1398,7 +1358,7 @@ public class Page : TemplateControl, IHttpHandler
 		if (target == null)
 			throw new HttpException (string.Format ("Invalid callback target '{0}'.", callbackTarget));
 
-		string callbackArgument = _requestValueCollection [callbackArgumentID];
+		string callbackArgument = _requestValueCollection [CallbackArgumentID];
 		return target.RaiseCallbackEvent (callbackArgument);
 	}
 
@@ -1505,7 +1465,7 @@ public class Page : TemplateControl, IHttpHandler
 	void LoadPreviousPageReference ()
 	{
 		if (_requestValueCollection != null) {
-			string prevPage = _requestValueCollection [previousPageID];
+			string prevPage = _requestValueCollection [PreviousPageID];
 			if (prevPage != null) {
 				previousPage = (Page) PageParser.GetCompiledPageInstance (prevPage, Server.MapPath (prevPage), Context);
 				previousPage.ProcessCrossPagePostBack (_context);

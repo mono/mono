@@ -1,3 +1,15 @@
+2005-03-11  Lluis Sanchez Gual <lluis@novell.com>
+
+	* Utils.cs, Control.cs: Don't use Page.GetPostBackClientEvent
+	since it is deprecated in 2.0.
+	* Page.cs: Deprecated GetPostBackClientEvent and similar methods
+	in 2.0. Moved callback management methods to ClientScriptManager.
+	* ClientScriptManager.cs: Moved here deprecated methods from Page.
+	In GetPostBackEventReference (PostBackOptions), don't use the
+	WebForm_DoPostback script if the post can be done with a simple
+	__doPostBack call.
+	* PostBackOptions.cs: Fixed default values for some properties.
+
 2005-03-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs: in FindControl, throw if there's more than one control
