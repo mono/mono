@@ -1,3 +1,21 @@
+2004-03-17 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* decl.cs (FindMemberToOverride): New method to find the correct
+	method or property to override in the base class.
+	* class.cs
+	    - Make Method/Property use the above method to find the
+	      version in the base class.
+	    - Remove the InheritableMemberSignatureCompare as it is now
+	      dead code.
+
+	This patch makes large code bases much faster to compile, as it is
+	O(n) rather than O(n^2) to do this validation.
+
+	Also, it fixes bug 52458 which is that nested classes are not
+	taken into account when finding the base class member.
+	
+	Reviewed/Approved by Martin.
+
 2004-03-17  Martin Baulig  <martin@ximian.com>
 
 	Merged latest changes into gmcs.  Please keep this comment in

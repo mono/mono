@@ -2538,31 +2538,19 @@ namespace Mono.CSharp {
 			Type ptype = container.TypeBuilder.BaseType;
 
 			// ptype is only null for System.Object while compiling corlib.
-			if (ptype != null){
-				MemberList mi, mi_static, mi_instance;
-
-				mi_instance = TypeContainer.FindMembers (
-					ptype, MemberTypes.Method,
-					BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance,
-					MethodSignature.inheritable_method_signature_filter,
-					ms);
-
-				if (mi_instance.Count > 0){
-					mi = mi_instance;
-				} else {
-					mi_static = TypeContainer.FindMembers (
-						ptype, MemberTypes.Method,
-						BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static,
-						MethodSignature.inheritable_method_signature_filter, ms);
-
-					if (mi_static.Count > 0)
-						mi = mi_static;
-					else
-						mi = null;
+			if (ptype != null) {
+				
+				//
+				// Explicit implementations do not have `parent' methods, however,
+				// the member cache stores them there. Without this check, we get
+				// an incorrect warning in corlib.
+				//
+				if (! IsExplicitImpl) {
+					parent_method = (MethodInfo)((IMemberContainer)container).Parent.MemberCache.FindMemberToOverride (
+						container.TypeBuilder, Name, ParameterTypes, false);
 				}
-
-				if (mi != null && mi.Count > 0){
-					parent_method = (MethodInfo) mi [0];
+				
+				if (parent_method != null) {
 					string name = parent_method.DeclaringType.Name + "." +
 						parent_method.Name;
 
@@ -4206,17 +4194,20 @@ namespace Mono.CSharp {
 					      "with the same parameter types");
 				return false;
 			}
+			
+			PropertyInfo parent_property = null;
+			
+			//
+			// Explicit implementations do not have `parent' methods, however,
+			// the member cache stores them there. Without this check, we get
+			// an incorrect warning in corlib.
+			//
+			if (! IsExplicitImpl) {
+				parent_property = (PropertyInfo) ((IMemberContainer)container).Parent.MemberCache.FindMemberToOverride (
+					container.TypeBuilder, Name, ParameterTypes, true);
+			}
 
-			MemberList mi_props;
-
-			mi_props = TypeContainer.FindMembers (
-				ptype, MemberTypes.Property,
-				BindingFlags.NonPublic | BindingFlags.Public |
-				BindingFlags.Instance | BindingFlags.Static,
-				MethodSignature.inheritable_method_signature_filter, base_ms);
-
-			if (mi_props.Count > 0){
-				PropertyInfo parent_property = (PropertyInfo) mi_props [0];
+			if (parent_property != null) {
 				string name = parent_property.DeclaringType.Name + "." +
 					parent_property.Name;
 
@@ -5276,22 +5267,7 @@ namespace Mono.CSharp {
 		///    This delegate is used to extract methods which have the
 		///    same signature as the argument
 		/// </summary>
-		public static MemberFilter method_signature_filter;
-
-		/// <summary>
-		///   This delegate is used to extract inheritable methods which
-		///   have the same signature as the argument.  By inheritable,
-		///   this means that we have permissions to override the method
-		///   from the current assembly and class
-		/// </summary>
-		public static MemberFilter inheritable_method_signature_filter;
-
-		static MethodSignature ()
-		{
-			method_signature_filter = new MemberFilter (MemberSignatureCompare);
-			inheritable_method_signature_filter = new MemberFilter (
-				InheritableMemberSignatureCompare);
-		}
+		public static MemberFilter method_signature_filter = new MemberFilter (MemberSignatureCompare);
 		
 		public MethodSignature (string name, Type ret_type, Type [] parameters)
 		{
@@ -5396,51 +5372,6 @@ namespace Mono.CSharp {
 				if (args [i] != sigp [i])
 					return false;
 			}
-			return true;
-		}
-
-		//
-		// This filter should be used when we are requesting methods that
-		// we want to override.
-		//
-		// This makes a number of assumptions, for example
-		// that the methods being extracted are of a parent
-		// class (this means we know implicitly that we are
-		// being called to find out about members by a derived
-		// class).
-		// 
-		static bool InheritableMemberSignatureCompare (MemberInfo m, object filter_criteria)
-		{
-			MethodInfo mi;
-			PropertyInfo pi = m as PropertyInfo;
-
-			if (pi != null) {
-				mi = pi.GetGetMethod (true);
-				if (mi == null)
-					mi = pi.GetSetMethod (true);
-			} else
-				mi = m as MethodInfo;
-
-			if (mi == null){
-				Console.WriteLine ("Nothing found");
-			}
-			
-			MethodAttributes prot = mi.Attributes & MethodAttributes.MemberAccessMask;
-
-			// If only accessible to the current class.
-			if (prot == MethodAttributes.Private)
-				return false;
-
-		        if (!MemberSignatureCompare (m, filter_criteria))
-				return false;
-
-			// If only accessible to the defining assembly or 
-			if (prot == MethodAttributes.FamANDAssem ||
-			    prot == MethodAttributes.Assembly){
-				return m.DeclaringType.Assembly == CodeGen.Assembly.Builder;
-			}
-
-			// Anything else (FamOrAssembly and Public) is fine
 			return true;
 		}
 	}
