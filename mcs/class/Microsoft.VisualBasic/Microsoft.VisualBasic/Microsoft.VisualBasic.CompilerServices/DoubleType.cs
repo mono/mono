@@ -55,11 +55,11 @@ namespace Microsoft.VisualBasic.CompilerServices
 				return 0.0;
 
 			//try {
-			//	double[] lRes = new double[1];
-			//if (VBUtils.isNumber(Value, lRes))
-			//	return lRes[0];
+				double[] lRes = new double[1];
+			if (VBUtils.isNumber(Value, lRes))
+				return lRes[0];
 			//}
-			////catch (java.lang.Exception e) {
+			//catch (Exception e) {
 			//	throw new InvalidCastException(
 			//		Utils.GetResourceString("InvalidCast_FromStringTo", 
 			//		Value, "Double"), e);
@@ -112,14 +112,9 @@ namespace Microsoft.VisualBasic.CompilerServices
 			return Parse(Value, null);
 		}
 
-		//not needed acccording to spec?
-		//public static boolean TryParse(string value, ClrDouble result) {
-		//	return ClrDouble.TryParse(Value, NumberStyles.Any, null, result);
-		//}
-		// the above is below with ClrDouble replaced with double what is a ClrDouble
-		//public static bool TryParse(string Value, double result) {
-		//	return double.TryParse(Value, NumberStyles.Any, null, result);
-		//}
+		public static bool TryParse(string Value, out double result) {
+			return  Double.TryParse(Value, NumberStyles.Any, null, out result);
+		}
 
 		/**
 		 * This method try to parse given string using all available styles, if an 

@@ -48,11 +48,8 @@ using System.Reflection;
 namespace Microsoft.VisualBasic.CompilerServices {
 	[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)] 
 	[Microsoft.VisualBasic.CompilerServices.StandardModule] 
-	//msrked as stati cin Mainsoft java code. what should it be here?
-	//public static class Utils {
 	 public class Utils {
-		//public const int SEVERITY_ERROR = ClrInt32.MinValue;
-		public const int SEVERITY_ERROR = int.MinValue;// Int32.MinValue;
+		public const int SEVERITY_ERROR = Int32.MinValue;
 		public const int FACILITY_CONTROL = 655360;
 		public const int FACILITY_RPC = 65536;
 		public const int FACILITY_ITF = 262144;
@@ -76,7 +73,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		public const char chCharH0D = '\r';
 		public const char chLineFeed = '\n';
 		public const char chDblQuote = '\"';
-		//TODO: why id this static, should it be const?
+		//TODO: why is this static, should it be const?
 		public static char[] m_achIntlSpace = new char[] { ' ', '\u3000' };
 
 		private const string FILE_NAME = "resources.MicrosoftVisualBasic";
@@ -96,9 +93,12 @@ namespace Microsoft.VisualBasic.CompilerServices {
 //		{
 //                        return string.Empty;
 //		}
+
+		[MonoTODO]
 		public static string GetResourceString(string key) {
 			string str = null;
 			//TODO:
+			str = key;//TODO: Get the resource!
 			//try {
 			//	//str = RESOURCE_BUNDLE.getString(key);
 			//}
@@ -117,8 +117,10 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			return str;
 		}
 
+		[MonoTODO]
 		public static string GetResourceString(string key, bool notUsed) {
 			string str = null;
+			str = key;//TODO: Get the resource!
 			//try {
 			//	str = RESOURCE_BUNDLE.getString(key);
 			//}
@@ -247,7 +249,6 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		public static string VBFriendlyName(object obj) {
 			if (obj == null)
 				return "Nothing";
-			//Type type = ObjectStaticWrapper.GetType(obj);//java code
 			Type type = obj.GetType();
 			return VBFriendlyName(type,obj);
 		}
@@ -258,7 +259,6 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		 * @return string the vb name of this type
 		 */
 		public static string VBFriendlyName(Type type) {
-			//return VBFriendlyNameOfTypeName(type.get_Name());//java version
 			return VBFriendlyNameOfTypeName(type.Name);
 		}
     
@@ -272,8 +272,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		public static string VBFriendlyName(Type type, object obj) {
 			
 			//if (StringStaticWrapper.CompareOrdinal(type.FullName, "System.__ComObject") //java code
-			if (string.CompareOrdinal(type.FullName, "System.__ComObject")
-				== 0) {
+			if (string.CompareOrdinal(type.FullName, "System.__ComObject") == 0) {
 				//this shape of if was writen  since get_IsCOMObject is not implemented
 				//yet. in this flow only when the type name is "System.__ComObject" the
 				//not implementedException is thrown.
@@ -376,9 +375,9 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		}
 
 		//TODO:
-		//public static DateTimeFormatInfo GetDateTimeFormatInfo() {
-		//	return CultureInfo.get_CurrentCulture().get_DateTimeFormat();
-		//}
+		public static DateTimeFormatInfo GetDateTimeFormatInfo() {
+			return CultureInfo.CurrentCulture.DateTimeFormat;
+		}
 
 		/**
 		 * This method maps exception id to message id in   

@@ -1,5 +1,14 @@
 2004-04-17	Dennis Hayes <dennish@raytek.com>
  More Java code converted from Mainsoft.
+
+	* DoubleType.cs
+	* FlowControl.cs
+	* HostServices.cs
+	* IVbHost.cs
+	* Utils.cs
+	
+2004-04-17	Dennis Hayes <dennish@raytek.com>
+ More Java code converted from Mainsoft.
 	
 	lots done, work in progress
 	* ObjectType.cs
