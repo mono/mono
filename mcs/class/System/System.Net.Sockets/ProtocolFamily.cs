@@ -9,7 +9,7 @@
 
 namespace System.Net.Sockets
 {
-	public enum AddressFamily
+	public enum ProtocolFamily
 	{
 		AppleTalk,
 		Atm,

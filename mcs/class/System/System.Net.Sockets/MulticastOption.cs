@@ -39,13 +39,13 @@ namespace System.Net.Sockets
 
 		public IPAddress LocalAddress
 		{
-			get { return local };
-			set { local = value; };
+			get { return local; }
+			set { local = value; }
 		}
 
 		public override bool Equals (object o)
-		{
-			return group.Equals (o.group) && local.Equals (o.local);
+		{	
+			return false;
 		}
 
 		public override int GetHashCode()

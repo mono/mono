@@ -7,7 +7,7 @@
 // (C) Andrew Sutton
 //
 
-using System;
+using System.IO;
 
 namespace System.Net.Sockets
 {

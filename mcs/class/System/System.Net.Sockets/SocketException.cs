@@ -6,6 +6,7 @@
 //
 // (C) Andrew Sutton
 //
+using System;
 
 namespace System.Net.Sockets
 {
@@ -16,7 +17,7 @@ namespace System.Net.Sockets
 	//
 	//    This needs some work...
 	// </remarks>
-	public class SocketException : Win32Exception
+	public class SocketException : Exception
 	{
 		protected int		error_code;
 		protected int		native_code;
@@ -50,12 +51,12 @@ namespace System.Net.Sockets
 
 		public override Exception InnerException
 		{
-			get { return inner_exception };
+			get { return inner_exception }
 		}
 
 		public override string Message
 		{
-			get { return message };
+			get { return message; }
 		}
 
 		public override int NativeErrorCode
