@@ -674,21 +674,40 @@ namespace Npgsql
         private ServerVersion ParseServerVersion (string VersionString)
         {
             String[]        Parts;
-
+            
+            
             Parts = VersionString.Split('.');
-
-            if (Parts.Length != 3) {
-                throw new FormatException("Internal: Backend sent bad version string");
-            }
-
-            try {
+            
+            
+            try 
+            {
+                
+                                
+                if (Parts.Length != 3) 
+                {
+                    if (Parts.Length == 2)
+                    {
+                        // Check if it is a devel version.
+                        if (Parts[1].EndsWith("devel"))
+                            return new ServerVersion(
+                                Convert.ToInt32(Parts[0]),
+                                Convert.ToInt32(Parts[1].Remove(Parts[1].Length - 5, 5)),
+                                0);
+                
+                    }
+                    
+                    throw new FormatException(String.Format("Internal: Backend sent bad version string: {0}", VersionString));
+                }
+                
                 return new ServerVersion(
                     Convert.ToInt32(Parts[0]),
                     Convert.ToInt32(Parts[1]),
                     Convert.ToInt32(Parts[2])
                 );
-            } catch (Exception E) {
-                throw new FormatException("Internal: Backend sent bad version string", E);
+            } 
+            catch (Exception E) 
+            {
+                throw new FormatException(String.Format("Internal: Backend sent bad version string: {0}", VersionString), E);
             }
         }
 

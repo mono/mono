@@ -1,4 +1,8 @@
-
+2004-05-23  Francisco Figueiredo Jr. <fxjrlists@yahoo.com.br>
+	
+	* Npgsql/NpgsqlConnection.cs: Fixed bug which prevented Npgsql to
+connect to cvs built servers which had devel in its version string.
+	
 2004-05-22  Francisco Figueiredo Jr. <fxjrlists@yahoo.com.br>
 
 	Npgsql/NpgsqlCommand.cs,
