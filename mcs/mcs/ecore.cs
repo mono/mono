@@ -4109,7 +4109,7 @@ namespace Mono.CSharp {
 				if (instance_expr.Type.IsValueType){
 					IMemoryLocation ml;
 					LocalTemporary tempo = null;
-					
+
 					if (!(instance_expr is IMemoryLocation)){
 						tempo = new LocalTemporary (
 							ec, instance_expr.Type);
@@ -4223,7 +4223,11 @@ namespace Mono.CSharp {
 				//
 				if (instance_expr is This)
 					((This)instance_expr).AddressOf (ec, AddressOp.LoadStore);
-				else
+				else if (instance_expr.Type.IsValueType && instance_expr is IMemoryLocation){
+					IMemoryLocation ml = (IMemoryLocation) instance_expr;
+
+					ml.AddressOf (ec, AddressOp.LoadStore);
+				} else
 					instance_expr.Emit (ec);
 				ig.Emit (OpCodes.Ldflda, FieldInfo);
 			}
