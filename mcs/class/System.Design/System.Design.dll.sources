@@ -32,6 +32,7 @@ System.Windows.Forms.Design/FileNameEditor.cs
 System.Windows.Forms.Design/FolderNameEditor.cs
 System.Windows.Forms.Design/IMenuEditorService.cs
 System.Windows.Forms.Design/IOleDragClient.cs
+System.Windows.Forms.Design/ISelectionUIHandler.cs
 System.Windows.Forms.Design/MenuCommands.cs
 System.Windows.Forms.Design/ParentControlDesigner.cs
 System.Windows.Forms.Design/ScrollableControlDesigner.cs
