@@ -1,3 +1,10 @@
+2004-01-18 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* FileStream.cs: Locking from bug #32344 removed. This is not
+	necessary because the correct fix was actually in the console.
+	This fixes bug #53026. Miguel de Icaza reviewed/approved this
+	patch.
+
 2004-01-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* FileStream.cs (.ctor): Avoid allocating a large buffer when reading

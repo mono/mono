@@ -218,9 +218,7 @@ namespace System.IO
 				if(CanSeek == false)
 					throw new NotSupportedException("The stream does not support seeking");
 				
-				lock(this) {
-					return(buf_start + buf_offset);
-				}
+				return(buf_start + buf_offset);
 			}
 			set {
 				if(CanSeek == false) {
@@ -251,17 +249,14 @@ namespace System.IO
 			if (!CanRead)
 				throw new NotSupportedException ("Stream does not support reading");
 			
-			lock(this) {
-				if (buf_offset >= buf_length) {
-					RefillBuffer ();
+			if (buf_offset >= buf_length) {
+				RefillBuffer ();
 
-					if (buf_length == 0) {
-						return -1;
-					}
-				}
-				
-				return(buf [buf_offset ++]);
+				if (buf_length == 0)
+					return -1;
 			}
+			
+			return buf [buf_offset ++];
 		}
 
 		public override void WriteByte (byte value)
@@ -272,18 +267,14 @@ namespace System.IO
 			if (!CanWrite)
 				throw new NotSupportedException ("Stream does not support writing");
 
-			lock(this) {
-				if (buf_offset == buf_size) {
-					FlushBuffer ();
-				}
+			if (buf_offset == buf_size)
+				FlushBuffer ();
 
-				buf [buf_offset ++] = value;
-				if (buf_offset > buf_length) {
-					buf_length = buf_offset;
-				}
+			buf [buf_offset ++] = value;
+			if (buf_offset > buf_length)
+				buf_length = buf_offset;
 
-				buf_dirty = true;
-			}
+			buf_dirty = true;
 		}
 
 		public override int Read ([In,Out] byte[] dest, int dest_offset, int count)
@@ -305,43 +296,41 @@ namespace System.IO
 			
 			int copied = 0;
 
-			lock(this) {
-				int n = ReadSegment (dest, dest_offset, count);
-				copied += n;
-				count -= n;
+			int n = ReadSegment (dest, dest_offset, count);
+			copied += n;
+			count -= n;
 			
-				if (count == 0) {
-					/* If there was already enough
-					 * buffered, no need to read
-					 * more from the file.
-					 */
-					return (copied);
-				}
-
-				if (count > buf_size) {
-					/* Read as much as we can, up
-					 * to count bytes
-					 */
-					FlushBuffer();
-					n = ReadData (handle, dest,
-						      dest_offset+copied,
-						      count);
-				
-					/* Make the next buffer read
-					 * start from the right place
-					 */
-					buf_start += n;
-				} else {
-					RefillBuffer ();
-					n = ReadSegment (dest,
-							 dest_offset+copied,
-							 count);
-				}
-
-				copied += n;
-
-				return(copied);
+			if (count == 0) {
+				/* If there was already enough
+				 * buffered, no need to read
+				 * more from the file.
+				 */
+				return (copied);
 			}
+
+			if (count > buf_size) {
+				/* Read as much as we can, up
+				 * to count bytes
+				 */
+				FlushBuffer();
+				n = ReadData (handle, dest,
+					      dest_offset+copied,
+					      count);
+			
+				/* Make the next buffer read
+				 * start from the right place
+				 */
+				buf_start += n;
+			} else {
+				RefillBuffer ();
+				n = ReadSegment (dest,
+						 dest_offset+copied,
+						 count);
+			}
+
+			copied += n;
+
+			return copied;
 		}
 
 		public override void Write (byte[] src, int src_offset, int count)
@@ -400,52 +389,49 @@ namespace System.IO
 				throw new NotSupportedException("The stream does not support seeking");
 			}
 
-			lock(this) {
+			switch (origin) {
+			case SeekOrigin.End:
+				pos = Length + offset;
+				break;
 
-				switch (origin) {
-				case SeekOrigin.End:
-					pos = Length + offset;
-					break;
+			case SeekOrigin.Current:
+				pos = Position + offset;
+				break;
 
-				case SeekOrigin.Current:
-					pos = Position + offset;
-					break;
-
-				case SeekOrigin.Begin: default:
-					pos = offset;
-					break;
-				}
-
-				if (pos < 0) {
-					/* LAMESPEC: shouldn't this be
-					 * ArgumentOutOfRangeException?
-					 */
-					throw new IOException("Attempted to Seek before the beginning of the stream");
-				}
-
-				if(pos < this.append_startpos) {
-					/* More undocumented crap */
-					throw new IOException("Can't seek back over pre-existing data in append mode");
-				}
-
-				if (buf_length > 0) {
-					if (pos >= buf_start &&
-						pos <= buf_start + buf_length) {
-						buf_offset = (int) (pos - buf_start);
-						return pos;
-					}
-				}
-
-				FlushBuffer ();
-
-				MonoIOError error;
-			
-				buf_start = MonoIO.Seek (handle, pos,
-							 SeekOrigin.Begin,
-							 out error);
-				
-				return(buf_start);
+			case SeekOrigin.Begin: default:
+				pos = offset;
+				break;
 			}
+
+			if (pos < 0) {
+				/* LAMESPEC: shouldn't this be
+				 * ArgumentOutOfRangeException?
+				 */
+				throw new IOException("Attempted to Seek before the beginning of the stream");
+			}
+
+			if(pos < this.append_startpos) {
+				/* More undocumented crap */
+				throw new IOException("Can't seek back over pre-existing data in append mode");
+			}
+
+			if (buf_length > 0) {
+				if (pos >= buf_start &&
+					pos <= buf_start + buf_length) {
+					buf_offset = (int) (pos - buf_start);
+					return pos;
+				}
+			}
+
+			FlushBuffer ();
+
+			MonoIOError error;
+		
+			buf_start = MonoIO.Seek (handle, pos,
+						 SeekOrigin.Begin,
+						 out error);
+			
+			return(buf_start);
 		}
 
 		public override void SetLength (long length)
@@ -474,9 +460,7 @@ namespace System.IO
 			if (handle == MonoIO.InvalidHandle)
 				throw new ObjectDisposedException ("Stream has been closed");
 
-			lock(this) {
-				FlushBuffer ();
-			}
+			FlushBuffer ();
 			
 			// The flushing is not actually required, in
 			//the mono runtime we were mapping flush to
@@ -512,9 +496,7 @@ namespace System.IO
 
 		protected virtual void Dispose (bool disposing) {
 			if (handle != MonoIO.InvalidHandle) {
-				lock(this) {
-					FlushBuffer ();
-				}
+				FlushBuffer ();
 
 				if (owner) {
 					MonoIOError error;
