@@ -1,6 +1,6 @@
 VERSION=0.13.99
 
-DIRS=jay nant mcs class nunit nunit20 monoresgen tools mbas ilasm
+DIRS=jay nant mcs class nunit20 monoresgen tools mbas ilasm
 INSTALL= /usr/bin/install
 
 all: 
@@ -26,7 +26,6 @@ testcorlib:
 	if test x$(OS) = xWindows_NT; then make testcorlibwindows; else make -f makefile.gnu testcorlib; fi
 
 testwindows:
-	$(MAKE) -C nunit
 	$(MAKE) -C nunit20
 	$(MAKE) -C class test
 
@@ -113,17 +112,12 @@ MONO_WIN_INSTALL_LIB=	\
 	class/lib/System.Windows.Forms.dll	\
 	class/lib/System.Xml.dll	\
 	class/lib/System.dll	\
-	class/lib/corlib.dll	\
-	nunit/NUnitBase.dll	\
-	nunit/NUnitCore.dll	\
-	nunit/NUnitCore_mono.dll
+	class/lib/corlib.dll
 
 MONO_WIN_INSTALL_BIN=	\
 	mcs/mcs.exe	\
 	mbas/mbas.exe	\
 	nant/NAnt.exe	\
-	nunit/NUnitConsole.exe	\
-	nunit/NUnitConsole_mono.exe	\
 	ilasm/ilasm.exe	\
 	monoresgen/monoresgen.exe	\
 	tools/EnumCheck.exe	\

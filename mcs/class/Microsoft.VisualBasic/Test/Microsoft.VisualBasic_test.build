@@ -6,7 +6,6 @@
 
 <project name="System.Data_test" default="build">
 	<property name="debug" value="false"/>
-	<property name="nunit_home" value="..\..\..\nunit"/>
 
 	<target name="build">
 	</target>
@@ -18,9 +17,6 @@
 				<includes name="**/*.cs"/>
 				<excludes name="TheTests.cs"/>
 			</sources>
-			<references basedir="..\..\..\nunit">
-				<includes name="NUnitCore.dll"/>
-			</references>
 			<arg value="/noconfig"/>	<!-- don't reference ms assemblies -->
 			<!--<arg value="/lib:../../lib/"/>-->
 			
@@ -29,6 +25,7 @@
 			<!--<arg value="/r:corlib.dll"/>-->
 			<arg value="/r:System.dll"/>
 			<arg value="/r:.\Microsoft.VisualBasic.dll"/>
+		    	<arg value="/r:..\..\..\nunit20\NUnit.Framework.dll"/>
 		</csc>
 
 <!--
@@ -37,21 +34,19 @@
 				<includes name="**/*.cs"/>
 				<excludes name="AllTests.cs"/>
 			</sources>
-			<references basedir="..\..\..\nunit">
-				<includes name="NUnitBase.dll"/>
-			</references>
 			<arg value="/nowarn:1595"/>
 			<arg value="/noconfig"/>
 			<arg value="/r:..\..\lib\corlib.dll"/>
 			<arg value="/r:..\..\lib\System.dll"/>
 			<arg value="/r:..\..\lib\Microsoft.VisualBasic.dll"/>
+		    	<arg value="/r:..\..\..\nunit20\NUnit.Framework.dll"/>
 		</csc>
 
 -->
 	</target>
 
 	<target name="test" depends="assemblies">
-		<exec program="..\..\..\nunit\NUnitConsole" commandline="MonoTests.AllTests,Microsoft.VisualBasic_test.dll" failonerror="false"/>
+		<exec program="..\..\..\nunit20\nunit-console.exe" commandline="Microsoft.VisualBasic_test.dll" failonerror="false"/>
 	</target>
 
 	<target name="clean">

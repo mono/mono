@@ -1,3 +1,7 @@
+2003/04/15  Nick Drochak <ndrochak@gol.com>
+
+	* Microsoft.VisualBasic_test.build: use nunit version 2
+
 2003-03-13  Martin Willemoes Hansen <mwh@sysrq.dk>
 	* Credited myself in CollectionTest.cs, 
 	  ConversionTest.cs and DateAndTimeTest.cs

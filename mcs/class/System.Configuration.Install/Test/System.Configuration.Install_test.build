@@ -6,7 +6,6 @@
 
 <project name="System_test" default="build">
 	<property name="debug" value="true"/>
-	<property name="nunit_home" value="..\..\..\nunit"/>
 
 	<target name="build">
 	</target>
@@ -16,17 +15,15 @@
 			<sources>
 				<includes name="**/*.cs"/>
 			</sources>
-			<references basedir="..\..\..\nunit">
-				<includes name="NUnitCore.dll"/>
-			</references>
 
 			<arg value="/noconfig"/>
+		    	<arg value="/r:..\..\..\nunit20\NUnit.Framework.dll"/>
 		</csc>
 
 	</target>
 
 	<target name="test" depends="assemblies">
-		<exec program="..\..\..\nunit\NUnitConsole" commandline="MonoTests.AllTests,System.Configuration.Install_test.dll" failonerror="false"/>
+		<exec program="..\..\..\nunit20\nunit-console.exe" commandline="System.Configuration.Install_test.dll" failonerror="false"/>
 	</target>
 
 	<target name="clean">
