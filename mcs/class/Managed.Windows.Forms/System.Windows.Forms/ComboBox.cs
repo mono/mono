@@ -40,7 +40,7 @@ namespace System.Windows.Forms
 		private DrawMode draw_mode;
 		private ComboBoxStyle dropdown_style;
 		private int dropdown_width;		
-		private int preferred_height;
+		private const int preferred_height = 20;
 		private int selected_index;
 		private object selected_item;
 		internal ObjectCollection items = null;
@@ -87,7 +87,7 @@ namespace System.Windows.Forms
 			{
 				Index = index;
 				ItemHeight = -1;
-			}
+			}			
 		}
 
 		public ComboBox ()
@@ -95,14 +95,14 @@ namespace System.Windows.Forms
 			items = new ObjectCollection (this);
 			listbox_ctrl = null;
 			textbox_ctrl = null;
-			combobox_info = new ComboBoxInfo ();			
+			combobox_info = new ComboBoxInfo ();
+			combobox_info.item_height = FontHeight + 2;
 			DropDownStyle = ComboBoxStyle.DropDown;
 			BackColor = ThemeEngine.Current.ColorWindow;
 			draw_mode = DrawMode.Normal;
 			selected_index = -1;
 			selected_item = null;
 			maxdrop_items = 8;			
-			combobox_info.item_height = FontHeight + 2;
 			suspend_ctrlupdate = false;
 			clicked = false;
 			dropdown_width = -1;
@@ -110,8 +110,7 @@ namespace System.Windows.Forms
 			integral_height = true;
 			process_textchanged_event = true;
 			
-			string_format = new StringFormat ();
-			
+			string_format = new StringFormat ();			
 
 			/* Events */
 			MouseDown += new MouseEventHandler (OnMouseDownCB);
@@ -203,8 +202,7 @@ namespace System.Windows.Forms
 						textbox_ctrl.Dispose ();
 						textbox_ctrl = null;
 					}
-				}
-				
+				}				
 				
 				dropdown_style = value;					
 				
@@ -311,7 +309,6 @@ namespace System.Windows.Forms
 				Refresh ();
 			}
 		}
-
 
 		public ComboBox.ObjectCollection Items {
 			get { return items; }
@@ -530,7 +527,7 @@ namespace System.Windows.Forms
 		public void EndUpdate ()
 		{
 			suspend_ctrlupdate = false;
-			Refresh ();
+			UpdatedItems ();
 		}
 
 		public int FindString (string s)
@@ -717,7 +714,8 @@ namespace System.Windows.Forms
 
 		protected virtual void OnSelectedItemChanged (EventArgs e)
 		{
-
+			if (SelectedIndexChanged != null)
+				SelectedIndexChanged (this, e);
 		}
 
 		protected override void OnSelectedValueChanged (EventArgs e)
@@ -727,7 +725,8 @@ namespace System.Windows.Forms
 
 		protected virtual void OnSelectionChangeCommitted (EventArgs e)
 		{
-
+			if (SelectionChangeCommitted != null)
+				SelectionChangeCommitted (this, e);
 		}
 
 		protected override void RefreshItem (int index)
@@ -999,7 +998,6 @@ namespace System.Windows.Forms
 			
 			listbox_ctrl.SetTopItem (item);
 			listbox_ctrl.SetHighLightedItem (item);
-			
 		}
 		
 		internal void SetControlText (string s)
@@ -1030,13 +1028,12 @@ namespace System.Windows.Forms
 
 			private ComboBox owner;
 			internal ArrayList object_items = new ArrayList ();
-			internal ArrayList listbox_items = new ArrayList ();
+			internal ArrayList combobox_items = new ArrayList ();
 
 			public ObjectCollection (ComboBox owner)
 			{
 				this.owner = owner;
 			}
-
 
 			#region Public Properties
 			public virtual int Count {
@@ -1075,6 +1072,22 @@ namespace System.Windows.Forms
 			}
 
 			#endregion Public Properties
+			
+			#region Private Properties			
+			internal ArrayList ObjectItems {
+				get { return object_items;}
+				set {
+					object_items = value;
+				}
+			}
+			
+			internal ArrayList ListBoxItems {
+				get { return combobox_items;}
+				set {
+					combobox_items = value;
+				}
+			}			
+			#endregion Private Properties
 
 			#region Public Methods
 			public int Add (object item)
@@ -1097,10 +1110,11 @@ namespace System.Windows.Forms
 			public virtual void Clear ()
 			{
 				object_items.Clear ();
-				listbox_items.Clear ();
+				combobox_items.Clear ();
 				owner.UpdatedItems ();
-
+				owner.selected_index = -1;				
 			}
+			
 			public virtual bool Contains (object obj)
 			{
 				return object_items.Contains (obj);
@@ -1133,7 +1147,34 @@ namespace System.Windows.Forms
 
 			public virtual void Insert (int index,  object item)
 			{
-				throw new NotImplementedException ();
+				if (index < 0 || index >= Count)
+					throw new ArgumentOutOfRangeException ("Index of out range");					
+				
+				ObjectCollection new_items = new ObjectCollection (owner);				
+    				object sel_item = owner.SelectedItem;
+    				    								
+				owner.BeginUpdate ();
+				
+				for (int i = 0; i < index; i++) {
+					new_items.AddItem (ObjectItems[i]);
+				}
+
+				new_items.AddItem (item);
+
+				for (int i = index; i < Count; i++){
+					new_items.AddItem (ObjectItems[i]);
+				}				
+
+				ObjectItems = new_items.ObjectItems;
+				ListBoxItems = new_items.ListBoxItems;
+				
+				if (sel_item != null) {
+					int idx = IndexOf (sel_item);
+					owner.selected_index = idx;
+					owner.listbox_ctrl.SetHighLightedItem (idx);
+				}
+												
+				owner.EndUpdate ();	// Calls UpdateItemInfo				
 			}
 
 			public virtual void Remove (object value)
@@ -1147,7 +1188,7 @@ namespace System.Windows.Forms
 					throw new ArgumentOutOfRangeException ("Index of out range");
 
 				object_items.RemoveAt (index);
-				listbox_items.RemoveAt (index);
+				combobox_items.RemoveAt (index);
 				owner.UpdatedItems ();
 			}
 			#endregion Public Methods
@@ -1157,7 +1198,7 @@ namespace System.Windows.Forms
 			{
 				int cnt = object_items.Count;
 				object_items.Add (item);
-				listbox_items.Add (new ComboBox.ComboBoxItem (cnt));				
+				combobox_items.Add (new ComboBox.ComboBoxItem (cnt));				
 				return cnt;
 			}
 
@@ -1166,7 +1207,7 @@ namespace System.Windows.Forms
 				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");
 
-				return (ComboBox.ComboBoxItem) listbox_items[index];
+				return (ComboBox.ComboBoxItem) combobox_items[index];
 			}
 
 			internal void SetComboBoxItem (ComboBox.ComboBoxItem item, int index)
@@ -1174,7 +1215,7 @@ namespace System.Windows.Forms
 				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");
 
-				listbox_items[index] = item;
+				combobox_items[index] = item;
 			}
 
 			#endregion Private Methods
@@ -1514,6 +1555,8 @@ namespace System.Windows.Forms
 				if (item != -1) {
 					SetHighLightedItem (item);
 					
+					owner.OnSelectionChangeCommitted (new EventArgs ());
+					
 					if (owner.DropDownStyle == ComboBoxStyle.Simple) {
 						owner.SetControlText (owner.Items[item].ToString ());
 					}
@@ -1563,8 +1606,8 @@ namespace System.Windows.Forms
     				 /* Current item */
     				invalidate = GetItemDisplayRectangle (highlighted_item, top_item);
     				if (ClientRectangle.Contains (invalidate))
-    					Invalidate (invalidate);
-				
+    					Invalidate (invalidate);   					
+    				
 			}			
 
 			public void SetTopItem (int item)
@@ -1585,6 +1628,7 @@ namespace System.Windows.Forms
     				if (index != -1) {    					
 					owner.SelectedIndex = index;
 					SetHighLightedItem (index);
+					owner.OnSelectionChangeCommitted (new EventArgs ());
 					HideWindow ();
 					return;
 				}
@@ -1661,8 +1705,7 @@ namespace System.Windows.Forms
 	    				
 	    				vscrollbar_ctrl.FireMouseUp (new MouseEventArgs (e.Button, e.Clicks,
 	    					pnt_client.X, pnt_client.Y, e.Delta));
-	    			}
-	    			
+	    			}	    			
 			}
 
 			private void OnPaintPUW (Object o, PaintEventArgs pevent)

@@ -79,6 +79,13 @@ namespace System.Windows.Forms
 				ItemHeight = -1;
 				State = CheckState.Unchecked;
 			}
+			
+			public void CopyState (ListBoxItem src)
+			{				
+				Selected = src.Selected;
+				ItemHeight = src.ItemHeight;
+				State = src.State;
+			}
 		}
 
 		internal enum ItemNavigation
@@ -91,6 +98,13 @@ namespace System.Windows.Forms
 			PreviousPage,
 			PreviousColumn,
 			NextColumn
+		}
+		
+		internal enum UpdateOperation
+		{
+			AddItems,
+			DeleteItems,
+			AllItems
 		}
 
 		private BorderStyle border_style;
@@ -350,7 +364,7 @@ namespace System.Windows.Forms
     				if (IsHandleCreated) {
     					RellocateScrollBars ();
 					CalcClientArea ();
-    					UpdateItemInfo (false, -1, -1);	
+    					UpdateItemInfo (UpdateOperation.AllItems, 0, 0);
     				}
 			}
 		}
@@ -442,9 +456,27 @@ namespace System.Windows.Forms
 
 				if (selection_mode == value)
 					return;
-
-    				selection_mode = value;
-				base.Refresh ();
+					
+				selection_mode = value;
+					
+				if (SelectedItems.Count > 0) {
+					switch (selection_mode) {
+					case SelectionMode.None: 
+						ClearSelected ();
+						break;						
+					case SelectionMode.One: {
+						if (SelectedItems.Count > 1) { // All except one
+							int cnt = selected_indices.Count - 1;
+							for (int i = 0; i < cnt; i++) {
+								UnSelectItem (i, true);								
+							}
+						}
+					}
+						break;
+					default:
+						break;						
+					}
+				}
     			}
 		}
 
@@ -556,7 +588,7 @@ namespace System.Windows.Forms
 		public void EndUpdate ()
 		{
 			suspend_ctrlupdate = false;
-			UpdateItemInfo (false, -1, -1);
+			UpdateItemInfo (UpdateOperation.AllItems, 0, 0);
 			base.Refresh ();
 		}
 
@@ -630,8 +662,7 @@ namespace System.Windows.Forms
 					}					
 				} else {
 					rect.Y = ItemHeight * index;	
-				}
-				
+				}				
 			}
 			else {
 				int which_page;
@@ -722,7 +753,7 @@ namespace System.Windows.Forms
 
 			RellocateScrollBars ();
 			CalcClientArea ();
-			UpdateItemInfo (false, -1, -1);
+			UpdateItemInfo (UpdateOperation.AllItems, 0, 0);
 		}
 
 		protected override void OnHandleCreated (EventArgs e)
@@ -732,7 +763,7 @@ namespace System.Windows.Forms
 			UpdateInternalClientRect (ClientRectangle);
 			Controls.Add (vscrollbar_ctrl);
 			Controls.Add (hscrollbar_ctrl);
-			UpdateItemInfo (false, -1, -1);
+			UpdateItemInfo (UpdateOperation.AllItems, 0, 0);
 		}
 
 		protected override void OnHandleDestroyed (EventArgs e)
@@ -1499,7 +1530,6 @@ namespace System.Windows.Forms
 				selected_items.RemoveObject (Items[index]);
 			}
 
-
 			if (ClientRectangle.Contains (invalidate))
 				Invalidate (invalidate);
 		}
@@ -1516,7 +1546,7 @@ namespace System.Windows.Forms
 		}
 
 		// Updates the scrollbar's position with the new items and inside area
-		internal virtual void UpdateItemInfo (bool adding, int first, int last)
+		internal virtual void UpdateItemInfo (UpdateOperation operation, int first, int last)
 		{
 			if (!IsHandleCreated || suspend_ctrlupdate == true)
 				return;
@@ -1538,7 +1568,7 @@ namespace System.Windows.Forms
 
 			if (MultiColumn == false) {
 				/* Calc the longest items for non multicolumn listboxes */
-				if ((first == -1 && last == -1) || (adding == false)) {
+				if (operation == UpdateOperation.AllItems || operation == UpdateOperation.DeleteItems) {
 
 					SizeF size;
 					for (int i = 0; i < Items.Count; i++) {
@@ -1549,7 +1579,7 @@ namespace System.Windows.Forms
 					}
 				}
 				else {
-					if (adding) {
+					if (operation == UpdateOperation.AddItems) {
 
 						SizeF size;
 						for (int i = first; i < last + 1; i++) {
@@ -1563,9 +1593,10 @@ namespace System.Windows.Forms
 			}
 
 			if (sorted) 
-				Sort ();
-				
-			if (adding == false) {
+				Sort ();				
+						
+			if (Items.Count == 0) {
+				SelectedIndex = -1;
 				focused_item = -1;
 			}
 
@@ -1582,7 +1613,7 @@ namespace System.Windows.Forms
 			UpdateShowHorizontalScrollBar ();
 			UpdateShowVerticalScrollBar ();
 			RellocateScrollBars ();
-			UpdateItemInfo (false, -1, -1);
+			UpdateItemInfo (UpdateOperation.AllItems, 0, 0);
 		}
 
 		/* Determines if the horizontal scrollbar has to be displyed */
@@ -1780,6 +1811,22 @@ namespace System.Windows.Forms
 			}
 
 			#endregion Public Properties
+			
+			#region Private Properties			
+			internal ArrayList ObjectItems {
+				get { return object_items;}
+				set {
+					object_items = value;
+				}
+			}
+			
+			internal ArrayList ListBoxItems {
+				get { return listbox_items;}
+				set {
+					listbox_items = value;
+				}
+			}			
+			#endregion Private Properties
 
 			#region Public Methods
 			public int Add (object item)
@@ -1787,7 +1834,7 @@ namespace System.Windows.Forms
 				int idx;
 
 				idx = AddItem (item);
-				owner.UpdateItemInfo (true, idx, idx);
+				owner.UpdateItemInfo (UpdateOperation.AddItems, idx, idx);
 				return idx;
 			}
 
@@ -1798,7 +1845,7 @@ namespace System.Windows.Forms
 				foreach (object mi in items)
 					AddItem (mi);
 
-				owner.UpdateItemInfo (true, cnt, Count);
+				owner.UpdateItemInfo (UpdateOperation.AddItems, cnt, Count);
 			}
 
 			public void AddRange (ObjectCollection col)
@@ -1808,14 +1855,14 @@ namespace System.Windows.Forms
 				foreach (object mi in col)
 					AddItem (mi);
 
-				owner.UpdateItemInfo (true, cnt, Count);
+				owner.UpdateItemInfo (UpdateOperation.AddItems, cnt, Count);
 			}
 
 			public virtual void Clear ()
 			{
 				object_items.Clear ();
 				listbox_items.Clear ();
-				owner.UpdateItemInfo (false, -1, -1);
+				owner.UpdateItemInfo (UpdateOperation.AllItems, 0, 0);
 			}
 			public virtual bool Contains (object obj)
 			{
@@ -1849,13 +1896,35 @@ namespace System.Windows.Forms
 
 			public virtual void Insert (int index,  object item)
 			{
-				throw new NotImplementedException ();
+				if (index < 0 || index >= Count)
+					throw new ArgumentOutOfRangeException ("Index of out range");
+					
+				int idx;
+				ObjectCollection new_items = new ObjectCollection (owner);
+					
+				owner.BeginUpdate ();
+				
+				for (int i = 0; i < index; i++) {
+					idx = new_items.AddItem (ObjectItems[i]);
+					(new_items.GetListBoxItem (idx)).CopyState (GetListBoxItem (i));
+				}
+
+				new_items.AddItem (item);
+
+				for (int i = index; i < Count; i++){
+					idx = new_items.AddItem (ObjectItems[i]);
+					(new_items.GetListBoxItem (idx)).CopyState (GetListBoxItem (i));
+				}				
+
+				ObjectItems = new_items.ObjectItems;
+				ListBoxItems = new_items.ListBoxItems;				
+								
+				owner.EndUpdate ();	// Calls UpdateItemInfo
 			}
 
 			public virtual void Remove (object value)
-			{
-				RemoveAt (IndexOf (value));
-				owner.UpdateItemInfo (false, -1, -1);
+			{				
+				RemoveAt (IndexOf (value));				
 			}
 
 			public virtual void RemoveAt (int index)
@@ -1864,13 +1933,13 @@ namespace System.Windows.Forms
 					throw new ArgumentOutOfRangeException ("Index of out range");
 
 				object_items.RemoveAt (index);
-				listbox_items.RemoveAt (index);
-				owner.UpdateItemInfo (false, -1, -1);
+				listbox_items.RemoveAt (index);				
+				owner.UpdateItemInfo (UpdateOperation.DeleteItems, index, index);
 			}
 			#endregion Public Methods
 
 			#region Private Methods
-			private int AddItem (object item)
+			internal int AddItem (object item)
 			{
 				int cnt = object_items.Count;
 				object_items.Add (item);

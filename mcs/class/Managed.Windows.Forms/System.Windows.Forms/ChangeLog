@@ -1,3 +1,18 @@
+2005-02-02  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* Combobox.cs:
+		- Fixes default size and PreferredHeight
+		- Missing events
+		- ObjectCollection.Insert implementation
+		
+	* ListControl.cs
+		- Fixes signature
+	* ListBox.cs:
+		- Several fixes
+		- ObjectCollection.Insert implementation
+		- No selection after clean
+		- Small fixes		
+
 2005-01-31	John BouAntoun  <jba-mono@optusnet.com.au>
 
 	* ThemeWin32Classic.cs: quick fix to comboboxbutton pushed painting

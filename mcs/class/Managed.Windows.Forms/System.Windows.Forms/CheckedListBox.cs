@@ -357,9 +357,9 @@ namespace System.Windows.Forms
 			base.OnMouseDownLB (sender, e);
 		}
 
-		internal override void UpdateItemInfo (bool adding, int first, int last)
+		internal override void UpdateItemInfo (UpdateOperation operation, int first, int last)
 		{
-			base.UpdateItemInfo (adding, first, last);
+			base.UpdateItemInfo (operation, first, last);
 			CheckedItems.ReCreate ();
 			CheckedIndices.ReCreate ();
 		}

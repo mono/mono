@@ -59,7 +59,8 @@ namespace System.Windows.Forms
 			get {throw new NotImplementedException (); }
 			set {throw new NotImplementedException (); }
 		}
-		string DisplayMember {
+		
+		public string DisplayMember {
 			get { return display_member; } 
 			set { display_member = value; }
 		}
