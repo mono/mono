@@ -101,7 +101,7 @@ namespace Mono.CSharp {
 				if (old_entry.Name == ns){
 					Report.Warning (105, loc, "The using directive for '" + ns +
 							"' appeared previously in this namespace");
-					break;
+					return;
 				}
 			}
 			
