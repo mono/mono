@@ -1,10 +1,24 @@
+2002-08-11  Rodrigo Moya <rodrigo@ximian.com>
+
+	* System.Data.OleDb/libgda.cs: added some GdaValue functions.
+
+	* System.Data.OleDb/OleDbCommand.cs (OpenReader): removed this
+	internal method, since we don't need it.
+	(ExecuteReader): call SetupGdaCommand before executing the command
+	via libgda functions.
+	(ExecuteScalar): implemented.
+
+	* System.Data.OleDb/OleDbDateReader.cs (OleDbDataReader): removed call
+	to OleDbCommand.OpenReader.
+	(GetBoolean): implemented.
+
 2002-08-08  Franklin Wise <gracenote@earthlink.net>
 
-	* System.Data.IDbComand.cs: IDbCommand now inherits IDisposable
+	* System.Data/IDbComand.cs: IDbCommand now inherits IDisposable
 
-	* System.Data.IDbConnection.cs: IDbConnection now inherits IDisposable
+	* System.Data/IDbConnection.cs: IDbConnection now inherits IDisposable
 
-	* System.Data.SqlTypes.SqlCompareOptions.cs: Enum now set to correct
+	* System.Data.SqlTypes/SqlCompareOptions.cs: Enum now set to correct
 	values.
 
 2002-08-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>

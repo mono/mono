@@ -17,6 +17,8 @@ namespace System.Data.OleDb.Test
 		{
 			string sql = "SELECT * FROM pg_tables";
 			OleDbCommand cmd = new OleDbCommand (sql, m_cnc);
+
+			IDataReader reader = cmd.ExecuteReader ();
 		}
 
 		void Close ()

@@ -41,7 +41,6 @@ namespace System.Data.OleDb
 				gdaResults = new ArrayList ();
 			currentResult = -1;
 			currentRow = -1;
-			command.OpenReader(this);
 			isOpened = true;
 		}
 
@@ -51,7 +50,9 @@ namespace System.Data.OleDb
 
 		public int Depth {
 			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 
 		public int FieldCount {
@@ -126,10 +127,22 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public bool GetBoolean (int ordinal)
 		{
-			throw new NotImplementedException ();
+			IntPtr value;
+
+			if (currentResult == -1)
+				return false;
+
+			value = libgda.gda_data_model_get_value_at ((IntPtr) gdaResults[currentResult],
+								    ordinal, currentRow);
+			if (value != IntPtr.Zero) {
+				if (libgda.gda_value_get_vtype (value) != GdaValueType.Boolean)
+					throw new InvalidCastException ();
+				return libgda.gda_value_get_boolean (value);
+			}
+
+			return false;
 		}
 
 		[MonoTODO]
@@ -299,7 +312,6 @@ namespace System.Data.OleDb
 			return false;
 		}
 
-		[MonoTODO]
 		public bool Read ()
 		{
 			throw new NotImplementedException ();

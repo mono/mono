@@ -29,6 +29,27 @@ namespace System.Data.OleDb
 		Schema = 4,
 		Invalid = 5
 	};
+
+	internal enum GdaValueType {
+		Null = 0,
+		Bigint = 1,
+		Binary = 2,
+		Boolean = 3,
+		Date = 4,
+		Double = 5,
+		GeometricPoint = 6,
+		Integer = 7,
+		List = 8,
+		Numeric = 9,
+		Single = 10,
+		Smallint = 11,
+		String = 12,
+		Time = 13,
+		Timestamp = 14,
+		Tinyint = 15,
+		Type = 16,
+		Unknown = 17
+	};
 	
 	sealed internal class libgda
 	{
@@ -47,6 +68,12 @@ namespace System.Data.OleDb
 		[DllImport("gda-2")]
 		public static extern void gda_init (string app_id, string version, int nargs, string[] args);
 
+		[DllImport("gda-2")]
+		public static extern GdaValueType gda_value_get_vtype (IntPtr value);
+
+		[DllImport("gda-2")]
+		public static extern bool gda_value_get_boolean (IntPtr value);
+		
 		[DllImport("gda-2")]
 		public static extern int gda_data_model_get_n_rows (IntPtr model);
 
