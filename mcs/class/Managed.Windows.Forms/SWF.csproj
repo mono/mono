@@ -1049,6 +1049,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\XEventQueue.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\XplatUI.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
