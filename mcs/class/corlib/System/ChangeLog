@@ -1,3 +1,9 @@
+
+Tue Mar 12 19:21:18 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* GC.cs: make SuppressFinalize() a nop.
+	* Delegate.cs: fix == operator.
+
 2002-03-13  Nick Drochak  <ndrochak@gol.com>
 
 	* Enum.cs: Add IConvertible methods. Cyclic dependancy fixed in the
