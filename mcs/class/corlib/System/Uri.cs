@@ -311,16 +311,5 @@ namespace System {
 		protected static string EscapeString(string str) {
 			throw new NotImplementedException();	
 		}
-		
-		static void Main(String[] args) {
-			Uri uri = new Uri("https://foo.com/bar.html#baz");
-
-			Console.WriteLine("uri.scheme = {0}", uri.scheme);
-			Console.WriteLine("uri.host = {0}", uri.host);
-			Console.WriteLine("uri.port = {0}", uri.port);
-			Console.WriteLine("uri.path = {0}", uri.path);
-			Console.WriteLine("uri.fragment = {0}", uri.fragment);
-			Console.WriteLine("uri.query = {0}", uri.query);
-		}
 	}
 }
