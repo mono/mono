@@ -1342,7 +1342,7 @@ namespace Mono.CSharp {
  					// We need to simulate part of ApplyAttribute method.
  					if (a.Type == null) {
  						TypeExpr attr_type = RootContext.LookupType (ds, GetAttributeFullName (a.Name), true, a.Location);
- 						if (attr_type.Type == TypeManager.cls_compliant_attribute_type)
+ 						if (attr_type != null && attr_type.Type == TypeManager.cls_compliant_attribute_type)
  							return a;
 
 						continue;
