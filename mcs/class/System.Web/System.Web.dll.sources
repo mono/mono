@@ -1,3 +1,5 @@
+Assembly/AssemblyInfo.cs
+Assembly/Consts.cs
 System.Web/BeginEventHandler.cs
 System.Web/EndEventHandler.cs
 System.Web/HttpContext.cs
