@@ -17,6 +17,7 @@ XmlDocumentTests.cs
 XmlDocumentFragmentTests.cs
 XmlDocumentTypeTests.cs
 XmlElementTests.cs
+XmlEntityReferenceTests.cs
 XmlNamespaceManagerTests.cs
 XmlNodeListTests.cs
 XmlNodeTests.cs
