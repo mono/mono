@@ -182,15 +182,39 @@ namespace Mono.Security.Cryptography {
 			throw new NotImplementedException ("CTS not yet supported");
 		}
 
+		private void CheckInput (byte[] inputBuffer, int inputOffset, int inputCount)
+		{
+			if (inputBuffer == null)
+				throw new ArgumentNullException ("inputBuffer");
+			if (inputOffset < 0)
+				throw new ArgumentOutOfRangeException ("inputOffset", "< 0");
+			if (inputCount < 0)
+				throw new ArgumentOutOfRangeException ("inputCount", "< 0");
+			// ordered to avoid possible integer overflow
+			if (inputOffset > inputBuffer.Length - inputCount)
+				throw new ArgumentException ("inputBuffer", Locale.GetText ("Overflow"));
+		}
+
 		// this method may get called MANY times so this is the one to optimize
-		public virtual int TransformBlock (byte [] inputBuffer, int inputOffset, int inputCount, byte [] outputBuffer, int outputOffset) 
+		public virtual int TransformBlock (byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset) 
 		{
 			if (m_disposed)
 				throw new ObjectDisposedException ("Object is disposed");
-			// reordered to avoid possible integer overflow
+			CheckInput (inputBuffer, inputOffset, inputCount);
+			// check output parameters
+			if (outputBuffer == null)
+				throw new ArgumentNullException ("outputBuffer");
+			if (outputOffset < 0)
+				throw new ArgumentOutOfRangeException ("outputOffset", "< 0");
+			// ordered to avoid possible integer overflow
 			if (outputOffset > outputBuffer.Length - inputCount)
-				throw new CryptographicException ("Insufficient output buffer size.");
+				throw new ArgumentException ("outputBuffer", Locale.GetText ("Overflow"));
 
+			return InternalTransformBlock (inputBuffer, inputOffset, inputCount, outputBuffer, outputOffset);
+		}
+
+		private int InternalTransformBlock (byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset) 
+		{
 			int offs = inputOffset;
 			int full;
 
@@ -250,7 +274,7 @@ namespace Mono.Security.Cryptography {
 
 			// process all blocks except the last (final) block
 			while (total > BlockSizeByte) {
-				TransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, outputOffset);
+				InternalTransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, outputOffset);
 				inputOffset += BlockSizeByte;
 				outputOffset += BlockSizeByte;
 				total -= BlockSizeByte;
@@ -263,15 +287,15 @@ namespace Mono.Security.Cryptography {
 					res [i] = padding;
 				Buffer.BlockCopy (inputBuffer, inputOffset, res, full, rem);
 				// the last padded block will be transformed in-place
-				TransformBlock (res, full, BlockSizeByte, res, full);
+				InternalTransformBlock (res, full, BlockSizeByte, res, full);
 			}
 			else
-				TransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, outputOffset);
+				InternalTransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, outputOffset);
 
 			return res;
 		}
 
-		private byte[] FinalDecrypt (byte [] inputBuffer, int inputOffset, int inputCount) 
+		private byte[] FinalDecrypt (byte[] inputBuffer, int inputOffset, int inputCount) 
 		{
 			if ((inputCount % BlockSizeByte) > 0)
 				throw new CryptographicException ("Invalid input block size.");
@@ -280,7 +304,7 @@ namespace Mono.Security.Cryptography {
 			byte[] res = new byte [total];
 			int outputOffset = 0;
 			while (inputCount > 0) {
-				TransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, outputOffset);
+				InternalTransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, outputOffset);
 				inputOffset += BlockSizeByte;
 				outputOffset += BlockSizeByte;
 				inputCount -= BlockSizeByte;
@@ -307,10 +331,11 @@ namespace Mono.Security.Cryptography {
 				return new byte [0];
 		}
 
-		public virtual byte [] TransformFinalBlock (byte [] inputBuffer, int inputOffset, int inputCount) 
+		public virtual byte[] TransformFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount) 
 		{
 			if (m_disposed)
 				throw new ObjectDisposedException ("Object is disposed");
+			CheckInput (inputBuffer, inputOffset, inputCount);
 
 			if (encrypt)
 				return FinalEncrypt (inputBuffer, inputOffset, inputCount);

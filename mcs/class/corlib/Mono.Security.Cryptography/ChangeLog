@@ -1,6 +1,7 @@
 2004-05-27  Sebastien Pouliot  <sebastien@ximian.com>
 
-	* SymmetricTransform.cs: Fixed possible integer overflow.
+	* SymmetricTransform.cs: Fixed possible integer overflow. Added 
+	missing exception handling in TransformBlock and TransformFinalBlock.
 
 2004-05-01  Sebastien Pouliot  <sebastien@ximian.com>
 
