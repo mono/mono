@@ -1,3 +1,8 @@
+2002-06-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ListBox.cs: mono-stylized.
+	(AddAttributesToRender): call parent class method.
+
 2002-06-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Style.cs: fixed IsEmpty and Width.

@@ -247,7 +247,7 @@ protected virtual void AddStyleAttribute(string name, string value, HtmlTextWrit
 	RenderStyle[] tagRender;
 	RenderStyle beforeTag;
 
-	if (_styleCount > (int) _styleList.Length) {
+	if (_styleCount >= (int) _styleList.Length) {
 		RenderStyle[] rAttrArr = new RenderStyle[_styleList.Length * 2];
 		System.Array.Copy(_styleList, rAttrArr, (int) _styleList.Length);
 		_styleList = rAttrArr;
@@ -256,7 +256,7 @@ protected virtual void AddStyleAttribute(string name, string value, HtmlTextWrit
 	rAttr.name = name;
 	rAttr.value = value;
 	rAttr.key = key;
-	_styleCount++;
+	_styleList [_styleCount++] = rAttr;
 }
 
 public override void Close(){
@@ -294,7 +294,7 @@ protected string EncodeUrl(string url){
 
 protected virtual void FilterAttributes(){
 	int count = 0;
-	for(int i=0; i <= _styleCount; i++){
+	for(int i=0; i < _styleCount; i++){
 		RenderStyle rStyle = _styleList[i];
 		if (OnStyleAttributeRender(rStyle.name, rStyle.value, rStyle.key)) {
 			count++;
@@ -361,7 +361,7 @@ protected virtual string GetTagName(HtmlTextWriterTag tagKey){
 }
 
 protected bool IsAttributeDefined(HtmlTextWriterAttribute key){
-	for (int i=0; i <= _attrCount; i++) {
+	for (int i=0; i < _attrCount; i++) {
 		if (_attrList[i].key == key)
 			return true;
 	}
@@ -370,7 +370,7 @@ protected bool IsAttributeDefined(HtmlTextWriterAttribute key){
 
 protected bool IsAttributeDefined(HtmlTextWriterAttribute key, ref string value){
 	value = null;
-	for (int i=0; i <= _attrCount; i++) {
+	for (int i=0; i < _attrCount; i++) {
 		if (_attrList[i].key == key) {
 			value = _attrList[i].value;
 			return true;
@@ -380,7 +380,7 @@ protected bool IsAttributeDefined(HtmlTextWriterAttribute key, ref string value)
 }
 
 protected bool IsStyleAttributeDefined(HtmlTextWriterStyle key){
-	for (int i= 0; i <= _styleCount; i++) {
+	for (int i= 0; i < _styleCount; i++) {
 		if (_styleList[i].key == key)
 			return true;
 	}
@@ -389,7 +389,7 @@ protected bool IsStyleAttributeDefined(HtmlTextWriterStyle key){
 
 protected bool IsStyleAttributeDefined(HtmlTextWriterStyle key, ref string value){
 	value = null;
-	for( int i=0; i <= _styleCount; i++) {
+	for( int i=0; i < _styleCount; i++) {
 		if (_styleList[i].key == key) {
 			value = _styleList[i].value;
 			return true;
@@ -541,7 +541,7 @@ public virtual void RenderBeginTag(HtmlTextWriterTag tagKey){
 			writer.Write(EqualsChar);
 			writer.Write(DoubleQuoteChar);
 			RenderStyle rStyle;
-			for (int i=0; i <= _styleCount; i++) {
+			for (int i=0; i < _styleCount; i++) {
 				rStyle = _styleList[i];
 				writer.Write(rStyle.name);
 				writer.Write(StyleEqualsChar);

@@ -1,3 +1,8 @@
+2002-06-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlTextWriter.cs: fixed style attributes rendering (almost the same
+	bug as in regular attributes).
+
 2002-06-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs: implemented PreventAutoID.
