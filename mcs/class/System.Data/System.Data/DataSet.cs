@@ -269,6 +269,7 @@ namespace System.Data {
 		public void WriteXml(XmlWriter writer)
 		{
 			WriteXml( writer, XmlWriteMode.IgnoreSchema );
+			writer.Close ();
 		}
 
 		public void WriteXml(Stream stream, XmlWriteMode mode)
@@ -328,7 +329,7 @@ namespace System.Data {
 			writer.WriteEndElement();
 			
 			writer.WriteEndDocument();
-					
+			writer.Close ();					
 		}
 
 		public void WriteXmlSchema(Stream stream)
@@ -362,7 +363,7 @@ namespace System.Data {
 			DoWriteXmlSchema( writer );
 			
 			writer.WriteEndDocument();
-			
+			writer.Close ();
 		}
 
 		public void ReadXmlSchema(Stream stream)
@@ -380,13 +381,14 @@ namespace System.Data {
 		public void ReadXmlSchema(TextReader treader)
 		{
 			XmlReader reader = new XmlTextReader( treader );
-
 			ReadXmlSchema( reader );			
 		}
 
 		public void ReadXmlSchema(XmlReader reader)
 		{
-			DoReadXmlSchema( reader );
+			XmlSchemaMapper SchemaMapper = new XmlSchemaMapper (this);
+			SchemaMapper.Read (reader);
+			reader.Close ();
 		}
 
 		public XmlReadMode ReadXml (Stream stream)
@@ -578,7 +580,7 @@ namespace System.Data {
 						break;					
 				};
 		}
-
+		
 		private void DoWriteXmlSchema( XmlWriter writer )
 		{
 			//Create the root element and declare all the namespaces etc
@@ -743,139 +745,6 @@ namespace System.Data {
 			writer.WriteEndElement();
 		}
 
-		[MonoTODO]
-		private void DoReadXmlSchema(XmlReader reader)
-		{
-			DataTable dt = new DataTable ();
-
-			// FIXME: add OnXmlSchemaValidation when ready.
-			XmlSchema schema = XmlSchema.Read (reader, null);
-			XmlSchemaObjectCollection SimpleTypes = new XmlSchemaObjectCollection ();
-			XmlSchemaObjectCollection ComplexTypes = new XmlSchemaObjectCollection ();
-			
-			// Get types
-			for (int i = 0; i < schema.Items.Count; i++) {
-
-				XmlSchemaSimpleType simpleType = null;
-				XmlSchemaComplexType complexType = null;
-				if ((simpleType = schema.Items [i] as XmlSchemaSimpleType) != null) {
-					SimpleTypes.Add (simpleType);
-				} 
-				else if ((complexType = schema.Items [i] as XmlSchemaComplexType) != null) {
-					ComplexTypes.Add (complexType);
-				}
-			}
-			
-			// Get elements
-			XmlSchemaObjectCollection Elements = new XmlSchemaObjectCollection ();
-			for (int i = 0; i < schema.Items.Count; i++) {
-
-				XmlSchemaElement element = null;
-				XmlSchemaComplexType complexType = null;
-				if ((element = schema.Items [i] as XmlSchemaElement) != null) {
-
-				        // does element have type defined
-					if (!element.SchemaTypeName.IsEmpty) {
-						dataSetName = element.Name;
-						ReadTypeElement (element, ComplexTypes, ref dt);
-					}
-					else if ((complexType = element.SchemaType as XmlSchemaComplexType) != null) {
-						dataSetName = element.Name;
-						ReadColumnsFromSchema (complexType, ComplexTypes, ref dt);
-					}
-
-					Tables.Add (dt);
-				}
-			}		
-		}
-
-		[MonoTODO]
-		private bool ReadTypeElement (XmlSchemaElement el, XmlSchemaObjectCollection ComplexTypes, 
-					      ref DataTable datatable) 
-		{
-			/*
-			 * reads element's type
-			 */
-
-			bool found = false;
-			
-			if (ComplexTypes.Count <= 0)
-				return found;
-			
-			if (ComplexTypes[0] is XmlSchemaComplexType) {
-
-				foreach (XmlSchemaComplexType c in ComplexTypes) {
-					
-					if (el.SchemaTypeName.ToString () == c.Name.ToString ()) {
-						
-						found = true;
-						ReadColumnsFromSchema (c, ComplexTypes, ref datatable);
-					}								
-				}
-			} 
-
-			return found;
-		}
-
-		[MonoTODO]
-		private void ReadColumnsFromSchema (XmlSchemaComplexType c, XmlSchemaObjectCollection ComplexTypes, 
-						    ref DataTable datatable)
-		{
-			// FIXME: There is so much work to do. And i dont event know is this right way but here it is
-			XmlSchemaSequence seq = null;
-			XmlSchemaChoice choice = null;
-			ArrayList names = new ArrayList ();
-
-			if ((seq = c.Particle as XmlSchemaSequence) != null) {
-
-				for (int i = 0; i < seq.Items.Count; i++) {
-
-					XmlSchemaElement element = null;
-					if ((element = seq.Items [i] as XmlSchemaElement) != null) {
-
-						// first is table name and after that comes column names
-						if (datatable.TableName == string.Empty)
-							datatable.TableName = element.Name;						
-						else if (i + 1 > datatable.Columns.Count)
-							datatable.Columns.Add (element.Name);
-
-						ReadTypeElement (element, ComplexTypes, ref datatable);
-					}
-				}
-			}
-			else if ((choice = c.Particle as XmlSchemaChoice) != null) {
-
-				foreach (XmlSchemaObject obj in choice.Items) {
-					XmlSchemaElement e = null;
-
-					if ((e = obj as XmlSchemaElement) != null) {
-
-						
-						// if element has type we got to find out what is it
-						if (e.SchemaType != null) {
-							datatable.TableName = e.Name;
-							ReadColumnsFromSchema (e.SchemaType as XmlSchemaComplexType, ComplexTypes, 
-								       ref datatable);
-						}
-						else if (!e.RefName.IsEmpty) {
-							
-							// FIXME: this is wrong way to do. We should find element which is
-							// referenced by e. I do that later
-							dataSetName = e.Name;
-							datatable.TableName = e.RefName.ToString ();
-						}
-					}
-				}
-			}
-		}
-
-		#endregion
-
-		[MonoTODO]
-		private void OnXmlSchemaValidation (object sender, ValidationEventArgs args)
-		{
-		}
-	
 		///<summary>
 		/// Helper function to split columns into attributes elements and simple
 		/// content
@@ -921,5 +790,7 @@ namespace System.Data {
 			//TODO - 
 			return "xs:string";
 		}
+
+		#endregion //Private Xml Serialisation
 	}
 }

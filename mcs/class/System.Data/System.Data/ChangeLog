@@ -1,3 +1,12 @@
+2003-01-01  Ville Palo <vi64pa@koti.soon.fi>
+
+	* DataSet.cs: 
+	  - Added XmlReader and XmlWriter Closing.
+	  - Moved ReadXmlSchema stuff to new internal class XmlSchemaMapper.
+	* XmlSchemaMapper.cs
+	  - Much better way IMHO  to map xmlschema than the old one in 
+	    DataSet.cs. Its, more flexible, cleaner, ...
+	   		
 2002-12-29  Ville Palo <vi64pa@koti.soon.fi>
 
 	* XmlDataLoader.cs: Reading diffgrams.
