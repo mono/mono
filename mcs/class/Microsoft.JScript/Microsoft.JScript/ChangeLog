@@ -1,3 +1,7 @@
+2004-08-26  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* ArrayPrototype.cs: mark method as built in.
+
 2004-08-25  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* expression.cs: made Binary is IAssignable, added fields assign
