@@ -1,3 +1,7 @@
+2004-10-12 Sanjay Gupta <gsanjay@novell.com>
+
+	* AccessDataSource.cs: Updated.
+
 2004-10-08 Sanjay Gupta <gsanjay@novell.com>
 
 	* ValidatedControlConverter.cs: Updated.
