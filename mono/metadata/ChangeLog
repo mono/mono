@@ -1,3 +1,12 @@
+2004-11-26  Martin Baulig  <martin@ximian.com>
+
+	* class.c (inflate_generic_signature): Correctly compute
+	`res->has_type_parameters'.
+	(mono_class_vtable): Use the `has_type_parameters' flag to
+	determine whether we're a generic method.
+
+	* metadata.c (mono_metadata_parse_method_signature_full): Likewise.
+
 2004-11-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* object.c (mono_runtime_run_main): Fix a small memory leak.
