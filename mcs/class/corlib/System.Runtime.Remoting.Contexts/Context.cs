@@ -3,13 +3,15 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
-//   Lluis Sanchez Gual (lsg@ctv.es)
+//   Lluis Sanchez Gual (lluis@ideary.com)
 //   Patrik Torstensson
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
 using System.Collections;
+using System.Threading;
+using System.Runtime.Remoting;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Lifetime;
 
@@ -17,18 +19,24 @@ namespace System.Runtime.Remoting.Contexts {
 
 	public class Context 
 	{
-		int domain_id;
+		public int domain_id;
 		int context_id;
 		int process_id;
-		
+
 		static Context default_context;
 		static ArrayList domain_contexts = new ArrayList();
 
 		// Default server context sink chain
-		static IMessageSink default_context_sink;
+		static IMessageSink default_server_context_sink;
+
+		// Default client context sink chain
+		static IMessageSink default_client_context_sink;
 
 		// The sink chain that has to be used by all calls entering the context
 		IMessageSink server_context_sink_chain = null;
+
+		// The sink chain that has to be used by all calls exiting the context
+		IMessageSink client_context_sink_chain = null;
 
 		ArrayList context_properties;
 		bool frozen;
@@ -37,7 +45,9 @@ namespace System.Runtime.Remoting.Contexts {
 		static Context ()
 		{
 			// Creates the default context sink chain
-			default_context_sink = new ServerContextTerminatorSink();
+
+			default_server_context_sink = new ServerContextTerminatorSink();
+			default_client_context_sink = new ClientContextTerminatorSink();
 
 			default_context = new Context ();
 			default_context.frozen = true;
@@ -45,6 +55,7 @@ namespace System.Runtime.Remoting.Contexts {
 		
 		public Context ()
 		{
+			domain_id = Thread.GetDomainID();
 			context_id = global_count++;
 		}
 
@@ -93,11 +104,20 @@ namespace System.Runtime.Remoting.Contexts {
 		{
 			if (server_context_sink_chain == null)
 			{
-				server_context_sink_chain = default_context_sink;
+				server_context_sink_chain = default_server_context_sink;
 			}
 			return server_context_sink_chain;
 		}
 
+		[MonoTODO("Create sinks from contributor properties")]
+		internal IMessageSink GetClientContextSinkChain()
+		{
+			if (client_context_sink_chain == null)
+			{
+				client_context_sink_chain = default_client_context_sink;
+			}
+			return client_context_sink_chain;
+		}
 
 		[MonoTODO("Create object sinks from contributor properties")]
 		internal IMessageSink CreateServerObjectSinkChain (MarshalByRefObject obj)
@@ -105,6 +125,27 @@ namespace System.Runtime.Remoting.Contexts {
 			IMessageSink objectSink = new StackBuilderSink(obj);
 			objectSink = new ServerObjectTerminatorSink(objectSink);
 			return new Lifetime.LeaseSink(objectSink);
+		}
+
+		[MonoTODO("Get sink from properties")]
+		internal IMessageSink CreateEnvoySink (MarshalByRefObject serverObject)
+		{
+			return EnvoyTerminatorSink.Instance;
+		}
+
+		[MonoTODO("Notify dynamic sinks")]
+		internal static Context SwitchToContext (Context newContext)
+		{
+			return AppDomain.InternalSetContext (newContext);
+		}
+
+		[MonoTODO("Check type properties")]
+		internal static Context GetContextForType (Type type)
+		{
+			// This method returns a context for a new instace of the provided type.
+			// It can be the current context or a new one.
+
+			return default_context;
 		}
 	}
 }

@@ -1,3 +1,9 @@
+2003-02-18 Lluis Sanchez Gual <lluis@ideary.com>
+	
+	* Contexts.cs : Added methods for getting the client context sink chain and the
+	  envoy sink chain. Also added stub methods for context switch and creation.
+	* CrossContextChannel.cs : Added.
+
 2003-02-03 Patrik Torstensson
 	
 	* Contexts.cs : Changed order of fields to match the runtime implementation.
