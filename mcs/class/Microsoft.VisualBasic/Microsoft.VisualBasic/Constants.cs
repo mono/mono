@@ -36,6 +36,8 @@ using System;
 namespace Microsoft.VisualBasic {
 	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
 	sealed public class Constants {
+		private Constants () {}
+
 		// Declarations
 		public const System.Int32 vbObjectError = (System.Int32)(-2147221504);
 		public const System.String vbCrLf = "\r\n";
