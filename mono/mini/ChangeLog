@@ -1,3 +1,7 @@
+2004-09-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* tramp-amd64.c mini-amd64.h: Add support for MONO_ARCH_HAVE_INVALIDATE_METHOD.
+
 2004-09-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* cpu-amd64.md: Fix bug in previous patch.
