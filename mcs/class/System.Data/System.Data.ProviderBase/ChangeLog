@@ -1,0 +1,3 @@
+2003-12-19  Tim Coleman <tim@timcoleman.com>
+	* DbCommandBase.cs:
+		New stub added
