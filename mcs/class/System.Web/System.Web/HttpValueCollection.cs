@@ -100,8 +100,6 @@ namespace System.Web
 			string [] arrValues = sData.Split (new char [] {'&'});
 			foreach (string sValue in arrValues) {
 				eq = sValue.IndexOf ('=');
-				if (eq == 0)
-					throw new InvalidOperationException ("Data is malformed");
 
 				if (eq == -1) {
 					k = HttpUtility.UrlDecode (sValue.Trim (), encoding);
@@ -110,9 +108,6 @@ namespace System.Web
 				}
 
 				k = sValue.Substring (0, eq).Trim ();
-				if (k.Length == 0)
-					throw new InvalidOperationException ("Data is malformed");
-
 				v = String.Empty;
 				if (eq + 1 < sValue.Length) {
 					v = sValue.Substring (eq + 1).Trim ();

@@ -1,3 +1,9 @@
+2003-12-04  Jackson Harper <jackson@ximian.com>
+
+	* HttpValueCollection.cs: Allow blank value names. Posting
+	<blank>=SomeValue is valid. And occurs if a radio button does
+	not have its name set.
+	
 2003-12-03  Jackson Harper <jackson@ximian.com>
 
 	* HttpResponse.cs: Actually apply an app path modifier in
