@@ -94,11 +94,10 @@ namespace System {
 			if (inArray == null)
 				throw new ArgumentNullException();
 			
-			if ((offset < 0) || (offset + length > inArray.Length))
+			if ((offset < 0) || (length < 0) || (offset + length > inArray.Length))
 				throw new ArgumentOutOfRangeException();
 			
-			int len = inArray.Length;
-			if (len < 4 || len % 4 != 0)
+			if (length < 4 || length % 4 != 0)
 				throw new FormatException();
 				
 			byte[] inArr = new System.Text.UTF8Encoding().GetBytes(inArray, offset, length);
