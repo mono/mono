@@ -102,6 +102,26 @@ public class DateTimeTest : Assertion
 		DateTime t3 = new DateTime (2002,2,25,5,25,13,8);
 		AssertEquals("A11", myTicks[2], t3.Ticks);
 	}
+
+	[Test]
+	public void Constructor_Max () 
+	{
+		AssertEquals ("Max", 3155378975999990000, new DateTime (9999, 12, 31, 23, 59, 59, 999).Ticks);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void Constructor_Milliseconds_Negative () 
+	{
+		new DateTime (9999, 12, 31, 23, 59, 59, -1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void Constructor_Milliseconds_1000 () 
+	{
+		new DateTime (9999, 12, 31, 23, 59, 59, 1000);
+	}
 	
 	[Test]
 	public void Fields ()
@@ -773,6 +793,135 @@ public class DateTimeTest : Assertion
 	public void ToFileTimeUtc_Negative () 
 	{
 		DateTime.FromFileTimeUtc (-1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidCastException))]
+	public void IConvertible_ToType_Boolean () 
+	{
+		((IConvertible)DateTime.Now).ToType (typeof (bool), null);
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidCastException))]
+	public void IConvertible_ToType_Byte () 
+	{
+		((IConvertible)DateTime.Now).ToType (typeof (byte), null);
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidCastException))]
+	public void IConvertible_ToType_Char () 
+	{
+		((IConvertible)DateTime.Now).ToType (typeof (char), null);
+	}
+
+	[Test]
+	public void IConvertible_ToType_DateTime () 
+	{
+		DateTime dt = DateTime.Now;
+		DateTime dt2 = (DateTime) ((IConvertible)dt).ToType (typeof (DateTime), null);
+		Assert ("Object", dt.Equals (dt2));
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidCastException))]
+	public void IConvertible_ToType_DBNull () 
+	{
+		((IConvertible)DateTime.Now).ToType (typeof (DBNull), null);
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidCastException))]
+	public void IConvertible_ToType_Decimal () 
+	{
+		((IConvertible)DateTime.Now).ToType (typeof (decimal), null);
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidCastException))]
+	public void IConvertible_ToType_Double () 
+	{
+		((IConvertible)DateTime.Now).ToType (typeof (double), null);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void IConvertible_ToType_Empty () 
+	{
+		((IConvertible)DateTime.Now).ToType (null, null);
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidCastException))]
+	public void IConvertible_ToType_Int16 () 
+	{
+		((IConvertible)DateTime.Now).ToType (typeof (short), null);
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidCastException))]
+	public void IConvertible_ToType_Int32 () 
+	{
+		((IConvertible)DateTime.Now).ToType (typeof (int), null);
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidCastException))]
+	public void IConvertible_ToType_Int64 () 
+	{
+		((IConvertible)DateTime.Now).ToType (typeof (long), null);
+	}
+
+	[Test]
+	public void IConvertible_ToType_Object () 
+	{
+		DateTime dt = DateTime.Now;
+		object o = ((IConvertible)dt).ToType (typeof (object), null);
+		Assert ("Object", dt.Equals (o));
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidCastException))]
+	public void IConvertible_ToType_SByte () 
+	{
+		((IConvertible)DateTime.Now).ToType (typeof (sbyte), null);
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidCastException))]
+	public void IConvertible_ToType_Single () 
+	{
+		((IConvertible)DateTime.Now).ToType (typeof (float), null);
+	}
+
+	[Test]
+	public void IConvertible_ToType_String () 
+	{
+		DateTime dt = DateTime.Now;
+		string s = (string) ((IConvertible)dt).ToType (typeof (string), null);
+		AssertEquals ("String", dt.ToString (), s);
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidCastException))]
+	public void IConvertible_ToType_UInt16 () 
+	{
+		((IConvertible)DateTime.Now).ToType (typeof (ushort), null);
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidCastException))]
+	public void IConvertible_ToType_UInt32 () 
+	{
+		((IConvertible)DateTime.Now).ToType (typeof (uint), null);
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidCastException))]
+	public void IConvertible_ToType_UInt64 () 
+	{
+		((IConvertible)DateTime.Now).ToType (typeof (ulong), null);
 	}
 }
 
