@@ -5,6 +5,11 @@
 
 2004-03-13  Miguel de Icaza  <miguel@ximian.com>
 
+	* convert.cs (ExplicitConversion): We were reporting an error on
+	certain conversions (object_type source to a value type, when the
+	expression was `null') before we had a chance to pass it through
+	the user defined conversions.
+
 	* driver.cs: Replace / and \ in resource specifications to dots.
 	Fixes 50752
 
