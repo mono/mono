@@ -23,6 +23,9 @@
 //	Peter Bartok	pbartok@novell.com
 //
 // $Log: RadioButton.cs,v $
+// Revision 1.5  2004/09/30 17:34:08  jackson
+// Fix typo. Patch by John BouAntoun.
+//
 // Revision 1.4  2004/09/28 18:44:25  pbartok
 // - Streamlined Theme interfaces:
 //   * Each DrawXXX method for a control now is passed the object for the
@@ -136,7 +139,7 @@ namespace System.Windows.Forms {
 
 			set {
 				if (value != appearance) {
-					value = appearance;
+					appearance = value;
 					if (AppearanceChanged != null) {
 						AppearanceChanged(this, EventArgs.Empty);
 					}
