@@ -208,6 +208,10 @@ namespace System.Windows.Forms {
 
 				DisplayHandle=display_handle;
 
+				// We need to tell System.Drawing our DisplayHandle. FromHdcInternal has
+				// been hacked to do this for us.
+				Graphics.FromHdcInternal (DisplayHandle);
+
 				// Create a few things
 				key_state = Keys.None;
 				mouse_state = MouseButtons.None;
