@@ -101,6 +101,7 @@ namespace System.Web.Services.Description {
 			get { throw new NotImplementedException (); }
 		}
 
+		[XmlIgnore]
 		public ServiceDescriptionCollection ServiceDescriptions {
 			get { 
 				if (serviceDescriptions == null) 
