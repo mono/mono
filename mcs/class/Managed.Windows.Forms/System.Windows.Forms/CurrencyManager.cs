@@ -79,6 +79,7 @@ namespace System.Windows.Forms {
 					return;
 				listposition = value;
 				OnCurrentChanged (EventArgs.Empty);
+				OnPositionChanged (EventArgs.Empty);
 			}
 		}
 
@@ -147,6 +148,13 @@ namespace System.Windows.Forms {
 
 			if (ItemChanged != null)
 				ItemChanged (this, e);
+		}
+
+		protected virtual void OnPositionChanged (EventArgs e)
+		{
+			if (onPositionChangedHandler == null)
+				return;
+			onPositionChangedHandler (this, e);
 		}
 
 		protected internal override string GetListName (ArrayList accessors)
