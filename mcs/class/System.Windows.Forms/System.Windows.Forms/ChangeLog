@@ -229,6 +229,11 @@ Added delegates. All delegates in System.Windows.Forms done
 * MonthCalendar.HitTestInfo.cs needs to be incorporated into MonthCalendar.
 * Menu.MenuItemCollection.cs needs to be incorporated into Menu.cs.
 
+2002-5-27 DennisHayes <dennish@raytek.com>
+		Check in for Paul Osman <paul.osman@sympatico.ca>
+* Panel.cs
+* New class, Stubbed and commented out
+
 
 
 
