@@ -1,5 +1,8 @@
 2004-01-19  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-x86.c: Under windows, the default pinvoke calling convention is
+	stdcall. Fixes #52834.
+
 	* mini.c (optimize_branches): Add an upper bound to the number of
 	iterations to prevent infinite loops on strange loops. Fixes #53003.
 
