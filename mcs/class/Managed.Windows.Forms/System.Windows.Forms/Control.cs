@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.54 $
+// $Revision: 1.55 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.55  2004/09/01 10:20:57  jordi
+// fires OnFontChanged event
+//
 // Revision 1.54  2004/09/01 01:41:31  pbartok
 // - Added firing of BackColorChanged event
 // - Added TopLevelControl property
@@ -1026,7 +1029,11 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				font=value;
+				if (font == value)
+					return;
+
+				font = value;	
+				OnFontChanged (EventArgs.Empty);				
 				Refresh();
 			}
 		}
