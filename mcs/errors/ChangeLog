@@ -1,6 +1,8 @@
 2005-01-05  Duncan Mak  <duncan@ximian.com>
-
-	* mcs-expect-no-error: Removed cs0541.cs.
+ 
+	* mcs-expect-no-error: Removed cs0541.cs, cs1040.cs.
+        
+ 	* cs1040-2.cs: Added to track bug #56460.        
 	
 2004-12-29  Duncan Mak  <duncan@ximian.com>
 

@@ -1955,6 +1955,7 @@ namespace Mono.CSharp
 							if (d == '*' && peekChar () == '/'){
 								getChar ();
 								col++;
+								tokens_seen = true;
 								break;
 							}
 							if (docAppend)
