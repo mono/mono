@@ -1,3 +1,10 @@
+2004-03-04 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsServerHelloDone.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Server/TlsServerHelloDone.cs:
+
+        - Fixed message type.
+
 2004-02-26 Carlos Guzman Alvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls/HandshakeState.cs:
