@@ -1,4 +1,8 @@
 
+Thu Jul 17 17:28:27 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* MonoType.cs: use an icall for IsPrimitiveImpl ().
+
 Thu Jul 17 15:23:17 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* Guid.cs: faster ToString ().

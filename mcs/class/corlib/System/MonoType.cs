@@ -267,13 +267,8 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		protected extern override bool IsPointerImpl ();
 
-		protected override bool IsPrimitiveImpl ()
-		{
-			MonoTypeInfo info;
-
-			get_type_info (_impl, out info);
-			return info.isprimitive;
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		protected extern override bool IsPrimitiveImpl ();
 
 		protected override bool IsValueTypeImpl ()
 		{
