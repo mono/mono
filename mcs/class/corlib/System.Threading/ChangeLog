@@ -1,3 +1,9 @@
+
+Thu Jan 13 18:15:32 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* Thread.cs: implement stacksize and parameterized
+	start functionality (requires matching runtime).
+
 2005-01-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ThreadAbortException.cs: added private serialization .ctor.

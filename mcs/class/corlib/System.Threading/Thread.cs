@@ -51,7 +51,8 @@ namespace System.Threading
 {
 	public sealed class Thread
 	{
-		#region Sync with object.h
+		#region Sync with metadata/object-internals.h
+		int lock_thread_id;
 		// stores a thread handle
 		private IntPtr system_thread_handle;
 		
@@ -75,6 +76,10 @@ namespace System.Threading
 		private IntPtr static_data;
 		private IntPtr jit_data;
 		private IntPtr lock_data;
+		IntPtr unused1;
+		IntPtr unused2;
+		int stack_size;
+		object start_obj;
 		private IntPtr appdomain_refs;
 		private bool interruption_requested;
 		private IntPtr suspend_event;
@@ -86,7 +91,8 @@ namespace System.Threading
 		private int serialized_ui_culture_info_len;
 		#endregion
 
-		private ThreadStart threadstart;
+		// can be both a ThreadSart and a ParameterizedThreadStart
+		private MulticastDelegate threadstart;
 		private string thread_name=null;
 		
 		private IPrincipal _principal;
@@ -285,7 +291,7 @@ namespace System.Threading
 
 		// Returns the system thread handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern IntPtr Thread_internal(ThreadStart start);
+		private extern IntPtr Thread_internal (MulticastDelegate start);
 
 		public Thread(ThreadStart start) {
 			if(start==null) {
@@ -810,7 +816,6 @@ namespace System.Threading
 #endif
 
 #if NET_2_0
-		[MonoTODO ("stack size is ignored")]
 		public Thread (ThreadStart start, int maxStackSize)
 		{
 			if (start == null)
@@ -818,19 +823,18 @@ namespace System.Threading
 			if (maxStackSize < 131072)
 				throw new ArgumentException ("< 128 kb", "maxStackSize");
 
-			threadstart=start;
+			threadstart = start;
+			stack_size = maxStackSize;
 		}
 
-		[MonoTODO]
 		public Thread (ParameterizedThreadStart start)
 		{
 			if (start == null)
 				throw new ArgumentNullException ("start");
 
-			throw new NotImplementedException ();
+			threadstart = start;
 		}
 
-		[MonoTODO]
 		public Thread (ParameterizedThreadStart start, int maxStackSize)
 		{
 			if (start == null)
@@ -838,7 +842,8 @@ namespace System.Threading
 			if (maxStackSize < 131072)
 				throw new ArgumentException ("< 128 kb", "maxStackSize");
 
-			throw new NotImplementedException ();
+			threadstart = start;
+			stack_size = maxStackSize;
 		}
 
 		[MonoTODO]
@@ -924,10 +929,10 @@ namespace System.Threading
 			return thread_id;
 		}
 
-		[MonoTODO]
 		public void Start (object parameter)
 		{
-			throw new NotImplementedException ();
+			start_obj = parameter;
+			Start ();
 		}
 #else
 		internal CompressedStack GetCompressedStack ()
