@@ -1173,7 +1173,8 @@ namespace Mono.CSharp
 				MethodInfo ep = RootContext.EntryPoint;
 
 				if (ep == null){
-					Report.Error (5001, "Program " + output_file +
+					if (Report.Errors == 0)
+						Report.Error (5001, "Program " + output_file +
 							      " does not have an entry point defined");
 					return false;
 				}

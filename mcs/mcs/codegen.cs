@@ -337,8 +337,11 @@ namespace Mono.CSharp {
 			
 			if (parent != null){
 				// Can only be null for the ResolveType contexts.
-			ContainerType = parent.TypeBuilder;
-			InUnsafe = ((parent.ModFlags | code_flags) & Modifiers.UNSAFE) != 0;
+				ContainerType = parent.TypeBuilder;
+				if (parent.UnsafeContext)
+					InUnsafe = true;
+				else
+					InUnsafe = (code_flags & Modifiers.UNSAFE) != 0;
 			}
 			OnlyLookupTypes = false;
 			loc = l;

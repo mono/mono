@@ -1,5 +1,15 @@
 2002-08-08  Martin Baulig  <martin@gnome.org>
 
+	* driver.cs (Driver.MainDriver): Only report an error CS5001
+	if there were no compilation errors.
+
+	* codegen.cs (EmitContext.EmitContext): Use the DeclSpace's
+	`UnsafeContext' property to determine whether the parent is in
+	unsafe context rather than checking the parent's ModFlags:
+	classes nested in an unsafe class are unsafe as well.
+
+2002-08-08  Martin Baulig  <martin@gnome.org>
+
 	* statement.cs (UsageVector.MergeChildren): Distinguish between
 	`Breaks' and `Returns' everywhere, don't set `Breaks' anymore if
 	we return.  Added test17() and test18() to test-154.cs.
