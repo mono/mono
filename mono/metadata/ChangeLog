@@ -1,3 +1,8 @@
+2003-11-13  Aleksey Demakov  <avd@openlinksw.com>
+
+	* assembly.c (mono_assembly_load): Fixed problem finding mscorlib.dll
+	when MONO_PATH is set but doesn't contain the install dir.
+
 2003-11-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c:
