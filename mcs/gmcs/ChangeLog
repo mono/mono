@@ -1,5 +1,11 @@
 2004-09-24  Martin Baulig  <martin@ximian.com>
 
+	* convert.cs (Convert.ImplicitReferenceConversion): Added implicit
+	type parameter conversions for type parameters which are known to
+	be reference types.
+
+2004-09-24  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs (GenericConstraints): Added `IsReferenceType' and
 	`IsValueType' properties.
 

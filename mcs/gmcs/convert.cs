@@ -170,7 +170,7 @@ namespace Mono.CSharp {
 			    target_type == TypeManager.delegate_type)
 				return new EmptyCast (expr, target_type);
 					
-				// from any array-type or delegate type into System.ICloneable.
+			// from any array-type or delegate type into System.ICloneable.
 			if (expr_type.IsArray ||
 			    expr_type == TypeManager.delegate_type || TypeManager.IsDelegateType (expr_type))
 				if (target_type == TypeManager.icloneable_type)
@@ -179,6 +179,22 @@ namespace Mono.CSharp {
 			// from a generic type definition to a generic instance.
 			if (TypeManager.IsEqualGenericType (expr_type, target_type))
 				return new EmptyCast (expr, target_type);
+
+			if (expr_type.IsGenericParameter) {
+				GenericConstraints gc = TypeManager.GetTypeParameterConstraints (expr_type);
+
+				// We're converting from a type parameter which is known to be a reference type.
+				if ((gc != null) && gc.IsReferenceType) {
+					if (gc.HasClassConstraint &&
+					    TypeManager.IsSubclassOf (gc.ClassConstraint, target_type))
+						return new EmptyCast (expr, target_type);
+
+					foreach (Type t in gc.InterfaceConstraints) {
+						if (TypeManager.IsSubclassOf (t, target_type))
+							return new EmptyCast (expr, target_type);
+					}
+				}
+			}
 				
 			return null;
 		}
@@ -259,6 +275,22 @@ namespace Mono.CSharp {
 			// from a generic type definition to a generic instance.
 			if (TypeManager.IsEqualGenericType (expr_type, target_type))
 				return true;
+
+			if (expr_type.IsGenericParameter) {
+				GenericConstraints gc = TypeManager.GetTypeParameterConstraints (expr_type);
+
+				// We're converting from a type parameter which is known to be a reference type.
+				if ((gc != null) && gc.IsReferenceType) {
+					if (gc.HasClassConstraint &&
+					    TypeManager.IsSubclassOf (gc.ClassConstraint, target_type))
+						return true;
+
+					foreach (Type t in gc.InterfaceConstraints) {
+						if (TypeManager.IsSubclassOf (t, target_type))
+							return true;
+					}
+				}
+			}
 
 			return false;
 		}
