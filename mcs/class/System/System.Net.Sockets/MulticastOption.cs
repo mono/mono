@@ -23,12 +23,19 @@ namespace System.Net.Sockets
 		protected IPAddress local;
 
 		public MulticastOption (IPAddress grp)
+			: this (grp, IPAddress.Any)
 		{
 			group = grp;
 		}
 
 		public MulticastOption (IPAddress grp, IPAddress addr)
 		{
+			if (grp == null)
+				throw new ArgumentNullException ("grp");
+
+			if (addr == null)
+				throw new ArgumentNullException ("addr");
+
 			group = grp;
 			local = addr;
 		}

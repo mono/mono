@@ -1,3 +1,7 @@
+2003-05-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MulticastOption.cs: patch by Jerome Laban included in bug #42393.
+
 2003-05-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs:
