@@ -1,0 +1,10 @@
+2002-11-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ChangeLog:
+	* ElapsedEventArgs.cs:
+	* ElapsedEventHandler.cs:
+	* Timer.cs:
+	* TimersDescriptionAttribute.cs: New files.
+
+	Don't use timers yet. If you do, your program will never end.
+
