@@ -1,3 +1,8 @@
+2004-08-11  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (TypeContainer.DefineType): Create the TypeBuilder
+	before resolving the base classes.
+
 2004-08-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Makefile: install .mdb file too.

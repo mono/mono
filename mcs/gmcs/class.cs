@@ -1007,6 +1007,65 @@ namespace Mono.CSharp {
 
 			ec = new EmitContext (this, Mono.CSharp.Location.Null, null, null, ModFlags);
 
+			TypeAttributes type_attributes = TypeAttr;
+
+			if (IsTopLevel){
+				if (TypeManager.NamespaceClash (Name, Location)) {
+					error = true;
+					return null;
+				}
+
+				ModuleBuilder builder = CodeGen.Module.Builder;
+				TypeBuilder = builder.DefineType (
+					Name, type_attributes, null, null);
+			} else {
+				TypeBuilder builder = Parent.DefineType ();
+				if (builder == null) {
+					error = true;
+					return null;
+				}
+				
+				TypeBuilder = builder.DefineNestedType (
+					MemberName.Basename, type_attributes, null, null);
+			}
+
+			TypeManager.AddUserType (Name, TypeBuilder, this);
+
+			if (IsGeneric) {
+				foreach (TypeParameter type_param in TypeParameters) {
+					if (!type_param.Resolve (this)) {
+						error = true;
+						return null;
+					}
+				}
+
+				CurrentType = new ConstructedType (
+					Name, TypeParameters, Location);
+
+				string[] param_names = new string [TypeParameters.Length];
+				for (int i = 0; i < TypeParameters.Length; i++)
+					param_names [i] = TypeParameters [i].Name;
+
+				GenericTypeParameterBuilder[] gen_params;
+				
+				gen_params = TypeBuilder.DefineGenericParameters (param_names);
+
+				for (int i = 0; i < gen_params.Length; i++)
+					TypeParameters [i].Define (gen_params [i]);
+			}
+
+			if (IsGeneric) {
+				foreach (TypeParameter type_param in TypeParameters)
+					if (!type_param.DefineType (ec))
+						error = true;
+
+				if (error)
+					return null;
+			}
+
+			if ((Kind == Kind.Struct) && TypeManager.value_type == null)
+				throw new Exception ();
+
 			TypeExpr[] iface_exprs = GetClassBases (out parent_type, out error); 
 			if (error)
 				return null;
@@ -1030,19 +1089,6 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (IsGeneric) {
-				foreach (TypeParameter type_param in TypeParameters)
-					if (!type_param.Resolve (this)) {
-						error = true;
-						return null;
-					}
-			}
-			
-			if ((Kind == Kind.Struct) && TypeManager.value_type == null)
-				throw new Exception ();
-
-			TypeAttributes type_attributes = TypeAttr;
-
 			Type ptype;
 			ConstructedType constructed = parent_type as ConstructedType;
 			if ((constructed == null) && (parent_type != null))
@@ -1050,62 +1096,16 @@ namespace Mono.CSharp {
 			else
 				ptype = null;
 
-			if (IsTopLevel){
-				if (TypeManager.NamespaceClash (Name, Location)) {
-					error = true;
-					return null;
-				}
-
-				ModuleBuilder builder = CodeGen.Module.Builder;
-				TypeBuilder = builder.DefineType (
-					Name, type_attributes, ptype, null);
-			} else {
-				TypeBuilder builder = Parent.DefineType ();
-				if (builder == null) {
-					error = true;
-					return null;
-				}
-				
-				TypeBuilder = builder.DefineNestedType (
-					MemberName.Basename, type_attributes, ptype, null);
-			}
-
-			TypeManager.AddUserType (Name, TypeBuilder, this);
-
-			if (IsGeneric) {
-				CurrentType = new ConstructedType (
-					Name, TypeParameters, Location);
-
-				string[] param_names = new string [TypeParameters.Length];
-				for (int i = 0; i < TypeParameters.Length; i++)
-					param_names [i] = TypeParameters [i].Name;
-
-				GenericTypeParameterBuilder[] gen_params;
-				
-				gen_params = TypeBuilder.DefineGenericParameters (param_names);
-
-				for (int i = 0; i < gen_params.Length; i++)
-					TypeParameters [i].Define (gen_params [i]);
-			}
-
 			if (constructed != null) {
 				ptype = constructed.ResolveType (ec);
 				if (ptype == null) {
 					error = true;
 					return null;
 				}
+			}
 
+			if (ptype != null)
 				TypeBuilder.SetParent (ptype);
-			}
-
-			if (IsGeneric) {
-				foreach (TypeParameter type_param in TypeParameters)
-					if (!type_param.DefineType (ec))
-						error = true;
-
-				if (error)
-					return null;
-			}
 
 			//
 			// Structs with no fields need to have at least one byte.
