@@ -104,6 +104,9 @@ namespace Mono.Security.Protocol.Tls
 			set { throw new NotSupportedException(); }
 		}
 
+		protected Stream InputBuffer {
+			get { return inputBuffer; }
+		}
 		#endregion
 
 		#region Security Properties
