@@ -1,3 +1,12 @@
+2004-09-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.h (MonoJitDynamicMethodInfo): New structure, extension of 
+	MonoJitInfo for dynamic methods.
+
+	* mini.c: Rename trampoline_hash_mutex to jit_mutex.
+
+	* mini.c: Add support for freeing JIT data for dynamic methods.
+	
 2004-09-01  Martin Baulig  <martin@ximian.com>
 
 	* mini-x86.c (is_regsize_var): Added support for generic
