@@ -1,4 +1,11 @@
 
+2004-02-25  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+
+	* Npgsql/NpgsqlDataReader.cs: Fixed a OutOfBoundsException when trying to access an element after have read all elements. Now it throws an InvalidOperationException.
+
+	* Npgsql/NpgsqlConnection.cs: Fixed Unicode handling. This also fixes bug 695 in gborg. Thanks Sami Kuhmonen <feenix@iqs.fi> for the patch.
+
+ 
 2004-02-16  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 
         * Npgsql/NpgsqlDataReader.cs: Removed a log line which reduced the conne
