@@ -173,6 +173,10 @@ namespace Microsoft.JScript {
 				t = typeof (NumericBinary);
 				local_builder = ig.DeclareLocal (t);
 				ig.Emit (OpCodes.Ldc_I4_S, (byte) 65);
+			} else if (current_op == JSToken.Modulo) {
+				t = typeof (NumericBinary);
+				local_builder = ig.DeclareLocal (t);
+				ig.Emit (OpCodes.Ldc_I4_S, (byte) 66);
 			} else if (current_op == JSToken.BitwiseOr) {
 				t = typeof (BitwiseBinary);
 				local_builder = ig.DeclareLocal (t);
