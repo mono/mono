@@ -282,7 +282,7 @@ namespace System {
 		}
 
 		internal static int _CompareChar (char chrA, char chrB, CultureInfo culture,
-						  _StringCompareMode mode)
+						  int mode)
 		{
 			int result = 0;
 
@@ -318,7 +318,7 @@ namespace System {
 		[MonoTODO]
 		internal static int _Compare (string strA, int indexA, string strB, int indexB,
 					      int length, CultureInfo culture,
-					      _StringCompareMode mode)
+					      int mode)
 
 		{
 			int i;
