@@ -333,6 +333,87 @@ namespace MonoTests.System.Data
                         AssertEquals ("#A44", table.Rows [0], (tableC.Rows [0]).GetParentRow (dr));
                 } 
 
+				[Test]
+                public void ChildRowTest ()
+                {
+
+                        //Clear all existing values from table
+                        for (int i = 0; i < table.Rows.Count; i++) {
+                                        table.Rows [i].Delete ();
+                        }
+                        table.AcceptChanges ();
+                        row = table.NewRow ();
+                        row ["FName"] = "My FName";
+                        row ["Id"] = 0;
+                        table.Rows.Add (row);
+                                                                                                    
+                        DataTable tableC = new DataTable ("Child");
+                        DataColumn colC;
+                        DataRow rowC;
+                                                                                                    
+
+                        colC = new DataColumn ();
+                        colC.DataType = Type.GetType ("System.Int32");
+                        colC.ColumnName = "Id";
+                        colC.AutoIncrement = true;
+                        tableC.Columns.Add (colC);
+                                                                                                    
+                        colC = new DataColumn ();
+                        colC.DataType = Type.GetType ("System.String");
+                        colC.ColumnName = "Name";
+                        tableC.Columns.Add (colC);
+                                                                                                    
+                        rowC = tableC.NewRow ();
+                        rowC ["Name"] = "My FName";
+                        tableC.Rows.Add (rowC);
+                        DataSet ds = new DataSet ();
+                        ds.Tables.Add (table);
+                        ds.Tables.Add (tableC);
+                        DataRelation dr = new DataRelation ("PO", table.Columns ["Id"], tableC.Columns ["Id"]);
+                        ds.Relations.Add (dr);
+                                                                                                    
+                        rowC.SetParentRow (table.Rows [0], dr);
+                                                                                                    
+                        DataRow [] rows = (table.Rows [0]).GetChildRows (dr);
+
+                        AssertEquals ("#A45", 1, rows.Length);
+                        AssertEquals ("#A46", tableC.Rows [0], rows [0]);
+                        
+                } 
+
+				[Test]
+                public void ChildRowTest2 ()
+                {
+                        DataSet ds = new DataSet ();
+						DataTable tableP = ds.Tables.Add ("Parent");
+                        DataTable tableC = ds.Tables.Add ("Child");
+                        DataColumn colC;
+                        DataRow rowC;
+                                                                                                    
+                        colC = new DataColumn ();
+                        colC.DataType = Type.GetType ("System.Int32");
+                        colC.ColumnName = "Id";
+                        colC.AutoIncrement = true;
+                        tableP.Columns.Add (colC);
+						
+						colC = new DataColumn ();
+                        colC.DataType = Type.GetType ("System.Int32");
+                        colC.ColumnName = "Id";
+                        tableC.Columns.Add (colC);
+
+						row = tableP.NewRow ();
+                        rowC = tableC.Rows.Add (new object [0]);
+
+						ds.EnforceConstraints = false;
+                        DataRelation dr = new DataRelation ("PO", tableP.Columns ["Id"], tableC.Columns ["Id"]);
+                        ds.Relations.Add (dr);
+						
+                        rowC.SetParentRow (row, dr);
+                        DataRow [] rows = row.GetChildRows (dr);
+                        
+                        AssertEquals ("#A47", 1, rows.Length);
+                        AssertEquals ("#A48", tableC.Rows [0], rows [0]);
+				}
 
 
 		// tests item at row, column in table to be DBNull.Value

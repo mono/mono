@@ -786,7 +786,7 @@ namespace System.Data {
 		/// </summary>
 		public DataRow[] GetChildRows (DataRelation relation) 
 		{
-			return GetChildRows (relation, DataRowVersion.Current);
+			return GetChildRows (relation, DataRowVersion.Default);
 		}
 
 		/// <summary>
@@ -807,7 +807,8 @@ namespace System.Data {
 			if (relation == null)
 				return new DataRow[0];
 
-			if (this.Table == null || RowState == DataRowState.Detached)
+			//if (this.Table == null || RowState == DataRowState.Detached)
+			if (this.Table == null)
 				throw new RowNotInTableException("This row has been removed from a table and does not have any data.  BeginEdit() will allow creation of new data in this row.");
 
 			if (relation.DataSet != this.Table.DataSet)
@@ -875,7 +876,7 @@ namespace System.Data {
 					}
 				}
 				else { // if there is no index we search manualy.
-					int curIndex = IndexFromVersion(DataRowVersion.Current);
+					int curIndex = IndexFromVersion(DataRowVersion.Default);
 					int tmpRecord = fkc.Table.RecordCache.NewRecord();
 
 					try {
