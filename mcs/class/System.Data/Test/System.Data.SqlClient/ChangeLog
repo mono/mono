@@ -1,0 +1,2 @@
+2004-08-19 Umadevi S <sumadevi@novell.com>
+ 	* Added file SqlDataAdapterTest.cs - to test update method on a datatable
