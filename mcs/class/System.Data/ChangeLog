@@ -1,3 +1,16 @@
+2002-10-28  Tim Coleman (tim@timcoleman.com)
+        * System.Data.SqlClient/SqlCommand.cs:
+                Add some error handling
+        * System.Data.SqlClient/SqlDataReader.cs:
+                Add some error handling
+                Add precision/scale to schema table
+        * System.Data.SqlClient/SqlException.cs:
+                Generate a SqlException from TDS error
+                collection
+        * System.Data.SqlClient/SqlTransaction.cs:
+                Add some error handling
+
+
 2002-10-28  Ville Palo <vi64pa@koti.soon.fi>
 
 	* System.Data.SqlTypes/SqlBinary.cs:

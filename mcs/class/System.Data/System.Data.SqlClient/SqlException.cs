@@ -33,6 +33,7 @@ namespace System.Data.SqlClient {
 			errors = new SqlErrorCollection (theClass, lineNumber, message, number, procedure, server, source, state);
 		}
 
+
 		#region Properties
 
 		[MonoTODO]
@@ -149,7 +150,8 @@ namespace System.Data.SqlClient {
 		[MonoTODO]
 		internal static SqlException FromTdsError (TdsPacketErrorResultCollection errors)
 		{
-			throw new NotImplementedException ();
+			TdsMessage message = errors[0].Message;
+			return new SqlException (message.Severity, message.Line, message.Message, message.Number, message.ProcName, message.Server, "Mono SqlClient Data Provider", message.State);
 		}
 
 		#endregion // Methods

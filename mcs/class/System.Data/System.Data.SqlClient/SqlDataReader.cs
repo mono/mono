@@ -30,7 +30,7 @@ namespace System.Data.SqlClient {
 		SqlCommand command;
 		DataTable schemaTable;
 
-		#endregion // eields
+		#endregion // Fields
 
 		#region Constructors
 
@@ -40,7 +40,6 @@ namespace System.Data.SqlClient {
 			this.command = command;
 			this.fieldCount = 0;
 			this.isClosed = false;
-			NextResult ();
 		}
 
 		#endregion
@@ -91,13 +90,14 @@ namespace System.Data.SqlClient {
 			Type stringType = Type.GetType ("System.String");
 			Type intType = Type.GetType ("System.Int32");
 			Type typeType = Type.GetType ("System.Type");
+			Type shortType = Type.GetType ("System.Int16");
 
 			DataTable schemaTable = new DataTable ("SchemaTable");
 			schemaTable.Columns.Add ("ColumnName", stringType);
 			schemaTable.Columns.Add ("ColumnOrdinal", intType);
 			schemaTable.Columns.Add ("ColumnSize", intType);
-			schemaTable.Columns.Add ("NumericPrecision", intType);
-			schemaTable.Columns.Add ("NumericScale", intType);
+			schemaTable.Columns.Add ("NumericPrecision", shortType);
+			schemaTable.Columns.Add ("NumericScale", shortType);
 			schemaTable.Columns.Add ("IsUnique", booleanType);
 			schemaTable.Columns.Add ("IsKey", booleanType);
 			schemaTable.Columns.Add ("BaseServerName", stringType);
@@ -249,16 +249,30 @@ namespace System.Data.SqlClient {
 		{
 			if (schemaTable.Rows != null && schemaTable.Rows.Count > 0)
 				return schemaTable;
+
 			fieldCount = 0;
 
 			foreach (TdsColumnSchema schemaObject in command.Tds.ColumnInfo) {
 				DataRow schemaRow = schemaTable.NewRow ();
+
 				schemaRow ["ColumnName"] = schemaObject.ColumnName;
 				schemaRow ["ColumnOrdinal"] = schemaObject.ColumnOrdinal;
 				schemaRow ["BaseTableName"] = schemaObject.TableName;
 				schemaRow ["AllowDBNull"] = schemaObject.Nullable;
 				schemaRow ["IsReadOnly"] = !schemaObject.Writable;
+
+				if (schemaObject.NumericPrecision >= 0)
+					schemaRow ["NumericPrecision"] = schemaObject.NumericPrecision;
+				else
+					schemaRow ["NumericPrecision"] = DBNull.Value;
+
+				if (schemaObject.NumericScale >= 0)
+					schemaRow ["NumericScale"] = schemaObject.NumericScale;
+				else
+					schemaRow ["NumericScale"] = DBNull.Value;
+
 				schemaTable.Rows.Add (schemaRow);
+
 				fieldCount += 1;
 			}
 			return schemaTable;
@@ -305,12 +319,18 @@ namespace System.Data.SqlClient {
 		public bool NextResult ()
 		{
 			schemaTable.Rows.Clear ();
-			return command.Tds.NextResult ();
+			bool result = command.Tds.NextResult ();
+			if (command.Tds.Errors.Count > 0)
+				throw SqlException.FromTdsError (command.Tds.Errors);
+			return result;
 		}
 
 		public bool Read ()
 		{
-			return command.Tds.NextRow ();
+			bool result = command.Tds.NextRow ();
+			if (command.Tds.Errors.Count > 0)
+				throw SqlException.FromTdsError (command.Tds.Errors);
+			return result;
 		}
 
 		#endregion // Methods

@@ -179,7 +179,10 @@ namespace System.Data.SqlClient {
 				throw new InvalidOperationException ("ExecuteNonQuery requires an open Connection object to continue. This connection is closed.");
 			if (commandText == String.Empty || commandText == null)
 				throw new InvalidOperationException ("The command text for this Command has not been set.");
-			return connection.Tds.ExecuteNonQuery (FormatQuery (commandText, commandType));
+			int result = connection.Tds.ExecuteNonQuery (FormatQuery (commandText, commandType));
+			if (connection.Tds.Errors.Count > 0)
+				throw SqlException.FromTdsError (connection.Tds.Errors);
+			return result;
 		}
 
 		public SqlDataReader ExecuteReader ()
@@ -199,6 +202,12 @@ namespace System.Data.SqlClient {
 				throw new InvalidOperationException ("The command text for this Command has not been set.");
 			connection.Tds.ExecuteQuery (FormatQuery (commandText, commandType));
 			connection.DataReaderOpen = true;
+
+			
+			bool result = connection.Tds.NextResult ();
+			if (connection.Tds.Errors.Count > 0)
+				throw SqlException.FromTdsError (connection.Tds.Errors);
+
 			return new SqlDataReader (this);
 		}
 
