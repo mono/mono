@@ -1,4 +1,8 @@
 
+Sat Jul 13 17:32:53 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* typemanager.cs: register also enum_type in corlib.
+
 Sat Jul 13 15:59:47 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.cs: allow calling this (but not base) initializers in structs.

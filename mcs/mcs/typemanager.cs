@@ -655,14 +655,15 @@ public class TypeManager {
 			system_void_array_copyto_array_int = GetMethod (
 				system_array_type, "CopyTo", system_array_int_arg);
 
-			Type [] system_type_type_arg = { system_type_type, system_type_type };
+			Type [] system_type_type_arg = { system_type_type, system_type_type, system_type_type };
 			system_void_set_corlib_type_builders = GetMethod (
 				system_assemblybuilder_type, "SetCorlibTypeBuilders",
 				system_type_type_arg);
 
-			object[] args = new object [2];
+			object[] args = new object [3];
 			args [0] = object_type;
 			args [1] = value_type;
+			args [2] = enum_type;
 
 			system_void_set_corlib_type_builders.Invoke (CodeGen.AssemblyBuilder, args);
 		}
