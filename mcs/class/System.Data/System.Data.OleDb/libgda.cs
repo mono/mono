@@ -52,6 +52,36 @@ namespace System.Data.OleDb
 	};
 
 	[StructLayout(LayoutKind.Sequential)]
+	internal class GdaDate
+	{
+		public short year;
+		public ushort month;
+		public ushort day;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	internal class GdaTime
+	{
+		public ushort hour;
+		public ushort minute;
+		public ushort second;
+		public long timezone;
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
+	internal class GdaTimestamp
+	{
+		public short year;
+		public ushort month;
+		public ushort day;
+		public ushort hour;
+		public ushort minute;
+		public ushort second;
+		public ulong fraction;
+		public long timezone;
+	}
+	
+	[StructLayout(LayoutKind.Sequential)]
 	internal class GdaList
 	{
 		public IntPtr data;
@@ -84,11 +114,35 @@ namespace System.Data.OleDb
 		public static extern GdaValueType gda_value_get_vtype (IntPtr value);
 
 		[DllImport("gda-2")]
+		public static extern long gda_value_get_bigint (IntPtr value);
+		
+		[DllImport("gda-2")]
 		public static extern bool gda_value_get_boolean (IntPtr value);
 
 		[DllImport("gda-2")]
+		public static extern IntPtr gda_value_get_date (IntPtr value);
+		
+		[DllImport("gda-2")]
+		public static extern double gda_value_get_double (IntPtr value);
+
+		[DllImport("gda-2")]
+		public static extern int gda_value_get_integer (IntPtr value);
+		
+		[DllImport("gda-2")]
+		public static extern float gda_value_get_single (IntPtr value);
+		
+		[DllImport("gda-2")]
 		public static extern int gda_value_get_smallint (IntPtr value);
 
+		[DllImport("gda-2")]
+		public static extern string gda_value_get_string (IntPtr value);
+
+		[DllImport("gda-2")]
+		public static extern IntPtr gda_value_get_time (IntPtr value);
+		
+		[DllImport("gda-2")]
+		public static extern IntPtr gda_value_get_timestamp (IntPtr value);
+		
 		[DllImport("gda-2")]
 		public static extern byte gda_value_get_tinyint (IntPtr value);
 
@@ -109,6 +163,21 @@ namespace System.Data.OleDb
 
 		[DllImport("gda-2")]
 		public static extern IntPtr gda_data_model_get_value_at (IntPtr model, int col, int row);
+
+		[DllImport("gda-2")]
+		public static extern string gda_data_model_get_column_title (IntPtr model, int col);
+
+		[DllImport("gda-2")]
+		public static extern IntPtr gda_data_model_describe_column (IntPtr model, int col);
+
+		[DllImport("gda-2")]
+		public static extern void gda_field_attributes_free (IntPtr fa);
+
+		[DllImport("gda-2")]
+		public static extern string gda_field_attributes_get_name (IntPtr fa);
+
+		[DllImport("gda-2")]
+		public static extern GdaValueType gda_field_attributes_get_gdatype (IntPtr fa);
 		
 		[DllImport("gda-2")]
 		public static extern IntPtr gda_client_new ();

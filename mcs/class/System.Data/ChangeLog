@@ -1,5 +1,24 @@
 2002-08-18  Rodrigo Moya <rodrigo@ximian.com>
 
+	* System.Data.OleDb/OleDbDataReader.cs (Close): clear the results
+	ArrayList after releasing the items.
+	(GetName, GetDateTime, GetDouble, GetSingle, GetInt16, GetInt32,
+	 GetOrdinal, GetString): implemented.
+	(GetDataTypeName): made it get the type from the data model, not from
+	the current value, which could not have been retrieved yet.
+	(GetValue): call the Get* method corresponding with the data type of
+	the requested column.
+
+	* System.Data.OleDb/libgda.cs: added more libgda functions.
+	(GdaTimestamp, GdaDate, GdaTime): new marshalled structures.
+
+	* System.Data.OleDb/TestOleDb.cs (TestDateReader): display column
+	titles via OleDbDataReader.GetName ().
+	(TestOleDb): create temporary table with a date field.
+	(InsertRow): set current date for the date field.
+
+2002-08-18  Rodrigo Moya <rodrigo@ximian.com>
+
 	* System.Data.OleDb/OleDbDataReader.cs (this[]): made it just call
 	GetValue, which will take care of all the work needed.
 	(Close): implemented basic stuff.

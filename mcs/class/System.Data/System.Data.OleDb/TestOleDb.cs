@@ -15,7 +15,9 @@ namespace System.Data.OleDb.Test
 			m_cnc.Open ();
 
 			Console.WriteLine ("Creating temporary table...");
-			cmd = new OleDbCommand ("CREATE TABLE mono_test_table ( name varchar(25), email varchar(50))", m_cnc);
+			cmd = new OleDbCommand ("CREATE TABLE mono_test_table ( " +
+						" name varchar(25), email varchar(50), date_entered timestamp)",
+						m_cnc);
 			cmd.ExecuteNonQuery ();
 			InsertRow ("Mike Smith", "mike@smiths.com");
 			InsertRow ("Julie Andrews", "julie@hollywood.com");
@@ -26,9 +28,9 @@ namespace System.Data.OleDb.Test
 		{
 			OleDbCommand cmd;
 
-			Console.WriteLine ("Inserting record " + name + "/" + email);
-			cmd = new OleDbCommand ("INSERT INTO mono_test_table (name, email) VALUES ('" +
-						name + "', '" + email +"')", m_cnc);
+			cmd = new OleDbCommand ("INSERT INTO mono_test_table (name, email, date_entered) VALUES ('" +
+						name + "', '" + email +"', date 'now')", m_cnc);
+			Console.WriteLine ("Executing command '" + cmd.CommandText + "'");
 			cmd.ExecuteNonQuery ();
 
 		}
@@ -52,7 +54,9 @@ namespace System.Data.OleDb.Test
 
 			Console.WriteLine (" Recordset description:");
 			for (i = 0; i < reader.FieldCount; i++) {
-				Console.WriteLine ("  Field " + i + ": " + reader.GetDataTypeName (i));
+				Console.WriteLine ("  Field " + i + ": " +
+						   reader.GetName (i) + " (" +
+						   reader.GetDataTypeName (i) + ")");
 			}
 
 			Console.WriteLine ("Reading data...");

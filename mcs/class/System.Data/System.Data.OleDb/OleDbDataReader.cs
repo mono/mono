@@ -13,6 +13,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
+using System.Runtime.InteropServices;
 
 namespace System.Data.OleDb
 {
@@ -115,6 +116,8 @@ namespace System.Data.OleDb
 				libgda.FreeObject (obj);
 				gdaResults = null;
 			}
+
+			gdaResults.Clear ();
 			
 			open = false;
 			currentResult = -1;
@@ -198,23 +201,61 @@ namespace System.Data.OleDb
 
 		public string GetDataTypeName (int index)
 		{
-			IntPtr value;
+			IntPtr attrs;
+			GdaValueType type;
 
 			if (currentResult == -1)
 				return "unknown";
 
-			value = libgda.gda_data_model_get_value_at ((IntPtr) gdaResults[currentResult],
-								    index, currentRow);
-			if (value == IntPtr.Zero)
+			
+			attrs = libgda.gda_data_model_describe_column ((IntPtr) gdaResults[currentResult],
+								       index);
+			if (attrs == IntPtr.Zero)
 				return "unknown";
 
-			return libgda.gda_type_to_string (libgda.gda_value_get_vtype (value));
+			type = libgda.gda_field_attributes_get_gdatype (attrs);
+			libgda.gda_field_attributes_free (attrs);
+			
+			return libgda.gda_type_to_string (type);
 		}
 
-		[MonoTODO]
 		public DateTime GetDateTime (int ordinal)
 		{
-			throw new NotImplementedException ();
+			IntPtr value;
+			DateTime dt;
+
+			if (currentResult == -1)
+				throw new InvalidCastException ();
+
+			value = libgda.gda_data_model_get_value_at ((IntPtr) gdaResults[currentResult],
+								    ordinal, currentRow);
+			if (value == IntPtr.Zero)
+				throw new InvalidCastException ();
+			
+			if (libgda.gda_value_get_vtype (value) == GdaValueType.Date) {
+				GdaDate gdt;
+
+				gdt = (GdaDate) Marshal.PtrToStructure (libgda.gda_value_get_date (value),
+									typeof (GdaDate));
+				return new DateTime ((int) gdt.year, (int) gdt.month, (int) gdt.day);
+			} else if (libgda.gda_value_get_vtype (value) == GdaValueType.Time) {
+				GdaTime gdt;
+
+				gdt = (GdaTime) Marshal.PtrToStructure (libgda.gda_value_get_time (value),
+									typeof (GdaTime));
+				return new DateTime (0, 0, 0, (int) gdt.hour, (int) gdt.minute, (int) gdt.second, 0);
+			} else if (libgda.gda_value_get_vtype (value) == GdaValueType.Timestamp) {
+				GdaTimestamp gdt;
+				
+				gdt = (GdaTimestamp) Marshal.PtrToStructure (libgda.gda_value_get_timestamp (value),
+									     typeof (GdaTimestamp));
+
+				return new DateTime ((int) gdt.year, (int) gdt.month, (int) gdt.day,
+						     (int) gdt.hour, (int) gdt.minute, (int) gdt.second,
+						     (int) gdt.fraction);
+			}
+
+			throw new InvalidCastException ();
 		}
 
 		[MonoTODO]
@@ -223,10 +264,21 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public double GetDouble (int ordinal)
 		{
-			throw new NotImplementedException ();
+			IntPtr value;
+
+			if (currentResult == -1)
+				throw new InvalidCastException ();
+
+			value = libgda.gda_data_model_get_value_at ((IntPtr) gdaResults[currentResult],
+								    ordinal, currentRow);
+			if (value == IntPtr.Zero)
+				throw new InvalidCastException ();
+			
+			if (libgda.gda_value_get_vtype (value) != GdaValueType.Double)
+				throw new InvalidCastException ();
+			return libgda.gda_value_get_double (value);
 		}
 
 		[MonoTODO]
@@ -235,10 +287,21 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public float GetFloat (int ordinal)
 		{
-			throw new NotImplementedException ();
+			IntPtr value;
+
+			if (currentResult == -1)
+				throw new InvalidCastException ();
+
+			value = libgda.gda_data_model_get_value_at ((IntPtr) gdaResults[currentResult],
+								    ordinal, currentRow);
+			if (value == IntPtr.Zero)
+				throw new InvalidCastException ();
+			
+			if (libgda.gda_value_get_vtype (value) != GdaValueType.Single)
+				throw new InvalidCastException ();
+			return libgda.gda_value_get_single (value);
 		}
 
 		[MonoTODO]
@@ -247,34 +310,77 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public short GetInt16 (int ordinal)
 		{
-			throw new NotImplementedException ();
+			IntPtr value;
+
+			if (currentResult == -1)
+				throw new InvalidCastException ();
+
+			value = libgda.gda_data_model_get_value_at ((IntPtr) gdaResults[currentResult],
+								    ordinal, currentRow);
+			if (value == IntPtr.Zero)
+				throw new InvalidCastException ();
+			
+			if (libgda.gda_value_get_vtype (value) != GdaValueType.Smallint)
+				throw new InvalidCastException ();
+			return (short) libgda.gda_value_get_smallint (value);
 		}
 
-		[MonoTODO]
 		public int GetInt32 (int ordinal)
 		{
-			throw new NotImplementedException ();
+			IntPtr value;
+
+			if (currentResult == -1)
+				throw new InvalidCastException ();
+
+			value = libgda.gda_data_model_get_value_at ((IntPtr) gdaResults[currentResult],
+								    ordinal, currentRow);
+			if (value == IntPtr.Zero)
+				throw new InvalidCastException ();
+			
+			if (libgda.gda_value_get_vtype (value) != GdaValueType.Integer)
+				throw new InvalidCastException ();
+			return libgda.gda_value_get_integer (value);
 		}
 
-		[MonoTODO]
 		public long GetInt64 (int ordinal)
 		{
-			throw new NotImplementedException ();
+			IntPtr value;
+
+			if (currentResult == -1)
+				throw new InvalidCastException ();
+
+			value = libgda.gda_data_model_get_value_at ((IntPtr) gdaResults[currentResult],
+								    ordinal, currentRow);
+			if (value == IntPtr.Zero)
+				throw new InvalidCastException ();
+			
+			if (libgda.gda_value_get_vtype (value) != GdaValueType.Bigint)
+				throw new InvalidCastException ();
+			return libgda.gda_value_get_bigint (value);
 		}
 
-		[MonoTODO]
 		public string GetName (int index)
 		{
-			throw new NotImplementedException ();
+			if (currentResult == -1)
+				return null;
+
+			return libgda.gda_data_model_get_column_title (
+				(IntPtr) gdaResults[currentResult], index);
 		}
 
-		[MonoTODO]
 		public int GetOrdinal (string name)
 		{
-			throw new NotImplementedException ();
+			if (currentResult == -1)
+				throw new IndexOutOfRangeException ();
+
+			for (int i = 0; i < FieldCount; i++) {
+				if (GetName (i) == name)
+					return i;
+			}
+
+			throw new IndexOutOfRangeException ();
 		}
 
 		[MonoTODO]
@@ -283,10 +389,21 @@ namespace System.Data.OleDb
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public string GetString (int ordinal)
 		{
-			throw new NotImplementedException ();
+			IntPtr value;
+
+			if (currentResult == -1)
+				throw new InvalidCastException ();
+
+			value = libgda.gda_data_model_get_value_at ((IntPtr) gdaResults[currentResult],
+								    ordinal, currentRow);
+			if (value == IntPtr.Zero)
+				throw new InvalidCastException ();
+			
+			if (libgda.gda_value_get_vtype (value) != GdaValueType.String)
+				throw new InvalidCastException ();
+			return libgda.gda_value_get_string (value);
 		}
 
 		[MonoTODO]
@@ -309,7 +426,19 @@ namespace System.Data.OleDb
 				throw new IndexOutOfRangeException ();
 
 			type = libgda.gda_value_get_vtype (value);
-			// FIXME: return correct type
+			switch (type) {
+			case GdaValueType.Bigint : return GetInt64 (ordinal);
+			case GdaValueType.Boolean : return GetBoolean (ordinal);
+			case GdaValueType.Date : return GetDateTime (ordinal);
+			case GdaValueType.Double : return GetDouble (ordinal);
+			case GdaValueType.Integer : return GetInt32 (ordinal);
+			case GdaValueType.Single : return GetFloat (ordinal);
+			case GdaValueType.Smallint : return GetByte (ordinal);
+			case GdaValueType.String : return GetString (ordinal);
+			case GdaValueType.Time : return GetDateTime (ordinal);
+			case GdaValueType.Timestamp : return GetDateTime (ordinal);
+			case GdaValueType.Tinyint : return GetByte (ordinal);
+			}
 
 			return (object) libgda.gda_value_stringify (value);
 		}
