@@ -1,3 +1,8 @@
+2005-03-02  Kazuki Oikawa  <kazuki@panicode.com>
+
+	* NumberFormatter.cs: Some internal classes was converted to structs,
+	and improved some points.
+
 2005-02-26  Kazuki Oikawa  <kazuki@panicode.com>
 
 	* NumberFormatter.cs: Improved performance and memory usage

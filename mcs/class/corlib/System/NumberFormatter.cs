@@ -233,7 +233,7 @@ namespace System
 					break;
 				case 2:
 					sb.Append (nfi.CurrencySymbol);
-					sb.Append (" ");
+					sb.Append (' ');
 					break;
 				}
 			} else {
@@ -301,7 +301,7 @@ namespace System
 					sb.Append (nfi.CurrencySymbol);
 					break;
 				case 3:
-					sb.Append (" ");
+					sb.Append (' ');
 					sb.Append (nfi.CurrencySymbol);
 					break;
 				}
@@ -621,7 +621,22 @@ namespace System
 				precision = 6;
 
 			if (ns.ZeroOnly) {
-				return string.Concat ("0", precision > 0 ? "." + new string ('0', precision) : "", upper ? "E" : "e", nfi.PositiveSign, "000");
+				StringBuilder sb = new StringBuilder (precision + nfi.PositiveSign.Length + 6);
+				sb.Append ('0');
+				if (precision > 0) {
+					sb.Append ('.');
+					sb.Append ('0', precision);
+				}
+
+				if (upper)
+					sb.Append ('E');
+				else
+					sb.Append ('e');
+
+				sb.Append (nfi.PositiveSign);
+				sb.Append ('0', 3);
+				
+				return sb.ToString ();
 			}
 
 			int exponent = 0;
@@ -787,7 +802,7 @@ namespace System
 					sb_int.Insert (0, "0", info.IntegerDigits - sb_int.Length);*/
 
 				while (sb_exp.Length < info.ExponentDigits - info.ExponentTailSharpDigits)
-					sb_exp.Insert (0, "0");
+					sb_exp.Insert (0, '0');
 
 				if (expPositive && !info.ExponentNegativeSignOnly)
 					sb_exp.Insert (0, nfi.PositiveSign);
@@ -817,7 +832,7 @@ namespace System
 			public int DecimalTailSharpDigits = 0;
 			public int IntegerDigits = 0;
 			public int IntegerHeadSharpDigits = 0;
-			public int IntegerHeadPos = -1;
+			public int IntegerHeadPos = 0;
 			public bool UseExponent = false;
 			public int ExponentDigits = 0;
 			public int ExponentTailSharpDigits = 0;
@@ -1211,8 +1226,8 @@ namespace System
 
 		#endregion
 
-		#region Internal Class
-		internal class NumberStore
+		#region Internal structures
+		internal struct NumberStore
 		{
 			bool _NaN;
 			bool _infinity;
@@ -1261,9 +1276,9 @@ namespace System
 			};
 
 			#region Constructors
-			NumberStore (){}
 			public NumberStore (long value)
 			{
+				_infinity = _NaN = false;
 				_defByteSize = 8;
 				_defMaxPrecision = _defPrecision = 19;
 				_positive = value >= 0;
@@ -1278,44 +1293,44 @@ namespace System
 
 				int i = 18, j = 0;
 
-				if (v >= 1000000000000000000)
-					i = 18;
-				else if (v >= 100000000000000000)
-					i = 17;
-				else if (v >= 10000000000000000)
-					i = 16;
-				else if (v >= 1000000000000000)
-					i = 15;
-				else if (v >= 100000000000000)
-					i = 14;
-				else if (v >= 10000000000000)
-					i = 13;
-				else if (v >= 1000000000000)
-					i = 12;
-				else if (v >= 100000000000)
-					i = 11;
-				else if (v >= 10000000000)
-					i = 10;
-				else if (v >= 1000000000)
-					i = 9;
-				else if (v >= 100000000)
-					i = 8;
-				else if (v >= 10000000)
-					i = 7;
-				else if (v >= 1000000)
-					i = 6;
-				else if (v >= 100000)
-					i = 5;
-				else if (v >= 10000)
-					i = 4;
-				else if (v >= 1000)
-					i = 3;
-				else if (v >= 100)
-					i = 2;
-				else if (v >= 10)
-					i = 1;
-				else
+				if (v < 10)
 					i = 0;
+				else if (v < 100)
+					i = 1;
+				else if (v < 1000)
+					i = 2;
+				else if (v < 10000)
+					i = 3;
+				else if (v < 100000)
+					i = 4;
+				else if (v < 1000000)
+					i = 5;
+				else if (v < 10000000)
+					i = 6;
+				else if (v < 100000000)
+					i = 7;
+				else if (v < 1000000000)
+					i = 8;
+				else if (v < 10000000000)
+					i = 9;
+				else if (v < 100000000000)
+					i = 10;
+				else if (v < 1000000000000)
+					i = 11;
+				else if (v < 10000000000000)
+					i = 12;
+				else if (v < 100000000000000)
+					i = 13;
+				else if (v < 1000000000000000)
+					i = 14;
+				else if (v < 10000000000000000)
+					i = 15;
+				else if (v < 100000000000000000)
+					i = 16;
+				else if (v < 1000000000000000000)
+					i = 17;
+				else
+					i = 18;
 
 				_digits = new byte [i + 1];
 				do {
@@ -1328,6 +1343,7 @@ namespace System
 			}
 			public NumberStore (int value)
 			{
+				_infinity = _NaN = false;
 				_defByteSize = 4;
 				_defMaxPrecision = _defPrecision = 10;
 				_positive = value >= 0;
@@ -1342,26 +1358,26 @@ namespace System
 
 				int i = 9, j = 0;
 
-				if (v >= 1000000000)
-					i = 9;
-				else if (v >= 100000000)
-					i = 8;
-				else if (v >= 10000000)
-					i = 7;
-				else if (v >= 1000000)
-					i = 6;
-				else if (v >= 100000)
-					i = 5;
-				else if (v >= 10000)
-					i = 4;
-				else if (v >= 1000)
-					i = 3;
-				else if (v >= 100)
-					i = 2;
-				else if (v >= 10)
-					i = 1;
-				else
+				if (v < 10)
 					i = 0;
+				else if (v < 100)
+					i = 1;
+				else if (v < 1000)
+					i = 2;
+				else if (v < 10000)
+					i = 3;
+				else if (v < 100000)
+					i = 4;
+				else if (v < 1000000)
+					i = 5;
+				else if (v < 10000000)
+					i = 6;
+				else if (v < 100000000)
+					i = 7;
+				else if (v < 1000000000)
+					i = 8;
+				else
+					i = 9;
 
 				_digits = new byte [i + 1];
 				do {
@@ -1385,6 +1401,7 @@ namespace System
 
 			public NumberStore (ulong value)
 			{
+				_infinity = _NaN = false;
 				_defByteSize = 8;
 				_defMaxPrecision = _defPrecision = 20;
 				_positive = true;
@@ -1397,46 +1414,46 @@ namespace System
 
 				int i = 19, j = 0;
 
-				if (value >= 10000000000000000000)
-					i = 19;
-				else if (value >= 1000000000000000000)
-					i = 18;
-				else if (value >= 100000000000000000)
-					i = 17;
-				else if (value >= 10000000000000000)
-					i = 16;
-				else if (value >= 1000000000000000)
-					i = 15;
-				else if (value >= 100000000000000)
-					i = 14;
-				else if (value >= 10000000000000)
-					i = 13;
-				else if (value >= 1000000000000)
-					i = 12;
-				else if (value >= 100000000000)
-					i = 11;
-				else if (value >= 10000000000)
-					i = 10;
-				else if (value >= 1000000000)
-					i = 9;
-				else if (value >= 100000000)
-					i = 8;
-				else if (value >= 10000000)
-					i = 7;
-				else if (value >= 1000000)
-					i = 6;
-				else if (value >= 100000)
-					i = 5;
-				else if (value >= 10000)
-					i = 4;
-				else if (value >= 1000)
-					i = 3;
-				else if (value >= 100)
-					i = 2;
-				else if (value >= 10)
-					i = 1;
-				else
+				if (value < 10)
 					i = 0;
+				else if (value < 100)
+					i = 1;
+				else if (value < 1000)
+					i = 2;
+				else if (value < 10000)
+					i = 3;
+				else if (value < 100000)
+					i = 4;
+				else if (value < 1000000)
+					i = 5;
+				else if (value < 10000000)
+					i = 6;
+				else if (value < 100000000)
+					i = 7;
+				else if (value < 1000000000)
+					i = 8;
+				else if (value < 10000000000)
+					i = 9;
+				else if (value < 100000000000)
+					i = 10;
+				else if (value < 1000000000000)
+					i = 11;
+				else if (value < 10000000000000)
+					i = 12;
+				else if (value < 100000000000000)
+					i = 13;
+				else if (value < 1000000000000000)
+					i = 14;
+				else if (value < 10000000000000000)
+					i = 15;
+				else if (value < 100000000000000000)
+					i = 16;
+				else if (value < 1000000000000000000)
+					i = 17;
+				else if (value < 10000000000000000000)
+					i = 18;
+				else
+					i = 19;
 
 				_digits = new byte [i + 1];
 				do {
@@ -1449,6 +1466,7 @@ namespace System
 			}
 			public NumberStore (uint value)
 			{
+				_infinity = _NaN = false;
 				_positive = true;
 				_defByteSize = 4;
 				_defMaxPrecision = _defPrecision = 10;
@@ -1461,26 +1479,26 @@ namespace System
 				
 				int i = 9, j = 0;
 
-				if (value >= 1000000000)
-					i = 9;
-				else if (value >= 100000000)
-					i = 8;
-				else if (value >= 10000000)
-					i = 7;
-				else if (value >= 1000000)
-					i = 6;
-				else if (value >= 100000)
-					i = 5;
-				else if (value >= 10000)
-					i = 4;
-				else if (value >= 1000)
-					i = 3;
-				else if (value >= 100)
-					i = 2;
-				else if (value >= 10)
-					i = 1;
-				else
+				if (value < 10)
 					i = 0;
+				else if (value < 100)
+					i = 1;
+				else if (value < 1000)
+					i = 2;
+				else if (value < 10000)
+					i = 3;
+				else if (value < 100000)
+					i = 4;
+				else if (value < 1000000)
+					i = 5;
+				else if (value < 10000000)
+					i = 6;
+				else if (value < 100000000)
+					i = 7;
+				else if (value < 1000000000)
+					i = 8;
+				else
+					i = 9;
 
 				_digits = new byte [i + 1];
 				do {
@@ -1504,6 +1522,8 @@ namespace System
 
 			public NumberStore(double value)
 			{
+				_digits = null;
+				_defByteSize = 64;
 				_defPrecision = 15;
 				_defMaxPrecision = _defPrecision + 2;
 
@@ -1511,7 +1531,10 @@ namespace System
 					_NaN = double.IsNaN (value);
 					_infinity = double.IsInfinity (value);
 					_positive = value > 0;
+					_decPointPos = 0;
 					return;
+				} else {
+					_NaN = _infinity = false;
 				}
 
 				long bits = BitConverter.DoubleToInt64Bits (value);
@@ -1588,6 +1611,8 @@ namespace System
 			}
 			public NumberStore(float value)
 			{
+				_digits = null;
+				_defByteSize = 32;
 				_defPrecision = 7;
 				_defMaxPrecision = _defPrecision + 2;
 
@@ -1595,8 +1620,10 @@ namespace System
 					_NaN = float.IsNaN (value);
 					_infinity = float.IsInfinity (value);
 					_positive = value > 0;
+					_decPointPos = 0;
 					return;
-				}
+				} else
+					_infinity = _NaN = false;
 
 				long bits = BitConverter.DoubleToInt64Bits (value);
 				_positive = (bits >= 0);
@@ -1836,7 +1863,7 @@ namespace System
 
 				return carry;
 			}
-			protected void RoundHelper (int index, bool carryFive, ref bool carry)
+			void RoundHelper (int index, bool carryFive, ref bool carry)
 			{
 				if (carry) {
 					if (_digits [index] == 9) {
@@ -2089,7 +2116,7 @@ namespace System
 				StringBuilder sb = new StringBuilder ();
 				AppendIntegerString (IntegerDigits, sb);
 				if (HasDecimal) {
-					sb.Append (".");
+					sb.Append ('.');
 					AppendDecimalString (DecimalDigits, sb);
 				}
 				return sb.ToString ();
@@ -2183,7 +2210,7 @@ namespace System
 			}
 			#endregion
 		}
-		internal class CharBuffer
+		internal struct CharBuffer
 		{
 			int offset;
 			char[] buffer;
