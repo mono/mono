@@ -1,3 +1,9 @@
+
+Mon Nov 15 11:54:22 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* domain.c, object.c, object-internals.h, domain-internals.h,
+	object.h, marshal.c: keep dynamic code info per domain.
+
 2004-11-15  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_type_get_name_recurse): Put type arguments in
