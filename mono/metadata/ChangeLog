@@ -1,3 +1,8 @@
+2003-02-12  Miguel de Icaza  <miguel@ximian.com>
+
+	* Makefile.am: Got tired of typing the full pathname to pedump.
+	Until there is another option, am installing this.
+
 2003-02-12  Dietmar Maurer  <dietmar@ximian.com>
 
 	* class.c (class_compute_field_layout): always set field->parent 
