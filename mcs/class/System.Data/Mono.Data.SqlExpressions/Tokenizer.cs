@@ -122,7 +122,7 @@ namespace Mono.Data.SqlExpressions {
 			string str = sb.ToString ();
 
 			if (str.IndexOf(".") == -1)
-				return int.Parse (str);
+				return Int64.Parse (str);
 			else
 				return double.Parse (str);
 		}
