@@ -9,5 +9,8 @@ include ../../library.make
 
 MCS_FLAGS = --target library --noconfig
 
+TEST_SUITE_PREFIX = MonoTests.System.Xml.
+TEST_SUITE = AllTests
+
 test: $(LIBRARY)
-	mono /usr/local/bin/NUnitConsole_mono.exe MonoTests.System.Xml.AllTests,System.XML_linux_test.dll
+	mono ../../../nunit/src/NUnitConsole/NUnitConsole_mono.exe $(TEST_SUITE_PREFIX)$(TEST_SUITE),System.XML_linux_test.dll

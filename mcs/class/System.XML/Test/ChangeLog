@@ -1,3 +1,15 @@
+2002-08-10  Jason Diamond  <jason@injektilo.org>
+
+	* makefile.gnu: Use relative path to NUnitConsole_mono.exe instead of
+	hardcoding it to /usr/local/bin. Default test suite to AllTests but
+	allow it to be overridden from the command line.
+
+	* XmlTextWriterTests.cs: Split TestWriteString into multiple tests.
+	Added encoding parameters to all the StreamReaders in
+	TestBaseConstructorsAndBaseStream. I think this is a bug in Mono's
+	StreamReader since these aren't required when testing against
+	Microsoft's.
+
 2002-08-08  Jason Diamond  <jason@injektilo.org>
 
 	* System.XML_linux_test.args: Added Kral's new test classes.

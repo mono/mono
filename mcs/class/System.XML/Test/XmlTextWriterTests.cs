@@ -254,8 +254,10 @@ namespace MonoTests.System.Xml
 			xtw.WriteStartDocument ();
 			xtw.Flush ();
 			ms.Seek (0, SeekOrigin.Begin);
-			sr = new StreamReader (ms);
-			AssertEquals ("<?xml version=\"1.0\" encoding=\"utf-16\"?>", sr.ReadToEnd ());
+			sr = new StreamReader (ms, Encoding.Unicode);
+			string expectedXmlDeclaration = "<?xml version=\"1.0\" encoding=\"utf-16\"?>";
+			string actualXmlDeclaration = sr.ReadToEnd();
+			AssertEquals (expectedXmlDeclaration, actualXmlDeclaration);
 			Assert ("BaseStream property returned wrong value.", Object.ReferenceEquals (ms, xtw.BaseStream));
 
 			ms = new MemoryStream ();
@@ -263,7 +265,7 @@ namespace MonoTests.System.Xml
 			xtw.WriteStartDocument (true);
 			xtw.Flush ();
 			ms.Seek (0, SeekOrigin.Begin);
-			sr = new StreamReader (ms);
+			sr = new StreamReader (ms, Encoding.Unicode);
 			AssertEquals ("<?xml version=\"1.0\" encoding=\"utf-16\" standalone=\"yes\"?>", sr.ReadToEnd ());
 
 			ms = new MemoryStream ();
@@ -271,7 +273,7 @@ namespace MonoTests.System.Xml
 			xtw.WriteStartDocument ();
 			xtw.Flush ();
 			ms.Seek (0, SeekOrigin.Begin);
-			sr = new StreamReader (ms);
+			sr = new StreamReader (ms, Encoding.UTF8);
 			AssertEquals ("<?xml version=\"1.0\" encoding=\"utf-8\"?>", sr.ReadToEnd ());
 
 			ms = new MemoryStream ();
@@ -279,7 +281,7 @@ namespace MonoTests.System.Xml
 			xtw.WriteStartDocument ();
 			xtw.Flush ();
 			ms.Seek (0, SeekOrigin.Begin);
-			sr = new StreamReader (ms);
+			sr = new StreamReader (ms, Encoding.UTF8);
 			AssertEquals ("<?xml version=\"1.0\"?>", sr.ReadToEnd ());
 
 			ms = new MemoryStream ();
@@ -287,7 +289,7 @@ namespace MonoTests.System.Xml
 			xtw.WriteStartDocument (true);
 			xtw.Flush ();
 			ms.Seek (0, SeekOrigin.Begin);
-			sr = new StreamReader (ms);
+			sr = new StreamReader (ms, Encoding.UTF8);
 			AssertEquals ("<?xml version=\"1.0\" standalone=\"yes\"?>", sr.ReadToEnd ());
 			Assert ("BaseStream property returned wrong value.", Object.ReferenceEquals (ms, xtw.BaseStream));
 		}
@@ -744,29 +746,35 @@ namespace MonoTests.System.Xml
 			xtw.WriteStartElement ("foo");
 			xtw.WriteAttributeString ("bar", "&<>");
 			AssertEquals ("<?xml version='1.0' encoding='utf-16'?><foo bar='&amp;&lt;&gt;'", StringWriterText);
+		}
 
+		public void TestWriteAttributeStringSingleQuoteChar()
+		{
 			// When QuoteChar is single quote then replaces single quotes within attributes
 			// but not double quotes.
-			sw.GetStringBuilder ().Remove (0, sw.GetStringBuilder ().Length);
 			xtw.WriteStartElement ("foo");
 			xtw.WriteAttributeString ("bar", "\"baz\"");
 			xtw.WriteAttributeString ("quux", "'baz'");
-			AssertEquals ("><foo bar='\"baz\"' quux='&apos;baz&apos;'", StringWriterText);
+			AssertEquals ("<foo bar='\"baz\"' quux='&apos;baz&apos;'", StringWriterText);
+		}
 
+		public void TestWriteAttributeStringDoubleQuoteChar()
+		{
 			// When QuoteChar is double quote then replaces double quotes within attributes
 			// but not single quotes.
 			xtw.QuoteChar = '"';
-			sw.GetStringBuilder ().Remove (0, sw.GetStringBuilder ().Length);
 			xtw.WriteStartElement ("foo");
 			xtw.WriteAttributeString ("bar", "\"baz\"");
 			xtw.WriteAttributeString ("quux", "'baz'");
-			AssertEquals ("><foo bar=\"&quot;baz&quot;\" quux=\"'baz'\"", StringWriterText);
+			AssertEquals ("<foo bar=\"&quot;baz&quot;\" quux=\"'baz'\"", StringWriterText);
+		}
 
+		public void TestWriteStringWithEntities()
+		{
 			// Testing element values
 			xtw.QuoteChar = '\'';
-			sw.GetStringBuilder ().Remove (0, sw.GetStringBuilder ().Length);
 			xtw.WriteElementString ("foo", "&<>\"'");
-			AssertEquals ("><foo>&amp;&lt;&gt;\"'</foo>", StringWriterText);
+			AssertEquals ("<foo>&amp;&lt;&gt;\"'</foo>", StringWriterText);
 		}
 
 		public void TestXmlLang ()
