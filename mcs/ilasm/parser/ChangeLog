@@ -1,3 +1,9 @@
+2003-05-19 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: When the float32 (0xFFFFFF) syntax is used the hex
+	value represents the exact byte value of a float NOT an integer
+	value that is converted to a float.
+		
 2003-05-18 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Use new methods for converting types to

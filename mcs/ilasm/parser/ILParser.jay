@@ -5,6 +5,7 @@
 
 using PEAPI;
 using System;
+using System.IO;
 using System.Collections;
 using System.Globalization;
 
@@ -1977,7 +1978,7 @@ int32			: INT32
                                 if (int64 > Int32.MaxValue)
                                         $$ = Int32.MaxValue;
                                 else if (int64 < Int32.MinValue)
-                                        $$ = Int32.MinValue;  
+                                        $$ = Int32.MinValue;
                           }
 			;
 
@@ -1988,11 +1989,20 @@ int64		        : INT64
 float64			: FLOAT64
 			| K_FLOAT32 OPEN_PARENS int32 CLOSE_PARENS
                           {
-                                $$ = Convert.ToDouble ($3);
+                                int i = (int) $3;
+                                byte[] intb = BitConverter.GetBytes (i);
+                                $$ = (double) BitConverter.ToSingle (intb, 0);
+                          }
+                        | K_FLOAT32 OPEN_PARENS INT64 CLOSE_PARENS
+                          {
+                                long l = (long) $3;
+                                byte[] intb = BitConverter.GetBytes (l);
+                                $$ = (double) BitConverter.ToSingle (intb, 0);
                           }
 			| K_FLOAT64 OPEN_PARENS int64 CLOSE_PARENS
                           {
-                                $$ = Convert.ToDouble ($3);
+                                byte[] intb = BitConverter.GetBytes ((long) $3);
+                                $$ = BitConverter.ToDouble (intb, 0);
                           }
 			;
 
