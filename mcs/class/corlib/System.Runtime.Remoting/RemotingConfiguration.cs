@@ -33,6 +33,7 @@ namespace System.Runtime.Remoting
 		static MiniParser parser = null; 
 		static string processGuid = null;
 		static bool defaultConfigRead = false;
+		static bool defaultDelayedConfigRead = false;
 		static string _errorMode;
 
 		static Hashtable wellKnownClientEntries = new Hashtable();
@@ -85,14 +86,17 @@ namespace System.Runtime.Remoting
 		
 		public static void Configure (string filename) 
 		{
-			if (!defaultConfigRead)
+			lock (channelTemplates)
 			{
-				ReadConfigFile (Environment.GetMachineConfigPath ());
-				defaultConfigRead = true;
+				if (!defaultConfigRead)
+				{
+					ReadConfigFile (Environment.GetMachineConfigPath ());
+					defaultConfigRead = true;
+				}
+				
+				if (filename != null)
+					ReadConfigFile (filename);
 			}
-			
-			if (filename != null)
-				ReadConfigFile (filename);
 		}
 
 		private static void ReadConfigFile (string filename)
@@ -101,7 +105,7 @@ namespace System.Runtime.Remoting
 			{
 				MiniParser parser = new MiniParser ();
 				RReader rreader = new RReader (filename);
-				ConfigHandler handler = new ConfigHandler ();
+				ConfigHandler handler = new ConfigHandler (false);
 				parser.Parse (rreader, handler);
 			}
 			catch (Exception ex)
@@ -109,43 +113,75 @@ namespace System.Runtime.Remoting
 				throw new RemotingException ("Configuration file '" + filename + "' could not be loaded: " + ex.Message);
 			}
 		}
+		
+		internal static void LoadDefaultDelayedChannels ()
+		{
+			lock (channelTemplates)
+			{
+				if (defaultDelayedConfigRead || defaultConfigRead) return;
+				
+				MiniParser parser = new MiniParser ();
+				RReader rreader = new RReader (Environment.GetMachineConfigPath ());
+				ConfigHandler handler = new ConfigHandler (true);
+				parser.Parse (rreader, handler);
+				defaultDelayedConfigRead = true;
+			}
+		}
 	
 		public static ActivatedClientTypeEntry[] GetRegisteredActivatedClientTypes () 
 		{
-			ActivatedClientTypeEntry[] entries = new ActivatedClientTypeEntry[activatedClientEntries.Count];
-			activatedClientEntries.Values.CopyTo (entries,0);
-			return entries;
+			lock (channelTemplates)
+			{
+				ActivatedClientTypeEntry[] entries = new ActivatedClientTypeEntry[activatedClientEntries.Count];
+				activatedClientEntries.Values.CopyTo (entries,0);
+				return entries;
+			}
 		}
 
 		public static ActivatedServiceTypeEntry[] GetRegisteredActivatedServiceTypes () 
 		{
-			ActivatedServiceTypeEntry[] entries = new ActivatedServiceTypeEntry[activatedServiceEntries.Count];
-			activatedServiceEntries.Values.CopyTo (entries,0);
-			return entries;
+			lock (channelTemplates)
+			{
+				ActivatedServiceTypeEntry[] entries = new ActivatedServiceTypeEntry[activatedServiceEntries.Count];
+				activatedServiceEntries.Values.CopyTo (entries,0);
+				return entries;
+			}
 		}
 
 		public static WellKnownClientTypeEntry[] GetRegisteredWellKnownClientTypes () 
 		{
-			WellKnownClientTypeEntry[] entries = new WellKnownClientTypeEntry[wellKnownClientEntries.Count];
-			wellKnownClientEntries.Values.CopyTo (entries,0);
-			return entries;
+			lock (channelTemplates)
+			{
+				WellKnownClientTypeEntry[] entries = new WellKnownClientTypeEntry[wellKnownClientEntries.Count];
+				wellKnownClientEntries.Values.CopyTo (entries,0);
+				return entries;
+			}
 		}
 
 		public static WellKnownServiceTypeEntry[] GetRegisteredWellKnownServiceTypes () 
 		{
-			WellKnownServiceTypeEntry[] entries = new WellKnownServiceTypeEntry[wellKnownServiceEntries.Count];
-			wellKnownServiceEntries.Values.CopyTo (entries,0);
-			return entries;
+			lock (channelTemplates)
+			{
+				WellKnownServiceTypeEntry[] entries = new WellKnownServiceTypeEntry[wellKnownServiceEntries.Count];
+				wellKnownServiceEntries.Values.CopyTo (entries,0);
+				return entries;
+			}
 		}
 
 		public static bool IsActivationAllowed (Type serverType) 
 		{
-			return activatedServiceEntries.ContainsKey (serverType);
+			lock (channelTemplates)
+			{
+				return activatedServiceEntries.ContainsKey (serverType);
+			}
 		}
 
 		public static ActivatedClientTypeEntry IsRemotelyActivatedClientType (Type serviceType) 
 		{
-			return activatedClientEntries [serviceType] as ActivatedClientTypeEntry;
+			lock (channelTemplates)
+			{
+				return activatedClientEntries [serviceType] as ActivatedClientTypeEntry;
+			}
 		}
 
 		public static ActivatedClientTypeEntry IsRemotelyActivatedClientType (string typeName, string assemblyName) 
@@ -155,7 +191,10 @@ namespace System.Runtime.Remoting
 
 		public static WellKnownClientTypeEntry IsWellKnownClientType (Type serviceType) 
 		{
-			return wellKnownClientEntries [serviceType] as WellKnownClientTypeEntry;
+			lock (channelTemplates)
+			{
+				return wellKnownClientEntries [serviceType] as WellKnownClientTypeEntry;
+			}
 		}
 
 		public static WellKnownClientTypeEntry IsWellKnownClientType (string typeName, string assemblyName) 
@@ -165,11 +204,14 @@ namespace System.Runtime.Remoting
 
 		public static void RegisterActivatedClientType (ActivatedClientTypeEntry entry) 
 		{
-			if (wellKnownClientEntries.ContainsKey (entry.ObjectType) || activatedClientEntries.ContainsKey (entry.ObjectType))
-				throw new RemotingException ("Attempt to redirect activation of type '" + entry.ObjectType.FullName + "' which is already redirected.");
-
-			activatedClientEntries[entry.ObjectType] = entry;
-			ActivationServices.EnableProxyActivation (entry.ObjectType, true);
+			lock (channelTemplates)
+			{
+				if (wellKnownClientEntries.ContainsKey (entry.ObjectType) || activatedClientEntries.ContainsKey (entry.ObjectType))
+					throw new RemotingException ("Attempt to redirect activation of type '" + entry.ObjectType.FullName + "' which is already redirected.");
+	
+				activatedClientEntries[entry.ObjectType] = entry;
+				ActivationServices.EnableProxyActivation (entry.ObjectType, true);
+			}
 		}
 
 		public static void RegisterActivatedClientType (Type type, string appUrl) 
@@ -182,7 +224,10 @@ namespace System.Runtime.Remoting
 
 		public static void RegisterActivatedServiceType (ActivatedServiceTypeEntry entry) 
 		{
-			activatedServiceEntries.Add (entry.ObjectType, entry);
+			lock (channelTemplates)
+			{
+				activatedServiceEntries.Add (entry.ObjectType, entry);
+			}
 		}
 
 		public static void RegisterActivatedServiceType (Type type) 
@@ -200,11 +245,14 @@ namespace System.Runtime.Remoting
 
 		public static void RegisterWellKnownClientType (WellKnownClientTypeEntry entry) 
 		{
-			if (wellKnownClientEntries.ContainsKey (entry.ObjectType) || activatedClientEntries.ContainsKey (entry.ObjectType))
-				throw new RemotingException ("Attempt to redirect activation of type '" + entry.ObjectType.FullName + "' which is already redirected.");
-
-			wellKnownClientEntries[entry.ObjectType] = entry;
-			ActivationServices.EnableProxyActivation (entry.ObjectType, true);
+			lock (channelTemplates)
+			{
+				if (wellKnownClientEntries.ContainsKey (entry.ObjectType) || activatedClientEntries.ContainsKey (entry.ObjectType))
+					throw new RemotingException ("Attempt to redirect activation of type '" + entry.ObjectType.FullName + "' which is already redirected.");
+	
+				wellKnownClientEntries[entry.ObjectType] = entry;
+				ActivationServices.EnableProxyActivation (entry.ObjectType, true);
+			}
 		}
 
 		public static void RegisterWellKnownServiceType (Type type, string objectUrl, WellKnownObjectMode mode) 
@@ -214,8 +262,11 @@ namespace System.Runtime.Remoting
 
 		public static void RegisterWellKnownServiceType (WellKnownServiceTypeEntry entry) 
 		{
-			wellKnownServiceEntries [entry.ObjectUri] = entry;
-			RemotingServices.CreateWellKnownServerIdentity (entry.ObjectType, entry.ObjectUri, entry.Mode);
+			lock (channelTemplates)
+			{
+				wellKnownServiceEntries [entry.ObjectUri] = entry;
+				RemotingServices.CreateWellKnownServerIdentity (entry.ObjectType, entry.ObjectUri, entry.Mode);
+			}
 		}
 
 		internal static void RegisterChannelTemplate (ChannelData channel)
@@ -233,10 +284,16 @@ namespace System.Runtime.Remoting
 			serverProviderTemplates [prov.Id] = prov;
 		}
 		
-		internal static void RegisterChannels (ArrayList channels)
+		internal static void RegisterChannels (ArrayList channels, bool onlyDelayed)
 		{
 			foreach (ChannelData channel in channels)
 			{
+				if (onlyDelayed && channel.DelayLoadAsClientChannel != "true")
+					continue;
+					
+				if (defaultDelayedConfigRead && channel.DelayLoadAsClientChannel == "true")
+					continue;
+					
 				if (channel.Ref != null)
 				{
 					ChannelData template = (ChannelData) channelTemplates [channel.Ref];
@@ -343,9 +400,11 @@ namespace System.Runtime.Remoting
 		string appName;
 		
 		string currentXmlPath = "";
+		bool onlyDelayedChannels;
 		
-		public ConfigHandler ()
+		public ConfigHandler (bool onlyDelayedChannels)
 		{
+			this.onlyDelayedChannels = onlyDelayedChannels;
 		}
 		
 		void ValidatePath (string element, params string[] paths)
@@ -743,8 +802,9 @@ namespace System.Runtime.Remoting
 		
 		public void OnEndParsing (MiniParser parser)
 		{
-			RemotingConfiguration.RegisterChannels (channelInstances);
-			RemotingConfiguration.RegisterTypes (typeEntries);
+			RemotingConfiguration.RegisterChannels (channelInstances, onlyDelayedChannels);
+			if (!onlyDelayedChannels)
+				RemotingConfiguration.RegisterTypes (typeEntries);
 		}
 	}
 
