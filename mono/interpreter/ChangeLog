@@ -1,3 +1,11 @@
+2002-03-26  Dick Porter  <dick@ximian.com>
+
+	* interp.c: Show thread ID's in trace output.
+		
+	New option "--traceclassinit" to put debug output around
+	runtime_class_init().
+
+	Make sure all options are displayed in usage().
 
 Tue Mar 26 17:03:14 CET 2002 Paolo Molaro <lupus@ximian.com>
 
