@@ -229,7 +229,8 @@ namespace Mono.CSharp {
 				if (result != null)
 					return true;
 			} else if (e is EmptyCast) {
-				return GetAttributeArgumentExpression (((EmptyCast)e).Child, loc, arg_type, out result);
+				Expression child = ((EmptyCast)e).Child;
+				return GetAttributeArgumentExpression (child, loc, child.Type, out result);
 			}
 
 			result = null;
