@@ -6,11 +6,8 @@ linux: build
 
 windows: build
 
-build: framework/Transform.resources
+build:
 	$(NANT) build
-
-framework/Transform.resources: 
-	resgen framework/Transform.resX
 
 clean:
 	$(NANT) clean

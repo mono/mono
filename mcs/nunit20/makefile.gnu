@@ -11,3 +11,4 @@ clean:
 	for d in $(DIRS) ; do \
 		$(MAKE) -C $$d -f makefile.gnu clean || exit 1; \
 	done
+

@@ -1,0 +1,4 @@
+2002-12-15  Nick Drochak  <ndrochak@gol.com>
+
+	* nunit.build: Don't delete Transform.resources now, we don't generate
+	it anymore.

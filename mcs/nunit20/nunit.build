@@ -42,7 +42,6 @@
 		<delete file="NUnit.Util.pdb" failonerror="false"/>
 		<delete file="nunit-console.exe" failonerror="false"/>
 		<delete file="nunit-console.pdb" failonerror="false"/>
-		<delete file="framework/Transform.resources" failonerror="false"/>
 	</target>
 
 </project>
