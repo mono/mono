@@ -91,7 +91,38 @@ namespace System.Reflection
 		public override MethodInfo[] GetMethods (BindingFlags bf)
 		{
 			initialize ();
-			return GetMethods_impl (bf, this);
+
+			ArrayList l = new ArrayList ();
+
+			//
+			// Walk up our class hierarchy and retrieve methods from our
+			// parent classes.
+			//
+
+			Type current_type = this;
+			do {
+				MonoGenericInst gi = current_type as MonoGenericInst;
+				if (gi != null)
+					l.AddRange (gi.GetMethods_impl (bf, this));
+				else if (current_type is TypeBuilder)
+					l.AddRange (current_type.GetMethods (bf));
+				else {
+					// If we encounter a `MonoType', its
+					// GetMethodsByName() will return all the methods
+					// from its parent type(s), so we can stop here.
+					MonoType mt = (MonoType) current_type;
+					l.AddRange (mt.GetMethodsByName (null, bf, false, this));
+					break;
+				}
+
+				if ((bf & BindingFlags.DeclaredOnly) != 0)
+					break;
+				current_type = current_type.BaseType;
+			} while (current_type != null);
+
+			MethodInfo[] result = new MethodInfo [l.Count];
+			l.CopyTo (result);
+			return result;
 		}
 
 		protected MethodInfo[] GetMethods_impl (BindingFlags bf, Type reftype)
@@ -99,12 +130,6 @@ namespace System.Reflection
 			ArrayList l = new ArrayList ();
 			bool match;
 			MethodAttributes mattrs;
-
-			if ((bf & BindingFlags.DeclaredOnly) == 0) {
-				MonoGenericInst parent = GetParentType ();
-				if (parent != null)
-					l.AddRange (parent.GetMethods_impl (bf, reftype));
-			}
 
 			MethodInfo[] methods = GetMethods_internal (reftype);
 
@@ -142,7 +167,30 @@ namespace System.Reflection
 		public override ConstructorInfo[] GetConstructors (BindingFlags bf)
 		{
 			initialize ();
-			return GetConstructors_impl (bf, this);
+
+			ArrayList l = new ArrayList ();
+
+			Type current_type = this;
+			do {
+				MonoGenericInst gi = current_type as MonoGenericInst;
+				if (gi != null)
+					l.AddRange (gi.GetConstructors_impl (bf, this));
+				else if (current_type is TypeBuilder)
+					l.AddRange (current_type.GetConstructors (bf));
+				else {
+					MonoType mt = (MonoType) current_type;
+					l.AddRange (mt.GetConstructors_internal (bf, this));
+					break;
+				}
+
+				if ((bf & BindingFlags.DeclaredOnly) != 0)
+					break;
+				current_type = current_type.BaseType;
+			} while (current_type != null);
+
+			ConstructorInfo[] result = new ConstructorInfo [l.Count];
+			l.CopyTo (result);
+			return result;
 		}
 
 		protected ConstructorInfo[] GetConstructors_impl (BindingFlags bf, Type reftype)
@@ -150,12 +198,6 @@ namespace System.Reflection
 			ArrayList l = new ArrayList ();
 			bool match;
 			MethodAttributes mattrs;
-
-			if ((bf & BindingFlags.DeclaredOnly) == 0) {
-				MonoGenericInst parent = GetParentType ();
-				if (parent != null)
-					l.AddRange (parent.GetConstructors_impl (bf, reftype));
-			}
 
 			ConstructorInfo[] ctors = GetConstructors_internal (reftype);
 
@@ -185,6 +227,7 @@ namespace System.Reflection
 					continue;
 				l.Add (c);
 			}
+
 			ConstructorInfo[] result = new ConstructorInfo [l.Count];
 			l.CopyTo (result);
 			return result;
@@ -193,7 +236,30 @@ namespace System.Reflection
 		public override FieldInfo[] GetFields (BindingFlags bf)
 		{
 			initialize ();
-			return GetFields_impl (bf, this);
+
+			ArrayList l = new ArrayList ();
+
+			Type current_type = this;
+			do {
+				MonoGenericInst gi = current_type as MonoGenericInst;
+				if (gi != null)
+					l.AddRange (gi.GetFields_impl (bf, this));
+				else if (current_type is TypeBuilder)
+					l.AddRange (current_type.GetFields (bf));
+				else {
+					MonoType mt = (MonoType) current_type;
+					l.AddRange (mt.GetFields_internal (bf, this));
+					break;
+				}
+
+				if ((bf & BindingFlags.DeclaredOnly) != 0)
+					break;
+				current_type = current_type.BaseType;
+			} while (current_type != null);
+
+			FieldInfo[] result = new FieldInfo [l.Count];
+			l.CopyTo (result);
+			return result;
 		}
 
 		protected FieldInfo[] GetFields_impl (BindingFlags bf, Type reftype)
@@ -201,12 +267,6 @@ namespace System.Reflection
 			ArrayList l = new ArrayList ();
 			bool match;
 			FieldAttributes fattrs;
-
-			if ((bf & BindingFlags.DeclaredOnly) == 0) {
-				MonoGenericInst parent = GetParentType ();
-				if (parent != null)
-					l.AddRange (parent.GetFields_impl (bf, reftype));
-			}
 
 			FieldInfo[] fields = GetFields_internal (reftype);
 

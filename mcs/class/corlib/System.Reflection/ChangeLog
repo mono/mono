@@ -1,5 +1,11 @@
 2004-02-17  Martin Baulig  <martin@ximian.com>
 
+	* MonoGenericInst.cs (MonoGenericInst.GetMethods): Walk up the
+	class hierarchy and return members from the parent classes.
+	(GetConstructors, GetFields): Likewise.
+
+2004-02-17  Martin Baulig  <martin@ximian.com>
+
 	* MonoGenericInst.cs (MonoGenericInst.initialize): Don't inflate
 	all the members here; we only do this for members of the current
 	class and only when they're actually queried for.
