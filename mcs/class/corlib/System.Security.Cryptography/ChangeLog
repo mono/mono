@@ -4,6 +4,8 @@
 	* CryptoConfig.cs: Changed Array.Copy to Buffer.BlockCopy.
 	* CryptoStream.cs: Changed Array.Copy to Buffer.BlockCopy.
 	* DSA.cs: Changed Array.Copy to Buffer.BlockCopy.
+	* DSACryptoServiceProvider.cs: Fixed SignData to hash data before 
+	signing it (thanks to Jens Thiel for spotting this).
 	* ICryptoTransform.cs: Moved XML comments to monodoc.
 	* PasswordDeriveBytes.cs: Changed Array.Copy to Buffer.BlockCopy.
 	* FromBase64Transform.cs: Moved XML comments to monodoc.

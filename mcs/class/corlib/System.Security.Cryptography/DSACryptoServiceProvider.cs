@@ -158,7 +158,10 @@ namespace System.Security.Cryptography {
 
 		public byte[] SignData (byte[] data)
 		{
-			return dsa.CreateSignature (data);
+			// right now only SHA1 is supported by FIPS186-2
+			HashAlgorithm hash = SHA1.Create ();
+			byte[] toBeSigned = hash.ComputeHash (data);
+			return dsa.CreateSignature (toBeSigned);
 		}
 
 		public byte[] SignData (byte[] data, int offset, int count)
