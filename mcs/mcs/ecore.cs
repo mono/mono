@@ -3189,15 +3189,27 @@ namespace Mono.CSharp {
 
 				f.status |= Field.Status.ASSIGNED | Field.Status.USED;
 			}
-			
+
+			//
+			// Handle initonly fields specially: make a copy and then
+			// get the address of the copy.
+			//
+			if (FieldInfo.IsInitOnly){
+				LocalBuilder local;
+				
+				Emit (ec);
+				local = ig.DeclareLocal (type);
+				ig.Emit (OpCodes.Stloc, local);
+				ig.Emit (OpCodes.Ldloca, local);
+				return;
+			} 
+
 			if (FieldInfo.IsStatic)
 				ig.Emit (OpCodes.Ldsflda, FieldInfo);
 			else {
 				InstanceExpression.Emit (ec);
 				ig.Emit (OpCodes.Ldflda, FieldInfo);
 			}
-
-			
 		}
 	}
 	
