@@ -12,6 +12,9 @@ using Microsoft.Web.Services.Referral;
 using Microsoft.Web.Services.Routing;
 using Microsoft.Web.Services.Security;
 using Microsoft.Web.Services.Timestamp;
+#if !WSE1
+using Microsoft.Web.Services.Addressing;
+#endif
 
 using System;
 using System.Collections;
@@ -29,7 +32,9 @@ namespace Microsoft.Web.Services {
 		private string contentType;
 		private SecurityCollection extendedSecurity;
 		private ReferralCollection referrals;
-
+#if !WSE1
+                private AddressingHeaders addressingHeaders;
+#endif
 		internal SoapContext () 
 		{
 			timestamp = new Microsoft.Web.Services.Timestamp.Timestamp ();
@@ -42,7 +47,21 @@ namespace Microsoft.Web.Services {
 			timestamp = new Microsoft.Web.Services.Timestamp.Timestamp ();
 			table = new Hashtable ();
 		}
+#if !WSE1
+		public Action Action {
+			get { return addressingHeaders.Action; }
+			set { addressingHeaders.Action = value; }
+		}
 
+		public ReplyTo ReplyTo {
+			get { return addressingHeaders.ReplyTo; }
+			set { addressingHeaders.ReplyTo = value; }
+		}
+  	 
+		public To To {
+			get { return addressingHeaders.To; }
+		}
+#endif
 		public Uri Actor { 
 			get { return actor; }
 		}

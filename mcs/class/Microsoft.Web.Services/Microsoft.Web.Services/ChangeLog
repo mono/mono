@@ -1,5 +1,9 @@
 2003-10-04  Sebastien Pouliot  <spouliot@videotron.ca>
 
+	* SoapContext.cs: Oops - nuked tberman changes :( reapplied
+
+2003-10-04  Sebastien Pouliot  <spouliot@videotron.ca>
+
 	* ChainStream.cs: New. Allows to chain the WebRequest.GetRequestStream
 	so we can modify its content before sending it.
 	* Pipeline.cs: Fixed stupid error in ProcessOutputMessage (x++ -> x--)
