@@ -1,3 +1,7 @@
+2003-06-27  Dietmar Maurer  <dietmar@ximian.com>
+
+	* threadpool.c (mono_thread_pool_add): keep a reference to the
+	AsyncResult to prevent GC
 
 Thu Jun 26 12:13:25 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
