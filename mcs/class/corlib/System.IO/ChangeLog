@@ -1,3 +1,12 @@
+2002-09-15  Miguel de Icaza  <miguel@ximian.com>
+
+	* FileStream.cs (Dispose): Call FlushBuffer(), and not Flush, as
+	Flush calls fsync().  
+
+	The API docs show no explicit mention that Flush() should even do
+	an fsync, I am thinking that we should drop that from the
+	runtime. 
+
 2002-09-09  Miguel de Icaza  <miguel@ximian.com>
 
 	* StreamWriter.cs: When no encoding is provided, create an

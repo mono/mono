@@ -251,7 +251,7 @@ namespace System.IO
 
 		protected virtual void Dispose (bool disposing) {
 			if (handle != MonoIO.InvalidHandle) {
-				Flush ();
+				FlushBuffer ();
 				MonoIO.Close (handle);
 
 				handle = MonoIO.InvalidHandle;
