@@ -1,3 +1,7 @@
+2003-12-11  Martin Baulig  <martin@ximian.com>
+
+	* test-154.cs: Added testcases for bugs #49153, #49359 and #49602.
+
 2003-11-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* test-150.cs: Improved test.

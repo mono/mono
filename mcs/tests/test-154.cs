@@ -462,4 +462,42 @@ public class X
 		outparam = null;
 		return null;
 	}
+
+	//
+	// Bug #49153
+	//
+	public string test31 (int blah)
+	{
+		switch(blah) {
+		case 1: return("foo"); break;
+		case 2: return("bar"); break;
+		case 3: return("baz"); break;
+
+		default:
+			throw new ArgumentException ("Value 0x"+blah.ToString ("x4")+" is not supported.");
+		}
+	}
+
+	//
+	// Bug #49359
+	//
+        public void test32 ()
+	{
+                while (true) {
+                        System.Threading.Thread.Sleep (1);
+                }
+
+                Console.WriteLine ("Hello");
+        }
+
+	//
+	// Bug 49602
+	//
+        public int test33 ()
+        {
+                int i = 0;
+                return 0;
+                if (i == 0)
+                        return 0;
+        }
 }
