@@ -1,5 +1,8 @@
 2002-12-10  Miguel de Icaza  <miguel@ximian.com>
 
+	* cs-parser.jay: Allow a trailing comma before the close bracked
+	in the attribute_section production.
+
 	* ecore.cs (FieldExpr.AddressOf): Until I figure out why the
 	address of the instance was being taken, I will take this out,
 	because we take the address of the object immediately here.

@@ -448,7 +448,7 @@ attribute_sections
 	;
 
 attribute_section
-	: OPEN_BRACKET attribute_target_specifier attribute_list CLOSE_BRACKET
+	: OPEN_BRACKET attribute_target_specifier attribute_list opt_comma CLOSE_BRACKET
 	  {
 		string target = null;
 		
@@ -457,7 +457,7 @@ attribute_section
 		
 		$$ = new AttributeSection (target, (ArrayList) $3);
  	  }
-        | OPEN_BRACKET attribute_list CLOSE_BRACKET
+        | OPEN_BRACKET attribute_list opt_comma CLOSE_BRACKET
 	  {
 		$$ = new AttributeSection (null, (ArrayList) $2);
 	  }
