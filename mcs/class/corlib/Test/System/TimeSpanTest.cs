@@ -17,7 +17,7 @@ public class TimeSpanTest : TestCase
 {
         public TimeSpanTest (string name): base(name) {}
 
-	public static ITest Suiter
+	public static ITest Suite
 	{
 		get {
 			return new TestSuite (typeof(TimeSpanTest));

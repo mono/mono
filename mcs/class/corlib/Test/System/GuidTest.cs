@@ -54,6 +54,39 @@ public class GuidTest : TestCase
 		AssertEquals("A3", exception, true);
 	}
 
+	public void TestCtor2() {
+		Guid g1 = new Guid ("00010203-0405-0607-0809-0a0b0c0d0e0f"); 
+		Guid g2 = new Guid ("{00010203-0405-0607-0809-0A0B0C0D0E0F}"); 
+		Guid g3 = new Guid ("{0x00010203,0x0405,0x0607,{0x08},{0x09},{0x0a},{0x0b},{0x0c},{0x0d},{0x0e},{0x0f}}");
+		Guid g4;
+		Guid g5;
+
+		bool exception;
+
+		AssertEquals("A1", g1.ToString(), "00010203-0405-0607-0809-0a0b0c0d0e0f"); 
+		AssertEquals("A2", g2.ToString(), "00010203-0405-0607-0809-0a0b0c0d0e0f"); 
+		AssertEquals("A3", g3.ToString(), "00010203-0405-0607-0809-0a0b0c0d0e0f"); 
+
+		try {
+			g4 = new Guid((string) null);
+			exception = false;
+		}
+		catch (ArgumentNullException) {
+			exception = true;
+		}
+		AssertEquals("A4", exception, true);
+
+		try {
+			g5 = new Guid("invalid");
+			exception = false;
+		}
+		catch (FormatException) {
+			exception = true;
+		}
+		AssertEquals("A5", exception, true);
+		
+	}
+
 	public void TestCtor4() {
 		Guid g1 = new Guid(0x00010203, (short) 0x0405, (short) 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
 		Guid g2 = new Guid(unchecked((int) 0xffffffff), unchecked((short) 0xffff), unchecked((short) 0xffff), 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);

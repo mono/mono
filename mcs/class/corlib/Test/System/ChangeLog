@@ -1,3 +1,6 @@
+2002-02-19  Duco Fijma <duco@lorentz.xs4all.nl>
+	* GuidTest.cs: added a few cases
+
 2002-02-18  Nick Drochak  <ndrochak@gol.com>
 
 	* GuidTest.cs: Fix compile error.  Needed to cast the null in the call to

@@ -1,3 +1,6 @@
+2002-02-18  Duco Fijma <duco@lorentz.xs4all.nl>
+	* Guid.cs: actual implementation for Guid.Guid(string) Ctor
+
 2002-02-18  Duncan Mak  <duncan@ximian.com>
 
         * Convert.cs: Changed from using Type.GetType (string) to just

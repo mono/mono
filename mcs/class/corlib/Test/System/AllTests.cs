@@ -23,10 +23,12 @@ namespace MonoTests.System {
                                 suite.AddTest(ArrayTest.Suite);
                                 suite.AddTest(CharTest.Suite);
                                 suite.AddTest(ByteTest.Suite);
+				suite.AddTest(GuidTest.Suite);
                                 suite.AddTest(SByteTest.Suite);
                                 suite.AddTest(Int16Test.Suite);
                                 suite.AddTest(Int32Test.Suite);
                                 suite.AddTest(Int64Test.Suite);
+				suite.AddTest(TimeSpanTest.Suite);
 				suite.AddTest(UInt16Test.Suite);
                                 suite.AddTest(UInt32Test.Suite);
                                 suite.AddTest(UInt64Test.Suite);

@@ -26,7 +26,7 @@ public struct Guid  : IFormattable, IComparable  {
 	private byte _node4;
 	private byte _node5;
 
-	private class GuidState {
+	internal class GuidState {
 		protected Random _prnd; // Pseudo RNG
 		protected RandomNumberGenerator _rnd; // Strong RNG
 		protected bool _usePRnd; // 'true' for pseudo RNG
@@ -107,6 +107,169 @@ public struct Guid  : IFormattable, IComparable  {
 		
 	};
 
+	internal class GuidParser {
+
+		private string _src;
+		private int _length;
+		private int _cur;
+	
+		public GuidParser (string src) {
+			_src = src;
+			Reset ();
+		}
+		
+		private void Reset () {
+			_cur = 0;
+			_length = _src.Length;
+		}
+	
+		private bool AtEnd () {
+			return _cur >= _length;
+		}
+	
+		private void ThrowFormatException () {
+			throw new FormatException (Locale.GetText ("Invalid format for Guid.Guid(string)"));
+		}
+	
+		private ulong ParseHex(int length, bool strictLength)
+		{
+			ulong res = 0;
+			int i;
+			bool end = false;
+		
+			for (i=0; (!end) && i<length; ++i) {
+				if (AtEnd ()) {
+					if (strictLength || i==0) {
+						ThrowFormatException ();
+					}
+					else {
+						end = true;
+					}
+				}
+				else {
+					char c = Char.ToLower (_src[_cur]);
+					if (Char.IsDigit (c)) {
+						res = res * 16 + c - '0';
+						_cur++;
+					}
+					else if (c >= 'a' && c <= 'f') {
+						res = res * 16 + c - 'a' + 10;
+						_cur++;
+					}
+					else {
+						if (strictLength || i==0) {
+							ThrowFormatException ();
+						}
+						else {
+							end = true;
+						}
+					}
+				}
+			}
+			
+			return res;
+		}
+	
+		private bool ParseOptChar (char c) {
+			if (!AtEnd() && _src[_cur] == c) {
+				_cur++;
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+	
+		private void ParseChar (char c) {
+			bool b = ParseOptChar (c);
+			if (!b) {
+				ThrowFormatException ();
+			}
+		}
+	
+		private Guid ParseGuid1 () {
+			bool openBrace; 
+			int a;
+			short b;
+			short c;
+			byte[] d = new byte[8];
+			int i;
+	
+			openBrace = ParseOptChar ('{');
+			a = (int) ParseHex(8, true);
+			ParseChar('-');
+			b = (short) ParseHex(4, true);
+			ParseChar('-');
+			c = (short) ParseHex(4, true);
+			ParseChar('-');
+			for (i=0; i<8; ++i) {
+				d[i] = (byte) ParseHex(2, true);
+				if (i == 1) {
+					ParseChar('-');
+				}	
+			}
+
+			if (openBrace && !ParseOptChar('}')) {
+				ThrowFormatException ();
+			}
+	
+			return new Guid(a, b, c, d);
+		}
+	
+		private void ParseHexPrefix () {
+			ParseChar ('0');
+			ParseChar ('x');
+		}
+	
+		private Guid ParseGuid2 ()
+		{
+			int a;
+			short b;
+			short c;
+			byte[] d = new byte[8];
+			int i;
+	
+			ParseChar ('{');
+			ParseHexPrefix ();
+			a = (int) ParseHex (8, false);
+			ParseChar (',');
+			ParseHexPrefix ();
+			b = (short) ParseHex (4, false);
+			ParseChar (',');
+			ParseHexPrefix ();
+			c = (short) ParseHex (4, false);
+			for (i=0; i<8; ++i) {
+				ParseChar (',');
+				ParseChar ('{');
+				ParseHexPrefix ();
+				d[i] = (byte) ParseHex (2, false);
+				ParseChar ('}');
+			}	
+			ParseChar ('}');
+	
+			return new Guid (a,b,c,d);			
+			
+		}
+	
+		public Guid Parse ()
+		{
+			Guid g;
+	
+			try {
+				g  = ParseGuid1 ();
+			}
+			catch (FormatException) {
+				Reset ();
+				g = ParseGuid2 (); 
+			}
+			if (!AtEnd () ) {
+				ThrowFormatException ();
+			}
+			return g;
+		}
+
+	}
+
 	private static GuidState _guidState = new GuidState ( true /* use pseudo RNG? */ ); 
 
 	private static void CheckNull (object o) {
@@ -115,7 +278,8 @@ public struct Guid  : IFormattable, IComparable  {
 		}
 	}
 
-	private static void CheckLength (byte[] o, int l) {
+	private static void CheckLength (byte[] o, int l)
+	{
 		if (o . Length != l) {
 			throw new ArgumentException (String.Format(Locale.GetText ("Array should be exactly {0} bytes long."), l));
 		}
@@ -141,19 +305,14 @@ public struct Guid  : IFormattable, IComparable  {
 		_node5 = b[15];
 	}
 
-	[MonoTODO("Implement")]
-	public Guid (string g) {
-		_timeLow = 0;
-		_timeMid = 0;
-		_timeHighAndVersion = 0;
-		_clockSeqHiAndReserved = 0;
-		_clockSeqLow = 0;
-		_node0 = 0;
-		_node1 = 0;
-		_node2 = 0;
-		_node3 = 0;
-		_node4 = 0;
-		_node5 = 0;
+	public Guid (string g)
+	{
+		CheckNull (g);
+
+		GuidParser p = new GuidParser (g);
+		Guid guid = p.Parse();
+
+		this = guid;
 	}
 
 	public Guid (int a, short b, short c, byte[] d) 
