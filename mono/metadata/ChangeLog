@@ -1,5 +1,25 @@
 2003-10-25  Martin Baulig  <martin@ximian.com>
 
+	* class.h (MonoGenericInst): Added `MonoClass *klass' field.
+
+	* image.h (MonoImage): Added `GHashTable *typespec_cache'.
+
+	* metadata.c (mono_metadata_parse_generic_inst): Renamed to
+	`do_mono_metadata_parse_generic_inst'; pass it the MonoType we're
+	currently parsing.  Create the generic class and store it in
+	`generic_inst->klass' before parsing the type arguments.  This is
+	required to support "recursive" definitions; see mcs/tests/gen-23.cs
+	for an example.
+	(mono_type_create_from_typespec): Use a new `image->typespec_cache'
+	to support recursive typespec entries.
+
+	* class.c (mono_class_setup_parent): If our parent is a generic
+	instance, we may get called before it has its name set.
+	(mono_class_from_generic): Splitted into
+	mono_class_create_from_generic() and mono_class_initialize_generic().
+
+2003-10-25  Martin Baulig  <martin@ximian.com>
+
 	* icall.c (ves_icall_Type_BindGenericParameters): Return a
 	`MonoReflectionGenericInst *' instead of a `MonoReflectionType *'.
 	("System.Reflection.MonoGenericInst::inflate_method"): New interncall.
