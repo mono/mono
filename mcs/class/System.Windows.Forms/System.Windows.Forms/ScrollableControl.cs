@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.Form
+// System.Windows.Forms.ScrollableControl.cs
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
@@ -146,7 +146,7 @@ namespace System.Windows.Forms {
 			Message message = new Message();
 
 			message.HWnd = hWnd;
-			message.Msg = msg;
+			message.Msg = (int) msg;
 			message.WParam = wParam;
 			message.LParam = lParam;
 			message.Result = (IntPtr)0;

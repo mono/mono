@@ -322,7 +322,7 @@ namespace System.Windows.Forms {
 
 		{
 			//FIXME
-			switch (m.Msg) {
+			switch ((Msg) m.Msg) {
 				case Msg.WM_COMMAND: 
 					switch(m.HiWordWParam) {
 						case (uint)ListBoxNotifications.LBN_SELCHANGE:

@@ -3,17 +3,16 @@
 //
 // Author:
 //   Dennis Hayes (dennish@raytek.com)
+//
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 // (C) 2003 Novell, Inc.  http://www.novell.com
 //
 
-using System;
-
-namespace System.Windows.Forms {
-
-	/// <summary>
-	/// </summary>
-	public enum ButtonState {
+namespace System.Windows.Forms
+{
+	[Flags]
+	public enum ButtonState
+	{
 		All = 18176,
 		Checked = 1024,
 		Flat = 16384,

@@ -131,17 +131,17 @@ namespace System.Windows.Forms {
 
 		public void DefWndProc (ref Message m) 
 		{
-			m.Result = Win32.DefWindowProcA (m.HWnd, m.Msg, 
+			m.Result = Win32.DefWindowProcA (m.HWnd, (Msg) m.Msg, 
 							 m.WParam, m.LParam);
 		}
 
 		internal void DefMDIChildProc ( ref Message m ) {
-			m.Result = Win32.DefMDIChildProc(m.HWnd, m.Msg, m.WParam, m.LParam);
+			m.Result = Win32.DefMDIChildProc(m.HWnd,(Msg) m.Msg, m.WParam, m.LParam);
 		}
 
 		internal void DefFrameProc ( ref Message m , Control MdiClient) {
 			m.Result = Win32.DefFrameProc(m.HWnd, MdiClient != null ? MdiClient.Handle : IntPtr.Zero, 
-							m.Msg, m.WParam, m.LParam);
+							(Msg) m.Msg, m.WParam, m.LParam);
 		}
 
 		public virtual void DestroyHandle () 
@@ -184,7 +184,7 @@ namespace System.Windows.Forms {
 
 		protected virtual void WndProc (ref Message m) 
 		{
-			if (m.Msg == Msg.WM_CREATE)
+			if (m.Msg == (int) Msg.WM_CREATE)
 				Console.WriteLine ("NW WndProc WM_CREATE");
 			DefWndProc (ref m);
 		}
@@ -212,7 +212,7 @@ namespace System.Windows.Forms {
 				// window.
 				window = (NativeWindow) windowCollection[hWnd];
 				message.HWnd = hWnd;
-				message.Msg = msg;
+				message.Msg = (int) msg;
 				message.WParam = wParam;
 				message.LParam = lParam;
 	 			message.Result = (IntPtr) 0;

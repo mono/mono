@@ -113,7 +113,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void WndProc(ref Message m)
 		{
-			switch ( m.Msg ) {
+			switch ((Msg) m.Msg ) {
 			case Msg.WM_DRAWITEM:
 				DRAWITEMSTRUCT dis = new DRAWITEMSTRUCT();
 				dis = (DRAWITEMSTRUCT)Marshal.PtrToStructure( m.LParam, dis.GetType() );

@@ -204,7 +204,7 @@ namespace System.Windows.Forms {
 		}
 		[MonoTODO]
 		protected override void WndProc(ref Message m) {
-			switch ( m.Msg ) {
+			switch ((Msg) m.Msg ) {
 				case Msg.WM_HSCROLL:
 				case Msg.WM_VSCROLL:
 					switch ( (ScrollBarRequests) Win32.LOW_ORDER ( m.WParam.ToInt32 ( ) ) ) {

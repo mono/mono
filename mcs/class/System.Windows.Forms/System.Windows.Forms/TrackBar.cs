@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.TrackBar
+// System.Windows.Forms.TrackBar.cs
 //
 // Author:
 //   stubbed out by Jackson Harper (jackson@latitudegeo.com)
@@ -308,7 +308,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void WndProc(ref Message m)
 		{
-			switch ( m.Msg ) {
+			switch ((Msg) m.Msg) {
 			case Msg.WM_HSCROLL:
 			case Msg.WM_VSCROLL:
 				OnScroll( new EventArgs() );

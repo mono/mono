@@ -1,5 +1,5 @@
     //
-    // System.Windows.Forms.Form
+    // System.Windows.Forms.Form.cs
     //
     // Author:
     //   Miguel de Icaza (miguel@ximian.com)
@@ -850,7 +850,7 @@
 				if ( IsMdiChild )
 					window.DefMDIChildProc ( ref m );
 				else if ( IsMdiContainer && mdiClientWnd.IsHandleCreated ) {
-					if ( m.Msg != Msg.WM_SIZE )
+					if ( m.Msg != (int) Msg.WM_SIZE )
 						window.DefFrameProc ( ref m, mdiClientWnd );
 				}
 				else
@@ -1104,7 +1104,7 @@
 			}
 
 			protected override void WndProc (ref Message m) {
-				switch (m.Msg) {
+				switch ((Msg) m.Msg) {
 					case Msg.WM_CLOSE:
 						CancelEventArgs args = new CancelEventArgs( false );
 						OnClosing( args );

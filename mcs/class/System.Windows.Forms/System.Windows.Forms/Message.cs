@@ -1,5 +1,5 @@
 //
-// System.Drawing.Message.cs
+// System.Windows.Forms.Message.cs
 //
 // Author:
 //   Dennis Hayes (dennish@raytek.com)
@@ -7,13 +7,12 @@
 // (C) 2002/3 Ximian, Inc.  http://www.ximian.com
 //
 //TODO uncomment and implment GetLParam.
-using System;
 
-namespace System.Windows.Forms {
-	[Serializable]
-	public struct Message { 
-
-		private Msg msg;
+namespace System.Windows.Forms
+{
+	public struct Message
+	{
+		private int msg;
 		private IntPtr hwnd;
 		private IntPtr lparam;
 		private IntPtr wparam;
@@ -67,7 +66,7 @@ namespace System.Windows.Forms {
 		// Public Instance Members
 		// -----------------------
 
-		public Msg Msg {
+		public int Msg {
 			get{
 				return msg;
 			}
@@ -138,17 +137,17 @@ namespace System.Windows.Forms {
 
 		internal bool IsMouseMessage {
 			get {
-				return Msg > Msg.WM_MOUSEFIRST && Msg < Msg.WM_MOUSELAST;
+				return (msg > (int) System.Windows.Forms.Msg.WM_MOUSEFIRST) && (msg < (int) System.Windows.Forms.Msg.WM_MOUSELAST);
 			}
 		}
 		
 		internal bool IsKeyboardMessage {
 			get {
-				return Msg > Msg.WM_KEYFIRST && Msg < Msg.WM_KEYLAST;
+				return (msg > (int) System.Windows.Forms.Msg.WM_KEYFIRST) && (msg < (int) System.Windows.Forms.Msg.WM_KEYLAST);
 			}
 		}
 		
-		public static Message create(IntPtr hWnd, Msg msg, IntPtr wparam, IntPtr lparam)
+		public static Message Create(IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam)
 		{
 			Message NewMessage =  new Message();
 			NewMessage.msg = msg;

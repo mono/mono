@@ -689,13 +689,21 @@ namespace System.Windows.Forms {
 
 				RECT rect = new RECT();
 				Win32.GetWindowRect (Handle, ref rect);
+
 				if( Parent != null) {
+
 					Win32.ScreenToClient(Parent.Handle, ref rect);
+
 				}
+
 				x = rect.left;
+
 				y = rect.top;
+
 				width = rect.right - rect.left;
+
 				height = rect.bottom - rect.top;
+
 			}
 
 			UpdateBounds (x, y, width, height);
@@ -725,7 +733,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void WndProc(ref Message m) 
 		{
-			switch (m.Msg) {
+			switch ((Msg) m.Msg) {
 				case Msg.WM_MEASUREITEM: {
 					MEASUREITEMSTRUCT mis = new MEASUREITEMSTRUCT();
 					mis = (MEASUREITEMSTRUCT)Marshal.PtrToStructure(m.LParam, mis.GetType());

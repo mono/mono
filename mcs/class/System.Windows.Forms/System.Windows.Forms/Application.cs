@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.Application
+// System.Windows.Forms.Application.cs
 //
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
@@ -316,7 +316,7 @@ namespace System.Windows.Forms
 
 				Message message = new Message ();
 				message.HWnd = msg.hwnd;
-				message.Msg = msg.message;//
+				message.Msg = (int) msg.message;//
 				message.WParam = msg.wParam;
 				message.LParam = msg.lParam;
 
@@ -386,7 +386,7 @@ namespace System.Windows.Forms
 
 				Message message = new Message ();
 				message.HWnd = msg.hwnd;
-				message.Msg = msg.message;
+				message.Msg = (int) msg.message;
 				message.WParam = msg.wParam;
 				message.LParam = msg.lParam;
 

@@ -95,6 +95,7 @@ namespace System.Windows.Forms {
 			set{
 				//fixme:
 			}
+
 		}
 
 		public ContentAlignment ImageAlign {
@@ -254,7 +255,7 @@ namespace System.Windows.Forms {
 		
 		protected override void WndProc (ref Message m) 
 		{
-			switch (m.Msg) {
+			switch ((Msg) m.Msg) {
 				case Msg.WM_COMMAND: {
 					switch(m.HiWordWParam) {
 						case (uint)ButtonNotification.BN_CLICKED: {

@@ -1,3 +1,28 @@
+2004-04-14  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* win32enum: made Msg internal
+	* Control.cs
+	* NativeWindow.cs
+	* ScrollableControl.cs
+	* Form.cs
+	* Application.cs
+	* ButtonBase.cs
+	* ListBox.cs
+	* CheckedListBox.cs
+	* ComboBox.cs
+	* TextBoxBase.cs
+	* DateTimePicker.cs
+	* GroupBox.cs
+	* ScrollBar.cs
+	* Label.cs
+	* ListView.cs
+	* StatusBar.cs
+	* TabControl.cs
+	* TrackBar.cs
+	* UpDownBase.cs
+	* Message.cs: Changes that were neccessary because of
+	  making Msg internal
+
 2004-04-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* same kind of line terminators in this file and cleanup

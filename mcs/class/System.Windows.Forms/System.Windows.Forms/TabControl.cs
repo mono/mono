@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.TabControl
+// System.Windows.Forms.TabControl.cs
 //
 // Author:
 //   stubbed out by Jackson Harper (jackson@latitudegeo.com)
@@ -472,7 +472,7 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		protected override void WndProc(ref Message m) {
-			switch ( m.Msg ) {
+			switch ((Msg) m.Msg ) {
 			case Msg.WM_NOTIFY:
 				NMHDR nmhdr = (NMHDR)Marshal.PtrToStructure ( m.LParam,	typeof ( NMHDR ) );
 				switch ( nmhdr.code ) {

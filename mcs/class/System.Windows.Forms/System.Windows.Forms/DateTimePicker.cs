@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.DateTimePicker
+// System.Windows.Forms.DateTimePicker.cs
 //
 // Author:
 //   stubbed out by Richard Baumann (biochem333@nyc.rr.com)
@@ -190,7 +190,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void WndProc(ref Message m)
 		{
-			switch ( m.Msg ) {
+			switch ((Msg) m.Msg) {
 			case Msg.WM_NOTIFY:
 				if ( m.LParam != IntPtr.Zero )
 					handleNotification ( ref m );

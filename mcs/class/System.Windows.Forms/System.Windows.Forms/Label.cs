@@ -421,7 +421,7 @@ namespace System.Windows.Forms {
 
     		protected override void WndProc(ref Message m)
     		{
-				switch (m.Msg) {
+				switch ((Msg) m.Msg) {
 					case Msg.WM_DRAWITEM: {
 						m.Result = (IntPtr)1;
 					}

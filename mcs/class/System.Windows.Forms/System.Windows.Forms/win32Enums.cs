@@ -52,7 +52,7 @@ namespace System.Windows.Forms{
 	#endregion
 	
 	#region Windows Messages
-	public enum Msg {
+	internal enum Msg {
 		WM_NULL                   = 0x0000,
 		WM_CREATE                 = 0x0001,
 		WM_DESTROY                = 0x0002,

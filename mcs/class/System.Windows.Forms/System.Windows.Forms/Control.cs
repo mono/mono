@@ -48,7 +48,7 @@ namespace System.Windows.Forms
     				// base.WndProc (ref m);
 				//Console.WriteLine ("Control WndProc {0}", control.GetType().ToString());
 #if FilterDrawItem				
-					if (m.Msg == Msg.WM_DRAWITEM) {
+					if (m.Msg ==(int) Msg.WM_DRAWITEM) {
 						m.Result = (IntPtr)1;
 					}
 					else
@@ -2117,7 +2117,7 @@ namespace System.Windows.Forms
     		[MonoTODO]
 		public virtual bool PreProcessMessage (ref Message msg) 
     		{
-			if (msg.Msg == Msg.WM_KEYDOWN){
+			if (msg.Msg == (int) Msg.WM_KEYDOWN){
 				Keys keyData = (Keys)msg.WParam.ToInt32 ();
     				if (!ProcessCmdKey (ref msg, keyData)) {
 					if (IsInputKey (keyData))
@@ -2127,7 +2127,7 @@ namespace System.Windows.Forms
 				}
 				return true;
 			}
-			else if (msg.Msg == Msg.WM_CHAR){
+			else if (msg.Msg == (int) Msg.WM_CHAR){
 				if (IsInputChar ( (char) msg.WParam))
 					return false;
 
@@ -2169,7 +2169,7 @@ namespace System.Windows.Forms
     		{
 			bool handled = false;
 
-			switch (m.Msg){
+			switch ((Msg) m.Msg) {
 			case Msg.WM_KEYDOWN:
 				KeyEventArgs args_down = new KeyEventArgs ( (Keys)m.WParam.ToInt32 ());
 				OnKeyDown (args_down);
@@ -2738,7 +2738,7 @@ namespace System.Windows.Forms
 					}
 					return;
 				}
-				else if (m.Msg == Msg.WM_COMMAND) {
+				else if (m.Msg == (int) Msg.WM_COMMAND) {
 					// Notification
 					m.Result = (IntPtr)1;
 					OnWmCommand (ref m);
@@ -2748,7 +2748,7 @@ namespace System.Windows.Forms
 					return;
 				}
 
-    			switch (m.Msg) {
+    			switch ((Msg) m.Msg) {
        			case Msg.WM_CREATE:
 				Console.WriteLine("WM_CREATE");
     				OnHandleCreated (eventArgs);

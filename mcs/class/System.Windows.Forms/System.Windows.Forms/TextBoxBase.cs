@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.TextBoxBase
+// System.Windows.Forms.TextBoxBase.cs
 //
 // Author:
 //   stubbed out by Jackson Harper (jackson@latitudegeo.com)
@@ -540,7 +540,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void WndProc(ref Message m)
 		{
-			switch ( m.Msg ) {
+			switch ((Msg) m.Msg ) {
 			case Msg.WM_CTLCOLOREDIT:
 			case Msg.WM_CTLCOLORSTATIC:
 				if ( backgrBrush != IntPtr.Zero ) {

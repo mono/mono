@@ -825,7 +825,7 @@ namespace System.Windows.Forms {
 			}
 			
 			
-    		if (m.Msg==Msg.WM_NOTIFY)
+    		if (m.Msg == (int) Msg.WM_NOTIFY)
 			{				
 				NMHDR nmhdr = (NMHDR)Marshal.PtrToStructure (m.LParam,	typeof (NMHDR));
 			

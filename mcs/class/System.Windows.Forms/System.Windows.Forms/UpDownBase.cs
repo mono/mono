@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.UpDownBase
+// System.Windows.Forms.UpDownBase.cs
 //
 // Author:
 //	 stubbed out by Stefan Warnke (StefanW@POBox.com)
@@ -58,8 +58,7 @@ namespace System.Windows.Forms {
 		}
 		
 		protected override void WndProc(ref Message m) { 
-			switch( m.Msg) 
-			{
+			switch ((Msg) m.Msg) {
 			case Msg.WM_NOTIFY:
 				NM_UPDOWN nmupdown = (NM_UPDOWN)Marshal.PtrToStructure ( m.LParam, typeof ( NM_UPDOWN ) );
 				// With default setup 

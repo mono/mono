@@ -562,7 +562,7 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		protected override void WndProc(ref Message m) {
-			switch (m.Msg) {
+			switch ((Msg) m.Msg) {
 				case Msg.WM_MEASUREITEM: {
 					MEASUREITEMSTRUCT mis = new MEASUREITEMSTRUCT();
 					mis = (MEASUREITEMSTRUCT)Marshal.PtrToStructure(m.LParam, mis.GetType());
