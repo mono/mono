@@ -2,7 +2,7 @@
 
 <project name="type-reflector" default="linux">
 	<target name="linux">
-		<csc target="exe" output="./SqlSharpCli.exe" debug="true">
+		<csc target="exe" output="./sqlsharp.exe" debug="true">
 			<arg value="/noconfig"/>
 			<arg value="/r:../../class/lib/System.dll"/>
 			<arg value="/r:../../class/lib/System.Xml.dll"/>

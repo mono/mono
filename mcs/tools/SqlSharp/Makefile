@@ -13,7 +13,7 @@ CSCFLAGS = /out:$(PROGRAM) \
 #	/r:../../class/lib/System.Data.dll \
 
 
-PROGRAM = SqlSharpCli.exe
+PROGRAM = sqlsharp.exe
 
 MONO = mono
 

@@ -1,6 +1,9 @@
 SQL# CLI - SQL Sharp Command Line Interface
 ===========================================
 
+Running SQL# CLI on Mono:
+	mono sqlsharp.exe
+
 Use this tool to test connection strings and enter SQL queries 
 to different ADO.NET providers in Mono.
 
