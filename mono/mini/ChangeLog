@@ -1,5 +1,8 @@
 2004-04-02  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mono_method_to_ir): Avoid handle_loaded_temps in
+	ldsfld and ldsflda.
+
 	* inssel-sparc.brg: Add more optimizations.
 
 	* mini-sparc.c: Replace multiply/divide with shifts if possible.
