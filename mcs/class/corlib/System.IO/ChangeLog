@@ -1,3 +1,8 @@
+2003-11-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* StringReader.cs: fixed ReadLine for some cases where there are mixed
+	'\r' and '\n'. Closes bug #51020.
+
 2003-11-14 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* MemoryStream.cs (.ctor): We need to check if buffer is null

@@ -96,48 +96,48 @@ namespace System.IO {
 			return charsToRead;
 		}
 
-		public override string ReadLine() {
+		public override string ReadLine ()
+		{
 			// Reads until next \r or \n or \r\n, otherwise return null
 
-                        // LAMESPEC:
-                        // The Beta 2 SDK help says that the ReadLine method returns
-                        // "The next line from the input stream [...] A line is defined as a sequence of
-                        // characters followed by a carriage return (\r), a line feed (\n), or a carriage
-                        // return immediately followed by a line feed (\r\n). [...]
-                        // The returned value is a null reference if the end of the input stream has been reached."
-                        //
-                        // HOWEVER, the MS implementation returns the rest of the string if no \r and/or \n is found
-                        // in the string
+			// LAMESPEC:
+			// The Beta 2 SDK help says that the ReadLine method
+			// returns "The next line from the input stream [...] A
+			// line is defined as a sequence of characters followed by
+			// a carriage return (\r), a line feed (\n), or a carriage
+			// return immediately followed by a line feed (\r\n).
+			// [...] The returned value is a null reference if the end
+			// of the input stream has been reached."
+			//
+			// HOWEVER, the MS implementation returns the rest of
+			// the string if no \r and/or \n is found in the string
 
 			if (disposed) 
-				throw new ObjectDisposedException ("StringReader", "Cannot read from a closed StringReader");
+				throw new ObjectDisposedException ("StringReader",
+						"Cannot read from a closed StringReader");
 
 			if (nextChar >= source.Length)
 				return null;
 
-			int nextCR = source.IndexOf( '\r', nextChar );
-                        int nextLF = source.IndexOf( '\n', nextChar );
+			int nextCR = source.IndexOf ('\r', nextChar);
+			int nextLF = source.IndexOf ('\n', nextChar);
+			int readTo;
+			bool consecutive = false;
 
-                        if( nextCR == -1 && nextLF == -1 ) {
-                                return ReadToEnd();
-                        }
+			if (nextCR == -1) {
+				if (nextLF == -1)
+					return ReadToEnd ();
 
-                        int readTo;
+				readTo = nextLF;
+			} else if (nextLF == -1) {
+				readTo = nextCR;
+			} else {
+				readTo = (nextCR > nextLF) ? nextLF : nextCR;
+				consecutive = (nextCR + 1 == nextLF || nextLF + 1 == nextCR);
+			}
 
-                        if( nextCR == -1 ) {
-                                readTo = nextLF;
-                        } else {
-                                readTo = nextCR;
-                        }
-
-                        string nextLine = source.Substring( nextChar, readTo - nextChar );
-
-                        if( nextLF == nextCR + 1 ) {
-		                nextChar = readTo + 2;
-                        } else {
-                                nextChar = readTo + 1;
-                        }
-
+			string nextLine = source.Substring (nextChar, readTo - nextChar);
+			nextChar = readTo + ((consecutive) ? 2 : 1);
 			return nextLine;
 		}
 
