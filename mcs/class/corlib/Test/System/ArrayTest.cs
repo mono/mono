@@ -2030,7 +2030,42 @@ public class ArrayTest : Assertion
 			}
 			Assert("#N04", errorThrown);
 		}
-
+		{
+			int tc = 5;
+			char[] arr = {'d', 'b', 'f', 'e', 'a', 'c'};
+			
+			try {
+				Array.Sort (null, 0, 1);
+				Fail ("#N" + tc.ToString ());
+			}
+			catch (ArgumentException) {}
+			catch (Exception) { Fail ("#N" + tc.ToString ()); }
+			tc++;
+			
+			try {
+				Array.Sort (arr, -1, 3);
+				Fail ("#N" + tc.ToString ());
+			}
+			catch (ArgumentException) {}
+			catch (Exception) { Fail ("#N" + tc.ToString ()); }
+			tc++;
+			
+			try {
+				Array.Sort (arr, 1, -3);
+				Fail ("#N" + tc.ToString ());
+			}
+			catch (ArgumentException) {}
+			catch (Exception) { Fail ("#N" + tc.ToString ()); }
+			tc++;
+			
+			try {
+				Array.Sort (arr, arr.Length, arr.Length + 2);
+				Fail ("#N" + tc.ToString ());
+			}
+			catch (ArgumentException) {}
+			catch (Exception) { Fail ("#N" + tc.ToString ()); }
+		}
+		
 		// note: null second array => just sort first array
 		char[] starter = {'d', 'b', 'f', 'e', 'a', 'c'};
 		int[] starter1 = {1,2,3,4,5,6};

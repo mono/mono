@@ -1,3 +1,7 @@
+2003-06-10  Nick Drochak <ndrochak@gol.com>
+
+	* ArrayTest.cs: Cleanup some unused bits.
+
 2003-06-02  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* RandomTest.cs: Added a test to compare Mono's random streams with
