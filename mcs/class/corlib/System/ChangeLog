@@ -1,3 +1,15 @@
+2002-03-07  Martin Baulig  <martin@gnome.org>
+
+	* String.cs (Join): Throw an ArgumentNullException.
+	(LastIndexOf (string,int,int)): This method does a backwards search,
+	so startIndex points to the end of value, not to its beginning. Don't
+	throw an exception if startIndex equals this.Length. Always return -1
+	if startIndex is smaller than the length of value.
+	(Replace (string,string)): Replace all occurences of oldValue.
+	If newValue is null, all occurences of oldValue are to be removed.
+	(Split (char[],int)): Return an empty array if maxCount is zero, throw
+	an ArgumentOutOfRangeException if it's less than zero. Return maxValue
+	elements, not maxValue+1.
 
 Thu Mar 7 17:16:06 CET 2002 Paolo Molaro <lupus@ximian.com>
 

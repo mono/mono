@@ -924,6 +924,9 @@ namespace System {
 
 		public static string Join (string separator, string[] value)
 		{
+			if (value == null)
+				throw new ArgumentNullException ();
+
 			return Join (separator, value, 0, value.Length);
 		}
 
@@ -1032,44 +1035,40 @@ namespace System {
 
 		public int LastIndexOf (string value, int startIndex, int count)
 		{
-			// LAMESPEC: currently I'm using startIndex as the 0-position in the comparison,
-			//           but maybe it's the end-position in MS's implementation?
-			//           msdn is unclear on this point. I think this is correct though.
+			// startIndex points to the end of value, ie. we're searching backwards.
 			int i, len;
 
 			if (value == null)
 				throw new ArgumentNullException ();
 
-			if (startIndex < 0 || startIndex >= this.length)
+			if (startIndex < 0 || startIndex > this.length)
 				throw new ArgumentOutOfRangeException ();
 
 			if (count < 0 || startIndex - count + 1 < 0)
 				throw new ArgumentOutOfRangeException ();
 
+			if (value.length > startIndex)
+				return -1;
+
 			if (value == String.Empty)
 				return startIndex;
 
-			if (startIndex + value.length > this.length) {
-				/* just a little optimization */
-				int start;
-
-				start = this.length - value.length;
-				count -= startIndex - start;
-				startIndex = start;
-			}
+			if (startIndex == this.length)
+				startIndex--;
 
 			// FIXME: use a reversed-unicode-safe-Boyer-Moore?
 			len = value.length - 1;
 			for (i = startIndex; i > startIndex - count; i--) {
-				if (this.c_str[i + len] == value.c_str[len]) {
+
+				if (this.c_str[i] == value.c_str[len]) {
 					bool equal = true;
 					int j;
 
-					for (j = len - 1; equal && j >= 0; j--)
-						equal = this.c_str[i + j] == value.c_str[j];
+					for (j = 0; equal && j < len; j++)
+						equal = this.c_str[i - j] == value.c_str[len - j];
 
 					if (equal)
-						return i;
+						return i - j;
 				}
 			}
 
@@ -1193,34 +1192,44 @@ namespace System {
 
 		public string Replace (string oldValue, string newValue)
 		{
-			// LAMESPEC: msdn doesn't specify what to do if either args is null
-			int index, len, i, j;
+			// If newValue is null, oldValue is removed.
+			int index, len, i, j, newlen;
+			string thestring;
 			char[] str;
 
-			if (oldValue == null || newValue == null)
+			if (oldValue == null)
 				throw new ArgumentNullException ();
 
-			// Use IndexOf in case I later rewrite it to use Boyer-Moore
-			index = IndexOf (oldValue, 0);
-			if (index == -1) {
-				// This is the easy one ;-)
-				return Substring (0, this.length);
+			thestring = Substring (0, this.length);
+			index = 0;
+
+			// Runs until all occurences of oldValue have been replaced.
+			while (true) {
+				// Use IndexOf in case I later rewrite it to use Boyer-Moore
+				index = thestring.IndexOf (oldValue, index);
+
+				if (index == -1)
+					return thestring;
+
+				newlen = (newValue == null) ? 0 : newValue.length;
+				len = thestring.length - oldValue.length + newlen;
+
+				if (len == 0)
+					return String.Empty;
+
+				String res = new String (len);
+				str = res.c_str;
+				for (i = 0; i < index; i++)
+					str[i] = thestring.c_str[i];
+				for (j = 0; j < newlen; j++)
+					str[i++] = newValue[j];
+				for (j = index + oldValue.length; j < thestring.length; j++)
+					str[i++] = thestring.c_str[j];
+
+				// Increment index, we're already done replacing until this index.
+				thestring = res;
+				index += newlen;
 			}
-
-			len = this.length - oldValue.length + newValue.length;
-			if (len == 0)
-				return String.Empty;
-
-			String res = new String (len);
-			str = res.c_str;
-			for (i = 0; i < index; i++)
-				str[i] = this.c_str[i];
-			for (j = 0; j < newValue.length; j++)
-				str[i++] = newValue[j];
-			for (j = index + oldValue.length; j < this.length; j++)
-				str[i++] = this.c_str[j];
-
-			return res;
 		}
 
 		private int splitme (char[] separators, int startIndex)
@@ -1293,15 +1302,19 @@ namespace System {
 
 		public string[] Split (char[] separator, int maxCount)
 		{
-			// FIXME: what to do if maxCount <= 0?
 			// FIXME: would using Queue be better than ArrayList?
 			string[] strings;
 			ArrayList list;
 			int index, len, used;
 
+			if (maxCount == 0)
+				return new string[0];
+			else if (maxCount < 0)
+				throw new ArgumentOutOfRangeException ();
+
 			used = 0;
 			list = new ArrayList ();
-			for (index = 0, len = 0; index < this.length && used < maxCount; index += len + 1) {
+			for (index = 0, len = 0; index < this.length && used < maxCount-1; index += len + 1) {
 				len = splitme (separator, index);
 				len = len > -1 ? len : this.length - index;
 				if (len == 0) {
