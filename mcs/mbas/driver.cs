@@ -719,6 +719,7 @@ namespace Mono.Languages
 		bool IsSWFApp()
 		{
 			bool hasSWF = false, isForm = false;
+			string mainclass = GetFQMainClass();
 			
 			foreach (string r in references) {
 				if (r.IndexOf ("System.Windows.Forms") >= 0) {
@@ -726,13 +727,20 @@ namespace Mono.Languages
 					break;	
 				}	
 			}	
-			string mainclass = RootContext.RootNamespace + "." + RootContext.MainClass;
 			if (mainclass != ".") {
 				Type t = TypeManager.LookupType(mainclass);
 				if (t != null) 
 					isForm = t.IsSubclassOf (TypeManager.LookupType("System.Windows.Forms.Form"));
 			}
 			return (hasSWF && isForm);
+		}
+		
+		string GetFQMainClass()
+		{	
+			if (RootContext.RootNamespace != "")
+				return RootContext.RootNamespace + "." + RootContext.MainClass;
+			else
+				return RootContext.MainClass;			
 		}
 		
 		void FixEntryPoint()
@@ -750,10 +758,10 @@ namespace Mono.Languages
 					// won't be able to compile SWF code out of the box.
 
 					if (IsSWFApp()) 
-					{					
-						Type t = TypeManager.LookupType(RootContext.RootNamespace + "." + RootContext.MainClass);
+					{												
+						Type t = TypeManager.LookupType(GetFQMainClass());
 						if (t != null) 
-						{
+						{							
 							TypeBuilder tb = t as TypeBuilder;
 							MethodBuilder mb = tb.DefineMethod ("Main", MethodAttributes.Public | MethodAttributes.Static, CallingConventions.Standard, 
 								typeof(void), new Type[0]);
