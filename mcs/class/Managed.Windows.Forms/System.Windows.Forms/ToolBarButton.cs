@@ -20,7 +20,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2004 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
 //	Ravindra (rkumar@novell.com)
@@ -29,9 +29,12 @@
 //     - DropDownMenu
 //     - Adding a button to two toolbars
 //
-// $Revision: 1.7 $
+// $Revision: 1.8 $
 // $Modtime: $
 // $Log: ToolBarButton.cs,v $
+// Revision 1.8  2004/10/05 08:42:20  ravindra
+// Added an internal member dd_pressed to handle clicks on DropDown arrow.
+//
 // Revision 1.7  2004/09/09 11:23:05  ravindra
 // Changes in ToolBarButton need to make it's parent redraw.
 //
@@ -72,6 +75,7 @@ namespace System.Windows.Forms
 	{
 		#region instance variable
 		//private ContextMenu menu; //NotImplemented
+		internal bool dd_pressed = false; // flag to check for a mouse down on dropdown rect
 		private bool enabled = true;
 		private int imageIndex = -1;
 		private ToolBar parent;
