@@ -308,30 +308,54 @@ namespace System.Xml
 		{
 			XmlDocument ownerDoc = (NodeType == XmlNodeType.Document) ? (XmlDocument)this : OwnerDocument;
 
-			if (NodeType == XmlNodeType.Document ||
-			    NodeType == XmlNodeType.Element ||
-			    NodeType == XmlNodeType.Attribute ||
-			    NodeType == XmlNodeType.DocumentFragment) {
-				if (IsReadOnly)
-					throw new ArgumentException ("The specified node is readonly.");
+			if (NodeType != XmlNodeType.Element &&
+			    NodeType != XmlNodeType.Attribute &&
+			    NodeType != XmlNodeType.Document &&
+			    NodeType != XmlNodeType.DocumentFragment)
+				throw new InvalidOperationException (String.Format ("current node {0} is not allowed to have any children.", NodeType));
 
-				if (newChild.OwnerDocument != ownerDoc)
-					throw new ArgumentException ("Can't append a node created by another document.");
+			switch (NodeType) {
+			case XmlNodeType.Attribute:
+				switch (newChild.NodeType) {
+				case XmlNodeType.Text:
+				case XmlNodeType.EntityReference:
+					break;
+				default:
+					throw new ArgumentException (String.Format (
+						"Cannot insert specified type of node {0} as a child of this node {0}.", 
+						newChild.NodeType, NodeType));
+				}
+				break;
+			case XmlNodeType.Element:
+				switch (newChild.NodeType) {
+				case XmlNodeType.Attribute:
+				case XmlNodeType.Document:
+				case XmlNodeType.DocumentType:
+				case XmlNodeType.Entity:
+				case XmlNodeType.Notation:
+				case XmlNodeType.XmlDeclaration:
+					throw new ArgumentException ("Cannot insert specified type of node as a child of this node.");
+				}
+				break;
+			}
 
-				if (refChild != null && newChild.OwnerDocument != refChild.OwnerDocument)
-						throw new ArgumentException ("argument nodes are on the different documents.");
+			if (IsReadOnly)
+				throw new ArgumentException ("The specified node is readonly.");
 
-				// This check is done by MS.NET 1.0, but isn't done for MS.NET 1.1. 
-				// Skip this check in the meantime...
+			if (newChild.OwnerDocument != ownerDoc)
+				throw new ArgumentException ("Can't append a node created by another document.");
+
+			if (refChild != null && newChild.OwnerDocument != refChild.OwnerDocument)
+					throw new ArgumentException ("argument nodes are on the different documents.");
+
+			// This check is done by MS.NET 1.0, but isn't done for MS.NET 1.1. 
+			// Skip this check in the meantime...
 //				if(this == ownerDoc && ownerDoc.DocumentElement != null && (newChild is XmlElement))
 //					throw new XmlException ("multiple document element not allowed.");
 
-				// checking validity finished. then appending...
+			// checking validity finished. then appending...
 
-				return insertBeforeIntern (newChild, refChild);
-			} 
-			else
-				throw new InvalidOperationException (String.Format ("current node {0} is not allowed to have any children.", NodeType));
+			return insertBeforeIntern (newChild, refChild);
 		}
 
 		internal XmlNode insertBeforeIntern (XmlNode newChild, XmlNode refChild)

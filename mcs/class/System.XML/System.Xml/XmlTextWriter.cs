@@ -20,6 +20,7 @@ namespace System.Xml
 	public class XmlTextWriter : XmlWriter
 	{
 		#region Fields
+		const string XmlnsNamespace = "http://www.w3.org/2000/xmlns/";
 
 		TextWriter w;
 		bool nullEncoding = false;
@@ -50,6 +51,11 @@ namespace System.Xml
 		Hashtable writtenAttributes = new Hashtable ();
 		ArrayList newAttributeNamespaces = new ArrayList ();
 		bool checkMultipleAttributes = false;
+
+		XmlNamespaceManager namespaceManager = new XmlNamespaceManager (new NameTable ());
+		string savingAttributeValue = String.Empty;
+		bool saveAttributeValue = false;
+		string savedAttributePrefix;
 
 		#endregion
 
@@ -227,8 +233,12 @@ namespace System.Xml
 			{
 				string ans = (string)newAttributeNamespaces[n];
 				string aprefix = namespaceManager.LookupPrefix (ans);
-				string formatXmlns = String.Format (" xmlns:{0}={1}{2}{1}", aprefix, quoteChar, ans);
-				w.Write(formatXmlns);
+
+				if(checkMultipleAttributes && !writtenAttributes.Contains ("xmlns:" + aprefix))
+				{
+					string formatXmlns = String.Format (" xmlns:{0}={1}{2}{1}", aprefix, quoteChar, ans);
+					w.Write(formatXmlns);
+				}
 			}
 			newAttributeNamespaces.Clear ();
 		}
@@ -411,6 +421,15 @@ namespace System.Xml
 			w.Write ("{0}", quoteChar);
 
 			openAttribute = false;
+
+			if (saveAttributeValue) {
+				// add namespace
+				namespaceManager.AddNamespace (
+					savedAttributePrefix, savingAttributeValue);
+				saveAttributeValue = false;
+				savedAttributePrefix = String.Empty;
+				savingAttributeValue = String.Empty;
+			}
 		}
 
 		public override void WriteEndDocument ()
@@ -536,8 +555,8 @@ namespace System.Xml
 			if ((prefix == "xmlns") && (localName.ToLower ().StartsWith ("xml")))
 				throw new ArgumentException ("Prefixes beginning with \"xml\" (regardless of whether the characters are uppercase, lowercase, or some combination thereof) are reserved for use by XML: " + prefix + ":" + localName);
 
-			if ((prefix == "xmlns") && (ns != "http://www.w3.org/2000/xmlns/"))
-				throw new ArgumentException ("The 'xmlns' attribute is bound to the reserved namespace 'http://www.w3.org/2000/xmlns/'");
+			if ((prefix == "xmlns") && (ns != XmlnsNamespace))
+				throw new ArgumentException (String.Format ("The 'xmlns' attribute is bound to the reserved namespace '{0}'", XmlnsNamespace));
 
 			CheckState ();
 
@@ -565,7 +584,7 @@ namespace System.Xml
 					namespaceManager.AddNamespace (prefix, ns);
 				}
 
-				if (prefix == String.Empty && ns != "http://www.w3.org/2000/xmlns/")
+				if (prefix == String.Empty && ns != XmlnsNamespace)
 					prefix = (existingPrefix == null) ?
 						String.Empty : existingPrefix;
 			}
@@ -591,16 +610,11 @@ namespace System.Xml
 			attributeWrittenForElement = true;
 			ws = WriteState.Attribute;
 
-/*			This is managed in WriteAttributeString.
-			
-			if (prefix == String.Empty && localName == "xmlns") {
-				if (namespaceManager.LookupNamespace (prefix) == null)
-					namespaceManager.AddNamespace (prefix, ns);
-			} else if (prefix == "xmlns") {
-				if (namespaceManager.LookupNamespace (localName) == null)
-					namespaceManager.AddNamespace (localName, ns);
+			if (prefix == "xmlns" || prefix == String.Empty && localName == "xmlns") {
+				saveAttributeValue = true;
+				savedAttributePrefix = (prefix == "xmlns") ? localName : String.Empty;
+				savingAttributeValue = String.Empty;
 			}
-			*/
 		}
 
 		public override void WriteStartDocument ()
@@ -698,6 +712,11 @@ namespace System.Xml
 				throw new InvalidOperationException ("Token content in state Prolog would result in an invalid XML document.");
 
 			WriteStringInternal (text, true);
+
+			// MS.NET (1.0) saves attribute value only at WriteString.
+			if (saveAttributeValue)
+				// In most cases it will be called one time, so simply use string + string.
+				savingAttributeValue += text;
 		}
 
 		private string NormalizeAttributeString (string value)

@@ -1,3 +1,19 @@
+2003-07-06  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlElement.cs : Removed extraneous xmlns output support (it should
+	  be done by XmlTextWriter).
+	* XmlNode.cs : InsertBefore() now checks validity of the newChild (and
+	  most of the changes are in fact indentation changes).
+	* XmlWriter.cs : WriteAttributes() now can write entity references.
+	  WriteNode() now writes xmldecl attributes correctly.
+	  Removed namespaceManager and xmlns check logic, since it should be 
+	  done by individual XmlTextWriter.
+	* XmlTextWriter.cs : Patch by Jerome. AddMissingElementXmlns () has
+	  written multiple xmlns declarations.
+	  Moved namespaceManager from abstract XmlWriter.
+	  Write{Start|End}Attribute() and WriteString() now checks xmlns 
+	  attribute value. (MS.NET holds value only with this write method).
+
 2003-07-04  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlDocument.cs : removed xmlReader.Close() from Load(XmlReader).

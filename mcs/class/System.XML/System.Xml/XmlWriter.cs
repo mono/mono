@@ -16,7 +16,6 @@ namespace System.Xml
 		#region Fields
 
 		protected WriteState ws = WriteState.Start;
-		protected XmlNamespaceManager namespaceManager = new XmlNamespaceManager (new NameTable ());
 
 		#endregion
 
@@ -44,7 +43,25 @@ namespace System.Xml
 
 		public abstract string LookupPrefix (string ns);
 
-		[MonoTODO("DTDs must be implemented to use 'defattr' parameter.")]
+		private void WriteAttribute (XmlReader reader, bool defattr)
+		{
+			if (!defattr && reader.IsDefault)
+				return;
+
+			WriteStartAttribute (reader.Prefix, reader.LocalName, reader.NamespaceURI);
+			while (reader.ReadAttributeValue ()) {
+				switch (reader.NodeType) {
+				case XmlNodeType.Text:
+					WriteString (reader.Value);
+					break;
+				case XmlNodeType.EntityReference:
+					WriteEntityRef (reader.Name);
+					break;
+				}
+			}
+			WriteEndAttribute ();
+		}
+
 		public virtual void WriteAttributes (XmlReader reader, bool defattr)
 		{
 			if(reader == null)
@@ -52,14 +69,19 @@ namespace System.Xml
 
 			switch (reader.NodeType) {
 			case XmlNodeType.XmlDeclaration:
+				WriteAttributeString ("version", reader ["version"]);
+				if (reader ["encoding"] != null)
+					WriteAttributeString ("encoding", reader ["encoding"]);
+				if (reader ["standalone"] != null)
+					WriteAttributeString ("standalone", reader ["standalone"]);
+				break;
 			case XmlNodeType.Element:
 				if (reader.MoveToFirstAttribute ())
 					goto case XmlNodeType.Attribute;
 				break;
 			case XmlNodeType.Attribute:
 				do {
-					// FIXME: use ReadAttributeValue () for strictly write EntityReference.
-					WriteAttributeString (reader.Prefix, reader.LocalName, reader.NamespaceURI, reader.Value);
+					WriteAttribute (reader, defattr);
 				} while (reader.MoveToNextAttribute ());
 				break;
 			default:
@@ -79,28 +101,15 @@ namespace System.Xml
 
 		public void WriteAttributeString (string prefix, string localName, string ns, string value)
 		{
+			// In MS.NET (1.0), this check is done *here*, not at WriteStartAttribute.
+			// (XmlTextWriter.WriteStartAttribute("xmlns", "anyname", null) throws an exception.
 			if ((prefix == "xmlns") || (prefix == "" && localName == "xmlns"))
-			{
-				if (ns == null)  ns = "http://www.w3.org/2000/xmlns/";
-				if (prefix == "xmlns" && namespaceManager.HasNamespace (localName))
-				  	return;
-			}
+				if (ns == null)
+					ns = "http://www.w3.org/2000/xmlns/";
 
 			WriteStartAttribute (prefix, localName, ns);
 			WriteString (value);
 			WriteEndAttribute ();
-
-			if ((prefix == "xmlns") || (localName == "xmlns")) 
-			{
-				if (prefix == "xmlns")
-				{
-					if (value == string.Empty) throw new ArgumentException ("Cannot use a prefix with an empty namespace");
-					namespaceManager.AddNamespace (localName, value);
-				}
-				else
-					namespaceManager.AddNamespace ("", value);
-			}
-			
 		}
 
 		public abstract void WriteBase64 (byte[] buffer, int index, int count);
@@ -145,7 +154,6 @@ namespace System.Xml
 
 		public abstract void WriteNmToken (string name);
 
-		[MonoTODO("needs to test")]
 		public virtual void WriteNode (XmlReader reader, bool defattr)
 		{
 			if (reader == null)
@@ -208,14 +216,16 @@ namespace System.Xml
 			case XmlNodeType.EndEntity:
 				break;
 			case XmlNodeType.XmlDeclaration:
+				// FIXME: It seems different from MS way, but I have 
+				// no other idea to write start document statefully.
 				string st = reader.GetAttribute ("standalone");
 				if (st != null && st != String.Empty)
-                                        WriteStartDocument (st.ToLower () == "yes");
+					WriteStartDocument (st.ToLower () == "yes");
 				else
 					WriteStartDocument ();
 				break;
 			default:
-				throw new NotImplementedException ();
+				throw new XmlException ("Unexpected node " + reader.Name + " of type " + reader.NodeType);
 			}
 			reader.Read ();
 		}

@@ -379,7 +379,8 @@ namespace System.Xml
 
 			foreach(XmlNode attributeNode in Attributes)
 				attributeNode.WriteTo(w);
-
+/*
+// It should be automatically written by XmlWriter.
 			// write namespace declarations(if not exist)
 			foreach(XmlNode attributeNode in Attributes) {
 				if(attributeNode.Prefix != null && attributeNode.Prefix != String.Empty &&
@@ -387,7 +388,7 @@ namespace System.Xml
 					attributeNode.Prefix != "xmlns")
 					w.WriteAttributeString("xmlns", attributeNode.Prefix, "http://www.w3.org/2000/xmlns/", attributeNode.NamespaceURI);
 			}
-
+*/
 			if (IsEmpty)
 				w.WriteEndElement ();
 			else {
