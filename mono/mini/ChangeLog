@@ -1,4 +1,8 @@
 
+Wed May 28 11:19:15 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, jit.h, mini.h: install header for embedding mono.
+
 Tue May 27 17:56:12 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: thread-static fields are registered in mono_class_vtable(),
