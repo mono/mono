@@ -1,3 +1,10 @@
+
+Fri Mar 29 17:15:11 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* io.c: EEXISTS is ignored for directory creation.
+	* mono-mutex.h: remove silly "pragma }" that emacs users insert
+	because they use a broken editor:-)
+
 2002-03-28  Dick Porter  <dick@ximian.com>
 
 	* sockets.h: 
