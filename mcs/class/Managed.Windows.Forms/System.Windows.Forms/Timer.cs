@@ -52,7 +52,6 @@ namespace System.Windows.Forms {
 			set {
 				enabled = value;
 				if (value) {
-					Console.WriteLine ("Setting timer");
 					XplatUI.SetTimer (this);
 				} else {
 					XplatUI.KillTimer (this);
