@@ -1,4 +1,25 @@
+2005-01-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* UpDownBase.cs (ctor): Connect TextChanged in the entry to the
+	OnTextBoxChanged.
+
+	Capture LostFocus and OnTextBoxChanged.  The later introduces a
+	recursive invocation that I have not figured out yet.
+
+	Reset the timer when not using (it was accumulating).
+
+
+	(OnTextBoxChanged): Set UserEdit to true here to track whether the
+	user has made changes that require validation.  
+
+	Reset changing to avoid loops.
+
 2005-01-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* NumericUpDown.cs: Display value at startup.
+
+	* UpDownBase.cs (Text): Do not call UpdateEditText here, only call
+	ValidateEditText. 
 
 	* NumericUpDown.cs: Minimum, Maximum, Text, Value properties
 	filled in.  Added some basic parsing of text.  

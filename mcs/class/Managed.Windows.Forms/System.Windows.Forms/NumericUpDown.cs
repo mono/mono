@@ -35,7 +35,10 @@ namespace System.Windows.Forms {
 		bool thousand = false;
 		bool on_init = false;
 		
-		public NumericUpDown () : base () {}
+		public NumericUpDown () : base ()
+		{
+			UpdateEditText ();
+		}
 		
 #region ISupportInitialize methods
 
@@ -194,7 +197,11 @@ namespace System.Windows.Forms {
 
 		protected override void OnLostFocus (EventArgs e)
 		{
-			// TODO: What to do?
+			base.OnLostFocus (e);
+			if (UserEdit){
+				ParseEditText ();
+				UpdateEditText ();
+			}
 		}
 
 		protected override void OnMouseDown (MouseEventArgs e)

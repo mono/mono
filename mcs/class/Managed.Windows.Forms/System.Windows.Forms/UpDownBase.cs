@@ -62,7 +62,7 @@ namespace System.Windows.Forms {
 			const int StartInterval = 1000;
 			const int RepeatInterval = 400;
 			const int ChangeInterval = 75;
-			const int MinimumInterval = 20;
+			const int MinimumInterval = 100;
 			
 			internal Spinner (UpDownBase updownbase)
 			{
@@ -121,6 +121,7 @@ namespace System.Windows.Forms {
 					}
 				}
 				Capture = false;
+				timer.Enabled = false;
 			}
 
 			//
@@ -130,6 +131,7 @@ namespace System.Windows.Forms {
 			void InitTimer ()
 			{
 				if (timer != null){
+					timer.Interval = StartInterval;
 					timer.Enabled = true;
 					return;
 				}
@@ -247,6 +249,8 @@ namespace System.Windows.Forms {
 			entry = new TextBox ();
 			entry.Font = Font;
 			entry.Size = new Size (120, Font.Height);
+			entry.LostFocus += new EventHandler (EntryOnLostFocus);
+			entry.TextChanged += new EventHandler (OnTextBoxTextChanged);
 			Controls.Add (entry);
 
 			spinner = new Spinner (this);
@@ -255,7 +259,11 @@ namespace System.Windows.Forms {
 			ComputeSizeAndLocation ();
 			ResumeLayout ();
 		}
-		
+
+		void EntryOnLostFocus (object sender, EventArgs e)
+		{
+			OnLostFocus (e);
+		}
 
 		void ComputeSizeAndLocation ()
 		{
@@ -380,7 +388,13 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnTextBoxTextChanged (object source, EventArgs e)
 		{
+#if false
+			if (changing_text)
+				return;
+			changing_text = false;
+			user_edit = true;
 			OnChanged (source, e);
+#endif
 		}
 
 #endregion
@@ -497,14 +511,25 @@ namespace System.Windows.Forms {
 
 		public override string Text {
 			get {
+				if (entry == null)
+					return String.Empty;
+				
 				return entry.Text;
 			}
 
 			set {
+				//
+				// The documentation is conflicts with itself, we can
+				// not call UpdateEditText, as this will call Text to
+				// set the value.
+				//
+				entry.Text = value;
+				
 				if (UserEdit)
-					UpdateEditText ();
-				else
 					ValidateEditText ();
+				
+				if (ChangingText)
+					ChangingText = false;
 			}
 		}
 		
