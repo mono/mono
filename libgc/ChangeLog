@@ -1,3 +1,8 @@
+2005-03-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* config.guess config.sub ltmain.sh: Update these files with more
+	up-to-date versions. Fixes #74071.
+
 2005-03-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* solaris_threads.c (GC_thread_is_registered): Add this for solaris
