@@ -1,3 +1,8 @@
+2004-12-06  Martin Baulig  <martin@ximian.com>
+
+	* Decimal.cs: Decimal constant support has been merged into GMCS,
+	removed the FIXME.
+
 2004-12-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Environment.cs: Bump corlib version.

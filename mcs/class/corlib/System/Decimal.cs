@@ -56,11 +56,7 @@ namespace System
 	IComparable
 #endif
     {
-#if BOOTSTRAP_WITH_OLDLIB || NET_2_0
-
-#if NET_2_0
-#  warning "FIXME: Workaround till Decimal Constant support is merged.  Once it's added, remove this warning and the '|| NET_2_0' above"
-#endif
+#if BOOTSTRAP_WITH_OLDLIB
 
 	// LAMESPEC: the attributes aren't mentioned, but show up in CorCompare
 	// Unfortunately, corcompare starts throwing security exceptions when
