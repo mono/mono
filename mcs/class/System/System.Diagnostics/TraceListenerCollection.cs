@@ -80,8 +80,8 @@ namespace System.Diagnostics {
 
 		private void InitializeListener (TraceListener listener)
 		{
-			listener.IndentLevel = TraceImpl.IndentLevel;
-			listener.IndentSize = TraceImpl.IndentSize;
+			listener.IndentLevel = 0;
+			listener.IndentSize = 4;
 		}
 
 		private void InitializeRange (IList listeners)

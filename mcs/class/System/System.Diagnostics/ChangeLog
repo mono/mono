@@ -1,3 +1,8 @@
+2002-09-19  Nick Drochak <ndrochak@gol.com>
+
+	* TraceListenerCollection.cs: Set Indet level and size to default 
+	values.  The values from TraceImpl might have been changed.
+
 2002-08-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Process.cs:
