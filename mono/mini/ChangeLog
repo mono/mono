@@ -1,3 +1,9 @@
+2004-11-24  Martin Baulig  <martin@ximian.com>
+
+	* mini.c (mono_method_to_ir): Use `STACK_OBJ' instead of
+	`ldind_type [CEE_LDIND_REF]' (which would be beyond the end of
+	that array).
+
 2004-11-24  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_method_to_ir): Disable inlining for methods containing
