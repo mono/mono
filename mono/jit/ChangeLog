@@ -1,3 +1,8 @@
+2002-07-05  Martin Baulig  <martin@gnome.org>
+
+	* debug.c (mono_debug_add_method): Fix a bug in the `begin_scope' and
+	`end_scope' calculations when linear scan register allocation is disabled.
+
 2002-07-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* mono.c: removed the "RESULT: X" message.
