@@ -26,7 +26,7 @@ public class ColorConverter : TypeConverter
 		return base.CanConvertFrom(context, sourceType);
 	}
 
-	[MonoTODO]
+	//[MonoTODO]
 	public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
 	{
 		throw new NotImplementedException ();
@@ -60,7 +60,7 @@ public class ColorConverter : TypeConverter
 		return Color.FromArgb (A, (i & 0x00FF0000) >> 16, (i & 0x00FF00) >> 8, (i & 0x0FF));
 	}
 
-	[MonoTODO]
+	//[MonoTODO]
 	public override object ConvertTo (ITypeDescriptorContext context,
 					  CultureInfo culture,
 					  object value,
@@ -76,7 +76,7 @@ public class ColorConverter : TypeConverter
 	}
 */
 
-	[MonoTODO]
+	//[MonoTODO]
 	public override bool GetStandardValuesSupported (ITypeDescriptorContext context)
 	{
 		// This should return true once GetStandardValues is implemented

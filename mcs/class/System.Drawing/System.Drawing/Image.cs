@@ -13,7 +13,6 @@ namespace System.Drawing {
 using System;
 using System.Runtime.Remoting;
 using System.Runtime.Serialization;
-using System.Drawing.Imaging;
 
 //[Serializable]
 //[ComVisible(true)]
@@ -49,29 +48,29 @@ public abstract class Image : MarshalByRefObject /*, ICloneable, IDisposable, IS
 		throw new NotImplementedException ();
 	}
 	
-	public static int GetPixelFormatSize (PixelFormat pixfmt)
-	{
-		// Fixme: implement me
-		throw new NotImplementedException ();
-	}
-
-	public static bool IsAlphaPixelFormat (PixelFormat pixfmt)
-	{
-		// Fixme: implement me
-		throw new NotImplementedException ();
-	}
-	
-	public static bool IsCanonicalPixelFormat (PixelFormat pixfmt)
-	{
-		// Fixme: implement me
-		throw new NotImplementedException ();
-	}
-	
-	public static bool IsExtendedPixelFormat (PixelFormat pixfmt)
-    	{
-		// Fixme: implement me
-		throw new NotImplementedException ();
-	}
+//	public static int GetPixelFormatSize (PixelFormat pixfmt)
+//	{
+//		// Fixme: implement me
+//		throw new NotImplementedException ();
+//	}
+//
+//	public static bool IsAlphaPixelFormat (PixelFormat pixfmt)
+//	{
+//		// Fixme: implement me
+//		throw new NotImplementedException ();
+//	}
+//	
+//	public static bool IsCanonicalPixelFormat (PixelFormat pixfmt)
+//	{
+//		// Fixme: implement me
+//		throw new NotImplementedException ();
+//	}
+//	
+//	public static bool IsExtendedPixelFormat (PixelFormat pixfmt)
+//    	{
+//		// Fixme: implement me
+//		throw new NotImplementedException ();
+//	}
 
 	// non-static
 	public RectangleF GetBounds (ref GraphicsUnit pageUnit)
@@ -146,14 +145,14 @@ public abstract class Image : MarshalByRefObject /*, ICloneable, IDisposable, IS
 		}
 	}
 	
-	public ColorPalette Palette {
-		get {
-			throw new NotImplementedException ();
-		}
-		set {
-			throw new NotImplementedException ();
-		}
-	}
+//	public ColorPalette Palette {
+//		get {
+//			throw new NotImplementedException ();
+//		}
+//		set {
+//			throw new NotImplementedException ();
+//		}
+//	}
 	
 	public SizeF PhysicalDimension {
 		get {
@@ -161,11 +160,11 @@ public abstract class Image : MarshalByRefObject /*, ICloneable, IDisposable, IS
 		}
 	}
 	
-	public PixelFormat PixelFormat {
-		get {
-			throw new NotImplementedException ();
-		}
-	}
+//	public PixelFormat PixelFormat {
+//		get {
+//			throw new NotImplementedException ();
+//		}
+//	}
 	
 	public int[] PropertyIdList {
 		get {

@@ -1,5 +1,14 @@
 2002-9-2  DennisHayes <dennish@raytek.com>
 
+	* Bitmap.cs
+	* Color.cs
+	* ColorConverter.cs
+	* Image.cs
+	* Pen.cs
+	* Added stubs, implmentation
+
+2002-9-2  DennisHayes <dennish@raytek.com>
+
 	* Brushes.cs : stubbed, added colors. Not sure how to implement,
 				 but this should at least save someone some typing.
 	* CharacterRange.cs :Implmented

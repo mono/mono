@@ -18,8 +18,6 @@
 // I'll have a closer look at it next week.
 //
 using System;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 
 namespace System.Drawing {
@@ -144,17 +142,17 @@ namespace System.Drawing {
 			//TODO: that is all the spec requires or desires
 		}
 
-		public Bitmap (int width, int heigth, PixelFormat format) {
-			if ((int)format != BI_RGB) {
-				throw new NotImplementedException ();
-			}
-			CommonInit (width, heigth);
-		}
-
-		public Bitmap (Image origial) {
-			throw new NotImplementedException ();
-			//this.original = original;
-		}
+//		public Bitmap (int width, int heigth, PixelFormat format) {
+//			if ((int)format != BI_RGB) {
+//				throw new NotImplementedException ();
+//			}
+//			CommonInit (width, heigth);
+//		}
+//
+//		public Bitmap (Image origial) {
+//			throw new NotImplementedException ();
+//			//this.original = original;
+//		}
 
 		public Bitmap (Stream stream) {
 			throw new NotImplementedException ();
@@ -198,15 +196,15 @@ namespace System.Drawing {
 		}
 
 
-		public Bitmap (int width, int height, int stride,
-			       PixelFormat format, IntPtr scan0) {
-			throw new NotImplementedException ();
-			//this.width = width;
-			//this.heigth = heigth;
-			//this.stride = stride;
-			//this.format = format;
-			//this.scan0 = scan0;
-		}
+//		public Bitmap (int width, int height, int stride,
+//			       PixelFormat format, IntPtr scan0) {
+//			throw new NotImplementedException ();
+//			//this.width = width;
+//			//this.heigth = heigth;
+//			//this.stride = stride;
+//			//this.format = format;
+//			//this.scan0 = scan0;
+//		}
 		#endregion
 		// methods
 		public Color GetPixel (int x, int y) {
@@ -222,13 +220,13 @@ namespace System.Drawing {
 			bitmap.bits[x + 2, y] = color.B;
 		}
 
-		public Bitmap Clone (Rectangle rect,PixelFormat format) {
-			throw new NotImplementedException ();
-		}
-		
-		public Bitmap Clone (RectangleF rect, PixelFormat format) {
-			throw new NotImplementedException ();
-		}
+//		public Bitmap Clone (Rectangle rect,PixelFormat format) {
+//			throw new NotImplementedException ();
+//		}
+//		
+//		public Bitmap Clone (RectangleF rect, PixelFormat format) {
+//			throw new NotImplementedException ();
+//		}
 
 		public static Bitmap FromHicon (IntPtr hicon) {
 			throw new NotImplementedException ();
@@ -251,10 +249,10 @@ namespace System.Drawing {
 			throw new NotImplementedException ();
 		}
 
-		public BitmapData LockBits (Rectangle rect, ImageLockMode flags,
-		                            PixelFormat format) {
-			throw new NotImplementedException ();
-		}
+//		public BitmapData LockBits (Rectangle rect, ImageLockMode flags,
+//		                            PixelFormat format) {
+//			throw new NotImplementedException ();
+//		}
 
 		public void MakeTransparent () {
 			throw new NotImplementedException ();
@@ -268,9 +266,9 @@ namespace System.Drawing {
 			throw new NotImplementedException ();
 		}
 
-		public void UnlockBits (BitmapData bitmapdata) {
-			throw new NotImplementedException ();
-		}
+//		public void UnlockBits (BitmapData bitmapdata) {
+//			throw new NotImplementedException ();
+//		}
 
 		// properties
 		// needs to be done ###FIXME###
