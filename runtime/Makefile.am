@@ -18,6 +18,7 @@ assemblies_DATA =	\
 	Microsoft.VisualBasic.dll				\
 	Microsoft.VisualC.dll					\
 	Microsoft.Vsa.dll					\
+	Mono.Cairo.dll	                		\
 	Mono.CSharp.Debugger.dll				\
 	Mono.Data.DB2Client.dll					\
 	Mono.Data.MySql.dll					\
