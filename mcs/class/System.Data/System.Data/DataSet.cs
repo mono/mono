@@ -684,6 +684,42 @@ namespace System.Data {
 		#endregion
 
 		#region Private Xml Serialisation
+
+		private string WriteObjectXml( object o ) {
+			switch (Type.GetTypeCode (o.GetType ())) {
+			case TypeCode.Boolean:
+				return XmlConvert.ToString ((Boolean) o);
+			case TypeCode.Byte:
+				return XmlConvert.ToString ((Byte) o);
+			case TypeCode.Char:
+				return XmlConvert.ToString ((Char) o);
+			case TypeCode.DateTime:
+				return XmlConvert.ToString ((DateTime) o);
+			case TypeCode.Decimal:
+				return XmlConvert.ToString ((Decimal) o);
+			case TypeCode.Double:
+				return XmlConvert.ToString ((Double) o);
+			case TypeCode.Int16:
+				return XmlConvert.ToString ((Int16) o);
+			case TypeCode.Int32:
+				return XmlConvert.ToString ((Int32) o);
+			case TypeCode.Int64:
+				return XmlConvert.ToString ((Int64) o);
+			case TypeCode.SByte:
+				return XmlConvert.ToString ((SByte) o);
+			case TypeCode.Single:
+				return XmlConvert.ToString ((Single) o);
+			case TypeCode.UInt16:
+				return XmlConvert.ToString ((UInt16) o);
+			case TypeCode.UInt32:
+				return XmlConvert.ToString ((UInt32) o);
+			case TypeCode.UInt64:
+				return XmlConvert.ToString ((UInt64) o);
+			}
+			if (o is TimeSpan) return XmlConvert.ToString ((TimeSpan) o);
+			if (o is Guid) return XmlConvert.ToString ((Guid) o);
+			return o.ToString();
+		}
 	
 		private void WriteTable( XmlWriter writer, DataTable table, XmlWriteMode mode )
 		{
@@ -734,7 +770,7 @@ namespace System.Data {
 				
 				if( simple != null )
 				{
-					writer.WriteString( row[simple].ToString() );
+					writer.WriteString( WriteObjectXml(row[simple]) );
 				}
 				else
 				{					
@@ -753,7 +789,7 @@ namespace System.Data {
 				
 						//TODO check if I can get away with write element string
 						WriteStartElement( writer, mode, colnspc, col.Prefix, col.ColumnName );
-						writer.WriteString( rowObject.ToString() );
+						writer.WriteString( WriteObjectXml(rowObject) );
 						writer.WriteEndElement();
 					}
 				}

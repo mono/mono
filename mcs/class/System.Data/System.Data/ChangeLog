@@ -1,3 +1,10 @@
+2003-02-28  Alan Tam <Tam@SiuLung.com>
+
+	* DataSet.cs: Changed WriteTable so that it now calls the newly written
+	WriteObjectXml to direct the call to the respective XmlConvert method.
+	This fixes the wrong format written to XML files of bool, float,
+	double, DateTime and TimeSpan types.
+
 2003-02-25  Alan Tam <Tam@SiuLung.com>
 
 	* DataRelation.cs: Added SetDataSet for DataSetRelationCollection to use.
