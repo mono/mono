@@ -274,7 +274,7 @@ namespace System.Diagnostics
 			try {
 				TraceImpl.Listeners.Remove (name);
 			}
-			catch (ArgumentException e) {
+			catch (ArgumentException) {
 				// The specified listener wasn't in the collection
 				// Ignore this; .NET does.
 			}

@@ -1,104 +1,108 @@
 //
-// System.Diagnostics.EventLogEntryCollection.cs
+// System.Diagnostics.EventLogPermissionEntryCollection.cs
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Jonathan Pryor
+// (C) 2003 Andreas Nahr
 //
 
 
 using System;
 using System.Collections;
 using System.Diagnostics;
+using System.Security.Permissions;
 
-namespace System.Diagnostics {
+namespace System.Diagnostics 
+{
 
-	[MonoTODO]
-	public class EventLogPermissionEntryCollection : CollectionBase {
+	[Serializable]
+	public class EventLogPermissionEntryCollection : CollectionBase 
+	{
 
-		[MonoTODO]
-		internal EventLogPermissionEntryCollection()
+		private EventLogPermissionEntryCollection()
 		{
 		}
 
-//		[MonoTODO]
-//		public virtual EventLogEntry this [int index] {
-//			get {throw new NotImplementedException();}
-//		}
-//
-//		[MonoTODO]
-//		public int Add(EventLogPermissionEntry value)
-//		{
-//			throw new NotImplementedException();
-//		}
-//
-//		[MonoTODO]
-//		public void AddRange(EventLogPermissionEntry[] value)
-//		{
-//			throw new NotImplementedException();
-//		}
-//
-//		[MonoTODO]
-//		public void AddRange(EventLogPermissionEntryCollection value)
-//		{
-//			throw new NotImplementedException();
-//		}
-//
-//		[MonoTODO]
-//		public bool Contains(EventLogPermissionEntry value)
-//		{
-//			throw new NotImplementedException();
-//		}
-//
-//		[MonoTODO]
-//		public void CopyTo(EventLogPermissionEntry[] array, int index)
-//		{
-//			throw new NotImplementedException();
-//		}
-//
-//		[MonoTODO]
-//		public int IndexOf(EventLogPermissionEntry value)
-//		{
-//			throw new NotImplementedException();
-//		}
-//
-//		[MonoTODO]
-//		public void Insert(int index, EventLogPermissionEntry value)
-//		{
-//			throw new NotImplementedException();
-//		}
-//
-//		[MonoTODO]
-//		protected override void OnClear()
-//		{
-//			throw new NotImplementedException();
-//		}
-//
-//		[MonoTODO]
-//		protected override void OnInsert(int index, object value)
-//		{
-//			throw new NotImplementedException();
-//		}
-//
-//		[MonoTODO]
-//		protected override void OnRemove(int index, object value)
-//		{
-//			throw new NotImplementedException();
-//		}
-//
-//		[MonoTODO]
-//		protected override void OnSet(int index, object oldValue, 
-//			object newValue)
-//		{
-//			throw new NotImplementedException();
-//		}
-//
-//		[MonoTODO]
-//		public void Remove(EventLogPermissionEntry value)
-//		{
-//			throw new NotImplementedException();
-//		}
+		internal EventLogPermissionEntryCollection (ResourcePermissionBaseEntry[] entries)
+		{
+			foreach (ResourcePermissionBaseEntry entry in entries) {
+				List.Add (new EventLogPermissionEntry ((EventLogPermissionAccess) entry.PermissionAccess, entry.PermissionAccessPath[0]));
+			}	
+		}
+
+		public virtual EventLogEntry this [int index] {
+			get {return (EventLogEntry) List[index];}
+		}
+
+		public int Add(EventLogPermissionEntry value)
+		{
+			return List.Add (value);
+		}
+
+		public void AddRange(EventLogPermissionEntry[] value)
+		{
+			foreach (EventLogPermissionEntry entry in value)
+				List.Add (entry);
+		}
+
+		public void AddRange(EventLogPermissionEntryCollection value)
+		{
+			foreach (EventLogPermissionEntry entry in value)
+				List.Add (entry);
+		}
+
+		public bool Contains(EventLogPermissionEntry value)
+		{
+			return List.Contains (value);
+		}
+
+		public void CopyTo(EventLogPermissionEntry[] array, int index)
+		{
+			List.CopyTo (array, index);
+		}
+
+		public int IndexOf(EventLogPermissionEntry value)
+		{
+			return List.IndexOf (value);
+		}
+
+		public void Insert(int index, EventLogPermissionEntry value)
+		{
+			List.Insert (index, value);
+		}
+
+		[MonoTODO]
+		protected override void OnClear()
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		protected override void OnInsert(int index, object value)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		protected override void OnRemove(int index, object value)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		protected override void OnSet(int index, object oldValue, 
+			object newValue)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Remove(EventLogPermissionEntry value)
+		{
+			List.Remove (value);
+		}
 	}
 }
 

@@ -3,35 +3,44 @@
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002
+// (C) 2003 Andreas Nahr
 //
 
 using System;
 using System.Diagnostics;
+using System.Security.Permissions;
 
-namespace System.Diagnostics {
-
+namespace System.Diagnostics 
+{
 	[Serializable]
-	[MonoTODO("Just Stubbed Out")]
-	public class EventLogPermissionEntry {
+	public class EventLogPermissionEntry
+	{
+		private EventLogPermissionAccess permissionAccess;
+		private string machineName;
 
-//		[MonoTODO]
-//		public EventLogPermissionEntry(
-//			EventLogPermissionAccess permissionAccess,
-//			string machineName)
-//		{
-//		}
-//
-//		[MonoTODO]
-//		public string MachineName {
-//			get {throw new NotImplementedException();}
-//		}
-//
-//		[MonoTODO]
-//		public EventLogPermissionAccess PermissionAccess {
-//			get {throw new NotImplementedException();}
-//		}
+		public EventLogPermissionEntry (
+			EventLogPermissionAccess permissionAccess,
+			string machineName)
+		{
+			this.permissionAccess = permissionAccess;
+			this.machineName = machineName;
+		}
+
+		public string MachineName {
+			get {return machineName; }
+		}
+
+		public EventLogPermissionAccess PermissionAccess {
+			get {return permissionAccess; }
+		}
+
+		internal ResourcePermissionBaseEntry CreateResourcePermissionBaseEntry ()
+		{
+			return new ResourcePermissionBaseEntry ((int) permissionAccess, new string[] {machineName});
+		} 
 	}
 }
 

@@ -3,8 +3,10 @@
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002
+// (C) 2003 Andreas Nahr
 //
 
 using System;
@@ -12,7 +14,8 @@ using System.Diagnostics;
 using System.Security;
 using System.Security.Permissions;
 
-namespace System.Diagnostics {
+namespace System.Diagnostics 
+{
 
 	[AttributeUsage(
 		AttributeTargets.Assembly |
@@ -21,40 +24,46 @@ namespace System.Diagnostics {
 		AttributeTargets.Constructor |
 		AttributeTargets.Method |
 		AttributeTargets.Event )]
-	[MonoTODO]
-	public class PerformanceCounterPermissionAttribute 
-		: CodeAccessSecurityAttribute {
+	[Serializable]
+	public class PerformanceCounterPermissionAttribute : CodeAccessSecurityAttribute 
+	{
+		private string categoryName;
+		private string machineName;
+		private PerformanceCounterPermissionAccess permissionAccess;
 
-		[MonoTODO]
-		public PerformanceCounterPermissionAttribute (
-			SecurityAction action) 
+		public PerformanceCounterPermissionAttribute (SecurityAction action) 
 			: base (action)
 		{
-			throw new NotImplementedException ();
+			categoryName = "*";
+			machineName = ".";
+			permissionAccess = PerformanceCounterPermissionAccess.Browse;
 		}
 
-//		[MonoTODO]
-//		public string CategoryName {
-//			get {throw new NotImplementedException ();}
-//			set {throw new NotImplementedException ();}
-//		}
-//
-//		[MonoTODO]
-//		public string MachineName {
-//			get {throw new NotImplementedException ();}
-//			set {throw new NotImplementedException ();}
-//		}
-//
-//		[MonoTODO]
-//		public PerformanceCounterPermissionAccess PermissionAccess {
-//			get {throw new NotImplementedException ();}
-//			set {throw new NotImplementedException ();}
-//		}
-//
-		[MonoTODO]
+		public string CategoryName {
+			get {return categoryName;}
+			set {categoryName = value;}
+		}
+
+		// May throw ArgumentException if computer name is invalid
+		public string MachineName {
+			get {return machineName;}
+			set {
+				// TODO check machine name
+				machineName = value;
+			}
+		}
+
+		public PerformanceCounterPermissionAccess PermissionAccess {
+			get {return permissionAccess;}
+			set {permissionAccess = value;}
+		}
+
 		public override IPermission CreatePermission ()
 		{
-			throw new NotImplementedException ();
+			if (base.Unrestricted) {
+				return new PerformanceCounterPermission (PermissionState.Unrestricted); 
+			}
+			return new PerformanceCounterPermission (PermissionAccess, MachineName, categoryName); 
 		}
 	}
 }

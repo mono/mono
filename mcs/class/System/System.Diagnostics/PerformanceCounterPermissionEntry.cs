@@ -3,42 +3,51 @@
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002
+// (C) 2003 Andreas Nahr
 //
 
 using System;
 using System.Diagnostics;
+using System.Security.Permissions;
 
-namespace System.Diagnostics {
-
+namespace System.Diagnostics 
+{
 	[Serializable]
-	[MonoTODO]
-	public class PerformanceCounterPermissionEntry {
+	public class PerformanceCounterPermissionEntry 
+	{
+		private PerformanceCounterPermissionAccess permissionAccess;
+		private string machineName;
+		private string categoryName;
 
-//		[MonoTODO]
-//		public PerformanceCounterPermissionEntry (
-//			PerformanceCounterPermissionAccess permissionAccess,
-//			string machineName,
-//			string categoryName)
-//		{
-//			throw new NotImplementedException ();
-//		}
-//
-//		[MonoTODO]
-//		public string CategoryName {
-//			get {throw new NotImplementedException ();}
-//		}
-//
-//		[MonoTODO]
-//		public string MachineName {
-//			get {throw new NotImplementedException ();}
-//		}
-//
-//		[MonoTODO]
-//		public PerformanceCounterPermissionAccess PermissionAccess {
-//			get {throw new NotImplementedException ();}
-//		}
+		public PerformanceCounterPermissionEntry (
+			PerformanceCounterPermissionAccess permissionAccess,
+			string machineName,
+			string categoryName)
+		{
+			this.permissionAccess = permissionAccess;
+			this.machineName = machineName;
+			this.categoryName = categoryName;
+		}
+
+		public string CategoryName {
+			get {return categoryName; }
+		}
+
+		public string MachineName {
+			get {return machineName; }
+		}
+
+		public PerformanceCounterPermissionAccess PermissionAccess {
+			get {return permissionAccess; }
+		}
+
+		internal ResourcePermissionBaseEntry CreateResourcePermissionBaseEntry ()
+		{
+			return new ResourcePermissionBaseEntry ((int) permissionAccess, new string[] {machineName, categoryName});
+		} 
 	}
 }
 

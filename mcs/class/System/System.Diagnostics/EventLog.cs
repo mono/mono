@@ -285,6 +285,12 @@ namespace System.Diagnostics {
 			throw new NotImplementedException ();
 		}
 
+		internal void OnEntryWritten (EventLogEntry newEntry)
+		{
+			if (EntryWritten != null)
+				EntryWritten (this, new EntryWrittenEventArgs (newEntry));
+		}
+
 		[MonitoringDescription ("Raised for each eventlog entry written.")]
 		public event EntryWrittenEventHandler EntryWritten;
 	}

@@ -1,3 +1,20 @@
+2003-07-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* DiagnosticsConfigurationHandler.cs: Removed a never used variable
+	* EventLog.cs: Small update to prevent a warning
+	* EventLogPermission.cs: Implemented or implementation added
+	* EventLogPermissionAttribute.cs: Implemented or implementation added
+	* EventLogPermissionEntry.cs: Implemented or implementation added
+	* EventLogPermissionEntryCollection.cs: Implemented or implementation added
+	* EventLogTraceListener.cs: Implemented or implementation added
+	* PerformanceCounterManager.cs: Implemented or implementation added
+	* PerformanceCounterInstaller.cs: Made internal
+	* PerformanceCounterCategory.cs: Implemented few members
+	* PerformanceCounterPermission.cs: Implemented or implementation added
+	* PerformanceCounterPermissionAttribute.cs: Implemented or implementation added
+	* PerformanceCounterPermissionEntry.cs: Implemented or implementation added
+	* PerformanceCounterPermissionEntryCollection.cs: Implemented or implementation added
+	
 2003-07-07  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* EventLog.cs: Removed unneccesary attribute according to corecompare

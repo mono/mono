@@ -3,23 +3,28 @@
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002
+// (C) 2003 Andreas Nahr
 //
 
 using System;
 using System.Diagnostics;
 using System.Collections;
 using System.Globalization;
+using System.Security.Permissions;
 
 namespace System.Diagnostics {
 
 	[Serializable]
-	public class PerformanceCounterPermissionEntryCollection 
-		: CollectionBase 
+	public class PerformanceCounterPermissionEntryCollection : CollectionBase 
 	{
-		internal PerformanceCounterPermissionEntryCollection ()
+		internal PerformanceCounterPermissionEntryCollection (ResourcePermissionBaseEntry[] entries)
 		{
+			foreach (ResourcePermissionBaseEntry entry in entries) {
+				List.Add (new PerformanceCounterPermissionEntry ((PerformanceCounterPermissionAccess) entry.PermissionAccess, entry.PermissionAccessPath[0], entry.PermissionAccessPath[1]));
+			}	
 		}
 
 		public PerformanceCounterPermissionEntry this [int index] {

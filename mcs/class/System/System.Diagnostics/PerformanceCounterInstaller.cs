@@ -15,7 +15,7 @@ using System.ComponentModel;
 
 namespace System.Diagnostics {
 
-	public class PerformanceCounterInstaller {
+	internal class PerformanceCounterInstaller {
 
 //		[MonoTODO]
 //		public PerformanceCounterInstaller ()
