@@ -1,3 +1,7 @@
+2004-05-25  Jackson Harper  <jackson@ximian.com>
+
+	* Makefile.am: Extract xml files.
+	
 2004-05-24  Jackson Harper  <jackson@ximian.com>
 
 	* Driver.cs: Filter on GetFiles so we only get the xml locale files.
