@@ -2,6 +2,7 @@
 
 	* emit-x86.c (arch_handle_exception): big fix - dont use
 	uninitialized next_bp
+	(arch_compile_method): make the jit thread save
 
 	* x86.brg: use new mono_assert macros
 
