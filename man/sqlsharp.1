@@ -342,16 +342,28 @@ ption defaulting to true.
 .SH PROVIDERS
 .nf
 
-PROVIDER    NAME          NAMESPACE                  ASSEMBLY
+PROVIDER   NAME          NAMESPACE                  ASSEMBLY
 
-OleDb       OLE DB        System.Data.OleDb          System.Data 
-SqlClient   MS SQL 7/2000 System.Data.SqlClient      System.Data
-Odbc        ODBC          System.Data.Odbc           System.Data
-MySql       MySQL         Mono.Data.MySql            Mono.Data.MySql
-Sqlite      SQL Lite      Mono.Data.SqliteClient     Mono.Data.SqliteClient
-Sybase      Sybase        Mono.Data.SybaseClient     Mono.Data.SybaseClient
-Tds         TDS Generic   Mono.Data.TdsClient        Mono.Data.TdsClient
-PostgreSql  PostgreSQL    Mono.Data.PostgreSqlClient Mono.Data.PostgreSqlClient
+Internal
+--------
+
+OleDb      OLE DB        System.Data.OleDb          System.Data 
+SqlClient  MS SQL 7/2000 System.Data.SqlClient      System.Data
+Odbc       ODBC          System.Data.Odbc           System.Data
+
+External to System.Data
+----------------------
+MySql      MySQL         Mono.Data.MySql            Mono.Data.MySql
+Sqlite     SQL Lite      Mono.Data.SqliteClient     Mono.Data.SqliteClient
+Sybase     Sybase        Mono.Data.SybaseClient     Mono.Data.SybaseClient
+Tds        TDS Generic   Mono.Data.TdsClient        Mono.Data.TdsClient
+PostgreSql MonoPostgreSQL Mono.Data.PostgreSqlClient Mono.Data.PostgreSqlClient
+
+External to Mono
+----------------
+
+Npgsql     PostgreSQL.NET Npgsql                    Npgsql
+MySQLNet   ByteFX MySQL  ByteFX.Data.MySQL          ByteFX.Data
 
 .fi
 .SH CONNECTION STRING SAMPLES
