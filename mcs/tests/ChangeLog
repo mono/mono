@@ -1,5 +1,9 @@
 2002-06-09  Martin Baulig  <martin@gnome.org>
 
+	* test-130.cs: New test for constants and casts.
+
+2002-06-09  Martin Baulig  <martin@gnome.org>
+
 	* test-129.cs: New test for unary minus.
 
 2002-06-08  Ravi Pratap  <ravi@ximian.com>
