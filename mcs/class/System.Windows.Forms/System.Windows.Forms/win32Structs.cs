@@ -28,6 +28,14 @@
  * authorization from Carlos Harvey Perez.
  */
 
+/*
+	Note. Please, take into account the Windows types defintion
+	
+	http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winprog/winprog/windows_data_types.asp
+	
+	Typically:	DWORD=uint, Handles=IntPtr, WORD=ushort, etc
+	
+*/
 
 using System;
 using System.Drawing;
@@ -1002,6 +1010,29 @@ namespace System.Windows.Forms
 		internal TVITEM    itemOld;
 		internal TVITEM    itemNew;
 		internal POINT     ptDrag;
+	}
+	
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi,  Pack=1)]
+	internal struct PRINTDLG {
+		internal uint			lStructSize;
+		internal IntPtr			hwndOwner;
+		internal IntPtr			hDevMode;
+		internal IntPtr			hDevNames;
+		internal IntPtr			hDC;
+		internal PrintDlgFlags	Flags;	//uint
+		internal short			nFromPage;
+		internal short			nToPage;
+		internal short			nMinPage;
+		internal short			nMaxPage;	
+		internal short			nCopies;
+		internal IntPtr			hInstance;
+		internal IntPtr			lCustData;
+		internal IntPtr			lpfnPrintHook;
+		internal IntPtr			lpfnSetupHook;
+		internal IntPtr			lpPrintTemplateName;
+		internal IntPtr			lpSetupTemplateName;
+		internal IntPtr			hPrintTemplate;
+		internal IntPtr			hSetupTemplate;
 	}
 }
 

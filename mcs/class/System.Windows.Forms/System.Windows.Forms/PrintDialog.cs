@@ -4,12 +4,15 @@
 // Author:
 //   stubbed out by Paul Osman (paul.osman@sympatico.ca)
 //	Dennis Hayes (dennish@raytek.com)
+//	Implemented by Jordi Mas i Hernàndez <jmas@softcatala.org>
 //
-// (C) 2002 Ximian, Inc
+// (C) 2002-3 Ximian, Inc
 //
 using System.Drawing.Printing;
 using System.Runtime.Remoting;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
+
 namespace System.Windows.Forms {
 
 	// <summary>
@@ -17,111 +20,128 @@ namespace System.Windows.Forms {
 	// </summary>
 
         public sealed class PrintDialog : CommonDialog {
+        	
+		private bool allowPrintToFile;	
+		private bool allowSelection;	
+		private bool allowSomePages;	
+		private bool showHelp;
+		private bool showNetwork;	
+		private bool printToFile;
+		private PrintDocument document = null;
+		private PrinterSettings printerSettings;
 
 		//
 		//  --- Constructor
-		//
-		[MonoTODO]
-		public PrintDialog()
-		{
-			
+		//		
+		public PrintDialog(){
+			Reset();			
 		}
 
 		//
 		//  --- Public Properties
-		//
-		[MonoTODO]
+		//		
 		public bool AllowPrintToFile {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+			get {return allowPrintToFile;}
+			set {allowPrintToFile = value;}
 		}
-		[MonoTODO]
+		
 		public bool AllowSelection {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+			get {return allowSelection;}
+			set {allowSelection = value;}
 		}
-		[MonoTODO]
+		
 		public bool AllowSomePages {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+			get {return allowSomePages;}
+			set {allowSomePages = value;}
 		}
 
-		[MonoTODO]
+		
 		public PrintDocument Document {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
-		}
-		[MonoTODO]
+			get {return document;}
+			set {document = value;}
+		}		
+		
 		public PrinterSettings PrinterSettings {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+			get {return printerSettings;}
+			set {printerSettings = value;}
 		}
-		[MonoTODO]
+		
 		public bool PrintToFile {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+			get {return printToFile;}
+			set {printToFile = value;}
 		}
-		[MonoTODO]
-		public bool ShowHelp {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+
+		public bool ShowHelp {		
+			get {return showHelp;}
+			set {showHelp = value;}
 		}
-		[MonoTODO]
+		
 		public bool ShowNetwork {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+			get {return showNetwork;}
+			set {showNetwork = value;}
 		}
+		
+		
 
 		//
 		//  --- Public Methods
 		//
-
-		[MonoTODO]
-		public override void Reset()
-		{
-			throw new NotImplementedException ();
+				
+		public override void Reset(){
+			
+			allowPrintToFile = true;	
+			allowSelection = false;	
+			allowSomePages = false;	
+			showHelp = false;
+			showNetwork = true;	
+			printToFile = false;
 		}
 
 		//
 		//  --- Protected Methods
-		//
-
-		[MonoTODO]
-		protected override bool RunDialog(IntPtr hwndOwner)
-		{
-			throw new NotImplementedException ();
+		//		
+		protected override bool RunDialog(IntPtr hwndOwner)	{			
+			
+			PRINTDLG pdlg = new PRINTDLG();
+			pdlg.hwndOwner = hwndOwner;						
+			pdlg.lStructSize  = (uint)Marshal.SizeOf(pdlg);				
+			pdlg.hDevMode = (IntPtr)0;
+			pdlg.hDevNames = (IntPtr)0;
+			pdlg.nFromPage = 0;
+			pdlg.nToPage = 0;
+			pdlg.nMinPage = 0;
+			pdlg.nMaxPage = 0;	
+			pdlg.nCopies = 0;
+			pdlg.hInstance = (IntPtr)0;
+			pdlg.lCustData = (IntPtr)0;
+			pdlg.lpfnPrintHook = (IntPtr)0;
+			pdlg.lpfnSetupHook = (IntPtr)0;
+			pdlg.lpPrintTemplateName = (IntPtr)0;
+			pdlg.lpSetupTemplateName = (IntPtr)0;
+			pdlg.hPrintTemplate = (IntPtr)0;
+			pdlg.hSetupTemplate = (IntPtr)0;
+			pdlg.Flags = 0;			
+			
+			if (!allowPrintToFile) pdlg.Flags |=  PrintDlgFlags.PD_DISABLEPRINTTOFILE;		
+			if (!allowSelection) pdlg.Flags |=  PrintDlgFlags.PD_NOSELECTION;				
+			if (!allowSomePages) pdlg.Flags |=  PrintDlgFlags.PD_NOPAGENUMS;
+			if (showHelp) pdlg.Flags |=  PrintDlgFlags.PD_SHOWHELP;				
+			if (!showNetwork) pdlg.Flags |=  PrintDlgFlags.PD_NONETWORKBUTTON;
+			if (!printToFile) pdlg.Flags |=  PrintDlgFlags.PD_DISABLEPRINTTOFILE;
+									
+			IntPtr lfBuffer = Marshal.AllocHGlobal(Marshal.SizeOf(pdlg));
+      		Marshal.StructureToPtr(pdlg, lfBuffer, false);			
+			
+			if (Win32_WineLess.PrintDlg(lfBuffer)){
+				
+				pdlg = (PRINTDLG)Marshal.PtrToStructure (lfBuffer, typeof (PRINTDLG));
+				
+				// TODO: PrinterSettings is not yet implemented, we should pass the values
+				// to that struct
+				//PrinterSettings.Copies =  pdlg.nCopies;
+				}
+			
+			return true;
 		}
 	 }
 }

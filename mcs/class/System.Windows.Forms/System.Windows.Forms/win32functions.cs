@@ -81,6 +81,12 @@ namespace System.Windows.Forms{
 		[DllImport ("comdlg32.dll",
 			 CallingConvention = CallingConvention.StdCall, 
 			 CharSet = CharSet.Ansi)]
+		internal static extern bool PrintDlg (IntPtr pDlg);
+		
+		
+		[DllImport ("comdlg32.dll",
+			 CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Ansi)]
 		internal static extern bool ChooseFont ( ref CHOOSEFONT lpcf );
 
 		[DllImport ("comdlg32.dll",
