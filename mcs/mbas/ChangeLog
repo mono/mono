@@ -1,3 +1,6 @@
+2005-03-17 Manjula GHM <mmanjula@novell.com>
+	*ecore.cs : Support Double in case statement and do necessary conversion to Int Literal
+
 2005-03-16 Manjula GHM <mmanjula@novell.com>
 	* mb-parser.jay:
 		Support 'expression TO expression' case clause for select statement

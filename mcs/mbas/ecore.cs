@@ -3,6 +3,7 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Manjula GHM (mmanjula@novell.com)
 //
 // (C) 2001 Ximian, Inc.
 //
@@ -3083,7 +3084,7 @@ namespace Mono.MonoBASIC {
 		
 		/// <summary>
 		///   Converts the IntConstant, UIntConstant, LongConstant or
-		///   ULongConstant into the integral target_type.   Notice
+		///   ULongConstant,Double into the integral target_type.   Notice
 		///   that we do not return an 'Expression' we do return
 		///   a boxed integral type.
 		///
@@ -3345,7 +3346,38 @@ namespace Mono.MonoBASIC {
 					return (ulong) v;
 
 				s = v.ToString ();
+
+			 } else if (c is DoubleConstant){
+                                double v = ((DoubleConstant) c).Value;
+
+                                if (target_type == TypeManager.sbyte_type){
+                                        if (v >= SByte.MinValue && v <= SByte.MaxValue)
+                                                return (sbyte) v;
+                                } else if (target_type == TypeManager.byte_type){
+                                        if (v >= Byte.MinValue && v <= Byte.MaxValue)
+                                                return (byte) v;
+                                } else if (target_type == TypeManager.char_type){
+                                        if (v >= Char.MinValue && v <= Char.MaxValue)
+                                                return (char) v;
+                                } else if (target_type == TypeManager.short_type){
+                                        if (v >= Int16.MinValue && v <= Int16.MaxValue)
+                                                return (short) v;
+                                } else if (target_type == TypeManager.ushort_type){
+                                        if (v >= UInt16.MinValue && v <= UInt16.MaxValue)
+                                                return (ushort) v;
+				} else if (target_type == TypeManager.int32_type){
+                                        if (v >= Int32.MinValue && v <= Int32.MaxValue)
+                                                return (int) v;
+                                } else if (target_type == TypeManager.uint32_type){
+                                        if (v >= 0 && v <= UInt32.MaxValue)
+                                                return (uint) v;
+                                } else if (target_type == TypeManager.uint64_type){
+                                        if (v > 0)
+                                                return (ulong) v;
+                                }
+                                s = v.ToString ();
 			}
+
 			Error_ConstantValueCannotBeConverted (loc, s, target_type);
 			return null;
 		}
