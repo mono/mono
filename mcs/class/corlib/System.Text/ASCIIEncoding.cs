@@ -2,6 +2,7 @@
  * ASCIIEncoding.cs - Implementation of the "System.Text.ASCIIEncoding" class.
  *
  * Copyright (c) 2001  Southern Storm Software, Pty Ltd
+ * Copyright (C) 2003 Novell, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the "Software"),
@@ -34,7 +35,12 @@ public class ASCIIEncoding : Encoding
 	internal const int ASCII_CODE_PAGE = 20127;
 
 	// Constructor.
-	public ASCIIEncoding () : base(ASCII_CODE_PAGE) {}
+	public ASCIIEncoding () : base(ASCII_CODE_PAGE) {
+		body_name = header_name = web_name= "us-ascii";
+		encoding_name = "US-ASCII";
+		is_mail_news_display = true;
+		is_mail_news_save = true;
+	}
 
 	// Get the number of bytes needed to encode a character buffer.
 	public override int GetByteCount (char[] chars, int index, int count)
@@ -231,58 +237,6 @@ public class ASCIIEncoding : Encoding
 			}
 		}
 	}
-
-#if !ECMA_COMPAT
-
-	// Get the mail body name for this encoding.
-	public override String BodyName
-	{
-		get {
-			return "us-ascii";
-		}
-	}
-
-	// Get the human-readable name for this encoding.
-	public override String EncodingName
-	{
-		get {
-			return "US-ASCII";
-		}
-	}
-
-	// Get the mail agent header name for this encoding.
-	public override String HeaderName
-	{
-		get {
-			return "us-ascii";
-		}
-	}
-
-	// Determine if this encoding can be displayed in a mail/news agent.
-	public override bool IsMailNewsDisplay
-	{
-		get {
-			return true;
-		}
-	}
-
-	// Determine if this encoding can be saved from a mail/news agent.
-	public override bool IsMailNewsSave
-	{
-		get {
-			return true;
-		}
-	}
-
-	// Get the IANA-preferred Web name for this encoding.
-	public override String WebName
-	{
-		get {
-			return "us-ascii";
-		}
-	}
-
-#endif // !ECMA_COMPAT
 
 }; // class ASCIIEncoding
 

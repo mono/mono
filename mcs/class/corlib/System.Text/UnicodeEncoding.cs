@@ -3,6 +3,7 @@
  *		"System.Text.UnicodeEncoding" class.
  *
  * Copyright (c) 2001, 2002  Southern Storm Software, Pty Ltd
+ * Copyright (C) 2003 Novell, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the "Software"),
@@ -45,7 +46,7 @@ public class UnicodeEncoding : Encoding
 	private bool byteOrderMark;
 
 	// Constructors.
-	public UnicodeEncoding () : base(UNICODE_CODE_PAGE)
+	public UnicodeEncoding () : this (false, true)
 	{
 		bigEndian = false;
 		byteOrderMark = true;
@@ -55,6 +56,24 @@ public class UnicodeEncoding : Encoding
 	{
 		this.bigEndian = bigEndian;
 		this.byteOrderMark = byteOrderMark;
+
+		if (bigEndian){
+			body_name = "unicodeFFFE";
+			encoding_name = "Unicode (Big-Endian)";
+			header_name = "unicodeFFFE";
+			is_browser_save = false;
+			web_name = "utf-16be";
+		} else {
+			body_name = "utf-16";
+			encoding_name = "Unicode";
+			header_name = "utf-16";
+			is_browser_save = true;
+			web_name = "utf-16";
+		}
+		
+		// Windows reports the same code page number for
+		// both the little-endian and big-endian forms.
+		windows_code_page = UNICODE_CODE_PAGE;
 	}
 
 	// Get the number of bytes needed to encode a character buffer.
@@ -161,6 +180,11 @@ public class UnicodeEncoding : Encoding
 		return posn - byteIndex;
 	}
 
+	public override byte [] GetBytes (String s)
+	{
+		return base.GetBytes (s);
+	}
+	
 	// Get the number of characters needed to decode a byte buffer.
 	public override int GetCharCount (byte[] bytes, int index, int count)
 	{
@@ -310,79 +334,6 @@ public class UnicodeEncoding : Encoding
 	{
 		return base.GetHashCode ();
 	}
-
-#if !ECMA_COMPAT
-
-	// Get the mail body name for this encoding.
-	public override String BodyName
-	{
-		get {
-			if (bigEndian) {
-				return "unicodeFFFE";
-			} else {
-				return "utf-16";
-			}
-		}
-	}
-
-	// Get the human-readable name for this encoding.
-	public override String EncodingName
-	{
-		get {
-			if (bigEndian) {
-				return "Unicode (Big-Endian)";
-			} else {
-				return "Unicode";
-			}
-		}
-	}
-
-	// Get the mail agent header name for this encoding.
-	public override String HeaderName
-	{
-		get {
-			if (bigEndian) {
-				return "unicodeFFFE";
-			} else {
-				return "utf-16";
-			}
-		}
-	}
-
-	// Determine if this encoding can be saved from a Web browser.
-	public override bool IsBrowserSave
-	{
-		get {
-			return !bigEndian;
-		}
-	}
-
-	// Get the IANA-preferred Web name for this encoding.
-	public override String WebName
-	{
-		get {
-			if (bigEndian) {
-				// unicodeFFFE is MS compliant, but it is not 
-				// valid IANA name.
-//				return "unicodeFFFE";
-				return "utf-16be";
-			} else {
-				return "utf-16";
-			}
-		}
-	}
-
-	// Get the Windows code page represented by this object.
-	public override int WindowsCodePage
-	{
-		get {
-			// Windows reports the same code page number for
-			// both the little-endian and big-endian forms.
-			return UNICODE_CODE_PAGE;
-		}
-	}
-
-#endif // !ECMA_COMPAT
 
 	// Unicode decoder implementation.
 	private sealed class UnicodeDecoder : Decoder

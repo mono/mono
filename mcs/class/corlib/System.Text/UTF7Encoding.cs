@@ -3,6 +3,7 @@
  *		"System.Text.UTF7Encoding" class.
  *
  * Copyright (c) 2002  Southern Storm Software, Pty Ltd
+ * Copyright (c) 2003, Novell, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the "Software"),
@@ -85,14 +86,22 @@ class UTF7Encoding : Encoding
 
 	// Constructors.
 	public UTF7Encoding ()
-	: base (UTF7_CODE_PAGE)
+	: this (false)
 	{
-		allowOptionals = false;
 	}
+	
 	public UTF7Encoding (bool allowOptionals)
 	: base (UTF7_CODE_PAGE)
 	{
 		this.allowOptionals = allowOptionals;
+		
+		body_name = "utf-7";
+		encoding_name = "Unicode (UTF-7)";
+		header_name = "utf-7";
+		is_mail_news_display = true;
+		is_mail_news_save = true;
+		web_name = "utf-7";
+		windows_code_page = UnicodeEncoding.UNICODE_CODE_PAGE;
 	}
 
 	// Internal version of "GetByteCount" that can handle
@@ -524,66 +533,6 @@ class UTF7Encoding : Encoding
 	{
 		return new UTF7Encoder (allowOptionals);
 	}
-
-#if !ECMA_COMPAT
-
-	// Get the mail body name for this encoding.
-	public override String BodyName
-	{
-		get {
-			return "utf-7";
-		}
-	}
-
-	// Get the human-readable name for this encoding.
-	public override String EncodingName
-	{
-		get {
-			return "Unicode (UTF-7)";
-		}
-	}
-
-	// Get the mail agent header name for this encoding.
-	public override String HeaderName
-	{
-		get {
-			return "utf-7";
-		}
-	}
-
-	// Determine if this encoding can be displayed in a mail/news agent.
-	public override bool IsMailNewsDisplay
-	{
-		get {
-			return true;
-		}
-	}
-
-	// Determine if this encoding can be saved from a mail/news agent.
-	public override bool IsMailNewsSave
-	{
-		get {
-			return true;
-		}
-	}
-
-	// Get the IANA-preferred Web name for this encoding.
-	public override String WebName
-	{
-		get {
-			return "utf-7";
-		}
-	}
-
-	// Get the Windows code page represented by this object.
-	public override int WindowsCodePage
-	{
-		get {
-			return UnicodeEncoding.UNICODE_CODE_PAGE;
-		}
-	}
-
-#endif // !ECMA_COMPAT
 
 	// UTF-7 decoder implementation.
 	private sealed class UTF7Decoder : Decoder

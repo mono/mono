@@ -3,6 +3,7 @@
  *
  * Copyright (c) 2001, 2002  Southern Storm Software, Pty Ltd
  * Copyright (c) 2002, Ximian, Inc.
+ * Copyright (c) 2003, Novell, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the "Software"),
@@ -37,6 +38,7 @@ public abstract class Encoding
 {
 	// Code page used by this encoding.
 	internal int codePage;
+	internal int windows_code_page;
 
 	// Constructor.
 	protected Encoding ()
@@ -50,7 +52,7 @@ public abstract class Encoding
 #endif
 	Encoding (int codePage)
 	{
-		this.codePage = codePage;
+		this.codePage = windows_code_page = codePage;
 	}
 
 	// until we change the callers:
@@ -477,11 +479,20 @@ public abstract class Encoding
 
 #if !ECMA_COMPAT
 
+	internal protected string body_name;
+	internal protected string encoding_name;
+	internal protected string header_name;
+	internal protected bool   is_mail_news_display;
+	internal protected bool   is_mail_news_save;
+	internal protected bool   is_browser_save = false;
+	internal protected bool   is_browser_display = false;
+	internal protected string web_name;
+	
 	// Get the mail body name for this encoding.
 	public virtual String BodyName
 	{
 		get {
-			return null;
+			return body_name;
 		}
 	}
 
@@ -497,7 +508,7 @@ public abstract class Encoding
 	public virtual String EncodingName
 	{
 		get {
-			return null;
+			return encoding_name;
 		}
 	}
 
@@ -505,7 +516,7 @@ public abstract class Encoding
 	public virtual String HeaderName
 	{
 		get {
-			return null;
+			return header_name;
 		}
 	}
 
@@ -513,7 +524,7 @@ public abstract class Encoding
 	public virtual bool IsBrowserDisplay
 	{
 		get {
-			return false;
+			return is_browser_display;
 		}
 	}
 
@@ -521,7 +532,7 @@ public abstract class Encoding
 	public virtual bool IsBrowserSave
 	{
 		get {
-			return false;
+			return is_browser_save;
 		}
 	}
 
@@ -529,7 +540,7 @@ public abstract class Encoding
 	public virtual bool IsMailNewsDisplay
 	{
 		get {
-			return false;
+			return is_mail_news_display;
 		}
 	}
 
@@ -537,7 +548,7 @@ public abstract class Encoding
 	public virtual bool IsMailNewsSave
 	{
 		get {
-			return false;
+			return is_mail_news_save;
 		}
 	}
 
@@ -545,7 +556,7 @@ public abstract class Encoding
 	public virtual String WebName
 	{
 		get {
-			return null;
+			return web_name;
 		}
 	}
 
@@ -555,7 +566,7 @@ public abstract class Encoding
 		get {
 			// We make no distinction between normal and
 			// Windows code pages in this implementation.
-			return codePage;
+			return windows_code_page;
 		}
 	}
 

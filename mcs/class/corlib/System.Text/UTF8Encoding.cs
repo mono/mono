@@ -41,11 +41,19 @@ public class UTF8Encoding : Encoding
 	public UTF8Encoding () : this (false, false) {}
 	public UTF8Encoding (bool encoderShouldEmitUTF8Identifier)
 			: this (encoderShouldEmitUTF8Identifier, false) {}
+	
 	public UTF8Encoding (bool encoderShouldEmitUTF8Identifier, bool throwOnInvalidBytes)
 		: base (UTF8_CODE_PAGE)
 	{
 		emitIdentifier = encoderShouldEmitUTF8Identifier;
 		throwOnInvalid = throwOnInvalidBytes;
+
+		web_name = body_name = header_name = "utf-8";
+		encoding_name = "Unicode (UTF-8)";
+		is_browser_save = true;
+		is_browser_display = true;
+		is_mail_news_display = true;
+		windows_code_page = UnicodeEncoding.UNICODE_CODE_PAGE;
 	}
 
 	// Internal version of "GetByteCount" which can handle a rolling
@@ -648,87 +656,16 @@ public class UTF8Encoding : Encoding
 		}
 	}
 
+	public override byte [] GetBytes (String s)
+	{
+		return base.GetBytes (s);
+	}
+	
 	// Get the hash code for this object.
 	public override int GetHashCode ()
 	{
 		return base.GetHashCode ();
 	}
-
-#if !ECMA_COMPAT
-
-	// Get the mail body name for this encoding.
-	public override String BodyName
-	{
-		get {
-			return "utf-8";
-		}
-	}
-
-	// Get the human-readable name for this encoding.
-	public override String EncodingName
-	{
-		get {
-			return "Unicode (UTF-8)";
-		}
-	}
-
-	// Get the mail agent header name for this encoding.
-	public override String HeaderName
-	{
-		get {
-			return "utf-8";
-		}
-	}
-
-	// Determine if this encoding can be displayed in a Web browser.
-	public override bool IsBrowserDisplay
-	{
-		get {
-			return true;
-		}
-	}
-
-	// Determine if this encoding can be saved from a Web browser.
-	public override bool IsBrowserSave
-	{
-		get {
-			return true;
-		}
-	}
-
-	// Determine if this encoding can be displayed in a mail/news agent.
-	public override bool IsMailNewsDisplay
-	{
-		get {
-			return true;
-		}
-	}
-
-	// Determine if this encoding can be saved from a mail/news agent.
-	public override bool IsMailNewsSave
-	{
-		get {
-			return true;
-		}
-	}
-
-	// Get the IANA-preferred Web name for this encoding.
-	public override String WebName
-	{
-		get {
-			return "utf-8";
-		}
-	}
-
-	// Get the Windows code page represented by this object.
-	public override int WindowsCodePage
-	{
-		get {
-			return UnicodeEncoding.UNICODE_CODE_PAGE;
-		}
-	}
-
-#endif // !ECMA_COMPAT
 
 	// UTF-8 decoder implementation.
 	[Serializable]

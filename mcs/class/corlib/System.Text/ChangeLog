@@ -1,3 +1,12 @@
+2003-11-11  Miguel de Icaza  <miguel@ximian.com>
+
+	* Encoding.cs: Use an internal variable to track the parameters of
+	each encoder, since the .NET API does not expose virtual methods
+	in the child classes, we should not depend on that.
+	
+	* ASCIIEncoding.cs, UTF7Encoding, UTF8Encoding, UnicodeEncoding:
+	Initialize the parameters for base class encoding here.
+
 2003-09-01  Miguel de Icaza  <miguel@ximian.com>
 
 	* Encoding.cs (UTF8Unmarked): make it also not error out on
