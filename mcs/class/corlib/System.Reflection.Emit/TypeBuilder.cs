@@ -18,6 +18,7 @@ using System.Security;
 using System.Security.Permissions;
 
 namespace System.Reflection.Emit {
+
 	public sealed class TypeBuilder : Type {
 	private string tname;
 	private string nspace;
@@ -520,24 +521,18 @@ namespace System.Reflection.Emit {
 			throw not_supported ();
 		}
 
-		[MonoTODO]
 		public override EventInfo GetEvent (string name, BindingFlags bindingAttr) {
-			if (name == null)
-				throw new ArgumentNullException ("name");
-
-			throw new NotImplementedException ();
+			throw not_supported ();
 		}
 
 		public override EventInfo[] GetEvents (BindingFlags bindingAttr) {
+			// FIXME: Under MS.NET, this throws a NotImplementedException
+			// But mcs calls this method. How can that be?
 			return new EventInfo [0];
 		}
 
-		[MonoTODO]
 		public override FieldInfo GetField( string name, BindingFlags bindingAttr) {
-			if (name == null)
-				throw new ArgumentNullException ("name");
-
-			throw new NotImplementedException ();
+			throw not_supported ();
 		}
 
 		public override FieldInfo[] GetFields (BindingFlags bindingAttr) {
@@ -576,12 +571,8 @@ namespace System.Reflection.Emit {
 			return result;
 		}
 
-		[MonoTODO]
 		public override Type GetInterface (string name, bool ignoreCase) {
-			if (name == null)
-				throw new ArgumentNullException ("name");
-
-			throw new NotImplementedException ();
+			throw not_supported ();
 		}
 		
 		public override Type[] GetInterfaces () {
@@ -594,10 +585,13 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		[MonoTODO]
-		public override MemberInfo[] GetMembers( BindingFlags bindingAttr) {
-			// FIXME
-			throw new NotImplementedException ();
+		public override MemberInfo[] GetMember (string name, MemberTypes type,
+												BindingFlags bindingAttr) {
+			throw not_supported ();
+		}
+
+		public override MemberInfo[] GetMembers (BindingFlags bindingAttr) {
+			throw not_supported ();
 		}
 
 		public override MethodInfo[] GetMethods (BindingFlags bindingAttr) {
@@ -636,18 +630,12 @@ namespace System.Reflection.Emit {
 			return result;
 		}
 
-		[MonoTODO]
 		protected override MethodInfo GetMethodImpl( string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) {
-			// FIXME
-			throw new NotImplementedException ();
+			throw not_supported ();
 		}
 		
-		[MonoTODO]
 		public override Type GetNestedType( string name, BindingFlags bindingAttr) {
-			if (name == null)
-				throw new ArgumentNullException ("name");
-
-			throw new NotImplementedException ();
+			throw not_supported ();
 		}
 
 		public override Type[] GetNestedTypes (BindingFlags bindingAttr) {
@@ -716,10 +704,8 @@ namespace System.Reflection.Emit {
 			return result;
 		}
 		
-		[MonoTODO]
 		protected override PropertyInfo GetPropertyImpl( string name, BindingFlags bindingAttr, Binder binder, Type returnType, Type[] types, ParameterModifier[] modifiers) {
-			// FIXME
-			throw new NotImplementedException ();
+			throw not_supported ();
 		}
 
 		protected override bool HasElementTypeImpl () {

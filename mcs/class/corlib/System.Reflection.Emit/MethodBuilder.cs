@@ -16,6 +16,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
+
 	public sealed class MethodBuilder : MethodInfo {
 		private RuntimeMethodHandle mhandle;
 		private Type rtype;
@@ -161,7 +162,6 @@ namespace System.Reflection.Emit {
 			return ilgen;
 		}
 		
-		[MonoTODO]
 		public ParameterBuilder DefineParameter (int position, ParameterAttributes attributes, string strParamName)
 		{
 			//
@@ -173,7 +173,6 @@ namespace System.Reflection.Emit {
 			RejectIfCreated ();
 
 			ParameterBuilder pb = new ParameterBuilder (this, position, attributes, strParamName);
-			// check position
 			if (pinfo == null)
 				pinfo = new ParameterBuilder [parameters.Length + 1];
 			pinfo [position] = pb;
@@ -219,7 +218,7 @@ namespace System.Reflection.Emit {
 			iattrs = attributes;
 		}
 		internal override int get_next_table_index (object obj, int table, bool inc) {
-			return type.get_next_table_index (obj, table, inc);
+		    return type.get_next_table_index (obj, table, inc);
 		}
 
 		internal void set_override (MethodInfo mdecl) {

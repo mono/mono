@@ -13,8 +13,10 @@ using System.Reflection.Emit;
 using System.Globalization;
 using System.Security;
 using System.Security.Permissions;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
+
 	public sealed class ConstructorBuilder : ConstructorInfo {
 		private RuntimeMethodHandle mhandle;
 		private ILGenerator ilgen;
@@ -91,7 +93,6 @@ namespace System.Reflection.Emit {
 		public void AddDeclarativeSecurity( SecurityAction action, PermissionSet pset) {
 		}
 
-		[MonoTODO]
 		public ParameterBuilder DefineParameter(int iSequence, ParameterAttributes attributes, string strParamName)
 		{
 			if ((iSequence < 1) || (iSequence > parameters.Length))
@@ -100,7 +101,6 @@ namespace System.Reflection.Emit {
 				throw not_after_created ();
 
 			ParameterBuilder pb = new ParameterBuilder (this, iSequence, attributes, strParamName);
-			// check iSequence
 			if (pinfo == null)
 				pinfo = new ParameterBuilder [parameters.Length + 1];
 			pinfo [iSequence] = pb;
