@@ -10,6 +10,8 @@
  */
 
 using System;
+using System.Xml;
+using System.Collections;
 using System.Reflection;
 
 namespace Mono.Enumerations
@@ -18,35 +20,19 @@ namespace Mono.Enumerations
 	{
 		private string className;
 		private Type   type;
-
-		public static string basePath = @"C:\WINNT\Microsoft.NET\Framework\v1.0.3705";
-		//public static string basePath = "file:///C:/WINNT/Microsoft.NET/Framework/v1.0.3705";
-		private static readonly string[] assemblies = {
-			"mscorlib",
-			"System.Web",
-			"System",
-			"System.Drawing",
-			"System.Security",
-			"System.Windows.Forms",
-			"System.XML",
-			"System.Data",
-			"System.Design",
-			"System.Enterpriseservices",
-			"System.Management",
-			"System.Messaging",
-			"System.Runtime.Remoting",
-			"System.ServiceProcess",
-			"System.Web.RegularExpressions",
-			"System.Web.Services"
-		};
+		private EnumCheckAssemblyCollection ecac = new EnumCheckAssemblyCollection();
+		
+		public static string confFile = "assemblies.xml";
 
 		public EnumCheck(string className)
 		{
 			this.className = className;
+			ecac.Parse();
 		}
 
 		public void Display()
 		{
+			ecac.ConfigFile = confFile;
 			LoadType();
 			if(type == null || !type.IsEnum)
 			{
@@ -66,20 +52,15 @@ namespace Mono.Enumerations
 		private void LoadType()
 		{
 			type = null;
-			foreach(string assemblyName in assemblies)
+			foreach(string url in ecac)
 			{
 				try
 				{
-					Assembly assembly;
-					assembly = Assembly.LoadFrom(basePath + "\\" + assemblyName + ".dll");
+					Assembly assembly = Assembly.LoadFrom(url);
 					foreach(Type t in assembly.GetTypes())
 					{
 						if(!t.IsEnum)
 							continue;
-						//string name = "";
-						//if(Type.GetType(className + "," + assemblyName) != null)
-						//	name = Type.GetType(className + "," + assemblyName).ToString();
-						//System.Console.WriteLine("\tTName: {0}\tSName: {1}", name, t.ToString());
 						if(className == t.ToString())
 						{
 							type = t;
@@ -116,8 +97,8 @@ namespace Mono.Enumerations
 			}
 			EnumCheck check = null;
 			string bdir;
-			System.Console.WriteLine("Enter directory to search assemblies");
-			System.Console.Write("[{0}]: ", basePath);
+			System.Console.Write("Enter assembly configuration file [{0}]:", confFile);
+			//System.Console.Write("[{0}]: ", confFile);
 			bdir = System.Console.ReadLine();
 			while(bdir.EndsWith("/") || bdir.EndsWith("\\"))
 			{
@@ -125,7 +106,7 @@ namespace Mono.Enumerations
 			}
 			if(bdir != "")
 			{
-				basePath = bdir;
+				confFile = bdir;
 			}
 			if(args.Length != 0)
 			{
