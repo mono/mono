@@ -51,8 +51,8 @@ namespace System.Data.Odbc
 		DataRowVersion sourceVersion;
 		string sourceColumn;
 		ParameterDirection direction;
-		OdbcType odbcType;
-		DbType dbType;
+		OdbcType odbcType = OdbcType.NVarChar;
+		DbType dbType = DbType.String;
 		OdbcParameterCollection container = null;	
 		
 		// Buffers for parameter value based on type. Currently I've only optimized 
@@ -250,15 +250,21 @@ namespace System.Data.Odbc
 
 			// Convert System.Data.ParameterDirection into odbc enum
 			OdbcInputOutputDirection paramdir = libodbc.ConvertParameterDirection(this.direction);
+
+                        SQL_C_TYPE ctype = OdbcTypeConverter.ConvertToSqlCType (odbcType);
+                        SQL_TYPE   sqltype = OdbcTypeConverter.ConvertToSqlType (odbcType);
+                        
 			// Bind parameter based on type
 			if (odbcType == OdbcType.Int)
-				ret = libodbc.SQLBindParameter(hstmt, (ushort)ParamNum, (short)paramdir,
-					(short)odbcType, (short)odbcType, Convert.ToUInt32(size),
-					0, ref intbuf, 0, 0);
+                                ret = libodbc.SQLBindParameter(hstmt, (ushort)ParamNum, (short)paramdir,
+                                                               ctype, sqltype, Convert.ToUInt32(size),
+                                                               0, ref intbuf, 0, 0);
 			else
-				ret = libodbc.SQLBindParameter(hstmt, (ushort)ParamNum, (short)paramdir,
-					(short)OdbcType.Char, (short)odbcType, Convert.ToUInt32(size),
-					0, buffer, 0, 0);
+                                ret = libodbc.SQLBindParameter(hstmt, (ushort)ParamNum, (short)paramdir,
+                                                               ctype, sqltype, Convert.ToUInt32(size),
+                                                               0, buffer, 0, 0);
+
+                                
 			// Check for error condition
 			if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo))
 				throw new OdbcException(new OdbcError("SQLBindParam", OdbcHandleType.Stmt, hstmt));
@@ -277,6 +283,8 @@ namespace System.Data.Odbc
 
                                  int minSize = size;
                                  minSize = size > 20 ? size : 20;
+                                 if (ParamValue is String)
+                                         minSize += 2; // for enclosing apos
 				 if (buffer == null || buffer.Length < minSize)
                                          buffer = new byte[minSize];
                                  else

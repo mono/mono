@@ -1,3 +1,8 @@
+2005-03-10  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* System.Data.dll.sources: Added
+	System.Data.Odbc/OdbcTypeConverter.
+
 2005-03-02  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* System.Data.dll.sources: Added

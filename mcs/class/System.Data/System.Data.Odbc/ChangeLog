@@ -1,3 +1,28 @@
+2005-03-10  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* OdbcType.cs: Added enums for SQL_TYPE & SQL_C_TYPE.
+	
+	* libodbc.cs: Accept SQL_C_TYPE for driver
+	parameters. SQLBindParameter takes two parameters SQL_TYPE and
+	SQL_C_TYPE. This caused the whole lot of changes done in this
+	revision.
+	
+	* OdbcParameter.cs: Set default values of OdbcType & DbType. Pass
+	mapped SQL_TYPE and SQL_C_TYPE to SQLBindParameter. Increase
+	buffer size by 2 for additional ' chars.
+	
+	* OdbcTypeConverter.cs: Added class to convert between OdbcType,
+	SQL_TYPE, SQL_C_TYPE.
+	
+	* OdbcColumn.cs: Added private members for SQL_TYPE and
+	SQL_C_TYPE. conversion from/to odbctype to/from SQL_TYPE is done
+	through OdbcTypeConverter class.
+	
+	* OdbcDataReader.cs: use OdbcColumn's SQL_C_TYPE member. It keeps
+	track of default mapping between odbctype, SQL_TYPE and
+	SQL_C_TYPE. Move dataTableSchema.AcceptChanges inside if condition
+	to avoid null reference exception.
+
 2005-02-04  Sureshkumar T  <tsureshkumar@novell.com>
 	    Appasamy <appasamy@rediffmail.com>
 

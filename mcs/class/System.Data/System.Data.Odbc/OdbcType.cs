@@ -2,6 +2,7 @@
 // System.Data.Odbc.OdbcType
 //
 // Author:
+//   Sureshkumar T <tsureshkumar@novell.com> 2005.
 //   Brian Ritchie
 //
 // Copyright (C) Brian Ritchie, 2002
@@ -72,44 +73,95 @@ namespace System.Data.Odbc
         //  and SQL_TYPE_TIMESTAMP (with instances of #define in the header file of 91, 92, and 93), 
         //  respectively.
         
-	// Unmapped SQL Types
-	//
-	//#define SQL_FLOAT								6
-	//	could map to SQL_DOUBLE?
-	//#define SQL_INTERVAL							10
-	//	could map to SmallDateTime?
-
         // This internal enum is used as mapping types into database drivers.
         // This is essentially a map between public OdbcType to C types for 
-        // Odbc to call into driver.
-        internal enum OdbcCType         // Native Types
+        // Odbc to call into driver. These values are taken from sql.h & sqlext.h.
+        internal enum SQL_TYPE : short
         {
-                SignedBigInt=-25,	// SQL_C_SBIGINT
-                BigInt=-5,		// SQL_BIGINT
-		Binary=-2,		// SQL_BINARY
-		Bit=-7,			// SQL_BIT
-		Char=1,			// SQL_CHAR
-		Date=91,		// SQL_TYPE_DATE
-		DateTime=9,		// SQL_DATETIME
-		Decimal=3,		// SQL_DECIMAL
-		Double=8,		// SQL_DOUBLE
-		Image=-4,		// SQL_LONGVARBINARY
-		Int=4,			// SQL_INTEGER
-		NChar=-95,		// SQL_UNICODE_CHAR
-		NText=-97,		// SQL_UNICODE_LONGVARCHAR
-		Numeric=2,		// SQL_NUMERIC
-		NVarChar=-96,	// SQL_UNICODE_VARCHAR
-		Real=7,			// SQL_REAL
-		SmallDateTime=0,// ??????????????????????????
-		SmallInt=5,		// SQL_SMALLINT
-		Time=92,		// SQL_TYPE_TIME
-		Text=-1,		// SQL_LONGVARCHAR
-		Timestamp=93,	// SQL_TYPE_TIMESTAMP
-		TinyInt=-6,		// SQL_TINYINT
-		UniqueIdentifier=-11,  // SQL_GUID
-		VarBinary=-3,	// SQL_VARBINARY
-		VarChar=12		// SQL_VARCHAR
+                BIGINT				= (-5),
+                BINARY				= (-2),
+                BIT				= (-7),
+                CHAR				= 1,
+                DATE				= 9,
+                DECIMAL                         = 3,
+                DOUBLE				= 8,
+                GUID				= (-11),
+                INTEGER				= 4,
+                INTERVAL_DAY			= (100 + 3),
+                INTERVAL_DAY_TO_HOUR		= (100 + 8),
+                INTERVAL_DAY_TO_MINUTE		= (100 + 9),
+                INTERVAL_DAY_TO_SECOND		= (100 + 10),
+                INTERVAL_HOUR			= (100 + 4),
+                INTERVAL_HOUR_TO_MINUTE		= (100 + 11),
+                INTERVAL_HOUR_TO_SECOND		= (100 + 12),
+                INTERVAL_MINUTE			= (100 + 5),
+                INTERVAL_MINUTE_TO_SECOND	= (100 + 13),
+                INTERVAL_MONTH			= (100 + 2),
+                INTERVAL_SECOND			= (100 + 6),
+                INTERVAL_YEAR			= (100 + 1),
+                INTERVAL_YEAR_TO_MONTH		= (100 + 7),
+                LONGVARBINARY                   = (-4),
+                LONGVARCHAR                     = (-1),
+                NUMERIC                         = 2,
+                REAL				= 7,
+                SMALLINT			= 5,
+                TIME				= 10,
+                TIMESTAMP			= 11,
+                TINYINT				= (-6),
+                TYPE_DATE			= 91,
+                TYPE_TIME			= 92,
+                TYPE_TIMESTAMP			= 93,
+                VARBINARY                       = (-3),
+                VARCHAR                         = 12,
+                WCHAR				= (-8),
+                WLONGVARCHAR                    = (-10),
+                WVARCHAR                        = (-9),
+                UNASSIGNED                      = Int16.MaxValue
         }
 
+        public enum SQL_C_TYPE : short
+        {
+                BINARY				= (-2),
+                BIT				= (-7),
+                BOOKMARK			= (4 +(-22)),
+                CHAR				= 1,
+                DATE				= 9,
+                DEFAULT				= 99,
+                DOUBLE				= 8,
+                FLOAT				= 7,
+                GUID				= (-11),
+                INTERVAL_DAY			= (100 + 3),
+                INTERVAL_DAY_TO_HOUR		= (100 + 8),
+                INTERVAL_DAY_TO_MINUTE		= (100 + 9),
+                INTERVAL_DAY_TO_SECOND		= (100 + 10),
+                INTERVAL_HOUR			= (100 + 4),
+                INTERVAL_HOUR_TO_MINUTE	        = (100 + 11),
+                INTERVAL_HOUR_TO_SECOND	        = (100 + 12),
+                INTERVAL_MINUTE			= (100 + 5),
+                INTERVAL_MINUTE_TO_SECOND	= (100 + 13),
+                INTERVAL_MONTH			= (100 + 2),
+                INTERVAL_SECOND			= (100 + 6),
+                INTERVAL_YEAR			= (100 + 1),
+                INTERVAL_YEAR_TO_MONTH		= (100 + 7),
+                LONG				= 4,
+                NUMERIC				= 2,
+                SBIGINT				= ((-5)+(-20)),
+                SHORT				= 5,
+                SLONG				= (4 +(-20)),
+                SSHORT				= (5 +(-20)),
+                STINYINT			= ((-6)+(-20)),
+                TCHAR				= 1,
+                TIME				= 10,
+                TIMESTAMP			= 11,
+                TINYINT				= (-6),
+                TYPE_DATE			= 91,
+                TYPE_TIME			= 92,
+                TYPE_TIMESTAMP			= 93,
+                UBIGINT				= ((-5)+(-22)),
+                ULONG				= (4 +(-22)),
+                USHORT				= (5 +(-22)),
+                UTINYINT			= ((-6)+(-22)),
+                WCHAR				= (-8),
+                UNASSIGNED                      = Int16.MaxValue
+        }
 }
-

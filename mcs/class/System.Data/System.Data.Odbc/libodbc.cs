@@ -3,6 +3,7 @@
 //
 // Authors:
 //   Brian Ritchie (brianlritchie@hotmail.com) 
+//   Sureshkumar T (tsureshkumar@novell.com)
 //  
 //
 // Copyright (C) Brian Ritchie, 2002
@@ -158,28 +159,28 @@ namespace System.Data.Odbc
 		internal static extern OdbcReturn SQLFetch (IntPtr StatementHandle);
 
 		[DllImport("odbc32.dll")]
-		internal static extern OdbcReturn SQLGetData (IntPtr StatementHandle, ushort ColumnNumber, OdbcCType TargetType, ref bool TargetPtr, int BufferLen, ref int Len);
+		internal static extern OdbcReturn SQLGetData (IntPtr StatementHandle, ushort ColumnNumber, SQL_C_TYPE TargetType, ref bool TargetPtr, int BufferLen, ref int Len);
 
 		[DllImport("odbc32.dll")]
-		internal static extern OdbcReturn SQLGetData (IntPtr StatementHandle, ushort ColumnNumber, OdbcCType TargetType, ref double TargetPtr, int BufferLen, ref int Len);
+		internal static extern OdbcReturn SQLGetData (IntPtr StatementHandle, ushort ColumnNumber, SQL_C_TYPE TargetType, ref double TargetPtr, int BufferLen, ref int Len);
 
 		[DllImport("odbc32.dll")]
-		internal static extern OdbcReturn SQLGetData (IntPtr StatementHandle, ushort ColumnNumber, OdbcCType TargetType, ref long TargetPtr, int BufferLen, ref int Len);
+		internal static extern OdbcReturn SQLGetData (IntPtr StatementHandle, ushort ColumnNumber, SQL_C_TYPE TargetType, ref long TargetPtr, int BufferLen, ref int Len);
 
                 [DllImport("odbc32.dll")]
-		internal static extern OdbcReturn SQLGetData (IntPtr StatementHandle, ushort ColumnNumber, OdbcCType TargetType, ref short TargetPtr, int BufferLen, ref int Len);
+		internal static extern OdbcReturn SQLGetData (IntPtr StatementHandle, ushort ColumnNumber, SQL_C_TYPE TargetType, ref short TargetPtr, int BufferLen, ref int Len);
 
 		[DllImport("odbc32.dll")]
-		internal static extern OdbcReturn SQLGetData (IntPtr StatementHandle, ushort ColumnNumber, OdbcCType TargetType, ref float TargetPtr, int BufferLen, ref int Len);
+		internal static extern OdbcReturn SQLGetData (IntPtr StatementHandle, ushort ColumnNumber, SQL_C_TYPE TargetType, ref float TargetPtr, int BufferLen, ref int Len);
 	
 		[DllImport("odbc32.dll")]
-		internal static extern OdbcReturn SQLGetData (IntPtr StatementHandle, ushort ColumnNumber, OdbcCType TargetType, ref OdbcTimestamp TargetPtr, int BufferLen, ref int Len);
+		internal static extern OdbcReturn SQLGetData (IntPtr StatementHandle, ushort ColumnNumber, SQL_C_TYPE TargetType, ref OdbcTimestamp TargetPtr, int BufferLen, ref int Len);
 
 		[DllImport("odbc32.dll")]
-		internal static extern OdbcReturn SQLGetData (IntPtr StatementHandle, ushort ColumnNumber, OdbcCType TargetType, ref int TargetPtr, int BufferLen, ref int Len);
+		internal static extern OdbcReturn SQLGetData (IntPtr StatementHandle, ushort ColumnNumber, SQL_C_TYPE TargetType, ref int TargetPtr, int BufferLen, ref int Len);
 	
 		[DllImport("odbc32.dll")]
-		internal static extern OdbcReturn SQLGetData (IntPtr StatementHandle, ushort ColumnNumber, OdbcCType TargetType, byte[] TargetPtr, int BufferLen, ref int Len);
+		internal static extern OdbcReturn SQLGetData (IntPtr StatementHandle, ushort ColumnNumber, SQL_C_TYPE TargetType, byte[] TargetPtr, int BufferLen, ref int Len);
 
 		[DllImport("odbc32.dll")]
 		internal static extern OdbcReturn SQLDescribeCol(IntPtr StatementHandle, ushort ColumnNumber, byte[] ColumnName, short BufferLength, ref short NameLength, ref short DataType, ref uint ColumnSize, ref short DecimalDigits, ref short Nullable);
@@ -204,12 +205,12 @@ namespace System.Data.Odbc
 
 		[DllImport("odbc32.dll")]
 		internal static extern OdbcReturn SQLBindParameter(IntPtr StatementHandle, ushort ParamNum, 
-				short InputOutputType, short ValueType, short ParamType, uint ColSize, 
+				short InputOutputType, SQL_C_TYPE ValueType, SQL_TYPE ParamType, uint ColSize, 
 				short DecimalDigits, byte[] ParamValue, int BufLen, int StrLen);
 
 		[DllImport("odbc32.dll")]
 		internal static extern OdbcReturn SQLBindParameter(IntPtr StatementHandle, ushort ParamNum, 
-				short InputOutputType, short ValueType, short ParamType, uint ColSize, 
+				short InputOutputType, SQL_C_TYPE ValueType, SQL_TYPE ParamType, uint ColSize, 
 				short DecimalDigits, ref int ParamValue, int BufLen, int StrLen);
 
 		[DllImport("odbc32.dll")]
@@ -261,66 +262,6 @@ namespace System.Data.Odbc
                                                               short buffLength, 
                                                               ref short remainingStrLen);
 
-
-                #region Type Utilities
-                internal static OdbcType NativeToOdbcType (OdbcCType native)
-                {
-                        switch (native)
-                        {
-                        case OdbcCType.SignedBigInt:	// SQL_C_SBIGINT
-                                return OdbcType.BigInt;
-                        case OdbcCType.BigInt:	// SQL_BIGINT
-                                return OdbcType.BigInt;
-                        case OdbcCType.Binary:	// SQL_BINARY
-                                return OdbcType.Binary;
-                        case OdbcCType.Bit:	// SQL_BIT
-                                return OdbcType.Bit;
-                        case OdbcCType.Char:	// SQL_CHAR
-                                return OdbcType.Char;
-                        case OdbcCType.Date:	// SQL_TYPE_DATE
-                                return OdbcType.Date;
-                        case OdbcCType.DateTime:	// SQL_DATETIME
-                                return OdbcType.DateTime;
-                        case OdbcCType.Decimal:	// SQL_DECIMAL
-                                return OdbcType.Decimal;
-                        case OdbcCType.Double:	// SQL_DOUBLE
-                                return OdbcType.Double;
-                        case OdbcCType.Image:	// SQL_LONGVARBINARY
-                                return OdbcType.Image;
-                        case OdbcCType.Int:	// SQL_INTEGER
-                                return OdbcType.Int;
-                        case OdbcCType.NChar:	// SQL_UNICODE_CHAR
-                                return OdbcType.NChar;
-                        case OdbcCType.NText:	// SQL_UNICODE_LONGVARCHAR
-                                return OdbcType.NText;
-                        case OdbcCType.Numeric:	// SQL_NUMERIC
-                                return OdbcType.Numeric;
-                        case OdbcCType.NVarChar:	// SQL_UNICODE_VARCHAR
-                                return OdbcType.NVarChar;
-                        case OdbcCType.Real:	// SQL_REAL
-                                return OdbcType.Real;
-                        case OdbcCType.SmallDateTime:	// ??????????????????????????
-                                return OdbcType.SmallDateTime;
-                        case OdbcCType.SmallInt:	// SQL_SMALLINT
-                                return OdbcType.SmallInt;
-                        case OdbcCType.Time:	// SQL_TYPE_TIME
-                                return OdbcType.Time;
-                        case OdbcCType.Text:	// SQL_LONGVARCHAR
-                                return OdbcType.Text;
-                        case OdbcCType.Timestamp:	// SQL_TYPE_TIMESTAMP
-                                return OdbcType.Timestamp;
-                        case OdbcCType.TinyInt:	// SQL_TINYINT
-                                return OdbcType.TinyInt;
-                        case OdbcCType.UniqueIdentifier:	// SQL_GUID
-                                return OdbcType.UniqueIdentifier;
-                        case OdbcCType.VarBinary:	// SQL_VARBINARY
-                                return OdbcType.VarBinary;
-                        case OdbcCType.VarChar:	// SQL_VARCHAR
-                                return OdbcType.VarChar;
-                        }
-                        throw new ArgumentException ("Invalid Native Type");
-                }
-                #endregion // Type Utilities
 
 	}
 }

@@ -32,6 +32,8 @@ namespace System.Data.Odbc
 	{
 		internal string ColumnName;
 		internal OdbcType OdbcType;
+                private SQL_TYPE _sqlType = SQL_TYPE.UNASSIGNED;
+                private SQL_C_TYPE _sqlCType = SQL_C_TYPE.UNASSIGNED;
 		internal bool AllowDBNull;
 		internal int MaxLength;
 		internal int Digits;
@@ -46,6 +48,18 @@ namespace System.Data.Odbc
 			Digits=0;
 			Value=null;
 		}
+
+                internal OdbcColumn(string Name, SQL_TYPE type)
+		{
+                        this.ColumnName=Name;
+			AllowDBNull=false;
+			MaxLength=0;
+			Digits=0;
+			Value=null;
+                        UpdateTypes (type);
+
+		}
+
 
 		internal Type DataType
 		{
@@ -129,6 +143,38 @@ namespace System.Data.Odbc
 				}
 			}
 		}
+
+                internal SQL_TYPE SqlType
+                {
+                        get {
+                                if ( _sqlType == SQL_TYPE.UNASSIGNED)
+                                        _sqlType = OdbcTypeConverter.ConvertToSqlType (OdbcType);
+                                return _sqlType;
+                        }
+
+                        set {_sqlType = value;}
+                }
+
+                internal SQL_C_TYPE SqlCType
+                {
+                        get {
+                                
+                                if ( _sqlCType == SQL_C_TYPE.UNASSIGNED)
+                                        _sqlCType = OdbcTypeConverter.ConvertToSqlCType (OdbcType);
+                                return _sqlCType;
+                        }
+                        set {_sqlCType = value;}
+                }
+
+                internal void UpdateTypes (SQL_TYPE sqlType)
+                {
+                        SqlType = sqlType;
+                        OdbcTypeConverter.TypeMap map = OdbcTypeConverter.GetTypeMap (SqlType);
+                        OdbcType = map.OdbcType;
+                        SqlCType = map.SqlCType;
+                }
+                
+                
 
 	}
 }
