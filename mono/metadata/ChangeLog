@@ -1,3 +1,9 @@
+2004-11-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* appdomain.c (ves_icall_System_AppDomain_GetData): Throw an 
+	exception instead of asserting if name is null.
+	(ves_icall_System_AppDomain_GetData): Ditto.
+
 2004-11-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	(ves_icall_get_enum_info): Avoid crash when called on a non-finished
