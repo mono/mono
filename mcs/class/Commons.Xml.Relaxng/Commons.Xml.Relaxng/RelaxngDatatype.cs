@@ -4,7 +4,8 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// (C)2004 Novell Inc.
+// Copyright (c) 2004 Novell Inc.
+// All rights reserved
 //
 
 //

@@ -4,7 +4,10 @@
 // Author:
 //	Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 //
-// (C)2003 Atsushi Enomoto. "Some rights reserved."
+// 2003 Atsushi Enomoto. "No rights reserved."
+//
+// Copyright (c) 2004 Novell Inc.
+// All rights reserved
 //
 
 //

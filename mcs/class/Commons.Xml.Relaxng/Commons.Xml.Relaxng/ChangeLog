@@ -1,3 +1,11 @@
+2004-06-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Misc.cs, RelaxngDatatype.cs, RelaxngDatatypeProvider.cs,
+	  RelaxngDefaultDatatype.cs, RelaxngException.cs, RelaxngGrammar.cs,
+	  RelaxngMergedProvider.cs, RelaxngNameClass.cs, RelaxngPattern.cs,
+	  RelaxngPatternType.cs, RelaxngReader.cs, RelaxngValidatingReader.cs,
+	  XsdDatatypeProvider.cs : Added/replaced novell license term.
+
 2004-06-21  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Misc.cs,
