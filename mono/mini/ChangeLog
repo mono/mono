@@ -1,4 +1,8 @@
 
+Fri Dec 12 10:11:49 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: lconv.ovf.i implemented.
+
 2003-12-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* mini.c:
