@@ -20,7 +20,6 @@ namespace Mono.Verifier {
 	// Collections
 	////////////////////////////////
 
-
 	public abstract class MemberCollection : IEnumerable {
 
 		public delegate MemberInfo [] InfoQuery (Type type, BindingFlags bindings);
@@ -94,7 +93,8 @@ namespace Mono.Verifier {
 
 
 
-		public IEnumerator GetEnumerator() {
+		public IEnumerator GetEnumerator()
+		{
 			return new Iterator (this);
 		}
 
@@ -280,45 +280,196 @@ namespace Mono.Verifier {
 
 
 
+	public abstract class AbstractTypeStuff {
+		public readonly Type type;
+
+		public AbstractTypeStuff (Type type)
+		{
+			if (type == null)
+				throw new NullReferenceException ("Invalid type.");
+
+			this.type = type;
+		}
+
+		public override int GetHashCode ()
+		{
+			return type.GetHashCode ();
+		}
+
+		public static bool operator == (AbstractTypeStuff t1, AbstractTypeStuff t2)
+		{
+			return t1.Equals (t2);
+		}
+
+		public static bool operator != (AbstractTypeStuff t1, AbstractTypeStuff t2)
+		{
+			return !(t1 == t2);
+		}
+
+		public override bool Equals (object o)
+		{
+			return (o is AbstractTypeStuff && CompareTypes (o as AbstractTypeStuff));
+		}
+
+		protected virtual bool CompareTypes (AbstractTypeStuff that)
+		{
+			Verifier.Log.Write ("info", "Comparing types.", ImportanceLevel.LOW);
+			bool res;
+
+			res = Compare.Types (this.type, that.type);
+
+			return res;
+		}
+
+	}
 
 
 
-	public class ClassStuff {
 
-		public Type type;
+	public class ClassStuff : AbstractTypeStuff {
+
 		public PublicMethods publicMethods;
 		public PublicStaticMethods publicStaticMethods;
 		public NonPublicMethods nonpublicMethods;
 		public NonPublicStaticMethods nonpublicStaticMethods;
 
-		public ClassStuff (Type type)
-		{
-			if (type == null)
-				throw new NullReferenceException ("Invalid type.");
+		public PublicFields publicFields;
+		public PublicStaticFields publicStaticFields;
+		public NonPublicFields nonpublicFields;
+		public NonPublicStaticFields nonpublicStaticFields;
 
-			this.type = type;
+		public ClassStuff (Type type) : base (type)
+		{
 			publicMethods = new PublicMethods (type);
 			publicStaticMethods = new PublicStaticMethods (type);
 			nonpublicMethods = new NonPublicMethods (type);
 			nonpublicStaticMethods = new NonPublicStaticMethods (type);
+
+			publicFields = new PublicFields (type);
+			publicStaticFields = new PublicStaticFields (type);
+			nonpublicFields = new NonPublicFields (type);
+			nonpublicStaticFields = new NonPublicStaticFields (type);
 		}
+
+
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
+
+		private bool CompareMethods (ClassStuff that)
+		{
+			bool res = true;
+			bool ok;
+
+			Verifier.Log.Write ("info", "Comparing public instance methods.", ImportanceLevel.LOW);
+			ok = (this.publicMethods == that.publicMethods);
+			res &= ok;
+			if (!ok && Verifier.stopOnError) return res;
+
+			Verifier.Log.Write ("info", "Comparing public static methods.", ImportanceLevel.LOW);
+			ok = (this.publicStaticMethods == that.publicStaticMethods);
+			res &= ok;
+			if (!ok && Verifier.stopOnError) return res;
+
+			Verifier.Log.Write ("info", "Comparing non-public instance methods.", ImportanceLevel.LOW);
+			ok = (this.nonpublicMethods == that.nonpublicMethods);
+			res &= ok;
+			if (!ok && Verifier.stopOnError) return res;
+
+			Verifier.Log.Write ("info", "Comparing non-public static methods.", ImportanceLevel.LOW);
+			ok = (this.nonpublicStaticMethods == that.nonpublicStaticMethods);
+			res &= ok;
+			if (!ok && Verifier.stopOnError) return res;
+
+			return res;
+		}
+
+
+		private bool CompareFields (ClassStuff that)
+		{
+			bool res = true;
+			bool ok;
+
+			Verifier.Log.Write ("info", "Comparing public instance fields.", ImportanceLevel.LOW);
+			ok = (this.publicFields == that.publicFields);
+			res &= ok;
+			if (!ok && Verifier.stopOnError) return res;
+
+			Verifier.Log.Write ("info", "Comparing public static fields.", ImportanceLevel.LOW);
+			ok = (this.publicStaticFields == that.publicStaticFields);
+			res &= ok;
+			if (!ok && Verifier.stopOnError) return res;
+
+			Verifier.Log.Write ("info", "Comparing non-public instance fields.", ImportanceLevel.LOW);
+			ok = (this.nonpublicFields == that.nonpublicFields);
+			res &= ok;
+			if (!ok && Verifier.stopOnError) return res;
+
+			Verifier.Log.Write ("info", "Comparing non-public static fields.", ImportanceLevel.LOW);
+			ok = (this.nonpublicStaticFields == that.nonpublicStaticFields);
+			res &= ok;
+			if (!ok && Verifier.stopOnError) return res;
+
+			return res;
+		}
+
+
+		public override bool Equals (object o)
+		{
+			bool res = (o is ClassStuff);
+			if (res) {
+				ClassStuff that = o as ClassStuff;
+
+				res &= this.CompareTypes (that);
+				if (!res && Verifier.stopOnError) return res;
+
+				res &= this.CompareMethods (that);
+				if (!res && Verifier.stopOnError) return res;
+
+				res &= this.CompareFields (that);
+				if (!res && Verifier.stopOnError) return res;
+
+			}
+			return res;
+		}
+
 	}
 
 
 
-	public class InterfaceStuff {
+	public class InterfaceStuff : AbstractTypeStuff {
 
-		public Type type;
 		public PublicMethods publicMethods;
 
-		public InterfaceStuff (Type type)
+		public InterfaceStuff (Type type) : base (type)
 		{
-			if (type == null)
-				throw new NullReferenceException ("Invalid type.");
-
-			this.type = type;
 			publicMethods = new PublicMethods (type);
 		}
+
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
+
+		public override bool Equals (object o)
+		{
+			bool res = (o is InterfaceStuff);
+			if (res) {
+				bool ok;
+				InterfaceStuff that = o as InterfaceStuff;
+
+				res = this.CompareTypes (that);
+				if (!res && Verifier.stopOnError) return res;
+
+				Verifier.Log.Write ("info", "Comparing interface methods.", ImportanceLevel.LOW);
+				ok = (this.publicMethods == that.publicMethods);
+				res &= ok;
+				if (!ok && Verifier.stopOnError) return res;
+			}
+			return res;
+		}
+
 	}
 
 
@@ -340,7 +491,7 @@ namespace Mono.Verifier {
 
 
 	public class AssemblyLoader {
-		public delegate void Hook (TypeArray assemblyExports);
+		public delegate void Hook (TypeArray assemblyTypes);
 
 		private static Hashtable cache;
 
@@ -364,20 +515,21 @@ namespace Mono.Verifier {
 		{
 			bool res = false;
 			try {
-				TypeArray exports = TypeArray.empty;
+				TypeArray types = TypeArray.empty;
 
 				lock (cache) {
 					if (cache.Contains (assemblyName)) {
-						exports = (cache [assemblyName] as TypeArray);
+						types = (cache [assemblyName] as TypeArray);
+						if (types == null) types = TypeArray.empty;
 					} else {
 						Assembly asm = Assembly.LoadFrom (assemblyName);
-						Type [] types = asm.GetExportedTypes ();
-						if (types == null) types = Type.EmptyTypes;
-						exports = new TypeArray (types);
-						cache [assemblyName] = exports;
+						Type [] allTypes = asm.GetTypes ();
+						if (allTypes == null) allTypes = Type.EmptyTypes;
+						types = new TypeArray (allTypes);
+						cache [assemblyName] = types;
 					}
 				}
-				hook (exports);
+				hook (types);
 				res = true;
 			} catch (ReflectionTypeLoadException rtle) {
 				Type [] loaded = rtle.Types;
@@ -414,7 +566,7 @@ namespace Mono.Verifier {
 			LoadFrom (assemblyName);
 		}
 
-		public abstract void LoaderHook (TypeArray exports);
+		public abstract void LoaderHook (TypeArray types);
 
 
 		public bool LoadFrom (string assemblyName)
@@ -438,9 +590,9 @@ namespace Mono.Verifier {
 		}
 
 
-		public override void LoaderHook (TypeArray exports)
+		public override void LoaderHook (TypeArray types)
 		{
-			foreach (Type type in exports.types) {
+			foreach (Type type in types.types) {
 				if (type.IsClass) {
 					this [type.FullName] = new ClassStuff (type);
 				}
@@ -462,9 +614,9 @@ namespace Mono.Verifier {
 		}
 
 
-		public override void LoaderHook (TypeArray exports)
+		public override void LoaderHook (TypeArray types)
 		{
-			foreach (Type type in exports.types) {
+			foreach (Type type in types.types) {
 				if (type.IsInterface) {
 					this [type.FullName] = new InterfaceStuff (type);
 				}
@@ -515,8 +667,8 @@ namespace Mono.Verifier {
 		protected static bool CompareClasses (AssemblyStuff asm1, AssemblyStuff asm2)
 		{
 			bool res = true;
-			bool ok;
 			Verifier.Log.Write ("info", "Comparing classes.");
+
 			foreach (DictionaryEntry c in asm1.classes) {
 				string className = c.Key as string;
 				Verifier.Log.Write ("class", className);
@@ -529,27 +681,10 @@ namespace Mono.Verifier {
 					return false;
 				}
 
-				Verifier.Log.Write ("info", "Comparing public instance methods.", ImportanceLevel.LOW);
-				ok = (class1.publicMethods == class2.publicMethods);
-				res &= ok;
-				if (!ok && Verifier.stopOnError) return res;
-
-				Verifier.Log.Write ("info", "Comparing public static methods.", ImportanceLevel.LOW);
-				ok = (class1.publicStaticMethods == class2.publicStaticMethods);
-				res &= ok;
-				if (!ok && Verifier.stopOnError) return res;
-
-				Verifier.Log.Write ("info", "Comparing non-public instance methods.", ImportanceLevel.LOW);
-				ok = (class1.nonpublicMethods == class2.nonpublicMethods);
-				res &= ok;
-				if (!ok && Verifier.stopOnError) return res;
-
-				Verifier.Log.Write ("info", "Comparing non-public static methods.", ImportanceLevel.LOW);
-				ok = (class1.nonpublicStaticMethods == class2.nonpublicStaticMethods);
-				res &= ok;
-				if (!ok && Verifier.stopOnError) return res;
-
+				res &= (class1 == class2);
+				if (!res && Verifier.stopOnError) return res;
 			}
+
 			return res;
 		}
 
@@ -557,8 +692,8 @@ namespace Mono.Verifier {
 		protected static bool CompareInterfaces (AssemblyStuff asm1, AssemblyStuff asm2)
 		{
 			bool res = true;
-			bool ok;
 			Verifier.Log.Write ("info", "Comparing interfaces.");
+
 			foreach (DictionaryEntry ifc in asm1.interfaces) {
 				string ifcName = ifc.Key as string;
 				Verifier.Log.Write ("interface", ifcName);
@@ -571,11 +706,11 @@ namespace Mono.Verifier {
 					return false;
 				}
 
-				Verifier.Log.Write ("info", "Comparing interface methods.", ImportanceLevel.LOW);
-				ok = (ifc1.publicMethods == ifc2.publicMethods);
-				res &= ok;
-				if (!ok && Verifier.stopOnError) return res;
+				res &= (ifc1 == ifc2);
+				if (!res && Verifier.stopOnError) return res;
+
 			}
+
 			return res;
 		}
 
@@ -655,9 +790,6 @@ namespace Mono.Verifier {
 
 
 
-
-
-
 	////////////////////////////////
 	// Compare
 	////////////////////////////////
@@ -688,7 +820,7 @@ namespace Mono.Verifier {
 
 				Verifier.Log.Write ("parameter", params1 [i].Name);
 
-				if (params1 [i].ParameterType != params2 [i].ParameterType) {
+				if (!Compare.Types (params1 [i].ParameterType, params2 [i].ParameterType)) {
 					Verifier.Log.Write ("error", String.Format ("Parameters types mismatch {0}, {1}.", params1 [i].ParameterType, params2 [i].ParameterType));
 					res = false;
 					if (Verifier.stopOnError) break;
@@ -746,31 +878,107 @@ namespace Mono.Verifier {
 		{
 			
 			if (mi2 == null) {
-				Verifier.Log.Write ("error", String.Format ("There is no such method {0}.", mi1.Name));
+				Verifier.Log.Write ("error", String.Format ("There is no such method {0}.", mi1.Name), ImportanceLevel.MEDIUM);
 				return false;
 			}
 
+
+			Verifier.Log.Flush ();
 			Verifier.Log.Write ("method", String.Format ("{0}.", mi1.Name));
 			bool res = true;
 			bool ok;
+			string expected;
 
-			ok = mi1.ReturnType.Equals (mi2.ReturnType);
+			ok = Compare.Types (mi1.ReturnType, mi2.ReturnType);
 			res &= ok;
 			if (!ok) {
-				Verifier.Log.Write ("error", "Return types mismatch.");
+				Verifier.Log.Write ("error", "Return types mismatch.", ImportanceLevel.MEDIUM);
 				if (Verifier.stopOnError) return res;
 			}
+
+
+
+
+			ok = (mi1.IsAbstract == mi2.IsAbstract);
+			res &= ok;
+			if (!ok) {
+				expected = (mi1.IsAbstract) ? "abstract" : "non-abstract";
+				Verifier.Log.Write ("error", String.Format ("Expected to be {0}.", expected), ImportanceLevel.MEDIUM);
+				if (Verifier.stopOnError) return res;
+			}
+
+			ok = (mi1.IsVirtual == mi2.IsVirtual);
+			res &= ok;
+			if (!ok) {
+				expected = (mi1.IsVirtual) ? "virtual" : "non-virtual";
+				Verifier.Log.Write ("error", String.Format ("Expected to be {0}.", expected), ImportanceLevel.MEDIUM);
+				if (Verifier.stopOnError) return res;
+			}
+
+			ok = (mi1.IsFinal == mi2.IsFinal);
+			res &= ok;
+			if (!ok) {
+				expected = (mi1.IsFinal) ? "final" : "overridable";
+				Verifier.Log.Write ("error", String.Format ("Expected to be {0}.", expected), ImportanceLevel.MEDIUM);
+				if (Verifier.stopOnError) return res;
+			}
+
+
+
+			// compare access modifiers
+
+			ok = (mi1.IsPrivate == mi2.IsPrivate);
+			res &= ok;
+			if (!ok) {
+				expected = (mi1.IsPublic) ? "public" : "private";
+				Verifier.Log.Write ("error", String.Format ("Accessibility levels mismatch (expected [{0}]).", expected), ImportanceLevel.MEDIUM);
+				if (Verifier.stopOnError) return res;
+			}
+
+
+			ok = (mi1.IsFamily == mi2.IsFamily);
+			res &= ok;
+			if (!ok) {
+				expected = (mi1.IsFamily) ? "protected" : "!protected";
+				Verifier.Log.Write ("error", String.Format ("Accessibility levels mismatch (expected [{0}]).", expected), ImportanceLevel.MEDIUM);
+				if (Verifier.stopOnError) return res;
+			}
+
+			ok = (mi1.IsAssembly == mi2.IsAssembly);
+			res &= ok;
+			if (!ok) {
+				expected = (mi1.IsAssembly) ? "internal" : "!internal";
+				Verifier.Log.Write ("error", String.Format ("Accessibility levels mismatch (expected [{0}]).", expected), ImportanceLevel.MEDIUM);
+				if (Verifier.stopOnError) return res;
+			}
+
+
+			ok = (mi1.IsStatic == mi2.IsStatic);
+			res &= ok;
+			if (!ok) {
+				expected = (mi1.IsStatic) ? "static" : "instance";
+				Verifier.Log.Write ("error", String.Format ("Accessibility levels mismatch (expected [{0}]).", expected), ImportanceLevel.MEDIUM);
+				if (Verifier.stopOnError) return res;
+			}
+
+
+
+			// parameters
 
 			ok = Compare.Parameters (mi1.GetParameters (), mi2.GetParameters ());
 			res &= ok;
 			if (!ok && Verifier.stopOnError) return res;
 
+
 			ok = (mi1.CallingConvention == mi2.CallingConvention);
 			res &= ok;
 			if (!ok) {
-				Verifier.Log.Write ("error", "Calling conventions mismatch.");
+				Verifier.Log.Write ("error", "Calling conventions mismatch.", ImportanceLevel.MEDIUM);
 				if (Verifier.stopOnError) return res;
 			}
+
+
+
 
 			return res;
 		}
@@ -779,17 +987,82 @@ namespace Mono.Verifier {
 		public static bool Fields (FieldInfo fi1, FieldInfo fi2)
 		{
 			if (fi2 == null) {
-				Verifier.Log.Write ("error", String.Format ("There is no such field {0}.", fi1.Name));
+				Verifier.Log.Write ("error", String.Format ("There is no such field {0}.", fi1.Name), ImportanceLevel.MEDIUM);
 				return false;
 			}
 
 			bool res = true;
 			bool ok;
+			string expected;
 
 			Verifier.Log.Write ("field", String.Format ("{0}.", fi1.Name));
 
 			ok = (fi1.IsPrivate == fi2.IsPrivate);
 			res &= ok;
+			if (!ok) {
+				expected = (fi1.IsPublic) ? "public" : "private";
+				Verifier.Log.Write ("error", String.Format ("Accessibility levels mismatch (expected [{0}]).", expected), ImportanceLevel.MEDIUM);
+				if (Verifier.stopOnError) return res;
+			}
+
+			ok = (fi1.IsFamily == fi2.IsFamily);
+			res &= ok;
+			if (!ok) {
+				expected = (fi1.IsFamily) ? "protected" : "!protected";
+				Verifier.Log.Write ("error", String.Format ("Accessibility levels mismatch (expected [{0}]).", expected), ImportanceLevel.MEDIUM);
+				if (Verifier.stopOnError) return res;
+			}
+
+			ok = (fi1.IsAssembly == fi2.IsAssembly);
+			res &= ok;
+			if (!ok) {
+				expected = (fi1.IsAssembly) ? "internal" : "!internal";
+				Verifier.Log.Write ("error", String.Format ("Accessibility levels mismatch (expected [{0}]).", expected), ImportanceLevel.MEDIUM);
+				if (Verifier.stopOnError) return res;
+			}
+
+			ok = (fi1.IsInitOnly == fi2.IsInitOnly);
+			res &= ok;
+			if (!ok) {
+				expected = (fi1.IsInitOnly) ? "readonly" : "!readonly";
+				Verifier.Log.Write ("error", String.Format ("Accessibility levels mismatch (expected [{0}]).", expected), ImportanceLevel.MEDIUM);
+				if (Verifier.stopOnError) return res;
+			}
+
+			ok = (fi1.IsStatic == fi2.IsStatic);
+			res &= ok;
+			if (!ok) {
+				expected = (fi1.IsStatic) ? "static" : "instance";
+				Verifier.Log.Write ("error", String.Format ("Accessibility levels mismatch (expected [{0}]).", expected), ImportanceLevel.MEDIUM);
+				if (Verifier.stopOnError) return res;
+			}
+
+			return res;
+		}
+
+
+
+		public static bool Types (Type type1, Type type2)
+		{
+			// NOTE:
+			// simply calling type1.Equals (type2) won't work,
+			// types are in different assemblies hence they have
+			// different (fully-qualified) names.
+			int eqFlags = 0;
+			eqFlags |= (type1.IsAbstract  == type2.IsAbstract)  ? 0 : 0x001;
+			eqFlags |= (type1.IsClass     == type2.IsClass)     ? 0 : 0x002;
+			eqFlags |= (type1.IsValueType == type2.IsValueType) ? 0 : 0x004;
+			eqFlags |= (type1.IsPublic    == type2.IsPublic)    ? 0 : 0x008;
+			eqFlags |= (type1.IsSealed    == type2.IsSealed)    ? 0 : 0x010;
+			eqFlags |= (type1.IsEnum      == type2.IsEnum)      ? 0 : 0x020;
+			eqFlags |= (type1.IsPointer   == type2.IsPointer)   ? 0 : 0x040;
+			eqFlags |= (type1.IsPrimitive == type2.IsPrimitive) ? 0 : 0x080;
+			bool res = (eqFlags == 0);
+
+			if (!res) {
+				// TODO: convert flags into descriptive message.
+				Verifier.Log.Write ("error", "Types mismatch (0x" + eqFlags.ToString("X") + ").", ImportanceLevel.MEDIUM);
+			}
 
 			return res;
 		}
@@ -1018,6 +1291,7 @@ namespace Mono.Verifier {
 
 	public class Verifier {
 
+
 		public static Log log = new Log ();
 		public static bool stopOnError = false;
 		public static bool checkOptionalFlags = true;
@@ -1037,7 +1311,7 @@ namespace Mono.Verifier {
 
 		public static void Main (String [] args) {
 			if (args.Length < 2) {
-				Console.WriteLine ("Usage: verifier asm1 asm2");
+				Console.WriteLine ("Usage: verifier assembly1 assembly2");
 			} else {
 				string name1 = args [0];
 				string name2 = args [1];
