@@ -140,5 +140,24 @@ namespace System.Reflection {
 			}
 			throw new Exception ("Method is not a builder method");
 		}
+
+#if NET_1_2
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern MethodInfo GetGenericMethodDefinition_impl ();
+
+		public virtual MethodInfo GetGenericMethodDefinition ()
+		{
+			MethodInfo res = GetGenericMethodDefinition_impl ();
+			if (res == null)
+				throw new InvalidOperationException ();
+
+			return res;
+		}
+
+		public extern bool HasGenericParameters {
+			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+			get;
+		}
+#endif
 	}
 }

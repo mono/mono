@@ -1,3 +1,8 @@
+2004-03-10  Martin Baulig  <martin@ximian.com>
+
+	* MethodBase.cs (MethodBase): Implemented
+	GetGenericMethodDefinition() and HasGenericParameters.
+
 2004-03-09  Martin Baulig  <martin@ximian.com>
 
 	* MonoEvent.cs (MonoEventInfo): Replaced `parent' with
