@@ -32,12 +32,20 @@ using System.Collections;
 using System.Web.Services;
 using System.Xml.Serialization;
 
-namespace System.Web.Services.Description {
-	public sealed class Message : DocumentableItem {
-
+namespace System.Web.Services.Description 
+{
+	public sealed class Message :
+#if NET_2_0
+		NamedItem
+#else
+		DocumentableItem 
+#endif
+	{
 		#region Fields
 
+#if !NET_2_0
 		string name;
+#endif
 		MessagePartCollection parts;
 		ServiceDescription serviceDescription;
 
@@ -47,7 +55,9 @@ namespace System.Web.Services.Description {
 		
 		public Message ()
 		{
+#if !NET_2_0
 			name = String.Empty;
+#endif
 			parts = new MessagePartCollection (this);
 			serviceDescription = null;
 		}
@@ -56,11 +66,13 @@ namespace System.Web.Services.Description {
 
 		#region Properties
 
+#if !NET_2_0
 		[XmlAttribute ("name", DataType = "NCName")]
 		public string Name {
 			get { return name; }
 			set { name = value; }
 		}
+#endif
 
 		[XmlElement ("part")]
 		public MessagePartCollection Parts {

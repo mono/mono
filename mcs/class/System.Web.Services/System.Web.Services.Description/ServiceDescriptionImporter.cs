@@ -31,12 +31,14 @@
 
 using System;
 using System.CodeDom;
+using System.CodeDom.Compiler;
 using System.Web.Services;
 using System.Web.Services.Protocols;
 using System.Web.Services.Description;
 using System.Xml.Serialization;
 using System.Xml;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Configuration;
 
 namespace System.Web.Services.Description {
@@ -85,6 +87,22 @@ namespace System.Web.Services.Description {
 			get { return style; }
 			set { style = value; }
 		}
+		
+#if NET_2_0
+		[MonoTODO]
+		[System.Runtime.InteropServices.ComVisible(false)]
+		public CodeGenerationOptions CodeGenerationOptions {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+		
+		[MonoTODO]
+		[System.Runtime.InteropServices.ComVisible(false)]
+		public ICodeGenerator CodeGenerator {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+#endif
 	
 		#endregion // Properties
 
@@ -137,6 +155,30 @@ namespace System.Web.Services.Description {
 			return list;
 		}
 		
+#if NET_2_0
+		[MonoTODO]
+		public static StringCollection GenerateWebReferences (
+			WebReferenceCollection webReferences, 
+			CodeGenerationOptions options, 
+			ServiceDescriptionImportStyle style, 
+			ICodeGenerator codeGenerator)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static StringCollection GenerateWebReferences (
+			WebReferenceCollection webReferences, 
+			CodeGenerationOptions options, 
+			ServiceDescriptionImportStyle style, 
+			ICodeGenerator codeGenerator, 
+			CodeCompileUnit codeCompileUnit, 
+			bool verbose)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 #endregion
 	}
 

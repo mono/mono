@@ -1,10 +1,10 @@
 // 
-// System.Web.Services.Description.ServiceDescriptionImportWarnings.cs
+// System.Web.Services.Description.WebServicesInteroperability.cs
 //
 // Author:
-//   Tim Coleman (tim@timcoleman.com)
+//   Lluis Sanchez (lluis@novell.com)
 //
-// Copyright (C) Tim Coleman, 2002
+// Copyright (C) Novell, Inc., 2004
 //
 
 //
@@ -28,21 +28,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+
 namespace System.Web.Services.Description 
 {
-#if NET_2_0
-	[Flags]
-#endif
-	[Serializable]
-	public enum ServiceDescriptionImportWarnings {
-		NoCodeGenerated = 0x1,
-		NoMethodsGenerated = 0x20,
-		OptionalExtensionsIgnored = 0x2,
-		RequiredExtensionsIgnored = 0x4,
-		UnsupportedBindingsIgnored = 0x10,
-		UnsupportedOperationsIgnored = 0x8,
-		[Obsolete] OperationConformanceClaimIgnored = 0x100,
-		SchemaValidation = 0x40,
-		WsiConformance = 0x80
+	public sealed class WebServicesInteroperability
+	{
+		private WebServicesInteroperability ()
+		{
+		}
+		
+		[MonoTODO]
+		public static bool CheckConformance (WsiClaims claims, ServiceDescription service, BasicProfileViolationCollection violations)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static bool CheckConformance (WsiClaims claims, ServiceDescriptionCollection services, BasicProfileViolationCollection violations)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static bool CheckConformance (WsiClaims claims, WebReference webReference, BasicProfileViolationCollection violations)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
+
+#endif

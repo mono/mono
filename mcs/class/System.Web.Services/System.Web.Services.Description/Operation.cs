@@ -32,14 +32,22 @@ using System.ComponentModel;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace System.Web.Services.Description {
-	public sealed class Operation : DocumentableItem {
-
+namespace System.Web.Services.Description 
+{
+	public sealed class Operation :
+#if NET_2_0
+		NamedItem
+#else
+		DocumentableItem 
+#endif
+	{
 		#region Fields
 
 		OperationFaultCollection faults;
 		OperationMessageCollection messages;
+#if !NET_2_0
 		string name;
+#endif
 		string[] parameterOrder;
 		PortType portType;
 
@@ -51,7 +59,9 @@ namespace System.Web.Services.Description {
 		{
 			faults = new OperationFaultCollection (this);
 			messages = new OperationMessageCollection (this);
+#if !NET_2_0
 			name = String.Empty;
+#endif
 			parameterOrder = null;
 			portType = null;
 		}
@@ -71,11 +81,13 @@ namespace System.Web.Services.Description {
 			get { return messages; }
 		}
 
+#if !NET_2_0
 		[XmlAttribute ("name", DataType = "NCName")]
 		public string Name {
 			get { return name; }
 			set { name = value; }
 		}
+#endif
 
 		[XmlIgnore]
 		public string[] ParameterOrder {

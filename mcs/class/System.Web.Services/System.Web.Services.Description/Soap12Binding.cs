@@ -1,10 +1,10 @@
 // 
-// System.Web.Services.Description.MessageBinding.cs
+// System.Web.Services.Description.Soap12Binding.cs
 //
 // Author:
-//   Tim Coleman (tim@timcoleman.com)
+//   Lluis Sanchez (lluis@novell.com)
 //
-// Copyright (C) Tim Coleman, 2002
+// Copyright (C) Novell, Inc., 2004
 //
 
 //
@@ -28,58 +28,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.ComponentModel;
+#if NET_2_0
+
+using System.Web.Services.Configuration;
 using System.Xml.Serialization;
 
-namespace System.Web.Services.Description
+namespace System.Web.Services.Description 
 {
-	public abstract class MessageBinding :
-#if NET_2_0
-		NamedItem
-#else
-		DocumentableItem 
-#endif
+	[XmlFormatExtensionPrefix ("soap12", "http://schemas.xmlsoap.org/wsdl/soap12/")]
+	[XmlFormatExtension ("binding", "http://schemas.xmlsoap.org/wsdl/soap12/", typeof (Binding))]
+	public sealed class Soap12Binding : SoapBinding 
 	{
-
-		#region Fields
-
-#if !NET_2_0
-		string name;
-#endif
-		OperationBinding operationBinding;
-
-		#endregion // Fields
-
-		#region Constructors
-		
-		protected MessageBinding ()
-		{
-			operationBinding = new OperationBinding ();
-		}
-		
-		#endregion // Constructors
-
-		#region Properties
-
-		[XmlIgnore]
-		public abstract ServiceDescriptionFormatExtensionCollection Extensions { 	
-			get;
-		}
-
-#if !NET_2_0
-//		[DefaultValue (null)]
-		[XmlAttribute ("name", DataType = "NMTOKEN")]	
-		public string Name {
-			get { return name; }
-			set { name = value; }
-		}
-#endif
-
-//		[XmlIgnore]
-		public OperationBinding OperationBinding {
-			get { return operationBinding; }
-		}
-
-		#endregion // Properties
+		public new const string HttpTransport = "http://schemas.xmlsoap.org/soap/http";
+		public new const string Namespace = "http://schemas.xmlsoap.org/wsdl/soap12/";
 	}
 }
+
+#endif

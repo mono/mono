@@ -1,3 +1,18 @@
+2004-07-13  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Binding.cs, Message.cs, MessageBinding.cs, MessagePart.cs, Operation.cs,
+	  OperationBinding.cs, OperationMessage.cs, Port.cs, PortType.cs, 
+	  Service.cs, ServiceDescription.cs, 
+	  Name property moved to NamedItem in 2.0.
+	* DocumentableItem.cs, ServiceDescriptionFormatExtension.cs,
+	  ServiceDescriptionImportWarnings.cs, ServiceDescriptionImporter.cs,
+	  SoapFaultBinding.cs: Added 2.0 api.
+	* BasicProfileViolation.cs, BasicProfileViolationCollection.cs,
+	  NamedItem.cs, Soap12AddressBinding.cs, Soap12Binding.cs,
+	  Soap12BodyBinding.cs, Soap12FaultBinding.cs, Soap12HeaderBinding.cs,
+	  Soap12OperationBinding.cs, WebReference.cs, WebReferenceCollection.cs,
+	  WebServicesInteroperability.cs: Mostly implemented new 2.0 classes.
+
 2004-07-01  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* SoapProtocolReflector.cs: Don't generate wsdl for unknown header

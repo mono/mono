@@ -30,12 +30,20 @@
 
 using System.Xml.Serialization;
 
-namespace System.Web.Services.Description {
-	public sealed class PortType : DocumentableItem {
-
+namespace System.Web.Services.Description
+{
+	public sealed class PortType :
+#if NET_2_0
+		NamedItem
+#else
+		DocumentableItem 
+#endif
+	{
 		#region Fields
 
+#if !NET_2_0
 		string name;
+#endif
 		OperationCollection operations;
 		ServiceDescription serviceDescription;
 
@@ -45,7 +53,6 @@ namespace System.Web.Services.Description {
 		
 		public PortType ()
 		{
-			name = null;
 			operations = new OperationCollection (this);
 			serviceDescription = null;
 		}
@@ -54,11 +61,13 @@ namespace System.Web.Services.Description {
 
 		#region Properties
 
+#if !NET_2_0
 		[XmlAttribute ("name", DataType = "NCName")]
 		public string Name {
 			get { return name; }
 			set { name = value; }
 		}
+#endif
 
 		[XmlElement ("operation")]
 		public OperationCollection Operations {

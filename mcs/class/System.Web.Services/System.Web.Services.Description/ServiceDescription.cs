@@ -38,11 +38,17 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
-namespace System.Web.Services.Description {
+namespace System.Web.Services.Description
+{
 	[XmlFormatExtensionPoint ("Extensions")]
 	[XmlRoot ("definitions", Namespace = "http://schemas.xmlsoap.org/wsdl/")]
-	public sealed class ServiceDescription : DocumentableItem {
-
+	public sealed class ServiceDescription :
+#if NET_2_0
+		NamedItem
+#else
+		DocumentableItem 
+#endif
+	{
 		#region Fields
 
 		public const string Namespace = "http://schemas.xmlsoap.org/wsdl/";
@@ -51,7 +57,9 @@ namespace System.Web.Services.Description {
 		ServiceDescriptionFormatExtensionCollection extensions;
 		ImportCollection imports;
 		MessageCollection messages;
+#if !NET_2_0
 		string name;
+#endif
 		PortTypeCollection portTypes;
 		string retrievalUrl;
 		ServiceDescriptionCollection serviceDescriptions;
@@ -75,7 +83,9 @@ namespace System.Web.Services.Description {
 			extensions = new ServiceDescriptionFormatExtensionCollection (this);
 			imports = new ImportCollection (this);
 			messages = new MessageCollection (this);
+#if !NET_2_0
 			name = String.Empty;		
+#endif
 			portTypes = new PortTypeCollection (this);
 
 			serviceDescriptions = null;
@@ -119,11 +129,13 @@ namespace System.Web.Services.Description {
 			get { return extensions; }
 		}
 
+#if !NET_2_0
 		[XmlAttribute ("name", DataType = "NMTOKEN")]	
 		public string Name {
 			get { return name; }
 			set { name = value; }
 		}
+#endif
 
 		[XmlIgnore]	
 		public string RetrievalUrl {

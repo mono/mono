@@ -1,10 +1,10 @@
 // 
-// System.Web.Services.Description.ServiceDescriptionImportWarnings.cs
+// System.Web.Services.Description.WebReferenceCollection.cs
 //
 // Author:
-//   Tim Coleman (tim@timcoleman.com)
+//   Lluis Sanchez (lluis@novell.com)
 //
-// Copyright (C) Tim Coleman, 2002
+// Copyright (C) Novell, Inc., 2004
 //
 
 //
@@ -28,21 +28,52 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.Web.Services.Description 
-{
 #if NET_2_0
-	[Flags]
-#endif
-	[Serializable]
-	public enum ServiceDescriptionImportWarnings {
-		NoCodeGenerated = 0x1,
-		NoMethodsGenerated = 0x20,
-		OptionalExtensionsIgnored = 0x2,
-		RequiredExtensionsIgnored = 0x4,
-		UnsupportedBindingsIgnored = 0x10,
-		UnsupportedOperationsIgnored = 0x8,
-		[Obsolete] OperationConformanceClaimIgnored = 0x100,
-		SchemaValidation = 0x40,
-		WsiConformance = 0x80
+
+using System.Collections;
+
+namespace System.Web.Services.Description
+{
+	public sealed class WebReferenceCollection: CollectionBase
+	{
+		public WebReferenceCollection ()
+		{
+		}
+		
+		public int Add (WebReference webReference) {
+			return List.Add (webReference);
+		}
+		
+		public WebReference this [int index] {
+			get { return (WebReference) List [index]; }
+			set { List [index] = value; }
+		}
+		
+		public bool Contains (WebReference webReference)
+		{
+			return List.Contains (webReference);
+		}
+		
+		public void CopyTo (WebReference[] array, int index)
+		{
+			List.CopyTo (array, index);
+		}
+		
+		public int IndexOf (WebReference webReference)
+		{
+			return List.IndexOf (webReference);
+		}
+
+		public void Insert (int index, WebReference webReference)
+		{
+			List.Insert (index, webReference);
+		}
+		
+		public void Remove (WebReference webReference)
+		{
+			List.Remove (webReference);
+		}
 	}
 }
+
+#endif

@@ -1,10 +1,10 @@
 // 
-// System.Web.Services.Description.ServiceDescriptionFormatExtension.cs
+// System.Web.Services.Description.Soap12AddressBinding.cs
 //
 // Author:
-//   Tim Coleman (tim@timcoleman.com)
+//   Lluis Sanchez (lluis@novell.com)
 //
-// Copyright (C) Tim Coleman, 2002
+// Copyright (C) Novell, Inc., 2004
 //
 
 //
@@ -28,62 +28,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.ComponentModel;
+#if NET_2_0
+
+using System.Web.Services.Configuration;
 using System.Xml.Serialization;
 
-namespace System.Web.Services.Description {
-	public abstract class ServiceDescriptionFormatExtension {
-
-		#region Fields
-		
-		bool handled;
-		object parent;
-		bool required;
-
-		#endregion // Fields
-
-		#region Constructors
-
-		protected ServiceDescriptionFormatExtension () 
-		{
-			handled = false;
-			parent = null;
-			required = false;	
-		}
-		
-		#endregion // Constructors
-
-		#region Properties
-
-		[XmlIgnore]
-		public bool Handled {
-			get { return handled; }
-			set { handled = value; }
-		}
-
-#if NET_2_0
-		[XmlIgnore]
-		public object Parent {
-			get { return parent; }
-		}
-#endif
-
-		[DefaultValue (false)]
-		[XmlAttribute ("required", Namespace = "http://schemas.xmlsoap.org/wsdl/")]
-		public bool Required {	
-			get { return required; }
-			set { required = value; }
-		}
-
-		#endregion // Properties
-
-		#region Methods
-
-		internal void SetParent (object value)
-		{
-			parent = value; 
-		}
-		
-		#endregion // Methods
+namespace System.Web.Services.Description 
+{
+	[XmlFormatExtension ("address", "http://schemas.xmlsoap.org/wsdl/soap12/", typeof (Port))]
+	public sealed class Soap12AddressBinding : SoapAddressBinding 
+	{
 	}
 }
+
+#endif

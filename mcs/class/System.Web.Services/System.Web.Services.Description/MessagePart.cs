@@ -31,14 +31,23 @@
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace System.Web.Services.Description {
-	public sealed class MessagePart : DocumentableItem {
+namespace System.Web.Services.Description 
+{
+	public sealed class MessagePart :
+#if NET_2_0
+		NamedItem
+#else
+		DocumentableItem 
+#endif
+	{
 
 		#region Fields
 
 		XmlQualifiedName element;
 		Message message;
+#if !NET_2_0
 		string name;
+#endif
 		XmlQualifiedName type;
 
 		#endregion // Fields
@@ -49,7 +58,9 @@ namespace System.Web.Services.Description {
 		{
 			element = XmlQualifiedName.Empty;
 			message = null;
+#if !NET_2_0
 			name = String.Empty;
+#endif
 			type = XmlQualifiedName.Empty;
 		}
 		
@@ -68,11 +79,13 @@ namespace System.Web.Services.Description {
 			get { return message; }
 		}
 	
+#if !NET_2_0
 		[XmlAttribute ("name", DataType = "NMTOKEN")]
 		public string Name {
 			get { return name; }
 			set { name = value; }
 		}
+#endif
 
 		[XmlAttribute ("type")]
 		public XmlQualifiedName Type {
