@@ -33,19 +33,24 @@ namespace System.Data.SqlTypes
 		public static readonly byte MaxPrecision = 38; 
 		public static readonly byte MaxScale = 38;
 
-		// This sould be 1E+38-1
+		// [1] Avoid breaking the build
+		// [1] This should be 99999999999999999999999999999999999999 (Console.WriteLine (SqlDecimal.MaxValue);
 		public static readonly SqlDecimal MaxValue = new SqlDecimal (MaxPrecision, 
 									     (byte)0, 
 									     true, 
 									     (int)716002642, 
-									     (int)2858073428, 
+									     //[1](int)2858073428, 
+									     Int32.MaxValue,
+									     //
 									     (int)1518778966, 
 									     (int)1262177448);
-		// This should be -1E+38
+		// [1]This should be -99999999999999999999999999999999999999 (Console.WriteLine (SqlDecimal.MinValue);
 		public static readonly SqlDecimal MinValue = new SqlDecimal (MaxPrecision, 
 									     (byte)0, false,
 									     (int)716002642, 
-									     (int)2858073428, 
+									     // [1] (int)2858073428, 
+									     Int32.MaxValue,
+									     //
 									     (int)1518778966, 
 									     (int)1262177448);
 
@@ -77,9 +82,8 @@ namespace System.Data.SqlTypes
 			else 
 				positive = false;
 
-			precision = GetPrecision (value);
-
 			notNull = true;
+			precision = GetPrecision (value);
 		}
 				
 		public SqlDecimal (double value) : this ((decimal)value) { }

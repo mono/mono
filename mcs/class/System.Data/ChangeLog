@@ -1,3 +1,8 @@
+2002-11-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Data.SqlTypes/SqlDecimal.cs: fixed build. Someone should check
+	my comments and do something more appropiate.
+
 2002-11-07  Ville Palo <vi64pa@koti.soon.fi>
 
 	* System.Data.SqlTypes/SqlBinary.cs:
