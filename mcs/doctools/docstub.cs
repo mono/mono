@@ -636,7 +636,7 @@ namespace Mono.Util
 					WriteParameter(writer, parameter);
 				}
 
-				writer.WriteElementString("returns", "TODO";
+				writer.WriteElementString("returns", "TODO");
 
 				writer.WriteEndElement();
 			}
