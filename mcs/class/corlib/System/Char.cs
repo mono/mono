@@ -1,10 +1,13 @@
 //
 // System.Char.cs
 //
-// Author:
+// Authors:
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //   Miguel de Icaza (miguel@ximian.com)
+//   Jackson Harper (jackson@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
+// (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
 // Note about the ToString()'s. ECMA says there's only a ToString() method, 
@@ -14,18 +17,43 @@
 // which appears to just be a Convert.ToString(char c) type method. ECMA also
 // doesn't list this class as implementing IFormattable.
 
+using System; 
 using System.Globalization;
 using System.Runtime.CompilerServices;
 
-namespace System {
-	
+namespace System
+{
 	[Serializable]
-	public struct Char : IComparable, IConvertible {
+	public struct Char : IComparable, IConvertible
+	{
 		public const char MaxValue = (char) 0xffff;
 		public const char MinValue = (char) 0;
-		
+
 		internal char value;
-		
+
+		static Char () {
+			unsafe {
+				GetDataTablePointers (out category_data, out numeric_data,
+						out numeric_data_values,
+						out to_lower_data_low, out to_lower_data_high,
+						out to_upper_data_low, out to_upper_data_high);
+			}
+		}
+
+		private readonly unsafe static byte *category_data;
+		private readonly unsafe static ushort *numeric_data;
+		private readonly unsafe static double *numeric_data_values;
+		private readonly unsafe static ushort *to_lower_data_low;
+		private readonly unsafe static ushort *to_lower_data_high;
+		private readonly unsafe static ushort *to_upper_data_low;
+		private readonly unsafe static ushort *to_upper_data_high;
+
+		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
+		private unsafe static extern void GetDataTablePointers (out byte *category_data,
+				out ushort *numeric_data, out double *numeric_data_values,
+				out ushort *to_lower_data_low, out ushort *to_lower_data_high,
+				out ushort *to_upper_data_low, out ushort *to_upper_data_high);
+
 		public int CompareTo (object v)
 		{
 			if (v == null)
@@ -46,10 +74,10 @@ namespace System {
 
 		public override bool Equals (object o)
 		{
-			if (!(o is System.Char))
+			if (!(o is Char))
 				return false;
 
-			return ((Char) o) == value;
+			return ((Char) o).value == value;
 		}
 
 		public override int GetHashCode ()
@@ -57,8 +85,22 @@ namespace System {
 			return value;
 		}
 
-		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
-		public static extern double GetNumericValue (char c);
+		public static double GetNumericValue (char c)
+		{
+			if (c > (char)0x3289) {
+				if (c >= (char)0xFF10 && c <= (char)0xFF19)
+					return (c - 0xFF10); // Numbers 0-9
+
+				// Default not set data
+				return -1;
+			}
+			else {
+				unsafe {
+					return numeric_data_values [numeric_data [c]];
+				}
+			}
+			
+		}
 
 		public static double GetNumericValue (string str, int index)
 		{
@@ -73,22 +115,31 @@ namespace System {
 			return GetNumericValue (str[index]);
 		}
 
-		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
-		public static extern UnicodeCategory GetUnicodeCategory (char c); 
+		public static UnicodeCategory GetUnicodeCategory (char c)
+		{
+			unsafe {
+				return (UnicodeCategory)(category_data [c]);
+			}
+		}
 
-		public static UnicodeCategory GetUnicodeCategory (string str, int index) {
+		public static UnicodeCategory GetUnicodeCategory (string str, int index)
+		{
 			if (str == null) 
 				throw new ArgumentNullException (Locale.GetText ("str is a null reference"));
 			
 			if (index < 0 || index >= str.Length)
 				throw new ArgumentOutOfRangeException (Locale.GetText ("The value of index is less "+
-					                  "than zero, or greater than or equal to the length of str"));
+							  "than zero, or greater than or equal to the length of str"));
 			
 			return GetUnicodeCategory (str[index]);
 		}
 
-		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
-		public static extern bool IsControl (char c);
+		public static bool IsControl (char c)
+		{
+			unsafe {
+				return (category_data [c] == (byte)UnicodeCategory.Control);
+			}
+		}
 
 		public static bool IsControl (string str, int index)
 		{
@@ -100,50 +151,13 @@ namespace System {
 					"The value of index is less than zero, or greater than or equal to the length of str"));
 			
 			return IsControl (str[index]);
-		}
-		
+		}	
+
 		public static bool IsDigit (char c)
 		{
-			// You will find that this int-comparison version 
-			// is faster than char-comparison version.
-			int i = (int) c;
-			if (i >= 0x30 && i <= 0x39) // ASCII digits
-				return true;
-			if (i < 0x660) // quick check for ASCII range.
-				return false;
-
-			// hereby all ASCII characters are evaluated quickly.
-
-			// the largest ranges of digits
-			if (i >= 0xff10 && i <= 0xff19) // fullwidth digits
-				return true;
-			// after the block above, there is a wide range of non-digits.
-			if (i > 0x1820)
-				return false;
-
-			if (i >= 0x660 && i <= 0x669 || // arabic-indic
-				i >= 0x6f0 && i <= 0x6f9)  // extended arabic-indic
-				return true;
-			if (i < 0x966)
-				return false;
-			if (i == 0xbe6)
-				return false; // (reserved - Tamil number 0 does not exist in Unicode spec)
-			// Devanagari, Bengali, Gurmukhi, Gujarati, Oriya, 
-			// Tamil, Telugu, Kannada and Malayalam digits.
-			if (i >= 0x960 && i <= 0xd6f &&
-				(i & 0xf) > 5 &&
-				((i & 0xf0) == 0x60 || (i & 0xf0) == 0xe0))
-				return true;
-			if (i < 0xe50)
-				return false;
-			return // rest are boring check ;-)
-				i >= 0xe50 && i <= 0xe59 || // Thai
-				i >= 0xed0 && i <= 0xed9 || // Lao
-				i >= 0xf20 && i <= 0xf29 || // Tibetan
-				i >= 0x1040 && i <= 0x1049 || // Myanmer
-				i >= 0x1369 && i <= 0x1371 || // Ethiopic
-				i >= 0x17e0 && i <= 0x17e9 || // Buhid
-				i >= 0x1810 && i <= 0x1819; // Mongolian
+			unsafe {
+				return (category_data [c] == (byte)UnicodeCategory.DecimalDigitNumber);
+			}
 		}
 
 		public static bool IsDigit (string str, int index)
@@ -158,8 +172,22 @@ namespace System {
 			return IsDigit (str[index]);
 		}
 
-		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
-		public static extern bool IsLetter (char c);
+		public static bool IsLetter (char c)
+		{
+			unsafe {
+				UnicodeCategory Category = (UnicodeCategory)category_data [c];
+				switch (Category) {
+				case UnicodeCategory.UppercaseLetter:
+				case UnicodeCategory.LowercaseLetter:
+				case UnicodeCategory.TitlecaseLetter:
+				case UnicodeCategory.ModifierLetter:
+				case UnicodeCategory.OtherLetter:
+					return true;
+				default:
+					return false;
+				}
+			}
+		}
 
 		public static bool IsLetter (string str, int index)
 		{
@@ -168,17 +196,27 @@ namespace System {
 			
 			if (index < 0 || index >= str.Length)
 				throw new ArgumentOutOfRangeException (Locale.GetText (
-			         "The value of index is less than zero, or greater than or equal to the length of str"));
+				 "The value of index is less than zero, or greater than or equal to the length of str"));
 			
 			return IsLetter (str[index]);
 		}
 
 		public static bool IsLetterOrDigit (char c)
 		{
-			if (IsLetter (c) == false && IsDigit (c) == false)
-				return false;
-			else
-				return true;
+			unsafe {
+				UnicodeCategory Category = (UnicodeCategory)category_data [c];
+				switch (Category) {
+				case UnicodeCategory.DecimalDigitNumber:
+				case UnicodeCategory.UppercaseLetter:
+				case UnicodeCategory.LowercaseLetter:
+				case UnicodeCategory.TitlecaseLetter:
+				case UnicodeCategory.ModifierLetter:
+				case UnicodeCategory.OtherLetter:
+					return true;
+				default:
+					return false;
+				}
+			}
 		}
 
 		public static bool IsLetterOrDigit (string str, int index)
@@ -193,8 +231,12 @@ namespace System {
 			return IsLetterOrDigit (str[index]);
 		}
 
-		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
-		public static extern bool IsLower (char c);
+		public static bool IsLower (char c)
+		{
+			unsafe {
+				return (category_data [c] == (byte)UnicodeCategory.LowercaseLetter);
+			}
+		}
 		
 		public static bool IsLower (string str, int index)
 		{
@@ -208,8 +250,20 @@ namespace System {
 			return IsLower (str[index]);
 		}
 
-		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
-		public static extern bool IsNumber (char c);
+		public static bool IsNumber (char c)
+		{
+			unsafe {
+				UnicodeCategory Category = (UnicodeCategory)category_data [c];
+				switch (Category) {
+				case UnicodeCategory.DecimalDigitNumber:
+				case UnicodeCategory.LetterNumber:
+				case UnicodeCategory.OtherNumber:
+					return true;
+				default:
+					return false;
+				}
+			}
+		}
 		
 		public static bool IsNumber (string str, int index)
 		{
@@ -223,8 +277,24 @@ namespace System {
 			return IsNumber (str[index]);
 		}
 
-		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
-		public static extern bool IsPunctuation (char c);
+		public static bool IsPunctuation (char c)
+		{
+			unsafe {
+				UnicodeCategory Category = (UnicodeCategory)category_data [c];
+				switch (Category) {
+				case UnicodeCategory.ConnectorPunctuation:
+				case UnicodeCategory.DashPunctuation:
+				case UnicodeCategory.OpenPunctuation:
+				case UnicodeCategory.ClosePunctuation:
+				case UnicodeCategory.InitialQuotePunctuation:
+				case UnicodeCategory.FinalQuotePunctuation:
+				case UnicodeCategory.OtherPunctuation:
+					return true;
+				default:
+					return false;
+				}
+			}
+		}
 		
 		public static bool IsPunctuation (string str, int index)
 		{
@@ -240,19 +310,16 @@ namespace System {
 
 		public static bool IsSeparator (char c)
 		{
-			int i = (int) c;
-			switch (i) {
-			case 0x20:
-			case 0xa0: // &nbsp;
-			case 0x1680: // Ogham space mark
-			case 0x202f: // Narrow nbsp
-			case 0x3000: // Ideographic space
-			case 0x2028:
-			case 0x2029:
-				return true;
-			default:
-				// general punctuations :: spaces
-				return i >= 0x2000 && i <= 0x200b;
+			unsafe {
+				UnicodeCategory Category = (UnicodeCategory)category_data [c];
+				switch (Category) {
+				case UnicodeCategory.SpaceSeparator:
+				case UnicodeCategory.LineSeparator:
+				case UnicodeCategory.ParagraphSeparator:
+					return true;
+				default:
+					return false;
+				}
 			}
 		}
 		
@@ -268,8 +335,12 @@ namespace System {
 			return IsSeparator (str[index]);
 		}
 
-		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
-		public static extern bool IsSurrogate (char c);
+		public static bool IsSurrogate (char c)
+		{
+			unsafe {
+				return (category_data [c] == (byte)UnicodeCategory.Surrogate);
+			}
+		}
 		
 		public static bool IsSurrogate (string str, int index)
 		{
@@ -278,13 +349,26 @@ namespace System {
 			
 			if (index < 0 || index >= str.Length)
 				throw new ArgumentOutOfRangeException (Locale.GetText (
-			         "The value of index is less than zero, or greater than or equal to the length of str"));
+				 "The value of index is less than zero, or greater than or equal to the length of str"));
 			
 			return IsSurrogate (str[index]);
 		}
 
-		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
-		public static extern bool IsSymbol (char c);
+		public static bool IsSymbol (char c)
+		{
+			unsafe {
+				UnicodeCategory Category = (UnicodeCategory)category_data [c];
+				switch (Category) {
+				case UnicodeCategory.MathSymbol:
+				case UnicodeCategory.CurrencySymbol:
+				case UnicodeCategory.ModifierSymbol:
+				case UnicodeCategory.OtherSymbol:
+					return true;
+				default:
+					return false;
+				}
+			}
+		}
 		
 		public static bool IsSymbol (string str, int index)
 		{
@@ -298,8 +382,12 @@ namespace System {
 			return IsSymbol (str[index]);
 		}
 
-		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
-		public static extern bool IsUpper (char c);
+		public static bool IsUpper (char c)
+		{
+			unsafe {
+				return (category_data [c] == (byte)UnicodeCategory.UppercaseLetter);
+			}
+		}
 		
 		public static bool IsUpper (string str, int index)
 		{
@@ -315,26 +403,23 @@ namespace System {
 
 		public static bool IsWhiteSpace (char c)
 		{
-			int i = (int) c;
-			switch (i) {
-			case 0x20:
-			case 0x9:
-			case 0x0a:
-			case 0x0b:
-			case 0x0c:
-			case 0x0d:
-			case 0x85: // NEL
-			case 0x2028: // Line Separator
-			case 0x2029: // Paragraph Separator
-			// Below are copy of IsSeparator test.
-			case 0xa0: // &nbsp;
-			case 0x1680: // Ogham space mark
-			case 0x202f: // Narrow nbsp
-			case 0x3000: // Ideographic space
-				return true;
-			default:
-				// general punctuations :: spaces
-				return i >= 0x2000 && i <= 0x200b;
+			unsafe {
+				if (category_data [c] == (byte)UnicodeCategory.SpaceSeparator)
+					return true;
+				
+				switch (c) {
+				case (char)0x9:
+				case (char)0x0a:
+				case (char)0x0b:
+				case (char)0x0c:
+				case (char)0x0d:
+				case (char)0x85: // NEL 
+				case (char)0x2028: // Line Separator
+				case (char)0x2029: // Paragraph Separator	
+					return true;
+				default:
+					return false;
+				}
 			}
 		}
 		
@@ -361,23 +446,40 @@ namespace System {
 			return str [0];
 		}
 
-		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
-		public static extern char ToLower (char c);
+		public static char ToLower (char c)
+		{
+			unsafe {
+				if (c <= ((char)0x24cf))
+					return (char) to_lower_data_low [c];
+				if (c >= ((char)0xff41))
+					return (char) to_lower_data_high[c - 0xff41];
+			}
+			return c;
+		}
 
 		[MonoTODO]
 		public static char ToLower (char c, CultureInfo culture)
 		{
-			throw new NotImplementedException();
+			//TODO ignored culture for now
+			return ToLower (c);
 		}
-		
 
-		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
-		public static extern char ToUpper (char c);
+		public static char ToUpper (char c)
+		{
+			unsafe {
+				if (c <= ((char)0x24cf))
+					return (char) to_upper_data_low [c];
+				if (c >= ((char)0xff21))
+					return (char) to_upper_data_high [c - 0xff21];
+			}
+			return c;
+		}
 
 		[MonoTODO]
 		public static char ToUpper(char c, CultureInfo culture)
 		{
-			throw new NotImplementedException();
+			//TODO ignored culture for now
+			return ToUpper (c);
 		}
 
 		public override string ToString ()
@@ -389,7 +491,7 @@ namespace System {
 
 		public static string ToString(char c)
 		{
-			return new String (new char [] {c});
+			return new String (c, 1);
 		}
 
 		public string ToString (IFormatProvider fp)
@@ -491,3 +593,4 @@ namespace System {
 		}
 	}
 }
+
