@@ -728,7 +728,7 @@ type			: K_CLASS class_ref
                           }
 			| type OPEN_BRACKET CLOSE_BRACKET
                           {
-                                ITypeRef base_type = GetTypeRef ((TypeRef) $1);
+                                ITypeRef base_type = GetTypeRef ((ITypeRef) $1);
                                 base_type.MakeArray ();
                                 $$ = base_type;
                           }
