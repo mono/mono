@@ -189,6 +189,7 @@ namespace System.Threading
 			return(Monitor_wait(obj, timeout.Milliseconds));
 		}
 
+		[MonoTODO]
 		public static bool Wait(object obj, int millisecondsTimeout, bool exitContext) {
 			if(obj==null) {
 				throw new ArgumentNullException("Object is null");
@@ -198,6 +199,7 @@ namespace System.Threading
 			return(false);
 		}
 
+		[MonoTODO]
 		public static bool Wait(object obj, TimeSpan timeout, bool exitContext) {
 			if(obj==null) {
 				throw new ArgumentNullException("Object is null");

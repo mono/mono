@@ -12,25 +12,28 @@ namespace System.Threading
 {
 	public class Overlapped
 	{
-		[CLSCompliant(false)]
+		[CLSCompliant(false)][MonoTODO]
 		unsafe public static void Free(NativeOverlapped *nativeOverlappedPtr) {
 			// FIXME
 		}
 
-		[CLSCompliant(false)]
+		[CLSCompliant(false)][MonoTODO]
 		unsafe public static Overlapped Unpack(NativeOverlapped *nativeOverlappedPtr) {
 			// FIXME
 			return(new Overlapped());
 		}
 
+		[MonoTODO]
 		public Overlapped() {
 			// FIXME
 		}
 
+		[MonoTODO]
 		public Overlapped(int offsetLo, int offsetHi, int hEvent, IAsyncResult ar) {
 			// FIXME
 		}
 
+		[MonoTODO]
 		public IAsyncResult AsyncResult {
 			get {
 				// FIXME
@@ -41,6 +44,7 @@ namespace System.Threading
 			}
 		}
 
+		[MonoTODO]
 		public int EventHandle {
 			get {
 				// FIXME
@@ -51,6 +55,7 @@ namespace System.Threading
 			}
 		}
 
+		[MonoTODO]
 		public int OffsetHigh {
 			get {
 				// FIXME
@@ -61,6 +66,7 @@ namespace System.Threading
 			}
 		}
 
+		[MonoTODO]
 		public int OffsetLow {
 			get {
 				// FIXME
@@ -71,13 +77,13 @@ namespace System.Threading
 			}
 		}
 
-		[CLSCompliant(false)]
+		[CLSCompliant(false)][MonoTODO]
 		unsafe public NativeOverlapped *Pack(IOCompletionCallback iocb) {
 			// FIXME
 			return(null);
 		}
 		
-		[CLSCompliant(false)]
+		[CLSCompliant(false)][MonoTODO]
 		unsafe public NativeOverlapped *UnsafePack(IOCompletionCallback iocb) {
 			// FIXME
 			return(null);

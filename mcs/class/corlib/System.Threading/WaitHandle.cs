@@ -54,6 +54,7 @@ namespace System.Threading
 			return(WaitAny_internal(waitHandles, timeout.Milliseconds, exitContext));
 		}
 
+		[MonoTODO]
 		public WaitHandle() {
 			// FIXME
 		}

@@ -12,6 +12,7 @@ namespace System.Threading
 {
 	public sealed class ThreadAbortException : SystemException
 	{
+		[MonoTODO]
 		public object ExceptionState {
 			get {
 				// FIXME

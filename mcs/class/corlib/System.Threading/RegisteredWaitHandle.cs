@@ -12,11 +12,13 @@ namespace System.Threading
 {
 	public sealed class RegisteredWaitHandle
 	{
+		[MonoTODO]
 		public bool Unregister(WaitHandle waitObject) {
 			// FIXME
 			return(false);
 		}
 
+		[MonoTODO]
 		~RegisteredWaitHandle() {
 			// FIXME
 		}

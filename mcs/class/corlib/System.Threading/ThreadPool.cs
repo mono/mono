@@ -12,23 +12,31 @@ namespace System.Threading
 {
 	public sealed class ThreadPool
 	{
+		[MonoTODO]
 		public static bool BindHandle(IntPtr osHandle) {
 			// FIXME
 			return(false);
 		}
 
+		[MonoTODO]
 		public static bool QueueUserWorkItem(WaitCallback callback) {
 			// FIXME
 			return(false);
 		}
 
+		[MonoTODO]
 		public static bool QueueUserWorkItem(WaitCallback callback,
 						     object state) {
 			// FIXME
 			return(false);
 		}
 
-		public static RegisteredWaitHandle RegisterWaitForSingleObject(WaitHandle waitObject, WaitOrTimerCallback callback, object state, int millisecondsTimeOutInterval, bool executeOnlyOnce) {
+		[MonoTODO]
+		public static RegisteredWaitHandle RegisterWaitForSingleObject(WaitHandle waitObject,
+									       WaitOrTimerCallback callback,
+									       object state,
+									       int millisecondsTimeOutInterval,
+									       bool executeOnlyOnce) {
 			if(millisecondsTimeOutInterval < -1) {
 				throw new ArgumentOutOfRangeException("timeout < -1");
 			}
@@ -36,7 +44,12 @@ namespace System.Threading
 			return(null);
 		}
 
-		public static RegisteredWaitHandle RegisterWaitForSingleObject(WaitHandle waitObject, WaitOrTimerCallback callback, object state, long millisecondsTimeOutInterval, bool executeOnlyOnce) {
+		[MonoTODO]
+		public static RegisteredWaitHandle RegisterWaitForSingleObject(WaitHandle waitObject,
+									       WaitOrTimerCallback callback,
+									       object state,
+									       long millisecondsTimeOutInterval,
+									       bool executeOnlyOnce) {
 			if(millisecondsTimeOutInterval < -1) {
 				throw new ArgumentOutOfRangeException("timeout < -1");
 			}
@@ -44,6 +57,7 @@ namespace System.Threading
 			return(null);
 		}
 
+		[MonoTODO]
 		public static RegisteredWaitHandle RegisterWaitForSingleObject(WaitHandle waitObject, WaitOrTimerCallback callback, object state, TimeSpan timeout, bool executeOnlyOnce) {
 			// LAMESPEC: I assume it means "timeout" when it says "millisecondsTimeOutInterval"
 			if(timeout.Milliseconds < -1) {
@@ -56,33 +70,37 @@ namespace System.Threading
 			return(null);
 		}
 
-		[CLSCompliant(false)]
+		[CLSCompliant(false)][MonoTODO]
 		public static RegisteredWaitHandle RegisterWaitForSingleObject(WaitHandle waitObject, WaitOrTimerCallback callback, object state, uint millisecondsTimeOutInterval, bool executeOnlyOnce) {
 			// FIXME
 			return(null);
 		}
 
+		[MonoTODO]
 		public static bool UnsafeQueueUserWorkItem(WaitCallback callback, object state) {
 			// FIXME
 			return(false);
 		}
 
+		[MonoTODO]
 		public static RegisteredWaitHandle UnsafeRegisterWaitForSingleObject(WaitHandle waitObject, WaitOrTimerCallback callback, object state, int millisecondsTimeOutInterval, bool executeOnlyOnce) {
 			// FIXME
 			return(null);
 		}
 
+		[MonoTODO]
 		public static RegisteredWaitHandle UnsafeRegisterWaitForSingleObject(WaitHandle waitObject, WaitOrTimerCallback callback, object state, long millisecondsTimeOutInterval, bool executeOnlyOnce) {
 			// FIXME
 			return(null);
 		}
 
+		[MonoTODO]
 		public static RegisteredWaitHandle UnsafeRegisterWaitForSingleObject(WaitHandle waitObject, WaitOrTimerCallback callback, object state, TimeSpan timeout, bool executeOnlyOnce) {
 			// FIXME
 			return(null);
 		}
 
-		[CLSCompliant(false)]
+		[CLSCompliant(false)][MonoTODO]
 		public static RegisteredWaitHandle UnsafeRegisterWaitForSingleObject(WaitHandle waitObject, WaitOrTimerCallback callback, object state, uint millisecondsTimeOutInterval, bool executeOnlyOnce) {
 			// FIXME
 			return(null);

@@ -12,6 +12,7 @@ namespace System.Threading
 {
 	public sealed class AutoResetEvent : WaitHandle 
 	{
+		[MonoTODO]
 		public AutoResetEvent(bool initialState) {
 			// FIXME
 		}

@@ -17,6 +17,7 @@ namespace System.Threading
 {
 	public sealed class Thread
 	{
+		[MonoTODO]
 		public static Context CurrentContext {
 			get {
 				// FIXME -
@@ -26,6 +27,7 @@ namespace System.Threading
 			}
 		}
 
+		[MonoTODO]
 		public static IPrincipal CurrentPrincipal {
 			get {
 				// FIXME -
@@ -105,11 +107,13 @@ namespace System.Threading
 			return(slothash[slot]);
 		}
 
+		[MonoTODO]
 		public static AppDomain GetDomain() {
 			// FIXME
 			return(null);
 		}
 
+		[MonoTODO]
 		public static int GetDomainID() {
 			// FIXME
 			return(0);
@@ -124,7 +128,8 @@ namespace System.Threading
 			
 			return(slot);
 		}
-
+		
+		[MonoTODO]
 		public static void ResetAbort() {
 			// FIXME
 		}
@@ -181,6 +186,7 @@ namespace System.Threading
 			system_thread_handle=Thread_internal(start);
 		}
 
+		[MonoTODO]
 		public ApartmentState ApartmentState {
 			get {
 				// FIXME
@@ -191,6 +197,7 @@ namespace System.Threading
 			}
 		}
 
+		[MonoTODO]
 		public CultureInfo CurrentCulture {
 			get {
 				// FIXME
@@ -201,6 +208,7 @@ namespace System.Threading
 			}
 		}
 
+		[MonoTODO]
 		public CultureInfo CurrentUICulture {
 			get {
 				// FIXME
@@ -257,6 +265,7 @@ namespace System.Threading
 			}
 		}
 
+		[MonoTODO]
 		public ThreadPriority Priority {
 			get {
 				// FIXME
@@ -275,14 +284,17 @@ namespace System.Threading
 			}
 		}
 
+		[MonoTODO]
 		public void Abort() {
 			// FIXME
 		}
 
+		[MonoTODO]
 		public void Abort(object stateInfo) {
 			// FIXME
 		}
 
+		[MonoTODO]
 		public void Interrupt() {
 			// FIXME
 		}
@@ -341,6 +353,7 @@ namespace System.Threading
 			return(ret);
 		}
 
+		[MonoTODO]
 		public void Resume() {
 			// FIXME
 		}
@@ -363,6 +376,7 @@ namespace System.Threading
 			Start_internal(system_thread_handle);
 		}
 
+		[MonoTODO]
 		public void Suspend() {
 			if((state & ThreadState.Unstarted) != 0 || !IsAlive) {
 				throw new ThreadStateException("Thread has not been started, or is dead");
@@ -373,6 +387,7 @@ namespace System.Threading
 			// this thread should now suspend
 		}
 
+		[MonoTODO]
 		~Thread() {
 			// FIXME
 		}
