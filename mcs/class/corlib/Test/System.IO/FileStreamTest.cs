@@ -204,7 +204,7 @@ namespace MonoTests.System.IO
 
 			FileStream stream = null;
 			try {
-				stream = new FileStream (path, FileMode.Truncate, FileAccess.Read, FileShare.ReadWrite, -1);
+				stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Read, FileShare.ReadWrite, -1);
 			} finally {
 				if (stream != null)
 					stream.Close ();

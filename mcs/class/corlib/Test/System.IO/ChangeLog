@@ -1,5 +1,12 @@
 2004-01-22  David Sheldon <dave-mono@earth.li>
 
+      * FileStreamTest.cs: CtorArgumentOutOfRangeException4, we were 
+       testing for this ecveption, but the other parameters were also
+       invalid. Made them correct. We don't care that MS throw
+       exceptions in a different order do we?
+
+2004-01-22  David Sheldon <dave-mono@earth.li>
+
        * DirectoryTest.cs: Added Ignore to the CreationTime tests, 
         as Unix filesystems don't support them. Should we only ignore
 	them on Unix?
