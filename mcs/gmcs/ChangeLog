@@ -1,3 +1,24 @@
+2004-02-25  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (DeclSpace.CurrentTypeParameters): New protected
+	property; returns the type parameters just from the current type,
+	ie. with the ones from outer classes.
+	(DeclSpace.LookupGeneric): First search in the current class, then
+	in outer classes.
+	(DeclSpace.initialize_type_params): When hiding a type parameter
+	from an outer class, put it into the `type_param_list' anyways.
+
+	* expression.cs (MemberAccess.expr): Made this field protected.
+
+	* class.cs (TypeContainer.Define): The `CurrentType' just contains
+	the type parameters from the current class.
+
+	* generic.cs (ConstructedType.ResolveType): Support nested generic
+	types by taking the type parameters which we inherit from outer
+	classes into account.
+	(GenericMemberAccess.ResolveAsTypeStep): Override this and added
+	support for nested generic types.
+
 2004-02-23  Martin Baulig  <martin@ximian.com>
 
 	* decl.cs (DeclSpace.IsGeneric): Make this a property instead of a

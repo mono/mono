@@ -827,7 +827,7 @@ namespace Mono.CSharp {
 
 			if (IsGeneric) {
 				CurrentType = new ConstructedType (
-					Name, TypeParameters, Location);
+					Name, CurrentTypeParameters, Location);
 
 				foreach (TypeParameter type_param in TypeParameters)
 					type_param.Define (TypeBuilder);

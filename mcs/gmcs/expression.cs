@@ -6561,7 +6561,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class MemberAccess : Expression {
 		public readonly string Identifier;
-		Expression expr;
+		protected Expression expr;
 		
 		public MemberAccess (Expression expr, string id, Location l)
 		{
@@ -6922,8 +6922,8 @@ namespace Mono.CSharp {
 				return new_expr.ResolveAsTypeStep (ec);
 			}
 
-			Type expr_type = new_expr.Type;
-		      
+			Type expr_type = ((TypeExpr) new_expr).ResolveType (ec);
+
 			if (expr_type.IsPointer){
 				Error (23, "The `.' operator can not be applied to pointer operands (" +
 				       TypeManager.CSharpName (expr_type) + ")");

@@ -374,7 +374,7 @@ namespace Mono.CSharp {
 			TypeContainer tc = TypeManager.LookupTypeContainer (t);
 			if ((tc != null) && tc.IsGeneric) {
 				ConstructedType ctype = new ConstructedType (
-					t, tc.TypeParameters, loc);
+					t, new TypeArguments (), loc);
 
 				t = ctype.ResolveType (type_resolve_ec);
 			}
@@ -391,7 +391,10 @@ namespace Mono.CSharp {
 			if (type_resolve_ec == null)
 				type_resolve_ec = GetTypeResolveEmitContext (parent, loc);
 			type_resolve_ec.loc = loc;
-			type_resolve_ec.ContainerType = TypeBuilder;
+			if (this is GenericMethod)
+				type_resolve_ec.ContainerType = Parent.TypeBuilder;
+			else
+				type_resolve_ec.ContainerType = TypeBuilder;
 
 			TypeExpr d = e.ResolveAsTypeTerminal (type_resolve_ec);
 			 
@@ -811,10 +814,10 @@ namespace Mono.CSharp {
 			return sb.ToString ();
 		}
 
-		int check_type_parameter (int start, string name)
+		bool check_type_parameter (ArrayList list, int start, string name)
 		{
 			for (int i = 0; i < start; i++) {
-				TypeParameter param = type_params [i];
+				TypeParameter param = (TypeParameter) list [i];
 
 				if (param.Name != name)
 					continue;
@@ -826,10 +829,10 @@ namespace Mono.CSharp {
 						"as type parameter from outer type `{1}'",
 						name, parent.GetInstantiationName ());
 
-				return i;
+				return false;
 			}
 
-			return -1;
+			return true;
 		}
 
 		TypeParameter[] initialize_type_params ()
@@ -855,17 +858,12 @@ namespace Mono.CSharp {
 			int count = type_params != null ? type_params.Length : 0;
 			for (int i = 0; i < count; i++) {
 				TypeParameter param = type_params [i];
-
-				int old_pos = check_type_parameter (start, param.Name);
-				if (old_pos >= 0)
-					list [old_pos] = param;
-				else
-					list.Add (param);
+				check_type_parameter (list, start, param.Name);
+				list.Add (param);
 			}
 
 			type_param_list = new TypeParameter [list.Count];
 			list.CopyTo (type_param_list, 0);
-
 			return type_param_list;
 		}
 
@@ -922,15 +920,27 @@ namespace Mono.CSharp {
 			}
 		}
 
+		protected TypeParameter[] CurrentTypeParameters {
+			get {
+				if (!IsGeneric)
+					throw new InvalidOperationException ();
+				if (type_params != null)
+					return type_params;
+				else
+					return new TypeParameter [0];
+			}
+		}
+
 		public TypeParameterExpr LookupGeneric (string name, Location loc)
 		{
-			if (IsGeneric) {
-				foreach (TypeParameter type_param in TypeParameters) {
-					if (type_param.Name != name)
-						continue;
+			if (!IsGeneric)
+				return null;
 
-					return new TypeParameterExpr (type_param, loc);
-				}
+			foreach (TypeParameter type_param in CurrentTypeParameters) {
+				if (type_param.Name != name)
+					continue;
+
+				return new TypeParameterExpr (type_param, loc);
 			}
 
 			if (parent != null)
@@ -1315,6 +1325,10 @@ namespace Mono.CSharp {
 
 			foreach (MemberInfo member in members) {
 				string name = member.Name;
+
+				int pos = name.IndexOf ('<');
+				if (pos > 0)
+					name = name.Substring (0, pos);
 
 				// We use a name-based hash table of ArrayList's.
 				ArrayList list = (ArrayList) member_hash [name];

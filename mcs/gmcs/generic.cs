@@ -245,6 +245,11 @@ namespace Mono.CSharp {
 			args.Add (type);
 		}
 
+		public void Add (TypeArguments new_args)
+		{
+			args.AddRange (new_args.args);
+		}
+
 		public Type[] Arguments {
 			get {
 				return atypes;
@@ -333,9 +338,19 @@ namespace Mono.CSharp {
 			gt = t.GetGenericTypeDefinition ();
 		}
 
+		public ConstructedType (Type t, TypeArguments args, Location l)
+			: this (t.Name, args, l)
+		{
+			gt = t.GetGenericTypeDefinition ();
+		}
+
+		public TypeArguments TypeArguments {
+			get { return args; }
+		}
+
 		protected bool CheckConstraints (int index)
 		{
-			Type atype = args.Arguments [index];
+			Type atype = atypes [index];
 			Type ptype = gen_params [index];
 
 			//// FIXME
@@ -408,7 +423,26 @@ namespace Mono.CSharp {
 			}
 
 			gen_params = gt.GetGenericArguments ();
-			atypes = args.Arguments;
+
+			DeclSpace parent = null;
+			if (TypeManager.IsNestedChildOf (gt, ec.ContainerType))
+				parent = ec.DeclSpace;
+			else if ((gt == ec.ContainerType) && (gt.DeclaringType != null))
+				parent = ec.DeclSpace.Parent;
+
+			if (parent != null) {
+				TypeParameter[] pparams = parent.TypeParameters;
+
+				atypes = new Type [args.Arguments.Length + pparams.Length];
+				for (int i = 0; i < pparams.Length; i++) {
+					TypeParameter pparam = pparams [i];
+					if (pparam.Type == null)
+						throw new Exception ();
+					atypes [i] = pparam.Type;
+				}
+				args.Arguments.CopyTo (atypes, pparams.Length);
+			} else
+				atypes = args.Arguments;
 
 			if (atypes.Length != gen_params.Length) {
 				Report.Error (-217, loc, "Generic type `{0}' takes {1} " +
@@ -571,6 +605,28 @@ namespace Mono.CSharp {
 			MethodGroupExpr new_mg = new MethodGroupExpr (methods, mg.Location);
 			new_mg.InstanceExpression = mg.InstanceExpression;
 			return new_mg;
+		}
+
+		public override Expression ResolveAsTypeStep (EmitContext ec)
+		{
+			ConstructedType cexpr = expr as ConstructedType;
+			if (cexpr == null)
+				throw new Exception ();
+
+			expr = base.ResolveAsTypeStep (ec);
+			if (expr == null)
+				return null;
+
+			Type t = ((TypeExpr) expr).ResolveType (ec);
+			if (t == null)
+				return null;
+
+			TypeArguments new_args = new TypeArguments ();
+			new_args.Add (cexpr.TypeArguments);
+			new_args.Add (args);
+
+			ConstructedType ctype = new ConstructedType (t, new_args, loc);
+			return ctype.ResolveAsTypeStep (ec);
 		}
 	}
 
