@@ -108,12 +108,17 @@ namespace System.Drawing.Drawing2D
 				float [] positions = value.Positions;
 				count = factors.Length;
 
+				if (count == 0 || positions.Length == 0)
+					throw new ArgumentException ("Invalid Blend object. It should have at least 2 elements in each of the factors and positions arrays.");
+
 				if (count != positions.Length)
-					throw new ArgumentException ();
+					throw new ArgumentException ("Invalid Blend object. It should contain the same number of factors and positions values.");
+
 				if (positions [0] != 0.0F)
-					throw new ArgumentException ();
+					throw new ArgumentException ("Invalid Blend object. The positions array must have 0.0 as its first element.");
+
 				if (positions [count - 1] != 1.0F)
-					throw new ArgumentException ();
+					throw new ArgumentException ("Invalid Blend object. The positions array must have 1.0 as its last element.");
 
 				Status status = GDIPlus.GdipSetLineBlend (nativeObject, factors, positions, count);
 				GDIPlus.CheckStatus (status);
@@ -159,16 +164,16 @@ namespace System.Drawing.Drawing2D
 				count = colors.Length;
 
 				if (count == 0 || positions.Length == 0)
-					throw new ArgumentException ("An invalid ColorBlend object was set. There must be at least 2 elements in the colors and positions array. The ColorBlend object must be constructed with the same number of positions and color values. With a position starting at 0.0 and ranging to 1.0. 1.0 being the last element in the array.");
+					throw new ArgumentException ("Invalid ColorBlend object. It should have at least 2 elements in each of the colors and positions arrays.");
 
 				if (count != positions.Length)
-					throw new ArgumentException ("An invalid ColorBlend object was set. The colors and positions do not have the same number of elements. The ColorBlend object must be constructed with the same number of positions and color values. With a position starting at 0.0 and ranging to 1.0. 1.0 being the last element in the array.");
+					throw new ArgumentException ("Invalid ColorBlend object. It should contain the same number of positions and color values.");
 
 				if (positions [0] != 0.0F)
-					throw new ArgumentException ("An invalid ColorBlend object was set. The position's first element must be equal to 0. The ColorBlend object must be constructed with the same number of positions and color values. With a position starting at 0.0 and ranging to 1.0. 1.0 being the last element in the array.");
+					throw new ArgumentException ("Invalid ColorBlend object. The positions array must have 0.0 as its first element.");
 
 				if (positions [count - 1] != 1.0F)
-					throw new ArgumentException ("An invalid ColorBlend object was set. The position's last element must be equal to 1.0. The ColorBlend object must be constructed with the same number of positions and color values. With a position starting at 0.0 and ranging to 1.0. 1.0 being the last element in the array.");
+					throw new ArgumentException ("Invalid ColorBlend object. The positions array must have 1.0 as its last element.");
 
 				int [] blend = new int [colors.Length];
 				for (int i = 0; i < colors.Length; i++)
