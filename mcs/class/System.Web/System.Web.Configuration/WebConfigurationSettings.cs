@@ -4,7 +4,7 @@
 // Authors:
 //   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (c) 2003 Novell, Inc. (http://www.novell.com)
+// (c) 2003,2004 Novell, Inc. (http://www.novell.com)
 //
 
 using System;
@@ -12,6 +12,7 @@ using System.Configuration;
 using System.Collections;
 using System.IO;
 using System.Reflection;
+using System.Runtime.Remoting;
 using System.Web.Util;
 using System.Xml;
 
@@ -135,19 +136,16 @@ namespace System.Web.Configuration
 
 		ConfigurationData GetConfigFromFileName (string filepath, HttpContext context)
 		{
-			if (filepath == "") {
+			if (filepath == "")
 				return (ConfigurationData) fileToConfig [WebConfigurationSettings.MachineConfigPath];
-			}
 
 			string dir = UrlUtils.GetDirectory (filepath);
 			if (dir == "/")
 				dir = "";
 
-			if (fileToConfig.ContainsKey (dir)) {
-				ConfigurationData data = (ConfigurationData) fileToConfig [dir];
-				if (CheckFileCache (data))
-					return data;
-			}
+			ConfigurationData data = (ConfigurationData) fileToConfig [dir];
+			if (data != null)
+				return data;
 
 			string realpath = context.Request.MapPath (dir);
 			string lower = Path.Combine (realpath, "web.config");
@@ -159,31 +157,21 @@ namespace System.Web.Configuration
 
 			string wcfile = (isUpper) ? upper : (isLower) ? lower : null;
 			ConfigurationData parent = GetConfigFromFileName (dir, context);
-			if (wcfile == null || parent.FileName == wcfile) {
-				fileToConfig [dir] = parent;
-				return parent;
+			if (wcfile == null) {
+				data = new ConfigurationData (parent, null, realpath);
+				data.DirName = dir;
+				fileToConfig [dir] = data;
 			}
 
-			ConfigurationData child = new ConfigurationData (parent);
-			child.DirName = dir;
-			child.LoadFromFile (wcfile);
-			fileToConfig [dir] = child;
-				
-			// Read remoting configuration
-			System.Runtime.Remoting.RemotingConfiguration.Configure (wcfile);
-				
-			return child;
-		}
+			if (data == null) {
+				data = new ConfigurationData (parent, wcfile);
+				data.DirName = dir;
+				data.LoadFromFile (wcfile);
+				fileToConfig [dir] = data;
+				RemotingConfiguration.Configure (wcfile);
+			}
 
-		bool CheckFileCache (ConfigurationData data)
-		{
-			if (data == null)
-				return true;
-
-			if (data.FileCache [""] == FileWatcherCache.Changed)
-				return false;
-
-			return CheckFileCache (data.Parent);
+			return data;
 		}
 
 		public void Init ()
@@ -193,9 +181,6 @@ namespace System.Web.Configuration
 
 		public void Init (HttpContext context)
 		{
-			if (initCalled)
-				return;
-
 			lock (this) {
 				if (initCalled)
 					return;
@@ -223,58 +208,60 @@ namespace System.Web.Configuration
 		}
 	}
 
-        //
-        // TODO: this should be changed to use the FileSystemWatcher
-        //
-        //  -eric@5stops.com 9.20.2003
-        //
         class FileWatcherCache
         {
                 Hashtable cacheTable;
-		DateTime lastWriteTime;
-                string filename;
-		public static readonly object Changed = new object ();
-		static TimeSpan seconds = new TimeSpan (0, 0, 2);
+		string path;
+		string filename;
+		FileSystemWatcher watcher;
+		ConfigurationData data;
 
-                public FileWatcherCache (string filename)
+                public FileWatcherCache (ConfigurationData data)
                 {
+			this.data = data;
                         cacheTable = Hashtable.Synchronized (new Hashtable ());
-                        lastWriteTime = new FileInfo (filename).LastWriteTime;
-                        this.filename = filename;
+			this.path = Path.GetDirectoryName (data.FileName);
+			this.filename = Path.GetFileName (data.FileName);
+			watcher = new FileSystemWatcher (this.path, this.filename);
+			FileSystemEventHandler handler = new FileSystemEventHandler (SetChanged);
+			watcher.Created += handler;
+			watcher.Changed += handler;
+			watcher.Deleted += handler;
+			watcher.EnableRaisingEvents = true;
                 }
 
-                bool CheckFileChange ()
-                {
-			FileInfo info = new FileInfo (filename);
-
-			if (!info.Exists) {
-				lastWriteTime = DateTime.MinValue;
+		void SetChanged (object o, FileSystemEventArgs args)
+		{
+			lock (data) {
+				if (watcher.Filter == "*.config" &&
+				    String.Compare (Path.GetFileName (args.FullPath), "web.config", true) != 0)
+					return;
+				
 				cacheTable.Clear ();
-				return false;
+				data.Reset ();
+				if (args.ChangeType == WatcherChangeTypes.Created)
+					RemotingConfiguration.Configure (args.FullPath);
+
+				if (args.ChangeType != WatcherChangeTypes.Deleted)
+					data.LoadFromFile (args.FullPath);
 			}
-
-			DateTime writeTime = info.LastWriteTime;
-			TimeSpan ts = (info.LastWriteTime - lastWriteTime);
-			if (ts >= seconds) {
-				lastWriteTime = writeTime;
-				cacheTable.Clear ();
-				return false;
-			}
-
-			return true;
-                }
-
+		}
+		
 		public object this [string key] {
 			get {
-				if (!CheckFileChange ())
-					return Changed;
-
-				return cacheTable [key];
+				lock (data)
+					return cacheTable [key];
 			}
 
 			set {
-				cacheTable [key] = value;
+				lock (data)
+					cacheTable [key] = value;
 			}
+		}
+
+		public void Close ()
+		{
+			watcher.EnableRaisingEvents = false;
 		}
         }
 
@@ -311,6 +298,7 @@ namespace System.Web.Configuration
 		Hashtable locations;
 		string fileName;
 		string dirname;
+		string realdir;
 		static object removedMark = new object ();
 		static object groupMark = new object ();
                 static object emptyMark = new object ();
@@ -328,7 +316,7 @@ namespace System.Web.Configuration
 					if (fileCache != null)
 						return fileCache;
 
-					fileCache = new FileWatcherCache (fileName);
+					fileCache = new FileWatcherCache (this);
                                 }
 
                                 return fileCache;
@@ -348,14 +336,36 @@ namespace System.Web.Configuration
 			set { dirname = value; }
 		}
 
+		internal void Reset ()
+		{
+			factories.Clear ();
+			if (pending != null)
+				pending.Clear ();
 
-		public ConfigurationData () : this (null)
+			if (locations != null)
+				locations.Clear ();
+		}
+		
+		public ConfigurationData () : this (null, null)
 		{
 		}
 
-		public ConfigurationData (ConfigurationData parent)
+		public ConfigurationData (ConfigurationData parent, string filename)
 		{
 			this.parent = (parent == this) ? null : parent;
+			this.fileName = filename;
+			factories = new Hashtable ();
+		}
+
+		public ConfigurationData (ConfigurationData parent, string filename, string realdir)
+		{
+			this.parent = (parent == this) ? null : parent;
+			this.realdir = realdir;
+			if (filename == null) {
+				this.fileName = Path.Combine (realdir, "*.config");
+			} else {
+				this.fileName = filename;
+			}
 			factories = new Hashtable ();
 		}
 
@@ -885,7 +895,7 @@ namespace System.Web.Configuration
 				return;
 
 			XmlTextReader reader = new XmlTextReader (new StringReader (str));
-			thisOne = new ConfigurationData (parent);
+			thisOne = new ConfigurationData (parent, parent.FileName);
 			thisOne.LoadFromReader (reader, parent.FileName, true);
 		}
 
