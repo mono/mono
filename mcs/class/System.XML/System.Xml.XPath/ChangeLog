@@ -1,5 +1,10 @@
 2002-06-23  Piers Haken <piersh@friskit.com>
 
+	* DefaultContext.cs: implemented XPathFUnctionId
+	* Iterator.cs: new ArrayListIterator for id() support
+
+2002-06-23  Piers Haken <piersh@friskit.com>
+
 	* XPathNavigator.cs: implement:
 		- Compile
 		- Evaluate

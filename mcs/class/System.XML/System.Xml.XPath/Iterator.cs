@@ -539,4 +539,30 @@ namespace System.Xml.XPath
 		public override XPathNavigator Current { get { return _iter.Current; }}
 		public override int CurrentPosition { get { return _pos; }}
 	}
+	internal class ArrayListIterator : BaseIterator
+	{
+		protected ArrayList _rgNodes;
+		protected int _pos;
+
+		public ArrayListIterator (BaseIterator iter, ArrayList rgNodes) : base (iter)
+		{
+			_rgNodes = rgNodes;
+		}
+
+		protected ArrayListIterator (ArrayListIterator other) : base (other)
+		{
+			_rgNodes = other._rgNodes;
+		}
+		public override XPathNodeIterator Clone () { return new ArrayListIterator (this); }
+
+		public override bool MoveNext ()
+		{
+			if (_pos >= _rgNodes.Count)
+				return false;
+			_pos++;
+			return true;
+		}
+		public override XPathNavigator Current { get { return (XPathNavigator) _rgNodes [_pos - 1]; }}
+		public override int CurrentPosition { get { return _pos; }}
+	}
 }

@@ -217,6 +217,7 @@ namespace System.Xml.XPath
 	}
 	internal class XPathFunctionId : XPathFunction
 	{
+		private static char [] rgchWhitespace = {' ', '\t', '\r', '\n'};
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
 		public override int Minargs { get { return 1; }}
 		public override int Maxargs { get { return 1; }}
@@ -224,7 +225,24 @@ namespace System.Xml.XPath
 		[MonoTODO]
 		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
 		{
-			throw new NotImplementedException ();
+			String strArgs;
+			BaseIterator iter = args [0] as BaseIterator;
+			if (iter != null)
+			{
+				strArgs = "";
+				while (!iter.MoveNext ())
+					strArgs += iter.Current.Value + " ";
+			}
+			else
+				strArgs = XPathFunctions.ToString (args [0]);
+			string [] rgstrArgs = strArgs.Split (rgchWhitespace);
+			ArrayList rgNodes = new ArrayList ();
+			foreach (string strArg in rgstrArgs)
+			{
+				if (docContext.MoveToId (strArg))
+					rgNodes.Add (docContext.Clone ());
+			}
+			return new ArrayListIterator (iter, rgNodes);
 		}
 		public override string Name { get { return "id"; }}
 	}
