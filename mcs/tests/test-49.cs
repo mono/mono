@@ -483,6 +483,20 @@ class X {
 			return 4;
 		return 0;
 	}
+
+	static int tests_default (string s)
+	{
+		// tests default in the middle of the switch
+		
+		switch (s){
+		default:
+		case "hello":
+		case "world":
+			return 1;
+		case "how":
+			return 2;
+		}
+	}
 	
 	static int Main ()
 	{
@@ -592,6 +606,15 @@ class X {
  
 		if (test_long_enum_switch () != 0)
 			return 42;
+
+		if (tests_default (null) != 1)
+			return 43;
+		if (tests_default ("hello") != 1)
+			return 44;
+		if (tests_default ("world") != 1)
+			return 45;
+		if (tests_default ("how") != 2)
+			return 46;
 		
 		Console.WriteLine ("All tests pass");
 		return 0;
