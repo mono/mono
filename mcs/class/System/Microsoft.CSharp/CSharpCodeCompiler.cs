@@ -47,7 +47,7 @@ namespace Mono.CSharp
 			StringCollection assemblies = options.ReferencedAssemblies;
 
 			foreach (CodeCompileUnit e in ea) {
-				fileNames [i] = GetTempFileNameWithExtension ("cs");
+				fileNames [i] = GetTempFileNameWithExtension (options.TempFiles, "cs");
 				FileStream f=new FileStream(fileNames[i],FileMode.OpenOrCreate);
 				StreamWriter s=new StreamWriter(f, Encoding.UTF8);
 				if (e.ReferencedAssemblies != null) {
@@ -139,7 +139,7 @@ namespace Mono.CSharp
 			string[] fileNames=new string[sources.Length];
 			int i=0;
 			foreach (string source in sources) {
-				fileNames [i] = GetTempFileNameWithExtension ("cs");
+				fileNames [i] = GetTempFileNameWithExtension (options.TempFiles, "cs");
 				FileStream f=new FileStream(fileNames[i],FileMode.OpenOrCreate);
 				StreamWriter s=new StreamWriter(f);
 				s.Write(source);
@@ -166,7 +166,7 @@ namespace Mono.CSharp
 				args.AppendFormat ("/warn:{0} ", options.WarningLevel);
 
 			if (options.OutputAssembly==null)
-				options.OutputAssembly = GetTempFileNameWithExtension ("dll");
+				options.OutputAssembly = GetTempFileNameWithExtension (options.TempFiles, "dll");
 			args.AppendFormat("/out:\"{0}\" ",options.OutputAssembly);
 			if (null != options.ReferencedAssemblies)
 			{
@@ -203,24 +203,9 @@ namespace Mono.CSharp
 			return error;
 		}
 
-		static string GetTempFileNameWithExtension (string extension)
+		static string GetTempFileNameWithExtension (TempFileCollection temp_files, string extension)
 		{
-			Exception exc;
-			string extFile;
-
-			do {
-				string tmpFile = Path.GetTempFileName ();
-				FileInfo fileInfo = new FileInfo (tmpFile);
-				extFile = Path.ChangeExtension (tmpFile, extension);
-				try {
-					fileInfo.MoveTo (extFile);
-					exc = null;
-				} catch (Exception e) {
-					exc = e;
-				}
-			} while (exc != null);
-
-			return extFile;
+			return temp_files.AddExtension (extension);
 		}
 	}
 }
