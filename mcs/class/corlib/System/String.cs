@@ -488,6 +488,9 @@ namespace System {
 		}
 
 		public bool StartsWith(String value) {
+			if (null == value)
+				throw new ArgumentNullException();
+
 			if (this.length < value.length)
 				return false;
 
