@@ -118,6 +118,7 @@ namespace Mono.ILASM {
 %token D_CLASS
 %token D_COMTYPE
 %token D_CONFIG
+%token D_CONSTRAINT
 %token D_IMAGEBASE
 %token D_CORFLAGS
 %token D_CTOR
@@ -352,6 +353,7 @@ namespace Mono.ILASM {
 %token K_STRING
 %token K_TRUE
 %token K_FALSE
+%token K_IN
 
 /* end generated */
 
@@ -412,6 +414,12 @@ language_decl		: D_LANGUAGE SQSTRING
 			| D_LANGUAGE SQSTRING COMMA SQSTRING COMMA SQSTRING
 			;
 
+constraint_decl         : D_CONSTRAINT BANG int32 K_IS type
+                          {
+                                codegen.CurrentTypeDef.AddGenericConstraint ((int) $3, (ITypeRef) $5);
+                          }
+                        ;
+                        
 vtfixup_decl		: D_VTFIXUP OPEN_BRACKET int32 CLOSE_BRACKET 
 			  vtfixup_attr K_AT id
 			;
@@ -611,6 +619,7 @@ class_decl		: method_all
 			  K_WITH call_conv type type_spec DOUBLE_COLON method_name
 			  OPEN_PARENS sig_args CLOSE_PARENS
 			| language_decl
+                        | constraint_decl
 			;
 
 type			: K_CLASS class_ref
