@@ -1,3 +1,7 @@
+2004-05-06  Jackson Harper  <jackson@ximian.com>
+
+	* Environment.cs: Make $HOME the personal directory.
+
 2004-05-06  Sebastien Pouliot  <sebastien@ximian.com>
  
 	* Convert.cs: ToBase64String method was depending on a bug in 

@@ -360,39 +360,44 @@ namespace System
 			// we can do this in managed code for non-Windows environments
 			string path = String.Empty;
 
+			string home = GetEnvironmentVariable ("HOME");
+
 			// http://freedesktop.org/Standards/basedir-spec/basedir-spec-0.6.html
 			string data = GetEnvironmentVariable ("XDG_DATA_HOME");
 			if ((data == null) || (data == String.Empty)) {
-				data = Path.Combine (GetEnvironmentVariable ("HOME"), ".local");
+				data = Path.Combine (home, ".local");
 				data = Path.Combine (data, "share");
 			}
 
 			string config = GetEnvironmentVariable ("XDG_CONFIG_HOME");
 			if ((config == null) || (config == String.Empty)) {
-				config = Path.Combine (GetEnvironmentVariable ("HOME"), ".config");
+				config = Path.Combine (home, ".config");
 			}
 
 			string cache = GetEnvironmentVariable ("XDG_CACHE_HOME");
 			if ((cache == null) || (cache == String.Empty)) {
-				cache = Path.Combine (GetEnvironmentVariable ("HOME"), ".cache");
+				cache = Path.Combine (home, ".cache");
 			}
 
-                        switch (folder) {
+			switch (folder) {
 #if NET_1_1
-                        case SpecialFolder.MyComputer: // MyComputer is a virtual directory
-                                path = "";
-                                break;
-#endif                                
+			case SpecialFolder.MyComputer: // MyComputer is a virtual directory
+				path = "";
+				break;
+#endif				      
+
+			case SpecialFolder.Personal:
+				path = home;
+				break;
 
 			// data related
 			case SpecialFolder.ApplicationData:
 			case SpecialFolder.LocalApplicationData:
 			case SpecialFolder.MyMusic:
 			case SpecialFolder.MyPictures:
-                        case SpecialFolder.Personal:
 			case SpecialFolder.Templates:
 				path = data;
-                         	break;
+				break;
 
 			// configuration related
 #if NET_1_1
