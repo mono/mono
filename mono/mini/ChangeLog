@@ -1,5 +1,13 @@
 2004-05-05  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-sparc.h: Fix warnings.
+
+	* exceptions-sparc.c (mono_arch_find_jit_info): Pop unused lfm off the
+	stack.
+
+	* mini-exceptions.c (mono_handle_exception): Call the filter in a
+	separate statement for clarity.
+
 	* mini-sparc.c: Update status.
 
 2004-05-04  Zoltan Varga  <vargaz@freemail.hu>
