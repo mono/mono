@@ -1,3 +1,7 @@
+2004-07-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* monosn.c: Applied patch from "grompf" (grompf@sublimeintervention.com). Fix compilation under OSX.
+
 2004-07-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (mono_marshal_get_managed_wrapper): Handle returning
