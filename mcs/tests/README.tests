@@ -184,6 +184,12 @@ test-177.cs
 This tests that the compiler is generating "return:" attributes for a 
 method.  This was a separate code path, and was not handled in the past.
 
+
+test-178.cs
+-----------
+Ensure that we emit attributes only once for operators. Bug #45876
+
+
 test-179.cs
 -----------
 Tests various uses of the indexers in the presence of the `new' keyword
