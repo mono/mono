@@ -7,7 +7,7 @@
 using System;
 using System.Collections;
 
-namespace Mono.Util.MonoDoc.Lib {
+namespace Mono.Document.Library {
 
 	public class DocType : IComparable {
 
@@ -122,6 +122,16 @@ namespace Mono.Util.MonoDoc.Lib {
 			set {fileroot = value;}
 		}
 
+		public string FileLanguage
+		{
+			get {return fileroot+"/"+language;}
+		}
+
+		public string FileNamespace
+		{
+			get {return fileroot+"/"+language+"/"+_namespace;}
+		}
+
 		public string FilePath
 		{
 			get {return fileroot+"/"+language+"/"+_namespace+"/"+name+".xml";}
@@ -179,6 +189,22 @@ namespace Mono.Util.MonoDoc.Lib {
 		{
 			get {return isNested;}
 			set {isNested = value;}
+		}
+
+		public string Type
+		{
+			get {
+				if (IsClass)
+					return "class";
+				else if (IsStructure)
+					return "structure";
+				else if (IsInterface)
+					return "interface";
+				else if (IsEnum)
+					return "emum";
+				else
+					return "delegate";
+			}
 		}
 
 		public ArrayList Enums

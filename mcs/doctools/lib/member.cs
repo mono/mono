@@ -8,7 +8,7 @@ using System;
 using System.IO;
 using System.Collections;
 
-namespace Mono.Util.MonoDoc.Lib {
+namespace Mono.Document.Library {
 
 	public class DocMember : IComparable {
 

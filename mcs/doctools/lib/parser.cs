@@ -10,7 +10,7 @@ using System.Xml;
 using System.Text;
 using System.Collections;
 
-namespace Mono.Util.MonoDoc.Lib {
+namespace Mono.Document.Library {
 
 	public class DocParser {
 
@@ -22,14 +22,21 @@ namespace Mono.Util.MonoDoc.Lib {
 		{
 			xtr = new XmlTextReader (xmlfile);
 			types = new ArrayList ();
-			ParseDoc (xmlfile);
+			ParseDoc ();
 			types.Sort ();
 		}
 
-		public static DocType GetDoc (string xmlfile)
+		private DocParser (DocType document)
 		{
-			DocParser inst = new DocParser (xmlfile);
-			return inst.document;
+			this.document = document;
+			xtr = new XmlTextReader (document.FilePath);
+			types = new ArrayList ();
+			ParseDoc ();
+		}
+
+		public static void Parse (DocType document)
+		{
+			DocParser inst = new DocParser (document);
 		}
 
 		public ArrayList DocTypes
@@ -37,7 +44,7 @@ namespace Mono.Util.MonoDoc.Lib {
 			get {return types;}
 		}
 
-		public void ParseDoc (string xmlfile)
+		private void ParseDoc ()
 		{
 			while(xtr.Read ()) {
 				DocType type;
@@ -75,7 +82,7 @@ namespace Mono.Util.MonoDoc.Lib {
 			}
 		}
 
-		public void ParseType (DocType type)
+		private void ParseType (DocType type)
 		{
 			if (xtr.MoveToAttribute("name")) {
 				type.Name = xtr.Value;
@@ -86,12 +93,11 @@ namespace Mono.Util.MonoDoc.Lib {
 			}
 
 			ParseTypeBody (type);
-			document = type;
 			type.Sort ();
 			types.Add (type);
 		}
 
-		public void ParseTypeBody (DocType type)
+		private void ParseTypeBody (DocType type)
 		{
 			while(xtr.Read ()) {
 				DocMember member;
@@ -136,13 +142,17 @@ namespace Mono.Util.MonoDoc.Lib {
 					case "summary":
 						if (xtr.NodeType != XmlNodeType.EndElement && xtr.Depth == 2) {
 							xtr.Read ();
-							type.Summary = xtr.Value;
+							if (document != null) {
+								document.Summary = xtr.Value;
+							}
       					}
 						continue;
 					case "remarks":
 						if (xtr.NodeType != XmlNodeType.EndElement && xtr.Depth == 2) {
 							xtr.Read ();
-							type.Remarks = xtr.Value;
+							if (document != null) {
+								document.Remarks = xtr.Value;
+							}
 						}
 						continue;
 					default:
@@ -151,7 +161,7 @@ namespace Mono.Util.MonoDoc.Lib {
 			}
 		}
 
-		public DocMember ParseMember (DocMember member)
+		private DocMember ParseMember (DocMember member)
 		{
 			if (xtr.MoveToAttribute("name")) {
 				string [] s = xtr.Value.Split ('(');
@@ -165,7 +175,7 @@ namespace Mono.Util.MonoDoc.Lib {
 			return member;
 		}
 
-		public string ShortArgs (DocMember member, string args)
+		private string ShortArgs (DocMember member, string args)
 		{
 			StringBuilder builder = new StringBuilder ();
 			string [] s = args.TrimEnd (')').Split (',');

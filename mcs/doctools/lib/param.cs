@@ -6,7 +6,7 @@
 
 using System;
 
-namespace Mono.Util.MonoDoc.Lib {
+namespace Mono.Document.Library {
 
 	public class DocParam {
 
