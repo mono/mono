@@ -463,7 +463,7 @@ namespace System.Xml
 			if (attr == null)
 				return null;
 			if (attr.OwnerElement == null || !attr.OwnerElement.IsRooted) {
-				idTable.Remove (id);
+//				idTable.Remove (id);
 				return null;
 			}
 			return attr;
@@ -693,6 +693,8 @@ namespace System.Xml
 				res = reader.MoveToAttribute (attribute.Name);
 			else 
 				res = reader.MoveToAttribute (attribute.LocalName, attribute.NamespaceURI);
+			if (reader.IsDefault)
+				attribute.SetDefault ();
 			return attribute;
 		}
 

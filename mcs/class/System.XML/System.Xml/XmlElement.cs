@@ -368,8 +368,9 @@ namespace System.Xml
 		{
 			w.WriteStartElement(Prefix, LocalName, NamespaceURI);
 
-			foreach(XmlNode attributeNode in Attributes)
-				attributeNode.WriteTo(w);
+			foreach(XmlAttribute attributeNode in Attributes)
+				if (attributeNode.Specified)
+					attributeNode.WriteTo(w);
 			if (IsEmpty)
 				w.WriteEndElement ();
 			else {

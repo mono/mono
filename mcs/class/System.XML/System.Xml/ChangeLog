@@ -1,3 +1,15 @@
+2003-07-28  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* DTDValidatingReader.cs : (Read,ValidateAttributes,ReadAttributeValue)
+	  attribute declaration should be got independently of elementdecl.
+	* XmlAttribute.cs :
+	  Added internal SetDefault() to mark as default.
+	  Removed InnerText implementation that is just the same as XmlNode.
+	* XmlDocument.cs : id shouldn't be removed from table at 'trying' to
+	  get matching elements.  ReadAttributeNode() now sets default mark.
+	* XmlElement.cs : WriteTo() should ignore default attributes.
+	* XmlTextWriter.cs : shuold allow valid name char such as digits.
+
 2003-07-27  Piers Haken	<piersh@friskit.com>
 
 	* XmlQualifiedName.cs : fields should never be null

@@ -298,21 +298,22 @@ namespace Mono.Xml
 				currentElement = Name;
 				elementStack.Push (reader.Name);
 				automataStack.Push (currentAutomata);
-				if (decl != null) {	// i.e. not invalid
+				if (decl != null)	// i.e. not invalid
 					currentAutomata = decl.ContentModel.GetAutomata ();
 
+				DTDAttListDeclaration attList = dtd.AttListDecls [currentElement];
+				if (attList != null) {
 					// check attributes
-					if (decl.Attributes == null) {
-						if (reader.HasAttributes) {
-							HandleError (String.Format ("Attributes are found on element {0} while it has no attribute definitions.",decl.Name),
-								XmlSeverityType.Error);
-							// FIXME: validation recovery code here.
-						}
+					ValidateAttributes (attList);
+				} else {
+					if (reader.HasAttributes) {
+						HandleError (String.Format (
+							"Attributes are found on element {0} while it has no attribute definitions.", currentElement),
+							XmlSeverityType.Error);
+						// FIXME: validation recovery code here.
 					}
-					else
-						ValidateAttributes (decl);
-				} else
 					SetupValidityIgnorantAttributes ();
+				}
 
 				// If it is empty element then directly check end element.
 				if (reader.IsEmptyElement)
@@ -353,7 +354,9 @@ namespace Mono.Xml
 					break;
 
 				DTDElementDeclaration elem = dtd.ElementDecls [elementStack.Peek () as string];
-				if (!elem.IsMixedContent) {
+				// Here element should have been already validated, so
+				// if no matching declaration is found, simply ignore.
+				if (elem != null && !elem.IsMixedContent) {
 					HandleError (String.Format ("Current element {0} does not allow character data content.", elementStack.Peek () as string),
 						XmlSeverityType.Error);
 					// FIXME: validation recovery code here.
@@ -399,7 +402,7 @@ namespace Mono.Xml
 				throw ex;
 		}
 
-		private void ValidateAttributes (DTDElementDeclaration decl)
+		private void ValidateAttributes (DTDAttListDeclaration decl)
 		{
 			while (reader.MoveToNextAttribute ()) {
 				string attrName = reader.Name;
@@ -425,7 +428,7 @@ namespace Mono.Xml
 				valueBuilder.Length = 0;
 				attributeValues.Add (attrName, attrValue);
 
-				DTDAttributeDefinition def = decl.Attributes [reader.Name];
+				DTDAttributeDefinition def = decl [reader.Name];
 				if (def == null) {
 					HandleError (String.Format ("Attribute {0} is not declared.", reader.Name),
 						XmlSeverityType.Error);
@@ -478,7 +481,7 @@ namespace Mono.Xml
 			}
 			// Check if all required attributes exist, and/or
 			// if there is default values, then add them.
-			foreach (DTDAttributeDefinition def in decl.Attributes.Definitions)
+			foreach (DTDAttributeDefinition def in decl.Definitions)
 				if (!attributes.Contains (def.Name)) {
 					if (def.OccurenceType == DTDAttributeOccurenceType.Required) {
 						HandleError (String.Format ("Required attribute {0} was not found.", decl.Name),
@@ -500,6 +503,10 @@ namespace Mono.Xml
 				return false;
 			if (NodeType == XmlNodeType.Attribute &&
 					validatingReader.EntityHandling == EntityHandling.ExpandEntities) {
+				consumedAttribute = true;
+				return true;
+			}
+			else if (IsDefault) {
 				consumedAttribute = true;
 				return true;
 			}
@@ -670,9 +677,7 @@ namespace Mono.Xml
 					sourceTextReader != null && 
 					sourceTextReader.Normalization) {
 				DTDAttributeDefinition def = 
-					dtd.ElementDecls [currentElement]
-					.Attributes [currentAttribute]
-					as DTDAttributeDefinition;
+					dtd.AttListDecls [currentElement] [currentAttribute] as DTDAttributeDefinition;
 				valueBuilder.Append (rawValue);
 				valueBuilder.Replace ('\r', ' ');
 				valueBuilder.Replace ('\n', ' ');
@@ -702,9 +707,7 @@ namespace Mono.Xml
 				// This check also covers value node of default attributes.
 				if (IsDefault) {
 					DTDAttributeDefinition def = 
-						dtd.ElementDecls [currentElement]
-						.Attributes [currentAttribute]
-						as DTDAttributeDefinition;
+						dtd.AttListDecls [currentElement] [currentAttribute] as DTDAttributeDefinition;
 					return sourceTextReader != null && sourceTextReader.Normalization ?
 						def.NormalizedDefaultValue : def.DefaultValue;
 				}

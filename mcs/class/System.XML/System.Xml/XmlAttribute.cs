@@ -33,7 +33,7 @@ namespace System.Xml
 		protected internal XmlAttribute (
 			string prefix, 
 			string localName, 
-			string namespaceURI, 
+			string namespaceURI,
 			XmlDocument doc) : base (doc)
 		{
 			if (prefix == null)
@@ -74,27 +74,14 @@ namespace System.Xml
 
 		public override string InnerText {
 			get {
-				StringBuilder builder = new StringBuilder ();
-				AppendChildValues (this, builder);
-				return builder.ToString ();
-                        }
+				return base.InnerText;
+			}
 
 			set {
 				Value = value;
 			}
 		}
 
-		private void AppendChildValues (XmlNode parent, StringBuilder builder)
-		{
-			XmlNode node = parent.FirstChild;
-			
-			while (node != null) {
-				builder.Append (node.Value);
-				AppendChildValues (node, builder);
-				node = node.NextSibling;
-                        }
-                }
-		
 		[MonoTODO ("Setter is incomplete(XmlTextReader.ReadAttribute is incomplete;No resolution for xml:lang/space")]
 		public override string InnerXml {
 			get {
@@ -230,6 +217,11 @@ namespace System.Xml
 			}
 
 			return node;
+		}
+
+		internal void SetDefault ()
+		{
+			isDefault = true;
 		}
 
 		// Parent of XmlAttribute must be null

@@ -486,10 +486,13 @@ namespace System.Xml
 			WriteEndElementInternal (true);
 		}
 
-		private void CheckValidChars (string name, bool firstOnlyLetter)
+		private void CheckValidName (string name, bool firstOnlyLetter)
 		{
+			if (firstOnlyLetter && !XmlConstructs.IsNameStart (name [0]))
+				throw new ArgumentException ("There is an invalid character: '" + name [0] +
+							     "'", "name");
 			foreach (char c in name) {
-				if (XmlConvert.IsInvalid (c, firstOnlyLetter))
+				if (!XmlConstructs.IsName (c))
 					throw new ArgumentException ("There is an invalid character: '" + c +
 								     "'", "name");
 			}
@@ -497,13 +500,13 @@ namespace System.Xml
 
 		public override void WriteName (string name)
 		{
-			CheckValidChars (name, true);
+			CheckValidName (name, true);
 			w.Write (name);
 		}
 
 		public override void WriteNmToken (string name)
 		{
-			CheckValidChars (name, false);
+			CheckValidName (name, false);
 			w.Write (name);
 		}
 
