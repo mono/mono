@@ -1,3 +1,8 @@
+2004-10-29  Neale Ferguson <Neale.Ferguson@SoftwareAG-usa.com>
+
+	* cattr-object.cs: Correct type checking so test will stop giving
+	false negatives.
+
 2004-10-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* pinvoke2.cs: Add test for prefixing 'lib' to dll names.
