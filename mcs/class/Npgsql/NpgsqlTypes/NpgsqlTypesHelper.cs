@@ -144,7 +144,7 @@ namespace NpgsqlTypes
             case DbType.Time:
                 return "time";
             default:
-                throw new NpgsqlException(String.Format(resman.GetString("Exception_TypeNotSupported"), dbType));
+                throw new Exception(String.Format(resman.GetString("Exception_TypeNotSupported"), dbType));
 
             }
         }
@@ -179,7 +179,7 @@ namespace NpgsqlTypes
             case DbType.StringFixedLength:
                 return encoding.GetString(data, 0, fieldValueSize);
             default:
-                throw new NpgsqlException("Type not supported in binary format");
+                throw new Exception("Type not supported in binary format");
             }
 
 
@@ -229,7 +229,7 @@ namespace NpgsqlTypes
 
             default:
                 // This should not happen!
-                throw new NpgsqlException(String.Format(resman.GetString("Exception_TypeNotSupported"), parameter.DbType));
+                throw new Exception(String.Format(resman.GetString("Exception_TypeNotSupported"), parameter.DbType));
 
 
             }
@@ -309,7 +309,7 @@ namespace NpgsqlTypes
             case DbType.StringFixedLength:
                 return data;
             default:
-                throw new NpgsqlException(String.Format(resman.GetString("Exception_TypeNotSupported"),  oidToNameMapping[typeOid]));
+                throw new Exception(String.Format(resman.GetString("Exception_TypeNotSupported"),  oidToNameMapping[typeOid]));
 
 
             }
@@ -365,7 +365,7 @@ namespace NpgsqlTypes
             case DbType.StringFixedLength:
                 return Type.GetType("System.String");
             default:
-                throw new NpgsqlException(String.Format(resman.GetString("Exception_TypeNotSupported"), oidToNameMapping[typeOid]));
+                throw new Exception(String.Format(resman.GetString("Exception_TypeNotSupported"), oidToNameMapping[typeOid]));
 
             }
 

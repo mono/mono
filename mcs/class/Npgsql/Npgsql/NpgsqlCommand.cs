@@ -206,7 +206,7 @@ namespace Npgsql
                 if (this.transaction != null && this.transaction.Connection == null)
                     this.transaction = null;
                 if (this.connection != null && this.connection.InTransaction == true)
-                    throw new NpgsqlException(resman.GetString("Exception_SetConnectionInTransaction"));
+                    throw new InvalidOperationException(resman.GetString("Exception_SetConnectionInTransaction"));
                 this.connection = value;
                 NpgsqlEventLog.LogPropertySet(LogLevel.Debug, CLASSNAME, "Connection", value);
             }
@@ -343,7 +343,7 @@ namespace Npgsql
 
             // Check if there were any errors.
             if (connection.Mediator.Errors.Count > 0)
-                throw new NpgsqlException(resman.GetString("Exception_BackendErrors"), connection.Mediator.Errors);
+                throw new NpgsqlException(connection.Mediator.Errors);
 
 
             CheckNotification();
@@ -450,7 +450,7 @@ namespace Npgsql
 
             // Check if there were any errors.
             if (connection.Mediator.Errors.Count > 0)
-                throw new NpgsqlException(resman.GetString("Exception_BackendErrors"), connection.Mediator.Errors);
+                throw new NpgsqlException(connection.Mediator.Errors);
 
 
             CheckNotification();
@@ -515,7 +515,7 @@ namespace Npgsql
             // Check if there were any errors.
             // [FIXME] Just check the first error.
             if (connection.Mediator.Errors.Count > 0)
-                throw new NpgsqlException(resman.GetString("Exception_BackendErrors"), connection.Mediator.Errors);
+                throw new NpgsqlException(connection.Mediator.Errors);
 
 
 
@@ -829,7 +829,7 @@ namespace Npgsql
 
             }//while
             if(!found)
-                throw new NpgsqlException(String.Format(resman.GetString("Exception_ParamNotInQuery"), parameterName));
+                throw new Exception(String.Format(resman.GetString("Exception_ParamNotInQuery"), parameterName));
 
             return result;
         }//ReplaceParameterValue

@@ -52,6 +52,9 @@ namespace Npgsql
         private String _line;
         private String _routine;
 
+        /// <summary>
+        /// Severity code.  All versions.
+        /// </summary>
         public String Severity
         {
             get
@@ -60,6 +63,9 @@ namespace Npgsql
             }
         }
 
+        /// <summary>
+        /// Error code.  PostgreSQL 7.4 and up.
+        /// </summary>
         public String Code
         {
             get
@@ -68,6 +74,9 @@ namespace Npgsql
             }
         }
 
+        /// <summary>
+        /// Terse error message.  All versions.
+        /// </summary>
         public String Message
         {
             get
@@ -76,6 +85,20 @@ namespace Npgsql
             }
         }
 
+        /// <summary>
+        /// Detailed error message.  PostgreSQL 7.4 and up.
+        /// </summary>
+        public String Detail
+        {
+            get
+            {
+                return _detail;
+            }
+        }
+
+        /// <summary>
+        /// Suggestion to help resolve the error.  PostgreSQL 7.4 and up.
+        /// </summary>
         public String Hint
         {
             get
@@ -84,6 +107,81 @@ namespace Npgsql
             }
         }
 
+        /// <summary>
+        /// Position (one based) within the query string where the error was encounterd.  PostgreSQL 7.4 and up.
+        /// </summary>
+        public String Position
+        {
+            get
+            {
+                return _position;
+            }
+        }
+
+        /// <summary>
+        /// Trace back information.  PostgreSQL 7.4 and up.
+        /// </summary>
+        public String Where
+        {
+            get
+            {
+                return _where;
+            }
+        }
+
+        /// <summary>
+        /// Source file (in backend) reporting the error.  PostgreSQL 7.4 and up.
+        /// </summary>
+        public String File
+        {
+            get
+            {
+                return _file;
+            }
+        }
+
+        /// <summary>
+        /// Source file line number (in backend) reporting the error.  PostgreSQL 7.4 and up.
+        /// </summary>
+        public String Line
+        {
+            get
+            {
+                return _line;
+            }
+        }
+
+        /// <summary>
+        /// Source routine (in backend) reporting the error.  PostgreSQL 7.4 and up.
+        /// </summary>
+        public String Routine
+        {
+            get
+            {
+                return _routine;
+            }
+        }
+
+        public override String ToString()
+        {
+            StringBuilder     B = new StringBuilder();
+
+            if (Severity.Length > 0)
+            {
+                B.AppendFormat("{0}: ", Severity);
+            }
+            if (Code.Length > 0)
+            {
+                B.AppendFormat("{0}: ", Code);
+            }
+            B.AppendFormat("{0}", Message);
+            // CHECKME - possibly multi-line, that is yucky
+            //            if (Hint.Length > 0) {
+            //                B.AppendFormat(" ({0})", Hint);
+            //            }
+
+            return B.ToString();
+        }
 
         private NpgsqlError()
         {}

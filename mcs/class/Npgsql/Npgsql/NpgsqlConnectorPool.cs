@@ -206,7 +206,7 @@ namespace Npgsql
                         timeoutMilliseconds -= 900;
                     }
 
-                    throw new NpgsqlException("Timeout while getting a connection from pool.");
+                    throw new Exception("Timeout while getting a connection from pool.");
 
                 }
 

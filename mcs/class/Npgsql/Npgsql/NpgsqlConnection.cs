@@ -388,7 +388,7 @@ namespace Npgsql
 
                 // Check if the connection is already open.
                 if (connection_state == ConnectionState.Open)
-                    throw new NpgsqlException(resman.GetString("Exception_ConnOpen"));
+                    throw new InvalidOperationException(resman.GetString("Exception_ConnOpen"));
 
                 lock(ConnectorPool.ConnectorPoolMgr)
                 {
@@ -429,7 +429,7 @@ namespace Npgsql
 
                         // Keep checking for errors...
                         if(_mediator.Errors.Count > 0)
-                            throw new NpgsqlException(resman.GetString("Exception_BackendErrors"), _mediator.Errors);
+                            throw new NpgsqlException(_mediator.Errors);
 
                     }
 
@@ -483,7 +483,8 @@ namespace Npgsql
                 // [TODO] Better exception handling. :)
                 Close();
 
-                throw new NpgsqlException(resman.GetString("Exception_OpenError"), e);
+                //throw new NpgsqlException(resman.GetString("Exception_OpenError"), e);
+                throw e;
             }
 
         }
@@ -541,10 +542,6 @@ namespace Npgsql
                         CurrentState.Close(this);
                     }
 
-                }
-                catch (IOException e)
-                {
-                    throw new NpgsqlException(resman.GetString("Exception_CloseError"), e);
                 }
                 finally
                 {

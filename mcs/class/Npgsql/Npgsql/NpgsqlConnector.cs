@@ -193,7 +193,7 @@ namespace Npgsql
             {
                 if ( this.mOpen ) // uuuuugh, bad habits...
                 {
-                    throw new Npgsql.NpgsqlException( "Connection strings "
+                    throw new InvalidOperationException( "Connection strings "
                                                       + " cannot be modified if connection is open." );
                 }
                 mConnectString = value;

@@ -115,7 +115,7 @@ namespace Npgsql
             if ((value.ParameterName == null) ||
                     (value.ParameterName.Trim() == String.Empty) ||
                     (value.ParameterName.Length == 1 && value.ParameterName[0] == ':'))
-                throw new NpgsqlException(String.Format(this.resman.GetString("Exception_InvalidParameterName"), value.ParameterName));
+                throw new ArgumentException(String.Format(this.resman.GetString("Exception_InvalidParameterName"), value.ParameterName));
 
             this.InternalList.Add(value);
             return value;
