@@ -282,7 +282,6 @@ namespace MonoTests.System.Threading {
 			AssertEquals("#41 Unexpected Priority Change: ",before,after);
 		}
 
-		[Ignore("these tests fail randomly")]
 		public void TestPriority2()
 		{
 			C2Test test1 = new C2Test();
@@ -295,7 +294,6 @@ namespace MonoTests.System.Threading {
 			AssertEquals("#44 Incorrect Priority in Aborted thread: ",ThreadPriority.Normal, TestThread.Priority);
 		}
 
-		[Ignore("these tests fail randomly")]
 		public void TestPriority3()
 		{
 			
@@ -316,7 +314,6 @@ namespace MonoTests.System.Threading {
 		}
 
 
-		[Ignore("these tests fail randomly")]
 		public void TestIsBackground1()
 		{
 			C2Test test1 = new C2Test();
@@ -328,7 +325,6 @@ namespace MonoTests.System.Threading {
 			Assert("#51 IsBackground not set at the default state: ",!(state));
 		}
 
-		[Ignore("these tests fail randomly")]
 		public void TestIsBackground2()
 		{
 			C2Test test1 = new C2Test();
@@ -354,7 +350,6 @@ namespace MonoTests.System.Threading {
 			TestThread.Abort();
 		}
 
-		[Ignore("these tests fail randomly")]
 		public void TestNestedThreads1()
 		{
 			C3Test  test1 = new C3Test();
@@ -371,7 +366,6 @@ namespace MonoTests.System.Threading {
 			}
 		}
 
-		[Ignore("causes seg fault on mono")]
 		public void TestNestedThreads2()
 		{
 			C4Test test1 = new C4Test();

@@ -1,3 +1,8 @@
+2004-06-10  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ThreadTest.cs: Removed Ignore attribute from several threading tests that
+	  failed because of Thread.Abort.
+
 2004-05-01  Nick Drochak <ndrochak@gol.com>
 
 	* ThreadTest.cs: Un-ignore some tests that seem to run pretty well
