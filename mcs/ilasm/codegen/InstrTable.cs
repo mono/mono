@@ -143,6 +143,14 @@ namespace Mono.ILASM {
                         inst_table["conv.ovf.u4"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_u4);
                         inst_table["conv.ovf.i8"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_i8);
                         inst_table["conv.ovf.u8"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_u8);
+                        inst_table["conv.ovf.u1.un"] = new ILToken (Token.INSTR_NONE, Op.conf_ovf_u1_un);
+                        inst_table["conv.ovf.u2.un"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_u2_un);
+                        inst_table["conv.ovf.u4.un"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_u4_un);
+                        inst_table["conv.ovf.u8.un"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_u8_un);
+                        inst_table["conv.ovf.i1.un"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_i1_un);
+                        inst_table["conv.ovf.i2.un"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_i2_un);
+                        inst_table["conv.ovf.i4.un"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_i4_un);
+                        inst_table["conv.ovf.i8.un"] = new ILToken (Token.INSTR_NONE, Op.conv_ovf_i8_un);
                         inst_table["ckfinite"] = new ILToken (Token.INSTR_NONE, Op.ckfinite);
                         inst_table["conv.u2"] = new ILToken (Token.INSTR_NONE, Op.conv_u2);
                         inst_table["conv.u1"] = new ILToken (Token.INSTR_NONE, Op.conv_u1);

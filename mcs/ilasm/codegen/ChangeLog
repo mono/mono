@@ -1,3 +1,7 @@
+2003-05-22 Jackson Harper <jackson@latitudegeo.com>
+
+	* InstrTable.cs: Add unsigned conversion instructions.
+		
 2003-05-21 Jackson Harper <jackson@latitudegeo.com>
 
 	* CalliInstr.cs: New file - The calli instruction
