@@ -192,6 +192,27 @@
 	The `ToXXXX' methods are the entry point, and provide error
 	reporting in case a conversion can not be performed.
 
+** Constant Folding
+
+	The C# language requires constant folding to be implemented.
+	Constant folding is hooked up in the Binary.Resolve method.
+	If both sides of a binary expression are constants, then the
+	ConstantFold.BinaryFold routine is invoked.  
+
+	This routine implements all the binary operator rules, it
+	is a mirror of the code that generates code for binary
+	operators, but that has to be evaluated at runtime.
+
+	If the constants can be folded, then a new constant expression
+	is returned, if not, then the null value is returned (for
+	example, the concatenation of a string constant and a numeric
+	constant is deferred to the runtime). 
+
+** Side effects
+
+	a [i++]++ 
+	a [i++] += 5;
+
 ** Statements
 
 * The semantic analysis 
@@ -312,3 +333,42 @@
 		* InUnsafe
 		  Whether we are inside an unsafe block
 		
+* Miscelaneous
+
+** Error Processing.
+
+	Errors are reported during the various stages of the
+	compilation process.  The compiler stops its processing if
+	there are errors between the various phases.  This simplifies
+	the code, because it is safe to assume always that the data
+	structures that the compiler is operating on are always
+	consistent.
+
+	The error codes in the Mono C# compiler are the same as those
+	found in the Microsoft C# compiler, with a few exceptions
+	(where we report a few more errors, those are documented in
+	mcs/errors/errors.txt).  The goal is to reduce confussion to
+	the users, and also to help us track the progress of the
+	compiler in terms of the errors we report. 
+
+	The Report class provides error and warning display functions,
+	and also keeps an error count which is used to stop the
+	compiler between the phases.  
+
+	A couple of debugging tools are available here, and are useful
+	when extending or fixing bugs in the compiler.  If the
+	`--fatal' flag is passed to the compiler, the Report.Error
+	routine will throw an exception.  This can be used to pinpoint
+	the location of the bug and examine the variables around the
+	error location.
+
+	Warnings can be turned into errors by using the `--werror'
+	flag to the compiler. 
+
+	The report class also ignores warnings that have been
+	specified on the command line with the `--nowarn' flag.
+
+	Finally, code in the compiler uses the global variable
+	RootContext.WarningLevel in a few places to decide whether a
+	warning is worth reporting to the user or not.  
+
