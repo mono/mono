@@ -1,3 +1,9 @@
+2002-09-24  Martin Baulig  <martin@gnome.org>
+
+	* debug.c (mono_debug_open): When we're invoked from inside the
+	Mono Debugger, set mono_debugger_class_init_func (exported in
+	metadata/class.c) to mono_add_type().
+	(mono_add_type): Call mono_debug_symfile_add_type().
 
 Tue Sep 24 11:34:02 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
