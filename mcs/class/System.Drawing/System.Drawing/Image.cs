@@ -115,7 +115,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	public void Save (string filename)
 	{
 		// Fixme: implement me
-		throw new NotImplementedException ();
+		implementation_.Save(filename);
 	}
 
 	//public void Save(Stream stream, ImageFormat format);

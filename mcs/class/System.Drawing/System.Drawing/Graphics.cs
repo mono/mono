@@ -438,25 +438,25 @@ namespace System.Drawing
 		[MonoTODO]
 		public void DrawLine (Pen pen, PointF pt1, PointF pt2)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawLine(pen, pt1, pt2);
 		}
 
 		[MonoTODO]
 		public void DrawLine (Pen pen, Point pt1, Point pt2)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawLine(pen, pt1, pt2);
 		}
 
 		[MonoTODO]
 		public void DrawLine (Pen pen, int x1, int y1, int x2, int y2)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawLine(pen, x1, y1, x2, y2);
 		}
 
 		[MonoTODO]
 		public void DrawLine (Pen pen, float x1, float y1, float x2, float y2)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawLine(pen, x1, y1, x2, y2);
 		}
 
 		[MonoTODO]
