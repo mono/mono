@@ -48,6 +48,9 @@ namespace System.Runtime.Remoting.Proxies
 		{
 			MonoMethodMessage mMsg = (MonoMethodMessage) request;
 
+			if (mMsg.CallType == CallType.EndInvoke)
+				return mMsg.AsyncResult.EndInvoke ();
+
 			if (mMsg.MethodBase.IsConstructor)
 				return ActivateRemoteObject (mMsg);
 
@@ -71,15 +74,16 @@ namespace System.Runtime.Remoting.Proxies
 			else
 				sink = _sink;
 
-			if (RemotingServices.IsAsyncMessage (request))
+			if (mMsg.CallType == CallType.Sync)
+				response = sink.SyncProcessMessage (request);
+			else
 			{
 				AsyncResult ares = ((MonoMethodMessage)request).AsyncResult;
 				IMessageCtrl mctrl = sink.AsyncProcessMessage (request, ares);
 				if (ares != null) ares.SetMessageCtrl (mctrl);
 				response = new ReturnMessage (null, new object[0], 0, null, mMsg);
 			}
-			else
-				response = sink.SyncProcessMessage (request);
+
 			_objectIdentity.NotifyClientDynamicSinks (false, request, true, false);
 
 			if (!(response is IConstructionReturnMessage))
