@@ -163,6 +163,8 @@ System.Security.Policy/StrongNameTest.cs
 System.Security.Policy/ZoneTest.cs
 System.Security.Principal/GenericIdentityTest.cs
 System.Security.Principal/GenericPrincipalTest.cs
+System.Security.Principal/WindowsIdentityTest.cs
+System.Security.Principal/WindowsPrincipalTest.cs
 System.Security/SecurityElementTest.cs
 System/SingleFormatterTest.cs
 System/StringTest.cs
