@@ -20,6 +20,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Mono.CSharp {
+
 	/// <summary>
 	///   Base class for objects that can have Attributes applied to them.
 	/// </summary>
@@ -81,7 +82,7 @@ namespace Mono.CSharp {
 				return usage_attribute;
 			}
 		}
-
+		
 		MethodImplOptions ImplOptions;
 		UnmanagedType     UnmanagedType;
 		CustomAttributeBuilder cb;
@@ -91,11 +92,10 @@ namespace Mono.CSharp {
 		FieldInfo [] field_info_arr;
 		object [] field_values_arr;
 		object [] prop_values_arr;
-		
- 		object [] pos_values;
+		object [] pos_values;
 
 		static PtrHashtable usage_attr_cache = new PtrHashtable ();
-
+		
 		public Attribute (string target, string name, ArrayList args, Location loc)
 		{
 			Name = name;
@@ -156,8 +156,7 @@ namespace Mono.CSharp {
 				Report.Error(1614, Location, "'" + Name + "': is ambiguous; " 
 					     + " use either '@" + Name + "' or '" + Name + "Attribute'");
 				return null;
-  			}
-
+			}
 			if (t1 != null)
 				return t1.ResolveType (ec);
 			if (t2 != null)
@@ -166,10 +165,11 @@ namespace Mono.CSharp {
 				Report.Error (616, Location, err0616);
 				return null;
 			}
+
 			if (complain)
-				Report.Error (
-					246, Location, "Could not find attribute '" + Name + "' (are you" +
-					" missing a using directive or an assembly reference ?)");
+				Report.Error (246, Location, 
+					      "Could not find attribute '" + Name 
+					      + "' (are you missing a using directive or an assembly reference ?)");
 			return null;
 		}
 
@@ -226,7 +226,7 @@ namespace Mono.CSharp {
 		public CustomAttributeBuilder Resolve (EmitContext ec)
 		{
 			Type oldType = Type;
-
+			
 			// Sanity check.
 			Type = CheckAttributeType (ec, true);
 			if (oldType == null && Type == null)
@@ -325,14 +325,14 @@ namespace Mono.CSharp {
 			ArrayList field_values = null;
 			ArrayList prop_values = null;
 
-			Hashtable seen_names = new Hashtable();
-
 			if (named_args.Count > 0) {
 				field_infos = new ArrayList ();
 				prop_infos  = new ArrayList ();
 				field_values = new ArrayList ();
 				prop_values = new ArrayList ();
 			}
+
+			Hashtable seen_names = new Hashtable();
 			
 			for (i = 0; i < named_args.Count; i++) {
 				DictionaryEntry de = (DictionaryEntry) named_args [i];
@@ -343,9 +343,9 @@ namespace Mono.CSharp {
 				if (seen_names.Contains(member_name)) {
 					Report.Error(643, Location, "'" + member_name + "' duplicate named attribute argument");
 					return null;
-				}
+				}				
 				seen_names.Add(member_name, 1);
-
+				
 				if (!a.Resolve (ec, Location))
 					return null;
 
@@ -377,14 +377,14 @@ namespace Mono.CSharp {
 
 					if (e is Constant) {
 						Constant c;
-
+						
 						if (e.Type != pi.PropertyType){
 							c = Const.ChangeType (Location, (Constant) e, pi.PropertyType);
 							if (c == null)
 								return null;
 						} else
 							c = (Constant) e;
-
+						
 						object o = c.GetValue ();
 						prop_values.Add (o);
 						
@@ -420,13 +420,13 @@ namespace Mono.CSharp {
 					
 					if (e is Constant){
 						Constant c = (Constant) e;;
-
+						
 						if (c.Type != fi.FieldType){
 							c = Const.ChangeType (Location, (Constant) e, fi.FieldType);
 							if (c == null)
 								return null;
-						}
-
+						} 
+						
 						object value = c.GetValue ();
 						field_values.Add (value);
 					} else if (e is TypeOf) {
@@ -470,7 +470,7 @@ namespace Mono.CSharp {
 			int pc = pd.Count;
 			if (pc > 0 && pd.ParameterModifier (pc-1) == Parameter.Modifier.PARAMS)
 				group_in_params_array = pc-1;
-			
+
 			for (int j = 0; j < pos_arg_count; ++j) {
 				Argument a = (Argument) pos_args [j];
 				
@@ -552,14 +552,14 @@ namespace Mono.CSharp {
 			return cb;
 		}
 
-                /// <summary>
-                ///   Get a string containing a list of valid targets for the attribute 'attr'
-                /// </summary>
+		/// <summary>
+		///   Get a string containing a list of valid targets for the attribute 'attr'
+		/// </summary>
 		static string GetValidTargets (Attribute attr)
 		{
 			StringBuilder sb = new StringBuilder ();
 			AttributeTargets targets = attr.GetAttributeUsage ().ValidOn;
-			
+
 			if ((targets & AttributeTargets.Assembly) != 0)
 				sb.Append ("'assembly' ");
 
@@ -614,9 +614,10 @@ namespace Mono.CSharp {
 				"It is valid on " + GetValidTargets (a) + "declarations only.");
 		}
 
-                /// <summary>
+
+		/// <summary>
 		/// Returns AttributeUsage attribute for this type
-                /// </summary>
+		/// </summary>
 		public AttributeUsageAttribute GetAttributeUsage ()
 		{
 			AttributeUsageAttribute ua = usage_attr_cache [Type] as AttributeUsageAttribute;
@@ -631,9 +632,10 @@ namespace Mono.CSharp {
 				usage_attr_cache.Add (Type, ua);
 				return ua;
 			}
-
+		
 			return attr_class.AttributeUsage;
 		}
+
 
 		//
 		// This pulls the condition name out of a Conditional attribute
@@ -712,42 +714,41 @@ namespace Mono.CSharp {
 				Error_AttributeConstructorMismatch ();
 				return null;
 			}
-
+			
 			Argument arg = (Argument) pos_args [0];
 			if (!arg.Resolve (ec, Location))
 				return null;
-
+			
 			StringConstant sc = arg.Expr as StringConstant;
 			if (sc == null){
 				Error_AttributeConstructorMismatch ();
 				return null;
 			}
-
+			
 			return sc.Value;
 		}
 
- 		/// <summary>
- 		/// Returns value of CLSCompliantAttribute contructor parameter but because the method can be called
- 		/// before ApplyAttribute. We need to resolve the arguments.
- 		/// This situation occurs when class deps is differs from Emit order.  
- 		/// </summary>
- 		public bool GetClsCompliantAttributeValue (DeclSpace ds)
- 		{
- 			if (pos_values == null) {
- 				EmitContext ec = new EmitContext (ds, ds, Location, null, null, 0, false);
+		/// <summary>
+		/// Returns value of CLSCompliantAttribute contructor parameter but because the method can be called
+		/// before ApplyAttribute. We need to resolve the arguments.
+		/// This situation occurs when class deps is differs from Emit order.  
+		/// </summary>
+		public bool GetClsCompliantAttributeValue (DeclSpace ds)
+		{
+			if (pos_values == null) {
+				EmitContext ec = new EmitContext (ds, ds, Location, null, null, 0, false);
 
 				// TODO: It is not neccessary to call whole Resolve (ApplyAttribute does it now) we need only ctor args.
- 				// But because a lot of attribute class code must be rewritten will be better to wait...
-
- 				Resolve (ec);
- 			}
+				// But because a lot of attribute class code must be rewritten will be better to wait...
+				Resolve (ec);
+			}
 
 			// Some error occurred
- 			if (pos_values [0] == null)
- 				return false;
+			if (pos_values [0] == null)
+				return false;
 
 			return (bool)pos_values [0];
- 		}
+		}
 
 		public object GetPositionalValue (int i)
 		{
@@ -769,35 +770,36 @@ namespace Mono.CSharp {
 		}
 
 		public UnmanagedMarshal GetMarshal ()
-                {
+		{
 			object o = GetFieldValue ("ArraySubType");
 			UnmanagedType array_sub_type = o == null ? UnmanagedType.I4 : (UnmanagedType) o;
+			
 			switch (UnmanagedType) {
 			case UnmanagedType.CustomMarshaler:
 				MethodInfo define_custom = typeof (UnmanagedMarshal).GetMethod ("DefineCustom",
                                                                        BindingFlags.Static | BindingFlags.Public);
 				if (define_custom == null)
 					return null;
-
+				
 				object [] args = new object [4];
 				args [0] = GetFieldValue ("MarshalTypeRef");
 				args [1] = GetFieldValue ("MarshalCookie");
 				args [2] = GetFieldValue ("MarshalType");
 				args [3] = Guid.Empty;
 				return (UnmanagedMarshal) define_custom.Invoke (null, args);
-
+				
 			case UnmanagedType.LPArray:				
 				return UnmanagedMarshal.DefineLPArray (array_sub_type);
-
+			
 			case UnmanagedType.SafeArray:
 				return UnmanagedMarshal.DefineSafeArray (array_sub_type);
-
+			
 			case UnmanagedType.ByValArray:
 				return UnmanagedMarshal.DefineByValArray ((int) GetFieldValue ("SizeConst"));
-
+			
 			case UnmanagedType.ByValTStr:
 				return UnmanagedMarshal.DefineByValTStr ((int) GetFieldValue ("SizeConst"));
-
+			
 			default:
 				return UnmanagedMarshal.DefineUnmanagedMarshal (UnmanagedType);
 			}
@@ -813,13 +815,13 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-  		/// <summary>
+		/// <summary>
 		/// Emit attribute for Attributable symbol
-  		/// </summary>
+		/// </summary>
 		public void Emit (EmitContext ec, Attributable ias, ListDictionary emitted_attr)
 		{
 			CustomAttributeBuilder cb = Resolve (ec);
-			if (cb == null) 
+			if (cb == null)
 				return;
 
 			AttributeUsageAttribute usage_attr = GetAttributeUsage ();
@@ -849,7 +851,6 @@ namespace Mono.CSharp {
 					return;
 
 				ArrayList pos_args = (ArrayList) Arguments [0];
-
 				if (pos_args != null) {
 					foreach (Argument arg in pos_args) { 
 						// Type is undefined (was error 246)
@@ -862,12 +863,11 @@ namespace Mono.CSharp {
 						}
 					}
 				}
-
+			
 				if (Arguments.Count < 2)
 					return;
-
+			
 				ArrayList named_args = (ArrayList) Arguments [1];
-
 				foreach (DictionaryEntry de in named_args) {
 					Argument arg  = (Argument) de.Value;
 
@@ -884,14 +884,14 @@ namespace Mono.CSharp {
 		}
 
 		public object GetValue (EmitContext ec, Constant c, Type target)
- 		{
- 			if (Convert.ImplicitConversionExists (ec, c, target))
- 				return c.GetValue ();
+		{
+			if (Convert.ImplicitConversionExists (ec, c, target))
+				return c.GetValue ();
 
 			Convert.Error_CannotImplicitConversion (Location, c.Type, target);
- 			return null;
+			return null;
 		}
-
+		
 		public MethodBuilder DefinePInvokeMethod (EmitContext ec, TypeBuilder builder, string name,
 							  MethodAttributes flags, Type ret_type, Type [] param_types)
 		{
@@ -972,15 +972,15 @@ namespace Mono.CSharp {
 					if (a.Expr is Constant) {
 						Constant c = (Constant) a.Expr;
 
- 						try {
- 							if (member_name == "CallingConvention"){
- 								object val = GetValue (ec, c, typeof (CallingConvention));
+						try {
+							if (member_name == "CallingConvention"){
+								object val = GetValue (ec, c, typeof (CallingConvention));
 								if (val == null)
- 									return null;
- 								cc = (CallingConvention) val;
+									return null;
+								cc = (CallingConvention) val;
 							} else if (member_name == "CharSet"){
 								charset = (CharSet) c.GetValue ();
- 							} else if (member_name == "EntryPoint")
+							} else if (member_name == "EntryPoint")
 								entry_point = (string) c.GetValue ();
 							else if (member_name == "SetLastError")
 								set_last_err = (bool) c.GetValue ();
@@ -991,9 +991,9 @@ namespace Mono.CSharp {
 							else if (member_name == "PreserveSig")
 								preserve_sig = (bool) c.GetValue ();
 						} catch (InvalidCastException){
- 							Error_InvalidNamedArgument (member_name);
- 							Error_AttributeArgumentNotValid (Location);
- 						}
+							Error_InvalidNamedArgument (member_name);
+							Error_AttributeArgumentNotValid (Location);
+						}
 					} else { 
 						Error_AttributeArgumentNotValid (Location);
 						return null;
@@ -1021,36 +1021,38 @@ namespace Mono.CSharp {
 			return mb;
 		}
 
- 		private Expression GetValue () 
- 		{
- 			if ((Arguments == null) || (Arguments.Count < 1))
- 				return null;
- 			ArrayList al = (ArrayList) Arguments [0];
+		private Expression GetValue () 
+		{
+			if ((Arguments == null) || (Arguments.Count < 1))
+				return null;
+			ArrayList al = (ArrayList) Arguments [0];
 			if ((al == null) || (al.Count < 1))
- 				return null;
- 			Argument arg = (Argument) al [0];
- 			if ((arg == null) || (arg.Expr == null))
- 				return null;
- 			return arg.Expr;
- 		}
+				return null;
+			Argument arg = (Argument) al [0];
+			if ((arg == null) || (arg.Expr == null))
+				return null;
+			return arg.Expr;
+		}
 
 		public string GetString () 
- 		{
- 			Expression e = GetValue ();
- 			if (e is StringLiteral)
- 				return (e as StringLiteral).Value;
- 			return null;
- 		}
+		{
+			Expression e = GetValue ();
+			if (e is StringLiteral)
+				return (e as StringLiteral).Value;
+			return null;
+		}
 
 		public bool GetBoolean () 
- 		{
- 			Expression e = GetValue ();
- 			if (e is BoolLiteral)
- 				return (e as BoolLiteral).Value;
- 			return false;
- 		}
+		{
+			Expression e = GetValue ();
+			if (e is BoolLiteral)
+				return (e as BoolLiteral).Value;
+			return false;
+		}
 	}
 	
+
+	/// <summary>
 	/// For global attributes (assembly, module) we need special handling.
 	/// Attributes can be located in the several files
 	/// </summary>
@@ -1142,9 +1144,8 @@ namespace Mono.CSharp {
 		{
 			ListDictionary ld = new ListDictionary ();
 
-			foreach (Attribute a in Attrs) {
+			foreach (Attribute a in Attrs)
 				a.Emit (ec, ias, ld);
-			}
 		}
 
 		public bool Contains (Type t, EmitContext ec)
@@ -1172,7 +1173,8 @@ namespace Mono.CSharp {
 
 			return a.IndexerName_GetIndexerName (ec);
 		}
- 	}
+
+	}
 
 	/// <summary>
 	/// Helper class for attribute verification routine.
