@@ -1,5 +1,10 @@
 2004-09-05 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* RemotingServices.cs (IsMethodOverloaded): use the internal
+	method GetMethodsByName. It does much less work than GetMembers.
+
+2004-09-05 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* RemotingServices.cs (IsOneWay): use IsDefined rather than
 	GetCustomAttributes. It is much faster.
 

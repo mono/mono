@@ -380,10 +380,9 @@ namespace System.Runtime.Remoting
 
 		public static bool IsMethodOverloaded(IMethodMessage msg)
 		{
-			// TODO: use internal call for better performance
-			Type type = msg.MethodBase.DeclaringType;
-			MemberInfo[] members = type.GetMember (msg.MethodName, MemberTypes.Method, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-			return members.Length > 1;
+			const BindingFlags bfinst = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
+			MonoType type = (MonoType) msg.MethodBase.DeclaringType;
+			return type.GetMethodsByName (msg.MethodName, bfinst, false, type).Length > 1;
 		}
 
 		public static bool IsObjectOutOfAppDomain(object tp)
