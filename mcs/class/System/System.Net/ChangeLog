@@ -1,3 +1,8 @@
+2004-12-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CookieCollection.cs: reformatted, fixed Add by adding a new method to
+	search across the arraylist, as list.IndexOf is not what we want.
+
 2004-11-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnection.cs: check for FIN or RST on the socket before reusing.

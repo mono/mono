@@ -1,8 +1,11 @@
 //
 // System.Net.CookieCollection
 //
-// Author:
-//   Lawrence Pit (loz@cable.a2000.nl)
+// Authors:
+// 	Lawrence Pit (loz@cable.a2000.nl)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//
+// (c) Copyright 2004 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -28,6 +31,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace System.Net 
@@ -35,15 +39,9 @@ namespace System.Net
 	[Serializable]
 	public class CookieCollection : ICollection, IEnumerable
 	{
-		private ArrayList list = new ArrayList ();
-		
-		// ctor
-		public CookieCollection () 
-		{
-		}
+		ArrayList list = new ArrayList (4);
 
 		// ICollection
-
 		public int Count {
 			get { return list.Count; }
 		}
@@ -61,71 +59,84 @@ namespace System.Net
 			list.CopyTo (array, arrayIndex);
 		}
 
-
 		// IEnumerable
-
 		public IEnumerator GetEnumerator ()
 		{
 			return list.GetEnumerator ();
 		}
-		
-		
+
 		// This
-		
+
 		// LAMESPEC: So how is one supposed to create a writable CookieCollection 
 		// instance?? We simply ignore this property, as this collection is always
 		// writable.
 		public bool IsReadOnly {
 			get { return true; }
 		}		
-		
-		// LAMESPEC: Which exception should we throw when the read only 
-		// property is set to true??
+
 		public void Add (Cookie cookie) 
 		{
 			if (cookie == null)
 				throw new ArgumentNullException ("cookie");
-			int pos = list.IndexOf (cookie);
+
+			int pos = SearchCookie (cookie);
 			if (pos == -1)
 				list.Add (cookie);
 			else 
 				list [pos] = cookie;
-		}		
-		
-		// LAMESPEC: Which exception should we throw when the read only 
-		// property is set to true??
+		}
+
+		int SearchCookie (Cookie cookie)
+		{
+			string name = cookie.Name;
+			string domain = cookie.Domain;
+			string path = cookie.Path;
+
+			for (int i = list.Count - 1; i >= 0; i--) {
+				Cookie c = (Cookie) list [i];
+				if (0 != String.Compare (domain, c.Domain, true, CultureInfo.InvariantCulture))
+					continue;
+
+				if (0 != String.Compare (name, c.Name, true, CultureInfo.InvariantCulture))
+					continue;
+
+				if (0 != String.Compare (path, c.Path, true, CultureInfo.InvariantCulture))
+					continue;
+
+				return i;
+			}
+
+			return -1;
+		}
+
 		public void Add (CookieCollection cookies) 
 		{
 			if (cookies == null)
 				throw new ArgumentNullException ("cookies");
-				
-			IEnumerator enumerator = cookies.list.GetEnumerator ();
-			while (enumerator.MoveNext ())
-				Add ((Cookie) enumerator.Current);
+
+			foreach (Cookie c in cookies)
+				Add (c);
 		}
-		
+
 		public Cookie this [int index] {
 			get {
 				if (index < 0 || index >= list.Count)
 					throw new ArgumentOutOfRangeException ("index");
+
 				return (Cookie) list [index];
 			}
-		}		
-				
+		}
+
 		public Cookie this [string name] {
 			get {
-				lock (this) {
-					IEnumerator enumerator = list.GetEnumerator ();
-					while (enumerator.MoveNext ())		
-						if (String.Compare (((Cookie) enumerator.Current).Name, name, true) == 0)
-							return (Cookie) enumerator.Current;
+				foreach (Cookie c in list) {
+					if (0 == String.Compare (c.Name, name, true))
+						return c;
 				}
 				return null;
 			}
-		}		
-		
+		}
 
 	} // CookieCollection
-
 } // System.Net
 
