@@ -46,6 +46,7 @@ namespace System.Reflection.Emit {
 		string mcookie;
 		string marshaltype;
 		Type marshaltyperef;
+		private int param_num;
 		
 		private UnmanagedMarshal (UnmanagedType maint, int cnt) {
 			count = cnt;
@@ -111,6 +112,14 @@ namespace System.Reflection.Emit {
 			return res;
 		}
 
+		internal static UnmanagedMarshal DefineLPArrayInternal (UnmanagedType elemType, int sizeConst, int sizeParamIndex) {
+			UnmanagedMarshal res = new UnmanagedMarshal (UnmanagedType.LPArray, elemType);
+			res.count = sizeConst;
+			res.param_num = sizeParamIndex;
+
+			return res;
+		}
+
 		internal MarshalAsAttribute ToMarshalAsAttribute () {
 			MarshalAsAttribute attr = new MarshalAsAttribute (t);
 			attr.ArraySubType = tbase;
@@ -118,6 +127,7 @@ namespace System.Reflection.Emit {
 			attr.MarshalType = marshaltype;
 			attr.MarshalTypeRef = marshaltyperef;
 			attr.SizeConst = count;
+			attr.SizeParamIndex = (short)param_num;
 			return attr;
 		}
 	}

@@ -1,3 +1,11 @@
+2005-02-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* CustomAttributeBuilder.cs (get_umarshal): Marshal sizeConst and
+	sizeParamIndex fields as well.
+
+	* UnmanagedMarshal.cs: Add param_num field and a new internal creation
+	method which sets it.
+
 2005-02-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeBuilder.cs (IsAssignableTo): New helper method. Fixes #70838.

@@ -208,8 +208,9 @@ namespace System.Reflection.Emit {
 
 		internal static UnmanagedMarshal get_umarshal (CustomAttributeBuilder customBuilder, bool is_field) {
 			byte[] data = customBuilder.Data;
-			UnmanagedType subtype = UnmanagedType.I4;
+			UnmanagedType subtype = (UnmanagedType)0x50; /* NATIVE_MAX */
 			int sizeConst = 0;
+			int sizeParamIndex = 0;
 			int value;
 			int utype; /* the (stupid) ctor takes a short or an enum ... */
 			Type marshalTypeRef = null;
@@ -247,6 +248,11 @@ namespace System.Reflection.Emit {
 					value |= ((int)data [pos++]) << 24;
 					sizeConst = value;
 					break;
+				case "SizeSizeParamIndex":
+					value = (int)data [pos++];
+					value |= ((int)data [pos++]) << 8;
+					sizeParamIndex = value;
+					break;
 				case "MarshalTypeRef":
 				case "MarshalType":
 					len = decode_len (data, pos, out pos);
@@ -268,7 +274,7 @@ namespace System.Reflection.Emit {
 
 			switch ((UnmanagedType)utype) {
 			case UnmanagedType.LPArray:
-				return UnmanagedMarshal.DefineLPArray (subtype);
+				return UnmanagedMarshal.DefineLPArrayInternal (subtype, sizeConst, sizeParamIndex);
 			case UnmanagedType.SafeArray:
 				return UnmanagedMarshal.DefineSafeArray (subtype);
 			case UnmanagedType.ByValArray:
