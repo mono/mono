@@ -1,5 +1,7 @@
 2002-04-08  Dietmar Maurer  <dietmar@ximian.com>
 
+	* mempool.c (MEM_ALIGN): hardcode MEM_ALIGN to 8
+
 	* class.c (mono_class_vtable): use domain mempool to allocate vtable
 	(mono_class_proxy_vtable): use domain mempool
 
