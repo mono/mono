@@ -42,7 +42,7 @@ namespace demo
 			this.vScrollBar1.Size = new Size(24, 200);
 			this.vScrollBar1.TabIndex = 0;
 			this.vScrollBar1.ValueChanged += new EventHandler(this.vScrollBar1_ValueChanged);
-			this.vScrollBar1.ForeColor = Color.Brown;
+			
 			this.vScrollBar1.BackColor = Color.Brown;
 
 			this.hScrollBar1.Location = new System.Drawing.Point(50, 60);
@@ -58,12 +58,14 @@ namespace demo
 			this.button1.Text = "Apply";
 			this.button1.Click += new EventHandler(this.button1_Click);    
 			this.button1.Enabled = false;
+			
 
 			this.button2.Location = new Point(150, 85);
 			this.button2.Name = "button2";
 			this.button2.Size = new Size(128, 44);
 			this.button2.Text = "File";
 			this.button2.Click += new EventHandler(this.button2_Click); 
+			this.button2.ForeColor = Color.Brown;
 
 			this.copybutton.Click += new EventHandler(this.copybutton_Click); 
 			this.pastebutton.Click += new EventHandler(this.pastebutton_Click); 
