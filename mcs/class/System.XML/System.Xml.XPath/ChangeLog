@@ -1,5 +1,15 @@
 2004-03-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Expression.cs,
+	  Iterator.cs, :
+	  SlashIterator is now constructed with requireSorting parameter 
+	  that thus just use RequireSorting from both left/right Expressions, 
+	  not iterators.
+	  When attribute axis is on the left expression, the result needs to
+	  be sorted.
+
+2004-03-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Iterator.cs : Now for most of iterator types, Current property always
 	  returns the same instance. It results in huge memory reduction.
 

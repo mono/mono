@@ -841,12 +841,12 @@ namespace System.Xml.XPath
 		bool _finished;
 		BaseIterator _nextIterRight;
 
-		public SlashIterator (BaseIterator iter, NodeSet expr) : base (iter.NamespaceManager)
+		public SlashIterator (BaseIterator iter, NodeSet expr, bool requireSorting) : base (iter.NamespaceManager)
 		{
 			_iterLeft = iter;
 			_expr = expr;
 
-			if (_iterLeft.RequireSorting || _expr.RequireSorting)
+			if (requireSorting)
 				CollectResults ();
 		}
 

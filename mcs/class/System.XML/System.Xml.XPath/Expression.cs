@@ -984,7 +984,7 @@ namespace System.Xml.XPath
 		public override object Evaluate (BaseIterator iter)
 		{
 			BaseIterator iterLeft = left.EvaluateNodeSet (iter);
-			return new SlashIterator (iterLeft, right);
+			return new SlashIterator (iterLeft, right, left.RequireSorting || right.RequireSorting);
 		}
 
 		public override bool RequireSorting { get { return left.RequireSorting || right.RequireSorting; } }
@@ -1019,9 +1019,11 @@ namespace System.Xml.XPath
 			return new SlashIterator (
 				new SlashIterator (
 					left.EvaluateNodeSet (iter),
-					DescendantOrSelfStar
+					DescendantOrSelfStar,
+					left.RequireSorting || DescendantOrSelfStar.RequireSorting
 				),
-				right
+				right,
+				DescendantOrSelfStar.RequireSorting || right.RequireSorting
 			);
 		}
 
@@ -1193,6 +1195,7 @@ namespace System.Xml.XPath
 				case Axes.AncestorOrSelf:
 				case Axes.Preceding:
 				case Axes.PrecedingSibling:
+				case Axes.Attribute:
 				case Axes.Namespace:
 					return true;
 				default:
