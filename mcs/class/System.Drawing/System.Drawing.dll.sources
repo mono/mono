@@ -185,10 +185,8 @@ System.Drawing.Printing/Margins.cs
 System.Drawing.Printing/PageSettings.cs
 System.Drawing.Printing/PaperKind.cs
 System.Drawing.Printing/PaperSize.cs
-System.Drawing.Printing/PaperSourceCollection.cs
 System.Drawing.Printing/PaperSource.cs
 System.Drawing.Printing/PaperSourceKind.cs
-System.Drawing.Printing/PaperUnitConvert.cs
 System.Drawing.Printing/PreviewPageInfo.cs
 System.Drawing.Printing/PreviewPrintController.cs
 System.Drawing.Printing/PrintController.cs

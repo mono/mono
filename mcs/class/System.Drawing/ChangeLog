@@ -1,3 +1,6 @@
+2003-09-21  Alexandre Pigolkine <pigolkine@gmx.de>
+	* System.Drawing.dll.sources	removed 2 files from Printing namespace
+
 2003-08-31  Jerome Laban <jlaban@wanadoo.fr>
 	* Graphics.cs:
 	* win32functions.cs: Added Win32 Ellipse implementation. 
