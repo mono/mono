@@ -10,7 +10,6 @@
 
 namespace System.Windows.Forms {
 
-	[ComVisible(true)]
 	public interface IDataObject {
 
 		object GetData(string format);

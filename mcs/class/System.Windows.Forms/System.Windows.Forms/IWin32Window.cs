@@ -10,7 +10,6 @@
 
 namespace System.Windows.Forms {
 
-	[ComVisible(true)]
 	// FixMe [Guid("")]
 	// FixMe [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	public interface IWin32Window {
