@@ -51,7 +51,7 @@ class Z
 		// Compile this:
 		//
 
-		int b = (Int32)int.Parse ("1");
+		int b = (System.Int32)int.Parse ("1");
 		return 0;
 	}
 }
