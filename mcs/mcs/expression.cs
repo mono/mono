@@ -7354,7 +7354,8 @@ namespace Mono.CSharp {
 				return null;
 
 			if (member_lookup is TypeExpr) {
-				if (!(expr is TypeExpr)) {
+				if (!(expr is TypeExpr) && 
+				    !IdenticalNameAndTypeName (ec, original, expr, loc)) {
 					Error (572, "Can't reference type `" + Identifier + "' through an expression; try `" +
 					       member_lookup.Type + "' instead");
 					return null;

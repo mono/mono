@@ -1,3 +1,10 @@
+2005-01-25  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #71602.
+	* expression.cs (MemberAccess.DoResolve): Don't complain with
+	cs0572 when the LHS of a member access has identical name and type
+	name.
+
 2005-01-25  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #71651, #71675
