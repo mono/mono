@@ -1,3 +1,8 @@
+2005-03-01  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #73117
+	* report.cs (WarningMessage.IsEnabled): Missing null check.
+
 2005-02-28  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs (DefinePInvokeMethod): Fix, all data are stored

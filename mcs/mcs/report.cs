@@ -151,6 +151,9 @@ namespace Mono.CSharp {
 					return true;
 
 				WarningRegions regions = (WarningRegions)warning_regions_table [loc.Name];
+				if (regions == null)
+					return true;
+
 				return regions.IsWarningEnabled (code, loc.Row);
 			}
 
