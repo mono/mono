@@ -1,4 +1,6 @@
 2003-03-06  Sebastien Pouliot  <spouliot@videotron.ca>
 
+	* list.unix: New. All C# files required to build the assembly.
+	* makefile.gnu: New. Makefile to build the assembly under Linux.
 	* Mono.Security.build: New. NAnt build file. 
 

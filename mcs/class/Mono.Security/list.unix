@@ -1,0 +1,4 @@
+./Mono.Security/ASN1.cs
+./Mono.Security/ASN1Convert.cs
+./Mono.Security/PKCS7.cs
+./Mono.Security.Authenticode/SoftwarePublisherCertificate.cs
