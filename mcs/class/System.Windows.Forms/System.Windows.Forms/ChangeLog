@@ -1,4 +1,10 @@
 2003-05-07  Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* Control.cs : static RegisterDefaultWindowClass method was added
+	* ScrollableControl.cs : registration of "mono_scrollable_control" was moved to Control class
+	* win32functions.cs : new constant DEFAULT_WINDOW_CLASS
+	* PictureBox.cs : implemented
+
+2003-05-07  Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* Control.cs : use WS_OVERLAPPED instead of WS_OVERLAPPEDWINDOW, update text field in get Text property
 	* TextBox.cs : use styles provided by TextBoxBase
 	* TextBoxBase.cs : more methods and properties were implemented

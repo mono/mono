@@ -54,6 +54,7 @@
     		private Control parent;
     		static private Hashtable controlsCollection = new Hashtable ();
 		static private NativeWindow parkingWindow = null;
+		private static bool classRegistered = false;
 
     		// private fields
     		// it seems these are stored in case the window is not created,
@@ -902,6 +903,27 @@
 
 				return parkingWindow.Handle;
 			}
+		}
+
+		protected static void RegisterDefaultWindowClass ( )
+		{
+			if ( !classRegistered ) {
+				WNDCLASS wndClass = new WNDCLASS();
+ 
+				wndClass.style = (int) (CS_.CS_OWNDC);
+				wndClass.lpfnWndProc = NativeWindow.GetWindowProc();
+				wndClass.cbClsExtra = 0;
+				wndClass.cbWndExtra = 0;
+				wndClass.hInstance = (IntPtr)0;
+				wndClass.hIcon = (IntPtr)0;
+				wndClass.hCursor = Win32.LoadCursor( (IntPtr)0, LC_.IDC_ARROW);
+				wndClass.hbrBackground = (IntPtr)((int)GetSysColorIndex.COLOR_BTNFACE + 1);
+				wndClass.lpszMenuName = "";
+				wndClass.lpszClassName = Win32.DEFAULT_WINDOW_CLASS;
+    
+				if (Win32.RegisterClass(ref wndClass) != 0) 
+					classRegistered = true; 
+			}		
 		}
 
     		[MonoTODO]

@@ -4,154 +4,201 @@
 // Author:
 //   stubbed out by Hossein Safavi (hsafavi@purdue.edu)
 //	Dennis Hayes (dennish@raytek.com)
+//   Aleksey Ryabchuk (ryabchuk@yahoo.com)
 //
 // (C) 2002 Ximian, Inc
 //
+using System.Drawing;
+using System.ComponentModel;
 
 namespace System.Windows.Forms {
 
 	//<summary>
 	//</summary>
-	using System.Drawing;
-	using System.ComponentModel;
 	public class PictureBox : Control {
 
 		Image image;
 		PictureBoxSizeMode sizeMode;
-		//
-		// --- Public Constructor
-		//
-		[MonoTODO]
+		BorderStyle borderStyle;
+
 		public PictureBox () 
 		{
 			image = null;
 			sizeMode = PictureBoxSizeMode.Normal;
+			borderStyle = BorderStyle.None;
+			SetStyle ( ControlStyles.UserPaint, true );
 		}
-		//
-		// --- Public Properties
-		//
 
-		[MonoTODO]
-		public Image Image {
-			get {
-				return image;
+		public BorderStyle BorderStyle {
+			get {   return borderStyle; }
+			set {
+				if ( !Enum.IsDefined ( typeof(BorderStyle), value ) )
+					throw new InvalidEnumArgumentException( "BorderStyle",
+						(int)value,
+						typeof(BorderStyle));
+				
+				if ( borderStyle != value ) {
+					borderStyle = value;
+					RecreateHandle ( );
+				}
 			}
+		}
+
+
+		public Image Image {
+			get { return image; }
 			set {
 				image = value;
+
+				if ( sizeMode == PictureBoxSizeMode.AutoSize && image != null )
+					SetBounds ( 0, 0, 0, 0, BoundsSpecified.None );
+
+				Invalidate ( );
 			}
 		}
 
-		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public new ImeMode ImeMode {
-			get {
-				return base.ImeMode;
-			}
-			set {
-				base.ImeMode = value;
-			}
+			get { return base.ImeMode; }
+			set { base.ImeMode = value;}
 		}
-		//
-		// --- Protected Properties
-		//
-		[MonoTODO]
+
 		protected override CreateParams CreateParams {
 			get {
-				CreateParams createParams = new CreateParams ();
-				window = new ControlNativeWindow (this);
+				RegisterDefaultWindowClass ( );
 
-				createParams.Caption = Text;
-				createParams.ClassName = "PICTUREBOX";
-				createParams.X = Left;
-				createParams.Y = Top;
-				createParams.Width = Width;
-				createParams.Height = Height;
-				createParams.ClassStyle = 0;
-				createParams.ExStyle = 0;
-				createParams.Param = 0;
-				//			createParams.Parent = Parent.Handle;
-				createParams.Style = (int) (
+				CreateParams createParams = base.CreateParams;
+
+				createParams.ClassName = Win32.DEFAULT_WINDOW_CLASS;
+
+				createParams.Style |= (int) (
 					WindowStyles.WS_CHILD | 
-					WindowStyles.WS_VISIBLE);
-				window.CreateHandle (createParams);
+					WindowStyles.WS_VISIBLE |
+					WindowStyles.WS_CLIPCHILDREN |
+					WindowStyles.WS_CLIPSIBLINGS );
+
+				switch ( BorderStyle ) {
+					case BorderStyle.Fixed3D:
+						createParams.ExStyle |= (int)WindowExStyles.WS_EX_CLIENTEDGE;
+						break;
+					case BorderStyle.FixedSingle:
+						createParams.Style |= (int) WindowStyles.WS_BORDER;
+						break;
+				};
 				return createParams;
 			}		
 		}
-		[MonoTODO]
+
 		protected override ImeMode DefaultImeMode {
-			get {
-				return base.DefaultImeMode;
-			}
+			get { return ImeMode.Disable; }
 		}
-		[MonoTODO]
+
 		protected override Size DefaultSize {
-			get {
-				return new Size(100,50);
-			}
+			get { return new Size(100,50); }
 		}
-		//
-		// --- Public Methods
-		//
-		[MonoTODO]
+
 		public override string ToString()
 		{
-			//FIXME:
-			return base.ToString();
+			return GetType( ).FullName.ToString ( ) + ", SizeMode: " + SizeMode.ToString ( );
 		}
 
-		[MonoTODO]
-		public PictureBoxSizeMode SizeMode () {
-			return sizeMode;
+		public PictureBoxSizeMode SizeMode {
+			get { return sizeMode; }
+			set {	
+				if ( !Enum.IsDefined ( typeof(PictureBoxSizeMode), value ) )
+					throw new InvalidEnumArgumentException( "SizeMode",
+						(int)value,
+						typeof( PictureBoxSizeMode ) );
+
+				if ( sizeMode != value ) {
+					sizeMode = value;
+
+					if ( sizeMode == PictureBoxSizeMode.AutoSize )
+						SetBounds ( 0, 0, 0, 0, BoundsSpecified.None );
+					
+					SetStyle ( ControlStyles.AllPaintingInWmPaint, sizeMode == PictureBoxSizeMode.StretchImage );
+
+					Invalidate ( );
+					OnSizeModeChanged ( EventArgs.Empty );
+				}
+			}
 		}
 		
-		//
-		// --- Protected Methods
-		//
-
 		[MonoTODO]
 		protected override void OnEnabledChanged(EventArgs e) 
 		{
 			//FIXME:
 			base.OnEnabledChanged(e);
 		}
-		[MonoTODO]
+
 		protected override void OnPaint(PaintEventArgs e) 
 		{
-			//FIXME:
+			if ( Image != null ) {
+				switch ( SizeMode ) {
+				case PictureBoxSizeMode.StretchImage:
+					e.Graphics.DrawImage ( Image, ClientRectangle );
+				break;
+				case PictureBoxSizeMode.CenterImage:
+					int dx = (ClientRectangle.Width - Image.Width)/2;
+					int dy = (ClientRectangle.Height- Image.Height)/2;
+					e.Graphics.DrawImage ( Image, dx, dy );
+				break;
+				default:
+					e.Graphics.DrawImage ( Image, 0, 0 );
+				break;
+				}
+			}
 			base.OnPaint(e);
 		}
-		[MonoTODO]
+
 		protected override void OnParentChanged(EventArgs e) 
 		{
-			//FIXME:
+			if ( Parent != null ) {
+				BackColor = Parent.BackColor;
+				Invalidate ( );
+			}
+				
 			base.OnParentChanged(e);
 		}
-		[MonoTODO]
+
 		protected override void OnResize(EventArgs e) 
 		{
-			//FIXME:
+			if ( SizeMode == PictureBoxSizeMode.CenterImage )
+				Invalidate ( );
+			else if ( SizeMode == PictureBoxSizeMode.StretchImage && IsHandleCreated)
+				Win32.InvalidateRect ( Handle, IntPtr.Zero, 0 );
+
 			base.OnResize(e);
 		}
-		[MonoTODO]
+
 		protected virtual void OnSizeModeChanged(EventArgs e)
 		{
-			//FIXME:
+			if ( SizeModeChanged != null )
+				SizeModeChanged ( this, e );
 		}
+
 		[MonoTODO]
 		protected override void OnVisibleChanged(EventArgs e) 
 		{
-			//FIXME:
+			base.OnVisibleChanged ( e );
 		}
-		[MonoTODO]
+
+		protected override void OnPaintBackground (PaintEventArgs e) {
+			if ( SizeMode != PictureBoxSizeMode.StretchImage ) 
+				base.OnPaintBackground ( e );
+		}
+
 		protected override void SetBoundsCore(int x,int y,int width,int height,BoundsSpecified specified) 
 		{
-			//FIXME:
+			if ( SizeMode == PictureBoxSizeMode.AutoSize && Image != null ) {
+				width = Image.Width;
+				height= Image.Height;
+				specified = BoundsSpecified.Size;
+			}
+				
 			base.SetBoundsCore(x, y, width, height, specified);
 		}
-		//
-		// --- Public Events
-		//
 
-		[MonoTODO]
 		public event EventHandler SizeModeChanged;
 	}
 }
