@@ -789,7 +789,10 @@ namespace Mono.CSharp
 			// </summary>
 			public MyBitVector Locals {
 				get {
-					return locals.Clone ();
+					if (locals != null)
+						return locals.Clone ();
+					else
+						return null;
 				}
 			}
 
@@ -919,7 +922,7 @@ namespace Mono.CSharp
 					(Type != BranchingType.LoopBlock);
 
 				Report.Debug (2, "    MERGING SIBLING   ", child,
-					      child.Parameters, child.Locals,
+					      child.ParameterVector, child.LocalVector,
 					      reachability, child.Reachability, do_break);
 
 				Reachability.And (ref reachability, child.Reachability, do_break);
