@@ -1,8 +1,8 @@
-EXTRA_DIST = mcs.in mbas.in
+EXTRA_DIST = mcs.in mbas.in ilasm.in cilc.in
 
-bin_SCRIPTS = mcs mbas
+bin_SCRIPTS = mcs mbas ilasm cilc
 
-CLEANFILES = mcs mbas
+CLEANFILES = mcs mbas ilasm cilc
 
 if X86
 MONO_INTERP = mono
@@ -18,3 +18,11 @@ mcs: mcs.in
 mbas: mbas.in
 	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' < $(srcdir)/mbas.in > mbas.tmp \
 	&& mv mbas.tmp mbas 
+
+ilasm: ilasm.in
+	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' < $(srcdir)/ilasm.in > ilasm.tmp \
+	&& mv ilasm.tmp ilasm
+
+cilc: cilc.in
+	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' < $(srcdir)/cilc.in > cilc.tmp \
+	&& mv cilc.tmp cilc
