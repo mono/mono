@@ -1,3 +1,19 @@
+2002-07-31  Duncan Mak  <duncan@ximian.com>
+
+	* TypeEntry.cs:
+	* ActivatedClientTypeEntry.cs:
+	* ActivatedServiceTypeEntry.cs:
+	* WellKnownClientTypeEntry.cs:
+	* WellKnownServiceTypeEntry.cs: Added all the classes derived from TypeEntry.
+
+	* RemotingException.cs: 
+	* RemotingTimeoutException.cs: 
+	* ServerException.cs: Added missing exceptions.
+
+	* IChannelInfo.cs: 
+	* IEnvoyInfo.cs: 
+	* IRemotingTypeInfo.cs: Added missing interfaces.
+
 2002-07-24  Duncan Mak  <duncan@ximian.com>
 
 	* LeaseState.cs: Moved to System.Runtime.Remoting.Lifetime.
