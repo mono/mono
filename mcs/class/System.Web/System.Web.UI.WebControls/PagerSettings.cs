@@ -284,7 +284,7 @@ namespace System.Web.UI.WebControls
 				}
 				
 				for (int n = first; n < last; n++)
-					row.Cells.Add (CreateCell (n.ToString(), string.Empty, (n != currentPage) ? "Page" + n : "", n.ToString()));
+					row.Cells.Add (CreateCell (n.ToString(), string.Empty, (n != currentPage) ? "Page" : "", n.ToString()));
 				
 				if (last < pageCount - 1) {
 					row.Cells.Add (CreateCell (NextPageText, NextPageImageUrl, "Page", "Next"));

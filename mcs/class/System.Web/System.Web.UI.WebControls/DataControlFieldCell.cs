@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Sanjay Gupta (gsanjay@novell.com)
+//  Lluis Sanchez Gual (lluis@novell.com)
 //
 // (C) 2004 Novell, Inc. (http://www.novell.com)
 //
@@ -31,7 +32,8 @@
 #if NET_2_0
 using System.Web.UI;
 
-namespace System.Web.UI.WebControls {
+namespace System.Web.UI.WebControls
+{
 	public class DataControlFieldCell : TableCell
 	{
 		DataControlField containerField;
@@ -49,5 +51,25 @@ namespace System.Web.UI.WebControls {
 			get { return containerField; }
 		}
 	}
+
+	internal class AccessibleDataControlFieldCell : DataControlFieldCell
+	{
+		bool colScope;
+		
+		public AccessibleDataControlFieldCell (bool colScope, DataControlField containerField): base (HtmlTextWriterTag.Th, containerField)
+		{
+			this.colScope = colScope;
+		}
+		
+		protected override void AddAttributesToRender (HtmlTextWriter writer)
+		{
+			base.AddAttributesToRender (writer);
+			if (colScope)
+				writer.AddAttribute (HtmlTextWriterAttribute.Scope, "col");
+			else
+				writer.AddAttribute (HtmlTextWriterAttribute.Scope, "row");
+		}
+	}
 }
+	
 #endif

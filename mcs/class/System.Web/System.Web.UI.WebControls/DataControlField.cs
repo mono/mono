@@ -281,6 +281,19 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+		[WebCategoryAttribute ("Behavior")]
+		[DefaultValueAttribute (true)]
+		public virtual bool InsertVisible {
+			get {
+				object val = viewState ["InsertVisible"];
+				return val != null ? (bool) val : true;
+			}
+			set { 
+				viewState ["InsertVisible"] = value;
+				OnFieldChanged ();
+			}
+		}
+
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 		[WebCategoryAttribute ("Styles")]

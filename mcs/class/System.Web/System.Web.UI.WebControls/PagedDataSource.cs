@@ -47,6 +47,12 @@ namespace System.Web.UI.WebControls
 		private int  currentPageIndex;
 		private bool allowCustomPaging;
 		private int  virtualCount;
+		
+#if NET_2_0
+		DataSourceSelectArguments arguments;
+		DataSourceView view;
+		bool serverPaging;
+#endif
 
 		private IEnumerable dataSource;
 
@@ -63,6 +69,44 @@ namespace System.Web.UI.WebControls
 			allowCustomPaging = false;
 			virtualCount      = 0;
 		}
+
+#if NET_2_0
+		public DataSourceSelectArguments DataSourceSelectArguments {
+			get { return arguments; }
+			set { arguments = value; }
+		}
+
+		public DataSourceView DataSourceView {
+			get { return view; }
+			set { view = value; }
+		}
+
+		public bool AllowServerPaging {
+			get { return serverPaging; }
+			set { serverPaging = value; }
+		}
+		
+		public bool IsServerPagingEnabled {
+			get { return allowPaging && serverPaging; }
+		}
+		
+		public void SetItemCountFromPageIndex (int highestPageIndex)
+		{
+			arguments.StartRowIndex = CurrentPageIndex * PageSize;
+			arguments.MaximumRows = (highestPageIndex - CurrentPageIndex) * PageSize + 1;
+			IEnumerable data = view.ExecuteSelect (arguments);
+			
+			virtualCount = CurrentPageIndex * PageSize;
+			if (data is ICollection) {
+				virtualCount += ((ICollection)data).Count;
+			} else {
+				IEnumerator e = data.GetEnumerator ();
+				while (e.MoveNext())
+					virtualCount++;
+			}
+		}
+
+#endif
 
 		public bool AllowCustomPaging
 		{
@@ -143,6 +187,12 @@ namespace System.Web.UI.WebControls
 			{
 				if(dataSource != null)
 				{
+#if NET_2_0
+					if (serverPaging)
+					{
+						return virtualCount;
+					}
+#endif
 					if(IsCustomPagingEnabled)
 					{
 						return virtualCount;
@@ -263,7 +313,7 @@ namespace System.Web.UI.WebControls
 				virtualCount = value;
 			}
 		}
-
+		
 		public void CopyTo(Array array, int index)
 		{
 			IEnumerator enumerator = this.GetEnumerator();
@@ -275,8 +325,13 @@ namespace System.Web.UI.WebControls
 
 		public IEnumerator GetEnumerator()
 		{
+#if NET_2_0
+			int fInd = serverPaging ? 0 : FirstIndexInPage;
+#else
 			int fInd = FirstIndexInPage;
+#endif
 			int count = -1;
+
 			if(dataSource is ICollection)
 			{
 				count = Count;

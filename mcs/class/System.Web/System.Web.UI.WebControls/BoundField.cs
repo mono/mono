@@ -34,6 +34,7 @@ using System.Collections.Specialized;
 using System.Web.UI;
 using System.ComponentModel;
 using System.Security.Permissions;
+using System.Reflection;
 
 namespace System.Web.UI.WebControls {
 
@@ -102,10 +103,22 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+		[WebCategoryAttribute ("Behavior")]
+		[DefaultValueAttribute (false)]
+		public bool ReadOnly {
+			get {
+				object val = ViewState ["ReadOnly"];
+				return val != null ? (bool) val : false;
+			}
+			set { 
+				ViewState ["ReadOnly"] = value;
+			}
+		}
+		
 		public override void ExtractValuesFromCell (IOrderedDictionary dictionary,
 			DataControlFieldCell cell, DataControlRowState rowState, bool includeReadOnly)
 		{
-			if ((rowState & DataControlRowState.Edit) != 0) {
+			if ((rowState & DataControlRowState.Edit) != 0 && !ReadOnly) {
 				if (cell.Controls.Count > 0) {
 					TextBox box = cell.Controls [0] as TextBox;
 					dictionary [DataField] = box.Text;
@@ -126,7 +139,7 @@ namespace System.Web.UI.WebControls {
 		
 		public virtual void InitializeDataCell (DataControlFieldCell cell, DataControlRowState rowState)
 		{
-			if ((rowState & DataControlRowState.Edit) != 0) {
+			if ((rowState & DataControlRowState.Edit) != 0 && !ReadOnly) {
 				TextBox box = new TextBox ();
 				cell.Controls.Add (box);
 			}
@@ -167,6 +180,10 @@ namespace System.Web.UI.WebControls {
 						boundProperty = desc.GetProperties () [DataField];
 						if (boundProperty != null)
 							return boundProperty.GetValue (dic.DataItem);
+					} else {
+						PropertyInfo pi = dic.DataItem.GetType ().GetProperty (DataField);
+						if (pi != null)
+							return pi.GetValue (dic.DataItem, null);
 					}
 					throw new InvalidOperationException ("Property '" + DataField + "' not found in data bound item");
 				}

@@ -59,13 +59,6 @@ namespace System.Web.UI.WebControls
 			PreventAutoID ();
 		}
 
-#if NET_2_0
-		public TableCell (string text) : this ()
-		{
-			Text = text;
-		}
-#endif
-
 #if !NET_2_0
 		[Bindable (true)]
 #endif
@@ -212,7 +205,7 @@ namespace System.Web.UI.WebControls
 
 		protected override void RenderContents (HtmlTextWriter writer)
 		{
-			if (HasControls ())
+			if (HasControls () || HasRenderMethodDelegate ())
 				base.RenderContents (writer);
 			else
 				writer.Write (Text);
