@@ -143,6 +143,7 @@ namespace Mono.Posix {
 		// SIGRTMIN
 	}
 	
+	[Obsolete ("Syscall is unmaintained.  Please use Mono.Unix.Syscall.")]
 	public class Syscall {
 		[DllImport ("libc", SetLastError=true)]
 		public static extern int exit (int status);
