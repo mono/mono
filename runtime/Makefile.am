@@ -19,6 +19,8 @@ monobins_DATA = \
 	xsd.exe.mdb				\
 	wsdl.exe				\
 	wsdl.exe.mdb				\
+	wsdl2.exe				\
+	wsdl2.exe.mdb				\
 	genxs.exe				\
 	genxs.exe.mdb				\
 	al.exe					\
