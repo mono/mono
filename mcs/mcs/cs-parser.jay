@@ -4528,7 +4528,10 @@ Block declare_local_variables (Expression type, ArrayList variable_declarators, 
 	//
 	// int j = 1;  int k = j + 1;
 	//
-	implicit_block = current_block;
+	if (current_block.Used)
+		implicit_block = new Block (current_block, Block.Flags.Implicit, loc, Location.Null);
+	else
+		implicit_block = current_block;
 
 	foreach (VariableDeclaration decl in variable_declarators){
 
