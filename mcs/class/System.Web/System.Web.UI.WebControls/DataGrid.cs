@@ -1053,14 +1053,14 @@ namespace System.Web.UI.WebControls
 					{
 						dataKeys.Add(DataBinder.GetPropertyValue(storedDataFirst, dkField));
 					}
-					deployType = ListItemType.Item;
-					if(indexCounter == editIndex)
-					{
+					if (indexCounter == editIndex) {
 						deployType = ListItemType.EditItem;
-					} else if(indexCounter == selIndex)
-					{
+					} else if (indexCounter == selIndex) {
 						deployType = ListItemType.SelectedItem;
+					} else {
+						deployType = ListItemType.Item;
 					}
+
 					itemsArrayList.Add(CreateItem(0, currentSourceIndex, deployType,
 								      useDataSource, storedDataFirst,
 								      cols, deployRows, null));
@@ -1078,14 +1078,17 @@ namespace System.Web.UI.WebControls
 					{
 						dataKeys.Add(DataBinder.GetPropertyValue(current, dkField));
 					}
-					deployType = ListItemType.Item;
-					if(indexCounter == editIndex)
-					{
+
+					if (indexCounter == editIndex) {
 						deployType = ListItemType.EditItem;
-					} else if(indexCounter == selIndex)
-					{
+					} else if (indexCounter == selIndex) {
 						deployType = ListItemType.SelectedItem;
+					} else if ((indexCounter % 2) == 1) {
+						deployType = ListItemType.AlternatingItem;
+					} else {
+						deployType = ListItemType.Item;
 					}
+
 					itemsArrayList.Add(CreateItem(indexCounter, currentSourceIndex,
 								      deployType, useDataSource, current,
 								      cols, deployRows, null));
