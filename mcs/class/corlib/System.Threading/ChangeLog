@@ -1,3 +1,10 @@
+2002-08-12  Dietmar Maurer  <dietmar@ximian.com>
+
+	* ThreadAbortException.cs: impl. ExceptionState property.
+
+	* Thread.cs: moved all instance variables to the start of the
+	class. added support for Thread::Abort()
+
 2002-04-30  Dick Porter  <dick@ximian.com>
 
 	* Thread.cs: If LocalDataStoreSlot already has data set, remove it

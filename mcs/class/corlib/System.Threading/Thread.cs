@@ -17,9 +17,15 @@ namespace System.Threading
 {
 	public sealed class Thread
 	{
-		private bool threadpool_thread = false;
+		// stores a thread handle
+		private IntPtr system_thread_handle;
+		
 		private CultureInfo current_culture;
-
+		private bool threadpool_thread = false;
+		private ThreadState state = ThreadState.Unstarted;
+		private object abort_exc;
+		internal object abort_state;
+		
 		[MonoTODO]
 		public static Context CurrentContext {
 			get {
@@ -132,10 +138,8 @@ namespace System.Threading
 			return(slot);
 		}
 		
-		[MonoTODO]
-		public static void ResetAbort() {
-			// FIXME
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static void ResetAbort();
 
 		public static void SetData(LocalDataStoreSlot slot,
 					   object data) {
@@ -175,9 +179,6 @@ namespace System.Threading
 			Sleep_internal(timeout.Milliseconds);
 			thread.clr_state(ThreadState.WaitSleepJoin);
 		}
-
-		// stores a thread handle
-		private IntPtr system_thread_handle;
 
 		// Returns the system thread handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -304,23 +305,18 @@ namespace System.Threading
 			}
 		}
 
-		private ThreadState state=ThreadState.Unstarted;
-		
 		public ThreadState ThreadState {
 			get {
 				return(state);
 			}
 		}
 
-		[MonoTODO]
 		public void Abort() {
-			// FIXME
+			Abort (null);
 		}
 
-		[MonoTODO]
-		public void Abort(object stateInfo) {
-			// FIXME
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern void Abort (object stateInfo);
 
 		[MonoTODO]
 		public void Interrupt() {

@@ -150,9 +150,8 @@ namespace System {
 
 		public override string ToString ()
 		{
-			return this.GetType ().FullName + "\n" +
-				message +
-				GetBaseException ().GetType ().FullName +
+			return this.GetType ().FullName + ": " + message + "\n" +
+				// GetBaseException ().GetType ().FullName +
 				stack_trace;
 		}
 	}

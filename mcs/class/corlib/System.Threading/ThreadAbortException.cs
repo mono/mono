@@ -7,19 +7,18 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Runtime.CompilerServices;
 
 namespace System.Threading
 {
 	[Serializable]
 	public sealed class ThreadAbortException : SystemException
 	{
-		private ThreadAbortException () {}
+		private ThreadAbortException () : base ("Thread was being aborted") {}
 
-		[MonoTODO]
 		public object ExceptionState {
 			get {
-				// FIXME
-				return(null);
+				return Thread.CurrentThread.abort_state;
 			}
 		}
 	}
