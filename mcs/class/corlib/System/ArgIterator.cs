@@ -70,11 +70,11 @@ namespace System
 		{
 			if (num_args == next_arg)
 				throw new InvalidOperationException ("invalid iterator position");
-			return IntGetNextArg (rth);
+			return IntGetNextArg (rth.Value);
 		}
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
-		extern TypedReference IntGetNextArg (RuntimeTypeHandle rth);
+		extern TypedReference IntGetNextArg (IntPtr rth);
 
 		public RuntimeTypeHandle GetNextArgType ()
 		{

@@ -33,7 +33,7 @@ namespace System
 		private static extern void type_from_obj (MonoType type, Object obj);
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern void get_type_info (RuntimeTypeHandle type, out MonoTypeInfo info);
+		private static extern void get_type_info (IntPtr type, out MonoTypeInfo info);
 
 		[MonoTODO]
 		internal MonoType (Object obj)
@@ -417,7 +417,7 @@ namespace System
 		public override Type UnderlyingSystemType {
 			get {
 				MonoTypeInfo info;
-				get_type_info (_impl, out info);
+				get_type_info (_impl.Value, out info);
 				return info.etype;
 			}
 		}
@@ -425,7 +425,7 @@ namespace System
 		public override Assembly Assembly {
 			get {
 				MonoTypeInfo info;
-				get_type_info (_impl, out info);
+				get_type_info (_impl.Value, out info);
 				return info.assembly;
 			}
 		}
@@ -474,7 +474,7 @@ namespace System
 		public override MemberTypes MemberType {
 			get {
 				MonoTypeInfo info;
-				get_type_info (_impl, out info);
+				get_type_info (_impl.Value, out info);
 				return info.nested_in == null? MemberTypes.TypeInfo: MemberTypes.NestedType;
 			}
 		}
@@ -482,7 +482,7 @@ namespace System
 		public override string Name {
 			get {
 				MonoTypeInfo info;
-				get_type_info (_impl, out info);
+				get_type_info (_impl.Value, out info);
 				return info.name;
 			}
 		}
@@ -490,7 +490,7 @@ namespace System
 		public override string Namespace {
 			get {
 				MonoTypeInfo info;
-				get_type_info (_impl, out info);
+				get_type_info (_impl.Value, out info);
 				if (info.nested_in == null)
 					return info.name_space;
 				else
@@ -506,7 +506,7 @@ namespace System
 		public override Type DeclaringType {
 			get {
 				MonoTypeInfo info;
-				get_type_info (_impl, out info);
+				get_type_info (_impl.Value, out info);
 				return info.nested_in;
 			}
 		}
@@ -514,7 +514,7 @@ namespace System
 		public override Type ReflectedType {
 			get {
 				MonoTypeInfo info;
-				get_type_info (_impl, out info);
+				get_type_info (_impl.Value, out info);
 				return info.nested_in;
 			}
 		}
@@ -529,7 +529,7 @@ namespace System
 		{
 			MonoTypeInfo info;
 			
-			get_type_info (_impl, out info);
+			get_type_info (_impl.Value, out info);
 			return info.rank;
 		}
 

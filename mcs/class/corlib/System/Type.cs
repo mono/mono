@@ -362,7 +362,7 @@ namespace System {
 		public extern bool Equals (Type type);
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern Type internal_from_handle (RuntimeTypeHandle handle);
+		private static extern Type internal_from_handle (IntPtr handle);
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern Type internal_from_name (string name, bool throwOnError, bool ignoreCase);
@@ -439,7 +439,7 @@ namespace System {
 
 		public static Type GetTypeFromHandle (RuntimeTypeHandle handle)
 		{ 
-			return internal_from_handle (handle);
+			return internal_from_handle (handle.Value);
 		}
 
 		[MonoTODO]
