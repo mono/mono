@@ -1,3 +1,7 @@
+2004-07-20  Martin Baulig  <martin@ximian.com>
+
+	* test-281.cs: New test for iterators.
+
 2004-07-18  Martin Baulig  <martin@ximian.com>
 
 	* gen-63.cs: New test.
