@@ -73,6 +73,24 @@ namespace System.Configuration
 			}
 		}
 
+#if NET_2_0
+                public static ConnectionStringSettingsCollection ConnectionStrings
+		{
+			get {
+                                ConnectionStringsSection connSection = (ConnectionStringsSection) GetConfig ("connectionStrings");
+                                ConnectionStringSettingsCollection connectionStrings = null;
+                                
+                                if (connSection != null)
+                                        connectionStrings = connSection.ConnectionStrings;
+                                else 
+                                        connectionStrings = new ConnectionStringSettingsCollection ();
+                                
+				return connectionStrings;
+			}
+		}
+
+#endif // NET_2_0
+
 		// Invoked from System.Web
 		static IConfigurationSystem ChangeConfigurationSystem (IConfigurationSystem newSystem)
 		{

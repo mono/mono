@@ -1,3 +1,8 @@
+2005-03-02  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* ConfigurationSettings.cs: Implemented ConnectionStrings
+	property.
+
 2005-02-22  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* ConnectionStringsSection.cs: Implemented all methods.
