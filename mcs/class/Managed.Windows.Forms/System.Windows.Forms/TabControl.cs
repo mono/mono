@@ -749,9 +749,9 @@ namespace System.Windows.Forms {
 			if (this.Width <= 0 || this.Height <=  0 || this.Visible == false)
 				return;
 
-			Draw ();
-			pe.Graphics.DrawImageUnscaled (ImageBuffer, 0, 0);
-			ImageBuffer.Save ("ImageBuffer.bmp");
+			Draw (pe.ClipRectangle);
+			pe.Graphics.DrawImage (ImageBuffer, pe.ClipRectangle,
+                                        pe.ClipRectangle, GraphicsUnit.Pixel);
 			// On MS the Paint event never seems to be raised
 		}
 
@@ -764,9 +764,9 @@ namespace System.Windows.Forms {
 			Refresh ();
 		}
 
-		private void Draw ()
+		private void Draw (Rectangle clip)
 		{
-			ThemeEngine.Current.DrawTabControl (DeviceContext, ClientRectangle, this);
+			ThemeEngine.Current.DrawTabControl (DeviceContext, clip, this);
 			redraw = false;
 		}
 

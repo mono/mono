@@ -1,5 +1,11 @@
 2005-01-21  Jackson Harper  <jackson@ximian.com>
 
+	* TabControl.cs: Use cliping rectangle for blitting. Give the
+	theme the clipping rect so we can do clipping while
+	drawing. Remove some debug code.
+
+2005-01-21  Jackson Harper  <jackson@ximian.com>
+
 	* TabPage.cs: Add a new method so tab pages can force the tab
 	control to recalculate the tab page sizes.
 	* TabControl.cs: UpdateOwner needs to make the tab control recalc
