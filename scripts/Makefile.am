@@ -24,6 +24,7 @@ bin_SCRIPTS = \
 	monop			\
 	monoresgen		\
 	permview		\
+	prj2make		\
 	resgen			\
 	secutil			\
 	setreg			\
