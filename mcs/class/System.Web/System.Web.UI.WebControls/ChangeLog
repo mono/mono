@@ -1,3 +1,8 @@
+2003-12-30 Alon Gazit <along@mainsoft.com>
+	* RepeatInfo.cs: Fixed DoVerticalRendering () and 
+	DoHorizontalRendering().
+	Current implementation produces few extra html tags.
+	   
 2003-12-29  Alon Gazit <along@mainsoft.com>
 
 	* CheckBox.cs: change the implementation of LoadPostData. 
