@@ -7,6 +7,7 @@
 
 using System;
 using System.Reflection;
+using System.Text;
 
 namespace Mono.Util.CorCompare {
 
@@ -28,7 +29,16 @@ namespace Mono.Util.CorCompare {
 
 		public string Name {
 			get {
-				return info.Name;
+				StringBuilder retVal = new StringBuilder(info.Name + "{");
+				if (this.NeedsGet) {
+					retVal.Append(" get;");
+				}
+				if (this.NeedsSet) {
+					retVal.Append(" set;");
+				}
+
+				retVal.Append(" }");
+				return retVal.ToString();
 			}
 		}
 		public virtual string Status {
@@ -36,5 +46,8 @@ namespace Mono.Util.CorCompare {
 				return "missing";
 			}
 		}
+
+		public bool NeedsGet = false;
+		public bool NeedsSet = false;
 	}
 }

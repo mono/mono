@@ -30,16 +30,25 @@ namespace Mono.Util.CorCompare {
 		}
 
 		ArrayList todoMethodList = new ArrayList();
-		public ToDoMethod[] ToDoMethods {
+		public ArrayList ToDoMethods {
 			get {
-				Array retVal=Array.CreateInstance( typeof(ToDoMethod), todoMethodList.Count );
-				todoMethodList.CopyTo(retVal);
-				return (ToDoMethod[])retVal;
+				return todoMethodList;
 			}
 		}
 
 		ArrayList missingPropertyList = new ArrayList();
+		public ArrayList MissingProperties {
+			get {
+				return missingPropertyList;
+			}
+		}
+
 		ArrayList todoPropertyList = new ArrayList();
+		public ArrayList ToDoProperties {
+			get {
+				return todoPropertyList;
+			}
+		}
 
 		int complete;
 
@@ -71,22 +80,6 @@ namespace Mono.Util.CorCompare {
 				}
 			}
 			return -1;
-		}
-
-		public void CompareWith(Type referenceType) {
-			//TODO: Next discover the missing methods, properties, etc.
-			GetMissingMethods(referenceType.GetMethods());
-			complete = 0;
-		}
-
-		void GetMissingMethods(MethodInfo[] referenceMethods) {
-			ArrayList referenceMethodList = new ArrayList(referenceMethods);
-			ArrayList MethodList = new ArrayList(theType.GetMethods());
-			foreach (MethodInfo method in referenceMethods) {
-				if (!MethodList.Contains(method)) {
-					missingMethodList.Add(method);
-				}
-			}
 		}
 
 		public override string Status {

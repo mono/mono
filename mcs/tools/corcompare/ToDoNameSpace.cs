@@ -175,26 +175,42 @@ namespace Mono.Util.CorCompare {
 			}
 			// find types with missing members
 			foreach (Type t in referenceTypes) {
-				bool addedIt = false;
+				if (t.IsPublic && !IsMissingType(t)) {
+					bool addedIt = false;
+					index = -1;
 
-				foreach (MemberInfo mi in t.GetMembers()) {
-					if (t.Name == mi.DeclaringType.Name && IsMissingMember(mi, t.Name, existingTypes)) {
-						if (!addedIt) {
-							index = ToDoType.IndexOf(t, ToDoTypes);
-							if (index >= 0) {
+					foreach (MemberInfo mi in t.GetMembers()) {
+						if (t.Name == mi.DeclaringType.Name && IsMissingMember(mi, t.Name, existingTypes)) {
+							if (!addedIt) {
+								index = ToDoType.IndexOf(t, ToDoTypes);
+								if (index >= 0) {
+								}
+								else {
+									index = ToDoTypes.Add(new ToDoType(t));
+								}
 								addedIt = true;
+							}
+							if (index >= 0) {
+								((ToDoType)(ToDoTypes[index])).AddMissingMember(mi);
 							}
 							else {
-								index = ToDoTypes.Add(new ToDoType(t));
-								addedIt = true;
+								throw new Exception("Don't know which ToDoType to add this missing member");
 							}
-							((ToDoType)(ToDoTypes[index])).AddMissingMember(mi);
 						}
 					}
-				}					
+				}
 			}
 
 			return (ToDoType[])ToDoTypes.ToArray(typeof(ToDoType));
+		}
+
+		bool IsMissingType(Type t) {
+			foreach (MissingType mt in missingTypes) {
+				if (t.Name == mt.Name) {
+					return true;
+				}
+			}
+			return false;
 		}
 
 		static bool IsMissingMember(MemberInfo mi, string typeName, Type[] typesToSearch) {
