@@ -178,7 +178,6 @@ namespace System.IO
 						return path.Replace (AltDirectorySeparatorChar, DirectorySeparatorChar);
 			}
 
-			bool combineCurrent = false;
 			if (!IsPathRooted (path))
 				path = Directory.GetCurrentDirectory () + DirectorySeparatorStr + path;
 			else if (DirectorySeparatorChar == '\\' &&
@@ -387,8 +386,6 @@ namespace System.IO
 				default: // Unix/Mac
 					return ret;
 				}
-
-				return ret;
 			}
 		}
 	}
