@@ -1,3 +1,8 @@
+
+Tue May 27 16:34:39 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* class.h, class.c, object.c: remove relative numbering support.
+
 2003-05-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* marshal.c (mono_marshal_get_native_wrapper): For now, do not
