@@ -2,13 +2,14 @@
  * Namespace: System.Web.UI.WebControls
  * Class:     FontUnitConverter
  *
- * Author:  Gaurav Vaish
+ * Author:  Gaurav Vaish, Gonzalo Paniagua Javier
  * Maintainer: gvaish@iitk.ac.in
- * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
+ * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>, <gonzalo@ximian.com>
  * Implementation: yes
  * Status: 95%
  *
  * (C) Gaurav Vaish (2002)
+ * (c) 2002 Ximian, Inc. (http://www.ximian.com)
  */
 
 using System;
@@ -21,9 +22,8 @@ namespace System.Web.UI.WebControls
 {
 	public class FontUnitConverter : TypeConverter
 	{
-		public FontUnitConverter(): base()
-		{
-		}
+		static StandardValuesCollection valuesCollection;
+		static string creatingValues = "creating value collection";
 
 		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
 		{
@@ -62,10 +62,21 @@ namespace System.Web.UI.WebControls
 			return base.ConvertTo(context, culture, value, destinationType);
 		}
 
-		[MonoTODO("GetStandardValues")]
 		public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
 		{
-			throw new NotImplementedException();
+			if (valuesCollection != null)
+				return valuesCollection;
+
+			lock (creatingValues) {
+				if (valuesCollection != null)
+					return valuesCollection;
+
+				Array values = Enum.GetValues (typeof (FontUnit));
+				Array.Sort (values);
+				valuesCollection = new StandardValuesCollection (values);
+			}
+
+			return valuesCollection;
 		}
 
 		public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)

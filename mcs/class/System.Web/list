@@ -215,6 +215,7 @@ System.Web.UI.WebControls/FontUnit.cs
 System.Web.UI.WebControls/FontUnitConverter.cs
 System.Web.UI.WebControls/GridLines.cs
 System.Web.UI.WebControls/HorizontalAlign.cs
+System.Web.UI.WebControls/HorizontalAlignConverter.cs
 System.Web.UI.WebControls/HyperLink.cs
 System.Web.UI.WebControls/HyperLinkColumn.cs
 System.Web.UI.WebControls/HyperLinkControlBuilder.cs
@@ -290,6 +291,7 @@ System.Web.UI.WebControls/ValidationSummary.cs
 System.Web.UI.WebControls/ValidationSummaryDisplayMode.cs
 System.Web.UI.WebControls/ValidatorDisplay.cs
 System.Web.UI.WebControls/VerticalAlign.cs
+System.Web.UI.WebControls/VerticalAlignConverter.cs
 System.Web.UI.WebControls/WebColorConverter.cs
 System.Web.UI.WebControls/WebControl.cs
 System.Web.UI.WebControls/Xml.cs

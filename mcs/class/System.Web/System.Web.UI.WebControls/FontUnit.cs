@@ -13,12 +13,14 @@
 
 using System;
 using System.Collections;
+using System.ComponentModel;
 using System.Globalization;
 using System.Web;
 using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
+	[TypeConverter(typeof(FontUnitConverter))]
 	public struct FontUnit
 	{
 		public static readonly FontUnit Empty   = new FontUnit();

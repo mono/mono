@@ -11,8 +11,11 @@
  * (C) Gaurav Vaish (2001)
  */
 
+using System.ComponentModel;
+
 namespace System.Web.UI.WebControls
 {
+	[TypeConverter(typeof(VerticalAlignConverter))]
 	public enum VerticalAlign
 	{
 		NotSet,
