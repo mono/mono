@@ -1,3 +1,6 @@
+2003-03-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (fixup_method): added support for array methods.
 
 Tue Mar 4 18:03:27 CET 2003 Paolo Molaro <lupus@ximian.com>
 
