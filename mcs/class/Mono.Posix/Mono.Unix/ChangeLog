@@ -1,5 +1,11 @@
 2005-02-02  Jonathan Pryor <jonpryor@vt.edu>
 
+	* Syscall.cs: Remove public sys_ methods.  Some were public by mistake, and
+	  others so that users could manually marshal strings if desired.  Manually
+	  marshaling strings shouldn't be necessary, though, so remove them too.
+
+2005-02-02  Jonathan Pryor <jonpryor@vt.edu>
+
 	* StdioFileStream.cs: Fix Length property to actually return the size of the
 	  file, not the # of bytes from the current position to EOF.  Oops.
 

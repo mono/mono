@@ -1625,15 +1625,10 @@ namespace Mono.Unix {
 		[DllImport (LIBC, SetLastError=true, EntryPoint="strsignal")]
 		private static extern IntPtr sys_strsignal (int sig);
 
-		public static IntPtr sys_strsignal (Signum sig)
-		{
-			int s = UnixConvert.FromSignum (sig);
-			return sys_strsignal (s);
-		}
-
 		public static string strsignal (Signum sig)
 		{
-			IntPtr r = sys_strsignal (sig);
+			int s = UnixConvert.FromSignum (sig);
+			IntPtr r = sys_strsignal (s);
 			return UnixMarshal.PtrToString (r);
 		}
 
@@ -1850,7 +1845,7 @@ namespace Mono.Unix {
 		// mkdir(2)
 		//    int mkdir(const char *pathname, mode_t mode);
 		[DllImport (LIBC, SetLastError=true, EntryPoint="mkdir")]
-		public static extern int sys_mkdir (string oldpath, uint mode);
+		private static extern int sys_mkdir (string oldpath, uint mode);
 
 		public static int mkdir (string oldpath, FilePermissions mode)
 		{
@@ -2440,8 +2435,7 @@ namespace Mono.Unix {
 		public static extern int vfork ();
 
 		[DllImport (LIBC, SetLastError=true, EntryPoint="ttyname")]
-		[Obsolete ("Not re-entrant.  Use ttyname_r instead.")]
-		public static extern IntPtr sys_ttyname (int fd);
+		private static extern IntPtr sys_ttyname (int fd);
 
 		[Obsolete ("Not re-entrant.  Use ttyname_r instead.")]
 		public static string ttyname (int fd)
@@ -2503,8 +2497,7 @@ namespace Mono.Unix {
 		public static extern int tcsetpgrp (int fd, int pgrp);
 
 		[DllImport (LIBC, SetLastError=true, EntryPoint="getlogin")]
-		[Obsolete ("Not re-entrant.  Use getlogin_r instead.")]
-		public static extern IntPtr sys_getlogin ();
+		private static extern IntPtr sys_getlogin ();
 
 		[Obsolete ("Not re-entrant.  Use getlogin_r instead.")]
 		public static string getlogin ()
@@ -2592,7 +2585,7 @@ namespace Mono.Unix {
 		public static extern int acct (string filename);
 
 		[DllImport (LIBC, SetLastError=true, EntryPoint="getusershell")]
-		public static extern IntPtr sys_getusershell ();
+		private static extern IntPtr sys_getusershell ();
 
 		public static string getusershell ()
 		{
@@ -2665,7 +2658,7 @@ namespace Mono.Unix {
 		public static extern int lockf (int fd, LockFlags cmd, long len);
 
 		[DllImport (CRYPT, SetLastError=true, EntryPoint="crypt")]
-		public static extern IntPtr sys_crypt (string key, string salt);
+		private static extern IntPtr sys_crypt (string key, string salt);
 
 		public static string crypt (string key, string salt)
 		{
