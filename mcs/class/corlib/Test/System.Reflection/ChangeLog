@@ -1,3 +1,8 @@
+2003-10-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AssemblyNameTest.cs: Convert to Nunit2 format, add tests for
+	CultureInfo, Version and HashAlgorithm properties.
+
 2003-09-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyTest.cs (TestGetType): New regression test for #49114.
