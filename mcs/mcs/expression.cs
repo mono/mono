@@ -3790,7 +3790,7 @@ namespace Mono.CSharp {
 		///   The MethodBase argument might be null if the
 		///   emission of the arguments is known not to contain
 		///   a `params' field (for example in constructors or other routines
-		///   that keep their arguments in this structure
+		///   that keep their arguments in this structure)
 		/// </summary>
 		public static void EmitArguments (EmitContext ec, MethodBase mb, ArrayList arguments)
 		{
@@ -4088,12 +4088,14 @@ namespace Mono.CSharp {
 								     Arguments, loc);
 				
 			}
-			
-			if (method == null && !is_struct) {
-				Error (1501, loc,
-				       "New invocation: Can not find a constructor for " +
-				       "this argument list");
-				return null;
+
+			if (method == null) { 
+                                if (!is_struct || Arguments.Count > 0) {
+        				Error (1501, loc,
+	        			       "New invocation: Can not find a constructor for " +
+		        		       "this argument list");
+			        	return null;
+                                }
 			}
 			return this;
 		}
@@ -5267,7 +5269,7 @@ namespace Mono.CSharp {
 		{
 			//
 			// We are the sole users of ResolveWithSimpleName (ie, the only
-			// ones that can cope with it
+			// ones that can cope with it)
 			//
 			Expression original = expr;
 			expr = expr.ResolveWithSimpleName (ec);
