@@ -2344,11 +2344,15 @@ namespace Mono.CSharp {
 		// 
 		public void Emit (TypeContainer parent)
 		{
-			if ((flags & MethodAttributes.PinvokeImpl) != 0)
-				return;
+			ILGenerator ig;
+			EmitContext ec;
 
-			ILGenerator ig = MethodBuilder.GetILGenerator ();
-			EmitContext ec = new EmitContext (parent, Location, ig,
+			if ((flags & MethodAttributes.PinvokeImpl) == 0)
+				ig = MethodBuilder.GetILGenerator ();
+			else
+				ig = null;
+			
+			ec = new EmitContext (parent, Location, ig,
 							  GetReturnType (parent), ModFlags);
 
 			if (OptAttributes != null)

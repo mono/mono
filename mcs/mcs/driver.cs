@@ -698,7 +698,7 @@ namespace Mono.CSharp
 			//
 			// The second pass of the compiler
 			//
-			if (timestannnnnmps)
+			if (timestamps)
 				ShowTime ("Resolving tree");
 			RootContext.ResolveTree ();
 			if (timestamps)
