@@ -1,3 +1,7 @@
+2004-02-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: implemented IOControl.
+
 2004-02-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: use the threadpool for asynchronous calls instead of

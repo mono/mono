@@ -1125,10 +1125,23 @@ namespace System.Net.Sockets
 			return(byte_val);
 		}
 
-		[MonoTODO("Totally undocumented")]
-		public int IOControl(int ioctl_code, byte[] in_value,
-				     byte[] out_value) {
-			throw new NotImplementedException();
+		// See Socket.IOControl, WSAIoctl documentation in MSDN. The
+		// common options between UNIX and Winsock are FIONREAD,
+		// FIONBIO and SIOCATMARK. Anything else will depend on the
+		// system.
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static int WSAIoctl (IntPtr sock, int ioctl_code, byte [] input, byte [] output);
+
+		public int IOControl (int ioctl_code, byte [] in_value, byte [] out_value)
+		{
+			if (disposed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
+			int result = WSAIoctl (socket, ioctl_code, in_value, out_value);
+			if (result == -1)
+				throw new InvalidOperationException ("Must use Blocking property instead.");
+
+			return result;
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
