@@ -51,13 +51,10 @@ namespace System.Web.UI
                 private bool _visible; //TODO: what default?
                 private HttpContext _context = null;
                 private bool _childControlsCreated = false;
-                private StateBag _viewState; //TODO: help me.
+                private StateBag _viewState = null;
                 private bool _trackViewState = false; //TODO: I think this is right. Verify. Also modify other methods to use this.
                 private EventHandlerList _events = new EventHandlerList();
-                public Control()
-                {
-                        _viewState = new StateBag(ViewStateIgnoreCase);
-                }
+                public Control() {}
                 public virtual string ClientID
                 {
                         get
@@ -185,10 +182,10 @@ namespace System.Web.UI
                                 _childControlsCreated = value;
                         }
                 }
-                protected virtual HttpContext Context
+                protected virtual HttpContext Context //DIT
                 {
                         get
-                        {                              //TODO: Is this right?
+                        {
                                 HttpContext context;
                                 if (_context != null)
                                         return _context;
@@ -217,17 +214,18 @@ namespace System.Web.UI
                                 return false;
                         }
                 }
-                protected bool IsTrackingViewState
+                protected bool IsTrackingViewState //DIT
                 {
                         get
-                        {       //FIXME: ME TO!
-                                return _enableViewState;
+                        {
+                                return _trackingViewState;
                         }
                 }
                 protected virtual StateBag ViewState
                 {
                         get
                         {
+                                if (_viewState == null) _viewState = new StateBag(ViewStateIgnoreCase);
                                 return _viewState;
                         }
                 }
@@ -305,6 +303,14 @@ namespace System.Web.UI
                         if (_events != null)
                         {
                                 EventHandler eh = (EventHandler)(_events[InitEvent]);
+                                if (eh != null) eh(this, e);
+                        }
+                }
+                protected virtual void OnLoad(EventArgs e) //DIT
+                {
+                        if (_events != null)
+                        {
+                                EventHandler eh = (EventHandler)(_events[LoadEvent]);
                                 if (eh != null) eh(this, e);
                         }
                 }
