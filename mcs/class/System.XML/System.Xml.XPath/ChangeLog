@@ -1,3 +1,7 @@
+2004-01-08  Nick Drochak <ndrochak@ieee.org>
+
+	* Iterator.cs: Removed unused variable.
+	
 2003-12-18 Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* Parser.jay : now it supresses error output from jay.

@@ -1021,8 +1021,6 @@ namespace System.Xml.XPath
 		{
 			while (_iter.MoveNext ())
 			{
-				bool fTrue = true;
-				
 				switch (resType) {
 					case XPathResultType.Number:
 						if (_pred.EvaluateNumber (_iter) != _iter.ComparablePosition)
