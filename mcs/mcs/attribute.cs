@@ -160,7 +160,6 @@ namespace Mono.CSharp {
 				} else if (e is TypeOf) {
 					pos_values [i] = ((TypeOf) e).TypeArg;
 				} else {
-					Console.WriteLine ("Foo " + e);
 					Error_AttributeArgumentNotValid ();
 					return null;
 				}
