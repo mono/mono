@@ -1,3 +1,7 @@
+2004-01-10  Jackson Harper <jackson@ximian.com>
+
+	* Page.cs: Save trace data before rendering it.
+	
 2004-01-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs: removed a couple of MonoTODO on methods we're not gonna

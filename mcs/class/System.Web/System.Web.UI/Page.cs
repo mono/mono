@@ -725,6 +725,7 @@ public class Page : TemplateControl, IHttpHandler
 	{
 		if (!Trace.IsEnabled)
 			return;
+		Trace.SaveData ();
 		Trace.Render (output);
 	}
 	
