@@ -1,3 +1,8 @@
+2005-02-23  Atsushi Enomoto <atsushi@ximian.com>
+
+	* GenericOutputter.cs : It should not attempt to write prefix "xml" and
+	  namespace "http://www.w3.org/XML/1998/namespace".
+
 2005-02-21  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlWriterEmitter.cs : PI nodes are normalized as to not contain "?>".

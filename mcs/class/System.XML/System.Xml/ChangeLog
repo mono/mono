@@ -1,5 +1,10 @@
 2005-02-23  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlNamespaceManager.cs : IsValidDeclaration was giving useless error
+	  information.
+
+2005-02-23  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlDocumentNavigator.cs : it should virtually expand EntityReference,
 	  so refactored to handle both entity references and top level children.
 

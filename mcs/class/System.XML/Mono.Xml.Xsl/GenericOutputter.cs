@@ -268,9 +268,9 @@ namespace Mono.Xml.Xsl
 
 		public override void WriteAttributeString (string prefix, string localName, string nsURI, string value)
 		{
-			if (prefix == String.Empty && nsURI != String.Empty) {
+			if (prefix == String.Empty && nsURI != String.Empty ||
+				prefix == "xml" && nsURI != XmlNamespaceManager.XmlnsXml)
 				prefix = "xp_" + _xpCount++;
-			}
 
 			//Put attribute to pending attributes collection, replacing namesake one
 			for (int i = 0; i < pendingAttributesPos; i++) {

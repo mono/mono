@@ -172,10 +172,10 @@ namespace System.Xml
 		{
 			string message = null;
 			if (prefix == PrefixXml && uri != XmlnsXml)
-				message = String.Format ("Prefix \"xml\" is only allowed to the fixed uri \"{0}\"", XmlnsXml);
-			if (message == null && prefix == "xmlns")
+				message = String.Format ("Prefix \"xml\" is only allowed to the fixed uri \"{0}\"", uri);
+			else if (message == null && prefix == "xmlns")
 				message = "Declaring prefix named \"xmlns\" is not allowed to any namespace.";
-			if (message == null && uri == XmlnsXmlns)
+			else if (message == null && uri == XmlnsXmlns)
 				message = String.Format ("Namespace URI \"{0}\" cannot be declared with any namespace.", XmlnsXmlns);
 			if (message != null && throwException)
 				throw new ArgumentException (message);
