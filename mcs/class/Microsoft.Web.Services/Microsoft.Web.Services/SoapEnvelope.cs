@@ -22,6 +22,7 @@ namespace Microsoft.Web.Services {
 		private XmlElement header;
 #if WSE2
 		private Encoding _encoding;
+		private bool _processed = false;
 #endif
 
 		public SoapEnvelope ()
@@ -49,6 +50,17 @@ namespace Microsoft.Web.Services {
 					_encoding = new UTF8Encoding (false);
 				}
 			}
+		}
+
+		public bool Processed {
+			get { return _processed; }
+		}
+
+
+		//Potential LAMESPEC: Why not a property?!?
+		public void SetProcessed (bool to)
+		{
+			_processed = to;
 		}
 #endif
 

@@ -1,7 +1,10 @@
-2003-10-13  Todd Berman <tberman@gentoo.org>
+2003-10-22  Todd Berman <tberman@gentoo.org>
 
-	* SoapContext.cs: Added Addressing objects.
-	* SoapEnvelope.cs: Added Encoding and fixed up Save (string)
+	* SoapContext.cs: Added Addressing objects, SetActor, SetTo, 
+	Processed, SetIsInbound and SetProcessed.
+	* SoapEnvelope.cs: Added Encoding, Processed and SetProcessed and 
+	fixed up Save (string)
+	* AsyncResult.cs: Basic Implementation for WSE2 (not for WSE1 yet).
 
 2003-10-05  Sebastien Pouliot  <spouliot@videotron.ca>
 

@@ -14,6 +14,7 @@ using Microsoft.Web.Services.Security;
 using Microsoft.Web.Services.Timestamp;
 #if !WSE1
 using Microsoft.Web.Services.Addressing;
+using Microsoft.Web.Services.Messaging;
 #endif
 
 using System;
@@ -24,8 +25,12 @@ namespace Microsoft.Web.Services {
 	public sealed class SoapContext {
 
 		private SoapEnvelope envelope;
+#if WSE1
 		private Uri actor;
-		private Microsoft.Web.Services.Timestamp.Timestamp timestamp;
+#else
+		private Uri actor = new Uri ("http://" + System.Net.Dns.GetHostName ());
+#endif
+		private Timestamp timestamp = new Timestamp ();
 		private Microsoft.Web.Services.Security.Security security;
 		private Hashtable table;
 		private DimeAttachmentCollection attachments;
@@ -34,6 +39,9 @@ namespace Microsoft.Web.Services {
 		private ReferralCollection referrals;
 #if !WSE1
                 private AddressingHeaders addressingHeaders;
+		private SoapChannel _channel;
+		private bool _processed = false;
+		private bool _isInbound = false;
 #endif
 		internal SoapContext () : this (null) 
 		{
@@ -95,6 +103,37 @@ namespace Microsoft.Web.Services {
 		public RelatesTo RelatesTo {
 			get { return addressingHeaders.RelatesTo; }
 			set { addressingHeaders.RelatesTo = value; }
+		}
+
+		public SoapChannel Channel {
+			get { return _channel; }
+			set { _channel = value; }
+		}
+
+		public bool Processed {
+			get { return _processed; }
+		}
+
+		public void SetProcessed (bool to) {
+			_processed = to;
+		}
+
+		public void SetTo (Uri uri) {
+			addressingHeaders.To = uri;
+		}
+
+		public void SetTo (To to) {
+			addressingHeaders.To = to;
+		}
+
+		public void SetActor (Uri act)
+		{
+			actor = act;
+		}
+
+		public void SetIsInbound (bool to)
+		{
+			_isInbound = to;
 		}
 #endif
 		public Uri Actor { 
