@@ -11,11 +11,9 @@
 using System;
 using System.IO;
 using System.Text;
-using NUnit.Framework;
 
 namespace MonoTests.System
 {
-	[TestFixture]
 	public class UriTestGenerator
 	{
 		public static void Main (string [] args)
@@ -24,6 +22,12 @@ namespace MonoTests.System
 			StreamWriter sw = new StreamWriter ("test-uri-props.txt", false, Encoding.UTF8);
 
 			GenerateResult (sr, sw, null);
+
+			sr = new StreamReader ("test-uri-relative-list.txt", Encoding.UTF8);
+			sw = new StreamWriter ("test-uri-relative-props.txt", false, Encoding.UTF8);
+
+			Uri baseUri = new Uri ("http://www.go-mono.com");
+			GenerateResult (sr, sw, baseUri);
 		}
 
 		public static void GenerateResult (TextReader sr, TextWriter sw, Uri baseUri)
@@ -54,6 +58,7 @@ namespace MonoTests.System
 				sw.WriteLine (uri.Authority);
 				sw.WriteLine (uri.Fragment);
 				sw.WriteLine (uri.UserInfo);
+				sw.Flush ();
 			}
 			sr.Close ();
 			sw.Close ();

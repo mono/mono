@@ -48,20 +48,38 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		public void TestFromFile ()
+		public void AbsoluteUriFromFile ()
 		{
-			StreamReader sr = new StreamReader ("Test/System/test-uri-props.txt", Encoding.UTF8);
+			FromFile ("Test/System/test-uri-props.txt", null);
+		}
+		
+		[Test]
+		public void AbsoluteUriFromFileManual ()
+		{
+			FromFile ("Test/System/test-uri-props-manual.txt", null);
+		}
+		
+		[Test]
+		public void RelativeUriFromFile ()
+		{
+			FromFile ("Test/System/test-uri-relative-props.txt", new Uri ("http://www.go-mono.com"));
+		}
+		
+		private void FromFile (string testFile, Uri baseUri)
+		{
+			StreamReader sr = new StreamReader (testFile, Encoding.UTF8);
 			while (sr.Peek () > 0) {
 				sr.ReadLine (); // skip
 				string uriString = sr.ReadLine ();
-//TextWriter sw = Console.Out;
-//				sw.WriteLine ("-------------------------");
-//				sw.WriteLine (uriString);
-
+/*
+TextWriter sw = Console.Out;
+				sw.WriteLine ("-------------------------");
+				sw.WriteLine (uriString);
+*/
 				if (uriString == null || uriString.Length == 0)
 					break;
 
-				Uri uri = new Uri (uriString);
+				Uri uri = baseUri == null ? new Uri (uriString) : new Uri (baseUri, uriString);
 /*
 				sw.WriteLine ("ToString(): " + uri.ToString ());
 				sw.WriteLine (uri.AbsoluteUri);
@@ -102,49 +120,6 @@ namespace MonoTests.System
 //				Console.WriteLine ("Passed: " + uriString);
 			}
 		}
-
-/*
-		public static void Main (string [] args)
-		{
-			StreamReader sr = new StreamReader ("test-uri-list.txt", Encoding.UTF8);
-			StreamWriter sw = new StreamWriter ("test-uri-props.txt", false, Encoding.UTF8);
-
-			GenerateResult (sr, sw, null);
-		}
-
-		public static void GenerateResult (TextReader sr, TextWriter sw, Uri baseUri)
-		{
-			while (sr.Peek () > 0) {
-				string uriString = sr.ReadLine ();
-				if (uriString.Length == 0 || uriString [0] == '#')
-					continue;
-				Uri uri = (baseUri == null) ?
-					new Uri (uriString) : new Uri (baseUri, uriString);
-
-				sw.WriteLine ("-------------------------");
-				sw.WriteLine (uriString);
-				sw.WriteLine (uri.ToString ());
-				sw.WriteLine (uri.AbsoluteUri);
-				sw.WriteLine (uri.Scheme);
-				sw.WriteLine (uri.Host);
-				sw.WriteLine (uri.LocalPath);
-				sw.WriteLine (uri.Query);
-				sw.WriteLine (uri.Port);
-				sw.WriteLine (uri.IsFile);
-				sw.WriteLine (uri.IsUnc);
-				sw.WriteLine (uri.IsLoopback);
-				sw.WriteLine (uri.UserEscaped);
-				sw.WriteLine (uri.HostNameType);
-				sw.WriteLine (uri.AbsolutePath);
-				sw.WriteLine (uri.PathAndQuery);
-				sw.WriteLine (uri.Authority);
-				sw.WriteLine (uri.Fragment);
-				sw.WriteLine (uri.UserInfo);
-			}
-			sr.Close ();
-			sw.Close ();
-		}
-*/
 
 	}
 }
