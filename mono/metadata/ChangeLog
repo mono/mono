@@ -1,3 +1,8 @@
+
+Thu Feb 14 11:49:30 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* opcode.c: use stddef.h to get NULL.
+
 2002-02-14  Jeffrey Stedfast  <fejj@ximian.com>
 
 	* socket-io.c: conditionally include sys/filio.h and sys/sockio.h
