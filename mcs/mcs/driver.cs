@@ -317,9 +317,6 @@ namespace Mono.CSharp
 		{
 			defines = new ArrayList ();
 			defines.Add ("__MonoCS__");
-
-			if (Type.GetType ("Mono.CSharp.Debugger.IMonoSymbolWriter") != null)
-				defines.Add ("__MonoRuntime__");
 		}
 
 		static string [] LoadArgs (string file)
