@@ -21,6 +21,7 @@ using System.Reflection;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Messaging;
+using System.Runtime.Remoting.MetadataServices;
 using System.Text;
 using System.Threading;
 
@@ -135,7 +136,10 @@ namespace System.Runtime.Remoting.Channels.Http
 			_channelData = new ChannelDataStore(urls);
 			
 			if(_sinkProvider == null)
-				_sinkProvider = new SoapServerFormatterSinkProvider();
+			{
+				_sinkProvider = new SdlChannelSinkProvider();
+				_sinkProvider.Next = new SoapServerFormatterSinkProvider();
+			}
 
 			// collect channel data from all providers
 			IServerChannelSinkProvider provider = _sinkProvider;
@@ -419,48 +423,7 @@ namespace System.Runtime.Remoting.Channels.Http
 		{
 			get { return s_serverHeader; }
 		}
-        
-        
 	} // HttpServerTransportSink
-
-
-
-	internal class ErrorMessage: IMethodCallMessage
-	{
-
-		// IMessage
-		public IDictionary Properties     { get{ return null;} }
-
-		// IMethodMessage
-		public String Uri                      { get{ return m_URI; } }
-		public String MethodName               { get{ return m_MethodName; }}
-		public String TypeName                 { get{ return m_TypeName; } }
-		public Object MethodSignature          { get { return m_MethodSignature;} }
-		public MethodBase MethodBase           { get { return null; }}
-		public int ArgCount                    { get { return m_ArgCount;} }
-		public String GetArgName(int index)    { return m_ArgName; }
-		public Object GetArg(int argNum)       { return null;}
-		public Object[] Args                   { get { return null;} }
-
-		public bool HasVarArgs                 { get { return false;} }
-		public LogicalCallContext LogicalCallContext { get { return null; }}
-
-
-		// IMethodCallMessage
-		public int InArgCount                  { get { return m_ArgCount;} }
-		public String GetInArgName(int index)   { return null; }
-		public Object GetInArg(int argNum)      { return null;}
-		public Object[] InArgs                { get { return null; }}
-
-		String m_URI = "Exception";
-		String m_MethodName = "Unknown";
-		String m_TypeName = "Unknown";
-		Object m_MethodSignature = null;
-		int m_ArgCount = 0;
-		String m_ArgName = "Unknown";
-	} // ErrorMessage
-
-
 
 
 } // namespace System.Runtime.Remoting.Channels.Http

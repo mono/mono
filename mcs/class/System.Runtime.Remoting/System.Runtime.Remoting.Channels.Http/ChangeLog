@@ -1,3 +1,10 @@
+2003-12-10  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* HttpServer.cs: Allow the use of GET method (SdlServerSink supports it).
+	Added some text constans for transport keys.
+	* HttpServerChannel.cs: Add SdlChannelSinkProvider to the default 
+	sink provider chain. Removed unused ErrorMessage class.
+
 2003-11-16  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* HttpHelper.cs: Removed usnused method GetMachineIp.

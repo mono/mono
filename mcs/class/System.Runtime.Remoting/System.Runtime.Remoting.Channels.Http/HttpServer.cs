@@ -88,10 +88,19 @@ namespace System.Runtime.Remoting.Channels.Http
 				return;
 
 			//Step (4) Recieve the entity body
-			byte [] buffer =new byte[(int)HeaderFields["content-length"]];
-			if (!RecieveEntityBody (reqArg, buffer))
-				return ;
-
+			
+			byte[] buffer;
+			object len = HeaderFields["content-length"];
+			if (len != null)
+			{
+				buffer = new byte [(int)len];
+				if (!RecieveEntityBody (reqArg, buffer))
+					return;
+			}
+			else
+				buffer = new byte [0];
+				
+			
 			//Step (5)
 		    SendRequestForChannel (reqArg, HeaderFields, CustomHeaders, buffer);
 		}
@@ -167,16 +176,13 @@ namespace System.Runtime.Remoting.Channels.Http
 		{
 			string temp;
 			
+			if (HeaderFields["expect"] as string == "100-continue")
+				SendResponse (reqArg, 100, null, null);
+
 			//Check the method
 			temp = HeaderFields["method"].ToString();
-			if (temp!="POST")
-			{
-				SendResponse (reqArg, 501, null, null);
-                return false;
-			}
-
-			if (HeaderFields["expect"].ToString() == "100-continue")
-				SendResponse (reqArg, 100, null, null);
+			if (temp != "POST")
+                return true;
 
 			//Check for the content-length field
 			if (HeaderFields["content-length"]==null)
@@ -223,17 +229,13 @@ namespace System.Runtime.Remoting.Channels.Http
 			if(stream.Position !=0)
 				stream.Seek(0,SeekOrigin.Begin);
 
-			//These two headers are sent to the Soap Formatter
-			//IF the Soap formatter on mono will need them , then uncomment them.
-			//THeaders["__ConnectionId"] = Int64.Parse("1");
-			//THeaders["__IPAddress"]= ((IPEndPoint)socket.RemoteEndPoint).Address;
-
-			THeaders["__RequestUri"] = FixURI((string)HeaderFields["request-url"]);
-			THeaders["Content-Type"]= HeaderFields["content-type"];
-			THeaders["__RequestVerb"]= HeaderFields["method"];
-			THeaders["__HttpVersion"] = HeaderFields["http-version"];
-			THeaders["User-Agent"] = HeaderFields["user-agent"];
-			THeaders["Host"] = HeaderFields["host"];
+			THeaders[CommonTransportKeys.RequestUri] = FixURI((string)HeaderFields["request-url"]);
+			THeaders[CommonTransportKeys.ContentType]= HeaderFields["content-type"];
+			THeaders[CommonTransportKeys.RequestVerb]= HeaderFields["method"];
+			THeaders[CommonTransportKeys.HttpVersion] = HeaderFields["http-version"];
+			THeaders[CommonTransportKeys.UserAgent] = HeaderFields["user-agent"];
+			THeaders[CommonTransportKeys.Host] = HeaderFields["host"];
+			THeaders[CommonTransportKeys.SoapAction] = HeaderFields["SOAPAction"];
 
 			foreach(DictionaryEntry DictEntry in CustomHeaders)
 			{
@@ -254,44 +256,53 @@ namespace System.Runtime.Remoting.Channels.Http
 			
 		}
 		
-		public static bool SendResponse (RequestArguments reqArg, int HttpStatusCode, ITransportHeaders  headers , Stream responseStream)
+		public static bool SendResponse (RequestArguments reqArg, int httpStatusCode, ITransportHeaders headers, Stream responseStream)
 		{
 			byte [] headersBuffer = null;
 			byte [] entityBuffer = null;
 
-			StringBuilder ResponseStr;
-			String Reason = GetReasonPhrase(HttpStatusCode);
+			StringBuilder responseStr;
+			String reason = null;
 
-			if (headers != null && headers["__HttpStatusCode"] != null) {
+			if (headers != null && headers[CommonTransportKeys.HttpStatusCode] != null) {
 				// The formatter can override the result code
-				HttpStatusCode = int.Parse ((string)headers["__HttpStatusCode"]);
-				Reason = (string)headers["__HttpReasonPhrase"];
+				httpStatusCode = int.Parse ((string)headers [CommonTransportKeys.HttpStatusCode]);
+				reason = (string) headers [CommonTransportKeys.HttpReasonPhrase];
 			}
+
+			if (reason == null)
+				reason = GetReasonPhrase (httpStatusCode);
 			
 			//Response Line 
-			ResponseStr = new StringBuilder( "HTTP/1.0 " + HttpStatusCode + " " + Reason + "\r\n" );
-			if(headers!=null)
-				foreach(DictionaryEntry entry in headers)
+			responseStr = new StringBuilder ("HTTP/1.0 " + httpStatusCode + " " + reason + "\r\n" );
+			
+			if (headers != null)
+			{
+				foreach (DictionaryEntry entry in headers)
 				{
 					string key = entry.Key.ToString();
-					if (key != "__HttpStatusCode" && key != "__HttpReasonPhrase")
-						ResponseStr.Append(key + ": " + entry.Value.ToString() + "\r\n");
+					if (key != CommonTransportKeys.HttpStatusCode && key != CommonTransportKeys.HttpReasonPhrase)
+						responseStr.Append(key + ": " + entry.Value.ToString() + "\r\n");
 				}
+			}
 			
-			ResponseStr.Append("Server: Mono Remoting, Mono CLR " + System.Environment.Version.ToString() + "\r\n");
+			responseStr.Append("Server: Mono Remoting, Mono CLR " + System.Environment.Version.ToString() + "\r\n");
 
-			if(responseStream != null)
-			if(responseStream.Length!=0)
+			if(responseStream != null && responseStream.Length!=0)
 			{
-				ResponseStr.Append("Content-Length: "+responseStream.Length.ToString()+"\r\n"); 
+				responseStr.Append("Content-Length: "+responseStream.Length.ToString()+"\r\n"); 
 				entityBuffer  = new byte[responseStream.Length];
 				responseStream.Seek(0 , SeekOrigin.Begin);
-                		responseStream.Read(entityBuffer,0,entityBuffer.Length);
+				responseStream.Read(entityBuffer,0,entityBuffer.Length);
 			}
+			else
+				responseStr.Append("Content-Length: 0\r\n"); 
 
-   			ResponseStr.Append("\r\n");
+			responseStr.Append("X-Powered-By: Mono\r\n"); 
+			responseStr.Append("Connection: close\r\n"); 
+   			responseStr.Append("\r\n");
 		
-		   	headersBuffer = Encoding.ASCII.GetBytes (ResponseStr.ToString());
+		   	headersBuffer = Encoding.ASCII.GetBytes (responseStr.ToString());
 
 			try
 			{
@@ -301,23 +312,22 @@ namespace System.Runtime.Remoting.Channels.Http
 				if (entityBuffer != null)
 					reqArg.OutputStream.Write (entityBuffer, 0, entityBuffer.Length);
 			}
-			catch (SocketException )
+			catch
 			{
 				//<EXCEPTION>
 				//may be its the client's fault so just return with false
 				return false;
 			}
+			finally
+			{
+				Console.WriteLine ("Closed");
+				reqArg.OutputStream.Close ();
+			}
 
 			return true;
 		}
 
-		public static bool SendResponse(Socket socket , int HttpStatusCode ,string ReasonPhrase, ITransportHeaders headers , Stream responseStream )
-		{
-			
-			return true;
-		}
-
-		internal static string GetReasonPhrase(int HttpStatusCode)
+		internal static string GetReasonPhrase (int HttpStatusCode)
 		{
 			switch (HttpStatusCode)
 			{
@@ -372,18 +382,18 @@ namespace System.Runtime.Remoting.Channels.Http
 	}
 	
 	
-	 internal  sealed class   ReqMessageParser
+	internal sealed class ReqMessageParser
 	{
-		 private  const int nCountReq = 14;
-		 private  const int nCountEntity = 15;
-
-		 private static bool bInitialized = false;
-
-		 private static String [] ReqRegExpString = new String [nCountReq ];
-		 private static String [] EntityRegExpString = new String[nCountEntity]; 
-		 
-		 private static Regex [] ReqRegExp = new Regex[nCountReq];
-		 private static Regex [] EntityRegExp = new Regex[nCountEntity];
+		private  const int nCountReq = 14;
+		private  const int nCountEntity = 15;
+		
+		private static bool bInitialized = false;
+		
+		private static String [] ReqRegExpString = new String [nCountReq ];
+		private static String [] EntityRegExpString = new String[nCountEntity]; 
+		
+		private static Regex [] ReqRegExp = new Regex[nCountReq];
+		private static Regex [] EntityRegExp = new Regex[nCountEntity];
 		 
 
 		 
@@ -393,16 +403,13 @@ namespace System.Runtime.Remoting.Channels.Http
 
 		 public static bool ParseHeaderField(string buffer,IDictionary headers)
 		 {
-			
 			 try
 			 {
-
 				 if(!bInitialized)
 				 {
 					 Initialize();
 					 bInitialized =true;
 				 }
-			 
 
 				 if(IsRequestField(buffer,headers))
 					 return true;
@@ -413,16 +420,12 @@ namespace System.Runtime.Remoting.Channels.Http
 			 catch(Exception )
 			 {
 				 //<Exception>
-
 			 }
 
 			 //Exception
 
 			 return false;
-
 		 }
-		  
-
 		 
 		 private static bool Initialize()
 		 {
