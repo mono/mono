@@ -1,3 +1,10 @@
+2004-11-29  Ben Maurer  <bmaurer@ximian.com>
+
+	* icall.c (ves_icall_System_Reflection_Assembly_GetNamespaces):
+	EXPORTEDTYPES are already in the class name cache, so there is no
+	need to add extra code here to look at them. Just removes a bit of
+	cruft.
+
 2004-11-28  Martin Baulig  <martin@ximian.com>
 
 	* loader.c
