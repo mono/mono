@@ -1,3 +1,9 @@
+2004-02-18  Jackson Harper <jackson@ximian.com>
+
+	* ExternTypeRefInst.cs: New file - represents an instance of an
+	extern type ref, used for making value type tokens.
+	* TypeDef.cs: Add implementing classes.
+	
 2003-12-10  Jackson Harper <jackson@ximian.com>
 
 	* ModifiableType.cs: Allow the conversion list to be got/set.

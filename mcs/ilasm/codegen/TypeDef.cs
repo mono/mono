@@ -269,6 +269,13 @@ namespace Mono.ILASM {
                         if (size != -1)
                                 classdef.AddLayoutInfo (pack, size);
 
+                        if (impl_list != null) {
+                                foreach (IClassRef impl in impl_list) {
+                                        impl.Resolve (code_gen);
+                                        classdef.AddImplementedInterface (impl.PeapiClass);
+                                }
+                        }
+
                         if (typar_list != null) {
                                 short index = 0;
                                 foreach (GenericInfo gi in typar_list) {
