@@ -42,7 +42,6 @@ namespace System.DirectoryServices
 	/// <summary>
 	///Performs queries against Ldap directory.
 	/// </summary>
-	[DesignerCategory ("Component")]
 	public class DirectorySearcher : Component	
 	{
 
@@ -369,10 +368,12 @@ namespace System.DirectoryServices
 		[DSDescription ("The time limit the server should observe to search.")]
 		public TimeSpan ServerTimeLimit 
 		{
+			[MonoTODO]
 			get
 			{
 				throw new NotImplementedException();
 			}
+			[MonoTODO]
 			set
 			{
 				throw new NotImplementedException();
@@ -414,10 +415,12 @@ namespace System.DirectoryServices
 		[TypeConverter (typeof (ExpandableObjectConverter))]
 		public SortOption Sort
 		{
+			[MonoTODO]
 			get
 			{
 				throw new NotImplementedException();
 			}
+			[MonoTODO]
 			set
 			{
 				throw new NotImplementedException();
@@ -656,6 +659,7 @@ namespace System.DirectoryServices
 		return;
 		}
 
+		[MonoTODO]
 		protected override void Dispose(bool disposing)
 		{
 			throw new NotImplementedException();

@@ -43,7 +43,6 @@ namespace System.DirectoryServices
 	/// <summary>
 	///Encapsulates a node or object in the Ldap Directory hierarchy.
 	/// </summary>
-	[DesignerCategory ("Component")]
 	[TypeConverter (typeof (DirectoryEntryConverter))]
 	public class DirectoryEntry : Component	
 	{
@@ -374,6 +373,7 @@ namespace System.DirectoryServices
 		[Browsable (false)]
 		public object NativeObject 
 		{
+			[MonoTODO]
 			get			{
 				throw new NotImplementedException();
 			}
@@ -386,10 +386,12 @@ namespace System.DirectoryServices
 		[DefaultValue (true)]
 		public bool UsePropertyCache
 		{
+			[MonoTODO]
 			get 
 			{
 				throw new NotImplementedException();
 			}
+			[MonoTODO]
 			set 
 			{
 				throw new NotImplementedException();
@@ -574,6 +576,7 @@ namespace System.DirectoryServices
 		[Browsable (false)]
 		public DirectoryEntry SchemaEntry 
 		{
+			[MonoTODO]
 			get			{
 				throw new NotImplementedException();
 			}
@@ -710,6 +713,7 @@ namespace System.DirectoryServices
 		/// </summary>
 		/// <param name="newParent">The parent DirectoryEntry. 	</param>
 		/// <returns>A copy of this entry as a child of the specified parent.
+		[MonoTODO]
 		public DirectoryEntry CopyTo(DirectoryEntry newParent)
 		{
 			throw new NotImplementedException();
@@ -810,6 +814,7 @@ namespace System.DirectoryServices
 		/// <returns>The return value of the invoked method</returns>
 		/// <remarks>
 		/// Not implemented.
+		[MonoTODO]
 		public object Invoke(string methodName,
 			params object[] args)
 		{
@@ -824,6 +829,7 @@ namespace System.DirectoryServices
 		/// <param name="newName"> The name of the copy of this entry. 
 		/// </param>
 		/// <returns>A renamed copy of this entry as a child of the specified parent.
+		[MonoTODO]
 		public DirectoryEntry CopyTo( DirectoryEntry newParent,
 			string newName	)
 		{
@@ -900,6 +906,17 @@ namespace System.DirectoryServices
 			}
 		}
 
+		[MonoTODO]
+		public void RefreshCache ()
+		{
+			throw new NotImplementedException ("System.DirectoryServices.DirectoryEntry.RefreshCache()");
+		}
+
+		[MonoTODO]
+		public void RefreshCache (string[] args)
+		{
+			throw new NotImplementedException ("System.DirectoryServices.DirectoryEntry.RefreshCache(System.String[])");
+		}
 	}
 }
 

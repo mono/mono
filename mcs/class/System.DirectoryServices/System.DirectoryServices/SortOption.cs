@@ -28,6 +28,8 @@ namespace System.DirectoryServices {
 			this.direction = direction;
 		}
 
+		[DSDescription ("Name of propertion to be sorted on"),
+		 DefaultValue (null)]
 		public String PropertyName {
 			get { return propertyName; }
 			set {
@@ -37,6 +39,8 @@ namespace System.DirectoryServices {
 			}
 		}
 
+		[DSDescription ("Whether the sort is ascending or descending"),
+		 DefaultValue (SortDirection.Ascending)]
 		public SortDirection Direction {
 			get { return direction; }
 			set { direction = value; }

@@ -22,78 +22,48 @@
 *******************************************************************************/
 
 //
-// System.DirectoryServices.SchemaNameCollection.cs
+// System.DirectoryServices.DirectoryEntry.cs
 //
-// Author:
-//   Sunil Kumar (sunilk@novell.com)
-//   Raja R Harinath <rharinath@novell.com>
+// Copyright (C) 2004  Novell Inc.
 //
-// Copyright (C) 2003, 2004  Novell Inc.
+// Stub implementation written by Raja R Harinath <rharinath@novell.com>
 //
 
-using System.Collections;
+using System.Security;
+using System.Security.Permissions;
 
 namespace System.DirectoryServices
 {
-	
-	/// <summary>
-	///Contains a list of the schema names that the
-	/// SchemaFilter property of a DirectoryEntries
-	///  object can use.
-	/// </summary>
-	public class SchemaNameCollection : CollectionBase
+	public class DirectoryServicesPermission : ResourcePermissionBase
 	{
-		internal SchemaNameCollection ()
+		DirectoryServicesPermissionEntryCollection entries;
+
+		[MonoTODO]
+		public DirectoryServicesPermission ()
+		{ throw new NotImplementedException ("System.DirectoryServices.DirectoryServicesPermission()"); }
+
+		[MonoTODO]
+		public DirectoryServicesPermission (DirectoryServicesPermissionEntry[] entries)
 		{
-		}
-		
-		public int Add (string value)
-		{
-			return List.Add (value);
+			entries = new DirectoryServicesPermissionEntryCollection ();
+			entries.AddRange (entries);
 		}
 
-		public string this[int pos]
+ 		[MonoTODO]
+ 		public DirectoryServicesPermission (PermissionState ps)
+ 		{ throw new NotImplementedException ("System.DirectoryServices.DirectoryServicesPermission(permission_state)"); }
+
+		[MonoTODO]
+		public DirectoryServicesPermission (DirectoryServicesPermissionAccess access, string path)
 		{
-			get { return List[pos] as string; }
-			set { List[pos] = value; }
+			entries = new DirectoryServicesPermissionEntryCollection ();
+			entries.Add (new DirectoryServicesPermissionEntry (access, path));
 		}
 
-		public int IndexOf (string s)
+		public DirectoryServicesPermissionEntryCollection PermissionEntries
 		{
-			return List.IndexOf (s);
-		}
-
-		public bool Contains (string s)
-		{
-			return List.Contains (s);
-		}
-
-		public void AddRange (string[] coll)
-		{
-			foreach (string s in coll)
-				Add (s);
-		}
-
-		public void AddRange (SchemaNameCollection coll)
-		{
-			foreach (string s in coll)
-				Add (s);
-		}
-
-		public void Insert (int pos, string s)
-		{
-			List.Insert (pos, s);
-		}
-
-		public void CopyTo (string[] copy_to, int index)
-		{
-			foreach (string s in List)
-				copy_to[index++] = s;
-		}
-
-		public void Remove (string s)
-		{
-			List.Remove (s);
+			[MonoTODO]
+			get { return entries; }
 		}
 	}
 }

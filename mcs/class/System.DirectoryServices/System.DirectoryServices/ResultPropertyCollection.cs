@@ -53,11 +53,11 @@ namespace System.DirectoryServices
 	/// </remarks>
 	public class ResultPropertyCollection  : DictionaryBase
 	{
-/*		internal ResultPropertyCollection()
+		internal ResultPropertyCollection()
 		{
 			
 		}
-*/
+
 		public ResultPropertyValueCollection this[string key]
 		{
 			get {
@@ -89,10 +89,14 @@ namespace System.DirectoryServices
 		{
 			get
 			{
-					return this.Dictionary.Values;
+				return this.Dictionary.Values;
 			}
 		}
 
+		public void CopyTo (ResultPropertyValueCollection[] copy_to, int index)
+		{
+			foreach (ResultPropertyValueCollection vals in Values)
+				copy_to[index++] = vals;
+		}
 	}
 }
-

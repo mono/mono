@@ -22,78 +22,70 @@
 *******************************************************************************/
 
 //
-// System.DirectoryServices.SchemaNameCollection.cs
+// System.DirectoryServices.DirectoryEntry.cs
 //
-// Author:
-//   Sunil Kumar (sunilk@novell.com)
-//   Raja R Harinath <rharinath@novell.com>
+// Copyright (C) 2004  Novell Inc.
 //
-// Copyright (C) 2003, 2004  Novell Inc.
+// Written by Raja R Harinath <rharinath@novell.com>
 //
 
 using System.Collections;
+using System.Security;
+using System.Security.Permissions;
 
 namespace System.DirectoryServices
 {
-	
-	/// <summary>
-	///Contains a list of the schema names that the
-	/// SchemaFilter property of a DirectoryEntries
-	///  object can use.
-	/// </summary>
-	public class SchemaNameCollection : CollectionBase
+	public class DirectoryServicesPermissionEntryCollection : CollectionBase
 	{
-		internal SchemaNameCollection ()
+		internal DirectoryServicesPermissionEntryCollection () { }
+
+		public DirectoryServicesPermissionEntry this[int index]
 		{
-		}
-		
-		public int Add (string value)
-		{
-			return List.Add (value);
+			get { return List[index] as DirectoryServicesPermissionEntry; }
+			set { List[index] = value; }
 		}
 
-		public string this[int pos]
+		public int Add (DirectoryServicesPermissionEntry entry)
 		{
-			get { return List[pos] as string; }
-			set { List[pos] = value; }
+			return List.Add (entry);
 		}
 
-		public int IndexOf (string s)
+		public void AddRange (DirectoryServicesPermissionEntry[] entries)
 		{
-			return List.IndexOf (s);
+			foreach (DirectoryServicesPermissionEntry entry in entries)
+				Add (entry);
 		}
 
-		public bool Contains (string s)
+		public void AddRange (DirectoryServicesPermissionEntryCollection entries)
 		{
-			return List.Contains (s);
+			foreach (DirectoryServicesPermissionEntry entry in entries)
+				Add (entry);
 		}
 
-		public void AddRange (string[] coll)
+		public void CopyTo (DirectoryServicesPermissionEntry[] copy_to, int index)
 		{
-			foreach (string s in coll)
-				Add (s);
+			foreach (DirectoryServicesPermissionEntry entry in List)
+				copy_to[index++] = entry;
 		}
 
-		public void AddRange (SchemaNameCollection coll)
+		public bool Contains (DirectoryServicesPermissionEntry entry)
 		{
-			foreach (string s in coll)
-				Add (s);
+			return List.Contains (entry);
 		}
 
-		public void Insert (int pos, string s)
+		public int IndexOf (DirectoryServicesPermissionEntry entry)
 		{
-			List.Insert (pos, s);
+			return List.IndexOf (entry);
 		}
 
-		public void CopyTo (string[] copy_to, int index)
+		public void Insert (int pos, DirectoryServicesPermissionEntry entry)
 		{
-			foreach (string s in List)
-				copy_to[index++] = s;
+			List.Insert (pos, entry);
 		}
 
-		public void Remove (string s)
+		public void Remove (DirectoryServicesPermissionEntry entry)
 		{
-			List.Remove (s);
+			List.Remove (entry);
 		}
 	}
 }

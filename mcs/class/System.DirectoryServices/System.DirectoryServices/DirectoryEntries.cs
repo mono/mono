@@ -145,6 +145,11 @@ namespace System.DirectoryServices
 			_Conn = lc;
 		}
 
+		public SchemaNameCollection SchemaFilter {
+			[MonoTODO]
+			get { throw new NotImplementedException ("System.DirectoryServices.DirectoryEntries.SchemaFilter"); }
+		}
+
 		public  IEnumerator GetEnumerator()
 		{
 			m_oValues= new ArrayList();

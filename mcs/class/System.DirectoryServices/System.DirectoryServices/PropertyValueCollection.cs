@@ -82,28 +82,16 @@ namespace System.DirectoryServices
 
 		}
 
-		public void AddRange(object[] value)
+		public void AddRange(object[] values)
 		{
-			int i=0;
-			while(true)
-			{
-				try
-				{
-					if(Add(value[i])!= -1)
-					{
-						++i;
-					}
-				}
-				catch(IndexOutOfRangeException ex)
-				{
-					break;
-				}
-				catch(Exception ex)
-				{
-					throw ex;
-				}
-			}
-			return;
+			foreach (object value in values)
+				Add (value);
+		}
+
+		public void AddRange (PropertyValueCollection coll)
+		{
+			foreach (object value in coll)
+				Add (value);
 		}
 
 		public int IndexOf( object value )  
@@ -137,6 +125,12 @@ namespace System.DirectoryServices
 				}
 			}
 			return false;
+		}
+
+		public void CopyTo (object[] copy_to, int index)
+		{
+			foreach (object o in List)
+				copy_to[index++] = o;
 		}
 
 		protected override void OnInsert( int index, Object value )  
@@ -183,11 +177,8 @@ namespace System.DirectoryServices
 			{
 				List.Clear();
 				Add(value);
-//				List[0] =  (object)value;
-//				_Mbit=true;
 			}
 		}
 
 	}
 }
-

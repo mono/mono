@@ -22,78 +22,50 @@
 *******************************************************************************/
 
 //
-// System.DirectoryServices.SchemaNameCollection.cs
+// System.DirectoryServices.DirectoryEntry.cs
 //
-// Author:
-//   Sunil Kumar (sunilk@novell.com)
-//   Raja R Harinath <rharinath@novell.com>
+// Copyright (C) 2004  Novell Inc.
 //
-// Copyright (C) 2003, 2004  Novell Inc.
+// Written by Raja R Harinath <rharinath@novell.com>
 //
 
-using System.Collections;
+using System.Security;
+using System.Security.Permissions;
 
 namespace System.DirectoryServices
 {
-	
-	/// <summary>
-	///Contains a list of the schema names that the
-	/// SchemaFilter property of a DirectoryEntries
-	///  object can use.
-	/// </summary>
-	public class SchemaNameCollection : CollectionBase
+	[AttributeUsage(AttributeTargets.Assembly
+			| AttributeTargets.Class | AttributeTargets.Struct
+			| AttributeTargets.Constructor | AttributeTargets.Method
+			| AttributeTargets.Event)]
+	[Serializable]
+	public class DirectoryServicesPermissionAttribute : CodeAccessSecurityAttribute
 	{
-		internal SchemaNameCollection ()
+		string path;
+		DirectoryServicesPermissionAccess access;
+
+		public DirectoryServicesPermissionAttribute (SecurityAction action)
+			: base (action)
 		{
-		}
-		
-		public int Add (string value)
-		{
-			return List.Add (value);
+			path = "*";
+			access = DirectoryServicesPermissionAccess.Browse;
 		}
 
-		public string this[int pos]
+		public string Path
 		{
-			get { return List[pos] as string; }
-			set { List[pos] = value; }
+			get { return path; }
+			set { path = value; }
 		}
 
-		public int IndexOf (string s)
+		public DirectoryServicesPermissionAccess PermissionAccess
 		{
-			return List.IndexOf (s);
+			get { return access; }
+			set { access = value; }
 		}
 
-		public bool Contains (string s)
+		public override IPermission CreatePermission ()
 		{
-			return List.Contains (s);
-		}
-
-		public void AddRange (string[] coll)
-		{
-			foreach (string s in coll)
-				Add (s);
-		}
-
-		public void AddRange (SchemaNameCollection coll)
-		{
-			foreach (string s in coll)
-				Add (s);
-		}
-
-		public void Insert (int pos, string s)
-		{
-			List.Insert (pos, s);
-		}
-
-		public void CopyTo (string[] copy_to, int index)
-		{
-			foreach (string s in List)
-				copy_to[index++] = s;
-		}
-
-		public void Remove (string s)
-		{
-			List.Remove (s);
+			return new DirectoryServicesPermission (access, path);
 		}
 	}
 }
