@@ -318,8 +318,9 @@ namespace System.Drawing
 		}
 
 		public void MakeTransparent (Color transparentColor)
-		{				
-			Bitmap	bmp = new Bitmap(Width, Height, PixelFormat);		
+		{							
+			// We have to draw always over a 32-bitmap surface that supports alpha channel
+			Bitmap	bmp = new Bitmap(Width, Height, PixelFormat.Format32bppArgb);
 			Graphics gr = Graphics.FromImage(bmp);
 			Rectangle destRect = new Rectangle(0,0, Width, Height);
 			ImageAttributes imageAttr = new ImageAttributes();

@@ -1,3 +1,7 @@
+2004-10-22 Jordi Mas i Hernandez <jordi@ximian.com>
+	
+	* Bitmap.cs: Fixes MakeTransparent problem with 24bbps
+
 2004-10-19 Jordi Mas i Hernandez <jordi@ximian.com>
 	
 	* Bitmap.cs: Fixes MakeTransparent method
