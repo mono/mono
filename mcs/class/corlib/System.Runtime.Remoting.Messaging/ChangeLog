@@ -1,3 +1,8 @@
+2004-02-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AsyncResult.cs:
+	(AsyncWaitHandle): create the handle if not done yet.
+
 2004-01-19  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* AsyncResult.cs: Added async_callback field and fixed the callback call.

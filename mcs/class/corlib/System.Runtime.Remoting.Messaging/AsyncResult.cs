@@ -41,10 +41,14 @@ public class AsyncResult : IAsyncResult, IMessageSink {
 		}
 	}
 
-	public virtual WaitHandle AsyncWaitHandle
-	{
+	public virtual WaitHandle AsyncWaitHandle {
 		get {
-			return handle;
+			lock (this) {
+				if (handle == null)
+					handle = new ManualResetEvent (completed);
+
+				return handle;
+			}
 		}
 	}
 
