@@ -204,7 +204,6 @@ namespace System.Xml
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		public virtual IDictionary GetNamespacesInScope (XmlNamespaceScope scope)
 #else
 		IDictionary IXmlNamespaceResolver.GetNamespacesInScope (XmlNamespaceScope scope)
@@ -216,9 +215,27 @@ namespace System.Xml
 #endif
 		{
 			Hashtable table = new Hashtable ();
-			int stop = (scope == XmlNamespaceScope.Local) ? declPos - count : 0;
-			for (int i = declPos; i > stop; i--)
-				table.Add (decls [i].Prefix, decls [i].Uri);
+
+			if (scope == XmlNamespaceScope.Local) {
+				for (int i = 0; i < count; i++)
+					if (decls [declPos - i].Prefix == String.Empty && decls [declPos - i].Uri == String.Empty) {
+						if (table.Contains (String.Empty))
+							table.Remove (String.Empty);
+					}
+					else if (decls [declPos - i].Uri != null)
+						table.Add (decls [declPos - i].Prefix, decls [declPos - i].Uri);
+				return table;
+			}
+
+			for (int i = 0; i < declPos + count; i++) {
+				if (decls [i].Prefix == String.Empty) {
+					if (table.Contains (String.Empty))
+						table.Remove (String.Empty);
+				}
+				else if (decls [i].Uri != null)
+					table [decls [i].Prefix] = decls [i].Uri;
+			}
+
 			if (scope == XmlNamespaceScope.All)
 				table.Add ("xml", XmlNamespaceManager.XmlnsXml);
 			return table;

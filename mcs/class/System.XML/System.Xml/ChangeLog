@@ -1,5 +1,10 @@
 2004-09-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlNamespaceManager.cs : Fixed GetNamespacesInScope() that returned
+	  inconsistent namespace pairs.
+
+2004-09-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlReader.cs, XmlTextReader.cs :
 	  Added NET_2_0 CheckCharacters support.
 
