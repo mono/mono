@@ -127,7 +127,10 @@ namespace Mono.MonoBASIC
 		Stack tmp_blocks;
 	    Stack statement_stack;
 
-
+		// A stack for With expressions.
+		//
+		Stack with_stack;
+	
 		
 		static public bool InitialOptionExplicit = false;
 		static public bool InitialOptionStrict = false;
@@ -139,6 +142,8 @@ namespace Mono.MonoBASIC
 
 		static public bool UseExtendedSyntax; // for ".mbs" files
 
+		bool implicit_modifiers;
+		
 		public override string[] extensions()
 		{
 			string [] list = { ".vb", ".mbs" };
@@ -860,10 +865,10 @@ module_declaration
 		string name;
 		name = MakeName((string) $2);
 		new_module = new Module(current_container, 
-								name, 
-								current_modifiers, // already checks then
-								(Attributes) current_attributes,
-								lexer.Location);
+					name, 
+					current_modifiers, // already checks then
+					(Attributes) current_attributes,
+					lexer.Location);
 		current_container = new_module;
 		current_container.Namespace = current_namespace;
 		RootContext.Tree.RecordDecl(name, new_module);
@@ -895,10 +900,13 @@ module_member_declaration
 	   opt_modifiers
 	   { 
 	   	current_attributes = (Attributes) $1;
-	   	current_modifiers = (int) $2 | (int)Modifiers.STATIC; // FIXME: for type_declaration it can result in trouble
+	   	current_modifiers = ((int)$2) | Modifiers.STATIC; 
+		bool explicit_static = (((int) $2 & Modifiers.STATIC) > 0);
+		implicit_modifiers = (!explicit_static);	  	
 	   }
 	   module_member_declarator
 	   {
+	   	implicit_modifiers = false;
 	   	$$ = $3;
 	   }
 	;
@@ -915,7 +923,7 @@ module_member_declarator
 	|  constant_declaration
 	|  property_declaration			
 	|  event_declaration	
-	|  type_declaration			
+	|  type_spec_declaration			
 	;
 	
 constant_declaration // TODO: implement truly the logic
@@ -1025,22 +1033,6 @@ sub_declaration
 	  	current_local_parameters = (Parameters) $4;
 		start_block(); 
 
-	  	/* This is WEIRD: declaring a method (sub) in a module as static will
-	  	   trigger a syntax error, but the same methods MUST be static in order
-	  	   to be properly called
-	  	*/
-	  	/* THIS SHOULD NOT BE NEEDED ANYMORE
-	  	if (current_container is Module) {
-	  	 	if ((current_modifiers & Modifiers.STATIC) != 0) {
-	  			Report.Error (30810, lexer.Location, "Methods cannot be declared 'Static'");
-	  		}
-	  		else
-	  		{
-	  			current_modifiers = Modifiers.STATIC;
-	  		}
-	  	
-	  	}
-	  	*/
 		// Structure members are Public by default			
 		if ((current_container is Struct) && (current_modifiers == 0))
 			current_modifiers = Modifiers.PUBLIC;		 	
@@ -1075,42 +1067,30 @@ sub_declaration
 	
 func_declaration
 	: FUNCTION identifier 
-	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS AS type opt_implement_clause EOL
+	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS opt_type_with_ranks opt_implement_clause EOL
 	  { 
 	  	
 	  	current_local_parameters = (Parameters) $4;
 		start_block(); 
-	
-	  	/* This is WEIRD: declaring a method (sub) in a module as static will
-	  	   trigger a syntax error, but the same methods MUST be static in order
-	  	   to be properly called
-	  	*/
-	  	/* THIS SHOULD NOT BE NEEDED ANYMORE
-	  	if (current_container is Module) {
-	  	 	if ((current_modifiers & Modifiers.STATIC) != 0) {
-	  			Report.Error (30810, lexer.Location, "Methods cannot be declared 'Static'");
-	  		}
-	  		else
-	  		{
-	  			current_modifiers |= Modifiers.STATIC;
-	  		}	  		
-	  	}
-	  	*/
+		
+		Expression ftype = ($6 == null) ? TypeManager.system_object_expr : (Expression) $6;
+
 		// Structure members are Public by default			
 		if ((current_container is Struct) && (current_modifiers == 0))
 			current_modifiers = Modifiers.PUBLIC;			  	
 		// Add local var declaration
 		// for return value
 		ArrayList retval = new ArrayList ();
-		retval.Add (new VariableDeclaration ((string) $2, (Expression) $7, lexer.Location));
-		declare_local_variables ((Expression) $7, retval, lexer.Location);
+		retval.Add (new VariableDeclaration ((string) $2, (Expression) ftype, lexer.Location));
+		declare_local_variables ((Expression) ftype, retval, lexer.Location);
 	  }	  
 	  opt_statement_list
 	  END FUNCTION EOL
 	  {
-		Method method = new Method ((Expression) $7, (int) current_modifiers, (string) $2,
+	  	Expression ftype = ($6 == null) ? TypeManager.system_object_expr : (Expression) $6;
+		Method method = new Method ((Expression) ftype, (int) current_modifiers, (string) $2,
 					    (Parameters) current_local_parameters, null, 
-					    (Expression) $7, lexer.Location);
+					    (Expression) ftype, lexer.Location);
 		method.Block = end_block();
 		$$ = method;
 	/*Console.WriteLine ("Declaring Function '{0}' with {1} statements and {2} arguments", 
@@ -1127,7 +1107,13 @@ struct_declaration
 	  {
 		Struct new_struct;
 		string full_struct_name = MakeName ((string) $2);
-
+		
+		// Module members are static by default, but structures *can't* be declared static
+		// so we must fix it, if mbas was the one actually responsible for this
+		// instead of triggering an error.
+		if (implicit_modifiers && ((current_modifiers & Modifiers.STATIC) != 0))
+			current_modifiers = (current_modifiers & ~Modifiers.STATIC);
+			
 		new_struct = new Struct (current_container, full_struct_name, 
 					 (int) current_modifiers,
 					 (Attributes) current_attributes, lexer.Location);
@@ -1160,15 +1146,9 @@ struct_member_declarations
 	;
 
 struct_member_declaration
-	: opt_attributes
-	  opt_modifiers
-	  { 
-	   	current_attributes = (Attributes) $1;
-	   	current_modifiers = (int) $2; 
-	  }
+	: opt_modifiers
 	  struct_member_declarator
 	;
-	
 struct_member_declarator	
 	: field_declaration
 	//| constant_declaration
@@ -1212,6 +1192,12 @@ enum_declaration
 		Expression enum_type = ($3 == null) ? TypeManager.system_int32_expr : (Expression) $3;
 		ArrayList enum_members = (ArrayList) $5;
 		
+		// Module members are static by default, but enums *can't* be declared static
+		// so we must fix it if mbas was the one actually responsible for this
+		// instead of triggering an error.
+		if (implicit_modifiers && ((current_modifiers & Modifiers.STATIC) != 0))
+			current_modifiers = (current_modifiers & ~Modifiers.STATIC);
+			
 		Mono.CSharp.Enum e = new Mono.CSharp.Enum (current_container, enum_type, 
 					(int) current_modifiers, full_name, 
 				   	(Attributes) current_attributes, enum_location);
@@ -1413,10 +1399,12 @@ interface_event_declaration
 	;
 
 property_declaration
-	  : opt_access_specifier PROPERTY identifier opt_property_parameters AS type opt_implement_clause EOL
+	  : opt_access_specifier opt_modifiers PROPERTY identifier opt_property_parameters AS type opt_implement_clause EOL
 	  {
 		get_implicit_value_parameter_type = (Expression) $7;
 		get_implicit_value_parameter_name = (string) $4;
+		
+		current_modifiers = (int) $2; 
 		
 		current_local_parameters = (Parameters) $5;
 		if (current_local_parameters != Parameters.EmptyReadOnlyParameters) { 
@@ -1644,6 +1632,12 @@ delegate_declaration
 	  EOL
 	  {
 		Location l = lexer.Location;
+		// Module members are static by default, but delegates *can't* be declared static
+		// so we must fix it, if mbas was the one actually responsible for this
+		// instead of triggering an error.
+		if (implicit_modifiers && ((current_modifiers & Modifiers.STATIC) != 0))
+			current_modifiers = (current_modifiers & ~Modifiers.STATIC);
+					
 		Mono.CSharp.Delegate del = new Mono.CSharp.Delegate (current_container, TypeManager.system_void_expr, 
 					     (int) current_modifiers, 
 		                             MakeName ((string) $3), (Parameters) $5, 
@@ -1825,14 +1819,21 @@ fixed_parameter
 parameter_array
 	: PARAM_ARRAY identifier opt_parens AS type 
 	  { 
-		$$ = new Parameter ((Expression) $5, (string) $2, Parameter.Modifier.PARAMS, null);
+	  	string s_patype = ((Expression) $5).ToString();
+	  	if ((bool) $3)
+	  		s_patype += "[]";
+	  		
+	  	Expression patype = DecomposeQI (s_patype, Location.Null);
+		$$ = new Parameter (patype, (string) $2, Parameter.Modifier.PARAMS, null);
 		// note  ("type must be a single-dimension array type"); 
 	  }
 	;
 		
 opt_parens
 	: /* empty */
+	  {	$$ = false;	}
 	| OPEN_PARENS CLOSE_PARENS
+	  {	$$ = true;	}
 	;
 	
 opt_parameter_modifier
@@ -1869,7 +1870,7 @@ statement :
 			current_block = (Block) $1;
 		}
 	    }
-	  | embedded_statement 
+	  | embedded_statement
 	    {
 		Statement s = (Statement) $1;
 
@@ -1884,8 +1885,14 @@ statement :
 	    {
 	    	RaiseEvent ((string) $2, (ArrayList) $4);
 	    }
-	  | array_handling_statement
+	  /*| array_handling_statement*/
 	  /* | empty_statement */
+	  | with_statement 
+	    {
+		Statement s = (Statement) $1;
+
+		current_block.AddStatement ((Statement) $1);
+	    }	  
 	  ;	
 
 labeled_statement
@@ -1908,6 +1915,7 @@ embedded_statement
 	| iteration_statement
 	| try_statement
 	| jump_statement 
+	| array_handling_statement
 	;
 /*        
 empty_statement
@@ -1917,6 +1925,24 @@ empty_statement
 	  }
 	;        
 */
+
+with_statement
+	: WITH expression end_of_stmt /* was : WITH qualified_identifier end_of_stmt */
+	  {
+	  	// was : Expression e = DecomposeQI ((string) $2, lexer.Location);
+	  	Expression e = (Expression) $2;
+		with_stack.Push(e);
+		start_block();
+	  }
+	  opt_statement_list
+	  END WITH
+	  {
+	  	Block b = end_block();
+		with_stack.Pop();
+		$$ = b;
+	  }
+	;
+	
 	
 array_handling_statement
 	: redim_statement
@@ -1930,10 +1956,10 @@ redim_statement
 		foreach(Invocation i in list)
 		{
 	  		ReDim r = new ReDim (i.expr, i.Arguments, (bool) $2, lexer.Location);
-	  		current_block.AddStatement (r);	
+	  		current_block.AddStatement (r);
 		}
 	  }
-	;	
+	;
 	
 opt_preserve
 	: /* empty */ 	{ $$ = false; }
@@ -1947,20 +1973,20 @@ redim_clauses
 
 		clauses.Add ($1);
 		$$ = clauses;
-	  }	
+	  }
 	| redim_clauses COMMA redim_clause
 	  {
 		ArrayList clauses = (ArrayList) ($1);
 		clauses.Add ($2);
 
 		$$ = clauses;
-	  }	
+	  }
 	;
 
 redim_clause
 	: invocation_expression
 	;
-	
+			
 erase_statement
 	: ERASE erase_clauses
 	{
@@ -1971,8 +1997,8 @@ erase_statement
 	  		current_block.AddStatement (r);	
 		}
 	}
-	;	
-	
+	;
+
 erase_clauses
 	: erase_clause
 	  {
@@ -1987,13 +2013,12 @@ erase_clauses
 		clauses.Add ($2);
 
 		$$ = clauses;
-	  }	
+	  }
 	;
 
 erase_clause
 	: primary_expression
-	;
-
+	;	
 		        
 jump_statement
 	: /*break_statement
@@ -2552,15 +2577,22 @@ case_sections
 	  }
 	;
 
+ends 
+	: end_of_stmt
+	| ends end_of_stmt
+	;
+	
+
 case_section
-	: CASE case_clauses end_of_stmt
+	: CASE case_clauses ends
 	  { 
 	  	start_block();
 	  }
 	  opt_statement_list
 	  {
-	  	Block topmost = current_block;
-
+	  	//Block topmost = current_block;
+		Block topmost = end_block();
+		
 		while (topmost.Implicit)
 			topmost = topmost.Parent;
 			
@@ -2568,7 +2600,7 @@ case_section
 		topmost.statements.Add (new Break (lexer.Location));
 	  	$$ = new SwitchSection ((ArrayList) $2, topmost);
 	  }
-	  | CASE ELSE end_of_stmt
+	  | CASE ELSE ends
 	    /* FIXME: we should somehow flag an error 
 	       (BC30321 'Case' cannot follow a 'Case Else' 
 	       in the same 'Select' statement.) 
@@ -2579,7 +2611,8 @@ case_section
 	  }	
 	  opt_statement_list
 	  { 
-	  	Block topmost = current_block;
+	  	//Block topmost = current_block;
+		Block topmost = end_block();
 
 		while (topmost.Implicit)
 			topmost = topmost.Parent;
@@ -2675,7 +2708,8 @@ array_creation_expression
 			
 	  	Expression atype = n.RequestedType;
   	
-	  	if (VariableDeclaration.IndexesSpecified(this)) {
+	  	if (VariableDeclaration.IndexesSpecifiedInRank(dims)) {
+	  		VariableDeclaration.VBFixIndexList (ref dims);
 	  		$$ = new ArrayCreation (atype, dims, "", (ArrayList) $2, lexer.Location); 
 	  	}
 	  	else
@@ -2768,7 +2802,7 @@ variable_declarator
 	  			Report.Error (205, "End of statement expected.");
 	  			
 			ArrayList args = (ArrayList) ((Pair) $2).Second;
-			if (VariableDeclaration.HasExplicitIndexes (args))	  
+			if (VariableDeclaration.IndexesSpecifiedInRank (args))	  	  
 				Report.Error (638, "Array bounds cannot appear in type specifiers.");	
 	
 			string s_vartype = vartype.ToString();				
@@ -2789,9 +2823,9 @@ variable_declarator
 	  	   and, in case, add the initializer after the array has been created.
 	  	*/
 	  	if (VariableDeclaration.IsArrayDecl (this)) {	
-			if (VariableDeclaration.IndexesSpecified(this)) {   
+			if (VariableDeclaration.IndexesSpecified(current_rank_specifiers)) {   
 				a_dims = (ArrayList) current_rank_specifiers;
-				//varinit = new ArrayCreation (vartype, a_dims, "", (ArrayList) varinit, lexer.Location);
+				VariableDeclaration.VBFixIndexLists (ref a_dims);
 				varinit = VariableDeclaration.BuildArrayCreator(vartype, a_dims, (ArrayList) varinit, lexer.Location);
 			}
 
@@ -2832,7 +2866,15 @@ opt_type_spec
 	  	$$ = (Expression) $2;
 	  }
 	;
-			
+		
+opt_type_with_ranks
+	: opt_type_spec	
+	| AS type rank_specifiers
+	  {
+	  	$$ = TypeManager.system_object_expr; 
+	  }
+	;
+	
 opt_type_decl
 	: opt_type_spec
 	  {
@@ -2840,7 +2882,7 @@ opt_type_decl
 	  }
 	| AS type OPEN_PARENS opt_argument_list CLOSE_PARENS
 	  {
-	  	$$ = new Pair ($2, $4);;
+	  	$$ = new Pair ($2, $4);
 	  }
 	| AS NEW type
 	  {
@@ -2905,8 +2947,8 @@ variable_initializer_list
 		list.Add ($3);
 		$$ = list;
 	  }
-	;	
-		
+	;
+
 opt_rank_specifiers
 	: /* empty */
 	  {
@@ -3059,7 +3101,19 @@ parenthesized_expression
 member_access
 	: primary_expression DOT identifier
 	  {
-		$$ = new MemberAccess ((Expression) $1, (string) $3, lexer.Location);
+	  	if ($1 != null)
+			$$ = new MemberAccess ((Expression) $1, (string) $3, lexer.Location);
+		else
+		{
+			if (with_stack.Count > 0) {
+				Expression e = (Expression) with_stack.Peek();
+				$$ = new MemberAccess (e, (string) $3, lexer.Location);
+			}
+			else
+			{
+				// OOps
+			}
+		}
 	  }
 	| primary_expression DOT NEW
 	  {
@@ -3067,7 +3121,19 @@ member_access
 	  }	  
 	| predefined_type DOT identifier
 	  {
-		$$ = new MemberAccess ((Expression) $1, (string) $3, lexer.Location);
+	  	if ($1 != null)
+			$$ = new MemberAccess ((Expression) $1, (string) $3, lexer.Location);
+		else
+		{
+			if (with_stack.Count > 0) {
+				Expression e = (Expression) with_stack.Peek();
+				$$ = new MemberAccess (e, (string) $3, lexer.Location);
+			}
+			else
+			{
+				// OOps
+			}
+		}
 	  }
 	;
 
@@ -3169,7 +3235,27 @@ opt_expression
 	: /* empty */
 	| expression
 	;
-		
+	
+expression_list
+	: expression
+	  {
+		ArrayList list = new ArrayList ();
+		list.Add ($1);
+		$$ = list;
+	  }
+	| expression_list COMMA expression
+	  {
+		ArrayList list = (ArrayList) $1;
+		list.Add ($3);
+		$$ = list;
+	  }
+	;
+
+opt_expression_list
+	: /*empty */ { $$ = null; }
+	| expression_list
+	;
+	
 this_access
 	: ME
 	  {
@@ -3177,8 +3263,8 @@ this_access
 	  }
 	| MYCLASS
 	  {
-		// FIXME: This is actually somewhat different from Me, 
-		// because it is for acessing static (classifier) methods/properties/fields
+		// FIXME: This is actually somewhat different from Me
+		// because it is for accessing static (classifier) methods/properties/fields
 		$$ = new This (current_block, lexer.Location);
 	  }
 	;
@@ -3448,6 +3534,8 @@ type
 		$$ = DecomposeQI ((string) $1, lexer.Location); 
 	  }
 	| builtin_types 
+	/*| array_type 
+	 | pointer_type */
 	;
 
 type_list
@@ -3487,7 +3575,7 @@ builtin_types
 	;
 
 integral_type
-	: 
+	:
 	| BYTE		{ $$ = TypeManager.system_byte_expr; }
 	| SHORT		{ $$ = TypeManager.system_int16_expr; }
 	| LONG		{ $$ = TypeManager.system_int64_expr; }
@@ -3684,18 +3772,31 @@ public class VariableDeclaration {
 		}
 	}
 	
-	public static bool IndexesSpecified (Parser t)
+	public static bool IndexesSpecifiedInRank (ArrayList IndexList)
 	{
 		bool res = false;
-		ArrayList ranks = t.current_rank_specifiers;
+		
+		if (IndexList != null) {
+			foreach (Expression e in IndexList)
+				if (!(e is EmptyExpression)) {
+					res = true;
+					break;
+				}	
+		}
+		return (res);
+	}	
+	
+	
+	public static bool IndexesSpecified (ArrayList ranks)
+	{
+		bool res = false;
 		
 		if (ranks != null) {
 			foreach (ArrayList IndexList in ranks) {
-				foreach (Expression e in IndexList)
-					if (!(e is EmptyExpression)) {
-						res = true;
-						break;
-					}
+				if (IndexesSpecifiedInRank (IndexList)) {
+					res = true;
+					break;
+				}	
 			}	
 		}
 		return (res);
@@ -3724,7 +3825,7 @@ public class VariableDeclaration {
 	public static string StripIndexesFromDims (string dims)
 	{
 		StringBuilder sb = new StringBuilder();
-		//  
+
 		foreach (char c in dims) 
 			if (c == ',' || c == ']' || c == '[')
 				sb.Append (c);
@@ -3754,39 +3855,16 @@ public class VariableDeclaration {
 		return res;
 	}	
 	
-	public static bool HasExplicitIndexes (ArrayList a)
+	public static void VBFixIndexList (ref ArrayList IndexList)
 	{
-		bool res = false;
-		
-		if (a != null) {
-			foreach (Expression e in a) 
+		if (IndexList != null) {
+			for (int x = 0; x < IndexList.Count; x++) {
+				Expression e = (Expression) IndexList[x];
 				if (!(e is EmptyExpression)) {
-					res = true;
-					break;
+					IndexList[x] = new Binary (Binary.Operator.Addition, e, new IntLiteral(1), Location.Null);
 				}
-		}			
-		return res;			
-	}
-	
-	public static ArrayList ParseIndexList (Parser t)
-	{
-		ArrayList res = new ArrayList();
-		//string d = dims.Substring (1, dims.Length -2);
-		//Array a = d.Split (',');
-		
-		return t.current_rank_specifiers;
-		/*
-		if (a.GetLength(0) > 32) {
-			Report.Error (999, "Arrays cannot have more than 32 dimensions");
+			}
 		}
-		
-		foreach (string s in a) 
-			if (s != "")
-				res.Add (new IntLiteral ((Int32) Convert.ToInt32(s) + 1));
-			else
-				res.Add (new IntLiteral ((Int32) 0));
-		
-		return (res);*/
 	}		
 	
 	public static bool IsArrayDecl (Parser t)
@@ -3795,6 +3873,16 @@ public class VariableDeclaration {
 		return (t.current_rank_specifiers != null);
 	}			
 	
+	public static void VBFixIndexLists (ref ArrayList ranks)
+	{	
+		if (ranks != null) {
+			for (int x = 0; x < ranks.Count; x++) {
+				ArrayList IndexList = (ArrayList) ranks[x];
+				VBFixIndexList (ref IndexList);
+			}	
+		}	
+	}
+		
 	public static void FixupArrayTypes (ArrayList vars)
 	{
 		int varcount = 	vars.Count;
@@ -3993,6 +4081,7 @@ public override int parse ()
 	switch_stack = new Stack ();
 	expr_stack = new Stack ();	
 	tmp_blocks = new Stack(); 
+	with_stack = new Stack();
 	statement_stack = new Stack(); 	
 	
 	UseExtendedSyntax = name.EndsWith(".mbs");
