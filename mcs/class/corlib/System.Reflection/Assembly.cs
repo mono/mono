@@ -494,19 +494,17 @@ namespace System.Reflection {
 		//
 		// The following functions are only for the Mono Debugger.
 		//
-		// They should be marked `internal', and extracted with GetMethod from the debugger.
-		//
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern MethodBase MonoDebugger_GetMethod (int token);
+		internal extern MethodBase MonoDebugger_GetMethod (int token);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern int MonoDebugger_GetMethodToken (MethodBase method);
+		internal extern int MonoDebugger_GetMethodToken (MethodBase method);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern Type MonoDebugger_GetLocalTypeFromSignature (byte[] signature);
+		internal extern Type MonoDebugger_GetLocalTypeFromSignature (byte[] signature);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern Type MonoDebugger_GetType (int token);
+		internal extern Type MonoDebugger_GetType (int token);
 	}
 }

@@ -1,3 +1,7 @@
+2004-01-15  Martin Baulig  <martin@ximian.com>
+
+	* Assembly.cs: Make the `MonoDebugger_' methods internal.
+
 2004-01-04  Nick Drochak <ndrochak@gol.com>
 
 	* Assembly.cs: Removed unused variable in catch block.Eliminates a build
