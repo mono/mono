@@ -74,7 +74,7 @@
                 />
                 <Reference
                     Name = "System.XML"
-                    AssemblyName = "System.XML"
+                    AssemblyName = "System.Xml"
                     HintPath = "..\obj\Debug\System.XML.dll"
                 />
             </References>
@@ -97,6 +97,11 @@
                 />
                 <File
                     RelPath = "SelectNodesTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "XmlAttributeCollectionTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

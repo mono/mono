@@ -188,5 +188,22 @@ namespace MonoTests.System.Xml
 			XmlElement element = document.CreateElement ("foo", "bar", "#foo");
 			AssertEquals ("<foo:bar xmlns:foo=\"#foo\" />", element.OuterXml);
 		}		
+
+		public void TestRemoveAllAttributes ()
+		{
+			StringBuilder xml = new StringBuilder ();
+			xml.Append ("<?xml version=\"1.0\" ?><library><book type=\"non-fiction\" price=\"34.95\"> ");
+			xml.Append ("<title type=\"intro\">XML Fun</title> " );
+			xml.Append ("<author>John Doe</author></book></library>");
+
+			MemoryStream memoryStream = new MemoryStream (Encoding.UTF8.GetBytes (xml.ToString ()));
+			document = new XmlDocument ();
+			document.Load (memoryStream);
+			XmlNodeList bookList = document.GetElementsByTagName ("book");
+			XmlNode xmlNode = bookList.Item (0);
+			XmlElement xmlElement = xmlNode as XmlElement;
+			xmlElement.RemoveAllAttributes ();
+			AssertEquals ("attributes not properly removed.", false, xmlElement.HasAttribute ("type"));
+		}
 	}
 }

@@ -1,5 +1,12 @@
 2002-08-22  Jason Diamond <jason@injektilo.org>
 
+	* AllTests.cs, System.XML_linux_test.args, 
+	XmlAttributeCollectionTests.cs,XmlElementTests.cs: Added test for 
+	RemoveAll and RemoveAllAttributes courtesy of Matt Hunter
+	<xrkune@tconl.com>.
+
+2002-08-22  Jason Diamond <jason@injektilo.org>
+
 	* XmlElementTests.cs: Correction to previous GetElementsByTagName
 	patch courtesy of Matt Hunter <xrkune@tconl.com>.
 

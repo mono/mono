@@ -217,10 +217,9 @@ namespace System.Xml
 			attributes.RemoveAll ();
 		}
 
-		[MonoTODO]
 		public virtual void RemoveAllAttributes ()
 		{
-			throw new NotImplementedException ();
+			attributes.RemoveAll ();
 		}
 
 		[MonoTODO]

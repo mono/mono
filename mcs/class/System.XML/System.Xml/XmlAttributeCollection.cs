@@ -96,10 +96,11 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual void RemoveAll () 
 		{
-			throw new NotImplementedException ();
+			while (this.Count > 0)
+				base.RemoveNamedItem (this.Item (0).Name);
+			
 		}
 
 		[MonoTODO]
