@@ -196,7 +196,8 @@ namespace System.Reflection.Emit {
 	
 		public override Guid GUID {
 			get {
-			    throw not_supported ();
+				check_created ();
+				return created.GUID;
 			}
 		}
 
@@ -225,8 +226,7 @@ namespace System.Reflection.Emit {
 				(action == SecurityAction.RequestRefuse))
 				throw new ArgumentException ("Request* values are not permitted", "action");
 
-			if (is_created)
-				throw not_after_created ();
+			check_not_created ();
 
 			if (permissions != null) {
 				/* Check duplicate actions */
@@ -248,8 +248,7 @@ namespace System.Reflection.Emit {
 		public void AddInterfaceImplementation( Type interfaceType) {
 			if (interfaceType == null)
 				throw new ArgumentNullException ("interfaceType");
-			if (is_created)
-				throw not_after_created ();
+			check_not_created ();
 
 			if (interfaces != null) {
 				// Check for duplicates
@@ -319,12 +318,16 @@ namespace System.Reflection.Emit {
 		
 		public override object[] GetCustomAttributes(bool inherit)
 		{
-			throw not_supported ();
+			check_created ();
+
+			return created.GetCustomAttributes (inherit);
 		}
 		
 		public override object[] GetCustomAttributes(Type attributeType, bool inherit)
 		{
-			throw not_supported ();
+			check_created ();
+
+			return created.GetCustomAttributes (attributeType, inherit);
 		}
 
 		public TypeBuilder DefineNestedType (string name) {
@@ -392,8 +395,7 @@ namespace System.Reflection.Emit {
 #endif
 		ConstructorBuilder DefineConstructor (MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes, Type[][] requiredCustomModifiers, Type[][] optionalCustomModifiers)
 		{
-			if (is_created)
-				throw not_after_created ();
+			check_not_created ();
 			ConstructorBuilder cb = new ConstructorBuilder (this, attributes, callingConvention, parameterTypes, requiredCustomModifiers, optionalCustomModifiers);
 			if (ctors != null) {
 				ConstructorBuilder[] new_ctors = new ConstructorBuilder [ctors.Length+1];
@@ -465,8 +467,7 @@ namespace System.Reflection.Emit {
 #endif
 		MethodBuilder DefineMethod( string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] returnTypeRequiredCustomModifiers, Type[] returnTypeOptionalCustomModifiers, Type[] parameterTypes, Type[][] parameterTypeRequiredCustomModifiers, Type[][] parameterTypeOptionalCustomModifiers) {
 			check_name ("name", name);
-			if (is_created)
-				throw not_after_created ();
+			check_not_created ();
 			if (IsInterface && (
 				!((attributes & MethodAttributes.Abstract) != 0) || 
 				!((attributes & MethodAttributes.Virtual) != 0)))
@@ -508,8 +509,7 @@ namespace System.Reflection.Emit {
 				throw new ArgumentException ("attributes", "PInvoke methods must be static and native and cannot be abstract.");
 			if (IsInterface)
 				throw new ArgumentException ("PInvoke methods cannot exist on interfaces.");		
-			if (is_created)
-				throw not_after_created ();
+			check_not_created ();
 
 			MethodBuilder res 
 				= new MethodBuilder (
@@ -541,8 +541,7 @@ namespace System.Reflection.Emit {
 				throw new ArgumentNullException ("methodInfoBody");
 			if (methodInfoDeclaration == null)
 				throw new ArgumentNullException ("methodInfoDeclaration");
-			if (is_created)
-				throw not_after_created ();
+			check_not_created ();
 
 			if (methodInfoBody is MethodBuilder) {
 				MethodBuilder mb = (MethodBuilder)methodInfoBody;
@@ -559,12 +558,11 @@ namespace System.Reflection.Emit {
 #else
 		internal
 #endif
-	    FieldBuilder DefineField( string fieldName, Type type, Type[] requiredCustomAttributes, Type[] optionalCustomAttributes, FieldAttributes attributes) {
+	    FieldBuilder DefineField (string fieldName, Type type, Type[] requiredCustomAttributes, Type[] optionalCustomAttributes, FieldAttributes attributes) {
 			check_name ("fieldName", fieldName);
 			if (type == typeof (void))
 				throw new ArgumentException ("type",  "Bad field type in defining field.");
-			if (is_created)
-				throw not_after_created ();
+			check_not_created ();
 
 			FieldBuilder res = new FieldBuilder (this, fieldName, type, attributes, requiredCustomAttributes, optionalCustomAttributes);
 			if (fields != null) {
@@ -590,8 +588,7 @@ namespace System.Reflection.Emit {
 				foreach (Type param in parameterTypes)
 					if (param == null)
 						throw new ArgumentNullException ("parameterTypes");
-			if (is_created)
-				throw not_after_created ();
+			check_not_created ();
 
 			PropertyBuilder res = new PropertyBuilder (this, name, attributes, returnType, parameterTypes);
 
@@ -626,8 +623,7 @@ namespace System.Reflection.Emit {
 		
 		public Type CreateType() {
 			/* handle nesting_type */
-			if (is_created)
-				throw not_after_created ();
+			check_not_created ();
 
 			// Fire TypeResolve events for fields whose type is an unfinished
 			// value type.
@@ -712,11 +708,13 @@ namespace System.Reflection.Emit {
 		}
 
 		public override Type GetElementType () { 
-			throw not_supported ();
+			check_created ();
+			return created.GetElementType ();
 		}
 
 		public override EventInfo GetEvent (string name, BindingFlags bindingAttr) {
-			throw not_supported ();
+			check_created ();
+			return created.GetEvent (name, bindingAttr);
 		}
 
 		/* Needed to keep signature compatibility with MS.NET */
@@ -726,9 +724,13 @@ namespace System.Reflection.Emit {
 		}
 
 		public override EventInfo[] GetEvents (BindingFlags bindingAttr) {
-			// FIXME: Under MS.NET, this throws a NotImplementedException
-			// But mcs calls this method. How can that be?
-			return new EventInfo [0];
+			/* FIXME: mcs calls this
+			   check_created ();
+			*/
+			if (!is_created)
+				return new EventInfo [0];
+			else
+				return created.GetEvents (bindingAttr);
 		}
 
 		// This is only used from MonoGenericInst.initialize().
@@ -855,7 +857,8 @@ namespace System.Reflection.Emit {
 		}
 
 		public override Type GetInterface (string name, bool ignoreCase) {
-			throw not_supported ();
+			check_created ();
+			return created.GetInterface (name, ignoreCase);
 		}
 		
 		public override Type[] GetInterfaces () {
@@ -870,11 +873,13 @@ namespace System.Reflection.Emit {
 
 		public override MemberInfo[] GetMember (string name, MemberTypes type,
 												BindingFlags bindingAttr) {
-			throw not_supported ();
+			check_created ();
+			return created.GetMember (name, type, bindingAttr);
 		}
 
 		public override MemberInfo[] GetMembers (BindingFlags bindingAttr) {
-			throw not_supported ();
+			check_created ();
+			return created.GetMembers (bindingAttr);
 		}
 
 		private MethodInfo[] GetMethodsByName (string name, BindingFlags bindingAttr, bool ignoreCase, Type reflected_type) {
@@ -944,9 +949,7 @@ namespace System.Reflection.Emit {
 							     CallingConventions callConvention,
 							     Type[] types, ParameterModifier[] modifiers)
 		{
-			if (!is_created)
-				/* MS.Net throws this exception if the type is unfinished... */
-				throw not_supported ();
+			check_created ();
 
 			bool ignoreCase = ((bindingAttr & BindingFlags.IgnoreCase) != 0);
 			MethodInfo[] methods = GetMethodsByName (name, bindingAttr, ignoreCase, this);
@@ -991,7 +994,8 @@ namespace System.Reflection.Emit {
 		}
 
 		public override Type GetNestedType( string name, BindingFlags bindingAttr) {
-			throw not_supported ();
+			check_created ();
+			return created.GetNestedType (name, bindingAttr);
 		}
 
 		public override Type[] GetNestedTypes (BindingFlags bindingAttr) {
@@ -1065,14 +1069,13 @@ namespace System.Reflection.Emit {
 		}
 
 		protected override bool HasElementTypeImpl () {
-			// According to the MSDN docs, this is supported for TypeBuilders,
-			// but in reality, it is not
-			throw not_supported ();
-			//			return IsArrayImpl() || IsByRefImpl() || IsPointerImpl ();
+			check_created ();
+			return created.HasElementType;
 		}
 
 		public override object InvokeMember( string name, BindingFlags invokeAttr, Binder binder, object target, object[] args, ParameterModifier[] modifiers, CultureInfo culture, string[] namedParameters) {
-			throw not_supported ();
+			check_created ();
+			return created.InvokeMember (name, invokeAttr, binder, target, args, modifiers, culture, namedParameters);
 		}
 
 		protected override bool IsArrayImpl ()
@@ -1103,7 +1106,8 @@ namespace System.Reflection.Emit {
 		
 		public override RuntimeTypeHandle TypeHandle { 
 			get { 
-				throw not_supported (); 
+				check_created ();
+				return created.TypeHandle;
 			} 
 		}
 
@@ -1209,8 +1213,7 @@ namespace System.Reflection.Emit {
 			check_name ("name", name);
 			if (eventtype == null)
 				throw new ArgumentNullException ("eventtype");
-			if (is_created)
-				throw not_after_created ();
+			check_not_created ();
 
 			EventBuilder res = new EventBuilder (this, name, attributes, eventtype);
 			if (events != null) {
@@ -1243,8 +1246,7 @@ namespace System.Reflection.Emit {
 			check_name ("name", name);
 			if ((size <= 0) || (size > 0x3f0000))
 				throw new ArgumentException ("size", "Data size must be > 0 and < 0x3f0000");
-			if (is_created)
-				throw not_after_created ();
+			check_not_created ();
 
 			string s = "$ArrayType$"+UnmanagedDataCount.ToString();
 			UnmanagedDataCount++;
@@ -1263,8 +1265,7 @@ namespace System.Reflection.Emit {
 		public void SetParent (Type parentType) {
 			if (parentType == null)
 				throw new ArgumentNullException ("parentType");
-			if (is_created)
-				throw not_after_created ();
+			check_not_created ();
 
 			parent = parentType;
 			// will just set the parent-related bits if called a second time
@@ -1293,9 +1294,16 @@ namespace System.Reflection.Emit {
 			return new NotSupportedException ("The invoked member is not supported in a dynamic module.");
 		}
 
-		private Exception not_after_created ()
+		private void check_not_created ()
 		{
-			return new InvalidOperationException ("Unable to change after type has been created.");
+			if (is_created)
+				throw new InvalidOperationException ("Unable to change after type has been created.");
+		}
+
+		private void check_created ()
+		{
+			if (!is_created)
+				throw not_supported ();
 		}
 
 		private void check_name (string argName, string name)

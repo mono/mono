@@ -1,3 +1,8 @@
+2004-11-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeBuilder.cs: Make some members work if the type is created since
+	MS does this.
+
 2004-10-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* CustomAttributeBuilder.cs: Check that arguments are not 
