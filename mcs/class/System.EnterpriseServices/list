@@ -42,4 +42,5 @@ System.EnterpriseServices/RegistrationHelper.cs
 System.EnterpriseServices/ServicedComponent.cs
 System.EnterpriseServices.CompensatingResourceManager/TransactionState.cs
 System.EnterpriseServices.CompensatingResourceManager/LogRecordFlags.cs
+System.EnterpriseServices.CompensatingResourceManager/LogRecord.cs
 System.EnterpriseServices.CompensatingResourceManager/CompensatorOptions.cs
