@@ -113,9 +113,6 @@ namespace Mono.MonoBASIC
 		//
 		Stack oob_stack;
 
-		// Current starting location
-		Location startingLocation;
-		
 		DoOptions do_type;
 		//
 		// Switch stack.
@@ -528,7 +525,7 @@ imports_directive
 
 imports_terms
 	: imports_term
-	| imports_terms COMMA imports_term
+	| imports_terms COMMA imports_terms
 	;
 	
 imports_term
@@ -844,36 +841,9 @@ modifier
 	| OVERRIDES 		{ $$ = Modifiers.OVERRIDE; }
 	| OVERRIDABLE		{ $$ = 0; }
 	| NOTOVERRIDABLE	{ $$ = 0; }
-	| MUSTOVERRIDE		{ $$ = 0; }
 	| OVERLOADS		{ $$ = 0; }
+	| MUSTINHERIT		{ $$ = 0; }
 	;
-
-opt_module_member_modifiers
-	: /* empty */				{ $$ = (int) 0; current_modifiers = 0; }
-	| module_member_modifiers 	{ $$ = $1; current_modifiers = (int) $1; }
-	;
-	
-module_member_modifiers
-	: module_member_modifier
-	| module_member_modifiers module_member_modifier
-	  { 
-		int m1 = (int) $1;
-		int m2 = (int) $2;
-
-		if ((m1 & m2) != 0) {
-			Location l = lexer.Location;
-			Report.Error (1004, l, "Duplicate modifier: `" + Modifiers.Name (m2) + "'");
-		}
-		$$ = (int) (m1 | m2);
-	  }
-        ;
-module_member_modifier
-	: PUBLIC		{ $$ = Modifiers.PUBLIC; }
-	| PRIVATE		{ $$ = Modifiers.PRIVATE; }
-	| FRIEND		{ $$ = Modifiers.INTERNAL; }
-	| OVERLOADS		{ $$ = 0; }
-	;
-	
 
 module_declaration
 	: MODULE identifier EOL
@@ -894,8 +864,10 @@ module_declaration
 	  END MODULE EOL
 	  {
 		Module new_module = (Module)current_container;
-		current_container = current_container.Parent;  
+
+		current_container = current_container.Parent;
 		CheckDef (current_container.AddClass(new_module), new_module.Name, new_module.Location);
+
 		$$ = new_module;
 	  }
 	;
@@ -912,29 +884,19 @@ module_member_declarations
 
 module_member_declaration
 	:  opt_attributes
-	   opt_module_member_modifiers
+	   opt_modifiers
 	   { 
 	   	current_attributes = (Attributes) $1;
-	   	current_modifiers = (int) $2 | (int)Modifiers.STATIC;
+	   	current_modifiers = (int) $2 | (int)Modifiers.STATIC; // FIXME: for type_declaration it can result in trouble
 	   }
 	   module_member_declarator
-	   {
-	   	$$ = $3;
-	   }
-	|  opt_attributes
-	   opt_module_member_modifiers
-	   { 
-	   	current_attributes = (Attributes) $1;
-	   	current_modifiers = (int) $2;
-	   }
-	   module_type_spec_declaration
 	   {
 	   	$$ = $3;
 	   }
 	;
 
 module_member_declarator
-	:  shared_constructor_declaration
+	:  static_constructor_declaration
 	|  method_declaration
 	   { 
 	   	Method method = (Method) $1;
@@ -945,16 +907,9 @@ module_member_declarator
 	|  constant_declaration
 	|  property_declaration			
 	|  event_declaration	
+	|  type_declaration			
 	;
-
-module_type_spec_declaration
-	: class_declaration
-	| interface_declaration
-	| delegate_declaration
-	| struct_declaration
-	| enum_declaration
-	;
-	   
+	
 constant_declaration // TODO: implement truly the logic
 	: CONST identifier ASSIGN constant_expression
 	| CONST identifier AS qualified_identifier ASSIGN constant_expression
@@ -1002,6 +957,56 @@ class_member_declarator
 method_declaration
 	: sub_declaration
 	| func_declaration 
+	| must_override_declaration
+	;
+	
+must_override_declaration
+	: must_override_sub_declaration
+	| must_override_func_declaration	
+	;
+	
+must_override_sub_declaration
+	: MUSTOVERRIDE SUB identifier OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS EOL
+	  {	
+	  	if (current_container is Module)
+	  		Report.Error (433, "Methods in a Module cannot be declared 'MustOverride'.");
+	  		
+	  	if (current_container is Struct)
+	  		Report.Error (435, "Methods in a Structure cannot be declared 'MustOverride'.");
+	  			  	
+	  	Method method = new Method (TypeManager.system_void_expr, (int) current_modifiers, (string) $3,
+					    (Parameters) $5, null, null, lexer.Location);
+					    
+		if (current_container is Class)	    
+			((Class)current_container).MustOverride.Add (method);					    
+		else
+			Report.Error (9999, "THIS SHOULD NEVER HAPPEN!");		
+			
+		// FIXME ASAP: This will crash the compiler at resolution time			
+		$$ = method; 			    
+	  }
+	;
+	
+must_override_func_declaration
+	: MUSTOVERRIDE FUNCTION identifier OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS AS type EOL
+	  {	
+	  	if (current_container is Module)
+	  		Report.Error (433, "Methods in a Module cannot be declared 'MustOverride'.");
+	  		
+	  	if (current_container is Struct)
+	  		Report.Error (435, "Methods in a Structure cannot be declared 'MustOverride'.");
+	  			  	
+	  	Method method = new Method ((Expression) $8, (int) current_modifiers, (string) $3,
+					    (Parameters) $5, null, null, lexer.Location);
+					    
+		if (current_container is Class)	    
+			((Class)current_container).MustOverride.Add (method);					    
+		else
+			Report.Error (9999, "THIS SHOULD NEVER HAPPEN!");
+			
+		// FIXME ASAP: This will crash the compiler at resolution time			
+		$$ = method; 					
+	  }	
 	;
 	
 sub_declaration
@@ -1010,7 +1015,23 @@ sub_declaration
 	  	
 	  	current_local_parameters = (Parameters) $4;
 		start_block(); 
-		  
+
+	  	/* This is WEIRD: declaring a method (sub) in a module as static will
+	  	   trigger a syntax error, but the same methods MUST be static in order
+	  	   to be properly called
+	  	*/
+	  	/* THIS SHOULD NOT BE NEEDED ANYMORE
+	  	if (current_container is Module) {
+	  	 	if ((current_modifiers & Modifiers.STATIC) != 0) {
+	  			Report.Error (30810, lexer.Location, "Methods cannot be declared 'Static'");
+	  		}
+	  		else
+	  		{
+	  			current_modifiers = Modifiers.STATIC;
+	  		}
+	  	
+	  	}
+	  	*/
 		// Structure members are Public by default			
 		if ((current_container is Struct) && (current_modifiers == 0))
 			current_modifiers = Modifiers.PUBLIC;		 	
@@ -1050,7 +1071,22 @@ func_declaration
 	  	
 	  	current_local_parameters = (Parameters) $4;
 		start_block(); 
-	  	
+	
+	  	/* This is WEIRD: declaring a method (sub) in a module as static will
+	  	   trigger a syntax error, but the same methods MUST be static in order
+	  	   to be properly called
+	  	*/
+	  	/* THIS SHOULD NOT BE NEEDED ANYMORE
+	  	if (current_container is Module) {
+	  	 	if ((current_modifiers & Modifiers.STATIC) != 0) {
+	  			Report.Error (30810, lexer.Location, "Methods cannot be declared 'Static'");
+	  		}
+	  		else
+	  		{
+	  			current_modifiers |= Modifiers.STATIC;
+	  		}	  		
+	  	}
+	  	*/
 		// Structure members are Public by default			
 		if ((current_container is Struct) && (current_modifiers == 0))
 			current_modifiers = Modifiers.PUBLIC;			  	
@@ -1154,9 +1190,9 @@ enum_declaration
 	  opt_enum_member_declarations
 	  { 
 		Location enum_location = lexer.Location;
-
+		Expression enum_type = ($3 == null) ? TypeManager.system_int32_expr : (Expression) $3;
 		string full_name = MakeName ((string) $2);
-		Mono.CSharp.Enum e = new Mono.CSharp.Enum (current_container, (Expression) $3, (int) current_modifiers, full_name, 
+		Mono.CSharp.Enum e = new Mono.CSharp.Enum (current_container, enum_type, (int) current_modifiers, full_name, 
 				   (Attributes) current_attributes, enum_location);
 		
 		foreach (VariableDeclaration ev in (ArrayList) $5) {
@@ -1618,7 +1654,7 @@ opt_empty_parens
 	| OPEN_PARENS CLOSE_PARENS
 	;	
 	
-shared_constructor_declaration
+static_constructor_declaration
 	: SHARED SUB NEW opt_empty_parens EOL
 	  {
 	  	current_local_parameters = Parameters.EmptyReadOnlyParameters;
@@ -1720,12 +1756,13 @@ fixed_parameters
 fixed_parameter
 	: opt_attributes
 	  opt_parameter_modifier
-	  identifier opt_type_spec opt_variable_initializer
+	  identifier opt_rank_specifier opt_type_spec opt_variable_initializer
 	  {
 	  	Parameter.Modifier pm = (Parameter.Modifier)$2;
 	  	bool opt_parm = ((pm & Parameter.Modifier.OPTIONAL) != 0);
+	  	Expression ptype;
 	  	
-	  	if (opt_parm && ($5 == null))
+	  	if (opt_parm && ($6 == null))
 	  		Report.Error (999, "Optional parameters must have a default value");
 	  	
 	  	if (opt_parm) {
@@ -1733,9 +1770,17 @@ fixed_parameter
 	  			pm = Parameter.Modifier.REF | Parameter.Modifier.ISBYREF;
 	  		else
 	  			pm = Parameter.Modifier.NONE;	//FIXME: should take into account BYREF
-		}	  		
-		$$ = new Parameter ((Expression) $4, (string) $3, 
-					pm, (Attributes) $1, (Expression) $5, opt_parm);
+		}	
+		
+		if ($4 == null)
+			ptype = (Expression) $5;
+		else
+	  	{
+	  		string t = ((Expression) $5).ToString() + (string) $4;
+	  		ptype = DecomposeQI (t, lexer.Location);
+	  	}			
+		$$ = new Parameter (ptype, (string) $3, pm,
+					(Attributes) $1, (Expression) $6, opt_parm);
 	  }
 	;
 	
@@ -2130,7 +2175,7 @@ for_statement
 	  	start_block();
 	  }
 	  opt_statement_list
-	  NEXT opt_next_identifier 
+	  NEXT opt_identifier 
 	  {
 	  	Block statement = end_block();
 	  	Expression for_var = (Expression) DecomposeQI ((string)$2, lexer.Location);;
@@ -2168,10 +2213,15 @@ if_statement
 	  {
 		$$ = $2;
 	  }
+	| if_statement_open embedded_statement
+	  {
+	  	Location l = (Location) oob_stack.Pop ();
+	  	$$ = new If ((Expression) tmp_expr, end_block(), l);
+	  }
 	;
 	
 if_statement_open
-	: IF boolean_expression THEN EOL 
+	: IF boolean_expression THEN 
 	  {
 	   	oob_stack.Push (lexer.Location);
 	   	start_block();
@@ -2180,7 +2230,7 @@ if_statement_open
 	 ;
 
 if_statement_rest
-	:	  
+	: EOL
 	  opt_statement_list
 	  END IF
 	  { 
@@ -2189,7 +2239,7 @@ if_statement_rest
 		$$ = new If ((Expression) tmp_expr, (Statement) end_block(), l);
 
 	  }	  
-	|
+	| EOL
 	  opt_statement_list
 	  ELSE EOL 
 	  { 
@@ -2332,6 +2382,7 @@ expression_statement
 	  }
 	;
 
+
 statement_expression
 	: invocation_expression		{ $$ = new StatementExpression ((ExpressionStatement) $1, lexer.Location);  }
 	| object_creation_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1, lexer.Location);  }
@@ -2344,10 +2395,37 @@ object_creation_expression
 		$$ = new New ((Expression) $2, (ArrayList) $4, lexer.Location);
 	  }
 	;
+	
+array_creation_expression
+	: object_creation_expression array_initializer
+	  {
+	  	New n = (New) $1;
+	  	string dims = "";
+	  	foreach (Argument a in n.Arguments) {
+	  		dims += (((IntLiteral)a.Expr).AsString() + ",");
+	  	}
+	  	dims = "[" + dims.Substring (0, dims.Length - 1) + "]";
+
+	  	Expression atype = n.RequestedType;
+  	
+	  	if (VariableDeclaration.IndexesSpecified(dims)) {
+	  		ArrayList dimlist = VariableDeclaration.ParseIndexList (dims);
+	  		dims = VariableDeclaration.StripIndexesFromDims (dims);
+	  		//$$ = new ArrayCreation (atype, dimlist, dims, (ArrayList) $2, lexer.Location); 
+	  		$$ = new ArrayCreation (atype, dimlist, "", (ArrayList) $2, lexer.Location); 
+	  	}
+	  	else
+	  	{
+	  		//$$ = new ArrayCreation (atype, dims, (ArrayList) $2, lexer.Location); 
+	  		$$ = new ArrayCreation (atype, "", (ArrayList) $2, lexer.Location); 
+	  	}
+	  	//Console.WriteLine ("Creating a new array of type " + (atype.ToString()) + " with rank '" + dims + "'");
+	  }
+	;	
 
 new_expression
 	: object_creation_expression
-	/* | array_creation_expression */
+	| array_creation_expression
 	;
 
 declaration_statement
@@ -2375,18 +2453,6 @@ local_variable_declaration
 	  {
 		$$ = new DictionaryEntry (DecomposeQI("_local_vars_", lexer.Location), $2);		
 	  }
-	/*| DIM variable_declarators 
-	  {
-		$$ = new DictionaryEntry (TypeManager.system_object_expr, $2);
-	  }
-	| DIM variable_declarators AS object_creation_expression
-	  {
-		if ($4 != null)
-			$$ = new DictionaryEntry ($4, $2);
-		else
-			$$ = null;
-						
-	  } */
  	;
 
 	
@@ -2404,10 +2470,6 @@ constant_declarator
 	: identifier ASSIGN constant_expression
 	  {
 		$$ = new VariableDeclaration ((string) $1, $3, lexer.Location);
-	  }
-	| identifier AS type ASSIGN constant_expression
-	  {
-		$$ = new VariableDeclaration ((string) $1, (Expression) $2, $4, lexer.Location);
 	  }
 	;		
 
@@ -2430,7 +2492,7 @@ variable_declarator
 	: variable_identifier opt_type_decl opt_variable_initializer
 	  {
 	  	string varname = (string)$1;
-	  	string dims = "";
+	  	string dims = "[]";
 	  	object varinit = $3;
 	  	Expression vartype = (Expression) $2;
 	  	
@@ -2440,11 +2502,14 @@ variable_declarator
 	  	   and, in case, add the initializer after the array has been created.
 	  	*/
 	  	if (VariableDeclaration.IsArrayDecl (varname)) {
-			if (VariableDeclaration.DimsSpecified(varname)) { 
+			if (VariableDeclaration.IndexesSpecified(varname)) { 
 				varname = VariableDeclaration.StripDims (varname, ref dims);
-				ArrayList a_dims = VariableDeclaration.ParseDimList(dims);
+				ArrayList a_dims = VariableDeclaration.ParseIndexList(dims);
 				varinit = new ArrayCreation (vartype, a_dims,"", (ArrayList) varinit, lexer.Location);
 			}
+			else
+				varname = VariableDeclaration.StripDims (varname, ref dims);
+				
 			vartype = DecomposeQI (vartype.ToString() + VariableDeclaration.GetRank (dims), lexer.Location);
 		}
 
@@ -2460,6 +2525,7 @@ variable_declarator
 			}
 		}
 	  	$$ = new VariableDeclaration (varname, vartype, varinit, lexer.Location, null);
+	  	//Console.WriteLine ("varname: {0} - vartype: {1} - dims: {2}", varname, vartype, dims);
 	  }
 	;
 
@@ -2473,8 +2539,14 @@ variable_identifier
 	;		
 		
 opt_type_spec
-	: /* empty */	{ $$ = null; 		}
-	| AS type 	{ $$ = (Expression) $2; };
+	: /* empty */	
+	  { 
+	  	$$ = null; 		
+	  }
+	| AS type	
+	  { 
+	  	$$ = (Expression) $2;
+	  }
 	;
 			
 opt_type_decl
@@ -2501,7 +2573,7 @@ opt_type_decl
 		
 opt_array_name_modifier
 	: /* empty */ 				{ $$ = null; }
-	| array_type_modifier			{ $$ = $1;   } 
+	| array_type_modifier			{ $$ = $1;   }
 	;
 	
 array_type_modifier
@@ -2655,12 +2727,14 @@ dim_separators
 		$$ = (string) $1 + ",";
 	  }
 	;
-	
+
 dim_specifiers
 	: integer_literal 			{ $$ = ((IntLiteral)$1).AsString(); }
 	| dim_specifiers COMMA integer_literal	{ $$ = $1 + "," + ((IntLiteral)$3).AsString(); }
 	;
-		
+
+
+	
 /* Expressions */
 primary_expression
 	: literal
@@ -2677,7 +2751,7 @@ primary_expression
 	| parenthesized_expression
 	| member_access
 	| invocation_expression
-	| element_access
+	//| element_access
 	| this_access
 	//| base_access
 	| new_expression
@@ -2731,6 +2805,10 @@ member_access
 	  {
 		$$ = new MemberAccess ((Expression) $1, (string) $3, lexer.Location);
 	  }
+	| primary_expression DOT NEW
+	  {
+		$$ = new MemberAccess ((Expression) $1, (string) "New", lexer.Location);
+	  }	  
 	| predefined_type DOT identifier
 	  {
 		$$ = new MemberAccess ((Expression) $1, (string) $3, lexer.Location);
@@ -2759,7 +2837,7 @@ invocation_expression
 	  {
 		BaseAccess ba = new BaseAccess ("New", lexer.Location);
 		$$ = new Invocation ((Expression) ba, (ArrayList) $5, lexer.Location);
-	  }  	  
+	  }  	    
 	;
 
 opt_argument_list
@@ -2815,14 +2893,13 @@ argument
 variable_reference
 	: expression {/* note ("section 5.4"); */  $$ = $1;  }
 	;
-
+/*
 element_access
 	: primary_expression OPEN_PARENS expression_list CLOSE_PARENS
 	  {
-	  
 		$$ = new ElementAccess ((Expression) $1, (ArrayList) $3, lexer.Location);
 	  }
-/*	| primary_expression rank_specifiers
+	| primary_expression rank_specifiers
 	  {
 		// So the super-trick is that primary_expression
 		// can only be either a SimpleName or a MemberAccess.
@@ -2842,8 +2919,9 @@ element_access
 			//
 			$$ = new SimpleName (GetQualifiedIdentifier (expr) + (string) $2, lexer.Location);
 		}
-	  }*/
+	  }
 	;
+*/
 
 expression
 	: conditional_expression { $$ = $1; }
@@ -2878,6 +2956,11 @@ opt_expression_list
 this_access
 	: ME
 	  {
+		$$ = new This (current_block, lexer.Location);
+	  }
+	| MYCLASS
+	  {
+		// FIXME: This is actually somewhat different from Me
 		$$ = new This (current_block, lexer.Location);
 	  }
 	;
@@ -3162,16 +3245,19 @@ builtin_types
 	;
 
 integral_type
-	: /*SBYTE		{ $$ = TypeManager.system_sbyte_expr; }
+	: 
 	| BYTE		{ $$ = TypeManager.system_byte_expr; }
 	| SHORT		{ $$ = TypeManager.system_int16_expr; }
-	| USHORT	{ $$ = TypeManager.system_uint16_expr; }
-	| */ INTEGER	{ $$ = TypeManager.system_int32_expr; }/*
-	| UINT		{ $$ = TypeManager.system_uint32_expr; }
 	| LONG		{ $$ = TypeManager.system_int64_expr; }
+	| INTEGER	{ $$ = TypeManager.system_int32_expr; }
+/*
+	| SBYTE		{ $$ = TypeManager.system_sbyte_expr; }
+	| UINT		{ $$ = TypeManager.system_uint32_expr; }
 	| ULONG		{ $$ = TypeManager.system_uint64_expr; }
+	| USHORT	{ $$ = TypeManager.system_uint16_expr; }
 	| CHAR		{ $$ = TypeManager.system_char_expr; }
-	| VOID		{ $$ = TypeManager.system_void_expr; }*/
+	| VOID		{ $$ = TypeManager.system_void_expr; }
+*/
 	;
 
 interface_type
@@ -3319,10 +3405,6 @@ public class VariableDeclaration {
 	{
 	}	
 	
-	public VariableDeclaration (string id, Expression t, object eoai, Location l) : this (id, t, eoai, l, null)
-	{
-	}	
-	
 	public VariableDeclaration (string id, object eoai, Location l, Attributes opt_attrs) :	this 
 					(id, TypeManager.system_object_expr, eoai, l, opt_attrs)
 	{
@@ -3348,7 +3430,7 @@ public class VariableDeclaration {
 		}
 	}
 	
-	public static bool DimsSpecified (string varname)
+	public static bool IndexesSpecified (string varname)
 	{
 		bool res = false;
 		
@@ -3382,6 +3464,17 @@ public class VariableDeclaration {
 		return (StripDims(varname, ref dres));
 	}	
 	
+	public static string StripIndexesFromDims (string dims)
+	{
+		StringBuilder sb = new StringBuilder();
+		//  
+		foreach (char c in dims) 
+			if (c == ',' || c == ']' || c == '[')
+				sb.Append (c);
+				
+		return sb.ToString();				
+	}
+	
 	public static string GetRank (string dims)
 	{
 		string res = "";
@@ -3394,7 +3487,7 @@ public class VariableDeclaration {
 		return (res);
 	}		
 	
-	public static ArrayList ParseDimList (string dims)
+	public static ArrayList ParseIndexList (string dims)
 	{
 		ArrayList res = new ArrayList();
 		string d = dims.Substring (1, dims.Length -2);
@@ -3406,7 +3499,7 @@ public class VariableDeclaration {
 		
 		foreach (string s in a) 
 			if (s != "")
-				res.Add (new IntLiteral ((Int32) Convert.ToInt32(s)));
+				res.Add (new IntLiteral ((Int32) Convert.ToInt32(s) + 1));
 			else
 				res.Add (new IntLiteral ((Int32) 0));
 		
@@ -3606,8 +3699,7 @@ public override int parse ()
 	catch (Exception e)
 	{
 		Console.WriteLine (lexer.location + "  : Parsing error in " + lexer.ref_name);
-		Report.Error(9999, lexer.Location, "");
-		
+		Report.Error (9999, lexer.Location, "");
 		Console.WriteLine (e);
 	}
 	
