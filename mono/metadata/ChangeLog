@@ -1,5 +1,9 @@
 2003-11-11  Martin Baulig  <martin@ximian.com>
 
+	* mono-debug.c (mono_debug_add_type): Ignore unknown modules.
+
+2003-11-11  Martin Baulig  <martin@ximian.com>
+
 	* reflection.c (mono_reflection_inflate_method_or_ctor): Allow
 	"MonoInflatedMethod" and "MonoInflatedCtor".
 
