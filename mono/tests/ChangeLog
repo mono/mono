@@ -1,3 +1,9 @@
+2004-09-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Makefile.am: Add marshal.cs.
+
+	* marshal.cs: New file for Marshal tests.
+
 2004-09-21    <vargaz@freemail.hu>
 
 	* libtest.c: Free memory using CoTaskMemFree on windows.
