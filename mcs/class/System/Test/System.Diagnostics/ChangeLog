@@ -1,3 +1,12 @@
+2002-12-20  Jonathan Pryor <jonpryor@vt.edu>
+
+	* AllTests.cs: Add new tests
+	* SwitchesTest.cs: new file to test switches
+	* DiagnosticsConfigurationHandlerTest.cs: new file to test
+	  DiagnosticsConfigurationHandler
+	* TraceTest.cs: Make sure that IndentLevel and IndentSize are set
+    appropriately before testing output.
+
 2002-09-23  Nick Drochak  <ndrochak@gol.com>
 
 	* TraceTest.cs: Default level and size are 0 & 4, respectively.

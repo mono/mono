@@ -21,6 +21,8 @@ namespace MonoTests.System.Diagnostics {
 			get {
 				TestSuite suite = new TestSuite();
 				suite.AddTest (MonoTests.System.Diagnostics.TraceTest.Suite);
+				suite.AddTest (MonoTests.System.Diagnostics.SwitchesTest.Suite);
+				suite.AddTest (MonoTests.System.Diagnostics.DiagnosticsConfigurationHandlerTest.Suite);
 				return suite;
 			}
 		}

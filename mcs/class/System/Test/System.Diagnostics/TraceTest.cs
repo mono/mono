@@ -42,7 +42,6 @@ namespace MonoTests.System.Diagnostics {
 			Trace.Listeners.Clear ();
 			Trace.Listeners.Add (listener);
 			Trace.AutoFlush = true;
-
 		}
 
 		protected override void TearDown ()
@@ -60,6 +59,9 @@ namespace MonoTests.System.Diagnostics {
 		// Make sure that when we get the output we expect....
 		public void TestTracing ()
 		{
+			Trace.IndentLevel = 0;
+			Trace.IndentSize = 4;
+
 			string value =  
 				"Entering Main" + Environment.NewLine +
 				"Exiting Main" + Environment.NewLine;
@@ -73,6 +75,9 @@ namespace MonoTests.System.Diagnostics {
 		// Make sure we get the output we expect in the presence of indenting...
 		public void TestIndent ()
 		{
+			Trace.IndentLevel = 0;
+			Trace.IndentSize = 4;
+
 			string value =  
 				"List of errors:" + Environment.NewLine +
 				"    Error 1: File not found" + Environment.NewLine +

@@ -3,6 +3,7 @@
 --noconfig
 -r ../../lib/corlib.dll
 -r ../../lib/System.dll
+-r ../../lib/System.Xml.dll
 -r ../../../nunit/NUnitCore_mono.dll
 AllTests.cs
 BasicOperationsTest.cs
@@ -18,6 +19,8 @@ System.ComponentModel/AllTests.cs
 System.ComponentModel/EventHandlerListTests.cs
 System.Diagnostics/AllTests.cs
 System.Diagnostics/TraceTest.cs
+System.Diagnostics/SwitchesTest.cs
+System.Diagnostics/DiagnosticsConfigurationHandlerTest.cs
 System.Net/AllTests.cs
 System.Net/CookieCollectionTest.cs
 System.Net/CookieTest.cs

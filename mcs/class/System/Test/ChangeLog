@@ -1,3 +1,13 @@
+2002-12-20 Jonathan Pryor <jonpryor@vt.edu>
+
+	* makefile.gnu: Add System.Xml.dll to list of referenced assemblies
+	* system_linux_test.args: Add System.Xml, new test cases
+	* test-config-file: new file; sample .config file that
+	  System.Diagnostics/SwitchesTest.cs would use to test .config file
+		operations.
+		I'm not sure what this file should be named, much less it's proper
+		location.  In CVS so it's stored in a "safe" location.
+
 2002-12-08 Jackson Harper <jackson@latitudegeo.com>
 
 	* system_linux_test.args: Remove Compiler tests
