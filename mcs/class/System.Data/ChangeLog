@@ -1,3 +1,7 @@
+2002-05-14  Tim Coleman
+	* System.Data/DataRowBuilder.cs:
+		Add stubb for this internal class.
+
 2002-05-13  Tim Coleman
 	* System.Data.Common/DbDataAdapter.cs:
 		The maxRecords check was not correct.
