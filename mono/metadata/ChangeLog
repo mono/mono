@@ -1,4 +1,12 @@
 
+Thu May 2 17:56:52 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.c, image.h: add some support for assemblies
+	with multiple modules.
+	* class.c, class.h: export mono_class_from_typeref().
+	* loader.c: remove duplicated code and use mono_class_from_typeref(),
+	instead.
+
 Thu May 2 15:51:11 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* unicode.c: Char.IsNumber doesn't include hex digits as the ms
