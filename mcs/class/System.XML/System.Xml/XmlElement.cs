@@ -47,6 +47,8 @@ namespace System.Xml
 			XmlDocument doc,
 			bool atomizedNames) : base (doc)
 		{
+			XmlConvert.VerifyName (localName);
+
 			if (atomizedNames) {
 				this.prefix = prefix;
 				this.localName = localName;

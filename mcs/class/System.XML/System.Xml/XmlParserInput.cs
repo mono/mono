@@ -12,9 +12,9 @@ using System.Text;
 using System.Xml;
 using System.Globalization;
 
-namespace Mono.Xml.Native
+namespace System.Xml
 {
-	public class XmlParserInput
+	internal class XmlParserInput
 	{
 		#region ctor
 		public XmlParserInput (TextReader reader, string baseURI)

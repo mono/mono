@@ -24,7 +24,6 @@ using System.Security.Policy;
 using System.Text;
 using System.Xml.Schema;
 using Mono.Xml;
-using Mono.Xml.Native;
 
 namespace System.Xml
 {

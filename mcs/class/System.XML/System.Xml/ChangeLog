@@ -1,3 +1,17 @@
+2004-05-12  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDObjectModel.cs,
+	  DTDReader.cs,
+	  XmlDocument.cs,
+	  XmlInputStream.cs,
+	  XmlParserInput.cs,
+	  XmlTextReader.cs,
+	  XmlUrlResolver.cs : removed reference to Mono.Xml.
+	  Made Mono.Xml.* classes internal.
+	* XmlDocument.cs : output xml declaration for TextWriter output in Save()
+	* XmlElement.cs : Name character check should be done in .ctor().
+	* XmlNamespaceManager.cs : Removed dangerous internal .ctor()
+
 2004-05-10  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlNodeReader.cs : renamed ownerElement to ownerLinkedNode (text

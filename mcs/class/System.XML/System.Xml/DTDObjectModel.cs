@@ -15,7 +15,6 @@ using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using Mono.Xml.Schema;
-using Mono.Xml.Native;
 
 namespace Mono.Xml
 {
@@ -1039,14 +1038,14 @@ namespace Mono.Xml
 		}
 	}
 
-	public enum DTDContentOrderType
+	internal enum DTDContentOrderType
 	{
 		None,
 		Seq,
 		Or
 	}
 
-	public enum DTDAttributeOccurenceType
+	internal enum DTDAttributeOccurenceType
 	{
 		None,
 		Required,
@@ -1054,7 +1053,7 @@ namespace Mono.Xml
 		Fixed
 	}
 
-	public enum DTDOccurence
+	internal enum DTDOccurence
 	{
 		One,
 		Optional,

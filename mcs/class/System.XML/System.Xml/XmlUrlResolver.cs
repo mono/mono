@@ -9,7 +9,6 @@
 using System.Net;
 using System.IO;
 using System.Text;
-using Mono.Xml.Native;
 
 namespace System.Xml
 {

@@ -21,7 +21,6 @@ using System.Xml.XPath;
 using System.Diagnostics;
 using System.Collections;
 using Mono.Xml;
-using Mono.Xml.Native;
 
 namespace System.Xml
 {
@@ -325,8 +324,6 @@ namespace System.Xml
 			// FIXME: MS.NET has a weird behavior that they can Load() from XmlTextReader 
 			// whose Namespaces = false, but their CreateElement() never allows qualified name.
 			// I leave it as it is.
-			if (!XmlChar.IsName (localName))
-				throw new ArgumentException ("Invalid name.", "localName");
 			return new XmlElement (prefix != null ? prefix : String.Empty, localName, namespaceURI != null ? namespaceURI : String.Empty, this, false);
 		}
 
@@ -850,7 +847,7 @@ namespace System.Xml
 			idTable.Remove (id);
 		}
 
-		public virtual void Save(Stream outStream)
+		public virtual void Save (Stream outStream)
 		{
 			XmlTextWriter xmlWriter = new XmlTextWriter (outStream, TextEncoding);
 			xmlWriter.Formatting = Formatting.Indented;
@@ -873,7 +870,10 @@ namespace System.Xml
 		{
 			XmlTextWriter xmlWriter = new XmlTextWriter (writer);
 			xmlWriter.Formatting = Formatting.Indented;
+			if (FirstChild != null && FirstChild.NodeType != XmlNodeType.XmlDeclaration)
+				xmlWriter.WriteStartDocument ();
 			WriteContentTo (xmlWriter);
+			xmlWriter.WriteEndDocument ();
 			xmlWriter.Flush ();
 		}
 

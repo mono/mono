@@ -12,10 +12,10 @@ using System.IO;
 using System.Text;
 using System.Xml;
 
-namespace Mono.Xml.Native
+namespace System.Xml
 {
 	#region XmlStreamReader
-	public class XmlStreamReader : StreamReader
+	internal class XmlStreamReader : StreamReader
 	{
 		XmlInputStream input;
 
