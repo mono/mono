@@ -1996,10 +1996,14 @@ namespace Mono.CSharp {
 			if (e == null)
 				return false;
 
-			if (!(e is Constant)){
+			Expression ee = e as Constant;
+			if (ee == null)
+				ee = Const.ConvertExpressionToConstant (e, loc, true, null);
+			if (ee == null){
 				Report.Error (150, loc, "A constant value is expected, got: " + e);
 				return false;
 			}
+			e = ee;
 
 			if (e is StringConstant || e is NullLiteral){
 				if (required_type == TypeManager.string_type){

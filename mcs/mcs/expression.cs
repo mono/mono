@@ -1795,6 +1795,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 			expr = Convert.ExplicitConversion (ec, expr, type, loc);
+
 			return expr;
 		}
 

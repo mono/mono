@@ -885,6 +885,16 @@ namespace Mono.CSharp {
 		/// </summary>
 		public static object ConvertIntLiteral (Constant c, Type target_type, Location loc)
 		{
+			if (TypeManager.IsEnumType (target_type))
+				target_type = TypeManager.EnumToUnderlying (target_type);
+
+			//
+			// Make into one of the literals we handle, we dont really care
+			// about this value as we will just return a few limited types
+			// 
+			if (c is EnumConstant)
+				c = ((EnumConstant)c).WidenToCompilerConstant ();
+			
 			if (!Convert.ImplicitStandardConversionExists (c, target_type)){
 				Convert.Error_CannotImplicitConversion (loc, c.Type, target_type);
 				return null;
@@ -895,12 +905,6 @@ namespace Mono.CSharp {
 			if (c.Type == target_type)
 				return ((Constant) c).GetValue ();
 
-			//
-			// Make into one of the literals we handle, we dont really care
-			// about this value as we will just return a few limited types
-			// 
-			if (c is EnumConstant)
-				c = ((EnumConstant)c).WidenToCompilerConstant ();
 
 			if (c is IntConstant){
 				int v = ((IntConstant) c).Value;
