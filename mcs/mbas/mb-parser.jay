@@ -1104,8 +1104,8 @@ sub_declaration
 	  END SUB EOL
 	  {
 		Method method = new Method (TypeManager.system_void_expr, (int) current_modifiers, (string) $2,
-					    (Parameters) current_local_parameters, null, (Expression) $7, 
-					    member_location);
+					    (Parameters) current_local_parameters, (Attributes) current_attributes, 
+					    (Expression) $7, member_location);
 	
 		method.Block = (Block) end_block();
 		$$ = method;
@@ -1153,7 +1153,7 @@ func_declaration
 		Expression ftype = ($7 == null) ? (($3 == null) ? TypeManager.system_object_expr : (Expression) $3 ) : (Expression) $7;
 
 		Method method = new Method ((Expression) ftype, (int) current_modifiers, (string) $2,
-					    (Parameters) current_local_parameters, null, 
+					    (Parameters) current_local_parameters, (Attributes) current_attributes,/* (Attributes) currx ent_attributes,  */
 					    (Expression) $8, member_location);
 		method.Block = end_block();
 		$$ = method;
