@@ -1,5 +1,10 @@
 2004-03-23  Zoltan Varga  <vargaz@freemail.hu>
 
+	* exceptions-sparc.c (mono_sparc_handle_exception): Remove debugging
+	output.
+
+2004-03-23  Zoltan Varga  <vargaz@freemail.hu>
+
 	* liveness.c: Consider SSA stores as well as loads when making vars
 	volatile.
 
