@@ -20,10 +20,9 @@ namespace System
 	/// 
 	public struct DateTime : IComparable , IFormattable  , IConvertible
 	{
-		long ticks;
+		private TimeSpan ticks;
+		private TimeSpan utcoffset;
 
-		private const long MaxTicks = 3155378975999999999L;
-		private const long MinTicks = 0L;
 		private const int dp400 = 146097;
 		private const int dp100 = 36524;
 		private const int dp4 = 1461;
@@ -38,8 +37,8 @@ namespace System
 		//
 		internal const long UnixEpoch = 621355968000000000L;
 		
-		public static readonly DateTime MaxValue = new DateTime (MaxTicks);
-		public static readonly DateTime MinValue = new DateTime (MinTicks);
+		public static readonly DateTime MaxValue = new DateTime (false,TimeSpan.MaxValue);
+		public static readonly DateTime MinValue = new DateTime (false,TimeSpan.MinValue);
 		
 		private enum Which 
 		{
@@ -52,7 +51,7 @@ namespace System
 		private static int[] daysmonth = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };	
 		private static int[] daysmonthleap = { 0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };	
 
-		private static long AbsoluteDays (int year, int month, int day)
+		private static int AbsoluteDays (int year, int month, int day)
 		{
 			int[] days;
 			int temp = 0, m=1 ;
@@ -70,8 +69,8 @@ namespace System
 			int M =1;
 
 			int[] days = daysmonth;
-			int totaldays = (int) (ticks / TimeSpan.TicksPerDay);
-			
+			int totaldays = this.ticks.Days;
+
 			num400 = (totaldays / dp400);
 			totaldays -=  num400 * dp400;
 		
@@ -84,7 +83,7 @@ namespace System
 			totaldays -= (num4 * dp4);
 
 			numyears = totaldays / 365 ;
-			
+
 			if (numyears == 4)  //leap
 				numyears =3 ;
 			if (what == Which.Year )
@@ -104,8 +103,6 @@ namespace System
 				return M;
 
 			return totaldays +1; 
-
-
 		}
 
 
@@ -115,12 +112,21 @@ namespace System
 		/// Constructs a DateTime for specified ticks
 		/// </summary>
 		/// 
-		public DateTime (long newticks) 
+		public DateTime (long newticks)
+			// `local' must default to false here to avoid
+			// a recursion loop.
+			: this (false, newticks) {}
+
+		internal DateTime (bool local, long newticks)
+			: this (true, new TimeSpan (newticks))
 		{
-			ticks = newticks;
-		
-			if ( newticks < MinValue.ticks || newticks > MaxValue.ticks)
-				throw new ArgumentOutOfRangeException ();
+			if (local) {
+				TimeZone tz = TimeZone.CurrentTimeZone;
+
+				utcoffset = tz.GetUtcOffset (this);
+
+				ticks = ticks + utcoffset;
+			}
 		}
 
 		public DateTime (int year, int month, int day)
@@ -138,15 +144,9 @@ namespace System
 				minute < 0 || minute > 59 ||
 				second < 0 || second > 59 )
 				throw new ArgumentOutOfRangeException() ;
-				
-			ticks = AbsoluteDays(year,month,day) * TimeSpan.TicksPerDay + 
-				hour * TimeSpan.TicksPerHour + 
-				minute * TimeSpan.TicksPerMinute + 
-				second * TimeSpan.TicksPerSecond + 
-				millisecond * TimeSpan.TicksPerMillisecond ; 
-			
-			if (ticks < MinValue.ticks || ticks > MaxValue.ticks )
-				throw new ArgumentException() ;
+
+			ticks = new TimeSpan (AbsoluteDays(year,month,day), hour, minute, second, millisecond);
+			utcoffset = new TimeSpan (0);
 		}
 
 		public DateTime (int year, int month, int day, Calendar calendar)
@@ -164,6 +164,15 @@ namespace System
 				throw new ArgumentNullException();
 		}
 
+		internal DateTime (bool check, TimeSpan value)
+		{
+			if (check && (value.Ticks < MinValue.Ticks || value.Ticks > MaxValue.Ticks))
+				throw new ArgumentOutOfRangeException ();
+
+			ticks = value;
+
+			utcoffset = new TimeSpan (0);
+		}
 
 		/* Properties  */
 		 
@@ -171,10 +180,19 @@ namespace System
 		{
 			get	
 			{ 
-				return new DateTime(ticks - (ticks % TimeSpan.TicksPerDay )) ; 
+				return new DateTime (Year, Month, Day);
 			}
 		}
         
+		public int Month 
+		{
+			get	
+			{ 
+				return FromTicks(Which.Month); 
+			}
+		}
+
+	       
 		public int Day
 		{
 			get 
@@ -187,7 +205,7 @@ namespace System
 		{
 			get 
 			{ 
-				return ( (DayOfWeek) (((ticks / TimeSpan.TicksPerDay)+1) % 7) ); 
+				return ( (DayOfWeek) ((ticks.Days+1) % 7) ); 
 			}
 		}
 
@@ -199,47 +217,28 @@ namespace System
 			}
 		}
 
+		public TimeSpan TimeOfDay 
+		{
+			get	
+			{ 
+				return new TimeSpan(ticks.Ticks % TimeSpan.TicksPerDay );
+			}
+			
+		}
+
 		public int Hour 
 		{
 			get 
 			{ 
-				return ( (int) ((ticks % TimeSpan.TicksPerDay) / TimeSpan.TicksPerHour) );  
+				return ticks.Hours;
 			}
 		}
 
-		public int Millisecond 
-		{
-			get 
-			{ 
-				return ( (int) (ticks % TimeSpan.TicksPerSecond / TimeSpan.TicksPerMillisecond) ); 
-			}
-		}
-		
 		public int Minute 
 		{
 			get 
 			{ 
-				return ( (int) (ticks % TimeSpan.TicksPerHour / TimeSpan.TicksPerMinute) ); 
-			}
-		}
-
-		public int Month 
-		{
-			get	
-			{ 
-				return FromTicks(Which.Month); 
-			}
-		}
-
-	       
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern long GetNow ();
-
-		public static DateTime Now 
-		{
-			get	
-			{ 
-				return new DateTime (GetNow ()); 
+				return ticks.Minutes;
 			}
 		}
 
@@ -247,7 +246,26 @@ namespace System
 		{
 			get	
 			{ 
-				return (int) (ticks % TimeSpan.TicksPerMinute / TimeSpan.TicksPerSecond); 
+				return ticks.Seconds;
+			}
+		}
+
+		public int Millisecond 
+		{
+			get 
+			{ 
+				return ticks.Milliseconds;
+			}
+		}
+		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern long GetNow ();
+
+		public static DateTime Now 
+		{
+			get	
+			{
+				return new DateTime (true, GetNow ());
 			}
 		}
 
@@ -255,35 +273,22 @@ namespace System
 		{ 
 			get	
 			{ 
-				return ticks ; 
+				return ticks.Ticks;
 			}
 		}
 	
-		public TimeSpan TimeOfDay 
-		{
-			get	
-			{ 
-				return new TimeSpan(ticks % TimeSpan.TicksPerDay );
-			}
-			
-		}
-
-		//TODO implement
-		[MonoTODO]
 		public static DateTime Today 
 		{
 			get	
 			{
-				return new DateTime (0);
+				return new DateTime (true, (GetNow () / TimeSpan.TicksPerDay) * TimeSpan.TicksPerDay);
 			}
 		}
 
-		//TODO implement
-		[MonoTODO]
 		public static DateTime UtcNow 
 		{
 			get {
-				return new DateTime (0);
+				return new DateTime (GetNow ());
 			}
 		}
 
@@ -299,15 +304,7 @@ namespace System
 
 		public DateTime Add (TimeSpan ts)
 		{
-			long newticks ;
-
-			newticks = ticks + ts.Ticks ;
-
-			if (ts.Ticks < MinTicks || ts.Ticks > MaxTicks || 
-				newticks < MinTicks || newticks > MaxTicks)
-				throw new ArgumentException ();
-			
-			return new DateTime (newticks);
+			return new DateTime (true, ticks) + ts;
 		}
 
 		public DateTime AddDays (double days)
@@ -317,12 +314,7 @@ namespace System
 		
 		public DateTime AddTicks (long t)
 		{
-			long newticks = ticks + t; 
-
-			if (t<MinTicks || t>MaxTicks || newticks<MinTicks || newticks>MaxTicks)
-				throw new ArgumentException ();
-
-			return new DateTime(newticks);
+			return Add (new TimeSpan (t));
 		}
 
 		public DateTime AddHours (double hours)
@@ -332,16 +324,11 @@ namespace System
 
 		public DateTime AddMilliseconds (double ms)
 		{
-			long msticks, newticks;
+			long msticks;
 			
 			msticks = (long) (ms += ms > 0 ? 0.5 : -0.5) * TimeSpan.TicksPerMillisecond ; 
-			newticks = ticks + msticks ;
 
-			if (msticks < MinTicks || msticks > MaxTicks ||
-				newticks < MinTicks || newticks > MaxTicks)
-				throw new ArgumentException ();
-
-			return new DateTime (newticks);
+			return AddTicks (msticks);
 		}
 
 		public DateTime AddMinutes (double minutes)
@@ -373,7 +360,7 @@ namespace System
 				day = maxday;
 
 			temp = new DateTime (year, month, day);
-            return  temp.Add (this.TimeOfDay);
+			return  temp.Add (this.TimeOfDay);
 		}
 
 		public DateTime AddSeconds (double seconds)
@@ -474,7 +461,7 @@ namespace System
 
 		public override int GetHashCode ()
 		{
-			return (int) ticks;
+			return (int) ticks.Ticks;
 		}
 
 		public TypeCode GetTypeCode ()
@@ -532,44 +519,36 @@ namespace System
 		
 		}
 		
-		public TimeSpan Subtract(DateTime dt )
+		public TimeSpan Subtract(DateTime dt)
 		{   
-			return new TimeSpan(ticks - dt.ticks );
+			return new TimeSpan(ticks.Ticks) - dt.ticks;
 		}
 
 		public DateTime Subtract(TimeSpan ts)
-		{	
-			return new DateTime(ticks - ts.Ticks );
+		{
+			TimeSpan newticks;
+
+			newticks = (new TimeSpan (ticks.Ticks)) - ts;
+			return new DateTime(true,newticks);
 		}
 
 		public long ToFileTime()
 		{
-			if(ticks < w32file_epoch) {
+			if(ticks.Ticks < w32file_epoch) {
 				throw new ArgumentOutOfRangeException("file time is not valid");
 			}
 			
-			return(ticks - w32file_epoch);
+			return(ticks.Ticks - w32file_epoch);
 		}
 
-		[MonoTODO]
-		public DateTime ToLocalTime()
-		{
-			// TODO Implement me 
-			return new DateTime (0);
-		}
-
-		[MonoTODO]
 		public string ToLongDateString()
 		{
-			// TODO implement me
-			throw new NotImplementedException ();
+			return ToString ("D");
 		}
 
-		[MonoTODO]
 		public string ToLongTimeString()
 		{
-			// TODO implement me
-			throw new NotImplementedException ();
+			return ToString ("T");
 		}
 
 		[MonoTODO]
@@ -579,60 +558,368 @@ namespace System
 			return 0;
 		}
 
-		[MonoTODO]
 		public string ToShortDateString()
 		{
-			// TODO implement me 
-			throw new NotImplementedException ();
+			return ToString ("d");
 		}
 
-		[MonoTODO]
 		public string ToShortTimeString()
 		{
-			// TODO implement me
-			throw new NotImplementedException ();
+			return ToString ("t");
 		}
 		
-		[MonoTODO]
 		public override string ToString ()
 		{
-			// TODO: Implement me
-			throw new NotImplementedException ();
+			return ToString (null, null);
 		}
 
-		[MonoTODO]
 		public string ToString (IFormatProvider fp)
 		{
-			// TODO: Implement me.
-			throw new NotImplementedException ();
+			return ToString (null, fp);
 		}
 
-		[MonoTODO]
 		public string ToString (string format)
 		{
-			// TODO: Implement me.
-			throw new NotImplementedException ();
+			return ToString (format, null);
+		}
+
+		internal string _GetStandardPattern (char format, DateTimeFormatInfo dfi, out bool useutc)
+		{
+			String pattern, f1, f2;
+
+			useutc = false;
+
+			switch (format)
+			{
+			case 'd':
+				pattern = dfi.ShortDatePattern;
+				break;
+			case 'D':
+				pattern = dfi.LongDatePattern;
+				break;
+			case 'f':
+				f1 = dfi.LongDatePattern;
+				f2 = dfi.ShortTimePattern;
+				pattern = String.Concat (f1, " ");
+				pattern = String.Concat (pattern, f2);
+				break;
+			case 'F':
+				pattern = dfi.FullDateTimePattern;
+				break;
+			case 'g':
+				f1 = dfi.ShortDatePattern;
+				f2 = dfi.ShortTimePattern;
+				pattern = String.Concat (f1, " ");
+				pattern = String.Concat (pattern, f2);
+				break;
+			case 'G':
+				f1 = dfi.ShortDatePattern;
+				f2 = dfi.LongTimePattern;
+				pattern = String.Concat (f1, " ");
+				pattern = String.Concat (pattern, f2);
+				break;
+			case 'm':
+			case 'M':
+				pattern = dfi.MonthDayPattern;
+				break;
+			case 'r':
+			case 'R':
+				pattern = dfi.RFC1123Pattern;
+				break;
+			case 's':
+				pattern = dfi.SortableDateTimePattern;
+				break;
+			case 't':
+				pattern = dfi.ShortTimePattern;
+				break;
+			case 'T':
+				pattern = dfi.LongTimePattern;
+				break;
+			case 'u':
+				pattern = dfi.UniversalSortableDateTimePattern;
+				useutc = true;
+				break;
+			case 'U':
+				f1 = dfi.LongDatePattern;
+				f2 = dfi.LongTimePattern;
+				pattern = String.Concat (f1, " ");
+				pattern = String.Concat (pattern, f2);
+				useutc = true;
+				break;
+			case 'y':
+			case 'Y':
+				pattern = dfi.YearMonthPattern;
+				break;
+			default:
+				pattern = null;
+				break;
+			}
+
+			Console.Write ("Pattern: ");
+			Console.WriteLine (pattern);
+
+			return pattern;
+		}
+
+		internal string _ToString (string format, DateTimeFormatInfo dfi)
+		{
+			String str = null, result = null;
+			char[] chars = format.ToCharArray ();
+			int len = format.Length, pos = 0, num = 0;
+
+			while (pos+num < len)
+			{
+				if (chars[pos] == '\'')
+				{
+					num = 1;
+					while (pos+num < len)
+					{
+						if (chars[pos+num] == '\'')
+							break;
+
+						result = String.Concat (result, chars[pos+num]);
+
+						num = num + 1;
+					}
+					if (pos+num > len)
+						throw new FormatException (Locale.GetText ("The specified format is invalid"));
+
+					pos = pos + num + 1;
+					num = 0;
+					continue;
+				}
+				else if (chars[pos] == '\\')
+				{
+					if (pos+1 >= len)
+						throw new FormatException (Locale.GetText ("The specified format is invalid"));
+
+					result = String.Concat (result, chars[pos]);
+					pos = pos + 1;
+					continue;
+				}
+				else if (chars[pos] == '%')
+				{
+					pos = pos + 1;
+					continue;
+				}
+
+
+				if ((pos+num+1 < len) && (chars[pos+num+1] == chars[pos+num]))
+				{
+					num = num + 1;
+					continue;
+				}
+
+				switch (chars[pos])
+				{
+				case 'd':
+					if (num == 0)
+						str = Day.ToString ("d");
+					else if (num == 1)
+						str = Day.ToString ("d02");
+					else if (num == 2)
+						str = dfi.GetAbbreviatedDayName (DayOfWeek);
+					else
+					{
+						str = dfi.GetDayName (DayOfWeek);
+						num = 3;
+					}
+					break;
+				case 'M':
+					if (num == 0)
+						str = Month.ToString ("d");
+					else if (num == 1)
+						str = Month.ToString ("d02");
+					else if (num == 2)
+						str = dfi.GetAbbreviatedMonthName (Month);
+					else
+					{
+						str = dfi.GetMonthName (Month);
+						num = 3;
+					}
+					break;
+				case 'y':
+					if (num == 0)
+					{
+						int shortyear = Year % 100;
+						str = shortyear.ToString ("d");
+					}
+					else if (num < 3)
+					{
+						int shortyear = Year % 100;
+						str = shortyear.ToString ("d02");
+						num = 1;
+					}
+					else
+					{
+						str = Year.ToString ("d");
+						num = 3;
+					}
+					break;
+				case 'g':
+					// FIXME
+					break;
+				case 'f':
+					num = Math.Min (num, 6);
+
+					long ms = (long) Millisecond;
+					long exp = 10;
+					for (int i = 0; i < num; i++)
+						exp = exp * 10;
+					long maxexp = TimeSpan.TicksPerMillisecond;
+
+					exp = Math.Min (exp, maxexp);
+					ms = ms * exp / maxexp;
+
+					String prec = (num+1).ToString ("d02");
+					str = ms.ToString (String.Concat ("d", prec));
+
+					break;
+				case 'h':
+					if (num == 0)
+					{
+						int shorthour = Hour % 12;
+						str = shorthour.ToString ("d");
+					}
+					else
+					{
+						int shorthour = Hour % 12;
+						str = shorthour.ToString ("d02");
+						num = 1;
+					}
+					break;
+				case 'H':
+					if (num == 0)
+						str = Hour.ToString ("d");
+					else
+					{
+						str = Hour.ToString ("d02");
+						num = 1;
+					}
+					break;
+				case 'm':
+					if (num == 0)
+						str = Minute.ToString ("d");
+					else
+					{
+						str = Minute.ToString ("d02");
+						num = 1;
+					}
+					break;
+				case 's':
+					if (num == 0)
+						str = Second.ToString ("d");
+					else
+					{
+						str = Second.ToString ("d02");
+						num = 1;
+					}
+					break;
+				case 't':
+					if (Hour < 12)
+						str = dfi.AMDesignator;
+					else
+						str = dfi.PMDesignator;
+
+					if (num == 0)
+						str = str.Substring (0,1);
+					else
+						num = 1;
+					break;
+				case 'z':
+					if (num == 0)
+					{
+						int offset = utcoffset.Hours;
+						str = offset.ToString ("d");
+						if (offset > 0)
+							str = String.Concat ("+", str);
+					}
+					else if (num == 1)
+					{
+						int offset = utcoffset.Hours;
+						str = offset.ToString ("d02");
+						if (offset > 0)
+							str = String.Concat ("+", str);
+					}
+					else if (num == 2)
+					{
+						int offhour = utcoffset.Hours;
+						int offminute = utcoffset.Minutes;
+						str = offhour.ToString ("d02");
+						str = String.Concat (str, dfi.TimeSeparator);
+						str = String.Concat (str, offminute.ToString ("d02"));
+						if (offhour > 0)
+							str = String.Concat ("+", str);
+						num = 2;
+					}
+					break;
+				case ':':
+					str = dfi.TimeSeparator;
+					num = 1;
+					break;
+				case '/':
+					str = dfi.DateSeparator;
+					num = 1;
+					break;
+				default:
+					str = String.Concat (chars [pos]);
+					num = 0;
+					break;
+				}
+
+				result = String.Concat (result, str);
+						
+				pos = pos + num + 1;
+				num = 0;
+			}
+
+			return result;
 		}
 
 		[MonoTODO]
 		public string ToString (string format, IFormatProvider fp)
 		{
-			// TODO: Implement me.
-			throw new NotImplementedException ();
+			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance(fp);
+
+			if (format == null)
+				format = dfi.FullDateTimePattern;
+
+			bool useutc = false;
+
+			if (format.Length == 1) {
+				char fchar = (format.ToCharArray ())[0];
+				format = this._GetStandardPattern (fchar, dfi, out useutc);
+			}
+
+			if (useutc)
+				return this.ToUniversalTime ()._ToString (format, dfi);
+			else
+				return this._ToString (format, dfi);
 		}
 
-		[MonoTODO]
+		public DateTime ToLocalTime()
+		{
+			TimeZone tz = TimeZone.CurrentTimeZone;
+
+			TimeSpan offset = tz.GetUtcOffset (this);
+
+			return new DateTime (true, ticks + offset);
+		}
+
 		public DateTime ToUniversalTime()
 		{
-			// TODO: implement me 
-			return new DateTime(0);
+			TimeZone tz = TimeZone.CurrentTimeZone;
+
+			TimeSpan offset = tz.GetUtcOffset (this);
+
+			return new DateTime (true, ticks - offset);
 		}
 
 		/*  OPERATORS */
 
 		public static DateTime operator +(DateTime d, TimeSpan t)
 		{
-			return new DateTime (d.ticks + t.Ticks);
+			return new DateTime (true, d.ticks + t);
 		}
 
 		public static bool operator ==(DateTime d1, DateTime d2)
@@ -667,12 +954,12 @@ namespace System
 
 		public static TimeSpan operator -(DateTime d1,DateTime d2)
 		{
-			return new TimeSpan(d1.ticks - d2.ticks);
+			return new TimeSpan((d1.ticks - d2.ticks).Ticks);
 		}
 
-		public static DateTime operator -(DateTime d,TimeSpan t	)
+		public static DateTime operator -(DateTime d,TimeSpan t)
 		{
-			return new DateTime (d.ticks - t.Ticks);
+			return new DateTime (true, d.ticks - t);
 		}
 
 		public bool ToBoolean(IFormatProvider provider)
@@ -694,7 +981,7 @@ namespace System
 		[MonoTODO]
 		public System.DateTime ToDateTime(IFormatProvider provider)
 		{
-			return new System.DateTime(this.ticks);
+			return new System.DateTime(true,this.ticks);
 		} 
 		
 		public decimal ToDecimal(IFormatProvider provider)
@@ -770,4 +1057,3 @@ namespace System
 		Saturday
 	}
 }
-
