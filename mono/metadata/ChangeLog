@@ -1,5 +1,10 @@
 2004-03-30  Martin Baulig  <martin@ximian.com>
 
+	* icall.c (icall_entries): It's called "System.Activator", not
+	"System.Activation".	
+
+2004-03-30  Martin Baulig  <martin@ximian.com>
+
 	* class.c (mono_ldtoken): Added `MonoGenericContext *' argument.
 	(mono_class_create_from_typespec): Likewise.
 
