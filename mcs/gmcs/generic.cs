@@ -8,7 +8,8 @@
 //
 using System;
 using System.Collections;
-
+using System.Text;
+	
 namespace Mono.CSharp {
 
 	//
@@ -72,6 +73,36 @@ namespace Mono.CSharp {
 		{
 			args.Add (type);
 		}
+
+		public override string ToString ()
+		{
+			StringBuilder s = new StringBuilder ();
+
+			int count = args.Count;
+			for (int i = 0; i < count; i++){
+				//
+				// FIXME: Use TypeManager.CSharpname once we have the type
+				//
+				s.Append (args [i].ToString ());
+				if (i+1 < count)
+					s.Append (", ");
+			}
+			return s.ToString ();
+		}
+
+		public bool Resolve (EmitContext ec)
+		{
+			int count = args.Count;
+			bool ok = true;
+			
+			for (int i = 0; i < count; i++){
+				Expression e = ((Expression)args [i]).ResolveAsTypeTerminal (ec);
+				if (e == null)
+					ok = false;
+				args [i] = e;
+			}
+			return ok;
+		}
 	}
 	
 	public class ConstructedType : Expression {
@@ -79,22 +110,51 @@ namespace Mono.CSharp {
 		string name;
 		TypeArguments args;
 		
-		public ConstructedType (Expression container_type, string name, TypeArguments args, Location l)
+		public ConstructedType (string name, TypeArguments args, Location l)
 		{
 			loc = l;
 			this.container_type = container_type;
 			this.name = name;
 			this.args = args;
+			eclass = ExprClass.Type;
 		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+			if (args.Resolve (ec) == false)
+				return null;
+
+			//
+			// Pretend there are not type parameters, until we get GetType support
+			//
+			return new SimpleName (name, loc).DoResolve (ec);
+		}
+
+		public override Expression ResolveAsTypeStep (EmitContext ec)
+		{
+			if (args.Resolve (ec) == false)
+				return null;
+			
+			//
+			// Pretend there are not type parameters, until we get GetType support
+			//
+			return new SimpleName (name, loc).ResolveAsTypeStep (ec);
+		}
+		
+		public override void Emit (EmitContext ec)
+		{
+			//
+			// Never reached for now
+			//
 			throw new Exception ("IMPLEMENT ME");
 		}
 
-		public override void Emit (EmitContext ec)
+		public override string ToString ()
 		{
-			throw new Exception ("IMPLEMENT ME");
+			if (container_type != null)
+				return container_type.ToString () + "<" + args.ToString () + ">";
+			else
+				return "<" + args.ToString () + ">";
 		}
 	}
 }

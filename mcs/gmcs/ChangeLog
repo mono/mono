@@ -1,3 +1,31 @@
+2003-07-24  Miguel de Icaza  <miguel@ximian.com>
+
+	This compiler can not self host currently.  Need to fix that.
+	
+	* Makefile: compile to `gmcs.exe'
+
+	* driver.cs: Turn on v2 by default on gmcs.
+
+	* generic.cs (ConstructedType): Does no longer take a container
+	type argument;  That will be taken care of later.
+
+	(ConstructedType.DoResolve, ConstructedType.ResolveAsTypeStep):
+	Use SimpleName to resolve for now, so we can continue the work on
+	the parser, until we get Type.GetType that understands generics.
+
+	(ConstructedType.ToString): Implement
+
+	(TypeArguments.Resolve): Resolve the child expressions as types. 
+	
+	* cs-parser.jay: Rename interface_constraints to
+	type_parameter_constraints
+
+	(namespace_or_type_name): Only use constructed types for the basic
+	construction, we will deal with identifier<...> later.
+
+	(type/type_name): No longer call DecomposeQI, as
+	namespace_or_type_name is always decoded now.
+	
 2003-07-22  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (Invocation.OverloadResolve): Follow the spec more

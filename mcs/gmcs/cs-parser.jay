@@ -1,5 +1,4 @@
-
-        %{
+%{
 //
 // cs-parser.jay: The Parser for the C# compiler
 //
@@ -1828,21 +1827,15 @@ namespace_or_type_name
 		if ($2 == null)
 			$$ = new SimpleName ((string) $1, lexer.Location);
 		else 
-			$$ = new ConstructedType (null, (string) $1, (TypeArguments) $2, lexer.Location);
+			$$ = new ConstructedType ((string) $1, (TypeArguments) $2, lexer.Location);
 	  }
 	| namespace_or_type_name DOT IDENTIFIER opt_type_argument_list
 	  {
 		Expression right;
 
-		if ($4 == null)
-			right = new SimpleName ((string) $3, lexer.Location);
-		else
-			right = new ConstructedType ((Expression) $1, (string) $3, 
-				(TypeArguments) $4, lexer.Location);
-
 		//
-		// This is known to be broken, just to compile for now
-		// Right should be an expression, not a string
+		// Third argument will become an Expression, when we have sorted out
+		// the issues with SimpleName first
 		//
 		$$ = new MemberAccess ((Expression) $1, (string) $3, lexer.Location);
 	  }
@@ -1878,11 +1871,6 @@ type_arguments
  */
 type
 	: type_name {  	/* class_type */
-		/* 
-	           This does interfaces, delegates, struct_types, class_types, 
-	           parent classes, and more! 4.2 
-	         */
-		$$ = DecomposeQI ((string) $1, lexer.Location);
 	  }
 	| builtin_types
 	| array_type
@@ -2872,21 +2860,13 @@ type_parameter_constraints_clauses
 	| type_parameter_constraints_clauses type_parameter_constraints_clause
 	; 
 
-type_parameter_constraint_clause
+type_parameter_constraints_clause
 	: WHERE type_parameter COLON type_parameter_constraints {
 		$$ = new Constraints ((string) $2, (ArrayList) $4);
 	  }
 	; 
 
-type_parameter_constraint
-	  //
-	  // we merge class and interface constraints, the tree resolution
-	  // will split them apart.
-	  //
-	| interface_constraints { $$ = $1; }
-	;
-
-interface_constraints
+type_parameter_constraints
 	: type { 
 		ArrayList constraints = new ArrayList (1);
 		constraints.Add ($1);
@@ -2897,7 +2877,7 @@ interface_constraints
 		constraints.Add (true);
 		$$ = constraints;
 	  } 
-	| interface_constraints COMMA type {
+	| type_parameter_constraints COMMA type {
 		ArrayList constraints = (ArrayList) $1;
 
 		constraints.Add ($3);
@@ -4013,25 +3993,6 @@ Expression DecomposeQI (string name, Location loc)
 		return new MemberAccess (o, right, loc);
 	}
 }
-
-// <summary>
-//  This method is used to get at the complete string representation of
-//  a fully-qualified type name, hiding inside a MemberAccess ;-)
-//  This is necessary because local_variable_type admits primary_expression
-//  as the type of the variable. So we do some extra checking
-// </summary>
-#if false
-string GetQualifiedIdentifier (Expression expr)
-{
-	if (expr is SimpleName)
-		return ((SimpleName)expr).Name;
-	else if (expr is MemberAccess)
-		return GetQualifiedIdentifier (((MemberAccess)expr).Expr) + "." + ((MemberAccess) expr).Identifier;
-	else 
-		throw new Exception ("Expr has to be either SimpleName or MemberAccess! (" + expr + ")");
-	
-}
-#endif
 
 Block declare_local_variables (Expression type, ArrayList variable_declarators, Location loc)
 {

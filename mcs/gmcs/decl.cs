@@ -485,6 +485,7 @@ namespace Mono.CSharp {
 			
 			if (d == null || d.eclass != ExprClass.Type){
 				if (!silent && errors == Report.Errors){
+					Console.WriteLine ("Type is: " + e.GetType().ToString ());
 					Report.Error (246, loc, "Cannot find type `"+ e.ToString () +"'");
 				}
 				return null;

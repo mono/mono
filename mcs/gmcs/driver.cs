@@ -247,6 +247,7 @@ namespace Mono.CSharp
 		
 		public static int Main (string[] args)
 		{
+			RootContext.V2 = true;
 			bool ok = MainDriver (args);
 			
 			if (ok && Report.Errors == 0) {
