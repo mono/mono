@@ -1,3 +1,12 @@
+2003-09-29    <cesar@ciencias.unam.mx>
+
+	* Added Microsoft.JScript_test.dll.sources
+
+	* Makefile: allow test build.
+
+	* Microsoft.JScript.dll.sources: Added VsaItem.cs, VsaItems.cs,
+	VsaGlobalItem.cs, VsaReferenceItem.cs , VsaCodeItem.cs to the build.
+
 2003-09-24    <cesar@ciencias.unam.mx>
 
 	* Microsoft.JScript/: Deleted VsaEngine.cs and BaseVsaEngine.cs
