@@ -85,8 +85,7 @@ namespace System
 		public static string MachineName
 		{
 			get
-			{
-				// TODO: needs more research/work/thought
+			{	// TODO: needs more research/work/thought
 				return GetEnvironmentVariable("HOSTNAME");
 			}
 		}
@@ -98,7 +97,7 @@ namespace System
 		{
 			get
 			{
-				return "\n";
+				return PlatformSpecific.NewLine;
 			}
 		}
 
@@ -114,7 +113,7 @@ namespace System
 		}
 
 		/// <summary>
-		/// Get a string containing a trace of the stack
+		/// Get StackTrace
 		/// </summary>
 		public static string StackTrace
 		{
@@ -131,7 +130,7 @@ namespace System
 		{
 			get
 			{
-				return null;
+				return GetFolderPath(SpecialFolder.System);
 			}
 		}
 
@@ -142,7 +141,7 @@ namespace System
 		{
 			get
 			{
-				return 0;
+				return getTickCount();
 			}
 		}
 
@@ -232,15 +231,39 @@ namespace System
 		/// </summary>
 		public static string GetEnvironmentVariable(string variable)
 		{
-			return null;
+			return getEnvironmentStrings()[variable];
 		}
 
 		/// <summary>
 		/// Return a set of all environment variables and their values
 		/// </summary>
-		public static IDictionary GetEnvironmentVariables()
+	   
+		public static IDictionary getEnvironmentStrings()
 		{
-			return null;
+			// could cache these in a member variable, but that
+			// wouldn't be very safe because the environment is
+			// dyanamic ya know
+			string strEnv = getEnvironment();
+			string[] arEnv = strEnv.Split('\t');
+			string[] arStr;
+			Hashtable ht = new Hashtable();
+			foreach(string str in arEnv)
+			{
+				arStr = str.Split('=', 2);
+				switch(arStr.Length)
+				{
+				case 1:
+					ht.Add(arStr[0], "");
+					break;
+				case 2:
+					ht.Add(arStr[0], arStr[1]);
+					break;
+				default:
+					Debug.Assert(false);	// this shouldn't happen
+					break;
+				}
+			}
+			return ht;
 		}
 
 		/// <summary>
@@ -258,5 +281,6 @@ namespace System
 		{
 			return null;
 		}
+
 	}
 }

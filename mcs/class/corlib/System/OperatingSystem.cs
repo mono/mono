@@ -18,7 +18,7 @@ namespace System
 	/// </summary>
 	public sealed class OperatingSystem : ICloneable
 	{
-		private PlatformID itsPlatform;
+		private System.PlatformID itsPlatform;
 		private Version itsVersion;
 
 		public OperatingSystem(PlatformID platform, Version version)
@@ -28,14 +28,6 @@ namespace System
 				throw new ArgumentNullException();
 			}
 			
-			// the doc doesn't say this, but I would
-			//if(platform < minPlatform || platform >= maxPlatform)
-			//{
-				// throw new ArgumentOutOfRangeException();
-				// TODO: find out if C# has assertion mechanism
-				//       isn't learning new languages fun? :)
-			//}
-
 			itsPlatform = platform;
 			itsVersion = version;
 		}
@@ -86,7 +78,7 @@ namespace System
 		/// Return hash code
 		/// </summary>
 		public override int GetHashCode()
-		{
+		{	// this leave us enuf for 256 unique platforms which should suffice for a good while
 			return ((int)itsPlatform << 24) | itsVersion.GetHashCode() >> 8;
 		}
 
@@ -95,7 +87,18 @@ namespace System
 		/// </summary>
 		public override string ToString()
 		{
-			return itsPlatform.ToString() + ", " + itsVersion.ToString();
+			string str;
+			
+			switch(itsPlatform)
+			{
+			case System.PlatformID.Win32NT: str = "Microsoft Windows NT"; break;
+			case System.PlatformID.Win32S: str = "Microsoft Win32S";  break;
+			case System.PlatformID.Win32Windows: str = "Microsoft Windows 98"; break;
+			case System.PlatformID.Linux86Redhat: str = "Redhat Linux"; break;
+			default: str = "<unknown>";	 break;
+			}
+
+			return str + " " + itsVersion.ToString();
 		}
 	}
 }
