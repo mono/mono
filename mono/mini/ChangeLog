@@ -1,5 +1,8 @@
 2004-08-30  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mono_create_jump_trampoline): Store the jump trampolines 
+	in a per-domain hash.
+
 	* mini-amd64.c (merge_argument_class_from_type): Handle generic
 	types.
 
