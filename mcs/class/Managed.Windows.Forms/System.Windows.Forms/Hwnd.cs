@@ -33,7 +33,7 @@ using System.Runtime.InteropServices;
 
 // NOTE: Possible optimization:
 // Several properties calculate dimensions on the fly; instead; they can 
-// be stored in a field and only be recalculated when a style is changed
+// be stored in a field and only be recalculated when a style is changed (DefaultClientRect, for example)
 
 namespace System.Windows.Forms {
 	internal class Hwnd : IDisposable {
@@ -59,6 +59,7 @@ namespace System.Windows.Forms {
 		internal Rectangle	invalid;
 		internal bool		expose_pending;
 		internal bool		nc_expose_pending;
+		internal bool		configure_pending;
 		internal Graphics	client_dc;
 		internal object		user_data;
 		internal Rectangle	client_rectangle;
@@ -215,39 +216,9 @@ Console.WriteLine("Disposing window {0:X} (whole: {1:X})", client_window.ToInt32
 		public Rectangle ClientRect {
 			get {
 				if (client_rectangle == Rectangle.Empty) {
-					Rectangle rect;
-
-					rect = new Rectangle(0, 0, width, height);
-
-					if (menu_handle != IntPtr.Zero) {
-						rect.Y += menu_height;
-						rect.Height -= menu_height;
-					}
-
-					if (border_style == BorderStyle.Fixed3D) {
-						rect.X += 2;
-						rect.Y += 2;
-						rect.Width -= 4;
-						rect.Height -= 4;
-					} else if (border_style == BorderStyle.FixedSingle) {
-						rect.X += 1;
-						rect.Y += 1;
-						rect.Width -= 2;
-						rect.Height -= 2;
-					}
-
-					if (this.title_style == TitleStyle.Normal)  {
-						rect.Y += caption_height;
-						rect.Height -= caption_height;
-					} else if (this.title_style == TitleStyle.Normal)  {
-						rect.Y += tool_caption_height;
-						rect.Height -= tool_caption_height;
-					}
-
-					return rect;
-				} else {
-					return client_rectangle;
+					return DefaultClientRect;
 				}
+				return client_rectangle;
 			}
 
 			set {
@@ -267,6 +238,41 @@ Console.WriteLine("Disposing window {0:X} (whole: {1:X})", client_window.ToInt32
 				if (windows[client_window] == null) {
 					windows[client_window] = this;
 				}
+			}
+		}
+
+		public Rectangle DefaultClientRect {
+			get {
+				Rectangle rect;
+
+				rect = new Rectangle(0, 0, width, height);
+
+				if (menu_handle != IntPtr.Zero) {
+					rect.Y += menu_height;
+					rect.Height -= menu_height;
+				}
+
+				if (border_style == BorderStyle.Fixed3D) {
+					rect.X += 2;
+					rect.Y += 2;
+					rect.Width -= 4;
+					rect.Height -= 4;
+				} else if (border_style == BorderStyle.FixedSingle) {
+					rect.X += 1;
+					rect.Y += 1;
+					rect.Width -= 2;
+					rect.Height -= 2;
+				}
+
+				if (this.title_style == TitleStyle.Normal)  {
+					rect.Y += caption_height;
+					rect.Height -= caption_height;
+				} else if (this.title_style == TitleStyle.Normal)  {
+					rect.Y += tool_caption_height;
+					rect.Height -= tool_caption_height;
+				}
+
+				return rect;
 			}
 		}
 

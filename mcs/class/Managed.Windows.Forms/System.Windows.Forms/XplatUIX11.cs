@@ -37,16 +37,17 @@
 // NOT COMPLETE
 
 // define to log Window handles and relationships to stdout
-#define DriverDebug
+#undef DriverDebug
 
 // Extra detailed debug
-#define	DriverDebugExtra
+#undef	DriverDebugExtra
 
 using System;
 using System.ComponentModel;
 using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
@@ -342,7 +343,7 @@ namespace System.Windows.Forms {
 			newline = String.Format("{0}\t {1} ", Environment.NewLine, Locale.GetText("at"));
 			unknown = Locale.GetText("<unknown method>");
 			sb = new StringBuilder();
-			stack = new StackTrace();
+			stack = new StackTrace(true);
 
 			for (int i = 0; i < stack.FrameCount; i++) {
 				frame = stack.GetFrame(i);
@@ -353,9 +354,8 @@ namespace System.Windows.Forms {
 					#if not
 						sb.AppendFormat(frame.ToString());
 					#endif
-
 					if (frame.GetFileLineNumber() != 0) {
-						sb.AppendFormat("{0}.{1} () [{2}:{3}]", method.DeclaringType.FullName, method.Name, frame.GetFileName(), frame.GetFileLineNumber());
+						sb.AppendFormat("{0}.{1} () [{2}:{3}]", method.DeclaringType.FullName, method.Name, Path.GetFileName(frame.GetFileName()), frame.GetFileLineNumber());
 					} else {
 						sb.AppendFormat("{0}.{1} ()", method.DeclaringType.FullName, method.Name);
 					}
@@ -564,7 +564,7 @@ namespace System.Windows.Forms {
 			mwmHints.decorations = (IntPtr)decorations;
 
 
-			client_rect= hwnd.ClientRect;
+			client_rect = hwnd.ClientRect;
 			lock (XlibLock) {
 				XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._MOTIF_WM_HINTS], NetAtoms[(int)NA._MOTIF_WM_HINTS], 32, PropertyMode.Replace, ref mwmHints, 5);
 
@@ -596,6 +596,7 @@ namespace System.Windows.Forms {
 		private void WakeupMain () {
 			wake.BeginSend (new byte [] { 0xFF }, 0, 1, SocketFlags.None, null, null);
 		}
+
 		private void AddExpose (XEvent xevent) {
 			Hwnd	hwnd;
 
@@ -620,6 +621,39 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
+
+		private void AddConfigureNotify (XEvent xevent) {
+			Hwnd	hwnd;
+
+			hwnd = Hwnd.GetObjectFromWindow(xevent.ConfigureEvent.window);
+
+			// Don't waste time
+			if (hwnd == null) {
+				return;
+			}
+
+			if (xevent.ConfigureEvent.window == hwnd.whole_window) {
+				if (hwnd.parent != null) {
+					hwnd.x = xevent.ConfigureEvent.x;
+					hwnd.y = xevent.ConfigureEvent.y;
+				} else {
+					IntPtr	child;
+
+					// We need to 'discount' the window the WM has put us in
+					XTranslateCoordinates(DisplayHandle, XGetParent(hwnd.whole_window), RootWindow, xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, out hwnd.x, out hwnd.y, out child);
+				}
+
+				hwnd.width = xevent.ConfigureEvent.width;
+				hwnd.height = xevent.ConfigureEvent.height;
+
+				if (!hwnd.configure_pending) {
+					MessageQueue.Enqueue(xevent);
+					hwnd.configure_pending = true;
+				}
+			}
+			// We drop configure events for Client windows
+		}
+
 		private void ShowCaret() {
 			if ((Caret.gc == IntPtr.Zero) || Caret.On) {
 				return;
@@ -748,12 +782,15 @@ namespace System.Windows.Forms {
 					case XEventName.EnterNotify:
 					case XEventName.LeaveNotify:
 					case XEventName.CreateNotify:
-					case XEventName.ConfigureNotify:
 					case XEventName.DestroyNotify:
 					case XEventName.FocusIn:
 					case XEventName.FocusOut:
 					case XEventName.ClientMessage:
 						MessageQueue.Enqueue (xevent);
+						break;
+
+					case XEventName.ConfigureNotify:
+						AddConfigureNotify(xevent);
 						break;
 
 					case XEventName.PropertyNotify:
@@ -2065,27 +2102,12 @@ namespace System.Windows.Forms {
 						#if DriverDebugExtra
 							Console.WriteLine("GetMessage(): Window {0:X} ConfigureNotify x={1} y={2} width={3} height={4}", hwnd.client_window.ToInt32(), xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, xevent.ConfigureEvent.width, xevent.ConfigureEvent.height);
 						#endif
-
-						if ((hwnd.x != xevent.ConfigureEvent.x) || (hwnd.y != xevent.ConfigureEvent.y) ||
-							(hwnd.width != xevent.ConfigureEvent.width) || (hwnd.height != xevent.ConfigureEvent.height)) {
-							msg.message=Msg.WM_WINDOWPOSCHANGED;
-
-							if (hwnd.parent != null) {
-								hwnd.x = xevent.ConfigureEvent.x;
-								hwnd.y = xevent.ConfigureEvent.y;
-							} else {
-								IntPtr	child;
-								// We need to 'discount' the window the WM has put us in
-								XTranslateCoordinates(DisplayHandle, XGetParent(hwnd.whole_window), RootWindow, xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, out hwnd.x, out hwnd.y, out child);
-							}
-							hwnd.width = xevent.ConfigureEvent.width;
-							hwnd.height = xevent.ConfigureEvent.height;
-						} else {
-							goto ProcessNextMessage;
-						}
+						msg.message = Msg.WM_WINDOWPOSCHANGED;
+						hwnd.configure_pending = false;
 
 						// We need to adjust our client window to track the resize of whole_window
-						rect = hwnd.ClientRect;
+						rect = hwnd.DefaultClientRect;
+
 						ncp = new XplatUIWin32.NCCALCSIZE_PARAMS();
 						ptr = Marshal.AllocHGlobal(Marshal.SizeOf(ncp));
 
@@ -2099,14 +2121,16 @@ namespace System.Windows.Forms {
 						ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure(ptr, typeof(XplatUIWin32.NCCALCSIZE_PARAMS));
 						Marshal.FreeHGlobal(ptr);
 
-						hwnd.ClientRect = new Rectangle(ncp.rgrc1.left, ncp.rgrc1.top, ncp.rgrc1.right - ncp.rgrc1.left, ncp.rgrc1.bottom - ncp.rgrc1.top);
+						// FIXME - debug this with Menus, need to set hwnd.ClientRect
+
+						rect = new Rectangle(ncp.rgrc1.left, ncp.rgrc1.top, ncp.rgrc1.right - ncp.rgrc1.left, ncp.rgrc1.bottom - ncp.rgrc1.top);
 
 						XMoveResizeWindow(DisplayHandle, hwnd.client_window, rect.X, rect.Y, rect.Width, rect.Height);
 					} else {
 						goto ProcessNextMessage;
 					}
 
-					msg.lParam=IntPtr.Zero;		// FIXME - Generated LPWINDOWPOS structure and pass
+					msg.lParam=IntPtr.Zero;		// FIXME - Generate LPWINDOWPOS structure and pass on
 					break;
 				}
 
@@ -2354,7 +2378,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void HandleException(Exception e) {
-			StackTrace st = new StackTrace(e);
+			StackTrace st = new StackTrace(e, true);
 			Console.WriteLine("Exception '{0}'", e.Message+st.ToString());
 			Console.WriteLine("{0}{1}", e.Message, st.ToString());
 		}
@@ -2759,7 +2783,6 @@ namespace System.Windows.Forms {
 			Rectangle	client_rect;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
-
 			// Save a server roundtrip (and prevent a feedback loop)
 			if ((hwnd.x == x) && (hwnd.y == y) && (hwnd.width == width) && (hwnd.height == height)) {
 				return;
@@ -2780,6 +2803,10 @@ namespace System.Windows.Forms {
 				XMoveResizeWindow(DisplayHandle, hwnd.whole_window, x, y, width, height);
 				XMoveResizeWindow(DisplayHandle, hwnd.client_window, client_rect.X, client_rect.Y, client_rect.Width, client_rect.Height);
 			}
+
+			// Prevent an old queued ConfigureNotify from setting our width with outdated data, set it now
+			hwnd.width = width;
+			hwnd.height = height;
 		}
 
 		internal override void SetWindowState(IntPtr handle, FormWindowState state) {

@@ -1,3 +1,17 @@
+2005-03-07  Peter Bartok  <pbartok@novell.com>
+
+	* Hwnd.cs: Added DefaultClientRectangle property
+	* XplatUI.cs: Now using the X11 driver Where() method, which provides
+	  more detailed debug information
+	* XplatUIX11.cs: 
+	  - Fixed size-change feedback loop, where we would pull an old size 
+	    off the queue and mistakenly change our window's size to an 
+	    earlier value
+	  - Now compressing ConfigureNotify events, to reduce looping and 
+	    redraw issues
+	* TextBoxBase.cs: Preventing crash when no text is set and ToString()
+	  is called
+
 2005-03-07  Jackson Harper  <jackson@ximian.com>
 
 	* Binding.cs: Push data pushes from data -> property. Check if the

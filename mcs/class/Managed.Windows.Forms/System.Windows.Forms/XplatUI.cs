@@ -686,7 +686,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal static void Where() {
-			Console.WriteLine("Here: {0}", new StackTrace().ToString());
+			XplatUIX11.Where();
 		}
 		#endregion	// Public Static Methods
 

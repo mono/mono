@@ -608,6 +608,10 @@ namespace System.Windows.Forms {
 			int		i;
 			int		end;
 
+			if (document == null) {
+				return String.Empty;
+			}
+
 			sb = new StringBuilder();
 
 			end = document.Lines;
