@@ -141,7 +141,7 @@ namespace System.Security.Cryptography.Xml {
 
 		public byte[] DecryptData (EncryptedData encryptedData, SymmetricAlgorithm symAlg)
 		{
-			return Transform (encryptedData.CipherData.CipherValue, symAlg.CreateDecryptor ());
+			return Transform (encryptedData.CipherData.CipherValue, symAlg.CreateDecryptor (), symAlg.BlockSize / 8);
 		}
 
 		public void DecryptDocument ()
@@ -208,8 +208,8 @@ namespace System.Security.Cryptography.Xml {
 			encryptedKey.CipherData = new CipherData (EncryptKey (symAlg.Key, keyAlg));
 			encryptedKey.KeyInfo = new KeyInfo();
 			encryptedKey.KeyInfo.AddClause (new KeyInfoName (keyName));
-
-			encryptedData.Type = String.Format( "{0}Element", XmlEncNamespaceUrl );
+			
+			encryptedData.Type = XmlEncElementUrl;
 			encryptedData.EncryptionMethod = new EncryptionMethod (GetAlgorithmUri (symAlg));
 			encryptedData.KeyInfo = new KeyInfo ();
 			encryptedData.KeyInfo.AddClause (new KeyInfoEncryptedKey (encryptedKey));
@@ -226,7 +226,21 @@ namespace System.Security.Cryptography.Xml {
 
 		public byte[] EncryptData (byte[] plainText, SymmetricAlgorithm symAlg)
 		{
-			return Transform (plainText, symAlg.CreateEncryptor ());
+			// Write the symmetric algorithm IV and ciphertext together.
+			// We use a memory stream to accomplish this.
+			MemoryStream stream = new MemoryStream ();
+			BinaryWriter writer = new BinaryWriter (stream);
+
+			writer.Write (symAlg.IV);
+			writer.Write (Transform (plainText, symAlg.CreateEncryptor ()));
+			writer.Flush ();
+
+			byte [] output = stream.ToArray ();
+
+			writer.Close ();
+			stream.Close ();
+
+			return output;
 		}
 
 		public byte[] EncryptData (XmlElement inputElement, SymmetricAlgorithm symAlg, bool content)
@@ -332,16 +346,20 @@ namespace System.Security.Cryptography.Xml {
 			throw new ArgumentException ("symAlg");
 		}
 
-		[MonoTODO]
 		public virtual byte[] GetDecryptionIV (EncryptedData encryptedData, string symAlgUri)
 		{
-			throw new NotImplementedException ();
+			SymmetricAlgorithm symAlg = GetAlgorithm (symAlgUri);
+			byte[] iv = new Byte [symAlg.BlockSize / 8];
+			Buffer.BlockCopy (encryptedData.CipherData.CipherValue, 0, iv, 0, iv.Length);
+			return iv;
 		}
 
 		[MonoTODO]
 		public virtual SymmetricAlgorithm GetDecryptionKey (EncryptedData encryptedData, string symAlgUri)
 		{
 			SymmetricAlgorithm symAlg = GetAlgorithm (symAlgUri);
+			symAlg.IV = GetDecryptionIV (encryptedData, encryptedData.EncryptionMethod.KeyAlgorithm);
+
 			KeyInfo keyInfo = encryptedData.KeyInfo;
 
 			foreach (KeyInfoClause clause in keyInfo) {
@@ -368,12 +386,11 @@ namespace System.Security.Cryptography.Xml {
 		[MonoTODO ("Verify")]
 		public void ReplaceData (XmlElement inputElement, byte[] decryptedData)
 		{
-			XmlDocument temp = new XmlDocument ();
-			temp.LoadXml (Encoding.GetString (decryptedData, 0, decryptedData.Length));
-			XmlElement root = temp.DocumentElement;
-
 			XmlDocument owner = inputElement.OwnerDocument;
-			owner.DocumentElement.ReplaceChild (root, inputElement);
+			XmlTextReader reader = new XmlTextReader (new StringReader (Encoding.GetString (decryptedData, 0, decryptedData.Length)));
+			reader.MoveToContent ();
+			XmlNode node = owner.ReadNode (reader);
+			owner.DocumentElement.ReplaceChild (node, inputElement);
 		}
 
 		[MonoTODO]
@@ -386,9 +403,14 @@ namespace System.Security.Cryptography.Xml {
 
 		private byte[] Transform (byte[] data, ICryptoTransform transform)
 		{
+			return Transform (data, transform, 0);
+		}
+
+		private byte[] Transform (byte[] data, ICryptoTransform transform, int startIndex)
+		{
 			MemoryStream output = new MemoryStream ();
 			CryptoStream crypto = new CryptoStream (output, transform, CryptoStreamMode.Write);
-			crypto.Write (data, 0, data.Length);
+			crypto.Write (data, startIndex, data.Length - startIndex);
 
 			crypto.FlushFinalBlock ();
 
