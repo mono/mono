@@ -25,5 +25,12 @@ namespace System.IO {
 			: base (message, inner)
 		{
 		}
+
+		public string FusionLog {
+			get {
+				// FIXME
+				return null;
+			}
+		}
 	}
 }

@@ -56,5 +56,8 @@ namespace System.Reflection.Emit {
 			return null;
 		}
 
+		public override Type GetElementType () { return null; }
+
+		public override Type[] GetInterfaces () { return null; }
 	}
 }

@@ -373,6 +373,10 @@ namespace System.Text {
 			return Append( value.ToString().ToCharArray() );
 		}
 
+		public StringBuilder Append( char value ) {
+			return Append (value, 1);
+		}
+
 		public StringBuilder Append( char value, int repeatCount ) {
 			if( repeatCount < 0 ) {
 				throw new ArgumentOutOfRangeException();

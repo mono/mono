@@ -115,6 +115,68 @@ namespace System {
 				return(false);
 			}
 		}
+
+		public bool IsClass {
+			get {
+				// FIXME
+				return true;
+			}
+		}
+
+		public bool IsInterface {
+			get {
+				// FIXME
+				return false;
+			}
+		}
+
+		public bool IsArray {
+			get {
+				// FIXME
+				return false;
+			}
+		}
+
+		public bool IsSubclassOf (Type c)
+		{
+			// FIXME
+			return false;
+		}
+
+		public virtual Type[] FindInterfaces (TypeFilter filter, object filterCriteria)
+		{
+			// FIXME
+			return null;
+		}
+
+		public abstract Type[] GetInterfaces ();
 		
+		public virtual bool IsAssignableFrom (Type c)
+		{
+			// FIXME
+			return false;
+		}
+
+		public virtual int GetArrayRank ()
+		{
+			// FIXME
+			return 0;
+		}
+
+		public abstract Type GetElementType ();
+
+		public bool IsSealed {
+			get {
+				// FIXME
+				return false;
+			}
+		}
+
+		public bool IsAbstract {
+			get {
+				// FIXME
+				return false;
+			}
+		}
 	}
 }

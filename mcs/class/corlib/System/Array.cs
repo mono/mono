@@ -506,5 +506,8 @@ namespace System
 				return comparer.Compare(value1, value2);
 		}
 	
+		public virtual void CopyTo (Array array, int index)
+		{
+		}
 	}
 }

@@ -164,5 +164,10 @@ namespace System.Reflection.Emit {
 			entry_point = entryMethod;
 		}
 
+		public void SetEntryPoint (MethodInfo entryMethod, PEFileKinds fileKind)
+		{
+			entry_point = entryMethod;
+		}
+
 	}
 }

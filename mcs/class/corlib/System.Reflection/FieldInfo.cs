@@ -12,5 +12,15 @@
 namespace System.Reflection {
 
 	public abstract class FieldInfo : MemberInfo {
+
+		public abstract Type FieldType { get; }
+
+		public abstract object GetValue(object obj);
+
+		// FIXME
+		public bool IsLiteral { get { return true; } } 
+
+		// FIXME
+		public bool IsStatic { get { return false; } }
 	}
 }

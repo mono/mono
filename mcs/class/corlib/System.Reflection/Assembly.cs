@@ -16,7 +16,7 @@ using System.Globalization;
 
 namespace System.Reflection {
 
-	public class Assembly : System.Object, System.Reflection.ICustomAttributeProvider,
+	public class Assembly : System.Reflection.ICustomAttributeProvider,
 		System.Security.IEvidenceFactory, System.Runtime.Serialization.ISerializable {
 
 		private string codebase;
