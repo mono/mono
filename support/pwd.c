@@ -137,6 +137,7 @@ Mono_Posix_Syscall_getpwuid (mph_uid_t uid, struct Mono_Posix_Syscall__Passwd *p
 	return 0;
 }
 
+#ifdef HAVE_GETPWNAM_R
 gint32
 Mono_Posix_Syscall_getpwnam_r (const char *name, 
 	struct Mono_Posix_Syscall__Passwd *pwbuf,
@@ -172,7 +173,9 @@ Mono_Posix_Syscall_getpwnam_r (const char *name,
 
 	return r;
 }
+#endif /* ndef HAVE_GETPWNAM_R */
 
+#ifdef HAVE_GETPWUID_R
 gint32
 Mono_Posix_Syscall_getpwuid_r (mph_uid_t uid,
 	struct Mono_Posix_Syscall__Passwd *pwbuf,
@@ -208,6 +211,7 @@ Mono_Posix_Syscall_getpwuid_r (mph_uid_t uid,
 
 	return r;
 }
+#endif /* ndef HAVE_GETPWUID_R */
 
 gint32
 Mono_Posix_Syscall_getpwent (struct Mono_Posix_Syscall__Passwd *pwbuf)
@@ -251,7 +255,7 @@ Mono_Posix_Syscall_fgetpwent (FILE *stream, struct Mono_Posix_Syscall__Passwd *p
 	}
 	return 0;
 }
-#endif /* ndef FGETPWENT */
+#endif /* ndef HAVE_FGETPWENT */
 
 G_END_DECLS
 

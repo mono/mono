@@ -146,6 +146,7 @@ Mono_Posix_Syscall_getgrgid (mph_gid_t gid, struct Mono_Posix_Syscall__Group *gb
 	return 0;
 }
 
+#ifdef HAVE_GETGRNAM_R
 gint32
 Mono_Posix_Syscall_getgrnam_r (const char *name, 
 	struct Mono_Posix_Syscall__Group *gbuf,
@@ -181,7 +182,9 @@ Mono_Posix_Syscall_getgrnam_r (const char *name,
 
 	return r;
 }
+#endif /* ndef HAVE_GETGRNAM_R */
 
+#ifdef HAVE_GETGRGID_R
 gint32
 Mono_Posix_Syscall_getgrgid_r (mph_gid_t gid,
 	struct Mono_Posix_Syscall__Group *gbuf,
@@ -217,6 +220,7 @@ Mono_Posix_Syscall_getgrgid_r (mph_gid_t gid,
 
 	return r;
 }
+#endif /* ndef HAVE_GETGRGID_R */
 
 gint32
 Mono_Posix_Syscall_getgrent (struct Mono_Posix_Syscall__Group *grbuf)

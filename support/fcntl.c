@@ -66,11 +66,7 @@ Mono_Posix_Syscall_fcntl_arg (gint32 fd, gint32 cmd, gint64 arg)
 gint32
 Mono_Posix_Syscall_fcntl_lock (gint32 fd, gint32 cmd, struct Mono_Posix_Flock *lock)
 {
-#ifdef MPH_USE_64_API
-	struct flock64 _lock;
-#else
 	struct flock _lock;
-#endif
 	int r;
 
 	if (lock == NULL) {
@@ -107,11 +103,8 @@ Mono_Posix_Syscall_open (const char *pathname, gint32 flags)
 {
 	if (Mono_Posix_FromOpenFlags (flags, &flags) == -1)
 		return -1;
-#ifdef MPH_USE_64_API
-	return open64 (pathname, flags);
-#else
+
 	return open (pathname, flags);
-#endif
 }
 
 gint32
@@ -121,11 +114,8 @@ Mono_Posix_Syscall_open_mode (const char *pathname, gint32 flags, guint32 mode)
 		return -1;
 	if (Mono_Posix_FromFilePermissions (mode, &mode) == -1)
 		return -1;
-#ifdef MPH_USE_64_API
-	return open64 (pathname, flags, mode);
-#else
+
 	return open (pathname, flags, mode);
-#endif
 }
 
 gint32
@@ -133,11 +123,8 @@ Mono_Posix_Syscall_creat (const char *pathname, guint32 mode)
 {
 	if (Mono_Posix_FromFilePermissions (mode, &mode) == -1)
 		return -1;
-#ifdef MPH_USE_64_API
-	return creat64 (pathname, mode);
-#else
+
 	return creat (pathname, mode);
-#endif
 }
 
 #ifdef HAVE_POSIX_FADVISE
@@ -151,11 +138,7 @@ Mono_Posix_Syscall_posix_fadvise (gint32 fd, mph_off_t offset, mph_off_t len,
 	if (Mono_Posix_FromPosixFadviseAdvice (advice, &advice) == -1)
 		return -1;
 
-#ifdef MPH_USE_64_API
-	return posix_fadvise64 (fd, offset, len, advice);
-#else
 	return posix_fadvise (fd, (off_t) offset, (off_t) len, advice);
-#endif
 }
 #endif /* ndef HAVE_POSIX_FADVISE */
 
@@ -166,11 +149,7 @@ Mono_Posix_Syscall_posix_fallocate (gint32 fd, mph_off_t offset, mph_size_t len)
 	mph_return_if_off_t_overflow (offset);
 	mph_return_if_size_t_overflow (len);
 
-#ifdef MPH_USE_64_API
-	return posix_fallocate64 (fd, offset, len);
-#else
-	return posix_fadvise (fd, (off_t) offset, (size_t) len);
-#endif
+	return posix_fallocate (fd, (off_t) offset, (size_t) len);
 }
 #endif /* ndef HAVE_POSIX_FALLOCATE */
 

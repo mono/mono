@@ -43,14 +43,7 @@ Mono_Posix_Syscall_telldir (DIR *dir)
 }
 
 static void
-copy_dirent (
-	struct Mono_Posix_Syscall__Dirent *to, 
-#ifdef MPH_USE_64_API
-	struct dirent64 *from
-#else
-	struct dirent *from
-#endif
-	)
+copy_dirent (struct Mono_Posix_Syscall__Dirent *to, struct dirent *from)
 {
 	to->d_ino    = from->d_ino;
 #ifdef MPH_ON_BSD
@@ -66,22 +59,15 @@ copy_dirent (
 gint32
 Mono_Posix_Syscall_readdir (DIR *dirp, struct Mono_Posix_Syscall__Dirent *entry)
 {
-#ifdef MPH_USE_64_API
-	struct dirent64 *d;
-#else
 	struct dirent *d;
-#endif
 
 	if (entry == NULL) {
 		errno = EFAULT;
 		return -1;
 	}
 
-#ifdef MPH_USE_64_API
-	d = readdir64 (dirp);
-#else
 	d = readdir (dirp);
-#endif
+
 	if (d == NULL) {
 		return -1;
 	}
@@ -94,18 +80,10 @@ Mono_Posix_Syscall_readdir (DIR *dirp, struct Mono_Posix_Syscall__Dirent *entry)
 gint32
 Mono_Posix_Syscall_readdir_r (DIR *dirp, struct Mono_Posix_Syscall__Dirent *entry, void **result)
 {
-#ifdef MPH_USE_64_API
-	struct dirent64 _entry;
-#else
 	struct dirent _entry;
-#endif
 	int r;
 
-#ifdef MPH_USE_64_API
-	r = readdir64_r (dirp, &_entry, (struct dirent64**) result);
-#else
 	r = readdir_r (dirp, &_entry, (struct dirent**) result);
-#endif
 
 	if (r == 0 && result != NULL) {
 		copy_dirent (entry, &_entry);

@@ -22,6 +22,7 @@ MPH_SOURCE = \
 	stdlib.c \
 	sys-mman.c \
 	sys-mount.c \
+	sys-sendfile.c \
 	sys-stat.c \
 	sys-wait.c \
 	time.c \

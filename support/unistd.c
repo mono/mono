@@ -19,8 +19,6 @@
 #include <limits.h>
 #include <string.h>     /* for swab(3) on Mac OS X */
 
-#include <glib/gtypes.h>
-
 #include "map.h"
 #include "mph.h"
 
@@ -34,11 +32,8 @@ Mono_Posix_Syscall_lseek (gint32 fd, mph_off_t offset, gint32 whence)
 	if (Mono_Posix_FromSeekFlags (whence, &_whence) == -1)
 		return -1;
 	whence = _whence;
-#ifdef MPH_USE_64_API
-	return lseek64 (fd, offset, whence);
-#else
+
 	return lseek (fd, offset, whence);
-#endif
 }
 
 mph_ssize_t
@@ -60,11 +55,8 @@ Mono_Posix_Syscall_pread (gint32 fd, void *buf, mph_size_t count, mph_off_t offs
 {
 	mph_return_if_size_t_overflow (count);
 	mph_return_if_off_t_overflow (offset);
-#ifdef MPH_USE_64_API
-	return pread64 (fd, buf, (size_t) count, offset);
-#else
+
 	return pread (fd, buf, (size_t) count, (off_t) offset);
-#endif
 }
 
 mph_ssize_t
@@ -72,11 +64,8 @@ Mono_Posix_Syscall_pwrite (gint32 fd, const void *buf, mph_size_t count, mph_off
 {
 	mph_return_if_size_t_overflow (count);
 	mph_return_if_off_t_overflow (offset);
-#ifdef MPH_USE_64_API
-	return pwrite64 (fd, buf, (size_t) count, offset);
-#else
+
 	return pwrite (fd, buf, (size_t) count, (off_t) offset);
-#endif
 }
 
 gint32
@@ -210,22 +199,14 @@ gint32
 Mono_Posix_Syscall_truncate (const char *path, mph_off_t length)
 {
 	mph_return_if_off_t_overflow (length);
-#ifdef MPH_USE_64_API
-	return truncate64 (path, length);
-#else
 	return truncate (path, (off_t) length);
-#endif
 }
 
 gint32
 Mono_Posix_Syscall_ftruncate (int fd, mph_off_t length)
 {
 	mph_return_if_off_t_overflow (length);
-#ifdef MPH_USE_64_API
-	return ftruncate64 (fd, length);
-#else
 	return ftruncate (fd, (off_t) length);
-#endif
 }
 
 gint32
@@ -234,17 +215,13 @@ Mono_Posix_Syscall_lockf (int fd, int cmd, mph_off_t len)
 	mph_return_if_off_t_overflow (len);
 	if (Mono_Posix_FromLockFlags (cmd, &cmd) == -1)
 		return -1;
-#ifdef MPH_USE_64_API
-	return lockf64 (fd, cmd, len);
-#else
 	return lockf (fd, cmd, (off_t) len);
-#endif
 }
 
 void
 Mono_Posix_Syscall_swab (void *from, void *to, mph_ssize_t n)
 {
-	if (n > LONG_MAX || n < LONG_MAX)
+	if (mph_have_long_overflow (n))
 		return;
 	swab (from, to, (ssize_t) n);
 }

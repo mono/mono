@@ -22,13 +22,14 @@
 #ifndef INC_mph_H
 #define INC_mph_H
 
-#include <stdint.h>             /* for SIZE_MAX */
+#include <config.h>
+
 #include <limits.h>             /* LONG_MAX, ULONG_MAX */
 #include <errno.h>              /* for ERANGE */
 #include <glib/gtypes.h>        /* for g* types, etc. */
 
-#ifdef _LARGEFILE64_SOURCE
-#define MPH_USE_64_API
+#ifdef HAVE_STDINT_H
+#include <stdint.h>             /* for SIZE_MAX */
 #endif
 
 #if __APPLE__ || __BSD__
@@ -49,41 +50,59 @@ typedef   guint32 mph_uid_t;
 typedef    gint64 mph_time_t;
 typedef    gint64 mph_clock_t;
 
-#define mph_have_long_overflow(var) ((var) > LONG_MAX || (var) < LONG_MIN)
+#ifdef HAVE_LARGE_FILE_SUPPORT
+#define MPH_OFF_T_MAX G_MAXINT64
+#define MPH_OFF_T_MIN G_MININT64
+#else
+#define MPH_OFF_T_MAX G_MAXINT32
+#define MPH_OFF_T_MIN G_MININT32
+#endif
 
-#define mph_return_val_if_long_overflow(var, ret) G_STMT_START{ \
-	if (mph_have_long_overflow(var)) { \
+#ifdef SIZE_MAX
+#define MPH_SIZE_T_MAX SIZE_MAX
+#elif SIZEOF_SIZE_T == 8
+#define MPH_SIZE_T_MAX  G_MAXUINT64
+#elif SIZEOF_SIZE_T == 4
+#define MPH_SIZE_T_MAX  G_MAXUINT32
+#else
+#error "sizeof(size_t) is unknown!"
+#endif
+
+#define _mph_return_val_if_cb_(val, ret, cb) G_STMT_START{ \
+	if (cb (val)) { \
 		errno = EOVERFLOW; \
 		return ret; \
 	}}G_STMT_END
+
+#define mph_have_long_overflow(var) ((var) > LONG_MAX || (var) < LONG_MIN)
+
+#define mph_return_val_if_long_overflow(var, ret) \
+	_mph_return_val_if_cb_(var, ret, mph_have_long_overflow)
 
 #define mph_return_if_long_overflow(var) mph_return_val_if_long_overflow(var, -1)
 
 #define mph_have_ulong_overflow(var) ((var) > ULONG_MAX)
-#define mph_return_val_if_ulong_overflow(var, ret) G_STMT_START{ \
-	if (mph_have_ulong_overflow(var)) { \
-		errno = EOVERFLOW; \
-		return ret; \
-	}}G_STMT_END
+
+#define mph_return_val_if_ulong_overflow(var, ret) \
+	_mph_return_val_if_cb_(var, ret, mph_have_ulong_overflow)
 
 #define mph_return_if_ulong_overflow(var) mph_return_val_if_ulong_overflow(var, -1)
 
-#ifdef SIZE_MAX
-#define mph_have_size_t_overflow(var) ((var) > SIZE_MAX)
-#define mph_return_val_if_size_t_overflow(var, ret) G_STMT_START{ \
-	if (mph_have_size_t_overflow(var)) { \
-		errno = EOVERFLOW; \
-		return ret; \
-	}}G_STMT_END
-#define mph_return_if_size_t_overflow(var) mph_return_val_if_size_t_overflow(var, -1)
-#else
-#define mph_have_size_t_overflow(var) mph_have_ulong_overflow(var)
-#define mph_return_if_size_t_overflow(var) mph_return_if_ulong_overflow(var)
-#define mph_return_val_if_size_t_overflow(var, ret) mph_return_if_ulong_overflow(var, ret)
-#endif
+#define mph_have_size_t_overflow(var) ((var) > MPH_SIZE_T_MAX)
 
-#define mph_return_if_off_t_overflow(var) mph_return_if_long_overflow(var)
-#define mph_return_if_ssize_t_overflow(var) mph_return_if_long_overflow(var)
+#define mph_return_val_if_size_t_overflow(var, ret) \
+	_mph_return_val_if_cb_(var, ret, mph_have_size_t_overflow)
+
+#define mph_return_if_size_t_overflow(var) mph_return_val_if_size_t_overflow(var, -1)
+
+#define mph_have_off_t_overflow(var) \
+	(((var) < MPH_OFF_T_MIN) || ((var) > MPH_OFF_T_MAX))
+
+#define mph_return_val_if_off_t_overflow(var, ret) \
+	_mph_return_val_if_cb_(var, ret, mph_have_off_t_overflow)
+
+#define mph_return_if_off_t_overflow(var) mph_return_val_if_size_t_overflow(var, -1)
+
 #define mph_return_if_time_t_overflow(var) mph_return_if_long_overflow(var)
 
 /*
