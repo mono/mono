@@ -1,3 +1,8 @@
+2004-10-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* system.c: check the number of online processors instead of the
+	existing ones. Sanitize return value if it's an error.
+
 2004-10-03 Ben Maurer  <bmaurer@ximian.com>
 
 	* system.c: Add support for getting the # of cpus.
