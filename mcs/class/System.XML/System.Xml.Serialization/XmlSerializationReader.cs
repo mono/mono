@@ -445,7 +445,7 @@ namespace System.Xml.Serialization {
 
 		bool ReadList (out object resultList)
 		{
-			string arrayType = Reader.GetAttribute ("arrayType", XmlSerializer.WsdlNamespace);
+			string arrayType = Reader.GetAttribute ("arrayType", XmlSerializer.EncodingNamespace);
 			XmlQualifiedName qn = ToXmlQualifiedName (arrayType);
 			int i = qn.Name.LastIndexOf ('[');
 			string dim = qn.Name.Substring (i);
@@ -563,8 +563,9 @@ namespace System.Xml.Serialization {
 
 				XmlQualifiedName qname = GetXsiType ();
 				if (qname == null) qname = new XmlQualifiedName (name, ns);
+				string arrayType = Reader.GetAttribute ("arrayType", XmlSerializer.EncodingNamespace);
 
-				if (qname == arrayQName)
+				if (qname == arrayQName || arrayType != null)
 				{
 					delayedListFixups = EnsureHashtable (delayedListFixups);
 					fixupReference = "__<" + delayedListFixups.Count + ">";
