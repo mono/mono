@@ -1,3 +1,7 @@
+2004-06-22 Sachin Kumar <skumar1@novell.com>
+	* DateAndTime.cs: Fixed bug in DateDiff()
+	* Collections.cs: Fixed bug in Add() 
+
 2004-06-21 Sachin Kumar <skumar1@novell.com>
 	* Collection.cs: Fixed bug in Add() 
 	* Information.cs: Fixed bug in IsNumeric()

@@ -226,11 +226,11 @@ namespace Microsoft.VisualBasic
 				case DateInterval.Day:
 					return ((TimeSpan)(Date2.Subtract(Date1))).Days;
 				case DateInterval.Hour:
-					return ((TimeSpan)(Date2.Subtract(Date1))).Hours;
+					return (int)((TimeSpan)(Date2.Subtract(Date1))).TotalHours;
 				case DateInterval.Minute:
-					return ((TimeSpan)(Date2.Subtract(Date1))).Minutes;
+					return (int)((TimeSpan)(Date2.Subtract(Date1))).TotalMinutes;
 				case DateInterval.Second:
-					return ((TimeSpan)(Date2.Subtract(Date1))).Seconds;
+					return (int)((TimeSpan)(Date2.Subtract(Date1))).TotalSeconds;
 				default:
 					throw new ArgumentException();
 			}
@@ -238,7 +238,6 @@ namespace Microsoft.VisualBasic
 
 		private static int ConvertWeekDay(DayOfWeek Day, int Offset) 
 		{
-
 			int Weekday = (int)Day + Offset;
 
 			if (Weekday > 7) {
@@ -274,7 +273,7 @@ namespace Microsoft.VisualBasic
 			FirstDayOfWeek StartOfWeek, 
 			[Optional] [DefaultValue(FirstWeekOfYear.Jan1)] 
 			FirstWeekOfYear StartOfYear) {
-			
+		
 			CalendarWeekRule WeekRule = CalendarWeekRule.FirstDay;
 			DayOfWeek DayRule = DateTimeFormatInfo.CurrentInfo.FirstDayOfWeek;
 			Calendar CurCalendar = CultureInfo.CurrentCulture.Calendar;

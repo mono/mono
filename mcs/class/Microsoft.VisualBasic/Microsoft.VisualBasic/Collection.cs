@@ -265,6 +265,12 @@ namespace Microsoft.VisualBasic {
 			if (Position < 0) {
 				throw new ArgumentException();
 			}
+
+			//Position must be from 1 to value of collections Count 
+			if (Position > m_HashIndexers.Count) {
+				throw new ArgumentOutOfRangeException();
+                        }
+ 
 			return Position;
 		}
 
@@ -283,7 +289,17 @@ namespace Microsoft.VisualBasic {
 				throw new ArgumentException();
 			}
 			if (Before != null) {
-				Position = GetIndexPosition(Before);
+				// Looks like its an implementation bug in .NET
+                                // Not very satisfied with the fix, but did it
+				// just to bring the similar behaviour on mono
+				// as well.
+				if (Before is int) {
+                                	Position = Convert.ToInt32(Before);
+					if (Position !=  (m_HashIndexers.Count + 1)) 
+						Position = GetIndexPosition(Before);				
+                        	}
+				else
+					Position = GetIndexPosition(Before);
 			}
 			if (After != null) {
 				Position = GetIndexPosition(After) + 1;
