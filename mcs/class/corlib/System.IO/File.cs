@@ -168,7 +168,7 @@ namespace System.IO
 			MonoIOError error;
 			
 			if (!MonoIO.GetFileStat (path, out stat, out error))
-				throw MonoIO.GetException (path, error);
+				throw new IOException (path);
 			return DateTime.FromFileTime (stat.CreationTime);
 		}
 
