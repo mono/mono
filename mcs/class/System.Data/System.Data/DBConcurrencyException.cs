@@ -13,6 +13,13 @@ namespace System.Data {
 	[Serializable]
 	public sealed class DBConcurrencyException : SystemException
 	{
+
+#if NET_1_1
+                public DBConcurrencyException ()
+                        : base ()
+                {
+                }
+#endif
 		public DBConcurrencyException (string message)
 			: base (message)
 		{

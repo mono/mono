@@ -91,7 +91,10 @@ namespace System.Data.Common
 
 		#region Methods
 
-		[MonoTODO]
+#if NET_1_1
+                [Obsolete ("Use the protected constructor instead", false)]
+#endif
+                [MonoTODO]
 		protected virtual DataAdapter CloneInternals ()
 		{
 			throw new NotImplementedException ();

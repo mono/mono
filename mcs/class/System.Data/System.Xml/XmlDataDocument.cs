@@ -122,74 +122,9 @@ namespace System.Xml {
 
 		#region Public Properties
 
-		public override string BaseURI {
-			[MonoTODO]
-			get {
-				// TODO: why are we overriding?
-				return base.BaseURI;
-			}
-		}
-
 		public DataSet DataSet {
 			get {
 				return dataSet;
-			}
-		}
-
-		// override inheritted method from XmlDocument
-		public override string InnerXml {
-			[MonoTODO("override???")]
-			get {
-				return base.InnerXml;
-			}
-				 
-			[MonoTODO]
-			set {
-				base.InnerXml = value;
-			}
-		}
-
-		public override bool IsReadOnly {
-			[MonoTODO("override???")]
-			get {
-				return isReadOnly;
-			}
-
-		}
-
-		// Item indexer
-		public override XmlElement this[string name] {
-			[MonoTODO("override???")]
-			get {
-				return base [name];
-			}
-		}
-
-		// Item indexer
-		public override XmlElement this[string localname, string ns] {
-			[MonoTODO("override???")]
-			get {
-				return base [localname, ns];
-			}
-		}
-
-		public override string LocalName {
-			[MonoTODO("override???")]
-			get {
-				return base.LocalName;
-			}
-		}
-
-		public override string Name {
-			[MonoTODO("override??")]
-			get {
-				return base.Name;
-			}
-		}
-
-		public override XmlDocument OwnerDocument {
-			get {
-				return null;
 			}
 		}
 
@@ -221,15 +156,10 @@ namespace System.Xml {
 
 		#region overloaded CreateElement methods
 
-		[MonoTODO ("why this is override?")]
-		public override XmlElement CreateElement(string prefix,
-				string localName, string namespaceURI) 
+		public override XmlElement CreateElement(
+                        string prefix, string localName, string namespaceURI) 
 		{
-			if ((localName == null) || (localName == String.Empty))
-				throw new ArgumentException ("The local name for elements or attributes cannot be null" +
-							     "or an empty string.");
-			string pref = prefix != null ? prefix : String.Empty;
-			return base.CreateElement (pref, localName, namespaceURI != null ? namespaceURI : String.Empty);
+			return base.CreateElement (prefix, localName, namespaceURI);
 		}
 
 		#endregion // overloaded CreateElement Methods
@@ -401,17 +331,6 @@ namespace System.Xml {
 		}
 		
 		#endregion // overloaded Load methods
-
-		[MonoTODO]
-		public override void WriteContentTo(XmlWriter xw) {
-			base.WriteContentTo (xw);
-		}
-
-		[MonoTODO]
-		public override void WriteTo(XmlWriter w) {
-			base.WriteTo (w);
-		}
-
 		#endregion // Public Methods
 
 		#region Protected Methods

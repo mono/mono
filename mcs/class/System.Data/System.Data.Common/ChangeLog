@@ -1,3 +1,8 @@
+2003-07-31  Duncan Mak  <duncan@ximian.com>
+
+	* DataAdapter.cs (CloneInternals): Mark with ObsoleteAttribute for
+	NET_1_1.
+
 2003-03-21  Alan Tam <Tam@SiuLung.com>
 
 	* DbDataAdapter.cs: Update now uses correct DataRowVersion

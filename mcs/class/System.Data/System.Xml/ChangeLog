@@ -1,3 +1,20 @@
+2003-07-31  Duncan Mak  <duncan@ximian.com>
+
+	* XmlDataDocument.cs (BaseURI):
+	(InnerXml):
+	(IsReadOnly):
+	(this):
+	(LocalName):
+	(Name):
+	(OwnerDocument):
+	(WriteContentTo):
+	(WriteTo): Removed, these do not need to be redefined, as
+	they are inherited from XmlDocument already.
+
+	(CreateElement): simplifed the
+	implementation. XmlDocument.CreateElement can handle String.Empty
+	and null just fine.
+
 2003-03-12  Alan Tam <Tam@SiuLung.com>
 
 	* XmlDataDocument.cs: Still need to print tag for the DataSet if there

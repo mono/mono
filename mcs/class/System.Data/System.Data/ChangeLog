@@ -1,3 +1,7 @@
+2003-07-31  Duncan Mak  <duncan@ximian.com>
+
+	* DBConcurrencyException.cs: Added new NET_1_1 no-param constructor.
+
 2003-07-25  Ravi Pratap  <ravi@ximian.com>
 
 	* DataRelation.cs (OnPropertyChanging): Calling the 'Invoke'
