@@ -16,6 +16,20 @@ class X {
 
 		return total;
 	}
+
+	//
+	// This tests typecasting from an object to an array of ints
+	// and then doing foreach
+	//
+	static int count (object o)
+	{
+		int total = 0;
+
+		foreach (int i in (int []) o)
+			total += i;
+
+		return total;
+	}
 	
 	static int Main ()
 	{
@@ -28,6 +42,13 @@ class X {
 		if (dob (b) != 4950)
 			return 1;
 
+		int [] a = new int [10];
+		for (int i = 0; i < 10; i++)
+			a [i] = 2;
+
+		if (count (a) != 20)
+			return 2;
+		
 		return 0;
 	}
 }
