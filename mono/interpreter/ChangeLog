@@ -1,3 +1,7 @@
+2005-01-20 Bernie Solomon  <bernard@ugsolutions.com>
+
+	* interp.c: mono_init_icall got renamed
+
 2005-01-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* transform.c (generate): Handle MONO_CLASSCONST.
