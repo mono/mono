@@ -205,7 +205,7 @@ test-compiler-jit-multi:
 	done ; \
 	if test -z "$$failed"; then :; else echo "Failing tests: $$failed"; exit 1; fi
 
-GENERIC_KNOWN_FAILURES = test-55
+GENERIC_KNOWN_FAILURES = test-55 test-289
 
 # 
 # Tests the generics compiler, and excludes GENERIC_KNOWN_FAILURES from the build

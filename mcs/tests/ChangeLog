@@ -1,3 +1,7 @@
+2004-09-06  Martin Baulig  <martin@ximian.com>
+
+	* Makefile: Enable gen-65.cs (bug #58306).
+
 2004-09-04  Marek Safar <marek.safar@seznam.cz>
 
 	* test-289.cs: New test for #63631.
