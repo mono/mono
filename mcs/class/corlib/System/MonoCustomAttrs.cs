@@ -102,17 +102,16 @@ namespace System {
 			if (obj == null)
 				return null;
 
-			Type t = obj.GetType ();
-			if (t == typeof (Type))
-				return t.BaseType;
+			if (obj is Type)
+				return ((Type) obj).BaseType;
 
 			MethodInfo method = null;
-			if (t == typeof (MonoProperty)) {
+			if (obj is MonoProperty) {
 				MonoProperty prop = (MonoProperty) obj;
 				method = prop.GetGetMethod ();
 				if (method == null)
 					method = prop.GetSetMethod ();
-			} else if (t == typeof (MonoMethod)) {
+			} else if (obj is MonoMethod) {
 				method = (MethodInfo) obj; 
 			}
 
