@@ -1,3 +1,8 @@
+2004-11-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeBuilderTest.cs: Ignore some tests which depend on TypeBuilder
+	features which are unlikely to change due to mcs depending on them.
+
 2004-11-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* EnumBuilderTest.cs: Remove test that depends on the exact format
