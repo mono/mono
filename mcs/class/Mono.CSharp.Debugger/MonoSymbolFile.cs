@@ -132,7 +132,7 @@ namespace Mono.CSharp.Debugger
 				Chunk chunk = FindChunk (position);
 				int coffset = position - chunk.Offset;
 				int rest = chunk.Length - coffset;
-				int size = Math.Min (count, rest);
+				int size = System.Math.Min (count, rest);
 
 				Array.Copy (chunk.Buffer, coffset, buffer, offset, size);
 				position += size;
@@ -152,7 +152,7 @@ namespace Mono.CSharp.Debugger
 				Chunk chunk = FindChunk (position);
 				int coffset = position - chunk.Offset;
 				int rest = chunk.Length - coffset;
-				int size = Math.Min (count, rest);
+				int size = System.Math.Min (count, rest);
 
 				Array.Copy (buffer, offset, chunk.Buffer, coffset, size);
 				position += size;

@@ -9,13 +9,11 @@
 		<csc target="library" output="../lib/Mono.CSharp.Debugger.dll" debug="${debug}">
 			<arg value="/nowarn:1595"/>
 			<arg value="/unsafe"/>
+			<arg value="/r:../lib/corlib.dll"/>
 			<sources>
 				<includes name="**/*.cs"/> 
 				<excludes name="Test/**"/>
 			</sources>
-			<references>
-				<includes name="../lib/corlib.dll"/>
-			</references>
 		</csc>
 	</target>
 	<target name="clean">
