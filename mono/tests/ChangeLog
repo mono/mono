@@ -1,5 +1,7 @@
 2004-02-02  Zoltan Varga  <vargaz@freemail.hu>
 
+	* pinvoke2.cs libtest.c: Add test for unicode StringBuilder marshalling.
+
 	* pinvoke.cs libtest.c: Add test for Sparc V8 split register/stack double
 	parameter passing.
 
