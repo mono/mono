@@ -567,6 +567,16 @@ namespace Mono.CSharp {
 			return ResolveOperator (ec);
 		}
 
+		public override Expression DoResolveLValue (EmitContext ec, Expression right)
+		{
+			if (Oper == Operator.Indirection)
+				return base.DoResolveLValue (ec, right);
+
+			Error (131, "The left-hand side of an assignment must be a " +
+			       "variable, property or indexer");
+			return null;
+		}
+
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
