@@ -184,45 +184,42 @@ namespace System.Reflection {
 
 		public static Assembly LoadFrom(String assemblyFile)
 		{
-			return LoadFrom (assemblyFile, new Evidence());
+			return AppDomain.CurrentDomain.Load (assemblyFile);
 		}
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public static extern Assembly LoadFrom(String assemblyFile, Evidence securityEvidence);
 
 		public static Assembly Load(String assemblyString)
 		{
-			return LoadFrom (assemblyString, new Evidence());
+			return AppDomain.CurrentDomain.Load (assemblyString);
 		}
 		
 		public static Assembly Load(String assemblyString, Evidence assemblySecurity)
 		{
-			return LoadFrom (assemblyString, assemblySecurity);
+			return AppDomain.CurrentDomain.Load (assemblyString, assemblySecurity);
 		}
 
 		public static Assembly Load(AssemblyName assemblyRef)
 		{
-			throw new NotImplementedException ();
+			return AppDomain.CurrentDomain.Load (assemblyRef);
 		}
 
 		public static Assembly Load(AssemblyName assemblyRef, Evidence assemblySecurity)
 		{
-			throw new NotImplementedException ();
+			return AppDomain.CurrentDomain.Load (assemblyRef, assemblySecurity);
 		}
 
 		public static Assembly Load(Byte[] rawAssembly)
 		{
-			throw new NotImplementedException ();
+			return AppDomain.CurrentDomain.Load (rawAssembly);
 		}
 
 		public static Assembly Load(Byte[] rawAssembly, Byte[] rawSymbolStore)
 		{
-			throw new NotImplementedException ();
+			return AppDomain.CurrentDomain.Load (rawAssembly, rawSymbolStore);
 		}
 
 		public static Assembly Load(Byte[] rawAssembly, Byte[] rawSymbolStore, Evidence securityEvidence)
 		{
-			throw new NotImplementedException ();
+			return AppDomain.CurrentDomain.Load (rawAssembly, rawSymbolStore, securityEvidence);
 		}
 
 		public Object CreateInstance(String typeName) 

@@ -1,26 +1,37 @@
+
 //
-// System.IAppDomainSetup
+// System/IAppDomainSetup.cs
 //
 // Author:
-//   Duco Fijma (duco@lorentz.xs4all.nl)
+//   Dietmar Maurer (dietmar@ximian.com)
 //
-// (C) 2002, Duco Fijma
+// (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
+
+using System;
 
 namespace System {
 
 	public interface IAppDomainSetup {
 
-		string ApplicationBase {get; }
-		string ApplicationName {get; }
-		string CachePath {get; }
-		string ConfigurationFile {get; }
-		string DynamicBase {get; }
-		string LicenseFile {get; }
-		string PrivateBinPath {get; }
-		string PrivateBinPathProbe {get; }
-		string ShadowCopyDirectories {get; }
-		string ShadowCopyFiles {get; }
+		string ApplicationBase { get; set; }
 
+		string ApplicationName { get; set; }
+
+		string CachePath { get; set; }
+
+		string ConfigurationFile { get; set; }
+
+		string DynamicBase { get; set; }
+
+		string LicenseFile { get; set; }
+
+		string PrivateBinPath { get; set; }
+
+		string PrivateBinPathProbe { get; set; }
+
+		string ShadowCopyDirectories { get; set; }
+
+		string ShadowCopyFiles { get; set; }
 	}
 }
