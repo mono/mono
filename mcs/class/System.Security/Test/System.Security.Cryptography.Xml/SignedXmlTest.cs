@@ -233,5 +233,13 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlElement xel = v1.GetIdElement (doc, "MyObjectId");
 			Assert ("GetIdElement", xel.InnerXml.StartsWith ("<ObjectListTag"));
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void LoadXml_Null ()
+		{
+			SignedXml sx = new SignedXml ();
+			sx.LoadXml (null);
+		}
 	}
 }
