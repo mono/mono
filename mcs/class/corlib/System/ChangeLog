@@ -1,5 +1,8 @@
 2002-02-26  Martin Baulig  <martin@gnome.org>
 
+	* TimeZone.cs: Use an internal enum rather than magic numbers to access the
+	fields of the interncall GetTimeZoneData.
+
 	* DateTime.cs: Implemented Parse and fixed a few bugs.
 
 	* String.cs (TrimStart): Small fix.

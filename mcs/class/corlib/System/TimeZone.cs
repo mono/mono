@@ -107,6 +107,18 @@ namespace System {
                 // the offset when daylightsaving is on.
                 private static TimeSpan utcOffsetWithDLS;
 
+		internal enum TimeZoneData {
+			DaylightSavingStartIdx,
+			DaylightSavingEndIdx,
+			UtcOffsetIdx,
+			AdditionalDaylightOffsetIdx
+		};
+
+		internal enum TimeZoneNames {
+			StandardNameIdx,
+			DaylightNameIdx
+		};
+
 		// Internal method to get timezone data.
 		//    data[0]:  start of daylight saving time (in DateTime ticks).
 		//    data[1]:  end of daylight saving time (in DateTime ticks).
@@ -129,11 +141,11 @@ namespace System {
 			if (!GetTimeZoneData (2002, out data, out names))
 				throw new NotSupportedException (Locale.GetText ("Can't get timezone name"));
 
-			standardName = names[0];
-			daylightName = names[1];
+			standardName = Locale.GetText (names[(int)TimeZoneNames.StandardNameIdx]);
+			daylightName = Locale.GetText (names[(int)TimeZoneNames.DaylightNameIdx]);
 
-			utcOffsetWithOutDLS = new TimeSpan (data[2]);
-			utcOffsetWithDLS = new TimeSpan (data[2] + data[3]);
+			utcOffsetWithOutDLS = new TimeSpan (data[(int)TimeZoneData.UtcOffsetIdx]);
+			utcOffsetWithDLS = new TimeSpan (data[(int)TimeZoneData.UtcOffsetIdx] + data[(int)TimeZoneData.AdditionalDaylightOffsetIdx]);
 		}
 
 		// Properties
@@ -161,9 +173,9 @@ namespace System {
 				if (!GetTimeZoneData (year, out data, out names))
 					throw new ArgumentException (Locale.GetText ("Can't get timezone data for " + year));
 
-				DaylightTime dlt = new DaylightTime (new DateTime (data[0]),
-								     new DateTime (data[1]),
-								     new TimeSpan (data[3]));
+				DaylightTime dlt = new DaylightTime (new DateTime (data[(int)TimeZoneData.DaylightSavingStartIdx]),
+								     new DateTime (data[(int)TimeZoneData.DaylightSavingEndIdx]),
+								     new TimeSpan (data[(int)TimeZoneData.AdditionalDaylightOffsetIdx]));
 				daylightCache.Add (year, dlt);
                         }
 
