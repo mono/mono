@@ -56,6 +56,9 @@ namespace System
 								       Type[] types,
 								       ParameterModifier[] modifiers)
 		{
+			if (bindingAttr == BindingFlags.Default)
+				bindingAttr = BindingFlags.Public | BindingFlags.Instance;
+
 			ConstructorInfo[] methods = GetConstructors (bindingAttr);
 			ConstructorInfo found = null;
 			MethodBase[] match;

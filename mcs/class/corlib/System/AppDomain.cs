@@ -386,10 +386,10 @@ namespace System {
 		}
 
 
-		[MonoTODO]
 		public void DoCallBack (CrossAppDomainDelegate theDelegate)
 		{
-			throw new NotImplementedException ();
+			if (theDelegate != null)
+				theDelegate ();
 		}
 		
 		public override bool Equals (object other)
