@@ -72,22 +72,7 @@ namespace System.Xml
 
 		public virtual bool HasNamespace(string prefix)
 		{
-			NamespaceScope scope = _Top;
-
-			while (scope != null)
-			{
-				if (scope.Namespaces != null)
-				{
-					if (scope.Namespaces.Contains(prefix))
-					{
-						return true;
-					}
-				}
-
-				scope = scope.Next;
-			}
-
-			return false;
+			return _Top != null && _Top.Namespaces != null && _Top.Namespaces.Contains(prefix);
 		}
 
 		public virtual string LookupNamespace(string prefix)
@@ -96,13 +81,9 @@ namespace System.Xml
 
 			while (scope != null)
 			{
-				if (scope.Namespaces != null)
+				if (scope.Namespaces != null && scope.Namespaces.Contains(prefix))
 				{
-					if (scope.Namespaces.Contains(prefix))
-					{
-						string uri = scope.Namespaces[prefix] as string;
-						return uri;
-					}
+					return scope.Namespaces[prefix] as string;
 				}
 
 				scope = scope.Next;

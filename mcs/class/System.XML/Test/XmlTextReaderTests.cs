@@ -941,7 +941,16 @@ namespace Ximian.Mono.Tests
 				"bar", // localName
 				"http://foo/", // namespaceURI
 				String.Empty, // value
-				0 // attributeCount
+				1 // attributeCount
+			);
+
+			AssertAttribute(
+				xmlReader, // xmlReader
+				"xmlns:foo", // name
+				"xmlns", // prefix
+				"foo", // localName
+				"http://www.w3.org/2000/xmlns/", // namespaceURI
+				"http://foo/" // value
 			);
 
 			AssertEquals("http://foo/", xmlReader.LookupNamespace("foo"));
@@ -967,7 +976,16 @@ namespace Ximian.Mono.Tests
 				"foo", // localName
 				"http://foo/", // namespaceURI
 				String.Empty, // value
-				0 // attributeCount
+				1 // attributeCount
+			);
+
+			AssertAttribute(
+				xmlReader, // xmlReader
+				"xmlns", // name
+				String.Empty, // prefix
+				"xmlns", // localName
+				"http://www.w3.org/2000/xmlns/", // namespaceURI
+				"http://foo/" // value
 			);
 
 			AssertEquals("http://foo/", xmlReader.LookupNamespace(String.Empty));
@@ -993,7 +1011,16 @@ namespace Ximian.Mono.Tests
 				"bar", // localName
 				"http://foo/", // namespaceURI
 				String.Empty, // value
-				0 // attributeCount
+				1 // attributeCount
+			);
+
+			AssertAttribute(
+				xmlReader, // xmlReader
+				"xmlns:foo", // name
+				"xmlns", // prefix
+				"foo", // localName
+				"http://www.w3.org/2000/xmlns/", // namespaceURI
+				"http://foo/" // value
 			);
 
 			AssertEquals("http://foo/", xmlReader.LookupNamespace("foo"));
@@ -1008,7 +1035,16 @@ namespace Ximian.Mono.Tests
 				"quux", // localName
 				"http://baz/", // namespaceURI
 				String.Empty, // value
-				0 // attributeCount
+				1 // attributeCount
+			);
+
+			AssertAttribute(
+				xmlReader, // xmlReader
+				"xmlns:baz", // name
+				"xmlns", // prefix
+				"baz", // localName
+				"http://www.w3.org/2000/xmlns/", // namespaceURI
+				"http://baz/" // value
 			);
 
 			AssertEquals("http://foo/", xmlReader.LookupNamespace("foo"));
@@ -1051,7 +1087,16 @@ namespace Ximian.Mono.Tests
 				"bar", // localName
 				"http://foo/", // namespaceURI
 				String.Empty, // value
-				0 // attributeCount
+				1 // attributeCount
+			);
+
+			AssertAttribute(
+				xmlReader, // xmlReader
+				"xmlns:foo", // name
+				"xmlns", // prefix
+				"foo", // localName
+				"http://www.w3.org/2000/xmlns/", // namespaceURI
+				"http://foo/" // value
 			);
 
 			AssertEquals("http://foo/", xmlReader.LookupNamespace("foo"));
@@ -1066,7 +1111,16 @@ namespace Ximian.Mono.Tests
 				"baz", // localName
 				"http://baz/", // namespaceURI
 				String.Empty, // value
-				0 // attributeCount
+				1 // attributeCount
+			);
+
+			AssertAttribute(
+				xmlReader, // xmlReader
+				"xmlns", // name
+				String.Empty, // prefix
+				"xmlns", // localName
+				"http://www.w3.org/2000/xmlns/", // namespaceURI
+				"http://baz/" // value
 			);
 
 			AssertEquals("http://foo/", xmlReader.LookupNamespace("foo"));
@@ -1108,7 +1162,7 @@ namespace Ximian.Mono.Tests
 				"foo", // localName
 				String.Empty, // namespaceURI
 				String.Empty, // value
-				1 // attributeCount
+				2 // attributeCount
 			);
 
 			AssertAttribute(
@@ -1118,6 +1172,15 @@ namespace Ximian.Mono.Tests
 				"baz", // localName
 				"http://bar/", // namespaceURI
 				"quux" // value
+			);
+
+			AssertAttribute(
+				xmlReader, // xmlReader
+				"xmlns:bar", // name
+				"xmlns", // prefix
+				"bar", // localName
+				"http://www.w3.org/2000/xmlns/", // namespaceURI
+				"http://bar/" // value
 			);
 
 			AssertEquals("http://bar/", xmlReader.LookupNamespace("bar"));

@@ -1,3 +1,11 @@
+2002-02-26  Jason Diamond <jason@injektilo.org>
+
+	* XmlTextReaderTests.cs: Test for namespace declarations as
+	attributes.
+
+	* XmlNamespaceManagerTests.cs: Use the newly implemented NameTable
+	when creating the XmlNamespaceManager. Properly test HasNamespace.
+
 2002-02-25  Jason Diamond <jason@injektilo.org>
 
 	* XmlDocumentTests.cs: Added file.

@@ -24,8 +24,8 @@ namespace Ximian.Mono.Tests
 
 		protected override void SetUp()
 		{
-			//XmlNameTable nameTable = new NameTable();
-			_NamespaceManager = new XmlNamespaceManager(null);
+			XmlNameTable nameTable = new NameTable();
+			_NamespaceManager = new XmlNamespaceManager(nameTable);
 		}
 
 		public void TestNewNamespaceManager()
@@ -61,8 +61,9 @@ namespace Ximian.Mono.Tests
 			_NamespaceManager.PushScope();
 			// add a new namespace.
 			_NamespaceManager.AddNamespace("bar", "http://bar/");
-			// make sure the old namespace is still there.
-			Assert(_NamespaceManager.HasNamespace("foo"));
+			// make sure the old namespace is not in this new scope.
+			Assert(!_NamespaceManager.HasNamespace("foo"));
+			// but we're still supposed to be able to lookup the old namespace.
 			AssertEquals("http://foo/", _NamespaceManager.LookupNamespace("foo"));
 			// make sure the new namespace is there.
 			Assert(_NamespaceManager.HasNamespace("bar"));

@@ -1,3 +1,11 @@
+2002-02-26  Jason Diamond <jason@injektilo.org>
+
+	* XmlTextReader.cs: Apparently Microsoft's implementation treats
+	namespace declarations as attributes so we do now, too.
+
+	* XmlNamespaceManager.cs: HasNamespace fixed so that it only
+	checks the current scope.
+
 2002-02-26  Duncan Mak  <duncan@ximian.com>
 
 	* XmlDocumentType.cs: Added a few hacks here and there to

@@ -459,6 +459,10 @@ namespace System.Xml
 						}
 					}
 				}
+				else if (localName == "xmlns" && namespaceURI == "http://www.w3.org/2000/xmlns/" && thisName == "xmlns")
+				{
+					return (string)attributes[thisName];
+				}
 			}
 
 			return String.Empty;
@@ -1102,10 +1106,8 @@ namespace System.Xml
 				{
 					namespaceManager.AddNamespace(name.Substring(6), value);
 				}
-				else
-				{
-					AddAttribute(name, value);
-				}
+
+				AddAttribute(name, value);
 			}
 			while (PeekChar() != '/' && PeekChar() != '>' && PeekChar() != -1);
 		}
