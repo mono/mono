@@ -395,6 +395,7 @@ namespace MonoTests.System.IO
 		{
 			Assert ("IsPathRooted #01", Path.IsPathRooted (path2));
 			Assert ("IsPathRooted #02", !Path.IsPathRooted (path3));
+			Assert ("IsPathRooted #03", !Path.IsPathRooted (null));
 		}
 
 #if !NUNIT
