@@ -1,0 +1,9 @@
+2003-02-08  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CryptoTools.cs: Renamed namespace to match new location.
+	* PKCS1.cs: Renamed namespace to match new location.
+	* HMACAlgorithm.cs: New. Generic class to implement HMAC
+	using any hash algorithm (was in S.S.C.HMACSHA1.cs).
+	* MACAlgorithm.cs: New. Generic class to implement MAC
+	using any symmetric algorithm (was in S.S.C.MACTripleDES.cs).
+
