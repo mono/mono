@@ -9,7 +9,14 @@ namespace System.Collections
     private int m_length;
     private int m_modCount = 0;
     
-    private int bitsToInts(int bits)
+    private static void clearJunk(Int32[] arr, int numbits)
+    {
+      int numjunkbits = 32 - (numbits%32);
+      UInt32 mask = (~0U >> numjunkbits);
+      arr[arr.Length - 1] &= (int)mask;
+    }
+
+    private static int bitsToInts(int bits)
     {
       int retval = bits/32;
       if (bits % 32 != 0)
@@ -18,7 +25,7 @@ namespace System.Collections
       return retval;
     }
 
-    private int bitsToBytes(int bits)
+    private static int bitsToBytes(int bits)
     {
       int retval = bits/8;
       if (bits % 8 != 0)
@@ -104,7 +111,7 @@ namespace System.Collections
     {
       m_length = bytes.Length * 8;
 
-      m_array = new Int32[bytes.Length/4];
+      m_array = new Int32[bitsToInts(m_length)];
       for (int i=0; i < bytes.Length; i++)
 	setByte(i, bytes[i]);
     }
@@ -194,12 +201,11 @@ namespace System.Collections
 	{
 	  int numints = bitsToInts(newLen);
 	  Int32 [] newArr = new Int32[numints];
-	  Array.Copy(m_array, newArr, numints);
+	  int copylen = (numints > m_array.Length ? m_array.Length : numints);
+	  Array.Copy(m_array, newArr, copylen);
 	  
 	  // clear out the junk bits at the end:
-	  int numjunkbits = 32 - (newLen%32);
-	  UInt32 mask = (~0U >> numjunkbits);
-	  newArr[numints - 1] &= (int)mask;
+	  clearJunk(newArr, newLen);
 
 	  // set the internal state
 	  m_array = newArr;
@@ -279,8 +285,7 @@ namespace System.Collections
 	int numints = bitsToInts(m_length);
 	if (index + numints >= array.Length)
 	  throw new ArgumentException();
-
-	Array.Copy(m_array, array, numints);
+	Array.Copy(m_array, 0, array, index, numints);
       }
       else
       {
@@ -350,8 +355,7 @@ namespace System.Collections
     }
 
     public IEnumerator GetEnumerator()
-    {
-      
+    {      
       return new BitArrayEnumerator(this);
     }
 
@@ -413,9 +417,14 @@ namespace System.Collections
       {
 	for (int i = 0; i < m_array.Length; i++)
 	  m_array[i] = ~0;
+	
+	// clear out the junk bits that we might have set
+	clearJunk(m_array, m_length);
       }
       else
 	Array.Clear(m_array, 0, m_array.Length);
+
+
       m_modCount++;
     }
     
@@ -485,12 +494,6 @@ namespace System.Collections
     }
   }
 }
-
-
-
-
-
-
 
 
 
