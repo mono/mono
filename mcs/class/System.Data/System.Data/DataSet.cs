@@ -121,8 +121,12 @@ namespace System.Data {
 					enforceConstraints = value; 
 					if (value) {
 						foreach (DataTable table in Tables) {
-							foreach (Constraint c in table.Constraints)
-								c.AssertConstraint ();
+							// first assert all unique constraints
+							foreach (UniqueConstraint uc in table.Constraints.UniqueConstraints)
+								uc.AssertConstraint ();
+							// then assert all foreign keys
+							foreach (ForeignKeyConstraint fk in table.Constraints.ForeignKeyConstraints)
+								fk.AssertConstraint ();
 						}
 					}
 				}
@@ -1491,7 +1495,8 @@ namespace System.Data {
 				complex.Particle = seq;
 
 				foreach (DataColumn col in elements) {
-					//<xs:element name=ColumnName type=MappedType Ordinal=index>
+					
+					// Add element for the column.
 					XmlSchemaElement colElem = new XmlSchemaElement ();
 					ArrayList xattrs = new ArrayList();
 					XmlAttribute xattr;

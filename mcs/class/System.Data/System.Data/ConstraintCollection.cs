@@ -137,7 +137,9 @@ namespace System.Data {
 			constraint.AddToConstraintCollectionSetup(this); //may throw if it can't setup
 
 			//Run Constraint to check existing data in table
-			constraint.AssertConstraint();
+			// this is redundant, since AddToConstraintCollectionSetup 
+			// calls AssertConstraint right before this call
+			//constraint.AssertConstraint();
 
 			//if name is null or empty give it a name
 			if (constraint.ConstraintName == null || 
@@ -343,6 +345,33 @@ namespace System.Data {
 			}
 			failReason = tmp;
 			return !cancel;
+		}
+
+		internal ICollection UniqueConstraints
+		{
+			get
+			{ 
+				return GetConstraintsCollection(typeof(UniqueConstraint));
+			}
+		}
+
+		internal ICollection ForeignKeyConstraints
+		{
+			get
+			{ 
+				return GetConstraintsCollection(typeof(ForeignKeyConstraint));
+			}
+		}
+
+		private ICollection GetConstraintsCollection (Type constraintType)
+		{
+			ArrayList cCollection = new ArrayList();
+			foreach (Constraint c in List) 
+			{
+				if (c.GetType() == constraintType)
+					cCollection.Add(c);
+			}
+			return cCollection;
 		}
 
 	}

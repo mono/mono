@@ -1,3 +1,10 @@
+2004-03-03 Eran Domb <erand@mainsoft.com>
+	
+	* Index.cs : Added.
+	* Constraint.cs, ForeignKeyConstraint.cs, UniqueConstraint, ConstraintCollection.cs, DataColumn.cs,
+	DataRow.cs, DataRowCollection.cs, DataSet.cs, DataTable.cs : Changes made for using indexes on tables.
+	This changes made for performance improvement.
+
 2004-02-08 Eran Domb <erand@mainsoft.com>
 
 	* XmlSchemaMapper.cs : Read columns is they were written as SimpleContent or as Attributes.

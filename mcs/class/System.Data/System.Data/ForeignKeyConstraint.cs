@@ -23,6 +23,7 @@ namespace System.Data {
 		private UniqueConstraint _parentUniqueConstraint;
 		private DataColumn [] _parentColumns;
 		private DataColumn [] _childColumns;
+		private DataColumn [] _childColumnsExtended;
 		private Rule _deleteRule = Rule.Cascade;
 		private Rule _updateRule = Rule.Cascade;
 		private AcceptRejectRule _acceptRejectRule = AcceptRejectRule.None;
@@ -336,17 +337,20 @@ namespace System.Data {
 				ConstraintCollection collection)
 		{
 			
+			if (collection.Table != Table)
+				throw new InvalidConstraintException("This constraint cannot be added since ForeignKey doesn't belong to table " + RelatedTable.TableName + ".");
+
 			//run Ctor rules again
 			_validateColumns(_parentColumns, _childColumns);
 			
 			//we must have a unique constraint on the parent
-			_ensureUniqueConstraintExists(collection, _parentColumns);
+			_ensureUniqueConstraintExists(collection, _parentColumns);	
 			
 			//Make sure we can create this thing
-			AssertConstraint(); //TODO:if this fails and we created a unique constraint
-						//we should probably roll it back
-			if (collection.Table != Table)
-				throw new InvalidConstraintException("This constraint cannot be added since ForeignKey doesn't belong to table " + RelatedTable.TableName + ".");
+			AssertConstraint(); 
+			//TODO:if this fails and we created a unique constraint
+			//we should probably roll it back
+			// and remove index form Table			
 		}
 					
 	
@@ -354,77 +358,116 @@ namespace System.Data {
 		internal override void RemoveFromConstraintCollectionCleanup( 
 				ConstraintCollection collection)
 		{
-			return; //no rules yet		
+			// this is not referncing the index anymore
+			Index index = this.Index;
+			this.Index = null;
+			// drop the extended index on child table
+			this.Table.DropIndex(index);
 		}
 		
 		[MonoTODO]
 		internal override void AssertConstraint()
 		{
-
-			//Constraint only works if both tables are part of the same dataset
-			
+			//Constraint only works if both tables are part of the same dataset			
 			//if DataSet ...
 			if (Table == null || RelatedTable == null) return; //TODO: Do we want this
 
 			if (Table.DataSet == null || RelatedTable.DataSet == null) return; //	
-				
-			try
-			{
-				foreach (DataRow row in Table.Rows)
-					AssertConstraint(row);
+			
+			try {
+				foreach (DataRow row in Table.Rows) {
+					// first we check if all values in _childColumns place are nulls.
+					// if yes we return.
+					if (row.IsNullColumns(_childColumns))
+						continue;
+
+					// check whenever there is (at least one) parent row  in RelatedTable
+					if(!RelatedTable.RowsExist(_parentColumns,_childColumns,row)) {	
+						// if no parent row exists - constraint is violated
+						string values = "";
+						for (int i = 0; i < _childColumns.Length; i++) {
+							values += row[_childColumns[0]].ToString();
+							if (i != _childColumns.Length - 1)
+								values += ",";
+						}
+						throw new InvalidConstraintException("ForeignKeyConstraint " + ConstraintName + " requires the child key values (" + values + ") to exist in the parent table.");
+					}
+				}
 			}
-			catch (InvalidConstraintException)
-			{
+			catch (InvalidConstraintException){
 				throw new ArgumentException("This constraint cannot be enabled as not all values have corresponding parent values.");
+			}
+
+			// Create or rebuild index on Table
+			// We create index for FK only if PK on the Table exists
+			// and extended index is created based on appending PK columns to the 
+			// FK columns			
+			if((this.Table.PrimaryKey != null) && (this.Table.PrimaryKey.Length > 0)) {
+				// rebuild extended columns
+				RebuildExtendedColumns();
+
+				if(this.Index == null) {
+					this.Index = this.Table.CreateIndex(this.ConstraintName + "_index",_childColumnsExtended,false);
+				}
+
+				if(UniqueConstraint.GetUniqueConstraintForColumnSet(this.Table.Constraints,this.Index.Columns) == null) {
+					this.Table.InitializeIndex(this.Index);
+				}	
 			}
 		}
 		
 		[MonoTODO]
 		internal override void AssertConstraint(DataRow row)
 		{
-			// first we check if all values in _childColumns place are DBNull.
+			// first we check if all values in _childColumns place are nulls.
 			// if yes we return.
-			bool allNull = true;
-			for (int i = 0; i < _childColumns.Length; i++)
-			{
-				if (row[_childColumns[i]] != DBNull.Value)
-				{
-					allNull = false;
-					break;
+			if (row.IsNullColumns(_childColumns))
+				return;
+
+			// check whenever there is (at least one) parent row  in RelatedTable
+			if(!RelatedTable.RowsExist(_parentColumns,_childColumns,row)) {	
+				// if no parent row exists - constraint is violated
+				string values = "";
+				for (int i = 0; i < _childColumns.Length; i++) {
+					values += row[_childColumns[0]].ToString();
+					if (i != _childColumns.Length - 1)
+						values += ",";
 				}
+				throw new InvalidConstraintException("ForeignKeyConstraint " + ConstraintName + " requires the child key values (" + values + ") to exist in the parent table.");
 			}
 
-			if (allNull)
+			// if row can be inserted - add it to constraint index
+			// if there is no UniqueConstraint on the same columns
+			if(this.Index != null && UniqueConstraint.GetUniqueConstraintForColumnSet(this.Table.Constraints,this.Index.Columns) == null) {
+				UpdateIndex(row);
+			}
+		}
+
+		internal override void RollbackAssert (DataRow row)
+		{
+			// first we check if all values in _childColumns place are DBNull.
+			// if yes we return.
+			if (row.IsNullColumns(_childColumns))
 				return;
-			
-			// check that there is a parent for this row.
-			foreach (DataRow parentRow in this.RelatedTable.Rows)
-			{
-				if (parentRow.RowState != DataRowState.Deleted)
-				{
-					bool match = true;
-					// check if the values in the constraints columns are equal
-					for (int i = 0; i < _parentColumns.Length; i++)
-					{
-						if (!row[_childColumns[i]].Equals(parentRow[_parentColumns[i]]))
-						{
-							match = false;
-							break;
-						}	
-					}
-					if (match) // there is a parent row for this row.
-						return;
-				}
+
+			// if there is no UniqueConstraint on the same columns
+			// we should rollback row from index
+			if(this.Index != null && UniqueConstraint.GetUniqueConstraintForColumnSet(this.Table.Constraints,this.Index.Columns) == null) {
+				RollbackIndex(row);
 			}
-			
-			string values = "";
-			for (int i = 0; i < _childColumns.Length; i++)
-			{
-				values += row[_childColumns[0]].ToString();
-				if (i != _childColumns.Length - 1)
-					values += ",";
+		}
+
+		internal void RebuildExtendedColumns()
+		{
+			DataColumn[] pkColumns = this.Table.PrimaryKey;
+			if((pkColumns != null) && (pkColumns.Length > 0)) {
+				_childColumnsExtended = new DataColumn[_childColumns.Length + pkColumns.Length];					
+				Array.Copy(_childColumns,0,_childColumnsExtended,0,_childColumns.Length);
+				Array.Copy(pkColumns,0,_childColumnsExtended,_childColumns.Length,pkColumns.Length);
 			}
-			throw new InvalidConstraintException("ForeignKeyConstraint " + ConstraintName + " requires the child key values (" + values + ") to exist in the parent table.");
+			else {
+				throw new InvalidOperationException("Can not extend columns for foreign key");
+			}
 		}
 		
 		#endregion // Methods

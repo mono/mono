@@ -314,17 +314,46 @@ namespace System.Data
 		{
 			//first check for null violations.
 			row.CheckNullConstraints();
-			//FIXME: this validates constraints in the order they appear
-			//in the collection. Most probably we need to do it in a 
-			//specific order like unique/primary keys first, then Foreignkeys, etc
-			foreach(Constraint constraint in table.Constraints)
-			{
-				constraint.AssertConstraint(row);
+			// This validates constraints in the specific order : 
+			// first unique/primary keys first, then Foreignkeys, etc
+			ArrayList uniqueConstraintsDone = new ArrayList();
+			ArrayList foreignKeyConstraintsDone = new ArrayList();
+			try {
+				foreach(Constraint constraint in table.Constraints.UniqueConstraints) {
+					constraint.AssertConstraint(row);
+					uniqueConstraintsDone.Add(constraint);
+				}
+			
+				foreach(Constraint constraint in table.Constraints.ForeignKeyConstraints) {
+					constraint.AssertConstraint(row);
+					foreignKeyConstraintsDone.Add(constraint);
+				}
+			}
+			// if one of the AssertConstraint failed - we need to "rollback" all the changes
+			// caused by AssertCoinstraint calls already succeeded
+			catch(ConstraintException e) {
+				RollbackAsserts(row,foreignKeyConstraintsDone,uniqueConstraintsDone);
+				throw e;
+			}
+			catch(InvalidConstraintException e) {	
+				RollbackAsserts(row,foreignKeyConstraintsDone,uniqueConstraintsDone);
+				throw e;
+			}
+		}
+
+		private void RollbackAsserts(DataRow row,ICollection foreignKeyConstraintsDone,
+			ICollection uniqueConstraintsDone)
+		{
+			// if any of constraints assert failed - 
+			// we have to rollback all the asserts scceeded
+			// on order reverse to thier original execution
+			foreach(Constraint constraint in foreignKeyConstraintsDone) {
+				constraint.RollbackAssert(row);
 			}
 
+			foreach(Constraint constraint in uniqueConstraintsDone) {
+				constraint.RollbackAssert(row);
+			}
 		}
-		
 	}
-
-
 }

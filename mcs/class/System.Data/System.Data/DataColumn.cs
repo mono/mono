@@ -18,6 +18,8 @@
 using System;
 using System.ComponentModel;
 using System.Reflection;
+using System.Collections;
+using System.Data.Common;
 
 namespace System.Data {
 	internal delegate void DelegateColumnValueChange(DataColumn column, DataRow row, object proposedValue);
@@ -46,59 +48,59 @@ namespace System.Data {
 		#region Fields
 
 		private bool _allowDBNull = true;
-		private bool _autoIncrement = false;
-		private long _autoIncrementSeed = 0;
+		private bool _autoIncrement;
+		private long _autoIncrementSeed;
 		private long _autoIncrementStep = 1;
-		private long _nextAutoIncrementValue = 0;
-		private bool dataHasBeenSet = false;
-		private string _caption = null;
-		private MappingType _columnMapping = MappingType.Element;
-		private string _columnName = null;
-		private Type _dataType = Type.GetType ("System.String");
+		private long _nextAutoIncrementValue;
+		private bool dataHasBeenSet;
+		private string _caption;
+		private MappingType _columnMapping;
+		private string _columnName;
+		private Type _dataType;
 		private object _defaultValue = DBNull.Value;
-		private string expression = "";
+		private string expression;
 		private PropertyCollection _extendedProperties = new PropertyCollection ();
 		private int maxLength = -1; //-1 represents no length limit
 		private string nameSpace = "";
 		private int _ordinal = -1; //-1 represents not part of a collection
 		private string prefix = "";
-		private bool readOnly = false;
-		private DataTable _table = null;
-		private bool unique = false;
+		private bool readOnly;
+		private DataTable _table;
+		private bool unique;
 
 		#endregion // Fields
 
 		#region Constructors
 
-		public DataColumn()
+		public DataColumn() : this("", typeof (string), "", MappingType.Element)
 		{
 		}
 
 		//TODO: Ctor init vars directly
-		public DataColumn(string columnName): this()
+		public DataColumn(string columnName): this(columnName, typeof (string), "", MappingType.Element)
 		{
-			ColumnName = columnName;
 		}
 
-		public DataColumn(string columnName, Type dataType): this(columnName)
+		public DataColumn(string columnName, Type dataType): this(columnName, dataType, "", MappingType.Element)
 		{
+		}
+
+		public DataColumn( string columnName, Type dataType, 
+			string expr): this(columnName, dataType, expr, MappingType.Element)
+		{
+		}
+
+		public DataColumn(string columnName, Type dataType, 
+			string expr, MappingType type)
+		{
+			ColumnName = (columnName == null ? "" : columnName);
+			
 			if(dataType == null) {
 				throw new ArgumentNullException("dataType can't be null.");
 			}
 			
 			DataType = dataType;
-
-		}
-
-		public DataColumn( string columnName, Type dataType, 
-			string expr): this(columnName, dataType)
-		{
-			if (expr != null) Expression = expr;
-		}
-
-		public DataColumn(string columnName, Type dataType, 
-			string expr, MappingType type): this(columnName, dataType, expr)
-		{
+			Expression = expr == null ? "" : expr;
 			ColumnMapping = type;
 		}
 		#endregion
@@ -625,6 +627,12 @@ namespace System.Data {
 			return true;
 		}
 		
+		static internal int CompareValues (object val1, object val2, Type t, bool ignoreCase)
+		{
+			IComparer comparer = DBComparerFactory.GetComparer (t, ignoreCase);
+			return comparer.Compare (val1, val2);
+		}
+
 		#endregion // Methods
 
 	}

@@ -171,9 +171,9 @@ namespace System.Data {
 		/// </summary>
 		public object this[DataColumn column, DataRowVersion version] {
 			get {
-				int columnIndex = _table.Columns.IndexOf (column);
-				if (columnIndex == -1)
+				if (column.Table != Table)
 					throw new ArgumentException ("The column does not belong to this table.");
+				int columnIndex = column.Ordinal;
 				return this[columnIndex, version];
 			}
 		}
@@ -392,6 +392,12 @@ namespace System.Data {
 					}
 					vType = v.GetType();
 				}
+
+				// The MaxLength property is ignored for non-text columns
+				if ((Type.GetTypeCode(vType) == TypeCode.String) && (this.Table.Columns[index].MaxLength != -1) && 
+					(this.Table.Columns[index].MaxLength < ((string)v).Length)) {
+					throw new ArgumentException("Cannot set column '" + this.Table.Columns[index].ColumnName + "' to '" + v + "'. The value violates the MaxLength limit of this column.");
+				}
 				newval = v;
 				if(col.AutoIncrement == true) {
 					long inc = Convert.ToInt64(v);
@@ -538,7 +544,11 @@ namespace System.Data {
 			_table.DeletingDataRow(this, DataRowAction.Delete);
 			switch (rowState) {
 			case DataRowState.Added:
+				// check what to do with child rows
+				CheckChildRows(DataRowAction.Delete);
+				_table.DeleteRowFromIndexes (this);
 				Table.Rows.RemoveInternal (this);
+
 				// if row was in Added state we move it to Detached.
 				DetachRow();
 				break;
@@ -547,17 +557,18 @@ namespace System.Data {
 			default:
 				// check what to do with child rows
 				CheckChildRows(DataRowAction.Delete);
+				_table.DeleteRowFromIndexes (this);
 				rowState = DataRowState.Deleted;
 				break;
 			}
-				_table.DeletedDataRow(this, DataRowAction.Delete);
+			_table.DeletedDataRow(this, DataRowAction.Delete);
 		}
 
 		// check the child rows of this row before deleting the row.
 		private void CheckChildRows(DataRowAction action)
 		{
 			
-			// in this method we find the row that this row is in a reltion with them.
+			// in this method we find the row that this row is in a relation with them.
 			// in shortly we find all child rows of this row.
 			// then we function according to the DeleteRule of the foriegnkey.
 
@@ -569,35 +580,26 @@ namespace System.Data {
 			{
 				foreach (DataTable table in _table.DataSet.Tables)
 				{
-					// loop on all constraints of the table.
-					ConstraintCollection constraintsCollection = table.Constraints;
-					for (int i = 0; i < constraintsCollection.Count; i++)
+					// loop on all ForeignKeyConstrain of the table.
+					foreach (ForeignKeyConstraint fk in table.Constraints.ForeignKeyConstraints)
 					{
-						ForeignKeyConstraint fk = null;
-						if (constraintsCollection[i] is ForeignKeyConstraint)
+						if (fk.RelatedTable == _table)
 						{
-							fk = (ForeignKeyConstraint)constraintsCollection[i];
-							if (fk.RelatedTable == _table)
-							{
-								//we create a dummy relation because we do not want to duplicate code of GetChild().
-								// we use the dummy relation to find child rows.
-								DataRelation rel = new DataRelation("dummy", fk.RelatedColumns, fk.Columns, false);
-								Rule rule;
-								if (action == DataRowAction.Delete)
-									rule = fk.DeleteRule;
-								else
-									rule = fk.UpdateRule;
-								CheckChildRows(rel, action, rule);
-							}
+							Rule rule;
+							if (action == DataRowAction.Delete)
+								rule = fk.DeleteRule;
+							else
+								rule = fk.UpdateRule;
+							CheckChildRows(fk, action, rule);
 						}			
 					}
 				}
 			}
 		}
 
-		private void CheckChildRows(DataRelation rel, DataRowAction action, Rule rule)
+		private void CheckChildRows(ForeignKeyConstraint fkc, DataRowAction action, Rule rule)
 		{				
-			DataRow[] childRows = GetChildRows(rel);
+			DataRow[] childRows = GetChildRows(fkc, DataRowVersion.Default);
 			switch (rule)
 			{
 				case Rule.Cascade:  // delete or change all relted rows.
@@ -616,8 +618,8 @@ namespace System.Data {
 							{
 								// change only the values in the key columns
 								// set the childcolumn value to the new parent row value
-								for (int k = 0; k < rel.ChildColumns.Length; k++)
-									childRows[j][rel.ChildColumns[k]] = this[rel.ParentColumns[k], DataRowVersion.Proposed];
+								for (int k = 0; k < fkc.Columns.Length; k++)
+									childRows[j][fkc.Columns[k]] = this[fkc.RelatedColumns[k], DataRowVersion.Proposed];
 							}
 						}
 					}
@@ -629,8 +631,8 @@ namespace System.Data {
 						{
 							if (childRows[j].RowState != DataRowState.Deleted)
 							{
-								string changeStr = "Cannot change this row because constraints are enforced on relation " + rel.RelationName +", and changing this row will strand child rows.";
-								string delStr = "Cannot delete this row because constraints are enforced on relation " + rel.RelationName +", and deleting this row will strand child rows.";
+								string changeStr = "Cannot change this row because constraints are enforced on relation " + fkc.ConstraintName +", and changing this row will strand child rows.";
+								string delStr = "Cannot delete this row because constraints are enforced on relation " + fkc.ConstraintName +", and deleting this row will strand child rows.";
 								string message = action == DataRowAction.Delete ? delStr : changeStr;
 								throw new InvalidConstraintException(message);
 							}
@@ -646,8 +648,8 @@ namespace System.Data {
 							if (childRows[j].RowState != DataRowState.Deleted)
 							{
 								//set only the key columns to default
-								for (int k = 0; k < rel.ChildColumns.Length; k++)
-									child[rel.ChildColumns[k]] = rel.ChildColumns[k].DefaultValue;
+								for (int k = 0; k < fkc.Columns.Length; k++)
+									child[fkc.Columns[k]] = fkc.Columns[k].DefaultValue;
 							}
 						}
 					}
@@ -661,8 +663,8 @@ namespace System.Data {
 							if (childRows[j].RowState != DataRowState.Deleted)
 							{
 								// set only the key columns to DBNull
-								for (int k = 0; k < rel.ChildColumns.Length; k++)
-									child.SetNull(rel.ChildColumns[k]);
+								for (int k = 0; k < fkc.Columns.Length; k++)
+									child.SetNull(fkc.Columns[k]);
 							}
 						}
 					}
@@ -712,11 +714,31 @@ namespace System.Data {
 					proposed = null;
 					throw e;
 				}
-				// check all child rows.
-				CheckChildRows(DataRowAction.Change);
+
+				// Now we are going to check all child rows of current row.
+				// In the case the cascade is true the child rows will look up for
+				// parent row. since lookup in index is always on current,
+				// we have to move proposed version of current row to current
+				// in the case of check child row failure we are rolling 
+				// current row state back.
+				object[] backup = current;
 				current = proposed;
 				proposed = null;
+				bool editing_backup = editing;
 				editing = false;
+				try {
+					// check all child rows.
+					CheckChildRows(DataRowAction.Change);
+				}
+				catch (Exception ex) {
+					// if check child rows failed - rollback to previous state
+					// i.e. restore proposed and current versions
+					proposed = current;
+					current = backup;
+					editing = editing_backup;
+					// since we failed - propagate an exception
+					throw ex;
+				}
 				_table.ChangedDataRow(this, DataRowAction.Change);
 			}
 		}
@@ -753,13 +775,19 @@ namespace System.Data {
 			if (relation.DataSet != this.Table.DataSet)
 				throw new ArgumentException();
 
-			// TODO: Caching for better preformance
+			if (relation.ChildKeyConstraint != null)
+				return GetChildRows (relation.ChildKeyConstraint, version);
+
 			ArrayList rows = new ArrayList();
 			DataColumn[] parentColumns = relation.ParentColumns;
 			DataColumn[] childColumns = relation.ChildColumns;
 			int numColumn = parentColumns.Length;
-			if (HasVersion(version)) 
+			if (HasVersion(version))
 			{
+				object[] vals = new object[parentColumns.Length];
+				for (int i = 0; i < vals.Length; i++)
+					vals[i] = this[parentColumns[i], version];
+				
 				foreach (DataRow row in relation.ChildTable.Rows) 
 				{
 					bool allColumnsMatch = false;
@@ -768,7 +796,7 @@ namespace System.Data {
 						allColumnsMatch = true;
 						for (int columnCnt = 0; columnCnt < numColumn; ++columnCnt) 
 						{
-							if (!this[parentColumns[columnCnt], version].Equals(
+							if (!vals[columnCnt].Equals(
 								row[childColumns[columnCnt], DataRowVersion.Default])) 
 							{
 								allColumnsMatch = false;
@@ -791,6 +819,53 @@ namespace System.Data {
 		public DataRow[] GetChildRows (string relationName, DataRowVersion version) 
 		{
 			return GetChildRows (Table.DataSet.Relations[relationName], version);
+		}
+
+		private DataRow[] GetChildRows (ForeignKeyConstraint fkc, DataRowVersion version) 
+		{
+			ArrayList rows = new ArrayList();
+			DataColumn[] parentColumns = fkc.RelatedColumns;
+			DataColumn[] childColumns = fkc.Columns;
+			int numColumn = parentColumns.Length;
+			if (HasVersion(version))
+			{
+				object[] vals = new object[parentColumns.Length];
+				for (int i = 0; i < vals.Length; i++)
+					vals[i] = this[parentColumns[i], version];
+
+				Index index = fkc.Index;
+				if (index != null) {
+					// get the child rows from the index
+					Node[] childNodes = index.FindAllSimple (vals);
+					for (int i = 0; i < childNodes.Length; i++) {
+						rows.Add (childNodes[i].Row);
+					}
+				}
+				else { // if there is no index we search manualy.
+					foreach (DataRow row in fkc.Table.Rows) 
+					{
+						bool allColumnsMatch = false;
+						if (row.HasVersion(DataRowVersion.Default))
+						{
+							allColumnsMatch = true;
+							for (int columnCnt = 0; columnCnt < numColumn; ++columnCnt) 
+							{
+								if (!vals[columnCnt].Equals(
+									row[childColumns[columnCnt], DataRowVersion.Default])) 
+								{
+									allColumnsMatch = false;
+									break;
+								}
+							}
+						}
+						if (allColumnsMatch) rows.Add(row);
+					}
+				}
+			}
+
+			DataRow[] result = fkc.Table.NewRowArray(rows.Count);
+			rows.CopyTo(result, 0);
+			return result;
 		}
 
 		/// <summary>
@@ -915,23 +990,36 @@ namespace System.Data {
 			int numColumn = parentColumns.Length;
 			if (HasVersion(version))
 			{
-				foreach (DataRow row in relation.ParentTable.Rows) 
-				{
-					bool allColumnsMatch = false;
-					if (row.HasVersion(DataRowVersion.Default))
+				object[] vals = new object[childColumns.Length];
+				for (int i = 0; i < vals.Length; i++)
+					vals[i] = this[childColumns[i], version];
+				
+				Index indx = relation.ParentTable.GetIndexByColumns (parentColumns);
+				if (indx != null) { // get the child rows from the index
+					Node[] childNodes = indx.FindAllSimple (vals);
+					for (int i = 0; i < childNodes.Length; i++) {
+						rows.Add (childNodes[i].Row);
+					}
+				}
+				else { // no index so we have to search manualy.
+					foreach (DataRow row in relation.ParentTable.Rows) 
 					{
-						allColumnsMatch = true;
-						for (int columnCnt = 0; columnCnt < numColumn; columnCnt++) 
+						bool allColumnsMatch = false;
+						if (row.HasVersion(DataRowVersion.Default))
 						{
-							if (!this[childColumns[columnCnt], version].Equals(
-								row[parentColumns[columnCnt], DataRowVersion.Default])) 
+							allColumnsMatch = true;
+							for (int columnCnt = 0; columnCnt < numColumn; columnCnt++) 
 							{
-								allColumnsMatch = false;
-								break;
+								if (!this[childColumns[columnCnt], version].Equals(
+									row[parentColumns[columnCnt], DataRowVersion.Default])) 
+								{
+									allColumnsMatch = false;
+									break;
+								}
 							}
 						}
+						if (allColumnsMatch) rows.Add(row);
 					}
-					if (allColumnsMatch) rows.Add(row);
 				}
 			}
 
@@ -1017,6 +1105,23 @@ namespace System.Data {
 		}
 
 		/// <summary>
+		/// Returns a value indicating whether all of the row columns specified contain a null value.
+		/// </summary>
+		internal bool IsNullColumns(DataColumn[] columns)
+		{
+			bool allNull = true;
+			for (int i = 0; i < columns.Length; i++) 
+			{
+				if (!IsNull(columns[i])) 
+				{
+					allNull = false;
+					break;
+				}
+			}
+			return allNull;
+		}
+
+		/// <summary>
 		/// Rejects all changes made to the row since AcceptChanges was last called.
 		/// </summary>
 		public void RejectChanges () 
@@ -1034,13 +1139,18 @@ namespace System.Data {
 				switch (rowState)
 				{
 					case DataRowState.Added:
+						_table.DeleteRowFromIndexes (this);
 						_table.Rows.RemoveInternal (this);
 						break;
 					case DataRowState.Modified:
+						if ((_table.DataSet == null || _table.DataSet.EnforceConstraints) && !_table._duringDataLoad)
+							_table.Rows.ValidateDataRowInternal(this);
 						rowState = DataRowState.Unchanged;
 						break;
 					case DataRowState.Deleted:
 						rowState = DataRowState.Unchanged;
+						if ((_table.DataSet == null || _table.DataSet.EnforceConstraints) && !_table._duringDataLoad)
+							_table.Rows.ValidateDataRowInternal(this);
 						break;
 				} 
 				
@@ -1053,6 +1163,7 @@ namespace System.Data {
 				
 				if ((rowState & DataRowState.Added) > 0)
 				{
+					_table.DeleteRowFromIndexes (this);
 					_table.Rows.RemoveInternal (this);
 					// if row was in Added state we move it to Detached.
 					DetachRow();

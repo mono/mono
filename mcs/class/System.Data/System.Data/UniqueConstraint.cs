@@ -29,7 +29,6 @@ namespace System.Data {
 
 		//TODO:provide helpers for this case
 		private string [] _dataColumnNames; //unique case
-		
 
 		#region Constructors
 
@@ -108,6 +107,8 @@ namespace System.Data {
 			
 			//Get table reference
 			_dataTable = column.Table;
+
+			
 		}
 
 		//helpter ctor	
@@ -124,6 +125,8 @@ namespace System.Data {
 
 			//PK?
 			__isPrimaryKey = isPrimaryKey;
+
+			
 		}
 		
 		#endregion // Constructors
@@ -347,62 +350,56 @@ namespace System.Data {
 		internal override void RemoveFromConstraintCollectionCleanup( 
 				ConstraintCollection collection)
 		{
+			Index index = this.Index;
+			this.Index = null;
+			// if a foreign key constraint references the same index - 
+			// change the index be to not unique.
+			// In this case we can not just drop the index
+			ICollection fkCollection = collection.ForeignKeyConstraints;
+			foreach (ForeignKeyConstraint fkc in fkCollection) {
+				if (index == fkc.Index) {
+					fkc.Index.SetUnique (false);
+					// this is not referencing the index anymore
+					return;
+				}
+			}
+			
+			// if we are here no one is using this index so we can remove it.
+			// There is no need calling drop index here
+			// since two unique constraints never references the same index
+			// and we already check that there is no foreign key constraint referencing it.
+			Table.RemoveIndex (index);
 		}
 
 		[MonoTODO]
 		internal override void AssertConstraint()
-		{
-			
+		{			
 			if (_dataTable == null) return; //???
-			if (_dataColumns == null) return; //???
-
+			if (_dataColumns == null) return; //???		
 			
-			//Unique?	
-			DataTable tbl = _dataTable;
-			bool ignoreCase = false;
-			if (_dataTable.DataSet != null)
-				ignoreCase = !_dataTable.DataSet.CaseSensitive;
-			//TODO: Investigate other ways of speeding up the validation work below.
-
-			//validate no duplicates exists.
-			//Only validate when there are at least 2 rows
-			//so that a duplicate migth exist.
-			if(tbl.Rows.Count > 1) {
-				//get copy of rows collection first so that we do not modify the
-				//original.
-				DataRow[] rows = new DataRow [tbl.Rows.Count];
-				tbl.Rows.CopyTo (rows, 0);
-				
-				Array.Sort(rows, new RowsComparer(this, ignoreCase));
-				
-				for (int i = 0 ; i < rows.Length - 1 ; i++) 
-				{
-					bool match = true;
-					// check if the values in the constraints columns are equal
-					for (int j = 0; j < _dataColumns.Length; j++)
-					{
-						if (_dataColumns[j].DataType == typeof(string))
-						{
-							string origVal = (string)rows[i][_dataColumns[j]];
-							string compVal = (string)rows[i + 1][_dataColumns[j]];
-							if (String.Compare(origVal, compVal, ignoreCase) != 0)
-							{
-								match = false;
-								break;
-							}
-						}
-						else if (!rows[i][_dataColumns[j]].Equals(rows[i + 1][_dataColumns[j]]))
-						{
-							match = false;
-							break;
-						}	
-					}
-					if (match)
-						throw new ArgumentException (String.Format ("Column '{0}' contains non-unique values", this._dataColumns[0]));					
+			Index fromTableIndex = null;
+			if (Index == null) {
+				fromTableIndex = Table.GetIndexByColumns (Columns);
+				if (fromTableIndex == null) {
+					Index = new Index (ConstraintName, _dataTable, _dataColumns, true);	
+				}
+				else {
+					fromTableIndex.SetUnique (true);
+					Index = fromTableIndex;
 				}
 			}
 
-
+			try {
+				Table.InitializeIndex (Index);
+			}
+			catch (ConstraintException) {
+				Index = null;
+				throw new ArgumentException (String.Format ("Column '{0}' contains non-unique values", this._dataColumns[0]));
+			}
+			
+			// if there is no index with same columns - add the new index to the table.
+			if (fromTableIndex == null)
+				Table.AddIndex (Index);
 		}
 
 		[MonoTODO]
@@ -410,70 +407,29 @@ namespace System.Data {
 		{
 			if (_dataTable == null) return; //???
 			if (_dataColumns == null) return; //???
+			
+			if (Index == null) {
+				Index = Table.GetIndexByColumns (Columns, true);
+				if (Index == null) {
+					Index = new Index (ConstraintName, _dataTable, _dataColumns, true);
+					Table.AddIndex (Index);
+				}
+			}
 
-			//Unique?
-			// check that the row has values for all columns in the constarint. 
 			object val;
-			for (int i = 0; i < _dataColumns.Length; i++)
-			{
+			for (int i = 0; i < _dataColumns.Length; i++) {
 
 				val = row[_dataColumns[i]];
 				if (val == null || val == DBNull.Value)
 					throw new NoNullAllowedException("Column '" + _dataColumns[i].ColumnName + "' does not allow nulls.");
 			}
-
-			DataTable tbl = _dataTable;
-			bool isValid;
-			object[] rowVals = new object[_dataColumns.Length];
-			for (int i = 0; i < _dataColumns.Length; i++)
-			{
-				if(row.HasVersion(DataRowVersion.Proposed))
-					rowVals[i] = row[_dataColumns[i], DataRowVersion.Proposed];
-				else
-					rowVals[i] = row[_dataColumns[i], DataRowVersion.Current];
-			}
 			
-			bool ignoreCase = false;
-			if (_dataTable.DataSet != null)
-				ignoreCase = !_dataTable.DataSet.CaseSensitive;
-
-			foreach(DataRow compareRow in tbl.Rows)
-			{
-				if (compareRow.RowState != DataRowState.Deleted)
-				{
-					isValid = false;
-					//skip if it is the same row to be validated
-					if(!row.Equals(compareRow))
-					{
-						for (int i = 0; i < _dataColumns.Length; i++)
-						{
-							// if the values in the row are not equal to the values of
-							// the original row from the table we can move to the next row.
-							if (_dataColumns[i].DataType == typeof(string))
-							{
-								string origVal = (string)rowVals[i];
-								string compVal = (string)compareRow[_dataColumns[i]];
-								if (String.Compare(origVal, compVal, ignoreCase) != 0)
-								{
-									isValid = true;
-									break;
-								}
-							}
-							else if (!rowVals[i].Equals( compareRow[_dataColumns[i]]))
-							{
-								isValid = true;
-								break;
-							}
-						}
-				
-						if (!isValid)
-							throw new ConstraintException(GetErrorMessage(compareRow));
-
-					}
-				}
-
+			try {
+				UpdateIndex (row);
 			}
-
+			catch (ConstraintException) {
+				throw new ConstraintException(GetErrorMessage(row));
+			}
 		}
 
 		private string GetErrorMessage(DataRow row)
@@ -491,56 +447,9 @@ namespace System.Data {
 			return "Column '" + colStr + "' is constrained to be unique.  Value '" + valStr + "' is already present.";
 		}
 		
-		// generates a hash key for a given row based on the constraints columns.
-		internal int CalcHashValue(DataRow row, bool ignoreCase)
-		{
-			object o;
-			int retVal = 0;
-			CaseInsensitiveHashCodeProvider ciProvider = null;
-			if (ignoreCase)
-				ciProvider = new CaseInsensitiveHashCodeProvider(_dataTable.Locale);
-			for (int i = 0; i < _dataColumns.Length; i++)
-			{
-				o = row[_dataColumns[i]];
-				if (o != null)
-				{
-					if (ciProvider != null)
-						retVal += ciProvider.GetHashCode(o);
-					else
-						retVal += o.GetHashCode();
-
-				}
-			}
-			return retVal;
-		}
-
+		
 		#endregion // Methods
 
-		private class RowsComparer : IComparer
-		{
-			private UniqueConstraint _uc;
-			private bool _ignoreCase;
-			
-			public RowsComparer(UniqueConstraint uc, bool ignoreCase)
-			{
-				_ignoreCase = ignoreCase;
-				_uc = uc;
-			}
-
-			public int Compare(object o1, object o2)
-			{
-				DataRow row1 = (DataRow) o1;
-				DataRow row2 = (DataRow) o2;
-				int val1 = _uc.CalcHashValue(row1, _ignoreCase);
-				int val2 = _uc.CalcHashValue(row2, _ignoreCase);
-				
-				if (val1 > val2)
-					return 1;
-				if (val1 == val2)
-					return 0;
-				return -1;
-			}
-		}
 	}
 
 	

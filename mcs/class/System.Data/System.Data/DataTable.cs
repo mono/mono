@@ -58,6 +58,7 @@ namespace System.Data {
 		internal bool _duringDataLoad;
 		private bool dataSetPrevEnforceConstraints;
 		private DataRowBuilder _rowBuilder;
+		private ArrayList _indexes;
 
 		
 		// If CaseSensitive property is changed once it does not anymore follow owner DataSet's 
@@ -81,6 +82,7 @@ namespace System.Data {
 			_primaryKey = null;
 			_site = null;
 			_rows = new DataRowCollection (this);
+			_indexes = new ArrayList();
 			
 			//LAMESPEC: spec says 25 impl does 50
 			_minimumCapacity = 50;
@@ -142,6 +144,10 @@ namespace System.Data {
 		internal bool VirginCaseSensitive {
 			get { return _virginCaseSensitive; }
 			set { _virginCaseSensitive = value; }
+		}
+
+		internal ArrayList Indexes{
+			get { return _indexes; }
 		}
 
 		internal void ChangedDataColumn (DataRow dr, DataColumn dc, object pv) 
@@ -367,23 +373,19 @@ namespace System.Data {
 					return;
 
 				// remove PK Constraint
-				if(oldPKConstraint != null)
-				{
+				if(oldPKConstraint != null) {
 					Constraints.Remove(oldPKConstraint);
 				}
 				
-				if (value != null)
-				{
+				if (value != null) {
 					//Does constraint exist for these columns
 					UniqueConstraint uc = UniqueConstraint.GetUniqueConstraintForColumnSet(
 						this.Constraints, (DataColumn[]) value);
 				
 					//if constraint doesn't exist for columns
 					//create new unique primary key constraint
-					if (null == uc) 
-					{
-						foreach (DataColumn Col in (DataColumn[]) value) 
-						{
+					if (null == uc) {
+						foreach (DataColumn Col in (DataColumn[]) value) {
 
 							if (Col.Table == null)
 								break;
@@ -397,9 +399,25 @@ namespace System.Data {
 					
 						Constraints.Add (uc);
 					}
-					else 
-					{ //set existing constraint as the new primary key
+					else { 
+						//set existing constraint as the new primary key
 						UniqueConstraint.SetAsPrimaryKey(this.Constraints, uc);
+					}
+
+					// if we really supplied some columns fo primary key - 
+					// rebuild indexes fo all foreign key constraints
+					if(value.Length > 0) {
+						foreach(ForeignKeyConstraint constraint in this.Constraints.ForeignKeyConstraints){
+							constraint.AssertConstraint();
+						}
+					}
+				}
+				else {
+					// if primary key is null now - drop all the indexes for foreign key constraints
+					foreach(ForeignKeyConstraint constraint in this.Constraints.ForeignKeyConstraints){
+						Index index = constraint.Index;
+						constraint.Index = null;
+						this.DropIndex(index);
 					}
 				}
 				
@@ -443,6 +461,44 @@ namespace System.Data {
 				// the collection is a DataView
 				return false;
 			}
+		}
+
+		public bool RowsExist(Object[] columns, Object[] relatedColumns,DataRow row)
+		{
+			object[] vals = new object[relatedColumns.Length];
+			for (int i = 0; i < vals.Length; i++)
+				vals[i] = row[(DataColumn)relatedColumns[i]];
+
+			return RowsExist(columns,vals);
+		}
+
+		public bool RowsExist(Object[] columns,Object[] values)
+		{
+			bool rowsExist = false;
+			Index indx = this.GetIndexByColumns ((DataColumn[])columns);
+
+			if (indx != null) { // lookup for a row in index			
+				rowsExist = (indx.FindSimple (values, false) != null);
+			} else { // no index we have to perform full-table scan
+				// check that there is a parent for this row.
+				foreach (DataRow thisRow in this.Rows) {
+					if (thisRow.RowState != DataRowState.Deleted) {
+						bool match = true;
+						// check if the values in the columns are equal
+						for (int i = 0; i < columns.Length; i++) {
+							if (!thisRow[(DataColumn)columns[i]].Equals(values[i])) {
+								match = false;
+								break;
+							}	
+						}
+						if (match) {// there is a row with columns values equals to those supplied.
+							rowsExist = true;
+							break;
+						}
+					}
+				}				
+			}
+			return rowsExist;
 		}
 
 		/// <summary>
@@ -1094,6 +1150,82 @@ namespace System.Data {
 			return dataRows;
 		}
 
+		internal void AddIndex (Index index)
+		{
+			if (_indexes == null)
+				_indexes = new ArrayList();
+
+			_indexes.Add (index);
+		}
+
+		internal void RemoveIndex (Index indx)
+		{
+			_indexes.Remove (indx);
+		}
+
+		internal Index GetIndexByColumns (DataColumn[] columns)
+		{
+			return GetIndexByColumns(columns,false,false);
+		}
+
+//		internal Index GetIndexByColumnsExtended(DataColumn[] columns)
+//		{
+//			DataColumn[] pkColumns = this.PrimaryKey;
+//			if((pkColumns != null) && (pkColumns.Length > 0)) {
+//				DataColumn[] cols = new DataColumn[columns.Length + pkColumns.Length];					
+//				Array.Copy(columns,0,cols,0,columns.Length);
+//				Array.Copy(pkColumns,0,cols,columns.Length,pkColumns.Length);
+//
+//				return _getIndexByColumns(cols,false,false);
+//			} else {
+//				return null;
+//			}
+//		}
+
+		internal Index GetIndexByColumns (DataColumn[] columns, bool unique)
+		{
+			return GetIndexByColumns(columns,unique,true);
+		}
+
+//		internal Index GetIndexByColumnsExtended(DataColumn[] columns, bool unique)
+//		{
+//			DataColumn[] pkColumns = this.PrimaryKey;
+//			if((pkColumns != null) && (pkColumns.Length > 0)) {
+//				DataColumn[] cols = new DataColumn[columns.Length + pkColumns.Length];					
+//				Array.Copy(columns,0,cols,0,columns.Length);
+//				Array.Copy(pkColumns,0,cols,columns.Length,pkColumns.Length);
+//
+//				return _getIndexByColumns(cols,unique,true);
+//			} else  {
+//				return null;
+//			}
+//		}
+
+		internal Index GetIndexByColumns(DataColumn[] columns, bool unique, bool useUnique)
+		{
+			if (_indexes != null) {
+				foreach (Index indx in _indexes) {
+					bool found = false;
+					if ((!useUnique) || ((useUnique)&& (indx.IsUnique))) {
+						found = DataColumn.AreColumnSetsTheSame (indx.Columns, columns);
+					}
+					if (found)
+						return indx;
+				}
+			}
+
+			return null;
+		}
+
+		internal void DeleteRowFromIndexes (DataRow row)
+		{
+			if (_indexes != null) {
+				foreach (Index indx in _indexes) {
+					indx.Delete (row);
+				}
+			}
+		}
+
 		private static int GetRowStateFilter(DataViewRowState recordStates)
 		{
 			int flag = 0;
@@ -1527,6 +1659,107 @@ namespace System.Data {
 					return -((b as IComparable).CompareTo (a));
 
 				throw new ArgumentException ("Neither a nor b IComparable");
+			}
+		}
+
+		/// <summary>
+		/// Creates new index for a table
+		/// </summary>
+		internal Index CreateIndex(string name, DataColumn[] columns, bool unique)
+		{
+			// first check whenever index exists on the columns
+			Index idx = this.GetIndexByColumns(columns);
+			if(idx != null) {
+			// if index on this columns already exists - return it
+				return idx;
+			}
+
+			// create new index
+			Index newIndex = new Index(name,this,columns,unique);
+
+			//InitializeIndex (newIndex);			
+
+			// add new index to table indexes
+			this.AddIndex(newIndex);
+			return newIndex;
+		}
+
+//		/// <summary>
+//		/// Creates new extended index for a table
+//		/// </summary>
+//		internal Index CreateIndexExtended(string name, DataColumn[] columns, bool unique)
+//		{
+//			// first check whenever extended index exists on the columns
+//			Index idx = this.GetIndexByColumnsExtended(columns);
+//			if(idx != null) {
+//				// if extended index on this columns already exists - return it
+//				return idx;
+//			}
+//
+//			DataColumn[] pkColumns = this.PrimaryKey;
+//			if((pkColumns != null) && (pkColumns.Length > 0)) {
+//				DataColumn[] cols = new DataColumn[columns.Length + pkColumns.Length];					
+//				Array.Copy(columns,0,cols,0,columns.Length);
+//				Array.Copy(pkColumns,0,cols,columns.Length,pkColumns.Length);
+//				return this.CreateIndex(name, cols, unique);
+//			} 
+//			else {
+//				throw new InvalidOperationException("Can not create extended index if the primary key is null or primary key does not contains any row");
+//			}
+//		}
+
+//		/// <summary>
+//		/// Drops extended index if it is not referenced anymore
+//		/// by any of table constraints
+//		/// </summary>
+//		internal void DropIndexExtended(DataColumn[] columns)
+//		{
+//			// first check whenever extended index exists on the columns
+//			Index index = this.GetIndexByColumnsExtended(columns);
+//			if(index == null) {
+//				// if no extended index on this columns exists - do nothing
+//				return;
+//			}
+//			this.DropIndex(index);
+//		}
+
+		/// <summary>
+		/// Drops index specified by columns if it is not referenced anymore
+		/// by any of table constraints
+		/// </summary>
+		internal void DropIndex(DataColumn[] columns)
+		{
+			// first check whenever index exists for the columns
+			Index index = this.GetIndexByColumns(columns);
+			if(index == null) {
+			// if no index on this columns already exists - do nothing
+				return;
+			}
+			this.DropIndex(index);
+		}
+
+		internal void DropIndex(Index index)
+		{
+			// loop through table constraints and checks 
+			foreach(Constraint constraint in Constraints) {
+				// if we found another reference to the index we do not remove the index.
+				if (index == constraint.Index)
+					return; 
+			}
+			
+			this.RemoveIndex(index);
+		}
+
+		internal void InitializeIndex (Index indx)
+		{
+			DataRow[] rows = new DataRow[this.Rows.Count];
+			this.Rows.CopyTo (rows, 0);
+			indx.Root = null;
+			// fill index with table rows
+			foreach(DataRow row in this.Rows) {
+				if(row.RowState != DataRowState.Deleted) {
+					indx.Insert(new Node(row), DataRowVersion.Default);
+				}
 			}
 		}
 	}
