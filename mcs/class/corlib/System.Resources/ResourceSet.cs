@@ -74,8 +74,7 @@ namespace System.Resources
 				    if (Table == null) {
 						  ReadResources ();
 						  return Table[name];
-				    }
-				    if (Table != null)
+				    } else
 						  return Table[name];
 			 }
 
@@ -90,12 +89,14 @@ namespace System.Resources
 				    if (ignoreCase) {
 						  foreach (DictionaryEntry de in Table) {
 								string key = (string) de.Key;
-
-								if (String.Compare (key, name, true))
+								if (String.Compare (key, name, true) == 0)
 									   return de.Value;
+								else
+									   return null;
 						  }
+						  
 				    } else
-						  return Table[name]
+						  return Table[name];
 			 }
 
 			 public virtual string GetString (string name)
@@ -119,7 +120,7 @@ namespace System.Resources
 				    IDictionaryEnumerator i = Reader.GetEnumerator();
 
 				    if (Table == null)
-						  Table = new ResourceHashtable ();
+						  Table = new Hashtable ();
 				    i.Reset ();
 
 				    while (i.MoveNext ()) 
