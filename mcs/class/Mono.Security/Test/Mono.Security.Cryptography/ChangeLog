@@ -1,3 +1,11 @@
+2003-11-27  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* MD4Test.cs: New. Contains all the test vectors provided in RFC1320 
+	- but none are executed because MD4 is an abstract class.
+	* MD4ManagedTest.cs: New. Run the unit tests from MD4Test.cs using 
+	the MD4Managed implementation of MD4.
+	* PKCS8Test.cs: New. Unit tests for PKCS8.
+
 2003-03-07  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ARC4ManagedTest.cs: New. Test vectors for RC4(tm) taken from
