@@ -4,301 +4,344 @@
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
-//
-// (C) 2002 Ximian, Inc
+//   ScrollableControl.DockPaddingEdges stub added by Jaak Simm (jaaksimm@firm.ee)
+//	Dennis Hayes (dennish@raytek.com)
+//   WINELib implementation started by John Sohn (jsohn@columbus.rr.com)
+//	CE Complete.
+// (C) 2002/3 Ximian, Inc
 //
 
 using System;
 using System.Drawing;
-using Gtk;
-using GtkSharp;
-
+using System.ComponentModel;
 namespace System.Windows.Forms {
+
 	public class ScrollableControl : Control {
+
+		private ScrollableControl.DockPaddingEdges dockPadding;
+		protected  const int ScrollStateAutoScrolling = 1;
+		protected  const int ScrollStateFullDrag = 16;
+		protected  const int ScrollStateHScrollVisible = 2;
+		
+		protected  const int ScrollStateUserHasScrolled = 8;
+		protected  const int ScrollStateVScrollVisible = 4;
+
+
 		//
 		//  --- Constructor
 		//
-		//[MonoTODO]
-		//public ScrollableControl()
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		public ScrollableControl () : base () {
+			dockPadding = new ScrollableControl.DockPaddingEdges();
+			TabStop = false;
+		}
 
 		//
 		//  --- Public Properties
 		//
-		//[MonoTODO]
-		//public virtual bool AutoScroll {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public Size AutoScrollMargin {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public Size AutoScrollMinSize {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public Point AutoScrollPosition {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public override Rectangle DisplayRectangle {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public ScrollableControl.DockPaddingEdges DockPadding {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//public override ISite Site {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		[MonoTODO]
+		public virtual bool AutoScroll {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				//FIXME:
+			}
+		}
+
+		[MonoTODO]
+		public Size AutoScrollMargin {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				//FIXME:
+			}
+		}
+
+		[MonoTODO]
+		public Size AutoScrollMinSize {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				//FIXME:
+			}
+		}
+
+		[MonoTODO]
+		public Point AutoScrollPosition {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				//FIXME:
+			}
+		}
+
+		public override Rectangle DisplayRectangle {
+			get {
+				return base.DisplayRectangle;
+			}
+		}
+
+		[MonoTODO]
+		public ScrollableControl.DockPaddingEdges DockPadding {
+			get {
+				return dockPadding;
+			}
+		}
 
 		//
-		//  --- Public Methods
+		//  --- public methods
 		//
-		//[MonoTODO]
-		//public IAsyncResult BeginInvoke(Delegate del)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public IAsyncResult BeginInvoke(Delegate del, object[] objs)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void Dispose()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public virtual bool Equals(object o);
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public static bool Equals(object o1, object o2);
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void Invalidate()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void Invalidate(bool val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void Invalidate(Rectangle rect)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void Invalidate(Region reg)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void Invalidate(Rectangle rect, bool val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void Invalidate(Region reg, bool val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public object Invoke(Delegate del)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public object Invoke(Delegate del, object[] objs)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void PerformLayout()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void PerformLayout(Control ctl, string str)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void ResumeLayout()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void ResumeLayout(bool val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void Scale(float val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void Scale(float val1, float val2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void Select()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void Select(bool val1, bool val2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void SetBounds(int val1, int val2, int val3, int val4)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void SetBounds(int val1, int val2, int val3, int val4, BoundsSpecified bounds)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+
+		[MonoTODO]
+		public void ScrollControlIntoView (Control activeControl) {
+		}
 
 		//
 		//  --- Protected Properties
 		//
-		//[MonoTODO]
-		//protected override CreateParams CreateParams {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//protected bool HScroll {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//protected bool VScroll {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+
+		protected override CreateParams CreateParams {
+			get {
+				//RegisterDefaultWindowClass ( );
+
+				CreateParams createParams = base.CreateParams;
+				createParams.Caption = "Hello World";
+				//createParams.ClassName = Win32.DEFAULT_WINDOW_CLASS;
+  				
+				//createParams.Style = (int) (WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CHILD);
+				//test version with scroll bars.
+				//createParams.Style = (int) (WindowStyles.WS_OVERLAPPEDWINDOW | WindowStyles.WS_HSCROLL | WindowStyles.WS_VSCROLL);
+				
+				return createParams;			
+			}
+		}
+
+		[MonoTODO]
+		protected bool HScroll {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				//FIXME:
+			}
+		}
+
+		[MonoTODO]
+		protected bool VScroll {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				//FIXME:
+			}
+		}
 
 		//
 		//  --- Protected Methods
 		//
-		//[MonoTODO]
-		//protected virtual void AdjustFormScrollbars( bool displayScrollbars)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected override void Dispose(bool val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected override void OnLayout(LayoutEventArgs levent)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected override void OnMouseWheel(MouseEventArgs e)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected override void OnVisibleChanged(EventArgs e)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//ContentAlignment RtlTranslateAlignment(ContentAlignment calign)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//HorizontalAlignment RtlTranslateAlignment(HorizontalAlignment halign)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//LeftRightAlignment RtlTranslateAlignment(LeftRightAlignment lralign)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected override void ScaleCore(float dx, float dy)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected void UpdateBounds()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected void UpdateBounds(int val1, int val2, int val3, int val4)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected void UpdateBounds(int val1, int val2, int val3, int val4, int val5, int val6)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//protected override void WndProc(ref Message m)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-	 }
+		/*static private IntPtr WndProc (IntPtr hWnd, Msg msg, IntPtr wParam, IntPtr lParam) {
+			Message message = new Message();
+
+			message.HWnd = hWnd;
+			message.Msg = msg;
+			message.WParam = wParam;
+			message.LParam = lParam;
+			message.Result = (IntPtr)0;
+
+			return (IntPtr)0;
+		}*/
+		
+		[MonoTODO]
+		protected virtual void AdjustFormScrollbars (
+			bool displayScrollbars) {
+			//FIXME:
+		}
+
+		protected bool GetScrollState(int bit){
+			throw new NotImplementedException ();
+		}
+
+		protected override void OnLayout (LayoutEventArgs levent) {
+			//FIXME:
+			base.OnLayout (levent);
+		}
+
+		protected override void OnMouseWheel (MouseEventArgs e) {
+			//FIXME:
+			base.OnMouseWheel (e);
+		}
+
+		protected override void OnVisibleChanged (EventArgs e) {
+			//FIXME:
+			base.OnVisibleChanged (e);
+		}
+
+		protected override void ScaleCore (float dx, float dy) {
+			//FIXME:
+			base.ScaleCore (dx, dy);
+		}
+
+		[MonoTODO]
+		public void SetAutoScrollMargin(int x,int y){
+		}
+
+		[MonoTODO]
+		protected void SetScrollState(int bit,bool value){
+		}
+
+		[MonoTODO]
+		protected void SetDisplayRectLocation(int x,int y){
+		}
+
+		protected override void WndProc (ref Message m) {
+			//FIXME:
+			base.WndProc (ref m);
+		}
+		
+
+		/// ScrollableControl.DockPaddingEdges
+		/// Determines the border padding for docked controls.
+		
+		public class DockPaddingEdges : ICloneable {
+			// --- Fields ---
+			public int all;
+			public int bottom;
+			public int left;
+			public int right;
+			public int top;
+			
+			
+			// --- public Properties ---
+			public int All {
+				get {
+					return all;
+				}
+				set {
+					all = value;
+					left = value;
+					right = value;
+					bottom = value;
+					top = value;
+				}
+			}
+			
+			public int Bottom {
+				get { return bottom; }
+				set { bottom = value; }
+			}
+			
+			public int Left {
+				get { return left; }
+				set { left = value; }
+			}
+			
+			public int Right {
+				get { return right; }
+				set { right = value; }
+			}
+			
+			public int Top {
+				get { return top; }
+				set { top = value; }
+			}
+			
+			
+			/// --- public Methods ---
+
+			/// <summary>
+			///	Equality Operator
+			/// </summary>
+			///
+			/// <remarks>
+			///	Compares two DockPaddingEdges objects. The return value is
+			///	based on the equivalence of the  
+			///	properties of the two DockPaddingEdges.
+			/// </remarks>
+
+			public static bool operator == (DockPaddingEdges objA, DockPaddingEdges objB) {
+				return ((objA.left == objB.left) && 
+					(objA.right == objB.right) && 
+					(objA.top == objB.top) && 
+					(objA.bottom == objB.bottom) && 
+					(objA.all == objB.all));
+			} 			
+			/// <summary>
+			///	Equals Method
+			/// </summary>
+			///
+			/// <remarks>
+			///	Checks equivalence of this DockPaddingEdges and another object.
+			/// </remarks>
+		
+			public override bool Equals (object obj) {
+				if (!(obj is DockPaddingEdges))
+					return false;
+
+				return (this == (DockPaddingEdges) obj);
+			}
+
+			/// <summary>
+			///	Inequality Operator
+			/// </summary>
+			///
+			/// <remarks>
+			///	Compares two DockPaddingEdges objects. The return value is
+			///	based on the equivalence of the  
+			///	properties of the two Sizes.
+			/// </remarks>
+
+			public static bool operator != (DockPaddingEdges objA, DockPaddingEdges objB) {
+				return ((objA.left != objB.left) ||
+					(objA.right != objB.right) ||
+					(objA.top != objB.top) ||
+					(objA.bottom != objB.bottom) ||
+					(objA.all != objB.all));
+			} 		
+			/// <summary>
+			///	GetHashCode Method
+			/// </summary>
+			///
+			/// <remarks>
+			///	Calculates a hashing value.
+			/// </remarks>
+		
+			public override int GetHashCode () {
+				unchecked{
+					return all * top * bottom * right * left;
+				}
+			}
+
+			
+			/// This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
+			object ICloneable.Clone () {
+				DockPaddingEdges dpe = new DockPaddingEdges();
+				dpe.all = all;
+				dpe.top = top;
+				dpe.right = right;
+				dpe.bottom = bottom;
+				dpe.left = left;
+				return (object) dpe;
+			}
+			
+			/// <summary>
+			///	ToString Method
+			/// </summary>
+			///
+			/// <remarks>
+			///	Formats the DockPaddingEdges as a string.
+			/// </remarks>
+		
+			public override string ToString () {
+				return "All = " + all.ToString() + " Top = " + top.ToString() + 
+					" Right = " + right.ToString() + " Bottom = " + bottom.ToString() + 
+					" Left = " + left.ToString();
+			}
+		}
+		public class DockPaddingEdgeConverter : TypeConverter {
+		}
+	}
 }
+

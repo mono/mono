@@ -14,111 +14,171 @@ EXES = demo.exe Demo2.exe Demo3.exe singlewidget.exe
 LIBRARY = System.Windows.Forms.dll 
 
 LIB_MCS_FLAGS = /r:Accessibility /r:glib-sharp.dll /r:gdk-sharp.dll /r:gtk-sharp.dll \
-    /r:gnome-sharp.dll /r:System.Drawing.dll -L `pkg-config --variable=prefix gtk-sharp`/lib
+    /r:gnome-sharp.dll /r:System.Drawing.dll /r:pango-sharp.dll	\
+ 	-L `pkg-config --variable=prefix gtk-sharp`/lib
 
 EXE_MCS_FLAGS = /r:$(LIBRARY) /r:System.Drawing.dll /r:System.Data /r:ByteFX.Data.dll 
 
 LIB_SOURCES = \
-	TODOAttribute.cs	\
-	AnchorStyles.cs		\
-	Application.cs		\
-	ContainerControl.cs	\
-	Button.cs		\
-	ButtonBase.cs		\
-	Control.cs		\
-	ControlEventArgs.cs	\
-	ControlEventHandler.cs	\
-	DialogResult.cs		\
-	Form.cs 		\
-	IButtonControl.cs	\
-	IContainerControl.cs	\
-	Label.cs		\
-	ScrollBars.cs	\
-	ScrollBar.cs	\
-	RightToLeft.cs	\
-	VScrollBar.cs	\
-	HScrollBar.cs	\
-	ScrollEventHandler.cs \
-	ScrollEventArgs.cs \
-	ScrollEventType.cs \
-	HorizontalAlignment.cs	\
-	TextBoxBase.cs	\
-	TextBox.cs	\
-	CheckBox.cs	\
-	RadioButton.cs	\
-	GroupBox.cs	\
-	ProgressBar.cs	\
-	PictureBox.cs	\
-	FileDialog.cs	\
-	FontDialog.cs	\
-	ColorDialog.cs	\
-	ComboBox.cs	\
-	MessageBox.cs	\
-	MessageBoxButtons.cs	\
-	MenuItem.cs	\
-	MainMenu.cs	\
-	Shortcut.cs	\
-	PictureBoxSizeMode.cs	\
-	ScrollableControl.cs \
-	StatusBar.cs \
-	StatusBarPanelBorderStyle.cs \
-	StatusBarPanel.cs \
-	StatusBarDrawItemEventArgs.cs \
-	StatusBarPanelClickEventArgs.cs \
-	StatusBarPanelStyle.cs \
-	StatusBarDrawItemEventHandler.cs \
-	StatusBarPanelClickEventHandler.cs \
-	StatusBarPanelAutoSize.cs \
-	StatusBarPanelCollection.cs \
-	DrawItemEventArgs.cs \
-	MouseEventArgs.cs \
-	DrawItemState.cs \
-	MouseButtons.cs \
-	DockStyle.cs \
-	ListControl.cs \
-	ListBox.cs \
-	CurrencyManager.cs	\
-	BindingManagerBase.cs	\
-	BindingsCollection.cs	\
-	BaseCollection.cs	\
-	Binding.cs	\
-	ItemChangedEventArgs.cs	\
-	ItemChangedEventHandler.cs	\
-	ConvertEventArgs.cs	\
-	ConvertEventHandler.cs	\
-	BindingMemberInfo.cs	\
-	BorderStyle.cs	\
-	KeyEventArgs.cs	\
-	KeyEventHandler.cs	\
-	KeyPressEventArgs.cs	\
-	KeyPressEventHandler.cs	\
-	Keys.cs	\
-	AccessibleObject.cs	\
 	AccessibleEvents.cs	\
 	AccessibleNavigation.cs	\
+	AccessibleObject.cs	\
 	AccessibleRole.cs	\
 	AccessibleSelection.cs	\
 	AccessibleStates.cs	\
-	NavigateEventArgs.cs	\
-	NavigateEventHandler.cs	\
-	PaintEventArgs.cs	\
-	PaintEventHandler.cs	\
-	GridTableStylesCollection.cs	\
-	GridColumnStylesCollection.cs	\
-	DataGrid.cs	\
-	IDataGridColumnStyleEditingNotificationService.cs	\
-	IDataGridEditingService.cs	\
-	DataGridColumnStyle.cs	\
+	AnchorStyles.cs	\
+	ApplicationContext.cs	\
+	Application.cs	\
+	BaseCollection.cs	\
+	BindingContext.cs	\
+	Binding.cs	\
+	BindingManagerBase.cs	\
+	BindingMemberInfo.cs	\
+	BindingsCollection.cs	\
+	BorderStyle.cs	\
+	BoundsSpecified.cs	\
+	ButtonBase.cs	\
+	Button.cs	\
+	CheckBox.cs	\
+	ColorDialog.cs	\
+	ComboBox.cs	\
+	CommonDialog.cs	\
+	ComVisible.cs	\
+	ContainerControl.cs	\
+	ContextMenu.cs	\
+	ControlBindingsCollection.cs	\
+	Control.cs	\
+	ControlEventArgs.cs	\
+	ControlEventHandler.cs	\
+	ControlStyles.cs	\
+	ConvertEventArgs.cs	\
+	ConvertEventHandler.cs	\
+	CreateParams.cs	\
+	CurrencyManager.cs	\
+	Cursor.cs	\
 	DataGridBoolColumn.cs	\
 	DataGridCell.cs	\
+	DataGridColumnStyle.cs	\
+	DataGrid.cs	\
 	DataGridLineStyle.cs	\
 	DataGridParentRowsLabelStyle.cs	\
 	DataGridPreferredColumnWidthTypeConverter.cs	\
 	DataGridTableStyle.cs	\
 	DataGridTextBoxColumn.cs	\
 	DataGridTextBox.cs	\
-	LayoutEventArgs.cs	
-
+	DialogResult.cs	\
+	DockStyle.cs	\
+	DragAction.cs	\
+	DragDropEffects.cs	\
+	DragEventArgs.cs	\
+	DragEventHandler.cs	\
+	DrawItemEventArgs.cs	\
+	DrawItemEventHandler.cs	\
+	DrawItemState.cs	\
+	FileDialog.cs	\
+	FlatStyle.cs	\
+	FolderBrowserDialog.cs	\
+	FontDialog.cs	\
+	FormBorderStyle.cs	\
+	Form.cs	\
+	FormStartPosition.cs	\
+	FormWindowState.cs	\
+	GiveFeedbackEventArgs.cs	\
+	GiveFeedbackEventHandler.cs	\
+	GridColumnStylesCollection.cs	\
+	GridTableStylesCollection.cs	\
+	GroupBox.cs	\
+	HelpEventArgs.cs	\
+	HelpEventHandler.cs	\
+	HorizontalAlignment.cs	\
+	HScrollBar.cs	\
+	IButtonControl.cs	\
+	IContainerControl.cs	\
+	IDataGridColumnStyleEditingNotificationService.cs	\
+	IDataGridEditingService.cs	\
+	IDataObject.cs	\
+	ImageList.cs	\
+	ImeMode.cs	\
+	IMessageFilter.cs	\
+	InputLanguageChangedEventArgs.cs	\
+	InputLanguageChangedEventHandler.cs	\
+	InputLanguageChangingEventArgs.cs	\
+	InputLanguageChangingEventHandler.cs	\
+	InputLanguageCollection.cs	\
+	InputLanguage.cs	\
+	InvalidateEventArgs.cs	\
+	InvalidateEventHandler.cs	\
+	ItemChangedEventArgs.cs	\
+	ItemChangedEventHandler.cs	\
+	IWin32Window.cs	\
+	KeyEventArgs.cs	\
+	KeyEventHandler.cs	\
+	KeyPressEventArgs.cs	\
+	KeyPressEventHandler.cs	\
+	Keys.cs	\
+	Label.cs	\
+	LayoutEventArgs.cs	\
+	LayoutEventHandler.cs	\
+	LeftRightAlignment.cs	\
+	ListBox.cs	\
+	ListControl.cs	\
+	MainMenu.cs	\
+	MdiLayout.cs	\
+	MeasureItemEventArgs.cs	\
+	MeasureItemEventHandler.cs	\
+	Menu.cs	\
+	MenuItem.cs	\
+	MenuMerge.cs	\
+	MessageBoxButtons.cs	\
+	MessageBox.cs	\
+	Message.cs	\
+	MouseButtons.cs	\
+	MouseEventArgs.cs	\
+	MouseEventHandler.cs	\
+	NavigateEventArgs.cs	\
+	NavigateEventHandler.cs	\
+	OpenFileDialog.cs	\
+	PageSetupDialog.cs	\
+	PaintEventArgs.cs	\
+	PaintEventHandler.cs	\
+	PictureBox.cs	\
+	PictureBoxSizeMode.cs	\
+	PrintDialog.cs	\
+	ProgressBar.cs	\
+	QueryAccessibilityHelpEventArgs.cs	\
+	QueryAccessibilityHelpEventHandler.cs	\
+	QueryContinueDragEventArgs.cs	\
+	QueryContinueDragEventHandler.cs	\
+	RadioButton.cs	\
+	RightToLeft.cs	\
+	SaveFileDialog.cs	\
+	ScrollableControl.cs	\
+	ScrollBar.cs	\
+	ScrollBars.cs	\
+	ScrollEventArgs.cs	\
+	ScrollEventHandler.cs	\
+	ScrollEventType.cs	\
+	Shortcut.cs	\
+	SizeGripStyle.cs	\
+	StatusBar.cs	\
+	StatusBarDrawItemEventArgs.cs	\
+	StatusBarDrawItemEventHandler.cs	\
+	StatusBarPanelAutoSize.cs	\
+	StatusBarPanelBorderStyle.cs	\
+	StatusBarPanelClickEventArgs.cs	\
+	StatusBarPanelClickEventHandler.cs	\
+	StatusBarPanelCollection.cs	\
+	StatusBarPanel.cs	\
+	StatusBarPanelStyle.cs	\
+	SWFGtkConv.cs	\
+	TextBoxBase.cs	\
+	TextBox.cs	\
+	Timer.cs	\
+	TODOAttribute.cs	\
+	UICues.cs	\
+	UICuesEventArgs.cs	\
+	UICuesEventHandler.cs	\
+	VScrollBar.cs	
 
 all-local: $(LIBRARY) $(EXES)
 

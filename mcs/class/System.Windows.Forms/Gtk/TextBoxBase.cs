@@ -305,8 +305,8 @@ namespace System.Windows.Forms {
 		public override string ToString()
 		{
 			// MS.NET returns "System.Windows.Forms.TextBox, Text: textBox1"
-			// return "System.Windows.Forms.TextBox, Text: " + this.name;
-			throw new NotImplementedException ();
+			return "System.Windows.Forms.TextBox, Text: " + this.Name;
+			//throw new NotImplementedException ();
 		}
 		[MonoTODO]
 		public void Undo()

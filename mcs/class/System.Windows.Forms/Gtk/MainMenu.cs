@@ -1,63 +1,90 @@
-//		
-//			System.Windows.Forms.MainMenu
 //
-//			Author: 
-//						Joel Basson		(jstrike@mweb.co.za)
-//
-//
+// System.Windows.Forms.MainMenu
+// 
 
-using System.Drawing;
+using System;
+using System.ComponentModel;
+namespace System.Windows.Forms{	
 
-namespace System.Windows.Forms{
+	public class MainMenu:Menu{
+		private RightToLeft rightToLeft = RightToLeft.Inherit;
+		private Form ownerForm;
 
-	public class MainMenu : Control{
-
-		public MenuItemCollection MenuItems;
-		String text;
-		internal Gtk.MenuBar mb;
-
-		public class MenuItemCollection{
-
-			MainMenu owner;
-
-			public MenuItemCollection (MainMenu owner) {
-				
-				this.owner = owner;
-			}
-
-			public void Add (MenuItem item) {
-
-				owner.mb.Append (item.file_item);
-				
-			}
-
-			public void AddRange(MenuItem[] items) {
-				
-				foreach (MenuItem m in items)
-					{owner.mb.Append (m.file_item);}
-				
-			}
-
+		public MainMenu ():base (null){ 
 		}
-
-		public MainMenu() : base (){
-
-			this.MenuItems = new MenuItemCollection(this);
-
-			CreateMenuBar();
+		public MainMenu (MenuItem[]items):base (items){
 		}
-
-		internal override Gtk.Widget CreateWidget () {
-			return mb;
-		}
-
 		
-		private void CreateMenuBar (){
-			
-			mb = new Gtk.MenuBar ();
-		
+		[MonoTODO]
+		public virtual RightToLeft RightToLeft {
+			get{
+				if(rightToLeft != RightToLeft.Inherit){
+					return rightToLeft;
+				}
+				else if(ownerForm != null){
+					return ownerForm.RightToLeft;
+				}
+				else{
+					return RightToLeft.No;
+				}
+			}
+			set{
+				if (!Enum.IsDefined (typeof(RightToLeft), value)){
+					throw new InvalidEnumArgumentException();
+				}
+				if(rightToLeft != value){
+					rightToLeft = value;
+				}
+			}			
 		}
-
+		[MonoTODO]
+		public virtual MainMenu CloneMenu (){	
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		protected virtual IntPtr CreateMenuHandle (){
+			return IntPtr.Zero;
+		}
+		[MonoTODO]
+		protected override void Dispose (bool disposing){
+			base.Dispose (disposing);
+		}
+		public virtual Form GetForm (){
+			return ownerForm;
+		}
+		[MonoTODO]
+		public override String ToString (){
+			if (ownerForm != null){
+				return base.ToString () + ", GetForm: " +
+					ownerForm.ToString ();
+			}
+			else{
+				return base.ToString ();
+			}
+		}
+		
+		
+		
+		[MonoTODO]
+		internal void AddToForm (Form form){
+			ownerForm = form;
+		}
+		[MonoTODO]
+		internal void RemoveFromForm (){
+			ownerForm = null;
+		}
+		
+		internal override Gtk.Widget CreateWidget(){
+			Gtk.MenuBar mb = new Gtk.MenuBar();
+			return mb;			
+		}
+		
+		internal override void OnNewMenuItemAdd (MenuItem item){
+			((Gtk.MenuBar)Widget).Add (item.Widget);
+		}
+		internal override void OnRemoveMenuItem (MenuItem item){
+			((Gtk.MenuBar)Widget).Remove (item.Widget);
+		}
+		
 	}
-
 }

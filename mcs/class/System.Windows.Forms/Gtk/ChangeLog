@@ -1,3 +1,105 @@
+Tue Dec 16 12:15:00 GMT+2 2003 Joel Basson <jstrike@mweb.co.za>
+
+	* Applied patch from Alberto Fernandez with the following changes...
+	* Added Shorcut to MenuItem.
+	* Changed demo.cs to work with new FileDialog.
+	* Created dialogs (Basic funcionality).
+	* Added new:
+		Timer.cs (?)
+	* Removed function ControlLocationChanged
+		(the code has been moved to Control.OnLocationChanged, and now works from
+		child Control, instead from parent.)
+	* MenuItem
+	* Menu
+	* ContextMenu
+	* MainMenu
+	* Fixed Control.Size bug
+	* New Samples:
+		ButtonEvents2.cs
+		ChangeParentDemo.cs (works with Gtk-Warnings)
+		LabelClickDemo.cs (doesn't work for now)
+		Menu.cs
+	* Added new:
+		CommonDialog.cs
+		OpenFileDialog.cs
+		SaveFileDialog.cs
+		FolderBrowserDialog.cs
+		PageSetupDialog.cs
+		PrintDialog.cs
+	* Changed:
+		FileDialog.cs (now Inherits from CommonDialog, and is an abstract class).
+	* Control.Parent works now.
+	* Added - copied from current System.Windows.Forms (wine based): 
+
+		ApplicationContext.cs
+		BindingContext.cs
+		BoundsSpecified.cs
+		ComVisible.cs
+		ControlBindingsCollection.cs
+		ControlStyles.cs
+		CreateParams.cs
+		DragAction.cs
+		DragDropEffects.cs
+		DragEventArgs.cs
+		DragEventHandler.cs
+		DrawItemEventHandler.cs
+		FlatStyle.cs
+		FormBorderStyle.cs
+		FormStartPosition.cs
+		FormWindowState.cs
+		GiveFeedbackEventArgs.cs
+		GiveFeedbackEventHandler.cs
+		HelpEventArgs.cs
+		HelpEventHandler.cs
+		IDataObject.cs
+		ImageList.cs
+		ImeMode.cs
+		IMessageFilter.cs
+		IWin32Window.cs
+		InputLanguageChangedEventArgs.cs
+		InputLanguageChangedEventHandler.cs
+		InputLanguageChangingEventArgs.cs
+		InputLanguageChangingEventHandler.cs
+		InputLanguageCollection.cs
+		InputLanguage.cs
+		InvalidateEventArgs.cs
+		InvalidateEventHandler.cs
+		LayoutEventHandler.cs
+		LeftRightAlignment.cs
+		MdiLayout.cs
+		MeasureItemEventArgs.cs
+		MeasureItemEventHandler.cs
+		MenuMerge.cs
+		Message.cs
+		MouseEventHandler.cs
+		QueryAccessibilityHelpEventArgs.cs
+		QueryAccessibilityHelpEventHandler.cs
+		QueryContinueDragEventArgs.cs
+		QueryContinueDragEventHandler.cs
+		SizeGripStyle.cs
+		UICues.cs
+		UICuesEventArgs.cs
+		UICuesEventHandler.cs
+
+	* Added (new, incomplete):
+		Cursor.cs
+		Menu.cs
+		ContextMenu.cs
+		
+	* Changed (to be compatible, now have empty methods):
+		MainMenu.cs
+		MenuItem.cs
+	
+	* Added (provides static conversion methods):
+		SWFGtkConv.cs
+	* Work on:
+		Control.cs - Completed stub, connected some events.		
+		Forms.cs - Completed stub.
+		Button.cs - Some methos overriden, some property changes have
+		to be aplied to the contained Gtk.Label (instead to the Gtk.Button)
+
+	* Others minor changes...
+
 Tue Nov 18 23:00:00 GMT+2 2003 Joel Basson <jstrike@mweb.co.za>
 
 	* New start to DataGrid. Imported files from swf-winelib

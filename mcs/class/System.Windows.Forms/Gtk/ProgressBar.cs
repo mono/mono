@@ -172,7 +172,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override string ToString() 
 		{
-			throw new NotImplementedException ();
+			return base.ToString();
+			//throw new NotImplementedException ();
 		}
 //		#endregion
 		

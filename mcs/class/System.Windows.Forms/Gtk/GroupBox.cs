@@ -13,8 +13,14 @@ namespace System.Windows.Forms {
 	///
 	/// </summary>
 
-	public class GroupBox : Form {
+	public class GroupBox : Control {
 
+	[MonoTODO]
+	public FlatStyle FlatStyle{
+		get{ return FlatStyle.Standard; }
+		set{}
+	}
+	
 	public GroupBox () : base ()
 	{
 	}

@@ -30,7 +30,7 @@ namespace demo
 		private RadioButton opt3 = new RadioButton();
 		private GroupBox frame1 = new GroupBox();
 		private PictureBox pbox = new PictureBox();
-		private FileDialog fdialog = new FileDialog();
+		private FileDialog fdialog = new OpenFileDialog();
 		private VScrollBar vScrollBar1 = new VScrollBar();
 		private HScrollBar hScrollBar1 = new HScrollBar();
 
@@ -126,7 +126,7 @@ namespace demo
 
 			//
 			// Add you image name and path below
-			// pbox.File = "/home/jstrike/Shared/7804.jpg";
+			//pbox.File = "/home/alberto/img.png";
 			//
 
 			this.Controls.AddRange(new System.Windows.Forms.Control[] { 
@@ -143,7 +143,7 @@ namespace demo
 						this.opt2,
 						this.opt3,
 						this.pbox,
-						this.fdialog,
+						//this.fdialog,
 						this.vScrollBar1,
 						this.hScrollBar1,
 						this.label1 });
@@ -186,7 +186,8 @@ namespace demo
 
 		private void button1_Click(object sender, EventArgs e){ 
 		
-			pbox.File = fdialog.OpenFile;
+			//pbox.File = fdialog.OpenFile;
+			pbox.File = fdialog.FileName;
 				if (this.opt2.Checked) { 
 					this.pbox.SizeMode = PictureBoxSizeMode.StretchImage;
 				}
