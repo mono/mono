@@ -1,3 +1,23 @@
+2001-11-24  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (ArrayCreation): Get rid of ArrayExprs : we save
+	some memory.
+
+	(EmitDynamicInitializers): Cope with the above since we extract data
+	directly from ArrayData now.
+
+	(ExpectInitializers): Keep track of whether initializers are mandatory
+	or not.
+
+	(Bounds): Make it a hashtable to prevent the same dimension being 
+	recorded for every element in that dimension.
+
+	(EmitDynamicInitializers): Fix bug which prevented the Set array method
+	from being found.
+
+	Also fix bug which was causing the indices to be emitted in the reverse
+	order.
+
 2001-11-24  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (ArrayCreation): Implement the bits that Ravi left

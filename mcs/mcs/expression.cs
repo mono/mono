@@ -2967,14 +2967,14 @@ namespace Mono.CSharp {
 		Type array_element_type;
 		bool IsOneDimensional = false;
 		bool IsBuiltinType = false;
+		bool ExpectInitializers = false;
 
 		int dimensions = 0;
 		Type underlying_type;
 
 		ArrayList ArrayData;
-		ArrayList ArrayExprs;
 
-		ArrayList Bounds;
+		Hashtable Bounds;
 
 		public ArrayCreation (string requested_type, ArrayList exprs,
 				      string rank, ArrayList initializers, Location l)
@@ -2988,7 +2988,7 @@ namespace Mono.CSharp {
 
 			foreach (Expression e in exprs)
 				Arguments.Add (new Argument (e, Argument.AType.Expression));
-			
+
 		}
 
 		public ArrayCreation (string requested_type, string rank, ArrayList initializers, Location l)
@@ -3002,6 +3002,7 @@ namespace Mono.CSharp {
 			string tmp = rank.Substring (rank.LastIndexOf ("["));
 
 			dimensions = tmp.Length - 1;
+			ExpectInitializers = true;
 		}
 
 		public static string FormArrayType (string base_type, int idx_count, string rank)
@@ -3060,9 +3061,8 @@ namespace Mono.CSharp {
 					error178 ();
 					return false;
 				}
-
-				Console.WriteLine ("Adding: " + value);
-				Bounds.Add (value);
+				
+				Bounds [idx] = value;
 			}
 			
 			foreach (object o in probe) {
@@ -3088,9 +3088,7 @@ namespace Mono.CSharp {
 					if (tmp is Literal)
 						ArrayData.Add (((Literal) tmp).GetValue ());
 					else
-						ArrayData.Add ((object) 0);
-
-					ArrayExprs.Add (tmp);
+						ArrayData.Add (tmp);
 				}
 			}
 
@@ -3098,19 +3096,23 @@ namespace Mono.CSharp {
 		}
 		
 		public void UpdateIndices (EmitContext ec)
-		{			
+		{
+			int i = 0;
 			for (ArrayList probe = Initializers; probe != null;) {
-
+				
 				if (probe [0] is ArrayList) {
 					Expression e = new IntLiteral (probe.Count);
 					Arguments.Add (new Argument (e, Argument.AType.Expression));
-					Bounds.Add (probe.Count);
+
+					Bounds [i++] =  probe.Count;
+					
 					probe = (ArrayList) probe [0];
 					
 				} else {
 					Expression e = new IntLiteral (probe.Count);
 					Arguments.Add (new Argument (e, Argument.AType.Expression));
-					Bounds.Add (probe.Count);
+
+					Bounds [i++] = probe.Count;
 					probe = null;
 				}
 			}
@@ -3119,18 +3121,21 @@ namespace Mono.CSharp {
 		
 		public bool ValidateInitializers (EmitContext ec)
 		{
-			if (Initializers == null)
-				return true;
-
+			if (Initializers == null) {
+				if (ExpectInitializers)
+					return false;
+				else
+					return true;
+			}
+			
 			underlying_type = ec.TypeContainer.LookupType (RequestedType, false);
-
+			
 			//
 			// We use this to store all the date values in the order in which we
 			// will need to store them in the byte blob later
 			//
 			ArrayData = new ArrayList ();
-			ArrayExprs = new ArrayList ();
-			Bounds = new ArrayList ();
+			Bounds = new Hashtable ();
 			
 			bool ret;
 
@@ -3299,8 +3304,11 @@ namespace Mono.CSharp {
 				
 				if (underlying_type == TypeManager.int64_type ||
 				    underlying_type == TypeManager.uint64_type){
-					long val = (long) ArrayData [i];
 
+					long val = 0;
+					if (!(ArrayData [i] is Expression))
+						val = (long) ArrayData [i];
+					
 					for (int j = 0; j < factor; ++j) {
 						data [(i * factor) + j] = (byte) (val & 0xFF);
 						val = val >> 8;
@@ -3316,8 +3324,11 @@ namespace Mono.CSharp {
 				  
 				  
 				} else {
-				        int val = (int) ArrayData [i];
-				  
+
+					int val = 0;
+					if (!(ArrayData [i] is Expression))
+						val = (int) ArrayData [i];
+					
 				        for (int j = 0; j < factor; ++j) {
 						data [(i * factor) + j] = (byte) (val & 0xFF);
 						val = val >> 8;
@@ -3365,23 +3376,25 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			int dims = Bounds.Count;
 			int [] current_pos = new int [dims];
-			int top = ArrayExprs.Count;
+			int top = ArrayData.Count;
 			LocalBuilder temp = ig.DeclareLocal (type);
 
 			ig.Emit (OpCodes.Stloc, temp);
 
 			MethodInfo set = null;
 
-			Console.WriteLine ("Dimensions: " + dims);
 			if (dims != 1){
 				Type [] args;
 				ModuleBuilder mb = null;
 				mb = ec.TypeContainer.RootContext.ModuleBuilder;
-				args = new Type [dims];
+				args = new Type [dims + 1];
 
-				for (int j = 0; j < dims; j++)
+				int j;
+				for (j = 0; j < dims; j++)
 					args [j] = TypeManager.int32_type;
 
+				args [j] = array_element_type;
+				
 				set = mb.GetArrayMethod (
 					type, "Set",
 					CallingConventions.HasThis | CallingConventions.Standard,
@@ -3389,25 +3402,31 @@ namespace Mono.CSharp {
 			}
 			
 			for (int i = 0; i < top; i++){
-				Expression e = (Expression) ArrayExprs [i];
-				
-				if (!(e is Literal && !(e is StringLiteral))){
 
-					Console.WriteLine ("Item " + i);
-					ig.Emit (OpCodes.Ldloc, temp);
+				Expression e = null;
+				if (ArrayData [i] is Expression)
+					e = (Expression) ArrayData [i];
 
-					for (int idx = 0; idx < dims; idx++)
-						IntLiteral.EmitInt (ig, current_pos [idx]);
-					
-					e.Emit (ec);
-					
-					if (dims == 1){
-						ArrayAccess.EmitStoreOpcode (ig, array_element_type);
-					} else {
-						ig.Emit (OpCodes.Call, set);
+				if (e != null) {
+					if (!(e is Literal && !(e is StringLiteral))){
+						
+						ig.Emit (OpCodes.Ldloc, temp);
+						
+						for (int idx = dims; idx > 0; ) {
+							idx--;
+							IntLiteral.EmitInt (ig, current_pos [idx]);
+						}
+
+						e.Emit (ec);
+						
+						if (dims == 1)
+							ArrayAccess.EmitStoreOpcode (ig, array_element_type);
+						else 
+							ig.Emit (OpCodes.Call, set);
+						
 					}
 				}
-
+				
 				//
 				// Advance counter
 				//
@@ -3445,7 +3464,6 @@ namespace Mono.CSharp {
 				// FIXME: Set this variable correctly.
 				// 
 				bool dynamic_initializers = true;
-
 				EmitStaticInitializers (ec, dynamic_initializers || !is_statement);
 
 				if (dynamic_initializers)
