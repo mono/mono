@@ -1,5 +1,13 @@
 2001-08-24  Dietmar Maurer  <dietmar@ximian.com>
 
+	* class.c (mono_class_create_from_typedef): System.Enum is also a
+	value type, although it does not derive from System.ValueType
+	(maybe a bug in the ms compiler?)
+
+	* metadata.c (mono_type_size): return the right size for value types
+
+	* loader.c (mono_get_method): only initialize method header if not abstract
+
 	* class.c (mono_class_from_mono_type): use mono_default values. 
 
 2001-08-23  Dietmar Maurer  <dietmar@ximian.com>

@@ -1,3 +1,6 @@
+2001-08-24  Dietmar Maurer  <dietmar@ximian.com>
+
+	* main.c (disassemble_file): use assembly_open instead of image_open
 
 Wed Aug 22 16:22:22 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
