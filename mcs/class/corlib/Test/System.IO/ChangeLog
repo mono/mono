@@ -1,3 +1,7 @@
+2003-04-05  Nick Drochak  <ndrochak@gol.com>
+
+	* PathTest.cs: Use nunit2 convention for exception test.
+
 2003-03-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* StreamReaderTest.cs: added test for exception when the nase stream is

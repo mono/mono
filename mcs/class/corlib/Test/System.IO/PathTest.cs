@@ -201,6 +201,13 @@ namespace MonoTests.System.IO
 			}
 		}
 
+		[Test]
+		[ExpectedException (typeof(ArgumentException))]
+		public void EmptyDirectoryName ()
+		{
+			string testDirName = Path.GetDirectoryName ("");
+		}
+
 		public void TestDirectoryName ()
 		{
 			string [] files = new string [3];
@@ -213,13 +220,6 @@ namespace MonoTests.System.IO
 			AssertEquals ("GetDirectoryName #02", files [(int) OS], testDirName);
 			testDirName = Path.GetDirectoryName (files [(int) OS] + DSC);
 			AssertEquals ("GetDirectoryName #03", files [(int) OS], testDirName);
-
-			try {
-				testDirName = Path.GetDirectoryName ("");
-				Fail ("GetDirectoryName Fail #01");
-			} catch (Exception e) {
-				AssertEquals ("GetDirectoryName Exc. #01", typeof (ArgumentException), e.GetType ());
-			}
 
 			if (Windows) {
 				try {
