@@ -83,7 +83,7 @@ public class TypeManager {
 	static public Type exception_type;
 	static public Type invalid_operation_exception_type;
 	static public Type obsolete_attribute_type;
-	static public object conditional_attribute_type;
+	static public Type conditional_attribute_type;
 	static public Type in_attribute_type;
 	static public Type cls_compliant_attribute_type;
 	static public Type typed_reference_type;
@@ -2362,56 +2362,7 @@ public class TypeManager {
 		return target_list;
 	}
 
-	[Flags]
-	public enum MethodFlags {
-		ShouldIgnore = 1 << 2
-	}
-	
-	//
-	// Returns the TypeManager.MethodFlags for this method.
-	// This emits an error 619 / warning 618 if the method is obsolete.
-	// In the former case, TypeManager.MethodFlags.IsObsoleteError is returned.
-	//
-	static public MethodFlags GetMethodFlags (MethodBase mb)
-	{
-		MethodFlags flags = 0;
-		
-		if (mb.DeclaringType is TypeBuilder){
-			IMethodData method = (IMethodData) builder_to_method [mb];
-			if (method == null) {
-				// FIXME: implement Obsolete attribute on Property,
-				//        Indexer and Event.
-				return 0;
-			}
 
-			if (method.ShouldIgnore ())
-				flags |= MethodFlags.ShouldIgnore;
-
-			return flags;
-		}
-
-		object [] attrs = mb.GetCustomAttributes (true);
-		foreach (object ta in attrs){
-			if (!(ta is System.Attribute)){
-				Console.WriteLine ("Unknown type in GetMethodFlags: " + ta);
-				continue;
-			}
-			System.Attribute a = (System.Attribute) ta;
-			
-			//
-			// Skip over conditional code.
-			//
-			if (a.TypeId == TypeManager.conditional_attribute_type){
-				ConditionalAttribute ca = (ConditionalAttribute) a;
-
-				if (RootContext.AllDefines [ca.ConditionString] == null)
-					flags |= MethodFlags.ShouldIgnore;
-			}
-		}
-
-		return flags;
-	}
-	
 #region MemberLookup implementation
 	
 	//

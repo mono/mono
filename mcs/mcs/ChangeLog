@@ -1,3 +1,25 @@
+2004-06-03  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs
+	(GetConditionalAttributeValue): New method. Returns
+	condition of ConditionalAttribute.
+	(SearchMulti): New method.  Returns all attributes of type 't'.
+	Use it when attribute is AllowMultiple = true.
+	(IsConditionalMethodExcluded): New method.
+
+	* class.cs
+	(Method.IsExcluded): Implemented. Returns true if method has conditional
+	attribute and the conditions is not defined (method is excluded).
+	(IMethodData): Extended interface for ConditionalAttribute support.
+	(PropertyMethod.IsExcluded): Implemented.
+
+	* decl.cs
+	(MemberCore.Flags): Excluded_Undetected, Excluded new caching flags.
+
+	* expression.cs
+	(Invocation.IsMethodExcluded): Checks the ConditionalAttribute
+	on the method.
+
 2004-06-02 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* expression.cs (ArrayCreationExpression): Make this just an
