@@ -1,3 +1,15 @@
+
+Wed Jan 9 19:27:13 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: initialize class in type_from_handle ().
+	Loop also in parent classes for get_method ().
+	* reflection.c: properly encode class and valuetype types.
+	Start on encoding TypeBuilder types. Handle fieldrefs.
+	Use correct length when registering a user string.
+	Handle ConstructorBuilder and MonoMethod in get_token ().
+	Make mono_type_get_object () aware of cached types.
+	* object.c: back out change to mono_string_new ().
+
 Tue Jan 8 22:47:44 EST 2002 Matt Kimball <matt@kimball.net>
 	* object.c: mono_string_new should return a NULL when the string 
 	passed in is NULL -- not try to deference it.
