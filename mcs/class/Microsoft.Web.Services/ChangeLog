@@ -1,3 +1,7 @@
+2003-10-12  Todd Berman <tberman@gentoo.org>
+
+	* Makefile: Fixed up the test target so it works now
+
 2003-10-08  Todd Berman <tberman@gentoo.org>
 
 	* Microsoft.Web.Services.dll2.sources: Added RelatesTo.cs

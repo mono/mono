@@ -34,15 +34,15 @@ ifndef NO_TEST
 test_lib = $(patsubst %.dll,%_test.dll,$(LIBRARY))
 test_lib2 = $(patsubst %.dll, %_test.dll,$(LIBRARY2))
 test_pdb = $(patsubst %.dll,%.pdb,$(test_lib))
-test_pdb = $(patsubst %.dll,%.pdb,$(test_lib2))
+test_pdb2 = $(patsubst %.dll,%.pdb,$(test_lib2))
 test_sourcefile = $(test_lib).sources
-test_sourcefile2 = Microsoft.Web.Services.dll.2.sources
+test_sourcefile2 = $(test_lib2).sources
 test_response = $(depsdir)/$(test_lib).response
-test_response2 = $(depsdir)/$(test_lib2).response
+test_response2 = $(depsdir)/a.response
 test_makefrag = $(depsdir)/$(test_lib).makefrag
-test_makefrag2 = $(depsdir)/$(test_lib2).makefrag
+test_makefrag2 = $(depsdir)/a.makefrag
 test_stampfile = $(depsdir)/$(test_lib).stamp
-test_stampfile2 = $(depsdir)/$(test_lib2).stamp
+test_stampfile2 = $(depsdir)/a.stamp
 test_flags = /r:$(the_lib) /r:$(topdir)/class/lib/NUnit.Framework.dll $(TEST_MCS_FLAGS)
 test_flags2 = /r:$(the_lib2) /r:$(topdir)/class/lib/NUnit.Framework.dll $(TEST_MCS_FLAGS)
 endif
@@ -77,13 +77,13 @@ ifdef PLATFORM_CHANGE_SEPARATOR_CMD
 endif
 
 ifndef NO_TEST
-test-local: $(the_lib) $(test_lib)
+test-local: $(the_lib) $(test_lib) $(the_lib2) $(test_lib2) 
 
 run-test-local:
 	$(TEST_RUNTIME) $(TEST_HARNESS) $(test_lib)
 
 else
-test-local: $(the_lib)
+test-local: $(the_lib) $(the_lib2)
 
 run-test-local:
 endif
@@ -94,6 +94,7 @@ ifdef NO_TEST
 TEST_FILES = 
 else
 TEST_FILES = `cat $(test_sourcefile) |sed -e 's,^\(.\),Test/\1,'`
+TEST_FILES2 = `cat $(test_sourcefile2) |sed -e 's,^\(.\),Test/\1,'`
 endif
 
 dist-local: dist-default
@@ -192,3 +193,31 @@ $(test_stampfile):
 	touch $@
 endif
 
+ifndef NO_TEST
+$(test_lib2): $(test_makefrag2) $(the_lib2) $(test_response2) $(test_stampfile2)
+	$(CSCOMPILE) /target:library /out:$@ $(test_flags2) @$(test_response2)
+
+$(test_response2): $(test_sourcefile2)
+	@echo Creating $@ ...
+ifdef PLATFORM_CHANGE_SEPARATOR_CMD
+	@cat $< |sed -e 's,^\(.\),Test/\1,' |$(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
+else
+	@cat $< |sed -e 's,^\(.\),Test/\1,' >$@
+endif
+
+$(test_makefrag2): $(test_response2)
+	@echo Creating $@ ...
+	@echo "HAVE_TEST_MAKEFRAG = yes" >$@.new
+	@echo "$(test_stampfile2): \\" >>$@.new
+	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
+	@cat $@.new |sed -e '$$s, \\$$,,' >$@
+	@$(ECHO_ESCAPE) "\ttouch \$$@" >>$@
+	@rm -rf $@.new
+
+-include $(test_makefrag2)
+endif
+#
+ifndef HAVE_TEST_MAKEFRAG
+$(test_stampfile2):
+	touch $@
+endif
