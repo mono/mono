@@ -91,7 +91,7 @@ namespace System.Web.UI.WebControls
 			}
 			remove
 			{
-				Events.AddHandler(ClickEvent, value);
+				Events.RemoveHandler(ClickEvent, value);
 			}
 		}
 		
@@ -103,7 +103,7 @@ namespace System.Web.UI.WebControls
 			}
 			remove
 			{
-				Events.AddHandler(CommandEvent, value);
+				Events.RemoveHandler(CommandEvent, value);
 			}
 		}
 		
@@ -115,11 +115,11 @@ namespace System.Web.UI.WebControls
 			{
 				if(Page.Validators.Count > 0)
 				{
-					writer.AddAttribute(HtmlTextWriterAttribute.OnClick, Utils.GetClientValidationEvent());
+					writer.AddAttribute(HtmlTextWriterAttribute.OnClick, Utils.GetClientValidatedEvent());
 					writer.AddAttribute("language", "javascript");
 				}
 			}
-			base.AddAttributesToRender(writer);
+			AddAttributesToRender(writer);
 		}
 		
 		protected virtual void OnClick(ImageClickEventArgs e)

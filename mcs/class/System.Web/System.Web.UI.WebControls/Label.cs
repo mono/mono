@@ -42,7 +42,7 @@ namespace System.Web.UI.WebControls
 		{
 			if(HasControls())
 			{
-				base.AddParsedSubObject(obj);
+				AddParsedSubObject(obj);
 				return;
 			}
 			if(obj is LiteralControl)
@@ -52,10 +52,10 @@ namespace System.Web.UI.WebControls
 			}
 			if(Text.Length > 0)
 			{
-				base.AddParsedSubObject(Text);
+				AddParsedSubObject(Text);
 				Text = String.Empty;
 			}
-			base.AddParsedSubObject(obj);
+			AddParsedSubObject(obj);
 		}
 
 		protected override void LoadViewState(object savedState)
@@ -73,7 +73,7 @@ namespace System.Web.UI.WebControls
 		{
 			if(HasControls())
 			{
-				base.RenderContents(writer);
+				RenderContents(writer);
 			} else
 			{
 				writer.Write(Text);
