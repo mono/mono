@@ -1,3 +1,10 @@
+2002-12-15  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Unary.TryReduce): mimic the code for the regular
+	code path.  Perform an implicit cast in the cases where we can
+	implicitly convert to one of the integral types, and then reduce
+	based on that constant.   This fixes bug #35483.
+
 2002-12-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* typemanager.cs: fixed cut & paste error in GetRemoveMethod.

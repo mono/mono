@@ -223,9 +223,30 @@ namespace Mono.CSharp {
 				      (expr_type == TypeManager.int64_type) ||
 				      (expr_type == TypeManager.uint64_type) ||
 				      (expr_type.IsSubclassOf (TypeManager.enum_type)))){
+
 					result = null;
-					Error23 (expr_type);
-					return false;
+					if (ImplicitConversionExists (ec, e, TypeManager.int32_type)){
+						result = new Cast (new TypeExpr (TypeManager.int32_type, loc), e, loc);
+						result = result.Resolve (ec);
+					} else if (ImplicitConversionExists (ec, e, TypeManager.uint32_type)){
+						result = new Cast (new TypeExpr (TypeManager.uint32_type, loc), e, loc);
+						result = result.Resolve (ec);
+					} else if (ImplicitConversionExists (ec, e, TypeManager.int64_type)){
+						result = new Cast (new TypeExpr (TypeManager.int64_type, loc), e, loc);
+						result = result.Resolve (ec);
+					} else if (ImplicitConversionExists (ec, e, TypeManager.uint64_type)){
+						result = new Cast (new TypeExpr (TypeManager.uint64_type, loc), e, loc);
+						result = result.Resolve (ec);
+					}
+
+					if (result == null || !(result is Constant)){
+						result = null;
+						Error23 (expr_type);
+						return false;
+					}
+
+					expr_type = result.Type;
+					e = (Constant) result;
 				}
 
 				if (e is EnumConstant){
