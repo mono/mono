@@ -1,5 +1,7 @@
 2003-10-13  Zoltan Varga  <vargaz@freemail.hu>
 
+	* libtest.c pinvoke2.cs: Add new test for SetLastError functionality.
+
 	* Makefile.am (TEST_CS_SRC): Remove merged tests.
 
 	* pinvoke2.cs pinvoke3.cs: Merge tests 4-8 into these files + 
