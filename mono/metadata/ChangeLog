@@ -1,3 +1,8 @@
+2005-04-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* char-conversions.h : The tables were incorrectly generated. Should
+	  be generated against invariant culture.
+
 2005-04-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* object.c (mono_runtime_invoke_array): Fix return value when 
