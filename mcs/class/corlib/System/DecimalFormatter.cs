@@ -75,7 +75,7 @@ namespace System
                     decimals = (precision >= 0) ? precision : nfi.NumberDecimalDigits;
                     break;
                 case 'G':
-                    digits = (precision >= 0) ? precision+1 : 0;
+                    digits = (precision >= 0) ? precision : 0;
                     break;
                 case 'E': 
                     digits = (precision >= 0) ? precision+1 : 7;
@@ -114,7 +114,7 @@ namespace System
                 case 'N': return FormatNumber(nfi, sb, decimals, decPos, sign);
                 case 'F': return FormatFixedPoint(nfi, sb, decimals, decPos, sign);
                 case 'G': return FormatGeneral(nfi, sb, digits, decPos, sign, format[0]);
-                case 'E': return FormatExponential(nfi, sb, digits, decPos, sign, format[0]);
+                case 'E': return FormatExponential(nfi, sb, digits, decPos, sign, format[0], true);
                 case 'P': return FormatPercent(nfi, sb, decimals, decPos, sign);
                 case 'Z': return FormatNormalized(nfi, sb, digits, decPos, sign);
                 default: 
@@ -139,7 +139,7 @@ namespace System
         }
 
         private static string FormatExponential(NumberFormatInfo nfi, StringBuilder sb, 
-            int digits, int decPos, int sign, char echar)
+            int digits, int decPos, int sign, char echar, bool exp3flag)
         {
             // insert decimal separator
             if (digits > 1 || (digits == 0 && sb.Length > 1)) 
@@ -158,6 +158,7 @@ namespace System
             decPos--;
             sb.Append((decPos >= 0) ? nfi.PositiveSign : nfi.NegativeSign);
             if (decPos < 0) decPos *= -1;
+            if (exp3flag) sb.Append('0');
             sb.Append((char)('0' + decPos/10));
             sb.Append((char)('0' + decPos%10));
 
@@ -167,24 +168,29 @@ namespace System
         private static string FormatGeneral(NumberFormatInfo nfi, StringBuilder sb, 
             int digits, int decPos, int sign, char gchar)
         {
-            if (sb.Length == 0) // adjust for zero
+            int dig = digits;
+            bool bFix = (digits == 0 && decPos >= -3) || (digits >= decPos && decPos >= -3 && digits != 0);
+
+            // remove trailing digits
+            while (sb.Length > 1 && (sb.Length > decPos || !bFix) && sb[sb.Length-1] == '0')
             {
-                sb.Append('0');
-                decPos = 1;
-                sign = 0;
+                sb.Remove(sb.Length-1, 1);
+                if (dig != 0) dig--;
             }
 
-            if (digits == 0 && decPos >= -3) // if we should show all significant digits, we use the fixed point format
+            if (bFix)
             {
+                while (decPos <= 0) 
+                {
+                    sb.Insert(0, '0');
+                    if (dig != 0 && decPos != 0) dig++;
+                    decPos++;
+                }
                 return FormatFixedPoint(nfi, sb, sb.Length - decPos, decPos, sign);
-            }
-            else if (digits < decPos || decPos < -3 || digits == 0) 
-            {
-                return FormatExponential(nfi, sb, digits, decPos, sign, (gchar == 'g') ? 'e' : 'E');
             }
             else
             {
-                return FormatFixedPoint(nfi, sb, digits - decPos, decPos, sign);
+                return FormatExponential(nfi, sb, dig, decPos, sign, (char)(gchar-2), false);
             }
         }
 
