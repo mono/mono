@@ -1,4 +1,9 @@
 
+Thu Jul 3 17:17:39 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* object.c, object.h: provide mono_object_new_fast() for faster
+	allocation in some special cases.
+
 Wed Jul 2 13:21:26 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* object.h, reflection.h, verify.c: fixes for some 64bit issues,
