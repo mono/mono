@@ -21,9 +21,9 @@ namespace System.Security.Cryptography {
 		/// <summary>
 		/// Creates a new KeySizes object.
 		/// </summary>
-		/// <param name="minSize">The minimum size key allowed for this cipher.</param>
-		/// <param name="maxSize">The maximum size key allowed for this cipher.</param>
-		/// <param name="skipSize">The jump/skip between the valid key sizes.</param>
+		/// <param name="minSize">The minimum size key allowed for this cipher in bits.</param>
+		/// <param name="maxSize">The maximum size key allowed for this cipher in bits.</param>
+		/// <param name="skipSize">The jump/skip between the valid key sizes in bits.</param>
 		public KeySizes (int minSize, int maxSize, int skipSize) {
 			_maxSize = maxSize;
 			_minSize = minSize;
@@ -31,7 +31,7 @@ namespace System.Security.Cryptography {
 		}
 		
 		/// <summary>
-		/// Returns the maximum valid key size;
+		/// Returns the maximum valid key size in bits;
 		/// </summary>
 		public int MaxSize {
 			get {
@@ -40,7 +40,7 @@ namespace System.Security.Cryptography {
 		}
 		
 		/// <summary>
-		/// Returns the minimum valid key size;
+		/// Returns the minimum valid key size in bits;
 		/// </summary>
 		public int MinSize {
 			get {
@@ -49,7 +49,7 @@ namespace System.Security.Cryptography {
 		}
 		
 		/// <summary>
-		/// Returns the skip between valid key sizes;
+		/// Returns the skip between valid key sizes in bits;
 		/// </summary>
 		public int SkipSize {
 			get {

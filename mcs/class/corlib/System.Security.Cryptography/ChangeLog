@@ -1,3 +1,11 @@
+2002-09-11  Andrew Birkett  <andy@nobugs.org>
+
+	* RijndaelManaged.cs: Implemented ECB-mode Rijndael cipher.
+	* Rijndael.cs: Set valid key/block sizes.
+	* SymmetricAlgorithm.cs: Remove throw from ctr so we can instantiate
+	  derived classes.  Fixes to key sizes so they are measured in bits.
+	* KeySizes.cs: Updated comments to emphasize that sizes are in bits.
+
 2002-06-29  Martin Baulig  <martin@gnome.org>
 
 	* AsymmetricAlgorithm.cs: Removed a duplicate semicolon to make it compile.

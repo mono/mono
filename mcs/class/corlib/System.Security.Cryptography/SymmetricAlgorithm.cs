@@ -29,7 +29,6 @@ namespace System.Security.Cryptography {
 		/// Called from constructor of derived class.
 		/// </summary>
 		public SymmetricAlgorithm () {
-		  throw new CryptographicException();
 		}
 		
 		/// <summary>
@@ -110,7 +109,7 @@ namespace System.Security.Cryptography {
 				if (value == null)
 					throw new ArgumentNullException("tried setting key to null");
 
-				if (!IsLegalKeySize(this.LegalKeySizesValue, value.Length))
+				if (!IsLegalKeySize(this.LegalKeySizesValue, value.Length * 8))
 					throw new CryptographicException("key size not supported by algorithm");
 
 				this.KeySizeValue = value.Length;
@@ -120,7 +119,7 @@ namespace System.Security.Cryptography {
 		}
 		
 		/// <summary>
-		/// Gets or sets the actual key size
+		/// Gets or sets the actual key size in bits
 		/// </summary>
 		public virtual int KeySize {
 			get {
