@@ -2,8 +2,9 @@
 // OdbcCommandTest.cs - NUnit Test Cases for testing the
 // OdbcCommand class
 //
-// Author: 
+// Authors: 
 //      Sureshkumar T (TSureshkumar@novell.com)
+//	Umadevi S (sumadevi@novell.com)
 // 
 // Copyright (c) 2004 Novell Inc., and the individuals listed
 // on the ChangeLog entries.
@@ -78,13 +79,35 @@ namespace MonoTests.System.Data.Odbc
                         dbcmd.Connection = conn;
                         dbcmd.CommandType = CommandType.Text;
                         dbcmd.CommandText = "select count(*) from test where col_char=?;";
-                        string colvalue = "mono test";
+                        string colvalue = "mono test#1";
                         dbcmd.Parameters.Add("@un",colvalue);
                         Object  obj = dbcmd.ExecuteScalar();
-                        Assertion.AssertEquals( "String parameter not passed correctly",5, Convert.ToInt32(obj));
+                        Assertion.AssertEquals( "String parameter not passed correctly",1,Convert.ToInt32(obj));
 
 
 		}
 
-	}
+		/// <summary>
+		/// Test ExecuteNonQuery
+		/// </summary>
+		[Test]
+		public void ExecuteNonQueryTest ()
+		{
+                                                                                                    
+                        OdbcCommand dbcmd = new OdbcCommand();
+                        dbcmd.Connection = conn;
+                        dbcmd.CommandType = CommandType.Text;
+                        dbcmd.CommandText = "select count(*) from test where col_char=?;";
+                        string colvalue = "mono test";
+                        dbcmd.Parameters.Add("@un",colvalue);
+                        int ret = dbcmd.ExecuteNonQuery();
+                        Assertion.AssertEquals( "ExecuteNonQuery not working",-1, ret);
+                        dbcmd = new OdbcCommand();
+                        dbcmd.Connection = conn;
+			dbcmd.CommandType = CommandType.Text;
+                        dbcmd.CommandText = "delete from test where (col_int >257);";
+			ret = dbcmd.ExecuteNonQuery();
+			Assertion.AssertEquals("ExecuteNonQuery not working", 2, ret);}	
+
+	         }
 }
