@@ -1,3 +1,8 @@
+2003-01-03  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* RC2CryptoServiceProvider.cs: Now about 2 time faster by inlining 
+	methods and changing to UInt16 (instead of UInt32). 
+
 2003-01-02  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* RijndaelManaged.cs: Now 7 (encrypt) to 10 (decrypt) times faster 
