@@ -1,3 +1,7 @@
+2003-10-25  Martin Baulig  <martin@ximian.com>
+
+	* MonoGenericInst.cs: New internal class.
+
 2003-10-18  Martin Baulig  <martin@ximian.com>
 
 	* MethodInfo.cs (MethodInfo.GetGenericArguments): Make this method

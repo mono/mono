@@ -26,7 +26,7 @@ namespace System
 	}
 
 	[Serializable]
-	internal sealed class MonoType : Type, ISerializable
+	internal class MonoType : Type, ISerializable
 	{
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

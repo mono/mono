@@ -1,3 +1,7 @@
+2003-10-25  Martin Baulig  <martin@ximian.com>
+
+	* MonoType.cs: Don't make this sealed.
+
 2003-10-24  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AppDomain.cs: Add InternalInvokeInDomain[ByID] icalls.
