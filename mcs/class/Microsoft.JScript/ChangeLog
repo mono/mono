@@ -1,3 +1,7 @@
+2004-10-11  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* Microsoft.JScript.dll.sources: add TypeMananger.cs
+
 2004-09-20  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* Antlr.Runtime/[antlr, antlr.collections, antlr.collections.impl,

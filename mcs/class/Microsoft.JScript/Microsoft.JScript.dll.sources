@@ -168,3 +168,4 @@ Microsoft.JScript/expression.cs
 Microsoft.JScript/Token.cs
 Microsoft.JScript/TokenStream.cs
 Microsoft.JScript/Parser.cs
+Microsoft.JScript/TypeManager.cs
