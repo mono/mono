@@ -14,120 +14,60 @@ using System.Runtime.Serialization;
 using System.Drawing.Imaging;
 using System.IO;
 
-//[Serializable]
-//[ComVisible(true)]
-
-internal interface IImage : IDisposable {
-
-	
-//	static int GetPixelFormatSize (PixelFormat pixfmt)
-//	{
-//		// Fixme: implement me
-//		throw new NotImplementedException ();
-//	}
-//
-//	static bool IsAlphaPixelFormat (PixelFormat pixfmt)
-//	{
-//		// Fixme: implement me
-//		throw new NotImplementedException ();
-//	}
-//	
-//	static bool IsCanonicalPixelFormat (PixelFormat pixfmt)
-//	{
-//		// Fixme: implement me
-//		throw new NotImplementedException ();
-//	}
-//	
-//	static bool IsExtendedPixelFormat (PixelFormat pixfmt)
-//    	{
-//		// Fixme: implement me
-//		throw new NotImplementedException ();
-//	}
-
-	// non-static
+internal interface IImage : IDisposable
+{
 	RectangleF GetBounds (ref GraphicsUnit pageUnit);
-	
-	//EncoderParameters GetEncoderParameterList(Guid encoder);
-	//int GetFrameCount(FrameDimension dimension);
-	//PropertyItem GetPropertyItem(int propid);
-	/*
-	  Image GetThumbnailImage(int thumbWidth, int thumbHeight,
-	  Image.GetThumbnailImageAbort callback,
-	  IntPtr callbackData);
-	*/
-	
+		
 	void RemovePropertyItem (int propid);
+
+	void SetPropertyItem (PropertyItem item);
+	
+	PropertyItem GetPropertyItem (int propid);
+	
+	int GetFrameCount (FrameDimension dimension);
+	
+	int SelectActiveFrame (FrameDimension dimension, int frameIndex);
 	
 	void RotateFlip (RotateFlipType rotateFlipType);
 
-	InternalImageInfo ConvertToInternalImageInfo();
+	// Possible MCS bug
+//	   Image GetThumbnailImage (
+//		   int thumbWidth, int thumbHeight,
+//		   System.Drawing.Image.GetThumbnailImageAbort callback,
+//		   IntPtr callbackData);
+
+	InternalImageInfo ConvertToInternalImageInfo ();
 
 	void Save (string filename);
 
-	void Save(Stream stream, ImageFormat format);
-	void Save(string filename, ImageFormat format);
-	//void Save(Stream stream, ImageCodecInfo encoder,
-	//                 EncoderParameters encoderParams);
-	//void Save(string filename, ImageCodecInfo encoder,
-	//                 EncoderParameters encoderParams);
-	//void SaveAdd(EncoderParameters_ encoderParams);
-	//void SaveAdd(Image image, EncoderParameters_ encoderParams);
-	//int SelectActiveFrame(FrameDimension dimension, int frameIndex);
-	//void SetPropertyItem(PropertyItem propitem);
+	void Save (Stream stream, ImageFormat format);
+	void Save (string filename, ImageFormat format);
 
 	// properties
-	int Flags {
-		get ;
-	}
+	int Flags { get; }
 	
-	Guid[] FrameDimensionsList {
-		get ;
-	}
+	Guid [] FrameDimensionsList { get; }
 	
-	int Height {
-		get ;
-	}
+	int Height { get; }
 	
-	float HorizontalResolution {
-		get ;
-	}
+	float HorizontalResolution { get; }
+		
+	SizeF PhysicalDimension { get; }
 	
-//	ColorPalette Palette {
-//		get {
-//			throw new NotImplementedException ();
-//		}
-//		set {
-//			throw new NotImplementedException ();
-//		}
-//	}
+	PixelFormat PixelFormat { get; }
 	
-	SizeF PhysicalDimension {
-		get ;
-	}
+	int [] PropertyIdList { get; }
 	
-	PixelFormat PixelFormat {
-		get ;
-	}
-	
-	int[] PropertyIdList {
-		get ;
-	}
-	
-	PropertyItem[] PropertyItems {get;}
-	ImageFormat RawFormat {get;}
+	PropertyItem [] PropertyItems { get; }
 
-	Size Size {
-		get ;
-	}
-	
-	float VerticalResolution {
-		get ;
-	}
-	
-	int Width {
-		get ;
-	}
+	ImageFormat RawFormat { get; }
 
+	Size Size { get; }
+	
+	float VerticalResolution { get; }
+	
+	int Width { get; }
+	
+	ColorPalette Palette { get; set; }
 }
-
 }

@@ -15,14 +15,14 @@ using System.Drawing.Imaging;
 namespace System.Drawing {
 	internal interface IBitmapFactory 
 	{
-		IBitmap Bitmap(int width, int height);
-		IBitmap Bitmap(int width, int height, Graphics g);
-		IBitmap Bitmap(int width, int height, PixelFormat format);
-		IBitmap Bitmap(Image original, Size newSize);
-		IBitmap Bitmap(Stream stream, bool useIcm);
-		IBitmap Bitmap(string filename, bool useIcm);
-		IBitmap Bitmap(Type type, string resource);
-		IBitmap Bitmap(int width, int height, int stride, PixelFormat format, IntPtr scan0);
+		IBitmap Bitmap (int width, int height);
+		IBitmap Bitmap (int width, int height, Graphics g);
+		IBitmap Bitmap (int width, int height, PixelFormat format);
+		IBitmap Bitmap (Image original, Size newSize);
+		IBitmap Bitmap (Stream stream, bool useIcm);
+		IBitmap Bitmap (string filename, bool useIcm);
+		IBitmap Bitmap (Type type, string resource);
+		IBitmap Bitmap (int width, int height, int stride, PixelFormat format, IntPtr scan0);
 	}
 
 	internal interface IBitmap : IImage {
@@ -41,8 +41,7 @@ namespace System.Drawing {
 
 		IntPtr GetHicon () ;
 
-		BitmapData LockBits (Rectangle rect, ImageLockMode flags,
-		                            PixelFormat format);
+		BitmapData LockBits (Rectangle rect, ImageLockMode flags, PixelFormat format);
 
 		void MakeTransparent () ;
 

@@ -1,3 +1,13 @@
+2003-08-06  Duncan Mak  <duncan@ximian.com>
+
+	* Image.cs: Reformatted. Make all methods defined in the interface
+	non-public, and expose them only as explicit interface implementations.
+
+	* Graphics.cs (FromImage): cast xrImage to IImage.
+
+	* Bitmap.cs (InitFromStream): cast to an IImage before calling
+	properties defined in the interface.
+
 2003-08-04  Alexandre Pigolkine <pigolkine@gmx.de>
 	* Bitmap.cs			keep loaded image buffer
 	* Graphics.cs		type conversion removed

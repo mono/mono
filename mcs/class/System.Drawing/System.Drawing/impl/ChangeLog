@@ -1,3 +1,11 @@
+2003-08-06  Duncan Mak  <duncan@ximian.com>
+
+	* ItfImage.cs: Reformatted and removed sections that were
+	commented out. Added missing methods that were in
+	System.Drawing.Image but not the interface.
+
+	* ItfBitmap.cs: Reformatted.
+
 2003-06-22  Alexandre Pigolkine <pigolkine@gmx.de>
 	* ItfFontFamily.cs		file added
 

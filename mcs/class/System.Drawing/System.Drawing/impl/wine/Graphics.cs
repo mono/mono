@@ -4,7 +4,7 @@
 // (C) 2003 Ximian, Inc.  http://www.ximian.com
 //
 // Authors:
-// 	Gonzalo Paniagua Javier (gonzalo@ximian.com) (stubbed out)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com) (stubbed out)
 //  Alexandre Pigolkine (pigolkine@gmx.de)
 //
 using System;
@@ -306,12 +306,16 @@ namespace System.Drawing
 				if( imageGraphics == null) {
 					IntPtr tempDC = Win32.CreateCompatibleDC (hdc_);
 					IntPtr oldBmp = Win32.SelectObject (tempDC, wineImage.nativeObject_);
-					Win32.StretchBlt(hdc_, x, y, width, height, tempDC, 0, 0, wineImage.Size.Width, wineImage.Size.Height, PatBltTypes.SRCCOPY);
+					Win32.StretchBlt(hdc_, x, y, width, height, tempDC, 0, 0,
+							((IImage) wineImage).Size.Width,
+							((IImage) wineImage).Size.Height, PatBltTypes.SRCCOPY);
 					Win32.SelectObject (tempDC, oldBmp);
 					Win32.DeleteDC (tempDC);
 				}
 				else {
-					Win32.StretchBlt(hdc_, x, y, width, height, imageGraphics.hdc_, 0, 0, wineImage.Size.Width, wineImage.Size.Height, PatBltTypes.SRCCOPY);
+					Win32.StretchBlt(hdc_, x, y, width, height, imageGraphics.hdc_, 0, 0,
+							((IImage) wineImage).Size.Width,
+							((IImage) wineImage).Size.Height, PatBltTypes.SRCCOPY);
 				}
 			}
 

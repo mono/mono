@@ -21,11 +21,11 @@ using System.Drawing.Imaging;
 using System.IO;
 
 internal class InternalImageInfo : IDisposable {
-	Size         imageSize;
+	Size	     imageSize;
 	PixelFormat  pixelFormat;
-	int          stride;
+	int	     stride;
 	ColorPalette palette;
-	byte[]       image;
+	byte[]	     image;
 	ImageFormat  rawFormat;
 	IntPtr		 unmanagedImagePtr;
 
@@ -142,11 +142,13 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 	internal IImage	implementation = null;
 	protected Size image_size;
+
+	public delegate bool GetThumbnailImageAbort ();	       
 	
 	// constructor
 	public Image () {}
 
-       	private Image (SerializationInfo info, StreamingContext context)
+	private Image (SerializationInfo info, StreamingContext context)
 	{
 	}
 
@@ -283,7 +285,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 //	}
 //	
 //	public static bool IsExtendedPixelFormat (PixelFormat pixfmt)
-//    	{
+//	{
 //		// Fixme: implement me
 //		throw new NotImplementedException ();
 //	}

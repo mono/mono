@@ -5,7 +5,7 @@
 // Author: Christian Meyer <Christian.Meyer@cs.tum.edu>
 //			Jason Perkins <jason@379.com>
 //			Dennis Hayes <dennish@raytek.com>
-//          Alexandre Pigolkine <pigolkine@gmx.de>
+//	    Alexandre Pigolkine <pigolkine@gmx.de>
 //
 using System;
 using System.IO;
@@ -111,15 +111,19 @@ namespace System.Drawing {
 					pixelFormat = info.PixelFormat;
 					CommonInit (info.Size.Width, info.Size.Height, false);
 					if (pixelFormat == PixelFormat.Format32bppArgb) {
-						native_object = GDK.gdk_pixbuf_new_from_data (info.UnmanagedImagePtr, GDK.GdkColorspace.GDK_COLORSPACE_RGB, 
-										true, 8, Size.Width, Size.Height, info.Stride, IntPtr.Zero, IntPtr.Zero);
-					}
-					else if (pixelFormat == PixelFormat.Format24bppRgb) {
+						native_object = GDK.gdk_pixbuf_new_from_data (
+							info.UnmanagedImagePtr, GDK.GdkColorspace.GDK_COLORSPACE_RGB, true, 8,
+							((IImage) this).Size.Width, ((IImage) this).Size.Height,
+							info.Stride, IntPtr.Zero, IntPtr.Zero);
+
+					} else if (pixelFormat == PixelFormat.Format24bppRgb) {
 						info.ChangePixelFormat (PixelFormat.Format32bppArgb);
-						native_object = GDK.gdk_pixbuf_new_from_data (info.UnmanagedImagePtr, GDK.GdkColorspace.GDK_COLORSPACE_RGB, 
-										true, 8, Size.Width, Size.Height, info.Stride, IntPtr.Zero, IntPtr.Zero);
-					}
-					else {
+						native_object = GDK.gdk_pixbuf_new_from_data (
+							info.UnmanagedImagePtr, GDK.GdkColorspace.GDK_COLORSPACE_RGB, true, 8,
+							((IImage) this).Size.Width, ((IImage) this).Size.Height,
+							info.Stride, IntPtr.Zero, IntPtr.Zero);
+
+					} else {
 						throw new NotImplementedException();
 					}
 					// FIXME: It is not safe to dispose the info here
@@ -235,8 +239,8 @@ namespace System.Drawing {
 			}
 		
 			//Fixme: gtk should be inherited from Image
-			//public override PixelFormat PixelFormat {
-			public new PixelFormat PixelFormat {
+			public PixelFormat PixelFormat {
+			// public new PixelFormat PixelFormat {
 				get {
 					return pixelFormat;
 				}

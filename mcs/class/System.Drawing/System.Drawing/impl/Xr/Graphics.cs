@@ -4,7 +4,7 @@
 // (C) 2003 Ximian, Inc.  http://www.ximian.com
 //
 // Authors:
-// 	Gonzalo Paniagua Javier (gonzalo@ximian.com) (stubbed out)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com) (stubbed out)
 //  Alexandre Pigolkine (pigolkine@gmx.de)
 //
 using System;
@@ -1159,8 +1159,10 @@ namespace System.Drawing
 				System.Drawing.XrImpl.Image	xrImage = ConvertImage (image);
 				IntPtr nativeObj = Xr.XrCreate ();
 				Graphics result = new Graphics (nativeObj);
-				Xr.XrSetTargetImage (nativeObj, GDK.gdk_pixbuf_get_pixels (xrImage.native_object), xrImage.xr_format,
-							xrImage.Width, xrImage.Height, GDK.gdk_pixbuf_get_rowstride (xrImage.native_object));
+				Xr.XrSetTargetImage (nativeObj, GDK.gdk_pixbuf_get_pixels (xrImage.native_object),
+						xrImage.xr_format, ((IImage) xrImage).Width, ((IImage) xrImage).Height,
+						GDK.gdk_pixbuf_get_rowstride (xrImage.native_object));
+				
 				xrImage.selected_into_graphics = result;
 				result.initialized_from_image = xrImage;
 				result.type = GraphicsType.FromImage;
