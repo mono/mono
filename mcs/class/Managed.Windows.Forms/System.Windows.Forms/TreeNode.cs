@@ -140,6 +140,10 @@ namespace System.Windows.Forms {
 			get { return bounds; }
 		}
 
+                public Rectangle PlusMinusBounds {
+                        get { return plus_minus_bounds; }
+                }
+
 		public bool Checked {
 			get { return check; }
 			set { check = value; }

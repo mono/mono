@@ -803,7 +803,7 @@ namespace System.Windows.Forms {
 			int half_height = ItemHeight / 2;
 			while (walk.MoveNext ()) {
 				TreeNode node = (TreeNode) walk.Current;
-				if (node.plus_minus_bounds.Contains (e.X, e.Y)) {
+				if (node.PlusMinusBounds.Contains (e.X, e.Y)) {
 					node.Toggle ();
 					break;
 				}
