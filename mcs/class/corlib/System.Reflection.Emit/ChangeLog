@@ -1,3 +1,7 @@
+2004-05-01  Todd Berman  <tberman@sevenl.net>
+
+	* ModuleBuilder.cs: Load the proper assembly for a gac-only install.
+
 2004-04-29 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* ILGenerator.cs, ModuleBuilder.cs: readonlyificate.
