@@ -46,6 +46,7 @@ namespace System.Xml.Schema
 		// post schema compilation infoset
 		private Hashtable idCollection;
 		private Hashtable missingBaseSchemaTypeRefs;
+		private Hashtable missingElementTypeRefs;
 
                 // Compiler specific things
                 private static string xmlname = "schema";
@@ -67,7 +68,7 @@ namespace System.Xml.Schema
                         schemaTypes                     = new XmlSchemaObjectTable();
 			idCollection                    = new Hashtable ();
 			missingBaseSchemaTypeRefs       = new Hashtable ();
-
+			missingElementTypeRefs          = new Hashtable ();
                 }
 
                 #region Properties
@@ -227,6 +228,10 @@ namespace System.Xml.Schema
 			get { return missingBaseSchemaTypeRefs; }
 		}
 
+		internal Hashtable MissingElementTypeRefs
+		{
+			get { return missingElementTypeRefs; }
+		}
                 #endregion
 
                 #region Compile
@@ -405,7 +410,13 @@ namespace System.Xml.Schema
                                                 "Object of Type "+obj.GetType().Name+" is not valid in Item Property of Schema");
                                 }
                         }
-                        Validate(handler);
+			foreach (XmlSchemaElement element in missingElementTypeRefs.Keys)
+			{
+				element.SetReferedElementInfo (
+					FindElement (missingElementTypeRefs [element] as XmlQualifiedName));
+			}
+
+			Validate(handler);
                 }
 
                 #endregion
@@ -444,6 +455,18 @@ namespace System.Xml.Schema
                         }
                 }
 
+		internal XmlSchemaElement FindElement (XmlQualifiedName name)
+		{
+			if (name.Namespace != TargetNamespace)
+				return null;
+
+			foreach (XmlSchemaObject obj in Items) {
+				XmlSchemaElement elem = obj as XmlSchemaElement;
+				if (obj != null && elem.Name == name.Name)
+					return elem;
+			}
+			return null;
+		}
 
                 #region Read
 

@@ -399,6 +399,9 @@ namespace System.Xml.Schema
 						error(h,"type must be absent");
 					if(SchemaType != null)
 						error(h,"simpleType or complexType must be absent");
+
+					qName = RefName;
+					schema.MissingElementTypeRefs.Add (this, qName);
 				}
 			}
 
@@ -419,6 +422,11 @@ namespace System.Xml.Schema
 
 			this.CompilationId = schema.CompilationId;
 			return errorCount;
+		}
+
+		internal void SetReferedElementInfo (XmlSchemaElement element)
+		{
+			this.elementType = element.elementType;
 		}
 		
 		[MonoTODO]

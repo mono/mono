@@ -1,3 +1,9 @@
+2003-07-21  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* XmlSchema.cs, XmlSchemaElement.cs :
+	  added internal MissingElementTypeRefs and support for refering 
+	  element's elementType.
+
 2003-07-20  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* XmlSchema.cs : added support for collecting missing type references
