@@ -589,7 +589,6 @@ namespace Mono.CSharp {
 				Hashtable captured_parameters = CaptureContext.captured_parameters;
 				
 				foreach (DictionaryEntry de in captured_parameters){
-					string name = (string) de.Key;
 					CapturedParameter cp = (CapturedParameter) de.Value;
 
 					ig.Emit (OpCodes.Ldloc, ScopeInstance);
