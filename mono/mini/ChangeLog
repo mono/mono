@@ -1,5 +1,8 @@
 2005-01-27  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-exceptions.c (mono_handle_exception): Compute the stack trace
+	eagerly if it contains dynamic methods.
+	
 	* mini-exceptions.c (ves_icall_System_Exception_get_trace): New icall.
 
 	* mini-exceptions.c (mono_handle_exception): Avoid computing the stack
