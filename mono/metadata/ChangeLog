@@ -1,3 +1,7 @@
+2004-12-09  Marek Safar <marek.safar@seznam.cz>
+
+	* reflection.c: Add support for null attribute arguments.
+
 2004-12-09  Martin Baulig  <martin@ximian.com>
 
 	* metadata.h, loader.h: Use `idx' instead of `index' in parameter
