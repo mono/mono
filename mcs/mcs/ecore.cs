@@ -3309,7 +3309,26 @@ namespace Mono.CSharp {
 				}
 					
 				return e;
-			} 				
+			}
+
+			if (e is PropertyExpr) {
+				PropertyExpr pe = (PropertyExpr) e;
+
+				if (ec.IsStatic){
+					if (allow_static)
+						return e;
+
+					return MemberStaticCheck (e);
+				} else {
+					// If we are not in static code and this
+					// field is not static, set the instance to `this'.
+
+					if (!pe.IsStatic)
+						pe.InstanceExpression = ec.This;
+				}
+
+				return e;
+			}
 
 			if (e is EventExpr) {
 				//

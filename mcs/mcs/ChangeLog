@@ -1,3 +1,9 @@
+2002-06-27  Martin Baulig  <martin@gnome.org>
+
+	* ecore.cs (Expression.SimpleNameResolve): If the expression is a
+	non-static PropertyExpr, set its InstanceExpression.  This makes
+	the `ICollection.Count' property work in System/Array.cs.
+
 2002-06-25  Andrew Birkett  <adb@tardis.ed.ac.uk>
 
 	* driver.cs: Made error handling more consistent.  Errors now
