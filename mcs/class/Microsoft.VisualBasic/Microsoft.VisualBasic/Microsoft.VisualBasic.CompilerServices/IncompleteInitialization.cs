@@ -36,6 +36,6 @@ namespace Microsoft.VisualBasic.CompilerServices
 	[System.Serializable]
 #endif
 	sealed public class IncompleteInitialization : System.Exception, System.Runtime.Serialization.ISerializable {
-	};
+	}
 }
 

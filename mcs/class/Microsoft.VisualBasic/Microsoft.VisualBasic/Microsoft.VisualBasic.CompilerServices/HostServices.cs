@@ -47,5 +47,5 @@ namespace Microsoft.VisualBasic.CompilerServices
 				host = value;
 			}
 		}
-	};
+	}
 }

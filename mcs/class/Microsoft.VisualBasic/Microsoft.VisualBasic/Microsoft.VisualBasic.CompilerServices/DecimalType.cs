@@ -120,6 +120,6 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		public static System.Decimal Parse (System.String Value, System.Globalization.NumberFormatInfo NumberFormat) {
 			return Decimal.Parse(Value, NumberStyles.Any, NumberFormat);
 		}
-	};
+	}
 }
 

@@ -43,5 +43,5 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		// Properties
 		// Methods
 		// Events
-	};
+	}
 }

@@ -36,5 +36,5 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		// Methods
 		string GetWindowTitle ();
 		System.Windows.Forms.IWin32Window GetParentWindow ();
-	};
+	}
 }

@@ -40,7 +40,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 	[AttributeUsage(AttributeTargets.Parameter)] 
 	[StructLayout(LayoutKind.Auto)] 
 	sealed public class OptionCompareAttribute : Attribute {
-	};
+	}
 
 }
 

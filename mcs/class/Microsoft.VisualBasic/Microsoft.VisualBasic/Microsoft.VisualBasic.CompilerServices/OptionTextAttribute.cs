@@ -38,6 +38,6 @@ namespace Microsoft.VisualBasic.CompilerServices
 	[AttributeUsage(AttributeTargets.Class)] 
 	[EditorBrowsable(EditorBrowsableState.Never)] 
 	sealed public class OptionTextAttribute : Attribute {
-	};
+	}
 }
 

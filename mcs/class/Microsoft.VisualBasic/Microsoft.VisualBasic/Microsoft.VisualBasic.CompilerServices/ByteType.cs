@@ -112,5 +112,5 @@ namespace Microsoft.VisualBasic.CompilerServices
 			//                    str, "Byte"), e);
 			//        }
 		}
-	};
+	}
 }

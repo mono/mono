@@ -92,7 +92,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			// 15 = DateTymeStyles.AllowWhiteSpaces || DateTymeStyles.NoCurrentDateDefault
 			return DateTime.Parse(val, culture,(System.Globalization.DateTimeStyles)15);
 		}
-	};
+	}
 }
 
 

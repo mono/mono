@@ -39,5 +39,5 @@ namespace Microsoft.VisualBasic.CompilerServices {
 	[StructLayout(LayoutKind.Auto)] 
 	[MonoTODO("What should it do?")]
 	sealed public class StandardModuleAttribute : Attribute {
-	};
+	}
 }

@@ -75,5 +75,5 @@ namespace Microsoft.VisualBasic.CompilerServices
                         
 			return System.Convert.ToInt32(Value);
 		}
-	};
+	}
 }

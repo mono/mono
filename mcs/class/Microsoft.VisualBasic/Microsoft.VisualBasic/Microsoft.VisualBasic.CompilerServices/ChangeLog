@@ -1,3 +1,15 @@
+2005-02-15  Duncan Mak  <duncan@novell.com>
+
+	* Bytetype.cs, StaticLocalInitFlags.cs:
+	* StandardModuleAttribute.cs:
+	* OptionTextAttribute.cs:
+	* OptionCompareAttribute.cs:
+	* IvbHost.cs, IntegerType.cs:
+	* IncompleteInitialization.cs
+	* HostServices.cs, DecimalType.cs:
+	* DateType.cs: Removed extraneous semicolon. Spotted by Dennis
+	Hayes <denisraytek@yahoo.com>.
+
 2004-11-07  Jambunathan K  <kjambunathan@novell.com>
 	* LateBinding.cs (LateGet, LateSet): Ported the missing pieces
 	from Mainsoft's codebase.
