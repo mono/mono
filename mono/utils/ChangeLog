@@ -1,3 +1,7 @@
+2004-07-09  Ben Maurer  <bmaurer@ximain.com>
+	
+	* mono-hash.c: register gc roots
+
 2004-07-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mono-logger.h mono-logger.c: Added AOT component.
