@@ -232,7 +232,6 @@ namespace Mono.CSharp {
 			// Now, we have to extract the interfaces implements by our parents, and
 			// remove them from the implementing_ifaces array.
 			//
-			int removed = 0;
 			for (Type t = type_builder.BaseType; t != null; t = t.BaseType){
 				Type [] base_ifaces = t.GetInterfaces ();
 					

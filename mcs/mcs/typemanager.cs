@@ -720,6 +720,7 @@ public class TypeManager {
 		}
 	}
 	
+#if false
 	public static void GetAllTypes ()
 	{
 		Hashtable namespaces = new Hashtable ();
@@ -734,7 +735,7 @@ public class TypeManager {
 			}
 		}
 	}
-
+#endif
 	
 	/// <summary>
 	///   Returns the C# name of a type if possible, or the full type name otherwise

@@ -562,8 +562,6 @@ namespace Mono.CSharp
 		
 		void hex_digits (int c)
 		{
-			int d;
-
 			if (c != -1)
 				number_builder [number_pos++] = (char) c;
 			
