@@ -15,8 +15,7 @@ using System.Runtime.CompilerServices;
 namespace System
 {
 
-	[MonoTODO("This should implement IList and IEnumerable too")]
-	public abstract class Array : ICloneable, ICollection
+	public abstract class Array : ICloneable, ICollection, IList, IEnumerable
 	{
 		// Constructor		
 		protected Array ()
@@ -45,6 +44,66 @@ namespace System
 			{
 				return this.GetRank ();
 			}
+		}
+
+		// IList interface
+		public object this [int index] {
+			get {
+				return GetValueImpl (index);
+			} 
+			set {
+				SetValueImpl (value, index);
+			}
+		}
+
+		int IList.Add (object value) {
+			throw new NotSupportedException ();
+		}
+
+		void IList.Clear () {
+			Array.Clear (this, this.GetLowerBound(0), this.Length);
+		}
+
+		bool IList.Contains (object value) {
+			int length = this.Length;
+			for (int i = 0; i < length; i++) {
+				if (value.Equals (this.GetValueImpl (i)))
+					return true;
+			}
+			return false;
+		}
+
+		int IList.IndexOf (object value) {
+			if (this.Rank > 1)
+				throw new RankException ();
+
+			int length = this.Length;
+			for (int i = 0; i < length; i++) {
+				if (value.Equals (this.GetValueImpl (i)))
+					// array index may not be zero-based.
+					// use lower bound
+					return i + this.GetLowerBound (0);
+			}
+
+			int retVal;
+			unchecked {
+				// lower bound may be MinValue
+				retVal = this.GetLowerBound (0) - 1;
+			}
+
+			return retVal;
+		}
+
+		void IList.Insert (int index, object value) {
+			throw new NotSupportedException ();
+		}
+
+		void IList.Remove (object value) {
+			throw new NotSupportedException ();
+		}
+
+		void IList.RemoveAt (int index) {
+			throw new NotSupportedException ();
 		}
 
 		// InternalCall Methods
@@ -113,11 +172,9 @@ namespace System
 			}
 		}
 
-		[MonoTODO]
 		public virtual IEnumerator GetEnumerator ()
 		{
-			// FIXME
-			return null;
+			return new SimpleEnumerator(this);
 		}
 
 		public int GetUpperBound (int dimension)
@@ -657,6 +714,51 @@ namespace System
 				throw new ArgumentOutOfRangeException ();
 
 			Copy (this, this.GetLowerBound(0), array, index, this.GetLength (0));
+		}
+
+		internal class SimpleEnumerator : IEnumerator {
+			Array enumeratee;
+			int currentpos;
+			int length;
+
+			public SimpleEnumerator (Array arrayToEnumerate) {
+				this.enumeratee = arrayToEnumerate;
+				this.currentpos = -1;
+				this.length = arrayToEnumerate.Length;
+			}
+
+			public object Current {
+				get {
+			 		// Exception messages based on MS implementation
+					if (currentpos < 0 ) {
+						throw new InvalidOperationException
+							("Enumeration has not started");
+					}
+					if  (currentpos >= length) {
+						throw new InvalidOperationException
+							("Enumeration has already ended");
+					}
+					// Current should not increase the position. So no ++ over here.
+					return enumeratee.GetValueImpl(currentpos);
+				}
+			}
+
+			public bool MoveNext() {
+				//The docs say Current should throw an exception if last
+				//call to MoveNext returned false. This means currentpos
+				//should be set to length when returning false.
+					if (currentpos < length) {
+						currentpos++;
+					}
+				if(currentpos < length)
+					return true;
+				else
+					return false;
+			}
+
+			public void Reset() {
+				currentpos= -1;
+			}
 		}
 	}
 }

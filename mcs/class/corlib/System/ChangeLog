@@ -1,3 +1,7 @@
+2002-03-15  Nick Drochak  <ndrochak@gol.com>
+
+	* Array.cs: Added IList and IEnumerable. 
+
 2002-03-14  Miguel de Icaza  <miguel@ximian.com>
 
 	* UInt64.cs, UInt32.cs, UInt16.cs: Mark public parse methods as
