@@ -1,3 +1,8 @@
+2004-10-22  Chris Toshok  <toshok@ximian.com>
+
+	* mono-debug-debugger.c (do_write_class): handle .cctors too, and
+	don't hide private methods.
+
 2004-10-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* icall.c: Allows the runtime to "share" (when known) the public key
