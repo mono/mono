@@ -1,4 +1,9 @@
 
+Wed Apr 30 15:16:02 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, basic-calls.cs: when inlining, save arguments to locals according 
+	to the type in the method signature (fixes bug#42134).
+
 Wed Apr 30 12:38:44 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: when inlining, check this is not null only when needed (bug #42135).
