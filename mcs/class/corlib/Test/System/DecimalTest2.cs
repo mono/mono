@@ -41,6 +41,7 @@ namespace MonoTests.System
     /// </summary>
     public class DecimalTest2 : TestCase
     {
+	public DecimalTest2() : base ("MonoTests.System.DecimalTest2 testcase") {}
         public DecimalTest2(string name) : base(name) {}
 
         public static ITest Suite 

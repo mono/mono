@@ -21,17 +21,20 @@ namespace MonoTests.System {
                         {
                                 TestSuite suite =  new TestSuite();
 
-				// ArrayTest: crashes
+				suite.AddTest(ArrayTest.Suite);
 				suite.AddTest(BitConverterTest.Suite);
 				suite.AddTest(BooleanTest.Suite);
                                 suite.AddTest(ByteTest.Suite);
 				// CharTest: crashes
                                 suite.AddTest(ConsoleTest.Suite);
 				// EnumTest: crashes
+				// DecimalTest: crashes
+				// DecimalTest2: crashes
 				suite.AddTest(GuidTest.Suite);
 				// Int16Test: file codegen-x86.c: line 1489
                                 suite.AddTest(Int32Test.Suite);
 				// Int64Test: deadly NumberOverflow
+				// MathTest: crashes
                                 suite.AddTest(ObjectTest.Suite);
 				// RandomTest: tree mismatch
                                 suite.AddTest(ResolveEventArgsTest.Suite);

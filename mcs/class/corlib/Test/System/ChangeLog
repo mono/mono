@@ -1,4 +1,14 @@
+2002-03-01  Martin Baulig  <martin@gnome.org>
+
+	* ArrayTest.cs: Commented out a few bits which are not yet implemented and
+	marked them with FIXME's.
+
+	* DecimalTest.cs, DecimalTest2.cs: Added zero-arg constructors.
+
+	* MartinTests.cs: Enabled ArrayTests.cs.
+
 2002-03-01  Duco Fijma <duco@lorentz.xs4all.nl>
+
 	* BitConverterTest.cs: completed test cases
 
 2002-03-01  Martin Baulig  <martin@gnome.org>
