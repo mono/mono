@@ -1,5 +1,10 @@
 2003-01-29  Dick Porter  <dick@ximian.com>
 
+	* threads.c: No need for the fake_thread kludge now that Thread
+	doesn't run a class constructor
+	
+2003-01-29  Dick Porter  <dick@ximian.com>
+
 	* threads.c: Use g_direct_hash instead of the rather bogus
 	g_int_hash
 
