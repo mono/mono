@@ -81,28 +81,6 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Pop);
 		}
 	}
-
-	public class ParenthesizedExpression : Expression
-	{
-		public Expression Expr;
-
-		public ParenthesizedExpression (Expression expr, Location loc)
-		{
-			this.Expr = expr;
-			this.loc = loc;
-		}
-
-		public override Expression DoResolve (EmitContext ec)
-		{
-			Expr = Expr.Resolve (ec);
-			return Expr;
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-			throw new Exception ("Should not happen");
-		}
-	}
 	
 	/// <summary>
 	///   Unary expressions.  
@@ -2691,18 +2669,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			if ((oper == Operator.Subtraction) && (left is ParenthesizedExpression)) {
-				left = ((ParenthesizedExpression) left).Expr;
-				left = left.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.Type);
-				if (left == null)
-					return null;
-
-				if (left.eclass == ExprClass.Type) {
-					Error (75, "Casting a negative value needs to have the value in parentheses.");
-					return null;
-				}
-			} else
-				left = left.Resolve (ec);
+			left = left.Resolve (ec);
 			right = right.Resolve (ec);
 
 			if (left == null || right == null)
