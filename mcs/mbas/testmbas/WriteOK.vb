@@ -1,3 +1,5 @@
+Imports System
+
 Module WriteOK
 
     Sub Main()

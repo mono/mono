@@ -1,6 +1,6 @@
 VERSION=0.13.99
 
-DIRS=jay nant mcs class nunit nunit20 monoresgen ilasm tools
+DIRS=jay nant mcs class mbas nunit nunit20 monoresgen ilasm tools
 INSTALL= /usr/bin/install
 
 all: 
@@ -96,6 +96,7 @@ MONO_WIN_INSTALL_LIB=	\
 
 MONO_WIN_INSTALL_BIN=	\
 	mcs/mcs.exe	\
+	mbas/mbas.exe	\
 	nant/NAnt.exe	\
 	nunit/NUnitConsole.exe	\
 	nunit/NUnitConsole_mono.exe	\

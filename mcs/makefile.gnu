@@ -1,4 +1,4 @@
-DIRS=jay mcs class nunit nunit20 monoresgen ilasm tools
+DIRS=jay mcs class mbas nunit nunit20 monoresgen ilasm tools
 DIST=monocharge-`date -u +%Y%m%d`
 MCS = mcs
 INSTALL=/usr/bin/install

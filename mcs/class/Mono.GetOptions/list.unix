@@ -1,6 +1,7 @@
 AssemblyInfo.cs
 ArgumentProcessorAttribute.cs
 AboutAttribute.cs
+ArgumentProcessorAttribute.cs
 AuthorAttribute.cs
 OptionAttribute.cs
 UsageComplementAttribute.cs
