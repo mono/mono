@@ -13,7 +13,7 @@ namespace I18N.CJK
 	// and forth between JIS character sets and Unicode.  It uses
 	// several large tables to do this, some of which are stored in
 	// the resource section of the assembly for efficient access.
-	internal sealed class DbcsConvert
+	internal class DbcsConvert
 	{
 		// Public access to the conversion tables.
 		public byte[] n2u;

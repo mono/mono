@@ -11,9 +11,9 @@ using I18N.Common;
 
 namespace I18N.CJK
 {
-	public class DbcsEncoding : Encoding
+	internal class DbcsEncoding : Encoding
 	{
-		private DbcsConvert convert;
+		internal DbcsConvert convert;
 		
 		public DbcsEncoding(int codePage) : base(codePage) {}
 		
@@ -127,10 +127,10 @@ namespace I18N.CJK
 		}
 		
 		// Decoder that handles a rolling state.
-		private sealed class DbcsDecoder : Decoder
+		internal class DbcsDecoder : Decoder
 		{
 			private DbcsConvert convert;
-			private int lastByte;
+			internal int lastByte;
 			
 			// Constructor.
 			public DbcsDecoder(DbcsConvert convert)
