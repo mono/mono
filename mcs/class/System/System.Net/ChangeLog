@@ -1,7 +1,7 @@
 2004-02-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DigestClient.cs: fix quote handling. Reordered attributes in response.
-	Fixed typo (QOP->CNonce).
+	Fixed typo (QOP->CNonce). Now Digest works with apache2.
 
 2004-02-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
