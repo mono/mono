@@ -1,3 +1,8 @@
+2003-04-03  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Path.cs : ChangeExtension() does not remove dot(.) when extension is
+	  an empty string.
+
 2004-04-01  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* FileSystemInfo.cs: Added InternalRefresh, a virtual method that derived

@@ -31,23 +31,28 @@ namespace System.IO
 		private static readonly char[] PathSeparatorChars;
 		private static bool dirEqualsVolume;
 
-		private Path () {}
+		private Path ()
+		{
+		}
 
 		// class methods
 		public static string ChangeExtension (string path, string extension)
 		{
 			if (path == null)
-			{
 				return null;
-			}
 
 			if (path.IndexOfAny (InvalidPathChars) != -1)
 				throw new ArgumentException ("Illegal characters in path", "path");
 
 			int iExt = findExtension (path);
 
-			if (extension != null && path.Length != 0) {
-				if (extension [0] != '.')
+			if (extension == null)
+				return iExt < 0 ? path : path.Substring (0, iExt);
+			else if (extension == String.Empty)
+				return iExt < 0 ? path + '.' : path.Substring (0, iExt + 1);
+
+			else if (path.Length != 0) {
+				if (extension.Length > 0 && extension [0] != '.')
 					extension = "." + extension;
 			} else
 				extension = String.Empty;
