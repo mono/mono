@@ -395,7 +395,13 @@ namespace System {
 
 		public static byte ToByte (string value, int fromBase)
 		{
-			return (byte) ConvertFromBase (value, fromBase);
+
+			int retVal = ConvertFromBase (value, fromBase);
+
+			if (retVal < (int) Byte.MinValue || retVal > (int) Byte.MaxValue)
+				throw new OverflowException ();
+			else
+				return (byte) retVal;
 		}
 
 		[CLSCompliant (false)]
@@ -1382,7 +1388,12 @@ namespace System {
 		[CLSCompliant (false)]
 		public static sbyte ToSByte (string value, int fromBase)
 		{
-			return (sbyte) ConvertFromBase (value, fromBase);
+			int retVal = ConvertFromBase (value, fromBase);
+
+			if (retVal < (int) SByte.MinValue || retVal > (int) SByte.MaxValue)
+				throw new OverflowException ();
+			else
+				return (sbyte) retVal;
 		}
 		
 		[CLSCompliant (false)]
@@ -2240,15 +2251,25 @@ namespace System {
 		{
 			if (NotValidBase (fromBase))
 				throw new ArgumentException ("fromBase is not valid.");
+
 			
+			int chars = 0;
 			int result = 0;
 
 			foreach (char c in value) {
-				if (Char.IsLetter (c))
+				if (Char.IsLetter (c)) {
 					result = (fromBase) * result + c - 'a' + 10;
-				else
+					chars ++;
+				} else if (Char.IsNumber (c)) {
 					result = (fromBase) * result + c - '0';
+					chars ++;
+				} else
+					throw new FormatException ("This is an invalid string: " + value);
 			}
+
+			if (chars == 0)
+				throw new FormatException ("Could not find any digits.");
+			
 			return result;
 		}
 

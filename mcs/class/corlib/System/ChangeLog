@@ -3,7 +3,11 @@
 	* Convert.cs (ToString): Fixed the ToString methods. Previously I had
 	mixed up the two code paths, one for converting to a specific base
 	(this case), another from converting from a foreign base to base10
-	(used by ToInt16|32|64 (string, int)).
+	(used by ToInt16|32|64 (string, int)). This fixes bug 25068.
+
+	* Convert.cs (ToByte)
+	(ToSByte): Fixed bug 25074. Added more bits to ConvertFromBase so
+	that we won't confuse FormatException with OverflowException.
 
 2002-05-22  Lawrence Pit  <loz@cable.a2000.nl>
 
