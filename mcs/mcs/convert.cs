@@ -91,8 +91,10 @@ namespace Mono.CSharp {
 					if (TypeManager.ImplementsInterface (expr_type, target_type)){
 						if (expr_type.IsClass)
 							return new EmptyCast (expr, target_type);
-						else if (expr_type.IsValueType)
+						else if (expr_type.IsValueType || expr_type == TypeManager.enum_type)
 							return new BoxedCast (expr, target_type);
+						else 
+							throw new Exception (String.Format ("ImplicitReferenceConversion: we should be able to perform this cast {0} to {1}", expr_type, target_type));
 					}
 				}
 
@@ -163,9 +165,9 @@ namespace Mono.CSharp {
 				if (expr_type.IsClass || expr_type.IsValueType ||
 				    expr_type.IsInterface || expr_type == TypeManager.enum_type)
 					return true;
-			} else if (expr_type.IsSubclassOf (target_type)) {
+			} else if (expr_type.IsSubclassOf (target_type)) 
 				return true;
-			} else {
+			else {
 				// Please remember that all code below actually comes
 				// from ImplicitReferenceConversion so make sure code remains in sync
 				
@@ -1626,7 +1628,6 @@ namespace Mono.CSharp {
 				return new UnboxCast (expr, target_type);
 			}
 
-			
 			ne = ExplicitReferenceConversion (expr, target_type);
 			if (ne != null)
 				return ne;

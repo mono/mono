@@ -1,5 +1,9 @@
 2003-11-12  Miguel de Icaza  <miguel@ximian.com>
 
+	* convert.cs (ImplicitReferenceConversion): We were missing a case
+	(System.Enum are not value types or class types, so we need to
+	classify them separatedly).
+
 	* driver.cs: We do not support error 2007.
 
 2003-11-12 Jackson Harper <jackson@ximian.com>
