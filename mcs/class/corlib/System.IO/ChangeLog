@@ -1,3 +1,9 @@
+2003-10-20  Miguel de Icaza  <miguel@ximian.com>
+
+	* FileStream.cs public FileStream (string name, FileMode mode)
+	constructor: If we pass FileMode.Append, we can not pass
+	FileAccess.ReadWrite.  This fixes bug 44959
+
 2003-09-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* BufferedStream.cs (Write): Use CanWrite in Write.  Patch from

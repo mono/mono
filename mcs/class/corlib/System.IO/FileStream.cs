@@ -63,7 +63,7 @@ namespace System.IO
 		// construct from filename
 		
 		public FileStream (string name, FileMode mode)
-			: this (name, mode, FileAccess.ReadWrite, FileShare.ReadWrite, DefaultBufferSize, false) { }
+			: this (name, mode, (mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite), FileShare.Read, DefaultBufferSize, false) { }
 
 		public FileStream (string name, FileMode mode, FileAccess access)
 			: this (name, mode, access, FileShare.ReadWrite, DefaultBufferSize, false) { }
