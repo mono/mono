@@ -1,3 +1,7 @@
+2004-11-25  Marek Safar  <marek.safar@seznam.cz>
+
+	* cfold.cs (BinaryFold): Add addition for DecimalConstant.
+
 2004-11-24  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-parser.jay: Use verbosity accordingly. 
