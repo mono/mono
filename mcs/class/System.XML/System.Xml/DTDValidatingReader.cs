@@ -426,6 +426,7 @@ namespace Mono.Xml
 				if (attList != null) {
 					// check attributes
 					ValidateAttributes (attList);
+					currentAttribute = null;
 				} else {
 					if (reader.HasAttributes) {
 						HandleError (String.Format (
@@ -561,31 +562,47 @@ namespace Mono.Xml
 				throw ex;
 		}
 
+		Stack attributeValueEntityStack = new Stack ();
+
 		[MonoTODO ("Resolve recursive attribute values.")]
 		private void ValidateAttributes (DTDAttListDeclaration decl)
 		{
 			while (reader.MoveToNextAttribute ()) {
 				string attrName = reader.Name;
+				this.currentAttribute = attrName;
 				attributes.Add (attrName);
 				attributeLocalNames.Add (attrName, reader.LocalName);
 				attributeNamespaces.Add (attrName, reader.NamespaceURI);
 				bool hasError = false;
-				while (reader.ReadAttributeValue ()) {
+				XmlReader targetReader = reader;
+				while (attributeValueEntityStack.Count >= 0) {
+					if (!targetReader.ReadAttributeValue ()) {
+						if (attributeValueEntityStack.Count > 0) {
+							targetReader = attributeValueEntityStack.Pop () as XmlReader;
+							continue;
+						} else
+							break;
+					}
 					// FIXME: Should recursively resolve entities.
-					switch (reader.NodeType) {
+					switch (targetReader.NodeType) {
 					case XmlNodeType.EntityReference:
-						DTDEntityDeclaration edecl = DTD.EntityDecls [reader.Name];
+						DTDEntityDeclaration edecl = DTD.EntityDecls [targetReader.Name];
 						if (edecl == null) {
-							HandleError (String.Format ("Referenced entity {0} is not declared.", reader.Name),
+							HandleError (String.Format ("Referenced entity {0} is not declared.", targetReader.Name),
 								XmlSeverityType.Error);
 							hasError = true;
-						} else
-							valueBuilder.Append (edecl.EntityValue);
+						} else {
+//							valueBuilder.Append (edecl.EntityValue);
+							XmlTextReader etr = new XmlTextReader (edecl.EntityValue, XmlNodeType.Attribute, ParserContext);
+							attributeValueEntityStack.Push (targetReader);
+							targetReader = etr;
+							continue;
+						}
 						break;
 					case XmlNodeType.EndEntity:
 						break;
 					default:
-						valueBuilder.Append (reader.Value);
+						valueBuilder.Append (targetReader.Value);
 						break;
 					}
 				}
@@ -615,9 +632,12 @@ namespace Mono.Xml
 
 					// check type constraint
 					string normalized = null;
+					if (def.Datatype != null)
+						normalized = FilterNormalization (def.Name, attrValue);
+					else
+						normalized = attrValue;
 					switch (def.Datatype.TokenizedType) {
 					case XmlTokenizedType.ID:
-						normalized = FilterNormalization (def.Name, attrValue);
 						if (!XmlChar.IsName (normalized))
 							HandleError (String.Format ("ID attribute value must match the creation rule Name: {0}", attrValue),
 								XmlSeverityType.Error);
@@ -631,7 +651,6 @@ namespace Mono.Xml
 						}
 						break;
 					case XmlTokenizedType.IDREF:
-						normalized = FilterNormalization (def.Name, attrValue);
 						if (!XmlChar.IsName (normalized))
 							HandleError (String.Format ("IDREF attribute value must match the creation rule Name: {0}", attrValue),
 								XmlSeverityType.Error);
@@ -639,43 +658,44 @@ namespace Mono.Xml
 							missingIDReferences.Add (normalized);
 						break;
 					case XmlTokenizedType.IDREFS:
-						string [] idrefs = def.Datatype.ParseValue (attrValue, NameTable, null) as string [];
+						string [] idrefs = def.Datatype.ParseValue (normalized, NameTable, null) as string [];
 						foreach (string idref in idrefs) {
-							normalized = FilterNormalization (def.Name, idref);
-							if (!XmlChar.IsName (normalized))
+							string each = FilterNormalization (def.Name, idref);
+							if (!XmlChar.IsName (each))
 								HandleError (String.Format ("Each ID in IDREFS attribute value must match the creation rule Name: {0}", attrValue),
 									XmlSeverityType.Error);
-							if (!idList.Contains (normalized))
-								missingIDReferences.Add (normalized);
+							if (!idList.Contains (each))
+								missingIDReferences.Add (each);
 						}
 						break;
 					case XmlTokenizedType.ENTITY:
-						normalized = FilterNormalization (reader.Name, attrValue);
 						if (dtd.EntityDecls [normalized] == null)
 							HandleError (String.Format ("Reference to undeclared entity was found in attribute {0}.", reader.Name),
 								XmlSeverityType.Error);
 						break;
 					case XmlTokenizedType.ENTITIES:
-						string [] entrefs = def.Datatype.ParseValue (attrValue, NameTable, null) as string [];
-						foreach (string entref in entrefs)
-							normalized = FilterNormalization (reader.Name, entref);
-							if (dtd.EntityDecls [normalized] == null)
+						string [] entrefs = def.Datatype.ParseValue (normalized, NameTable, null) as string [];
+						foreach (string entref in entrefs) {
+							if (dtd.EntityDecls [ FilterNormalization (reader.Name, entref) ] == null)
 								HandleError (String.Format ("Reference to undeclared entity was found in attribute {0}.", reader.Name),
 									XmlSeverityType.Error);
+						}
 						break;
 					case XmlTokenizedType.NMTOKEN:
-						if (!XmlChar.IsNmToken (FilterNormalization (def.Name, attrValue)))
+						if (!XmlChar.IsNmToken (normalized))
 							HandleError (String.Format ("NMTOKEN attribute value must match the creation rule NMTOKEN. Name={0}", reader.Name),
 								XmlSeverityType.Error);
 						break;
 					case XmlTokenizedType.NMTOKENS:
-						string [] tokens = def.Datatype.ParseValue (attrValue, NameTable, null) as string [];
+						string [] tokens = def.Datatype.ParseValue (normalized, NameTable, null) as string [];
 						foreach (string token in tokens)
 							if (!XmlChar.IsNmToken (FilterNormalization (def.Name, token)))
 								HandleError (String.Format ("Name Token in NMTOKENS attribute value must match the creation rule NMTOKEN. Name={0}", reader.Name),
 									XmlSeverityType.Error);
 						break;
 					}
+					if (isStandalone && !def.IsInternalSubset && attrValue != normalized)
+						HandleError ("In standalone document, attribute value characters must not be checked against external definition.", XmlSeverityType.Error);
 
 					if (def.OccurenceType == DTDAttributeOccurenceType.Fixed &&
 							attrValue != def.DefaultValue) {
@@ -697,6 +717,8 @@ namespace Mono.Xml
 						// FIXME: validation recovery code here.
 					}
 					else if (def.DefaultValue != null) {
+						if (this.isStandalone && !def.IsInternalSubset)
+							HandleError ("In standalone document, external default value definition must not be applied.", XmlSeverityType.Error);
 						switch (validatingReader.ValidationType) {
 						case ValidationType.Auto:
 							if (validatingReader.Schemas.Count == 0)
@@ -779,7 +801,7 @@ namespace Mono.Xml
 				nextEntityReader = new XmlTextReader (replacementText, xmlReaderNodeType, ParserContext);
 			}
 			nextEntityReader.XmlResolver = resolver;
-			nextEntityReader.MaybeTextDecl = true;
+			nextEntityReader.SkipTextDeclaration ();
 		}
 
 		public override int AttributeCount {

@@ -198,7 +198,7 @@ namespace System.Xml
 		{
 			get {
 				if (useProceedingLineInfo)
-					return currentInput.LineNumber;
+					return line;
 				else
 					return cursorToken.LineNumber;
 			}
@@ -208,7 +208,7 @@ namespace System.Xml
 		{
 			get {
 				if (useProceedingLineInfo)
-					return currentInput.LinePosition;
+					return column;
 				else
 					return cursorToken.LinePosition;
 			}
@@ -304,9 +304,6 @@ namespace System.Xml
 		public override void Close ()
 		{
 			readState = ReadState.Closed;
-			foreach (XmlParserInput input in parserInputStack.ToArray ())
-				input.Close ();
-			this.currentInput.Close ();
 
 			cursorToken.Clear ();
 			currentToken.Clear ();
@@ -356,10 +353,28 @@ namespace System.Xml
 			return attributeTokens [idx].Value;
 		}
 
-		[MonoTODO]
 		public TextReader GetRemainder ()
 		{
-			throw new NotImplementedException ();
+			StringBuilder sb = null;
+			if (this.hasPeekChars) {
+				sb = new StringBuilder ();
+				int end = 0;
+				for (; end < 6; end++)
+					if (peekChars [end] <= 0)
+						break;
+				sb.Append (peekChars, 0, end);
+			}
+			if (has_peek && peek_char > 0) {
+				if (sb != null)
+					sb.Append ((char) peek_char);
+				else
+					return new StringReader (((char) peek_char) + reader.ReadToEnd ());
+			}
+			// As long as less memory consumptive...
+			if (sb != null)
+				return new StringReader (sb.ToString () + reader.ReadToEnd ());
+			else
+				return new StringReader (reader.ReadToEnd ());
 		}
 
 		bool IXmlLineInfo.HasLineInfo ()
@@ -459,8 +474,8 @@ namespace System.Xml
 
 			bool more = false;
 			readState = ReadState.Interactive;
-			currentLinkedNodeLineNumber = currentInput.LineNumber;
-			currentLinkedNodeLinePosition = currentInput.LinePosition;
+			currentLinkedNodeLineNumber = line;
+			currentLinkedNodeLinePosition = column;
 			useProceedingLineInfo = true;
 
 			cursorToken = currentToken;
@@ -473,12 +488,15 @@ namespace System.Xml
 				++depth;
 			depthUp = false;
 
+			if (shouldSkipUntilEndTag) {
+				shouldSkipUntilEndTag = false;
+				return ReadUntilEndTag ();
+			}
+
 			more = ReadContent ();
 
 			if (depth == 0 && !allowMultipleRoot && (IsEmptyElement || NodeType == XmlNodeType.EndElement))
 				currentState = XmlNodeType.EndElement;
-			if (maybeTextDecl != 0)
-				maybeTextDecl--;
 
 			if (!more && startNodeType == XmlNodeType.Document && currentState != XmlNodeType.EndElement)
 				throw new XmlException ("Document element did not appear.");
@@ -508,22 +526,78 @@ namespace System.Xml
 				return false;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("It looks to keep incomplete byte block.")]
 		public int ReadBase64 (byte [] buffer, int offset, int length)
 		{
-			throw new NotImplementedException ();
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException ("offset", offset, "Offset must be non-negative integer.");
+			else if (length < 0)
+				throw new ArgumentOutOfRangeException ("length", length, "Length must be non-negative integer.");
+			else if (buffer.Length < offset + length)
+				throw new ArgumentOutOfRangeException ("buffer length is smaller than the sum of offset and length.");
+
+			int max = (int) System.Math.Ceiling (4.0 / 3 * length);
+			char [] chars = new char [max];
+			int charsLength = ReadChars (chars, 0, max);
+
+			int bufIndex = offset;
+			for (int i = 0; i < charsLength - 3; i += 4) {
+				buffer [bufIndex] = (byte) (GetBase64Byte (chars [i]) << 2);
+				if (i + 1 == charsLength)
+					break;
+				byte b = GetBase64Byte (chars [i + 1]);
+				buffer [bufIndex] += (byte) (b >> 4);
+				bufIndex++;
+				buffer [bufIndex] = (byte) ((b & 0xf) << 4);
+				if (i + 2 == charsLength)
+					break;
+				b = GetBase64Byte (chars [i + 2]);
+				buffer [bufIndex] += (byte) (b >> 2);
+				bufIndex++;
+				buffer [bufIndex] = (byte) ((b & 3) << 6);
+				if (i + 3 == charsLength)
+					break;
+				buffer [bufIndex] += GetBase64Byte (chars [i + 3]);
+				bufIndex++;
+			}
+			return (int) System.Math.Ceiling (4.0 / 3 * max);
 		}
 
-		[MonoTODO]
 		public int ReadBinHex (byte [] buffer, int offset, int length)
 		{
-			throw new NotImplementedException ();
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException ("offset", offset, "Offset must be non-negative integer.");
+			else if (length < 0)
+				throw new ArgumentOutOfRangeException ("length", length, "Length must be non-negative integer.");
+			else if (buffer.Length < offset + length)
+				throw new ArgumentOutOfRangeException ("buffer length is smaller than the sum of offset and length.");
+
+			char [] chars = new char [length * 2];
+			int charsLength = ReadChars (chars, 0, length * 2);
+			int bufIndex = offset;
+			for (int i = 0; i < charsLength - 1; i += 2) {
+				buffer [bufIndex] = (chars [i] > '9' ?
+						(byte) (chars [i] - 'A' + 10) :
+						(byte) (chars [i] - '0'));
+				buffer [bufIndex] <<= 4;
+				buffer [bufIndex] += chars [i + 1] > '9' ?
+						(byte) (chars [i + 1] - 'A' + 10) : 
+						(byte) (chars [i + 1] - '0');
+				bufIndex++;
+			}
+			if (charsLength %2 != 0)
+				buffer [bufIndex++] = (byte)
+					((chars [charsLength - 1] > '9' ?
+						(byte) (chars [charsLength - 1] - 'A' + 10) :
+						(byte) (chars [charsLength - 1] - '0'))
+					<< 4);
+
+			return bufIndex - offset;
 		}
 
-		[MonoTODO]
 		public int ReadChars (char [] buffer, int offset, int length)
 		{
-			throw new NotImplementedException ();
+			return ReadCharsInternal (buffer, offset, length);
 		}
 
 #if NET_1_0
@@ -618,10 +692,6 @@ namespace System.Xml
 		// Parsed DTD Objects
 		internal DTDObjectModel DTD {
 			get { return parserContext.Dtd; }
-		}
-
-		internal bool MaybeTextDecl {
-			set { if (value) this.maybeTextDecl = 2; }
 		}
 		#endregion
 
@@ -786,8 +856,6 @@ namespace System.Xml
 
 		private XmlParserContext parserContext;
 
-		private XmlParserInput currentInput;
-		private Stack parserInputStack;
 		private ReadState readState;
 
 		private int depth;
@@ -813,20 +881,23 @@ namespace System.Xml
 
 		private StringBuilder valueBuffer;
 
+		private TextReader reader;
+		private bool can_seek;
+		private bool has_peek;
+		private int peek_char;
+		private bool hasPeekChars;
+		private char [] peekChars;
+		private int peekCharsIndex;
+
+		private int line;
+		private int column;
+		private StringBuilder currentTag;
+
 		private int currentLinkedNodeLineNumber;
 		private int currentLinkedNodeLinePosition;
 		private bool useProceedingLineInfo;
 
 		// A buffer for ReadContent for ReadOuterXml
-		private StringBuilder currentTag {
-			get {
-				return currentInput.CurrentMarkup;
-			}
-		}
-
-		// Parameter entity placeholder
-		private Hashtable parameterEntities;
-		private int dtdIncludeSect;
 
 		private XmlNodeType startNodeType;
 		// State machine attribute.
@@ -835,7 +906,6 @@ namespace System.Xml
 		//	Element: inside document element
 		//	EndElement: after document element
 		private XmlNodeType currentState;
-		private int maybeTextDecl;
 
 		private XmlResolver resolver = new XmlUrlResolver ();
 
@@ -844,18 +914,26 @@ namespace System.Xml
 		private WhitespaceHandling whitespaceHandling = WhitespaceHandling.All;
 		private bool normalization = false;
 
+		// For ReadChars()/ReadBase64()/ReadBinHex()
+		private bool shouldSkipUntilEndTag;
+
 		private void Init ()
 		{
 			readState = ReadState.Initial;
 			currentState = XmlNodeType.None;
-			maybeTextDecl = 0;
 			allowMultipleRoot = false;
 
 			depth = 0;
 			depthUp = false;
 
+			currentTag = new StringBuilder ();
+			peek_char = 0;
+			has_peek = false;
+			can_seek = false;
+			hasPeekChars = false;
+			peekChars = new char [6];
+
 			popScope = false;
-			parserInputStack = new Stack ();
 			elementStack = new Stack();
 			currentAttribute = -1;
 			currentAttributeValue = -1;
@@ -868,7 +946,6 @@ namespace System.Xml
 			nameCapacity = initialNameCapacity;
 			
 			valueBuffer = new StringBuilder (512);
-			parameterEntities = new Hashtable ();
 
 			currentToken = new XmlTokenInfo (this);
 			cursorToken = currentToken;
@@ -908,7 +985,7 @@ namespace System.Xml
 				throw new XmlException (String.Format ("NodeType {0} is not allowed to create XmlTextReader.", fragType));
 			}
 
-			this.currentInput = new XmlParserInput (fragment, url);
+			reader = fragment;
 		}
 
 		// Use this method rather than setting the properties
@@ -970,6 +1047,7 @@ namespace System.Xml
 			currentAttributeValue = -1;
 		}
 
+		/*
 		private int PeekChar ()
 		{
 			return currentInput.PeekChar ();
@@ -978,6 +1056,47 @@ namespace System.Xml
 		private int ReadChar ()
 		{
 			return currentInput.ReadChar ();
+		}
+		*/
+		public int PeekChar ()
+		{
+			if (can_seek)
+				return reader.Peek ();
+
+			if (hasPeekChars)
+				return peekChars [peekCharsIndex];
+
+			if (has_peek)
+				return peek_char;
+
+			peek_char = reader.Read ();
+			has_peek = true;
+			return peek_char;
+		}
+
+		public int ReadChar ()
+		{
+			int ch;
+
+			if (hasPeekChars) {
+				ch = peekChars [peekCharsIndex++];
+				if (peekChars [peekCharsIndex] == 0)
+					hasPeekChars = false;
+			} else if (has_peek) {
+				ch = peek_char;
+				has_peek = false;
+			} else {
+				ch = reader.Read ();
+			}
+
+			if (ch == '\n') {
+				line++;
+				column = 1;
+			} else {
+				column++;
+			}
+			currentTag.Append ((char) ch);
+			return ch;
 		}
 
 		// This should really keep track of some state so
@@ -1029,25 +1148,22 @@ namespace System.Xml
 					break;
 				}
 			}
-			if (NodeType == XmlNodeType.XmlDeclaration && maybeTextDecl == 1)
-				return ReadContent ();
 			return this.ReadState != ReadState.EndOfFile;
 		}
 
 		private void SetEntityReferenceProperties ()
 		{
-/*
-			if (resolver != null) {
-				if (DTD == null)
+			DTDEntityDeclaration decl = DTD != null ? DTD.EntityDecls [entityReferenceName] : null;
+//			if (DTD != null && resolver != null && decl == null)
+//				throw new XmlException (this as IXmlLineInfo, "Entity declaration does not exist.");
+			if (this.isStandalone)
+				if (DTD == null || decl == null || !decl.IsInternalSubset)
 					throw new XmlException (this as IXmlLineInfo,
-						"Entity reference is not allowed without document type declaration.");
-				else if((!DTD.InternalSubsetHasPEReference || isStandalone) &&
-					DTD.EntityDecls [entityReferenceName] == null)
-					throw new XmlException (this as IXmlLineInfo,
-						"Required entity declaration for '" + entityReferenceName + "' was not found.");
-				string dummy = DTD.EntityDecls [entityReferenceName].EntityValue;
-			}
-*/
+						"Standalone document must not contain any references to an non-internally declared entity.");
+			if (decl != null && decl.NotationName != null)
+				throw new XmlException (this as IXmlLineInfo,
+					"Reference to any unparsed entities is not allowed here.");
+
 			SetProperties (
 				XmlNodeType.EntityReference, // nodeType
 				entityReferenceName, // name
@@ -1392,8 +1508,8 @@ namespace System.Xml
 					throw new XmlException ("Unexpected token. Name is required here.");
 
 				IncrementAttributeToken ();
-				currentAttributeToken.LineNumber = currentInput.LineNumber;
-				currentAttributeToken.LinePosition = currentInput.LinePosition;
+				currentAttributeToken.LineNumber = line;
+				currentAttributeToken.LinePosition = column;
 
 				currentAttributeToken.Name = ReadName ();
 				SkipWhitespace ();
@@ -1477,8 +1593,8 @@ namespace System.Xml
 
 			IncrementAttributeValueToken ();
 			currentAttributeToken.ValueTokenStartIndex = currentAttributeValue;
-			currentAttributeValueToken.LineNumber = currentInput.LineNumber;
-			currentAttributeValueToken.LinePosition = currentInput.LinePosition;
+			currentAttributeValueToken.LineNumber = line;
+			currentAttributeValueToken.LinePosition = column;
 
 			bool incrementToken = false;
 			bool isNewToken = true;
@@ -1486,8 +1602,8 @@ namespace System.Xml
 			while (loop && PeekChar () != quoteChar) {
 				if (incrementToken) {
 					IncrementAttributeValueToken ();
-					currentAttributeValueToken.LineNumber = currentInput.LineNumber;
-					currentAttributeValueToken.LinePosition = currentInput.LinePosition;
+					currentAttributeValueToken.LineNumber = line;
+					currentAttributeValueToken.LinePosition = column;
 					incrementToken = false;
 					isNewToken = true;
 				}
@@ -1518,10 +1634,17 @@ namespace System.Xml
 					if (predefined == 0) {
 						DTDEntityDeclaration entDecl = 
 							DTD == null ? null : DTD.EntityDecls [entName];
-						if (entDecl != null && entDecl.SystemId != null)
-//						if (!startNodeType == XmlNodeType.Attribute && (entDecl == null || entDecl.SystemId != null))
+						if (DTD != null && resolver != null && entDecl == null)
+							throw new XmlException (this as IXmlLineInfo, "Entity declaration does not exist.");
+						if (entDecl != null && entDecl.HasExternalReference)
 							throw new XmlException (this as IXmlLineInfo,
 								"Reference to external entities is not allowed in the value of an attribute.");
+						if (isStandalone && !entDecl.IsInternalSubset)
+							throw new XmlException (this as IXmlLineInfo,
+								"Reference to external entities is not allowed in the value of an attribute.");
+						if (entDecl != null && entDecl.EntityValue.IndexOf ('<') >= 0)
+							throw new XmlException (this as IXmlLineInfo,
+								"Attribute must not contain character '<' either directly or indirectly by way of entity references.");
 						currentAttributeValueToken.Value = CreateValueString ();
 						currentAttributeValueToken.NodeType = XmlNodeType.Text;
 						if (!isNewToken)
@@ -1544,69 +1667,11 @@ namespace System.Xml
 			if (!incrementToken) {
 				currentAttributeValueToken.Value = CreateValueString ();
 				currentAttributeValueToken.NodeType = XmlNodeType.Text;
-				currentAttributeToken.ValueTokenEndIndex = currentAttributeValue;
 			}
+			currentAttributeToken.ValueTokenEndIndex = currentAttributeValue;
 
 			if (dummyQuoteChar < 0)
 				ReadChar (); // quoteChar
-		}
-
-		// The reader is positioned on the quote character.
-		// *Keeps quote char* to value to get_QuoteChar() correctly.
-		// Not it is used only for DTD.
-		private string ReadAttribute (bool isDefaultValue)
-		{
-			ClearValueBuffer ();
-
-			int quoteChar = ReadChar ();
-
-			if (quoteChar != '\'' && quoteChar != '\"')
-				throw new XmlException (this as IXmlLineInfo,"an attribute value was not quoted");
-
-			AppendValueChar (quoteChar);
-
-			while (PeekChar () != quoteChar) {
-				int ch = ReadChar ();
-
-				switch (ch)
-				{
-				case '<':
-					throw new XmlException (this as IXmlLineInfo,"attribute values cannot contain '<'");
-				case -1:
-					throw new XmlException (this as IXmlLineInfo,"unexpected end of file in an attribute value");
-/*
-				case '&':
-					if (isDefaultValue) {
-						AppendValueChar (ch);
-						break;
-					}
-					AppendValueChar (ch);
-					if (PeekChar () == '#')
-						break;
-					// Check XML 1.0 section 3.1 WFC.
-					string entName = ReadName ();
-					Expect (';');
-					if (XmlChar.GetPredefinedEntity (entName) == 0) {
-						DTDEntityDeclaration entDecl = 
-							DTD == null ? null : DTD.EntityDecls [entName];
-						if (entDecl == null || entDecl.SystemId != null)
-							throw new XmlException (this as IXmlLineInfo,
-								"Reference to external entities is not allowed in attribute value.");
-					}
-					valueBuffer.Append (entName);
-					AppendValueChar (';');
-					break;
-*/
-				default:
-					AppendValueChar (ch);
-					break;
-				}
-			}
-
-			ReadChar (); // quoteChar
-			AppendValueChar (quoteChar);
-
-			return CreateValueString ();
 		}
 
 		// The reader is positioned on the first character
@@ -1657,13 +1722,10 @@ namespace System.Xml
 		private void ReadXmlDeclaration ()
 		{
 			if (currentState != XmlNodeType.None) {
-				if (maybeTextDecl == 0)
-					throw new XmlException (this as IXmlLineInfo,
-						"XML declaration cannot appear in this state.");
+				throw new XmlException (this as IXmlLineInfo,
+					"XML declaration cannot appear in this state.");
 			}
-			// Is this required?
-			if (maybeTextDecl != 0)
-				currentState = XmlNodeType.XmlDeclaration;
+			currentState = XmlNodeType.XmlDeclaration;
 
 			ClearAttributes ();
 
@@ -1671,49 +1733,135 @@ namespace System.Xml
 			string version = GetAttribute ("version");
 
 			string message = null;
-			if (parserInputStack.Count == 0) {
-				if (maybeTextDecl == 0 && (attributeTokens [0].Name != "version" || version != "1.0"))
-					message = "Version 1.0 declaration is required in XML Declaration.";
-				else if (attributeCount > 1 &&
-						(attributeTokens [1].Name != "encoding" &&
-						attributeTokens [1].Name != "standalone"))
-					message = "Invalid Xml Declaration markup was found.";
-				else if (attributeCount > 2 && attributeTokens [2].Name != "standalone")
-					message = "Invalid Xml Declaration markup was found.";
-				string sa = GetAttribute ("standalone");
-				if (sa != null && sa != "yes" && sa != "no")
-					message = "Only 'yes' or 'no' is allowed for standalone.";
 
-				this.isStandalone = (sa == "yes");
-			} else {
-				int currentCheck = 0;
-				if (attributeTokens [0].Name == "version") {
-					if (version != "1.0")
-						message = "Version 1.0 declaration is required in Text Declaration.";
-					currentCheck = 1;
-				}
-				if (attributeCount <= currentCheck || attributeTokens [currentCheck].Name != "encoding")
-					message = "Invalid Text Declaration markup was found. encoding specification is required.";
-			}
+			if (attributeTokens [0].Name != "version" || version != "1.0")
+				message = "Version 1.0 declaration is required in XML Declaration.";
+			else if (attributeCount > 1 &&
+					(attributeTokens [1].Name != "encoding" &&
+					attributeTokens [1].Name != "standalone"))
+				message = "Invalid Xml Declaration markup was found.";
+			else if (attributeCount > 2 && attributeTokens [2].Name != "standalone")
+				message = "Invalid Xml Declaration markup was found.";
+			string sa = GetAttribute ("standalone");
+			if (sa != null && sa != "yes" && sa != "no")
+				message = "Only 'yes' or 'no' is allowed for standalone.";
+
+			this.isStandalone = (sa == "yes");
+
 			if (message != null)
 				throw new XmlException (this as IXmlLineInfo, message);
-
-			Expect ("?>");
-
-			if (maybeTextDecl != 0)
-				if (this ["standalone"] != null)
-					throw new XmlException (this as IXmlLineInfo,
-						"Invalid text declaration.");
-			if (maybeTextDecl == 2)
-				maybeTextDecl = 1;
 
 			SetProperties (
 				XmlNodeType.XmlDeclaration, // nodeType
 				"xml", // name
 				false, // isEmptyElement
-				currentInput.CurrentMarkup.ToString (6, currentInput.CurrentMarkup.Length - 6), // value
+				currentTag.ToString (6, currentTag.Length - 6), // value
 				false // clearAttributes
 			);
+
+			Expect ("?>");
+		}
+
+		internal void SkipTextDeclaration ()
+		{
+			this.currentState = XmlNodeType.Element;
+
+			if (PeekChar () != '<')
+				return;
+
+			ReadChar ();
+			peekChars [0] = '<';
+
+			if (PeekChar () != '?') {
+				hasPeekChars = true;
+				return;
+			}
+			ReadChar ();
+			peekChars [1] = '?';
+
+			for (int i = 2; i < 6; i++) {
+				if (PeekChar () == 0)
+					break;
+				else
+					peekChars [i] = (char) ReadChar ();
+			}
+			if (new string (peekChars, 2, 4) != "xml ") {
+				if (new string (peekChars, 2, 3).ToLower () == "xml") {
+					throw new XmlException (this as IXmlLineInfo,
+						"Processing instruction name must not be character sequence 'X' 'M' 'L' with case insensitivity.");
+				}
+				hasPeekChars = true;
+				return;
+			}
+
+			for (int i = 0; i < 6; i++)
+				peekChars [i] = '\0';
+
+			SkipWhitespace ();
+
+			// version decl
+			if (PeekChar () == 'v') {
+				Expect ("version");
+				SkipWhitespace ();
+				Expect ('=');
+				SkipWhitespace ();
+				int quoteChar = ReadChar ();
+				char [] expect1_0 = new char [3];
+				int versionLength = 0;
+				switch (quoteChar) {
+				case '\'':
+				case '"':
+					while (PeekChar () != quoteChar) {
+						if (PeekChar () == -1)
+							throw new XmlException (this as IXmlLineInfo,
+								"Invalid version declaration inside text declaration.");
+						else if (versionLength == 3)
+							throw new XmlException (this as IXmlLineInfo,
+								"Invalid version number inside text declaration.");
+						else {
+							expect1_0 [versionLength] = (char) ReadChar ();
+							versionLength++;
+							if (versionLength == 3 && new String (expect1_0) != "1.0")
+								throw new XmlException (this as IXmlLineInfo,
+									"Invalid version number inside text declaration.");
+						}
+					}
+					ReadChar ();
+					SkipWhitespace ();
+					break;
+				default:
+					throw new XmlException (this as IXmlLineInfo,
+						"Invalid version declaration inside text declaration.");
+				}
+			}
+
+			if (PeekChar () == 'e') {
+				Expect ("encoding");
+				SkipWhitespace ();
+				Expect ('=');
+				SkipWhitespace ();
+				int quoteChar = ReadChar ();
+				switch (quoteChar) {
+				case '\'':
+				case '"':
+					while (PeekChar () != quoteChar)
+						if (ReadChar () == -1)
+							throw new XmlException (this as IXmlLineInfo,
+								"Invalid encoding declaration inside text declaration.");
+					ReadChar ();
+					SkipWhitespace ();
+					break;
+				default:
+					throw new XmlException (this as IXmlLineInfo,
+						"Invalid encoding declaration inside text declaration.");
+				}
+				// Encoding value should be checked inside XmlInputStream.
+			}
+			else
+				throw new XmlException (this as IXmlLineInfo,
+					"Encoding declaration is mandatory in text declaration.");
+
+			Expect ("?>");
 		}
 
 		// The reader is positioned on the first character after
@@ -1906,67 +2054,18 @@ namespace System.Xml
 			string systemId, string internalSubset, int intSubsetStartLine, int intSubsetStartColumn)
 		{
 			// now compile DTD
-			parserContext.Dtd = new DTDObjectModel ();	// merges both internal and external subsets in the meantime,
+			parserContext.Dtd = new DTDObjectModel (this.NameTable);	// merges both internal and external subsets in the meantime,
 			DTD.BaseURI = BaseURI;
 			DTD.Name = name;
 			DTD.PublicId = publicId;
 			DTD.SystemId = systemId;
 			DTD.InternalSubset = internalSubset;
 			DTD.XmlResolver = resolver;
-			int originalParserDepth = parserInputStack.Count;
-			bool more;
-			if (internalSubset != null && internalSubset.Length > 0) {
-				XmlParserInput original = currentInput;
-				currentInput = new XmlParserInput (new StringReader (internalSubset), BaseURI, intSubsetStartLine, intSubsetStartColumn);
-				do {
-					more = CompileDTDSubset ();
-					if (PeekChar () == -1 && parserInputStack.Count > 0)
-						PopParserInput ();
-				} while (more || parserInputStack.Count > originalParserDepth);
-				if (dtdIncludeSect != 0)
-					throw new XmlException (this as IXmlLineInfo,"INCLUDE section is not ended correctly.");
-				currentInput = original;
-			}
-			if (systemId != null && systemId != String.Empty && resolver != null) {
-				PushParserInput (systemId);
-				do {
-					more = this.CompileDTDSubset ();
-					if (PeekChar () == -1 && parserInputStack.Count > 1)
-						PopParserInput ();
-				} while (more || parserInputStack.Count > originalParserDepth + 1);
-				PopParserInput ();
-			}
+			DTD.IsStandalone = isStandalone;
+			DTD.LineNumber = line;
+			DTD.LinePosition = column;
 
-			return DTD;
-		}
-
-		private void PushParserInput (string url)
-		{
-			Uri baseUri = null;
-			try {
-				baseUri = new Uri (BaseURI);
-			} catch (UriFormatException) {
-			}
-
-			Uri absUri = resolver.ResolveUri (baseUri, url);
-			string absPath = absUri.ToString ();
-
-			foreach (XmlParserInput i in parserInputStack.ToArray ()) {
-				if (i.BaseURI == absPath)
-					throw new XmlException (this as IXmlLineInfo, "Nested inclusion is not allowed: " + url);
-			}
-			parserInputStack.Push (currentInput);
-			currentInput = new XmlParserInput (new XmlStreamReader (url, false, resolver, BaseURI), absPath);
-			parserContext.PushScope ();
-			parserContext.BaseURI = absPath;
-
-			maybeTextDecl = 2;
-		}
-
-		private void PopParserInput ()
-		{
-			currentInput = parserInputStack.Pop () as XmlParserInput;
-			parserContext.PopScope ();
+			return new DTDReader (DTD, intSubsetStartLine, intSubsetStartColumn).GenerateDTDObjectModel ();
 		}
 
 		private enum DtdInputState
@@ -2132,804 +2231,6 @@ namespace System.Xml
 			}
 		}
 
-		// Read any one of following:
-		//   elementdecl, AttlistDecl, EntityDecl, NotationDecl,
-		//   PI, Comment, Parameter Entity, or doctype termination char(']')
-		//
-		// Returns true if it may have any more contents, or false if not.
-		private bool CompileDTDSubset()
-		{
-			SkipWhitespace ();
-			switch(PeekChar ())
-			{
-			case -1:
-				return false;
-			case '%':
-				// It affects on entity references' well-formedness
-				if (this.parserInputStack.Count == 0)
-					DTD.InternalSubsetHasPEReference = true;
-				ReadChar ();
-				string peName = ReadName ();
-				Expect (';');
-				currentInput.InsertParameterEntityBuffer (GetPEValue (peName));
-				int currentLine = currentInput.LineNumber;
-				int currentColumn = currentInput.LinePosition;
-				while (currentInput.HasPEBuffer)
-					CompileDTDSubset ();
-				if (currentInput.LineNumber != currentLine ||
-					currentInput.LinePosition != currentColumn)
-					throw new XmlException (this as IXmlLineInfo,
-						"Incorrectly nested parameter entity.");
-				break;
-			case '<':
-				ReadChar ();
-				switch(ReadChar ())
-				{
-				case '?':
-					// Only read, no store.
-					ReadProcessingInstruction ();
-					break;
-				case '!':
-					CompileDeclaration ();
-					break;
-				default:
-					throw new XmlException (this as IXmlLineInfo,"Syntax Error after '<' character.");
-				}
-				break;
-			case ']':
-				if (dtdIncludeSect == 0)
-					throw new XmlException (this as IXmlLineInfo, "Unbalanced end of INCLUDE/IGNORE section.");
-				// End of inclusion
-				Expect ("]]>");
-				dtdIncludeSect--;
-				SkipWhitespace ();
-				return false;
-			default:
-				throw new XmlException (this as IXmlLineInfo,String.Format ("Syntax Error inside doctypedecl markup : {0}({1})", PeekChar (), (char) PeekChar ()));
-			}
-			return true;
-		}
-
-		private void CompileDeclaration ()
-		{
-			switch(ReadChar ())
-			{
-			case '-':
-				Expect ('-');
-				// Only read, no store.
-				ReadComment ();
-				break;
-			case 'E':
-				switch(ReadChar ())
-				{
-				case 'N':
-					Expect ("TITY");
-					if (!SkipWhitespace ())
-						throw new XmlException (this as IXmlLineInfo,
-							"Whitespace is required after '<!ENTITY' in DTD entity declaration.");
-					LOOPBACK:
-					if (PeekChar () == '%') {
-						ReadChar ();
-						if (!SkipWhitespace ()) {
-							ImportAsPERef ();
-							goto LOOPBACK;
-						} else {
-							TryExpandPERef ();
-							SkipWhitespace ();
-							if (XmlChar.IsNameChar (PeekChar ()))
-								ReadParameterEntityDecl ();
-							else
-								throw new XmlException (this as IXmlLineInfo,"expected name character");
-						}
-						break;
-					}
-					DTDEntityDeclaration ent = ReadEntityDecl ();
-					if (DTD.EntityDecls [ent.Name] == null)
-						DTD.EntityDecls.Add (ent.Name, ent);
-					break;
-				case 'L':
-					Expect ("EMENT");
-					DTDElementDeclaration el = ReadElementDecl ();
-					DTD.ElementDecls.Add (el.Name, el);
-					break;
-				default:
-					throw new XmlException (this as IXmlLineInfo,"Syntax Error after '<!E' (ELEMENT or ENTITY must be found)");
-				}
-				break;
-			case 'A':
-				Expect ("TTLIST");
-				DTDAttListDeclaration atl = ReadAttListDecl ();
-//				if (DTD.AttListDecls.ContainsKey (atl.Name))
-					DTD.AttListDecls.Add (atl.Name, atl);
-				break;
-			case 'N':
-				Expect ("OTATION");
-				DTDNotationDeclaration not = ReadNotationDecl ();
-				DTD.NotationDecls.Add (not.Name, not);
-				break;
-			case '[':
-				// conditional sections
-				SkipWhitespace ();
-				TryExpandPERef ();
-				SkipWhitespace ();
-				Expect ('I');
-				switch (ReadChar ()) {
-				case 'N':
-					Expect ("CLUDE");
-					SkipWhitespace ();
-					Expect ('[');
-					dtdIncludeSect++;
-					break;
-				case 'G':
-					Expect ("NORE");
-					ReadIgnoreSect ();
-					break;
-				}
-				break;
-			default:
-				throw new XmlException (this as IXmlLineInfo,"Syntax Error after '<!' characters.");
-			}
-		}
-
-		private void ReadIgnoreSect ()
-		{
-			bool skip = false;
-			SkipWhitespace ();
-			Expect ('[');
-			int dtdIgnoreSect = 1;
-			while (dtdIgnoreSect > 0) {
-				switch (skip ? PeekChar () : ReadChar ()) {
-				case -1:
-					throw new XmlException (this as IXmlLineInfo,"Unexpected IGNORE section end.");
-				case '<':
-					if (ReadChar () == '!' && ReadChar () == '[')
-						dtdIgnoreSect++;
-					break;
-				case ']':
-					if (ReadChar () == ']') {
-						if (ReadChar () == '>')
-							dtdIgnoreSect--;
-						else
-							skip = true;
-					}
-					break;
-				}
-				skip = false;
-			}
-		}
-
-		// The reader is positioned on the head of the name.
-		private DTDElementDeclaration ReadElementDecl ()
-		{
-			DTDElementDeclaration decl = new DTDElementDeclaration (DTD);
-			if (!SkipWhitespace ())
-				throw new XmlException (this as IXmlLineInfo,
-					"Whitespace is required between '<!ELEMENT' and name in DTD element declaration.");
-			TryExpandPERef ();
-			SkipWhitespace ();
-			decl.Name = ReadName ();
-			if (!SkipWhitespace ())
-				throw new XmlException (this as IXmlLineInfo,
-					"Whitespace is required between name and content in DTD element declaration.");
-			TryExpandPERef ();
-			ReadContentSpec (decl);
-			SkipWhitespace ();
-			// This expanding is only allowed as a non-validating parser.
-			TryExpandPERef ();
-			SkipWhitespace ();
-			Expect ('>');
-			return decl;
-		}
-
-		// read 'children'(BNF) of contentspec
-		private void ReadContentSpec (DTDElementDeclaration decl)
-		{
-			TryExpandPERef ();
-			SkipWhitespace ();
-			switch(PeekChar ())
-			{
-			case 'E':
-				decl.IsEmpty = true;
-				Expect ("EMPTY");
-				break;
-			case 'A':
-				decl.IsAny = true;
-				Expect ("ANY");
-				break;
-			case '(':
-				DTDContentModel model = decl.ContentModel;
-				ReadChar ();
-				SkipWhitespace ();
-				TryExpandPERef ();
-				SkipWhitespace ();
-				if(PeekChar () == '#') {
-					// Mixed Contents. "#PCDATA" must appear first.
-					decl.IsMixedContent = true;
-					model.Occurence = DTDOccurence.ZeroOrMore;
-					model.OrderType = DTDContentOrderType.Or;
-					Expect ("#PCDATA");
-					SkipWhitespace ();
-					TryExpandPERef ();
-					SkipWhitespace ();
-					while(PeekChar () != ')') {
-						Expect('|');
-						SkipWhitespace ();
-						TryExpandPERef ();
-						SkipWhitespace ();
-						DTDContentModel elem = new DTDContentModel (DTD, decl.Name);
-						elem.ElementName = ReadName ();
-						model.ChildModels.Add (elem);
-						SkipWhitespace ();
-						TryExpandPERef ();
-						SkipWhitespace ();
-					}
-					Expect (')');
-					if (model.ChildModels.Count > 0)
-						Expect ('*');
-					else if (PeekChar () == '*')
-						Expect ('*');
-				} else {
-					// Non-Mixed Contents
-					model.ChildModels.Add (ReadCP (decl));
-					SkipWhitespace ();
-
-					do {	// copied from ReadCP() ...;-)
-						TryExpandPERef ();
-						SkipWhitespace ();
-						if(PeekChar ()=='|') {
-							// CPType=Or
-							if (model.OrderType == DTDContentOrderType.Seq)
-								throw new XmlException (this as IXmlLineInfo,
-									"Inconsistent choice markup in sequence cp.");
-							model.OrderType = DTDContentOrderType.Or;
-							ReadChar ();
-							SkipWhitespace ();
-							model.ChildModels.Add (ReadCP (decl));
-							SkipWhitespace ();
-						}
-						else if(PeekChar () == ',')
-						{
-							// CPType=Seq
-							if (model.OrderType == DTDContentOrderType.Or)
-								throw new XmlException (this as IXmlLineInfo,
-									"Inconsistent sequence markup in choice cp.");
-							model.OrderType = DTDContentOrderType.Seq;
-							ReadChar ();
-							SkipWhitespace ();
-							model.ChildModels.Add (ReadCP (decl));
-							SkipWhitespace ();
-						}
-						else
-							break;
-					}
-					while(true);
-
-					Expect (')');
-					switch(PeekChar ())
-					{
-					case '?':
-						model.Occurence = DTDOccurence.Optional;
-						ReadChar ();
-						break;
-					case '*':
-						model.Occurence = DTDOccurence.ZeroOrMore;
-						ReadChar ();
-						break;
-					case '+':
-						model.Occurence = DTDOccurence.OneOrMore;
-						ReadChar ();
-						break;
-					}
-					SkipWhitespace ();
-				}
-				SkipWhitespace ();
-				break;
-			}
-		}
-
-		// Read 'cp' (BNF) of contentdecl (BNF)
-		private DTDContentModel ReadCP (DTDElementDeclaration elem)
-		{
-			DTDContentModel model = null;
-			TryExpandPERef ();
-			SkipWhitespace ();
-			if(PeekChar () == '(') {
-				model = new DTDContentModel (DTD, elem.Name);
-				ReadChar ();
-				SkipWhitespace ();
-				model.ChildModels.Add (ReadCP (elem));
-				SkipWhitespace ();
-				do {
-					TryExpandPERef ();
-					SkipWhitespace ();
-					if(PeekChar ()=='|') {
-						// CPType=Or
-						if (model.OrderType == DTDContentOrderType.Seq)
-							throw new XmlException (this as IXmlLineInfo,
-								"Inconsistent choice markup in sequence cp.");
-						model.OrderType = DTDContentOrderType.Or;
-						ReadChar ();
-						SkipWhitespace ();
-						model.ChildModels.Add (ReadCP (elem));
-						SkipWhitespace ();
-					}
-					else if(PeekChar () == ',') {
-						// CPType=Seq
-						if (model.OrderType == DTDContentOrderType.Or)
-							throw new XmlException (this as IXmlLineInfo,
-								"Inconsistent sequence markup in choice cp.");
-						model.OrderType = DTDContentOrderType.Seq;
-						ReadChar ();
-						SkipWhitespace ();
-						model.ChildModels.Add (ReadCP (elem));
-						SkipWhitespace ();
-					}
-					else
-						break;
-				}
-				while(true);
-				SkipWhitespace ();
-				Expect (')');
-			}
-			else {
-				TryExpandPERef ();
-				model = new DTDContentModel (DTD, elem.Name);
-				SkipWhitespace ();
-				model.ElementName = ReadName ();
-			}
-
-			switch(PeekChar ()) {
-			case '?':
-				model.Occurence = DTDOccurence.Optional;
-				ReadChar ();
-				break;
-			case '*':
-				model.Occurence = DTDOccurence.ZeroOrMore;
-				ReadChar ();
-				break;
-			case '+':
-				model.Occurence = DTDOccurence.OneOrMore;
-				ReadChar ();
-				break;
-			}
-			return model;
-		}
-
-		// The reader is positioned on the first name char.
-		private void ReadParameterEntityDecl ()
-		{
-			DTDParameterEntityDeclaration decl = 
-				new DTDParameterEntityDeclaration();
-			decl.BaseURI = BaseURI;
-
-			decl.Name = ReadName ();
-			if (!SkipWhitespace ())
-				throw new XmlException (this as IXmlLineInfo,
-					"Whitespace is required after name in DTD parameter entity declaration.");
-
-			if (PeekChar () == 'S' || PeekChar () == 'P') {
-//				throw new NotImplementedException ("External parameter entity reference is not implemented yet.");
-				// read publicId/systemId
-				ReadExternalID ();
-				decl.PublicId = GetAttribute ("PUBLIC");
-				decl.SystemId = GetAttribute ("SYSTEM");
-				SkipWhitespace ();
-				decl.Resolve (resolver);
-			}
-			else {
-				TryExpandPERef ();
-				int quoteChar = ReadChar ();
-				int start = currentTag.Length;
-				ClearValueBuffer ();
-				bool loop = true;
-				while (loop) {
-					int c = PeekChar ();
-					switch (c) {
-					case -1:
-						throw new XmlException ("unexpected end of stream in entity value definition.");
-					case '"':
-						ReadChar ();
-						if (quoteChar == '"')
-							loop = false;
-						else
-							AppendValueChar ('"');
-						break;
-					case '\'':
-						ReadChar ();
-						if (quoteChar == '\'')
-							loop = false;
-						else
-							AppendValueChar ('\'');
-						break;
-					case '&':
-						ReadChar ();
-						if (PeekChar () == '#') {
-							ReadChar ();
-							ReadCharacterReference ();
-						}
-						else
-							AppendValueChar ('&');
-						break;
-					case '%':
-						ReadChar ();
-						string peName = ReadName ();
-						Expect (';');
-						valueBuffer.Append (GetPEValue (peName));
-						break;
-					default:
-						AppendValueChar (ReadChar ());
-						break;
-					}
-				}
-				decl.LiteralValue = CreateValueString (); // currentTag.ToString (start, currentTag.Length - start - 1);
-				ClearValueBuffer ();
-			}
-			SkipWhitespace ();
-			Expect ('>');
-			if (parameterEntities [decl.Name] == null) {
-                                parameterEntities.Add (decl.Name, decl);
-			}
-		}
-
-		private string GetPEValue (string peName)
-		{
-			DTDParameterEntityDeclaration peDecl =
-				this.parameterEntities [peName] as DTDParameterEntityDeclaration;
-			if (peDecl != null)
-				return peDecl.Value;
-			// See XML 1.0 section 4.1 for both WFC and VC.
-			if ((DTD.SystemId == null && !DTD.InternalSubsetHasPEReference) || this.isStandalone)
-				throw new XmlException (this as IXmlLineInfo,
-					"Parameter entity " + peName + " not found.");
-			DTD.AddError (new XmlSchemaException (
-				"Parameter entity " + peName + " not found.", null));
-			return "";
-		}
-
-		private void TryExpandPERef ()
-		{
-			if (PeekChar () == '%') {
-//				ReadChar ();
-//				if (!XmlChar.IsNameChar (PeekChar ()))
-//					return;
-//				ExpandPERef ();
-				ImportAsPERef ();
-			}
-		}
-
-		// reader is positioned on '%'
-		private void ImportAsPERef ()
-		{
-			ReadChar ();
-			string peName = ReadName ();
-			Expect (';');
-			DTDParameterEntityDeclaration peDecl =
-				this.parameterEntities [peName] as DTDParameterEntityDeclaration;
-			if (peDecl == null) {
-				DTD.AddError (new XmlSchemaException ("Parameter entity " + peName + " not found.", null));
-				return;	// do nothing
-			}
-			currentInput.InsertParameterEntityBuffer (" " + peDecl.Value + " ");
-
-		}
-
-		// The reader is positioned on the head of the name.
-		private DTDEntityDeclaration ReadEntityDecl ()
-		{
-			DTDEntityDeclaration decl = new DTDEntityDeclaration (DTD);
-			decl.IsInternalSubset = (parserInputStack.Count == 0);
-			TryExpandPERef ();
-			SkipWhitespace ();
-			decl.Name = ReadName ();
-			if (!SkipWhitespace ())
-				throw new XmlException (this as IXmlLineInfo,
-					"Whitespace is required between name and content in DTD entity declaration.");
-			TryExpandPERef ();
-			SkipWhitespace ();
-
-			if (PeekChar () == 'S' || PeekChar () == 'P') {
-				// external entity
-				ReadExternalID ();
-				decl.PublicId = GetAttribute ("PUBLIC");
-				decl.SystemId = GetAttribute ("SYSTEM");
-				if (SkipWhitespace ()) {
-					if (PeekChar () == 'N') {
-						// NDataDecl
-						Expect ("NDATA");
-						if (!SkipWhitespace ())
-							throw new XmlException (this as IXmlLineInfo,
-								"Whitespace is required after NDATA.");
-						decl.NotationName = ReadName ();	// ndata_name
-					}
-				}
-				decl.ScanEntityValue (new StringCollection ());
-			}
-			else {
-				// literal entity
-				ReadEntityValueDecl (decl);
-			}
-			SkipWhitespace ();
-			// This expanding is only allowed as a non-validating parser.
-			TryExpandPERef ();
-			SkipWhitespace ();
-			Expect ('>');
-			return decl;
-		}
-
-		private void ReadEntityValueDecl (DTDEntityDeclaration decl)
-		{
-			SkipWhitespace ();
-			// quotation char will be finally removed on unescaping
-			int quoteChar = ReadChar ();
-			int start = currentTag.Length;
-			if (quoteChar != '\'' && quoteChar != '"')
-				throw new XmlException ("quotation char was expected.");
-
-			ClearValueBuffer ();
-
-			while (PeekChar () != quoteChar) {
-				switch (PeekChar ()) {
-				case '%':
-					ReadChar ();
-					string name = ReadName ();
-					Expect (';');
-					if (decl.IsInternalSubset)
-						throw new XmlException (this as IXmlLineInfo,
-							"Parameter entity is not allowed in internal subset entity '" + name + "'");
-					valueBuffer.Append (GetPEValue (name));
-					break;
-				case -1:
-					throw new XmlException ("unexpected end of stream.");
-				default:
-					AppendValueChar (ReadChar ());
-					break;
-				}
-			}
-			string value = Dereference (CreateValueString (), false);
-			ClearValueBuffer ();
-
-			Expect (quoteChar);
-			decl.LiteralEntityValue = value;
-		}
-
-		private DTDAttListDeclaration ReadAttListDecl ()
-		{
-			SkipWhitespace ();
-			TryExpandPERef ();
-			SkipWhitespace ();
-			string name = ReadName ();	// target element name
-			DTDAttListDeclaration decl =
-				DTD.AttListDecls [name] as DTDAttListDeclaration;
-			if (decl == null)
-				decl = new DTDAttListDeclaration (DTD);
-			decl.Name = name;
-
-			if (!SkipWhitespace ())
-				if (PeekChar () != '>')
-					throw new XmlException (this as IXmlLineInfo,
-						"Whitespace is required between name and content in non-empty DTD attlist declaration.");
-
-			TryExpandPERef ();
-			SkipWhitespace ();
-
-			while (XmlChar.IsNameChar ((char) PeekChar ())) {
-				DTDAttributeDefinition def = ReadAttributeDefinition ();
-				if (decl [def.Name] == null)
-					decl.Add (def);
-				SkipWhitespace ();
-				TryExpandPERef ();
-				SkipWhitespace ();
-			}
-			SkipWhitespace ();
-			// This expanding is only allowed as a non-validating parser.
-			TryExpandPERef ();
-			SkipWhitespace ();
-			Expect ('>');
-			return decl;
-		}
-
-		private DTDAttributeDefinition ReadAttributeDefinition ()
-		{
-			DTDAttributeDefinition def = new DTDAttributeDefinition ();
-
-			// attr_name
-			TryExpandPERef ();
-			SkipWhitespace ();
-			def.Name = ReadName ();
-			if (!SkipWhitespace ())
-				throw new XmlException (this as IXmlLineInfo,
-					"Whitespace is required between name and content in DTD attribute definition.");
-
-			// attr_value
-			TryExpandPERef ();
-			SkipWhitespace ();
-			switch(PeekChar ()) {
-			case 'C':	// CDATA
-				Expect ("CDATA");
-				def.Datatype = XmlSchemaDatatype.FromName ("normalizedString");
-				break;
-			case 'I':	// ID, IDREF, IDREFS
-				Expect ("ID");
-				if(PeekChar () == 'R') {
-					Expect ("REF");
-					if(PeekChar () == 'S') {
-						// IDREFS
-						ReadChar ();
-						def.Datatype = XmlSchemaDatatype.FromName ("IDREFS");
-					}
-					else	// IDREF
-						def.Datatype = XmlSchemaDatatype.FromName ("IDREF");
-				}
-				else	// ID
-					def.Datatype = XmlSchemaDatatype.FromName ("ID");
-				break;
-			case 'E':	// ENTITY, ENTITIES
-				Expect ("ENTIT");
-				switch(ReadChar ()) {
-					case 'Y':	// ENTITY
-						def.Datatype = XmlSchemaDatatype.FromName ("ENTITY");
-						break;
-					case 'I':	// ENTITIES
-						Expect ("ES");
-						def.Datatype = XmlSchemaDatatype.FromName ("ENTITIES");
-						break;
-				}
-				break;
-			case 'N':	// NMTOKEN, NMTOKENS, NOTATION
-				ReadChar ();
-				switch(PeekChar ()) {
-				case 'M':
-					Expect ("MTOKEN");
-					if(PeekChar ()=='S') {	// NMTOKENS
-						ReadChar ();
-						def.Datatype = XmlSchemaDatatype.FromName ("NMTOKENS");
-					}
-					else	// NMTOKEN
-						def.Datatype = XmlSchemaDatatype.FromName ("NMTOKEN");
-					break;
-				case 'O':
-					Expect ("OTATION");
-					def.Datatype = XmlSchemaDatatype.FromName ("NOTATION");
-					if (!SkipWhitespace ())
-						throw new XmlException (this as IXmlLineInfo,
-							"Whitespace is required between name and content in DTD attribute definition.");
-					Expect ('(');
-					SkipWhitespace ();
-					def.EnumeratedNotations.Add (ReadName ());		// notation name
-					SkipWhitespace ();
-					while(PeekChar () == '|') {
-						ReadChar ();
-						SkipWhitespace ();
-						def.EnumeratedNotations.Add (ReadName ());	// notation name
-						SkipWhitespace ();
-					}
-					Expect (')');
-					break;
-				default:
-					throw new XmlException ("attribute declaration syntax error.");
-				}
-				break;
-			default:	// Enumerated Values
-				def.Datatype = XmlSchemaDatatype.FromName ("NMTOKEN");
-				TryExpandPERef ();
-				SkipWhitespace ();
-				Expect ('(');
-				SkipWhitespace ();
-				def.EnumeratedAttributeDeclaration.Add (
-					def.Datatype.Normalize (ReadNmToken ()));	// enum value
-				SkipWhitespace ();
-				while(PeekChar () == '|') {
-					ReadChar ();
-					SkipWhitespace ();
-					def.EnumeratedAttributeDeclaration.Add (
-						def.Datatype.Normalize (ReadNmToken ()));	// enum value
-					SkipWhitespace ();
-				}
-				Expect (')');
-				break;
-			}
-			TryExpandPERef ();
-			if (!SkipWhitespace ())
-				throw new XmlException (this as IXmlLineInfo,
-					"Whitespace is required between type and occurence in DTD attribute definition.");
-
-			// def_value
-			if(PeekChar () == '#')
-			{
-				ReadChar ();
-				switch(PeekChar ())
-				{
-				case 'R':
-					Expect ("REQUIRED");
-					def.OccurenceType = DTDAttributeOccurenceType.Required;
-					break;
-				case 'I':
-					Expect ("IMPLIED");
-					def.OccurenceType = DTDAttributeOccurenceType.Optional;
-					break;
-				case 'F':
-					Expect ("FIXED");
-					def.OccurenceType = DTDAttributeOccurenceType.Fixed;
-					if (!SkipWhitespace ())
-						throw new XmlException (this as IXmlLineInfo,
-							"Whitespace is required between FIXED and actual value in DTD attribute definition.");
-					def.UnresolvedDefaultValue = ReadAttribute (true);
-					break;
-				}
-			} else {
-				// one of the enumerated value
-				TryExpandPERef ();
-				SkipWhitespace ();
-				def.UnresolvedDefaultValue = ReadAttribute (true);
-			}
-
-			return def;
-		}
-
-		private DTDNotationDeclaration ReadNotationDecl()
-		{
-			DTDNotationDeclaration decl = new DTDNotationDeclaration ();
-			TryExpandPERef ();
-			SkipWhitespace ();
-			decl.Name = ReadName ();	// notation name
-			if (namespaces) {	// copy from SetProperties ;-)
-				int indexOfColon = decl.Name.IndexOf (':');
-
-				if (indexOfColon == -1) {
-					decl.Prefix = String.Empty;
-					decl.LocalName = decl.Name;
-				} else {
-					decl.Prefix = decl.Name.Substring (0, indexOfColon);
-					decl.LocalName = decl.Name.Substring (indexOfColon + 1);
-				}
-			} else {
-				decl.Prefix = String.Empty;
-				decl.LocalName = decl.Name;
-			}
-
-			SkipWhitespace ();
-			if(PeekChar () == 'P') {
-				decl.PublicId = ReadPubidLiteral ();
-				bool wsSkipped = SkipWhitespace ();
-				if (PeekChar () == '\'' || PeekChar () == '"') {
-					if (!wsSkipped)
-						throw new XmlException (this as IXmlLineInfo,
-							"Whitespace is required between public id and system id.");
-					decl.SystemId = ReadSystemLiteral (false);
-					SkipWhitespace ();
-				}
-			} else if(PeekChar () == 'S') {
-				decl.SystemId = ReadSystemLiteral (true);
-				SkipWhitespace ();
-			}
-			if(decl.PublicId == null && decl.SystemId == null)
-				throw new XmlException ("public or system declaration required for \"NOTATION\" declaration.");
-			// This expanding is only allowed as a non-validating parser.
-			TryExpandPERef ();
-			SkipWhitespace ();
-			Expect ('>');
-			return decl;
-		}
-
-		private void ReadExternalID () {
-			this.ClearAttributes ();
-			switch (PeekChar ()) {
-			case 'S':
-				string systemId = ReadSystemLiteral (true);
-				AddAttribute ("SYSTEM", systemId);
-				break;
-			case 'P':
-				string publicId = ReadPubidLiteral ();
-				if (!SkipWhitespace ())
-					throw new XmlException (this as IXmlLineInfo,
-						"Whitespace is required between PUBLIC id and SYSTEM id.");
-				systemId = ReadSystemLiteral (false);
-				AddAttribute ("PUBLIC", publicId);
-				AddAttribute ("SYSTEM", systemId);
-				break;
-			}
-		}
-
 		// The reader is positioned on the first 'S' of "SYSTEM".
 		private string ReadSystemLiteral (bool expectSYSTEM)
 		{
@@ -2991,7 +2292,7 @@ namespace System.Xml
 			return ReadNameOrNmToken(true);
 		}
 
-		private string ReadNameOrNmToken(bool isNameToken)
+		private string ReadNameOrNmToken (bool isNameToken)
 		{
 			int ch = PeekChar ();
 			if(isNameToken) {
@@ -3074,52 +2375,103 @@ namespace System.Xml
 			return; // (PeekChar () != -1);
 		}
 
-		private string Dereference (string unresolved, bool expandPredefined)
+		private byte GetBase64Byte (char ch)
 		{
-			StringBuilder resolved = new StringBuilder();
-			int pos = 0;
-			int next = unresolved.IndexOf ('&');
-			if(next < 0)
-				return unresolved;
-
-			while(next >= 0) {
-				if(pos < next)
-					resolved.Append (unresolved.Substring (pos, next - pos));// - 1);
-				int endPos = unresolved.IndexOf (';', next+1);
-				string entityName =
-					unresolved.Substring (next + 1, endPos - next - 1);
-				if(entityName [0] == '#') {
-					char c;
-					// character entity
-					if(entityName [1] == 'x') {
-						// hexadecimal
-						c = (char) int.Parse ("0" + entityName.Substring (2),
-							System.Globalization.NumberStyles.HexNumber);
-					} else {
-						// decimal
-						c = (char) int.Parse (entityName.Substring (1));
-					}
-					resolved.Append (c);
-				} else {
-					char predefined = XmlChar.GetPredefinedEntity (entityName);
-					if (expandPredefined && predefined != 0)
-						resolved.Append (predefined);
-					else
-					// With respect to "Value", MS document is helpless
-					// and the implemention returns inconsistent value
-					// (e.g. XML: "&ent; &amp;ent;" ---> Value: "&ent; &ent;".)
-						resolved.Append ("&" + entityName + ";");
-				}
-				pos = endPos + 1;
-				if(pos > unresolved.Length)
-					break;
-				next = unresolved.IndexOf('&', pos);
+			switch (ch) {
+			case '+':
+				return 62;
+			case '/':
+				return 63;
+			case '=':
+				return 0;
+			default:
+				if (ch >= 'A' && ch <= 'Z')
+					return (byte) (ch - 'A');
+				else if (ch >= 'a' && ch <= 'z')
+					return (byte) (ch - 'a' + 26);
+				else if (ch >= '0' && ch <= '9')
+					return (byte) (ch - '0' + 52);
+				else
+					throw new XmlException ("Invalid Base64 character was found.");
 			}
-			resolved.Append (unresolved.Substring(pos));
-
-			return resolved.ToString();
 		}
 
+		// Returns -1 if it should throw an error.
+		private int ReadCharsInternal (char [] buffer, int offset, int length)
+		{
+			shouldSkipUntilEndTag = true;
+
+			if (offset < 0)
+				throw new ArgumentOutOfRangeException ("offset", offset, "Offset must be non-negative integer.");
+			else if (length < 0)
+				throw new ArgumentOutOfRangeException ("length", length, "Length must be non-negative integer.");
+			else if (buffer.Length < offset + length)
+				throw new ArgumentOutOfRangeException ("buffer length is smaller than the sum of offset and length.");
+
+			if (NodeType != XmlNodeType.Element)
+				return 0;
+
+			int bufIndex = offset;
+			for (int i = 0; i < length; i++) {
+				int c = PeekChar ();
+				switch (c) {
+				case -1:
+					throw new XmlException (this as IXmlLineInfo, "Unexpected end of xml.");
+				case '<':
+					ReadChar ();
+					if (PeekChar () != '/') {
+						buffer [bufIndex++] = '<';
+						continue;
+					}
+					// Seems to skip immediate EndElement
+					Expect ('/');
+					string name = ReadName ();
+					if (name != (string) this.elementStack.Peek ()) {
+						if (i + 1 < length) {
+							buffer [bufIndex++] = '<';
+							buffer [bufIndex++] = '/';
+						}
+						for (int n = 0; n < name.Length && i + n + 1 < length; n++)
+							buffer [bufIndex++] = name [n];
+						continue;
+					}
+					Expect ('>');
+					depth--;
+					this.elementStack.Pop ();
+					shouldSkipUntilEndTag = false;
+					Read ();
+					return i;
+				default:
+					buffer [bufIndex++] = (char) ReadChar ();
+					break;
+				}
+			}
+			return length;
+		}
+
+		private bool ReadUntilEndTag ()
+		{
+			int ch;
+			do {
+				ch = ReadChar ();
+				switch (ch) {
+				case -1:
+					throw new XmlException (this as IXmlLineInfo,
+						"Unexpected end of xml.");
+				case '<':
+					if (PeekChar () != '/')
+						continue;
+					ReadChar ();
+					string name = ReadName ();
+					if (name != (string) this.elementStack.Peek ())
+						continue;
+					Expect ('>');
+					depth--;
+					this.elementStack.Pop ();
+					return Read ();
+				}
+			} while (true);
+		}
 		#endregion
 	}
 }

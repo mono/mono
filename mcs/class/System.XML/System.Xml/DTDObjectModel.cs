@@ -21,40 +21,103 @@ namespace Mono.Xml
 {
 	public class DTDObjectModel
 	{
+		DTDAutomataFactory factory;
+		DTDElementAutomata rootAutomata;
+		DTDEmptyAutomata emptyAutomata;
+		DTDAnyAutomata anyAutomata;
+		DTDInvalidAutomata invalidAutomata;
+
 		DTDElementDeclarationCollection elementDecls;
 		DTDAttListDeclarationCollection attListDecls;
+		DTDParameterEntityDeclarationCollection peDecls;
 		DTDEntityDeclarationCollection entityDecls;
 		DTDNotationDeclarationCollection notationDecls;
 		ArrayList validationErrors;
 		XmlResolver resolver;
+		XmlNameTable nameTable;
 
-		public DTDObjectModel ()
+		string baseURI;
+		string name;
+		string publicId;
+		string systemId;
+		string intSubset;
+		bool intSubsetHasPERef;
+		bool isStandalone;
+		int lineNumber;
+		int linePosition;
+
+		public DTDObjectModel (XmlNameTable nameTable)
 		{
+			this.nameTable = nameTable;
 			elementDecls = new DTDElementDeclarationCollection (this);
 			attListDecls = new DTDAttListDeclarationCollection (this);
 			entityDecls = new DTDEntityDeclarationCollection (this);
+			peDecls = new DTDParameterEntityDeclarationCollection (this);
 			notationDecls = new DTDNotationDeclarationCollection (this);
 			factory = new DTDAutomataFactory (this);
 			validationErrors = new ArrayList ();
 		}
 
-		public string BaseURI;
+		public string BaseURI {
+			get { return baseURI; }
+			set { baseURI = value; }
+		}
 
-		public string Name;
-		
-		public string PublicId;
-		
-		public string SystemId;
-		
-		public string InternalSubset;
+		public bool IsStandalone {
+			get { return isStandalone; }
+			set { isStandalone = value; }
+		}
 
-		public bool InternalSubsetHasPEReference;
+		public string Name {
+			get { return name; }
+			set { name = value; }
+		}
+
+		public XmlNameTable NameTable {
+			get { return nameTable; }
+		}
+		
+		public string PublicId {
+			get { return publicId; }
+			set { publicId = value; }
+		}
+
+		public string SystemId {
+			get { return systemId; }
+			set { systemId = value; }
+		}
+		
+		public string InternalSubset {
+			get { return intSubset; }
+			set { intSubset = value; }
+		}
+
+		public bool InternalSubsetHasPEReference {
+			get { return intSubsetHasPERef; }
+			set { intSubsetHasPERef = value; }
+		}
+
+		public int LineNumber {
+			get { return lineNumber; }
+			set { lineNumber = value; }
+		}
+
+		public int LinePosition {
+			get { return linePosition; }
+			set { linePosition = value; }
+		}
 		
 		public string ResolveEntity (string name)
 		{
 			DTDEntityDeclaration decl = EntityDecls [name] 
 				as DTDEntityDeclaration;
-			return decl.EntityValue;
+			if (decl == null) {
+				AddError (new XmlSchemaException ("Required entity was not found.",
+					this.LineNumber, this.LinePosition, null, this.BaseURI, null));
+				return " ";
+			}
+			else
+				return decl.EntityValue;
 		}
 
 		internal XmlResolver Resolver {
@@ -65,7 +128,6 @@ namespace Mono.Xml
 			set { resolver = value; }
 		}
 
-		private DTDAutomataFactory factory;
 		public DTDAutomataFactory Factory {
 			get { return factory; }
 		}
@@ -86,11 +148,14 @@ namespace Mono.Xml
 			get { return entityDecls; }
 		}
 
+		public DTDParameterEntityDeclarationCollection PEDecls {
+			get { return peDecls; }
+		}
+
 		public DTDNotationDeclarationCollection NotationDecls {
 			get { return notationDecls; }
 		}
 
-		DTDElementAutomata rootAutomata;
 		public DTDAutomata RootAutomata {
 			get {
 				if (rootAutomata == null)
@@ -99,7 +164,6 @@ namespace Mono.Xml
 			}
 		}
 
-		DTDEmptyAutomata emptyAutomata;
 		public DTDEmptyAutomata Empty {
 			get {
 				if (emptyAutomata == null)
@@ -108,7 +172,6 @@ namespace Mono.Xml
 			}
 		}
 
-		DTDAnyAutomata anyAutomata;
 		public DTDAnyAutomata Any {
 			get {
 				if (anyAutomata == null)
@@ -117,7 +180,6 @@ namespace Mono.Xml
 			}
 		}
 
-		DTDInvalidAutomata invalidAutomata;
 		public DTDInvalidAutomata Invalid {
 			get {
 				if (invalidAutomata == null)
@@ -275,17 +337,17 @@ namespace Mono.Xml
 		}
 	}
 
-	public class DTDContentModel
+	// This class contains either ElementName or ChildModels.
+	public class DTDContentModel : DTDNode
 	{
-		private DTDObjectModel root;
+		DTDObjectModel root;
 		DTDAutomata compiledAutomata;
 
-		private string ownerElementName;
-		public string ElementName;
-		public DTDContentOrderType OrderType = DTDContentOrderType.None;
-		public DTDContentModelCollection ChildModels 
-			= new DTDContentModelCollection ();
-		public DTDOccurence Occurence = DTDOccurence.One;
+		string ownerElementName;
+		string elementName;
+		DTDContentOrderType orderType = DTDContentOrderType.None;
+		DTDContentModelCollection childModels = new DTDContentModelCollection ();
+		DTDOccurence occurence = DTDOccurence.One;
 
 		internal DTDContentModel (DTDObjectModel root, string ownerElementName)
 		{
@@ -293,10 +355,28 @@ namespace Mono.Xml
 			this.ownerElementName = ownerElementName;
 		}
 
+		public DTDContentModelCollection ChildModels {
+			get { return childModels; }
+			set { childModels = value; }
+		}
+
 		public DTDElementDeclaration ElementDecl {
-			get {
-			      return root.ElementDecls [ownerElementName];
-			}
+			get { return root.ElementDecls [ownerElementName]; }
+		}
+
+		public string ElementName {
+			get { return elementName; }
+			set { elementName = value; }
+		}
+
+		public DTDOccurence Occurence {
+			get { return occurence; }
+			set { occurence = value; }
+		}
+
+		public DTDContentOrderType OrderType {
+			get { return orderType; }
+			set { orderType = value; }
 		}
 
 		public DTDAutomata GetAutomata ()
@@ -402,12 +482,38 @@ namespace Mono.Xml
 		}
 	}
 
-	public abstract class DTDNode
+	public abstract class DTDNode : IXmlLineInfo
 	{
-		private DTDObjectModel root;
-		public string BaseURI;
-		public int LineNumber;
-		public int LinePosition;
+		DTDObjectModel root;
+		bool isInternalSubset;
+		string baseURI;
+		int lineNumber;
+		int linePosition;
+
+		public string BaseURI {
+			get { return baseURI; }
+			set { baseURI = value; }
+		}
+
+		public bool IsInternalSubset {
+			get { return isInternalSubset; }
+			set { isInternalSubset = value; }
+		}
+
+		public int LineNumber {
+			get { return lineNumber; }
+			set { lineNumber = value; }
+		}
+
+		public int LinePosition {
+			get { return linePosition; }
+			set { linePosition = value; }
+		}
+
+		public bool HasLineInfo ()
+		{
+			return lineNumber != 0;
+		}
 
 		internal void SetRoot (DTDObjectModel root)
 		{
@@ -421,18 +527,37 @@ namespace Mono.Xml
 		}
 	}
 
-	public class DTDElementDeclaration : DTDNode // : ICloneable
+	public class DTDElementDeclaration : DTDNode
 	{
-		public string Name;
-		public bool IsEmpty;
-		public bool IsAny;
-		public bool IsMixedContent;
-		public DTDContentModel contentModel;
 		DTDObjectModel root;
+		DTDContentModel contentModel;
+		string name;
+		bool isEmpty;
+		bool isAny;
+		bool isMixedContent;
 
 		internal DTDElementDeclaration (DTDObjectModel root)
 		{
 			this.root = root;
+		}
+
+		public string Name {
+			get { return name; }
+			set { name = value; }
+		}
+		public bool IsEmpty {
+			get { return isEmpty; }
+			set { isEmpty = value; }
+		}
+
+		public bool IsAny {
+			get { return isAny; }
+			set { isAny = value; }
+		}
+
+		public bool IsMixedContent {
+			get { return isMixedContent; }
+			set { isMixedContent = value; }
 		}
 
 		public DTDContentModel ContentModel {
@@ -448,29 +573,50 @@ namespace Mono.Xml
 				return Root.AttListDecls [Name];
 			}
 		}
-
-//		public object Clone ()
-//		{
-//			return this.MemberwiseClone ();
-//		}
 	}
 
-	public class DTDAttributeDefinition : DTDNode// : ICloneable
+	public class DTDAttributeDefinition : DTDNode
 	{
-		public string Name;
-		public XmlSchemaDatatype Datatype;
+		string name;
+		XmlSchemaDatatype datatype;
+		ArrayList enumeratedLiterals = new ArrayList ();
+		string unresolvedDefault;
+		ArrayList enumeratedNotations = new ArrayList ();
+		DTDAttributeOccurenceType occurenceType = DTDAttributeOccurenceType.None;
+		string resolvedDefaultValue;
+		string resolvedNormalizedDefaultValue;
+
+		internal DTDAttributeDefinition (DTDObjectModel root)
+		{
+			this.SetRoot (root);
+		}
+
+		public string Name {
+			get { return name; }
+			set { name =value; }
+		}
+
+		public XmlSchemaDatatype Datatype {
+			get { return datatype; }
+			set { datatype = value; }
+		}
+
+		public DTDAttributeOccurenceType OccurenceType {
+			get { return this.occurenceType; }
+			set { this.occurenceType = value; }
+		}
+
 		// entity reference inside enumerated values are not allowed,
 		// but on the other hand, they are allowed inside default value.
 		// Then I decided to use string ArrayList for enumerated values,
 		// and unresolved string value for DefaultValue.
-		public ArrayList EnumeratedAttributeDeclaration = new ArrayList ();
-		public string UnresolvedDefaultValue = null;
-		public ArrayList EnumeratedNotations = new ArrayList();
-		public DTDAttributeOccurenceType OccurenceType = DTDAttributeOccurenceType.None;
-		private string resolvedDefaultValue;
-		private string resolvedNormalizedDefaultValue;
+		public ArrayList EnumeratedAttributeDeclaration {
+			get { return this.enumeratedLiterals; }
+		}
 
-		internal DTDAttributeDefinition () {}
+		public ArrayList EnumeratedNotations {
+			get { return this.enumeratedNotations; }
+		}
 
 		public string DefaultValue {
 			get {
@@ -490,6 +636,19 @@ namespace Mono.Xml
 						o.ToString ();
 				}
 				return resolvedNormalizedDefaultValue;
+			}
+		}
+
+		public string UnresolvedDefaultValue {
+			get { return this.unresolvedDefault; }
+			set { this.unresolvedDefault = value; }
+		}
+
+		public char QuoteChar {
+			get {
+				return UnresolvedDefaultValue.Length > 0 ?
+					this.UnresolvedDefaultValue [0] :
+					'"';
 			}
 		}
 
@@ -518,7 +677,7 @@ namespace Mono.Xml
 					sb.Append ((char) int.Parse (spec, style));
 				} else {
 					sb.Append (value.Substring (pos, next - 1));
-					string name = value.Substring (pos + 1, semicolon - 1);
+					string name = value.Substring (next + 1, semicolon - 2);
 					char predefined = XmlChar.GetPredefinedEntity (name);
 					if (predefined != 0)
 						sb.Append (predefined);
@@ -534,31 +693,23 @@ namespace Mono.Xml
 			return ret;
 		}
 
-		public char QuoteChar {
-			get {
-				return UnresolvedDefaultValue.Length > 0 ?
-					this.UnresolvedDefaultValue [0] :
-					'"';
-			}
-		}
-
-//		public object Clone ()
-//		{
-//			return this.MemberwiseClone ();
-//		}
 	}
 
-	public class DTDAttListDeclaration : DTDNode // : ICloneable
+	public class DTDAttListDeclaration : DTDNode
 	{
-		public string Name;
+		string name;
+		Hashtable attributeOrders = new Hashtable ();
+		ArrayList attributes = new ArrayList ();
 
 		internal DTDAttListDeclaration (DTDObjectModel root)
 		{
 			SetRoot (root);
 		}
 
-		private Hashtable attributeOrders = new Hashtable ();
-		private ArrayList attributes = new ArrayList ();
+		public string Name {
+			get { return name; }
+			set { name = value; }
+		}
 
 		public DTDAttributeDefinition this [int i] {
 			get { return Get (i); }
@@ -600,36 +751,80 @@ namespace Mono.Xml
 		public int Count {
 			get { return attributeOrders.Count; }
 		}
-
-//		public object Clone ()
-//		{
-//			return this.MemberwiseClone ();
-//		}
 	}
 
-	public class DTDEntityDeclaration : DTDNode
+	public class DTDEntityBase : DTDNode
+	{
+		string name;
+		string publicId;
+		string systemId;
+		string literalValue;
+
+		public string Name {
+			get { return name; }
+			set { name = value; }
+		}
+
+		public string PublicId {
+			get { return publicId; }
+			set { publicId = value; }
+		}
+
+		public string SystemId {
+			get { return systemId; }
+			set { systemId = value; }
+		}
+
+		public string LiteralEntityValue {
+			get { return literalValue; }
+			set { literalValue = value; }
+		}
+
+	}
+
+	public class DTDEntityDeclaration : DTDEntityBase
 	{
 		string entityValue;
+		string notationName;
 
-		public string Name;
-		public string PublicId;
-		public string SystemId;
-		public string NotationName;
-		public string LiteralEntityValue;
-		public bool IsInternalSubset;
-		public StringCollection ReferencingEntities = new StringCollection ();
+		StringCollection ReferencingEntities = new StringCollection ();
+
 		bool scanned;
 		bool recursed;
+		bool hasExternalReference;
+
+		internal DTDEntityDeclaration (DTDObjectModel root)
+		{
+			this.SetRoot (root);
+		}
+
+		public string NotationName {
+			get { return notationName; }
+			set { notationName = value; }
+		}
+
+		public bool HasExternalReference {
+			get {
+				if (!scanned)
+					ScanEntityValue (new StringCollection ());
+				return hasExternalReference;
+			}
+		}
 
 		public string EntityValue {
 			get {
+				if (PublicId == null && SystemId == null && LiteralEntityValue == null)
+					return String.Empty;
+
 				if (entityValue == null) {
 					if (NotationName != null)
 						entityValue = "";
-					else if (SystemId == null)
+					else if (SystemId == null || SystemId == String.Empty) {
+						// FIXME: Isn't it an error??
 						entityValue = LiteralEntityValue;
-					else {
-						// FIXME: should use specified XmlUrlResolver.
+						if (entityValue == null)
+							entityValue = String.Empty;
+					} else {
 						entityValue = ResolveExternalEntity (Root.Resolver);
 					}
 					// Check illegal recursion.
@@ -639,10 +834,13 @@ namespace Mono.Xml
 			}
 		}
 
+		// It returns whether the entity contains references to external entities.
 		public void ScanEntityValue (StringCollection refs)
 		{
 			// To modify this code, beware nesting between this and EntityValue.
 			string value = EntityValue;
+			if (this.SystemId != null)
+				hasExternalReference = true;
 
 			if (recursed)
 				throw new XmlException ("Entity recursion was found.");
@@ -669,20 +867,40 @@ namespace Mono.Xml
 					if (start == 0)
 						break;
 					string name = value.Substring (start, i - start);
+					if (name.Length == 0)
+						throw new XmlException (this as IXmlLineInfo, "Entity reference name is missing.");
+					if (name [0] == '#')
+						break;	// character reference
+					// FIXME: Should be checked, but how to handle entity for ENTITY attribute?
+//					if (!XmlChar.IsName (name))
+//						throw new XmlException (this as IXmlLineInfo, "Invalid entity reference name.");
+					if (XmlChar.GetPredefinedEntity (name) != 0)
+						break;	// predefined reference
+
 					this.ReferencingEntities.Add (name);
 					DTDEntityDeclaration decl = Root.EntityDecls [name];
 					if (decl != null) {
+						if (decl.SystemId != null)
+							hasExternalReference = true;
 						refs.Add (Name);
 						decl.ScanEntityValue (refs);
 						foreach (string str in decl.ReferencingEntities)
 							ReferencingEntities.Add (str);
 						refs.Remove (Name);
+						value = value.Remove (start - 1, name.Length + 2);
+						value = value.Insert (start - 1, decl.EntityValue);
+						i -= name.Length + 1; // not +2, because of immediate i++ .
+						len = value.Length;
 					}
 					start = 0;
 					break;
 				}
 			}
+			if (start != 0)
+				Root.AddError (new XmlSchemaException ("Invalid reference character '&' is specified.",
+					this.LineNumber, this.LinePosition, null, this.BaseURI, null));
 			scanned = true;
+			entityValue = value;
 			recursed = false;
 		}
 
@@ -696,8 +914,20 @@ namespace Mono.Xml
 				baseUri = null;
 			Uri uri = resolver.ResolveUri (
 				baseUri != null ? new Uri (baseUri) : null, SystemId);
-			Stream stream = resolver.GetEntity (uri, null, typeof (Stream)) as Stream;
-			XmlStreamReader reader = new XmlStreamReader (stream, false);
+			XmlStreamReader xsreader = null;
+			try {
+				Stream stream = resolver.GetEntity (uri, null, typeof (Stream)) as Stream;
+				xsreader = new XmlStreamReader (stream, false);
+			} catch (Exception ex) { // FIXME: bad catch ;-(
+				Root.AddError (new XmlSchemaException ("Cannot resolve external entity " + uri.ToString () + " .",
+					this.LineNumber, this.LinePosition, null, this.BaseURI, ex));
+			}
+			if (xsreader == null)
+				return String.Empty;
+			XmlTextReader extEntReader = new XmlTextReader (xsreader);
+			extEntReader.SkipTextDeclaration ();
+			TextReader reader = extEntReader.GetRemainder ();
+			extEntReader.Close ();
 
 			StringBuilder sb = new StringBuilder ();
 
@@ -721,39 +951,97 @@ namespace Mono.Xml
 			}
 			return sb.ToString ();
 		}
-
-		internal DTDEntityDeclaration (DTDObjectModel root)
-		{
-			this.SetRoot (root);
-		}
 	}
 
 	public class DTDNotationDeclaration : DTDNode
 	{
-		public string Name;
-		public string LocalName;
-		public string Prefix;
-		public string PublicId;
-		public string SystemId;
+		string name;
+		string localName;
+		string prefix;
+		string publicId;
+		string systemId;
 
-		internal DTDNotationDeclaration () {}
+		public string Name {
+			get { return name; }
+			set { name = value; }
+		}
+
+		public string PublicId {
+			get { return publicId; }
+			set { publicId = value; }
+		}
+
+		public string SystemId {
+			get { return systemId; }
+			set { systemId = value; }
+		}
+
+		public string LocalName {
+			get { return localName; }
+			set { localName = value; }
+		}
+
+		public string Prefix {
+			get { return prefix; }
+			set { prefix = value; }
+		}
+
+		internal DTDNotationDeclaration (DTDObjectModel root)
+		{
+			SetRoot (root);
+		}
 	}
 
-	public class DTDParameterEntityDeclaration : DTDNode
+	public class DTDParameterEntityDeclarationCollection
+	{
+		Hashtable peDecls = new Hashtable ();
+		DTDObjectModel root;
+
+		public DTDParameterEntityDeclarationCollection (DTDObjectModel root)
+		{
+			this.root = root;
+		}
+
+		public DTDParameterEntityDeclaration this [string name] {
+			get { return peDecls [name] as DTDParameterEntityDeclaration; }
+		}
+
+		public void Add (string name, DTDParameterEntityDeclaration decl)
+		{
+			if (peDecls [name] != null) {
+//				this.root.AddError (new XmlSchemaException (String.Format (
+//					"Parameter entity declaration for {0} was already added.",
+//					name), null));
+				return;
+			}
+			decl.SetRoot (root);
+			peDecls.Add (name, decl);
+		}
+
+		public ICollection Keys {
+			get { return peDecls.Keys; }
+		}
+
+		public ICollection Values {
+			get { return peDecls.Values; }
+		}
+	}
+
+	public class DTDParameterEntityDeclaration : DTDEntityBase
 	{
 		string resolvedValue;
 		Exception loadException;
+		bool loadFailed;
 
-		public string Name;
-		public string PublicId;
-		public string SystemId;
-		public string LiteralValue;
-		public bool LoadFailed;
+		public bool LoadFailed {
+			get { return loadFailed; }
+			set { loadFailed = value; }
+		}
 
 		public string Value {
 			get {
-				if (LiteralValue != null)
-					return LiteralValue;
+				if (LiteralEntityValue != null)
+					return LiteralEntityValue;
 				if (resolvedValue == null)
 					throw new InvalidOperationException ();
 				return resolvedValue;
@@ -779,22 +1067,9 @@ namespace Mono.Xml
 
 			try {
 				XmlStreamReader tw = new XmlStreamReader (absUri.ToString (), false, resolver, BaseURI);
-				string s = tw.ReadToEnd ();
-				if (s.StartsWith ("<?xml")) {
-					int end = s.IndexOf (">") + 1;
-					if (end < 0)
-						throw new XmlException (this as IXmlLineInfo,
-							"Inconsistent text declaration markup.");
-					if (s.IndexOf ("encoding", 0, end) < 0)
-						throw new XmlException (this as IXmlLineInfo,
-							"Text declaration must not omit encoding specification.");
-					if (s.IndexOf ("standalone", 0, end) >= 0)
-						throw new XmlException (this as IXmlLineInfo,
-							"Text declaration cannot have standalone declaration.");
-					resolvedValue = s.Substring (end);
-				}
-				else
-					resolvedValue = s;
+				XmlTextReader xtr = new XmlTextReader (tw);
+				xtr.SkipTextDeclaration ();
+				resolvedValue = xtr.GetRemainder ().ReadToEnd ();
 			} catch (IOException ex) {
 				loadException = ex;
 				resolvedValue = String.Empty;

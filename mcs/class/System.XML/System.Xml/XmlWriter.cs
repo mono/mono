@@ -1,10 +1,12 @@
 //
-// System.Xml.XmlTextWriter
+// System.Xml.XmlWriter
 //
-// Author:
+// Authors:
 //   Kral Ferch <kral_ferch@hotmail.com>
+//   Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 //
 // (C) 2002 Kral Ferch
+// (C) 2002-2003 Atsushi Enomoto
 //
 
 using System;
@@ -224,6 +226,8 @@ namespace System.Xml
 				else
 					WriteStartDocument ();
 				break;
+			case XmlNodeType.None:
+				return;	// Do nothing, nor reporting errors.
 			default:
 				throw new XmlException ("Unexpected node " + reader.Name + " of type " + reader.NodeType);
 			}

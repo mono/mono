@@ -929,7 +929,7 @@ namespace System.Xml
 			}
 			entityReader = new XmlTextReader (replacementText, xmlReaderNodeType, ctx);
 			entityReader.XmlResolver = document.Resolver;
-			entityReader.MaybeTextDecl = true;
+			entityReader.SkipTextDeclaration ();
 		}
 
 		public override void Skip ()

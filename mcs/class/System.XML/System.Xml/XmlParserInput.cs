@@ -146,43 +146,15 @@ namespace Mono.Xml.Native
 		public int LinePosition {
 			get { return column; }
 		}
-		public string Name 
-		{
-			get {
-				return currentMarkup.ToString (parsedNameStart, parsedNameEnd - parsedNameStart);
-			}
+
+		public bool InitialState {
+			get { return initialState; }
+			set { initialState = value; }
 		}
 
-		public string Value {
-			get {
-				return currentMarkup.ToString (parsedValueStart, parsedValueEnd - parsedValueStart);
-			}
-		}
 		#endregion
 
 		#region Privates
-		private void ReadNameOrNmToken(bool isNameToken)
-		{
-			parsedNameStart = currentMarkup.Length;
-			if(isNameToken) {
-				if (!XmlChar.IsNameChar (PeekChar ()))
-					throw ReaderError ("a name did not start with a legal character " + PeekChar ());
-			}
-			else {
-				if (!XmlChar.IsFirstNameChar (PeekChar ()))
-					throw ReaderError ("a name did not start with a valid character " + PeekChar () + "(" + (char) PeekChar () + ")");
-			}
-
-			ReadChar ();
-
-			while (XmlChar.IsNameChar (PeekChar ())) {
-				ReadChar ();
-			}
-
-			parsedNameEnd = currentMarkup.Length;
-		}
-
-		// Privates
 		TextReader reader;
 		bool can_seek;
 		bool has_peek;
@@ -190,13 +162,10 @@ namespace Mono.Xml.Native
 		int line;
 		int column;
 		StringBuilder currentMarkup = new StringBuilder ();
-		int parsedNameStart;
-		int parsedNameEnd;
-		int parsedValueStart;
-		int parsedValueEnd;
 		StringBuilder peBuffer = new StringBuilder ();
 		string baseURI;
 		bool peStored = false;
+		bool initialState = true;
 
 		private int ParseCharReference (string name)
 		{

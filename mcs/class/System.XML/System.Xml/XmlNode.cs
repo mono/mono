@@ -638,10 +638,14 @@ namespace System.Xml
 			return ((XmlDocumentNavigator) iter.Current).Node;
 		}
 
-		[MonoTODO]
 		public virtual bool Supports (string feature, string version)
 		{
-			throw new NotImplementedException ();
+			if (String.Compare (feature, "xml", true) == 0 // not case-sensitive
+			    && (String.Compare (version, "1.0", true) == 0
+				|| String.Compare (version, "2.0", true) == 0))
+				return true;
+			else
+				return false;
 		}
 
 		public abstract void WriteContentTo (XmlWriter w);

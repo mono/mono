@@ -28,8 +28,9 @@ namespace System.Xml
 
 		public bool HasFeature (string strFeature, string strVersion)
 		{
-			if ((strFeature == "XML") || (strFeature == "xml") // not case-sensitive
-			    && (strVersion == "1.0") || (strVersion == "2.0"))
+			if (String.Compare (strFeature, "xml", true) == 0 // not case-sensitive
+			    && (String.Compare (strVersion, "1.0", true) == 0
+				|| String.Compare (strVersion, "2.0", true) == 0))
 				return true;
 			else
 				return false;

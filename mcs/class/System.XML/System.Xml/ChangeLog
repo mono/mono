@@ -1,7 +1,42 @@
+2003-10-09  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* Added DTDReader.cs. It is almost importation of XmlTextReader.
+	* DTDObjectModel.cs :
+	  - More .NET-ism. Properties took place of fields.
+	  - Imported PE set from XmlTextReader. Added location info.
+	  - Added DTDEntityBase common to PE and GE.
+	  - More correct text declaration handling with new XmlTextReader.
+	* DTDValidatingReader.cs :
+	  - Now uses entity resolving XmlTextReader to validate attributes
+	    correctly. Implemented standalone
+	  - Standalone and default related validity constraints check.
+	* XmlImplementation.cs: Implemented HasFeature().
+	* XmlNode.cs : Implemented Supports().
+	* XmlNodeReader.cs : Modified to use XmlTextReader.SkipTextDeclaration()
+	* XmlParserInput.cs : Removed extraneous members.
+	* XmlTextReader.cs :
+	  - All DTD related functionality now goes to DTDReader.cs
+	  - It became old simple TextReader input style.
+	  - Implemented GetRemainder().
+	  - Implemented ReadBase64(), ReadBinHex() and ReadChars(), using 
+	    additional new private method ReadUntilEndTag().
+	  - Removed incomplete MaybeTextDecl and added SkipTextDeclaration().
+	    ReadXmlDeclaration() now became simple.
+	  - More strict entity reference check at SetEntityReferenceProperty()
+	  - Removed extraneous members.
+	* XmlWriter.cs : WriteNode(XmlNodeType.None) does not raise error.
+
 2003-10-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XmlTextReader.cs: when we get an unexpected EOF in ReadContent, set
 	the state before throwing the exception if depth > 0.
+
+2003-10-04  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlAttribute.cs : Removed extraneous MonoTODO.
+	* XmlTextWriter.cs : Implemented WriteBinHex() and WriteChars().
+	  WriteStartElement() and WriteStartAttribute() should ignore Prefix
+	  if namespace uri is not specified.
 
 2003-10-04  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
