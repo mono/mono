@@ -1,3 +1,7 @@
+2004-06-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlDefaultReader.cs : don't catch the exception.
+
 2004-02-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlDefaultReader.cs : Added support for IXmlLineInfo.

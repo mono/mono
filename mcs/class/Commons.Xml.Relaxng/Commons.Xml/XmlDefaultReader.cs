@@ -186,11 +186,7 @@ namespace Commons.Xml
 
 		public override bool Read ()
 		{
-			try {
-				return Reader.Read ();
-			} catch (Exception ex) {
-				throw ex;
-			}
+			return Reader.Read ();
 		}
 
 		public override string ReadString ()
