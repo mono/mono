@@ -1,65 +1,71 @@
 //
-// Microsoft.Web.Services.Pipeline.cs
+// Pipeline.cs: Soap Filter Pipeline
 //
-// Author: Duncan Mak (duncan@ximian.com)
+// Author:
+//	Sebastien Pouliot (spouliot@motus.com)
 //
-// (C) Ximian Inc, 2003.
+// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using System;
-using System.Globalization;
+// using Microsoft.Web.Services.Configuration;
 
-namespace Microsoft.Web.Services  {
+namespace Microsoft.Web.Services {
 
-        public class Pipeline
-        {
-                SoapInputFilterCollection input;
-                SoapOutputFilterCollection output;
+	// Reference:
+	// 1.	Inside the Web Services Enhancements Pipeline
+	//	http://msdn.microsoft.com/library/en-us/dnwebsrv/html/insidewsepipe.asp
 
-                
-                public Pipeline ()
-                {
-                }
+	public class Pipeline {
 
-                public Pipeline (Pipeline pipeline)
-                {
-                        if (pipeline == null)
-                                throw new ArgumentNullException (
-                                        Locale.GetText ("Argument is null"));
+		private SoapInputFilterCollection input;
+		private SoapOutputFilterCollection output;
 
-                        input = pipeline.InputFilters;
-                        output = pipeline.OutputFilters;
-                }
+		public Pipeline() 
+		{
+			// set to defaults
+			input = (SoapInputFilterCollection) WebServicesConfiguration.FilterConfiguration.InputFilters.Clone ();
+			output = (SoapOutputFilterCollection) WebServicesConfiguration.FilterConfiguration.OutputFilters.Clone ();
+		}
 
-                public Pipeline (
-                        SoapInputFilterCollection inputCollection,
-                        SoapOutputFilterCollection outputCollection)
-                {
-                        if (inputCollection == null || outputCollection == null)
-                                throw new ArgumentNullException (
-                                        Locale.GetText ("Argument is null"));
+		public Pipeline (Pipeline pipeline) 
+		{
+			if (pipeline == null)
+				throw new ArgumentNullException ("pipeline");
+			input = (SoapInputFilterCollection) pipeline.InputFilters.Clone ();
+			output = (SoapOutputFilterCollection) pipeline.OutputFilters.Clone ();
+		}
 
-                        input = inputCollection;
-                        output = outputCollection;
-                }
+		public Pipeline (SoapInputFilterCollection inputFilters, SoapOutputFilterCollection outputFilters) 
+		{
+			if (inputFilters == null)
+				throw new ArgumentNullException ("inputFilters");
+			if (outputFilters == null)
+				throw new ArgumentNullException ("outputFilters");
+			input = (SoapInputFilterCollection) inputFilters.Clone ();
+			output = (SoapOutputFilterCollection) outputFilters.Clone ();
+		}
 
-                public SoapInputFilterCollection InputFilters {
-                        get { return input; }
-                }
+		public SoapInputFilterCollection InputFilters {
+			get { return input; }
+		}
 
-                public SoapOutputFilterCollection OutputFilters {
+		public SoapOutputFilterCollection OutputFilters { 
+			get { return output; }
+		}
 
-                        get { return output; }
-                }
+		public void ProcessInputMessage (SoapEnvelope envelope) 
+		{
+			// in normal order
+			for (int x=0; x < input.Count; x++)
+				input [x].ProcessMessage (envelope);
+		}
 
-                public void ProcessInputMessage (SoapEnvelope envelope)
-                {
-                        throw new NotImplementedException ();
-                }
-
-                public void ProcessOutputMessage (SoapEnvelope envelope)
-                {
-                        throw new NotImplementedException ();
-                }
-        }
+		public void ProcessOutputMessage (SoapEnvelope envelope) 
+		{
+			// in reverse order - see reference [1]
+			for (int x=output.Count - 1; x >= 0; x++)
+				output [x].ProcessMessage (envelope);
+		}
+	}
 }

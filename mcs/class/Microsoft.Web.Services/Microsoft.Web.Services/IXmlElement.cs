@@ -1,19 +1,20 @@
 //
-// Microsoft.Web.Services.IXmlElement.cs
+// IXmlElement.cs: Interface IXmlElement
 //
-// Author: Duncan Mak (duncan@ximian.com)
+// Author:
+//	Sebastien Pouliot (spouliot@motus.com)
 //
-// (C) Ximian Inc, 2003.
+// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using System.Xml;
 
-namespace Microsoft.Web.Services  {
+namespace Microsoft.Web.Services {
 
-        public interface IXmlElement
-        {
-                XmlElement GetXml (XmlDocument document);
+	public interface IXmlElement {
 
-                void LoadXml (XmlElement element);
-        }
+		XmlElement GetXml (XmlDocument document);
+
+		void LoadXml (XmlElement element);
+	}
 }

@@ -1,24 +1,29 @@
 //
-// Microsoft.Web.Services.HttpSoapContext.cs
+// HttpSoapContext.cs: Http Soap Contexts
 //
-// Author: Duncan Mak (duncan@ximian.com)
+// Author:
+//	Sebastien Pouliot (spouliot@motus.com)
 //
-// (C) Ximian Inc, 2003.
+// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
-namespace Microsoft.Web.Services  {
-        public sealed class HttpSoapContext
-        {
-                public static SoapContext RequestContext {
-                        get {
-                        }
-                }
+using System;
 
-                public static SoapContext ResponseContext {
+namespace Microsoft.Web.Services {
 
-                        get {
-                        }
+	public sealed class HttpSoapContext {
 
-                }
-        }
+		// must have an internal one or a public one will be created (winchurn)
+		internal HttpSoapContext () {}
+
+		[MonoTODO("ASP.NET related")]
+		public static SoapContext RequestContext { 
+			get { return null; }
+		}
+
+		[MonoTODO("ASP.NET related")]
+		public static SoapContext ResponseContext { 
+			get { return null; }
+		}
+	}
 }
