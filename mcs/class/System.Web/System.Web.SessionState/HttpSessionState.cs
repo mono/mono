@@ -9,14 +9,47 @@
 using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Globalization;
+using System.Threading;
 
 namespace System.Web.SessionState {
 public sealed class HttpSessionState : ICollection, IEnumerable
 {
-	private int _codePage;
 	private NameValueCollection _state; //FIXME: it should be a ManagementNamedValueCollection
+	private string _id;
+	private SessionDictionary _dict;
+	private HttpStaticObjectsCollection _staticObjects;
+	private int _timeout;
+	private bool _newSession;
+	private bool _isCookieless;
+	private SessionStateMode _mode;
+	private bool _isReadonly;
+	private bool _abandoned;
 
-	//public int CodePage -> compatibility with ASP
+	internal HttpSessionState (string id,
+				   SessionDictionary dict,
+				   HttpStaticObjectsCollection staticObjects,
+				   int timeout,
+				   bool newSession,
+				   bool isCookieless,
+				   SessionStateMode mode,
+				   bool isReadonly)
+	{
+		_id = id;
+		_dict = dict;
+		_staticObjects = staticObjects;
+		_timeout = timeout;
+		_newSession = newSession;
+		_isCookieless = isCookieless;
+		_mode = mode;
+		_isReadonly = isReadonly;
+	}
+
+	// Compatibility with ASP
+	public int CodePage
+	{
+		get { return 0; }
+	}
 
 	public HttpSessionState Contents
 	{
@@ -28,28 +61,29 @@ public sealed class HttpSessionState : ICollection, IEnumerable
 		get { return _state.Count; }
 	}
 
-	[MonoTODO]
+	public bool IsAbandoned
+	{
+		get { return _abandoned; }
+	}
+
 	public bool IsCookieless
 	{
-		get { throw new NotImplementedException (); }
+		get { return _isCookieless; }
 	}
 
-	[MonoTODO]
 	public bool IsNewSession
 	{
-		get { throw new NotImplementedException (); }
+		get { return _newSession; }
 	}
 
-	[MonoTODO]
 	public bool IsReadOnly
 	{
-		get { throw new NotImplementedException (); }
+		get { return _isReadonly; }
 	}
 
-	[MonoTODO]
 	public bool IsSynchronized
 	{
-		get { throw new NotImplementedException (); }
+		get { return false; }
 	}
 
 	public object this [string key]
@@ -72,29 +106,25 @@ public sealed class HttpSessionState : ICollection, IEnumerable
 		get { return _state.Keys; }
 	}
 
-	[MonoTODO]
 	public int LCID
 	{
-		get { throw new NotImplementedException (); }
-		set { throw new NotImplementedException (); }
+		get { return Thread.CurrentThread.CurrentCulture.LCID; }
+		set { Thread.CurrentThread.CurrentCulture = new CultureInfo(value); }
 	}
 
-	[MonoTODO]
 	public SessionStateMode Mode
 	{
-		get { throw new NotImplementedException (); }
+		get { return _mode; }
 	}
 
-	[MonoTODO]
 	public string SessionID
 	{
-		get { throw new NotImplementedException (); }
+		get { return _id; }
 	}
 
-	[MonoTODO]
 	public HttpStaticObjectsCollection StaticObjects
 	{
-		get { throw new NotImplementedException (); }
+		get { return _staticObjects; }
 	}
 
 	public object SyncRoot
@@ -102,17 +132,15 @@ public sealed class HttpSessionState : ICollection, IEnumerable
 		get { return this; }
 	}
 
-	[MonoTODO]
 	public int Timeout
 	{
-		get { throw new NotImplementedException (); }
-		set { throw new NotImplementedException (); }
+		get { return _timeout; }
+		set { _timeout = value; }
 	}
 
-	[MonoTODO]
 	public void Abandon ()
 	{
-		throw new NotImplementedException ();
+		_abandoned = true;
 	}
 
 	public void Add (string name, object value)

@@ -1,3 +1,8 @@
+2002-06-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpSessionState.cs: implemented more methods/properties.
+	* SessionDictionary.cs: New file.
+
 2002-06-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Web.SessionState/HttpSessionState.cs:
