@@ -1,3 +1,10 @@
+2004-11-22  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaException.cs : Message is only 1.x (not 2.0).
+	* XmlSchemaInference.cs : use more static readonly QName fields.
+	  Type merge inference now traverses every base types.
+	* XmlSchemaInfo.cs : added new file.
+
 2004-11-18  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaException.cs : added .ctor(string).

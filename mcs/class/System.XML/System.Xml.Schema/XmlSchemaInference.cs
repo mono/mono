@@ -117,20 +117,65 @@ namespace System.Xml.Schema
 			return impl.schemas;
 		}
 
-		public const string NamespaceXml = "http://www.w3.org/XML/1998/namespace";
+		public const string NamespaceXml =
+			"http://www.w3.org/XML/1998/namespace";
 
-		public const string NamespaceXmlns = "http://www.w3.org/2000/xmlns/";
+		public const string NamespaceXmlns =
+			"http://www.w3.org/2000/xmlns/";
 
-		public const string XdtNamespace = "http://www.w3.org/2003/11/xpath-datatypes";
+		public const string XdtNamespace =
+			"http://www.w3.org/2003/11/xpath-datatypes";
 
-		static readonly QName QNameString = new QName ("string",
-			XmlSchema.Namespace);
+		static readonly QName QNameString = new QName (
+			"string", XmlSchema.Namespace);
 
-		static readonly QName QNameBoolean = new QName ("boolean",
-			XmlSchema.Namespace);
+		static readonly QName QNameBoolean = new QName (
+			"boolean", XmlSchema.Namespace);
 
-		static readonly QName QNameAnyType = new QName ("anyType",
-			XmlSchema.Namespace);
+		static readonly QName QNameAnyType = new QName (
+			"anyType", XmlSchema.Namespace);
+
+		static readonly QName QNameByte = new QName (
+			"byte", XmlSchema.Namespace);
+
+		static readonly QName QNameUByte = new QName (
+			"unsignedByte", XmlSchema.Namespace);
+
+		static readonly QName QNameShort = new QName (
+			"short", XmlSchema.Namespace);
+
+		static readonly QName QNameUShort = new QName (
+			"unsignedShort", XmlSchema.Namespace);
+
+		static readonly QName QNameInt = new QName (
+			"int", XmlSchema.Namespace);
+
+		static readonly QName QNameUInt = new QName (
+			"unsignedInt", XmlSchema.Namespace);
+
+		static readonly QName QNameLong = new QName (
+			"long", XmlSchema.Namespace);
+
+		static readonly QName QNameULong = new QName (
+			"unsignedLong", XmlSchema.Namespace);
+
+		static readonly QName QNameDecimal = new QName (
+			"decimal", XmlSchema.Namespace);
+
+		static readonly QName QNameUDecimal = new QName (
+			"unsignedDecimal", XmlSchema.Namespace);
+
+		static readonly QName QNameDouble = new QName (
+			"double", XmlSchema.Namespace);
+
+		static readonly QName QNameFloat = new QName (
+			"float", XmlSchema.Namespace);
+
+		static readonly QName QNameDateTime = new QName (
+			"dateTime", XmlSchema.Namespace);
+
+		static readonly QName QNameDuration = new QName (
+			"duration", XmlSchema.Namespace);
 
 		XmlReader source;
 		XmlSchemaSet schemas;
@@ -339,17 +384,18 @@ namespace System.Xml.Schema
 				typeName);
 			if (st == null) // non-primitive type => see above.
 				return QNameString;
-			try {
-				st.Datatype.ParseValue (value,
-					source.NameTable,
-					source as IXmlNamespaceResolver);
-				// the string value was value
-				return typeName;
-			} catch {
-				// The types were incompatible.
-				// FIXME: find the base common type
-				return QNameString;
-			}
+			do {
+				try {
+					st.Datatype.ParseValue (value,
+						source.NameTable,
+						source as IXmlNamespaceResolver);
+					return typeName;
+				} catch {
+					st = st.BaseXmlSchemaType as XmlSchemaSimpleType;
+					typeName = st != null ? st.QualifiedName : QName.Empty;
+				}
+			} while (typeName != QName.Empty);
+			return QNameString;
 		}
 
 		private SOMList GetAttributes (ComplexType ct)
@@ -930,49 +976,49 @@ namespace System.Xml.Schema
 			try {
 				long dec = XmlConvert.ToInt64 (value);
 				if (byte.MinValue <= dec && dec <= byte.MaxValue)
-					return XmlSchemaType.GetBuiltInSimpleType (XmlTypeCode.UnsignedByte).QualifiedName;
+					return QNameUByte;
 				if (sbyte.MinValue <= dec && dec <= sbyte.MaxValue)
-					return XmlSchemaType.GetBuiltInSimpleType (XmlTypeCode.Byte).QualifiedName;
+					return QNameByte;
 				if (ushort.MinValue <= dec && dec <= ushort.MaxValue)
-					return XmlSchemaType.GetBuiltInSimpleType (XmlTypeCode.UnsignedShort).QualifiedName;
+					return QNameUShort;
 				if (short.MinValue <= dec && dec <= short.MaxValue)
-					return XmlSchemaType.GetBuiltInSimpleType (XmlTypeCode.Short).QualifiedName;
+					return QNameShort;
 				if (uint.MinValue <= dec && dec <= uint.MaxValue)
-					return XmlSchemaType.GetBuiltInSimpleType (XmlTypeCode.UnsignedInt).QualifiedName;
+					return QNameUInt;
 				if (int.MinValue <= dec && dec <= int.MaxValue)
-					return XmlSchemaType.GetBuiltInSimpleType (XmlTypeCode.Int).QualifiedName;
-				return XmlSchemaType.GetBuiltInSimpleType (XmlTypeCode.Long).QualifiedName;
+					return QNameInt;
+				return QNameLong;
 			} catch (Exception) {
 			}
 			try {
 				XmlConvert.ToUInt64 (value);
-				return XmlSchemaType.GetBuiltInSimpleType (XmlTypeCode.UnsignedLong).QualifiedName;
+				return QNameULong;
 			} catch (Exception) {
 			}
 			try {
 				XmlConvert.ToDecimal (value);
-				return XmlSchemaType.GetBuiltInSimpleType (XmlTypeCode.Decimal).QualifiedName;
+				return QNameDecimal;
 			} catch (Exception) {
 			}
 			try {
 				double dbl = XmlConvert.ToDouble (value);
 				if (float.MinValue <= dbl &&
 					dbl <= float.MaxValue)
-					return XmlSchemaType.GetBuiltInSimpleType (XmlTypeCode.Float).QualifiedName;
+					return QNameFloat;
 				else
-					return XmlSchemaType.GetBuiltInSimpleType (XmlTypeCode.Double).QualifiedName;
+					return QNameDouble;
 			} catch (Exception) {
 			}
 			try {
 				// FIXME: also try DateTimeSerializationMode
 				// and gYearMonth
 				XmlConvert.ToDateTime (value);
-				return XmlSchemaType.GetBuiltInSimpleType (XmlTypeCode.DateTime).QualifiedName;
+				return QNameDateTime;
 			} catch (Exception) {
 			}
 			try {
 				XmlConvert.ToTimeSpan (value);
-				return XmlSchemaType.GetBuiltInSimpleType (XmlTypeCode.Duration).QualifiedName;
+				return QNameDuration;
 			} catch (Exception) {
 			}
 

@@ -163,6 +163,7 @@ namespace System.Xml.Schema
 		}
 
 #if NET_2_0
+#else
 		public override string Message {
 			get { return base.Message; }
 		}
