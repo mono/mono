@@ -340,6 +340,9 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			if (d is ConstructedType)
+				((ConstructedType) d).Resolve (type_resolve_ec, TypeBuilder);
+
 			if (!CheckAccessLevel (d.Type)) {
 				Report.	Error (122, loc,  "`" + d.Type + "' " +
 				       "is inaccessible because of its protection level");

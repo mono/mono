@@ -394,8 +394,10 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (args.HasTypeArguments)
+			if (args.HasTypeArguments) {
+				type = parent;
 				return parent;
+			}
 
 			for (int i = 0; i < gen_params.Length; i++) {
 				if (!CheckConstraints (i))
@@ -405,7 +407,8 @@ namespace Mono.CSharp {
 			//
 			// Now bind the parameters.
 			//
-			return gt.BindGenericParameters (args.Arguments);
+			type = gt.BindGenericParameters (args.Arguments);
+			return type;
 		}
 		
 		public override void Emit (EmitContext ec)

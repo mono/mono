@@ -1,5 +1,12 @@
 2003-10-25  Martin Baulig  <martin@ximian.com>
 
+	* decl.cs (DeclSpace.ResolveType): If we're a ConstructedType,
+	call ConstructedType.Resolve() on it.
+
+	* generic.cs (ConstructedType.Resolve): Set `type' on success.
+
+2003-10-25  Martin Baulig  <martin@ximian.com>
+
 	* class.cs (TypeContainer.GetClassBases): Changed
 	`out Type parent' into `out TypeExpr parent'.  Moved CS0644 and
 	CS8214 reporting here.
