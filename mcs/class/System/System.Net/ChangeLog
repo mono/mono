@@ -1,3 +1,9 @@
+2004-02-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WebConnection.cs: Update previous patch to use HttpsClientStream
+	(internal in Mono.Security assembly) in place of SslClientStream.
+	This will reduce reflection and allow to use ICertificatePolicy.
+
 2004-02-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DigestClient.cs: fix quote handling. Reordered attributes in response.
@@ -8,7 +14,7 @@
 	* DigestClient.cs: removed Console.
 	* HttpWebRequest.cs: 401/407 were hanging for GET. Fixed.
 
-2004-02-18  Sebastien Pouliot  <sebastien@ximian.com>
+2004-02-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DigestClient.cs: Fixed issue with Apache server which do not use "
 	for specifying the digest algorithm (.e.g. algorithm=MD5 not ="MD5").

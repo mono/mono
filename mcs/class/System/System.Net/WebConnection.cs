@@ -118,9 +118,9 @@ namespace System.Net
 					if (!sslCheck) {
 						lock (typeof (WebConnection)) {
 							sslCheck = true;
-							sslStream = Type.GetType ("Mono.Security.Protocol.Tls.SslClientStream, Mono.Security, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false);
+							// HttpsClientStream is an internal glue class in Mono.Security.dll
+							sslStream = Type.GetType ("Mono.Security.Protocol.Tls.HttpsClientStream, Mono.Security, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", false);
 							if (sslStream != null) {
-								piCRL = sslStream.GetProperty ("CheckCertRevocationStatus");
 								piClient = sslStream.GetProperty ("SelectedClientCertificate");
 								piServer = sslStream.GetProperty ("ServerCertificate");
 							}
@@ -128,17 +128,10 @@ namespace System.Net
 					}
 					if (sslStream == null)
 						throw new NotSupportedException ("Missing Mono.Security.dll assembly. Support for SSL/TLS is unavailable.");
-					// FIXME: SecurityProtocolType is defined in System (1.1+) and Mono.Security (for 1.0)
-					// this results in MissingMethodException :(
-//					object[] args = new object [5] { serverStream, request.RequestUri.Host, false, ServicePointManager.SecurityProtocol, request.ClientCertificates };
-					// so we ends up using Default and not ServicePointManager.SecurityProtocol
-					object[] args = new object [3] { serverStream, request.RequestUri.Host, request.ClientCertificates };
+
+					object[] args = new object [4] { serverStream, request.RequestUri.Host, request.ClientCertificates, request };
 					nstream = (Stream) Activator.CreateInstance (sslStream, args);
 
-					if (ServicePointManager.CheckCertificateRevocationList) {
-						// note: default is false
-						piCRL.SetValue (nstream, true, null);
-					}
 					// we also need to set ServicePoint.Certificate 
 					// and ServicePoint.ClientCertificate but this can
 					// only be done later (after handshake - which is
