@@ -1,3 +1,8 @@
+2004-07-23  Martin Baulig  <martin@ximian.com>
+
+	* cs0260.cs, cs0260-2.cs, cs0261.cs, cs0262.cs, cs0263.cs: New
+	tests for partial classes.
+
 2004-07-14  Martin Baulig  <martin@ximian.com>
 
 	* cs1623.cs, cs1624.cs, cs1625.cs, cs1631.cs: New tests for
