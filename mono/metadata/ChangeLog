@@ -1,3 +1,13 @@
+2004-04-01  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_inflate_generic_type): Moved the
+	functionality into a new static inflate_generic_type() which
+	returns NULL if it didn't do anything.  Only increment the
+	`mono_stats.inflated_type_count' if we actually inflated
+	something.
+	(mono_class_get_full): Check the classes type to see whether we
+	need to inflate it; also inflate MONO_TYPE_(M)VAR.
+
 2004-04-01  Jackson Harper  <jackson@ximian.com>
 
 	* reflection.c: Set culture for assembly references.
