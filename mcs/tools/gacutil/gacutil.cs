@@ -10,6 +10,7 @@ using System.Text;
 using System.Reflection;
 using System.Collections;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 using Mono.Security;
 
@@ -329,7 +330,7 @@ namespace Mono.Tools
 						Directory.CreateDirectory (libdir + package_name);
 					} catch {}
 					
-					Mono.Posix.Syscall.symlink (linkPath + an.Name + ".dll", libdir + package_name + Path.DirectorySeparatorChar + Path.GetFileName (args[0]));
+					symlink (linkPath + an.Name + ".dll", libdir + package_name + Path.DirectorySeparatorChar + Path.GetFileName (args[0]));
 				} else {
 					File.Copy (args[0], libdir + package_name + Path.DirectorySeparatorChar + Path.GetFileName (args[0]));
 				}
@@ -487,5 +488,8 @@ namespace Mono.Tools
 			}
 			return Path.Combine (Path.Combine ((string)libdir.Invoke (null, null), "mono"), "");
 		}
+
+		[DllImport ("libc", SetLastError=true)]
+		public static extern int symlink (string oldpath, string newpath);
 	}
 }
