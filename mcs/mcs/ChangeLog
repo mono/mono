@@ -1,5 +1,9 @@
 2004-02-07  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (Binary.ResolveOperator): Instead of testing for
+	int/uint/long/ulong, try to implicitly convert to any of those
+	types and use that in pointer arithmetic.
+
 	* delegate.cs (Error_NoMatchingMethodForDelegate): Compute the
 	method to print information for from the type, not from the
 	null-method we were given.

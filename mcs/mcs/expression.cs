@@ -2201,12 +2201,6 @@ namespace Mono.CSharp {
 			Error_OperatorCannotBeApplied (loc, OperName (oper), left.Type, right.Type);
 		}
 
-		static bool is_32_or_64 (Type t)
-		{
-			return (t == TypeManager.int32_type || t == TypeManager.uint32_type ||
-				t == TypeManager.int64_type || t == TypeManager.uint64_type);
-		}
-
 		static bool is_unsigned (Type t)
 		{
 			return (t == TypeManager.uint32_type || t == TypeManager.uint64_type ||
@@ -2220,6 +2214,28 @@ namespace Mono.CSharp {
 				return true;
 			else
 				return false;
+		}
+
+		Expression Make32or64 (EmitContext ec, Expression e)
+		{
+			Type t= e.Type;
+			
+			if (t == TypeManager.int32_type || t == TypeManager.uint32_type ||
+			    t == TypeManager.int64_type || t == TypeManager.uint64_type)
+				return e;
+			Expression ee = Convert.ImplicitConversion (ec, e, TypeManager.int32_type, loc);
+			if (ee != null)
+				return ee;
+			ee = Convert.ImplicitConversion (ec, e, TypeManager.uint32_type, loc);
+			if (ee != null)
+				return ee;
+			ee = Convert.ImplicitConversion (ec, e, TypeManager.int64_type, loc);
+			if (ee != null)
+				return ee;
+			ee = Convert.ImplicitConversion (ec, e, TypeManager.uint64_type, loc);
+			if (ee != null)
+				return ee;
+			return null;
 		}
 					
 		Expression CheckShiftArguments (EmitContext ec)
@@ -2543,12 +2559,16 @@ namespace Mono.CSharp {
 							return new PointerArithmetic (
 								false, left, right, TypeManager.int64_type,
 								loc);
-					} else if (is_32_or_64 (r))
-						return new PointerArithmetic (
-							oper == Operator.Addition, left, right, l, loc);
-				} else if (r.IsPointer && is_32_or_64 (l) && oper == Operator.Addition)
-					return new PointerArithmetic (
-						true, right, left, r, loc);
+					} else {
+						Expression t = Make32or64 (ec, right);
+						if (t != null)
+							return new PointerArithmetic (oper == Operator.Addition, left, t, l, loc);
+					}
+				} else if (r.IsPointer && oper == Operator.Addition){
+					Expression t = Make32or64 (ec, left);
+					if (t != null)
+						return new PointerArithmetic (true, right, t, r, loc);
+				}
 			}
 			
 			//
