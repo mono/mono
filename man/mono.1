@@ -101,8 +101,12 @@ The following optimizations are implemented:
              intrins    Intrinsic method implementations
              tailc      Tail recursion and tail calls
              loop       Loop related optimizations
+             fcmov      Fast x86 FP compares
              leaf       Leaf procedures optimizations
-             profile    Use profiling information
+             aot        Usage of Ahead Of Time compiled code
+             precomp    Precompile all methods before executing Main
+             abcrem     Array bound checks removal
+             ssapre     SSA based Partial Redundancy Elimination
 .fi
 .Sp
 For example, to enable all the optimization but dead code
@@ -126,11 +130,45 @@ information for stack traces.
 .I "--profile[=profiler[:profiler_args]]"
 Instructs the runtime to collect profiling information about execution
 times and memory allocation, and dump it at the end of the execution.
-If a profiler is not specified, the default profiler is used. profiler_args 
+If a profiler is not specified, the default profiler is used.
+.Sp
+Mono has a built-in profiler called `default' (and is also the default
+if no arguments are specified), but developers can write custom
+profilers as shared libraries.  The shared library must be called
+`mono-profiler-NAME.so' where `NAME' is the name of your profiler.
+.Sp
+For a sample of the custom profilers look in the Mono source tree for
+in the samples/profiler.c.
+.Sp
+The 
+.I profiler_args 
 is a profiler-specific string of options for the profiler itself.
-.PP
-The default profiler accepts -time and -alloc to options to disable
-the time profiling or the memory allocation profilng.
+.Sp
+The default profiler is called `default' and it accepts `alloc' to
+profile memory consumption by the application; `time' to profile the
+time spent on each routine and `stat' to perform sample statistical
+profiling.  If no options are provided the default is `alloc,time'.
+.Sp
+For example:
+.nf
+	mono --profile program.exe
+.fi
+.Sp
+That will run the program with the default profiler and will do time
+and allocation profiling.
+.Sp
+.nf
+	mono --profile=default:stat,alloc program.exe
+.fi
+Will do  sample statistical profiling and allocation profiling on
+program.exe.
+.TP
+.nf
+	mono --profile=custom program.exe
+.fi
+.Sp
+In the above sample Mono will load the user defined profiler from the
+shared library `mono-profiler-custom.so'.
 .SH JIT MAINTAINER OPTIONS
 The maintainer options are only used by those developing the runtime
 itself, and not typically of interest to runtime users or developers.
@@ -149,7 +187,7 @@ This generates a postscript file with a graph with the details about
 the specified method (namespace.name:methodname).  This requires `dot'
 and ghostview to be installed (it expects Ghostview to be called
 "gv"). 
-.PP
+.Sp
 The following graphs are available:
 .nf
           cfg        Control Flow Graph (CFG)
@@ -184,14 +222,14 @@ application with a native debugger when an exception is thrown.
 .I "--trace[=expression]"
 Shows method names as they are invoked.  By default all methods are
 traced. 
-.PP
+.Sp
 The trace can be customized to include or exclude methods, classes or
 assemblies.  A trace expression is a comma separated list of targets,
 each target can be prefixed with a minus sign to turn off a particular
 target.  The words `program' and `all' have special meaning.
 `program' refers to the main program being executed, and `all' means
 all the method calls. 
-.PP
+.Sp
 Assemblies are specified by their name, for example, to trace all
 calls in the System assembly, use:
 .nf
@@ -234,11 +272,37 @@ Finally, namespaces can be specified using the N: prefix:
 .fi
 .SH DEBUGGING
 .PP
-If you are interested in debugging P/Invoke problems with your
-application, you might want to use:
+You can use the MONO_LOG_LEVEL and MONO_LOG_MASK environment variables
+to get verbose debugging output about the execution of your
+application within Mono.
+.PP
+The 
+.I MONO_LOG_LEVEL
+environment variable if set, the logging level is changed to the set
+value. Possible values are "error", "critical", "warning", "message",
+"info", "debug". The default value is "error". Messages with a logging
+level greater then or equal to the log level will be printed to
+stdout/stderr.
+.PP
+Use "info" to track the dynamic loading of assemblies.
+.PP
+.PP
+Use the 
+.I MONO_LOG_MASK
+environment variable to limit the extent of the messages you get: 
+If set, the log mask is changed to the set value. Possible values are
+"asm" (assembly loader), "type", "dll" (native library loader), "gc"
+(garbage collector), "cfg" (config file loader), "aot" (precompiler) and "all". 
+The default value is "all". Changing the mask value allows you to display only 
+messages for a certain component. You can use multiple masks by comma 
+separating them. For example to see config file messages and assembly loader
+messages set you mask to "asm,cfg".
+.PP
+The following is a common use to track down problems with P/Invoke:
 .nf
 	$ MONO_LOG_LEVEL="debug" MONO_LOG_MASK="dll" mono glue.exe
 .fi
+.PP
 .SH SERIALIZATION
 Mono's XML serialization engine by default will use a reflection-based
 approach to serialize which might be slow for continous processing
@@ -324,17 +388,15 @@ install. Or to the directory provided in the gacutil /gacdir command. Example:
 .B /home/username/.mono:/usr/local/mono/
 .TP
 .I "MONO_LOG_LEVEL"
-If set, the logging level is changed to the set value. Possible values
-are "error", "critical", "warning", "message", "info", "debug". The
-default value is "error". Messages with a logging level greater then
-or equal to the log level will be printed to stdout/stderr.
-.PP
-Use info to track the dynamic loading of assemblies.
+The logging level, possible values are `error', `critical', `warning',
+`message', `info' and `debug'.  See the DEBUGGING section for more
+details.
 .TP
 .I "MONO_LOG_MASK"
+Controls the domain of the Mono runtime that logging will apply to. 
 If set, the log mask is changed to the set value. Possible values are
 "asm" (assembly loader), "type", "dll" (native library loader), "gc"
-(garbage collector), "cfg" (config file loader), "aot" (precompiler), "all". 
+(garbage collector), "cfg" (config file loader), "aot" (precompiler) and "all". 
 The default value is "all". Changing the mask value allows you to display only 
 messages for a certain component. You can use multiple masks by comma 
 separating them. For example to see config file messages and assembly loader
@@ -399,7 +461,7 @@ more information.
 .SH MAILING LISTS
 Visit http://mail.ximian.com/mailman/mono-list for details.
 .SH WEB SITE
-Visit: http://www.go-mono.com for details
+Visit: http://www.mono-project.com for details
 .SH SEE ALSO
 .BR mcs(1), mint(1), monodis(1), mono-config(5), certmgr(1).
 .PP
