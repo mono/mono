@@ -1,13 +1,13 @@
-2004-10-18  Raja R Harinath  <rharinath@novell.com>
-
-	* class.cs (FieldMember.DoDefine): Reset ec.InUnsafe after doing
-	the ResolveType.
-
 2004-10-18  Martin Baulig  <martin@ximian.com>
 
 	Merged latest changes into gmcs.  Please keep this comment in
 	here, it makes it easier for me to see what changed in MCS since
 	the last time I merged.
+
+2004-10-18  Raja R Harinath  <rharinath@novell.com>
+
+	* class.cs (FieldMember.DoDefine): Reset ec.InUnsafe after doing
+	the ResolveType.
 
 2004-10-18  Martin Baulig  <martin@ximian.com>
 
