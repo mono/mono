@@ -1,3 +1,7 @@
+2004-10-03 Ben Maurer  <bmaurer@ximian.com>
+
+	* system.c: Add support for getting the # of cpus.
+
 2004-09-28  Dick Porter  <dick@ximian.com>
 
 	* io.c (pipe_close_private): Fix one small typo in the last change
