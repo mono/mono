@@ -247,15 +247,23 @@ namespace System.Xml.XPath
 	internal class DescendantIterator : SimpleIterator
 	{
 		protected int _depth;
+		private bool _finished;
+
 		public DescendantIterator (BaseIterator iter) : base (iter) {}
+
 		protected DescendantIterator (DescendantIterator other) : base (other)
 		{
 			_depth = other._depth;
 		}
+
 		public override XPathNodeIterator Clone () { return new DescendantIterator (this); }
+
 		[MonoTODO]
 		public override bool MoveNext ()
 		{
+			if (_finished)
+				return false;
+
 			if (_nav.MoveToFirstChild ())
 			{
 				_depth ++;
@@ -273,6 +281,7 @@ namespace System.Xml.XPath
 					throw new XPathException ("unexpected depth");	// TODO: better message
 				_depth --;
 			}
+			_finished = true;
 			return false;
 		}
 	}
@@ -327,11 +336,14 @@ namespace System.Xml.XPath
 
 	internal class FollowingIterator : SimpleIterator
 	{
+		private bool _finished = false;
 		public FollowingIterator (BaseIterator iter) : base (iter) {}
 		protected FollowingIterator (FollowingIterator other) : base (other) {}
 		public override XPathNodeIterator Clone () { return new FollowingIterator (this); }
 		public override bool MoveNext ()
 		{
+			if (_finished)
+				return false;
 			if (_pos == 0)
 			{
 				if (_nav.MoveToNext ())
@@ -357,6 +369,7 @@ namespace System.Xml.XPath
 				}
 				while (_nav.MoveToParent ());
 			}
+			_finished = true;
 			return false;
 		}
 	}

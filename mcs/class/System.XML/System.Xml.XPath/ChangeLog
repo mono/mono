@@ -1,3 +1,8 @@
+2003-10-15  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* Iterator.cs : DescendantIterator and FollowingIterator also should
+	  not MoveNext() after they reached to the end.
+
 2003-10-13  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* Iterator.cs : Fixed UnionIterator who ignores document order.
