@@ -18,6 +18,9 @@ Microsoft.Web.Services/SoapContext.cs
 Microsoft.Web.Services/Pipeline.cs
 Microsoft.Web.Services/IXmlElement.cs
 Microsoft.Web.Services/HttpSoapContext.cs
+Microsoft.Web.Services.Configuration/ConfigurationBase.cs
+Microsoft.Web.Services.Configuration/FilterConfiguration.cs
+Microsoft.Web.Services.Configuration/WebServicesConfiguration.cs
 Microsoft.Web.Services.Timestamp/TimestampFormatException.cs
 Microsoft.Web.Services.Timestamp/WSTimestamp.cs
 Microsoft.Web.Services.Timestamp/TimestampOutputFilter.cs

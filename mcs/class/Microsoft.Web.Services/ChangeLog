@@ -1,3 +1,8 @@
+2003-09-05  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* Microsoft.Web.Services.dll.sources: Added stubbed classes from
+	Microsoft.Web.Services.Configuration to fix compilation.
+
 2003-09-04  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Makefile: Added reference to System.Security assembly and a define
