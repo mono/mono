@@ -1441,10 +1441,19 @@ namespace System.Drawing
 			return new SizeF(boundingBox.Width, boundingBox.Height);
 		}
 
-		[MonoTODO]
+		
 		public SizeF MeasureString (string text, Font font, int width)
-		{
-			throw new NotImplementedException ();
+		{				
+			RectangleF boundingBox = new RectangleF ();
+			RectangleF rect = new RectangleF (0, 0, width, 999999);
+			int charactersFitted, linesFilled;
+
+			Status status = GDIPlus.GdipMeasureString (nativeObject, text, text.Length, 
+				font.NativeObject, ref rect, IntPtr.Zero, 
+				out boundingBox, out charactersFitted, out linesFilled);
+			GDIPlus.CheckStatus (status);
+
+			return new SizeF (boundingBox.Width, boundingBox.Height);
 		}
 
 		
@@ -1454,10 +1463,12 @@ namespace System.Drawing
 			return MeasureString (text, font, layoutArea, stringFormat, out charactersFitted, out linesFilled);
 		}
 
-		[MonoTODO]
+		
 		public SizeF MeasureString (string text, Font font, int width, StringFormat format)
 		{
-			throw new NotImplementedException ();
+			int charactersFitted, linesFilled;			
+			return MeasureString (text, font, new SizeF (width, 999999), 
+				format, out charactersFitted, out linesFilled);
 		}
 
 		

@@ -1,5 +1,9 @@
 2004-06-22 Jordi Mas i Hernandez <jordi@ximian.com>
 
+	* Graphics.cs: added MeasureString wrappers
+
+2004-06-22 Jordi Mas i Hernandez <jordi@ximian.com>
+
 	* Graphics.cs, gdipFunctions.cs: define and use GdipSetVisibleClip_linux 
 
 2004-06-20 Jordi Mas i Hernandez <jordi@ximian.com>
