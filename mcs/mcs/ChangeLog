@@ -1,3 +1,8 @@
+2003-11-27  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs: Shift count can be up to 31 for int/uint and 63
+	for long/ulong.
+
 2003-11-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs (Block.LookupLabel): Also look for the label on the

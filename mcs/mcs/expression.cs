@@ -1720,9 +1720,9 @@ namespace Mono.CSharp {
 			if (real_expr is DoubleConstant){
 				double v = ((DoubleConstant) real_expr).Value;
 	
-				if (target_type == TypeManager.byte_type)
+				if (target_type == TypeManager.byte_type){
 					return new ByteConstant ((byte) v);
-				if (target_type == TypeManager.sbyte_type)
+				} if (target_type == TypeManager.sbyte_type)
 					return new SByteConstant ((sbyte) v);
 				if (target_type == TypeManager.short_type)
 					return new ShortConstant ((short) v);
@@ -2209,6 +2209,14 @@ namespace Mono.CSharp {
 				left = e;
 				type = e.Type;
 
+				if (type == TypeManager.int32_type || type == TypeManager.uint32_type){
+					right = new Binary (Binary.Operator.BitwiseAnd, right, new IntLiteral (31), loc);
+					right = right.DoResolve (ec);
+				} else {
+					right = new Binary (Binary.Operator.BitwiseAnd, right, new IntLiteral (63), loc);
+					right = right.DoResolve (ec);
+				}
+
 				return this;
 			}
 			Error_OperatorCannotBeApplied ();
@@ -2662,8 +2670,9 @@ namespace Mono.CSharp {
 					      (l == TypeManager.short_type) ||
 					      (l == TypeManager.ushort_type) ||
 					      (l == TypeManager.int64_type) ||
-					      (l == TypeManager.uint64_type)))
+					      (l == TypeManager.uint64_type))){
 						type = l;
+					}
 				} else {
 					Error_OperatorCannotBeApplied ();
 					return null;
@@ -3011,7 +3020,8 @@ namespace Mono.CSharp {
 			right.Emit (ec);
 
 			bool isUnsigned = is_unsigned (left.Type);
-
+			IntConstant ic;
+			
 			switch (oper){
 			case Operator.Multiply:
 				if (ec.CheckState){
