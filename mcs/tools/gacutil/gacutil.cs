@@ -61,12 +61,16 @@ namespace Mono.Tools
 					ListAssemblies (remainder_args);
 					break;
 				case "/u":
-				case "--un-install":
+				case "--uninstall":
 					UninstallAssemblies (remainder_args);
 					break;
 				case "/il":
 				case "--install-from-list":
 					InstallAssembliesFromList (remainder_args);
+					break;
+				case "/ul":
+				case "--uninstall-from-list":
+					UninstallAssembliesFromList (remainder_args);
 					break;
 				default:
 					ShowHelp (false);
@@ -92,9 +96,29 @@ namespace Mono.Tools
 				string line;
 
 				while((line = s.ReadLine()) != null) {
-					Console.WriteLine (line);
 					perFile[0] = line;
 					InstallAssembly (perFile);
+				}
+			}
+		}
+
+		public void UninstallAssembliesFromList (string[] args)
+		{
+			if (args.Length == 0) {
+				Console.WriteLine ("ERROR: file must be passed.");
+				return;
+			}
+
+			if (!File.Exists (args[0])) {
+				Console.WriteLine ("ERROR: file '" + args[0] + "' does not exist");
+				return;
+			}
+
+			using (StreamReader s = File.OpenText (args[0])) {
+				string line;
+
+				while ((line = s.ReadLine ()) != null) {
+					UninstallAssemblies (new string[] { line } );
 				}
 			}
 		}
@@ -118,6 +142,11 @@ namespace Mono.Tools
 					paramInfo["assembly"] = pieces[0];
 				else
 					paramInfo[pieces[0].ToLower ()] = pieces[1];
+			}
+
+			if (!Directory.Exists (Path.Combine (gac_path, (string) paramInfo["assembly"]))) {
+				Console.WriteLine ("ERROR: Assembly not in gac.");
+				return;
 			}
 
 			string searchString = (string) paramInfo["assembly"] + Path.DirectorySeparatorChar;
@@ -214,13 +243,9 @@ namespace Mono.Tools
 				force = true;
 
 		
-			Console.WriteLine (an.Version);
-		
 			string version_token = an.Version + "__" + GetStringToken (an.GetPublicKeyToken ());
 
 			string fullPath = String.Format ("{0}{3}{1}{3}{2}{3}", gac_path, an.Name, version_token, Path.DirectorySeparatorChar);
-
-			Console.WriteLine (fullPath);
 
 			if (File.Exists (fullPath + an.Name + ".dll") && force == false) {
 				Hashtable assemInfo = GetAssemblyInfo (fullPath + "__AssemblyInfo__");

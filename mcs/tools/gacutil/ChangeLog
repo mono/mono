@@ -1,6 +1,8 @@
 2003-11-16  Todd Berman  <tberman@gentoo.org>
 
 	* gacutil.cs: /il functionality
+	* gacutil.cs: /ul functionality
+	* TODO: updated
 
 2003-11-15  Todd Berman  <tberman@gentoo.org>
 	
