@@ -1,7 +1,7 @@
 2004-01-03 Ben Maurer  <bmaurer@users.sourceforge.net>
 
-	* convert.cs: correctly handle conversions from value types
-	to Enum and ValueType as unboxing conversions.
+	* convert.cs: correctly handle conversions to value types
+	from Enum and ValueType as unboxing conversions.
 
 	Fixes bug #52569. Patch by Benjamin Jemlich.
 
