@@ -271,4 +271,7 @@
 
 2001-08-26  Christopher Podurgiel <cpodurgiel@msn.com>
 
-	* ConfigurationSettings.cs: No longer references the NameValueSectionHandler 	  directly.  Instead it uses System.Reflection to call the Create() method 		  for the appropriate SectionHandler as defined in the .config file.
+	* ConfigurationSettings.cs: No longer references the
+	NameValueSectionHandler directly.  Instead it uses
+	System.Reflection to call the Create() method for the appropriate
+	SectionHandler as defined in the .config file.

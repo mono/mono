@@ -27,6 +27,7 @@
 //
 
 #if NET_2_0
+#if XML_DEP
 using System;
 
 namespace System.Configuration {
@@ -57,4 +58,5 @@ namespace System.Configuration {
                 }                                
         }
 }
+#endif
 #endif
