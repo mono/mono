@@ -1,10 +1,15 @@
+2003-12-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* aot.c: Set verbosity back to 0.
+	
 Wed Dec 3 15:42:27 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* regalloc.c: complete memory leak fix by Laurent Morichetti
 	(l_m@pacbell.net).
 
 2003-12-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* driver.c (main_thread_handler): Revert the previous patch.
 
 	* tramp-x86.c (x86_class_init_trampoline): Avoid patching when running
 	under valgrind.
