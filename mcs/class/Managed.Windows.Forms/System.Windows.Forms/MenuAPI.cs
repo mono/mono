@@ -412,9 +412,7 @@ namespace System.Windows.Forms
 			if ((item.fState & MF.MF_HILITE) == MF.MF_HILITE) {
 				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
 					(ThemeEngine.Current.ColorHilight), item.rect);				
-			} else
-				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
-					(ThemeEngine.Current.ColorMenu), item.rect);	
+			} 
 
 			if (item.item.Enabled) {
 
@@ -485,9 +483,31 @@ namespace System.Windows.Forms
 
 		}
 
-		static public void DrawPopupMenu (Graphics dc, IntPtr hMenu)
+		static public void DrawPopupMenu (Graphics dc, IntPtr hMenu, Rectangle rect)
 		{
 			MENU menu = GetMenuFromID (hMenu);
+
+			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
+				(ThemeEngine.Current.ColorMenu), rect);
+
+			/* Draw menu borders */
+			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorHilightText),
+				rect.X, rect.Y, rect.X + rect.Width, rect.Y);
+
+			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorHilightText),
+				rect.X, rect.Y, rect.X, rect.Y + rect.Height);
+
+			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow),
+				rect.X + rect.Width - 1 , rect.Y , rect.X + rect.Width - 1, rect.Y + rect.Height);
+
+			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonDkShadow),
+				rect.X + rect.Width, rect.Y , rect.X + rect.Width, rect.Y + rect.Height);
+
+			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow),
+				rect.X , rect.Y + rect.Height - 1 , rect.X + rect.Width - 1, rect.Y + rect.Height -1);
+
+			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonDkShadow),
+				rect.X , rect.Y + rect.Height, rect.X + rect.Width - 1, rect.Y + rect.Height);
 
 			for (int i = 0; i < menu.items.Count; i++) {
 				DrawMenuItem (dc, (MENUITEM) menu.items[i], menu.Height, false);
@@ -538,9 +558,6 @@ namespace System.Windows.Forms
 
 			rect.Height = menu.Height;
 			rect.Width = menu.Width;
-
-			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
-				(ThemeEngine.Current.ColorMenu), rect);
 
 			for (int i = 0; i < menu.items.Count; i++) {
 				DrawMenuItem (dc, (MENUITEM) menu.items[i], menu.Height, true);
@@ -841,6 +858,7 @@ namespace System.Windows.Forms
 
 		protected override void OnResize(EventArgs e)
 		{
+			base.OnResize (e);
 			Console.WriteLine ("OnResize {0} {1} ", Width, Height);
 		}
 
@@ -925,33 +943,7 @@ namespace System.Windows.Forms
 
 		private void Draw ()
 		{
-			Rectangle rect = ClientRectangle;
-			rect.Width = rect.Width - 1;
-			rect.Height = rect.Height - 1;
-
-			DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
-				(ThemeEngine.Current.ColorMenu), ClientRectangle);
-
-			/* Draw menu borders */
-			DeviceContext.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorHilightText),
-				rect.X, rect.Y, rect.X + rect.Width, rect.Y);
-
-			DeviceContext.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorHilightText),
-				rect.X, rect.Y, rect.X, rect.Y + rect.Height);
-
-			DeviceContext.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow),
-				rect.X + rect.Width - 1 , rect.Y , rect.X + rect.Width - 1, rect.Y + rect.Height);
-
-			DeviceContext.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonDkShadow),
-				rect.X + rect.Width, rect.Y , rect.X + rect.Width, rect.Y + rect.Height);
-
-			DeviceContext.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow),
-				rect.X , rect.Y + rect.Height - 1 , rect.X + rect.Width - 1, rect.Y + rect.Height -1);
-
-			DeviceContext.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonDkShadow),
-				rect.X , rect.Y + rect.Height, rect.X + rect.Width - 1, rect.Y + rect.Height);
-
-			MenuAPI.DrawPopupMenu  (DeviceContext, hMenu);
+			MenuAPI.DrawPopupMenu  (DeviceContext, hMenu, ClientRectangle);
 		}
 	}
 
