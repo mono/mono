@@ -1,0 +1,14 @@
+-o type-reflector.exe
+ConsoleOutput.cs
+CSharpTypeDisplayer.cs
+ExplicitTypeDisplayer.cs
+IndentingTextWriter.cs
+IndentingTypeDisplayer.cs
+ProgramOptions.cs
+ReflectionTypeDisplayer.cs
+TestTypes.cs
+TextFormatter.cs
+TypeDisplayer.cs
+TypeDisplayerFactory.cs
+TypeLoader.cs
+TypeReflectorOptions.cs
