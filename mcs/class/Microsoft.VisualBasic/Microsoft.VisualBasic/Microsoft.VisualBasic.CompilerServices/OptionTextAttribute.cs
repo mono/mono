@@ -9,7 +9,7 @@
 namespace Microsoft.VisualBasic.CompilerServices {
 	[System.AttributeUsageAttribute(System.AttributeTargets.Class)] 
 	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
-	[System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Auto)] 
+	[MonoTODO]
 	sealed public class OptionTextAttribute : System.Attribute {
 		// Declarations
 		// Constructors
