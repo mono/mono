@@ -1,3 +1,7 @@
+2004-08-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c: Register allocator improvements.
+
 2004-08-21  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (read_tls_offset_from_method): Add another code
