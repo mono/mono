@@ -63,11 +63,11 @@ Console.WriteLine ("Finished: " + DateTime.Now.ToString ("yyyy-MM-dd HH:mm:ss.ff
 					xtr.Namespaces = false;
 					while (!xtr.EOF)
 						xtr.Read ();
-					Console.WriteLine ("Incorrectly wf: " + fi.FullName);
+					Console.WriteLine ("Incorrectly wf: " + subdir + "/" + di.Name + "/" + fi.Name);
 				} catch (XmlException) {
 					// expected
 				} catch (Exception ex) {
-					Console.WriteLine ("Unexpected Error: " + fi.FullName + "\n" + ex.Message);
+					Console.WriteLine ("Unexpected Error: " + subdir + "/" + di.Name + "/" + fi.Name + "\n" + ex.Message);
 				}
 			}
 		}
@@ -92,11 +92,11 @@ Console.WriteLine ("Finished: " + DateTime.Now.ToString ("yyyy-MM-dd HH:mm:ss.ff
 					while (!xr.EOF)
 						xr.Read ();
 				} catch (XmlException ex) {
-					Console.WriteLine ("Incorrectly not-wf: " + fi.FullName + " " + ex.Message);
+					Console.WriteLine ("Incorrectly not-wf: " + subdir + "/" + di.Name + "/" + fi.Name + " " + ex.Message);
 				} catch (XmlSchemaException ex) {
-					Console.WriteLine ("Incorrectly invalid: " + fi.FullName + " " + ex.Message);
+					Console.WriteLine ("Incorrectly invalid: " + subdir + "/" + di.Name + "/" + fi.Name + " " + ex.Message);
 				} catch (Exception ex) {
-					Console.WriteLine ("Unexpected Error: " + fi.FullName + "\n" + ex.Message);
+					Console.WriteLine ("Unexpected Error: " + subdir + "/" + di.Name + "/" + fi.Name + "\n" + ex.Message);
 				}
 			}
 		}
@@ -120,7 +120,7 @@ Console.WriteLine ("Finished: " + DateTime.Now.ToString ("yyyy-MM-dd HH:mm:ss.ff
 					while (!xtr.EOF)
 						xtr.Read ();
 				} catch (Exception ex) {
-					Console.WriteLine ("Incorrectly not-wf: " + fi.FullName + String.Concat ("(", ex.GetType ().Name, ") " + ex.Message));
+					Console.WriteLine ("Incorrectly not-wf: " + di.Name + "/" + fi.Name + String.Concat ("(", ex.GetType ().Name, ") " + ex.Message));
 				}
 			}
 		}
@@ -135,11 +135,11 @@ Console.WriteLine ("Finished: " + DateTime.Now.ToString ("yyyy-MM-dd HH:mm:ss.ff
 						new XmlValidatingReader (xtr);
 					while (!xr.EOF)
 						xr.Read ();
-					Console.WriteLine ("Incorrectly valid: " + fi.FullName);
+					Console.WriteLine ("Incorrectly valid: " + subdir + "/" + di.Name + "/" + fi.Name);
 				} catch (XmlSchemaException) {
 					// expected
 				} catch (Exception ex) {
-					Console.WriteLine ("Unexpected Error: " + fi.FullName + "\n" + ex.Message);
+					Console.WriteLine ("Unexpected Error: " + subdir + "/" + di.Name + "/" + fi.Name + "\n" + ex.Message);
 				}
 			}
 		}
