@@ -229,8 +229,18 @@ namespace System.Xml
 
 		public XmlAttribute CreateAttribute (string name)
 		{
-			return CreateAttribute (name,
-				name == "xmlns" ? "http://www.w3.org/2000/xmlns/" : String.Empty);
+			string prefix;
+			string localName;
+			string namespaceURI = String.Empty;
+
+			ParseName (name, out prefix, out localName);
+
+			if (prefix == "xmlns" || (prefix == "" && localName == "xmlns"))
+				namespaceURI = XmlNamespaceManager.XmlnsXmlns;
+			else if (prefix == "xml")
+				namespaceURI = XmlNamespaceManager.XmlnsXml;
+
+			return CreateAttribute (prefix, localName, namespaceURI );
 		}
 
 		public XmlAttribute CreateAttribute (string qualifiedName, string namespaceURI)
