@@ -86,6 +86,14 @@ namespace Mono.ILASM {
 				return_type, param_list, param_type_list, location);
 			code_buffer = current_method.CreateCodeBuffer ();
 		}
+
+		public Method GetMethodRef (TypeRef type, string name, TypeRef return_type, 
+			Param[] param_list, TypeRef[] param_type_list, Location location)
+		{
+			MethodTable method_table = class_table.GetMethodTable (type.FullName, location);
+			
+			return method_table.GetReference (name, return_type, param_list, param_type_list, location);
+		}
 	}
 
 }

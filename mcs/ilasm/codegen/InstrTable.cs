@@ -18,12 +18,14 @@ namespace Mono.ILASM {
 		private static Hashtable op_table;
 		private static Hashtable int_table;		
 		private static Hashtable type_table;
+		private static Hashtable method_table;
 
 		static InstrTable ()
 		{
 			CreateOpTable ();
 			CreateIntTable ();
 			CreateTypeTable ();
+			CreateMethodTable ();
 		}
 		
 		public static ILToken GetToken (string str)
@@ -37,6 +39,9 @@ namespace Mono.ILASM {
 			} else if (IsTypeOp (str)) {
 				TypeOp op = GetTypeOp (str);
 				return new ILToken (Token.INSTR_TYPE, op);
+			} else if (IsMethodOp (str)) {
+				MethodOp op = GetMethodOp (str);
+				return new ILToken (Token.INSTR_METHOD, op);
 			}
 
 			return null;
@@ -44,7 +49,7 @@ namespace Mono.ILASM {
 
 		public static bool IsInstr (string str)
 		{
-			return (IsOp (str) || IsIntOp (str) || IsTypeOp (str));
+			return (IsOp (str) || IsIntOp (str) || IsTypeOp (str) || IsMethodOp (str));
 		}
 
 		public static bool IsOp (string str)
@@ -62,6 +67,11 @@ namespace Mono.ILASM {
 			return type_table.Contains (str);
 		}
 
+		public static bool IsMethodOp (string str) 
+		{
+			return method_table.Contains (str);
+		}
+
 		public static Op GetOp (string str)
 		{
 			return (Op) op_table[str];
@@ -75,6 +85,11 @@ namespace Mono.ILASM {
 		public static TypeOp GetTypeOp (string str)
 		{
 			return (TypeOp) type_table[str];
+		}
+
+		public static MethodOp GetMethodOp (string str)
+		{
+			return (MethodOp) method_table[str];
 		}
 
 		private static void CreateOpTable ()
@@ -259,6 +274,19 @@ namespace Mono.ILASM {
 			type_table["ldtoken"] = TypeOp.ldtoken;
 			type_table["initobj"] = TypeOp.initobj;
 			type_table["sizeof"] = TypeOp.sizeOf;
+		}
+
+		private static void CreateMethodTable ()
+		{
+			method_table = new Hashtable ();
+			
+			method_table["jmp"] = MethodOp.jmp;
+			method_table["call"] = MethodOp.call;
+			method_table["callvirt"] = MethodOp.callvirt;
+			method_table["newobj"] = MethodOp.newobj;
+			method_table["ldtoken"] = MethodOp.ldtoken;
+			method_table["ldftn"] = MethodOp.ldftn;
+			method_table["ldvirtfn"] = MethodOp.ldvirtfn;
 		}
 	}
 

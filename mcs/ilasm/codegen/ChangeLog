@@ -1,3 +1,9 @@
+2003-03-15 Jackson Harper <jackson@latitudegeo.com>
+
+	* CodeGen.cs: Add method to get method references.
+	* MethodTable.cs: Complete GetReference method
+	* InstrTable.cs: Add MethodOps (instructions that take a method ref param)
+
 2003-03-14 Jackson Harper <jackson@latitudegeo.com>
 
 	* InstrTable.cs: Add TypeOps (instructions that take a type param)

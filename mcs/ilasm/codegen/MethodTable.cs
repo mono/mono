@@ -65,7 +65,12 @@ namespace Mono.ILASM {
 				return item.Method;
 			}
 			
-			return null;
+			MethodDef method = parent_class.AddMethod (name, return_type.Type,
+				param_list);
+			
+			AddReferenced (signature, method, location);
+
+			return method;
 		}
 	
 		public MethodDef AddDefinition (MethAttr method_attr, ImplAttr impl_attr, CallConv call_conv, 
@@ -113,6 +118,13 @@ namespace Mono.ILASM {
 			MethodTableItem item = new MethodTableItem (method, location);
 			item.Defined = true;
 
+			table[signature] = item;
+		}
+
+		protected void AddReferenced (string signature, Method method, Location location)
+		{
+			MethodTableItem item = new MethodTableItem (method, location);
+			
 			table[signature] = item;
 		}
 
