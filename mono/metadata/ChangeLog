@@ -1,5 +1,8 @@
 2003-11-26  Zoltan Varga  <vargaz@freemail.hu>
 
+	(ves_icall_System_AppDomain_LoadAssemblyRaw): Fix exception throw.
+	Thanks to Gonzalo for spotting this.
+	
 	* appdomain.c (ves_icall_System_AppDomain_LoadAssemblyRaw): Applied
 	patch from ztashev@openlinksw.co.uk (Zdravko Tashev). New icall.
 
