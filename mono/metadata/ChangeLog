@@ -1,3 +1,8 @@
+2001-10-25  Dietmar Maurer  <dietmar@ximian.com>
+
+	* class.c (mono_compute_relative_numbering): use relative
+	numbering to support fast runtime type checks.
+
 2001-10-17  Sean MacIsaac  <macisaac@ximian.com>
 
 	* class.c (mono_class_create_from_typeref): added debugging output

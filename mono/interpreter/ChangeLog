@@ -1,3 +1,8 @@
+2001-10-25  Dietmar Maurer  <dietmar@ximian.com>
+
+	* interp.c (ves_exec_method): use relative numbering for runtime
+	type checks (and make it work with interfaces)
+
 2001-10-15  Dietmar Maurer  <dietmar@ximian.com>
 
 	* interp.c: removed newobj()
