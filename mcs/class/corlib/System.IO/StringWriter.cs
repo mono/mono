@@ -20,11 +20,15 @@ namespace System.IO {
                         internalFormatProvider = formatProvider;
                 }
 
-                public StringWriter( StringBuilder sb ) {
-                        internalString = sb;
+                public StringWriter( StringBuilder sb ) : this (sb, null) {
+
                 }
 
                 public StringWriter( StringBuilder sb, IFormatProvider formatProvider ) {
+			
+			if (sb == null)
+				throw new ArgumentNullException ();
+
                         internalString = sb;
                         internalFormatProvider = formatProvider;
                 }

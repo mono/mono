@@ -1,3 +1,8 @@
+2003-04-11  Ville Palo <vi64pa@kolumbus.fi>
+
+	* StringWriter.cs: Now throws an exception if StringBuilder parameter
+	is null
+	
 2003-04-05  Miguel de Icaza  <miguel@ximian.com>
 
 	* TextWriter.cs: Implemented Synchronized method.
