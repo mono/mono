@@ -1,3 +1,9 @@
+2004-01-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDocument.cs : Fixed Load() to set XmlResolver correctly. Patch
+	  by Benjamin Jemlich.
+	  Assure closing XmlTextReader which are internally used.
+
 2004-01-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTextWriter.cs : trivial character-case fix

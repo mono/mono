@@ -556,15 +556,20 @@ namespace System.Xml
 
 		public virtual void Load (Stream inStream)
 		{
-			Load (new XmlTextReader (inStream));
+			XmlTextReader reader = new XmlTextReader (inStream);
+			reader.XmlResolver = resolver;
+			Load (reader);
 		}
 
 		public virtual void Load (string filename)
 		{
 			XmlTextReader xr = new XmlTextReader (filename);
-			xr.XmlResolver = resolver;
-			Load (xr);
-			xr.Close ();
+			try {
+				xr.XmlResolver = resolver;
+				Load (xr);
+			} finally {
+				xr.Close ();
+			}
 		}
 
 		public virtual void Load (TextReader txtReader)
@@ -595,8 +600,12 @@ namespace System.Xml
 		{
 			XmlTextReader xmlReader = new XmlTextReader (
 				xml, XmlNodeType.Document, null);
-			xmlReader.XmlResolver = resolver;
-			Load (xmlReader);
+			try {
+				xmlReader.XmlResolver = resolver;
+				Load (xmlReader);
+			} finally {
+				xmlReader.Close ();
+			}
 		}
 
 		internal void onNodeChanged (XmlNode node, XmlNode Parent)
@@ -875,9 +884,12 @@ namespace System.Xml
 		public virtual void Save (string filename)
 		{
 			XmlTextWriter xmlWriter = new XmlTextWriter (filename, TextEncoding);
-			xmlWriter.Formatting = Formatting.Indented;
-			WriteContentTo (xmlWriter);
-			xmlWriter.Close ();
+			try {
+				xmlWriter.Formatting = Formatting.Indented;
+				WriteContentTo (xmlWriter);
+			} finally {
+				xmlWriter.Close ();
+			}
 		}
 
 		public virtual void Save (TextWriter writer)
