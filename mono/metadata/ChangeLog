@@ -1,3 +1,7 @@
+2004-05-06  Jackson Harper  <jackson@ximian.com>
+
+	* assembly.c: Check the usergac when loading with partial names.
+	
 2004-05-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* rand.c|h: Added new icall for (optionally) seeding the PRNG. This 
