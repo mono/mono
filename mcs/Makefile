@@ -1,33 +1,40 @@
 thisdir := .
+
 SUBDIRS := build jay mcs monoresgen class mbas nunit20 ilasm tools tests errors docs
+
+ifdef TEST_SUBDIRS
+SUBDIRS := $(TEST_SUBDIRS)
+endif
+
+ifndef NO_SIGN_ASSEMBLIES
 OVERRIDE_TARGET_ALL = yes
+endif
+
 include build/rules.make
 
 all-recursive $(STD_TARGETS:=-recursive): platform-check profile-check
 
+# Used only if OVERRIDE_TARGET_ALL is defined
 all.override:
 	$(MAKE) NO_SIGN_ASSEMBLY=yes all.real
 	$(MAKE) all.real
 
+.PHONY: all-local $(STD_TARGETS:=-local)
 all-local $(STD_TARGETS:=-local):
 	@:
 
 # fun specialty targets
 
-all-profiles:
-	$(MAKE) PROFILE=default all
-	$(MAKE) PROFILE=net_2_0 all
-
-clean-profiles:
-	$(MAKE) PROFILE=default clean
-	$(MAKE) PROFILE=net_2_0 clean
+.PHONY: all-profiles $(STD_TARGETS:=-profiles)
+all-profiles $(STD_TARGETS:=-profiles):
+	$(MAKE) PROFILE=default $(@:-profiles=)
+	$(MAKE) PROFILE=net_2_0 $(@:-profiles=)
 
 testcorlib:
 	@cd class/corlib && $(MAKE) test run-test
 
-test-compiler:
-	$(MAKE) -C tests test-everything
-	$(MAKE) -C errors test-everything
+compiler-tests:
+	$(MAKE) TEST_SUBDIRS="tests errors" run-test-profiles
 
 # Disting. We need to override $(distdir) here.
 
@@ -53,15 +60,16 @@ DISTFILES = \
 	ScalableMonoIcon.svg	\
 	winexe.in
 
-dist-pre:
-	rm -rf $(package)
-
-dist-post:
-	tar cvzf $(package).tar.gz $(package)
 
 dist-local: dist-default
+dist-recursive: dist-pre
 
-dist-tarball: dist-pre dist-recursive dist-post
+dist-pre:
+	rm -rf $(package)
+	mkdir $(package)
+
+dist-tarball: dist-recursive
+	tar cvzf $(package).tar.gz $(package)
 
 dist: dist-tarball
 	rm -rf $(package)
@@ -73,11 +81,10 @@ dist: dist-tarball
 # We need to set prefix on make so class/System/Makefile can find
 # the installed System.Xml to build properly
 
-distcheck:
+distcheck: dist-tarball
 	rm -rf InstallTest Distcheck-MCS ; \
 	mkdir InstallTest ; \
 	destdir=`cd InstallTest && pwd` ; \
-	$(MAKE) dist-tarball || exit 1 ; \
 	mv $(package) Distcheck-MCS ; \
 	(cd Distcheck-MCS && \
 	    $(MAKE) prefix=$(prefix) && $(MAKE) test && $(MAKE) install DESTDIR="$$destdir" && \

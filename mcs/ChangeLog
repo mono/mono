@@ -1,3 +1,10 @@
+2004-09-14  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (SUBDIRS): Allow to be overriden by $(TEST_SUBDIRS).
+	(test-profiles, run-test-profiles): New targets.
+	(test-compiler): Rename to ...
+	(compiler-tests): ... this.  Run tests on all profiles.
+
 2004-09-03  Martin Baulig  <martin@ximian.com>
 
 	* Makefile (test-compiler): New target to run the compiler test.
