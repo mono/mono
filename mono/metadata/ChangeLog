@@ -1,4 +1,14 @@
 
+Wed Aug 22 16:27:30 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c, loader.h, loader.c, image.h, image.c, class.h, class.c:
+	MonoClass now has the name and name_space fields. 
+	MonoMethod has a pointer to its MonoClass, instead of MonoImage.
+	mono_get_method () takes and optional MonoClass as argument.
+	Removed mono_typedef_from_name() and added mono_class_token_from_name()
+	instead that takes advantage of a map from class names to typedef
+	tokens in MonoImage.
+
 Tue Aug 21 18:54:58 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* metadata.c: zero is not a valid alignment boundary.

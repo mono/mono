@@ -1,4 +1,9 @@
 
+Wed Aug 22 16:34:03 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: Updates for changes in metadata/. Better output in debug mode
+	and in the stack trace. Completed rethrow handling
+
 Tue Aug 21 18:56:19 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: new macro INIT_FRAME() to properly
