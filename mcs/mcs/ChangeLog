@@ -1,3 +1,19 @@
+2004-01-19 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* flowanalysis.cs: Reduce memory allocation in a few ways:
+	  - A block with no variables should not allocate a bit
+	    vector for itself.
+	  - A method with no out parameters does not need any tracking
+	    for assignment of the parameters, so we need not allocate
+	    any data for it.
+	  - The arrays:
+	        public readonly Type[] VariableTypes;
+		public readonly string[] VariableNames;
+	    Are redundant. The data is already stored in the variable
+	    map, so we need not allocate another array for it.
+	  - We need to add alot of checks for if (params | locals) == null
+	    due to the first two changes.
+
 2004-01-18  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (FieldExpr.AddressOf): For ValueTypes that do not

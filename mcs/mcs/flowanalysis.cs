@@ -441,13 +441,17 @@ namespace Mono.CSharp
 				this.CountLocals = num_locals;
 
 				if (parent != null) {
-					locals = new MyBitVector (parent.locals, CountLocals);
+					if (num_locals > 0)
+						locals = new MyBitVector (parent.locals, CountLocals);
+					
 					if (num_params > 0)
 						parameters = new MyBitVector (parent.parameters, num_params);
 
 					reachability = parent.Reachability.Clone ();
 				} else {
-					locals = new MyBitVector (null, CountLocals);
+					if (num_locals > 0)
+						locals = new MyBitVector (null, CountLocals);
+					
 					if (num_params > 0)
 						parameters = new MyBitVector (null, num_params);
 
@@ -481,9 +485,12 @@ namespace Mono.CSharp
 			{
 				UsageVector retval = new UsageVector (Type, null, Location, CountParameters, CountLocals);
 
-				retval.locals = locals.Clone ();
+				if (retval.locals != null)
+					retval.locals = locals.Clone ();
+				
 				if (parameters != null)
 					retval.parameters = parameters.Clone ();
+				
 				retval.reachability = reachability.Clone ();
 
 				return retval;
@@ -614,7 +621,7 @@ namespace Mono.CSharp
 					return result;
 				}
 
-				if (result.LocalVector != null)
+				if (locals != null && result.LocalVector != null)
 					locals.Or (result.LocalVector);
 
 				if (result.ParameterVector != null)
@@ -647,7 +654,7 @@ namespace Mono.CSharp
 						MergeFinally (branching, f_origins, parameters);
 				}
 
-				if (f_vector != null)
+				if (f_vector != null && f_vector.LocalVector != null)
 					MyBitVector.Or (ref locals, f_vector.LocalVector);
 			}
 
@@ -686,12 +693,15 @@ namespace Mono.CSharp
 					Report.Debug (1, "    MERGING JUMP ORIGIN", vector);
 
 					if (first) {
-						locals.Or (vector.locals);
+						if (locals != null && vector.Locals != null)
+							locals.Or (vector.locals);
+						
 						if (parameters != null)
 							parameters.Or (vector.parameters);
 						first = false;
 					} else {
-						locals.And (vector.locals);
+						if (locals != null && vector.Locals != null)
+							locals.And (vector.locals);
 						if (parameters != null)
 							parameters.And (vector.parameters);
 					}
@@ -843,6 +853,8 @@ namespace Mono.CSharp
 
 				UsageVector parent_vector = parent != null ? parent.CurrentUsageVector : null;
 				vector = new UsageVector (stype, parent_vector, loc, param_map.Length, local_map.Length);
+				
+
 			} else {
 				param_map = Parent.param_map;
 				local_map = Parent.local_map;
@@ -885,7 +897,7 @@ namespace Mono.CSharp
 					continue;
 
 				Report.Error (177, loc, "The out parameter `" +
-					      param_map.VariableNames [i] + "' must be " +
+					      var.Name + "' must be " +
 					      "assigned before control leave the current method.");
 			}
 		}
@@ -958,7 +970,7 @@ namespace Mono.CSharp
 					      Type, child.Type, child.Reachability.IsUnreachable,
 					      do_break_2, unreachable);
 
-				if (!unreachable)
+				if (!unreachable && (child.LocalVector != null))
 					MyBitVector.And (ref locals, child.LocalVector);
 
 				// An `out' parameter must be assigned in all branches which do
@@ -1698,22 +1710,16 @@ namespace Mono.CSharp
 		// <summary>
 		public readonly int Length;
 
-		// <summary>
-		//   Type and name of all the variables.
-		//   Note that this is null for variables for which we do not need to compute
-		//   assignment info.
-		// </summary>
-		public readonly Type[] VariableTypes;
-		public readonly string[] VariableNames;
-
 		VariableInfo[] map;
 
 		public VariableMap (InternalParameters ip)
 		{
 			Count = ip != null ? ip.Count : 0;
-			map = new VariableInfo [Count];
-			VariableNames = new string [Count];
-			VariableTypes = new Type [Count];
+			
+			// Dont bother allocating anything!
+			if (Count == 0)
+				return;
+			
 			Length = 0;
 
 			for (int i = 0; i < Count; i++) {
@@ -1721,11 +1727,14 @@ namespace Mono.CSharp
 
 				if ((mod & Parameter.Modifier.OUT) == 0)
 					continue;
+				
+				// Dont allocate till we find an out var.
+				if (map == null)
+					map = new VariableInfo [Count];
 
-				VariableNames [i] = ip.ParameterName (i);
-				VariableTypes [i] = TypeManager.GetElementType (ip.ParameterType (i));
-
-				map [i] = new VariableInfo (VariableNames [i], VariableTypes [i], i, Length);
+				map [i] = new VariableInfo (ip.ParameterName (i),
+					TypeManager.GetElementType (ip.ParameterType (i)), i, Length);
+				
 				Length += map [i].Length;
 			}
 		}
@@ -1737,21 +1746,21 @@ namespace Mono.CSharp
 		public VariableMap (VariableMap parent, LocalInfo[] locals)
 		{
 			int offset = 0, start = 0;
-			if (parent != null) {
+			if (parent != null && parent.map != null) {
 				offset = parent.Length;
 				start = parent.Count;
 			}
 
 			Count = locals.Length + start;
+			
+			if (Count == 0)
+				return;
+			
 			map = new VariableInfo [Count];
-			VariableNames = new string [Count];
-			VariableTypes = new Type [Count];
 			Length = offset;
 
-			if (parent != null) {
+			if (parent != null && parent.map != null) {
 				parent.map.CopyTo (map, 0);
-				parent.VariableNames.CopyTo (VariableNames, 0);
-				parent.VariableTypes.CopyTo (VariableTypes, 0);
 			}
 
 			for (int i = start; i < Count; i++) {
@@ -1759,9 +1768,6 @@ namespace Mono.CSharp
 
 				if (li.VariableType == null)
 					continue;
-
-				VariableNames [i] = li.Name;
-				VariableTypes [i] = li.VariableType;
 
 				map [i] = li.VariableInfo = new VariableInfo (li, Length);
 				Length += map [i].Length;
@@ -1774,6 +1780,9 @@ namespace Mono.CSharp
 		// </summary>
 		public VariableInfo this [int index] {
 			get {
+				if (map == null)
+					return null;
+				
 				return map [index];
 			}
 		}
@@ -1968,7 +1977,7 @@ namespace Mono.CSharp
 		{
 			if (vector != null)
 				return;
-
+			
 			vector = new BitArray (Count, false);
 			if (InheritsFrom != null)
 				Vector = InheritsFrom.Vector;
