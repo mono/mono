@@ -1,5 +1,11 @@
 2002-07-04  Nick Drochak  <ndrochak@gol.com>
 
+	* DateTimeTest.cs: Made tests pass on ms.net.  Well, they pass in
+	timezone JST.  Need to test in others.  Maybe I'll fly over to GMT
+	and see how they work.  Supposed to be eaiser there.
+
+2002-07-04  Nick Drochak  <ndrochak@gol.com>
+
 	* ConvertTest.cs: Make the test generate the overflow exceptions on
 	mono on Linux.
 	* DecimalTest2.cs: Report exception thrown during subtraction.

@@ -144,9 +144,20 @@ public class DateTimeTest : TestCase
 		t1 = DateTime.ParseExact ("02/25/2002 05:25:13", "G", null);
 		AssertEquals ("D06", myTicks[4], t1.Ticks);
 		t1 = DateTime.ParseExact ("2002-02-25 04:25:13Z", "u", null);
-		AssertEquals ("D07", myTicks[4], t1.Ticks);
+		AssertEquals ("D07a", 2002, t1.Year);
+		AssertEquals ("D07b", 02, t1.Month);
+		AssertEquals ("D07c", 25, t1.Day);
+		AssertEquals ("D07d", 04, t1.Hour);
+		AssertEquals ("D07e", 25, t1.Minute);
+		AssertEquals ("D07f", 13, t1.Second);
 		t1 = DateTime.ParseExact ("Monday, 25 February 2002 04:25:13", "U", null);
-		AssertEquals ("D08", myTicks[4], t1.Ticks);
+		t1 = TimeZone.CurrentTimeZone.ToUniversalTime(t1);
+		AssertEquals ("D08a", 2002, t1.Year);
+		AssertEquals ("D08b", 02, t1.Month);
+		AssertEquals ("D08c", 25, t1.Day);
+		AssertEquals ("D08d", 04, t1.Hour);
+		AssertEquals ("D08e", 25, t1.Minute);
+		AssertEquals ("D08f", 13, t1.Second);
 
 		DateTime t2 = new DateTime (DateTime.Today.Year, 2, 25);
 		t1 = DateTime.ParseExact ("February 25", "m", null);
@@ -157,9 +168,20 @@ public class DateTimeTest : TestCase
 		AssertEquals ("D10", t2.Ticks, t1.Ticks);
 
 		t1 = DateTime.ParseExact ("Mon, 25 Feb 2002 04:25:13 GMT", "r", null);
-		AssertEquals ("D11", myTicks[4], t1.Ticks);
+		AssertEquals ("D11a", 2002, t1.Year);
+		AssertEquals ("D11b", 02, t1.Month);
+		AssertEquals ("D11c", 25, t1.Day);
+		AssertEquals ("D11d", 04, t1.Hour);
+		AssertEquals ("D11e", 25, t1.Minute);
+		AssertEquals ("D11f", 13, t1.Second);
+
 		t1 = DateTime.ParseExact ("Mon, 25 Feb 2002 04:25:13 GMT", "R", null);
-		AssertEquals ("D12", myTicks[4], t1.Ticks);
+		AssertEquals ("D12a", 2002, t1.Year);
+		AssertEquals ("D12b", 02, t1.Month);
+		AssertEquals ("D12c", 25, t1.Day);
+		AssertEquals ("D12d", 04, t1.Hour);
+		AssertEquals ("D12e", 25, t1.Minute);
+		AssertEquals ("D12f", 13, t1.Second);
 
 		t1 = DateTime.ParseExact ("2002-02-25T05:25:13", "s", null);
 		AssertEquals ("D13", myTicks[4], t1.Ticks);
@@ -230,12 +252,27 @@ public class DateTimeTest : TestCase
 		// Time zones
 		t2 = DateTime.Today + new TimeSpan (17, 18, 0);
 		t1 = DateTime.ParseExact ("11:18AM -5", "h:mmtt z", null);
+		t1 = TimeZone.CurrentTimeZone.ToUniversalTime(t1);
+		if (!TimeZone.CurrentTimeZone.IsDaylightSavingTime(t1))
+			t1 += new TimeSpan(1, 0, 0);
 		AssertEquals ("F01", t2.Ticks, t1.Ticks);
+
 		t1 = DateTime.ParseExact ("11:18AM -05:00", "h:mmtt zzz", null);
+		t1 = TimeZone.CurrentTimeZone.ToUniversalTime(t1);
+		if (!TimeZone.CurrentTimeZone.IsDaylightSavingTime(t1))
+			t1 += new TimeSpan(1, 0, 0);
 		AssertEquals ("F02", t2.Ticks, t1.Ticks);
+
 		t1 = DateTime.ParseExact ("7:18PM +03", "h:mmtt zz", null);
+		t1 = TimeZone.CurrentTimeZone.ToUniversalTime(t1);
+		if (!TimeZone.CurrentTimeZone.IsDaylightSavingTime(t1))
+			t1 += new TimeSpan(1, 0, 0);
 		AssertEquals ("F03", t2.Ticks, t1.Ticks);
+
 		t1 = DateTime.ParseExact ("7:48PM +03:30", "h:mmtt zzz", null);
+		t1 = TimeZone.CurrentTimeZone.ToUniversalTime(t1);
+		if (!TimeZone.CurrentTimeZone.IsDaylightSavingTime(t1))
+			t1 += new TimeSpan(1, 0, 0);
 		AssertEquals ("F04", t2.Ticks, t1.Ticks);
 
 		// Options
@@ -317,7 +354,13 @@ public class DateTimeTest : TestCase
 		t1 = DateTime.Parse ("02/25/2002 05:25:13");
 		AssertEquals ("H06", myTicks[4], t1.Ticks);
 		t1 = DateTime.Parse ("2002-02-25 04:25:13Z");
-		AssertEquals ("H07", myTicks[4], t1.Ticks);
+		t1 = TimeZone.CurrentTimeZone.ToUniversalTime(t1);
+		AssertEquals ("H07a", 2002, t1.Year);
+		AssertEquals ("H07b", 02, t1.Month);
+		AssertEquals ("H07c", 25, t1.Day);
+		AssertEquals ("H07d", 04, t1.Hour);
+		AssertEquals ("H07e", 25, t1.Minute);
+		AssertEquals ("H07f", 13, t1.Second);
 
 		DateTime t2 = new DateTime (DateTime.Today.Year, 2, 25);
 		t1 = DateTime.Parse ("February 25");
@@ -328,7 +371,13 @@ public class DateTimeTest : TestCase
 		AssertEquals ("H09", t2.Ticks, t1.Ticks);
 
 		t1 = DateTime.Parse ("Mon, 25 Feb 2002 04:25:13 GMT");
-		AssertEquals ("H10", myTicks[4], t1.Ticks);
+		t1 = TimeZone.CurrentTimeZone.ToUniversalTime(t1);
+		AssertEquals ("H10a", 2002, t1.Year);
+		AssertEquals ("H10b", 02, t1.Month);
+		AssertEquals ("H10c", 25, t1.Day);
+		AssertEquals ("H10d", 04, t1.Hour);
+		AssertEquals ("H10e", 25, t1.Minute);
+		AssertEquals ("H10f", 13, t1.Second);
 
 		t1 = DateTime.Parse ("2002-02-25T05:25:13");
 		AssertEquals ("H11", myTicks[4], t1.Ticks);
