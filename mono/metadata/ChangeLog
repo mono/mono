@@ -1,3 +1,8 @@
+2004-09-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (mono_marshal_alloc): Return a valid pointer on size 0
+	as well.
+
 2004-09-02  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_class_instance_size): Don't allow generic type
