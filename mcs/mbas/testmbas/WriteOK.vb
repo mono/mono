@@ -37,8 +37,8 @@ Module WriteOK
 			Constants.vbCRLF + "dateLit {7}", _ 
 			nodim, octalLit, hexLit, singleLit, doubleLit, decimalLit, charLit, dateLit)
 		Console.WriteLine(123.ToString("g"))
-		WriteOK5.ModuleSub() ' 122
-		' ModuleSub() ' 103
+		WriteOK5.ModuleSub("Qualified") ' 122
+		ModuleSub("Unqualified") ' 103
 		
 		Console.WriteLine(Strings.ChrW(64))
 
@@ -78,7 +78,7 @@ Public Class WriteOK2
 End Class
 
 Public Module WriteOK5
-    Public Sub ModuleSub()
-        Console.WriteLine("ModuleSub:OK!")
+    Public Sub ModuleSub(Parm As String)
+        Console.WriteLine("ModuleSub:OK! (" & Parm & ")")
     End Sub
 End Module

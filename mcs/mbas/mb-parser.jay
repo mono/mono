@@ -900,6 +900,8 @@ module_declaration
 
 		current_container = current_container.Parent;
 		CheckDef (current_container.AddClass(new_module), new_module.Name, new_module.Location);
+		
+		TypeManager.AddStandardModule(new_module);
 
 		$$ = new_module;
 	  }

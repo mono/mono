@@ -3709,7 +3709,7 @@ namespace Mono.MonoBASIC {
 // #52067 - Start - Trying to solve
 
 			if (e == null)
-				foreach(Type type in TypeManager.GetPertinentStandardModules(new string[] {"Microsoft.VisualBasic"})) {
+				foreach(Type type in TypeManager.GetPertinentStandardModules(new string[] {"Microsoft.VisualBasic", ""})) {
 					e = MemberLookup(ec, type, Name, loc);
 					if (e != null) // FIXME! Must Output Ambiguity Error Messages
 						break;

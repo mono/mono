@@ -470,6 +470,7 @@ public class TypeManager {
 		public readonly string Namespace;
 		public readonly string Name;
 		public StandardModule(string _namespace, string name) { Namespace = _namespace; Name = name; }
+		public override string ToString() { return ((Namespace != null && Namespace.Length > 0)?(Namespace + "."):"") + Name; }
 	}
 
 	private static StandardModule[] standardModules;
@@ -512,7 +513,7 @@ public class TypeManager {
 		{ 
 			for(int i = 0; i < standardModules.Length; i++)
 				if (standardModules[i].Namespace == Namespace)
-					list.Add(LookupType(Namespace + "." + standardModules[i].Name));
+					list.Add(LookupType(standardModules[i].ToString()));
 		}
 		return (Type[])list.ToArray(typeof(Type));
 	}
