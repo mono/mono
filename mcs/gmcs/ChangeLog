@@ -1,5 +1,12 @@
 2004-10-18  Martin Baulig  <martin@ximian.com>
 
+	* statement.cs (Fixed.Resolve): Don't access the TypeExpr's
+	`Type' directly, but call ResolveType() on it.
+	(Catch.Resolve): Likewise.
+	(Foreach.Resolve): Likewise.
+
+2004-10-18  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (Cast.DoResolve): Don't access the TypeExpr's
 	`Type' directly, but call ResolveType() on it.
 	(Probe.DoResolve): Likewise.

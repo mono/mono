@@ -3051,11 +3051,11 @@ namespace Mono.CSharp {
 				return false;
 			}
 			
-			type = type.ResolveAsTypeTerminal (ec, false);
-			if (type == null)
+			TypeExpr texpr = type.ResolveAsTypeTerminal (ec, false);
+			if (texpr == null)
 				return false;
 
-			expr_type = type.Type;
+			expr_type = texpr.ResolveType (ec);
 
 			CheckObsolete (expr_type);
 
@@ -3324,7 +3324,7 @@ namespace Mono.CSharp {
 				if (te == null)
 					return false;
 
-				type = te.Type;
+				type = te.ResolveType (ec);
 
 				CheckObsolete (type);
 
@@ -3526,11 +3526,11 @@ namespace Mono.CSharp {
 		{
 			int i = 0;
 
-			expr = expr.ResolveAsTypeTerminal (ec, false);
-			if (expr == null)
+			TypeExpr texpr = expr.ResolveAsTypeTerminal (ec, false);
+			if (texpr == null)
 				return false;
 
-			expr_type = expr.Type;
+			expr_type = texpr.ResolveType (ec);
 
 			//
 			// The type must be an IDisposable or an implicit conversion
@@ -3798,11 +3798,11 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
-			type = type.ResolveAsTypeTerminal (ec, false);
-			if (type == null)
+			TypeExpr texpr = type.ResolveAsTypeTerminal (ec, false);
+			if (texpr == null)
 				return false;
 
-			var_type = type.Type;
+			var_type = texpr.ResolveType (ec);
 			
 			//
 			// We need an instance variable.  Not sure this is the best
