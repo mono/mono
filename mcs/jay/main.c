@@ -94,8 +94,6 @@ char *nullable;
 #if defined(_WIN32) && !defined(__CYGWIN32__) && !defined(__CYGWIN__)
 extern char* mktemp();
 #define mkstemp mktemp
-#else
-extern char *mkstemp();
 #endif
 
 extern char *getenv();

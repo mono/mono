@@ -1,3 +1,9 @@
+
+Mon May 3 08:34:32 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* main.c, defs.h: use the proper header files instead of broken
+	prototypes (thanks to Marcus for reporting).
+
 2004-03-13  Miguel de Icaza  <miguel@ximian.com>
 
 	* main.c (create_file_names): Try a few temp directories, since
