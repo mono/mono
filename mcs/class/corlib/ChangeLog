@@ -1,3 +1,17 @@
+2003-07-24  Peter Williams  <peter@newton.cx>
+
+	* Makefile: Boo-yah! Add corlib_plattest.dll, which is a
+	corlib test library built against the platform corlib. This
+	lets us test our corlib tests. On a non-mono-native platform
+	(Windows) we run those tests only; on a mono-native platform, we
+	run the full corlib test suite on our own tests.
+
+	* corlib_plattest.dll.excludes: Add this. (The result of
+	'grep Mono corlib_test.dll.sources')
+
+	* corlib_test.dll.sources: Extraneous newline was messing things
+	up.
+	
 2003-07-23  Ravi Pratap  <ravi@ximian.com>
 
 	* Type.cs, TypeBuilder.cs, MonoType.cs: Fixes to IsArrayImpl
