@@ -152,7 +152,20 @@ namespace System.Reflection {
 			return internal_from_handle (handle.Value);
 		}
 
-		internal abstract int GetFieldOffset ();
+		//
+		// Note: making this abstract imposes an implementation requirement
+		//       on any class that derives from it.  However, since it's also
+		//       internal, that means only classes inside corlib can derive
+		//       from FieldInfo.  See
+		//
+		//          errors/cs0534-4.cs errors/CS0534-4-lib.cs
+		//
+		//          class/Microsoft.JScript/Microsoft.JScript/JSFieldInfo.cs
+		//
+		internal virtual int GetFieldOffset ()
+		{
+			throw new SystemException ("This method should not be called");
+		}
 
 		[CLSCompliant(false)]
 		[MonoTODO]
