@@ -113,7 +113,7 @@ using System.Globalization;
 
 namespace System {
 
-	unsafe class IntegerFormatter {
+	class IntegerFormatter {
 
 		const int maxByteLength = 4;
 		const int maxShortLength = 6;
@@ -320,7 +320,7 @@ namespace System {
 			int padding = (precision >= 0) ? precision : nfi.CurrencyDecimalDigits;	     
 			int size = maxLength + (groupSeparator.Length * maxLength) + padding + 2 + 
 			decimalSeparator.Length + symbolLength;	
-			char* buffy = stackalloc char [size];
+			char [] buffy = new char [size];
 			int position = size;
 
 			// set up the pattern from IFormattible
@@ -580,7 +580,7 @@ namespace System {
 			int padding = (precision >= 0) ? precision : nfi.CurrencyDecimalDigits;	     
 			int size = maxLength + (groupSeparator.Length * maxLength) + padding + 2 + 
 			decimalSeparator.Length + symbolLength;	
-			char* buffy = stackalloc char [size];
+			char [] buffy = new char [size];
 			int position = size;
 
 			// set up the pattern from IFormattible, no negative
@@ -678,7 +678,7 @@ namespace System {
 		internal static string FormatDecimal (long value, int precision, int maxLength)
 		{
 			int size = (precision > 0) ? (maxLength + precision) : maxLength;
-			char* buffy = stackalloc char [size];
+			char [] buffy = new char [size];
 			int position = size;
 			bool negative = (value < 0);
 
@@ -710,7 +710,7 @@ namespace System {
 		internal static string FormatDecimal (ulong value, int precision, int maxLength)
 		{
 			int size = (precision > 0) ? (maxLength + precision) : maxLength;
-			char* buffy = stackalloc char [size];
+			char [] buffy = new char [size];
 			int position = size;
 
 			// get our value into a buffer from right to left
@@ -757,8 +757,8 @@ namespace System {
 		{
 			bool negative = (value < 0);
 			int padding = (precision >= 0) ? precision : 6;
-			char* buffy = stackalloc char [(padding + 8)];
-			char* tmp = stackalloc char [maxLength];
+			char [] buffy = new char [(padding + 8)];
+			char [] tmp = new char [maxLength];
 			int exponent = 0, position = maxLength;
 			int exp = 0, idx = 0;
 			ulong pow = 10;
@@ -846,8 +846,8 @@ namespace System {
 		private static string FormatExponential (ulong value, int precision, bool upper, int maxLength)
 		{
 			int padding = (precision >= 0) ? precision : 6;
-			char* buffy = stackalloc char [(padding + 8)];
-			char* tmp = stackalloc char [maxLength];
+			char [] buffy = new char [(padding + 8)];
+			char [] tmp = new char [maxLength];
 			int exponent = 0, position = maxLength;
 			int exp = 0, idx = 0;
 			ulong pow = 10;
@@ -939,7 +939,7 @@ namespace System {
 		static string FormatFixedPoint (long value, int precision, NumberFormatInfo nfi, int maxLength)
 		{
 			int padding = (precision >= 0) ? (precision + maxLength) : (nfi.NumberDecimalDigits + maxLength);
-			char* buffy = stackalloc char [padding];
+			char [] buffy = new char [padding];
 			int position = padding;
 			bool negative = (value < 0);
 			
@@ -974,7 +974,7 @@ namespace System {
 		static string FormatFixedPoint (ulong value, int precision, NumberFormatInfo nfi, int maxLength)
 		{
 			int padding = (precision >= 0) ? (precision + maxLength) : (nfi.NumberDecimalDigits + maxLength);
-			char* buffy = stackalloc char [padding];
+			char [] buffy = new char [padding];
 			int position = padding;
 
 			// fill up w/ precision # of 0's
@@ -1041,7 +1041,7 @@ namespace System {
 		internal static string FormatGeneral (long value, int precision, NumberFormatInfo nfi, bool upper, int maxLength) 
 		{
 			bool negative = (value < 0);
-			char* tmp = stackalloc char [maxLength];
+			char [] tmp = new char [maxLength];
 			int exponent = 0;
 			int position = maxLength;
 
@@ -1106,7 +1106,7 @@ namespace System {
 			// finally, make our final buffer, at least precision + 6 for 'E+XX' and '-'
 			idx = position;
 			position = 0;
-			char* buffy = stackalloc char [precision + 6];
+			char [] buffy = new char [precision + 6];
 
 			if (negative)
 				buffy[position++] = '-';
@@ -1144,7 +1144,7 @@ namespace System {
 
 		internal static string FormatGeneral (ulong value, int precision, NumberFormatInfo nfi, bool upper, int maxLength)
 		{
-			char* tmp = stackalloc char [maxLength];
+			char [] tmp = new char [maxLength];
 			int exponent = 0;
 			int position = maxLength;
 			ulong number = value;
@@ -1197,7 +1197,7 @@ namespace System {
 			// finally, make our final buffer, at least precision + 6 for 'E+XX' and '-'
 			idx = position;
 			position = 0;
-			char* buffy = stackalloc char [precision + 6];
+			char [] buffy = new char [precision + 6];
 
 			buffy[position++] = tmp[idx++];
 			buffy[position] = '.';
@@ -1275,7 +1275,7 @@ namespace System {
 			int pattern = nfi.NumberNegativePattern;
 			int size = maxLength + (maxLength * groupSeparator.Length) + padding +
 			decimalSeparator.Length + 4;
-			char* buffy = stackalloc char [size];
+			char [] buffy = new char [size];
 			int position = size;
 			bool negative = (value < 0);
 			
@@ -1384,7 +1384,7 @@ namespace System {
 			int padding = (precision >= 0) ? precision : nfi.NumberDecimalDigits;
 			int size = maxLength + (maxLength * groupSeparator.Length) + padding +
 			decimalSeparator.Length + 2;
-			char* buffy = stackalloc char [size];
+			char [] buffy = new char [size];
 			int position = size;
 			
 			// right pad it w/ precision 0's
@@ -1463,7 +1463,7 @@ namespace System {
 			int padding = (precision >= 0) ? precision : nfi.PercentDecimalDigits;	     
 			int size = maxLength + (groupSeparator.Length * maxLength) + padding + 2 + 
 			decimalSeparator.Length + symbolLength;	
-			char* buffy = stackalloc char [size];
+			char [] buffy = new char [size];
 			int position = size;
 
 			// set up the pattern from IFormattible
@@ -1622,7 +1622,7 @@ namespace System {
 			int padding = (precision >= 0) ? precision : nfi.PercentDecimalDigits;	     
 			int size = maxLength + (groupSeparator.Length * maxLength) + padding + 2 + 
 			decimalSeparator.Length + symbolLength;	
-			char* buffy = stackalloc char [size];
+			char [] buffy = new char [size];
 			int position = size;
 
 			// set up the pattern from IFormattible
@@ -1729,7 +1729,7 @@ namespace System {
 		{
 			if (precision < 0) precision = 0;
 			int size = maxLength + precision;
-			char* buffy = stackalloc char [size];
+			char [] buffy = new char [size];
 			char[] table = upper ? digitUpperTable : digitLowerTable;
 			int position = size;
 			const long mask = (1 << 4) - 1;
@@ -1756,7 +1756,7 @@ namespace System {
 		{			
 			if (precision < 0) precision = 0;
 			int size = maxLength + precision;
-			char* buffy = stackalloc char [size];
+			char [] buffy = new char [size];
 			char[] table = upper ? digitUpperTable : digitLowerTable;
 			int position = size;
 			const ulong mask = (1 << 4) - 1;
