@@ -1,3 +1,12 @@
+2003-11-03  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (mono_image_get_generic_method_param_info):
+	Removed, use mono_image_get_generic_param_info() instead.
+	(mono_image_get_type_info): Write the GenericParam table before
+	the Method table.  This is neccessary because in the GenericParam
+	table, type parameters of the class (ie. '!0' etc.) must come
+	before the ones from its generic methods (ie. '!!0' etc).
+
 2003-11-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_System_Reflection_Assembly_FillName): Fill out AssemblyName->codebase. Fixes #50469.
