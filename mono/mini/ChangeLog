@@ -1,5 +1,10 @@
 2005-03-12  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-ops.h: Add OP_LMUL_IMM.
+
+	* mini.c jit-icalls.cmini-amd64.h mini-amd64.c cpu-amd64.md: Implement
+	long mul/div opcodes as intrinsic.
+
 	* mini-amd64.c (emit_call): Handle the case when the callee might be
 	an AOT method.
 
