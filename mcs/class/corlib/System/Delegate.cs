@@ -14,6 +14,8 @@ using System;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.Runtime.CompilerServices;
+
 
 namespace System {
 
@@ -70,6 +72,57 @@ namespace System {
 		// Methods
 		//
 
+		[MonoTODO]
+		public static Delegate CreateDelegate (Type type, MethodInfo methodinfo)
+		{
+			throw new NotImplementedException();
+		}
+		
+		[MonoTODO]
+		public static Delegate CreateDelegate (Type type, object target, string method)
+		{
+			if (type == null)
+				throw new ArgumentNullException (Locale.GetText ("Type is null"));
+
+			if (target == null)
+				throw new ArgumentNullException (Locale.GetText ("Target type is null"));
+
+			if (method == null)
+				throw new ArgumentNullException (Locale.GetText ("method string is null"));
+
+			MethodInfo info = target.GetType ().GetMethod (method);
+			IntPtr ptr = CreateDelegate_internal (info);
+			Delegate d = CreateDelegate (type, target, ptr);
+			d.m_target = target;
+			d.method_name = method;
+			return d;
+		}
+
+		[MonoTODO]
+ 		public static Delegate CreateDelegate (Type type, Type target, string method)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public static Delegate CreateDelegate (Type type, object target, string method, bool ignorecase)
+		{
+			throw new NotImplementedException();
+		}
+
+		private static Delegate CreateDelegate (Type type, object target, IntPtr method)
+		{
+			object[] args = new object [2];
+			args [0] = target; args [1] = method;
+			Type[] argtypes = new Type [2];
+			argtypes[0] = typeof (System.Object); argtypes[1] = typeof (System.IntPtr);
+			ConstructorInfo ctor = type.GetConstructor (argtypes);
+			return (Delegate)ctor.Invoke (args);
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern IntPtr CreateDelegate_internal (MethodInfo info);
+
 		public object DynamicInvoke( object[] args )
 		{
 			return DynamicInvokeImpl( args );
@@ -77,6 +130,13 @@ namespace System {
 
 		public virtual object DynamicInvokeImpl( object[] args )
 		{
+			if (Method == null) {
+				Type[] mtypes = new Type [args.Length];
+   				for (int i = 0; i < args.Length; ++i) {
+      				mtypes [i] = args [i].GetType ();
+         		}
+				method_info = m_target.GetType ().GetMethod (method_name, mtypes);
+			}
 			return Method.Invoke( m_target, args );
 		}
 
