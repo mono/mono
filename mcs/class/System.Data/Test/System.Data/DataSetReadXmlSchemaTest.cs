@@ -672,5 +672,31 @@ namespace MonoTests.System.Data
 
 			AssertDataRelation ("rel", ds.Relations [0], "Foo_Bar", true, new string [] {"Foo_Id"}, new string [] {"Foo_Id"}, true, true);
 		}
+
+		[Test]
+		public void TestMoreThanOneRepeatableColumns ()
+		{
+			DataSet ds = new DataSet ();
+			ds.ReadXmlSchema ("Test/System.Data/schemas/test014.xsd");
+			AssertDataSet ("014", ds, "NewDataSet", 3, 2);
+
+			DataTable dt = ds.Tables [0];
+			AssertDataTable ("parent", dt, "root", 1, 0, 0, 2, 1, 1);
+			AssertDataColumn ("key", dt.Columns [0], "root_Id", false, true, 0, 1, "root_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, true);
+
+			dt = ds.Tables [1];
+			AssertDataTable ("repeated", dt, "x", 2, 0, 1, 0, 1, 0);
+			AssertDataColumn ("data_1", dt.Columns [0], "x_Column", false, false, 0, 1, "x_Column", MappingType.SimpleContent, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
+			AssertDataColumn ("refkey_1", dt.Columns [1], "root_Id", true, false, 0, 1, "root_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
+
+			dt = ds.Tables [2];
+			AssertDataTable ("repeated", dt, "y", 2, 0, 1, 0, 1, 0);
+			AssertDataColumn ("data", dt.Columns [0], "y_Column", false, false, 0, 1, "y_Column", MappingType.SimpleContent, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
+			AssertDataColumn ("refkey", dt.Columns [1], "root_Id", true, false, 0, 1, "root_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
+
+			AssertDataRelation ("rel", ds.Relations [0], "root_x", true, new string [] {"root_Id"}, new string [] {"root_Id"}, true, true);
+
+			AssertDataRelation ("rel", ds.Relations [1], "root_y", true, new string [] {"root_Id"}, new string [] {"root_Id"}, true, true);
+		}
 	}
 }
