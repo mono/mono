@@ -1,3 +1,22 @@
+2004-05-05  Jesper Pedersen  <jep@itplus.dk>
+
+	* PKCS12.cs: Added support for SafeBag attributes. Added support for 
+	Clone() (ICloneable), Equals and GetHashCode. New methods:
+	- AddCertificate (X509Certificate cert)
+	- AddCertificate (X509Certificate cert, IDictionary attributes)
+	- RemoveCertificate (X509Certificate cert)
+	- RemoveCertificate (X509Certificate cert, IDictionary attributes)
+	- AddPkcs8ShroudedKeyBag (AsymmetricAlgorithm aa)
+	- AddPkcs8ShroudedKeyBag (AsymmetricAlgorithm aa, IDictionary attributes)
+	- RemovePkcs8ShroudedKeyBag (AsymmetricAlgorithm aa)
+	- AddKeyBag (AsymmetricAlgorithm aa)
+	- AddKeyBag (AsymmetricAlgorithm aa, IDictionary attributes)
+	- RemoveKeyBag (AsymmetricAlgorithm aa)
+	- AsymmetricAlgorithm GetAsymmetricAlgorithm (IDictionary attrs)
+	- X509Certificate GetCertificate (IDictionary attrs)
+	- IDictionary GetAttributes (AsymmetricAlgorithm aa) 
+	- IDictionary GetAttributes (X509Certificate cert)
+
 2004-04-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PKCS12.cs: FxCop-ized. CLS compliance.
