@@ -1,3 +1,8 @@
+2003-05-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MethodBuilderTest.cs: Comment out test which fails because of a mono
+	extension to DefineParameter.
+
 2003-02-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyBuilderTest.cs: New file.
