@@ -1,3 +1,9 @@
+2003-03-15  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ASN1.cs: Improved version.
+	* ASN1Convert.cs: New. Helper class to convert between .NET 
+	types and ASN.1 structures.
+
 2003-02-08  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ASN1.cs: Renamed namespace to match new location.
