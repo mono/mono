@@ -18,3 +18,13 @@
 	* FormWindowState.cs: 
 	* FrameStyle.cs: Fixed enum layouts with EnumCheck.
 
+2002-4-23 Dennis Hayes <dennish@raytek.com>
+
+	* AccessibleNavigation.cs :added to cvs with bad enum values, I will correct.
+	* AccessibleSelection.cs :added with good enum values.
+	* ContentsResizedEventHandler.cs :Added delagate
+	* MainMenu.cs
+	* AccessibleObject.cs
+	* MeasureItemEventArgs :added stubbed classes. Commented out.
+	* IButtonControl.cs : Added interface.
+
