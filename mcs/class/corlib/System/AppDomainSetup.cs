@@ -1,4 +1,3 @@
-
 //
 // System/AppDomainSetup.cs
 //
@@ -15,18 +14,18 @@ namespace System {
 
 
 	public sealed class AppDomainSetup : IAppDomainSetup {
-
-		private string application_base;
-		private string application_name;
-		private string cache_path;
-		private string configuration_file;
-		private string dynamic_base;
-		private string license_file;
-		private string private_bin_path;
-		private string private_bin_path_probe;
-		private string shadow_copy_directories;
-		private string shadow_copy_files;
-
+		string application_base;
+		string application_name;
+		string cache_path;
+		string configuration_file;
+		string dynamic_base;
+		string license_file;
+		string private_bin_path;
+		string private_bin_path_probe;
+		string shadow_copy_directories;
+		string shadow_copy_files;
+		bool publisher_policy;
+		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern AppDomainSetup InitAppDomainSetup (AppDomainSetup setup);
 
@@ -79,6 +78,16 @@ namespace System {
 			}
 		}
 
+		public bool DisallowPublisherPolicy {
+			get {
+				return publisher_policy;
+			}
+
+			set {
+				publisher_policy = value;
+			}
+		}
+		
 		public string DynamicBase {
 
 			get {
@@ -100,6 +109,8 @@ namespace System {
 				license_file = value;
 			}
 		}
+
+		
 
 		public string PrivateBinPath {
 

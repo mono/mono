@@ -709,6 +709,5 @@ namespace System {
 				res = res + "*";
 			return res;
 		}
-
 	}
 }

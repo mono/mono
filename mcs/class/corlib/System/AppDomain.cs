@@ -5,8 +5,9 @@
 // Authors:
 //   Paolo Molaro (lupus@ximian.com)
 //   Dietmar Maurer (dietmar@ximian.com)
+//   Miguel de Icaza (miguel@ximian.com)
 //
-// (C) 2001 Ximian, Inc.  http://www.ximian.com
+// (C) 2001, 2002 Ximian, Inc.  http://www.ximian.com
 //
 
 using System;
@@ -21,15 +22,21 @@ namespace System {
 	public sealed class AppDomain /* : MarshalByRefObject , _AppDomain, IEvidenceFactory */ {
 
 		private Hashtable loaded_assemblies = new Hashtable ();
-
 		private Hashtable data_hash = new Hashtable ();
-		
 		private AppDomainSetup adsetup;
-
 		private string friendly_name;
-
 		private Evidence evidence;
 
+		private AppDomain ()
+		{
+			//
+			// Prime the loaded assemblies with the assemblies that were loaded
+			// by the runtime in our behalf
+			//
+			foreach (Assembly a in getDefaultAssemblies ())
+				loaded_assemblies [a.FullName] = a;
+		}
+		
 		public AppDomainSetup SetupInformation {
 
 			get {
@@ -74,17 +81,19 @@ namespace System {
 		}
 
 		
-		public static AppDomain CreateDomain(string friendlyName)
+		public static AppDomain CreateDomain (string friendlyName)
 		{
 			return CreateDomain (friendlyName, new Evidence (), new AppDomainSetup ());
 		}
 		
-		public static AppDomain CreateDomain(string friendlyName, Evidence securityInfo)
+		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo)
 		{
 			return CreateDomain (friendlyName, securityInfo, new AppDomainSetup ());
 		}
 		
-		public static AppDomain CreateDomain(string friendlyName, Evidence securityInfo, AppDomainSetup info)
+		public static AppDomain CreateDomain (string friendlyName,
+						      Evidence securityInfo,
+						      AppDomainSetup info)
 		{
 			if (friendlyName == null || securityInfo == null || info == null)
 				throw new System.ArgumentNullException();
@@ -94,12 +103,13 @@ namespace System {
 			ad.friendly_name = friendlyName;
 			ad.evidence = securityInfo;
 			ad.adsetup = info;
-			
+
 			return ad;
 		}
 
-		public static AppDomain CreateDomain(string friendlyName, Evidence securityInfo, string appBasePath,
-						     string appRelativeSearchPath, bool shadowCopyFiles)
+		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo,
+						      string appBasePath, string appRelativeSearchPath,
+						      bool shadowCopyFiles)
 		{
 			AppDomainSetup info = new AppDomainSetup ();
 
@@ -114,10 +124,10 @@ namespace System {
 			return CreateDomain (friendlyName, securityInfo, info);
 		}
 		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public static extern Assembly LoadFrom(String assemblyFile, Evidence securityEvidence);
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public static extern Assembly LoadFrom (String assemblyFile, Evidence securityEvidence);
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern AppDomain getCurDomain ();
 		
 		public static AppDomain CurrentDomain
@@ -186,19 +196,22 @@ namespace System {
 			throw new NotImplementedException ();
 		}
 
+		//
+		// This returns a list of the assemblies that were loaded in behalf
+		// of this AppDomain
+		//
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static private extern Assembly [] getDefaultAssemblies ();
+			
 		public Assembly[] GetAssemblies ()
 		{
 			int x = loaded_assemblies.Count;
-			return null;
 			Assembly[] res = new Assembly [loaded_assemblies.Count];
 
-			IDictionaryEnumerator it = loaded_assemblies.GetEnumerator ();
 			int i = 0;
-
-			
-			while (it.MoveNext ())
-				res [i++] = (Assembly)it.Value;
-
+			foreach (DictionaryEntry de in loaded_assemblies)
+				res [i++] = (Assembly) de.Value;
+				
 			return res;
 		}
 
@@ -206,15 +219,24 @@ namespace System {
 		public object GetData (string name)
 		{
 			switch (name) {
-			case "APPBASE": return adsetup.ApplicationBase;
-			case "APP_CONFIG_FILE": return adsetup.ConfigurationFile;
-			case "DYNAMIC_BASE": return adsetup.DynamicBase;
-			case "APP_NAME": return adsetup.ApplicationName;
-			case "CACHE_BASE": return adsetup.CachePath;
-			case "PRIVATE_BINPATH": return adsetup.PrivateBinPath;
-			case "BINPATH_PROBE_ONLY": return adsetup.PrivateBinPathProbe;
-			case "SHADOW_COPY_DIRS": return adsetup.ShadowCopyDirectories;
-			case "FORCE_CACHE_INSTALL": return adsetup.ShadowCopyFiles;
+			case "APPBASE":
+				return adsetup.ApplicationBase;
+			case "APP_CONFIG_FILE":
+				return adsetup.ConfigurationFile;
+			case "DYNAMIC_BASE":
+				return adsetup.DynamicBase;
+			case "APP_NAME":
+				return adsetup.ApplicationName;
+			case "CACHE_BASE":
+				return adsetup.CachePath;
+			case "PRIVATE_BINPATH":
+				return adsetup.PrivateBinPath;
+			case "BINPATH_PROBE_ONLY":
+				return adsetup.PrivateBinPathProbe;
+			case "SHADOW_COPY_DIRS":
+				return adsetup.ShadowCopyDirectories;
+			case "FORCE_CACHE_INSTALL":
+				return adsetup.ShadowCopyFiles;
 			}
 
 			return data_hash [name];

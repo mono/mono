@@ -9,22 +9,53 @@
 
 using System;
 using System.Reflection;
+using System.Runtime.Serialization;
 
 namespace System.Reflection {
 
 	public class AssemblyName /* : ICloneable, ISerializable, IDeserializationCallback */ {
-
-		private string name;
+		string name;
+		string codebase;
+		Version version;
 		
-		public virtual string Name {
-			get {return name;}
-			set {name = value;}
-		}
-
-		public AssemblyName () {
+		public AssemblyName ()
+		{
 			name = null;
 		}
 
+		public AssemblyName (SerializationInfo si, StreamingContext sc)
+		{
+		}
+
+		public virtual string Name {
+			get {
+				return name;
+			}
+			set {
+				name = value;
+			}
+		}
+
+		public virtual string CodeBase {
+			get {
+				return codebase;
+			}
+
+			set {
+				codebase = value;
+			}
+		}
+
+		public virtual Version Version {
+			get {
+				return version;
+			}
+
+			set {
+				version = value;
+			}
+		}
+		
 		public override int GetHashCode ()
 		{
 			return name.GetHashCode ();

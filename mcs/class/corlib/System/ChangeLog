@@ -1,5 +1,14 @@
 2002-01-23  Miguel de Icaza  <miguel@ximian.com>
 
+	* AppDomain.cs (GetAssemblies): Use foreach construct instead of
+	manually getting the enumerator.
+
+	(AppDomain.AppDomain): Prime the loaded assemblies with the
+	assemblies loaded by the runtime in our behalf.
+
+	* AppDomainSetup.cs: Remove private keyword, that is the default.
+	Add a new property DisallowPublisherPolicy.
+
 	* AppDomain.cs (AppDomain.GetAssemblies): Implement.
 
 Tue Jan 22 22:51:48 CET 2002 Paolo Molaro <lupus@ximian.com>

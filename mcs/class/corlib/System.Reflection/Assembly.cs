@@ -21,26 +21,54 @@ namespace System.Reflection {
 		System.Security.IEvidenceFactory, System.Runtime.Serialization.ISerializable {
 		private IntPtr _mono_assembly;
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern string get_code_base ();
 		
-		public virtual string CodeBase { get { return get_code_base (); } }
+		public virtual string CodeBase {
+			get {
+				return get_code_base ();
+			}
+		}
 
-		public virtual string CopiedCodeBase { get {return null;} } 
+		public virtual string CopiedCodeBase {
+			get {
+				return null;
+			}
+		} 
 
-		public virtual string FullName { get {return null;} }
+		public virtual string FullName {
+			get {
+				//
+				// FIXME: This is wrong, but it gets us going
+				// in the compiler for now
+				//
+				return CodeBase;
+			}
+		}
 
-		public virtual MethodInfo EntryPoint { get {return null;} }
+		public virtual MethodInfo EntryPoint {
+			get {
+				return null;
+			}
+		}
 
-		public virtual Evidence Evidence { get {return null;} }
+		public virtual Evidence Evidence {
+			get {
+				return null;
+			}
+		}
 
-		public virtual String Location { get {return null;} }
+		public virtual String Location {
+			get {
+				return null;
+			}
+		}
 
-		public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 		}
 
-		public virtual Boolean IsDefined(Type attributeType)
+		public virtual Boolean IsDefined (Type attributeType)
 		{
 			return false;
 		}
@@ -50,12 +78,12 @@ namespace System.Reflection {
 			return false;
 		}
 
-		public virtual Object[] GetCustomAttributes()
+		public virtual Object[] GetCustomAttributes ()
 		{
 			return null;
 		}
 
-		public virtual Object[] GetCustomAttributes(Type attributeType)
+		public virtual Object[] GetCustomAttributes (Type attributeType)
 		{
 			return null;
 		}
@@ -70,214 +98,220 @@ namespace System.Reflection {
 			return null;
 		}
 
-		public virtual void RemoveOnTypeResolve(ResolveEventHandler handler)
+		public virtual void RemoveOnTypeResolve (ResolveEventHandler handler)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public virtual void AddOnTypeResolve(ResolveEventHandler handler)
+		public virtual void AddOnTypeResolve (ResolveEventHandler handler)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public virtual void RemoveOnResourceResolve(ResolveEventHandler handler)
+		public virtual void RemoveOnResourceResolve (ResolveEventHandler handler)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		public virtual void AddOnResourceResolve(ResolveEventHandler handler)
+		public virtual void AddOnResourceResolve (ResolveEventHandler handler)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public virtual ModuleBuilder DefineDynamicModule(String name, Boolean emitSymbolInfo)
+		public virtual ModuleBuilder DefineDynamicModule (String name, Boolean emitSymbolInfo)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public virtual ModuleBuilder DefineDynamicModule(String name)
+		public virtual ModuleBuilder DefineDynamicModule (String name)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public virtual FileStream[] GetFiles()
+		public virtual FileStream[] GetFiles ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		public virtual FileStream GetFile(String name)
+		public virtual FileStream GetFile (String name)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public virtual Stream GetManifestResourceStream(String name)
+		public virtual Stream GetManifestResourceStream (String name)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public virtual Stream GetManifestResourceStream(Type type, String name)
+		public virtual Stream GetManifestResourceStream (Type type, String name)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public virtual Type[] GetTypes()
+		public virtual Type[] GetTypes ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		public virtual Type[] GetExportedTypes()
+		public virtual Type[] GetExportedTypes ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		public virtual Type GetType(String name, Boolean throwOnError)
+		public virtual Type GetType (String name, Boolean throwOnError)
 		{
 			return GetType (name, throwOnError, false);
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern virtual Type GetType(String name);
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern virtual Type GetType (String name);
 
-		public Type GetType(String name, Boolean throwOnError, Boolean ignoreCase)
+		public Type GetType (String name, Boolean throwOnError, Boolean ignoreCase)
 		{
 			throw new NotImplementedException ();
 		}
 		
-		public virtual AssemblyName GetName(Boolean copiedName)
+		public virtual AssemblyName GetName (Boolean copiedName)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public virtual AssemblyName GetName()
+		public virtual AssemblyName GetName ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		public override String ToString()
+		public override String ToString ()
 		{
 			return GetName ().Name;
 		}
 
 		[MonoTODO]
-		public static String CreateQualifiedName(String assemblyName, String typeName) 
+		public static String CreateQualifiedName (String assemblyName, String typeName) 
 		{
 			return "FIXME: assembly";
 		}
 
 		[MonoTODO]
-		public static String nCreateQualifiedName(String assemblyName, String typeName)
+		public static String nCreateQualifiedName (String assemblyName, String typeName)
 		{
 			return "FIXME: assembly";
 		}
 
 		[MonoTODO]
-		public static Assembly GetAssembly(Type type)
+		public static Assembly GetAssembly (Type type)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public Assembly GetSatelliteAssembly(CultureInfo culture)
+		public Assembly GetSatelliteAssembly (CultureInfo culture)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public static Assembly LoadFrom(String assemblyFile)
+		public static Assembly LoadFrom (String assemblyFile)
 		{
 			return AppDomain.CurrentDomain.Load (assemblyFile);
 		}
 
-		public static Assembly Load(String assemblyString)
+		public static Assembly Load (String assemblyString)
 		{
 			return AppDomain.CurrentDomain.Load (assemblyString);
 		}
 		
-		public static Assembly Load(String assemblyString, Evidence assemblySecurity)
+		public static Assembly Load (String assemblyString, Evidence assemblySecurity)
 		{
 			return AppDomain.CurrentDomain.Load (assemblyString, assemblySecurity);
 		}
 
-		public static Assembly Load(AssemblyName assemblyRef)
+		public static Assembly Load (AssemblyName assemblyRef)
 		{
 			return AppDomain.CurrentDomain.Load (assemblyRef);
 		}
 
-		public static Assembly Load(AssemblyName assemblyRef, Evidence assemblySecurity)
+		public static Assembly Load (AssemblyName assemblyRef, Evidence assemblySecurity)
 		{
 			return AppDomain.CurrentDomain.Load (assemblyRef, assemblySecurity);
 		}
 
-		public static Assembly Load(Byte[] rawAssembly)
+		public static Assembly Load (Byte[] rawAssembly)
 		{
 			return AppDomain.CurrentDomain.Load (rawAssembly);
 		}
 
-		public static Assembly Load(Byte[] rawAssembly, Byte[] rawSymbolStore)
+		public static Assembly Load (Byte[] rawAssembly, Byte[] rawSymbolStore)
 		{
 			return AppDomain.CurrentDomain.Load (rawAssembly, rawSymbolStore);
 		}
 
-		public static Assembly Load(Byte[] rawAssembly, Byte[] rawSymbolStore, Evidence securityEvidence)
+		public static Assembly Load (Byte[] rawAssembly, Byte[] rawSymbolStore,
+					     Evidence securityEvidence)
 		{
 			return AppDomain.CurrentDomain.Load (rawAssembly, rawSymbolStore, securityEvidence);
 		}
 
-		public Object CreateInstance(String typeName) 
+		public Object CreateInstance (String typeName) 
 		{
 			throw new NotImplementedException ();
 		}
 
-		public Object CreateInstance(String typeName, Boolean ignoreCase)
+		public Object CreateInstance (String typeName, Boolean ignoreCase)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public Object CreateInstance(String typeName, Boolean ignoreCase, BindingFlags bindingAttr, Binder binder, Object[] args, CultureInfo culture, Object[] activationAttributes)
+		public Object CreateInstance (String typeName, Boolean ignoreCase,
+					      BindingFlags bindingAttr, Binder binder,
+					      Object[] args, CultureInfo culture,
+					      Object[] activationAttributes)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public Module[] GetLoadedModules()
+		public Module[] GetLoadedModules ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		public Module[] GetModules()
+		public Module[] GetModules ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		public Module GetModule(String name)
+		public Module GetModule (String name)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public String[] GetManifestResourceNames()
+		public String[] GetManifestResourceNames ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		public static Assembly GetExecutingAssembly()
+		public static Assembly GetExecutingAssembly ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		public AssemblyName[] GetReferencedAssemblies()
+		public AssemblyName[] GetReferencedAssemblies ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		public ManifestResourceInfo GetManifestResourceInfo(String resourceName)
+		public ManifestResourceInfo GetManifestResourceInfo (String resourceName)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public static Assembly Load(AssemblyName assemblyRef, Evidence assemblySecurity, String callerLocation)
+		public static Assembly Load (AssemblyName assemblyRef, Evidence assemblySecurity,
+					     String callerLocation)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public static Assembly Load(String assemblyString, Evidence assemblySecurity, String callerLocation)
+		public static Assembly Load (String assemblyString, Evidence assemblySecurity,
+					     String callerLocation)
 		{
 			throw new NotImplementedException ();
 		}

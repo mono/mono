@@ -1,6 +1,10 @@
 2002-01-23  Miguel de Icaza  <miguel@ximian.com>
 
 	* Assembly.cs (Assembly.CodeBase): Implement.
+	(Assembly.FullName): simplistic and broken implementation.  Gets
+	us where we were yesterday.
+
+	Code style fix.
 
 Tue Jan 22 22:54:18 CET 2002 Paolo Molaro <lupus@ximian.com>
 
