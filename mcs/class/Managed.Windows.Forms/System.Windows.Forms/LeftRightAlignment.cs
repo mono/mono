@@ -17,17 +17,19 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2004-2005 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
 //
 //
 
-
 // COMPLETE
 
+using System.Runtime.InteropServices;
+
 namespace System.Windows.Forms {
+	[ComVisible(true)]
 	public enum LeftRightAlignment {
 		Left	= 0,
 		Right	= 1

@@ -69,12 +69,12 @@ namespace System.Windows.Forms {
 			}
 
 			// Both calls are needed, one is for the WM, the other for our focus logic
-			XplatUI.Activate(form.form_parent_window.window.Handle);
+			XplatUI.Activate(form.window.Handle);
 			form.Activate();
 
 			while (control.MoveNext()) {
 				if ((((Control)control.Current).parent == null) && (((Control)control.Current).is_visible) && (((Control)control.Current).is_enabled)) {
-					if ((control.Current is Form.FormParentWindow)  && (((Form.FormParentWindow)control.Current)!=form.form_parent_window)) {
+					if ((control.Current is Form)  && (((Form)control.Current)!=form)) {
 						XplatUI.EnableWindow(((Control)control.Current).window.Handle, false);
 						toplevels.Enqueue((Control)control.Current);
 					}
@@ -304,7 +304,7 @@ namespace System.Windows.Forms {
 
 			if (form != null) {
 				// Both calls are needed, one is for the WM, the other for our focus logic
-				XplatUI.Activate(form.form_parent_window.window.Handle);
+				XplatUI.Activate(form.window.Handle);
 				form.Activate();
 			}
 

@@ -40,7 +40,6 @@ namespace System.Windows.Forms
 	[Designer ("System.Windows.Forms.Design.LabelDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	public class Label : Control
     	{
-    		private BorderStyle border_style;
     		private bool autosize;
     		private Image image;
     		private bool render_transparent;

@@ -39,7 +39,6 @@ namespace System.Windows.Forms {
 		internal bool			accepts_tab;
 		internal bool			accepts_return;
 		internal bool			auto_size;
-		internal BorderStyle		border_style;
 		internal CharacterCasing	character_casing;
 		internal bool			undo;
 		internal bool			hide_selection;

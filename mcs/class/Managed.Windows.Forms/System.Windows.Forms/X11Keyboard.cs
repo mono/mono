@@ -503,7 +503,7 @@ namespace System.Windows.Forms {
 
 			syms = keysyms_per_keycode;
 			if (syms > 4) {
-				Console.Error.WriteLine ("{0} keysymbols per a keycode is not supported, setting to 4", syms);
+				//Console.Error.WriteLine ("{0} keysymbols per a keycode is not supported, setting to 4", syms);
 				syms = 2;
 			}
 
@@ -586,10 +586,11 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			if (layout != null) 
-				Console.WriteLine ("done detecting keyboard:  " + layout.Comment);
-			else
-				Console.WriteLine ("no keyboard detected");
+			if (layout != null)  {
+				Console.WriteLine (Locale.GetText("Keyboard") + ": " + layout.Comment);
+			} else {
+				Console.WriteLine (Locale.GetText("Keyboard layout not recognized"));
+			}
 			this.layout = layout;
 		}
 

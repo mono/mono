@@ -24,11 +24,15 @@
 //
 //
 
-
 // COMPLETE
+
+using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 	[Flags]
+	[ComVisible(true)]
+	[TypeConverter(typeof(KeysConverter))]
 	public enum Keys {
 		None		= 0x00000000,
 		LButton		= 0x00000001,

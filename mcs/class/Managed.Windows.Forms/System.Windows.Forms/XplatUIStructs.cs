@@ -174,6 +174,8 @@ namespace System.Windows.Forms {
 		WM_STYLECHANGED           = 0x007D,
 		WM_DISPLAYCHANGE          = 0x007E,
 		WM_GETICON                = 0x007F,
+
+		// Non-Client messages
 		WM_SETICON                = 0x0080,
 		WM_NCCREATE               = 0x0081,
 		WM_NCDESTROY              = 0x0082,
@@ -750,6 +752,12 @@ namespace System.Windows.Forms {
 		HTOBJECT			= 19,
 		HTCLOSE				= 20,
 		HTHELP				= 21
+	}
+
+	internal enum TitleStyle {
+		None				= 0,
+		Normal				= 1,
+		Tool				= 2
 	}
 }
 

@@ -130,16 +130,17 @@ namespace System.Windows.Forms {
 			form.form_parent_window.Parent = owner;
 			#endif
 
-			XplatUI.SetModal(form.form_parent_window.Handle, true);
+			XplatUI.SetModal(form.window.Handle, true);
 
 			form.Show();
 
+			form.end_modal = false;
 			form.is_modal = true;
 			Application.ModalRun(form);
 			form.is_modal = false;
 			form.Hide();
 
-			XplatUI.SetModal(form.form_parent_window.Handle, false);
+			XplatUI.SetModal(form.window.Handle, false);
 
 			return form.DialogResult;
 		}

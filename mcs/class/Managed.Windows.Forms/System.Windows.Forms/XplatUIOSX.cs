@@ -219,6 +219,9 @@ namespace System.Windows.Forms {
 		}
 
 		private XplatUIOSX() {
+
+			throw new SystemException ("This driver is temporarily unavailable due to the new Hwnd architecture changes.");
+
 			viewEventHandler = new CarbonEventHandler (ViewHandler);
 			windowEventHandler = new CarbonEventHandler (WindowHandler);
 			ref_count = 0;
@@ -1155,11 +1158,11 @@ DEBUG THIS:
 			throw new NotImplementedException ();
 		}
 
-		internal override void ReleaseWindow(IntPtr hWnd) {
+		internal override void UngrabWindow(IntPtr hWnd) {
 			grabWindow = IntPtr.Zero;
 		}
 
-		internal override bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, bool HasMenu, out Rectangle WindowRect) {
+		internal override bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, int ExStyle, IntPtr MenuHandle, out Rectangle WindowRect) {
 			WindowRect = new Rectangle(ClientRect.Left, ClientRect.Top, ClientRect.Width, ClientRect.Height);
 			return true;
 		}
@@ -1494,6 +1497,13 @@ DEBUG THIS:
 			}
 		}
 
+		internal override void SetBorderStyle(IntPtr handle, BorderStyle border_style) {
+			throw new NotImplementedException();
+		}
+
+		internal override void SetMenu(IntPtr handle, IntPtr menu_handle) {
+			throw new NotImplementedException();
+		}
 
 		[MonoTODO]
 		internal override int KeyboardSpeed {
@@ -1521,6 +1531,16 @@ DEBUG THIS:
 
 		[MonoTODO]
 		internal override void SystrayRemove(IntPtr hwnd, ref ToolTip tt) {
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		internal override Graphics GetMenuDC(IntPtr hwnd, IntPtr ncpaint_region) {
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		internal override void ReleaseMenuDC(IntPtr hwnd, Graphics dc) {
 			throw new NotImplementedException();
 		}
 

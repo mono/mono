@@ -77,6 +77,8 @@ namespace System.Windows.Forms {
 
 		#region Constructor & Destructor
 		static XplatUI() {
+			Console.WriteLine("Mono System.Windows.Forms Assembly [Revision: 40575; built: 2005/1/13 1:47:46]");
+
 			// Don't forget to throw the mac in here somewhere, too
 			default_class_name="SWFClass";
 
@@ -89,7 +91,6 @@ namespace System.Windows.Forms {
 				driver=XplatUIWin32.GetInstance();
 			}
 
-			Console.WriteLine("#region #line XplatUI Constructor called");
 		}
 
 		~XplatUI() {
@@ -349,8 +350,8 @@ namespace System.Windows.Forms {
 			driver.GrabInfo(out hWnd, out GrabConfined, out GrabArea);
 		}
 
-		internal static void ReleaseWindow(IntPtr hWnd) {
-			driver.ReleaseWindow(hWnd);
+		internal static void UngrabWindow(IntPtr hWnd) {
+			driver.UngrabWindow(hWnd);
 		}
 
 		internal static bool SetZOrder(IntPtr hWnd, IntPtr AfterhWnd, bool Top, bool Bottom) {
@@ -361,8 +362,8 @@ namespace System.Windows.Forms {
 			return driver.SetTopmost(hWnd, hWndOwner, Enabled);
 		}
 
-		internal static bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, bool HasMenu, out Rectangle WindowRect) {
-			return driver.CalculateWindowRect(hWnd, ref ClientRect, Style, HasMenu, out WindowRect);
+		internal static bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, int ExStyle, IntPtr MenuHandle, out Rectangle WindowRect) {
+			return driver.CalculateWindowRect(hWnd, ref ClientRect, Style, ExStyle, MenuHandle, out WindowRect);
 		}
 
 		internal static void SetCursor(IntPtr hwnd, IntPtr cursor) {
@@ -483,6 +484,22 @@ namespace System.Windows.Forms {
 			driver.SystrayRemove(hwnd, ref tt);
 		}
 
+		internal static void SetBorderStyle(IntPtr handle, BorderStyle border_style) {
+			driver.SetBorderStyle(handle, border_style);
+		}
+
+		internal static void SetMenu(IntPtr handle, IntPtr menu_handle) {
+			driver.SetMenu(handle, menu_handle);
+		}
+
+
+		internal static Graphics GetMenuDC(IntPtr hwnd, IntPtr ncpaint_region) {
+			return driver.GetMenuDC(hwnd, ncpaint_region);
+		}
+
+		internal static void ReleaseMenuDC(IntPtr hwnd, Graphics dc) {
+			driver.ReleaseMenuDC(hwnd, dc);
+		}
 
 		// Santa's little helper
 		internal static void Where() {

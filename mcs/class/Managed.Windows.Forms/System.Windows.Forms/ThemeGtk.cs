@@ -208,7 +208,7 @@ namespace System.Windows.Forms
 			gtk_widget_ensure_style (widget);
 			style = gtk_widget_get_style (widget);			
 
-			XplatUIX11.SetDisplay (gdk_x11_display_get_xdisplay (gdkdisplay));
+			XplatUIX11.GetInstance().SetDisplay (gdk_x11_display_get_xdisplay (gdkdisplay));
 		}
 
 		public void LoadSysDefaultColors ()

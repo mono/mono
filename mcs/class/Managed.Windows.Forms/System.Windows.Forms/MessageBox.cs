@@ -22,19 +22,22 @@
 // Authors:
 //	Jordi Mas i Hernandez	(jordi@ximian.com)
 //	Benjamin Dasnois	(benjamin.dasnois@gmail.com)
+//	Robert Thompson		(rmt@corporatism.org)
 //	Peter Bartok		(pbartok@novell.com)
 //
 // TODO:
-//	- Complete the implementation when icons are available, Form.BorderStyle is available.
+//	- Complete the implementation when Form.BorderStyle is available.
 //	- Add support for MessageBoxOptions and MessageBoxDefaultButton.
-//
+//	- Button size calculations assume fixed height for buttons, that could be bad
 //
 
 
-// INCOMPLETE
+// NOT COMPLETE
 
 using System;
 using System.Drawing;
+using System.Globalization;
+using System.Resources;
 
 namespace System.Windows.Forms
 {
@@ -44,9 +47,15 @@ namespace System.Windows.Forms
 		private class MessageBoxForm : Form
 		{
 			#region MessageBoxFrom Local Variables
+			internal static Image	error_icon	= (Image)Locale.GetResource("mbox_error.png");
+			internal static Image	question_icon	= (Image)Locale.GetResource("mbox_question.png");
+			internal static Image	warning_icon	= (Image)Locale.GetResource("mbox_warn.png");
+			internal static Image	info_icon	= (Image)Locale.GetResource("mbox_info.png");
+			internal static string	Yes;
+			internal const int	space_border	= 10;
 			string			msgbox_text;
-			bool			size_known	=false;
-			const int		space_image_text= 20;
+			bool			size_known	= false;
+			const int		space_image_text= 10;
 			Image			icon_image;
 			Point			textleft_up;
 			MessageBoxButtons	msgbox_buttons;
@@ -64,19 +73,23 @@ namespace System.Windows.Forms
 						break;
 					}
 
-					case MessageBoxIcon.Error: {
+					case MessageBoxIcon.Error: {		// Same as MessageBoxIcon.Hand and MessageBoxIcon.Stop
+						icon_image = error_icon;
 						break;
 					}
 
 					case MessageBoxIcon.Question: {
+ 						icon_image = question_icon;
 						break;
 					}
 
-					case MessageBoxIcon.Exclamation: {
+					case MessageBoxIcon.Asterisk: {		// Same as MessageBoxIcon.Information
+						icon_image = info_icon;
 						break;
 					}
 
-					case MessageBoxIcon.Asterisk: {
+					case MessageBoxIcon.Warning: {		// Same as MessageBoxIcon.Exclamation:
+						icon_image = warning_icon;
 						break;
 					}
 				}
@@ -133,6 +146,9 @@ namespace System.Windows.Forms
 			private void MessageBoxForm_Paint (object sender, PaintEventArgs e)
 			{
 				e.Graphics.DrawString (msgbox_text, this.Font, new SolidBrush(Color.Black), textleft_up);
+				if (icon_image != null) {
+					e.Graphics.DrawImage(icon_image, new Point(space_border, space_border));
+				}
 			}
 
 			private void InitFormsSize ()
@@ -142,11 +158,19 @@ namespace System.Windows.Forms
 				// First we have to know the size of text + image
 				Drawing.SizeF tsize = this.DeviceContext.MeasureString (msgbox_text, this.Font);
 
-				if (!(icon_image == null)) {
-					tsize.Width += icon_image.Width;
-					textleft_up = new Point (icon_image.Width + space_image_text, 0);
+				if (icon_image != null) {
+					tsize.Width += icon_image.Width + 10;
+					if(icon_image.Height > tsize.Height) {
+						// Place text middle-right
+						textleft_up = new Point (icon_image.Width + space_image_text + space_border, (int)((icon_image.Height/2)-(tsize.Height/2)) + space_border);
+					} else {
+						textleft_up = new Point (icon_image.Width + space_image_text + space_border, 2 + space_border);
+					}
+					tsize.Height = icon_image.Height;
 				} else {
-					textleft_up = new Point (0, 0);
+					tsize.Width += space_border * 2;
+					textleft_up = new Point (space_border + 12, space_border + 12);
+					tsize.Height += space_border * 2;
 				}
 
 				// Now we want to know the width of buttons
@@ -185,14 +209,15 @@ namespace System.Windows.Forms
 
 				// Now we choose the good size for the form
 				if (tsize.ToSize ().Width > tb_width) {
-					this.Width = tsize.ToSize().Width + 10;
+					//this.Width = tsize.ToSize().Width + 10;
+					this.ClientSize = new Size(tsize.ToSize().Width + 10 + (space_border * 2), Height = tsize.ToSize ().Height + 40 + (space_border * 2));
 				} else {
-					this.Width = tb_width;
+					//this.Width = tb_width + 10;
+					this.ClientSize = new Size(tb_width + 10 + (space_border * 2), Height = tsize.ToSize ().Height + 40 + (space_border * 2));
 				}
-				this.Height = tsize.ToSize ().Height + 80;
 
 				// Now we set the left of the buttons
-				button_left = (this.Width / 2) - (tb_width / 2);
+				button_left = (this.ClientSize.Width / 2) - (tb_width / 2) + 5;
 				AddButtons ();
 				size_known = true;
 			}
@@ -247,10 +272,10 @@ namespace System.Windows.Forms
 			private void AddOkButton (int left)
 			{
 				Button bok = new Button ();
-				bok.Text = "OK";
+				bok.Text = Locale.GetText("OK");
 				bok.Width = 100;
 				bok.Height = 30;
-				bok.Top = this.Height - 70;
+				bok.Top = this.ClientSize.Height - 35 - space_border;
 				bok.Left = left;
 				bok.Click += new EventHandler (OkClick);
 				AcceptButton = bok;
@@ -260,10 +285,10 @@ namespace System.Windows.Forms
 			private void AddCancelButton (int left)
 			{
 				Button bcan = new Button ();
-				bcan.Text = "Cancel";
+				bcan.Text = Locale.GetText("Cancel");
 				bcan.Width = 100;
 				bcan.Height = 30;
-				bcan.Top = this.Height - 70;
+				bcan.Top = this.ClientSize.Height - 35 - space_border;
 				bcan.Left = left;
 				bcan.Click += new EventHandler (CancelClick);
 				CancelButton = bcan;
@@ -273,10 +298,10 @@ namespace System.Windows.Forms
 			private void AddAbortButton (int left)
 			{
 				Button babort = new Button ();
-				babort.Text = "Abort";
+				babort.Text = Locale.GetText("Abort");
 				babort.Width = 100;
 				babort.Height = 30;
-				babort.Top = this.Height - 70;
+				babort.Top = this.ClientSize.Height - 35 - space_border;
 				babort.Left = left;
 				babort.Click += new EventHandler (AbortClick);
 				CancelButton = babort;
@@ -286,10 +311,10 @@ namespace System.Windows.Forms
 			private void AddRetryButton(int left)
 			{
 				Button bretry = new Button ();
-				bretry.Text = "Retry";
+				bretry.Text = Locale.GetText("Retry");
 				bretry.Width = 100;
 				bretry.Height = 30;
-				bretry.Top = this.Height - 70;
+				bretry.Top = this.ClientSize.Height - 35 - space_border;
 				bretry.Left = left;
 				bretry.Click += new EventHandler (RetryClick);
 				AcceptButton = bretry;
@@ -299,10 +324,10 @@ namespace System.Windows.Forms
 			private void AddIgnoreButton (int left)
 			{
 				Button bignore = new Button ();
-				bignore.Text = "Ignore";
+				bignore.Text = Locale.GetText("Ignore");
 				bignore.Width = 100;
 				bignore.Height = 30;
-				bignore.Top = this.Height - 70;
+				bignore.Top = this.ClientSize.Height - 35 - space_border;
 				bignore.Left = left;
 				bignore.Click += new EventHandler (IgnoreClick);
 				this.Controls.Add (bignore);
@@ -311,10 +336,10 @@ namespace System.Windows.Forms
 			private void AddYesButton (int left)
 			{
 				Button byes = new Button ();
-				byes.Text = "Yes";
+				byes.Text = Locale.GetText("Yes");
 				byes.Width = 100;
 				byes.Height = 30;
-				byes.Top = this.Height - 70;
+				byes.Top = this.ClientSize.Height - 35 - space_border;
 				byes.Left = left;
 				byes.Click += new EventHandler (YesClick);
 				AcceptButton = byes;
@@ -324,10 +349,10 @@ namespace System.Windows.Forms
 			private void AddNoButton (int left)
 			{
 				Button bno = new Button ();
-				bno.Text = "No";
+				bno.Text = Locale.GetText("No");
 				bno.Width = 100;
 				bno.Height = 30;
-				bno.Top = this.Height - 70;
+				bno.Top = this.ClientSize.Height - 35 - space_border;
 				bno.Left = left;
 				bno.Click += new EventHandler (NoClick);
 				CancelButton = bno;
@@ -385,7 +410,6 @@ namespace System.Windows.Forms
 		#region	Constructors
 		private MessageBox ()
 		{
-
 		}
 		#endregion	// Constructors
 
@@ -400,8 +424,7 @@ namespace System.Windows.Forms
 
 		public static DialogResult Show (IWin32Window owner, string text)
 		{
-			MessageBoxForm form = new MessageBoxForm (owner, text, string.Empty,
-					MessageBoxButtons.OK, MessageBoxIcon.None);
+			MessageBoxForm form = new MessageBoxForm (owner, text, string.Empty, MessageBoxButtons.OK, MessageBoxIcon.None);
 				
 			return form.RunDialog ();
 
@@ -409,25 +432,22 @@ namespace System.Windows.Forms
 
 		public static DialogResult Show (string text, string caption)
 		{
-			MessageBoxForm form = new MessageBoxForm (null, text, caption,
-					MessageBoxButtons.OK, MessageBoxIcon.None);
+			MessageBoxForm form = new MessageBoxForm (null, text, caption, MessageBoxButtons.OK, MessageBoxIcon.None);
 
 			return form.RunDialog ();
 		}
 
 		public static DialogResult Show (string text, string caption, MessageBoxButtons buttons)
 		{
-			MessageBoxForm form = new MessageBoxForm (null, text, caption,
-					buttons, MessageBoxIcon.None);
+			MessageBoxForm form = new MessageBoxForm (null, text, caption, buttons, MessageBoxIcon.None);
 				
 			return form.RunDialog ();
 		}
 
-		public static DialogResult Show (IWin32Window owner, string text,  string caption,
+		public static DialogResult Show (IWin32Window owner, string text, string caption,
 				MessageBoxButtons buttons)
 		{
-			MessageBoxForm form = new MessageBoxForm (owner, text, caption,
-					buttons, MessageBoxIcon.None);
+			MessageBoxForm form = new MessageBoxForm (owner, text, caption, buttons, MessageBoxIcon.None);
 				
 			return form.RunDialog ();
 		}
@@ -435,8 +455,7 @@ namespace System.Windows.Forms
 		public static DialogResult Show (IWin32Window owner, string text, string caption,
 				MessageBoxButtons buttons, MessageBoxIcon icon)
 		{
-			MessageBoxForm form = new MessageBoxForm (owner, text, caption,
-					buttons, icon);
+			MessageBoxForm form = new MessageBoxForm (owner, text, caption, buttons, icon);
 				
 			return form.RunDialog ();
 		}
@@ -444,8 +463,7 @@ namespace System.Windows.Forms
 
 		public static DialogResult Show (IWin32Window owner, string text, string caption)
 		{
-			MessageBoxForm form = new MessageBoxForm (owner, text, caption,
-					MessageBoxButtons.OK, MessageBoxIcon.None);
+			MessageBoxForm form = new MessageBoxForm (owner, text, caption, MessageBoxButtons.OK, MessageBoxIcon.None);
 				
 			return form.RunDialog ();
 		}
@@ -454,8 +472,7 @@ namespace System.Windows.Forms
 		public static DialogResult Show (string text, string caption, MessageBoxButtons buttons,
 				MessageBoxIcon icon)
 		{
-			MessageBoxForm form = new MessageBoxForm (null, text, caption,
-					buttons, icon);
+			MessageBoxForm form = new MessageBoxForm (null, text, caption, buttons, icon);
 				
 			return form.RunDialog ();
 		}
@@ -464,8 +481,7 @@ namespace System.Windows.Forms
 				MessageBoxIcon icon, MessageBoxDefaultButton defaultButton)
 		{
 
-			MessageBoxForm form = new MessageBoxForm (null, text, caption,
-					buttons, icon, defaultButton, MessageBoxOptions.DefaultDesktopOnly);
+			MessageBoxForm form = new MessageBoxForm (null, text, caption, buttons, icon, defaultButton, MessageBoxOptions.DefaultDesktopOnly);
 				
 			return form.RunDialog ();
 
@@ -474,26 +490,21 @@ namespace System.Windows.Forms
 		public static DialogResult Show (IWin32Window owner, string text, string caption,
 				MessageBoxButtons buttons, MessageBoxIcon icon,	 MessageBoxDefaultButton defaultButton)
 		{
-			MessageBoxForm form = new MessageBoxForm (owner, text, caption,
-					buttons, icon, defaultButton, MessageBoxOptions.DefaultDesktopOnly);
+			MessageBoxForm form = new MessageBoxForm (owner, text, caption, buttons, icon, defaultButton, MessageBoxOptions.DefaultDesktopOnly);
 				
 			return form.RunDialog ();
 		}
 
-		public static DialogResult
-				Show (string text, string caption,
-						MessageBoxButtons buttons, MessageBoxIcon icon,
+		public static DialogResult Show (string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon,
 						MessageBoxDefaultButton defaultButton, MessageBoxOptions options)
 		{
-			MessageBoxForm form = new MessageBoxForm (null, text, caption,
-					buttons, icon, defaultButton, options);
+			MessageBoxForm form = new MessageBoxForm (null, text, caption, buttons, icon, defaultButton, options);
 				
 			return form.RunDialog ();
 		}
 
-		public static DialogResult Show (IWin32Window owner, string text, string caption,
-				MessageBoxButtons buttons, MessageBoxIcon icon,
-				MessageBoxDefaultButton defaultButton, MessageBoxOptions options)
+		public static DialogResult Show (IWin32Window owner, string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon,
+						MessageBoxDefaultButton defaultButton, MessageBoxOptions options)
 		{
 			MessageBoxForm form = new MessageBoxForm (owner, text, caption,
 					buttons, icon, defaultButton, options);

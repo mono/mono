@@ -28,11 +28,18 @@
 using System;
 using System.Drawing;
 using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.ComponentModel.Design.Serialization;
 using System.Collections;
 using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace System.Windows.Forms {
+	[DesignerCategory("Form")]
+	[DesignTimeVisible(false)]
+	[Designer("System.Windows.Forms.Design.FormDesigner, System.Design")]
+	[DefaultEvent("Load")]
+	[ToolboxItem(false)]
 	public class Form : ContainerControl {
 		#region Local Variables
 		internal static Form		active_form;
@@ -56,15 +63,13 @@ namespace System.Windows.Forms {
 		private Form.ControlCollection	owned_forms;
 		private bool			key_preview;
 		private MainMenu		menu;
-		internal FormParentWindow	form_parent_window;
-		private bool			created_form_parent;
 		private	Icon			icon;
 		private Size			maximum_size;
 		private Size			minimum_size;
 		#endregion	// Local Variables
 
 		#region Private Classes
-
+#if no
 		// This class will take over for the client area
 		internal class FormParentWindow : Control {
 			#region FormParentWindow Class Local Variables
@@ -195,6 +200,7 @@ namespace System.Windows.Forms {
 			}
 			#endregion	// FormParentWindow Class Private & Internal Methods
 		}
+#endif
 		#endregion	// Private Classes
 
 		#region Public Classes
@@ -242,6 +248,7 @@ namespace System.Windows.Forms {
 			help_button = false;
 			show_in_taskbar = true;
 			ime_mode = ImeMode.NoControl;
+			is_visible = false;
 
 			owned_forms = new Form.ControlCollection(this);
 		}
@@ -258,18 +265,14 @@ namespace System.Windows.Forms {
 
 				if (active != null) {
 					if ( !(active is Form)) {
-						if (active is FormParentWindow) {
-							return ((FormParentWindow)active).owner;
-						} else {
-							Control	parent;
+						Control	parent;
 
-							parent = active.Parent;
-							while (parent != null) {
-								if (parent is Form) {
-									return (Form)parent;
-								}
-								parent = parent.Parent;
+						parent = active.Parent;
+						while (parent != null) {
+							if (parent is Form) {
+								return (Form)parent;
 							}
+							parent = parent.Parent;
 						}
 					} else {
 						return (Form)active;
@@ -328,7 +331,7 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				form_parent_window.ClientSize = value;
+				base.ClientSize = value;
 			}
 		}
 
@@ -345,23 +348,25 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[MonoTODO("make sure we return screen coords")]
 		public Rectangle DesktopBounds {
 			get {
-				return new Rectangle(form_parent_window.Location, form_parent_window.Size);
+				return new Rectangle(Location, Size);
 			}
 
 			set {
-				this.form_parent_window.Bounds = value;
+				Bounds = value;
 			}
 		}
 
+		[MonoTODO("make sure we return screen coords")]
 		public Point DesktopLocation {
 			get {
-				return form_parent_window.Location;
+				return Location;
 			}
 
 			set {
-				form_parent_window.Location = value;
+				Location = value;
 			}
 		}
 
@@ -469,9 +474,10 @@ namespace System.Windows.Forms {
 					menu = value;
 
 					menu.SetForm (this);
-					MenuAPI.SetMenuBarWindow (menu.Handle, form_parent_window);
+					MenuAPI.SetMenuBarWindow (menu.Handle, this);
 
-					form_parent_window.MenuChanged();
+					// Trigger calculations
+					OnResize(EventArgs.Empty);
 				}
 			}
 		}
@@ -555,11 +561,11 @@ namespace System.Windows.Forms {
 
 		public Size Size {
 			get {
-				return form_parent_window.Size;
+				return Size;
 			}
 
 			set {
-				form_parent_window.Size = value;
+				base.Size = value;
 			}
 		}
 
@@ -571,7 +577,7 @@ namespace System.Windows.Forms {
 			set {
 				if (start_position == FormStartPosition.WindowsDefaultLocation) {		// Only do this if it's not set yet
 					start_position = value;
-					if (form_parent_window.IsHandleCreated) {
+					if (IsHandleCreated) {
 						switch(start_position) {
 							case FormStartPosition.CenterParent: {
 								if (Parent!=null && Width>0 && Height>0) {
@@ -624,62 +630,21 @@ namespace System.Windows.Forms {
 
 		public FormWindowState WindowState {
 			get {
-				return XplatUI.GetWindowState(form_parent_window.window.Handle);
+				return XplatUI.GetWindowState(window.Handle);
 			}
 
 			set {
-				XplatUI.SetWindowState(form_parent_window.window.Handle, value);
+				XplatUI.SetWindowState(window.Handle, value);
 			}
 		}
 
 		#endregion	// Public Instance Properties
-
-
-		internal CreateParams CreateClientAreaParams {
-			get {
-				CreateParams cp = new CreateParams();
-
-				if (this.form_parent_window == null) {
-					form_parent_window = new FormParentWindow(this);
-					form_parent_window.MenuChanged();
-				}
-
-				cp.Caption = "ClientArea";
-				cp.ClassName=XplatUI.DefaultClassName;
-				cp.ClassStyle = 0;
-				cp.ExStyle=0;
-				cp.Param=0;
-				cp.Parent = form_parent_window.window.Handle;
-				cp.X = 0;
-				cp.Y = 0;
-				cp.Width = form_parent_window.ClientSize.Width;
-				cp.Height = form_parent_window.ClientSize.Width;
-				
-				cp.Style = (int)WindowStyles.WS_CHILD;
-				cp.Style |= (int)WindowStyles.WS_VISIBLE;
-				cp.Style |= (int)WindowStyles.WS_CLIPSIBLINGS;
-				cp.Style |= (int)WindowStyles.WS_CLIPCHILDREN;
-
-				return cp;
-			}
-		}
-
-		internal CreateParams CreateFormParams {
-			get {
-				return CreateParams;
-			}
-		}
 
 		#region Protected Instance Properties
 		[MonoTODO("Need to add MDI support")]
 		protected override CreateParams CreateParams {
 			get {
 				CreateParams cp;
-
-				if (!created_form_parent) {
-					created_form_parent = true;
-					form_parent_window = new FormParentWindow(this);
-				}
 
 				cp = new CreateParams();
 
@@ -750,7 +715,7 @@ namespace System.Windows.Forms {
 			// The docs say activate only activates if our app is already active
 			active = ActiveForm;
 			if ((active != null) && (this != active)) {
-				XplatUI.Activate(form_parent_window.window.Handle);
+				XplatUI.Activate(window.Handle);
 			}
 		}
 
@@ -804,7 +769,7 @@ namespace System.Windows.Forms {
 				CreateControl();
 			}
 
-			XplatUI.SetModal(form_parent_window.window.Handle, true);
+			XplatUI.SetModal(window.Handle, true);
 
 			Show();
 			PerformLayout();
@@ -814,11 +779,11 @@ namespace System.Windows.Forms {
 			is_modal = false;
 			Hide();
 
-			XplatUI.SetModal(form_parent_window.window.Handle, false);
+			XplatUI.SetModal(window.Handle, false);
 
 			if (previous != null) {
 				// Cannot use Activate(), it has a check for the current active window...
-				XplatUI.Activate(previous.form_parent_window.window.Handle);
+				XplatUI.Activate(previous.window.Handle);
 			}
 
 			return DialogResult;
@@ -936,6 +901,15 @@ namespace System.Windows.Forms {
 					break;
 				}
 
+				case Msg.WM_ACTIVATE: {
+					if (m.WParam != (IntPtr)WindowActiveFlags.WA_INACTIVE) {
+						OnActivated(EventArgs.Empty);
+					} else {
+						OnDeactivate(EventArgs.Empty);
+					}
+					return;
+				}
+
 				case Msg.WM_KILLFOCUS: {
 					return;
 				}
@@ -946,7 +920,58 @@ namespace System.Windows.Forms {
 					}
 					return;
 				}
+#if notyet
+				// Menu drawing
+				case Msg.WM_NCLBUTTONDOWN: {
+					if (this.menu != null) {
+						menu.OnMouseDown(this, new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+							mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()) - 20, HighOrder ((int) m.LParam.ToInt32 ()), 
+							0));
+					}
+					base.WndProc(ref m);
+					return;
+				}
 
+				case Msg.WM_NCMOUSEMOVE: {
+					if (this.menu != null) {
+						menu.OnMouseMove(this, new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+							mouse_clicks, 
+							LowOrder ((int) m.LParam.ToInt32 ()) - 20, HighOrder ((int) m.LParam.ToInt32 ()), 
+							0));
+					}
+					base.WndProc(ref m);
+					return;
+				}
+
+				case Msg.WM_NCPAINT: {
+					if (this.menu != null) {
+						Graphics	hdc;
+						Rectangle	rect;
+
+						hdc = XplatUI.GetMenuDC(window.Handle, m.WParam);
+						rect = new Rectangle (0, 10, Width, 0);
+						MenuAPI.DrawMenuBar (hdc, menu.Handle, rect);
+						XplatUI.ReleaseMenuDC(window.Handle, hdc);
+					}
+					base.WndProc(ref m);
+					return;
+				}
+
+				// This message is only received under Win32
+				case Msg.WM_NCCALCSIZE: {
+					XplatUIWin32.NCCALCSIZE_PARAMS	ncp;
+
+					if ((menu != null) && (m.WParam == (IntPtr)1)) {
+						ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure(m.LParam, typeof(XplatUIWin32.NCCALCSIZE_PARAMS));
+
+						// Adjust for menu
+						ncp.rgrc1.top += MenuAPI.MenuBarCalcSize(DeviceContext, menu.menu_handle, ClientSize.Width);
+						Marshal.StructureToPtr(ncp, m.LParam, true);
+					} 
+					DefWndProc(ref m);
+					break;
+				}
+#endif				
 				default: {
 					base.WndProc (ref m);
 					break;
@@ -1047,6 +1072,10 @@ namespace System.Windows.Forms {
 		public event EventHandler MenuComplete;
 		public event EventHandler MenuStart;
 		public event EventHandler MinimumSizeChanged;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler TabIndexChanged;
 		#endregion	// Events
 	}
 }

@@ -18,16 +18,17 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	John BouAntoun	jba-mono@optusnet.com.au
 //
 
-namespace System.Windows.Forms {
-	// used mainly by monthcalendar
-	public sealed class SelectionRange {
+using System.ComponentModel;
 
+namespace System.Windows.Forms {
+	[TypeConverter(typeof(SelectionRangeConverter))]
+	public sealed class SelectionRange {
 		#region local members 
 	
 		DateTime end;

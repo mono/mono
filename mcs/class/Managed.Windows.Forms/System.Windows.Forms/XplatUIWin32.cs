@@ -74,7 +74,7 @@ namespace System.Windows.Forms {
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		private struct RECT {
+		internal struct RECT {
 			internal int		left;
 			internal int		top;
 			internal int		right;
@@ -113,6 +113,14 @@ namespace System.Windows.Forms {
 			internal POINT			ptMinPosition;
 			internal POINT			ptMaxPosition;
 			internal RECT			rcNormalPosition;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		internal struct NCCALCSIZE_PARAMS {
+			internal RECT		rgrc1;
+			internal RECT		rgrc2;
+			internal RECT		rgrc3;
+			internal IntPtr		lppos;
 		}
 
 		[Flags]
@@ -445,6 +453,22 @@ namespace System.Windows.Forms {
 			internal IntPtr			hIcon;
 			[MarshalAs(UnmanagedType.ByValTStr, SizeConst=64)]
 			internal string			szTip;
+		}
+
+		[Flags]
+		internal enum DCExFlags {
+			DCX_WINDOW			= 0x00000001,
+			DCX_CACHE			= 0x00000002,
+			DCX_NORESETATTRS     		= 0x00000004,
+			DCX_CLIPCHILDREN     		= 0x00000008,
+			DCX_CLIPSIBLINGS     		= 0x00000010,
+			DCX_PARENTCLIP       		= 0x00000020,
+			DCX_EXCLUDERGN       		= 0x00000040,
+			DCX_INTERSECTRGN     		= 0x00000080,
+			DCX_EXCLUDEUPDATE    		= 0x00000100,
+			DCX_INTERSECTUPDATE  		= 0x00000200,
+			DCX_LOCKWINDOWUPDATE 		= 0x00000400,
+			DCX_VALIDATE         		= 0x00200000
 		}
 		#endregion
 
@@ -1097,12 +1121,12 @@ namespace System.Windows.Forms {
 			GrabArea = grab_area;
 		}
 
-		internal override void ReleaseWindow(IntPtr hWnd) {
+		internal override void UngrabWindow(IntPtr hWnd) {
 			Win32ReleaseCapture();
 			grab_hwnd = IntPtr.Zero;
 		}
 
-		internal override bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, bool HasMenu, out Rectangle WindowRect) {
+		internal override bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, int ExStyle, IntPtr MenuHandle, out Rectangle WindowRect) {
 			RECT	rect;
 
 			rect.left=ClientRect.Left;
@@ -1110,7 +1134,7 @@ namespace System.Windows.Forms {
 			rect.right=ClientRect.Right;
 			rect.bottom=ClientRect.Bottom;
 
-			if (!Win32AdjustWindowRectEx(ref rect, Style, HasMenu, 0)) {
+			if (!Win32AdjustWindowRectEx(ref rect, Style, MenuHandle != IntPtr.Zero, ExStyle)) {
 				WindowRect = new Rectangle(ClientRect.Left, ClientRect.Top, ClientRect.Width, ClientRect.Height);
 				return false;
 			}
@@ -1446,6 +1470,26 @@ namespace System.Windows.Forms {
 		}
 
 
+		internal override void SetBorderStyle(IntPtr handle, BorderStyle border_style) {
+			throw new NotImplementedException();
+		}
+
+		internal override void SetMenu(IntPtr handle, IntPtr menu_handle) {
+			throw new NotImplementedException();
+		}
+
+
+		internal override Graphics GetMenuDC(IntPtr hwnd, IntPtr ncpaint_region) {
+			IntPtr	hdc;
+
+			hdc = Win32GetDCEx(hwnd, ncpaint_region, DCExFlags.DCX_WINDOW | DCExFlags.DCX_INTERSECTRGN);
+			return Graphics.FromHdc(hdc);
+		}
+
+		internal override void ReleaseMenuDC(IntPtr hwnd, Graphics dc) {
+			dc.Dispose();
+		}
+
 		internal override int KeyboardSpeed {
 			get {
 				Console.WriteLine ("KeyboardSpeed: need to query Windows");
@@ -1558,6 +1602,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="GetDC", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32GetDC(IntPtr hWnd);
+
+		[DllImport ("user32.dll", EntryPoint="GetDCEx", CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32GetDCEx(IntPtr hWnd, IntPtr hRgn, DCExFlags flags);
 
 		[DllImport ("user32.dll", EntryPoint="ReleaseDC", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32ReleaseDC(IntPtr hWnd, IntPtr hDC);

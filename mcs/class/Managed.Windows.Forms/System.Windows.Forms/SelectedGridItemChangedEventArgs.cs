@@ -53,7 +53,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public object OldSelection
+		public GridItem OldSelection
 		{
 			get {
 				return old_selection;

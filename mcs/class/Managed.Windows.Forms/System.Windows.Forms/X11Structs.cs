@@ -29,6 +29,7 @@
 using System;
 using System.ComponentModel;
 using System.Collections;
+using System.Drawing;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
@@ -382,7 +383,7 @@ namespace System.Windows.Forms {
 		internal bool		send_event;
 		internal IntPtr		display;
 		internal IntPtr		window;
-		internal IntPtr		atom;
+		internal int		atom;
 		internal IntPtr		time;
 		internal int		state;
 	}
@@ -651,6 +652,7 @@ namespace System.Windows.Forms {
 
 	[Flags]
 	internal enum SetWindowValuemask {
+		Nothing		= 0,
 		BackPixmap	= 1,
 		BackPixel	= 2,
 		BorderPixmap	= 4,
@@ -665,7 +667,7 @@ namespace System.Windows.Forms {
 		EventMask	= 2048,
 		DontPropagate	= 4096,
 		ColorMap	= 8192,
-		Cursor	= 16384
+		Cursor		= 16384
 	}
 
 	internal enum CreateWindowArgs {
@@ -1326,6 +1328,109 @@ namespace System.Windows.Forms {
 		internal int			max_height;
 		internal int			width_inc;
 		internal int			height_inc;
+	}
+
+	internal enum NA {
+		WM_PROTOCOLS,
+		WM_DELETE_WINDOW,
+		WM_TAKE_FOCUS,
+
+		_NET_SUPPORTED,
+		_NET_CLIENT_LIST,
+		_NET_NUMBER_OF_DESKTOPS,
+		_NET_DESKTOP_GEOMETRY,
+		_NET_DESKTOP_VIEWPORT,
+		_NET_CURRENT_DESKTOP,
+		_NET_DESKTOP_NAMES,
+		_NET_ACTIVE_WINDOW,
+		_NET_WORKAREA,
+		_NET_SUPPORTING_WM_CHECK,
+		_NET_VIRTUAL_ROOTS,
+		_NET_DESKTOP_LAYOUT,
+		_NET_SHOWING_DESKTOP,
+
+		_NET_CLOSE_WINDOW,
+		_NET_MOVERESIZE_WINDOW,
+		_NET_WM_MOVERESIZE,
+		_NET_RESTACK_WINDOW,
+		_NET_REQUEST_FRAME_EXTENTS,
+
+		_NET_WM_NAME,
+		_NET_WM_VISIBLE_NAME,
+		_NET_WM_ICON_NAME,
+		_NET_WM_VISIBLE_ICON_NAME,
+		_NET_WM_DESKTOP,
+		_NET_WM_WINDOW_TYPE,
+		_NET_WM_STATE,
+		_NET_WM_ALLOWED_ACTIONS,
+		_NET_WM_STRUT,
+		_NET_WM_STRUT_PARTIAL,
+		_NET_WM_ICON_GEOMETRY,
+		_NET_WM_ICON,
+		_NET_WM_PID,
+		_NET_WM_HANDLED_ICONS,
+		_NET_WM_USER_TIME,
+		_NET_FRAME_EXTENTS,
+
+		_NET_WM_PING,
+		_NET_WM_SYNC_REQUEST,
+
+		_NET_SYSTEM_TRAY_S,
+		_NET_SYSTEM_TRAY_ORIENTATION,
+		_NET_SYSTEM_TRAY_OPCODE,
+
+		_NET_WM_STATE_MAXIMIZED_HORZ,
+		_NET_WM_STATE_MAXIMIZED_VERT,
+
+		_XEMBED,
+		_XEMBED_INFO,
+
+		_MOTIF_WM_HINTS,
+
+		_NET_WM_STATE_NO_TASKBAR,
+		_NET_WM_STATE_ABOVE,
+		_NET_WM_STATE_MODAL,
+		_NET_WM_CONTEXT_HELP,
+
+		LAST_NET_ATOM
+	}
+
+	internal struct CaretStruct {
+		internal Timer	Timer;				// Blink interval
+		internal IntPtr	Hwnd;				// Window owning the caret
+		internal IntPtr	Window;				// Actual X11 handle of the window
+		internal int	X;				// X position of the caret
+		internal int	Y;				// Y position of the caret
+		internal int	Width;				// Width of the caret; if no image used
+		internal int	Height;				// Height of the caret, if no image used
+		internal int	Visible;			// Counter for visible/hidden
+		internal bool	On;				// Caret blink display state: On/Off
+		internal IntPtr	gc;				// Graphics context
+		internal bool	Paused;				// Don't update right now
+	}
+
+	internal struct HoverStruct {
+		internal Timer	Timer;				// for hovering
+		internal IntPtr	Window;				// Last window we entered; used to generate WM_MOUSEHOVER (handle is X11 handle)
+		internal int	X;				// Last MouseMove X coordinate; used to generate WM_MOUSEHOVER
+		internal int	Y;				// Last MouseMove Y coordinate; used to generate WM_MOUSEHOVER
+		internal int	Interval;			// in milliseconds, how long to hold before hover is generated
+		internal int	Atom;				// X Atom
+	}
+
+	internal struct ClickStruct {
+		internal IntPtr	Hwnd;				// 
+		internal Msg	Message;			// 
+		internal IntPtr	wParam;				// 
+		internal IntPtr	lParam;				// 
+		internal long	Time;				// Last time we received a mouse click
+		internal bool	Pending;			// True if we haven't sent the last mouse click
+	}
+
+	internal struct GrabStruct {
+		internal bool		Confined;		// Is the current grab (if any) confined to grab_area?
+		internal IntPtr		Hwnd;			// The window that is grabbed
+		internal Rectangle	Area;			// The area the current grab is confined to
 	}
 }
 

@@ -1,3 +1,58 @@
+2005-02-13  Peter Bartok  <pbartok@novell.com>
+
+	* MouseButtons.cs: Added missing attributes
+	* XplatUIStructs.cs: Added enumeration for title styles
+	* LeftRightAlignment.cs: Added missing attributes
+	* Hwnd.cs: Switched to use client_window as handle (slower, but makes
+	  it compatible with Graphics.FromHwnd()
+	* SelectedGridItemChangedEventArgs.cs: Fixed property type
+	* Keys.cs: Added missing attributes
+	* SelectionRange.cs: Added missing attributes
+	* SelectionRangeConverter.cs: Added
+	* XplatUI.cs: 
+	  - Introduced SetBorderStyle, SetMenu, GetMenuDC and 
+	    ReleaseMenuDC methods
+	  - Renamed ReleaseWindow to UngrabWindow
+	  - Added proper startup notice to allow version identification
+	* Form.cs: 
+	  - Added missing attributes
+	  - Removed FormParent concept
+	* Label.cs: Removed border_style field, now in Control
+	* RadioButton.cs: Now properly selects RadioButton when focus is 
+	  received
+	* ThemeGtk.cs: Fixed SetDisplay call to match new X11 behaviour
+	* Control.cs:
+	  - Added missing attributes
+	  - Added borderstyle handling
+	  - Removed FormParent concept support
+	  - Fixed calls to XplatUI to match changed APIs
+	  - Fixed bug that would case us to use disposed Graphics objects
+	  - Removed unneeded internal methods
+	  - PerformLayout(): Fixed to handle DockStyle.Fill properly
+	  - SelectNextControl(): Fixed to properly check common parents
+	* TextBoxBase.cs: Removed border_style field (now in Control)
+	* MessageBox.cs:
+	  - Patch by Robert Thompson (rmt@corporatism.org): Added icon support,
+	    fixed calculations for form size
+	  - Added support for localized strings and icons
+	  - Improved form size calculations, added border
+	* ListView.cs: Removed border_style field (now in Control)
+	* X11Structs.cs: Moved several structs from X11 driver here
+	* X11Keyboard.cs: Changed debug message
+	* Application.cs: Removed FormParent concept support
+	* CommonDialog.cs:
+	  - Resetting end_modal flag
+	  - Removed FormParent concept support
+	* NativeWindow.cs: Removed FormParent concept support
+	* XplatUIX11.cs: Rewritten, now using the new Hwnd class, implementing
+	  Client area and Non-Client whole window to allow support for WM_NC
+	  messages
+	* XplatUIOSX.cs: Updated to match latest driver spec; added exception
+	  prevent using it until it supports Hwnd as per Geoff Norton's request
+	* ToolBar.cs: Fixed drawing, was not doing proper drawing
+	* PictureBox.cs: Removed border_style field, now in Control
+	* XplatUIWin32.cs: Added new driver methods
+
 2005-02-12  Peter Bartok  <pbartok@novell.com>
 
 	* OpacityConverter.cs: Implemented

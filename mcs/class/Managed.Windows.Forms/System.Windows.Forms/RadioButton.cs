@@ -105,6 +105,7 @@ namespace System.Windows.Forms {
 			radiobutton_alignment = ContentAlignment.MiddleLeft;
 			text_alignment = ContentAlignment.MiddleLeft;
 			tab_stop = false;
+			GotFocus +=new EventHandler(ReceivedFocus);
 		}
 		#endregion	// Public Constructors
 
@@ -141,6 +142,10 @@ namespace System.Windows.Forms {
 				ThemeEngine.Current.DrawRadioButton(this.DeviceContext, this.ClientRectangle, this);
 				redraw = false;
 			}
+		}
+
+		private void ReceivedFocus(object sender, EventArgs e) {
+			OnClick(e);
 		}
 		#endregion	// Private Methods
 

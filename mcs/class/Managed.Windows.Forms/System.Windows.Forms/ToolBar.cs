@@ -654,27 +654,28 @@ namespace System.Windows.Forms
 			}
 		}
 
-		private void ToolBar_Paint (object sender, PaintEventArgs pe)
+		private void ToolBar_Paint (object sender, PaintEventArgs pevent)
 		{
 			if (this.Width <= 0 || this.Height <=  0 || this.Visible == false)
 				return;
 
 			if (redraw) {
-				ThemeEngine.Current.DrawToolBar (this.DeviceContext, pe.ClipRectangle, this);
+				ThemeEngine.Current.DrawToolBar (this.DeviceContext, pevent.ClipRectangle, this);
 				redraw = false;
 			}
 
-			// paint on the screen
-			pe.Graphics.DrawImage (this.ImageBuffer, pe.ClipRectangle, pe.ClipRectangle, GraphicsUnit.Pixel);
+			pevent.Graphics.DrawImage(this.ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
 
-			if (Paint != null)
-				Paint (this, pe);
+			if (Paint != null) {
+				Paint (this, pevent);
+			}
 		}
 
 		internal void Redraw (bool recalculate)
 		{
-			if (recalculate)
+			if (recalculate) {
 				CalcToolBar ();
+			}
 
 			redraw = true;
 			Refresh ();

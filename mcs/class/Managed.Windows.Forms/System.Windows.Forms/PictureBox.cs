@@ -34,7 +34,6 @@ namespace System.Windows.Forms {
 
 		private Image image;
 		private PictureBoxSizeMode size_mode;
-		private BorderStyle border_style;
 		private bool redraw;
 		private bool recalc;
 

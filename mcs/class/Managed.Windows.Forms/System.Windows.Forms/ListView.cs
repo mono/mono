@@ -51,7 +51,6 @@ namespace System.Windows.Forms
 		private ListViewAlignment alignment = ListViewAlignment.Top;
 		private bool allow_column_reorder = false;
 		private bool auto_arrange = true;
-		private BorderStyle border_style = BorderStyle.Fixed3D;
 		private bool check_boxes = false;
 		private CheckedIndexCollection checked_indices;
 		private CheckedListViewItemCollection checked_items;
@@ -129,6 +128,8 @@ namespace System.Windows.Forms
 			items = new ListViewItemCollection (this);
 			selected_indices = new SelectedIndexCollection (this);
 			selected_items = new SelectedListViewItemCollection (this);
+
+			border_style = BorderStyle.Fixed3D;
 
 			// we are mostly scrollable
 			h_scroll = new HScrollBar ();

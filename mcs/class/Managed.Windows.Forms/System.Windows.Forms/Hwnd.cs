@@ -39,10 +39,11 @@ namespace System.Windows.Forms {
 		private const int	caption_height = 0;			// FIXME - Read this value from somewhere
 		private const int	tool_caption_height = 0;		// FIXME - Read this value from somewhere
 
-		private GCHandle	gc_handle;
+		//private GCHandle	gc_handle;
+		private IntPtr		handle;
 		internal IntPtr		client_window;
 		internal IntPtr		whole_window;
-		internal bool		has_menu;
+		internal IntPtr		menu_handle;
 		internal TitleStyle	title_style;
 		internal BorderStyle	border_style;
 		internal Border3DStyle	edge_style;
@@ -55,22 +56,23 @@ namespace System.Windows.Forms {
 		internal Rectangle	invalid;
 		internal bool		expose_pending;
 		internal bool		nc_expose_pending;
-		internal Graphics		client_dc;
+		internal Graphics	client_dc;
 		#endregion	// Local Variables
 
 		#region Constructors and destructors
 		public Hwnd() {
-			gc_handle = GCHandle.Alloc(this);
+			//gc_handle = GCHandle.Alloc(this);
 
 			x = 0;
 			y = 0;
 			width = 0;
 			height = 0;
 			visible = false;
-			has_menu = false;
+			menu_handle = IntPtr.Zero;
 			border_style = BorderStyle.None;
 			client_window = IntPtr.Zero;
 			whole_window = IntPtr.Zero;
+			handle = IntPtr.Zero;
 			parent = null;
 			invalid = Rectangle.Empty;
 			expose_pending = false;
@@ -79,7 +81,7 @@ namespace System.Windows.Forms {
 		}
 
 		public void Dispose() {
-			gc_handle.Free();
+			//gc_handle.Free();
 		}
 		#endregion
 
@@ -93,11 +95,13 @@ namespace System.Windows.Forms {
 		}
 
 		public static Hwnd ObjectFromHandle(IntPtr handle) {
-			return (Hwnd)(((GCHandle)handle).Target);
+			//return (Hwnd)(((GCHandle)handle).Target);
+			return (Hwnd)windows[handle];
 		}
 
 		public static IntPtr HandleFromObject(Hwnd obj) {
-			return (IntPtr)obj.gc_handle;
+			//return (IntPtr)obj.gc_handle;
+			return obj.handle;
 		}
 
 		public static Hwnd GetObjectFromWindow(IntPtr window) {
@@ -109,18 +113,19 @@ namespace System.Windows.Forms {
 
 			hwnd = (Hwnd)windows[window];
 			if (hwnd != null) {
-				return (IntPtr)hwnd.gc_handle;
+				//return (IntPtr)hwnd.gc_handle;
+				return hwnd.handle;
 			} else {
 				return IntPtr.Zero;
 			}
 		}
 
-		public static Rectangle GetWindowRectangle(BorderStyle border_style, bool has_menu, TitleStyle title_style, Rectangle client_rect) {
+		public static Rectangle GetWindowRectangle(BorderStyle border_style, IntPtr menu_handle, TitleStyle title_style, Rectangle client_rect) {
 			Rectangle	rect;
 
 			rect = new Rectangle(client_rect.Location, client_rect.Size);
 
-			if (has_menu) {
+			if (menu_handle != IntPtr.Zero) {
 				rect.Y -= menu_height;
 				rect.Height += menu_height;
 			}
@@ -143,6 +148,39 @@ namespace System.Windows.Forms {
 			} else if (title_style == TitleStyle.Tool) {
 				rect.Y -= tool_caption_height;
 				rect.Height += tool_caption_height;
+			}
+
+			return rect;
+		}
+
+		public static Rectangle GetClientRectangle(BorderStyle border_style, IntPtr menu_handle, TitleStyle title_style, int width, int height) {
+			Rectangle rect;
+
+			rect = new Rectangle(0, 0, width, height);
+
+			if (menu_handle != IntPtr.Zero) {
+				rect.Y += menu_height;
+				rect.Height -= menu_height;
+			}
+
+			if (border_style == BorderStyle.Fixed3D) {
+				rect.X += 2;
+				rect.Y += 2;
+				rect.Width -= 4;
+				rect.Height -= 4;
+			} else if (border_style == BorderStyle.FixedSingle) {
+				rect.X += 1;
+				rect.Y += 1;
+				rect.Width -= 2;
+				rect.Height -= 2;
+			}
+
+			if (title_style == TitleStyle.Normal)  {
+				rect.Y += caption_height;
+				rect.Height -= caption_height;
+			} else if (title_style == TitleStyle.Normal)  {
+				rect.Y += tool_caption_height;
+				rect.Height -= tool_caption_height;
 			}
 
 			return rect;
@@ -176,7 +214,7 @@ namespace System.Windows.Forms {
 
 				rect = new Rectangle(0, 0, width, height);
 
-				if (has_menu) {
+				if (menu_handle != IntPtr.Zero) {
 					rect.Y += menu_height;
 					rect.Height -= menu_height;
 				}
@@ -212,6 +250,7 @@ namespace System.Windows.Forms {
 
 			set {
 				client_window = value;
+				handle = value;
 
 				if (windows[client_window] == null) {
 					windows[client_window] = this;
@@ -241,7 +280,11 @@ namespace System.Windows.Forms {
 
 		public IntPtr Handle {
 			get {
-				return (IntPtr)gc_handle;
+				if (handle == IntPtr.Zero) {
+					throw new ArgumentNullException("Handle", "Handle is not yet assigned, need a ClientWindow");
+				}
+				//return (IntPtr)gc_handle;
+				return handle;
 			}
 		}
 
@@ -255,13 +298,13 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public bool HasMenu {
+		public IntPtr MenuHandle {
 			get {
-				return has_menu;
+				return menu_handle;
 			}
 
 			set {
-				has_menu = value;
+				menu_handle = value;
 			}
 		}
 
