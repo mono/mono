@@ -2181,12 +2181,20 @@ public class TypeManager {
 		return "Item";
 	}
 
+	static MethodInfo pinned_method = null;
 	public static void MakePinned (LocalBuilder builder)
 	{
-		//
-		// FIXME: Flag the "LocalBuilder" type as being
-		// pinned.  Figure out API.
-		//
+		if (pinned_method == null) {
+			pinned_method = typeof (LocalBuilder).GetMethod ("MakePinned", BindingFlags.Instance | BindingFlags.NonPublic);
+			if (pinned_method == null) {
+				Report.Warning (-24, new Location (-1), "Microsoft.NET does not support making pinned variables." +
+					"This code may cause errors on a runtime with a moving GC");
+				
+				return;
+			}
+		}
+		
+		pinned_method.Invoke (builder, null);
 	}
 
 

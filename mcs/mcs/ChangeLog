@@ -1,5 +1,9 @@
 2004-03-29 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* typemanager.cs: support for pinned variables.
+
+2004-03-29 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* decl.cs, typemanager.cs: Avoid using an arraylist
 	as a buffer if there is only one result set.
 
