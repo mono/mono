@@ -1,3 +1,7 @@
+2002-07-13  Jonathan Pryor  <jonpryor@vt.edu>
+	* ResourcePermissionBase.cs: Stubbed out
+	* ResourcePermissionBaseEntry.cs: Implemented.
+
 2002-03-12  Duncan Mak  <duncan@ximian.com>
 
 	* SiteIdentityPermissionAttribute.cs: 
