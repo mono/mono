@@ -1,3 +1,9 @@
+2002-07-19  Martin Baulig  <martin@gnome.org>
+
+	The test suite now compiles with MCS on GNU/Linux :-)
+
+	* corlib_linux_test.args: Added MCS command file to compile this.
+
 2002-07-11  Nick Drochak  <ndrochak@gol.com>
 
 	* .cvsignore: Ignore temp files too.
