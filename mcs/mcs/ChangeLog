@@ -1,3 +1,8 @@
+2005-03-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* attribute.cs: Encode ThrowOnUnmappableChar and BestFitMapping
+	attributes.
+
 2005-03-16  Raja R Harinath  <rharinath@novell.com>
 
 	Remove TypeManager.LookupType and TypeManager.LookupTypeDirect.
