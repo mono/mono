@@ -11,7 +11,6 @@ using System;
 
 namespace Mono.Math.Prime.Generator {
 
-	[CLSCompliant(false)]
 #if INSIDE_CORLIB
 	internal
 #else
