@@ -144,10 +144,10 @@ namespace MonoTests.System.Data
 			DataColumn col = new DataColumn();
 			DataColumn col2 = new DataColumn();
 			
+			col.ColumnName = "abc";
+
 			_tbl.Columns.Add(col);
 			_tbl.Columns.Add(col2);
-
-			col.ColumnName = "abc";
 			
 			//Duplicate name exception
 			try
@@ -176,6 +176,49 @@ namespace MonoTests.System.Data
 				Assertion.Fail("AE: Wrong exception type. " + exc.ToString());
 			}
 			
+		}
+
+		public void TestDefaultValue()
+		{
+			DataTable tbl = new DataTable();
+			tbl.Columns.Add("MyCol", typeof(int));
+			
+			//Set default Value if Autoincrement is true
+			tbl.Columns[0].AutoIncrement = true;
+			try
+			{
+				tbl.Columns[0].DefaultValue = 2;
+				Assertion.Fail("Failed to throw ArgumentException.");
+			}
+			catch (ArgumentException){}
+			catch (AssertionFailedError exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assertion.Fail("WET1: Wrong exception type. " + exc.ToString());
+			}
+
+
+			tbl.Columns[0].AutoIncrement = false;
+
+			//Set default value to an incompatible datatype
+			try
+			{
+				tbl.Columns[0].DefaultValue = "hello";
+				Assertion.Fail("Failed to throw InvalidCastException.");
+			}
+			catch (InvalidCastException){}
+			catch (AssertionFailedError exc) {throw  exc;}
+			catch (Exception exc)
+			{
+				Assertion.Fail("WET2: Wrong exception type. " + exc.ToString());
+			}
+
+			//TODO: maybe add tests for setting default value for types that can implict
+			//cast
+
+
+
+
 		}
 
 		public void TestSetDataType()

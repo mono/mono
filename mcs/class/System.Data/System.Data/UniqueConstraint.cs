@@ -288,9 +288,28 @@ namespace System.Data
 
 		}
 
-		[MonoTODO]
-		public override int GetHashCode() {
-			throw new NotImplementedException ();
+		public override int GetHashCode() 
+		{
+			//initialize hash with default value 
+			int hash = 42;
+			int i;
+
+			//derive the hash code from the columns that way
+			//Equals and GetHashCode return Equal objects to be the
+			//same
+
+			//Get the first column hash
+			if (this.Columns.Length > 0)
+				hash ^= this.Columns[0].GetHashCode();
+			
+			//get the rest of the column hashes if there any
+			for (i = 1; i < this.Columns.Length; i++)
+			{
+				hash ^= this.Columns[1].GetHashCode();
+				
+			}
+			
+			return hash ;
 		}
 		
 	

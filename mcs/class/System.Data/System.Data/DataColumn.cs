@@ -48,12 +48,12 @@ namespace System.Data
 		private MappingType _columnMapping = MappingType.Element;
 		private string _columnName = null;
 		private Type _dataType = null;
-		private object defaultValue = null;
+		private object _defaultValue = null;
 		private string expression = null;
-		private PropertyCollection extendedProperties = null;
-		private int maxLength = -1;
+		private PropertyCollection _extendedProperties = null;
+		private int maxLength = -1; //-1 represents no length limit
 		private string nameSpace = null;
-		private int ordinal = -1;
+		private int _ordinal = -1; //-1 represents not part of a collection
 		private string prefix = null;
 		private bool readOnly = false;
 		private DataTable _table = null;
@@ -244,13 +244,32 @@ namespace System.Data
 		/// 
 		/// </summary>
 		/// <remarks>When AutoIncrement is set to true, there can be no default value.</remarks>
+		/// <exception cref="System.InvalidCastException"></exception>
+		/// <exception cref="System.ArgumentException"></exception>
 		public object DefaultValue
 		{
 			get {
-				return defaultValue;
+				return _defaultValue;
 			}
 			set {
-				defaultValue = value;
+				
+				//If autoIncrement == true throw
+				if (AutoIncrement) 
+				{
+					throw new ArgumentException("Can not set default value while" +
+							" AutoIncrement is true on this column.");
+				}
+					
+				//Will throw invalid cast exception
+				//if value is not the correct type
+				//FIXME: some types can be casted
+				if (value.GetType() != _dataType)
+				{
+					throw new InvalidCastException("Default Value type is not compatible with" + 
+							" column type.");
+				}
+					
+				_defaultValue = value;
 			}
 		}
 
@@ -269,16 +288,18 @@ namespace System.Data
 		public PropertyCollection ExtendedProperties
 		{
 			get {
-				return extendedProperties;
+				return _extendedProperties;
 			}
 		}
 
 		public int MaxLength
 		{
 			get {
+				//Default == -1 no max length
 				return maxLength;
 			}
 			set {
+				//only applies to string columns
 				maxLength = value;
 			}
 		}
@@ -297,8 +318,14 @@ namespace System.Data
 		public int Ordinal
 		{
 			get {
-				return ordinal;
+				//value is -1 if not part of a collection
+				return _ordinal;
 			}
+		}
+
+		internal void SetOrdinal(int ordinal)
+		{
+			_ordinal = ordinal;
 		}
 
 		public string Prefix

@@ -154,7 +154,7 @@ namespace MonoTests.System.Data
 		
 		}
 
-		public void TestEquals() {
+		public void TestEqualsAndHashCode() {
 			UniqueConstraint cst = new UniqueConstraint( new DataColumn [] {
 					_table.Columns[0], _table.Columns[1]});
 			UniqueConstraint cst2 = new UniqueConstraint( new DataColumn [] {
@@ -171,6 +171,13 @@ namespace MonoTests.System.Data
 			Assertion.Assert("A2", cst.Equals(cst3) == false);
 			Assertion.Assert("A3", cst3.Equals(cst) == false);
 			Assertion.Assert("A4", cst.Equals(cst4) == false);
+
+			//true
+			Assertion.Assert("HashEquals", cst.GetHashCode() == cst2.GetHashCode());
+
+			//false
+			Assertion.Assert("Hash Not Equals", (cst.GetHashCode() == cst3.GetHashCode()) == false);
+
 
 		}
 

@@ -1,3 +1,13 @@
+2002-09-06  Franklin Wise <gracenote@earthlink.net>
+	
+	* System.Data/DataColumn.cs: More flushing out.
+
+	* System.Data/ForeignKeyConstraint.cs: Implemented GetHashCode()
+
+	* System.Data/UniqueKeyConstraint.cs: Implemented GetHashCode()
+	
+	* Tests:  See Changelog for System.Data/Test
+	
 2002-09-04  Franklin Wise <gracenote@earthlink.net>
 	
 	* Tests:  See Changelog for System.Data/Test

@@ -296,9 +296,39 @@ namespace System.Data
 			return true;
 		}
 
-		[MonoTODO]
-		public override int GetHashCode() {
-			throw new NotImplementedException ();
+		public override int GetHashCode()
+		{
+			//initialize hash1 and hash2 with default hashes
+			//any two DIFFERENT numbers will do here
+			int hash1 = 32, hash2 = 88;
+			int i;
+
+			//derive the hash code from the columns that way
+			//Equals and GetHashCode return Equal objects to be the
+			//same
+
+			//Get the first parent column hash
+			if (this.Columns.Length > 0)
+				hash1 ^= this.Columns[0].GetHashCode();
+			
+			//get the rest of the parent column hashes if there any
+			for (i = 1; i < this.Columns.Length; i++)
+			{
+				hash1 ^= this.Columns[1].GetHashCode();
+				
+			}
+			
+			//Get the child column hash
+			if (this.RelatedColumns.Length > 0)
+				hash2 ^= this.Columns[0].GetHashCode();
+			
+			for (i = 1; i < this.RelatedColumns.Length; i++)
+			{
+				hash2 ^= this.RelatedColumns[1].GetHashCode();
+			}
+
+			//combine the two hashes
+			return hash1 ^ hash2;
 		}
 
 		internal override void AddToConstraintCollectionSetup(

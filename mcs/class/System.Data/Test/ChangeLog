@@ -1,3 +1,10 @@
+2002-09-06  Franklin Wise <gracenote@earthlink.net>
+
+	*  System.Data\ForeignKeyConstraintTest.cs: added
+	  TestEqualAndHashCode() test.
+	
+	*  System.Data\UniqueConstraint.cs: Added testing for HashCode
+	
 2002-09-04  Franklin Wise <gracenote@earthlink.net>
 	
 	* New Files: 

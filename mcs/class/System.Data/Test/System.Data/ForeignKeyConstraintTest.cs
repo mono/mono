@@ -194,9 +194,35 @@ namespace MonoTests.System.Data
 
 		}
 
-		public void TestEquals()
+		public void TestEqualsAndHashCode()
 		{
-			//TODO:
+			DataTable tbl = _ds.Tables[0];
+			DataTable tbl2 = _ds.Tables[1];
+
+			ForeignKeyConstraint fkc = new ForeignKeyConstraint( 
+				new DataColumn[] {tbl.Columns[0], tbl.Columns[1]} ,
+				new DataColumn[] {tbl2.Columns[0], tbl2.Columns[1]} );
+
+			ForeignKeyConstraint fkc2 = new ForeignKeyConstraint( 
+				new DataColumn[] {tbl.Columns[0], tbl.Columns[1]} ,
+				new DataColumn[] {tbl2.Columns[0], tbl2.Columns[1]} );
+
+			ForeignKeyConstraint fkcDiff = 
+				new ForeignKeyConstraint( tbl.Columns[1], tbl.Columns[2]);
+		
+			Assertion.Assert( "Equals failed. 1" , fkc.Equals(fkc2));
+			Assertion.Assert( "Equals failed. 2" , fkc2.Equals(fkc));
+			Assertion.Assert( "Equals failed. 3" , fkc.Equals(fkc));
+
+			Assertion.Assert( "Equals failed diff. 1" , fkc.Equals(fkcDiff) == false);
+
+			Assertion.Assert( "Hash Code Failed. 1", fkc.GetHashCode() == fkc2.GetHashCode() );
+			Assertion.Assert( "Hash Code Failed. 2", fkc.GetHashCode() != fkcDiff.GetHashCode() );
+
+
+
+
+	
 		}
 	}
 }
