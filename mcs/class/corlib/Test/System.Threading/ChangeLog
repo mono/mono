@@ -1,3 +1,7 @@
+2004-08-25  Nick Drochak <ndrochak@ieee.com>
+
+	* ThreadTest.cs: Some tests hang on MS.NET so ignore them.
+
 2004-06-22  Dick Porter <dick@ximian.com>
 
 	* MutexTest.cs: No need to ignore these tests now
