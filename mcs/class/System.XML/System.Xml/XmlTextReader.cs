@@ -414,6 +414,8 @@ namespace System.Xml
 				return true;
 			}
 
+			RestoreProperties ();
+
 			return false;
 		}
 

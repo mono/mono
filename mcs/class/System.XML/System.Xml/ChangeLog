@@ -1,3 +1,11 @@
+2002-03-18  Kral Ferch <kral_ferch@hotmail.com>
+
+	* XmlTextReader.cs: Restores properties after
+	reading last attribute on an element.
+	
+	* XmlNode.cs: AppendChild sets the parent
+	on the child.
+
 2002-03-17  Kral Ferch  <kral_ferch@hotmail.com>
 
 	* XmlCDataSection.cs: Formatting, Implementation for WriteTo.

@@ -188,6 +188,8 @@ namespace System.Xml
 			if (NodeType == XmlNodeType.Document || NodeType == XmlNodeType.Element || NodeType == XmlNodeType.Attribute) {
 				XmlLinkedNode newLinkedChild = (XmlLinkedNode)newChild;
 				XmlLinkedNode lastLinkedChild = LastLinkedChild;
+
+				newLinkedChild.parentNode = this;
 				
 				if (lastLinkedChild != null) {
 					newLinkedChild.NextLinkedSibling = lastLinkedChild.NextLinkedSibling;
