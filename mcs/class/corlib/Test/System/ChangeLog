@@ -1,3 +1,8 @@
+2005-03-15  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* BadImageFormatExceptionCas.cs: New. Permission tests for 
+	BadImageFormatException.
+
 2005-03-14  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* EnvironmentCas.cs: Fixed failures under MS for NET_1_1.
