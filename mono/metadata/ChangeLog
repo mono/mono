@@ -1,3 +1,7 @@
+2003-01-12  Patrik Torstensson <totte@race-x-change.com>
+
+	* string-icall.[c|h], icall.c: Added support for CompareOrdinal mode
+
 2003-01-11  Martin Baulig  <martin@ximian.com>
 
 	* debug-mono-symfile.h (MONO_SYMBOL_FILE_DYNAMIC_VERSION): Incremented
