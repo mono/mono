@@ -1,3 +1,8 @@
+2002-07-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (Method, Property, Indexer): Do not allow the public
+	modifier to be used in explicit interface implementations.
+
 2002-07-02  Martin Baulig  <martin@gnome.org>
 
 	* typemanager.cs (TypeManager.InitCoreTypes): When compiling

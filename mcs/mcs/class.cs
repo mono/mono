@@ -2029,11 +2029,10 @@ namespace Mono.CSharp {
 					if ((ModFlags & Modifiers.STATIC) != 0)
 						implementing = null;
 				} else {
-					if ((ModFlags & (Modifiers.PUBLIC | Modifiers.ABSTRACT)) != 0){
+					if ((ModFlags & (Modifiers.PUBLIC | Modifiers.ABSTRACT | Modifiers.VIRTUAL)) != 0){
 						Report.Error (
-							106, Location, "`public' or `abstract' modifiers "+
-							"are not allowed in explicit interface declarations"
-							);
+							106, Location, "`public', `virtual' or `abstract' modifiers "+
+							"are not allowed in explicit interface declarations");
 						implementing = null;
 					}
 				}
@@ -2766,9 +2765,9 @@ namespace Mono.CSharp {
 					if ((ModFlags & Modifiers.STATIC) != 0)
 						implementing = null;
 				} else {
-					if ((ModFlags & (Modifiers.PUBLIC | Modifiers.ABSTRACT)) != 0){
+					if ((ModFlags & (Modifiers.PUBLIC | Modifiers.ABSTRACT | Modifiers.VIRTUAL)) != 0){
 						Report.Error (
-							106, Location, "`public' or `abstract' modifiers "+
+							106, Location, "`public', `virtual' or `abstract' modifiers "+
 							"are not allowed in explicit interface declarations"
 							);
 						implementing = null;
@@ -3399,10 +3398,10 @@ namespace Mono.CSharp {
 					if ((ModFlags & Modifiers.STATIC) != 0)
 						implementing = null;
 				} else {
-					if((ModFlags&(Modifiers.PUBLIC | Modifiers.ABSTRACT)) != 0){
+					if((ModFlags&(Modifiers.PUBLIC | Modifiers.ABSTRACT | Modifiers.VIRTUAL)) != 0){
 						Report.Error (
 							106, Location,
-							"`public' or `abstract' modifiers are not "+
+							"`public', `virtual' or `abstract' modifiers are not "+
 							"allowed in explicit interface declarations"
 							);
 						implementing = null;
