@@ -51,7 +51,7 @@ namespace System.Xml.Xsl {
 				case OutputMethod.HTML:
 					throw new NotImplementedException("HTML output method is not implemented yet.");
 				case OutputMethod.Text:
-					new XslTransformProcessor (s).Process (input, new TextOutputter(output), args, resolver);
+					new XslTransformProcessor (s).Process (input, new TextOutputter(output, false), args, resolver);
 					break;
 				case OutputMethod.Custom:
 					throw new NotImplementedException("Custom output method is not implemented yet.");

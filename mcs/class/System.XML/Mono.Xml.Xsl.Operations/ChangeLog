@@ -1,3 +1,8 @@
+2003-08-20 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* XslComment.cs, XslMessage.cs, XslProcessingInsturction.cs:
+	Ignore element contnet, per spec. (Oleg)
+
 2003-08-19 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* XslNumber.cs: Better support for formatting.

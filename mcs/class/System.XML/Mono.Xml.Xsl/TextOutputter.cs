@@ -17,18 +17,27 @@ namespace Mono.Xml.Xsl {
 	/// </summary>
 	public class TextOutputter : Outputter {
 		private TextWriter _writer;
+		//Current output depth
+		private int _depth;		
+		//Ignore nested text nodes
+		private bool _ignoreNestedText;
 		
-		public TextOutputter(TextWriter w) {
+		public TextOutputter(TextWriter w, bool ignoreNestedText) {
 			_writer = w;
+			_ignoreNestedText = ignoreNestedText;
 		}
 
 		public override void WriteStartDocument() {}
 		
 		public override void WriteEndDocument() {}
 
-		public override void WriteStartElement(string prefix, string localName, string nsURI) {}
+		public override void WriteStartElement(string prefix, string localName, string nsURI) {
+			if (_ignoreNestedText) _depth++;
+		}
 
-		public override void WriteEndElement() {}
+		public override void WriteEndElement() {
+			if (_ignoreNestedText) _depth--;
+		}
 
 		public override void WriteAttributeString(string prefix, string localName, string nsURI, string value) {}
 
@@ -41,11 +50,15 @@ namespace Mono.Xml.Xsl {
 		public override void WriteProcessingInstruction(string name, string text) {}
 
 		public override void WriteString(string text) {
-			_writer.Write(text);
+			WriteImpl(text);
 		}
 
 		public override void WriteRaw(string data) {
-			_writer.Write(data);
+			WriteImpl(data);
+		}
+
+		private void WriteImpl(string text) {
+			if (!_ignoreNestedText || _depth==0) _writer.Write(text);
 		}
 
 		public override void Done () {

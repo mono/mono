@@ -35,9 +35,7 @@ namespace Mono.Xml.Xsl.Operations {
 		public override void Evaluate (XslTransformProcessor p)
 		{
 			StringWriter s = new StringWriter ();
-			//TODO: only text nodes allowed here, other nodes must be ignored along with any content,
-			//so TextOutputter is not really suitable here
-			Outputter outputter = new TextOutputter(s);
+			Outputter outputter = new TextOutputter(s, true);
 			p.PushOutput (outputter);
 			value.Evaluate (p);
 			p.PopOutput ();
