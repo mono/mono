@@ -46,13 +46,13 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			if (args != null) 
-				Invocation.EmitArguments (ec, mi, args);
+				Invocation.EmitArguments (ec, mi, args, false, null);
 
 			ec.ig.Emit (OpCodes.Call, mi);
 			return;
 		}
 		
-		static public Expression MakeSimpleCall (EmitContext ec, MethodGroupExpr mg,
+		static public StaticCallExpr MakeSimpleCall (EmitContext ec, MethodGroupExpr mg,
 							 Expression e, Location loc)
 		{
 			ArrayList args;
@@ -80,6 +80,10 @@ namespace Mono.CSharp {
 			Emit (ec);
 			if (TypeManager.TypeToCoreType (type) != TypeManager.void_type)
 				ec.ig.Emit (OpCodes.Pop);
+		}
+		
+		public MethodInfo Method {
+			get { return mi; }
 		}
 	}
 
@@ -644,7 +648,7 @@ namespace Mono.CSharp {
 	public class Indirection : Expression, IMemoryLocation, IAssignMethod {
 		Expression expr;
 		LocalTemporary temporary;
-		bool have_temporary;
+		bool prepared;
 		
 		public Indirection (Expression expr, Location l)
 		{
@@ -660,54 +664,47 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
+			if (!prepared)
+				expr.Emit (ec);
 
-			if (temporary != null){
-				if (have_temporary) {
-					temporary.Emit (ec);
-				} else {
-				expr.Emit (ec);
-				ec.ig.Emit (OpCodes.Dup);
-				temporary.Store (ec);
-				have_temporary = true;
-				}
-			} else
-				expr.Emit (ec);
-			
-			LoadFromPtr (ig, Type);
+			LoadFromPtr (ec.ig, Type);
 		}
 
-		public void EmitAssign (EmitContext ec, Expression source)
+		public void Emit (EmitContext ec, bool leave_copy)
 		{
-			if (temporary != null){
-				if (have_temporary)
-					temporary.Emit (ec);
-				else {
-					expr.Emit (ec);
-					ec.ig.Emit (OpCodes.Dup);
-					temporary.Store (ec);
-					have_temporary = true;
-				}
-			} else 
-				expr.Emit (ec);
+			Emit (ec);
+			if (leave_copy) {
+				ec.ig.Emit (OpCodes.Dup);
+				temporary = new LocalTemporary (ec, expr.Type);
+				temporary.Store (ec);
+			}
+		}
+
+		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
+		{
+			prepared = prepare_for_load;
+
+			expr.Emit (ec);
+
+			if (prepare_for_load)
+				ec.ig.Emit (OpCodes.Dup);
 
 			source.Emit (ec);
+			if (leave_copy) {
+				ec.ig.Emit (OpCodes.Dup);
+				temporary = new LocalTemporary (ec, expr.Type);
+				temporary.Store (ec);
+			}
+
 			StoreFromPtr (ec.ig, type);
+
+			if (temporary != null)
+				temporary.Emit (ec);
 		}
-		
+
 		public void AddressOf (EmitContext ec, AddressOp Mode)
 		{
-			if (temporary != null){
-				if (have_temporary){
-					temporary.Emit (ec);
-					return;
-				}
-				expr.Emit (ec);
-				ec.ig.Emit (OpCodes.Dup);
-				temporary.Store (ec);
-				have_temporary = true;
-			} else
-				expr.Emit (ec);
+			expr.Emit (ec);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -717,12 +714,7 @@ namespace Mono.CSharp {
 			//
 			return this;
 		}
-
-		public new void CacheTemporaries (EmitContext ec)
-		{
-			temporary = new LocalTemporary (ec, expr.Type);
-		}
-
+		
 		public override string ToString ()
 		{
 			return "*(" + expr + ")";
@@ -758,13 +750,15 @@ namespace Mono.CSharp {
 		}
 		
 		Mode mode;
+		bool is_expr = false;
+		bool recurse = false;
+		
 		Expression expr;
-		LocalTemporary temp_storage;
 
 		//
 		// This is expensive for the simplest case.
 		//
-		Expression method;
+		StaticCallExpr method;
 			
 		public UnaryMutator (Mode m, Expression e, Location l)
 		{
@@ -856,9 +850,7 @@ namespace Mono.CSharp {
 			} else if (expr.eclass == ExprClass.IndexerAccess){
 				IndexerAccess ia = (IndexerAccess) expr;
 				
-				temp_storage = new LocalTemporary (ec, expr.Type);
-				
-				expr = ia.ResolveLValue (ec, temp_storage);
+				expr = ia.ResolveLValue (ec, this);
 				if (expr == null)
 					return null;
 
@@ -976,114 +968,39 @@ namespace Mono.CSharp {
 			}
 			
 		}
-
-		static EmptyExpression empty_expr;
 		
 		void EmitCode (EmitContext ec, bool is_expr)
 		{
-			ILGenerator ig = ec.ig;
-			IAssignMethod ia = (IAssignMethod) expr;
-			Type expr_type = expr.Type;
-
-			ia.CacheTemporaries (ec);
-
-			//
-			// NOTE: We should probably handle three cases:
-			//
-			//     * method invocation required.
-			//     * direct stack manipulation possible
-			//     * the object requires an "instance" field
-			//
-			if (temp_storage == null){
-				//
-				// Temporary improvement: if we are dealing with something that does
-				// not require complicated instance setup, avoid using a temporary
-				//
-				// For now: only localvariables when not remapped
-				//
-
-				if (method == null &&
-				    ((expr is LocalVariableReference) ||(expr is FieldExpr && ((FieldExpr) expr).FieldInfo.IsStatic))){
-					if (empty_expr == null)
-						empty_expr = new EmptyExpression ();
-					
-					switch (mode){
-					case Mode.PreIncrement:
-					case Mode.PreDecrement:
-						expr.Emit (ec);
-					
-						LoadOneAndEmitOp (ec, expr_type);
-						if (is_expr)
-							ig.Emit (OpCodes.Dup);
-						ia.EmitAssign (ec, empty_expr);
-						break;
-						
-					case Mode.PostIncrement:
-					case Mode.PostDecrement:
-						expr.Emit (ec);
-						if (is_expr)
-							ig.Emit (OpCodes.Dup);
-						
-						LoadOneAndEmitOp (ec, expr_type);
-						ia.EmitAssign (ec, empty_expr);
-						break;
-					}
-					return;
-				}
-				temp_storage = new LocalTemporary (ec, expr_type);
-			}
-			
-			switch (mode){
-			case Mode.PreIncrement:
-			case Mode.PreDecrement:
-				if (method == null){
-					expr.Emit (ec);
-					
-					LoadOneAndEmitOp (ec, expr_type);
-				} else 
-					method.Emit (ec);
-				
-				temp_storage.Store (ec);
-				ia.EmitAssign (ec, temp_storage);
-				if (is_expr)
-					temp_storage.Emit (ec);
-				break;
-				
-			case Mode.PostIncrement:
-			case Mode.PostDecrement:
-				if (is_expr)
-					expr.Emit (ec);
-				
-				if (method == null){
-					if (!is_expr)
-						expr.Emit (ec);
-					else
-						ig.Emit (OpCodes.Dup);
-					
-					LoadOneAndEmitOp (ec, expr_type);
-				} else {
-					method.Emit (ec);
-				}
-				
-				temp_storage.Store (ec);
-				ia.EmitAssign (ec, temp_storage);
-				break;
-			}
-
-			temp_storage.Release (ec);
+			recurse = true;
+			this.is_expr = is_expr;
+			((IAssignMethod) expr).EmitAssign (ec, this, is_expr && (mode == Mode.PreIncrement || mode == Mode.PreDecrement), true);
 		}
+		
 
 		public override void Emit (EmitContext ec)
 		{
-			EmitCode (ec, true);
+			//
+			// We use recurse to allow ourselfs to be the source
+			// of an assignment. This little hack prevents us from
+			// having to allocate another expression
+			//
+			if (recurse) {
+				((IAssignMethod) expr).Emit (ec, is_expr && (mode == Mode.PostIncrement  || mode == Mode.PostDecrement));
+				if (method == null)
+					LoadOneAndEmitOp (ec, expr.Type);
+				else
+					ec.ig.Emit (OpCodes.Call, method.Method);
+				recurse = false;
+				return;
+			}
 			
+			EmitCode (ec, true);
 		}
 		
 		public override void EmitStatement (EmitContext ec)
 		{
 			EmitCode (ec, false);
 		}
-
 	}
 
 	/// <summary>
@@ -3167,7 +3084,7 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			
 			if (Arguments != null) 
-				Invocation.EmitArguments (ec, method, Arguments);
+				Invocation.EmitArguments (ec, method, Arguments, false, null);
 			
 			if (method is MethodInfo)
 				ig.Emit (OpCodes.Call, (MethodInfo) method);
@@ -3302,7 +3219,7 @@ namespace Mono.CSharp {
 				break;
 			}
 			
-			Invocation.EmitArguments (ec, concat_method, operands);
+			Invocation.EmitArguments (ec, concat_method, operands, false, null);
 			ec.ig.Emit (OpCodes.Call, concat_method);
 		}
 	}
@@ -3331,7 +3248,7 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 			
-			Invocation.EmitArguments (ec, method, args);
+			Invocation.EmitArguments (ec, method, args, false, null);
 			
 			ig.Emit (OpCodes.Call, (MethodInfo) method);
 			ig.Emit (OpCodes.Castclass, type);
@@ -3699,7 +3616,7 @@ namespace Mono.CSharp {
 			if (e != null) {
 				local_info.Used = true;
 				eclass = ExprClass.Value;
-				return e;
+				return e.Resolve (ec);
 			}
 
 			VariableInfo variable_info = local_info.VariableInfo; 
@@ -3760,12 +3677,19 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Ldloc, local_info.LocalBuilder);
 		}
 		
-		public void EmitAssign (EmitContext ec, Expression source)
+		public void Emit (EmitContext ec, bool leave_copy)
 		{
-			ILGenerator ig = ec.ig;
-
+			Emit (ec);
+			if (leave_copy)
+				ec.ig.Emit (OpCodes.Dup);
+		}
+		
+		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
+		{
 			source.Emit (ec);
-			ig.Emit (OpCodes.Stloc, local_info.LocalBuilder);
+			if (leave_copy)
+				ec.ig.Emit (OpCodes.Dup);
+			ec.ig.Emit (OpCodes.Stloc, local_info.LocalBuilder);
 		}
 		
 		public void AddressOf (EmitContext ec, AddressOp mode)
@@ -3792,7 +3716,8 @@ namespace Mono.CSharp {
 		Block block;
 		VariableInfo vi;
 		public Parameter.Modifier mod;
-		public bool is_ref, is_out;
+		public bool is_ref, is_out, prepared;
+		LocalTemporary temp;
 		
 		public ParameterReference (Parameters pars, Block block, int idx, string name, Location loc)
 		{
@@ -3928,6 +3853,11 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
+			Emit (ec, false);
+		}
+		
+		public void Emit (EmitContext ec, bool leave_copy)
+		{
 			ILGenerator ig = ec.ig;
 			
 			int arg_idx = idx;
@@ -3937,33 +3867,56 @@ namespace Mono.CSharp {
 
 			EmitLdArg (ig, arg_idx);
 
-			if (!is_ref)
-				return;
-
-			//
-			// If we are a reference, we loaded on the stack a pointer
-			// Now lets load the real value
-			//
-			LoadFromPtr (ig, type);
+			if (is_ref) {
+				if (prepared)
+					ec.ig.Emit (OpCodes.Dup);
+	
+				//
+				// If we are a reference, we loaded on the stack a pointer
+				// Now lets load the real value
+				//
+				LoadFromPtr (ig, type);
+			}
+			
+			if (leave_copy) {
+				ec.ig.Emit (OpCodes.Dup);
+				
+				if (is_ref) {
+					temp = new LocalTemporary (ec, type);
+					temp.Store (ec);
+				}
+			}
 		}
-
-		public void EmitAssign (EmitContext ec, Expression source)
+		
+		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
 		{
 			ILGenerator ig = ec.ig;
-			
 			int arg_idx = idx;
-
+			
+			prepared = prepare_for_load;
+			
 			if (!ec.IsStatic)
 				arg_idx++;
 
-			if (is_ref)
+			if (is_ref && !prepared)
 				EmitLdArg (ig, arg_idx);
 			
 			source.Emit (ec);
 
-			if (is_ref)
+			if (leave_copy)
+				ec.ig.Emit (OpCodes.Dup);
+			
+			if (is_ref) {
+				if (leave_copy) {
+					temp = new LocalTemporary (ec, type);
+					temp.Store (ec);
+				}
+				
 				StoreFromPtr (ig, type);
-			else {
+				
+				if (temp != null)
+					temp.Emit (ec);
+			} else {
 				if (arg_idx <= 255)
 					ig.Emit (OpCodes.Starg_S, (byte) arg_idx);
 				else
@@ -4011,6 +3964,12 @@ namespace Mono.CSharp {
 		{
 			this.Expr = expr;
 			this.ArgType = type;
+		}
+
+		public Argument (Expression expr)
+		{
+			this.Expr = expr;
+			this.ArgType = AType.Expression;
 		}
 
 		public Type Type {
@@ -5401,14 +5360,24 @@ namespace Mono.CSharp {
 		///   emission of the arguments is known not to contain
 		///   a `params' field (for example in constructors or other routines
 		///   that keep their arguments in this structure)
+		///   
+		///   if `dup_args' is true, a copy of the arguments will be left
+		///   on the stack. If `dup_args' is true, you can specify `this_arg'
+		///   which will be duplicated before any other args. Only EmitCall
+		///   should be using this interface.
 		/// </summary>
-		public static void EmitArguments (EmitContext ec, MethodBase mb, ArrayList arguments)
+		public static void EmitArguments (EmitContext ec, MethodBase mb, ArrayList arguments, bool dup_args, LocalTemporary this_arg)
 		{
 			ParameterData pd;
 			if (mb != null)
 				pd = GetParameterData (mb);
 			else
 				pd = null;
+			
+			LocalTemporary [] temps = null;
+			
+			if (dup_args)
+				temps = new LocalTemporary [arguments.Count];
 
 			//
 			// If we are calling a params method with no arguments, special case it
@@ -5445,6 +5414,18 @@ namespace Mono.CSharp {
 				}
 					    
 				a.Emit (ec);
+				if (dup_args) {
+					ec.ig.Emit (OpCodes.Dup);
+					(temps [i] = new LocalTemporary (ec, a.Type)).Store (ec);
+				}
+			}
+			
+			if (dup_args) {
+				if (this_arg != null)
+					this_arg.Emit (ec);
+				
+				for (int i = 0; i < top; i ++)
+					temps [i].Emit (ec);
 			}
 
 			if (pd != null && pd.Count > top &&
@@ -5509,9 +5490,24 @@ namespace Mono.CSharp {
 					     bool is_static, Expression instance_expr,
 					     MethodBase method, ArrayList Arguments, Location loc)
 		{
+			EmitCall (ec, is_base, is_static, instance_expr, method, Arguments, loc, false, false);
+		}
+		
+		// `dup_args' leaves an extra copy of the arguments on the stack
+		// `omit_args' does not leave any arguments at all.
+		// So, basically, you could make one call with `dup_args' set to true,
+		// and then another with `omit_args' set to true, and the two calls
+		// would have the same set of arguments. However, each argument would
+		// only have been evaluated once.
+		public static void EmitCall (EmitContext ec, bool is_base,
+					     bool is_static, Expression instance_expr,
+					     MethodBase method, ArrayList Arguments, Location loc,
+		                             bool dup_args, bool omit_args)
+		{
 			ILGenerator ig = ec.ig;
 			bool struct_call = false;
 			bool this_call = false;
+			LocalTemporary this_arg = null;
 
 			Type decl_type = method.DeclaringType;
 
@@ -5556,57 +5552,69 @@ namespace Mono.CSharp {
 				return;
 			
 			if (!is_static){
-				if (TypeManager.IsValueType (decl_type))
+				this_call = instance_expr == null;
+				if (decl_type.IsValueType || (!this_call && instance_expr.Type.IsValueType))
 					struct_call = true;
+
 				//
 				// If this is ourselves, push "this"
 				//
-				if (instance_expr == null){
-					this_call = true;
-					ig.Emit (OpCodes.Ldarg_0);
-				} else {
-					Type itype = instance_expr.Type;
-
-					//
-					// Push the instance expression
-					//
-					if (TypeManager.IsValueType (itype)){
+				if (!omit_args) {
+					Type t = null;
+					if (this_call) {
+						ig.Emit (OpCodes.Ldarg_0);
+						t = decl_type;
+					} else {
 						//
-						// Special case: calls to a function declared in a 
-						// reference-type with a value-type argument need
-						// to have their value boxed.  
-						if (decl_type.IsValueType || itype.IsGenericParameter){
+						// Push the instance expression
+						//
+						if (instance_expr.Type.IsValueType) {
 							//
-							// If the expression implements IMemoryLocation, then
-							// we can optimize and use AddressOf on the
-							// return.
-							//
-							// If not we have to use some temporary storage for
-							// it.
-							if (instance_expr is IMemoryLocation){
-								((IMemoryLocation)instance_expr).
-									AddressOf (ec, AddressOp.LoadStore);
-							}
-							else {
+							// Special case: calls to a function declared in a 
+							// reference-type with a value-type argument need
+							// to have their value boxed.
+							if (decl_type.IsValueType) {
+								//
+								// If the expression implements IMemoryLocation, then
+								// we can optimize and use AddressOf on the
+								// return.
+								//
+								// If not we have to use some temporary storage for
+								// it.
+								if (instance_expr is IMemoryLocation) {
+									((IMemoryLocation)instance_expr).
+										AddressOf (ec, AddressOp.LoadStore);
+								} else {
+									LocalTemporary temp = new LocalTemporary (ec, instance_expr.Type);
+									instance_expr.Emit (ec);
+									temp.Store (ec);
+									temp.AddressOf (ec, AddressOp.Load);
+								}
+
+								// avoid the overhead of doing this all the time.
+								if (dup_args)
+									t = TypeManager.GetReferenceType (instance_expr.Type);
+							} else {
 								instance_expr.Emit (ec);
-								LocalBuilder temp = ig.DeclareLocal (itype);
-								ig.Emit (OpCodes.Stloc, temp);
-								ig.Emit (OpCodes.Ldloca, temp);
+								ig.Emit (OpCodes.Box, instance_expr.Type);
+								t = TypeManager.object_type;
 							}
-							if (itype.IsGenericParameter)
-								ig.Emit (OpCodes.Constrained, itype);
-							else
-								struct_call = true;
 						} else {
 							instance_expr.Emit (ec);
-							ig.Emit (OpCodes.Box, itype);
-						} 
-					} else
-						instance_expr.Emit (ec);
+							t = instance_expr.Type;
+						}
+					}
+
+					if (dup_args) {
+						this_arg = new LocalTemporary (ec, t);
+						ig.Emit (OpCodes.Dup);
+						this_arg.Store (ec);
+					}
 				}
 			}
 
-			EmitArguments (ec, method, Arguments);
+			if (!omit_args)
+				EmitArguments (ec, method, Arguments, dup_args, this_arg);
 
 			OpCode call_op;
 			if (is_static || struct_call || is_base || (this_call && !method.IsVirtual))
@@ -5626,9 +5634,9 @@ namespace Mono.CSharp {
 			// and DoFoo is not virtual, you can omit the callvirt,
 			// because you don't need the null checking behavior.
 			//
-				if (method is MethodInfo)
+			if (method is MethodInfo)
 				ig.Emit (call_op, (MethodInfo) method);
-				else
+			else
 				ig.Emit (call_op, (ConstructorInfo) method);
 		}
 		
@@ -6003,7 +6011,7 @@ namespace Mono.CSharp {
 			}
 
 			if (method != null)
-				Invocation.EmitArguments (ec, method, Arguments);
+				Invocation.EmitArguments (ec, method, Arguments, false, null);
 
 			if (is_value_type){
 				if (method == null)
@@ -6059,7 +6067,7 @@ namespace Mono.CSharp {
 			IMemoryLocation ml = (IMemoryLocation) value_target;
 			ml.AddressOf (ec, AddressOp.Store);
 			if (method != null)
-				Invocation.EmitArguments (ec, method, Arguments);
+				Invocation.EmitArguments (ec, method, Arguments, false, null);
 
 			if (method == null)
 				ec.ig.Emit (OpCodes.Initobj, type);
@@ -6743,12 +6751,18 @@ namespace Mono.CSharp {
 
 						e.Emit (ec);
 
-                                                if (dims == 1)
-                                                        ArrayAccess.EmitStoreOpcode (ig, array_element_type);
-                                                else 
+						if (dims == 1) {
+							bool is_stobj, has_typearg;
+							OpCode op = ArrayAccess.GetStoreOpcode (
+								etype, out is_stobj,
+								out has_typearg);
+							if (is_stobj)
+								ig.Emit (OpCodes.Stobj, etype);
+							else
+								ig.Emit (op);
+						} else 
                                                         ig.Emit (OpCodes.Call, set);
-                                                
-                                        }
+					}
 				}
 				
 				//
@@ -6936,6 +6950,28 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		public void Emit (EmitContext ec, bool leave_copy)
+		{
+			Emit (ec);
+			if (leave_copy)
+				ec.ig.Emit (OpCodes.Dup);
+		}
+		
+		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
+		{
+			ILGenerator ig = ec.ig;
+			
+			if (ec.TypeContainer is Struct){
+				ec.EmitThis ();
+				source.Emit (ec);
+				if (leave_copy)
+					ec.ig.Emit (OpCodes.Dup);
+				ig.Emit (OpCodes.Stobj, type);
+			} else {
+				throw new Exception ("how did you get here");
+			}
+		}
+		
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
@@ -6943,20 +6979,6 @@ namespace Mono.CSharp {
 			ec.EmitThis ();
 			if (ec.TypeContainer is Struct)
 				ig.Emit (OpCodes.Ldobj, type);
-		}
-
-		public void EmitAssign (EmitContext ec, Expression source)
-		{
-			ILGenerator ig = ec.ig;
-			
-			if (ec.TypeContainer is Struct){
-				ec.EmitThis ();
-				source.Emit (ec);
-				ig.Emit (OpCodes.Stobj, type);
-			} else {
-				source.Emit (ec);
-				ig.Emit (OpCodes.Starg, 0);
-			}
 		}
 
 		public void AddressOf (EmitContext ec, AddressOp mode)
@@ -7893,7 +7915,8 @@ namespace Mono.CSharp {
 		//
 		ElementAccess ea;
 
-		LocalTemporary [] cached_locations;
+		LocalTemporary temp;
+		bool prepared;
 		
 		public ArrayAccess (ElementAccess ea_data, Location l)
 		{
@@ -7995,20 +8018,6 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///    Emits the right opcode to store an object of Type `t'
-		///    from an array of T.  
-		/// </summary>
-		static public void EmitStoreOpcode (ILGenerator ig, Type t)
-		{
-			bool is_stobj, has_type_arg;
-			OpCode op = GetStoreOpcode (t, out is_stobj, out has_type_arg);
-			if (has_type_arg)
-				ig.Emit (op, t);
-			else
-				ig.Emit (op);
-		}
-
-		/// <summary>
 		///    Returns the right opcode to store an object of Type `t'
 		///    from an array of T.  
 		/// </summary>
@@ -8017,7 +8026,7 @@ namespace Mono.CSharp {
 			//Console.WriteLine (new System.Diagnostics.StackTrace ());
 			has_type_arg = false; is_stobj = false;
 			t = TypeManager.TypeToCoreType (t);
-			if (TypeManager.IsEnumType (t) && t != TypeManager.enum_type)
+			if (TypeManager.IsEnumType (t))
 				t = TypeManager.EnumToUnderlying (t);
 			if (t == TypeManager.byte_type || t == TypeManager.sbyte_type ||
 			    t == TypeManager.bool_type)
@@ -8104,100 +8113,110 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 			
-			if (cached_locations == null){
-				ea.Expr.Emit (ec);
-				foreach (Argument a in ea.Arguments){
-					Type argtype = a.Expr.Type;
-					
-					a.Expr.Emit (ec);
-					
-					if (argtype == TypeManager.int64_type)
-						ig.Emit (OpCodes.Conv_Ovf_I);
-					else if (argtype == TypeManager.uint64_type)
-						ig.Emit (OpCodes.Conv_Ovf_I_Un);
-				}
-				return;
-			}
-
-			if (cached_locations [0] == null){
-				cached_locations [0] = new LocalTemporary (ec, ea.Expr.Type);
-				ea.Expr.Emit (ec);
-				ig.Emit (OpCodes.Dup);
-				cached_locations [0].Store (ec);
+			ea.Expr.Emit (ec);
+			foreach (Argument a in ea.Arguments){
+				Type argtype = a.Expr.Type;
 				
-				int j = 1;
+				a.Expr.Emit (ec);
 				
-				foreach (Argument a in ea.Arguments){
-					Type argtype = a.Expr.Type;
-					
-					cached_locations [j] = new LocalTemporary (ec, TypeManager.intptr_type /* a.Expr.Type */);
-					a.Expr.Emit (ec);
-					if (argtype == TypeManager.int64_type)
-						ig.Emit (OpCodes.Conv_Ovf_I);
-					else if (argtype == TypeManager.uint64_type)
-						ig.Emit (OpCodes.Conv_Ovf_I_Un);
-
-					ig.Emit (OpCodes.Dup);
-					cached_locations [j].Store (ec);
-					j++;
-				}
-				return;
+				if (argtype == TypeManager.int64_type)
+					ig.Emit (OpCodes.Conv_Ovf_I);
+				else if (argtype == TypeManager.uint64_type)
+					ig.Emit (OpCodes.Conv_Ovf_I_Un);
 			}
-
-			foreach (LocalTemporary lt in cached_locations)
-				lt.Emit (ec);
 		}
 
-		public new void CacheTemporaries (EmitContext ec)
+		public void Emit (EmitContext ec, bool leave_copy)
 		{
-			cached_locations = new LocalTemporary [ea.Arguments.Count + 1];
+			int rank = ea.Expr.Type.GetArrayRank ();
+			ILGenerator ig = ec.ig;
+
+			if (!prepared) {
+				LoadArrayAndArguments (ec);
+				
+				if (rank == 1)
+					EmitLoadOpcode (ig, type);
+				else {
+					MethodInfo method;
+					
+					method = FetchGetMethod ();
+					ig.Emit (OpCodes.Call, method);
+				}
+			} else
+				LoadFromPtr (ec.ig, this.type);
+			
+			if (leave_copy) {
+				ec.ig.Emit (OpCodes.Dup);
+				temp = new LocalTemporary (ec, this.type);
+				temp.Store (ec);
+			}
 		}
 		
 		public override void Emit (EmitContext ec)
 		{
-			int rank = ea.Expr.Type.GetArrayRank ();
-			ILGenerator ig = ec.ig;
-
-			LoadArrayAndArguments (ec);
-			
-			if (rank == 1)
-				EmitLoadOpcode (ig, type);
-			else {
-				MethodInfo method;
-				
-				method = FetchGetMethod ();
-				ig.Emit (OpCodes.Call, method);
-			}
+			Emit (ec, false);
 		}
 
-		public void EmitAssign (EmitContext ec, Expression source)
+		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
 		{
 			int rank = ea.Expr.Type.GetArrayRank ();
 			ILGenerator ig = ec.ig;
 			Type t = source.Type;
+			prepared = prepare_for_load;
 
-			LoadArrayAndArguments (ec);
-
-			//
-			// The stobj opcode used by value types will need
-			// an address on the stack, not really an array/array
-			// pair
-			//
-			if (rank == 1){
-				if (t == TypeManager.enum_type || t == TypeManager.decimal_type ||
-				    (t.IsSubclassOf (TypeManager.value_type) && !TypeManager.IsEnumType (t) && !TypeManager.IsBuiltinType (t)))
-					ig.Emit (OpCodes.Ldelema, t);
+			if (prepare_for_load) {
+				AddressOf (ec, AddressOp.LoadStore);
+				ec.ig.Emit (OpCodes.Dup);
+				source.Emit (ec);
+				if (leave_copy) {
+					ec.ig.Emit (OpCodes.Dup);
+					temp = new LocalTemporary (ec, this.type);
+					temp.Store (ec);
+				}
+				StoreFromPtr (ec.ig, t);
+				
+				if (temp != null)
+					temp.Emit (ec);
+				
+				return;
 			}
 			
-			source.Emit (ec);
+			LoadArrayAndArguments (ec);
 
-			if (rank == 1)
-				EmitStoreOpcode (ig, t);
-			else {
+			if (rank == 1) {
+				bool is_stobj, has_type_arg;
+				OpCode op = GetStoreOpcode (t, out is_stobj, out has_type_arg);
+				//
+				// The stobj opcode used by value types will need
+				// an address on the stack, not really an array/array
+				// pair
+				//
+				if (is_stobj)
+					ig.Emit (OpCodes.Ldelema, t);
+				
+				source.Emit (ec);
+				if (leave_copy) {
+					ec.ig.Emit (OpCodes.Dup);
+					temp = new LocalTemporary (ec, this.type);
+					temp.Store (ec);
+				}
+				
+				if (is_stobj)
+					ig.Emit (OpCodes.Stobj, t);
+				else
+					ig.Emit (op);
+			} else {
 				ModuleBuilder mb = CodeGen.Module.Builder;
 				int arg_count = ea.Arguments.Count;
 				Type [] args = new Type [arg_count + 1];
 				MethodInfo set;
+				
+				source.Emit (ec);
+				if (leave_copy) {
+					ec.ig.Emit (OpCodes.Dup);
+					temp = new LocalTemporary (ec, this.type);
+					temp.Store (ec);
+				}
 				
 				for (int i = 0; i < arg_count; i++){
 					//args [i++] = a.Type;
@@ -8214,6 +8233,9 @@ namespace Mono.CSharp {
 				
 				ig.Emit (OpCodes.Call, set);
 			}
+			
+			if (temp != null)
+				temp.Emit (ec);
 		}
 
 		public void AddressOf (EmitContext ec, AddressOp mode)
@@ -8506,19 +8528,53 @@ namespace Mono.CSharp {
 			return this;
 		}
 		
-		public override void Emit (EmitContext ec)
+		bool prepared = false;
+		LocalTemporary temp;
+		
+		public void Emit (EmitContext ec, bool leave_copy)
 		{
-			Invocation.EmitCall (ec, is_base_indexer, false, instance_expr, get, arguments, loc);
+			Invocation.EmitCall (ec, is_base_indexer, false, instance_expr, get, arguments, loc, prepared, false);
+			if (leave_copy) {
+				ec.ig.Emit (OpCodes.Dup);
+				temp = new LocalTemporary (ec, Type);
+				temp.Store (ec);
+			}
 		}
-
+		
 		//
 		// source is ignored, because we already have a copy of it from the
 		// LValue resolution and we have already constructed a pre-cached
 		// version of the arguments (ea.set_arguments);
 		//
-		public void EmitAssign (EmitContext ec, Expression source)
+		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
 		{
-			Invocation.EmitCall (ec, is_base_indexer, false, instance_expr, set, set_arguments, loc);
+			prepared = prepare_for_load;
+			Argument a = (Argument) set_arguments [set_arguments.Count - 1];
+			
+			if (prepared) {
+				source.Emit (ec);
+				if (leave_copy) {
+					ec.ig.Emit (OpCodes.Dup);
+					temp = new LocalTemporary (ec, Type);
+					temp.Store (ec);
+				}
+			} else if (leave_copy) {
+				temp = new LocalTemporary (ec, Type);
+				source.Emit (ec);
+				temp.Store (ec);
+				a.Expr = temp;
+			}
+			
+			Invocation.EmitCall (ec, is_base_indexer, false, instance_expr, set, set_arguments, loc, false, prepared);
+			
+			if (temp != null)
+				temp.Emit (ec);
+		}
+		
+		
+		public override void Emit (EmitContext ec)
+		{
+			Emit (ec, false);
 		}
 	}
 

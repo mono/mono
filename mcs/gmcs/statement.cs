@@ -2723,9 +2723,34 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class Lock : Statement {
+	public abstract class ExceptionStatement : Statement
+	{
+		public abstract void EmitFinally (EmitContext ec);
+
+		protected bool emit_finally = true;
+		ArrayList parent_vectors;
+
+		protected void DoEmitFinally (EmitContext ec)
+		{
+			if (emit_finally)
+				ec.ig.BeginFinallyBlock ();
+			else
+				ec.CurrentIterator.MarkFinally (ec, parent_vectors);
+			EmitFinally (ec);
+		}
+
+		protected void ResolveFinally (FlowBranchingException branching)
+		{
+			emit_finally = branching.EmitFinally;
+			if (!emit_finally)
+				branching.Parent.StealFinallyClauses (ref parent_vectors);
+		}
+	}
+
+	public class Lock : ExceptionStatement {
 		Expression expr;
 		Statement Statement;
+		LocalBuilder temp;
 			
 		public Lock (Expression expr, Statement stmt, Location l)
 		{
@@ -2747,12 +2772,14 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			ec.StartFlowBranching (FlowBranching.BranchingType.Exception, loc);
+			FlowBranchingException branching = ec.StartFlowBranching (this);
 			bool ok = Statement.Resolve (ec);
 			if (!ok) {
 				ec.KillFlowBranching ();
 				return false;
 			}
+
+			ResolveFinally (branching);
 
 			FlowBranching.Reachability reachability = ec.EndFlowBranching ();
 			if (reachability.Returns != FlowBranching.FlowReturns.Always) {
@@ -2772,7 +2799,7 @@ namespace Mono.CSharp {
 			Type type = expr.Type;
 			
 			ILGenerator ig = ec.ig;
-			LocalBuilder temp = ig.DeclareLocal (type);
+			temp = ig.DeclareLocal (type);
 				
 			expr.Emit (ec);
 			ig.Emit (OpCodes.Dup);
@@ -2780,18 +2807,21 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Call, TypeManager.void_monitor_enter_object);
 
 			// try
-			ig.BeginExceptionBlock ();
-			Label finish = ig.DefineLabel ();
+			if (emit_finally)
+				ig.BeginExceptionBlock ();
 			Statement.Emit (ec);
-			// ig.Emit (OpCodes.Leave, finish);
-
-			ig.MarkLabel (finish);
 			
 			// finally
-			ig.BeginFinallyBlock ();
+			DoEmitFinally (ec);
+			if (emit_finally)
+				ig.EndExceptionBlock ();
+		}
+
+		public override void EmitFinally (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
 			ig.Emit (OpCodes.Ldloc, temp);
 			ig.Emit (OpCodes.Call, TypeManager.void_monitor_exit_object);
-			ig.EndExceptionBlock ();
 		}
 	}
 
@@ -3214,10 +3244,12 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class Try : Statement {
+	public class Try : ExceptionStatement {
 		public readonly Block Fini, Block;
 		public readonly ArrayList Specific;
 		public readonly Catch General;
+
+		bool need_exc_block;
 		
 		//
 		// specific, general and fini might all be null.
@@ -3239,7 +3271,7 @@ namespace Mono.CSharp {
 		{
 			bool ok = true;
 			
-			ec.StartFlowBranching (FlowBranching.BranchingType.Exception, Block.StartLocation);
+			FlowBranchingException branching = ec.StartFlowBranching (this);
 
 			Report.Debug (1, "START OF TRY BLOCK", Block.StartLocation);
 
@@ -3278,6 +3310,7 @@ namespace Mono.CSharp {
 				}
 
 				prevCatches [last_index++] = resolvedType;
+				need_exc_block = true;
 			}
 
 			Report.Debug (1, "END OF CATCH BLOCKS", ec.CurrentBranching);
@@ -3290,6 +3323,8 @@ namespace Mono.CSharp {
 
 				if (!General.Resolve (ec))
 					ok = false;
+
+				need_exc_block = true;
 			}
 
 			Report.Debug (1, "END OF GENERAL CATCH BLOCKS", ec.CurrentBranching);
@@ -3305,6 +3340,9 @@ namespace Mono.CSharp {
 					ok = false;
 			}
 
+			ResolveFinally (branching);
+			need_exc_block |= emit_finally;
+
 			FlowBranching.Reachability reachability = ec.EndFlowBranching ();
 
 			FlowBranching.UsageVector f_vector = ec.CurrentBranching.CurrentUsageVector;
@@ -3312,9 +3350,10 @@ namespace Mono.CSharp {
 			Report.Debug (1, "END OF TRY", ec.CurrentBranching, reachability, vector, f_vector);
 
 			if (reachability.Returns != FlowBranching.FlowReturns.Always) {
-				// Unfortunately, System.Reflection.Emit automatically emits a leave
-				// to the end of the finally block.  This is a problem if `returns'
-				// is true since we may jump to a point after the end of the method.
+				// Unfortunately, System.Reflection.Emit automatically emits
+				// a leave to the end of the finally block.  This is a problem
+				// if `returns' is true since we may jump to a point after the
+				// end of the method.
 				// As a workaround, emit an explicit ret here.
 				ec.NeedReturnLabel ();
 			}
@@ -3325,14 +3364,10 @@ namespace Mono.CSharp {
 		protected override void DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			Label finish = ig.DefineLabel ();;
 
-			ig.BeginExceptionBlock ();
+			if (need_exc_block)
+				ig.BeginExceptionBlock ();
 			Block.Emit (ec);
-
-			//
-			// System.Reflection.Emit provides this automatically:
-			// ig.Emit (OpCodes.Leave, finish);
 
 			foreach (Catch c in Specific){
 				LocalInfo vi;
@@ -3357,25 +3392,30 @@ namespace Mono.CSharp {
 				General.Block.Emit (ec);
 			}
 
-			ig.MarkLabel (finish);
+			DoEmitFinally (ec);
+			if (need_exc_block)
+				ig.EndExceptionBlock ();
+		}
+
+		public override void EmitFinally (EmitContext ec)
+		{
 			if (Fini != null){
-				ig.BeginFinallyBlock ();
 				Fini.Emit (ec);
 			}
-			
-			ig.EndExceptionBlock ();
 		}
 	}
 
-	public class Using : Statement {
+	public class Using : ExceptionStatement {
 		object expression_or_block;
 		Statement Statement;
 		ArrayList var_list;
 		Expression expr;
 		Type expr_type;
 		Expression conv;
+		Expression [] resolved_vars;
 		Expression [] converted_vars;
 		ExpressionStatement [] assign;
+		LocalBuilder local_copy;
 		
 		public Using (object expression_or_block, Statement stmt, Location l)
 		{
@@ -3389,7 +3429,6 @@ namespace Mono.CSharp {
 		//
 		bool ResolveLocalVariableDecls (EmitContext ec)
 		{
-			bool need_conv = false;
 			expr_type = ec.DeclSpace.ResolveType (expr, false, loc);
 			int i = 0;
 
@@ -3401,28 +3440,38 @@ namespace Mono.CSharp {
 			// must exist.
 			//
 			converted_vars = new Expression [var_list.Count];
+			resolved_vars = new Expression [var_list.Count];
 			assign = new ExpressionStatement [var_list.Count];
-			if (!TypeManager.ImplementsInterface (expr_type, TypeManager.idisposable_type)){
-				foreach (DictionaryEntry e in var_list){
-					Expression var = (Expression) e.Key;
 
-					var = var.ResolveLValue (ec, new EmptyExpression ());
-					if (var == null)
-						return false;
-					
-					converted_vars [i] = Convert.ImplicitConversionRequired (
-						ec, var, TypeManager.idisposable_type, loc);
+			bool need_conv = !TypeManager.ImplementsInterface (
+				expr_type, TypeManager.idisposable_type);
 
-					if (converted_vars [i] == null)
-						return false;
+			foreach (DictionaryEntry e in var_list){
+				Expression var = (Expression) e.Key;
+
+				var = var.ResolveLValue (ec, new EmptyExpression ());
+				if (var == null)
+					return false;
+
+				resolved_vars [i] = var;
+
+				if (!need_conv) {
 					i++;
+					continue;
 				}
-				need_conv = true;
+
+				converted_vars [i] = Convert.ImplicitConversionRequired (
+					ec, var, TypeManager.idisposable_type, loc);
+
+				if (converted_vars [i] == null)
+					return false;
+
+				i++;
 			}
 
 			i = 0;
 			foreach (DictionaryEntry e in var_list){
-				LocalVariableReference var = (LocalVariableReference) e.Key;
+				Expression var = resolved_vars [i];
 				Expression new_expr = (Expression) e.Value;
 				Expression a;
 
@@ -3456,21 +3505,31 @@ namespace Mono.CSharp {
 		//
 		// Emits the code for the case of using using a local variable declaration.
 		//
-		bool EmitLocalVariableDecls (EmitContext ec)
+		void EmitLocalVariableDecls (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			int i = 0;
 
 			for (i = 0; i < assign.Length; i++) {
 				assign [i].EmitStatement (ec);
-				
-				ig.BeginExceptionBlock ();
+
+				if (emit_finally)
+					ig.BeginExceptionBlock ();
 			}
 			Statement.Emit (ec);
 
 			var_list.Reverse ();
+
+			DoEmitFinally (ec);
+		}
+
+		void EmitLocalVariableDeclFinally (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+
+			int i = assign.Length;
 			foreach (DictionaryEntry e in var_list){
-				LocalVariableReference var = (LocalVariableReference) e.Key;
+				Expression var = resolved_vars [--i];
 				Label skip = ig.DefineLabel ();
 				i--;
 				
@@ -3500,47 +3559,58 @@ namespace Mono.CSharp {
 
 						if (mi == null) {
 							Report.Error(-100, Mono.CSharp.Location.Null, "Internal error: No Dispose method which takes 0 parameters.");
-							return false;
+							return;
 						}
 
-						var.AddressOf (ec, AddressOp.Load);
+						IMemoryLocation mloc = (IMemoryLocation) var;
+
+						mloc.AddressOf (ec, AddressOp.Load);
 						ig.Emit (OpCodes.Call, mi);
 					}
 				}
 
 				ig.MarkLabel (skip);
-				ig.EndExceptionBlock ();
-			}
 
-			return false;
+				if (emit_finally) {
+					ig.EndExceptionBlock ();
+					if (i > 0)
+						ig.BeginFinallyBlock ();
+				}
+			}
 		}
 
-		bool EmitExpression (EmitContext ec)
+		void EmitExpression (EmitContext ec)
 		{
 			//
 			// Make a copy of the expression and operate on that.
 			//
 			ILGenerator ig = ec.ig;
-			LocalBuilder local_copy = ig.DeclareLocal (expr_type);
+			local_copy = ig.DeclareLocal (expr_type);
 			if (conv != null)
 				conv.Emit (ec);
 			else
 				expr.Emit (ec);
 			ig.Emit (OpCodes.Stloc, local_copy);
 
-			ig.BeginExceptionBlock ();
+			if (emit_finally)
+				ig.BeginExceptionBlock ();
+
 			Statement.Emit (ec);
 			
+			DoEmitFinally (ec);
+			if (emit_finally)
+				ig.EndExceptionBlock ();
+		}
+
+		void EmitExpressionFinally (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
 			Label skip = ig.DefineLabel ();
-			ig.BeginFinallyBlock ();
 			ig.Emit (OpCodes.Ldloc, local_copy);
 			ig.Emit (OpCodes.Brfalse, skip);
 			ig.Emit (OpCodes.Ldloc, local_copy);
 			ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
 			ig.MarkLabel (skip);
-			ig.EndExceptionBlock ();
-
-			return false;
 		}
 		
 		public override bool Resolve (EmitContext ec)
@@ -3565,7 +3635,7 @@ namespace Mono.CSharp {
 					return false;
 			}
 
-			ec.StartFlowBranching (FlowBranching.BranchingType.Exception, loc);
+			FlowBranchingException branching = ec.StartFlowBranching (this);
 
 			bool ok = Statement.Resolve (ec);
 
@@ -3573,7 +3643,8 @@ namespace Mono.CSharp {
 				ec.KillFlowBranching ();
 				return false;
 			}
-					
+
+			ResolveFinally (branching);					
 			FlowBranching.Reachability reachability = ec.EndFlowBranching ();
 
 			if (reachability.Returns != FlowBranching.FlowReturns.Always) {
@@ -3594,12 +3665,20 @@ namespace Mono.CSharp {
 			else if (expression_or_block is Expression)
 				EmitExpression (ec);
 		}
+
+		public override void EmitFinally (EmitContext ec)
+		{
+			if (expression_or_block is DictionaryEntry)
+				EmitLocalVariableDeclFinally (ec);
+			else if (expression_or_block is Expression)
+				EmitExpressionFinally (ec);
+		}
 	}
 
 	/// <summary>
 	///   Implementation of the foreach C# statement
 	/// </summary>
-	public class Foreach : Statement {
+	public class Foreach : ExceptionStatement {
 		Expression type;
 		Expression variable;
 		Expression expr;
@@ -3608,6 +3687,7 @@ namespace Mono.CSharp {
 		Expression empty, conv;
 		Type array_type, element_type;
 		Type var_type;
+		VariableStorage enumerator;
 		
 		public Foreach (Expression type, LocalVariableReference var, Expression expr,
 				Statement stmt, Location l)
@@ -3682,14 +3762,18 @@ namespace Mono.CSharp {
 				ok = false;
 
 			bool disposable = (hm != null) && hm.is_disposable;
+			FlowBranchingException branching = null;
 			if (disposable)
-				ec.StartFlowBranching (FlowBranching.BranchingType.Exception, loc);
+				branching = ec.StartFlowBranching (this);
 
 			if (!statement.Resolve (ec))
 				ok = false;
 
-			if (disposable)
+			if (disposable) {
+				ResolveFinally (branching);
 				ec.EndFlowBranching ();
+			} else
+				emit_finally = true;
 
 			ec.EndFlowBranching ();
 
@@ -3969,7 +4053,6 @@ namespace Mono.CSharp {
 		bool EmitCollectionForeach (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			VariableStorage enumerator;
 
 			enumerator = new VariableStorage (ec, hm.enumerator_type);
 			enumerator.EmitThis ();
@@ -4010,7 +4093,7 @@ namespace Mono.CSharp {
 			// Protect the code in a try/finalize block, so that
 			// if the beast implement IDisposable, we get rid of it
 			//
-			if (hm.is_disposable)
+			if (hm.is_disposable && emit_finally)
 				ig.BeginExceptionBlock ();
 			
 			Label end_try = ig.DefineLabel ();
@@ -4029,7 +4112,7 @@ namespace Mono.CSharp {
 				conv.Emit (ec);
 				ig.Emit (OpCodes.Stfld, ((FieldExpr) variable).FieldInfo);
 			} else 
-				((IAssignMethod)variable).EmitAssign (ec, conv);
+				((IAssignMethod)variable).EmitAssign (ec, conv, false, false);
 				
 			statement.Emit (ec);
 			ig.Emit (OpCodes.Br, ec.LoopBegin);
@@ -4042,29 +4125,30 @@ namespace Mono.CSharp {
 			// Now the finally block
 			//
 			if (hm.is_disposable) {
-				Label call_dispose = ig.DefineLabel ();
-				ig.BeginFinallyBlock ();
-
-				enumerator.EmitThis ();
-				enumerator.EmitLoad ();
-				ig.Emit (OpCodes.Isinst, TypeManager.idisposable_type);
-				ig.Emit (OpCodes.Dup);
-				ig.Emit (OpCodes.Brtrue_S, call_dispose);
-				ig.Emit (OpCodes.Pop);
-				ig.Emit (OpCodes.Endfinally);
-				
-				ig.MarkLabel (call_dispose);
-				ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
-				
-
-				// The runtime generates this anyways.
-				// ig.Emit (OpCodes.Endfinally);
-
-				ig.EndExceptionBlock ();
+				DoEmitFinally (ec);
+				if (emit_finally)
+					ig.EndExceptionBlock ();
 			}
 
 			ig.MarkLabel (ec.LoopEnd);
 			return false;
+		}
+
+		public override void EmitFinally (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			Label call_dispose = ig.DefineLabel ();
+
+			enumerator.EmitThis ();
+			enumerator.EmitLoad ();
+			ig.Emit (OpCodes.Isinst, TypeManager.idisposable_type);
+			ig.Emit (OpCodes.Dup);
+			ig.Emit (OpCodes.Brtrue_S, call_dispose);
+			ig.Emit (OpCodes.Pop);
+			ig.Emit (OpCodes.Endfinally);
+
+			ig.MarkLabel (call_dispose);
+			ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
 		}
 
 		//
@@ -4116,7 +4200,7 @@ namespace Mono.CSharp {
 					conv.Emit (ec);
 					ig.Emit (OpCodes.Stfld, ((FieldExpr) variable).FieldInfo);
 				} else 
-					((IAssignMethod)variable).EmitAssign (ec, conv);
+					((IAssignMethod)variable).EmitAssign (ec, conv, false, false);
 
 				statement.Emit (ec);
 
@@ -4196,7 +4280,7 @@ namespace Mono.CSharp {
 					conv.Emit (ec);
 					ig.Emit (OpCodes.Stfld, ((FieldExpr) variable).FieldInfo);
 				} else 
-					((IAssignMethod)variable).EmitAssign (ec, conv);
+					((IAssignMethod)variable).EmitAssign (ec, conv, false, false);
 				statement.Emit (ec);
 				ig.MarkLabel (ec.LoopBegin);
 				for (dim = rank - 1; dim >= 0; dim--){

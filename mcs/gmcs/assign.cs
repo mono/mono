@@ -29,19 +29,21 @@ namespace Mono.CSharp {
 	/// </remarks>
 	public interface IAssignMethod {
 		//
-		// This method will emit the code for the actual assignment
+		// This is an extra version of Emit. If leave_copy is `true'
+		// A copy of the expression will be left on the stack at the
+		// end of the code generated for EmitAssign
 		//
-		void EmitAssign (EmitContext ec, Expression source);
-
+		void Emit (EmitContext ec, bool leave_copy);
+		
 		//
-		// This method is invoked before any code generation takes
-		// place, and it is a mechanism to inform that the expression
-		// will be invoked more than once, and that the method should
-		// use temporary values to avoid having side effects
+		// This method does the assignment
+		// `source' will be stored into the location specified by `this'
+		// if `leave_copy' is true, a copy of `source' will be left on the stack
+		// if `prepare_for_load' is true, when `source' is emitted, there will
+		// be data on the stack that it can use to compuatate its value. This is
+		// for expressions like a [f ()] ++, where you can't call `f ()' twice.
 		//
-		// Example: a [ g () ] ++
-		//
-		void CacheTemporaries (EmitContext ec);
+		void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load);
 	}
 
 	/// <summary>
@@ -394,7 +396,7 @@ namespace Mono.CSharp {
 			}
 
 			Expression temp_source = (temp != null) ? temp : source;
-			((IAssignMethod) target).EmitAssign (ec, temp_source);
+			((IAssignMethod) target).EmitAssign (ec, temp_source, false, false);
 			return temp_source;
 		}
 
@@ -416,20 +418,8 @@ namespace Mono.CSharp {
 				((EventExpr) target).EmitAddOrRemove (ec, source);
 				return;
 			}
-
-			bool use_temporaries = false;
 			
-			//
-			// FIXME! We need a way to "probe" if the process can
-			// just use `dup' to propagate the result
-			// 
 			IAssignMethod am = (IAssignMethod) target;
-
-			if (this is CompoundAssign)
-				am.CacheTemporaries (ec);
-
-			if (!is_statement)
-				use_temporaries = true;
 
 			Expression temp_source;
 			if (embedded != null) {
@@ -442,27 +432,8 @@ namespace Mono.CSharp {
 				}
 			} else
 				temp_source = source;
-
-			if (use_temporaries){
-				//
-				// Doing this for every path is too expensive
-				// I wonder if we can work around this and have a less
-				// expensive path
-				//
-				LocalTemporary tempo;
-				
-				tempo = new LocalTemporary (ec, source.Type);
-				
-				temp_source.Emit (ec);
-				tempo.Store (ec);
-				am.EmitAssign (ec, tempo);
-				if (!is_statement)
-					tempo.Emit (ec);
-				
-				tempo.Release (ec);
-			} else {
-				am.EmitAssign (ec, temp_source);
-			}
+		
+			am.EmitAssign (ec, temp_source, !is_statement, this is CompoundAssign);
 				
 			if (embedded != null) {
 				if (temp != null)

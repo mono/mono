@@ -31,7 +31,7 @@ namespace Mono.CSharp {
 	
 	public class Yield : Statement {
 		public Expression expr;
-		bool in_exc;
+		ArrayList finally_blocks;
 		
 		public Yield (Expression expr, Location l)
 		{
@@ -71,19 +71,21 @@ namespace Mono.CSharp {
 			if (!CheckContext (ec, loc))
 				return false;
 
-			in_exc = ec.CurrentBranching.InTryOrCatch (false);
-			Type iterator_type = ec.CurrentIterator.IteratorType;
-			if (expr.Type != iterator_type){
-				expr = Convert.ImplicitConversionRequired (ec, expr, iterator_type, loc);
+			Iterator iterator = ec.CurrentIterator;
+			if (expr.Type != iterator.IteratorType){
+				expr = Convert.ImplicitConversionRequired (
+					ec, expr, iterator.IteratorType, loc);
 				if (expr == null)
 					return false;
 			}
+
+			ec.CurrentBranching.StealFinallyClauses (ref finally_blocks);
 			return true;
 		}
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			ec.CurrentIterator.MarkYield (ec, expr, in_exc);
+			ec.CurrentIterator.MarkYield (ec, expr, finally_blocks);
 		}
 	}
 
@@ -105,11 +107,12 @@ namespace Mono.CSharp {
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			ec.CurrentIterator.EmitYieldBreak (ec.ig, true);
+			ec.CurrentIterator.EmitYieldBreak (ec.ig);
 		}
 	}
 
 	public class Iterator : Class {
+		string original_name;
 		Block original_block;
 		Block block;
 
@@ -118,10 +121,13 @@ namespace Mono.CSharp {
 		bool is_enumerable;
 		bool is_static;
 
+		Hashtable fields;
+
 		//
 		// The state as we generate the iterator
 		//
-		ArrayList resume_labels = new ArrayList ();
+		Label move_next_ok, move_next_error;
+		ArrayList resume_points = new ArrayList ();
 		int pc;
 		
 		//
@@ -138,46 +144,138 @@ namespace Mono.CSharp {
 		Expression generic_enumerable_type;
 		TypeArguments generic_args;
 
+		protected enum State {
+			Uninitialized	= -2,
+			After,
+			Running
+		}
+
 		static int proxy_count;
 
-		public void EmitYieldBreak (ILGenerator ig, bool add_return)
+		public void EmitYieldBreak (ILGenerator ig)
 		{
 			ig.Emit (OpCodes.Ldarg_0);
-			IntConstant.EmitInt (ig, -1);
-			ig.Emit (OpCodes.Stfld, pc_field.FieldBuilder);
-			if (add_return){
-				ig.Emit (OpCodes.Ldc_I4_0);
-				ig.Emit (OpCodes.Ret);
-			}
+			IntConstant.EmitInt (ig, (int) State.After);
+			ig.Emit (OpCodes.Br, move_next_error);
 		}
 
 		public void EmitMoveNext (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 
+			move_next_ok = ig.DefineLabel ();
+			move_next_error = ig.DefineLabel ();
+
+			LocalBuilder retval = ec.GetTemporaryLocal (TypeManager.int32_type);
+
+			ig.BeginExceptionBlock ();
+
 			Label dispatcher = ig.DefineLabel ();
 			ig.Emit (OpCodes.Br, dispatcher);
-			Label entry_point = ig.DefineLabel ();
-			ig.MarkLabel (entry_point);
-			resume_labels.Add (entry_point);
+
+			ResumePoint entry_point = new ResumePoint (null);
+			resume_points.Add (entry_point);
+			entry_point.Define (ig);
 
 			ec.EmitTopBlock (original_block, parameters, Location);
+			EmitYieldBreak (ig);
 
-			EmitYieldBreak (ig, true);
-
-			//
-			// FIXME: Split the switch in blocks that can be consumed
-			//        by switch.
-			//
 			ig.MarkLabel (dispatcher);
 
-			Label [] labels = new Label [resume_labels.Count];
-			resume_labels.CopyTo (labels);
+			Label [] labels = new Label [resume_points.Count];
+			for (int i = 0; i < labels.Length; i++)
+				labels [i] = ((ResumePoint) resume_points [i]).Label;
+
 			ig.Emit (OpCodes.Ldarg_0);
 			ig.Emit (OpCodes.Ldfld, pc_field.FieldBuilder);
 			ig.Emit (OpCodes.Switch, labels);
-			ig.Emit (OpCodes.Ldc_I4_0); 
+
+			Label end = ig.DefineLabel ();
+
+			ig.MarkLabel (move_next_error);
+  			ig.Emit (OpCodes.Ldc_I4_0); 
+			ig.Emit (OpCodes.Stloc, retval);
+			ig.Emit (OpCodes.Leave, end);
+
+			ig.MarkLabel (move_next_ok);
+			ig.Emit (OpCodes.Ldc_I4_1);
+			ig.Emit (OpCodes.Stloc, retval);
+			ig.Emit (OpCodes.Leave, end);
+
+			ig.BeginFaultBlock ();
+
+			ig.Emit (OpCodes.Ldarg_0);
+			ig.Emit (OpCodes.Callvirt, dispose.MethodBuilder);
+
+			ig.EndExceptionBlock ();
+
+			ig.MarkLabel (end);
+			ig.Emit (OpCodes.Ldloc, retval);
 			ig.Emit (OpCodes.Ret);
+		}
+
+		public void EmitDispose (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+
+			Label end = ig.DefineLabel ();
+			Label dispatcher = ig.DefineLabel ();
+			ig.Emit (OpCodes.Br, dispatcher);
+
+			Label [] labels = new Label [resume_points.Count];
+			for (int i = 0; i < labels.Length; i++) {
+				ResumePoint point = (ResumePoint) resume_points [i];
+
+				if (point.FinallyBlocks == null) {
+					labels [i] = end;
+					continue;
+				}
+
+				labels [i] = ig.DefineLabel ();
+				ig.MarkLabel (labels [i]);
+
+				ig.BeginExceptionBlock ();
+				ig.BeginFinallyBlock ();
+
+				foreach (ExceptionStatement stmt in point.FinallyBlocks) {
+					if (stmt != null)
+						stmt.EmitFinally (ec);
+				}
+
+				ig.EndExceptionBlock ();
+				ig.Emit (OpCodes.Br, end);
+			}
+
+			ig.MarkLabel (dispatcher);
+			ig.Emit (OpCodes.Ldarg_0);
+			ig.Emit (OpCodes.Ldfld, pc_field.FieldBuilder);
+			ig.Emit (OpCodes.Switch, labels);
+
+			ig.Emit (OpCodes.Ldarg_0);
+			IntConstant.EmitInt (ig, (int) State.After);
+			ig.Emit (OpCodes.Stfld, pc_field.FieldBuilder);
+
+			ig.MarkLabel (end);
+		}
+
+		protected class ResumePoint
+		{
+			public Label Label;
+			public readonly ExceptionStatement[] FinallyBlocks;
+
+			public ResumePoint (ArrayList list)
+			{
+				if (list != null) {
+					FinallyBlocks = new ExceptionStatement [list.Count];
+					list.CopyTo (FinallyBlocks, 0);
+				}
+			}
+
+			public void Define (ILGenerator ig)
+			{
+				Label = ig.DefineLabel ();
+				ig.MarkLabel (Label);
+			}
 		}
 
 		// 
@@ -190,13 +288,21 @@ namespace Mono.CSharp {
 		//
 		public FieldBuilder MapVariable (string pfx, string name, Type t)
 		{
-			return TypeBuilder.DefineField (pfx + name, t, FieldAttributes.Public);
+			string full_name = pfx + name;
+			FieldBuilder fb = (FieldBuilder) fields [full_name];
+			if (fb != null)
+				return fb;
+
+			fb = TypeBuilder.DefineField (full_name, t, FieldAttributes.Private);
+			fields.Add (full_name, fb);
+			return fb;
 		}
-		
+
 		//
 		// Called back from Yield
 		//
-		public void MarkYield (EmitContext ec, Expression expr, bool in_exc)
+		public void MarkYield (EmitContext ec, Expression expr,
+				       ArrayList finally_blocks)
 		{
 			ILGenerator ig = ec.ig;
 
@@ -212,29 +318,26 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Stfld, pc_field.FieldBuilder);
 
 			// Return ok
-			ig.Emit (OpCodes.Ldc_I4_1);
-			
-			// Find out how to "leave"
-			if (in_exc || !ec.IsLastStatement){
-				Type old = ec.ReturnType;
-				ec.ReturnType = TypeManager.int32_type;
-				ig.Emit (OpCodes.Stloc, ec.TemporaryReturn ());
-				ec.ReturnType = old;
-			}
+			ig.Emit (OpCodes.Br, move_next_ok);
 
-			if (in_exc){
-				ec.NeedReturnLabel ();
-				ig.Emit (OpCodes.Leave, ec.ReturnLabel);
-			} else if (ec.IsLastStatement){
-				ig.Emit (OpCodes.Ret);
-			} else {
-				ec.NeedReturnLabel ();
-				ig.Emit (OpCodes.Br, ec.ReturnLabel);
-			}
-			
-			Label resume_point = ig.DefineLabel ();
-			ig.MarkLabel (resume_point);
-			resume_labels.Add (resume_point);
+			ResumePoint point = new ResumePoint (finally_blocks);
+			resume_points.Add (point);
+			point.Define (ig);
+		}
+
+		public void MarkFinally (EmitContext ec, ArrayList finally_blocks)
+		{
+			ILGenerator ig = ec.ig;
+
+			// increment pc
+			pc++;
+			ig.Emit (OpCodes.Ldarg_0);
+			IntConstant.EmitInt (ig, pc);
+			ig.Emit (OpCodes.Stfld, pc_field.FieldBuilder);
+
+			ResumePoint point = new ResumePoint (finally_blocks);
+			resume_points.Add (point);
+			point.Define (ig);
 		}
 
 		private static MemberName MakeProxyName (string name)
@@ -259,12 +362,13 @@ namespace Mono.CSharp {
 			this.return_type = return_type;
 			this.param_types = param_types;
 			this.parameters = parameters;
+			this.original_name = name;
 			this.original_block = block;
 			this.block = new Block (null);
 
-			is_static = (modifiers & Modifiers.STATIC) != 0;
+			fields = new Hashtable ();
 
-			container.AddIterator (this);
+			is_static = (modifiers & Modifiers.STATIC) != 0;
 		}
 
 		public bool Define ()
@@ -274,7 +378,7 @@ namespace Mono.CSharp {
 					1624, Location,
 					"The body of `{0}' cannot be an iterator block " +
 					"because '{1}' is not an iterator interface type",
-					Name, TypeManager.CSharpName (return_type));
+					original_name, TypeManager.CSharpName (return_type));
 				return false;
 			}
 
@@ -316,6 +420,8 @@ namespace Mono.CSharp {
 
 			iterator_type_expr = new TypeExpression (iterator_type, Location);
 
+			container.AddIterator (this);
+
 			Bases = list;
 			return true;
 		}
@@ -346,6 +452,8 @@ namespace Mono.CSharp {
 
 		Field pc_field;
 		Field current_field;
+		Method dispose;
+
 		public Field this_field;
 		public Field[] parameter_fields;
 
@@ -357,15 +465,15 @@ namespace Mono.CSharp {
 			if (!is_static) {
 				Type t = container.TypeBuilder;
 				args.Add (new Argument (
-					new SimpleParameterReference (t, 0, Location),
-					Argument.AType.Expression));
+					new ThisParameterReference (t, 0, Location)));
 			}
+
+			args.Add (new Argument (new BoolLiteral (false)));
 
 			for (int i = 0; i < parameters.Count; i++) {
 				Type t = parameters.ParameterType (i);
 				args.Add (new Argument (
-					new SimpleParameterReference (t, first + i, Location),
-					Argument.AType.Expression));
+					new SimpleParameterReference (t, first + i, Location)));
 			}
 
 			Expression new_expr = new New (
@@ -411,26 +519,26 @@ namespace Mono.CSharp {
 		{
 			Parameters ctor_params;
 
-			if (!is_static) {
-				Parameter this_param = new Parameter (
+			ArrayList list = new ArrayList ();
+
+			if (!is_static)
+				list.Add (new Parameter (
 					new TypeExpression (container.TypeBuilder, Location),
-					"this", Parameter.Modifier.NONE, null);
+					"this", Parameter.Modifier.NONE, null));
+			list.Add (new Parameter (
+				TypeManager.system_boolean_expr, "initialized",
+				Parameter.Modifier.NONE, null));
 
-				Parameter[] old_fixed = parameters.Parameters.FixedParameters;
-				Parameter[] fixed_params;
-				if (old_fixed != null) {
-					fixed_params = new Parameter [old_fixed.Length + 1];
-					old_fixed.CopyTo (fixed_params, 1);
-				} else {
-					fixed_params = new Parameter [1];
-				}
-				fixed_params [0] = this_param;
+			Parameter[] old_fixed = parameters.Parameters.FixedParameters;
+			if (old_fixed != null)
+				list.AddRange (old_fixed);
 
-				ctor_params = new Parameters (
-					fixed_params, parameters.Parameters.ArrayParameter,
-					Location);
-			} else
-				ctor_params = parameters.Parameters;
+			Parameter[] fixed_params = new Parameter [list.Count];
+			list.CopyTo (fixed_params);
+
+			ctor_params = new Parameters (
+				fixed_params, parameters.Parameters.ArrayParameter,
+				Location);
 
 			Constructor ctor = new Constructor (
 				this, Name, Modifiers.PUBLIC, ctor_params,
@@ -452,7 +560,7 @@ namespace Mono.CSharp {
 				block.AddStatement (new StatementExpression (assign, Location));
 			}
 
-			int first = is_static ? 1 : 2;
+			int first = is_static ? 2 : 3;
 
 			for (int i = 0; i < parameters.Count; i++) {
 				Type t = parameters.ParameterType (i);
@@ -464,6 +572,15 @@ namespace Mono.CSharp {
 
 				block.AddStatement (new StatementExpression (assign, Location));
 			}
+
+			State initial = is_enumerable ? State.Uninitialized : State.Running;
+			block.AddStatement (new SetState (this, initial, Location));
+
+			block.AddStatement (new If (
+				new SimpleParameterReference (
+					TypeManager.bool_type, first - 1, Location),
+				new SetState (this, State.Running, Location),
+				Location));
 		}
 
 		Statement Create_ThrowInvalidOperation ()
@@ -504,7 +621,7 @@ namespace Mono.CSharp {
 				new Binary (
 					Binary.Operator.LessThanOrEqual,
 					new FieldExpression (pc_field),
-					new IntLiteral (0), Location),
+					new IntLiteral ((int) State.Running), Location),
 				Create_ThrowInvalidOperation (),
 				new Return (
 					new FieldExpression (current_field), Location),
@@ -556,8 +673,40 @@ namespace Mono.CSharp {
 
 			get_enumerator.Block = new Block (null);
 
-			This the_this = new This (block, Location);
-			get_enumerator.Block.AddStatement (new Return (the_this, Location));
+			Expression ce = new MemberAccess (
+				new SimpleName ("System.Threading.Interlocked", Location),
+				"CompareExchange", Location);
+
+			Expression pc = new FieldExpression (pc_field);
+			Expression before = new IntLiteral ((int) State.Running);
+			Expression uninitialized = new IntLiteral ((int) State.Uninitialized);
+
+			ArrayList args = new ArrayList ();
+			args.Add (new Argument (pc, Argument.AType.Ref));
+			args.Add (new Argument (before, Argument.AType.Expression));
+			args.Add (new Argument (uninitialized, Argument.AType.Expression));
+
+			get_enumerator.Block.AddStatement (new If (
+				new Binary (
+					Binary.Operator.Equality,
+					new Invocation (ce, args, Location),
+					uninitialized, Location),
+				new Return (new This (block, Location), Location),
+				Location));
+
+			args = new ArrayList ();
+			if (!is_static)
+				args.Add (new Argument (new FieldExpression (this_field)));
+
+			args.Add (new Argument (new BoolLiteral (true)));
+
+			for (int i = 0; i < parameters.Count; i++)
+				args.Add (new Argument (
+						  new FieldExpression (parameter_fields [i])));
+
+			Expression new_expr = new New (
+				new TypeExpression (TypeBuilder, Location), args, Location);
+			get_enumerator.Block.AddStatement (new Return (new_expr, Location));
 		}
 
 		protected class SimpleParameterReference : Expression
@@ -579,7 +728,26 @@ namespace Mono.CSharp {
 
 			public override void Emit (EmitContext ec)
 			{
+				DoEmit (ec);
+			}
+
+			protected virtual void DoEmit (EmitContext ec)
+			{
 				ParameterReference.EmitLdArg (ec.ig, idx);
+			}
+		}
+
+		protected class ThisParameterReference : SimpleParameterReference
+		{
+			public ThisParameterReference (Type type, int idx, Location loc)
+				: base (type, idx, loc)
+			{ }
+
+			protected override void DoEmit (EmitContext ec)
+			{
+				base.DoEmit (ec);
+				if (ec.TypeContainer is Struct)
+					ec.ig.Emit (OpCodes.Ldobj, type);
 			}
 		}
 
@@ -605,7 +773,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public class MoveNextMethod : Statement {
+		protected class MoveNextMethod : Statement {
 			Iterator iterator;
 
 			public MoveNextMethod (Iterator iterator, Location loc)
@@ -628,7 +796,7 @@ namespace Mono.CSharp {
 
 				EmitContext new_ec = new EmitContext (
 					iterator.container, loc, ec.ig,
-					iterator.return_type, code_flags);
+					TypeManager.int32_type, code_flags);
 
 				new_ec.CurrentIterator = iterator;
 
@@ -636,29 +804,79 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected class DoYieldBreak : Statement
-		{
+		protected class DisposeMethod : Statement {
 			Iterator iterator;
-			bool add_return;
 
-			public DoYieldBreak (Iterator iterator, bool add_return,
-					     Location loc)
+			public DisposeMethod (Iterator iterator, Location loc)
 			{
-				this.iterator = iterator;
-				this.add_return = add_return;
 				this.loc = loc;
+				this.iterator = iterator;
 			}
 
 			public override bool Resolve (EmitContext ec)
 			{
-				if (add_return)
-					ec.CurrentBranching.CurrentUsageVector.Return ();
 				return true;
 			}
 
 			protected override void DoEmit (EmitContext ec)
 			{
-			       iterator.EmitYieldBreak (ec.ig, add_return);
+				iterator.EmitDispose (ec);
+			}
+		}
+
+		protected class StatementList : Statement {
+			ArrayList statements;
+
+			public StatementList (Location loc)
+			{
+				this.loc = loc;
+				statements = new ArrayList ();
+			}
+
+			public void Add (Statement statement)
+			{
+				statements.Add (statement);
+			}
+
+			public override bool Resolve (EmitContext ec)
+			{
+				foreach (Statement stmt in statements) {
+					if (!stmt.Resolve (ec))
+						return false;
+				}
+
+				return true;
+			}
+
+			protected override void DoEmit (EmitContext ec)
+			{
+				foreach (Statement stmt in statements)
+					stmt.Emit (ec);
+			}
+		}
+
+		protected class SetState : Statement
+		{
+			Iterator iterator;
+			State state;
+
+			public SetState (Iterator iterator, State state, Location loc)
+			{
+				this.iterator = iterator;
+				this.state = state;
+				this.loc = loc;
+			}
+
+			public override bool Resolve (EmitContext ec)
+			{
+				return true;
+			}
+
+			protected override void DoEmit (EmitContext ec)
+			{
+				ec.ig.Emit (OpCodes.Ldarg_0);
+				IntConstant.EmitInt (ec.ig, (int) state);
+				ec.ig.Emit (OpCodes.Stfld, iterator.pc_field.FieldBuilder);
 			}
 		}
 
@@ -676,15 +894,14 @@ namespace Mono.CSharp {
 
 		void Define_Dispose ()
 		{
-			Method dispose = new Method (
+			dispose = new Method (
 				this, TypeManager.system_void_expr, Modifiers.PUBLIC,
 				false, new MemberName ("Dispose"),
 				Parameters.EmptyReadOnlyParameters, null, Location);
 			AddMethod (dispose);
 
 			dispose.Block = new Block (null);
-			dispose.Block.AddStatement (new DoYieldBreak (this, false, Location));
-			dispose.Block.AddStatement (new Return (null, Location));
+			dispose.Block.AddStatement (new DisposeMethod (this, Location));
 		}
 
 		public Block Block {

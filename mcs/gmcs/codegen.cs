@@ -462,6 +462,14 @@ namespace Mono.CSharp {
 			return current_flow_branching;
 		}
 
+		public FlowBranchingException StartFlowBranching (ExceptionStatement stmt)
+		{
+			FlowBranchingException branching = new FlowBranchingException (
+				CurrentBranching, stmt);
+			current_flow_branching = branching;
+			return branching;
+		}
+
 		// <summary>
 		//   Ends a code branching.  Merges the state of locals and parameters
 		//   from all the children of the ending branching.
@@ -697,7 +705,7 @@ namespace Mono.CSharp {
 
 		public void NeedReturnLabel ()
 		{
-			if (!HasReturnLabel) {
+			if (!InIterator && !HasReturnLabel) {
 				ReturnLabel = ig.DefineLabel ();
 				HasReturnLabel = true;
 			}
@@ -752,17 +760,14 @@ namespace Mono.CSharp {
 		//
 		public void EmitThis ()
 		{
-			if (InIterator){
-				ig.Emit (OpCodes.Ldarg_0);
-				if (!IsStatic){
-					FieldBuilder this_field = CurrentIterator.this_field.FieldBuilder;
-					if (TypeManager.IsValueType (this_field.FieldType))
-						ig.Emit (OpCodes.Ldflda, this_field);
-					else
-						ig.Emit (OpCodes.Ldfld, this_field);
-				} 
-			} else
-				ig.Emit (OpCodes.Ldarg_0);
+			ig.Emit (OpCodes.Ldarg_0);
+			if (InIterator && !IsStatic){
+				FieldBuilder this_field = CurrentIterator.this_field.FieldBuilder;
+				if (TypeManager.IsValueType (this_field.FieldType))
+					ig.Emit (OpCodes.Ldflda, this_field);
+				else
+					ig.Emit (OpCodes.Ldfld, this_field);
+			}
 		}
 
 		public Expression GetThis (Location loc)
