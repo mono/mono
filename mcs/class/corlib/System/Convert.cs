@@ -2372,13 +2372,22 @@ namespace System {
 			int len = value.Length;
 			bool negative = false;
 
-			
-			if (fromBase == 10) {
+			// special processing for some bases
+			switch (fromBase) {
+			case 10:
 				if (value[i] == '-') {
 					negative = true;
 					i++;
 				}
+				break;
+			case 16:
+				// 0x00 or 0X00
+				if ((value[i] == '0') && ((value [i+1] == 'x') || (value [i+1] == 'X'))) {
+					i+=2;
+				}
+				break;
 			}
+
 			if (value[i] == '+') {
 				i++;
 			}
@@ -2527,7 +2536,7 @@ namespace System {
 				return null;
 
 			if (conversionType == null)
-				throw new InvalidCastException ("Cannot cast to destination type.");
+				throw new ArgumentNullException ("convertionType");
 
 			if (value.GetType () == conversionType)
 				return value;

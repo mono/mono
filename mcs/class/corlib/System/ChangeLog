@@ -1,6 +1,8 @@
 2004-05-26  Sebastien Pouliot  <sebastien@ximian.com>
 
-	Environment.cs: Bumped mono_corlib_version to 20 (rng interface).
+	* Byte.cs: Throw an OverflowException for negative numbers.
+	* Convert.cs: Accept 0x and 0X as prefix when parsing base16 strings.
+	* Environment.cs: Bumped mono_corlib_version to 20 (rng interface).
 
 2004-05-25  Sebastien Pouliot  <sebastien@ximian.com>
 

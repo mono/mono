@@ -77,6 +77,10 @@ namespace System
 			// look for the optional '+' sign
 			if (s [i] == '+')
 				i++;
+			else if (s [i] == '-') {
+				throw new OverflowException (
+					Locale.GetText ("Negative number"));
+			}
 
 			// we should just have numerals followed by whitespace now
 			for (; i < len; i++){
