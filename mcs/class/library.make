@@ -9,7 +9,7 @@ clean:
 .response: $(LIB_LIST)
 	cat $^ |egrep '\.cs$$' >$@
 
-.makefrag: $(LIB_LIST) ../library.make
+.makefrag: $(LIB_LIST) $(topdir)/class/library.make
 	echo -n "library-deps.stamp: " >$@.new
 	cat $^ |egrep '\.cs$$' | sed -e 's,\.cs,.cs \\,' >>$@.new
 	cat $@.new |sed -e '$$s, \\$$,,' >$@

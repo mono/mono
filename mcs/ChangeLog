@@ -2,6 +2,7 @@
 
 	* class/library.make: Oops, the deps weren't right -- touching a .cs
 	file didn't cause the libraries to be rebuilt.
+	(clean): Robustify this rule a bit.
 
 2002-07-20  Martin Baulig  <martin@gnome.org>
 
