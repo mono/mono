@@ -83,7 +83,9 @@ static void
 append (GpPath *path, float x, float y, GpPathPointType type)
 {
         byte t = (byte) type;
-        GpPointF pt = { x, y };
+        GpPointF pt;
+        pt.X = x;
+        pt.Y = y;
         g_array_append_val (path->points, pt);
         g_byte_array_append (path->types, &t, 1);
 }
