@@ -36,6 +36,12 @@ using System.Xml.Xsl;
 using System.Globalization;
 using Mono.Xml.XPath;
 
+#if NET_2_0
+using NSResolver = System.Xml.IXmlNamespaceResolver;
+#else
+using NSResolver = System.Xml.XmlNamespaceManager;
+#endif
+
 namespace System.Xml.XPath
 {
 #if XPATH_DEBUG
@@ -44,7 +50,7 @@ namespace System.Xml.XPath
 	internal class CompiledExpression : XPathExpression
 #endif
 	{
-		protected XmlNamespaceManager _nsm;
+		protected NSResolver _nsm;
 		protected Expression _expr;
 		XPathSorters _sorters;
 
@@ -69,7 +75,7 @@ namespace System.Xml.XPath
 		{
 			_nsm = nsManager;
 		}
-		internal XmlNamespaceManager NamespaceManager { get { return _nsm; } }
+		internal NSResolver NamespaceManager { get { return _nsm; } }
 		public override String Expression { get { return _expr.ToString (); }}
 		public override XPathResultType ReturnType { get { return _expr.ReturnType; }}
 
@@ -1141,7 +1147,7 @@ namespace System.Xml.XPath
 		{
 			_axis = new AxisSpecifier (axis);
 		}
-		public abstract bool Match (XmlNamespaceManager nsm, XPathNavigator nav);
+		public abstract bool Match (NSResolver nsm, XPathNavigator nav);
 		public AxisSpecifier Axis { get { return _axis; }}
 		public override object Evaluate (BaseIterator iter)
 		{
@@ -1149,7 +1155,7 @@ namespace System.Xml.XPath
 			return new AxisIterator (iterAxis, this);
 		}
 		
-		public abstract void GetInfo (out string name, out string ns, out XPathNodeType nodetype, XmlNamespaceManager nsm);
+		public abstract void GetInfo (out string name, out string ns, out XPathNodeType nodetype, NSResolver nsm);
 
 		public override bool RequireSorting {
 			get {
@@ -1224,7 +1230,7 @@ namespace System.Xml.XPath
 			}
 		}
 
-		public override bool Match (XmlNamespaceManager nsm, XPathNavigator nav)
+		public override bool Match (NSResolver nsm, XPathNavigator nav)
 		{
 			XPathNodeType nodeType = nav.NodeType;
 			switch (type)
@@ -1244,7 +1250,7 @@ namespace System.Xml.XPath
 			}
 		}
 		
-		public override void GetInfo (out string name, out string ns, out XPathNodeType nodetype, XmlNamespaceManager nsm)
+		public override void GetInfo (out string name, out string ns, out XPathNodeType nodetype, NSResolver nsm)
 		{
 			name = _param;
 			ns = null;
@@ -1274,7 +1280,7 @@ namespace System.Xml.XPath
 		
 		public XmlQualifiedName Name { get { return _name; } }
 
-		public override bool Match (XmlNamespaceManager nsm, XPathNavigator nav)
+		public override bool Match (NSResolver nsm, XPathNavigator nav)
 		{
 			// must be the correct node type
 			if (nav.NodeType != _axis.NodeType)
@@ -1305,7 +1311,7 @@ namespace System.Xml.XPath
 			return strURI1 == nav.NamespaceURI;
 		}
 		
-		public override void GetInfo (out string name, out string ns, out XPathNodeType nodetype, XmlNamespaceManager nsm)
+		public override void GetInfo (out string name, out string ns, out XPathNodeType nodetype, NSResolver nsm)
 		{
 			// must be the correct node type
 			nodetype = _axis.NodeType;

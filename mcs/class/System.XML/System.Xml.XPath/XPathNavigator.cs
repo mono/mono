@@ -36,9 +36,20 @@ using System.Xml;
 using System.Xml.Schema;
 using Mono.Xml.XPath;
 
+#if NET_2_0
+using NSResolver = System.Xml.IXmlNamespaceResolver;
+#else
+using NSResolver = System.Xml.XmlNamespaceManager;
+#endif
+
 namespace System.Xml.XPath
 {
+#if NET_2_0
+	public abstract class XPathNavigator : XPathItem,
+		ICloneable, IXPathNavigable, IXmlNamespaceResolver
+#else
 	public abstract class XPathNavigator : ICloneable
+#endif
 	{
 		#region Constructor
 
@@ -70,7 +81,10 @@ namespace System.Xml.XPath
 
 		public abstract string Prefix { get; }
 
+#if NET_2_0
+#else
 		public abstract string Value { get; }
+#endif
 
 		public abstract string XmlLang { get; }
 
@@ -203,7 +217,7 @@ namespace System.Xml.XPath
 			return Evaluate (expr, context, null);
 		}
 		
-		internal virtual object Evaluate (XPathExpression expr, XPathNodeIterator context, XmlNamespaceManager ctx)
+		internal virtual object Evaluate (XPathExpression expr, XPathNodeIterator context, NSResolver ctx)
 		{
 			CompiledExpression cexpr = (CompiledExpression) expr;
 			if (ctx == null)
@@ -216,7 +230,7 @@ namespace System.Xml.XPath
 			return cexpr.Evaluate (iterContext);
 		}
 
-		internal XPathNodeIterator EvaluateNodeSet (XPathExpression expr, XPathNodeIterator context, XmlNamespaceManager ctx)
+		internal XPathNodeIterator EvaluateNodeSet (XPathExpression expr, XPathNodeIterator context, NSResolver ctx)
 		{
 			CompiledExpression cexpr = (CompiledExpression) expr;
 			if (ctx == null)
@@ -229,7 +243,7 @@ namespace System.Xml.XPath
 			return cexpr.EvaluateNodeSet (iterContext);
 		}
 
-		internal string EvaluateString (XPathExpression expr, XPathNodeIterator context, XmlNamespaceManager ctx)
+		internal string EvaluateString (XPathExpression expr, XPathNodeIterator context, NSResolver ctx)
 		{
 			CompiledExpression cexpr = (CompiledExpression) expr;
 			if (ctx == null)
@@ -242,7 +256,7 @@ namespace System.Xml.XPath
 			return cexpr.EvaluateString (iterContext);
 		}
 
-		internal double EvaluateNumber (XPathExpression expr, XPathNodeIterator context, XmlNamespaceManager ctx)
+		internal double EvaluateNumber (XPathExpression expr, XPathNodeIterator context, NSResolver ctx)
 		{
 			CompiledExpression cexpr = (CompiledExpression) expr;
 			if (ctx == null)
@@ -255,7 +269,7 @@ namespace System.Xml.XPath
 			return cexpr.EvaluateNumber (iterContext);
 		}
 
-		internal bool EvaluateBoolean (XPathExpression expr, XPathNodeIterator context, XmlNamespaceManager ctx)
+		internal bool EvaluateBoolean (XPathExpression expr, XPathNodeIterator context, NSResolver ctx)
 		{
 			CompiledExpression cexpr = (CompiledExpression) expr;
 			if (ctx == null)
@@ -412,7 +426,7 @@ namespace System.Xml.XPath
 			return Select (expr, null);
 		}
 		
-		internal virtual XPathNodeIterator Select (XPathExpression expr, XmlNamespaceManager ctx)
+		internal virtual XPathNodeIterator Select (XPathExpression expr, NSResolver ctx)
 		{
 			CompiledExpression cexpr = (CompiledExpression) expr;
 			if (ctx == null)
@@ -497,30 +511,11 @@ namespace System.Xml.XPath
 		}
 
 		[MonoTODO]
-		public virtual bool CheckValidity (XmlSchemaSet schemas, ValidationEventHandler handler, XmlSchemaAttribute attribute)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public virtual bool CheckValidity (XmlSchemaSet schemas, ValidationEventHandler handler, XmlSchemaElement element)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public virtual bool CheckValidity (XmlSchemaSet schemas, ValidationEventHandler handler, XmlSchemaType schemaType)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
 		public virtual object CopyAsObject (Type targetType)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual XPathNavigator CreateNavigator ()
 		{
 			return Clone ();
@@ -529,7 +524,7 @@ namespace System.Xml.XPath
 		[MonoTODO]
 		public virtual object Evaluate (string xpath, IXmlNamespaceResolver nsResolver)
 		{
-			throw new NotImplementedException ();
+			return Evaluate (Compile (xpath), null, nsResolver);
 		}
 
 		[MonoTODO]
@@ -577,13 +572,13 @@ namespace System.Xml.XPath
 			throw new NotImplementedException ();
 		}
 
-		public virtual object ValueAs (Type type)
+		public override object ValueAs (Type type)
 		{
-			return ValueAs (type, null);
+			return ValueAs (type, this);
 		}
 
 		[MonoTODO]
-		public virtual object ValueAs (Type type, IXmlNamespaceResolver nsResolver)
+		public override object ValueAs (Type type, IXmlNamespaceResolver nsResolver)
 		{
 			throw new NotImplementedException ();
 		}
@@ -595,25 +590,20 @@ namespace System.Xml.XPath
 		}
 
 		[MonoTODO]
-		public bool HasNamespaceResolver {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
 		public virtual string InnerXml {
 			get { throw new NotImplementedException (); }
 		}
 
-		public virtual bool IsNode {
+		[MonoTODO]
+		public override bool IsNode {
 			get { throw new NotImplementedException (); }
 		}
 
-/* FIXME: It should be member, but requires new Collection type.
 		[MonoTODO]
 		public virtual IKeyComparer NavigatorComparer {
 			get { throw new NotImplementedException (); }
 		}
-*/
+
 		[MonoTODO]
 		public virtual string OuterXml {
 			get { throw new NotImplementedException (); }
@@ -634,46 +624,57 @@ namespace System.Xml.XPath
 			get { throw new NotImplementedException (); }
 		}
 
-		public virtual bool ValueAsBoolean {
+		[MonoTODO]
+		public override bool ValueAsBoolean {
 			get { throw new NotImplementedException (); }
 		}
 
-		public virtual DateTime ValueAsDateTime {
+		[MonoTODO]
+		public override DateTime ValueAsDateTime {
 			get { throw new NotImplementedException (); }
 		}
 
-		public virtual decimal ValueAsDecimal {
+		[MonoTODO]
+		public override decimal ValueAsDecimal {
 			get { throw new NotImplementedException (); }
 		}
 
-		public virtual double ValueAsDouble {
+		[MonoTODO]
+		public override double ValueAsDouble {
 			get { throw new NotImplementedException (); }
 		}
 
-		public virtual int ValueAsInt32 {
+		[MonoTODO]
+		public override int ValueAsInt32 {
 			get { throw new NotImplementedException (); }
 		}
 
-		public virtual long ValueAsInt64 {
+		[MonoTODO]
+		public override long ValueAsInt64 {
 			get { throw new NotImplementedException (); }
 		}
 
-		public virtual ICollection ValueAsList {
+		[MonoTODO]
+		public override ICollection ValueAsList {
 			get { throw new NotImplementedException (); }
 		}
 
-		public virtual float ValueAsSingle {
+		[MonoTODO]
+		public override float ValueAsSingle {
 			get { throw new NotImplementedException (); }
 		}
 
+		[MonoTODO]
 		public virtual Type ValueType {
 			get { throw new NotImplementedException (); }
 		}
 
+		[MonoTODO]
 		public virtual XmlSchemaType XmlType {
 			get { throw new NotImplementedException (); }
 		}
 
+		[MonoTODO]
 		protected XmlReader GetValidatingReader (XmlSchemaSet schemas, ValidationEventHandler handler)
 		{
 			throw new NotImplementedException ();

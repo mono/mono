@@ -1,3 +1,12 @@
+2004-07-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Expression.cs, Iterator.cs, XPathNavigator.cs :
+	  Use IXmlNamespaceResolver for net 2.0. Removed unused code.
+	* XPathEditableNavigator.cs : fixed namespace.
+	* XPathNavigator.cs :
+	  Fixed inheritance. Added missing MonoTODO.
+	  Removed old .net 1.2 code. 
+
 2004-06-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DefaultContext.cs : Globalization.

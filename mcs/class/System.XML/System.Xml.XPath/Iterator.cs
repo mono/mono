@@ -36,23 +36,29 @@ using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 
+#if NET_2_0
+using NSResolver = System.Xml.IXmlNamespaceResolver;
+#else
+using NSResolver = System.Xml.XmlNamespaceManager;
+#endif
+
 namespace System.Xml.XPath
 {
 	internal abstract class BaseIterator : XPathNodeIterator
 	{
-		private XmlNamespaceManager _nsm;
+		private NSResolver _nsm;
 		protected bool _needClone = true; // TODO: use this field in practice.
 
 		internal BaseIterator (BaseIterator other)
 		{
 			_nsm = other._nsm;
 		}
-		internal BaseIterator (XmlNamespaceManager nsm)
+		internal BaseIterator (NSResolver nsm)
 		{
 			_nsm = nsm;
 		}
 
-		public XmlNamespaceManager NamespaceManager
+		public NSResolver NamespaceManager
 		{
 			get { return _nsm; }
 			set { _nsm = value; }
@@ -106,7 +112,7 @@ namespace System.Xml.XPath
 			_pos = other._pos;
 			_current = other._current.Clone ();
 		}
-		public SimpleIterator (XPathNavigator nav, XmlNamespaceManager nsm) : base (nsm)
+		public SimpleIterator (XPathNavigator nav, NSResolver nsm) : base (nsm)
 		{
 			_nav = nav.Clone ();
 			_current = nav.Clone ();
@@ -119,7 +125,7 @@ namespace System.Xml.XPath
 	internal class SelfIterator : SimpleIterator
 	{
 		public SelfIterator (BaseIterator iter) : base (iter) {}
-		public SelfIterator (XPathNavigator nav, XmlNamespaceManager nsm) : base (nav, nsm) {}
+		public SelfIterator (XPathNavigator nav, NSResolver nsm) : base (nav, nsm) {}
 		protected SelfIterator (SelfIterator other) : base (other) {}
 		public override XPathNodeIterator Clone () { return new SelfIterator (this); }
 		public override bool MoveNext ()
@@ -140,7 +146,7 @@ namespace System.Xml.XPath
 	{
 		public NullIterator (BaseIterator iter) : base (iter) {}
 		public NullIterator (XPathNavigator nav) : this (nav, null) {}
-		public NullIterator (XPathNavigator nav, XmlNamespaceManager nsm) : base (nav, nsm) {}
+		public NullIterator (XPathNavigator nav, NSResolver nsm) : base (nav, nsm) {}
 		protected NullIterator (NullIterator other) : base (other) {}
 		public override XPathNodeIterator Clone () { return new NullIterator (this); }
 		public override bool MoveNext ()
@@ -178,7 +184,7 @@ namespace System.Xml.XPath
 	{
 		public ParentIterator (BaseIterator iter) : base (iter) {}
 		protected ParentIterator (ParentIterator other) : base (other) {}
-		public ParentIterator (XPathNavigator nav, XmlNamespaceManager nsm) : base (nav, nsm) {}
+		public ParentIterator (XPathNavigator nav, NSResolver nsm) : base (nav, nsm) {}
 		public override XPathNodeIterator Clone () { return new ParentIterator (this); }
 		public override bool MoveNext ()
 		{
@@ -1062,52 +1068,6 @@ namespace System.Xml.XPath
 		public override bool RequireSorting { get { return true; } }
 	}
 
-	/*
-	internal class EnumeratorIterator : BaseIterator
-	{
-		protected IEnumerator _enum;
-		protected int _pos;
-		bool _requireSorting;
-
-		public EnumeratorIterator (BaseIterator iter, IEnumerator enumerator, bool requireSorting) : base (iter)
-		{
-			if (!(enumerator is ICloneable))
-				throw new ArgumentException ("Target enumerator must be cloneable.");
-			_enum = enumerator;
-			_requireSorting = requireSorting;
-		}
-		
-		public EnumeratorIterator (IEnumerator enumerator, XmlNamespaceManager nsm, bool requireSorting) : base (nsm)
-		{
-			if (!(enumerator is ICloneable))
-				throw new ArgumentException ("Target enumerator must be cloneable.");
-			_enum = enumerator;
-			_requireSorting = requireSorting;
-		}
-
-		protected EnumeratorIterator (EnumeratorIterator other) : base (other)
-		{
-			ICloneable enumClone = other._enum as ICloneable;
-			_enum = (IEnumerator) enumClone.Clone ();
-			_pos = other._pos;
-			_requireSorting = other._requireSorting;
-		}
-		public override XPathNodeIterator Clone () { return new EnumeratorIterator (this); }
-
-		public override bool MoveNext ()
-		{
-			if (!_enum.MoveNext ())
-				return false;
-			_pos++;
-			return true;
-		}
-		public override XPathNavigator Current { get { return (XPathNavigator) _enum.Current; }}
-		public override int CurrentPosition { get { return _pos; }}
-
-		public override bool RequireSorting { get { return _requireSorting; } }
-	}
-	*/
-
 	internal class ListIterator : BaseIterator
 	{
 		protected IList _list;
@@ -1122,7 +1082,7 @@ namespace System.Xml.XPath
 			_requireSorting = requireSorting;
 		}
 		
-		public ListIterator (IList list, XmlNamespaceManager nsm, bool requireSorting) : base (nsm)
+		public ListIterator (IList list, NSResolver nsm, bool requireSorting) : base (nsm)
 		{
 			if (!(list is ICloneable))
 				throw new ArgumentException ("Target enumerator must be cloneable.");

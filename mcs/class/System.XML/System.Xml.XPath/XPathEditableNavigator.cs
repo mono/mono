@@ -41,7 +41,7 @@ using System.Xml.XPath;
 //using Mono.Xml.XPath2;
 //using MS.Internal.Xml;
 
-namespace System.Xml
+namespace System.Xml.XPath
 {
 	public abstract class XPathEditableNavigator 
 		: XPathNavigator, IXPathEditable
