@@ -104,10 +104,10 @@ namespace System.Web.Mail {
 	}
 	
 	
-	public void WriteHeaders( IDictionary headers ) {
+	public void WriteHeader( MailHeader header ) {
 	    // write the headers
-	    foreach( string key in headers.Keys )
-		WriteLine( "{0}: {1}" , key , (string)headers[ key ] );
+	    foreach( string key in header.Data.AllKeys )
+		WriteLine( "{0}: {1}" , key , header.Data[ key ] );
 	    
 	    // write the header end tag
 	    WriteLine( "" );

@@ -58,11 +58,7 @@ namespace System.Web.Mail {
 		if( msg.To.Count < 1 ) throw new SmtpException( "Atleast one recipient must be set." );
 	    }
 	    
-	    // if no encoding is set then set the system
-	    // default encoding
-	    if( msg.BodyEncoding == null ) 
-		msg.BodyEncoding = Encoding.Default;
-	    
+	    	    
 	    // start with a reset incase old data
 	    // is present at the server in this session
 	    smtp.WriteRset();
@@ -103,10 +99,8 @@ namespace System.Web.Mail {
 	// sends a single part mail to the server
 	private void SendSinglepartMail( MailMessageWrapper msg ) {
 	    	    	    
-	    // create the headers
-	    IDictionary headers = CreateHeaders( msg );
-	
-	    smtp.WriteHeaders( headers );
+	    // write the header
+	    smtp.WriteHeader( msg.Header );
 	    
 	    // send the mail body FIXME
 	    smtp.WriteBytes( msg.BodyEncoding.GetBytes( msg.Body ) );
@@ -115,30 +109,26 @@ namespace System.Web.Mail {
 	
 	// sends a multipart mail to the server
 	private void SendMultipartMail( MailMessageWrapper msg ) {
-	    	    	    
-	    // create the headers
-	    IDictionary headers = CreateHeaders( msg );
-
+	    	    
 	    // set the part boundary FIXME: THIS SHOULD NOT BE HARDCODED
 	    // look att  Gaurav Vaish implementation
 	    string boundary = "NextPart_000_1113_1962_1fe8";
 		
 	    // set the Content-Type header to multipart/mixed
-	    headers[ "Content-Type" ] = 
+	    msg.Header.ContentType = 
 		String.Format( "multipart/mixed;\r\n   boundary={0}" , boundary );
 		
-	    // write the headers
-	    // and start writing the multipart body
-	    smtp.WriteHeaders( headers );
+	    // write the header
+	    smtp.WriteHeader( msg.Header );
 		
 	    // write the first part text part
 	    // before the attachments
 	    smtp.WriteBoundary( boundary );
 		
-	    Hashtable partHeaders = new Hashtable();
-	    partHeaders[ "Content-Type" ] = "text/plain";
+	    MailHeader partHeader = new MailHeader();
+	    partHeader.ContentType = "text/plain";
 		
-	    smtp.WriteHeaders( partHeaders );
+	    smtp.WriteHeader( partHeader );
 	    	
 	  
 	    // FIXME: probably need to use QP or Base64 on everything higher
@@ -154,19 +144,18 @@ namespace System.Web.Mail {
 			
 		FileInfo fileInfo = new FileInfo( a.Filename );
 
-		Hashtable aHeaders = new Hashtable();
+		MailHeader aHeader = new MailHeader();
 		
-		aHeaders[ "Content-Type" ] = 
+		aHeader.ContentType = 
 		    String.Format( "application/octet-stream; name=\"{0}\"", 
 				   fileInfo.Name  );
 		
-		aHeaders[ "Content-Disposition" ] = 
+		aHeader.ContentDisposition = 
 		    String.Format( "attachment; filename=\"{0}\"" , fileInfo.Name );
 		
-		aHeaders[ "Content-Transfer-Encoding" ] = 
-		    (a.Encoding == MailEncoding.UUEncode ? "UUEncode" : "Base64" );
-		
-		smtp.WriteHeaders( aHeaders );
+		aHeader.ContentTransferEncoding = a.Encoding.ToString();
+		    		
+		smtp.WriteHeader( aHeader );
 		   
 		// perform the actual writing of the file.
 		// read from the file stream and write to the tcp stream
@@ -200,127 +189,6 @@ namespace System.Web.Mail {
 	    }
 	       
 	}
-	
-	// send the standard headers
-	// and the custom in MailMessage
-	private IDictionary CreateHeaders( MailMessageWrapper msg ) {
-	    Hashtable headers = new Hashtable(); 
-	    
-	    headers[ "From" ] = msg.From.ToString();
-	    headers[ "To" ] = msg.To.ToString();
-	    	    
-	    if( msg.Cc.Count > 0 ) headers[ "Cc" ] = msg.Cc.ToString();
-			    
-	    if( msg.Bcc.Count > 0 ) headers[ "Bcc" ] = msg.Bcc.ToString();
-	    
-	    if( HasData( msg.Subject ) ) {
-		
-		// if the BodyEncoding is not 7bit us-ascii then
-		// convert using base64 
-		if( msg.BodyEncoding is ASCIIEncoding ) {
-		
-		    headers[ "Subject" ] = msg.Subject;
-		
-		} else {
-		
-		    byte[] subjectBytes = msg.BodyEncoding.GetBytes( msg.Subject );
-		    // encode the subject with Base64
-		    headers[ "Subject" ] = 
-			String.Format( "=?{0}?{1}?{2}?=" , 
-				       msg.BodyEncoding.BodyName , "B",
-				       Convert.ToBase64String( subjectBytes ) );
-		}
-
-	    }
-	    
-	    if( HasData( msg.UrlContentBase ) ) 
-		headers[ "Content-Base" ] = msg.UrlContentBase;
-	    
-	    if( HasData( msg.UrlContentLocation ) ) 
-		headers[ "Content-Location" ] = msg.UrlContentLocation;
-	   
-	    
-	    string charset = String.Format( "charset=\"{0}\"" , msg.BodyEncoding.BodyName );
-
-	    // set body the content type
-	    switch( msg.BodyFormat ) {
-		
-	    case MailFormat.Html: 
-		headers[ "Content-Type" ] = "text/html; " + charset; 
-		break;
-	    
-	    case MailFormat.Text: 
-		headers[ "Content-Type" ] = "text/plain; " + charset; 
-		break;
-	    
-	    default: 
-		headers[ "Content-Type" ] = "text/plain; " + charset; 
-		break;
-
-	    }
-	    
-	    // set the priority as in the same way as .NET sdk does
-	    switch( msg.Priority ) {
-		
-	    case MailPriority.High: 
-		headers[ "Importance" ] = "high";
-		break;
-	    
-	    case MailPriority.Low: 
-		headers[ "Importance" ] = "low";
-		break;
-		
-	    case MailPriority.Normal: 
-		headers[ "Importance" ] = "normal";
-		break;
-		
-	    default: 
-		headers[ "Importance" ] = "normal";
-		break;
-
-	    }
-	    
-	    // .NET sdk allways sets this to normal
-	    headers[ "Priority" ] = "normal";
-	    
-
-	    // add mime version
-	    headers[ "Mime-Version" ] = "1.0";
-	    
-	    // set the mailer -- should probably be changed
-	    headers[ "X-Mailer" ] = "Mono (System.Web.Mail.SmtpMail.Send)";
-	    
-	    // Set the transfer encoding.. it seems like only sends 7bit
-	    // if it is ASCII
-	    if( msg.BodyEncoding is ASCIIEncoding ) {
-		headers[ "Content-Transfer-Encoding" ] = "7bit";
-	    } else {
-		headers[ "Content-Transfer-Encoding" ] = "8bit";
-	    }
-	    
-	    
-	    // add the custom headers they will overwrite
-	    // the earlier ones if they are the same
-	    foreach( string key in msg.Headers.Keys )
-		headers[ key ] = (string)msg.Headers[ key ];
-		
-	    
-
-	    return headers;
-	}
-	
-	// returns true if str is not null and not
-	// empty
-	private bool HasData( string str ) {
-	    bool hasData = false;
-	    if( str != null ) {
-		if( str.Length > 0 ) {
-		    hasData = true;
-		}
-	    }
-	    return hasData;
-	}
-	
 	
 	// send quit command and
 	// closes the connection

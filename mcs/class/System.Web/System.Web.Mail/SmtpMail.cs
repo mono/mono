@@ -8,6 +8,7 @@
 
 using System;
 using System.Net;
+using System.Text;
 using System.IO;
 using System.Reflection;
 
@@ -34,7 +35,11 @@ namespace System.Web.Mail
 		
 		public static void Send (MailMessage message) 
 		{
-		    		    
+		    
+		    // if no encoding is set then set the system
+		    // default encoding
+		    if( message.BodyEncoding == null ) message.BodyEncoding = Encoding.Default;
+		    
 		    try {
 			
 			MailMessageWrapper messageWrapper = new MailMessageWrapper( message );

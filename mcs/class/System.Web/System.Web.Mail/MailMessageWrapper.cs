@@ -20,6 +20,7 @@ namespace System.Web.Mail {
 	private MailAddressCollection cc = new MailAddressCollection();		
 	private MailAddress from;
 	private MailAddressCollection to = new MailAddressCollection();
+	private MailHeader header = new MailHeader();
 	private MailMessage message;
 		
 	// Constructor		
@@ -27,10 +28,114 @@ namespace System.Web.Mail {
 	{
 	    this.message = message;
 	    
-	    if(message.From != null ) from = MailAddress.Parse( message.From );
-	    if(message.To != null ) to = MailAddressCollection.Parse( message.To );
-	    if(message.Cc != null )cc = MailAddressCollection.Parse( message.Cc );
-	    if(message.Bcc != null )bcc = MailAddressCollection.Parse( message.Bcc );
+	    if( message.From != null ) {
+		from = MailAddress.Parse( message.From );
+		header.From = from.ToString();
+	    }
+	    
+	    if( message.To != null ) {
+		to = MailAddressCollection.Parse( message.To );
+		header.To = to.ToString();
+	    }
+	    
+	    if( message.Cc != null ) {
+		cc = MailAddressCollection.Parse( message.Cc );
+		header.Cc = cc.ToString();
+	    }
+		
+	    if( message.Bcc != null ) {
+		bcc = MailAddressCollection.Parse( message.Bcc );
+		header.Bcc = bcc.ToString();
+	    }
+
+	    
+	    // set the subject
+	    if( message.Subject != null ) {
+		// if the BodyEncoding is not 7bit us-ascii then
+		// convert the subject using base64 
+		if( message.BodyEncoding is ASCIIEncoding ) {
+		
+		    header.Subject = message.Subject;
+		    
+		} else {
+		
+		    byte[] subjectBytes = message.BodyEncoding.GetBytes( message.Subject );
+		    // encode the subject with Base64
+		    header.Subject = String.Format( "=?{0}?B?{1}?=" , 
+						    message.BodyEncoding.BodyName ,
+						    Convert.ToBase64String( subjectBytes ) );
+		}
+	    }
+
+	    
+	    // set the Contet-Base header
+	    if( message.UrlContentBase != null ) 
+		header.ContentBase = message.UrlContentBase;
+	    
+	    // set the Contet-Location header
+	    if( message.UrlContentLocation != null ) 
+		header.ContentLocation = message.UrlContentLocation;
+
+	    	    
+	    // set the content type
+	    switch( message.BodyFormat ) {
+		
+	    case MailFormat.Html: 
+		header.ContentType = 
+		    String.Format( "text/html; charset=\"{0}\"" , message.BodyEncoding.BodyName ); 
+		break;
+	    
+	    case MailFormat.Text: 
+		header.ContentType = 
+		    String.Format( "text/html; charset=\"{0}\"" , message.BodyEncoding.BodyName );
+		break;
+	    
+	    default: 
+		header.ContentType = 
+		    String.Format( "text/html; charset=\"{0}\"" , message.BodyEncoding.BodyName );
+		break;
+	    }
+	    
+	    	    
+	    // set the priority as in the same way as .NET sdk does
+	    switch( message.Priority ) {
+		
+	    case MailPriority.High: 
+		header.Importance = "high";
+		break;
+	    
+	    case MailPriority.Low: 
+		header.Importance = "low";
+		break;
+		
+	    case MailPriority.Normal: 
+		header.Importance = "normal";
+		break;
+		
+	    default: 
+		header.Importance = "normal";
+		break;
+
+	    }
+
+	    // .NET sdk allways sets this to normal
+	    header.Priority = "normal";
+	    
+	    
+	    // Set the mime version
+	    header.MimeVersion = "1.0";
+	    
+	    // Set the transfer encoding
+	    if( message.BodyEncoding is ASCIIEncoding ) {
+		header.ContentTransferEncoding = "7bit";
+	    } else {
+		header.ContentTransferEncoding = "8bit";
+	    }
+
+	    
+	    // Add the custom headers
+	    foreach( string key in message.Headers.Keys )
+		header.Data[ key ] = (string)this.message.Headers[ key ];
 	}		
 	
 	// Properties
@@ -65,8 +170,8 @@ namespace System.Web.Mail {
 	    get { return from; } 
 	}
 
-	public IDictionary Headers {
-	    get { return message.Headers; }
+	public MailHeader Header {
+	    get { return header; }
 	}
 		
 	public MailPriority Priority {
