@@ -4,6 +4,7 @@
 // Authors:
 //   Joe Shaw (joe@ximian.com)
 //   Duncan Mak (duncan@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
@@ -15,28 +16,34 @@ namespace System
 	[Serializable]
 	public class ArgumentOutOfRangeException : ArgumentException
 	{
+		const int Result = unchecked ((int)0x80131502);
+
 		private object actual_value;
 
 		// Constructors
 		public ArgumentOutOfRangeException ()
 			: base (Locale.GetText ("Argument is out of range."))
 		{
+			HResult = Result;
 		}
 
 		public ArgumentOutOfRangeException (string paramName)
 			: base (Locale.GetText ("Argument is out of range."), paramName)
 		{
+			HResult = Result;
 		}
 
 		public ArgumentOutOfRangeException (string paramName, string message)
 			: base (message, paramName)
 		{
+			HResult = Result;
 		}
 
 		public ArgumentOutOfRangeException (string paramName, object actualValue, string message)
 			: base (message, paramName)
 		{
 			this.actual_value = actualValue;
+			HResult = Result;
 		}
 
 		protected ArgumentOutOfRangeException (SerializationInfo info, StreamingContext context)
@@ -44,7 +51,7 @@ namespace System
 		{
 			actual_value = info.GetString ("ActualValue");
 		}
- 
+
 		// Properties
 		public virtual object ActualValue {
 			get {
@@ -57,7 +64,7 @@ namespace System
 				string basemsg = base.Message;
 				if (actual_value == null)
 					return basemsg;
-				return basemsg + '\n' + actual_value;
+				return basemsg + Environment.NewLine + actual_value;
 			}
 		}
 
@@ -67,6 +74,5 @@ namespace System
 			base.GetObjectData (info, context);
 			info.AddValue ("ActualValue", actual_value);
 		}
-		
 	}
 }

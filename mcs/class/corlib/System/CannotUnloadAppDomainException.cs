@@ -1,8 +1,9 @@
 //	
 // System.CannotUnloadAppDomainException.cs
 //
-// Author:
+// Authors:
 //   Duncan Mak (duncan@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // 2002 (C) Ximian, Inc. http://www.ximian.com
 //
@@ -14,15 +15,19 @@ namespace System
 	[Serializable]
 	public class CannotUnloadAppDomainException : SystemException
 	{
+		const int Result = unchecked ((int)0x80131015);
+
 		// Constructors
 		public CannotUnloadAppDomainException ()
 			: base (Locale.GetText ("Attempt to unload application domain failed."))
 		{
+			HResult = Result;
 		}
 
 		public CannotUnloadAppDomainException (string message)
 			: base (message)
 		{
+			HResult = Result;
 		}
 
 		protected CannotUnloadAppDomainException (SerializationInfo info, StreamingContext context)
@@ -33,6 +38,7 @@ namespace System
 		public CannotUnloadAppDomainException (string message, Exception innerException)
 			:base (message, innerException)
 		{
+			HResult = Result;
 		}
 	}
 }

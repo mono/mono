@@ -4,6 +4,7 @@
 // Authors:
 //   Sean MacIsaac (macisaac@ximian.com)
 //   Duncan Mak (duncan@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2001 Ximian, Inc.
 //
@@ -13,26 +14,26 @@ using System.Runtime.Serialization;
 namespace System
 {
 	[Serializable]
-	[MonoTODO ("fix wrong impl.")]
+	[MonoTODO ("probably not entirely correct. fusionLog needs to be set somehow (we are probably missing internal constuctor)")]
 	public class BadImageFormatException : SystemException
 	{
+		const int Result = unchecked ((int)0x8007000B);
+
 		// Fields
-		private string msg; // we need this because System.Exception's message is private.
-		private Exception inner;
 		private string fileName;
 		private string fusionLog;
-		
+
 		// Constructors
 		public BadImageFormatException ()
 			: base (Locale.GetText ("Invalid file image."))
 		{
-			msg = "Invalid file image.";
+			HResult = Result;
 		}
-		
+
 		public BadImageFormatException (string message)
 			: base (message)
 		{
-			msg = message;
+			HResult = Result;
 		}
 
 		protected BadImageFormatException (SerializationInfo info, StreamingContext context)
@@ -45,36 +46,34 @@ namespace System
 		public BadImageFormatException (string message, Exception innerException)
 			: base (message, innerException)
 		{
-			msg = message;
-			this.inner = innerException;
+			HResult = Result;
 		}
 
 		public BadImageFormatException (string message, string fileName)
 			: base (message)
 		{
-			msg = message;
 			this.fileName = fileName;
+			HResult = Result;
 		}
 
 		public BadImageFormatException (string message, string fileName, Exception innerException)
 			: base (message, innerException)
 		{
-			msg = message;
-			this.inner = innerException;
 			this.fileName = fileName;
+			HResult = Result;
 		}
-		    
+
 		// Properties
 		public override string Message
 		{
-			get { return Locale.GetText (msg); }
+			get { return base.Message; }
 		}
 
 		public string FileName
 		{
 			get { return fileName; }
 		}
-				
+
 		public string FusionLog
 		{
 			get { return fusionLog; }
@@ -90,10 +89,9 @@ namespace System
 
 		public override string ToString ()
 		{
-			if (inner != null)
-				return inner.ToString();
-			else
-				return base.ToString ();
+			if (fileName != null)
+				return Locale.GetText ("Filename: ") + fileName;
+			return base.ToString ();
 		}
 	}
 }

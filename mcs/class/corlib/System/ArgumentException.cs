@@ -1,8 +1,9 @@
 //
 // System.ArgumentException.cs
 //
-// Author:
+// Authors:
 //   Joe Shaw (joe@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
@@ -14,34 +15,41 @@ namespace System
 	[Serializable]
 	public class ArgumentException : SystemException
 	{
+		const int Result = unchecked ((int)0x80070057);
+
 		private string param_name;
 
 		// Constructors
 		public ArgumentException ()
 			: base (Locale.GetText ("An invalid argument was specified."))
 		{
+			HResult = Result;
 		}
 
 		public ArgumentException (string message)
 			: base (message)
 		{
+			HResult = Result;
 		}
 
 		public ArgumentException (string message, Exception innerException)
 			: base (message, innerException)
 		{
+			HResult = Result;
 		}
 
 		public ArgumentException (string message, string paramName)
 			: base (message)
 		{
 			this.param_name = paramName;
+			HResult = Result;
 		}
 
 		public ArgumentException (string message, string paramName, Exception innerException)
 			: base (message, innerException)
 		{
 			this.param_name = paramName;
+			HResult = Result;
 		}
 
 		protected ArgumentException (SerializationInfo info, StreamingContext context)

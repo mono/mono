@@ -15,20 +15,25 @@ namespace System
 	[Serializable]
 	public class ArithmeticException : SystemException
 	{
+		const int Result = unchecked ((int)0x80070216);
+
 		// Constructors
 		public ArithmeticException ()
 			: base (Locale.GetText ("The arithmetic operation is not allowed."))
 		{
+			HResult = Result;
 		}
 
 		public ArithmeticException (string message)
 			: base (message)
 		{
+			HResult = Result;
 		}
 
 		public ArithmeticException (string message, Exception innerException)
 			: base (message, innerException)
 		{
+			HResult = Result;
 		}
 
 		protected ArithmeticException (SerializationInfo info, StreamingContext context)
