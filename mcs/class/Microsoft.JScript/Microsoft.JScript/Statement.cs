@@ -144,8 +144,9 @@ namespace Microsoft.JScript {
 
 		internal AST expression;
 
-		internal Return (AST exp)
+		internal Return (AST parent, AST exp)
 		{
+			this.parent = parent;
 			expression = exp;
 		}
 
@@ -156,8 +157,10 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			expression.Resolve (context);
-			return true;
+			if (parent == null)
+				throw new Exception ("error JS1018: 'return' statement outside of function");
+
+			return expression.Resolve (context);
 		}
 
 		internal override void Emit (EmitContext ec)

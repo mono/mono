@@ -180,7 +180,7 @@ return_stm [AST parent] returns [AST r]
 	r = null;
 	AST e = null;
 }
-	: "return" (e = expr [parent] { r = new Return (e); } | ) SEMI_COLON
+	: "return" (e = expr [parent] { r = new Return (parent, e); } | ) SEMI_COLON
 	;
 
 break_stm returns [AST b]
