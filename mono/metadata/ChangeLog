@@ -1,5 +1,8 @@
 2004-09-09  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.c (reflection_methodbuilder_to_mono_method): Fix bug in
+	previous patch.
+
 	* reflection.h reflection.c loader.c: Allow dynamic construction of
 	pinvoke methods. Fixes #65571.
 	
