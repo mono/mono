@@ -62,6 +62,9 @@ namespace System.Web
 		ArrayList fileDependencies;
 		CachedRawResponse cached_response;
 		ArrayList cached_headers;
+#if NET_1_1
+		string redirectLocation;
+#endif
 
 		string app_path_mod = null;
                 
@@ -211,7 +214,11 @@ namespace System.Web
 					oHeaders.Add (_Cookies.Get (i).GetCookieHeader ());
 				}
 			}
-
+#if NET_1_1
+			if (redirectLocation != null)
+				oHeaders.Add (new HttpResponseHeader (HttpWorkerRequest.HeaderLocation,
+								      redirectLocation));
+#endif
 			return oHeaders;
 		}
 		
@@ -520,6 +527,13 @@ namespace System.Web
 			}
 		}
 
+#if NET_1_1
+		public string RedirectLocation {
+			get { return redirectLocation; }
+			set { redirectLocation = value; }
+		}
+#endif
+		
 		public string StatusDescription
 		{
 			get {

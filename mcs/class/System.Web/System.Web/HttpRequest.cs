@@ -429,6 +429,9 @@ namespace System.Web {
 
 				return _sContentType;
 			}
+#if NET_1_1
+			set { _sContentType = value; }
+#endif
 		}
 
 		static private string GetCookieValue (string str, int length, ref int i)
@@ -1135,9 +1138,22 @@ namespace System.Web {
 			oFile.Close();
 		}
 
+#if NET_1_1
+		[MonoTODO]
+		public void ValidateInput ()
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+		
 		internal void SetFilePath (string filePath)
 		{
 			_sFilePath = filePath;
+		}
+
+		internal void SetPathInfo (string pathInfo)
+		{
+			_sPathInfo = pathInfo;
 		}
 
 		internal void SetForm (HttpValueCollection form)

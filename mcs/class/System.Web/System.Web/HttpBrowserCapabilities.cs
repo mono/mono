@@ -326,6 +326,14 @@ namespace System.Web
 			}
 		}
 
+#if NET_1_1
+		[MonoTODO]
+		public Version [] GetClrVersions ()
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		bool ReadBoolean (string key, bool dflt)
 		{
 			string v = this [key];

@@ -331,6 +331,13 @@ namespace System.Web {
 			}
 		}
 
+#if NET_1_1
+		[MonoTODO]
+		public void UnloadAppDomain ()
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		public static Cache Cache {
 			get {
 				return _runtime._cache;

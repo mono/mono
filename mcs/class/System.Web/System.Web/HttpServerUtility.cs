@@ -151,8 +151,13 @@ namespace System.Web
 		{
 			Execute (path, writer, false);
 		}
-		
-		public void Execute (string path, TextWriter writer, bool preserveQuery)
+
+#if NET_1_2
+		public
+#else
+		internal
+#endif
+		void Execute (string path, TextWriter writer, bool preserveQuery)
 		{
 			if (path == null)
 				throw new ArgumentNullException ("path");

@@ -120,11 +120,11 @@ namespace System.Web
 			}
 		}
 
-		public static HttpContext Current
-		{
-			get {
-				return Context;
-			}
+		public static HttpContext Current {
+			get { return Context; }
+#if NET_1_1
+			set { Context = value; }
+#endif
 		}
 
 		public Exception Error
@@ -386,6 +386,14 @@ namespace System.Web
 			Request.SetFilePath (path);
 			Request.QueryStringRaw = query;
 		}
+
+#if NET_1_1
+		public void RewritePath (string filePath, string pathInfo, string queryString)
+		{
+			RewritePath (filePath + "?" + queryString);
+			Request.SetPathInfo (pathInfo);
+		}
+#endif
 	}
 }
 

@@ -232,6 +232,12 @@ namespace System.Web {
 			varyByCustom = custom;
 		}
 
+		[MonoTODO]
+		public void SetAllowResponseInBrowserHistory (bool allow)
+		{
+			throw new NotImplementedException ();
+		}
+
 		internal void SetHeaders (HttpResponse response, ArrayList headers)
 		{
 			string cc, expires;

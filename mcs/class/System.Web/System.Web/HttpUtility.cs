@@ -790,6 +790,18 @@ namespace System.Web {
 			output.Write (HtmlEncode (s));
 		}
 
+#if NET_1_1
+		public string UrlPathEncode (string s)
+		{
+			// find the path portion (?)
+			int idx = s.IndexOf ("?");
+			string s2 = s.Substring (0, idx-1);
+			s2 = UrlEncode (s2);
+			s2 += s.Substring (idx);
+
+			return s2;
+		}
+#endif
 		#endregion // Methods
 	}
 }

@@ -1,3 +1,16 @@
+2003-12-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpBrowserCapabilities.cs: added GetClrVersions ().
+	* HttpCachePolicy.cs: added SetAllowResponseInBrowserHistory ().
+	* HttpContext.cs: added set_Current and RewritePath (s, s, s) for 1.1.
+	* HttpRequest.cs: added set_ContentType, SetPathInfo and ValidateInput.
+	* HttpRequestValidationException.cs: new class for 1.1
+	* HttpResponse.cs: added RedirectLocation.
+	* HttpRuntime.cs: added UnloadAppDomain.
+	* HttpServerUtility.cs: Execute (s, t, b) is internal for < 1.2
+	* HttpUtility.cs: copied UrlPathEncode from HttpServerUtility.
+	* HttpWorkerRequest.cs: added [ComVisible] and made the ctor public.
+
 2003-12-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpContext.cs: implemented IsCustomErrorEnabled and

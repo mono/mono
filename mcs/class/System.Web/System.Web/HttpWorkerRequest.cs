@@ -15,6 +15,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Web
 {
+	[ComVisible (false)]
 	public abstract class HttpWorkerRequest : IHttpMapPath
 	{
 		public delegate void EndOfSendNotification (HttpWorkerRequest wr, object extraData);
@@ -160,7 +161,7 @@ namespace System.Web
 			InitLookupTables ();
 		}
 
-		protected HttpWorkerRequest ()
+		public HttpWorkerRequest ()
 		{
 		}
 
