@@ -485,10 +485,14 @@ namespace System.Xml
 					break;
 				case ValidationType.Schema:
 					dtdReader = new DTDValidatingReader (sourceReader, this);
-					XsdValidatingReader xsvr = new XsdValidatingReader (dtdReader, this);
+					XsdValidatingReader xsvr = new XsdValidatingReader (dtdReader);
+					xsvr.ValidationEventHandler +=
+						new ValidationEventHandler (
+							OnValidationEvent);
+					xsvr.ValidationType = ValidationType;
 					xsvr.Schemas = Schemas.SchemaSet;
-					validatingReader = xsvr;
 					xsvr.XmlResolver = Resolver;
+					validatingReader = xsvr;
 					dtdReader.XmlResolver = Resolver;
 					break;
 				case ValidationType.XDR:

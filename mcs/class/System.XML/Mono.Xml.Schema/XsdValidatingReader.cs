@@ -47,15 +47,15 @@ namespace Mono.Xml.Schema
 		static char [] wsChars = new char [] {' ', '\t', '\n', '\r'};
 
 		XmlReader reader;
-		XmlValidatingReader xvReader;
 		XmlResolver resolver;
 		IHasXmlSchemaInfo sourceReaderSchemaInfo;
 		IXmlLineInfo readerLineInfo;
 //		bool laxElementValidation = true;
-		bool reportNoValidationError;
+		ValidationType validationType;
 		XmlSchemaSet schemas = new XmlSchemaSet ();
 		bool namespaces = true;
 
+		bool checkIdentity = true;
 		Hashtable idList = new Hashtable ();
 		ArrayList missingIDReferences;
 		string thisElementId;
@@ -80,32 +80,24 @@ namespace Mono.Xml.Schema
 		bool popContext;
 
 		// Property Cache.
-		int nonDefaultAttributeCount;
 		bool defaultAttributeConsumed;
 
 		// Validation engine cached object
-		ArrayList defaultAttributesCache;
+		ArrayList defaultAttributesCache = new ArrayList ();
 		ArrayList tmpKeyrefPool;
 
 #region .ctor
 		public XsdValidatingReader (XmlReader reader)
-			: this (reader, null)
-		{
-		}
-		
-		public XsdValidatingReader (XmlReader reader, XmlReader validatingReader)
 		{
 			this.reader = reader;
-			xvReader = validatingReader as XmlValidatingReader;
-			if (xvReader != null) {
-				if (xvReader.ValidationType == ValidationType.None)
-					reportNoValidationError = true;
-			}
 			readerLineInfo = reader as IXmlLineInfo;
 			sourceReaderSchemaInfo = reader as IHasXmlSchemaInfo;
 		}
 #endregion
-		// Provate Properties
+
+		public ValidationEventHandler ValidationEventHandler;
+
+		// Private Properties
 		private XmlQualifiedName CurrentQName {
 			get {
 				if (currentQName == null)
@@ -119,14 +111,6 @@ namespace Mono.Xml.Schema
 				if (currentKeyFieldConsumers == null)
 					currentKeyFieldConsumers = new ArrayList ();
 				return currentKeyFieldConsumers;
-			}
-		}
-
-		private ArrayList DefaultAttributesCache {
-			get {
-				if (defaultAttributesCache == null)
-					defaultAttributesCache = new ArrayList ();
-				return defaultAttributesCache;
 			}
 		}
 
@@ -201,13 +185,12 @@ namespace Mono.Xml.Schema
 			get { return this.sourceReaderSchemaInfo != null ? sourceReaderSchemaInfo.SchemaType : null; }
 		}
 
-		// This property is never used in Mono.
 		public ValidationType ValidationType {
-			get {
-				if (reportNoValidationError)
-					return ValidationType.None;
-				else
-					return ValidationType.Schema;
+			get { return validationType; }
+			set {
+				if (ReadState != ReadState.Initial)
+					throw new InvalidOperationException ("ValidationType must be set before reading.");
+				validationType = value;
 			}
 		}
 
@@ -275,13 +258,11 @@ namespace Mono.Xml.Schema
 			return null;
 		}
 
-//		public ValidationEventHandler ValidationEventHandler;
-
 		// Public Overrided Properties
 
 		public override int AttributeCount {
 			get {
-				return nonDefaultAttributeCount + defaultAttributes.Length;
+				return reader.AttributeCount + defaultAttributes.Length;
 			}
 		}
 
@@ -491,7 +472,7 @@ namespace Mono.Xml.Schema
 
 		private void HandleError (string error, Exception innerException, bool isWarning)
 		{
-			if (reportNoValidationError)	// extra quick check
+			if (ValidationType == ValidationType.None)	// extra quick check
 				return;
 
 			XmlSchemaException schemaException = new XmlSchemaException (error, 
@@ -506,22 +487,17 @@ namespace Mono.Xml.Schema
 
 		private void HandleError (XmlSchemaException schemaException, bool isWarning)
 		{
-			if (reportNoValidationError)
+			if (ValidationType == ValidationType.None)
 				return;
 
 			ValidationEventArgs e = new ValidationEventArgs (schemaException,
 				schemaException.Message, isWarning ? XmlSeverityType.Warning : XmlSeverityType.Error);
 
-			/*if (this.ValidationEventHandler != null)
-				this.ValidationEventHandler (this, e);
-			else */if (xvReader != null)
-				xvReader.OnValidationEvent (this, e);
+			if (ValidationEventHandler != null)
+				ValidationEventHandler (this, e);
+
 			else if (e.Severity == XmlSeverityType.Error)
-#if NON_MONO_ENV
-				this.xvReader.OnValidationEvent (this, e);
-#else
 				throw e.Exception;
-#endif
 		}
 
 		private XmlSchemaElement FindElement (string name, string ns)
@@ -1018,33 +994,30 @@ namespace Mono.Xml.Schema
 					if (attr.ValidatedUse == XmlSchemaUse.Required && 
 						attr.ValidatedFixedValue == null)
 						HandleError ("Required attribute " + attr.QualifiedName + " was not found.");
-					else if (attr.ValidatedDefaultValue != null)
-						DefaultAttributesCache.Add (attr);
-					else if (attr.ValidatedFixedValue != null)
-						DefaultAttributesCache.Add (attr);
+					else if (attr.ValidatedDefaultValue != null || attr.ValidatedFixedValue != null)
+						defaultAttributesCache.Add (attr);
 				}
 			}
 			defaultAttributes = (XmlSchemaAttribute []) 
-				DefaultAttributesCache.ToArray (typeof (XmlSchemaAttribute));
+				defaultAttributesCache.ToArray (typeof (XmlSchemaAttribute));
 			context.DefaultAttributes = defaultAttributes;
-			if (defaultAttributesCache != null)
-				defaultAttributesCache.Clear ();
+			defaultAttributesCache.Clear ();
 			// 5. wild IDs was already checked above.
 		}
 
 		// Spec 3.10.4 Item Valid (Wildcard)
-		private bool AttributeWildcardItemValid (XmlSchemaAnyAttribute anyAttr, XmlQualifiedName qname)
+		private static bool AttributeWildcardItemValid (XmlSchemaAnyAttribute anyAttr, XmlQualifiedName qname, string ns)
 		{
 			if (anyAttr.HasValueAny)
 				return true;
-			if (anyAttr.HasValueOther && (anyAttr.TargetNamespace == "" || reader.NamespaceURI != anyAttr.TargetNamespace))
+			if (anyAttr.HasValueOther && (anyAttr.TargetNamespace == "" || ns != anyAttr.TargetNamespace))
 				return true;
-			if (anyAttr.HasValueTargetNamespace && reader.NamespaceURI == anyAttr.TargetNamespace)
+			if (anyAttr.HasValueTargetNamespace && ns == anyAttr.TargetNamespace)
 				return true;
-			if (anyAttr.HasValueLocal && reader.NamespaceURI == "")
+			if (anyAttr.HasValueLocal && ns == "")
 				return true;
 			for (int i = 0; i < anyAttr.ResolvedNamespaces.Count; i++)
-				if (anyAttr.ResolvedNamespaces [i] == reader.NamespaceURI)
+				if (anyAttr.ResolvedNamespaces [i] == ns)
 					return true;
 			return false;
 		}
@@ -1060,7 +1033,7 @@ namespace Mono.Xml.Schema
 			if (cType.AttributeWildcard == null)
 				return null;
 
-			if (!AttributeWildcardItemValid (cType.AttributeWildcard, qname))
+			if (!AttributeWildcardItemValid (cType.AttributeWildcard, qname, reader.NamespaceURI))
 				return null;
 
 			if (cType.AttributeWildcard.ResolvedProcessContents == XmlSchemaContentProcessing.Skip)
@@ -1101,7 +1074,7 @@ namespace Mono.Xml.Schema
 				}
 				if (attr.ValidatedFixedValue != null && attr.ValidatedFixedValue != normalized)
 					HandleError ("The value of the attribute " + attr.QualifiedName + " does not match with its fixed value.");
-				if (checkWildIDs)
+				if (this.checkIdentity && checkWildIDs)
 					AssessEachAttributeIdentityConstraint (dt, normalized, parsedValue);
 			}
 		}
@@ -1332,7 +1305,7 @@ namespace Mono.Xml.Schema
 
 			if (reader.AttributeCount > i)
 				reader.GetAttribute (i);
-			int defIdx = i - nonDefaultAttributeCount;
+			int defIdx = i - reader.AttributeCount;
 			if (i < AttributeCount)
 				return defaultAttributes [defIdx].DefaultValue;
 
@@ -1434,14 +1407,14 @@ namespace Mono.Xml.Schema
 			}
 
 			currentQName = null;
-			if (i < this.nonDefaultAttributeCount) {
+			if (i < reader.AttributeCount) {
 				reader.MoveToAttribute (i);
 				this.currentDefaultAttribute = -1;
 				this.defaultAttributeConsumed = false;
 			}
 
 			if (i < AttributeCount) {
-				this.currentDefaultAttribute = i - nonDefaultAttributeCount;
+				this.currentDefaultAttribute = i - reader.AttributeCount;
 				this.defaultAttributeConsumed = false;
 			}
 			else
@@ -1513,7 +1486,7 @@ namespace Mono.Xml.Schema
 			}
 
 			currentQName = null;
-			if (this.nonDefaultAttributeCount > 0) {
+			if (reader.AttributeCount > 0) {
 				bool b = reader.MoveToFirstAttribute ();
 				if (b) {
 					currentDefaultAttribute = -1;
@@ -1643,11 +1616,11 @@ namespace Mono.Xml.Schema
 
 		public override bool Read ()
 		{
-			nonDefaultAttributeCount = 0;
 			currentDefaultAttribute = -1;
 			defaultAttributeConsumed = false;
 			currentQName = null;
-			thisElementId = null;
+			if (this.checkIdentity)
+				thisElementId = null;
 			defaultAttributes = new XmlSchemaAttribute [0];
 			if (!schemas.IsCompiled)
 				schemas.Compile ();
@@ -1658,18 +1631,14 @@ namespace Mono.Xml.Schema
 
 			bool result = reader.Read ();
 			// 3.3.4 ElementLocallyValidElement 7 = Root Valid.
-			if (!result && HasMissingIDReferences ())
+			if (!result && this.checkIdentity &&
+				HasMissingIDReferences ())
 				HandleError ("There are missing ID references: " +
 					String.Join (" ",
 					this.missingIDReferences.ToArray (typeof (string)) as string []));
 
 			switch (reader.NodeType) {
-			case XmlNodeType.XmlDeclaration:
-				this.nonDefaultAttributeCount = reader.AttributeCount;
-				break;
 			case XmlNodeType.Element:
-				nonDefaultAttributeCount = reader.AttributeCount;
-
 				// FIXME: schemaLocation could be specified 
 				// at any Depth.
 				if (reader.Depth == 0)

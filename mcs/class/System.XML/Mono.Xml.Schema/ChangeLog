@@ -1,3 +1,12 @@
+2004-12-08  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdValidatingReader.cs : making smarter relationship between
+	  XmlValidatingReader. Added ValidationEventHandler and ValidationType.
+	  nonDefaultAttributeCount was extraneous.
+	  Added 'checkIdentity' (i.e. !IgnoreIdentityConstraints).
+	  DefaultAttributesCache property did make little sense, so just
+	  reverted to ArrayList field.
+
 2004-11-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsdValidatingReader.cs : warning elimination
