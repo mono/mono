@@ -1,3 +1,8 @@
+2004-08-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CodeGenerator.cs :
+	  Don't initialize output more than once. TextWriter is wrapped twice.
+
 2004-07-15  Peter Williams  <peter@newton.cx>
 
 	* CodeGenerator.cs: Have the basic generator create line pragmas
