@@ -5,7 +5,7 @@
 Imports System
 Module ImpConversionofInttoLongA
 	Sub Main()
-		Dim a as Int = 123
+		Dim a as Integer = 123
 		Dim b as Long = a
 		if b<>123 then 
 			Throw New System.Exception("Implicit Conversion of Int to Long has Failed")

@@ -1,3 +1,9 @@
+2005-02-14  Satya Sudha K <ksathyasudha@novell.com>
+	* Test cases for Conversions with overloaded functions and Enum conversions
+		- by Sudharsan V <vsudharsan@novell.com>
+	* Minor corrections in other testcases - as suggested by Sudharsan V
+	
+
 2005-02-11  Manjula GHM <mmanjula@novell.com>
 	* Added tests for Statements - by Sudharsan V <vsudharsan@novell.com>
 

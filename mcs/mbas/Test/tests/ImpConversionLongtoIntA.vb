@@ -5,10 +5,10 @@
 
 Module ImpConversionofLongtoIntA
 	Sub Main()
-		Dim a as Long = 123456789
-		Dim b as Short = a
-		'if b<>123 then 
-		'	Throw New System.Exception("Implicit Conversion of Long to Int has Failed")
-		'End if		
+		Dim a as Long = 123
+		Dim b as Integer = a
+		if b<>123 then 
+			Throw New System.Exception("Implicit Conversion of Long to Int has Failed")
+		End if		
 	End Sub
 End Module
