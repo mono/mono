@@ -74,9 +74,16 @@ namespace MonoTests.System.Data.SqlTypes
 
 		[Test]
 		[ExpectedException(typeof (ArgumentOutOfRangeException))]
-		public void CtorArgumentOutOfRangeException ()
+		public void CtorArgumentOutOfRangeException1 ()
 		{
 			SqlString TestString = new SqlString (2057, SqlCompareOptions.BinarySort, new byte [2] {113, 100}, 2, 1);
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentOutOfRangeException))]
+		public void CtorArgumentOutOfRangeException2 ()
+		{
+			SqlString TestString = new SqlString (2057, SqlCompareOptions.BinarySort, new byte [2] {113, 100}, 0, 4);
 		}
 
                 // Test public fields
@@ -115,7 +122,7 @@ namespace MonoTests.System.Data.SqlTypes
                         // IsNull
                         Assert ("#C03", !Test1.IsNull);
                         Assert ("#C04", SqlString.Null.IsNull);
-                        
+			                        
                         // LCID
                         AssertEquals ("#C05", 3081, Test1.LCID);
                         
@@ -125,9 +132,27 @@ namespace MonoTests.System.Data.SqlTypes
 
                         // Value
                         AssertEquals ("#C07", "First TestString", Test1.Value);
+
                 }
 
                 // PUBLIC METHODS
+
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void CompareToArgumentException ()
+		{
+			SqlByte Test = new SqlByte (1);
+			Test1.CompareTo (Test);
+		}
+
+		[Test]
+		[ExpectedException(typeof(SqlTypeException))]
+		public void CompareToSqlTypeException ()
+		{
+			SqlString T1 = new SqlString ("test", 2057, SqlCompareOptions.IgnoreCase);
+                	SqlString T2 = new SqlString ("TEST", 2057, SqlCompareOptions.None);
+			T1.CompareTo (T2);
+		}
 
 		[Test]
                 public void CompareTo()
@@ -139,23 +164,10 @@ namespace MonoTests.System.Data.SqlTypes
                         Assert ("#D03", Test2.CompareTo (Test3) == 0);
                         Assert ("#D04", Test3.CompareTo (SqlString.Null) > 0);
 
-                        try {
-                                Test1.CompareTo (Test);
-                                Fail("#D05");
-                        } catch(Exception e) {                        
-                                AssertEquals ("#D06", typeof (ArgumentException), e.GetType ());
-                        }
                         
                         SqlString T1 = new SqlString ("test", 2057, SqlCompareOptions.IgnoreCase);
                 	SqlString T2 = new SqlString ("TEST", 2057, SqlCompareOptions.None);
-                	
-                	try {
-                		T1.CompareTo (T2);
-                		Fail ("#D07");
-                	} catch (Exception e) {
-                		AssertEquals ("#D08", typeof (SqlTypeException), e.GetType ());
-                	}
-                	
+                	                	
                 	// IgnoreCase
                 	T1 = new SqlString ("test", 2057, SqlCompareOptions.IgnoreCase);
                 	T2 = new SqlString ("TEST", 2057, SqlCompareOptions.IgnoreCase);
