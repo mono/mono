@@ -9,6 +9,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Collections;
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Permissions;
@@ -17,7 +18,7 @@ using System.Security.Policy;
 namespace MonoTests.System.Security.Policy {
 
 [TestFixture]
-public class PublisherMembershipConditionTest {
+public class PublisherMembershipConditionTest : Assertion {
 
 	static byte[] msSpCert = { 0x30, 0x82, 0x05, 0x0F, 0x30, 0x82, 0x03, 0xF7, 0xA0, 0x03, 0x02, 0x01, 0x02, 0x02, 0x0A, 0x61, 0x07, 0x11, 0x43, 0x00, 0x00, 0x00, 0x00, 0x00, 0x34, 0x30, 0x0D, 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 0x01, 0x01, 0x05, 0x05, 0x00, 0x30, 0x81, 0xA6, 0x31, 0x0B, 0x30, 0x09, 0x06, 0x03, 0x55, 0x04, 0x06, 0x13, 0x02, 0x55, 0x53, 0x31, 0x13, 0x30, 0x11, 0x06, 0x03, 0x55, 0x04, 0x08, 0x13, 0x0A, 0x57, 0x61, 0x73, 0x68, 0x69, 0x6E, 0x67, 0x74, 0x6F, 0x6E, 0x31, 0x10, 0x30, 0x0E, 0x06, 0x03, 0x55, 0x04, 0x07, 0x13, 0x07, 0x52, 0x65, 0x64, 0x6D, 0x6F, 0x6E, 0x64, 0x31, 0x1E, 0x30, 0x1C, 0x06, 0x03, 0x55, 0x04, 0x0A, 0x13, 0x15, 0x4D, 0x69, 0x63, 0x72, 0x6F, 0x73, 0x6F, 0x66, 0x74, 0x20, 0x43, 0x6F, 0x72, 0x70, 0x6F, 0x72, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x31, 0x2B, 0x30, 0x29, 0x06, 0x03, 0x55, 0x04, 0x0B, 0x13, 0x22, 0x43, 0x6F, 0x70, 0x79, 0x72, 0x69, 0x67, 0x68, 0x74, 0x20, 0x28, 0x63, 0x29, 0x20, 0x32, 0x30, 0x30, 0x30, 0x20, 0x4D, 0x69, 0x63, 0x72,
 		0x6F, 0x73, 0x6F, 0x66, 0x74, 0x20, 0x43, 0x6F, 0x72, 0x70, 0x2E, 0x31, 0x23, 0x30, 0x21, 0x06, 0x03, 0x55, 0x04, 0x03, 0x13, 0x1A, 0x4D, 0x69, 0x63, 0x72, 0x6F, 0x73, 0x6F, 0x66, 0x74, 0x20, 0x43, 0x6F, 0x64, 0x65, 0x20, 0x53, 0x69, 0x67, 0x6E, 0x69, 0x6E, 0x67, 0x20, 0x50, 0x43, 0x41, 0x30, 0x1E, 0x17, 0x0D, 0x30, 0x32, 0x30, 0x35, 0x32, 0x35, 0x30, 0x30, 0x35, 0x35, 0x34, 0x38, 0x5A, 0x17, 0x0D, 0x30, 0x33, 0x31, 0x31, 0x32, 0x35, 0x30, 0x31, 0x30, 0x35, 0x34, 0x38, 0x5A, 0x30, 0x81, 0xA1, 0x31, 0x0B, 0x30, 0x09, 0x06, 0x03, 0x55, 0x04, 0x06, 0x13, 0x02, 0x55, 0x53, 0x31, 0x13, 0x30, 0x11, 0x06, 0x03, 0x55, 0x04, 0x08, 0x13, 0x0A, 0x57, 0x61, 0x73, 0x68, 0x69, 0x6E, 0x67, 0x74, 0x6F, 0x6E, 0x31, 0x10, 0x30, 0x0E, 0x06, 0x03, 0x55, 0x04, 0x07, 0x13, 0x07, 0x52, 0x65, 0x64, 0x6D, 0x6F, 0x6E, 0x64, 0x31, 0x1E, 0x30, 0x1C, 0x06, 0x03, 0x55, 0x04, 0x0A, 0x13, 0x15, 0x4D, 0x69, 0x63, 0x72, 0x6F, 0x73, 0x6F, 0x66, 0x74, 0x20, 0x43, 0x6F, 0x72, 0x70, 0x6F, 0x72, 0x61,
@@ -60,11 +61,28 @@ public class PublisherMembershipConditionTest {
 		X509Certificate x509 = new X509Certificate (msSpCert);
 		PublisherMembershipCondition pmc = new PublisherMembershipCondition (x509);
 
-		Assertion.Assert("Certificate", pmc.Certificate.Equals (x509));
-		Assertion.AssertEquals ("GetHashCode", x509.GetHashCode (), pmc.GetHashCode ());
+		Assert ("Certificate", pmc.Certificate.Equals (x509));
+		AssertEquals ("GetHashCode", x509.GetHashCode (), pmc.GetHashCode ());
 
 		string s = "Publisher - 3082010A0282010100AA99BD39A81827F42B3D0B4C3F7C772EA7CBB5D18C0DC23A74D793B5E0A04B3F595ECE454F9A7929F149CC1A47EE55C2083E1220F855F2EE5FD3E0CA96BC30DEFE58C82732D08554E8F09110BBF32BBE19E5039B0B861DF3B0398CB8FD0B1D3C7326AC572BCA29A215908215E277A34052038B9DC270BA1FE934F6F335924E5583F8DA30B620DE5706B55A4206DE59CBF2DFA6BD154771192523D2CB6F9B1979DF6A5BF176057929FCC356CA8F440885558ACBC80F464B55CB8C96774A87E8A94106C7FF0DE968576372C36957B443CF323A30DC1BE9D543262A79FE95DB226724C92FD034E3E6FB514986B83CD0255FD6EC9E036187A96840C7F8E203E6CF050203010001";
-		Assertion.AssertEquals ("ToString", s, pmc.ToString ());
+		AssertEquals ("ToString", s, pmc.ToString ());
+	}
+
+	[Test]
+	public void Check () 
+	{
+		Evidence evidence = new Evidence ();
+		X509Certificate x509 = new X509Certificate (msSpCert);
+		PublisherMembershipCondition pmc = new PublisherMembershipCondition (x509);
+		Assert ("Check(empty evidence)", !pmc.Check (evidence));
+
+		Publisher p = new Publisher (x509);
+		// it doesn't check assembly evidences
+		evidence.AddAssembly (p);
+		Assert ("Check(assembly)", !pmc.Check (evidence));
+		// but it check host evidences
+		evidence.AddHost (p);
+		Assert ("Check(assembly)", pmc.Check (evidence));
 	}
 
 	[Test]
@@ -74,20 +92,92 @@ public class PublisherMembershipConditionTest {
 		PublisherMembershipCondition pmc = new PublisherMembershipCondition (x509);
 		PublisherMembershipCondition pmcCopy = (PublisherMembershipCondition) pmc.Copy ();
 
-		Assertion.AssertNotNull ("Copy-Cert", pmcCopy.Certificate);
-		Assertion.Assert("Copy-Equals", pmc.Equals (pmcCopy));
-		Assertion.AssertEquals ("Copy-GetHashCode", pmc.GetHashCode (), pmcCopy.GetHashCode ());
-		Assertion.AssertEquals ("Copy-ToString", pmc.ToString (), pmcCopy.ToString ());
+		AssertNotNull ("Copy-Cert", pmcCopy.Certificate);
+		Assert ("Copy-Equals", pmc.Equals (pmcCopy));
+		AssertEquals ("Copy-GetHashCode", pmc.GetHashCode (), pmcCopy.GetHashCode ());
+		AssertEquals ("Copy-ToString", pmc.ToString (), pmcCopy.ToString ());
 	}
 
 	[Test]
-	public void Xml () 
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void FromXmlNull () 
+	{
+		X509Certificate x509 = new X509Certificate (msSpCert);
+		PublisherMembershipCondition pmc = new PublisherMembershipCondition (x509);
+		pmc.FromXml (null);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void FromXmlInvalid ()
 	{
 		X509Certificate x509 = new X509Certificate (msSpCert);
 		PublisherMembershipCondition pmc = new PublisherMembershipCondition (x509);
 		SecurityElement se = pmc.ToXml ();
+		se.Tag = "IMonoship";
 		pmc.FromXml (se);
-		Assertion.AssertEquals ("XmlCertificate", x509.GetHashCode (), pmc.Certificate.GetHashCode ());
+	}
+
+	[Test]
+	public void FromXmlPolicyLevel () 
+	{
+		X509Certificate x509 = new X509Certificate (msSpCert);
+		PublisherMembershipCondition pmc = new PublisherMembershipCondition (x509);
+		SecurityElement se = pmc.ToXml ();
+		// is it accepted for all policy levels ?
+		IEnumerator e = SecurityManager.PolicyHierarchy ();
+		while (e.MoveNext ()) {
+			PolicyLevel pl = e.Current as PolicyLevel;
+			pmc.FromXml (se, pl);
+			Assert ("FromXml(PolicyLevel='" + pl.Label + "')", x509.Equals (pmc.Certificate));
+		}
+		// yes!
+	}
+
+	[Test]
+	public void ToXmlNull () 
+	{
+		X509Certificate x509 = new X509Certificate (msSpCert);
+		PublisherMembershipCondition pmc = new PublisherMembershipCondition (x509);
+		// no ArgumentNullException here
+		SecurityElement se = pmc.ToXml (null);
+		AssertNotNull ("ToXml(null)", se);
+	}
+
+	[Test]
+	public void ToXmlPolicyLevel () 
+	{
+		X509Certificate x509 = new X509Certificate (msSpCert);
+		PublisherMembershipCondition pmc = new PublisherMembershipCondition (x509);
+		string s = pmc.ToXml ().ToString ();
+		// are they all the same ?
+		IEnumerator e = SecurityManager.PolicyHierarchy ();
+		while (e.MoveNext ()) {
+			PolicyLevel pl = e.Current as PolicyLevel;
+			AssertEquals ("ToXml(PolicyLevel='" + pl.Label + "')", s, pmc.ToXml (pl).ToString ());
+		}
+		// yes!
+	}
+
+	[Test]
+	public void ToFromXmlRoundTrip () 
+	{
+		X509Certificate x509 = new X509Certificate (msSpCert);
+		PublisherMembershipCondition pmc = new PublisherMembershipCondition (x509);
+		SecurityElement se = pmc.ToXml ();
+
+		// note: different version #
+		string expectedXmlFragment = "\"\r\n                      version=\"1\"\r\n                      X509Certificate=\"3082050F308203F7A003020102020A61071143000000000034300D06092A864886F70D01010505003081A6310B3009060355040613025553311330110603550408130A57617368696E67746F6E3110300E060355040713075265646D6F6E64311E301C060355040A13154D6963726F736F667420436F72706F726174696F6E312B3029060355040B1322436F7079726967687420";
+		expectedXmlFragment += "2863292032303030204D6963726F736F667420436F72702E312330210603550403131A4D6963726F736F667420436F6465205369676E696E6720504341301E170D3032303532353030353534385A170D3033313132353031303534385A3081A1310B3009060355040613025553311330110603550408130A57617368696E67746F6E3110300E060355040713075265646D6F6E64311E301C060355040A13154D6963726F736F667420436F72706F726174696F6E312B3029060355040B1322436F70797269676874202863292032303032204D6963726F736F667420436F72702E311E301C060355040313154D6963726F736F667420436F72706F726174696F6E30820122300D06092A864886F70D010101";
+		expectedXmlFragment += "05000382010F003082010A0282010100AA99BD39A81827F42B3D0B4C3F7C772EA7CBB5D18C0DC23A74D793B5E0A04B3F595ECE454F9A7929F149CC1A47EE55C2083E1220F855F2EE5FD3E0CA96BC30DEFE58C82732D08554E8F09110BBF32BBE19E5039B0B861DF3B0398CB8FD0B1D3C7326AC572BCA29A215908215E277A34052038B9DC270BA1FE934F6F335924E5583F8DA30B620DE5706B55A4206DE59CBF2DFA6BD154771192523D2CB6F9B1979DF6A5BF176057929FCC356CA8F440885558ACBC80F464B55CB8C96774A87E8A94106C7FF0DE968576372C36957B443CF323A30DC1BE9D543262A79FE95DB226724C92FD034E3E6FB514986B83CD0255FD6EC9E036187A96840C7F8E203E6CF050203";
+		expectedXmlFragment += "010001A38201403082013C300E0603551D0F0101FF0404030206C030130603551D25040C300A06082B06010505070303301D0603551D0E041604146BC8C65120F0B42FD3A0B6AE7F5E26B2B88752293081A90603551D230481A130819E8014295CB91BB6CD33EEBB9E597DF7E5CA2EC40D3428A174A4723070312B3029060355040B1322436F70797269676874202863292031393937204D6963726F736F667420436F72702E311E301C060355040B13154D6963726F736F667420436F72706F726174696F6E3121301F060355040313184D6963726F736F667420526F6F7420417574686F7269747982106A0B994FC000DEAA11D4D8409AA8BEE6304A0603551D1F04433041303FA03DA03B863968747470";
+		expectedXmlFragment += "3A2F2F63726C2E6D6963726F736F66742E636F6D2F706B692F63726C2F70726F64756374732F436F64655369676E5043412E63726C300D06092A864886F70D010105050003820101003523FD1354FCE9DCF0DD0C147AFAA7B3CEFDA73AC8BAE5E7F603FB53DBA799A9A09B369C03EB82471C21BD14CBE7674009C716910255CE4342B4CD1B5DB0F332043D12E51DA707A78FA37E4555761B96959169F0DD38F34889EF7040B7DBB55580C003C42EB628DC0A820EC743E37A485DB8068992406C6EC5DCF89AEF0BBE210A8C2F3AB5EDA7CE71876823E1B3E4187DB84701A52BC458CBB2896C5FFDD32CC46FB823B20DFF3CF2114574F209069918DD6FC0860118121D2B16AF56EF6533A1EA674EF44B82ABE9";
+		expectedXmlFragment += "0FDC01FADF607F66475DCB2C70CC7B4ED906B86E8C0CFE621E42F9937CA2AB0A9ED02310AE4D7B27916F26BE68FAA63F9F23EBC89DBB87\"/>\r\n";
+		AssertEquals ("ToXml().Tag", "IMembershipCondition", se.Tag);
+		Assert ("ToXml().ToString()", se.ToString ().EndsWith (expectedXmlFragment));
+
+		pmc.FromXml (se);
+		AssertEquals ("XmlCertificate", x509.GetHashCode (), pmc.Certificate.GetHashCode ());
 	}
 }
 
