@@ -126,6 +126,7 @@ System.Drawing.Printing/PrinterResolution.cs
 System.Drawing.Printing/PrinterResolutionKind.cs
 System.Drawing.Printing/PrinterSettings.cs
 System.Drawing.Printing/PrinterUnit.cs
+System.Drawing.Printing/PrinterUnitConvert.cs
 System.Drawing.Printing/PrintEventArgs.cs
 System.Drawing.Printing/PrintEventHandler.cs
 System.Drawing.Printing/PrintingPermissionAttribute.cs
