@@ -33,8 +33,8 @@ namespace System.Xml.Serialization
 				return SchemaTypes.Enum;
 			else if (type.IsArray)
 				return SchemaTypes.Array;
-			else if (type == typeof (System.Data.DataSet))
-				return SchemaTypes.DataSet;
+			/*else if (type == typeof (System.Data.DataSet))
+				return SchemaTypes.DataSet;*/
 			else if (type == typeof (System.Xml.XmlNode))
 				return SchemaTypes.XmlNode;
 			return SchemaTypes.Class;

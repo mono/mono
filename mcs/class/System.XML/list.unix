@@ -160,6 +160,7 @@ System.Xml.Serialization/AssemblyInfo.cs
 System.Xml.Serialization/CodeIdentifier.cs
 System.Xml.Serialization/CodeIdentifiers.cs
 System.Xml.Serialization/IXmlSerializable.cs
+System.Xml.Serialization/SchemaTypes.cs
 System.Xml.Serialization/SoapAttributeAttribute.cs
 System.Xml.Serialization/SoapAttributeOverrides.cs
 System.Xml.Serialization/SoapAttributes.cs
@@ -173,7 +174,9 @@ System.Xml.Serialization/SoapSchemaExporter.cs
 System.Xml.Serialization/SoapSchemaMember.cs
 System.Xml.Serialization/SoapReflectionImporter.cs
 System.Xml.Serialization/SoapTypeAttribute.cs
+System.Xml.Serialization/TypeData.cs
 System.Xml.Serialization/TypeMember.cs
+System.Xml.Serialization/TypeTranslator.cs
 System.Xml.Serialization/UnreferencedObjectEventArgs.cs
 System.Xml.Serialization/UnreferencedObjectEventHandler.cs
 System.Xml.Serialization/XmlAnyAttributeAttribute.cs
