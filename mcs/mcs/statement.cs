@@ -41,7 +41,6 @@ namespace Mono.CSharp {
 		public virtual bool Emit (EmitContext ec)
 		{
 			ec.Mark (loc);
-			Report.Debug (8, "MARK", this, loc);
 			return DoEmit (ec);
 		}
 		
@@ -3148,17 +3147,25 @@ namespace Mono.CSharp {
 		
 		protected override bool DoEmit (EmitContext ec)
 		{
+			foreach (Statement s in statements)
+				s.Emit (ec);
+
+			return has_ret;
+		}
+
+		public override bool Emit (EmitContext ec)
+		{
 			Block prev_block = ec.CurrentBlock;
 
 			ec.CurrentBlock = this;
 
 			ec.Mark (StartLocation);
-			foreach (Statement s in statements)
-				s.Emit (ec);
+			bool retval = DoEmit (ec);
 			ec.Mark (EndLocation); 
 			
 			ec.CurrentBlock = prev_block;
-			return has_ret;
+
+			return retval;
 		}
 	}
 

@@ -484,8 +484,13 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void Mark (Location loc)
 		{
-			if ((CodeGen.SymbolWriter != null) && !Location.IsNull (loc))
-				ig.MarkSequencePoint (null, loc.Row, 0, 0, 0);
+			if ((CodeGen.SymbolWriter == null) || Location.IsNull (loc))
+				return;
+
+			if ((CurrentBlock != null) && (CurrentBlock.StartLocation.File != loc.File))
+				return;
+
+			ig.MarkSequencePoint (null, loc.Row, 0, 0, 0);
 		}
 
 		/// <summary>

@@ -1081,8 +1081,6 @@ namespace Mono.CSharp
 				} else {
 					ref_line = System.Int32.Parse (arg);
 				}
-				
-				ref_line--;
 			} catch {
 				return false;
 			}

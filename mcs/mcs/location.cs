@@ -194,6 +194,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public int File {
+			get {
+				return token & source_mask;
+			}
+		}
+
 		// The ISymbolDocumentWriter interface is used by the symbol writer to
 		// describe a single source file - for each source file there's exactly
 		// one corresponding ISymbolDocumentWriter instance.
