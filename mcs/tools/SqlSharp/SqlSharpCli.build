@@ -9,7 +9,7 @@
 			<arg value="/r:../../class/lib/System.Data.dll"/>
 
 			<sources>
-				<includes name="*.cs" />
+				<includes name="SqlSharpCli.cs" />
 			</sources>
 		</csc>
 	</target>

@@ -16,7 +16,7 @@ DIRS =	corlib				\
 	System.Configuration.Install 	\
 	Mono.CSharp.Debugger		\
 	Mono.Data.MySql			\
-	Mono.Data.PostgreSqlClient \
+	Mono.Data.PostgreSqlClient		\
 	Mono.Data.SqliteClient		\
 	Mono.Data.SybaseClient		\
 	Mono.Data.TdsClient		\

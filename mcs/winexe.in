@@ -1,0 +1,2 @@
+#!/bin/sh
+@bindir@/bin/mono.exe @bindir@/bin/@thewindowexe@ "$@"

@@ -1,5 +1,5 @@
 RUNTIME = mono
-MCS = $(RUNTIME) $(topdir)/mcs/mcs.exe
+MCS = ../mcs/mcs.exe
 CSFLAGS = --target exe
 INSTALL = /usr/bin/install
 prefix = /usr
@@ -26,9 +26,7 @@ SOURCES = 				\
 	scanner/StringHelperBase.cs	\
 	scanner/StringHelper.cs
 
-all: ilasm.exe
-
-ildasm.exe: list
+ilasm.exe: list
 	$(MCS) $(CSFLAGS) @list -o ilasm.exe
 
 install: all
@@ -40,3 +38,12 @@ parser/ILParser.cs: parser/ILParser.jay ../jay/skeleton.cs
 
 list: $(SOURCES)
 	echo $(SOURCES) > list
+
+all: ilasm.exe
+
+linux: ilasm.exe
+
+windows: ilasm.exe
+
+clean:
+	rm -f ilasm.exe parser/ILParser.cs list

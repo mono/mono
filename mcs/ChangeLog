@@ -1,3 +1,24 @@
+2002-11-29  Daniel Morgan  <danmorg@sc.rr.com>
+
+	* INSTALL: renamed to INSTALL.txt because INSTALL 
+	interferred with "make install" on windows
+	
+	* makefile: changes to get "make install" work 
+	on windows
+	
+	* class/makefile.gnu: flush
+	
+	* ilasm/makefile: updated for windows build
+	
+	* monoresgen/makefile: updated for windows build
+	
+	* tools/SqlSharp/SqlSharpCli.build: flush
+	
+	* winexe.in: add file to be template for executable assemblies
+	to be installed on windows via "make install" by providing
+	a script that runs mono and the assembly 
+	like mcs runs mono mcs.exe 
+	
 2002-11-28  Daniel Morgan  <danmorg@sc.rr.com>
 
 	* makefile.gnu: added tools directory to linux build
