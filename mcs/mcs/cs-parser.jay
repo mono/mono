@@ -2536,8 +2536,8 @@ anonymous_method_expression
 			$$ = null;
 		} else {
 			create_toplevel_block = false;
-			if (!RootContext.V2){
-				Report.Error (-213, lexer.Location, "Anonymous methods are only supported in V2");
+			if (RootContext.Version == LanguageVersion.ISO_1){
+				Report.FeatureIsNotStandardized ("anonymous methods");
 				$$ = null;
 			} else 
 				$$ = new AnonymousMethod ((Parameters) $2, (Block) $4, lexer.Location);
@@ -3666,8 +3666,8 @@ yield_statement
 			Report.Error (1003, lexer.Location, "; expected");
 			$$ = null;
 		}
-		if (!RootContext.V2){
-			Report.Error (-222, lexer.Location, "yield statement only available in C# 2.0 mode");
+		if (RootContext.Version == LanguageVersion.ISO_1){
+			Report.FeatureIsNotStandardized ("yield statement");
 			$$ = null;
 		}
 		if (iterator_container == null){
@@ -3685,8 +3685,8 @@ yield_statement
 			Report.Error (1003, lexer.Location, "; expected");
 			$$ = null;
 		}
-		if (!RootContext.V2){
-			Report.Error (-222, lexer.Location, "yield statement only available in C# 2.0 mode");
+		if (RootContext.Version == LanguageVersion.ISO_1){
+			Report.FeatureIsNotStandardized ("yield statement");
 			$$ = null;
 		}
 		if (iterator_container == null){

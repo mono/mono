@@ -69,12 +69,6 @@ namespace Mono.CSharp {
 
 		public static bool VerifyClsCompliance = true;
 
-		//
-		// If set, enable C# version 2 features
-		//
-		[Obsolete ("Please use LanguageVersion enum insted")]
-		public static bool V2 = true;
-
 		public static LanguageVersion Version = LanguageVersion.Default;
 
 		//

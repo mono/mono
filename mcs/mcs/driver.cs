@@ -644,7 +644,7 @@ namespace Mono.CSharp
 
 		static void SetupV2 ()
 		{
-			RootContext.V2 = true;
+			RootContext.Version = LanguageVersion.Default;
 			defines.Add ("__V2__");
 		}
 		

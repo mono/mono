@@ -318,7 +318,7 @@ namespace Mono.CSharp {
 				break;
 
 			case ExprClass.MethodGroup:
-				if (!RootContext.V2){
+				if (RootContext.Version == LanguageVersion.ISO_1){
 					if ((flags & ResolveFlags.MethodGroup) == 0) {
 						((MethodGroupExpr) e).ReportUsageError ();
 						return null;

@@ -2402,7 +2402,8 @@ namespace Mono.CSharp {
 			//
 			if (oper == Operator.Addition || oper == Operator.Subtraction) {
 				if (l.IsSubclassOf (TypeManager.delegate_type)){
-					if (right.eclass == ExprClass.MethodGroup && RootContext.V2){
+					if ((right.eclass == ExprClass.MethodGroup) &&
+					    (RootContext.Version != LanguageVersion.ISO_1)){
 						Expression tmp = Convert.ImplicitConversionRequired (ec, right, l, loc);
 						if (tmp == null)
 							return null;
