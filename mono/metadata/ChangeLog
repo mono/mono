@@ -1,3 +1,11 @@
+2003-06-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* object.c: free the GError.
+	* icall.c: added CloseEvent_internal.
+	* threads.[ch]:
+	(ves_icall_System_Threading_Events_CloseEvent_internal): new internal
+	call.
+
 2003-06-01  Zoltan Varga  <vargaz@freemail.hu>
 
 	* loader.c (mono_method_get_signature): Add support for dynamic
