@@ -1,3 +1,9 @@
+2004-11-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CustomDataClassGenerator.cs : custom DataTable ctor should call
+	  InitializeFields(), and those DataColumns created by that method
+	  should take data type. This should fix bug #68972.
+
 2004-10-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSet.cs : Also clear UnhandledAttributes ArrayList before 
