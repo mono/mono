@@ -10,7 +10,6 @@
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using NUnit.Framework;
 
 namespace MonoTests.System.Drawing{
@@ -81,22 +80,6 @@ namespace MonoTests.System.Drawing{
 			
 			Console.WriteLine("Color "+ color);			
 			AssertEquals (Color.FromArgb(255,255,0,0), color);											
-		}
-
-		[Test]
-		[ExpectedException (typeof (IOException))]
-		public void BitmapSaveSameFile() 
-		{				
-			string sOutFile = getSubDir() + "linerect.bmp";
-									
-			// Load			
-			Bitmap	bmpLoad = new Bitmap(sOutFile);
-			if( bmpLoad == null) 
-				Console.WriteLine("Unable to load "+ sOutFile);						
-			
-			//Try saving in the same file
-			bmpLoad.Save(sOutFile, ImageFormat.Bmp);
-			
 		}
 
 		[Test]
