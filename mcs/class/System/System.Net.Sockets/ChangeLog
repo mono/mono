@@ -1,3 +1,8 @@
+2003-12-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TcpListener.cs: get the LocalEndPoint from the socket after binding.
+	Fixes bug #52329.
+
 2003-10-20  Miguel de Icaza  <miguel@ximian.com>
 
 	* TcpClient.cs: Fix void Dispose (bool disposing) to follow the

@@ -35,9 +35,9 @@ namespace System.Net.Sockets
 		private void Init (AddressFamily family, EndPoint ep)
 		{
 			active = false;
-			savedEP = ep;
 			server = new Socket(family, SocketType.Stream, ProtocolType.Tcp);
 			server.Bind (ep);
+			savedEP = server.LocalEndPoint;
 		}
 		
 		/// <summary>
