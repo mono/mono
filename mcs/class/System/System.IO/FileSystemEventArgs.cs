@@ -38,8 +38,7 @@ namespace System.IO {
 		}
 
 		public string FullPath {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return Path.Combine (directory, name); }
 		}
 
 		public string Name {

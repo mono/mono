@@ -1,16 +1,20 @@
 // 
 // System.IO.FileSystemWatcher.cs
 //
-// Author:
-//   Tim Coleman (tim@timcoleman.com)
+// Authors:
+// 	Tim Coleman (tim@timcoleman.com)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// Copyright (C) Tim Coleman, 2002
+// Copyright (C) Tim Coleman, 2002 
+// (c) 2003 Ximian, Inc. (http://www.ximian.com)
 //
 
 using System;
 using System.ComponentModel;
+using System.Threading;
 
 namespace System.IO {
+	[DefaultEvent("Changed")]
 	public class FileSystemWatcher : Component, ISupportInitialize {
 
 		#region Fields
@@ -43,17 +47,19 @@ namespace System.IO {
 		{
 		}
 
-		[MonoTODO]
 		public FileSystemWatcher (string path, string filter)
 		{
 			if (path == null)
-				throw new ArgumentNullException ();
-			if (filter == null)
-				throw new ArgumentNullException ();
-			if (path == String.Empty)
-				throw new ArgumentException ();
+				throw new ArgumentNullException ("path");
 
-			// if the path does not exist throw an ArgumentException
+			if (filter == null)
+				throw new ArgumentNullException ("filter");
+
+			if (path == String.Empty)
+				throw new ArgumentException ("Empty path", "path");
+
+			if (!Directory.Exists (path))
+				throw new ArgumentException ("Directory does not exists", "path");
 
 			this.enableRaisingEvents = false;
 			this.filter = filter;
@@ -68,43 +74,81 @@ namespace System.IO {
 
 		#region Properties
 
+		[DefaultValue(false)]
+		[IODescription("Flag to indicate if this instance is active")]
 		public bool EnableRaisingEvents {
 			get { return enableRaisingEvents; }
 			set { enableRaisingEvents = value; }
 		}
 
+		[DefaultValue("*.*")]
+		[IODescription("File name filter pattern")]
+		[RecommendedAsConfigurable(true)]
 		public string Filter {
 			get { return filter; }
-			set { filter = value; }
+			set {
+				filter = value;
+				if (filter == null || filter == "")
+					filter = "*.*";
+			}
 		}
 
+		[DefaultValue(false)]
+		[IODescription("Flag to indicate we want to watch subdirectories")]
 		public bool IncludeSubdirectories {
 			get { return includeSubdirectories; }
 			set { includeSubdirectories = value; }
 		}
 
+		[Browsable(false)]
+		[DefaultValue(8192)]
 		public int InternalBufferSize {
 			get { return internalBufferSize; }
 			set { internalBufferSize = value; }
 		}
 
+		[DefaultValue(NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.LastWrite)]
+		[IODescription("Flag to indicate which change event we want to monitor")]
 		public NotifyFilters NotifyFilter {
 			get { return notifyFilter; }
 			[MonoTODO ("Perform validation.")]
 			set { notifyFilter = value; }
 		}
 
+		[DefaultValue("")]
+		[IODescription("The directory to monitor")]
+		[RecommendedAsConfigurable(true)]
 		public string Path {
 			get { return path; }
-			[MonoTODO ("Perform validation.")]
-			set { path = value; }
+			set {
+				bool exists = false;
+				Exception exc = null;
+
+				try {
+					exists = Directory.Exists (value);
+				} catch (Exception e) {
+					exists = false;
+					exc = e;
+				}
+
+				if (exc != null)
+					throw new ArgumentException ("Invalid directory name", "value", exc);
+
+				if (!exists)
+					throw new ArgumentException ("Directory does not exists", "value");
+
+				path = value;
+			}
 		}
 
+		[Browsable(false)]
 		public override ISite Site {
 			get { return site; }
 			set { site = value; }
 		}
 
+		[DefaultValue(null)]
+		[IODescription("The object used to marshal the event handler calls resulting from a directory change")]
 		public ISynchronizeInvoke SynchronizingObject {
 			get { return synchronizingObject; }
 			set { synchronizingObject = value; }
@@ -135,40 +179,49 @@ namespace System.IO {
 			throw new NotImplementedException (); 
 		}
 
-		[MonoTODO]
+		private void RaiseEvent (Delegate ev, EventArgs arg)
+		{
+			if (ev == null)
+				return;
+
+			object [] args = new object [] {this, arg};
+
+			if (synchronizingObject == null) {
+				ev.DynamicInvoke (args);
+				return;
+			}
+			
+			synchronizingObject.BeginInvoke (ev, args);
+		}
+
 		protected void OnChanged (FileSystemEventArgs e)
 		{
-			throw new NotImplementedException (); 
+			RaiseEvent (Changed, e);
 		}
 
-		[MonoTODO]
 		protected void OnCreated (FileSystemEventArgs e)
 		{
-			throw new NotImplementedException (); 
+			RaiseEvent (Created, e);
 		}
 
-		[MonoTODO]
 		protected void OnDeleted (FileSystemEventArgs e)
 		{
-			throw new NotImplementedException (); 
+			RaiseEvent (Deleted, e);
 		}
 
-		[MonoTODO]
 		protected void OnError (ErrorEventArgs e)
 		{
-			throw new NotImplementedException (); 
+			RaiseEvent (Error, e);
 		}
 
-		[MonoTODO]
 		protected void OnRenamed (RenamedEventArgs e)
 		{
-			throw new NotImplementedException (); 
+			RaiseEvent (Renamed, e);
 		}
 
-		[MonoTODO]
 		public WaitForChangedResult WaitForChanged (WatcherChangeTypes changeType)
 		{
-			throw new NotImplementedException (); 
+			return WaitForChanged (changeType, Timeout.Infinite);
 		}
 
 		[MonoTODO]
@@ -177,15 +230,24 @@ namespace System.IO {
 			throw new NotImplementedException (); 
 		}
 
-
 		#endregion // Methods
 
 		#region Events and Delegates
 
+		[IODescription("Occurs when a file/directory change matches the filter")]
 		public event FileSystemEventHandler Changed;
+
+
+		[IODescription("Occurs when a file/directory creation matches the filter")]
 		public event FileSystemEventHandler Created;
+
+		[IODescription("Occurs when a file/directory deletion matches the filter")]
 		public event FileSystemEventHandler Deleted;
+
+		[Browsable(false)]
 		public event ErrorEventHandler Error;
+
+		[IODescription("Occurs when a file/directory rename matches the filter")]
 		public event RenamedEventHandler Renamed;
 
 		#endregion // Events and Delegates

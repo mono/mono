@@ -1,3 +1,11 @@
+2003-03-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FileSystemWatcher.cs: added attributes and some more implementation.
+	Now only the guts left to do.
+
+	* FileSystemEventArgs.cs:
+	* RenamedEventArgs.cs: implemented a couple of properties.
+
 2002-10-31  Dick Porter  <dick@ximian.com>
 
 	* MonoIO.cs: Return the error status in a parameter, as the

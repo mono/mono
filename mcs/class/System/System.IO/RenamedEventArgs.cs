@@ -15,6 +15,7 @@ namespace System.IO {
 		#region Fields
 
 		string oldName;
+		string oldFullPath;
 
 		#endregion // Fields
 
@@ -24,6 +25,7 @@ namespace System.IO {
 			: base (changeType, directory, name)
 		{
 			this.oldName = oldName;
+			oldFullPath = Path.Combine (directory, oldName);
 		}
 		
 		#endregion // Constructors
@@ -31,8 +33,7 @@ namespace System.IO {
 		#region Properties
 
 		public string OldFullPath {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return oldFullPath; }
 		}
 
 		public string OldName {
