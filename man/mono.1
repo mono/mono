@@ -271,6 +271,10 @@ If set to any value, System.IO.FileSystemWatcher will use the default
 managed implementation (slow). If unset, mono will try to use FAM under
 Unix systems and native API calls on Windows, falling back to the
 managed implementation on error.
+.TP
+.I "MONO_CODEDOM_NODELETE"
+If set to any value, the C# CodeDom compiler will not remove the temporary
+source files generated.
 .SH FILES
 On Unix assemblies are loaded from the installation lib directory.  If you set
 `prefix' to /usr, the assemblies will be located in /usr/lib.  On
