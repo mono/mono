@@ -61,6 +61,7 @@ install-local: gmcs.exe
 	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib/mono/2.0
 	$(INSTALL_BIN) gmcs.exe $(DESTDIR)$(prefix)/lib/mono/2.0
 	$(INSTALL_DATA) gmcs.exe.config $(DESTDIR)$(prefix)/lib/mono/2.0
+	$(INSTALL_DATA) gmcs.exe.mdb $(DESTDIR)$(prefix)/lib/mono/2.0
 
 uninstall-local:
 	-rm -f $(DESTDIR)$(prefix)/bin/mcs.exe
@@ -68,7 +69,7 @@ uninstall-local:
 test-local run-test-local:
 
 clean-local:
-	rm -f *.exe *.pdb cs-parser.cs y.output
+	rm -f *.exe *.pdb cs-parser.cs y.output *.mdb
 
 dist-local: dist-default
 

@@ -1,3 +1,7 @@
+2004-08-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Makefile: install .mdb file too.
+
 2004-08-05  Martin Baulig  <martin@ximian.com>
 
 	* ecore.cs (FieldExpr.DoResolveLValue): If we're resolving a field
