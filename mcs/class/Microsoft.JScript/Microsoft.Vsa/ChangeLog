@@ -1,3 +1,8 @@
+2005-02-14  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* BaseVsaEngine.cs (Compile): Guide the compilation process when
+	the VsaItem is a VsaCodeItem.
+
 2004-01-16  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
         * Microsoft.Vsa/BaseVsaEngine.cs: added setter for InitNewCalled.
