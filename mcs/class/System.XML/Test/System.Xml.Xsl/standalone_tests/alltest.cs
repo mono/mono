@@ -53,8 +53,25 @@ namespace simpleTests
 		static void Main(string[] args)
 		{
 			string topdir = "Results";
-			if (args.Length > 0)
-				topdir = args [0];
+			bool noExclude = false;
+			foreach (string arg in args) {
+				switch (arg) {
+				case "--noexc":
+					noExclude = true;
+					continue;
+				default:
+					topdir = arg;
+					break;
+				}
+			}
+			Console.WriteLine ("Setting topdir as {0}", topdir);
+			if (!noExclude) {
+				foreach (string s_ in new StreamReader ("ignore.lst").ReadToEnd ().Split ("\n".ToCharArray ())) {
+					string s = s_.Trim ();
+					if (s.Length > 0)
+						excludedTests.Add (s);
+				}
+			}
 
 			string pathPrefix = "testsuite/TESTS";
 			Directory.SetCurrentDirectory (pathPrefix);

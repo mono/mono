@@ -89,6 +89,7 @@ namespace XmlNormalizer {
 
 		public void Process(TextReader rd) {
 			doc=new XmlDocument();
+			doc.PreserveWhitespace = true;
 
 			string fileContents = rd.ReadToEnd();
 			

@@ -10,6 +10,7 @@ namespace XsltTest
 {
 	public class XsltTest
 	{
+		static bool noExclude;
 		static bool reportDetails;
 		static bool reportAsXml;
 		static bool useDomStyle;
@@ -50,6 +51,7 @@ Options:
 			Use this feature only when you want to update
 			reference output.
 	--list		Print output list to console.
+	--noExclude	Don't exclude meaningless comparison testcases.
 	--outall	Output fine results as OK (omitted by default).
 	--stoponerror	Stops the test process and throw detailed
 			error if happened.
@@ -102,6 +104,9 @@ FileMatch:
 				case "--list":
 					listOutput = true;
 					break;
+				case "--noExclude":
+					noExclude = true;
+					break;
 				case "--outall":
 					outputAll = true;
 					break;
@@ -138,6 +143,14 @@ FileMatch:
 					}
 					explicitTarget = arg;
 					break;
+				}
+			}
+
+			if (!noExclude) {
+				foreach (string s_ in new StreamReader ("ignore.lst").ReadToEnd ().Split ("\n".ToCharArray ())) {
+					string s = s_.Trim ();
+					if (s.Length > 0)
+						skipTargets.Add (s);
 				}
 			}
 
