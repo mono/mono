@@ -99,7 +99,7 @@ namespace System.IO.IsolatedStorage
 			return GetStore (IsolatedStorageScope.Assembly);
 		}
 
-		public static IsolatedStorageFile GetUseStoreForDomain ()
+		public static IsolatedStorageFile GetUserStoreForDomain ()
 		{
 			return GetStore (IsolatedStorageScope.Domain);
 		}
