@@ -22,7 +22,7 @@ namespace System.Windows.CaptionButton
 		//Values were verified with enumcheck.
 		Close = 0,
 		Minimize = 1,
-		Minimize = 2,
+		Maximize = 2,
 		Restore = 3,
 		Help = 4,
 	}

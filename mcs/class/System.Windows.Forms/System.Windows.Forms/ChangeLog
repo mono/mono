@@ -346,3 +346,12 @@ Added delegates. All delegates in System.Windows.Forms done
 * ArrangeDirection.cs
 * AccessibleEvents.cs
 * Added values for enums
+
+2002-6-24 DennisHayes <dennish@raytek.com>
+* BindingMemberInfo.cs
+* CaptionButton.cs
+* DataGridCell.cs
+* Message.cs
+* MessageBox.cs
+* Fixed bugs preventing compile
+

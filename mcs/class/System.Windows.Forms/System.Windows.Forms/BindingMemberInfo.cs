@@ -36,9 +36,9 @@ namespace System.Windows.Forms {
 		
 		public BindingMemberInfo (string dataMember){
 			//TODO: Initilize with real values.
-			bindingmember = new string ("");
-			bindingfield = new string ("");
-			bindingpath = new string ("");
+			bindingmember =  ("");
+			bindingfield =  ("");
+			bindingpath =  ("");
 		}
 
 		// -----------------------
