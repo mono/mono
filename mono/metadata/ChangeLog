@@ -1,3 +1,8 @@
+2005-03-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* icall.c: Added new icall for RNG.
+	* rand.c|h: Added new icall to open the RNG. This allows to share a 
+	single handle on Linux to access /dev/urandom and fix #73183.
 
 Thu Mar 3 17:53:17 CET 2005 Paolo Molaro <lupus@ximian.com>
 
