@@ -51,7 +51,7 @@ namespace System.Drawing
 
 			try {
 				int width = Int32.Parse (subs [0]);
-				int height = Int32.Parse (subs [0]);
+				int height = Int32.Parse (subs [1]);
 				return new Size (width, height);
 			} catch {
 				throw new ArgumentException ("Error parsing " + s + " as Size", "value");
