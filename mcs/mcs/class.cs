@@ -1052,7 +1052,7 @@ namespace CIR {
 			}
 			
 			parent_constructor = (ConstructorInfo) Invocation.OverloadResolve (
-				(MethodGroupExpr) parent_constructor_group, argument_list);
+				(MethodGroupExpr) parent_constructor_group, argument_list, tc);
 			
 			if (parent_constructor == null)
 				return false;

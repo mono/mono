@@ -1,3 +1,16 @@
+2001-09-22  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (OverloadResolve): Improve some more to catch errors 1502 and 1503
+	Also take an additional TypeContainer argument.
+
+	* All over : Pass in TypeContainer as argument to OverloadResolve.
+
+	* typemanager.cs (CSharpName): Update to check for the string type and return
+	that too.
+
+	* expression.cs (Invocation::FullMethodDesc): New static method to return a string fully describing
+	a given method.
+	
 2001-09-21  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (Invocation::OverloadResolve): Re-write to conform more to the spec.

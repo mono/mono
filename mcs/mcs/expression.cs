@@ -12,7 +12,8 @@ namespace CIR {
 	using System;
 	using System.Reflection;
 	using System.Reflection.Emit;
-
+	using System.Text;
+	
 	// <remarks>
 	//   The ExprClass class contains the is used to pass the 
 	//   classification of an expression (value, variable, namespace,
@@ -268,11 +269,10 @@ namespace CIR {
 		{
 			Type expr_type = expr.Type;
 
-			if (expr_type == target_type){
-				Console.WriteLine ("Hey, ConvertImplicit was called with no job to do");
+			if (expr_type == target_type)
 				return expr;
-			}
-
+			
+			
 			//
 			// Step 1: Perform implicit conversions as found on expr.Type
 			//
@@ -692,7 +692,7 @@ namespace CIR {
 				Arguments = new ArrayList ();
 				Arguments.Add (new Argument (expr, Argument.AType.Expression));
 				
-				method = Invocation.OverloadResolve ((MethodGroupExpr) mg, Arguments);
+				method = Invocation.OverloadResolve ((MethodGroupExpr) mg, Arguments, tc);
 				if (method != null)
 					return this;
 			}
@@ -1289,7 +1289,7 @@ namespace CIR {
 				Arguments.Add (new Argument (right, Argument.AType.Expression));
 
 			
-				method = Invocation.OverloadResolve (union, Arguments);
+				method = Invocation.OverloadResolve (union, Arguments, tc);
 				if (method != null) 
 					return this;
 			}
@@ -2195,7 +2195,7 @@ namespace CIR {
 						
 						if (x > 0)
 							continue;
-						else
+						else 
 							break;
 					}
 					
@@ -2234,6 +2234,23 @@ namespace CIR {
 				return 0;
 			
 		}
+
+		public static string FullMethodDesc (MethodBase mb)
+		{
+			StringBuilder sb = new StringBuilder (mb.Name);
+			ParameterData pd = GetParameterData (mb);
+			
+			sb.Append (" (");
+			for (int i = pd.Count; i > 0;) {
+				i--;
+				sb.Append (TypeManager.CSharpName (pd.ParameterType (i)));
+				if (i != 0)
+					sb.Append (",");
+			}
+			
+			sb.Append (")");
+			return sb.ToString ();
+		}
 		
 		// <summary>
 		//   Find the Applicable Function Members (7.4.2.1)
@@ -2248,12 +2265,13 @@ namespace CIR {
 		//            that is the best match of me on Arguments.
 		//
 		// </summary>
-		public static MethodBase OverloadResolve (MethodGroupExpr me, ArrayList Arguments)
+		public static MethodBase OverloadResolve (MethodGroupExpr me, ArrayList Arguments, TypeContainer tc)
 		{
 			ArrayList afm = new ArrayList ();
 			int best_match_idx = -1;
 			MethodBase method = null;
-
+			int argument_count;
+			
 			for (int i = me.Methods.Length; i > 0; ){
 				i--;
 				MethodBase candidate  = me.Methods [i];
@@ -2269,9 +2287,56 @@ namespace CIR {
 				}
 			}
 			
+			if (best_match_idx != -1)
+				return method;
+
+			// Now we see if we can at least find a method with the same number of arguments
+			// and then try doing implicit conversion on the arguments
+
+			if (Arguments == null)
+				argument_count = 0;
+			else
+				argument_count = Arguments.Count;
+
+			ParameterData pd = null;
+			
+			for (int i = me.Methods.Length; i > 0;) {
+				i--;
+				MethodBase mb = me.Methods [i];
+				pd = GetParameterData (mb);
+
+				if (pd.Count == argument_count) {
+					best_match_idx = i;
+					method = me.Methods [best_match_idx];
+					break;
+				} else
+					continue;
+			}
+
 			if (best_match_idx == -1)
 				return null;
 
+			// And now convert implicitly, each argument to the required type
+			
+			pd = GetParameterData (method);
+
+			for (int j = argument_count; j > 0;) {
+				j--;
+				Argument a = (Argument) Arguments [j];
+
+				Expression conv = ConvertImplicit (a.Expr, pd.ParameterType (j));
+
+				if (conv == null) {
+					tc.RootContext.Report.Error (1502,
+					       "The best overloaded match for method '" + FullMethodDesc (method) +
+					       "' has some invalid arguments");
+					tc.RootContext.Report.Error (1503, "Argument " + (j+1) +
+					       " : Cannot convert from '" + TypeManager.CSharpName (a.Expr.Type)
+					       + "' to '" + TypeManager.CSharpName (pd.ParameterType (j)) + "'");
+					return null;
+				}
+			}
+			
 			return method;
 		}
 
@@ -2304,11 +2369,11 @@ namespace CIR {
 				}
 			}
 
-			method = OverloadResolve ((MethodGroupExpr) this.expr, Arguments);
+			method = OverloadResolve ((MethodGroupExpr) this.expr, Arguments, tc);
 
 			if (method == null){
 				tc.RootContext.Report.Error (-6, Location,
-				"Figure out error: Can not find a good function for this argument list");
+				       "Could not find any applicable function for this argument list");
 				return null;
 			}
 
@@ -2439,7 +2504,7 @@ namespace CIR {
 				}
 			}
 
-			method = Invocation.OverloadResolve ((MethodGroupExpr) ml, Arguments);
+			method = Invocation.OverloadResolve ((MethodGroupExpr) ml, Arguments, tc);
 
 			if (method == null) {
 				tc.RootContext.Report.Error (-6,
