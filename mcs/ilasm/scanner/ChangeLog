@@ -1,3 +1,7 @@
+2003-05-31 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILTables.cs: Add refany keyword which is just an alias for typedref.
+		
 2003-05-22 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILTokenizer.cs: When building instructions allow the '.' char so
