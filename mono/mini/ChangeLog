@@ -1,3 +1,8 @@
+2003-05-19  Dietmar Maurer  <dietmar@ximian.com>
+
+	* mini.c (mono_compile_get_interface_var): share interface
+	variables if possible.
+
 2003-05-16  Martin Baulig  <martin@ximian.com>
 
 	* debug-mini.c (mono_init_debugger): New function to initialize
