@@ -1,3 +1,9 @@
+2004-01-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Calendar.cs: when rendering days, add a LiteralControl containing the
+	day before OnDayRender is called. Only generate the default links for
+	days when IsSelectable is true after OnDayRender. Fixes bug #53372.
+
 2004-01-21  Martin Baulig  <martin@ximian.com>
 
 	* XmlHierarchyData.cs: Make this compile with csc.
@@ -6,14 +12,20 @@
 	accessor since the base class doesn't have one.
 
 2004-01-18 Alon Gazit <along@mainsoft.com>
+
 	* CheckBoxList.cs: fix problem with negative TabIndex (wasn't rendered).
 	
 2004-01-18 Alon Gazit <along@mainsoft.com>
-	* Style.cs: CopyFrom method shouldn't copy a value that is equal to Property default value.
-	* FontInfo.cs : CopyFrom method shouldn't copy a value that is equal to Property default value.	
+
+	* Style.cs: CopyFrom method shouldn't copy a value that is equal to
+	Property default value.
+	* FontInfo.cs : CopyFrom method shouldn't copy a value that is equal to 
+	Property default value.	
 
 2004-01-15 Alon Gazit <along@mainsoft.com>
-	* RadioButtonList.cs: RepeatLayout property should affect the rendered html.	
+
+	* RadioButtonList.cs: RepeatLayout property should affect the rendered
+	html.	
 
 2004-01-15 Alon Gazit <along@mainsoft.com>
 	* FontInfo.cs: Add validation check to Size property.	

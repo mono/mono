@@ -939,16 +939,15 @@ namespace System.Web.UI.WebControls
 
 					TableCell dayCell = new TableCell ();
 					dayCell.ApplyStyle (currentDayStyle);
+					dayCell.Controls.Add (new LiteralControl (dayString));
 					calDay.IsSelectable = isActive;
 					OnDayRender (dayCell, calDay);
-					if (isActive)
+					if (calDay.IsSelectable)
 						dayCell.Text = GetCalendarLinkText (
 									"selectDay" + (crr * 7 + weekDay),
 									dayString,
 									dayCell.ForeColor,
-									true);
-					else
-						dayCell.Text = dayString;
+									isActive);
 
 					dayCell.RenderControl (writer);
 
