@@ -1,3 +1,6 @@
+﻿2003/09/15  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* driver.cs: Corrected handling of FileNotFoundException in LoadAssembly(), according to Bernie Solomon's patch
+
 2003/08/13  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* mb-parser.jay: ReDim statement parses many variables now (but initializers aren't allowed)
 					 Erase statement implemented

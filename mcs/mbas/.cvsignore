@@ -12,7 +12,3 @@ D/obj/*
 update.bat
 mcs.*.log
 *.dll
-mbas.prj
-mbas.pws
-.tm_project.cache
-commit.log

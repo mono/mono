@@ -1,4 +1,4 @@
-//
+﻿//
 // driver.cs: The compiler command line driver.
 //
 // Author: Rafael Teixeira (rafaelteixeirabr@hotmail.com)
@@ -334,7 +334,8 @@ namespace Mono.Languages
 			Assembly a;
 			string total_log = "";
 
-			try {
+			try 
+			{
 				char[] path_chars = { '/', '\\' };
 
 				if (assembly.IndexOfAny (path_chars) != -1)
@@ -343,22 +344,33 @@ namespace Mono.Languages
 					a = Assembly.Load(assembly);
 				TypeManager.AddAssembly (a);
 				return 0;
-			} catch (FileNotFoundException){
-				foreach (string dir in linkpaths){
-					string full_path = dir + "/" + assembly + ".dll";
+			}
+			catch (FileNotFoundException)
+			{
+				if (linkpaths != null)
+				{
+					foreach (string dir in linkpaths)
+					{
+						string full_path = dir + "/" + assembly + ".dll";
 
-					try {
-						a = Assembly.LoadFrom (full_path);
-						TypeManager.AddAssembly (a);
-						return 0;
-					} catch (FileNotFoundException ff) {
-						total_log += ff.FusionLog;
-						continue;
+						try 
+						{
+							a = Assembly.LoadFrom (full_path);
+							TypeManager.AddAssembly (a);
+							return 0;
+						} 
+						catch (FileNotFoundException ff) 
+						{
+							total_log += ff.FusionLog;
+							continue;
+						}
 					}
 				}
 				if (soft)
 					return 0;
-			} catch (BadImageFormatException f) {
+			}
+			catch (BadImageFormatException f) 
+			{
 				Error ("// Bad file format while loading assembly");
 				Error ("Log: " + f.FusionLog);
 				return 1;
