@@ -1,3 +1,8 @@
+2003-10-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (reflection_methodbuilder_to_mono_method): Avoid looking
+	up icalls at method definition time. Partially fixes #33569.
+
 2003-10-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (mono_marshal_get_native_wrapper): Add support for [Out]
