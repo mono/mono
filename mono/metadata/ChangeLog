@@ -1,3 +1,14 @@
+2003-04-01  Miguel de Icaza  <miguel@ximian.com>
+
+	* metadata.h: Added the new tables.
+
+	* row-indexes.h: Added definitions for new tables.
+
+	* metadata.c: Add schemas for new tables, and add support for
+	computing the sizes of them.
+
+	* class.c: Update for handling the new type cases.
+
 2003-04-01  Dietmar Maurer  <dietmar@ximian.com>
 
 	* metadata.h (MONO_TYPE_IS_VOID): new macro

@@ -1,3 +1,11 @@
+2003-03-31  Miguel de Icaza  <miguel@ximian.com>
+
+	* main.c: Sorted command line options table by name.
+
+	* dump.c: Add support for dumping the new generic tables. 
+
+	* monodis.1: Update man page.
+	
 2003-03-09 Jackson Harper <jackson@latitudegeo.com>
 
 	* main.c: Ouput implements clause as a comma seperated list.
