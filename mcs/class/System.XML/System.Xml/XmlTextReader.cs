@@ -313,9 +313,13 @@ namespace System.Xml
 			readState = ReadState.Closed;
 		}
 
+		[MonoTODO]
 		public override string GetAttribute (int i)
 		{
-			return orderedAttributes [i] as string;
+			if (i > attributes.Count)
+				throw new ArgumentOutOfRangeException ("i is smaller than AttributeCount");
+			else
+				throw new NotImplementedException ();
 		}
 
 		public override string GetAttribute (string name)
@@ -750,9 +754,6 @@ namespace System.Xml
 				popScope = false;
 			}
 
-			if (depthDown)
-				--depth;
-
 			if (returnEntityReference) {
 				++depth;
 				SetEntityReferenceProperties ();
@@ -765,6 +766,12 @@ namespace System.Xml
 					ReadTag ();
 					more = true;
 					break;
+				case '\n':
+					ReadChar ();
+					return ReadContent ();
+				case ' ':
+					SkipWhitespace ();
+					return ReadContent ();
 				case -1:
 					readState = ReadState.EndOfFile;
 					SetProperties (
@@ -847,6 +854,7 @@ namespace System.Xml
 
 			Expect ('>');
 
+			if (!depthDown)
 			++depth;
 
 			SetProperties (
