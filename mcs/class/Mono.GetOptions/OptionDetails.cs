@@ -94,17 +94,8 @@ namespace Mono.GetOptions
 
 		private OptionsParsingMode parsingMode { get { return this.OptionBundle.ParsingMode; } } 
 
-		private static bool x = true;
-
 		private string linuxLongPrefix {
 			get { 
-				if (x)
-				{	
-
-					Console.WriteLine("linuxLongPrefix - parsingMode = " +  parsingMode.ToString()); 
-					Console.WriteLine("linuxLongPrefix > " + ((((int)parsingMode & (int)OptionsParsingMode.GNU_DoubleDash) == (int)OptionsParsingMode.GNU_DoubleDash)? "--":"-")); 
-					x = false;
-				}
 				return (((parsingMode & OptionsParsingMode.GNU_DoubleDash) == OptionsParsingMode.GNU_DoubleDash)? "--":"-"); 
 			} 
 		}
