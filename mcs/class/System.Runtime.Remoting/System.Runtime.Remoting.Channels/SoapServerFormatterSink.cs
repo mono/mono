@@ -161,13 +161,6 @@ namespace System.Runtime.Remoting.Channels {
 			
 		}
 
-		private object HH(Header[] headers) {
-			foreach(Header h in headers) {
-				Console.WriteLine("Name: {0} Value:{0}", h.Name, h.Value);
-			}
-			return null;
-		}
-		
 		[Serializable]
 		public enum Protocol
 		{

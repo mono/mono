@@ -1,3 +1,7 @@
+2004-06-16  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* SoapServerFormatterSink.cs: Removed unneded method.
+
 2004-06-10  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* SoapMessageFormatter.cs: Don't add the signature to the headers list if
@@ -40,7 +44,7 @@
 	* SoapServerFormatterSink.cs: Use soapMsgFormatter.CreateSoapMessage to
 	  create the SoapMessage.
 
-﻿2004-02-27  Lluis Sanchez Gual  <lluis@ximian.com>
+2004-02-27  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* BinaryClientFormatterSink.cs: Don't set the request uri here, this will
 	  be done in the transport sink.
@@ -52,7 +56,7 @@
 	* BinaryServerFormatterSinkProvider.cs, SoapServerFormatterSinkProvider.cs:
 	  Changed some ifdefs for allowedProperties field.
 
-﻿2003-12-11  Patrik Torstensson  <p@rxc.se>
+2003-12-11  Patrik Torstensson  <p@rxc.se>
 
 	* SoapMessageFormater.cs: Use GetMethod with signature if possible, solves
           AmbiguousMatchException for bug 51990.
