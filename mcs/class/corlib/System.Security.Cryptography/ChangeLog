@@ -1,3 +1,24 @@
+2002-11-16  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AsymmetricAlgorithm.cs: Added internal class AsymmetricParameters
+	(which implements the IReader interface for MiniParser). Corrected
+	Dispose declaration.
+	* BigInteger.cs: New. Internal class for handling BIG integers for 
+	asymmetric crypto (both RSA and DSA). Thanks to Chew Keong TAN !
+	* CryptoConfig.cs: Added XMLDSIG URLs in CreateFromName.
+	Will dynamically load System.Security.dll, when required,
+	to return instance of those classes. Also CryptoConfig can now
+	create any object (e.g. System.IO.MemoryStream) !
+	* DSA.cs: Added internal class DSAHandler (which implements IHandler
+	interface for MiniParser) to import DSA keypairs from XML strings.
+	* DSACryptoServiceProvider.cs: Crypto fully implemented using 
+	BigInteger. Key generation (group) is VERY long.
+	* MiniParser.cs: New. Minimal XML parser by Sergey Chaban. Used to 
+	import keypairs in XML strings.
+	* SignatureDescription.cs: Removed local CreateFromName (to use
+	CryptoConfig - which actually can create anything). Added internal
+	classes DSASignatureDescription and RSAPKCS1SHA1SignatureDescription.
+
 2002-11-15  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptographicUnexpectedOperationException.cs: Forgot it last time!

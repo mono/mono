@@ -10,7 +10,6 @@
 
 using System;
 using System.Text;
-//using System.Xml;
 
 // References:
 // a.	FIPS PUB 186-2: Digital Signature Standard (DSS) 
@@ -18,14 +17,78 @@ using System.Text;
 
 namespace System.Security.Cryptography
 {
+	internal class DSAHandler : MiniParser.IHandler {
+
+		private DSAParameters dsa;
+		private bool unknown;
+		private byte[] temp;
+
+		public DSAHandler () 
+		{
+			dsa = new DSAParameters();
+		}
+
+		public DSAParameters GetParams () 
+		{
+			return dsa;
+		}
+
+		public void OnStartParsing (MiniParser parser) {}
+
+		public void OnStartElement (string name, MiniParser.IAttrList attrs) {}
+
+		public void OnEndElement (string name) 
+		{
+			switch (name) {
+				case "P":
+					dsa.P = temp;
+					break;
+				case "Q":
+					dsa.Q = temp;
+					break;
+				case "G":
+					dsa.G = temp;
+					break;
+				case "J":
+					dsa.J = temp;
+					break;
+				case "Y":
+					dsa.Y = temp;
+					break;
+				case "X":
+					dsa.X = temp;
+					break;
+				case "Seed":
+					dsa.Seed = temp;
+					break;
+				case "PgenCounter":
+					byte[] counter4b = new byte[4];
+					Array.Copy (temp, 0, counter4b, 0, temp.Length);
+					dsa.Counter = BitConverter.ToInt32 (counter4b, 0);
+					break;
+				default:
+					// unknown tag in parameters
+					break;
+			}
+		}
+
+		public void OnChars (string ch) 
+		{
+			temp = Convert.FromBase64String (ch);
+		}
+
+		public void OnEndParsing (MiniParser parser) {}
+	}
+
 	/// <summary>
 	/// Abstract base class for all implementations of the DSA algorithm
 	/// </summary>
 	public abstract class DSA : AsymmetricAlgorithm
 	{
-		// now public like RSA (but unlike MS which is internal)
-		// this caused problems to compile the test suite
-		public DSA () {}
+		// LAMESPEC: It says to derive new DSA implemenation from DSA class.
+		// Well it's aint gonna be easy this way.
+		// RSA constructor is public
+		internal DSA () {}
 	
 		public static new DSA Create ()
 		{
@@ -54,21 +117,11 @@ namespace System.Security.Cryptography
 			
 			DSAParameters dsaParams = new DSAParameters ();
 			try {
-/*				XmlDocument xml = new XmlDocument ();
-				xml.LoadXml (xmlString);
-				dsaParams.P = GetElement (xml, "P");
-				dsaParams.Q = GetElement (xml, "Q");
-				dsaParams.G = GetElement (xml, "G");
-				dsaParams.Y = GetElement (xml, "Y");
-				dsaParams.J = GetElement (xml, "J");
-				dsaParams.Seed = GetElement (xml, "Seed");
-				byte[] counter = GetElement (xml, "PgenCounter");
-				// else we may have an exception
-				byte[] counter4b = new byte[4];
-				Array.Copy (counter, 0, counter4b, 0, counter.Length);
-				dsaParams.Counter = BitConverter.ToInt32 (counter4b, 0);
-				dsaParams.X = GetElement (xml, "X");*/
-				ImportParameters (dsaParams);
+				MiniParser parser = new MiniParser ();
+				AsymmetricParameters reader = new AsymmetricParameters (xmlString);
+				DSAHandler handler = new DSAHandler ();
+				parser.Parse(reader, handler);
+				ImportParameters (handler.GetParams ());
 			}
 			catch {
 				ZeroizePrivateKey (dsaParams);
@@ -101,7 +154,7 @@ namespace System.Security.Cryptography
 				sb.Append ("</G>");
 
 				sb.Append ("<Y>");
-				sb.Append (Convert.ToBase64String( dsaParams.Y));
+				sb.Append (Convert.ToBase64String (dsaParams.Y));
 				sb.Append( "</Y>");
 
 				sb.Append ("<J>");
@@ -136,9 +189,6 @@ namespace System.Security.Cryptography
 			catch {
 				ZeroizePrivateKey (dsaParams);
 				throw;
-			}
-			finally	{
-				ZeroizePrivateKey (dsaParams);
 			}
                         			
 			return sb.ToString ();

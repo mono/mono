@@ -2,8 +2,8 @@
 // System.Security.Cryptography.AsymmetricAlgorithm Class implementation
 //
 // Authors:
-//   Thomas Neidhart (tome@sbox.tugraz.at)
-//   Sebastien Pouliot (spouliot@motus.com)
+//	Thomas Neidhart (tome@sbox.tugraz.at)
+//	Sebastien Pouliot (spouliot@motus.com)
 //
 // Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
 //
@@ -11,6 +11,28 @@
 using System;
 
 namespace System.Security.Cryptography {
+
+	// to import keypairs parameters using MiniParser
+	internal class AsymmetricParameters : MiniParser.IReader {
+		private string xml;
+		private int pos;
+
+		public AsymmetricParameters (string xml) 
+		{
+			this.xml = xml;
+			pos = 0;
+		}
+
+		public int Read () 
+		{
+			try {
+				return (int) xml [pos++];
+			}
+			catch {
+				return -1;
+			}
+		}
+	}
 
 	/// <summary>
 	/// Abstract base class for all cryptographic asymmetric algorithms.
@@ -36,9 +58,7 @@ namespace System.Security.Cryptography {
 		/// Gets or sets the actual key size
 		/// </summary>
 		public virtual int KeySize {
-			get {
-				return this.KeySizeValue;
-			}
+			get { return this.KeySizeValue; }
 			set {
 				if (!IsLegalKeySize (this.LegalKeySizesValue, value))
 					throw new CryptographicException("key size not supported by algorithm");
@@ -51,9 +71,7 @@ namespace System.Security.Cryptography {
 		/// Gets all legal key sizes
 		/// </summary>
 		public virtual KeySizes[] LegalKeySizes {
-			get {
-				return this.LegalKeySizesValue;
-			}
+			get { return this.LegalKeySizesValue; }
 		}
 
 		/// <summary>
@@ -61,41 +79,30 @@ namespace System.Security.Cryptography {
 		/// </summary>
 		public abstract string SignatureAlgorithm {get;}
 
-		public void Dispose() 
+		void IDisposable.Dispose () 
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);  // Finalization is now unnecessary
 		}
 
-		public void Clear() 
+		public void Clear () 
 		{
 			Dispose (false);
 		}
 
 		protected abstract void Dispose (bool disposing);
 
-/* Commented to remove cyclic dependency between corlib and System.Xml
-		// helper function for FromXmlString (used in RSA and DSA)
-		protected byte[] GetElement (XmlDocument xml, string tag) 
-		{
-			XmlNodeList xnl = xml.GetElementsByTagName (tag);
-			if (xnl.Count > 0)
-				return Convert.FromBase64String (xnl[0].InnerText);
-			else
-				return null;
-		}*/
-
 		/// <summary>
 		/// Reconstructs the AsymmetricAlgorithm Object from an XML-string
 		/// </summary>
-		public abstract void FromXmlString(string xmlString);
+		public abstract void FromXmlString (string xmlString);
 		
 		/// <summary>
 		/// Returns an XML string representation the current AsymmetricAlgorithm object
 		/// </summary>
-		public abstract string ToXmlString(bool includePrivateParameters);		
+		public abstract string ToXmlString (bool includePrivateParameters);		
 		
-		private bool IsLegalKeySize(KeySizes[] LegalKeys, int Size) 
+		private bool IsLegalKeySize (KeySizes[] LegalKeys, int Size) 
 		{
 			foreach (KeySizes LegalKeySize in LegalKeys) {
 				for (int i=LegalKeySize.MinSize; i<=LegalKeySize.MaxSize; i+=LegalKeySize.SkipSize) {
@@ -110,9 +117,9 @@ namespace System.Security.Cryptography {
 		/// Checks wether the given keyLength is valid for the current algorithm
 		/// </summary>
 		/// <param name="bitLength">the given keyLength</param>
-		public bool ValidKeySize(int bitLength) 
+		public bool ValidKeySize (int bitLength) 
 		{
-			return IsLegalKeySize(LegalKeySizesValue, bitLength);
+			return IsLegalKeySize (LegalKeySizesValue, bitLength);
 		}
 		
 		/// <summary>
