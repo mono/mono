@@ -1,7 +1,3 @@
-2003-06-08  Martin Baulig  <martin@ximian.com>
-
-	* Makefile.am (libmonoutils_la_LIBADD): Added LIBGC_LIBS.
-
 Fri Jun 6 19:09:51 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mono-logger.h, mono-logger.c, Makefile.am: added
