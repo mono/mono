@@ -831,7 +831,7 @@ el.ElementType != schemaAnyType)
 			foreach (XmlSchemaXPath Field in ic.Fields) {
 				string colName = Field.XPath;
 				bool isAttr = colName.Length > 0 && colName [0] == '@';
-				int index = colName.LastIndexOf (':', isAttr ? 1 : 0);
+				int index = colName.LastIndexOf (':');
 				if (index > 0)
 					colName = colName.Substring (index + 1);
 				else if (isAttr)
@@ -888,7 +888,7 @@ el.ElementType != schemaAnyType)
 			foreach (XmlSchemaXPath Field in keyref.Fields) {
 				string colName = Field.XPath;
 				bool isAttr = colName.Length > 0 && colName [0] == '@';
-				int index = colName.LastIndexOf (':', isAttr ? 1 : 0);
+				int index = colName.LastIndexOf (':');
 				if (index > 0)
 					colName = colName.Substring (index + 1);
 				else if (isAttr)

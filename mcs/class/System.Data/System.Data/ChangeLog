@@ -1,4 +1,9 @@
-2004-05-20  Atsushi Enomoto  <atsushi@ximian.com>
+2004-05-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaDataImporter.cs : Setting startindex in LastIndexOf() 
+	  caused problem on qualified name to get schema Field name.
+
+2004-05-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlDataReader.cs : Now data reader is namespace aware in all places.
 	  When table's namespace is different, it entered to infinite loop.
