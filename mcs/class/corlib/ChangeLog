@@ -1,3 +1,6 @@
+2004-09-14  Tim Coleman <tim@timcoleman.com>
+	* corlib.dll.sources: Added System.Security.Principal/TokenImpersonationLevel
+
 2004-09-09  Tim Coleman <tim@timcoleman.com>
 	* corlib.dll.sources: Added System/Base64FormattingOptions.cs to the
 	build

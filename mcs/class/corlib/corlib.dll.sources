@@ -1056,6 +1056,7 @@ System.Security.Principal/GenericPrincipal.cs
 System.Security.Principal/IIdentity.cs
 System.Security.Principal/IPrincipal.cs
 System.Security.Principal/PrincipalPolicy.cs
+System.Security.Principal/TokenImpersonationLevel.cs
 System.Security.Principal/WindowsAccountType.cs
 System.Security.Principal/WindowsBuiltInRole.cs
 System.Security.Principal/WindowsIdentity.cs
