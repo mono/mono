@@ -1,3 +1,10 @@
+2003-02-14  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (Field.Define): Do not overwrite the type definition
+	inside the `volatile' group.  Turns out that volatile enumerations
+	were changing the type here to perform a validity test, which
+	broke conversions. 
+
 2003-02-12  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (FieldExpr.AddressOf): In the particular case of This

@@ -3496,22 +3496,24 @@ namespace Mono.CSharp {
 
 			if ((ModFlags & Modifiers.VOLATILE) != 0){
 				if (!t.IsClass){
-					if (TypeManager.IsEnumType (t))
-						t = TypeManager.EnumToUnderlying (t);
+					Type vt = t;
+					
+					if (TypeManager.IsEnumType (vt))
+						vt = TypeManager.EnumToUnderlying (t);
 
-					if (!((t == TypeManager.bool_type) ||
-					      (t == TypeManager.sbyte_type) ||
-					      (t == TypeManager.byte_type) ||
-					      (t == TypeManager.short_type) ||    
-					      (t == TypeManager.ushort_type) ||
-					      (t == TypeManager.int32_type) ||    
-					      (t == TypeManager.uint32_type) ||    
-					      (t == TypeManager.char_type) ||    
-					      (t == TypeManager.float_type))){
+					if (!((vt == TypeManager.bool_type) ||
+					      (vt == TypeManager.sbyte_type) ||
+					      (vt == TypeManager.byte_type) ||
+					      (vt == TypeManager.short_type) ||    
+					      (vt == TypeManager.ushort_type) ||
+					      (vt == TypeManager.int32_type) ||    
+					      (vt == TypeManager.uint32_type) ||    
+					      (vt == TypeManager.char_type) ||    
+					      (vt == TypeManager.float_type))){
 						Report.Error (
 							677, Location, parent.MakeName (Name) +
 							" A volatile field can not be of type `" +
-							TypeManager.CSharpName (t) + "'");
+							TypeManager.CSharpName (vt) + "'");
 						return false;
 					}
 				}
