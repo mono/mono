@@ -41,6 +41,10 @@ namespace System.Data.Common {
 	{
 		#region Constructors
 
+		protected DbProviderFactory ()
+		{
+		}
+
 		[MonoTODO]
 		protected DbProviderFactory (DbProviderSupportedClasses supportedClasses)
 		{
@@ -50,11 +54,7 @@ namespace System.Data.Common {
 
 		#region Properties
 
-		[MonoTODO]
-		public DbProviderSupportedClasses SupportedClasses {
-			get { throw new NotImplementedException (); }
-		}
-
+		public abstract DbProviderSupportedClasses SupportedClasses { get; }
 		#endregion // Properties
 
 		#region Methods

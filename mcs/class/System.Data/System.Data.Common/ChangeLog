@@ -1,3 +1,14 @@
+2004-10-01  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DbProviderFactories.cs: Implemented all the stubs. Added functionality for
+	getting available provider factories and creating a specified provider factory.
+
+	* DbProviderFactoriesConfigurationHandler.cs: Added functionality for handling
+	DbProviderFactories configuration section.
+
+	* DbProviderFactory.cs: Added protected constructor. SupportedClasses property
+	is made abstract.
+
 2004-09-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DbDataPermission.cs: Implemented Intersect, IsSubsetOf and Union.

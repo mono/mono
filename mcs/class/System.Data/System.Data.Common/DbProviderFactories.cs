@@ -2,6 +2,7 @@
 // System.Data.Common.DbProviderFactories.cs
 //
 // Author:
+//   Sureshkumar T (tsureshkumar@novell.com)
 //   Tim Coleman (tim@timcoleman.com)
 //
 // Copyright (C) Tim Coleman, 2003
@@ -32,32 +33,79 @@
 
 #if NET_2_0
 
+using System.Threading;
+using System.Reflection;
 using System.Collections;
+using System.Configuration;
 
 namespace System.Data.Common {
 	public sealed class DbProviderFactories
 	{
+		private static object configEntries = null; // DataSet
+
+                private const string CONFIG_SECTION_NAME        = "system.data";
+                private const string CONFIG_SEC_TABLE_NAME      = "DbProviderFactories";
+                
+		#region Constructors
+		private DbProviderFactories ()
+		{
+		}
+		#endregion Constructors
+
 		#region Methods
 
-		[MonoTODO]
 		public static DbProviderFactory GetFactory (DataRow providerRow)
 		{
-			throw new NotImplementedException ();
+                        string assemblyType = (string) providerRow ["AssemblyQualifiedName"];
+                        Type type = Type.GetType (assemblyType, false, true);
+                        if (type != null && type.IsSubclassOf (typeof (DbProviderFactory))) {
+                                // Provider factories are singletons with Instance field having
+                                // the sole instance
+                                FieldInfo field = type.GetField ("Instance", BindingFlags.Public |
+                                                                 BindingFlags.Static);
+                                if (field != null) {
+                                        return field.GetValue (null) as DbProviderFactory;
+                                }
+                                
+                        }
+                        
+                        throw new ConfigurationException("DataProvider is missing!");
 		}
 
-		[MonoTODO]
 		public static DbProviderFactory GetFactory (string providerInvariantName)
 		{
-			throw new NotImplementedException ();
+                        DataTable table = GetFactoryClasses ();
+                        if (table != null) {
+                                DataRow row = table.Rows.Find (providerInvariantName);
+                                if (row != null)
+                                        return GetFactory (row);
+                        }
+                        throw new ConfigurationException ("DataProvider is not found!");
 		}
 
-		[MonoTODO]
 		public static DataTable GetFactoryClasses ()
 		{
-			throw new NotImplementedException ();
+                        DataSet ds = GetConfigEntries ();
+                        DataTable table = ds != null ? ds.Tables [CONFIG_SEC_TABLE_NAME] : null;
+                        if (table != null)
+                                table = table.Copy (); // avoid modifications by user
+                        return table;
 		}
 
 		#endregion // Methods
+
+		#region Internal Methods
+		internal static DataSet GetConfigEntries ()
+		{
+                        
+                        if (configEntries != null)
+                                return configEntries as DataSet;
+                        
+                        DataSet ds = (DataSet) ConfigurationSettings.GetConfig (CONFIG_SECTION_NAME);
+                        Interlocked.CompareExchange (ref configEntries, ds, null);
+                        return configEntries as DataSet;
+		}
+		#endregion Internal Methods
 	}
 }
 
