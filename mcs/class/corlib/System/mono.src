@@ -8,3 +8,4 @@ RuntimeTypeHandle.cs
 Type.cs
 TypeInitializationException.cs
 ValueType.cs
+MarshalByRefObject.cs

@@ -7,6 +7,8 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Runtime.Remoting;
+
 namespace System {
 
 	public abstract class MarshalByRefObject {

@@ -12,7 +12,8 @@ DIRS=	\
 	System.Security.Cryptography			\
 	System.Security.Permissions			\
 	System.Text					\
-	System.Threading
+	System.Threading				\
+	Unix
 
 all:
 	@echo "You must use 'make windows' or 'make unix'."
