@@ -2,7 +2,12 @@
 
 	TlsCupherSuite.cs: Fixed padding length calculation on record encryption.
 	
-	TlsSessionContext.cs: Added new CompressionMethod property.
+	TlsSessionContext.cs: 	Added new CompressionMethod property.
+					Added new MAX_FRAGMENT_SIZE constant.
+
+	TlsSession.cs: Removed MaxFragmentSize property.
+
+	TlsSocket.cs: Replaced use of TlsSesison.MaxFragmentSize by TlsSessionContext.MAX_FAGMENT_SIZE
 	
 	TlsSessionSettings.cs: Added new CompressionMethod property.
 
