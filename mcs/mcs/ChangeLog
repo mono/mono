@@ -1,3 +1,7 @@
+2002-12-20 Jackson Harper <jackson@latitudegeo.com>
+
+	* codegen.cs: Use Path.GetFileNameWithoutExtension so an exception is not thrown when extensionless outputs are used 
+
 2002-12-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* rootcontext.cs: fixed compilation of corlib.
