@@ -104,10 +104,10 @@ namespace Npgsql
         /// <summary>
         /// Finalizer for <see cref="Npgsql.NpgsqlCommand">NpgsqlCommand</see>.
         /// </summary>
-        ~NpgsqlCommand ()
+        /*~NpgsqlCommand ()
         {
             Dispose(false);
-        }
+        }*/
 
         // Public properties.
         /// <summary>
@@ -471,7 +471,7 @@ namespace Npgsql
 
             CheckNotification();
 
-
+            
             // Get the resultsets and create a Datareader with them.
             return new NpgsqlDataReader(connection.Mediator.GetResultSets(), connection.Mediator.GetCompletedResponses(), connection, cb);
         }
@@ -616,9 +616,12 @@ namespace Npgsql
         /// </summary>
         protected override void Dispose (bool disposing)
         {
-            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Dispose");
+            
             if (disposing)
             {
+                // Only if explicitly calling Close or dispose we still have access to 
+                // managed resources.
+                NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Dispose");
                 if (connection != null)
                 {
                     connection.Dispose();

@@ -243,8 +243,10 @@ namespace Npgsql
 
             CheckCanRead();
 
-            if (i < 0 || _rowIndex < 0)
-                throw new InvalidOperationException("Cannot read data.");
+            if (i < 0)
+                throw new InvalidOperationException("Cannot read data. Column less than 0 specified.");
+            if (_rowIndex < 0)
+                throw new InvalidOperationException("Cannot read data. DataReader not initialized. Maybe you forgot to call Read()?");
             return ((NpgsqlAsciiRow)_currentResultset[_rowIndex])[i];
 
 

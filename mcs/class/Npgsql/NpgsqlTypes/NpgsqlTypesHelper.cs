@@ -247,7 +247,7 @@ namespace NpgsqlTypes
 
                 // Get the date time parsed in all expected formats for timestamp.
                 return DateTime.ParseExact(data,
-                                           new String[] {"yyyy-MM-dd HH:mm:ss.fff", "yyyy-MM-dd HH:mm:ss.ff", "yyyy-MM-dd HH:mm:ss.f", "yyyy-MM-dd HH:mm:ss"},
+                                           new String[] {"yyyy-MM-dd HH:mm:ss.ffffff", "yyyy-MM-dd HH:mm:ss.fffff", "yyyy-MM-dd HH:mm:ss.ffff", "yyyy-MM-dd HH:mm:ss.fff", "yyyy-MM-dd HH:mm:ss.ff", "yyyy-MM-dd HH:mm:ss.f", "yyyy-MM-dd HH:mm:ss"},
                                            DateTimeFormatInfo.InvariantInfo,
                                            DateTimeStyles.NoCurrentDateDefault | DateTimeStyles.AllowWhiteSpaces);
 
@@ -485,18 +485,17 @@ namespace NpgsqlTypes
         private static String ConvertByteArrayToBytea(Byte[] byteArray)
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ConvertByteArrayToBytea");
-            Int32 len = byteArray.Length;
-            Char[] res = new Char [len * 5];
-            for (Int32 i = 0; i <len; i++)
+            int len = byteArray.Length;
+            char[] res = new char[len * 5];
+            for (int i=0, o=0; i<len; ++i, o += 5)
             {
-                res [(i*5)] = '\\';
-                res [(i*5)+1] = '\\';
-                res [(i*5)+2] = (Char) (((byteArray[i] & 0xC0) >> 6) + '0');
-                res [(i*5)+3] = (Char) (((byteArray[i] & 0x38) >> 3) + '0');
-                res [(i*5)+4] = (Char) ((byteArray[i] & 0x07) + '0');
+                byte item = byteArray[i];
+                res[o] = res[o + 1] = '\\';
+                res[o + 2] = (char)('0' + (7 & (item >> 6)));
+                res[o + 3] = (char)('0' + (7 & (item >> 3)));
+                res[o + 4] = (char)('0' + (7 & item));
             }
-
-            return new String (res);
+            return new String(res);
 
         }
     }

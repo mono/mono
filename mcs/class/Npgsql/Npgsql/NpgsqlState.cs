@@ -46,27 +46,49 @@ namespace Npgsql
         protected ResourceManager resman = null;
 
         public virtual void Open(NpgsqlConnection context)
-        {}
+        {
+            throw new InvalidOperationException("Internal Error! " + this);
+        }
         public virtual void Startup(NpgsqlConnection context)
-        {}
+        {
+            throw new InvalidOperationException("Internal Error! " + this);
+        }
         public virtual void Authenticate(NpgsqlConnection context, string password)
-        {}
+        {
+            throw new InvalidOperationException("Internal Error! " + this);
+        }
         public virtual void Query(NpgsqlConnection context, NpgsqlCommand command)
-        {}
+        {
+            throw new InvalidOperationException("Internal Error! " + this);
+        }
         public virtual void Ready( NpgsqlConnection context )
-        {}
+        {
+            throw new InvalidOperationException("Internal Error! " + this);
+        }
         public virtual void FunctionCall(NpgsqlConnection context, NpgsqlCommand command)
-        {}
+        {
+            throw new InvalidOperationException("Internal Error! " + this);
+        }
         public virtual void Parse(NpgsqlConnection context, NpgsqlParse parse)
-        {}
+        {
+            throw new InvalidOperationException("Internal Error! " + this);
+        }
         public virtual void Flush(NpgsqlConnection context)
-        {}
+        {
+            throw new InvalidOperationException("Internal Error! " + this);
+        }
         public virtual void Sync(NpgsqlConnection context)
-        {}
+        {
+            throw new InvalidOperationException("Internal Error! " + this);
+        }
         public virtual void Bind(NpgsqlConnection context, NpgsqlBind bind)
-        {}
+        {
+            throw new InvalidOperationException("Internal Error! " + this);
+        }
         public virtual void Execute(NpgsqlConnection context, NpgsqlExecute execute)
-        {}
+        {
+            throw new InvalidOperationException("Internal Error! " + this);
+        }
 
         public NpgsqlState()
         {
@@ -75,7 +97,7 @@ namespace Npgsql
 
         public virtual void Close( NpgsqlConnection context )
         {
-            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Close");
+            /*NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Close");
             if ( context.State == ConnectionState.Open )
             {
                 Stream stream = context.Stream;
@@ -86,8 +108,11 @@ namespace Npgsql
                         PGUtil.WriteInt32(stream, 4);
                     stream.Flush();
                 }
-            }
-            ChangeState( context, NpgsqlClosedState.Instance );
+            }*/
+            
+            context.Connector.InUse = false;
+            context.Connector = null;
+            //ChangeState( context, NpgsqlClosedState.Instance );
         }
 
         ///<summary> This method is used by the states to change the state of the context.

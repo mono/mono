@@ -50,7 +50,7 @@ namespace Npgsql
     /// PostgreSQL server.
     /// </summary>
     [System.Drawing.ToolboxBitmapAttribute(typeof(NpgsqlConnection))]
-    public sealed class NpgsqlConnection : Component, IDbConnection, IDisposable
+    public sealed class NpgsqlConnection : Component, IDbConnection
     {
         //Changed the Name of this event because events usually don't start with 'On' in the .Net-Framework
         // (but their handlers do ;-)
@@ -84,6 +84,10 @@ namespace Npgsql
         // These are for ODBC connection string compatibility
         internal readonly String ODBC_USERID 	= "UID";
         internal readonly String ODBC_PASSWORD = "PWD";
+        
+        // These are for the connection pool
+        internal readonly String MIN_POOL_SIZE = "MINPOOLSIZE";
+        internal readonly String MAX_POOL_SIZE = "MAXPOOLSIZE";
 
         // Values for possible CancelRequest messages.
         private NpgsqlBackEndKeyData backend_keydata;
@@ -98,6 +102,8 @@ namespace Npgsql
         private readonly String CLASSNAME = "NpgsqlConnection";
 
         private Stream					stream;
+        
+        private Connector               _connector;
         
         private Encoding				connection_encoding;
 
@@ -144,14 +150,7 @@ namespace Npgsql
                 ParseConnectionString();
         }
 
-        /// <summary>
-        /// Finalizer for NpgsqlConnection
-        /// </summary>
-        ~NpgsqlConnection ()
-        {
-            Dispose(false);
-        }
-
+        
         /// <summary>
         /// Gets or sets the string used to open a SQL Server database.
         /// </summary>
@@ -355,77 +354,100 @@ namespace Npgsql
                 connection_string_values[CONN_PORT] = PG_PORT;
             if (connection_string_values[SSL_ENABLED] == null)
                 connection_string_values[SSL_ENABLED] = "no";
-
+            
+            if (connection_string_values[MIN_POOL_SIZE] == null)
+                connection_string_values[MIN_POOL_SIZE] = "1";
+            if (connection_string_values[MAX_POOL_SIZE] == null)
+                connection_string_values[MAX_POOL_SIZE] = "-1";
+                
             try
             {
-
+            
                 // Check if the connection is already open.
                 if (connection_state == ConnectionState.Open)
                     throw new NpgsqlException(resman.GetString("Exception_ConnOpen"));
 
-
-                // Try first connect using the 3.0 protocol...
-                CurrentState.Open(this);
-
-
-                // Check if there were any errors.
-                if (_mediator.Errors.Count > 0)
+                lock(ConnectorPool.ConnectorPoolMgr)
                 {
-                    // Check if there is an error of protocol not supported...
-                    // As the message can be localized, just check the initial unlocalized part of the
-                    // message. If it is an error other than protocol error, when connecting using
-                    // version 2.0 we shall catch the error again.
-                    if (((String)_mediator.Errors[0]).StartsWith("FATAL"))
-                    {
-                        // Try using the 2.0 protocol.
-                        _mediator.Reset();
-                        CurrentState = NpgsqlClosedState.Instance;
-                        BackendProtocolVersion = ProtocolVersion.Version2;
-                        CurrentState.Open(this);
-                    }
+                    Connector = ConnectorPool.ConnectorPoolMgr.RequestConnector(ConnectionString, false);
+                    Connector.InUse = true;
+                }
+                
+                if (!Connector.IsInitialized)
+                {
+                    
+                    // Reset state to initialize new connector in pool.
+                    CurrentState = NpgsqlClosedState.Instance;
 
-                    // Keep checking for errors...
-                    if(_mediator.Errors.Count > 0)
+                    // Try first connect using the 3.0 protocol...
+                    CurrentState.Open(this);
+                    
+                    // Change the state of connection to open.
+                    connection_state = ConnectionState.Open;
+        
+                    // Check if there were any errors.
+                    if (_mediator.Errors.Count > 0)
                     {
-                        StringWriter sw = new StringWriter();
-                        sw.WriteLine(resman.GetString("Exception_OpenError"));
-                        uint i = 1;
-                        foreach(string error in _mediator.Errors)
+                        // Check if there is an error of protocol not supported...
+                        // As the message can be localized, just check the initial unlocalized part of the
+                        // message. If it is an error other than protocol error, when connecting using
+                        // version 2.0 we shall catch the error again.
+                        if (((String)_mediator.Errors[0]).StartsWith("FATAL"))
                         {
-                            sw.WriteLine("{0}. {1}", i++, error);
+                            // Try using the 2.0 protocol.
+                            _mediator.Reset();
+                            CurrentState = NpgsqlClosedState.Instance;
+                            BackendProtocolVersion = ProtocolVersion.Version2;
+                            CurrentState.Open(this);
                         }
-                        CurrentState = NpgsqlClosedState.Instance;
-                        _mediator.Reset();
-                        throw new NpgsqlException(sw.ToString());
+    
+                        // Keep checking for errors...
+                        if(_mediator.Errors.Count > 0)
+                        {
+                            StringWriter sw = new StringWriter();
+                            sw.WriteLine(resman.GetString("Exception_OpenError"));
+                            uint i = 1;
+                            foreach(string error in _mediator.Errors)
+                            {
+                                sw.WriteLine("{0}. {1}", i++, error);
+                            }
+                            CurrentState = NpgsqlClosedState.Instance;
+                            _mediator.Reset();
+                            throw new NpgsqlException(sw.ToString());
+                        }
                     }
+    
+                    backend_keydata = _mediator.GetBackEndKeyData();
+    
+                    
+    
+                    // Get version information to enable/disable server version features.
+                    // Only for protocol 2.0.
+                    if (BackendProtocolVersion == ProtocolVersion.Version2)
+                    {
+                        NpgsqlCommand command = new NpgsqlCommand("select version();set DATESTYLE TO ISO;", this);
+                        _serverVersion = (String) command.ExecuteScalar();
+                    }
+                    
+                    Connector.ServerVersion = _serverVersion;
+                    
                 }
-
-                backend_keydata = _mediator.GetBackEndKeyData();
-
-                // Change the state of connection to open.
-                connection_state = ConnectionState.Open;
-
-                // Get version information to enable/disable server version features.
-                // Only for protocol 2.0.
-                if (BackendProtocolVersion == ProtocolVersion.Version2)
-                {
-                    NpgsqlCommand command = new NpgsqlCommand("select version();set DATESTYLE TO ISO;", this);
-                    _serverVersion = (String) command.ExecuteScalar();
-                }
-
-
                 //NpgsqlCommand commandEncoding = new NpgsqlCommand("show client_encoding", this);
                 //String serverEncoding = (String)commandEncoding.ExecuteScalar();
 
                 //if (serverEncoding.Equals("UNICODE"))
                 //  connection_encoding = Encoding.UTF8;
-
-
-
+                
+                
+                // Connector was obtained from pool. 
+                // Do a mini initialization in the state machine.
+                
+                connection_state = ConnectionState.Open;
+                _serverVersion = Connector.ServerVersion;
+                CurrentState = NpgsqlReadyState.Instance;
+                
                 ProcessServerVersion();
                 _oidToNameMapping = NpgsqlTypesHelper.LoadTypesMapping(this);
-
-
 
             }
 
@@ -450,26 +472,8 @@ namespace Npgsql
         /// </summary>
         public void Close()
         {
-            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Close");
-
-            try
-            {
-                if ((connection_state == ConnectionState.Open))
-                {
-                    CurrentState.Close(this);
-                }
-            }
-            catch (IOException e)
-            {
-                throw new NpgsqlException(resman.GetString("Exception_CloseError"), e);
-            }
-            finally
-            {
-                // Even if an exception occurs, let object in a consistent state.
-                if (stream != null)
-                    stream.Close();
-                connection_state = ConnectionState.Closed;
-            }
+            Dispose(true);
+            
         }
 
         /// <summary>
@@ -503,12 +507,32 @@ namespace Npgsql
         /// <b>false</b> to release only unmanaged resources.</param>
         protected override void Dispose(bool disposing)
         {
-            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Dispose", disposing);
-            if (disposing == true)
+            if (disposing)
             {
-                if (this.connection_state == ConnectionState.Open)
-                    this.Close();
-                this.connection_string = null;
+                // Only if explicitly calling Close or dispose we still have access to 
+                // managed resources.
+                NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Dispose", disposing);
+
+                try
+                {
+                    if ((connection_state == ConnectionState.Open))
+                    {
+                        CurrentState.Close(this);
+                    }
+                    
+                }
+                catch (IOException e)
+                {
+                    throw new NpgsqlException(resman.GetString("Exception_CloseError"), e);
+                }
+                finally
+                {
+                    // Even if an exception occurs, let object in a consistent state.
+                    /*if (stream != null)
+                        stream.Close();*/
+                    connection_state = ConnectionState.Closed;
+                }
+                                
             }
             base.Dispose (disposing);
         }
@@ -524,6 +548,8 @@ namespace Npgsql
         /// Database 	- Database name. Defaults to user name if not specified
         /// User		- User name
         /// Password	- Password for clear text authentication
+        /// MinPoolSize - Min size of connection pool
+        /// MaxPoolSize - Max size of connection pool
         /// </summary>
         private void ParseConnectionString()
         {
@@ -572,26 +598,43 @@ namespace Npgsql
         private void ProcessServerVersion ()
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ProcessServerVersion");
+            // FIXME: Do a better parsing of server version to avoid
+            // hardcode version numbers.
 
             if (BackendProtocolVersion == ProtocolVersion.Version2)
             {
+                // With protocol version 2, only 7.3 version supports prepare.
                 SupportsPrepare = (_serverVersion.IndexOf("PostgreSQL 7.3") != -1);
             }
             else
             {
                 // 3.0+ version is set by ParameterStatus message.
-                SupportsPrepare = (_serverVersion.IndexOf("7.4") != -1);
+                // On protocol 3.0, 7.4 and above support it.
+                SupportsPrepare = (_serverVersion.IndexOf("7.4") != -1)
+                                    || (_serverVersion.IndexOf("7.5") != -1);
             }
         }
 
         internal Stream Stream {
             get
             {
-                return stream;
+                return _connector.Stream;
             }
             set
             {
                 stream = value;
+            }
+        }
+        
+        internal Connector Connector
+        {
+            get
+            {
+                return _connector;
+            }
+            set
+            {
+                _connector = value;
             }
         }
 
@@ -777,6 +820,20 @@ namespace Npgsql
             set
             {
                 _backendProtocolVersion = value;
+            }
+        }
+        
+        internal Int32 MinPoolSize {
+            get
+            {
+                return Int32.Parse((String)connection_string_values[MIN_POOL_SIZE]);
+            }
+        }
+        
+        internal Int32 MaxPoolSize {
+            get
+            {
+                return Int32.Parse((String)connection_string_values[MAX_POOL_SIZE]);
             }
         }
 

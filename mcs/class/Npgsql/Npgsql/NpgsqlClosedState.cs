@@ -26,6 +26,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Resources;
+using System.Collections;
 using Mono.Security.Protocol.Tls;
 
 namespace Npgsql
@@ -56,7 +57,6 @@ namespace Npgsql
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Open");
 
-            // Create a new TLS Session
             try
             {
                 TcpClient tcpc = new TcpClient(context.ServerName, Int32.Parse(context.ServerPort));
@@ -73,16 +73,20 @@ namespace Npgsql
                         stream = new SslClientStream(tcpc.GetStream(), context.ServerName, true, Mono.Security.Protocol.Tls.SecurityProtocolType.Default);
                     }
                 }
-                context.Stream = stream;
                 
+                context.Connector.Stream = stream;
+                
+                               
             }
             catch (TlsException e)
             {
                 throw new NpgsqlException(e.ToString());
             }
+            
             NpgsqlEventLog.LogMsg(resman, "Log_ConnectedTo", LogLevel.Normal, context.ServerName, context.ServerPort);
             ChangeState(context, NpgsqlConnectedState.Instance);
             context.Startup();
+            
         }
 
     }

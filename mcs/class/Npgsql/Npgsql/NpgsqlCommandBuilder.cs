@@ -242,10 +242,10 @@ namespace Npgsql
             }
         }
 
-        ~NpgsqlCommandBuilder ()
+        /*~NpgsqlCommandBuilder ()
         {
             Dispose(false);
-        }
+        }*/
 
     }
 

@@ -146,7 +146,7 @@ namespace Npgsql
             {
                 Console.WriteLine(message);
             }
-
+            
             if (logfile != null)
             {
                 if (logfile != "")

@@ -25,24 +25,14 @@
 
 using System;
 using System.Net.Sockets;
+using System.IO;
 
 namespace Npgsql
 {
     /// <summary>
     /// !!! Helper class, for compilation only.
     /// </summary>
-    internal class Socket
-    {
-        internal void Open()
-        {
-            return;
-        }
-        internal void Close()
-        {
-            return;
-        }
-    }
-
+    
     /// <summary>
     /// Connector implements the logic for the Connection Objects to
     /// access the physical connection to the database, and isolate
@@ -51,7 +41,20 @@ namespace Npgsql
     internal class Connector
     {
         /// <value>Buffer for the public Pooled property</value>
-        private bool mPooled;
+        private Boolean _inUse;
+
+
+        private Stream _stream;
+        
+        // This is information about the connection
+        // this connector is holding. For while only the server version is used.
+        // Change later for a more generic way to keep it. (Hashtable)
+        private String _serverVersion;
+        
+        private Boolean _isInitialized;
+        
+        private Boolean mPooled;
+        private Boolean mOpen;
 
         /// <value>Chain references for implementing a double linked
         /// list</value>
@@ -79,6 +82,42 @@ namespace Npgsql
                 this.mPooled = value;
             }
         }
+        
+        internal String ServerVersion
+        {
+            get
+            {
+                return _serverVersion;
+            }
+            
+            set
+            {
+                _serverVersion = value;
+            }
+        }
+        
+        
+        internal Stream Stream {
+            get
+            {
+                return _stream;
+            }
+            set
+            {
+                _stream = value;
+                _isInitialized = true;
+            }
+        }
+        
+        internal Boolean IsInitialized
+        {
+            get
+            {
+                return _isInitialized;
+            }
+            
+        }
+        
 
         /// <value>Buffer for the public Shared property</value>
         private bool mShared;
@@ -132,17 +171,16 @@ namespace Npgsql
 
         /// <value>Provides physical access to the server</value>
         // !!! to be fixed
-        private Npgsql.Socket Socket;
+        //private Npgsql.Socket Socket;
 
-        /// <value>True if the physical connection is open.</value>
-        private bool mOpen;
-
+        
         /// <summary>
         /// Default constructor. Creates a pooled Connector by default.
         /// </summary>
         public Connector()
         {
-            this.Pooled = true;
+            Pooled = true;
+            _isInitialized = false;
         }
 
         /// <summary>
@@ -150,9 +188,9 @@ namespace Npgsql
         /// </summary>
         internal Connector( string ConnectString, bool Shared )
         {
-            this.ConnectString = ConnectString;
-            this.Shared = Shared;
-            this.Pooled = true;
+            ConnectString = ConnectString;
+            Shared = Shared;
+            Pooled = true;
         }
 
         /// <summary>
@@ -162,9 +200,22 @@ namespace Npgsql
         /// Method of the connection pool manager.</remarks>
         internal void Open()
         {
-            this.Socket = new Npgsql.Socket();
-            this.Socket.Open(); // !!! to be fixed
-            this.mOpen = true;
+            //this.Socket = new Npgsql.Socket();
+            //this.Socket.Open(); // !!! to be fixed
+            //this.mOpen = true;
+        }
+        
+        
+        internal Boolean InUse {
+            get
+            {
+                return _inUse;
+            }
+            set
+            {
+                _inUse = value;
+            }
+            
         }
 
         /// <summary>
@@ -175,7 +226,7 @@ namespace Npgsql
         /// evaluation inside this method, so they are left in their current state.
         ///	They get new meaning again when the connector is requested from the
         /// pool manager later. </remarks>
-        public void Release()
+        /*public void Release()
         {
             if ( this.mShared )
             {
@@ -207,9 +258,9 @@ namespace Npgsql
                     // Instead they are (implicitly) handed over to the
                     // garbage collection.
                     // !!! to be fixed
-                    this.Socket.Close();
+                    //this.Socket.Close();
                 }
             }
-        }
+        }*/
     }
 }
