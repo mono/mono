@@ -661,7 +661,8 @@ namespace System.Windows.Forms {
 					throw new ArgumentException ("Cannot add " +
 						value.GetType ().Name + " to TabControl. " +
 						"Only TabPages can be directly added to TabControls.");
-				
+
+				value.Visible = false;
 				base.Add (value);
 				if (Count == 1) {
 					owner.SelectedIndex = 0;
