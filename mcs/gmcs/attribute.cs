@@ -1384,7 +1384,9 @@ namespace Mono.CSharp {
 			ObsoleteAttribute result = null;
 			if (type.IsByRef || type.IsArray || type.IsPointer) {
 				result = GetObsoleteAttribute (TypeManager.GetElementType (type));
-			} else {
+			} else if (type.IsGenericParameter || type.IsGenericInstance)
+				return null;
+			else {
 				DeclSpace type_ds = TypeManager.LookupDeclSpace (type);
 
 				// Type is external, we can get attribute directly
