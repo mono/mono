@@ -477,11 +477,19 @@ namespace System {
 
 		public abstract Type[] GetInterfaces ();
 
-		[MonoTODO]
 		public virtual bool IsAssignableFrom (Type c)
 		{
-			// FIXME
-			return type_is_subtype_of (c, this, true);
+			if (Equals (c))
+				return true;
+
+			if (type_is_subtype_of (c, this, true))
+				return true;;
+
+			if (!IsInterface)
+				return false;
+
+			Type [] ifaces = c.GetInterfaces ();
+			return (Array.IndexOf (ifaces, this) != -1);
 		}
 
 		public virtual bool IsInstanceOfType (object o) {
