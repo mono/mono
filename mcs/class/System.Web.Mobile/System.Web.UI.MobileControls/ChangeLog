@@ -1,6 +1,16 @@
 
 2003-02-23	Gaurav Vaish <gvaish_mono AT lycos.com>
 
+	* CustomValidator.cs     : Completed.
+	* DeviceSpecific.cs      : Initial implementation.
+	* DeviceSpecificChoiceTemplateContainer.cs
+	                         : Completed.
+	* DeviceSpecificChoiceCollection.cs
+	                         : Completed.
+	* DeviceSpecificChoice.cs: Initial implementation.
+
+2003-02-23	Gaurav Vaish <gvaish_mono AT lycos.com>
+
 	* Calendar.cs            : Completed.
 	* BaseValidator.cs       : Completed.
 	* CompareValidator.cs    : Completed.
