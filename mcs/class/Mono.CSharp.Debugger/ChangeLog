@@ -1,3 +1,11 @@
+2003-12-07 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* MonoSymbolTable.cs: It is faster to do a linear search
+	than it is to make a hashtable. Even though the linear
+	search is O(n^2) while the hashtable is O(n), the allocation
+	cost for a hashtable is *very* high, especially when only
+	a few members will be added.
+
 2003-09-06  Martin Baulig  <martin@ximian.com>
 
 	* MonoSymbolFile.cs: Removed debugging output.

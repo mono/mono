@@ -621,13 +621,32 @@ namespace Mono.CSharp.Debugger
 			NumLocals = locals.Length;
 			Locals = locals;
 
-			Hashtable local_names = new Hashtable ();
-			foreach (LocalVariableEntry local in locals) {
-				if (local_names.Contains (local.Name)) {
-					LocalNamesAmbiguous = true;
-					break;
+			if (NumLocals <= 32) {
+				// Most of the time, the O(n^2) factor is actually
+				// less than the cost of allocating the hash table,
+				// 32 is a rough number obtained through some testing.
+				
+				for (int i = 0; i < NumLocals; i ++) {
+					string nm = locals [i].Name;
+					
+					for (int j = i + 1; j < NumLocals; j ++) {
+						if (locals [j].Name == nm) {
+							LocalNamesAmbiguous = true;
+							goto locals_check_done;
+						}
+					}
 				}
-				local_names.Add (local.Name, local);
+			locals_check_done :
+				;
+			} else {
+				Hashtable local_names = new Hashtable ();
+				foreach (LocalVariableEntry local in locals) {
+					if (local_names.Contains (local.Name)) {
+						LocalNamesAmbiguous = true;
+						break;
+					}
+					local_names.Add (local.Name, local);
+				}
 			}
 
 			LocalTypeIndices = new int [NumLocals];
