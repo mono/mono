@@ -1,3 +1,9 @@
+2004-08-27  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolFile.cs (MonoSymbolFile..ctor): Set
+	`reader.BaseStream.Position' to 12 before reading the GUID so we
+	actually read it from the correct file offset.
+
 2004-08-27  Chris Toshok  <toshok@ximian.com>
 
 	* MonoSymbolFile.cs (MonoSymbolFile.ReadSymbolFile): pass name to

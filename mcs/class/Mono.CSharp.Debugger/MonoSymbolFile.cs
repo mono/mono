@@ -460,6 +460,7 @@ namespace Mono.CompilerServices.SymbolWriter
 					"Cannot read symbol file `{0}'", filename);
 			}
 
+			reader.BaseStream.Position = 12;
 			Guid guid = new Guid (reader.ReadBytes (16));
 			Module[] modules = assembly.GetModules ();
 			Guid assembly_guid = MonoDebuggerSupport.GetGuid (modules [0]);
