@@ -301,7 +301,11 @@ namespace System.Security
 		}
 
 #if NET_2_0
-		public static SecurityElement FromString (string xml)
+		public 
+#else
+		internal
+#endif
+		static SecurityElement FromString (string xml)
 		{
 			if (xml == null)
 				throw new ArgumentNullException ("xml");
@@ -316,7 +320,6 @@ namespace System.Security
 				throw new XmlSyntaxException (msg, e);
 			}
 		}
-#endif
 
 		public static bool IsValidAttributeName (string name)
 		{

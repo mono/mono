@@ -1,3 +1,9 @@
+2004-09-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PermissionSet.cs: Updated to match latest unit tests, i.e. match
+	Fx 1.1 on NET_1_1 and Fx 2.0 (beta 1) in NET_2_0.
+	* SecurityElement.cs: FromString is now internal before NET_2_0.
+
 2004-09-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* NamedPermissionSet.cs: FromXml now calls base class instead of an

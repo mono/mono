@@ -31,10 +31,13 @@
 
 using System.Collections;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Permissions;
 using System.Security.Policy;
+using System.Text;
 
 namespace System.Security {
 
@@ -43,6 +46,7 @@ namespace System.Security {
 
 		private static string tagName = "PermissionSet";
 		private const int version = 1;
+		private static object[] psNone = new object [1] { PermissionState.None };
 
 		private PermissionState state;
 		private ArrayList list;
@@ -221,11 +225,16 @@ namespace System.Security {
 					// http://blogs.msdn.com/shawnfa/archive/2004/08/05/209320.aspx
 					Type classType = Type.GetType (className);
 					if (classType != null) {
-						object [] psNone = new object [1] { PermissionState.None };
 						IPermission p = (IPermission) Activator.CreateInstance (classType, psNone);
 						p.FromXml (se);
 						list.Add (p);
 					}
+#if !NET_2_0
+					else {
+						string msg = Locale.GetText ("Can't create an instance of permission class {0}.");
+						throw new ArgumentException (String.Format (msg, se.Attribute ("class")));
+					}
+#endif
 				}
 			}
 		}
@@ -290,20 +299,55 @@ namespace System.Security {
 			if (inFormat == outFormat)
 				return inData;
 
+			PermissionSet ps = null;
+
 			if (inFormat == "BINARY") {
 				if (outFormat.StartsWith ("XML")) {
-					// TODO - convert from binary format
-					return inData;
+					using (MemoryStream ms = new MemoryStream (inData)) {
+						BinaryFormatter formatter = new BinaryFormatter ();
+						ps = (PermissionSet) formatter.Deserialize (ms);
+						ms.Close ();
+					}
+					string xml = ps.ToString ();
+					switch (outFormat) {
+						case "XML":
+						case "XMLASCII":
+							return Encoding.ASCII.GetBytes (xml);
+						case "XMLUNICODE":
+							return Encoding.Unicode.GetBytes (xml);
+					}
 				}
 			}
 			else if (inFormat.StartsWith ("XML")) {
 				if (outFormat == "BINARY") {
-					// TODO - convert to binary format
-					return inData;
+					string xml = null;
+					switch (inFormat) {
+						case "XML":
+						case "XMLASCII":
+							xml = Encoding.ASCII.GetString (inData);
+							break;
+						case "XMLUNICODE":
+							xml = Encoding.Unicode.GetString (inData);
+							break;
+					}
+					if (xml != null) {
+						ps = new PermissionSet (PermissionState.None);
+						ps.FromXml (SecurityElement.FromString (xml));
+
+						MemoryStream ms = new MemoryStream ();
+						BinaryFormatter formatter = new BinaryFormatter ();
+						formatter.Serialize (ms, ps);
+						ms.Close ();
+						return ms.ToArray ();
+					}
 				}
 				else if (outFormat.StartsWith ("XML")) {
 					string msg = String.Format (Locale.GetText ("Can't convert from {0} to {1}"), inFormat, outFormat);
+#if NET_2_0
 					throw new XmlSyntaxException (msg);
+#else
+					throw new ArgumentException (msg);
+#endif
 				}
 			}
 			else {
