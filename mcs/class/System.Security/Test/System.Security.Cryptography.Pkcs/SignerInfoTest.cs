@@ -2,9 +2,29 @@
 // SignerInfoTest.cs - NUnit tests for SignerInfo
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 #if NET_2_0
@@ -45,7 +65,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 
 		private SignerInfo GetSignerInfo (byte[] signature) 
 		{
-			SignedPkcs7 sp = new SignedPkcs7 ();
+			SignedCms sp = new SignedCms ();
 			sp.Decode (signature);
 			return sp.SignerInfos [0];
 		}
@@ -55,14 +75,14 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		{
 			SignerInfo si = GetSignerInfo (issuerAndSerialNumberSignature);
 			// default properties
-			AssertEquals ("AuthenticatedAttributes", 0, si.AuthenticatedAttributes.Count);
+			AssertEquals ("SignedAttributes", 0, si.SignedAttributes.Count);
 			AssertNotNull ("Certificate", si.Certificate);
 			AssertEquals ("CounterSignerInfos", 0, si.CounterSignerInfos.Count);
 			AssertEquals ("DigestAlgorithm.FriendlyName", sha1Name, si.DigestAlgorithm.FriendlyName);
 			AssertEquals ("DigestAlgorithm.Value", sha1Oid, si.DigestAlgorithm.Value);
 			AssertEquals ("SignerIdentifier.Type", SubjectIdentifierType.IssuerAndSerialNumber, si.SignerIdentifier.Type);
 			Assert ("SignerIdentifier.Value", (si.SignerIdentifier.Value.GetType () == typeof (X509IssuerSerial)));
-			AssertEquals ("UnauthenticatedAttributes", 0, si.UnauthenticatedAttributes.Count);
+			AssertEquals ("UnsignedAttributes", 0, si.UnsignedAttributes.Count);
 			AssertEquals ("Version", 1, si.Version);
 		}
 
@@ -71,14 +91,14 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		{
 			SignerInfo si = GetSignerInfo (subjectKeyIdentifierSignature);
 			// default properties
-			AssertEquals ("AuthenticatedAttributes", 0, si.AuthenticatedAttributes.Count);
+			AssertEquals ("SignedAttributes", 0, si.SignedAttributes.Count);
 			AssertNotNull ("Certificate", si.Certificate);
 			AssertEquals ("CounterSignerInfos", 0, si.CounterSignerInfos.Count);
 			AssertEquals ("DigestAlgorithm.FriendlyName", sha1Name, si.DigestAlgorithm.FriendlyName);
 			AssertEquals ("DigestAlgorithm.Value", sha1Oid, si.DigestAlgorithm.Value);
 			AssertEquals ("SignerIdentifier.Type", SubjectIdentifierType.SubjectKeyIdentifier, si.SignerIdentifier.Type);
 			AssertEquals ("SignerIdentifier.Value", "02E1A73254AEFDC0A43236F6FE236A037228B1F7", (string)si.SignerIdentifier.Value);
-			AssertEquals ("UnauthenticatedAttributes", 0, si.UnauthenticatedAttributes.Count);
+			AssertEquals ("UnsignedAttributes", 0, si.UnsignedAttributes.Count);
 			AssertEquals ("Version", 3, si.Version);
 		}
 	}

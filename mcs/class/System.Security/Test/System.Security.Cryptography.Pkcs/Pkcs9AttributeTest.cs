@@ -2,9 +2,29 @@
 // Pkcs9AttributeTest.cs - NUnit tests for Pkcs9Attribute
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
 #if NET_2_0
@@ -19,82 +39,74 @@ using System.Security.Cryptography.Pkcs;
 namespace MonoTests.System.Security.Cryptography.Pkcs {
 
 	[TestFixture]
-	public class Pkcs9AttributeTest : Assertion {
+	public class Pkcs9AttributeTest {
 
 		static string defaultOid = "1.2.840.113549.1.7.1";
 		static string defaultName = "PKCS 7 Data";
 
 		[Test]
-		public void ConstructorOid () 
+		public void ConstructorEmpty () 
 		{
-			Oid o = new Oid (defaultOid);
-			Pkcs9Attribute a = new Pkcs9Attribute (o);
-			AssertEquals ("Oid.FriendlyName", defaultName, a.Oid.FriendlyName);
-			AssertEquals ("Oid.Value", defaultOid, a.Oid.Value);
-			AssertEquals ("Values", 0, a.Values.Count);
+			Pkcs9Attribute a = new Pkcs9Attribute ();
+			Assert.IsNull (a.Oid, "Oid");
+			Assert.IsNull (a.RawData, "RawData");
 		}
 
 		[Test]
-		//BUG [ExpectedException (typeof (ArgumentNullException))]
-		public void ConstructorOidNull () 
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ConstructorAsnEncodedDataNull () 
 		{
 			Pkcs9Attribute a = new Pkcs9Attribute (null);
 		}
 
 		[Test]
-		public void ConstructorOidArrayList () 
+		public void ConstructorOidArray () 
 		{
 			Oid o = new Oid (defaultOid);
-			ArrayList al = new ArrayList ();
-			Pkcs9Attribute a = new Pkcs9Attribute (o, al);
-			AssertEquals ("Oid.FriendlyName", defaultName, a.Oid.FriendlyName);
-			AssertEquals ("Oid.Value", defaultOid, a.Oid.Value);
-			AssertEquals ("Values", 0, a.Values.Count);
+			Pkcs9Attribute a = new Pkcs9Attribute (o, new byte [0]);
+			Assert.AreEqual (defaultName, a.Oid.FriendlyName, "Oid.FriendlyName");
+			Assert.AreEqual (defaultOid, a.Oid.Value, "Oid.Value");
+			Assert.AreEqual (0, a.RawData.Length, "RawData");
 		}
 
 		[Test]
-		//BUG [ExpectedException (typeof (ArgumentNullException))]
-		public void ConstructorOidNullArrayList () 
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ConstructorOidNullArray ()
 		{
-			ArrayList al = new ArrayList ();
-			Pkcs9Attribute a = new Pkcs9Attribute (null, al);
+			Oid o = null;
+			Pkcs9Attribute a = new Pkcs9Attribute (o, new byte [0]);
 		}
 
 		[Test]
-		//BUG [ExpectedException (typeof (ArgumentNullException))]
-		[ExpectedException (typeof (NullReferenceException))]
-		public void ConstructorOidArrayListNull () 
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ConstructorOidArrayNull ()
 		{
 			Oid o = new Oid (defaultOid);
-			ArrayList al = null; // do not confuse compiler
-			Pkcs9Attribute a = new Pkcs9Attribute (o, al);
+			Pkcs9Attribute a = new Pkcs9Attribute (o, null);
 		}
 
 		[Test]
-		public void ConstructorOidObject () 
+		public void ConstructorStringArray ()
 		{
-			Oid o = new Oid (defaultOid);
-			Pkcs9Attribute a = new Pkcs9Attribute (o, o);
-			AssertEquals ("Oid.FriendlyName", defaultName, a.Oid.FriendlyName);
-			AssertEquals ("Oid.Value", defaultOid, a.Oid.Value);
-			AssertEquals ("Values", 1, a.Values.Count);
+			Pkcs9Attribute a = new Pkcs9Attribute (defaultOid, new byte [0]);
+			Assert.AreEqual (defaultName, a.Oid.FriendlyName, "Oid.FriendlyName");
+			Assert.AreEqual (defaultOid, a.Oid.Value, "Oid.Value");
+			Assert.AreEqual (0, a.RawData.Length, "RawData");
 		}
 
 		[Test]
-		//BUG [ExpectedException (typeof (ArgumentNullException))]
-		public void ConstructorOidNullObject () 
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ConstructorStringNullArray ()
 		{
-			Oid o = new Oid (defaultOid);
-			Pkcs9Attribute a = new Pkcs9Attribute (null, o);
+			string s = null;
+			Pkcs9Attribute a = new Pkcs9Attribute (s, new byte [0]);
 		}
 
 		[Test]
-		//BUG [ExpectedException (typeof (ArgumentNullException))]
-		public void ConstructorOidObjectNull () 
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ConstructorStringArrayNull ()
 		{
-			Oid o = new Oid (defaultOid);
-			object obj = null; // do not confuse compiler
-			Pkcs9Attribute a = new Pkcs9Attribute (o, obj);
+			Pkcs9Attribute a = new Pkcs9Attribute (defaultOid, null);
 		}
 	}
 }
