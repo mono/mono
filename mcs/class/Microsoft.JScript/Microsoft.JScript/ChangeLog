@@ -1,3 +1,15 @@
+2005-02-20  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* Parser.cs: Pass proper parent.
+	* CodeGenerator.cs: added emit_get_default_this.
+	* Literal.cs (This) : Resolve and Emit implemented. Fixes #72477
+	* expression.cs: (emit_late_get_or_set) use
+	load_engine. (load_script_func) Ensure that TypeManager has a ref
+	to the local otherwise it's a field. (New.Resolve) Check if late
+	binding is needed. (New.Emit) Generate proper IL that make use of
+	late binding  when the id of the constructor it's not part of the
+	build in objects.
+
 2005-02-14  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* Token.cs, TokenStream.cs, Parser.cs: make this classes internal.

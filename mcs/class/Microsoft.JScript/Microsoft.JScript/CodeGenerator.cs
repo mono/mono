@@ -477,5 +477,15 @@ namespace Microsoft.JScript {
 				ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
 			}
 		}
+		
+		internal static void emit_get_default_this (ILGenerator ig) 
+		{
+			ig.Emit (OpCodes.Ldarg_0);
+			ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
+			ig.Emit (OpCodes.Call, typeof (VsaEngine).GetMethod ("ScriptObjectStackTop"));
+			Type iact_obj = typeof (IActivationObject);
+			ig.Emit (OpCodes.Castclass, iact_obj);
+			ig.Emit (OpCodes.Callvirt, iact_obj.GetMethod ("GetDefaultThisObject"));
+		}
 	}
 }

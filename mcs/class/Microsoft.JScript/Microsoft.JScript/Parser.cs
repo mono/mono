@@ -1004,7 +1004,7 @@ namespace Microsoft.JScript {
 					MustMatchToken (Token.NAME, "msg.no.name.after.dot");
 					string s = ts.GetString;
 					// FIXME: is 'new Identifier' appropriate here?
-					pn = new Binary (null, pn, new Identifier (null, ts.GetString), JSToken.AccessField);
+					pn = new Binary (parent, pn, new Identifier (parent, ts.GetString), JSToken.AccessField);
 				} else if (tt == Token.LB) {
 					Binary b = new Binary (parent, pn, JSToken.LeftBracket);
 					b.right = Expr (b, false);
@@ -1127,7 +1127,7 @@ namespace Microsoft.JScript {
 				// FIXME, build the null object;
 				return null;
 			} else if (tt ==  Token.THIS) {
-				return new This (); 
+				return new This (parent); 
 			} else if (tt == Token.FALSE || tt == Token.TRUE) {
 				bool v;	
 				if (tt == Token.FALSE)

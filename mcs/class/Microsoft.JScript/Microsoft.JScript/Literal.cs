@@ -31,23 +31,28 @@
 using System;
 using System.Reflection.Emit;
 using System.Collections;
+using Microsoft.JScript.Vsa;
 
 namespace Microsoft.JScript {
 
 	internal class This : AST {
 
-		internal This ()
+		internal This (AST parent)
 		{
+			this.parent = parent;
 		}
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			throw new NotImplementedException ();
+			return true;
 		}
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			if (InFunction)
+				ec.ig.Emit (OpCodes.Ldarg_0);
+			else
+				CodeGenerator.emit_get_default_this (ec.ig);
 		}
 	}
 

@@ -267,12 +267,10 @@ namespace Microsoft.JScript {
 			
 			left.Emit (ec);
 
-			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
+			CodeGenerator.load_engine (InFunction, ec.ig);
 			ig.Emit (OpCodes.Call , typeof (Convert).GetMethod ("ToObject"));
 
 			Type lb_type = typeof (LateBinding);
-
 			ig.Emit (OpCodes.Stfld, lb_type.GetField ("obj"));
 
 			if (assign) {
@@ -1039,7 +1037,7 @@ namespace Microsoft.JScript {
 
 		void load_script_func (EmitContext ec, FunctionDeclaration binding)
 		{
-			if (InFunction)
+			if (InFunction && (TypeManager.GetLocal (binding.func_obj.name) != null))
 				ec.ig.Emit (OpCodes.Ldloc, TypeManager.GetLocal (binding.func_obj.name));
 			else {
 				TypeBuilder type = ec.type_builder;
@@ -1451,6 +1449,7 @@ namespace Microsoft.JScript {
 
 		AST exp;
 		Args args;
+		bool late_bind = false;
 
 		internal New (AST parent, AST exp)
 		{
@@ -1467,8 +1466,14 @@ namespace Microsoft.JScript {
 		internal override bool Resolve (IdentificationTable context)
 		{
 			bool r = true;
-			if (exp != null)
-				r &= exp.Resolve (context);
+
+			if (exp != null && exp.GetType () == typeof (Identifier)) {
+				Identifier id = (Identifier) exp;
+				late_bind = !SemanticAnalyser.is_js_object (id.name.Value);
+				Console.WriteLine ("id = {0}, late_bind = {1}", id.name.Value, late_bind);
+			} 
+			exp.Resolve (context);
+
 			if (args != null)
 				r &= args.Resolve (context);
 			return r;
@@ -1476,11 +1481,38 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			if (exp != null)
-				exp.Emit (ec);
-			if (args != null)
-				emit_args (ec);
-			emit_create_instance (ec);
+			ILGenerator ig = ec.ig;
+
+			if (exp != null) {
+				if (late_bind) {					
+					CodeGenerator.emit_get_default_this (ec.ig);
+					exp.Emit (ec);
+
+					ig.Emit (OpCodes.Ldc_I4, args.Size);
+					ig.Emit (OpCodes.Newarr, typeof (object));
+
+					for (int i = 0; i < args.Size; i++) {
+						ig.Emit (OpCodes.Dup);
+						ig.Emit (OpCodes.Ldc_I4, i);
+						args.get_element (i).Emit (ec);
+						ig.Emit (OpCodes.Stelem_Ref);
+					}
+					
+					ig.Emit (OpCodes.Ldc_I4_1);
+					ig.Emit (OpCodes.Ldc_I4_0);
+
+					ig.Emit (OpCodes.Ldarg_0);
+					ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
+
+					ig.Emit (OpCodes.Call, typeof (LateBinding).GetMethod ("CallValue"));
+				} else {
+					if (exp != null)
+						exp.Emit (ec);
+					if (args != null)
+						emit_args (ec);
+					emit_create_instance (ec);
+				}
+			}
 		}
 		
 		void emit_create_instance (EmitContext ec)
