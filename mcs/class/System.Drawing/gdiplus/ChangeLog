@@ -1,3 +1,11 @@
+2003-12-21  Duncan Mak  <duncan@ximian.com>
+
+	* graphics.c (C1): Made it more precise.
+	(make_pie): Fixed.
+	(make_arc): New helper function for getting the right Bezier for
+	an elliptical arc, based on an algorithm found in the
+	comp.text.pdf FAQ.
+
 2003-12-02  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* pen.c (GdipSetPenLineCap): fix arg type so it compiles

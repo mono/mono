@@ -1,7 +1,7 @@
 /*
  * graphics.c
  *
- * Copyright (c) 2003 Alexandre Pigolkine
+ * Copyright (c) 2003 Alexandre Pigolkine, Novell Inc.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
@@ -66,8 +66,7 @@ gdip_graphics_detach_bitmap (GpGraphics *graphics, GpBitmap *image)
 	/* FIXME: implement me */
 }
 
-#define C1 0.552
-
+#define C1 0.552285
 static void 
 make_ellipse (GpGraphics *graphics, float x, float y, float width, float height)
 {
@@ -84,20 +83,23 @@ make_ellipse (GpGraphics *graphics, float x, float y, float width, float height)
                         cx + rx, cy - C1 * ry,
                         cx + C1 * rx, cy - ry,
                         cx, cy - ry);
+        
         cairo_curve_to (graphics->ct,
                         cx - C1 * rx, cy - ry,
                         cx - rx, cy - C1 * ry,
                         cx - rx, cy);
+
         cairo_curve_to (graphics->ct,
                         cx - rx, cy + C1 * ry,
                         cx - C1 * rx, cy + ry,
                         cx, cy + ry);
+                
         cairo_curve_to (graphics->ct,
                         cx + C1 * rx, cy + ry,
                         cx + rx, cy + C1 * ry,
                         cx + rx, cy);
 
-        cairo_close_path (graphics->ct);        
+        cairo_close_path (graphics->ct);
 }
 
 static void
@@ -139,45 +141,86 @@ make_polygon_from_integers (
         cairo_close_path (graphics->ct);
 }
 
+/*
+ * Based on the algorithm described in
+ *      http://www.stillhq.com/ctpfaq/2002/03/c1088.html#AEN1212
+ */
 static void
-make_pie (GpGraphics *graphics, float x, float y, float width,
-                float height, float startAngle, float sweepAngle)
+make_pie (GpGraphics *graphics, float x, float y, 
+          float width, float height, float startAngle, float sweepAngle)
 {
-        float ax, ay;           /* the first intersection */
-        float bx, by;           /* the second intersection */
-        float cx, cy;           /* center of the bounding rect */
-        float f1, f2;           /* x coord. of foci */
-        float c;                /* distance between center and focus */
-        
-        /*
-         * we'll assume that we're working on a circle 
-         * and transform back into an ellipse after the calculation
-         */
-        float radius = width / 2;
-        float scale = height / width;
+        float rx = width / 2;
+        float ry = height / 2;
+        int cx = x + rx;
+        int cy = y + ry;
 
-        ax = radius * cos (startAngle);
-        ay = radius * sin (startAngle) * scale; 
-        
-        bx = radius * cos (startAngle + sweepAngle);        
-        by = radius * sin (startAngle + sweepAngle) * scale;
-        
-        cx = x + (width / 2);
-        cy = y + (height / 2);
+        /* angles in radians */        
+        float alpha = startAngle * PI / 180;
+        float beta = sweepAngle * PI / 180;
 
-        c = sqrt (-cy * cy + cx * cx);
-        f1 = cx - c;
-        f2 = cx + c;        
+        float delta = beta - alpha;
+        float bcp = 4.0 / 3 * (1 - cos (delta / 2)) / sin (delta /2);
 
+        float sin_alpha = sin (alpha);
+        float sin_beta = sin (beta);
+        float cos_alpha = cos (alpha);
+        float cos_beta = cos (beta);
+
+        /* move to center */
         cairo_move_to (graphics->ct, cx, cy);
-        cairo_line_to (graphics->ct, ax, ay);
+
+        /* draw pie edge */
+        cairo_line_to (graphics->ct,
+                       cx + rx * cos_alpha, 
+                       cy + ry * sin_alpha);
+        
+        cairo_curve_to (graphics->ct,
+                        cx + rx * (cos_alpha - bcp * sin_alpha),
+                        cy + ry * (sin_alpha + bcp * cos_alpha),
+                        cx + rx * (cos_beta  + bcp * sin_beta),
+                        cy + ry * (sin_beta  - bcp * cos_beta),
+                        cx + rx *  cos_beta,
+                        cy + ry *  sin_beta);
+
+        /* draws line back to center */
+        cairo_close_path (graphics->ct);
+}
+
+static void
+make_arc (GpGraphics *graphics, float x, float y, float width,
+                float height, float startAngle, float sweepAngle)
+{        
+        float rx = width / 2;
+        float ry = height / 2;
+        
+        /* center */
+        int cx = x + rx;
+        int cy = y + ry;
+
+        /* angles in radians */        
+        float alpha = startAngle * PI / 180;
+        float beta = sweepAngle * PI / 180;
+
+        float delta = beta - alpha;
+        float bcp = 4.0 / 3 * (1 - cos (delta / 2)) / sin (delta /2);
+
+        float sin_alpha = sin (alpha);
+        float sin_beta = sin (beta);
+        float cos_alpha = cos (alpha);
+        float cos_beta = cos (beta);
+
+        /* move to pie edge */
+        cairo_move_to (graphics->ct,
+                       cx + rx * cos_alpha, 
+                       cy + ry * sin_alpha);
 
         cairo_curve_to (graphics->ct,
-                        cx, f1, cx, f2, bx, by);
-
-        cairo_line_to (graphics->ct, cx, cy);
-
-        cairo_close_path (graphics->ct);
+                        cx + rx * (cos_alpha - bcp * sin_alpha),
+                        cy + ry * (sin_alpha + bcp * cos_alpha),
+                        cx + rx * (cos_beta  + bcp * sin_beta),
+                        cy + ry * (sin_beta  - bcp * cos_beta),
+                        cx + rx *  cos_beta,
+                        cy + ry *  sin_beta);
 }
 
 static cairo_fill_rule_t
@@ -349,7 +392,6 @@ GdipTranslateWorldTransform (GpGraphics *graphics, float dx, float dy, GpMatrixO
         }
 }
 
-/* XXX: TODO */
 GpStatus
 GdipDrawArc (GpGraphics *graphics, GpPen *pen, 
                 float x, float y, float width, float height, 
@@ -357,17 +399,41 @@ GdipDrawArc (GpGraphics *graphics, GpPen *pen,
 {
         gdip_pen_setup (graphics, pen);
 
-        return NotImplemented;
+        float delta = sweepAngle - startAngle;
+
+        if (delta < 180)
+                make_arc (graphics, x, y, width, height, startAngle, sweepAngle);
+
+        else {
+                make_arc (graphics, x, y, width, height, startAngle, startAngle + 180);
+                make_arc (graphics, x, y, width, height, startAngle + 180, sweepAngle);
+        }
+
+        cairo_stroke (graphics->ct);
+
+        return gdip_get_status (cairo_status (graphics->ct));
 }
 
 GpStatus
 GdipDrawArcI (GpGraphics *graphics, GpPen *pen, 
                 int x, int y, int width, int height, 
-                int startAngle, int sweepAngle)
+                float startAngle, float sweepAngle)
 {
         gdip_pen_setup (graphics, pen);
 
-        return NotImplemented;
+        float delta = sweepAngle - startAngle;
+
+        if (delta < 180)
+                make_arc (graphics, x, y, width, height, startAngle, sweepAngle);
+
+        else {
+                make_arc (graphics, x, y, width, height, startAngle, startAngle + 180);
+                make_arc (graphics, x, y, width, height, startAngle + 180, sweepAngle);
+        }
+
+        cairo_stroke (graphics->ct);
+
+        return gdip_get_status (cairo_status (graphics->ct));
 }
 
 GpStatus 
@@ -376,6 +442,7 @@ GdipDrawBezier (GpGraphics *graphics, GpPen *pen,
                 float x3, float y3, float x4, float y4)
 {
         gdip_pen_setup (graphics, pen);        
+        
         cairo_move_to (graphics->ct, x1, y1);
         cairo_curve_to (graphics->ct, x2, y2, x3, y3, x4, y4);
         cairo_stroke (graphics->ct);
@@ -401,6 +468,7 @@ GdipDrawBeziers (GpGraphics *graphics, GpPen *pen,
                 return Ok;
 
         gdip_pen_setup (graphics, pen);
+        
         cairo_move_to (graphics->ct, points [0].X, points [0].Y);
 
         for (i = 0; i < count; i += 3) {
@@ -427,6 +495,7 @@ GdipDrawBeziersI (GpGraphics *graphics, GpPen *pen,
                 return Ok;
 
         gdip_pen_setup (graphics, pen);
+
         cairo_move_to (graphics->ct, points [0].X, points [0].Y);
 
         for (i = 0; i < count; i += 3) {
@@ -448,6 +517,7 @@ GdipDrawEllipse (GpGraphics *graphics, GpPen *pen,
                 float x, float y, float width, float height)
 {
         gdip_pen_setup (graphics, pen);
+        
         make_ellipse (graphics, x, y, width, height);
         cairo_stroke (graphics->ct);
 
@@ -469,7 +539,6 @@ GdipDrawLine (GpGraphics *graphics, GpPen *pen,
 
 	cairo_move_to (graphics->ct, x1, y1);
 	cairo_line_to (graphics->ct, x2, y2);
-
 	cairo_stroke (graphics->ct);
 
         return gdip_get_status (cairo_status (graphics->ct));
@@ -497,7 +566,7 @@ GdipDrawLines (GpGraphics *graphics, GpPen *pen, GpPointF *points, int count)
                 if (s != Ok) return s;
         }
 
-        return Ok;
+        return gdip_get_status (cairo_status (graphics->ct));
 }
 
 GpStatus 
@@ -524,10 +593,20 @@ GdipDrawPie (GpGraphics *graphics, GpPen *pen, float x, float y,
                 float width, float height, float startAngle, float sweepAngle)
 {
         gdip_pen_setup (graphics, pen);
-        make_pie (graphics, x, y, width, height, startAngle, sweepAngle);
+
+        float delta = sweepAngle - startAngle;
+
+        if (delta < 180)
+                make_pie (graphics, x, y, width, height, startAngle, sweepAngle);
+        else {
+                make_pie (graphics, x, y, width, height, startAngle, startAngle + 180);
+                make_pie (graphics, x, y, width, height, startAngle + 180, sweepAngle);
+        }
+
         cairo_stroke (graphics->ct);
+
         cairo_close_path (graphics->ct);
-        
+
         return gdip_get_status (cairo_status (graphics->ct));
 }
 
@@ -536,10 +615,20 @@ GdipDrawPieI (GpGraphics *graphics, GpPen *pen, int x, int y,
                 int width, int height, float startAngle, float sweepAngle)
 {
         gdip_pen_setup (graphics, pen);
-        make_pie (graphics, x, y, width, height, startAngle, sweepAngle);
-        cairo_stroke (graphics->ct);
-        cairo_close_path (graphics->ct);
         
+        float delta = sweepAngle - startAngle;
+        
+        if (delta < 180)
+                make_pie (graphics, x, y, width, height, startAngle, sweepAngle);
+        else {
+                make_pie (graphics, x, y, width, height, startAngle, startAngle + 180);
+                make_pie (graphics, x, y, width, height, startAngle + 180, sweepAngle);
+        }
+
+        cairo_stroke (graphics->ct);
+
+        cairo_close_path (graphics->ct);
+
         return gdip_get_status (cairo_status (graphics->ct));
 }
 
@@ -547,6 +636,7 @@ GpStatus
 GdipDrawPolygon (GpGraphics *graphics, GpPen *pen, GpPointF *points, int count)
 {
         gdip_pen_setup (graphics, pen);
+        
         make_polygon (graphics, points, count);
         cairo_stroke (graphics->ct);
 
@@ -557,6 +647,7 @@ GpStatus
 GdipDrawPolygonI (GpGraphics *graphics, GpPen *pen, GpPoint *points, int count)
 {
         gdip_pen_setup (graphics, pen);
+        
         make_polygon_from_integers (graphics, points, count);
         cairo_stroke (graphics->ct);
 
@@ -568,6 +659,7 @@ GdipDrawRectangle (GpGraphics *graphics, GpPen *pen,
                 float x, float y, float width, float height)
 {
         gdip_pen_setup (graphics, pen);
+
         cairo_rectangle (graphics->ct, x, y, width, height);
         cairo_stroke (graphics->ct);
 
@@ -657,17 +749,18 @@ GpStatus
 GdipDrawString (GpGraphics *graphics, const char *string,
                 int len, void *font, RectF *rc, void *format, GpBrush *brush)
 {
-	cairo_save (graphics->ct);
-	if (brush) {
+        cairo_save (graphics->ct);
+	if (brush)
 		gdip_brush_setup (graphics, brush);
-	} else {
+
+        else
 		cairo_set_rgb_color (graphics->ct, 0., 0., 0.);
-	}
+
 	cairo_move_to (graphics->ct, rc->left, rc->top + 12);
 	cairo_scale_font (graphics->ct, 12);
 	cairo_show_text (graphics->ct, string);
-	cairo_restore(graphics->ct);
 
+        cairo_restore (graphics->ct);        
 	return gdip_get_status (cairo_status (graphics->ct));
 }
 

@@ -71,24 +71,26 @@ namespace System.Drawing
 		[MonoTODO]
 		public void DrawArc (Pen pen, Rectangle rect, float startAngle, float sweepAngle)
 		{
-			throw new NotImplementedException ();
+			DrawArc (pen, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
 		}
 
 		[MonoTODO]
 		public void DrawArc (Pen pen, RectangleF rect, float startAngle, float sweepAngle)
 		{
-			throw new NotImplementedException ();
+			DrawArc (pen, rect.X, rect.Y, rect.Width, rect.Height, startAngle, sweepAngle);
 		}
 
 		[MonoTODO]
 		public void DrawArc (Pen pen, float x, float y, float width, float height, float startAngle, float sweepAngle)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawArc (nativeObject, pen.nativeObject,
+                                        x, y, width, height, startAngle, sweepAngle);
 		}
 
-		public void DrawArc (Pen pen, int x, int y, int width, int height, int startAngle, int sweepAngle)
+		public void DrawArc (Pen pen, int x, int y, int width, int height, float startAngle, float sweepAngle)
 		{
-			throw new NotImplementedException ();
+			GDIPlus.GdipDrawArcI (nativeObject, pen.nativeObject,
+                                        x, y, width, height, startAngle, sweepAngle);
 		}
 
 		public void DrawBezier (Pen pen, PointF pt1, PointF pt2, PointF pt3, PointF pt4)
@@ -1232,7 +1234,7 @@ namespace System.Drawing
 		public void RotateTransform (float angle, MatrixOrder order)
 		{
 			//transform.Rotate(angle, order);
-			// GDIPlus.GdipRotateWorldTransform (nativeObject, angle, order);
+			GDIPlus.GdipRotateWorldTransform (nativeObject, angle, order);
 		}
 
 		[MonoTODO]

@@ -1,3 +1,12 @@
+2003-12-21  Duncan Mak  <duncan@ximian.com>
+
+	* Graphics.cs (DrawArc): Fixed the method signature and hooked it
+	up to the GDI+ implementation.
+	(RotateTransform): Uncommented.
+
+	* gdipFunctions.cs (DrawArc, DrawArcI): Import from
+	libgdiplus.so.dll.
+
 2003-12-13  Todd Berman  <tberman@sevenl.net>
 
 	* Font.cs: Implementing a couple things for porting purposes

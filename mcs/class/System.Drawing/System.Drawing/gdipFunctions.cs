@@ -69,6 +69,10 @@ namespace System.Drawing {
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipTranslateWorldTransform(IntPtr graphics, float dx, float dy, MatrixOrder order);
 		[DllImport("gdiplus.dll")]
+                static internal extern Status GdipDrawArc (IntPtr graphics, IntPtr pen, float x, float y, float width, float height, float startAngle, float sweepAngle);
+		[DllImport("gdiplus.dll")]
+                static internal extern Status GdipDrawArcI (IntPtr graphics, IntPtr pen, int x, int y, int width, int height, float startAngle, float sweepAngle);
+		[DllImport("gdiplus.dll")]
                 static internal extern Status GdipDrawBezier (IntPtr graphics, IntPtr pen, float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4);
 		[DllImport("gdiplus.dll")]
                 static internal extern Status GdipDrawBezierI (IntPtr graphics, IntPtr pen, int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
