@@ -1,3 +1,19 @@
+2005-02-23  Chris Toshok  <toshok@ximian.com>
+
+	Part of fix for #72827.
+	* mono-debug.c (mono_debug_add_method): add lexical block data to
+	the info we write.  Kind of a hack at the moment - we copy the
+	lexical block info from the MonoDebugMethodInfo to the
+	MonoDebugMethodJitInfo here, before writing it.
+	(mono_debug_read_method): read the lexical block info.
+
+	* mono-debug.h (_MonoDebugMethodJitInfo): add lexical block slots.
+
+	* debug-mono-symfile.h: add lexical block support.
+
+	* debug-mono-symfile.c (mono_debug_find_method): add lexical block
+	support.
+
 2005-02-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* loader.c (mono_lookup_pinvoke_call): Fix warning.
