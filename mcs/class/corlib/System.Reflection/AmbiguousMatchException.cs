@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Runtime.Serialization;
 
 namespace System.Reflection {
 
@@ -26,6 +27,11 @@ namespace System.Reflection {
 
 		public AmbiguousMatchException (string message, Exception inner)
 			: base (message, inner)
+		{
+		}
+		
+		internal AmbiguousMatchException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
 		{
 		}
 	}

@@ -1,3 +1,7 @@
+2003-12-11  Lluis Sanchez Gual <lluis@ximian.com>
+	
+	* AmbiguousMatchException.cs: Added serialization constructor.
+	
 2003-12-08  Martin Baulig  <martin@ximian.com>
 
 	* MonoGenericInst.cs (MonoGenericParam): New internal class;
