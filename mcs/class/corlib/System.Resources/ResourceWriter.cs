@@ -29,7 +29,7 @@ namespace System.Resources
 				throw new ArgumentException ("stream is not writable.");
 
 			this.stream=stream;
-			resources=new Hashtable(new CaseInsensitiveHashCodeProvider(), new CaseInsensitiveComparer());
+			resources=new Hashtable(CaseInsensitiveHashCodeProvider.Default, CaseInsensitiveComparer.Default);
 		}
 		
 		public ResourceWriter (String fileName)
