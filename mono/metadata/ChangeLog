@@ -1,3 +1,9 @@
+2005-01-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_System_Environment_Exit): Suspend all managed
+	threads before shutting down the runtime.
+
+	* threads.c (mono_thread_suspend_all_other_threads): New helper function.
 
 Thu Jan 13 18:16:35 CET 2005 Paolo Molaro <lupus@ximian.com>
 
