@@ -33,7 +33,7 @@ namespace MonoTests.System.Data
 		public void ReadXmlSchema ()
 		{
 			DataSet ds = new DataSet ();
-			ds.ReadXmlSchema ("System.Data/own_schema.xsd");
+			ds.ReadXmlSchema ("Test/System.Data/own_schema.xsd");
 			
 			AssertEquals ("test#01", 2, ds.Tables.Count);
 			DataTable Table = ds.Tables [0];

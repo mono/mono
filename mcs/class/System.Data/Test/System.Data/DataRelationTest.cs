@@ -113,30 +113,24 @@ namespace MonoTests.System.Data
                 }
 
 		[Test]
+		[ExpectedException (typeof(InvalidConstraintException))]
 		public void InvalidConstraintException ()
 		{
-			
-			DataRelation Relation = null;
-			try {
-				Relation = new DataRelation ("Rel", Mom.Columns [1], Child.Columns [1], true);
-				Fail ("test#01");
-			} catch (Exception e) {
-				AssertEquals ("test#02", typeof (InvalidConstraintException), e.GetType ());
-				AssertEquals ("test#03", "Parent Columns and Child Columns don't have type-matching columns.", e.Message);
-			}
-			
+			// Parent Columns and Child Columns don't have type-matching columns.
+			DataRelation Relation = new DataRelation ("Rel", Mom.Columns [1], Child.Columns [1], true);
+		}
+
+		[Test]
+		[ExpectedException (typeof(InvalidConstraintException))]
+		public void InvalidConstraintException2 ()
+		{
+			// Parent Columns and Child Columns don't have type-matching columns.
 			Child.Columns [1].DataType = Mom.Columns [1].DataType;
 			
-			Relation = new DataRelation ("Rel", Mom.Columns [1], Child.Columns [1], true);
+			DataRelation Relation = new DataRelation ("Rel", Mom.Columns [1], Child.Columns [1], true);
 			Set.Relations.Add (Relation);
 			
-			try {
-				Child.Columns [1].DataType = Type.GetType ("System.Double");
-				Fail ("test#04");
-			} catch (Exception e) {
-				AssertEquals ("test#05", typeof (InvalidConstraintException), e.GetType ());
-				AssertEquals ("test#06", "Parent Columns and Child Columns don't have type-matching columns.", e.Message);
-			}									
+			Child.Columns [1].DataType = Type.GetType ("System.Double");
 		}
 		
 		[Test]
@@ -373,7 +367,7 @@ namespace MonoTests.System.Data
 		public void RelationFromSchema ()
 		{
 			DataSet Set = new DataSet ();
-			Set.ReadXmlSchema ("System.Data/store.xsd");
+			Set.ReadXmlSchema ("Test/System.Data/store.xsd");
 			DataTable Table = Set.Tables [0];
 			
 			AssertEquals ("test#01", false, Table.CaseSensitive);

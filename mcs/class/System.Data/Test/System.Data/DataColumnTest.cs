@@ -532,7 +532,7 @@ namespace MonoTests.System.Data
                 public void AdditionToConstraintCollectionTest()
                 {
                         DataTable myTable = new DataTable("myTable");
-                        DataColumn idCol = new DataColumn("id",System.Type.GetType("System.Int32"));                        //set the unique property and add them to the table
+                        DataColumn idCol = new DataColumn("id",Type.GetType("System.Int32"));                        //set the unique property and add them to the table
                         idCol.Unique=true;
                         myTable.Columns.Add(idCol);
                         ConstraintCollection cc = myTable.Constraints;

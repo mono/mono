@@ -40,20 +40,20 @@ namespace MonoTests.System.Data
                         DataColumn idColumn = new  DataColumn ();
                                                                                                     
                                                                                                     
-                        idColumn.DataType = System.Type.GetType ("System.Int32");
+                        idColumn.DataType = Type.GetType ("System.Int32");
                         idColumn.ColumnName = "Id";
                         idColumn.AutoIncrement = true;
                         namesTable.Columns.Add (idColumn);
                                                                                                     
                                                                                                     
                         DataColumn fNameColumn = new DataColumn ();
-                        fNameColumn.DataType = System.Type.GetType ("System.String");
+                        fNameColumn.DataType = Type.GetType ("System.String");
                         fNameColumn.ColumnName = "Fname";
                         fNameColumn.DefaultValue = "Fname";
                         namesTable.Columns.Add (fNameColumn);
                                                                                                     
                         DataColumn lNameColumn = new DataColumn ();
-                        lNameColumn.DataType = System.Type.GetType ("System.String");
+                        lNameColumn.DataType = Type.GetType ("System.String");
                         lNameColumn.ColumnName = "LName";
                         lNameColumn.DefaultValue="LName";
                         namesTable.Columns.Add (lNameColumn);
@@ -288,14 +288,14 @@ namespace MonoTests.System.Data
                         DataRow rowC;
                                                                                                     
                         colC = new DataColumn ();
-                        colC.DataType = System.Type.GetType ("System.Int32");
+                        colC.DataType = Type.GetType ("System.Int32");
                         colC.ColumnName = "Id";
                         colC.AutoIncrement=true;
                         tableC.Columns.Add (colC);
                                                                                                     
                                                                                                     
                         colC = new DataColumn ();
-                        colC.DataType = System.Type.GetType ("System.String");
+                        colC.DataType = Type.GetType ("System.String");
                         colC.ColumnName = "Name";
                         tableC.Columns.Add (colC);
                                                                                                     

@@ -758,7 +758,7 @@ namespace MonoTests.System.Data
 
 			DataColumn col = new DataColumn ();
 			col.ColumnName = "Id";
-			col.DataType = System.Type.GetType ("System.Int32");
+			col.DataType = Type.GetType ("System.Int32");
 			table.Columns.Add (col);
 			UniqueConstraint uc = new UniqueConstraint ("UK1", table.Columns[0] );
 			table.Constraints.Add (uc);
@@ -766,16 +766,16 @@ namespace MonoTests.System.Data
                                                                                                                            
 			col = new DataColumn ();
 			col.ColumnName = "Name";
-			col.DataType = System.Type.GetType ("System.String");
+			col.DataType = Type.GetType ("System.String");
 			table.Columns.Add (col);
         	        
 			col = new DataColumn ();
 			col.ColumnName = "Id";
-			col.DataType = System.Type.GetType ("System.Int32");
+			col.DataType = Type.GetType ("System.Int32");
 			table1.Columns.Add (col);
 			col = new DataColumn ();
 			col.ColumnName = "Name";
-			col.DataType = System.Type.GetType ("System.String");
+			col.DataType = Type.GetType ("System.String");
 			table1.Columns.Add (col);
 
 			DataRelation dr = new DataRelation ("DR", table.Columns[0], table1.Columns[0]);
@@ -824,12 +824,12 @@ namespace MonoTests.System.Data
 
 			DataColumn col = new DataColumn ();
 			col.ColumnName = "Id";
-			col.DataType = System.Type.GetType ("System.Int32");
+			col.DataType = Type.GetType ("System.Int32");
 			table.Columns.Add (col);
                                                                                                                              
 			col = new DataColumn ();
 			col.ColumnName = "Name";
-			col.DataType = System.Type.GetType ("System.String");
+			col.DataType = Type.GetType ("System.String");
 			table.Columns.Add (col);
 			
 			DataRow row = table.NewRow ();
@@ -858,24 +858,24 @@ namespace MonoTests.System.Data
 
 			DataColumn col = new DataColumn ();
 			col.ColumnName = "Id";
-			col.DataType = System.Type.GetType ("System.Int32");
+			col.DataType = Type.GetType ("System.Int32");
 			table.Columns.Add (col);
 			UniqueConstraint uc = new UniqueConstraint ("UK1", table.Columns[0] );
 			table.Constraints.Add (uc);
                 
 			col = new DataColumn ();
 			col.ColumnName = "Id";
-			col.DataType = System.Type.GetType ("System.Int32");
+			col.DataType = Type.GetType ("System.Int32");
 			table1.Columns.Add (col);
                                                                                                                              
 			col = new DataColumn ();
 			col.ColumnName = "Name";
-			col.DataType = System.Type.GetType ("System.String");
+			col.DataType = Type.GetType ("System.String");
 			table.Columns.Add (col);
 			
 			col = new DataColumn ();
 			col.ColumnName = "Name";
-			col.DataType = System.Type.GetType ("System.String");
+			col.DataType = Type.GetType ("System.String");
                 	table1.Columns.Add (col);
 			DataRow row = table.NewRow ();
 			row ["Id"] = 147;
@@ -957,7 +957,7 @@ namespace MonoTests.System.Data
 			DataTable table = new DataTable ();
 			DataColumn col = new DataColumn ();
 			col.ColumnName = "Id";
-			col.DataType = System.Type.GetType ("System.Int32");
+			col.DataType = Type.GetType ("System.Int32");
 			col.DefaultValue = 47;
 			table.Columns.Add (col);
 			UniqueConstraint uc = new UniqueConstraint ("UK1", table.Columns[0] );
@@ -965,7 +965,7 @@ namespace MonoTests.System.Data
                 
 			col = new DataColumn ();
 			col.ColumnName = "Name";
-			col.DataType = System.Type.GetType ("System.String");
+			col.DataType = Type.GetType ("System.String");
 			col.DefaultValue = "Hello";
 			table.Columns.Add (col);
                 
@@ -998,14 +998,14 @@ namespace MonoTests.System.Data
 
 			DataColumn col = new DataColumn ();
 			col.ColumnName = "Id";
-			col.DataType = System.Type.GetType ("System.Int32");
+			col.DataType = Type.GetType ("System.Int32");
 			table.Columns.Add (col);
 			UniqueConstraint uc = new UniqueConstraint ("UK1", table.Columns[0] );
 			table.Constraints.Add (uc);
                                                                                                                              
 			col = new DataColumn ();
 			col.ColumnName = "Name";
-			col.DataType = System.Type.GetType ("System.String");
+			col.DataType = Type.GetType ("System.String");
 			table.Columns.Add (col);			
 
 			DataRow row = table.NewRow ();
@@ -1052,12 +1052,12 @@ namespace MonoTests.System.Data
 			DataTable table = new DataTable ();
 			DataColumn col = new DataColumn ();
 			col.ColumnName = "Id";
-			col.DataType = System.Type.GetType ("System.Int32");
+			col.DataType = Type.GetType ("System.Int32");
 			table.Columns.Add (col);
                         
 			col = new DataColumn ();
 			col.ColumnName = "Name";
-			col.DataType = System.Type.GetType ("System.String");
+			col.DataType = Type.GetType ("System.String");
 			table.Columns.Add (col);
                         
 			DataRow row = table.NewRow ();
@@ -1093,7 +1093,7 @@ namespace MonoTests.System.Data
                 
 			DataColumn col = new DataColumn ();
 			col.ColumnName = "Id";
-			col.DataType = System.Type.GetType ("System.Int32");
+			col.DataType = Type.GetType ("System.Int32");
 			table.Columns.Add (col);
 			UniqueConstraint uc = new UniqueConstraint ("UK1", table.Columns[0] );
 			table.Constraints.Add (uc);
@@ -1101,17 +1101,17 @@ namespace MonoTests.System.Data
                 
 			col = new DataColumn ();
 			col.ColumnName = "Name";
-			col.DataType = System.Type.GetType ("System.String");
+			col.DataType = Type.GetType ("System.String");
 			table.Columns.Add (col);
                 
 			col = new DataColumn ();
 			col.ColumnName = "Id";
-			col.DataType = System.Type.GetType ("System.Int32");
+			col.DataType = Type.GetType ("System.Int32");
 			table1.Columns.Add (col);
                 
 			col = new DataColumn ();
 			col.ColumnName = "Name";
-			col.DataType = System.Type.GetType ("System.String");
+			col.DataType = Type.GetType ("System.String");
 			table1.Columns.Add (col);
 
 			DataRelation dr = new DataRelation ("DR", table.Columns[0], table1.Columns[0]);
