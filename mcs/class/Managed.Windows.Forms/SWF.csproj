@@ -199,6 +199,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\Button.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\ButtonBase.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
@@ -670,7 +675,7 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\MainMenu.cs"
-                    SubType = "Code"
+                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
