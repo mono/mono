@@ -1,3 +1,8 @@
+2002-05-12  Mike Gray <mike@mikegray.org>
+
+	* FileTest.cs: Adding better tests for File.Exists, File.Create,
+	and File.Copy
+
 2002-05-12  Nick Drochak  <ndrochak@gol.com>
 
 	* StringTest.cs: Add a couple more tests.

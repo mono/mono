@@ -40,22 +40,182 @@ namespace MonoTests.System.IO
 
 		public void TestExists ()
 		{
+                        Assert ("null filename should not exist", !File.Exists (null));
+                        Assert ("empty filename should not exist", !File.Exists (""));
 			Assert ("File resources" + Path.DirectorySeparatorChar + "AFile.txt should exist", File.Exists ("resources" + Path.DirectorySeparatorChar + "AFile.txt"));
                         Assert ("File resources" + Path.DirectorySeparatorChar + "doesnotexist should not exist", !File.Exists ("resources" + Path.DirectorySeparatorChar + "doesnotexist"));
 		}
 
 		public void TestCreate ()
 		{
-			FileStream stream = File.Create ("resources" + Path.DirectorySeparatorChar + "foo");
-			Assert ("File should exist", File.Exists ("resources" + Path.DirectorySeparatorChar + "foo"));
-			stream.Close ();
+			FileStream stream;
+
+			/* exception test: File.Create(null) */
+			try {
+				stream = File.Create (null);
+				Fail ("File.Create(null) should throw ArgumentNullException");
+			} catch (ArgumentNullException) {
+				// do nothing, this is what we expect
+			} catch (Exception e) {
+				Fail ("File.Create(null) unexpected exception caught: e=" + e.ToString());
+			}
+
+			/* exception test: File.Create("") */
+			try {
+				stream = File.Create ("");
+				Fail ("File.Create('') should throw ArgumentException");
+			} catch (ArgumentException) {
+				// do nothing, this is what we expect
+			} catch (Exception e) {
+				Fail ("File.Create('') unexpected exception caught: e=" + e.ToString());
+			}
+
+			/* exception test: File.Create(" ") */
+			try {
+				stream = File.Create (" ");
+				Fail ("File.Create(' ') should throw ArgumentException");
+			} catch (ArgumentException) {
+				// do nothing, this is what we expect
+			} catch (Exception e) {
+				Fail ("File.Create(' ') unexpected exception caught: e=" + e.ToString());
+			}
+
+			/* exception test: File.Create(directory_not_found) */
+			try {
+				stream = File.Create ("directory_does_not_exist" + Path.DirectorySeparatorChar + "foo");
+				Fail ("File.Create(directory_does_not_exist) should throw DirectoryNotFoundException");
+			} catch (DirectoryNotFoundException) {
+				// do nothing, this is what we expect
+			} catch (Exception e) {
+				Fail ("File.Create(directory_does_not_exist) unexpected exception caught: e=" + e.ToString());
+			}
+
+
+			/* positive test: create resources/foo */
+			try {
+				stream = File.Create ("resources" + Path.DirectorySeparatorChar + "foo");
+				Assert ("File should exist", File.Exists ("resources" + Path.DirectorySeparatorChar + "foo"));
+				stream.Close ();
+			} catch (Exception e) {
+				Fail ("File.Create(resources/foo) unexpected exception caught: e=" + e.ToString());
+			}
+
+			/* positive test: repeat test above again to test for overwriting file */
+			try {
+				stream = File.Create ("resources" + Path.DirectorySeparatorChar + "foo");
+				Assert ("File should exist", File.Exists ("resources" + Path.DirectorySeparatorChar + "foo"));
+				stream.Close ();
+			} catch (Exception e) {
+				Fail ("File.Create(resources/foo) unexpected exception caught: e=" + e.ToString());
+			}
 		}
 
 		public void TestCopy ()
 		{
-			File.Copy ("resources" + Path.DirectorySeparatorChar + "AFile.txt", "resources" + Path.DirectorySeparatorChar + "bar", false);
-			Assert ("File AFile.txt should still exist", File.Exists ("resources" + Path.DirectorySeparatorChar + "AFile.txt"));
-			Assert ("File bar should exist after File.Copy", File.Exists ("resources" + Path.DirectorySeparatorChar + "bar"));
+			/* exception test: File.Copy(null, b) */
+			try {
+				File.Copy (null, "b");
+				Fail ("File.Copy(null, 'b') should throw ArgumentNullException");
+			} catch (ArgumentNullException) {
+				// do nothing, this is what we expect
+			} catch (Exception e) {
+				Fail ("File.Copy(null, 'b') unexpected exception caught: e=" + e.ToString());
+			}
+
+			/* exception test: File.Copy(a, null) */
+			try {
+				File.Copy ("a", null);
+				Fail ("File.Copy('a', null) should throw ArgumentNullException");
+			} catch (ArgumentNullException) {
+				// do nothing, this is what we expect
+			} catch (Exception e) {
+				Fail ("File.Copy('a', null) unexpected exception caught: e=" + e.ToString());
+			}
+
+
+			/* exception test: File.Copy("", b) */
+			try {
+				File.Copy ("", "b");
+				Fail ("File.Copy('', 'b') should throw ArgumentException");
+			} catch (ArgumentException) {
+				// do nothing, this is what we expect
+			} catch (Exception e) {
+				Fail ("File.Copy('', 'b') unexpected exception caught: e=" + e.ToString());
+			}
+
+			/* exception test: File.Copy(a, "") */
+			try {
+				File.Copy ("a", "");
+				Fail ("File.Copy('a', '') should throw ArgumentException");
+			} catch (ArgumentException) {
+				// do nothing, this is what we expect
+			} catch (Exception e) {
+				Fail ("File.Copy('a', '') unexpected exception caught: e=" + e.ToString());
+			}
+
+
+			/* exception test: File.Copy(" ", b) */
+			try {
+				File.Copy (" ", "b");
+				Fail ("File.Copy(' ', 'b') should throw ArgumentException");
+			} catch (ArgumentException) {
+				// do nothing, this is what we expect
+			} catch (Exception e) {
+				Fail ("File.Copy(' ', 'b') unexpected exception caught: e=" + e.ToString());
+			}
+
+			/* exception test: File.Copy(a, " ") */
+			try {
+				File.Copy ("a", " ");
+				Fail ("File.Copy('a', ' ') should throw ArgumentException");
+			} catch (ArgumentException) {
+				// do nothing, this is what we expect
+			} catch (Exception e) {
+				Fail ("File.Copy('a', ' ') unexpected exception caught: e=" + e.ToString());
+			}
+
+
+			/* exception test: File.Copy(doesnotexist, b) */
+			try {
+				File.Copy ("doesnotexist", "b");
+				Fail ("File.Copy('doesnotexist', 'b') should throw FileNotFoundException");
+			} catch (FileNotFoundException) {
+				// do nothing, this is what we expect
+			} catch (Exception e) {
+				Fail ("File.Copy('doesnotexist', 'b') unexpected exception caught: e=" + e.ToString());
+			}
+
+			/* positive test: copy resources/AFile.txt to resources/bar */
+			try {
+				File.Copy ("resources" + Path.DirectorySeparatorChar + "AFile.txt", "resources" + Path.DirectorySeparatorChar + "bar");
+				Assert ("File AFile.txt should still exist", File.Exists ("resources" + Path.DirectorySeparatorChar + "AFile.txt"));
+				Assert ("File bar should exist after File.Copy", File.Exists ("resources" + Path.DirectorySeparatorChar + "bar"));
+			} catch (Exception e) {
+				Fail ("File.Copy('resources/AFile.txt', 'resources/bar') unexpected exception caught: e=" + e.ToString());
+			}
+
+			/* exception test: File.Copy(resources/AFile.txt, resources/bar) (default is overwrite == false) */
+			try {
+				File.Copy ("resources" + Path.DirectorySeparatorChar + "AFile.txt", "resources" + Path.DirectorySeparatorChar + "bar");
+				Fail ("File.Copy('resources/AFile.txt', 'resources/bar') should throw IOException");
+			} catch (IOException) {
+				// do nothing, this is what we expect
+			} catch (Exception e) {
+				Fail ("File.Copy('resources/AFile.txt', 'resources/bar') unexpected exception caught: e=" + e.ToString());
+			}
+
+
+			/* positive test: copy resources/AFile.txt to resources/bar, overwrite */
+			try {
+				Assert ("File bar should exist before File.Copy", File.Exists ("resources" + Path.DirectorySeparatorChar + "bar"));
+				File.Copy ("resources" + Path.DirectorySeparatorChar + "AFile.txt", "resources" + Path.DirectorySeparatorChar + "bar", true);
+				Assert ("File AFile.txt should still exist", File.Exists ("resources" + Path.DirectorySeparatorChar + "AFile.txt"));
+				Assert ("File bar should exist after File.Copy", File.Exists ("resources" + Path.DirectorySeparatorChar + "bar"));
+			} catch (Exception e) {
+				Fail ("File.Copy('resources/AFile.txt', 'resources/bar', true) unexpected exception caught: e=" + e.ToString());
+			}
+
+
 		}
 		
 		public void TestDelete ()
