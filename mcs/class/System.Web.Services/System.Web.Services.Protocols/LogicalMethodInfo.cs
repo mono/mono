@@ -231,7 +231,7 @@ namespace System.Web.Services.Protocols {
 			}
 		}
 
-		public bool EnableSession {
+		internal bool EnableSession {
 			get {
 				if (method_info == null)
 					return false;
