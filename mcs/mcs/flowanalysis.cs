@@ -1138,7 +1138,8 @@ namespace Mono.CSharp
 
 			Report.Debug (4, "MERGE TOP BLOCK", Location, vector, result.Reachability);
 
-			if (vector.Reachability.Throws != FlowReturns.Always)
+			if ((vector.Reachability.Throws != FlowReturns.Always) &&
+			    (vector.Reachability.Barrier != FlowReturns.Always))
 				CheckOutParameters (vector.Parameters, Location);
 
 			return result.Reachability;
