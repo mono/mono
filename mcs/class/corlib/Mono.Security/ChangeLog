@@ -4,6 +4,8 @@
 	encoding" is used (#68903 but it's not a fix ;-). Fixed GetBytes to
 	encode structures bigger than 64k (fix #68907). Simplified ToString
 	and added Length to help debugging.
+	* PKCS7.cs: Added a flag to avoid resigning a structure (which was
+	duplicating some attributes).
 
 2004-09-16  Sebastien Pouliot  <sebastien@ximian.com>
 
