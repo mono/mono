@@ -250,7 +250,7 @@ namespace Mono.ILASM {
                                         "ilasm [options] source-files\n" +
                                         "   --about            About the Mono ILasm compiler\n" +
                                         "   --version          Print the version number of the Mono ILasm compiler\n" +
-                                        "   /out:file_name     Specifies output file.\n" +
+                                        "   /output:file_name  Specifies output file.\n" +
                                         "   /exe               Compile to executable.\n" +
                                         "   /dll               Compile to library.\n" +
                                         "Options can be of the form -option or /option\n");

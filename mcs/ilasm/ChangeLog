@@ -1,6 +1,7 @@
 2004-04-05  Jackson Harper  <jackson@ximian.com>
 
-	* Driver.cs: Accept output option.
+	* Driver.cs: Accept output option. Usage shows /output instead of
+	/out like MS.
 	
 2004-04-01  Jackson Harper  <jackson@ximian.com>
 
