@@ -219,7 +219,7 @@ public class CP51932 : Encoding
 				value -= 0x0100;
 				bytes [posn++] = (byte) (value / 0x5E + 0xA1);
 				bytes [posn++] = (byte) (value % 0x5E + 0xA1);
-Console.WriteLine ("{0:X04}", ch);
+//Console.WriteLine ("{0:X04}", ch);
 				continue;
 			}
 			else
