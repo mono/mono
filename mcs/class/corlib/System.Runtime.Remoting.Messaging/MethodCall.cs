@@ -15,7 +15,7 @@ using System.Runtime.Serialization;
 namespace System.Runtime.Remoting.Messaging {
 
 	[Serializable] [CLSCompliant (false)]
-	public class MethodCall : IMethodCallMessage, IMethodMessage, IMessage, ISerializable
+	public class MethodCall : IMethodCallMessage, IMethodMessage, IMessage, ISerializable, IInternalMessage
 	{
 		string _uri;
 		string _typeName;
@@ -25,7 +25,10 @@ namespace System.Runtime.Remoting.Messaging {
 		MethodBase _methodBase;
 		LogicalCallContext _callContext;
 		ArgInfo _inArgInfo;
-		InternalDictionary _properties;
+		Identity _targetIdentity;
+
+		protected IDictionary ExternalProperties;
+		protected IDictionary InternalProperties;
 
 		public MethodCall (Header [] headers)
 		{
@@ -34,23 +37,23 @@ namespace System.Runtime.Remoting.Messaging {
 			if (headers == null || headers.Length == 0) return;
 
 			foreach (Header header in headers)
-			{
-				switch (header.Name)
-				{
-					case "__TypeName" : _typeName = (string)header.Value; break;
-					case "__MethodName" : _methodName = (string)header.Value; break;
-					case "__MethodSignature" : _methodSignature = (Type[])header.Value; break;
-					case "__Args" : _args = (object[])header.Value; break;
-					case "__CallContext" : _callContext = (LogicalCallContext)header.Value; break;
-					default: _properties [header.Name] = header.Value; break;
-				}
-			}
+				InitMethodProperty (header.Name, header.Value);
 
 			ResolveMethod ();
-			Init();
 		}
 
-		internal MethodCall (CADMethodCallMessage msg) {
+		internal MethodCall (SerializationInfo info, StreamingContext context)
+		{
+			Init();
+
+			foreach (SerializationEntry entry in info)
+				InitMethodProperty ((string)entry.Name, entry.Value);
+
+			ResolveMethod ();
+		}
+
+		internal MethodCall (CADMethodCallMessage msg) 
+		{
 			_typeName = msg.TypeName;
 			_uri = msg.Uri;
 			_methodName = msg.MethodName;
@@ -68,15 +71,60 @@ namespace System.Runtime.Remoting.Messaging {
 				CADMessageBase.UnmarshalProperties (Properties, msg.PropertiesCount, args);
 		}
 
-		[MonoTODO]
 		public MethodCall (IMessage msg)
 		{
+			IMethodMessage call = (IMethodMessage) msg;
+			_uri = call.Uri;
+			_typeName = call.TypeName;
+			_methodName = call.MethodName;
+			_args = call.Args;
+			_methodSignature = (Type[]) call.MethodSignature;
+			_methodBase = call.MethodBase;
+			_callContext = call.LogicalCallContext;
+
 			Init();
-			throw new NotImplementedException ();
+			
 		}
 
-		protected IDictionary ExternalProperties;
-		protected IDictionary InternalProperties;
+		public MethodCall (string uri, string typeName, string methodName, object[] args)
+		{
+			_uri = uri;
+			_typeName = typeName;
+			_methodName = methodName;
+			_args = args;
+
+			Init();
+			ResolveMethod();
+		}
+		
+		internal virtual void InitMethodProperty(string key, object value)
+		{
+			switch (key)
+			{
+				case "__TypeName" : _typeName = (string) value; return;
+				case "__MethodName" : _methodName = (string) value; return;
+				case "__MethodSignature" : _methodSignature = (Type[]) value; return;
+				case "__Args" : _args = (object[]) value; return;
+				case "__CallContext" : _callContext = (LogicalCallContext) value; return;
+				case "__Uri" : _uri = (string) value; return;
+				default: Properties[key] = value; return;
+			}
+		}
+
+		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			info.AddValue ("__TypeName", _typeName);
+			info.AddValue ("__MethodName", _methodName);
+			info.AddValue ("__MethodSignature", _methodSignature);
+			info.AddValue ("__Args", _args);
+			info.AddValue ("__CallContext", _callContext);
+			info.AddValue ("__Uri", _uri);
+
+			if (InternalProperties != null) {
+				foreach (DictionaryEntry entry in InternalProperties)
+					info.AddValue ((string) entry.Key, entry.Value);
+			}
+		} 
 
 		public int ArgCount {
 			get { return _args.Length; }
@@ -135,10 +183,22 @@ namespace System.Runtime.Remoting.Messaging {
 		}
 
 		public virtual IDictionary Properties {
-			get { return _properties; }
+			get 
+			{ 
+				if (ExternalProperties == null) InitDictionary ();
+				return ExternalProperties; 
+			}
 		}
 
-		public string TypeName {
+		internal virtual void InitDictionary()
+		{
+			MethodCallDictionary props = new MethodCallDictionary (this);
+			ExternalProperties = props;
+			InternalProperties = props.GetInternalProperties();
+		}
+
+		public string TypeName 
+		{
 			get { return _typeName; }
 		}
 
@@ -170,12 +230,6 @@ namespace System.Runtime.Remoting.Messaging {
 		}
 
 		[MonoTODO]
-		public void GetObjectData (SerializationInfo info, StreamingContext context)
-		{
-			throw new NotImplementedException ();
-		} 
-
-		[MonoTODO]
 		public virtual object HeaderHandler (Header[] h)
 		{
 			throw new NotImplementedException ();
@@ -183,9 +237,6 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public virtual void Init ()
 		{
-			_properties = new InternalDictionary (this);
-			ExternalProperties = _properties;
-			InternalProperties = _properties.GetInternalProperties();
 		}
 
 		public void ResolveMethod ()
@@ -199,15 +250,10 @@ namespace System.Runtime.Remoting.Messaging {
 			throw new NotImplementedException ();
 		}
 
-		class InternalDictionary : MethodCallDictionary
+		Identity IInternalMessage.TargetIdentity
 		{
-			public InternalDictionary(MethodCall message) : base (message) { }
-
-			protected override void SetMethodProperty (string key, object value)
-			{
-				if (key == "__Uri") ((MethodCall)_message).Uri = (string)value;
-				else base.SetMethodProperty (key, value);
-			}
+			get { return _targetIdentity; }
+			set { _targetIdentity = value; }
 		}
 	}
 }

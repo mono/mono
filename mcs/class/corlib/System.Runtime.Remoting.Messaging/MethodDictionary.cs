@@ -140,12 +140,13 @@ namespace System.Runtime.Remoting.Messaging
 			{
 				case "__CallContext": // Ignore?
 				case "__OutArgs":
-				case "__Return": break;
+				case "__Return": return;
 
 				case "__MethodName" : 
 				case "__TypeName" : 
 				case "__MethodSignature" : 
 				case "__Args" : throw new ArgumentException ("key was invalid");
+				case "__Uri": ((IInternalMessage)_message).Uri = (string) value; return;
 			}
 		}
 
@@ -252,7 +253,6 @@ namespace System.Runtime.Remoting.Messaging
 		{
 			return new DictionaryEnumerator (this);
 		}
-
 
 		// Dictionary enumerator
 

@@ -1,3 +1,18 @@
+2003-02-18  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* IInternalMessage.cs: Added. Provides some useful methods for method messages.
+	* ServerContextTerminatorSink.cs: Added support for construction messages.
+	* MethodCall.cs: Implemented serialization support. Added support for IInternalMessage.
+	* MethodDictionary.cs: Added support for IInternalMessage.
+	* MethodResponse.cs: Added serialization support. Added support for IInternalMessage.
+	* MonoMethodMessage.cs: Added support for IInternalMessage.
+	* ReturnMessage.cs: Added support for IInternalMessage.
+	* ClientContextTerminatorSink.cs: Added.
+	* ConstructionCall.cs: Added.
+	* ConstructionCallDictionary.cs: Added.
+	* ConstructionResponse.cs: Added.
+	* EnvoyTerminatorSink.cs: Added.
+	
 2003-02-07  Patrik Torstensson
 
 	* CADMessages.cs: Disable smuggeling of objects cross domain, still issues casing remoting

@@ -14,7 +14,7 @@ using System.Reflection;
 namespace System.Runtime.Remoting.Messaging {
 
 	[Serializable]
-	public class ReturnMessage : IMethodReturnMessage, IMethodMessage 
+	public class ReturnMessage : IMethodReturnMessage, IMethodMessage, IInternalMessage 
 	{
 		object[] _outArgs;
 		LogicalCallContext _callCtx;
@@ -25,7 +25,8 @@ namespace System.Runtime.Remoting.Messaging {
 		string _methodName;
 		object _methodSignature;
 		string _typeName;
-		InternalDictionary _properties;
+		MethodReturnDictionary _properties;
+		Identity _targetIdentity;
 
 		public ReturnMessage (object returnValue, object [] outArgs,
 			       int outArgCount, LogicalCallContext callCtx,
@@ -97,7 +98,7 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public virtual IDictionary Properties {
 			get {
-				if (_properties == null) _properties = new InternalDictionary (this);
+				if (_properties == null) _properties = new MethodReturnDictionary (this);
 				return _properties;
 			}
 		}
@@ -162,16 +163,10 @@ namespace System.Runtime.Remoting.Messaging {
 			return _methodBase.GetParameters()[arg_num].Name;
 		}
 
-
-		class InternalDictionary : MethodReturnDictionary
+		Identity IInternalMessage.TargetIdentity
 		{
-			public InternalDictionary(ReturnMessage message) : base (message) { }
-
-			protected override void SetMethodProperty (string key, object value)
-			{
-				if (key == "__Uri") ((ReturnMessage)_message).Uri = (string)value;
-				else base.SetMethodProperty (key, value);
-			}
+			get { return _targetIdentity; }
+			set { _targetIdentity = value; }
 		}
 	}
 }

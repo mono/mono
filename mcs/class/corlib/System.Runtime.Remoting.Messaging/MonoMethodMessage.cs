@@ -16,7 +16,7 @@ using System.Runtime.CompilerServices;
 namespace System.Runtime.Remoting.Messaging {
 	
 	[Serializable]
-	public class MonoMethodMessage : IMethodCallMessage, IMethodReturnMessage {
+	public class MonoMethodMessage : IMethodCallMessage, IMethodReturnMessage, IInternalMessage {
 
 		MonoMethod method;
 
@@ -34,9 +34,12 @@ namespace System.Runtime.Remoting.Messaging {
 
 		string uri;
 
-		InternalDictionary properties;
+		MethodCallDictionary properties;
 
 		Type[] methodSignature;
+
+		Identity identity;
+
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern void InitMessage (MonoMethod method, object [] out_args);
@@ -64,7 +67,7 @@ namespace System.Runtime.Remoting.Messaging {
 		
 		public IDictionary Properties {
 			get {
-				if (properties == null) properties = new InternalDictionary (this);
+				if (properties == null) properties = new MethodCallDictionary (this);
 				return properties;
 			}
 		}
@@ -287,19 +290,10 @@ namespace System.Runtime.Remoting.Messaging {
 			return null;
 		}
 
-		[Serializable]
-		class InternalDictionary : MethodCallDictionary
+		Identity IInternalMessage.TargetIdentity
 		{
-			public InternalDictionary(MonoMethodMessage message) : base (message) 
-			{ 
-			}
-
-			protected override void SetMethodProperty (string key, object value)
-			{
-				if (key == "__Uri") ((MonoMethodMessage)_message).Uri = (string)value;
-				else base.SetMethodProperty (key, value);
-			}
+			get { return identity; }
+			set { identity = value; }
 		}
-
 	}
 }

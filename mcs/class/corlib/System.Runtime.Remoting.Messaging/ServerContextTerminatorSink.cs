@@ -8,6 +8,7 @@
 
 using System;
 using System.Runtime.Remoting;
+using System.Runtime.Remoting.Activation;
 
 namespace System.Runtime.Remoting.Messaging
 {
@@ -18,13 +19,18 @@ namespace System.Runtime.Remoting.Messaging
 	{
 		public IMessage SyncProcessMessage (IMessage msg)
 		{
-			ServerIdentity identity = RemotingServices.GetMessageTargetIdentity (msg);
-			return identity.SyncObjectProcessMessage (msg);
+			if (msg is IConstructionCallMessage)
+				return ActivationServices.CreateInstanceFromMessage ((IConstructionCallMessage) msg);
+			else
+			{
+				ServerIdentity identity = (ServerIdentity) RemotingServices.GetMessageTargetIdentity (msg);
+				return identity.SyncObjectProcessMessage (msg);
+			}
 		}
 
 		public IMessageCtrl AsyncProcessMessage (IMessage msg, IMessageSink replySink)
 		{
-			ServerIdentity identity = RemotingServices.GetMessageTargetIdentity (msg);
+			ServerIdentity identity = (ServerIdentity) RemotingServices.GetMessageTargetIdentity (msg);
 			return identity.AsyncObjectProcessMessage (msg, replySink);
 		}
 

@@ -16,7 +16,7 @@ using System.Runtime.Serialization;
 namespace System.Runtime.Remoting.Messaging {
 
 	[Serializable] [CLSCompliant (false)]
-	public class MethodResponse : IMethodReturnMessage, ISerializable
+	public class MethodResponse : IMethodReturnMessage, ISerializable, IInternalMessage
 	{
 		string _methodName;
 		string _uri;
@@ -27,16 +27,31 @@ namespace System.Runtime.Remoting.Messaging {
 		Exception _exception;
 		Type [] _methodSignature;
 		ArgInfo _inArgInfo;
-		InternalDictionary _properties;
 
 		object []  _outArgs;
-
 		IMethodCallMessage _callMsg;
-
 		LogicalCallContext _callContext;
+		Identity _targetIdentity;
+
+		protected IDictionary ExternalProperties;
+		protected IDictionary InternalProperties;
 
 		public MethodResponse (Header[] headers, IMethodCallMessage mcm)
 		{
+			if (mcm != null)
+			{
+				_methodName = mcm.MethodName;
+				_uri = mcm.Uri;
+				_typeName = mcm.TypeName;
+				_methodBase = mcm.MethodBase;
+				_methodSignature = (Type[]) mcm.MethodSignature;
+			}
+
+			if (headers != null)
+			{
+				foreach (Header header in headers)
+					InitMethodProperty (header.Name, header.Value);
+			}
 		}
 
 		internal MethodResponse (Exception e, IMethodCallMessage msg) {
@@ -81,8 +96,27 @@ namespace System.Runtime.Remoting.Messaging {
 				CADMessageBase.UnmarshalProperties (Properties, retmsg.PropertiesCount, args);
 		}
 
-		protected IDictionary ExternalProperties;
-		protected IDictionary InternalProperties;
+		internal MethodResponse (SerializationInfo info, StreamingContext context) 
+		{
+			foreach (SerializationEntry entry in info)
+				InitMethodProperty (entry.Name, entry.Value);
+		}
+
+		internal void InitMethodProperty (string key, object value) 
+		{
+			switch (key) 
+			{
+				case "__TypeName": _typeName = (string) value; break;
+				case "__MethodName": _methodName = (string) value; break;
+				case "__MethodSignature": _methodSignature = (Type[]) value; break;
+				case "__Uri": _uri = (string) value; break;
+				case "__Return": _returnValue = value; break;
+				case "__OutArgs": _outArgs = (object[]) value; break;
+				case "__fault": _exception = (Exception) value; break;
+				case "__CallContext": _callContext = (LogicalCallContext) value; break;
+				default: Properties [key] = value; break;
+			}
+		}
 
 		public int ArgCount {
 			get { 
@@ -166,11 +200,10 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public virtual IDictionary Properties {
 			get { 
-				if (null == _properties) {
-					_properties = new InternalDictionary (this);
-
-					ExternalProperties = _properties;
-					InternalProperties = _properties.GetInternalProperties();
+				if (null == ExternalProperties) {
+					MethodReturnDictionary properties = new MethodReturnDictionary (this);
+					ExternalProperties = properties;
+					InternalProperties = properties.GetInternalProperties();
 				}
 				
 				return ExternalProperties;
@@ -218,10 +251,26 @@ namespace System.Runtime.Remoting.Messaging {
 			throw new NotSupportedException ();
 		}
 
-		[MonoTODO]
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			throw new NotImplementedException ();
+			if (_exception == null)
+			{
+				info.AddValue ("__TypeName", _typeName);
+				info.AddValue ("__MethodName", _methodName);
+				info.AddValue ("__MethodSignature", _methodSignature);
+				info.AddValue ("__Uri", _uri);
+				info.AddValue ("__Return", _returnValue);
+				info.AddValue ("__OutArgs", _outArgs);
+			}
+			else
+				info.AddValue ("__fault", _exception);
+
+			info.AddValue ("__CallContext", _callContext);
+
+			if (InternalProperties != null) {
+				foreach (DictionaryEntry entry in InternalProperties)
+					info.AddValue ((string) entry.Key, entry.Value);
+			}
 		} 
 
 		public object GetOutArg (int argNum)
@@ -254,13 +303,10 @@ namespace System.Runtime.Remoting.Messaging {
 			throw new NotImplementedException ();
 		} 
 
-		class InternalDictionary : MethodReturnDictionary {
-			public InternalDictionary(MethodResponse message) : base (message) { }
-
-			protected override void SetMethodProperty (string key, object value) {
-				if (key == "__Uri") ((MethodResponse) _message).Uri = (string)value;
-				else base.SetMethodProperty (key, value);
-			}
+		Identity IInternalMessage.TargetIdentity
+		{
+			get { return _targetIdentity; }
+			set { _targetIdentity = value; }
 		}
 	}
 }
