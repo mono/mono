@@ -1,4 +1,9 @@
 2004-10-21  Jambunathan K  <kjambunathan@novell.com>
+	* typemanager.cs (LookupType, LookupTypeDirect): Added a negative
+	cache for failed type lookups (stolen from mcs' typemanager.cs).
+	mbas gets a performance boost of about 20 times due to this
+	change.
+
 	* driver.cs (MainDriver): Made the warning message a little less
 	scary and more inviting for first time users.
 

@@ -306,6 +306,7 @@ public class TypeManager {
 		user_types = new ArrayList ();
 		
 		types = new CaseInsensitiveHashtable ();
+		negative_hits = new CaseInsensitiveHashtable ();
 		typecontainers = new CaseInsensitiveHashtable ();
 		
 		builder_to_declspace = new PtrHashtable ();
@@ -574,6 +575,7 @@ public class TypeManager {
 		return null;
 	}
 
+	static CaseInsensitiveHashtable negative_hits;
 	//
 	// This function is used when you want to avoid the lookups, and want to go
 	// directly to the source.  This will use the cache.
@@ -588,11 +590,13 @@ public class TypeManager {
 		if (t != null)
 			return t;
 
+		if (negative_hits.Contains (name))
+			return null;
 		t = LookupTypeReflection (name);
 		if (t == null)
-			return null;
-
-		types [name] = t;
+			negative_hits [name] = null;
+		else
+			types [name] = t;
 		return t;
 	}
 	
@@ -613,6 +617,9 @@ public class TypeManager {
 		if (t != null)
 			return t;
 
+		if (negative_hits.Contains (name))
+			return null;
+
 		//
 		// Optimization: ComposedCast will work with an existing type, and might already have the
 		// full name of the type, so the full system lookup can probably be avoided.
@@ -624,11 +631,16 @@ public class TypeManager {
 		for (int n = 1; n <= count; n++){
 			string top_level_type = String.Join (".", elements, 0, n);
 
+			if (negative_hits.Contains (top_level_type))
+				continue;
+
 			t = (Type) types [top_level_type];
 			if (t == null){
 				t = LookupTypeReflection (top_level_type);
-				if (t == null)
+				if (t == null){
+					negative_hits [top_level_type] = null;
 					continue;
+				}
 			}
 			
 			if (count == n){
@@ -637,11 +649,14 @@ public class TypeManager {
 			} 
 			
 			string newt = top_level_type + "+" + String.Join ("+", elements, n, count - n);
-			t = LookupTypeDirect (newt);
-			if (t != null)
-				types [newt] = t;
+			t = LookupTypeReflection (newt);
+			if (t == null)
+				negative_hits [name] = null;
+			else
+				types [name] = t;
 			return t;
 		}
+		negative_hits [name] = null;
 		return null;
 	}
 
