@@ -1,3 +1,9 @@
+2004-12-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Thread.cs: Change type of culture_info and ui_culture_info to 
+	IntPtr. Implement correct culture handling for the UI culture as
+	well.
+
 2004-12-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Thread.cs: Optimize CurrentCulture to avoid initializing the

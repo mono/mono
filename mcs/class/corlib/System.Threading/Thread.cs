@@ -54,8 +54,8 @@ namespace System.Threading
 		// stores a thread handle
 		private IntPtr system_thread_handle;
 		
-		private CultureInfo current_culture;
-		private CultureInfo current_ui_culture;
+		private IntPtr culture_info;
+		private IntPtr ui_culture_info;
 		private bool threadpool_thread;
 		/* accessed only from unmanaged code */
 		private IntPtr name;
@@ -413,25 +413,68 @@ namespace System.Threading
 
 		public CultureInfo CurrentUICulture {
 			get {
-				if (current_ui_culture == null) {
-					lock (synch_lock) {
-						if(current_ui_culture==null) {
-							/* We don't
-							 * distinguish
-							 * between
-							 * System and
-							 * UI cultures
-							 */
-							current_ui_culture = CultureInfo.ConstructCurrentUICulture ();
-						}
+				if (in_currentculture)
+					/* Bail out */
+					return CultureInfo.InvariantCulture;
+
+				CultureInfo culture = GetCachedCurrentUICulture ();
+				if (culture != null)
+					return culture;
+
+				byte[] arr = GetSerializedCurrentUICulture ();
+				if (arr == null) {
+					lock (typeof (Thread)) {
+						in_currentculture=true;
+						/* We don't
+						 * distinguish
+						 * between
+						 * System and
+						 * UI cultures
+						 */
+						culture = CultureInfo.ConstructCurrentUICulture ();
+						//
+						// Don't serialize the culture in this case to avoid
+						// initializing the serialization infrastructure in the
+						// common case when the culture is not set explicitly.
+						//
+						SetCachedCurrentUICulture (culture);
+						in_currentculture = false;
+						return culture;
 					}
 				}
-				
-				return(current_ui_culture);
+
+				/*
+				 * No cultureinfo object exists for this domain, so create one
+				 * by deserializing the serialized form.
+				 */
+				in_currentculture = true;
+				try {
+					BinaryFormatter bf = new BinaryFormatter ();
+					MemoryStream ms = new MemoryStream (arr);
+					culture = (CultureInfo)bf.Deserialize (ms);
+					SetCachedCurrentUICulture (culture);
+				}
+				finally {
+					in_currentculture = false;
+				}
+
+				return culture;
 			}
 			
 			set {
-				current_ui_culture = value;
+				in_currentculture = true;
+
+				try {
+					BinaryFormatter bf = new BinaryFormatter();
+					MemoryStream ms = new MemoryStream ();
+					bf.Serialize (ms, value);
+
+					SetCachedCurrentUICulture (value);
+					SetSerializedCurrentUICulture (ms.GetBuffer ());
+				}
+				finally {
+					in_currentculture = false;
+				}
 			}
 		}
 
