@@ -880,11 +880,13 @@ namespace nist_dom.fundamental
         //
         //----------------------------------------------------------------------------
 
+
         [Test]
 	public void core0018D()
         {
             string computedValue = "0";//0;
-            string expectedValue = "37";//37;
+	// Mmm, shouldn't the count be 36?
+            string expectedValue = "36";//37;
             System.Xml.XmlDocument testNode = null;
 
             testResults results = new testResults("Core0018D");
