@@ -1,3 +1,6 @@
+2002-04-11  Nick Drochak  <ndrochak@gol.com>
+
+	* icall.c: Implement a simple Double.ToString().
 
 Tue Apr 9 21:31:16 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
