@@ -1,3 +1,7 @@
+2003-08-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* StringTest.cs: added a couple of tests for Split. See bug #47802.
+
 2003-08-21  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ArrayTest.cs: Added regression test for #38812.

@@ -944,6 +944,16 @@ public class StringTest : Assertion
 		AssertEquals("Zero split", 0, chunks.Length);
 	}
 
+	[Test]
+	public void MoreSplit ()
+	{
+		string test = "123 456 789";
+		string [] st = test.Split ();
+		AssertEquals ("#01", "123", st [0]);
+		st = test.Split (null);
+		AssertEquals ("#02", "123", st [0]);
+	}
+
 	public void TestStartsWith() {
 		string s1 = "original";
 		
