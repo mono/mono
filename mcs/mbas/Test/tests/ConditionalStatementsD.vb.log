@@ -1,0 +1,8 @@
+
+MONO_PATH="../../../class/lib/default:$MONO_PATH" mono  ../../../mbas/mbas.exe   -d:NET_1_1 -d:ONLY_1_1 -debug /libpath:../../../class/lib/default /imports:System   ConditionalStatementsD.vb
+MonoBASIC Compiler  0.95.0.0 - (c)2002, 2003, 2004, 2005 Rafael Teixeira
+--------
+THIS IS AN ALPHA SOFTWARE.
+--------
+ConditionalStatementsD.vb(16,0) error BC29999: Parsing error
+Compilation failed: 1 Error(s), 0 warnings

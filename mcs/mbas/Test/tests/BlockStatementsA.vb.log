@@ -1,0 +1,8 @@
+
+MONO_PATH="../../../class/lib/default:$MONO_PATH" mono  ../../../mbas/mbas.exe   -d:NET_1_1 -d:ONLY_1_1 -debug /libpath:../../../class/lib/default /imports:System   BlockStatementsA.vb
+MonoBASIC Compiler  0.95.0.0 - (c)2002, 2003, 2004, 2005 Rafael Teixeira
+--------
+THIS IS AN ALPHA SOFTWARE.
+--------
+BlockStatementsA.vb(34,0) error BC0140: The label 'f1' is a duplicate
+Compilation failed: 1 Error(s), 0 warnings

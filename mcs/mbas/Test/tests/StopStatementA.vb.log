@@ -1,0 +1,10 @@
+
+MONO_PATH="../../../class/lib/default:$MONO_PATH" mono  ../../../mbas/mbas.exe   -d:NET_1_1 -d:ONLY_1_1 -debug /libpath:../../../class/lib/default /imports:System   StopStatementA.vb
+MonoBASIC Compiler  0.95.0.0 - (c)2002, 2003, 2004, 2005 Rafael Teixeira
+--------
+THIS IS AN ALPHA SOFTWARE.
+--------
+syntax error, got token `IDENTIFIER'
+StopStatementA.vb(8,20) error BC29999: Unrecognized Pre-Processor statement
+StopStatementA.vb(9,17) error BC29999: Parsing error
+Compilation failed: 2 Error(s), 0 warnings

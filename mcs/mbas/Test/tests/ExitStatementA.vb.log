@@ -1,0 +1,16 @@
+
+MONO_PATH="../../../class/lib/default:$MONO_PATH" mono  ../../../mbas/mbas.exe   -d:NET_1_1 -d:ONLY_1_1 -debug /libpath:../../../class/lib/default /imports:System   ExitStatementA.vb
+MonoBASIC Compiler  0.95.0.0 - (c)2002, 2003, 2004, 2005 Rafael Teixeira
+--------
+THIS IS AN ALPHA SOFTWARE.
+--------
+Internal warning BC-0018: Cannot find any symbol writer
+ExitStatementA.vb(11,0) warning BC0162: Unreachable code detected
+Compilation succeeded: 2 warning(s)
+
+MONO_PATH="../../../class/lib/default::$MONO_PATH" mono  --debug ./ExitStatementA.exe
+
+** ERROR **: Invalid IL code at IL0000 in exitstmt:fun (): IL_0000: ret       
+
+
+aborting...

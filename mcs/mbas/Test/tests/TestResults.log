@@ -1,0 +1,70 @@
+========================
+AssignmentStatementsA.vb: OK
+========================
+AssignmentStatementsB.vb: OK
+========================
+AssignmentStatementsC.vb: FAILED COMPILATION
+========================
+AssignmentStatementsD.vb: OK
+========================
+AssignmentStatementsE.vb: OK
+========================
+AssignmentStatementsF.vb: OK
+========================
+AssignmentStatementsG.vb: OK
+========================
+AssignmentStatementsH.vb: OK
+========================
+AssignmentStatementsI.vb: OK
+========================
+BlockStatementsA.vb: FAILED COMPILATION
+========================
+ConditionalStatementsA.vb: OK
+========================
+ConditionalStatementsB.vb: OK
+========================
+ConditionalStatementsC.vb: FAILED COMPILATION
+========================
+ConditionalStatementsD.vb: FAILED COMPILATION
+========================
+ConditionalStatementsE.vb: OK
+========================
+ConditionalStatementsF.vb: OK
+========================
+ConditionalStatementsG.vb: OK
+========================
+ConditionalStatementsH.vb: OK
+========================
+ConditionalStatementsI.vb: OK
+========================
+ConditionalStatementsJ.vb: OK
+========================
+ExitStatementA.vb: FAILED EXECUTION
+========================
+GotoStatementA.vb: FAILED COMPILATION
+========================
+InvocationStatementA.vb: OK
+========================
+LoopStatementsA.vb: OK
+========================
+LoopStatementsB.vb: OK
+========================
+LoopStatementsC.vb: OK
+========================
+LoopStatementsD.vb: OK
+========================
+LoopStatementsE.vb: FAILED EXECUTION
+========================
+LoopStatementsF.vb: OK
+========================
+LoopStatementsG.vb: FAILED EXECUTION
+========================
+ReturnStatementA.vb: OK
+========================
+StopStatementA.vb: FAILED COMPILATION
+========================
+WithStatementA.vb: OK
+========================
+WithStatementB.vb: FAILED EXECUTION
+========================
+WithStatementC.vb: FAILED COMPILATION
