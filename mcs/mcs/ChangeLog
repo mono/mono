@@ -1,5 +1,8 @@
 2002-09-08  Miguel de Icaza  <miguel@ximian.com>
 
+	* statement.cs (For.Emit): for infinite loops (test == null)
+	return whether there is a break inside, not always "true".
+
 	* namespace.cs (UsingEntry): New struct to hold the name of the
 	using definition, the location where it is defined, and whether it
 	has been used in a successful type lookup.

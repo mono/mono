@@ -500,7 +500,7 @@ namespace Mono.CSharp {
 			ec.LoopBeginTryCatchLevel = old_loop_begin_try_catch_level;
 			
 			//
-			// Inform whether we are infinite or not
+ 			// Inform whether we are infinite or not
 			//
 			if (Test != null){
 				if (Test is BoolConstant){
@@ -511,7 +511,7 @@ namespace Mono.CSharp {
 				}
 				return false;
 			} else
-				return true;
+				return breaks == false;
 		}
 	}
 	
