@@ -312,7 +312,7 @@ namespace System.Threading
 			Thread thread=CurrentThread;
 				
 			thread.set_state(ThreadState.WaitSleepJoin);
-			Join_internal(0, system_thread_handle);
+			Join_internal(Timeout.Infinite, system_thread_handle);
 			thread.clr_state(ThreadState.WaitSleepJoin);
 		}
 

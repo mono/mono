@@ -26,7 +26,8 @@ namespace System.Threading
 				}
 			}
 			
-			return(WaitAll_internal(waitHandles, 0, false));
+			return(WaitAll_internal(waitHandles, Timeout.Infinite,
+						false));
 		}
 
 		public static bool WaitAll(WaitHandle[] waitHandles,
@@ -60,7 +61,9 @@ namespace System.Threading
 				}
 			}
 			
-			return(WaitAll_internal(waitHandles, timeout.Milliseconds, exitContext));
+			return(WaitAll_internal(waitHandles,
+						timeout.Milliseconds,
+						exitContext));
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -77,7 +80,8 @@ namespace System.Threading
 				}
 			}
 			
-			return(WaitAny_internal(waitHandles, 0, false));
+			return(WaitAny_internal(waitHandles, Timeout.Infinite,
+						false));
 		}
 
 		public static int WaitAny(WaitHandle[] waitHandles,
@@ -92,7 +96,9 @@ namespace System.Threading
 				}
 			}
 			
-			return(WaitAny_internal(waitHandles, millisecondsTimeout, exitContext));
+			return(WaitAny_internal(waitHandles,
+						millisecondsTimeout,
+						exitContext));
 		}
 
 		public static int WaitAny(WaitHandle[] waitHandles,
@@ -110,7 +116,9 @@ namespace System.Threading
 				}
 			}
 			
-			return(WaitAny_internal(waitHandles, timeout.Milliseconds, exitContext));
+			return(WaitAny_internal(waitHandles,
+						timeout.Milliseconds,
+						exitContext));
 		}
 
 		[MonoTODO]
@@ -140,15 +148,20 @@ namespace System.Threading
 		protected virtual extern bool WaitOne_internal(IntPtr handle, int ms, bool exitContext);
 
 		public virtual bool WaitOne() {
-			return(WaitOne_internal(handle, 0, false));
+			return(WaitOne_internal(handle, Timeout.Infinite,
+						false));
 		}
 
 		public virtual bool WaitOne(int millisecondsTimeout, bool exitContext) {
-			return(WaitOne_internal(handle, millisecondsTimeout, exitContext));
+			return(WaitOne_internal(handle,
+						millisecondsTimeout,
+						exitContext));
 		}
 
 		public virtual bool WaitOne(TimeSpan timeout, bool exitContext) {
-			return(WaitOne_internal(handle, timeout.Milliseconds, exitContext));
+			return(WaitOne_internal(handle,
+						timeout.Milliseconds,
+						exitContext));
 		}
 
 		protected static readonly IntPtr InvalidHandle;

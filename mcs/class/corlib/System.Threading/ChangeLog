@@ -1,3 +1,9 @@
+2002-01-15  Dick Porter  <dick@ximian.com>
+
+	* WaitHandle.cs:
+	* Thread.cs: Make the runtime's idea of infinite timeouts coincide
+	with the class library's
+
 2002-01-10  Dick Porter  <dick@ximian.com>
 
 	* WaitHandle.cs: Added checks for too many handles and null
