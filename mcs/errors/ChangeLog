@@ -1,3 +1,10 @@
+2004-03-24 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* Makefile, do-tests.pl: A new system for testing.
+	* mcs-expect-no-errors, mcs-expect-wrong-error: a list
+	of tests that we fail on.
+	* CONTRIBUTORS_README: update docs.
+
 2004-03-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* cs1548.cs: New test for signing an assembly.

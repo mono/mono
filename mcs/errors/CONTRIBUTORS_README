@@ -51,3 +51,21 @@ Mono MCS Errors.
         Create separate file with same name as your error test name except
         first two letters which are uppercased. And then add this file to
         Makefile.
+
+* Known errors
+
+	Many of the errors in this test suite are not tested for by MCS. To cope
+	with this, we have a list of failures, so that someone running the test
+	can know if they have caused any regressions.
+	
+	In this model there are two types of regressions:
+		* Incorrect error -- When mcs emits an error, but it is different
+		  than the one CSC emits.
+		  
+		* No error -- When mcs incorrectly compiles an invalid file.
+		
+	`Incorrect error' regressions should be listed in mcs-expect-wrong-error.
+	`No error' regressiions should be listed in mcs-expect-no-error.
+	
+	If you fix a bug and thus remove a regression, be sure to remove the file
+	from the failures list!

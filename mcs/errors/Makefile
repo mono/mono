@@ -29,56 +29,10 @@ test-local:
 # don't compile on make test.
 
 run-test-local:
-	@ failed=false; \
-	for i in cs*.cs; do \
-		case $$i in \
-			cs[0-9]*-[0-9]*cs) \
-			error=`echo $$i | sed -e 's/cs*//' -e 's/.cs//' -e 's/-.*//'`; \
-			;;\
-			cs[0-9-]*cs)  \
-			error=`echo $$i | sed -e 's/cs*//' -e 's/.cs//'`; \
-			;;\
-		esac; \
-		echo -n "Running test $$i ... "; \
-		options=`fgrep "// Compiler options:" $$i | sed -e 's/\/\/ Compiler options://'`; \
-		if $(CSCOMPILE) --expect-error $$error $$i $$options > /dev/null; \
-		then echo OK; \
-		else echo FAILED; \
-		     flist="$$flist $$i"; \
-		     failed=true; \
-		fi; \
-	done; \
-	if $$failed; then \
-		echo "The compiler failed to flag the following errors: $$flist"; \
-	else \
-		echo All tests passed; \
-	fi
+	@ ./do-tests.pl mcs "$(CSCOMPILE)" "cs*.cs"
 
 run-generics-local:
-	@ failed=false; \
-	for i in gcs*.cs; do \
-		case $$i in \
-			gcs[0-9]*-[0-9]*cs) \
-			error=`echo $$i | sed -e 's/gcs*//' -e 's/.cs//' -e 's/-.*//'`; \
-			;;\
-			gcs[0-9-]*cs)  \
-			error=`echo $$i | sed -e 's/gcs*//' -e 's/.cs//'`; \
-			;;\
-		esac; \
-		echo -n "Running test $$i ... "; \
-		options=`fgrep "// Compiler options:" $$i | sed -e 's/\/\/ Compiler options://'`; \
-		if $(GMCS_COMPILE) --expect-error $$error $$i $$options > /dev/null; \
-		then echo OK; \
-		else echo FAILED; \
-		     flist="$$flist $$i"; \
-		     failed=true; \
-		fi; \
-	done; \
-	if $$failed; then \
-		echo "The compiler failed to flag the following errors: $$flist"; \
-	else \
-		echo All tests passed; \
-	fi
+	@ ./do-tests.pl gmcs "$(GMCS_COMPILE)" "gmcs*.cs"
 
 test-multi-local:
 	@ failed=false; \
