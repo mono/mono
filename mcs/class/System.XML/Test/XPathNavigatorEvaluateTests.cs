@@ -149,7 +149,7 @@ namespace MonoTests.System.Xml
 			AssertEquals("0.33333333333333331", navigator.Evaluate ("string(1 div 3)").ToString ());
 		}
 
-		public void saveTestCoreFunctionConcat ()
+		public void TestCoreFunctionConcat ()
 		{
 			try {
 				navigator.Evaluate ("concat()");
@@ -167,7 +167,7 @@ namespace MonoTests.System.Xml
 			AssertEquals ("foobarbazquxquux", navigator.Evaluate ("concat('foo', 'bar', 'baz', 'qux', 'quux')").ToString ());
 		}
 
-		public void saveTestCoreFunctionStartsWith ()
+		public void TestCoreFunctionStartsWith ()
 		{
 			try {
 				navigator.Evaluate ("starts-with()");
@@ -188,7 +188,7 @@ namespace MonoTests.System.Xml
 			Assert (!(bool)navigator.Evaluate ("starts-with('foobar', 'bar')"));
 		}
 
-		public void saveTestCoreFunctionContains ()
+		public void TestCoreFunctionContains ()
 		{
 			try {
 				navigator.Evaluate ("contains()");
