@@ -147,6 +147,11 @@
 		statements live in this file.  This also drives the
 		semantic analysis process.
 
+	    iterators.cs:
+
+	 	Contains the support for implementing iterators from
+		the C# 2.0 specification.
+
 	Declarations, Classes, Structs, Enumerations
 
 	    decl.cs
