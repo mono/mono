@@ -1,4 +1,10 @@
 
+Tue Jun 22 16:48:02 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mono-debug.h, mono-debug-debugger.h, debug-mono-symfile.h:
+	mark headers as not supported, they are installed only for use by the
+	debugger.
+
 Tue Jun 22 16:32:03 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* *.c, *.h: avoid namespace pollution in public headers.
