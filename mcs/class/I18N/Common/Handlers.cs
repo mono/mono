@@ -35,6 +35,8 @@ public sealed class Handlers
 {
     public static readonly String[] List = {
         "I18N.CJK.CP932",
+        "I18N.CJK.CP950",
+        "I18N.CJK.ENCbig5",
         "I18N.CJK.ENCshift_jis",
         "I18N.MidEast.CP1254",
         "I18N.MidEast.ENCwindows_1254",

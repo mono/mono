@@ -1,3 +1,7 @@
+Big5Convert.cs
 CP932.cs
+CP950.cs
 CodeTable.cs
+DbcsEncoding.cs
+DbcsConvert.cs
 JISConvert.cs
