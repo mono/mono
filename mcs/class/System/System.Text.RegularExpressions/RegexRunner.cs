@@ -45,7 +45,7 @@ namespace System.Text.RegularExpressions {
 		}
 
 		[MonoTODO]
-		protected int CrawlPos () {
+		protected int Crawlpos () {
 			throw new NotImplementedException ();
 		}
 
@@ -95,7 +95,7 @@ namespace System.Text.RegularExpressions {
 		}
 
 		[MonoTODO]
-		protected int PopCrawl () {
+		protected int Popcrawl () {
 			throw new NotImplementedException ();
 		}
 

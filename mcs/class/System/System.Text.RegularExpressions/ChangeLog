@@ -1,5 +1,9 @@
 2004-06-10  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* RegexRunner.cs: fixed case mismatch of methods
+
+2004-06-10  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* RegexRunner.cs: marked TODO, added missing protected internal
 	fields, throw NotImplementedException in all methods
 
