@@ -502,7 +502,7 @@ namespace System.Threading
 		[MonoTODO ("seems required for multi-processors systems like Itanium")]
 		public static void MemoryBarrier ()
 		{
-			throw new NotImplementedException ();
+			// Will be implemented when we have support for Itanium.
 		}
 #endif
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
