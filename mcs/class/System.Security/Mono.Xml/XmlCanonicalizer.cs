@@ -96,13 +96,13 @@ namespace Mono.Xml {
 				WriteProcessingInstructionNode (node, visible);
 				break;
 			case XmlNodeType.EntityReference:
-				throw new XmlException ("Entity references should be resolved by parser");
+				throw new XmlException ("Entity references should be resolved by parser", null);
 			case XmlNodeType.Attribute:
-				throw new XmlException ("Attribute node is impossible here");
+				throw new XmlException ("Attribute node is impossible here", null);
 			case XmlNodeType.EndElement:
-				throw new XmlException ("EndElement node is impossible here");
+				throw new XmlException ("EndElement node is impossible here", null);
 			case XmlNodeType.EndEntity:
-				throw new XmlException ("EndEntity node is impossible here");
+				throw new XmlException ("EndEntity node is impossible here", null);
 			case XmlNodeType.DocumentType:
 			case XmlNodeType.Entity:
 			case XmlNodeType.Notation:

@@ -1,3 +1,7 @@
+2003-07-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XmlCanonicalizer.cs: fixed to make it build for 1.0 and 1.1.
+
 2003-07-24  Sebastien Pouliot <spouliot@motus.com>
 
 	* XmlCanonicalizer.cs: New. C14N class from Aleksey Sanin.
