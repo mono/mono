@@ -1,3 +1,8 @@
+2004-03-24  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (DeclSpace.FindType): Also use
+	TypeManager.CheckGeneric() for types from the using clauses.
+
 2004-03-23  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (Invocation.OverloadResolve): Added `bool

@@ -928,7 +928,8 @@ namespace Mono.CSharp {
 					if (error)
 						return null;
 
-					if (match != null){
+					if ((match != null) &&
+					    TypeManager.CheckGeneric (match, num_type_args)) {
 						if (t != null){
 							if (CheckAccessLevel (match)) {
 								Error_AmbiguousTypeReference (loc, name, t, match);
