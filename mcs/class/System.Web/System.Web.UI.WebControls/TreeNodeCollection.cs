@@ -78,6 +78,7 @@ namespace System.Web.UI.WebControls
 			child.SetParent (parent);
 			if (marked) {
 				child.TrackViewState ();
+				child.SetDirty ();
 				dirty = true;
 			}
 		}
@@ -92,6 +93,7 @@ namespace System.Web.UI.WebControls
 				((TreeNode)items[n]).Index = n;
 			if (marked) {
 				child.TrackViewState ();
+				child.SetDirty ();
 				dirty = true;
 			}
 		}
@@ -163,7 +165,7 @@ namespace System.Web.UI.WebControls
 		{
 			items.CopyTo (array, index);
 		}
-		
+
 		void IStateManager.LoadViewState (object state)
 		{
 			if (state == null) return;
@@ -180,9 +182,8 @@ namespace System.Web.UI.WebControls
 				TreeNode node;
 				if (oi != -1) node = originalItems [oi];
 				else node = new TreeNode ();
+				if (dirty) Add (node);
 				node.LoadViewState (pair.Second);
-				if (dirty)
-					Add (node);
 			}
 		}
 		

@@ -524,6 +524,16 @@ namespace System.Web.UI.WebControls
 		{
 			Set (bit);
 		}
+		
+#if NET_2_0
+		public void SetDirty ()
+		{
+			if (selectionBits != 0x00)
+				Set (MARKED);
+			if (viewState != null)
+				viewState.SetDirty ();
+		}
+#endif
 	}
 }
 

@@ -1,3 +1,18 @@
+2004-12-02 Lluis Sanchez Gual <lluis@novell.com>
+
+	* TreeNodeBindingCollection.cs, TreeNodeStyleCollection.cs: 
+	Implemented SetDirtyObject.
+	* Style.cs: Implemented SetDirty().
+	* TreeNodeBinding.cs: Added missing attributes. Implemented SetDirty().
+	* TreeNode.cs: Added missing attributes added support for
+	PopulateOnDemand. Added some missing property bindings.
+	* TreeNodeCollection.cs: Several minor fixes. SetDirty must be called
+	to newly added elements to make sure al new data is saved.
+	* TreeView.js: Implemented support for client population of nodes.
+	* TreeNodeStyle.cs: Added missing attributes.
+	* TreeView.cs: Implemented support for PopulateNodesFromClient and
+	PopulateOnDemand. Improved rendering.
+
 2004-11-29 Sanjay Gupta <gsanjay@novell.com>
 
 	* DataControlField.cs:

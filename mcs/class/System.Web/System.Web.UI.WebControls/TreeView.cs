@@ -37,6 +37,7 @@ using System.ComponentModel;
 using System.Web.UI;
 using System.Web.Handlers;
 using System.Collections.Specialized;
+using System.IO;
 
 namespace System.Web.UI.WebControls
 {
@@ -486,7 +487,6 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue (true)]
-		[MonoTODO ("Support this")]
 		public virtual bool PopulateNodesFromClient {
 			get {
 				object o = ViewState ["PopulateNodesFromClient"];
@@ -677,6 +677,11 @@ namespace System.Web.UI.WebControls
 				OnTreeNodeCollapsed (new TreeNodeEventArgs (node));
 		}
 
+		internal void NotifyPopulateRequired (TreeNode node)
+		{
+			OnTreeNodePopulate (new TreeNodeEventArgs (node));
+		}
+
 		protected override void TrackViewState()
 		{
 			EnsureDataBound ();
@@ -808,11 +813,26 @@ namespace System.Web.UI.WebControls
 			Console.WriteLine ("RaisePostDataChangedEvent");
 		}
 		
-		[MonoTODO]
 		string ICallbackEventHandler.RaiseCallbackEvent (string eventArgs)
 		{
-			Console.WriteLine ("RaiseCallbackEvent " + eventArgs);
-			return "";
+			TreeNode node = FindNodeByPos (eventArgs);
+			ArrayList levelLines = new ArrayList ();
+			TreeNode nd = node;
+			while (nd != null) {
+				int childCount = nd.Parent != null ? nd.Parent.ChildNodes.Count : Nodes.Count;
+				levelLines.Insert (0, (nd.Index < childCount - 1) ? this : null);
+				nd = nd.Parent;
+			}
+			
+			StringWriter sw = new StringWriter ();
+			HtmlTextWriter writer = new HtmlTextWriter (sw);
+			
+			int num = node.ChildNodes.Count;
+			for (int n=0; n<num; n++)
+				RenderNode (writer, node.ChildNodes [n], node.Depth + 1, levelLines, true, n<num-1);
+			
+			string res = sw.ToString ();
+			return res != "" ? res : "*";
 		}
 		
 		protected override ControlCollection CreateControlCollection ()
@@ -837,27 +857,6 @@ namespace System.Web.UI.WebControls
 		{
 			EnsureDataBound ();
 			
-			if (EnableClientScript && !Page.ClientScript.IsClientScriptIncludeRegistered (GetType(), "TreeView.js")) {
-				string url = Page.GetWebResourceUrl (typeof(TreeView), "TreeView.js");
-				Page.ClientScript.RegisterClientScriptInclude (GetType(), "TreeView.js", url);
-				
-				string ctree = ClientID + "_data";
-				string script = string.Format ("var {0} = new Object ();\n", ctree);
-				script += string.Format ("{0}.showImage = {1};\n", ctree, ShowExpandCollapse.ToString().ToLower());
-				
-				if (ShowExpandCollapse) {
-					bool defaultImages = ShowLines || ImageSet != TreeViewImageSet.Custom || (ExpandImageUrl == "" && CollapseImageUrl == "");
-					script += string.Format ("{0}.defaultImages = {1};\n", ctree, defaultImages.ToString().ToLower());
-					if (!defaultImages) {
-						ImageStyle imageStyle = GetImageStyle ();
-						script += string.Format ("{0}.expandImage = '{1}';\n", ctree, GetNodeImageUrl ("plus", imageStyle));
-						script += string.Format ("{0}.collapseImage = '{1}';\n", ctree, GetNodeImageUrl ("minus", imageStyle));
-					}
-				}
-				
-				Page.ClientScript.RegisterStartupScript (GetType(), "", script, true);
-			}
-
 			if (!Page.IsPostBack && ExpandDepth != 0) {
 				foreach (TreeNode node in Nodes)
 					node.Expand (ExpandDepth - 1);
@@ -887,8 +886,38 @@ namespace System.Web.UI.WebControls
 		protected override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
+			
+			if (EnableClientScript && !Page.ClientScript.IsClientScriptIncludeRegistered (typeof(TreeView), "TreeView.js")) {
+				string url = Page.GetWebResourceUrl (typeof(TreeView), "TreeView.js");
+				Page.ClientScript.RegisterClientScriptInclude (GetType(), "TreeView.js", url);
+				
+				string ctree = ClientID + "_data";
+				string script = string.Format ("var {0} = new Object ();\n", ctree);
+				script += string.Format ("{0}.showImage = {1};\n", ctree, GetScriptLiteral (ShowExpandCollapse));
+				
+				if (ShowExpandCollapse) {
+					bool defaultImages = ShowLines || ImageSet != TreeViewImageSet.Custom || (ExpandImageUrl == "" && CollapseImageUrl == "");
+					script += string.Format ("{0}.defaultImages = {1};\n", ctree, GetScriptLiteral (defaultImages));
+					ImageStyle imageStyle = GetImageStyle ();
+					if (!defaultImages) {
+						script += string.Format ("{0}.expandImage = {1};\n", ctree, GetScriptLiteral (GetNodeImageUrl ("plus", imageStyle)));
+						script += string.Format ("{0}.collapseImage = {1};\n", ctree, GetScriptLiteral (GetNodeImageUrl ("minus", imageStyle)));
+					}
+					if (PopulateNodesFromClient)
+						script += string.Format ("{0}.noExpandImage = {1};\n", ctree, GetScriptLiteral (GetNodeImageUrl ("noexpand", imageStyle)));
+				}
+				script += string.Format ("{0}.populateFromClient = {1};\n", ctree, GetScriptLiteral (PopulateNodesFromClient));
+				script += string.Format ("{0}.expandAlt = {1};\n", ctree, GetScriptLiteral (GetNodeImageToolTip (true, null)));
+				script += string.Format ("{0}.collapseAlt = {1};\n", ctree, GetScriptLiteral (GetNodeImageToolTip (false, null)));
+				Page.ClientScript.RegisterStartupScript (GetType(), "", script, true);
+			}
+
 			if (EnableClientScript) {
 				Page.ClientScript.RegisterHiddenField (ClientID + "_ExpandStates", GetExpandStates ());
+				
+				// Make sure the basic script infrastructure is rendered
+		        Page.GetCallbackEventReference (this, "null", "", "null");
+				Page.GetPostBackClientHyperlink (this, "");
 			}
 			
 			if (dataBindings != null && dataBindings.Count > 0) {
@@ -900,6 +929,19 @@ namespace System.Web.UI.WebControls
 			}
 			else
 				bindings = null;
+		}
+		
+		string GetScriptLiteral (object ob)
+		{
+			if (ob is string) {
+				string s = (string)ob;
+				s = s.Replace ("\"", "\\\"");
+				return "\"" + s + "\"";
+			} else if (ob is bool) {
+				return ob.ToString().ToLower();
+			} else {
+				return ob.ToString ();
+			}
 		}
 		
 		string GetBindingKey (string dataMember, int depth)
@@ -937,9 +979,21 @@ namespace System.Web.UI.WebControls
 			string nodeImage;
 			bool clientExpand = EnableClientScript && Events [TreeNodeCollapsedEvent] == null && Events [TreeNodeExpandedEvent] == null;
 			ImageStyle imageStyle = GetImageStyle ();
+			bool renderChildNodes = node.Expanded;
 			
+			if (clientExpand && !renderChildNodes)
+				renderChildNodes = (!PopulateNodesFromClient || HasChildInputData (node));
+				
+			bool hasChildNodes;
+			
+			if (renderChildNodes)
+				hasChildNodes = node.ChildNodes.Count > 0;
+			else
+				hasChildNodes = (node.PopulateOnDemand && !node.Populated) || node.ChildNodes.Count > 0;
+				
 			writer.AddAttribute ("cellpadding", "0");
 			writer.AddAttribute ("cellspacing", "0");
+			writer.AddStyleAttribute ("border-width", "0");
 			writer.RenderBeginTag (HtmlTextWriterTag.Table);
 			writer.RenderBeginTag (HtmlTextWriterTag.Tr);
 			
@@ -957,6 +1011,9 @@ namespace System.Web.UI.WebControls
 					writer.AddAttribute ("border", "0");
 					writer.RenderBeginTag (HtmlTextWriterTag.Img);
 					writer.RenderEndTag ();
+					
+					writer.RenderEndTag ();	// TD
+					writer.RenderBeginTag (HtmlTextWriterTag.Td);
 				}
 				writer.AddStyleAttribute ("width", NodeIndent + "px");
 				writer.RenderBeginTag (HtmlTextWriterTag.Div);
@@ -980,18 +1037,11 @@ namespace System.Web.UI.WebControls
 					shape = "";
 				
 				if (ShowExpandCollapse) {
-					if (node.ChildNodes.Count > 0) {
+					if (hasChildNodes) {
 						buttonImage = true;
-						if (node.Expanded) {
-							shape += "minus";
-							tooltip = CollapseImageToolTip;
-							if (tooltip == "") tooltip = "Collapse " + node.Text;
-						}
-						else {
-							shape += "plus";
-							tooltip = ExpandImageToolTip;
-							if (tooltip == "") tooltip = "Expand " + node.Text;
-						}
+						if (node.Expanded) shape += "minus";
+						else shape += "plus";
+						tooltip = GetNodeImageToolTip (!node.Expanded, node.Text);
 					} else if (!ShowLines)
 						shape = "noexpand";
 				}
@@ -1011,7 +1061,7 @@ namespace System.Web.UI.WebControls
 					if (tooltip != null)
 						writer.AddAttribute ("alt", tooltip);
 					if (buttonImage && clientExpand)
-						writer.AddAttribute ("id", ClientID + "_img_" + node.Path);
+						writer.AddAttribute ("id", GetNodeClientId (node, "img"));
 					writer.AddAttribute ("src", nodeImage);
 					writer.AddAttribute ("border", "0");
 					writer.RenderBeginTag (HtmlTextWriterTag.Img);
@@ -1050,10 +1100,14 @@ namespace System.Web.UI.WebControls
 			
 			// Checkbox
 			
-			bool showChecks = (ShowCheckBoxes == TreeNodeTypes.All) ||
-						 (ShowCheckBoxes == TreeNodeTypes.Leaf && node.ChildNodes.Count == 0) ||
-						 (ShowCheckBoxes == TreeNodeTypes.Parent && node.ChildNodes.Count > 0 && node.Parent != null) ||
-						 (ShowCheckBoxes == TreeNodeTypes.Root && node.Parent == null && node.ChildNodes.Count > 0);
+			bool showChecks;
+			if (node.IsShowCheckBoxSet)
+				showChecks = node.ShowCheckBox;
+			else
+				showChecks = (ShowCheckBoxes == TreeNodeTypes.All) ||
+							 (ShowCheckBoxes == TreeNodeTypes.Leaf && node.ChildNodes.Count == 0) ||
+							 (ShowCheckBoxes == TreeNodeTypes.Parent && node.ChildNodes.Count > 0 && node.Parent != null) ||
+							 (ShowCheckBoxes == TreeNodeTypes.Root && node.Parent == null && node.ChildNodes.Count > 0);
 
 			if (showChecks) {
 				AddNodeStyle (writer, node, level);
@@ -1073,6 +1127,8 @@ namespace System.Web.UI.WebControls
 			writer.RenderBeginTag (HtmlTextWriterTag.Td);	// TD
 			
 			AddNodeStyle (writer, node, level);
+			if (clientExpand)
+				writer.AddAttribute ("id", GetNodeClientId (node, "txt"));
 			BeginNodeTag (writer, node, clientExpand);
 			writer.Write (node.Text);
 			writer.RenderEndTag ();	// style tag
@@ -1084,14 +1140,8 @@ namespace System.Web.UI.WebControls
 			
 			// Children
 			
-			if ((node.Expanded || clientExpand) && node.ChildNodes.Count > 0) {
-				if (clientExpand) {
-					if (!node.Expanded) writer.AddStyleAttribute ("display", "none");
-					else writer.AddStyleAttribute ("display", "block");
-					writer.AddAttribute ("id", ClientID + "_" + node.Path);
-					writer.RenderBeginTag (HtmlTextWriterTag.Span);
-				}
-				
+			if (hasChildNodes)
+			{
 				if (level >= levelLines.Count) {
 					if (hasNext) levelLines.Add (this);
 					else levelLines.Add (null);
@@ -1100,12 +1150,24 @@ namespace System.Web.UI.WebControls
 					else levelLines [level] = null;
 				}
 				
-				int num = node.ChildNodes.Count;
-				for (int n=0; n<num; n++)
-					RenderNode (writer, node.ChildNodes [n], level + 1, levelLines, true, n<num-1);
+				if (clientExpand) {
+					if (!node.Expanded) writer.AddStyleAttribute ("display", "none");
+					else writer.AddStyleAttribute ("display", "block");
+					writer.AddAttribute ("id", GetNodeClientId (node, null));
+					writer.RenderBeginTag (HtmlTextWriterTag.Span);
 					
-				if (clientExpand)
+					if (renderChildNodes) {
+						int num = node.ChildNodes.Count;
+						for (int n=0; n<num; n++)
+							RenderNode (writer, node.ChildNodes [n], level + 1, levelLines, true, n<num-1);
+					}
 					writer.RenderEndTag ();	// SPAN
+				}
+				else if (renderChildNodes) {
+					int num = node.ChildNodes.Count;
+					for (int n=0; n<num; n++)
+						RenderNode (writer, node.ChildNodes [n], level + 1, levelLines, true, n<num-1);
+				}
 			}
 		}
 		
@@ -1152,6 +1214,42 @@ namespace System.Web.UI.WebControls
 				writer.RenderBeginTag (HtmlTextWriterTag.Span);
 		}
 		
+		bool HasChildInputData (TreeNode node)
+		{
+			// Returns true if this node contain childs whose state is hold in
+			// input elements that are rendered together with the node.
+			
+			if (node.Checked) return true;
+			if (!node.HasChildData) return false;
+
+			foreach (TreeNode n in node.ChildNodes)
+				if (HasChildInputData (n)) return true;
+			return false;
+		}
+		
+		string GetNodeImageToolTip (bool expand, string txt) {
+			if (expand)  {
+				if (ExpandImageToolTip != "")
+					return ExpandImageToolTip;
+				else if (txt != null)
+					return "Expand " + txt;
+				else
+					return "Expand {0}";
+			} else {
+				if (CollapseImageToolTip != "")
+					return CollapseImageToolTip;
+				else if (txt != null)
+					return "Collapse " + txt;
+				else
+					return "Collapse {0}";
+			}
+		}
+		
+		string GetNodeClientId (TreeNode node, string sufix)
+		{
+			return ClientID + "_" + node.Path + (sufix != null ? "_" + sufix : "");
+		}
+							
 		string GetNodeImageUrl (string shape, ImageStyle imageStyle)
 		{
 			if (ShowLines) {

@@ -94,9 +94,9 @@ namespace System.Web.UI.WebControls
 			set { ((IList)this) [i] = value; }
 		}
 		
-		[MonoTODO]
 		protected override void SetDirtyObject (object o)
 		{
+			((TreeNodeStyle)o).SetDirty ();
 		}
 	}
 }

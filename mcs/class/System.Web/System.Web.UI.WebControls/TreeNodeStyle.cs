@@ -32,6 +32,7 @@
 
 using System;
 using System.Web.UI;
+using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
@@ -43,6 +44,10 @@ namespace System.Web.UI.WebControls
 		private static int SPACING = (0x01 << 19);
 		private static int VERT_PADD = (0x01 << 20);
 		
+		[DefaultValue ("")]
+		[UrlProperty]
+		[NotifyParentProperty (true)]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public string ImageUrl {
 			get {
 				if(IsSet(IMG_URL))
@@ -57,6 +62,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (0)]
+		[NotifyParentProperty (true)]
 		public int ChildNodesPadding {
 			get {
 				if(IsSet(CHILD_PADD))
@@ -69,6 +76,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (0)]
+		[NotifyParentProperty (true)]
 		public int HorizontalPadding {
 			get {
 				if(IsSet(HORZ_PADD))
@@ -81,6 +90,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (0)]
+		[NotifyParentProperty (true)]
 		public int VerticalPadding {
 			get {
 				if(IsSet(VERT_PADD))
@@ -93,6 +104,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (0)]
+		[NotifyParentProperty (true)]
 		public int NodeSpacing {
 			get {
 				if(IsSet(SPACING))

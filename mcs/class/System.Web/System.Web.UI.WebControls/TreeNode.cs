@@ -55,6 +55,11 @@ namespace System.Web.UI.WebControls
 		TreeNodeBinding binding;
 		PropertyDescriptorCollection boundProperties;
 		
+		internal TreeNode (TreeView tree)
+		{
+			Tree = tree;
+		}
+		
 		public TreeNode ()
 		{
 		}
@@ -86,6 +91,8 @@ namespace System.Web.UI.WebControls
 			Target = target;
 		}
 		
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public int Depth {
 			get {
 				if (depth != -1) return depth;
@@ -122,10 +129,15 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[DefaultValue (false)]
+		[Browsable (false)]
 		public bool DataBound {
 			get { return hierarchyData != null; }
 		}
 		
+		[DefaultValue (null)]
+		[Browsable (false)]
 		public object DataItem {
 			get {
 				if (hierarchyData == null) throw new InvalidOperationException ("TreeNode is not data bound.");
@@ -133,6 +145,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[DefaultValue ("")]
+		[Browsable (false)]
 		public string DataPath {
 			get {
 				if (hierarchyData == null) throw new InvalidOperationException ("TreeNode is not data bound.");
@@ -140,6 +155,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		[DefaultValue (false)]
 		public virtual bool Checked {
 			get {
 				object o = ViewState ["Checked"];
@@ -160,6 +176,9 @@ namespace System.Web.UI.WebControls
 		public virtual TreeNodeCollection ChildNodes {
 			get {
 				if (nodes == null) {
+					if (PopulateOnDemand && tree == null)
+						return null;
+
 					if (DataBound)
 						FillBoundChildren ();
 					else
@@ -167,11 +186,17 @@ namespace System.Web.UI.WebControls
 						
 					if (IsTrackingViewState)
 						((IStateManager)nodes).TrackViewState();
+					
+					if (PopulateOnDemand && !Populated) {
+						Populated = true;
+						Populate ();
+					}
 				}
 				return nodes;
 			}
 		}
-
+		
+		[DefaultValue (false)]
 		public virtual bool Expanded {
 			get {
 				object o = ViewState ["Expanded"];
@@ -185,6 +210,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Localizable (true)]
+		[DefaultValue ("")]
 		public virtual string ImageToolTip {
 			get {
 				object o = ViewState ["ImageToolTip"];
@@ -204,10 +231,21 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public virtual string ImageUrl {
 			get {
 				object o = ViewState ["ImageUrl"];
 				if (o != null) return (string)o;
+				if (DataBound) {
+					TreeNodeBinding bin = GetBinding ();
+					if (bin != null) {
+						if (bin.ImageUrlField != "")
+							return (string) GetBoundPropertyValue (bin.ImageUrlField);
+						return bin.ImageUrl;
+					}
+				}
 				return "";
 			}
 			set {
@@ -215,10 +253,21 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public virtual string NavigateUrl {
 			get {
 				object o = ViewState ["NavigateUrl"];
 				if (o != null) return (string)o;
+				if (DataBound) {
+					TreeNodeBinding bin = GetBinding ();
+					if (bin != null) {
+						if (bin.NavigateUrlField != "")
+							return (string) GetBoundPropertyValue (bin.NavigateUrlField);
+						return bin.NavigateUrl;
+					}
+				}
 				return "";
 			}
 			set {
@@ -226,10 +275,16 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (false)]
 		public bool PopulateOnDemand {
 			get {
 				object o = ViewState ["PopulateOnDemand"];
 				if (o != null) return (bool)o;
+				if (DataBound) {
+					TreeNodeBinding bin = GetBinding ();
+					if (bin != null)
+						return bin.PopulateOnDemand;
+				}
 				return false;
 			}
 			set {
@@ -237,10 +292,16 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (TreeNodeSelectAction.Select)]
 		public TreeNodeSelectAction SelectAction {
 			get {
 				object o = ViewState ["SelectAction"];
 				if (o != null) return (TreeNodeSelectAction)o;
+				if (DataBound) {
+					TreeNodeBinding bin = GetBinding ();
+					if (bin != null)
+						return bin.SelectAction;
+				}
 				return TreeNodeSelectAction.Select;
 			}
 			set {
@@ -248,21 +309,40 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (false)]
 		public bool ShowCheckBox {
 			get {
 				object o = ViewState ["ShowCheckBox"];
 				if (o != null) return (bool)o;
+				if (DataBound) {
+					TreeNodeBinding bin = GetBinding ();
+					if (bin != null)
+						return bin.ShowCheckBox;
+				}
 				return false;
 			}
 			set {
 				ViewState ["ShowCheckBox"] = value;
 			}
 		}
+		
+		internal bool IsShowCheckBoxSet {
+			get { return ViewState ["ShowCheckBox"] != null; }
+		}
 
+		[DefaultValue ("")]
 		public virtual string Target {
 			get {
 				object o = ViewState ["Target"];
 				if(o != null) return (string)o;
+				if (DataBound) {
+					TreeNodeBinding bin = GetBinding ();
+					if (bin != null) {
+						if (bin.TargetField != "")
+							return (string) GetBoundPropertyValue (bin.TargetField);
+						return bin.Target;
+					}
+				}
 				return "";
 			}
 			set {
@@ -276,14 +356,21 @@ namespace System.Web.UI.WebControls
 		public virtual string Text {
 			get {
 				object o = ViewState ["Text"];
-				if(o != null) return (string)o;
+				if (o != null) return (string)o;
 				if (DataBound) {
 					TreeNodeBinding bin = GetBinding ();
 					if (bin != null) {
+						string text;
 						if (bin.TextField != "")
-							return (string) GetBoundPropertyValue (bin.TextField);
-						if (bin.Text != "")
-							return bin.Text;
+							text = (string) GetBoundPropertyValue (bin.TextField);
+						else if (bin.Text != "")
+							text = bin.Text;
+						else
+							text = hierarchyData.ToString ();
+							
+						if (bin.FormatString.Length != 0)
+							text = string.Format (bin.FormatString, text);
+						return text;
 					}
 					return hierarchyData.ToString ();
 				}
@@ -294,10 +381,20 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Localizable (true)]
+		[DefaultValue ("")]
 		public virtual string ToolTip {
 			get {
 				object o = ViewState ["ToolTip"];
 				if(o != null) return (string)o;
+				if (DataBound) {
+					TreeNodeBinding bin = GetBinding ();
+					if (bin != null) {
+						if (bin.ToolTipField != "")
+							return (string) GetBoundPropertyValue (bin.ToolTipField);
+						return bin.ToolTip;
+					}
+				}
 				return "";
 			}
 			set {
@@ -305,6 +402,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Localizable (true)]
+		[DefaultValue ("")]
 		public virtual string Value {
 			get {
 				object o = ViewState ["Value"];
@@ -326,6 +425,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		[DefaultValue (false)]
 		public virtual bool Selected {
 			get {
 				return SelectedFlag;
@@ -353,10 +453,14 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public TreeNode Parent {
 			get { return parent; }
 		}
 		
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		public string ValuePath {
 			get {
 				if (tree == null) return Value;
@@ -397,8 +501,24 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		internal bool Populated {
+			get {
+				object o = ViewState ["Populated"];
+				if (o != null) return (bool) o;
+				return false;
+			}
+			set {
+				ViewState ["Populated"] = value;
+			}
+		}
+
 		internal bool HasChildData {
 			get { return nodes != null; }
+		}
+		
+		protected virtual void Populate ()
+		{
+			tree.NotifyPopulateRequired (this);
 		}
 		
 		public void Collapse ()
@@ -455,8 +575,9 @@ namespace System.Web.UI.WebControls
 			
 			if (tree != null && SelectedFlag)
 				tree.SetSelectedNode (this);
-				
-			((IStateManager)ChildNodes).LoadViewState (states [1]);
+			
+			if (!PopulateOnDemand || Populated)
+				((IStateManager)ChildNodes).LoadViewState (states [1]);
 		}
 		
 		public object SaveViewState ()
@@ -474,6 +595,7 @@ namespace System.Web.UI.WebControls
 		
 		public void TrackViewState ()
 		{
+			if (marked) return;
 			marked = true;
 			ViewState.TrackViewState();
 
@@ -484,6 +606,11 @@ namespace System.Web.UI.WebControls
 		public bool IsTrackingViewState
 		{
 			get { return marked; }
+		}
+		
+		internal void SetDirty ()
+		{
+			ViewState.SetDirty ();
 		}
 		
 		public object Clone ()

@@ -37,10 +37,12 @@ using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
+	[DefaultProperty ("TextField")]
 	public sealed class TreeNodeBinding: IStateManager, ICloneable, IDataSourceViewSchemaAccessor
 	{
 		StateBag ViewState = new StateBag ();
 		
+		[DefaultValue ("")]
 		public string DataMember {
 			get {
 				object o = ViewState ["DataMember"];
@@ -52,6 +54,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (-1)]
 		public int Depth {
 			get {
 				object o = ViewState ["Depth"];
@@ -63,6 +66,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Localizable (true)]
+		[DefaultValue ("")]
+		[UrlProperty]
 		public string FormatString {
 			get {
 				object o = ViewState ["FormatString"];
@@ -74,6 +80,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[Localizable (true)]
+		[DefaultValue ("")]
 		public string ImageToolTip {
 			get {
 				object o = ViewState ["ImageToolTip"];
@@ -85,6 +93,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
+		[TypeConverter ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
 		public string ImageToolTipField {
 			get {
 				object o = ViewState ["ImageToolTipField"];
@@ -96,6 +106,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public string ImageUrl {
 			get {
 				object o = ViewState ["ImageUrl"];
@@ -107,6 +120,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
+		[TypeConverter ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
 		public string ImageUrlField {
 			get {
 				object o = ViewState ["ImageUrlField"];
@@ -118,6 +133,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
+		[UrlProperty]
+		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public string NavigateUrl {
 			get {
 				object o = ViewState ["NavigateUrl"];
@@ -129,6 +147,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
+		[TypeConverter ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
 		public string NavigateUrlField {
 			get {
 				object o = ViewState ["NavigateUrlField"];
@@ -140,6 +160,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (false)]
 		public bool PopulateOnDemand {
 			get {
 				object o = ViewState ["PopulateOnDemand"];
@@ -151,6 +172,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (TreeNodeSelectAction.Select)]
 		public TreeNodeSelectAction SelectAction {
 			get {
 				object o = ViewState ["SelectAction"];
@@ -162,6 +184,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (false)]
 		public bool ShowCheckBox {
 			get {
 				object o = ViewState ["ShowCheckBox"];
@@ -173,6 +196,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
 		public string Target {
 			get {
 				object o = ViewState ["Target"];
@@ -181,6 +205,19 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState ["Target"] = value;
+			}
+		}
+
+		[DefaultValue ("")]
+		[TypeConverter ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
+		public string TargetField {
+			get {
+				object o = ViewState ["TargetField"];
+				if (o != null) return (string) o;
+				return "";
+			}
+			set {
+				ViewState ["TargetField"] = value;
 			}
 		}
 
@@ -198,6 +235,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
+		[TypeConverter ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
 		public string TextField {
 			get {
 				object o = ViewState ["TextField"];
@@ -209,6 +248,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
+		[Localizable (true)]
 		public string ToolTip {
 			get {
 				object o = ViewState ["ToolTip"];
@@ -220,6 +261,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
+		[TypeConverter ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
 		public string ToolTipField {
 			get {
 				object o = ViewState ["ToolTipField"];
@@ -231,6 +274,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
+		[Localizable (true)]
 		public string Value {
 			get {
 				object o = ViewState ["Value"];
@@ -242,6 +287,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue ("")]
+		[TypeConverter ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
 		public string ValueField {
 			get {
 				object o = ViewState ["ValueField"];
@@ -284,6 +331,12 @@ namespace System.Web.UI.WebControls
 			foreach (DictionaryEntry e in ViewState)
 				bin.ViewState [(string)e.Key] = e.Value;
 			return bin;
+		}
+
+		internal void SetDirty ()
+		{
+			foreach (string key in ViewState.Keys)
+				ViewState.SetItemDirty (key, true);
 		}
 	}
 }
