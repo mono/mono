@@ -441,7 +441,7 @@ namespace System
 			Type src_type = source.GetType ().GetElementType ();
 			Type dst_type = dest.GetType ().GetElementType ();
 
-			if (src_type.IsValueType && (src_type == dst_type)) {
+			if (src_type == dst_type) {
 				FastCopy (source, source_pos, dest, dest_pos, length);
 				return;
 			}
@@ -450,23 +450,16 @@ namespace System
 			{
 				Object srcval = source.GetValueImpl (source_pos + i);
 
-				bool errorThrown = false;
-
 				try {
 					dest.SetValueImpl (srcval, dest_pos + i);
 				} catch {
-					errorThrown = true;
+					if ((dst_type.IsValueType || dst_type.Equals (typeof (String))) &&
+					    (src_type.Equals (typeof (Object))))
+						throw new InvalidCastException ();
+					else
+						throw new ArrayTypeMismatchException (
+							String.Format ("(Types: source={0};  target={1})", src_type.FullName, dst_type.FullName));
 				}
-
-				if (!errorThrown)
-					continue;
-
-				if ((dst_type.IsValueType || dst_type.Equals (typeof (String))) &&
-				    (src_type.Equals (typeof (Object))))
-					throw new InvalidCastException ();
-				else
-					throw new ArrayTypeMismatchException (
-						String.Format ("(Types: source={0};  target={1})", src_type.FullName, dst_type.FullName));
 			}
 		}
 		

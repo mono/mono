@@ -1,3 +1,13 @@
+
+Tue Mar 19 18:18:49 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Array.cs: move error handling in the catch block.
+	* MulticastDelegate.cs: remove == and != operators that were
+	removed with the delegate changes (when you add stuff, please do not
+	remove existing functionality!).
+	* Type.cs: if a property is not found in a type, search for it
+	in the parent types, too.
+
 2002-03-18  Dan Lewis <dihlewis@yahoo.co.uk>
 	
 	* Math.cs: changed to use icall instead of PAL.

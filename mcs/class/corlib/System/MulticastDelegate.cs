@@ -134,5 +134,18 @@ namespace System {
 		{
 			throw new NotImplementedException();
 		}
+
+		public static bool operator == (MulticastDelegate a, MulticastDelegate b) {
+			if ((object)a == null) {
+				if ((object)b == null)
+					return true;
+				return false;
+			}
+			return a.Equals (b);
+		}
+		
+		public static bool operator != (MulticastDelegate a, MulticastDelegate b) {
+			return !(a == b);
+		}
 	}
 }

@@ -739,13 +739,21 @@ namespace System {
 				}
 			}
 			if ((memberType & MemberTypes.Property) != 0) {
-				PropertyInfo[] c = GetProperties (bindingAttr);
+				PropertyInfo[] c;
+				int count = l.Count;
+				Type ptype;
 				if (filter != null) {
-					foreach (MemberInfo m in c) {
-						if (filter (m, filterCriteria))
-							l.Add (m);
+					ptype = this;
+					while ((l.Count == count) && (ptype != null)) {
+						c = ptype.GetProperties (bindingAttr);
+						foreach (MemberInfo m in c) {
+							if (filter (m, filterCriteria))
+								l.Add (m);
+						}
+						ptype = ptype.BaseType;
 					}
 				} else {
+					c = GetProperties (bindingAttr);
 					l.AddRange (c);
 				}
 			}
