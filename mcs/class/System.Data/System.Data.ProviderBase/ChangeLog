@@ -1,3 +1,13 @@
+2005-03-08  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DbParameterBase.cs: Implemented most of get set methods.
+	* DbConnectionBase.cs: Commented ConnectionOptions creation,
+	because it is not yet implemented.
+	* DbCommandBase.cs: Implemented ExecuteScalar method.
+	* DbParameterCollectionBase.cs: Implemented Add method.
+	* DbDataReaderBase.cs: removed internal constructor DbDataReader
+	(DbCommand).
+
 2005-03-02  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DbConnectionBase.cs: CreateDbCommand: assign connection to the

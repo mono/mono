@@ -109,10 +109,17 @@ namespace System.Data.ProviderBase {
 			return reader.RecordsAffected;
 		}
 
-		[MonoTODO]
 		public override object ExecuteScalar ()
 		{
-			throw new NotImplementedException ();
+                        object val = null;
+                        DbDataReader reader=ExecuteReader();
+			try {
+				if (reader.Read ())
+					val=reader[0];
+			} finally {
+				reader.Close();
+			}
+                        return val;
 		}
 
 		[MonoTODO]

@@ -2,11 +2,11 @@
 // System.Data.ProviderBase.DbParameterBase
 //
 // Author:
+//   Sureshkumar T (tsureshkumar@novell.com)
 //   Tim Coleman (tim@timcoleman.com)
 //
 // Copyright (C) Tim Coleman, 2003
 //
-
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -37,6 +37,21 @@ using System.Data.Common;
 namespace System.Data.ProviderBase {
 	public abstract class DbParameterBase : DbParameter
 	{
+
+                #region Fields
+                string _name;
+                ParameterDirection _direction = ParameterDirection.Input;
+                bool _isNullable = false;
+		int _size;
+		byte _precision;
+		byte _scale;
+                object _paramValue;
+                int _offset;
+		DataRowVersion _sourceVersion;
+		string _sourceColumn;
+
+                #endregion // Fields
+
 		#region Constructors
 	
 		[MonoTODO]
@@ -58,64 +73,60 @@ namespace System.Data.ProviderBase {
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
-		public override ParameterDirection Direction {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+                public override ParameterDirection Direction {
+			get { return _direction; }
+			set { _direction = value; }
 		}
 
-		[MonoTODO]
 		public override bool IsNullable {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return _isNullable; }
+			set { _isNullable = value; }
 		}
 
-		[MonoTODO]
+		
 		public override int Offset {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return _offset; }
+			set { _offset = value; }			
 		}
 
-		[MonoTODO]
 		public override string ParameterName {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return _name; }
+			set { _name = value; }
 		}
 
-		[MonoTODO]
 		public override byte Precision {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return _precision; }
+			set { _precision = value; }
+
 		}
 
-		[MonoTODO]
 		public override byte Scale {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return _scale; }
+			set { _scale = value; }
+
 		}
 
-		[MonoTODO]
 		public override int Size {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return _size; }
+			set { _size = value; }
 		}
 
-		[MonoTODO]
+		
 		public override string SourceColumn {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return _sourceColumn; }
+			set { _sourceColumn = value; }
 		}
 
-		[MonoTODO]
+		
 		public override DataRowVersion SourceVersion {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return _sourceVersion; }
+			set { _sourceVersion = value; }
 		}
 
-		[MonoTODO]
+		
 		public override object Value {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return _paramValue; }
+			set { _paramValue = value; }
 		}
 
 		#endregion // Properties

@@ -75,7 +75,7 @@ namespace System.Data.SqlClient {
 
 		internal SqlDataReader (SqlCommand command) 
 #if NET_2_0
-                        : base ((DbCommand) command)
+                        : base (command.CommandBehavior)
 #endif // NET_2_0
 		{
 			readResult = false;

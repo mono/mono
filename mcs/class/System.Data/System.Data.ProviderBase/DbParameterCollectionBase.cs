@@ -87,11 +87,10 @@ namespace System.Data.ProviderBase {
 
 		#region Methods
 
-		[MonoTODO]
 		public override int Add (object value)
 		{
 			ValidateType (value);
-			throw new NotImplementedException ();
+                        return list.Add (value);
 		}
 
 		public override void AddRange (Array values)

@@ -81,11 +81,10 @@ namespace System.Data.ProviderBase {
 			get { return connectionOptions; }
 		}
 
-		[MonoTODO]
 		public override string ConnectionString {
 			get { return connectionString; }
 			set { 
-				connectionOptions = ConnectionFactory.CreateConnectionOptionsInternal (value);
+				//connectionOptions = ConnectionFactory.CreateConnectionOptionsInternal (value);
 				connectionString = value;
 			}
 		}
