@@ -1,3 +1,11 @@
+2003-11-20  Jackson Harper <jackson@ximian.com>
+
+	* Cache.cs: New method so non public cache items can be added.
+	* CachedRawResponse.cs: New file - A snapshot of a response that
+	is stored in the cache and can be used to create a new response.
+	* OutputCacheModule.cs: Module for inserting and retrieving
+	responses from the cache.
+	
 2003-04-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CacheDependency.cs:

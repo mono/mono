@@ -176,6 +176,19 @@ namespace System.Web.Caching
 				   CacheItemPriority enumPriority,
 				   CacheItemRemovedCallback eventRemoveCallback)
 		{
+			return Add (strKey, objItem, objDependency, absolutExpiration,
+					slidingExpiration, enumPriority, eventRemoveCallback, true);
+		}
+
+		private object Add (string strKey,
+				   object objItem,
+				   CacheDependency objDependency,
+				   DateTime absolutExpiration,
+				   TimeSpan slidingExpiration,
+				   CacheItemPriority enumPriority,
+				   CacheItemRemovedCallback eventRemoveCallback,
+				   bool pub)
+		{
 			if (strKey == null)
 				throw new ArgumentNullException ("strKey");
 
@@ -200,7 +213,7 @@ namespace System.Web.Caching
 						   absolutExpiration,
 						   slidingExpiration,
 						   longHitRange,
-						   true,
+						   pub,
 						   enumPriority);
 
 			Interlocked.Increment (ref _nItems);
@@ -217,7 +230,7 @@ namespace System.Web.Caching
 
 			return objEntry.Item;
 		}
-
+		
 		/// <summary>
 		/// Inserts an item into the Cache object with a cache key to
 		/// reference its location and using default values provided by
@@ -342,6 +355,23 @@ namespace System.Web.Caching
 			     slidingExpiration,
 			     enumPriority,
 			     eventRemoveCallback);
+		}
+
+		internal void InsertPrivate (string strKey,
+				object objItem,
+				CacheDependency objDependency,
+				DateTime absolutExpiration,
+				TimeSpan slidingExpiration,
+				CacheItemPriority enumPriority,
+				CacheItemRemovedCallback eventRemoveCallback)
+		{
+			Add (strKey,
+			     objItem,
+			     objDependency,
+			     absolutExpiration,
+			     slidingExpiration,
+			     enumPriority,
+			     eventRemoveCallback, false);
 		}
 
 		/// <summary>
