@@ -1,3 +1,6 @@
+//
+// FIXED
+//
 interface A {
 	void B ();
 }
@@ -8,5 +11,7 @@ interface X {
 
 
 class B : A, X {
+	void X.B () {}
+	void A.B () {}
 	
 }

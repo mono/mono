@@ -1,3 +1,6 @@
+//
+// fixed
+//
 class X {
 
 	static void A (ref int a)
