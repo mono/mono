@@ -50,7 +50,7 @@ namespace System.IO
 			completed = true;
 			wh.Set ();
 			if (cb != null)
-				cb (ares);
+				cb (this);
 		}
 		
 		public void SetComplete (Exception e, int nbytes)
