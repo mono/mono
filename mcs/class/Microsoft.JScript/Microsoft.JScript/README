@@ -17,6 +17,33 @@ namespace, exposes some classes related to that task. Those are:
 
 
 Syntax Analysis and Abstract Syntax Tree construction:
+
+* jscript-lexer-parser.g: This is the grammar file, written in
+  Antlr metalanguage. If you want to hack on the grammar, there are
+some pieces missing:
+
+	- Full support of Ecmascript grammar defined on Standard
+	  ECMA-262, 3rd Edition. There are some corner 
+	  cases that we still do not handle.
+
+	- Add the extensions from MS, like classes, interfaces, etc.
+
+  We are currently using Antlr 2.7.2, you can get it from: 
+  http://antlr.org/download.html.
+
+  You must installed it, it depends on java runtime.
+
+  You can generate the new parser and lexer with something like:
+
+  [x@y] java -cp /your/path/to/antlr-2.7.2 antlr.Tool -traceParser jscript-lexer-parser.g
+
+  Then, build Microsoft.JScript.dll (type make on: mcs/class/Microsoft.JScript).
+
+  And finally compile driver.cs, with:
+
+  [x@y] mcs /debug+ /out:mjs.exe /r:../../lib/Microsoft.JScript.dll driver.cs
+
+
 - AST
 - ASTList
 - ArrayLiteral

@@ -1,5 +1,7 @@
 2003-10-10  cesar lopez nataren <cesar@ciencias.unam.mx>
 
+	* README: added some info about hacking the grammar
+
 	* JSparser.cs: Updated the constructor to not receiving params.
 	* JScriptLexer.cs, JScriptParser.cs, JScriptParserTokenTypes.cs,
 	JScriptParserTokenTypes.txt: update of antlr generated files from
