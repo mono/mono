@@ -36,7 +36,7 @@ assemblies_DATA =	\
 	System.Windows.Forms.dll				\
 	System.Xml.dll
 
-monobins_DATA = mcs.exe monoresgen.exe secutil.exe
+monobins_DATA = mcs.exe monoresgen.exe secutil.exe sqlsharp.exe
 
 EXTRA_DIST = $(monobins_DATA) $(assemblies_DATA)
 
@@ -52,6 +52,7 @@ $(assemblies_DATA):
 $(monobins_DATA):
 	-cp $(top_srcdir)/../mcs/mcs/mcs.exe . || cp $(monobinsdir)/$@ . 
 	-cp $(top_srcdir)/../mcs/tools/secutil.exe . || cp $(monobinsdir)/$@ . 
+	-cp $(top_srcdir)/../mcs/tools/SqlSharp/sqlsharp.exe . || cp $(monobinsdir)/$@ . 
 	-cp $(top_srcdir)/../mcs/monoresgen/monoresgen.exe . || cp $(monobinsdir)/$@ . 
 
 dist-hook:
