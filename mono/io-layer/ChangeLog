@@ -1,4 +1,12 @@
 
+Mon Dec 22 18:29:03 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* threads.c, timed-thread.c, timed-thread.h: use mach
+	semaphores on Darwin (MacOSX) since the posix ones
+	are mostly broken there (threads are not created suspended
+	and they can start executing before they are fully initialized
+	like in tests/thread-static.cs).
+
 Mon Dec 22 17:18:45 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* atomic.h: ppc fixes.
