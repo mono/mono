@@ -7,14 +7,14 @@ using System.Reflection;
 namespace Npgsql.Design
 {
 	/// <summary>
-	/// Zusammenfassung für NpgsqlParameterConverter.
+	/// Zusammenfassung fr NpgsqlParameterConverter.
 	/// </summary>
 	internal class NpgsqlParameterConverter : ExpandableObjectConverter
 	{
 		public NpgsqlParameterConverter()
 		{
 			//
-			// TODO: Fügen Sie hier die Konstruktorlogik hinzu
+			// TODO: Fgen Sie hier die Konstruktorlogik hinzu
 			//
 		}
 	

@@ -4,13 +4,14 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 
-namespace Npgsql.Design {
-
+namespace Npgsql.Design
+{
 	/// <summary>
 	/// An UITypeEditor that simply initializes a
 	/// ConnectionStringEditorForm if possible
 	/// </summary>
-	internal class ConnectionStringEditor : UITypeEditor {
+	internal class ConnectionStringEditor : UITypeEditor
+	{
 		/// <summary>
 		/// Edits the Value of the given Object using the EditSyle given by GetEditStyle.
 		/// </summary>
@@ -18,27 +19,26 @@ namespace Npgsql.Design {
 		/// <param name="provider">An IServiceProvider, through which this editor may order services.</param>
 		/// <param name="value">The Object to edit</param>
 		/// <returns>The new value of the Object</returns>
-		public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value) {
-			if (context != null
-				&& context.Instance != null
-				&& provider != null) {
+		public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
+		{
+			if (context != null && context.Instance != null && provider != null) {
 				IWindowsFormsEditorService edSvc = (IWindowsFormsEditorService)provider.GetService(typeof(IWindowsFormsEditorService));
+
 				if (edSvc != null) {
 					ConnectionStringEditorForm eform;
-					if(value != null && value.ToString() != String.Empty){
+
+					if(value != null && value.ToString() != String.Empty) {
 						eform = new ConnectionStringEditorForm(value.ToString());
-					}
-					else{
+					} else {
 						eform = new ConnectionStringEditorForm();
 					}
-					if(edSvc.ShowDialog(eform) == DialogResult.OK){
+
+					if(edSvc.ShowDialog(eform) == DialogResult.OK) {
 						return eform.ConnectionString;
-					}
-					else{
+					} else {
 						return value;
 					}
-				}
-				else{
+				} else {
 					return value;
 				}
 			}
@@ -51,11 +51,14 @@ namespace Npgsql.Design {
 		/// </summary>
 		/// <param name="context">An ITypeDescriptorContext, through wich you can get additional context information.</param>
 		/// <returns>An UITypeEditorEditStyle-Value, indicating the EditStyle used by EditValue. If UITypeEditor doesn't support this method, GetEditStyle returns the value None.</returns>
-		public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context) {
+		public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)
+		{
 			if (context != null && context.Instance != null) {
 				return UITypeEditorEditStyle.Modal;
 			}
+
 			return base.GetEditStyle (context);
 		}
 	}
 }
+

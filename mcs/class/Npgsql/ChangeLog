@@ -1,3 +1,33 @@
+
+2004-05-22  Francisco Figueiredo Jr. <fxjrlists@yahoo.com.br>
+
+	Npgsql/NpgsqlCommand.cs,
+	Npgsql/NpgsqlConnection.cs,
+	Npgsql/NpgsqlDataReader.cs,
+	Npgsql/NpgsqlException.cs,
+	Npgsql/NpgsqlTransaction.cs,
+	Npgsql/Design/ConnectionStringEditor.cs,
+	Npgsql/Design/ConnectionStringEditorForm.cs,
+	Npgsql/Design/NpgsqlParameterConverter.cs,
+	Npgsql/Design/NpgsqlParametersEditor.cs,
+	NpgsqlTypes/NpgsqlTypesHelper.cs: Commit log by 
+	Glen Parker (glenebob@nwlink.com): Bug #772 ("Using 
+	Command and Prepare adds single quotes to strings twice")
+	is fixed  :-)   It was broken when running on the version 3
+	protocol (extended query support) on PostgreSQL 7.4. 
+	Some of the files in Design were formatted with macintosh line 
+	terminators. This was screwing up the xmldoc generator in csc, 
+	so I reformatted to make it work.
+	I've added some essential xmldoc comments (<summary> tags).  Much work
+remains here, but I wanted to get a few in on common functions and
+properties.
+
+	The .build file will now generate the Npgsql.xml file, next to the .dll
+file.  I removed the existing Npgsql.xml from CVS.
+
+	Thanks Glen Parker for this patch.
+
+
 2004-05-20  Francisco Figueiredo Jr. <fxjrlists@yahoo.com.br>
 
         NpgsqlAsciiRow.cs,

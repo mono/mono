@@ -36,7 +36,9 @@ namespace Npgsql.Design {
 		private System.Windows.Forms.Button btn_refresh;
 		private System.Windows.Forms.Label lab_password;
 		private System.Resources.ResourceManager resman;
+
 		private Npgsql.NpgsqlConnection pgconn;
+
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -111,13 +113,14 @@ namespace Npgsql.Design {
 			// 
 			// tc_main
 			// 
-			this.tc_main.AccessibleDescription = resources.GetString("tc_main.AccessibleDescription");
-			this.tc_main.AccessibleName = resources.GetString("tc_main.AccessibleName");
+			this.tc_main.AccessibleDescription = ((string)(resources.GetObject("tc_main.AccessibleDescription")));
+			this.tc_main.AccessibleName = ((string)(resources.GetObject("tc_main.AccessibleName")));
 			this.tc_main.Alignment = ((System.Windows.Forms.TabAlignment)(resources.GetObject("tc_main.Alignment")));
 			this.tc_main.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("tc_main.Anchor")));
 			this.tc_main.Appearance = ((System.Windows.Forms.TabAppearance)(resources.GetObject("tc_main.Appearance")));
 			this.tc_main.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("tc_main.BackgroundImage")));
-			this.tc_main.Controls.Add(this.tp_connection);
+			this.tc_main.Controls.AddRange(new System.Windows.Forms.Control[] {
+																																					this.tp_connection});
 			this.tc_main.Dock = ((System.Windows.Forms.DockStyle)(resources.GetObject("tc_main.Dock")));
 			this.tc_main.Enabled = ((bool)(resources.GetObject("tc_main.Enabled")));
 			this.tc_main.Font = ((System.Drawing.Font)(resources.GetObject("tc_main.Font")));
@@ -136,26 +139,27 @@ namespace Npgsql.Design {
 			// 
 			// tp_connection
 			// 
-			this.tp_connection.AccessibleDescription = resources.GetString("tp_connection.AccessibleDescription");
-			this.tp_connection.AccessibleName = resources.GetString("tp_connection.AccessibleName");
+			this.tp_connection.AccessibleDescription = ((string)(resources.GetObject("tp_connection.AccessibleDescription")));
+			this.tp_connection.AccessibleName = ((string)(resources.GetObject("tp_connection.AccessibleName")));
 			this.tp_connection.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("tp_connection.Anchor")));
 			this.tp_connection.AutoScroll = ((bool)(resources.GetObject("tp_connection.AutoScroll")));
 			this.tp_connection.AutoScrollMargin = ((System.Drawing.Size)(resources.GetObject("tp_connection.AutoScrollMargin")));
 			this.tp_connection.AutoScrollMinSize = ((System.Drawing.Size)(resources.GetObject("tp_connection.AutoScrollMinSize")));
 			this.tp_connection.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("tp_connection.BackgroundImage")));
-			this.tp_connection.Controls.Add(this.btn_refresh);
-			this.tp_connection.Controls.Add(this.tb_server);
-			this.tp_connection.Controls.Add(this.btn_check_connection);
-			this.tp_connection.Controls.Add(this.gb_add_parms);
-			this.tp_connection.Controls.Add(this.cb_select_db);
-			this.tp_connection.Controls.Add(this.lab_select_db);
-			this.tp_connection.Controls.Add(this.tb_password);
-			this.tp_connection.Controls.Add(this.lab_password);
-			this.tp_connection.Controls.Add(this.tb_username);
-			this.tp_connection.Controls.Add(this.lab_username);
-			this.tp_connection.Controls.Add(this.lab_login);
-			this.tp_connection.Controls.Add(this.lab_server);
-			this.tp_connection.Controls.Add(this.lab_advise);
+			this.tp_connection.Controls.AddRange(new System.Windows.Forms.Control[] {
+																																								this.btn_refresh,
+																																								this.tb_server,
+																																								this.btn_check_connection,
+																																								this.gb_add_parms,
+																																								this.cb_select_db,
+																																								this.lab_select_db,
+																																								this.tb_password,
+																																								this.lab_password,
+																																								this.tb_username,
+																																								this.lab_username,
+																																								this.lab_login,
+																																								this.lab_server,
+																																								this.lab_advise});
 			this.tp_connection.Dock = ((System.Windows.Forms.DockStyle)(resources.GetObject("tp_connection.Dock")));
 			this.tp_connection.Enabled = ((bool)(resources.GetObject("tp_connection.Enabled")));
 			this.tp_connection.Font = ((System.Drawing.Font)(resources.GetObject("tp_connection.Font")));
@@ -172,8 +176,8 @@ namespace Npgsql.Design {
 			// 
 			// btn_refresh
 			// 
-			this.btn_refresh.AccessibleDescription = resources.GetString("btn_refresh.AccessibleDescription");
-			this.btn_refresh.AccessibleName = resources.GetString("btn_refresh.AccessibleName");
+			this.btn_refresh.AccessibleDescription = ((string)(resources.GetObject("btn_refresh.AccessibleDescription")));
+			this.btn_refresh.AccessibleName = ((string)(resources.GetObject("btn_refresh.AccessibleName")));
 			this.btn_refresh.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("btn_refresh.Anchor")));
 			this.btn_refresh.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btn_refresh.BackgroundImage")));
 			this.btn_refresh.Dock = ((System.Windows.Forms.DockStyle)(resources.GetObject("btn_refresh.Dock")));
@@ -196,8 +200,8 @@ namespace Npgsql.Design {
 			// 
 			// tb_server
 			// 
-			this.tb_server.AccessibleDescription = resources.GetString("tb_server.AccessibleDescription");
-			this.tb_server.AccessibleName = resources.GetString("tb_server.AccessibleName");
+			this.tb_server.AccessibleDescription = ((string)(resources.GetObject("tb_server.AccessibleDescription")));
+			this.tb_server.AccessibleName = ((string)(resources.GetObject("tb_server.AccessibleName")));
 			this.tb_server.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("tb_server.Anchor")));
 			this.tb_server.AutoSize = ((bool)(resources.GetObject("tb_server.AutoSize")));
 			this.tb_server.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("tb_server.BackgroundImage")));
@@ -221,8 +225,8 @@ namespace Npgsql.Design {
 			// 
 			// btn_check_connection
 			// 
-			this.btn_check_connection.AccessibleDescription = resources.GetString("btn_check_connection.AccessibleDescription");
-			this.btn_check_connection.AccessibleName = resources.GetString("btn_check_connection.AccessibleName");
+			this.btn_check_connection.AccessibleDescription = ((string)(resources.GetObject("btn_check_connection.AccessibleDescription")));
+			this.btn_check_connection.AccessibleName = ((string)(resources.GetObject("btn_check_connection.AccessibleName")));
 			this.btn_check_connection.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("btn_check_connection.Anchor")));
 			this.btn_check_connection.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btn_check_connection.BackgroundImage")));
 			this.btn_check_connection.Dock = ((System.Windows.Forms.DockStyle)(resources.GetObject("btn_check_connection.Dock")));
@@ -245,14 +249,15 @@ namespace Npgsql.Design {
 			// 
 			// gb_add_parms
 			// 
-			this.gb_add_parms.AccessibleDescription = resources.GetString("gb_add_parms.AccessibleDescription");
-			this.gb_add_parms.AccessibleName = resources.GetString("gb_add_parms.AccessibleName");
+			this.gb_add_parms.AccessibleDescription = ((string)(resources.GetObject("gb_add_parms.AccessibleDescription")));
+			this.gb_add_parms.AccessibleName = ((string)(resources.GetObject("gb_add_parms.AccessibleName")));
 			this.gb_add_parms.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("gb_add_parms.Anchor")));
 			this.gb_add_parms.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("gb_add_parms.BackgroundImage")));
-			this.gb_add_parms.Controls.Add(this.tb_port);
-			this.gb_add_parms.Controls.Add(this.lab_port);
-			this.gb_add_parms.Controls.Add(this.tb_timeout);
-			this.gb_add_parms.Controls.Add(this.lab_timeout);
+			this.gb_add_parms.Controls.AddRange(new System.Windows.Forms.Control[] {
+																																							 this.tb_port,
+																																							 this.lab_port,
+																																							 this.tb_timeout,
+																																							 this.lab_timeout});
 			this.gb_add_parms.Dock = ((System.Windows.Forms.DockStyle)(resources.GetObject("gb_add_parms.Dock")));
 			this.gb_add_parms.Enabled = ((bool)(resources.GetObject("gb_add_parms.Enabled")));
 			this.gb_add_parms.Font = ((System.Drawing.Font)(resources.GetObject("gb_add_parms.Font")));
@@ -268,8 +273,8 @@ namespace Npgsql.Design {
 			// 
 			// tb_port
 			// 
-			this.tb_port.AccessibleDescription = resources.GetString("tb_port.AccessibleDescription");
-			this.tb_port.AccessibleName = resources.GetString("tb_port.AccessibleName");
+			this.tb_port.AccessibleDescription = ((string)(resources.GetObject("tb_port.AccessibleDescription")));
+			this.tb_port.AccessibleName = ((string)(resources.GetObject("tb_port.AccessibleName")));
 			this.tb_port.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("tb_port.Anchor")));
 			this.tb_port.AutoSize = ((bool)(resources.GetObject("tb_port.AutoSize")));
 			this.tb_port.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("tb_port.BackgroundImage")));
@@ -293,8 +298,8 @@ namespace Npgsql.Design {
 			// 
 			// lab_port
 			// 
-			this.lab_port.AccessibleDescription = resources.GetString("lab_port.AccessibleDescription");
-			this.lab_port.AccessibleName = resources.GetString("lab_port.AccessibleName");
+			this.lab_port.AccessibleDescription = ((string)(resources.GetObject("lab_port.AccessibleDescription")));
+			this.lab_port.AccessibleName = ((string)(resources.GetObject("lab_port.AccessibleName")));
 			this.lab_port.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("lab_port.Anchor")));
 			this.lab_port.AutoSize = ((bool)(resources.GetObject("lab_port.AutoSize")));
 			this.lab_port.Dock = ((System.Windows.Forms.DockStyle)(resources.GetObject("lab_port.Dock")));
@@ -315,8 +320,8 @@ namespace Npgsql.Design {
 			// 
 			// tb_timeout
 			// 
-			this.tb_timeout.AccessibleDescription = resources.GetString("tb_timeout.AccessibleDescription");
-			this.tb_timeout.AccessibleName = resources.GetString("tb_timeout.AccessibleName");
+			this.tb_timeout.AccessibleDescription = ((string)(resources.GetObject("tb_timeout.AccessibleDescription")));
+			this.tb_timeout.AccessibleName = ((string)(resources.GetObject("tb_timeout.AccessibleName")));
 			this.tb_timeout.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("tb_timeout.Anchor")));
 			this.tb_timeout.AutoSize = ((bool)(resources.GetObject("tb_timeout.AutoSize")));
 			this.tb_timeout.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("tb_timeout.BackgroundImage")));
@@ -340,8 +345,8 @@ namespace Npgsql.Design {
 			// 
 			// lab_timeout
 			// 
-			this.lab_timeout.AccessibleDescription = resources.GetString("lab_timeout.AccessibleDescription");
-			this.lab_timeout.AccessibleName = resources.GetString("lab_timeout.AccessibleName");
+			this.lab_timeout.AccessibleDescription = ((string)(resources.GetObject("lab_timeout.AccessibleDescription")));
+			this.lab_timeout.AccessibleName = ((string)(resources.GetObject("lab_timeout.AccessibleName")));
 			this.lab_timeout.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("lab_timeout.Anchor")));
 			this.lab_timeout.AutoSize = ((bool)(resources.GetObject("lab_timeout.AutoSize")));
 			this.lab_timeout.Dock = ((System.Windows.Forms.DockStyle)(resources.GetObject("lab_timeout.Dock")));
@@ -362,8 +367,8 @@ namespace Npgsql.Design {
 			// 
 			// cb_select_db
 			// 
-			this.cb_select_db.AccessibleDescription = resources.GetString("cb_select_db.AccessibleDescription");
-			this.cb_select_db.AccessibleName = resources.GetString("cb_select_db.AccessibleName");
+			this.cb_select_db.AccessibleDescription = ((string)(resources.GetObject("cb_select_db.AccessibleDescription")));
+			this.cb_select_db.AccessibleName = ((string)(resources.GetObject("cb_select_db.AccessibleName")));
 			this.cb_select_db.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("cb_select_db.Anchor")));
 			this.cb_select_db.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("cb_select_db.BackgroundImage")));
 			this.cb_select_db.Dock = ((System.Windows.Forms.DockStyle)(resources.GetObject("cb_select_db.Dock")));
@@ -385,8 +390,8 @@ namespace Npgsql.Design {
 			// 
 			// lab_select_db
 			// 
-			this.lab_select_db.AccessibleDescription = resources.GetString("lab_select_db.AccessibleDescription");
-			this.lab_select_db.AccessibleName = resources.GetString("lab_select_db.AccessibleName");
+			this.lab_select_db.AccessibleDescription = ((string)(resources.GetObject("lab_select_db.AccessibleDescription")));
+			this.lab_select_db.AccessibleName = ((string)(resources.GetObject("lab_select_db.AccessibleName")));
 			this.lab_select_db.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("lab_select_db.Anchor")));
 			this.lab_select_db.AutoSize = ((bool)(resources.GetObject("lab_select_db.AutoSize")));
 			this.lab_select_db.Dock = ((System.Windows.Forms.DockStyle)(resources.GetObject("lab_select_db.Dock")));
@@ -407,8 +412,8 @@ namespace Npgsql.Design {
 			// 
 			// tb_password
 			// 
-			this.tb_password.AccessibleDescription = resources.GetString("tb_password.AccessibleDescription");
-			this.tb_password.AccessibleName = resources.GetString("tb_password.AccessibleName");
+			this.tb_password.AccessibleDescription = ((string)(resources.GetObject("tb_password.AccessibleDescription")));
+			this.tb_password.AccessibleName = ((string)(resources.GetObject("tb_password.AccessibleName")));
 			this.tb_password.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("tb_password.Anchor")));
 			this.tb_password.AutoSize = ((bool)(resources.GetObject("tb_password.AutoSize")));
 			this.tb_password.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("tb_password.BackgroundImage")));
@@ -432,8 +437,8 @@ namespace Npgsql.Design {
 			// 
 			// lab_password
 			// 
-			this.lab_password.AccessibleDescription = resources.GetString("lab_password.AccessibleDescription");
-			this.lab_password.AccessibleName = resources.GetString("lab_password.AccessibleName");
+			this.lab_password.AccessibleDescription = ((string)(resources.GetObject("lab_password.AccessibleDescription")));
+			this.lab_password.AccessibleName = ((string)(resources.GetObject("lab_password.AccessibleName")));
 			this.lab_password.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("lab_password.Anchor")));
 			this.lab_password.AutoSize = ((bool)(resources.GetObject("lab_password.AutoSize")));
 			this.lab_password.Dock = ((System.Windows.Forms.DockStyle)(resources.GetObject("lab_password.Dock")));
@@ -454,8 +459,8 @@ namespace Npgsql.Design {
 			// 
 			// tb_username
 			// 
-			this.tb_username.AccessibleDescription = resources.GetString("tb_username.AccessibleDescription");
-			this.tb_username.AccessibleName = resources.GetString("tb_username.AccessibleName");
+			this.tb_username.AccessibleDescription = ((string)(resources.GetObject("tb_username.AccessibleDescription")));
+			this.tb_username.AccessibleName = ((string)(resources.GetObject("tb_username.AccessibleName")));
 			this.tb_username.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("tb_username.Anchor")));
 			this.tb_username.AutoSize = ((bool)(resources.GetObject("tb_username.AutoSize")));
 			this.tb_username.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("tb_username.BackgroundImage")));
@@ -479,8 +484,8 @@ namespace Npgsql.Design {
 			// 
 			// lab_username
 			// 
-			this.lab_username.AccessibleDescription = resources.GetString("lab_username.AccessibleDescription");
-			this.lab_username.AccessibleName = resources.GetString("lab_username.AccessibleName");
+			this.lab_username.AccessibleDescription = ((string)(resources.GetObject("lab_username.AccessibleDescription")));
+			this.lab_username.AccessibleName = ((string)(resources.GetObject("lab_username.AccessibleName")));
 			this.lab_username.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("lab_username.Anchor")));
 			this.lab_username.AutoSize = ((bool)(resources.GetObject("lab_username.AutoSize")));
 			this.lab_username.Dock = ((System.Windows.Forms.DockStyle)(resources.GetObject("lab_username.Dock")));
@@ -501,8 +506,8 @@ namespace Npgsql.Design {
 			// 
 			// lab_login
 			// 
-			this.lab_login.AccessibleDescription = resources.GetString("lab_login.AccessibleDescription");
-			this.lab_login.AccessibleName = resources.GetString("lab_login.AccessibleName");
+			this.lab_login.AccessibleDescription = ((string)(resources.GetObject("lab_login.AccessibleDescription")));
+			this.lab_login.AccessibleName = ((string)(resources.GetObject("lab_login.AccessibleName")));
 			this.lab_login.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("lab_login.Anchor")));
 			this.lab_login.AutoSize = ((bool)(resources.GetObject("lab_login.AutoSize")));
 			this.lab_login.Dock = ((System.Windows.Forms.DockStyle)(resources.GetObject("lab_login.Dock")));
@@ -523,8 +528,8 @@ namespace Npgsql.Design {
 			// 
 			// lab_server
 			// 
-			this.lab_server.AccessibleDescription = resources.GetString("lab_server.AccessibleDescription");
-			this.lab_server.AccessibleName = resources.GetString("lab_server.AccessibleName");
+			this.lab_server.AccessibleDescription = ((string)(resources.GetObject("lab_server.AccessibleDescription")));
+			this.lab_server.AccessibleName = ((string)(resources.GetObject("lab_server.AccessibleName")));
 			this.lab_server.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("lab_server.Anchor")));
 			this.lab_server.AutoSize = ((bool)(resources.GetObject("lab_server.AutoSize")));
 			this.lab_server.Dock = ((System.Windows.Forms.DockStyle)(resources.GetObject("lab_server.Dock")));
@@ -545,8 +550,8 @@ namespace Npgsql.Design {
 			// 
 			// lab_advise
 			// 
-			this.lab_advise.AccessibleDescription = resources.GetString("lab_advise.AccessibleDescription");
-			this.lab_advise.AccessibleName = resources.GetString("lab_advise.AccessibleName");
+			this.lab_advise.AccessibleDescription = ((string)(resources.GetObject("lab_advise.AccessibleDescription")));
+			this.lab_advise.AccessibleName = ((string)(resources.GetObject("lab_advise.AccessibleName")));
 			this.lab_advise.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("lab_advise.Anchor")));
 			this.lab_advise.AutoSize = ((bool)(resources.GetObject("lab_advise.AutoSize")));
 			this.lab_advise.Dock = ((System.Windows.Forms.DockStyle)(resources.GetObject("lab_advise.Dock")));
@@ -567,8 +572,8 @@ namespace Npgsql.Design {
 			// 
 			// btn_ok
 			// 
-			this.btn_ok.AccessibleDescription = resources.GetString("btn_ok.AccessibleDescription");
-			this.btn_ok.AccessibleName = resources.GetString("btn_ok.AccessibleName");
+			this.btn_ok.AccessibleDescription = ((string)(resources.GetObject("btn_ok.AccessibleDescription")));
+			this.btn_ok.AccessibleName = ((string)(resources.GetObject("btn_ok.AccessibleName")));
 			this.btn_ok.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("btn_ok.Anchor")));
 			this.btn_ok.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btn_ok.BackgroundImage")));
 			this.btn_ok.Dock = ((System.Windows.Forms.DockStyle)(resources.GetObject("btn_ok.Dock")));
@@ -591,8 +596,8 @@ namespace Npgsql.Design {
 			// 
 			// btn_cancel
 			// 
-			this.btn_cancel.AccessibleDescription = resources.GetString("btn_cancel.AccessibleDescription");
-			this.btn_cancel.AccessibleName = resources.GetString("btn_cancel.AccessibleName");
+			this.btn_cancel.AccessibleDescription = ((string)(resources.GetObject("btn_cancel.AccessibleDescription")));
+			this.btn_cancel.AccessibleName = ((string)(resources.GetObject("btn_cancel.AccessibleName")));
 			this.btn_cancel.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("btn_cancel.Anchor")));
 			this.btn_cancel.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btn_cancel.BackgroundImage")));
 			this.btn_cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
@@ -616,8 +621,8 @@ namespace Npgsql.Design {
 			// 
 			// btn_help
 			// 
-			this.btn_help.AccessibleDescription = resources.GetString("btn_help.AccessibleDescription");
-			this.btn_help.AccessibleName = resources.GetString("btn_help.AccessibleName");
+			this.btn_help.AccessibleDescription = ((string)(resources.GetObject("btn_help.AccessibleDescription")));
+			this.btn_help.AccessibleName = ((string)(resources.GetObject("btn_help.AccessibleName")));
 			this.btn_help.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("btn_help.Anchor")));
 			this.btn_help.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btn_help.BackgroundImage")));
 			this.btn_help.Dock = ((System.Windows.Forms.DockStyle)(resources.GetObject("btn_help.Dock")));
@@ -638,15 +643,12 @@ namespace Npgsql.Design {
 			this.btn_help.Visible = ((bool)(resources.GetObject("btn_help.Visible")));
 			this.btn_help.Click += new System.EventHandler(this.btn_help_Click);
 			// 
-			// pgconn
-			// 
-			this.pgconn.ConnectionString = "";
-			// 
 			// ConnectionStringEditorForm
 			// 
 			this.AcceptButton = this.btn_ok;
-			this.AccessibleDescription = resources.GetString("$this.AccessibleDescription");
-			this.AccessibleName = resources.GetString("$this.AccessibleName");
+			this.AccessibleDescription = ((string)(resources.GetObject("$this.AccessibleDescription")));
+			this.AccessibleName = ((string)(resources.GetObject("$this.AccessibleName")));
+			this.Anchor = ((System.Windows.Forms.AnchorStyles)(resources.GetObject("$this.Anchor")));
 			this.AutoScaleBaseSize = ((System.Drawing.Size)(resources.GetObject("$this.AutoScaleBaseSize")));
 			this.AutoScroll = ((bool)(resources.GetObject("$this.AutoScroll")));
 			this.AutoScrollMargin = ((System.Drawing.Size)(resources.GetObject("$this.AutoScrollMargin")));
@@ -654,10 +656,12 @@ namespace Npgsql.Design {
 			this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
 			this.CancelButton = this.btn_cancel;
 			this.ClientSize = ((System.Drawing.Size)(resources.GetObject("$this.ClientSize")));
-			this.Controls.Add(this.btn_help);
-			this.Controls.Add(this.btn_cancel);
-			this.Controls.Add(this.btn_ok);
-			this.Controls.Add(this.tc_main);
+			this.Controls.AddRange(new System.Windows.Forms.Control[] {
+																																	this.btn_help,
+																																	this.btn_cancel,
+																																	this.btn_ok,
+																																	this.tc_main});
+			this.Dock = ((System.Windows.Forms.DockStyle)(resources.GetObject("$this.Dock")));
 			this.Enabled = ((bool)(resources.GetObject("$this.Enabled")));
 			this.Font = ((System.Drawing.Font)(resources.GetObject("$this.Font")));
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -673,6 +677,7 @@ namespace Npgsql.Design {
 			this.ShowInTaskbar = false;
 			this.StartPosition = ((System.Windows.Forms.FormStartPosition)(resources.GetObject("$this.StartPosition")));
 			this.Text = resources.GetString("$this.Text");
+			this.Visible = ((bool)(resources.GetObject("$this.Visible")));
 			this.tc_main.ResumeLayout(false);
 			this.tp_connection.ResumeLayout(false);
 			this.gb_add_parms.ResumeLayout(false);
@@ -784,7 +789,10 @@ namespace Npgsql.Design {
 			connect(true);
 		}
 
+
+
 		private void cb_select_db_DropDown(object sender, System.EventArgs e) {
+
 			if(cb_select_db.Items.Count < 1){
 				connect(true);
 			}

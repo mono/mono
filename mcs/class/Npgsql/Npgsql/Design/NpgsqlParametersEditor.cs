@@ -4,7 +4,7 @@ using System.ComponentModel.Design;
 namespace Npgsql.Design
 {
 	/// <summary>
-	/// Zusammenfassung für NpgsqlParametersEditor.
+	/// Zusammenfassung fr NpgsqlParametersEditor.
 	/// </summary>
 	internal class NpgsqlParametersEditor : CollectionEditor
 	{

@@ -162,7 +162,7 @@ namespace Npgsql
         }
 
         /// <summary>
-        /// Gets or sets the string used to open a SQL Server database.
+        /// Gets or sets the string used to connect to a PostgreSQL database.
         /// </summary>
         /// <value>The connection string that includes the server name,
         /// the database name, and other parameters needed to establish
@@ -942,7 +942,7 @@ namespace Npgsql
             }
         }
 
-        public Int32 ConnectStringValueToInt32(String Key)
+        private Int32 ConnectStringValueToInt32(String Key)
         {
             if (! connection_string_values.Contains(Key)) {
                 return 0;
@@ -955,7 +955,7 @@ namespace Npgsql
             }
         }
 
-        public String ConnectStringValueToString(String Key)
+        private String ConnectStringValueToString(String Key)
         {
             if (! connection_string_values.Contains(Key)) {
                 return "";

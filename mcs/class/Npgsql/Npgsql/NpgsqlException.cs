@@ -31,24 +31,18 @@ using System.Collections;
 
 namespace Npgsql
 {
+    /// <summary>
+    /// The exception that is thrown when the PostgreSQL backend reports errors.
+    /// </summary>
     [Serializable]
     public sealed class NpgsqlException : Exception
     {
         private IList errors;
 
-
         // Logging related values
         private static readonly String CLASSNAME = "NpgsqlException";
         private static ResourceManager resman = new ResourceManager(typeof(NpgsqlException));
 
-        /// <summary>
-        /// Don't ever allow this to be called.
-        /// </summary>
-        private NpgsqlException()
-        {
-            NpgsqlEventLog.LogMsg(resman, "Log_ExceptionOccured", LogLevel.Normal, "<no message>");
-        }
-        
         /// <summary>
         /// Construct a backend error exception based on a list of one or more
         /// backend errors.  The basic Exception.Message will be built from the
@@ -216,6 +210,7 @@ namespace Npgsql
             return S.ToString();
             
         }
+
         /// <summary>
         /// Append a line to the given Stream, first checking for zero-length.
         /// </summary>

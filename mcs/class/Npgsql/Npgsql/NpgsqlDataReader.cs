@@ -31,12 +31,11 @@ using NpgsqlTypes;
 
 namespace Npgsql
 {
-
+    /// <summary>
+    /// Provides a means of reading a forward-only stream of rows from a PostgreSQL backend.  This class cannot be inherited.
+    /// </summary>
     public class NpgsqlDataReader : IDataReader, IEnumerable
     {
-
-
-
         private NpgsqlConnection 	_connection;
         private ArrayList 			_resultsets;
         private ArrayList			_responses;
@@ -46,7 +45,6 @@ namespace Npgsql
         private DataTable			_currentResultsetSchema;
         private CommandBehavior     _behavior;
         private Boolean             _isClosed;
-
 
 
         // Logging related values
@@ -65,7 +63,6 @@ namespace Npgsql
 
             _behavior = behavior;
             _isClosed = false;
-
         }
 
         private Boolean CanRead()
@@ -85,6 +82,9 @@ namespace Npgsql
                 throw new InvalidOperationException("Cannot read data");
         }
 
+        /// <summary>
+        /// Releases the resources used by the <see cref="Npgsql.NpgsqlCommand">NpgsqlCommand</see>.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
@@ -101,6 +101,10 @@ namespace Npgsql
                 this.Close();
             }
         }
+
+        /// <summary>
+        /// Gets a value indicating the depth of nesting for the current row.  Always returns zero.
+        /// </summary>
         public Int32 Depth
         {
             get
@@ -110,6 +114,9 @@ namespace Npgsql
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether the data reader is closed.
+        /// </summary>
         public Boolean IsClosed
         {
             get
@@ -119,12 +126,14 @@ namespace Npgsql
             }
         }
 
+        /// <summary>
+        /// Gets the number of rows changed, inserted, or deleted by execution of the SQL statement.
+        /// </summary>
         public Int32 RecordsAffected
         {
             get
             {
                 NpgsqlEventLog.LogPropertyGet(LogLevel.Debug, CLASSNAME, "RecordsAffected");
-
 
                 if (CanRead())
                     return -1;
@@ -136,11 +145,13 @@ namespace Npgsql
                 }
                 catch (FormatException) {
                     return -1;
-		}
+                }
             }
-
         }
 
+        /// <summary>
+        /// Closes the data reader object.
+        /// </summary>
         public void Close()
         {
             if ((_behavior & CommandBehavior.CloseConnection) == CommandBehavior.CloseConnection)
@@ -148,9 +159,12 @@ namespace Npgsql
                 _connection.Close();
                 _isClosed = true;
             }
-
         }
 
+        /// <summary>
+        /// Advances the data reader to the next result, when multiple result sets were returned by the PostgreSQL backend.
+        /// </summary>
+        /// <returns></returns>
         public Boolean NextResult()
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "NextResult");
@@ -167,6 +181,10 @@ namespace Npgsql
 
         }
 
+        /// <summary>
+        /// Advances the data reader to the next row.
+        /// </summary>
+        /// <returns></returns>
         public Boolean Read()
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "Read");
@@ -177,9 +195,11 @@ namespace Npgsql
                 return false;
             else
                 return true;
-
         }
 
+        /// <summary>
+        /// Returns a System.Data.DataTable that describes the column metadata of the DataReader.
+        /// </summary>
         public DataTable GetSchemaTable()
         {
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetSchemaTable");
@@ -188,10 +208,11 @@ namespace Npgsql
                 _currentResultsetSchema = GetResultsetSchema();
 
             return _currentResultsetSchema;
-
         }
 
-
+        /// <summary>
+        /// Gets the number of columns in the current row.
+        /// </summary>
         public Int32 FieldCount
         {
             get
@@ -278,6 +299,9 @@ namespace Npgsql
             return _currentResultset.RowDescription.FieldIndex(name);
         }
 
+        /// <summary>
+        /// Gets the value of a column in its native format.
+        /// </summary>
         public Object this [ Int32 i ]
         {
             get
@@ -287,6 +311,9 @@ namespace Npgsql
             }
         }
 
+        /// <summary>
+        /// Gets the value of a column in its native format.
+        /// </summary>
         public Object this [ String name ]
         {
             get

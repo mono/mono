@@ -468,7 +468,8 @@ namespace Npgsql
                 Object[] parameterValues = new Object[parameters.Count];
                 for (Int32 i = 0; i < parameters.Count; i++)
                 {
-                    parameterValues[i] = NpgsqlTypesHelper.ConvertNpgsqlParameterToBackendStringValue(parameters[i]);
+                    // Do not quote strings, or escape existing quotes - this will be handled by the backend.
+                    parameterValues[i] = NpgsqlTypesHelper.ConvertNpgsqlParameterToBackendStringValue(parameters[i], false);
                 }
                 bind.ParameterValues = parameterValues;
             }
@@ -662,7 +663,7 @@ namespace Npgsql
             {
                 parameterName = parameters[i].ParameterName;
 
-                result = ReplaceParameterValue(result, parameterName, NpgsqlTypesHelper.ConvertNpgsqlParameterToBackendStringValue(parameters[i]));
+                result = ReplaceParameterValue(result, parameterName, NpgsqlTypesHelper.ConvertNpgsqlParameterToBackendStringValue(parameters[i], true));
 
             }
 
@@ -685,7 +686,7 @@ namespace Npgsql
 
             for (Int32 i = 0; i < parameters.Count; i++)
             {
-                result.Append(NpgsqlTypesHelper.ConvertNpgsqlParameterToBackendStringValue(parameters[i]) + ',');
+                result.Append(NpgsqlTypesHelper.ConvertNpgsqlParameterToBackendStringValue(parameters[i], false) + ',');
             }
 
             result = result.Remove(result.Length - 1, 1);

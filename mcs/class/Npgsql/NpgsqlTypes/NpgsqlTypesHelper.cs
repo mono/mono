@@ -186,8 +186,14 @@ namespace NpgsqlTypes
         }
 
 
-        public static String ConvertNpgsqlParameterToBackendStringValue(NpgsqlParameter parameter)
+        public static String ConvertNpgsqlParameterToBackendStringValue(NpgsqlParameter parameter, Boolean QuoteStrings)
         {
+            // HACK (?)
+            // glenebob@nwlink.com 05/20/2004
+            // bool QuoteString is a bit of a hack.
+            // When using the version 3 extended query support, we do not need to do quoting of parameters.
+            // The backend handles that properly.
+
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ConvertNpgsqlParameterToBackendStringValue");
 
             if ((parameter.Value == DBNull.Value) || (parameter.Value == null))
@@ -196,7 +202,12 @@ namespace NpgsqlTypes
             switch(parameter.DbType)
             {
             case DbType.Binary:
-                return "'" + ConvertByteArrayToBytea((Byte[])parameter.Value) + "'";
+								if (QuoteStrings) {
+                    return "'" + ConvertByteArrayToBytea((Byte[])parameter.Value) + "'";
+                } else {
+                    return ConvertByteArrayToBytea((Byte[])parameter.Value);
+                }
+
             case DbType.Boolean:
             case DbType.Int64:
             case DbType.Int32:
@@ -205,16 +216,28 @@ namespace NpgsqlTypes
 
             case DbType.Single:
                 // To not have a value implicitly converted to float8, we add quotes.
-                return "'" + ((Single)parameter.Value).ToString(NumberFormatInfo.InvariantInfo) + "'";
+                if (QuoteStrings) {
+                    return "'" + ((Single)parameter.Value).ToString(NumberFormatInfo.InvariantInfo) + "'";
+                } else {
+                    return ((Single)parameter.Value).ToString(NumberFormatInfo.InvariantInfo);
+                }
 
             case DbType.Double:
                 return ((Double)parameter.Value).ToString(NumberFormatInfo.InvariantInfo);
 
             case DbType.Date:
-                return "'" + ((DateTime)parameter.Value).ToString("yyyy-MM-dd") + "'";
+                if (QuoteStrings) {
+                    return "'" + ((DateTime)parameter.Value).ToString("yyyy-MM-dd") + "'";
+                } else {
+                    return ((DateTime)parameter.Value).ToString("yyyy-MM-dd");
+                }
 
             case DbType.DateTime:
-                return "'" + ((DateTime)parameter.Value).ToString("yyyy-MM-dd HH:mm:ss.fff") + "'";
+                if (QuoteStrings) {
+                    return "'" + ((DateTime)parameter.Value).ToString("yyyy-MM-dd HH:mm:ss.fff") + "'";
+                } else {
+                    return ((DateTime)parameter.Value).ToString("yyyy-MM-dd HH:mm:ss.fff");
+                }
 
             case DbType.Decimal:
                 return ((Decimal)parameter.Value).ToString(NumberFormatInfo.InvariantInfo);
@@ -222,10 +245,18 @@ namespace NpgsqlTypes
             case DbType.String:
             case DbType.AnsiString:
             case DbType.StringFixedLength:
-                return "'" + parameter.Value.ToString().Replace("'", "\\'") + "'";
+                if (QuoteStrings) {
+                    return "'" + parameter.Value.ToString().Replace("'", "\\'") + "'";
+                } else {
+                    return parameter.Value.ToString();
+								}
 
             case DbType.Time:
-                return "'" + ((DateTime)parameter.Value).ToString("HH:mm:ss.ffff") + "'";
+                if (QuoteStrings) {
+                    return "'" + ((DateTime)parameter.Value).ToString("HH:mm:ss.ffff") + "'";
+                } else {
+                    return ((DateTime)parameter.Value).ToString("HH:mm:ss.ffff");
+								}
 
             default:
                 // This should not happen!
