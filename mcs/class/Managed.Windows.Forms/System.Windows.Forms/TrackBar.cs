@@ -33,9 +33,12 @@
 // Copyright (C) Novell Inc., 2004
 //
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 // $Modtime: $
 // $Log: TrackBar.cs,v $
+// Revision 1.3  2004/07/27 15:53:02  jordi
+// fixes trackbar events, def classname, methods signature
+//
 // Revision 1.2  2004/07/26 17:42:03  jordi
 // Theme support
 //
@@ -72,19 +75,8 @@ namespace System.Windows.Forms
 		private float pixel_per_pos = 0;		
 
 		#region Events
-		public event EventHandler scroll_event;
-		public event EventHandler valuechanged_event;		
-
-		public void add_Scroll (System.EventHandler value)
-		{
-			scroll_event = value;
-		}
-		
-		
-		public void add_ValueChanged (System.EventHandler value)
-		{			
-			valuechanged_event = value;
-		}
+		public event EventHandler Scroll;
+		public event EventHandler ValueChanged;		
 
 		#endregion // Events
 
@@ -99,8 +91,8 @@ namespace System.Windows.Forms
 			tickStyle = TickStyle.BottomRight;
 			smallChange = 1;
 			largeChange = 5;
-			scroll_event = null;
-			valuechanged_event  = null;		
+			Scroll = null;
+			ValueChanged  = null;		
 
 			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);			
@@ -221,8 +213,8 @@ namespace System.Windows.Forms
 				if (position != value) {													
 					position = value;					
 					
-					if (valuechanged_event != null)				
-						valuechanged_event (this, new EventArgs ());
+					if (ValueChanged != null)				
+						ValueChanged (this, new EventArgs ());
 						
 					Invalidate ();
 				}				
@@ -250,7 +242,7 @@ namespace System.Windows.Forms
 		protected override CreateParams CreateParams {
 			get {
 				CreateParams createParams = base.CreateParams;
-				createParams.ClassName = "BUTTON";
+				createParams.ClassName = XplatUI.DefaultClassName;
 
 				createParams.Style = (int) (
 					WindowStyles.WS_CHILD |
@@ -268,12 +260,12 @@ namespace System.Windows.Forms
 			get { return new System.Drawing.Size (104, 42); }
 		}	
 
-		void ISupportInitialize.BeginInit()
+		public virtual void BeginInit()		
 		{
 
 		}
 
-		void ISupportInitialize.EndInit()
+		public virtual void EndInit()		
 		{
 
 		}
@@ -284,10 +276,10 @@ namespace System.Windows.Forms
 
 		private void fire_scroll_event ()
 		{
-			if (scroll_event == null)
+			if (Scroll == null)
 				return;
 
-			scroll_event (this, new EventArgs ());
+			Scroll (this, new EventArgs ());
 		}
 
 		private void UpdateArea ()
@@ -378,7 +370,7 @@ namespace System.Windows.Forms
 
     			//Console.WriteLine ("UpdatePos: " + newPos + " ; " + Value);
 
-    			//Console.WriteLine ("event : {0} {1} {2}", scroll_event != null, position, old);
+    			//Console.WriteLine ("event : {0} {1} {2}", Scroll != null, position, old);
 
     			if (orientation == Orientation.Horizontal) {
 				if (update_trumbpos)
