@@ -62,11 +62,7 @@ gac_assemblies_list = \
 	System.Windows.Forms				\
 	System.Xml
 
-if INSTALL_2_0
 gac_assemblies = $(gac_assemblies_list:=.dll)
-else
-gac_assemblies = 
-endif
 
 corlibdir = $(libdir)/mono/2.0
 corlib_DATA = mscorlib.dll
@@ -84,6 +80,7 @@ mscorlib.dll $(gac_assemblies):
 
 all-local: $(gac_assemblies)
 
+if INSTALL_2_0
 install-data-local:
 	@if test -n '$(gac_assemblies)'; then \
 	  for i in ''$(gac_assemblies); do \
@@ -99,6 +96,10 @@ uninstall-local:
 	    MONO_PATH=$(srcdir)/../net_1_1 \
 	      $(LIBTOOL) --mode=execute $(mono_runtime) $(gacutil) /u $$i /root $(DESTDIR)$(libdir) || true ; \
 	  done; fi
+else
+install-data-local uninstall-local:
+	@:
+endif
 
 copy_dlls:
 	cp /nt/mono/mcs/class/*/*.dll .
