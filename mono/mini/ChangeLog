@@ -1,3 +1,10 @@
+2004-04-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c: Only set bblock->real_offset when adding a new bblock, and
+	before each IL instruction.
+
+	* mini.c (CEE_BOX): Fix warnings.
+
 2004-04-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* mini.c: removed a few unused vars and extra whitespace.
