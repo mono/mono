@@ -41,6 +41,13 @@ namespace System.Reflection {
 		internal IntPtr mhandle;
 		string name;
 		Type reftype;
+
+		internal MonoMethod () {
+		}
+
+		internal MonoMethod (RuntimeMethodHandle mhandle) {
+			this.mhandle = mhandle.Value;
+		}
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern MonoMethod get_base_definition (MonoMethod method);

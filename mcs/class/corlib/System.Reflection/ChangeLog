@@ -1,3 +1,7 @@
+2003-11-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MonoMethod.cs: Add missing constructor.
+
 2003-11-21  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MethodBase.cs (Invoke): Make this virtual under NET 1.2.
