@@ -1,3 +1,9 @@
+2004-08-04  Martin Baulig  <martin@ximian.com>
+
+	* List.cs (List<T>.Enumerator): Made this a struct.
+	(List<T>.GetEnumerator): The public method now returns the
+	`Enumerator' struct.
+
 2004-08-02  Martin Baulig  <martin@ximian.com>
 
 	Started to do some API review.

@@ -239,7 +239,12 @@ namespace System.Collections.Generic
 			get { return this; }
 		}
 
-		public IEnumerator<T> GetEnumerator ()
+		public Enumerator GetEnumerator ()
+		{
+			return new Enumerator (this);
+		}
+
+		IEnumerator<T> IEnumerable<T>.GetEnumerator ()
 		{
 			return new Enumerator (this);
 		}
@@ -249,7 +254,7 @@ namespace System.Collections.Generic
 			return new Enumerator (this);
 		}
 
-		public class Enumerator : IEnumerator<T>, IEnumerator
+		public struct Enumerator : IEnumerator<T>, IEnumerator
 		{
 			List<T> list;
 			int modified;
