@@ -2485,7 +2485,7 @@ public class ArrayTest : Assertion
 	}
 
 	[Test]
-	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	[ExpectedException (typeof (IndexOutOfRangeException))]
 	public void ClearOutsideMultidimentionalArray () 
 	{
 		byte[,] matrix = new byte [2,2] { {1, 1}, {2, 2} };
