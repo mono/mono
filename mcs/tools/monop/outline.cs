@@ -24,12 +24,12 @@ public class Outline {
 		this.t = t;
 		this.o = new IndentedTextWriter (output, "    ");
 	}
-	
+
 	public void OutlineType ()
         {
 		o.Write (GetTypeVisibility (t));
 		o.Write (" ");
-		o.Write (t.IsValueType ? "struct" : "class");
+		o.Write (GetTypeKind (t));
 		o.Write (" ");
 		o.Write (t.Name);
 		
@@ -55,6 +55,20 @@ public class Outline {
 		
 		o.WriteLine (" {");
 		o.Indent++;
+
+		if (t.IsEnum)
+		{
+			foreach (FieldInfo fi in t.GetFields ()) {
+				if (fi.Name != "value__")
+				{
+					o.Write (fi.Name);
+					o.Write (";");
+					o.WriteLine ();
+				}
+			}
+			o.Indent--; o.WriteLine ("}");
+			return;
+		}
 		
 		foreach (ConstructorInfo ci in t.GetConstructors ()) {
 			OutlineConstructor (ci);
@@ -195,6 +209,19 @@ public class Outline {
 				"override ";
 		
 		return null;
+	}
+
+	static string GetTypeKind (Type t)
+	{
+		if (t.IsEnum)
+			return "enum";
+		if (t.IsClass)
+			return "class";
+		if (t.IsInterface)
+			return "interface";
+		if (t.IsValueType)
+			return "struct";
+		return "class";
 	}
 	
 	static string GetTypeVisibility (Type t)

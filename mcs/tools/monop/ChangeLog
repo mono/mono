@@ -1,3 +1,11 @@
+2004-04-27  John Luke <jluke@cfl.rr.com>
+
+	* outline.cs: add GetTypeKind so we print
+	enums and interfaces, instead of always class or
+	struct	
+	add a special case for enums so we just print the fields
+	and quit
+
 2004-04-03  Duncan Mak  <duncan@ximian.com>
 
 	* monop.cs (PrintTypes): show the number of types in the assembly
