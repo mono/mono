@@ -1,8 +1,15 @@
-2004-04-29  Peter Bartok <pbartok@novell.com>
-   * Brushes.cs: Fixed bug #52695. No longer creates a new
-   brush for every request and behaves Microsoft compatible
+2004-04-30  Ravindra <rkumar@novell.com>
 
-2004-04-28  Jordi Mas i Hernandez <jordi@ximian.com>
+	* Graphics.cs: Added checks for status.
+	* Image.cs: Added a check for status.
+	* FontFamily.cs: Added checks for status.
+
+2004-04-29  Peter Bartok <pbartok@novell.com>
+
+	* Brushes.cs: Fixed bug #52695. No longer creates a new
+	brush for every request and behaves Microsoft compatible
+
+2004-04-29  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Image.cs: fixes Save method. It now retrieves the proper encoder and uses
 	its ClsID instead of the formatID (as GDI+ expects)

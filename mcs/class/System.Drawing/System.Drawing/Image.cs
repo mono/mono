@@ -469,7 +469,9 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		get {
 			float resolution;
 			
-			GDIPlus.GdipGetImageVerticalResolution (nativeObject, out resolution);			
+			Status status = GDIPlus.GdipGetImageVerticalResolution (nativeObject, out resolution);
+			GDIPlus.CheckStatus (status);
+
 			return resolution;
 		}
 	}
@@ -505,7 +507,8 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 	protected virtual void DisposeResources ()
 	{
-		GDIPlus.GdipDisposeImage (nativeObject);
+		Status status = GDIPlus.GdipDisposeImage (nativeObject);
+		GDIPlus.CheckStatus (status);
 	}
 	
 	protected virtual void Dispose (bool disposing)

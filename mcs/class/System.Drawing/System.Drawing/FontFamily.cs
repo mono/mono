@@ -33,6 +33,7 @@ namespace System.Drawing {
 			int language = 0;			
 			StringBuilder sBuilder = new StringBuilder (GDIPlus.FACESIZE * UnicodeEncoding.CharSize);	
 	    		Status status = GDIPlus.GdipGetFamilyName (nativeFontFamily, sBuilder, language);
+			GDIPlus.CheckStatus (status);
     			name = sBuilder.ToString();    		    		
 		}
 		
@@ -61,31 +62,23 @@ namespace System.Drawing {
 			{
 				case GenericFontFamilies.Monospace:
 					status = GDIPlus.GdipGetGenericFontFamilyMonospace (out nativeFontFamily);
-					if ( status != Status.Ok ) 
-						throw new Exception ( "Error calling GDIPlus.GdipGetGenericFontFamilyMonospace: " + status );
-					
-					refreshName();
+					GDIPlus.CheckStatus (status);
+					refreshName ();
 					break;
 				case GenericFontFamilies.SansSerif:
 					status = GDIPlus.GdipGetGenericFontFamilySansSerif (out nativeFontFamily);
-					if ( status != Status.Ok ) 
-						throw new Exception ( "Error calling GDIPlus.GdipGetGenericFontFamilySansSerif: " + status );
-					
-					refreshName();
+					GDIPlus.CheckStatus (status);
+					refreshName ();
 					break;
 				case GenericFontFamilies.Serif:
 					status = GDIPlus.GdipGetGenericFontFamilySerif (out nativeFontFamily);
-					if ( status != Status.Ok ) 
-						throw new Exception ( "Error calling GDIPlus.GdipGetGenericFontFamilySerif: " + status );
-					
-					refreshName();
+					GDIPlus.CheckStatus (status);
+					refreshName ();
 					break;
 				default:	// Undocumented default 
 					status = GDIPlus.GdipGetGenericFontFamilyMonospace (out nativeFontFamily);
-					if ( status != Status.Ok ) 
-						throw new Exception ( "Error calling GDIPlus.GdipGetGenericFontFamilyMonospace: " + status );
-					
-					refreshName();
+					GDIPlus.CheckStatus (status);
+					refreshName ();
 					break;
 			}
 		}
@@ -101,14 +94,9 @@ namespace System.Drawing {
 				status = GDIPlus.GdipCreateFontFamilyFromName (familyName, collection.nativeFontCollection, out nativeFontFamily);
 			else
 				status = GDIPlus.GdipCreateFontFamilyFromName (familyName, IntPtr.Zero, out nativeFontFamily);
-						
-			if (status != Status.Ok)
-			{
-				nativeFontFamily = IntPtr.Zero;
-				throw new Exception ( "Error calling GDIPlus.GdipCreateFontFamilyFromName: " + status );
-			}
+			GDIPlus.CheckStatus (status);
 			
-			refreshName();
+			refreshName ();
 		}
 		
 		public string Name 
@@ -127,13 +115,9 @@ namespace System.Drawing {
 				{
 					IntPtr generic = IntPtr.Zero;
 					Status status = GDIPlus.GdipGetGenericFontFamilyMonospace (out generic);
-					if ( status != Status.Ok ) 
-					{
-						generic = IntPtr.Zero;
-						throw new Exception ( "Error calling GDIPlus.GdipGetGenericFontFamilyMonospace: " + status );
-					}
+					GDIPlus.CheckStatus (status);
 					genericMonospace = new FontFamily (generic);
-					genericMonospace.refreshName();
+					genericMonospace.refreshName ();
 				}
 				return genericMonospace;
 			}
@@ -147,13 +131,9 @@ namespace System.Drawing {
 				{
 					IntPtr generic = IntPtr.Zero;
 					Status status = GDIPlus.GdipGetGenericFontFamilySansSerif (out generic);
-					if ( status != Status.Ok ) 
-					{
-						generic = IntPtr.Zero;
-						throw new Exception ( "Error calling GDIPlus.GdipGetGenericFontFamilySansSerif: " + status );
-					}
-					genericSansSerif = new FontFamily ( generic );
-					genericSansSerif.refreshName();
+					GDIPlus.CheckStatus (status);
+					genericSansSerif = new FontFamily (generic);
+					genericSansSerif.refreshName ();
 				}
 				return genericSansSerif;
 			}
@@ -167,13 +147,9 @@ namespace System.Drawing {
 				{
 					IntPtr generic = IntPtr.Zero;
 					Status status = GDIPlus.GdipGetGenericFontFamilySerif (out generic);
-					if ( status != Status.Ok ) 
-					{
-						generic = IntPtr.Zero;
-						throw new Exception ( "Error calling GDIPlus.GdipGetGenericFontFamilySerif: " + status );
-					}
+					GDIPlus.CheckStatus (status);
 					genericSerif = new FontFamily (generic);
-					genericSerif.refreshName();
+					genericSerif.refreshName ();
 				}
 				return genericSerif;
 			}
@@ -205,67 +181,62 @@ namespace System.Drawing {
 			return styleCheck;
 		}
 
-		public int GetCellAscent(FontStyle style) 
+		public int GetCellAscent (FontStyle style) 
 		{
 			Status status;
 			uint outProperty;
 			int styleCheck = GetStyleCheck (style);				
 			status = GDIPlus.GdipGetCellAscent (nativeFontFamily, styleCheck, out outProperty);
-			if ( status != Status.Ok )
-				throw new Exception ("Error calling GDIPlus.GdipGetCellAscent: " + status);
-				
-			return (int)outProperty;
+			GDIPlus.CheckStatus (status);
+
+			return (int) outProperty;
 		}
 		
-		public int GetCellDescent(FontStyle style) 
+		public int GetCellDescent (FontStyle style) 
 		{
 			Status status;
 			uint outProperty;
 			int styleCheck = GetStyleCheck (style);				
 			status = GDIPlus.GdipGetCellDescent (nativeFontFamily, styleCheck, out outProperty);
-			if (status != Status.Ok)
-				throw new Exception ("Error calling GDIPlus.GdipGetCellAscent: " + status);
-				
-			return (int)outProperty;
+			GDIPlus.CheckStatus (status);
+
+			return (int) outProperty;
 		}
 		
-		public int GetEmHeight(FontStyle style ) 
+		public int GetEmHeight (FontStyle style) 
 		{
 			Status status;
 			uint outProperty;
 			int styleCheck = GetStyleCheck (style);				
 			status = GDIPlus.GdipGetEmHeight (nativeFontFamily, styleCheck, out outProperty);
-			if (status != Status.Ok)
-				throw new Exception ("Error calling GDIPlus.GdipGetCellAscent: " + status );
-				
-			return (int)outProperty;
+			GDIPlus.CheckStatus (status);
+
+			return (int) outProperty;
 		}
 		
-		public int GetLineSpacing(FontStyle style) 
+		public int GetLineSpacing (FontStyle style)
 		{
 			Status status;
 			uint outProperty;
 			int styleCheck = GetStyleCheck (style);				
 			status = GDIPlus.GdipGetLineSpacing (nativeFontFamily, styleCheck, out outProperty);
-			if (status != Status.Ok)
-				throw new Exception ( "Error calling GDIPlus.GdipGetCellAscent: " + status);
-				
-			return (int)outProperty;
+			GDIPlus.CheckStatus (status);
+
+			return (int) outProperty;
 		}
 		
-		public bool IsStyleAvailable(FontStyle style)
+		public bool IsStyleAvailable (FontStyle style)
 		{
 			Status status;
 			bool outProperty;
 			int styleCheck = GetStyleCheck (style);				
 			status = GDIPlus.GdipIsStyleAvailable (nativeFontFamily, styleCheck, out outProperty);
-			if (status != Status.Ok)
-				throw new Exception ("Error calling GDIPlus.GdipGetCellAscent: " + status);
-				
+			GDIPlus.CheckStatus (status);
+
 			return outProperty;
 		}
 		
-		public void Dispose() 
+		public void Dispose ()
 		{
 			Status status;
 			if ( genericSerif != null ) {
@@ -303,9 +274,9 @@ namespace System.Drawing {
 			return (this == (FontFamily) obj);			
 		}
 		
-		public override int GetHashCode()
+		public override int GetHashCode ()
 		{
-			return name.GetHashCode();			
+			return name.GetHashCode ();			
 		}
 			
 			
@@ -317,19 +288,19 @@ namespace System.Drawing {
 			}
 		}		
 		
-		public static FontFamily[] GetFamilies(Graphics graphics)
+		public static FontFamily[] GetFamilies (Graphics graphics)
 		{
 			InstalledFontCollection fntcol = new InstalledFontCollection ();
 			return fntcol.Families;			
 		}
 		
 		[MonoTODO ("We only support the default system language")]
-		public string GetName(int language)
+		public string GetName (int language)
 		{
 			return name;
 		}
 		
-		public override string ToString()
+		public override string ToString ()
 		{
 			return "FontFamily :" + name;
 		}
