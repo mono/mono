@@ -9,16 +9,21 @@
 //
 
 using System.IO;
+using System.Text;
 using System.Xml;
 
 namespace System.Security.Cryptography.Xml { 
 
 public class XmlDsigC14NTransform : Transform {
 
-	protected bool comments;
+	private Type[] input;
+	private Type[] output;
+	private bool comments;
+	private Stream s;
 
 	public XmlDsigC14NTransform () 
 	{
+		Algorithm = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
 		comments = false;
 	}
 
@@ -62,8 +67,7 @@ public class XmlDsigC14NTransform : Transform {
 
 	public override object GetOutput () 
 	{
-//		return (object) new Stream ();
-		return null;
+		return (object) s;
 	}
 
 	public override object GetOutput (Type type) 
@@ -75,12 +79,31 @@ public class XmlDsigC14NTransform : Transform {
 
 	public override void LoadInnerXml (XmlNodeList nodeList) 
 	{
-		// NO CHANGE
+		// documented as not changing the state of the transform
 	}
 
 	public override void LoadInput (object obj) 
 	{
-	//	if (type.Equals (Stream.GetType ())
+		XmlNodeList xnl = null;
+
+		if (obj is Stream) 
+			s = (obj as Stream);
+		else if (obj is XmlDocument)
+			xnl = (obj as XmlDocument).ChildNodes;
+		else if (obj is XmlNodeList)
+			xnl = (XmlNodeList) obj;
+
+		if (xnl != null) {
+			StringBuilder sb = new StringBuilder ();
+			foreach (XmlNode xn in xnl)
+				sb.Append (xn.InnerText);
+
+			UTF8Encoding utf8 = new UTF8Encoding ();
+			byte[] data = utf8.GetBytes (sb.ToString ());
+			s = new MemoryStream (data);
+		}
+
+		// note: there is no default are other types won't throw an exception
 	}
 }
 

@@ -20,6 +20,8 @@ namespace System.Security.Cryptography.Xml {
 // see Section 6.6.3 of the XMLDSIG specification
 public class XmlDsigXPathTransform : Transform {
 
+	private Type[] input;
+	private Type[] output;
 	private XmlNodeList xnl;
 	private XmlNodeList xpathNodes;
 

@@ -28,11 +28,11 @@ internal class IssuerSerial {
 
 public class KeyInfoX509Data : KeyInfoClause {
 
-	protected byte[] x509crl;
-	protected ArrayList IssuerSerialList;
-	protected ArrayList SubjectKeyIdList;
-	protected ArrayList SubjectNameList;
-	protected ArrayList X509CertificateList;
+	private byte[] x509crl;
+	private ArrayList IssuerSerialList;
+	private ArrayList SubjectKeyIdList;
+	private ArrayList SubjectNameList;
+	private ArrayList X509CertificateList;
 
 	public KeyInfoX509Data () 
 	{
@@ -153,10 +153,10 @@ public class KeyInfoX509Data : KeyInfoClause {
 		return doc.DocumentElement;
 	}
 
-	public override void LoadXml (XmlElement value) 
+	public override void LoadXml (XmlElement element) 
 	{
-		if (value == null)
-			throw new ArgumentNullException ();
+		if (element == null)
+			throw new ArgumentNullException ("element");
 
 		IssuerSerialList.Clear ();
 		SubjectKeyIdList.Clear ();
@@ -165,10 +165,10 @@ public class KeyInfoX509Data : KeyInfoClause {
 		x509crl = null;
 
 		string ns = "http://www.w3.org/2000/09/xmldsig#";
-		if ((value.LocalName == "X509Data") && (value.NamespaceURI == ns)) {
+		if ((element.LocalName == "X509Data") && (element.NamespaceURI == ns)) {
 			XmlNodeList xnl = null;
 			// <X509IssuerSerial>
-			xnl = value.GetElementsByTagName ("X509IssuerSerial", ns);
+			xnl = element.GetElementsByTagName ("X509IssuerSerial", ns);
 			if (xnl != null) {
 				for (int i=0; i < xnl.Count; i++) {
 					XmlElement xel = (XmlElement) xnl[i];
@@ -178,7 +178,7 @@ public class KeyInfoX509Data : KeyInfoClause {
 				}
 			}
 			// <X509SKI>
-			xnl = value.GetElementsByTagName ("X509SKI", ns);
+			xnl = element.GetElementsByTagName ("X509SKI", ns);
 			if (xnl != null) {
 				for (int i=0; i < xnl.Count; i++) {
 					byte[] skid = Convert.FromBase64String (xnl[i].InnerXml);
@@ -186,14 +186,14 @@ public class KeyInfoX509Data : KeyInfoClause {
 				}
 			}
 			// <X509SubjectName>
-			xnl = value.GetElementsByTagName ("X509SubjectName", ns);
+			xnl = element.GetElementsByTagName ("X509SubjectName", ns);
 			if (xnl != null) {
 				for (int i=0; i < xnl.Count; i++) {
 					AddSubjectName (xnl[i].InnerXml);
 				}
 			}
 			// <X509Certificate>
-			xnl = value.GetElementsByTagName ("X509Certificate", ns);
+			xnl = element.GetElementsByTagName ("X509Certificate", ns);
 			if (xnl != null) {
 				for (int i=0; i < xnl.Count; i++) {
 					byte[] cert = Convert.FromBase64String (xnl[i].InnerXml);
@@ -201,13 +201,13 @@ public class KeyInfoX509Data : KeyInfoClause {
 				}
 			}
 			// only one <X509CRL> 
-			xnl = value.GetElementsByTagName ("X509CRL", ns);
+			xnl = element.GetElementsByTagName ("X509CRL", ns);
 			if ((xnl != null) && (xnl.Count > 0)) {
 				x509crl = Convert.FromBase64String (xnl[0].InnerXml);
 			}
 		}
 		else
-			throw new CryptographicException ("value");
+			throw new CryptographicException ("element");
 	}
 }
 

@@ -18,6 +18,8 @@ namespace System.Security.Cryptography.Xml {
 
 public class XmlDsigXsltTransform : Transform {
 
+	private Type[] input;
+	private Type[] output;
 	private bool comments;
 	private XmlNodeList xnl;
 	private CryptoStream cs;
@@ -27,7 +29,7 @@ public class XmlDsigXsltTransform : Transform {
 	public XmlDsigXsltTransform (bool includeComments) 
 	{
 		comments = includeComments;
-		algo = "http://www.w3.org/TR/1999/REC-xslt-19991116";
+		Algorithm = "http://www.w3.org/TR/1999/REC-xslt-19991116";
 	}
 
 	public override Type[] InputTypes {

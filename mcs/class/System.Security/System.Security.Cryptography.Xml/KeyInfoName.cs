@@ -14,7 +14,7 @@ namespace System.Security.Cryptography.Xml {
 
 public class KeyInfoName : KeyInfoClause {
 
-	protected string Name;
+	private string Name;
 
 	public KeyInfoName() {}
 

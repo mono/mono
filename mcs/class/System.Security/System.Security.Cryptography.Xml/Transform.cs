@@ -14,9 +14,7 @@ namespace System.Security.Cryptography.Xml {
 
 public abstract class Transform {
 
-	protected string algo;
-	protected Type[] input;
-	protected Type[] output;
+	private string algo;
 
 	public Transform () {}
 

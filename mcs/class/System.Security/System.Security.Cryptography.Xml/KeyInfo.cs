@@ -17,8 +17,8 @@ public class KeyInfo : IEnumerable {
 
 	static private string xmldsig = "http://www.w3.org/2000/09/xmldsig#";
 
-	protected ArrayList Info;
-	protected string id;
+	private ArrayList Info;
+	private string id;
 
 	public KeyInfo() 
 	{

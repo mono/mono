@@ -14,7 +14,7 @@ namespace System.Security.Cryptography.Xml {
 
 public class KeyInfoRetrievalMethod : KeyInfoClause {
 
-	protected string URI;
+	private string URI;
 
 	public KeyInfoRetrievalMethod () {}
 

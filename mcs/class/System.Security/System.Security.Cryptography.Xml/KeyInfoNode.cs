@@ -14,7 +14,7 @@ namespace System.Security.Cryptography.Xml {
 
 public class KeyInfoNode : KeyInfoClause {
 
-	protected XmlElement Node;
+	private XmlElement Node;
 
 	public KeyInfoNode () {}
 

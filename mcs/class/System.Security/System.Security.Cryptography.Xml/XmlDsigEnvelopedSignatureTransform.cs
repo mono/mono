@@ -15,7 +15,9 @@ namespace System.Security.Cryptography.Xml {
 
 public class XmlDsigEnvelopedSignatureTransform : Transform {
 
-	protected bool comments;
+	private Type[] input;
+	private Type[] output;
+	private bool comments;
 
 	public XmlDsigEnvelopedSignatureTransform () 
 	{

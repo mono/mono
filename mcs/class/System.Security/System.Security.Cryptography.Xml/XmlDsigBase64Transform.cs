@@ -17,11 +17,13 @@ namespace System.Security.Cryptography.Xml {
 // http://www.w3.org/2000/09/xmldsig#base64
 public class XmlDsigBase64Transform : Transform {
 
+	private Type[] input;
+	private Type[] output;
 	private CryptoStream cs;
 
 	public XmlDsigBase64Transform () 
 	{
-		algo = "http://www.w3.org/2000/09/xmldsig#base64";
+		Algorithm = "http://www.w3.org/2000/09/xmldsig#base64";
 	}
 
 	public override Type[] InputTypes {
