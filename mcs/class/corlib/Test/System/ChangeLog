@@ -1,3 +1,9 @@
+2004-01-22 David Sheldon <dave-mono@earth.li>
+
+       * AppDomainSetupTest: Changed test 3 to test that the
+         appdomain is relative to the current dir, rather than 
+	 the temp dir. This is what the MS runtime appears to 
+	 give, and handily is what we do too.
 
 2004-01-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
