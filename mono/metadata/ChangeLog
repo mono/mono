@@ -1,3 +1,7 @@
+2004-08-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_System_Reflection_MethodBase_GetMethodFromHandle): New icall.
+
 2004-08-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (mono_marshal_get_native_wrapper): Add support for byref 
