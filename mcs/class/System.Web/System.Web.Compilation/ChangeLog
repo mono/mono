@@ -1,3 +1,8 @@
+2005-01-10  Lluis Sanchez Gual <lluis@novell.com>
+
+	* TemplateControlCompiler.cs: Get the container type from the
+	template (if it was defined using TemplateContainerAttribute.
+
 2004-10-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: correctly process script tags that self-closing.

@@ -537,6 +537,10 @@ namespace System.Web.Compilation
 
 		static Type GetContainerType (ControlBuilder builder)
 		{
+			TemplateBuilder tb = builder as TemplateBuilder;
+			if (tb != null && tb.ContainerType != null)
+				return tb.ContainerType;
+
 			Type type = builder.NamingContainerType;
 
 			PropertyInfo prop = type.GetProperty ("Items", noCaseFlags);
