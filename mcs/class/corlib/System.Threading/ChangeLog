@@ -1,3 +1,8 @@
+2003-03-03  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* Thread.cs: Changed implementation of CurrentContext, adapted to the changes
+	  in the runtime.
+
 2003-02-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Thread.cs: implemented CurrentContext.
