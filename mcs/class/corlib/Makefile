@@ -16,10 +16,10 @@ endif
 
 LOCAL_MCS_FLAGS = /nowarn:649 /nowarn:169 -d:INSIDE_CORLIB
 
-corlib = $(topdir)/class/lib/mscorlib.dll
+corlib = $(topdir)/class/lib/$(PROFILE)/mscorlib.dll
 testlib = corlib_test.dll
-cmplib = $(topdir)/class/lib/corlib_cmp.dll
-reslib = $(topdir)/class/lib/corlib_res.dll
+cmplib = $(topdir)/class/lib/$(PROFILE)/corlib_cmp.dll
+reslib = $(topdir)/class/lib/$(PROFILE)/corlib_res.dll
 plattestlib = corlib_plattest.dll
 
 corpdb = $(patsubst %.dll,%.pdb,$(corlib))
@@ -29,33 +29,33 @@ respdb = $(patsubst %.dll,%.pdb,$(reslib))
 plattestpdb = $(patsubst %.dll,%.pdb,$(plattestlib))
 
 sourcefile = corlib.dll.sources
-response = $(depsdir)/corlib.dll.response
-makefrag = $(depsdir)/corlib.dll.makefrag
-stampfile = $(depsdir)/corlib.dll.stamp
+response = $(depsdir)/$(PROFILE)_corlib.dll.response
+makefrag = $(depsdir)/$(PROFILE)_corlib.dll.makefrag
+stampfile = $(depsdir)/$(PROFILE)_corlib.dll.stamp
 # disable, until people fix their code...
 #corlib_flags = /unsafe /nostdlib /d:INSIDE_CORLIB
 corlib_flags = /unsafe /nostdlib
 
 test_sourcefile = corlib_test.dll.sources
-test_response = $(depsdir)/$(testlib).response
-test_makefrag = $(depsdir)/$(testlib).makefrag
-test_stampfile = $(depsdir)/$(testlib).stamp
+test_response = $(depsdir)/$(PROFILE)_$(testlib).response
+test_makefrag = $(depsdir)/$(PROFILE)_$(testlib).makefrag
+test_stampfile = $(depsdir)/$(PROFILE)_$(testlib).stamp
 test_flags = /nowarn:0618 /nowarn:0672 /r:$(test_against) /r:$(topdir)/class/lib/NUnit.Framework.dll
 
-cmp_response = $(depsdir)/corlib_cmp.dll.response
-cmp_makefrag = $(depsdir)/corlib_cmp.dll.makefrag
-cmp_stampfile = $(depsdir)/corlib_cmp.dll.stamp
+cmp_response = $(depsdir)/$(PROFILE)_corlib_cmp.dll.response
+cmp_makefrag = $(depsdir)/$(PROFILE)_corlib_cmp.dll.makefrag
+cmp_stampfile = $(depsdir)/$(PROFILE)_corlib_cmp.dll.stamp
 cmp_flags = /r:$(PLATFORM_CORLIB) $(corlib_flags)
 
-res_response = $(depsdir)/corlib_res.dll.response
-res_makefrag = $(depsdir)/corlib_res.dll.makefrag
-res_stampfile = $(depsdir)/corlib_res.dll.stamp
+res_response = $(depsdir)/$(PROFILE)_corlib_res.dll.response
+res_makefrag = $(depsdir)/$(PROFILE)_corlib_res.dll.makefrag
+res_stampfile = $(depsdir)/$(PROFILE)_corlib_res.dll.stamp
 res_flags = /r:$(PLATFORM_CORLIB) $(corlib_flags)
 
 plattest_excludes = corlib_plattest.dll.excludes
-plattest_response = $(depsdir)/$(plattestlib).response
-plattest_makefrag = $(depsdir)/$(plattestlib).makefrag
-plattest_stampfile = $(depsdir)/$(plattestlib).stamp
+plattest_response = $(depsdir)/$(PROFILE)_$(plattestlib).response
+plattest_makefrag = $(depsdir)/$(PROFILE)_$(plattestlib).makefrag
+plattest_stampfile = $(depsdir)/$(PROFILE)_$(plattestlib).stamp
 plattest_flags = /debug+ /debug:full /nowarn:0618 /nowarn:0672 /r:$(PLATFORM_CORLIB) /r:$(topdir)/class/lib/NUnit.Framework.dll
 
 # Here, we make all.

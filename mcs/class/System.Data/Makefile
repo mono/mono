@@ -7,7 +7,7 @@ include ../../build/rules.make
 ifeq ($(PROFILE),atomic)
 system = System.dll
 else
-system = $(topdir)/class/lib/System.dll
+system = $(topdir)/class/lib/$(PROFILE)/System.dll
 endif
 
 LIBRARY = System.Data.dll

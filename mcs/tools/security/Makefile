@@ -3,7 +3,7 @@ SUBDIRS =
 DIST_ONLY_SUBDIRS = certview
 include ../../build/rules.make
 
-LOCAL_MCS_FLAGS = /r:$(topdir)/class/lib/Mono.Security.dll
+LOCAL_MCS_FLAGS = /lib:../class/lib/default /r:Mono.Security.dll
 
 SECURITY_PROGRAMS = secutil.exe cert2spc.exe sn.exe MakeCert.exe chktrust.exe signcode.exe setreg.exe certmgr.exe
 

@@ -10,22 +10,22 @@
 
 sourcefile = $(LIBRARY).sources
 ifdef PLATFORM_CHANGE_SEPARATOR_CMD
-response = $(depsdir)/$(LIBRARY).response
+response = $(depsdir)/$(PROFILE)_$(LIBRARY).response
 else
 response = $(sourcefile)
 endif
-makefrag = $(depsdir)/$(LIBRARY).makefrag
-stampfile = $(depsdir)/$(LIBRARY).stamp
-the_lib = $(topdir)/class/lib/$(LIBRARY)
+makefrag = $(depsdir)/$(PROFILE)_$(LIBRARY).makefrag
+stampfile = $(depsdir)/$(PROFILE)_$(LIBRARY).stamp
+the_lib = $(topdir)/class/lib/$(PROFILE)/$(LIBRARY)
 the_pdb = $(patsubst %.dll,%.pdb,$(the_lib))
 
 ifndef NO_TEST
 test_lib = $(patsubst %.dll,%_test.dll,$(LIBRARY))
 test_pdb = $(patsubst %.dll,%.pdb,$(test_lib))
 test_sourcefile = $(test_lib).sources
-test_response = $(depsdir)/$(test_lib).response
-test_makefrag = $(depsdir)/$(test_lib).makefrag
-test_stampfile = $(depsdir)/$(test_lib).stamp
+test_response = $(depsdir)/$(PROFILE)_$(test_lib).response
+test_makefrag = $(depsdir)/$(PROFILE)_$(test_lib).makefrag
+test_stampfile = $(depsdir)/$(PROFILE)_$(test_lib).stamp
 test_flags = /r:$(the_lib) /r:$(topdir)/class/lib/NUnit.Framework.dll $(TEST_MCS_FLAGS)
 endif
 
