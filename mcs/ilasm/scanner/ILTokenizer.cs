@@ -112,12 +112,13 @@ namespace Mono.ILASM {
                                         }
 
                                         if (!is_hex (ch))
-                                                throw new Exception ("Invalid hex value. '" + (char) ch + "'."); // yeah proper error reporting would be great
+                                                throw new ILTokenizingException (reader.Location, ((char) ch).ToString ());
                                         hx += (char) ch;
                                         if (is_hex (reader.Peek ()))
                                                 hx += (char) reader.Read ();
                                         else if (!Char.IsWhiteSpace ((char) reader.Peek ()) && reader.Peek () != ')')
-                                                throw new Exception ("Invalid hex value. '" + (char) reader.Peek () + "'.");
+                                                throw new ILTokenizingException (reader.Location,
+                                                                ((char) reader.Peek ()).ToString ());
                                         res.token = Token.HEXBYTE;
                                         res.val = Byte.Parse (hx, NumberStyles.HexNumber);
 

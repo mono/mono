@@ -1,3 +1,10 @@
+2004-06-10  Jackson Harper  <jackson@ximian.com>
+
+	* ILTokenizingExpcetion.cs: New exception thrown by the tokenizer
+	if any tokenizing errors occur.
+	* ILTokenizer.cs:
+	* NumberHelper.cs: Use the new exception.
+	
 2004-06-04  Jackson Harper  <jackson@ximian.com>
 
 	* ILTokenizer.cs: Handle comments first, handle whitespace in hex

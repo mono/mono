@@ -86,7 +86,7 @@ namespace Mono.ILASM {
 
                                 if (is_e (ch)) {
                                         if (is_real)
-                                                throw new Exception ("Bad number format, multiples e's found.");
+                                                throw new ILTokenizingException (reader.Location, num_builder.ToString ());
 
                                         is_real = true;
                                 }
@@ -137,7 +137,7 @@ namespace Mono.ILASM {
                                 reader.RestoreLocation ();
                                 num = String.Empty;
                                 Reset ();
-                                throw new ILSyntaxError ("Bad number format! '" + num_builder + "'");
+                                throw new ILTokenizingException (reader.Location, num_builder.ToString ());
                         }
                         return num;
                 }
@@ -155,12 +155,12 @@ namespace Mono.ILASM {
 
                         ch = reader.Read ();
                         if (ch != '0')
-                                throw new Exception ("Bad hex number format, first char is not 0");
+                                throw new ILTokenizingException (reader.Location, ((char) ch).ToString ());
 
                         ch = reader.Read ();
 
                         if (ch != 'x' && ch != 'X')
-                                throw new Exception ("Bad hex number format, second char is not x or X");
+                                throw new ILTokenizingException (reader.Location, "0" + (char) ch);
 
                         do {
                                 ch = reader.Read ();
@@ -171,7 +171,7 @@ namespace Mono.ILASM {
                                         break;
 
                                 if (num_builder.Length == 32)
-                                        throw new Exception ("Number too big.");
+                                        throw new ILTokenizingException (reader.Location, num_builder.ToString ());
 
                         } while (ch != -1);
 
@@ -192,7 +192,7 @@ namespace Mono.ILASM {
                                 reader.RestoreLocation ();
                                 num = String.Empty;
                                 Reset ();
-                                throw new ILSyntaxError ("Bad hex number format! '" + tnum + "'");
+                                throw new ILTokenizingException (reader.Location, tnum);
                         }
                         return num;
                 }
