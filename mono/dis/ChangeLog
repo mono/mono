@@ -1,3 +1,10 @@
+Sat Aug 18 11:24:07 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* dump.c, get.c, get.h, main.c: dis_stringify_method_signature()
+	gets an optional methodef_row index instead of a name, so it
+	can figure out also the names and attributes of params.
+	parse_method_signature() and free_method_signature() removed as
+	they are useless now.
 
 Sat Aug 4 12:36:54 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
