@@ -5,9 +5,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -54,6 +52,7 @@ namespace Mono.Security.Authenticode {
 		private PKCS7.SignedData pkcs7;
 		private string description;
 		private Uri url;
+		private byte [] entry;
 
 		public AuthenticodeFormatter () : base () 
 		{
@@ -242,11 +241,11 @@ namespace Mono.Security.Authenticode {
 			int dirSecuritySize = BitConverter.ToInt32 (file, peOffset + 156);
 
 			if (dirSecuritySize > 8) {
-				rawData = new byte [dirSecuritySize - 8];
-				Buffer.BlockCopy (file, dirSecurityOffset + 8, rawData, 0, rawData.Length);
+				entry = new byte [dirSecuritySize - 8];
+				Buffer.BlockCopy (file, dirSecurityOffset + 8, entry, 0, entry.Length);
 			}
 			else
-				rawData = null;
+				entry = null;
 
 			HashAlgorithm hash = HashAlgorithm.Create (hashAlgorithm);
 			// 0 to 215 (216) then skip 4 (checksum)
