@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Runtime.Remoting;
 using System.Runtime.Remoting.Metadata;
 
 namespace System.Runtime.Remoting.Metadata {
@@ -23,6 +24,8 @@ namespace System.Runtime.Remoting.Metadata {
 		string _xmlNamespace;
 		string _xmlTypeName;
 		string _xmlTypeNamespace;
+		bool _isType;
+		bool _isElement;
 		
 		public SoapTypeAttribute ()
 		{
@@ -54,6 +57,7 @@ namespace System.Runtime.Remoting.Metadata {
 			}
 
 			set {
+				_isElement = value != null;
 				_xmlElementName = value;
 			}
 		}
@@ -74,6 +78,7 @@ namespace System.Runtime.Remoting.Metadata {
 			}
 
 			set {
+				_isElement = value != null;
 				_xmlNamespace = value;
 			}
 		}
@@ -84,6 +89,7 @@ namespace System.Runtime.Remoting.Metadata {
 			}
 
 			set {
+				_isType = value != null;
 				_xmlTypeName = value;
 			}
 		}
@@ -94,8 +100,36 @@ namespace System.Runtime.Remoting.Metadata {
 			}
 
 			set {
+				_isType = value != null;
 				_xmlTypeNamespace = value;
 			}
+		}
+		
+		internal bool IsInteropXmlElement
+		{
+			get { return _isElement; }
+		}
+		
+		internal bool IsInteropXmlType
+		{
+			get { return _isType; }
+		}
+		
+		internal override void SetReflectionObject (object reflectionObject)
+		{
+			Type type = (Type) reflectionObject;
+			
+			if (_xmlElementName == null)
+				_xmlElementName = type.Name;
+				
+			if (_xmlTypeName == null)
+				_xmlTypeName = type.Name;
+			
+			if (_xmlTypeNamespace == null)
+				_xmlTypeNamespace = SoapServices.CodeXmlNamespaceForClrTypeNamespace (type.Namespace, type.Assembly.GetName().Name);
+			
+			if (_xmlNamespace == null)
+				_xmlNamespace = _xmlTypeNamespace;
 		}
 	}
 }

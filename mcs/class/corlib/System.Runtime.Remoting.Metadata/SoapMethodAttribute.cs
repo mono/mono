@@ -8,6 +8,8 @@
 //
 
 using System;
+using System.Reflection;
+using System.Runtime.Remoting;
 using System.Runtime.Remoting.Metadata;
 
 namespace System.Runtime.Remoting.Metadata {
@@ -84,6 +86,27 @@ namespace System.Runtime.Remoting.Metadata {
 			set {
 				_namespace = value;
 			}
+		}
+		
+		internal override void SetReflectionObject (object reflectionObject)
+		{
+			MethodBase mb = (MethodBase) reflectionObject;
+			
+			if (_responseElement == null)
+				_responseElement = mb.Name + "Response";
+				
+			if (_responseNamespace == null)
+				_responseNamespace = SoapServices.GetXmlNamespaceForMethodResponse (mb);
+				
+			if (_returnElement == null)
+				_returnElement = "return";
+				
+			if (_soapAction == null) {
+				_soapAction = SoapServices.GetXmlNamespaceForMethodCall (mb) + "#" + mb.Name;
+			}
+			
+			if (_namespace == null)
+				_namespace = SoapServices.GetXmlNamespaceForMethodCall (mb);
 		}
 	}
 }

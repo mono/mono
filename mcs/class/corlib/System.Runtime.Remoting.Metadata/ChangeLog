@@ -1,3 +1,9 @@
+2003-11-26  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* SoapAttribute.cs, SoapFieldAttribute.cs, SoapMethodAttribute.cs,
+	  SoapTypeAttribute.cs: Added SetReflectionObject. Used to initialize some
+	  attribute properties.
+
 2003-11-11  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* SoapAttribute.cs, SoapFieldAttribute.cs, SoapMethodAttribute.cs,

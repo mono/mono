@@ -7,7 +7,9 @@
 // 2002 (C) Copyright, Ximian, Inc.
 //
 
+using System.Runtime.Remoting;
 using System.Runtime.Remoting.Metadata;
+using System.Reflection;
 
 namespace System.Runtime.Remoting.Metadata {
 
@@ -16,6 +18,7 @@ namespace System.Runtime.Remoting.Metadata {
 	{
 		int _order;
 		string _elementName;
+		bool _isElement = false;
 		
 		public SoapFieldAttribute ()
 		{
@@ -37,14 +40,20 @@ namespace System.Runtime.Remoting.Metadata {
 			}
 
 			set {
+				_isElement = value != null;
 				_elementName = value;
 			}
 		}
 
-		[MonoTODO]
 		public bool IsInteropXmlElement ()
 		{
-			throw new NotImplementedException ();
+			return _isElement;
+		}
+		
+		internal override void SetReflectionObject (object reflectionObject)
+		{
+			FieldInfo f = (FieldInfo) reflectionObject;
+			if (_elementName == null) _elementName = f.Name;
 		}
 	}
 }
