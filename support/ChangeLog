@@ -1,0 +1,5 @@
+2004-11-14  Geoff Norton  <gnorton@customerdna.com>
+	
+	* mph.h:  Revernt jonp's removal of MPH_ON_BSD define as sys-mount.c
+	and unistd.c still check this configuration value.  This allows mono
+	to build on *BSD again.
