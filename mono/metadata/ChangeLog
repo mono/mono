@@ -1,3 +1,9 @@
+2003-03-29  Miguel de Icaza  <miguel@ximian.com>
+
+	* blob.h: Add a couple of new MonoType types definitions.
+
+	* tabledefs.h: Add a couple of new call convs.
+
 2003-03-27  Zoltan Varga  <vargaz@freemail.h>
 
 	* reflection.h (MonoReflectionDynamicAssembly): track changes in
