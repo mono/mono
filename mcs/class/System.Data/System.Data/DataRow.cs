@@ -500,7 +500,6 @@ namespace System.Data {
 		[MonoTODO]
 		public void Delete () 
 		{
-			_table.DeletingDataRow(this, DataRowAction.Delete);
 			switch (rowState) {
 			case DataRowState.Added:
 				Table.Rows.Remove (this);
@@ -508,12 +507,13 @@ namespace System.Data {
 			case DataRowState.Deleted:
 				throw new DeletedRowInaccessibleException ();
 			default:
+				_table.DeletingDataRow(this, DataRowAction.Delete);
 				// check what to do with child rows
 				CheckChildRows(DataRowAction.Delete);
 				rowState = DataRowState.Deleted;
+				_table.DeletedDataRow(this, DataRowAction.Delete);
 				break;
 			}
-			_table.DeletedDataRow(this, DataRowAction.Delete);
 		}
 
 		// check the child rows of this row before deleting the row.
