@@ -1,3 +1,8 @@
+2003-07-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class.c (mono_class_layout_fields): Fix gc aware auto layout by
+	initializing real_size only once. Also fix bug #46602.
+
 2003-07-21  Jerome Laban <jlaban@wanadoo.fr>
 
 	* object.c: Renamed mono_metadata_section to metadata_section.
