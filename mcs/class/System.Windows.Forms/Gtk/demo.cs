@@ -93,6 +93,9 @@ namespace demo
 			this.bar1.Text = "This is a ProgressBar";
 			this.bar1.Value = 25;
 
+			this.bar1.ForeColor = Color.Blue;
+			this.bar1.BackColor = Color.Lime;
+
 			this.label1.Location = new Point(330, 20);
 			this.label1.Text = "This is a Label";	
 
