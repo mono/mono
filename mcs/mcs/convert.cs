@@ -37,6 +37,9 @@ namespace Mono.CSharp {
 				expr.Emit (null);
 			}
 
+			if (expr_type == TypeManager.void_type)
+				return null;
+			
 			//
 			// notice that it is possible to write "ValueType v = 1", the ValueType here
 			// is an abstract class, and not really a value type, so we apply the same rules.
