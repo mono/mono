@@ -1,3 +1,7 @@
+2003-02-04  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* unix.args: added ServerIdentity.cs, Lease.cs, LeaseManager.cs
+
 2003-02-03  Patrik Torstensson
 
 	* corlib.build: fixes so corlib_cmp and corlib_res builds, need to

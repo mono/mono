@@ -470,6 +470,7 @@ System.Runtime.Remoting/RemotingException.cs
 System.Runtime.Remoting/RemotingTimeoutException.cs
 System.Runtime.Remoting/RemotingServices.cs
 System.Runtime.Remoting/ServerException.cs
+System.Runtime.Remoting/ServerIdentity.cs
 System.Runtime.Remoting/TypeEntry.cs
 System.Runtime.Remoting/TypeInfo.cs
 System.Runtime.Remoting/WellKnownObjectMode.cs
@@ -523,6 +524,8 @@ System.Runtime.Remoting.Contexts/IDynamicProperty.cs
 System.Runtime.Remoting.Lifetime/ClientSponsor.cs
 System.Runtime.Remoting.Lifetime/ILease.cs
 System.Runtime.Remoting.Lifetime/ISponsor.cs
+System.Runtime.Remoting.Lifetime/Lease.cs
+System.Runtime.Remoting.Lifetime/LeaseManager.cs
 System.Runtime.Remoting.Lifetime/LeaseSink.cs
 System.Runtime.Remoting.Lifetime/LeaseState.cs
 System.Runtime.Remoting.Lifetime/LifetimeServices.cs
