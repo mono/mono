@@ -65,6 +65,12 @@ internal class InternalImageInfo {
 		get { return rawFormat; }
 		set { rawFormat = value; }
 	}
+	
+	public override string ToString()
+	{
+		return String.Format("InternalImageInfo. Size {0}, PixelFormat {1}, Stride {2}, Image size {3}",
+			image_size, format, stride, image.Length);
+	}
 }
 
 [Serializable]
@@ -89,14 +95,12 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	// static
 	public static Image FromFile (string filename)
 	{
-		// Fixme: implement me
-		throw new NotImplementedException ();
+		return new Bitmap (filename);
 	}
 	
 	public static Image FromFile (string filename, bool useEmbeddedColorManagement)
 	{
-		// Fixme: implement me
-		throw new NotImplementedException ();
+		return new Bitmap (filename, useEmbeddedColorManagement);
 	}
 	
 	public static Bitmap FromHbitmap (IntPtr hbitmap)
@@ -183,12 +187,32 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		return result;
 	}
 
-//	public static bool IsAlphaPixelFormat (PixelFormat pixfmt)
-//	{
-//		// Fixme: implement me
-//		throw new NotImplementedException ();
-//	}
-//	
+	public static bool IsAlphaPixelFormat (PixelFormat pixfmt)
+	{
+		bool result = false;
+		switch (pixfmt) {
+			case PixelFormat.Format16bppArgb1555:
+			case PixelFormat.Format32bppArgb:
+			case PixelFormat.Format32bppPArgb:
+			case PixelFormat.Format64bppArgb:
+			case PixelFormat.Format64bppPArgb:
+				result = true;
+				break;
+			case PixelFormat.Format16bppGrayScale:
+			case PixelFormat.Format16bppRgb555:
+			case PixelFormat.Format16bppRgb565:
+			case PixelFormat.Format1bppIndexed:
+			case PixelFormat.Format24bppRgb:
+			case PixelFormat.Format32bppRgb:
+			case PixelFormat.Format48bppRgb:
+			case PixelFormat.Format4bppIndexed:
+			case PixelFormat.Format8bppIndexed:
+				result = false;
+				break;
+		}
+		return result;
+	}
+	
 //	public static bool IsCanonicalPixelFormat (PixelFormat pixfmt)
 //	{
 //		// Fixme: implement me
