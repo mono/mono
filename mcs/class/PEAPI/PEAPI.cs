@@ -2220,11 +2220,6 @@ namespace PEAPI
 
     internal DataConstant() { }
 
-    public Type Type {
-            get { return type; }
-            set { type = value; }
-    }
-
     public uint DataOffset {
       get { return dataOffset; }
       set { dataOffset = value; }
@@ -2270,6 +2265,11 @@ namespace PEAPI
     public ByteArrConst(byte[] val) {
       this.val = val;
       size = (uint)val.Length;
+    }
+
+    public Type Type {
+            get { return type; }
+            set { type = value; }
     }
 
     internal sealed override uint GetBlobIndex(MetaData md) {
