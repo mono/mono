@@ -36,7 +36,6 @@ namespace System.Xml.Schema
 		private XmlQualifiedName schemaTypeName;
 		private XmlQualifiedName substitutionGroup;
 		internal bool parentIsSchema = false;
-		private string targetNamespace;
 		private string validatedDefaultValue;
 		private string validatedFixedValue;
 		internal bool actualIsAbstract;
@@ -281,7 +280,6 @@ namespace System.Xml.Schema
 		///		5. abstract is prohibited
 		///		6. default and fixed must not both be present.(Actually both are absent)
 		/// </remarks>	
-		[MonoTODO]
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
@@ -370,42 +368,23 @@ namespace System.Xml.Schema
 					error(h,"substitutionGroup must be absent");
 				if(final != XmlSchemaDerivationMethod.None)
 					error(h,"final must be absent");
-				// This is not W3C REC 3.3.3 requirement
-//				if(isAbstract)
-//					error(h,"abstract must be absent");
 
 				CompileOccurence (h, schema);
 
 				if(refName == null || RefName.IsEmpty)
 				{
+					string targetNamespace = String.Empty;
+
 					if(form == XmlSchemaForm.Qualified || (form == XmlSchemaForm.None && schema.ElementFormDefault == XmlSchemaForm.Qualified))
-						this.targetNamespace = schema.TargetNamespace;
-					else
-						this.targetNamespace = "";
+						targetNamespace = schema.TargetNamespace;
 
 					if(this.name == null)	//b1
 						error(h,"Required attribute name must be present");
 					else if(!XmlSchemaUtil.CheckNCName(this.name)) // b1.2
 						error(h,"attribute name must be NCName");
 					else
-						this.qName = new XmlQualifiedName(this.name, this.targetNamespace);
+						this.qName = new XmlQualifiedName(this.name, targetNamespace);
 				
-					/*
-					XmlSchemaDerivationMethod allblock = XmlSchemaDerivationMethod.Extension | 
-						XmlSchemaDerivationMethod.Restriction | XmlSchemaDerivationMethod.Substitution;
-
-					if(block == XmlSchemaDerivationMethod.All)
-						blockResolved = allblock;
-//					else if(block == XmlSchemaDerivationMethod.None)
-//						blockResolved = allblock;
-					else
-					{
-						if((block & ~allblock) != 0)
-							warn(h,"Some of the values for block are invalid in this context");
-						blockResolved = block & allblock;
-					}
-					*/
-
 					if(schemaType != null && schemaTypeName != null && !schemaTypeName.IsEmpty)
 					{
 						error(h,"both schemaType and content can't be present");
@@ -501,7 +480,6 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 
-		[MonoTODO]
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
 			if (IsValidated (schema.CompilationId))
@@ -756,11 +734,11 @@ namespace System.Xml.Schema
 						continue;
 					if (any.HasValueAny ||
 						any.HasValueLocal && this.QualifiedName.Namespace == "" ||
-						any.HasValueOther && this.QualifiedName.Namespace != this.targetNamespace ||
-						any.HasValueTargetNamespace && this.QualifiedName.Namespace == this.targetNamespace) {
+						any.HasValueOther && this.QualifiedName.Namespace != this.QualifiedName.Namespace ||
+						any.HasValueTargetNamespace && this.QualifiedName.Namespace == this.QualifiedName.Namespace) {
 						error (h, "Ambiguous element label which is contained by -any- particle was detected: " + this.QualifiedName);
 						break;
-					} else {
+					} else if (!any.HasValueOther) {
 						bool bad = false;
 						foreach (string ns in any.ResolvedNamespaces) {
 							if (ns == this.QualifiedName.Namespace) {
@@ -772,6 +750,10 @@ namespace System.Xml.Schema
 							error (h, "Ambiguous element label which is contained by -any- particle was detected: " + this.QualifiedName);
 							break;
 						}
+					} else {
+						if (any.TargetNamespace.Length == 0 ||
+							any.TargetNamespace != this.QualifiedName.Namespace)
+							error (h, "Ambiguous element label which is contained by -any- particle with ##other value was detected: " + this.QualifiedName);
 					}
 				}
 				qnames.Add (this.QualifiedName, this);

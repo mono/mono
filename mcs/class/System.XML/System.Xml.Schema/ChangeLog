@@ -1,3 +1,8 @@
+2004-01-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaElement.cs : Fixed incorrect unique particle attribution
+	  check on ##other and target namespace element.
+
 2004-01-08  Nick Drochak <ndrochak@ieee.org>
 
 	* XmlSchemaSimpleType.cs: Needed a 'new' on the property
