@@ -212,8 +212,11 @@ namespace System.Web.Services.Protocols {
 			{
 				HttpStatusCode code = http_response.StatusCode;
 	
-				if (!(code == HttpStatusCode.Accepted || code == HttpStatusCode.OK || code == HttpStatusCode.InternalServerError))
-					throw new WebException ("Request error. Return code was: " + http_response.StatusCode);
+				if (!(code == HttpStatusCode.Accepted || code == HttpStatusCode.OK || code == HttpStatusCode.InternalServerError)) {
+					string msg = "The request failed with HTTP status {0}: {1}";
+					msg = String.Format (msg, (int) code, code);
+					throw new WebException (msg, null, WebExceptionStatus.ProtocolError, http_response);
+				}
 			}
 			
 			//
