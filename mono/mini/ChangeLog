@@ -1,3 +1,7 @@
+2004-12-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-sparc.c (mono_arch_output_basic_block): Fix LOCALLOC_IMM
+	bug introduced by the previous patch.
 
 Tue Dec 7 11:44:39 CET 2004 Paolo Molaro <lupus@ximian.com>
 
