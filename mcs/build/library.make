@@ -217,16 +217,22 @@ $(sn):
 	cd $(topdir) && $(MAKE) PROFILE=net_1_1_bootstrap
 endif
 
+ifeq (cat, $(PLATFORM_CHANGE_SEPARATOR_CMD))
+BUILT_SOURCES_cmdline = $(BUILT_SOURCES)
+else
+BUILT_SOURCES_cmdline = `echo $(BUILT_SOURCES) | $(PLATFORM_CHANGE_SEPARATOR_CMD)`
+endif
+
 # The library
 
 $(the_lib): $(response) $(sn) $(BUILT_SOURCES)
 ifdef LIBRARY_USE_INTERMEDIATE_FILE
-	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$(@F) $(BUILT_SOURCES) @$(response)
+	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$(@F) $(BUILT_SOURCES_cmdline) @$(response)
 	$(SN) $(SNFLAGS) $(@F) $(LIBRARY_SNK)
 	mv $(@F) $@
 	test ! -f $(@F).mdb || mv $(@F).mdb $@.mdb
 else
-	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$@ $(BUILT_SOURCES) @$(response)
+	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$@ $(BUILT_SOURCES_cmdline) @$(response)
 	$(SN) $(SNFLAGS) $@ $(LIBRARY_SNK)
 endif
 
