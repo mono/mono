@@ -73,7 +73,7 @@ namespace CIR {
 			return "null";
 		}
 
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			type = TypeManager.object_type;
 			return this;
@@ -98,7 +98,7 @@ namespace CIR {
 			return val ? "true" : "false";
 		}
 
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			type = TypeManager.bool_type;
 
@@ -127,7 +127,7 @@ namespace CIR {
 			return "\"" + descape (c) + "\"";
 		}
 
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			type = TypeManager.char_type;
 
@@ -153,7 +153,7 @@ namespace CIR {
 			return Value.ToString ();
 		}
 
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			type = TypeManager.int32_type;
 
@@ -233,7 +233,7 @@ namespace CIR {
 			return Value.ToString ();
 		}
 
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			type = TypeManager.uint32_type;
 
@@ -262,7 +262,7 @@ namespace CIR {
 			return Value.ToString ();
 		}
 
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			type = TypeManager.int64_type;
 
@@ -298,7 +298,7 @@ namespace CIR {
 			return Value.ToString ();
 		}
 
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			type = TypeManager.float_type;
 
@@ -324,7 +324,7 @@ namespace CIR {
 			return Value.ToString ();
 		}
 
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			type = TypeManager.double_type;
 
@@ -350,7 +350,7 @@ namespace CIR {
 			return Value.ToString ();
 		}
 
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			type = TypeManager.decimal_type;
 
@@ -377,7 +377,7 @@ namespace CIR {
 			return "\"" + s + "\"";
 		}
 
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			type = TypeManager.string_type;
 

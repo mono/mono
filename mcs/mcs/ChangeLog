@@ -1,6 +1,22 @@
 2001-09-28  Miguel de Icaza  <miguel@ximian.com>
 
-	* expression.cs (Probe::Emit): Is needs to do an isinst and then
+	* expression.cs (UserImplicitCast): Method should always be
+	non-null. 
+	(Invocation::BetterConversion): Simplified test for IntLiteral.
+
+	(Expression::ImplicitNumericConversion): Split this routine out.
+	Put the code that performs implicit constant integer conversions
+	here. 
+
+	(Expression::Resolve): Become a wrapper around DoResolve so we can
+	check eclass and type being set after resolve.
+
+	(Invocation::Badness): Remove this dead function
+
+	(Binary::ResolveOperator): Do not compute the expensive argumnets
+	unless we have a union for it.
+
+	(Probe::Emit): Is needs to do an isinst and then
 	compare against null.
 
 	(::CanConvert): Added Location argument.  If the Location argument

@@ -36,6 +36,7 @@ public class TypeManager {
 	static public Type enum_type;
 	static public Type delegate_type;
 	static public Type void_type;
+	static public Type enumeration_type;
 
 	static public MethodInfo string_concat_string_string;
 	static public MethodInfo string_concat_object_object;

@@ -42,7 +42,7 @@ namespace CIR {
 			}
 		}
 
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			target = target.Resolve (tc);
 			source = source.Resolve (tc);
@@ -64,6 +64,7 @@ namespace CIR {
 				tc.RootContext.Report.Error (131, "Left hand of an assignment must be a variable, a property or an indexer");
 			}
 			type = target_type;
+			eclass = ExprClass.Value;
 			return this;
 		}
 

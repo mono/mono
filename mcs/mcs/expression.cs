@@ -119,8 +119,32 @@ namespace CIR {
 		//   expression).
 		// </remarks>
 		
-		public abstract Expression Resolve (TypeContainer tc);
+		public abstract Expression DoResolve (TypeContainer tc);
 
+
+		//
+		// Currently Resolve wraps DoResolve to perform sanity
+		// checking and assertion checking on what we expect from Resolve
+		//
+
+		public Expression Resolve (TypeContainer tc)
+		{
+			Expression e = DoResolve (tc);
+
+			if (e != null){
+				if (e.ExprClass == ExprClass.Invalid)
+					throw new Exception ("Expression " + e +
+							     " ExprClass is Invalid after resolve");
+
+				if (e.ExprClass != ExprClass.MethodGroup)
+					if (e.type == null)
+						throw new Exception ("Expression " + e +
+								     " did not set its type after Resolve");
+			}
+
+			return e;
+		}
+		       
 		// <summary>
 		//   Emits the code for the expression
 		// </summary>
@@ -340,34 +364,37 @@ namespace CIR {
 			return ne.Resolve (tc);
 		}
 
-		static int level = 0;
-
-		static Hashtable conversion_cache;
 		// <summary>
-		//   Converts implicitly the resolved expression `expr' into the
-		//   `target_type'.  It returns a new expression that can be used
-		//   in a context that expects a `target_type'. 
+		//   Implicit Numeric Conversions.
+		//
+		//   expr is the expression to convert, returns a new expression of type
+		//   target_type or null if an implicit conversion is not possible.
+		//
 		// </summary>
-		static public Expression ConvertImplicit (TypeContainer tc, Expression expr,
-							  Type target_type, Location l)
+		static public Expression ImplicitNumericConversion (TypeContainer tc, Expression expr,
+								    Type target_type, Location l)
 		{
 			Type expr_type = expr.Type;
-
-			if (expr_type == target_type)
-				return expr;
 			
-			if (level != 0) {
-				if (conversion_cache == null)
-					conversion_cache = new Hashtable ();
-				
-				Expression conv = (Expression) conversion_cache [expr_type + "=>" + target_type];
+			//
+			// Attempt to do the implicit constant expression conversions
 
-				return conv;
+			if (expr is IntLiteral){
+				Expression e;
+				
+				e = TryImplicitIntConversion (target_type, (IntLiteral) expr);
+				if (e != null)
+					return e;
+			} else if (expr is LongLiteral){
+				//
+				// Try the implicit constant expression conversion
+				// from long to ulong, instead of a nice routine,
+				// we just inline it
+				//
+				if (((LongLiteral) expr).Value > 0)
+					return expr;
 			}
 			
-			//
-			// Step 1: Built-in conversions.
-			//
 			if (expr_type == TypeManager.sbyte_type){
 				//
 				// From sbyte to short, int, long, float, double.
@@ -468,7 +495,7 @@ namespace CIR {
 			} else if ((expr_type == TypeManager.uint64_type) ||
 				   (expr_type == TypeManager.int64_type)){
 				//
-				// From long to float, double
+				// From long/ulong to float, double
 				//
 				if (target_type == TypeManager.double_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
@@ -496,33 +523,146 @@ namespace CIR {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				if (target_type == TypeManager.decimal_type)
 					return InternalTypeConstructor (tc, expr, target_type);
-			} 
-
-			Expression e;
-			
-			e = ImplicitReferenceConversion (expr, target_type);
-			if (e != null){
-				return e;
+			} else if (expr_type == TypeManager.float_type){
+				//
+				// float to double
+				//
+				if (target_type == TypeManager.double_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 			}
 
-			level++;
-			e = UserImplicitCast.CanConvert (tc, expr, target_type, l);
-			level--;
-
-			if (e != null) {
-
-				if (conversion_cache == null)
-					conversion_cache = new Hashtable ();
-				
-				conversion_cache.Add (expr_type.ToString () + "=>" + target_type.ToString (), e);
-				return e;
-			}
-			//
-			//  Could not find an implicit cast.
-			//
 			return null;
 		}
 
+		// <summary>
+		//   User-defined implicit conversions
+		// </summary>
+		static public Expression ImplicitUserConversion (TypeContainer tc, Expression source,
+								 Type target, Location l)
+		{
+			Expression mg1, mg2;
+			MethodBase method;
+			ArrayList arguments;
+			
+			mg1 = MemberLookup (tc, source.Type, "op_Implicit", false);
+			mg2 = MemberLookup (tc, target, "op_Implicit", false);
+			
+			MethodGroupExpr union = Invocation.MakeUnionSet (mg1, mg2);
+
+			if (union != null) {
+				arguments = new ArrayList ();
+				arguments.Add (new Argument (source, Argument.AType.Expression));
+
+				method = Invocation.OverloadResolve (tc, union, arguments, l, true);
+
+				if (method != null) {
+					MethodInfo mi = (MethodInfo) method;
+					
+					if (mi.ReturnType == target)
+						return new UserImplicitCast (mi, arguments);
+				}
+			}
+			
+			// If we have a boolean type, we need to check for the True
+			// and False operators too.
+			
+			if (target == TypeManager.bool_type) {
+
+				mg1 = MemberLookup (tc, source.Type, "op_True", false);
+				mg2 = MemberLookup (tc, target, "op_True", false);
+				
+				union = Invocation.MakeUnionSet (mg1, mg2);
+
+				if (union == null)
+					return null;
+
+				arguments = new ArrayList ();
+				arguments.Add (new Argument (source, Argument.AType.Expression));
+			
+				method = Invocation.OverloadResolve (tc, union, arguments,
+								     new Location ("FIXME", 1, 1), true);
+				if (method != null) {
+					MethodInfo mi = (MethodInfo) method;
+
+					if (mi.ReturnType == target) 
+						return new UserImplicitCast (mi, arguments);
+				}
+			}
+			
+			return null;
+		}
+		
+		// <summary>
+		//   Converts implicitly the resolved expression `expr' into the
+		//   `target_type'.  It returns a new expression that can be used
+		//   in a context that expects a `target_type'. 
+		// </summary>
+		static public Expression ConvertImplicit (TypeContainer tc, Expression expr,
+							  Type target_type, Location l)
+		{
+			Type expr_type = expr.Type;
+			Expression e;
+
+			if (expr_type == target_type)
+				return expr;
+
+			e = ImplicitNumericConversion (tc, expr, target_type, l);
+			if (e != null)
+				return e;
+
+			e = ImplicitReferenceConversion (expr, target_type);
+			if (e != null)
+				return e;
+
+			e = ImplicitUserConversion (tc, expr, target_type, l);
+			if (e != null)
+				return e;
+
+			if (target_type.IsSubclassOf (TypeManager.enum_type) && expr is IntLiteral){
+				IntLiteral i = (IntLiteral) expr;
+
+				if (i.Value == 0)
+					return new EmptyCast (expr, target_type);
+			}
+			return null;
+		}
+
+		
+		// <summary>
+		//   Attempts to apply the `Standard Implicit
+		//   Conversion' rules to the expression `expr' into
+		//   the `target_type'.  It returns a new expression
+		//   that can be used in a context that expects a
+		//   `target_type'.
+		//
+		//   This is different from `ConvertImplicit' in that the
+		//   user defined implicit conversions are excluded. 
+		// </summary>
+		static public Expression ConvertImplicitStandard (TypeContainer tc, Expression expr,
+								  Type target_type, Location l)
+		{
+			Type expr_type = expr.Type;
+			Expression e;
+
+			if (expr_type == target_type)
+				return expr;
+
+			e = ImplicitNumericConversion (tc, expr, target_type, l);
+			if (e != null)
+				return e;
+
+			e = ImplicitReferenceConversion (expr, target_type);
+			if (e != null)
+				return e;
+
+			if (target_type.IsSubclassOf (TypeManager.enum_type) && expr is IntLiteral){
+				IntLiteral i = (IntLiteral) expr;
+
+				if (i.Value == 0)
+					return new EmptyCast (expr, target_type);
+			}
+			return null;
+		}
 		// <summary>
 		//   Attemps to perform an implict constant conversion of the IntLiteral
 		//   into a different data type using casts (See Implicit Constant
@@ -577,23 +717,6 @@ namespace CIR {
 			e = ConvertImplicit (tc, target, type, l);
 			if (e != null)
 				return e;
-			
-			//
-			// Attempt to do the implicit constant expression conversions
-
-			if (target is IntLiteral){
-				e = TryImplicitIntConversion (type, (IntLiteral) target);
-				if (e != null)
-					return e;
-			} else if (target is LongLiteral){
-				//
-				// Try the implicit constant expression conversion
-				// from long to ulong, instead of a nice routine,
-				// we just inline it
-				//
-				if (((LongLiteral) target).Value > 0)
-					return target;
-			}
 			
 			string msg = "Can not convert implicitly from `"+
 				TypeManager.CSharpName (target.Type) + "' to `" +
@@ -928,7 +1051,7 @@ namespace CIR {
 			this.child = child;
 		}
 
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			// This should never be invoked, we are born in fully
 			// initialized state.
@@ -955,7 +1078,7 @@ namespace CIR {
 		{
 		}
 
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			// This should never be invoked, we are born in fully
 			// initialized state.
@@ -996,7 +1119,7 @@ namespace CIR {
 			second_valid = true;
 		}
 
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			// This should never be invoked, we are born in fully
 			// initialized state.
@@ -1026,7 +1149,7 @@ namespace CIR {
 		{
 		}
 
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			// This should never be invoked, we are born in fully
 			// initialized state.
@@ -1178,7 +1301,8 @@ namespace CIR {
 				Arguments = new ArrayList ();
 				Arguments.Add (new Argument (expr, Argument.AType.Expression));
 				
-				method = Invocation.OverloadResolve (tc, (MethodGroupExpr) mg, Arguments, location);
+				method = Invocation.OverloadResolve (tc, (MethodGroupExpr) mg,
+								     Arguments, location);
 				if (method != null) {
 					MethodInfo mi = (MethodInfo) method;
 
@@ -1362,13 +1486,14 @@ namespace CIR {
 
 		}
 
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			expr = expr.Resolve (tc);
 
 			if (expr == null)
 				return null;
-			
+
+			eclass = ExprClass.Value;
 			return ResolveOperator (tc);
 		}
 
@@ -1520,7 +1645,7 @@ namespace CIR {
 			}
 		}
 		
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			probe_type = tc.LookupType (ProbeType, false);
 
@@ -1582,7 +1707,7 @@ namespace CIR {
 			}
 		}
 		
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			expr = expr.Resolve (tc);
 			if (expr == null)
@@ -1880,11 +2005,11 @@ namespace CIR {
 
 			MethodGroupExpr union = Invocation.MakeUnionSet (left_expr, right_expr);
 
-			Arguments = new ArrayList ();
-			Arguments.Add (new Argument (left, Argument.AType.Expression));
-			Arguments.Add (new Argument (right, Argument.AType.Expression));
-			
 			if (union != null) {
+				Arguments = new ArrayList ();
+				Arguments.Add (new Argument (left, Argument.AType.Expression));
+				Arguments.Add (new Argument (right, Argument.AType.Expression));
+			
 				method = Invocation.OverloadResolve (tc, union, Arguments, location);
 				if (method != null) {
 					MethodInfo mi = (MethodInfo) method;
@@ -1901,15 +2026,7 @@ namespace CIR {
 			// Only perform numeric promotions on:
 			// +, -, *, /, %, &, |, ^, ==, !=, <, >, <=, >=
 			//
-			if (oper == Operator.LeftShift || oper == Operator.RightShift){
-				return CheckShiftArguments (tc);
-			} else if (oper == Operator.LogicalOr || oper == Operator.LogicalAnd){
-
-				if (l != TypeManager.bool_type || r != TypeManager.bool_type)
-					error19 (tc);
-
-				return this;
-			} else if (oper == Operator.Addition){
+			if (oper == Operator.Addition){
 				//
 				// If any of the arguments is a string, cast to string
 				//
@@ -1947,8 +2064,23 @@ namespace CIR {
 				//
 				// FIXME: is Delegate operator + (D x, D y) handled?
 				//
-			} else 			
-				DoNumericPromotions (tc, l, r);
+			}
+			
+			if (oper == Operator.LeftShift || oper == Operator.RightShift)
+				return CheckShiftArguments (tc);
+
+			if (oper == Operator.LogicalOr || oper == Operator.LogicalAnd){
+				if (l != TypeManager.bool_type || r != TypeManager.bool_type)
+					error19 (tc);
+
+				return this;
+			} 
+
+			//
+			// We are dealing with numbers
+			//
+
+			DoNumericPromotions (tc, l, r);
 
 			if (left == null || right == null)
 				return null;
@@ -1977,7 +2109,7 @@ namespace CIR {
 			return this;
 		}
 		
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			left = left.Resolve (tc);
 			right = right.Resolve (tc);
@@ -1989,7 +2121,9 @@ namespace CIR {
 				throw new Exception ("Resolve returned non null, but did not set the type!");
 			if (right.Type == null)
 				throw new Exception ("Resolve returned non null, but did not set the type!");
-			
+
+			eclass = ExprClass.Value;
+
 			return ResolveOperator (tc);
 		}
 
@@ -2249,7 +2383,7 @@ namespace CIR {
 			}
 		}
 
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			expr = expr.Resolve (tc);
 
@@ -2398,7 +2532,7 @@ namespace CIR {
 		// simple_names and qualified_identifiers are placed on
 		// the tree equally.
 		//
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			if (Name.IndexOf (".") != -1)
 				return ResolveMemberAccess (tc, Name);
@@ -2448,7 +2582,7 @@ namespace CIR {
 			}
 		}
 		
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			VariableInfo vi = Block.GetVariableInfo (Name);
 
@@ -2551,7 +2685,7 @@ namespace CIR {
 			eclass = ExprClass.Variable;
 		}
 
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			Type [] types = Pars.GetParameterInfo (tc);
 
@@ -2665,90 +2799,6 @@ namespace CIR {
 			}
 		}
 
-		/// <summary>
-		///   Computes whether Argument `a' and the Type t of the  ParameterInfo `pi' are
-		///   compatible, and if so, how good is the match (in terms of
-		///   "better conversions" (7.4.2.3).
-		///
-		///   0   is the best possible match.
-		///   -1  represents a type mismatch.
-		///   -2  represents a ref/out mismatch.
-		/// </summary>
-		static int Badness (Argument a, Type t)
-		{
-			Expression argument_expr = a.Expr;
-			Type argument_type = argument_expr.Type;
-
-			if (argument_type == null){
-				throw new Exception ("Expression of type " + a.Expr + " does not resolve its type");
-			}
-			
-			if (t == argument_type) 
-				return 0;
-
-			//
-			// Now probe whether an implicit constant expression conversion
-			// can be used.
-			//
-			// An implicit constant expression conversion permits the following
-			// conversions:
-			//
-			//    * A constant-expression of type `int' can be converted to type
-			//      sbyte, byute, short, ushort, uint, ulong provided the value of
-			//      of the expression is withing the range of the destination type.
-			//
-			//    * A constant-expression of type long can be converted to type
-			//      ulong, provided the value of the constant expression is not negative
-			//
-			// FIXME: Note that this assumes that constant folding has
-			// taken place.  We dont do constant folding yet.
-			//
-
-			if (argument_type == TypeManager.int32_type && argument_expr is IntLiteral){
-				IntLiteral ei = (IntLiteral) argument_expr;
-				int value = ei.Value;
-				
-				if (t == TypeManager.sbyte_type){
-					if (value >= SByte.MinValue && value <= SByte.MaxValue)
-						return 1;
-				} else if (t == TypeManager.byte_type){
-					if (Byte.MinValue >= 0 && value <= Byte.MaxValue)
-						return 1;
-				} else if (t == TypeManager.short_type){
-					if (value >= Int16.MinValue && value <= Int16.MaxValue)
-						return 1;
-				} else if (t == TypeManager.ushort_type){
-					if (value >= UInt16.MinValue && value <= UInt16.MaxValue)
-						return 1;
-				} else if (t == TypeManager.uint32_type){
-					//
-					// we can optimize this case: a positive int32
-					// always fits on a uint32
-					//
-					if (value >= 0)
-						return 1;
-				} else if (t == TypeManager.uint64_type){
-					//
-					// we can optimize this case: a positive int32
-					// always fits on a uint64
-					//
-					if (value >= 0)
-						return 1;
-				}
-			} else if (argument_type == TypeManager.int64_type && argument_expr is LongLiteral){
-				LongLiteral ll = (LongLiteral) argument_expr;
-
-				if (t == TypeManager.uint64_type)
-					if (ll.Value > 0)
-						return 1;
-			}
-			
-			// FIXME: Implement user-defined implicit conversions here.
-			// FIXME: Implement better conversion here.
-			
-			return -1;
-		}
-
 		// <summary>
 		//   Returns the Parameters (a ParameterData interface) for the
 		//   Method `mb'
@@ -2776,6 +2826,12 @@ namespace CIR {
 			}
 		}
 
+		// <summary>
+		//   Tells whether a user defined conversion from Type `from' to
+		//   Type `to' exists.
+		//
+		//   FIXME: we could implement a cache here. 
+		// </summary>
 		static bool ConversionExists (TypeContainer tc, Type from, Type to)
 		{
 			// Locate user-defined implicit operators
@@ -2820,7 +2876,7 @@ namespace CIR {
 		//  Returns : 1 if a->p is better
 		//            0 if a->q or neither is better 
 		// </summary>
-		static int BetterConversion (TypeContainer tc, Argument a, Type p, Type q)
+		static int BetterConversion (TypeContainer tc, Argument a, Type p, Type q, bool use_standard)
 		{
 			
 			Type argument_type = a.Expr.Type;
@@ -2856,7 +2912,7 @@ namespace CIR {
 			// taken place.  We dont do constant folding yet.
 			//
 
-			if (argument_type == TypeManager.int32_type && argument_expr is IntLiteral){
+			if (argument_expr is IntLiteral){
 				IntLiteral ei = (IntLiteral) argument_expr;
 				int value = ei.Value;
 				
@@ -2900,7 +2956,10 @@ namespace CIR {
 
 				Expression tmp;
 
-				tmp = ConvertImplicit (tc, argument_expr, p, Location.Null);
+				if (use_standard)
+					tmp = ConvertImplicitStandard (tc, argument_expr, p, Location.Null);
+				else
+					tmp = ConvertImplicit (tc, argument_expr, p, Location.Null);
 
 				if (tmp != null)
 					return 1;
@@ -2909,12 +2968,8 @@ namespace CIR {
 
 			}
 
-			Expression p_tmp, q_tmp;
-
-			p_tmp = ConvertImplicit (tc, argument_expr, p, Location.Null);
-			q_tmp = ConvertImplicit (tc, argument_expr, q, Location.Null);
-
-			if (p_tmp != null && q_tmp == null)
+			if (ConversionExists (tc, p, q) == true &&
+			    ConversionExists (tc, q, p) == false)
 				return 1;
 
 			if (p == TypeManager.sbyte_type)
@@ -2943,7 +2998,9 @@ namespace CIR {
 		//  0 if candidate ain't better
 		//  1 if candidate is better than the current best match
 		// </summary>
-		static int BetterFunction (TypeContainer tc, ArrayList args, MethodBase candidate, MethodBase best)
+		static int BetterFunction (TypeContainer tc, ArrayList args,
+					   MethodBase candidate, MethodBase best,
+					   bool use_standard)
 		{
 			ParameterData candidate_pd = GetParameterData (candidate);
 			ParameterData best_pd;
@@ -2965,11 +3022,11 @@ namespace CIR {
 						
 						Argument a = (Argument) args [j];
 						
-						x = BetterConversion (tc, a, candidate_pd.ParameterType (j), null);
+						x = BetterConversion (
+							tc, a, candidate_pd.ParameterType (j), null,
+							use_standard);
 						
-						if (x > 0)
-							continue;
-						else 
+						if (x <= 0)
 							break;
 					}
 					
@@ -2994,9 +3051,9 @@ namespace CIR {
 					Argument a = (Argument) args [j];
 
 					x = BetterConversion (tc, a, candidate_pd.ParameterType (j),
-							      best_pd.ParameterType (j));
+							      best_pd.ParameterType (j), use_standard);
 					y = BetterConversion (tc, a, best_pd.ParameterType (j),
-							      candidate_pd.ParameterType (j));
+							      candidate_pd.ParameterType (j), use_standard);
 					
 					rating1 += x;
 					rating2 += y;
@@ -3061,7 +3118,7 @@ namespace CIR {
 			return null;
 
 		}
-		
+
 		// <summary>
 		//   Find the Applicable Function Members (7.4.2.1)
 		//
@@ -3074,12 +3131,16 @@ namespace CIR {
 		//   loc: The location if we want an error to be reported, or a Null
 		//        location for "probing" purposes.
 		//
+		//   inside_user_defined: controls whether OverloadResolve should use the 
+		//   ConvertImplicit or ConvertImplicitStandard during overload resolution.
+		//
 		//   Returns: The MethodBase (either a ConstructorInfo or a MethodInfo)
 		//            that is the best match of me on Arguments.
 		//
 		// </summary>
 		public static MethodBase OverloadResolve (TypeContainer tc, MethodGroupExpr me,
-							  ArrayList Arguments, Location loc)
+							  ArrayList Arguments, Location loc,
+							  bool use_standard)
 		{
 			ArrayList afm = new ArrayList ();
 			int best_match_idx = -1;
@@ -3091,7 +3152,7 @@ namespace CIR {
 				MethodBase candidate  = me.Methods [i];
 				int x;
 
-				x = BetterFunction (tc, Arguments, candidate, method);
+				x = BetterFunction (tc, Arguments, candidate, method, use_standard);
 				
 				if (x == 0)
 					continue;
@@ -3141,8 +3202,14 @@ namespace CIR {
 				Type parameter_type = pd.ParameterType (j);
 				
 				if (a_expr.Type != parameter_type){
-					Expression conv = ConvertImplicit (tc, a_expr, parameter_type,
-									   Location.Null);
+					Expression conv;
+
+					if (use_standard)
+						conv = ConvertImplicitStandard (tc, a_expr, parameter_type,
+										Location.Null);
+					else
+						conv = ConvertImplicit (tc, a_expr, parameter_type,
+									Location.Null);
 
 					if (conv == null){
 						if (!Location.IsNull (loc)) {
@@ -3151,7 +3218,7 @@ namespace CIR {
 							       "' has some invalid arguments");
 							Error (tc, 1503, loc,
 							       "Argument " + (j+1) +
-							       " : Cannot convert from '" + TypeManager.CSharpName (a_expr.Type)
+							       ": Cannot convert from '" + TypeManager.CSharpName (a_expr.Type)
 							       + "' to '" + TypeManager.CSharpName (pd.ParameterType (j)) + "'");
 						}
 						return null;
@@ -3167,8 +3234,13 @@ namespace CIR {
 			return method;
 		}
 
+		public static MethodBase OverloadResolve (TypeContainer tc, MethodGroupExpr me,
+							  ArrayList Arguments, Location loc)
+		{
+			return OverloadResolve (tc, me, Arguments, loc, false);
+		}
 			
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			//
 			// First, resolve the expression that is used to
@@ -3196,7 +3268,8 @@ namespace CIR {
 				}
 			}
 
-			method = OverloadResolve (tc, (MethodGroupExpr) this.expr, Arguments, Location);
+			method = OverloadResolve (tc, (MethodGroupExpr) this.expr, Arguments,
+						  Location);
 
 			if (method == null){
 				Error (tc, -6, Location,
@@ -3207,6 +3280,7 @@ namespace CIR {
 			if (method is MethodInfo)
 				type = ((MethodInfo)method).ReturnType;
 
+			eclass = ExprClass.Value;
 			return this;
 		}
 
@@ -3312,7 +3386,7 @@ namespace CIR {
 			Location      = loc;
 		}
 		
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			type = tc.LookupType (RequestedType, false);
 
@@ -3342,14 +3416,16 @@ namespace CIR {
 				}
 			}
 
-			method = Invocation.OverloadResolve (tc, (MethodGroupExpr) ml, Arguments, Location);
+			method = Invocation.OverloadResolve (tc, (MethodGroupExpr) ml, Arguments,
+							     Location);
 
 			if (method == null) {
 				Error (tc, -6, Location,
 				       "New invocation: Can not find a constructor for this argument list");
 				return null;
 			}
-			
+
+			eclass = ExprClass.Value;
 			return this;
 		}
 
@@ -3370,7 +3446,7 @@ namespace CIR {
 	// Represents the `this' construct
 	//
 	public class This : Expression, LValue {
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			eclass = ExprClass.Variable;
 			type = tc.TypeBuilder;
@@ -3411,7 +3487,7 @@ namespace CIR {
 			QueriedType = queried_type;
 		}
 
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			type = tc.LookupType (QueriedType, false);
 
@@ -3437,7 +3513,7 @@ namespace CIR {
 			this.QueriedType = queried_type;
 		}
 
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			// FIXME: Implement;
 			throw new Exception ("Unimplemented");
@@ -3467,7 +3543,7 @@ namespace CIR {
 			}
 		}
 		
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			Expression new_expression = expr.Resolve (tc);
 
@@ -3530,7 +3606,7 @@ namespace CIR {
 			eclass = ExprClass.Namespace;
 		}
 
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			return this;
 		}
@@ -3551,7 +3627,7 @@ namespace CIR {
 			eclass = ExprClass.Type;
 		}
 
-		override public Expression Resolve (TypeContainer tc)
+		override public Expression DoResolve (TypeContainer tc)
 		{
 			return this;
 		}
@@ -3591,7 +3667,7 @@ namespace CIR {
 			}
 		}
 		
-		override public Expression Resolve (TypeContainer tc)
+		override public Expression DoResolve (TypeContainer tc)
 		{
 			return this;
 		}
@@ -3615,7 +3691,7 @@ namespace CIR {
 			type = fi.FieldType;
 		}
 
-		override public Expression Resolve (TypeContainer tc)
+		override public Expression DoResolve (TypeContainer tc)
 		{
 			if (!FieldInfo.IsStatic){
 				if (Instance == null){
@@ -3686,7 +3762,7 @@ namespace CIR {
 			type = pi.PropertyType;
 		}
 
-		override public Expression Resolve (TypeContainer tc)
+		override public Expression DoResolve (TypeContainer tc)
 		{
 			// We are born in resolved state. 
 			return this;
@@ -3711,7 +3787,7 @@ namespace CIR {
 			eclass = ExprClass.EventAccess;
 		}
 
-		override public Expression Resolve (TypeContainer tc)
+		override public Expression DoResolve (TypeContainer tc)
 		{
 			// We are born in resolved state. 
 			return this;
@@ -3733,7 +3809,7 @@ namespace CIR {
 			Expr = e;
 		}
 
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			Expr = Expr.Resolve (tc);
 
@@ -3765,7 +3841,7 @@ namespace CIR {
 			Expr = e;
 		}
 
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			Expr = Expr.Resolve (tc);
 
@@ -3799,7 +3875,7 @@ namespace CIR {
 			Arguments = e_list;
 		}
 
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			// FIXME: Implement;
 			throw new Exception ("Unimplemented");
@@ -3833,7 +3909,7 @@ namespace CIR {
 			
 		}
 
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			// FIXME: Implement;
 			throw new Exception ("Unimplemented");
@@ -3858,7 +3934,7 @@ namespace CIR {
 			eclass = ExprClass.Value;
 		}
 
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			//
 			// We are born in a fully resolved state
@@ -3866,81 +3942,19 @@ namespace CIR {
 			return this;
 		}
 
-		public static Expression CanConvert (TypeContainer tc, Expression source, Type target,
-						     Location l)
-		{
-			Expression mg1, mg2;
-			MethodBase method;
-			ArrayList arguments;
-			
-			mg1 = MemberLookup (tc, source.Type, "op_Implicit", false);
-			mg2 = MemberLookup (tc, target, "op_Implicit", false);
-			
-			MethodGroupExpr union = Invocation.MakeUnionSet (mg1, mg2);
-
-			if (union != null) {
-				arguments = new ArrayList ();
-				arguments.Add (new Argument (source, Argument.AType.Expression));
-
-				method = Invocation.OverloadResolve (tc, union, arguments, l);
-
-				if (method != null) {
-					MethodInfo mi = (MethodInfo) method;
-					
-					if (mi.ReturnType == target)
-						return new UserImplicitCast (mi, arguments);
-				}
-			}
-			
-			// If we have a boolean type, we need to check for the True
-			// and False operators too.
-			
-			if (target == TypeManager.bool_type) {
-
-				mg1 = MemberLookup (tc, source.Type, "op_True", false);
-				mg2 = MemberLookup (tc, target, "op_True", false);
-				
-				union = Invocation.MakeUnionSet (mg1, mg2);
-
-				if (union == null)
-					return null;
-
-				arguments = new ArrayList ();
-				arguments.Add (new Argument (source, Argument.AType.Expression));
-			
-				method = Invocation.OverloadResolve (tc, union, arguments,
-								     new Location ("FIXME", 1, 1));
-				if (method != null) {
-					MethodInfo mi = (MethodInfo) method;
-
-					if (mi.ReturnType == target) 
-						return new UserImplicitCast (mi, arguments);
-				}
-			}
-			
-			return null;
-		}
-		
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			
-			if (method != null) {
-
-				// Note that operators are static anyway
+			// Note that operators are static anyway
 				
-				if (arguments != null) 
-					Invocation.EmitArguments (ec, method, arguments);
-				
-				if (method is MethodInfo)
-					ig.Emit (OpCodes.Call, (MethodInfo) method);
-				else
-					ig.Emit (OpCodes.Call, (ConstructorInfo) method);
-
-				return;
-			}
-
-			throw new Exception ("Implement me");
+			if (arguments != null) 
+				Invocation.EmitArguments (ec, method, arguments);
+			
+			if (method is MethodInfo)
+				ig.Emit (OpCodes.Call, (MethodInfo) method);
+			else
+				ig.Emit (OpCodes.Call, (ConstructorInfo) method);
 		}
 
 	}

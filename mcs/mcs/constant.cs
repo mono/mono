@@ -52,7 +52,7 @@ namespace CIR {
 			}
 		}
 
-		public override Expression Resolve (TypeContainer tc)
+		public override Expression DoResolve (TypeContainer tc)
 		{
 			// FIXME: implement
 			return this;
