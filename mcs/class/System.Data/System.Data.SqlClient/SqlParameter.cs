@@ -10,6 +10,7 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using Mono.Data.Tds;
 using Mono.Data.Tds.Protocol;
 using System;
 using System.ComponentModel;
@@ -23,22 +24,18 @@ namespace System.Data.SqlClient {
 	{
 		#region Fields
 
+		TdsMetaParameter metaParameter;
+
 		SqlParameterCollection container = null;
 		DbType dbType;
 		ParameterDirection direction = ParameterDirection.Input;
 		bool isNullable;
 		bool isSizeSet = false;
 		bool isTypeSet = false;
-		object objValue;
 		int offset;
-		string parameterName;
-		byte precision;
-		byte scale;
-		int size;
 		SqlDbType sqlDbType;
 		string sourceColumn;
 		DataRowVersion sourceVersion;
-		string typeName;
 
 		#endregion // Fields
 
@@ -51,8 +48,7 @@ namespace System.Data.SqlClient {
 
 		public SqlParameter (string parameterName, object value) 
 		{
-			this.parameterName = parameterName;
-			this.objValue = value;
+			metaParameter = new TdsMetaParameter (parameterName, value);
 			this.sourceVersion = DataRowVersion.Current;
 			InferSqlType (value);
 		}
@@ -75,15 +71,10 @@ namespace System.Data.SqlClient {
 		[EditorBrowsable (EditorBrowsableState.Advanced)]	 
 		public SqlParameter (string parameterName, SqlDbType dbType, int size, ParameterDirection direction, bool isNullable, byte precision, byte scale, string sourceColumn, DataRowVersion sourceVersion, object value) 
 		{
-			SqlDbType = dbType;
-			Size = size;
-			Value = value;
+			metaParameter = new TdsMetaParameter (parameterName, size, isNullable, precision, scale, value);
 
-			ParameterName = parameterName;
+			SqlDbType = dbType;
 			Direction = direction;
-			IsNullable = isNullable;
-			Precision = precision;
-			Scale = scale;
 			SourceColumn = sourceColumn;
 			SourceVersion = sourceVersion;
 		}
@@ -93,33 +84,33 @@ namespace System.Data.SqlClient {
 		// This is in SqlCommand.DeriveParameters.
 		internal SqlParameter (object[] dbValues)
 		{
-			precision = 0;
-			scale = 0;
-			direction = ParameterDirection.Input;
+			Precision = 0;
+			Scale = 0;
+			Direction = ParameterDirection.Input;
 
-			parameterName = (string) dbValues[3];
+			ParameterName = (string) dbValues[3];
 
 			switch ((short) dbValues[5]) {
 			case 1:
-				direction = ParameterDirection.Input;
+				Direction = ParameterDirection.Input;
 				break;
 			case 2:
-				direction = ParameterDirection.Output;
+				Direction = ParameterDirection.Output;
 				break;
 			case 3:
-				direction = ParameterDirection.InputOutput;
+				Direction = ParameterDirection.InputOutput;
 				break;
 			case 4:
-				direction = ParameterDirection.ReturnValue;
+				Direction = ParameterDirection.ReturnValue;
 				break;
 			}
 
-			isNullable = (bool) dbValues[8];
+			IsNullable = (bool) dbValues[8];
 
 			if (dbValues[12] != null)
-				precision = (byte) ((short) dbValues[12]);
+				Precision = (byte) ((short) dbValues[12]);
 			if (dbValues[13] != null)
-				scale = (byte) ((short) dbValues[13]);
+				Scale = (byte) ((short) dbValues[13]);
 
 			SetDbTypeName ((string) dbValues[16]);
 		}
@@ -153,12 +144,20 @@ namespace System.Data.SqlClient {
 		[DefaultValue (ParameterDirection.Input)]
 		public ParameterDirection Direction {
 			get { return direction; }
-			set { direction = value; }
+			set { 
+				direction = value; 
+				if (direction == ParameterDirection.Output)
+					MetaParameter.Direction = TdsParameterDirection.Output;
+			}
+		}
+
+		internal TdsMetaParameter MetaParameter {
+			get { return metaParameter; }
 		}
 
 		string IDataParameter.ParameterName {
-			get { return parameterName; }
-			set { parameterName = value; }
+			get { return metaParameter.ParameterName; }
+			set { metaParameter.ParameterName = value; }
 		}
 
 		[Browsable (false)]
@@ -167,8 +166,8 @@ namespace System.Data.SqlClient {
 		[DesignOnly (true)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]	 
 		public bool IsNullable	{
-			get { return isNullable; }
-			set { isNullable = value; }
+			get { return metaParameter.IsNullable; }
+			set { metaParameter.IsNullable = value; }
 		}
 
 		[Browsable (false)]
@@ -183,35 +182,32 @@ namespace System.Data.SqlClient {
 		[DataSysDescription ("Name of the parameter, like '@p1'")]
 		[DefaultValue ("")]
 		public string ParameterName {
-			get { return parameterName; }
-			set { parameterName = value; }
+			get { return metaParameter.ParameterName; }
+			set { metaParameter.ParameterName = value; }
 		}
 
 		[DataCategory ("Data")]
 		[DataSysDescription ("For decimal, numeric, varnumeric DBTypes.")]
 		[DefaultValue (0)]
 		public byte Precision {
-			get { return precision; }
-			set { precision = value; }
+			get { return metaParameter.Precision; }
+			set { metaParameter.Precision = value; }
 		}
 
 		[DataCategory ("Data")]
 		[DataSysDescription ("For decimal, numeric, varnumeric DBTypes.")]
 		[DefaultValue (0)]
                 public byte Scale {
-			get { return scale; }
-			set { scale = value; }
+			get { return metaParameter.Scale; }
+			set { metaParameter.Scale = value; }
 		}
 
 		[DataCategory ("Data")]
 		[DataSysDescription ("Size of variable length datatypes (strings & arrays).")]
 		[DefaultValue (0)]
                 public int Size {
-			get { return size; }
-			set { 
-				size = value; 
-				isSizeSet = true;
-			}
+			get { return metaParameter.Size; }
+			set { metaParameter.Size = value; }
 		}
 
 		[DataCategory ("Data")]
@@ -246,11 +242,11 @@ namespace System.Data.SqlClient {
 		[DataSysDescription ("Value of the parameter.")]
 		[DefaultValue (null)]
 		public object Value {
-			get { return objValue; }
+			get { return metaParameter.Value; }
 			set { 
 				if (!isTypeSet)
 					InferSqlType (value);
-				objValue = value; 
+				metaParameter.Value = value; 
 			}
 		}
 
@@ -316,37 +312,6 @@ namespace System.Data.SqlClient {
 			}
 		}
 
-		internal string Prepare (string name)
-		{
-			StringBuilder result = new StringBuilder ();
-			result.Append (name);
-			result.Append (" ");
-			result.Append (typeName);
-
-			switch (sqlDbType) {
-			case SqlDbType.VarBinary :
-			case SqlDbType.NVarChar :
-			case SqlDbType.VarChar :
-				if (!isSizeSet || size == 0)
-					throw new InvalidOperationException ("All variable length parameters must have an explicitly set non-zero size.");
-				result.Append (String.Format ("({0})", size));
-				break;
-			case SqlDbType.NChar :
-			case SqlDbType.Char :
-			case SqlDbType.Binary :
-				if (size > 0) 
-					result.Append (String.Format ("({0})", size));
-				break;
-			case SqlDbType.Decimal :
-				result.Append (String.Format ("({0},{1})", precision, scale));
-				break;
-                        default:
-                                break;
-                        }
-
-                        return result.ToString ();
-		}
-
 		// When the DbType is set, we also set the SqlDbType, as well as the SQL Server
 		// string representation of the type name.  If the DbType is not convertible
 		// to an SqlDbType, throw an exception.
@@ -356,76 +321,76 @@ namespace System.Data.SqlClient {
 
 			switch (type) {
 			case DbType.AnsiString:
-				typeName = "varchar";
+				MetaParameter.TypeName = "varchar";
 				sqlDbType = SqlDbType.VarChar;
 				break;
 			case DbType.AnsiStringFixedLength:
-				typeName = "char";
+				MetaParameter.TypeName = "char";
 				sqlDbType = SqlDbType.Char;
 				break;
 			case DbType.Binary:
-				typeName = "varbinary";
+				MetaParameter.TypeName = "varbinary";
 				sqlDbType = SqlDbType.VarBinary;
 				break;
 			case DbType.Boolean:
-				typeName = "bit";
+				MetaParameter.TypeName = "bit";
 				sqlDbType = SqlDbType.Bit;
 				break;
 			case DbType.Byte:
-				typeName = "tinyint";
+				MetaParameter.TypeName = "tinyint";
 				sqlDbType = SqlDbType.TinyInt;
 				break;
 			case DbType.Currency:
 				sqlDbType = SqlDbType.Money;
-				typeName = "money";
+				MetaParameter.TypeName = "money";
 				break;
 			case DbType.Date:
 			case DbType.DateTime:
-				typeName = "datetime";
+				MetaParameter.TypeName = "datetime";
 				sqlDbType = SqlDbType.DateTime;
 				break;
 			case DbType.Decimal:
-				typeName = "decimal";
+				MetaParameter.TypeName = "decimal";
 				sqlDbType = SqlDbType.Decimal;
 				break;
 			case DbType.Double:
-				typeName = "float";
+				MetaParameter.TypeName = "float";
 				sqlDbType = SqlDbType.Float;
 				break;
 			case DbType.Guid:
-				typeName = "uniqueidentifier";
+				MetaParameter.TypeName = "uniqueidentifier";
 				sqlDbType = SqlDbType.UniqueIdentifier;
 				break;
 			case DbType.Int16:
-				typeName = "smallint";
+				MetaParameter.TypeName = "smallint";
 				sqlDbType = SqlDbType.SmallInt;
 				break;
 			case DbType.Int32:
-				typeName = "int";
+				MetaParameter.TypeName = "int";
 				sqlDbType = SqlDbType.Int;
 				break;
 			case DbType.Int64:
-				typeName = "bigint";
+				MetaParameter.TypeName = "bigint";
 				sqlDbType = SqlDbType.BigInt;
 				break;
 			case DbType.Object:
-				typeName = "sql_variant";
+				MetaParameter.TypeName = "sql_variant";
 				sqlDbType = SqlDbType.Variant;
 				break;
 			case DbType.Single:
-				typeName = "real";
+				MetaParameter.TypeName = "real";
 				sqlDbType = SqlDbType.Real;
 				break;
 			case DbType.String:
-				typeName = "nvarchar";
+				MetaParameter.TypeName = "nvarchar";
 				sqlDbType = SqlDbType.NVarChar;
 				break;
 			case DbType.StringFixedLength:
-				typeName = "nchar";
+				MetaParameter.TypeName = "nchar";
 				sqlDbType = SqlDbType.NChar;
 				break;
 			case DbType.Time:
-				typeName = "datetime";
+				MetaParameter.TypeName = "datetime";
 				sqlDbType = SqlDbType.DateTime;
 				break;
 			default:
@@ -522,99 +487,99 @@ namespace System.Data.SqlClient {
 
 			switch (type) {
 			case SqlDbType.BigInt:
-				typeName = "bigint";
+				MetaParameter.TypeName = "bigint";
 				dbType = DbType.Int64;
 				break;
 			case SqlDbType.Binary:
-				typeName = "binary";
+				MetaParameter.TypeName = "binary";
 				dbType = DbType.Binary;
 				break;
 			case SqlDbType.Timestamp:
-				typeName = "timestamp";
+				MetaParameter.TypeName = "timestamp";
 				dbType = DbType.Binary;
 				break;
 			case SqlDbType.VarBinary:
-				typeName = "varbinary";
+				MetaParameter.TypeName = "varbinary";
 				dbType = DbType.Binary;
 				break;
 			case SqlDbType.Bit:
-				typeName = "bit";
+				MetaParameter.TypeName = "bit";
 				dbType = DbType.Boolean;
 				break;
 			case SqlDbType.Char:
-				typeName = "char";
+				MetaParameter.TypeName = "char";
 				dbType = DbType.AnsiStringFixedLength;
 				break;
 			case SqlDbType.DateTime:
-				typeName = "datetime";
+				MetaParameter.TypeName = "datetime";
 				dbType = DbType.DateTime;
 				break;
 			case SqlDbType.SmallDateTime:
-				typeName = "smalldatetime";
+				MetaParameter.TypeName = "smalldatetime";
 				dbType = DbType.DateTime;
 				break;
 			case SqlDbType.Decimal:
-				typeName = "decimal";
+				MetaParameter.TypeName = "decimal";
 				dbType = DbType.Decimal;
 				break;
 			case SqlDbType.Float:
-				typeName = "float";
+				MetaParameter.TypeName = "float";
 				dbType = DbType.Double;
 				break;
 			case SqlDbType.Image:
-				typeName = "image";
+				MetaParameter.TypeName = "image";
 				dbType = DbType.Binary;
 				break;
 			case SqlDbType.Int:
-				typeName = "int";
+				MetaParameter.TypeName = "int";
 				dbType = DbType.Int32;
 				break;
 			case SqlDbType.Money:
-				typeName = "money";
+				MetaParameter.TypeName = "money";
 				dbType = DbType.Currency;
 				break;
 			case SqlDbType.SmallMoney:
-				typeName = "smallmoney";
+				MetaParameter.TypeName = "smallmoney";
 				dbType = DbType.Currency;
 				break;
 			case SqlDbType.NChar:
-				typeName = "nchar";
+				MetaParameter.TypeName = "nchar";
 				dbType = DbType.StringFixedLength;
 				break;
 			case SqlDbType.NText:
-				typeName = "ntext";
+				MetaParameter.TypeName = "ntext";
 				dbType = DbType.String;
 				break;
 			case SqlDbType.NVarChar:
-				typeName = "nvarchar";
+				MetaParameter.TypeName = "nvarchar";
 				dbType = DbType.String;
 				break;
 			case SqlDbType.Real:
-				typeName = "real";
+				MetaParameter.TypeName = "real";
 				dbType = DbType.Single;
 				break;
 			case SqlDbType.SmallInt:
-				typeName = "smallint";
+				MetaParameter.TypeName = "smallint";
 				dbType = DbType.Int16;
 				break;
 			case SqlDbType.Text:
-				typeName = "text";
+				MetaParameter.TypeName = "text";
 				dbType = DbType.AnsiString;
 				break;
 			case SqlDbType.VarChar:
-				typeName = "varchar";
+				MetaParameter.TypeName = "varchar";
 				dbType = DbType.AnsiString;
 				break;
 			case SqlDbType.TinyInt:
-				typeName = "tinyint";
+				MetaParameter.TypeName = "tinyint";
 				dbType = DbType.Byte;
 				break;
 			case SqlDbType.UniqueIdentifier:
-				typeName = "uniqueidentifier";
+				MetaParameter.TypeName = "uniqueidentifier";
 				dbType = DbType.Guid;
 				break;
 			case SqlDbType.Variant:
-				typeName = "sql_variant";
+				MetaParameter.TypeName = "sql_variant";
 				dbType = DbType.Object;
 				break;
 			default:
@@ -625,7 +590,7 @@ namespace System.Data.SqlClient {
 
 		public override string ToString() 
 		{
-			return parameterName;
+			return ParameterName;
 		}
 
 		#endregion // Methods

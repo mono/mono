@@ -1,3 +1,14 @@
+2002-11-26  Tim Coleman <tim@timcoleman.com>
+	* System.Data.SqlClient/SqlCommand.cs:
+	* System.Data.SqlClient/SqlConnection.cs:
+	* System.Data.SqlClient/SqlDataReader.cs:
+	* System.Data.SqlClient/SqlParameter.cs:
+	* System.Data.SqlClient/SqlParameterCollection.cs:
+	* System.Data.SqlClient/SqlTransaction.cs:
+		Many changes around restructuring of parameter
+		information so that the Sybase provider supports
+		PREPAREs too.
+
 2002-11-25  Ville Palo <vi64pa@koti.soon.fi>
 
 	* System.Data/DataSet.cs : Started to implement ReadXmlSchema -method

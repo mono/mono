@@ -11,6 +11,7 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using Mono.Data.Tds;
 using Mono.Data.Tds.Protocol;
 using System;
 using System.Collections;
@@ -28,19 +29,16 @@ namespace System.Data.SqlClient {
 		#region Fields
 
 		bool disposed = false;
-
 		int commandTimeout;
 		bool designTimeVisible;
 		string commandText;
-
 		CommandType commandType;
 		SqlConnection connection;
 		SqlTransaction transaction;
 		UpdateRowSource updatedRowSource;
-
 		CommandBehavior behavior = CommandBehavior.Default;
-		NameValueCollection preparedStatements = new NameValueCollection ();
 		SqlParameterCollection parameters;
+		string preparedStatement = null;
 
 		#endregion // Fields
 
@@ -90,7 +88,11 @@ namespace System.Data.SqlClient {
 		[RefreshProperties (RefreshProperties.All)]
 		public string CommandText {
 			get { return commandText; }
-			set { commandText = value; }
+			set { 
+				if (value != commandText && preparedStatement != null)
+					Unprepare ();
+				commandText = value; 
+			}
 		}
 
 		[DataSysDescription ("Time to wait for command to execute.")]
@@ -191,137 +193,6 @@ namespace System.Data.SqlClient {
 
 		#region Methods
 
-		private string BuildCommand ()
-		{
-			string statementHandle = preparedStatements [commandText];
-			if (statementHandle != null) {
-				string proc = String.Format ("sp_execute {0}", statementHandle);	
-				if (parameters.Count > 0)
-					proc += ",";
-				return BuildProcedureCall (proc, parameters);
-			}
-
-			if (commandType == CommandType.StoredProcedure)
-				return BuildProcedureCall (commandText, parameters);
-
-			string sql = String.Empty;
-			if ((behavior & CommandBehavior.KeyInfo) > 0)
-				sql += "SET FMTONLY OFF; SET NO_BROWSETABLE ON;";
-			if ((behavior & CommandBehavior.SchemaOnly) > 0)
-				sql += "SET FMTONLY ON;";
-	
-			switch (commandType) {
-			case CommandType.Text :
-				sql += commandText;
-				break;
-			default:
-				throw new InvalidOperationException ("The CommandType was invalid.");
-			}
-			return BuildExec (sql);
-		}
-
-		private string BuildExec (string sql)
-		{
-			StringBuilder parms = new StringBuilder ();
-			foreach (SqlParameter parameter in parameters) {
-				if (parms.Length > 0)
-					parms.Append (", ");
-				parms.Append (parameter.Prepare (parameter.ParameterName));
-				if (parameter.Direction == ParameterDirection.Output)
-					parms.Append (" output");
-			}
-
-			SqlParameterCollection localParameters = new SqlParameterCollection (this);
-		
-			localParameters.Add ("@P1", SqlDbType.NVarChar, sql.Length).Value = sql;
-
-			if (parameters.Count > 0) 
-				localParameters.Add ("@P2", SqlDbType.NVarChar, parms.ToString ().Length).Value = parms.ToString ();
-
-			foreach (SqlParameter p in parameters)
-				localParameters.Add ((SqlParameter) ((ICloneable) p).Clone ());
-
-			return BuildProcedureCall ("sp_executesql", localParameters);
-		}
-
-		private string BuildPrepare ()
-		{
-			StringBuilder parms = new StringBuilder ();
-			foreach (SqlParameter parameter in parameters) {
-				if (parms.Length > 0)
-					parms.Append (", ");
-				parms.Append (parameter.Prepare (parameter.ParameterName));
-				if (parameter.Direction == ParameterDirection.Output)
-					parms.Append (" output");
-			}
-
-			SqlParameterCollection localParameters = new SqlParameterCollection (this);
-			SqlParameter parm;
-		
-			parm = new SqlParameter ("@P1", SqlDbType.Int);
-			parm.Direction = ParameterDirection.Output;
-			localParameters.Add (parm);
-
-			parm = new SqlParameter ("@P2", SqlDbType.NVarChar);
-			parm.Value = parms.ToString ();
-			parm.Size = ((string) parm.Value).Length;
-			localParameters.Add (parm);
-
-			parm = new SqlParameter ("@P3", SqlDbType.NVarChar);
-			parm.Value = commandText;
-			parm.Size = ((string) parm.Value).Length;
-			localParameters.Add (parm);
-
-			return BuildProcedureCall ("sp_prepare", localParameters);
-		}
-
-		private static string BuildProcedureCall (string procedure, SqlParameterCollection parameters)
-		{
-			StringBuilder parms = new StringBuilder ();
-			StringBuilder declarations = new StringBuilder ();
-			StringBuilder outParms = new StringBuilder ();
-			StringBuilder set = new StringBuilder ();
-
-			int index = 1;
-			foreach (SqlParameter parameter in parameters) {
-				string parmName = String.Format ("@P{0}", index);
-
-				switch (parameter.Direction) {
-				case ParameterDirection.Input :
-					if (parms.Length > 0)
-						parms.Append (", ");
-					parms.Append (FormatParameter (parameter));
-					break;
-				case ParameterDirection.Output :
-					if (parms.Length > 0)
-						parms.Append (", ");
-					parms.Append (parmName);
-					parms.Append (" output");
-
-					if (outParms.Length > 0) {
-						outParms.Append (", ");
-						declarations.Append (", ");
-					}
-					else {
-						outParms.Append ("select ");
-						declarations.Append ("declare ");
-					}
-
-					declarations.Append (parameter.Prepare (parmName));
-					set.Append (String.Format ("set {0}=NULL\n", parmName));
-					outParms.Append (parmName);
-					break;
-				default :
-					throw new NotImplementedException ("Only support input and output parameters.");
-				}
-				index += 1;
-			}
-			if (declarations.Length > 0)
-				declarations.Append ('\n');
-
-			return String.Format ("{0}{1}{2} {3}\n{4}", declarations.ToString (), set.ToString (), procedure, parms.ToString (), outParms.ToString ());
-		}
-
 		public void Cancel () 
 		{
 			if (Connection == null || Connection.Tds == null)
@@ -352,7 +223,10 @@ namespace System.Data.SqlClient {
 			SqlParameterCollection localParameters = new SqlParameterCollection (this);
 			localParameters.Add ("@P1", SqlDbType.NVarChar, commandText.Length).Value = commandText;
 
-			Connection.Tds.ExecuteQuery (BuildProcedureCall ("sp_procedure_params_rowset", localParameters));
+			string sql = "sp_procedure_params_rowset";
+
+			Connection.Tds.ExecProc (sql, localParameters.MetaParameters, 0, true);
+
 			SqlDataReader reader = new SqlDataReader (this);
 			parameters.Clear ();
 			object[] dbValues = new object[reader.FieldCount];
@@ -364,19 +238,52 @@ namespace System.Data.SqlClient {
 			reader.Close ();	
 		}
 
+		private void Execute (CommandBehavior behavior, bool wantResults)
+		{
+			TdsMetaParameterCollection parms = Parameters.MetaParameters;
+			if (preparedStatement == null) {
+				bool schemaOnly = ((CommandBehavior & CommandBehavior.SchemaOnly) > 0);
+				bool keyInfo = ((CommandBehavior & CommandBehavior.SchemaOnly) > 0);
+
+				StringBuilder sql1 = new StringBuilder ();
+				StringBuilder sql2 = new StringBuilder ();
+
+				if (schemaOnly || keyInfo)
+					sql1.Append ("SET FMTONLY OFF;");
+				if (keyInfo) {
+					sql1.Append ("SET NO_BROWSETABLE ON;");
+					sql2.Append ("SET NO_BROWSETABLE OFF;");
+				}
+				if (schemaOnly) {
+					sql1.Append ("SET FMTONLY ON;");
+					sql2.Append ("SET FMTONLY OFF;");
+				}
+
+				switch (CommandType) {
+				case CommandType.StoredProcedure:
+					if (keyInfo || schemaOnly)
+						Connection.Tds.Execute (sql1.ToString ());
+					Connection.Tds.ExecProc (CommandText, parms, CommandTimeout, wantResults);
+					if (keyInfo || schemaOnly)
+						Connection.Tds.Execute (sql2.ToString ());
+					break;
+				case CommandType.Text:
+					string sql = String.Format ("{0}{1}{2}", sql1.ToString (), CommandText, sql2.ToString ());
+					Connection.Tds.Execute (sql, parms, CommandTimeout, wantResults);
+					break;
+				}
+			}
+			else 
+				Connection.Tds.ExecPrepared (preparedStatement, parms, CommandTimeout, wantResults);
+		}
+
 		public int ExecuteNonQuery ()
 		{
 			ValidateCommand ("ExecuteNonQuery");
-			string sql = String.Empty;
 			int result = 0;
 
-			if (Parameters.Count > 0)
-				sql = BuildCommand ();
-			else
-				sql = CommandText;
-
 			try {
-				result = Connection.Tds.ExecuteNonQuery (sql, CommandTimeout);
+				Execute (CommandBehavior.Default, false);
 			}
 			catch (TdsTimeoutException e) {
 				throw SqlException.FromTdsInternalException ((TdsInternalException) e);
@@ -394,15 +301,12 @@ namespace System.Data.SqlClient {
 		public SqlDataReader ExecuteReader (CommandBehavior behavior)
 		{
 			ValidateCommand ("ExecuteReader");
-			this.behavior = behavior;
-
 			try {
-				Connection.Tds.ExecuteQuery (BuildCommand (), CommandTimeout);
+				Execute (behavior, true);
 			}
 			catch (TdsTimeoutException e) {
 				throw SqlException.FromTdsInternalException ((TdsInternalException) e);
 			}
-		
 			Connection.DataReader = new SqlDataReader (this);
 			return Connection.DataReader;
 		}
@@ -411,7 +315,7 @@ namespace System.Data.SqlClient {
 		{
 			ValidateCommand ("ExecuteScalar");
 			try {
-				Connection.Tds.ExecuteQuery (BuildCommand (), CommandTimeout);
+				Execute (CommandBehavior.Default, true);
 			}
 			catch (TdsTimeoutException e) {
 				throw SqlException.FromTdsInternalException ((TdsInternalException) e);
@@ -428,9 +332,8 @@ namespace System.Data.SqlClient {
 		public XmlReader ExecuteXmlReader ()
 		{
 			ValidateCommand ("ExecuteXmlReader");
-
-			try {
-				Connection.Tds.ExecuteQuery (BuildCommand (), CommandTimeout);
+			try { 
+				Execute (CommandBehavior.Default, true);
 			}
 			catch (TdsTimeoutException e) {
 				throw SqlException.FromTdsInternalException ((TdsInternalException) e);
@@ -440,41 +343,6 @@ namespace System.Data.SqlClient {
 			SqlXmlTextReader textReader = new SqlXmlTextReader (dataReader);
 			XmlReader xmlReader = new XmlTextReader (textReader);
 			return xmlReader;
-		}
-
-		[MonoTODO ("Include offset from SqlParameter for binary/string types.")]
-		static string FormatParameter (SqlParameter parameter)
-		{
-			if (parameter.Value == null)
-				return "NULL";
-
-			switch (parameter.SqlDbType) {
-				case SqlDbType.BigInt :
-				case SqlDbType.Decimal :
-				case SqlDbType.Float :
-				case SqlDbType.Int :
-				case SqlDbType.Money :
-				case SqlDbType.Real :
-				case SqlDbType.SmallInt :
-				case SqlDbType.SmallMoney :
-				case SqlDbType.TinyInt :
-					return parameter.Value.ToString ();
-				case SqlDbType.NVarChar :
-				case SqlDbType.NChar :
-					return String.Format ("N'{0}'", parameter.Value.ToString ().Replace ("'", "''"));
-				case SqlDbType.UniqueIdentifier :
-					return String.Format ("0x{0}", ((Guid) parameter.Value).ToString ("N"));
-				case SqlDbType.Bit:
-					if (parameter.Value.GetType () == typeof (bool))
-						return (((bool) parameter.Value) ? "0x1" : "0x0");
-					return parameter.Value.ToString ();
-				case SqlDbType.Image:
-				case SqlDbType.Binary:
-				case SqlDbType.VarBinary:
-					return String.Format ("0x{0}", BitConverter.ToString ((byte[]) parameter.Value).Replace ("-", "").ToLower ());
-				default:
-					return String.Format ("'{0}'", parameter.Value.ToString ().Replace ("'", "''"));
-			}
 		}
 
 		private void GetOutputParameters ()
@@ -519,17 +387,19 @@ namespace System.Data.SqlClient {
 		public void Prepare ()
 		{
 			ValidateCommand ("Prepare");
-			Connection.Tds.ExecuteNonQuery (BuildPrepare ());
-
-			if (Connection.Tds.OutputParameters.Count == 0 || Connection.Tds.OutputParameters[0] == null)
-				throw new Exception ("Could not prepare the statement.");
-
-			preparedStatements [commandText] = ((int) Connection.Tds.OutputParameters [0]).ToString ();
+			if (CommandType == CommandType.Text) 
+				preparedStatement = Connection.Tds.Prepare (CommandText, Parameters.MetaParameters);
 		}
 
 		public void ResetCommandTimeout ()
 		{
 			commandTimeout = 30;
+		}
+
+		private void Unprepare ()
+		{
+			Connection.Tds.Unprepare (preparedStatement);
+			preparedStatement = null;
 		}
 
 		private void ValidateCommand (string method)

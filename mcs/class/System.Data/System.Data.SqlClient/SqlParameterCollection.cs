@@ -10,6 +10,7 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using Mono.Data.Tds;
 using System;
 using System.ComponentModel;
 using System.Data;
@@ -23,6 +24,7 @@ namespace System.Data.SqlClient {
 		#region Fields
 
 		ArrayList list = new ArrayList();
+		TdsMetaParameterCollection metaParameters;
 		SqlCommand command;
 
 		#endregion // Fields
@@ -32,6 +34,7 @@ namespace System.Data.SqlClient {
 		internal SqlParameterCollection (SqlCommand command)
 		{
 			this.command = command;
+			metaParameters = new TdsMetaParameterCollection ();
 		}
 
 		#endregion // Constructors
@@ -96,6 +99,10 @@ namespace System.Data.SqlClient {
 		object ICollection.SyncRoot {
 			get { return list.SyncRoot; }
 		}
+
+		internal TdsMetaParameterCollection MetaParameters {
+			get { return metaParameters; }
+		}
 		
 		#endregion // Properties
 
@@ -116,6 +123,7 @@ namespace System.Data.SqlClient {
 			
 			value.Container = this;
 			list.Add (value);
+			metaParameters.Add (value.MetaParameter);
 			return value;
 		}
 		
@@ -141,6 +149,7 @@ namespace System.Data.SqlClient {
 
 		public void Clear()
 		{
+			metaParameters.Clear ();
 			list.Clear ();
 		}
 		
@@ -188,11 +197,13 @@ namespace System.Data.SqlClient {
 
 		public void Remove (object value)
 		{
+			metaParameters.Remove (((SqlParameter) value).MetaParameter);
 			list.Remove (value);
 		}
 
 		public void RemoveAt (int index)
 		{
+			metaParameters.RemoveAt (index);
 			list.RemoveAt (index);
 		}
 

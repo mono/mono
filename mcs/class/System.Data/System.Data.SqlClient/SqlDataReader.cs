@@ -320,6 +320,55 @@ namespace System.Data.SqlClient {
 					row ["BaseColumnName"] = row ["ColumnName"];
 
 				switch ((TdsColumnType) schema ["ColumnType"]) {
+					case TdsColumnType.Int1:
+					case TdsColumnType.Int2:
+					case TdsColumnType.Int4:
+					case TdsColumnType.IntN:
+						switch ((int) schema ["ColumnSize"]) {
+						case 1:
+							dataTypeNames.Add ("tinyint");
+							row ["ProviderType"] = (int) SqlDbType.TinyInt;
+							row ["DataType"] = typeof (byte);
+							row ["IsLong"] = false;
+							break;
+						case 2:
+							dataTypeNames.Add ("smallint");
+							row ["ProviderType"] = (int) SqlDbType.SmallInt;
+							row ["DataType"] = typeof (short);
+							row ["IsLong"] = false;
+							break;
+						case 4:
+							dataTypeNames.Add ("int");
+							row ["ProviderType"] = (int) SqlDbType.Int;
+							row ["DataType"] = typeof (int);
+							row ["IsLong"] = false;
+							break;
+						case 8:
+							dataTypeNames.Add ("bigint");
+							row ["ProviderType"] = (int) SqlDbType.BigInt;
+							row ["DataType"] = typeof (long);
+							row ["IsLong"] = false;
+							break;
+						}
+						break;
+					case TdsColumnType.Real:
+					case TdsColumnType.Float8:
+					case TdsColumnType.FloatN:
+						switch ((int) schema ["ColumnSize"]) {
+						case 4:
+							dataTypeNames.Add ("real");
+							row ["ProviderType"] = (int) SqlDbType.Real;
+							row ["DataType"] = typeof (float);
+							row ["IsLong"] = false;
+							break;
+						case 8:
+							dataTypeNames.Add ("float");
+							row ["ProviderType"] = (int) SqlDbType.Float;
+							row ["DataType"] = typeof (double);
+							row ["IsLong"] = false;
+							break;
+						}
+						break;
 					case TdsColumnType.Image :
 						dataTypeNames.Add ("image");
 						row ["ProviderType"] = (int) SqlDbType.Image;
@@ -345,13 +394,6 @@ namespace System.Data.SqlClient {
 						row ["DataType"] = typeof (byte[]);
 						row ["IsLong"] = true;
 						break;
-					case TdsColumnType.IntN :
-					case TdsColumnType.Int4 :
-						dataTypeNames.Add ("int");
-						row ["ProviderType"] = (int) SqlDbType.Int;
-						row ["DataType"] = typeof (int);
-						row ["IsLong"] = false;
-						break;
 					case TdsColumnType.VarChar :
 					case TdsColumnType.BigVarChar :
 						dataTypeNames.Add ("varchar");
@@ -373,23 +415,11 @@ namespace System.Data.SqlClient {
 						row ["DataType"] = typeof (string);
 						row ["IsLong"] = false;
 						break;
-					case TdsColumnType.Int1 :
-						dataTypeNames.Add ("tinyint");
-						row ["ProviderType"] = (int) SqlDbType.TinyInt;
-						row ["DataType"] = typeof (byte);
-						row ["IsLong"] = false;
-						break;
 					case TdsColumnType.Bit :
 					case TdsColumnType.BitN :
 						dataTypeNames.Add ("bit");
 						row ["ProviderType"] = (int) SqlDbType.Bit;
 						row ["DataType"] = typeof (bool);
-						row ["IsLong"] = false;
-						break;
-					case TdsColumnType.Int2 :
-						dataTypeNames.Add ("smallint");
-						row ["ProviderType"] = (int) SqlDbType.SmallInt;
-						row ["DataType"] = typeof (short);
 						row ["IsLong"] = false;
 						break;
 					case TdsColumnType.DateTime4 :
@@ -400,24 +430,12 @@ namespace System.Data.SqlClient {
 						row ["DataType"] = typeof (DateTime);
 						row ["IsLong"] = false;
 						break;
-					case TdsColumnType.Real :
-						dataTypeNames.Add ("real");
-						row ["ProviderType"] = (int) SqlDbType.Real;
-						row ["DataType"] = typeof (float);
-						break;
 					case TdsColumnType.Money :
 					case TdsColumnType.MoneyN :
 					case TdsColumnType.Money4 :
 						dataTypeNames.Add ("money");
 						row ["ProviderType"] = (int) SqlDbType.Money;
 						row ["DataType"] = typeof (decimal);
-						row ["IsLong"] = false;
-						break;
-					case TdsColumnType.Float8 :
-					case TdsColumnType.FloatN :
-						dataTypeNames.Add ("float");
-						row ["ProviderType"] = (int) SqlDbType.Float;
-						row ["DataType"] = typeof (double);
 						row ["IsLong"] = false;
 						break;
 					case TdsColumnType.NText :

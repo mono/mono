@@ -11,6 +11,7 @@
 // Copyright (C) Tim Coleman, 2002
 //
 
+using Mono.Data.Tds;
 using Mono.Data.Tds.Protocol;
 using System;
 using System.Collections;
@@ -224,7 +225,7 @@ namespace System.Data.SqlClient {
 				break;
 			}
 
-			tds.ExecuteNonQuery (String.Format ("SET TRANSACTION ISOLATION LEVEL {0};BEGIN TRANSACTION {1}", isolevel, transactionName));
+			tds.Execute (String.Format ("SET TRANSACTION ISOLATION LEVEL {0};BEGIN TRANSACTION {1}", isolevel, transactionName));
 
 			transaction = new SqlTransaction (this, iso);
 			return transaction;
@@ -236,7 +237,7 @@ namespace System.Data.SqlClient {
 				throw new ArgumentException (String.Format ("The database name {0} is not valid."));
 			if (state != ConnectionState.Open)
 				throw new InvalidOperationException ("The connection is not open.");
-			tds.ExecuteNonQuery (String.Format ("use {0}", database));
+			tds.Execute (String.Format ("use {0}", database));
 		}
 
 		private void ChangeState (ConnectionState currentState)
@@ -351,7 +352,7 @@ namespace System.Data.SqlClient {
 			if (!tds.IsConnected) 
 				tds.Connect (parms);
 			else if (connectionReset)
-				tds.ExecuteNonQuery ("EXEC sp_reset_connection");
+				tds.ExecProc ("sp_reset_connection");
 				
 			ChangeState (ConnectionState.Open);
 		}
