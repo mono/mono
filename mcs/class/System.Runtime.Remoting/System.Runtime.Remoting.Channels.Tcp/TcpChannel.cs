@@ -2,7 +2,7 @@
 // System.Runtime.Remoting.Channels.Tcp.TcpChannel.cs
 //
 // Author: Rodrigo Moya (rodrigo@ximian.com)
-//         Lluis Sanchez Gual (lsg@ctv.es)
+//         Lluis Sanchez Gual (lluis@ideary.com)
 //
 // 2002 (C) Copyright, Ximian, Inc.
 //
@@ -114,7 +114,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			objectURI = null;
 			port = 0;
 			
-			Match m = Regex.Match (url, "tcp://([^:]+):([0-9]+)[/](.*)");
+			Match m = Regex.Match (url, "tcp://([^:]+):([0-9]+)/?(.*)");
 
 			if (!m.Success)
 				return null;
@@ -123,6 +123,8 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			string port_str = m.Groups[2].Value;
 			objectURI = m.Groups[3].Value;
 			port = Convert.ToInt32 (port_str);
+
+			if (objectURI == string.Empty) objectURI = null;
 				
 			return host;
 		}

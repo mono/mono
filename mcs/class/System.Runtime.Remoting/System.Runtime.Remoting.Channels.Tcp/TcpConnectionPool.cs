@@ -1,7 +1,7 @@
 //
 // System.Runtime.Remoting.Channels.Tcp.TcpConnectionPool.cs
 //
-// Author: Lluis Sanchez (lsg@ctv.es)
+// Author: Lluis Sanchez Gual (lluis@ideary.com)
 //
 // 2002 (C) Lluis Sanchez Gual
 //
@@ -29,7 +29,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		// instance for each host
 		static Hashtable _pools = new Hashtable();
 
-		static int _maxOpenConnections = 2;
+		static int _maxOpenConnections = 50;
 		static int _keepAliveSeconds = 15;
 
 		static TcpConnectionPool()
@@ -178,7 +178,9 @@ namespace System.Runtime.Remoting.Channels.Tcp
 					// Wait for somewone to release one.
 
 					if (connection == null)
+					{
 						Monitor.Wait(_pool);
+					}
 				} 
 				while (connection == null);
 

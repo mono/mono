@@ -2,7 +2,7 @@
 // System.Runtime.Remoting.Channels.Tcp.TcpServerChannel.cs
 //
 // Author: Rodrigo Moya (rodrigo@ximian.com)
-//         Lluis Sanchez Gual (lsg@ctv.es)
+//         Lluis Sanchez Gual (lluis@ideary.com)
 //
 // 2002 (C) Copyright, Ximian, Inc.
 //
@@ -14,7 +14,6 @@ using System.Net.Sockets;
 using System.Net;
 using System.Threading;
 using System.IO;
-using System.Runtime.Remoting.Channels.Simple;
 
 namespace System.Runtime.Remoting.Channels.Tcp
 {
@@ -33,7 +32,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		{
 			if (serverSinkProvider == null) {
 				// FIXME: change soap for binary
-				serverSinkProvider = new SimpleServerFormatterSinkProvider ();
+				serverSinkProvider = new BinaryServerFormatterSinkProvider ();
 			}
 
 			host = Dns.GetHostByName(Dns.GetHostName()).HostName;

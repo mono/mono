@@ -1,6 +1,6 @@
 // System.Runtime.Remoting.Channels.Tcp.TcpMessageIO.cs
 //
-// Author: Lluis Sanchez (lsg@ctv.es)
+// Author: Lluis Sanchez Gual (lluis@ideary.com)
 //
 // (C) 2002 Lluis Sanchez Gual
 
@@ -49,7 +49,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 				}
 				return MessageType.Unknown;
 			}
-			catch (IOException ex)
+			catch (IOException)
 			{
 				// Stream closed
 				return MessageType.CancelSignal;

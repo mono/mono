@@ -2,7 +2,7 @@
 // System.Runtime.Remoting.Channels.Tcp.TcpClientTransportSink.cs
 //
 // Author: Dietmar Maurer (dietmar@ximian.com)
-//         Lluis Sanchez (lsg@ctv.es)
+//         Lluis Sanchez Gual (lluis@ideary.com)
 //
 // 2002 (C) Copyright, Ximian, Inc.
 //
@@ -56,8 +56,12 @@ namespace System.Runtime.Remoting.Channels.Tcp
 
 				connection = TcpConnectionPool.GetConnection (_host, _port);
 				TcpMessageIO.SendMessageStream (connection.Stream, requestStream, headers, connection.Buffer);
-				sinkStack.Push (this, connection);
-				ThreadPool.QueueUserWorkItem (new WaitCallback(ReadAsyncTcpMessage), sinkStack);
+
+				if (!RemotingServices.IsOneWay (((IMethodMessage)msg).MethodBase)) 
+				{
+					sinkStack.Push (this, connection);
+					ThreadPool.QueueUserWorkItem (new WaitCallback(ReadAsyncTcpMessage), sinkStack);
+				}
 			}
 			catch
 			{
@@ -131,13 +135,21 @@ namespace System.Runtime.Remoting.Channels.Tcp
 				connection = TcpConnectionPool.GetConnection (_host, _port);
 				TcpMessageIO.SendMessageStream (connection.Stream, requestStream, requestHeaders, connection.Buffer);
 
-				// Reads the response
-				MessageType type = TcpMessageIO.ReceiveMessageType (connection.Stream);
+				if (!RemotingServices.IsOneWay (((IMethodMessage)msg).MethodBase)) 
+				{
+					// Reads the response
+					MessageType type = TcpMessageIO.ReceiveMessageType (connection.Stream);
 
-				if (type != MessageType.MethodMessage)
-					throw new RemotingException ("Unknown response message from server");
+					if (type != MessageType.MethodMessage)
+						throw new RemotingException ("Unknown response message from server");
 
-				responseStream = TcpMessageIO.ReceiveMessageStream (connection.Stream, out responseHeaders, connection.Buffer);
+					responseStream = TcpMessageIO.ReceiveMessageStream (connection.Stream, out responseHeaders, connection.Buffer);
+				}
+				else
+				{
+					responseHeaders = null;
+					responseStream = null;
+				}
 			}
 			finally
 			{

@@ -3,6 +3,7 @@
 //
 // Author: Rodrigo Moya (rodrigo@ximian.com)
 //         Dietmar Maurer (dietmar@ximian.com)
+//         Lluis Sanchez Gual (lluis@ideary.com)
 //
 // 2002 (C) Copyright, Ximian, Inc.
 //
@@ -10,6 +11,7 @@
 using System.Collections;
 using System.IO;
 using System.Runtime.Remoting.Messaging;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace System.Runtime.Remoting.Channels
@@ -17,8 +19,20 @@ namespace System.Runtime.Remoting.Channels
 	public class BinaryClientFormatterSink : IClientFormatterSink,
 		IMessageSink, IClientChannelSink, IChannelSinkBase
 	{
+		static BinaryFormatter _serializationFormatter;
+		static BinaryFormatter _deserializationFormatter;
+
 		IClientChannelSink nextInChain;
-		IRemotingFormatter formatter = new BinaryFormatter ();
+
+		static BinaryClientFormatterSink ()
+		{
+			RemotingSurrogateSelector surrogateSelector = new RemotingSurrogateSelector ();
+			StreamingContext context = new StreamingContext(StreamingContextStates.Remoting, null);
+
+			_serializationFormatter = new BinaryFormatter (surrogateSelector, context);
+			_deserializationFormatter = new BinaryFormatter (null, context);
+		}
+
 		
 		public BinaryClientFormatterSink (IClientChannelSink nextSink)
 		{
@@ -35,7 +49,8 @@ namespace System.Runtime.Remoting.Channels
 		public IMessageSink NextSink
 		{
 			get {
-				return (IMessageSink) nextInChain;
+				// This is the last sink in the IMessageSink sink chain
+				return null;
 			}
 		}
 
@@ -46,12 +61,6 @@ namespace System.Runtime.Remoting.Channels
 			}
 		}
 
-		public IMessageCtrl AsyncProcessMessage (IMessage msg,
-							 IMessageSink replySink)
-		{
-			throw new NotImplementedException ();
-		}
-
 		public void AsyncProcessRequest (IClientChannelSinkStack sinkStack,
 						 IMessage msg,
 						 ITransportHeaders headers,
@@ -59,16 +68,16 @@ namespace System.Runtime.Remoting.Channels
 	        {
 			// never called because the formatter sink is
 			// always the first in the chain
-			throw new NotSupportedException ();
+			throw new NotSupportedException("BinaryClientFormatterSink must be the first sink in the IClientChannelSink chain");
 		}
 
-		[MonoTODO]
 		public void AsyncProcessResponse (IClientResponseChannelSinkStack sinkStack,
 						  object state,
 						  ITransportHeaders headers,
 						  Stream stream)
 		{
-			throw new NotImplementedException ();
+			IMessage replyMessage = (IMessage)_deserializationFormatter.DeserializeMethodResponse (stream, null, (IMethodCallMessage)state);
+			sinkStack.DispatchReplyMessage (replyMessage);
 		}
 
 		public Stream GetRequestStream (IMessage msg,
@@ -89,32 +98,51 @@ namespace System.Runtime.Remoting.Channels
 			throw new NotSupportedException ();
 		}
 
-		[MonoTODO]
+		public IMessageCtrl AsyncProcessMessage (IMessage msg,
+			IMessageSink replySink)
+		{
+			ITransportHeaders transportHeaders = new TransportHeaders();
+			transportHeaders[CommonTransportKeys.RequestUri] = ((IMethodCallMessage)msg).Uri;
+
+			Stream stream = nextInChain.GetRequestStream(msg, transportHeaders);
+			if (stream == null) stream = new MemoryStream ();
+
+			_serializationFormatter.Serialize (stream, msg, null);
+			if (stream is MemoryStream) stream.Position = 0;
+
+			ClientChannelSinkStack stack = new ClientChannelSinkStack(replySink);
+			stack.Push (this, msg);
+
+			nextInChain.AsyncProcessRequest (stack, msg, transportHeaders, stream);
+
+			// FIXME: No idea about how to implement IMessageCtrl
+			return null;	
+		}
+
 		public IMessage SyncProcessMessage (IMessage msg)
 		{
 			try {
 
-				ITransportHeaders response_headers;
+				ITransportHeaders call_headers = new TransportHeaders();
+				call_headers[CommonTransportKeys.RequestUri] = ((IMethodCallMessage)msg).Uri;
+
+				Stream call_stream = nextInChain.GetRequestStream(msg, call_headers);
+				if (call_stream == null) call_stream = new MemoryStream ();
+
+				// Serialize msg to the stream
+
+				_serializationFormatter.Serialize (call_stream, msg, null);
+				if (call_stream is MemoryStream) call_stream.Position = 0;
+
 				Stream response_stream;
-			
-				// fixme: use nextInChain.GetRequestStream() ??
-				Stream out_stream = new MemoryStream ();
-				//Stream out_stream = File.Open ("test.bin", FileMode.Create);
-			
-				// serialize msg to the stream
-				//formatter.Serialize (out_stream, msg, null);
-				//formatter.Serialize (out_stream, new Exception ("TEST"), null);
-				//out_stream.Position = 0;			
-				nextInChain.ProcessMessage (msg, null, out_stream, out response_headers,
+				ITransportHeaders response_headers;
+
+				nextInChain.ProcessMessage (msg, call_headers, call_stream, out response_headers,
 							    out response_stream);
 
-				out_stream.Close ();
+				// Deserialize response_stream
 
-				// deserialize response_stream
-				//IMessage result = (IMessage) formatter.Deserialize (response_stream, null);
-				throw new NotImplementedException ();
-
-				return null;
+				return (IMessage) _deserializationFormatter.DeserializeMethodResponse (response_stream, null, (IMethodCallMessage)msg);
 				
 			} catch (Exception e) {
 				 return new ReturnMessage (e, (IMethodCallMessage)msg);

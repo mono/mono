@@ -2,6 +2,7 @@
 // System.Runtime.Remoting.Channels.BinaryServerFormatterSink.cs
 //
 // Author: Duncan Mak (duncan@ximian.com)
+//         Lluis Sanchez Gual (lluis@ideary.com)
 //
 // 2002 (C) Copyright, Ximian, Inc.
 //
@@ -9,6 +10,8 @@
 using System.Collections;
 using System.IO;
 using System.Runtime.Remoting.Messaging;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace System.Runtime.Remoting.Channels {
 
@@ -21,9 +24,21 @@ namespace System.Runtime.Remoting.Channels {
 			Other = 1,
 		}
 
+		static BinaryFormatter _serializationFormatter;
+		static BinaryFormatter _deserializationFormatter;
+
 		IServerChannelSink next_sink;
 		Protocol protocol;
 		IChannelReceiver receiver;
+
+		static BinaryServerFormatterSink()
+		{
+			RemotingSurrogateSelector surrogateSelector = new RemotingSurrogateSelector ();
+			StreamingContext context = new StreamingContext(StreamingContextStates.Remoting, null);
+
+			_serializationFormatter = new BinaryFormatter (surrogateSelector, context);
+			_deserializationFormatter = new BinaryFormatter (null, context);
+		}
 		
 		public BinaryServerFormatterSink (BinaryServerFormatterSink.Protocol protocol,
 						  IServerChannelSink nextSink,
@@ -46,26 +61,59 @@ namespace System.Runtime.Remoting.Channels {
 			}
 		}
 
-		[MonoTODO]
 		public void AsyncProcessResponse (IServerResponseChannelSinkStack sinkStack, object state,
-						  IMessage msg, ITransportHeaders headers, Stream stream)
+						  IMessage message, ITransportHeaders headers, Stream stream)
 		{
-			throw new NotImplementedException ();
+			ITransportHeaders responseHeaders = new TransportHeaders();
+
+			if (sinkStack != null) stream = sinkStack.GetResponseStream (message, responseHeaders);
+			if (stream == null) stream = new MemoryStream();
+
+			_serializationFormatter.Serialize (stream, message, null);
+			if (stream is MemoryStream) stream.Position = 0;
+
+			sinkStack.AsyncProcessResponse (message, responseHeaders, stream);
 		}
 
 		public Stream GetResponseStream (IServerResponseChannelSinkStack sinkStack, object state,
 						IMessage msg, ITransportHeaders headers)
 		{
-			// never called 
-			throw new NotSupportedException ();
+			return null;
 		}
 		
-		[MonoTODO]
 		public ServerProcessing ProcessMessage (IServerChannelSinkStack sinkStack,
 							IMessage requestMsg, ITransportHeaders requestHeaders, Stream requestStream,
 							out IMessage responseMsg, out ITransportHeaders responseHeaders, out Stream responseStream)
 		{
-			throw new NotImplementedException ();
+			sinkStack.Push (this, null);
+
+			requestMsg = (IMessage) _deserializationFormatter.Deserialize (requestStream, null);
+
+			string url = (string)requestHeaders[CommonTransportKeys.RequestUri];
+			string uri;
+			receiver.Parse (url, out uri);
+			if (uri == null) uri = url;
+			requestMsg.Properties["__Uri"] = uri;
+
+			// Fixme: check if the message is an async msg
+
+			ServerProcessing res = next_sink.ProcessMessage (sinkStack, requestMsg, requestHeaders, null, out responseMsg, out responseHeaders, out responseStream);
+
+			if (res == ServerProcessing.Complete)
+			{
+				responseStream = null;
+				responseHeaders = new TransportHeaders();
+
+				if (sinkStack != null) responseStream = sinkStack.GetResponseStream (responseMsg, responseHeaders);
+				if (responseStream == null) responseStream = new MemoryStream();
+
+				_serializationFormatter.Serialize (responseStream, responseMsg);
+				if (responseStream is MemoryStream) responseStream.Position = 0;
+
+				sinkStack.Pop (this);
+			}
+			return res;
 		}
+
 	}
 }

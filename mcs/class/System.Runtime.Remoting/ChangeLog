@@ -1,4 +1,15 @@
-2002-12-29  Lluis Sanchez Gual <lsg@ctv.es>
+2002-12-29  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* TcpServerChannel.cs: Changed default formatter sink to BinaryFormatterSink
+	* TcpMessageIO.cs: warning corrected.
+	* TcpConnectionPool.cs: changed default value of MaxOpenConnections.
+	* TcpClientTransportSink.cs: implemented support for one way calls.
+	* TcpClientChannel.cs: Changed default formatter sink to BinaryFormatterSink.
+	* TcpChannel.cs: corrected Parse method. Now can parse channel uris.
+	* BinaryServerFormatterSink.cs: Implemented.
+	* BinaryClientFormatterSink.cs: Implemented.
+	
+2002-12-29  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* CommonTransportKeys.cs: Implemented and added to CVS
 	* TcpChannel.cs: Added. It is a more ore less complete implementation

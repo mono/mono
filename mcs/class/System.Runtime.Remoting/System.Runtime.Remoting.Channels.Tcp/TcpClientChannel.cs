@@ -2,7 +2,7 @@
 // System.Runtime.Remoting.Channels.Tcp.TcpClientChannel.cs
 //
 // Author: Dietmar Maurer (dietmar@ximian.com)
-//         Lluis Sanchez Gual (lsg@ctv.es)
+//         Lluis Sanchez Gual (lluis@ideary.com)
 //
 // 2002 (C) Copyright, Ximian, Inc.
 //
@@ -12,7 +12,6 @@ using System.IO;
 using System.Net.Sockets;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting.Channels.Simple;
 using System.Threading;
 
 namespace System.Runtime.Remoting.Channels.Tcp
@@ -45,8 +44,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			}
 			else
 			{
-				// FIXME: change soap to binary
-				_sinkProvider = new SimpleClientFormatterSinkProvider ();
+				_sinkProvider = new BinaryClientFormatterSinkProvider ();
 				_sinkProvider.Next = new TcpClientTransportSinkProvider ();
 			}
 
@@ -84,10 +82,14 @@ namespace System.Runtime.Remoting.Channels.Tcp
 	    {
 			if (url == null && remoteChannelData != null) {
 				IChannelDataStore ds = remoteChannelData as IChannelDataStore;
-				if (ds != null)
+				if (ds != null && ds.ChannelUris.Length > 0)
 					url = ds.ChannelUris [0];
+				else {
+					objectURI = null;
+					return null;
+				}
 			}
-			
+
 			if (Parse (url, out objectURI) == null)
 				return null;
 
