@@ -1,0 +1,16 @@
+2001-06-26  Sean MacIsaac  <macisaac@ximian.com>
+
+	* UnicodeEncoding.cs: Members added so that a clean compile is
+	possible.
+
+	* ASCIIEncoding.cs: Members added so that a clean compile is
+	possible.
+
+	* UTF7Encoding.cs: Members added so that a clean compile is
+	possible.
+
+	* UTF8Encoding.cs: Members added so that a clean compile is
+	possible.
+
+	* Encoding.cs: All public members included.  Most members
+	unimplemented.
