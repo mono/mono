@@ -1,5 +1,9 @@
 2002-08-24  Martin Baulig  <martin@gnome.org>
 
+	* debug.c (mono_debugger_internal_symbol_files): New function.
+
+2002-08-24  Martin Baulig  <martin@gnome.org>
+
 	* debug.c (mono_debug_write_symbols): Added support for the new
 	debugging format.
 
