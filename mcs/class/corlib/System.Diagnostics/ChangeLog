@@ -1,5 +1,8 @@
 2001-09-02  Miguel de Icaza  <miguel@ximian.com>
 
+	* Moved BooleanSwitch, Switch, TraceLevel and TraceSwitch to the
+	System assembly.
+
 	* Added StackFrame.cs and StackTrace.cs to the build.
 
 2001-08-21  Nick Drochak <ndrochak@gol.com>
