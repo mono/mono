@@ -1262,6 +1262,10 @@ namespace Mono.MonoBASIC {
 				    (target_type == TypeManager.decimal_type))
 					return true;
 
+			} else if (expr_type == TypeManager.decimal_type) {
+				if (target_type == TypeManager.float_type ||
+				    target_type == TypeManager.double_type)
+					return true;
 			} else if (expr_type == TypeManager.float_type){
 				//
 				// float to double, decimal

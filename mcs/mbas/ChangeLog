@@ -1,5 +1,11 @@
+2005-03-08 Satya Sudha K <ksathyasudha@novell.com>
+	* ecore.cs      : Included Decimal -> Single/double conversions in 'WideningConversionExists' method
+	* expression.cs : Fixed the behaviour of some Unary operators
+			  Allowing Exponentiation on object types
+
 2005-03-08 Manjula GHM <mmanjula@novell.com>
 	*assign.cs : Bug fix - new Object creation and object assignment
+
 2005-03-07 Satya Sudha K <ksathyasudha@novell.com>
 	* mb-parser.jay : Support for shift operators
 	* assign.cs     : Calling 'RuntimeHelpers.GetObjectValue' during new Object creation 

@@ -116,7 +116,7 @@ namespace Mono.MonoBASIC {
 			case Operator.OnesComplement:
 				return "~";
 			case Operator.AddressOf:
-				return "&";
+				return "AddressOf";
 			case Operator.Indirection:
 				return "*";
 			}
@@ -361,6 +361,7 @@ namespace Mono.MonoBASIC {
 
 				break;
 			case Operator.AddressOf:
+				// Not required in VB ??
 				if (Expr.eclass != ExprClass.Variable){
 					Error (211, "Cannot take the address of non-variables");
 					return null;
@@ -410,6 +411,15 @@ namespace Mono.MonoBASIC {
 						return e;
 					}
 				}
+
+				if (expr_type == TypeManager.bool_type) {
+					Expression e = ConvertImplicit (ec, Expr, TypeManager.short_type, loc);
+					if (e != null){
+						type = TypeManager.int32_type;
+						return e;
+					}
+				}
+
 				return Expr;
 
 			case Operator.UnaryNegation:
@@ -421,7 +431,6 @@ namespace Mono.MonoBASIC {
 				// double  operator- (double d)
 				// decimal operator- (decimal d)
 				//
-				Expression expr = null;
 
 				//
 				// transform - - expr into expr
@@ -452,54 +461,32 @@ namespace Mono.MonoBASIC {
 						return this;
 					}
 				}
-				if (expr_type == TypeManager.uint32_type){
-					//
-					// FIXME: handle exception to this rule that
-					// permits the int value -2147483648 (-2^31) to
-					// bt wrote as a decimal interger literal
-					//
-					type = TypeManager.int64_type;
-					Expr = ConvertImplicit (ec, Expr, type, loc);
-					return this;
-				}
 
-				if (expr_type == TypeManager.uint64_type){
-					//
-					// FIXME: Handle exception of 'long value'
-					// -92233720368547758087 (-2^63) to be wrote as
-					// decimal integer literal.
-					//
-					Error23 (expr_type);
-					return null;
+				if (expr_type == TypeManager.bool_type) {
+					Expression e = ConvertImplicit (ec, Expr, TypeManager.short_type, loc);
+					if (e != null){
+						Expr = e;
+						type = TypeManager.int32_type;
+						return this;
+					}
 				}
 
 				if (expr_type == TypeManager.float_type || 
-				    expr_type == TypeManager.double_type || 
-				    expr_type == TypeManager.int64_type || 
-				    expr_type == TypeManager.int32_type){
+				    expr_type == TypeManager.double_type) {
 					type = expr_type;
 					return this;
 				}
-				
-				expr = ConvertImplicit (ec, Expr, TypeManager.int32_type, loc);
-				if (expr != null){
-					Expr = expr;
-					type = expr.Type;
-					return this;
-				} 
 
-				expr = ConvertImplicit (ec, Expr, TypeManager.int64_type, loc);
-				if (expr != null){
-					Expr = expr;
-					type = expr.Type;
+				if (expr_type == TypeManager.short_type ||
+				    expr_type == TypeManager.byte_type) { 
+					type = TypeManager.int32_type;
 					return this;
 				}
 
-				expr = ConvertImplicit (ec, Expr, TypeManager.double_type, loc);
-				if (expr != null){
-					Expr = expr;
-					type = expr.Type;
-					return this;
+				if (expr_type == TypeManager.int32_type || 
+				    expr_type == TypeManager.int64_type) {
+					Expression e = new Binary (Binary.Operator.Subtraction, new IntLiteral (0), Expr, loc);
+					return e.Resolve (ec);
 				}
 				
 				Error23 (expr_type);
@@ -513,7 +500,6 @@ namespace Mono.MonoBASIC {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			Type init_type = Expr.Type;
 			if (Oper == Operator.AddressOf)
 				Expr = Expr.ResolveLValue (ec, new EmptyExpression ());
 			else
@@ -522,15 +508,22 @@ namespace Mono.MonoBASIC {
 			if (Expr == null)
 				return null;
 
+			Type init_type = Expr.Type;
+
 			eclass = ExprClass.Value;
 			Expression etmp = ResolveOperator (ec);
-			if (init_type == TypeManager.byte_type || init_type == TypeManager.short_type) {
+			// Convert the result to byte/short if operands are of type byte/short/boolean
+			if (etmp.Type != init_type && 
+			    (init_type == TypeManager.byte_type || 
+			     init_type == TypeManager.short_type || 
+			     init_type == TypeManager.bool_type)) {
 				Expression conv_exp = null;
-				if (init_type == TypeManager.byte_type && Oper != Operator.UnaryNegation){
-					conv_exp = ConvertImplicit (ec, etmp, TypeManager.byte_type, loc);
+				if (init_type == TypeManager.byte_type && Oper != Operator.UnaryNegation) {
+					return new OpcodeCast (etmp, TypeManager.byte_type, OpCodes.Conv_U1);
 				}
-				else 
+				else
 					conv_exp = ConvertImplicit (ec, etmp, TypeManager.short_type, loc);
+
 				if (conv_exp != null)
 					return conv_exp;
 			}
@@ -1581,6 +1574,30 @@ namespace Mono.MonoBASIC {
 			
 			Type l = left.Type;
 			Type r = right.Type;
+
+			if (l == TypeManager.object_type || r == TypeManager.object_type) {
+				if (r.IsValueType)
+					right = ConvertImplicit (ec, right, TypeManager.object_type, loc);
+				if (l.IsValueType)
+					left = ConvertImplicit (ec, left, TypeManager.object_type, loc);
+				if (left == null || right == null) {
+					Error_OperatorCannotBeApplied (loc, "^", l, r);
+					return null;
+				}
+
+				l = left.Type;
+				r = right.Type;
+
+				Expression tmp = Mono.MonoBASIC.Parser.DecomposeQI (
+							"Microsoft.VisualBasic.CompilerServices.ObjectType.PowObj",
+							Location.Null);
+
+				ArrayList arguments = new ArrayList ();
+				arguments.Add (new Argument (left, Argument.AType.Expression));
+				arguments.Add (new Argument (right, Argument.AType.Expression));
+				e = new Invocation (tmp, arguments, loc);
+				return e.Resolve (ec);
+			}
 			
 			if (l == TypeManager.date_type || r == TypeManager.date_type ||
 			    l == TypeManager.char_type || r == TypeManager.char_type ||
@@ -1608,16 +1625,11 @@ namespace Mono.MonoBASIC {
 				type = TypeManager.double_type;
 			}
 
-                        Expression etmp;
-                        ArrayList args;
-                        Argument arg1, arg2;
                                                                                                                
-                        etmp = Mono.MonoBASIC.Parser.DecomposeQI("System.Math.Pow", loc);
-                        args = new ArrayList();
-                        arg1 = new Argument (left, Argument.AType.Expression);
-                        arg2 = new Argument (right, Argument.AType.Expression);
-                        args.Add (arg1);
-                        args.Add (arg2);
+                        Expression etmp = Mono.MonoBASIC.Parser.DecomposeQI("System.Math.Pow", loc);
+                        ArrayList args = new ArrayList();
+                        args.Add (new Argument (left, Argument.AType.Expression));
+                        args.Add (new Argument (right, Argument.AType.Expression));
                         e = (Expression) new Invocation (etmp, args, loc);
                         return e.Resolve(ec);
 		}
@@ -2124,8 +2136,6 @@ namespace Mono.MonoBASIC {
 
 			Type conv_left_as = null;
 			Type conv_right_as = null;
-			Expression match, other;
-			match = other = null;
 
 			// deal with objects and reference types first
 			if (l == TypeManager.object_type || r == TypeManager.object_type) {
@@ -2284,8 +2294,7 @@ namespace Mono.MonoBASIC {
 						} 
 					} 
 	
-					match = left_is_string ? left: right;
-					other = right_is_string ? left: right;
+					Expression other = right_is_string ? left: right;
 					Type other_type = other.Type;
 	
 					//
