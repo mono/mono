@@ -8,21 +8,18 @@
 # All the dep files now land in the same directory so we
 # munge in the library name to keep the files from clashing.
 
-core_sourcefile = $(LIBRARY).sources
+sourcefile = $(LIBRARY).sources
 PLATFORM_excludes := $(wildcard $(LIBRARY).$(PLATFORM)-excludes)
 
-ifdef PLATFORM_excludes
-sourcefile = $(depsdir)/$(LIBRARY).$(PLATFORM)-sources
-$(sourcefile): $(core_sourcefile) $(PLATFORM_excludes)
-	cat $(core_sourcefile) $(PLATFORM_excludes) | sort | uniq -u >$@
-else
-sourcefile = $(core_sourcefile)
+ifndef PLATFORM_excludes
+ifeq (cat,$(PLATFORM_CHANGE_SEPARATOR_CMD))
+response = $(sourcefile)
+endif
 endif
 
-ifdef PLATFORM_CHANGE_SEPARATOR_CMD
+ifndef response
 response = $(depsdir)/$(PROFILE)_$(LIBRARY).response
-else
-response = $(sourcefile)
+library_CLEAN_FILES += $(response)
 endif
 
 ifndef LIBRARY_NAME
@@ -31,14 +28,14 @@ endif
 
 makefrag = $(depsdir)/$(PROFILE)_$(LIBRARY).makefrag
 the_lib = $(topdir)/class/lib/$(PROFILE)/$(LIBRARY_NAME)
-the_pdb = $(patsubst %.dll,%.pdb,$(the_lib))
+the_pdb = $(the_lib:.dll=.pdb)
+library_CLEAN_FILES += $(makefrag) $(the_lib) $(the_pdb)
 
 ifndef NO_TEST
-test_nunitfw = $(topdir)/class/lib/$(PROFILE)/nunit.framework.dll 
-test_nunitcore = $(topdir)/class/lib/$(PROFILE)/nunit.core.dll 
-test_nunitutil = $(topdir)/class/lib/$(PROFILE)/nunit.util.dll 
-test_nunit_dep = $(test_nunitfw) $(test_nunitcore) $(test_nunitutil)
-test_nunit_ref = -r:$(test_nunitfw) -r:$(test_nunitcore) -r:$(test_nunitutil)
+test_nunit_lib = nunit.framework.dll nunit.core.dll nunit.util.dll
+test_nunit_dep = $(test_nunit_lib:%=$(topdir)/class/lib/$(PROFILE)/%)
+test_nunit_ref = $(test_nunit_dep:%=-r:%)
+library_CLEAN_FILES += TestResult.xml
 
 ifndef test_against
 test_against = $(the_lib)
@@ -46,22 +43,24 @@ test_dep = $(the_lib)
 endif
 
 ifndef test_lib
-test_lib = $(patsubst %.dll,%_test.dll,$(LIBRARY))
+test_lib = $(LIBRARY:.dll=_test.dll)
 endif
-test_pdb = $(patsubst %.dll,%.pdb,$(test_lib))
+test_pdb = $(test_lib:.dll=.pdb)
 test_sourcefile = $(test_lib).sources
 test_response = $(depsdir)/$(PROFILE)_$(test_lib).response
 test_makefrag = $(depsdir)/$(PROFILE)_$(test_lib).makefrag
 test_flags = /r:$(test_against) $(test_nunit_ref) $(TEST_MCS_FLAGS)
+library_CLEAN_FILES += $(test_lib) $(test_pdb) $(test_response) $(test_makefrag)
 
 ifndef btest_lib
-btest_lib = $(patsubst %.dll,%_btest.dll,$(LIBRARY))
+btest_lib = $(LIBRARY:.dll=_btest.dll)
 endif
-btest_pdb = $(patsubst %.dll,%.pdb,$(btest_lib))
+btest_pdb = $(btest_lib:.dll=.pdb)
 btest_sourcefile = $(btest_lib).sources
 btest_response = $(depsdir)/$(btest_lib).response
 btest_makefrag = $(depsdir)/$(btest_lib).makefrag
 btest_flags = /r:$(test_against) $(test_nunit_ref) $(TEST_MBAS_FLAGS)
+library_CLEAN_FILES += $(btest_lib) $(btest_pdb) $(btest_response) $(btest_makefrag)
 
 ifndef HAVE_CS_TESTS
 HAVE_CS_TESTS := $(wildcard $(test_sourcefile))
@@ -99,7 +98,7 @@ install-local: $(gacutil)
 	$(RUNTIME) $(gacutil) /i $(the_lib) /f /root $(DESTDIR)$(prefix)/lib /package $(PACKAGE)
 
 uninstall-local: $(gacutil)
-	$(RUNTIME) $(gacutil) /u `echo $(LIBRARY_NAME) | sed 's,.dll$$,,'`
+	$(RUNTIME) $(gacutil) /u $(LIBRARY_NAME:.dll=)
 
 $(gacutil):
 	cd $(topdir)/tools/gacutil && $(MAKE)
@@ -116,17 +115,7 @@ $(sn):
 	cd $(topdir)/tools/security && $(MAKE) sn.exe
 
 clean-local:
-	-rm -f $(the_lib) $(makefrag) $(test_lib) \
-	       $(test_makefrag) $(test_response) \
-	       $(the_pdb) $(test_pdb) $(CLEAN_FILES) \
-	       TestResult.xml
-ifdef PLATFORM_excludes
-	-rm -rf $(sourcefile)
-endif
-ifdef PLATFORM_CHANGE_SEPARATOR_CMD
-	-rm -rf $(response)
-endif
-
+	-rm -f $(library_CLEAN_FILES) $(CLEAN_FILES)
 
 test-local: $(the_lib)
 	@:
@@ -174,7 +163,7 @@ run-btest-ondotnet-lib: test-local
 
 endif
 
-DISTFILES = $(core_sourcefile) $(test_sourcefile) $(EXTRA_DISTFILES)
+DISTFILES = $(sourcefile) $(test_sourcefile) $(EXTRA_DISTFILES)
 
 TEST_FILES = 
 
@@ -186,7 +175,7 @@ TEST_FILES += `sed 's,^,Test/,' $(btest_sourcefile)`
 endif
 
 dist-local: dist-default
-	for f in `cat $(core_sourcefile)` $(TEST_FILES) ; do \
+	for f in `cat $(sourcefile)` $(TEST_FILES) ; do \
 	    dest=`dirname $(distdir)/$$f` ; \
 	    $(MKINSTALLDIRS) $$dest && cp $$f $$dest || exit 1 ; \
 	done
@@ -212,10 +201,10 @@ $(makefrag): $(sourcefile)
 	@echo Creating $@ ...
 	@sed 's,^,$(the_lib): ,' $< >$@
 
-ifdef PLATFORM_CHANGE_SEPARATOR_CMD
-$(response): $(sourcefile)
+ifneq ($(response),$(sourcefile))
+$(response): $(sourcefile) $(PLATFORM_excludes)
 	@echo Creating $@ ...
-	@cat $(sourcefile) | $(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
+	@sort $(sourcefile) $(PLATFORM_excludes) | uniq -u | $(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
 endif
 
 -include $(makefrag)
@@ -230,11 +219,7 @@ $(test_lib): $(test_makefrag) $(test_dep) $(test_response) $(test_nunit_dep)
 
 $(test_response): $(test_sourcefile)
 	@echo Creating $@ ...
-ifdef PLATFORM_CHANGE_SEPARATOR_CMD
-	@sed 's,^,Test/,' $< |$(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
-else
-	@sed 's,^,Test/,' $< >$@
-endif
+	@sed 's,^,Test/,' $(test_sourcefile) | $(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
 
 $(test_makefrag): $(test_response)
 	@echo Creating $@ ...
@@ -251,11 +236,7 @@ $(btest_lib): $(btest_makefrag) $(test_dep) $(btest_response) $(test_nunit_dep)
 
 $(btest_response): $(btest_sourcefile)
 	@echo Creating $@ ...
-ifdef PLATFORM_CHANGE_SEPARATOR_CMD
-	@sed 's,^,Test/,' $< |$(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
-else
-	@sed 's,^,Test/,' $< >$@
-endif
+	@sed 's,^,Test/,' $(btest_sourcefile) | $(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
 
 $(btest_makefrag): $(btest_response)
 	@echo Creating $@ ...

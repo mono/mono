@@ -8,13 +8,17 @@
 
 base_prog = $(shell basename $(PROGRAM))
 sourcefile = $(base_prog).sources
-ifdef PLATFORM_CHANGE_SEPARATOR_CMD
-response = $(depsdir)/$(base_prog).response
-else
+
+ifeq (cat,$(PLATFORM_CHANGE_SEPARATOR_CMD))
 response = $(sourcefile)
+else
+response = $(depsdir)/$(base_prog).response
+executable_CLEAN_FILES += $(response)
 endif
+
 makefrag = $(depsdir)/$(base_prog).makefrag
 pdb = $(patsubst %.exe,%.pdb,$(PROGRAM))
+executable_CLEAN_FILES += $(makefrag) $(pdb)
 
 ifndef PROGRAM_INSTALL_DIR
 PROGRAM_INSTALL_DIR = $(prefix)/bin
@@ -30,10 +34,7 @@ uninstall-local:
 	-rm -f $(DESTDIR)$(PROGRAM_INSTALL_DIR)/$(base_prog)
 
 clean-local:
-	-rm -f *.exe $(BUILT_SOURCES) $(CLEAN_FILES) $(pdb) $(makefrag)
-ifdef PLATFORM_CHANGE_SEPARATOR_CMD
-	-rm -f $(response)
-endif
+	-rm -f *.exe $(BUILT_SOURCES) $(executable_CLEAN_FILES) $(CLEAN_FILES)
 
 test-local: $(PROGRAM)
 	@:
@@ -61,10 +62,10 @@ $(makefrag): $(sourcefile)
 	@echo Creating $@ ...
 	@sed 's,^,$(PROGRAM): ,' $< > $@
 
-ifdef PLATFORM_CHANGE_SEPARATOR_CMD
+ifneq ($(response),$(sourcefile))
 $(response): $(sourcefile)
 	@echo Creating $@ ...
-	@cat $< |$(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
+	@( $(PLATFORM_CHANGE_SEPARATOR_CMD) ) <$< >$@
 endif
 
 -include $(makefrag)

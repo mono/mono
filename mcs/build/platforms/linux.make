@@ -16,27 +16,19 @@ PLATFORM_PATH_SEPARATOR = :
 # Define this if this ever will work on Linux
 # PLATFORM_MAKE_CORLIB_CMP = yes
 
-# This is for the security permission attribute problem
-# on windows
-PLATFORM_TWEAK_CORLIB_SOURCES = cat
-
 # This is for changing / to \ on windows
-# Don't define it so we don't needlessly copy the sources
-# file. This command is handy for testing:
-#
-# PLATFORM_CHANGE_SEPARATOR_CMD=sed -e 's,/,/./,g'
+PLATFORM_CHANGE_SEPARATOR_CMD = cat
 
 hidden_prefix = .
 hidden_suffix = 
 
 platform-check:
-	@if ! type $(BOOTSTRAP_MCS) >/dev/null 2>&1 ; then \
+	@set fnord $(BOOTSTRAP_MCS) ; if type $$2 >/dev/null 2>&1 ; then :; else \
 	    echo "*** You need a C# compiler installed to build MCS. (make sure mcs works from the command line)" ; \
 	    echo "*** Read INSTALL.txt for information on how to bootstrap" ; \
 	    echo "*** a Mono installation." ; \
 	    exit 1 ; \
 	fi
-
 
 # I tried this but apparently Make's version strings aren't that
 # ... consistent between releases. Whatever.

@@ -1,5 +1,22 @@
 2004-06-14  Raja R Harinath  <rharinath@novell.com>
 
+	* platforms/linux.make (PLATFORM_CHANGE_SEPARATOR_CMD): Define to 'cat'.
+	(PLATFORM_TWEAK_CORLIB_SOURCES): Remove.
+	(platform-check): Avoid bash-ism.
+	* library.make: Simplify uses of $(patsubst x,y,$(foo)) to $(foo:x=y).
+	(core_sourcefile): Rename back to ...
+	(sourcefile): ... this.  Remove creation of redundant intermediate file.
+	(response): Change test for optimization, now that
+	PLATFORM_CHANGE_SEPARATOR_CMD is unconditional.  Combine with
+	platform-exclude handling.
+	(library_CLEAN_FILES): New variable to specify clean:-able files
+	close to where they're defined.
+	(test_response, btest_response): Simplify.
+	* executable.make (response): Change test for optimization.
+	(executable_CLEAN_FILES): New define.
+
+2004-06-14  Raja R Harinath  <rharinath@novell.com>
+
 	* library.make (uninstall-local): Fix typo.
 
 2004-06-11  Atsushi Enomoto  <atsushi@ximian.com>
