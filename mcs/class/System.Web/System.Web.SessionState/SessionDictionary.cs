@@ -107,7 +107,12 @@ internal class SessionDictionary : NameObjectCollectionBase
 
 		set {
 			lock (this)
+			{				 
+				object obj = BaseGet(s);
+				if ((obj == null) && (value == null))
+					return; 
 				BaseSet (s, value);
+			}
 
 			_dirty = true;
 		}
@@ -124,7 +129,12 @@ internal class SessionDictionary : NameObjectCollectionBase
 		}
 		set {
 			lock (this)
+			{				 
+				object obj = BaseGet(index);
+				if ((obj == null) && (value == null))
+					return; 
 				BaseSet (index, value);
+			}
 
 			_dirty = true;
 		}

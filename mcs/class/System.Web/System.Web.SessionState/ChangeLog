@@ -1,3 +1,7 @@
+2004-01-05  Alon Gazit <along@mainsoft.com>
+
+	* SessionDictionary.cs: can't set item's value to null if the item is new.
+
 2003-12-25  Jackson Harper <jackson@ximian.com>
 
 	* SessionStateModule.cs: Handle SessionStateMode.Off properly in
