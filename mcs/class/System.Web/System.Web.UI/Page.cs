@@ -422,25 +422,25 @@ public class Page : TemplateControl, IHttpHandler
 				foreach (string h in hdrs)
 					cache.VaryByHeaders [h.Trim ()] = true;
 			}
-			
+			_context.Response.CacheResponse (_context.Request);
 			goto case OutputCacheLocation.Downstream;
 		case OutputCacheLocation.Client:
 			cache.SetCacheability (HttpCacheability.Private);
-			cache.SetExpires (DateTime.Now.AddSeconds (duration));
 			cache.SetMaxAge (new TimeSpan (0, 0, duration));		
 			cache.SetLastModified (_context.Timestamp);
 			break;
 		case OutputCacheLocation.Downstream:
 			cache.SetCacheability (HttpCacheability.Public);
-			cache.SetExpires (DateTime.Now.AddSeconds (duration));
 			cache.SetMaxAge (new TimeSpan (0, 0, duration));		
 			cache.SetLastModified (_context.Timestamp);
 			break;
 		case OutputCacheLocation.Server:
+			_context.Response.CacheResponse (_context.Request);
 			goto case OutputCacheLocation.None;
 		case OutputCacheLocation.None:
 			break;
 		}
+		cache.SetExpires (_context.Timestamp.AddSeconds (duration));
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -722,7 +722,7 @@ public class Page : TemplateControl, IHttpHandler
 			hiddenFields.Add (hiddenFieldName, hiddenFieldInitialValue);
 	}
 	
- 	[MonoTODO]
+	[MonoTODO]
 	public void RegisterClientScriptFile (string a, string b, string c)
 	{
 		throw new NotImplementedException ();

@@ -1,5 +1,10 @@
 2003-11-19  Jackson Harper <jackson@ximian.com>
 
+	* Page.cs: Always set the cache expire time. Tell the response to
+	cache itself for server side cached pages.
+	
+2003-11-19  Jackson Harper <jackson@ximian.com>
+
 	* Control.cs: Remove ResolveBaseUrl. ResolveUrl does the same
 	thing, some corner cases still need work though. Was this the
 	shortest lived method in the history of mono?
