@@ -1,3 +1,12 @@
+2002-08-05  Martin Baulig  <martin@gnome.org>
+
+	* runtest.pl: This is a perl script which runs a testcase, parses the
+	MCS output and checks whether all errors are reported.
+
+	* error-1.cs, error-2.cs: Moved here from ../tests/.
+
+	* README.tests: Added (empty) list of all test cases.
+
 2002-08-02  Martin Baulig  <martin@gnome.org>
 
 	* cs0155.cs, cs0155-2.cs: New tests.

@@ -1,0 +1,22 @@
+Test cases listed by Category:
+==============================
+
+* Flow Analysis
+
+  error-1.cs
+
+* Type Containers
+
+  error-2.cs
+
+Test cases listed by Number:
+============================
+
+error-1.cs
+----------
+Flow analysis: Check whether mcs correctly reports all errors.
+
+error-2.cs
+----------
+Base types are less accessible than the current type.
+
