@@ -1,3 +1,8 @@
+2004-10-19  Lluis Sanchez  <lluis@novell.com>
+
+	* MarshalByRefObject.cs: Field _identity is not serializable.
+	This fixes bug #68567.
+
 2004-10-17  Ben Maurer  <bmaurer@ximian.com>
 
 	* DateTime.cs (ZeroPad): Use unsafe code to speed this up. We
