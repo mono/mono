@@ -25,6 +25,7 @@ namespace System.Data.SqlTypes
 		#region Fields
 
 		int value;
+		private bool notNull;
 
 		public static readonly SqlInt32 MaxValue = new SqlInt32 (2147483647);
 		public static readonly SqlInt32 MinValue = new SqlInt32 (-2147483648);
@@ -38,6 +39,7 @@ namespace System.Data.SqlTypes
 		public SqlInt32(int value) 
 		{
 			this.value = value;
+			notNull = true;
 		}
 
 		#endregion
@@ -45,7 +47,7 @@ namespace System.Data.SqlTypes
 		#region Properties
 
 		public bool IsNull {
-			get { return (bool) (this == Null); }
+			get { return !notNull; }
 		}
 
 		public int Value {
@@ -209,7 +211,7 @@ namespace System.Data.SqlTypes
 		public override string ToString() 
 		{
 			if (this.IsNull)
-				return String.Empty;
+				return "Null";
 			else
 				return value.ToString ();
 		}

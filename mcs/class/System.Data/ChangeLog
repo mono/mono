@@ -1,3 +1,23 @@
+2002-10-28  Ville Palo <vi64pa@koti.soon.fi>
+
+	* System.Data.SqlTypes/SqlBinary.cs:
+	* System.Data.SqlTypes/SqlBoolean.cs:
+	* System.Data.SqlTypes/SqlByte.cs:
+	* System.Data.SqlTypes/SqlDateTime.cs:
+	* System.Data.SqlTypes/SqlDecimal.cs:
+	* System.Data.SqlTypes/SqlDouble.cs:
+	* System.Data.SqlTypes/SqlDecimal.cs:
+	* System.Data.SqlTypes/SqlDouble.cs:
+	* System.Data.SqlTypes/SqlGuid.cs:
+	* System.Data.SqlTypes/SqlInt16.cs:
+	* System.Data.SqlTypes/SqlInt32.cs:
+	* System.Data.SqlTypes/SqlInt64.cs:
+	* System.Data.SqlTypes/Money.cs:
+	* System.Data.SqlTypes/SqlSingle.cs:
+	* System.Data.SqlTypes/SqlString.cs:
+	* System.Data.SqlTypes/SqlSingle.cs: Fixed internal loop bugs and
+	some other minor fixes.
+
 2002-10-27  Rodrigo Moya <rodrigo@ximian.com>
 
 	* System.Data.OleDb/OleDbDataAdapter.cs (Fill, FillSchema,

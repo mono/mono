@@ -23,6 +23,7 @@ namespace System.Data.SqlTypes
 		#region Fields
 
 		byte[] value;
+		private bool notNull;
 
 		public static readonly SqlBinary Null;
 
@@ -33,6 +34,7 @@ namespace System.Data.SqlTypes
 		public SqlBinary (byte[] value) 
 		{
 			this.value = value;
+			notNull = true;
 		}
 
 		#endregion
@@ -40,7 +42,7 @@ namespace System.Data.SqlTypes
 		#region Properties
 
 		public bool IsNull {
-			get { return (bool) (this == Null); }
+			get { return !notNull; }
 		}
 
 		public byte this[int index] {

@@ -25,6 +25,9 @@ namespace System.Data.SqlTypes
 		#region Fields
 
 		byte value;
+		
+		// default is false
+		private bool notNull;
 
 		public static readonly SqlBoolean False = new SqlBoolean (false);
 		public static readonly SqlBoolean Null;
@@ -39,11 +42,13 @@ namespace System.Data.SqlTypes
 		public SqlBoolean (bool value) 
 		{
 			this.value = (byte) (value ? 1 : 0);
+			notNull = true;
 		}
 
 		public SqlBoolean (int value) 
 		{
 			this.value = (byte) (value != 0 ? 1 : 0);
+			notNull = true;
 		}
 
 		#endregion // Constructors
@@ -53,7 +58,7 @@ namespace System.Data.SqlTypes
 		public byte ByteValue {
 			get {
 				if (this.IsNull)
-					throw new SqlNullValueException( "The property is set to null.");
+					throw new SqlNullValueException(Locale.GetText("The property is set to null."));
 				else
 					return value;
 			}
@@ -69,7 +74,9 @@ namespace System.Data.SqlTypes
 		}
 
 		public bool IsNull {
-			get { return (bool) (this == Null); }
+			get { 
+				return !notNull;
+			}
 		}
 
 		public bool IsTrue {
@@ -84,7 +91,7 @@ namespace System.Data.SqlTypes
 		public bool Value {
 			get { 
 				if (this.IsNull)
-					throw new SqlNullValueException( "The property is set to null.");
+					throw new SqlNullValueException(Locale.GetText("The property is set to null."));
 				else
 					return this.IsTrue;
 			}
@@ -194,7 +201,7 @@ namespace System.Data.SqlTypes
 		public SqlString ToSqlString() 
 		{
 			if (this.IsNull)
-				throw new SqlNullValueException ("The value is null");
+			        return new SqlString ("Null");
 			if (this.IsTrue)
 				return new SqlString ("True");
 			else
@@ -204,7 +211,7 @@ namespace System.Data.SqlTypes
 		public override string ToString() 
 		{
 			if (this.IsNull)
-				throw new SqlNullValueException ("The value is null");
+			        return "Null";
 			if (this.IsTrue)
 				return "True";
 			else

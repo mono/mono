@@ -17,6 +17,8 @@ namespace System.Data.SqlTypes
 		#region Fields
 		double value;
 
+		private bool notNull;
+
 		public static readonly SqlDouble MaxValue = new SqlDouble (1.7976931348623157e308);
 		public static readonly SqlDouble MinValue = new SqlDouble (-1.7976931348623157e308);
 		public static readonly SqlDouble Null;
@@ -29,6 +31,7 @@ namespace System.Data.SqlTypes
 		public SqlDouble (double value) 
 		{
 			this.value = value;
+			notNull = true;
 		}
 
 		#endregion
@@ -36,7 +39,7 @@ namespace System.Data.SqlTypes
 		#region Properties
 
 		public bool IsNull { 
-			get { return (bool) (this == Null); }
+			get { return !notNull; }
 		}
 
 		public double Value { 
@@ -89,7 +92,9 @@ namespace System.Data.SqlTypes
 
 		public override int GetHashCode ()
 		{
-			return (int)value;
+			long LongValue = (long)value;
+			return (int)(LongValue ^ (LongValue >> 32));
+			
 		}
 
 		public static SqlBoolean GreaterThan (SqlDouble x, SqlDouble y)

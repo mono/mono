@@ -18,6 +18,8 @@ namespace System.Data.SqlTypes
 
 		float value;
 
+		private bool notNull;
+
 		public static readonly SqlSingle MaxValue = new SqlSingle (3.40282346638528859e38);
 		public static readonly SqlSingle MinValue = new SqlSingle (-3.40282346638528859e38);
 		public static readonly SqlSingle Null;
@@ -30,11 +32,13 @@ namespace System.Data.SqlTypes
 		public SqlSingle (double value) 
 		{
 			this.value = (float)value;
+			notNull = true;
 		}
 
 		public SqlSingle (float value) 
 		{
 			this.value = value;
+			notNull = true;
 		}
 
 		#endregion
@@ -42,7 +46,7 @@ namespace System.Data.SqlTypes
 		#region Properties
 
 		public bool IsNull { 
-			get { return (bool) (this == Null); }
+			get { return !notNull; }
 		}
 
 		public float Value { 
@@ -95,7 +99,8 @@ namespace System.Data.SqlTypes
 
 		public override int GetHashCode ()
 		{
-			return (int)value;
+			long LongValue = (long) value;
+			return (int)(LongValue ^ (LongValue >> 32));
 		}
 
 		public static SqlBoolean GreaterThan (SqlSingle x, SqlSingle y)

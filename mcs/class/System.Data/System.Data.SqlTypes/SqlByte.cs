@@ -17,6 +17,8 @@ namespace System.Data.SqlTypes
 		#region Fields
 
 		byte value;
+		private bool notNull;
+
 		public static readonly SqlByte MaxValue = new SqlByte (0xff);
 		public static readonly SqlByte MinValue = new SqlByte (0);
 		public static readonly SqlByte Null;
@@ -29,6 +31,7 @@ namespace System.Data.SqlTypes
 		public SqlByte (byte value) 
 		{
 			this.value = value;
+			notNull = true;
 		}
 
 		#endregion
@@ -36,7 +39,7 @@ namespace System.Data.SqlTypes
 		#region Properties
 
 		public bool IsNull {
-			get { return (bool) (this == Null); }
+			get { return !notNull; }
 		}
 
 		public byte Value { 
@@ -200,7 +203,7 @@ namespace System.Data.SqlTypes
 		public override string ToString ()
 		{
 			if (this.IsNull)
-				return String.Empty;
+				return "Null";
 			else
 				return value.ToString ();
 		}

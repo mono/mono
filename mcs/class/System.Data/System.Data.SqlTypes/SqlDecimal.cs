@@ -21,6 +21,8 @@ namespace System.Data.SqlTypes
 		byte scale;
 		bool positive;
 
+		private bool notNull;
+
 		// borrowed from System.Decimal
 		const int SCALE_SHIFT = 16;
 		const int SIGN_SHIFT = 31;
@@ -52,6 +54,7 @@ namespace System.Data.SqlTypes
 			this.value[1] = binData[1];
 			this.value[2] = binData[2];
 			this.value[3] = 0;
+			notNull = true;
 		}
 
 		public SqlDecimal (double value) : this ((decimal)value) { }
@@ -70,6 +73,7 @@ namespace System.Data.SqlTypes
 			this.value[1] = data2;
 			this.value[2] = data3;
 			this.value[3] = data4;
+			notNull = true;
 		}
 
 		#endregion
@@ -91,7 +95,7 @@ namespace System.Data.SqlTypes
 		}
 
 		public bool IsNull { 
-			get { return (bool) (this == Null); }
+			get { return !notNull; }
 		}
 
 		public bool IsPositive { 

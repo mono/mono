@@ -17,6 +17,7 @@ namespace System.Data.SqlTypes
 		#region Fields
 
 		short value;
+		private bool notNull;
 
 		public static readonly SqlInt16 MaxValue = new SqlInt16 (32767);
 		public static readonly SqlInt16 MinValue = new SqlInt16 (-32768);
@@ -30,6 +31,7 @@ namespace System.Data.SqlTypes
 		public SqlInt16 (short value) 
 		{
 			this.value = value;
+			notNull = true;;
 		}
 
 		#endregion
@@ -37,7 +39,7 @@ namespace System.Data.SqlTypes
 		#region Properties
 
 		public bool IsNull { 
-			get { return (bool) (this == Null); }
+			get { return !notNull; }
 		}
 
 		public short Value { 
@@ -201,7 +203,7 @@ namespace System.Data.SqlTypes
 		public override string ToString ()
 		{
 			if (this.IsNull)
-				return String.Empty;
+				return "Null";
 			else
 				return value.ToString ();
 		}
@@ -223,7 +225,7 @@ namespace System.Data.SqlTypes
 
 		public static SqlInt16 operator | (SqlInt16 x, SqlInt16 y)
 		{
-			return new SqlInt16 ((short) (x | y));
+			return new SqlInt16 ((short) (x.Value | y.Value));
 		}
 
 		public static SqlInt16 operator / (SqlInt16 x, SqlInt16 y)

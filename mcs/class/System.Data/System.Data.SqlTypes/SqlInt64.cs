@@ -17,7 +17,8 @@ namespace System.Data.SqlTypes
 		#region Fields
 
 		long value;
-		
+
+		private bool notNull;
 		
 		public static readonly SqlInt64 MaxValue = new SqlInt64 (9223372036854775807);
 		public static readonly SqlInt64 MinValue = new SqlInt64 (-9223372036854775808);
@@ -32,6 +33,7 @@ namespace System.Data.SqlTypes
 		public SqlInt64 (long value) 
 		{
 			this.value = value;
+			notNull = true;
 		}
 
 		#endregion
@@ -39,7 +41,7 @@ namespace System.Data.SqlTypes
 		#region Properties
 
 		public bool IsNull { 
-			get { return (bool) (this == Null); }
+			get { return !notNull; }
 		}
 
 		public long Value { 
@@ -203,6 +205,9 @@ namespace System.Data.SqlTypes
 
 		public override string ToString ()
 		{
+			if (this.IsNull)
+				return "Null";
+
 			return value.ToString ();
 		}
 

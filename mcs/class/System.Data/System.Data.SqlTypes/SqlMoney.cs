@@ -17,8 +17,10 @@ namespace System.Data.SqlTypes
 		#region Fields
 
 		decimal value;
+		
+		private bool notNull;
 
-		public static readonly SqlMoney MaxValue = new SqlMoney (922337203685475.5807);
+		public static readonly SqlMoney MaxValue = new SqlMoney (922337203685477.5807);
 		public static readonly SqlMoney MinValue = new SqlMoney (-922337203685477.5808);
 		public static readonly SqlMoney Null;
 		public static readonly SqlMoney Zero = new SqlMoney (0);
@@ -30,21 +32,25 @@ namespace System.Data.SqlTypes
 		public SqlMoney (decimal value) 
 		{
 			this.value = value;
+			notNull = true;
 		}
 
 		public SqlMoney (double value) 
 		{
 			this.value = (decimal)value;
+			notNull = true;
 		}
 
 		public SqlMoney (int value) 
 		{
 			this.value = (decimal)value;
+			notNull = true;
 		}
 
 		public SqlMoney (long value) 
 		{
 			this.value = (decimal)value;
+			notNull = true;
 		}
 
 		#endregion
@@ -53,7 +59,7 @@ namespace System.Data.SqlTypes
 
 		[MonoTODO]
 		public bool IsNull { 
-			get { return (bool) (this == Null); }
+			get { return !notNull; }
 		}
 
 		public decimal Value { 
@@ -104,7 +110,6 @@ namespace System.Data.SqlTypes
 			return (x == y);
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
 			return (int)value;
@@ -140,10 +145,14 @@ namespace System.Data.SqlTypes
 			return (x != y);
 		}
 
-		[MonoTODO]
 		public static SqlMoney Parse (string s)
 		{
-			throw new NotImplementedException ();
+			decimal d = Decimal.Parse (s);
+
+			if (d > SqlMoney.MaxValue.Value || d < SqlMoney.MinValue.Value) 
+				throw new OverflowException ("");
+			
+			return new SqlMoney (d);
 		}
 
 		public static SqlMoney Subtract (SqlMoney x, SqlMoney y)
@@ -332,10 +341,9 @@ namespace System.Data.SqlTypes
 				return new SqlMoney ((decimal)x.Value);
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlMoney (SqlString x)
 		{
-			throw new NotImplementedException ();
+			return SqlMoney.Parse (x.Value);
 		}
 
 		public static implicit operator SqlMoney (decimal x)

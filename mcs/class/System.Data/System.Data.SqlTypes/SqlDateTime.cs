@@ -16,6 +16,7 @@ namespace System.Data.SqlTypes
 	{
 		#region Fields
 		private DateTime value;
+		private bool notNull;
 
 		public static readonly SqlDateTime MaxValue = new SqlDateTime (9999,12,31);
 		public static readonly SqlDateTime MinValue = new SqlDateTime (1753,1,1);
@@ -31,34 +32,40 @@ namespace System.Data.SqlTypes
 		public SqlDateTime (DateTime value) 
 		{
 			this.value = value;
+			notNull = true;
 		}
 
 		[MonoTODO]
 		public SqlDateTime (int dayTicks, int timeTicks) 
 		{
 			throw new NotImplementedException ();
+			notNull = true;
 		}
 
 		public SqlDateTime (int year, int month, int day) 
 		{
 			this.value = new DateTime (year, month, day);
+			notNull = true;
 		}
 
 		public SqlDateTime (int year, int month, int day, int hour, int minute, int second) 
 		{
 			this.value = new DateTime (year, month, day, hour, minute, second);
+			notNull = true;
 		}
 
 		[MonoTODO]
 		public SqlDateTime (int year, int month, int day, int hour, int minute, int second, double millisecond) 
 		{
 			throw new NotImplementedException ();
+			notNull = true;
 		}
 
 		[MonoTODO]
 		public SqlDateTime (int year, int month, int day, int hour, int minute, int second, int bilisecond) 
 		{
 			throw new NotImplementedException ();
+			notNull = true;
 		}
 
 		#endregion
@@ -71,7 +78,7 @@ namespace System.Data.SqlTypes
 		}
 
 		public bool IsNull { 
-			get { return (bool) (this == Null); }
+			get { return !notNull; }
 		}
 
 		[MonoTODO]

@@ -16,7 +16,9 @@ namespace System.Data.SqlTypes
 	{
 		#region Fields
 
-		Guid value;
+	        Guid value;
+
+		private bool notNull;
 
 		public static readonly SqlGuid Null;
 
@@ -27,21 +29,25 @@ namespace System.Data.SqlTypes
 		public SqlGuid (byte[] value) 
 		{
 			this.value = new Guid (value);
+			notNull = true;
 		}
 
 		public SqlGuid (Guid g) 
 		{
 			this.value = g;
+			notNull = true;
 		}
 
 		public SqlGuid (string s) 
 		{
 			this.value = new Guid (s);
+			notNull = true;
 		}
 
 		public SqlGuid (int a, short b, short c, byte d, byte e, byte f, byte g, byte h, byte i, byte j, byte k) 
 		{
 			this.value = new Guid (a, b, c, d, e, f, g, h, i, j, k);
+			notNull = true;
 		}
 
 		#endregion
@@ -49,7 +55,7 @@ namespace System.Data.SqlTypes
 		#region Properties
 
 		public bool IsNull {
-			get { return (bool) (this == SqlGuid.Null); }
+			get { return !notNull; }
 		}
 
 		public Guid Value { 
