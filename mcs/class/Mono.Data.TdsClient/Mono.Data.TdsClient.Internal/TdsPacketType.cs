@@ -16,6 +16,7 @@ namespace Mono.Data.TdsClient.Internal {
 		Proc = 0x3,
 		Reply = 0x4,
 		Cancel = 0x6,
-		Logon70 = 0x10
+		Logon70 = 0x10,
+		Logoff = 0x71
 	}
 }

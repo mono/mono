@@ -46,11 +46,16 @@ namespace Mono.Data.TdsClient.Internal {
 		bool autoCommit;
                 Socket socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-
-		TdsPacketRowResult currentRow;
+		TdsPacketRowResult currentRow = null;
 		TdsPacketColumnNamesResult columnNames;
 		TdsPacketColumnInfoResult columnInfo;
 		TdsPacketErrorResultCollection errors = new TdsPacketErrorResultCollection ();
+
+		bool queryInProgress;
+		int cancelsRequested;
+		int cancelsProcessed;
+
+		ArrayList outputParameters = new ArrayList ();
 
 		#endregion // Fields
 
@@ -109,6 +114,11 @@ namespace Mono.Data.TdsClient.Internal {
 			get { return tdsVersion; }
 		}
 
+		public ArrayList OutputParameters {
+			get { return outputParameters; }
+			set { outputParameters = value; }
+		}
+
 		#endregion // Properties
 
 		#region Constructors
@@ -137,42 +147,43 @@ namespace Mono.Data.TdsClient.Internal {
 
 		#endregion // Constructors
 
-		#region Methods
+		#region Public Methods
 
 		public void Cancel ()
 		{
+			if (queryInProgress) {
+				if (cancelsRequested == cancelsProcessed) {
+					comm.StartPacket (TdsPacketType.Cancel);
+					comm.SendPacket ();
+					cancelsRequested += 1;
+				}
+			}	
+				
 		}
 		
-		public void ChangeSettings (bool autoCommit, IsolationLevel isolationLevel)
-		{
-			/*string query = SqlStatementForSettings (autoCommit, isolationLevel);
-			if (query != null)
-				ChangeSettings (query);
-				*/
-		}
+		public abstract bool Connect (TdsConnectionParameters connectionParameters);
 
-		private bool ChangeSettings (string query)
+		public void Disconnect ()
 		{
-			TdsPacketResult result;
-			bool isOkay = true;
-			if (query.Length == 0)
-				return true;
+			TdsPacketResult result = null;
 
-			comm.StartPacket (TdsPacketType.Query);
-			comm.Append (query);
-			comm.SendPacket ();
+			comm.StartPacket (TdsPacketType.Logoff);
+			comm.Append ((byte) 0);
+			comm.SendPacket ();	
 
 			bool done = false;
 			do {
 				result = ProcessSubPacket ();
-				done = (result is TdsPacketEndTokenResult) && (!((TdsPacketEndTokenResult) result).MoreResults);
-				
+				if (result != null) {
+					switch (result.GetType ().ToString ()) {
+					case "Mono.Data.TdsClient.Internal.TdsPacketEndTokenResult" :
+						done = !((TdsPacketEndTokenResult) result).MoreResults;
+						break;
+					}
+				}
 			} while (!done);
-
-			return isOkay;
 		}
 
-		[MonoTODO ("fixme")]
 		public int ExecuteNonQuery (string sql)
 		{
 			TdsPacketResult result;
@@ -197,36 +208,15 @@ namespace Mono.Data.TdsClient.Internal {
 				return -1;
 		}
 
-		[MonoTODO ("fixme")]
 		public void ExecuteQuery (string sql)
 		{
+			outputParameters.Clear ();
 			if (sql.Length > 0) {
 				comm.StartPacket (TdsPacketType.Query);
 				comm.Append (sql);
 				moreResults2 = true;
 				comm.SendPacket ();
 			}
-		}
-
-		public bool NextRow ()
-		{
-			TdsPacketResult result = null;
-			bool done = false;
-			do {
-				result = ProcessSubPacket ();
-				if (result != null) {
-					switch (result.GetType ().ToString ()) {
-					case "Mono.Data.TdsClient.Internal.TdsPacketRowResult" :
-						currentRow = (TdsPacketRowResult) result;
-						return true;
-					case "Mono.Data.TdsClient.Internal.TdsPacketEndTokenResult" :
-						done = !((TdsPacketEndTokenResult) result).MoreResults;
-						break;
-					}
-				}
-			} while (!done);
-
-			return false;
 		}
 
 		public bool NextResult ()
@@ -253,30 +243,208 @@ namespace Mono.Data.TdsClient.Internal {
 					}
 				}
 			} while (!done);
+			return false;
+		}
+
+		public bool NextRow ()
+		{
+			TdsPacketResult result = null;
+			bool done = false;
+			do {
+				result = ProcessSubPacket ();
+				if (result != null) {
+					switch (result.GetType ().ToString ()) {
+					case "Mono.Data.TdsClient.Internal.TdsPacketRowResult" :
+						currentRow = (TdsPacketRowResult) result;
+						return true;
+					case "Mono.Data.TdsClient.Internal.TdsPacketEndTokenResult" :
+						return false;
+					}
+				}
+			} while (!done);
 
 			return false;
 		}
 
-		private object GetStringValue (bool wideChars, bool outputParam)
+		#endregion // Public Methods
+
+		#region // Private Methods
+
+		private void FinishQuery (bool wasCancelled, bool moreResults)
 		{
-			object result = null;
-			bool shortLen = (tdsVersion == TdsVersion.tds70) && (wideChars || !outputParam);
+			if (!moreResults)
+				queryInProgress = false;
+			if (wasCancelled)
+				cancelsProcessed += 1;
+		}
 
-			int len = shortLen ? comm.GetTdsShort () : (comm.GetByte () & 0xff);
+		private object GetColumnValue (TdsColumnType colType, bool outParam)
+		{
+			return GetColumnValue (colType, outParam, -1);
+		}
 
-			if ((tdsVersion < TdsVersion.tds70 && len == 0) || (tdsVersion == TdsVersion.tds70 && len == 0xffff))
-				result = null;
-			else if (len >= 0) {
-				if (wideChars)
-					result = comm.GetString (len / 2);
+		private object GetColumnValue (TdsColumnType colType, bool outParam, int ordinal)
+		{
+			int len;
+			object element = null;
+
+			switch (colType) {
+			case TdsColumnType.IntN :
+				if (outParam)
+					comm.GetByte (); // column size
+				element = GetIntValue (colType);
+				break;
+			case TdsColumnType.Int1 :
+			case TdsColumnType.Int2 :
+			case TdsColumnType.Int4 :
+				element = GetIntValue (colType);
+				break;
+			case TdsColumnType.Image :
+				if (outParam) 
+					comm.GetByte (); // column size
+				element = GetImageValue ();
+				break;
+			case TdsColumnType.Text :
+				if (outParam) 
+					comm.GetByte (); // column size
+				element = GetTextValue (false);
+				break;
+			case TdsColumnType.NText :
+				if (outParam) 
+					comm.GetByte (); // column size
+				element = GetTextValue (true);
+				break;
+			case TdsColumnType.Char :
+			case TdsColumnType.VarChar :
+				if (outParam)
+					comm.GetByte (); // column size
+				element = GetStringValue (false, false);
+				break;
+			case TdsColumnType.BigVarBinary :
+				comm.GetTdsShort ();
+				len = comm.GetTdsShort ();
+				element = comm.GetBytes (len, true);
+				break;
+			case TdsColumnType.BigVarChar :
+				comm.GetTdsShort ();
+				element = GetStringValue (false, false);
+				break;
+			case TdsColumnType.NChar :
+			case TdsColumnType.NVarChar :
+				if (outParam) 
+					comm.GetByte (); // column size
+				element = GetStringValue (true, false);
+				break;
+			case TdsColumnType.Real :
+				element = ReadFloatN (4);
+				break;
+			case TdsColumnType.Float8 :
+				element = ReadFloatN (8);
+				break;
+			case TdsColumnType.FloatN :
+				if (outParam) 
+					comm.GetByte (); // column size
+				int actualSize = comm.GetByte ();
+				element = ReadFloatN (actualSize);
+				break;
+			case TdsColumnType.SmallMoney :
+			case TdsColumnType.Money :
+				element = GetMoneyValue (colType);
+				break;
+			case TdsColumnType.MoneyN :
+				if (outParam)
+					comm.GetByte (); // column size
+				element = GetMoneyValue (colType);
+				break;
+			case TdsColumnType.Numeric :
+			case TdsColumnType.Decimal :
+				byte scale;
+				if (outParam) {
+					comm.GetByte (); // column size
+					comm.GetByte (); // precision
+					scale = comm.GetByte ();
+				}
+				else 
+					scale = columnInfo[ordinal].NumericScale;
+
+				element = GetDecimalValue (scale);
+				break;
+			case TdsColumnType.DateTimeN :
+				if (outParam) 
+					comm.GetByte (); // column size
+				element = GetDateTimeValue (colType);
+				break;
+			case TdsColumnType.DateTime4 :
+			case TdsColumnType.DateTime :
+				element = GetDateTimeValue (colType);
+				break;
+			case TdsColumnType.VarBinary :
+			case TdsColumnType.Binary :
+				if (outParam) 
+					comm.GetByte (); // column size
+				len = (comm.GetByte () & 0xff);
+				element = comm.GetBytes (len, true);
+				break;
+			case TdsColumnType.BitN :
+				if (outParam) 
+					comm.GetByte (); // column size
+				if (comm.GetByte () == 0)
+					element = null;
 				else
-					result = comm.GetString (len, false);
-
-				if (tdsVersion < TdsVersion.tds70 && ((string) result).Equals (" "))
-					result = "";
+					element = (comm.GetByte() != 0);
+				break;
+			case TdsColumnType.Bit :
+				int columnSize = comm.GetByte ();
+				element = (columnSize != 0);
+				break;
+			case TdsColumnType.UniqueIdentifier :
+				len = comm.GetByte () & 0xff;
+				//element = (len == 0 ? null : new Guid (comm.GetBytes (len, false)));
+				break;
+			default :
+				return null;
 			}
+
+			return element;
+		}
+
+		private object GetDateTimeValue (TdsColumnType type)
+		{
+			int len;
+			object result = null;
+			
+			if (type == TdsColumnType.DateTimeN)
+				len = comm.GetByte ();
+			else if (type == TdsColumnType.DateTime4)
+				len = 4;
 			else
-				result = null;
+				len = 8;
+			
+			switch (len) {
+			case 8 :
+				int tdsDaysInt = comm.GetTdsInt ();
+				int tdsTimeInt = comm.GetTdsInt ();
+				result = new DateTime (1900,1,1);
+				result = ((DateTime) result).AddDays (tdsDaysInt);
+				if (tdsTimeInt != 0) {
+					result = ((DateTime) result).AddSeconds (tdsTimeInt);
+					result = TimeZone.CurrentTimeZone.ToLocalTime ((DateTime) result);
+				}
+				break;
+			case 4 :
+				short tdsDaysShort = comm.GetTdsShort ();
+				short tdsTimeShort = comm.GetTdsShort ();
+				result = new DateTime (1900,1,1);
+				result = ((DateTime) result).AddDays ((int) tdsDaysShort);
+				if (tdsTimeShort != 0) {
+					result = ((DateTime) result).AddSeconds ((int) tdsTimeShort);
+					result = TimeZone.CurrentTimeZone.ToLocalTime ((DateTime) result);
+				}
+				break;
+			default :
+				break;
+			}
+
 			return result;
 		}
 
@@ -294,11 +462,6 @@ namespace Mono.Data.TdsClient.Internal {
 				bits[index] = comm.GetTdsInt ();
 
 			return new Decimal (bits[0], bits[1], bits[2], !positive, scale);
-		}
-
-		private object GetDateTimeValue (TdsColumnType type)
-		{
-			throw new NotImplementedException ();
 		}
 
 		private object GetImageValue ()
@@ -379,6 +542,29 @@ namespace Mono.Data.TdsClient.Internal {
 			return result;
 		}
 
+		private object GetStringValue (bool wideChars, bool outputParam)
+		{
+			object result = null;
+			bool shortLen = (tdsVersion == TdsVersion.tds70) && (wideChars || !outputParam);
+
+			int len = shortLen ? comm.GetTdsShort () : (comm.GetByte () & 0xff);
+
+			if ((tdsVersion < TdsVersion.tds70 && len == 0) || (tdsVersion == TdsVersion.tds70 && len == 0xffff))
+				result = null;
+			else if (len >= 0) {
+				if (wideChars)
+					result = comm.GetString (len / 2);
+				else
+					result = comm.GetString (len, false);
+
+				if (tdsVersion < TdsVersion.tds70 && ((string) result).Equals (" "))
+					result = "";
+			}
+			else
+				result = null;
+			return result;
+		}
+
 		private int GetSubPacketLength ()
 		{
 			return comm.GetTdsShort ();
@@ -444,6 +630,19 @@ namespace Mono.Data.TdsClient.Internal {
 			}
 		}
 
+		private TdsPacketRowResult LoadRow (TdsContext context)
+		{
+			TdsPacketRowResult result = new TdsPacketRowResult (context);
+
+			int i = 0;
+			foreach (TdsColumnSchema info in columnInfo) {
+				result.Add (GetColumnValue (info.ColumnType, false, i));
+				i += 1;
+			}
+
+			return result;
+		}
+
 		protected int LookupBufferSize (TdsColumnType columnType)
 		{
 			switch (columnType) {
@@ -496,6 +695,8 @@ namespace Mono.Data.TdsClient.Internal {
 			}
 		}
 
+		protected abstract TdsPacketColumnInfoResult ProcessColumnInfo ();
+
 		private TdsPacketColumnNamesResult ProcessColumnNames ()
 		{
 			TdsPacketColumnNamesResult result = new TdsPacketColumnNamesResult ();
@@ -515,9 +716,6 @@ namespace Mono.Data.TdsClient.Internal {
 			return result;
 		}
 
-		protected abstract TdsPacketColumnInfoResult ProcessColumnInfo ();
-
-		[MonoTODO]
 		private TdsPacketEndTokenResult ProcessEndToken (TdsPacketSubType type)
 		{
 			byte status = comm.GetByte ();
@@ -535,7 +733,7 @@ namespace Mono.Data.TdsClient.Internal {
 
 			moreResults = result.MoreResults;
 
-			// FIXME: Finish the query
+			FinishQuery (result.Cancelled, result.MoreResults);
 
 			return result;
 		}
@@ -589,7 +787,6 @@ namespace Mono.Data.TdsClient.Internal {
 
 		private TdsPacketResult ProcessLoginAck ()
 		{
-
 			GetSubPacketLength ();
 
 			if (tdsVersion == TdsVersion.tds70) {
@@ -652,19 +849,6 @@ namespace Mono.Data.TdsClient.Internal {
 			return new TdsPacketMessageResult (subType, message);
 		}
 
-		private TdsPacketRowResult LoadRow (TdsContext context)
-		{
-			TdsPacketRowResult result = new TdsPacketRowResult (context);
-
-			int i = 0;
-			foreach (TdsColumnSchema info in columnInfo) {
-				result.Add (GetColumnValue (info.ColumnType, false, i));
-				i += 1;
-			}
-
-			return result;
-		}
-
 		private TdsPacketOutputParam ProcessOutputParam ()
 		{
 			GetSubPacketLength ();
@@ -672,127 +856,9 @@ namespace Mono.Data.TdsClient.Internal {
 			comm.Skip (5);
 
 			TdsColumnType colType = (TdsColumnType) comm.GetByte ();
-			return new TdsPacketOutputParam (GetColumnValue (colType, true));
-		}
-
-		private object GetColumnValue (TdsColumnType colType, bool outParam)
-		{
-			return GetColumnValue (colType, outParam, -1);
-		}
-
-		private object GetColumnValue (TdsColumnType colType, bool outParam, int ordinal)
-		{
-			int len;
-			object element = null;
-
-			switch (colType) {
-			case TdsColumnType.IntN :
-				if (outParam)
-					comm.GetByte (); // column size
-				element = GetIntValue (colType);
-				break;
-			case TdsColumnType.Int1 :
-			case TdsColumnType.Int2 :
-			case TdsColumnType.Int4 :
-				element = GetIntValue (colType);
-				break;
-			case TdsColumnType.Image :
-				comm.GetByte ();
-				element = GetImageValue ();
-				break;
-			case TdsColumnType.Text :
-				comm.GetByte ();
-				element = GetTextValue (false);
-				break;
-			case TdsColumnType.NText :
-				comm.GetByte ();
-				element = GetTextValue (true);
-				break;
-			case TdsColumnType.Char :
-			case TdsColumnType.VarChar :
-				if (outParam)
-					comm.GetByte (); // column size
-				element = GetStringValue (false, false);
-				break;
-			case TdsColumnType.BigVarBinary :
-				comm.GetTdsShort ();
-				len = comm.GetTdsShort ();
-				element = comm.GetBytes (len, true);
-				break;
-			case TdsColumnType.BigVarChar :
-				comm.GetTdsShort ();
-				element = GetStringValue (false, false);
-				break;
-			case TdsColumnType.NChar :
-			case TdsColumnType.NVarChar :
-				comm.GetByte ();
-				element = GetStringValue (true, false);
-				break;
-			case TdsColumnType.Real :
-				element = ReadFloatN (4);
-				break;
-			case TdsColumnType.Float8 :
-				element = ReadFloatN (8);
-				break;
-			case TdsColumnType.FloatN :
-				comm.GetByte ();
-				int actualSize = comm.GetByte ();
-				element = ReadFloatN (actualSize);
-				break;
-			case TdsColumnType.SmallMoney :
-			case TdsColumnType.Money :
-			case TdsColumnType.MoneyN :
-				if (outParam)
-					comm.GetByte (); // column size
-				element = GetMoneyValue (colType);
-				break;
-			case TdsColumnType.Numeric :
-			case TdsColumnType.Decimal :
-				byte scale;
-				if (outParam) {
-					comm.GetByte (); // column size
-					comm.GetByte (); // precision
-					scale = comm.GetByte ();
-				}
-				else 
-					scale = columnInfo[ordinal].NumericScale;
-
-				element = GetDecimalValue (scale);
-				break;
-			case TdsColumnType.DateTimeN :
-				comm.GetByte ();
-				element = GetDateTimeValue (colType);
-				break;
-			case TdsColumnType.DateTime4 :
-			case TdsColumnType.DateTime :
-				element = GetDateTimeValue (colType);
-				break;
-			case TdsColumnType.VarBinary :
-			case TdsColumnType.Binary :
-				comm.GetByte ();
-				len = (comm.GetByte () & 0xff);
-				element = comm.GetBytes (len, true);
-				break;
-			case TdsColumnType.BitN :
-				comm.GetByte ();
-				if (comm.GetByte () == 0)
-					element = null;
-				else
-					element = (comm.GetByte() != 0);
-				break;
-			case TdsColumnType.Bit :
-				int columnSize = comm.GetByte ();
-				element = (columnSize != 0);
-				break;
-			case TdsColumnType.UniqueIdentifier :
-				len = comm.GetByte () & 0xff;
-				//element = (len == 0 ? null : new Guid (comm.GetBytes (len, false)));
-				break;
-			default :
-				return null;
-			}
-
-			return element;
+			object value = GetColumnValue (colType, true);
+			outputParameters.Add (value);
+			return null;
 		}
 
 		private TdsPacketResult ProcessProcId ()
@@ -806,7 +872,6 @@ namespace Mono.Data.TdsClient.Internal {
 			return new TdsPacketRetStatResult (comm.GetTdsInt ());
 		}
 
-		[MonoTODO]
 		protected TdsPacketResult ProcessSubPacket ()
 		{
 			TdsPacketResult result = null;
@@ -932,69 +997,7 @@ namespace Mono.Data.TdsClient.Internal {
 			this.language = language;
 		}
 
-		public void SubmitProcedure (string sql)
-		{
-			TdsPacketResult result;
-			ExecuteQuery (sql);
-
-			bool done = false;
-			do {
-				result = ProcessSubPacket ();
-				done = (result is TdsPacketEndTokenResult) && (!((TdsPacketEndTokenResult) result).MoreResults);
-				
-			} while (!done);
-		}
-
-		public void Disconnect ()
-		{
-		}
-
-		public abstract bool Connect (TdsConnectionParameters connectionParameters);
-
-		private string SqlStatementForSettings (bool autoCommit, IsolationLevel isolationLevel)
-		{
-			if (autoCommit == this.autoCommit && isolationLevel == this.isolationLevel)
-				return null;
-			StringBuilder res = new StringBuilder ();
-			if (autoCommit != this.autoCommit) {
-				this.autoCommit = autoCommit;
-				res.Append (SqlStatementToSetCommit ());
-				res.Append (' ');
-			}
-			if (isolationLevel != this.isolationLevel) {
-				this.isolationLevel = isolationLevel;
-				res.Append (SqlStatementToSetIsolationLevel ());
-				res.Append (' ');
-			}
-			return res.ToString ();
-		}
-
-		private string SqlStatementToSetCommit ()
-		{
-			string result;
-			if (serverType == TdsServerType.Sybase) {
-				if (autoCommit) 
-					result = "set CHAINED off";
-				else
-					result = "set CHAINED on";
-			}
-			else {
-				if (autoCommit)
-					result = "set implicit_transactions off";
-				else
-					result = "set implicit_transactions on";
-			}
-			return result;
-		}
-
-		[MonoTODO]
-		private string SqlStatementToSetIsolationLevel ()
-		{
-			string result = "";
-			return result;
-		}
-
-		#endregion // Methods
+		#endregion // Private Methods
 	}
 
 }

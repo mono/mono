@@ -1,3 +1,15 @@
+2002-10-29  Tim Coleman (tim@timcoleman.com)
+	* ITds.cs:
+		Add OutputParameters collection
+	* Tds.cs:
+		Much reformatting, added handling for dates,
+		fixed handling of output parameters, and a
+		whole lot more
+	* TdsPacketEndTokenResult.cs:
+		Remove incorrect exception
+	* TdsPacketType.cs:
+		Add Logoff packet type.
+
 2002-10-28  Tim Coleman (tim@timcoleman.com)
 	* Tds.cs:
 		Add much handling to get the following types

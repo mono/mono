@@ -29,8 +29,6 @@ namespace Mono.Data.TdsClient.Internal {
 		public TdsPacketEndTokenResult (TdsPacketSubType type, byte status, int rowCount)
 			: base (type)
 		{
-			if (type == TdsPacketSubType.DoneInProc)
-				throw new Exception ("");
 			this.type = type;
 			this.status = status;
 			this.rowCount = rowCount;

@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Collections;
 
 namespace Mono.Data.TdsClient.Internal {
         internal interface ITds 
@@ -36,6 +37,11 @@ namespace Mono.Data.TdsClient.Internal {
 
 		TdsPacketErrorResultCollection Errors {
 			get;
+		}
+
+		ArrayList OutputParameters {
+			get;	
+			set;
 		}
 
 		#endregion // Properties
