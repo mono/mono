@@ -1,5 +1,14 @@
 2002-03-02  Jason Diamond <jason@injektilo.org>
 
+	* XmlDocument.cs: Implemented the remaining CreateElement and
+	CreateAttribute methods.
+
+	* XmlAttribute.cs: Re-implemented.
+
+	* XmlElement.cs: Set owner element on attributes. Reformatted.
+
+2002-03-02  Jason Diamond <jason@injektilo.org>
+
 	* XmlTextReader.cs: Implemented MoveToNextAttribute().
 
 	* XmlDocument.cs: Reformatted. Adding missing methods and MonoTODO

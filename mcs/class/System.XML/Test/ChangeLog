@@ -1,5 +1,11 @@
 2002-03-02  Jason Diamond <jason@injektilo.org>
 
+	* XmlElementTests.cs: New file.
+
+	* AllTests.cs: Added XmlElementTests.
+
+2002-03-02  Jason Diamond <jason@injektilo.org>
+
 	* XmlTextReaderTests.cs: Test MoveToNextAttribute().
 
 	* XmlDocumentTests.cs: Test loading document containing attributes

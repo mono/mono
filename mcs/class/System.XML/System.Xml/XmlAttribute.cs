@@ -1,146 +1,167 @@
-// -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 //
 // System.Xml.XmlAttribute
 //
 // Author:
-//   Daniel Weber (daniel-weber@austin.rr.com)
+//   Jason Diamond (jason@injektilo.org)
 //
-// (C) 2001 Daniel Weber
+// (C) 2002 Jason Diamond  http://injektilo.org/
+//
 
 using System;
 
 namespace System.Xml
 {
-	/// <summary>
-	/// Summary description for XmlAttribute.
-	/// </summary>
 	public class XmlAttribute : XmlNode
 	{
-		// ============  private data structures ==============================
-		private XmlNode FOwnerElement;
-		
-		string FattrName;
-		string FattrValue;
-		
-		//==== Public Properties ====================================================
+		#region Fields
 
-		/// <summary>
-		/// Returns the local name of the attribute.  For attributes, this is the same as Name
-		/// </summary>
-		public override string LocalName 
+		private string localName;
+		private string namespaceURI;
+		private string prefix;
+		private XmlElement ownerElement;
+		private string data;
+
+		#endregion
+
+		#region Constructor
+
+		protected internal XmlAttribute (
+			string prefix, 
+			string localName, 
+			string namespaceURI, 
+			XmlDocument doc) : base (doc)
 		{
-			get
-			{
-				return FattrName;
+			this.prefix = prefix;
+			this.localName = localName;
+			this.namespaceURI = namespaceURI;
+		}
+
+		#endregion
+
+		#region Properties
+
+		[MonoTODO]
+		public override string BaseURI {
+			get {
+				throw new NotImplementedException ();
 			}
 		}
 
-		/// <summary>
-		/// Get the qualified attribute name.  Attributes do not have an associated namespace.
-		/// </summary>
-		public override string Name 
-		{ 
-			get
-			{
-				return FattrName;
+		[MonoTODO]
+		public override string InnerText {
+			get {
+				throw new NotImplementedException ();
+			}
+
+			set {
+				throw new NotImplementedException ();
 			}
 		}
 
-		/// <summary>
-		/// Override.  Returns the node type.
-		/// </summary>
-		public override XmlNodeType NodeType 
-		{
-			get
-			{
+		[MonoTODO]
+		public override string InnerXml {
+			get {
+				throw new NotImplementedException ();
+			}
+
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public override string LocalName {
+			get {
+				return localName;
+			}
+		}
+
+		public override string Name {
+			get { 
+				return prefix != String.Empty ? prefix + ":" + localName : localName; 
+			}
+		}
+
+		public override string NamespaceURI {
+			get {
+				return namespaceURI;
+			}
+		}
+
+		public override XmlNodeType NodeType {
+			get {
 				return XmlNodeType.Attribute;
 			}
 		}
 
-		/// <summary>
-		/// Retrieve the XmlElement owner of this attribute, or null if attribute not assigned
-		/// </summary>
-		public virtual XmlElement OwnerElement
-		{
-			get
-			{
-				if (FOwnerElement.NodeType == XmlNodeType.Element)
-					return FOwnerElement as XmlElement;
-				else
-					return null;
+		public override XmlDocument OwnerDocument {
+			get {
+				return base.OwnerDocument;
 			}
 		}
 
-		/// <summary>
-		/// Get/Set the value for this node
-		/// </summary>
-		public override string Value 
-		{
-			get
-			{
-				return FattrValue;
-			}
-			
-			set
-			{
-				FattrValue = value;
+		public virtual XmlElement OwnerElement {
+			get {
+				return ownerElement;
 			}
 		}
 
-		//============== Public Methods =============================================
-
-		/// <summary>
-		/// Return a clone of the node
-		/// </summary>
-		/// <param name="deep">Make copy of all children</param>
-		/// <returns>Cloned node</returns>
-		public override XmlNode CloneNode( bool deep)
+		internal void SetOwnerElement (XmlElement ownerElement)
 		{
-			// TODO - implement XmlAttribute.CloneNode()
-			throw new NotImplementedException();
+			this.ownerElement = ownerElement;
 		}
 
-		/// <summary>
-		/// Saves all children of the current node to the passed writer
-		/// </summary>
-		/// <param name="w"></param>
+		[MonoTODO]
+		public override XmlNode ParentNode {
+			get {
+				return null;
+			}
+		}
+
+		public override string Prefix {
+			get {
+				return prefix;
+			}
+		}
+
+		[MonoTODO]
+		public virtual bool Specified {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public override string Value {
+			get {
+				return data;
+			}
+
+			set {
+				data = value;
+			}
+		}
+
+		#endregion
+
+		#region Methods
+
+		[MonoTODO]
+		public override XmlNode CloneNode (bool deep)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		public override void WriteContentTo(XmlWriter w)
 		{
-			// TODO - implement XmlAttribute.WriteContentsTo(XmlWriter)
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
-		/// <summary>
-		/// Saves the current node to writer w
-		/// </summary>
-		/// <param name="w"></param>
+		[MonoTODO]
 		public override void WriteTo(XmlWriter w)
 		{
-			// TODO - implement XmlAttribute.WriteTo(XmlWriter)
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
-		// ============  Internal methods  ====================================
-		internal void setOwnerElement( XmlElement newOwnerElement)
-		{
-			FOwnerElement = newOwnerElement;
-		}
-
-		// ============  Constructors =========================================
-		internal XmlAttribute ( XmlDocument aOwner,			// owner document
-			string attributeName,							// cannot be ""
-			string attValue) : base(aOwner)
-		{
-			if (aOwner == null)
-				throw new ArgumentException("Null OwnerDocument passed to XmlAttribute constructor");
-			if (attributeName.Length == 0)
-				throw new ArgumentException("Empty string passed to XmlAttribute constructor");
-
-			FOwnerElement = null;
-			FattrName = attributeName;
-			FattrValue = attValue;
-		}
-	
-
+		#endregion
 	}
 }

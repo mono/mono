@@ -1,10 +1,11 @@
 //
-// System.Xml.XmlElement
+// System.Xml.XmlAttribute
 //
 // Author:
-//   Daniel Weber (daniel-weber@austin.rr.com)
+//   Jason Diamond (jason@injektilo.org)
 //
-// (C) 2001 Daniel Weber
+// (C) 2002 Jason Diamond  http://injektilo.org/
+//
 
 using System;
 
@@ -23,94 +24,109 @@ namespace System.Xml
 
 		#region Constructor
 
-		protected internal XmlElement(string prefix, string localName, string namespaceURI, XmlDocument doc) : base(doc)
+		protected internal XmlElement (
+			string prefix, 
+			string localName, 
+			string namespaceURI, 
+			XmlDocument doc) : base (doc)
 		{
 			this.prefix = prefix;
 			this.localName = localName;
 			this.namespaceURI = namespaceURI;
 
-			attributes = new XmlAttributeCollection(this);
+			attributes = new XmlAttributeCollection (this);
 		}
 
 		#endregion
 
 		#region Properties
 
-		public override XmlAttributeCollection Attributes
-		{
-			get { return attributes; }
+		public override XmlAttributeCollection Attributes {
+			get { 
+				return attributes; 
+			}
 		}
 
-		public virtual bool HasAttributes
-		{
-			get { return attributes.Count > 0; }
-		}
-
-		[MonoTODO]
-		public override string InnerText
-		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+		public virtual bool HasAttributes {
+			get { 
+				return attributes.Count > 0; 
+			}
 		}
 
 		[MonoTODO]
-		public override string InnerXml
-		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
+		public override string InnerText {
+			get { 
+				throw new NotImplementedException (); 
+			}
+
+			set { 
+				throw new NotImplementedException (); 
+			}
 		}
 
 		[MonoTODO]
-		public bool IsEmpty
-		{
-			get { throw new NotImplementedException(); }
-			set { throw new NotImplementedException(); }
-		}
+		public override string InnerXml {
+			get { 
+				throw new NotImplementedException (); 
+			}
 
-		public override string LocalName
-		{
-			get { return localName; }
-		}
-
-		public override string Name
-		{
-			get { return prefix != String.Empty ? prefix + ":" + localName : localName; }
-		}
-
-		public override string NamespaceURI
-		{
-			get { return namespaceURI; }
-		}
-
-		[MonoTODO()]
-		public override XmlNode NextSibling
-		{
-			get { return base.NextSibling; }
-		}
-
-		public override XmlNodeType NodeType
-		{
-			get { return XmlNodeType.Element; }
-		}
-
-		public override string Prefix
-		{
-			get { return prefix; }
+			set { 
+				throw new NotImplementedException (); 
+			}
 		}
 
 		[MonoTODO]
-		public override XmlDocument OwnerDocument
-		{
-			get { return base.OwnerDocument; }
+		public bool IsEmpty	{
+			get { 
+				throw new NotImplementedException (); 
+			}
+
+			set { 
+				throw new NotImplementedException (); 
+			}
 		}
 
-		public override string Value
-		{
-			get { return null; }
+		public override string LocalName {
+			get { 
+				return localName; 
+			}
+		}
 
-			set
-			{
-				// Do nothing.
+		public override string Name {
+			get { 
+				return prefix != String.Empty ? prefix + ":" + localName : localName; 
+			}
+		}
+
+		public override string NamespaceURI {
+			get { 
+				return namespaceURI; 
+			}
+		}
+
+		[MonoTODO]
+		public override XmlNode NextSibling {
+			get { 
+				return base.NextSibling; 
+			}
+		}
+
+		public override XmlNodeType NodeType {
+			get { 
+				return XmlNodeType.Element; 
+			}
+		}
+
+		[MonoTODO]
+		public override XmlDocument OwnerDocument {
+			get { 
+				return base.OwnerDocument; 
+			}
+		}
+
+		public override string Prefix {
+			get { 
+				return prefix; 
 			}
 		}
 
@@ -121,7 +137,7 @@ namespace System.Xml
 		[MonoTODO]
 		public override XmlNode CloneNode (bool deep)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -132,129 +148,130 @@ namespace System.Xml
 		}
 
 		[MonoTODO]
-		public virtual string GetAttribute(string localName, string namespaceURI)
+		public virtual string GetAttribute (string localName, string namespaceURI)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual XmlAttribute GetAttributeNode(string name)
+		public virtual XmlAttribute GetAttributeNode (string name)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual XmlAttribute GetAttributeNode(string localName, string namespaceURI)
+		public virtual XmlAttribute GetAttributeNode (string localName, string namespaceURI)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual XmlNodeList GetElementsByTagName(string name)
+		public virtual XmlNodeList GetElementsByTagName (string name)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual XmlNodeList GetElementsByTagName(string localName, string namespaceURI)
+		public virtual XmlNodeList GetElementsByTagName (string localName, string namespaceURI)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual bool HasAttribute(string name)
+		public virtual bool HasAttribute (string name)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual bool HasAttribute(string localName, string namespaceURI)
+		public virtual bool HasAttribute (string localName, string namespaceURI)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
-		[MonoTODO("Don't remove default attributes.")]
-		public override void RemoveAll()
+		[MonoTODO ("Don't remove default attributes.")]
+		public override void RemoveAll ()
 		{
 			// Remove the child nodes.
-			base.RemoveAll();
+			base.RemoveAll ();
 
 			// Remove all attributes.
-			attributes.RemoveAll();
+			attributes.RemoveAll ();
 		}
 
 		[MonoTODO]
-		public virtual void RemoveAllAttributes()
+		public virtual void RemoveAllAttributes ()
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual void RemoveAttribute(string name)
+		public virtual void RemoveAttribute (string name)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual void RemoveAttribute(string localName, string namespaceURI)
+		public virtual void RemoveAttribute (string localName, string namespaceURI)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual XmlNode RemoveAttributeAt(int i)
+		public virtual XmlNode RemoveAttributeAt (int i)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual XmlAttribute RemoveAttributeNode(XmlAttribute oldAttr)
+		public virtual XmlAttribute RemoveAttributeNode (XmlAttribute oldAttr)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual XmlAttribute RemoveAttributeNode(string localName, string namespaceURI)
+		public virtual XmlAttribute RemoveAttributeNode (string localName, string namespaceURI)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual void SetAttribute(string name, string value)
+		public virtual void SetAttribute (string name, string value)
 		{
 			XmlAttribute attribute = OwnerDocument.CreateAttribute (name);
+			attribute.SetOwnerElement (this);
 			attribute.Value = value;
 			Attributes.SetNamedItem (attribute);
 		}
 
 		[MonoTODO]
-		public virtual void SetAttribute(string localName, string namespaceURI, string value)
+		public virtual void SetAttribute (string localName, string namespaceURI, string value)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual XmlAttribute SetAttributeNode(XmlAttribute newAttr)
+		public virtual XmlAttribute SetAttributeNode (XmlAttribute newAttr)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual XmlAttribute SetAttributeNode(string localName, string namespaceURI)
+		public virtual XmlAttribute SetAttributeNode (string localName, string namespaceURI)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public override void WriteContentTo(XmlWriter w)
+		public override void WriteContentTo (XmlWriter w)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public override void WriteTo(XmlWriter w)
+		public override void WriteTo (XmlWriter w)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		#endregion

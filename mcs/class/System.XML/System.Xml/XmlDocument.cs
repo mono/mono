@@ -169,19 +169,35 @@ namespace System.Xml
 		[MonoTODO]
 		public XmlAttribute CreateAttribute (string name)
 		{
-			return new XmlAttribute (this, name, "");
+			int indexOfColon = name.IndexOf (':');
+			
+			if (indexOfColon == -1)
+				return CreateAttribute (String.Empty, name, String.Empty);
+
+			string prefix = name.Substring (0, indexOfColon);
+			string localName = name.Substring (indexOfColon + 1);
+
+			return CreateAttribute (prefix, localName, String.Empty);
 		}
 
 		[MonoTODO]
 		public XmlAttribute CreateAttribute (string qualifiedName, string namespaceURI)
 		{
-			throw new NotImplementedException ();
+			int indexOfColon = qualifiedName.IndexOf (':');
+			
+			if (indexOfColon == -1)
+				return CreateAttribute (String.Empty, qualifiedName, String.Empty);
+
+			string prefix = qualifiedName.Substring (0, indexOfColon);
+			string localName = qualifiedName.Substring (indexOfColon + 1);
+
+			return CreateAttribute (prefix, localName, String.Empty);
 		}
 
 		[MonoTODO]
 		public virtual XmlAttribute CreateAttribute (string prefix, string localName, string namespaceURI)
 		{
-			throw new NotImplementedException ();
+			return new XmlAttribute (prefix, localName, namespaceURI, this);
 		}
 
 		[MonoTODO]
@@ -218,16 +234,33 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public XmlElement CreateElement (string name)
 		{
-			throw new NotImplementedException ();
+			int indexOfColon = name.IndexOf (':');
+			
+			if (indexOfColon == -1)
+				return CreateElement (String.Empty, name, String.Empty);
+
+			string prefix = name.Substring (0, indexOfColon);
+			string localName = name.Substring (indexOfColon + 1);
+
+			return CreateElement (prefix, localName, String.Empty);
 		}
 
 		[MonoTODO]
-		public XmlElement CreateElement (string qualifiedName, string namespaceURI)
+		public XmlElement CreateElement (
+			string qualifiedName, 
+			string namespaceURI)
 		{
-			throw new NotImplementedException ();
+			int indexOfColon = qualifiedName.IndexOf (':');
+			
+			if (indexOfColon == -1)
+				return CreateElement (String.Empty, qualifiedName, namespaceURI);
+
+			string prefix = qualifiedName.Substring (0, indexOfColon);
+			string localName = qualifiedName.Substring (indexOfColon + 1);
+
+			return CreateElement (prefix, localName, namespaceURI);
 		}
 
 		public virtual XmlElement CreateElement (

@@ -97,6 +97,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "XmlElementTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "XmlNamespaceManagerTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
