@@ -30,7 +30,9 @@ namespace System {
 	///   tables). 
 	/// </remarks>
 
-	[AttributeUsage(AttributeTargets.Class, Inherited=false, AllowMultiple=false)]
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct 
+		| AttributeTargets.Enum | AttributeTargets.Delegate, 
+		Inherited=false, AllowMultiple=false)]
 	public sealed class SerializableAttribute : Attribute {
 	}
 }

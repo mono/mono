@@ -1,3 +1,8 @@
+2002-01-20 Nick Drochak  <ndrochak@gol.com>
+
+	* SerializableAttribute.cs: this attrib can be used on enums, structs, 
+	and delegates too. Added the appropriate usage flags.
+
 2002-01-18  Duncan Mak  <duncan@ximian.com>
 
 	* CharEnumerator.cs: Implemented.
