@@ -463,7 +463,6 @@ namespace System.Xml
 			if (attr == null)
 				return null;
 			if (attr.OwnerElement == null || !attr.OwnerElement.IsRooted) {
-                        if (attr.OwnerElement == null) {
 				idTable.Remove (id);
 				return null;
 			}
