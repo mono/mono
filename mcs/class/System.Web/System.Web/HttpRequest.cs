@@ -290,7 +290,12 @@ namespace System.Web {
 		}
 
 		public HttpBrowserCapabilities Browser {
-			get { return _browser; }
+			get {
+				if (_browser == null)
+					_browser = new HttpBrowserCapabilities ();
+
+				return _browser;
+			}
 
 			set { _browser = value; }
 		}

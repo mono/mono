@@ -1,3 +1,11 @@
+2002-11-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: provide a default Browser until we detect it.
+	* HttpResponse.cs:
+	(End): do not close the connection here.
+	(Flush (bool)): send the headers when, for example, Redirect () is
+	called.
+
 2002-11-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpException.cs: simple error output.

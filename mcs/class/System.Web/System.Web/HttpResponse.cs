@@ -631,14 +631,14 @@ namespace System.Web
 			Flush (true);
 		}
 
-		[MonoTODO("Check timeout and if we can cancel the thread...")]
 		public void End ()
 		{
-			if (!_bEnded) {
-				Flush ();
-				_WorkerRequest.CloseConnection ();
-				_bEnded = true;
-			}
+			if (_bEnded)
+				return;
+
+			Flush ();
+			_bEnded = true;
+			_Context.ApplicationInstance.CompleteRequest ();
 		}
 
 		public void Flush ()
@@ -671,21 +671,23 @@ namespace System.Web
 						length = _Writer.BufferSize;
 						if (length != 0)
 							_WorkerRequest.SendCalculatedContentLength ((int) length);
-					} else if (_lContentLength == 0 && _iStatusCode == 200 &&
+					} else {
+						if (_lContentLength == 0 && _iStatusCode == 200 &&
 						   _sTransferEncoding == null) {
-						// Check we are going todo chunked encoding
-						string sProto = Request.ServerVariables ["SERVER_PROTOCOL"];
+							// Check we are going todo chunked encoding
+							string sProto = Request.ServerVariables ["SERVER_PROTOCOL"];
 
-						if (sProto != null && sProto == "HTTP/1.1") {
-							AppendHeader (
-								HttpWorkerRequest.HeaderTransferEncoding,
-								"chunked");
-						}  else {
-							// Just in case, the old browsers sends a HTTP/1.0
-							// request with Connection: Keep-Alive
-							AppendHeader (
-								HttpWorkerRequest.HeaderConnection,
-								"Close");
+							if (sProto != null && sProto == "HTTP/1.1") {
+								AppendHeader (
+									HttpWorkerRequest.HeaderTransferEncoding,
+									"chunked");
+							}  else {
+								// Just in case, the old browsers send a HTTP/1.0
+								// request with Connection: Keep-Alive
+								AppendHeader (
+									HttpWorkerRequest.HeaderConnection,
+									"Close");
+							}
 						}
 
 						SendHeaders ();
