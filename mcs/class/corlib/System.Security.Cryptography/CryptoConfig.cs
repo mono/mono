@@ -2,23 +2,150 @@
 // CryptoConfig.cs: Handles cryptographic implementations and OIDs.
 //
 // Author:
-//		Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (spouliot@motus.com)
 //
-// (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using System;
 using System.Collections;
+using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Text;
 
-namespace System.Security.Cryptography
-{
+namespace System.Security.Cryptography {
 
-public class CryptoConfig
-{
+internal class CorlibReader : MiniParser.IReader {
+	private string xml;
+	private int pos;
+
+	public CorlibReader (string filename) 
+	{
+		try {
+			StreamReader sr = new StreamReader (filename);
+			xml = sr.ReadToEnd ();
+			sr.Close ();
+		}
+		catch {
+			xml = null;
+		}
+	}
+
+	public int Read () {
+		try {
+			return (int) xml [pos++];
+		}
+		catch {
+			return -1;
+		}
+	}
+}
+
+internal class CorlibHandler : MiniParser.IHandler {
+
+	private bool mscorlib;
+	private bool cryptographySettings;
+	private bool cryptoNameMapping;
+	private bool cryptoClasses;
+
+	private Hashtable algo;
+	private Hashtable cryptoClass;
+	private Hashtable nameEntry;
+	private Hashtable oid;
+
+	public CorlibHandler (Hashtable algo, Hashtable oid) 
+	{
+		this.algo = algo;
+		this.oid = oid;
+		cryptoClass = new Hashtable ();
+		nameEntry = new Hashtable ();
+	}
+
+	public void OnStartParsing (MiniParser parser) {}
+
+	public void OnStartElement (string name, MiniParser.IAttrList attrs) 
+	{
+		switch (name) {
+			case "mscorlib":
+				mscorlib = true;
+				break;
+			case "cryptographySettings":
+				if (mscorlib)
+					cryptographySettings = true;
+				break;
+			case "cryptoNameMapping":
+				if (cryptographySettings)
+					cryptoNameMapping = true;
+				break;
+			case "nameEntry":
+				if (cryptoNameMapping) {
+					string ename = attrs.Values [0];
+					string eclas = attrs.Values [1];
+					nameEntry.Add (ename, eclas);
+				}
+				break;
+			case "cryptoClasses":
+				if (cryptoNameMapping)
+					cryptoClasses = true;
+				break;
+			case "cryptoClass":
+				if (cryptoClasses)
+					cryptoClass.Add (attrs.Names [0], attrs.Values [0]);
+				break;
+			default:
+				// unknown tag in parameters
+				break;
+		}
+	}
+
+	public void OnEndElement (string name) 
+	{
+		switch (name) {
+			case "mscorlib":
+				mscorlib = false;
+				break;
+			case "cryptographySettings":
+				cryptographySettings = false;
+				break;
+			case "cryptoNameMapping":
+				cryptoNameMapping = false;
+				break;
+			case "cryptoClasses":
+				cryptoClasses = false;
+				break;
+			default:
+				// unknown tag in parameters
+				break;
+		}
+	}
+
+	public void OnChars (string ch) {}
+
+	public void OnEndParsing (MiniParser parser) 
+	{
+		foreach (string key in nameEntry.Keys) {
+			string eclass = (string) nameEntry [key];
+			
+			// is it a class or a friendly name ?
+			object o = cryptoClass [eclass];
+			if (o != null) {
+				// friendly name, so get it's class
+				eclass = (string) o;
+			}
+
+			if (algo.ContainsKey (key)) 
+				algo.Remove (key);
+			algo.Add (key, eclass);
+		}
+	}
+}
+
+
+public class CryptoConfig {
+
 	static private Hashtable algorithms;
 	static private Hashtable oid;
-	static Assembly xmldsig;
 
 	private const string defaultNamespace = "System.Security.Cryptography.";
 	private const string defaultSHA1 = defaultNamespace + "SHA1CryptoServiceProvider";
@@ -40,15 +167,21 @@ public class CryptoConfig
 	private const string defaultDSASigDesc = defaultNamespace + "DSASignatureDescription";
 	private const string defaultRSASigDesc = defaultNamespace + "RSAPKCS1SHA1SignatureDescription";
 	// LAMESPEC: undocumented names in CryptoConfig
-	private const string defaultC14N = defaultNamespace + "Xml.XmlDsigC14NTransform";
-	private const string defaultC14NWithComments = defaultNamespace + "Xml.XmlDsigC14NWithCommentsTransform";
-	private const string defaultBase64 = defaultNamespace + "Xml.XmlDsigBase64Transform";
-	private const string defaultXPath = defaultNamespace + "Xml.XmlDsigXPathTransform";
-	private const string defaultXslt = defaultNamespace + "Xml.XmlDsigXsltTransform";
-	private const string defaultEnveloped = defaultNamespace + "Xml.XmlDsigEnvelopedSignatureTransform";
+	private const string xmlAssembly = ", System.Security, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null";
+	private const string defaultC14N = defaultNamespace + "Xml.XmlDsigC14NTransform" + xmlAssembly;
+	private const string defaultC14NWithComments = defaultNamespace + "Xml.XmlDsigC14NWithCommentsTransform" + xmlAssembly;
+	private const string defaultBase64 = defaultNamespace + "Xml.XmlDsigBase64Transform" + xmlAssembly;
+	private const string defaultXPath = defaultNamespace + "Xml.XmlDsigXPathTransform" + xmlAssembly;
+	private const string defaultXslt = defaultNamespace + "Xml.XmlDsigXsltTransform" + xmlAssembly;
+	private const string defaultEnveloped = defaultNamespace + "Xml.XmlDsigEnvelopedSignatureTransform" + xmlAssembly;
+	// LAMESPEC: only documentated in ".NET Framework Security" book
+	private const string defaultX509Data = defaultNamespace + "Xml.KeyInfoX509Data" + xmlAssembly;
+	private const string defaultKeyName = defaultNamespace + "Xml.KeyInfoName" + xmlAssembly;
+	private const string defaultKeyValueDSA = defaultNamespace + "Xml.DSAKeyValue" + xmlAssembly;
+	private const string defaultKeyValueRSA = defaultNamespace + "Xml.RSAKeyValue" + xmlAssembly;
+	private const string defaultRetrievalMethod = defaultNamespace + "Xml.KeyInfoRetrievalMethod" + xmlAssembly;
 
 	private const string managedSHA1 = defaultNamespace + "SHA1Managed";
-
 
 	// Oddly OID seems only available for hash algorithms
 	private const string oidSHA1 = "1.3.14.3.2.26";
@@ -56,6 +189,8 @@ public class CryptoConfig
 	private const string oidSHA256 = "2.16.840.1.101.3.4.1";
 	private const string oidSHA384 = "2.16.840.1.101.3.4.2";
 	private const string oidSHA512 = "2.16.840.1.101.3.4.3";
+	// LAMESPEC: only documentated in ".NET Framework Security" book
+	private const string oid3DESKeyWrap = "1.2.840.113549.1.9.16.3.6";
 
 	private const string nameSHA1a = "SHA";
 	private const string nameSHA1b = "SHA1";
@@ -96,20 +231,30 @@ public class CryptoConfig
 	private const string nameHMACb = "System.Security.Cryptography.HMACSHA1";
 	private const string nameMAC3DESa = "MACTripleDES";
 	private const string nameMAC3DESb = "System.Security.Cryptography.MACTripleDES";
+	// LAMESPEC: only documentated in ".NET Framework Security" book
+	private const string name3DESKeyWrap = "TripleDESKeyWrap";
+
+	private const string urlXmlDsig = "http://www.w3.org/2000/09/xmldsig#";
 	// LAMESPEC: undocumented URLs in CryptoConfig
-	private const string urlDSASHA1 = "http://www.w3.org/2000/09/xmldsig#dsa-sha1";
-	private const string urlRSASHA1 = "http://www.w3.org/2000/09/xmldsig#rsa-sha1";
-	private const string urlSHA1 = "http://www.w3.org/2000/09/xmldsig#sha1";
+	private const string urlDSASHA1 = urlXmlDsig + "dsa-sha1";			// no space
+	private const string urlRSASHA1 = urlXmlDsig + "rsa-sha1";			// no space
+	private const string urlSHA1 = urlXmlDsig + "sha1";				// no space
 	private const string urlC14N = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315"; 
 	private const string urlC14NWithComments = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments";
 	private const string urlBase64 = "http://www.w3.org/2000/09/xmldsig#base64";
 	private const string urlXPath = "http://www.w3.org/TR/1999/REC-xpath-19991116";
 	private const string urlXslt = "http://www.w3.org/TR/1999/REC-xslt-19991116";
-	private const string urlEnveloped = "http://www.w3.org/2000/09/xmldsig#enveloped-signature";
+	private const string urlEnveloped = urlXmlDsig + "enveloped-signature";		// no space
+	// LAMESPEC: only documentated in ".NET Framework Security" book
+	private const string urlX509Data = urlXmlDsig + " X509Data";			// space is required
+	private const string urlKeyName = urlXmlDsig + " KeyName";			// space is required
+	private const string urlKeyValueDSA = urlXmlDsig + " KeyValue/DSAKeyValue";	// space is required
+	private const string urlKeyValueRSA = urlXmlDsig + " KeyValue/RSAKeyValue";	// space is required
+	private const string urlRetrievalMethod = urlXmlDsig + " RetrievalMethod";	// space is required
 
 	// ??? must we read from the machine.config each time or just at startup ???
-	[MonoTODO ("support machine.config")]
-	static CryptoConfig()
+	[MonoTODO ("support OID in machine.config")]
+	static CryptoConfig ()
 	{
 		algorithms = new Hashtable ();
 		// see list @ http://msdn.microsoft.com/library/en-us/cpref/html/
@@ -141,16 +286,16 @@ public class CryptoConfig
 		algorithms.Add (nameDSAa, defaultDSA);  
 		algorithms.Add (nameDSAb, defaultDSA);  
 	
-		algorithms.Add (nameDESa, defaultDES);  
-		algorithms.Add (nameDESb, defaultDES);  
+		algorithms.Add (nameDESa, defaultDES);
+		algorithms.Add (nameDESb, defaultDES);
 	
-		algorithms.Add (name3DESa, default3DES);    
-		algorithms.Add (name3DESb, default3DES);    
-		algorithms.Add (name3DESc, default3DES);     
-		algorithms.Add (name3DESd, default3DES);    
+		algorithms.Add (name3DESa, default3DES);
+		algorithms.Add (name3DESb, default3DES);
+		algorithms.Add (name3DESc, default3DES);
+		algorithms.Add (name3DESd, default3DES);
 	
-		algorithms.Add (nameRC2a, defaultRC2);  
-		algorithms.Add (nameRC2b, defaultRC2);  
+		algorithms.Add (nameRC2a, defaultRC2);
+		algorithms.Add (nameRC2b, defaultRC2);
 
 		algorithms.Add (nameAESa, defaultAES);  
 		algorithms.Add (nameAESb, defaultAES);
@@ -179,16 +324,20 @@ public class CryptoConfig
 		algorithms.Add (urlXPath, defaultXPath);
 		algorithms.Add (urlXslt, defaultXslt);
 		algorithms.Add (urlEnveloped, defaultEnveloped);
+		// LAMESPEC: only documentated in ".NET Framework Security" book
+		algorithms.Add (urlX509Data, defaultX509Data);
+		algorithms.Add (urlKeyName, defaultKeyName);
+		algorithms.Add (urlKeyValueDSA, defaultKeyValueDSA);
+		algorithms.Add (urlKeyValueRSA, defaultKeyValueRSA);
+		algorithms.Add (urlRetrievalMethod, defaultRetrievalMethod);
 
 		oid = new Hashtable ();
 		// comments here are to match with MS implementation (but not with doc)
 		// LAMESPEC: only HashAlgorithm seems to have their OID included
 		oid.Add (defaultSHA1, oidSHA1);
 		oid.Add (managedSHA1, oidSHA1);
-		// oid.Add (nameSHA1a, oidSHA1);
 		oid.Add (nameSHA1b, oidSHA1);
 		oid.Add (nameSHA1c, oidSHA1);
-		// oid.Add (nameSHA1d, oidSHA1);
 
 		oid.Add (defaultMD5, oidMD5);
 		oid.Add (nameMD5a, oidMD5);
@@ -196,18 +345,49 @@ public class CryptoConfig
 
 		oid.Add (defaultSHA256, oidSHA256);
 		oid.Add (nameSHA256a, oidSHA256);
-		// oid.Add (nameSHA256b, oidSHA256);
 		oid.Add (nameSHA256c, oidSHA256);
 
 		oid.Add (defaultSHA384, oidSHA384);
 		oid.Add (nameSHA384a, oidSHA384);
-		// oid.Add (nameSHA384b, oidSHA384);
 		oid.Add (nameSHA384c, oidSHA384);
 
 		oid.Add (defaultSHA512, oidSHA512);
 		oid.Add (nameSHA512a, oidSHA512);
-		// oid.Add (nameSHA512b, oidSHA512);
 		oid.Add (nameSHA512c, oidSHA512);
+
+		// surprise! documented in ".NET Framework Security" book
+		oid.Add (name3DESKeyWrap, oid3DESKeyWrap);
+
+		// Add/modify the config as specified by machine.config
+		string config = GetMachineConfigPath ();
+		// debug @"C:\mono-0.17\install\etc\mono\machine.config";
+		if (config != null) {
+			MiniParser parser = new MiniParser ();
+			CorlibReader reader = new CorlibReader (config);
+			CorlibHandler handler = new CorlibHandler (algorithms, oid);
+			parser.Parse (reader, handler);
+		}
+	}
+
+	// managed version of "get_machine_config_path"
+	private static string GetMachineConfigPath () 
+	{
+		string env = Environment.GetEnvironmentVariable ("MONO_CONFIG");
+		if (env != null)
+			return env;
+		env = Environment.GetEnvironmentVariable ("MONO_BASEPATH");
+		if (env == null)
+			return null;
+
+		StringBuilder sb = new StringBuilder ();
+		sb.Append (env);
+		sb.Append (Path.DirectorySeparatorChar);
+		sb.Append ("etc");
+		sb.Append (Path.DirectorySeparatorChar);
+		sb.Append ("mono");
+		sb.Append (Path.DirectorySeparatorChar);
+		sb.Append ("machine.config");
+		return sb.ToString ();
 	}
 
 	public static object CreateFromName (string name)
@@ -222,38 +402,19 @@ public class CryptoConfig
 	
 		try {
 			Type algoClass = null;
-			string algo = (string)algorithms [name];
+			string algo = (string) algorithms [name];
 			// do we have an entry
-			if (algo != null) {
-				algoClass = Type.GetType (algo);
-				// some classes are in assembly System.Security.Cryptography.Xml
-				if ((algoClass == null) && (algo.StartsWith ("System.Security.Cryptography.Xml."))) {
-					// second chance !
-					if (xmldsig == null)
-						xmldsig = Assembly.LoadWithPartialName ("System.Security");
-					if (xmldsig != null)
-						algoClass = xmldsig.GetType (algo);
-				}
-			}
-			else
-				algoClass = Type.GetType (name);
+			if (algo == null)
+				algo = name;
+			algoClass = Type.GetType (algo);
 			// call the constructor for the type
 			return Activator.CreateInstance (algoClass, args);
 		}
 		catch {
+			// method deosn't throw any exception
 			return null;
 		}
 	}
-
-	// Note: Couldn't access private in DefaultConfig so I copied the
-	// two required functions.
-/*	[MethodImplAttribute(MethodImplOptions.InternalCall)]
-	extern private static string get_machine_config_path ();
-
-	private static string GetMachineConfigPath () 
-	{
-		return get_machine_config_path ();
-	}*/
 
 	// encode (7bits array) number greater than 127
 	private static byte[] EncodeLongNumber (long x)
@@ -343,7 +504,7 @@ public class CryptoConfig
 	public static string MapNameToOID (string name)
 	{
 		if (name == null)
-			throw new ArgumentNullException ();
+			throw new ArgumentNullException ("name");
 
 		return (string)oid [name];
 	}

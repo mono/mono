@@ -1,3 +1,10 @@
+2003-03-04  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CryptoConfig.cs: Added initital support for "machine.config" 
+	(limited to algorithms, not OIDs). Modified CreateFromName to use
+	the fully qualified class names (and removed xmldsig hack). Added
+	algorithm names documented in book ".NET Framework Security".
+
 2003-02-03  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* PasswordDeriveBytes.cs: Finally got the derivation right. The
