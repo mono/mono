@@ -1,3 +1,7 @@
+2002-04-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* monoburg.c: added a default handler for warning messages that just
+	output the messages to stderr instead of stdout.
 
 Mon Feb 18 14:28:10 CET 2002 Paolo Molaro <lupus@ximian.com>
 
