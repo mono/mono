@@ -1,3 +1,7 @@
+2003-06-04  Ben Maurer <bmaurer@users.sourceforge.net>
+	* DictionaryEntry.cs: Throw exception if key == null. Fixes Rotor
+	failures
+
 2003-06-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ArrayList.cs: nullify the array in Clear ().
