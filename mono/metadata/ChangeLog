@@ -1,3 +1,10 @@
+
+Wed Jul 24 13:04:05 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* loader.h, loader.c: stack walking support.
+	* icall.c: implemented GetCurrentMethod, GetExecutingAssembly,
+	GetCallingAssembly.
+
 2002-07-24  Dietmar Maurer  <dietmar@ximian.com>
 
 	* marshal.c (mono_string_utf8_to_builder): impl.
