@@ -1,3 +1,8 @@
+2002-10-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* mono-config.c:
+	(mono_config_parse_file): don't leak the text.
+
 2002-10-02  Martin Baulig  <martin@gnome.org>
 
 	* debug-mono-symfile.c: Added support for methods.
