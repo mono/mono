@@ -956,26 +956,26 @@ constant_declaration
 	{
 		int mod = (int) current_modifiers;
 
-		VariableDeclaration.FixupTypes ((ArrayList) $2);
-		VariableDeclaration.FixupArrayTypes ((ArrayList) $2);
-		
-/*		if (current_container is Module)
-			mod = mod | Modifiers.STATIC;
-*/			
-
 		mod = mod ^ Modifiers.STATIC;
 		
 		// Structure members are Public by default			
 		if ((current_container is Struct) && (mod == 0))
 			mod = Modifiers.PUBLIC;			
-					
-		foreach (VariableDeclaration var in (ArrayList) $2){
-			Location l = var.Location;
-			Const vconstant = new Const ((Expression)var.type, (String)var.identifier, 
-						 (Expression)var.expression_or_array_initializer, 
-						 mod, (Attributes) null, l);
 
-			CheckDef (current_container.AddConstant (vconstant), vconstant.Name, l);
+		ArrayList consts = (ArrayList) $2;
+		if(consts.Count > 0) 
+		{
+			VariableDeclaration.FixupTypes ((ArrayList) $2);
+			VariableDeclaration.FixupArrayTypes ((ArrayList) $2);
+
+			foreach (VariableDeclaration var in (ArrayList) $2){
+				Location l = var.Location;
+				Const vconstant = new Const ((Expression)var.type, (String)var.identifier, 
+							(Expression)var.expression_or_array_initializer, 
+							mod, (Attributes) null, l);
+
+				CheckDef (current_container.AddConstant (vconstant), vconstant.Name, l);
+			}
 		}
 	}
 	;
@@ -2830,13 +2830,17 @@ constant_declarators
 	: constant_declarator 
 	  {
 		ArrayList decl = new ArrayList ();
-		decl.Add ($1);
+		if ($1 != null) 
+			decl.Add ($1);
+			
 		$$ = decl;
 	  }
 	| constant_declarators COMMA constant_declarator
 	  {
-		ArrayList decls = (ArrayList) $1;
-		decls.Add ($3);
+	  	ArrayList decls = (ArrayList) $1;
+		if ($3 != null)
+			decls.Add ($3);
+
 		$$ = $1;
 	  }
 	;
@@ -2865,23 +2869,10 @@ constant_declarator
 		if (current_rank_specifiers != null) 
 		{
 			Report.Error (30424, lexer.Location, "Constant doesn't support array");
+			$$ = null;
 	  	}
-	  	
-	  	/*
-	  	   Check for a declaration like Dim a(2) or Dim a(2,3)
-	  	   If this is the case, we must generate an ArrayCreationExpression
-	  	   and, in case, add the initializer after the array has been created.
-	  	*/
-	  	if (VariableDeclaration.IsArrayDecl (this)) {	
-			if (VariableDeclaration.IndexesSpecified(current_rank_specifiers)) {   
-				a_dims = (ArrayList) current_rank_specifiers;
-				VariableDeclaration.VBFixIndexLists (ref a_dims);
-				varinit = VariableDeclaration.BuildArrayCreator(vartype, a_dims, (ArrayList) varinit, lexer.Location);
-			}
-			vartype = DecomposeQI (vartype.ToString() + VariableDeclaration.BuildRanks (this), lexer.Location);
-		}
-	  
-	  	$$ = new VariableDeclaration (varname, vartype, varinit, lexer.Location, null);
+	  	else
+	  	  	$$ = new VariableDeclaration (varname, vartype, varinit, lexer.Location, null);
 	  }
 	;		
 
