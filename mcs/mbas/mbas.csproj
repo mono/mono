@@ -116,6 +116,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "compileroptions.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "const.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

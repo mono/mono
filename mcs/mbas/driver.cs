@@ -20,21 +20,160 @@ namespace Mono.Languages
 	using Mono.CSharp;
 	using Mono.GetOptions;
 
-	enum Target {
+	enum Target 
+	{
 		Library, Exe, Module, WinExe
 	};
 	
 	/// <summary>
 	///    The compiler driver.
 	/// </summary>
-	public class Driver
+	public class Driver : Options
 	{
 		
-		//
-		// Assemblies references to be linked.   Initialized with
-		// mscorlib.dll elsewhere.
-		static ArrayList references;
+		[Option("Verbose parsing (for debugging the parser)",'v')] 
+		public bool verbose	{ set { GenericParser.yacc_verbose_flag = value; } }
 
+		[Option("Specifies PARAM as main (starting) class", 'm')]
+		public string main { set { RootContext.MainClass = value; } }
+
+		[Option("About the MonoBASIC compiler", "about")]
+		public override WhatToDoNext DoAbout()
+		{
+			return base.DoAbout();
+		}
+
+		[Option("Adds PARAM to the assembly link path", 'L')]
+		public static string[] LinkPaths = null;
+
+		[Option("Defines the symbol PARAM", "define")]
+		public static string[] Defines = null;
+
+		[Option("Only parses the source file (for debugging the tokenizer)", "parse")]
+		public static bool parse_only = false;
+
+		private static bool load_default_config = true;
+
+		[Option("Disables implicit references to assemblies", "noconfig")]
+		public bool NoConfig { set { load_default_config = !value; } }
+
+		[Option("Allows unsafe code", "unsafe")]
+		public bool AllowUnsafeCode { set { RootContext.Unsafe = value; } }
+
+		private string output_file;
+
+		[Option("Specifies output file", 'o', "output")]
+		public WhatToDoNext SetOutputFile(string FileName)
+		{
+			output_file = FileName;
+			string bname = CodeGen.Basename (output_file);
+			if (bname.IndexOf (".") == -1)
+				output_file += ".exe";
+			return WhatToDoNext.GoAhead;
+		}
+
+
+		[Option("Only tokenizes source files", "tokenize")]
+		public static bool tokenize = true;
+
+		[Option("Set default context to checked", "checked")]
+		public bool Checked { set { RootContext.Checked = value; } }
+
+		[Option("Shows stack trace at error location", "Stacktrace")]
+		public bool Stacktrace { set { Report.Stacktrace = value; } }
+
+		private static ArrayList references;
+
+		[Option("References an assembly", 'r')]
+		public static string reference { set { references.Add(value); } }
+
+		[Option("Adds PARAM as a resource", "resource")]
+		public static string[] resources;
+
+		[Option("Set default context to checked", "nostdlib")]
+		public bool nostdlib { set { RootContext.StdLib = !value; } }
+
+		[Option("Makes errors fatal", "fatal")]
+		public bool Fatal { set { Report.Fatal = value; } }
+
+		[Option("Treat warnings as errors", "werror")]
+		public bool WarningsAreErrors { set { Report.WarningsAreErrors = value; } }
+
+		[Option("Ignores warning number PARAM", "nowarn")]
+		public WhatToDoNext SetIgnoreWarning(int warn)
+		{
+			Report.SetIgnoreWarning(warn);
+			return WhatToDoNext.GoAhead;
+		}
+
+		[Option("Recursively compiles the files in PARAM ([dir]/file)", "recurse")]
+		public WhatToDoNext recurse(string DirName)
+		{
+			AddFiles (DirName, true);
+			return WhatToDoNext.GoAhead;
+		}
+	
+
+		[Option("Write symbolic debugging information to FILE-debug.s", 'g', "debug")]
+		public static bool want_debugging_support = false;
+
+		[Option("Debugger arguments", "debug-args")]
+		public WhatToDoNext SetDebugArgs(string args)
+		{
+			char[] sep = { ',' };
+			debug_arglist.AddRange (args.Split (sep));
+			return WhatToDoNext.GoAhead;
+		}
+
+		[Option("Specifies the target (PARAM is one of: exe, winexe, library, module)", "target")]
+		public WhatToDoNext SetTarget(string type)
+		{
+			switch (type)
+			{
+				case "library":
+					target = Target.Library;
+					target_ext = ".dll";
+					break;
+							
+				case "exe":
+					target = Target.Exe;
+					break;
+							
+				case "winexe":
+					target = Target.WinExe;
+					break;
+							
+				case "module":
+					target = Target.Module;
+					target_ext = ".dll";
+					break;
+			}
+			return WhatToDoNext.GoAhead;
+		}
+
+		[Option("Sets warning level (the highest is 4, the default)", "wlevel")]
+		public int wlevel { set { RootContext.WarningLevel = value; } }
+
+		[Option("Sets warning level (the highest is 4, the default)")]
+		public bool timestamp
+		{
+			set
+			{
+				timestamps = true;
+				last_time = DateTime.Now;
+				debug_arglist.Add("timestamp");
+			}
+		}
+
+	static void Usage (bool is_error)
+		{
+			Console.WriteLine (	@"
+MonoBASIC Compiler, Copyright (C)2002 Rafael Teixeira.
+  --timestamp     Displays time stamps of various compiler events
+  @file           Read response file for more options
+");
+		}
+		
 		//
 		// If any of these fail, we ignore the problem.  This is so
 		// that we can list all the assemblies in Windows and not fail
@@ -42,12 +181,6 @@ namespace Mono.Languages
 		//
 		static ArrayList soft_references;
 
-		// Lookup paths
-		static ArrayList link_paths;
-
-		// Whether we want to only run the tokenizer
-		static bool tokenize = false;
-		
 		static int error_count = 0;
 
 		static string first_source;
@@ -55,16 +188,9 @@ namespace Mono.Languages
 		static Target target = Target.Exe;
 		static string target_ext = ".exe";
 
-		static bool want_debugging_support = false;
 		static ArrayList debug_arglist = new ArrayList ();
 
-		static bool parse_only = false;
 		static bool timestamps = false;
-
-		//
-		// Whether to load the initial config file (what CSC.RSP has by default)
-		// 
-		static bool load_default_config = true;
 
 		static Hashtable source_files = new Hashtable ();
 
@@ -73,10 +199,6 @@ namespace Mono.Languages
 		//
 		static ArrayList defines;
 
-		//
-		// A list of resource files
-		//
-		static ArrayList resources = new ArrayList();
 		
 		//
 		// Last time we took the time
@@ -92,52 +214,7 @@ namespace Mono.Languages
 				"[{0:00}:{1:000}] {2}",
 				(int) span.TotalSeconds, span.Milliseconds, msg);
 		}
-	       
-		
-		static void Usage (bool is_error)
-		{
-			Console.WriteLine (	@"
-MonoBASIC Compiler, Copyright (C)2002 Rafael Teixeira.
-Usage: mbas [options] source-files
-Options:
-  --about         About the MonoBASIC compiler
-  --checked       Set default context to checked
-  --define SYM    Defines the symbol SYM
-  --fatal         Makes errors fatal
-  -g, --debug     Write symbolic debugging information to FILE-debug.s
-  -h, --help      Prints this usage instructions
-  -L PATH         Adds PATH to the assembly link path
-  -m CLASS,
-  --main CLASS    Specifies CLASS as main (starting) class
-  --noconfig      Disables implicit references to assemblies
-  --nostdlib      Does not load core libraries
-  --nowarn XXX    Ignores warning number XXX
-  -o FNAME,
-  --output FNAME  Specifies output file
-  --parse         Only parses the source file (for debugging the tokenizer)
-  --probe X       Probes for the source to generate code X on line L
-  -r ASSEMBLY     References an assembly
-  --recurse SPEC  Recursively compiles the files in SPEC ([dir]/file)
-  --resource FILE Adds FILE as a resource
-  --stacktrace    Shows stack trace at error location
-  --target KIND   Specifies the target (KIND is one of: exe, winexe, library, module)
-  --tokenize      Only tokenizes source files
-  --timestamp     Displays time stamps of various compiler events
-  --unsafe        Allows unsafe code
-  --werror        Treat warnings as errors
-  -v              Verbose parsing (for debugging the parser)
-  --wlevel LEVEL  Sets warning level (the highest is 4, the default)
-  @file           Read response file for more options
-");
-
-		}
-
-
-		static void About ()
-		{
-//			Options.ShowAbout();
-		}
-		
+	       		
 		static void error (string msg)
 		{
 			Console.WriteLine ("Error: " + msg);
@@ -148,49 +225,11 @@ Options:
 			Console.WriteLine (msg);
 		}
 		
-		private static Mono.GetOptions.OptionList Options;
-
-		private static bool SetVerboseParsing(object nothing)
-		{
-			GenericParser.yacc_verbose_flag = true;
-			return true;
-		}
-
-		private static bool SetMainClass(object className)
-		{
-			RootContext.MainClass = (string)className;
-			return true;
-		}
-
-		private static bool AddFile(object fileName)
-		{
-			string f = (string)fileName;
-			if (first_source == null)
-				first_source = f;
-
-			if (source_files.Contains(f))
-			{
-				Report.Error (1516, "Source file `" + f + "' specified multiple times");
-				return false;
-			} 
-			else
-				source_files.Add(f, f);
-					
-			return true;
-		}
-
 		public static int Main (string[] args)
 		{
-			Options = new OptionList();
-			Options.ShowTitle();
-			Options.AddParameterReader(new OptionFound(AddFile));
-			Options.AddAbout(' ',"about", "About the MonoBASIC compiler");
-			Options.AddBooleanSwitch('v',"verbose", "Verbose parsing (for debugging the parser)", new OptionFound(SetVerboseParsing) );
-			Options.AddSymbolAdder('m',"main", "Specifies CLASS as main (starting) class", "CLASS", new OptionFound(SetMainClass) );
-
-			bool ok = MainDriver (args);
+			Driver Exec = new Driver();
 			
-			if (ok && Report.Errors == 0) 
+			if (Exec.MainDriver(args) && Report.Errors == 0) 
 			{
 				Console.Write("Compilation succeeded");
 				if (Report.Warnings > 0) 
@@ -223,7 +262,7 @@ Options:
 				TypeManager.AddAssembly (a);
 				return 0;
 			} catch (FileNotFoundException){
-				foreach (string dir in link_paths){
+				foreach (string dir in LinkPaths){
 					string full_path = dir + "/" + assembly + ".dll";
 
 					try {
@@ -423,6 +462,24 @@ Options:
 			foreach (string def in default_config)
 				soft_references.Insert (p++, def);
 		}
+
+		private static bool AddFile(string fileName)
+		{
+			string f = fileName;
+			if (first_source == null)
+				first_source = f;
+
+			if (source_files.Contains(f))
+			{
+				Report.Error (1516, "Source file `" + f + "' specified multiple times");
+				return false;
+			} 
+			else
+				source_files.Add(f, f);
+
+			return true;
+		}
+
 		
 		/// <summary>
 		///    Parses the arguments, and drives the compilation
@@ -433,263 +490,19 @@ Options:
 		///    TODO: Mostly structured to debug the compiler
 		///    now, needs to be turned into a real driver soon.
 		/// </remarks>
-		static bool MainDriver (string [] args)
+		bool MainDriver(string [] args)
 		{
 			int errors = 0;//, i;
 			string output_file = null;
-			//bool parsing_options = true;
 			
-			references = new ArrayList ();
 			soft_references = new ArrayList ();
-			link_paths = new ArrayList ();
 			SetupDefaultDefines ();
 			
-			//
-			// Setup defaults
-			//
-			// This is not required because Assembly.Load knows about this
-			// path.
-			//
-			link_paths.Add (GetSystemDir ());
+			this.ProcessArgs(args);
 
-			if (!Options.ProcessArgs(args))
-				return false;
+			foreach(string arg in this.RemainingArguments)
+				AddFile(arg); 
 
-			/*			int argc = args.Length;
-						for (i = 0; i < argc; i++){
-							string arg = args [i];
-							//
-							// Prepare to recurse
-							//
-				
-							if (parsing_options && (arg.StartsWith ("-"))){
-								switch (arg){
-
-								case "--":
-									parsing_options = false;
-									continue;
-
-								case "--parse":
-									parse_only = true;
-									continue;
-
-								case "--unsafe":
-									RootContext.Unsafe = true;
-									continue;
-
-								case "/?": case "/h": case "/help":
-								case "--help":
-									Usage (false);
-									return false;
-
-								case "--define":
-									if ((i + 1) >= argc){
-										Usage (true);
-										return false;
-									}
-									defines.Add (args [++i]);
-									continue;
-						
-								case "--probe": {
-									int code = 0;
-
-									try {
-										code = Int32.Parse (
-											args [++i], NumberStyles.AllowLeadingSign);
-										Report.SetProbe (code);
-									} catch {
-										Report.Error (-14, "Invalid number specified");
-									} 
-									continue;
-								}
-
-								case "--tokenize": {
-									tokenize = true;
-									continue;
-								}
-					
-								case "-o": 
-								case "--output":
-									if ((i + 1) >= argc){
-										Usage (true);
-										return false;
-									}
-									output_file = args [++i];
-									string bname = CodeGen.Basename (output_file);
-									if (bname.IndexOf (".") == -1)
-										output_file += ".exe";
-									continue;
-
-								case "--checked":
-									RootContext.Checked = true;
-									continue;
-
-								case "--stacktrace":
-									Report.Stacktrace = true;
-									continue;
-
-								case "--target":
-									if ((i + 1) >= argc){
-										Usage (true);
-										return false;
-									}
-
-									string type = args [++i];
-									switch (type){
-									case "library":
-										target = Target.Library;
-										target_ext = ".dll";
-										break;
-							
-									case "exe":
-										target = Target.Exe;
-										break;
-							
-									case "winexe":
-										target = Target.WinExe;
-										break;
-							
-									case "module":
-										target = Target.Module;
-										target_ext = ".dll";
-										break;
-									default:
-										Usage (true);
-										return false;
-									}
-									continue;
-
-								case "-r":
-									if ((i + 1) >= argc){
-										Usage (true);
-										return false;
-									}
-						
-									references.Add(args [++i]);
-									continue;
-					
-								case "--resource":
-									if ((i + 1) >= argc)
-									{
-										Usage (true);
-										Console.WriteLine("Missing argument to --resource"); 
-										return false;
-									}
-						
-									resources.Add(args [++i]);
-									continue;
-					
-					
-								case "-L":
-									if ((i + 1) >= argc){
-										Usage (true);
-										return false;
-									}
-									link_paths.Add (args [++i]);
-									continue;
-						
-								case "--nostdlib":
-									RootContext.StdLib = false;
-									continue;
-						
-								case "--fatal":
-									Report.Fatal = true;
-									continue;
-
-								case "--werror":
-									Report.WarningsAreErrors = true;
-									continue;
-
-								case "--nowarn":
-									if ((i + 1) >= argc){
-										Usage (true);
-										return false;
-									}
-									int warn;
-						
-									try {
-										warn = Int32.Parse (args [++i]);
-									} catch {
-										Usage (true);
-										return false;
-									}
-									Report.SetIgnoreWarning (warn);
-									continue;
-
-								case "--wlevel":
-									if ((i + 1) >= argc){
-										Report.Error (
-											1900,
-											"--wlevel requires an value from 0 to 4");
-										error_count++;
-										return false;
-									}
-									int level;
-						
-									try {
-										level = Int32.Parse (args [++i]);
-									} catch {
-										Report.Error (
-											1900,
-											"--wlevel requires an value from 0 to 4");
-										return false;
-									}
-									if (level < 0 || level > 4){
-										Report.Error (1900, "Warning level must be 0 to 4");
-										return false;
-									} else
-										RootContext.WarningLevel = level;
-									continue;
-						
-								case "--about":
-									About ();
-									return false;
-
-								case "--recurse":
-									if ((i + 1) >= argc){
-										Console.WriteLine ("--recurse requires an argument");
-										error_count++;
-										return false;
-									}
-									AddFiles (args [++i], true);
-									continue;
-						
-								case "--timestamp":
-									timestamps = true;
-									last_time = DateTime.Now;
-									debug_arglist.Add("timestamp");
-									continue;
-
-								case "--debug": case "-g":
-									want_debugging_support = true;
-									continue;
-
-								case "--debug-args":
-									if ((i + 1) >= argc){
-										Console.WriteLine ("--debug-args requires an argument");
-										error_count++;
-										return false;
-									}
-									char[] sep = { ',' };
-									debug_arglist.AddRange (args [++i].Split (sep));
-									continue;
-
-								case "--noconfig":
-									load_default_config = false;
-									continue;
-
-								default:
-									Console.WriteLine ("Unknown option: " + arg);
-									errors++;
-									continue;
-								}
-							}
-
-							// Rafael: Does not compile them yet!!!
-							errors += AddFiles(arg, false); 
-						}
-			*/
-			//Rafael: Compile all source files!!!
 			foreach(string filename in source_files.Values)
 				errors += ProcessSourceFile(filename);
 

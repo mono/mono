@@ -33,13 +33,17 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]		
 
-[assembly: Mono.GetOptions.Author("Ravi Pratap")]
-[assembly: Mono.GetOptions.Author("Miguel de Icaza")]
-[assembly: Mono.GetOptions.Author("Rafael Teixeira")]
+[assembly: Mono.Author("Ravi Pratap")]
+[assembly: Mono.Author("Miguel de Icaza")]
+[assembly: Mono.Author("Rafael Teixeira")]
 
-[assembly: Mono.GetOptions.LicensingWith(Mono.GetOptions.Licenses.GPL)]
-[assembly: Mono.GetOptions.ForMoreInformation("http://www.go-mono.com")]
-[assembly: Mono.GetOptions.UsageClause("mbas [options] source-files")]
+[assembly: Mono.About("Distributed under the GPL")]
+
+[assembly: Mono.UsageComplement("SOURCE-FILES")]
+
+//[assembly: Mono.LicensingWith(Mono.GetOptions.Licenses.GPL)]
+//[assembly: Mono.ForMoreInformation("http://www.go-mono.com")]
+//[assembly: Mono.UsageClause("mbas [options] source-files")]
 
 //
 // Version information for an assembly consists of the following four values:
