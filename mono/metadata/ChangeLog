@@ -1,3 +1,13 @@
+
+Fri Jul 25 19:14:13 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, class.h, image.c, image.h, loader.c, metadata.c,
+	metadata.h, row-indexes.h, verify.c: first cut of generics support.
+
+Thu Jul 24 11:34:20 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: disable mcs bug workaround.
+
 2003-07-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* object.c (mono_runtime_class_init): Take the metadata_section
