@@ -1,3 +1,8 @@
+2002-07-11  Nick Drochak  <ndrochak@gol.com>
+
+	* ArrayTest.cs: Disable a test for now.  Bugzilla'd this one.
+	* ConvertTest.cs: Make message unique for this mistaken duplicate.
+
 2002-07-04  Nick Drochak  <ndrochak@gol.com>
 
 	* DateTimeTest.cs: Made tests pass on ms.net.  Well, they pass in

@@ -1477,7 +1477,7 @@ namespace MonoTests.System
 				Fail();
 			}
 			catch (Exception e) {
-				AssertEquals("#L32", typeof(FormatException), e.GetType());
+				AssertEquals("#L32b", typeof(FormatException), e.GetType());
 			}
 			
 			try {							
