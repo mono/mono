@@ -1,3 +1,10 @@
+2004-06-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DateTime.cs: Fixed OLE Automation date conversions: timezone 
+	insensitive, wrong exception in FromOADate, handling of Min/Max 
+	values, negative doubles where integer part is negative but 
+	decimals are positive! Charming format ;-)
+
 2004-06-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* String.cs: Fixed Join in case separator parameter is null.

@@ -43,7 +43,12 @@ namespace System
 		// in Ticks
 		//
 		internal const long UnixEpoch = 621355968000000000L;
-		
+
+		// for OLE Automation dates
+		private const long ticks18991230 = 599264352000000000L;
+		private const double OAMinValue = -657435.0d;
+		private const double OAMaxValue = 2958466.0d;
+
 		public static readonly DateTime MaxValue = new DateTime (false, MAX_VALUE_TICKS);
 		public static readonly DateTime MinValue = new DateTime (false, 0);
 
@@ -484,11 +489,22 @@ namespace System
 			// whose value is the number of days from midnight, 30 December 1899.
 
 			// d must be negative 657435.0 through positive 2958466.0.
+			if ((d <= OAMinValue) || (d >= OAMaxValue))
+				throw new ArgumentException ("d", "[-657435,2958466]");
 
-			if ((d < -657435.0) || (d > 2958466.0))
-				throw new OverflowException();
+			DateTime dt = new DateTime (ticks18991230);
+			if (d < 0.0d) {
+				Double days = Math.Ceiling (d);
+				// integer part is the number of days (negative)
+				dt = dt.AddDays (days);
+				// but decimals are the number of hours (in days fractions) and positive
+				Double hours = (days - d);
+				dt = dt.AddDays (hours);
+			}
+			else
+				dt = dt.AddDays (d);
 
-			return (new DateTime(1899, 12, 30, 0, 0, 0)).AddDays(d);
+			return dt;
 		}
 
 		public string[] GetDateTimeFormats() 
@@ -1264,11 +1280,30 @@ namespace System
 			return ToString ("T");
 		}
 
-		public double ToOADate()
+		public double ToOADate ()
 		{
-			DateTime p = new DateTime(1899, 12, 30, 0, 0, 0);
-			TimeSpan t = new TimeSpan (this.Ticks - p.Ticks);
-			return t.TotalDays;
+			long t = this.Ticks;
+			// uninitialized DateTime case
+			if (t == 0)
+				return 0;
+			// we can't reach minimum value
+			if (t < 31242239136000000)
+				return OAMinValue + 0.001;
+
+			TimeSpan ts = new TimeSpan (this.Ticks - ticks18991230);
+			double result = ts.TotalDays;
+			// t < 0 (where 599264352000000000 == 0.0d for OA)
+			if (t < 599264352000000000) {
+				// negative days (int) but decimals are positive
+				double d = Math.Ceiling (result);
+				result = d - 2 - (result - d);
+			}
+			else {
+				// we can't reach maximum value
+				if (result >= OAMaxValue)
+					result = OAMaxValue - 0.00000001d;
+			}
+			return result;
 		}
 
 		public string ToShortDateString()
