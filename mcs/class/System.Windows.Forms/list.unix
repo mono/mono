@@ -314,7 +314,12 @@ System.Windows.Forms/UpDownEventHandler.cs
 System.Windows.Forms/UserControl.cs
 System.Windows.Forms/View.cs
 System.Windows.Forms/VScrollBar.cs
-System.Windows.Forms/Win32.cs
+System.Windows.Forms/win32Enums.cs
+System.Windows.Forms/win32Handles.cs
+System.Windows.Forms/win32Interfaces.cs
+System.Windows.Forms/win32RegistryUtil.cs
+System.Windows.Forms/win32Structs.cs
+System.Windows.Forms/win32functions.cs
 System.Windows.Forms.Design/AnchorEditor.cs
 System.Windows.Forms.Design/AssemblyInfo.cs
 System.Windows.Forms.Design/AxImporter.cs
