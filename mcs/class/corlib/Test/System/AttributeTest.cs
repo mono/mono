@@ -118,10 +118,19 @@ public class AttributeTest : TestCase {
 
 	public void TestGetCustomAttribute ()
 	{
-		AssertEquals ("A3",  "MyDerivedClass", ((MyCustomAttribute) (Attribute.GetCustomAttribute(typeof(MyDerivedClass), typeof(MyCustomAttribute), false))).Info);
-		AssertEquals("A4", null, ((YourCustomAttribute) (Attribute.GetCustomAttribute(typeof(MyDerivedClass), typeof(YourCustomAttribute), false))));
-		AssertEquals ("A1",  "MyDerivedClass", ((MyCustomAttribute) (Attribute.GetCustomAttribute(typeof(MyDerivedClass), typeof(MyCustomAttribute)))).Info);
-		AssertEquals("A2", 37, ((YourCustomAttribute) (Attribute.GetCustomAttribute(typeof(MyDerivedClass), typeof(YourCustomAttribute)))).Value);
+		int i = 1;
+		Type t = typeof(MyDerivedClass);
+		try {
+			AssertEquals ("A1",  "MyDerivedClass", ((MyCustomAttribute) (Attribute.GetCustomAttribute(typeof(MyDerivedClass), typeof(MyCustomAttribute), false))).Info);
+			i++;
+			AssertEquals ("A2", null, ((YourCustomAttribute) (Attribute.GetCustomAttribute(typeof(MyDerivedClass), typeof(YourCustomAttribute), false))));
+			i++;
+			AssertEquals ("A3",  "MyDerivedClass", ((MyCustomAttribute) (Attribute.GetCustomAttribute(typeof(MyDerivedClass), typeof(MyCustomAttribute)))).Info);
+			i++;
+			AssertEquals ("A4", 37, ((YourCustomAttribute) (Attribute.GetCustomAttribute(t, typeof(YourCustomAttribute)))).Value);
+		} catch (Exception e) {
+			Fail ("Unexpected exception thrown at i=" + i + " with t=" + t + ". e=" + e);
+		}
 	}
 /*
 
