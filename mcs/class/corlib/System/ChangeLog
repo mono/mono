@@ -1,3 +1,7 @@
+2004-07-07  Geoff Norton <gnorton@customerdna.com>
+
+        * Patch to fix bug #58973
+
 2004-06-25  Ben Maurer <bmaurer@ximian.com>
 	
 	* Environment.cs: GetFolderPath has new behavior. r=miguel
