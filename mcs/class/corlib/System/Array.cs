@@ -485,6 +485,9 @@ namespace System
 			if (array == null)
 				throw new ArgumentNullException ("array");
 
+			if (value == null)
+				return -1;
+
 			if (array.Rank > 1)
 				throw new RankException (Locale.GetText ("Only single dimension arrays are supported."));
 
@@ -502,7 +505,7 @@ namespace System
 			if (array.Rank > 1)
 				throw new RankException (Locale.GetText ("Only single dimension arrays are supported."));
 
-			if ((comparer == null) && !(value is IComparable))
+			if ((comparer == null) && (value != null) && !(value is IComparable))
 				throw new ArgumentException (Locale.GetText (
 					"comparer is null and value does not support IComparable."));
 
@@ -527,7 +530,7 @@ namespace System
 			if (index > array.GetLowerBound (0) + array.GetLength (0) - length)
 				throw new ArgumentException (Locale.GetText (
 					"index and length do not specify a valid range in array."));
-			if (!(value is IComparable))
+			if ((value != null) && (!(value is IComparable)))
 				throw new ArgumentException (Locale.GetText (
 					"value does not support IComparable"));
 
@@ -553,7 +556,7 @@ namespace System
 				throw new ArgumentException (Locale.GetText (
 					"index and length do not specify a valid range in array."));
 
-			if ((comparer == null) && !(value is IComparable))
+			if ((comparer == null) && (value != null) && !(value is IComparable))
 				throw new ArgumentException (Locale.GetText (
 					"comparer is null and value does not support IComparable."));
 

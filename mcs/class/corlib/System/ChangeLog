@@ -1,5 +1,7 @@
 2004-05-31  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* Array.cs: Fixed legal case where value is null.
+	* Byte.cs: Fixed ToString when format is an empty string (use "G").
 	* Guid.cs: Renamed private fields (and changed some to signed) to 
 	match MS implementation and allow serialization to work. Fix 
 	bug #59113.
