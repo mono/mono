@@ -39,45 +39,45 @@ namespace System.Runtime.Serialization.Formatters {
 	[Serializable]
 	public class SoapMessage : ISoapMessage
 	{
-		private Header[] _headers;
-		private string _methodName;
-		private string[] _paramNames;
-		private Type[] _paramTypes;
-		private object[] _paramValues;
-		private string _xmlNameSpace;
+		private Header[] headers;
+		private string methodName;
+		private string[] paramNames;
+		private Type[] paramTypes;
+		private object[] paramValues;
+		private string xmlNameSpace;
 		
 		public SoapMessage ()
 		{
 		}
 
 		public Header[] Headers {
-			get { return _headers; }
-			set { _headers = value; }
+			get { return headers; }
+			set { headers = value; }
 		}
 
 		public string MethodName {
-			get { return _methodName; }
-			set { _methodName = value; }
+			get { return methodName; }
+			set { methodName = value; }
 		}
 
 		public string [] ParamNames {
-			get { return _paramNames; }
-			set { _paramNames = value; }
+			get { return paramNames; }
+			set { paramNames = value; }
 		}
 
 		public Type [] ParamTypes {
-			get { return _paramTypes; }
-			set { _paramTypes = value; }
+			get { return paramTypes; }
+			set { paramTypes = value; }
 		}
 
 		public object [] ParamValues {
-			get { return _paramValues; }
-			set { _paramValues = value; }
+			get { return paramValues; }
+			set { paramValues = value; }
 		}
 
 		public string XmlNameSpace {
-			get { return _xmlNameSpace; }
-			set { _xmlNameSpace = value; }
+			get { return xmlNameSpace; }
+			set { xmlNameSpace = value; }
 		}
 	}
 }

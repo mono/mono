@@ -1,3 +1,7 @@
+2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* SoapMessage.cs: fixed serialization compatibility with MS.NET
+
 2003-11-18  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* ServerFault.cs: Added missing attribute
