@@ -1,3 +1,7 @@
+2004-09-09  Martin Baulig  <martin@ximian.com>
+
+	* gen-75.cs: New test.
+
 2004-09-07  Raja R Harinath  <rharinath@novell.com>
 
 	* test-290.cs: New test.
