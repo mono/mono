@@ -1,3 +1,10 @@
+2004-08-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib.dll.sources: Added System.Runtime.ConstrainedExecution/
+	CER.cs, Consistency.cs, PrePrepareMethodAttribute.cs and
+	ReliabilityContractAttribute.cs. Added System.Threading/
+	ParameterizedThreadStart.cs. All for NET_2_0 profile.
+
 2004-08-09  Marek Safar  <marek.safar@seznam.cz>
 
 	* corlib.dll.sources: Added System/EnvironmentVariableTarget.cs
