@@ -1,3 +1,8 @@
+2003-02-09 Jackson Harper <jackson@latitudegeo.com>
+
+	* test-3.il: Add file
+	* makefile: Add new test
+
 2003-02-08 Jackson Harper <jackson@latitudegeo.com>
 
 	* test-1.il: Change class name
