@@ -111,7 +111,7 @@ namespace Mono.CSharp {
 			if (expr is NullLiteral && !type.IsValueType && !TypeManager.IsEnumType (type))
 				return NullLiteral.Null;
 
-			if (!Convert.ImplicitStandardConversionExists (expr, type)){
+			if (!Convert.ImplicitStandardConversionExists (Convert.ConstantEC, expr, type)){
 				Convert.Error_CannotImplicitConversion (loc, expr.Type, type);
 				return null;
 			}

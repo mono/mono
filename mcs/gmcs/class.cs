@@ -3023,7 +3023,7 @@ namespace Mono.CSharp {
 		public readonly Parameters Parameters;
 		public readonly GenericMethod GenericMethod;
 		public readonly DeclSpace ds;
-		protected Block block;
+		protected ToplevelBlock block;
 		
 		//
 		// Parameters, cached for semantic analysis.
@@ -3074,7 +3074,7 @@ namespace Mono.CSharp {
 			}
 		}
 		
-		public Block Block {
+		public ToplevelBlock Block {
 			get {
 				return block;
 			}
@@ -4597,7 +4597,7 @@ namespace Mono.CSharp {
 		GenericMethod GenericMethod { get; }
 
 		Attributes OptAttributes { get; }
-		Block Block { get; }
+		ToplevelBlock Block { get; }
 
 		EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig);
 		ObsoleteAttribute GetObsoleteAttribute ();
@@ -4903,7 +4903,8 @@ namespace Mono.CSharp {
 			if (member is MethodCore)
 				((MethodCore) member).Parameters.LabelParameters (ec, MethodBuilder, loc);
                         
-			Block block = method.Block;
+			SymbolWriter sw = CodeGen.SymbolWriter;
+			ToplevelBlock block = method.Block;
 			
 			//
 			// abstract or extern methods have no bodies
@@ -4959,7 +4960,7 @@ namespace Mono.CSharp {
 				source.CloseMethod ();
 		}
 
-		void EmitDestructor (EmitContext ec, Block block)
+		void EmitDestructor (EmitContext ec, ToplevelBlock block)
 		{
 			ILGenerator ig = ec.ig;
 			
@@ -5298,7 +5299,10 @@ namespace Mono.CSharp {
 		public Status status;
 
 		[Flags]
-		public enum Status : byte { ASSIGNED = 1, USED = 2 }
+		public enum Status : byte {
+			ASSIGNED = 1,
+			USED = 2
+		}
 
 		static string[] attribute_targets = new string [] { "field" };
 
@@ -5656,11 +5660,11 @@ namespace Mono.CSharp {
 		//
 		// Null if the accessor is empty, or a Block if not
 		//
-		public Block Block;
+		public ToplevelBlock Block;
 		public Attributes Attributes;
 		public Location Location;
 		
-		public Accessor (Block b, Attributes attrs, Location loc)
+		public Accessor (ToplevelBlock b, Attributes attrs, Location loc)
 		{
 			Block = b;
 			Attributes = attrs;
@@ -5673,7 +5677,7 @@ namespace Mono.CSharp {
 	// When it will be possible move here a lot of child code and template method type.
 	public abstract class AbstractPropertyEventMethod: MemberCore, IMethodData {
 		protected MethodData method_data;
-		protected Block block;
+		protected ToplevelBlock block;
 
 		// The accessor are created event if they are not wanted.
 		// But we need them because their names are reserved.
@@ -5714,7 +5718,7 @@ namespace Mono.CSharp {
 
 		#region IMethodData Members
 
-		public Block Block {
+		public ToplevelBlock Block {
 			get {
 				return block;
 			}
@@ -7127,7 +7131,7 @@ namespace Mono.CSharp {
 
 		public Operator (TypeContainer parent, OpType type, Expression ret_type,
 				 int mod_flags, Parameters parameters,
-				 Block block, Attributes attrs, Location loc)
+				 ToplevelBlock block, Attributes attrs, Location loc)
 			: base (parent, null, ret_type, mod_flags, AllowedModifiers, false,
 				new MemberName ("op_" + type), attrs, parameters, loc)
 		{

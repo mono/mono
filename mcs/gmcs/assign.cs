@@ -442,7 +442,7 @@ namespace Mono.CSharp {
 					// 2. and the original right side is implicitly convertible to
 					// the type of target
 					//
-					if (Convert.ImplicitStandardConversionExists (a.original_source, target_type))
+					if (Convert.ImplicitStandardConversionExists (ec, a.original_source, target_type))
 						return this;
 
 					//

@@ -264,7 +264,7 @@ namespace Mono.CSharp {
 			else
 				typeName = TypeName.ToString ();
 
-			switch (ModFlags & ~Modifier.ISBYREF) {
+			switch (ModFlags & unchecked (~Modifier.ISBYREF)) {
 				case Modifier.OUT:
 					return "out " + typeName;
 				case Modifier.PARAMS:
@@ -439,6 +439,13 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		public Parameter GetParameterByName (string name)
+		{
+			int idx;
+
+			return GetParameterByName (name, out idx);
+		}
+		
 		bool ComputeParameterTypes (EmitContext ec)
 		{
 			int extra = (ArrayParameter != null) ? 1 : 0;

@@ -421,6 +421,25 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		//
+		// Returns the MethodBase for "Invoke" from a delegate type, this is used
+		// to extract the signature of a delegate.
+		//
+		public static MethodGroupExpr GetInvokeMethod (EmitContext ec, Type delegate_type,
+							       Location loc)
+		{
+			Expression ml = Expression.MemberLookup (
+				ec, delegate_type, "Invoke", loc);
+
+			MethodGroupExpr mg = ml as MethodGroupExpr;
+			if (mg == null) {
+				Report.Error (-100, loc, "Internal error: could not find Invoke method!");
+				return null;
+			}
+
+			return mg;
+		}
+		
 		/// <summary>
 		///  Verifies whether the method in question is compatible with the delegate
 		///  Returns the method itself if okay and null if not.
@@ -428,19 +447,14 @@ namespace Mono.CSharp {
 		public static MethodBase VerifyMethod (EmitContext ec, Type delegate_type, MethodBase mb,
 						       Location loc)
 		{
-			Expression ml = Expression.MemberLookup (
-				ec, delegate_type, "Invoke", loc);
-
-			if (!(ml is MethodGroupExpr)) {
-				Report.Error (-100, loc, "Internal error: could not find Invoke method!");
+			MethodGroupExpr mg = GetInvokeMethod (ec, delegate_type, loc);
+			if (mg == null)
 				return null;
-			}
 
-			MethodBase invoke_mb = ((MethodGroupExpr) ml).Methods [0];
-
+			MethodBase invoke_mb = mg.Methods [0];
 			ParameterData invoke_pd = Invocation.GetParameterData (invoke_mb);
 
-			if (!((MethodGroupExpr) ml).HasTypeArguments &&
+			if (!mg.HasTypeArguments &&
 			    !Invocation.InferTypeArguments (ec, invoke_pd, ref mb))
 				return null;
 
@@ -499,8 +513,8 @@ namespace Mono.CSharp {
 
 			if (!params_method && pd_count != arg_count) {
 				Report.Error (1593, loc,
-					      "Delegate '" + delegate_type.ToString ()
-					      + "' does not take '" + arg_count + "' arguments");
+					      "Delegate '{0}' does not take {1} arguments",
+					      delegate_type.ToString (), arg_count);
 				return false;
 			}
 

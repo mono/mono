@@ -926,7 +926,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public static object ConvertIntLiteral (Constant c, Type target_type, Location loc)
 		{
-			if (!Convert.ImplicitStandardConversionExists (c, target_type)){
+			if (!Convert.ImplicitStandardConversionExists (Convert.ConstantEC, c, target_type)){
 				Convert.Error_CannotImplicitConversion (loc, c.Type, target_type);
 				return null;
 			}
@@ -2180,21 +2180,12 @@ namespace Mono.CSharp {
 						return var.Resolve (ec);
 				}
 
-				int idx = -1;
-				Parameter par = null;
-				Parameters pars = current_block.Parameters;
-				if (pars != null)
-					par = pars.GetParameterByName (Name, out idx);
-
-				if (par != null) {
-					ParameterReference param;
-					
-					param = new ParameterReference (pars, current_block, idx, Name, loc);
-
+				ParameterReference pref = current_block.GetParameterReference (Name, loc);
+				if (pref != null) {
 					if (right_side != null)
-						return param.ResolveLValue (ec, right_side);
+						return pref.ResolveLValue (ec, right_side);
 					else
-						return param.Resolve (ec);
+						return pref.Resolve (ec);
 				}
 			}
 			
@@ -2941,6 +2932,16 @@ namespace Mono.CSharp {
 					AttributeTester.Report_ObsoleteMessage (oa, TypeManager.GetFullNameSignature (FieldInfo), loc);
 			}
 
+			if (ec.CurrentAnonymousMethod != null){
+				if (!FieldInfo.IsStatic){
+					if (ec.TypeContainer is Struct){
+						Report.Error (1673, loc, "Can not reference instance variables in anonymous methods hosted in structs");
+						return null;
+					}
+					ec.CaptureField (this);
+				} 
+			}
+			
 			// If the instance expression is a local variable or parameter.
 			IVariable var = instance_expr as IVariable;
 			if ((var == null) || (var.VariableInfo == null))
