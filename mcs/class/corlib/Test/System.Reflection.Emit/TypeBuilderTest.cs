@@ -1626,6 +1626,17 @@ public class TypeBuilderTest : Assertion
 		AssertEquals (3, (Int32)enumVal);
 	}
 
+	[Test]
+	public void DefineEnum () {
+		TypeBuilder typeBuilder = module.DefineType (genTypeName (),
+													 TypeAttributes.Public);
+		EnumBuilder enumBuilder = module.DefineEnum (genTypeName (),
+													 TypeAttributes.Public, typeof(int));
+		typeBuilder.DefineField ("myField", enumBuilder, FieldAttributes.Private);
+		typeBuilder.CreateType();
+		enumBuilder.CreateType();
+	}
+
 	private void DefineStringProperty (TypeBuilder tb, string propertyName, string fieldName, MethodAttributes methodAttribs) {
 		// define the field holding the property value
 		FieldBuilder fieldBuilder = tb.DefineField (fieldName,

@@ -1,3 +1,7 @@
+2004-08-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeBuilderTest.cs: Add regression test for #62237.
+
 2004-06-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* EnumBuilderTest.cs: Fixed typos so the test is reported in 
