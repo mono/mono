@@ -1,3 +1,7 @@
+2004-05-31	Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* Financial.cs:
+		Correct IRR and MIRR method signatures and prevent public default constructor, all according to Class Status Page (corcompare)
+
 2004-04-26	Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* DateAndTime.cs:
 		Catch FormatException and rethrow as InvalidCastException in:

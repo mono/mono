@@ -8,13 +8,15 @@
 //
 
 using System;
+using Microsoft.VisualBasic.CompilerServices;
 
 namespace Microsoft.VisualBasic 
 {
-	[Microsoft.VisualBasic.CompilerServices.StandardModuleAttribute] 
+	[StandardModule] 
 	sealed public class Financial {
 		// Declarations
 		// Constructors
+		private Financial() {} // prevent public default constructor
 		// Properties
 		// Methods
 		[MonoTODO]
@@ -24,9 +26,9 @@ namespace Microsoft.VisualBasic
 		[MonoTODO]
 		public static System.Double IPmt (System.Double Rate, System.Double Per, System.Double NPer, System.Double PV, [System.Runtime.InteropServices.Optional] [System.ComponentModel.DefaultValue(0)] System.Double FV, [System.Runtime.InteropServices.Optional] [System.ComponentModel.DefaultValue(0)] Microsoft.VisualBasic.DueDate Due) { throw new NotImplementedException (); }
 		[MonoTODO]
-		public static System.Double IRR (ref System.Double[] ValueArray, [System.Runtime.InteropServices.Optional] [System.ComponentModel.DefaultValue(0.1)] ref System.Double Guess) { throw new NotImplementedException (); }
+		public static System.Double IRR (ref System.Double[] ValueArray, [System.Runtime.InteropServices.Optional] [System.ComponentModel.DefaultValue(0.1)] System.Double Guess) { throw new NotImplementedException (); }
 		[MonoTODO]
-		public static System.Double MIRR (ref System.Double[] ValueArray, ref System.Double FinanceRate, ref System.Double ReinvestRate) { throw new NotImplementedException (); }
+		public static System.Double MIRR (ref System.Double[] ValueArray, System.Double FinanceRate, System.Double ReinvestRate) { throw new NotImplementedException (); }
 		[MonoTODO]
 		public static System.Double NPer (System.Double Rate, System.Double Pmt, System.Double PV, [System.Runtime.InteropServices.Optional] [System.ComponentModel.DefaultValue(0)] System.Double FV, [System.Runtime.InteropServices.Optional] [System.ComponentModel.DefaultValue(0)] Microsoft.VisualBasic.DueDate Due) { throw new NotImplementedException (); }
 		[MonoTODO]
