@@ -1,3 +1,18 @@
+2004-09-12  Jambunathan K  <kjambunathan@novell.com>
+
+	* reflection.c (mono_param_get_objects): Modified to return
+	ParameterInfo.DefaultValue object.
+
+	(get_default_param_value_blobs):
+	(mono_get_object_from_blob):
+	(mono_get_dbnull_object): New helper routines. 
+
+	* object.c (mono_get_constant_value_from_blob): New helper routine
+	carved out from get_default_field_value ()
+
+	* object-internals.h (mono_get_constant_value_from_blob): Added
+	function declaration.
+
 2004-09-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* assembly.c assembly.h icall.c class.c appdomain.c: Lazily load 
