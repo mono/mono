@@ -50,7 +50,7 @@ WINDOWS_SOURCES = \
 # Test 120 does not pass because the MS.NET runtime is buggy.
 
 TEST_NOPASS = \
-	test-28  test-45  test-53  test-91  test-202 test-106 test-107 test-120 test-122 test-132 test-133 test-66 test-177
+	test-28  test-45  test-53  test-91  test-102 test-106 test-107 test-120 test-122 test-132 test-133 test-66 test-177
 
 all-local install-local:
 
@@ -115,7 +115,7 @@ test-unsafe-compiler-jit:
 	    if $(INTERNAL_MCS) /unsafe $$i.cs >/dev/null ; then \
 	        true ; \
 	    else \
-	        echo FAILED COMPILATION ; exit 1\
+	        echo FAILED COMPILATION ; exit 1 \
 	    fi ; \
 	    if $(TEST_RUNTIME) ./$$i.exe >/dev/null ; then \
 	        echo OK ; \
