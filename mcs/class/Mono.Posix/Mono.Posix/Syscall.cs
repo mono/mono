@@ -453,8 +453,13 @@ namespace Mono.Posix {
 			return new String(cbuf, 0, chars);
 		}
 
-		[DllImport ("libc")]
-		public static extern string strerror(int errnum);
+		[DllImport ("libc", EntryPoint="strerror")]
+		static extern IntPtr _strerror(int errnum);
+
+		public static string strerror (int errnum)
+		{
+			return Marshal.PtrToStringAnsi (_strerror (errnum));
+		}
 
 		[DllImport ("libc")]
 		public static extern IntPtr opendir(string path);

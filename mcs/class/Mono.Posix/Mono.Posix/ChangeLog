@@ -1,3 +1,9 @@
+2004-05-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* Syscall.cs: Do not let the runtime handle strings, as we do not
+	own those strings, we must transform the char * into a string
+	ourselves. 
+
 2004-05-03  Miguel de Icaza  <miguel@ximian.com>
 
 	* Syscall.cs: Add symlink
