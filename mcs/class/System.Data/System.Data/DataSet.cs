@@ -347,11 +347,17 @@ namespace System.Data {
 
 		public virtual DataSet Clone ()
 		{
-			DataSet Copy = new DataSet ();
+			// need to return the same type as this...
+			DataSet Copy = (DataSet) Activator.CreateInstance(GetType(), true);
+	
 			CopyProperties (Copy);
 
 			foreach (DataTable Table in Tables) {
-				Copy.Tables.Add (Table.Clone ());
+		        // tables are often added in no-args constructor, don't add them
+		        // twice.
+		        	if (!Copy.Tables.Contains(Table.TableName)) {
+			    		Copy.Tables.Add (Table.Clone ());
+        			}
 			}
 
 			//Copy Relationships between tables after existance of tables
