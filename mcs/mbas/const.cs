@@ -151,6 +151,11 @@ namespace Mono.MonoBASIC {
 			/*else if ((ModFlags & Modifiers.NEW) != 0)
 				WarningNotHiding (parent);*/
 
+			if ((parent is Struct) && ((ModFlags & Modifiers.PROTECTED) != 0))
+				Report.Error (30435, Location,
+					"'Const' inside a 'Structure' can not be " +
+					"declared as 'Protected'");
+
 			FieldBuilder = parent.TypeBuilder.DefineField (Name, type, FieldAttr);
 
 			TypeManager.RegisterConstant (FieldBuilder, this);

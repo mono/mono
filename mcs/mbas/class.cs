@@ -610,7 +610,7 @@ namespace Mono.MonoBASIC {
 			
 			foreach (Field f in initialized_fields){
 				Report.Error (
-					573, Location,
+					31049, Location,
 					"`" + n + "." + f.Name + "': can not have " +
 					"instance field initializers in structs");
 			}
@@ -823,6 +823,11 @@ namespace Mono.MonoBASIC {
 				Report.Error (30735, Location,
 					"'Type' inside a 'Module' can not be " +
 					"declared as 'Protected'");
+
+			if ((Parent is Struct) && ((ModFlags & Modifiers.PROTECTED) != 0))
+				Report.Error (30435, Location,
+					"'Type' inside a 'Structure' can not be " +
+					"declared as 'Protected'");
 			
 			TypeAttributes type_attributes = TypeAttr;
 
@@ -838,23 +843,25 @@ namespace Mono.MonoBASIC {
 					Basename, type_attributes, parent, ifaces);
 			}
 				
-			//
-			// Structs with no fields need to have at least one byte.
-			// The right thing would be to set the PackingSize in a DefineType
-			// but there are no functions that allow interfaces *and* the size to
-			// be specified.
-			//
+			if (!is_class)
+			{
+				// structure must contain atleast one member variable
+				if(!have_nonstatic_fields){
+					Report.Error (
+						30281, Location, "Structure `" + Name + "' do not " +
+						"contain any member Variable");
 
-			if (!is_class && !have_nonstatic_fields){
-				TypeBuilder.DefineField ("$PRIVATE$", TypeManager.byte_type,
-							 FieldAttributes.Private);
+					/*TypeBuilder.DefineField ("$PRIVATE$", TypeManager.byte_type,
+								 FieldAttributes.Private);*/
+				}
+
+				// add interfaces that were not added at type creation (weird API issue)
+				if (!have_nonstatic_fields && (ifaces != null)) {
+					foreach (Type i in ifaces)
+						TypeBuilder.AddInterfaceImplementation (i);
+				}
 			}
 
-			// add interfaces that were not added at type creation (weird API issue)
-			if (!is_class && !have_nonstatic_fields && (ifaces != null)) {
-				foreach (Type i in ifaces)
-					TypeBuilder.AddInterfaceImplementation (i);
-			}
 			
 			//
 			// Finish the setup for the EmitContext
@@ -2474,10 +2481,10 @@ namespace Mono.MonoBASIC {
 								"'Protected' or 'Protected Friend'");
 				}
 			}
-		
 			/* else if ((ModFlags & Modifiers.NEW) != 0)
 				WarningNotHiding (parent);
 			*/
+
 			return true;
 		}
 
@@ -2491,6 +2498,11 @@ namespace Mono.MonoBASIC {
 
 			if (!CheckBase (parent))
 				return false;
+
+			if ((parent is Struct) && ((ModFlags & Modifiers.PROTECTED) != 0))
+				Report.Error (31067, Location,
+					"'Sub' or 'Function' inside a 'Structure' can not be declared as " +
+					"'Protected' or 'Protected Friend'");
 
 			CallingConventions cc = GetCallingConvention (parent is Class);
 
@@ -2730,7 +2742,7 @@ namespace Mono.MonoBASIC {
 			else {
 				if (parent is Struct && ParameterTypes.Length == 0)	{
 					Report.Error (
-						568, Location, 
+						30629, Location, 
 						"Structs can not contain explicit parameterless " +
 						"constructors");
 					return false;
@@ -3591,18 +3603,19 @@ namespace Mono.MonoBASIC {
 			if (t.IsPointer && !UnsafeOK (parent))
 				return false;
 				
-			if (RootContext.WarningLevel > 1){
-				Type ptype = parent.TypeBuilder.BaseType;
+			Type ptype = parent.TypeBuilder.BaseType;
 
-				// ptype is only null for System.Object while compiling corlib.
-				if (ptype != null){
-					MemberList list = TypeContainer.FindMembers (
-						ptype, MemberTypes.Field,
-						BindingFlags.Public |
-						BindingFlags.Static | BindingFlags.Instance,
-						System.Type.FilterName, Name);
+			// ptype is only null for System.Object while compiling corlib.
+			if (ptype != null){
+				MemberList list = TypeContainer.FindMembers (
+					ptype, MemberTypes.Field,
+					BindingFlags.Public |
+					BindingFlags.Static | BindingFlags.Instance,
+					System.Type.FilterName, Name);
 
-					if ((list.Count > 0) && ((ModFlags & Modifiers.SHADOWS) == 0)) {
+				if (RootContext.WarningLevel > 1){	
+					if ((list.Count > 0) && ((ModFlags & Modifiers.SHADOWS) == 0)) 
+					{
 						Report.Warning (
 							40004, 2, Location, 
 							"Variable '" + Name + "' should be declared " +
@@ -3611,15 +3624,20 @@ namespace Mono.MonoBASIC {
 
 						ModFlags |= Modifiers.SHADOWS;
 					}
-					if (list.Count == 0)
-						// if a member of module is not inherited from Object class
-						// can not be declared protected
-						if ((parent is Module) && ((ModFlags & Modifiers.PROTECTED) != 0))
-						Report.Error (30593, Location,
-							"'Variable' inside a 'Module' can not be " +
-							"declared as 'Protected'");
 				}
+				if (list.Count == 0)
+					// if a member of module is not inherited from Object class
+					// can not be declared protected
+					if ((parent is Module) && ((ModFlags & Modifiers.PROTECTED) != 0))
+					Report.Error (30593, Location,
+						"'Variable' inside a 'Module' can not be " +
+						"declared as 'Protected'");
 			}
+			
+			if ((parent is Struct) && ((ModFlags & Modifiers.PROTECTED) != 0))
+				Report.Error (30435, Location,
+					"'Variable' inside a 'Structure' can not be " +
+					"declared as 'Protected'");
 
 			if ((ModFlags & Modifiers.VOLATILE) != 0){
 				if (!t.IsClass){

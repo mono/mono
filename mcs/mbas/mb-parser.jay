@@ -1208,13 +1208,18 @@ struct_member_declaration
 	: opt_modifiers
 	  struct_member_declarator
 	;
+	
 struct_member_declarator	
 	: field_declaration
-	//| constant_declaration
+	| constant_declaration
+	| constructor_declaration
 	| method_declaration
+	  { 
+	   	Method method = (Method) $1;
+	   	CheckDef (current_container.AddMethod (method), method.Name, method.Location);
+	  }	
 	| property_declaration
 	| event_declaration
-	| constructor_declaration
 	| type_spec_declaration
 
 	/*
