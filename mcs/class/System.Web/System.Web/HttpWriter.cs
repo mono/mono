@@ -97,7 +97,6 @@ namespace System.Web
 			_OutputHelper.Close ();
 			_OutputStream.Close ();
 					
-			// Quick way of doing cleanup
 			_OutputStream = new MemoryStream (32768);
 			_OutputHelper = new StreamWriter (_OutputStream, _Response.ContentEncoding);
 		}
@@ -146,7 +145,6 @@ namespace System.Web
 
 		public override void Close ()
 		{
-			FlushBuffers ();
 			_Response.Flush ();
 			_Response.Close ();
 		}
@@ -159,7 +157,6 @@ namespace System.Web
 		{
 			if (!_Response.BufferOutput) {
 				FlushBuffers ();
-				_Response.Flush ();
 			}
 		}
 

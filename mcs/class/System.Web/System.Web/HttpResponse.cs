@@ -39,6 +39,7 @@ namespace System.Web
 		int _iStatusCode;
 
 		bool _ClientDisconnected;
+		bool closed;
 
 		string	_sContentType;
 		string	_sCacheControl;
@@ -630,9 +631,11 @@ namespace System.Web
 
 		public void Close ()
 		{
-			_bClientDisconnected = false;
-			_WorkerRequest.CloseConnection ();
-			_bClientDisconnected = true;
+			if (closed && !_bClientDisconnected) {
+				_bClientDisconnected = false;
+				_WorkerRequest.CloseConnection ();
+				_bClientDisconnected = true;
+			}
 		}
 
 		internal void Dispose ()
@@ -661,12 +664,15 @@ namespace System.Web
 
 		public void Flush ()
 		{
+			if (closed)
+				throw new HttpException ("Response already finished.");
+
 			Flush (false);
 		}
 
 		private void Flush (bool bFinish)
 		{
-			if (_bFlushing)
+			if (_bFlushing || closed)
 				return;
 
 			_bFlushing = true;
@@ -753,15 +759,14 @@ namespace System.Web
 					} else {
 						_Writer.SendContent (_WorkerRequest);
 					}
-				} else {
-					_Writer.Clear ();
 				}
 
 				_WorkerRequest.FlushResponse (bFinish);
-
-				if (!bFinish)
-					_Writer.Clear ();
+				_Writer.Clear ();
 			} finally {
+				if (bFinish)
+					closed = true;
+
 				_bFlushing = false;
 			}
 		}

@@ -1,3 +1,9 @@
+2003-11-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponse.cs: 
+	* HttpWriter.cs: some fixes to allow closing a response stream without
+	messing the rest.
+
 2003-11-13  Jackson Harper  <jackson@ximian.com>
 
 	* HttpCachePolicy.cs: Make sure cacheability and maxage get
