@@ -1,5 +1,18 @@
 2004-12-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* metadata-internals.h (MonoAssembly): Add 'corlib_internal' field.
+
+	* object-internals.h (MonoReflectionAssemblyBuilder): Move 'corlib_internal' field from Assembly to AssemblyBuilder.
+
+	* reflection.c (mono_image_basic_init): Initialize assembly->corlib_internal from the assembly builder.
+
+	* reflection.c (mono_assembly_get_object): Remove the workaround put
+	in for the release.
+	
+	* appdomain.c: Use the corlib_internal field from MonoAssembly.
+
+	* appdomain.c: Bump corlib version.
+
 	* reflection.c (mono_assembly_get_object): Add a workaround so __MetadataTypes won't
 	be visible in other appdomains.
 
