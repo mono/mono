@@ -1,3 +1,7 @@
+2003-01-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MemoryStream.cs: fixed bug #36319.
+
 2002-12-16  Eduardo Garcia Cebollero <kiwnix@yahoo.es>
 	
 	* Directory.cs: Some fixes to SMB shares handling, and not compiling 

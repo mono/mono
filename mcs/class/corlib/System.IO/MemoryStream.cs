@@ -141,7 +141,8 @@ namespace System.IO {
 
                         set {
                                 if( value < 0 || value < capacity ) {
-                                        throw new ArgumentOutOfRangeException( "New capacity cannot be negative or less than the current capacity" );
+                                        throw new ArgumentOutOfRangeException("value",
+						"New capacity cannot be negative or less than the current capacity" );
                                 } else if( !expandable ) {
                                         throw new NotSupportedException( "Cannot expand this MemoryStream" );
                                 }
@@ -179,16 +180,15 @@ namespace System.IO {
                         set {
 
                                 if( position < 0 ) {
-                                        throw new ArgumentOutOfRangeException( "Position cannot be negative" );
+                                        throw new ArgumentOutOfRangeException ("value", "Position cannot be negative" );
+				} else if (position > Int32.MaxValue) {
+                                        throw new ArgumentOutOfRangeException ("value",
+							"Length must be non-negative and less than 2^31 - 1 - origin");
                                 } else if( streamClosed ) {
                                         throw new IOException( "MemoryStream is closed" );
                                 }
                                 
                                 position = value;
-
-                                if( position > internalBuffer.Length + 1 ) {
-                                        position = internalBuffer.Length + 1;
-                                }
                         }
                 }
                 
@@ -287,7 +287,8 @@ namespace System.IO {
                         if( refPoint + offset < 0 ) {
                                 throw new IOException( "Attempted to seek before start of MemoryStream" );
                         } else if( offset > internalBuffer.Length ) {
-                                throw new ArgumentOutOfRangeException( "Offset cannot be greater than length of MemoryStream" );
+                                throw new ArgumentOutOfRangeException("offset",
+						"Offset cannot be greater than length of MemoryStream" );
                         }
 
                         position = refPoint + offset;
@@ -378,9 +379,6 @@ namespace System.IO {
                                 throw new ObjectDisposedException( "MemoryStream" );
 			else if( !canWrite || (position >= capacity && !expandable))
                                 throw new NotSupportedException();
-
-                        if ( position >= capacity )
-                                SetLength( capacity + 1 );
 
 			if( position >= internalBuffer.Length )
 				SetLength ( position + 1 );
