@@ -1566,10 +1566,9 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			if (method == null || count > 1) {
-				Report.Error (-11, loc, "Ambiguous user defined conversion");
+			if (method == null || count > 1)
 				return null;
-			}
+			
 			
 			//
 			// This will do the conversion to the best match that we
