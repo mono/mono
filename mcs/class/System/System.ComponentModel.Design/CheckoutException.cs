@@ -1,10 +1,12 @@
 //
-// System.ComponentModel.Design.CheckoutException
+// System.ComponentModel.Design.CheckoutException.cs
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 using System.Runtime.InteropServices;
@@ -13,32 +15,26 @@ namespace System.ComponentModel.Design
 {
 	public class CheckoutException : ExternalException
 	{
-		public static readonly CheckoutException Canceled;
+		public static readonly CheckoutException Canceled = new CheckoutException ();
 
-		[MonoTODO]
 		public CheckoutException()
+			: this (null, 0)
 		{
 		}
 
-		[MonoTODO]
 		public CheckoutException (string message)
+			: this (message, 0)
 		{
 		}
 
-		[MonoTODO]
 		public CheckoutException (string message, int errorCode)
+			: base (message, errorCode)
 		{
 		}
 
-		[MonoTODO]
 		public override string ToString()
 		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~CheckoutException()
-		{
+			return base.ToString ();
 		}
 	}
 }

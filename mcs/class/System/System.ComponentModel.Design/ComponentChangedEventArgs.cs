@@ -1,10 +1,12 @@
 //
-// System.ComponentModel.Design.ComponentChangedEventArgs
+// System.ComponentModel.Design.ComponentChangedEventArgs.cs
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 using System.Runtime.InteropServices;
@@ -12,39 +14,37 @@ using System.Runtime.InteropServices;
 namespace System.ComponentModel.Design
 {
 	[ComVisible(true)]
-        public sealed class ComponentChangedEventArgs : EventArgs
+	public sealed class ComponentChangedEventArgs : EventArgs
 	{
-		[MonoTODO]
+
+		private object component;
+		private MemberDescriptor member;
+		private object oldValue;
+		private object newValue;
+
 		public ComponentChangedEventArgs (object component,
-						  MemberDescriptor member,
-						  object oldValue,
-						  object newValue)
+			MemberDescriptor member, object oldValue, object newValue)
 		{
+			this.component = component;
+			this.member = member;
+			this.oldValue = oldValue;
+			this.newValue = newValue;
 		}
 
 		public object Component {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return component; }
 		}
 
 		public MemberDescriptor Member {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return member; }
 		}
 
 		public object NewValue {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return oldValue; }
 		}
 
 		public object OldValue {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
-		}
-
-		[MonoTODO]
-		~ComponentChangedEventArgs()
-		{
+			get { return newValue; }
 		}
 	}
 }

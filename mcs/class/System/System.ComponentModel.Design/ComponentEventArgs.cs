@@ -1,10 +1,12 @@
 //
-// System.ComponentModel.Design.ComponentEventArgs
+// System.ComponentModel.Design.ComponentEventArgs.cs
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 using System.Runtime.InteropServices;
@@ -12,21 +14,17 @@ using System.Runtime.InteropServices;
 namespace System.ComponentModel.Design
 {
 	[ComVisible(true)]
-        public class ComponentEventArgs : EventArgs
+	public class ComponentEventArgs : EventArgs
 	{
-		[MonoTODO]
+		IComponent icomp;
+
 		public ComponentEventArgs (IComponent component)
 		{
+			icomp = component;
 		}
 
 		public virtual IComponent Component {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
-		}
-
-		[MonoTODO]
-		ComponentEventArgs()
-		{
+			get { return icomp; }
 		}
 	}
 }

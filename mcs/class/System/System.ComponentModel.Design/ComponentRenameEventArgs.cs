@@ -1,10 +1,12 @@
 //
-// System.ComponentModel.Design.ComponentRenameEventArgs
+// System.ComponentModel.Design.ComponentRenameEventArgs.cs
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 using System.Runtime.InteropServices;
@@ -12,34 +14,30 @@ using System.Runtime.InteropServices;
 namespace System.ComponentModel.Design
 {
 	[ComVisible(true)]
-        public class ComponentRenameEventArgs : EventArgs
+	public class ComponentRenameEventArgs : EventArgs
 	{
-		[MonoTODO]
+		private object component;
+		private string oldName;
+		private string newName;
+
 		public ComponentRenameEventArgs (object component,
-						 string oldName,
-						 string newName)
+			string oldName, string newName)
 		{
+			this.component = component;
+			this.oldName = oldName;
+			this.newName = newName;
 		}
 
 		public object Component {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return component; }
 		}
 
 		public virtual string NewName {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return newName; }
 		}
 
 		public virtual string OldName {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return oldName; }
 		}
-
-		[MonoTODO]
-		~ComponentRenameEventArgs()
-		{
-		}
-		
 	}
 }

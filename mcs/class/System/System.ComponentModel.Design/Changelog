@@ -1,3 +1,44 @@
+2003-06-12  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* ActiveDesignerEventArgs.cs: Fixed property access
+	
+	* CheckoutException.cs
+	* CommandID.cs
+	* ComponentChangedEventArgs.cs
+	* ComponentChangingEventArgs.cs
+	* ComponentEventArgs.cs
+	* ComponentRenameEventArgs.cs
+	* DesignerEventArgs.cs: Implemented
+	
+	* StandardCommands.cs
+	* StandardToolWindows.cs: Implemented and removed unneeded MonoTODOs
+	
+	* DesignerCollection.cs
+	* DesignerVerbCollection.cs: Collections implemented
+	
+	* DesignerTransaction.cs
+	* DesignerVerb.cs: Implemented
+	
+	* MenuCommand.cs: Most members implemented
+	
+	* IDesignerHost.cs: Completed interface
+	
+	* IInheritanceService.cs: Hopefully fixed interface
+	
+	* ITypeResolutionService.cs: Completed interface
+	
+	* ISelectionService.cs: Completed interface
+	
+	* DesigntimeLicenseContext.cs: Added member, implemented
+	
+	* DesigntimeLicenseContextSerializer.cs: Added private constructor, removed unneeded members
+	
+	* SelectionTypes.cs
+	* HelpContextType.cs
+	* HelpKeywordType.cs: Hopefully fixed enums
+	
+	* ServiceContainer.cs: implementation added
+	  
 2002-12-05  Alejandro Sánchez Acosta  <raciel@gnome.org>
 
 	* ActiveDesignerEventArgs.cs,

@@ -1,5 +1,5 @@
 //
-// System.ComponentModel.Design.HelpKeywordType
+// System.ComponentModel.Design.HelpKeywordType.cs
 //
 // Authors:
 //      Martin Willemoes Hansen (mwh@sysrq.dk)
@@ -10,10 +10,10 @@
 namespace System.ComponentModel.Design
 {
 	[Serializable]
-        public enum HelpKeywordType
+	public enum HelpKeywordType
 	{
-		F1Keyword,
-		FilterKeyword,
-		GeneralKeyword,
+		F1Keyword = 0,
+		GeneralKeyword = 1,
+		FilterKeyword = 2
 	}
 }

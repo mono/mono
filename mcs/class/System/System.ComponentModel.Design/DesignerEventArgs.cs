@@ -1,30 +1,28 @@
 //
-// System.ComponentModel.Design.DesignerEventArgs
+// System.ComponentModel.Design.DesignerEventArgs.cs
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 namespace System.ComponentModel.Design
 {
 	public class DesignerEventArgs : EventArgs
 	{
-		[MonoTODO]
+
+		private IDesignerHost host;
+
 		public DesignerEventArgs (IDesignerHost host)
 		{
+			this.host = host;
 		}
 
 		public IDesignerHost Designer {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return host; }
 		}
-
-		[MonoTODO]
-		~DesignerEventArgs()
-		{
-		}
-
 	}
 }

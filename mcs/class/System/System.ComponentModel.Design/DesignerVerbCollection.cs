@@ -1,9 +1,12 @@
+//
 // System.ComponentModel.Design.DesignerVerbCollection.cs
 //
-// Author:
-// 	Alejandro Sánchez Acosta  <raciel@es.gnu.org>
+// Authors:
+//   Alejandro Sánchez Acosta  <raciel@es.gnu.org>
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Alejandro Sánchez Acosta
+// (C) 2003 Andreas Nahr
 // 
 
 using System.Collections;
@@ -14,98 +17,88 @@ namespace System.ComponentModel.Design
 	[ComVisible(true)]
 	public class DesignerVerbCollection : CollectionBase
 	{
-		[MonoTODO]
-		public DesignerVerbCollection(){
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public DesignerVerbCollection (DesignerVerb[] value){
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public DesignerVerb this[int index] 
+		public DesignerVerbCollection()
 		{
+		}
+
+		public DesignerVerbCollection (DesignerVerb[] value)
+		{
+			InnerList.AddRange (value);
+		}
+
+		public DesignerVerb this[int index] {
 			get {
-				throw new NotImplementedException ();
+				return (DesignerVerb) InnerList[index];
 			}
 			
 			set {
-				throw new NotImplementedException ();		
+				InnerList[index] = value;		
 			}
 		}
 
-		[MonoTODO]
 		public int Add (DesignerVerb value)
 		{
-			throw new NotImplementedException ();
+			return InnerList.Add ( value);
 		}
 
-		[MonoTODO]
 		public void AddRange (DesignerVerb[] value)
 		{
-			throw new NotImplementedException ();
+			InnerList.AddRange (value);
 		}
 
-		[MonoTODO]
+		public void AddRange (DesignerVerbCollection value)
+		{
+			InnerList.AddRange (value);
+		}
+
 		public bool Contains (DesignerVerb value)
 		{
-			throw new NotImplementedException ();
+			return InnerList.Contains (value);
 		}
 
-		[MonoTODO]
 		public void CopyTo (DesignerVerb[] array, int index)
 		{
-			throw new NotImplementedException ();
+			InnerList.CopyTo (array, index);
 		}
 
-		[MonoTODO]
 		public int IndexOf (DesignerVerb value)
 		{
-			throw new NotImplementedException ();
+			return InnerList.IndexOf (value);
 		}
 
-		[MonoTODO]
 		public void Insert (int index, DesignerVerb value)
 		{
-			throw new NotImplementedException ();
+			InnerList.Insert (index, value);
 		}
 
-		[MonoTODO]
 		protected override void OnClear()
 		{
-			throw new NotImplementedException ();
+			// Cannot think of anything we would need to do here - probably nothing
 		}
 
-		[MonoTODO]
 		protected override void OnInsert (int index, object value)
 		{
-			throw new NotImplementedException ();
+			// Cannot think of anything we would need to do here - probably nothing
 		}
 
-		[MonoTODO]
 		protected override void OnRemove (int index, object value)
 		{
-			throw new NotImplementedException ();
+			// Cannot think of anything we would need to do here - probably nothing
 		}
 
-		[MonoTODO]
 		protected override void OnSet(int index, object oldValue, object newValue)
 		{
-			throw new NotImplementedException ();
+			// Cannot think of anything we would need to do here - probably nothing
 		}
 
-		[MonoTODO]
 		protected override void OnValidate(object value)
 		{
-			throw new NotImplementedException ();
+			// Cannot think of anything we would need to do here - probably nothing
 		}
 
-		[MonoTODO]
 		public void Remove (DesignerVerb value)
 		{
-			throw new NotImplementedException ();
+			InnerList.Remove (value);
 		}
 	}	
 }

@@ -1,9 +1,12 @@
+//
 // System.ComponentModel.Design.MenuCommand.cs
 //
-// Author:
-// 	Alejandro Sánchez Acosta  <raciel@es.gnu.org>
+// Authors:
+//   Alejandro Sánchez Acosta  <raciel@es.gnu.org>
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Alejandro Sánchez Acosta
+// (C) 2003 Andreas Nahr
 // 
 
 using System.Runtime.InteropServices;
@@ -13,95 +16,110 @@ namespace System.ComponentModel.Design
 	[ComVisible(true)]
 	public class MenuCommand
 	{
-		[MonoTODO]
-		public MenuCommand (EventHandler handler, CommandID command) {
-			throw new NotImplementedException ();
+
+		private EventHandler handler;
+		private CommandID command;
+		private bool ischecked = false;
+		private bool enabled = true;
+		private bool issupported = true;
+		private bool visible = true;
+
+		public MenuCommand (EventHandler handler, CommandID command)
+		{
+			this.handler = handler;
+			this.command = command;
 		}
 
-		[MonoTODO]
-		public virtual bool Checked 
-		{
+		public virtual bool Checked {
 			get {
-				throw new NotImplementedException ();
+				return ischecked;
 			}
-			
 			set {
-				throw new NotImplementedException ();
+				if (ischecked != value) {
+					ischecked = value;
+					OnCommandChanged (EventArgs.Empty);
+				}
 			}
 		}
 
-		[MonoTODO]
-		public virtual CommandID CommandID 
-		{
+		public virtual CommandID CommandID {
 			get {
-				throw new NotImplementedException ();
+				return command;
 			}
 		}
 
-		[MonoTODO]
-		public virtual bool Enabled 
-		{
+		public virtual bool Enabled {
 			get {
-				throw new NotImplementedException ();
+				return enabled;
 			}
-			
 			set {
-				throw new NotImplementedException ();
+				if (enabled != value) 
+				{
+					enabled = value;
+					OnCommandChanged (EventArgs.Empty);
+				}
 			}
 		}
 
 		[MonoTODO]
-		public virtual int OleStatus 
-		{
+		public virtual int OleStatus {
 			get {
-				throw new NotImplementedException ();
+				// This is calcualted from the other properties, but the docs to not tell how
+				// Default seems to be "3", but changes with diffentent set properties
+				return 3;
 			}		
-
-			set {
-				throw new NotImplementedException ();
-			}
 		}
 
-		[MonoTODO]
-		public virtual bool Supported 
-		{
+		public virtual bool Supported {
 			get {
-				throw new NotImplementedException (); 
+				return issupported; 
 			}
 			
 			set {
-				throw new NotImplementedException ();
+				issupported = value;
 			}
 		}
 
-		[MonoTODO]
-		public virtual bool Visible 
-		{
+		public virtual bool Visible {
 			get {
-				throw new NotImplementedException ();
+				return visible;
 			}
 			
 			set {
-				throw new NotImplementedException ();
+				visible = value;
 			}
 		}
 
-		[MonoTODO]
 		public virtual void Invoke()
 		{
-			throw new NotImplementedException ();
+			// FIXME Not sure if this invocation is what should be done here
+			if (handler != null)
+				handler (this, EventArgs.Empty);
 		}
 		
-		[MonoTODO]
 		protected virtual void OnCommandChanged (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			if (CommandChanged != null)
+				CommandChanged (this, e);
 		}
 
-		[MonoTODO]
 		public override string ToString()
 		{
-			throw new NotImplementedException ();
+			// MS runtime produces a NullReferenceException here if CommandID property == null
+			// which I guess isn't a good idea (throwing exceptions in ToStrings???) - bug in MS??
+			string commandpart = string.Empty;
+			if (command != null)
+				commandpart = command.ToString ();
+			commandpart = string.Concat (commandpart, " : ");
+			if (this.Supported)
+				commandpart = string.Concat (commandpart, "Supported");
+			if (this.Enabled)
+  				commandpart = string.Concat (commandpart, "|Enabled");
+			if (this.Visible)
+				commandpart = string.Concat (commandpart, "|Visible");
+			if (this.Checked)
+				commandpart = string.Concat (commandpart, "|Checked");
+			return commandpart;
 		}
 		
 		public event EventHandler CommandChanged;

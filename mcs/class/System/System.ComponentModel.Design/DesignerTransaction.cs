@@ -1,9 +1,12 @@
+//
 // System.ComponentModel.Design.DesignerTransaction.cs
 //
 // Author:
-// 	Alejandro Sánchez Acosta  <raciel@es.gnu.org>
+//   Alejandro Sánchez Acosta (raciel@es.gnu.org)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Alejandro Sánchez Acosta
+// (C) 2003 Andreas Nahr
 // 
 
 using System;
@@ -12,42 +15,73 @@ namespace System.ComponentModel.Design
 {
 	public abstract class DesignerTransaction : IDisposable
 	{
-		[MonoTODO]
-		public DesignerTransaction () {
-			throw new NotImplementedException ();
+		private string description;
+		private bool committed;
+		private bool canceled;
+
+		public DesignerTransaction () 
+			: this ("")
+		{
 		}
 
-		[MonoTODO]
-		public DesignerTransaction (string description) {
-			throw new NotImplementedException ();
+		public DesignerTransaction (string description)
+		{
+			this.description = description;
+			this.committed = false;
+			this.canceled = false;
 		}
 		
 		void IDisposable.Dispose () 
 		{ 
-			this.Dispose(); 
+			this.Dispose (true); 
 		}
 		
-		public abstract void Dispose();
+		public abstract void Dispose (bool disposing);
 
-		public bool Canceled 
+		protected abstract void OnCancel ();
+
+		protected abstract void OnCommit ();
+
+		public void Cancel ()
 		{
-			get {
-				throw new NotImplementedException ();
+			// LAMESPEC Cannot find anything about the exact behavior, but I do some checks that
+			// seem to make sense
+			if (this.Canceled == false && this.Committed == false) {
+				this.canceled = true;
+				OnCancel ();
 			}
 		}
 
-		public bool Committed
+		public void Commit ()
 		{
+			// LAMESPEC Cannot find anything about the exact behavior, but I do some checks that
+			// seem to make sense
+			if (this.Canceled == false && this.Committed == false) {
+ 				this.committed = true;
+				OnCommit ();
+			}
+		}
+
+		public bool Canceled {
 			get {
-				throw new NotImplementedException ();
+				return canceled;
+			}
+		}
+
+		public bool Committed {
+			get {
+				return committed;
 			}
 		}
 		
-		public string Description 
-		{
+		public string Description {
 			get {
-				throw new NotImplementedException ();
+				return description;
 			}
-		}				
+		}
+
+		~DesignerTransaction ()
+		{
+		}
 	}
 }

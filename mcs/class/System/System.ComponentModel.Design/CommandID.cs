@@ -1,9 +1,12 @@
+//
 // System.ComponentModel.Design.CommandID.cs
 //
 // Author:
-// 	Alejandro Sánchez Acosta  <raciel@es.gnu.org>
+//   Alejandro Sánchez Acosta  <raciel@es.gnu.org>
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Alejandro Sánchez Acosta
+// (C) 2003 Andreas Nahr
 // 
 
 using System.Runtime.InteropServices;
@@ -13,49 +16,46 @@ namespace System.ComponentModel.Design
 	[ComVisible(true)]
 	public class CommandID
 	{
-	
-		[MonoTODO]
-		internal CommandID (string text) {
-			throw new NotImplementedException ();
-		}
+		private int cID;
+		private Guid guid;
 
-		[MonoTODO]
-		public CommandID (Guid menuGroup, int commandID) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public virtual Guid Guid 
+		public CommandID (Guid menuGroup, int commandID)
 		{
+			cID = commandID;
+			guid = menuGroup;
+		}
+
+		public virtual Guid Guid {
 			get {
-				throw new NotImplementedException ();
+				return guid;
 			}
 		}
 
-		[MonoTODO]
-		public virtual int ID 
-		{
+		public virtual int ID {
 			get {
-				throw new NotImplementedException ();
+				return cID;
 			}
 		}
 
-		[MonoTODO]
 		public override bool Equals (object obj)
 		{
-			throw new NotImplementedException ();
+			if (!(obj is CommandID))
+				return false;
+			if (obj == this)
+				return true;
+			return ((CommandID) obj).Guid.Equals (guid) && 
+				((CommandID) obj).ID.Equals (cID);
 		}
 
-		[MonoTODO]
 		public override int GetHashCode() 
 		{
-			throw new NotImplementedException ();
+			// Guid can only be valid
+			return guid.GetHashCode() ^ cID.GetHashCode();
 		}
 
-		[MonoTODO]
 		public override string ToString()
 		{
-			throw new NotImplementedException ();
+			return guid.ToString () + " : " + cID.ToString ();
 		}
 	}
 }

@@ -1,11 +1,15 @@
+//
 // System.ComponentModel.Design.IDesignerHost.cs
 //
-// Author:
-// 	Alejandro Sánchez Acosta  <raciel@es.gnu.org>
+// Authors:
+//   Alejandro Sánchez Acosta  <raciel@es.gnu.org>
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Alejandro Sánchez Acosta
+// (C) 2003 Andreas Nahr
 // 
 
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace System.ComponentModel.Design
@@ -34,6 +38,8 @@ namespace System.ComponentModel.Design
 		DesignerTransaction CreateTransaction ();
 
 		DesignerTransaction CreateTransaction (string description);
+
+		void DestroyComponent (IComponent component);
 
 		IDesigner GetDesigner (IComponent component);
 

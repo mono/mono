@@ -1,5 +1,5 @@
 //
-// System.ComponentModel.Design.SelectionTypes
+// System.ComponentModel.Design.SelectionTypes.cs
 //
 // Authors:
 //      Martin Willemoes Hansen (mwh@sysrq.dk)
@@ -16,11 +16,11 @@ namespace System.ComponentModel.Design
 	[ComVisible(true)]
         public enum SelectionTypes
 	{
-		Click,
-		MouseDown,
-		MouseUp,
-		Normal,
-		Replace,
-		Valid,
+		Click = 16,
+		MouseDown = 4,
+		MouseUp = 8,
+		Normal = 1,
+		Replace = 2,
+		Valid = 31
 	}
 }

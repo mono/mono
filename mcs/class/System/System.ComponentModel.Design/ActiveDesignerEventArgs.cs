@@ -1,3 +1,4 @@
+//
 // System.ComponentModel.Design.ActiveDesignerEventArgs.cs
 //
 // Author:
@@ -24,20 +25,12 @@ namespace System.ComponentModel.Design
 			get {
 				return newDesigner;
 			}
-
-			set {
-				newDesigner = value;
-			}
 		}
 
 		public IDesignerHost OldDesigner {
 			get {
 				return oldDesigner;
-			}
-
-			set {
-				newDesigner = value;
-			}			
+			}		
 		}
 	}
 }

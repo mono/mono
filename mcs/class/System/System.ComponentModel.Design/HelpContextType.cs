@@ -1,8 +1,8 @@
 //
-// System.ComponentModel.Design.HelpContextType
+// System.ComponentModel.Design.HelpContextType.cs
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
 //
 // (C) 2003 Martin Willemoes Hansen
 //
@@ -10,11 +10,11 @@
 namespace System.ComponentModel.Design
 {
 	[Serializable]
-        public enum HelpContextType
+	public enum HelpContextType
 	{
-		Ambient,
-		Selection,
-		ToolWindowSelection,
-		Window,
+		Ambient = 0,
+		Window = 1,
+		Selection = 2,
+		ToolWindowSelection = 3
 	}
 }

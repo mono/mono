@@ -1,10 +1,12 @@
 //
-// System.ComponentModel.Design.DesignerCollection
+// System.ComponentModel.Design.DesignerCollection.cs
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 using System.Collections;
@@ -13,52 +15,43 @@ namespace System.ComponentModel.Design
 {
 	public class DesignerCollection : ICollection, IEnumerable
 	{
-		[MonoTODO]
+
+		private ArrayList designers;
+
 		public DesignerCollection (IDesignerHost[] designers)
 		{
+			this.designers = new ArrayList (designers);
 		}
 
-		[MonoTODO]
 		public DesignerCollection (IList designers)
 		{
+			this.designers = new ArrayList (designers);
 		}
 
 		public int Count {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return designers.Count; }
 		}
 
 		public virtual IDesignerHost this [int index] {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return (IDesignerHost) designers [index]; }
 		}
 
-		[MonoTODO]
 		public IEnumerator GetEnumerator()
 		{
-			throw new NotImplementedException();
+			return designers.GetEnumerator ();
 		}
 
-		public bool IsSynchronized {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+		bool ICollection.IsSynchronized {
+			get { return designers.IsSynchronized; }
 		}
 
-		public object SyncRoot {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+		object ICollection.SyncRoot {
+			get { return designers.SyncRoot; }
 		}
 
-		[MonoTODO]
-		public void CopyTo (Array array, int index)
+		void ICollection.CopyTo (Array array, int index)
 		{
-			throw new NotImplementedException();
+			designers.CopyTo (array, index);
 		}
-
-		[MonoTODO]
-		~DesignerCollection()
-		{
-		}
-
 	}
 }

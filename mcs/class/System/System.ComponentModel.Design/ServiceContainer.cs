@@ -1,39 +1,42 @@
 //
-// System.ComponentModel.Design.ServiceContainer
+// System.ComponentModel.Design.ServiceContainer.cs
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
+
+using System.Collections;
 
 namespace System.ComponentModel.Design
 {
-	public sealed class ServiceContainer : IServiceContainer,
-                                               IServiceProvider
+	public sealed class ServiceContainer : IServiceContainer, IServiceProvider
 	{
-		[MonoTODO]
+
+		private IServiceProvider parentProvider;
+		private Hashtable services = new Hashtable ();
+
 		public ServiceContainer()
+			: this (null)
 		{
 		}
 
-		[MonoTODO]
 		public ServiceContainer (IServiceProvider parentProvider)
 		{
+			this.parentProvider = parentProvider;
 		}
 
-		[MonoTODO]
-		public void AddService (Type serviceType,
-					object serviceInstance)
+		public void AddService (Type serviceType, object serviceInstance)
 		{
-			throw new NotImplementedException();
+			AddService (serviceType, serviceInstance, false);
 		}
 
-		[MonoTODO]
-		public void AddService (Type serviceType,
-					ServiceCreatorCallback callback)
+		public void AddService (Type serviceType, ServiceCreatorCallback callback)
 		{
-			throw new NotImplementedException();
+			AddService (serviceType, callback, false);
 		}
 
 		[MonoTODO]
@@ -41,6 +44,12 @@ namespace System.ComponentModel.Design
 					object serviceInstance,
 					bool promote)
 		{
+			if (serviceType == null)
+				throw new ArgumentNullException ("serviceType", "Cannot be null");
+			if (promote)
+				if (parentProvider != null)
+					((IServiceContainer)parentProvider.GetService(typeof(IServiceContainer))).AddService (serviceType, serviceInstance, promote);
+			// Add real implementation
 			throw new NotImplementedException();
 		}
 
@@ -49,31 +58,35 @@ namespace System.ComponentModel.Design
 					ServiceCreatorCallback callback,
 					bool promote)
 		{
+			if (serviceType == null)
+				throw new ArgumentNullException ("serviceType", "Cannot be null");
+			if (promote)
+				if (parentProvider != null)
+					((IServiceContainer)parentProvider.GetService(typeof(IServiceContainer))).AddService (serviceType, callback, promote);
+			// Add real implementation
 			throw new NotImplementedException();
 		}
 
-		[MonoTODO]
 		public void RemoveService (Type serviceType)
 		{
-			throw new NotImplementedException();
+			RemoveService (serviceType, false);
 		}
 
-		[MonoTODO]
-		public void RemoveService (Type serviceType,
-					   bool promote)
+		public void RemoveService (Type serviceType, bool promote)
 		{
-			throw new NotImplementedException();
+			if (serviceType == null)
+				throw new ArgumentNullException ("serviceType", "Cannot be null");
+			if (promote)
+				if (parentProvider != null)
+					((IServiceContainer)parentProvider.GetService(typeof(IServiceContainer))).RemoveService (serviceType, promote);
+			else
+				services.Remove (serviceType);
 		}
 
 		[MonoTODO]
 		public object GetService (Type serviceType)
 		{
 			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~ServiceContainer()
-		{
 		}
 	}
 }

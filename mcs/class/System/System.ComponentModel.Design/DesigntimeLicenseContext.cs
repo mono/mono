@@ -1,39 +1,44 @@
 //
-// System.ComponentModel.Design.DesigntimeLicenseContext
+// System.ComponentModel.Design.DesigntimeLicenseContext.cs
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
+using System.ComponentModel;
 using System.Reflection;
+using System.Collections;
 
 namespace System.ComponentModel.Design
 {
 	public class DesigntimeLicenseContext : LicenseContext
 	{
-		[MonoTODO]
+		private Hashtable keys = new Hashtable ();
+
 		public DesigntimeLicenseContext()
 		{
 		}
 
-		[MonoTODO]
 		public override string GetSavedLicenseKey (Type type,
 							   Assembly resourceAssembly)
 		{
-			throw new NotImplementedException();
+			return (string)keys[type];
 		}
 
-		[MonoTODO]
 		public override void SetSavedLicenseKey (Type type, string key)
 		{
-			throw new NotImplementedException();
+			keys[type] = key;
 		}
 
-		[MonoTODO]
-		~DesigntimeLicenseContext()
-		{
+		public override LicenseUsageMode UsageMode {
+			get {
+				// It's a 'Designtime'LicenseContext
+				return LicenseUsageMode.Designtime;
+			}
 		}
 	}
 }
