@@ -338,7 +338,7 @@ namespace Mono.MonoBASIC {
 					//    target_type
 					//
 					
-					source = ConvertExplicit (ec, source, target_type, loc);
+					source = ConvertExplicit (ec, source, target_type, false, loc);
 					if (source == null){
 						Error_CannotConvertImplicit (loc, source_type, target_type);
 						return null;
