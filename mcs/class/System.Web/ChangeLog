@@ -1,5 +1,10 @@
 2004-08-31  Sanjay Gupta <gsanjay@novell.com>
 
+	* System.Web.dll.sources: Added new interfaces in 
+	System.Web.UI.WebControls.WebParts namespace.
+
+2004-08-31  Sanjay Gupta <gsanjay@novell.com>
+
 	* System.Web.dll.sources: Added new *EventArgs.cs and *EventHandler in 
 	System.Web.UI.WebControls namespace.
 
