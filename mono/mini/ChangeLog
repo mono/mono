@@ -1,3 +1,7 @@
+Tue Aug 3 23:50:00 EST 2004 Neale Ferguson <Neale.Ferguson@SoftwareAG-usa.com>
+	
+	* mini-s390x.c mini-s390x.h tramp-s390x.c inssel-s390x.brg
+	  cpu-s390x.md exceptions-s390x.c: S/390 64-bit JIT
 
 Tue Aug 3 01:35:44 PDT 2004 Paolo Molaro <lupus@ximian.com>
 
