@@ -98,10 +98,13 @@ System.Web.Mail/SmtpClient.cs
 System.Web.Mail/SmtpStream.cs
 System.Web.Mail/SmtpException.cs
 System.Web.Mail/SmtpResponse.cs
-System.Web.Mail/MailEncoder.cs
 System.Web.Mail/MailAddress.cs
 System.Web.Mail/MailAddressCollection.cs
 System.Web.Mail/MailMessageWrapper.cs
+System.Web.Mail/UUAttachmentEncoder.cs
+System.Web.Mail/IAttachmentEncoder.cs
+System.Web.Mail/Base64AttachmentEncoder.cs
+System.Web.Mail/ToUUEncodingTransform.cs
 System.Web.UI/BuildMethod.cs
 System.Web.UI/BuildTemplateMethod.cs
 System.Web.UI/Control.cs

@@ -146,26 +146,35 @@ namespace System.Web.Mail {
 	    
 	    for( int i=0; i< msg.Attachments.Count ; i++ ) {
 		MailAttachment a = (MailAttachment)msg.Attachments[ i ];
-				    		    
+			
+		FileInfo fileInfo = new FileInfo( a.Filename );
+
 		Hashtable aHeaders = new Hashtable();
 		
 		aHeaders[ "Content-Type" ] = 
 		    String.Format( "application/octet-stream; name=\"{0}\"", 
-				   a.Filename );
+				   fileInfo.Name  );
 		
 		aHeaders[ "Content-Disposition" ] = 
-		    String.Format( "attachment; filename=\"{0}\"" , a.Filename );
+		    String.Format( "attachment; filename=\"{0}\"" , fileInfo.Name );
 		
-		aHeaders[ "Content-Transfer-Encoding" ] = "base64";
-			
+		aHeaders[ "Content-Transfer-Encoding" ] = 
+		    (a.Encoding == MailEncoding.UUEncode ? "UUEncode" : "Base64" );
+		
 		smtp.WriteHeaders( aHeaders );
 		   
 		// perform the actual writing of the file.
 		// read from the file stream and write to the tcp stream
-		FileStream ins = new FileStream( a.Filename , FileMode.Open );
+		FileStream ins = new FileStream( fileInfo.FullName  , FileMode.Open );
 		
 		// create an apropriate encoder
-		MailEncoder encoder = new MailEncoder( a.Encoding );
+		IAttachmentEncoder encoder;
+		if( a.Encoding == MailEncoding.UUEncode ) {
+		    encoder = new UUAttachmentEncoder( 644 , fileInfo.Name  );
+		} else {
+		    encoder = new Base64AttachmentEncoder();
+		}
+		
 		encoder.EncodeStream( ins , smtp.Stream );
 		
 		ins.Close();
