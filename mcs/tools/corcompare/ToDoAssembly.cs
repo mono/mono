@@ -115,18 +115,11 @@ namespace Mono.Util.CorCompare {
 
 		public Type[] GetReferenceTypes()
 		{
-			try
-			{
-				// get the types in the corlib we are running with
-				//Assembly msAsmbl = Assembly.GetAssembly(typeof (System.Object));
-				Assembly assembly = Assembly.Load (assemblyToCompareWith);
-				Type[] mscorlibTypes = assembly.GetTypes();
-				return mscorlibTypes;
-			}
-			catch (Exception)
-			{
-				return null;
-			}
+			// get the types in the corlib we are running with
+			//Assembly msAsmbl = Assembly.GetAssembly(typeof (System.Object));
+			Assembly assembly = Assembly.LoadWithPartialName (assemblyToCompareWith);
+			Type[] mscorlibTypes = assembly.GetTypes();
+			return mscorlibTypes;
 		}
 
 		public Type[] GetMonoTypes()
