@@ -5,8 +5,9 @@
 // 	Patrik Torstensson (Patrik.Torstensson@labs2.com)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (c) 2003 Novell, Inc. (http://www.novell.com)
+// (c) 2003, 2004 Novell, Inc. (http://www.novell.com)
 //
+
 using System;
 using System.Collections;
 using System.Configuration;
@@ -32,7 +33,6 @@ namespace System.Web
 		private TraceContext _oTrace;
 		private IHttpHandler _Handler;
 		private IHttpAsyncHandler _AsyncHandler;
-		private IPrincipal _User;
 
 		private bool _skipauth;
 		private Hashtable		_oItems;
@@ -256,10 +256,10 @@ namespace System.Web
 		public IPrincipal User
 		{
 			get {
-				return _User;
+				return Thread.CurrentPrincipal;
 			}
 			set {
-				_User = value;
+				Thread.CurrentPrincipal = value;
 			}
 		}
 

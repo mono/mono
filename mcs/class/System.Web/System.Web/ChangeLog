@@ -1,3 +1,8 @@
+2004-06-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpContext.cs: User property now get/set Thread.CurrentPrincipal.
+	Fix (at least partially) #59683.
+
 2004-06-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequest.cs: reverting patch from Alon Gazit. Uses the above file
