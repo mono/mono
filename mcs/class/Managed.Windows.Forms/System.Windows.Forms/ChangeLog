@@ -1,3 +1,8 @@
+2004-12-06  Peter Bartok <pbartok@novell.com>
+
+	* Control.cs (Parent): Added check and exception to prevent 
+	circular parenting
+
 2004-12-03  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ListBox.cs: implemented clipping, selection single and multiple,
