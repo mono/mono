@@ -991,19 +991,25 @@ namespace System.Web.Compilation
 				converter = TypeDescriptor.GetConverter (type);
 			}
 			
-			if (converter != null && converter.CanConvertFrom (typeof (string)))
-			{
+			if (converter != null && converter.CanConvertFrom (typeof (string))) {
 				object value = converter.ConvertFrom (str);
 
 				if (converter.CanConvertTo (typeof (InstanceDescriptor))) {
 					InstanceDescriptor idesc = (InstanceDescriptor) converter.ConvertTo (value, typeof(InstanceDescriptor));
 					return GenerateInstance (idesc);
 				}
+
+				CodeMethodReferenceExpression m = new CodeMethodReferenceExpression ();
+				m.TargetObject = new CodeTypeReferenceExpression (typeof (TypeDescriptor));
+				m.MethodName = "GetConverter";
+				CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression (m);
+				CodeTypeReference tref = new CodeTypeReference (type);
+				invoke.Parameters.Add (new CodeTypeOfExpression (tref));
 				
-				InstanceDescriptor desc = GetDefaultInstanceDescriptor (value);
-				if (desc != null) return GenerateInstance (desc);
-				
-				return GenerateObjectInstance (value);
+				invoke = new CodeMethodInvokeExpression (invoke, "ConvertFrom");
+				invoke.Parameters.Add (new CodePrimitiveExpression (str));
+
+				return new CodeCastExpression (tref, invoke);
 			}
 			
 			Console.WriteLine ("Unknown type: " + type + " value: " + str);

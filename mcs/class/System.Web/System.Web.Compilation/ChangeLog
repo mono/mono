@@ -1,3 +1,7 @@
+2005-03-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateControlCompiler.cs: make typedesc.aspx work again.
+
 2005-02-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ExpressionBuilderContext.cs:
