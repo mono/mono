@@ -50,10 +50,10 @@ namespace System.Security.Cryptography.X509Certificates {
 	// LAMESPEC: the MSDN docs always talks about X509v3 certificates
 	// and/or Authenticode certs. However this class works with older
 	// X509v1 certificates and non-authenticode (code signing) certs.
+	[Serializable]
 #if NET_2_0
 	public class X509Certificate : IDeserializationCallback, ISerializable {
 #else
-	[Serializable]
 	public class X509Certificate {
 #endif
 		// typedef struct _CERT_CONTEXT {
@@ -157,23 +157,40 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 #if NET_2_0
-		public X509Certificate () {}
+		[MonoTODO]
+		public X509Certificate ()
+		{
+		}
 
-		public X509Certificate (byte[] rawData, string password) {}
+		[MonoTODO]
+		public X509Certificate (byte[] rawData, string password)
+		{
+		}
 
-		public X509Certificate (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags) {}
+		[MonoTODO]
+		public X509Certificate (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
+		{
+		}
 
+		[MonoTODO]
 		public X509Certificate (string fileName)
 		{
 		}
 
+		[MonoTODO]
 		public X509Certificate (string fileName, string password)
 		{
 		}
 
-		public X509Certificate (string fileName, string password, X509KeyStorageFlags keyStorageFlags) {}
+		[MonoTODO]
+		public X509Certificate (string fileName, string password, X509KeyStorageFlags keyStorageFlags)
+		{
+		}
 
-		public X509Certificate (SerializationInfo info, StreamingContext context) {}
+		[MonoTODO]
+		public X509Certificate (SerializationInfo info, StreamingContext context)
+		{
+		}
 #endif
 
 		// public methods
@@ -376,29 +393,60 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 #if NET_2_0
+		public override bool Equals (object obj) 
+		{
+			X509Certificate x = (obj as X509Certificate);
+			if (x != null)
+				return this.Equals (x);
+			return false;
+		}
+
+		[MonoTODO]
 		public virtual byte[] Export (X509ContentType contentType)
 		{
 			return null;
 		}
 
+		[MonoTODO]
 		public virtual byte[] Export (X509ContentType contentType, string password)
 		{
 			return null;
 		}
 
-		void IDeserializationCallback.OnDeserialization (object sender) {}
+		[MonoTODO]
+		void IDeserializationCallback.OnDeserialization (object sender)
+		{
+		}
 
-		public virtual void Import (byte[] rawData) {}
+		[MonoTODO]
+		public virtual void Import (byte[] rawData)
+		{
+		}
 
-		public virtual void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags) {}
+		[MonoTODO]
+		public virtual void Import (byte[] rawData, string password, X509KeyStorageFlags keyStorageFlags)
+		{
+		}
 
-		public virtual void Import (string fileName) {}
+		[MonoTODO]
+		public virtual void Import (string fileName)
+		{
+		}
 
-		public virtual void Import (string fileName, string password, X509KeyStorageFlags keyStorageFlags) {}
+		[MonoTODO]
+		public virtual void Import (string fileName, string password, X509KeyStorageFlags keyStorageFlags)
+		{
+		}
 
-		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context) {}
+		[MonoTODO]
+		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+		}
 
-		public virtual void Reset() {}
+		[MonoTODO]
+		public virtual void Reset ()
+		{
+		}
 
 		// properties
 

@@ -33,13 +33,14 @@ using System;
 namespace System.Security.Cryptography.X509Certificates {
 
 	[Flags]
+	[Serializable]
 	public enum X509KeyStorageFlags	{
-		DefaultKeySet,
-		UserKeySet,
-		MachineKeySet,
-		Exportable,
-		UserProtected,
-		PersistKeySet 
+		DefaultKeySet = 0,
+		UserKeySet = 1,
+		MachineKeySet = 2,
+		Exportable = 4,
+		UserProtected = 8,
+		PersistKeySet = 16 
 	}
 }
 

@@ -1,3 +1,12 @@
+2004-07-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate.cs: Added new Equals(Object). Moved [Serializable]
+	so it's compiled by all profiles. Added missing MonoTODO.
+	* X509ContentType.cs: Added new (from 1.2) Pkcs12 enum member. Added
+	missing [Serializable] attribute.
+	* X509KeyStorageFlags.cs: Specified all flags values. Added missing
+	[Serializable] attribute.
+
 2004-07-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate.cs: Fixed NET_2_0 directives.
