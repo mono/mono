@@ -3596,7 +3596,7 @@ namespace Mono.CSharp {
 
 		public bool VerifyFixed (bool is_expression)
 		{
-			return !is_expression;
+			return !is_expression || TypeManager.IsValueType (type);
 		}
 
 		public bool IsAssigned (EmitContext ec, Location loc)
@@ -6206,7 +6206,10 @@ namespace Mono.CSharp {
 
 		public bool VerifyFixed (bool is_expression)
 		{
-			return variable_info.LocalInfo.IsFixed;
+			if ((variable_info == null) || (variable_info.LocalInfo == null))
+				return false;
+			else
+				return variable_info.LocalInfo.IsFixed;
 		}
 
 		public bool ResolveBase (EmitContext ec)

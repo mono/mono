@@ -1,3 +1,12 @@
+2003-07-25  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (TypeContainer.DefineMembers): Check whether all
+	readonly fields have been assigned and report warning CS0649 if
+	not.
+
+	* statement.cs (LocalInfo.IsFixed): Always return true if this is
+	a valuetype.
+
 2003-07-24  Ravi Pratap  <ravi@ximian.com>
 
 	* decl.cs (MemberCache.AddMethods): Reverse the order of the array

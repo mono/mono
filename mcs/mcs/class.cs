@@ -1048,6 +1048,14 @@ namespace Mono.CSharp {
 			if (fields != null)
 				DefineMembers (fields, defined_names);
 
+			if ((RootContext.WarningLevel >= 4) && (fields != null)) {
+				foreach (Field f in fields) {
+					if (((f.ModFlags & Modifiers.READONLY) != 0) && !f.IsAssigned)
+						Report.Warning (649, "Field `" + MakeFQN (Name, f.Name) + "; is never " +
+								"assigned and will ever have its default value");
+				}
+			}
+
 			if (this is Class){
 				if (instance_constructors == null){
 					if (default_constructor == null)
@@ -3625,6 +3633,8 @@ namespace Mono.CSharp {
 				return init != null;
 			}
 		}
+
+		public bool IsAssigned;
 
 		protected readonly Object init;
 		// Private.
