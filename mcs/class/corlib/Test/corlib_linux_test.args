@@ -136,4 +136,5 @@ System.Text/UTF8EncodingTest.cs
 System.Threading/ThreadTest.cs
 System.Threading/MutexTest.cs
 System.Reflection/AssemblyNameTest.cs
+System.Reflection/AssemblyTest.cs
 System.Reflection/StrongNameKeyPairTest.cs
