@@ -39,7 +39,7 @@ using System.Runtime.InteropServices;
 namespace System.Reflection {
 
 	[Serializable]
-	[ClassInterface(ClassInterfaceType.AutoDual)]
+	[ClassInterface(ClassInterfaceType.None)]
 	public abstract class ConstructorInfo : MethodBase {
 		public static readonly string ConstructorName = ".ctor";
 		public static readonly string TypeConstructorName = ".cctor";

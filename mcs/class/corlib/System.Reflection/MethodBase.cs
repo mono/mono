@@ -40,7 +40,7 @@ using System.Runtime.InteropServices;
 namespace System.Reflection {
 
 	[Serializable]
-	[ClassInterface(ClassInterfaceType.AutoDual)]
+	[ClassInterface(ClassInterfaceType.None)]
 	public abstract class MethodBase: MemberInfo {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection {
 
-	[ClassInterface(ClassInterfaceType.AutoDual)]
+	[ClassInterface(ClassInterfaceType.None)]
 	public abstract class EventInfo : MemberInfo {
 
 		public abstract EventAttributes Attributes {get;}

@@ -1,3 +1,13 @@
+2005-02-10  Marek Safar  <marek.safar@seznam.cz>
+
+	* Assembly.cs,
+	* ConstructorInfo.cs,
+	* EventInfo.cs,
+	* FieldInfo.cs,
+	* MemberInfo.cs,
+	* MethodBase.cs,
+	* MethodInfo.cs,
+	* PropertyInfo.cs: ClassInterfaceType is None.
 
 Thu Feb 3 15:22:55 CET 2005 Paolo Molaro <lupus@ximian.com>
 

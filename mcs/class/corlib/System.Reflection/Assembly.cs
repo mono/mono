@@ -47,7 +47,7 @@ namespace System.Reflection {
 	}
 
 	[Serializable]
-	[ClassInterface(ClassInterfaceType.AutoDual)]
+	[ClassInterface(ClassInterfaceType.None)]
 	public class Assembly : System.Reflection.ICustomAttributeProvider,
 		System.Security.IEvidenceFactory, System.Runtime.Serialization.ISerializable {
 

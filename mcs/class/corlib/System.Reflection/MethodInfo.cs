@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 namespace System.Reflection {
 
 	[Serializable]
-	[ClassInterface(ClassInterfaceType.AutoDual)]
+	[ClassInterface(ClassInterfaceType.None)]
 	public abstract class MethodInfo: MethodBase {
 
 		public abstract MethodInfo GetBaseDefinition();

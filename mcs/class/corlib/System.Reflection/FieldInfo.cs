@@ -43,7 +43,7 @@ using System.Runtime.InteropServices;
 namespace System.Reflection {
 
 	[Serializable]
-	[ClassInterface(ClassInterfaceType.AutoDual)]
+	[ClassInterface(ClassInterfaceType.None)]
 	public abstract class FieldInfo : MemberInfo {
 		public abstract FieldAttributes Attributes {get;}
 		public abstract RuntimeFieldHandle FieldHandle {get;}
