@@ -78,7 +78,7 @@ namespace System.Xml.Serialization {
 				if (member.Namespace != ns) att.Arguments.Add (MapCodeGenerator.GetArg ("Namespace", member.Namespace));
 				if (att.Arguments.Count > 0) metadata.Add (att);
 			}
-			else
+			else if (!member.Any)
 			{
 				att = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlElement");
 				if (forceUseMemberName || (member.ElementName != member.MemberName)) att.Arguments.Add (MapCodeGenerator.GetArg ("ElementName", member.ElementName));

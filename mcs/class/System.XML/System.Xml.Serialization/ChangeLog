@@ -1,6 +1,10 @@
 2003-12-11  Lluis Sanchez Gual <lluis@ximian.com>
 	
-	* 
+	* MapCodeGenerator.cs: Added support for [Flags] enum.
+	* XmlCodeExporter.cs: Do not add XmlElement attributes if the member is Any.
+	* XmlSchemaImporter.cs: Implemented ImportAnyType(). Improved import of
+	  encoded array type. Added support for enums with [Flags].
+	  In encoded format, unqualified types are schema types by default.
 	
 2003-12-08  Lluis Sanchez Gual <lluis@ximian.com>
 

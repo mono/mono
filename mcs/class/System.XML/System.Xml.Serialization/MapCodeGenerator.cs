@@ -289,10 +289,19 @@ namespace System.Xml.Serialization {
 
 			GenerateEnum (map, codeEnum);
 			EnumMap emap = (EnumMap) map.ObjectMap;
+			
+			if (emap.IsFlags)
+				codeEnum.CustomAttributes.Add (new CodeAttributeDeclaration ("System.Flags"));
 
+			int flag = 1;
 			foreach (EnumMap.EnumMapMember emem in emap.Members)
 			{
 				CodeMemberField codeField = new CodeMemberField ("", emem.EnumName);
+				if (emap.IsFlags) {
+					codeField.InitExpression = new CodePrimitiveExpression (flag);
+					flag *= 2;
+				}
+				
 				AddComments (codeField, emem.Documentation);
 
 				GenerateEnumItem (codeField, emem);

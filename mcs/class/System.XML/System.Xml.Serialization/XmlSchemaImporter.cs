@@ -70,10 +70,16 @@ namespace System.Xml.Serialization {
 
 		#region Methods
 
-		[MonoTODO]
 		public XmlMembersMapping ImportAnyType (XmlQualifiedName typeName, string elementName)
 		{
-			throw new NotImplementedException ();
+			XmlTypeMapMemberAnyElement mapMem = new XmlTypeMapMemberAnyElement ();
+			mapMem.Name = typeName.Name;
+			mapMem.TypeData = TypeTranslator.GetTypeData(typeof(XmlNode));
+			mapMem.ElementInfo.Add (CreateElementInfo (typeName.Namespace, mapMem, typeName.Name, mapMem.TypeData, true));
+			
+			XmlMemberMapping[] mm = new XmlMemberMapping [1];
+			mm[0] = new XmlMemberMapping (typeName.Name, typeName.Namespace, mapMem, encodedFormat);
+			return new XmlMembersMapping (mm);
 		}
 
 		public XmlTypeMapping ImportDerivedTypeMapping (XmlQualifiedName name, Type baseType)
@@ -449,21 +455,39 @@ namespace System.Xml.Serialization {
 				XmlSchemaComplexContentRestriction rest = content.Content as XmlSchemaComplexContentRestriction;
 				XmlSchemaAttribute arrayTypeAt = FindArrayAttribute (rest.Attributes);
 				
-				XmlAttribute[] uatts = arrayTypeAt.UnhandledAttributes;
-				if (uatts == null || uatts.Length == 0) throw new InvalidOperationException ("arrayType attribute not specified in array declaration: " + typeQName);
-				
-				XmlAttribute xat = null;
-				foreach (XmlAttribute at in uatts)
-					if (at.LocalName == "arrayType" && at.NamespaceURI == XmlSerializer.WsdlNamespace)
-						{ xat = at; break; }
-				
-				if (xat == null) 
-					throw new InvalidOperationException ("arrayType attribute not specified in array declaration: " + typeQName);
-
-				string name, ns, dims;
-				TypeTranslator.ParseArrayType (xat.Value, out name, out ns, out dims);
-				
-				return BuildEncodedArrayMap (name + dims, ns, out arrayTypeData);
+				if (arrayTypeAt != null)
+				{
+					XmlAttribute[] uatts = arrayTypeAt.UnhandledAttributes;
+					if (uatts == null || uatts.Length == 0) throw new InvalidOperationException ("arrayType attribute not specified in array declaration: " + typeQName);
+					
+					XmlAttribute xat = null;
+					foreach (XmlAttribute at in uatts)
+						if (at.LocalName == "arrayType" && at.NamespaceURI == XmlSerializer.WsdlNamespace)
+							{ xat = at; break; }
+					
+					if (xat == null) 
+						throw new InvalidOperationException ("arrayType attribute not specified in array declaration: " + typeQName);
+	
+					string name, ns, dims;
+					TypeTranslator.ParseArrayType (xat.Value, out name, out ns, out dims);
+					return BuildEncodedArrayMap (name + dims, ns, out arrayTypeData);
+				}
+				else
+				{
+					XmlSchemaElement elem = null;
+					XmlSchemaSequence seq = rest.Particle as XmlSchemaSequence;
+					if (seq != null && seq.Items.Count == 1) 
+						elem = seq.Items[0] as XmlSchemaElement;
+					else {
+						XmlSchemaAll all = rest.Particle as XmlSchemaAll;
+						if (all != null && all.Items.Count == 1)
+							elem = all.Items[0] as XmlSchemaElement;
+					}
+					if (elem == null)
+						throw new InvalidOperationException ("Unknown array format");
+						
+					return BuildEncodedArrayMap (elem.SchemaTypeName.Name + "[]", elem.SchemaTypeName.Namespace, out arrayTypeData);
+				}
 			}
 			else
 			{
@@ -965,10 +989,16 @@ namespace System.Xml.Serialization {
 				// Create an enum map
 
 				CodeIdentifiers codeIdents = new CodeIdentifiers ();
-				XmlSchemaSimpleTypeRestriction rest = (XmlSchemaSimpleTypeRestriction)stype.Content;
-
 				XmlTypeMapping enumMap = CreateTypeMapping (typeQName, SchemaTypes.Enum, null);
 				enumMap.Documentation = GetDocumentation (stype);
+				
+				bool isFlags = false;
+				if (stype.Content is XmlSchemaSimpleTypeList) {
+					stype = ((XmlSchemaSimpleTypeList)stype.Content).ItemType;
+					isFlags = true;
+				}
+				XmlSchemaSimpleTypeRestriction rest = (XmlSchemaSimpleTypeRestriction)stype.Content;
+
 				codeIdents.AddReserved (enumMap.TypeData.TypeName);
 
 				EnumMap.EnumMapMember[] members = new EnumMap.EnumMapMember [rest.Facets.Count];
@@ -979,7 +1009,7 @@ namespace System.Xml.Serialization {
 					members [n] = new EnumMap.EnumMapMember (enu.Value, enumName);
 					members [n].Documentation = GetDocumentation (enu);
 				}
-				enumMap.ObjectMap = new EnumMap (members, false);
+				enumMap.ObjectMap = new EnumMap (members, isFlags);
 				enumMap.IsSimpleType = true;
 				return enumMap;
 			}
@@ -1014,6 +1044,11 @@ namespace System.Xml.Serialization {
 				foreach (object ob in rest.Facets)
 					if (!(ob is XmlSchemaEnumerationFacet)) return false;
 				return true;
+			}
+			else if (stype.Content is XmlSchemaSimpleTypeList)
+			{
+				XmlSchemaSimpleTypeList list = (XmlSchemaSimpleTypeList) stype.Content;
+				return (list.ItemType != null && CanBeEnum (list.ItemType));
 			}
 			return false;
 		}
@@ -1276,7 +1311,7 @@ namespace System.Xml.Serialization {
 
 		TypeData GetTypeData (XmlQualifiedName typeQName, XmlQualifiedName root)
 		{
-			if (typeQName.Namespace == XmlSchema.Namespace)
+			if (typeQName.Namespace == XmlSchema.Namespace || (encodedFormat && typeQName.Namespace == ""))
 				return TypeTranslator.GetPrimitiveTypeData (typeQName.Name);
 
 			return ImportType (typeQName, root).TypeData;
