@@ -1,3 +1,7 @@
+2003-12-19  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* locales.c: include string.h for memxxx prototypes
+
 2003-12-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_MonoField_GetValueInternal): Do not run the class
