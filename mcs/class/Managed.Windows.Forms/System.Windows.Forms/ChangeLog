@@ -1,3 +1,8 @@
+2004-12-17  Jackson Harper  <jackson@ximian.com>
+
+	* TreeNode.cs:
+	* MonthCalendar.cs: Signature fixes
+
 2004-12-17  Geoff Norton  <gnorton@customerdna.com>
 
 	* XplatUIOSX.cs: Find the missing caret; caret was dissappearing after a 
