@@ -1142,7 +1142,11 @@ namespace System.Globalization
 		public virtual CultureInfo Parent
 		{
 			get {
-				return(new CultureInfo (CultureMap.lcid_to_parent_lcid (lcid)));
+				int parent_lcid = CultureMap.lcid_to_parent_lcid (lcid);
+				if (parent_lcid == lcid)
+					return null;
+
+				return (new CultureInfo (parent_lcid));
 			}
 		}
 
