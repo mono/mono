@@ -1,5 +1,11 @@
 2003-09-10  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
+	* FloatingPointFormatter.cs: Fix a bug with Custm Format.
+	* FloatingPointFormatter.cs: Fix a little bug I've introduced the
+	last change.
+
+2003-09-10  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
 	* DoubleFormatter.cs: A few optimizations. Now, only one object
 	is created to convert all double numbers.
 	* SingleFormatter.cs: A few optimizations. Now, only one object

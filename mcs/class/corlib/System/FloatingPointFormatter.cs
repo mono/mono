@@ -52,9 +52,6 @@ namespace System {
 
 		public string GetStringFrom
 				(string format, NumberFormatInfo nfi, double value) {
-			this.format = format;
-			this.nfi = nfi;
-			this.value = value;
 			if (format == null || format == "") {
 				format = "G";
 			}
@@ -70,6 +67,9 @@ namespace System {
 			if (Double.IsPositiveInfinity(value)) {
 				return nfi.PositiveInfinitySymbol;
 			}
+			this.format = format;
+			this.nfi = nfi;
+			this.value = value;
 			char specifier;
 			int precision;
 			if (!ParseFormat(out specifier, out precision)) {
@@ -792,6 +792,9 @@ namespace System {
 			long mantissa;
 			int exponent;
 			Flags f = AnalizeFormat(format);
+			if (f.FirstFormatPos < 0) {
+				return format;
+			}
 			if (((f.Percent) || (f.NumberOfColons > 0)) && (f.ExpPos < 0)) {
 				int len = f.DecimalLength;
 				int exp = 0;
