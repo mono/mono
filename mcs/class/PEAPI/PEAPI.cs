@@ -489,7 +489,7 @@ namespace PEAPI
   /// </summary>
   public enum ImplAttr { IL, Native, Runtime = 0x03, Unmanaged = 0x04,
     ForwardRef = 0x10, PreserveSig = 0x0080, InternalCall = 0x1000, 
-    Synchronised = 0x0020, Synchronized = 0x0020, NoInLining = 0x0008}
+    Synchronised = 0x0020, Synchronized = 0x0020, NoInLining = 0x0008, Optil = 0x0002}
 
   /// <summary>
   /// Modes for a parameter
@@ -1553,6 +1553,15 @@ namespace PEAPI
       nameSpaceIx = md.AddToStringsHeap(nameSpace);
     }
 
+	public string Name {
+		get { 
+			if (nameSpace != null &&
+			   nameSpace != String.Empty) {
+				return nameSpace + "." + name;
+			}
+			return name;
+		}
+	}
     internal Class(uint nsIx, uint nIx) : base(0x12) {
       nameSpaceIx = nsIx;
       nameIx = nIx;
@@ -1563,7 +1572,7 @@ namespace PEAPI
     internal virtual void MakeValueClass() {
       typeIndex = 0x11;
     }
-
+	
     internal virtual string TypeName() {
       return (nameSpace + "." + name);
     }

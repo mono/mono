@@ -1,5 +1,11 @@
 2003-03-06 Jackson Harper <jackson@latitudegeo.com>
 
+	* PEAPI.cs: (ImplAttr) Add Optil implementation flag (not supported 
+	in first release of CLR)
+	(Class) And Name property
+
+2003-03-06 Jackson Harper <jackson@latitudegeo.com>
+
 	* makefile.gnu: Add file
 	* list.unix: Add file
 
