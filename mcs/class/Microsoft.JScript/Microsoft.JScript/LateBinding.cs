@@ -5,6 +5,7 @@
 //	Cesar Lopez Nataren (cesar@ciencias.unam.mx)
 //
 // (C) 2003, Cesar Lopez Nataren
+// (C) 2005, Novell Inc, (http://novell.com)
 //
 
 //
@@ -29,13 +30,15 @@
 //
 
 using System;
+using System.Reflection;
 using Microsoft.JScript.Vsa;
 
 namespace Microsoft.JScript {
 
-	public sealed class LateBinding
-	{
+	public sealed class LateBinding {
+
 		public object obj;
+		private static BindingFlags bind_flags = BindingFlags.Public;
 
 		public LateBinding (string name)
 		{
@@ -59,7 +62,25 @@ namespace Microsoft.JScript {
 		public static object CallValue (object thisObj, object val, object [] arguments,
 						bool construct, bool brackets, VsaEngine engine)
 		{
-			throw new NotImplementedException ();
+			if (construct) {
+				if (brackets) {
+					return null;
+				} 
+				return null;
+			} else if (brackets) {
+				if (!(val is JSObject))
+					throw new Exception ("val has to be a JSObject");
+
+				JSObject js_val = (JSObject) val;
+				object res = js_val.GetField (Convert.ToString (arguments [0]));
+				if (res is JSFieldInfo) 
+					return ((JSFieldInfo) res).GetValue (arguments [0]);
+				else 
+					throw new NotImplementedException ();
+			} else {
+				return null;
+			}
+			return null;			
 		}
 
 
@@ -97,7 +118,12 @@ namespace Microsoft.JScript {
 		public static void SetIndexedPropertyValueStatic (object obj, object [] arguments,
 								  object value)
 		{
-			throw new NotImplementedException ();
+			if (!(obj is JSObject))
+				throw new Exception ("obj should be a JSObject");
+
+			JSObject js_obj = (JSObject) obj;
+			foreach (object o in arguments)
+				js_obj.AddField (o, value);
 		}
 
 

@@ -5,6 +5,7 @@
 //	Cesar Lopez Nataren (cesar@ciencias.unam.mx)
 //
 // (C) 2003, 2004 Cesar Lopez Nataren
+// (C) 2005, Novell Inc, (http://novell.com)
 //
 
 //
@@ -83,9 +84,8 @@ namespace Microsoft.JScript {
 				Console.WriteLine ("Equality, tc1 = {0}, tc2 = {1}", tc1, tc2);
 				break;
 			}
-			throw new NotImplementedException ();			
+			throw new Exception ("error: Not an equality operator");
 		}
-
 
 		public static bool JScriptEquals (object v1, object v2)
 		{

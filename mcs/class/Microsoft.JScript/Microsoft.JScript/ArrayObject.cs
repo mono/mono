@@ -4,6 +4,7 @@
 // Author: Cesar Octavio Lopez Nataren
 //
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
+// (C) 2005, Novell Inc, (http://novell.com)
 //
 
 //
@@ -28,14 +29,59 @@
 //
 
 using System;
-
+using System.Collections;
+ 
 namespace Microsoft.JScript {
 
 	public class ArrayObject : JSObject {
 
-		public virtual Object length {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+		private object _length;
+
+		public virtual object length {
+			get { return _length; }
+			set { _length = value; }
+		}
+
+		internal ArrayObject ()
+		{
+			length = 0;
+		}
+		
+		internal ArrayObject (object o)
+		{
+			IConvertible ic = o as IConvertible;
+			TypeCode tc = ic.GetTypeCode ();
+
+			if (tc == TypeCode.Int32 || ic.ToDouble (null) < Int32.MaxValue) {
+				int size = ic.ToInt32 (null);
+				if (size > 0)
+					length = o;
+				else 
+					throw new JScriptException (JSError.ArrayLengthConstructIncorrect);
+			} else {
+				elems = new Hashtable ();
+				elems.Add (o, o);
+			}
+		}
+
+		internal ArrayObject (params object [] args)
+		{
+			if (args != null) {
+				int size = args.Length;
+				length = (object) size;
+				elems = new Hashtable ();
+
+				int idx = 0;
+				foreach (object o in args) {
+					elems.Add (idx, o);
+					idx++;
+				}
+			} else
+				throw new Exception ("args can't be null");
+		}
+
+		internal Hashtable Elements {
+			get { return elems; }
 		}
 	}
 }

@@ -36,9 +36,10 @@ namespace Microsoft.JScript {
 
 	public sealed class JSFieldInfo : FieldInfo {
 
-		FieldAttributes attr;
-		string name;
-		
+		private FieldAttributes attr;
+		private string name;
+		private object value;
+
 		internal JSFieldInfo (string name)
 		{
 			this.name = name;
@@ -78,7 +79,12 @@ namespace Microsoft.JScript {
 
 		public override object GetValue (object obj)
 		{
-			throw new NotImplementedException ();
+			string str_name = Convert.ToString (obj);
+
+			if (str_name == name)
+				return value;
+			else
+				throw new NotImplementedException ();
 		}
 
 
@@ -105,7 +111,11 @@ namespace Microsoft.JScript {
 
 		public new void SetValue (object obj, object value)
 		{
-			throw new NotImplementedException ();
+			string str_name = Convert.ToString (obj);
+			if (str_name == name)
+				this.value = value;
+			else
+				throw new NotImplementedException ();
 		}
 
 

@@ -4,6 +4,7 @@
 // Author: Cesar Octavio Lopez Nataren
 //
 // (C) Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
+// (C) 2005, Novell Inc. (http://novell.com)
 //
 
 //
@@ -48,9 +49,14 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasVarArgs)]
 		public new ArrayObject CreateInstance (params Object [] args)
 		{
-			throw new NotImplementedException ();
+			if (args == null || args.Length == 0)
+				return new ArrayObject ();
+			else if (args.Length == 1)
+				return new ArrayObject (args [0]);
+			else
+				return new ArrayObject (args);
 		}
-
+		
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasVarArgs)]
 		public ArrayObject Invoke (params Object [] args)
 		{

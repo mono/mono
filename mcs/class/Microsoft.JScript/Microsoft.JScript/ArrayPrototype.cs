@@ -5,6 +5,7 @@
 //	Cesar Lopez Nataren (cesar@ciencias.unam.mx)
 //
 // (C) 2003, Cesar Lopez Nataren
+// (C) 2005, Novell Inc, (http://novell.com)
 //
 
 //
@@ -29,6 +30,8 @@
 //
 
 using System;
+using System.Collections;
+using System.Text;
 using Microsoft.JScript.Vsa;
 
 namespace Microsoft.JScript {
@@ -50,7 +53,25 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Array_join)]
 		public static string join (object thisObj, object separator)
 		{
-			throw new NotImplementedException ();
+			SemanticAnalyser.assert_type (thisObj, typeof (ArrayObject));
+			ArrayObject array_obj = (ArrayObject) thisObj;
+			
+			string _separator;
+			if (separator == null)
+				_separator = ",";
+			else 
+				_separator = Convert.ToString (separator);
+
+			Hashtable elems = array_obj.Elements;
+			StringBuilder str = new StringBuilder ();
+			bool first = true;
+			foreach (DictionaryEntry entry in elems) {
+				if (!first)
+					str.Append (_separator);
+				first = false;
+				str.Append (Convert.ToString (entry.Value));
+			}
+			return str.ToString ();
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Array_pop)]
@@ -107,7 +128,7 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Array_toString)]
 		public static string toString (object thisObj)
 		{
-			throw new NotImplementedException ();
+			return ArrayPrototype.join (thisObj, null);
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject | JSFunctionAttributeEnum.HasVarArgs, JSBuiltin.Array_unshift)]

@@ -1,3 +1,18 @@
+2005-03-30  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* TypeOf.cs: take into account Objects.
+	* ArrayConstructor.cs: Implement CreateInstance.
+	* LateBinding.cs: Initial implementatio of CallValue and
+	SetIndexedPropertyValueStatic.
+	* JSFieldInfo.cs: Implement GetValue and SetValue.
+	* ArrayObject.cs: Implement length, add three ctrs.
+	* JScriptException.cs: Add error_number field. Implement
+	ctr. ErrorNumber, Message and StackTrace.
+	* ArrayPrototype.cs: Implement join and toString.	
+	* JSObject.cs: Remove the ChainHash, we use a simple hashtable
+	now, the one inherited from ScriptObject.
+	* ScriptObject.cs: Add a Hashtable here.
+
 2005-03-29  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* GlobalScope.cs: Set parent and engine in ctr. Return 'this' for

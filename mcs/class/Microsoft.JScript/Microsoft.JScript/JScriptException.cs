@@ -5,6 +5,7 @@
 //	Cesar Lopez Nataren (cesar@ciencias.unam.mx)
 //
 // (C) 2003, Cesar Lopez Nataren
+// (C) 2005, Novell Inc, (http://novell.com)
 //
 
 //
@@ -35,11 +36,13 @@ using System.Runtime.Serialization;
 namespace Microsoft.JScript {
 
 	[Serializable]
-	public class JScriptException : ApplicationException, IVsaError
-	{
+	public class JScriptException : ApplicationException, IVsaError	{
+
+		private JSError error_number;
+
 		public JScriptException (JSError errorNumber)
 		{
-			throw new NotImplementedException ();
+			error_number = errorNumber;
 		}
 
 
@@ -79,7 +82,7 @@ namespace Microsoft.JScript {
 
 
 		public int ErrorNumber {
-			get { throw new NotImplementedException (); }
+			get { return (int) error_number; }
 		}
 
 
@@ -100,7 +103,12 @@ namespace Microsoft.JScript {
 
 
 		public override string Message {
-			get { throw new NotImplementedException (); }
+			get {
+				if (error_number == JSError.ArrayLengthConstructIncorrect) 
+					return "Array length must be zero or a positive integer";
+				else
+					throw new NotImplementedException ();
+			}
 		}
 
 
@@ -115,7 +123,9 @@ namespace Microsoft.JScript {
 
 
 		public override string StackTrace {
-			get { throw new NotImplementedException (); }
+			get { 
+				return base.StackTrace;
+			}
 		}
 	}
 

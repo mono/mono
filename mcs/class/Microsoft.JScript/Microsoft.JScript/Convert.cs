@@ -5,6 +5,7 @@
 //	Cesar Lopez Nataren (cesar@ciencias.unam.mx)
 //
 // (C) 2003, Cesar Lopez Nataren
+// (C) 2005, Novell Inc, (http://novell.com)
 //
 
 //
@@ -178,8 +179,10 @@ namespace Microsoft.JScript {
 					return RegExpPrototype.toString (value);
 				else if (value is StringObject)
 					return StringPrototype.toString (value);
+				Console.WriteLine ("value.GetType = {0}", value.GetType ());
 				throw new NotImplementedException ();
 			default:
+				Console.WriteLine ("tc = {0}", tc);
 				throw new NotImplementedException ();
 			}
 		}

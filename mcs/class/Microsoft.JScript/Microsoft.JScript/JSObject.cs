@@ -4,6 +4,7 @@
 // Author: Cesar Octavio Lopez Nataren
 //
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
+// (C) 2005, Novell Inc, (http://novell.com)
 //
 
 //
@@ -36,39 +37,48 @@ namespace Microsoft.JScript {
 
 	public class JSObject : ScriptObject, IEnumerable, IExpando {
 
-		ChainHash ext;
-
 		public JSObject ()
-		{
-			ext = new ChainHash (10);
+		{		
+			elems = new Hashtable ();
 		}
 
 		public FieldInfo AddField (string name)
 		{
 			JSFieldInfo fi = new JSFieldInfo (name);
-			ext.Insert (name, fi);
+			elems.Add (name, fi);
 			return fi;
+		}
+
+		internal JSFieldInfo GetField (string name)
+		{
+			object res = elems [name];
+			
+			if (res == null)
+				throw new Exception ("JSObject.GetField: search somewhere else");
+			if (res is JSFieldInfo)
+				return (JSFieldInfo) res;
+			return null;
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return ext.GetEnumerator ();
+			return elems.GetEnumerator ();
 		}
 
 		PropertyInfo IExpando.AddProperty (string name)
 		{
 			JSPropertyInfo pi = new JSPropertyInfo (name);
-			ext.Insert (name, pi);
+			elems.Add (name, pi);
 			return pi;
 		}
 		
 		MethodInfo IExpando.AddMethod (String name, Delegate method)
 		{
 			JSMethodInfo minfo = new JSMethodInfo (name, method.Method);
-			ext.Insert (name, minfo);
+			elems.Add (name, minfo);
 			return minfo;
 		}
-
+		
 		public override MemberInfo [] GetMember (string name, BindingFlags bindFlags)
 		{
 			throw new NotImplementedException ();
@@ -77,7 +87,7 @@ namespace Microsoft.JScript {
 		public override MemberInfo [] GetMembers (BindingFlags bindFlags)
 		{
 			MemberInfo [] members;
-			IEnumerator enumerator = ext.GetEnumerator ();
+			IEnumerator enumerator = elems.GetEnumerator ();
 			ArrayList tmp = new ArrayList ();
 
 			while (enumerator.MoveNext ())
@@ -95,7 +105,7 @@ namespace Microsoft.JScript {
 
 		void IExpando.RemoveMember (MemberInfo m)
 		{
-			ext.Delete (m);
+			elems.Remove (m);
 		}
 
 		public override string ToString ()
@@ -106,10 +116,29 @@ namespace Microsoft.JScript {
 		internal string ClassName {
 			get { 
 				if (this is ObjectPrototype)
-					return "Object";
+					return "Object";				
 				else
 					throw new NotImplementedException ();
 			}
+		}
+
+		internal void AddField (object name, object value)
+		{
+			string str_name = Convert.ToString (name);
+			
+			if (proper_array_index (str_name)) {
+				JSFieldInfo field = (JSFieldInfo) AddField (str_name);
+				field.SetValue (str_name, value);
+			} else
+				throw new Exception ("Not a valid index array");
+		}
+
+		//
+		// FIXME: 
+		//
+		private bool proper_array_index (object name)
+		{
+			return true;
 		}
 	}
 }

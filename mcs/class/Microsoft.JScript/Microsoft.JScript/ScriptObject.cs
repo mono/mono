@@ -4,6 +4,7 @@
 // Author: Cesar Octavio Lopez Nataren
 //
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
+// (C) 2005, Novell Inc, (http://novell.com)
 //
 
 //
@@ -28,8 +29,9 @@
 //
 
 using System;
-using System.Globalization;
 using System.Reflection;
+using System.Collections;
+using System.Globalization;
 using Microsoft.JScript.Vsa;
 
 namespace Microsoft.JScript {
@@ -38,6 +40,7 @@ namespace Microsoft.JScript {
 
 		public VsaEngine engine;
 		protected GlobalScope parent;
+		internal Hashtable elems;
 
 		public FieldInfo GetField (string name, BindingFlags bindFlags)
 		{

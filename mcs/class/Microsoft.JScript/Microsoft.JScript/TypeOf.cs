@@ -47,6 +47,9 @@ namespace Microsoft.JScript {
 			case TypeCode.String:
 				return "string";
 
+			case TypeCode.Object:
+				return "object";
+				
 			default:
 				Console.WriteLine ("TypeOf, tc = {0}", tc);
 				break;
