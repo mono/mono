@@ -1,3 +1,7 @@
+2004-01-20 Atsushi Enomoto <atsushi@ximian.com>
+
+	* Added missing TypedDataSetGenerator.cs.
+
 2004-01-08 Eran Domb <erand@mainsoft.com>
 
 	* XmlSchemaMapper.cs : Fix a bug. Check if table already in DataSet before adding it.
