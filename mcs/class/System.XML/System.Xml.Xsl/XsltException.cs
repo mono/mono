@@ -33,6 +33,7 @@
 using System;
 using System.Runtime.Serialization;
 using System.Xml.XPath;
+using System.Security.Permissions;
 
 namespace System.Xml.Xsl
 {
@@ -147,6 +148,10 @@ namespace System.Xml.Xsl
 
 		#region Methods
 
+#if NET_2_0
+		[SecurityPermission (SecurityAction.LinkDemand,
+			Flags=SecurityPermissionFlag.SerializationFormatter)]
+#endif
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);

@@ -1,3 +1,8 @@
+2004-12-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsltException.cs, XsltCompileException.cs :
+	  added SecurityPermissionAttributes.
+
 2004-10-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsltException.cs : Message is incorrectly regarded only after 2.0
