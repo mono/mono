@@ -1,3 +1,7 @@
+2004-10-24 Marek Safar <marek.safar@seznam.cz>
+
+	* cs82??.cs: Renumber some 82xx errors.
+
 2004-10-21  Raja R Harinath  <rharinath@novell.com>
 
 	* do-tests.pl: Make robust to being invoked in parallel for
