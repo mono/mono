@@ -226,74 +226,61 @@ namespace Mono.Data.TdsClient.Internal {
 
 		protected override TdsPacketColumnInfoResult ProcessColumnInfo ()
 		{
-			byte precision;
-			byte scale;
-			int totalLength = Comm.GetTdsShort ();
-			int bytesRead = 0;
-
 			TdsPacketColumnInfoResult result = new TdsPacketColumnInfoResult ();
+			int totalLength = Comm.GetTdsShort ();	
+			int count = Comm.GetTdsShort ();
+			for (int i = 0; i < count; i += 1) {
+				string columnName = Comm.GetString (Comm.GetByte ());
+				int status = Comm.GetByte ();
+				bool hidden = (status & 0x01) > 0;
+				bool isKey = (status & 0x02) > 0;
+				bool isRowVersion = (status & 0x04) > 0;
+				bool isUpdatable = (status & 0x10) > 0;
+				bool allowDBNull = (status & 0x20) > 0;
+				bool isIdentity = (status & 0x40) > 0;
 
-			while (bytesRead < totalLength) {
-				scale = 0;
-				precision = 0;
+				Comm.Skip (4); // User type
 
-				int bufLength = -1;
-				//int dispSize = -1;
-				byte[] flagData = new byte[4];
-				for (int i = 0; i < 4; i += 1) {
-					flagData[i] = Comm.GetByte ();
-					bytesRead += 1;
-				}
-				bool nullable = (flagData[2] & 0x01) > 0;
-				bool caseSensitive = (flagData[2] & 0x02) > 0;
-				bool writable = (flagData[2] & 0x0c) > 0;
-				bool autoIncrement = (flagData[2] & 0x10) > 0;
+				byte type = Comm.GetByte ();
+				bool isBlob = (type == 0x24);
 
-				string tableName = String.Empty;
-				TdsColumnType columnType = (TdsColumnType) Comm.GetByte ();
+				TdsColumnType columnType = (TdsColumnType) type;
+				int bufLength = 0;
 
-				bytesRead += 1;
+				byte precision = 0;
+				byte scale = 0;
 
 				if (columnType == TdsColumnType.Text || columnType == TdsColumnType.Image) {
-					Comm.Skip (4);
-					bytesRead += 4;
-
-					int tableNameLength = Comm.GetTdsShort ();
-					bytesRead += 2;
-					tableName = Comm.GetString (tableNameLength);
-					bytesRead += tableNameLength;
-					bufLength = 2 << 31 - 1;
-				}
-				else if (columnType == TdsColumnType.Decimal || columnType == TdsColumnType.Numeric) {
-					bufLength = Comm.GetByte ();
-					bytesRead += 1;
-					precision = Comm.GetByte ();
-					bytesRead += 1;
-					scale = Comm.GetByte ();
-					bytesRead += 1;
+					bufLength = Comm.GetTdsInt ();
+					Comm.Skip (Comm.GetTdsShort ());
 				}
 				else if (IsFixedSizeColumn (columnType))
 					bufLength = LookupBufferSize (columnType);
-				else {
-					bufLength = (int) Comm.GetByte () & 0xff;
-					bytesRead += 1;
+				else
+					bufLength = Comm.GetTdsShort ();
+
+				if (columnType == TdsColumnType.Decimal || columnType == TdsColumnType.Numeric) {
+					precision = Comm.GetByte ();
+					scale = Comm.GetByte ();
 				}
+
+				Comm.Skip (Comm.GetByte ()); // Locale
+				if (isBlob)
+					Comm.Skip (Comm.GetTdsShort ()); // Class ID
 
 				int index = result.Add (new TdsSchemaInfo ());
 				result[index]["NumericPrecision"] = precision;
 				result[index]["NumericScale"] = scale;
 				result[index]["ColumnSize"] = bufLength;
-				result[index]["ColumnName"] = ColumnNames[index];
-				result[index]["BaseTableName"] = tableName;
-				result[index]["AllowDBNull"] = nullable;
-				result[index]["IsReadOnly"] = !writable;
+				result[index]["ColumnName"] = columnName;
+				result[index]["AllowDBNull"] = allowDBNull;
+				result[index]["IsReadOnly"] = !isUpdatable;
+				result[index]["IsIdentity"] = isIdentity;
+				result[index]["IsRowVersion"] = isRowVersion;
+				result[index]["IsKey"] = isKey;
+				result[index]["Hidden"] = hidden;
 				result[index]["ColumnType"] = columnType;
 			}
-
-			//int skipLength = totalLength - bytesRead;
-			//if (skipLength != 0)
-				//throw new TdsException ("skipping");
-
 			return result;
 		}
 

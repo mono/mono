@@ -29,6 +29,7 @@ namespace Mono.Data.TdsClient.Internal {
 		Order = 0xa9,
 		Control = 0xae,
 		Row = 0xd1,
-		ColumnMetadata = 0x81
+		ColumnMetadata = 0x81,
+		RowFormat = 0xee
 	}
 }

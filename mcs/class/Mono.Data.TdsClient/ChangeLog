@@ -1,3 +1,11 @@
+2002-11-19  Tim Coleman <tim@timcoleman.com>
+	* Mono.Data.TdsClient.Internal/Tds.cs:
+	* Mono.Data.TdsClient.Internal/Tds50.cs:
+	* Mono.Data.TdsClient.Internal/TdsPacketSubType.cs:
+		More changes to get Sybase queries working
+		properly.
+	
+
 2002-11-18  Tim Coleman <tim@timcoleman.com>
 	* Mono.Data.TdsClient.Internal/Tds.cs:
 	* Mono.Data.TdsClient.Internal/Tds50.cs:

@@ -53,7 +53,7 @@ namespace Mono.Data.TdsClient.Internal {
 		bool isDoneInProc;
 
 		ArrayList outputParameters = new ArrayList ();
-		TdsInternalErrorCollection messages = new TdsInternalErrorCollection ();
+		protected TdsInternalErrorCollection messages = new TdsInternalErrorCollection ();
 
 		int recordsAffected = 0;
 
@@ -723,7 +723,7 @@ namespace Mono.Data.TdsClient.Internal {
 			return result;
 		}
 
-		private int GetSubPacketLength ()
+		protected int GetSubPacketLength ()
 		{
 			return comm.GetTdsShort ();
 		}
@@ -793,7 +793,7 @@ namespace Mono.Data.TdsClient.Internal {
 			}
 		}
 
-		private TdsPacketRowResult LoadRow ()
+		protected TdsPacketRowResult LoadRow ()
 		{
 			TdsPacketRowResult result = new TdsPacketRowResult ();
 
@@ -905,7 +905,7 @@ namespace Mono.Data.TdsClient.Internal {
 
 		protected abstract TdsPacketColumnInfoResult ProcessColumnInfo ();
 
-		private TdsPacketColumnNamesResult ProcessColumnNames ()
+		protected TdsPacketColumnNamesResult ProcessColumnNames ()
 		{
 			TdsPacketColumnNamesResult result = new TdsPacketColumnNamesResult ();
 
@@ -925,7 +925,7 @@ namespace Mono.Data.TdsClient.Internal {
 		}
 
 		[MonoTODO ("Make sure counting works right, especially with multiple resultsets.")]
-		private TdsPacketEndTokenResult ProcessEndToken (TdsPacketSubType type)
+		protected TdsPacketEndTokenResult ProcessEndToken (TdsPacketSubType type)
 		{
 			byte status = comm.GetByte ();
 			comm.GetByte ();
@@ -951,7 +951,7 @@ namespace Mono.Data.TdsClient.Internal {
 			return result;
 		}
 
-		private TdsPacketResult ProcessEnvChange ()
+		protected TdsPacketResult ProcessEnvChange ()
 		{
 			int len = GetSubPacketLength ();
 			TdsEnvPacketSubType type = (TdsEnvPacketSubType) comm.GetByte ();
@@ -998,7 +998,7 @@ namespace Mono.Data.TdsClient.Internal {
 			return new TdsPacketResult (TdsPacketSubType.EnvChange);
 		}
 
-		private TdsPacketResult ProcessLoginAck ()
+		protected TdsPacketResult ProcessLoginAck ()
 		{
 			GetSubPacketLength ();
 
@@ -1041,8 +1041,8 @@ namespace Mono.Data.TdsClient.Internal {
 				TdsInfoMessage (this, e);
 			messages.Clear ();
 		}
-		
-		private void ProcessMessage (TdsPacketSubType subType)
+
+		protected void ProcessMessage (TdsPacketSubType subType)
 		{
 			GetSubPacketLength ();
 
@@ -1068,10 +1068,8 @@ namespace Mono.Data.TdsClient.Internal {
 			server = comm.GetString (comm.GetByte ());
 			procedure = comm.GetString (comm.GetByte ());
 			lineNumber = comm.GetByte ();
+			comm.Skip (1);
 			source = String.Empty; // FIXME
-
-			if (subType != TdsPacketSubType.EED)
-				comm.Skip (1);
 
 			if (isError)
 				messages.Add (new TdsInternalError (theClass, lineNumber, message, number, procedure, server, source, state));
@@ -1079,7 +1077,7 @@ namespace Mono.Data.TdsClient.Internal {
 				OnTdsErrorMessage (CreateTdsErrorMessageEvent (theClass, lineNumber, message, number, procedure, server, source, state));
 		}
 
-		private TdsPacketOutputParam ProcessOutputParam ()
+		protected TdsPacketOutputParam ProcessOutputParam ()
 		{
 			GetSubPacketLength ();
 			comm.GetString (comm.GetByte () & 0xff);
@@ -1092,18 +1090,18 @@ namespace Mono.Data.TdsClient.Internal {
 			return null;
 		}
 
-		private TdsPacketResult ProcessProcId ()
+		protected TdsPacketResult ProcessProcId ()
 		{
 			comm.Skip (8);
 			return new TdsPacketResult (TdsPacketSubType.ProcId);
 		}
 
-		private TdsPacketRetStatResult ProcessReturnStatus ()
+		protected TdsPacketRetStatResult ProcessReturnStatus ()
 		{
 			return new TdsPacketRetStatResult (comm.GetTdsInt ());
 		}
 
-		protected TdsPacketResult ProcessSubPacket ()
+		protected virtual TdsPacketResult ProcessSubPacket ()
 		{
 			TdsPacketResult result = null;
 			moreResults = false;
@@ -1111,59 +1109,60 @@ namespace Mono.Data.TdsClient.Internal {
 			TdsPacketSubType subType = (TdsPacketSubType) comm.GetByte ();
 
 			switch (subType) {
-			case TdsPacketSubType.EnvChange :
+			case TdsPacketSubType.EnvChange:
 				result = ProcessEnvChange ();
 				break;
-			case TdsPacketSubType.Info :
-			case TdsPacketSubType.EED:
-			case TdsPacketSubType.Error :
+			case TdsPacketSubType.Info:  // TDS 4.2/7.0
+			case TdsPacketSubType.EED:   // TDS 5.0
+			case TdsPacketSubType.Error: // TDS 4.2/7.0
 				ProcessMessage (subType);
 				break;
-			case TdsPacketSubType.Param :
+			case TdsPacketSubType.Param:
 				result = ProcessOutputParam ();
 				break;
-			case TdsPacketSubType.LoginAck :
+			case TdsPacketSubType.LoginAck:
 				result = ProcessLoginAck ();
 				break;
 			case TdsPacketSubType.ReturnStatus :
 				result = ProcessReturnStatus ();
 				break;
-			case TdsPacketSubType.ProcId :
+			case TdsPacketSubType.ProcId:
 				result = ProcessProcId ();
 				break;
-			case TdsPacketSubType.Done :
-			case TdsPacketSubType.DoneProc :
-			case TdsPacketSubType.DoneInProc :
+			case TdsPacketSubType.Done:
+			case TdsPacketSubType.DoneProc:
+			case TdsPacketSubType.DoneInProc:
 				result = ProcessEndToken (subType);
 				break;
-			case TdsPacketSubType.ColumnNameToken :
+			case TdsPacketSubType.ColumnNameToken:
 				result = ProcessProcId ();
 				result = ProcessColumnNames ();
 				break;
-			case TdsPacketSubType.ColumnInfoToken :
-			case TdsPacketSubType.ColumnMetadata :
+			case TdsPacketSubType.ColumnInfoToken: // TDS 4.2
+			case TdsPacketSubType.ColumnMetadata:  // TDS 7.0
+			case TdsPacketSubType.RowFormat:       // TDS 5.0
 				result = ProcessColumnInfo ();
 				break;
-			case TdsPacketSubType.ColumnDetail :
+			case TdsPacketSubType.ColumnDetail:
 				result = ProcessColumnDetail ();
 				break;
-			case TdsPacketSubType.Unknown0xA7 :
-			case TdsPacketSubType.Unknown0xA8 :
+			case TdsPacketSubType.Unknown0xA7:
+			case TdsPacketSubType.Unknown0xA8:
 				comm.Skip (comm.GetTdsShort ());
 				result = new TdsPacketUnknown (subType);
 				break;
-			case TdsPacketSubType.TableName :
+			case TdsPacketSubType.TableName:
 				result = ProcessTableName ();
 				break;
-			case TdsPacketSubType.Order :
+			case TdsPacketSubType.Order:
 				comm.Skip (comm.GetTdsShort ());
 				result = new TdsPacketColumnOrderResult ();
 				break;
-			case TdsPacketSubType.Control :
+			case TdsPacketSubType.Control:
 				comm.Skip (comm.GetTdsShort ());
 				result = new TdsPacketControlResult ();
 				break;
-			case TdsPacketSubType.Row :
+			case TdsPacketSubType.Row:
 				result = LoadRow ();
 				break;
 			default:
@@ -1173,7 +1172,7 @@ namespace Mono.Data.TdsClient.Internal {
 			return result;
 		}
 
-		private TdsPacketTableNameResult ProcessTableName ()
+		protected TdsPacketTableNameResult ProcessTableName ()
 		{
 			TdsPacketTableNameResult result = new TdsPacketTableNameResult ();
 			int totalLength = comm.GetTdsShort ();
