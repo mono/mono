@@ -1,3 +1,40 @@
+2002-04-20  Daniel Morgan <danmorg@sc.rr.com>
+
+* System.Data.OleDb: added directory - for OleDb database 
+provider classes
+
+* System.Data.SqlClient/SqlClientPermission.cs
+* System.Data.SqlClient/SqlClientPermissionAttribute.cs
+* System.Data.SqlClient/SqlCommandBuilder.cs
+* System.Data.SqlClient/SqlInfoMessageEventHandler.cs
+* System.Data.SqlClient/SqlRowUpdatedEventArgs.cs
+* System.Data.SqlClient/SqlRowUpdatedEventHandler.cs
+* System.Data.SqlClient/SqlRowUpdatingEventArgs.cs
+* System.Data.SqlClient/SqlRowUpdatingEventHandler.cs
+* Test/TestSqlException.cs
+* Test/TestSqlIsolationLevel.cs: added - more tests
+
+* System.Data.build: modified - added new files - excludes these too
+
+* System.Data.SqlClient/PostgresLibrary.cs - modified - comment
+
+* System.Data.SqlClient/SqlConnection.cs 
+* System.Data.SqlClient/SqlCommand.cs
+* System.Data.SqlClient/SqlTransaction.cs
+* System.Data.SqlClient/SqlException.cs
+* System.Data.SqlClient/SqlErrorCollection.cs
+* System.Data.SqlClient/SqlError.cs: modified - transaction and
+  exception/error handling. SqlConnection(connectionString) 
+  constructor should not automatically connect.
+  
+* System.Data.SqlClient/SqlDataReader.cs
+* System.Data.SqlClient/SqlDataAdapter.cs
+* System.Data.SqlClient/SqlParameter.cs
+* System.Data.SqlClient/SqlParameterCollection.cs: modified - 
+added using System.ComponentModel;
+  
+* Test/TestSqlInsert.cs: modified - to use transaction
+
 2002-04-17  Rodrigo Moya <rodrigo@ximian.com>
 
 	* System.Data/DataRow.cs: new skeletons.

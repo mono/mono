@@ -20,68 +20,27 @@ namespace System.Data.SqlClient
 	[MonoTODO]
 	public sealed class SqlErrorCollection : ICollection, IEnumerable
 	{
+		private int count = 0;
+		ArrayList errorList = new ArrayList();
+
+		internal SqlErrorCollection() {
+		}
+
+		internal SqlErrorCollection(byte theClass, int lineNumber,
+			string message,	int number, string procedure,
+			string server, string source, byte state) {
+			
+			Add (theClass, lineNumber, message,
+				number, procedure,
+				server, source, state);
+		}
+
 		#region Properties
-
-		[MonoTODO]
-		public byte Class {
-			get { 
-				throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO]
-		public int LineNumber {
-			get { 
-			   throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO]
-		public string Message {
-			get { 
-				throw new NotImplementedException ();
-			}
-		}
-		
-		[MonoTODO]
-		public int Number {
-			get { 
-				throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO]
-		public string Procedure {
-			get { 
-				throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO]
-		public string Server {
-			get { 
-				throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO]
-		public string Source {
-			get { 
-				throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO]
-		public byte State {
-			get { 
-				throw new NotImplementedException ();
-			}
-		}
-
+                
 		[MonoTODO]
 		public int Count {
 			get {	
-				throw new NotImplementedException ();
+				return errorList.Count;
 			}			  
 		}
 
@@ -109,6 +68,14 @@ namespace System.Data.SqlClient
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
+		// Index property (indexer)
+		public SqlError this[int index] {
+			get {
+				return (SqlError) errorList[index];
+			}
+		}
+
 		#endregion
 
 		#region Methods
@@ -120,19 +87,29 @@ namespace System.Data.SqlClient
 		}
 		#endregion
 
+		internal void Add(SqlError error) {
+			errorList.Add(error);
+		}
+
+		internal void Add(byte theClass, int lineNumber,
+			string message,	int number, string procedure,
+			string server, string source, byte state) {
+			
+			SqlError error = new SqlError(theClass,
+				lineNumber, message,
+				number, procedure,
+				server, source, state);
+			Add(error);
+		}
+
 		#region Destructors
 
-		// FIXME: do the destructor
-/*
 		[MonoTODO]
-		[ClassInterface(ClassInterfaceType.AutoDual)]
-		~SqlError()
+		~SqlErrorCollection()
 		{
-
+			// FIXME: do the destructor - release resources
 		}
-*/
 
-		#endregion
-		
+		#endregion		
 	}
 }

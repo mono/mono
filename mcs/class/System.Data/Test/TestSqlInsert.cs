@@ -1,5 +1,5 @@
 //
-// System.Data.SqlClient.SqlError.cs
+// TestSqlInsert.cs
 //
 // To Test SqlConnection and SqlCommand by connecting
 // to a PostgreSQL database 
@@ -9,6 +9,10 @@
 //   change strings to your database, userid, tables, etc...:
 //        connectionString
 //        insertStatement
+//
+// To test:
+//   mcs TestSqlInsert.cs -r System.Data
+//   mint TestSqlInsert.exe
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
@@ -32,6 +36,8 @@ namespace TestSystemDataSqlClient
 			SqlCommand cmd;
 			SqlTransaction trans;
 
+			int rowsAffected;
+
 			String connectionString;
 			String insertStatement;
 			String deleteStatement;
@@ -54,6 +60,7 @@ namespace TestSystemDataSqlClient
 			// Connect to a PostgreSQL database
 			Console.WriteLine ("Connect to database...");
 			conn = new SqlConnection(connectionString);
+			conn.Open();
 
 			// begin transaction
 			Console.WriteLine ("Begin Transaction...");
@@ -67,6 +74,8 @@ namespace TestSystemDataSqlClient
 			// execute the DELETE SQL command
 			Console.WriteLine ("Execute DELETE SQL Command...");
 			cmd.ExecuteNonQuery();
+			rowsAffected = cmd.ExecuteNonQuery();
+			Console.WriteLine ("Rows Affected: " + rowsAffected);
 
 			// change the SQL command to an SQL INSERT Command
 			Console.WriteLine ("Now use INSERT SQL Command...");
@@ -75,6 +84,8 @@ namespace TestSystemDataSqlClient
 			// execute the INSERT SQL command
 			Console.WriteLine ("Execute INSERT SQL Command...");
 			cmd.ExecuteNonQuery();
+			rowsAffected = cmd.ExecuteNonQuery();
+			Console.WriteLine ("Rows Affected: " + rowsAffected);
 
 			// if successfull at INSERT, commit the transaction,
 			// otherwise, do a rollback the transaction using

@@ -8,6 +8,9 @@
 // (C) Ximian, Inc 2002
 //
 
+// use #define DEBUG_SqlCommand if you want to spew debug messages
+// #define DEBUG_SqlCommand
+
 using System;
 using System.ComponentModel;
 using System.Data;
@@ -99,10 +102,8 @@ namespace System.Data.SqlClient
 			ExecStatusType execStatus;
 			String rowsAffectedString;
 
-			// FIXME: throw an 
-			// InvalidOperationException
-			// exception if the the connection
-			// does not exist or is not open
+			if(conn.State != ConnectionState.Open)
+				throw new InvalidOperationException("ConnnectionState is not Open");
 
 			// FIXME: PQexec blocks 
 			// while PQsendQuery is non-blocking
@@ -115,52 +116,43 @@ namespace System.Data.SqlClient
 			pgResult = PostgresLibrary.
 				PQexec (conn.PostgresConnection, sql);
 
-			/* FIXME: throw an SqlException exception
-			 * if there is a SQL Error
-			 */
-
-			/*
-			 * FIXME: get status
-			 */
                         execStatus = PostgresLibrary.
 					PQresultStatus (pgResult);
 			
 			if(execStatus == ExecStatusType.PGRES_COMMAND_OK)
 			{
-				Console.WriteLine("*** SqlCommand Execute " +
-					"got PGRES_COMMAND_OK");
 				rowsAffectedString = PostgresLibrary.
 					PQcmdTuples (pgResult);
-				Console.WriteLine("*** Rows Affected: " + 
-					rowsAffectedString);
-				// FIXME: convert string to number
+#if DEBUG_SqlCommand
+				Console.WriteLine("rowsAffectedString: " + 
+						rowsAffectedString);
+#endif // DEBUG_SqlCommand
+				if(rowsAffectedString != null)
+					if(rowsAffectedString.Equals("") == false)
+						rowsAffected = int.Parse(rowsAffectedString);
 			}
 			else
 			{
-				Console.WriteLine("*** Error: SqlCommand " +
-					"did not get PGRES_COMMAND_OK");
-				String statusString;
+				String errorMessage = "ExecuteNonQuery execution failure";
 				
-				statusString = PostgresLibrary.
-					PQresStatus(execStatus);
-				Console.WriteLine("*** Command Status: " +
-					statusString);
-
-				String errorMessage;
 				errorMessage = PostgresLibrary.
-					PQresultErrorMessage(pgResult);
+					PQresStatus(execStatus);
 
-				Console.WriteLine("*** Error message: " +
-					statusString);				
+				errorMessage += " " + PostgresLibrary.
+					PQresultErrorMessage(pgResult);
+				
+				throw new SqlException(0, 0,
+						  errorMessage, 0, "",
+						  conn.DataSource, "SqlCommand", 0);
 			}
-			
+#if DEBUG_SqlCommand			
 			String cmdStatus;
 			cmdStatus = PostgresLibrary.
 				PQcmdStatus(pgResult);
 
 			Console.WriteLine("*** Command Status: " +
 				cmdStatus);
-
+#endif // DEBUG_SqlCommand
 			PostgresLibrary.PQclear (pgResult);
 			
 			// FIXME: get number of rows
@@ -214,6 +206,7 @@ namespace System.Data.SqlClient
 		[MonoTODO]
 		public void Prepare ()
 		{
+			// FIXME: parameters have to be implemented for this
 			throw new NotImplementedException ();
 		}
 
@@ -354,15 +347,21 @@ namespace System.Data.SqlClient
 
 		#endregion // Properties
 
-		#region Desctructors
-/*		
+		#region Destructors
+
 		[MonoTODO]
-		[ClassInterface(ClassInterfaceType.AutoDual)]
+		public void Dispose() {
+			// FIXME: need proper way to release resources
+			// Dispose(true);
+		}
+
+		[MonoTODO]
 		~SqlCommand()
 		{
-			FIXME: need proper way to release resources
+			// FIXME: need proper way to release resources
+			// Dispose(false);
 		}
-*/
+
 		#endregion //Destructors
 	}
 }

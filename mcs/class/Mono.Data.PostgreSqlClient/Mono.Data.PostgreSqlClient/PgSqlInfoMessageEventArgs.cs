@@ -15,12 +15,14 @@ namespace System.Data.SqlClient
 {
 	public sealed class SqlInfoMessageEventArgs : EventArgs
 	{
+		[MonoTODO]
 		public SqlErrorCollection Errors {
 			get { 
 				throw new NotImplementedException (); 
 			}
 		}	
 
+		[MonoTODO]
 		public string Message 
 		{
 			get { 
@@ -28,14 +30,21 @@ namespace System.Data.SqlClient
 			}
 		}	
 
+		[MonoTODO]
 		public string Source {
 			get { 
 				throw new NotImplementedException (); 
 			}
 		}
 
+		[MonoTODO]
 		public override string ToString() {
 			// representation of InfoMessage event
+		}
+
+		[MonoTODO]
+		~SqlInfoMessageEventArgs() {
+			// FIXME: destructor needs to release resources
 		}
 	}
 }

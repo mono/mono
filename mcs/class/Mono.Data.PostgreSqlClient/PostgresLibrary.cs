@@ -55,7 +55,6 @@ namespace System.Data.SqlClient
 		PGRES_FATAL_ERROR
 	}
 
-	// FIXME: should be sealed internal class
 	sealed internal class PostgresLibrary
 	{
 		#region PInvoke Functions

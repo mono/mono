@@ -8,6 +8,7 @@
 // (C) Ximian, Inc. 2002
 //
 using System;
+using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.Runtime.InteropServices;
@@ -23,6 +24,43 @@ namespace System.Data.SqlClient
 	//	IDbDataParameter, IDataParameter, ICloneable
 	public sealed class SqlParameter : IDbDataParameter, IDataParameter
 	{
+		[MonoTODO]
+		public SqlParameter () {
+			// FIXME: do this
+		}
+
+		[MonoTODO]
+		public SqlParameter (string parameterName, object value) {
+			// FIXME: do this
+		}
+		
+		[MonoTODO]
+		public SqlParameter(string parameterName, SqlDbType dbType) {
+			// FIXME: do this
+		}
+
+		[MonoTODO]
+		public SqlParameter(string parameterName, SqlDbType dbType,
+			int size) {
+			// FIXME: do this
+		}
+		
+		[MonoTODO]
+		public SqlParameter(string parameterName, SqlDbType dbType,
+			int size, string sourceColumn) {
+			// FIXME: do this
+		}
+			 
+		[MonoTODO]
+		public SqlParameter(string parameterName, SqlDbType dbType,
+			int size, ParameterDirection direction, 
+			bool isNullable, byte precision,
+			byte scale, string sourceColumn,
+			DataRowVersion sourceVersion, object value) {
+			// FIXME: do this
+		}
+
+
 		[MonoTODO]
 		public DbType DbType {
 			get { 
@@ -46,6 +84,17 @@ namespace System.Data.SqlClient
 		[MonoTODO]
 		public bool IsNullable	{
 			get { 
+				throw new NotImplementedException (); 
+			}
+		}
+
+		[MonoTODO]
+		public int Offset {
+			get {
+				throw new NotImplementedException (); 
+			}
+			
+			set {
 				throw new NotImplementedException (); 
 			}
 		}
@@ -79,6 +128,17 @@ namespace System.Data.SqlClient
 			}
 
 			set { 
+				throw new NotImplementedException (); 
+			}
+		}
+		
+		[MonoTODO]
+		public SqlDbType SqlDbType {
+			get {
+				throw new NotImplementedException (); 
+			}
+			
+			set {
 				throw new NotImplementedException (); 
 			}
 		}
@@ -128,5 +188,9 @@ namespace System.Data.SqlClient
 			}
 		}
 
+		[MonoTODO]
+		public override string ToString() {
+			throw new NotImplementedException (); 
+		}
 	}
 }

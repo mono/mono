@@ -8,9 +8,8 @@
 // (C) Ximian, Inc 2002
 //
 
-// FIXME: what is the proper way to debug messages?
-// use #define DEBUG_SqlConnection if you want to spew debug messages for 
-#define DEBUG_SqlConnection
+// use #define DEBUG_SqlConnection if you want to spew debug messages
+// #define DEBUG_SqlConnection
 
 using System;
 using System.ComponentModel;
@@ -34,6 +33,9 @@ namespace System.Data.SqlClient
 	//	ICloneable
 	public sealed class SqlConnection : IDbConnection
 	{
+		// FIXME: Need to implement class Component, 
+		// and interfaces: ICloneable and IDisposable	
+
 		#region Fields
 
 		private PGconn pgConn = IntPtr.Zero;    
@@ -106,24 +108,31 @@ namespace System.Data.SqlClient
 		public SqlConnection (String connectionString)
 		{
 			SetConnectionString (connectionString);
-			OpenDataSource ();
 		}
 
-		#endregion
+		#endregion // Constructors
 
-		#region Deconstructors
+		#region Destructors
 
+		[MonoTODO]
+		public void Dispose () {	
+			// FIXME: release resources properly
+			Close ();
+			// Dispose (true);
+		}
+	
 		// aka Finalize
-
-
-		/*
-		[ClassInterface(ClassInterfaceType.AutoDual)]
+		// [ClassInterface(ClassInterfaceType.AutoDual)]
+		[MonoTODO]
 		~SqlConnection()
 		{
-
+			// FIXME: this class need 
+			//        a destructor to release resources
+			//        Also, take a look at Dispose
+			// Dispose (false);
 		}
-		*/
-		#endregion // Deconstructors
+		
+		#endregion // Destructors
 
 		#region Public Methods
 
@@ -146,6 +155,19 @@ namespace System.Data.SqlClient
 		public SqlTransaction BeginTransaction (IsolationLevel il)
 		{
 			return TransactionBegin (il); // call private method
+		}
+
+		// PostgreSQL does not support named transactions/savepoint
+		//            nor nested transactions
+		[Obsolete]
+		public SqlTransaction BeginTransaction(	string transactionName) {
+			return TransactionBegin (); // call private method
+		}
+
+		[Obsolete]
+		public SqlTransaction BeginTransaction(IsolationLevel iso,
+						string transactionName) {
+			return TransactionBegin (); // call private method
 		}
 
 		[MonoTODO]
@@ -178,15 +200,7 @@ namespace System.Data.SqlClient
 			OpenDataSource ();
 		}
 
-		[MonoTODO]
-		public void Dispose ()
-		{	
-			// FIXME: quick hack
-			Close ();
-			// Dispose (true);
-		}
-	
-		#endregion
+		#endregion // Public Methods
 
 		#region Internal Methods
 
@@ -218,6 +232,11 @@ namespace System.Data.SqlClient
 
 		private void OpenDataSource ()
 		{
+			if(dbname.Equals(""))
+				throw new InvalidOperationException("dbname missing");
+			else if(conState == ConnectionState.Open)
+				throw new InvalidOperationException("ConnnectionState is already Open");
+
 			ConnStatusType connStatus;
 
 			// FIXME: check to make sure we have 
@@ -242,24 +261,12 @@ namespace System.Data.SqlClient
 			{
 				String errorMessage = PostgresLibrary.
 					PQerrorMessage (pgConn);
-				// FIXME: use thie WriteLine's until
-				// exceptions have been implemented
-				Console.WriteLine("*** Error: " + 
-					"could not connect to database.");			
-				Console.WriteLine ("Error Message: " + 
-					errorMessage);
+				errorMessage += ": Could not connect to database.";
 
-				// FIXME: do error checking, 
-				// if could not connect, 
-				// throw an exception:
-				//  InvalidOperationException - attempt 
-				//    to connect to without specifying 
-				//    database or server
-				//  SqlException - error while 
-				//    connecting to database
-				
+				throw new SqlException(0, 0,
+					errorMessage, 0, "",
+					host, "SqlConnection", 0);
 			}
-			
 		}
 
 		private void CloseDataSource ()
@@ -297,12 +304,12 @@ namespace System.Data.SqlClient
 				connectionString);
 
 #if DEBUG_SqlConnection
-			Console.WriteLine("DEBUG_SqlConnection: " +
-				"SqlConnection.pgConnectionString: " +
+			Console.WriteLine(
+				"OLE-DB Connection String    [in]: " +
+				this.ConnectionString);
+			Console.WriteLine(
+				"Postgres Connection String [out]: " +
 				pgConnectionString);
-			Console.WriteLine("DEBUG_SqlConnection: " +
-				"SqlConnection.connectionString: " +
-				this.connectionString);
 #endif // DEBUG_SqlConnection
 		}
 
@@ -381,7 +388,7 @@ namespace System.Data.SqlClient
 
 				case "password":
 					password = parmValue;
-					addParm = false;
+				//	addParm = false;
 					break;
 
 				case "options":
@@ -429,7 +436,7 @@ namespace System.Data.SqlClient
 		[MonoTODO]
 		public ConnectionState State 		{
 			get { 
-				throw new NotImplementedException (); 
+				return conState;
 			}
 		}
 
@@ -478,6 +485,12 @@ namespace System.Data.SqlClient
 		public string ServerVersion {
 			get { 
 				throw new NotImplementedException ();
+			}
+		}
+
+		internal SqlTransaction Transaction {
+			get {
+				return trans;
 			}
 		}
 

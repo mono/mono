@@ -3,9 +3,15 @@
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
+//   Daniel Morgan (danmorg@sc.rr.com)
 //
 // (C) Ximian, Inc. 2002
 //
+
+// use #define DEBUG_SqlTransaction if you want to spew debug messages
+// #define DEBUG_SqlTransaction
+
+
 using System;
 using System.Data;
 using System.Data.Common;
@@ -21,12 +27,11 @@ namespace System.Data.SqlClient
 	{
 		#region Fields
 
+		private bool doingTransaction = false;
 		private SqlConnection conn = null;
-		//        How do you get/set the 
-		//        IsolationLevel in PostgreSQL?
 		private IsolationLevel isolationLevel =	
 			IsolationLevel.ReadCommitted;
-		// There are two IsolationLevel's for PostgreSQL:
+		// There are only two IsolationLevel's for PostgreSQL:
 		//    ReadCommitted and Serializable, 
 		// but ReadCommitted is the default 
 		
@@ -37,51 +42,48 @@ namespace System.Data.SqlClient
 		[MonoTODO]
 		public void Commit ()
 		{
-			IntPtr pgResult;
-			ExecStatusType execStatus;
-
-			pgResult = PostgresLibrary.
-				PQexec (conn.PostgresConnection, 
-					"COMMIT");
-			/* FIXME: check result and emit 
-			 * exceptions on errors 
-			 */
-			execStatus = PostgresLibrary.
-				PQresultStatus (pgResult);
-
-			String cmdStatus;
-			cmdStatus = PostgresLibrary.
-				PQcmdStatus(pgResult);
-
-			Console.WriteLine("*** Command Status: " +
-				cmdStatus);
-
-			PostgresLibrary.PQclear (pgResult);
+			if(doingTransaction == false)
+				throw new InvalidOperationException(
+					"Begin transaction was not " +
+					"done earlier " +
+					"thus PostgreSQL can not " +
+					"Commit transaction.");
+			
+			SqlCommand cmd = new SqlCommand("COMMIT", conn);
+			cmd.ExecuteNonQuery();
+						
+			doingTransaction = false;
 		}		
 
 		[MonoTODO]
 		public void Rollback()
 		{
-			IntPtr pgResult;
-			ExecStatusType execStatus;
+			if(doingTransaction == false)
+				throw new InvalidOperationException(
+					"Begin transaction was not " +
+					"done earlier " +
+					"thus PostgreSQL can not " +
+					"Rollback transaction.");
+			
+			SqlCommand cmd = new SqlCommand("ROLLBACK", conn);
+			cmd.ExecuteNonQuery();
+						
+			doingTransaction = false;
+		}
 
-			pgResult = PostgresLibrary.
-				PQexec (conn.PostgresConnection, 
-					"ROLLBACK");
-			/* FIXME: check result and emit 
-			 * exceptions on errors 
-			 */
-			execStatus = PostgresLibrary.
-				PQresultStatus (pgResult);
+		// For PostgreSQL, Rollback(string) will not be implemented
+		// because PostgreSQL does not support Savepoints
+		[Obsolete]
+		public void Rollback(string transactionName) {
+			// throw new NotImplementedException ();
+			Rollback();
+		}
 
-			String cmdStatus;
-			cmdStatus = PostgresLibrary.
-				PQcmdStatus(pgResult);
-
-			Console.WriteLine("*** Command Status: " +
-				cmdStatus);
-
-			PostgresLibrary.PQclear (pgResult);
+		// For PostgreSQL, Save(string) will not be implemented
+		// because PostgreSQL does not support Savepoints
+		[Obsolete]
+		public void Save (string savePointName) {
+			// throw new NotImplementedException ();
 		}
 
 		#endregion // Public Methods
@@ -90,30 +92,40 @@ namespace System.Data.SqlClient
 
 		internal void Begin()
 		{
-			IntPtr pgResult;
-			ExecStatusType execStatus;
-
-			pgResult = PostgresLibrary.
-				PQexec (conn.PostgresConnection, 
-					"BEGIN");
-			/* FIXME: check result and emit 
-			 * exceptions on errors 
-			 */
-			execStatus = PostgresLibrary.
-				PQresultStatus (pgResult);
-
-			String cmdStatus;
-			cmdStatus = PostgresLibrary.
-				PQcmdStatus(pgResult);
-
-			Console.WriteLine("*** Command Status: " +
-				cmdStatus);
-
-			PostgresLibrary.PQclear (pgResult);
+			if(doingTransaction == true)
+				throw new InvalidOperationException(
+					"Transaction has begun " +
+					"and PostgreSQL does not " +
+					"support nested transactions.");
+			
+			SqlCommand cmd = new SqlCommand("BEGIN", conn);
+			cmd.ExecuteNonQuery();
+						
+			doingTransaction = true;
 		}
 
 		internal void SetIsolationLevel(IsolationLevel isoLevel)
 		{
+			String sSql = "SET TRANSACTION ISOLATION LEVEL ";
+ 
+			switch (isoLevel) 
+			{
+				case IsolationLevel.ReadCommitted:
+					sSql += "READ COMMITTED";
+					break;
+
+				case IsolationLevel.Serializable:
+					sSql += "SERIALIZABLE";
+					break;
+				default:
+					// FIXME: generate exception here
+					// PostgreSQL only supports:
+					//   ReadCommitted or Serializable
+					break;
+			}
+			SqlCommand cmd = new SqlCommand(sSql, conn);
+			cmd.ExecuteNonQuery();
+
 			this.isolationLevel = isoLevel;
 		}
 
@@ -144,13 +156,35 @@ namespace System.Data.SqlClient
 			}
 		}
 
+		internal bool DoingTransaction {
+			get {
+				return doingTransaction;
+			}
+		}
+
+		#endregion Properties
+
+		#region Destructors
+
+		// Destructors aka Finalize and Dispose
+
 		[MonoTODO]
 		public void Dispose()
 		{
 			// FIXME: need to properly release resources
+			// Dispose(true);
 		}
-	
-		#endregion // Properties
+
+		// Destructor 
+		[MonoTODO]
+		// [Serializable]
+		// [ClassInterface(ClassInterfaceType.AutoDual)]
+		~SqlTransaction() {
+			// FIXME: need to properly release resources
+			// Dispose(false);
+		}
+
+		#endregion // Destructors
 
 	}
 }
