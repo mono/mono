@@ -20,5 +20,9 @@ class X
 
 		Bar bar = (Bar) se;
 		Foo blah = (Foo) obj1;
+
+		Enum Ea = Foo.A;
+
+		IConvertible iconv = Ea;
 	}
 }
