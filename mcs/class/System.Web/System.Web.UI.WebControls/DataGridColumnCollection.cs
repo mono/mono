@@ -23,7 +23,7 @@ namespace System.Web.UI.WebControls
 	{
 		private DataGrid  owner;
 		private ArrayList columns;
-		private bool      trackViewState = false;
+		private bool      trackViewState;
 
 		public DataGridColumnCollection(DataGrid owner, ArrayList columns)
 		{
@@ -194,6 +194,8 @@ namespace System.Web.UI.WebControls
 		void IStateManager.TrackViewState()
 		{
 			trackViewState = true;
+			foreach (IStateManager col in columns)
+				col.TrackViewState ();
 		}
 
 		bool IStateManager.IsTrackingViewState

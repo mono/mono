@@ -370,17 +370,14 @@ namespace System.Web.UI.WebControls
 
 		protected virtual void LoadViewState(object savedState)
 		{
-			if(savedState!= null)
-			{
-				object[] states = (object[]) savedState;
-				if(states != null)
-				{
-					ViewState.LoadViewState(states[0]);
-					FooterStyle.LoadViewState(states[1]);
-					HeaderStyle.LoadViewState(states[2]);
-					ItemStyle.LoadViewState(states[3]);
-				}
-			}
+			if (savedState == null)
+				return;
+
+			object[] states = (object[]) savedState;
+			ViewState.LoadViewState (states [0]);
+			FooterStyle.LoadViewState (states [1]);
+			HeaderStyle.LoadViewState (states [2]);
+			ItemStyle.LoadViewState (states [3]);
 		}
 
 		protected virtual void TrackViewState()

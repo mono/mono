@@ -1,29 +1,40 @@
-2003-12-18  Alon Gazit <along@mainsoft.com>
-	* DataGridPagerStyle.cs: merge DataGridPagerStyle properties when Style is
-	empty.
+2003-12-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataGridColumn.cs: stylized LoadViewState.
+	* DataGridColumnCollection.cs: when TrackViewState is called, also
+	call it on all the existing columns. Fixes bug #52334.
 
 2003-12-18  Alon Gazit <along@mainsoft.com>
-	* TableStyle.cs: merge TableStyle properties when Style is
-	empty.
+
+	* DataGridPagerStyle.cs: merge DataGridPagerStyle properties when Style 
+	is empty.
+
+2003-12-18  Alon Gazit <along@mainsoft.com>
+
+	* TableStyle.cs: merge TableStyle properties when Style is empty.
 
 2003-12-16  Alon Gazit <along@mainsoft.com>
+
 	* HyperLink.cs: Change Text property implementation. in MS when the Text
 	property is set, all the controls in the HyperLink are being deleted. 
 	This fixes bug #52239.   
 
 2003-12-15  Alon Gazit <along@mainsoft.com>
-	* RepeatInfo.cs: Fixed DoVerticalRendering() and DoHorizontalRendering().
-	Both methods add additional empty table row in the head of each item table 
-	when the variable named isTable equals true (happenes with the default instantiation
-	of RepeatInfo). 
-	These additional rows should be added when isTable equals false.
+	* RepeatInfo.cs: Fixed DoVerticalRendering () and 
+	DoHorizontalRendering().
+	Both methods add additional empty table row in the head of each item
+	table when the variable named isTable equals true (happenes with the
+	default instantiation of RepeatInfo). These additional rows should be
+	added when isTable equals false.
 	This fixes bug #52225.   
 
 2003-12-15  Alon Gazit <along@mainsoft.com>
-	* RepeatInfo.cs: Fixed DoVerticalRendering() and DoHorizontalRendering().
+
+	* RepeatInfo.cs: Fixed DoVerticalRendering() and
+	DoHorizontalRendering().
 	Both methods add to rendered Header a colspan attribute according to the
-	rows count. after the change the colspan is added according to the columns
-	count.   
+	rows count. after the change the colspan is added according to the
+	columns count.   
 
 2003-12-15  Alon Gazit <along@mainsoft.com>
 	* CheckBox.cs: Disabled CheckBox does not produce same HTML as .NET.
