@@ -56,10 +56,15 @@ namespace Mono.CSharp {
 		}
 		
 		/// <remarks>
-		///    Emits a bool expression.
+		///    Encapsulates the emission of a boolean test and jumping to a
+		///    destination.
+		///
+		///    This will emit the bool expression in `bool_expr' and if
+		///    `target_is_for_true' is true, then the code will generate a 
+		///    brtrue to the target.   Otherwise a brfalse. 
 		/// </remarks>
 		public static void EmitBoolExpression (EmitContext ec, Expression bool_expr,
-						       Label target, bool isTrue)
+						       Label target, bool target_is_for_true)
 		{
 			ILGenerator ig = ec.ig;
 			
@@ -72,12 +77,17 @@ namespace Mono.CSharp {
 
 					u.EmitLogicalNot (ec);
 				}
-			} 
+			} else if (bool_expr is Binary){
+				Binary b = (Binary) bool_expr;
+
+				if (b.EmitBranchable (ec, target, target_is_for_true))
+					return;
+			}
 
 			if (!invert)
 				bool_expr.Emit (ec);
 
-			if (isTrue){
+			if (target_is_for_true){
 				if (invert)
 					ig.Emit (OpCodes.Brfalse, target);
 				else

@@ -1,3 +1,14 @@
+2002-07-10  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Binary.EmitBranchable): this routine emits the
+	Binary expression in a branchable context.  This basically means:
+	we need to branch somewhere, not just get the value on the stack.
+
+	This works together with Statement.EmitBoolExpression.
+
+	* statement.cs (Statement.EmitBoolExpression): Use
+	EmitBranchable. 
+
 2002-07-09  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs (For): Reduce the number of jumps in loops.

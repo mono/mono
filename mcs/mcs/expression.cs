@@ -2221,105 +2221,81 @@ namespace Mono.CSharp {
 			return ResolveOperator (ec);
 		}
 
-		public bool IsBranchable ()
+		/// <remarks>
+		///   EmitBranchable is called from Statement.EmitBoolExpression in the
+		///   context of a conditional bool expression.  This function will return
+		///   false if it is was possible to use EmitBranchable, or true if it was.
+		///
+		///   The expression's code is generated, and we will generate a branch to `target'
+		///   if the resulting expression value is equal to isTrue
+		/// </remarks>
+		public bool EmitBranchable (EmitContext ec, Label target, bool onTrue)
 		{
-			if (oper == Operator.Equality ||
-			    oper == Operator.Inequality ||
-			    oper == Operator.LessThan ||
-			    oper == Operator.GreaterThan ||
-			    oper == Operator.LessThanOrEqual ||
-			    oper == Operator.GreaterThanOrEqual){
-				return true;
-			} else
+			if (method != null)
 				return false;
-		}
 
-		/// <summary>
-		///   This entry point is used by routines that might want
-		///   to emit a brfalse/brtrue after an expression, and instead
-		///   they could use a more compact notation.
-		///
-		///   Typically the code would generate l.emit/r.emit, followed
-		///   by the comparission and then a brtrue/brfalse.  The comparissions
-		///   are sometimes inneficient (there are not as complete as the branches
-		///   look for the hacks in Emit using double ceqs).
-		///
-		///   So for those cases we provide EmitBranchable that can emit the
-		///   branch with the test
-		/// </summary>
-		public void EmitBranchable (EmitContext ec, int target)
-		{
-			OpCode opcode;
-			bool close_target = false;
-			ILGenerator ig = ec.ig;
-				
-			//
-			// short-circuit operators
-			//
-			if (oper == Operator.LogicalAnd){
-				left.Emit (ec);
-				ig.Emit (OpCodes.Brfalse, target);
-				right.Emit (ec);
-				ig.Emit (OpCodes.Brfalse, target);
-			} else if (oper == Operator.LogicalOr){
-				left.Emit (ec);
-				ig.Emit (OpCodes.Brtrue, target);
-				right.Emit (ec);
-				ig.Emit (OpCodes.Brfalse, target);
-			}
-				
+			if (!(oper == Operator.Equality ||
+			      oper == Operator.Inequality ||
+			      oper == Operator.LessThan ||
+			      oper == Operator.GreaterThan ||
+			      oper == Operator.LessThanOrEqual ||
+			      oper == Operator.GreaterThanOrEqual))
+				return false;
+
 			left.Emit (ec);
 			right.Emit (ec);
+
+			ILGenerator ig = ec.ig;
 			
 			switch (oper){
 			case Operator.Equality:
-				if (close_target)
-					opcode = OpCodes.Beq_S;
+				if (onTrue)
+					ig.Emit (OpCodes.Beq, target);
 				else
-					opcode = OpCodes.Beq;
+					ig.Emit (OpCodes.Bne_Un, target);
 				break;
 
 			case Operator.Inequality:
-				if (close_target)
-					opcode = OpCodes.Bne_Un_S;
+				if (onTrue)
+					ig.Emit (OpCodes.Bne_Un, target);
 				else
-					opcode = OpCodes.Bne_Un;
+					ig.Emit (OpCodes.Beq, target);
 				break;
 
 			case Operator.LessThan:
-				if (close_target)
-					opcode = OpCodes.Blt_S;
+				if (onTrue)
+					ig.Emit (OpCodes.Blt, target);
 				else
-					opcode = OpCodes.Blt;
+					ig.Emit (OpCodes.Bge, target);
 				break;
 
 			case Operator.GreaterThan:
-				if (close_target)
-					opcode = OpCodes.Bgt_S;
+				if (onTrue)
+					ig.Emit (OpCodes.Bgt, target);
 				else
-					opcode = OpCodes.Bgt;
+					ig.Emit (OpCodes.Ble, target);
 				break;
 
 			case Operator.LessThanOrEqual:
-				if (close_target)
-					opcode = OpCodes.Ble_S;
+				if (onTrue)
+					ig.Emit (OpCodes.Ble, target);
 				else
-					opcode = OpCodes.Ble;
+					ig.Emit (OpCodes.Bgt, target);
 				break;
 
+
 			case Operator.GreaterThanOrEqual:
-				if (close_target)
-					opcode = OpCodes.Bge_S;
+				if (onTrue)
+					ig.Emit (OpCodes.Bge, target);
 				else
-					opcode = OpCodes.Ble;
+					ig.Emit (OpCodes.Blt, target);
 				break;
 
 			default:
-				throw new Exception ("EmitBranchable called on non-EmitBranchable operator: "
-						     + oper.ToString ());
+				return false;
 			}
-
-			ig.Emit (opcode, target);
+			
+			return true;
 		}
 		
 		public override void Emit (EmitContext ec)
