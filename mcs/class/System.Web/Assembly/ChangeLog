@@ -1,5 +1,9 @@
 2004-11-23  Lluis Sanchez Gual <lluis@novell.com>
 
+	* AssemblyInfo.cs: Added missing ifdef NET_2_0.
+
+2004-11-23  Lluis Sanchez Gual <lluis@novell.com>
+
 	* AssemblyInfo.cs: Added resource attributes.
 
 2003-11-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>

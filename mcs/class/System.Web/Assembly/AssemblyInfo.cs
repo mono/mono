@@ -71,6 +71,10 @@ using System.Web.UI;
 
 // Resources
 
+#if NET_2_0
+
 [assembly: WebResource ("TreeView_Default_Collapse.gif", "image/gif")]
 [assembly: WebResource ("TreeView_Default_Expand.gif", "image/gif")]
 [assembly: WebResource ("TreeView_Default_NoExpand.gif", "image/gif")]
+
+#endif
