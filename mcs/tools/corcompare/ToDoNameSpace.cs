@@ -28,6 +28,8 @@ namespace Mono.Util.CorCompare {
 		string strNamespace;
 		ArrayList rgMissing = new ArrayList ();
 		ArrayList rgTodo = new ArrayList ();
+		protected static Hashtable htGhostTypes;
+		static string[] rgstrGhostTypes = {"System.Object", "System.ValueType", "System.Delegate", "System.Enum"};
 
 		public static ArrayList GetNamespaces(Type[] types) 
 		{
@@ -40,6 +42,16 @@ namespace Mono.Util.CorCompare {
 				}
 			}
 			return nsList;
+		}
+
+		static ToDoNameSpace ()
+		{
+			htGhostTypes = new Hashtable ();
+
+			foreach (string strGhostType in rgstrGhostTypes)
+			{
+				htGhostTypes.Add (strGhostType, null);
+			}
 		}
 
 		public ToDoNameSpace(string nameSpace, Type[] referenceTypes, 
@@ -76,7 +88,7 @@ namespace Mono.Util.CorCompare {
 					CompletionInfo ciType;
 					if (tMono == null)
 					{
-						if (t.IsPublic)
+						if (t.IsPublic && !htGhostTypes.Contains (t.FullName))
 						{
 							MissingType mt = new MissingType (t);
 							rgMissing.Add (mt);

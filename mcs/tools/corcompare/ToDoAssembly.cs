@@ -24,7 +24,6 @@ namespace Mono.Util.CorCompare {
 	class ToDoAssembly : MissingBase
 	{
 		// these types are in mono corlib, but not in the dll we are going to examine.
-		static string[] ghostTypes = {"System.Object", "System.ValueType", "System.Delegate", "System.Enum"};
 		ArrayList MissingTypes = new ArrayList();
 		string assemblyToCompare, assemblyToCompareWith;
 		bool analyzed = false;
