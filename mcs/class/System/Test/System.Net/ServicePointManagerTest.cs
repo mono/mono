@@ -19,7 +19,7 @@ namespace MonoTests.System.Net
 {
 
 [TestFixture]
-public class ServicePointManagerTest
+public class ServicePointManagerTest : Assertion
 {
 	private Uri googleUri;
 	private Uri yahooUri;
@@ -33,63 +33,59 @@ public class ServicePointManagerTest
 		apacheUri = new Uri ("http://www.apache.org");
 	}
 
-        [Test]
+        [Test, ExpectedException (typeof (InvalidOperationException))]
         public void MaxServicePointManagers ()
         {
-		try {
-			Assertion.AssertEquals ("#1", 0, ServicePointManager.MaxServicePoints);
-			
-			DoWebRequest (googleUri);
-			Thread.Sleep (100);
-			DoWebRequest (yahooUri);
-			Thread.Sleep (100);
-			DoWebRequest (apacheUri);
-			Thread.Sleep (100);
-			
-			ServicePoint sp = ServicePointManager.FindServicePoint (googleUri);
-			WriteServicePoint (sp);
-			sp = ServicePointManager.FindServicePoint (yahooUri);
-			WriteServicePoint (sp);
-			sp = ServicePointManager.FindServicePoint (apacheUri);
-			WriteServicePoint (sp);
-			
-			ServicePointManager.MaxServicePoints = 1;
+		AssertEquals ("#1", 0, ServicePointManager.MaxServicePoints);
+		
+		DoWebRequest (googleUri);
+		Thread.Sleep (100);
+		DoWebRequest (yahooUri);
+		Thread.Sleep (100);
+		DoWebRequest (apacheUri);
+		Thread.Sleep (100);
+		
+		ServicePoint sp = ServicePointManager.FindServicePoint (googleUri);
+		//WriteServicePoint (sp);
+		sp = ServicePointManager.FindServicePoint (yahooUri);
+		//WriteServicePoint (sp);
+		sp = ServicePointManager.FindServicePoint (apacheUri);
+		//WriteServicePoint (sp);
+		
+		ServicePointManager.MaxServicePoints = 1;
 
-			sp = ServicePointManager.FindServicePoint (googleUri);
-			WriteServicePoint (sp);
-			sp = ServicePointManager.FindServicePoint (yahooUri);
-			WriteServicePoint (sp);
-			sp = ServicePointManager.FindServicePoint (apacheUri);
-			WriteServicePoint (sp);
-			
-			GC.Collect ();
-			
-			// hmm... aparently ms.net still has the service points even
-			// though I set it to a max of 1.
-			
-			// this should force an exception then...		
-			sp = ServicePointManager.FindServicePoint (new Uri ("http://www.microsoft.com"));
-			WriteServicePoint (sp);
-			
-		} catch (Exception e) {
-			Assertion.Fail("The following unexpected Exception was thrown : " + e);
-		}
+		sp = ServicePointManager.FindServicePoint (googleUri);
+		//WriteServicePoint (sp);
+		sp = ServicePointManager.FindServicePoint (yahooUri);
+		//WriteServicePoint (sp);
+		sp = ServicePointManager.FindServicePoint (apacheUri);
+		//WriteServicePoint (sp);
+		
+		GC.Collect ();
+		
+		// hmm... aparently ms.net still has the service points even
+		// though I set it to a max of 1.
+		
+		// this should force an exception then...		
+		sp = ServicePointManager.FindServicePoint (new Uri ("http://www.microsoft.com"));
+		//WriteServicePoint (sp);
 	}
 	
         [Test]
 	public void FindServicePoint ()
 	{
 		ServicePoint sp = ServicePointManager.FindServicePoint (googleUri, new WebProxy (apacheUri));
-		Assertion.AssertEquals ("#1", apacheUri, sp.Address);
-		Assertion.AssertEquals ("#2", 2, sp.ConnectionLimit);
-		Assertion.AssertEquals ("#3", "http", sp.ConnectionName);
+		AssertEquals ("#1", apacheUri, sp.Address);
+		AssertEquals ("#2", 2, sp.ConnectionLimit);
+		AssertEquals ("#3", "http", sp.ConnectionName);
 	}
 	
 	private void DoWebRequest (Uri uri)
 	{
 		WebRequest.Create (uri).GetResponse ().Close ();
 	}
-	
+
+/* Unused code for now, but might be useful later for debugging
 	private void WriteServicePoint (ServicePoint sp)
 	{
 		Console.WriteLine ("\nAddress: " + sp.Address);
@@ -101,7 +97,8 @@ public class ServicePointManagerTest
 		Console.WriteLine ("ProtocolVersion: " + sp.ProtocolVersion);
 		Console.WriteLine ("SupportsPipelining: " + sp.SupportsPipelining);		
 	}
-}
+*/
 
+}
 }
 
