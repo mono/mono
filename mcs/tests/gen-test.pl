@@ -57,10 +57,15 @@ sub LibraryTest
     RunTest (0, $mono, $exe) or return 0;
 }
 
+my @verify;
+push @verify, "sidney";
+push @verify, 'bin/peverify.sh';
+
 foreach my $file (@normal) {
     print "RUNNING TEST: $file\n";
     if (NormalTest ($file)) {
 	print STDERR "TEST SUCCEEDED: $file\n";
+	push @verify, qq[$file.exe];
     } else {
 	print STDERR "TEST FAILED: $file\n";
     }
@@ -70,7 +75,17 @@ foreach my $file (@library) {
     print "RUNNING LIBRARY TEST: $file\n";
     if (LibraryTest ($file)) {
 	print STDERR "TEST SUCCEEDED: $file\n";
+	push @verify, qq[$file-dll.dll];
+	push @verify, qq[$file-exe.exe];
     } else {
 	print STDERR "TEST FAILED: $file\n";
     }
+}
+
+my $hostname = `hostname --fqdn`;
+chop $hostname;
+
+if ($hostname eq 'gondor.martin.baulig') {
+    print STDERR "VERIFYING TESTS\n";
+    RunTest (0, "ssh", @verify);
 }
