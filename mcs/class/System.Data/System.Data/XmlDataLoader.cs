@@ -45,11 +45,11 @@ namespace System.Data
 			switch (mode) {
 			case XmlReadMode.Auto:
 				Result = DSet.Tables.Count == 0 ? XmlReadMode.InferSchema : XmlReadMode.IgnoreSchema;
-				ReadModeSchema (reader, Result);
+				ReadModeSchema (reader, true, true);
 				break;
 			case XmlReadMode.InferSchema:
 				Result = XmlReadMode.InferSchema;
-				ReadModeSchema (reader, XmlReadMode.InferSchema);
+				ReadModeSchema (reader, true, false);
 				break;
 			default:
 				reader.Skip ();
@@ -62,21 +62,21 @@ namespace System.Data
 		#region reading
 
 		// Read information from the reader.
-		private void ReadModeSchema (XmlReader reader, XmlReadMode mode)
+		private void ReadModeSchema (XmlReader reader, bool inferSchema, bool fillRows)
 		{
-			bool inferSchema = mode == XmlReadMode.InferSchema ? true : false;
+			// FIXME: Do we really need this process here?
 			//check if the current element is schema.
 			if (reader.LocalName == "schema") {
 				
-				if (mode == XmlReadMode.InferSchema || mode == XmlReadMode.IgnoreSchema)
+				if (inferSchema)
 					reader.Skip(); // skip the schema node.
 				else
 					DSet.ReadXmlSchema(reader);
 				
 				reader.MoveToContent();
 			}
+
 			// load an XmlDocument from the reader.
-//			XmlDocument doc = BuildXmlDocument(reader);
 			XmlDocument doc = new XmlDocument ();
 			doc.Load (reader);
 			if (doc.DocumentElement == null)
@@ -87,6 +87,9 @@ namespace System.Data
 			// than the root element actually represents datatable and not dataset
 			// so we add new root element to doc 
 			// in order to create an element representing dataset.
+			//
+			// FIXME: Consider attributes. 
+			// <root a='1' b='2' /> is regarded as a valid DataTable.
 			int rootNodeDepth = XmlNodeElementsDepth(doc.DocumentElement);
 			switch (rootNodeDepth) {
 			case 1:
@@ -127,7 +130,7 @@ namespace System.Data
 				XmlNode node = nList[i];
 				// node represents a table onky if it is of type XmlNodeType.Element
 				if (node.NodeType == XmlNodeType.Element) {
-					AddRowToTable(node, null, inferSchema);
+					AddRowToTable(node, null, inferSchema, fillRows);
 				}
 			}
 
@@ -185,7 +188,7 @@ namespace System.Data
 			return Convert.ChangeType (value, type);
 		}
 
-		private void AddRowToTable(XmlNode tableNode, DataColumn relationColumn, bool inferSchema)
+		private void AddRowToTable(XmlNode tableNode, DataColumn relationColumn, bool inferSchema, bool fillRows)
 		{
 			Hashtable rowValue = new Hashtable();
 			DataTable table;
@@ -248,10 +251,10 @@ namespace System.Data
 							table.Columns.Add(newRelationColumn);
 						}
 						// Add a row to the new table we found.
-						AddRowToTable(childNode, table.Columns[newRelationColumnName], inferSchema);
+						AddRowToTable(childNode, table.Columns[newRelationColumnName], inferSchema, fillRows);
 					}
 					else
-						AddRowToTable(childNode, null, inferSchema);
+						AddRowToTable(childNode, null, inferSchema, fillRows);
 					
 				}
 				else {
@@ -315,27 +318,9 @@ namespace System.Data
 				row [enumerator.Key.ToString ()] = StringToObject (table.Columns[enumerator.Key.ToString ()].DataType, enumerator.Value.ToString ());
 			}
 
-			table.Rows.Add (row);
+			if (fillRows)
+				table.Rows.Add (row);
 			
-		}
-		
-		// bulid the document from the reader.
-		private XmlDocument BuildXmlDocument(XmlReader reader)
-		{
-			XmlDocument doc = new XmlDocument();
-			// Create the root element. This is the DataSet element.
-			XmlElement dataSetElement = doc.CreateElement(DSet.DataSetName);
-			
-			do {
-				XmlNode n = doc.ReadNode (reader);
-				if(n == null) break;
-				// Add the table nodes to the DataSet node.
-				dataSetElement.AppendChild (n);
-			} while (reader.IsStartElement());
-			
-			// Add the DataSet element to the document.
-			doc.AppendChild(dataSetElement);
-			return doc;
 		}
 
 		// this method calculates the depth of child nodes tree

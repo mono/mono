@@ -1,5 +1,17 @@
 2004-04-19  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlDataLoader.cs : Added "never add data rows" mode.
+	  Removed unused code. However, it is temporary fixes to unify
+	  ReadXml() and InferXmlSchema().
+	* DataSet.cs : Implemented InferXmlSchema(), though it is incomplete.
+
+	  I'll create another XmlDataLoader since there are many problems
+	  such that 1) it is too waste to read the entire xml into an
+	  XmlDocument, 2) it does not handle attributes correctly, and 3) it
+	  must handle "ignored namespaces".
+
+2004-04-19  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Added XmlSchemaDataImporter.cs (new schema reader).
 	* DataSet.cs : Use XmlSchemaDataImporter (right now for DataSet only)
 	  for ReadXmlSchema().

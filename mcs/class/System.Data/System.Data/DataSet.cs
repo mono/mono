@@ -525,10 +525,11 @@ namespace System.Data {
 			return false;		
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Consider ignored namespace array")]
 		public void InferXmlSchema (XmlReader reader, string[] nsArray)
 		{
-			throw new NotImplementedException ();
+			XmlDataLoader Loader = new XmlDataLoader (this);
+			Loader.LoadData (reader, XmlReadMode.InferSchema);
 		}
 
 		public void InferXmlSchema (Stream stream, string[] nsArray)
