@@ -1,3 +1,7 @@
+2003-06-18  Nick Drochak <ndrochak@gol.com>
+
+	* FileSystemInfo.cs: Refresh cache when changeing file times.
+
 2003-06-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* FileStream.cs: Fix errors in previous checkins:

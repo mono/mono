@@ -47,6 +47,7 @@ namespace System.IO {
 							       value,
 							       out error))
 					throw MonoIO.GetException (error);
+				Refresh (true);
 			}
 		}
 
@@ -64,6 +65,7 @@ namespace System.IO {
 				if (!MonoIO.SetFileTime (FullName, filetime,
 							 -1, -1, out error))
 					throw MonoIO.GetException (error);
+				Refresh (true);
 			}
 		}
 
@@ -92,6 +94,7 @@ namespace System.IO {
 							 filetime, -1,
 							 out error))
 					throw MonoIO.GetException (error);
+				Refresh (true);
 			}
 		}
 
@@ -120,6 +123,7 @@ namespace System.IO {
 				if (!MonoIO.SetFileTime (FullName, -1, -1,
 							 filetime, out error))
 					throw MonoIO.GetException (error);
+				Refresh (true);
 			}
 		}
 
