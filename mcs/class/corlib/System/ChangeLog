@@ -1,3 +1,13 @@
+2001-08-10  Dietmar Maurer  <dietmar@ximian.com>
+
+	* common.src: removed UriFormatException.cs because the file is
+	not there.
+
+	* RuntimeTypeHandle.cs: replaced IntrPtr with IntPtr
+	* Char.cs: replaced byte with char
+
+	* Array.cs: make it work with the mono interpreter
+
 2001-08-06  Miguel de Icaza  <miguel@ximian.com>
 
 	* Version.cs: Make the class sealed

@@ -24,22 +24,22 @@ namespace System {
 		
 		// VES needs to know about value.  public is workaround
 		// so source will compile
-		public byte value;
+		public char value;
 		
 		public int CompareTo (object v)
 		{
-			if (!(v is System.Byte))
-				throw new ArgumentException ("Value is not a System.Byte");
+			if (!(v is System.Char))
+				throw new ArgumentException ("Value is not a System.Char");
 
-			return value - ((byte) v);
+			return value - ((char) v);
 		}
 
 		public override bool Equals (object o)
 		{
-			if (!(o is System.Byte))
+			if (!(o is System.Char))
 				return false;
 
-			return ((byte) o) == value;
+			return ((Char) o) == value;
 		}
 
 		public override int GetHashCode ()
@@ -333,7 +333,7 @@ namespace System {
 		
 		public TypeCode GetTypeCode ()
 		{
-			return TypeCode.Byte;
+			return TypeCode.Char;
 		}	  
 	}
 }

@@ -13,7 +13,7 @@ namespace System {
 
 	// FIXME: Implement me!
 	public struct RuntimeTypeHandle : ISerializable {
-		IntrPtr value;
+		IntPtr value;
 		
 		public IntPtr Value {
 			get {
