@@ -1,5 +1,8 @@
 2005-03-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* amd64/amd64-codegen.h (amd64_sse_cvtsi2sd_reg_reg_size): Add _size
+	variants to some sse2 macros.
+
 	* amd64/amd64-codegen.h (amd64_sse_cvtsd2si_reg_reg): Make this convert
 	to a 64 bit value.
 
