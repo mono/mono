@@ -827,17 +827,12 @@ namespace System.Xml
 			public int ValueTokenStartIndex;
 			public int ValueTokenEndIndex;
 			string valueCache;
-			bool cachedNormalization;
 			StringBuilder tmpBuilder = new StringBuilder ();
 
 			public override string Value {
 				get {
-					if (cachedNormalization != Reader.Normalization)
-						valueCache = null;
 					if (valueCache != null)
 						return valueCache;
-
-					cachedNormalization = Reader.Normalization;
 
 					// An empty value should return String.Empty.
 					if (ValueTokenStartIndex == ValueTokenEndIndex) {
@@ -846,8 +841,6 @@ namespace System.Xml
 							valueCache = String.Concat ("&", ti.Name, ";");
 						else
 							valueCache = ti.Value;
-						if (cachedNormalization)
-							NormalizeSpaces ();
 						return valueCache;
 					}
 
@@ -864,8 +857,8 @@ namespace System.Xml
 					}
 
 					valueCache = tmpBuilder.ToString ();
-					if (cachedNormalization)
-						NormalizeSpaces ();
+//					if (cachedNormalization)
+//						NormalizeSpaces ();
 					return valueCache;
 				}
 
@@ -897,26 +890,6 @@ namespace System.Xml
 					NamespaceURI = string.Empty;
 				else
 					NamespaceURI = Reader.LookupNamespace (Prefix, true);
-			}
-
-			private void NormalizeSpaces ()
-			{
-				tmpBuilder.Length = 0;
-				for (int i = 0; i < valueCache.Length; i++)
-					switch (valueCache [i]) {
-					case '\r':
-						if (i + 1 < valueCache.Length && valueCache [i + 1] == '\n')
-							i++;
-						goto case '\n';
-					case '\t':
-					case '\n':
-						tmpBuilder.Append (' ');
-						break;
-					default:
-						tmpBuilder.Append (valueCache [i]);
-						break;
-					}
-				valueCache = tmpBuilder.ToString ();
 			}
 		}
 
@@ -1884,6 +1857,20 @@ namespace System.Xml
 					else	// Attribute value constructor.
 						loop = false;
 					break;
+				case '\r':
+					if (!normalization)
+						goto default;
+					if (PeekChar () == '\n')
+						continue; // skip '\r'.
+					goto case '\n';
+				case '\n':
+				case '\t':
+					// When Normalize = true, then replace
+					// all spaces to ' '
+					if (!normalization)
+						goto default;
+					ch = ' ';
+					goto default;
 				case '&':
 					int startPosition = currentTagLength - 1;
 					if (PeekChar () == '#') {

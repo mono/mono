@@ -1,5 +1,11 @@
 2004-11-22  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextReader.cs : Now attribute normalization is handled on Read(),
+	  not on get_Value. This caused a problem when we use
+	  XmlValidatingReader that value is not always normalized expectedly.
+
+2004-11-22  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlReader.cs : removed old ReadValueAsXXX() and added new
 	  ReadContentAsXXX() and ReadElementContentAsXXX().
 	* XmlTextReader.cs : removed old ReadValueAsXXX() (no overrides now).
