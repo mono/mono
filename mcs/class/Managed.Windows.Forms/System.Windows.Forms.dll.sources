@@ -101,6 +101,7 @@ System.Windows.Forms/ItemDragEventArgs.cs
 System.Windows.Forms/ItemDragEventHandler.cs
 System.Windows.Forms/IWin32Window.cs
 System.Windows.Forms/IWindowTarget.cs
+System.Windows.Forms/KeyboardLayouts.cs
 System.Windows.Forms/KeyEventArgs.cs
 System.Windows.Forms/KeyEventHandler.cs
 System.Windows.Forms/KeyPressEventArgs.cs
@@ -227,6 +228,7 @@ System.Windows.Forms/UserControl.cs
 System.Windows.Forms/View.cs
 System.Windows.Forms/VScrollBar.cs
 System.Windows.Forms/X11Structs.cs
+System.Windows.Forms/X11Keyboard.cs
 System.Windows.Forms/XEventQueue.cs
 System.Windows.Forms/XplatUI.cs
 System.Windows.Forms/XplatUIDriver.cs

@@ -1,3 +1,7 @@
+2004-12-15  Jackson Harper  <jackson@ximian.com>
+
+	* System.Windows.Forms.dll.sources: Add keyboard love to the build.
+
 2004-12-08  Peter Bartok  <pbartok@novell.com>
 
 	* SWF.csproj: Added XplatUIOSX.cs to build list

@@ -445,6 +445,12 @@ namespace System.Windows.Forms {
 		WA_CLICKACTIVE		= 2
 	}
 
+	internal enum KeybdEventFlags {
+		None			= 0,
+		ExtendedKey		= 0x0001,
+		KeyUp			= 0x0002
+	}
+
 	internal enum VirtualKeys {
 		VK_LBUTTON		= 0x01,
 		VK_RBUTTON              = 0x02,
@@ -459,6 +465,7 @@ namespace System.Windows.Forms {
 		VK_SHIFT		= 0x10,
 		VK_CONTROL		= 0x11,
 		VK_MENU			= 0x12,
+		VK_PAUSE		= 0x13,
 		VK_CAPITAL		= 0x14,
 		VK_ESCAPE		= 0x1B,
 		VK_SPACE		= 0x20,
@@ -526,6 +533,22 @@ namespace System.Windows.Forms {
 		VK_SUBTRACT		= 0x6D,
 		VK_DECIMAL		= 0x6E,
 		VK_DIVIDE		= 0x6F,
+		VK_F1			= 0x70,
+		VK_F2			= 0x71,
+		VK_F3			= 0x72,
+		VK_F4			= 0x73,
+		VK_F5			= 0x74,
+		VK_F6			= 0x75,
+		VK_F7			= 0x76,
+		VK_F8			= 0x77,
+		VK_F9			= 0x78,
+		VK_F10			= 0x79,
+		VK_F11			= 0x7A,
+		VK_F12			= 0x7B,
+		VK_DELETE		= 0x7F,
+		VK_NUMLOCK		= 0x90,
+		VK_SCROLL_LOCK		= 0x91,
+		VK_INSERT		= 0x9B,
 		VK_ATTN			= 0xF6,
 		VK_CRSEL		= 0xF7,
 		VK_EXSEL		= 0xF8,
@@ -543,7 +566,80 @@ namespace System.Windows.Forms {
 		VK_LCONTROL		= 0xA2,   
 		VK_RCONTROL		= 0xA3,   
 		VK_LMENU		= 0xA4,   
-		VK_RMENU		= 0xA5
+		VK_RMENU		= 0xA5,
+		VK_OEM_1		= 0xBA, // for misc chars, varies by keyboard
+		VK_OEM_PLUS		= 0xBB,
+		VK_OEM_COMMA		= 0xBC,
+		VK_OEM_MINUS		= 0xBD,
+		VK_OEM_PERIOD		= 0xBE,
+		// for misc chars, varies by keyboard
+		VK_OEM_2		= 0xBF, 
+		VK_OEM_3		= 0xC0,
+		VK_OEM_4		= 0xDB,
+		VK_OEM_5		= 0xDC,
+		VK_OEM_6		= 0xDD,
+		VK_OEM_7		= 0xDE,
+		VK_OEM_8		= 0xDF,
+		VK_OEM_102		= 0xE2,
+		VK_PROCESSKEY		= 0xE5,
+		VK_F13			= 0xF000,
+		VK_F14			= 0xF001,
+		VK_F15			= 0xF002,
+		VK_F16			= 0xF003,
+	}
+
+	internal enum TtyKeys {
+		XK_BackSpace		= 0xff08,  /* Back space, back char */
+		XK_Tab			= 0xff09,
+		XK_Linefeed		= 0xff0a,  /* Linefeed, LF */
+		XK_Clear		= 0xff0b,
+		XK_Return		= 0xff0d,  /* Return, enter */
+		XK_Pause		= 0xff13,  /* Pause, hold */
+		XK_Scroll_Lock		= 0xff14,
+		XK_Sys_Req		= 0xff15,
+		XK_Escape		= 0xff1b,
+		XK_Delete		= 0xffff  /* Delete, rubout */
+	}
+
+	internal enum KeypadKeys {
+		XK_KP_Space		= 0xff80,
+		XK_KP_Tab		= 0xff89,
+		XK_KP_Enter		= 0xff8d,  /* Enter */
+		XK_KP_F1		= 0xff91,  /* PF1, KP_A, ... */
+		XK_KP_F2		= 0xff92,
+		XK_KP_F3		= 0xff93,
+		XK_KP_F4		= 0xff94,
+		XK_KP_Home		= 0xff95,
+		XK_KP_Left		= 0xff96,
+		XK_KP_Up		= 0xff97,
+		XK_KP_Right		= 0xff98,
+		XK_KP_Down		= 0xff99,
+		XK_KP_Prior		= 0xff9a,
+		XK_KP_Page_Up		= 0xff9a,
+		XK_KP_Next		= 0xff9b,
+		XK_KP_Page_Down		= 0xff9b,
+		XK_KP_End		= 0xff9c,
+		XK_KP_Begin		= 0xff9d,
+		XK_KP_Insert		= 0xff9e,
+		XK_KP_Delete		= 0xff9f,
+		XK_KP_Equal		= 0xffbd,  /* Equals */
+		XK_KP_Multiply		= 0xffaa,
+		XK_KP_Add		= 0xffab,
+		XK_KP_Separator		= 0xffac,  /* Separator, often comma */
+		XK_KP_Subtract		= 0xffad,
+		XK_KP_Decimal		= 0xffae,
+		XK_KP_Divide		= 0xffaf,
+
+		XK_KP_0			= 0xffb0,
+		XK_KP_1			= 0xffb1,
+		XK_KP_2			= 0xffb2,
+		XK_KP_3			= 0xffb3,
+		XK_KP_4			= 0xffb4,
+		XK_KP_5			= 0xffb5,
+		XK_KP_6			= 0xffb6,
+		XK_KP_7			= 0xffb7,
+		XK_KP_8			= 0xffb8,
+		XK_KP_9			= 0xffb9
 	}
 }
 

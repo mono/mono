@@ -1025,6 +1025,12 @@ namespace System.Windows.Forms {
 		FullApplicationMondal	= 3
 	}
 
+        internal enum KeyMasks {
+                ShiftMask               = (1 << 0),
+                LockMask 		= (1 << 1),
+                ControlMask		= (1 << 2)
+        }
+
 	internal enum PropertyMode {
 		Replace			= 0,
 		Prepend			= 1,

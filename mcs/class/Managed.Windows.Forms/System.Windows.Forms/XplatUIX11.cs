@@ -85,6 +85,9 @@ namespace System.Windows.Forms {
 		private static int		atom;			// X Atom
 		private static int		net_wm_state;		// X Atom
 		private static int		async_method;
+
+		private static int		post_message;
+
 		private static uint		default_colormap;	// X Colormap ID
 		internal static Keys		key_state;
 		internal static MouseButtons	mouse_state;
@@ -104,8 +107,9 @@ namespace System.Windows.Forms {
 		internal static Caret		caret;			// To display a blinking caret
 
 		private static Hashtable	handle_data;
-		private XEventQueue		message_queue;
+		private static XEventQueue	message_queue;
 
+		private X11Keyboard keyboard;
 		private ArrayList timer_list;
 		private Thread timer_thread;
 		private AutoResetEvent timer_wait;
@@ -202,6 +206,8 @@ namespace System.Windows.Forms {
 			// Now regular initialization
 			SetDisplay(XOpenDisplay(IntPtr.Zero));
 
+			keyboard = new X11Keyboard (DisplayHandle);
+			
 			listen = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 0);
 			listen.Bind (ep);
@@ -360,6 +366,7 @@ namespace System.Windows.Forms {
 				wm_state_above=XInternAtom(display_handle, "_NET_WM_STATE_ABOVE", false);
 				atom=XInternAtom(display_handle, "ATOM", false);
 				async_method = XInternAtom(display_handle, "_SWF_AsyncAtom", false);
+				post_message = XInternAtom (display_handle, "_SWF_PostMessageAtom", false);
 				hover.hevent = XInternAtom(display_handle, "_SWF_HoverAtom", false);
 
 				handle_data = new Hashtable ();
@@ -787,7 +794,7 @@ namespace System.Windows.Forms {
 			for (int i = 0; i < KeyMapping.Length; i++) {
 				if (KeyMapping[i].X11Key == keysym) {
 					msg.wParam = (IntPtr) KeyMapping[i].Win32Key;
-					Console.WriteLine("Got special key {0} {1:x} ", keysym, keysym);
+					// Console.WriteLine("Got special key {0} {1:x} ", (VirtualKeys) keysym, keysym);
 					break;
 				}							
 			}
@@ -796,7 +803,7 @@ namespace System.Windows.Forms {
 				char[] keychars;				
 				keychars=keys.ToCharArray(0, 1);
 				msg.wParam=(IntPtr)keychars[0];
-				Console.WriteLine("Got key {0} {1:x} ", keysym, keysym);
+				// Console.WriteLine("Got key {0} {1:x} ", (VirtualKeys) keysym, keysym);
 			}
 
 			Marshal.FreeHGlobal (buffer);
@@ -977,14 +984,12 @@ namespace System.Windows.Forms {
 			//
 			switch(xevent.type) {
 				case XEventName.KeyPress: {
-					msg.message = Msg.WM_KEYDOWN;
-					CreateKeyBoardMsg (xevent, ref msg);
+					keyboard.KeyEvent (hWnd, xevent, ref msg);
 					break;
 				}
 
 				case XEventName.KeyRelease: {
-					msg.message=Msg.WM_KEYUP;
-					CreateKeyBoardMsg (xevent, ref msg);
+					keyboard.KeyEvent (hWnd, xevent, ref msg);
 					break;
 				}
 
@@ -1193,7 +1198,11 @@ namespace System.Windows.Forms {
 						msg.message = Msg.WM_MOUSEHOVER;
 						msg.wParam = GetMousewParam(0);
 						msg.lParam = (IntPtr) (xevent.ClientMessageEvent.ptr1);
-
+					} else if (xevent.ClientMessageEvent.message_type == (IntPtr) insert_message) {
+						msg.message = (Msg) xevent.ClientMessageEvent.ptr1.ToInt32 ();
+						msg.wParam = xevent.ClientMessageEvent.ptr2;
+						msg.lParam = xevent.ClientMessageEvent.ptr3;
+						Console.WriteLine ("inserted message:  {0}  {1}	 {2}", msg.message, (char) msg.wParam, msg.lParam);
 					} else {
 						msg.message=Msg.WM_QUIT;
 						msg.wParam=IntPtr.Zero;
@@ -1218,15 +1227,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override bool TranslateMessage(ref MSG msg) {
-#if notyet
-			switch (msg.message) {
-				case Msg.WM_KEYDOWN: {
-					switch(msg.lParam) {
-					}
-				}
-			}
-#endif
-			return true;
+			return keyboard.TranslateMessage (ref msg);
 		}
 
 		internal override IntPtr DispatchMessage(ref MSG msg) {
@@ -1462,7 +1463,7 @@ namespace System.Windows.Forms {
 		internal override void SendAsyncMethod (AsyncMethodData method)
 		{
 			XEvent xevent = new XEvent ();
-			
+
 			xevent.type = XEventName.ClientMessage;
 			xevent.ClientMessageEvent.display = DisplayHandle;
 			xevent.ClientMessageEvent.window = IntPtr.Zero;
@@ -1473,6 +1474,23 @@ namespace System.Windows.Forms {
 			message_queue.EnqueueLocked (xevent);
 
 			WakeupMain ();
+		}
+
+		// must be called from main thread
+		public static void PostMessage (IntPtr hwnd, Msg message, IntPtr wparam, IntPtr lparam)
+		{
+			XEvent xevent = new XEvent ();
+
+			xevent.type = XEventName.ClientMessage;
+			xevent.ClientMessageEvent.display = DisplayHandle;
+			xevent.ClientMessageEvent.window = hwnd;
+			xevent.ClientMessageEvent.message_type = (IntPtr) XplatUIX11.insert_message;
+			xevent.ClientMessageEvent.format = 32;
+			xevent.ClientMessageEvent.ptr1 = (IntPtr) message;
+			xevent.ClientMessageEvent.ptr2 = wparam;
+			xevent.ClientMessageEvent.ptr3 = lparam;
+
+			message_queue.Enqueue (xevent);
 		}
 
 		private void WakeupMain ()

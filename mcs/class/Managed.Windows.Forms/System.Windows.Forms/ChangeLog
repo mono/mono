@@ -1,3 +1,13 @@
+2004-12-15  Jackson Harper  <jackson@ximian.com>
+
+	* X11Structs.cs: Add key mask values
+	* XplatUIStruct.cs: Add keyboard event flags, and keyboard definitions
+	* X11Keyboard.cs: New file - Extrapolates and interpolates key
+	down/up foo into WM_CHAR foo
+	* KeyboardLayouts.cs: Common keyboard layouts
+	* XplatUIX11.cs: Add the keyboard driver. Add functionality to
+	post messages into the main queue.
+
 2004-12-13  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Button.cs: implement ProcessMnemonic
