@@ -156,7 +156,7 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public object [] OutArgs {
 			get {
-				if (_outArgs == null) {
+				if (_outArgs == null && _args != null) {
 					if (_inArgInfo == null) _inArgInfo = new ArgInfo (MethodBase, ArgInfoType.Out);
 					_outArgs = _inArgInfo.GetInOutArgs (_args);
 				}					
