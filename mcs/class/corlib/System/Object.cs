@@ -80,7 +80,7 @@ namespace System {
 		// <summary>
 		//   Shallow copy of the object.
 		// </summary>
-		protected object MemberWiseClone ()
+		protected object MemberwiseClone ()
 		{
 			return null;	
 		}

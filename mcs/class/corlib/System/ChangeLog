@@ -1,5 +1,7 @@
 2001-08-10  Dietmar Maurer  <dietmar@ximian.com>
 
+	* Object.cs: changed MemberWiseClone to MemberwiseClone
+
 	* common.src: removed UriFormatException.cs because the file is
 	not there.
 
