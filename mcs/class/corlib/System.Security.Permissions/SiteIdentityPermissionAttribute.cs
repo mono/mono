@@ -15,13 +15,16 @@ namespace System.Security.Permissions
 			 AttributeTargets.Struct | AttributeTargets.Constructor |
 			 AttributeTargets.Method)]
 	[Serializable]
-	public sealed class SiteIdentityPermissionAttribute : IsolatedStoragePermissionAttribute
+	public sealed class SiteIdentityPermissionAttribute : CodeAccessSecurityAttribute
 	{
 		// Fields
 		private string site;
 		
 		// Constructor
-		public SiteIdentityPermissionAttribute (SecurityAction action) : base (action) {}
+		public SiteIdentityPermissionAttribute (SecurityAction action)
+			: base (action)
+		{
+		}
 		
 		// Properties
 		public string Site

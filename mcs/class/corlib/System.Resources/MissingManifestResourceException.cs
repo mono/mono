@@ -13,7 +13,7 @@ using System.Runtime.Serialization;
 namespace System.Resources
 {
 
-	public class MissingManifestResourceException: Exception
+	public class MissingManifestResourceException: SystemException
 	{
 		private string param;
 		

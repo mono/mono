@@ -1,3 +1,7 @@
+2002-03-12  Duncan Mak  <duncan@ximian.com>
+
+	* SecurityException.cs: Inherit from SystemException, not Exception.
+
 2002-02-23  Nick Drochak  <ndrochak@gol.com>
 
 	* SecurityElement.cs: fixed typo

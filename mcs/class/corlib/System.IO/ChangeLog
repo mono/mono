@@ -1,3 +1,15 @@
+2002-03-12  Duncan Mak  <duncan@ximian.com>
+
+	* EndOfStreamException.cs:
+	* FileLoadException.cs:
+	* FileNotFoundException.cs:
+	* PathTooLongException.cs: Changed the base classes to IOException
+	instead of SystemException.
+
+	* IOException.cs: Added missing constructors.
+	
+	
+
 2002-03-07  Nick Drochak  <ndrochak@gol.com>
 
 	* FileMode.cs: Docs don't say this should be explicitly derived from

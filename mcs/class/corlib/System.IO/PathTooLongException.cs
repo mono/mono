@@ -9,12 +9,13 @@
 
 using System;
 using System.Globalization;
+using System.IO;
 using System.Runtime.Serialization;
 
 namespace System.IO
 {
 	   [Serializable]
-	   public class PathTooLongException : SystemException
+	   public class PathTooLongException : IOException
 	   {
 			 // Constructors
 			 public PathTooLongException ()

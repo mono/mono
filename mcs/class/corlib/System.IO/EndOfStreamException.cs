@@ -9,12 +9,13 @@
 
 using System;
 using System.Globalization;
+using System.IO;
 using System.Runtime.Serialization;
 
 namespace System.IO
 {
 	   [Serializable]
-	   public class EndOfStreamException : SystemException
+	   public class EndOfStreamException : IOException
 	   {
 			 // Constructors
 			 public EndOfStreamException ()

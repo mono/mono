@@ -1,3 +1,8 @@
+2002-03-12  Duncan Mak  <duncan@ximian.com>
+
+	* MissingManifestResourceException.cs: This should inherit from
+	SystemException, not Exception.
+
 2002-01-26  Nick Drochak  <ndrochak@gol.com>
 
 	* ResourceReader.cs: Finsished reading resource files with just strings

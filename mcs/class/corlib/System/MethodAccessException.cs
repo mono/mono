@@ -14,7 +14,7 @@ using System.Runtime.Serialization;
 namespace System
 {
 	[Serializable]
-	public class MethodAccessException : SystemException
+	public class MethodAccessException : MemberAccessException
 	{
 		// Constructors
 		public MethodAccessException ()

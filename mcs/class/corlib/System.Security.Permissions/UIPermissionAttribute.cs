@@ -15,7 +15,7 @@ namespace System.Security.Permissions
 			 AttributeTargets.Struct | AttributeTargets.Constructor |
 			 AttributeTargets.Method)]
 	[Serializable]
-	public sealed class UIPermissionAttribute : IsolatedStoragePermissionAttribute
+	public sealed class UIPermissionAttribute : CodeAccessSecurityAttribute
 	{
 
 		// Fields

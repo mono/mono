@@ -7,9 +7,12 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-namespace System.IO {
+using System.Runtime.Serialization;
 
+namespace System.IO {
+	[Serializable]
 	public class IOException : SystemException {
+
 		// Constructors
 		public IOException ()
 			: base ("I/O Error")
@@ -24,6 +27,17 @@ namespace System.IO {
 		public IOException (string message, Exception inner)
 			: base (message, inner)
 		{
+		}
+
+		public IOException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{
+		}
+
+		public IOException (string message, int hresult)
+			: base (message)
+		{
+			this.HResult = hresult;
 		}
 	}
 }

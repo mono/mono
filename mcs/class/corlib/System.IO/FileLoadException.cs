@@ -9,11 +9,12 @@
 //
 
 using System.Globalization;
+using System.IO;
 using System.Runtime.Serialization;
 
 namespace System.IO {
 	[Serializable]
-	public class FileLoadException : SystemException {
+	public class FileLoadException : IOException {
 
 		// Fields
 		string msg;

@@ -11,7 +11,7 @@ using System.Runtime.Serialization;
 using System.Globalization;
 
 namespace System.Security {
-	public class SecurityException : Exception {
+	public class SecurityException : SystemException {
 
 		// Fields
 		string permissionState;

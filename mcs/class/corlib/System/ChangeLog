@@ -1,5 +1,10 @@
 2002-03-12  Duncan Mak  <duncan@ximian.com>
 
+	* FieldAccessException.cs: 
+	* MethodAccessException.cs: 
+	* PlatformNotSupportedException.cs: Inherit from
+	MemberAccessException, not SystemException.
+
 	* ObsoleteAttribute.cs: Made Message and IsError properties
 	instead of fields.
 

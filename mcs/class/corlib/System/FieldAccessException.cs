@@ -13,7 +13,7 @@ using System.Runtime.Serialization;
 namespace System
 {
 	[Serializable]
-	public class FieldAccessException : SystemException
+	public class FieldAccessException : MemberAccessException
 	{
 		// Constructors
 		public FieldAccessException ()

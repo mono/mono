@@ -8,11 +8,12 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 using System.Globalization;
+using System.IO;
 using System.Runtime.Serialization;
 
 namespace System.IO {
 
-	public class FileNotFoundException : SystemException {
+	public class FileNotFoundException : IOException {
 		private string fileName;
 		private string fusionLog;
 		private string msg;
