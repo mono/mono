@@ -1,4 +1,20 @@
+2002-05-27  Dietmar Maurer  <dietmar@ximian.com>
+
+	* helpers.c (map_arg_type): move some generic helper function into
+	this file.
+
+	* mono.c (usage): new option --breakonex 
+
+	* exception.c (arch_exc_is_caught): only return FALSE if really
+	unhandled.
+
+	* jit.c (mono_thread_abort): free jit_tls
+
 2002-05-24  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg (stmt): use memmove to cope with overlapping
+	blocks. This is not required by the specs, so we can remove it
+	later if it turns out to be too slow (and use memcpy).
 
 	* jit.c (mono_analyze_stack): moved const. folding from x86.brg
 
