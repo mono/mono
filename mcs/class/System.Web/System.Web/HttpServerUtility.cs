@@ -46,6 +46,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Text;
 using System.Web.Hosting;
+using System.Web.Util;
 
 namespace System.Web
 {
@@ -199,7 +200,7 @@ namespace System.Web
 
 			HttpRequest request = _Context.Request;
 			string oldFilePath = request.FilePath;
-			request.SetFilePath (path);
+			request.SetFilePath (UrlUtils.Combine (_Context.Request.BaseVirtualDir, path));
 			string oldQuery = request.QueryStringRaw;
 			
 			if (!preserveQuery)	request.QueryStringRaw = query;
