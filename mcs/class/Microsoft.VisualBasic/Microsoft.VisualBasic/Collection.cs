@@ -299,9 +299,9 @@ namespace Microsoft.VisualBasic {
 		}
 
 		public void Add (System.Object Item, 
-			[Optional, __DefaultArgumentValue(null)] String Key, 
-			[Optional, __DefaultArgumentValue(null)] System.Object Before, 
-			[Optional, __DefaultArgumentValue(null)] System.Object After)
+			[Optional, __DefaultArgumentValue((object)null)] String Key, 
+			[Optional, __DefaultArgumentValue((object)null)] System.Object Before, 
+			[Optional, __DefaultArgumentValue((object)null)] System.Object After)
 		{
 			int Position = int.MinValue;
 			

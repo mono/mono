@@ -1,3 +1,14 @@
+2005-03-16 Manjula GHM <mmanjula@novell.com>
+	   Ankit Jain <radical@gmail.com>
+
+	  * Collection.cs:
+	  * DateAndTime.cs:
+	  * ErrObject.cs:
+	  * FileSyste.cs:
+	  * Strings.cs:
+	  Added type casting in some places and moved "optional" attribute to be AFTER that __Default* attribute
+          	
+
 2005-02-14 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* FileSystem.cs, CompilerServices/FlowControl.cs : killed unneeded local variables (warnings).
 	* CompilerServices/ObjectType.cs : killed unneeded private method (diagnosed from warnings on local vars)

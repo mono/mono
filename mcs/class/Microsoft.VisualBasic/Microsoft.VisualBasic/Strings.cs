@@ -142,7 +142,7 @@ namespace Microsoft.VisualBasic
 					      string Match, 
 					      [Optional, __DefaultArgumentValue(true)] 
 					      bool Include,
-					      [OptionCompare, Optional, __DefaultArgumentValue(CompareMethod.Binary)] 
+					      [Optional, __DefaultArgumentValue((int)CompareMethod.Binary), OptionCompare] 
 					      CompareMethod Compare)
 		{
 			if (Source == null)
@@ -162,7 +162,7 @@ namespace Microsoft.VisualBasic
 					      string Match, 
 					      [Optional, __DefaultArgumentValue(true)] 
 					      bool Include,
-					      [Optional, __DefaultArgumentValue(CompareMethod.Binary)] 
+					      [Optional, __DefaultArgumentValue((int)CompareMethod.Binary)] 
 					      CompareMethod Compare)
 		{
 			if (Source == null)
@@ -237,7 +237,7 @@ namespace Microsoft.VisualBasic
 					    [Optional, __DefaultArgumentValue("")]string style)
 		{
 			string returnstr=null;
-			string expstring=expression.GetType().ToString();;
+			string expstring=expression.GetType().ToString();
 			switch(expstring)
 			{
 			case "System.Char":
@@ -373,11 +373,11 @@ namespace Microsoft.VisualBasic
 		public static string FormatCurrency(object Expression, 
 						    [Optional, __DefaultArgumentValue(-1)] 
 						    int NumDigitsAfterDecimal, 
-						    [Optional, __DefaultArgumentValue(TriState.UseDefault)] 
+						    [Optional, __DefaultArgumentValue((int)TriState.UseDefault)] 
 						    TriState IncludeLeadingDigit, 
-						    [Optional, __DefaultArgumentValue(TriState.UseDefault)] 
+						    [Optional, __DefaultArgumentValue((int)TriState.UseDefault)] 
 						    TriState UseParensForNegativeNumbers, 
-						    [Optional, __DefaultArgumentValue(TriState.UseDefault)] 
+						    [Optional, __DefaultArgumentValue((int)TriState.UseDefault)] 
 						    TriState GroupDigits)
 		{
 			if (NumDigitsAfterDecimal > 99 || NumDigitsAfterDecimal < -1 )
@@ -434,7 +434,7 @@ namespace Microsoft.VisualBasic
 		}
 
 		public static string FormatDateTime(DateTime Expression, 
-						    [Optional, __DefaultArgumentValue(DateFormat.GeneralDate)] 
+						    [Optional, __DefaultArgumentValue((int)DateFormat.GeneralDate)] 
 						    DateFormat NamedFormat)
 		{
 			switch(NamedFormat) {
@@ -456,11 +456,11 @@ namespace Microsoft.VisualBasic
 		public static string FormatNumber(object Expression, 
 						  [Optional, __DefaultArgumentValue(-1)] 
 						  int NumDigitsAfterDecimal, 
-						  [Optional, __DefaultArgumentValue(TriState.UseDefault)] 
+						  [Optional, __DefaultArgumentValue((int)TriState.UseDefault)] 
 						  TriState IncludeLeadingDigit, 
-						  [Optional, __DefaultArgumentValue(TriState.UseDefault)] 
+						  [Optional, __DefaultArgumentValue((int)TriState.UseDefault)] 
 						  TriState UseParensForNegativeNumbers, 
-						  [Optional, __DefaultArgumentValue(TriState.UseDefault)] 
+						  [Optional, __DefaultArgumentValue((int)TriState.UseDefault)] 
 						  TriState GroupDigits)
 		{
 			if (NumDigitsAfterDecimal > 99 || NumDigitsAfterDecimal < -1 )
@@ -517,11 +517,11 @@ namespace Microsoft.VisualBasic
 		public static string FormatPercent(object Expression, 
 						   [Optional, __DefaultArgumentValue(-1)] 
 						   int NumDigitsAfterDecimal, 
-						   [Optional, __DefaultArgumentValue(TriState.UseDefault)] 
+						   [Optional, __DefaultArgumentValue((int)TriState.UseDefault)] 
 						   TriState IncludeLeadingDigit, 
-						   [Optional, __DefaultArgumentValue(TriState.UseDefault)] 
+						   [Optional, __DefaultArgumentValue((int)TriState.UseDefault)] 
 						   TriState UseParensForNegativeNumbers, 
-						   [Optional, __DefaultArgumentValue(TriState.UseDefault)] 
+						   [Optional, __DefaultArgumentValue((int)TriState.UseDefault)] 
 						   TriState GroupDigits)
 		{
 			if (NumDigitsAfterDecimal > 99 || NumDigitsAfterDecimal < -1 )
@@ -591,7 +591,7 @@ namespace Microsoft.VisualBasic
 
 		public static int InStr(string String1, 
 					string String2, 
-					[OptionCompare, Optional, __DefaultArgumentValue(CompareMethod.Binary)] 
+					[Optional, __DefaultArgumentValue((int)CompareMethod.Binary), OptionCompare] 
 					CompareMethod Compare)
 		{
 			return InStr(1, String1, String2, Compare);
@@ -600,7 +600,7 @@ namespace Microsoft.VisualBasic
 		public static int InStr(int Start, 
 					string String1, 
 					string String2, 
-					[OptionCompare, Optional, __DefaultArgumentValue(CompareMethod.Binary)] 
+					[Optional, __DefaultArgumentValue((int)CompareMethod.Binary), OptionCompare] 
 					CompareMethod Compare)
 		{
 			if (Start < 1)
@@ -634,7 +634,7 @@ namespace Microsoft.VisualBasic
 					   string StringMatch, 
 					   [Optional, __DefaultArgumentValue(-1)] 
 					   int Start,
-					   [OptionCompare, Optional, __DefaultArgumentValue(CompareMethod.Binary)] 
+					   [Optional, __DefaultArgumentValue((int)CompareMethod.Binary), OptionCompare] 
 					   CompareMethod Compare)
 		{
 			if ((Start == 0) || (Start < -1))
@@ -927,7 +927,7 @@ namespace Microsoft.VisualBasic
 					     int Start,
 					     [Optional, __DefaultArgumentValue(-1)] 
 					     int Count,
-					     [OptionCompare, Optional, __DefaultArgumentValue(CompareMethod.Binary)] 
+					     [Optional, __DefaultArgumentValue((int)CompareMethod.Binary), OptionCompare] 
 					     CompareMethod Compare)
 		{
 
@@ -984,11 +984,11 @@ namespace Microsoft.VisualBasic
 		}
 
 		public static string[] Split(string Expression, 
-					     [Optional, __DefaultArgumentValue("")] 
+					     [Optional, __DefaultArgumentValue(" ")] 
 					     string Delimiter,
 					     [Optional, __DefaultArgumentValue(-1)] 
 					     int Limit,
-					     [OptionCompare, Optional, __DefaultArgumentValue(CompareMethod.Binary)] 
+					     [Optional, __DefaultArgumentValue((int)CompareMethod.Binary), OptionCompare] 
 					     CompareMethod Compare)
 		{
 			if (Expression == null)
@@ -1027,7 +1027,7 @@ namespace Microsoft.VisualBasic
 
 		public static int StrComp(string String1, 
 					  string String2,
-					  [OptionCompare, Optional, __DefaultArgumentValue(CompareMethod.Binary)] 
+					  [Optional, __DefaultArgumentValue((int)CompareMethod.Binary), OptionCompare] 
 					  CompareMethod Compare)
 		{
 			if (String1 == null)

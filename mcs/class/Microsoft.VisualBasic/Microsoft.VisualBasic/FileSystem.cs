@@ -121,8 +121,8 @@ namespace Microsoft.VisualBasic
 					    int fileNumber,
 					    String fileName,
 					    OpenMode mode,
-					    [Optional, __DefaultArgumentValue((OpenAccess)(-1))] OpenAccess access, 
-					    [Optional, __DefaultArgumentValue((OpenShare)(-1))] OpenShare share, 
+					    [Optional, __DefaultArgumentValue((int)(-1))] OpenAccess access, 
+					    [Optional, __DefaultArgumentValue((int)(-1))] OpenShare share, 
 					    [Optional, __DefaultArgumentValue(-1)] int recordLength)
 
 		{
@@ -159,7 +159,7 @@ namespace Microsoft.VisualBasic
 
 		public static void FilePut(int fileNumber,
 					   bool value,
-					   [Optional, __DefaultArgumentValue(-1)] long  recordNumber)
+					   [Optional, __DefaultArgumentValue((long)-1)] long  recordNumber)
 		{
 			checkRecordNumber(recordNumber,false);
 			VBFile vbFile = getVBFile(fileNumber);
@@ -719,7 +719,7 @@ namespace Microsoft.VisualBasic
 		}
 
 		public static /*synchronized*/ String Dir(String pathName, 
-							  [Optional, __DefaultArgumentValue((FileAttribute)0)] 
+							  [Optional, __DefaultArgumentValue((int)0)] 
 							  FileAttribute fileAttribute)
 		{
 			_fileIndex = 0;
