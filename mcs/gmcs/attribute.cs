@@ -89,26 +89,34 @@ namespace Mono.CSharp {
                 ///   Tries to resolve the type of the attribute. Flags an error if it can't.
                 /// </summary>
 		private Type CheckAttributeType (EmitContext ec) {
-			TypeExpr t;
-			bool isattributeclass = true;
-			
-			t = RootContext.LookupType (ec.DeclSpace, Name, true, Location);
-			if (t != null) {
-				isattributeclass = t.IsAttribute;
-				if (isattributeclass)
-					return t.ResolveType (ec);
+			TypeExpr t1 = RootContext.LookupType (ec.DeclSpace, Name, true, Location);
+			// FIXME: Shouldn't do this for quoted attributes: [@A]
+			TypeExpr t2 = RootContext.LookupType (ec.DeclSpace, Name + "Attribute", true, Location);
+
+			String err0616 = null;
+			if (t1 != null && ! t1.IsAttribute) {
+				t1 = null;
+				err0616 = "'" + Name + "': is not an attribute class";
 			}
-			t = RootContext.LookupType (ec.DeclSpace, Name + "Attribute", true, Location);
-			if (t != null) {
-				if (t.IsAttribute)
-					return t.ResolveType (ec);
+			if (t2 != null && ! t2.IsAttribute) {
+				t2 = null;
+				err0616 = (err0616 != null) 
+					? "Neither '" + Name + "' nor '" + Name + "Attribute' is an attribute class"
+					: "'" + Name + "Attribute': is not an attribute class";
 			}
-			if (!isattributeclass) {
-				Report.Error (616, Location, "'" + Name + "': is not an attribute class");
+
+			if (t1 != null && t2 != null) {
+				Report.Error(1614, Location, "'" + Name + "': is ambiguous; " 
+					     + " use either '@" + Name + "' or '" + Name + "Attribute'");
 				return null;
-			}
-			if (t != null) {
-				Report.Error (616, Location, "'" + Name + "Attribute': is not an attribute class");
+  			}
+
+			if (t1 != null)
+				return t1.ResolveType (ec);
+			if (t2 != null)
+				return t2.ResolveType (ec);
+			if (err0616 != null) {
+				Report.Error (616, Location, err0616);
 				return null;
 			}
 			Report.Error (
@@ -260,6 +268,8 @@ namespace Mono.CSharp {
 			ArrayList field_values = null;
 			ArrayList prop_values = null;
 
+			Hashtable seen_names = new Hashtable();
+
 			if (named_args.Count > 0) {
 				field_infos = new ArrayList ();
 				prop_infos  = new ArrayList ();
@@ -272,7 +282,13 @@ namespace Mono.CSharp {
 				string member_name = (string) de.Key;
 				Argument a  = (Argument) de.Value;
 				Expression e;
-				
+
+				if (seen_names.Contains(member_name)) {
+					Report.Error(643, Location, "'" + member_name + "' duplicate named attribute argument");
+					return null;
+				}
+				seen_names.Add(member_name, 1);
+
 				if (!a.Resolve (ec, Location))
 					return null;
 

@@ -2877,9 +2877,6 @@ namespace Mono.CSharp {
 				if (!(instance_expr is IMemoryLocation)){
 					tempo = new LocalTemporary (ec, instance_expr.Type);
 					
-					if (ec.RemapToProxy)
-						ec.EmitThis ();
-			
 					InstanceExpression.Emit (ec);
 					tempo.Store (ec);
 					ml = tempo;
@@ -2888,10 +2885,7 @@ namespace Mono.CSharp {
 				
 				ml.AddressOf (ec, AddressOp.Load);
 			} else {
-				if (ec.RemapToProxy)
-					ec.EmitThis ();
-				else
-					instance_expr.Emit (ec);
+				instance_expr.Emit (ec);
 			}
 			if (is_volatile)
 				ig.Emit (OpCodes.Volatile);
@@ -2919,10 +2913,7 @@ namespace Mono.CSharp {
 
 					ml.AddressOf (ec, AddressOp.Store);
 				} else {
-					if (ec.RemapToProxy)
-						ec.EmitThis ();
-					else
-						instance.Emit (ec);
+					instance.Emit (ec);
 				}
 			}
 

@@ -401,7 +401,7 @@ namespace Mono.CSharp {
 			if (indexers == null)
 				indexers = new ArrayList ();
 
-			if (i.InterfaceType != null)
+			if (i.ExplicitInterfaceName != null)
 				indexers.Insert (0, i);
 			else
 				indexers.Add (i);
@@ -1073,11 +1073,11 @@ namespace Mono.CSharp {
 
 		//
 		// Defines the indexers, and also verifies that the IndexerNameAttribute in the
-		// class is consisten.  Either it is `Item' or it is the name defined by all the
+		// class is consistent.  Either it is `Item' or it is the name defined by all the
 		// indexers with the `IndexerName' attribute.
 		//
 		// Turns out that the IndexerNameAttribute is applied to each indexer,
-		// but it is never emitted, instead a DefaultName attribute is attached
+		// but it is never emitted, instead a DefaultMember attribute is attached
 		// to the class.
 		//
 		void DefineIndexers ()
@@ -1090,17 +1090,15 @@ namespace Mono.CSharp {
 			// a normal indexer.  See bug #37714.
 			//
 
-			ArrayList list = new ArrayList ();
-			foreach (Indexer i in Indexers){
+			// Invariant maintained by AddIndexer(): All explicit interface indexers precede normal indexers
+			bool seen_normal_indexers = false;
+			foreach (Indexer i in Indexers) {
 				if (i.MemberName.TypeName != null)
-					list.Add (i);
+					seen_normal_indexers = true;
+				else if (seen_normal_indexers)
+					throw new Exception ("Internal Error: 'Indexers' array not sorted properly.");
 			}
 			foreach (Indexer i in Indexers){
-				if (i.MemberName.TypeName == null)
-					list.Add (i);
-			}
-
-			foreach (Indexer i in list){
 				string name;
 
 				i.Define (this);
@@ -1122,7 +1120,8 @@ namespace Mono.CSharp {
 					668, "Two indexers have different names, " +
 					" you should use the same name for all your indexers");
 			}
-			if (class_indexer_name == null)
+
+			if (seen_normal_indexers && class_indexer_name == null)
 				class_indexer_name = "Item";
 			IndexerName = class_indexer_name;
 		}
@@ -1258,10 +1257,8 @@ namespace Mono.CSharp {
 			if (events != null)
 				DefineMembers (events, defined_names);
 
-			if (indexers != null) {
+			if (indexers != null)
 				DefineIndexers ();
-			} else
-				IndexerName = "Item";
 
 			if (operators != null){
 				DefineMembers (operators, null);
@@ -1877,9 +1874,10 @@ namespace Mono.CSharp {
 			if (indexers != null){
 				foreach (Indexer ix in indexers)
 					ix.Emit (this);
-				
-				CustomAttributeBuilder cb = EmitDefaultMemberAttr ();
-				TypeBuilder.SetCustomAttribute (cb);
+				if (IndexerName != null) {
+					CustomAttributeBuilder cb = EmitDefaultMemberAttr ();
+					TypeBuilder.SetCustomAttribute (cb);
+				}
 			}
 			
 			if (fields != null)

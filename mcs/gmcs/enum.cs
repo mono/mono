@@ -141,10 +141,9 @@ namespace Mono.CSharp {
 			    UnderlyingType != TypeManager.short_type &&
 			    UnderlyingType != TypeManager.ushort_type &&
 			    UnderlyingType != TypeManager.byte_type  &&
-			    UnderlyingType != TypeManager.char_type  &&
 			    UnderlyingType != TypeManager.sbyte_type) {
 				Report.Error (1008, Location,
-					      "Type byte, sbyte, short, char, ushort, int, uint, " +
+					      "Type byte, sbyte, short, ushort, int, uint, " +
 					      "long, or ulong expected (got: " +
 					      TypeManager.CSharpName (UnderlyingType) + ")");
 				return null;
