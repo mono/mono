@@ -1,3 +1,7 @@
+2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
+	
+	* Evidence.cs: added TODO for serialization
+
 2004-06-10  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* Publisher.cs: removed extra finalizer to fix public API 

@@ -41,6 +41,7 @@ using System.Security.Permissions;
 namespace System.Security.Policy {
 
 	[Serializable]
+	[MonoTODO ("Fix serialization compatibility with MS.NET")]
 	public sealed class Evidence : ICollection, IEnumerable {
 	
 		private bool _locked;
