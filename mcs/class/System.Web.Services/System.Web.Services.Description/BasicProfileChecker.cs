@@ -31,6 +31,7 @@
 #if NET_2_0
 
 using System.Xml.Schema;
+using System.Xml;
 
 namespace System.Web.Services.Description 
 {
@@ -106,7 +107,7 @@ namespace System.Web.Services.Description
 		{
 			if (s.TargetNamespace == null || s.TargetNamespace == "") {
 				foreach (XmlSchemaObject ob in s.Items)
-					if (!(ob is XmlSchemaImport) && !(ob is XmlSchemaAnotation)) {
+					if (!(ob is XmlSchemaImport) && !(ob is XmlSchemaAnnotation)) {
 						ctx.ReportRuleViolation (s, BasicProfileRules.R2105);
 						break;
 					}
@@ -127,7 +128,7 @@ namespace System.Web.Services.Description
 			XmlAttribute[] uatts = value.UnhandledAttributes;
 			if (uatts != null) {
 				foreach (XmlAttribute at in uatts)
-					if (at.LocalName == "arrayType" && at.NamespaceURI == XmlSerializer.WsdlNamespace)
+					if (at.LocalName == "arrayType" && at.NamespaceURI == "http://schemas.xmlsoap.org/wsdl/")
 						ctx.ReportRuleViolation (value, BasicProfileRules.R2111);
 			}
 		}
@@ -206,21 +207,21 @@ namespace System.Web.Services.Description
 				foreach (XmlSchema s in ctx.ServiceDescription.Types.Schemas)
 				{
 					if (s.TargetNamespace == name.Namespace) return;
-					foreach (XmlSchemaImport i in s.Imports)
-						if (i.Namespace == name.Namespace) return;
+					foreach (XmlSchemaObject i in s.Includes)
+						if ((i is XmlSchemaImport) && ((XmlSchemaImport)i).Namespace == name.Namespace) return;
 				}
 			}
 			ctx.ReportRuleViolation (element, BasicProfileRules.R2101);
 		}
 		
-		void CheckSchemaQName (ConformanceCheckContext ctx, XmlSchema schema, object element, XmlQualifiedName name)
+		void CheckSchemaQName (ConformanceCheckContext ctx, object element, XmlQualifiedName name)
 		{
 			if (name == null || name == XmlQualifiedName.Empty) return;
 			if (name.Namespace == "") return;
 			if (ctx.CurrentSchema.TargetNamespace == name.Namespace) return;
 			
-			foreach (XmlSchemaImport i in ctx.CurrentSchema.Imports)
-				if (i.Namespace == name.Namespace) return;
+			foreach (XmlSchemaObject i in ctx.CurrentSchema.Includes)
+				if ((i is XmlSchemaImport) && ((XmlSchemaImport)i).Namespace == name.Namespace) return;
 				
 			ctx.ReportRuleViolation (element, BasicProfileRules.R2102);
 		}

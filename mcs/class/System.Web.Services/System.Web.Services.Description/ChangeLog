@@ -1,5 +1,11 @@
 2004-07-28  Lluis Sanchez Gual  <lluis@ximian.com>
 
+	* BasicProfileChecker.cs, ConformanceChecker.cs, 
+	  WebServicesInteroperability.cs: Fixed build errors. I commited before
+	  it was ready :-(.
+	
+2004-07-28  Lluis Sanchez Gual  <lluis@ximian.com>
+
 	* BasicProfileChecker.cs: Added checks for R2101, R2102, R2105, R2110, R2111
 	* ConformanceChecker.cs: Added check methods for schema objects.
 	* WebServicesInteroperability.cs: Added checks for schema objects.

@@ -31,6 +31,7 @@
 #if NET_2_0
 
 using System.Xml.Schema;
+using System.Xml.Serialization;
 
 namespace System.Web.Services.Description 
 {
@@ -54,6 +55,7 @@ namespace System.Web.Services.Description
 		public virtual void Check (ConformanceCheckContext ctx, ServiceDescriptionFormatExtension value) {}
 		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaObject value) {}
 		
+		public virtual void Check (ConformanceCheckContext ctx, XmlSchema s) {}
 		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaImport value) {}
 		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaAll value) {}
 		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaAnnotation value) {}
@@ -111,7 +113,7 @@ namespace System.Web.Services.Description
 			this.violations = violations;
 			foreach (ServiceDescription sd in collection) {
 				if (sd.Types != null && sd.Types.Schemas != null)
-					schemas.Add (s.Types.Schemas);
+					schemas.Add (sd.Types.Schemas);
 			}
 		}
 		
@@ -123,11 +125,11 @@ namespace System.Web.Services.Description
 			foreach (object doc in webReference.Documents.Values) 
 			{
 				if (doc is XmlSchema)
-					schemas.Add (doc);
+					schemas.Add ((XmlSchema)doc);
 				else if (doc is ServiceDescription) {
 					ServiceDescription sd = (ServiceDescription) doc;
 					if (sd.Types != null && sd.Types.Schemas != null)
-						schemas.Add (s.Types.Schemas);
+						schemas.Add (sd.Types.Schemas);
 				}
 			}
 		}

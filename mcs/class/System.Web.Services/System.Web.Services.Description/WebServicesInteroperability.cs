@@ -31,6 +31,7 @@
 #if NET_2_0
 
 using System.Collections;
+using System.Xml.Schema;
 
 namespace System.Web.Services.Description 
 {
@@ -158,13 +159,13 @@ namespace System.Web.Services.Description
 			}
 		}
 		
-		void CheckObjects (ConformanceCheckContext ctx, ConformanceChecker checker, Hashtable visitedObjects, XmlSchemaObjectCollection col)
+		static void CheckObjects (ConformanceCheckContext ctx, ConformanceChecker checker, Hashtable visitedObjects, XmlSchemaObjectCollection col)
 		{
 			foreach (XmlSchemaObject item in col)
 				Check (ctx, checker, visitedObjects, item);
 		}
 		
-		void Check (ConformanceCheckContext ctx, ConformanceChecker checker, Hashtable visitedObjects, XmlSchemaObject value)
+		static void Check (ConformanceCheckContext ctx, ConformanceChecker checker, Hashtable visitedObjects, XmlSchemaObject value)
 		{
 			if (value == null) return;
 			
