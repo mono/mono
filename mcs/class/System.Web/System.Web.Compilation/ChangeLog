@@ -1,3 +1,9 @@
+2003-01-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: don't generate instance fields for pages/controls
+	when the base class specified in the Inherits attribute already has
+	them. Closes bug #36262.
+
 2002-12-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspGenerator.cs: generate code like 'control.XXX = value' also for

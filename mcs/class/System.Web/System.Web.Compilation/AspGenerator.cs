@@ -313,6 +313,7 @@ class AspGenerator
 	private string interfaces;
 	private string basetype;
 	private string parent;
+	private Type parentType;
 	private string fullPath;
 	private static string enableSessionStateLiteral =  ", System.Web.SessionState.IRequiresSessionState";
 
@@ -513,6 +514,68 @@ class AspGenerator
 		return output;
 	}
 	
+	bool AddProtectedField (Type type, string fieldName)
+	{
+		if (parentType == null) {
+			declarations.AppendFormat ("\t\tprotected {0} {1};\n", type.ToString (), fieldName);
+			return true;
+		}
+
+		FieldInfo field = parentType.GetField (fieldName, BindingFlags.Public |
+								  BindingFlags.NonPublic |
+								  BindingFlags.Instance |
+								  BindingFlags.Static);
+
+		if (field == null || (!field.IsPublic && !field.IsFamily)) {
+			declarations.AppendFormat ("\t\tprotected {0} {1};\n", type.ToString (), fieldName);
+			return true;
+		}
+
+		if (!field.FieldType.IsAssignableFrom (type)) {
+			string message = String.Format ("The base class includes the field '{0}', but its " +
+							"type '{1}' is not compatible with {2}",
+							fieldName, field.FieldType, type);
+
+			throw new ApplicationException (message);
+		}
+
+		return false;
+	}
+	
+	private Type LoadParentType (string typeName)
+	{
+		// First try loaded assemblies, then try assemblies in Bin directory.
+		// By now i do this 'by hand' but may be this is a runtime/gac task.
+		Type type = Type.GetType (typeName);
+		if (type != null)
+			return type;
+
+		string [] binDlls = Directory.GetFiles (privateBinPath, "*.dll");
+		Assembly assembly;
+		foreach (string dll in binDlls) {
+			string dllPath = Path.Combine (privateBinPath, dll);
+			assembly = null;
+			try {
+				assembly = Assembly.LoadFrom (dllPath);
+				type = assembly.GetType (typeName);
+			} catch (Exception e) {
+				if (assembly != null) {
+					Console.WriteLine ("ASP.NET Warning: assembly {0} loaded", dllPath);
+					Console.WriteLine ("ASP.NET Warning: but type {0} not found", typeName);
+				} else {
+					Console.WriteLine ("ASP.NET Warning: unable to load type {0} from {1}",
+							   typeName, dllPath);
+				}
+				Console.WriteLine ("ASP.NET Warning: error was: {0}", e.Message);
+			}
+
+			if (type != null)
+				return type;
+		}
+
+		return null;
+	}
+
 	private void PageDirective (TagAttributes att)
 	{
 		if (att ["ClassName"] != null){
@@ -529,8 +592,12 @@ class AspGenerator
 								"a correct value: " + est);
 		}
 
-		if (att ["Inherits"] != null)
+		if (att ["Inherits"] != null) {
 			parent = (string) att ["Inherits"];
+			parentType = LoadParentType (parent);
+			if (parentType == null)
+				throw new ApplicationException ("The class " + parent + " cannot be found.");
+		}
 
 		if (att ["CompilerOptions"] != null)
 			Options ["CompilerOptions"] = (string) att ["CompilerOptions"];
@@ -1315,7 +1382,7 @@ class AspGenerator
 		}
 		
 		Type controlType = html_ctrl.ControlType;
-		declarations.AppendFormat ("\t\tprotected {0} {1};\n", controlType, html_ctrl.ControlID);
+		AddProtectedField (controlType, html_ctrl.ControlID);
 
 		ChildrenKind children_kind;
 		if (0 == String.Compare (html_ctrl.TagID, "table", true))
@@ -1364,7 +1431,7 @@ class AspGenerator
 	{
 		AspComponent component = (AspComponent) elements.Current;
 		Type component_type = component.ComponentType;
-		declarations.AppendFormat ("\t\tprotected {0} {1};\n", component_type, component.ControlID);
+		AddProtectedField (component_type, component.ControlID);
 
 		NewControlFunction (component.TagID, component.ControlID, component_type,
 				    component.ChildrenKind, component.DefaultPropertyName); 
@@ -1530,7 +1597,7 @@ class AspGenerator
 
 			string default_id = Tag.GetDefaultID ();
 			Type type = typeof (System.Web.UI.WebControls.ListItem);
-			declarations.AppendFormat ("\t\tprotected {0} {1};\n", type, default_id);
+			AddProtectedField (type, default_id);
 			NewControlFunction (tag.TagID, default_id, type, ChildrenKind.CONTROLS, null); 
 			return;
 		}
@@ -1653,7 +1720,7 @@ class AspGenerator
 		StringBuilder db_function = new StringBuilder ();
 		string control_id = Tag.GetDefaultID ();
 		string control_type_string = "System.Web.UI.DataBoundLiteralControl";
-		declarations.AppendFormat ("\t\tprotected {0} {1};\n", control_type_string, control_id);
+		AddProtectedField (typeof (System.Web.UI.DataBoundLiteralControl), control_id);
 		// Build the control
 		db_function.AppendFormat ("\t\tprivate System.Web.UI.Control __BuildControl_{0} ()\n" +
 					  "\t\t{{\n\t\t\t{1} __ctrl;\n\n" +
