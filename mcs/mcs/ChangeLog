@@ -1,3 +1,10 @@
+2003-01-15  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Only perform the constructor checks here if we
+	are named like the class;  This will help provider a better
+	error.  The constructor path is taken when a type definition is
+	not found, but most likely the user forgot to add the type, so
+	report that rather than the constructor error.
 
 Tue Jan 14 10:36:49 CET 2003 Paolo Molaro <lupus@ximian.com>
 
