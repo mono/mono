@@ -1,3 +1,43 @@
+2004-12-20  Peter Bartok  <pbartok@novell.com>
+
+	* Control.cs (Visible): Now uses the parent window instead of the
+	  client area window for the property
+
+	* Form.cs
+	  - ShowDialog(): Now uses the proper window for modality
+	  - The default visibility state for the form parent is now false. This
+	    will prevent the user from seeing all the changes to the form and
+	    its controls before the application hits Application.Run()
+	  - Removed some stale commented out code
+
+	* NativeWindow.cs:
+	  - Added FindWindow() method to have a method to check for existence
+	    of a window handle
+	  - Added ability to override default exception handling (for example
+	    when debugging with VS.Net; to do this the ExternalExceptionHandler
+	    define must be set
+	  - Removed some useless debug output
+
+	* XplatUIX11.cs: 
+	  - Removed r37929 (SetModal patch from Ashwin Bharambe), was 
+	    not working as expected
+	  - Implemented modal_window stack and checking for _WM_ACTIVE_WINDOW
+	    property to allow switching back to the modal window if focus is
+	    given to another one of our windows (Application Modal)
+	  - Now only sets override_redirect if we create a window 
+	    without WS_CAPTION
+	  - Moved EventMask selection before mapping of newly created window
+	    so we can catch the map event as well
+	  - Implemented Activate() method via the _WM_ACTIVE_WINDOW property
+	  - Added various Atom related DllImports
+	  - Implemented Exit() method
+	  - .ctor() : No longer shows window if WS_VISIBLE is not defined
+	    in the CreateParams
+
+	* MessageBox.cs: Now properly deals with the FormParent window by
+	  providing an override the FormParent CreateParams property to
+	  set as POPUP instead of OVERLAPPED window.
+
 2004-12-19  Geoff Norton  <gnorton@customerdna.com>
 
 	* XplatUIOSX.cs: Implement DestroyWindow.  Implement ScrollWindow
