@@ -1,3 +1,7 @@
+2004-04-28 Alon Gazit <along@mainsoft.com>
+        * WebControl.cs: fixed LoadViewState(). 
+        Always loading the saved attributes collection.
+
 2004-04-18 Alon Gazit <along@mainsoft.com>
 	* Repeater.cs: fixed InstantiateItem() and DataSource property.
 	The change in DataSource prevents throwing ArgumentException while

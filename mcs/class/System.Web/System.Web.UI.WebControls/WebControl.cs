@@ -427,8 +427,12 @@ namespace System.Web.UI.WebControls
 			if (ControlStyleCreated || ViewState [System.Web.UI.WebControls.Style.selectionBitString] != null)
 				ControlStyle.LoadViewState (null);
 
-			if (attributeState != null)
+			if (saved.Second != null)
+			{
+				attributeState = new StateBag(true);
+				attributeState.TrackViewState();
 				attributeState.LoadViewState (saved.Second);
+			}
 		}
 
 		protected override void Render(HtmlTextWriter writer)
