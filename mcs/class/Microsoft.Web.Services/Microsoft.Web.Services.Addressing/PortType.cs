@@ -33,6 +33,7 @@ namespace Microsoft.Web.Services.Addressing
 			                                            "PortType",
 								    "http://schemas.xmlsoap.org/ws/2003/03/addressing");
 			GetXmlQName (document, element);
+			
 			return element;
 		}
 

@@ -36,7 +36,7 @@ namespace Microsoft.Web.Services.Addressing
 			XmlElement element = document.CreateElement ("wsa",
 			                                             "EndpointReference",
 								     "http://schemas.xmlsoap.org/ws/2003/03/addressing");
-			
+
 			GetXmlAny (document, element);
 			return element;
 		}

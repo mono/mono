@@ -50,7 +50,7 @@ namespace Microsoft.Web.Services.Addressing
 			}
 
 			element.AppendChild (_address.GetXml (document));
-			
+
 			if(_portType != null) {
 				element.AppendChild (_portType.GetXml (document));
 			}
@@ -83,16 +83,16 @@ namespace Microsoft.Web.Services.Addressing
 				switch (node.LocalName) {
 					case "Address":
 						_address = new Address (node);
-						break;
+						continue;
 					case "ReferenceProperties":
 						_properties = new ReferenceProperties (node);
-						break;
+						continue;
 					case "PortType":
 						_portType = new PortType (node);
-						break;
+						continue;
 					case "ServiceName":
 						_serviceName = new ServiceName (node);
-						break;
+						continue;
 				}
 
 				AnyElements.Add (node);
@@ -111,7 +111,7 @@ namespace Microsoft.Web.Services.Addressing
 
 		public PortType PortType {
 			get { return _portType; }
-			set { _portType = null; }
+			set { _portType = value; }
 		}
 
 		public ReferenceProperties ReferenceProperties {

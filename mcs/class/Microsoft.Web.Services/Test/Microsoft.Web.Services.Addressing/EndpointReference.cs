@@ -92,15 +92,16 @@ namespace Microsoft.Web.Services.Addressing.Tests
 			
 			element.AppendChild (a.GetXml (doc));
 			
-			PortType p = new PortType (new QualifiedName ("wsa", "s", "http://schemas.xmlsoap.org/ws/2003/03/addressing"));
+			PortType p = new PortType (new QualifiedName ("wsa", "test", "http://schemas.xmlsoap.org/ws/2003/03/addressing"));
 			
 			element.AppendChild (p.GetXml (doc));
-			
-			
 			
 			EndpointReference e = new EndpointReference (element);
 			
 			XmlElement e2 = e.GetXml (new XmlDocument ());
+			
+			Assert.IsNotNull (element);
+			Assert.IsNotNull (e2);
 			
 			Assert.IsTrue (element.OuterXml == e2.OuterXml);
 		}
