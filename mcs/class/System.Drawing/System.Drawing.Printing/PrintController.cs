@@ -27,11 +27,11 @@ namespace System.Drawing.Printing
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public virtual void OnStartPrint(PrintDocument document, PrintPageEventArgs e){
+		public virtual void OnStartPrint(PrintDocument document, PrintEventArgs e){
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public virtual void OnEndPrint(PrintDocument document, PrintPageEventArgs e){
+		public virtual void OnEndPrint(PrintDocument document, PrintEventArgs e){
 			throw new NotImplementedException ();
 		}
 		//[MonoTODO]
