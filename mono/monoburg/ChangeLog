@@ -1,3 +1,8 @@
+2001-09-09  Nick Drochak  <ndrochak@gol.com>
+
+	* Makefile.am: change CLEANFILES line to use just '=' instead of '+='
+		some versions of automake complain if you try to '+=' before you '='
+		
 2001-09-08  Dietmar Maurer  <dietmar@ximian.com>
 
 	* monoburg.c (emit_header): added some convenient macros
