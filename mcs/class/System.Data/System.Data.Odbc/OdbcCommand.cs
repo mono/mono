@@ -342,11 +342,12 @@ namespace System.Data.Odbc
 		
 		public object ExecuteScalar ()
 		{
-			object val;
+			object val = null;
 			OdbcDataReader reader=ExecuteReader();
 			try
 			{
-				val=reader[0];
+				if (reader.Read ())
+					val=reader[0];
 			}
 			finally
 			{
