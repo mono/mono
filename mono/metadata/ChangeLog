@@ -1,5 +1,11 @@
 2003-11-02  Martin Baulig  <martin@ximian.com>
 
+	* reflection.c (create_generic_typespec): Take a
+	`MonoReflectionTypeBuilder *' instead of a `MonoType *' and get
+	the generic parameters from it.
+
+2003-11-02  Martin Baulig  <martin@ximian.com>
+
 	* reflection.c (fieldref_encode_signature): Take a `MonoType *'
 	instead of a `MonoClassField *' since we just need the type.
 	(create_generic_typespec): New static function.  Creates a
