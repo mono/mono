@@ -4,13 +4,15 @@
 // Author:
 //   Nick Drochak (ndrochak@gol.com)
 //
-// (C) 2001 Nick Drochak II
+// (C) 2001-2002 Nick Drochak II
 //
-
+// Note: Only Unix and Windows file paths are tested.  To run the tests on Mac OS's
+// search for the "FIXME" notes below and adjust accordingly.
 
 using System;
 using System.Security;
 using System.Security.Permissions;
+using System.IO;
 
 using NUnit.Framework;
 
@@ -28,14 +30,45 @@ namespace MonoTests.System.Security.Permissions {
 			}
 		}
 
+		string[] pathArrayGood;
+		string[] pathArrayBad;
+		FileIOPermission p;
+		FileIOPermission p2;
+		string[] pathsInPermission;
+		string[] pathArrayGood2;
+		FileIOPermission unrestricted;
+
 		protected override void SetUp() {
+			p = null;
+			pathsInPermission = null;
+			pathArrayGood = new string[2];
+			pathArrayBad = new string[2];
+			pathArrayGood2 = new string[3];
+			// FIXME: Adjust to run on Mac OS's
+			if (Path.VolumeSeparatorChar == ':') {
+				pathArrayGood[0] = "c:\\temp1";
+				pathArrayGood[1] = "d:\\temp2";
+				pathArrayBad[0] = "c:\\temp1";
+				pathArrayBad[1] = "d:\\temp*";
+				pathArrayGood2[0] = "c:\\temp1";
+				pathArrayGood2[1] = "d:\\temp2";
+				pathArrayGood2[2] = "z:\\something";
+			}
+			else {
+				pathArrayGood[0] = "/temp1";
+				pathArrayGood[1] = "/usr/temp2";
+				pathArrayBad[0] = "/temp1";
+				pathArrayBad[1] = "/usr/temp*";
+				pathArrayGood2[0] = "/temp1";
+				pathArrayGood2[1] = "/usr/temp2";
+				pathArrayGood2[2] = "/usr/bin/something";
+			}
 		}
 
 		private void SetDefaultData() {
 		}
 		
 		public void TestConstructorPermissionState() {
-			FileIOPermission p;
 			p = new FileIOPermission(PermissionState.None);
 			AssertEquals("Should be Restricted", false, p.IsUnrestricted());
 			p = new FileIOPermission(PermissionState.Unrestricted);
@@ -50,7 +83,6 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		public void TestConstructorString() {
-			FileIOPermission p;
 			try{
 				p = new FileIOPermission(FileIOPermissionAccess.Append, "this path is not rooted");
 				Fail("Should have thrown an exception on path not rooted");
@@ -75,19 +107,20 @@ namespace MonoTests.System.Security.Permissions {
 			}
 			catch{}
 
-			string pathToAdd = "c:\\temp";
+			string pathToAdd;
+			// FIXME: Adjust to run on Mac OS's
+			if (Path.VolumeSeparatorChar == ':')
+				pathToAdd = "c:\\temp";
+			else
+				pathToAdd = "/temp";
+
 			p = new FileIOPermission(FileIOPermissionAccess.Read, pathToAdd);
-			string[] pathsInPermission = p.GetPathList(FileIOPermissionAccess.Read);
+			pathsInPermission = p.GetPathList(FileIOPermissionAccess.Read);
 			Assert("Does not contain correct number of paths. Expected 1 but got: "+pathsInPermission.Length, pathsInPermission.Length == 1);
 			Assert("Does not contain expected path from constructor: "+pathToAdd, pathsInPermission[0] == pathToAdd);
 		}
 
 		public void TestConstructorStringArray() {
-			FileIOPermission p;
-			string[] pathArrayGood = {"c:\\temp1", "d:\\temp2"};
-			string[] pathArrayBad = {"c:\\temp1", "d:\\temp*"};
-			string[] pathsInPermission;
-
 			try{
 				p = new FileIOPermission(FileIOPermissionAccess.Append, pathArrayBad);
 				Fail("Should have thrown an exception on wildcards not allowed in path");
@@ -110,10 +143,6 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		public void TestAddPathListStringArray() {
-			FileIOPermission p;
-			string[] pathArrayGood = {"c:\\temp1", "d:\\temp2"};
-			string[] pathsInPermission;
-
 			p = new FileIOPermission(FileIOPermissionAccess.Read, pathArrayGood);
 			pathsInPermission = p.GetPathList(FileIOPermissionAccess.Read);
 			Assert("Does not contain correct number of paths. Expected 2 but got: "+pathsInPermission.Length, pathsInPermission.Length == 2);
@@ -135,13 +164,7 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		public void TestIntersect() {
-			FileIOPermission p;
-			FileIOPermission p2;
-			FileIOPermission unrestricted;
 			FileIOPermission intersection;
-			string[] pathArrayGood = {"c:\\temp1\\", "d:\\temp2\\"};
-			string[] pathArrayGood2 = {"c:\\temp1\\", "d:\\temp2\\", "z:\\something"};
-			string[] pathsInPermission;
 
 			p = new FileIOPermission(FileIOPermissionAccess.Read, pathArrayGood);
 			p.AllFiles = FileIOPermissionAccess.Append;
@@ -166,9 +189,10 @@ namespace MonoTests.System.Security.Permissions {
 			p2.AllLocalFiles = FileIOPermissionAccess.Write | FileIOPermissionAccess.Read;
 			intersection = (FileIOPermission)p.Intersect(p2);
 			pathsInPermission = intersection.GetPathList(FileIOPermissionAccess.Read);
-			Assert("Should contain correct number of Read paths. Expected 2 but got: "+pathsInPermission.Length, pathsInPermission.Length == 2);
-			Assert("Should have only Append bit in AllFiles.", intersection.AllFiles == FileIOPermissionAccess.Append);
-			Assert("Should have only Write bit in AllLocalFiles.", intersection.AllLocalFiles == FileIOPermissionAccess.Write);
+			AssertNotNull ("Should have some paths", pathsInPermission);
+			AssertEquals ("Should contain correct number of Read paths", 2, pathsInPermission.Length);
+			AssertEquals ("Should have only Append bit in AllFiles.",  FileIOPermissionAccess.Append, intersection.AllFiles);
+			AssertEquals ("Should have only Write bit in AllLocalFiles.",  FileIOPermissionAccess.Write, intersection.AllLocalFiles);
 
 			intersection = (FileIOPermission)p2.Intersect(p);
 			pathsInPermission = intersection.GetPathList(FileIOPermissionAccess.Read);
@@ -178,39 +202,26 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		public void TestIsSubsetOf() {
-			FileIOPermission p;
-			FileIOPermission p2;
-			FileIOPermission unrestricted;
-			string[] pathArrayGood = {"c:\\temp1\\", "d:\\temp2\\"};
-			string[] pathArrayGood2 = {"c:\\temp1\\", "d:\\temp2\\", "z:\\something"};
-
 			unrestricted = new FileIOPermission(PermissionState.Unrestricted);
 			Assert("IsSubsetOf reflective test failed", unrestricted.IsSubsetOf(unrestricted));
 
 			p = new FileIOPermission(FileIOPermissionAccess.Read, pathArrayGood);
 			p.AllFiles = FileIOPermissionAccess.Append;
 			p.AllLocalFiles = FileIOPermissionAccess.Write;
-			Assert("IsSubsetOf reflective test failed", p.IsSubsetOf(p));
-			Assert("IsSubsetOf false test failed", !unrestricted.IsSubsetOf(p));
-			Assert("IsSubsetOf true test failed", p.IsSubsetOf(unrestricted));
+			Assert("#1 IsSubsetOf reflective test failed", p.IsSubsetOf(p));
+			Assert("#1 IsSubsetOf false test failed", !unrestricted.IsSubsetOf(p));
+			Assert("#1 IsSubsetOf true test failed", p.IsSubsetOf(unrestricted));
 
 			p2 = new FileIOPermission(FileIOPermissionAccess.Append | FileIOPermissionAccess.Read, pathArrayGood2);
 			p2.AllFiles = FileIOPermissionAccess.Append | FileIOPermissionAccess.Write;
 			p2.AllLocalFiles = FileIOPermissionAccess.Write | FileIOPermissionAccess.Read;
-			Assert("IsSubsetOf reflective test failed", p2.IsSubsetOf(p2));
-
-			Assert("IsSubsetOf true test failed", p.IsSubsetOf(p2));
-			Assert("IsSubsetOf false test failed", !p2.IsSubsetOf(p));
+			Assert("#2 IsSubsetOf reflective test failed", p2.IsSubsetOf(p2));
+			Assert("#2 IsSubsetOf true test failed", p.IsSubsetOf(p2));
+			Assert("#2 IsSubsetOf false test failed", !p2.IsSubsetOf(p));
 		}
 
 		public void TestUnion() {
-			FileIOPermission p;
-			FileIOPermission p2;
-			FileIOPermission unrestricted;
 			FileIOPermission union;
-			string[] pathArrayGood = {"c:\\temp1\\", "d:\\temp2\\"};
-			string[] pathArrayGood2 = {"c:\\temp1\\", "d:\\temp2\\", "z:\\something"};
-			string[] pathsInPermission;
 
 			unrestricted = new FileIOPermission(PermissionState.Unrestricted);
 			p = new FileIOPermission(FileIOPermissionAccess.Read, pathArrayGood);
@@ -240,9 +251,8 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		public void TestFromXML() {
-			FileIOPermission p = new FileIOPermission(PermissionState.None);
+			p = new FileIOPermission(PermissionState.None);
 			SecurityElement esd;
-			string[] pathsInPermission;
 
 			esd = new SecurityElement("IPermission");
 			esd.AddAttribute("class", "FileIOPermission");
@@ -254,9 +264,15 @@ namespace MonoTests.System.Security.Permissions {
 			esd = new SecurityElement("IPermission");
 			esd.AddAttribute("class", "FileIOPermission");
 			esd.AddAttribute("version", "1");
-			esd.AddAttribute("Read", "c:\\temp;d:\\temp2");
-			esd.AddAttribute("Write", "c:\\temp;d:\\temp2;z:\\temp3");
-
+			// FIXME: Adjust to run on Mac OS's
+			if (Path.VolumeSeparatorChar == ':') {
+				esd.AddAttribute("Read", "c:\\temp;d:\\temp2");
+				esd.AddAttribute("Write", "c:\\temp;d:\\temp2;z:\\temp3");
+			}
+			else {
+				esd.AddAttribute("Read", "/temp;/usr/temp2");
+				esd.AddAttribute("Write", "/temp;/usr/temp2;/usr/bin/temp3");
+			}
 			p = new FileIOPermission(PermissionState.None);
 			p.FromXml(esd);
 			pathsInPermission = p.GetPathList(FileIOPermissionAccess.Read);
@@ -266,11 +282,8 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		public void TestToXML() {
-			FileIOPermission p;
 			SecurityElement esd;
-			string[] pathsInPermission;
 			string read;
-			string[] pathArrayGood = {"c:\\temp1\\", "d:\\temp2\\"};
 			p = new FileIOPermission(FileIOPermissionAccess.Read, pathArrayGood);
 			esd = p.ToXml();
 			Assert("Esd tag incorrect", esd.Tag == "IPermission");

@@ -1,3 +1,10 @@
+2002-06-18  Nick Drochak  <ndrochak@gol.com>
+
+	* FileIOPermissionTest.cs: Use Unix paths if it looks like we are not
+	running the tests on Windows. Need to expand this when we run the
+	tests on Mac OS's (and others I suppose).  Also consolidated some
+	redundant code.
+
 2002-02-09  Nick Drochak  <ndrochak@gol.com>
 
 	* FileIOPermissionTest.cs: Remove intersect test where it was trying
