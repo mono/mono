@@ -1,7 +1,10 @@
 2004-05-26  Atsushi Enomoto  <atsushi@ximian.com>
 
-	* supp/pl.xml,
-	  supp/ja.xml : Added overriding formats. pl.xml fixes bug #58186.
+	* Driver.cs : for af_ZA locale, am/pm part got required to support
+	  "empty" string. So check am/pm elements and overwrite AMDesigner/
+	  PMDesigner value even if they consist of empty string.
+
+	* (moved logs for supp/ content to supp/)
 
 2004-05-25  Jackson Harper  <jackson@ximian.com>
 

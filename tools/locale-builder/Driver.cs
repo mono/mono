@@ -446,6 +446,13 @@ namespace Mono.Tools.LocaleBuilder {
 					df.FullDateTimePattern = String.Format (ni2.Current.ToString (),
 							df.LongTimePattern, df.LongDatePattern);
 
+				XPathNodeIterator am = ni.Current.SelectChildren ("am", "");
+				if (am.MoveNext ())
+					df.AMDesignator = am.Current.Value;
+				XPathNodeIterator pm = ni.Current.SelectChildren ("pm", "");
+				if (pm.MoveNext ())
+					df.PMDesignator = pm.Current.Value;
+/*
                                 string am = (string) ni.Current.Evaluate ("string(am)");
                                 string pm = (string) ni.Current.Evaluate ("string(pm)");
 
@@ -453,6 +460,7 @@ namespace Mono.Tools.LocaleBuilder {
                                         df.AMDesignator = am;
                                 if (pm != String.Empty)
                                         df.PMDesignator = pm;
+*/
 			}
 
                         string date_sep = (string) nav.Evaluate ("string(ldml/dates/symbols/dateSeparator)");
