@@ -1,5 +1,10 @@
 2004-03-16  Martin Baulig  <martin@ximian.com>
 
+	* ecore.cs (SimpleName.DoResolveAsTypeStep): Lookup type
+	parameters before aliases.
+
+2004-03-16  Martin Baulig  <martin@ximian.com>
+
 	* typemanager.cs (TypeManager.MayBecomeEqualGenericInstances):
 	New oublic function; checks whether two generic instances may become
 	equal under some instantiations (26.3.1).

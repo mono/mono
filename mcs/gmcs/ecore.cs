@@ -2014,6 +2014,10 @@ namespace Mono.CSharp {
 			else
 				alias_value = null;
 
+			TypeParameterExpr generic_type = ds.LookupGeneric (Name, loc);
+			if (generic_type != null)
+				return generic_type.ResolveAsTypeTerminal (ec);
+
 			if (ec.ResolvingTypeTree){
 				int errors = Report.Errors;
 				Type dt = ds.FindType (loc, Name, NumTypeArguments);
@@ -2040,10 +2044,6 @@ namespace Mono.CSharp {
 				// we have alias value, but it isn't Type, so try if it's namespace
 				return new SimpleName (alias_value, loc);
 			}
-
-			TypeParameterExpr generic_type = ds.LookupGeneric (Name, loc);
-			if (generic_type != null)
-				return generic_type.ResolveAsTypeTerminal (ec);
 
 			//
 			// Stage 2: Lookup up if we are an alias to a type
