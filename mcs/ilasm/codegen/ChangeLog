@@ -1,3 +1,8 @@
+2003-09-15 Jackson Harper <jackson@latitudegeo.com>
+
+	* FinallyBlock.cs: The sad thing is how long it took me to realize
+	what was going on here...
+		
 2003-09-13 Jackson Harper <jackson@latitudegeo.com>
 
 	* MethodInstr.cs: callvirt operation is implicitly instance.
