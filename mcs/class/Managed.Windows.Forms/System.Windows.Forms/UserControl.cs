@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
@@ -28,9 +28,15 @@
 // COMPLETE
 
 using System;
+using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Drawing;
 
 namespace System.Windows.Forms {
+	[DefaultEvent("Load")]
+	[DesignerCategory("UserControl")]
+	[Designer("System.Windows.Forms.Design.UserControlDocumentDesigner, " + Consts.AssemblySystem_Design, typeof(IRootDesigner))]
+	[Designer("System.Windows.Forms.Design.ControlDesigner, " + Consts.AssemblySystem_Design)]
 	public class UserControl : ContainerControl {
 		#region Public Constructors
 		public UserControl() {
@@ -45,6 +51,10 @@ namespace System.Windows.Forms {
 		}
 
 
+		[Bindable(false)]
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override string Text {
 			get {
 				return base.Text;
@@ -57,6 +67,7 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Properties
 
 		#region Protected Instance Methods
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnCreateControl() {
 			base.OnCreateControl();
 
@@ -65,14 +76,17 @@ namespace System.Windows.Forms {
 			OnLoad(EventArgs.Empty);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnLoad(EventArgs e) {
 			if (Load != null) Load(this, e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnMouseDown(MouseEventArgs e) {
 			base.OnMouseDown(e);
 		}
 
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void WndProc(ref Message m) {
 			base.WndProc(ref m);
 		}
@@ -80,6 +94,10 @@ namespace System.Windows.Forms {
 
 		#region Events
 		public event EventHandler	Load;
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public event EventHandler	TextChanged;
 		#endregion	// Events
 	}
 }

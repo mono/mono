@@ -464,12 +464,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal static void ScrollWindow(IntPtr hwnd, Rectangle rectangle, int XAmount, int YAmount, bool clear) {
-			driver.ScrollWindow(hwnd, rectangle, XAmount, YAmount, clear);
+		internal static void ScrollWindow(IntPtr hwnd, Rectangle rectangle, int XAmount, int YAmount, bool with_children) {
+			driver.ScrollWindow(hwnd, rectangle, XAmount, YAmount, with_children);
 		}
 
-		internal static void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount, bool clear) {
-			driver.ScrollWindow(hwnd, XAmount, YAmount, clear);
+		internal static void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount, bool with_children) {
+			driver.ScrollWindow(hwnd, XAmount, YAmount, with_children);
 		}
 
 		internal static bool SystrayAdd(IntPtr hwnd, string tip, Icon icon, out ToolTip tt) {

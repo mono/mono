@@ -726,6 +726,24 @@ namespace System.Windows.Forms {
 
 			return (IntPtr)result;
 		}
+		private IntPtr XGetParent(IntPtr handle) {
+			IntPtr	Root;
+			IntPtr	Parent;
+			IntPtr	Children;
+			int	ChildCount;
+
+			lock (XlibLock) {
+				XQueryTree(DisplayHandle, handle, out Root, out Parent, out Children, out ChildCount);
+			}
+
+			if (Children!=IntPtr.Zero) {
+				lock (XlibLock) {
+					XFree(Children);
+				}
+			}
+			return Parent;
+		}
+
 		#endregion	// Private Methods
 
 		#region	Callbacks
@@ -1877,8 +1895,14 @@ namespace System.Windows.Forms {
 							(hwnd.width != xevent.ConfigureEvent.width) || (hwnd.height != xevent.ConfigureEvent.height)) {
 							msg.message=Msg.WM_WINDOWPOSCHANGED;
 
-							hwnd.x = xevent.ConfigureEvent.x;
-							hwnd.y = xevent.ConfigureEvent.y;
+							if (hwnd.parent != null) {
+								hwnd.x = xevent.ConfigureEvent.x;
+								hwnd.y = xevent.ConfigureEvent.y;
+							} else {
+								IntPtr	child;
+								// We need to 'discount' the window the WM has put us in
+								XTranslateCoordinates(DisplayHandle, XGetParent(hwnd.whole_window), RootWindow, xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, out hwnd.x, out hwnd.y, out child);
+							}
 							hwnd.width = xevent.ConfigureEvent.width;
 							hwnd.height = xevent.ConfigureEvent.height;
 						} else {
@@ -2250,7 +2274,7 @@ namespace System.Windows.Forms {
 			y = dest_y_return;
 		}
 
-		internal override void ScrollWindow(IntPtr handle, Rectangle area, int XAmount, int YAmount, bool clear) {
+		internal override void ScrollWindow(IntPtr handle, Rectangle area, int XAmount, int YAmount, bool with_children) {
 			Hwnd		hwnd;
 			IntPtr		gc;
 			XGCValues	gc_values;
@@ -2278,6 +2302,10 @@ namespace System.Windows.Forms {
 
 			gc_values = new XGCValues();
 
+			if (with_children) {
+				gc_values.subwindow_mode = GCSubwindowMode.IncludeInferiors;
+			}
+
 			gc = XCreateGC(DisplayHandle, hwnd.client_window, 0, ref gc_values);
 
 			XCopyArea(DisplayHandle, hwnd.client_window, hwnd.client_window, gc, area.X - XAmount, area.Y - YAmount, area.Width, area.Height, area.X, area.Y);
@@ -2300,7 +2328,14 @@ namespace System.Windows.Forms {
 			UpdateWindow(handle);
 		}
 
-		internal override void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount, bool clear){ throw new NotImplementedException(); }
+		internal override void ScrollWindow(IntPtr handle, int XAmount, int YAmount, bool with_children) {
+			Hwnd	hwnd;
+
+			hwnd = Hwnd.GetObjectFromWindow(handle);
+	
+			ScrollWindow(handle, hwnd.ClientRect, XAmount, YAmount, with_children);
+		}
+
 		internal override void SendAsyncMethod (AsyncMethodData method) {
 			XEvent xevent = new XEvent ();
 
@@ -2809,7 +2844,7 @@ namespace System.Windows.Forms {
 		internal extern static int XSendEvent(IntPtr display, IntPtr window, bool propagate, EventMask event_mask, ref XEvent send_event);
 
 		[DllImport ("libX11", EntryPoint="XQueryTree")]
-		internal extern static int XQueryTree(IntPtr display, IntPtr window, ref IntPtr root_return, ref IntPtr parent_return, ref IntPtr children_return, ref int nchildren_return);
+		internal extern static int XQueryTree(IntPtr display, IntPtr window, out IntPtr root_return, out IntPtr parent_return, out IntPtr children_return, out int nchildren_return);
 
 		[DllImport ("libX11", EntryPoint="XFree")]
 		internal extern static int XFree(IntPtr data);

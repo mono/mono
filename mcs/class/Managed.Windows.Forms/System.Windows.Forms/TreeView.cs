@@ -993,7 +993,7 @@ namespace System.Windows.Forms {
 			skipped_nodes = vbar.Value;
 
 			int y_move = (old_skip - skipped_nodes) * ItemHeight;
-			XplatUI.ScrollWindow (Handle, ViewportRectangle, 0, y_move, true);
+			XplatUI.ScrollWindow (Handle, ViewportRectangle, 0, y_move, false);
 		}
 
 		private void HScrollBarValueChanged(object sender, EventArgs e)
@@ -1001,7 +1001,7 @@ namespace System.Windows.Forms {
 			int old_offset = hbar_offset;
 			hbar_offset = hbar.Value;
 
-			XplatUI.ScrollWindow (Handle, ViewportRectangle, old_offset - hbar_offset, 0, true);
+			XplatUI.ScrollWindow (Handle, ViewportRectangle, old_offset - hbar_offset, 0, false);
 		}
 
 		private int GetOpenNodeCount ()

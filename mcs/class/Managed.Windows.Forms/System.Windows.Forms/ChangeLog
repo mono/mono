@@ -1,3 +1,21 @@
+2005-02-19  Peter Bartok  <pbartok@novell.com>
+
+	* UserControl.cs: Added TextChanged event; added attributes
+	* SizeGrip.cs: Implemented resizing and optional display of grip
+	* Form.cs: Fixed attribute
+	* XplatUI.cs, XplatUIDriver.cs, XplatUIOSX.cs, XplatUIWin32.cs:
+	  Changed meaning of ScrollWindow bool argument; instead of the
+	  clear attribute (which will be true usually anyway), it gives the
+	  option of moving child controls as well.
+	* XplatUIX11.cs:
+	  - Changed to match new ScrollWindow argument
+	  - Fixed GetWindowPos/SetWindowPos behaviour for toplevel controls,
+	    now handles the implicit parent window a WM puts around us
+	* ScrollableControl.cs: Implemented (not the prettiest, but it seems 
+	  to work)
+	* TextBoxBase.cs: Adjusted to new ScrollWindow arguments
+	* TreeView.cs: Adjusted to new ScrollWindow arguments
+
 2005-02-19  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Form.cs: Menu integration with non-client area

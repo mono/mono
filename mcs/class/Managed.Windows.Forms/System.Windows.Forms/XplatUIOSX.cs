@@ -1472,11 +1472,11 @@ DEBUG THIS:
 			return GetFontMetrics(g.GetHdc(), font.ToHfont(), out ascent, out descent);
 		}
 
-		internal override void ScrollWindow(IntPtr hwnd, Rectangle rectangle, int XAmount, int YAmount, bool clear) {
+		internal override void ScrollWindow(IntPtr hwnd, Rectangle rectangle, int XAmount, int YAmount, bool with_children) {
 			throw new NotImplementedException("Need to implement the overload that provides the rectangle for ScrollWindow");
 		}
 
-		internal override void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount, bool clear) {
+		internal override void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount, bool with_children) {
 			IntPtr rect = IntPtr.Zero;
 			HIRect vBounds = new HIRect ();
                         HIViewGetBounds (hwnd, ref vBounds);
@@ -1485,15 +1485,15 @@ DEBUG THIS:
 			ScrollRect (ref rect, (short)XAmount, (short)-YAmount, IntPtr.Zero);
 
 			if (YAmount > 0) {
-				Invalidate (hwnd, new Rectangle (0, YAmount, (int)vBounds.size.width, (int)(vBounds.size.height)), clear);
+				Invalidate (hwnd, new Rectangle (0, YAmount, (int)vBounds.size.width, (int)(vBounds.size.height)), true);
 			} else if (YAmount < 0) {
-				Invalidate (hwnd, new Rectangle (0, 0, (int)vBounds.size.width, -YAmount), clear);
+				Invalidate (hwnd, new Rectangle (0, 0, (int)vBounds.size.width, -YAmount), true);
 			}
 
 			if (XAmount > 0) {
-				Invalidate (hwnd, new Rectangle (0, 0, XAmount, (int)vBounds.size.height), clear);
+				Invalidate (hwnd, new Rectangle (0, 0, XAmount, (int)vBounds.size.height), true);
 			} else if (XAmount < 0) {
-				Invalidate (hwnd, new Rectangle ((int)(vBounds.size.width+XAmount), 0, (int)vBounds.size.width, (int)vBounds.size.height), clear);
+				Invalidate (hwnd, new Rectangle ((int)(vBounds.size.width+XAmount), 0, (int)vBounds.size.width, (int)vBounds.size.height), true);
 			}
 		}
 

@@ -37,7 +37,7 @@ using System.Threading;
 namespace System.Windows.Forms {
 	[DesignerCategory("Form")]
 	[DesignTimeVisible(false)]
-	[Designer("System.Windows.Forms.Design.FormDesigner, " + Consts.AssemblySystem_Design, typeof(IRootDesigner))]
+	[Designer("System.Windows.Forms.Design.FormDocumentDesigner, " + Consts.AssemblySystem_Design, typeof(IRootDesigner))]
 	[DefaultEvent("Load")]
 	[ToolboxItem(false)]
 	public class Form : ContainerControl {

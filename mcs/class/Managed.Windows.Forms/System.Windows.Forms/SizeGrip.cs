@@ -30,42 +30,111 @@ using System.Drawing;
 namespace System.Windows.Forms {
 
 	internal class SizeGrip : Control {
+		#region Local Variables
+		private bool	redraw;
+		private Point	capture_point;
+		private int	window_w;
+		private int	window_h;
+		private bool	show_grip;
+		private bool	hide_pending;
+		#endregion	// Local Variables
 
-		private bool redraw = true;
-		
+		#region Constructors
 		public SizeGrip ()
 		{
+			this.Cursor = Cursors.SizeNWSE;
+			show_grip = true;
+			redraw = true;
+			hide_pending = false;
 		}
+		#endregion	// Constructors
 
-		protected override void OnPaint (PaintEventArgs pe)
-		{
+		#region Properties
+		public bool ShowGrip {
+			get {
+				return show_grip;
+			}
+
+			set {
+				show_grip = value;
+				redraw = true;
+			}
+		}
+		#endregion	// Properties
+
+		#region Methods
+		protected override void OnPaint (PaintEventArgs pe) {
 			base.OnPaint (pe);
 
-			if (redraw)
-				Draw ();
+			if (redraw) {
+				if (show_grip) {
+					ControlPaint.DrawSizeGrip(DeviceContext, BackColor, ClientRectangle);
+				}
+			}
 
-			pe.Graphics.DrawImage (ImageBuffer, pe.ClipRectangle, pe.ClipRectangle, GraphicsUnit.Pixel);
+			pe.Graphics.DrawImage(ImageBuffer, pe.ClipRectangle, pe.ClipRectangle, GraphicsUnit.Pixel);
 		}
 
-		protected override void OnSizeChanged (EventArgs e)
-		{
+		protected override void OnSizeChanged (EventArgs e) {
 			base.OnSizeChanged (e);
 			redraw = true;
 		}
 
-		protected override void OnVisibleChanged (EventArgs e)
-		{
+		protected override void OnVisibleChanged (EventArgs e) {
 			base.OnVisibleChanged (e);
 			redraw = true;
 		}
 
-		private void Draw ()
-		{
-			ControlPaint.DrawSizeGrip (DeviceContext, BackColor, ClientRectangle);
-			redraw = false;
-		}
-	}
+		protected override void OnMouseDown(MouseEventArgs e) {
+			Capture = true;
+			
+			capture_point = Control.MousePosition;
 
+			window_w = parent.Width;
+			window_h = parent.Height;
+		}
+
+		protected override void OnMouseMove(MouseEventArgs e) {
+			if (this.is_captured) {
+				int	delta_x;
+				int	delta_y;
+				Point	current_point;
+
+				current_point = Control.MousePosition;
+
+				delta_x = current_point.X - capture_point.X;
+				delta_y = current_point.Y - capture_point.Y;
+
+				this.parent.Size = new Size(window_w + delta_x, window_h + delta_y);
+				XplatUI.DoEvents();
+			}
+		}
+
+		protected override void OnMouseUp(MouseEventArgs e) {
+			if (Capture) {
+				Capture = false;
+				if (hide_pending) {
+					Hide();
+					hide_pending = false;
+				}
+			}
+		}
+
+
+		protected override void SetVisibleCore(bool value) {
+			if (Capture) {
+				if (value == false) {
+					hide_pending = true;
+				} else {
+					hide_pending = false;
+				}
+				return;
+			}
+			base.SetVisibleCore (value);
+		}
+
+		#endregion	// Methods
+	}
 }
 
 
