@@ -1,5 +1,8 @@
 2004-05-25  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mono_jit_compile_method_with_opt): Really emit icall wrappers
+	into the default appdomain. Fixes #58707.
+
 	* jit-icalls.c: Remove the broken approximation for truncl, doing
 	no conversion is better.
 
