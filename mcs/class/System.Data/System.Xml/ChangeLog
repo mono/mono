@@ -1,3 +1,22 @@
+2004-05-12  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlDataDocument.cs : Radical design change.
+	  - GetElementFromRow() must return "detached" element, even if it is
+	    not added to table's Rows.
+	  - Introduced XmlDataElement class to map element (this class itself)
+	    and DataRow _always_ . It is impossible to map *all* DataRows 
+	    to/from elements only in XmlDataDocument API, since DataRow can 
+	    be created separate from it (i.e. by table.NewRow()).
+	  - Removed unreliable GetElementsByTagName() dependency from most
+	    of the code, since users might create elements that has the same
+	    name of any tables (that is possible especially unmapped elements).
+	  - Adding/Removing delegates on every event action is unnecessary.
+	    Use just flags.
+	  - For Load(), just using base.Load() will do most of the job.
+	  - Attributes and SimpleContents are not handled properly.
+
+	  "Removed" and "Rollback" events are still TODO.
+
 2004-04-13  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlDataDocument.cs:
