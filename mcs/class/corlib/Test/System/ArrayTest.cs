@@ -26,6 +26,14 @@ namespace MonoTests.System
 		}
 	}
 
+	class BClass : AClass
+	{
+    }
+
+	class CClass : AClass
+    {
+    }
+
 	struct AStruct
 	{
 		public string s;
@@ -543,6 +551,21 @@ public class ArrayTest : Assertion
 				errorThrown = true;
 			}
 			Assert("#E79", !errorThrown);
+		}
+
+		{
+			// bug #38812
+			bool errorThrown = false;
+			try {
+				CClass[] src = new CClass [] { new CClass () };
+				BClass[] dest = new BClass [1];
+
+				src.CopyTo (dest, 0);
+
+			} catch (ArrayTypeMismatchException) {
+				errorThrown = true;
+			}
+			Assert("#E80", errorThrown);
 		}
 	}
 

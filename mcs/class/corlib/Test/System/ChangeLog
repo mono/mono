@@ -1,3 +1,7 @@
+2003-08-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ArrayTest.cs: Added regression test for #38812.
+
 2003-08-10  Miguel de Icaza  <miguel@ximian.com>
 
 	* ArrayTest.cs: New test from Thong (Tum) Nguyen.
