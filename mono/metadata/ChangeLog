@@ -1,5 +1,11 @@
 2004-11-15  Martin Baulig  <martin@ximian.com>
 
+	* class.c (mono_type_get_name_recurse): Put type arguments in
+	`[',`]' instead of in `<','>'.  Thanks to Atsushi for the patch,
+	see bug #68387.
+
+2004-11-15  Martin Baulig  <martin@ximian.com>
+
 	* class.c (mono_type_get_name_recurse): Added `include_ns' flag.
 	(mono_class_setup_vtable): When computing `the_cname' for a
 	generic instance, don't include the namespace since we'd otherwise
