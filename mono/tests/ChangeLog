@@ -1,5 +1,7 @@
 2004-05-28  Zoltan Varga  <vargaz@freemail.hu>
 
+	* static-constructor.cs: Add new regression test for bug #59193.
+
 	* setenv.cs: Fix this after marshalling changes.
 
 2004-05-26  Zoltan Varga  <vargaz@freemail.hu>
