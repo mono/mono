@@ -1,3 +1,9 @@
+2004-10-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* tabledefs.h: Added "internal" security actions to support non-CAS
+	permissions NonCasDemand, NonCasLinkDemand and NonCasInheritance. 
+	Note: they do not seems to be used anymore in 2.0 (new metadata format)
+
 2004-10-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_InternalInvoke): Throw an exception when calling
