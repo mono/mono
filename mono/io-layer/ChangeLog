@@ -1,3 +1,31 @@
+2002-09-27  Dick Porter  <dick@ximian.com>
+
+	* processes.c: Pass environment and working directory to the
+	daemon when forking.  Don't let argv[0] be duplicated when looking
+	for the program name.  Implement EnumProcessModules (simple
+	version for now, lsof-style later if needed), GetModuleBaseName,
+	{Get,Set}ProcessWorkingSetSize (just faked, because the vm hints
+	aren't available on Linux).
+
+	* process-private.h: Store the process name, and the working set
+	min and max
+
+	* handles.c:
+	* handles-private.h: New functions to store and retrieve an array
+	of strings in the scratch space
+
+	* daemon.c: Don't miss deleting some handles when a client exits
+	(we used to rely on the client doing the final cleanup, but
+	obviously if the client is no longer there the daemon has to do
+	it).
+
+	Process forking now sets the environment and the working
+	directory.
+
+	* io.c: Don't confuse fd 0 with an unassigned handle struct
+
+	* atomic.h: Add a google cache alternative to the msdn URL
+
 2002-09-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* sockets.c:

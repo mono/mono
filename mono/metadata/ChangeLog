@@ -1,3 +1,17 @@
+2002-09-27  Dick Porter  <dick@ximian.com>
+
+	* threads.c (mono_thread_init): Call GetCurrentProcess() so
+	io-layer can set up some process handle info.  Not needed on w32,
+	but doesn't hurt either.
+
+	* process.c: Pass the program name in the second parameter to
+	CreateProcess, so the path is searched.  Include the working
+	directory. Implemented process name, process enumeration, and some
+	process detail internal calls.
+	
+	* icall.c: Added internal calls for process lookup, and some
+	process details
+
 2002-09-26  Martin Baulig  <martin@gnome.org>
 
 	* assembly.c (mono_install_open_assembly_hook): New global
