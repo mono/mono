@@ -161,7 +161,7 @@ namespace System.Xml.Serialization {
 
 			if (atts.XmlType != null)
 			{
-				if (atts.XmlType.Namespace != null && atts.XmlType.Namespace != string.Empty)
+				if (atts.XmlType.Namespace != null && atts.XmlType.Namespace != string.Empty && typeData.SchemaType != SchemaTypes.Enum)
 					defaultNamespace = atts.XmlType.Namespace;
 
 				if (atts.XmlType.TypeName != null && atts.XmlType.TypeName != string.Empty)

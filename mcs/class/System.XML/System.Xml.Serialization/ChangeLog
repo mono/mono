@@ -1,3 +1,8 @@
+2004-01-07  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* XmlReflectionImporter.cs: Ignore Namespace property when applying
+	  the [XmlType] attribute to an enum. This fixes bug #52607.
+
 2003-12-19  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* SerializationCodeGenerator.cs, XmlReflectionImporter.cs: Added internal
