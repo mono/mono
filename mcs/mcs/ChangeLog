@@ -1,5 +1,9 @@
 2004-09-16  Marek Safar  <marek.safar@seznam.cz>
 
+	* cs-parser.jay: Add error 504 report.
+
+2004-09-16  Marek Safar  <marek.safar@seznam.cz>
+
 	* rootcontext.cs: WarningLevel is 4 by default now.
 
 	* statement.cs (Fixed.Resolve): Do not null

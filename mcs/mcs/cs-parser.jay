@@ -801,12 +801,17 @@ constant_declaration
 	  constant_declarators
 	  SEMICOLON
 	  {
+		int modflags = (int) $2;
 		foreach (VariableDeclaration constant in (ArrayList) $5){
 			Location l = constant.Location;
+			if ((modflags & Modifiers.STATIC) != 0) {
+				Report.Error (504, l, "The constant '{0}' cannot be marked static", current_container.GetSignatureForError () + '.' + (string) constant.identifier);
+				continue;
+			}
 
 			Const c = new Const (
 				current_class, (Expression) $4, (string) constant.identifier, 
-				(Expression) constant.expression_or_array_initializer, (int) $2, 
+				(Expression) constant.expression_or_array_initializer, modflags, 
 				(Attributes) $1, l);
 
 			current_container.AddConstant (c);
