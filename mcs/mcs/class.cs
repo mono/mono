@@ -1949,7 +1949,8 @@ namespace Mono.CSharp {
 			CallingConventions cc = GetCallingConvention (parent is Class);
 
 			MethodData = new MethodData (this, null, MemberType, ParameterTypes,
-						     ParameterInfo, cc, null, ModFlags, flags, true);
+						     ParameterInfo, cc, OptAttributes,
+						     ModFlags, flags, true);
 
 			if (!MethodData.Define (parent))
 				return false;
