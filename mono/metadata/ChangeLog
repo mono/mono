@@ -1,3 +1,8 @@
+
+Thu Jun 26 12:13:25 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: leak fix.
+
 2003-06-25  Dick Porter  <dick@ximian.com>
 
 	* threadpool.c (mono_thread_pool_add): Don't set up a finaliser
