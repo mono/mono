@@ -34,7 +34,7 @@ public class StreamWriterTest : TestCase
 	}
 
 	private string _codeFileName = "StreamWriterTest.temp";
-	private string _thisCodeFileName = "System.IO/StreamReaderTest.cs";
+	private string _thisCodeFileName = "resources" + Path.DirectorySeparatorChar + "AFile.txt";
 
 	// TODO - ctors
 	public void TestCtor1() {
