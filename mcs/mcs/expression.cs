@@ -299,12 +299,12 @@ namespace CIR {
 		static public Expression ImplicitReferenceConversion (Expression expr, Type target_type)
 		{
 			Type expr_type = expr.Type;
-			
+
 			if (target_type == TypeManager.object_type) {
 				if (expr_type.IsClass)
 					return new EmptyCast (expr, target_type);
 				if (expr_type.IsValueType)
-					return new BoxedCast (expr, target_type);
+					return new BoxedCast (expr);
 			} else if (expr_type.IsSubclassOf (target_type))
 				return new EmptyCast (expr, target_type);
 			else 
@@ -338,7 +338,9 @@ namespace CIR {
 
 			return ne.Resolve (tc);
 		}
-						    
+
+		static int level = 0;
+		
 		// <summary>
 		//   Converts implicitly the resolved expression `expr' into the
 		//   `target_type'.  It returns a new expression that can be used
@@ -348,11 +350,15 @@ namespace CIR {
 		{
 			Type expr_type = expr.Type;
 
+			Console.WriteLine ("ConvertImplicit " + expr_type + " => " + target_type);
+			if (level != 0)
+				throw new Exception ("Lame Loop Detector Triggered");
+			
 			if (expr_type == target_type)
 				return expr;
 			
 			//
-			// Step 2: Built-in conversions.
+			// Step 1: Built-in conversions.
 			//
 			if (expr_type == TypeManager.sbyte_type){
 				//
@@ -482,16 +488,21 @@ namespace CIR {
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				if (target_type == TypeManager.decimal_type)
 					return InternalTypeConstructor (tc, expr, target_type);
-			} else
-				return ImplicitReferenceConversion (expr, target_type);
+			} 
 
-
-			if (UserImplicitCast.CanConvert (tc, expr, target_type) == true) {
-				Expression imp = new UserImplicitCast (expr, target_type);
-				imp.Resolve (tc);
-				return imp;
+			Expression e;
+			
+			e = ImplicitReferenceConversion (expr, target_type);
+			if (e != null){
+				return e;
 			}
 
+			level++;
+			e = UserImplicitCast.CanConvert (tc, expr, target_type);
+			level--;
+			if (e != null)
+				return e;
+			
 			//
 			//  Could not find an implicit cast.
 			//
@@ -903,8 +914,8 @@ namespace CIR {
 	// </summary>
 	public class BoxedCast : EmptyCast {
 
-		public BoxedCast (Expression expr, Type target_type)
-			: base (expr, target_type)
+		public BoxedCast (Expression expr)
+			: base (expr, TypeManager.object_type)
 		{
 		}
 
@@ -3677,84 +3688,27 @@ namespace CIR {
 	}
 
 	public class UserImplicitCast : Expression {
-
-		Expression source;
-		Type       target; 
 		MethodBase method;
 		ArrayList  arguments;
 		
-		public UserImplicitCast (Expression source, Type target)
+		public UserImplicitCast (MethodInfo method, ArrayList arguments)
 		{
-			this.source = source;
-			this.target = target;
+			this.method = method;
+			this.arguments = arguments;
+			type = method.ReturnType;
+			eclass = ExprClass.Value;
 		}
 
 		public override Expression Resolve (TypeContainer tc)
 		{
-			source = source.Resolve (tc);
-			
-			if (source == null)
-				return null;
-
-			Expression mg1, mg2;
-			MethodGroupExpr union;
-			MethodInfo mi;
-			
-			mg1 = MemberLookup (tc, source.Type, "op_Implicit", false);
-			mg2 = MemberLookup (tc, target, "op_Implicit", false);
-			
-			union = Invocation.MakeUnionSet (mg1, mg2);
-
-			arguments = new ArrayList ();
-			arguments.Add (new Argument (source, Argument.AType.Expression));
-			
-			if (union != null) {
-				method = Invocation.OverloadResolve (tc, union, arguments,
-								     new Location ("FIXME", 1, 1));
-				
-				if (method != null) {
-					mi = (MethodInfo) method;
-
-					if (mi.ReturnType == target) {
-						type = mi.ReturnType;
-						return this;
-					}
-				}
-			}
-			
-			if (target == TypeManager.bool_type) {
-
-				mg1 = MemberLookup (tc, source.Type, "op_True", false);
-				mg2 = MemberLookup (tc, target, "op_True", false);
-				
-				union = Invocation.MakeUnionSet (mg1, mg2);
-
-				if (union == null)
-					return null;
-				
-				method = Invocation.OverloadResolve (tc, union, arguments,
-								     new Location ("FIXME", 1, 1));
-				
-				if (method != null) {
-					mi = (MethodInfo) method;
-
-					if (mi.ReturnType == target) {
-						type = mi.ReturnType;
-						return this;
-					}
-				}
-			}
-
-			return null;
+			//
+			// We are born in a fully resolved state
+			//
+			return this;
 		}
 
-		public static bool CanConvert (TypeContainer tc, Expression source, Type target)
+		public static Expression CanConvert (TypeContainer tc, Expression source, Type target)
 		{
-			source = source.Resolve (tc);
-			
-			if (source == null)
-				return false;
-
 			Expression mg1, mg2;
 			MethodBase method;
 			ArrayList arguments;
@@ -3764,10 +3718,9 @@ namespace CIR {
 			
 			MethodGroupExpr union = Invocation.MakeUnionSet (mg1, mg2);
 
-			arguments = new ArrayList ();
-			arguments.Add (new Argument (source, Argument.AType.Expression));
-			
 			if (union != null) {
+				arguments = new ArrayList ();
+				arguments.Add (new Argument (source, Argument.AType.Expression));
 				
 				method = Invocation.OverloadResolve (tc, union, arguments,
 								     new Location ("FIXME", 1, 1));
@@ -3776,7 +3729,7 @@ namespace CIR {
 					MethodInfo mi = (MethodInfo) method;
 					
 					if (mi.ReturnType == target)
-						return true;
+						return new UserImplicitCast (mi, arguments);
 				}
 			}
 			
@@ -3791,20 +3744,22 @@ namespace CIR {
 				union = Invocation.MakeUnionSet (mg1, mg2);
 
 				if (union == null)
-					return false;
+					return null;
 
+				arguments = new ArrayList ();
+				arguments.Add (new Argument (source, Argument.AType.Expression));
+			
 				method = Invocation.OverloadResolve (tc, union, arguments,
 								     new Location ("FIXME", 1, 1));
 				if (method != null) {
 					MethodInfo mi = (MethodInfo) method;
 
 					if (mi.ReturnType == target) 
-						return true;
+						return new UserImplicitCast (mi, arguments);
 				}
 			}
 			
-			return false;
-			
+			return null;
 		}
 		
 		public override void Emit (EmitContext ec)

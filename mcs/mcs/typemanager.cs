@@ -150,8 +150,10 @@ public class TypeManager {
 			return "short";
 		else if (t == ushort_type)
 			return "ushort";
-		else if (t == System.Type.GetType ("System.String"))
+		else if (t == string_type)
 			return "string";
+		else if (t == object_type)
+			return "object";
 		else
 			return t.FullName;
 	}

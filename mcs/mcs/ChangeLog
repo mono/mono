@@ -1,5 +1,28 @@
 2001-09-27  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs: Fix the order in which implicit conversions are
+	done.  
+
+	The previous fixed dropped support for boxed conversions (adding a
+	test to the test suite now)
+
+	(UserImplicitCast::CanConvert): Remove test for source being null,
+	that code is broken.  We should not feed a null to begin with, if
+	we do, then we should track the bug where the problem originates
+	and not try to cover it up here.
+
+	Return a resolved expression of type UserImplicitCast on success
+	rather than true/false.  Ravi: this is what I was talking about,
+	the pattern is to use a static method as a "constructor" for
+	objects. 
+
+	Also, do not create arguments until the very last minute,
+	otherwise we always create the arguments even for lookups that
+	will never be performed. 
+
+	(UserImplicitCast::Resolve): Eliminate, objects of type
+	UserImplicitCast are born in a fully resolved state. 
+	
 	* typemanager.cs (InitCoreTypes): Init also value_type
 	(System.ValueType). 
 
