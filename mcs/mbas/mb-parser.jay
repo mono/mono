@@ -4326,20 +4326,13 @@ private void RaiseEvent (string evt_name, ArrayList args)
    	current_block.AddStatement (s);	
 }
 
-// FIXME: THIS DOES NOT WORK!!!
 private void RemoveHandler (Block b, Expression evt_definition, string handler_name)
 {
-   	Location loc = lexer.Location;
-   	ArrayList neh_args = new ArrayList();
-   	neh_args.Add (new Argument (DecomposeQI(handler_name, loc), Argument.AType.Expression));
-   	
-   	ExpressionStatement se = (ExpressionStatement)new New (DecomposeQI("System.EventHandler", loc), neh_args, loc);
-   	
-   	CompoundAssign ca = new CompoundAssign (
-			Binary.Operator.Subtraction, evt_definition, (Expression) se, loc);
-			
-	Statement s = (Statement)(new StatementExpression ((ExpressionStatement) ca, loc)); 
-	b.AddStatement (s);	
+	Location loc = lexer.Location;
+   	string evt_target = evt_definition.ToString();
+   	evt_target = evt_target.Substring (0, evt_target.LastIndexOf('.'));
+   	Statement s = (Statement) new RemoveHandler (evt_definition, DecomposeQI(handler_name, loc), DecomposeQI(evt_target, loc), loc);
+   	b.AddStatement (s);
 }
 
 // <summary>

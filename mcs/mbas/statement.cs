@@ -5508,7 +5508,75 @@ namespace Mono.MonoBASIC {
 			return false;
 		}
 	}
-	
+
+	/// <summary>
+	///   RemoveHandler statement
+	/// </summary>
+	public class RemoveHandler : Statement 
+	{
+		Expression EvtId;
+		Expression EvtHandler;
+		Expression EvtTarget;
+
+		public RemoveHandler (Expression evt_id, Expression evt_handler, 
+			Expression evt_target, Location l)
+		{
+			EvtId = evt_id;
+			EvtHandler = evt_handler;
+			EvtTarget = evt_target;
+			loc = l;
+		}
+
+		public override bool Resolve (EmitContext ec)
+		{
+			EvtId = EvtId.Resolve(ec);
+			EvtHandler = EvtHandler.Resolve(ec,ResolveFlags.MethodGroup);
+			EvtTarget = EvtTarget.Resolve (ec,ResolveFlags.VariableOrValue);
+			if (EvtId == null || (!(EvtId is EventExpr))) 
+			{
+				Report.Error (30676, "Need an event designator.");
+				return false;
+			}
+
+			if (EvtHandler == null) 
+			{
+				Report.Error (999, "'AddHandler' statement needs an event handler.");
+				return false;
+			}
+			return true;
+		}
+
+		protected override bool DoEmit (EmitContext ec)
+		{
+			Expression e, d;
+			ArrayList args = new ArrayList();
+			Argument arg = new Argument (EvtHandler, Argument.AType.Expression);
+			args.Add (arg);
+			
+			// The even type was already resolved to a delegate, so
+			// we must un-resolve its name to generate a type expression
+			string ts = (EvtId.Type.ToString()).Replace ('+','.');
+			Expression dtype = Mono.MonoBASIC.Parser.DecomposeQI (ts, Location.Null);
+
+			// which we can use to declare a new event handler
+			// of the same type
+			d = new New (dtype, args, Location.Null);
+			d = d.Resolve(ec);
+			// detach the event
+			e = new CompoundAssign(Binary.Operator.Subtraction, EvtId, d, Location.Null);
+
+			// we resolve it all and emit the code
+			e = e.Resolve(ec);
+			if (e != null) 
+			{
+				e.Emit(ec);
+				return true;
+			}
+
+			return false;
+		}
+	}
+
 	public class RedimClause {
 		public Expression Expr;
 		public ArrayList NewIndexes;
