@@ -1,3 +1,7 @@
+2004-11-17  Martin Baulig  <martin@ximian.com>
+
+	* Makefile: Enable test-315 and gen-95.
+
 2004-11-16  Martin Baulig  <martin@ximian.com>
 
 	* test-316.cs: New test for #69082.
