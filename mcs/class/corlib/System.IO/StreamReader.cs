@@ -130,15 +130,15 @@ namespace System.IO {
 		public StreamReader(string path, Encoding encoding, bool detect_encoding_from_bytemarks, int buffer_size)
 		{
 			if (null == path)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException("path");
 			if (String.Empty == path)
-				throw new ArgumentException();
+				throw new ArgumentException("Empty path not allowed");
 			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException("path contains invalid characters");
 
 			string DirName = Path.GetDirectoryName(path);
 			if (DirName != String.Empty && !Directory.Exists(DirName))
-				throw new DirectoryNotFoundException();
+				throw new DirectoryNotFoundException ("Directory '" + DirName + "' not found.");
 			if (!File.Exists(path))
 				throw new FileNotFoundException(path);
 
@@ -149,7 +149,7 @@ namespace System.IO {
 		protected void Initialize (Stream stream, Encoding encoding, bool detect_encoding_from_bytemarks, int buffer_size)
 		{
 			if (null == stream)
-				throw new ArgumentNullException();
+				throw new ArgumentNullException("stream");
 			if (!stream.CanRead)
 				throw new ArgumentException("Cannot read stream");
 
