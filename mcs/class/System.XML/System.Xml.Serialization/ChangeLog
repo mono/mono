@@ -1,3 +1,8 @@
+2004-09-03  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlSerializer.cs: When the XmlReader is created by XmlSerializer, use
+	  Normalization==true by default.
+
 2004-09-02  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* ReflectionHelper.cs, SoapReflectionImporter.cs, XmlReflectionImporter.cs: 

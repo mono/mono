@@ -289,12 +289,14 @@ namespace System.Xml.Serialization
 		public object Deserialize (Stream stream)
 		{
 			XmlTextReader xmlReader = new XmlTextReader(stream);
+			xmlReader.Normalization = true;
 			return Deserialize(xmlReader);
 		}
 
 		public object Deserialize (TextReader textReader)
 		{
 			XmlTextReader xmlReader = new XmlTextReader(textReader);
+			xmlReader.Normalization = true;
 			return Deserialize(xmlReader);
 		}
 
