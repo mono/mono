@@ -1,3 +1,8 @@
+2004-02-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DTMXPathDocumentBuilder2.cs : in some cases, significant whitespace
+	  is incorrectly regarded as Text. Patch by Andrew Skiba.
+
 2005-02-09  Atsushi Enomoto <atsushi@ximian.com>
 
 	* LocationPathPattern.cs : Wildcard name is held as "", so we should
