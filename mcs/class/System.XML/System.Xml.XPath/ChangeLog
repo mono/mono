@@ -1,3 +1,16 @@
+2004-03-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Expression.cs,
+	  DefaultContext.cs : Removed unused NeedAbsoluteMatching.
+	  Added Peer and Subtree (for "peer & subtree optimization. See:
+	  http://idealliance.org/papers/dx_xmle04/papers/02-03-02/02-03-02.html
+	  Fixed some ToString() that caused NullReferenceException.
+
+	* Iterator.cs : Predicate does not affect on RequireSorting.
+	  Added SimpleSlashIterator for peer & subtree optimization.
+
+	  Added PreserveWhitespace() consideration in BaseIterator.MoveNext().
+
 2004-03-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Expression.cs,

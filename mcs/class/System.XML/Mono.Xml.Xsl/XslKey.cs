@@ -63,11 +63,6 @@ namespace Mono.Xml.Xsl
 			get { return expr.EvaluatedNodeType; }
 		}
 
-		internal override bool NeedAbsoluteMatching {
-			// This must be evaluated at any point.
-			get { return true; }
-		}
-
 		public override XPathResultType ReturnType {
 			get { return expr.ReturnType; }
 		}
@@ -120,11 +115,7 @@ namespace Mono.Xml.Xsl
 		{
 			XPathNavigator nav = doc.Clone ();
 			nav.MoveToRoot ();
-//			Expression expr = ((ExprKeyContainer) MatchPattern.ExpressionNode).BodyExpression;
-//			if (expr.NeedAbsoluteMatching)
-//				CollectAbsoluteMatchNodes (nav);
-//			else
-				CollectRelativeMatchNodes (nav);
+			CollectRelativeMatchNodes (nav);
 		}
 
 		private void CollectAbsoluteMatchNodes (XPathNavigator nav)

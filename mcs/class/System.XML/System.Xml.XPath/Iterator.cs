@@ -91,6 +91,11 @@ namespace System.Xml.XPath
 			if (!MoveNextCore ())
 				return false;
 			position++;
+			if (Current != null &&
+				Current.NodeType == XPathNodeType.Whitespace &&
+				_nsm is XsltContext &&
+				!((XsltContext) _nsm).PreserveWhitespace (Current))
+				return MoveNext ();
 			return true;
 		}
 
@@ -831,6 +836,54 @@ namespace System.Xml.XPath
 		public override bool RequireSorting { get { return _iter.RequireSorting; } }
 	}
 
+	internal class SimpleSlashIterator : BaseIterator
+	{
+		private NodeSet _expr;
+		private BaseIterator _left, _right;
+		private XPathNavigator _current;
+
+		public SimpleSlashIterator (BaseIterator left, NodeSet expr)
+			: base (left.NamespaceManager)
+		{
+			this._left = left;
+			this._expr = expr;
+		}
+
+		private SimpleSlashIterator (SimpleSlashIterator other)
+			: base (other)
+		{
+			_expr = other._expr;
+			_left = (BaseIterator) other._left.Clone ();
+			if (other._right != null)
+				_right = (BaseIterator) other._right.Clone ();
+		}
+
+		public override XPathNodeIterator Clone () { return new SimpleSlashIterator (this); }
+
+		public override bool MoveNextCore ()
+		{
+			while (_right == null || !_right.MoveNext ()) {
+				if (!_left.MoveNext ())
+					return false;
+				_right = _expr.EvaluateNodeSet (_left);
+			}
+			if (_current == null)
+				_current = _right.Current.Clone ();
+			else
+				_current.MoveTo (_right.Current);
+			return true;
+		}
+
+		public override XPathNavigator Current {
+			get { return _current; }
+		}
+
+		public override bool RequireSorting {
+			// It always does not need to be sorted.
+			get { return false; }
+		}
+	}
+
 	internal class SlashIterator : BaseIterator
 	{
 		private BaseIterator _iterLeft;
@@ -1056,7 +1109,7 @@ namespace System.Xml.XPath
 			get { return _iter.ReverseAxis; }
 		}
 
-		public override bool RequireSorting { get { return _iter.RequireSorting || _pred.RequireSorting; } }
+		public override bool RequireSorting { get { return _iter.RequireSorting; } }
 	}
 
 	internal class ListIterator : BaseIterator

@@ -193,6 +193,15 @@ namespace Mono.Xml.Xsl
 		{
 			return new SelfIterator ((iter.NamespaceManager as XsltCompiledContext).Processor.CurrentNode, null);
 		}
+
+		internal override bool Peer {
+			get { return false; }
+		}
+
+		public override string ToString ()
+		{
+			return "current()";
+		}
 	}
 	
 	class XsltDocument : XPathFunction 
@@ -211,7 +220,11 @@ namespace Mono.Xml.Xsl
 			doc = c.Input.Clone ();
 		}
 		public override XPathResultType ReturnType { get { return XPathResultType.NodeSet; }}
-		
+
+		internal override bool Peer {
+			get { return arg0.Peer && (arg1 != null ? arg1.Peer : true); }
+		}
+
 		public override object Evaluate (BaseIterator iter)
 		{
 			string baseUri = null;
@@ -279,6 +292,15 @@ namespace Mono.Xml.Xsl
 			
 			return new SelfIterator (n, xsltContext);
 		}
+
+		public override string ToString ()
+		{
+			return String.Concat ("document(",
+				arg0.ToString (),
+				arg1 != null ? "," : String.Empty,
+				arg1 != null ? arg1.ToString () : String.Empty,
+				")");
+		}
 	}
 	
 	class XsltElementAvailable : XPathFunction 
@@ -296,6 +318,10 @@ namespace Mono.Xml.Xsl
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
+
+		internal override bool Peer {
+			get { return arg0.Peer; }
+		}
 
 		public override object Evaluate (BaseIterator iter)
 		{
@@ -346,6 +372,10 @@ namespace Mono.Xml.Xsl
 			}
 		}
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
+
+		internal override bool Peer {
+			get { return arg0.Peer && arg1.Peer && (arg2 != null ? arg2.Peer : true); }
+		}
 		
 		public override object Evaluate (BaseIterator iter)
 		{
@@ -380,6 +410,10 @@ namespace Mono.Xml.Xsl
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
+
+		internal override bool Peer {
+			get { return arg0.Peer; }
+		}
 		
 		public override object Evaluate (BaseIterator iter)
 		{
@@ -451,6 +485,11 @@ namespace Mono.Xml.Xsl
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
+
+		internal override bool Peer {
+			get { return arg0.Peer; }
+		}
+
 		public override object Evaluate (BaseIterator iter)
 		{
 			XPathNavigator n;
@@ -504,6 +543,10 @@ namespace Mono.Xml.Xsl
 		public Expression KeyName { get { return arg0; } }
 		public Expression Field { get { return arg1; } }
 		public override XPathResultType ReturnType { get { return XPathResultType.NodeSet; }}
+
+		internal override bool Peer {
+			get { return arg0.Peer && arg1.Peer; }
+		}
 		
 		public override object Evaluate (BaseIterator iter)
 		{
@@ -580,6 +623,11 @@ namespace Mono.Xml.Xsl
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
+
+		internal override bool Peer {
+			get { return arg0.Peer; }
+		}
+
 		public override object Evaluate (BaseIterator iter)
 		{
 			QName name = XslNameUtil.FromString (arg0.EvaluateString (iter), ctx);
@@ -609,6 +657,11 @@ namespace Mono.Xml.Xsl
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
+
+		internal override bool Peer {
+			get { return arg0.Peer; }
+		}
+
 		public override object Evaluate (BaseIterator iter)
 		{
 			IHasXmlNode xn = iter.Current as IHasXmlNode;
@@ -643,6 +696,10 @@ namespace Mono.Xml.Xsl
 			get {
 				return XPathResultType.NodeSet;
 			}
+		}
+
+		internal override bool Peer {
+			get { return arg0.Peer; }
 		}
 
 		public override object Evaluate (BaseIterator iter)

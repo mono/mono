@@ -431,11 +431,11 @@ namespace System.Xml.XPath
 			get { return XPathNodeType.All; }
 		}
 
-		internal virtual bool NeedAbsoluteMatching {
+		internal virtual bool IsPositional {
 			get { return false; }
 		}
 
-		internal virtual bool IsPositional {
+		internal virtual bool Peer {
 			get { return false; }
 		}
 
@@ -579,6 +579,10 @@ namespace System.Xml.XPath
 
 		internal override bool IsPositional {
 			get { return _left.IsPositional || _right.IsPositional; }
+		}
+
+		internal override bool Peer {
+			get { return _left.Peer && _right.Peer; }
 		}
 	}
 
@@ -940,11 +944,13 @@ namespace System.Xml.XPath
 	internal abstract class NodeSet : Expression
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.NodeSet; }}
+
+		internal abstract bool Subtree { get; }
 	}
 
 	internal class ExprUNION : NodeSet
 	{
-		public readonly Expression left, right;
+		internal readonly Expression left, right;
 		public ExprUNION (Expression left, Expression right)
 		{
 			this.left = left;
@@ -958,16 +964,24 @@ namespace System.Xml.XPath
 			return new UnionIterator (iter, iterLeft, iterRight);
 		}
 
-		internal override bool NeedAbsoluteMatching {
-			get { return left.NeedAbsoluteMatching || right.NeedAbsoluteMatching; }
-		}
-
 		internal override XPathNodeType EvaluatedNodeType {
 			get { return left.EvaluatedNodeType == right.EvaluatedNodeType ? left.EvaluatedNodeType : XPathNodeType.All; }
 		}
 
 		internal override bool IsPositional {
 			get { return left.IsPositional || right.IsPositional; }
+		}
+
+		internal override bool Peer {
+			get { return left.Peer && right.Peer; }
+		}
+
+		internal override bool Subtree {
+			get {
+				NodeSet nl = left as NodeSet;
+				NodeSet nr = right as NodeSet;
+				return nl != null && nr != null && nl.Subtree && nr.Subtree;
+			}
 		}
 	}
 
@@ -984,14 +998,12 @@ namespace System.Xml.XPath
 		public override object Evaluate (BaseIterator iter)
 		{
 			BaseIterator iterLeft = left.EvaluateNodeSet (iter);
-			return new SlashIterator (iterLeft, right, left.RequireSorting || right.RequireSorting);
+			if (left.Peer && right.Subtree && !RequireSorting)
+				return new SimpleSlashIterator (iterLeft, right);
+			return new SlashIterator (iterLeft, right, RequireSorting);
 		}
 
 		public override bool RequireSorting { get { return left.RequireSorting || right.RequireSorting; } }
-
-		internal override bool NeedAbsoluteMatching {
-			get { return true; }
-		}
 
 		internal override XPathNodeType EvaluatedNodeType {
 			get { return right.EvaluatedNodeType; }
@@ -999,6 +1011,17 @@ namespace System.Xml.XPath
 
 		internal override bool IsPositional {
 			get { return left.IsPositional || right.IsPositional; }
+		}
+
+		internal override bool Peer {
+			get { return left.Peer && right.Peer; }
+		}
+
+		internal override bool Subtree {
+			get {
+				NodeSet n = left as NodeSet;
+				return n != null && n.Subtree && right.Subtree;
+			}
 		}
 	}
 	
@@ -1029,16 +1052,23 @@ namespace System.Xml.XPath
 
 		public override bool RequireSorting { get { return left.RequireSorting || right.RequireSorting; } }
 
-		internal override bool NeedAbsoluteMatching {
-			get { return true; }
-		}
-
 		internal override XPathNodeType EvaluatedNodeType {
 			get { return right.EvaluatedNodeType; }
 		}
 
 		internal override bool IsPositional {
 			get { return left.IsPositional || right.IsPositional; }
+		}
+
+		internal override bool Peer {
+			get { return false; }
+		}
+
+		internal override bool Subtree {
+			get {
+				NodeSet n = left as NodeSet;
+				return n != null && n.Subtree && right.Subtree;
+			}
 		}
 	}
 
@@ -1052,12 +1082,16 @@ namespace System.Xml.XPath
 			return new SelfIterator (navRoot, iter.NamespaceManager);
 		}
 
-		internal override bool NeedAbsoluteMatching {
-			get { return false; }
-		}
-
 		internal override XPathNodeType EvaluatedNodeType {
 			get { return XPathNodeType.Root; }
+		}
+
+		internal override bool Peer {
+			get { return true; }
+		}
+
+		internal override bool Subtree {
+			get { return false; }
 		}
 	}
 
@@ -1200,6 +1234,38 @@ namespace System.Xml.XPath
 					return true;
 				default:
 					return false;
+				}
+			}
+
+		}
+
+		internal override bool Peer {
+			get {
+				switch (_axis.Axis) {
+				case Axes.Ancestor:
+				case Axes.AncestorOrSelf:
+				case Axes.DescendantOrSelf:
+				case Axes.Descendant:
+				case Axes.Preceding:
+				case Axes.Following:
+					return false;
+				default:
+					return true;
+				}
+			}
+		}
+
+		internal override bool Subtree {
+			get {
+				switch (_axis.Axis) {
+				case Axes.Parent:
+				case Axes.Ancestor:
+				case Axes.AncestorOrSelf:
+				case Axes.Preceding:
+				case Axes.Following:
+					return false;
+				default:
+					return true;
 				}
 			}
 
@@ -1384,10 +1450,6 @@ namespace System.Xml.XPath
 			return new PredicateIterator (iterExpr, pred);
 		}
 
-		internal override bool NeedAbsoluteMatching {
-			get { return expr.NeedAbsoluteMatching; }
-		}
-
 		internal override XPathNodeType EvaluatedNodeType {
 			get { return expr.EvaluatedNodeType; }
 		}
@@ -1397,6 +1459,17 @@ namespace System.Xml.XPath
 				if (pred.ReturnType == XPathResultType.Number)
 					return true;
 				return expr.IsPositional || pred.IsPositional;
+			}
+		}
+
+		internal override bool Peer {
+			get { return expr.Peer && pred.Peer; }
+		}
+
+		internal override bool Subtree {
+			get {
+				NodeSet n = expr as NodeSet;
+				return n != null && n.Subtree;
 			}
 		}
 	}
@@ -1486,6 +1559,10 @@ namespace System.Xml.XPath
 				return iterResult is BaseIterator ? iterResult : new WrapperIterator (iterResult, iter.NamespaceManager);
 			return objResult;
 		}
+
+		internal override bool Peer {
+			get { return false; }
+		}
 	}
 
 	internal class ExprParens : Expression
@@ -1513,16 +1590,16 @@ namespace System.Xml.XPath
 				return o;
 		}
 
-		internal override bool NeedAbsoluteMatching {
-			get { return _expr.NeedAbsoluteMatching; }
-		}
-
 		internal override XPathNodeType EvaluatedNodeType {
 			get { return _expr.EvaluatedNodeType; }
 		}
 
 		internal override bool IsPositional {
 			get { return _expr.IsPositional; }
+		}
+
+		internal override bool Peer {
+			get { return _expr.Peer; }
 		}
 	}
 
@@ -1670,6 +1747,10 @@ namespace System.Xml.XPath
 				}
 			}
 			return func.Invoke (context, rgArgs, iter.Current);
+		}
+
+		internal override bool Peer {
+			get { return false; }
 		}
 	}
 }

@@ -213,7 +213,11 @@ namespace System.Xml.XPath
 		}
 
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
-		
+
+		internal override bool Peer {
+			get { return arg0.Peer; }
+		}
+
 		public override object Evaluate (BaseIterator iter)
 		{
 			return (double) arg0.EvaluateNodeSet (iter).Count;
@@ -250,6 +254,10 @@ namespace System.Xml.XPath
 		
 		private static char [] rgchWhitespace = {' ', '\t', '\r', '\n'};
 		public override XPathResultType ReturnType { get { return XPathResultType.NodeSet; }}
+
+		internal override bool Peer {
+			get { return arg0.Peer; }
+		}
 
 		public override object Evaluate (BaseIterator iter)
 		{
@@ -297,6 +305,10 @@ namespace System.Xml.XPath
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
+
+		internal override bool Peer {
+			get { return arg0 != null ? arg0.Peer : true; }
+		}
 		
 		public override object Evaluate (BaseIterator iter)
 		{
@@ -327,6 +339,10 @@ namespace System.Xml.XPath
 				if (args.Tail != null)
 					throw new XPathException ("namespace-uri takes 1 or zero args");
 			}
+		}
+
+		internal override bool Peer {
+			get { return arg0 != null ? arg0.Peer : true; }
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
@@ -363,6 +379,10 @@ namespace System.Xml.XPath
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
+
+		internal override bool Peer {
+			get { return arg0 != null ? arg0.Peer : true; }
+		}
 		
 		public override object Evaluate (BaseIterator iter)
 		{
@@ -377,7 +397,9 @@ namespace System.Xml.XPath
 
 		public override string ToString ()
 		{
-			return "name(" + arg0.ToString () + ")";
+			return String.Concat ("name(",
+				 arg0 != null ? arg0.ToString () : String.Empty,
+				 ")");
 		}
 	}
 
@@ -391,11 +413,15 @@ namespace System.Xml.XPath
 			if (args != null) {
 				arg0 = args.Arg;
 				if (args.Tail != null)
-					throw new XPathException ("boolean takes 1 or zero args");
+					throw new XPathException ("string takes 1 or zero args");
 			}
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
+
+		internal override bool Peer {
+			get { return arg0 != null ? arg0.Peer : true; }
+		}
 
 		public override object Evaluate (BaseIterator iter)
 		{
@@ -424,6 +450,15 @@ namespace System.Xml.XPath
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
+
+		internal override bool Peer {
+			get {
+				for (int i = 0; i < rgs.Count; i++)
+					if (!((Expression) rgs [i]).Peer)
+						return false;
+				return true;
+			}
+		}
 		
 		public override object Evaluate (BaseIterator iter)
 		{
@@ -465,6 +500,10 @@ namespace System.Xml.XPath
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
+
+		internal override bool Peer {
+			get { return arg0.Peer && arg1.Peer; }
+		}
 		
 		public override object Evaluate (BaseIterator iter)
 		{
@@ -492,6 +531,10 @@ namespace System.Xml.XPath
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
+
+		internal override bool Peer {
+			get { return arg0.Peer && arg1.Peer; }
+		}
 		
 		public override object Evaluate (BaseIterator iter)
 		{
@@ -519,6 +562,10 @@ namespace System.Xml.XPath
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
+
+		internal override bool Peer {
+			get { return arg0.Peer && arg1.Peer; }
+		}
 		
 		public override object Evaluate (BaseIterator iter)
 		{
@@ -551,6 +598,10 @@ namespace System.Xml.XPath
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
+
+		internal override bool Peer {
+			get { return arg0.Peer && arg1.Peer; }
+		}
 		
 		public override object Evaluate (BaseIterator iter)
 		{
@@ -585,6 +636,10 @@ namespace System.Xml.XPath
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
+
+		internal override bool Peer {
+			get { return arg0.Peer && arg1.Peer && (arg2 != null ? arg2.Peer : true); }
+		}
 		
 		public override object Evaluate (BaseIterator iter)
 		{
@@ -642,6 +697,10 @@ namespace System.Xml.XPath
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
+
+		internal override bool Peer {
+			get { return arg0 != null ? arg0.Peer : true; }
+		}
 		
 		public override object Evaluate (BaseIterator iter)
 		{
@@ -675,6 +734,10 @@ namespace System.Xml.XPath
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
+
+		internal override bool Peer {
+			get { return arg0 !=null ? arg0.Peer : true; }
+		}
 
 		public override object Evaluate (BaseIterator iter)
 		{
@@ -730,6 +793,10 @@ namespace System.Xml.XPath
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
+
+		internal override bool Peer {
+			get { return arg0.Peer && arg1.Peer && arg2.Peer; }
+		}
 		
 		public override object Evaluate (BaseIterator iter)
 		{
@@ -783,6 +850,10 @@ namespace System.Xml.XPath
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
 
+		internal override bool Peer {
+			get { return arg0 != null ? arg0.Peer : true; }
+		}
+
 		public override object Evaluate (BaseIterator iter)
 		{
 			if (arg0 == null)
@@ -809,6 +880,10 @@ namespace System.Xml.XPath
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
+
+		internal override bool Peer {
+			get { return arg0.Peer; }
+		}
 
 		public override object Evaluate (BaseIterator iter)
 		{
@@ -878,6 +953,10 @@ namespace System.Xml.XPath
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
 
+		internal override bool Peer {
+			get { return arg0.Peer; }
+		}
+
 		public override object Evaluate (BaseIterator iter)
 		{
 			string lang = arg0.EvaluateString (iter).ToLower (CultureInfo.InvariantCulture);
@@ -908,6 +987,10 @@ namespace System.Xml.XPath
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
 
+		internal override bool Peer {
+			get { return arg0 != null ? arg0.Peer : true; }
+		}
+
 		public override object Evaluate (BaseIterator iter)
 		{
 			if (arg0 == null)
@@ -934,6 +1017,10 @@ namespace System.Xml.XPath
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
+
+		internal override bool Peer {
+			get { return arg0.Peer; }
+		}
 
 		public override object Evaluate (BaseIterator iter)
 		{
@@ -966,6 +1053,10 @@ namespace System.Xml.XPath
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
 
+		internal override bool Peer {
+			get { return arg0.Peer; }
+		}
+
 		public override object Evaluate (BaseIterator iter)
 		{
 			return Math.Floor (arg0.EvaluateNumber (iter));
@@ -991,6 +1082,10 @@ namespace System.Xml.XPath
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
 
+		internal override bool Peer {
+			get { return arg0.Peer; }
+		}
+
 		public override object Evaluate (BaseIterator iter)
 		{
 			return Math.Ceiling (arg0.EvaluateNumber (iter));
@@ -1015,6 +1110,10 @@ namespace System.Xml.XPath
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
+
+		internal override bool Peer {
+			get { return arg0.Peer; }
+		}
 
 		public override object Evaluate (BaseIterator iter)
 		{
