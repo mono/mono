@@ -1,3 +1,7 @@
+2004-05-26  Ravindra <rkumar@novell.com>
+
+	* Color.cs: Corrected Color.Green property.
+
 2004-05-24  Jordi Mas i Hernandez <jordi@ximian.com>
 	* gdipStructs.cs: remove unnecessary code, since bug 57706 is fixed
 

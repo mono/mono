@@ -855,7 +855,7 @@ namespace System.Drawing
 		static public Color Green
 		{	
 			get {
-				return Color.FromArgbNamed (255, 0, 128, 0, "Green", KnownColor.Green);
+				return Color.FromArgbNamed (255, 0, 255, 0, "Green", KnownColor.Green);
 			}
 		}
 
