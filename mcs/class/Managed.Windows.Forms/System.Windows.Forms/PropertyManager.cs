@@ -34,7 +34,7 @@ namespace System.Windows.Forms {
 		private string property_name;
 		private PropertyDescriptor prop_desc;
 		private bool binding_suspended;
-		
+
 		internal PropertyManager (object data_source, string property_name)
 		{
 			this.data_source = data_source;
@@ -43,7 +43,8 @@ namespace System.Windows.Forms {
 			prop_desc = TypeDescriptor.GetProperties (data_source).Find (property_name, true);
 
 			if (prop_desc == null)
-				throw new ArgumentException ("Property does not exist");
+				return;
+
 			prop_desc.AddValueChanged (data_source, new EventHandler (PropertyChangedHandler));
 		}
 

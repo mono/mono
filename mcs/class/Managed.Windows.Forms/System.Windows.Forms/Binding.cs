@@ -165,9 +165,14 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			PropertyDescriptor pd = TypeDescriptor.GetProperties (manager.Current).Find (data_member, true);
-			object pulled = pd.GetValue (manager.Current);
-			data = ParseData (pulled, pd.PropertyType);
+			if (data_member != null) {
+				PropertyDescriptor pd = TypeDescriptor.GetProperties (manager.Current).Find (data_member, true);
+				object pulled = pd.GetValue (manager.Current);
+				data = ParseData (pulled, pd.PropertyType);
+			} else {
+				object pulled = manager.Current;
+				data = ParseData (pulled, pulled.GetType ());
+			}
 
 			data = FormatData (data);
 			SetControlValue (data);
