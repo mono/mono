@@ -45,6 +45,7 @@ System.Xml/XmlProcessingInstruction.cs
 System.Xml/XmlQualifiedName.cs
 System.Xml/XmlReader.cs
 System.Xml/XmlResolver.cs
+System.Xml/XmlSecureResolver.cs
 System.Xml/XmlSignificantWhitespace.cs
 System.Xml/XmlSpace.cs
 System.Xml/XmlText.cs

@@ -1,6 +1,14 @@
+2003-05-18  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* added XmlSecureResolver.cs to list.unix.
+
 2003-05-15  Nick Drochak  <ndrochak@gol.com>
 
 	* System.XML.build: exclude standalone tests from dll build.
+
+2003-05-10  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* added TypeTableEntry.cs to list.unix.
 
 2003-03-18  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
