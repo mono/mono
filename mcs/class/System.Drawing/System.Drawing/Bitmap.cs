@@ -45,14 +45,9 @@ namespace System.Drawing {
 		}
 
 		public Bitmap (int width, int height, PixelFormat format)
-		{			
-			int bpp = GetPixelFormatSize (format);
-			int stride = ((bpp * width) / 8);
-			stride = (stride + 3) & ~3;
-			int bmp_size = stride * height;		
-			
+		{	
 			IntPtr bmp;
-			Status s = GDIPlus.GdipCreateBitmapFromScan0 (width, height, stride, format, IntPtr.Zero, 
+			Status s = GDIPlus.GdipCreateBitmapFromScan0 (width, height, 0, format, IntPtr.Zero, 
 				out bmp);
 			GDIPlus.CheckStatus (s);
 			nativeObject = (IntPtr) bmp;
@@ -181,8 +176,8 @@ namespace System.Drawing {
 			GDIPlus.CheckStatus (status);
 
 			Bitmap bmpnew = new Bitmap (rect.Width, rect.Height,  PixelFormat, (IntPtr) bmp);
-       		return bmpnew;
-       	}
+       			return bmpnew;
+       		}
 		
 		public Bitmap Clone (RectangleF rect, PixelFormat format)
 		{
@@ -300,8 +295,6 @@ namespace System.Drawing {
 			GDIPlus.CheckStatus (status);
 		}
 
-		// properties
-		// needs to be done ###FIXME###
 
 		protected override void DisposeResources ()
 		{

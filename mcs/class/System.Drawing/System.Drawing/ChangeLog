@@ -1,4 +1,7 @@
 2004-05-05  Jordi Mas i Hernandez <jordi@ximian.com>
+	* Bitmap.cs: Let GDI+ calculate the strides, as it does in Win32.
+
+2004-05-05  Jordi Mas i Hernandez <jordi@ximian.com>
 	* Image.cs: raw_format should be handled by GDI+
 	* Bitmap.cs: raw_format should be handled by GDI+
 
