@@ -4667,6 +4667,12 @@ namespace Mono.CSharp {
 		public static MemberFilter method_signature_filter;
 
 		/// <summary>
+		///    This delegate is used to extract methods which have the
+		///    same signature as the argument except for the name
+		/// </summary>
+		public static MemberFilter method_signature_noname_filter;
+
+		/// <summary>
 		///   This delegate is used to extract inheritable methods which
 		///   have the same signature as the argument.  By inheritable,
 		///   this means that we have permissions to override the method
@@ -4685,6 +4691,7 @@ namespace Mono.CSharp {
 		static MethodSignature ()
 		{
 			method_signature_filter = new MemberFilter (MemberSignatureCompare);
+			method_signature_noname_filter = new MemberFilter (MemberSignatureCompareNoName);
 			inheritable_method_signature_filter = new MemberFilter (
 				InheritableMemberSignatureCompare);
 			inheritable_property_signature_filter = new MemberFilter (
@@ -4737,11 +4744,21 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		static bool MemberSignatureCompareNoName (MemberInfo m, object filter_criteria)
+		{
+			return MemberSignatureCompare (m, filter_criteria, false);
+		}
+
 		static bool MemberSignatureCompare (MemberInfo m, object filter_criteria)
+		{
+			return MemberSignatureCompare (m, filter_criteria, true);
+		}
+
+		static bool MemberSignatureCompare (MemberInfo m, object filter_criteria, bool use_name)
 		{
 			MethodSignature sig = (MethodSignature) filter_criteria;
 
-			if (m.Name != sig.Name)
+			if (use_name && (m.Name != sig.Name))
 				return false;
 
 			Type ReturnType;

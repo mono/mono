@@ -444,14 +444,15 @@ namespace Mono.CSharp {
 			MethodSignature ms;
 			
 			Type [] args = TypeManager.GetArgumentTypes (mi);
+
 			ms = new MethodSignature (mi.Name, mi.ReturnType, args);
 			MemberList list = TypeContainer.FindMembers (
 				container.TypeBuilder.BaseType, MemberTypes.Method | MemberTypes.Property,
 				BindingFlags.Public | BindingFlags.Instance,
-				MethodSignature.method_signature_filter, ms);
+				MethodSignature.method_signature_noname_filter, ms);
 
-			if (list.Count == 0)
-				return false;
+			if (list.Count == 0) 
+				return false;		
 
 			DefineProxy (iface_type, (MethodInfo) list [0], mi, args);
 			return true;
