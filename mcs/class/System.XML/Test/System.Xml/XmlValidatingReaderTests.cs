@@ -443,6 +443,84 @@ namespace MonoTests.System.Xml
 			Assert (dvr.MoveToFirstAttribute ());
 			AssertEquals ("foo", dvr.Name);
 			// MS BUG: it returns "entity string", however, entity should not be exanded.
+			//  ReadAttributeValue()
+			Assert (dvr.ReadAttributeValue ());
+			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
+			AssertEquals ("ent", dvr.Name);
+			AssertEquals ("", dvr.Value);
+			Assert (!dvr.ReadAttributeValue ());
+
+			// bar
+			Assert (dvr.MoveToNextAttribute ());
+			AssertEquals ("bar", dvr.Name);
+			//  ReadAttributeValue()
+			Assert (dvr.ReadAttributeValue ());
+			AssertEquals (XmlNodeType.Text, dvr.NodeType);
+			AssertEquals ("", dvr.Name);
+			AssertEquals ("internal ", dvr.Value);
+			Assert (dvr.ReadAttributeValue ());
+			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
+			AssertEquals ("ent", dvr.Name);
+			AssertEquals ("", dvr.Value);
+			Assert (dvr.ReadAttributeValue ());
+			AssertEquals (XmlNodeType.Text, dvr.NodeType);
+			AssertEquals ("", dvr.Name);
+			AssertEquals (" value", dvr.Value);
+
+			// ValidationType = None
+
+			dvr = PrepareXmlReader (xml);
+			dvr.EntityHandling = EntityHandling.ExpandCharEntities;
+			dvr.ValidationType = ValidationType.None;
+			dvr.Read ();	// DTD
+			dvr.Read ();
+			AssertEquals (XmlNodeType.Element, dvr.NodeType);
+			AssertEquals ("root", dvr.Name);
+
+			// foo
+			Assert (dvr.MoveToFirstAttribute ());
+			AssertEquals ("foo", dvr.Name);
+			//  ReadAttributeValue()
+			Assert (dvr.ReadAttributeValue ());
+			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
+			AssertEquals ("ent", dvr.Name);
+			AssertEquals ("", dvr.Value);
+			Assert (!dvr.ReadAttributeValue ());
+
+			// bar
+			Assert (dvr.MoveToNextAttribute ());
+			AssertEquals ("bar", dvr.Name);
+			//  ReadAttributeValue()
+			Assert (dvr.ReadAttributeValue ());
+			AssertEquals (XmlNodeType.Text, dvr.NodeType);
+			AssertEquals ("", dvr.Name);
+			AssertEquals ("internal ", dvr.Value);
+			Assert (dvr.ReadAttributeValue ());
+			AssertEquals (XmlNodeType.EntityReference, dvr.NodeType);
+			AssertEquals ("ent", dvr.Name);
+			AssertEquals ("", dvr.Value);
+			Assert (dvr.ReadAttributeValue ());
+			AssertEquals (XmlNodeType.Text, dvr.NodeType);
+			AssertEquals ("", dvr.Name);
+			AssertEquals (" value", dvr.Value);
+		}
+
+		[Test]
+		[Category("NotDotNet")]
+		public void TestPreserveEntityNotOnDotNet ()
+		{
+			string intSubset = "<!ELEMENT root EMPTY><!ATTLIST root foo CDATA 'foo-def' bar CDATA 'bar-def'><!ENTITY ent 'entity string'>";
+			string dtd = "<!DOCTYPE root [" + intSubset + "]>";
+			string xml = dtd + "<root foo='&ent;' bar='internal &ent; value' />";
+			dvr = PrepareXmlReader (xml);
+			dvr.EntityHandling = EntityHandling.ExpandCharEntities;
+			dvr.Read ();	// DTD
+			dvr.Read ();
+			AssertEquals (XmlNodeType.Element, dvr.NodeType);
+			AssertEquals ("root", dvr.Name);
+			Assert (dvr.MoveToFirstAttribute ());
+			AssertEquals ("foo", dvr.Name);
+			// MS BUG: it returns "entity string", however, entity should not be exanded.
 			AssertEquals ("&ent;", dvr.Value);
 			//  ReadAttributeValue()
 			Assert (dvr.ReadAttributeValue ());

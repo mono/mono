@@ -1,3 +1,8 @@
+2005-01-26  Nick Drochak  <ndrochak@ieee.org>
+
+	* XmlValidatingReaderTests.cs: Move MS.NET bug-exposing test to a new
+	test method and ignore it on .NET.
+
 2005-01-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReaderSettingsTests.cs : added some .ctor() tests.
