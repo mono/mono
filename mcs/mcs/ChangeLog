@@ -1,3 +1,8 @@
+2003-03-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Indexers): Do not construct immediately, allow
+	for new members to be appended as we go.  Fixes 38143
+
 2003-03-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* expression.cs: save/restore context when resolving an unchecked
