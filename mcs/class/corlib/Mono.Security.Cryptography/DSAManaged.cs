@@ -20,7 +20,12 @@ using Mono.Math;
 
 namespace Mono.Security.Cryptography {
 
-	public class DSAManaged : DSA {
+#if INSIDE_CORLIB
+	internal
+#else
+	public
+#endif
+	class DSAManaged : DSA {
 
 		private const int defaultKeySize = 1024;
 

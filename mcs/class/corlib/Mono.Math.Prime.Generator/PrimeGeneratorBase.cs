@@ -12,7 +12,12 @@ using System;
 namespace Mono.Math.Prime.Generator {
 
 	[CLSCompliant(false)]
-	public abstract class PrimeGeneratorBase {
+#if INSIDE_CORLIB
+	internal
+#else
+	public
+#endif
+	abstract class PrimeGeneratorBase {
 
 		public virtual ConfidenceFactor Confidence {
 			get {

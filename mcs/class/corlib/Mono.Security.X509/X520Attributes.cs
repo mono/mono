@@ -30,7 +30,12 @@ namespace Mono.Security.X509 {
 	 * 
 	 * AttributeValue ::= ANY DEFINED BY AttributeType
 	 */
-	public class X520 {
+#if INSIDE_CORLIB
+	internal
+#else
+	public
+#endif
+	class X520 {
 
 		public abstract class AttributeTypeAndValue {
 			protected string oid;

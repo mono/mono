@@ -18,7 +18,12 @@ namespace Mono.Security {
 	// a.	ITU ASN.1 standards (free download)
 	//	http://www.itu.int/ITU-T/studygroups/com17/languages/
 
-	public class ASN1Convert {
+#if INSIDE_CORLIB
+	internal
+#else
+	public
+#endif
+	class ASN1Convert {
 
 		// RFC3280, section 4.2.1.5
 		// CAs conforming to this profile MUST always encode certificate

@@ -15,7 +15,12 @@ namespace Mono.Xml {
 
 	// convert an XML document into SecurityElement objects
 	[CLSCompliant(false)]
-	public class SecurityParser : MiniParser, MiniParser.IHandler, MiniParser.IReader {
+#if INSIDE_CORLIB
+	internal
+#else
+	public
+#endif
+	class SecurityParser : MiniParser, MiniParser.IHandler, MiniParser.IReader {
 
 		private SecurityElement root;
 

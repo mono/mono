@@ -13,10 +13,20 @@ using System.Security.Cryptography;
 namespace Mono.Math.Prime {
 
 	[CLSCompliant(false)]
-	public delegate bool PrimalityTest (BigInteger bi, ConfidenceFactor confidence);
+#if INSIDE_CORLIB
+	internal
+#else
+	public
+#endif
+	delegate bool PrimalityTest (BigInteger bi, ConfidenceFactor confidence);
 
 	[CLSCompliant(false)]
-	public sealed class PrimalityTests {
+#if INSIDE_CORLIB
+	internal
+#else
+	public
+#endif
+	sealed class PrimalityTests {
 
 		#region SPP Test
 		

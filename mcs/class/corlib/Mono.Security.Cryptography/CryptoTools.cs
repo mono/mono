@@ -13,7 +13,12 @@ using System.Security.Cryptography;
 
 namespace Mono.Security.Cryptography {
 
-	public class KeyBuilder {
+#if INSIDE_CORLIB
+	internal
+#else
+	public
+#endif
+	class KeyBuilder {
 	
 		static private RandomNumberGenerator rng;
 	
@@ -38,7 +43,12 @@ namespace Mono.Security.Cryptography {
 	}
 	
 	// Process an array as a sequence of blocks
-	public class BlockProcessor {
+#if INSIDE_CORLIB
+	internal
+#else
+	public
+#endif
+	class BlockProcessor {
 		private ICryptoTransform transform;
 		private byte[] block;
 		private int blockSize;	// in bytes (not in bits)

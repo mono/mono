@@ -20,7 +20,12 @@ using Mono.Math.Prime;
 namespace Mono.Math {
 
 	[CLSCompliant(false)]
-	public class BigInteger {
+#if INSIDE_CORLIB
+	internal
+#else
+	public
+#endif
+	class BigInteger {
 
 		#region Data Storage
 

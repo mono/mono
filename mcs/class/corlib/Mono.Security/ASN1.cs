@@ -16,7 +16,12 @@ namespace Mono.Security {
 // a.	ITU ASN.1 standards (free download)
 //	http://www.itu.int/ITU-T/studygroups/com17/languages/
 
-public class ASN1 {
+#if INSIDE_CORLIB
+	internal
+#else
+	public
+#endif
+class ASN1 {
 
 	protected byte m_nTag;
 	protected byte[] m_aValue;

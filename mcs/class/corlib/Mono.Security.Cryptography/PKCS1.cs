@@ -16,7 +16,12 @@ namespace Mono.Security.Cryptography {
 	// a.	PKCS#1: RSA Cryptography Standard 
 	//	http://www.rsasecurity.com/rsalabs/pkcs/pkcs-1/index.html
 	
-	public class PKCS1 {
+#if INSIDE_CORLIB
+	internal
+#else
+	public
+#endif
+	class PKCS1 {
 	
 		private static bool Compare (byte[] array1, byte[] array2) 
 		{

@@ -20,7 +20,12 @@ namespace Mono.Security.X509 {
 	 *	extnValue   OCTET STRING  
 	 * }
 	 */
-	public class X509Extension {
+#if INSIDE_CORLIB
+	internal
+#else
+	public
+#endif
+	class X509Extension {
 
 		protected string extnOid;
 		protected bool extnCritical;

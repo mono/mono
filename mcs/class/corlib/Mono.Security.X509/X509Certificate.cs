@@ -20,7 +20,12 @@ namespace Mono.Security.X509 {
 	// b.	ITU ASN.1 standards (free download)
 	//	http://www.itu.int/ITU-T/studygroups/com17/languages/
 
-	public class X509Certificate {
+#if INSIDE_CORLIB
+	internal
+#else
+	public
+#endif
+	class X509Certificate {
 
 		private ASN1 decoder;
 

@@ -37,7 +37,12 @@ using System.Globalization;
 namespace Mono.Xml {
 
 [CLSCompliant(false)] 
-public class MiniParser {
+#if INSIDE_CORLIB
+	internal
+#else
+	public
+#endif
+class MiniParser {
 
 	public interface IReader {
 		int Read();

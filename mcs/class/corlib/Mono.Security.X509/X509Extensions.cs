@@ -18,7 +18,12 @@ namespace Mono.Security.X509 {
 	 * 
 	 * Note: 1..MAX -> There shouldn't be 0 Extensions in the ASN1 structure
 	 */
-	public class X509Extensions : ICollection, IEnumerable {
+#if INSIDE_CORLIB
+	internal
+#else
+	public
+#endif
+	class X509Extensions : ICollection, IEnumerable {
 
 		private ArrayList extensions;
 		private bool readOnly;
