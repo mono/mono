@@ -1,3 +1,8 @@
+2004-04-21  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* CaseInsensitiveHashCodeProvider.cs: If the culture is null, don't use
+	  Char.ToLower(c,culture), since it does not accept null as culture.
+
 2004-04-20  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Queue.cs: Renamed internal membesr to match MS.NET (to allow serialization

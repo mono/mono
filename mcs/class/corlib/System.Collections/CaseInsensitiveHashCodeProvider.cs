@@ -86,9 +86,17 @@ namespace System.Collections {
 			char c;
 
 			int length = str.Length;
-			for (int i = 0;i<length;i++) {
-				c = Char.ToLower (str [i], culture);
-				h = h * 31 + c;
+			if (culture != null) {
+				for (int i = 0;i<length;i++) {
+					c = Char.ToLower (str [i], culture);
+					h = h * 31 + c;
+				}
+			}
+			else {
+				for (int i = 0;i<length;i++) {
+					c = Char.ToLower (str [i]);
+					h = h * 31 + c;
+				}
 			}
 
 			return h;
