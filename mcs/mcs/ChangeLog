@@ -9,6 +9,10 @@
 	class implementing that interface.
 	(IteratorHandle.IsIEnumerator): Likewise, for IEnumerator.	
 
+2004-07-13  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs: Fixed previous fix, it broke some error tests.
+
 2004-07-12  Martin Baulig  <martin@ximian.com>
 
 	* enum.cs (Enum.Define): Call Emit() to emit the attributes.
