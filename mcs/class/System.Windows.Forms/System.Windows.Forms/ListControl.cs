@@ -201,7 +201,7 @@ namespace System.Windows.Forms {
 		protected virtual void SetItemCore (int index, object value) {
 			//FIXME:
 		}
-		protected abstract void SetItemsCore (IList Items);
+		protected abstract void SetItemsCore (IList items);
 
 		[MonoTODO]
 		protected abstract void RefreshItem (int index);

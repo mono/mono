@@ -298,7 +298,9 @@ namespace System.Windows.Forms {
 		/// --- ButtonBase.ButtonBaseAccessibleObject ---
 		/// the class isonly used for .NET framework
 		/// 
-		public class ButtonBaseAccessibleObject : AccessibleObject{
-		}
+		//public class ButtonBaseAccessibleObject : Control.ControlAccessibleObject{
+		//	private ButtonBaseAccessibleObject() : base(/* need "control" parameter here. "this", "base" no go.*/){
+		//}
+		//}
 	}
 }

@@ -104,6 +104,16 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
+
+		[MonoTODO]
+		public int HorizontalExtent {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				//Fixme
+			}
+		}
 		public bool MultiColumn {
 			get {
 				return MultiColumn_;
@@ -144,6 +154,13 @@ namespace System.Windows.Forms {
 			}
 			set {
 				// FIXME
+			}
+		}
+
+		[MonoTODO]
+		public int PreferredHeight {
+			get {
+				throw new NotImplementedException ();
 			}
 		}
 		
@@ -423,6 +440,12 @@ namespace System.Windows.Forms {
 		//
 		//  --- Protected Methods
 		//
+
+		[MonoTODO]
+		protected virtual void AddItemsCore(object [] value) {
+			//Fixme
+		}
+
 		[MonoTODO]
 		protected virtual ObjectCollection CreateItemCollection() {
 			return new ListBox.ObjectCollection( this);

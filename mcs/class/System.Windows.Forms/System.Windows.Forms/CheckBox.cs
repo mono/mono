@@ -134,18 +134,7 @@ namespace System.Windows.Forms {
 		public bool ThreeState {
 			get { return threeState; }
 			set { threeState = value; }
-		}
-		
-		
-		[MonoTODO]
-		public ImageList ImageList {
-			get {
-				throw new NotImplementedException ();
-			}
-			set{
-				//fixme:
-			}
-		}		
+		}	
 		
 		// --- CheckBox methods ---
 
@@ -287,10 +276,10 @@ namespace System.Windows.Forms {
 		public event EventHandler CheckedChanged;
 		public event EventHandler CheckStateChanged;
 		
-		/// --- public class CheckBox.CheckBoxAccessibleObject : ButtonBase.ButtonBaseAccessibleObject ---
+		/// --- public class CheckBox.CheckBoxAccessibleObject : AccessibleObject ---
 		/// the class is only used for .NET framework
 		/// 
-		public class ButtonBaseAccessibleObject {
+		public class CheckBoxAccessibleObject : AccessibleObject {
 		}
 	}
 }
