@@ -52,6 +52,10 @@ namespace System
 			// too. It's important because it's used in XML
 			// serialization.
 			"yyyy-MM-ddTHH:mm:sszzz",
+			// DayOfTheWeek, dd full_month_name yyyy
+			"dddd, dd MMMM yyyy",
+			// DayOfTheWeek, dd yyyy
+			"MMMM dd, yyyy",
 			// Full date and time
 			"F", "G", "r", "s", "u", "U",
 			// Full date and time, but no seconds

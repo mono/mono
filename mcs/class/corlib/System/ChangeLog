@@ -1,3 +1,8 @@
+2004-05-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DateTime.cs : added more invariant format patterns. This should
+	  really fix bug #57656.
+
 2004-05-25 14:14 CET Patrik Torstensson	<totte@hiddenpeaks.com>
 
 	* BitConverter.cs (ToBoolean): Return true or false instead
@@ -6,7 +11,7 @@
 2004-05-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DateTime.cs : In ToString(string, IFormatProvider), use "G" if
-	  string format argument is null. This should fix bug #57656.
+	  string format argument is null.
 
 2004-05-25  Lluis Sanchez Gual  <lluis@ximian.com>
 
