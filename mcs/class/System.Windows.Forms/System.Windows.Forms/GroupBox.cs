@@ -22,6 +22,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public GroupBox() {
 			//SubClassWndProc_ = true;
+			SetStyle ( ControlStyles.UserPaint, true);
 		}
 
 		//

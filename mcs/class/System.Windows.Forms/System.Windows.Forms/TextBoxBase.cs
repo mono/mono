@@ -34,6 +34,8 @@ namespace System.Windows.Forms {
 		private static readonly int wordWrap      = BitVector32.CreateMask( readOnly );
 
 		internal TextBoxBase ( ) {
+			SubClassWndProc_ = true;
+
 			flags = new BitVector32 ( );
 
 			flags[ autoSize ] = true;

@@ -1412,19 +1412,21 @@
     		[MonoTODO]
     		protected virtual bool IsInputChar (char charCode)
     		{
-    			throw new NotImplementedException ();
+    			return true;
     		}
     		
     		[MonoTODO]
     		protected virtual bool IsInputKey (Keys keyData) 
     		{
-    			throw new NotImplementedException ();
+			return false;
     		}
     		
-    		[MonoTODO]
-    		public static bool IsMnemonic (char charCode,string text)
+    		public static bool IsMnemonic (char charCode, string text)
     		{
-    			throw new NotImplementedException ();
+    			if ( text == null )
+				return false;
+			return text.IndexOf ( "&" + charCode ) > 0;
+
     		}
     		
     		// methods used with events:
@@ -1979,51 +1981,102 @@
     		[MonoTODO]
     		public virtual bool PreProcessMessage (ref Message msg) 
     		{
-    			throw new NotImplementedException ();
+			if ( msg.Msg == Msg.WM_KEYDOWN ) {
+				Keys keyData = (Keys)msg.WParam.ToInt32( );
+    				if ( !ProcessCmdKey ( ref msg, keyData ) ) {
+					if ( IsInputKey ( keyData ) )
+						return false;
+
+					return ProcessDialogKey ( keyData );
+				}
+				return true;
+			}
+			else if ( msg.Msg == Msg.WM_CHAR ) {
+				if ( IsInputChar ( (char) msg.WParam ) )
+					return false;
+
+				return ProcessDialogChar ( (char) msg.WParam );
+			}
+
+			return false;
     		}
     		
     		[MonoTODO]
     		protected virtual bool ProcessCmdKey (ref Message msg,
     						      Keys keyData) 
     		{
-    			throw new NotImplementedException ();
+			// do something with context menu
+
+    			if ( Parent != null )
+				return Parent.ProcessCmdKey ( ref msg, keyData );
+			return false;
     		}
     		
     		[MonoTODO]
     		protected virtual bool ProcessDialogChar (char charCode) 
     		{
-    			throw new NotImplementedException ();
+			if ( Parent != null )
+				return Parent.ProcessDialogChar ( charCode );
+    			return false;
     		}
     		
     		[MonoTODO]
     		protected virtual bool ProcessDialogKey (Keys keyData) 
     		{
-    			throw new NotImplementedException ();
+			if ( Parent != null )
+				return Parent.ProcessDialogKey ( keyData );
+    			return false;
     		}
     		
     		[MonoTODO]
     		protected virtual bool ProcessKeyEventArgs (ref Message m) 
     		{
-    			throw new NotImplementedException ();
+			bool handled = false;
+
+			switch ( m.Msg ) {
+			case Msg.WM_KEYDOWN:
+				KeyEventArgs args_down = new KeyEventArgs ( (Keys)m.WParam.ToInt32() );
+				OnKeyDown ( args_down );
+				handled = args_down.Handled;
+			break;			
+			case Msg.WM_CHAR:
+				KeyPressEventArgs args_press = new KeyPressEventArgs ( (char) m.WParam );
+				OnKeyPress ( args_press );
+				handled = args_press.Handled;
+			break;
+			case Msg.WM_KEYUP:
+				KeyEventArgs args_up = new KeyEventArgs ( (Keys)m.WParam.ToInt32() );
+				OnKeyUp ( args_up );
+				handled = args_up.Handled;
+			break;
+			}
+			
+			return handled;
     		}
     		
     		[MonoTODO]
-    		protected internal virtual bool ProcessKeyMessage (
-    			ref Message m) 
+    		protected internal virtual bool ProcessKeyMessage ( ref Message m) 
     		{
-    			throw new NotImplementedException ();
+			if ( Parent != null ) {
+				if ( !Parent.ProcessKeyPreview ( ref m ) )
+					return ProcessKeyEventArgs ( ref m );
+			}
+			return false;
     		}
     		
     		[MonoTODO]
     		protected virtual bool ProcessKeyPreview (ref Message m) 
     		{
-    			throw new NotImplementedException ();
+    			if ( Parent != null )
+				return Parent.ProcessKeyPreview ( ref m );
+			return false;
     		}
     		
-    		[MonoTODO]
+		// This default implementation of the ProcessMnemonic method simply
+		// returns false to indicate that the control has no mnemonic.
     		protected virtual bool ProcessMnemonic (char charCode) 
     		{
-    			throw new NotImplementedException ();
+    			return false;
     		}
     		
     		// used when properties/values of Control 
@@ -2563,20 +2616,19 @@
 					CallControlWndProc(ref m);
 					break;
     			case Msg.WM_KEYDOWN:
-    				// FIXME:
-    				// OnKeyDown (eventArgs);
-					CallControlWndProc(ref m);
-					break;
+				if ( !PreProcessMessage ( ref m ) )
+					if ( !ProcessKeyMessage ( ref m ) )
+						CallControlWndProc(ref m);
+			break;
     			case Msg.WM_CHAR:
-    				// FIXME:
-    				// OnKeyPress (eventArgs);
-					CallControlWndProc(ref m);
-					break;
+				if ( !PreProcessMessage ( ref m ) )
+					if ( !ProcessKeyMessage ( ref m ) )
+						CallControlWndProc(ref m);
+			break;
     			case Msg.WM_KEYUP:
-    				// FIXME:
-    				OnKeyUp ( new KeyEventArgs ( (Keys)m.WParam.ToInt32() ) );
-				CallControlWndProc(ref m);
-				break;
+				if ( !ProcessKeyMessage ( ref m ) )
+					CallControlWndProc(ref m);
+			break;
     			case Msg.WM_KILLFOCUS:
     				OnLeave (eventArgs);
     				OnLostFocus (eventArgs);
