@@ -1,5 +1,8 @@
 2003-08-21  Zoltan Varga  <vargaz@freemail.hu>
 
+	* icall.c (ves_icall_System_Array_SetValueImpl): Check types for
+	reference types too. Fixes #38812.
+
 	* image.c (mono_image_init): Fixed warnings.
 
 	* class.c (mono_class_from_typeref): Handle assembly load failure
