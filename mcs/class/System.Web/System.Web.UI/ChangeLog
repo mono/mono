@@ -1,8 +1,7 @@
 2003-11-13  Jackson Harper  <jackson@ximian.com>
 
 	* Page.cs: Initial implementation of InitOutputCache.
-	* TemplateParser.cs: Call InitOutputCache when the OutputCache
-	directive is set.
+	* TemplateParser.cs: Page OutputCache options
 	
 2003-11-09 Ben Maurer  <bmaurer@users.sourceforge.net>
 
