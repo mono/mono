@@ -1,0 +1,4 @@
+2003-09-04  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* Via.cs: Corrected typos to fix compilation.
+	* ViaCollection.cs: Corrected typos to fix compilation.

@@ -32,7 +32,7 @@ namespace Microsoft.Web.Services.Routing {
 
 		public Uri Value
 		{
-			get { return value; }
+			get { return val; }
 			set { val = value; }
 		}
 

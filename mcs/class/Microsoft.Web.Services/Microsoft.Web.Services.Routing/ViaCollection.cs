@@ -32,7 +32,6 @@ namespace Microsoft.Web.Services.Routing {
 
 
 		public bool IsSynchronized {
-
 			get { return list.IsSynchronized; }
 		}
 
@@ -60,12 +59,12 @@ namespace Microsoft.Web.Services.Routing {
 		
 		public virtual object Clone ()
 		{
-			return new Via (list);
+			return new ViaCollection (list);
 		}
 
 		public virtual void CopyTo (Array array, int index) 
 		{
-			list.Copyto(array, index);
+			list.CopyTo(array, index);
 		}
 
 		public virtual IEnumerator GetEnumerator () 
@@ -75,7 +74,7 @@ namespace Microsoft.Web.Services.Routing {
 
 		public void Insert (int index, Via via) 
 		{
-			list.insert(index, via);
+			list.Insert(index, via);
 		}
 
 		public void InsertRange (int index, ViaCollection collection) 
