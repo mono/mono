@@ -40,12 +40,9 @@ namespace System.Drawing.Drawing2D
 	/// </summary>
 	public sealed class RegionData
 	{
+		private byte[] data;
 
-		byte[] data;
-
-		internal RegionData()
-		{
-		}
+		internal RegionData () { }
 
 		public byte[] Data {
 			get {return data;} 

@@ -37,14 +37,13 @@ namespace System.Drawing.Drawing2D {
 	/// </summary>
 	public sealed class GraphicsState : MarshalByRefObject
 	{
-		
-		//constructor
+		// Constructor
 		internal GraphicsState()
 		{
-			//Nothing to be done here
+			// Nothing to be done here
 		}
 
-		//All members inherited
+		// All members inherited
 		internal Matrix matrix;
 		internal uint nativeState;
 	}

@@ -40,13 +40,10 @@ namespace System.Drawing.Drawing2D
 	/// </summary>
 	public sealed class PathData
 	{
+		private PointF[] points = null;
+		private byte[] types = null;
 
-		PointF[] points = null;
-		byte[] types = null;
-
-		public PathData()
-		{
-		}
+		public PathData() { }
 
 		public PointF[] Points {
 			get { return points; } 
