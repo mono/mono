@@ -1,5 +1,7 @@
 2003-10-13  Bernie Solomon  <bernard@ugsolutions.com>
 
+	* Makefile.am: add hppa subdir 
+
 	* hppa/tramp.c: add initial implementation - this is 64 bit only
 	hppa/Makefile.am hppa/.cvsignore: added
 
