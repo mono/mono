@@ -22,10 +22,19 @@ public class UInt16Test : TestCase
 	private const string MyString3 = "65535";
 	private string[] Formats1 = {"c", "d", "e", "f", "g", "n", "p", "x" };
 	private string[] Formats2 = {"c5", "d5", "e5", "f5", "g5", "n5", "p5", "x5" };
-	private string[] Results1 = {"$0.00", "0", "0.000000e+000", "0.00",
-	                                  "0", "0.00", "0.00 %", "0"};
-	private string[] Results2 = {"$65,535.00000", "65535", "6.55350e+004", "65535.00000",
-	                                  "65535", "65,535.00000", "6,553,500.00000 %", "0ffff"};
+	private string[] Results1 = {NumberFormatInfo.CurrentInfo.CurrencySymbol+"0.00",
+					"0", "0.000000e+000", "0.00",
+					"0", "0.00", "0.00 %", "0"};
+	private string[] ResultsNfi1 = {NumberFormatInfo.InvariantInfo.CurrencySymbol+"0.00",
+					"0", "0.000000e+000", "0.00",
+					"0", "0.00", "0.00 %", "0"};
+	private string[] Results2 = {NumberFormatInfo.CurrentInfo.CurrencySymbol+"65,535.00000",
+					"65535", "6.55350e+004", "65535.00000",
+					"65535", "65,535.00000", "6,553,500.00000 %", "0ffff"};
+	private string[] ResultsNfi2 = {NumberFormatInfo.InvariantInfo.CurrencySymbol+"65,535.00000",
+					"65535", "6.55350e+004", "65535.00000",
+					"65535", "65,535.00000", "6,553,500.00000 %", "0ffff"};
+
 	private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
 	
 	public UInt16Test(string name) : base(name) {}
@@ -142,18 +151,18 @@ public class UInt16Test : TestCase
 	public void TestToString()
 	{
 		//test ToString()
-		Assert(String.Compare(MyString1, MyUInt16_1.ToString()) == 0);
-		Assert(String.Compare(MyString2, MyUInt16_2.ToString()) == 0);
-		Assert(String.Compare(MyString3, MyUInt16_3.ToString()) == 0);
+		AssertEquals(MyString1, MyUInt16_1.ToString());
+		AssertEquals(MyString2, MyUInt16_2.ToString());
+		AssertEquals(MyString3, MyUInt16_3.ToString());
 		//test ToString(string format)
 		for (int i=0; i < Formats1.Length; i++) {
-			Assert(String.Compare(Results1[i], MyUInt16_2.ToString(Formats1[i])) == 0);
-			Assert(String.Compare(Results2[i], MyUInt16_3.ToString(Formats2[i])) == 0);
+			AssertEquals(Results1[i], MyUInt16_2.ToString(Formats1[i]));
+			AssertEquals(Results2[i], MyUInt16_3.ToString(Formats2[i]));
 		}
 		//test ToString(string format, IFormatProvider provider);
 		for (int i=0; i < Formats1.Length; i++) {
-			Assert(String.Compare(Results1[i], MyUInt16_2.ToString(Formats1[i], Nfi)) == 0);
-			Assert(String.Compare(Results2[i], MyUInt16_3.ToString(Formats2[i], Nfi)) == 0);
+			AssertEquals(ResultsNfi1[i], MyUInt16_2.ToString(Formats1[i], Nfi));
+			AssertEquals(ResultsNfi2[i], MyUInt16_3.ToString(Formats2[i], Nfi));
 		}
 		try {
 			MyUInt16_1.ToString("z");

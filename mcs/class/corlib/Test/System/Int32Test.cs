@@ -22,14 +22,18 @@ public class Int32Test : TestCase
 	private const string MyString3 = "2147483647";
 	private string[] Formats1 = {"c", "d", "e", "f", "g", "n", "p", "x" };
 	private string[] Formats2 = {"c5", "d5", "e5", "f5", "g5", "n5", "p5", "x5" };
-	private string[] Results1 = {"($2,147,483,648.00)", "-2147483648", "-2.147484e+009", "-2147483648.00",
-	                                  "-2147483648", "-2,147,483,648.00", "-214,748,364,800.00 %", "80000000"};
-	private string[] Results2 = {"$2,147,483,647.00000", "2147483647", "2.14748e+009", "2147483647.00000",
-	                                  "2.1475e+09", "2,147,483,647.00000", "214,748,364,700.00000 %", "7fffffff"};
-	private string[] ResultsNfi1 = {"($2,147,483,648.00)", "-2147483648", "-2.147484e+009", "-2147483648.00",
-	                                  "-2147483648", "(2,147,483,648.00)", "-214,748,364,800.00 %", "80000000"};
-	private string[] ResultsNfi2 = {"$2,147,483,647.00000", "2147483647", "2.14748e+009", "2147483647.00000",
-	                                  "2.1475e+09", "2,147,483,647.00000", "214,748,364,700.00000 %", "7fffffff"};
+	private string[] Results1 = {"("+NumberFormatInfo.CurrentInfo.CurrencySymbol+"2,147,483,648.00)",
+					"-2147483648", "-2.147484e+009", "-2147483648.00",
+					"-2147483648", "-2,147,483,648.00", "-214,748,364,800.00 %", "80000000"};
+	private string[] Results2 = {NumberFormatInfo.CurrentInfo.CurrencySymbol+"2,147,483,647.00000",
+					"2147483647", "2.14748e+009", "2147483647.00000",
+					"2.1475e+09", "2,147,483,647.00000", "214,748,364,700.00000 %", "7fffffff"};
+	private string[] ResultsNfi1 = {"("+NumberFormatInfo.InvariantInfo.CurrencySymbol+"2,147,483,648.00)",
+					"-2147483648", "-2.147484e+009", "-2147483648.00",
+					"-2147483648", "-2,147,483,648.00", "-214,748,364,800.00 %", "80000000"};
+	private string[] ResultsNfi2 = {NumberFormatInfo.InvariantInfo.CurrencySymbol+"2,147,483,647.00000",
+					"2147483647", "2.14748e+009", "2147483647.00000",
+					"2.1475e+09", "2,147,483,647.00000", "214,748,364,700.00000 %", "7fffffff"};
 	private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
 	
 	public Int32Test(string name) : base(name) {}

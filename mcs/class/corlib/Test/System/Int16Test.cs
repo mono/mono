@@ -22,13 +22,13 @@ public class Int16Test : TestCase
 	private const string MyString3 = "32767";
 	private string[] Formats1 = {"c", "d", "e", "f", "g", "n", "p", "x" };
 	private string[] Formats2 = {"c5", "d5", "e5", "f5", "g5", "n5", "p5", "x5" };
-	private string[] Results1 = {"($32,768.00)", "-32768", "-3.276800e+004", "-32768.00",
+	private string[] Results1 = {"("+NumberFormatInfo.CurrentInfo.CurrencySymbol+"32,768.00)", "-32768", "-3.276800e+004", "-32768.00",
 	                                  "-32768", "-32,768.00", "-3,276,800.00 %", "8000"};
-	private string[] Results2 = {"$32,767.00000", "32767", "3.27670e+004", "32767.00000",
+	private string[] Results2 = {NumberFormatInfo.CurrentInfo.CurrencySymbol+"32,767.00000", "32767", "3.27670e+004", "32767.00000",
 	                                  "32767", "32,767.00000", "3,276,700.00000 %", "07fff"};
-	private string[] ResultsNfi1 = {"($32,768.00)", "-32768", "-3.276800e+004", "-32768.00",
-	                                  "-32768", "(32,768.00)", "-3,276,800.00 %", "8000"};
-	private string[] ResultsNfi2 = {"$32,767.00000", "32767", "3.27670e+004", "32767.00000",
+	private string[] ResultsNfi1 = {"("+NumberFormatInfo.InvariantInfo.CurrencySymbol+"32,768.00)", "-32768", "-3.276800e+004", "-32768.00",
+	                                  "-32768", "-32,768.00", "-3,276,800.00 %", "8000"};
+	private string[] ResultsNfi2 = {NumberFormatInfo.InvariantInfo.CurrencySymbol+"32,767.00000", "32767", "3.27670e+004", "32767.00000",
 	                                  "32767", "32,767.00000", "3,276,700.00000 %", "07fff"};
 	private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
 	

@@ -22,14 +22,18 @@ public class SByteTest : TestCase
 	private const string MyString3 = "127";
 	private string[] Formats1 = {"c", "d", "e", "f", "g", "n", "p", "x" };
 	private string[] Formats2 = {"c5", "d5", "e5", "f5", "g5", "n5", "p5", "x5" };
-	private string[] Results1 = {"($128.00)", "-128", "-1.280000e+002", "-128.00",
-	                                  "-128", "-128.00", "-12,800.00 %", "80"};
-	private string[] Results2 = {"$127.00000", "00127", "1.27000e+002", "127.00000",
-	                                  "127", "127.00000", "12,700.00000 %", "0007f"};
-	private string[] ResultsNfi1 = {"($128.00)", "-128", "-1.280000e+002", "-128.00",
-	                                  "-128", "(128.00)", "-12,800.00 %", "80"};
-	private string[] ResultsNfi2 = {"$127.00000", "00127", "1.27000e+002", "127.00000",
-	                                  "127", "127.00000", "12,700.00000 %", "0007f"};
+	private string[] Results1 = {"("+NumberFormatInfo.CurrentInfo.CurrencySymbol+"$128.00)",
+					"-128", "-1.280000e+002", "-128.00",
+					"-128", "-128.00", "-12,800.00 %", "80"};
+	private string[] Results2 = {NumberFormatInfo.CurrentInfo.CurrencySymbol+"127.00000",
+					"00127", "1.27000e+002", "127.00000",
+					"127", "127.00000", "12,700.00000 %", "0007f"};
+	private string[] ResultsNfi1 = {"("+NumberFormatInfo.InvariantInfo.CurrencySymbol+"128.00)", 
+					"-128", "-1.280000e+002", "-128.00",
+					"-128", "-128.00", "-12,800.00 %", "80"};
+	private string[] ResultsNfi2 = {NumberFormatInfo.InvariantInfo.CurrencySymbol+"127.00000",
+					"00127", "1.27000e+002", "127.00000",
+					"127", "127.00000", "12,700.00000 %", "0007f"};
 	private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
 	
 	public SByteTest(string name) : base(name) {}

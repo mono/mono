@@ -1,3 +1,16 @@
+2002-02-09  Nick Drochak  <ndrochak@gol.com>
+
+	* ByteTest.cs:
+	* Int16Test.cs:
+	* Int32Test.cs:
+	* SByteTest.cs:
+	* UInt16Test.cs:
+	* UInt32Test.cs:
+	* UInt64Test.cs: Fixed tests where a "$" was hard coded.  Change it to
+	use NumberFormatInfo.CurrentInfo.CurrencySymbol.  Also used
+	NumberFormatInfo.InvariantInfo.CurrencySymbol where appropriate. These
+	tests all pass now with mscorlib.
+
 2002-01-06  Nick Drochak  <ndrochak@gol.com>
 
 	* ResolveEventArgsTest.cs: New test.

@@ -22,10 +22,19 @@ public class ByteTest : TestCase
 	private const string MyString3 = "255";
 	private string[] Formats1 = {"c", "d", "e", "f", "g", "n", "p", "x" };
 	private string[] Formats2 = {"c5", "d5", "e5", "f5", "g5", "n5", "p5", "x5" };
-	private string[] Results1 = {"$0.00", "0", "0.000000e+000", "0.00",
-	                                  "0", "0.00", "0.00 %", "0"};
-	private string[] Results2 = {"$255.00000", "00255", "2.55000e+002", "255.00000",
-	                                  "255", "255.00000", "25,500.00000 %", "000ff"};
+	private string[] Results1 = {NumberFormatInfo.CurrentInfo.CurrencySymbol+"0.00", 
+					"0", "0.000000e+000", "0.00",
+					"0", "0.00", "0.00 %", "0"};
+	private string[] Results1_Nfi = {NumberFormatInfo.InvariantInfo.CurrencySymbol+"0.00",
+					"0", "0.000000e+000", "0.00",
+					"0", "0.00", "0.00 %", "0"};
+	private string[] Results2 = {NumberFormatInfo.CurrentInfo.CurrencySymbol+"255.00000",
+					"00255", "2.55000e+002", "255.00000",
+					"255", "255.00000", "25,500.00000 %", "000ff"};
+	private string[] Results2_Nfi = {NumberFormatInfo.InvariantInfo.CurrencySymbol+"255.00000", 
+					"00255", "2.55000e+002", "255.00000",
+					"255", "255.00000", "25,500.00000 %", "000ff"};
+
 	private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
 	
 	public ByteTest(string name) : base(name) {}
@@ -143,25 +152,25 @@ public class ByteTest : TestCase
 	public void TestToString()
 	{
 		//test ToString()
-		Assert(String.Compare(MyString1, MyByte1.ToString()) == 0);
-		Assert(String.Compare(MyString2, MyByte2.ToString()) == 0);
-		Assert(String.Compare(MyString3, MyByte3.ToString()) == 0);
+		AssertEquals("Compare failed for MyString1 and MyByte1", MyString1, MyByte1.ToString());
+		AssertEquals("Compare failed for MyString2 and MyByte2", MyString2, MyByte2.ToString());
+		AssertEquals("Compare failed for MyString3 and MyByte3", MyString3, MyByte3.ToString());
 		//test ToString(string format)
 		for (int i=0; i < Formats1.Length; i++) {
-			Assert(String.Compare(Results1[i], MyByte2.ToString(Formats1[i])) == 0);
-			Assert(String.Compare(Results2[i], MyByte3.ToString(Formats2[i])) == 0);
+			AssertEquals("Compare failed for Formats1["+i.ToString()+"]", Results1[i], MyByte2.ToString(Formats1[i]));
+			AssertEquals("Compare failed for Formats2["+i.ToString()+"]", Results2[i], MyByte3.ToString(Formats2[i]));
 		}
 		//test ToString(string format, IFormatProvider provider);
 		for (int i=0; i < Formats1.Length; i++) {
-			Assert(String.Compare(Results1[i], MyByte2.ToString(Formats1[i], Nfi)) == 0);
-			Assert(String.Compare(Results2[i], MyByte3.ToString(Formats2[i], Nfi)) == 0);
+			AssertEquals("Compare failed for Formats1["+i.ToString()+"] with Nfi", Results1_Nfi[i], MyByte2.ToString(Formats1[i], Nfi));
+			AssertEquals("Compare failed for Formats2["+i.ToString()+"] with Nfi", Results2_Nfi[i], MyByte3.ToString(Formats2[i], Nfi));
 		}
 		try {
 			MyByte1.ToString("z");
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
+			Assert("Exception is the wrong type", typeof(FormatException) == e.GetType());
 		}
 		
 	}
