@@ -1,3 +1,9 @@
+2003-10-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_no_aot): Remove unused global variable.
+
+	* mini.c: Thread safety fixes.
+
 2003-10-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_create_class_init_trampoline): Add a lock around
