@@ -1,7 +1,7 @@
 Monodoc GUI Graphical Resources
 
 These are the original files for graphical resources that end up in
-mcs/doctools/src/Gui/ImageResources.resx.
+ImageResources.resX.
 
 Filename --> Resource Name
 
