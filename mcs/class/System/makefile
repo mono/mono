@@ -1,4 +1,4 @@
-DIRS=System.CodeDom System.CodeDom.Compiler System.ComponentModel System.Net System.Net.Sockets System.Collections.Specialized 
+DIRS=System System.CodeDom System.CodeDom.Compiler System.ComponentModel System.Net System.Net.Sockets System.Collections.Specialized 
 
 all:
 	@echo "You must use 'make windows' or 'make unix'."
