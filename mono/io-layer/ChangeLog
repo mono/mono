@@ -1,3 +1,10 @@
+2004-07-05  Dick Porter  <dick@ximian.com>
+
+	* mutexes.c (mutex_ops_init): Make the named mutex mutex sharable.
+
+	* daemon.c (unref_handle): Only destroy a handle if all processes
+	have released it, not just the current one.  Fixes bug 60887.
+
 2004-06-24  Dick Porter  <dick@ximian.com>
 
 	* mutexes.c: Indicate when a named mutex was reused
