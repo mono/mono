@@ -688,9 +688,10 @@ method_declaration
 		
 		if (b == null){
 			if ((method.ModFlags & (Modifiers.EXTERN | Modifiers.ABSTRACT)) == 0){
-				rc.Report.Error (501, lexer.Location, "`" + 
+				Report.Error (
+					501, lexer.Location, "`" + 
 					current_container.Name + "." + method.Name + "'" +
-					"must declare a body because it is not marked abstract or extern");
+				        "must declare a body because it is not marked abstract or extern");
 			}
 		}
 
@@ -919,7 +920,7 @@ interface_declaration
 					       (Attributes) $1, lexer.Location);
 		if (current_interface != null) {
 			Location l = lexer.Location;
-			rc.Report.Error (-2, l, "Internal compiler error: interface inside interface");
+			Report.Error (-2, l, "Internal compiler error: interface inside interface");
 		}
 		current_interface = new_interface;
 		tree.RecordInterface (full_interface_name, new_interface);
@@ -1166,17 +1167,17 @@ constructor_declaration
 		if ((c.ModFlags & Modifiers.STATIC) != 0){
 			if ((c.ModFlags & Modifiers.Accessibility) != 0) {
 				Location l = lexer.Location;
-				rc.Report.Error (515, l, "Access modifiers are not allowed on static constructors");
+				Report.Error (515, l, "Access modifiers are not allowed on static constructors");
 			}
 
 			if (c.Initializer != null){
 				Location l = lexer.Location;
-				rc.Report.Error (514, l, "Static constructors can not have an explicit this or base constructor invocations");
+				Report.Error (514, l, "Static constructors can not have an explicit this or base constructor invocations");
 			}
 
 			if (!c.Parameters.Empty){
 				Location l = lexer.Location;
-				rc.Report.Error (103, l, "Static constructors should not have parameters");
+				Report.Error (103, l, "Static constructors should not have parameters");
 			}
 		} 
 		
@@ -1619,7 +1620,7 @@ invocation_expression
 		// 	$$ = new DelegateCall ($1, $3);
 		if ($1 == null) {
 			Location l = lexer.Location;
-			rc.Report.Error (1, l, "THIS IS CRAZY");
+			Report.Error (1, l, "THIS IS CRAZY");
 		}
 		$$ = new Invocation ((Expression) $1, (ArrayList) $3, lexer.Location);
 		
@@ -2238,7 +2239,7 @@ modifiers
 
 		if ((m1 & m2) != 0) {
 			Location l = lexer.Location;
-			rc.Report.Error (1002, l, "Duplicate modifier: `" + Modifiers.Name (m2) + "'");
+			Report.Error (1002, l, "Duplicate modifier: `" + Modifiers.Name (m2) + "'");
 		}
 		$$ = (int) (m1 | m2);
 	  }
@@ -2356,7 +2357,7 @@ labeled_statement
 
 		if (!current_block.AddLabel (lab, block)){
 			Location l = lexer.Location;
-			rc.Report.Error (140, l, "The label '" + lab + "' is a duplicate");
+			Report.Error (140, l, "The label '" + lab + "' is a duplicate");
 			$$ = $3;
 		}	
 	  }
@@ -2391,7 +2392,7 @@ local_variable_type
 			$$ = ((SimpleName) $1).Name;
 		else {
 			Location l = lexer.Location;
-			rc.Report.Error (-1, l, "Invalid Type definition");
+			Report.Error (-1, l, "Invalid Type definition");
 			$$ = "System.Object";
 		}
 	  }
@@ -2943,7 +2944,7 @@ CheckDef (DeclSpace.AdditionResult result, string name)
 	
 	switch (result){
 	case DeclSpace.AdditionResult.NameExists:
-		rc.Report.Error (102, l, "The namespace `" + current_container.Name + 
+		Report.Error (102, l, "The namespace `" + current_container.Name + 
 				 "' already contains a definition for `"+
 				 name + "'");
 		break;
@@ -2958,11 +2959,11 @@ CheckDef (DeclSpace.AdditionResult result, string name)
 //  		break;
 
 	case DeclSpace.AdditionResult.EnclosingClash:
-		rc.Report.Error (542, l, "Member names cannot be the same as their enclosing type");
+		Report.Error (542, l, "Member names cannot be the same as their enclosing type");
 		break;
 		
 	case DeclSpace.AdditionResult.NotAConstructor:
-		rc.Report.Error (1520, l, "Class, struct, or interface method must have a return type");
+		Report.Error (1520, l, "Class, struct, or interface method must have a return type");
 		break;
 	}
 }
@@ -3066,7 +3067,7 @@ Block declare_local_variables (string type, ArrayList variable_declarators)
 			}
 		} else {
 			Location l = lexer.Location;
-			rc.Report.Error (128, l, "A local variable `" + decl.identifier +
+			Report.Error (128, l, "A local variable `" + decl.identifier +
 					 "' is already defined in this scope");
 		}
 	}
@@ -3110,7 +3111,7 @@ void CheckAttributeTarget (string a)
 		
 	default :
 		Location l = lexer.Location;
-		rc.Report.Error (658, l, "Invalid attribute target");
+		Report.Error (658, l, "Invalid attribute target");
 		break;
 	}
 
@@ -3133,7 +3134,7 @@ void CheckUnaryOperator (Operator.OpType op)
 		
 	default :
 		Location l = lexer.Location;
-		rc.Report.Error (1019, l, "Overloadable unary operator expected"); 
+		Report.Error (1019, l, "Overloadable unary operator expected"); 
 		break;
 		
 	}
@@ -3163,7 +3164,7 @@ void CheckBinaryOperator (Operator.OpType op)
 		
 	default :
 		Location l = lexer.Location;
-		rc.Report.Error (1020, l, "Overloadable binary operator expected");
+		Report.Error (1020, l, "Overloadable binary operator expected");
 		break;
 	}
 	

@@ -11,14 +11,14 @@ using System;
 namespace CIR {
 
 	public class Report {
-		int errors;
-		int warnings;
+		static int errors;
+		static int warnings;
 
 		//
 		// whether errors are fatal (they throw an exception), useful
 		// for debugging the compiler
 		//
-		bool fatal;
+		static bool fatal;
 
 		//
 		// If the error code is reported on the given line,
@@ -26,17 +26,17 @@ namespace CIR {
 		//
 		// Used for the test suite to excercise the error codes
 		//
-		int probe_error = 0;
-		int probe_line = 0;
+		static int probe_error = 0;
+		static int probe_line = 0;
 		
-		void Check (int code)
+		static void Check (int code)
 		{
 			if (code ==  probe_error){
 				Environment.Exit (123);
 			}
 		}
 		
-		public void RealError (string msg)
+		static public void RealError (string msg)
 		{
 			errors++;
 			Console.WriteLine (msg);
@@ -45,7 +45,7 @@ namespace CIR {
 				throw new Exception (msg);
 		}
 		       
-		public void Error (int code, Location l, string text)
+		static public void Error (int code, Location l, string text)
 		{
 			string msg = l.Name + "(" + l.Row + 
 				"): Error CS"+code+": " + text;
@@ -54,7 +54,7 @@ namespace CIR {
 			Check (code);
 		}
 
-		public void Warning (int code, Location l, string text)
+		static public void Warning (int code, Location l, string text)
 		{
 			Console.WriteLine (l.Name + "(" + l.Row + 
 					   "): Warning CS"+code+": " + text);
@@ -62,7 +62,7 @@ namespace CIR {
 			Check (code);
 		}
 		
-		public void Error (int code, string text)
+		static public void Error (int code, string text)
 		{
 			string msg = "Error CS"+code+": "+text;
 
@@ -70,14 +70,14 @@ namespace CIR {
 			Check (code);
 		}
 
-		public void Warning (int code, string text)
+		static public void Warning (int code, string text)
 		{
 			Console.WriteLine ("Warning CS"+code+": "+text);
 			warnings++;
 			Check (code);
 		}
 
-		public void Message (Message m)
+		static public void Message (Message m)
 		{
 			if (m is ErrorMessage)
 				Error (m.code, m.text);
@@ -85,25 +85,25 @@ namespace CIR {
 				Warning (m.code, m.text);
 		}
 
-		public void SetProbe (int code, int line)
+		static public void SetProbe (int code, int line)
 		{
 			probe_error = code;
 			probe_line = line;
 		}
 	
-		public int Errors {
+		static public int Errors {
 			get {
 				return errors;
 			}
 		}
 
-		public int Warnings {
+		static public int Warnings {
 			get {
 				return warnings;
 			}
 		}
 
-		public bool Fatal {
+		static public bool Fatal {
 			set {
 				fatal = true;
 			}

@@ -74,12 +74,12 @@ namespace CIR {
 		// </summary>
 		static protected void Error (TypeContainer tc, int error, string s)
 		{
-			tc.RootContext.Report.Error (error, s);
+			Report.Error (error, s);
 		}
 
 		static protected void Error (TypeContainer tc, int error, Location l, string s)
 		{
-			tc.RootContext.Report.Error (error, l, s);
+			Report.Error (error, l, s);
 		}
 		
 		// <summary>
@@ -87,7 +87,7 @@ namespace CIR {
 		// </summary>
 		static protected void Warning (TypeContainer tc, int warning, string s)
 		{
-			tc.RootContext.Report.Warning (warning, s);
+			Report.Warning (warning, s);
 		}
 
 		// <summary>
@@ -1585,7 +1585,7 @@ namespace CIR {
 
 		void error23 (TypeContainer tc, Type t)
 		{
-			tc.RootContext.Report.Error (23, location, "Operator " + OperName () +
+			Report.Error (23, location, "Operator " + OperName () +
 				 " cannot be applied to operand of type `" +
 				 TypeManager.CSharpName (t) + "'");
 		}
@@ -2837,15 +2837,16 @@ namespace CIR {
 		// Checks whether we are trying to access an instance
 		// property, method or field from a static body.
 		//
-		Expression MemberStaticCheck (Report r, Expression e)
+		Expression MemberStaticCheck (Expression e)
 		{
 			if (e is FieldExpr){
 				FieldInfo fi = ((FieldExpr) e).FieldInfo;
 				
 				if (!fi.IsStatic){
-					r.Error (120,
-						 "An object reference is required " +
-						 "for the non-static field `"+Name+"'");
+					Report.Error (
+						120,
+						"An object reference is required " +
+						"for the non-static field `"+Name+"'");
 					return null;
 				}
 			} else if (e is MethodGroupExpr){
@@ -2857,10 +2858,10 @@ namespace CIR {
 				return e;
 			} else if (e is PropertyExpr){
 				if (!((PropertyExpr) e).IsStatic){
-					r.Error (120,
-						 "An object reference is required " +
-						 "for the non-static property access `"+
-						 Name+"'");
+					Report.Error (120,
+						      "An object reference is required " +
+						      "for the non-static property access `"+
+						      Name+"'");
 					return null;
 				}
 			}
@@ -2877,7 +2878,6 @@ namespace CIR {
 		Expression ResolveSimpleName (TypeContainer tc)
 		{
 			Expression e;
-			Report r = tc.RootContext.Report;
 
 			e = MemberLookup (tc, tc.TypeBuilder, Name, true);
 			if (e != null){
@@ -2891,7 +2891,7 @@ namespace CIR {
 				}
 				
 				if ((tc.ModFlags & Modifiers.STATIC) != 0)
-					return MemberStaticCheck (r, e);
+					return MemberStaticCheck (e);
 				else
 					return e;
 			}

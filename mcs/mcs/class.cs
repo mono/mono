@@ -106,8 +106,6 @@ namespace CIR {
 			this.parent = parent;
 			RootContext = rc;
 
-			object a = rc.Report;
-			
 			if (parent == null)
 				n = "";
 			else
@@ -556,7 +554,7 @@ namespace CIR {
 			string n = TypeBuilder.FullName;
 			
 			foreach (Field f in initialized_fields){
-				RootContext.Report.Error (
+				Report.Error (
 					573, Location,
 					"`" + n + "." + f.Name + "': can not have " +
 					"instance field initializers in structs");
@@ -998,7 +996,7 @@ namespace CIR {
 				PendingMethod method = (PendingMethod) de.Key;
 				
 				Console.WriteLine ("Missing implementations: " + method.Name);
-				RootContext.Report.Error (1, "Blah");
+				Report.Error (1, "Blah");
 			}
 		}
 		
@@ -1231,7 +1229,7 @@ namespace CIR {
 
 		void WarningNotHiding (TypeContainer parent)
 		{
-			parent.RootContext.Report.Warning (
+			Report.Warning (
 				109, Location,
 				"The member `" + parent.Name + "." + Name + "' does not hide an " +
 				"inherited member.  The keyword new is not required");
@@ -1268,7 +1266,7 @@ namespace CIR {
 					m = ptype.GetMethod (Name, parameters);
 					if (m != null){
 						if ((ModFlags & Modifiers.NEW) == 0){
-							parent.RootContext.Report.Error (
+							Report.Error (
 								108, Location, "The keyword new is required on `" +
 								parent.Name + "." + Name + "' because it hides `" +
 								m.DeclaringType + "." + m.Name + "'");
@@ -1292,7 +1290,7 @@ namespace CIR {
 				bool error = false;
 				
 				if (av == (Modifiers.VIRTUAL | Modifiers.ABSTRACT)){
-					parent.RootContext.Report.Error (
+					Report.Error (
 						503, Location, "The abstract method `" +
 						parent.Name + "." + Name + "' " + 
 						"can not be marked virtual");
@@ -1301,7 +1299,7 @@ namespace CIR {
 
 				if ((ModFlags & Modifiers.ABSTRACT) != 0){
 					if ((parent.ModFlags & Modifiers.ABSTRACT) == 0){
-						parent.RootContext.Report.Error (
+						Report.Error (
 							513, Location, "`" + parent.Name + "." +
 							Name + "' is abstract but its container class is not");
 						error = true;
@@ -1309,7 +1307,7 @@ namespace CIR {
 				}
 				
 				if ((ModFlags & Modifiers.PRIVATE) != 0){
-					parent.RootContext.Report.Error (
+					Report.Error (
 						621, Location, "`" + parent.Name + "." + Name + "' " + 
 						"virtual or abstract members can not be private");
 					error = true;
@@ -1322,7 +1320,7 @@ namespace CIR {
 				Name, flags,
 				GetCallingConvention (parent is Class),
 				ret_type, parameters);
-			
+
 			ParameterInfo = new InternalParameters (parameters);
 
 			//
@@ -1484,7 +1482,7 @@ namespace CIR {
 			Type [] parameters = ParameterTypes (parent);
 
 			if (parent is Struct && parameters == null){
-				parent.RootContext.Report.Error (
+				Report.Error (
 					568, Location, 
 					"Structs can not contain explicit parameterless constructors");
 				return null;
@@ -1884,7 +1882,7 @@ namespace CIR {
 			Parameter [] param_list = new Parameter [length];
 
 			if ((ModFlags & RequiredModifiers) != RequiredModifiers){
-				parent.RootContext.Report.Error (
+				Report.Error (
 					558, Location, 
 					"User defined operators `" +
 					Prototype (parent) +
@@ -1914,24 +1912,24 @@ namespace CIR {
 			if (OperatorType == OpType.Implicit || OperatorType == OpType.Explicit) {
 				
 				if (first_arg_type == return_type && first_arg_type == declaring_type)
-					parent.RootContext.Report.Error (555, Location,
+					Report.Error (555, Location,
 					       "User-defined conversion cannot take an object of the enclosing type " +
 					       "and convert to an object of the enclosing type");
 				
 				if (first_arg_type != declaring_type && return_type != declaring_type)
-					parent.RootContext.Report.Error (556, Location, 
+					Report.Error (556, Location, 
 					       "User-defined conversion must convert to or from the enclosing type");
 				
 				if (first_arg_type == TypeManager.object_type || return_type == TypeManager.object_type)
-					parent.RootContext.Report.Error (-8, Location,
+					Report.Error (-8, Location,
 					       "User-defined conversion cannot convert to or from object type");
 				
 				if (first_arg_type.IsInterface || return_type.IsInterface)
-					parent.RootContext.Report.Error (-9, Location,
+					Report.Error (-9, Location,
 					       "User-defined conversion cannot convert to or from an interface type");	 
 				
 				if (first_arg_type.IsSubclassOf (return_type) || return_type.IsSubclassOf (first_arg_type))
-					parent.RootContext.Report.Error (-10, Location,
+					Report.Error (-10, Location,
 						"User-defined conversion cannot convert between types that " +
 						"derive from each other"); 
 				
@@ -1939,13 +1937,13 @@ namespace CIR {
 				// Checks for Unary operators
 				
 				if (first_arg_type != declaring_type) 
-					parent.RootContext.Report.Error (562, Location,
+					Report.Error (562, Location,
 						   "The parameter of a unary operator must be the containing type");
 				
 				
 				if (OperatorType == OpType.Increment || OperatorType == OpType.Decrement) {
 					if (return_type != declaring_type)
-						parent.RootContext.Report.Error (559, Location,
+						Report.Error (559, Location,
 						       "The parameter and return type for ++ and -- " +
 						       "must be the containing type");
 					
@@ -1953,7 +1951,7 @@ namespace CIR {
 				
 				if (OperatorType == OpType.True || OperatorType == OpType.False) {
 					if (return_type != TypeManager.bool_type)
-						parent.RootContext.Report.Error (215, Location,
+						Report.Error (215, Location,
 						       "The return type of operator True or False " +
 						       "must be bool");
 				}
@@ -1963,7 +1961,7 @@ namespace CIR {
 				
 				if (first_arg_type != declaring_type &&
 				    param_types [1] != declaring_type)
-					parent.RootContext.Report.Error (563, Location,
+					Report.Error (563, Location,
 					       "One of the parameters of a binary operator must be the containing type");
 			}
 			

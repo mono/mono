@@ -38,18 +38,6 @@ namespace CIR {
 		ModuleBuilder mb;
 
 		//
-		// Error reporting object
-		// 
-		Report report;
-
-		//
-		// The `System.Object' and `System.ValueType' types, as they
-		// are used often
-		//
-		Type object_type;
-		Type value_type;
-
-		//
 		// Whether we are being linked against the standard libraries.
 		// This is only used to tell whether `System.Object' should
 		// have a parent or not.
@@ -72,10 +60,6 @@ namespace CIR {
 		{
 			tree = new Tree (this);
 			TypeManager = new TypeManager ();
-			report = new Report ();
-
-			object_type = System.Type.GetType ("System.Object");
-			value_type = System.Type.GetType ("System.ValueType");
 		}
 
 		public Tree Tree {
@@ -124,7 +108,7 @@ namespace CIR {
 				else
 					cause = "Should not happen.";
 
-				report.Error (527, "`"+name+"' " + cause + ", need an interface instead");
+				Report.Error (527, "`"+name+"' " + cause + ", need an interface instead");
 				
 				return null;
 			}
@@ -138,13 +122,13 @@ namespace CIR {
 				else if (tree.Structs [name] != null)
 					cause = "is a struct";
 				
-				report.Error (527, "`"+name+"' " + cause + ", need an interface instead");
+				Report.Error (527, "`"+name+"' " + cause + ", need an interface instead");
 				return null;
 			}
 
 			t = CreateInterface ((Interface) parent);
 			if (t == null){
-				report.Error (529,
+				Report.Error (529,
 					      "Inherited interface `"+name+"' is circular");
 				return null;
 			}
@@ -260,7 +244,7 @@ namespace CIR {
 			if (parent != null){
 				t = CreateType (parent, is_class);
 				if (t == null){
-					report.Error (146, "Class definition is circular: `"+name+"'");
+					Report.Error (146, "Class definition is circular: `"+name+"'");
 					error = true;
 					return null;
 				}
@@ -311,7 +295,7 @@ namespace CIR {
 				}
 				
 			}
-			report.Error (246, "Can not find type `"+name+"'");
+			Report.Error (246, "Can not find type `"+name+"'");
 			return null;
 		}
 
@@ -336,14 +320,14 @@ namespace CIR {
 			if (is_class)
 				parent = null;
 			else
-				parent = value_type;
+				parent = TypeManager.value_type;
 
 			if (bases == null){
 				if (is_class){
 					if (stdlib)
-						parent = object_type;
+						parent = TypeManager.object_type;
 					else if (tc.Name != "System.Object")
-						parent = object_type;
+						parent = TypeManager.object_type;
 				} else {
 					//
 					// If we are compiling our runtime,
@@ -351,7 +335,7 @@ namespace CIR {
 					// parent is `System.Object'.
 					//
 					if (!stdlib && tc. Name == "System.ValueType")
-						parent = object_type;
+						parent = TypeManager.object_type;
 				}
 
 				return null;
@@ -376,7 +360,7 @@ namespace CIR {
 					parent = first;
 					start = 1;
 				} else {
-					parent = object_type;
+					parent = TypeManager.object_type;
 					start = 0;
 				}
 			} else {
@@ -395,7 +379,7 @@ namespace CIR {
 				}
 
 				if (is_class == false && !t.IsInterface){
-					report.Error (527, "In Struct `"+tc.Name+"', type `"+
+					Report.Error (527, "In Struct `"+tc.Name+"', type `"+
 						      name+"' is not an interface");
 					error = true;
 					return null;
@@ -407,7 +391,7 @@ namespace CIR {
 					if (t.IsValueType)
 						detail = " (a class can not inherit from a struct)";
 							
-					report.Error (509, "class `"+tc.Name+
+					Report.Error (509, "class `"+tc.Name+
 						      "': Cannot inherit from sealed class `"+
 						      bases [i]+"'"+detail);
 					error = true;
@@ -416,7 +400,7 @@ namespace CIR {
 
 				if (t.IsClass) {
 					if (parent != null){
-						report.Error (527, "In Class `"+tc.Name+"', type `"+
+						Report.Error (527, "In Class `"+tc.Name+"', type `"+
 							      name+"' is not an interface");
 						error = true;
 						return null;
@@ -570,7 +554,7 @@ namespace CIR {
 			}
 
 			if (!silent)
-				report.Error (246, "Cannot find type `"+name+"'");
+				Report.Error (246, "Cannot find type `"+name+"'");
 			
 			return null;
 		}
@@ -642,12 +626,6 @@ namespace CIR {
 
 			set {
 				stdlib = value;
-			}
-		}
-
-		public Report Report {
-			get {
-				return report;
 			}
 		}
 

@@ -492,7 +492,7 @@ namespace CIR {
 			}
 		}
 
-		public void UsageWarning (Report r)
+		public void UsageWarning ()
 		{
 			string name;
 			
@@ -506,20 +506,21 @@ namespace CIR {
 					name = (string) de.Key;
 						
 					if (vi.Assigned){
-						r.Warning (
+						Report.Warning (
 							219, vi.Location, "The variable `" + name +
 							"' is assigned but its value is never used");
 					} else {
-						r.Warning (168, vi.Location, "The variable `" +
-							   name +
-							   "' is declared but never used");
+						Report.Warning (
+							168, vi.Location, "The variable `" +
+							name +
+							"' is declared but never used");
 					} 
 				}
 			}
 
 			if (children != null)
 				foreach (Block b in children)
-					b.UsageWarning (r);
+					b.UsageWarning ();
 		}
 	}
 

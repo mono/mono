@@ -132,7 +132,7 @@ namespace CIR {
 				for (j = i + 1; j < count; j++){
 					if (FixedParameters [i].Name != FixedParameters [j].Name)
 						continue;
-					tc.RootContext.Report.Error (
+					Report.Error (
 						100, "The parameter name `" + FixedParameters [i].Name +
 						"' is a duplicate");
 					return false;

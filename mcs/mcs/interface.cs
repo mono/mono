@@ -186,10 +186,9 @@ namespace CIR {
 
 				if ((mod_flags & Modifiers.PUBLIC) != 0)
 					x |= TypeAttributes.Public;
-
-				if ((mod_flags & Modifiers.PRIVATE) != 0)
+				else if ((mod_flags & Modifiers.PRIVATE) != 0)
 					x |= TypeAttributes.NotPublic;
-
+				
 				if (IsTopLevel == false) {
 					
 					if ((mod_flags & Modifiers.PROTECTED) != 0
@@ -216,7 +215,7 @@ namespace CIR {
 		
 		void Error111 (InterfaceMethod im)
 		{
-			parent.RootContext.Report.Error (
+			Report.Error (
 				111,
 				"Interface `" + Name + "' already contains a definition with the " +
 				"same return value and paramenter types for method `" + im.Name + "'");

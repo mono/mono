@@ -61,7 +61,7 @@ namespace CIR {
 			}
 			
 			if (!(target is LValue)){
-				tc.RootContext.Report.Error (131, "Left hand of an assignment must be a variable, a property or an indexer");
+				Report.Error (131, "Left hand of an assignment must be a variable, a property or an indexer");
 			}
 			type = target_type;
 			eclass = ExprClass.Value;

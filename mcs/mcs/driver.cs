@@ -58,7 +58,7 @@ namespace CIR
 			try {
 				input = System.IO.File.OpenRead (input_file);
 			} catch {
-				context.Report.Error (2001, "Source file '" + input_file + "' could not be opened");
+				Report.Error (2001, "Source file '" + input_file + "' could not be opened");
 				return 1;
 			}
 
@@ -123,30 +123,41 @@ namespace CIR
 		public int LoadAssembly (string assembly)
 		{
 			Assembly a;
+			string total_log = "";
 
-			foreach (string dir in link_paths){
-				string full_path = dir + "/" + assembly;
-
-				try {
-					a = Assembly.Load (assembly);
-				} catch (FileNotFoundException f) {
-					error ("// File not found: " + full_path);
-					error ("Log: " + f.FusionLog);
-					return 1;
-				} catch (BadImageFormatException) {
-					error ("// Bad file format: " + full_path);
-					return 1;
-				} catch (FileLoadException f){
-					error ("// File Load Exception: " + full_path);
-					error ("Log: " + f.FusionLog);
-					return 1;
-				} catch (ArgumentNullException){
-					error ("// Argument Null exception " + full_path);
-					return 1;
-				}
-
+			try {
+				a = Assembly.Load (assembly);
 				context.TypeManager.AddAssembly (a);
+				return 0;
+			} catch (FileNotFoundException){
+				foreach (string dir in link_paths){
+					string full_path = dir + "/" + assembly;;
+
+					try {
+						a = Assembly.LoadFrom (full_path);
+						context.TypeManager.AddAssembly (a);
+						return 0;
+					} catch (FileNotFoundException ff) {
+						total_log += ff.FusionLog;
+						continue;
+					}
+				}
+			} catch (BadImageFormatException f) {
+				error ("// Bad file format while loading assembly");
+				error ("Log: " + f.FusionLog);
+				return 1;
+			} catch (FileLoadException f){
+				error ("// File Load Exception: ");
+				error ("Log: " + f.FusionLog);
+				return 1;
+			} catch (ArgumentNullException){
+				error ("// Argument Null exception ");
+				return 1;
 			}
+			
+			Report.Error (6, "Can not find assembly `" + assembly + "'" );
+			Console.WriteLine ("Log: \n" + total_log);
+
 			return 0;
 		}
 
@@ -184,11 +195,14 @@ namespace CIR
 			//
 			// Setup defaults
 			//
-			link_paths.Add ("file:///C:/WINNT/Microsoft.NET/Framework/v1.0.2914");
+			// This is not required because Assembly.Load knows about this
+			// path.
+			//
+			// link_paths.Add ("file:///C:/WINNT/Microsoft.NET/Framework/v1.0.2914");
 			
 			for (i = 0; i < args.Length; i++){
 				string arg = args [i];
-
+				
 				try {
 					if (arg.StartsWith ("-")){
 						if (arg == "-v"){
@@ -211,7 +225,7 @@ namespace CIR
 							
 							code = Int32.Parse (args [++i], 0);
 							line = Int32.Parse (args [++i], 0);
-							context.Report.SetProbe (code, line);
+							Report.SetProbe (code, line);
 							continue;
 						}
 						
@@ -272,7 +286,7 @@ namespace CIR
 						}
 						
 						if (arg == "--fatal"){
-							context.Report.Fatal = true;
+							Report.Fatal = true;
 							continue;
 						}
 						Usage ();
@@ -299,11 +313,11 @@ namespace CIR
 			}
 
 			if (first_source == null){
-				context.Report.Error (2008, "No files to compile were specified");
+				Report.Error (2008, "No files to compile were specified");
 				return;
 			}
 
-			if (context.Report.Errors > 0)
+			if (Report.Errors > 0)
 				return;
 			
 			if (parse_only)
@@ -388,7 +402,7 @@ namespace CIR
 			context.ResolveTree ();
 			context.PopulateTypes ();
 			
-			if (context.Report.Errors > 0){
+			if (Report.Errors > 0){
 				error ("Compilation failed");
 				return;
 			}
@@ -398,7 +412,7 @@ namespace CIR
 			//
 			context.EmitCode ();
 			
-			if (context.Report.Errors > 0){
+			if (Report.Errors > 0){
 				error ("Compilation failed");
 				return;
 			}
@@ -418,7 +432,7 @@ namespace CIR
 				MethodInfo ep = context.EntryPoint;
 
 				if (ep == null){
-					context.Report.Error (5001, "Program " + output_file +
+					Report.Error (5001, "Program " + output_file +
 							      " does not have an entry point defined");
 					return;
 				}
@@ -426,14 +440,12 @@ namespace CIR
 				context.CodeGen.AssemblyBuilder.SetEntryPoint (ep, k);
 			}
 			
-			context.CodeGen.Save (context.Report, output_file);
+			context.CodeGen.Save (output_file);
 
-			if (context.Report.Errors > 0){
+			if (Report.Errors > 0){
 				error ("Compilation failed");
 				return;
 			}
-
-			notice ("Success");
 		}
 
 	}

@@ -63,12 +63,12 @@ namespace CIR {
 			}
 		}
 		
-		public void Save (Report report, string name)
+		public void Save (string name)
 		{
 			try {
 				assembly_builder.Save (Basename (name));
 			} catch (System.IO.IOException io){
-				report.Error (16, "Coult not write to file `"+name+"', cause: " + io.Message);
+				Report.Error (16, "Coult not write to file `"+name+"', cause: " + io.Message);
 			}
 		}
 	}
@@ -99,7 +99,7 @@ namespace CIR {
 				return true;
 
 			if (verbose)
-				parent.RootContext.Report.Error (
+				Report.Error (
 					31, "Can not convert to type bool");
 			
 			return false;
@@ -117,7 +117,7 @@ namespace CIR {
 								new Location (-1));
 
 			if (e == null){
-				parent.RootContext.Report.Error (
+				Report.Error (
 					31, "Can not convert the expression to a boolean");
 				return false;
 			}
@@ -310,18 +310,18 @@ namespace CIR {
 		public void EmitTopBlock (Block block)
 		{
 			bool has_ret = false;
-			Report r = parent.RootContext.Report;
 			
 			if (block != null){
-				int errors = r.Errors;
+				int errors = Report.Errors;
 				
 				block.EmitMeta (parent, ig, block, 0);
-				has_ret = EmitBlock (block);
-
-				//
-				// Only emit warnings if there were no errors
-				if (r.Errors == errors)
-					block.UsageWarning (r);
+				
+				if (Report.Errors == errors){
+					has_ret = EmitBlock (block);
+					
+					if (Report.Errors == errors)
+						block.UsageWarning ();
+				}
 			}
 
 			if (!has_ret)

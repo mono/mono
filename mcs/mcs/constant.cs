@@ -93,7 +93,7 @@ namespace CIR {
 			} else if (t.IsSubclassOf (typeof (System.Enum))) {
 
 			} else {
-				rc.Report.Error (-3, "Constant type is not valid (only system types are allowed");
+				Report.Error (-3, "Constant type is not valid (only system types are allowed");
 				return;
 			}
 

@@ -1,3 +1,20 @@
+2001-10-03  Miguel de Icaza  <miguel@ximian.com>
+
+	* report.cs: Make all of it static.
+
+	* rootcontext.cs: Drop object_type and value_type computations, as
+	we have those in the TypeManager anyways.
+
+	Drop report instance variable too, now it is a global.
+
+	* driver.cs: Use try/catch on command line handling.
+
+	Add --probe option to debug the error reporting system with a test
+	suite. 
+
+	* report.cs: Add support for exiting program when a probe
+	condition is reached.
+
 2001-10-03  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (Binary::DoNumericPromotions): Fix the case when
