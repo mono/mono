@@ -21,6 +21,11 @@ namespace System.Data
 
 	public class DataRowBuilder 
 	{
+		#region Fields
+		
+		DataTable table;
+
+		#endregion
 
 		#region Constructors
 
@@ -30,6 +35,15 @@ namespace System.Data
 
 		protected internal DataRowBuilder (DataTable table, int x, int y)
 		{
+			this.table = table;
+		}
+
+		#endregion
+
+		#region Properties
+
+		protected internal DataTable Table {
+			get { return table; }
 		}
 
 		#endregion

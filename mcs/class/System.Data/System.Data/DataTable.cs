@@ -527,9 +527,7 @@ namespace System.Data
 		/// </summary>
 		public DataRow NewRow()
 		{
-			DataRow dataRow = new DataRow ();
-			dataRow.SetTable (this);
-			return dataRow;
+			return this.NewRowFromBuilder (new DataRowBuilder (this, 0, 0);
 		}
 
 		/// <summary>
@@ -545,13 +543,12 @@ namespace System.Data
 		/// <summary>
 		/// Creates a new row from an existing row.
 		/// </summary>
-		/* DataRowBuilder is internal
+		
 		protected virtual DataRow NewRowFromBuilder(DataRowBuilder builder)
 		{
-			DataRow dataRow = null;
-			return dataRow;
+			return new DataRow (builder);
 		}
-		*/
+	
 
 		/// <summary>
 		/// Raises the ColumnChanged event.

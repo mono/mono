@@ -1,4 +1,13 @@
 2002-05-14  Tim Coleman
+	* System.Data/DataRow.cs:
+	* System.Data/DataRowBuilder.cs:
+	* System.Data/DataTable.cs:
+		More implementation of these classes.  DataRow
+		can now (possibly) do some useful things.
+		Still not sure what DataRowBuilder is all about,
+		other than passing a DataTable in.
+
+2002-05-14  Tim Coleman
 	* System.Data/DataRowBuilder.cs:
 		Add stubb for this internal class.
 

@@ -4,9 +4,11 @@
 // Author:
 //   Rodrigo Moya <rodrigo@ximian.com>
 //   Daniel Morgan <danmorg@sc.rr.com>
+//   Tim Coleman <tim@timcoleman.com>
 //
 // (C) Ximian, Inc 2002
 // (C) Daniel Morgan 2002
+// Copyright (C) 2002 Tim Coleman
 //
 
 using System;
@@ -21,28 +23,136 @@ namespace System.Data
 	{
 		#region Fields
 
-		private ArrayList columns = new ArrayList ();
-		private ArrayList columnNames = new ArrayList ();
-		private DataTable table = null;
-		private DataRowState rowState = DataRowState.Unchanged;
+		private DataTable table;
+		private Hashtable dataRowVersions;
+		private ArrayList columnErrors;
+		private string rowError;
+		private bool deleted;
+		private DataRowState rowState;
+
+		#endregion
+
+		#region Constructors
+
+		protected internal DataRow (DataRowBuilder builder)
+		{
+			table = builder.Table;
+
+			dataRowVersions = new Hashtable ();
+			dataRowVersions[DataRowVersion.Original] = new ArrayList ();
+			dataRowVersions[DataRowVersion.Default] = new ArrayList ();
+			dataRowVersions[DataRowVersion.Current] = new ArrayList ();
+			dataRowVersions[DataRowVersion.Proposed] = new ArrayList ();
+
+			columnErrors = new ArrayList ();
+			rowError = String.Empty;
+
+			deleted = false;
+
+			rowState = DataRowState.Unchanged;
+		}
+
+		#endregion
+
+		#region Properties
+
+		public bool HasErrors {
+			[MonoTODO]
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public object this[string columnName] {
+			get { return this[columnName, DataRowVersion.Default]; }
+			set { ((ArrayList)(dataRowVersions[DataRowVersion.Default]))[table.Columns.IndexOf(columnName)] = value; }
+		}
+
+		public object this[DataColumn column] {
+			get { return this[column, DataRowVersion.Default]; }
+			set { ((ArrayList)(dataRowVersions[DataRowVersion.Default]))[table.Columns.IndexOf(column)] = value; }
+		}
+
+		public object this[int columnIndex] {
+			get { return this[columnIndex, DataRowVersion.Default]; }
+			set { ((ArrayList)(dataRowVersions[DataRowVersion.Default]))[columnIndex] = value; }
+		}
+
+		public object this[string columnName, DataRowVersion version] {
+			get { return ((ArrayList)(dataRowVersions[version]))[table.Columns.IndexOf(columnName)]; }
+		}
+
+		public object this[DataColumn column, DataRowVersion version] {
+			get { return ((ArrayList)(dataRowVersions[version]))[table.Columns.IndexOf(column)]; }
+		}
+
+		public object this[int columnIndex, DataRowVersion version] {
+			get { return ((ArrayList)(dataRowVersions[version]))[columnIndex]; }
+		}
+
+		public object[] ItemArray {
+			get { return ((ArrayList)(dataRowVersions[DataRowVersion.Default])).ToArray (); }
+			set {
+				if (deleted)
+					throw new DeletedRowInaccessibleException ();
+
+				if (value.Length > table.Columns.Count)
+					throw new ArgumentException ("The array is larger than the number of columns in the table.");
+				for (int i = 0; i < value.Length; i += 1)
+				{
+					if (table.Columns[i].DataType != value[i].GetType())
+						throw new InvalidCastException ();
+					if (table.Columns[i].ReadOnly && value[i] != ((ArrayList)(dataRowVersions[DataRowVersion.Default]))[i])
+						throw new ReadOnlyException ();
+					if (!table.Columns[i].AllowDBNull && value[i] == null)
+						throw new NoNullAllowedException ();
+					((ArrayList)(dataRowVersions[DataRowVersion.Default]))[i] = value[i];
+				}
+			}
+		}
+
+		public string RowError {
+			get {
+				if (this.HasErrors)
+					return rowError;
+
+				return String.Empty;
+			}
+			set { rowError = value; }
+		}
+
+		public DataRowState RowState {
+			get { return rowState; }
+		}
+
+		public DataTable Table {
+			[MonoTODO]
+			get {
+				return table;
+			}
+		}
 
 		#endregion
 
 		#region Methods
 
-		[MonoTODO]
-		public void AcceptChanges () {
-			throw new NotImplementedException ();
+		public void AcceptChanges () 
+		{
+			this.EndEdit ();
+			// if the RowState was Added or Modified, RowState becomes Unchanged
+			// if the RowState was Deleted, the row is removed.
 		}
 
-		[MonoTODO]
-		public void BeginEdit() {
-			throw new NotImplementedException ();
+		public void BeginEdit() 
+		{
+			dataRowVersions[DataRowVersion.Proposed] = dataRowVersions[DataRowVersion.Current];
+			dataRowVersions[DataRowVersion.Default] = dataRowVersions[DataRowVersion.Proposed];
 		}
 
-		[MonoTODO]
-		public void CancelEdit() {
-			// FIXME: throw changes away
+		public void CancelEdit() 
+		{
+			dataRowVersions[DataRowVersion.Proposed] = null;
+			dataRowVersions[DataRowVersion.Default] = dataRowVersions[DataRowVersion.Current];
 			rowState = DataRowState.Unchanged;
 		}
 
@@ -51,17 +161,22 @@ namespace System.Data
 			throw new NotImplementedException ();
 		}
 
-		public void Delete() {
+		public void Delete() 
+		{
 			rowState = DataRowState.Deleted;
 		}
 
-		[MonoTODO]
-		public void EndEdit() {
-			throw new NotImplementedException ();
+		public void EndEdit() 
+		{
+			dataRowVersions[DataRowVersion.Current] = dataRowVersions[DataRowVersion.Proposed];
+			dataRowVersions[DataRowVersion.Default] = dataRowVersions[DataRowVersion.Current];
+			dataRowVersions[DataRowVersion.Proposed] = null;
+			rowState = DataRowState.Modified;
 		}
 
 		[MonoTODO]
-		public DataRow[] GetChildRows (DataRelation dr) {
+		public DataRow[] GetChildRows (DataRelation dr) 
+		{
 			throw new NotImplementedException ();
 		}
 
@@ -80,19 +195,31 @@ namespace System.Data
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public string GetColumnError (DataColumn col) {
-			throw new NotImplementedException ();
+		public string GetColumnError (DataColumn column) 
+		{
+			if (this.HasErrors)
+				return (string)(columnErrors[table.Columns.IndexOf(column)]);
+			
+			return String.Empty;
 		}
 
-		[MonoTODO]
-		public string GetColumnError (int index) {
-			throw new NotImplementedException ();
+		public string GetColumnError (int columnIndex) 
+		{
+			if (columnIndex > table.Columns.Count)
+				throw new IndexOutOfRangeException ();
+
+			if (this.HasErrors)
+				return (string)(columnErrors[columnIndex]);
+
+			return String.Empty;
 		}
 
-		[MonoTODO]
-		public string GetColumnError (string s) {
-			throw new NotImplementedException ();
+		public string GetColumnError (string columnName) 
+		{
+			if (this.HasErrors)
+				return (string)(columnErrors[table.Columns.IndexOf(columnName)]);
+
+			return String.Empty;
 		}
 
 		[MonoTODO]
@@ -201,115 +328,5 @@ namespace System.Data
 		}
 		
 		#endregion // Methods
-
-		#region Properties
-
-		public bool HasErrors {
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public object this[string s] {
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
-			}
-
-			[MonoTODO]
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public object this[DataColumn dc] {
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
-			}
-
-			[MonoTODO]
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public object this[int i] {
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
-			}
-
-			[MonoTODO]
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public object this[string s, DataRowVersion version] {
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public object this[DataColumn dc, DataRowVersion version] {
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public object this[int i, DataRowVersion version] {
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public object[] ItemArray {
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
-			}
-
-			[MonoTODO]
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public string RowError {
-			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
-			}
-
-			[MonoTODO]
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public DataRowState RowState {
-			get {
-				return rowState;
-			}
-		}
-
-		public DataTable Table {
-			[MonoTODO]
-			get {
-				return table;
-			}
-		}
-
-		#endregion // Public Properties
-
-		internal void SetTable(DataTable table) {
-			this.table = table; 
-			// FIXME: called by DataTable
-		}
 	}
 }
