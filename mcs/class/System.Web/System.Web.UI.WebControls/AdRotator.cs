@@ -3,8 +3,9 @@
  * Class:     AdRotator
  * 
  * Author:  Gaurav Vaish
+ * Maintainer: gvaish@iitk.ac.in
  * Contact: <gvaish@iitk.ac.in>
- * Status:  10??%
+ * Status:  75%
  * 
  * (C) Gaurav Vaish (2001)
  */

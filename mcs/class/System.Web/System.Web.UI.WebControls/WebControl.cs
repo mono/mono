@@ -3,8 +3,9 @@
  * Class:     WebControl
  * 
  * Author:  Gaurav Vaish
+ * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
- * Status:  15%??
+ * Status:  40%
  * 
  * (C) Gaurav Vaish (2001)
  */

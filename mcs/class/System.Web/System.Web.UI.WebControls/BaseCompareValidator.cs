@@ -3,8 +3,9 @@
  * Class:     BaseCompareValidator
  * 
  * Author:  Gaurav Vaish
+ * Maintainer: gvaish@iitk.ac.in
  * Contact: <gvaish@iitk.ac.in>
- * Status:  100%
+ * Status:  30%
  * 
  * (C) Gaurav Vaish (2001)
  */
