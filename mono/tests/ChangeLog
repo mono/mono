@@ -1,3 +1,9 @@
+2005-03-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* pinvoke3.cs: Add tests for passing blittable arrays.
+	
+	* pinvoke3.cs libtest.c: Add tests for passing arrays to delegates.
+
 2005-02-21  Ben Maurer  <bmaurer@ximian.com>
 
 	* abort-stress-1.cs, abort-stress-2.cs: Stress tests for thread
