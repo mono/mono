@@ -11,6 +11,7 @@ using Mono.Data.TdsClient.Internal;
 using System;
 using System.Data;
 using System.Runtime.Serialization;
+using System.Text;
 
 namespace Mono.Data.SybaseClient {
 	[Serializable]
@@ -40,105 +41,48 @@ namespace Mono.Data.SybaseClient {
 
 		#region Properties
 
-		[MonoTODO]
 		public byte Class {
-			get { 
-				if(errors.Count == 0)
-					return 0; // FIXME: throw exception here?
-				else
-					return errors[0].Class;
-			}
-			set { errors[0].SetClass(value); }
+			get { return errors [0].Class; }
 		}
 
-		[MonoTODO]
-		public SybaseErrorCollection Errors 
-		{
+		public SybaseErrorCollection Errors {
 			get { return errors; }
-			set { errors = value; }
 		}
 
-		[MonoTODO]
 		public int LineNumber {
-			get { if(errors.Count == 0)
-					return 0; // FIXME: throw exception here?
-				return errors[0].LineNumber;
-			}
-			set { errors[0].SetLineNumber(value); }
+			get { return errors [0].LineNumber; }
 		}
 		
-		[MonoTODO]
 		public override string Message 	{
-			get { 
-				if(errors.Count == 0)
-					return ""; // FIXME: throw exception?
-				else {
-					String msg = "";
-					int i = 0;
-					
-					for(i = 0; i < errors.Count - 1; i++) {
-						msg = msg + errors[i].Message + "\n";
-                                        }
-					msg = msg + errors[i].Message;
-
-					return msg;
+			get {
+				StringBuilder result = new StringBuilder ();
+				foreach (SybaseError error in Errors) {
+					if (result.Length > 0)
+						result.Append ('\n');
+					result.Append (error.Message);
 				}
-			}
+				return result.ToString ();
+			}                                                                
 		}
 		
-		[MonoTODO]
 		public int Number {
-			get { 
-				if(errors.Count == 0)
-					return 0; // FIXME: throw exception?
-				else
-					return errors[0].Number;
-			}
-			set { errors[0].SetNumber(value); }
+			get { return errors [0].Number; }
 		}
 		
-		[MonoTODO]
 		public string Procedure {
-			get { 
-				if(errors.Count == 0)
-					return ""; // FIXME: throw exception?
-				else
-					return errors[0].Procedure;
-			}
-			set { errors[0].SetProcedure(value); }
+			get { return errors [0].Procedure; }
 		}
 
-		[MonoTODO]
 		public string Server {
-			get { 
-				if(errors.Count == 0)
-					return ""; // FIXME: throw exception?
-				else
-					return errors[0].Server;
-			}
-			set { errors[0].SetServer(value); }
+			get { return errors [0].Server; }
 		}
 		
-		[MonoTODO]
 		public override string Source {
-			get { 
-				if(errors.Count == 0)
-					return ""; // FIXME: throw exception?
-				else
-					return errors[0].Source;
-			}
-			set { errors[0].SetSource(value); }
+			get { return errors [0].Source; }
 		}
 
-		[MonoTODO]
 		public byte State {
-			get { 
-				if(errors.Count == 0)
-					return 0; // FIXME: throw exception?
-				else
-					return errors[0].State;
-			}
-			set { errors[0].SetState(value); }
+			get { return errors [0].State; }
 		}
 
 		#endregion // Properties
@@ -149,6 +93,11 @@ namespace Mono.Data.SybaseClient {
 		public override void GetObjectData (SerializationInfo si, StreamingContext context) 
 		{
 			throw new NotImplementedException ();
+		}
+
+		internal static SybaseException FromTdsInternalException (TdsInternalException e)
+		{
+			return new SybaseException (e.Class, e.LineNumber, e.Message, e.Number, e.Procedure, e.Server, "Mono SybaseClient Data Provider", e.State);
 		}
 
 		#endregion // Methods

@@ -7,7 +7,7 @@
 // (C) Copyright Tim Coleman, 2002
 //
 
-using Mono.Data.SybaseClient;
+using Mono.Data.TdsClient.Internal;
 using System;
 using System.Data.SqlTypes;
 using System.Globalization;
@@ -15,6 +15,7 @@ using System.Globalization;
 namespace Mono.Data.SybaseTypes {
 	public struct SybaseDecimal : INullable, IComparable
 	{
+
 		#region Fields
 
 		int[] value;
@@ -22,17 +23,18 @@ namespace Mono.Data.SybaseTypes {
 		byte scale;
 		bool positive;
 
-		private bool notNull;
+		bool notNull;
 
 		// borrowed from System.Decimal
 		const int SCALE_SHIFT = 16;
 		const int SIGN_SHIFT = 31;
 		const int RESERVED_SS32_BITS = 0x7F00FFFF;
 
-		public static readonly byte MaxPrecision = 38; 
-		public static readonly byte MaxScale = 28;
-		public static readonly SybaseDecimal MaxValue = new SybaseDecimal (79228162514264337593543950335.0);
-		public static readonly SybaseDecimal MinValue = new SybaseDecimal (-79228162514264337593543950335.0);
+		public static readonly byte MaxPrecision = 38;
+		public static readonly byte MaxScale = 38;
+
+		public static readonly SybaseDecimal MaxValue = new SybaseDecimal (MaxPrecision, (byte)0, true, (int)716002642, Int32.MaxValue, (int)1518778966, (int)1262177448);
+		public static readonly SybaseDecimal MinValue = new SybaseDecimal (MaxPrecision, (byte)0, false, (int)716002642, Int32.MaxValue, (int)1518778966, (int)1262177448);
 		public static readonly SybaseDecimal Null;
 
 		#endregion
@@ -192,6 +194,14 @@ namespace Mono.Data.SybaseTypes {
 		{
 			throw new NotImplementedException ();
 		}
+
+		internal static SybaseDecimal FromTdsBigDecimal (TdsBigDecimal x)
+		{
+			if (x == null)
+				return Null;
+			else
+				return new SybaseDecimal (x.Precision, x.Scale, !x.IsNegative, x.Data);
+                }
 
 		public override int GetHashCode ()
 		{

@@ -22,6 +22,7 @@ namespace Mono.Data.SybaseClient {
 	public sealed class SybaseConnection : Component, IDbConnection, ICloneable	
 	{
 		#region Fields
+		bool disposed = false;
 
 		// The set of SQL connection pools
 		static Hashtable SybaseConnectionPools = new Hashtable ();
@@ -48,13 +49,11 @@ namespace Mono.Data.SybaseClient {
 
 		// The current state
 		ConnectionState state = ConnectionState.Closed;
-		bool dataReaderOpen = false;
+
+		SybaseDataReader dataReader = null;
 
 		// The TDS object
 		ITds tds;
-
-		static readonly object EventStateChange = new object ();
-		static readonly object EventSybaseInfoMessage = new object ();
 
 		#endregion // Fields
 
@@ -67,8 +66,7 @@ namespace Mono.Data.SybaseClient {
 	
 		public SybaseConnection (string connectionString) 
 		{
-			SetConnectionString (connectionString);
-			this.connectionString = connectionString;
+			ConnectionString = connectionString;
 		}
 
 		#endregion // Constructors
@@ -88,9 +86,9 @@ namespace Mono.Data.SybaseClient {
 			get { return tds.Database; }
 		}
 
-		internal bool DataReaderOpen {
-			get { return dataReaderOpen; }
-			set { dataReaderOpen = value; }
+		internal SybaseDataReader DataReader {
+			get { return dataReader; }
+			set { dataReader = value; }
 		}
 
 		public string DataSource {
@@ -115,6 +113,7 @@ namespace Mono.Data.SybaseClient {
 
 		internal SybaseTransaction Transaction {
 			get { return transaction; }
+			set { transaction = value; }
 		}
 
 		public string WorkstationId {
@@ -123,24 +122,11 @@ namespace Mono.Data.SybaseClient {
 
 		#endregion // Properties
 
-		#region Events
+		#region Events and Delegates
                 
-		public event SybaseInfoMessageEventHandler InfoMessage {
-			add { Events.AddHandler (EventSybaseInfoMessage, value); }
-			remove { Events.RemoveHandler (EventSybaseInfoMessage, value); }
-		}
-
-		public event StateChangeEventHandler StateChange {
-			add { Events.AddHandler (EventStateChange, value); }
-			remove { Events.RemoveHandler (EventStateChange, value); }
-		}
+		public event SybaseInfoMessageEventHandler InfoMessage;
+		public event StateChangeEventHandler StateChange;
 		
-		#endregion // Events
-
-		#region Delegates
-
-		#endregion // Delegates
-
 		private void ErrorHandler (object sender, TdsInternalErrorMessageEventArgs e)
 		{
 			throw new SybaseException (e.Class, e.LineNumber, e.Message, e.Number, e.Procedure, e.Server, "Mono SybaseClient Data Provider", e.State);
@@ -150,6 +136,8 @@ namespace Mono.Data.SybaseClient {
 		{
 			OnSybaseInfoMessage (CreateSybaseInfoMessageEvent (e.Errors));
 		}
+
+		#endregion // Events and Delegates
 
 		#region Methods
 
@@ -165,16 +153,36 @@ namespace Mono.Data.SybaseClient {
 
 		public SybaseTransaction BeginTransaction (string transactionName)
 		{
-			return BeginTransaction (IsolationLevel.ReadCommitted, String.Empty);
+			return BeginTransaction (IsolationLevel.ReadCommitted, transactionName);
 		}
 
 		public SybaseTransaction BeginTransaction (IsolationLevel iso, string transactionName)
 		{
-			if (transaction != null)
+			if (State == ConnectionState.Closed)
+				throw new InvalidOperationException ("The connection is not open.");
+			if (Transaction != null)
 				throw new InvalidOperationException ("SybaseConnection does not support parallel transactions.");
 
-			tds.ExecuteNonQuery (String.Format ("BEGIN TRANSACTION {0}", transactionName));
+			string isolevel = String.Empty;
+			switch (iso) {
+			case IsolationLevel.Chaos:
+				isolevel = "CHAOS";
+				break;
+			case IsolationLevel.ReadCommitted:
+				isolevel = "READ COMMITTED";
+				break;
+			case IsolationLevel.ReadUncommitted:
+				isolevel = "READ UNCOMMITTED";
+				break;
+			case IsolationLevel.RepeatableRead:
+				isolevel = "REPEATABLE READ";
+				break;
+			case IsolationLevel.Serializable:
+				isolevel = "SERIALIZABLE";
+				break;
+			}
 
+			tds.ExecuteNonQuery (String.Format ("SET TRANSACTION ISOLATION LEVEL {0};BEGIN TRANSACTION {1}", isolevel, transactionName));
 			transaction = new SybaseTransaction (this, iso);
 			return transaction;
 		}
@@ -183,10 +191,8 @@ namespace Mono.Data.SybaseClient {
 		{
 			if (!IsValidDatabaseName (database))
 				throw new ArgumentException (String.Format ("The database name {0} is not valid."));
-
-			if (state != ConnectionState.Open)
+			if (State != ConnectionState.Open)
 				throw new InvalidOperationException ("The connection is not open");
-
 			tds.ExecuteNonQuery (String.Format ("use {0}", database));
 		}
 
@@ -199,8 +205,8 @@ namespace Mono.Data.SybaseClient {
 
 		public void Close () 
 		{
-			if (transaction != null && transaction.IsOpen)
-				transaction.Rollback ();
+			if (Transaction != null && Transaction.IsOpen)
+				Transaction.Rollback ();
 			if (pooling)
 				pool.ReleaseConnection (tds);
 			else
@@ -227,9 +233,18 @@ namespace Mono.Data.SybaseClient {
 			return new SybaseInfoMessageEventArgs (errors);
 		}
 
-		protected override void Dispose (bool disposing) 
+		protected override void Dispose (bool disposing)
 		{
-			Close ();
+			if (!disposed) {
+				if (disposing) {
+					if (State == ConnectionState.Open)
+						Close ();
+					parms = null;
+					dataSource = null;
+				}
+				base.Dispose (disposing);
+				disposed = true;
+			}
 		}
 
 		[MonoTODO]
@@ -238,10 +253,9 @@ namespace Mono.Data.SybaseClient {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		object ICloneable.Clone ()
 		{
-			throw new NotImplementedException ();
+			return new SybaseConnection (ConnectionString);
 		}
 
 		IDbTransaction IDbConnection.BeginTransaction ()
@@ -261,22 +275,30 @@ namespace Mono.Data.SybaseClient {
 
 		void IDisposable.Dispose ()
 		{
-			Dispose ();
+			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 
+		[MonoTODO ("Figure out the Sybase way to reset the connection.")]
 		public void Open () 
 		{
 			if (connectionString == null)
 				throw new InvalidOperationException ("Connection string has not been initialized.");
-			if (!pooling)
-				tds = new Tds50 (DataSource, port, PacketSize, ConnectionTimeout);
-			else {
-				pool = (SybaseConnectionPool) SybaseConnectionPools [connectionString];
-				if (pool == null) {
-					pool = new SybaseConnectionPool (dataSource, port, packetSize, ConnectionTimeout, minPoolSize, maxPoolSize);
-					SybaseConnectionPools [connectionString] = pool;
+
+			try {
+				if (!pooling)
+					tds = new Tds50 (DataSource, port, PacketSize, ConnectionTimeout);
+				else {
+					pool = (SybaseConnectionPool) SybaseConnectionPools [connectionString];
+					if (pool == null) {
+						pool = new SybaseConnectionPool (dataSource, port, packetSize, ConnectionTimeout, minPoolSize, maxPoolSize);
+						SybaseConnectionPools [connectionString] = pool;
+					}
+					tds = pool.AllocateConnection ();
 				}
-				tds = pool.AllocateConnection ();
+			}
+			catch (TdsTimeoutException e) {
+				throw SybaseException.FromTdsInternalException ((TdsInternalException) e);
 			}
 
 			tds.TdsErrorMessage += new TdsInternalErrorMessageEventHandler (ErrorHandler);
@@ -284,12 +306,13 @@ namespace Mono.Data.SybaseClient {
 
 			if (!tds.IsConnected) {
 				tds.Connect (parms);
+				ChangeState (ConnectionState.Open);
 				ChangeDatabase (parms.Database);
-			} 
-			else if (connectionReset) 
-				tds.ExecuteNonQuery ("EXEC sp_reset_connection");
-
-			ChangeState (ConnectionState.Open);
+			}
+			else if (connectionReset) {
+				// tds.ExecuteNonQuery ("EXEC sp_reset_connection"); FIXME
+				ChangeState (ConnectionState.Open);
+			}
 		}
 
                 void SetConnectionString (string connectionString)
@@ -480,16 +503,14 @@ namespace Mono.Data.SybaseClient {
 
 		private void OnSybaseInfoMessage (SybaseInfoMessageEventArgs value)
 		{
-			SybaseInfoMessageEventHandler handler = (SybaseInfoMessageEventHandler) Events [EventSybaseInfoMessage];
-			if (handler != null)
-				handler (this, value);
+			if (InfoMessage != null)
+				InfoMessage (this, value);
 		}
 
 		private void OnStateChange (StateChangeEventArgs value)
 		{
-			StateChangeEventHandler handler = (StateChangeEventHandler) Events [EventStateChange];
-			if (handler != null)
-				handler (this, value);
+			if (StateChange != null)
+				StateChange (this, value);
 		}
 
 		#endregion // Methods

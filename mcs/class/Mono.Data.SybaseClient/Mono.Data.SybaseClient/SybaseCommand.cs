@@ -13,6 +13,7 @@
 
 using Mono.Data.TdsClient.Internal;
 using System;
+using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
@@ -26,6 +27,8 @@ namespace Mono.Data.SybaseClient {
 	{
 		#region Fields
 
+		bool disposed = false;
+
 		int commandTimeout;
 		bool designTimeVisible;
 		string commandText;
@@ -33,11 +36,11 @@ namespace Mono.Data.SybaseClient {
 		CommandType commandType;
 		SybaseConnection connection;
 		SybaseTransaction transaction;
+		UpdateRowSource updatedRowSource;
 
-		SybaseParameterCollection parameters = new SybaseParameterCollection ();
-		private CommandBehavior behavior = CommandBehavior.Default;
-
-		NameValueCollection procedureCache = new NameValueCollection ();
+		CommandBehavior behavior = CommandBehavior.Default;
+		NameValueCollection preparedStatements = new NameValueCollection ();
+		SybaseParameterCollection parameters;
 
 		#endregion // Fields
 
@@ -66,8 +69,11 @@ namespace Mono.Data.SybaseClient {
 			this.connection = connection;
 			this.transaction = transaction;
 			this.commandType = CommandType.Text;
+			this.updatedRowSource = UpdateRowSource.Both;
+
 			this.designTimeVisible = false;
 			this.commandTimeout = 30;
+			parameters = new SybaseParameterCollection (this);
 		}
 
 		#endregion // Constructors
@@ -79,7 +85,7 @@ namespace Mono.Data.SybaseClient {
 		}
 
 		public string CommandText {
-			get { return CommandText; }
+			get { return commandText; }
 			set { commandText = value; }
 		}
 
@@ -94,8 +100,11 @@ namespace Mono.Data.SybaseClient {
 
 		public CommandType CommandType	{
 			get { return commandType; }
-			[MonoTODO ("Validate")]
-			set { commandType = value; }
+			set { 
+				if (value == CommandType.TableDirect)
+					throw new ArgumentException ("CommandType.TableDirect is not supported by the Mono SybaseClient Data Provider.");
+				commandType = value; 
+			}
 		}
 
 		public SybaseConnection Connection {
@@ -118,7 +127,7 @@ namespace Mono.Data.SybaseClient {
 		}
 
 		internal ITds Tds {
-			get { return connection.Tds; }
+			get { return Connection.Tds; }
 		}
 
 		IDbConnection IDbCommand.Connection {
@@ -148,41 +157,156 @@ namespace Mono.Data.SybaseClient {
 			set { transaction = value; }
 		}	
 
-		[MonoTODO]
 		public UpdateRowSource UpdatedRowSource	{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return updatedRowSource; }
+			set { updatedRowSource = value; }
 		}
 
 		#endregion // Fields
 
 		#region Methods
 
+		private string BuildCommand ()
+		{
+			string statementHandle = preparedStatements [commandText];
+			if (statementHandle != null) {
+				string proc = String.Format ("sp_execute {0}", statementHandle);	
+				if (parameters.Count > 0)
+					proc += ",";
+				return BuildProcedureCall (proc, parameters);
+			}
+
+			if (commandType == CommandType.StoredProcedure)
+				return BuildProcedureCall (commandText, parameters);
+
+			string sql = String.Empty;
+			if ((behavior & CommandBehavior.KeyInfo) > 0)
+				sql += "SET FMTONLY OFF; SET NO_BROWSETABLE ON;";
+			if ((behavior & CommandBehavior.SchemaOnly) > 0)
+				sql += "SET FMTONLY ON;";
+	
+			switch (commandType) {
+			case CommandType.Text :
+				sql += commandText;
+				break;
+			default:
+				throw new InvalidOperationException ("The CommandType was invalid.");
+			}
+			return BuildExec (sql);
+		}
+
+		[MonoTODO ("This throws a SybaseException.")]
+		private string BuildExec (string sql)
+		{
+			StringBuilder declare = new StringBuilder ();
+			StringBuilder assign = new StringBuilder ();
+
+			sql = sql.Replace ("'", "''");
+			foreach (SybaseParameter parameter in parameters) {
+				declare.Append ("declare ");
+				declare.Append (parameter.Prepare (parameter.ParameterName));
+				if (parameter.Direction == ParameterDirection.Output)
+					declare.Append (" output");
+				declare.Append ('\n');
+				assign.Append (String.Format ("select {0}={1}\n", parameter.ParameterName, FormatParameter (parameter)));
+				sql = sql.Replace (parameter.ParameterName, String.Format ("' + {0} + '", parameter.ParameterName));
+			}
+
+			return String.Format ("{0}{1}execute ({2})", declare.ToString (), assign.ToString (), sql);
+		}
+
+		private string BuildPrepare ()
+		{
+			StringBuilder parms = new StringBuilder ();
+			foreach (SybaseParameter parameter in parameters) {
+				if (parms.Length > 0)
+					parms.Append (", ");
+				parms.Append (parameter.Prepare (parameter.ParameterName));
+				if (parameter.Direction == ParameterDirection.Output)
+					parms.Append (" output");
+			}
+
+			SybaseParameterCollection localParameters = new SybaseParameterCollection (this);
+			SybaseParameter parm;
+		
+			parm = new SybaseParameter ("@P1", SybaseType.Int);
+			parm.Direction = ParameterDirection.Output;
+			localParameters.Add (parm);
+
+			parm = new SybaseParameter ("@P2", SybaseType.NVarChar);
+			parm.Value = parms.ToString ();
+			parm.Size = ((string) parm.Value).Length;
+			localParameters.Add (parm);
+
+			parm = new SybaseParameter ("@P3", SybaseType.NVarChar);
+			parm.Value = commandText;
+			parm.Size = ((string) parm.Value).Length;
+			localParameters.Add (parm);
+
+			return BuildProcedureCall ("sp_prepare", localParameters);
+		}
+
+		private static string BuildProcedureCall (string procedure, SybaseParameterCollection parameters)
+		{
+			StringBuilder parms = new StringBuilder ();
+			StringBuilder declarations = new StringBuilder ();
+			StringBuilder outParms = new StringBuilder ();
+			StringBuilder set = new StringBuilder ();
+
+			int index = 1;
+			foreach (SybaseParameter parameter in parameters) {
+				string parmName = String.Format ("@P{0}", index);
+
+				switch (parameter.Direction) {
+				case ParameterDirection.Input :
+					if (parms.Length > 0)
+						parms.Append (", ");
+					parms.Append (FormatParameter (parameter));
+					break;
+				case ParameterDirection.Output :
+					if (parms.Length > 0)
+						parms.Append (", ");
+					parms.Append (parmName);
+					parms.Append (" output");
+
+					if (outParms.Length > 0) {
+						outParms.Append (", ");
+						declarations.Append (", ");
+					}
+					else {
+						outParms.Append ("select ");
+						declarations.Append ("declare ");
+					}
+
+					declarations.Append (parameter.Prepare (parmName));
+					set.Append (String.Format ("set {0}=NULL\n", parmName));
+					outParms.Append (parmName);
+					break;
+				default :
+					throw new NotImplementedException ("Only support input and output parameters.");
+				}
+				index += 1;
+			}
+			if (declarations.Length > 0)
+				declarations.Append ('\n');
+
+			return String.Format ("{0}{1}{2} {3}\n{4}", declarations.ToString (), set.ToString (), procedure, parms.ToString (), outParms.ToString ());
+		}
+
 		public void Cancel () 
 		{
-			if (connection == null || connection.Tds == null)
+			if (Connection == null || Connection.Tds == null)
 				return;
-			connection.Tds.Cancel ();
+			Connection.Tds.Cancel ();
 		}
 
 		internal void CloseDataReader (bool moreResults)
 		{
-			while (moreResults)
-				moreResults = connection.Tds.NextResult ();
+			GetOutputParameters ();
+			Connection.DataReader = null;
 
-			if (connection.Tds.OutputParameters.Count > 0) {
-				int index = 0;
-				foreach (SybaseParameter parameter in parameters) {
-					if (parameter.Direction != ParameterDirection.Input)
-						parameter.Value = connection.Tds.OutputParameters[index];
-					index += 1;
-					if (index >= connection.Tds.OutputParameters.Count)
-						break;
-				}
-			}
-			connection.DataReaderOpen = false;
 			if ((behavior & CommandBehavior.CloseConnection) != 0)
-				connection.Close ();
+				Connection.Close ();
 		}
 
 		public SybaseParameter CreateParameter () 
@@ -190,9 +314,46 @@ namespace Mono.Data.SybaseClient {
 			return new SybaseParameter ();
 		}
 
+		internal void DeriveParameters ()
+		{
+			if (commandType != CommandType.StoredProcedure)
+				throw new InvalidOperationException (String.Format ("SybaseCommand DeriveParameters only supports CommandType.StoredProcedure, not CommandType.{0}", commandType));
+			ValidateCommand ("DeriveParameters");
+
+			SybaseParameterCollection localParameters = new SybaseParameterCollection (this);
+			localParameters.Add ("@P1", SybaseType.NVarChar, commandText.Length).Value = commandText;
+
+			Connection.Tds.ExecuteQuery (BuildProcedureCall ("sp_procedure_params_rowset", localParameters));
+			SybaseDataReader reader = new SybaseDataReader (this);
+			parameters.Clear ();
+			object[] dbValues = new object[reader.FieldCount];
+
+			while (reader.Read ()) {
+				reader.GetValues (dbValues);
+				parameters.Add (new SybaseParameter (dbValues));
+			}
+			reader.Close ();	
+		}
+
 		public int ExecuteNonQuery ()
 		{
-			int result = connection.Tds.ExecuteNonQuery (ValidateQuery ("ExecuteNonQuery"));
+			ValidateCommand ("ExecuteNonQuery");
+			string sql = String.Empty;
+			int result = 0;
+
+			if (Parameters.Count > 0)
+				sql = BuildCommand ();
+			else
+				sql = CommandText;
+
+			try {
+				result = Connection.Tds.ExecuteNonQuery (sql, CommandTimeout);
+			}
+			catch (TdsTimeoutException e) {
+				throw SybaseException.FromTdsInternalException ((TdsInternalException) e);
+			}
+
+			GetOutputParameters ();
 			return result;
 		}
 
@@ -203,31 +364,39 @@ namespace Mono.Data.SybaseClient {
 
 		public SybaseDataReader ExecuteReader (CommandBehavior behavior)
 		{
+			ValidateCommand ("ExecuteReader");
 			this.behavior = behavior;
-			connection.Tds.ExecuteQuery (ValidateQuery ("ExecuteReader"));
-			connection.DataReaderOpen = true;
-			return new SybaseDataReader (this);
+
+			try {
+				Connection.Tds.ExecuteQuery (BuildCommand (), CommandTimeout);
+			}
+			catch (TdsTimeoutException e) {
+				throw SybaseException.FromTdsInternalException ((TdsInternalException) e);
+			}
+		
+			Connection.DataReader = new SybaseDataReader (this);
+			return Connection.DataReader;
 		}
 
 		public object ExecuteScalar ()
 		{
-			connection.Tds.ExecuteQuery (ValidateQuery ("ExecuteScalar"));
+			ValidateCommand ("ExecuteScalar");
+			try {
+				Connection.Tds.ExecuteQuery (BuildCommand (), CommandTimeout);
+			}
+			catch (TdsTimeoutException e) {
+				throw SybaseException.FromTdsInternalException ((TdsInternalException) e);
+			}
 
-			bool moreResults = connection.Tds.NextResult ();
-
-			if (!moreResults)
+			if (!Connection.Tds.NextResult () || !Connection.Tds.NextRow ())
 				return null;
 
-			moreResults = connection.Tds.NextRow ();
-
-			if (!moreResults)
-				return null;
-
-			object result = connection.Tds.ColumnValues[0];
+			object result = Connection.Tds.ColumnValues [0];
 			CloseDataReader (true);
 			return result;
 		}
 
+		[MonoTODO ("Include offset from SybaseParameter for binary/string types.")]
 		static string FormatParameter (SybaseParameter parameter)
 		{
 			if (parameter.Value == null)
@@ -235,7 +404,6 @@ namespace Mono.Data.SybaseClient {
 
 			switch (parameter.SybaseType) {
 				case SybaseType.BigInt :
-				case SybaseType.Bit :
 				case SybaseType.Decimal :
 				case SybaseType.Float :
 				case SybaseType.Int :
@@ -245,64 +413,46 @@ namespace Mono.Data.SybaseClient {
 				case SybaseType.SmallMoney :
 				case SybaseType.TinyInt :
 					return parameter.Value.ToString ();
+				case SybaseType.NVarChar :
+				case SybaseType.NChar :
+					return String.Format ("N'{0}'", parameter.Value.ToString ().Replace ("'", "''"));
+				case SybaseType.UniqueIdentifier :
+					return String.Format ("0x{0}", ((Guid) parameter.Value).ToString ("N"));
+				case SybaseType.Bit:
+					if (parameter.Value.GetType () == typeof (bool))
+						return (((bool) parameter.Value) ? "0x1" : "0x0");
+					return parameter.Value.ToString ();
+				case SybaseType.Image:
+				case SybaseType.Binary:
+				case SybaseType.VarBinary:
+					return String.Format ("0x{0}", BitConverter.ToString ((byte[]) parameter.Value).Replace ("-", "").ToLower ());
 				default:
 					return String.Format ("'{0}'", parameter.Value.ToString ().Replace ("'", "''"));
 			}
 		}
 
-		static string FormatQuery (string commandText, CommandType commandType, SybaseParameterCollection parameters)
+		private void GetOutputParameters ()
 		{
-			StringBuilder result = new StringBuilder ();
+			Connection.Tds.SkipToEnd ();
 
-			switch (commandType) {
-			case CommandType.Text :
-				return commandText;
-			case CommandType.TableDirect :
-				return String.Format ("SELECT * FROM {0}", commandText);
-			case CommandType.StoredProcedure :
+			IList list = Connection.Tds.ColumnValues;
 
-				StringBuilder parms = new StringBuilder ();
-				StringBuilder declarations = new StringBuilder ();
-
+			if (list != null && list.Count > 0) {
+				int index = 0;
 				foreach (SybaseParameter parameter in parameters) {
-					switch (parameter.Direction) {
-					case ParameterDirection.Input :
-						if (parms.Length > 0)
-							result.Append (",");
-						parms.Append (FormatParameter (parameter));
-						break;
-					case ParameterDirection.Output :
-						if (parms.Length > 0)
-							parms.Append (",");
-						parms.Append (parameter.ParameterName);
-						parms.Append (" OUT");
-
-						if (declarations.Length == 0)
-							declarations.Append ("DECLARE ");
-						else
-							declarations.Append (",");
-
-						declarations.Append (parameter.Prepare ());
-						break;
-					default :
-						throw new NotImplementedException ("Only support input and output parameters.");
+					if (parameter.Direction != ParameterDirection.Input) {
+						parameter.Value = list [index];
+						index += 1;
 					}
+					if (index >= list.Count)
+						break;
 				}
-				result.Append (declarations.ToString ());
-				result.Append (" EXEC ");
-				result.Append (commandText);
-				result.Append (" ");
-				result.Append (parms);
-				return result.ToString ();
-			default:
-				throw new InvalidOperationException ("The CommandType was not recognized.");
 			}
 		}
 
-		[MonoTODO]
 		object ICloneable.Clone ()
 		{
-			throw new NotImplementedException ();
+			return new SybaseCommand (commandText, Connection);
 		}
 
 		IDbDataParameter IDbCommand.CreateParameter ()
@@ -320,37 +470,15 @@ namespace Mono.Data.SybaseClient {
 			return ExecuteReader (behavior);
 		}
 
-		void IDisposable.Dispose ()
-		{
-			Dispose (true);
-		}
-
 		public void Prepare ()
 		{
-			bool prependComma = false;
-			Guid uniqueId = Guid.NewGuid ();
-			string procedureName = String.Format ("#mono#{0}", uniqueId.ToString ("N"));
-			StringBuilder procedureString = new StringBuilder ();
+			ValidateCommand ("Prepare");
+			Connection.Tds.ExecuteNonQuery (BuildPrepare ());
 
-			procedureString.Append ("CREATE PROC ");
-			procedureString.Append (procedureName);
-			procedureString.Append (" (");
+			if (Connection.Tds.OutputParameters.Count == 0 || Connection.Tds.OutputParameters[0] == null)
+				throw new Exception ("Could not prepare the statement.");
 
-			foreach (SybaseParameter parameter in parameters) {
-				if (prependComma)
-					procedureString.Append (", ");
-				else
-					prependComma = true;
-				procedureString.Append (parameter.Prepare ());
-				if (parameter.Direction == ParameterDirection.Output)
-					procedureString.Append (" OUT");
-			}
-				
-			procedureString.Append (") AS ");
-			procedureString.Append (commandText);
-			string cmdText = FormatQuery (procedureName, CommandType.StoredProcedure, parameters);
-			connection.Tds.ExecuteNonQuery (procedureString.ToString ());
-			procedureCache[commandText] = cmdText;
+			preparedStatements [commandText] = ((int) Connection.Tds.OutputParameters [0]).ToString ();
 		}
 
 		public void ResetCommandTimeout ()
@@ -358,25 +486,18 @@ namespace Mono.Data.SybaseClient {
 			commandTimeout = 30;
 		}
 
-		string ValidateQuery (string methodName)
+		private void ValidateCommand (string method)
 		{
-			if (connection == null)
-				throw new InvalidOperationException (String.Format ("{0} requires a Connection object to continue.", methodName));
-			if (connection.Transaction != null && transaction != connection.Transaction)
+			if (Connection == null)
+				throw new InvalidOperationException (String.Format ("{0} requires a Connection object to continue.", method));
+			if (Connection.Transaction != null && transaction != Connection.Transaction)
 				throw new InvalidOperationException ("The Connection object does not have the same transaction as the command object.");
-			if (connection.State != ConnectionState.Open)
-				throw new InvalidOperationException (String.Format ("ExecuteNonQuery requires an open Connection object to continue. This connection is closed.", methodName));
+			if (Connection.State != ConnectionState.Open)
+				throw new InvalidOperationException (String.Format ("ExecuteNonQuery requires an open Connection object to continue. This connection is closed.", method));
 			if (commandText == String.Empty || commandText == null)
 				throw new InvalidOperationException ("The command text for this Command has not been set.");
-
-			string sql = procedureCache[commandText];
-			if (sql == null)
-				sql = FormatQuery (commandText, commandType, parameters);
-		
-			if ((behavior & CommandBehavior.KeyInfo) != 0)
-				sql += " FOR BROWSE";
-
-			return sql;
+			if (Connection.DataReader != null)
+				throw new InvalidOperationException ("There is already an open DataReader associated with this Connection which must be closed first.");
 		}
 
 		#endregion // Methods

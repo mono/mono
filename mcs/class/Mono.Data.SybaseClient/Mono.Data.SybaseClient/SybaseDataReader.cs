@@ -2,11 +2,16 @@
 // Mono.Data.SybaseClient.SybaseDataReader.cs
 //
 // Author:
+//   Rodrigo Moya (rodrigo@ximian.com)
+//   Daniel Morgan (danmorg@sc.rr.com)
 //   Tim Coleman (tim@timcoleman.com)
 //
+// (C) Ximian, Inc 2002
+// (C) Daniel Morgan 2002
 // Copyright (C) Tim Coleman, 2002
 //
 
+using Mono.Data.SybaseTypes;
 using Mono.Data.TdsClient.Internal;
 using System;
 using System.Collections;
@@ -19,20 +24,16 @@ namespace Mono.Data.SybaseClient {
 	{
 		#region Fields
 
+		SybaseCommand command;
+		ArrayList dataTypeNames;
+		bool disposed = false;
 		int fieldCount;
-		bool hasRows;
 		bool isClosed;
-		int recordsAffected;
+		bool isSelect;
 		bool moreResults;
-
 		int resultsRead;
 		int rowsRead;
-
-		SybaseCommand command;
 		DataTable schemaTable;
-
-		ArrayList dataTypeNames;
-		ArrayList dataTypes;
 
 		#endregion // Fields
 
@@ -40,16 +41,17 @@ namespace Mono.Data.SybaseClient {
 
 		internal SybaseDataReader (SybaseCommand command)
 		{
-			schemaTable = ConstructSchemaTable ();
-			this.resultsRead = 0;
 			this.command = command;
-			this.fieldCount = 0;
-			this.isClosed = false;
-
+			schemaTable = ConstructSchemaTable ();
+			resultsRead = 0;
+			fieldCount = 0;
+			isClosed = false;
+			isSelect = (command.CommandText.Trim ().ToUpper ().StartsWith ("SELECT"));
+			command.Tds.RecordsAffected = 0;
 			NextResult ();
 		}
 
-		#endregion
+		#endregion // Constructors
 
 		#region Properties
 
@@ -59,10 +61,6 @@ namespace Mono.Data.SybaseClient {
 
 		public int FieldCount {
 			get { return fieldCount; }
-		}
-
-		public bool HasRows {
-			get { return hasRows; }
 		}
 
 		public bool IsClosed {
@@ -76,17 +74,21 @@ namespace Mono.Data.SybaseClient {
 		public object this [string name] {
 			get { return GetValue (GetOrdinal (name)); }
 		}
-		
-
+	
 		public int RecordsAffected {
-			get { return recordsAffected; }
+			get { 
+				if (isSelect) 
+					return -1;
+				else
+					return command.Tds.RecordsAffected; 
+			}
 		}
 
 		#endregion // Properties
 
 		#region Methods
 
-		public void Close()
+		public void Close ()
 		{
 			isClosed = true;
 			command.CloseDataReader (moreResults);
@@ -128,6 +130,17 @@ namespace Mono.Data.SybaseClient {
 			return schemaTable;
 		}
 
+		private void Dispose (bool disposing) 
+		{
+			if (!disposed) {
+				if (disposing) {
+					schemaTable.Dispose ();
+					Close ();
+				}
+				disposed = true;
+			}
+		}
+
 		public bool GetBoolean (int i)
 		{
 			object value = GetValue (i);
@@ -144,7 +157,6 @@ namespace Mono.Data.SybaseClient {
 			return (byte) value;
 		}
 
-		[MonoTODO]
 		public long GetBytes (int i, long dataIndex, byte[] buffer, int bufferIndex, int length)
 		{
 			object value = GetValue (i);
@@ -154,23 +166,24 @@ namespace Mono.Data.SybaseClient {
 			return ((byte []) value).Length - dataIndex;
 		}
 
-		[MonoTODO]
 		public char GetChar (int i)
 		{
-			throw new NotImplementedException ();
+			object value = GetValue (i);
+			if (!(value is char))
+				throw new InvalidCastException ();
+			return (char) value;
 		}
 
-		[MonoTODO]
 		public long GetChars (int i, long dataIndex, char[] buffer, int bufferIndex, int length)
 		{
 			object value = GetValue (i);
-			if (!(value is char []))
+			if (!(value is char[]))
 				throw new InvalidCastException ();
 			Array.Copy ((char []) value, (int) dataIndex, buffer, bufferIndex, length);
 			return ((char []) value).Length - dataIndex;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Implement GetData")]
 		public IDataReader GetData (int i)
 		{
 			throw new NotImplementedException ();
@@ -196,6 +209,7 @@ namespace Mono.Data.SybaseClient {
 				throw new InvalidCastException ();
 			return (decimal) value;
 		}
+
 		public double GetDouble (int i)
 		{
 			object value = GetValue (i);
@@ -217,10 +231,12 @@ namespace Mono.Data.SybaseClient {
 			return (float) value;
 		}
 
-		[MonoTODO]
 		public Guid GetGuid (int i)
 		{
-			throw new NotImplementedException ();
+			object value = GetValue (i);
+			if (!(value is Guid))
+				throw new InvalidCastException ();
+			return (Guid) value;
 		}
 
 		public short GetInt16 (int i)
@@ -252,7 +268,6 @@ namespace Mono.Data.SybaseClient {
 			return (string) schemaTable.Rows[i]["ColumnName"];
 		}
 
-		[MonoTODO]
 		public int GetOrdinal (string name)
 		{
 			foreach (DataRow schemaRow in schemaTable.Rows)
@@ -275,14 +290,12 @@ namespace Mono.Data.SybaseClient {
 			fieldCount = 0;
 
 			dataTypeNames = new ArrayList ();
-			dataTypes = new ArrayList ();
-
 
 			foreach (TdsSchemaInfo schema in command.Tds.Schema) {
 				DataRow row = schemaTable.NewRow ();
 
 				row ["ColumnName"]		= GetSchemaValue (schema, "ColumnName");
-				row ["ColumnSize"]		= GetSchemaValue (schema, "ColumnSize");
+				row ["ColumnSize"]		= GetSchemaValue (schema, "ColumnSize"); 
 				row ["ColumnOrdinal"]		= GetSchemaValue (schema, "ColumnOrdinal");
 				row ["NumericPrecision"]	= GetSchemaValue (schema, "NumericPrecision");
 				row ["NumericScale"]		= GetSchemaValue (schema, "NumericScale");
@@ -302,153 +315,154 @@ namespace Mono.Data.SybaseClient {
 				row ["IsHidden"]		= GetSchemaValue (schema, "IsHidden");
 				row ["IsReadOnly"]		= GetSchemaValue (schema, "IsReadOnly");
 
-                                // set default values
+				// We don't always get the base column name.
+				if (row ["BaseColumnName"] == DBNull.Value)
+					row ["BaseColumnName"] = row ["ColumnName"];
 
 				switch ((TdsColumnType) schema ["ColumnType"]) {
-				case TdsColumnType.Image :
-					dataTypeNames.Add ("image");
-					row ["ProviderType"] = (int) SybaseType.Image;
-					row ["DataType"] = typeof (byte[]);
-					row ["IsLong"] = true;
-					break;
-				case TdsColumnType.Text :
-					dataTypes.Add (typeof (string));
-					dataTypeNames.Add ("text");
-					row ["ProviderType"] = (int) SybaseType.Text;
-					row ["DataType"] = typeof (string);
-					row ["IsLong"] = true;
-					break;
-				case TdsColumnType.UniqueIdentifier :
-					dataTypeNames.Add ("uniqueidentifier");
-					row ["ProviderType"] = (int) SybaseType.UniqueIdentifier;
-					row ["DataType"] = typeof (Guid);
-					row ["IsLong"] = false;
-					break;
-				case TdsColumnType.VarBinary :
-				case TdsColumnType.BigVarBinary :
-					dataTypeNames.Add ("varbinary");
-					row ["ProviderType"] = (int) SybaseType.VarBinary;
-					row ["DataType"] = typeof (byte[]);
-					row ["IsLong"] = true;
-					break;
-				case TdsColumnType.IntN :
-				case TdsColumnType.Int4 :
-					dataTypeNames.Add ("int");
-					row ["ProviderType"] = (int) SybaseType.Int;
-					row ["DataType"] = typeof (int);
-					row ["IsLong"] = false;
-					break;
-				case TdsColumnType.VarChar :
-				case TdsColumnType.BigVarChar :
-					dataTypeNames.Add ("varchar");
-					row ["ProviderType"] = (int) SybaseType.VarChar;
-					row ["DataType"] = typeof (string);
-					row ["IsLong"] = false;
-					break;
-				case TdsColumnType.Binary :
-				case TdsColumnType.BigBinary :
-					dataTypeNames.Add ("binary");
-					row ["ProviderType"] = (int) SybaseType.Binary;
-					row ["DataType"] = typeof (byte[]);
-					row ["IsLong"] = true;
-					break;
-				case TdsColumnType.Char :
-				case TdsColumnType.BigChar :
-					dataTypeNames.Add ("char");
-					row ["ProviderType"] = (int) SybaseType.Char;
-					row ["DataType"] = typeof (string);
-					row ["IsLong"] = false;
-					break;
-				case TdsColumnType.Int1 :
-					dataTypeNames.Add ("tinyint");
-					row ["ProviderType"] = (int) SybaseType.TinyInt;
-					row ["DataType"] = typeof (byte);
-					row ["IsLong"] = false;
-					break;
-				case TdsColumnType.Bit :
-				case TdsColumnType.BitN :
-					dataTypeNames.Add ("bit");
-					row ["ProviderType"] = (int) SybaseType.Bit;
-					row ["DataType"] = typeof (bool);
-					row ["IsLong"] = false;
-					break;
-				case TdsColumnType.Int2 :
-				dataTypeNames.Add ("smallint");
-					row ["ProviderType"] = (int) SybaseType.SmallInt;
-					row ["DataType"] = typeof (short);
-					row ["IsLong"] = false;
-					break;
-				case TdsColumnType.DateTime4 :
-				case TdsColumnType.DateTime :
-				case TdsColumnType.DateTimeN :
-					dataTypeNames.Add ("datetime");
-					row ["ProviderType"] = (int) SybaseType.DateTime;
-					row ["DataType"] = typeof (DateTime);
-					row ["IsLong"] = false;
-					break;
-				case TdsColumnType.Real :
-					dataTypeNames.Add ("real");
-					row ["ProviderType"] = (int) SybaseType.Real;
-					row ["DataType"] = typeof (float);
-					break;
-				case TdsColumnType.Money :
-				case TdsColumnType.MoneyN :
-				case TdsColumnType.Money4 :
-					dataTypeNames.Add ("money");
-					row ["ProviderType"] = (int) SybaseType.Money;
-					row ["DataType"] = typeof (decimal);
-					row ["IsLong"] = false;
-					break;
-				case TdsColumnType.Float8 :
-				case TdsColumnType.FloatN :
-					dataTypeNames.Add ("float");
-					row ["ProviderType"] = (int) SybaseType.Float;
-					row ["DataType"] = typeof (double);
-					row ["IsLong"] = false;
-					break;
-				case TdsColumnType.NText :
-					dataTypeNames.Add ("ntext");
-					row ["ProviderType"] = (int) SybaseType.NText;
-					row ["DataType"] = typeof (string);
-					row ["IsLong"] = true;
-					break;
-				case TdsColumnType.NVarChar :
-					dataTypeNames.Add ("nvarchar");
-					row ["ProviderType"] = (int) SybaseType.NVarChar;
-					row ["DataType"] = typeof (string);
-					row ["IsLong"] = false;
-					break;
-				case TdsColumnType.Decimal :
-				case TdsColumnType.Numeric :
-					dataTypeNames.Add ("decimal");
-					row ["ProviderType"] = (int) SybaseType.Decimal;
-					row ["DataType"] = typeof (decimal);
-					row ["IsLong"] = false;
-					break;
-				case TdsColumnType.NChar :
-					dataTypeNames.Add ("nchar");
-					row ["ProviderType"] = (int) SybaseType.Char;
-					row ["DataType"] = typeof (string);
-					row ["IsLong"] = false;
-					break;
-				case TdsColumnType.SmallMoney :
-					dataTypeNames.Add ("smallmoney");
-					row ["ProviderType"] = (int) SybaseType.SmallMoney;
-					row ["DataType"] = typeof (decimal);
-					row ["IsLong"] = false;
-					break;
-				default :
-					dataTypeNames.Add ("variant");
-					row ["ProviderType"] = (int) SybaseType.Variant;
-					row ["DataType"] = typeof (object);
-					row ["IsLong"] = false;
-					break;
+					case TdsColumnType.Image :
+						dataTypeNames.Add ("image");
+						row ["ProviderType"] = (int) SybaseType.Image;
+						row ["DataType"] = typeof (byte[]);
+						row ["IsLong"] = true;
+						break;
+					case TdsColumnType.Text :
+						dataTypeNames.Add ("text");
+						row ["ProviderType"] = (int) SybaseType.Text;
+						row ["DataType"] = typeof (string);
+						row ["IsLong"] = true;
+						break;
+					case TdsColumnType.UniqueIdentifier :
+						dataTypeNames.Add ("uniqueidentifier");
+						row ["ProviderType"] = (int) SybaseType.UniqueIdentifier;
+						row ["DataType"] = typeof (Guid);
+						row ["IsLong"] = false;
+						break;
+					case TdsColumnType.VarBinary :
+					case TdsColumnType.BigVarBinary :
+						dataTypeNames.Add ("varbinary");
+						row ["ProviderType"] = (int) SybaseType.VarBinary;
+						row ["DataType"] = typeof (byte[]);
+						row ["IsLong"] = true;
+						break;
+					case TdsColumnType.IntN :
+					case TdsColumnType.Int4 :
+						dataTypeNames.Add ("int");
+						row ["ProviderType"] = (int) SybaseType.Int;
+						row ["DataType"] = typeof (int);
+						row ["IsLong"] = false;
+						break;
+					case TdsColumnType.VarChar :
+					case TdsColumnType.BigVarChar :
+						dataTypeNames.Add ("varchar");
+						row ["ProviderType"] = (int) SybaseType.VarChar;
+						row ["DataType"] = typeof (string);
+						row ["IsLong"] = false;
+						break;
+					case TdsColumnType.Binary :
+					case TdsColumnType.BigBinary :
+						dataTypeNames.Add ("binary");
+						row ["ProviderType"] = (int) SybaseType.Binary;
+						row ["DataType"] = typeof (byte[]);
+						row ["IsLong"] = true;
+						break;
+					case TdsColumnType.Char :
+					case TdsColumnType.BigChar :
+						dataTypeNames.Add ("char");
+						row ["ProviderType"] = (int) SybaseType.Char;
+						row ["DataType"] = typeof (string);
+						row ["IsLong"] = false;
+						break;
+					case TdsColumnType.Int1 :
+						dataTypeNames.Add ("tinyint");
+						row ["ProviderType"] = (int) SybaseType.TinyInt;
+						row ["DataType"] = typeof (byte);
+						row ["IsLong"] = false;
+						break;
+					case TdsColumnType.Bit :
+					case TdsColumnType.BitN :
+						dataTypeNames.Add ("bit");
+						row ["ProviderType"] = (int) SybaseType.Bit;
+						row ["DataType"] = typeof (bool);
+						row ["IsLong"] = false;
+						break;
+					case TdsColumnType.Int2 :
+						dataTypeNames.Add ("smallint");
+						row ["ProviderType"] = (int) SybaseType.SmallInt;
+						row ["DataType"] = typeof (short);
+						row ["IsLong"] = false;
+						break;
+					case TdsColumnType.DateTime4 :
+					case TdsColumnType.DateTime :
+					case TdsColumnType.DateTimeN :
+						dataTypeNames.Add ("datetime");
+						row ["ProviderType"] = (int) SybaseType.DateTime;
+						row ["DataType"] = typeof (DateTime);
+						row ["IsLong"] = false;
+						break;
+					case TdsColumnType.Real :
+						dataTypeNames.Add ("real");
+						row ["ProviderType"] = (int) SybaseType.Real;
+						row ["DataType"] = typeof (float);
+						break;
+					case TdsColumnType.Money :
+					case TdsColumnType.MoneyN :
+					case TdsColumnType.Money4 :
+						dataTypeNames.Add ("money");
+						row ["ProviderType"] = (int) SybaseType.Money;
+						row ["DataType"] = typeof (decimal);
+						row ["IsLong"] = false;
+						break;
+					case TdsColumnType.Float8 :
+					case TdsColumnType.FloatN :
+						dataTypeNames.Add ("float");
+						row ["ProviderType"] = (int) SybaseType.Float;
+						row ["DataType"] = typeof (double);
+						row ["IsLong"] = false;
+						break;
+					case TdsColumnType.NText :
+						dataTypeNames.Add ("ntext");
+						row ["ProviderType"] = (int) SybaseType.NText;
+						row ["DataType"] = typeof (string);
+						row ["IsLong"] = true;
+						break;
+					case TdsColumnType.NVarChar :
+						dataTypeNames.Add ("nvarchar");
+						row ["ProviderType"] = (int) SybaseType.NVarChar;
+						row ["DataType"] = typeof (string);
+						row ["IsLong"] = false;
+						break;
+					case TdsColumnType.Decimal :
+					case TdsColumnType.Numeric :
+						dataTypeNames.Add ("decimal");
+						row ["ProviderType"] = (int) SybaseType.Decimal;
+						row ["DataType"] = typeof (decimal);
+						row ["IsLong"] = false;
+						break;
+					case TdsColumnType.NChar :
+						dataTypeNames.Add ("nchar");
+						row ["ProviderType"] = (int) SybaseType.NChar;
+						row ["DataType"] = typeof (string);
+						row ["IsLong"] = false;
+						break;
+					case TdsColumnType.SmallMoney :
+						dataTypeNames.Add ("smallmoney");
+						row ["ProviderType"] = (int) SybaseType.SmallMoney;
+						row ["DataType"] = typeof (decimal);
+						row ["IsLong"] = false;
+						break;
+					default :
+						dataTypeNames.Add ("variant");
+						row ["ProviderType"] = (int) SybaseType.Variant;
+						row ["DataType"] = typeof (object);
+						row ["IsLong"] = false;
+						break;
 				}
 
 				schemaTable.Rows.Add (row);
+
 				fieldCount += 1;
 			}
-
 			return schemaTable;
 		}		
 
@@ -457,6 +471,200 @@ namespace Mono.Data.SybaseClient {
 			if (schema.ContainsKey (key) && schema [key] != null)
 				return schema [key];
 			return DBNull.Value;
+		}
+
+		public SybaseBinary GetSybaseBinary (int i)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public SybaseBoolean GetSybaseBoolean (int i) 
+		{
+			object value = GetSybaseValue (i);
+			if (!(value is SybaseBoolean))
+				throw new InvalidCastException ();
+			return (SybaseBoolean) value;
+		}
+
+		public SybaseByte GetSybaseByte (int i)
+		{
+			object value = GetSybaseValue (i);
+			if (!(value is SybaseByte))
+				throw new InvalidCastException ();
+			return (SybaseByte) value;
+		}
+
+		public SybaseDateTime GetSybaseDateTime (int i)
+		{
+			object value = GetSybaseValue (i);
+			if (!(value is SybaseDateTime))
+				throw new InvalidCastException ();
+			return (SybaseDateTime) value;
+		}
+
+		public SybaseDecimal GetSybaseDecimal (int i)
+		{
+			object value = GetSybaseValue (i);
+			if (!(value is SybaseDecimal))
+				throw new InvalidCastException ();
+			return (SybaseDecimal) value;
+		}
+
+		public SybaseDouble GetSybaseDouble (int i)
+		{
+			object value = GetSybaseValue (i);
+			if (!(value is SybaseDouble))
+				throw new InvalidCastException ();
+			return (SybaseDouble) value;
+		}
+
+		public SybaseGuid GetSybaseGuid (int i)
+		{
+			object value = GetSybaseValue (i);
+			if (!(value is SybaseGuid))
+				throw new InvalidCastException ();
+			return (SybaseGuid) value;
+		}
+
+		public SybaseInt16 GetSybaseInt16 (int i)
+		{
+			object value = GetSybaseValue (i);
+			if (!(value is SybaseInt16))
+				throw new InvalidCastException ();
+			return (SybaseInt16) value;
+		}
+
+		public SybaseInt32 GetSybaseInt32 (int i)
+		{
+			object value = GetSybaseValue (i);
+			if (!(value is SybaseInt32))
+				throw new InvalidCastException ();
+			return (SybaseInt32) value;
+		}
+
+		public SybaseInt64 GetSybaseInt64 (int i)
+		{
+			object value = GetSybaseValue (i);
+			if (!(value is SybaseInt64))
+				throw new InvalidCastException ();
+			return (SybaseInt64) value;
+		}
+
+		public SybaseMoney GetSybaseMoney (int i)
+		{
+			object value = GetSybaseValue (i);
+			if (!(value is SybaseMoney))
+				throw new InvalidCastException ();
+			return (SybaseMoney) value;
+		}
+
+		public SybaseSingle GetSybaseSingle (int i)
+		{
+			object value = GetSybaseValue (i);
+			if (!(value is SybaseSingle))
+				throw new InvalidCastException ();
+			return (SybaseSingle) value;
+		}
+
+		public SybaseString GetSybaseString (int i)
+		{
+			object value = GetSybaseValue (i);
+			if (!(value is SybaseString))
+				throw new InvalidCastException ();
+			return (SybaseString) value;
+		}
+
+		[MonoTODO ("Implement TdsBigDecimal conversion.  SybaseType.Real fails tests?")]
+		public object GetSybaseValue (int i)
+		{
+			SybaseType type = (SybaseType) (schemaTable.Rows [i]["ProviderType"]);
+			object value = GetValue (i);
+
+			switch (type) {
+			case SybaseType.BigInt:
+				if (value == null)
+					return SybaseInt64.Null;
+				return (SybaseInt64) ((long) value);
+			case SybaseType.Binary:
+			case SybaseType.Image:
+			case SybaseType.VarBinary:
+			case SybaseType.Timestamp:
+				if (value == null)
+					return SybaseBinary.Null;
+				return (SybaseBinary) ((byte[]) value);
+			case SybaseType.Bit:
+				if (value == null)
+					return SybaseBoolean.Null;
+				return (SybaseBoolean) ((bool) value);
+			case SybaseType.Char:
+			case SybaseType.NChar:
+			case SybaseType.NText:
+			case SybaseType.NVarChar:
+			case SybaseType.Text:
+			case SybaseType.VarChar:
+				if (value == null)
+					return SybaseString.Null;
+				return (SybaseString) ((string) value);
+			case SybaseType.DateTime:
+			case SybaseType.SmallDateTime:
+				if (value == null)
+					return SybaseDateTime.Null;
+				return (SybaseDateTime) ((DateTime) value);
+			case SybaseType.Decimal:
+				if (value == null)
+					return SybaseDecimal.Null;
+				if (value is TdsBigDecimal)
+					return SybaseDecimal.FromTdsBigDecimal ((TdsBigDecimal) value);
+				return (SybaseDecimal) ((decimal) value);
+			case SybaseType.Float:
+				if (value == null)
+					return SybaseDouble.Null;
+				return (SybaseDouble) ((double) value);
+			case SybaseType.Int:
+				if (value == null)
+					return SybaseInt32.Null;
+				return (SybaseInt32) ((int) value);
+			case SybaseType.Money:
+			case SybaseType.SmallMoney:
+				if (value == null)
+					return SybaseMoney.Null;
+				return (SybaseMoney) ((decimal) value);
+			case SybaseType.Real:
+				if (value == null)
+					return SybaseSingle.Null;
+				return (SybaseSingle) ((float) value);
+			case SybaseType.UniqueIdentifier:
+				if (value == null)
+					return SybaseGuid.Null;
+				return (SybaseGuid) ((Guid) value);
+			case SybaseType.SmallInt:
+				if (value == null)
+					return SybaseInt16.Null;
+				return (SybaseInt16) ((short) value);
+			case SybaseType.TinyInt:
+				if (value == null)
+					return SybaseByte.Null;
+				return (SybaseByte) ((byte) value);
+			}
+
+			throw new InvalidOperationException ("The type of this column is unknown.");
+		}
+
+		public int GetSybaseValues (object[] values)
+		{
+			int count = 0;
+			int columnCount = schemaTable.Rows.Count;
+			int arrayCount = values.Length;
+
+			if (arrayCount > columnCount)
+				count = columnCount;
+			else
+				count = arrayCount;
+
+			for (int i = 0; i < count; i += 1) 
+				values [i] = GetSybaseValue (i);
+
+			return count;
 		}
 
 		public string GetString (int i)
@@ -469,20 +677,27 @@ namespace Mono.Data.SybaseClient {
 
 		public object GetValue (int i)
 		{
-			return command.Tds.ColumnValues[i];
+			return command.Tds.ColumnValues [i];
 		}
 
 		public int GetValues (object[] values)
 		{
 			int len = values.Length;
+			int bigDecimalIndex = command.Tds.ColumnValues.BigDecimalIndex;
+
+			// If a four-byte decimal is stored, then we can't convert to
+			// a native type.  Throw an OverflowException.
+			if (bigDecimalIndex >= 0 && bigDecimalIndex < len)
+				throw new OverflowException ();
+
 			command.Tds.ColumnValues.CopyTo (0, values, 0, len);
 			return (len > FieldCount ? len : FieldCount);
 		}
 
-		[MonoTODO]
 		void IDisposable.Dispose ()
 		{
-			throw new NotImplementedException ();
+			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
@@ -499,10 +714,14 @@ namespace Mono.Data.SybaseClient {
 		{
 			if ((command.CommandBehavior & CommandBehavior.SingleResult) != 0 && resultsRead > 0)
 				return false;
+			if (command.Tds.DoneProc)
+				return false;
 
 			schemaTable.Rows.Clear ();
 
 			moreResults = command.Tds.NextResult ();
+			GetSchemaTable ();
+
 			rowsRead = 0;
 			resultsRead += 1;
 			return moreResults;

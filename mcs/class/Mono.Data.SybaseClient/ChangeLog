@@ -1,3 +1,16 @@
+2002-11-18  Tim Coleman <tim@timcoleman.com>
+	* Mono.Data.SybaseClient/SybaseCommand.cs:
+	* Mono.Data.SybaseClient/SybaseConnection.cs:
+	* Mono.Data.SybaseClient/SybaseDataReader.cs:
+	* Mono.Data.SybaseClient/SybaseException.cs:
+	* Mono.Data.SybaseClient/SybaseParameter.cs:
+	* Mono.Data.SybaseClient/SybaseParameterCollection.cs:
+	* Mono.Data.SybaseClient/SybaseTransaction.cs:
+	* Mono.Data.SybaseTypes/SybaseDecimal.cs:
+		Various changes to overhaul Sybase provider,
+		and bring it closer to being in-line with
+		the SqlClient.  Can now connect to Sybase DB.
+
 2002-11-14  Tim Coleman <tim@timcoleman.com>
 	* Mono.Data.SybaseClient/SybaseDataReader.cs:
 		Change SchemaTable handling

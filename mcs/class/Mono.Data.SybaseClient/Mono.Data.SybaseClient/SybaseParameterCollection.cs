@@ -2,8 +2,11 @@
 // Mono.Data.SybaseClient.SybaseParameterCollection.cs
 //
 // Author:
+//   Rodrigo Moya (rodrigo@ximian.com)
+//   Daniel Morgan (danmorg@sc.rr.com)
 //   Tim Coleman (tim@timcoleman.com)
 //
+// (C) Ximian, Inc 2002
 // Copyright (C) Tim Coleman, 2002
 //
 
@@ -14,242 +17,184 @@ using System.Data.Common;
 using System.Collections;
 
 namespace Mono.Data.SybaseClient {
+	[ListBindable (false)]
 	public sealed class SybaseParameterCollection : MarshalByRefObject, IDataParameterCollection, IList, ICollection, IEnumerable
 	{
-		private ArrayList parameterList = new ArrayList();
+		#region Fields
 
-		public IEnumerator GetEnumerator()
+		ArrayList list = new ArrayList();
+		SybaseCommand command;
+
+		#endregion // Fields
+
+		#region Constructors
+
+		internal SybaseParameterCollection (SybaseCommand command)
 		{
-			return parameterList.GetEnumerator ();
+			this.command = command;
 		}
 
-		
-		public int Add (object value)
-		{
-			// Call the add version that receives a SybaseParameter 
-			
-			// Check if value is a SybaseParameter.
-			CheckType(value);
-			Add((SybaseParameter) value);
+		#endregion // Constructors
 
-			return IndexOf (value);
-		}
+		#region Properties
 
-		
-		public SybaseParameter Add (SybaseParameter value)
-		{
-			parameterList.Add (value);
-			return value;
-		}
-
-		
-		public SybaseParameter Add (string parameterName, object value)
-		{
-			SybaseParameter sqlparam = new SybaseParameter();
-			sqlparam.Value = value;
-			// TODO: Get the dbtype and SybaseType from system type of value.
-			
-			return Add(sqlparam);
-		}
-		
-		public SybaseParameter Add(string parameterName, SybaseType sqlDbType)
-		{
-			SybaseParameter sqlparam = new SybaseParameter();
-			sqlparam.ParameterName = parameterName;
-			sqlparam.SybaseType = sqlDbType;
-			return Add(sqlparam);			
-		}
-
-		public SybaseParameter Add(string parameterName,
-			SybaseType sqlDbType, int size)
-		{
-			SybaseParameter sqlparam = new SybaseParameter();
-			sqlparam.ParameterName = parameterName;
-			sqlparam.SybaseType = sqlDbType;
-			sqlparam.Size = size;
-			return Add(sqlparam);			
-		}
-
-		
-		public SybaseParameter Add(string parameterName,
-			SybaseType sqlDbType, int size, string sourceColumn)
-		{
-			SybaseParameter sqlparam = new SybaseParameter();
-			sqlparam.ParameterName = parameterName;
-			sqlparam.SybaseType = sqlDbType;
-			sqlparam.Size = size;
-			sqlparam.SourceColumn = sourceColumn;
-			return Add(sqlparam);			
-		}
-
-		[MonoTODO]
-		public void Clear()
-		{
-			throw new NotImplementedException ();
-		}
-
-		
-		public bool Contains(object value)
-		{
-			// Check if value is a SybaseParameter
-			CheckType(value);
-			return Contains(((SybaseParameter)value).ParameterName);
-		}
-
-
-		[MonoTODO]
-		public bool Contains(string value)
-		{
-			for(int p = 0; p < parameterList.Count; p++) {
-				if(((SybaseParameter)parameterList[p]).ParameterName.Equals(value))
-					return true;
-			}
-			return false;
-		}
-
-		[MonoTODO]
-		public void CopyTo(Array array,	int index)
-		{
-			throw new NotImplementedException ();
-		}
-
-		
-		public int IndexOf(object value)
-		{
-			// Check if value is a SybaseParameter
-			CheckType(value);
-			return IndexOf(((SybaseParameter)value).ParameterName);
-		}
-
-		
-		public int IndexOf(string parameterName)
-		{
-			int p = -1;
-
-			for(p = 0; p < parameterList.Count; p++) {
-				if(((SybaseParameter)parameterList[p]).ParameterName.Equals(parameterName))
-					return p;
-			}
-			return p;
-		}
-
-		[MonoTODO]
-		public void Insert(int index, object value)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void Remove(object value)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void RemoveAt(int index)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void RemoveAt(string parameterName)
-		{
-			throw new NotImplementedException ();
-		}
-	
-		[MonoTODO]
 		public int Count {
-			get {	
-				return parameterList.Count;
-			}			  
+			get { return list.Count; }			  
 		}
 
-		object IList.this[int index] {
-			[MonoTODO]
-			get { 
-				return (SybaseParameter) this[index];
-			}
-			
-			[MonoTODO]
+		public SybaseParameter this [int index] {
+			get { return (SybaseParameter) list [index]; }			  
+			set { list [index] = (SybaseParameter) value; }			  
+		}
+
+		object IDataParameterCollection.this [string parameterName] {
+			get { return this[parameterName]; }
 			set { 
-				this[index] = (SybaseParameter) value;
+				if (!(value is SybaseParameter))
+					throw new InvalidCastException ("Only SQLParameter objects can be used.");
+				this [parameterName] = (SybaseParameter) value;
 			}
 		}
 
-		public SybaseParameter this[int index] {
-			get {	
-				return (SybaseParameter) parameterList[index];
-			}			  
-			
-			set {	
-				parameterList[index] = (SybaseParameter) value;
-			}			  
-		}
-
-		object IDataParameterCollection.this[string parameterName] {
-			[MonoTODO]
-			get { 
-				return this[parameterName];
-			}
-			
-			[MonoTODO]
-			set { 
-				CheckType(value);
-				this[parameterName] = (SybaseParameter) value;
-			}
-		}
-
-		public SybaseParameter this[string parameterName] {
-			get {	
-				for(int p = 0; p < parameterList.Count; p++) {
-					if(parameterName.Equals(((SybaseParameter)parameterList[p]).ParameterName))
-						return (SybaseParameter) parameterList[p];
-				}
-				throw new IndexOutOfRangeException("The specified name does not exist: " + parameterName);
+		public SybaseParameter this [string parameterName] {
+			get {
+				foreach (SybaseParameter p in list)
+					if (p.ParameterName.Equals (parameterName))
+						return p;
+				throw new IndexOutOfRangeException ("The specified name does not exist: " + parameterName);
 			}	  
-			
 			set {	
-				for(int p = 0; p < parameterList.Count; p++) {
-					if(parameterName.Equals(((SybaseParameter)parameterList[p]).ParameterName))
-						parameterList[p] = value;
-				}
-				throw new IndexOutOfRangeException("The specified name does not exist: " + parameterName);
+				if (!Contains (parameterName))
+					throw new IndexOutOfRangeException("The specified name does not exist: " + parameterName);
+				this [IndexOf (parameterName)] = value;
 			}			  
+		}
+
+		object IList.this [int index] {
+			get { return (SybaseParameter) this [index]; }
+			set { this [index] = (SybaseParameter) value; }
 		}
 
 		bool IList.IsFixedSize {
-			get {	
-				throw new NotImplementedException ();
-			}			  
+			get { return list.IsFixedSize; }
 		}
 
 		bool IList.IsReadOnly {
-			get {	
-				throw new NotImplementedException ();
-			}			  
+			get { return list.IsReadOnly; }
 		}
 
 		bool ICollection.IsSynchronized {
-			get {	
-				throw new NotImplementedException ();
-			}			  
+			get { return list.IsSynchronized; }
 		}
 
 		object ICollection.SyncRoot {
-			get {	
-				throw new NotImplementedException ();
-			}			  
+			get { return list.SyncRoot; }
 		}
 		
-		/// <summary>
-		/// This method checks if the parameter value is of 
-		/// SybaseParameter type. If it doesn't, throws an InvalidCastException.
-		/// </summary>
-		private void CheckType(object value)
+		#endregion // Properties
+
+		#region Methods
+
+		public int Add (object value)
 		{
-			if(!(value is SybaseParameter))
-				throw new InvalidCastException("Only SQLParameter objects can be used.");
+			if (!(value is SybaseParameter))
+				throw new InvalidCastException ("The parameter was not an SybaseParameter.");
+			Add ((SybaseParameter) value);
+			return IndexOf (value);
 		}
 		
+		public SybaseParameter Add (SybaseParameter value)
+		{
+			if (value.Container != null)
+				throw new ArgumentException ("The SybaseParameter specified in the value parameter is already added to this or another SybaseParameterCollection.");
+			
+			value.Container = this;
+			list.Add (value);
+			return value;
+		}
+		
+		public SybaseParameter Add (string parameterName, object value)
+		{
+			return Add (new SybaseParameter (parameterName, value));
+		}
+		
+		public SybaseParameter Add (string parameterName, SybaseType sqlDbType)
+		{
+			return Add (new SybaseParameter (parameterName, sqlDbType));
+		}
+
+		public SybaseParameter Add (string parameterName, SybaseType sqlDbType, int size)
+		{
+			return Add (new SybaseParameter (parameterName, sqlDbType, size));
+		}
+
+		public SybaseParameter Add (string parameterName, SybaseType sqlDbType, int size, string sourceColumn)
+		{
+			return Add (new SybaseParameter (parameterName, sqlDbType, size, sourceColumn));
+		}
+
+		public void Clear()
+		{
+			list.Clear ();
+		}
+		
+		public bool Contains (object value)
+		{
+			if (!(value is SybaseParameter))
+				throw new InvalidCastException ("The parameter was not an SybaseParameter.");
+			return Contains (((SybaseParameter) value).ParameterName);
+		}
+
+		public bool Contains (string value)
+		{
+			foreach (SybaseParameter p in list)
+				if (p.ParameterName.Equals (value))
+					return true;
+			return false;
+		}
+
+		public void CopyTo (Array array, int index)
+		{
+			list.CopyTo (array, index);
+		}
+
+		public IEnumerator GetEnumerator()
+		{
+			return list.GetEnumerator ();
+		}
+		
+		public int IndexOf (object value)
+		{
+			if (!(value is SybaseParameter))
+				throw new InvalidCastException ("The parameter was not an SybaseParameter.");
+			return IndexOf (((SybaseParameter) value).ParameterName);
+		}
+		
+		public int IndexOf (string parameterName)
+		{
+			return list.IndexOf (parameterName);
+		}
+
+		public void Insert (int index, object value)
+		{
+			list.Insert (index, value);
+		}
+
+		public void Remove (object value)
+		{
+			list.Remove (value);
+		}
+
+		public void RemoveAt (int index)
+		{
+			list.RemoveAt (index);
+		}
+
+		public void RemoveAt (string parameterName)
+		{
+			RemoveAt (IndexOf (parameterName));
+		}
+
+		#endregion // Methods	
 	}
 }

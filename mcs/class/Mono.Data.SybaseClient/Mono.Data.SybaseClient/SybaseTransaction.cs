@@ -17,6 +17,8 @@ namespace Mono.Data.SybaseClient {
 	{
 		#region Fields
 
+		bool disposed = false;
+
 		SybaseConnection connection;
 		IsolationLevel isolationLevel;
 		bool isOpen;
@@ -27,7 +29,6 @@ namespace Mono.Data.SybaseClient {
 
 		internal SybaseTransaction (SybaseConnection connection, IsolationLevel isolevel)
 		{
-			SetIsolationLevel (connection, isolevel);
 			this.connection = connection;
 			this.isolationLevel = isolevel;
 			isOpen = true;
@@ -57,59 +58,40 @@ namespace Mono.Data.SybaseClient {
                
 		#region Methods
 
-		static void SetIsolationLevel (SybaseConnection connection, IsolationLevel isolevel)
-		{
-			string commandText = "SET TRANSACTION ISOLATION LEVEL ";
-
-			switch (isolevel) {
-			case IsolationLevel.Chaos :
-				commandText += "CHAOS";
-				break;
-			case IsolationLevel.ReadCommitted :
-				commandText += "READ COMMITTED";
-				break;
-			case IsolationLevel.ReadUncommitted :
-				commandText += "READ UNCOMMITTED";
-				break;
-			case IsolationLevel.RepeatableRead :
-				commandText += "REPEATABLE READ";
-				break;
-			case IsolationLevel.Serializable :
-				commandText += "SERIALIZABLE";
-				break;
-			default :
-				return;
-			}
-			connection.Tds.ExecuteNonQuery (commandText);
-		}
-
 		public void Commit ()
 		{
 			if (!isOpen)
 				throw new InvalidOperationException ("The Transaction was not open.");
-			connection.Tds.ExecuteNonQuery ("IF @@TRANCOUNT>0 COMMIT TRAN");
+			connection.Tds.ExecuteNonQuery ("COMMIT TRANSACTION");
+			connection.Transaction = null;
 			isOpen = false;
 		}		
 
-		[MonoTODO]
+		private void Dispose (bool disposing)
+		{
+			if (!disposed) {
+				if (disposing)
+					Rollback ();
+				disposed = true;
+			}
+		}
+
 		public void Dispose ()
 		{
-			throw new NotImplementedException ();
+			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 
 		public void Rollback ()
 		{
-			if (!isOpen)
-				throw new InvalidOperationException ("The Transaction was not open.");
-			connection.Tds.ExecuteNonQuery ("IF @@TRANCOUNT>0 ROLLBACK TRAN");
-			isOpen = false;
+			Rollback (String.Empty);
 		}
 
 		public void Rollback (string transactionName)
 		{
 			if (!isOpen)
 				throw new InvalidOperationException ("The Transaction was not open.");
-			connection.Tds.ExecuteNonQuery (String.Format ("IF @@TRANCOUNT > 0 ROLLBACK TRAN {0}", transactionName));
+			connection.Tds.ExecuteNonQuery (String.Format ("ROLLBACK TRANSACTION {0}", transactionName));
 			isOpen = false;
 		}
 
@@ -117,7 +99,7 @@ namespace Mono.Data.SybaseClient {
 		{
 			if (!isOpen)
 				throw new InvalidOperationException ("The Transaction was not open.");
-			connection.Tds.ExecuteNonQuery (String.Format ("SAVE TRAN {0}", savePointName));
+			connection.Tds.ExecuteNonQuery (String.Format ("SAVE TRANSACTION {0}", savePointName));
 		}
 
 		#endregion // Methods
