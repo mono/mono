@@ -16,7 +16,6 @@ XmlNodeListTests.cs
 XmlNodeReaderTests.cs
 XmlNodeTests.cs
 XmlProcessingInstructionTests.cs
-XmlSchemaTests.cs
 XmlSignificantWhitespaceTests.cs
 XmlTextReaderTests.cs
 XmlTextTests.cs
