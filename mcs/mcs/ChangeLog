@@ -1,3 +1,11 @@
+2002-12-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay (parse): Use Report.Error to flag errors instead
+	of ignoring it and letting the compile continue.
+
+	* typemanager.cs (ChangeType): use an extra argument to return an
+	error condition instead of throwing an exception.
+
 2002-12-15  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Unary.TryReduce): mimic the code for the regular
