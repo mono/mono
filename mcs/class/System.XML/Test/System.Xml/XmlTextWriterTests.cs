@@ -94,8 +94,8 @@ namespace MonoTests.System.Xml
 			xtw.WriteStartElement ("foo");
 			try {
 				xtw.WriteAttributeString ("xmlns", "xmlns", null, "http://abc.def");
-				// This should not be allowed, even though
-				// MS.NET doesn't treat as an error.
+				// This should not be allowed, even though MS.NET doesn't treat as an error.
+				// See http://www.w3.org/TR/REC-xml-names/ Namespace Constraint: Prefix Declared
 				Fail ("any prefix which name starts from \"xml\" must not be allowed.");
 			}
  			catch (ArgumentException) {}
@@ -174,7 +174,7 @@ namespace MonoTests.System.Xml
 		{
 			xtw.WriteCData("foo]]>bar");
 		}
-
+		
 		[Test]
 		public void CloseOpenElements ()
 		{
@@ -352,6 +352,15 @@ namespace MonoTests.System.Xml
 			xtw.QuoteChar = '\'';
 			xtw.WriteStartDocument (false);
 			AssertEquals ("<?xml version='1.0' encoding='utf-16' standalone='no'?>", StringWriterText);
+		}
+
+		[Test]
+		public void ElementAndAttributeSameXmlns ()
+		{
+			xtw.WriteStartElement ("ped", "foo", "urn:foo");
+			xtw.WriteStartAttribute ("ped", "foo", "urn:foo");
+			xtw.WriteEndElement ();
+			AssertEquals ("<ped:foo ped:foo='' xmlns:ped='urn:foo' />", StringWriterText);
 		}
 
 		[Test]
@@ -539,19 +548,17 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		public void NamespacesPrefixWithEmptyAndNullNamespace ()
+		[ExpectedException (typeof (ArgumentException))]
+		public void NamespacesPrefixWithEmptyAndNullNamespaceEmpty ()
 		{
-			try {
-				xtw.WriteStartElement ("foo", "bar", "");
-				Fail ("Should have thrown an ArgumentException.");
-			} catch (ArgumentException) {}
+			xtw.WriteStartElement ("foo", "bar", "");
+		}
 
-			try 
-			{
-				xtw.WriteStartElement ("foo", "bar", null);
-				Fail ("Should have thrown an ArgumentException.");
-			} 
-			catch (ArgumentException) {}
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void NamespacesPrefixWithEmptyAndNullNamespaceNull ()
+		{
+			xtw.WriteStartElement ("foo", "bar", null);
 		}
 
 		[Test]
@@ -656,6 +663,14 @@ namespace MonoTests.System.Xml
 				xtw.WriteBase64 (null, 0, 6);
 				Fail ("Expected an Argument Exception to be thrown.");
 			} catch (ArgumentNullException) {}
+		}
+
+		[Test]
+		public void WriteBinHex ()
+		{
+			byte [] bytes = new byte [] {4,14,34, 54,94,114, 134,194,255, 0,5};
+			xtw.WriteBinHex (bytes, 0, 11);
+			AssertEquals ("040E22365E7286C2FF0005", StringWriterText);
 		}
 
 		[Test]

@@ -1,3 +1,17 @@
+2003-11-28  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlWriterTests.cs : Added WriteNodeFullDocument() with 
+	  encoding specification. Added WriteNodeNonEmptyElement().
+	* XmlUrlResolverTests.cs : Added GetEntityWithNonStreamReturnType()
+	  and GetEntityWithRelativeFileUri().
+	* XmlTextWriterTests.cs : Added some namespace related tests.
+	* XmlTextReaderTests.cs : Added char-entity and ReadBase64() tests.
+	* XmlNodeTests.cs : GetPrefixOfNamespace() test also for disconnected
+	  nodes.
+	* XmlElementTests.cs : Added ConstructionAndDefaultAttributes().
+	* XmlDeclarationTests.cs : Added InvalidInnerText().
+	* XmlAttributeTests.cs : Added CheckPrefixWithNamespace().
+
 2003-10-13  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlWriterTests.cs : Added WriteSurrogateCharEntity().

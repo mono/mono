@@ -87,6 +87,19 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void ConstructionAndDefaultAttributes ()
+		{
+			string dtd = "<!DOCTYPE root [<!ELEMENT root EMPTY><!ATTLIST root foo CDATA 'def'>]>";
+			string xml = dtd + "<root />";
+			XmlValidatingReader xvr = new XmlValidatingReader (new XmlTextReader (xml, XmlNodeType.Document, null));
+			XmlDocument doc = new XmlDocument ();
+			doc.Load (xvr);
+			Console.WriteLine (doc.DocumentElement.Attributes.Count);
+			Console.WriteLine (doc.CreateElement ("root").Attributes.Count);
+			Console.WriteLine (doc.CreateElement ("root2").Attributes.Count);
+		}
+
+		[Test]
 		public void CreateElement1 ()
 		{
 			XmlElement element = document.CreateElement ("name");

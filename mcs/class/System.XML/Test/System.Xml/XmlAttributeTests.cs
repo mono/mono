@@ -87,6 +87,18 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CheckPrefixWithNamespace ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<root xmlns:foo='urn:foo' foo='attfoo' foo:foo='attfoofoo' />");
+			// hogehoge does not match to any namespace.
+			AssertEquals ("xmlns:foo", doc.DocumentElement.Attributes [0].Name);
+			doc.DocumentElement.Attributes [0].Prefix="hogehoge";
+			doc.Save (Console.Out);
+		}
+
+		[Test]
 		public void NamespaceAttributes ()
 		{
 			try {

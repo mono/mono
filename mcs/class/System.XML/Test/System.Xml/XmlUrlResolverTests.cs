@@ -65,5 +65,19 @@ namespace MonoTests.System.Xml
 			Uri uri = new Uri ("http://www.go-mono.com/index.rss");
 			resolver.GetEntity (uri, null, null);
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void GetEntityWithRelativeFileUri ()
+		{
+			resolver.GetEntity (new Uri ("file://file.txt"), null, typeof (Stream));
+		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void GetEntityWithNonStreamReturnType ()
+		{
+			resolver.GetEntity (new Uri ("http://www.go-mono.com/"), null, typeof (File));
+		}
 	}
 }

@@ -44,8 +44,14 @@ namespace MonoTests.System.Xml
 		{
 			setupWriter ();
 			string xml = "<?xml version='1.0'?><root />";
-			StringReader sr = new StringReader (xml);
-			XmlTextReader xtr = new XmlTextReader (sr);
+			XmlTextReader xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			xtw.WriteNode (xtr, false);
+			AssertEquals (xml, writer.ToString ());
+
+			// With encoding
+			setupWriter ();
+			xml = "<?xml version='1.0' encoding='iso-2022-jp' ?><root />";
+			xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
 			xtw.WriteNode (xtr, false);
 			AssertEquals (xml, writer.ToString ());
 		}
@@ -73,6 +79,15 @@ namespace MonoTests.System.Xml
 			xtw.WriteNode (xtr, false);
 			AssertEquals (xml.Replace ("'", "\""),
 				writer.ToString ());
+		}
+
+		[Test]
+		public void WriteNodeNonEmptyElement ()
+		{
+			setupWriter ();
+			string xml = @"<foo><bar></bar></foo>";
+			xtw.WriteNode (new XmlTextReader (xml, XmlNodeType.Document, null), false);
+			AssertEquals (xml, writer.ToString ());
 		}
 
 		[Test]

@@ -285,6 +285,13 @@ namespace MonoTests.System.Xml
 			AssertEquals ("c2", String.Empty, document.DocumentElement.FirstChild.GetPrefixOfNamespace ("urn:foo"));
 			AssertEquals ("c3", "foo", document.DocumentElement.FirstChild.FirstChild.GetPrefixOfNamespace ("urn:foo"));
 
+			// disconnected nodes.
+			XmlNode n = document.CreateElement ("foo");
+			AssertEquals (String.Empty, n.GetPrefixOfNamespace ("foo"));
+			n = document.CreateTextNode ("text"); // does not have Attributes
+			AssertEquals (String.Empty, n.GetPrefixOfNamespace ("foo"));
+			n = document.CreateXmlDeclaration ("1.0", null, null); // does not have Attributes
+			AssertEquals (String.Empty, n.GetPrefixOfNamespace ("foo"));
 		}
 
 		[Test]

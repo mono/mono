@@ -648,10 +648,19 @@ namespace MonoTests.System.Xml
 			doc.Load ("XmlFiles/nested-dtd-test.xml");
 		}
 
-		// MS.NET 1.0 fails this test.
 		[Test]
 		[ExpectedException (typeof (XmlException))]
 		public void NotAllowedCharRef ()
+		{
+			string xml = "<root>&#0;</root>";
+			XmlTextReader xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			xtr.Normalization = true;
+			xtr.Read ();
+			xtr.Read ();
+		}
+
+		[Test]
+		public void NotAllowedCharRefButPassNormalizationFalse ()
 		{
 			string xml = "<root>&#0;</root>";
 			XmlTextReader xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
@@ -709,5 +718,53 @@ namespace MonoTests.System.Xml
 			doc.LoadXml (xml);
 		}
 
+		[Test]
+		public void ReadBase64 ()
+		{
+			byte [] bytes = new byte [] {4,14,54,114,134,184,254,255};
+			
+			string base64 = "<root><foo>BA42coa44</foo></root>";
+			XmlTextReader xtr = new XmlTextReader (base64, XmlNodeType.Document, null);
+			byte [] bytes2 = new byte [10];
+			xtr.Read ();	// root
+			xtr.Read ();	// foo
+			this.AssertNodeValues (xtr, XmlNodeType.Element, 1, false, "foo", String.Empty,
+				"foo", String.Empty, String.Empty, 0);
+			AssertEquals (6, xtr.ReadBase64 (bytes2, 0, 10));
+			this.AssertNodeValues (xtr, XmlNodeType.EndElement, 0, false, "root", String.Empty,
+				"root", String.Empty, String.Empty, 0);
+			Assert (!xtr.Read ());
+			AssertEquals (4, bytes2 [0]);
+			AssertEquals (14, bytes2 [1]);
+			AssertEquals (54, bytes2 [2]);
+			AssertEquals (114, bytes2 [3]);
+			AssertEquals (134, bytes2 [4]);
+			AssertEquals (184, bytes2 [5]);
+			AssertEquals (0, bytes2 [6]);
+
+			xtr = new XmlTextReader (base64, XmlNodeType.Document, null);
+			bytes2 = new byte [10];
+			xtr.Read ();	// root
+			xtr.Read ();	// foo
+			this.AssertNodeValues (xtr, XmlNodeType.Element, 1, false, "foo", String.Empty,
+				"foo", String.Empty, String.Empty, 0);
+
+			// Read less than 4 (i.e. one Base64 block)
+			AssertEquals (1, xtr.ReadBase64 (bytes2, 0, 1));
+			this.AssertNodeValues (xtr, XmlNodeType.Element, 1, false, "foo", String.Empty,
+				"foo", String.Empty, String.Empty, 0);
+			AssertEquals (4, bytes2 [0]);
+
+			AssertEquals (5, xtr.ReadBase64 (bytes2, 0, 10));
+			this.AssertNodeValues (xtr, XmlNodeType.EndElement, 0, false, "root", String.Empty,
+				"root", String.Empty, String.Empty, 0);
+			Assert (!xtr.Read ());
+			AssertEquals (14, bytes2 [0]);
+			AssertEquals (54, bytes2 [1]);
+			AssertEquals (114, bytes2 [2]);
+			AssertEquals (134, bytes2 [3]);
+			AssertEquals (184, bytes2 [4]);
+			AssertEquals (0, bytes2 [5]);
+		}
 	}
 }
