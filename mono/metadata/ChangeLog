@@ -1,3 +1,8 @@
+2002-03-06  Martin Baulig  <martin@gnome.org>
+
+	* icall.c (ves_icall_System_Array_CreateInstanceImpl): Make this work with
+	non-zero lower bounds. See testcases #F10-#F13.
+
 2002-03-05  Martin Baulig  <martin@gnome.org>
 
 	* exception.c (mono_get_exception_argument_out_of_range): New exception.
