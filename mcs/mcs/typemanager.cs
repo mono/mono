@@ -1823,7 +1823,8 @@ public class TypeManager {
 		if ((filter_criteria != null) && (m.Name != (string) filter_criteria))
 				return false;
 
-		if (closure_start_type == closure_invocation_type)
+		if ((closure_start_type == closure_invocation_type) &&
+		    (m.DeclaringType == closure_invocation_type))
 			return true;
 
 		//
@@ -2004,10 +2005,10 @@ public class TypeManager {
 			//
 			if (invocation_type != null){
 				if (invocation_type == current_type){
-					private_ok = true;
+					private_ok = (bf & BindingFlags.NonPublic) != 0;
 				} else
 					private_ok = always_ok_flag;
-				
+
 				if (private_ok || invocation_type.IsSubclassOf (current_type))
 					bf = original_bf | BindingFlags.NonPublic;
 			} else {

@@ -3679,6 +3679,7 @@ namespace Mono.CSharp {
 	public class MethodGroupExpr : Expression, IMemberExpr {
 		public MethodBase [] Methods;
 		Expression instance_expression = null;
+		bool is_explicit_impl = false;
 		
 		public MethodGroupExpr (MemberInfo [] mi, Location l)
 		{
@@ -3719,6 +3720,16 @@ namespace Mono.CSharp {
 
 			set {
 				instance_expression = value;
+			}
+		}
+
+		public bool IsExplicitImpl {
+			get {
+				return is_explicit_impl;
+			}
+
+			set {
+				is_explicit_impl = value;
 			}
 		}
 

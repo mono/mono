@@ -3962,7 +3962,7 @@ namespace Mono.CSharp {
 			MethodInfo mi = method as MethodInfo;
 			if (mi != null) {
 				type = TypeManager.TypeToCoreType (mi.ReturnType);
-				if (!mi.IsStatic && (mg.InstanceExpression == null))
+				if (!mi.IsStatic && !mg.IsExplicitImpl && (mg.InstanceExpression == null))
 					SimpleName.Error_ObjectRefRequired (ec, loc, mi.Name);
 			}
 
@@ -5479,6 +5479,10 @@ namespace Mono.CSharp {
 				IMemberExpr me = (IMemberExpr) member_lookup;
 
 				if (left_is_type){
+					MethodGroupExpr mg = me as MethodGroupExpr;
+					if ((mg != null) && left_is_explicit && left.Type.IsInterface)
+						mg.IsExplicitImpl = left_is_explicit;
+
 					if (!me.IsStatic){
 						if (IdenticalNameAndTypeName (ec, left_original, loc))
 							return member_lookup;
@@ -5486,6 +5490,7 @@ namespace Mono.CSharp {
 						SimpleName.Error_ObjectRefRequired (ec, loc, me.Name);
 						return null;
 					}
+
 				} else {
 					if (!me.IsInstance){
 						if (IdenticalNameAndTypeName (ec, left_original, loc))
@@ -5604,7 +5609,8 @@ namespace Mono.CSharp {
 				// it, we know that the error was due to limited visibility
 				//
 				object lookup = TypeManager.MemberLookup (
-					expr_type, expr_type, AllMemberTypes, AllBindingFlags, Identifier);
+					expr_type, expr_type, AllMemberTypes, AllBindingFlags |
+					BindingFlags.NonPublic, Identifier);
 				if (lookup == null)
 					Error (117, "`" + expr_type + "' does not contain a " +
 					       "definition for `" + Identifier + "'");

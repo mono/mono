@@ -1,3 +1,20 @@
+2002-08-28  Martin Baulig  <martin@gnome.org>
+
+	* typemanager.cs (TypeManager.FilterWithClosure): It's not enough
+	to check whether `closure_start_type == closure_invocation_type',
+	we also need to check whether `m.DeclaringType == closure_invocation_type'
+	before bypassing the permission checks.  We might be accessing
+	protected/private members from the base class.
+	(TypeManager.RealMemberLookup): Only set private_ok if private
+	members were requested via BindingFlags.NonPublic.
+
+	* ecore.cs (MethodGroupExpr.IsExplicitImpl): New property.
+
+	* expression.cs (MemberAccess.ResolveMemberAccess): Set
+	MethodGroupExpr.IsExplicitImpl if appropriate.
+	(Invocation.DoResolve): Don't report the CS0120 for explicit
+	interface implementations.
+
 2002-08-27  Martin Baulig  <martin@gnome.org>
 
 	* expression.cs (Invocation.DoResolve): If this is a static
