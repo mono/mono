@@ -52,6 +52,8 @@ namespace System.Xml.Serialization
 
 			primitiveTypes.Add ("date", new TypeData (typeof (DateTime), "date", true));	// TODO: timeInstant
 			primitiveTypes.Add ("time", new TypeData (typeof (DateTime), "time", true));
+			primitiveTypes.Add ("NMTOKEN", new TypeData (typeof (string), "NMTOKEN", true));
+			primitiveTypes.Add ("NCName", new TypeData (typeof (string), "NCName", true));
 		}
 
 		public static TypeData GetTypeData (Type type)
@@ -86,7 +88,9 @@ namespace System.Xml.Serialization
 
 		public static TypeData GetPrimitiveTypeData (string typeName)
 		{
-			return (TypeData) primitiveTypes[typeName];
+			TypeData td = (TypeData) primitiveTypes[typeName];
+			if (td == null) throw new NotSupportedException ("Data type '" + typeName + "' not supported");
+			return td;
 		}
 	}
 }

@@ -163,7 +163,7 @@ namespace System.Xml.Serialization
 				if (extraAtts != null) 
 				{
 					foreach (XmlAttribute attr in extraAtts)
-						WriteAttribute (attr.LocalName, attr.NamespaceURI, attr.Value);
+						WriteAttribute (attr.Prefix, attr.LocalName, attr.NamespaceURI, attr.Value);
 				}
 			}
 

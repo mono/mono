@@ -1,3 +1,9 @@
+2003-07-22  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* TypeTranslator.cs: Added new primitive types: NMTOKEN and NCName.
+	* XmlSerializationWriterInterpreter.cs: Write XmlAttributes with the prefix
+	  they have.
+
 2003-07-15  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SoapReflectionImporter.cs, XmlReflectionImporter.cs: Avoid generating two
