@@ -1,3 +1,7 @@
+2002-11-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* StreamReader.cs: Changed all Encoding.UTF8 to Encoding.UTF8Unmarked.
+
 2002-11-06  Miguel de Icaza  <miguel@ximian.com>
 
 	* StreamWriter.cs: Changed all Encoding.UTF8 to Encoding.UTF8Unmarked.

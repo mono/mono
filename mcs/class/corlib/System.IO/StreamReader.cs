@@ -99,10 +99,10 @@ namespace System.IO {
 		internal StreamReader() {}
 
 		public StreamReader(Stream stream)
-			: this (stream, Encoding.UTF8, true, DefaultBufferSize) { }
+			: this (stream, Encoding.UTF8Unmarked, true, DefaultBufferSize) { }
 
 		public StreamReader(Stream stream, bool detect_encoding_from_bytemarks)
-			: this (stream, Encoding.UTF8, detect_encoding_from_bytemarks, DefaultBufferSize) { }
+			: this (stream, Encoding.UTF8Unmarked, detect_encoding_from_bytemarks, DefaultBufferSize) { }
 
 		public StreamReader(Stream stream, Encoding encoding)
 			: this (stream, encoding, true, DefaultBufferSize) { }
@@ -116,10 +116,10 @@ namespace System.IO {
 		}
 
 		public StreamReader(string path)
-			: this (path, Encoding.UTF8, true, DefaultFileBufferSize) { }
+			: this (path, Encoding.UTF8Unmarked, true, DefaultFileBufferSize) { }
 
 		public StreamReader(string path, bool detect_encoding_from_bytemarks)
-			: this (path, Encoding.UTF8, detect_encoding_from_bytemarks, DefaultFileBufferSize) { }
+			: this (path, Encoding.UTF8Unmarked, detect_encoding_from_bytemarks, DefaultFileBufferSize) { }
 
 		public StreamReader(string path, Encoding encoding)
 			: this (path, encoding, true, DefaultFileBufferSize) { }
@@ -244,7 +244,7 @@ namespace System.IO {
 					return 0;
 
 				if (input_buffer [0] == 0xef && input_buffer [1] == 0xbb && input_buffer [2] == 0xbf){
-					this.encoding = Encoding.UTF8;
+					this.encoding = Encoding.UTF8Unmarked;
 					return 3;
 				}
 			}
