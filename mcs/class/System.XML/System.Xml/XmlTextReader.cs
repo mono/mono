@@ -542,6 +542,10 @@ namespace System.Xml
 				attributeString =
 					value.Substring (1, value.Length - 2);
 
+			// It occurs when attribute dully consists of entity reference.
+			if (attributeValuePos == attributeString.Length)
+				return false;
+
 			returnEntityReference = false;
 			value = String.Empty;
 			int refPosition;
@@ -586,7 +590,7 @@ namespace System.Xml
 					false);
 			else
 				SetProperties (XmlNodeType.Text,
-					"#text",
+					"",
 					false,
 					value,
 					false);

@@ -342,6 +342,10 @@ namespace System.Xml
 
 		public virtual XmlAttribute SetAttributeNode (XmlAttribute newAttr)
 		{
+			if (newAttr.OwnerElement != null)
+				throw new InvalidOperationException (
+					"Specified attribute is already an attribute of another element.");
+
 			newAttr.SetOwnerElement(this);
 			XmlNode oldAttr = Attributes.SetNamedItem(newAttr);
 			return oldAttr != null ? oldAttr as XmlAttribute : null;

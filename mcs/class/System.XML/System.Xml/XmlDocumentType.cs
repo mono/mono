@@ -21,7 +21,7 @@ namespace System.Xml
 		string internalSubset;  // value of the DTD internal subset
 		internal XmlNamedNodeMap entities;
 		internal XmlNamedNodeMap notations;
-		DTDObjectModel DTD;
+		DTDObjectModel dtd;
 
 		// Constructor
 		protected internal XmlDocumentType (string name, string publicId,
@@ -36,7 +36,7 @@ namespace System.Xml
 
 			XmlTextReader xtr = new XmlTextReader ("", XmlNodeType.Document, null);
 			xtr.GenerateDTDObjectModel (name, publicId, systemId, internalSubset);
-			this.DTD = xtr.DTD;
+			this.dtd = xtr.DTD;
 
 			ImportFromDTD ();
 		}
@@ -48,7 +48,7 @@ namespace System.Xml
 			this.publicId = reader ["PUBLIC"];
 			this.systemId = reader ["SYSTEM"];
 			this.internalSubset = reader.Value;
-			this.DTD = reader.DTD;
+			this.dtd = reader.DTD;
 
 			ImportFromDTD ();
 		}
@@ -73,6 +73,10 @@ namespace System.Xml
 		}
 
 		// Properties
+		internal DTDObjectModel DTD {
+			get { return dtd; }
+		}
+
 		public XmlNamedNodeMap Entities
 		{
 			get { return entities; }

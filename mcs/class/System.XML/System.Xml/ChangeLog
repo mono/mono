@@ -1,5 +1,18 @@
 2003-07-26  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlDocumentType.cs :
+	  modified private DTD to dtd and added internal DTD (the same thing).
+	* XmlElement.cs :
+	  Fixed SetAttributeNode() to check if specified attribute is already
+	  set to the other element. In fact it is W3C DOM's specification but
+	  MS.NET 1.0 failed to catch it.
+	* XmlTextReader.cs :
+	  ReadAttributeValue() should check if the value of the attribute is
+	  already read when the whole value is entity reference.
+	  Also, Name of text nodes should be "", not "#text"
+
+2003-07-26  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlAttribute.cs : .ctor() shouldallow localName "xml" (not prefix)
 	  with http://www.w3.org/XML/1998/namespace.
 	* XmlEntity.cs : patch by Aleksey Sanin. InnerText is now supported.
