@@ -1418,7 +1418,11 @@ namespace System.Drawing
 		{
 			public Stream stream;
 			
-			public GdiPlusStreamHelper (Stream s) { stream = s; }
+			public GdiPlusStreamHelper (Stream s) 
+			{ 
+				stream = s; 
+				stream.Seek(0, SeekOrigin.Begin);				
+			}
 
 			public int StreamGetBytesImpl (IntPtr buf, int bufsz, bool peek) 
 			{
