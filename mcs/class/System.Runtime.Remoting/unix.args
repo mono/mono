@@ -1,5 +1,4 @@
 ./System.Runtime.Remoting/TODOAttribute.cs
-System.Runtime.Remoting.Activation/UrlAttribute.cs
 ./System.Runtime.Remoting.Channels/BinaryClientFormatterSink.cs
 ./System.Runtime.Remoting.Channels/BinaryClientFormatterSinkProvider.cs
 ./System.Runtime.Remoting.Channels/BinaryServerFormatterSink.cs

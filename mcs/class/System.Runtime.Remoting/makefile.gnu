@@ -2,7 +2,7 @@ topdir = ../..
 
 LIBRARY = ../lib/System.Runtime.Remoting.dll
 
-LIB_LIST = list
+LIB_LIST = unix.args
 LIB_FLAGS = -r corlib -r System
 
 SOURCES_INCLUDE=*.cs
