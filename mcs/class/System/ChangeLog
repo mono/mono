@@ -1,3 +1,7 @@
+2004-09-10  Tim Coleman <tim@timcoleman.com>
+	* System.dll.sources: Add System.Net.Cache, System.Net.Configuration,
+		System.Net.Mail, System.Configuration classes
+
 2004-09-09  Tim Coleman <tim@timcoleman.com>
 	* System.dll.sources: Add new System.Net.Mail classes
 
