@@ -1,6 +1,6 @@
 2003-03-27  Martin Willemoes Hansen <mwh@sysrq.dk>
 
-	* Made initial stubing of System.ComponentModel.Design.Serialization
+	* Stubed rest of System.ComponentModel.Design.Serialization
 
 2003-03-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

@@ -71,5 +71,11 @@ namespace System.ComponentModel.Design.Serialization
 		public override object TypeId {
 			get { throw new NotImplementedException ();}
 		}
+
+		[MonoTODO]
+		public override int GetHashCode() 
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
