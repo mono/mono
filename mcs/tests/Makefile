@@ -87,7 +87,7 @@ test-local:
 run-test-local: test-compiler-jit test-unsafe-compiler-jit test-casts
 
 clean-local:
-	rm -f *.exe *.out *.pdb casts.cs
+	rm -f *.exe *.netmodule *.out *.pdb casts.cs
 
 dist-local: dist-default
 	rm -f $(distdir)/casts.cs
@@ -168,3 +168,9 @@ multi-3:
 	$(INTERNAL_MCS) /target:library conv-lib.cs
 	$(INTERNAL_MCS) /r:conv-lib.dll conv-main.cs
 	$(TEST_RUNTIME) conv-main.exe
+
+multi-4:
+	$(INTERNAL_MCS) /target:module module-1.cs
+	$(INTERNAL_MCS) /target:module module-2.cs
+	$(INTERNAL_MCS) /addmodule:module-1.netmodule /addmodule:module-2.netmodule module-3.cs
+	$(TEST_RUNTIME) module-3.exe

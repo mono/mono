@@ -1,3 +1,9 @@
+2003-12-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* module-1.cs module-2.cs module-3.cs: New files.
+
+	* Makefile: Add test for /target:module and /addmodule.
+
 2003-12-13  Martin Baulig  <martin@ximian.com>
 
 	* test-154.cs: Added testcase for bug #48962.
