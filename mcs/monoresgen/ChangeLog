@@ -1,3 +1,8 @@
+2004-03-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* monoresgen.cs:  don't create the output file on error reading the
+	input. Fixes bug #55916.
+
 2004-01-12  Miguel de Icaza  <miguel@ximian.com>
 
 	* monoresgen.cs (PoResourceWriter.AddResource): Escape strings,

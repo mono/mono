@@ -102,9 +102,10 @@ the output file name.
 
 		try {
 			source = new FileStream (sname, FileMode.Open, FileAccess.Read);
-			dest = new FileStream (dname, FileMode.OpenOrCreate, FileAccess.Write);
 
 			reader = GetReader (source, sname);
+
+			dest = new FileStream (dname, FileMode.OpenOrCreate, FileAccess.Write);
 			writer = GetWriter (dest, dname);
 
 			int rescount = 0;
