@@ -1,3 +1,8 @@
+
+Fri Jun 21 13:37:57 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* typemanager.cs: make ExpandInterfaces() slip duplicated interfaces.
+
 2002-06-20  Miguel de Icaza  <miguel@ximian.com>
 
 	* attribute.cs: Return null if we can not look up the type.
