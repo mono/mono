@@ -1,3 +1,10 @@
+2004-07-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvertDateTimeOption.cs : it is NET_2_0.
+	* IXmlNamespaceResolver.cs,
+	  XmlNamespaceScope.cs : Compile it in .net 1.1 (as internal).
+	* XmlNamespaceManager.cs : Implement IXmlNamespaceResolver.
+
 2004-07-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlConvertDateTimeOption.cs : Forgot to change the content...

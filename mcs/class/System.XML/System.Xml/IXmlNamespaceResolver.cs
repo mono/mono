@@ -25,7 +25,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
 
 using System;
 using System.Collections;
@@ -34,7 +33,11 @@ using System.Xml.XPath;
 
 namespace System.Xml
 {
+#if NET_2_0
 	public interface IXmlNamespaceResolver
+#else
+	internal interface IXmlNamespaceResolver
+#endif
 	{
 		XmlNameTable NameTable { get; } 
 
@@ -49,5 +52,3 @@ namespace System.Xml
 		string LookupPrefix (string ns, bool atomizedName);  
 	}
 }
-
-#endif

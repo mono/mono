@@ -37,7 +37,7 @@ using System.Collections.Specialized;
 
 namespace System.Xml
 {
-	public class XmlNamespaceManager : IEnumerable
+	public class XmlNamespaceManager : IXmlNamespaceResolver, IEnumerable
 	{
 		#region Data
 		struct NsDecl {
@@ -202,13 +202,21 @@ namespace System.Xml
 			
 			return ht.Keys.GetEnumerator ();
 		}
+
 #if NET_2_0
 		[MonoTODO]
-		public virtual StringDictionary GetNamespacesInScope (XmlNamespaceScope scope)
+		public virtual IDictionary GetNamespacesInScope (XmlNamespaceScope scope)
+#else
+		IDictionary IXmlNamespaceResolver.GetNamespacesInScope (XmlNamespaceScope scope)
+		{
+			return GetNamespacesInScope (scope);
+		}
+
+		internal virtual IDictionary GetNamespacesInScope (XmlNamespaceScope scope)
+#endif
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 
 		public virtual bool HasNamespace (string prefix)
 		{
@@ -242,9 +250,14 @@ namespace System.Xml
 		}
 
 #if NET_2_0
-		public virtual string LookupNamespace (string prefix, bool atomizedName)
+		public virtual string LookupNamespace (string prefix, bool atomizedNames)
 #else
-		internal virtual string LookupNamespace (string prefix, bool atomizedName)
+		string IXmlNamespaceResolver.LookupNamespace (string prefix, bool atomizedNames)
+		{
+			return LookupNamespace (prefix, atomizedNames);
+		}
+
+		internal virtual string LookupNamespace (string prefix, bool atomizedNames)
 #endif
 		{
 			switch (prefix) {
@@ -259,7 +272,7 @@ namespace System.Xml
 			}
 
 			for (int i = declPos; i >= 0; i--) {
-				if (CompareString (decls [i].Prefix, prefix, atomizedName) && decls [i].Uri != null /* null == flag for removed */)
+				if (CompareString (decls [i].Prefix, prefix, atomizedNames) && decls [i].Uri != null /* null == flag for removed */)
 					return decls [i].Uri;
 			}
 			
@@ -286,6 +299,11 @@ namespace System.Xml
 #if NET_2_0
 		public string LookupPrefix (string uri, bool atomizedName)
 #else
+		string IXmlNamespaceResolver.LookupPrefix (string uri, bool atomizedName)
+		{
+			return LookupPrefix (uri, atomizedName);
+		}
+
 		internal string LookupPrefix (string uri, bool atomizedName)
 #endif
 		{

@@ -28,15 +28,18 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
 
 namespace System.Xml
 {
-	public enum XmlNamespaceScope
+#if NET_2_0
+	public
+#else
+	internal
+#endif
+	enum XmlNamespaceScope
 	{
 		All,
 		ExcludeXml,
 		Local 
 	}
 }
-#endif
