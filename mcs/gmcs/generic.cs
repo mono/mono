@@ -15,6 +15,13 @@ using System.Text;
 	
 namespace Mono.CSharp {
 
+	public enum SpecialConstraint
+	{
+		Constructor,
+		ReferenceType,
+		ValueType
+	}
+
 	//
 	// Tracks the constraints for a type parameter
 	//
@@ -42,6 +49,8 @@ namespace Mono.CSharp {
 		}
 
 		bool has_ctor_constraint;
+		bool has_reference_type;
+		bool has_value_type;
 		TypeExpr class_constraint;
 		ArrayList iface_constraints;
 		int num_constraints, first_constraint;
@@ -63,8 +72,34 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				if (obj is bool) {
-					has_ctor_constraint = true;
+				if (obj is SpecialConstraint) {
+					SpecialConstraint sc = (SpecialConstraint) obj;
+
+					if (sc == SpecialConstraint.Constructor) {
+						if (!has_value_type) {
+							has_ctor_constraint = true;
+							continue;
+						}
+
+						Report.Error (
+							451, loc, "The new () constraint " +
+							"cannot be used with the `struct' " +
+							"constraint.");
+						return false;
+					}
+
+					if ((num_constraints > 0) || has_reference_type ||
+					    has_value_type) {
+						Report.Error (449, loc,
+							      "The `class' or `struct' " +
+							      "constraint must be first");
+						return false;
+					}
+
+					if (sc == SpecialConstraint.ReferenceType)
+						has_reference_type = true;
+					else
+						has_value_type = true;
 					continue;
 				}
 
@@ -86,6 +121,11 @@ namespace Mono.CSharp {
 						      "`{0}': the class constraint for `{1}' " +
 						      "must come before any other constraints.",
 						      expr.Name, name);
+					return false;
+				} else if (has_reference_type || has_value_type) {
+					Report.Error (450, loc, "`{0}': cannot specify both " +
+						      "a constraint class and the `class' " +
+						      "or `struct' constraint.", expr.Name);
 					return false;
 				} else
 					class_constraint = expr;
@@ -151,6 +191,11 @@ namespace Mono.CSharp {
 					return false;
 				}
 			}
+
+			if (has_reference_type)
+				class_constraint_type = TypeManager.object_type;
+			else if (has_value_type)
+				class_constraint_type = TypeManager.value_type;
 
 			return true;
 		}

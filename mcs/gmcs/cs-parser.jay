@@ -3154,7 +3154,13 @@ type_parameter_constraints
 type_parameter_constraint
 	: type
 	| NEW OPEN_PARENS CLOSE_PARENS {
-		$$ = true;
+		$$ = SpecialConstraint.Constructor;
+	  }
+	| CLASS {
+		$$ = SpecialConstraint.ReferenceType;
+	  }
+	| STRUCT {
+		$$ = SpecialConstraint.ValueType;
 	  }
 	;
 

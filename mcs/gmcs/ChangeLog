@@ -1,5 +1,14 @@
 2004-04-07  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (SpecialConstraint): New public enum.
+	(Constraints.Resolve): Added support for the `class' and `struct'
+	constraints.
+
+	* cs-parser.jay (type_parameter_constraint): Added support for the
+	`class' and `struct' constraints.
+
+2004-04-07  Martin Baulig  <martin@ximian.com>
+
 	* support.cs (GenericConstraints): Replaced `Types' by
 	`ClassConstraint' and `InterfaceConstraints'; added
 	`HasClassConstraint'.	
