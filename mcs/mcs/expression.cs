@@ -548,6 +548,9 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+			//
+			// Born fully resolved
+			//
 			return this;
 		}
 	}
@@ -1539,7 +1542,13 @@ namespace Mono.CSharp {
 			       TypeManager.CSharpName (right.Type) + "'");
 						     
 		}
-		
+
+		static bool is_32_or_64 (Type t)
+		{
+			return (t == TypeManager.int32_type || t == TypeManager.uint32_type ||
+				t == TypeManager.int64_type || t == TypeManager.uint64_type);
+		}
+					
 		Expression CheckShiftArguments (EmitContext ec)
 		{
 			Expression e;
@@ -1684,6 +1693,38 @@ namespace Mono.CSharp {
 					type = l;
 					return this;
 				}
+
+				//
+				// Pointer arithmetic:
+				//
+				// T* operator + (T* x, int y);
+				// T* operator + (T* x, uint y);
+				// T* operator + (T* x, long y);
+				// T* operator + (T* x, ulong y);
+				//
+				// T* operator + (int y,   T* x);
+				// T* operator + (uint y,  T *x);
+				// T* operator + (long y,  T *x);
+				// T* operator + (ulong y, T *x);
+				//
+				// T* operator - (T* x, int y);
+				// T* operator - (T* x, uint y);
+				// T* operator - (T* x, long y);
+				// T* operator - (T* x, ulong y);
+				//
+				// long operator - (T* x, T *y)
+				//
+				if (l.IsPointer){
+					if (r.IsPointer && oper == Operator.Subtraction){
+						if (r == l)
+							return new PointerArithmetic (
+								false, left, right, TypeManager.int64_type);
+					} else if (is_32_or_64 (r))
+						return new PointerArithmetic (
+							oper == Operator.Addition, left, right, l);
+				} else if (r.IsPointer && is_32_or_64 (l) && oper == Operator.Addition)
+					return new PointerArithmetic (
+						true, right, left, r);
 			}
 			
 			//
@@ -1776,6 +1817,18 @@ namespace Mono.CSharp {
 				}
 			}
 
+			//
+			// Pointer comparison
+			//
+			if (l.IsPointer && r.IsPointer){
+				if (oper == Operator.Equality || oper == Operator.Inequality ||
+				    oper == Operator.LessThan || oper == Operator.LessThanOrEqual ||
+				    oper == Operator.GreaterThan || oper == Operator.GreaterThanOrEqual){
+					type = TypeManager.bool_type;
+					return this;
+				}
+			}
+			
 			//
 			// We are dealing with numbers
 			//
@@ -2175,6 +2228,74 @@ namespace Mono.CSharp {
 		}
 	}
 
+	public class PointerArithmetic : Expression {
+		Expression left, right;
+		bool is_add;
+
+		//
+		// We assume that `l' is always a pointer
+		//
+		public PointerArithmetic (bool is_addition, Expression l, Expression r, Type t)
+		{
+			type = t;
+			eclass = ExprClass.Variable;
+			left = l;
+			right = r;
+			is_add = is_addition;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			//
+			// We are born fully resolved
+			//
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			Type op_type = left.Type;
+			ILGenerator ig = ec.ig;
+			int size = GetTypeSize (op_type.GetElementType ());
+			
+			if (right.Type.IsPointer){
+				//
+				// handle (pointer - pointer)
+				//
+				left.Emit (ec);
+				right.Emit (ec);
+				ig.Emit (OpCodes.Sub);
+
+				if (size != 1){
+					if (size == 0)
+						ig.Emit (OpCodes.Sizeof, op_type);
+					else 
+						IntLiteral.EmitInt (ig, size);
+					ig.Emit (OpCodes.Div);
+				}
+				ig.Emit (OpCodes.Conv_I8);
+			} else {
+				//
+				// handle + and - on (pointer op int)
+				//
+				left.Emit (ec);
+				ig.Emit (OpCodes.Conv_I);
+				right.Emit (ec);
+				if (size != 1){
+					if (size == 0)
+						ig.Emit (OpCodes.Sizeof, op_type);
+					else 
+						IntLiteral.EmitInt (ig, size);
+					ig.Emit (OpCodes.Mul);
+				}
+				if (is_add)
+					ig.Emit (OpCodes.Add);
+				else
+					ig.Emit (OpCodes.Sub);
+			}
+		}
+	}
+	
 	/// <summary>
 	///   Implements the ternary conditiona operator (?:)
 	/// </summary>
@@ -4119,8 +4240,6 @@ namespace Mono.CSharp {
 						}
 					}
 				} else if (underlying_type == TypeManager.float_type) {
-#if __MonoCS__
-#else
 					unsafe {
 						if (!(v is Expression)){
 							float val = (float) v;
@@ -4131,10 +4250,7 @@ namespace Mono.CSharp {
 								data [idx + j] = (byte) ptr [j];
 						}
 					}
-#endif
 				} else if (underlying_type == TypeManager.double_type) {
-#if __MonoCS__
-#else
 					unsafe {
 						if (!(v is Expression)){
 							double val = (double) v;
@@ -4145,7 +4261,6 @@ namespace Mono.CSharp {
 								data [idx + j] = (byte) ptr [j];
 						}
 					}
-#endif
 				} else if (underlying_type == TypeManager.char_type){
 
 					if (!(v is Expression)){
@@ -4947,7 +5062,27 @@ namespace Mono.CSharp {
 
 			return true;
 		}
-				
+
+		Expression MakePointerAccess ()
+		{
+			Type t = Expr.Type;
+
+			if (t == TypeManager.void_ptr_type){
+				Report.Error (
+					242, loc,
+					"The array index operation is not valid for void pointers");
+				return null;
+			}
+			if (Arguments.Count != 1){
+				Report.Error (
+					196, loc,
+					"A pointer must be indexed by a single value");
+				return null;
+			}
+			Expression p = new PointerArithmetic (true, Expr, ((Argument)Arguments [0]).Expr, t);
+			return new Indirection (p);
+		}
+		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			if (!CommonResolve (ec))
@@ -4959,8 +5094,12 @@ namespace Mono.CSharp {
 			//
 			// I am experimenting with this pattern.
 			//
-			if (Expr.Type.IsSubclassOf (TypeManager.array_type))
+			Type t = Expr.Type;
+
+			if (t.IsSubclassOf (TypeManager.array_type))
 				return (new ArrayAccess (this)).Resolve (ec);
+			else if (t.IsPointer)
+				return MakePointerAccess ();
 			else
 				return (new IndexerAccess (this)).Resolve (ec);
 		}
@@ -4970,8 +5109,11 @@ namespace Mono.CSharp {
 			if (!CommonResolve (ec))
 				return null;
 
-			if (Expr.Type.IsSubclassOf (TypeManager.array_type))
+			Type t = Expr.Type;
+			if (t.IsSubclassOf (TypeManager.array_type))
 				return (new ArrayAccess (this)).ResolveLValue (ec, right_side);
+			else if (t.IsPointer)
+				return MakePointerAccess ();
 			else
 				return (new IndexerAccess (this)).ResolveLValue (ec, right_side);
 		}
@@ -5005,7 +5147,6 @@ namespace Mono.CSharp {
 			}
 
 			Type t = ea.Expr.Type;
-
 			if (t.GetArrayRank () != ea.Arguments.Count){
 				Report.Error (22, ea.loc,
 					      "Incorrect number of indexes for array " +
@@ -5549,7 +5690,6 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Call, (ConstructorInfo) method);
 
 		}
-
 	}
 
 	// <summary>
@@ -5600,4 +5740,48 @@ namespace Mono.CSharp {
 			throw new Exception ("This should never be called");
 		}
 	}
+
+	//
+	// This class is used to represent the address of an array, used
+	// only by the Fixed statement, this is like the C "&a [0]" construct.
+	//
+	public class ArrayPtr : Expression {
+		Expression array;
+		
+		public ArrayPtr (Expression array)
+		{
+			Type array_type = array.Type.GetElementType ();
+
+			this.array = array;
+			
+			string array_ptr_type_name = array_type.FullName + "*";
+			
+			type = Type.GetType (array_ptr_type_name);
+			if (type == null){
+				ModuleBuilder mb = RootContext.ModuleBuilder;
+				
+				type = mb.GetType (array_ptr_type_name);
+			}
+
+			eclass = ExprClass.Value;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			
+			array.Emit (ec);
+			IntLiteral.EmitInt (ig, 0);
+			ig.Emit (OpCodes.Ldelema, array.Type.GetElementType ());
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			//
+			// We are born fully resolved
+			//
+			return this;
+		}
+	}
+	
 }

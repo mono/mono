@@ -1812,17 +1812,10 @@ namespace Mono.CSharp {
 					// and T* is implicitly convertible to the
 					// pointer type given in the fixed statement.
 					//
-					string array_ptr_type_name = array_type.FullName + "*";
-					Type array_ptr_type = Type.GetType (array_ptr_type_name);
-					if (array_ptr_type == null){
-						ModuleBuilder mb = RootContext.ModuleBuilder;
-
-						array_ptr_type = mb.GetType (array_ptr_type_name);
-					}
-
-#if PENDING
+					ArrayPtr array_ptr = new ArrayPtr (e);
+					
 					Expression converted = Expression.ConvertImplicitRequired (
-						ec, array_ptr_type, vi.VariableType, loc);
+						ec, array_ptr, vi.VariableType, loc);
 					if (converted == null)
 						continue;
 
@@ -1830,7 +1823,6 @@ namespace Mono.CSharp {
 					// Store pointer in pinned location
 					//
 					converted.Emit (ec);
-#endif
 					
 					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
 

@@ -99,6 +99,48 @@ unsafe class X {
 			return 105;
 		return 0;
 	}
+
+	static int TestPtrArithmetic ()
+	{
+		char [] array = new char [10];
+		char *pb;
+
+		array [5] = 'j';
+		fixed (char *pa = array){
+			pb = pa + 1;
+
+
+			//
+			// This one tests pointer element access
+			//
+			if (pa [5] != 'j')
+				return 199;
+			
+			Console.WriteLine ("V: " + (pb - pa));
+			if ((pb - pa) != 1)
+				return 200;
+
+			pb++;
+
+			if (pb == pa)
+				return 201;
+			if (pb < pa)
+				return 202;
+			if (pa > pb)
+				return 203;
+			if (pa >= pb)
+				return 204;
+			if (pb <= pa)
+				return 205;
+			pb = pb - 2;
+			if (pb != pa){
+				Console.WriteLine ("VV: " + (pb - pa));
+				return 206;
+			}
+		}
+
+		return 0;
+	}
 	
 	static int Main ()
 	{
@@ -112,7 +154,9 @@ unsafe class X {
 
 		if ((v = TestPtrAssign ()) != 0)
 			return v;
-		
+
+		if ((v = TestPtrArithmetic ()) != 0)
+			return v;
 		Console.WriteLine ("Ok");
 		return 0;
 	}

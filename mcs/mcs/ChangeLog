@@ -1,9 +1,28 @@
+2002-02-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (MakeByteBlob): Removed the hacks we had in place
+	before we supported unsafe code.
+	
+	* makefile: add --unsafe to the self compilation of mcs.
+
 2002-02-20  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (PointerArithmetic): New class that is used to
+	perform pointer arithmetic.
+	(Binary.Resolve): Handle pointer arithmetic
+	Handle pointer comparission.
+	(ArrayPtr): Utility expression class that is used to take the
+	address of an array.
+
+	(ElementAccess): Implement array access for pointers
+	
+	* statement.cs (Fixed): Implement fixed statement for arrays, we
+	are missing one more case before we are done.
 
 	* expression.cs (Indirection): Implement EmitAssign and set the
 	ExprClass to Variable.  This allows pointer dereferences to be
 	treated as variables, and to have values assigned to them.
-
+	
 	* ecore.cs (Expression.StoreFromPtr): New utility function to
 	store values dereferencing.
 

@@ -45,10 +45,10 @@ dum: cs-parser.cs
 	./mcs --fatal --target exe -o mcs2.exe $(COMPILER_SOURCES)
 
 mcs2.exe: mcs.exe
-	./mcs --target exe -o mcs2.exe $(COMPILER_SOURCES)
+	./mcs --target exe --unsafe -o mcs2.exe $(COMPILER_SOURCES)
 
 mcs3.exe: mcs2.exe
-	./mcs2 --target exe -o mcs3.exe $(COMPILER_SOURCES)
+	./mcs2 --target exe --unsafe -o mcs3.exe $(COMPILER_SOURCES)
 
 test: mcs3.exe
 	ls -l mcs2.exe mcs3.exe
