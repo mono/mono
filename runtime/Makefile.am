@@ -20,9 +20,6 @@ assemblies_DATA =	\
 	Microsoft.Vsa.dll					\
 	Mono.Cairo.dll	                		\
 	Mono.CSharp.Debugger.dll				\
-	Mono.Data.DB2Client.dll					\
-	Mono.Data.MySql.dll					\
-	Mono.Data.PostgreSqlClient.dll				\
 	Mono.Data.SqliteClient.dll				\
 	Mono.Data.SybaseClient.dll				\
 	Mono.Data.TdsClient.dll					\
