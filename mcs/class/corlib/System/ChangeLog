@@ -1,5 +1,20 @@
 2004-05-27  Atsushi Enomoto <atsushi@ximian.com>
 
+	* DateTime.cs : 
+	  - Added "yyyy/MM/dd HH:mm:ss 'GMT'" and "yyyy-MM-dd HH:mm:ss 'GMT'"
+	    to common formats (yes, I know it is nothing more than hack)
+	  - Fixed some GetDateTimeFormats() that just returned patterns.
+	  - For InvariantCulture, now try both supported formats and our
+	    predefined formats.
+	  - It was accepting incorrectly extraneous characters. That caused
+	    some UTC/non-UTC bug.
+	  - RFC1123 string should return universal time. Uncomment again (the
+	    problem should went away because of the extra characters fix above.
+
+	    With some of the changes above, fixed bug #47720.
+
+2004-05-27  Atsushi Enomoto <atsushi@ximian.com>
+
 	* DateTime.cs : quick revert 'Z' support for certificate verifications.
 
 2004-05-26  Sebastien Pouliot  <sebastien@ximian.com>

@@ -56,6 +56,9 @@ namespace System
 			"yyyy-MM-ddTHH:mm:sszzz",
 			// Fix for bug #58938
 			"yyyy-MM-dd HH:mm:ss",
+			"yyyy/MM/dd HH:mm:ss 'GMT'",
+			// Fix for bug #47720
+			"yyyy-MM-dd HH:mm:ss 'GMT'",
 			// DayOfTheWeek, dd full_month_name yyyy
 			"dddd, dd MMMM yyyy",
 			// DayOfTheWeek, dd yyyy
@@ -508,13 +511,23 @@ namespace System
 		public string[] GetDateTimeFormats(IFormatProvider provider)
 		{
 			DateTimeFormatInfo info = (DateTimeFormatInfo) provider.GetFormat (typeof(DateTimeFormatInfo));
-			return info.GetAllDateTimePatterns ();
+//			return info.GetAllDateTimePatterns ();
+			return GetDateTimeFormats (info.GetAllDateTimePatterns ());
 		}
 
 		public string[] GetDateTimeFormats(char format,IFormatProvider provider	)
 		{
 			DateTimeFormatInfo info = (DateTimeFormatInfo) provider.GetFormat (typeof(DateTimeFormatInfo));
-			return info.GetAllDateTimePatterns (format);
+//			return info.GetAllDateTimePatterns (format);
+			return GetDateTimeFormats (info.GetAllDateTimePatterns (format));
+		}
+
+		private string [] GetDateTimeFormats (string [] patterns)
+		{
+			string [] results = new string [patterns.Length];
+			for (int i = 0; i < results.Length; i++)
+				results [i] = ToString (patterns [i]);
+			return results;
 		}
 
 		public override int GetHashCode ()
@@ -542,8 +555,20 @@ namespace System
 			return Parse (s, fp, DateTimeStyles.AllowWhiteSpaces);
 		}
 
+		[MonoTODO ("see the comments inline")]
 		public static DateTime Parse (string s, IFormatProvider fp, DateTimeStyles styles)
 		{
+			// This method should try only expected patterns. 
+			// Should not try extra patterns.
+			// Right now we also tries InvariantCulture, but I
+			// confirmed in some cases this method rejects what
+			// InvariantCulture supports (can be checked against
+			// "th-TH" with Gregorian Calendar). So basically it
+			// should not be done.
+			// I think it should be CurrentCulture to be tested,
+			// but right now we don't support all the supported
+			// patterns for each culture, so try InvariantCulture
+			// as a quick remedy.
 			if (s == null)
 				throw new ArgumentNullException (Locale.GetText ("s is null"));
 			DateTime result;
@@ -551,21 +576,20 @@ namespace System
 			if (fp == null)
 				fp = CultureInfo.CurrentCulture;
 			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance (fp);
-			// FIXME: It should be all the formats supported by dfi.
 			string [] formats = dfi.GetAllDateTimePatterns ();
 
 			if (ParseExact (s, formats, dfi, styles, out result))
 				return result;
 
-			// Also try InvariantCulture, unless fp is invariant.
-			//
-			// FIXME: actually this method should not try Invariant
-			// culture here. Sometimes it allows string values
-			// unexpectedly, but the counterpart case would be much
-			// larger. This is a quick remedy.
-			if (fp == CultureInfo.InvariantCulture)
-				throw new FormatException ();
+			// Also try CurrentCulture + its supported formats.
+			fp = CultureInfo.CurrentCulture;
+			dfi = DateTimeFormatInfo.GetInstance (fp);
+			formats = dfi.GetAllDateTimePatterns ();
 
+			if (ParseExact (s, formats, dfi, styles, out result))
+				return result;
+
+			// Also try InvariantCulture + our custom formats.
 			fp = CultureInfo.InvariantCulture;
 			dfi = DateTimeFormatInfo.GetInstance (fp);
 			formats = DateTime.formats;//dfi.GetAllDateTimePatterns ();
@@ -687,8 +711,13 @@ namespace System
 				s = s.TrimEnd (null);
 			}
 
+			// FIXME: it should be done in another place
+			if (format.EndsWith ("'GMT'"))
+				useutc = true;
+
 			if ((style & DateTimeStyles.AllowInnerWhite) != 0)
 				sloppy_parsing = true;
+//Console.WriteLine ("** Trying '{1}' as '{0}'", format, s);
 
 			char[] chars = format.ToCharArray ();
 			int len = format.Length, pos = 0, num = 0;
@@ -1033,6 +1062,9 @@ namespace System
 				num = 0;
 			}
 
+			if (s.Length != 0) // extraneous tail.
+				return false;
+
 			if (hour == -1)
 				hour = 0;
 			if (minute == -1)
@@ -1083,6 +1115,7 @@ namespace System
 
 			result = new DateTime (year, month, day, hour, minute, second, millisecond);
 
+//Console.WriteLine ("**** useutc? {0} format {1} s {2}", useutc, format, s);
 			if ((dayofweek != -1) && (dayofweek != (int) result.DayOfWeek))
 				throw new FormatException (Locale.GetText ("String was not recognized as valid DateTime because the day of week was incorrect."));
 
@@ -1272,7 +1305,8 @@ namespace System
 			case 'R':
 				pattern = dfi.RFC1123Pattern;
 				// commented by LP 09/jun/2002, rfc 1123 pattern is always in GMT
-				// useutc= true;
+				// uncommented by AE 27/may/2004
+				useutc= true;
 				break;
 			case 's':
 				pattern = dfi.SortableDateTimePattern;
