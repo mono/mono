@@ -45,6 +45,9 @@ namespace System.Reflection.Emit {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void setup_internal_class (TypeBuilder tb);
 		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern void create_internal_class (TypeBuilder tb);
+		
 		internal TypeBuilder (ModuleBuilder mb, string name, TypeAttributes attr, Type parent, Type[] interfaces) {
 			int sep_index;
 			this.parent = parent;
@@ -253,6 +256,7 @@ namespace System.Reflection.Emit {
 			} else {
 				fields = new FieldBuilder [1];
 				fields [0] = res;
+				create_internal_class (this);
 			}
 			return res;
 		}

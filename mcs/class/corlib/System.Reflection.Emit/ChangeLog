@@ -1,3 +1,8 @@
+2002-05-20  Martin Baulig  <martin@gnome.org>
+
+	* TypeBuilder.cs (DefineField): Call the new `create_internal_class'
+	interncall after adding the first field.  This is used when creating
+	enum types to set `klass->enum_basetype'.
 
 Thu May 16 16:09:51 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
