@@ -297,4 +297,13 @@ public class X
                 return res;
         }
 
+	// from bug #30487.
+	static int foo() {
+		try {
+			return 0;
+		}
+		catch (Exception) {
+			throw;
+		}
+	}
 }

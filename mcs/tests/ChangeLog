@@ -1,3 +1,7 @@
+2002-09-19  Martin Baulig  <martin@gnome.org>
+
+	* test-154.cs: Added testcase from bug #30487.
+
 2002-09-17  Martin Baulig  <martin@gnome.org>
 
 	* test-148.cs: Added testcase for base indexers.
