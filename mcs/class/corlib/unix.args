@@ -688,6 +688,7 @@ System.Security.Permissions/IUnrestrictedPermission.cs
 System.Security.Permissions/PermissionSetAttribute.cs
 System.Security.Permissions/PermissionState.cs
 System.Security.Permissions/PrincipalPermissionAttribute.cs
+System.Security.Permissions/PublisherIdentityPermission.cs
 System.Security.Permissions/ReflectionPermission.cs
 System.Security.Permissions/ReflectionPermissionAttribute.cs
 System.Security.Permissions/ReflectionPermissionFlag.cs
@@ -715,6 +716,8 @@ System.Security.Policy/PolicyException.cs
 System.Security.Policy/PolicyLevel.cs
 System.Security.Policy/PolicyStatement.cs
 System.Security.Policy/PolicyStatementAttribute.cs
+System.Security.Policy/Publisher.cs 
+System.Security.Policy/PublisherMembershipCondition.cs
 System.Security.Principal/GenericIdentity.cs
 System.Security.Principal/GenericPrincipal.cs
 System.Security.Principal/IIdentity.cs
