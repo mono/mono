@@ -1,3 +1,7 @@
+2003-12-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* verify.c (check_corlib): Fix field index.
+
 2003-12-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c: Applied patch from Todd Berman (tbermann@gentoo.org). New
