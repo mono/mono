@@ -560,7 +560,10 @@ public class DateTimeTest : Assertion
 		AssertEquals("Dash03", 12, t1.Month);
 		t1=DateTime.ParseExact ("---24", "---dd" , null);
 		AssertEquals("Dash04", 24, t1.Day);
-	
+
+		// Bug 63376
+		t1 = DateTime.ParseExact ("18Aug2004 12:33:00", "ddMMMyyyy hh:mm:ss", new System.Globalization.CultureInfo ("en-US"));
+		AssertEquals ("hh allows 12, though it's useless", 0, t1.Hour);
 	}
 
 	[Ignore ("need to fix tests that run on different timezones")]

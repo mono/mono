@@ -1,3 +1,7 @@
+2004-08-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeTest.cs : added bugzilla 63376 test case.
+
 2004-08-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* VersionTest.cs: Added tests when cloning a version with no build and
