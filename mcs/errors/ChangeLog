@@ -1,3 +1,9 @@
+2004-08-27  Martin Baulig  <martin@ximian.com>
+
+	* do-tests.pl: Deal with compiler crashes.
+
+	* mcs-expect-no-error, mcs-expect-wrong-error: Updated.
+
 2004-08-04 Marek Safar <marek.safar@seznam.cz>
 
 	* 62 new error tests.

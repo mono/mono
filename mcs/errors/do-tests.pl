@@ -45,6 +45,7 @@ my $RESULT_UNEXPECTED_INCORRECT_ERROR   = 3;
 my $RESULT_EXPECTED_INCORRECT_ERROR     = 4;
 my $RESULT_UNEXPECTED_NO_ERROR          = 5;
 my $RESULT_EXPECTED_NO_ERROR            = 6;
+my $RESULT_UNEXPECTED_CRASH		= 7;
 
 my @statuses = (
 	"UNEXPECTED SUCCESS",
@@ -53,9 +54,11 @@ my @statuses = (
 	"INCORRECT ERROR",
 	"UNEXPECTED NO ERROR",
 	"NO ERROR",
+	"UNEXPECTED CRASH"
 );
 
 my @status_items = (
+	[],
 	[],
 	[],
 	[],
@@ -79,10 +82,12 @@ foreach (glob ($files)) {
 	exit 1 if $? & 127;
 	
 	my $exit_value = $? >> 8;
-	
-	die "unexpected return from mcs" if $exit_value > 2;
-	
+
 	my $status;
+	
+	if ($exit_value > 2) {
+		$status = $RESULT_UNEXPECTED_CRASH;
+	}
 	
 	if ($exit_value == 0) {
                 system "rm -f $testlogfile";
@@ -115,6 +120,9 @@ print, print "\n" foreach @{@status_items [($RESULT_UNEXPECTED_CORRECT_ERROR - 1
 print scalar @{@status_items [($RESULT_UNEXPECTED_INCORRECT_ERROR - 1)]}, " Unexpected incorrect errors\n";
 print, print "\n" foreach @{@status_items [($RESULT_UNEXPECTED_INCORRECT_ERROR - 1)]};
 
+print scalar @{@status_items [($RESULT_UNEXPECTED_CRASH - 1)]}, " Unexpected compiler crash\n";
+print, print "\n" foreach @{@status_items [($RESULT_UNEXPECTED_CRASH - 1)]};
+
 print scalar @{@status_items [($RESULT_UNEXPECTED_NO_ERROR        - 1)]}, " Unexpected no errors\n";
 print, print "\n" foreach @{@status_items [($RESULT_UNEXPECTED_NO_ERROR - 1)]};
 
@@ -122,12 +130,14 @@ print "\n";
 
 print "OVERALL:";
 print scalar @{@status_items [($RESULT_CORRECT_ERROR - 1)]}, " tests succeeded\n";
-print scalar @{@status_items [($RESULT_EXPECTED_INCORRECT_ERROR - 1)]} + scalar @{@status_items [($RESULT_EXPECTED_NO_ERROR - 1)]}, " known errors\n";
-print scalar @{@status_items [($RESULT_UNEXPECTED_INCORRECT_ERROR - 1)]} + scalar @{@status_items [($RESULT_UNEXPECTED_NO_ERROR - 1)]}, " errors\n";
+print scalar @{@status_items [($RESULT_EXPECTED_INCORRECT_ERROR - 1)]} + scalar @{@status_items [($RESULT_EXPECTED_NO_ERROR - 1)]}, " known errors (expected failures)\n";
+print scalar @{@status_items [($RESULT_UNEXPECTED_CRASH - 1)]}, " unexpected compiler crashes\n";
+print scalar @{@status_items [($RESULT_UNEXPECTED_INCORRECT_ERROR - 1)]} + scalar @{@status_items [($RESULT_UNEXPECTED_NO_ERROR - 1)]}, " errors (unexpected failures)\n";
 print scalar @{@status_items [($RESULT_UNEXPECTED_CORRECT_ERROR   - 1)]}, " new tests passing\n";
 
 exit (
 	scalar @{@status_items [($RESULT_UNEXPECTED_INCORRECT_ERROR - 1)]} +
 	scalar @{@status_items [($RESULT_UNEXPECTED_NO_ERROR        - 1)]} +
-	scalar @{@status_items [($RESULT_UNEXPECTED_CORRECT_ERROR   - 1)]}
+	scalar @{@status_items [($RESULT_UNEXPECTED_CORRECT_ERROR   - 1)]} +
+	scalar @{@status_items [($RESULT_UNEXPECTED_CRASH           - 1)]}
 ) == 0 ? 0 : 1;
