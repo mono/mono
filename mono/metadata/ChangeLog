@@ -1,3 +1,26 @@
+2004-02-17  Martin Baulig  <martin@ximian.com>
+
+	* class.h (MonoDynamicGenericInst): New type.
+	(MonoGenericInst): Added `dynamic_info' and `is_dynamic' fields.
+
+	* icall.c (ves_icall_MonoGenericInst_GetMethods): New interncall.
+	(ves_icall_MonoGenericInst_GetConstructors): New interncall.
+	(ves_icall_MonoGenericInst_GetFields): New interncall.
+
+	* class.c (mono_class_from_generic): Don't call
+	mono_class_initialize_generic() if this is a dynamic instance;
+	ie. it's being created from a TypeBuilder.
+	Use MONO_TYPE_GENERICINST for `class->this_arg.type' and
+	`class->byval_arg.type'.
+
+	* reflection.c (mono_reflection_inflate_method_or_ctor): Renamed
+	to `inflate_method' and made static.
+	(mono_reflection_inflate_field): Removed.
+	(mono_reflection_generic_inst_initialize): New public method.
+
+	* reflection.h (MonoReflectionGenericInst): Removed `methods',
+	`ctors' and `fields'; added `initialized'.
+
 2004-02-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* debug-helpers.c (mono_method_full_name): Fix output for empty
