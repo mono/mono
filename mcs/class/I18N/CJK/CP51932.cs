@@ -253,7 +253,6 @@ public class CP51932 : Encoding
 		// Determine the total length of the converted string.
 		int length = 0;
 		int byteval;
-		int last = 0;
 		while (count > 0) {
 			byteval = bytes [index++];
 			--count;
