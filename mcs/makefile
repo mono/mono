@@ -77,6 +77,7 @@ MONO_WIN_INSTALL_LIB=	\
 	class/lib/I18N.West.dll	\
 	class/lib/I18N.dll	\
 	class/lib/Microsoft.VisualBasic.dll	\
+	class/lib/Microsoft.VisualC.dll	\
 	class/lib/Mono.Data.MySql.dll	\
 	class/lib/Mono.Data.PostgreSqlClient.dll	\
 	class/lib/Mono.Data.SqliteClient.dll	\

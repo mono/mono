@@ -13,6 +13,7 @@
 		<nant basedir="Cscompmgd" target="build" buildfile="Cscompmgd/Cscompmgd.build"/>
 		<nant basedir="I18N" target="build" buildfile="I18N/I18N.build"/>
 		<nant basedir="Microsoft.VisualBasic" target="build" buildfile="Microsoft.VisualBasic/Microsoft.VisualBasic.build"/>
+		<nant basedir="Microsoft.VisualC" target="build" buildfile="Microsoft.VisualC/Microsoft.VisualC.build"/>
 		<nant basedir="Mono.CSharp.Debugger" target="build" buildfile="Mono.CSharp.Debugger/Mono.CSharp.Debugger.build"/>
 		<nant basedir="Mono.Data" target="build" buildfile="Mono.Data/Mono.Data.build"/>
 
@@ -88,6 +89,7 @@
 		<nant basedir="System.Web.Services" target="clean"/>
 		<nant basedir="Mono.GetOptions" target="clean"/>
 		<nant basedir="Microsoft.VisualBasic" target="clean"/>
+		<nant basedir="Microsoft.VisualC" target="clean"/>
 		<nant basedir="System.Configuration.Install" target="clean"/>
 		<nant basedir="Mono.PEToolkit" target="clean"/>
 		<nant basedir="System.Security" target="clean"/>
