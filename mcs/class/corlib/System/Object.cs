@@ -31,15 +31,10 @@ namespace System {
 			if (a == b)
 				return true;
 			
-			if (a == null) {
-				if (b == null)
-					return true;
+			if (a == null || b == null)
 				return false;
-			} else {
-				if (b == null)
-					return false;
-				return a.Equals (b);
-			}
+
+			return a.Equals (b);
 		}
 
 		// <summary>
