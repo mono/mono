@@ -138,37 +138,39 @@ namespace Mono.Util.CorCompare {
 
 			// look at all the existing types in this namespace for MonoTODO attrib
 			foreach(Type t in existingTypes) {
-				// assume we won't find it
-				foundIt = false;
+				if (t.IsPublic) {
+					// assume we won't find it
+					foundIt = false;
 
-				// get all the custom attributes on the type
-				myAttributes = t.GetCustomAttributes(false);
-				foreach (object o in myAttributes) {
-					// check to see if any of them are the MonoTODO attrib
-					if (o.ToString() == "System.MonoTODOAttribute"){
-						// if so, this is a todo type 
-						ToDoTypes.Add(new ToDoType(t));
-						// and we can stop look at the custom attribs
-						break;
-					}
-				}
-
-				// look at all the members of the type
-				foreach (MemberInfo mi in t.GetMembers()) {
-					// see if any of them have the MonoTODO attrib
-					myAttributes = mi.GetCustomAttributes(false);
+					// get all the custom attributes on the type
+					myAttributes = t.GetCustomAttributes(false);
 					foreach (object o in myAttributes) {
-						if (o.ToString() == "System.MonoTODOAttribute") {
-							// the first time we find one for this type add the type to the list
-							if (!foundIt) {
-								index = ToDoType.IndexOf(t, ToDoTypes);
-								if (index < 0) {
-									ToDoTypes.Add(new ToDoType(t));
+						// check to see if any of them are the MonoTODO attrib
+						if (o.ToString() == "System.MonoTODOAttribute"){
+							// if so, this is a todo type 
+							ToDoTypes.Add(new ToDoType(t));
+							// and we can stop look at the custom attribs
+							break;
+						}
+					}
+
+					// look at all the members of the type
+					foreach (MemberInfo mi in t.GetMembers()) {
+						// see if any of them have the MonoTODO attrib
+						myAttributes = mi.GetCustomAttributes(false);
+						foreach (object o in myAttributes) {
+							if (o.ToString() == "System.MonoTODOAttribute") {
+								// the first time we find one for this type add the type to the list
+								if (!foundIt) {
+									index = ToDoType.IndexOf(t, ToDoTypes);
+									if (index < 0) {
+										ToDoTypes.Add(new ToDoType(t));
+									}
+									foundIt = true;
 								}
-								foundIt = true;
+								// add any todo member infos to the todo type
+								((ToDoType)(ToDoTypes[ToDoTypes.Count-1])).AddToDoMember(t, mi);
 							}
-							// add any todo member infos to the todo type
-							((ToDoType)(ToDoTypes[ToDoTypes.Count-1])).AddToDoMember(t, mi);
 						}
 					}
 				}

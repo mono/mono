@@ -50,6 +50,62 @@ namespace Mono.Util.CorCompare {
 			}
 		}
 
+		ArrayList missingEventList = new ArrayList();
+		public ArrayList MissingEvents {
+			get {
+				return missingEventList;
+			}
+		}
+
+		ArrayList todoEventList = new ArrayList();
+		public ArrayList ToDoEvents {
+			get {
+				return todoEventList;
+			}
+		}
+
+		ArrayList missingFieldList = new ArrayList();
+		public ArrayList MissingFields {
+			get {
+				return missingFieldList;
+			}
+		}
+
+		ArrayList todoFieldList = new ArrayList();
+		public ArrayList ToDoFields {
+			get {
+				return todoFieldList;
+			}
+		}
+
+		ArrayList missingConstructorList = new ArrayList();
+		public ArrayList MissingConstructors {
+			get {
+				return missingConstructorList;
+			}
+		}
+
+		ArrayList todoConstructorList = new ArrayList();
+		public ArrayList ToDoConstructors {
+			get {
+				return todoConstructorList;
+			}
+		}
+
+		ArrayList missingNestedTypeList = new ArrayList();
+		public ArrayList MissingNestedTypes {
+			get {
+				return missingNestedTypeList;
+			}
+		}
+
+		ArrayList todoNestedTypeList = new ArrayList();
+		public ArrayList ToDoNestedTypes {
+			get {
+				return todoNestedTypeList;
+			}
+		}
+
 		int complete;
 
 		public ToDoType(Type t) : base(t) {
@@ -96,9 +152,21 @@ namespace Mono.Util.CorCompare {
 				case MemberTypes.Property:
 					todoPropertyList.Add(new ToDoProperty(info));
 					break;
+				case MemberTypes.Event:
+					todoEventList.Add(new ToDoEvent(info));
+					break;
+				case MemberTypes.Field:
+					todoFieldList.Add(new ToDoField(info));
+					break;
+				case MemberTypes.Constructor:
+					todoConstructorList.Add(new ToDoConstructor(info));
+					break;
+				case MemberTypes.NestedType:
+					todoNestedTypeList.Add(new ToDoNestedType(info));
+					break;
 				default:
 					break;
-					//throw new Exception("Didn't code that member type yet");
+					//throw new Exception("Didn't code todo member type: " + info.MemberType.ToString());
 			}
 		}
 
@@ -110,9 +178,21 @@ namespace Mono.Util.CorCompare {
 				case MemberTypes.Property:
 					missingPropertyList.Add(new MissingProperty(info));
 					break;
+				case MemberTypes.Event:
+					missingEventList.Add(new MissingEvent(info));
+					break;
+				case MemberTypes.Field:
+					missingFieldList.Add(new MissingField(info));
+					break;
+				case MemberTypes.Constructor:
+					missingConstructorList.Add(new MissingConstructor(info));
+					break;
+				case MemberTypes.NestedType:
+					missingNestedTypeList.Add(new MissingNestedType(info));
+					break;
 				default:
 					break;
-					//throw new Exception("Didn't code that member type yet");
+					//throw new Exception("Didn't code missing member type: " + info.MemberType.ToString());
 			}
 		}
 	}

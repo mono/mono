@@ -53,6 +53,16 @@ namespace Mono.Util.CorCompare {
 			}
 		}
 
+		public int ToDoCount {
+			get {
+				int sum = 0;
+				foreach(ToDoNameSpace ns in todoNameSpaces) {
+					sum += ns.ToDoCount;
+				}
+				return sum;
+			}
+		}
+
 		public int ReferenceTypeCount {
 			get {
 				int sum = 0;
@@ -136,7 +146,8 @@ namespace Mono.Util.CorCompare {
 			XmlElement assemblyElem = outDoc.CreateElement("assembly");
 			assemblyElem.SetAttribute("name", this.Name);
 			assemblyElem.SetAttribute("missing", this.MissingCount.ToString());
-			assemblyElem.SetAttribute("complete", (100 - 100 * this.MissingCount / this.ReferenceTypeCount).ToString());
+			assemblyElem.SetAttribute("todo", this.ToDoCount.ToString());
+			assemblyElem.SetAttribute("complete", (100 - 100 * (this.MissingCount + this.ToDoCount) / this.ReferenceTypeCount).ToString());
 			assembliesElem.AppendChild(assemblyElem);
 			XmlElement namespacesElem = outDoc.CreateElement("namespaces");
 			assemblyElem.AppendChild(namespacesElem);
@@ -145,10 +156,7 @@ namespace Mono.Util.CorCompare {
 				XmlElement namespaceElem;
 				XmlElement classesElem;
 				XmlElement classElem;
-				XmlElement methodsElem = null;
-				XmlElement methodElem;
-				XmlElement propertiesElem = null;
-				XmlElement propertyElem;
+				XmlElement memberElem = null;
 				foreach (ToDoNameSpace ns in todoNameSpaces) {
 					namespaceElem = outDoc.CreateElement("namespace");
 					namespaceElem.SetAttribute("name", ns.name);
@@ -182,60 +190,34 @@ namespace Mono.Util.CorCompare {
 							classElem.SetAttribute("todo", type.ToDoCount.ToString());
 							classesElem.AppendChild(classElem);
 							
-							methodsElem = null;
-							if (type.MissingMethods.Count > 0) {
-								methodsElem = outDoc.CreateElement("methods");
-								foreach (MissingMethod m in type.MissingMethods) {
-									methodElem = outDoc.CreateElement("method");
-									methodElem.SetAttribute("name", ((MissingMethod)m).Name);
-									methodElem.SetAttribute("status", ((MissingMethod)m).Status);
-									methodsElem.AppendChild(methodElem);
-								}
-							}
-							
-							if (type.ToDoMethods.Count > 0) {
-								if (methodsElem == null) {
-									methodsElem = outDoc.CreateElement("methods");
-								}
-								foreach (ToDoMethod m in type.ToDoMethods) {
-									methodElem = outDoc.CreateElement("method");
-									methodElem.SetAttribute("name", ((ToDoMethod)m).Name);
-									methodElem.SetAttribute("status", ((ToDoMethod)m).Status);
-									methodsElem.AppendChild(methodElem);
-								}
+							memberElem = CreateMemberCollectionElement("methods", type.MissingMethods, type.ToDoMethods, outDoc);
+							if (memberElem != null) {
+								classElem.AppendChild(memberElem);
 							}
 
-							if (methodsElem != null) {
-								methodsElem.SetAttribute("missing", type.MissingMethods.Count.ToString());
-								methodsElem.SetAttribute("todo", type.ToDoMethods.Count.ToString());
-								classElem.AppendChild(methodsElem);
+							memberElem = CreateMemberCollectionElement("properties", type.MissingProperties, type.ToDoProperties, outDoc);
+							if (memberElem != null) {
+								classElem.AppendChild(memberElem);
 							}
 
-							propertiesElem = null;
-							if (type.MissingProperties.Count > 0) {
-								propertiesElem = outDoc.CreateElement("properties");
-								foreach (MissingProperty p in type.MissingProperties) {
-									propertyElem = outDoc.CreateElement("property");
-									propertyElem.SetAttribute("name", ((MissingProperty)p).Name);
-									propertyElem.SetAttribute("status", ((MissingProperty)p).Status);
-									propertiesElem.AppendChild(propertyElem);
-								}
+							memberElem = CreateMemberCollectionElement("events", type.MissingEvents, type.ToDoEvents, outDoc);
+							if (memberElem != null) {
+								classElem.AppendChild(memberElem);
 							}
-							if (type.ToDoProperties.Count > 0) {
-								if (propertiesElem == null) {
-									propertiesElem = outDoc.CreateElement("properties");
-								}
-								foreach (ToDoProperty p in type.ToDoProperties) {
-									propertyElem = outDoc.CreateElement("property");
-									propertyElem.SetAttribute("name", ((ToDoProperty)p).Name);
-									propertyElem.SetAttribute("status", ((ToDoProperty)p).Status);
-									propertiesElem.AppendChild(propertyElem);
-								}
+
+							memberElem = CreateMemberCollectionElement("fields", type.MissingFields, type.ToDoFields, outDoc);
+							if (memberElem != null) {
+								classElem.AppendChild(memberElem);
 							}
-							if (propertiesElem != null) {
-								propertiesElem.SetAttribute("missing", type.MissingProperties.Count.ToString());
-								propertiesElem.SetAttribute("todo", type.ToDoProperties.Count.ToString());
-								classElem.AppendChild(propertiesElem);
+
+							memberElem = CreateMemberCollectionElement("constructors", type.MissingConstructors, type.ToDoConstructors, outDoc);
+							if (memberElem != null) {
+								classElem.AppendChild(memberElem);
+							}
+
+							memberElem = CreateMemberCollectionElement("nestedTypes", type.MissingNestedTypes, type.ToDoNestedTypes, outDoc);
+							if (memberElem != null) {
+								classElem.AppendChild(memberElem);
 							}
 						}
 						namespaceElem.SetAttribute("todo", ns.ToDoCount.ToString());
@@ -251,6 +233,36 @@ namespace Mono.Util.CorCompare {
 			}
 			
 			outDoc.Save(filename);
+		}
+
+		static XmlElement CreateMemberCollectionElement(string name, ArrayList missingList, ArrayList todoList, XmlDocument doc) {
+			XmlElement element = null;
+			if (missingList.Count > 0) {
+				element = doc.CreateElement(name);
+				foreach (IMissingMember missing in missingList) {
+					element.AppendChild(CreateMissingElement(missing, doc));
+				}
+			}
+			if (todoList.Count > 0) {
+				if (element == null) {
+					element = doc.CreateElement(name);
+				}
+				foreach (IMissingMember missing in todoList) {
+					element.AppendChild(CreateMissingElement(missing, doc));
+				}
+			}
+			if (element != null) {
+				element.SetAttribute("missing", missingList.Count.ToString());
+				element.SetAttribute("todo", todoList.Count.ToString());
+			}
+			return element;
+		}
+
+		static XmlElement CreateMissingElement(IMissingMember member, XmlDocument doc) {
+			XmlElement missingElement  = doc.CreateElement(member.Type);
+			missingElement.SetAttribute("name", (member.Name));
+			missingElement.SetAttribute("status", (member.Status));
+			return missingElement;
 		}
 
 		static int GetMethodCount(ArrayList methods, string className) {

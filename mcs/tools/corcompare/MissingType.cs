@@ -16,7 +16,7 @@ namespace Mono.Util.CorCompare {
 	/// 	created by - Nick
 	/// 	created on - 2/20/2002 10:43:57 PM
 	/// </remarks>
-	class MissingType 
+	class MissingType
 	{
 		// e.g. <class name="System.Byte" status="missing"/>
 		protected Type theType;

@@ -1,20 +1,13 @@
-CSC=csc.exe
-CSCFLAGS=/nologo /debug+ /debug:full 
-CORCOMPARE_SRC=CorCompare.cs \
-	ToDoProperty.cs \
-	ToDoNameSpace.cs \
-	MissingProperty.cs \
-	ToDoMethod.cs \
-	MissingMethod.cs \
-	ToDoType.cs \
-	MissingType.cs \
-	ToDoAssembly.cs
+all: linux
 
-all: CorCompare.exe
+windows: linux
 
-CorCompare.exe: $(CORCOMPARE_SRC)
-	$(CSC) $(CSCFLAGS) $(CORCOMPARE_SRC) ..\\XMLUtil.cs
+linux: CorCompare.exe
+
+CorCompare.exe:
+	../../nant/NAnt.exe linux
 	./CorCompare.exe -x cormissing.xml ../../class/lib/corlib_cmp.dll
+
 clean:
 	rm -f *.exe *.pdb *.dll
 	rm -f cormissing.xml

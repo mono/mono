@@ -18,7 +18,7 @@ namespace Mono.Util.CorCompare {
 	/// 	created by - Nick
 	/// 	created on - 2/20/2002 10:43:57 PM
 	/// </remarks>
-	class MissingProperty 
+	class MissingProperty : IMissingMember 
 	{
 		// e.g. <property name="Length" status="missing"/>
 		MemberInfo info;
@@ -44,6 +44,12 @@ namespace Mono.Util.CorCompare {
 		public virtual string Status {
 			get {
 				return "missing";
+			}
+		}
+
+		public string Type {
+			get {
+				return "property";
 			}
 		}
 

@@ -1,4 +1,4 @@
-// Mono.Util.CorCompare.MissingMethod
+// Mono.Util.CorCompare.MissingNestedType
 //
 // Author(s):
 //   Nick Drochak (ndrochak@gol.com)
@@ -7,31 +7,27 @@
 
 using System;
 using System.Reflection;
-using System.Text;
 
 namespace Mono.Util.CorCompare {
 
 	/// <summary>
-	/// 	Represents a class method that is completely missing
+	/// 	Represents a class event that is completely missing
 	/// </summary>
 	/// <remarks>
 	/// 	created by - Nick
-	/// 	created on - 2/20/2002 10:43:57 PM
+	/// 	created on - 2/24/2002 10:43:57 PM
 	/// </remarks>
-	class MissingMethod : IMissingMember 
-	{
+	class MissingNestedType : IMissingMember {
 		// e.g. <method name="Equals" status="missing"/>
 		MemberInfo mInfo;
 
-		public MissingMethod(MemberInfo info) {
+		public MissingNestedType(MemberInfo info) {
 			mInfo = info;
 		}
 
 		public string Name {
 			get {
-				string s = mInfo.ToString();
-				int index = s.IndexOf(' ');
-				return s.Substring(index + 1);
+				return mInfo.Name;
 			}
 		}
 
@@ -43,7 +39,7 @@ namespace Mono.Util.CorCompare {
 
 		public string Type {
 			get {
-				return "method";
+				return "nestedType";
 			}
 		}
 	}
