@@ -1,3 +1,9 @@
+
+Tue Jun 3 11:11:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* attribute.cs: handle custom marshalers and emit marshal info
+	for fields, too.
+
 2003-05-28  Hector E. Gomez Morales  <hgomez_36@flashmail.com>
 
 	* makefile.gnu: Added anonymous.cs to the compiler sources.

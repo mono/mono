@@ -41,6 +41,12 @@ namespace Mono.CSharp {
 		MethodImplOptions ImplOptions;
 		UnmanagedType     UnmanagedType;
 		CustomAttributeBuilder cb;
+	
+		/* non-null if named args present after Resolve () is called */
+		PropertyInfo [] prop_info_arr;
+		FieldInfo [] field_info_arr;
+		object [] field_values_arr;
+		object [] prop_values_arr;
 		
 		public Attribute (string name, ArrayList args, Location loc)
 		{
@@ -384,10 +390,10 @@ namespace Mono.CSharp {
 
 			try {
 				if (named_args.Count > 0) {
-					PropertyInfo [] prop_info_arr = new PropertyInfo [prop_infos.Count];
-					FieldInfo [] field_info_arr = new FieldInfo [field_infos.Count];
-					object [] field_values_arr = new object [field_values.Count];
-					object [] prop_values_arr = new object [prop_values.Count];
+					prop_info_arr = new PropertyInfo [prop_infos.Count];
+					field_info_arr = new FieldInfo [field_infos.Count];
+					field_values_arr = new object [field_values.Count];
+					prop_values_arr = new object [prop_values.Count];
 
 					field_infos.CopyTo  (field_info_arr, 0);
 					field_values.CopyTo (field_values_arr, 0);
@@ -723,6 +729,42 @@ namespace Mono.CSharp {
 			return ((StringConstant) arg.Expr).Value;
 		}
 
+		static object GetFieldValue (Attribute a, string name) {
+			int i;
+			if (a.field_info_arr == null)
+				return null;
+			i = 0;
+			foreach (FieldInfo fi in a.field_info_arr) {
+				if (fi.Name == name)
+					return a.field_values_arr [i];
+				i++;
+			}
+			return null;
+		}
+
+		static UnmanagedMarshal GetMarshal (Attribute a) {
+			UnmanagedMarshal marshal;
+
+			if (a.UnmanagedType == UnmanagedType.CustomMarshaler) {
+				MethodInfo define_custom = typeof (UnmanagedMarshal).GetMethod ("DefineCustom", BindingFlags.Static | BindingFlags.Public);
+				if (define_custom == null) {
+					return null;
+				}
+				object[] args = new object [4];
+				args [0] = GetFieldValue (a, "MarshalTypeRef");
+				args [1] = GetFieldValue (a, "MarshalCookie");
+				args [2] = GetFieldValue (a, "MarshalType");
+				args [3] = Guid.Empty;
+				marshal = (UnmanagedMarshal) define_custom.Invoke (null, args);
+			/*
+			 * need to special case other special marshal types
+			 */
+			} else {
+				marshal = UnmanagedMarshal.DefineUnmanagedMarshal (a.UnmanagedType);
+			}
+			return marshal;
+		}
+
 		//
 		// Applies the attributes to the `builder'.
 		//
@@ -800,10 +842,14 @@ namespace Mono.CSharp {
 					} else if (kind is ParameterBuilder) {
 
 						if (attr_type == TypeManager.marshal_as_attr_type) {
-							UnmanagedMarshal marshal =
-								UnmanagedMarshal.DefineUnmanagedMarshal (a.UnmanagedType);
-							
-							((ParameterBuilder) builder).SetMarshal (marshal);
+							UnmanagedMarshal marshal = GetMarshal (a);
+							if (marshal == null) {
+								Report.Warning (-24, loc,
+									"The Microsoft Runtime cannot set this marshal info. " +
+									"Please use the Mono runtime instead.");
+							} else {
+								((ParameterBuilder) builder).SetMarshal (marshal);
+							}
 						} else { 
 
 							try {
@@ -880,7 +926,18 @@ namespace Mono.CSharp {
 					} else if (kind is ModuleBuilder) {
 						((ModuleBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is FieldBuilder) {
-						((FieldBuilder) builder).SetCustomAttribute (cb);
+						if (attr_type == TypeManager.marshal_as_attr_type) {
+							UnmanagedMarshal marshal = GetMarshal (a);
+							if (marshal == null) {
+								Report.Warning (-24, loc,
+									"The Microsoft Runtime cannot set this marshal info. " +
+									"Please use the Mono runtime instead.");
+							} else {
+								((ParameterBuilder) builder).SetMarshal (marshal);
+							}
+						} else { 
+							((FieldBuilder) builder).SetCustomAttribute (cb);
+						}
 					} else
 						throw new Exception ("Unknown kind: " + kind);
 
