@@ -24,6 +24,7 @@ namespace System.Xml.Schema
 		public XmlSchemaType()
 		{
 			final = XmlSchemaDerivationMethod.None;
+			qName = XmlQualifiedName.Empty;
 		}
 
 		#region Attributes

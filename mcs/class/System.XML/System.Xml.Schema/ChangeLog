@@ -1,3 +1,17 @@
+2002-05-25  Dwivedi, Ajay kumar <adwiv@yahoo.com>
+	* BUGS.txt: New file to keep track of bugs
+
+	* ALL: All classes are initialized exactly as in .NET except
+	       1. inclusion of language attribute in schema
+	       2. ComplexContent's Particle is initialized to null whereas .NET 
+	          to some internal implementation. IMO Null is more appropriate
+
+	* ALL: Changed the Compile methods to return the count of errors.
+
+	* ALL: Complile methods are almost complete. Pass 1453 of 3061 tests.
+	       This number should shoot up if we write a parser to read the
+	       Schema instead of using reflection (which is slower too)
+
 2002-05-04  Dwivedi, Ajay kumar <adwiv@yahoo.com>
 	* XmlSchemaUtil.cs: New file added. 
 	

@@ -14,6 +14,7 @@ namespace System.Xml.Schema
 		private string name;
 		private XmlSchemaGroupBase particle;
 		private XmlQualifiedName qualifiedName;
+		private int errorCount;
 
 		public XmlSchemaGroup()
 		{
@@ -41,16 +42,54 @@ namespace System.Xml.Schema
 			get{ return qualifiedName;}
 		}
 
+		// 1. name must be present
 		[MonoTODO]
-		internal bool Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
 		{
-			return false;
+			if(Name == null)
+				error(h,"Required attribute name must be present");
+			else if(!XmlSchemaUtil.CheckNCName(this.name)) 
+				error(h,"attribute name must be NCName");
+			else
+				qualifiedName = new XmlQualifiedName(Name,info.targetNS);
+			
+			if(Particle == null)
+			{
+				error(h,"Particle is required");
+			}
+			else if(Particle is XmlSchemaChoice)
+			{
+				errorCount += ((XmlSchemaChoice)Particle).Compile(h,info);
+			}
+			else if(Particle is XmlSchemaSequence)
+			{
+				errorCount += ((XmlSchemaSequence)Particle).Compile(h,info);
+			}
+			else if(Particle is XmlSchemaAll)
+			{
+				errorCount += ((XmlSchemaAll)Particle).Compile(h,info);
+			}
+			else
+			{
+				error(h,"only all,choice or sequence are allowed");
+			}
+
+			if(this.Id != null && !XmlSchemaUtil.CheckID(Id))
+				error(h, "id must be a valid ID");
+
+			return errorCount;
 		}
 		
 		[MonoTODO]
-		internal bool Validate(ValidationEventHandler h)
+		internal int Validate(ValidationEventHandler h)
 		{
-			return false;
+			return errorCount;
+		}
+		
+		internal void error(ValidationEventHandler handle,string message)
+		{
+			errorCount++;
+			ValidationHandler.RaiseValidationError(handle,this,message);
 		}
 	}
 }

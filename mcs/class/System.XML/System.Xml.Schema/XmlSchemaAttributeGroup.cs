@@ -16,12 +16,11 @@ namespace System.Xml.Schema
 		private string name;
 		private XmlSchemaAttributeGroup redefined;
 		private XmlQualifiedName qualifiedName;
+		private int errorCount;
 
 		public XmlSchemaAttributeGroup()
 		{
 			attributes  = new XmlSchemaObjectCollection();
-			//FIXME:
-			redefined  = this;
 		}
 
 		[XmlElement("anyAttribute",Namespace="http://www.w3.org/2001/XMLSchema")]
@@ -58,16 +57,58 @@ namespace System.Xml.Schema
 			get{ return qualifiedName;}
 		}
 
+		/// <remarks>
+		/// An Attribute group can only be defined as a child of XmlSchema or in XmlSchemaRedefine.
+		/// The other attributeGroup has type XmlSchemaAttributeGroupRef.
+		///  1. Name must be present
+		/// </remarks>
 		[MonoTODO]
-		internal bool Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
 		{
-			return false;
+			errorCount = 0;
+
+			if(this.Name == null) //1
+				error(h,"Name is required in top level simpletype");
+			else if(!XmlSchemaUtil.CheckNCName(this.Name)) // b.1.2
+				error(h,"name attribute of a simpleType must be NCName");
+			else
+				this.qualifiedName = new XmlQualifiedName(this.Name,info.targetNS);
+			
+			if(this.AnyAttribute != null)
+			{
+				errorCount += this.AnyAttribute.Compile(h,info);
+			}
+			
+			foreach(XmlSchemaObject obj in Attributes)
+			{
+				if(obj is XmlSchemaAttribute)
+				{
+					XmlSchemaAttribute attr = (XmlSchemaAttribute) obj;
+					errorCount += attr.Compile(h, info);
+				}
+				else if(obj is XmlSchemaAttributeGroupRef)
+				{
+					XmlSchemaAttributeGroupRef gref = (XmlSchemaAttributeGroupRef) obj;
+					errorCount += gref.Compile(h, info);
+				}
+				else
+				{
+					error(h,"invalid type of object in Attributes property");
+				}
+			}
+			return errorCount;
 		}
 		
 		[MonoTODO]
-		internal bool Validate(ValidationEventHandler h)
+		internal int Validate(ValidationEventHandler h)
 		{
-			return false;
+			return errorCount;
+		}
+				
+		internal void error(ValidationEventHandler handle,string message)
+		{
+			this.errorCount++;
+			ValidationHandler.RaiseValidationError(handle,this,message);
 		}
 	}
 }

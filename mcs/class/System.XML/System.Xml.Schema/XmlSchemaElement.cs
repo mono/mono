@@ -29,6 +29,9 @@ namespace System.Xml.Schema
 		private XmlSchemaType schemaType;
 		private XmlQualifiedName schemaTypeName;
 		private XmlQualifiedName substitutionGroup;
+		internal bool parentIsSchema = false;
+		private int errorCount;
+		private string targetNamespace;
 
 		public XmlSchemaElement()
 		{
@@ -36,6 +39,10 @@ namespace System.Xml.Schema
 			final = XmlSchemaDerivationMethod.None;
 			constraints = new XmlSchemaObjectCollection();
 			qName = XmlQualifiedName.Empty;
+			refName = XmlQualifiedName.Empty;
+			schemaTypeName = XmlQualifiedName.Empty;
+			substitutionGroup = XmlQualifiedName.Empty;
+
 			substitutionGroup = XmlQualifiedName.Empty;
 		}
 
@@ -175,16 +182,207 @@ namespace System.Xml.Schema
 
 		#endregion
 
+		/// <remarks>
+		/// a) If Element has parent as schema:
+		///		1. name must be present and of type NCName.
+		///		2. ref must be absent
+		///		3. form must be absent
+		///		4. minOccurs must be absent
+		///		5. maxOccurs must be absent
+		///	b) If Element has parent is not schema and ref is absent
+		///		1. name must be present and of type NCName.
+		///		2. if form equals qualified or form is absent and schema's formdefault is qualifed,
+		///		   targetNamespace is schema's targetnamespace else empty.
+		///		3. type and either <simpleType> or <complexType> are mutually exclusive
+		///		4. default and fixed must not both be present.
+		///		5. substitutiongroup must be absent
+		///		6. final must be absent
+		///		7. abstract must be absent
+		///	c) if the parent is not schema and ref is set
+		///		1. name must not be present
+		///		2. all of <simpleType>,<complexType>,  <key>, <keyref>, <unique>, nillable, 
+		///		   default, fixed, form, block and type,  must be absent.
+		///	    3. substitutiongroup is prohibited
+		///		4. final is prohibited
+		///		5. abstract is prohibited
+		///		6. default and fixed must not both be present.(Actually both are absent)
+		/// </remarks>	
 		[MonoTODO]
-		internal bool Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
 		{
-			return false;
+			
+			if(this.defaultValue != null && this.fixedValue != null)
+				error(h,"both default and fixed can't be present");
+
+			if(parentIsSchema)
+			{
+				if(this.refName != null && !RefName.IsEmpty)
+					error(h,"ref must be absent");
+				
+				if(this.name == null)	//b1
+					error(h,"Required attribute name must be present");
+				else if(!XmlSchemaUtil.CheckNCName(this.name)) // b1.2
+					error(h,"attribute name must be NCName");
+				else
+					this.qName = new XmlQualifiedName(this.name, info.targetNS);
+				
+				if(form != XmlSchemaForm.None)
+					error(h,"form must be absent");
+				if(MinOccursString != null)
+					error(h,"minOccurs must be absent");
+				if(MaxOccursString != null)
+					error(h,"maxOccurs must be absent");
+
+				
+				if(final == XmlSchemaDerivationMethod.All)
+					finalResolved = XmlSchemaDerivationMethod.All;
+				else if(final == XmlSchemaDerivationMethod.None)
+					finalResolved = info.blockDefault & (XmlSchemaDerivationMethod.Extension | XmlSchemaDerivationMethod.Restriction);
+				else 
+					finalResolved = final & (XmlSchemaDerivationMethod.Extension | XmlSchemaDerivationMethod.Restriction);
+
+				if(block == XmlSchemaDerivationMethod.All)
+					blockResolved = XmlSchemaDerivationMethod.All;
+				else if(block == XmlSchemaDerivationMethod.None)
+					blockResolved = info.blockDefault & (XmlSchemaDerivationMethod.Extension | 
+						XmlSchemaDerivationMethod.Restriction | XmlSchemaDerivationMethod.Substitution);
+				else 
+					blockResolved = block & (XmlSchemaDerivationMethod.Extension | 
+						XmlSchemaDerivationMethod.Restriction | XmlSchemaDerivationMethod.Substitution);
+
+				if(schemaType != null && schemaTypeName != null && !schemaTypeName.IsEmpty)
+				{
+					error(h,"both schemaType and content can't be present");
+				}
+				else
+				{
+					if(schemaType != null)
+					{
+						if(schemaType is XmlSchemaSimpleType)
+							errorCount += ((XmlSchemaSimpleType)schemaType).Compile(h,info);
+						else if(schemaType is XmlSchemaComplexType)
+							errorCount += ((XmlSchemaComplexType)schemaType).Compile(h,info);
+						else
+							error(h,"only simpletype or complextype is allowed");
+					}
+					else
+					{
+						if(schemaTypeName == null || schemaTypeName.IsEmpty)
+							error(h,"one of schemaType or schemaTypeName must be present");
+					}
+				}
+
+				foreach(XmlSchemaObject obj in constraints)
+				{
+					if(obj is XmlSchemaUnique)
+						((XmlSchemaUnique)obj).Compile(h,info);
+					else if(obj is XmlSchemaKey)
+						((XmlSchemaKey)obj).Compile(h,info);
+					else if(obj is XmlSchemaKeyref)
+						((XmlSchemaKeyref)obj).Compile(h,info);
+				}
+			}
+			else
+			{
+				if(substitutionGroup != null && !substitutionGroup.IsEmpty)
+					error(h,"substitutionGroup must be absent");
+				if(final != XmlSchemaDerivationMethod.None)
+					error(h,"final must be absent");
+				if(isAbstract)
+					error(h,"abstract must be absent");
+
+				if(refName == null || RefName.IsEmpty)
+				{
+					if(form == XmlSchemaForm.Qualified || (form == XmlSchemaForm.None && info.formDefault == XmlSchemaForm.Qualified))
+						this.targetNamespace = info.targetNS;
+					else
+						this.targetNamespace = string.Empty;
+
+					if(this.name == null)	//b1
+						error(h,"Required attribute name must be present");
+					else if(!XmlSchemaUtil.CheckNCName(this.name)) // b1.2
+						error(h,"attribute name must be NCName");
+					else
+						this.qName = new XmlQualifiedName(this.name, this.targetNamespace);
+				
+					if(block == XmlSchemaDerivationMethod.All)
+						blockResolved = XmlSchemaDerivationMethod.All;
+					else if(block == XmlSchemaDerivationMethod.None)
+						blockResolved = info.blockDefault & (XmlSchemaDerivationMethod.Extension | 
+							XmlSchemaDerivationMethod.Restriction | XmlSchemaDerivationMethod.Substitution);
+					else 
+						blockResolved = block & (XmlSchemaDerivationMethod.Extension | 
+							XmlSchemaDerivationMethod.Restriction | XmlSchemaDerivationMethod.Substitution);
+
+					if(schemaType != null && schemaTypeName != null && !schemaTypeName.IsEmpty)
+					{
+						error(h,"both schemaType and content can't be present");
+					}
+					else
+					{
+						if(schemaType != null)
+						{
+							if(schemaType is XmlSchemaSimpleType)
+								errorCount += ((XmlSchemaSimpleType)schemaType).Compile(h,info);
+							else if(schemaType is XmlSchemaComplexType)
+								errorCount += ((XmlSchemaComplexType)schemaType).Compile(h,info);
+							else
+								error(h,"only simpletype or complextype is allowed");
+						}
+						else
+						{
+							if(schemaTypeName == null || schemaTypeName.IsEmpty)
+								error(h,"one of schemaType or schemaTypeName must be present");
+						}
+					}
+
+					foreach(XmlSchemaObject obj in constraints)
+					{
+						if(obj is XmlSchemaUnique)
+							((XmlSchemaUnique)obj).Compile(h,info);
+						else if(obj is XmlSchemaKey)
+							((XmlSchemaKey)obj).Compile(h,info);
+						else if(obj is XmlSchemaKeyref)
+							((XmlSchemaKeyref)obj).Compile(h,info);
+					}
+				}
+				else
+				{
+					if(name != null)
+						error(h,"name must not be present when ref is present");
+					if(Constraints.Count != 0)
+						error(h,"key, keyref and unique must be absent");
+					if(isNillable)
+						error(h,"nillable must be absent");
+					if(defaultValue != null)
+						error(h,"default must be absent");
+					if(fixedValue != null)
+						error(h,"fixed must be null");
+					if(form != XmlSchemaForm.None)
+						error(h,"form must be absent");
+					if(block != XmlSchemaDerivationMethod.None)
+						error(h,"block must be absent");
+					if(schemaTypeName != null && !schemaTypeName.IsEmpty)
+						error(h,"type must be absent");
+					if(SchemaType != null)
+						error(h,"simpleType or complexType must be absent");
+				}
+			}
+			if(this.Id != null && !XmlSchemaUtil.CheckID(Id))
+				error(h, "id must be a valid ID");
+			return errorCount;
 		}
 		
 		[MonoTODO]
-		internal bool Validate(ValidationEventHandler h)
+		internal int Validate(ValidationEventHandler h)
 		{
-			return false;
+			return errorCount;
+		}
+
+		internal void error(ValidationEventHandler handle,string message)
+		{
+			errorCount++;
+			ValidationHandler.RaiseValidationError(handle,this,message);
 		}
 	}
 }

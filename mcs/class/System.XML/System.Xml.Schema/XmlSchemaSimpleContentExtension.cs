@@ -15,6 +15,7 @@ namespace System.Xml.Schema
 		private XmlSchemaAnyAttribute any;
 		private XmlSchemaObjectCollection attributes;
 		private XmlQualifiedName baseTypeName;
+		private int errorCount=0;
 
 		public XmlSchemaSimpleContentExtension()
 		{
@@ -41,6 +42,53 @@ namespace System.Xml.Schema
 		{
 			get{ return  baseTypeName; }
 			set{ baseTypeName = value; }
+		}
+		///<remarks>
+		/// 1. Base must be present and a QName
+		///</remarks>
+		[MonoTODO]
+		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		{
+			if(BaseTypeName == null || BaseTypeName.IsEmpty)
+			{
+				error(h, "base must be present and a QName");
+			}
+			
+			if(this.AnyAttribute != null)
+			{
+				AnyAttribute.Compile(h,info);
+			}
+
+			foreach(XmlSchemaObject obj in Attributes)
+			{
+				if(obj is XmlSchemaAttribute)
+				{
+					XmlSchemaAttribute attr = (XmlSchemaAttribute) obj;
+					attr.Compile(h,info);
+				}
+				else if(obj is XmlSchemaAttributeGroup)
+				{
+					XmlSchemaAttributeGroup atgrp = (XmlSchemaAttributeGroup) obj;
+					atgrp.Compile(h,info);
+				}
+				else
+					error(h,"object is not valid in this place");
+			}
+			if(this.Id != null && !XmlSchemaUtil.CheckID(Id))
+				error(h, "id must be a valid ID");
+
+			return errorCount;
+		}
+		
+		[MonoTODO]
+		internal int Validate(ValidationEventHandler h)
+		{
+			return errorCount;
+		}
+
+		internal void error(ValidationEventHandler handle,string message)
+		{
+			ValidationHandler.RaiseValidationError(handle,this,message);
 		}
 	}
 }

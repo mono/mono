@@ -15,6 +15,7 @@ namespace System.Xml.Schema
 		private string pub;
 		private string system;
 		private XmlQualifiedName qualifiedName;
+		private int errorCount;
 
 		public XmlSchemaNotation()
 		{
@@ -44,16 +45,42 @@ namespace System.Xml.Schema
 			get{ return qualifiedName;}
 		}
 
+		// 1. name and public must be present
+		// public and system must be anyURI
 		[MonoTODO]
-		internal bool Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
 		{
-			return false;
+			if(Name == null)
+				error(h,"Required attribute name must be present");
+			else if(!XmlSchemaUtil.CheckNCName(this.name)) 
+				error(h,"attribute name must be NCName");
+			else
+				qualifiedName = new XmlQualifiedName(Name,info.targetNS);
+
+			if(Public==null||Public == "")
+				error(h,"public must be present");
+			else if(!XmlSchemaUtil.CheckAnyUri(Public))
+				error(h,"public must be anyURI");
+
+			if(system != null && XmlSchemaUtil.CheckAnyUri(system))
+				error(h,"system must be anyURI");
+
+			if(this.Id != null && !XmlSchemaUtil.CheckID(Id))
+				error(h, "id must be a valid ID");
+
+			return errorCount;
 		}
 		
 		[MonoTODO]
-		internal bool Validate(ValidationEventHandler h)
+		internal int Validate(ValidationEventHandler h)
 		{
-			return false;
+			return errorCount;
+		}
+				
+		internal void error(ValidationEventHandler handle,string message)
+		{
+			errorCount++;
+			ValidationHandler.RaiseValidationError(handle,this,message);
 		}
 	}
 }

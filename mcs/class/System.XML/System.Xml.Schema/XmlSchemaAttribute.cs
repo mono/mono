@@ -24,8 +24,7 @@ namespace System.Xml.Schema
 		private XmlSchemaUse use;
 		//Compilation fields
 		internal bool parentIsSchema = false;
-		internal XmlSchema schema = null;
-		internal bool errorOccured = false;
+		internal int errorCount;
 		
 		public XmlSchemaAttribute()
 		{
@@ -146,13 +145,28 @@ namespace System.Xml.Schema
 		///		14. name must not be xmlns
 		///		15. Targetnamespace must not be xsi. This implies the target namespace of schema can't be xsi if toplevel attributes are used.
 		///		16. *Exception to rule 15* inbuilt attributes: xsi:nil, xsi:type, xsi:schemaLocation, xsi: noNamespaceSchemaLocation
-		///	b) *TODO*: If the parent is complextype and ref is not set
-		///	c) *TODO*: if the parent is not schema and ref is set
+		///	b) If the parent is complextype and ref is not set
+		///		1. name must be present and of type NCName.
+		///		2. type and <simpleType> must not both be present.
+		///		3. default and fixed must not both be present. 
+		///     4. If default and use are both present, use must have the ·actual value· optional.
+		///		5. name must not be xmlns
+		///		6. Targetnamespace must not be xsi.
+		///		7. *Exception to rule 15* inbuilt attributes: xsi:nil, xsi:type, xsi:schemaLocation, xsi: noNamespaceSchemaLocation
+		///		8. If form has actual value qualified or the schema's formdefault is qualified, targetnamespace
+		///		   is same as schema's target namespace, otherwise absent.
+		///	c) if the parent is not schema and ref is set
+		///		1. name must not be present
+		///		2. all of <simpleType>, form and type must be absent. 
+		///		3. default and fixed must not both be present. 
+		///     4. If default and use are both present, use must have the ·actual value· optional.
 		/// </remarks>
 		[MonoTODO]
 		//FIXME: Should we set a property to null if an error occurs? Or should we stop the validation?
-		internal bool Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
 		{
+			errorCount = 0;
+			
 			if(parentIsSchema)//a
 			{
 				if(this.refName!= null && !this.refName.IsEmpty) // a.1
@@ -164,18 +178,45 @@ namespace System.Xml.Schema
 				if(this.use != XmlSchemaUse.None)		// a.3
 					error(h,"use must be absent in the top level <attribute>");
 
-				if(this.name == null)	//a.4
-					error(h,"name must be present if attribute has schema as its parent");
-				else if(!XmlSchemaUtil.CheckNCName(this.name)) // a.4.2
+				// TODO: a.10, a.11, a.12, a.13
+				CompileCommon(h,info, true);
+			}
+			else // local
+			{
+				if(this.refName == null || this.refName.IsEmpty)
+				{
+					//TODO: b.8
+					CompileCommon(h,info, true);
+				}
+				else
+				{
+					if(this.name != null)
+						error(h,"name must be absent if ref is present");
+					if(this.form != XmlSchemaForm.None)
+						error(h,"form must be absent if ref is present");
+					if(this.schemaType != null)
+						error(h,"simpletype must be absent if ref is present");
+					if(this.schemaTypeName != null && !this.schemaTypeName.IsEmpty)
+						error(h,"type must be absent if ref is present");
+					CompileCommon(h,info,false);
+				}
+			}
+
+			return errorCount;
+		}
+		
+		private void CompileCommon(ValidationEventHandler h, XmlSchemaInfo info, bool refIsNotPresent)
+		{
+			if(refIsNotPresent)
+			{
+				if(this.name == null)	//a.4, b.1, 
+					error(h,"Required attribute name must be present");
+				else if(!XmlSchemaUtil.CheckNCName(this.name)) // a.4.2, b1.2
 					error(h,"attribute name must be NCName");
-				else if(this.name == "xmlns") // a.14 
+				else if(this.name == "xmlns") // a.14 , b5
 					error(h,"attribute name can't be xmlns");
 				else
 					this.qualifiedName = new XmlQualifiedName(this.name, info.targetNS);	
-	
-				// TODO: a.10, a.11, a.12, a.13
-				if(this.defaultValue != null && this.fixedValue != null) // a.6
-					error(h,"default and fixed must not both be present in an Attribute");
 
 				if(this.schemaType != null)
 				{
@@ -183,35 +224,40 @@ namespace System.Xml.Schema
 						error(h,"attribute can't have both a type and <simpleType> content");
 					else 
 					{
-						this.SchemaType.islocal = true;
-						this.schemaType.Compile(h,info); 
+						errorCount += this.schemaType.Compile(h,info); 
 					}
 				}
-
-				if(info.targetNS == XmlSchema.InstanceNamespace && this.name != "nil" && this.name != "type" 
-					&& this.name != "schemaLocation" && this.name != "noNamespaceSchemaLocation") // a.15, a.16
-					error(h,"targetNamespace can't be " + XmlSchema.InstanceNamespace);
-
 			}
-//			TODO: 
-//			else
-//			{
-//			}
-			if(!XmlSchemaUtil.CheckID(this.Id))
-				error(h,"id must be a valid ID");
+			else
+			{
+				//	redundant since we call function after check
+				//if(this.refName == null || this.refName.IsEmpty) 
+				//	error(h,"refname must be present");
+				this.qualifiedName = this.refName;
+			}
+			if(info.targetNS == XmlSchema.InstanceNamespace && this.name != "nil" && this.name != "type" 
+				&& this.name != "schemaLocation" && this.name != "noNamespaceSchemaLocation") // a.15, a.16
+				error(h,"targetNamespace can't be " + XmlSchema.InstanceNamespace);
 
-			return !errorOccured;
+			if(this.defaultValue != null && this.fixedValue != null) // a.6, b.3, c.3
+				error(h,"default and fixed must not both be present in an Attribute");
+
+			if(this.defaultValue != null && this.use != XmlSchemaUse.None && this.use != XmlSchemaUse.Optional)
+				error(h,"if default is present, use must be optional");
+			
+			if(this.Id != null && !XmlSchemaUtil.CheckID(Id))
+				error(h,"id attribute must be a valid ID");
 		}
-		
+
 		[MonoTODO]
-		internal bool Validate(ValidationEventHandler h)
+		internal int Validate(ValidationEventHandler h)
 		{
-			return false;
+			return errorCount;
 		}
 		
 		internal void error(ValidationEventHandler handle,string message)
 		{
-			this.errorOccured = true;
+			this.errorCount++;
 			ValidationHandler.RaiseValidationError(handle,this,message);
 		}
 	}

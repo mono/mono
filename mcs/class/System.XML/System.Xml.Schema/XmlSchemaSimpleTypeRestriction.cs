@@ -15,7 +15,7 @@ namespace System.Xml.Schema
 		private XmlSchemaSimpleType baseType;
 		private XmlQualifiedName baseTypeName;
 		private XmlSchemaObjectCollection facets;
-		bool errorOccured;
+		private int errorCount;
 
 		public XmlSchemaSimpleTypeRestriction()
 		{
@@ -60,33 +60,34 @@ namespace System.Xml.Schema
 		/// 3. base must be a valid QName *NO CHECK REQUIRED*
 		/// </remarks>
 		[MonoTODO]
-		internal bool Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
 		{
+			errorCount = 0;
+
 			if(this.baseType != null && !this.BaseTypeName.IsEmpty)
 				error(h, "both base and simpletype can't be set");
 			if(this.baseType == null && this.BaseTypeName.IsEmpty)
 				error(h, "one of basetype or simpletype must be present");
 			if(this.baseType != null)
 			{
-				this.baseType.islocal = true;
-				this.baseType.Compile(h,info);
+				errorCount += this.baseType.Compile(h,info);
 			}
 
-			if(!XmlSchemaUtil.CheckID(this.Id))
+			if(this.Id != null && !XmlSchemaUtil.CheckID(this.Id))
 				error(h,"id must be a valid ID");
 
-			return !errorOccured;
+			return errorCount;
 		}
 		
 		[MonoTODO]
-		internal bool Validate(ValidationEventHandler h)
+		internal int Validate(ValidationEventHandler h)
 		{
-			return false;
+			return errorCount;
 		}
 
 		internal void error(ValidationEventHandler handle,string message)
 		{
-			this.errorOccured = true;
+			this.errorCount++;
 			ValidationHandler.RaiseValidationError(handle,this,message);
 		}
 	}

@@ -15,6 +15,7 @@ namespace System.Xml.Schema
 		private string name;
 		private XmlQualifiedName qName;
 		private XmlSchemaXPath selector;
+		private int errorCount = 0;
 
 		public XmlSchemaIdentityConstraint()
 		{
@@ -46,6 +47,38 @@ namespace System.Xml.Schema
 		public XmlQualifiedName QualifiedName 
 		{
 			get{ return  qName; }
+		}
+		/// <remarks>
+		/// 1. name must be present
+		/// 2. selector and field must be present
+		/// </remarks>
+		[MonoTODO]
+		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		{
+			if(Name == null)
+				error(h,"Required attribute name must be present");
+			else if(!XmlSchemaUtil.CheckNCName(this.name)) 
+				error(h,"attribute name must be NCName");
+			else
+				this.qName = new XmlQualifiedName(Name,info.targetNS);
+
+			//TODO: Compile Xpath. 
+			if(Selector == null)
+				error(h,"selector must be present");
+		
+			if(Fields.Count == 0)
+				error(h,"atleast one field value must be present");
+
+			if(this.Id != null && !XmlSchemaUtil.CheckID(Id))
+				error(h, "id must be a valid ID");
+
+			return errorCount;
+		}
+
+		internal void error(ValidationEventHandler handle, string message)
+		{
+			errorCount++;
+			ValidationHandler.RaiseValidationError(handle, this, message);
 		}
 	}
 }

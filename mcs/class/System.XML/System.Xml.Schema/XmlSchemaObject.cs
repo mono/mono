@@ -15,7 +15,7 @@ namespace System.Xml.Schema
 		private int linePosition;
 		private string sourceUri;
 		private XmlSerializerNamespaces namespaces;
-		
+
 		protected XmlSchemaObject()
 		{
 			namespaces = new XmlSerializerNamespaces();

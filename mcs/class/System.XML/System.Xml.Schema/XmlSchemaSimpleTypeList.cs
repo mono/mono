@@ -14,10 +14,12 @@ namespace System.Xml.Schema
 	{
 		private XmlSchemaSimpleType itemType;
 		private XmlQualifiedName itemTypeName;
-		private bool errorOccured;
+		private int errorCount;
 
 		public XmlSchemaSimpleTypeList()
-		{}
+		{
+			this.ItemTypeName = XmlQualifiedName.Empty;
+		}
 
 		[XmlElement("simpleType",Namespace="http://www.w3.org/2001/XMLSchema")]
 		public XmlSchemaSimpleType ItemType 
@@ -26,7 +28,6 @@ namespace System.Xml.Schema
 			set
 			{
 				itemType = value;
-				itemTypeName = null;
 			}
 		}
 
@@ -37,7 +38,6 @@ namespace System.Xml.Schema
 			set
 			{
 				itemTypeName = value;
-				itemType = null;
 			}
 		}
 		/// <remarks>
@@ -45,33 +45,34 @@ namespace System.Xml.Schema
 		/// 2. id must be of type ID
 		/// </remarks>
 		[MonoTODO]
-		internal bool Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
 		{
+			errorCount = 0;
+
 			if(this.itemType != null && !this.ItemTypeName.IsEmpty)
 				error(h, "both itemType and simpletype can't be present");
 			if(this.itemType == null && this.ItemTypeName.IsEmpty)
 				error(h, "one of itemType or simpletype must be present");
 			if(this.itemType != null)
 			{
-				this.itemType.islocal = true;
-				this.itemType.Compile(h,info);
+				errorCount += this.itemType.Compile(h,info);
 			}
 
-			if(!XmlSchemaUtil.CheckID(this.Id))
+			if(this.Id != null && !XmlSchemaUtil.CheckID(this.Id))
 				error(h,"id must be a valid ID");
 
-			return !errorOccured;
+			return errorCount;
 		}
 		
 		[MonoTODO]
-		internal bool Validate(ValidationEventHandler h)
+		internal int Validate(ValidationEventHandler h)
 		{
-			return false;
+			return errorCount;
 		}
 		
 		internal void error(ValidationEventHandler handle,string message)
 		{
-			this.errorOccured = true;
+			this.errorCount++;
 			ValidationHandler.RaiseValidationError(handle,this,message);
 		}
 	}

@@ -11,6 +11,7 @@ namespace System.Xml.Schema
 	public class XmlSchemaSequence : XmlSchemaGroupBase
 	{
 		private XmlSchemaObjectCollection items;
+		private int errorCount=0;
 		public XmlSchemaSequence()
 		{
 			items = new XmlSchemaObjectCollection();
@@ -24,6 +25,45 @@ namespace System.Xml.Schema
 		public override XmlSchemaObjectCollection Items 
 		{
 			get{ return items; }
+		}
+		[MonoTODO]
+		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		{
+			foreach(XmlSchemaObject obj in Items)
+			{
+				if(obj is XmlSchemaElement)
+				{
+					errorCount += ((XmlSchemaElement)obj).Compile(h,info);
+				}
+				else if(obj is XmlSchemaGroupRef)
+				{
+					errorCount += ((XmlSchemaGroupRef)obj).Compile(h,info);
+				}
+				else if(obj is XmlSchemaChoice)
+				{
+					errorCount += ((XmlSchemaChoice)obj).Compile(h,info);
+				}
+				else if(obj is XmlSchemaSequence)
+				{
+					errorCount += ((XmlSchemaSequence)obj).Compile(h,info);
+				}
+				else if(obj is XmlSchemaAny)
+				{
+					errorCount += ((XmlSchemaAny)obj).Compile(h,info);
+				}
+			}
+			return errorCount;
+		}
+		
+		[MonoTODO]
+		internal int Validate(ValidationEventHandler h)
+		{
+			return errorCount;
+		}
+
+		internal void error(ValidationEventHandler handle,string message)
+		{
+			ValidationHandler.RaiseValidationError(handle,this,message);
 		}
 	}
 }

@@ -13,7 +13,7 @@ namespace System.Xml.Schema
 	{
 		private XmlSchemaObjectCollection baseTypes;
 		private XmlQualifiedName[] memberTypes;
-		private bool errorOccured;
+		private int errorCount;
 
 		public XmlSchemaSimpleTypeUnion()
 		{
@@ -37,9 +37,15 @@ namespace System.Xml.Schema
 		/// 2. id must be a valid ID
 		/// </remarks>
 		[MonoTODO]
-		internal bool Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
 		{
-			if(BaseTypes.Count + MemberTypes.Length == 0)
+			errorCount = 0;
+
+			int count = BaseTypes.Count;
+			if(MemberTypes != null)
+				count += MemberTypes.Length;
+
+			if(count == 0)
 				error(h, "Atleast one simpletype or membertype must be present");
 
 			foreach(XmlSchemaObject obj in baseTypes)
@@ -47,42 +53,47 @@ namespace System.Xml.Schema
 				if(obj != null && obj is XmlSchemaSimpleType)
 				{
 					XmlSchemaSimpleType stype = (XmlSchemaSimpleType) obj;
-					stype.Compile(h,info);
+					errorCount += stype.Compile(h,info);
 				}
 				else
 				{
 					error(h, "baseTypes can't have objects other than a simpletype");
 				}
 			}
-			for(int i=0; i< memberTypes.Length; i++)
+			
+			if(memberTypes!=null)
 			{
-				if(memberTypes[i] == null)
+				for(int i=0; i< memberTypes.Length; i++)
 				{
-					warn(h,"memberTypes should not have a null value");
-					memberTypes[i] = XmlQualifiedName.Empty;
+					if(memberTypes[i] == null)
+					{
+						warn(h,"memberTypes should not have a null value");
+						memberTypes[i] = XmlQualifiedName.Empty;
+					}
 				}
 			}
-			if(!XmlSchemaUtil.CheckID(this.Id))
+
+			if(this.Id != null && !XmlSchemaUtil.CheckID(this.Id))
 				error(h,"id must be a valid ID");
 
-			return !errorOccured;
+			return errorCount;
 		}
 		
 		[MonoTODO]
-		internal bool Validate(ValidationEventHandler h)
+		internal int Validate(ValidationEventHandler h)
 		{
-			return false;
+			return errorCount;
 		}
 		
 		internal void error(ValidationEventHandler handle,string message)
 		{
-			this.errorOccured = true;
+			this.errorCount++;
 			ValidationHandler.RaiseValidationError(handle,this,message);
 		}
 
 		internal void warn(ValidationEventHandler handle,string message)
 		{
-			this.errorOccured = true;
+			this.errorCount++;
 			ValidationHandler.RaiseValidationWarning(handle,this,message);
 		}
 	}

@@ -17,8 +17,8 @@ namespace System.Xml.Schema
 
 		protected XmlSchemaFacet()
 		{
-			val = string.Empty;
 		}
+
 		[DefaultValue(false)]
 		[System.Xml.Serialization.XmlAttribute("fixed")]
 		public virtual bool IsFixed 
@@ -26,6 +26,7 @@ namespace System.Xml.Schema
 			get{ return  isFixed; }
 			set{ isFixed = value; }
 		}
+		
 		[System.Xml.Serialization.XmlAttribute("value")]
 		public string Value
 		{

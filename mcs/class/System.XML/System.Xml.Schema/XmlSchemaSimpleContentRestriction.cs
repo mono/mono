@@ -17,6 +17,7 @@ namespace System.Xml.Schema
 		private XmlSchemaSimpleType baseType;
 		private XmlQualifiedName baseTypeName;
 		private XmlSchemaObjectCollection facets;
+		private int errorCount=0;
 
 		public XmlSchemaSimpleContentRestriction()
 		{
@@ -69,6 +70,61 @@ namespace System.Xml.Schema
 		public XmlSchemaObjectCollection Facets 
 		{ 
 			get{ return facets; } 
+		}
+		///<remarks>
+		/// 1. Base must be present and a QName
+		///</remarks>
+		[MonoTODO]
+		internal int Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		{
+			if(BaseTypeName == null || BaseTypeName.IsEmpty)
+			{
+				error(h, "base must be present and a QName");
+			}
+
+			if(BaseType != null)
+			{
+				errorCount += BaseType.Compile(h,info);
+			}
+
+			if(this.AnyAttribute != null)
+			{
+				errorCount += AnyAttribute.Compile(h,info);
+			}
+
+			foreach(XmlSchemaObject obj in Attributes)
+			{
+				if(obj is XmlSchemaAttribute)
+				{
+					XmlSchemaAttribute attr = (XmlSchemaAttribute) obj;
+					errorCount += attr.Compile(h,info);
+				}
+				else if(obj is XmlSchemaAttributeGroupRef)
+				{
+					XmlSchemaAttributeGroupRef atgrp = (XmlSchemaAttributeGroupRef) obj;
+					errorCount += atgrp.Compile(h,info);
+				}
+				else
+					error(h,"object is not valid in this place");
+			}
+			
+			//TODO: Compile Facets: Looks like they are a part of datatypes. So we'll do them with the datatypes
+
+			if(this.Id != null && !XmlSchemaUtil.CheckID(Id))
+				error(h, "id must be a valid ID");
+			return errorCount;
+		}
+		
+		[MonoTODO]
+		internal int Validate(ValidationEventHandler h)
+		{
+			return errorCount;
+		}
+
+		internal void error(ValidationEventHandler handle,string message)
+		{
+			errorCount++;
+			ValidationHandler.RaiseValidationError(handle,this,message);
 		}
 	}
 }

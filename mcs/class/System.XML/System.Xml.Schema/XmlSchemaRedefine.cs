@@ -17,6 +17,10 @@ namespace System.Xml.Schema
 
 		public XmlSchemaRedefine()
 		{
+			attributeGroups = new XmlSchemaObjectTable();
+			groups = new XmlSchemaObjectTable();
+			items = new XmlSchemaObjectCollection(this);
+			schemaTypes = new XmlSchemaObjectTable();
 		}
 		[XmlIgnore]
 		public XmlSchemaObjectTable AttributeGroups 
