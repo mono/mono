@@ -5770,10 +5770,10 @@ namespace Mono.MonoBASIC {
 						if (IdenticalNameAndTypeName (ec, left_original, loc))
 							return member_lookup;
 
-						if (left_is_explicit) {
+						/*if (left_is_explicit) {
 							error176 (loc, me.Name);
 							return null;
-						}
+						}*/
 					}
 
 					//
