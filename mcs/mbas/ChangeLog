@@ -1,4 +1,7 @@
 2003/09/17  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* .cvsignore: some more files to ignore
+
+2003/09/17  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* mb-tokenizer.cs, driver.cs: Back to Linux line-endings, SORRY
 
 2003/09/16  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
