@@ -1,3 +1,7 @@
+2002-01-17  Dietmar Maurer  <dietmar@ximian.com>
+
+	* jit.c (mono_analyze_stack): use LDIND_REF/STIND_REF
+
 2002-01-16  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (main): install the trampoline before we start to create

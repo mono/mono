@@ -1,3 +1,9 @@
+2002-01-17  Dietmar Maurer  <dietmar@ximian.com>
+
+	* metadata.c (mono_type_stack_size): impl.
+
+	* class.c (mono_class_get_field): impl. memberref token
+
 2002-01-16 Veronica De Santis <veron78@@interfree.it>
 
         * icall.h : Added the internal calls mapping for CreateMutex_internal
