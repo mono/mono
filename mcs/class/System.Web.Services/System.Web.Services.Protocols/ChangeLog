@@ -1,3 +1,13 @@
+2004-05-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SoapDocumentationHandler.cs: added internal property to get the page
+	handler when available.
+
+	* WebServiceHandlerFactory.cs: wrap the documentation handler in a class
+	that implements IRequiresSessionState and, if requested,
+	IReadOnlySessionState, so that we can use Sesion object in the default
+	WSDL help generator.
+
 2004-05-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpSoapWebServiceHandler.cs: finish the request after serializing

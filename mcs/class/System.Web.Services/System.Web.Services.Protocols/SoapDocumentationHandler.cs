@@ -71,6 +71,10 @@ namespace System.Web.Services.Protocols
 				
 		}
 
+		internal IHttpHandler PageHandler {
+			get { return _pageHandler; }
+		}
+
 		public override bool IsReusable 
 		{
 			get { return false; }

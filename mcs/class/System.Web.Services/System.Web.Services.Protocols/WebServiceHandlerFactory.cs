@@ -49,7 +49,44 @@ namespace System.Web.Services.Protocols
 			base.ProcessRequest (context);
 		}
 	}
-	
+
+	class SessionWrapperHandler : IHttpHandler, IRequiresSessionState
+	{
+		IHttpHandler handler;
+
+		public SessionWrapperHandler (IHttpHandler handler)
+		{
+			this.handler = handler;
+		}
+		
+		public bool IsReusable {
+			get { return handler.IsReusable; }
+		}
+
+		public void ProcessRequest (HttpContext context)
+		{
+			handler.ProcessRequest (context);
+		}
+	}
+
+	class ReadOnlySessionWrapperHandler : IHttpHandler, IRequiresSessionState, IReadOnlySessionState
+	{
+		IHttpHandler handler;
+
+		public ReadOnlySessionWrapperHandler (IHttpHandler handler)
+		{
+			this.handler = handler;
+		}
+		
+		public bool IsReusable {
+			get { return handler.IsReusable; }
+		}
+
+		public void ProcessRequest (HttpContext context)
+		{
+			handler.ProcessRequest (context);
+		}
+	}
 	public class WebServiceHandlerFactory : IHttpHandlerFactory
 	{
 
@@ -96,7 +133,16 @@ namespace System.Web.Services.Protocols
 
 				break;
 			case WSProtocol.Documentation:
-				handler = new SoapDocumentationHandler (type, context);
+				SoapDocumentationHandler soapHandler;
+				soapHandler = new SoapDocumentationHandler (type, context);
+				if (soapHandler.PageHandler is IRequiresSessionState) {
+					if (soapHandler.PageHandler is IReadOnlySessionState)
+						handler = new ReadOnlySessionWrapperHandler (soapHandler);
+					else
+						handler = new SessionWrapperHandler (soapHandler);
+				} else {
+					handler = soapHandler;
+				}
 				break;
 			}
 
