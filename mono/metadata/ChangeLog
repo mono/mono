@@ -1,3 +1,7 @@
+2004-04-29  Jackson Harper  <jackson@ximian.com>
+
+	* locales.c: Add some missing MONO_ARCH_SAVE_REGS'.
+
 2004-04-29  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
  
  	* string-icalls.c: added low overhead function for copying chars
