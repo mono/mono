@@ -1,3 +1,6 @@
+2002-07-22  Dietmar Maurer  <dietmar@ximian.com>
+
+	* metadata.c (mono_type_stack_size): removed temporary fix for new gcc
 
 Mon Jul 22 18:17:05 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

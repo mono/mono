@@ -1,5 +1,9 @@
 2002-07-22  Dietmar Maurer  <dietmar@ximian.com>
 
+	* emit-x86.c (arch_allocate_var): fix alignment bug
+
+	* x86.brg (X86_CALL_BEGIN): add argument padding before emitting a call
+
 	* jit.c (mono_analyze_stack): s/k/k + 1/
 
 	* x86.brg (LOCALLOC): align to MONO_FRAME_ALIGNMENT
