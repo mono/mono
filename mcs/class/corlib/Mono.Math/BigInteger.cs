@@ -834,11 +834,17 @@ namespace Mono.Math {
 
 		public bool IsProbablePrime ()
 		{
-			for (int p = 0; p < smallPrimes.Length; p++) {
-				if (this == smallPrimes [p])
-					return true;
-				if (this % smallPrimes [p] == 0)
-					return false;
+			if (this < smallPrimes [smallPrimes.Length - 1]) {
+				for (int p = 0; p < smallPrimes.Length; p++) {
+					if (this == smallPrimes [p])
+						return true;
+				}
+			}
+			else {
+				for (int p = 0; p < smallPrimes.Length; p++) {
+					if (this % smallPrimes [p] == 0)
+						return false;
+				}
 			}
 			return PrimalityTests.RabinMillerTest (this, Prime.ConfidenceFactor.Medium);
 		}
@@ -1095,13 +1101,18 @@ namespace Mono.Math {
 			[CLSCompliant (false)]
 			public BigInteger Pow (uint b, BigInteger exp)
 			{
-				if (b != 2) {
-					if ((mod.data [0] & 1) == 1) return OddPow (b, exp);
-					else return EvenPow (b, exp);
+//				if (b != 2) {
+					if ((mod.data [0] & 1) == 1)
+						return OddPow (b, exp);
+					else
+						return EvenPow (b, exp);
+/* buggy in some cases (like the well tested primes)
 				} else {
-					if ((mod.data [0] & 1) == 1) return OddModTwoPow (exp);
-					else return EvenModTwoPow (exp);
-				}
+					if ((mod.data [0] & 1) == 1)
+						return OddModTwoPow (exp);
+					else 
+						return EvenModTwoPow (exp);
+				}*/
 			}
 
 			[CLSCompliant (false)]
@@ -1165,8 +1176,16 @@ namespace Mono.Math {
 
 								// We would rather have this estimate overshoot,
 								// so we add one to the divisor
-								uint divEstimate = (uint) ((((ulong)cc << 32) | (ulong) u [i -1]) /
-									(mod.data [mod.length-1] + 1));
+								uint divEstimate;
+								if (mod.data [mod.length - 1] < UInt32.MaxValue) {
+									divEstimate = (uint) ((((ulong)cc << 32) | (ulong) u [i -1]) /
+										(mod.data [mod.length-1] + 1));
+								}
+								else {
+									// guess but don't divide by 0
+									divEstimate = (uint) ((((ulong)cc << 32) | (ulong) u [i -1]) /
+										(mod.data [mod.length-1]));
+								}
 
 								uint t;
 
@@ -1308,6 +1327,7 @@ namespace Mono.Math {
 				return resultNum;
 			}
 
+/* known to be buggy in some cases
 			private unsafe BigInteger EvenModTwoPow (BigInteger exp)
 			{
 				exp.Normalize ();
@@ -1440,7 +1460,7 @@ namespace Mono.Math {
 				resultNum = Montgomery.Reduce (resultNum, mod, mPrime);
 				return resultNum;
 			}
-			
+*/			
 			#endregion
 		}
 
