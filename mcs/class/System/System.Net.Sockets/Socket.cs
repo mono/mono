@@ -51,7 +51,10 @@ namespace System.Net.Sockets
 
 			public WaitHandle AsyncWaitHandle {
 				get {
-					return(waithandle);
+					if (waithandle == null)
+						waithandle = new ManualResetEvent (completed);
+
+					return waithandle;
 				}
 				set {
 					waithandle=value;
@@ -70,6 +73,9 @@ namespace System.Net.Sockets
 				}
 				set {
 					completed=value;
+					if (waithandle != null && value) {
+						((ManualResetEvent) waithandle).Set ();
+					}
 				}
 			}
 			
@@ -144,7 +150,6 @@ namespace System.Net.Sockets
 			}
 
 			private void End() {
-				((ManualResetEvent)result.AsyncWaitHandle).Set();
 				result.IsCompleted=true;
 				if (callback != null)
 					callback(result);
@@ -236,40 +241,121 @@ namespace System.Net.Sockets
 
 			public void ReceiveFrom() {
 				lock(result) {
-					try {
-						total=socket.ReceiveFrom(buffer,
-									 offset, size,
-									 sockflags,
-									 ref endpoint);
-					} catch (Exception e) {
-                                                result.SetDelayedException(e);
+					if (socket.Blocking) {
+						try {
+							total=socket.ReceiveFrom(buffer,
+										 offset, size,
+										 sockflags,
+										 ref endpoint);
+						} catch (Exception e) {
+							result.SetDelayedException(e);
+						}
+						End();
+						return;
 					}
-					End();
+
+					SocketException rethrow = null;
+					try {
+						total = socket.ReceiveFrom (buffer, offset, size,
+									sockflags, ref endpoint);
+					} catch (SocketException e) {
+						//WSAEWOULDBLOCK
+						if (e.NativeErrorCode != 10035) {
+							result.SetDelayedException(e);
+							End ();
+                                                        return;
+						}
+
+						socket.Poll (-1, SelectMode.SelectRead);
+						try {
+							total = socket.ReceiveFrom (buffer, offset, size,
+										sockflags, ref endpoint);
+						} catch (SocketException e2) {
+							rethrow = e2;
+						}
+					}
+					if (rethrow != null)
+						result.SetDelayedException(rethrow);
+					End ();
 				}
 			}
 
 			public void Send() {
 				lock(result) {
-					try {
-						total=socket.Send(buffer, offset, size,
-								  sockflags);
-					} catch (Exception e) {
-						result.SetDelayedException(e);
+					if (socket.Blocking) {
+						try {
+							total=socket.Send(buffer, offset, size,
+									  sockflags);
+						} catch (Exception e) {
+							result.SetDelayedException(e);
+						}
+						End();
+						return;
 					}
-					End();
+
+					SocketException rethrow = null;
+					try {
+						total = socket.Send (buffer, offset, size, sockflags);
+					} catch (SocketException e) {
+						//WSAEWOULDBLOCK
+						if (e.NativeErrorCode != 10035) {
+							result.SetDelayedException(e);
+							End ();
+                                                        return;
+						}
+
+						socket.Poll (-1, SelectMode.SelectWrite);
+						try {
+							total = socket.Send (buffer, offset, size, sockflags);
+						} catch (SocketException e2) {
+							rethrow = e2;
+						}
+					}
+
+					if (rethrow != null)
+						result.SetDelayedException(rethrow);
+					End ();
 				}
 			}
 
 			public void SendTo() {
 				lock(result) {
+					if (socket.Blocking) {
+						try {
+							total=socket.SendTo(buffer, offset,
+									    size, sockflags,
+									    endpoint);
+						} catch (Exception e) {
+							result.SetDelayedException(e);
+						}
+						End();
+						return;
+					}
+
+					SocketException rethrow = null;
 					try {
-						total=socket.SendTo(buffer, offset,
-								    size, sockflags,
-								    endpoint);
-					} catch (Exception e) {
-                                                result.SetDelayedException(e);
-                                        }
-					End();
+						total = socket.SendTo (buffer, offset, size,
+									sockflags, endpoint);
+					} catch (SocketException e) {
+						//WSAEWOULDBLOCK
+						if (e.NativeErrorCode != 10035) {
+							result.SetDelayedException(e);
+							End ();
+                                                        return;
+						}
+
+						socket.Poll (-1, SelectMode.SelectWrite);
+						try {
+							total = socket.SendTo (buffer, offset, size,
+										sockflags, endpoint);
+						} catch (SocketException e2) {
+							rethrow = e2;
+						}
+					}
+
+					if (rethrow != null)
+						result.SetDelayedException(rethrow);
+					End ();
 				}
 			}
 
@@ -867,7 +953,9 @@ namespace System.Net.Sockets
 			if (req == null)
 				throw new ArgumentException ("Invalid IAsyncResult");
 
-			result.AsyncWaitHandle.WaitOne();
+			if (!result.IsCompleted)
+				result.AsyncWaitHandle.WaitOne();
+
 			Interlocked.Decrement (ref pendingEnds);
 			CheckIfClose ();
 			req.CheckIfThrowDelayedException();
@@ -885,7 +973,9 @@ namespace System.Net.Sockets
 			if (req == null)
 				throw new ArgumentException ("Invalid IAsyncResult");
 
-			result.AsyncWaitHandle.WaitOne();
+			if (!result.IsCompleted)
+				result.AsyncWaitHandle.WaitOne();
+
 			Interlocked.Decrement (ref pendingEnds);
 			CheckIfClose ();
 			req.CheckIfThrowDelayedException();
@@ -902,7 +992,9 @@ namespace System.Net.Sockets
 			if (req == null)
 				throw new ArgumentException ("Invalid IAsyncResult");
 
-			result.AsyncWaitHandle.WaitOne();
+			if (!result.IsCompleted)
+				result.AsyncWaitHandle.WaitOne();
+
 			Interlocked.Decrement (ref pendingEnds);
 			CheckIfClose ();
 			req.CheckIfThrowDelayedException();
@@ -921,7 +1013,9 @@ namespace System.Net.Sockets
 			if (req == null)
 				throw new ArgumentException ("Invalid IAsyncResult");
 
-			result.AsyncWaitHandle.WaitOne();
+			if (!result.IsCompleted)
+				result.AsyncWaitHandle.WaitOne();
+
 			Interlocked.Decrement (ref pendingEnds);
 			CheckIfClose ();
  			req.CheckIfThrowDelayedException();
@@ -940,7 +1034,9 @@ namespace System.Net.Sockets
 			if (req == null)
 				throw new ArgumentException ("Invalid IAsyncResult");
 
-			result.AsyncWaitHandle.WaitOne();
+			if (!result.IsCompleted)
+				result.AsyncWaitHandle.WaitOne();
+
 			Interlocked.Decrement (ref pendingEnds);
 			CheckIfClose ();
 			req.CheckIfThrowDelayedException();
@@ -958,7 +1054,9 @@ namespace System.Net.Sockets
 			if (req == null)
 				throw new ArgumentException ("Invalid IAsyncResult");
 
-			result.AsyncWaitHandle.WaitOne();
+			if (!result.IsCompleted)
+				result.AsyncWaitHandle.WaitOne();
+
 			Interlocked.Decrement (ref pendingEnds);
 			CheckIfClose ();
 			req.CheckIfThrowDelayedException();
@@ -967,7 +1065,8 @@ namespace System.Net.Sockets
 
 		void CheckIfClose ()
 		{
-			if (Interlocked.CompareExchange (ref closeDelayed, 1, 0) == 1) {
+			if (Interlocked.CompareExchange (ref closeDelayed, 0, 1) == 1 &&
+			    Interlocked.CompareExchange (ref pendingEnds, 0, 0) == 0) {
 				closed = true;
 				Close_internal(socket);
 			}
@@ -1337,12 +1436,11 @@ namespace System.Net.Sockets
 				this.disposed=true;
 			
 				connected=false;
-				Interlocked.CompareExchange (ref closeDelayed, 0, 1);
 				if (Interlocked.CompareExchange (ref pendingEnds, 0, 0) == 0) {
-					if (Interlocked.CompareExchange (ref closeDelayed, 1, 0) == 1) {
-						closed = true;
-						Close_internal(socket);
-					}
+					closed = true;
+					Close_internal(socket);
+				} else {
+					Interlocked.CompareExchange (ref closeDelayed, 1, 0);
 				}
 			}
 		}
