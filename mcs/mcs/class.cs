@@ -2643,7 +2643,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected bool IsDuplicateImplementation (TypeContainer tc, MethodCore method)
+		internal bool IsDuplicateImplementation (TypeContainer tc, MethodCore method)
 		{
 			if ((method == this) || (method.Name != Name))
 				return false;
@@ -6253,6 +6253,17 @@ namespace Mono.CSharp {
 			Type return_type = OperatorMethod.GetReturnType ();
 			Type first_arg_type = param_types [0];
 
+			ArrayList ar = container.Operators;
+		
+			if (ar != null) {
+				int arLen = ar.Count;
+				for (int i = 0; i < arLen; i++) {
+					Operator m = (Operator) ar [i];
+					if (m.OperatorMethod != null && return_type == m.OperatorMethod.GetReturnType() && 
+					    OperatorMethod.IsDuplicateImplementation (container, m.OperatorMethod))
+					       return false;
+				}
+			}						
 			// Rules for conversion operators
 			
 			if (OperatorType == OpType.Implicit || OperatorType == OpType.Explicit) {
