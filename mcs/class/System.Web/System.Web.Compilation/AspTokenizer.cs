@@ -215,8 +215,10 @@ namespace System.Web.Compilation
 					return Token.IDENTIFIER;
 				}
 
-				if (!Char.IsWhiteSpace ((char) c))
+				if (!Char.IsWhiteSpace ((char) c)) {
+					sb.Append  ((char) c);
 					return c;
+				}
 			}
 
 			return Token.EOF;
@@ -233,6 +235,11 @@ namespace System.Web.Compilation
 			}
 		}
 
+		public bool InTag {
+			get { return inTag; }
+			set { inTag = value; }
+		}
+		
 		public int BeginLine {
 			get { return begline; }
 		}

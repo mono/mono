@@ -254,6 +254,7 @@ namespace System.Web.Compilation
 				break;
 			default:
 				tagtype = TagType.Text;
+				tokenizer.InTag = false;
 				id = "<" + tokenizer.Value;
 				break;
 			}
@@ -266,7 +267,7 @@ namespace System.Web.Compilation
 			string id;
 
 			attributes = new TagAttributes ();
-			while ((token = tokenizer.get_token ())  != Token.EOF){
+			while ((token = tokenizer.get_token ()) != Token.EOF){
 				if (token != Token.IDENTIFIER)
 					break;
 				id = tokenizer.Value;
@@ -285,9 +286,6 @@ namespace System.Web.Compilation
 			}
 
 			tokenizer.put_back ();
-			if (attributes.Count == 0)
-				return null;
-
 			return attributes;
 		}
 

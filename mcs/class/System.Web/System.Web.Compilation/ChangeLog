@@ -1,3 +1,8 @@
+2003-05-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspParser.cs:
+	* AspTokenizer.cs: fixed bugs #43206 and #43371.
+
 2003-05-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateControlCompiler.cs: duh! Generate SupportAutoEvents instead
