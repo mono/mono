@@ -2276,13 +2276,17 @@ namespace Mono.CSharp {
 		// The method's attributes are passed in because we need to extract
 		// the "return:" attribute from there to apply on the return type
 		//
-		public void LabelParameters (EmitContext ec, MethodBase builder, Attributes method_attrs)
+		static public void LabelParameters (EmitContext ec,
+                                                    MethodBase builder,
+                                                    Parameters parameters,
+                                                    Attributes method_attrs,
+                                                    Location loc)
 		{
 			//
 			// Define each type attribute (in/out/ref) and
 			// the argument names.
 			//
-			Parameter [] p = Parameters.FixedParameters;
+			Parameter [] p = parameters.FixedParameters;
 			int i = 0;
 			
 			MethodBuilder mb = null;
@@ -2311,16 +2315,16 @@ namespace Mono.CSharp {
 
 						if (par_attr == ParameterAttributes.Out){
 							if (attr.Contains (TypeManager.in_attribute_type))
-								Report.Error (36, Location,
+								Report.Error (36, loc,
                                                                     "Can not use [In] attribute on out parameter");
 						}
 					}
 				}
 			}
 
-			if (Parameters.ArrayParameter != null){
+			if (parameters.ArrayParameter != null){
 				ParameterBuilder pb;
-				Parameter array_param = Parameters.ArrayParameter;
+				Parameter array_param = parameters.ArrayParameter;
 
 				if (mb == null)
 					pb = cb.DefineParameter (
@@ -2361,9 +2365,10 @@ namespace Mono.CSharp {
 				try {
 				 	ret_pb = mb.DefineParameter (0, ParameterAttributes.None, "");
 					Attribute.ApplyAttributes (ec, ret_pb, ret_pb, ret_attrs);
-				} catch (ArgumentOutOfRangeException) {
+
+                                } catch (ArgumentOutOfRangeException) {
 					Report.Warning (
-						-24, Location,
+						-24, loc,
 				                ".NET SDK 1.0 does not permit setting custom attributes" +
                                                 " on the return type of a method");
 				}
@@ -2873,7 +2878,8 @@ namespace Mono.CSharp {
 				ec.IsStatic = false;
 			}
 
-			LabelParameters (ec, ConstructorBuilder, OptAttributes);
+			MethodCore.LabelParameters (ec, ConstructorBuilder,
+                                                    Parameters, OptAttributes, Location);
 			
 			SymbolWriter sw = CodeGen.SymbolWriter;
 			bool generate_debugging = false;
@@ -3353,8 +3359,11 @@ namespace Mono.CSharp {
 				Attribute.ApplyAttributes (ec, builder, kind, OptAttributes);
 
 			if (member is MethodCore)
-				((MethodCore) member).LabelParameters (ec, MethodBuilder, OptAttributes);
-
+				MethodCore.LabelParameters (ec, MethodBuilder,
+                                                            ((MethodCore) member).Parameters,
+                                                            OptAttributes,
+                                                            Location);
+                        
 			//
 			// abstract or extern methods have no bodies
 			//

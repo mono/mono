@@ -1,5 +1,31 @@
 2003-09-07  Martin Baulig  <martin@ximian.com>
 
+	* report.cs (Error, Warning): Added overloaded versions which take
+	a `params object[] args' and call String.Format().
+
+2003-09-07  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (DeclSpace..ctor): Don't call
+	NamespaceEntry.DefineName() here; do it in RecordDecl() which is
+	called from Tree.RecordDecl().  Fixes the CS0101 reporting.
+	(DeclSpace.RecordDecl): New method.
+
+	* tree.cs (Tree.RecordDecl): Call ds.RecordDecl().
+
+2003-09-02  Ravi Pratap  <ravi@ximian.com>
+
+	* attribute.cs (CheckAttributeTarget): Ensure that we allow return
+	value attributes to be applied to ParameterBuilders.
+
+	* class.cs (MethodCore.LabelParameters): Make static and more
+	generic so that it can be used from other places - like interface
+	methods, for instance.
+
+	* interface.cs (Interface.Emit): Call LabelParameters before
+	emitting attributes on the InterfaceMethod.
+
+2003-09-07  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs (ConstructedType.ResolveAsTypeStep): Report a CS8217
 	if the number of type parameters doesn't match.
 
