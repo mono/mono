@@ -2,7 +2,9 @@
 // System.Windows.Forms.Shortcut.cs
 //
 // Author:
-//   Dennis Hayes = dennish@raytek.com,
+//   Dennis Hayes = dennish@raytek.com
+//   Gianandrea Terzi (gianandrea.terzi@lario.com)
+//
 // = C, 2002 Ximian, Inc.  http://www.ximian.com
 //
 
@@ -12,6 +14,7 @@ namespace System.Windows.Forms {
 
 	/// <summary>
 	/// </summary>
+	[Flags]
 	public enum Shortcut {
 		Alt0 = 262192,
 		Alt1 = 262193,

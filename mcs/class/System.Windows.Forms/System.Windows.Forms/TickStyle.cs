@@ -3,6 +3,8 @@
 //
 // Author:
 //   Dennis Hayes (dennish@raytek.com)
+//	 Gianandrea Terzi (gianandrea.terzi@lario.com)
+//
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 //
 
@@ -14,8 +16,8 @@ namespace System.Windows.Forms {
 	/// </summary>
 	public enum TickStyle {
 		Both = 3,
-		BottemRight = 2,
-		none =0,
-		TopLeft = 1
+		BottomRight = 2,
+		None =0,
+		TopLeft = 1,
 	}
 }

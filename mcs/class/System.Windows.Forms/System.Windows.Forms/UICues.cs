@@ -10,15 +10,17 @@ using System;
 
 namespace System.Windows.Forms {
 
-	/// <summary>
-	/// </summary>
-	public enum UICues {
-		Changed = 12,
-		ChangeFocus = 4,
-		ChangeKeyboard = 8,
-		None = 0,
-		ShowFocus = 1,
-		ShowKeyboard = 2,
-		Shown = 3
+	// Specifies the state of the user interface
+	[Flags]
+	public enum UICues 
+	{
+		Changed			= 12,			// The state of the focus cues and keyboard cues has changed. 
+		ChangeFocus		=  4,			// The state of the focus cues has changed. 
+		ChangeKeyboard	=  8,			// The state of the keyboard cues has changed. 
+		None			=  0,			// No change was made.
+		ShowFocus		=  1,			// Focus rectangles are displayed after the change.
+		ShowKeyboard	=  2,			// Keyboard cues are underlined after the change. 
+		Shown			=  3,			// Focus rectangles are displayed and keyboard cues are underlined 
 	}
+
 }

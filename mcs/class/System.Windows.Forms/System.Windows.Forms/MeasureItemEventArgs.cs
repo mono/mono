@@ -141,8 +141,8 @@ namespace System.Windows.Forms  {
 		/// </remarks>
 		public override bool Equals (object obj) 
 		{
-			if (!(obj is PropertyTabChangedEventArgs))return false;
-			return (this == (PropertyTabChangedEventArgs) obj);
+			if (!(obj is MeasureItemEventArgs))return false;
+			return (this == (MeasureItemEventArgs) obj);
 		}
 
 		/// <summary>

@@ -79,8 +79,8 @@ namespace System.Windows.Forms {
 		/// </remarks>
 		public override bool Equals (object obj) 
 		{
-			if (!(obj is ToolBarButtonClickEventArgsA))return false;
-			return (this == (ToolBarButtonClickEventArgsA) obj);
+			if (!(obj is ToolBarButtonClickEventArgs))return false;
+			return (this == (ToolBarButtonClickEventArgs) obj);
 		}
 
 		/// <summary>

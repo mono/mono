@@ -70,7 +70,7 @@ namespace System.Windows.Forms {
 		///	newvalue and type Property
 		///	of the two ScrollEventArgs.
 		/// </remarks>
-		public static bool operator == (ScrollEventArgs ScrollEventArgsA, ScrollEventArgs ScrollEventArgsA) 
+		public static bool operator == (ScrollEventArgs ScrollEventArgsA, ScrollEventArgs ScrollEventArgsB) 
 		{
 			return ((ScrollEventArgsA.NewValue == ScrollEventArgsB.NewValue) && (ScrollEventArgsA.Type == ScrollEventArgsB.Type));
 		}
@@ -85,7 +85,7 @@ namespace System.Windows.Forms {
 		///	newvalue and type Property
 		///	of the two ScrollEventArgs.
 		/// </remarks>
-		public static bool operator != (ScrollEventArgs ScrollEventArgsA, ScrollEventArgs ScrollEventArgsA) 
+		public static bool operator != (ScrollEventArgs ScrollEventArgsA, ScrollEventArgs ScrollEventArgsB) 
 		{
 			return ((ScrollEventArgsA.NewValue != ScrollEventArgsB.NewValue) || (ScrollEventArgsA.Type != ScrollEventArgsB.Type));
 		}

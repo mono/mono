@@ -4,6 +4,7 @@
 // Author:
 //	 stubbed out by Stefan Warnke (StefanW@POBox.com)
 //   Dennis Hayes (dennish@Raytek.com)
+//   Gianandrea Terzi (gianandrea.terzi@lario.com)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -23,6 +24,14 @@ namespace System.Windows.Forms {
 	/// bar, commonly referred to as a spinner control.
 	/// </summary>
 	public abstract class UpDownBase : ContainerControl {
+
+		//UpDownBase+ButtonID
+		enum ButtonID 
+		{
+			Down = 2, 
+			None = 0, 
+			Up = 1
+		}
 
 		/// --- Constructor ---
 		public UpDownBase()	

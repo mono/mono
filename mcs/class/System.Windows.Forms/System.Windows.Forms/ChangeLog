@@ -1,3 +1,34 @@
+2002-8-6  DennisHayes <dennish@raytek.com>
+* Checked in for Ginandrea Terzi (gterzi@lario.com)
+
+* MeasureItemEventArgs.cs
+* PropertyValueChangedEventArgs.cs
+* ScrollEventArgs.cs
+* ScrollEventType.cs
+* SelectionMode.cs
+* Shortcut.cs
+* TickStyle.cs
+* ToolBarButtonClickEventArgs.cs
+* TreeViewAction.cs
+* TriangleDirection.cs
+* UICues.cs
+* UICuesEventArgs.cs
+* UpDownBase.cs
+* UpDownEventHandler.cs
+* Fixed syntax errors and verifier errors
+
+2002-8-6  DennisHayes <dennish@raytek.com>
+
+* PropertyTabChangedEventArgs.cs
+* Minor sytax bug fixes.
+
+* System.Windows.Forms.csproj
+* System.Windows.Forms.csproj.user
+* System.Windows.Forms.sln
+* Added support for System.Windows.Forms.Design
+* Builds two dlls instead of one.
+* Allows compiling for now, but needs to be fixed
+
 2002-8-2  DennisHayes <dennish@raytek.com>
 * Checked in for Ginandrea Terzi (gterzi@lario.com)
 

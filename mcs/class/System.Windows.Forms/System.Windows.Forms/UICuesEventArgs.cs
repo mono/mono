@@ -21,18 +21,6 @@ namespace System.Windows.Forms {
 	/// UICuesEventArgs specifies which user interface feature changed and its new value.
 	/// </summary>
 	public class UICuesEventArgs : EventArgs {
-
-//		// Specifies the state of the user interface
-		public enum UICues {
-			None			=  0,			// No change was made.
-			ShowFocus		=  1,			// Focus rectangles are displayed after the change.
-			ShowKeyboard	=  2,			// Keyboard cues are underlined after the change. 
-			Shown			=  3,			// Focus rectangles are displayed and keyboard cues are underlined 
-											// after the change. 
-			ChangeFocus		=  4,			// The state of the focus cues has changed. 
-			ChangeKeyboard	=  8,			// The state of the keyboard cues has changed. 
-			Changed			= 12			// The state of the focus cues and keyboard cues has changed. 
-		};
 		
 		private UICues uicues;
 //		/// --- Constructor ---
