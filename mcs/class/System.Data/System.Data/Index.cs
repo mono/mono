@@ -597,8 +597,7 @@ namespace System.Data
 
 		internal int ComparePartialRowNonUnique(object[] a, DataRow b)
 		{
-
-			int i = DataColumn.CompareValues(a[0], b[0, DataRowVersion.Current], _columns[0].DataType, !_columns[0].Table.CaseSensitive);
+			int i = DataColumn.CompareValues(a[0], b[_columns[0].Ordinal, DataRowVersion.Current], _columns[0].DataType, !_columns[0].Table.CaseSensitive);
 
 			if (i != 0) {
 				return i;
