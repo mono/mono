@@ -1,5 +1,9 @@
 2002-07-02  Mike Kestner  <mkestner@speakeasy.net>
 
+	* StreamReader.cs: Guard against ^\n lines as pointed out by Gonzalo.
+
+2002-07-02  Mike Kestner  <mkestner@speakeasy.net>
+
 	* StreamReader.cs: Revert the last Peek change and fix the ReadLine
 	end of line detection code instead.
 

@@ -237,7 +237,7 @@ namespace System.IO {
 				}
 
 				if (c == '\n') {			// newline
-					if (text [text.Length - 1] == '\r')
+					if ((text.Length > 0) && (text [text.Length - 1] == '\r'))
 						text.Length--;
 					break;
 				}
