@@ -1,3 +1,11 @@
+2001-12-03  Miguel de Icaza  <miguel@ximian.com>
+
+	* test-49.cs: Updated to test `goto default'
+
+	* test-43.cs: Test break and continue here.
+
+	* gen-cast-test.cs: Improved cast test generator.
+
 2001-12-03  Ravi Pratap <ravi@ximian.com>
 
 	* test-50.cs : Add. This does not pass yet.

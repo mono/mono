@@ -1,6 +1,7 @@
 //
 // This test is used for testing the foreach array support
 //
+using System;
 
 class X {
 
@@ -14,6 +15,36 @@ class X {
 		return total;
 	}
 
+	static int test_continue (int [] a)
+	{
+		int total = 0;
+		int j = 0;
+		
+		foreach (int i in a){
+			j++;
+			if (j == 5)
+				continue;
+			total += i;
+		}
+
+		return total;
+	}
+
+	static int test_break (int [] a)
+	{
+		int total = 0;
+		int j = 0;
+
+		foreach (int i in a){
+			j++;
+			if (j == 5)
+				break;
+			total += i;
+		}
+
+		return total;
+	}
+	
 	static int Main ()
 	{
 		int [] a = new int [10];
@@ -31,6 +62,16 @@ class X {
 		if (test_single (b) != 101)
 			return 2;
 
+		if (test_continue (a) != 131){
+			Console.WriteLine ("Expecting: 131, got " + test_continue (a));
+			return 3;
+		}
+
+		if (test_break (a) != 46){
+			Console.WriteLine ("Expecting: 46, got " + test_break (a));
+			return 4;
+		}
+		
 		return 0;
 	}
 }

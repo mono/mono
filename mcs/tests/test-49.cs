@@ -368,6 +368,21 @@ class X {
 		}
 		return 4;
 	}
+
+	static int test_def (string s)
+	{
+		switch (s){
+		case "one":
+			goto default;
+		case "two":
+			return 1;
+		case "three":
+			return 2;
+		default:
+			return 3;
+		}
+		return 4;
+	}
 	
 	static int Main ()
 	{
@@ -437,6 +452,15 @@ class X {
 		if (testp ("blah") != 4)
 			return 25;
 
+		if (test_def ("one") != 3)
+			return 26;
+		if (test_def ("two") != 1)
+			return 27;
+		if (test_def ("three") != 2)
+			return 28;
+		if (test_def (null) != 3)
+			return 29;
+		
 		Console.WriteLine ("All tests pass");
 		return 0;
 	}

@@ -1,8 +1,6 @@
 using System;
 
 class Stress {
-
-	static string mode = "unchecked";
 	
 	static string [] types = {
 		"int",   "uint",
@@ -33,37 +31,29 @@ class Stress {
 		
 	}
 
-	static void var (string type, string name, string init)
-	{
-		w ("\t\t" + type + " " + name + " = (" + type + ") " + init + ";\n");
-	}
-
 	static void call (string type, string name)
 	{
-		w ("\t\treceive_" + type + " (" + mode + "((" + type + ") " + name + "));\n");
+		w ("\t\treceive_" + type + " (checked ((" + type + ") var ));\n");
 	}
-	
+
 	static void generate_emision ()
 	{
 		foreach (string type in types){
 			w ("\tstatic void probe_" + type + "()\n\t{\n");
-			var (type, "zero", "0");
-			var (type, "min", type + ".MinValue");
-			var (type, "max", type + ".MaxValue");
+			if (type == "char")
+				w ("\t\t" + type + " var = (char) 0;");
+			else
+				w ("\t\t" + type + " var = 0;");					
+				
 			wl ("");
 
-			wl ("\t\tConsole.WriteLine (\"Testing: " + type + "\");\n");
-			foreach (string t in types){
-				wl ("\t\tConsole.WriteLine (\"   arg: " + t + " (" + type + ")\");\n");
-				call (t, "zero");
-				call (t, "min");
-				call (t, "max");
-			}
+			foreach (string t in types)
+				call (t, "var");
 			
 			w ("\t}\n\n");
 		}
 	}
-
+	
 	static void generate_main ()
 	{
 		wl ("\tstatic void Main ()\n\t{");
@@ -73,20 +63,9 @@ class Stress {
 		}
 		wl ("\t}");
 	}
-	
+
 	static void Main (string [] args)
 	{
-		foreach (string arg in args){
-			if (arg == "-h" || arg == "--help"){
-				Console.WriteLine ("-h, --help     Shows help");
-				Console.WriteLine ("-c, --checked  Generate checked contexts");
-				return;
-			}
-			if (arg == "--checked" || arg == "-c"){
-				mode = "checked";
-				continue;
-			}
-		}
 		wl ("using System;\nclass Test {\n");
 
 		generate_receptors ();
