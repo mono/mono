@@ -114,10 +114,12 @@ namespace System
 				this.fragment = baseUri.fragment;
 				return;
 			}
-			
+
 			int pos = relativeUri.IndexOf (':');
 			if (pos != -1) {
+
 				int pos2 = relativeUri.IndexOfAny (new char [] {'/', '\\'});
+
 				if (pos2 > pos) {
 					// equivalent to new Uri (relativeUri, dontEscape)
 					Parse (relativeUri);
@@ -132,7 +134,7 @@ namespace System
 					return;
 				}
 			}
-						
+
 			// 8 fragment
 			pos = relativeUri.IndexOf ('#');
 			if (pos != -1) {
@@ -151,7 +153,7 @@ namespace System
 				relativeUri = relativeUri.Substring (0, pos);
 			}
 
-			if (relativeUri[0] == '/') {
+			if (relativeUri [0] == '/') {
 				path = relativeUri;
 				if (!userEscaped)
 					path = EscapeString (path);
@@ -161,12 +163,12 @@ namespace System
 			// par 5.2 step 6 a)
 			path = baseUri.path;
 			pos = path.LastIndexOf ('/');
-			if (pos > 0) 
+			if (pos >= 0) 
 				path = path.Substring (0, pos + 1);
-				
+
 			// 6 b)
 			path += relativeUri;
-			
+
 			// 6 c)
 			int startIndex = 0;
 			while (true) {
@@ -211,7 +213,6 @@ namespace System
 			// 6 f)
 			if (path.Length > 3 && path.EndsWith ("/..")) {
 				pos = path.LastIndexOf ('/', path.Length - 4);
-				Console.WriteLine ("6f " + pos);
 				if (pos != -1)
 					if (path.Substring (pos + 1, path.Length - pos - 4) != "..")
 						path = path.Remove (pos + 1, path.Length - pos - 1);

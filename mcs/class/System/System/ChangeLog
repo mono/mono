@@ -1,3 +1,17 @@
+2003-08-12  Duncan Mak  <duncan@ximian.com>
+
+	* Uri.cs (constructor): Properly implement RFC 2396, Par. 5.2,
+	part 6a, which says:
+	
+		In other words, any characters after the last (right-most)
+		slash character, if any, are excluded.
+
+        Previously, when merging "a://foo.com/foo" with "bar", we yield
+	the result "a://foo.com/foobar", instead of the correct
+	"a://foo.com/bar".
+
+	This fixes bug #45614.
+
 2003-07-27  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* SRDescriptionAttribute.cs: Moved from System.Diagnostics directory
