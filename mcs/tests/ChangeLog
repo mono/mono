@@ -1,3 +1,13 @@
+2001-12-29  Ravi Pratap  <ravi@ximian.com>
+
+	* test-69.cs : Add. This tests support for methods which are
+	internal calls.
+
+2001-12-28  Ravi Pratap  <ravi@ximian.com>
+
+	* test-34.cs : Update to exercise the new overload resolution
+	code.
+
 2001-12-26  Ravi Pratap  <ravi@ximian.com>
 
 	* test-67.cs : Add. These are tests for explicit layout
