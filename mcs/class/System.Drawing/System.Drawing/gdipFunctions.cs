@@ -1409,7 +1409,7 @@ namespace System.Drawing
 		// These are stuff that is unix-only
 		//
 		public delegate int StreamGetBytesDelegate (IntPtr buf, int bufsz, bool peek);
-		public delegate int StreamSeekDelegate (int offset, int whence);
+		public delegate long StreamSeekDelegate (int offset, int whence);
 		public delegate int StreamPutBytesDelegate (IntPtr buf, int bufsz);
 		public delegate void StreamCloseDelegate ();
 		public delegate long StreamSizeDelegate ();
@@ -1417,8 +1417,7 @@ namespace System.Drawing
 		internal class GdiPlusStreamHelper 
 		{
 			public Stream stream;
-			public byte[] peekBytes;
-
+			
 			public GdiPlusStreamHelper (Stream s) { stream = s; }
 
 			public int StreamGetBytesImpl (IntPtr buf, int bufsz, bool peek) 
@@ -1429,24 +1428,10 @@ namespace System.Drawing
 				byte[] managedBuf = new byte[bufsz];
 				int bytesReturn = 0;
 				int bytesRead = 0;
-
-				if (peekBytes != null) {
-					if (bufsz < peekBytes.Length) {
-						Marshal.Copy (peekBytes, 0, buf, bufsz);
-						byte[] newPeekBytes = new byte[peekBytes.Length - bufsz];
-						Array.Copy (peekBytes, bufsz, newPeekBytes, 0, newPeekBytes.Length);
-						bytesReturn += bufsz;
-						bufsz = 0;
-						peekBytes = newPeekBytes;
-					} else {
-						Marshal.Copy (peekBytes, 0, buf, peekBytes.Length);
-						bytesReturn += peekBytes.Length;
-						bufsz -= peekBytes.Length;
-						peekBytes = null;
-					}
-				}
-
+				long streamPosition = 0;
+				
 				if (bufsz > 0) {
+					streamPosition = stream.Position;
 					try {
 						bytesRead = stream.Read (managedBuf, 0, bufsz);
 					} catch (IOException) {
@@ -1458,13 +1443,13 @@ namespace System.Drawing
 					}
 
 					if (peek) {
-						peekBytes = new byte[bytesRead];
-						Array.Copy (managedBuf, peekBytes, bytesRead);
+						// If we are peeking bytes, then go back to original position before peeking
+						stream.Seek (streamPosition, SeekOrigin.Begin);
 					}
 			      
 					bytesReturn += bytesRead;
 				}
-
+				
 				return bytesReturn;
 			}
 
@@ -1476,17 +1461,20 @@ namespace System.Drawing
 				}
 			}
 
-			public int StreamSeekImpl (int offset, int whence) 
+			public long StreamSeekImpl (int offset, int whence) 
 			{
+				long retOffset;
 				if (whence == 0) {
-					return (int) stream.Seek ((long) offset, SeekOrigin.Begin);
+					retOffset = stream.Seek ((long) offset, SeekOrigin.Begin);
 				} else if (whence == 1) {
-					return (int) stream.Seek ((long) offset, SeekOrigin.Current);
+					retOffset = stream.Seek ((long) offset, SeekOrigin.Current);
 				} else if (whence == 2) {
-					return (int) stream.Seek ((long) offset, SeekOrigin.End);
+					retOffset = stream.Seek ((long) offset, SeekOrigin.End);
 				} else {
-					return -1;
+					retOffset = -1;
 				}
+			
+				return retOffset;
 			}
 
 			public StreamSeekDelegate SeekDelegate {

@@ -1,3 +1,10 @@
+2004-06-24  Sanjay Gupta <gsanjay@novell.com>
+
+	* gdipFunctions.cs: Corrected issue in GdiPlusStreamHelper class.
+	If read function was called after seek function call, the 
+	implementation 	was returning data from bytes already peeked and 
+	not from the new position in stream, which we have seeked.
+	
 2004-06-22 Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Graphics.cs: added MeasureString wrappers
