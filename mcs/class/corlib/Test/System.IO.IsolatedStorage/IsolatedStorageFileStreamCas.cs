@@ -32,6 +32,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.IO.IsolatedStorage;
+using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
 
@@ -208,7 +209,7 @@ namespace MonoCasTests.System.IO.IsolatedStorage {
 		{
 			IsolatedStorageFileStream isfs = new IsolatedStorageFileStream ("cas-Handle", FileMode.Create);
 			IntPtr p = isfs.Handle;
-			// LAMSPEC: SecurityException with UnmanagedCode
+			// Note: The SecurityException for UnmanagedCode cannot be tested here because it's a LinkDemand
 		}
 #if NET_2_0
 		[Test]
@@ -218,6 +219,42 @@ namespace MonoCasTests.System.IO.IsolatedStorage {
 		{
 			IsolatedStorageFileStream isfs = new IsolatedStorageFileStream ("cas-SafeFileHandle", FileMode.Create);
 			SafeFileHandle sfh = isfs.SafeFileHandle;
+			// Note: The SecurityException for UnmanagedCode cannot be tested here because it's a LinkDemand
+		}
+#endif
+
+		// we use reflection to call IsolatedStorageFileStream as the Handle and SafeFileHandle
+		// properties are protected by LinkDemand (which will be converted into full demand, 
+		// i.e. a stack walk) when reflection is used (i.e. it gets testable).
+
+		[Test]
+		[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
+		[ExpectedException (typeof (SecurityException))]
+		public void Handle_UnmanagedCode ()
+		{
+			IsolatedStorageFileStream isfs = new IsolatedStorageFileStream ("cas-Handle-Unmanaged", FileMode.Create);
+			try {
+				MethodInfo mi = typeof (IsolatedStorageFileStream).GetProperty ("Handle").GetGetMethod ();
+				mi.Invoke (isfs, null);
+			}
+			finally {
+				isfs.Close ();
+			}
+		}
+#if NET_2_0
+		[Test]
+		[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
+		[ExpectedException (typeof (SecurityException))]
+		public void SafeFileHandle_UnmanagedCode ()
+		{
+			IsolatedStorageFileStream isfs = new IsolatedStorageFileStream ("cas-SafeFileHandle-Unmanaged", FileMode.Create);
+			try {
+				MethodInfo mi = typeof (IsolatedStorageFileStream).GetProperty ("SafeFileHandle").GetGetMethod ();
+				mi.Invoke (isfs, null);
+			}
+			finally {
+				isfs.Close ();
+			}
 		}
 #endif
 	}
