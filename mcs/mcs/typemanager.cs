@@ -456,8 +456,28 @@ public class TypeManager {
 		modules = n;
 	}
 
+	public static Type LookupTypeReflection (string name)
+	{
+		Type t;
+		
+		foreach (Assembly a in assemblies){
+			t = a.GetType (name);
+			if (t != null)
+				return t;
+		}
+
+		foreach (ModuleBuilder mb in modules) {
+			t = mb.GetType (name);
+			if (t != null)
+				return t;
+		}
+		return null;
+	}
+	
 	/// <summary>
-	///   Returns the Type associated with @name
+	///   Returns the Type associated with @name, takes care of the fact that
+	///   reflection expects nested types to be separated from the main type
+	///   with a "+" instead of a "."
 	/// </summary>
 	public static Type LookupType (string name)
 	{
@@ -471,23 +491,31 @@ public class TypeManager {
 		if (t != null)
 			return t;
 
-		foreach (Assembly a in assemblies){
-			t = a.GetType (name);
-			if (t != null){
-				types [name] = t;
-
-				return t;
-			}
-		}
-
-		foreach (ModuleBuilder mb in modules) {
-			t = mb.GetType (name);
-			if (t != null) {
-				types [name] = t;
-				return t;
-			}
-		}
+		string [] elements = name.Split ('.');
+		int count = elements.Length;
 		
+		for (int n = 1; n <= count; n++){
+			string top_level_type = String.Join (".", elements, 0, n);
+
+			t = (Type) types [top_level_type];
+			if (t == null){
+				t = LookupTypeReflection (top_level_type);
+				if (t == null)
+					continue;
+			}
+			
+			if (count == n){
+				types [name] = t;
+				return t;
+			}
+			
+			string rest = String.Join ("+", elements, n, count - n);
+
+			t = LookupTypeReflection (top_level_type + "+" + rest);
+			if (t != null)
+				types [name] = t;
+			return t;
+		}
 		return null;
 	}
 

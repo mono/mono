@@ -1,3 +1,14 @@
+2002-09-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* typemanager.cs (LookupType): Redo the type lookup code to match
+	the needs of System.Reflection.  
+
+	The issue is that System.Reflection requires references to nested
+	types to begin with a "+" sign instead of a dot.  So toplevel
+	types look like: "NameSpace.TopLevelClass", and nested ones look
+	like "Namespace.TopLevelClass+Nested", with arbitrary nesting
+	levels. 
+
 2002-09-19  Martin Baulig  <martin@gnome.org>
 
 	* codegen.cs (EmitContext.EmitTopBlock): If control flow analysis

@@ -547,7 +547,7 @@ namespace Mono.CSharp {
 						//
 						// nested class
 						//
-						t = TypeManager.LookupType (current_type.FullName + "+" + name);
+						t = TypeManager.LookupType (current_type.FullName + "." + name);
 						if (t != null){
 							ds.Cache [name] = t;
 							return t;
