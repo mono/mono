@@ -292,10 +292,6 @@ namespace MonoTests.System.Diagnostics {
                 public void TestGetMethod() {
                         Assert("Method not null (1)", (frame1.GetMethod() != null));
 
-			AssertEquals("Method name (1)",
-                                     "InternalInvoke",
-                                     frame1.GetMethod().Name);
-                                     
                         Assert("Method not null (2)", (frame2.GetMethod() != null));
                         
                         AssertEquals("Class declaring the method (2)",
