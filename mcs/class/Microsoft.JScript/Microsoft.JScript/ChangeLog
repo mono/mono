@@ -1,5 +1,7 @@
 2003-09-29    <cesar@ciencias.unam.mx>
 
+	* Added: VsaGlobalItem.cs, VsaReferenceItem.cs, VsaCodeItem.cs
+
 	* Added VsaItem.cs, implements IVsaItem.
 
 2003-09-28    <cesar@ciencias.unam.mx>
