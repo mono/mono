@@ -1,3 +1,6 @@
+2003-03-05  Dietmar Maurer  <dietmar@ximian.com>
+
+	* monobitset.c (mono_bitset_set_all): impl.
 
 Fri Sep 13 15:56:04 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
