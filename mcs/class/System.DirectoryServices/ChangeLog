@@ -1,3 +1,7 @@
+2004-01-15  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* System.DirectoryServices.dll.sources: Added lots of files, sorted existing
+
 2003-07-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.DirectoryServices.build: New file.
