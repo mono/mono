@@ -571,8 +571,17 @@ namespace Mono.CSharp {
 				throw new Exception ("This should be caught by Resolve");
 				
 			case Operator.UnaryNegation:
-				Expr.Emit (ec);
-				ig.Emit (OpCodes.Neg);
+				if (ec.CheckState) {
+					ig.Emit (OpCodes.Ldc_I4_0);
+					if (type == TypeManager.int64_type)
+						ig.Emit (OpCodes.Conv_U8);
+					Expr.Emit (ec);
+					ig.Emit (OpCodes.Sub_Ovf);
+				} else {
+					Expr.Emit (ec);
+					ig.Emit (OpCodes.Neg);
+				}
+				
 				break;
 				
 			case Operator.LogicalNot:
