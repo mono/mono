@@ -1,7 +1,10 @@
 //
-// System.Web.UI.WebControls.TreeNodeSelectAction.cs
+// System.Web.UI.WebControls.TreeNodeBinding.cs
 //
-// Author: Sanjay Gupta (gsanjay@novell.com)
+// Authors:
+//	Lluis Sanchez Gual (lluis@novell.com)
+//
+// (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,12 +29,49 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls {
-	public enum TreeNodeSelectAction {
-		Select = 0,
-		Expand = 1,
-		SelectExpand = 2,
-		None = 3				
-        }
+
+using System;
+using System.Web.UI;
+
+namespace System.Web.UI.WebControls
+{
+	public sealed class TreeNodeBinding: IStateManager, ICloneable, IDataSourceViewSchemaAccessor
+	{
+		[MonoTODO]
+		void IStateManager.LoadViewState (object state)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		object IStateManager.SaveViewState ()
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		void IStateManager.TrackViewState ()
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		bool IStateManager.IsTrackingViewState {
+			get { throw new NotImplementedException (); }
+		}
+		
+		[MonoTODO]
+		object IDataSourceViewSchemaAccessor.DataSourceViewSchema {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+		
+		[MonoTODO]
+		object ICloneable.Clone ()
+		{
+			throw new NotImplementedException ();
+		}
+	}
 }
+
 #endif

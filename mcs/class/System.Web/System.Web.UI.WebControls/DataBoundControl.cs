@@ -36,7 +36,7 @@ using System.Web.Util;
 using System.ComponentModel;
 
 namespace System.Web.UI.WebControls {
-	public abstract class DataBoundControl : WebControl
+	public abstract class DataBoundControl : BaseDataBoundControl
 	{
 		public event EventHandler DataBound;
 		

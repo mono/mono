@@ -1,7 +1,10 @@
 //
-// System.Web.UI.WebControls.TreeNodeSelectAction.cs
+// System.Web.UI.WebControls.TreeNodeBindingCollection.cs
 //
-// Author: Sanjay Gupta (gsanjay@novell.com)
+// Authors:
+//	Lluis Sanchez Gual (lluis@novell.com)
+//
+// (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,12 +29,26 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls {
-	public enum TreeNodeSelectAction {
-		Select = 0,
-		Expand = 1,
-		SelectExpand = 2,
-		None = 3				
-        }
+
+using System;
+using System.Web.UI;
+
+namespace System.Web.UI.WebControls
+{
+	public sealed class TreeNodeBindingCollection: StateManagedCollection
+	{
+		[MonoTODO]
+		protected override object CreateKnownType (int index)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		protected override void SetDirtyObject (object o)
+		{
+			throw new NotImplementedException ();
+		}
+	}
 }
+
 #endif

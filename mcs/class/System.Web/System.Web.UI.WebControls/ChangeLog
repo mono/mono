@@ -1,3 +1,14 @@
+2004-11-23 Lluis Sanchez Gual <lluis@novell.com>
+
+	* TreeNodeBindingCollection.cs, TreeNodeBinding.cs, TreeNode.cs,
+	TreeNodeCollection.cs, TreeNodeStyleCollection.cs, TreeNodeStyle.cs,
+	TreeView.cs: Initial implementation.
+	* DataBoundControl.cs: Set the correct base class.
+	* HierarchicalDataBoundControl.cs, BaseDataBoundControl.cs: Created stub.
+	* TreeNodeSelectAction.cs: Formatting.
+	* TreeView_Default_Collapse.gif, TreeView_Default_Expand.gif,
+	TreeView_Default_NoExpand.gif: TreeView images.
+
 2004-11-22 Sanjay Gupta <gsanjay@novell.com>
 
 	* SqlDataSourceView.cs: Updated methods and added one property.
