@@ -22,25 +22,47 @@ namespace System.Drawing
 		byte g;
 		byte b;
 
-		public float GetU (){
-			// Intensity is the normalized sum of the three RGB values.;
-			return ((float)(r + g + b))/(255*3);
-		}
-		public float GetS (){
-			// S = 1 - I * Min(r,g,b)
-			return (255 - 
-				(((float)(R + g +b))/3)*Math.Min(r,Math.Min(g,b))
-				)/255;
+		// The specs also indicate that all three of these propities are true
+		// if created with FromKnownColor or FromNamedColor, false otherwise (FromARGB).
+		// Per Microsoft and ECMA specs these varibles are set by which constructor is used, not by their values.
+		bool isknowncolor;
+		bool isnamedcolor;
+		bool issystemcolor;
+
+		string name;
+
+		public string Name {
+			get{
+				return name;
+			}
 		}
 
-		public float GetH (){
-			float top = ((float)(2*r-g-b))/(2*255);
-			float bottom = (float)Math.Sqrt(((r-g)*(r-g) + (r-b)*(g-b))/255);
-			return (float)Math.Acos(top/bottom);
+		public bool IsKnownColor {
+			get{
+				return isknowncolor;
+			}
 		}
-		
+
+		public bool IsSystemColor {
+			get{
+				return issystemcolor;
+			}
+		}
+
+		public bool IsNamedColor {
+			get{
+				return isNamedcolor;
+			}
+		}
+
+
 		public static Color FromArgb (int red, int green, int blue)
 		{
+			//TODO: convert rgb to name format "12345678"
+			isknowncolor = false;
+			isnamedcolor = false;
+			issystemcolor = false;
+
 			CheckRGBValues(red, green, blue);
 			Color color;
 			color.a = 255;
@@ -52,6 +74,10 @@ namespace System.Drawing
 		
 		public static Color FromArgb (int alpha, int red, int green, int blue)
 		{
+			//TODO: convert rgb to name format "12345678"
+			isknowncolor = false;
+			isnamedcolor = false;
+			issystemcolor = false;
 			CheckARGBValues(alpha, red, green, blue);
 			Color color;
 			color.a = (byte)alpha;
@@ -67,6 +93,10 @@ namespace System.Drawing
 
 		public static Color FromArgb (int alpha, Color baseColor)
 		{
+			//TODO: convert basecolor rgb to name
+			isknowncolor = false;
+			isnamedcolor = false;
+			issystemcolor = false;
 			//check alpha, use valid dummy values for rgb.
 			CheckARGBValues(alpha, 0, 0, 0);
 			Color color;
@@ -79,6 +109,10 @@ namespace System.Drawing
 
 		public static Color FromArgb (int argb)
 		{
+			//TODO: convert irgb to name
+			isknowncolor = false;
+			isnamedcolor = false;
+			issystemcolor = false;
 			Color color;
 			color.a = (byte) (argb >> 24);
 			color.r = (byte) (argb >> 16);
@@ -89,11 +123,33 @@ namespace System.Drawing
 
 		public static Color FromKnownColor (KnownColor KnownColorToConvert)
 		{
+			isknowncolor = true;
+			isnamedcolor = true;
+			issystemcolor = true;
+
+			name = KnownColorToConvert.ToString();
+
 			return FromName(KnownColorToConvert.ToString());
 		}
 
-		public static Color FromName( string name ) 
+		public KnownColor ToKnownColor () {
+			if(isknowncolor){
+				// TODO: return correct enumeration of knowncolor. note the return 0 in the else block is correct.
+				return (knownColor)0;
+			}
+			else{
+				return (knownColor)0;
+			}
+			return FromName(KnownColorToConvert.ToString());
+		}
+		public static Color FromName( string ColorName ) 
 		{
+			isknowncolor = true;
+			isnamedcolor = true;
+			issystemcolor = true;
+			
+			name = ColorName;
+
 			Type colorType = typeof( Color );
 			PropertyInfo[] properties =
 				colorType.GetProperties();
@@ -157,6 +213,23 @@ namespace System.Drawing
 		{
 			return ((colorA.a != colorB.a) || (colorA.r != colorB.r)
 			|| (colorA.g != colorB.g) || (colorA.b != colorB.b));
+		}
+		
+		public float GetBrightness (){
+			// Intensity is the normalized sum of the three RGB values.;
+			return ((float)(r + g + b))/(255*3);
+		}
+		public float GetSaturation (){
+			// S = 1 - I * Min(r,g,b)
+			return (255 - 
+				(((float)(R + g +b))/3)*Math.Min(r,Math.Min(g,b))
+				)/255;
+		}
+
+		public float GetHue (){
+			float top = ((float)(2*r-g-b))/(2*255);
+			float bottom = (float)Math.Sqrt(((r-g)*(r-g) + (r-b)*(g-b))/255);
+			return (float)Math.Acos(top/bottom);
 		}
 		
 		// -----------------------
