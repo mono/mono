@@ -1,3 +1,9 @@
+2004-12-06  Ben Maurer  <bmaurer@ximian.com>
+
+	* Exception.cs: Prevent stringifying the type name on the
+	ctor. this gets called a few times on every execution to create a
+	nullref exception.
+
 2004-12-06  Martin Baulig  <martin@ximian.com>
 
 	* Decimal.cs: Decimal constant support has been merged into GMCS,

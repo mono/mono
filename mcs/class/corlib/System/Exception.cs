@@ -50,24 +50,19 @@ namespace System
 		string message;
 		string help_link;
 		string class_name;
-		string stack_trace = null;
-		string remote_stack_trace = "";
-		int remote_stack_index = 0;
+		string stack_trace;
+		string remote_stack_trace;
+		int remote_stack_index;
 		int hresult = unchecked ((int)0x80004005);
 		string source;
 
 		public Exception ()
 		{
-			inner_exception = null;
-			message = null;
-			class_name = GetType().FullName;
 		}
 
 		public Exception (string msg)
 		{
-			inner_exception = null;
 			message = msg;
-			class_name = GetType().FullName;
 		}
 
 		protected Exception (SerializationInfo info, StreamingContext sc)
@@ -90,7 +85,6 @@ namespace System
 		{
 			inner_exception = e;
 			message = msg;
-			class_name = GetType().FullName;
 		}
 
 		public Exception InnerException {
@@ -183,6 +177,9 @@ namespace System
 
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
+			if (class_name == null)
+				class_name = GetType ().FullName;
+			
 			info.AddValue ("ClassName", class_name);
 			info.AddValue ("Message", message);
 			info.AddValue ("InnerException", inner_exception);
