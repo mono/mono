@@ -35,5 +35,19 @@ Mono MCS Errors.
 	The next thing is to write a short text file with a little
 	description of what the error is and what it's necessary
 	to be done to solve it. 
+        
+* Compiler options
 
+        If you need to run error test with some special option(s),
+        use following syntax in your error test file.
+        
+        // cs0193.cs: * or -> operator can only be applied to pointer types.
+        // Line: 9
+        // Compiler options: -unsafe        
 
+* Dependencies
+
+        In case that your error test depends on the library or other C# file.
+        Create separate file with same name as your error test name except
+        first two letters which are uppercased. And then add this file to
+        Makefile.
