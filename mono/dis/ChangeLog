@@ -1,3 +1,17 @@
+2004-12-10  Martin Baulig  <martin@ximian.com>
+
+	Started to add generics support to monodis.
+
+	* get.c (get_typedef_or_ref): Added `MonoGenericContext *'.
+	(get_field_signature, get_field): Likewise.
+	(get_methodref_signature, get_methodspec): Likewise.
+        (get_token, get_token_type, get_typespec): Likewise.
+        (get_method, get_method_type_param): Likewise.
+	(get_method_override, dis_stringify_method_signature): Likewise.
+	(get_type, get_ret_type, get_param): Likewise.
+
+	* dis-cil.c (disasemble_cil): Added `MonoGenericContext *'.
+
 2004-12-09  Martin Baulig  <martin@ximian.com>
 
 	* get.c (get_generic_param): Take a `MonoGenericContainer *' and
