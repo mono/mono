@@ -21,7 +21,13 @@ namespace System.Web.Handlers
 		void IHttpHandler.ProcessRequest (HttpContext context)
 		{
 			TraceManager manager = HttpRuntime.TraceManager;
-			
+
+			if (manager.LocalOnly && !context.Request.IsLocal) {
+				// Need to figure out the error message that goes here
+				// but I only have cassini for testing
+				return;
+			}
+				
 			HtmlTextWriter output = new HtmlTextWriter (context.Response.Output);
 
 			if (context.Request.QueryString ["clear"] != null)

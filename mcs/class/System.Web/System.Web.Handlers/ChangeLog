@@ -1,5 +1,9 @@
 2004-01-10  Jackson Harper <jackson@ximian.com>
 
+	* TraceHandler.cs: Obey localOnly attribute.
+	
+2004-01-10  Jackson Harper <jackson@ximian.com>
+
 	* TraceHandler.cs: Implement.
 	
 2003-11-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
