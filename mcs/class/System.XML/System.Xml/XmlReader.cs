@@ -317,7 +317,7 @@ namespace System.Xml
 
 		internal string ReadInnerXmlInternal ()
 		{
-			if (ReadState != ReadState.Interactive)
+			if (ReadState != ReadState.Interactive || NodeType == XmlNodeType.EndElement)
 				return String.Empty;
 
 			StringWriter sw = new StringWriter ();
@@ -343,7 +343,7 @@ namespace System.Xml
 
 		internal string ReadOuterXmlInternal ()
 		{
-			if (ReadState != ReadState.Interactive)
+			if (ReadState != ReadState.Interactive || NodeType == XmlNodeType.EndElement)
 				return String.Empty;
 
 			StringWriter sw = new StringWriter ();

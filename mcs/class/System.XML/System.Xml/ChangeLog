@@ -1,3 +1,8 @@
+2004-03-15  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReader.cs : ReadInnerXml()/ReadOuterXml() should not bork when
+	  the reader is on EndElement. Patch by Jean-Marc Andre.
+
 2004-03-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlDocumentNavigator.cs : as for namespace node "xml", MS.NET seems
