@@ -267,7 +267,7 @@ namespace System.Xml.XPath
 		{
 			bool fSuccess = (CurrentPosition == 0) ? _nav.MoveToFirstChild () : _nav.MoveToNext ();
 			if (fSuccess) {
-				_current = null;
+				Current.MoveTo (_nav);
 			}
 			return fSuccess;
 		}
@@ -290,7 +290,7 @@ namespace System.Xml.XPath
 			}
 			if (_nav.MoveToNext ())
 			{
-				_current = null;
+				Current.MoveTo (_nav);
 				return true;
 			}
 			return false;
@@ -333,7 +333,7 @@ namespace System.Xml.XPath
 
 				_nav.MoveToFirst ();
 				if (!_nav.IsSamePosition (startPosition)) {
-					_current = null;
+					Current.MoveTo (_nav);
 					return true;
 				}
 			} else {
@@ -347,7 +347,7 @@ namespace System.Xml.XPath
 				finished = true;
 				return false;
 			} else {
-				_current = null;
+				Current.MoveTo (_nav);
 				return true;
 			}
 		}
@@ -404,14 +404,14 @@ namespace System.Xml.XPath
 				if (startPosition.NodeType != XPathNodeType.Root) {
 					// First time it returns Root
 					_nav.MoveToRoot ();
-					_current = null;
+					Current.MoveTo (_nav);
 					return true;
 				}
 			}
 			if (currentPosition == 0)
 				return false;
 			_nav.MoveTo ((XPathNavigator) navigators [--currentPosition]);
-			_current = null;
+			Current.MoveTo (_nav);
 			return true;
 		}
 
@@ -476,7 +476,7 @@ namespace System.Xml.XPath
 				if (startPosition.NodeType != XPathNodeType.Root) {
 					// First time it returns Root
 					_nav.MoveToRoot ();
-					_current = null;
+					Current.MoveTo (_nav);
 					return true;
 				}
 			}
@@ -484,11 +484,11 @@ namespace System.Xml.XPath
 				return false;
 			if (currentPosition-- == 0) {
 				_nav.MoveTo (startPosition);
-				_current = null;
+				Current.MoveTo (_nav);
 				return true; // returns self.
 			}
 			_nav.MoveTo ((XPathNavigator) navigators [currentPosition]);
-			_current = null;
+			Current.MoveTo (_nav);
 			return true;
 		}
 
@@ -530,14 +530,14 @@ namespace System.Xml.XPath
 			if (_nav.MoveToFirstChild ())
 			{
 				_depth ++;
-				_current = null;
+				Current.MoveTo (_nav);
 				return true;
 			}
 			while (_depth != 0)
 			{
 				if (_nav.MoveToNext ())
 				{
-					_current = null;
+					Current.MoveTo (_nav);
 					return true;
 				}
 				if (!_nav.MoveToParent ())	// should NEVER fail!
@@ -573,20 +573,20 @@ namespace System.Xml.XPath
 			if (CurrentPosition == 0)
 			{
 				// self
-				_current = null;
+				Current.MoveTo (_nav);
 				return true;
 			}
 			if (_nav.MoveToFirstChild ())
 			{
 				_depth ++;
-				_current = null;
+				Current.MoveTo (_nav);
 				return true;
 			}
 			while (_depth != 0)
 			{
 				if (_nav.MoveToNext ())
 				{
-					_current = null;
+					Current.MoveTo (_nav);
 					return true;
 				}
 				if (!_nav.MoveToParent ())	// should NEVER fail!
@@ -623,12 +623,12 @@ namespace System.Xml.XPath
 				default:
 					if (_nav.MoveToNext ())
 					{
-						_current = null;
+						Current.MoveTo (_nav);
 						return true;
 					} else {
 						while (_nav.MoveToParent ()) {
 							if (_nav.MoveToNext ()) {
-								_current = null;
+								Current.MoveTo (_nav);
 								return true;
 							}
 						}
@@ -640,14 +640,14 @@ namespace System.Xml.XPath
 			{
 				if (_nav.MoveToFirstChild ())
 				{
-					_current = null;
+					Current.MoveTo (_nav);
 					return true;
 				}
 				do
 				{
 					if (_nav.MoveToNext ())
 					{
-						_current = null;
+						Current.MoveTo (_nav);
 						return true;
 					}
 				}
@@ -706,7 +706,7 @@ namespace System.Xml.XPath
 				finished = true;
 				return false;
 			} else {
-				_current = null;
+				Current.MoveTo (_nav);
 				return true;
 			}
 		}
@@ -728,13 +728,13 @@ namespace System.Xml.XPath
 			{
 				if (_nav.MoveToFirstNamespace ())
 				{
-					_current = null;
+					Current.MoveTo (_nav);
 					return true;
 				}
 			}
 			else if (_nav.MoveToNextNamespace ())
 			{
-				_current = null;
+				Current.MoveTo (_nav);
 				return true;
 			}
 			return false;
@@ -755,13 +755,13 @@ namespace System.Xml.XPath
 			{
 				if (_nav.MoveToFirstAttribute ())
 				{
-					_current = null;
+					Current.MoveTo (_nav);
 					return true;
 				}
 			}
 			else if (_nav.MoveToNextAttribute ())
 			{
-				_current = null;
+				Current.MoveTo (_nav);
 				return true;
 			}
 			return false;			
@@ -971,7 +971,7 @@ namespace System.Xml.XPath
 					_iterRight = _expr.EvaluateNodeSet (_iterLeft);
 				}
 				XPathNavigator nav = _iterRight.Current;
-				_navStore.Add (nav);
+				_navStore.Add (nav.Clone ());
 			}
 		}
 
@@ -1113,7 +1113,7 @@ namespace System.Xml.XPath
 		private BaseIterator _left, _right;
 		private bool keepLeft;
 		private bool keepRight;
-		private bool useRight;
+		XPathNavigator _current;
 
 		public UnionIterator (BaseIterator iter, BaseIterator left, BaseIterator right) : base (iter.NamespaceManager)
 		{
@@ -1127,7 +1127,8 @@ namespace System.Xml.XPath
 			_right = (BaseIterator) other._right.Clone ();
 			keepLeft = other.keepLeft;
 			keepRight = other.keepRight;
-			useRight = other.useRight;
+			if (other._current != null)
+				_current = other._current.Clone ();
 		}
 		public override XPathNodeIterator Clone () { return new UnionIterator (this); }
 
@@ -1142,11 +1143,12 @@ namespace System.Xml.XPath
 				return false;
 
 			if (!keepRight) {
-				keepLeft = useRight = false;
+				keepLeft = false;
+				SetCurrent (_left);
 				return true;
 			} else if (!keepLeft) {
 				keepRight = false;
-				useRight = true;
+				SetCurrent (_right);
 				return true;
 			}
 
@@ -1154,31 +1156,33 @@ namespace System.Xml.XPath
 			case XmlNodeOrder.Same:
 				// consume both. i.e. don't output duplicate result.
 				keepLeft = keepRight = false;
-				useRight = true;
+				SetCurrent (_right);
 				return true;
 			case XmlNodeOrder.Before:
 			case XmlNodeOrder.Unknown: // Maybe happen because of "document(a) | document(b)"
-				keepLeft = useRight = false;
+				keepLeft = false;
+				SetCurrent (_left);
 				return true;
 			case XmlNodeOrder.After:
 				keepRight = false;
-				useRight = true;
+				SetCurrent (_right);
 				return true;
 			default:
 				throw new InvalidOperationException ("Should not happen.");
 			}
 		}
+
+		private void SetCurrent (XPathNodeIterator iter)
+		{
+			if (_current == null)
+				_current = iter.Current.Clone ();
+			else
+				_current.MoveTo (iter.Current);
+		}
+
 		public override XPathNavigator Current
 		{
-			get
-			{
-				if (CurrentPosition == 0)
-					return null;
-				if (useRight)
-					return _right.Current;
-				else
-					return _left.Current;
-			}
+			get { return _current; }
 		}
 
 		public override bool RequireSorting { get { return _left.RequireSorting || _right.RequireSorting; } }

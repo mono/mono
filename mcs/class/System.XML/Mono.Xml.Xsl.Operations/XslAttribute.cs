@@ -90,7 +90,6 @@ namespace Mono.Xml.Xsl.Operations {
 				value = c.CompileTemplateContent (XPathNodeType.Attribute);
 				c.Input.MoveToParent ();
 			}
-
 		}
 
 		public override void Evaluate (XslTransformProcessor p)
@@ -110,7 +109,7 @@ namespace Mono.Xml.Xsl.Operations {
 			// local attribute
 			if (colonAt > 0) {
 				prefix = nm.Substring (0, colonAt);
-				nm = nm.Substring (colonAt + 1, nm.Length - colonAt - 1);
+				nm = nm.Substring (colonAt + 1);
 
 				// global attribute
 				if (nmsp == String.Empty &&
@@ -121,8 +120,6 @@ namespace Mono.Xml.Xsl.Operations {
 					if (nmsp == null)
 						nmsp = String.Empty;
 				}
-				else
-					nm = XslNameUtil.LocalNameOf (nm);
 			}
 
 			if (prefix == "xmlns")

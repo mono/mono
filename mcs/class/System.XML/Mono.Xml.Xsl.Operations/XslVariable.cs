@@ -94,7 +94,7 @@ namespace Mono.Xml.Xsl.Operations {
 					ArrayList al = new ArrayList ();
 					XPathNodeIterator iter = (XPathNodeIterator) o;
 					while (iter.MoveNext ())
-						al.Add (iter.Current);
+						al.Add (iter.Current.Clone ());
 					o = new ListIterator (al, p.XPathContext, false);
 				}
 				return o;

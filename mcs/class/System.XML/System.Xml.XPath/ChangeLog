@@ -1,3 +1,8 @@
+2004-03-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Iterator.cs : Now for most of iterator types, Current property always
+	  returns the same instance. It results in huge memory reduction.
+
 2004-03-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Iterator.cs : (SlashIterator.MoveNext()) For SortedList.Add(), the
