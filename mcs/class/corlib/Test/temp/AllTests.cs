@@ -40,7 +40,8 @@ namespace Ximian.Mono.Tests {
                                 suite.AddTest(new TestSuite(typeof(StringReaderTest)));
                                 suite.AddTest(new TestSuite(typeof(StringWriterTest)));
                         	
-                        		suite.AddTest(Testsuite.System.Security.Cryptography.AllCryptoTests.Suite);
+                                suite.AddTest(Testsuite.System.AllSystemTests.Suite);
+                                suite.AddTest(Testsuite.System.Security.Cryptography.AllCryptoTests.Suite);
                                 return suite;
                         }
                 }
