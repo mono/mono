@@ -49,13 +49,14 @@ namespace System.Runtime.Remoting.Activation
 		public static IMessage Activate (RemotingProxy proxy, ConstructionCall ctorCall)
 		{
 			IMessage response;
+			ctorCall.SourceProxy = proxy;
 
 			if (Thread.CurrentContext.HasExitSinks && !ctorCall.IsContextOk)
 				response = Thread.CurrentContext.GetClientContextSinkChain ().SyncProcessMessage (ctorCall);
 			else
 				response = RemoteActivate (ctorCall);
 
-			if (response is IConstructionReturnMessage && ((IConstructionReturnMessage)response).Exception == null)
+			if (response is IConstructionReturnMessage && ((IConstructionReturnMessage)response).Exception == null && proxy.ObjectIdentity == null)
 			{
 				Identity identity = RemotingServices.GetMessageTargetIdentity (ctorCall);
 				proxy.AttachIdentity (identity);
@@ -167,11 +168,19 @@ namespace System.Runtime.Remoting.Activation
 		public static IMessage CreateInstanceFromMessage (IConstructionCallMessage ctorCall)
 		{
 			object obj = AllocateUninitializedClassInstance (ctorCall.ActivationType);
-			ctorCall.MethodBase.Invoke (obj, ctorCall.Args);
 
 			ServerIdentity identity = (ServerIdentity) RemotingServices.GetMessageTargetIdentity (ctorCall);
-
 			identity.AttachServerObject ((MarshalByRefObject) obj, Threading.Thread.CurrentContext);
+
+			ConstructionCall call = ctorCall as ConstructionCall;
+			if (ctorCall.ActivationType.IsContextful && call != null && call.SourceProxy != null)
+			{
+				call.SourceProxy.AttachIdentity (identity);
+				MarshalByRefObject target = (MarshalByRefObject) call.SourceProxy.GetTransparentProxy ();
+				RemotingServices.InternalExecuteMessage (target, ctorCall);
+			}
+			else
+				ctorCall.MethodBase.Invoke (obj, ctorCall.Args);
 
 			return new ConstructionResponse (obj, null, ctorCall);
 		}

@@ -1,3 +1,9 @@
+2004-09-22  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* ActivationServices.cs: In Activate, assign the proxy to the ctor
+	  message. In CreateInstanceFromMessage if the object being created
+	  is a CBO, use the provided proxy as "this" when calling the ctor.
+
 2003-12-23  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ActivationServices.cs: If remote activation returns an exception, do not
