@@ -1,3 +1,26 @@
+2002-05-05  Nick Drochak  <ndrochak@gol.com>
+
+	* AllTests.cs 
+	* NameTableTests.cs 
+	* TheTests.cs 
+	* XPathScannerTests.cs
+	* XmlAttributeTests.cs 
+	* XmlCDataSectionTests.cs
+	* XmlCommentTests.cs 
+	* XmlDeclarationTests.cs 
+	* XmlDocumentTests.cs
+	* XmlDocumentTypeTests.cs 
+	* XmlElementTests.cs
+	* XmlNamespaceManagerTests.cs 
+	* XmlNodeListTests.cs
+	* XmlProcessingInstructionTests.cs
+	* XmlSignificantWhitespaceTests.cs 
+	* XmlTextReaderTests.cs
+	* XmlTextTests.cs 
+	* XmlTextWriterTests.cs 
+	* XmlWhiteSpaceTests.cs: Use same namespace style as corlib tests.
+	Changed Ximian.Mono.Tests to MonoTests.System.Xml
+
 2002-04-08  Kral Ferch  <kral_ferch@hotmail.com>
 
 	* AllTests.cs: added XmlProcessingInstructionTests and XmlTextTests.

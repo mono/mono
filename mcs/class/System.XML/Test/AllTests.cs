@@ -6,7 +6,7 @@
 
 using NUnit.Framework;
 
-namespace Ximian.Mono.Tests
+namespace MonoTests.System.Xml
 {
 	/// <summary>
 	///   Combines all unit tests for the System.XML.dll assembly

@@ -12,7 +12,7 @@ using System.Xml;
 
 using NUnit.Framework;
 
-namespace Ximian.Mono.Tests
+namespace MonoTests.System.Xml
 {
 	public class XmlDeclarationTests : TestCase
 	{
@@ -20,7 +20,7 @@ namespace Ximian.Mono.Tests
 		XmlDocument document;
 		XmlDeclaration declaration;
 		
-		public XmlDeclarationTests () : base ("Ximian.Mono.Tests.XmlDeclarationTests testsuite") {}
+		public XmlDeclarationTests () : base ("MonoTests.System.Xml.XmlDeclarationTests testsuite") {}
 		
 		public XmlDeclarationTests (string name) : base (name) {}
 

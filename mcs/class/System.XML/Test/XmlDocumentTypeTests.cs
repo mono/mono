@@ -11,14 +11,14 @@ using System.Xml;
 
 using NUnit.Framework;
 
-namespace Ximian.Mono.Tests
+namespace MonoTests.System.Xml
 {
 	public class XmlDocumentTypeTests : TestCase
 	{
 		XmlDocument document;
 		XmlDocumentType docType;
 		public XmlDocumentTypeTests ()
-			: base ("XmlDocumentTypeTests testsuite")
+			: base ("MonoTests.System.Xml.XmlDocumentTypeTests testsuite")
 		{
 		}
 

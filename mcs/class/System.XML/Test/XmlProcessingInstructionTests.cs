@@ -11,11 +11,11 @@ using System;
 using System.Xml;
 using NUnit.Framework;
 
-namespace Ximian.Mono.Tests
+namespace MonoTests.System.Xml
 {
 	public class XmlProcessingInstructionTests : TestCase
 	{
-		public XmlProcessingInstructionTests () : base ("Ximian.Mono.Tests.XmlProcessingInstructionTests testsuite") {}
+		public XmlProcessingInstructionTests () : base ("MonoTests.System.Xml.XmlProcessingInstructionTests testsuite") {}
 		public XmlProcessingInstructionTests (string name) : base (name) {}
 
 		XmlDocument document;

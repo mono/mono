@@ -9,11 +9,11 @@ using System.Xml;
 
 using NUnit.Framework;
 
-namespace Ximian.Mono.Tests
+namespace MonoTests.System.Xml
 {
 	public class XmlAttributeTests : TestCase
 	{
-		public XmlAttributeTests() : base("Ximian.Mono.Tests.XmlAttributeTests testsuite") { }
+		public XmlAttributeTests() : base("MonoTests.System.Xml.XmlAttributeTests testsuite") { }
 		public XmlAttributeTests(string name) : base(name) { }
 
 		XmlDocument doc;

@@ -12,11 +12,11 @@ using System.Xml.XPath;
 
 using NUnit.Framework;
 
-namespace Ximian.Mono.Tests
+namespace MonoTests.System.Xml
 {
 	public class XPathScannerTests : TestCase
 	{
-		public XPathScannerTests () : base ("Ximian.Mono.Tests.XPathScannerTests testsuite") { }
+		public XPathScannerTests () : base ("MonoTests.System.Xml.XPathScannerTests testsuite") { }
 		public XPathScannerTests (string name) : base (name) { }
 
 		public void TestLocationPathWithOneNameTest ()

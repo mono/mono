@@ -4,11 +4,11 @@ using System.Collections;
 
 using NUnit.Framework;
 
-namespace Ximian.Mono.Tests
+namespace MonoTests.System.Xml
 {
 	public class XmlNodeListTests : TestCase
 	{
-		public XmlNodeListTests () : base ("Ximian.Mono.Tests.XmlNodeListTests testsuite") {}
+		public XmlNodeListTests () : base ("MonoTests.System.Xml.XmlNodeListTests testsuite") {}
 		public XmlNodeListTests (string name) : base (name) {}
 		
 		XmlDocument document;

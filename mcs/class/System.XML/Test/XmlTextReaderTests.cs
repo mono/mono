@@ -13,11 +13,11 @@ using System.Xml;
 
 using NUnit.Framework;
 
-namespace Ximian.Mono.Tests
+namespace MonoTests.System.Xml
 {
 	public class XmlTextReaderTests : TestCase
 	{
-		public XmlTextReaderTests () : base ("Ximian.Mono.Tests.XmlTextReaderTests testsuite") { }
+		public XmlTextReaderTests () : base ("MonoTests.System.Xml.XmlTextReaderTests testsuite") { }
 		public XmlTextReaderTests (string name) : base (name) { }
 
 		private void AssertStartDocument (XmlReader xmlReader)

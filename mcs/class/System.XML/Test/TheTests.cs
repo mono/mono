@@ -3,7 +3,7 @@ using System;
 using System.Threading;
 using System.Globalization;
 
-namespace Ximian.Mono.Tests
+namespace MonoTests.System.Xml
 {
 	public class RunXmlTextReaderTests : XmlTextReaderTests
 	{
@@ -39,7 +39,7 @@ namespace Ximian.Mono.Tests
 	}
 }
 
-namespace Ximian.Mono.Tests
+namespace MonoTests.System.Xml
 {
 	public class RunXmlNamespaceManagerTests : XmlNamespaceManagerTests
 	{
@@ -53,7 +53,7 @@ namespace Ximian.Mono.Tests
 	}
 }
 
-namespace Ximian.Mono.Tests
+namespace MonoTests.System.Xml
 {
 	public class RunXmlDocumentTests : XmlDocumentTests
 	{
@@ -70,9 +70,9 @@ namespace MonoTests
 	{
 		public static void AddAllTests (TestSuite suite)
 		{
-			suite.AddTest (new Ximian.Mono.Tests.RunXmlTextReaderTests ());
-			suite.AddTest (new Ximian.Mono.Tests.RunXmlNamespaceManagerTests ());
-			suite.AddTest (new Ximian.Mono.Tests.RunXmlDocumentTests ());
+			suite.AddTest (new MonoTests.System.Xml.RunXmlTextReaderTests ());
+			suite.AddTest (new MonoTests.System.Xml.RunXmlNamespaceManagerTests ());
+			suite.AddTest (new MonoTests.System.Xml.RunXmlDocumentTests ());
 		}
 	}
 }

@@ -14,11 +14,11 @@ using System.Xml;
 
 using NUnit.Framework;
 
-namespace Ximian.Mono.Tests
+namespace MonoTests.System.Xml
 {
 	public class XmlTextWriterTests : TestCase
 	{
-		public XmlTextWriterTests () : base ("Ximian.Mono.Tests.XmlTextWriterTests testsuite") {}
+		public XmlTextWriterTests () : base ("MonoTests.System.Xml.XmlTextWriterTests testsuite") {}
 		public XmlTextWriterTests (string name) : base (name) {}
 
 		StringWriter sw;

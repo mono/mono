@@ -12,11 +12,11 @@ using System.Xml;
 
 using NUnit.Framework;
 
-namespace Ximian.Mono.Tests
+namespace MonoTests.System.Xml
 {
 	public class XmlNamespaceManagerTests : TestCase
 	{
-		public XmlNamespaceManagerTests () : base ("Ximian.Mono.Tests.XmlNameSpaceManagerTests testsuite") { }
+		public XmlNamespaceManagerTests () : base ("MonoTests.System.Xml.XmlNameSpaceManagerTests testsuite") { }
 		public XmlNamespaceManagerTests (string name) : base (name) { }
 
 		private XmlNameTable nameTable;

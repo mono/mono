@@ -12,7 +12,7 @@ using System.Xml;
 
 using NUnit.Framework;
 
-namespace Ximian.Mono.Tests
+namespace MonoTests.System.Xml
 {
 	public class XmlSignificantWhitespaceTests : TestCase
 	{
@@ -20,11 +20,11 @@ namespace Ximian.Mono.Tests
 		XmlDocument doc2;
 		XmlSignificantWhitespace whitespace;
 		XmlSignificantWhitespace broken;
-        XmlNode original;
-        XmlNode deep;
-        XmlNode shallow;
+		XmlNode original;
+		XmlNode deep;
+		XmlNode shallow;
 		
-		public XmlSignificantWhitespaceTests ()	: base ("Ximian.Mono.Tests.XmlWhitespaceTests testsuite") {}
+		public XmlSignificantWhitespaceTests ()	: base ("MonoTests.System.Xml.XmlWhitespaceTests testsuite") {}
 		public XmlSignificantWhitespaceTests (string name) : base (name) {}
 
 		protected override void SetUp ()

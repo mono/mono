@@ -12,7 +12,7 @@ using System.Xml;
 
 using NUnit.Framework;
 
-namespace Ximian.Mono.Tests
+namespace MonoTests.System.Xml
 {
 	public class XmlCommentTests : TestCase
 	{
@@ -22,7 +22,7 @@ namespace Ximian.Mono.Tests
 		XmlNode deep;
 		XmlNode shallow;
 
-		public XmlCommentTests () : base ("Ximian.Mono.Tests.XmlCommentTests testsuite") {}
+		public XmlCommentTests () : base ("MonoTests.System.Xml.XmlCommentTests testsuite") {}
 
 		public XmlCommentTests (string name) : base (name) {}
 
