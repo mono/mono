@@ -1,4 +1,10 @@
 
+Thu Jun 10 20:10:16 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: make the token for a created method match
+	the token of the MethodBuilder it was created from
+	(IKVM requires this behaviour now).
+
 Thu Jun 10 16:02:27 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* image.c, image.h, appdomain.c, assembly.c, loader.c, metadata.c,
