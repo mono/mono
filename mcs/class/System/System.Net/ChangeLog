@@ -1,3 +1,8 @@
+2001-11-20  Miguel de Icaza  <miguel@ximian.com>
+
+	* IPAddress.cs: Updated to contain Any, Broadcast, Loopback and
+	None as suggested by Phillip.
+
 2001-09-26  Mads Pultz <mpultz@get2net.dk>
 	* Dns.cs: Initial work on BeginGetHostByName and EndGetHostByName implemented.
 

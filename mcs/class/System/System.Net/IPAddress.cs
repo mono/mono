@@ -14,11 +14,24 @@ namespace System.Net {
 	// </remarks>
 	public class IPAddress {
 		public uint address;
+
+		public static readonly IPAddress Any;
+		public static readonly IPAddress Broadcast;
+		public static readonly IPAddress Loopback;
+		public static readonly IPAddress None;
 		
 		public const uint InaddrAny       = 0;
 		public const uint InaddrBroadcast = 0xffffffff;
 		public const uint InaddrLoopback  = 0x7f000001;
 		public const uint InaddrNone      = 0xffffffff;
+
+		static IPAddress ()
+		{
+			Any.address = new IPAddress (InaddrAny);
+			Broadcast.address = new IPAddress (InaddrBroadcast);
+			Loopback.address = new IPAddress (InaddrLoopback);
+			None.address = new IPAddress (InaddrNone);
+		}
 		
 		// <summary>
 		//   Constructor from a 32-bit constant.
