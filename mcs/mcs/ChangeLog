@@ -1,5 +1,12 @@
 2002-06-08  Martin Baulig  <martin@gnome.org>
 
+	* enum.cs (Enum.LookupEnumValue): Don't report an error if the
+	name can't be found in the `defined_names' - the caller will do a
+	MemberLookup in this case and thus find methods in System.Enum
+	such as Enum.IsDefined().
+
+2002-06-08  Martin Baulig  <martin@gnome.org>
+
 	* enum.cs (Enum.ChangeEnumType): This is a custom version of
 	Convert.ChangeType() which works with TypeBuilder created types.
 	(Enum.LookupEnumValue, Enum.Define): Use it here.

@@ -322,11 +322,12 @@ namespace Mono.CSharp {
 			if (default_value != null)
 				return default_value;
 
-			if (!defined_names.Contains (name)) {
-				Report.Error (117, loc, "'"+ Name + "' does not contain a definition for '"
-					      + name + "'");
+			//
+			// This may happen if we're calling a method in System.Enum, for instance
+			// Enum.IsDefined().
+			//
+			if (!defined_names.Contains (name))
 				return null;
-			}
 
 			//
 			// So if the above doesn't happen, we have a member that is undefined
