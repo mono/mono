@@ -1,3 +1,8 @@
+2003-08-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyTest.cs: Added new tests for 1.1 and 2.0 features. Converted
+	existing tests to NUnit 2.2.
+
 2004-07-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ModuleTest.cs: New tests for FindTypes.
