@@ -13,7 +13,7 @@ using System.Runtime.InteropServices;
 namespace System.Web.Hosting
 {
 	[Guid ("c4918956-485b-3503-bd10-9083e3f6b66c")]
-	[ComVisible (false)]
+	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
         public interface IISAPIRuntime
         {
                 void DoGCCollect ();

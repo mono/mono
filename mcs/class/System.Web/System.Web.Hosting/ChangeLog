@@ -1,3 +1,7 @@
+2004-01-14  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* IISAPIRuntime.cs: Fixed wrong attribute
+
 2004-01-11  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* SimpleWorkerRequest.cs: Added missing attribute
