@@ -32,6 +32,8 @@ using System.ComponentModel;
 using System.Drawing;
 
 namespace System.Windows.Forms {
+	[ProvideProperty ("ToolTip", "System.Windows.Forms.Control")]
+	[ToolboxItemFilter("System.Windows.Forms", ToolboxItemFilterType.Allow)]
 	public sealed class ToolTip : System.ComponentModel.Component, System.ComponentModel.IExtenderProvider {
 		#region Local variables
 		internal bool		is_active;
@@ -170,6 +172,7 @@ namespace System.Windows.Forms {
 		#endregion	// Public Constructors & Destructors
 
 		#region Public Instance Properties
+		[DefaultValue (true)]
 		public bool Active {
 			get {
 				return is_active;
@@ -187,6 +190,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue (500)]
+		[RefreshProperties (RefreshProperties.All)]
 		public int AutomaticDelay {
 			get {
 				return automatic_delay;
@@ -202,6 +207,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[RefreshProperties (RefreshProperties.All)]
 		public int AutoPopDelay {
 			get {
 				return autopop_delay;
@@ -214,6 +220,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[RefreshProperties (RefreshProperties.All)]
 		public int InitialDelay {
 			get {
 				return initial_delay;
@@ -226,6 +233,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[RefreshProperties (RefreshProperties.All)]
 		public int ReshowDelay {
 			get {
 				return re_show_delay;
@@ -238,6 +246,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue (false)]
 		public bool ShowAlways {
 			get {
 				return show_always;
@@ -256,6 +265,8 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
+		[Localizable (true)]
+		[DefaultValue ("")]
 		public string GetToolTip(Control control) {
 			return (string)tooltip_strings[control];
 		}

@@ -1,5 +1,16 @@
 2005-02-03  Peter Bartok  <pbartok@novell.com>
 
+	* ComponentModel.cs: Added
+	* IDataGridEditingService.cs: Added
+	* Timer.cs: Added missing attributes
+	* ToolTip.cs: Added missing attributes
+
+2005-02-03  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* PropertyGridView.cs: Added. Patch by Jonathan Chambers
+
+2005-02-03  Peter Bartok  <pbartok@novell.com>
+
 	* ListBox.cs: Added missing attributes
 
 2005-02-03  Jordi Mas i Hernandez <jordi@ximian.com>

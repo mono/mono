@@ -1,4 +1,9 @@
-2005-01-30	John BouAntoun  <jba-mono@optusnet.com.au>
+2005-02-03  Peter Bartok  <pbartok@novell.com>
+
+	* System.Windows.Forms.dll.Sources: Added ComponentModel.cs and
+	  PropertyGridView.cs
+
+2005-01-30  John BouAntoun  <jba-mono@optusnet.com.au>
 
 	* System.Windows.Forms.dll.Sources: Added DateTimePicker.cs and
 	  DateTimePickerFormat.cs

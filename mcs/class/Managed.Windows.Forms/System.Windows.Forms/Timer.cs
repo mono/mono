@@ -28,7 +28,9 @@ using System.Threading;
 using System.ComponentModel;
 
 namespace System.Windows.Forms {
-
+	[DefaultProperty("Interval")]
+	[DefaultEvent("Tick")]
+	[ToolboxItemFilter("System.Windows.Forms", ToolboxItemFilterType.Allow)]
 	public class Timer : Component {
 
 		private bool enabled;
@@ -48,6 +50,7 @@ namespace System.Windows.Forms {
 			container.Add (this);
 		}
 
+		[DefaultValue (false)]
 		public bool Enabled {
 			get {
 				return enabled;
@@ -64,6 +67,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue (100)]
 		public int Interval {
 			get {
 				return interval;
