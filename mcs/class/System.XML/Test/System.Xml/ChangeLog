@@ -1,3 +1,8 @@
+2003-12-21  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlDocumentTests.cs, XmlElementTests.cs :
+	  Added GetElementsByTagNameNs2().
+
 2003-12-16  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlDeclarationTests.cs : Added InvalidInnerText().

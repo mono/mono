@@ -232,6 +232,66 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void GetElementsByTagNameNs2 ()
+		{
+			document.LoadXml (@"<root>
+			<x:a xmlns:x='urn:foo' id='a'>
+			<y:a xmlns:y='urn:foo' id='b'/>
+			<x:a id='c' />
+			<z id='d' />
+			text node
+			<?a processing instruction ?>
+			<x:w id='e'/>
+			</x:a>
+			</root>");
+			// id='b' has different prefix. Should not caught by (name),
+			// while should caught by (name, ns).
+			XmlNodeList nl = document.DocumentElement.GetElementsByTagName ("x:a");
+			AssertEquals (2, nl.Count);
+			AssertEquals ("a", nl [0].Attributes ["id"].Value);
+			AssertEquals ("c", nl [1].Attributes ["id"].Value);
+
+			nl = document.DocumentElement.GetElementsByTagName ("a", "urn:foo");
+			AssertEquals (3, nl.Count);
+			AssertEquals ("a", nl [0].Attributes ["id"].Value);
+			AssertEquals ("b", nl [1].Attributes ["id"].Value);
+			AssertEquals ("c", nl [2].Attributes ["id"].Value);
+
+			// name wildcard
+			nl = document.DocumentElement.GetElementsByTagName ("*");
+			AssertEquals (5, nl.Count);
+			AssertEquals ("a", nl [0].Attributes ["id"].Value);
+			AssertEquals ("b", nl [1].Attributes ["id"].Value);
+			AssertEquals ("c", nl [2].Attributes ["id"].Value);
+			AssertEquals ("d", nl [3].Attributes ["id"].Value);
+			AssertEquals ("e", nl [4].Attributes ["id"].Value);
+
+			// wildcard - local and ns
+			nl = document.DocumentElement.GetElementsByTagName ("*", "*");
+			AssertEquals (5, nl.Count);
+			AssertEquals ("a", nl [0].Attributes ["id"].Value);
+			AssertEquals ("b", nl [1].Attributes ["id"].Value);
+			AssertEquals ("c", nl [2].Attributes ["id"].Value);
+			AssertEquals ("d", nl [3].Attributes ["id"].Value);
+			AssertEquals ("e", nl [4].Attributes ["id"].Value);
+
+			// namespace wildcard - namespace
+			nl = document.DocumentElement.GetElementsByTagName ("*", "urn:foo");
+			AssertEquals (4, nl.Count);
+			AssertEquals ("a", nl [0].Attributes ["id"].Value);
+			AssertEquals ("b", nl [1].Attributes ["id"].Value);
+			AssertEquals ("c", nl [2].Attributes ["id"].Value);
+			AssertEquals ("e", nl [3].Attributes ["id"].Value);
+
+			// namespace wildcard - local only. I dare say, such usage is not XML-ish!
+			nl = document.DocumentElement.GetElementsByTagName ("a", "*");
+			AssertEquals (3, nl.Count);
+			AssertEquals ("a", nl [0].Attributes ["id"].Value);
+			AssertEquals ("b", nl [1].Attributes ["id"].Value);
+			AssertEquals ("c", nl [2].Attributes ["id"].Value);
+		}
+
+		[Test]
 		public void OuterXmlWithNamespace ()
 		{
 			XmlElement element = document.CreateElement ("foo", "bar", "#foo");
