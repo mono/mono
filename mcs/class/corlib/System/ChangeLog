@@ -1,3 +1,7 @@
+2001-08-01  Dietmar Maurer  <dietmar@ximian.com>
+
+	* Type.cs (GetTypeFromHandle): added placeholder 
+
 2001-07-24  Derek Holden  <dholden@draper.com>
 
 	* Boolean.cs: Formatted to code style standard. Added GetTypeCode

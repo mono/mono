@@ -16,5 +16,12 @@ namespace System {
 		public abstract string FullName {
 			get;
 		}
+		
+		public Type GetTypeFromHandle (RuntimeTypeHandle handle) { 
+			
+			// FIXME: implement me
+			
+			return null;
+		} 
 	}
 }
