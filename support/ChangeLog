@@ -1,5 +1,10 @@
 2005-02-03  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* Makefile.am (MPH_C_SOURCE): Move errno.c into MPH_C_SOURCE, so it's built
+	  on Windows as well as Unix.
+
+2005-02-03  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* errno.c: Mono_Posix_Syscall_SetLastError should be in Stdlib, not Syscall, 
 	  since it's part of ANSI C (and errno will be used from StdioFileStream).  
 	  Add Mono_Posix_Stdlib_SetLastError.  Don't remove the Syscall version, as 

@@ -7,6 +7,7 @@ INCLUDES = \
 # Source code which helps implement the ANSI C standards, and thus *should* be
 # portable to any platform having a C compiler.
 MPH_C_SOURCE =   \
+	errno.c 	     \
 	map.c          \
 	map.h          \
 	mph.h          \
@@ -18,7 +19,6 @@ MPH_C_SOURCE =   \
 # and *may* be portable between Unix platforms.
 MPH_UNIX_SOURCE = \
 	dirent.c 	\
-	errno.c 	\
 	fcntl.c 	\
 	fstab.c   \
 	grp.c 		\
