@@ -1,3 +1,7 @@
+2004-10-11 David Sheldon <dave-mono@earth.li>
+
+  * HttpWebRequest.cs: Use RemoveAndAdd for AddRange. Fixes unittest. 
+
 2004-10-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequest.cs: ProxyQuery returns true when we use a proxy without

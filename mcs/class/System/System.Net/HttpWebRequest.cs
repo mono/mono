@@ -525,7 +525,7 @@ namespace System.Net
 				value += ",";
 			else
 				throw new InvalidOperationException ("rangeSpecifier");
-			webHeaders.SetInternal ("Range", value + range + "-");	
+			webHeaders.RemoveAndAdd ("Range", value + range + "-");	
 		}
 		
 		public void AddRange (string rangeSpecifier, int from, int to)
@@ -541,7 +541,7 @@ namespace System.Net
 				value += ",";
 			else
 				throw new InvalidOperationException ("rangeSpecifier");
-			webHeaders.SetInternal ("Range", value + from + "-" + to);	
+			webHeaders.RemoveAndAdd ("Range", value + from + "-" + to);	
 		}
 		
 		public override int GetHashCode ()
