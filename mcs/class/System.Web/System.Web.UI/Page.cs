@@ -746,8 +746,10 @@ public class Page : TemplateControl, IHttpHandler
 			return;
 
 		string eventTarget = postdata [postEventSourceID];
-		if (eventTarget == null || eventTarget.Length == 0)
+		if (eventTarget == null || eventTarget.Length == 0) {
+			Validate ();
 			return;
+                }
 
 		IPostBackEventHandler target = FindControl (eventTarget) as IPostBackEventHandler;
 		if (target == null)

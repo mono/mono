@@ -1,5 +1,11 @@
 2004-01-14  Jackson Harper <jackson@ximian.com>
 
+	* Page.cs: If we have a postback that wasn't sent through a
+	postback script (ie user hit submit on a input type=submit) call
+	Validate so page validation occurs. This fixes bug #52770.
+	
+2004-01-14  Jackson Harper <jackson@ximian.com>
+
 	* Page.cs: Don't tell the response to cache anymore. This is done
 	when the cacheability is modified by a callback. Set the cache's duration.
 	
