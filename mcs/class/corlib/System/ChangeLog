@@ -1,3 +1,8 @@
+2005-01-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BitConverter.cs: Reverted my patch from 2004-11-15 as this is true
+	only for Fx 2.0+.
+
 2004-12-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTime.cs : If no progress on value string, don't regard as
