@@ -562,3 +562,12 @@
 	RootContext.WarningLevel in a few places to decide whether a
 	warning is worth reporting to the user or not.  
 
+* Debugging the compiler
+
+	Sometimes it is convenient to find *how* a particular error
+	message is being reported from, to do that, you might want to use
+	the --fatal flag to mcs.  The flag will instruct the compiler to 
+	abort with a stack trace execution when the error is reported.
+
+	You can use this with -warnaserror to obtain the same effect
+	with warnings. 
