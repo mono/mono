@@ -581,4 +581,28 @@ public class X
 	foo:
 		;
 	}
+
+	//
+	// Bug 59867
+	//
+	static void test39 (out int a)
+	{
+		int x_0 = 0;
+		int ll_1 = 0;
+        
+		switch (0) {
+		default:
+			switch (x_0) {
+			default:
+				if (ll_1 == 0)
+					break;
+				else
+					goto k_1;
+			}
+			a = 5;
+			break;
+		k_1:
+			break;
+		}
+	}
 }
