@@ -1,7 +1,6 @@
-thisdir = tools/monop
-SUBDIRS = 
+thisdir = tools/mono-rpm-helpers
+SUBDIRS = mono-find-provides mono-find-requires
+
 include ../../build/rules.make
 
-PROGRAM = mono-find-provides.exe mono-find-requires.exe
-
-include ../../build/executable.make
+all-local install-local test-local run-test-local clean-local uninstall-local dist-local:
