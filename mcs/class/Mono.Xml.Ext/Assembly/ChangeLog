@@ -1,0 +1,5 @@
+2004-10-22  Atsushi Enomoto <atsushi@ximian.com>
+
+	AssemblyInfo.cs,
+	TODOAttribute.cs: Initial Checkin.
+
