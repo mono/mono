@@ -1,18 +1,20 @@
 #
 # Makefile for nunit-console.exe
 #
-# Author:
+# Authors:
 #   Jackson Harper (Jackson@LatitudeGeo.com)
+#   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 #
 
+topdir = ../..
+PROGRAM = ../nunit-console.exe
+
+PROGRAM_LIST = list.unix
+PROGRAM_FLAGS =
+
+include $(topdir)/class/executable.make
+
 RUNTIME=mono
-MCS = $(RUNTIME) ../../mcs/mcs.exe
-MCS_FLAGS =
+MCS = $(RUNTIME) $(topdir)/mcs/mcs.exe
+MCS_FLAGS = -L $(topdir)/class/lib /r:NUnit.Framework.dll /r:NUnit.Util.dll
 
-all: nunit-console.exe
-
-nunit-console.exe: *.cs
-	$(MCS) $(MCS_FLAGS) *.cs /r:../NUnit.Framework.dll /r:../NUnit.Util.dll /out:nunit-console.exe
-	cp nunit-console.exe ..
-clean:
-	rm -f ../nunit-console.exe nunit-console.exe

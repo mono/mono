@@ -1,19 +1,20 @@
 #
 # Makefile for NUnit.Util.dll
 #
-# Author:
+# Authors:
 #   Jackson Harper (Jackson@LatitudeGeo.com)
+#   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 #
 
+topdir = ../..
+PROGRAM = $(topdir)/class/lib/NUnit.Util.dll
+
+PROGRAM_LIST = list.unix
+PROGRAM_FLAGS =
+
+include $(topdir)/class/executable.make
+
 RUNTIME=mono
-MCS = $(RUNTIME) ../../mcs/mcs.exe
-MCS_FLAGS =
+MCS = $(RUNTIME) $(topdir)/mcs/mcs.exe
+MCS_FLAGS = --target library -L $(topdir)/class/lib /r:NUnit.Framework.dll
 
-all: NUnit.Util.dll
-
-NUnit.Util.dll: *.cs
-	$(MCS) $(MCS_FLAGS) /target:library /r:../NUnit.Framework.dll /out:NUnit.Util.dll CommandLineOptions.cs ConsoleOptions.cs
-	cp NUnit.Util.dll ..
-
-clean:
-	rm -f ../NUnit.Util.dll NUnit.Util.dll

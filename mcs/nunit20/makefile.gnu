@@ -2,14 +2,12 @@ DIRS=framework util nunit-console
 
 default: all
 
-all:
-	for d in $(DIRS) ; do \
-		$(MAKE) -C $$d -f makefile.gnu || exit 1; \
+all install clean:
+	@for i in $(DIRS) ; do \
+		if [ -d "$$i" ] && [ -f "$$i/makefile.gnu" ] ; then	\
+			$(MAKE) -C $$i -f makefile.gnu $@ || exit 1; \
+		fi	\
 	done
 
-clean:
-	for d in $(DIRS) ; do \
-		$(MAKE) -C $$d -f makefile.gnu clean || exit 1; \
-	done
+test:
 
-install:

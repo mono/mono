@@ -1,19 +1,20 @@
 #
 # Makefile for NUnit.Framework.dll
 #
-# Author:
+# Authors:
 #   Jackson Harper (Jackson@LatitudeGeo.com)
+#   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 #
 
+topdir = ../..
+PROGRAM = $(topdir)/class/lib/NUnit.Framework.dll
+
+PROGRAM_LIST = list.unix
+PROGRAM_FLAGS = /resource:Transform.resources,NUnit.Framework.Transform.resources
+
+include $(topdir)/class/executable.make
+
 RUNTIME=mono
-MCS = $(RUNTIME) ../../mcs/mcs.exe
-MCS_FLAGS =
+MCS = $(RUNTIME) $(topdir)/mcs/mcs.exe
+MCS_FLAGS = --target library
 
-all: NUnit.Framework.dll
-
-NUnit.Framework.dll: *.cs
-	$(MCS) $(MCS_FLAGS) *.cs /resource:Transform.resources,NUnit.Framework.Transform.resources /target:library /out:NUnit.Framework.dll
-	cp NUnit.Framework.dll ..
-
-clean:
-	rm -f ../NUnit.Framework.dll NUnit.Framework.dll
