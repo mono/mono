@@ -1,4 +1,13 @@
 
+2003-09-29	Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* HtmlMobileTextWriter.cs
+	                        : Added several Style related methods,
+	                          and also some Write methods.
+	* MobileTextWriter.cs   : Device { get; }          - Implemented
+	* StyleStack.cs, WriterState.cs, WriterStyle.cs, StyleTag.cs
+	                        : (Private / Internal) Helper classes.
+
 2003-09-04	Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* ControlAdapter.cs     : Control property         - Marked virtual

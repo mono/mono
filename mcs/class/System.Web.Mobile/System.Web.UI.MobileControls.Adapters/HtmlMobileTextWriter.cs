@@ -29,12 +29,24 @@ namespace System.Web.UI.MobileControls.Adapters
 		private bool requiresNoBreak = false;
 		private bool shouldEnsureStyle = true;
 
+		private WriterState currentState;
+
 		[MonoTODO]
 		public HtmlMobileTextWriter(TextWriter writer,
 		                 MobileCapabilities capabilities)
 		                 : base(writer, capabilities)
 		{
-			throw new NotImplementedException();
+			RenderBold = capabilities.SupportsBold;
+			RenderItalic = capabilities.SupportsItalic;
+			RenderFontSize = capabilities.SupportsFontSize;
+			RenderFontName = capabilities.SupportsFontName;
+			RenderFontColor = capabilities.SupportsFontColor;
+			RenderBodyColor = capabilities.SupportsBodyColor;
+			RenderDivAlign = capabilities.SupportsDivAlign;
+			RenderDivNoWrap = capabilities.SupportsDivNoWrap;
+			RequiresNoBreakInFormatting = capabilities.RequiresNoBreakInFormatting;
+
+			currentState = new WriterState(this);
 		}
 
 		public bool BeforeFirstControlWritten
@@ -186,7 +198,7 @@ namespace System.Web.UI.MobileControls.Adapters
 		{
 			throw new NotImplementedException();
 		}
-		
+
 		[MonoTODO]
 		public void ExitLayout(Style style, bool breakAfter)
 		{
@@ -197,6 +209,16 @@ namespace System.Web.UI.MobileControls.Adapters
 		public void EnterStyle(System.Web.UI.MobileControls.Style style)
 		{
 			throw new NotImplementedException();
+		}
+
+		private void EnterStyle(WriterStyle style)
+		{
+			currentState.Push(style);
+		}
+
+		public void ExitStyle(Style style)
+		{
+			ExitStyle(style, false);
 		}
 
 		[MonoTODO]
@@ -212,9 +234,77 @@ namespace System.Web.UI.MobileControls.Adapters
 		}
 
 		[MonoTODO]
+		public override void Write(char c)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
 		public override void Write(string text)
 		{
 			throw new NotImplementedException();
+		}
+
+		public void BeginStyleContext()
+		{
+			if(currentState.IsBreakPending)
+			{
+				WriteBreak();
+				currentState.IsBreakPending = false;
+			}
+			currentState.PushState();
+			EnterStyle(new WriterStyle());
+		}
+		
+		public void EndStyleContext()
+		{
+			if(currentState.IsBreakPending)
+			{
+				WriteBreak();
+				currentState.IsBreakPending = false;
+			}
+			currentState.PopState();
+			currentState.Pop();
+			currentState.Transition(new WriterStyle());
+		}
+		
+		public void EnterFormat(Style style)
+		{
+			WriterStyle wstyle = new WriterStyle(style);
+			wstyle.Layout = false;
+			EnterStyle(wstyle);
+		}
+		
+		public virtual void ExitFormat(Style style)
+		{
+			ExitStyle(style);
+		}
+		
+		public void WriteBreak()
+		{
+			WriteLine("<br>");
+		}
+		
+		public override void WriteLine(string text)
+		{
+			EnsureStyle();
+			base.WriteLine(text);
+		}
+		
+		internal void EnsureStyle()
+		{
+			if(shouldEnsureStyle)
+			{
+				if(currentState.Count > 0)
+				{
+					currentState.Transition(currentState.Peek());
+				}
+				shouldEnsureStyle = false;
+			}
+			if(BeforeFirstControlWritten)
+			{
+				BeforeFirstControlWritten = false;
+			}
 		}
 	}
 }

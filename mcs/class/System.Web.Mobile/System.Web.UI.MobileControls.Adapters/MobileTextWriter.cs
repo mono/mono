@@ -16,10 +16,21 @@ namespace System.Web.UI.MobileControls.Adapters
 {
 	public class MobileTextWriter : MultiPartWriter
 	{
+		private MobileCapabilities device;
+		
 		public MobileTextWriter(TextWriter writer,
 		                 MobileCapabilities capabilities) : base(writer)
 		{
+			this.device = capabilities;
 			throw new NotImplementedException();
+		}
+		
+		public MobileCapabilities Device
+		{
+			get
+			{
+				return device;
+			}
 		}
 	}
 }
