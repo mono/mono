@@ -7,6 +7,7 @@ DIRS=	\
 	System.IO					\
 	System.IO.IsolatedStorage			\
 	System.Reflection 				\
+	System.Reflection.Emit				\
 	System.Runtime.CompilerServices			\
 	System.Runtime.InteropServices			\
 	System.Runtime.Remoting				\
