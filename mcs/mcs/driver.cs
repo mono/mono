@@ -553,8 +553,17 @@ namespace Mono.CSharp
 			if (level < 0 || level > 4){
 				Report.Error (1900, "Warning level must be 0 to 4");
 				Environment.Exit (1);
-			} else
-				RootContext.WarningLevel = level;
+			}
+			RootContext.WarningLevel = level;
+			TestWarningConflict ();
+		}
+
+		static void TestWarningConflict ()
+		{
+			if (Report.Warnings == 0 && Report.WarningsAreErrors) {
+				Report.Error (1901, "Conflicting options specified: Warning level 0; Treat warnings as errors");
+				Environment.Exit (1);
+			}
 		}
 
 		static void SetupV2 ()
@@ -743,6 +752,7 @@ namespace Mono.CSharp
 				
 			case "--werror":
 				Report.WarningsAreErrors = true;
+				TestWarningConflict();
 				return true;
 				
 			case "--nowarn":
@@ -995,6 +1005,7 @@ namespace Mono.CSharp
 			case "/warnaserror":
 			case "/warnaserror+":
 				Report.WarningsAreErrors = true;
+				TestWarningConflict();
 				return true;
 
 			case "/warnaserror-":
@@ -1015,15 +1026,16 @@ namespace Mono.CSharp
 				
 				warns = value.Split (new Char [] {','});
 				foreach (string wc in warns){
-					int warn = 0;
-					
 					try {
-						warn = Int32.Parse (wc);
+						int warn = Int32.Parse (wc);
+						if (warn < 1) {
+							throw new ArgumentOutOfRangeException("warn");
+						}
+						Report.SetIgnoreWarning (warn);
 					} catch {
-						Usage ();
+						Report.Error (1904, String.Format("'{0}' is not a valid warning number", wc));
 						Environment.Exit (1);
 					}
-					Report.SetIgnoreWarning (warn);
 				}
 				return true;
 			}
@@ -1091,22 +1103,16 @@ namespace Mono.CSharp
 				
 				try {
 					cp = Int32.Parse (value);
-				} catch { }
-				
-				if (cp == -1){
-					Console.WriteLine ("Invalid code-page requested");
-					Usage ();
-				}
-
-				try {
 					encoding = Encoding.GetEncoding (cp);
 					using_default_encoder = false;
 				} catch {
-					Console.WriteLine ("Code page: {0} not supported", cp);
+					Report.Error (2016, String.Format("Code page '{0}' is invalid or not installed", cp));
+					Environment.Exit (1);
 				}
 				return true;
-
 			}
+			Report.Error (2007, String.Format ("Unrecognized command-line option: '{0}'", option));
+			Environment.Exit (1);
 			return false;
 		}
 		
@@ -1120,7 +1126,7 @@ namespace Mono.CSharp
 		///    now, needs to be turned into a real driver soon.
 		/// </remarks>
 		// [MonoTODO("Change error code for unknown argument to something reasonable")]
-		static bool MainDriver (string [] args)
+		internal static bool MainDriver (string [] args)
 		{
 			int i;
 			bool parsing_options = true;
@@ -1426,5 +1432,24 @@ namespace Mono.CSharp
 			return (Report.Errors == 0);
 		}
 
+	}
+
+	//
+	// This is the only public entry point
+	//
+	public class CompilerCallableEntryPoint : MarshalByRefObject {
+		static bool used = false;
+		
+		public bool InvokeCompiler (string [] args)
+		{
+			if (used)
+				Reset ();
+			bool ok = Driver.MainDriver (args);
+			return ok && Report.Errors == 0;
+		}
+
+		public void Reset ()
+		{
+		}
 	}
 }
