@@ -1,0 +1,61 @@
+
+	Mono MCS Errors contributors readme
+
+	Created: 01/14/2003. First revised:
+	
+  If you are willing to contribute to the errors tests,
+  you should follow the following procedure.
+
+	* Visit the URL: 
+	
+	http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cscomp/html/vctbsCompilerErrorsSC0001ThroughSC9999.asp
+	
+	We are writing at least one test per each error 
+	CSXXXX documented in that URL. So check the mcs/errors
+	directory for missing csXXXX.cs files, where a csXXXX.cs
+	file is a simple error test for a concrete bug.
+
+	* Contact raciel@gnome.org, jaime@gnome.org 
+	or the mono list: mono-list@ximian.com before you
+	start so we can provide you with a list of errors 
+	that are unassigned. Otherwise you might start
+	writing already assigned errors tests.
+
+	
+	
+	Template for an error test:
+
+	The file should be named: csXXXX.cs according to the
+	error number.
+
+	The file should start with two inline commented lines.
+	The first one contains a little description of the error.
+	You can't just copy it from Microsoft's documentation. 
+	Invent your own. 
+	The second line declares the line where the error occurs.
+	
+	F.ex: 
+	// cs0057.cs: Inconsistent accessibility. Parameter type is less accessible than operator.
+	// Line: 10
+
+	Then you can write the code for your test. You can also
+	add inline comments for the copyright, etc if you want
+	to. Look at the other tests for examples.
+
+	There shouldn't be two or more errors per tests. This is
+	you write a test for each error and the code shouldn't
+	have more errors than the one trying to show and that
+	appears at the line commented in the second line of the
+	file.
+
+	Then you have to add the file to the CVS and commit it.
+
+	The next thing is to write a short text file with a little
+	description of what the error is and what it's necessary
+	to be done to solve it. F.ex, if the error is that there 
+	is no entrypoint in the program, you could say:
+	"Error CSXXXX: no entrypoint defined. You need to specify
+	an entrypoint or compile with /target:library (F.ex.).
+	The file must be called csXXXX.txt
+
+
