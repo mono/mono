@@ -3,11 +3,12 @@
 //
 // Author:
 //   Joe Shaw (joe@ximian.com)
+//   Duncan Mak (duncan@ximian.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
-
 using System.Globalization;
+using System.Runtime.Serialization;
 namespace System {
 
 	public class TypeInitializationException : SystemException {
@@ -25,6 +26,13 @@ namespace System {
 			get {
 				return type_name;
 			}
+		}
+
+		// Methods
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			base.GetObjectData (info, context);
+			info.AddValue ("TypeName", type_name);
 		}
 	}
 

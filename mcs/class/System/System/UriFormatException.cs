@@ -3,19 +3,24 @@
 //
 // Author:
 //   Scott Sanders (scott@stonecobra.com)
+//   Duncan Mak (duncan@ximian.com)
 //
 // (C) 2001 Scott Sanders
+// (C) 2002 Ximian, Inc.
 //
 
+using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace System {
-
-	public class UriFormatException : Exception {
+	[Serializable]
+	[MonoTODO] // Doc says this class doesn't implement ISerializable
+	public class UriFormatException : FormatException, ISerializable
+	{
 
 		// Constructors
 		public UriFormatException ()
-			: base ("Invalid URI format")
+			: base (Locale.GetText ("Invalid URI format"))
 		{
 		}
 
@@ -24,11 +29,16 @@ namespace System {
 		{
 		}
 
-		[MonoTODO]
-		protected UriFormatException( SerializationInfo info, StreamingContext context)
-			: base ("UriFormatException: Please implement me")
+		protected UriFormatException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{			
+		}
+
+		// Methods
+		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			//TODO - Implement me...  The Beta2 docs say nothing about what this method does
+			base.GetObjectData (info, context);
 		}
 	}
 }
+	

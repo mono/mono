@@ -3,11 +3,13 @@
 //
 // Author:
 //   Joe Shaw (joe@ximian.com)
+//   Duncan Mak (duncan@ximian.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
-
 using System.Globalization;
+using System.Runtime.Serialization;
+
 namespace System {
 
 	public class NotFiniteNumberException : ArithmeticException {
@@ -40,11 +42,25 @@ namespace System {
 			this.offending_number = offending_number;
 		}
 
+		protected NotFiniteNumberException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{
+			offending_number = info.GetDouble ("OffendingNumber");
+		}		
+
 		// Properties
 		public virtual double OffendingNumber {
 			get {
 				return offending_number;
 			}
+		}
+
+		// Method
+
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			base.GetObjectData (info, context);
+			info.AddValue ("OffendingNumber", offending_number);
 		}
 	}
 }

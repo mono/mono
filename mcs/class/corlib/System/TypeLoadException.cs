@@ -56,8 +56,13 @@ namespace System {
 			get { return type; }
 		}
 
-		// Method
-		[MonoTODO] // it seems like this object serializes more fields than those described.
+		// Methods
+		//
+		// It seems like this object serializes more fields than those described.
+		// Those fields are TypeLoadClassName, TypeLoadAssemblyName,
+		// TypeLoadMessageArg and TypeLoadResourceID.
+		//
+		[MonoTODO] 
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)

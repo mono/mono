@@ -55,7 +55,7 @@ namespace System.Resources
 		
 		public void Dispose ()
 		{
-				Close();
+			Close();
 		}
 
 		[MonoTODO]

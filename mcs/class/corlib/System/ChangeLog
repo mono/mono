@@ -1,5 +1,10 @@
 2002-01-31  Duncan Mak  <duncan@ximian.com>
 
+	* InvalidOperationException.cs:
+	* NotFiniteNumberException.cs:
+	* ObjectDisposedException.cs:
+	* TypeInitializationException.cs: Added missing bits for serialization/
+	
 	* AppDomainUnloadedException.cs:
 	* ApplicationException.cs:
 	* ArgumentOutOfRangeException.cs:

@@ -3,13 +3,16 @@
 //
 // Author:
 //   Joe Shaw (joe@ximian.com)
+//   Duncan Mak (duncan@ximian.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
 using System.Globalization;
-namespace System {
+using System.Runtime.Serialization;
 
+namespace System {
+	[Serializable]
 	public class InvalidOperationException : SystemException {
 		// Constructors
 		public InvalidOperationException ()
@@ -24,6 +27,11 @@ namespace System {
 
 		public InvalidOperationException (string message, Exception inner)
 			: base (message, inner)
+		{
+		}
+
+		protected InvalidOperationException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
 		{
 		}
 	}
