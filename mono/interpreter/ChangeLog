@@ -1,3 +1,8 @@
+2004-03-29  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* interp.c interp.h: remove child from MonoInvocation
+	as it isn't used.
+
 2004-03-25  Martin Baulig  <martin@ximian.com>
 
 	* interp.c (stackval_from_data): Added MONO_TYPE_GENERICINST.
