@@ -1,3 +1,7 @@
+2003-09-29  Martin Baulig  <martin@ximian.com>
+
+	* gen-14.cs: New generics test.
+
 2003-09-27  Martin Baulig  <martin@ximian.com>
 
 	* gen-11.cs, gen-12.cs: New generics tests.
