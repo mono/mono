@@ -153,6 +153,12 @@ namespace System.Reflection {
 			return false;
 		}
 
+		public override string ToString ()
+		{
+			string name = FullName;
+			return (name != null) ? name : base.ToString ();
+		}
+
 		[MonoTODO]
 		public byte[] GetPublicKeyToken() {
 			return new byte[0];

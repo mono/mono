@@ -45,7 +45,7 @@ namespace System.Reflection {
 				// FIXME: This is wrong, but it gets us going
 				// in the compiler for now
 				//
-				return CodeBase;
+				return GetName (false).ToString ();
 			}
 		}
 
