@@ -1,3 +1,8 @@
+2003-12-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: fix for several asynchronous methods to delay exception
+	throwing.  Patch by Brad FitzpatrickBrad Fitzpatrick <brad@danga.com>.
+
 2003-12-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TcpListener.cs: get the LocalEndPoint from the socket after binding.

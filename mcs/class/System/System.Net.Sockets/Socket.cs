@@ -26,11 +26,21 @@ namespace System.Net.Sockets
 			private WaitHandle waithandle;
 			private bool completed_sync, completed;
 			private Worker worker;
+			private Exception delayedException = null;
 
 			public SocketAsyncResult(object state) {
 				this.state=state;
 				waithandle=new ManualResetEvent(false);
 				completed_sync=completed=false;
+			}
+
+			public void SetDelayedException (Exception e) {
+				delayedException = e;
+			}
+
+			public void CheckIfThrowDelayedException () {
+				if (delayedException != null)
+					throw delayedException;
 			}
 
 			public object AsyncState {
@@ -150,7 +160,11 @@ namespace System.Net.Sockets
 			public void Connect() {
 				lock(result) {
 					if (socket.Blocking) {
-						socket.Connect(endpoint);
+						try {
+							socket.Connect(endpoint);
+						} catch (Exception e) {
+							result.SetDelayedException(e);
+						}
 						End ();
 						return;
 					}
@@ -218,17 +232,25 @@ namespace System.Net.Sockets
 
 			public void Send() {
 				lock(result) {
-					total=socket.Send(buffer, offset, size,
-							  sockflags);
+					try {
+						total=socket.Send(buffer, offset, size,
+								  sockflags);
+					} catch (Exception e) {
+						result.SetDelayedException(e);
+					}
 					End();
 				}
 			}
 
 			public void SendTo() {
 				lock(result) {
-					total=socket.SendTo(buffer, offset,
-							    size, sockflags,
-							    endpoint);
+					try {
+						total=socket.SendTo(buffer, offset,
+								    size, sockflags,
+								    endpoint);
+					} catch (Exception e) {
+                                                result.SetDelayedException(e);
+                                        }
 					End();
 				}
 			}
@@ -721,6 +743,7 @@ namespace System.Net.Sockets
 			SocketAsyncResult req=(SocketAsyncResult)result;
 
 			result.AsyncWaitHandle.WaitOne();
+			req.CheckIfThrowDelayedException();
 		}
 
 		public int EndReceive(IAsyncResult result) {
@@ -743,6 +766,7 @@ namespace System.Net.Sockets
 			SocketAsyncResult req=(SocketAsyncResult)result;
 
 			result.AsyncWaitHandle.WaitOne();
+			req.CheckIfThrowDelayedException();
 			return(req.Worker.Total);
 		}
 
@@ -750,6 +774,7 @@ namespace System.Net.Sockets
 			SocketAsyncResult req=(SocketAsyncResult)result;
 
 			result.AsyncWaitHandle.WaitOne();
+			req.CheckIfThrowDelayedException();
 			return(req.Worker.Total);
 		}
 

@@ -1,3 +1,8 @@
+2003-12-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SocketTest.cs: new test for asynchronous connection failure.
+	Test by Brad FitzpatrickBrad Fitzpatrick <brad@danga.com>.
+
 2003-08-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TcpListenerTest.cs: added more tests.

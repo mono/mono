@@ -35,6 +35,7 @@ System.Net/WebProxyTest.cs
 System.Net/WebRequestTest.cs
 System.Net.Sockets/TcpClientTest.cs
 System.Net.Sockets/TcpListenerTest.cs
+System.Net.Sockets/SocketTest.cs
 System.Text.RegularExpressions/PerlTest.cs
 System.Text.RegularExpressions/PerlTrials.cs
 System.Text.RegularExpressions/RegexTrial.cs
