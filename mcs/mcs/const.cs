@@ -24,13 +24,12 @@ namespace Mono.CSharp {
 	using System.Reflection.Emit;
 	using System.Collections;
 
-	public class Const : FieldBase {
+	public class Const : FieldMember {
 		public Expression Expr;
 		EmitContext const_ec;
 
 		bool resolved = false;
 		object ConstantValue = null;
-		Type type;
 
 		bool in_transit = false;
 
@@ -74,14 +73,12 @@ namespace Mono.CSharp {
 		/// </summary>
 		public override bool Define ()
 		{
-			type = Parent.ResolveType (Type, false, Location);
-
-			if (type == null)
+			if (!base.Define ())
 				return false;
 
-			const_ec = new EmitContext (Parent, Location, null, type, ModFlags);
+			const_ec = new EmitContext (Parent, Location, null, MemberType, ModFlags);
 
-			Type ttype = type;
+			Type ttype = MemberType;
 			while (ttype.IsArray)
 			    ttype = TypeManager.GetElementType (ttype);
 			
@@ -93,10 +90,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (!CheckBase ())
-				return false;
-
-			FieldBuilder = Parent.TypeBuilder.DefineField (Name, type, FieldAttr);
+			FieldBuilder = Parent.TypeBuilder.DefineField (Name, MemberType, FieldAttr);
 
 			TypeManager.RegisterConstant (FieldBuilder, this);
 
@@ -235,8 +229,8 @@ namespace Mono.CSharp {
 				ce = Expr as Constant;
 			}
 
-			if (type != real_expr.Type) {
-				ce = ChangeType (Location, ce, type);
+			if (MemberType != real_expr.Type) {
+				ce = ChangeType (Location, ce, MemberType);
 				if (ce == null){
 					value = null;
 					return false;
@@ -245,13 +239,13 @@ namespace Mono.CSharp {
 			}
 			ConstantValue = ce.GetValue ();
 
-			if (type.IsEnum){
+			if (MemberType.IsEnum){
 				//
 				// This sadly does not work for our user-defined enumerations types ;-(
 				//
 				try {
 					ConstantValue = System.Enum.ToObject (
-						type, ConstantValue);
+						MemberType, ConstantValue);
 				} catch (ArgumentException){
 					Report.Error (
 						-16, Location,

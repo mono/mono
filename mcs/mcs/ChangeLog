@@ -1,3 +1,15 @@
+2004-09-22  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (TypeContainer.HasExplicitLayout): New property
+	Returns whether container has StructLayout attribute set Explicit.
+	(FieldMember): New abstract class for consts and fields.
+	(FieldMember.ApplyAttributeBuilder): Add error 636 and 637 report.
+	(Field): Reuse FieldMember.
+
+	* const.cs (Const): Reuse FieldMember.
+
+	* rootcontext.cs: EmitConstants call moved to class.
+
 2004-09-22  Martin Baulig  <martin@ximian.com>
 
 	Thanks to Peter Sestoft for this bug report.

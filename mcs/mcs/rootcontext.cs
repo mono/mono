@@ -722,9 +722,6 @@ namespace Mono.CSharp {
 
 			if (type_container_resolve_order != null) {
 				foreach (TypeContainer tc in type_container_resolve_order)
-					tc.EmitConstants ();
-				
-				foreach (TypeContainer tc in type_container_resolve_order)
 					tc.EmitType ();
 			}
 			

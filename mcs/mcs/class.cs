@@ -1525,6 +1525,13 @@ namespace Mono.CSharp {
 			return retMethods;
 		}
 		
+		// Indicated whether container has StructLayout attribute set Explicit
+		public virtual bool HasExplicitLayout {
+			get {
+				return false;
+			}
+		}
+		
 		/// <summary>
 		///   This method returns the members of this type just like Type.FindMembers would
 		///   Only, we need to use this for types which are _being_ defined because MS' 
@@ -2023,6 +2030,8 @@ namespace Mono.CSharp {
 						c.Emit ();
 				}
 			}
+
+			EmitConstants ();
 
 			if (default_static_constructor != null)
 				default_static_constructor.Emit ();
@@ -2578,32 +2587,14 @@ namespace Mono.CSharp {
 			return PendingImplementation.GetPendingImplementations (this);
 		}
 
-		protected override void VerifyMembers (EmitContext ec) 
-		{
-			if (Fields != null) {
-				foreach (Field f in Fields) {
-					if ((f.ModFlags & Modifiers.STATIC) != 0)
-						continue;
-					if (hasExplicitLayout) {
-						if (f.OptAttributes == null 
-						    || !f.OptAttributes.Contains (TypeManager.field_offset_attribute_type, ec)) {
-							Report.Error (625, f.Location,
-								      "Instance field of type marked with" 
-								      + " StructLayout(LayoutKind.Explicit) must have a"
-								      + " FieldOffset attribute.");
-						}
-					}
-					else {
-						if (f.OptAttributes != null 
-						    && f.OptAttributes.Contains (TypeManager.field_offset_attribute_type, ec)) {
-							Report.Error (636, f.Location,
-								      "The FieldOffset attribute can only be placed on members of "
-								      + "types marked with the StructLayout(LayoutKind.Explicit)");
-						}
-					}
-				}
+		public override bool HasExplicitLayout {
+			get {
+				return hasExplicitLayout;
 			}
+		}
 
+		protected override void VerifyMembers (EmitContext ec)
+		{
 			base.VerifyMembers (ec);
 
 			if ((events != null) && (RootContext.WarningLevel >= 3)) {
@@ -5050,10 +5041,74 @@ namespace Mono.CSharp {
 		}
 	}
 
+	public abstract class FieldMember: FieldBase
+	{
+		bool has_field_offset = false;
+
+		protected FieldMember (TypeContainer parent, Expression type, int mod,
+			int allowed_mod, MemberName name, object init, Attributes attrs, Location loc)
+			: base (parent, type, mod, allowed_mod, name, init, attrs, loc)
+		{
+		}
+
+		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
+		{
+			if (a.Type == TypeManager.field_offset_attribute_type)
+			{
+				has_field_offset = true;
+
+				if (!Parent.HasExplicitLayout) {
+					Report.Error (636, Location, "The FieldOffset attribute can only be placed on members of types marked with the StructLayout(LayoutKind.Explicit)");
+					return;
+				}
+
+				if ((ModFlags & Modifiers.STATIC) != 0 || this is Const) {
+					Report.Error (637, Location, "The FieldOffset attribute is not allowed on static or const fields");
+					return;
+				}
+			}
+			base.ApplyAttributeBuilder (a, cb);
+		}
+
+
+		public override bool Define()
+		{
+			MemberType = Parent.ResolveType (Type, false, Location);
+			
+			if (MemberType == null)
+				return false;
+
+			if (!CheckBase ())
+				return false;
+			
+			if (!Parent.AsAccessible (MemberType, ModFlags)) {
+				Report.Error (52, Location,
+					"Inconsistent accessibility: field type `" +
+					TypeManager.CSharpName (MemberType) + "' is less " +
+					"accessible than field `" + Name + "'");
+				return false;
+			}
+
+			if (MemberType.IsPointer && !UnsafeOK (Parent))
+				return false;
+
+			return true;
+		}
+
+		public override void Emit ()
+		{
+			if (Parent.HasExplicitLayout && !has_field_offset && (ModFlags & Modifiers.STATIC) == 0) {
+				Report.Error (625, Location, "'{0}': Instance field types marked with StructLayout(LayoutKind.Explicit) must have a FieldOffset attribute.", GetSignatureForError ());
+			}
+
+			base.Emit ();
+		}
+	}
+
 	//
 	// The Field class is used to represents class/struct fields during parsing.
 	//
-	public class Field : FieldBase {
+	public class Field : FieldMember {
 		// <summary>
 		//   Modifiers allowed in a class declaration
 		// </summary>
@@ -5077,24 +5132,9 @@ namespace Mono.CSharp {
 
 		public override bool Define ()
 		{
-			MemberType = Parent.ResolveType (Type, false, Location);
-			
-			if (MemberType == null)
+			if (!base.Define ())
 				return false;
 
-			CheckBase ();
-			
-			if (!Parent.AsAccessible (MemberType, ModFlags)) {
-				Report.Error (52, Location,
-					      "Inconsistent accessibility: field type `" +
-					      TypeManager.CSharpName (MemberType) + "' is less " +
-					      "accessible than field `" + Name + "'");
-				return false;
-			}
-
-			if (MemberType.IsPointer && !UnsafeOK (Parent))
-				return false;
-			
 			if (RootContext.WarningLevel > 1){
 				Type ptype = Parent.TypeBuilder.BaseType;
 
