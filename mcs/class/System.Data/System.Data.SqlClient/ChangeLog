@@ -1,3 +1,14 @@
+2003-08-20  Duncan Mak  <duncan@ximian.com>
+
+	* SqlConnectionPool.cs (ReleaseConnection): A patch from Joerg
+	Rosenkranz <JoergR@voelcker.com>. Currently, if a connection is
+	closed by an external event (network problem, etc.) it is pushed
+	back into the connection pool. The next Open call retrieves this
+	invalid connection which leads to exceptions when executing
+	statements.
+
+	This patch fixes this problem. This closes bug #47429.
+
 2003-07-04  Miguel de Icaza  <miguel@ximian.com>
 
 	* SqlDataReader.cs: Added extra information to the exceptions

@@ -139,7 +139,22 @@ namespace System.Data.SqlClient {
 
 		public void ReleaseConnection (ITds tds)
 		{
-			Monitor.Exit (tds);
+			// Check if connection is still valid
+			try
+			{
+				// Send dummy statement to check connection
+				tds.Execute("select 1");
+			}
+			catch
+			{
+				// Remove invalid connection
+				list.Remove(tds);
+			}
+			finally
+			{
+				// Release lock
+				Monitor.Exit (tds);
+			}
 		}
 
 		public int IndexOf (object o)
