@@ -1,3 +1,13 @@
+2004-11-24  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlQualifiedName.cs : in 2.0 it is [Serializable].
+	* XmlTextReader.cs : removed unused local variable.
+	* XmlTextWriter.cs : Improved some exception messages.
+	  moved some private fields into #if NET_2_0.
+	* XmlValidatingReader.cs : rename specifiedResolver to
+	  resolverSpecified and use it in internal get_Resolver().
+	  Added [Obsolete] for ReadTypedValue() whose base is obsoleted.
+
 2004-11-22  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextReader.cs : Now attribute normalization is handled on Read(),

@@ -55,7 +55,7 @@ namespace System.Xml
 		XmlTextReader xmlTextReader;
 		XmlReader validatingReader;
 		XmlResolver resolver; // Only used to non-XmlTextReader XmlReader
-		bool specifiedResolver;
+		bool resolverSpecified;
 		ValidationType validationType;
 		// for 2.0: Now it is obsolete. It is allocated only when it is required
 		XmlSchemaSet schemas;
@@ -267,8 +267,10 @@ namespace System.Xml
 				// silly behavior here.
 				if (this.xmlTextReader != null)
 					return this.xmlTextReader.Resolver;
-				else
+				else if (resolverSpecified)
 					return resolver;
+				else
+					return null;
 			}
 		}
 
@@ -323,11 +325,10 @@ namespace System.Xml
 
 		public XmlResolver XmlResolver {
 			set {
-				specifiedResolver = true;
+				resolverSpecified = true;
+				resolver = value;
 				if (xmlTextReader != null)
 					xmlTextReader.XmlResolver = value;
-				else
-					resolver = value;
 
 				XsdValidatingReader xsvr = validatingReader as XsdValidatingReader;
 				if (xsvr != null)
@@ -536,6 +537,7 @@ namespace System.Xml
 #endif
 
 #if NET_2_0
+		[Obsolete]
 		public override object ReadTypedValue ()
 #else
 		public object ReadTypedValue ()

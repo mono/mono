@@ -609,7 +609,6 @@ namespace System.Xml
 
 			byte b = 0;
 			byte work = 0;
-			bool loop = true;
 			for (int i = 0; i < charsLength - 3; i++) {
 				if ((i = SkipIgnorableBase64Chars (chars, charsLength, i)) == charsLength)
 					break;

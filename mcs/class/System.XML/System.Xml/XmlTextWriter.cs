@@ -85,8 +85,8 @@ namespace System.Xml
 		bool closeOutput = true;
 		bool newLineOnAttributes;
 		string newLineChars;
-		bool outputXmlDeclaration;
 #if NET_2_0
+		bool outputXmlDeclaration;
 		ConformanceLevel conformanceLevel;
 #endif
 
@@ -448,7 +448,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 		public override void WriteCData (string text)
 		{
 			if (text.IndexOf ("]]>") >= 0)
-				throw new ArgumentException ();
+				throw new ArgumentException ("CDATA section cannot contain text \"]]>\".");
 
 			CheckState ();
 			IndentingOverriden = true;
@@ -485,9 +485,10 @@ openElements [openElementCount - 1]).IndentingOverriden;
 
 		public override void WriteComment (string text)
 		{
-			if ((text.EndsWith("-")) || (text.IndexOf("--") > 0)) {
-				throw new ArgumentException ();
-			}
+			if (text.EndsWith("-"))
+				throw new ArgumentException ("An XML comment cannot contain \"--\" inside.");
+			else if (text.IndexOf("--") > 0)
+				throw new ArgumentException ("An XML comment cannot end with \"-\".");
 			if (ws != WriteState.Content && formatting == Formatting.Indented)
 				w.WriteLine ();
 
@@ -678,7 +679,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 		public override void WriteProcessingInstruction (string name, string text)
 		{
 			if ((name == null) || (name == string.Empty))
-				throw new ArgumentException ();
+				throw new ArgumentException ("Argument processing instruction name must not be null or empty.");
 			if (!XmlChar.IsName (name))
 				throw new ArgumentException ("Invalid processing instruction name.");
 			if ((text.IndexOf("?>") > 0))
