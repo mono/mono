@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Collections;
 using System.IO;
 using System.Text;
 
@@ -17,7 +18,10 @@ namespace System.Xml
 	{
 		#region Fields
 
-		TextWriter w;
+		protected TextWriter w;
+		protected bool openWriter = true;
+		protected bool openStartElement;
+		protected Stack openElements = new Stack();
 
 		#endregion
 
@@ -97,10 +101,26 @@ namespace System.Xml
 
 		#region Methods
 
-		[MonoTODO]
+		private void CheckOpenWriter ()
+		{
+			if (!openWriter) {
+				throw new InvalidOperationException ();
+			}
+		}
+
+		[MonoTODO("Need to close all open elements and close the underlying streams.")]
 		public override void Close ()
 		{
-			throw new NotImplementedException ();
+			openWriter = false;
+		}
+
+		private void CloseStartElement ()
+		{
+			if (openStartElement) 
+			{
+				w.Write(">");
+				openStartElement = false;
+			}
 		}
 
 		[MonoTODO]
@@ -167,10 +187,14 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override void WriteEndElement ()
 		{
-			throw new NotImplementedException ();
+			if (openStartElement) {
+				w.Write(" />");
+			}
+			else {
+				w.Write("</{0}>", openElements.Pop());
+			}
 		}
 
 		[MonoTODO]
@@ -197,10 +221,13 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override void WriteProcessingInstruction (string name, string text)
 		{
-			throw new NotImplementedException ();
+			if ((name == null) || (name == string.Empty) || (name.IndexOf("?>") > 0) || (text.IndexOf("?>") > 0)) {
+				throw new ArgumentException();
+			}
+
+			w.Write("<?{0} {1}?>", name, text);
 		}
 
 		[MonoTODO]
@@ -239,16 +266,22 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Not dealing with prefix and ns yet.")]
 		public override void WriteStartElement (string prefix, string localName, string ns)
 		{
-			throw new NotImplementedException ();
+			CheckOpenWriter();
+			CloseStartElement();
+			w.Write("<{0}", localName);
+			openElements.Push(localName);
+			openStartElement = true;
 		}
 
-		[MonoTODO]
+		[MonoTODO("Haven't done any entity replacements yet.")]
 		public override void WriteString (string text)
 		{
-			throw new NotImplementedException ();
+			CheckOpenWriter();
+			CloseStartElement();
+			w.Write(text);
 		}
 
 		[MonoTODO]

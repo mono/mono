@@ -274,16 +274,22 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override void WriteContentTo (XmlWriter w)
 		{
-			throw new NotImplementedException ();
+			foreach(XmlNode childNode in ChildNodes)
+				childNode.WriteTo(w);
 		}
 
-		[MonoTODO]
 		public override void WriteTo (XmlWriter w)
 		{
-			throw new NotImplementedException ();
+			w.WriteStartElement(Value);
+
+			foreach(XmlNode attributeNode in Attributes)
+				attributeNode.WriteTo(w);
+
+			WriteContentTo(w);
+
+			w.WriteEndElement();
 		}
 
 		#endregion

@@ -372,19 +372,20 @@ namespace System.Xml
 			RemoveAll ();
 
 			XmlNode currentNode = this;
+			XmlNode newNode;
 
 			while (xmlReader.Read ()) 
 			{
 				switch (xmlReader.NodeType) {
 
 				case XmlNodeType.CDATA:
-					XmlCDataSection cdataSection = CreateCDataSection(xmlReader.Value);
-					currentNode.AppendChild (cdataSection);
+					newNode = CreateCDataSection(xmlReader.Value);
+					currentNode.AppendChild (newNode);
 					break;
 
 				case XmlNodeType.Comment:
-					XmlComment comment = CreateComment (xmlReader.Value);
-					currentNode.AppendChild (comment);
+					newNode = CreateComment (xmlReader.Value);
+					currentNode.AppendChild (newNode);
 					break;
 
 				case XmlNodeType.Element:
@@ -406,14 +407,13 @@ namespace System.Xml
 					break;
 
 				case XmlNodeType.ProcessingInstruction:
-					XmlProcessingInstruction processingInstruction = CreateProcessingInstruction (xmlReader.Name, xmlReader.Value);
-					// Where does a processing instruction go in the doc?
-					// I think we need to just hold on to them in an internal array in doc.
+					newNode = CreateProcessingInstruction (xmlReader.Name, xmlReader.Value);
+					currentNode.AppendChild (newNode);
 					break;
 
 				case XmlNodeType.Text:
-					XmlText text = CreateTextNode (xmlReader.Value);
-					currentNode.AppendChild (text);
+					newNode = CreateTextNode (xmlReader.Value);
+					currentNode.AppendChild (newNode);
 					break;
 				}
 			}
@@ -423,6 +423,54 @@ namespace System.Xml
 		{
 			XmlReader xmlReader = new XmlTextReader (new StringReader (xml));
 			Load (xmlReader);
+		}
+
+		internal void onNodeChanged (XmlNode node, XmlNode Parent)
+		{
+			if (NodeChanged != null)
+				NodeInserted (node, new XmlNodeChangedEventArgs
+					(XmlNodeChangedAction.Change,
+					node, Parent, Parent));
+		}
+
+		internal void onNodeChanging(XmlNode node, XmlNode Parent)
+		{
+			if (NodeInserting != null)
+				NodeChanging (node, new XmlNodeChangedEventArgs
+					(XmlNodeChangedAction.Change,
+					node, Parent, Parent));
+		}
+
+		internal void onNodeInserted (XmlNode node, XmlNode newParent)
+		{
+			if (NodeInserted != null)
+				NodeInserted (node, new XmlNodeChangedEventArgs
+					(XmlNodeChangedAction.Insert,
+					node, null, newParent));
+		}
+
+		internal void onNodeInserting (XmlNode node, XmlNode newParent)
+		{
+			if (NodeInserting != null)
+				NodeInserting (node, new XmlNodeChangedEventArgs
+					(XmlNodeChangedAction.Insert,
+					node, null, newParent));
+		}
+
+		internal void onNodeRemoved (XmlNode node, XmlNode oldParent)
+		{
+			if (NodeRemoved != null)
+				NodeRemoved (node, new XmlNodeChangedEventArgs
+					(XmlNodeChangedAction.Remove,
+					node, oldParent, null));
+		}
+
+		internal void onNodeRemoving (XmlNode node, XmlNode oldParent)
+		{
+			if (NodeRemoving != null)
+				NodeRemoving (node, new XmlNodeChangedEventArgs
+					(XmlNodeChangedAction.Remove,
+					node, oldParent, null));
 		}
 
 		[MonoTODO]
@@ -455,64 +503,15 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public override void WriteContentTo (XmlWriter xw)
+		public override void WriteContentTo (XmlWriter w)
 		{
-			throw new NotImplementedException ();
+			foreach(XmlNode childNode in ChildNodes)
+				childNode.WriteTo(w);
 		}
 
-		[MonoTODO]
 		public override void WriteTo (XmlWriter w)
 		{
-			throw new NotImplementedException ();
-		}
-
-		internal void onNodeChanging(XmlNode node, XmlNode Parent)
-		{
-			if (NodeInserting != null)
-				NodeChanging (node, new XmlNodeChangedEventArgs
-					(XmlNodeChangedAction.Change,
-					node, Parent, Parent));
-		}
-
-		internal void onNodeChanged (XmlNode node, XmlNode Parent)
-		{
-			if (NodeChanged != null)
-				NodeInserted (node, new XmlNodeChangedEventArgs
-					(XmlNodeChangedAction.Change,
-					node, Parent, Parent));
-		}
-
-		internal void onNodeInserting (XmlNode node, XmlNode newParent)
-		{
-			if (NodeInserting != null)
-				NodeInserting (node, new XmlNodeChangedEventArgs
-					(XmlNodeChangedAction.Insert,
-					node, null, newParent));
-		}
-
-		internal void onNodeInserted (XmlNode node, XmlNode newParent)
-		{
-			if (NodeInserted != null)
-				NodeInserted (node, new XmlNodeChangedEventArgs
-					(XmlNodeChangedAction.Insert,
-					node, null, newParent));
-		}
-
-		internal void onNodeRemoving (XmlNode node, XmlNode oldParent)
-		{
-			if (NodeRemoving != null)
-				NodeRemoving (node, new XmlNodeChangedEventArgs
-					(XmlNodeChangedAction.Remove,
-					node, oldParent, null));
-		}
-
-		internal void onNodeRemoved (XmlNode node, XmlNode oldParent)
-		{
-			if (NodeRemoved != null)
-				NodeRemoved (node, new XmlNodeChangedEventArgs
-					(XmlNodeChangedAction.Remove,
-					node, oldParent, null));
+			WriteContentTo(w);
 		}
 
 		#endregion

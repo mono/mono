@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections;
+using System.IO;
 using System.Xml.XPath;
 
 namespace System.Xml
@@ -71,9 +72,17 @@ namespace System.Xml
 			set { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
+		[MonoTODO("Setter.")]
 		public virtual string InnerXml {
-			get { throw new NotImplementedException (); }
+			get {
+				StringWriter sw = new StringWriter ();
+				XmlTextWriter xtw = new XmlTextWriter (sw);
+
+				WriteContentTo(xtw);
+
+				return sw.GetStringBuilder().ToString();
+			}
+
 			set { throw new NotImplementedException (); }
 		}
 
@@ -136,7 +145,14 @@ namespace System.Xml
 
 		[MonoTODO]
 		public virtual string OuterXml {
-			get { throw new NotImplementedException (); }
+			get {
+				StringWriter sw = new StringWriter ();
+				XmlTextWriter xtw = new XmlTextWriter (sw);
+
+				WriteTo(xtw);
+
+				return sw.GetStringBuilder().ToString();
+			}
 		}
 
 		public virtual XmlDocument OwnerDocument {

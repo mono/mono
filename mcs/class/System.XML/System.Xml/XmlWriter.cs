@@ -129,16 +129,14 @@ namespace System.Xml
 
 		public abstract void WriteStartDocument (bool standalone);
 
-		[MonoTODO]
 		public void WriteStartElement (string localName)
 		{
-			throw new NotImplementedException ();
+			WriteStartElement ("", localName, "");
 		}
 
-		[MonoTODO]
 		public void WriteStartElement (string localName, string ns)
 		{
-			throw new NotImplementedException ();
+			WriteStartElement ("", localName, ns);
 		}
 
 		public abstract void WriteStartElement (string prefix, string localName, string ns);

@@ -83,16 +83,11 @@ namespace System.Xml
 			return new XmlProcessingInstruction (target, data, OwnerDocument);
 		}
 
-		[MonoTODO]
-		public override void WriteContentTo (XmlWriter w)
-		{
-			throw new NotImplementedException ();
-		}
+		public override void WriteContentTo (XmlWriter w) { }
 
-		[MonoTODO]
 		public override void WriteTo (XmlWriter w)
 		{
-			throw new NotImplementedException ();
+			w.WriteProcessingInstruction(target, data);
 		}
 
 		#endregion

@@ -17,108 +17,6 @@ namespace Ximian.Mono.Tests
 			document = new XmlDocument ();
 		}
 
-		public void TestCreateProcessingInstructionInvalid()
-		{
-			XmlProcessingInstruction processingInstruction;
-//			string outerXml;
-
-			// A newly created node should/shouldn't? have a parent or a documentelement?
-			// need to make a test to find out.
-
-
-			// Invalid contents doesn't fail on the create but will on methods
-			// like OuterXml.
-
-//			processingInstruction = null;
-//			processingInstruction = document.CreateProcessingInstruction("foo", "bar?>baz");
-//			Assert(processingInstruction != null);
-//			document.AppendChild(processingInstruction);
-//			try {
-//				outerXml = document.OuterXml;
-//				Fail("Should have thrown an ArgumentException.");
-//			} catch (ArgumentException) { }
-			
-			processingInstruction = null;
-			processingInstruction = document.CreateProcessingInstruction("foo", "bar?>baz");
-			Assert(processingInstruction != null);
-			
-			processingInstruction = null;
-			processingInstruction = document.CreateProcessingInstruction("XML", "bar");
-			Assert(processingInstruction != null);
-			
-			processingInstruction = null;
-			processingInstruction = document.CreateProcessingInstruction("xml", "bar");
-			Assert(processingInstruction != null);
-
-			try {
-				Fail("Should have thrown an Exception.");
-			}
-			catch (Exception e) {
-				string billy = e.Message;
-			}
-
-		}
-
-
-		public void TestLoadProcessingInstruction ()
-		{
-			document.LoadXml (@"<?foo bar='baaz' quux='quuux'?><quuuux></quuuux>");
-			// Not sure where this goes in a doc yet...
-		}
-
-		public void TestLoadCDATA ()
-		{
-			document.LoadXml ("<foo><![CDATA[bar]]></foo>");
-			Assert (document.DocumentElement.FirstChild.NodeType == XmlNodeType.CDATA);
-			AssertEquals ("bar", document.DocumentElement.FirstChild.Value);
-		}
-
-		public void TestLoadComment()
-		{
-			document.LoadXml ("<foo><!--Comment--></foo>");
-			Assert (document.DocumentElement.FirstChild.NodeType == XmlNodeType.Comment);
-			AssertEquals ("Comment", document.DocumentElement.FirstChild.Value);
-		}
-
-		public void TestLoadXmlSingleElement ()
-		{
-			AssertNull (document.DocumentElement);
-			document.LoadXml ("<foo/>");
-			AssertNotNull (document.DocumentElement);
-
-			AssertSame (document.FirstChild, document.DocumentElement);
-			AssertSame (document.FirstChild, document.DocumentElement);
-		}
-
-		public void TestLoadXmlExceptionClearsDocument ()
-		{
-			document.LoadXml ("<foo/>");
-			Assert (document.FirstChild != null);
-			
-			try {
-				document.LoadXml ("<123/>");
-				Fail ("An XmlException should have been thrown.");
-			} catch (XmlException) {}
-
-			Assert (document.FirstChild == null);
-		}
-
-		public void TestLoadXmlElementWithChildElement ()
-		{
-			document.LoadXml ("<foo><bar/></foo>");
-			Assert (document.ChildNodes.Count == 1);
-			Assert (document.FirstChild.ChildNodes.Count == 1);
-			AssertEquals ("foo", document.DocumentElement.LocalName);
-			AssertEquals ("bar", document.DocumentElement.FirstChild.LocalName);
-		}
-
-		public void TestLoadXmlElementWithTextNode ()
-		{
-			document.LoadXml ("<foo>bar</foo>");
-			Assert (document.DocumentElement.FirstChild.NodeType == XmlNodeType.Text);
-			AssertEquals ("bar", document.DocumentElement.FirstChild.Value);
-		}
-
 		public void TestDocumentElement ()
 		{
 			AssertNull (document.DocumentElement);
@@ -136,6 +34,35 @@ namespace Ximian.Mono.Tests
 			AssertSame (element, document.DocumentElement);
 		}
 
+		public void TestDocumentEmpty()
+		{
+			AssertEquals ("Incorrect output for empty document.", "", document.OuterXml);
+		}
+
+		public void TestLoadXmlCDATA ()
+		{
+			document.LoadXml ("<foo><![CDATA[bar]]></foo>");
+			Assert (document.DocumentElement.FirstChild.NodeType == XmlNodeType.CDATA);
+			AssertEquals ("bar", document.DocumentElement.FirstChild.Value);
+		}
+
+		public void TestLoadXMLComment()
+		{
+			document.LoadXml ("<foo><!--Comment--></foo>");
+			Assert (document.DocumentElement.FirstChild.NodeType == XmlNodeType.Comment);
+			AssertEquals ("Comment", document.DocumentElement.FirstChild.Value);
+		}
+
+		public void TestLoadXmlElementSingle ()
+		{
+			AssertNull (document.DocumentElement);
+			document.LoadXml ("<foo/>");
+			AssertNotNull (document.DocumentElement);
+
+			AssertSame (document.FirstChild, document.DocumentElement);
+			AssertSame (document.FirstChild, document.DocumentElement);
+		}
+
 		public void TestLoadXmlElementWithAttributes ()
 		{
 			AssertNull (document.DocumentElement);
@@ -145,6 +72,41 @@ namespace Ximian.Mono.Tests
 
 			AssertEquals ("baz", documentElement.GetAttribute ("bar"));
 			AssertEquals ("quuux", documentElement.GetAttribute ("quux"));
+		}
+		public void TestLoadXmlElementWithChildElement ()
+		{
+			document.LoadXml ("<foo><bar/></foo>");
+			Assert (document.ChildNodes.Count == 1);
+			Assert (document.FirstChild.ChildNodes.Count == 1);
+			AssertEquals ("foo", document.DocumentElement.LocalName);
+			AssertEquals ("bar", document.DocumentElement.FirstChild.LocalName);
+		}
+
+		public void TestLoadXmlElementWithTextNode ()
+		{
+			document.LoadXml ("<foo>bar</foo>");
+			Assert (document.DocumentElement.FirstChild.NodeType == XmlNodeType.Text);
+			AssertEquals ("bar", document.DocumentElement.FirstChild.Value);
+		}
+
+		public void TestLoadXmlExceptionClearsDocument ()
+		{
+			document.LoadXml ("<foo/>");
+			Assert (document.FirstChild != null);
+			
+			try {
+				document.LoadXml ("<123/>");
+				Fail ("An XmlException should have been thrown.");
+			} catch (XmlException) {}
+
+			Assert (document.FirstChild == null);
+		}
+
+		public void TestLoadXmlProcessingInstruction ()
+		{
+			document.LoadXml (@"<?foo bar='baaz' quux='quuux'?><quuuux></quuuux>");
+			AssertEquals ("Incorrect target.", "foo", ((XmlProcessingInstruction)document.FirstChild).Target);
+			AssertEquals ("Incorrect data.", "bar='baaz' quux='quuux'", ((XmlProcessingInstruction)document.FirstChild).Data);
 		}
 	}
 }

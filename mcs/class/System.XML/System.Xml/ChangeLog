@@ -1,3 +1,21 @@
+2002-03-14  Kral Ferch  <kral_ferch@hotmail.com>
+
+	* XmlDocument.cs: Implementations for WriteTo() and WriteContentTo(),
+	had Load() add PIs to the document, moved onXXX methods to alphabetical
+	order in the file.
+	
+	* XmlElement.cs: Implementations for WriteTo() and WriteContentTo().
+	
+	* XmlNode.cs: Implementations for InnerXml Get and OuterXml.
+	
+	* XmlProcessingInstruction.cs: Implementations for WriteTo() and
+	WriteContentTo().
+	
+	* XmlTextWriter.cs: Implementations for WriteEndElement,
+	WriteProcessingInstruction, WriteStartElement, and WriteString.
+	
+	* XmlWriter.cs: Implemented WriteStartElement() methods.
+
 2002-03-15  Duncan Mak  <duncan@ximian.com>
 
 	* XmlEntity.cs: Added to CVS. Need to implement BaseURI and
