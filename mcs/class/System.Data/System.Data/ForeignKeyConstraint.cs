@@ -23,9 +23,9 @@ namespace System.Data {
 		private UniqueConstraint _parentUniqueConstraint;
 		private DataColumn [] _parentColumns;
 		private DataColumn [] _childColumns;
-		private Rule _deleteRule;
-		private Rule _updateRule;
-		private AcceptRejectRule _acceptRejectRule;
+		private Rule _deleteRule = Rule.Cascade;
+		private Rule _updateRule = Rule.Cascade;
+		private AcceptRejectRule _acceptRejectRule = AcceptRejectRule.None;
 		
 		#region Constructors
 
@@ -383,17 +383,29 @@ namespace System.Data {
 		[MonoTODO]
 		internal override void AssertConstraint(DataRow row)
 		{
-			//Implement: this should be used to validate ForeignKeys constraints 
-			//when modifiying the DataRow values of a DataTable.
+			// first we check if all values in _childColumns place are DBNull.
+			// if yes we return.
+			bool allNull = true;
+			for (int i = 0; i < _childColumns.Length; i++)
+			{
+				if (row[_childColumns[i]] != DBNull.Value)
+				{
+					allNull = false;
+					break;
+				}
+			}
 
+			if (allNull)
+				return;
+			
+			// check that there is a parent for this row.
 			foreach (DataRow parentRow in this.RelatedTable.Rows)
 			{
 				if (parentRow.RowState != DataRowState.Deleted)
 				{
 					bool match = true;
 					// check if the values in the constraints columns are equal
-					int i = 0;
-					for (; i < _parentColumns.Length; i++)
+					for (int i = 0; i < _parentColumns.Length; i++)
 					{
 						if (!row[_childColumns[i]].Equals(parentRow[_parentColumns[i]]))
 						{
@@ -401,10 +413,19 @@ namespace System.Data {
 							break;
 						}	
 					}
-					if (!match)
-						throw new InvalidConstraintException("ForeignKeyConstraint " + ConstraintName + " requires the child key values (" + row[_childColumns[i]].ToString() + ") to exist in the parent table.");					
+					if (match) // there is a parent row for this row.
+						return;
 				}
 			}
+			
+			string values = "";
+			for (int i = 0; i < _childColumns.Length; i++)
+			{
+				values += row[_childColumns[0]].ToString();
+				if (i != _childColumns.Length - 1)
+					values += ",";
+			}
+			throw new InvalidConstraintException("ForeignKeyConstraint " + ConstraintName + " requires the child key values (" + values + ") to exist in the parent table.");
 		}
 		
 		#endregion // Methods

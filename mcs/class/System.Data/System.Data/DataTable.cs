@@ -574,12 +574,13 @@ namespace System.Data {
 
 			// we can not simply copy the row values (NewRow [C.ColumnName] = Row [C.ColumnName])
 			// because if the row state is deleted we get an exception.
+			Copy._duringDataLoad = true;
 			foreach (DataRow Row in Rows) {
 				DataRow NewRow = Copy.NewRow ();
 				Copy.Rows.Add (NewRow);
 				Row.CopyValuesToRow(NewRow);
 			}
-		       			
+		       	Copy._duringDataLoad = false;		
 			return Copy;
 		}
 

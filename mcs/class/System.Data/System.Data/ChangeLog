@@ -1,3 +1,15 @@
+2003-11-04  Eran Domb  <erand@mainsoft.com>
+	* DataRow.cs (CheckChildRows) : Improving the implementation - checking child for all FK, and not
+	on all Relations.
+	(GetChildRows) : Adding some checks.
+	(GetParentRows) : Adding some checks. Fix a bug in implementation.
+	(SetParentRow) : Added implementation.
+	
+	* DataRowCollection.cs (Add) : Added more checks on the row added to the collection.
+	* DataTable.cs (Copy) : Set the During Loading flag to save unnecessary assertions.
+	* ForeignKeyConstraint.cs (AssertConstraint) : Fixing bugs in implementation. Checking for DBNull values in the row.
+	* MergeManager.cs : Check that the target table is not null.
+
 2003-10-27  Eran Domb  <erand@mainsoft.com>
 	* DataColumn.cs (DefaultValue) : Changing null value to DBNull. Checking that the type of the new default value 
 	can be converted to the column type.

@@ -38,6 +38,7 @@ namespace System.Data {
 		internal int xmlRowID = 0;
 		internal bool _nullConstraintViolation;
 		private bool editing = false;
+		private bool _hasParentCollection;
 
 		#endregion
 
@@ -64,14 +65,13 @@ namespace System.Data {
 
 			//on first creating a DataRow it is always detached.
 			rowState = DataRowState.Detached;
-
+			
 			foreach (DataColumn Col in _table.Columns) {
 				
 				if (Col.AutoIncrement) {
 					this [Col] = Col.AutoIncrementValue();
 				}
 			}
-
 			_table.Columns.CollectionChanged += new System.ComponentModel.CollectionChangeEventHandler(CollectionChanged);
 		}
 
@@ -243,7 +243,7 @@ namespace System.Data {
 			object newval = null;
 			DataColumn col = _table.Columns[index];
 			
-			if (col.ReadOnly && v != this[index])
+			if (_hasParentCollection && col.ReadOnly && v != this[index])
 				throw new ReadOnlyException ();
 
 			if (v == null)
@@ -405,6 +405,7 @@ namespace System.Data {
 		//from a Datatable so I added this method. Delete if there is a better way.
 		internal void DetachRow() {
 			proposed = null;
+			_hasParentCollection = false;
 			rowState = DataRowState.Detached;
 		}
 
@@ -529,82 +530,108 @@ namespace System.Data {
 			// 3. find if there are any constraint on the table that the row is in.
 			if (_table.DataSet != null && _table.DataSet.EnforceConstraints && _table.Constraints.Count > 0)
 			{
-				// loop on all relations of the dataset.
-				DataRelationCollection relCollection = _table.DataSet.Relations;
-				for (int i = 0; i < relCollection.Count; i++)
+				foreach (DataTable table in _table.DataSet.Tables)
 				{
-					DataRelation rel = relCollection[i];
-					// we want only relations that their parent table is the table this row is in.
-					// that is because we interesting only in relations that the row is a parent of
-					// other rows.
-					if (rel.ParentTable == _table)
+					// loop on all constraints of the table.
+					ConstraintCollection constraintsCollection = table.Constraints;
+					for (int i = 0; i < constraintsCollection.Count; i++)
 					{
-						Rule rule;
-						if (action == DataRowAction.Delete)
-							rule = rel.ChildKeyConstraint.DeleteRule;
-						else
-							rule = rel.ChildKeyConstraint.UpdateRule;
-						
-						DataRow[] childRows = GetChildRows(rel);
-						switch (rule)
+						ForeignKeyConstraint fk = null;
+						if (constraintsCollection[i] is ForeignKeyConstraint)
 						{
-							case Rule.Cascade:  // delete or change all relted rows.
-								if (childRows != null)
-								{
-									for (int j = 0; j < childRows.Length; j++)
-									{
-										// if action is delete we delte all child rows
-										if (action == DataRowAction.Delete)
-											childRows[j].Delete();
-										// if action is change we change the values in the child row
-										else if (action == DataRowAction.Change)
-										{
-											// change only the values in the key columns
-											// set the childcolumn value to the new parent row value
-											for (int k = 0; k < rel.ChildColumns.Length; k++)
-												childRows[j][rel.ChildColumns[k]] = this[rel.ParentColumns[k], DataRowVersion.Proposed];
-										}
-									}
-								}
-								break;
-							case Rule.None: // throw an exception if there are any child rows.
-								if (childRows != null)
-								{
-									string changeStr = "Cannot change this row because constraints are enforced on relation " + rel.RelationName +", and changing this row will strand child rows.";
-									string delStr = "Cannot delete this row because constraints are enforced on relation " + rel.RelationName +", and deleting this row will strand child rows.";
-									string message = action == DataRowAction.Delete ? delStr : changeStr;
-									throw new InvalidConstraintException(message);
-								}
-								break;
-							case Rule.SetDefault: // set the values in the child rows to the defult value of the columns.
-								if (childRows != null)
-								{
-									for (int j = 0; j < childRows.Length; j++)
-									{
-										DataRow child = childRows[j];
-										//set only the key columns to default
-										for (int k = 0; k < rel.ChildColumns.Length; k++)
-											child[rel.ChildColumns[k]] = rel.ChildColumns[k].DefaultValue;
-									}
-								}
-								break;
-							case Rule.SetNull: // set the values in the child row to null.
-								if (childRows != null)
-								{
-									for (int j = 0; j < childRows.Length; j++)
-									{
-										DataRow child = childRows[j];
-										// set only the key columns to DBNull
-										for (int k = 0; k < rel.ChildColumns.Length; k++)
-											child.SetNull(rel.ChildColumns[k]);
-									}
-								}
-								break;
-						}
-							
+							fk = (ForeignKeyConstraint)constraintsCollection[i];
+							if (fk.RelatedTable == _table)
+							{
+								//we create a dummy relation because we do not want to duplicate code of GetChild().
+								// we use the dummy relation to find child rows.
+								DataRelation rel = new DataRelation("dummy", fk.RelatedColumns, fk.Columns, false);
+								Rule rule;
+								if (action == DataRowAction.Delete)
+									rule = fk.DeleteRule;
+								else
+									rule = fk.UpdateRule;
+								CheckChildRows(rel, action, rule);
+							}
+						}			
 					}
 				}
 			}
+		}
+
+		private void CheckChildRows(DataRelation rel, DataRowAction action, Rule rule)
+		{				
+			DataRow[] childRows = GetChildRows(rel);
+			switch (rule)
+			{
+				case Rule.Cascade:  // delete or change all relted rows.
+					if (childRows != null)
+					{
+						for (int j = 0; j < childRows.Length; j++)
+						{
+							// if action is delete we delete all child rows
+							if (action == DataRowAction.Delete)
+							{
+								if (childRows[j].RowState != DataRowState.Deleted)
+									childRows[j].Delete();
+							}
+							// if action is change we change the values in the child row
+							else if (action == DataRowAction.Change)
+							{
+								// change only the values in the key columns
+								// set the childcolumn value to the new parent row value
+								for (int k = 0; k < rel.ChildColumns.Length; k++)
+									childRows[j][rel.ChildColumns[k]] = this[rel.ParentColumns[k], DataRowVersion.Proposed];
+							}
+						}
+					}
+					break;
+				case Rule.None: // throw an exception if there are any child rows.
+					if (childRows != null)
+					{
+						for (int j = 0; j < childRows.Length; j++)
+						{
+							if (childRows[j].RowState != DataRowState.Deleted)
+							{
+								string changeStr = "Cannot change this row because constraints are enforced on relation " + rel.RelationName +", and changing this row will strand child rows.";
+								string delStr = "Cannot delete this row because constraints are enforced on relation " + rel.RelationName +", and deleting this row will strand child rows.";
+								string message = action == DataRowAction.Delete ? delStr : changeStr;
+								throw new InvalidConstraintException(message);
+							}
+						}
+					}
+					break;
+				case Rule.SetDefault: // set the values in the child rows to the defult value of the columns.
+					if (childRows != null)
+					{
+						for (int j = 0; j < childRows.Length; j++)
+						{
+							DataRow child = childRows[j];
+							if (childRows[j].RowState != DataRowState.Deleted)
+							{
+								//set only the key columns to default
+								for (int k = 0; k < rel.ChildColumns.Length; k++)
+									child[rel.ChildColumns[k]] = rel.ChildColumns[k].DefaultValue;
+							}
+						}
+					}
+					break;
+				case Rule.SetNull: // set the values in the child row to null.
+					if (childRows != null)
+					{
+						for (int j = 0; j < childRows.Length; j++)
+						{
+							DataRow child = childRows[j];
+							if (childRows[j].RowState != DataRowState.Deleted)
+							{
+								// set only the key columns to DBNull
+								for (int k = 0; k < rel.ChildColumns.Length; k++)
+									child.SetNull(rel.ChildColumns[k]);
+							}
+						}
+					}
+					break;
+			}
+
 		}
 
 		/// <summary>
@@ -665,6 +692,15 @@ namespace System.Data {
 		/// </summary>
 		public DataRow[] GetChildRows (DataRelation relation, DataRowVersion version) 
 		{
+			if (relation == null)
+				return new DataRow[0];
+
+			if (this.Table == null)
+				throw new RowNotInTableException();
+
+			if (relation.DataSet != this.Table.DataSet)
+				throw new ArgumentException();
+
 			// TODO: Caching for better preformance
 			ArrayList rows = new ArrayList();
 			DataColumn[] parentColumns = relation.ParentColumns;
@@ -810,6 +846,15 @@ namespace System.Data {
 		public DataRow[] GetParentRows (DataRelation relation, DataRowVersion version) 
 		{
 			// TODO: Caching for better preformance
+			if (relation == null)
+				return new DataRow[0];
+
+			if (this.Table == null)
+				throw new RowNotInTableException();
+
+			if (relation.DataSet != this.Table.DataSet)
+				throw new ArgumentException();
+
 			ArrayList rows = new ArrayList();
 			DataColumn[] parentColumns = relation.ParentColumns;
 			DataColumn[] childColumns = relation.ChildColumns;
@@ -822,10 +867,10 @@ namespace System.Data {
 					if (row.HasVersion(DataRowVersion.Default))
 					{
 						allColumnsMatch = true;
-						for (int columnCnt = 0; columnCnt < numColumn; ++columnCnt) 
+						for (int columnCnt = 0; columnCnt < numColumn; columnCnt++) 
 						{
-							if (!this[parentColumns[columnCnt], version].Equals(
-								row[childColumns[columnCnt], DataRowVersion.Default])) 
+							if (!this[childColumns[columnCnt], version].Equals(
+								row[parentColumns[columnCnt], DataRowVersion.Default])) 
 							{
 								allColumnsMatch = false;
 								break;
@@ -992,7 +1037,7 @@ namespace System.Data {
 		[MonoTODO]
 		public void SetParentRow (DataRow parentRow) 
 		{
-			throw new NotImplementedException ();
+			SetParentRow(parentRow, null);
 		}
 
 		/// <summary>
@@ -1002,7 +1047,44 @@ namespace System.Data {
 		[MonoTODO]
 		public void SetParentRow (DataRow parentRow, DataRelation relation) 
 		{
-			throw new NotImplementedException ();
+			if (_table == null || parentRow.Table == null)
+				throw new RowNotInTableException();
+
+			if (parentRow != null && _table.DataSet != parentRow.Table.DataSet)
+				throw new ArgumentException();
+			
+			BeginEdit();
+			if (relation == null)
+			{
+				foreach (DataRelation parentRel in _table.ParentRelations)
+				{
+					DataColumn[] childCols = parentRel.ChildKeyConstraint.Columns;
+					DataColumn[] parentCols = parentRel.ChildKeyConstraint.RelatedColumns;
+					
+					for (int i = 0; i < parentCols.Length; i++)
+					{
+						if (parentRow == null)
+							this[childCols[i].Ordinal] = DBNull.Value;
+						else
+							this[childCols[i].Ordinal] = parentRow[parentCols[i]];
+					}
+					
+				}
+			}
+			else
+			{
+				DataColumn[] childCols = relation.ChildKeyConstraint.Columns;
+				DataColumn[] parentCols = relation.ChildKeyConstraint.RelatedColumns;
+					
+				for (int i = 0; i < parentCols.Length; i++)
+				{
+					if (parentRow == null)
+						this[childCols[i].Ordinal] = DBNull.Value;
+					else
+						this[childCols[i].Ordinal] = parentRow[parentCols[i]];
+				}
+			}
+			EndEdit();
 		}
 		
 		//Copy all values of this DataaRow to the row parameter.
@@ -1108,6 +1190,18 @@ namespace System.Data {
 			}
 
 			return false;
+		}
+
+		internal bool HasParentCollection
+		{
+			get
+			{
+				return _hasParentCollection;
+			}
+			set
+			{
+				_hasParentCollection = value;
+			}
 		}
 
 		#endregion // Methods

@@ -62,13 +62,18 @@ namespace System.Data
 			if (row == null)
 				throw new ArgumentNullException("row", "'row' argument cannot be null.");
 
+			if (row.Table != this.table)
+				throw new ArgumentException ("This row already belongs to another table.");
+
 			if (list.IndexOf(row) != -1)
 				throw new ArgumentException ("This row already belongs to this table.");
 			
-			if (table.DataSet == null || table.DataSet.EnforceConstraints)
+
+			if ((table.DataSet == null || table.DataSet.EnforceConstraints) && !table._duringDataLoad)
 				// we have to check that the new row doesn't colide with existing row
 				ValidateDataRowInternal(row);
 			
+			row.HasParentCollection = true;
 			list.Add (row);
 			row.AttachRow ();
 			row.Table.ChangedDataRow (row, DataRowAction.Add);

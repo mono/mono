@@ -29,8 +29,12 @@ namespace System.Data
 			
 			if (!AdjustSchema(targetSet, sourceTable, missingSchemaAction))
 				return;
-			checkColumnTypes(targetSet.Tables[sourceTable.TableName], sourceTable); // check that the colums datatype is the same
-			fillData(targetSet.Tables[sourceTable.TableName], sourceTable, preserveChanges);
+			DataTable targetTable = targetSet.Tables[sourceTable.TableName];
+			if (targetTable != null)
+			{
+				checkColumnTypes(targetTable, sourceTable); // check that the colums datatype is the same
+				fillData(targetTable, sourceTable, preserveChanges);
+			}
 			
 		}
 
@@ -47,8 +51,12 @@ namespace System.Data
 				DataTable sourceTable = row.Table;
 				if (!AdjustSchema(targetSet, sourceTable, missingSchemaAction))
 					return;
-				checkColumnTypes(targetSet.Tables[row.Table.TableName], row.Table);
-				MergeRow(targetSet.Tables[sourceTable.TableName], row, preserveChanges);
+				DataTable targetTable = targetSet.Tables[row.Table.TableName];
+				if (targetTable != null)
+				{
+					checkColumnTypes(targetTable, row.Table);
+					MergeRow(targetTable, row, preserveChanges);
+				}
 			}
 		}
 
@@ -207,7 +215,7 @@ namespace System.Data
 			{
 				DataColumn fromCol = sourceTable.Columns[i];
 				DataColumn toCol = targetTable.Columns[fromCol.ColumnName];
-				if(toCol.DataType != fromCol.DataType)
+				if((toCol != null) && (toCol.DataType != fromCol.DataType))
 					throw new DataException("<target>." + fromCol.ColumnName + " and <source>." + fromCol.ColumnName + " have conflicting properties: DataType property mismatch.");
 			}
 		}
