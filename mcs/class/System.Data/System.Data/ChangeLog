@@ -1,5 +1,20 @@
 2005-02-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataView.cs : Mostly reimplemented.
+	  - UpdateIndex() is invoked only when it is required (results in 
+	    significant performance improvement).
+	  - Use SortedList and wrapper OptionalSortedList which switches
+	    between SortedList (with Sort) and UnsortedList (without Sort).
+	  - DataView itself now contains two collections for rowviews:
+	    Table rows based pool and AddNew() based cache. Consider those
+	    two collections in every members.
+	  - Reset() does not clear rows. Just invokes UpdateIndex().
+	  - Hook RowDeleting, ColumnChanging and ColumnChanged events in table
+	    which is required to handle state changes.
+	  - Reimplemented Find() and FindRows() because of internal changes.
+
+2005-02-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataTable.cs : Fixed row comparer. Even if every of the sort target
 	  columns are identical for two rows, they should not be regarded as
 	  the same unless they are Object.ReferenceEquals.
