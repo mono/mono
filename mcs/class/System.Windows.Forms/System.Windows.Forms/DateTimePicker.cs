@@ -163,7 +163,7 @@ namespace System.Windows.Forms {
 
 		protected override void OnHandleCreated(EventArgs e) {
 			base.OnHandleCreated(e);
-			setControlRange( (int)( DateTimePickerFlags.GDTR_MIN | DateTimePickerFlags.GDTR_MAX ) );
+			setControlRange( );
 			setControlValue( );
 			setCalendarColors( );
 			setCustomFormat( );
@@ -356,7 +356,7 @@ namespace System.Windows.Forms {
 						string.Format ("DateTimePicker does not support dates after {0}.", MaxDateTime ) );
 
 				maxDate = value;
-				setControlRange	( (int)DateTimePickerFlags.GDTR_MAX );
+				setControlRange	( );
 			}
 		}
 
@@ -375,7 +375,7 @@ namespace System.Windows.Forms {
 					string.Format ("DateTimePicker does not support dates before {0}.", MinDateTime ) );
 
 				minDate = value;
-				setControlRange	( (int)DateTimePickerFlags.GDTR_MIN );
+				setControlRange	( );
 			}
 		}
 
@@ -505,11 +505,11 @@ namespace System.Windows.Forms {
 			if ( IsHandleCreated ) 	{
 				SYSTIME systime = toSysTime ( val ) ;
 
-				IntPtr ptr = Marshal.AllocCoTaskMem ( Marshal.SizeOf ( systime ) );
+				IntPtr ptr = Marshal.AllocHGlobal ( Marshal.SizeOf ( systime ) );
 				Marshal.StructureToPtr( systime, ptr, false );
 				Win32.SendMessage ( Handle, (int)DateTimePickerMessages.DTM_SETSYSTEMTIME,
 							(int)DateTimePickerFlags.GDT_VALID, ptr );
-				Marshal.FreeCoTaskMem( ptr );
+				Marshal.FreeHGlobal ( ptr );
 			}
 		}
 
@@ -527,7 +527,7 @@ namespace System.Windows.Forms {
 		private void getControlValue ( bool updateProp ) {
 			if ( IsHandleCreated ) 	{
 				SYSTIME systime = new SYSTIME();
-				IntPtr ptr = Marshal.AllocCoTaskMem ( Marshal.SizeOf ( systime ) );
+				IntPtr ptr = Marshal.AllocHGlobal ( Marshal.SizeOf ( systime ) );
 				Marshal.StructureToPtr( systime, ptr, false );
 				int res = Win32.SendMessage ( Handle, (int)DateTimePickerMessages.DTM_GETSYSTEMTIME,
 							      0	, ptr ).ToInt32();
@@ -542,20 +542,22 @@ namespace System.Windows.Forms {
 				}
 				else
 					CHecked = false;
-				Marshal.FreeCoTaskMem( ptr );
+				Marshal.FreeHGlobal ( ptr );
 			}
 		}
 
-		private void setControlRange ( int rangeFlag ) {
+		private void setControlRange (  ) {
 			if ( IsHandleCreated ) {
 				SYSTIME[] range = { toSysTime ( MinDate ), toSysTime ( MaxDate ) };
-				IntPtr buffer = Marshal.AllocCoTaskMem( Marshal.SizeOf( range[0] ) * 2 );
+				IntPtr buffer = Marshal.AllocHGlobal ( Marshal.SizeOf( range[0] ) * 2 );
 				IntPtr current = buffer;
 				Marshal.StructureToPtr ( range[0], current, false );
 				current = (IntPtr)( current.ToInt32() + Marshal.SizeOf( range[0] ) );
 				Marshal.StructureToPtr ( range[1], current, false );
-				Win32.SendMessage( Handle, (int)DateTimePickerMessages.DTM_SETRANGE, rangeFlag, buffer.ToInt32() );
-				Marshal.FreeCoTaskMem( buffer );
+				Win32.SendMessage( Handle, (int)DateTimePickerMessages.DTM_SETRANGE,
+							(int)( DateTimePickerFlags.GDTR_MIN | DateTimePickerFlags.GDTR_MAX ),
+							 buffer.ToInt32() );
+				Marshal.FreeHGlobal ( buffer );
 			}
 		}
 

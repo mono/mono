@@ -274,11 +274,11 @@ namespace System.Windows.Forms {
 				CalculatePanelWidths ( array );
 				int size = array.Length;
 
-				IntPtr buffer = Marshal.AllocCoTaskMem( Marshal.SizeOf( size ) * size );
+				IntPtr buffer = Marshal.AllocHGlobal ( Marshal.SizeOf( size ) * size );
 				Marshal.Copy( array, 0, buffer, size );
 				Win32.SendMessage( Handle, (int)StatusbarMessages.SB_SETPARTS, size, buffer.ToInt32() );
 				Win32.SendMessage( Handle, (int)StatusbarMessages.SB_SIMPLE, 0, 0 );
-				Marshal.FreeCoTaskMem( buffer );
+				Marshal.FreeHGlobal ( buffer );
 			}
 			else {
 				Win32.SendMessage( Handle, (int)StatusbarMessages.SB_SIMPLE, 1, 0 );

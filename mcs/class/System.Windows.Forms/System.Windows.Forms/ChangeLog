@@ -1,3 +1,10 @@
+2003-03-30 Alexandre Pigolkine <pigolkine@gmx.de>
+	* DateTimePicker.cs
+	* StatusBar.cs
+	* tooltip.cs
+		Fixed AllocCoTaskMem issure. Bug-fix for DTP.
+		Aleksey Ryabchuk <ryabchuk@yahoo.com>
+
 2003-03-29 Alan Tam <Tam@SiuLung.com>
 	* DataGrid.cs
 		stubbed a missing method

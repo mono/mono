@@ -243,13 +243,10 @@ namespace System.Windows.Forms {
 
 		private void sendMessageHelper ( ToolTipControlMessages mes, ref TOOLINFO ti ) {
 			if ( tooltipWnd.Handle != IntPtr.Zero ) {
-/*
-// FIXME: AllocCoTaskMem is not implemented in Mono.
-				IntPtr ptr	= Marshal.AllocCoTaskMem ( Marshal.SizeOf ( ti ) );
+				IntPtr ptr	= Marshal.AllocHGlobal ( Marshal.SizeOf ( ti ) );
 				Marshal.StructureToPtr( ti, ptr, false );
 				Win32.SendMessage ( tooltipWnd.Handle ,	(int)mes, 0, ptr.ToInt32() );
-				Marshal.FreeCoTaskMem( ptr );
-*/
+				Marshal.FreeHGlobal ( ptr );
 			}
 		}
 	}
