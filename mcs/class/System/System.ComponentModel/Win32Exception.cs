@@ -112,11 +112,14 @@ namespace System.ComponentModel
 			case 10040:
 				message = Locale.GetText ("Message too long");
 				break;
+			case 10042:
+				message = Locale.GetText ("Protocol option not supported");
+				break;
 			case 10043:
-				message = Locale.GetText ("proto no supported");
+				message = Locale.GetText ("Protocol not supported");
 				break;
 			case 10044:
-				message = Locale.GetText ("socket not supproted");
+				message = Locale.GetText ("Socket not supported");
 				break;
 			case 10045:
 				message = Locale.GetText ("Operation not supported");

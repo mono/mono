@@ -1,3 +1,8 @@
+2004-12-09  Dick Porter  <dick@ximian.com>
+
+	* Win32Exception.cs: Add another socket error, fix the message of
+	some old ones.
+
 2004-10-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AttributeCollection.cs: support attributes inherited from the one
