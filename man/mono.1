@@ -239,6 +239,23 @@ application, you might want to use:
 .nf
 	$ MONO_LOG_LEVEL="debug" MONO_LOG_MASK="dll" mono glue.exe
 .fi
+.SH SERIALIZATION
+Mono's XML serialization engine by default will use a reflection-based
+approach to serialize which might be slow for continous processing
+(web service applications).  The serialization engine will determine
+when a class must use a hand-tuned serializer based on a few
+parameters and if needed it will produce a customized C# serializer
+for your types at runtime.  This customized serializer then gets
+dynamically loaded into your application.
+.PP
+You can control this with the MONO_XMLSERIALIZER_THS environment
+variable.
+.PP
+The possible values are `no' to disable the use of a C# customized
+serializer, or an integer that is the minimum number of uses before
+the runtime will produce a custom serializer (0 will produce a
+custom serializer on the first access, 50 will produce a serializer on
+the 50th use).
 .SH ENVIRONMENT VARIABLES
 .TP
 .I "GC_DONT_GC"
@@ -259,37 +276,12 @@ If set, this variable overrides the default runtime configuration file
 ($PREFIX/etc/mono/config). The --config command line options overrides the
 environment variable.
 .TP
-.I "MONO_LOG_LEVEL"
-If set, the logging level is changed to the set value. Possible values
-are "error", "critical", "warning", "message", "info", "debug". The
-default value is "error". Messages with a logging level greater then
-or equal to the log level will be printed to stdout/stderr.
-.PP
-Use info to track the dynamic loading of assemblies.
-.TP
-.I "MONO_LOG_MASK"
-If set, the log mask is changed to the set value. Possible values are
-"asm" (assembly loader), "type", "dll" (native library loader), "gc"
-(garbage collector), "cfg" (config file loader), "aot" (precompiler), "all". 
-The default value is "all". Changing the mask value allows you to display only 
-messages for a certain component. You can use multiple masks by comma 
-separating them. For example to see config file messages and assembly loader
-messages set you mask to "asm,cfg".
-.TP
 .I "MONO_DEBUG"
 If set, enables some features of the runtime useful for debugging.
 It makes the runtime display the stack traces for all the threads
 running and exit when mono is interrupted (Ctrl-C) and print some
 additional messages on error conditions. It may not exit cleanly. Use at
 your own risk.
-.TP
-.I "MONO_TRACE"
-If set, enables the System.Diagnostics.DefaultTraceListener, which will 
-print the output of the System.Diagnostics Trace and Debug classes.  
-It can be set to a filename, and to Console.Out or Console.Error to display
-output to standard output or standard error, respectively.
-See the System.Diagnostics.DefaultTraceListener documentation for more
-information.
 .TP
 .I "MONO_DISABLE_AIO"
 If set, tells mono NOT to attempt using native asynchronous I/O services. In
@@ -319,29 +311,62 @@ conversion ending the search.  When writing external text (e.g. new
 filenames or arguments to new processes) the first item in this list
 is used, or UTF-8 if the environment variable is not set.
 .TP
-.I "MONO_MANAGED_WATCHER"
-If set to any value, System.IO.FileSystemWatcher will use the default
-managed implementation (slow). If unset, mono will try to use FAM under
-Unix systems and native API calls on Windows, falling back to the
-managed implementation on error.
-.TP
-.I "MONO_PATH"
-Provides a search path to the runtime where to look for library files.
-Directories are separated by the platform path separator (colons on unix). Example:
-.B /home/username/lib:/usr/local/mono/lib
-.TP
 .I "MONO_GAC_PREFIX"
 Provides a prefix the runtime uses to look for Global Assembly Caches.
 Directories are separated by the platform path separator (colons on
 unix). MONO_GAC_PREFIX should point to the top directory of a prefixed
 install. Or to the directory provided in the gacutil /gacdir command. Example:
 .B /home/username/.mono:/usr/local/mono/
+.TP
+.I "MONO_LOG_LEVEL"
+If set, the logging level is changed to the set value. Possible values
+are "error", "critical", "warning", "message", "info", "debug". The
+default value is "error". Messages with a logging level greater then
+or equal to the log level will be printed to stdout/stderr.
+.PP
+Use info to track the dynamic loading of assemblies.
+.TP
+.I "MONO_LOG_MASK"
+If set, the log mask is changed to the set value. Possible values are
+"asm" (assembly loader), "type", "dll" (native library loader), "gc"
+(garbage collector), "cfg" (config file loader), "aot" (precompiler), "all". 
+The default value is "all". Changing the mask value allows you to display only 
+messages for a certain component. You can use multiple masks by comma 
+separating them. For example to see config file messages and assembly loader
+messages set you mask to "asm,cfg".
+.TP
+.I "MONO_MANAGED_WATCHER"
+If set to any value, System.IO.FileSystemWatcher will use the default
+managed implementation (slow). If unset, mono will try to use FAM under
+Unix systems and native API calls on Windows, falling back to the
+managed implementation on error.
+.TP
+.I "MONO_TRACE"
+If set, enables the System.Diagnostics.DefaultTraceListener, which will 
+print the output of the System.Diagnostics Trace and Debug classes.  
+It can be set to a filename, and to Console.Out or Console.Error to display
+output to standard output or standard error, respectively.
+See the System.Diagnostics.DefaultTraceListener documentation for more
+information.
 .TP 
 .I "MONO_SHARED_DIR"
 If set its the directory where the ".wapi" handle state is stored.
 This is the directory where the Windows I/O Emulation layer stores its
 shared state data (files, events, mutexes, pipes).  By default Mono
 will store the ".wapi" directory in the users's home directory.
+.TP
+.I "MONO_PATH"
+Provides a search path to the runtime where to look for library files.
+Directories are separated by the platform path separator (colons on unix). Example:
+.B /home/username/lib:/usr/local/mono/lib
+.TP
+.I "MONO_XMLSERIALIZER_THS"
+Controls the threshold for the XmlSerializer to produce a custom
+serializer for a given class instead of using the Reflection-based
+interpreter.  The possible values are `no' to disable the use of a
+custom serializer or a number to indicate when the XmlSerializer
+should start serializing.   The default value is 50, which means that
+the a custom serializer will be produced on the 50th use.
 .SH FILES
 On Unix assemblies are loaded from the installation lib directory.  If you set
 `prefix' to /usr, the assemblies will be located in /usr/lib.  On
