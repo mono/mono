@@ -141,6 +141,19 @@ unsafe class X {
 
 		return 0;
 	}
+
+	static int TestMultiple ()
+	{
+		char [] array = new char [10];
+		int count = 0;
+		
+		fixed (char *pa = array, pb = array){
+			count++;
+		}
+		if (count != 1)
+			return 300;
+		return 0;
+	}
 	
 	static int Main ()
 	{
@@ -157,6 +170,10 @@ unsafe class X {
 
 		if ((v = TestPtrArithmetic ()) != 0)
 			return v;
+
+		if ((v = TestMultiple ()) != 0)
+			return v;
+		
 		Console.WriteLine ("Ok");
 		return 0;
 	}
