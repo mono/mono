@@ -17,17 +17,25 @@ namespace Mono.Util
 		static string[] ghostTypes = {"System.Object", "System.ValueType", "System.Delegate"};
 
 		public static void Main(string[] args) {
+			bool text = false;
+			
 			if (args.Length < 1) {
 				Console.WriteLine ("Usage: CorCompare assembly_to_compare");
 				return;
 			}
+			int i = 0;
 			Assembly monoAsmbl = null;
+			if (args [i] == "-t"){
+				text = true;
+				i++;
+			}
+			
 			try{
-				monoAsmbl = Assembly.LoadFrom(args[0]);
+				monoAsmbl = Assembly.LoadFrom(args[i]);
 			}
 			catch(FileNotFoundException)
 			{
-				Console.WriteLine("Could not find corlib file: {0}", args[0]);
+				Console.WriteLine("Could not find corlib file: {0}", args[i]);
 				return;
 			}
 
@@ -81,7 +89,12 @@ namespace Mono.Util
 
 			// sort for easy reading
 			MissingTypes.Sort();
-			Console.WriteLine(XMLUtil.ToXML(MissingTypes, "Type", "MissingTypes"));
+			if (text){
+				foreach (string t in MissingTypes)
+					Console.WriteLine (t);
+			} else {
+				Console.WriteLine(XMLUtil.ToXML(MissingTypes, "Type", "MissingTypes"));
+			}
 		}
 	}
 

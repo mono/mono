@@ -909,8 +909,10 @@ public class TypeManager {
 				foreach (Attribute a in asec.Attributes) {
 					if (a.Name.IndexOf ("DefaultMember") != -1) {
 						ArrayList pos_args = (ArrayList) a.Arguments [0];
+						Expression e = ((Argument) pos_args [0]).expr;
 
-						return (string) pos_args [0];
+						if (e is StringConstant)
+							return ((StringConstant) e).Value;
 					}
 				}
 			}

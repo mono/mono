@@ -15,26 +15,14 @@ cs0164.cs: We dont emit the warning for an unused label
 cs0165-2.cs cs0165.cs:
 	We need data flow analysis
 
-cs0169.cs:
-	We do not track usage of private fields (missing warning)
-
 cs0171.cs 
-	We do not track unassigned readonly fields.
+	We do not track unassigned struct fields on struct constructors 
 
 cs0216.cs:
 	We do not report missing operators.
 
 cs0234.cs:
 	Will be hard to fix;
-
-cs0534.cs:
-	This is bad.  We were supposed to catch this
-
-cs0563.cs:
-	Parser error.  This is bad.
-
-cs0646.cs:
-	Compiler crash
 
 cs0654.cs:
 	Compiler crash

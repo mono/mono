@@ -1,9 +1,11 @@
 // cs0171.cs: field x must be initialized before constructor X ends.
 // Line: 
-class X {
+struct X {
 	public readonly int x;
 
-	X ()
+	X (int a)
 	{
 	}
+
+	static void Main () {}
 }

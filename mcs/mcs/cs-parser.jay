@@ -758,13 +758,19 @@ method_declaration
 	  {
 		Method method = (Method) $1;
 		Block b = (Block) $2;
-		
+		const int extern_abstract = (Modifiers.EXTERN | Modifiers.ABSTRACT);
+
 		if (b == null){
-			if ((method.ModFlags & (Modifiers.EXTERN | Modifiers.ABSTRACT)) == 0){
+			if ((method.ModFlags & extern_abstract) == 0){
 				Report.Error (
-					501, lexer.Location, "`" + 
-					current_container.Name + "." + method.Name + "'" +
+					501, lexer.Location,  current_container.MakeName (method.Name) +
 				        "must declare a body because it is not marked abstract or extern");
+			}
+		} else {
+			if ((method.ModFlags & Modifiers.EXTERN) != 0){
+				Report.Error (
+					179, lexer.Location, current_container.MakeName (method.Name) +
+					" is declared extern, but has a body");
 			}
 		}
 
@@ -2789,6 +2795,12 @@ if_statement
 	  embedded_statement
 	  { 
 		$$ = new If ((Expression) $3, (Statement) $5);
+
+		if (RootContext.WarningLevel >= 3){
+			if ($5 is EmptyStatement)
+				Report.Warning (642, lexer.Location, "Possibly mistaken empty statement");
+		}
+
 	  }
 	| IF OPEN_PARENS boolean_expression CLOSE_PARENS
 	  embedded_statement ELSE embedded_statement
@@ -2895,6 +2907,11 @@ while_statement
 	: WHILE OPEN_PARENS boolean_expression CLOSE_PARENS embedded_statement
 	{
 		$$ = new While ((Expression) $3, (Statement) $5);
+	
+		if (RootContext.WarningLevel >= 3){
+			if ($5 is EmptyStatement)
+				Report.Warning (642, lexer.Location, "Possibly mistaken empty statement");
+		}
 	}
 	;
 
@@ -2961,6 +2978,11 @@ for_statement
 	  embedded_statement
 	  {
 		For f = new For ((Statement) $3, (Expression) $6, (Statement) $8, (Statement) $10);
+
+		if (RootContext.WarningLevel >= 3){
+			if ($10 is EmptyStatement)
+				Report.Warning (642, lexer.Location, "Possibly mistaken empty statement");
+		}
 
 		current_block.AddStatement (f);
 		while (current_block.Implicit)

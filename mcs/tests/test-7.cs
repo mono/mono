@@ -53,7 +53,7 @@ namespace Mine {
 
 			int i = new Blah (5) * new Blah (10);
 
-			if (i.i != 50)
+			if (i != 50)
 				return 1;
 
 			k = new Blah (50);

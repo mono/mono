@@ -30,6 +30,9 @@ AddressOf
 BUGS
 ----
 
+* Check for Final when overriding, if the parent is Final, then we cant
+  allow an override.
+
 * Add test case for destructors
 
 * Do not declare a .property on things that are just implementations, that

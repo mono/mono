@@ -6,4 +6,6 @@ class X {
 	void blah ()
 	{
 	}
+
+	static void Main () {}
 }

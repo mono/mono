@@ -567,6 +567,61 @@ namespace Mono.CSharp {
 		// This array keeps track of the pending implementations
 		// 
 		TypeAndMethods [] pending_implementations;
+
+		//
+		// Returns a list of the abstract methods that are exposed by all of our
+		// parents that we must implement.  Notice that this `flattens' the
+		// method search space, and takes into account overrides.  
+		//
+		ArrayList GetAbstractMethods (Type t)
+		{
+			ArrayList list = null;
+			bool searching = true;
+			Type current_type = t;
+			
+			do {
+				MemberInfo [] mi;
+				
+				mi = FindMembers (
+					current_type, MemberTypes.Method,
+					BindingFlags.Public | BindingFlags.Instance |
+					BindingFlags.DeclaredOnly,
+					virtual_method_filter, null);
+
+				if (current_type == TypeManager.object_type)
+					searching = false;
+				else {
+					current_type = current_type.BaseType;
+					if (!current_type.IsAbstract)
+						searching = false;
+				}
+
+				if (mi == null)
+					continue;
+
+				int count = mi.Length;
+				if (count == 0)
+					continue;
+
+				if (count == 1 && !(mi [0] is MethodBase))
+					searching = false;
+				else 
+					list = Expression.CopyNewMethods (list, mi);
+			} while (searching);
+
+			if (list == null)
+				return null;
+			
+			for (int i = 0; i < list.Count; i++){
+				while (list.Count > i && !((MethodInfo) list [i]).IsAbstract)
+					list.RemoveAt (i);
+			}
+
+			if (list.Count == 0)
+				return null;
+
+			return list;
+		}
 		
 		//
 		// Registers the required method implementations for this class
@@ -579,14 +634,32 @@ namespace Mono.CSharp {
 			Type [] ifaces = TypeBuilder.GetInterfaces ();
 			Type b = TypeBuilder.BaseType;
 			int icount = 0;
-			
-			if (ifaces != null)
-				icount = ifaces.Length;
 
-			if (icount == 0)
-				return;
+			icount = ifaces.Length;
+
+			//
+			// If we are implementing an abstract class, and we are not
+			// ourselves abstract, and there are abstract methods (C# allows
+			// abstract classes that have no abstract methods), then allocate
+			// one slot.
+			//
+			// We also pre-compute the methods.
+			//
+			bool implementing_abstract = (b.IsAbstract && !TypeBuilder.IsAbstract);
+			ArrayList abstract_methods = null;
+
+			if (implementing_abstract){
+				abstract_methods = GetAbstractMethods (b);
+				
+				if (abstract_methods == null)
+					implementing_abstract = false;
+			}
 			
-			pending_implementations = new TypeAndMethods [icount + (b.IsAbstract ? 1 : 0)];
+			int total = icount +  (implementing_abstract ? 1 : 0);
+			if (total == 0)
+				return;
+
+			pending_implementations = new TypeAndMethods [total];
 			
 			int i = 0;
 			if (ifaces != null){
@@ -619,35 +692,25 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (b.IsAbstract){
-				MemberInfo [] abstract_methods;
-
-				abstract_methods = FindMembers (
-					TypeBuilder.BaseType,
-					MemberTypes.Method, BindingFlags.Public | BindingFlags.Instance,
-					abstract_method_filter, null);
-
-				if (abstract_methods != null){
-					int count = abstract_methods.Length;
-					pending_implementations [i].methods = new MethodInfo [count];
+			if (abstract_methods != null){
+				int count = abstract_methods.Count;
+				pending_implementations [i].methods = new MethodInfo [count];
+				
+				abstract_methods.CopyTo (pending_implementations [i].methods, 0);
+				pending_implementations [i].found = new bool [count];
+				pending_implementations [i].args = new Type [count][];
+				pending_implementations [i].type = TypeBuilder;
+				
+				int j = 0;
+				foreach (MemberInfo m in abstract_methods){
+					MethodInfo mi = (MethodInfo) m;
 					
-					abstract_methods.CopyTo (pending_implementations [i].methods, 0);
-					pending_implementations [i].found = new bool [count];
-					pending_implementations [i].args = new Type [count][];
-					pending_implementations [i].type = TypeBuilder;
-
-					int j = 0;
-					foreach (MemberInfo m in abstract_methods){
-						MethodInfo mi = (MethodInfo) m;
-						
-						Type [] types = TypeManager.GetArgumentTypes (mi);
-
-						pending_implementations [i].args [j] = types;
-						j++;
-					}
+					Type [] types = TypeManager.GetArgumentTypes (mi);
+					
+					pending_implementations [i].args [j] = types;
+					j++;
 				}
 			}
-			
 		}
 
 		public static string MakeFQN (string nsn, string name)
@@ -884,6 +947,18 @@ namespace Mono.CSharp {
 			if (error)
 				return null;
 
+			if (this is Class){
+				if (parent == TypeManager.enum_type ||
+				    (parent == TypeManager.value_type && RootContext.StdLib) ||
+				    parent == TypeManager.delegate_type ||
+				    parent == TypeManager.array_type){
+					Report.Error (
+						644, Location, "`" + Name + "' cannot inherit from " +
+						"special class `" + TypeManager.CSharpName (parent) + "'");
+					return null;
+				}
+			}
+			
 			if (parent_builder is ModuleBuilder) {
 				ModuleBuilder builder = (ModuleBuilder) parent_builder;
 				//
@@ -1119,26 +1194,27 @@ namespace Mono.CSharp {
 		{
 			return true;
 		}
-		
-		static bool IsAbstractMethod (MemberInfo m, object filter_criteria)
-		{
-			MethodInfo mi = (MethodInfo) m;
-
-			return mi.IsAbstract;
-		}
 
 		/// <summary>
 		///   This filter is used by FindMembers, and we just keep
 		///   a global for the filter to `AlwaysAccept'
 		/// </summary>
 		static MemberFilter accepting_filter;
+
+		static bool IsVirtualFilter (MemberInfo m, object filterCriteria)
+		{
+			if (!(m is MethodInfo))
+				return false;
+
+			return ((MethodInfo) m).IsVirtual;
+		}
 		
 		/// <summary>
-		///    This delegate is a MemberFilter used to extract the 
-		///    abstact methods from a type.  
+		///   This filter is used by FindMembers, and it is used to
+		///   extract only virtual/abstract fields
 		/// </summary>
-		static MemberFilter abstract_method_filter;
-
+		static MemberFilter virtual_method_filter;
+		
 		/// <summary>
 		///   A member comparission method based on name only
 		/// </summary>
@@ -1146,8 +1222,8 @@ namespace Mono.CSharp {
 
 		static TypeContainer ()
 		{
-			abstract_method_filter = new MemberFilter (IsAbstractMethod);
 			accepting_filter = new MemberFilter (AlwaysAccept);
+			virtual_method_filter = new MemberFilter (IsVirtualFilter);
 			mif_compare = new MemberInfoCompare ();
 		}
 		
@@ -1524,9 +1600,22 @@ namespace Mono.CSharp {
 			//
 			// Check for internal or private fields that were never assigned
 			//
-			if (RootContext.WarningLevel == 4){
+			if (RootContext.WarningLevel >= 3){
 				foreach (Field f in fields){
 					if ((f.ModFlags & Modifiers.PUBLIC) != 0)
+						continue;
+
+					if (f.status == 0){
+						Report.Warning (
+							169, f.Location, "Private field " +
+							MakeName (f.Name) + " is never used");
+						continue;
+					}
+
+					//
+					// Only report 649 on level 4
+					//
+					if (RootContext.WarningLevel < 4)
 						continue;
 					
 					if ((f.status & Field.Status.ASSIGNED) != 0)
@@ -1534,8 +1623,8 @@ namespace Mono.CSharp {
 
 					Report.Warning (
 						649, f.Location,
-						"Field `" + f.Name + "' is never assigned to and will " +
-						"always have its default value");
+						"Field " + MakeName (f.Name) + " is never assigned " +
+						" to and will always have its default value");
 				}
 			}
 			
@@ -2141,11 +2230,12 @@ namespace Mono.CSharp {
 					ec, parent.TypeBuilder,
 					Name, flags, ret_type, parameters);
 			} else {
+				
 				MethodBuilder = parent.TypeBuilder.DefineMethod (
 					Name, flags,
 					GetCallingConvention (parent is Class),
 					ret_type, parameters);
-
+				
 				if (implementing != null){
 					parent.TypeBuilder.DefineMethodOverride (
 						MethodBuilder, implementing);
@@ -2501,6 +2591,8 @@ namespace Mono.CSharp {
 		public readonly Attributes OptAttributes;
 		public FieldBuilder  FieldBuilder;
 		public Status status;
+
+		[Flags]
 		public enum Status : byte { ASSIGNED = 1, USED = 2 }
 
 		

@@ -1225,6 +1225,11 @@ namespace Mono.CSharp
 
 					if (!is_keyword (ids) || allow_keyword_as_ident) {
 						val = ids;
+						if (ids.Length > 512){
+							Report.Error (
+								645, Location,
+								"Identifier too long (limit is 512 chars)");
+						}
 						return Token.IDENTIFIER;
 					}
 

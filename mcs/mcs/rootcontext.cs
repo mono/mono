@@ -44,7 +44,7 @@ namespace Mono.CSharp {
 		// This is only used to tell whether `System.Object' should
 		// have a parent or not.
 		//
-		static bool stdlib = true;
+		public static bool StdLib = true;
 
 		//
 		// This keeps track of the order in which classes were defined
@@ -367,19 +367,6 @@ namespace Mono.CSharp {
 			}
 		}
 		
-		// <summary>
-		//   Compiling against Standard Libraries property.
-		// </summary>
-		static public bool StdLib {
-			get {
-				return stdlib;
-			}
-
-			set {
-				stdlib = value;
-			}
-		}
-
 		static public ModuleBuilder ModuleBuilder {
 			get {
 				return mb;

@@ -323,12 +323,46 @@ namespace Mono.CSharp {
 		}
 
 		//
+		// Returns whether the array of memberinfos contains the given method
+		//
+		static bool ArrayContainsMethod (MemberInfo [] array, MethodBase new_method)
+		{
+			Type [] new_args = TypeManager.GetArgumentTypes (new_method);
+
+			foreach (MethodBase method in array){
+				if (method.Name != new_method.Name)
+					continue;
+				
+				Type [] old_args = TypeManager.GetArgumentTypes (method);
+				int old_count = old_args.Length;
+				int i;
+
+				if (new_args.Length != old_count)
+					continue;
+				
+				for (i = 0; i < old_count; i++){
+					if (old_args [i] != new_args [i])
+						break;
+				}
+				if (i != old_count)
+					continue;
+
+				if (!(method is MethodInfo && new_method is MethodInfo))
+					return true;
+				
+				if (((MethodInfo) method).ReturnType == ((MethodInfo) new_method).ReturnType)
+					return true;
+			}
+			return false;
+		}
+		
+		//
 		// We copy methods from `new_members' into `target_list' if the signature
 		// for the method from in the new list does not exist in the target_list
 		//
 		// The name is assumed to be the same.
 		//
-		static ArrayList CopyNewMethods (ArrayList target_list, MemberInfo [] new_members)
+		public static ArrayList CopyNewMethods (ArrayList target_list, MemberInfo [] new_members)
 		{
 			if (target_list == null){
 				target_list = new ArrayList ();
@@ -342,25 +376,9 @@ namespace Mono.CSharp {
 			
 			foreach (MemberInfo mi in new_members){
 				MethodBase new_method = (MethodBase) mi;
-				Type [] new_args = TypeManager.GetArgumentTypes (new_method);
-					
-				foreach (MethodBase method in target_array){
-					Type [] old_args = TypeManager.GetArgumentTypes (method);
-					int new_count = new_args.Length;
-					int old_count = old_args.Length;
-					
-					if (new_count != old_count){
-						target_list.Add (method);
-						continue;
-					}
 
-					for (int i = 0; i < old_count; i++){
-						if (old_args [i] == new_args [i])
-							continue;
-						target_list.Add (method);
-						break;
-					}
-				}
+				if (!ArrayContainsMethod (target_array, new_method))
+					target_list.Add (new_method);
 			}
 			return target_list;
 		}
@@ -3164,12 +3182,22 @@ namespace Mono.CSharp {
 			// I think we want an extra argument to AddressOf to pass
 			// this semantic information.
 			//
+			// For now: just flag both assigned and used.
+			//
+			if (FieldInfo is FieldBuilder){
+				Field f = TypeManager.GetField (FieldInfo);
+
+				f.status |= Field.Status.ASSIGNED | Field.Status.USED;
+			}
+			
 			if (FieldInfo.IsStatic)
 				ig.Emit (OpCodes.Ldsflda, FieldInfo);
 			else {
 				InstanceExpression.Emit (ec);
 				ig.Emit (OpCodes.Ldflda, FieldInfo);
 			}
+
+			
 		}
 	}
 	

@@ -734,7 +734,7 @@ namespace Mono.CSharp {
 		public readonly string ProbeType;
 		protected Expression expr;
 		protected Type probe_type;
-		Location loc;
+		protected Location loc;
 		
 		public Probe (Expression expr, string probe_type, Location l)
 		{
@@ -789,6 +789,23 @@ namespace Mono.CSharp {
 			if (e == null)
 				return null;
 
+			if (RootContext.WarningLevel >= 1){
+				if (expr.Type == probe_type || expr.Type.IsSubclassOf (probe_type)){
+					Report.Warning (
+						183, loc,
+						"The expression is always of type `" +
+						TypeManager.CSharpName (probe_type) + "'");
+				}
+
+				if (expr.Type != probe_type && !probe_type.IsSubclassOf (expr.Type)){
+					if (!probe_type.IsInterface)
+						Report.Warning (
+							184, loc,
+							"The expression is never of type `" +
+							TypeManager.CSharpName (probe_type) + "'");
+				}
+			}
+			
 			type = TypeManager.bool_type;
 			eclass = ExprClass.Value;
 
@@ -2111,6 +2128,18 @@ namespace Mono.CSharp {
 				//
 				conv = ConvertImplicit (ec, trueExpr, falseExpr.Type, loc);
 				if (conv != null){
+					//
+					// Check if both can convert implicitl to each other's type
+					//
+					if (ConvertImplicit (ec, falseExpr, trueExpr.Type, loc) != null){
+						Report.Error (
+							172, loc,
+							"Can not compute type of conditional expression " +
+							"as `" + TypeManager.CSharpName (trueExpr.Type) +
+							"' and `" + TypeManager.CSharpName (falseExpr.Type) +
+							"' convert implicitly to each other");
+						return null;
+					}
 					type = falseExpr.Type;
 					trueExpr = conv;
 				} else if ((conv = ConvertImplicit(ec, falseExpr,trueExpr.Type,loc))!= null){
@@ -4452,6 +4481,19 @@ namespace Mono.CSharp {
 				//
 				// Instance.MethodGroup
 				//
+				if (IdenticalNameAndTypeName (ec, left_original, loc)){
+					if (mg.RemoveInstanceMethods ())
+						return member_lookup;
+				}
+				
+				if (!mg.RemoveStaticMethods ()){
+					error176 (loc, mg.Methods [0].Name);
+					return null;
+				} 
+				
+				mg.InstanceExpression = left;
+				return member_lookup;
+#if ORIGINAL
 				if (!mg.RemoveStaticMethods ()){
 					if (IdenticalNameAndTypeName (ec, left_original, loc)){
 						if (!mg.RemoveInstanceMethods ()){
@@ -4468,6 +4510,7 @@ namespace Mono.CSharp {
 				mg.InstanceExpression = left;
 					
 				return member_lookup;
+#endif
 			}
 
 			if (member_lookup is FieldExpr){

@@ -1,3 +1,46 @@
+2002-01-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (CopyNewMethods): reworked, exposed, made public.
+	Slower, but more generally useful.  Used by the abstract
+	registering implementation. 
+
+	* expression.cs (ResolveMemberAccess): Reorder the way we evaluate
+	the rules for the special rule on Type/instances.  First check if
+	we have the same name, and if so, try that special static path
+	rather than the instance path.
+	
+2002-01-18  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Emit 642 (warning: possible empty statement) for
+	for, while and if.
+
+	* class.cs (TypeBuilder.DefineType): Do not allow inheritance from
+	Enum, ValueType, Delegate or Array for non-corlib compiles.
+
+	* cs-tokenizer.cs: Catch long identifiers (645)
+
+	* typemanager.cs (IndexerPropetyName): Ravi never tested this
+	piece of code.
+
+	* class.cs (TypeContainer.RegisterRequiredImplementations): Bug
+	fix, we were returning too early, so we were not registering
+	pending methods from abstract classes.
+
+	Do not register pending methods if the class is abstract.
+
+	* expression.cs (Conditional.DoResolve): Report circular implicit
+	conversions when we neecd to compute it for conditional
+	expressions. 
+
+	(Is.DoResolve): If the expression is always of the provided type,
+	flag warning 183.  If the expression can not ever be of the
+	provided type flag warning 184.
+
+	* class.cs: Catch 169 as well.
+
+	* ecore.cs (FieldExpr): For now in AddressOf mark as assigned and
+	read. 
+
 2002-01-18  Nick Drochak  <ndrochak@gol.com>
 
 	* makefile: remove path to beta2 csc.exe.  path to csc.exe must be in PATH instead.

@@ -6,5 +6,6 @@ abstract class X {
 }
 
 class Y : X {
+static void Main (){}
 }
 	
