@@ -1,3 +1,8 @@
+2003-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebControl.cs: don't create the attributes when GetAttribute is
+	called.
+
 2003-12-01  Jackson Harper <jackson@ximian.com>
 
 	* WebControl.cs: Only allow access keys to be null or a single

@@ -1,3 +1,12 @@
+2003-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* GlobalizationConfiguration.cs: return null when the configuration is
+	not available.
+	
+	* WebConfigurationSettings.cs: handle configuration for System.Web. It
+	replaces the default IConfigurationSystem with itself and handles
+	web.config files oddities.
+
 2003-11-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CompilationConfiguration.cs: don't throw an HttpException.

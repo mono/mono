@@ -110,11 +110,18 @@ namespace System.Web
 			 _bClientDisconnected = false;
 
 			 _bChunked = false;
-
-			 _Writer = new HttpWriter (this);
-			 _TextWriter = _Writer;
 		}
 
+		internal void InitializeWriter ()
+		{
+			// We cannot do this in the .ctor because HttpWriter uses configuration and
+			// it may not be initialized
+			if (_Writer == null) {
+				 _Writer = new HttpWriter (this);
+				 _TextWriter = _Writer;
+			}
+		}
+		
 		internal void FinalFlush ()
 		{
 			Flush (true);

@@ -11,6 +11,7 @@ using System.Text;
 using System.Security;
 using System.Security.Permissions;
 using System.Threading;
+using System.Web.Configuration;
 using System.Web.UI;
 using System.Web.Util;
 using System.Web.Caching;
@@ -65,7 +66,6 @@ namespace System.Web {
 		public HttpRuntime ()
 		{
 			doRequestCallback = new WaitCallback (DoRequest);
-			queueManager = new QueueManager ();
 		}
 
 		static internal object CreateInternalObject(Type type) {
@@ -90,8 +90,15 @@ namespace System.Web {
 			}
 		}
 
-		private void OnFirstRequestStart() {
-			if (null == _initError) {
+		private void OnFirstRequestStart(HttpContext context) {
+			if (_initError != null)
+				throw _initError;
+
+			try {
+				WebConfigurationSettings.Init (context);
+				queueManager = new QueueManager ();
+			} catch (Exception e) {
+				_initError = e;
 			}
 
 			// If we got an error during init, throw to client now..
@@ -220,12 +227,14 @@ namespace System.Web {
 						if (!_firstRequestStarted) {
 							_firstRequestStartTime = DateTime.Now;
 
-							OnFirstRequestStart();
+							OnFirstRequestStart(context);
 							_firstRequestStarted = true;
 						}						
 					}
 				}
 
+				// This *must* be done after the configuration is initialized.
+				context.Response.InitializeWriter ();
 				handler = HttpApplicationFactory.GetInstance(context);
 				if (null == handler)
 					throw new HttpException(FormatResourceString("unable_to_create_app"));
@@ -241,6 +250,7 @@ namespace System.Web {
 				}
 			}
 			catch (Exception error) {
+				context.Response.InitializeWriter ();
 				FinishRequest(context, error);
 			}
 		}
@@ -257,6 +267,9 @@ namespace System.Web {
 			if (Interlocked.CompareExchange (ref pendingCallbacks, 3, 3) == 3) {
 				return;
 			}
+
+			if (queueManager == null)
+				return;
 
 			if (!queueManager.CanExecuteRequest (false)) {
 				return;
@@ -277,7 +290,7 @@ namespace System.Web {
 			if (Request == null)
 				throw new ArgumentNullException ("Request");
 
-			if (_runtime.queueManager.CanExecuteRequest (false)) {
+			if (!_runtime._firstRequestExecuted || _runtime.queueManager.CanExecuteRequest (false)) {
 				_runtime.InternalExecuteRequest (Request);
 			} else {
 				_runtime.queueManager.Queue (Request);

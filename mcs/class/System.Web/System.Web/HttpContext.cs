@@ -305,12 +305,12 @@ namespace System.Web
 
 		public object GetConfig (string name)
 		{
-			return ConfigurationSettings.GetConfig (name);
+			return WebConfigurationSettings.GetConfig (name, this);
 		}
 
 		public static object GetAppConfig (string name)
 		{
-			return ConfigurationSettings.GetConfig (name);
+			return WebConfigurationSettings.GetConfig (name);
 		}
 
 		object IServiceProvider.GetService (Type service)

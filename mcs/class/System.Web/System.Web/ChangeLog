@@ -1,3 +1,14 @@
+2003-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpContext.cs: updated GetConfig and GetAppConfig to new API.
+	
+	* HttpResponse.cs: separate initialization of the HttpWriter, as it
+	tries to read configuration settings while the config. system is not
+	available (ie, before the first request).
+	
+	* HttpRuntime.cs: delayed queueManager and response writer
+	initialization until the configuration system is working.
+
 2003-11-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRuntime.cs: added request queue handling.

@@ -1,3 +1,7 @@
+2003-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Web.dll.sources: added WebConfigurationSettings.
+
 2003-11-25  Jackson Harper <jackson@ximian.com>
 
 	* System.web.dll.sources: Add AltSerialization.cs to the build

@@ -40,11 +40,13 @@ namespace System.Web.Configuration
 			if (context == null)
 				context = HttpContext.Context;
 
-			config = context.GetConfig ("system.web/globalization") as GlobalizationConfiguration;
-
-			if (config == null)
-				throw new Exception ("Configuration error");
-
+			//config = context.GetConfig ("system.web/globalization") as GlobalizationConfiguration;
+			try {
+				config = HttpContext.GetAppConfig ("system.web/globalization")
+								as GlobalizationConfiguration;
+			} catch {
+				return null;
+			}
 			return config;
 		}
 

@@ -477,14 +477,15 @@ namespace System.Web.UI.WebControls
 
 		string IAttributeAccessor.GetAttribute(string key)
 		{
-			if(Attributes!=null)
-				return Attributes[key] as string;
+			if (attributes != null)
+				return Attributes [key] as string;
+
 			return null;
 		}
 
 		void IAttributeAccessor.SetAttribute(string key, string value)
 		{
-			Attributes[key] = value;
+			Attributes [key] = value;
 		}
 	}
 }

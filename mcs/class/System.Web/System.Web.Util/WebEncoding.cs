@@ -18,6 +18,9 @@ namespace System.Web.Util
 		static public Encoding FileEncoding {
 			get {
 				GlobalizationConfiguration gc = GlobalizationConfiguration.GetInstance (null);
+				if (gc == null)
+					return Encoding.Default;
+
 				return gc.FileEncoding;
 			}
 		}
@@ -25,6 +28,9 @@ namespace System.Web.Util
 		static public Encoding ResponseEncoding {
 			get {
 				GlobalizationConfiguration gc = GlobalizationConfiguration.GetInstance (null);
+				if (gc == null)
+					return Encoding.Default;
+
 				return gc.ResponseEncoding;
 			}
 		}
@@ -32,6 +38,9 @@ namespace System.Web.Util
 		static public Encoding RequestEncoding {
 			get {
 				GlobalizationConfiguration gc = GlobalizationConfiguration.GetInstance (null);
+				if (gc == null)
+					return Encoding.Default;
+
 				return gc.RequestEncoding;
 			}
 		}

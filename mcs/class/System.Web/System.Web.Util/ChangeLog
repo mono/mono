@@ -1,3 +1,8 @@
+2003-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebEncoding.cs: use the Default encoding when the globalization
+	configuration is not available.
+
 2003-12-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UrlUtils.cs: don't forget basePath when relative path is not rooted.
