@@ -87,6 +87,7 @@ $(monobins_DATA):
 	-cp $(top_srcdir)/../mcs/tools/SqlSharp/sqlsharp.exe . || cp $(monobinsdir)/sqlsharp.exe .
 	-cp $(top_srcdir)/../mcs/tools/security/chktrust.exe . || cp $(monobinsdir)/chktrust.exe .
 	-cp $(top_srcdir)/../mcs/tools/security/signcode.exe . || cp $(monobinsdir)/signcode.exe .
+	-cp $(top_srcdir)/../mcs/tools/browsercaps-updater/browsercaps-updater.exe . || cp $(monobinsdir)/browsercaps-updater.exe .
         
 dist-hook:
 	for i in $(monobins_DATA) $(assemblies_DATA); do	\
