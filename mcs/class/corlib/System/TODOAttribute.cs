@@ -19,6 +19,14 @@ namespace System {
 	[AttributeUsage (AttributeTargets.All)]
 	internal class MonoTODOAttribute : Attribute {
 
-		// No methods.
+		string comment;
+		
+		public MonoTODOAttribute ()
+		{}
+
+		public MonoTODOAttribute (string comment)
+		{
+			this.comment = comment;
+		}
 	}
 }
