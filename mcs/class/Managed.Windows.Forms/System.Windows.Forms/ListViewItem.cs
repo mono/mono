@@ -344,7 +344,10 @@ namespace System.Windows.Forms
 			clone.is_focused = this.is_focused;
 			clone.selected = this.selected;
 			clone.state_image_index = this.state_image_index;
-			clone.sub_items = this.sub_items;
+			clone.sub_items = new ListViewSubItemCollection (this);
+			foreach (ListViewSubItem subItem in this.sub_items)
+				clone.sub_items.Add (subItem.Text, subItem.ForeColor,
+						     subItem.BackColor, subItem.Font);
 			clone.tag = this.tag;
 			clone.use_item_style = this.use_item_style;
 			clone.owner = null;

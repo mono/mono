@@ -92,6 +92,7 @@ namespace System.Windows.Forms
 		private ListViewItem last_clicked_item;
 		private ColumnHeaderCollection columns;
 		private bool ctrl_pressed;
+		private bool shift_pressed;
 		private bool draw_headers = true; // Used for painting. Do we need to draw column headers ?
 		private ListViewItem focused_item;
 		private bool full_row_select = false;
@@ -168,9 +169,9 @@ namespace System.Windows.Forms
 
 			// scroll bars are disabled initially
 			h_scroll.Visible = false;
-			h_scroll.Scroll += new ScrollEventHandler(HorizontalScroller);
+			h_scroll.ValueChanged += new EventHandler(HorizontalScroller);
 			v_scroll.Visible = false;
-			v_scroll.Scroll += new ScrollEventHandler(VerticalScroller);
+			v_scroll.ValueChanged += new EventHandler(VerticalScroller);
 
 			// event handlers
 			base.DoubleClick += new EventHandler(ListView_DoubleClick);
@@ -199,7 +200,8 @@ namespace System.Windows.Forms
 
 		internal bool CanMultiselect {
 			get {
-				if (this.multiselect && this.ctrl_pressed)
+				if (this.multiselect &&
+					(this.ctrl_pressed || this.shift_pressed))
 					return true;
 				else
 					return false;
@@ -861,21 +863,20 @@ namespace System.Windows.Forms
 									    - this.h_scroll.Height);
 					
 					this.h_scroll.Minimum = 0;
-					this.h_scroll.Maximum = this.layout_wd - this.Width;
 
 					// if v_scroll is visible, adjust the maximum of the
 					// h_scroll to account for the width of v_scroll
 					if (this.v_scroll.Visible) {
-						this.h_scroll.Maximum += this.v_scroll.Width;
+						this.h_scroll.Maximum = this.layout_wd + this.v_scroll.Width;
 						this.h_scroll.Width = this.Width - this.v_scroll.Width;
 					}
-					else
+					else {
+						this.h_scroll.Maximum = this.layout_wd;
 						this.h_scroll.Width = this.Width;
+					}
    
 					this.h_scroll.LargeChange = this.Width;
 					this.h_scroll.SmallChange = this.Font.Height;
-					// adjust the maximum value to make the raw max value attainable
-					this.h_scroll.Maximum += this.Width;
 				}
 
 				// vertical scrollbar
@@ -884,22 +885,20 @@ namespace System.Windows.Forms
 									    - this.v_scroll.Width, 0);
 
 					this.v_scroll.Minimum = 0;
-					this.v_scroll.Maximum = this.layout_ht - this.Height;
 
 					// if h_scroll is visible, adjust the maximum of the
 					// v_scroll to account for the height of h_scroll
 					if (this.h_scroll.Visible) {
-						this.v_scroll.Maximum += this.h_scroll.Height;
+						this.v_scroll.Maximum = this.layout_ht + this.h_scroll.Height;
 						this.v_scroll.Height = this.Height - this.h_scroll.Height;
 					}
-					else
+					else {
+						this.v_scroll.Maximum = this.layout_ht;
 						this.v_scroll.Height = this.Height;
+					}
 
 					this.v_scroll.LargeChange = this.Height;
 					this.v_scroll.SmallChange = this.Font.Height;
-
-					// adjust the maximum value to make the raw max value attainable
-					this.v_scroll.Maximum += this.Height;
 				}
 			}
 			else {
@@ -918,16 +917,81 @@ namespace System.Windows.Forms
 
 		private void ListView_KeyDown (object sender, KeyEventArgs ke)
 		{
-			if (!ke.Handled && ke.KeyCode == Keys.ControlKey) {
+			int index = -1;
+			if (ke.Handled)
+				return;
+
+			ke.Handled = true;
+
+			switch (ke.KeyCode) {
+
+			case Keys.ControlKey:
 				this.ctrl_pressed = true;
-				ke.Handled = true;
+				break;
+
+			case Keys.Down:
+				// FIXME:TODO
+				break;
+
+			case Keys.End:
+				this.v_scroll.Value = this.v_scroll.Maximum;
+				break;
+
+			case Keys.Home:
+				this.v_scroll.Value = this.v_scroll.Minimum;
+				break;
+
+			case Keys.Left:
+				index = -1;
+				if (this.last_clicked_item != null)
+					index = this.last_clicked_item.Index;
+				else
+					break;
+
+				if (index > 0)
+					index -= 1;
+
+				this.last_clicked_item = this.items [index];
+				this.last_clicked_item.Selected = true;
+				this.EnsureVisible (index);
+				break;
+
+			case Keys.Right:
+				if (this.last_clicked_item != null)
+					index = this.last_clicked_item.Index + 1;
+				else
+					index = 1;
+
+				if (index == this.items.Count)
+					break;
+
+				this.last_clicked_item = this.items [index];
+				this.last_clicked_item.Selected = true;
+				this.EnsureVisible (index);
+				break;
+
+			case Keys.ShiftKey:
+				this.shift_pressed = true;
+				break;
+
+			case Keys.Up:
+				// FIXME:TODO
+				break;
+
+			default:
+				ke.Handled = false;
+				break;
 			}
 		}
 
 		private void ListView_KeyUp (object sender, KeyEventArgs ke)
 		{
-			if (!ke.Handled && ke.KeyCode == Keys.ControlKey) {
-				this.ctrl_pressed = false;
+			if (!ke.Handled) {
+				if (ke.KeyCode == Keys.ControlKey)
+					this.ctrl_pressed = false;
+
+				if (ke.KeyCode == Keys.ShiftKey)
+					this.shift_pressed = false;
 				ke.Handled = true;
 			}
 		}
@@ -1186,24 +1250,24 @@ namespace System.Windows.Forms
 				Paint (this, pe);
 		}
 
-		private void HorizontalScroller (object sender, ScrollEventArgs se)
+		private void HorizontalScroller (object sender, EventArgs e)
 		{
 			// Avoid unnecessary flickering, when button is
 			// kept pressed at the end
-			if (h_marker != se.NewValue) {
-				h_marker = se.NewValue;
+			if (h_marker != h_scroll.Value) {
+				h_marker = h_scroll.Value;
 				// draw the headers again
 				this.draw_headers = true;
 				this.Refresh ();
 			}
 		}
 
-		private void VerticalScroller (object sender, ScrollEventArgs se)
+		private void VerticalScroller (object sender, EventArgs e)
 		{
 			// Avoid unnecessary flickering, when button is
 			// kept pressed at the end
-			if (v_marker != se.NewValue) {
-				v_marker = se.NewValue;
+			if (v_marker != v_scroll.Value) {
+				v_marker = v_scroll.Value;
 				this.Refresh ();
 			}
 		}
@@ -1369,17 +1433,19 @@ namespace System.Windows.Forms
 			if (view_rect.Contains (rect))
 				return;
 
+			// Scroll Left or Up
 			if ((rect.Left < view_rect.Left) || (rect.Top < view_rect.Top)) {
 				if (rect.Left < view_rect.Left)
-					this.h_scroll.Value += (view_rect.Left - rect.Left);
+					this.h_scroll.Value -= (view_rect.Left - rect.Left);
 				if (rect.Top < view_rect.Top)
-					this.v_scroll.Value += (view_rect.Top - rect.Top);
+					this.v_scroll.Value -= (view_rect.Top - rect.Top);
 			}
+			// Scroll Right or Down
 			else {
 				if (rect.Right > view_rect.Right)
-					this.h_scroll.Value -= (rect.Right - view_rect.Right);
+					this.h_scroll.Value += (rect.Right - view_rect.Right);
 				if (rect.Bottom > view_rect.Bottom)
-					this.v_scroll.Value -= (rect.Bottom - view_rect.Bottom);
+					this.v_scroll.Value += (rect.Bottom - view_rect.Bottom);
 			}
 		}
 		
