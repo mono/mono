@@ -43,26 +43,23 @@ public class RSAPKCS1SignatureDeformatter : AsymmetricSignatureDeformatter {
 		// here null is accepted!
 	}
 
-	[MonoTODO()]
 	public override bool VerifySignature (byte[] rgbHash, byte[] rgbSignature) 
 	{
 		if ((rsa == null) || (hash == null))
 			throw new CryptographicUnexpectedOperationException ();
 		if ((rgbHash == null) || (rgbSignature == null))
 			throw new ArgumentNullException ();
-		// TODO
-		return false;
+
+		string oid = CryptoConfig.MapNameToOID (hash.ToString ());
+		return PKCS1.Verify_v15 (rsa, oid, rgbHash, rgbSignature);
 	}
 
-	[MonoTODO()]
 	public override bool VerifySignature (HashAlgorithm hash, byte[] rgbSignature) 
 	{
-		if ((hash == null) || (rgbSignature == null))
+		if (hash == null)
 			throw new ArgumentNullException ();
-		if ((rsa == null) || (hash == null))
-			throw new CryptographicUnexpectedOperationException ();
-		// TODO
-		return false;
+
+		return VerifySignature (hash.Hash, rgbSignature);
 	}
 }
 

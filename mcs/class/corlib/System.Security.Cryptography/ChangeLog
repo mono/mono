@@ -1,5 +1,24 @@
 2002-11-17  Sebastien Pouliot  <spouliot@videotron.ca>
 
+	* CryptoConfig.cs: Added full classes name for MapNameToOID.
+	* PKCS1.cs: New. Internal class for the various primitives defined
+	in PKCS#1 v.2.1.
+	* PKCS1MaskGenerationFunction.cs: Modified to use PKCS1.cs.
+	* RSA.cs: Added internal class RSAHandler (which implements IHandler
+	interface for MiniParser) to import RSA keypairs from XML strings.
+	* RSACryptoServiceProvider.cs: Crypto implemented using BigInteger. 
+	Key generation is VERY LONG.
+	* RSAOAEPKeyExchangeDeformatter.cs: Completed using PKCS1. Not sure 
+	of the results as this is not available in all versions of Windows.
+	* RSAOAEPKeyExchangeFormatter.cs: Completed using PKCS1. Not sure 
+	of the results as this is not available in all versions of Windows.
+	* RSAPKCS1KeyExchangeDeformatter.cs: Completed using PKCS1.
+	* RSAPKCS1KeyExchangeFormatter.cs: Completed using PKCS1.
+	* RSAPKCS1SignatureDeformatter.cs: Completed using PKCS1.
+	* RSAPKCS1SignatureFormatter.cs: Completed using PKCS1.
+
+2002-11-17  Sebastien Pouliot  <spouliot@videotron.ca>
+
 	* MiniParser.cs: Added explicit cast in order to compile with mcs.
 
 2002-11-16  Sebastien Pouliot  <spouliot@videotron.ca>

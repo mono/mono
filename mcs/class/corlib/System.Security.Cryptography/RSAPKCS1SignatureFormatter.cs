@@ -26,26 +26,23 @@ public class RSAPKCS1SignatureFormatter : AsymmetricSignatureFormatter {
 		SetKey (key);
 	}
 
-	[MonoTODO()]
 	public override byte[] CreateSignature (byte[] rgbHash) 
 	{
 		if ((rsa == null) || (hash == null))
 			throw new CryptographicUnexpectedOperationException ();
 		if (rgbHash == null)
 			throw new ArgumentNullException ();
-		// TODO
-		return null;
+
+		string oid = CryptoConfig.MapNameToOID (hash.ToString ());
+		return PKCS1.Sign_v15 (rsa, oid, rgbHash);
 	}
 
-	[MonoTODO()]
 	public override byte[] CreateSignature (HashAlgorithm hash) 
 	{
 		if (hash == null)
 			throw new ArgumentNullException ();
-		if (rsa == null)
-			throw new CryptographicUnexpectedOperationException ();
-		// TODO
-		return null;
+		this.hash = hash;
+		return CreateSignature (hash.Hash);
 	}
 
 	public override void SetHashAlgorithm (string strName) 

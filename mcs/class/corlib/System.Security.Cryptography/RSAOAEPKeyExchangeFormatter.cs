@@ -42,7 +42,13 @@ public class RSAOAEPKeyExchangeFormatter : AsymmetricKeyExchangeFormatter {
 
 	public override byte[] CreateKeyExchange (byte[] rgbData) 
 	{
-		throw new CryptographicException ();
+		if (rsa == null)
+			throw new CryptographicException ();
+		if (random == null)
+			random = RandomNumberGenerator.Create ();  // create default
+
+		SHA1 sha1 = SHA1.Create ();
+		return PKCS1.Encrypt_OAEP (rsa, sha1, random, rgbData);
 	}
 
 	public override byte[] CreateKeyExchange (byte[] rgbData, Type symAlgType) 

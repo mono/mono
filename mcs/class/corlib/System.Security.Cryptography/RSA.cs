@@ -11,10 +11,68 @@
 
 using System;
 using System.Text;
-//using System.Xml;
 
 namespace System.Security.Cryptography 
 {
+	internal class RSAHandler : MiniParser.IHandler {
+
+		private RSAParameters rsa;
+		private bool unknown;
+		private byte[] temp;
+
+		public RSAHandler () 
+		{
+			rsa = new RSAParameters();
+		}
+
+		public RSAParameters GetParams () {
+			return rsa;
+		}
+
+		public void OnStartParsing (MiniParser parser) {}
+
+		public void OnStartElement (string name, MiniParser.IAttrList attrs) {}
+
+		public void OnEndElement (string name) {
+			switch (name) {
+				case "P":
+					rsa.P = temp;
+					break;
+				case "Q":
+					rsa.Q = temp;
+					break;
+				case "D":
+					rsa.D = temp;
+					break;
+				case "DP":
+					rsa.DP = temp;
+					break;
+				case "DQ":
+					rsa.DQ = temp;
+					break;
+				case "Exponent":
+					rsa.Exponent = temp;
+					break;
+				case "InverseQ":
+					rsa.InverseQ = temp;
+					break;
+				case "Modulus":
+					rsa.Modulus = temp;
+					break;
+				default:
+					// unknown tag in parameters
+					break;
+			}
+		}
+
+		public void OnChars (string ch) 
+		{
+			temp = Convert.FromBase64String (ch);
+		}
+
+		public void OnEndParsing (MiniParser parser) {}
+	}
+
 	public abstract class RSA : AsymmetricAlgorithm 
 	{
 		public static new RSA Create () 
@@ -58,17 +116,11 @@ namespace System.Security.Cryptography
 
 			RSAParameters rsaParams = new RSAParameters ();
 			try {
-/*				XmlDocument xml = new XmlDocument ();
-				xml.LoadXml (xmlString);
-				rsaParams.Modulus = GetElement (xml, "Modulus");
-				rsaParams.Exponent = GetElement (xml, "Exponent");
-				rsaParams.P = GetElement (xml, "P");
-				rsaParams.Q = GetElement (xml, "Q");
-				rsaParams.DP = GetElement (xml, "DP");
-				rsaParams.DQ = GetElement (xml, "DQ");
-				rsaParams.InverseQ = GetElement (xml, "InverseQ");
-				rsaParams.D = GetElement (xml, "D");*/
-				ImportParameters (rsaParams);
+				MiniParser parser = new MiniParser ();
+				AsymmetricParameters reader = new AsymmetricParameters (xmlString);
+				RSAHandler handler = new RSAHandler ();
+				parser.Parse(reader, handler);
+				ImportParameters (handler.GetParams ());
 			}
 			catch {
 				ZeroizePrivateKey (rsaParams);
@@ -127,10 +179,6 @@ namespace System.Security.Cryptography
 				ZeroizePrivateKey (rsaParams);
 				throw;
 			}
-			finally	{
-				ZeroizePrivateKey (rsaParams);
-			}
-
 			
 			return sb.ToString ();
 		}

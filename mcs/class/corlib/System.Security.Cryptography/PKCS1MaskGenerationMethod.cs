@@ -35,56 +35,10 @@ public class PKCS1MaskGenerationMethod : MaskGenerationMethod {
 		}
 	}
 
-	// I2OSP converts a nonnegative integer to an octet string of a specified length.
-	// in this case xLen is always 4 so we simplify the function 
-	private byte[] I2OSP (int x)
-	{
-		byte[] array = BitConverter.GetBytes (x);
-		// FIXME: This line is commented for compatibility with MS .NET
-		// Framework.
-//		Array.Reverse (array); // big-little endian issues
-		return array;
-	}
-
-	// from MGF1 on page 48 from PKCS#1 v2.1 (pdf version)
 	public override byte[] GenerateMask (byte[] mgfSeed, int maskLen)
 	{
-		// 1. If maskLen > 2^32 hLen, output “mask too long” and stop.
-		// easy - this is impossible by using a int (31bits) as parameter ;-)
-		// BUT with a signed int we do have to check for negative values!
-		if (maskLen < 0)
-			throw new OverflowException();
-
-		int mgfSeedLength = mgfSeed.Length;
 		HashAlgorithm hash = HashAlgorithm.Create (hashName);
-		int hLen = (hash.HashSize >> 3); // from bits to bytes
-		int iterations = (maskLen / hLen);
-		if (maskLen % hLen != 0)
-			iterations++;
-		// 2. Let T be the empty octet string.
-		byte[] T = new byte [iterations * hLen];
-
-		byte[] toBeHashed = new byte [mgfSeedLength + 4];
-		int pos = 0;
-		// 3. For counter from 0 to (maskLen / hLen) – 1, do the following:
-		for (int counter = 0; counter < iterations; counter++) {
-			// a.	Convert counter to an octet string C of length 4 octets
-			//	C = I2OSP (counter, 4)
-			byte[] C = I2OSP (counter);
-
-			// b.	Concatenate the hash of the seed mgfSeed and C to the octet string T:
-			//	T = T || Hash (mgfSeed || C)
-			Array.Copy (mgfSeed, 0, toBeHashed, 0, mgfSeedLength);
-			Array.Copy (C, 0, toBeHashed, mgfSeedLength, 4);
-			byte[] output = hash.ComputeHash (toBeHashed);
-			Array.Copy (output, 0, T, pos, hLen);
-			pos += mgfSeedLength;
-		}
-		
-		// 4. Output the leading maskLen octets of T as the octet string mask.
-		byte[] mask = new byte [maskLen];
-		Array.Copy (T, 0, mask, 0, maskLen);
-		return mask;
+		return PKCS1.MGF1 (hash, mgfSeed, maskLen);
 	}
 }
 

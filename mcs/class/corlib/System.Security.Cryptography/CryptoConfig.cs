@@ -47,6 +47,9 @@ public class CryptoConfig
 	private const string defaultXslt = defaultNamespace + "Xml.XmlDsigXsltTransform";
 	private const string defaultEnveloped = defaultNamespace + "Xml.XmlDsigEnvelopedSignatureTransform";
 
+	private const string managedSHA1 = defaultNamespace + "SHA1Managed";
+
+
 	// Oddly OID seems only available for hash algorithms
 	private const string oidSHA1 = "1.3.14.3.2.26";
 	private const string oidMD5 = "1.2.840.113549.2.5";
@@ -180,18 +183,28 @@ public class CryptoConfig
 		oid = new Hashtable ();
 		// comments here are to match with MS implementation (but not with doc)
 		// LAMESPEC: only HashAlgorithm seems to have their OID included
+		oid.Add (defaultSHA1, oidSHA1);
+		oid.Add (managedSHA1, oidSHA1);
 		// oid.Add (nameSHA1a, oidSHA1);
 		oid.Add (nameSHA1b, oidSHA1);
 		oid.Add (nameSHA1c, oidSHA1);
 		// oid.Add (nameSHA1d, oidSHA1);
+
+		oid.Add (defaultMD5, oidMD5);
 		oid.Add (nameMD5a, oidMD5);
 		oid.Add (nameMD5b, oidMD5);
+
+		oid.Add (defaultSHA256, oidSHA256);
 		oid.Add (nameSHA256a, oidSHA256);
 		// oid.Add (nameSHA256b, oidSHA256);
 		oid.Add (nameSHA256c, oidSHA256);
+
+		oid.Add (defaultSHA384, oidSHA384);
 		oid.Add (nameSHA384a, oidSHA384);
 		// oid.Add (nameSHA384b, oidSHA384);
 		oid.Add (nameSHA384c, oidSHA384);
+
+		oid.Add (defaultSHA512, oidSHA512);
 		oid.Add (nameSHA512a, oidSHA512);
 		// oid.Add (nameSHA512b, oidSHA512);
 		oid.Add (nameSHA512c, oidSHA512);

@@ -35,10 +35,9 @@ public class RSAOAEPKeyExchangeDeformatter : AsymmetricKeyExchangeDeformatter {
 	{
 		if (rsa == null)
 			throw new CryptographicException ();
-		byte[] mask = rsa.DecryptValue (rgbData);
-		byte[] secret = null;
-		// TODO retreive key from mask
-		return secret;
+
+		SHA1 sha1 = SHA1.Create ();
+		return PKCS1.Decrypt_OAEP (rsa, sha1, rgbData);
 	}
 
 	public override void SetKey (AsymmetricAlgorithm key) 
