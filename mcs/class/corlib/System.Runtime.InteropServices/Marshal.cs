@@ -8,7 +8,7 @@ using System.Runtime.CompilerServices;
 
 namespace System.Runtime.InteropServices
 {
-	sealed class Marshal
+	public sealed class Marshal
 	{
 		private Marshal () {}
 

@@ -1,3 +1,8 @@
+2002-04-08  Nick Drochak  <ndrochak@gol.com>
+
+	* Marshal.cs: Make class public.
+	* ComVisible.cs: New File.
+
 2002-03-24  Nick Drochak  <ndrochak@gol.com>
 
 	* ClassInterfaceAttribute.cs:
