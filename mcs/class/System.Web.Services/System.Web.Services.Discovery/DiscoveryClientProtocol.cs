@@ -76,75 +76,81 @@ namespace System.Web.Services.Discovery {
 
 		public DiscoveryDocument DiscoverAny (string url)
 		{
-			string contentType = null;
-			Stream stream = Download (ref url, ref contentType);
-
-			if (contentType.IndexOf ("text/html") != -1)
+			try
 			{
-				// Look for an alternate url
-				
-				StreamReader sr = new StreamReader (stream);
-				string str = sr.ReadToEnd ();
-				
-				string rex = "link\\s*rel\\s*=\\s*[\"']?alternate[\"']?\\s*";
-				rex += "type\\s*=\\s*[\"']?text/xml[\"']?\\s*href\\s*=\\s*(?:\"(?<1>[^\"]*)\"|'(?<1>[^']*)'|(?<1>\\S+))";
-				Regex rob = new Regex (rex, RegexOptions.IgnoreCase);
-				Match m = rob.Match (str);
-				if (!m.Success) 
-					throw new InvalidOperationException ("The HTML document does not contain Web service discovery information");
-				
-				if (url.StartsWith ("/"))
+				string contentType = null;
+				Stream stream = Download (ref url, ref contentType);
+	
+				if (contentType.IndexOf ("text/html") != -1)
 				{
-					Uri uri = new Uri (url);
-					url = uri.GetLeftPart (UriPartial.Authority) + m.Groups[1];
+					// Look for an alternate url
+					
+					StreamReader sr = new StreamReader (stream);
+					string str = sr.ReadToEnd ();
+					
+					string rex = "link\\s*rel\\s*=\\s*[\"']?alternate[\"']?\\s*";
+					rex += "type\\s*=\\s*[\"']?text/xml[\"']?\\s*href\\s*=\\s*(?:\"(?<1>[^\"]*)\"|'(?<1>[^']*)'|(?<1>\\S+))";
+					Regex rob = new Regex (rex, RegexOptions.IgnoreCase);
+					Match m = rob.Match (str);
+					if (!m.Success) 
+						throw new InvalidOperationException ("The HTML document does not contain Web service discovery information");
+					
+					if (url.StartsWith ("/"))
+					{
+						Uri uri = new Uri (url);
+						url = uri.GetLeftPart (UriPartial.Authority) + m.Groups[1];
+					}
+					else
+					{
+						int i = url.LastIndexOf ('/');
+						if (i == -1)
+							throw new InvalidOperationException ("The HTML document does not contain Web service discovery information");
+						url = url.Substring (0,i+1) + m.Groups[1];
+					}
+					stream = Download (ref url);
+				}
+				
+				XmlTextReader reader = new XmlTextReader (stream);
+				reader.MoveToContent ();
+				DiscoveryDocument doc;
+				DiscoveryReference refe = null;
+				
+				if (DiscoveryDocument.CanRead (reader))
+				{
+					doc = DiscoveryDocument.Read (reader);
+					documents.Add (url, doc);
+					refe = new DiscoveryDocumentReference ();
+					AddDiscoReferences (doc);
+				}
+				else if (ServiceDescription.CanRead (reader))
+				{
+					ServiceDescription wsdl = ServiceDescription.Read (reader);
+					documents.Add (url, wsdl);
+					doc = new DiscoveryDocument ();
+					refe = new ContractReference ();
+					doc.References.Add (refe);
+					refe.Url = url;
+					((ContractReference)refe).ResolveInternal (this, wsdl);
 				}
 				else
 				{
-					int i = url.LastIndexOf ('/');
-					if (i == -1)
-						throw new InvalidOperationException ("The HTML document does not contain Web service discovery information");
-					url = url.Substring (0,i+1) + m.Groups[1];
+					XmlSchema schema = XmlSchema.Read (reader, null);
+					documents.Add (url, schema);
+					doc = new DiscoveryDocument ();
+					refe = new SchemaReference ();
+					doc.References.Add (refe);
 				}
-				stream = Download (ref url);
-			}
-			
-			XmlTextReader reader = new XmlTextReader (stream);
-			reader.MoveToContent ();
-			DiscoveryDocument doc;
-			DiscoveryReference refe = null;
-			
-			if (DiscoveryDocument.CanRead (reader))
-			{
-				doc = DiscoveryDocument.Read (reader);
-				documents.Add (url, doc);
-				refe = new DiscoveryDocumentReference ();
-				AddDiscoReferences (doc);
-			}
-			else if (ServiceDescription.CanRead (reader))
-			{
-				ServiceDescription wsdl = ServiceDescription.Read (reader);
-				documents.Add (url, wsdl);
-				doc = new DiscoveryDocument ();
-				refe = new ContractReference ();
-				doc.References.Add (refe);
-				refe.Url = url;
-				((ContractReference)refe).ResolveInternal (this, wsdl);
-			}
-			else
-			{
-				XmlSchema schema = XmlSchema.Read (reader, null);
-				documents.Add (url, schema);
-				doc = new DiscoveryDocument ();
-				refe = new SchemaReference ();
-				doc.References.Add (refe);
-			}
-			
-			refe.ClientProtocol = this;
-			refe.Url = url;
-			references.Add (url, refe);
 				
-			reader.Close ();
-			return doc;
+				refe.ClientProtocol = this;
+				refe.Url = url;
+				references.Add (url, refe);
+					
+				reader.Close ();
+				return doc;
+			}
+			catch (DiscoveryException ex) {
+				throw ex.Exception;
+			}
 		}
 		
 		void AddDiscoReferences (DiscoveryDocument doc)

@@ -49,6 +49,18 @@ namespace System.Web.Services.Discovery {
 			set;
 		}
 		
+		internal Uri BaseUri 
+		{
+			get
+			{
+				int i = Url.IndexOf ("://");
+				if (i == -1 || !Uri.CheckSchemeName (Url.Substring (0,i)))
+					return new Uri ("file://" + Url);
+				else
+					return new Uri (Url);
+			}
+		}
+		
 		#endregion // Properties
 
 		#region Methods

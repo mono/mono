@@ -1,3 +1,12 @@
+2004-06-10  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* DiscoveryClientProtocol.cs: In DiscoverAny, catch expection of type
+	  DiscoveryException and rethrow the included Exception instead.
+	* DiscoveryReference.cs: Added BaseUri property, that returns an uri
+	  for the reference, supporting file uris.
+	* ContractReference.cs: Use the new property BaseUri to build the import
+	  uri.
+
 2004-06-01  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* DiscoveryReference.cs: Added missing XmlIgnore attribute.
