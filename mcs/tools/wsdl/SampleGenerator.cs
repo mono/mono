@@ -518,8 +518,8 @@ namespace Mono.WebServices
 					}
 					
 					string val;
-					if (!attr.SchemaTypeName.IsEmpty) val = FindBuiltInType (attr.SchemaTypeName);
-					else val = FindBuiltInType ((XmlSchemaSimpleType) attr.SchemaType);
+					if (!refAttr.SchemaTypeName.IsEmpty) val = FindBuiltInType (refAttr.SchemaTypeName);
+					else val = FindBuiltInType ((XmlSchemaSimpleType) refAttr.SchemaType);
 					
 					xtw.WriteAttributeString (refAttr.Name, val);
 				}
@@ -591,8 +591,9 @@ namespace Mono.WebServices
 			else if (item is XmlSchemaAny)
 			{
 				xtw.WriteStartElement ("any"); xtw.WriteEndElement ();
-				if (multiValue)
-					xtw.WriteStartElement ("any"); xtw.WriteEndElement ();
+				if (multiValue) {
+					xtw.WriteStartElement ("any"); xtw.WriteEndElement (); 
+				}
 			}
 			else if (item is XmlSchemaParticle) {
 				WriteParticleContent (xtw, ns, (XmlSchemaParticle)item, multiValue);
