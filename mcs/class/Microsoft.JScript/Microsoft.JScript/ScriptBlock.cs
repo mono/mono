@@ -34,7 +34,6 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			System.Console.WriteLine ("ScriptBlock::Resolve");
 			return src_elems.Resolve (context);
 		}
 	}
