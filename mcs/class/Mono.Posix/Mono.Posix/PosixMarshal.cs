@@ -27,18 +27,86 @@
 //
 
 using System;
-using System.Collections;
 using System.IO;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using System.Text;
 using Mono.Posix;
 
 namespace Mono.Posix {
 
+	// Scenario:  We want to be able to translate an Error to a string.
+	//  Problem:  Thread-safety.  Strerror(3) isn't thread safe (unless
+	//            thread-local-variables are used, which is probably only 
+	//            true on Windows).
+	// Solution:  Use strerror_r().
+	//  Problem:  strerror_r() isn't portable. 
+	//            (Apparently Solaris doesn't provide it.)
+	// Solution:  Cry.  Then introduce an intermediary, ErrorMarshal.
+	//            ErrorMarshal exposes a single public delegate, Translator,
+	//            which will convert an Error to a string.  It's static
+	//            constructor first tries using strerror_r().  If it works,
+	//            great; use it in the future.  If it doesn't work, fallback to
+	//            using strerror(3).
+	//            This should be thread safe, since the check is done within the
+	//            class constructor lock.
+	//  Problem:  But if strerror_r() isn't present, we're not thread safe!
+	// Solution:  Tough.  It's still better than nothing.  I think.  
+	//            Check PosixMarshal.IsErrorDescriptionThreadSafe if you need to
+	//            know which error translator is being used.
+	internal class ErrorMarshal
+	{
+		public delegate string ErrorTranslator (Error errno);
+
+		public static readonly ErrorTranslator Translate;
+		public static readonly bool HaveStrerror_r;
+
+		static ErrorMarshal ()
+		{
+			try {
+				Translate = new ErrorTranslator (strerror_r);
+				string ignore = Translate (Error.EPERM);
+				HaveStrerror_r = true;
+			}
+			catch (MissingMethodException e) {
+				Translate = new ErrorTranslator (strerror);
+				HaveStrerror_r = false;
+			}
+		}
+
+		private static string strerror (Error errno)
+		{
+			return Syscall.strerror (errno);
+		}
+
+		private static string strerror_r (Error errno)
+		{
+			StringBuilder buf = new StringBuilder (16);
+			int r = 0;
+			do {
+				buf.Capacity *= 2;
+				r = Syscall.strerror_r (errno, buf);
+			} while (r == -1 && Syscall.GetLastError() == Error.ERANGE);
+
+			if (r == -1)
+				return "** Unknown error code: " + ((int) errno) + "**";
+			return buf.ToString();
+		}
+	}
+
 	public sealed /* static */ class PosixMarshal
 	{
 		private PosixMarshal () {}
+
+		public static string GetErrorDescription (Error errno)
+		{
+			return ErrorMarshal.Translate (errno);
+		}
+
+		public static bool IsErrorDescriptionThreadSafe {
+			get {return ErrorMarshal.HaveStrerror_r;}
+		}
 
 		public static IntPtr Alloc (long size)
 		{
@@ -143,7 +211,7 @@ namespace Mono.Posix {
 
 		private static Exception CreateExceptionForError (Error errno)
 		{
-			string message = Syscall.strerror_r (errno);
+			string message = GetErrorDescription (errno);
 			PosixIOException p = new PosixIOException (errno);
 			switch (errno) {
 				case Error.EFAULT:        return new NullReferenceException (message, p);

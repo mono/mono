@@ -80,7 +80,7 @@ namespace Mono.Posix {
 
 		public override string ToString ()
 		{
-			return Syscall.strerror_r (ErrorCode);
+			return PosixMarshal.GetErrorDescription (ErrorCode);
 		}
 	}
 }

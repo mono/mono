@@ -740,7 +740,7 @@ namespace Mono.Posix {
 		public PollEvents revents;
 	}
 
-	public class Dirent
+	public sealed class Dirent
 	{
 		public /* ino_t */ ulong  d_ino;
 		public /* off_t */ long   d_off;
@@ -748,18 +748,72 @@ namespace Mono.Posix {
 		public byte               d_type;
 		public string             d_name;
 
+		public override int GetHashCode ()
+		{
+			return d_ino.GetHashCode () ^ d_off.GetHashCode () ^ 
+				d_reclen.GetHashCode () ^ d_type.GetHashCode () ^
+				d_name.GetHashCode ();
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj == null || GetType() != obj.GetType())
+				return false;
+			Dirent d = (Dirent) obj;
+			return d.d_ino == d_ino && d.d_off == d_off &&
+				d.d_reclen == d_reclen && d.d_type == d_type &&
+				d.d_name == d.d_name;
+		}
+
 		public override string ToString ()
 		{
 			return d_name;
 		}
+
+		public static bool operator== (Dirent lhs, Dirent rhs)
+		{
+			return Object.Equals (lhs, rhs);
+		}
+
+		public static bool operator!= (Dirent lhs, Dirent rhs)
+		{
+			return Object.Equals (lhs, rhs);
+		}
 	}
 
-	public class Group
+	public sealed class Group
 	{
 		public string           gr_name;
 		public string           gr_passwd;
 		public /* gid_t */ uint gr_gid;
 		public string[]         gr_mem;
+
+		public override int GetHashCode ()
+		{
+			int memhc = 0;
+			for (int i = 0; i < gr_mem.Length; ++i)
+				memhc ^= gr_mem[i].GetHashCode ();
+
+			return gr_name.GetHashCode () ^ gr_passwd.GetHashCode () ^ 
+				gr_gid.GetHashCode () ^ memhc;
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj == null || GetType() != obj.GetType())
+				return false;
+			Group g = (Group) obj;
+			if (g.gr_gid != gr_gid)
+				return false;
+			if (g.gr_gid == gr_gid && g.gr_name == g.gr_name &&
+				g.gr_passwd == g.gr_passwd && g.gr_mem.Length == gr_mem.Length) {
+				for (int i = 0; i < gr_mem.Length; ++i)
+					if (gr_mem[i] != g.gr_mem[i])
+						return false;
+				return true;
+			}
+			return false;
+		}
 
 		// Generate string in /etc/group format
 		public override string ToString ()
@@ -779,9 +833,19 @@ namespace Mono.Posix {
 				sb.Append (members[i]);
 			}
 		}
+
+		public static bool operator== (Group lhs, Group rhs)
+		{
+			return Object.Equals (lhs, rhs);
+		}
+
+		public static bool operator!= (Group lhs, Group rhs)
+		{
+			return Object.Equals (lhs, rhs);
+		}
 	}
 
-	public class Passwd
+	public sealed class Passwd
 	{
 		public string           pw_name;
 		public string           pw_passwd;
@@ -791,11 +855,39 @@ namespace Mono.Posix {
 		public string           pw_dir;
 		public string           pw_shell;
 
+		public override int GetHashCode ()
+		{
+			return pw_name.GetHashCode () ^ pw_passwd.GetHashCode () ^ 
+				pw_uid.GetHashCode () ^ pw_gid.GetHashCode () ^
+				pw_gecos.GetHashCode () ^ pw_dir.GetHashCode () ^
+				pw_dir.GetHashCode () ^ pw_shell.GetHashCode ();
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj == null || GetType() != obj.GetType())
+				return false;
+			Passwd p = (Passwd) obj;
+			return p.pw_uid == pw_uid && p.pw_gid == pw_gid && p.pw_name == pw_name && 
+				p.pw_passwd == pw_passwd && p.pw_gecos == p.pw_gecos && 
+				p.pw_dir == p.pw_dir && p.pw_shell == p.pw_shell;
+		}
+
 		// Generate string in /etc/passwd format
 		public override string ToString ()
 		{
 			return string.Format ("{0}:{1}:{2}:{3}:{4}:{5}:{6}",
 				pw_name, pw_passwd, pw_uid, pw_gid, pw_gecos, pw_dir, pw_shell);
+		}
+
+		public static bool operator== (Passwd lhs, Passwd rhs)
+		{
+			return Object.Equals (lhs, rhs);
+		}
+
+		public static bool operator!= (Passwd lhs, Passwd rhs)
+		{
+			return Object.Equals (lhs, rhs);
 		}
 	}
 
@@ -804,7 +896,7 @@ namespace Mono.Posix {
 		public  /* ino_t */     ulong   st_ino;     // inode
 		public  FilePermissions         st_mode;    // protection
 		private uint                    _padding_;  // padding for structure alignment
-		public  /* nlink_t */   ulong    st_nlink;  // number of hard links
+		public  /* nlink_t */   ulong   st_nlink;   // number of hard links
 		public  /* uid_t */     uint    st_uid;     // user ID of owner
 		public  /* gid_t */     uint    st_gid;     // group ID of owner
 		public  /* dev_t */     ulong   st_rdev;    // device type (if inode device)
@@ -847,7 +939,7 @@ namespace Mono.Posix {
 	//  (2) "Trivial" function overloads.  For example, if the parameters to a
 	//      function are related (e.g. getgroups(2))
 	//  (3) The return type SHOULD NOT be changed.  If you want to provide a
-	//      convenient function with a nicer return type, place it into one of
+	//      convenience function with a nicer return type, place it into one of
 	//      the Posix* wrapper classes, and give it a .NET-styled name.
 	//  (4) Exceptions SHOULD NOT be thrown.  EXCEPTIONS: 
 	//      - If you're wrapping *broken* methods which make assumptions about 
@@ -1001,20 +1093,6 @@ namespace Mono.Posix {
 		public static int strerror_r (Error errnum, StringBuilder buf)
 		{
 			return strerror_r (errnum, buf, (ulong) buf.Capacity);
-		}
-
-		public static string strerror_r (Error errnum)
-		{
-			StringBuilder buf = new StringBuilder (16);
-			int r = 0;
-			do {
-				buf.Capacity *= 2;
-				r = strerror_r (errnum, buf);
-			} while (r == -1 && GetLastError() == Error.ERANGE);
-
-			if (r == -1)
-				return "** Unknown error code: " + ((int) errnum) + "**";
-			return buf.ToString();
 		}
 
 		//
@@ -2286,7 +2364,7 @@ namespace Mono.Posix {
 		//[Obsolete ("Use Mono.Posix.Stdlib.strerror")]
 		public static string strerror (int errnum)
 		{
-			IntPtr r = Stdlib.sys_strerror (errnum);
+			IntPtr r = Stdlib.sys_strerror ((Error) errnum);
 			return PosixMarshal.PtrToString (r);
 		}
 

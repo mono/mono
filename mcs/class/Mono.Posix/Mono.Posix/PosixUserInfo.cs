@@ -55,7 +55,7 @@ namespace Mono.Posix {
 				throw new ArgumentException (Locale.GetText ("invalid user id"), "user");
 		}
 
-		internal PosixUserInfo (Passwd passwd)
+		public PosixUserInfo (Passwd passwd)
 		{
 			this.passwd = passwd;
 		}
@@ -90,6 +90,18 @@ namespace Mono.Posix {
 
 		public string ShellProgram {
 			get {return passwd.pw_shell;}
+		}
+
+		public override int GetHashCode ()
+		{
+			return passwd.GetHashCode ();
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj == null || GetType () != obj.GetType())
+				return false;
+			return passwd.Equals (((PosixUserInfo) obj).passwd);
 		}
 
 		public override string ToString ()

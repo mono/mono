@@ -1,3 +1,26 @@
+2004-11-15  Jonathan Pryor <jonpryor@vt.edu>
+
+	* PosixUserInfo.cs: Make the PosixUserInfo(Passwd) constructor public;
+	  override Object.GetHashCode and Object.Equals.
+	* PosixGroupInfo.cs: Make the PosixGroupInfo(Group) constructor public;
+	  override Object.GetHashCode and Object.Equals.
+	* PosixIOException.cs: Use PosixMarshal.GetErrorDescription instead of
+	  calling Syscall.strerror_r directly
+	* PosixMarshal.cs: Add GetErrorDescription.  Strerror_r() isn't portable, so
+	  GetErrorDescription() first tries strerror_r(), and if it fails falls back
+	  to strerror(3).
+	* Syscall.cs: 
+	  - Seal the Dirent class.  It has no virtual members, so there's no point 
+      in it being non-sealed.  Override Object.GetHashCode and Object.Equals.
+	  - Seal the Group class.  It has no virtual members, so there's no point 
+      in it being non-sealed.  Override Object.GetHashCode and Object.Equals.
+	    Provide operator== and operator!=.
+	  - Seal the Passwd class.  It has no virtual members, so there's no point 
+      in it being non-sealed.  Override Object.GetHashCode and Object.Equals.
+	    Provide operator== and operator!=.
+	  - Remove strerror_r() convenience overload.  This is now
+	    PosixMarshal.GetErrorDescription().
+
 2004-11-12  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Syscall.cs: Export time-related functions (gettimeofday, settimeofday,

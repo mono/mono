@@ -54,7 +54,7 @@ namespace Mono.Posix {
 				throw new ArgumentException (Locale.GetText ("invalid group id"), "group");
 		}
 
-		internal PosixGroupInfo (Group group)
+		public PosixGroupInfo (Group group)
 		{
 			this.group = group;
 		}
@@ -73,6 +73,18 @@ namespace Mono.Posix {
 
 		public string[] Members {
 			get {return group.gr_mem;}
+		}
+
+		public override int GetHashCode ()
+		{
+			return group.GetHashCode ();
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj == null || GetType () != obj.GetType())
+				return false;
+			return group.Equals (((PosixGroupInfo) obj).group);
 		}
 
 		public override string ToString ()
