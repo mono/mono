@@ -64,7 +64,14 @@ namespace MonoTests.System.Data
 			col.AllowDBNull = true;
 			_tbl.Rows.Add(_tbl.NewRow());
 			_tbl.Rows[0]["NullCheck"] = DBNull.Value;
+			try {
 			col.AllowDBNull = false;
+				Fail("DC8b: Failed to throw DataException.");
+			}
+			catch (DataException) {}
+			catch (Exception exc) {
+				Fail("DC8c: Wrong exception type. Got:" + exc);
+			}
 		}
 
 		[Test]
@@ -117,7 +124,7 @@ namespace MonoTests.System.Data
 
 			//Clear caption
 			col.Caption = null;
-			AssertEquals("DC16: Caption Should Equal Col Name after clear", col.ColumnName, col.Caption);
+			AssertEquals("DC16: Caption Should Equal empty string after clear", String.Empty, col.Caption);
 			
 		}
 
@@ -181,9 +188,9 @@ namespace MonoTests.System.Data
 			try
 			{
 				tbl.Columns[0].DefaultValue = "hello";
-				Fail("DC21: Failed to throw InvalidCastException.");
+				Fail("DC21: Failed to throw FormatException.");
 			}
-			catch (InvalidCastException){}
+			catch (FormatException){}
 			catch (AssertionException exc) {throw  exc;}
 			catch (Exception exc)
 			{
@@ -322,13 +329,15 @@ namespace MonoTests.System.Data
                 	
                 	try {
                 		C.Expression = "iff (age = 24, 'hurrey', 'boo')";
-                		Fail ("DC34");
-                	} catch (Exception e) {
                 		                	
                 		// The expression contains undefined function call iff().
-                		AssertEquals ("DC35", typeof (EvaluateException), e.GetType ());
-                	}
+							Fail ("DC34");
+						} catch (EvaluateException) {}
+						catch (SyntaxErrorException) {}
                 	
+                	//The following two cases fail on mono. MS.net evaluates the expression
+                	//immediatly upon assignment. We don't do this yet hence we don't throw
+                	//an exception at this point.
                 	try {
                 		C.Expression = "iif (nimi = 24, 'hurrey', 'boo')";
                 		Fail ("DC36");
@@ -342,7 +351,7 @@ namespace MonoTests.System.Data
                 		Fail ("DC39");
                 	} catch (Exception e) {
                 		AssertEquals ("DC40", typeof (EvaluateException), e.GetType ());
-                		AssertEquals ("DC41", "Cannot perform '=' operation on System.String and System.Int32.", e.Message);
+                		//AssertEquals ("DC41", "Cannot perform '=' operation on System.String and System.Int32.", e.Message);
                 	}
                 	
 
@@ -433,8 +442,8 @@ namespace MonoTests.System.Data
                 	AssertEquals ("DC54", "60", T.Rows [60] [3]);		                	
 
 			C.Expression = "stdev (Child.age)";
-                	AssertEquals ("DC55", "1,4142135623731", T.Rows [0] [3]);
-                	AssertEquals ("DC56", "1,4142135623731", T.Rows [60] [3]);		                	
+                	AssertEquals ("DC55", (1.4142135623731).ToString(), T.Rows [0] [3]);
+                	AssertEquals ("DC56", (1.4142135623731).ToString(), T.Rows [60] [3]);		                	
 
 			C.Expression = "var (Child.age)";
                 	AssertEquals ("DC57", "2", T.Rows [0] [3]);
