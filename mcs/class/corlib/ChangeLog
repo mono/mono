@@ -1,5 +1,9 @@
 2003-01-26  Lluis Sanchez Gual <lluis@ideary.com>
 
+	* unix.args: added RemoteActivator.cs.
+
+2003-01-26  Lluis Sanchez Gual <lluis@ideary.com>
+
 	* unix.args: added System.Runtime.Remoting.Messaging/ArgInfo.cs,
 		System.Runtime.Remoting.Messaging/MethodCallDictionary.cs
 		System.Runtime.Remoting.Messaging/MethodDictionary.cs

@@ -478,6 +478,7 @@ System.Runtime.Remoting.Activation/ActivatorLevel.cs
 System.Runtime.Remoting.Activation/IActivator.cs
 System.Runtime.Remoting.Activation/IConstructionCallMessage.cs
 System.Runtime.Remoting.Activation/IConstructionReturnMessage.cs
+System.Runtime.Remoting.Activation/RemoteActivator.cs
 System.Runtime.Remoting.Channels/BaseChannelObjectWithProperties.cs
 System.Runtime.Remoting.Channels/BaseChannelSinkWithProperties.cs
 System.Runtime.Remoting.Channels/BaseChannelWithProperties.cs
