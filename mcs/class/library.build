@@ -14,6 +14,7 @@
 		<nant basedir="System.Drawing" target="build"/>
 		<nant basedir="System.EnterpriseServices" target="build"/>
 		<nant basedir="System.XML" target="build"/>
+		<nant basedir="Mono.Data.Tds" target="build"/>
 		<nant basedir="System.Data" target="build"/>
 		<nant basedir="Mono.Data.MySql" target="build"/>
 		<nant basedir="Mono.Data.SqliteClient" target="build"/>
@@ -50,6 +51,7 @@
 		<nant basedir="System.Drawing" target="clean"/>
 		<nant basedir="System.EnterpriseServices" target="clean"/>
 		<nant basedir="System.XML" target="clean"/>
+		<nant basedir="Mono.Data.Tds" target="clean"/>
 		<nant basedir="System.Data" target="clean"/>
 		<nant basedir="Mono.Data.MySql" target="clean"/>
 		<nant basedir="Mono.Data.SqliteClient" target="clean"/>
