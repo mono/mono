@@ -1,3 +1,17 @@
+2003-07-29  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* icall.c: improve fix of get_base_definition(). If the parent class
+	  doesn't have the mehod, look at the parent of the parent.
+	* object.c: mono_message_init(): use the attribute PARAM_ATTRIBUTE_OUT
+	  to check if a parameter is an in or out parameter
+	  (PARAM_ATTRIBUTE_IN is not set by default).
+	  mono_method_return_message_restore(): Use mono_class_value_size to
+	  get the size of a value type. mono_type_stack_size (parameterType)
+	  does not return the correct value if parameterType is byRef.
+	  mono_load_remote_field(), mono_load_remote_field_new(),
+	  mono_store_remote_field(), mono_store_remote_field_new():
+	  raise exception if the remote call returns an exception.
+
 2003-07-28  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug-debugger.c (mono_debugger_runtime_invoke): New
