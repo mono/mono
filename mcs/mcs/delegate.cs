@@ -315,45 +315,19 @@ namespace Mono.CSharp {
 			if (invoke_pd.Count != pd_count)
 				return null;
 
-			bool mismatch = false;
 			for (int i = pd_count; i > 0; ) {
 				i--;
 
 				if (invoke_pd.ParameterType (i) == pd.ParameterType (i))
 					continue;
-				else {
-					mismatch = true;
-					break;
-				}
-			}
-
-			if (mismatch) {
-				//
-				// FIXME: This error message is not very useful!
-				//
-				Report.Error (
-					123, loc, "Method '" + Invocation.FullMethodDesc (mb) +
-					"' does not match delegate '" +
-					FullDelegateDesc (delegate_type, invoke_mb, invoke_pd) + "'");
-				return null;
+				else
+					return null;
 			}
 
 			if (((MethodInfo) invoke_mb).ReturnType == ((MethodInfo) mb).ReturnType)
 				return mb;
 			else
-				mismatch = true;
-
-			if (mismatch) {
-				//
-				// FIXME: This error message is not very useful!
-				//
-				Report.Error (123, loc, "Method '" + Invocation.FullMethodDesc (mb) +
-					      "' does not match delegate '" +
-					      FullDelegateDesc (delegate_type, invoke_mb, invoke_pd) + "'");
 				return null;
-			}
-
-			return null;
 		}
 
 		// <summary>
@@ -583,6 +557,15 @@ namespace Mono.CSharp {
 			
 			Expression e = a.Expr;
 
+			Expression invoke_method = Expression.MemberLookup (
+				ec, type, "Invoke", MemberTypes.Method,
+				Expression.AllBindingFlags, Location);
+
+			if (invoke_method == null) {
+				Report.Error (-200, Location, "Internal error ! COuld not find Invoke method!");
+				return null;
+			}
+
 			if (e is MethodGroupExpr) {
 				MethodGroupExpr mg = (MethodGroupExpr) e;
 
@@ -594,7 +577,19 @@ namespace Mono.CSharp {
 				}
 					
 				if (delegate_method == null) {
-					Report.Error (-14, Location, "Ambiguous method reference in delegate creation");
+					string method_desc;
+					if (mg.Methods.Length > 1)
+						method_desc = mg.Methods [0].Name;
+					else
+						method_desc = Invocation.FullMethodDesc (mg.Methods [0]);
+
+					MethodBase dm = ((MethodGroupExpr) invoke_method).Methods [0];
+					ParameterData param = Invocation.GetParameterData (dm);
+					string delegate_desc = Delegate.FullDelegateDesc (type, dm, param);
+
+					Report.Error (123, Location, "Method '" + method_desc + "' does not " +
+						      "match delegate '" + delegate_desc + "'");
+
 					return null;
 				}
 						
@@ -629,15 +624,6 @@ namespace Mono.CSharp {
 			if (!Delegate.VerifyDelegate (ec, type, e_type, Location)) {
 				Report.Error (29, Location, "Cannot implicitly convert type '" + e_type + "' " +
 					      "to type '" + type + "'");
-				return null;
-			}
-
-			Expression invoke_method = Expression.MemberLookup (
-				ec, e_type, "Invoke", MemberTypes.Method,
-				Expression.AllBindingFlags, Location);
-
-			if (invoke_method == null) {
-				Report.Error (-200, Location, "Internal error ! COuld not find Invoke method!");
 				return null;
 			}
 				

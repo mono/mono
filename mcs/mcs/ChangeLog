@@ -1,5 +1,14 @@
 2002-07-24  Martin Baulig  <martin@gnome.org>
 
+	* delegate.cs (Delegate.VerifyMethod): Simply return null if the method
+	does not match, but don't report any errors.  This method is called in
+	order for all methods in a MethodGroupExpr until a matching method is
+	found, so we don't want to bail out if the first method doesn't match.
+	(NewDelegate.DoResolve): If none of the methods in the MethodGroupExpr
+	matches, report the 123.  Fixes #28070.
+
+2002-07-24  Martin Baulig  <martin@gnome.org>
+
 	* expression.cs (ArrayAccess.EmitStoreOpcode): Moved the
 	TypeManager.TypeToCoreType() to the top of the method so the
 	following equality checks will work.  Fixes #28107.
