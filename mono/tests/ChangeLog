@@ -1,3 +1,7 @@
+2005-04-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* invoke.cs: Add new test.
+
 2005-03-31  Zoltan Varga  <vargaz@freemail.hu>
 
 	* stack-overflow.cs: New tests, not yet enabled.
