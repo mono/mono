@@ -581,7 +581,6 @@ namespace Mono.Xml
 				attributes.Add (attrName);
 				attributeLocalNames.Add (attrName, reader.LocalName);
 				attributeNamespaces.Add (attrName, reader.NamespaceURI);
-				bool hasError = false;
 				XmlReader targetReader = reader;
 				string attrValue = null;
 				if (currentEntityHandling == EntityHandling.ExpandCharEntities)
@@ -601,7 +600,6 @@ namespace Mono.Xml
 							if (edecl == null) {
 								HandleError (String.Format ("Referenced entity {0} is not declared.", targetReader.Name),
 									XmlSeverityType.Error);
-								hasError = true;
 							} else {
 								XmlTextReader etr = new XmlTextReader (edecl.EntityValue, XmlNodeType.Attribute, ParserContext);
 								attributeValueEntityStack.Push (targetReader);

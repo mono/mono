@@ -1,3 +1,7 @@
+2004-01-08  Nick Drochak <ndrochak@ieee.org>
+
+	* DTDValidatingReader.cs: Removed unused variable
+	
 2004-01-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlNamespaceManager.cs : Implemented .NET 1.2 methods that take
