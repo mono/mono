@@ -158,7 +158,6 @@ namespace System.Security.Cryptography {
 					Array.Copy (input, x, temp, BlockSizeByte - FeedBackByte, FeedBackByte);
 					for (int i = 0; i < FeedBackByte; i++)
 						output[i + x] = (byte)(temp2[i] ^ input[i + x]);
-//						output[i + x] = (byte)(temp2[BlockSizeByte - x - i - 1] ^ input[i + x]);
 				}
 			}
 		}
@@ -270,7 +269,7 @@ namespace System.Security.Cryptography {
 	/// Available algorithms include:
 	/// DES, RC2, Rijndael, TripleDES
 	/// </summary>
-	public abstract class SymmetricAlgorithm {
+	public abstract class SymmetricAlgorithm : IDisposable {
 		protected int BlockSizeValue; // The block size of the cryptographic operation in bits. 
 		protected int FeedbackSizeValue; // The feedback size of the cryptographic operation in bits. 
 		protected byte[] IVValue; // The initialization vector ( IV) for the symmetric algorithm. 
@@ -280,6 +279,7 @@ namespace System.Security.Cryptography {
 		protected KeySizes[] LegalKeySizesValue; // Specifies the key sizes that are supported by the symmetric algorithm. 
 		protected CipherMode ModeValue; // Represents the cipher mode used in the symmetric algorithm. 
 		protected PaddingMode PaddingValue; // Represents the padding mode used in the symmetric algorithm. 
+		private bool m_disposed;
 
 		/// <summary>
 		/// Called from constructor of derived class.
@@ -288,6 +288,7 @@ namespace System.Security.Cryptography {
 		{
 			ModeValue = CipherMode.CBC;
 			PaddingValue = PaddingMode.PKCS7;
+			m_disposed = false;
 		}
 		
 		/// <summary>
@@ -295,10 +296,29 @@ namespace System.Security.Cryptography {
 		/// </summary>
 		~SymmetricAlgorithm () 
 		{
-			if (KeyValue != null) {
-				// Zeroize the secret key and free
-				Array.Clear (KeyValue, 0, KeyValue.Length);
-				KeyValue = null;
+			Dispose (false);
+		}
+
+		public void Dispose () 
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);  // Finalization is now unnecessary
+		}
+
+		protected void Dispose (bool disposing) 
+		{
+			if (!m_disposed) {
+				// always zeroize keys
+				if (KeyValue != null) {
+					// Zeroize the secret key and free
+					Array.Clear (KeyValue, 0, KeyValue.Length);
+					KeyValue = null;
+				}
+				// dispose unmanaged managed objects
+				if (disposing) {
+					// dispose managed objects
+				}
+				m_disposed = true;
 			}
 		}
 

@@ -6,8 +6,6 @@
 //
 
 using System;
-using System.Security.Cryptography;
-
 
 namespace System.Security.Cryptography {
 
@@ -22,6 +20,7 @@ namespace System.Security.Cryptography {
 		private byte [] accumulator;
 		private byte [] filterBuffer;
 		private int accPtr;
+		private bool m_disposed;
 
 
 		/// <summary>
@@ -29,7 +28,7 @@ namespace System.Security.Cryptography {
 		///  with the default transformation mode (IgnoreWhiteSpaces).
 		/// </summary>
 		public FromBase64Transform ()
-		: this (FromBase64TransformMode.IgnoreWhiteSpaces)
+			: this (FromBase64TransformMode.IgnoreWhiteSpaces)
 		{
 		}
 
@@ -44,6 +43,12 @@ namespace System.Security.Cryptography {
 			accumulator = new byte [4];
 			filterBuffer = new byte [4];
 			accPtr = 0;
+			m_disposed = false;
+		}
+
+		~FromBase64Transform () 
+		{
+			Dispose (false);
 		}
 
 
@@ -55,6 +60,9 @@ namespace System.Security.Cryptography {
 			}
 		}
 
+		public bool CanReuseTransform {
+			get { return false; }
+		}
 
 		/// <summary>
 		///  Returns the input block size for the Base64 decoder.
@@ -81,11 +89,27 @@ namespace System.Security.Cryptography {
 			}
 		}
 
+		public void Clear() 
+		{
+			Dispose (true);
+		}
 
-                void System.IDisposable.Dispose ()
-                {
-                }
+		public void Dispose () 
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);  // Finalization is now unnecessary
+		}
 
+		protected virtual void Dispose (bool disposing) 
+		{
+			if (!m_disposed) {
+				// dispose unmanaged objects
+				if (disposing) {
+					// dispose managed objects
+				}
+				m_disposed = true;
+			}
+		}
 
 		private int Filter (byte [] buffer, int offset, int count)
 		{

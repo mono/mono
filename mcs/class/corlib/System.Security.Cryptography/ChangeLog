@@ -1,3 +1,17 @@
+2002-11-03  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CryptoAPITransform.cs: Added missing CanReuseTransform property,
+	Clear method, destructor and IDisposable support.
+	* CryptographicException.cs: Added missing protected constructor.
+	* CryptographicUnexpectedOperationException.cs: Added missing 
+	protected constructor.
+	* ICryptoTransform.cs: Added missing CanReuseTransform property.
+	* FromBase64Transform.cs: Added missing CanReuseTransform property,
+	Clear method, destructor and IDisposable support.
+	* SymmetricAlgorithm.cs: Implement IDisposable.
+	* ToBase64Transform.cs: Added missing CanReuseTransform property,
+	Clear method, destructor and IDisposable support.
+
 2002-11-02  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* SignatureDescription.cs: Updated class to match unit test results

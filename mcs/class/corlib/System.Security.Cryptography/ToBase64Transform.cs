@@ -6,13 +6,12 @@
 //
 
 using System;
-using System.Security.Cryptography;
-
 
 namespace System.Security.Cryptography {
 
 	public class ToBase64Transform : ICryptoTransform {
 
+		private bool m_disposed;
 
 		/// <summary>
 		///  Default constructor.
@@ -21,6 +20,10 @@ namespace System.Security.Cryptography {
 		{
 		}
 
+		~ToBase64Transform () 
+		{
+			Dispose (false);
+		}
 
 		/// <summary>
 		/// </summary>
@@ -30,6 +33,9 @@ namespace System.Security.Cryptography {
 			}
 		}
 
+		public bool CanReuseTransform {
+			get { return false; }
+		}
 
 		/// <summary>
 		///  Returns the input block size for the Base64 encoder.
@@ -56,11 +62,27 @@ namespace System.Security.Cryptography {
 			}
 		}
 
+		public void Clear() 
+		{
+			Dispose (true);
+		}
 
-                void System.IDisposable.Dispose ()
-                {
-                }
+		public void Dispose () 
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);  // Finalization is now unnecessary
+		}
 
+		protected virtual void Dispose (bool disposing) 
+		{
+			if (!m_disposed) {
+				// dispose unmanaged objects
+				if (disposing) {
+					// dispose managed objects
+				}
+				m_disposed = true;
+			}
+		}
 
 		/// <summary>
 		/// </summary>
