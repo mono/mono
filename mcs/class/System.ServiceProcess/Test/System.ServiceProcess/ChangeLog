@@ -1,0 +1,6 @@
+2004-09-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ServiceControllerPermissionAttributeTest.cs: New. Unit tests for
+	ServiceControllerPermissionAttribute class.
+	* ServiceControllerPermissionTest.cs: New. Unit tests for Service
+	ControllerPermission class.
