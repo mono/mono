@@ -1,7 +1,11 @@
 2001-11-28  Dietmar Maurer  <dietmar@ximian.com>
 
+	* x86.brg (LDIND_I1, LDIND_I2): use x86_widen_ instead of x86_mov_
+
 	* jit.c (mono_analyze_stack): record the cli_address for later use
 	with gdb.
+	(sigsegv_signal_handler): translate sigsegv into "Internal error"
+	exception.
 
 Tue Nov 27 16:32:41 CET 2001 Paolo Molaro <lupus@ximian.com>
 
