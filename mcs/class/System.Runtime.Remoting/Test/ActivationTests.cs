@@ -19,21 +19,29 @@ namespace MonoTests.Remoting
 	public class ActivationTests
 	{
 		ActivationServer server;
+		TcpChannel tcp;
+		HttpChannel http;
 			
 		[TestFixtureSetUp]
 		public void Run()
 		{
 			try
 			{
+				tcp =  new TcpChannel (0);
+				http =  new HttpChannel (0);
+			
+				ChannelServices.RegisterChannel (tcp);
+				ChannelServices.RegisterChannel (http);
+			
 				AppDomain domain = AppDomain.CreateDomain ("testdomain_activation");
 				server = (ActivationServer) domain.CreateInstanceAndUnwrap(GetType().Assembly.FullName,"MonoTests.Remoting.ActivationServer");
 				
-				RemotingConfiguration.RegisterActivatedClientType (typeof(CaObject1), "tcp://localhost:32433");
-				RemotingConfiguration.RegisterActivatedClientType (typeof(CaObject2), "http://localhost:32434");
-				RemotingConfiguration.RegisterWellKnownClientType (typeof(WkObjectSinglecall1), "tcp://localhost:32433/wkoSingleCall1");
-				RemotingConfiguration.RegisterWellKnownClientType (typeof(WkObjectSingleton1), "tcp://localhost:32433/wkoSingleton1");
-				RemotingConfiguration.RegisterWellKnownClientType (typeof(WkObjectSinglecall2), "http://localhost:32434/wkoSingleCall2");
-				RemotingConfiguration.RegisterWellKnownClientType (typeof(WkObjectSingleton2), "http://localhost:32434/wkoSingleton2");
+				RemotingConfiguration.RegisterActivatedClientType (typeof(CaObject1), "tcp://localhost:9433");
+				RemotingConfiguration.RegisterActivatedClientType (typeof(CaObject2), "http://localhost:9434");
+				RemotingConfiguration.RegisterWellKnownClientType (typeof(WkObjectSinglecall1), "tcp://localhost:9433/wkoSingleCall1");
+				RemotingConfiguration.RegisterWellKnownClientType (typeof(WkObjectSingleton1), "tcp://localhost:9433/wkoSingleton1");
+				RemotingConfiguration.RegisterWellKnownClientType (typeof(WkObjectSinglecall2), "http://localhost:9434/wkoSingleCall2");
+				RemotingConfiguration.RegisterWellKnownClientType (typeof(WkObjectSingleton2), "http://localhost:9434/wkoSingleton2");
 			}
 			catch (Exception ex)
 			{
@@ -46,6 +54,7 @@ namespace MonoTests.Remoting
 		{
 			CaObject1 ca = new CaObject1 ();
 			CaObject1 ca2 = new CaObject1 ();
+			Assert.IsTrue (BaseObject.CreationCount == 0, "Objects created locally");
 			RunTestCreateCao (ca, ca2);
 		}
 		
@@ -54,6 +63,7 @@ namespace MonoTests.Remoting
 		{
 			CaObject2 ca = new CaObject2 ();
 			CaObject2 ca2 = new CaObject2 ();
+			Assert.IsTrue (BaseObject.CreationCount == 0, "Objects created locally");
 			RunTestCreateCao (ca, ca2);
 		}
 		
@@ -77,6 +87,7 @@ namespace MonoTests.Remoting
 		{
 			WkObjectSinglecall1 ca = new WkObjectSinglecall1 ();
 			WkObjectSinglecall1 ca2 = new WkObjectSinglecall1 ();
+			Assert.IsTrue (BaseObject.CreationCount == 0, "Objects created locally");
 			RunTestCreateWkoSingleCall (ca, ca2);
 		}
 		
@@ -85,6 +96,7 @@ namespace MonoTests.Remoting
 		{
 			WkObjectSingleton1 ca = new WkObjectSingleton1 ();
 			WkObjectSingleton1 ca2 = new WkObjectSingleton1 ();
+			Assert.IsTrue (BaseObject.CreationCount == 0, "Objects created locally");
 			RunTestCreateWkoSingleton (ca, ca2);
 		}
 
@@ -93,6 +105,7 @@ namespace MonoTests.Remoting
 		{
 			WkObjectSinglecall2 ca = new WkObjectSinglecall2 ();
 			WkObjectSinglecall2 ca2 = new WkObjectSinglecall2 ();
+			Assert.IsTrue (BaseObject.CreationCount == 0, "Objects created locally");
 			RunTestCreateWkoSingleCall (ca, ca2);
 		}
 		
@@ -101,6 +114,7 @@ namespace MonoTests.Remoting
 		{
 			WkObjectSingleton2 ca = new WkObjectSingleton2 ();
 			WkObjectSingleton2 ca2 = new WkObjectSingleton2 ();
+			Assert.IsTrue (BaseObject.CreationCount == 0, "Objects created locally");
 			RunTestCreateWkoSingleton (ca, ca2);
 		}
 		
@@ -129,6 +143,8 @@ namespace MonoTests.Remoting
 		[TestFixtureTearDown]
 		public void End ()
 		{
+			ChannelServices.UnregisterChannel (tcp);
+			ChannelServices.UnregisterChannel (http);
 			server.Stop ();
 		}
 	}
@@ -140,8 +156,8 @@ namespace MonoTests.Remoting
 		
 		public ActivationServer ()
 		{
-			TcpChannel tcp =  new TcpChannel (32433);
-			HttpChannel http =  new HttpChannel (32434);
+			tcp =  new TcpChannel (9433);
+			http =  new HttpChannel (9434);
 			
 			ChannelServices.RegisterChannel (tcp);
 			ChannelServices.RegisterChannel (http);
@@ -156,14 +172,20 @@ namespace MonoTests.Remoting
 		
 		public void Stop ()
 		{
-			tcp.StopListening (null);
-			http.StopListening (null);
+			ChannelServices.UnregisterChannel (tcp);
+			ChannelServices.UnregisterChannel (http);
 		}
 	}
 	
 	public class BaseObject: MarshalByRefObject
 	{
 		public int counter;
+		public static int CreationCount;
+		
+		public BaseObject ()
+		{
+			CreationCount++;
+		}
 	}
 	
 	public class CaObject1: BaseObject

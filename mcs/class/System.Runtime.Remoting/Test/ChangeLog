@@ -1,3 +1,8 @@
+2004-07-02  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ActivationTests.cs: Fixed and enhanced tests.
+	* RemotingServicesTest.cs: Added.
+
 2004-06-23  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ActivationTests.cs: New tests.
