@@ -1947,6 +1947,12 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (enums != null) {
+				foreach (Enum e in enums) {
+					e.Emit (this);
+				}
+			}
+
 			if (Pending != null)
 				if (Pending.VerifyPendingMethods ())
 					return;
