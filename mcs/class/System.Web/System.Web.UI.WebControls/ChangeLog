@@ -1,3 +1,10 @@
+2004-08-09  Sanjay Gupta <gsanjay@novell.com>
+
+	* AuthenticateEventArgs.cs:
+	* AuthenticateEventHandler.cs:
+	* CreateUserErrorEventArgs.cs:
+	* CreateUserErrorEventHandler.cs: Added new delegates.
+
 2004-08-05  Sanjay Gupta <gsanjay@novell.com>
 
 	* IButtonControl.cs:
