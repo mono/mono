@@ -1,4 +1,10 @@
+2003-12-04  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-x86.c (mono_arch_get_allocatable_int_vars): Sort the var list
+	at the end instead of inserting each variable into the sorted list.
+
+	* linear-scan.c (mono_varlist_sort): New helper function.
+	
 Wed Dec 3 20:46:28 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: ensure arguments and locals are within bounds.
