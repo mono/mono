@@ -36,12 +36,10 @@ CONNECTION AND PROVIDER COMMANDS
 	Microsoft SQL Server via System.Data.SqlClient or Mono.Data.TdsClient provider:
 		SQL# \ConnectionString Server=DANPC;Database=pubs;User ID=danmorg;Password=freetds
 		
-	PostgreSQL via Mono.Data.PostgreSqlClient provider:
-		SQL# \ConnectionString host=localhost;dbname=test;user=postgres;pass=fun2db
-		          or
+	PostgreSQL via Npgsql provider:
 		SQL# \ConnectionString Server=localhost;Database=test;User ID=postgres;Password=fun2db
 		
-	MySQL via Mono.Data.MySql provider:
+	MySQL via ByteFX.Data.MySqlClient provider:
 		SQL# \ConnectionString Server=localhost;Database=test;User ID=mysql;Password=
 		
 	ODBC via System.Data.Odbc provider using a DSN named "MSSQLDSN"	I set up 
@@ -58,33 +56,21 @@ CONNECTION AND PROVIDER COMMANDS
 		
 	Oracle via System.Data.OracleClient
 		SQL# \ConnectionString Data Source=testdb;User ID=scott;Password=tiger
-		
-	IBM DB2 Universal Database via Mono.Data.DB2Client
-		SQL# \ConnectionString DSN=sample;User ID=db2admin;Password=mysecret	
-		
-	Npgsql (.NET PostgreSQL) from http://gborg.postgresql.org/project/npgsql/projdisplay.php
-		SQL# \ConnectionString Server=localhost;Database=test;User ID=postgres;Password=fun2db
-		
-	MySQLNet (ByteFX MySQL) from http://sourceforge.net/projects/mysqlnet/
-		SQL# \ConnectionString Server=localhost;Database=test;User ID=mysql;Password=
+	
 
 \Provider to set the Provider:
 
     Provider    Name          Namespace                  Assembly
     =========== ============= ========================== ==========================
-	OleDb       OLE DB        System.Data.OleDb          System.Data 
+	OleDb       OLE DB        System.Data.OleDb          System.Data  
 	SqlClient   MS SQL 7/2000 System.Data.SqlClient      System.Data
 	Odbc        ODBC          System.Data.Odbc           System.Data
-	----------- ------------- -------------------------- --------------------------
-	MySql       MySQL         Mono.Data.MySql            Mono.Data.MySql
-	PostgreSql  PostgreSQL    Mono.Data.PostgreSqlClient Mono.Data.PostgreSqlClient
 	Sqlite      SQL Lite      Mono.Data.SqliteClient     Mono.Data.SqliteClient
 	Sybase      Sybase        Mono.Data.SybaseClient     Mono.Data.SybaseClient
 	Tds         TDS Generic   Mono.Data.TdsClient        Mono.Data.TdsClient
 	Oracle      Oracle 8i     System.Data.OracleClient   System.Data.OracleClient
-	----------- ------------- -------------------------- --------------------------
-	Npgsql       NET Postgres Npgsql                     Npgsql
-	MySQLNet     ByteFX MySQL ByteFX.Data.MySQLClient    ByteFX.Data
+	PostgreSql  NET Postgres  Npgsql                     Npgsql
+	MySql       ByteFX MySQL  ByteFX.Data.MySqlClient    ByteFX.Data
 	
 	Example: to set the provider for MySQL:
 		SQL# \provider mysql
