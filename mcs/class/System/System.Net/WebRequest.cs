@@ -6,6 +6,8 @@
 //
 
 using System;
+using System.Collections;
+using System.Collections.Specialized;
 using System.IO;
 using System.Runtime.Serialization;
 
@@ -14,11 +16,41 @@ namespace System.Net
 	[Serializable]
 	public abstract class WebRequest : MarshalByRefObject, ISerializable
 	{
+		private static HybridDictionary prefixes;
+		
+		static WebRequest () {
+			prefixes = new HybridDictionary (3, true);
+			RegisterPrefix ("file", new FileWebRequestCreator ());
+			RegisterPrefix ("http", new HttpWebRequestCreator ());
+			RegisterPrefix ("https", new HttpWebRequestCreator ());
+		}
+		
+		internal class HttpWebRequestCreator : IWebRequestCreate
+		{
+			internal HttpWebRequestCreator () { }
+			
+			public WebRequest Create (Uri uri) 
+			{
+				return new HttpWebRequest (uri);
+			}
+		}
+
+		internal class FileWebRequestCreator : IWebRequestCreate
+		{
+			internal FileWebRequestCreator () { }
+			
+			public WebRequest Create (Uri uri) 
+			{
+				return new FileWebRequest (uri);
+			}
+		}
+
+		
 		// Constructors
 		
-		protected WebRequest () {}		
+		protected WebRequest () { }		
 		
-		protected WebRequest (SerializationInfo serializationInfo, StreamingContext streamingContext)
+		protected WebRequest (SerializationInfo serializationInfo, StreamingContext streamingContext) 
 		{
 			throw new NotSupportedException ();
 		}
@@ -99,20 +131,18 @@ namespace System.Net
 			return Create (new Uri (requestUriString));
 		}
 				
-		[MonoTODO]
 		public static WebRequest Create (Uri requestUri) 
 		{
 			if (requestUri == null)
 				throw new ArgumentNullException ("requestUri");
-			throw new NotImplementedException ();
+			return GetCreator (requestUri.AbsoluteUri).Create (requestUri);
 		}
 		
-		[MonoTODO]
 		public static WebRequest CreateDefault (Uri requestUri)
 		{
 			if (requestUri == null)
 				throw new ArgumentNullException ("requestUri");
-			throw new NotImplementedException ();			
+			return GetCreator (requestUri.Scheme).Create (requestUri);
 		}
 
 		public virtual Stream EndGetRequestStream (IAsyncResult asyncResult)
@@ -141,10 +171,46 @@ namespace System.Net
 			throw new NotSupportedException ();
 		}
 
-		[MonoTODO]		
 		public static bool RegisterPrefix (string prefix, IWebRequestCreate creator)
 		{
-			throw new NotImplementedException ();			
+			if (prefix == null)
+				throw new ArgumentNullException("prefix");
+			if (creator == null)
+				throw new ArgumentNullException("creator");			
+			
+			lock (prefixes.SyncRoot) {
+				if (prefixes.Contains (prefix))
+					return false;
+				prefixes.Add (prefix.ToLower (), creator);
+			}
+			return true;
+		}
+		
+		private static IWebRequestCreate GetCreator (string prefix)
+		{
+			int longestPrefix = -1;
+			IWebRequestCreate creator = null;
+
+			prefix = prefix.ToLower ();
+
+			IDictionaryEnumerator e = prefixes.GetEnumerator ();
+			while (e.MoveNext ()) {
+				string key = e.Key as string;
+
+				if (key.Length <= longestPrefix) 
+					continue;
+				
+				if (!prefix.StartsWith (key))
+					continue;					
+					
+				longestPrefix = key.Length;
+				creator = (IWebRequestCreate) e.Value;
+			}
+			
+			if (creator == null) 
+				throw new NotSupportedException (prefix);
+				
+			return creator;
 		}
 	}
 }

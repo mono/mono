@@ -27,6 +27,7 @@ namespace MonoTests.System.Net {
                                 suite.AddTest (CookieCollectionTest.Suite);
                                 suite.AddTest (CredentialCacheTest.Suite);
                                 //suite.AddTest (CookieContainerTest.Suite);
+                                suite.AddTest (WebRequestTest.Suite);
 				return suite;
                         }
                 }
