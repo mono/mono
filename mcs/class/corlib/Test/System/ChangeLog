@@ -1,3 +1,7 @@
+2002-02-25  Duco Fijma <duco@lorentz.xs4all.nl>
+	* GuidTest.cs: all methods of System.Guid are now covered
+	* BitConverterTest.cs: created, not yet complete
+
 2002-02-21  Duco Fijma <duco@lorentz.xs4all.nl>
 	* GuidTest.cs: changed according to fix in System.Guid
 

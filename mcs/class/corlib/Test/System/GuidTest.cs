@@ -109,17 +109,91 @@ public class GuidTest : TestCase
 		AssertEquals("A1", "00000000-0000-0000-0000-000000000000", Guid.Empty.ToString());
 	}
 
+	public void TestNewGuid() {
+		Guid g1 = Guid.NewGuid ();
+		Guid g2 = Guid.NewGuid ();
+		
+		Assert("A1", g1 != g2);
+	}
+
+	public void TestEqualityOp() {
+		Guid g1 = new Guid(0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
+		Guid g2 = new Guid(0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
+		Guid g3 = new Guid(0x11223344, 0x5566, 0x6677, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff);
+
+		AssertEquals("A1", true, g1 == g1);
+		AssertEquals("A2", true, g1 == g2);
+		AssertEquals("A3", false, g1 == g3);
+	}
+
+	public void TestInequalityOp() {
+		Guid g1 = new Guid(0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
+		Guid g2 = new Guid(0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
+		Guid g3 = new Guid(0x11223344, 0x5566, 0x6677, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff);
+
+		AssertEquals("A1", false, g1 != g1);
+		AssertEquals("A2", false, g1 != g2);
+		AssertEquals("A3", true, g1 != g3);
+	}
+
 	public void TestEquals() {
 		Guid g1 = new Guid(0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
 		Guid g2 = new Guid(0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
 		Guid g3 = new Guid(0x11223344, 0x5566, 0x6677, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff);
-		string s = "Thus is not a Guid!";
+		string s = "This is not a Guid!";
 
 		AssertEquals("A1", true, g1.Equals(g1));
 		AssertEquals("A2", true, g1.Equals(g2));
 		AssertEquals("A3", false, g1.Equals(g3));
 		AssertEquals("A4", false, g1.Equals(null));
 		AssertEquals("A5", false, g1.Equals(s));
+	}
+
+	public void TestCompareTo() {
+		Guid g1 = new Guid(0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
+		Guid g2 = new Guid(0x00010204, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
+		Guid g3 = new Guid(0x00010203, 0x0405, 0x0607, 0x09, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
+		Guid g4 = new Guid(0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x1f);
+		bool exception;
+
+		Assert("A1", g1.CompareTo(g2) < 0);
+		Assert("A2", g1.CompareTo(g3) < 0);
+		Assert("A3", g1.CompareTo(g4) < 0);
+		Assert("A4", g2.CompareTo(g1) > 0);
+		Assert("A5", g3.CompareTo(g1) > 0);
+		Assert("A6", g4.CompareTo(g1) > 0);
+		Assert("A7", g1.CompareTo(g1) == 0);
+		Assert("A8", g1.CompareTo(null) > 0);
+		
+		try {
+			g1.CompareTo("Say what?");
+			exception = false;
+		}
+		catch (ArgumentException) {
+			exception = true;
+		}
+		Assert("A9", exception);
+	}
+
+	public void TestGetHashCode () {
+		// We don't test anything but the availibility of this member
+		
+		int res = Guid.NewGuid().GetHashCode();
+	
+		Assert("A1", true);
+	}
+
+	public void TestToByteArray () {
+		Guid g1 = new Guid(0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f);
+		byte[] b = g1.ToByteArray ();
+		
+		AssertEquals("A1", 0x00010203, BitConverter.ToInt32(b, 0));
+		AssertEquals("A2", (short) 0x0405, BitConverter.ToInt16(b, 4));
+		AssertEquals("A3", (short) 0x0607, BitConverter.ToInt16(b, 6));
+		for (int i=8; i<16; ++i) {
+			AssertEquals("A1", (byte) i, b[i]);
+		}
+		
 	}
 
 	public void TestToString() {
