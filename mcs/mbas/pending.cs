@@ -450,10 +450,10 @@ namespace Mono.CSharp {
 				foreach (Property p in container.Properties) 
 				{
 					if (p.Implements != null) {					
-						if (IsPropertyGetMethod (method_name) && (p.Implements.ToString() == iface_name + "." + method_name.Substring(4))) 
+						if (IsPropertyGetMethod (method_name) && (container.Namespace.Name +  "." + p.Implements.ToString() == iface_name + "." + method_name.Substring(4))) 
 								return p.PropertyBuilder.GetGetMethod(true);
 
-						if (IsPropertySetMethod (method_name) && (p.Implements.ToString() == iface_name + "." + method_name.Substring(4))) 
+						if (IsPropertySetMethod (method_name) && (container.Namespace.Name +  "." + p.Implements.ToString() == iface_name + "." + method_name.Substring(4))) 
 								return p.PropertyBuilder.GetSetMethod(true);
 					}
 				}
@@ -465,7 +465,7 @@ namespace Mono.CSharp {
 				{
 					if (m.Implements != null) 
 					{					
-						if (m.Implements.ToString() == iface_name + "." + method_name.Substring(4))
+						if (container.Namespace.Name +  "." + m.Implements.ToString() == iface_name + "." + method_name)
 							return (MethodInfo) m.MethodBuilder;
 					}
 				}
