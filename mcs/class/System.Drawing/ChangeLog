@@ -1,3 +1,9 @@
+2004-05-18  Ravindra <rkumar@novell.com>
+
+	* System.Drawing_test.dll.sources: Added TestHatchBrush.cs to the
+	test sources list.
+	* README: Added some guidelines for writing tests/samples.
+
 2004-05-17  Sanjay Gupta <gsanjay@novell.com>
 
 	* System.Drawing_test.dll.sources: Added TestIconConverter.cs to the test sources list.

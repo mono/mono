@@ -17,6 +17,7 @@ System.Drawing/TestImageFormatConverter.cs
 System.Drawing/TestIconConverter.cs
 System.Drawing.Drawing2D/TestBlend.cs
 System.Drawing.Drawing2D/TestColorBlend.cs
+System.Drawing.Drawing2D/TestHatchBrush.cs
 System.Drawing/TestRegion.cs
 System.Drawing.Imaging/TestImageCodecInfo.cs
 System.Drawing.Imaging/TestBmpCodec.cs
