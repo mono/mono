@@ -985,7 +985,7 @@ method_header
 		GenericMethod generic = null;
 		if (name.TypeArguments != null) {
 			generic = new GenericMethod (current_namespace, current_container,
-						     name, (Attributes) $1, lexer.Location);
+						     name, lexer.Location);
 
 			CheckDef (generic.SetParameterInfo ((ArrayList) $9), name.Name, lexer.Location);
 
@@ -1021,7 +1021,7 @@ method_header
 		GenericMethod generic = null;
 		if (name.TypeArguments != null) {
 			generic = new GenericMethod (current_namespace, current_container,
-						     name, (Attributes) $1, lexer.Location);
+						     name, lexer.Location);
 
 
 			CheckDef (generic.SetParameterInfo ((ArrayList) $9), name.Name, lexer.Location);
@@ -1400,7 +1400,7 @@ interface_method_declaration
 		GenericMethod generic = null;
 		if (name.TypeArguments != null) {
 			generic = new GenericMethod (current_namespace, current_container,
-						     name, (Attributes) $1, lexer.Location);
+						     name, lexer.Location);
 
 			CheckDef (generic.SetParameterInfo ((ArrayList) $9), name.Name, lexer.Location);
 
@@ -1430,7 +1430,7 @@ interface_method_declaration
 		GenericMethod generic = null;
 		if (name.TypeArguments != null) {
 			generic = new GenericMethod (current_namespace, current_container,
-						     name, (Attributes) $1, lexer.Location);
+						     name, lexer.Location);
 
 			CheckDef (generic.SetParameterInfo ((ArrayList) $9), name.Name, lexer.Location);
 

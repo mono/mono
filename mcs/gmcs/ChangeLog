@@ -1,3 +1,8 @@
+2004-06-18  Martin Baulig  <martin@ximian.com>
+
+	* generics.cs (GenericMethod.ctor): Don't take an Attributes
+	argument.  Fixes #60441.
+
 2004-06-16  Ben Maurer  <bmaurer@ximian.com>
 	* ecore.cs (MethodGroupExpr.Name): Revert Martin's patch.
 	The name needs to have the actual name of the method in order

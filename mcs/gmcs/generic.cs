@@ -858,8 +858,8 @@ namespace Mono.CSharp {
 	public class GenericMethod : DeclSpace
 	{
 		public GenericMethod (NamespaceEntry ns, TypeContainer parent,
-				      MemberName name, Attributes attrs, Location l)
-			: base (ns, parent, name, attrs, l)
+				      MemberName name, Location l)
+			: base (ns, parent, name, null, l)
 		{ }
 
 		public override TypeBuilder DefineType ()
