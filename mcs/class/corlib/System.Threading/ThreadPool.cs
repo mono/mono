@@ -20,7 +20,7 @@ namespace System.Threading
    /// the queue with an internal one (performance)
    /// 
    /// This class should also use a specialized queue to increase performance..
-   /// </summary
+   /// </summary>
    /// 
    public sealed class ThreadPool {
       internal struct ThreadPoolWorkItem {
@@ -91,8 +91,8 @@ namespace System.Threading
             Interlocked.Increment(ref _CurrentThreads);
       
             Thread Start = new Thread(new ThreadStart(WorkerThread));
-            Start.Start();
             Start.IsThreadPoolThreadInternal = true;
+            Start.Start();
             
             _Threads.Add(Start);
          }
