@@ -167,7 +167,8 @@ namespace System.IO
 			MonoIOStat stat;
 			MonoIOError error;
 			
-			MonoIO.GetFileStat (path, out stat, out error);
+			if (!MonoIO.GetFileStat (path, out stat, out error))
+				throw MonoIO.GetException (path, error);
 			return DateTime.FromFileTime (stat.CreationTime);
 		}
 
@@ -176,7 +177,8 @@ namespace System.IO
 			MonoIOStat stat;
 			MonoIOError error;
 			
-			MonoIO.GetFileStat (path, out stat, out error);
+			if (!MonoIO.GetFileStat (path, out stat, out error))
+				throw MonoIO.GetException (path, error);
 			return DateTime.FromFileTime (stat.LastAccessTime);
 		}
 
@@ -185,7 +187,8 @@ namespace System.IO
 			MonoIOStat stat;
 			MonoIOError error;
 			
-			MonoIO.GetFileStat (path, out stat, out error);
+			if (!MonoIO.GetFileStat (path, out stat, out error))
+				throw MonoIO.GetException (path, error);
 			return DateTime.FromFileTime (stat.LastWriteTime);
 		}
 
