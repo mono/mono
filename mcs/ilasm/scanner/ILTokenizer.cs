@@ -35,7 +35,8 @@ namespace Mono.ILASM {
                 private ILReader reader;
                 private StringHelper strBuilder;
                 private NumberHelper numBuilder;
-
+                private bool in_byte_array;
+                
                 public event NewTokenEvent NewTokenEvent;
 
                 static ILTokenizer()
@@ -56,19 +57,17 @@ namespace Mono.ILASM {
                         lastToken = ILToken.Invalid.Clone () as ILToken;
                 }
 
-
-
-                /// <summary>
-                /// </summary>
                 public ILReader Reader {
                         get {
                                 return reader;
                         }
                 }
 
-                /// <summary>
-                /// </summary>
-                /// <returns></returns>
+                public bool InByteArray {
+                        get { return in_byte_array; }
+                        set { in_byte_array = value; }
+                }
+
                 public ILToken GetNextToken ()
                 {
                         if (lastToken == ILToken.EOF) return ILToken.EOF;
@@ -79,6 +78,28 @@ namespace Mono.ILASM {
 
                         while ((ch = reader.Read ()) != -1) {
 
+                                // HEXBYTES are flagged by the parser otherwise it is
+                                // impossible to figure them out
+                                if (in_byte_array) {
+                                        string hx = String.Empty;
+
+                                        if (ch == ')') {
+                                                res = ILToken.CloseParens;
+                                                break;
+                                        }
+                                                
+                                        if (!is_hex (ch))
+                                                throw new Exception ("Invalid hex value."); // yeah proper error reporting would be great
+                                        hx += (char) ch;
+                                        if (is_hex (reader.Peek ()))
+                                                hx += (char) reader.Read ();
+                                        else if (!Char.IsWhiteSpace ((char) reader.Peek ()) || reader.Peek () != ')')
+                                                throw new Exception ("Invalid hex value.");
+                                        res.token = Token.HEXBYTE;
+                                        res.val = Byte.Parse (hx, NumberStyles.HexNumber);
+                                        break;
+                                }
+                                
                                 // Ellipsis
                                 if (ch == '.' && reader.Peek () == '.') {
                                         reader.MarkLocation ();
