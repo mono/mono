@@ -1,3 +1,15 @@
+2004-08-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AllMembershipConditionTest.cs: New. Unit tests in NUnit 2.2 format.
+	* ApplicationDirectoryMembershipConditionTest.cs: New. Unit tests in
+	NUnit 2.2 format.
+	* ApplicationMembershipConditionTest.cs: New. Unit tests in NUnit 2.2
+	format.
+	* DomainApplicationMembershipConditionTest.cs: New. Unit tests in 
+	NUnit 2.2 format.
+	* PublisherMembershipConditionTest.cs: Completed. Converted 
+	existing unit tests to NUnit 2.2 format.
+
 2004-08-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ZoneMembershipConditionTest.cs: Fixed tests that where failing too
