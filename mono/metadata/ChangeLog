@@ -1,3 +1,18 @@
+2002-02-19  Dietmar Maurer  <dietmar@ximian.com>
+
+	* appdomain.c (mono_domain_transfer_object): impl. hack for Arrays
+	and String - but we will need generic marshalling support in the
+	future. 
+
+	* object.c (mono_string_new_utf16): bug fix: use char[] instead of
+	String[].
+
+2002-02-18  Dietmar Maurer  <dietmar@ximian.com>
+
+	* object.c (mono_array_clone): use alloca() instead of g_malloc  
+	for sizes
+
+	* appdomain.c (mono_domain_unload): impl.
 
 Mon Feb 18 15:52:20 CET 2002 Paolo Molaro <lupus@ximian.com>
 
