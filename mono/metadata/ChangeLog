@@ -1,3 +1,7 @@
+2003-02-18  Martin Baulig  <martin@ximian.com>
+
+	* debug-mono-symfile.h (MonoSymbolFileMethodAddress): Added `has_this'.
+
 2003-02-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* reflection.c:
