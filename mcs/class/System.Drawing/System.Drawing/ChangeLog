@@ -1,3 +1,7 @@
+2004-10-04  Ravindra  <rkumar@novell.com>
+
+	* gdipFunctioncs.cs: Backporting. Fix from Alois for bug #67383.
+
 2004-09-22  Ravindra <rkumar@novell.com>
 
 	* gdipFunctions.cs: Backporting. Improved the exception message
