@@ -1,5 +1,9 @@
 2004-06-20  Jackson Harper  <jackson@ximian.com>
 
+	* SwitchInstr.cs: Allow switches with no labels.
+	
+2004-06-20  Jackson Harper  <jackson@ximian.com>
+
 	* InstrTable.cs: Add .u8 opcodes for ldind and ldelem these are
 	just aliases to their .i8 equivelents.
 	

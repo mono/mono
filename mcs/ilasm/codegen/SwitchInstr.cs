@@ -25,15 +25,19 @@ namespace Mono.ILASM {
                 public void Emit (CodeGen code_gen, MethodDef meth, PEAPI.CILInstructions cil)
                 {
                         int count = 0;
-                        PEAPI.CILLabel[] label_array = new PEAPI.CILLabel[label_list.Count];
+                        PEAPI.CILLabel[] label_array;
 
-                        foreach (object lab in label_list) {
-                                if (lab is string) {
-                                        label_array[count++] = meth.GetLabelDef ((string) lab);
-                                } else {
-                                        // TODO: int32 labels
-                                        throw new NotImplementedException ("offsets in switch statements.");
+                        if (label_list != null) {
+                                label_array = new PEAPI.CILLabel[label_list.Count];
+                                foreach (object lab in label_list) {
+                                        if (lab is string) {
+                                                label_array[count++] = meth.GetLabelDef ((string) lab);
+                                        } else {                                                
+                                                throw new NotImplementedException ("offsets in switch statements.");
+                                        }
                                 }
+                        } else {
+                                label_array = new PEAPI.CILLabel [0];
                         }
 
                         cil.Switch (label_array);
