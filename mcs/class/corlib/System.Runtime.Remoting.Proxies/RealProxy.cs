@@ -81,6 +81,7 @@ namespace System.Runtime.Remoting.Proxies
 		internal Identity ObjectIdentity
 		{
 			get { return _objectIdentity; }
+			set { _objectIdentity = value; }
 		}
 		
 		[MonoTODO]

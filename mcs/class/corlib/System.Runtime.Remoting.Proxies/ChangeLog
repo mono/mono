@@ -1,3 +1,7 @@
+2004-01-19  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* RealProxy.cs: Added setter for ObjectIdentity.
+
 2003-11-26  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* RealProxy.cs: Signature fix.
