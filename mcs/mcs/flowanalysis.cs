@@ -334,6 +334,11 @@ namespace Mono.CSharp
 				barrier = FlowReturns.Always;
 			}
 
+			public void ResetBarrier ()
+			{
+				barrier = FlowReturns.Never;
+			}
+
 			static string ShortName (FlowReturns returns)
 			{
 				switch (returns) {
@@ -624,7 +629,7 @@ namespace Mono.CSharp
 			{
 				UsageVector result = branching.Merge ();
 
-				Report.Debug (2, "  MERGING CHILD", this, IsDirty,
+				Report.Debug (2, "  MERGING CHILD", this, branching, IsDirty,
 					      result.ParameterVector, result.LocalVector,
 					      result.Reachability, reachability, Type);
 
@@ -654,6 +659,9 @@ namespace Mono.CSharp
 							// We're either finite or we may leave the loop.
 							new_r.SetThrowsSometimes ();
 						}
+
+						if (!new_r.MayReturn && !new_r.MayThrow)
+							new_r.ResetBarrier ();
 					}
 				} else if (branching.Type == BranchingType.Switch)
 					new_r.ResetBreaks ();

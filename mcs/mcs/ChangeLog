@@ -1,3 +1,8 @@
+2004-06-23  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs (UsageVector.MergeChild): If we're a loop and we
+	neither return nor throw, reset the barrier as well.  Fixes #60457.
+
 2004-06-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* class.cs : EventAttributes is now set to None by default.
@@ -6,12 +11,12 @@
 2004-06-18  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix bug #60219
- 	* class.cs (ConstructorInitializer.GetOverloadedConstructor):
+	* class.cs (ConstructorInitializer.GetOverloadedConstructor):
  	Don't throw exception but return null (it's sufficient now).
 
 2004-06-18  Marek Safar  <marek.safar@seznam.cz>
 
- 	* typemanager.cs (GetArgumentTypes): Faster implementation.
+	* typemanager.cs (GetArgumentTypes): Faster implementation.
 
 2004-06-18  Martin Baulig  <martin@ximian.com>
 
