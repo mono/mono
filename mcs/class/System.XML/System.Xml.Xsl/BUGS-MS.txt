@@ -1,0 +1,34 @@
+This is MS.NET bug note. I confirmed them with version 1.1.
+
+In this document I refer to OASIS test suite. It is located here:
+http://www.oasis-open.org/committees/documents.php?wg_abbrev=xslt
+
+No. 0001
+
+	position() handling in predicates is incomplete. For example,
+	see foo [position() mod 1 > 0] [position() > 3] [2] result 
+	(match_match19.xsl, match_match22.xsl and match_match26.xsl)
+
+No. 0002
+	Import precedence resolution on attribute sets are buggy if there are
+	two imported stylesheets and both of them have identically-named
+	attribute in the identically-named attribute sets. MS takes the one
+	from the first stylesheet, but it must be the one from another.
+	(attribset_attribset_45.xsl)
+
+No. 0003
+	http://www.w3.org/1999/11/REC-xslt-19991116-errata/ E26 says that
+	attribute sets are combined before use-attribute-set is replaced with
+	the actual attributes. MS does not conform to this requirement.
+	(attribset_attribset42.xsl)
+
+
+Notes:
+
+1. Roman numbering
+
+	MS.NET has "Oxford style" which for example converts 99 as
+	XXXXXXXXXIX. It is not violating XSLT 1.0 spec. However, section
+	7.7.1 explicitly describes 4 and 9 as iv and ix, so strict Oxford
+	style violates the spec.
+
