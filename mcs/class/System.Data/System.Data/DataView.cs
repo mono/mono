@@ -52,7 +52,7 @@ namespace System.Data
 		bool bInit = false;
 		bool useDefaultSort = true;
 		
-		internal DataViewManager dataViewManager = null;
+		DataViewManager dataViewManager = null;
 		#region Constructors
 		public DataView () 
 		{
@@ -331,7 +331,7 @@ namespace System.Data
 			rowCache = newCache;
 
 			// DataRowView is added, but DataRow is still Detached.
-			ChangedList (ListChangedType.ItemAdded, newCache.Length - 1, -1);
+			OnListChanged (new ListChangedEventArgs (ListChangedType.ItemAdded, newCache.Length - 1, -1));
 			return rowView;
 		}
 
@@ -345,12 +345,6 @@ namespace System.Data
 		[MonoTODO]
 		public void CopyTo (Array array, int index) 
 		{
-			/*
-			int row = 0;
-			for (; row < rowCache.Length && row < array.Length; row++) {
-				array.SetValue (rowCache[row], index + row);
-			}
-			*/
 			rowCache.CopyTo (array, index);
 		}
 
@@ -485,18 +479,18 @@ namespace System.Data
 		[MonoTODO]
 		protected void Close() 
 		{
-			// FIXME:
+			if (dataTable != null)
+				UnregisterEventHandlers ();
+			rowCache = new DataRowView [0];
 			isOpen = false;
 		}
 
-		[MonoTODO]
-		protected virtual void ColumnCollectionChanged (object sender, 
-							CollectionChangeEventArgs e) 
+		protected virtual void ColumnCollectionChanged (
+			object sender, CollectionChangeEventArgs e)
 		{
-			throw new NotImplementedException ();
 		}
 
-		protected override void Dispose (bool disposing) 
+		protected override void Dispose (bool disposing)
 		{
 			if (disposing)
 				Close ();
@@ -504,23 +498,18 @@ namespace System.Data
 			base.Dispose (disposing);
 		}
 
-		[MonoTODO]
-		protected virtual void IndexListChanged(object sender, ListChangedEventArgs e) 
+		protected virtual void IndexListChanged (
+			object sender, ListChangedEventArgs e)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		protected virtual void OnListChanged(ListChangedEventArgs e) 
+		protected virtual void OnListChanged (ListChangedEventArgs e) 
 		{
+			// Yes, under MS.NET, when it is overriden, the 
+			// events are not fired (even if it is essential
+			// to internal processing).
 			if (ListChanged != null)
 				ListChanged (this, e);
-		}
-
-		internal void ChangedList(ListChangedType listChangedType, int newIndex,int oldIndex)
-		{
-			ListChangedEventArgs e = new ListChangedEventArgs(listChangedType,newIndex,oldIndex);
-			OnListChanged(e);
 		}
 
 		[MonoTODO]

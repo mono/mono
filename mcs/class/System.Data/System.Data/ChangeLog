@@ -1,5 +1,11 @@
 2005-01-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataView.cs :
+	  Code cleanup: privatify some members, remove unused methods.
+	  Some event-based invocation methods should not raise NotImplemented.
+
+2005-01-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataSet.cs : ReadXml() became closer to MS behavior, being hacky.
 
 2005-01-28  Atsushi Enomoto  <atsushi@ximian.com>
