@@ -1,3 +1,9 @@
+2004-12-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* assembly.c (mono_assembly_open_from_bundle): Fix warning.
+
+	* reflection.c: Fix some memory leaks.
+	
 2004-12-02  Martin Baulig  <martin@ximian.com>
 
 	* metadata.c (generic_inst_cache): New static hashtable.
