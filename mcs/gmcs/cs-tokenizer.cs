@@ -42,6 +42,7 @@ namespace Mono.CSharp
 		bool handle_remove_add = false;
 		bool handle_assembly = false;
 		bool handle_constraints = false;
+		bool handle_typeof = false;
 
 		//
 		// Whether tokens have been seen on this line
@@ -142,6 +143,16 @@ namespace Mono.CSharp
 
 			set {
 				handle_constraints = value;
+			}
+		}
+
+		public bool TypeOfParsing {
+			get {
+				return handle_typeof;
+			}
+
+			set {
+				handle_typeof = value;
 			}
 		}
 		
@@ -413,6 +424,22 @@ namespace Mono.CSharp
 			return true;
 		}
 
+		bool parse_generic_dimension (out int dimension)
+		{
+			dimension = 1;
+
+		again:
+			int the_token = token ();
+			if (the_token == Token.OP_GENERICS_GT)
+				return true;
+			else if (the_token == Token.COMMA) {
+				dimension++;
+				goto again;
+			}
+
+			return false;
+		}
+
 		bool parse_less_than ()
 		{
 		start:
@@ -523,8 +550,19 @@ namespace Mono.CSharp
 				if (parsing_generic_less_than++ > 0)
 					return Token.OP_GENERICS_LT;
 
-				// Save current position and parse next token.
 				int old = reader.Position;
+				if (handle_typeof) {
+					int dimension;
+					if (parse_generic_dimension (out dimension)) {
+						val = dimension;
+						return Token.GENERIC_DIMENSION;
+					}
+					reader.Position = old;
+					putback_char = -1;
+				}
+
+				// Save current position and parse next token.
+				old = reader.Position;
 				bool is_generic_lt = parse_less_than ();
 				reader.Position = old;
 				putback_char = -1;

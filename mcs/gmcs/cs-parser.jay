@@ -264,6 +264,7 @@ namespace Mono.CSharp
 %token CLOSE_PARENS_OPEN_PARENS
 %token CLOSE_PARENS_MINUS
 %token DEFAULT_OPEN_PARENS
+%token GENERIC_DIMENSION
 
 /* Add precedence rules to solve dangling else s/r conflict */
 %nonassoc LOWPREC
@@ -2158,6 +2159,10 @@ opt_type_argument_list
 	  {
 		$$ = $2;
 	  }
+	| GENERIC_DIMENSION
+	  {
+		$$ = new TypeArguments ((int) $1, lexer.Location);
+	  }
 	;
 
 type_arguments
@@ -2188,7 +2193,6 @@ type
 	| array_type
 	| pointer_type	  
 	;
-
 
 pointer_type
 	: type STAR
@@ -2679,44 +2683,14 @@ typeof_expression
 	  {
 		$$ = new TypeOfVoid (lexer.Location);
 	  }
-	| TYPEOF OPEN_PARENS type CLOSE_PARENS
+	| TYPEOF OPEN_PARENS
 	  {
-		$$ = new TypeOf ((Expression) $3, lexer.Location);
+		lexer.TypeOfParsing = true;
 	  }
-	| TYPEOF OPEN_PARENS unbound_type_name CLOSE_PARENS
+	  type CLOSE_PARENS
 	  {
-		$$ = new TypeOf ((Expression) $3, lexer.Location);
-	  }
-	;
-
-unbound_type_name
-	: IDENTIFIER generic_dimension_specifier
-	  {
-		$$ = new UnboundTypeExpression ((string) $1, (int) $2);
-	  }
-	;
-
-generic_dimension_specifier
-	: OP_LT opt_commas OP_GT
-	  {
-		$$ = $2;
-	  }
-	;
-
-opt_commas
-	: /* empty */
-	  {
-		$$ = 1;
-	  }
-	| commas
-	;
-
-commas
-	: COMMA {
-		$$ = 2;
-  	  }
-	| commas COMMA {
-		$$ = ((int) $1) + 1;
+		lexer.TypeOfParsing = false;
+		$$ = new TypeOf ((Expression) $4, lexer.Location);
 	  }
 	;
 

@@ -2483,8 +2483,8 @@ namespace Mono.CSharp {
 	///   See 14.5.11.
 	/// </summary>
 	public class UnboundTypeExpression : TypeLookupExpression {
-		public UnboundTypeExpression (string name, int num_type_args)
-			: base (MemberName.MakeName (name, num_type_args))
+		public UnboundTypeExpression (string name)
+			: base (name)
 		{ }
 	}
 

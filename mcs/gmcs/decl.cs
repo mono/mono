@@ -123,8 +123,38 @@ namespace Mono.CSharp {
 				return MakeName (Name, TypeArguments);
 		}
 
+		protected bool IsUnbound {
+			get {
+				if ((Left != null) && Left.IsUnbound)
+					return true;
+				else if (TypeArguments == null)
+					return false;
+				else
+					return TypeArguments.IsUnbound;
+			}
+		}
+
+		protected bool CheckUnbound (Location loc)
+		{
+			if ((Left != null) && !Left.CheckUnbound (loc))
+				return false;
+			if ((TypeArguments != null) && !TypeArguments.IsUnbound) {
+				Report.Error (1031, loc, "Type expected");
+				return false;
+			}
+
+			return true;
+		}
+
 		public Expression GetTypeExpression (Location loc)
 		{
+			if (IsUnbound) {
+				if (!CheckUnbound (loc))
+					return null;
+
+				return new UnboundTypeExpression (GetTypeName ());
+			}
+
 			if (Left != null) {
 				Expression lexpr = Left.GetTypeExpression (loc);
 

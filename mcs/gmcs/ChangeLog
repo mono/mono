@@ -1,3 +1,17 @@
+2004-08-16  Martin Baulig  <martin@ximian.com>
+
+	* cs-tokenizer.cs (Tokenizer.TypeOfParsing): New public property.
+	(Token.GENERIC_DIMENSION): New token; this is returned if we
+	encounter an unbound generic type in a typeof() expression.
+
+	* cs-parser.jay (opt_type_argument_list): Added GENERIC_DIMENSION;
+	this token is only generated while parsing a typeof() expression.
+	(typeof_expression): Removed the old unbound_type hack.
+
+	* generic.cs (TypeArguments.IsUnbound): New public property.
+
+	* decl.cs (MemberName): Added support for unbound types.
+
 2004-08-14  Martin Baulig  <martin@ximian.com>
 
 	* typemanager.cs

@@ -408,12 +408,19 @@ namespace Mono.CSharp {
 		public readonly Location Location;
 		ArrayList args;
 		Type[] atypes;
+		int dimension;
 		bool has_type_args;
 		bool created;
 		
 		public TypeArguments (Location loc)
 		{
 			args = new ArrayList ();
+			this.Location = loc;
+		}
+
+		public TypeArguments (int dimension, Location loc)
+		{
+			this.dimension = dimension;
 			this.Location = loc;
 		}
 
@@ -464,7 +471,16 @@ namespace Mono.CSharp {
 
 		public int Count {
 			get {
-				return args.Count;
+				if (dimension > 0)
+					return dimension;
+				else
+					return args.Count;
+			}
+		}
+
+		public bool IsUnbound {
+			get {
+				return dimension > 0;
 			}
 		}
 
@@ -472,12 +488,13 @@ namespace Mono.CSharp {
 		{
 			StringBuilder s = new StringBuilder ();
 
-			int count = args.Count;
+			int count = Count;
 			for (int i = 0; i < count; i++){
 				//
 				// FIXME: Use TypeManager.CSharpname once we have the type
 				//
-				s.Append (args [i].ToString ());
+				if (args != null)
+					s.Append (args [i].ToString ());
 				if (i+1 < count)
 					s.Append (",");
 			}
