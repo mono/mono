@@ -68,7 +68,7 @@
                 />
                 <Reference
                     Name = "System.XML"
-                    AssemblyName = "System.XML"
+                    AssemblyName = "System.Xml"
                 />
             </References>
         </Build>
@@ -85,12 +85,17 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "cil-codegen.cs"
+                    RelPath = "attribute.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "class.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "codegen.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -115,6 +120,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "delegate.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "driver.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -125,17 +135,17 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "errors.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "expression.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "generator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "genericparser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -195,12 +205,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "tree.cs"
+                    RelPath = "support.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "type.cs"
+                    RelPath = "tree.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -1587,7 +1587,8 @@ invocation_expression
 			Location l = lexer.Location;
 			rc.Report.Error (1, l, "THIS IS CRAZY");
 		}
-		$$ = new Invocation ((Expression) $1, (ArrayList) $3);
+		$$ = new Invocation ((Expression) $1, (ArrayList) $3, lexer.Location);
+		
 	  }
 	; 
 
@@ -2597,7 +2598,8 @@ foreach_statement
 		foreach_block.AddVariable ((string) $3, (string) $4);
 		assign_e = new Assign (new LocalVariableReference (foreach_block, temp_id), 
 				       new Invocation (
-						new MemberAccess ((Expression) $6, "GetEnumerator"), null));
+						new MemberAccess ((Expression) $6, "GetEnumerator"), 
+						null, lexer.Location));
 		current_block.AddStatement (new StatementExpression (assign_e));
 		ma = new MemberAccess (new LocalVariableReference (foreach_block, temp_id), "MoveNext");
 		child_block = new Block (current_block);

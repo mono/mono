@@ -9,7 +9,7 @@
                     EnableUnmanagedDebugging = "false"
                     EnableSQLServerDebugging = "false"
                     StartAction = "Project"
-                    StartArguments = "i-undefined.cs"
+                    StartArguments = "c:\mono\mcs\test\test-4.cs"
                     StartPage = ""
                     StartProgram = ""
                     StartURL = ""

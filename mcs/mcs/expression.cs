@@ -643,6 +643,31 @@ namespace CIR {
 				}
 			}
 
+			//
+			// A plus in front of something is just a no-op
+			//
+			if (oper == Operator.Add)
+				return expr;
+
+			//
+			// Fold -Constant into a negative constant
+			//make
+			if (oper == Operator.Subtract){
+				Expression e = null;
+				
+				if (expr is IntLiteral)
+					e = new IntLiteral (-((IntLiteral) expr).Value);
+				else if (expr is LongLiteral)
+					e = new LongLiteral (-((LongLiteral) expr).Value);
+				else if (expr is FloatLiteral)
+					e = new FloatLiteral (-((FloatLiteral) expr).Value);
+
+				if (e != null){
+					e = e.Resolve (tc);
+					return e;
+				}
+			}
+
 			// FIXME : Are we supposed to check that we have an object type
 			// for & and * operators ?
 
@@ -686,8 +711,7 @@ namespace CIR {
 
 			switch (oper){
 			case Operator.Add:
-				// Which one ?
-				break;
+				throw new Exception ("This should be caught by Resolve");
 
 			case Operator.Subtract:
 				// Which one ?
@@ -766,6 +790,7 @@ namespace CIR {
 		public override Expression Resolve (TypeContainer tc)
 		{
 			// FIXME: Implement;
+			throw new Exception ("Unimplemented");
 			return this;
 		}
 
@@ -801,7 +826,13 @@ namespace CIR {
 		
 		public override Expression Resolve (TypeContainer tc)
 		{
-			// FIXME: Implement;
+			type = tc.LookupType (target_type, false);
+			eclass = ExprClass.Value;
+			
+			if (type == null)
+				return null;
+
+			// FIXME: Finish this.
 			return this;
 		}
 
@@ -1417,6 +1448,8 @@ namespace CIR {
 		public override Expression Resolve (TypeContainer tc)
 		{
 			// FIXME: Implement;
+			throw new Exception ("Unimplemented");
+
 			return this;
 		}
 
@@ -1559,7 +1592,8 @@ namespace CIR {
 			VariableInfo vi = VariableInfo;
 			ILGenerator ig = ec.ig;
 			int idx = vi.Idx;
-			
+
+			Console.WriteLine ("Variable: " + vi);
 			switch (idx){
 			case 0:
 				ig.Emit (OpCodes.Ldloc_0);
@@ -1660,9 +1694,11 @@ namespace CIR {
 	// </summary>
 	public class Invocation : Expression {
 		public readonly ArrayList Arguments;
+		public readonly Location Location;
+		
 		Expression expr;
 		MethodBase method = null;
-		
+			
 		static Hashtable method_parameter_cache;
 
 		static Invocation ()
@@ -1677,10 +1713,11 @@ namespace CIR {
 		// FIXME: only allow expr to be a method invocation or a
 		// delegate invocation (7.5.5)
 		//
-		public Invocation (Expression expr, ArrayList arguments)
+		public Invocation (Expression expr, ArrayList arguments, Location l)
 		{
 			this.expr = expr;
 			Arguments = arguments;
+			Location = l;
 		}
 
 		public Expression Expr {
@@ -1690,7 +1727,7 @@ namespace CIR {
 		}
 
 		/// <summary>
-		///   Computes whether Argument `a' and the ParameterInfo `pi' are
+		///   Computes whether Argument `a' and the Type t of the  ParameterInfo `pi' are
 		///   compatible, and if so, how good is the match (in terms of
 		///   "better conversions" (7.4.2.3).
 		///
@@ -1700,14 +1737,75 @@ namespace CIR {
 		/// </summary>
 		static int Badness (Argument a, Type t)
 		{
-			if (a.Expr.Type == null){
+			Expression argument_expr = a.Expr;
+			Type argument_type = argument_expr.Type;
+
+			if (argument_type == null){
 				throw new Exception ("Expression of type " + a.Expr + " does not resolve its type");
 			}
 			
-			if (t == a.Expr.Type) 
+			if (t == argument_type) 
 				return 0;
+
+			//
+			// Now probe whether an implicit constant expression conversion
+			// can be used.
+			//
+			// An implicit constant expression conversion permits the following
+			// conversions:
+			//
+			//    * A constant-expression of type `int' can be converted to type
+			//      sbyte, byute, short, ushort, uint, ulong provided the value of
+			//      of the expression is withing the range of the destination type.
+			//
+			//    * A constant-expression of type long can be converted to type
+			//      ulong, provided the value of the constant expression is not negative
+			//
+			// FIXME: Note that this assumes that constant folding has
+			// taken place.  We dont do constant folding yet.
+			//
+
+			if (argument_type == TypeManager.int32_type && argument_expr is IntLiteral){
+				IntLiteral ei = (IntLiteral) argument_expr;
+				int value = ei.Value;
+				
+				if (t == TypeManager.sbyte_type){
+					if (value >= SByte.MinValue && value <= SByte.MaxValue)
+						return 1;
+				} else if (t == TypeManager.byte_type){
+					if (Byte.MinValue >= 0 && value <= Byte.MaxValue)
+						return 1;
+				} else if (t == TypeManager.short_type){
+					if (value >= Int16.MinValue && value <= Int16.MaxValue)
+						return 1;
+				} else if (t == TypeManager.ushort_type){
+					if (value >= UInt16.MinValue && value <= UInt16.MaxValue)
+						return 1;
+				} else if (t == TypeManager.uint32_type){
+					//
+					// we can optimize this case: a positive int32
+					// always fits on a uint32
+					//
+					if (value >= 0)
+						return 1;
+				} else if (t == TypeManager.uint64_type){
+					//
+					// we can optimize this case: a positive int32
+					// always fits on a uint64
+					//
+					if (value >= 0)
+						return 1;
+				}
+			} else if (argument_type == TypeManager.int64_type && argument_expr is LongLiteral){
+				LongLiteral ll = (LongLiteral) argument_expr;
+				
+				if (t == TypeManager.uint64_type){
+					if (ll.Value > 0)
+						return 1;
+				}
+			}
 			
-			// FIXME: Implement implicit conversions here.
+			// FIXME: Implement user-defined implicit conversions here.
 			// FIXME: Implement better conversion here.
 			
 			return -1;
@@ -1790,7 +1888,7 @@ namespace CIR {
 						Argument a = (Argument) Arguments [j];
 
 						x = Badness (a, pd.ParameterType (j));
-						
+
 						if (x < 0){
 							badness = best_match;
 							continue;
@@ -1846,7 +1944,7 @@ namespace CIR {
 			method = OverloadResolve ((MethodGroupExpr) this.expr, Arguments);
 
 			if (method == null){
-				tc.RootContext.Report.Error (-6,
+				tc.RootContext.Report.Error (-6, Location,
 				"Figure out error: Can not find a good function for this argument list");
 				return null;
 			}
@@ -2040,6 +2138,8 @@ namespace CIR {
 		public override Expression Resolve (TypeContainer tc)
 		{
 			// FIXME: Implement;
+			throw new Exception ("Unimplemented");
+
 			return this;
 		}
 
@@ -2214,6 +2314,8 @@ namespace CIR {
 		public override Expression Resolve (TypeContainer tc)
 		{
 			// FIXME: Implement;
+			throw new Exception ("Unimplemented");
+
 			return this;
 		}
 
@@ -2297,7 +2399,8 @@ namespace CIR {
 
 		override public void Emit (EmitContext ec)
 		{
-			// FIXME: Implement.
+			// FIXME: Implement;
+			throw new Exception ("Unimplemented");
 		}
 	}
 
@@ -2406,7 +2509,9 @@ namespace CIR {
 
 		public override Expression Resolve (TypeContainer tc)
 		{
-			// FIXME : Implement
+			// FIXME: Implement;
+			throw new Exception ("Unimplemented");
+
 			return this;
 		}
 		
@@ -2438,7 +2543,9 @@ namespace CIR {
 
 		public override Expression Resolve (TypeContainer tc)
 		{
-			// FIXME : Implement !
+			// FIXME: Implement;
+			throw new Exception ("Unimplemented");
+
 			return this;
 		}
 

@@ -518,7 +518,6 @@ namespace CIR
 		{
 			string s = number.ToString ();
 
-			Console.WriteLine (s);
 			switch (t){
 			case Token.LITERAL_DECIMAL:
 				val = new System.Decimal ();

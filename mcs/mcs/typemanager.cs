@@ -100,7 +100,7 @@ public class TypeManager {
 		t = (Type) types [name];
 		if (t != null)
 			return t;
-		
+
 		foreach (Assembly a in assemblies){
 			t = a.GetType (name);
 			if (t != null){
@@ -147,7 +147,17 @@ public class TypeManager {
 		else
 			return t.FullName;
 	}
-	
+
+	Type CoreLookupType (string name)
+	{
+		Type t = LookupType (name);
+
+		if (t == null)
+			throw new Exception ("Can not find core type " + name);
+
+		return t;
+	}
+	       
 	// <remarks>
 	//   The types have to be initialized after the initial
 	//   population of the type has happened (for example, to
@@ -155,20 +165,21 @@ public class TypeManager {
 	// </remarks>
 	public void InitCoreTypes ()
 	{
-		object_type  = LookupType ("System.Object");
-		string_type  = LookupType ("System.String");
-		int32_type   = LookupType ("System.Int32");
-		int64_type   = LookupType ("System.Int64");
-		uint32_type  = LookupType ("System.UInt32"); 
-		uint64_type  = LookupType ("System.UInt64"); 
-		float_type   = LookupType ("System.Single");
-		double_type  = LookupType ("System.Double");
-		byte_type    = LookupType ("System.Byte");
-		sbyte_type   = LookupType ("System.SByte");
-		char_type    = LookupType ("System.Char");
-		short_type   = LookupType ("System.Short");
-		decimal_type = LookupType ("System.Decimal");
-		bool_type    = LookupType ("System.Bool");
+		object_type  = CoreLookupType ("System.Object");
+		string_type  = CoreLookupType ("System.String");
+		int32_type   = CoreLookupType ("System.Int32");
+		int64_type   = CoreLookupType ("System.Int64");
+		uint32_type  = CoreLookupType ("System.UInt32"); 
+		uint64_type  = CoreLookupType ("System.UInt64"); 
+		float_type   = CoreLookupType ("System.Single");
+		double_type  = CoreLookupType ("System.Double");
+		byte_type    = CoreLookupType ("System.Byte");
+		sbyte_type   = CoreLookupType ("System.SByte");
+		char_type    = CoreLookupType ("System.Char");
+		short_type   = CoreLookupType ("System.Int16");
+		ushort_type  = CoreLookupType ("System.UInt16");
+		decimal_type = CoreLookupType ("System.Decimal");
+		bool_type    = CoreLookupType ("System.Boolean");
 	}
 	
 	public MemberInfo [] FindMembers (Type t, MemberTypes mt, BindingFlags bf, MemberFilter filter, object criteria)

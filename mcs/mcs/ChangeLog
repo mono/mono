@@ -1,3 +1,19 @@
+2001-09-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* typemanager.cs (TypeManager::CoreLookupType): A function to make sure that we
+	are loading the correct data types (throws an exception if not).
+	(TypeManager::InitCoreTypes): Use CoreLookupType
+
+	* expression.cs (Unary::ResolveOperator): return the child
+	expression for expressions which are just +expr.
+	(Unary::ResolveOperator): Return negative literals for -LITERAL
+	expressions (otherwise they are Unary {Literal}).
+	(Invocation::Badness): Take into account `Implicit constant
+	expression conversions'.
+
+	* literal.cs (LongLiteral): Implement long literal class.
+	(IntLiteral): export the `Value' of the intliteral. 
+
 2001-09-19  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (Binary::Emit): Finally get the emission right ! Woo!

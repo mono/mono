@@ -209,7 +209,8 @@ namespace CIR {
 				methods = new ArrayList ();
 
 			methods.Add (method);
-			DefineName (name, method);
+			if (value != null)
+				DefineName (name, method);
 
 			return AdditionResult.Success;
 		}

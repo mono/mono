@@ -56,6 +56,11 @@ namespace CIR {
 			}
 			return c.ToString ();
 		}
+
+		protected Literal ()
+		{
+			eclass = ExprClass.Value;
+		}
 	}
 
 	public class NullLiteral : Literal {
@@ -70,9 +75,7 @@ namespace CIR {
 
 		public override Expression Resolve (TypeContainer tc)
 		{
-			eclass = ExprClass.Value;
 			type = TypeManager.object_type;
-
 			return this;
 		}
 
@@ -97,7 +100,6 @@ namespace CIR {
 
 		public override Expression Resolve (TypeContainer tc)
 		{
-			eclass = ExprClass.Value;
 			type = TypeManager.bool_type;
 
 			return this;
@@ -127,7 +129,6 @@ namespace CIR {
 
 		public override Expression Resolve (TypeContainer tc)
 		{
-			eclass = ExprClass.Value;
 			type = TypeManager.char_type;
 
 			return this;
@@ -140,21 +141,20 @@ namespace CIR {
 	}
 
 	public class IntLiteral : Literal {
-		int i;
+		public readonly int Value;
 
 		public IntLiteral (int l)
 		{
-			i = l;
+			Value = l;
 		}
 
 		override public string AsString ()
 		{
-			return i.ToString ();
+			return Value.ToString ();
 		}
 
 		public override Expression Resolve (TypeContainer tc)
 		{
-			eclass = ExprClass.Value;
 			type = TypeManager.int32_type;
 
 			return this;
@@ -164,7 +164,7 @@ namespace CIR {
 		{
 			ILGenerator ig = ec.ig;
 
-			EmitInt (ig, i);
+			EmitInt (ig, Value);
 		}
 
 		static public void EmitInt (ILGenerator ig, int i)
@@ -220,22 +220,57 @@ namespace CIR {
 		}
 	}
 
-	public class FloatLiteral : Literal {
-		float f;
+	public class LongLiteral : Literal {
+		public readonly long Value;
 
-		public FloatLiteral (float f)
+		public LongLiteral (long l)
 		{
-			this.f = f;
+			Value = l;
 		}
 
 		override public string AsString ()
 		{
-			return f.ToString ();
+			return Value.ToString ();
 		}
 
 		public override Expression Resolve (TypeContainer tc)
 		{
-			eclass = ExprClass.Value;
+			type = TypeManager.int64_type;
+
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+
+			EmitLong (ig, Value);
+		}
+
+		static public void EmitLong (ILGenerator ig, long l)
+		{
+			if (l >= -1 || l < Int32.MaxValue)
+				IntLiteral.EmitInt (ig, (int) l);
+			else
+				ig.Emit (OpCodes.Ldc_I8, l);
+		}
+	}
+
+	public class FloatLiteral : Literal {
+		public readonly float Value;
+
+		public FloatLiteral (float f)
+		{
+			Value = f;
+		}
+
+		override public string AsString ()
+		{
+			return Value.ToString ();
+		}
+
+		public override Expression Resolve (TypeContainer tc)
+		{
 			type = TypeManager.float_type;
 
 			return this;
@@ -243,26 +278,25 @@ namespace CIR {
 
 		public override void Emit (EmitContext ec)
 		{
-			ec.ig.Emit (OpCodes.Ldc_R4, f);
+			ec.ig.Emit (OpCodes.Ldc_R4, Value);
 		}
 	}
 
 	public class DoubleLiteral : Literal {
-		double d;
+		public readonly double Value;
 
 		public DoubleLiteral (double d)
 		{
-			this.d = d;
+			Value = d;
 		}
 
 		override public string AsString ()
 		{
-			return d.ToString ();
+			return Value.ToString ();
 		}
 
 		public override Expression Resolve (TypeContainer tc)
 		{
-			eclass = ExprClass.Value;
 			type = TypeManager.double_type;
 
 			return this;
@@ -270,7 +304,7 @@ namespace CIR {
 
 		public override void Emit (EmitContext ec)
 		{
-			ec.ig.Emit (OpCodes.Ldc_R8, d);
+			ec.ig.Emit (OpCodes.Ldc_R8, Value);
 		}
 	}
 
@@ -289,7 +323,6 @@ namespace CIR {
 
 		public override Expression Resolve (TypeContainer tc)
 		{
-			eclass = ExprClass.Value;
 			type = TypeManager.decimal_type;
 
 			return this;
@@ -316,7 +349,6 @@ namespace CIR {
 
 		public override Expression Resolve (TypeContainer tc)
 		{
-			eclass = ExprClass.Value;
 			type = TypeManager.string_type;
 
 			return this;

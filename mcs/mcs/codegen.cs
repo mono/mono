@@ -17,6 +17,20 @@ namespace CIR {
 		AppDomain current_domain;
 		AssemblyBuilder assembly_builder;
 		ModuleBuilder   module_builder;
+
+		string Basename (string name)
+		{
+			int pos = name.LastIndexOf ("/");
+
+			if (pos != -1)
+				return name.Substring (pos + 1);
+
+			pos = name.LastIndexOf ("\\");
+			if (pos != -1)
+				return name.Substring (pos + 1);
+
+			return name;
+		}
 		
 		public CodeGen (string name, string output)
 		{
@@ -26,9 +40,15 @@ namespace CIR {
 			an.Name = "AssemblyName";
 			current_domain = AppDomain.CurrentDomain;
 			assembly_builder = current_domain.DefineDynamicAssembly (
-										 an, AssemblyBuilderAccess.RunAndSave);
-			
-			module_builder = assembly_builder.DefineDynamicModule (name, output);
+				an, AssemblyBuilderAccess.RunAndSave);
+
+			//
+			// Pass a path-less name to DefineDynamicModule.  Wonder how
+			// this copes with output in different directories then.
+			// FIXME: figure out how this copes with --output /tmp/blah
+			//
+			module_builder = assembly_builder.DefineDynamicModule (
+				Basename (name), Basename (output));
 		}
 		
 		public AssemblyBuilder AssemblyBuilder {
@@ -45,8 +65,10 @@ namespace CIR {
 		
 		public void Save (Report report, string name)
 		{
+			Console.WriteLine ("This is it " + Basename (name));
+			
 			try {
-				assembly_builder.Save (name);
+				assembly_builder.Save (Basename (name));
 			} catch (System.IO.IOException io){
 				report.Error (16, "Coult not write to file `"+name+"', cause: " + io.Message);
 			}
@@ -91,7 +113,7 @@ namespace CIR {
 
 			if (e == null)
 				return false;
-			
+
 			if (e.Type != TypeManager.bool_type)
 				e = Expression.ConvertImplicit (e, TypeManager.bool_type);
 
@@ -125,12 +147,9 @@ namespace CIR {
 			Statement false_stat = s.FalseStatement;
 			bool is_ret;
 			
-			Console.WriteLine ("Emitting IF");
-
 			if (!EmitBoolExpression (s.Expr))
 				return false;
 			
-			Console.WriteLine ("Ok, so like the bool expression was emitted");
 			ig.Emit (OpCodes.Brfalse, false_target);
 			is_ret = EmitStatement (s.TrueStatement);
 
