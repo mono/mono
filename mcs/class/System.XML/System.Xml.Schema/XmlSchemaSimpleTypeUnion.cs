@@ -18,13 +18,15 @@ namespace System.Xml.Schema
 		{
 			baseTypes = new XmlSchemaObjectCollection();
 		}
-		[XmlElement]
+
+		[XmlElement("simpleType",typeof(XmlSchemaSimpleType),Namespace="http://www.w3.org/2001/XMLSchema")]
 		public XmlSchemaObjectCollection BaseTypes 
 		{
 			get{ return baseTypes; }
 		}
-		[XmlAttribute]
-		public XmlQualifiedName[] MemberTypes 
+
+		[System.Xml.Serialization.XmlAttribute("memberTypes")]
+		public XmlQualifiedName[] MemberTypes
 		{
 			get{ return  memberTypes; } 
 			set{ memberTypes = value; }

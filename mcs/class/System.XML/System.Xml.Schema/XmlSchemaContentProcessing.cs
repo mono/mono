@@ -12,11 +12,11 @@ namespace System.Xml.Schema
 	{
 		[XmlIgnore]
 		None	= 0,
-		[XmlEnum]
+		[XmlEnum("skip")]
 		Skip	= 1,
-		[XmlEnum]
+		[XmlEnum("lax")]
 		Lax		= 2, 
-		[XmlEnum]
+		[XmlEnum("strict")]
 		Strict	= 3, 
 	}
 }

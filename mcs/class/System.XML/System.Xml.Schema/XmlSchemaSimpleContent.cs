@@ -15,7 +15,9 @@ namespace System.Xml.Schema
 		public XmlSchemaSimpleContent()
 		{
 		}
-		[XmlElement]
+
+		[XmlElement("restriction",typeof(XmlSchemaSimpleContentRestriction),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("extension",typeof(XmlSchemaSimpleContentExtension),Namespace="http://www.w3.org/2001/XMLSchema")]
 		public override XmlSchemaContent Content 
 		{
 			get{ return  content; } 

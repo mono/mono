@@ -9,6 +9,21 @@ namespace System.Xml.Schema
 	/// <summary>
 	/// Summary description for XmlSchemaAnnotated.
 	/// </summary>
+	// Include all childrens of this class
+//	[XmlInclude(typeof(XmlSchemaAnyAttribute)),
+//	XmlInclude(typeof(XmlSchemaAttribute)),
+//	XmlInclude(typeof(XmlSchemaAttributeGroup)),
+//	XmlInclude(typeof(XmlSchemaAttributeGroupRef)),
+//	XmlInclude(typeof(XmlSchemaContent)),
+//	XmlInclude(typeof(XmlSchemaContentModel)),
+//	XmlInclude(typeof(XmlSchemaFacet)),
+//	XmlInclude(typeof(XmlSchemaGroup)),
+//	XmlInclude(typeof(XmlSchemaIdentityConstraint)),
+//	XmlInclude(typeof(XmlSchemaNotation)),
+//	XmlInclude(typeof(XmlSchemaParticle)),
+//	XmlInclude(typeof(XmlSchemaSimpleTypeContent)),
+//	XmlInclude(typeof(XmlSchemaType)),
+//	XmlInclude(typeof(XmlSchemaXPath))]
 	public class XmlSchemaAnnotated : XmlSchemaObject
 	{
 		private XmlSchemaAnnotation annotation;
@@ -17,18 +32,21 @@ namespace System.Xml.Schema
 
 		public XmlSchemaAnnotated()
 		{}
-		[XmlElement]
+		
+		[XmlElement("annotation",Namespace="http://www.w3.org/2001/XMLSchema")]
 		public XmlSchemaAnnotation Annotation 
 		{ 
-			get{ return this.annotation; } 
-			set{ this.annotation = value; } 
+			get{ return  annotation; } 
+			set{ annotation = value; } 
 		}
-		[XmlAttribute]
+		
+		[System.Xml.Serialization.XmlAttribute("id")]
 		public string Id 
 		{ 
-			get{ return this.id; } 
+			get{ return  id; } 
 			set{ id = value; } 
 		}
+		
 		[XmlAnyAttribute]
 		public XmlAttribute[] UnhandledAttributes 
 		{ 

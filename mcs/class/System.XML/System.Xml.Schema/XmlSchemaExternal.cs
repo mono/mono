@@ -17,21 +17,23 @@ namespace System.Xml.Schema
 		private XmlAttribute[] unhandledAttributes;
 
 		protected XmlSchemaExternal()
-		{
-		}
-		[XmlAttribute]
+		{}
+
+		[System.Xml.Serialization.XmlAttribute("id")]
 		public string Id 
 		{
 			get{ return  id; }
 			set{ id = value; }
 		}
+
 		[XmlIgnore]
 		public XmlSchema Schema 
 		{
 			get{ return  schema; }
 			set{ schema = value; }
 		}
-		[XmlAttribute]
+		
+		[System.Xml.Serialization.XmlAttribute("schemaLocation")]
 		public string SchemaLocation 
 		{
 			get{ return  location; } 

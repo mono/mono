@@ -17,17 +17,18 @@ namespace System.Xml.Schema
 		public XmlSchemaAny()
 		{
 			nameSpace = string.Empty;
-			processing = XmlSchemaContentProcessing.Strict;
 		}
-		[XmlAttribute]
+
+		[System.Xml.Serialization.XmlAttribute("namespace")]
 		public string Namespace 
 		{
 			get{ return  nameSpace; } 
 			set{ nameSpace = value; }
 		}
-		[DefaultValue(XmlSchemaContentProcessing.Strict)]
-		[XmlAttribute]
-		public XmlSchemaContentProcessing ProcessContents 
+		
+		[DefaultValue(XmlSchemaContentProcessing.None)]
+		[System.Xml.Serialization.XmlAttribute("processContents")]
+		public XmlSchemaContentProcessing ProcessContents
 		{ 
 			get{ return processing; } 
 			set{ processing = value; }

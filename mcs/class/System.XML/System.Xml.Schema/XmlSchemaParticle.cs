@@ -18,20 +18,11 @@ namespace System.Xml.Schema
 			minOccurs = decimal.One;
 			maxOccurs = decimal.One;
 		}
-		[XmlIgnore]
-		public decimal MaxOccurs 
-		{
-			get{ return  maxOccurs; } 
-			set
-			{
-				if(value >= 0 && (value == Decimal.Truncate(value)))
-					maxOccurs = value;
-				else
-					throw new XmlSchemaException("MaxOccurs must be a non-negative number",null);
-			}
-		}
-		[XmlAttribute]
-		public string MaxOccursString 
+
+		#region Attributes
+
+		[System.Xml.Serialization.XmlAttribute("maxOccurs")]
+		public string MaxOccursString
 		{
 			get{ return maxstr; }
 			set
@@ -44,33 +35,63 @@ namespace System.Xml.Schema
 				else
 				{
 					decimal val = decimal.Parse(value);
-					//Setting through the property
-					MaxOccurs = val;
-					maxstr = value;
+					if(val >= 0 && (val == Decimal.Truncate(val)))
+					{
+						maxOccurs = val;
+						maxstr = value;
+					}
+					else
+					{
+						throw new XmlSchemaException
+							("MaxOccurs must be a non-negative integer",null);
+					}
 				}
 			}
 		}
+
+		[System.Xml.Serialization.XmlAttribute("minOccurs")]
+		public string MinOccursString
+		{
+			get{ return minstr; }
+			set
+			{
+				decimal val = decimal.Parse(value);
+				if(val >= 0 && (val == Decimal.Truncate(val)))
+				{
+					minOccurs = val;
+					minstr	 = value;
+				}
+				else
+				{
+					throw new XmlSchemaException
+						("MinOccursString must be a non-negative number",null); 					
+				}
+			}
+		}
+
+		#endregion
+
+		#region XmlIgnore
+
+		[XmlIgnore]
+		public decimal MaxOccurs 
+		{
+			get{ return  maxOccurs; } 
+			set
+			{
+				MaxOccursString = value.ToString();
+			}
+		}
+
 		[XmlIgnore]
 		public decimal MinOccurs
 		{
 			get{ return  minOccurs; }
 			set
 			{
-				if(value >= 0 && (value == Decimal.Truncate(value)))
-					minOccurs = value;
-				else
-					throw new XmlSchemaException("MinOccursString must be a non-negative number",null); 					
+				MinOccursString = value.ToString();
 			}
 		}
-		[XmlAttribute]
-		public string MinOccursString
-		{
-			get{ return minstr; }
-			set
-			{
-				MinOccurs = decimal.Parse(value);
-				minstr = value;
-			}
-		}
+		#endregion
 	}
 }

@@ -14,15 +14,17 @@ namespace System.Xml.Schema
 		private bool isMixed;
 
 		public XmlSchemaComplexContent()
-		{
-		}
-		[XmlElement]
+		{}
+
+		[XmlElement("restriction",typeof(XmlSchemaComplexContentRestriction),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("extension",typeof(XmlSchemaComplexContentExtension),Namespace="http://www.w3.org/2001/XMLSchema")]
 		public override XmlSchemaContent Content 
 		{
 			get{ return  content; } 
 			set{ content = value; }
 		}
-		[XmlAttribute]
+
+		[System.Xml.Serialization.XmlAttribute("mixed")]
 		public bool IsMixed 
 		{
 			get{ return  isMixed; } 

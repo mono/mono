@@ -11,9 +11,9 @@ namespace System.Xml.Schema
 	{
 		[XmlIgnore]
 		None = 0x00000000, 
-		[XmlEnum]
+		[XmlEnum("qualified")]
 		Qualified = 0x00000001, 
-		[XmlEnum]
+		[XmlEnum("unqualified")]
 		Unqualified = 0x00000002, 
 	}
 }

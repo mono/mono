@@ -19,24 +19,31 @@ namespace System.Xml.Schema
 		{
 			attributes = new XmlSchemaObjectCollection();
 		}
-		[XmlElement]
-		public XmlSchemaAnyAttribute AnyAttribute 
-		{
-			get{ return any; }
-			set{ any = value;}
-		}
-		[XmlElement]
-		public XmlSchemaObjectCollection Attributes 
-		{
-			get{ return attributes; }
-		}
-		[XmlAttribute]
+		
+		[System.Xml.Serialization.XmlAttribute("base")]
 		public XmlQualifiedName BaseTypeName 
 		{
 			get{ return  baseTypeName; }
 			set{ baseTypeName = value; }
 		}
-		[XmlElement]
+		[XmlElement("anyAttribute",Namespace="http://www.w3.org/2001/XMLSchema")]
+		public XmlSchemaAnyAttribute AnyAttribute 
+		{
+			get{ return any; }
+			set{ any = value;}
+		}
+
+		[XmlElement("attribute",typeof(XmlSchemaAttribute),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("attributeGroup",typeof(XmlSchemaAttributeGroupRef),Namespace="http://www.w3.org/2001/XMLSchema")]
+		public XmlSchemaObjectCollection Attributes 
+		{
+			get{ return attributes; }
+		}
+
+		[XmlElement("group",typeof(XmlSchemaGroupRef),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("all",typeof(XmlSchemaAll),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("choice",typeof(XmlSchemaChoice),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("sequence",typeof(XmlSchemaSequence),Namespace="http://www.w3.org/2001/XMLSchema")]
 		public XmlSchemaParticle Particle
 		{
 			get{ return  particle; }

@@ -12,22 +12,22 @@ namespace System.Xml.Schema
 	public class XmlSchemaAnyAttribute : XmlSchemaAnnotated
 	{
 		private string nameSpace;
-		public XmlSchemaContentProcessing processing;
+		private XmlSchemaContentProcessing processing;
 
 		public XmlSchemaAnyAttribute()
 		{
 			nameSpace = string.Empty;
-			this.processing = XmlSchemaContentProcessing.Strict;
 		}
 
-		[XmlAttribute]
+		[System.Xml.Serialization.XmlAttribute("namespace")]
 		public string Namespace 
 		{ 
 			get{ return nameSpace; } 
 			set{ nameSpace = value; } 
 		}
-		[DefaultValue(XmlSchemaContentProcessing.Strict)]
-		[XmlAttribute]
+		
+		[DefaultValue(XmlSchemaContentProcessing.None)]
+		[System.Xml.Serialization.XmlAttribute("processContents")]
 		public XmlSchemaContentProcessing ProcessContents 
 		{ 
 			get{ return processing; } 

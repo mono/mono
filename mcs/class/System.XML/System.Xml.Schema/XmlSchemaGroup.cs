@@ -15,15 +15,18 @@ namespace System.Xml.Schema
 
 		public XmlSchemaGroup()
 		{
-			name = string.Empty;
 		}
-		[XmlAttribute]
+
+		[System.Xml.Serialization.XmlAttribute("name")]
 		public string Name 
 		{
 			get{ return  name; } 
 			set{ name = value; }
 		}
-		[XmlElement]
+
+		[XmlElement("all",typeof(XmlSchemaAll),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("choice",typeof(XmlSchemaChoice),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("sequence",typeof(XmlSchemaSequence),Namespace="http://www.w3.org/2001/XMLSchema")]
 		public XmlSchemaGroupBase Particle
 		{
 			get{ return  particle; }

@@ -10,6 +10,7 @@ namespace System.Xml.Schema
 	/// <summary>
 	/// Summary description for XmlSchemaType.
 	/// </summary>
+	[XmlInclude(typeof(XmlSchemaSimpleType))]
 	public class XmlSchemaType : XmlSchemaAnnotated
 	{
 		private object baseSchemaType;
@@ -25,6 +26,24 @@ namespace System.Xml.Schema
 		{
 			final = XmlSchemaDerivationMethod.None;
 		}
+
+		#region Attributes
+		[System.Xml.Serialization.XmlAttribute("name")]
+		public string Name 
+		{
+			get{ return name; }
+			set{ name = value; }
+		}
+		[DefaultValue(XmlSchemaDerivationMethod.None)]
+		[System.Xml.Serialization.XmlAttribute("final")]
+		public XmlSchemaDerivationMethod Final 
+		{
+			get{ return  final; }
+			set{ final = value; }
+		}
+		#endregion
+
+		#region XmlIgnore
 		[XmlIgnore]
 		public object BaseSchemaType 
 		{
@@ -40,13 +59,6 @@ namespace System.Xml.Schema
 		{
 			get{ return derivedBy; }
 		}
-		[DefaultValue(XmlSchemaDerivationMethod.None)]
-		[XmlAttribute]
-		public XmlSchemaDerivationMethod Final 
-		{
-			get{ return  final; }
-			set{ final = value; }
-		}
 		[XmlIgnore]
 		public XmlSchemaDerivationMethod FinalResolved 
 		{
@@ -58,16 +70,11 @@ namespace System.Xml.Schema
 			get{ return  isMixed; }
 			set{ isMixed = value; } 
 		}
-		[XmlAttribute]
-		public string Name 
-		{
-			get{ return name; }
-			set{ name = value; }
-		}
 		[XmlIgnore]
 		public XmlQualifiedName QualifiedName 
 		{
 			get{ return qName; }
 		}
+		#endregion
 	}
 }

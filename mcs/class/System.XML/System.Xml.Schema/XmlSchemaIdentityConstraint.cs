@@ -21,27 +21,31 @@ namespace System.Xml.Schema
 			fields = new XmlSchemaObjectCollection();
 			qName = XmlQualifiedName.Empty;
 		}
-		[XmlElement]
+
+		[XmlElement("field",typeof(XmlSchemaXPath),Namespace="http://www.w3.org/2001/XMLSchema")]
 		public XmlSchemaObjectCollection Fields 
 		{
 			get{ return fields; }
 		}
-		[XmlAttribute]
+
+		[XmlElement("selector",typeof(XmlSchemaXPath),Namespace="http://www.w3.org/2001/XMLSchema")]
+		public XmlSchemaXPath Selector 
+		{
+			get{ return  selector; } 
+			set{ selector = value; }
+		}
+		
+		[System.Xml.Serialization.XmlAttribute("name")]
 		public string Name 
 		{
 			get{ return  name; } 
 			set{ name = value; }
 		}
+		
 		[XmlIgnore]
 		public XmlQualifiedName QualifiedName 
 		{
 			get{ return  qName; }
-		}
-		[XmlElement]
-		public XmlSchemaXPath Selector 
-		{
-			get{ return  selector; } 
-			set{ selector = value; }
 		}
 	}
 }

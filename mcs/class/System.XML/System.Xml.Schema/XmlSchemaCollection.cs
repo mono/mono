@@ -84,11 +84,11 @@ namespace System.Xml.Schema
 		{
 			return this.htable.Contains(ns);
 		}
-		public bool Contains(System.Xml.Schema.XmlSchema schema)
+		public bool Contains(XmlSchema schema)
 		{
 			return this.htable.Contains(schema.TargetNamespace); 
 		}
-		public void CopyTo(System.Xml.Schema.XmlSchema[] array, int index)
+		public void CopyTo(XmlSchema[] array, int index)
 		{
 
 		}

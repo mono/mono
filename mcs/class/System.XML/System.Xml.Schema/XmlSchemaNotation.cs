@@ -17,19 +17,19 @@ namespace System.Xml.Schema
 		public XmlSchemaNotation()
 		{
 		}
-		[XmlAttribute]
+		[System.Xml.Serialization.XmlAttribute("name")]
 		public string Name 
 		{
 			get{ return  name; } 
 			set{ name = value; }
 		}
-		[XmlAttribute]
+		[System.Xml.Serialization.XmlAttribute("public")]
 		public string Public 
 		{
 			get{ return  pub; } 
 			set{ pub = value; }
 		}
-		[XmlAttribute]
+		[System.Xml.Serialization.XmlAttribute("system")]
 		public string System 
 		{
 			get{ return  system; } 

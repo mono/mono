@@ -17,18 +17,23 @@ namespace System.Xml.Schema
 
 		public XmlSchemaAnnotation()
 		{
+			items = new XmlSchemaObjectCollection();
 		}
-		[XmlAttribute]
+
+		[System.Xml.Serialization.XmlAttribute("id")]
 		public string Id 
 		{
 			get{ return  id; } 
 			set{ id = value; }
 		}
-		[XmlElement]
-		public XmlSchemaObjectCollection Items 
+		
+		[XmlElement("appinfo",typeof(XmlSchemaAppInfo),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("documentation",typeof(XmlSchemaDocumentation),Namespace="http://www.w3.org/2001/XMLSchema")]
+		public XmlSchemaObjectCollection Items
 		{
 			get{ return items; }
 		}
+		
 		[XmlAnyAttribute]
 		public XmlAttribute[] UnhandledAttributes 
 		{

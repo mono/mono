@@ -27,20 +27,72 @@ namespace System.Xml.Schema
 
 		public XmlSchemaComplexType()
 		{
+			attributes = new XmlSchemaObjectCollection();
 			block = XmlSchemaDerivationMethod.None;
 		}
 
-		[XmlElement]
+		#region Attributes
+
+		[DefaultValue(XmlSchemaDerivationMethod.None)]
+		[System.Xml.Serialization.XmlAttribute("block")]
+		public XmlSchemaDerivationMethod Block
+		{
+			get{ return  block; }
+			set{ block = value; }
+		}
+		[DefaultValue(false)]
+		[System.Xml.Serialization.XmlAttribute("abstract")]
+		public bool IsAbstract 
+		{
+			get{ return  isAbstract; }
+			set{ isAbstract = value; }
+		}
+		[DefaultValue(false)]
+		[System.Xml.Serialization.XmlAttribute("mixed")]
+		public override bool IsMixed
+		{
+			get{ return  isMixed; }
+			set{ isMixed = value; }
+		}
+		
+		#endregion
+		
+		#region Elements
+		[XmlElement("anyAttribute",Namespace="http://www.w3.org/2001/XMLSchema")]
 		public XmlSchemaAnyAttribute AnyAttribute 
 		{
 			get{ return  anyAttribute; }
 			set{ anyAttribute = value; }
 		}
-		[XmlElement]
+
+		[XmlElement("attribute",typeof(XmlSchemaAttribute),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("attributeGroup",typeof(XmlSchemaAttributeGroupRef),Namespace="http://www.w3.org/2001/XMLSchema")]
 		public XmlSchemaObjectCollection Attributes 
 		{
 			get{ return attributes; }
 		}
+		
+		[XmlElement("simpleContent",typeof(XmlSchemaSimpleContent),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("complexContent",typeof(XmlSchemaComplexContent),Namespace="http://www.w3.org/2001/XMLSchema")]
+		public XmlSchemaContentModel ContentModel 
+		{
+			get{ return  contentModel; } 
+			set{ contentModel = value; }
+		}
+
+		[XmlElement("group",typeof(XmlSchemaGroupRef),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("all",typeof(XmlSchemaAll),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("choice",typeof(XmlSchemaChoice),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("sequence",typeof(XmlSchemaSequence),Namespace="http://www.w3.org/2001/XMLSchema")]
+		public XmlSchemaParticle Particle 
+		{
+			get{ return  particle; } 
+			set{ particle = value; }
+		}
+
+		#endregion
+
+		#region XmlIgnore
 		[XmlIgnore]
 		public XmlSchemaObjectTable AttributeUses 
 		{
@@ -51,23 +103,10 @@ namespace System.Xml.Schema
 		{
 			get{ return attributeWildcard; }
 		}
-		[DefaultValue(XmlSchemaDerivationMethod.None)]
-		[XmlAttribute]
-		public XmlSchemaDerivationMethod Block 
-		{
-			get{ return  block; }
-			set{ block = value; }
-		}
 		[XmlIgnore]
 		public XmlSchemaDerivationMethod BlockResolved 
 		{
 			get{ return blockResolved; }
-		}
-		[XmlElement]
-		public XmlSchemaContentModel ContentModel 
-		{
-			get{ return  contentModel; } 
-			set{ contentModel = value; }
 		}
 		[XmlIgnore]
 		public XmlSchemaContentType ContentType 
@@ -79,25 +118,6 @@ namespace System.Xml.Schema
 		{
 			get{ return contentTypeParticle; }
 		}
-		[DefaultValue(true)]
-		[XmlAttribute]
-		public bool IsAbstract 
-		{
-			get{ return  isAbstract; }
-			set{ isAbstract = value; }
-		}
-		[DefaultValue(true)]
-		[XmlAttribute]
-		public override bool IsMixed
-		{
-			get{ return  isMixed; }
-			set{ isMixed = value; }
-		}
-		[XmlElement]
-		public XmlSchemaParticle Particle 
-		{
-			get{ return  particle; } 
-			set{ particle = value; }
-		}
+		#endregion
 	}
 }

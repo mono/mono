@@ -10,12 +10,14 @@ namespace System.Xml.Schema
 	/// </summary>
 	public class XmlSchemaObjectCollection : System.Collections.CollectionBase
 	{
+		private XmlSchemaObject parent;
+
 		public XmlSchemaObjectCollection()
 		{
 		}
-		[MonoTODO]
 		public XmlSchemaObjectCollection(XmlSchemaObject parent)
 		{
+			this.parent = parent;
 		}
 
 		// Properties
@@ -32,17 +34,17 @@ namespace System.Xml.Schema
 		}
 
 		// Methods
-		public int Add(System.Xml.Schema.XmlSchemaObject item)
+		public int  Add(XmlSchemaObject item)
 		{
 			return this.List.Add(item);
 		}
 		
-		public bool Contains(System.Xml.Schema.XmlSchemaObject item)
+		public bool Contains(XmlSchemaObject item)
 		{
 			return this.List.Contains(item);
 		}
 		
-		public void CopyTo(System.Xml.Schema.XmlSchemaObject[] array, int index)
+		public void CopyTo(XmlSchemaObject[] array, int index)
 		{
 			this.List.CopyTo(array,index);
 		}
@@ -53,12 +55,12 @@ namespace System.Xml.Schema
 			return (XmlSchemaObjectEnumerator) new object();
 		}
 		
-		public int IndexOf(System.Xml.Schema.XmlSchemaObject item)
+		public int IndexOf(XmlSchemaObject item)
 		{
 			return this.List.IndexOf(item);
 		}
 		
-		public void Insert(int index, System.Xml.Schema.XmlSchemaObject item)
+		public void Insert(int index, XmlSchemaObject item)
 		{
 			this.List.Insert(index, item);
 		}
@@ -72,7 +74,7 @@ namespace System.Xml.Schema
 		[MonoTODO]
 		protected override void OnSet(int index,object oldValue,object newValue){}
 
-		public void Remove(System.Xml.Schema.XmlSchemaObject item)
+		public void Remove(XmlSchemaObject item)
 		{
 			this.List.Remove(item);
 		}

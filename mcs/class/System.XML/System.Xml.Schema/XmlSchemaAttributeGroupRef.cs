@@ -16,14 +16,11 @@ namespace System.Xml.Schema
 		public XmlSchemaAttributeGroupRef()
 		{}
 		
-		[XmlAttribute]
+		[System.Xml.Serialization.XmlAttribute("ref")]
 		public XmlQualifiedName RefName 
 		{
-			get{ return refName;}
-			set
-			{
-				refName = value; 
-			}
+			get{ return  refName; }
+			set{ refName = value; }
 		}
 	}
 }

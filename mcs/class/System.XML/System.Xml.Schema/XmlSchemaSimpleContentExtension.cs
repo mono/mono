@@ -22,18 +22,21 @@ namespace System.Xml.Schema
 			attributes	 = new XmlSchemaObjectCollection();
 		}
 
-		[XmlElement]
+		[XmlElement("anyAttribute",Namespace="http://www.w3.org/2001/XMLSchema")]
 		public XmlSchemaAnyAttribute AnyAttribute 
 		{
 			get{ return  any; }
 			set{ any = value; }
 		}
-		[XmlElement]
+
+		[XmlElement("attribute",typeof(XmlSchemaAttribute),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("attributeGroup",typeof(XmlSchemaAttributeGroupRef),Namespace="http://www.w3.org/2001/XMLSchema")]
 		public XmlSchemaObjectCollection Attributes 
 		{
 			get{ return attributes; }
 		}
-		[XmlAttribute]
+
+		[System.Xml.Serialization.XmlAttribute("base")]
 		public XmlQualifiedName BaseTypeName 
 		{
 			get{ return  baseTypeName; }

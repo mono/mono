@@ -26,7 +26,8 @@ namespace System.Xml.Schema
 			get{ return  markup; }
 			set{ markup = value; }
 		}
-		[XmlAttribute]
+
+		[System.Xml.Serialization.XmlAttribute("source")]
 		public string Source 
 		{
 			get{ return  source; } 

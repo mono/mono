@@ -11,19 +11,19 @@ namespace System.Xml.Schema
 	[Flags]
 	public enum XmlSchemaDerivationMethod
 	{
-		[XmlEnum]
+		[XmlEnum("empty")]
 		Empty		= 0x00000000, 
-		[XmlEnum]
+		[XmlEnum("substitution")]
 		Substitution= 0x00000001, 
-		[XmlEnum]
+		[XmlEnum("extension")]
 		Extension	= 0x00000002, 
-		[XmlEnum]
+		[XmlEnum("restriction")]
 		Restriction	= 0x00000004, 
-		[XmlEnum]
+		[XmlEnum("list")]
 		List		= 0x00000008, 
-		[XmlEnum]
+		[XmlEnum("union")]
 		Union		= 0x00000010, 
-		[XmlEnum]
+		[XmlEnum("#all")]
 		All			= 0x000000FF,
 		[XmlIgnore]
 		None		= 0x00000100, 

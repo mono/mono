@@ -20,14 +20,14 @@ namespace System.Xml.Schema
 			val = string.Empty;
 		}
 		[DefaultValue(false)]
-		[XmlAttribute]
+		[System.Xml.Serialization.XmlAttribute("fixed")]
 		public virtual bool IsFixed 
 		{
 			get{ return  isFixed; }
 			set{ isFixed = value; }
 		}
-		[XmlAttribute]
-		public string Value 
+		[System.Xml.Serialization.XmlAttribute("value")]
+		public string Value
 		{
 			get{ return  val; } 
 			set{ val = value; }

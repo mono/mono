@@ -16,8 +16,8 @@ namespace System.Xml.Schema
 		public XmlSchemaXPath()
 		{
 		}
-		[DefaultValue("")]
-		[XmlAttribute]
+		[DefaultValue(null)]
+		[System.Xml.Serialization.XmlAttribute("xpath")]
 		public string XPath 
 		{
 			get{ return  xpath; } 

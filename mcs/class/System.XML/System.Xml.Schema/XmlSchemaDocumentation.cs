@@ -19,12 +19,7 @@ namespace System.Xml.Schema
 		{
 			source = string.Empty;
 		}
-		[XmlAttribute]
-		public string Language 
-		{
-			get{ return  language; }
-			set{ language = value; }
-		}
+
 		[XmlAnyElement]
 		[XmlText]
 		public XmlNode[] Markup 
@@ -32,11 +27,19 @@ namespace System.Xml.Schema
 			get{ return  markup; }
 			set{ markup = value; }
 		}
-		[XmlAttribute]
+		
+		[System.Xml.Serialization.XmlAttribute("source")]
 		public string Source 
 		{
 			get{ return  source; } 
 			set{ source = value; }
+		}
+
+		[System.Xml.Serialization.XmlAttribute("xml:lang")]
+		public string Language 
+		{
+			get{ return  language; }
+			set{ language = value; }
 		}
 	}
 }

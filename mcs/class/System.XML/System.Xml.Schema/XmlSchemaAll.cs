@@ -15,7 +15,7 @@ namespace System.Xml.Schema
 		{
 			items = new XmlSchemaObjectCollection();
 		}
-		[XmlElement]
+		[XmlElement("element",typeof(XmlSchemaElement),Namespace="http://www.w3.org/2001/XMLSchema")]
 		public override XmlSchemaObjectCollection Items 
 		{
 			get{ return items; }

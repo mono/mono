@@ -21,7 +21,7 @@ namespace System.Xml.Schema
 		{
 			get{ return particle; }
 		}
-		[XmlAttribute]
+		[System.Xml.Serialization.XmlAttribute("ref")]
 		public XmlQualifiedName RefName 
 		{
 			get{ return  refName; } 

@@ -8,6 +8,12 @@ namespace System.Xml.Schema
 	/// <summary>
 	/// Summary description for XmlSchemaObject.
 	/// </summary>
+//	[XmlInclude(typeof(XmlSchema)),
+//	XmlInclude(typeof(XmlSchemaAnnotated)),
+//	XmlInclude(typeof(XmlSchemaAnnotation)),
+//	XmlInclude(typeof(XmlSchemaAppInfo)),
+//	XmlInclude(typeof(XmlSchemaDocumentation)),
+//	XmlInclude(typeof(XmlSchemaExternal))]
 	public abstract class XmlSchemaObject
 	{
 		private int lineNumber;
@@ -36,6 +42,7 @@ namespace System.Xml.Schema
 			get{ return sourceUri; } 
 			set{ sourceUri = value; } 
 		}
+
 		// Undocumented Property
 		[XmlNamespaceDeclarations]
 		public XmlSerializerNamespaces Namespaces 

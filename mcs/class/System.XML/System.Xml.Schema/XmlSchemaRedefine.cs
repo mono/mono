@@ -28,7 +28,12 @@ namespace System.Xml.Schema
 		{
 			get{ return groups; }
 		}
-		[XmlElement]
+		[XmlElement("annotation",typeof(XmlSchemaAnnotation),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("simpleType",typeof(XmlSchemaSimpleType),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("complexType",typeof(XmlSchemaComplexType),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("group",typeof(XmlSchemaGroup),Namespace="http://www.w3.org/2001/XMLSchema")]
+		//NOTE: AttributeGroup and not AttributeGroupRef
+		[XmlElement("attributeGroup",typeof(XmlSchemaAttributeGroup),Namespace="http://www.w3.org/2001/XMLSchema")]
 		public XmlSchemaObjectCollection Items 
 		{
 			get{ return items; }

@@ -12,11 +12,11 @@ namespace System.Xml.Schema
 	{
 		[XmlIgnore]
 		None = 0x00000000, 
-		[XmlEnum]
+		[XmlEnum("optional")]
 		Optional = 0x00000001, 
-		[XmlEnum]
+		[XmlEnum("prohibited")]
 		Prohibited = 0x00000002, 
-		[XmlEnum]
+		[XmlEnum("required")]
 		Required = 0x00000003, 
 	}
 }

@@ -16,8 +16,9 @@ namespace System.Xml.Schema
 		public XmlSchemaKeyref()
 		{
 		}
-		[XmlAttribute]
-		public XmlQualifiedName Refer 
+
+		[System.Xml.Serialization.XmlAttribute("refer")]
+		public XmlQualifiedName Refer
 		{
 			get{ return  refer; } 
 			set{ refer = value; }

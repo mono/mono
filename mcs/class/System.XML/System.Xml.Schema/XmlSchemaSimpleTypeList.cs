@@ -17,7 +17,8 @@ namespace System.Xml.Schema
 
 		public XmlSchemaSimpleTypeList()
 		{}
-		[XmlElement]
+
+		[XmlElement("simpleType",Namespace="http://www.w3.org/2001/XMLSchema")]
 		public XmlSchemaSimpleType ItemType 
 		{
 			get{ return itemType; } 
@@ -27,8 +28,9 @@ namespace System.Xml.Schema
 				itemTypeName = null;
 			}
 		}
-		[XmlAttribute]
-		public XmlQualifiedName ItemTypeName 
+
+		[System.Xml.Serialization.XmlAttribute("itemType")]
+		public XmlQualifiedName ItemTypeName
 		{
 			get{ return itemTypeName; } 
 			set

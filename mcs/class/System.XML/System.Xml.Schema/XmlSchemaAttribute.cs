@@ -27,7 +27,7 @@ namespace System.Xml.Schema
 		{
 			//FIXME: Docs says the default is optional.
 			//Whereas the MS implementation has default None.
-			use = XmlSchemaUse.Optional;
+			use = XmlSchemaUse.None;
 			qualifiedName = XmlQualifiedName.Empty;
 			refName = XmlQualifiedName.Empty;
 		}
@@ -38,9 +38,9 @@ namespace System.Xml.Schema
 		{ //FIXME: This is not correct. Is it?
 			get{ return attributeType; }
 		}
-		//FIXME: what is the default value?
-		[DefaultValue("")]
-		[XmlAttribute]
+
+		[DefaultValue(null)]
+		[System.Xml.Serialization.XmlAttribute("default")]
 		public string DefaultValue 
 		{
 			get{ return defaultValue;}
@@ -50,8 +50,9 @@ namespace System.Xml.Schema
 				defaultValue = value;
 			}
 		}
-		[DefaultValue("")]
-		[XmlAttribute]
+
+		[DefaultValue(null)]
+		[System.Xml.Serialization.XmlAttribute("fixed")]
 		public string FixedValue 
 		{
 			get{ return fixedValue;}
@@ -61,14 +62,16 @@ namespace System.Xml.Schema
 				fixedValue = value;
 			}
 		}
+
 		[DefaultValue(XmlSchemaForm.None)]
-		[XmlAttribute]
+		[System.Xml.Serialization.XmlAttribute("form")]
 		public XmlSchemaForm Form 
 		{
 			get{ return form;}
 			set{ form = value;}
 		}
-		[XmlAttribute]
+
+		[System.Xml.Serialization.XmlAttribute("name")]
 		public string Name 
 		{
 			get{ return name;}
@@ -84,7 +87,7 @@ namespace System.Xml.Schema
 			get{ return qualifiedName;}
 		}
 
-		[XmlAttribute]
+		[System.Xml.Serialization.XmlAttribute("ref")]
 		public XmlQualifiedName RefName 
 		{
 			get{ return refName;}
@@ -94,20 +97,23 @@ namespace System.Xml.Schema
 				refName = value; 
 			}
 		}
-		[XmlElement]
+
+		[XmlElement("simpleType",Namespace="http://www.w3.org/2001/XMLSchema")]
 		public XmlSchemaSimpleType SchemaType 
 		{
 			get{ return schemaType;}
 			set{ schemaType = value;}
 		}
-		[XmlAttribute]
+		
+		[System.Xml.Serialization.XmlAttribute("type")]
 		public XmlQualifiedName SchemaTypeName 
 		{
 			get{ return schemaTypeName;}
 			set{ schemaTypeName = value;}
 		}
-		[DefaultValue(XmlSchemaUse.Optional)]
-		[XmlAttribute]
+
+		[DefaultValue(XmlSchemaUse.None)]
+		[System.Xml.Serialization.XmlAttribute("use")]
 		public XmlSchemaUse Use 
 		{
 			get{ return use;}

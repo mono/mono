@@ -15,13 +15,15 @@ namespace System.Xml.Schema
 		public XmlSchemaImport()
 		{
 		}
-		[XmlElement]
+
+		[XmlElement("annotation",Namespace="http://www.w3.org/2001/XMLSchema")]
 		public XmlSchemaAnnotation Annotation 
 		{
 			get{ return  annotation; } 
 			set{ annotation = value; }
 		}
-		[XmlAttribute]
+		
+		[System.Xml.Serialization.XmlAttribute("namespace")]
 		public string Namespace 
 		{
 			get{ return  nameSpace; } 
