@@ -1,5 +1,11 @@
 2003-08-21  Zoltan Varga  <vargaz@freemail.hu>
 
+	* rawbuffer.c rawbuffer.h: Make this module thread safe.
+
+	* domain.c: Make this module thread safe.
+
+	* domain.c (mono_init): Call new initialization function.
+
 	* icall.c (ves_icall_System_Array_SetValueImpl): Check types for
 	reference types too. Fixes #38812.
 
