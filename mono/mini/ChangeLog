@@ -1,5 +1,8 @@
 2005-02-04  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-ops.h cpu-pentium.md inssel-x86.brg mini-x86.c: Add optimized
+	rules for compare <MEM>, IMM.
+
 	* mini.h (MONO_AOT_FILE_VERSION): Bump it.
 
 	* aot.c: Handle inherited finalizers correctly.
