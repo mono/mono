@@ -31,7 +31,7 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		public override void Evaluate (XslTransformProcessor p)
 		{
-			throw new NotImplementedException ();
+			children.Evaluate (p);
 		}
 	}
 }

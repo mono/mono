@@ -21,6 +21,7 @@ namespace Mono.Xml.Xsl.Operations {
 		string localname, prefix, nsUri;
 		ArrayList attrs = new ArrayList ();
 		XmlQualifiedName [] useAttributeSets;
+		Hashtable nsDecls;
 		
 		public XslLiteralElement (Compiler c) : base (c) {}
 			
@@ -49,6 +50,7 @@ namespace Mono.Xml.Xsl.Operations {
 			this.nsUri = c.Input.NamespaceURI;
 			this.localname = c.Input.LocalName;
 			this.useAttributeSets = c.ParseQNameListAttribute ("use-attribute-sets", XsltNamespace);
+			this.nsDecls = c.GetNamespacesToCopy ();
 			
 			if (c.Input.MoveToFirstAttribute ())
 			{
@@ -69,6 +71,12 @@ namespace Mono.Xml.Xsl.Operations {
 		{
 			p.Out.WriteStartElement (prefix, localname, nsUri);
 
+			foreach (DictionaryEntry de in nsDecls)
+				if ((string)de.Key != "")
+					p.Out.WriteAttributeString ("xmlns", (string)de.Key, null, (string)de.Value);
+				else
+					p.Out.WriteAttributeString ("xmlns", (string)de.Value);
+				
 			foreach (XslLiteralAttribute a in attrs)
 				a.Evaluate (p);
 			

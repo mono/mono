@@ -296,6 +296,73 @@ namespace Mono.Xml.Xsl {
 		}
 		public VariableScope CurrentVariableScope { get { return curVarScope; }}
 #endregion
+		
+#region Scope (version, {excluded, extension} namespaces)
+		[MonoTODO ("This will work, but is *very* slow")]
+		public bool IsExtensionNamespace (string nsUri)
+		{
+			if (nsUri == XsltNamespace) return true;
+				
+			XPathNavigator nav = Input.Clone ();
+			XPathNavigator nsScope = nav.Clone ();
+			do {
+				bool isXslt = nav.NamespaceURI == XsltNamespace;
+				nsScope.MoveTo (nav);
+				if (nav.MoveToFirstAttribute ()) {
+					do {
+						if (nav.LocalName == "extension-element-prefixes" &&
+							nav.NamespaceURI == (isXslt ? String.Empty : XsltNamespace))
+						{
+						
+							foreach (string ns in nav.Value.Split (' '))
+								if (nsScope.GetNamespace (ns == "#default" ? "" : ns) == nsUri)
+									return true;
+						}
+					} while (nav.MoveToNextAttribute ());
+					nav.MoveToParent ();
+				}
+			} while (nav.MoveToParent ());
+				
+			return false;
+		}
+		
+		public Hashtable GetNamespacesToCopy ()
+		{
+			Hashtable ret = new Hashtable ();
+			
+			XPathNavigator nav = Input.Clone ();
+			XPathNavigator nsScope = nav.Clone ();
+			do {
+				bool isXslt = nav.NamespaceURI == XsltNamespace;
+				nsScope.MoveTo (nav);
+				
+				if (nav.MoveToFirstNamespace (XPathNamespaceScope.Local)) {
+					do {
+						if (nav.Value != XsltNamespace && !ret.Contains (nav.Name))
+							ret.Add (nav.Name, nav.Value);
+					} while (nav.MoveToNextNamespace (XPathNamespaceScope.Local));
+					nav.MoveToParent ();
+				}
+				
+				if (nav.MoveToFirstAttribute())	{
+					do {
+						if ((nav.LocalName == "extension-element-prefixes" || nav.LocalName == "exclude-result-prefixes") &&
+							nav.NamespaceURI == (isXslt ? String.Empty : XsltNamespace))
+						{
+							foreach (string ns in nav.Value.Split (' ')) {
+								if (ret [ns] == nsScope.GetNamespace (ns == "#default" ? "" : ns))
+									ret.Remove (ns);
+							}
+						}
+					} while (nav.MoveToNextAttribute ());
+					nav.MoveToParent();
+				}
+			} while (nav.MoveToParent ());
+			
+			return ret;
+		}
+#endregion
+		
 #region Key
 		ArrayList keys = new ArrayList ();
 		

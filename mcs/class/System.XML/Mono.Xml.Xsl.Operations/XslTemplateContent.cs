@@ -96,7 +96,17 @@ namespace Mono.Xml.Xsl.Operations {
 						}
 						break;
 					default:
-						content.Add (new XslLiteralElement(c));
+						if (!c.IsExtensionNamespace (n.NamespaceURI))
+							content.Add (new XslLiteralElement(c));
+						else {
+							if (n.MoveToFirstChild ()) {
+								do {
+									if (n.NamespaceURI == XsltNamespace && n.LocalName == "fallback")
+										content.Add (new XslFallback (c));
+								} while (n.MoveToNext ());
+								n.MoveToParent ();
+							}
+						}
 						break;
 					}
 					break;

@@ -1,5 +1,9 @@
 2003-08-17 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* Compiler.cs: handle extension and excluded namespaces.
+
+2003-08-17 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* XsltCompiledContext.cs, Compiler.cs: copy the XPathNavigator
 	from the stylesheet for correct namespace resolution.
 

@@ -1,5 +1,12 @@
 2003-08-17 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* XslCopyOf.cs: handle default ns
+	* XslFallback.cs: implement
+	* XslLiteralElement.cs: copy namespaces that were declared.
+	* XslTemplateContent.cs: handle ext elements
+	
+2003-08-17 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* XslComment.cs, XslTemplateContent.cs: remove dead variables.
 
 2003-08-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
