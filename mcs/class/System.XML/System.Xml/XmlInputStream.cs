@@ -269,13 +269,13 @@ namespace System.Xml
 		{
 			int ret;
 			if (count <= bufLength - bufPos)	{	// all from buffer
-				Array.Copy (this.buffer, bufPos, buffer, offset, count);
+				Buffer.BlockCopy (this.buffer, bufPos, buffer, offset, count);
 				bufPos += count;
 				ret = count;
 			} else {
 				int bufRest = bufLength - bufPos;
 				if (bufLength > bufPos) {
-					Array.Copy (this.buffer, bufPos, buffer, offset, bufRest);
+					Buffer.BlockCopy (this.buffer, bufPos, buffer, offset, bufRest);
 					bufPos += bufRest;
 				}
 				ret = bufRest +

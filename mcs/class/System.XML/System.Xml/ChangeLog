@@ -1,3 +1,8 @@
+2004-12-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XmlTextReader.cs: don't use \0 as buffer terminator.
+	* XmlInputStream.cs: s/Array.Copy/Buffer.BlockCopy/.
+
 2004-11-30  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTDReader.cs : Consideration on parameter entity was missing for 

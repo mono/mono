@@ -1165,9 +1165,8 @@ namespace System.Xml
 				else
 					return PeekChar ();
 			}
-			else
-				return peekChars [peekCharsIndex] != 0 ?
-					peekChars [peekCharsIndex] : -1;
+
+			return peekChars [peekCharsIndex];
 		}
 
 		private int ReadChar ()
@@ -1197,12 +1196,7 @@ namespace System.Xml
 		{
 			peekCharsIndex = 0;
 			peekCharsLength = reader.Read (peekChars, 0, peekCharCapacity);
-			if (peekCharsLength == 0)
-				return false;
-			// set EOF
-			if (peekCharsLength < peekCharCapacity)
-				peekChars [peekCharsLength] = (char) 0;
-			return true;
+			return (peekCharsLength != 0);
 		}
 
 		private string ExpandSurrogateChar (int ch)
