@@ -1,3 +1,10 @@
+2003-10-31  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AppDomain.cs (InternalPushDomainRef): New icalls.
+
+	* AppDomain.cs (InvokeInDomain): New method to execute code in a 
+	different appdomain.
+
 2003-10-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AppDomain.cs: Fix prototype of InternalIsFinalizingForUnload.

@@ -526,13 +526,16 @@ namespace System {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern AppDomain InternalSetDomain (AppDomain context);
 
-		// Execute the given method in the given appdomain
+		// Notifies the runtime that this thread references 'domain'.
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern object InternalInvokeInDomain (AppDomain domain, MethodInfo method, object obj, object[] args);
+		internal static extern void InternalPushDomainRef (AppDomain domain);
 
-		// Execute the given method in the given appdomain
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern object InternalInvokeInDomainByID (int domain_id, MethodInfo method, object obj, object[] args);
+		internal static extern void InternalPushDomainRefByID (int domain_id);
+
+		// Undoes the effect of the last PushDomainRef call
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern void InternalPopDomainRef ();
 
 		// Changes the active context and returns the old context
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -548,6 +551,43 @@ namespace System {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern string InternalGetProcessGuid (string newguid);
+
+		// This method is handled specially by the runtime
+		// It is the only managed method which is allowed to set the current
+		// appdomain
+		internal static object InvokeInDomain (AppDomain domain, MethodInfo method, object obj, object [] args) {
+			AppDomain current = CurrentDomain;
+			bool pushed = false;
+
+			try {
+				InternalPushDomainRef (domain);
+				pushed = true;
+				InternalSetDomain (domain);
+				return method.Invoke (obj, args);
+			}
+			finally {
+				InternalSetDomain (current);
+				if (pushed)
+					InternalPopDomainRef ();
+			}
+		}
+
+		internal static object InvokeInDomainByID (int domain_id, MethodInfo method, object obj, object [] args) {
+			AppDomain current = CurrentDomain;
+			bool pushed = false;
+
+			try {
+				InternalPushDomainRefByID (domain_id);
+				pushed = true;
+				InternalSetDomainByID (domain_id);
+				return method.Invoke (obj, args);
+			}
+			finally {
+				InternalSetDomain (current);
+				if (pushed)
+					InternalPopDomainRef ();
+			}
+		}
 
 		internal static String GetProcessGuid ()
 		{
@@ -624,15 +664,6 @@ namespace System {
 			if (domain == null)
 				throw new ArgumentNullException ("domain");
 
-			// FIX: We need to unload the stuff in another thread
-			// and throw abort exceptions on all threads involved
-			// in any operations in the unloading domain.
-			//
-			// We need to clean the remoting references and cross app
-			// domain sinks.
-			//
-			// This is just a hack to make unload work (almost anyway)
-		
 			InternalUnload (domain.getDomainID());
 		}
 
