@@ -30,7 +30,7 @@ USE_MCS_FLAGS :=
 #
 NEW_TEST_SOURCES_common = xml-033 xml-034 xml-035 xml-036 test-329 2test-16 test-330 a-parameter5 test-331 test-332 \
 			  test-333 test-311 test-335 test-336 test-337 test-287 test-338 test-339 test-341 test-334 test-342 \
-			  test-344 test-345 test-346 test-347 test-348 test-349 test-351 test-352 test-353 test-354 test-355 \
+			  test-344 test-345 test-346 test-347 test-348 test-349 test-350 test-351 test-352 test-353 test-354 test-355 \
 			  test-356 test-357 test-358 \
 	mtest-7-dll mtest-7-exe
 
@@ -75,7 +75,7 @@ TEST_SOURCES_common = \
 		 test-312 test-313 test-314 test-315 test-316 test-317 test-318          test-320 \
 	test-321          test-323 test-324 test-325 test-326 test-327 test-328 		  \
 											 test-340 \
-			  test-343 							 test-350 \
+			  test-343 							 	  \
 	cls-test-0 cls-test-1 cls-test-2 cls-test-3 cls-test-5 cls-test-6 cls-test-7 cls-test-10  \
 	cls-test-11 cls-test-12 cls-test-14 cls-test-15 cls-test-16 \
 	2test-1  2test-2  2test-3  2test-4  2test-5  2test-6  2test-7  2test-8  2test-9  2test-10 \
