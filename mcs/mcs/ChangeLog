@@ -1,3 +1,8 @@
+2003-03-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (FieldExpr): do not allow initialization of initonly
+	fields on derived classes
+
 2003-03-13  Martin Baulig  <martin@ximian.com>
 
 	* statement.cs (Block.Emit): Call ig.BeginScope() and
