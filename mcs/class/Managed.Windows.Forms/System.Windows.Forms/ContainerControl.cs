@@ -27,19 +27,26 @@
 
 // NOT COMPLETE
 
+using System.ComponentModel;
+using System.ComponentModel.Design;
+
 namespace System.Windows.Forms {
 	public class ContainerControl : ScrollableControl, IContainerControl {
 		private Control active_control;
 		private Control focused_control;
+		private Control	unvalidated_control;
 
 		#region Public Constructors
 		public ContainerControl() {
 			active_control = null;
 			focused_control = null;
+			unvalidated_control = null;
 		}
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties
+		[Browsable (false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Control ActiveControl {
 			get {
 				return active_control;
@@ -56,10 +63,14 @@ namespace System.Windows.Forms {
 					throw new ArgumentException("Not a child control");
 				}
 
-				XplatUI.SetFocus(active_control.window.Handle);
+				// Scroll control into view
+
+				// Let the control know it's selected
+				Select(value);
 			}
 		}
 
+		[Browsable (false)]
 		public override BindingContext BindingContext {
 			get {
 				if (base.BindingContext == null) {
@@ -73,6 +84,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable (false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Form ParentForm {
 			get {
 				Control parent;
@@ -100,30 +113,51 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Methods
 
 		#region Public Instance Methods
+		[MonoTODO]
 		public bool Validate() {
 			throw new NotImplementedException();
 		}
 
-		bool IContainerControl.ActivateControl(Control control) {
-			throw new NotImplementedException();
+		public bool ActivateControl(Control control) {
+			return Select(control);
 		}
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override void AdjustFormScrollbars(bool displayScrollbars) {
+			// Internal MS
 		}
 
 		protected override void Dispose(bool disposing) {
+			base.Dispose(disposing);
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override void OnControlRemoved(ControlEventArgs e) {
+			if (e.Control == this.unvalidated_control) {
+				this.unvalidated_control = null;
+			}
+
+			if (e.Control == this.active_control) {
+				this.unvalidated_control = null;
+			}
+
+			base.OnControlRemoved(e);
 		}
 
 		protected override void OnCreateControl() {
+			base.OnCreateControl();
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override bool ProcessDialogChar(char charCode) {
-			throw new NotImplementedException();
+			if (GetTopLevel()) {
+				if (ProcessMnemonic(charCode)) {
+					return true;
+				}
+			}
+			return base.ProcessDialogChar(charCode);
 		}
 
 		protected override bool ProcessDialogKey(Keys keyData) {
@@ -164,11 +198,32 @@ namespace System.Windows.Forms {
 
 			}
 			return base.ProcessDialogKey(keyData);
-
 		}
 
 		protected override bool ProcessMnemonic(char charCode) {
-			throw new NotImplementedException();
+			bool	wrapped;
+			Control	c;
+
+			wrapped = false;
+			c = active_control;
+
+			do {
+				c = GetNextControl(c, true);
+				if (c != null) {
+					// This is stupid. I want to be able to call c.ProcessMnemonic directly
+					if (c.ProcessControlMnemonic(charCode)) {
+						return(true);
+					}
+					continue;
+				} else {
+					if (wrapped) {
+						break;
+					}
+					wrapped = true;
+				}
+			} while (c != active_control);
+			
+			return false;
 		}
 
 		protected virtual bool ProcessTabKey(bool forward) {
@@ -180,8 +235,10 @@ namespace System.Windows.Forms {
 		}
 
 		protected virtual void UpdateDefaultButton() {
+			// MS Internal
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override void WndProc(ref Message m) {
 			base.WndProc(ref m);
 		}

@@ -701,8 +701,8 @@ namespace System.Windows.Forms
 		}
 
 		internal bool Select(Control control) {
-			Control	parent;
-			IContainerControl container;
+			Control			parent;
+			IContainerControl	container;
 
 			if (control == null) {
 				return false;
@@ -755,6 +755,10 @@ namespace System.Windows.Forms
 				
 			return buttons;
 
+		}
+
+		internal virtual bool ProcessControlMnemonic(char charCode) {
+			return ProcessMnemonic(charCode);
 		}
 
 		private static Control FindFlatForward(Control container, Control start) {
@@ -2324,7 +2328,7 @@ namespace System.Windows.Forms
 		public virtual bool PreProcessMessage(ref Message msg) {
 			Keys key_data;
 
-			if (msg.Msg == (int)Msg.WM_KEYDOWN) {
+			if ((msg.Msg == (int)Msg.WM_KEYDOWN) || (msg.Msg == (int)Msg.WM_SYSKEYDOWN)) {
 				key_data = (Keys)msg.WParam.ToInt32();
 				if (!ProcessCmdKey(ref msg, key_data)) {
 					if (IsInputKey(key_data)) {
@@ -2335,7 +2339,7 @@ namespace System.Windows.Forms
 				}
 
 				return true;
-			} else if (msg.Msg == (int)Msg.WM_CHAR) {
+			} else if ((msg.Msg == (int)Msg.WM_CHAR) || (msg.Msg == (int)Msg.WM_SYSCHAR)) {
 				if (IsInputChar((char)msg.WParam)) {
 					return false;
 				}
@@ -2602,7 +2606,7 @@ namespace System.Windows.Forms
 				return parent.IsInputChar(charCode);
 			}
 
-			return true;
+			return false;
 		}
 
 		protected virtual bool IsInputKey (Keys keyData) {
@@ -2646,8 +2650,6 @@ namespace System.Windows.Forms
 		protected virtual bool ProcessKeyEventArgs (ref Message msg)
 		{
 			KeyEventArgs		key_event;
-
-			PreProcessMessage(ref msg);
 
 			switch (msg.Msg) {
 				case (int)Msg.WM_KEYDOWN: {
@@ -3268,25 +3270,21 @@ namespace System.Windows.Forms
 					OnMouseHover(EventArgs.Empty);
 					return;
 				}
-				
-				case Msg.WM_KEYDOWN: {
-					if (!ProcessKeyMessage(ref m)) {
-						DefWndProc (ref m);
-					}
-					return;
-				}
 
-				case Msg.WM_KEYUP: {
-					if (!ProcessKeyMessage(ref m)) {
-						DefWndProc (ref m);
-					}
-					return;
-				}		
-
+				case Msg.WM_SYSKEYDOWN:
+				case Msg.WM_KEYDOWN:
+				case Msg.WM_SYSKEYUP:
+				case Msg.WM_KEYUP:
+				case Msg.WM_SYSCHAR:
 				case Msg.WM_CHAR: {
-					if (!ProcessKeyMessage(ref m)) {
-						DefWndProc (ref m);
+					if (PreProcessMessage(ref m)) {
+						return;
 					}
+
+					if (ProcessKeyMessage(ref m)) {
+						return;
+					}
+					DefWndProc (ref m);
 					return;
 				}
 

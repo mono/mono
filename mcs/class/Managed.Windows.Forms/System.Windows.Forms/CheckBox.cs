@@ -316,7 +316,13 @@ namespace System.Windows.Forms {
 		}
 
 		protected override bool ProcessMnemonic(char charCode) {
-			return base.ProcessMnemonic (charCode);
+			if (IsMnemonic(charCode, Text) == true) {
+				Select();
+				OnClick(EventArgs.Empty);
+				return true;
+			}
+			
+			return base.ProcessMnemonic(charCode);
 		}
 		#endregion	// Protected Instance Methods
 

@@ -249,7 +249,7 @@ namespace System.Windows.Forms {
 			show_in_taskbar = true;
 			ime_mode = ImeMode.NoControl;
 			is_visible = false;
-
+			is_toplevel = true;
 			owned_forms = new Form.ControlCollection(this);
 		}
 		#endregion	// Public Constructor & Destructor

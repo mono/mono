@@ -1,4 +1,25 @@
-2005-02-13  Peter Bartok  <pbartok@novell.com>
+2005-02-15  Peter Bartok  <pbartok@novell.com>
+
+	* RadioButton.cs (ProcessMnemonic): Implemented
+	* CheckBox.cs (ProcessMnemonic): Implemented
+	* Control.cs:
+	  - Added handling of WM_SYSxxx keyboard messages to support mnemonic
+	    handling
+	  - Added internal method to allow calling ProcessMnemonic from other
+	    controls
+	* ContainerControl.cs:
+	  - Started support for handling validation chain handling
+	  - Implemented ProcessMnemonic support
+	  - Added Select() call to Active, to make sure the active control
+	    receives focus
+	* Form.cs: Setting toplevel flag for Forms (this was lost in the
+	  FormParent rewrite)
+	* ThemeWin32Classic.cs: 
+	  - DrawCheckBox(): Fixed stringformat to show hotkeys
+	  - DrawRadioButton(): Fixed stringformat to show hotkeys
+	* CommonDialog.cs: Removed WndProc override, not needed
+
+2005-02-14  Peter Bartok  <pbartok@novell.com>
 
 	* XplatUIX11.cs: Fixed NotImplemented exceptions for properties,
 	  missed those in the rewrite

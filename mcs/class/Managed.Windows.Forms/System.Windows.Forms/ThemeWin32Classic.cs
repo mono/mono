@@ -30,6 +30,7 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Drawing.Text;
 
 namespace System.Windows.Forms
 {
@@ -393,6 +394,7 @@ namespace System.Windows.Forms
 			text_format = new StringFormat();
 			text_format.Alignment=StringAlignment.Near;
 			text_format.LineAlignment=StringAlignment.Center;
+			text_format.HotkeyPrefix = HotkeyPrefix.Show;
 
 			/* Calculate the position of text and checkbox rectangle */
 			if (checkbox.appearance!=Appearance.Button) {
@@ -1799,6 +1801,7 @@ namespace System.Windows.Forms
 			text_format = new StringFormat();
 			text_format.Alignment = StringAlignment.Near;
 			text_format.LineAlignment = StringAlignment.Center;
+			text_format.HotkeyPrefix = HotkeyPrefix.Show;
 
 			/* Calculate the position of text and checkbox rectangle */
 			if (radio_button.appearance!=Appearance.Button) {

@@ -54,17 +54,11 @@ namespace System.Windows.Forms {
 
 					cp = base.CreateParams;
 
-					// FIXME - I need to rethink this a bit, we're loosing any cp.Style set in base; might not matter though
 					cp.Style = (int)(WindowStyles.WS_POPUP | WindowStyles.WS_CAPTION | WindowStyles.WS_SYSMENU | WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS);
 
 					return cp;
 				}
 			}
-
-			protected override void WndProc(ref Message m) {
-				base.WndProc (ref m);
-			}
-
 			#endregion	// Protected Instance Properties
 
 			#region Internal Methods
