@@ -13,6 +13,7 @@ using System;
 using System.CodeDom;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Security.Policy;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.XPath;
@@ -77,9 +78,12 @@ namespace Mono.Xml.Xsl {
 		
 		XslStylesheet rootStyle;
 				
-		public CompiledStylesheet Compile (XPathNavigator nav, XmlResolver res)
+		public CompiledStylesheet Compile (XPathNavigator nav, XmlResolver res, Evidence evidence)
 		{
 			this.res = res;
+			if (res == null)
+				this.res = new XmlUrlResolver ();
+
 			if (!nav.MoveToFirstChild ()) throw new Exception ("WTF?");
 				
 			while (nav.NodeType != XPathNodeType.Element) nav.MoveToNext();

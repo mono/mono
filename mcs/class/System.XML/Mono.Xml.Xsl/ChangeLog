@@ -1,3 +1,8 @@
+2003-08-14 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* Compiler.cs : 1) Changed public .ctor() to receive Evidence argument 
+	  introduced in .NET 1.1. 2) XmlResolver object is required for 'res'.
+
 2003-08-07 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* XslTransformProcessor.cs: Add a table to detect when an object
