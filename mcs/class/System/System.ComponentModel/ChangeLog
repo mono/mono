@@ -1,3 +1,7 @@
+2003-01-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TypeDescriptor.cs: moved code from GetProperties (object) to (Type).
+
 2002-11-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DefaultValueAttribute.cs: the attribute applies to All.
