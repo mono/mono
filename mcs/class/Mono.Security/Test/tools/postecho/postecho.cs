@@ -28,6 +28,8 @@ class PostEcho {
 
 	static string PostWeb (string url, byte[] buffer)
 	{
+		ServicePointManager.CertificatePolicy = new TestCertificatePolicy ();
+
 		string postdata = "TEST=";
 		HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
 		req.Method = "POST";
@@ -179,6 +181,23 @@ class PostEcho {
 		}
 		// whatever the reason we do not stop the SSL connection
 		return true;
+	}
+
+	public class TestCertificatePolicy : ICertificatePolicy {
+
+		public bool CheckValidationResult (ServicePoint sp, X509Certificate certificate, WebRequest request, int error)
+		{
+			if (error != 0) {
+				Console.WriteLine (certificate.ToString (true));
+				// X509Certificate.ToString(true) doesn't show dates :-(
+				Console.WriteLine ("\tValid From:  {0}", certificate.GetEffectiveDateString ());
+				Console.WriteLine ("\tValid Until: {0}{1}", certificate.GetExpirationDateString (), Environment.NewLine);
+
+				ShowCertificateError (error);
+			}
+			// whatever the reason we do not stop the SSL connection
+			return true;
+		}
 	}
 }
 
