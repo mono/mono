@@ -116,11 +116,11 @@ namespace System.Reflection {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern FieldInfo internal_from_handle (RuntimeFieldHandle handle);
+		private static extern FieldInfo internal_from_handle (IntPtr handle);
 
 		public static FieldInfo GetFieldFromHandle (RuntimeFieldHandle handle)
 		{
-			return internal_from_handle (handle);
+			return internal_from_handle (handle.Value);
 		}
 	}
 }

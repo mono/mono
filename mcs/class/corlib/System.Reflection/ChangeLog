@@ -1,3 +1,9 @@
+
+Thu Jul 17 17:26:59 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* FieldInfo.cs, MonoField.cs: cleanups. Cache some info and use
+	finer-grained icalls. Requires a matching runtime.
+
 2003-07-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyFlagsAttribute.cs: Added new constructor from NET 1.1.
