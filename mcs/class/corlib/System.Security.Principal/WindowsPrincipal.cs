@@ -99,7 +99,7 @@ namespace System.Security.Principal {
 					m_roles = WindowsIdentity._GetRoles (Token);
 				}
 #if !NET_1_0
-				role = role.ToUpper ();
+				role = role.ToUpperInvariant ();
 #endif
 				foreach (string check in m_roles) {
 #if NET_1_0
@@ -107,7 +107,7 @@ namespace System.Security.Principal {
 						return true;
 #else
 					Console.WriteLine ("> {0}", check);
-					if ((check != null) && (role == check.ToUpper ()))
+					if ((check != null) && (role == check.ToUpperInvariant ()))
 						return true;
 #endif
 				}
