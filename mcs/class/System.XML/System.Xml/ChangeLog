@@ -1,5 +1,9 @@
 2004-07-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlConvertDateTimeOption.cs : Forgot to change the content...
+
+2004-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ConformanceLevel.cs : Fixed integer value.
 	* Added XmlConvertDateTimeOption.cs.
 	* Removed XmlItemView.cs and XmlItemViewCollection.cs.

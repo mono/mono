@@ -29,18 +29,11 @@
 
 namespace System.Xml {
 
+	public enum XmlConvertDateTimeOption {
 
-	/// <summary>
-	/// </summary>
-	public enum Formatting {
+		Local = 0,
 
-		/// <summary>
-		/// </summary>
-		None = 0,
+		RoundTrip= 1,
+	}
 
-		/// <summary>
-		/// </summary>
-		Indented = 1,
-	} // Formatting
-
-} // System.Xml
+}
