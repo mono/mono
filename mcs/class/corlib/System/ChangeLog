@@ -1,3 +1,8 @@
+
+Mon Apr 29 15:32:02 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Environment.cs: support for Exit(), CommandLine, CommandLineArgs ().
+
 2002-04-28  Duncan Mak  <duncan@ximian.com>
 
 	* DivideByZeroException.cs: Added missing serialization constructor.

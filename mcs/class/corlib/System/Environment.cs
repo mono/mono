@@ -58,7 +58,9 @@ namespace System
 			// [EnvironmentPermissionAttribute(SecurityAction.Demand, Read = "COMMANDLINE")]
 			get
 			{
-				return GetCommandLine ();
+				// FIXME: we may need to quote, but any sane person
+				// should use GetCommandLineArgs () instead.
+				return String.Join ("", GetCommandLineArgs ());
 			}
 		}
 
@@ -231,10 +233,8 @@ namespace System
 			}
 		}
 
-		[MonoTODO]
-		public static void Exit(int exitCode)
-		{ 
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static void Exit(int exitCode);
 
 		/// <summary>
 		/// Substitute environment variables in the argument "name"
@@ -248,12 +248,8 @@ namespace System
 		/// <summary>
 		/// Return an array of the command line arguments of the current process
 		/// </summary>
-		public static string[] GetCommandLineArgs()
-		{
-			char[] delimiter = new char[1];
-			delimiter[0] = ' ';
-			return CommandLine.Split (delimiter);
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static string[] GetCommandLineArgs();
 
 		/// <summary>
 		/// Return a string containing the value of the environment
@@ -299,7 +295,5 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static string [] GetEnvironmentVariableNames ();
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern static string GetCommandLine ();
 	}
 }
