@@ -27,6 +27,7 @@ namespace System.Reflection.Emit {
 		private byte[] rva_data;
 		private CustomAttributeBuilder[] cattrs;
 		private UnmanagedMarshal marshal_info;
+		private RuntimeFieldHandle handle;
 
 		internal FieldBuilder (TypeBuilder tb, string fieldName, Type type, FieldAttributes attributes) {
 			attrs = attributes;
