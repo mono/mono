@@ -1,3 +1,9 @@
+2003-07-02  Dick Porter  <dick@ximian.com>
+
+	* timed-thread.c (_wapi_timed_thread_exit): 
+	* threads.c: Let the timed thread code deal with deleting the
+	thread info struct.  (Valgrind noticed that the join_mutex could
+	be locked when it was being deleted.)
 
 Wed Jun 18 19:08:40 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
