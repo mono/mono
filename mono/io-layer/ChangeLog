@@ -1,3 +1,9 @@
+2001-11-10  Dick Porter  <dick@ximian.com>
+
+	* Makefile.am (libwapiincludedir): Fix include destination
+
+	* .cvsignore: Ignore generated files
+
 2001-11-10  Dietmar Maurer  <dietmar@ximian.com>
 
 	* pthread-compat.c: added some include files to make it compile on
