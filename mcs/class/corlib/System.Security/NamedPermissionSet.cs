@@ -39,7 +39,7 @@ namespace System.Security {
 		public string Name {
 			get { return name; }
 			set { 
-				if ((name == null) || (name == String.Empty)) 
+				if ((value == null) || (value == String.Empty)) 
 					throw new ArgumentException ("invalid name");
 				name = value; 
 			}

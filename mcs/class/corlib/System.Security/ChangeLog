@@ -1,3 +1,7 @@
+2002-06-29  Nick Drochak  <ndrochak@gol.com>
+
+	* NamedPermissionSet.cs : Fix buglet/typo/thinko. Thank you unit tests.
+
 2003-06-28  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CodeAccessPermission.cs: Added missing methods. Removed old XML
