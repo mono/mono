@@ -22,11 +22,11 @@ using System.IO;
 
 using Mono.Xml.Xsl.Operations;
 using Mono.Xml.XPath;
-using Mono.Xml.Xsl.Functions;
 
 using QName = System.Xml.XmlQualifiedName;
 
-namespace Mono.Xml.Xsl {
+namespace Mono.Xml.Xsl 
+{
 	public class CompiledStylesheet {
 		XslStylesheet style;
 		Hashtable globalVariables;

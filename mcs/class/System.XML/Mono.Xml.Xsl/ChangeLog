@@ -1,3 +1,10 @@
+2004-02-17 Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsltCompiledContext.cs : Extracted XslFunctions and changed namespace
+	  from Mono.Xml.Xsl.Functions to Mono.Xml.Xsl.
+	* XslFunctions.cs : hereby Added.
+	* Compiler.cs : Removed deleted usingdecl.
+
 2004-02-16 Atsushi Enomoto <atsushi@ximian.com>
 
 	* XslTransformProcessor.cs : Bugfix. Stored keys should be cleared.
