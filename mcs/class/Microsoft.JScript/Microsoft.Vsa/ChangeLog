@@ -1,0 +1,9 @@
+2003-09-25    <cesar@ciencias.unam.mx>
+
+	* BaseVsaEngine.cs: Implemented the properties of "the kind of
+	state machine" that BaseVsaEngine is. There are some tiny details
+	- properly marked to be fixed - missing ;-). They were: Assembly,
+	Evidence, GenerateDebug, IsCompiled, IsDirty, IsRunning, Language,
+	LCID, Name, RootMoniker, RootNamespace, Site.
+	
+
