@@ -14,7 +14,7 @@ using System.Data.Common;
 
 namespace System.Data.Odbc
 {
-	public class OdbcError
+	public sealed class OdbcError
 	{
 		string message,source,sqlstate;
 		int nativeerror;
@@ -113,6 +113,16 @@ namespace System.Data.Odbc
 		}
 
 		#endregion // Properties
+		
+		#region methods
+		
+		public override string ToString () 
+		{
+			return Message;
+		}	
+			
+		#endregion
 
 	}
+
 }
