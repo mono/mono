@@ -1,3 +1,6 @@
+2005-04-05  Boris Kirzner <borisk@mainsoft.com>
+	* Added Novell.Directory.Ldap.Rfc2251/RfcLdapSuperDN.cs to sources.
+
 2004-12-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : csc wanted ".dll" for Mono.Security

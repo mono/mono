@@ -65,6 +65,7 @@ Novell.Directory.Ldap.Rfc2251/RfcAbandonRequest.cs
 Novell.Directory.Ldap.Rfc2251/RfcAuthenticationChoice.cs
 Novell.Directory.Ldap.Rfc2251/RfcFilter.cs
 Novell.Directory.Ldap.Rfc2251/RfcLdapString.cs
+Novell.Directory.Ldap.Rfc2251/RfcLdapSuperDN.cs
 Novell.Directory.Ldap.Rfc2251/RfcLdapOID.cs
 Novell.Directory.Ldap.Rfc2251/RfcLdapDN.cs
 Novell.Directory.Ldap.Rfc2251/RfcMessageID.cs
