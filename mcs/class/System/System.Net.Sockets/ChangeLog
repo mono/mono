@@ -1,3 +1,11 @@
+2002-11-03  Phillip Pearson  <pp@myelin.co.nz>
+
+	* TcpClient.cs: Fixed SetTcpClient() to pass through to the Client 
+	property, which now sets stream to null (it's set by GetStream()).  This 
+	should make GetStream() work on a TcpClient which has had the socket set 
+	by assignment to the Client property, not only one that has been created 
+	by TcpListener.AcceptTcpClient().
+
 2002-10-08  Dick Porter  <dick@ximian.com>
 
 	* Socket.cs: 

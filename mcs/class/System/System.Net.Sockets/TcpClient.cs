@@ -91,7 +91,10 @@ namespace System.Net.Sockets
 		protected Socket Client
 		{
 			get { return client; }
-			set { client = value; }
+			set {
+				client = value;
+				stream = null;
+			}
 		}
 
 		/// <summary>
@@ -102,8 +105,7 @@ namespace System.Net.Sockets
 		/// <param name="s"></param>
 		internal void SetTcpClient (Socket s) 
 		{
-			client = s;
-			stream = new NetworkStream (client, true);
+			Client = s;
 		}
 		
 		/// <summary>
@@ -325,7 +327,13 @@ namespace System.Net.Sockets
 		/// connection socket</returns>
 		public NetworkStream GetStream()
 		{
-			try { return stream; }
+			try {
+				if (stream == null)
+				{
+					stream = new NetworkStream (client, true);
+				}
+				return stream;
+			}
 			finally { CheckDisposed (); }
 		}
 		
