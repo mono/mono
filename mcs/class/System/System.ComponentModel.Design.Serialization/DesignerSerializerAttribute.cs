@@ -2,54 +2,49 @@
 // System.ComponentModel.Design.Serialization.DesignerSerializerAttribute.cs
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Martin Willemoes Hansen
+// (C) 2003 Andreas Nahr
 //
 
 namespace System.ComponentModel.Design.Serialization
 {
-	[AttributeUsage(AttributeTargets.Class |
-			AttributeTargets.Interface)]
-        public sealed class DesignerSerializerAttribute : Attribute
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = true, Inherited = true)]
+	public sealed class DesignerSerializerAttribute : Attribute
 	{
-		[MonoTODO]
+
+		private string serializerTypeName;
+		private string baseSerializerTypeName;
+
 		public DesignerSerializerAttribute (string serializerTypeName,
-						    string baseSerializerTypeName)
+			string baseSerializerTypeName)
+		{
+			this.serializerTypeName = serializerTypeName;
+			this.baseSerializerTypeName = baseSerializerTypeName;
+		}
+
+		public DesignerSerializerAttribute (string serializerTypeName, Type baseSerializerType)
+			: this (serializerTypeName, baseSerializerType.AssemblyQualifiedName)
 		{
 		}
 
-		[MonoTODO]
-		public DesignerSerializerAttribute (string serializerTypeName,
-						    Type baseSerializerType)
-		{
-		}
-
-		[MonoTODO]
-		public DesignerSerializerAttribute (Type serializerType,
-						    Type baseSerializerType)
+		public DesignerSerializerAttribute (Type serializerType, Type baseSerializerType)
+			: this (serializerType.AssemblyQualifiedName, baseSerializerType.AssemblyQualifiedName)
 		{
 		}
 
 		public string SerializerBaseTypeName {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return baseSerializerTypeName; }
 		}
 
 		public string SerializerTypeName {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
+			get { return serializerTypeName; }
 		}
 
 		public override object TypeId {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
-		}
-
-		[MonoTODO]
-		public override int GetHashCode()
-		{
-			throw new NotImplementedException();
+			get { return string.Concat (this.ToString(), baseSerializerTypeName); }
 		}
 	}
 }

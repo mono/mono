@@ -1,44 +1,66 @@
+//
 // System.ComponentModel.Design.Serialization.ContextStack.cs
 //
 // Author:
-//      Alejandro Sánchez Acosta   <raciel@gnome.org>
+//   Alejandro Sánchez Acosta (raciel@gnome.org)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Alejandro Sánchez Acosta
+// (C) 2003 Andreas Nahr
 //
 
 using System.Collections;
 
 namespace System.ComponentModel.Design.Serialization
 {
-        public sealed class ContextStack
-        {
-		public ArrayList list;
-		
-                public ContextStack () {
-                        list = new ArrayList ();
-                }
+	public sealed class ContextStack
+	{
+		private Stack stack;
 
-                public object Current {
-                        get { 
-                                if (list.Count == 0) return null;
-                                return list [list.Count - 1];
-                        }
+		public ContextStack () 
+		{
+			stack = new Stack ();
+		}
 
-			set { 
- 				list.Add (value);
-                        }
-                }
+		public object Current {
+			get { 
+				try {
+					return stack.Peek ();
+				}
+				catch {
+					return null;
+				}
+			}
+		}
 
-                [MonoTODO]
 		public object this[Type type] {
-                        get { throw new NotImplementedException ();}
-                        set { throw new NotImplementedException ();}
-                }
+			get {
+				foreach (object o in stack.ToArray())
+					if (o.GetType () == type)
+ 						return o;
+				return null;
+			}
+		}
 
-                [MonoTODO]
-                public object this[int level] {
-                        get { throw new NotImplementedException ();}
-                        set { throw new NotImplementedException ();}
-                }
+		public object this[int level] {
+			get {
+				if (level < 0)
+					throw new ArgumentException ("level has to be >= 0","level");
+				Array A = stack.ToArray();
+				if (level > (A.Length - 1))
+					return null;
+				return A.GetValue(level);
+			}
+		}
+
+		public object Pop ()
+		{
+			return stack.Pop ();
+		}
+
+		public void Push (object context)
+		{
+			stack.Push (context);
+		}
 	}
 }

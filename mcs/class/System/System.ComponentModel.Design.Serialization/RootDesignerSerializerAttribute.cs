@@ -1,20 +1,21 @@
+//
 // System.ComponentModel.Design.Serialization.RootDesignerSerializerAttribute.cs
 //
-// Author:
-// 	Alejandro Sánchez Acosta   <raciel@gnome.org>
+// Authors:
+//   Alejandro Sánchez Acosta (raciel@gnome.org)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Alejandro Sánchez Acosta
+// (C) 2003 Andreas Nahr
 //
 
 namespace System.ComponentModel.Design.Serialization
 {
-	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = true, Inherited = true)]
 	public sealed class RootDesignerSerializerAttribute : Attribute
 	{
 		private string serializer;
 		private string baseserializer;
-		private Type basetypeserializer;
-		private Type serializertype;
 		private bool reload;
 		
 		public RootDesignerSerializerAttribute (string serializerTypeName, string baseSerializerTypeName, bool reloadable) {
@@ -23,25 +24,19 @@ namespace System.ComponentModel.Design.Serialization
 			this.reload = reloadable;
 		}
 
-		public RootDesignerSerializerAttribute (string serializerTypeName, Type baseSerializerType, bool reloadable) {
-			this.serializer = serializerTypeName;
-			this.basetypeserializer = baseSerializerType;
-			this.reload = reloadable;
+		public RootDesignerSerializerAttribute (string serializerTypeName, Type baseSerializerType, bool reloadable)
+			: this (serializerTypeName, baseSerializerType.AssemblyQualifiedName, reloadable)
+		{
 		}
 
-		public RootDesignerSerializerAttribute (Type serializerType, Type baseSerializerType, bool reloadable) {
-			this.serializertype = serializerType;
-			this.basetypeserializer = baseSerializerType;
-			this.reload = reloadable;
+		public RootDesignerSerializerAttribute (Type serializerType, Type baseSerializerType, bool reloadable) 
+			: this (serializerType.AssemblyQualifiedName, baseSerializerType.AssemblyQualifiedName, reloadable)
+		{
 		}
 
 		public bool Reloadable {
 			get {
 				return this.reload;
-			}
-			
-			set {
-				this.reload = value;
 			}
 		}
 
@@ -49,31 +44,16 @@ namespace System.ComponentModel.Design.Serialization
 			get {
 				return this.baseserializer;
 			}
-
-			set {
-				this.baseserializer = value;
-			}
 		}
 
 		public string SerializerTypeName {
 			get {
 				return this.serializer;
 			}
-			
-			set {
-				serializer = value;
-			}
 		}
 
-		[MonoTODO]
 		public override object TypeId {
-			get { throw new NotImplementedException ();}
-		}
-
-		[MonoTODO]
-		public override int GetHashCode() 
-		{
-			throw new NotImplementedException();
+			get { return string.Concat (this.ToString(), baseserializer);}
 		}
 	}
 }
