@@ -151,7 +151,7 @@ namespace Mono.Data.MySql {
 
 			}
 
-			reader = new MySqlDataReader(this);
+			reader = new MySqlDataReader(this, behavior);
 			reader.NextResult();
 
 			return reader;
@@ -176,11 +176,13 @@ namespace Mono.Data.MySql {
 			
 			int numFields = MySql.NumFields(res);
 						
-			Field fd = (Field) Marshal.PtrToStructure(MySql.FetchField(res), typeof(Field));
+			MySqlMarshalledField fd;
+			fd = (MySqlMarshalledField) Marshal.PtrToStructure(MySql.FetchField(res), 
+				typeof(MySqlMarshalledField));
 			string fieldName = fd.Name;
 			int fieldType = fd.FieldType; 
 
-			Console.WriteLine("*** DEBUG: MySql FieldType: " + fieldType);
+			//Console.WriteLine("*** DEBUG: MySql FieldType: " + fieldType);
 						
 			IntPtr row;
 			row = MySql.FetchRow(res);
@@ -188,8 +190,8 @@ namespace Mono.Data.MySql {
 				Console.WriteLine("*** Error: Row returned IntPtr.Zero");
 			}
 			else {
-				
-				obj = rowVal(row, 0); // only get first column/first row
+				// only get first column/first row
+				obj = GetColumnData(row, 0);
 			}
 			MySql.FreeResult(res);
 
@@ -213,11 +215,13 @@ namespace Mono.Data.MySql {
 		}
 
 		// Used to marshal a field value from the database result set.
-		// the indexed column data on the current result set row
-		internal string rowVal(IntPtr res, int index) {
+		// The indexed column data on the current result set row.
+		// res = the result set from a MySql.Query().
+		// index = the column index.
+		internal string GetColumnData(IntPtr res, int index) {
 			IntPtr str = Marshal.ReadIntPtr(res, index*IntPtr.Size);
 			if (str == IntPtr.Zero)
-				return "NULL";
+				return "";
 			string s = Marshal.PtrToStringAnsi(str);
 			return s;
 		}

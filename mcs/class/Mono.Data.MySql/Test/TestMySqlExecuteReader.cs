@@ -46,16 +46,18 @@ namespace TestSystemDataSqlClient {
 			Console.WriteLine("ExecuteReader...");
 			reader = cmd.ExecuteReader();
 
-			int row = 1;
+			int row = 0;
 			Console.WriteLine("Reading data...");
 			while(reader.Read()){
+				row++;
 				Console.WriteLine("Row: " + row);
 				for(int col = 0; col < reader.FieldCount; col++) {
 					Console.WriteLine("  Field: " + col);
-					string dname = reader.GetName(col);
-					Console.WriteLine("      Name: " + dname);
-					string dvalue = reader.GetValue(col).ToString();
-					Console.WriteLine("      Value: " + dvalue);
+					
+					Console.WriteLine("      Name: " + 
+						reader.GetName(col));
+					Console.WriteLine("      Value: " + 
+						reader.GetValue(col));
 				}
 			}
 			Console.WriteLine("Clean up...");

@@ -28,7 +28,7 @@ namespace Mono.Data.MySql {
 	using System.Runtime.InteropServices;
 
 	[Flags]
-	internal enum MySqlFieldFlags {
+	internal enum MySqlFieldFlags : uint {
 		NOT_NULL_FLAG = 1,
 		PRI_KEY_FLAG = 2,
 		UNIQUE_KEY_FLAG = 4,
@@ -65,9 +65,8 @@ namespace Mono.Data.MySql {
 	///</para>
 	///</remarks>
 	[StructLayout(LayoutKind.Sequential)]
-	public class Field {
+	public class MySqlMarshalledField {
 
-		#region Marshalled members from MySQL struct
 		///<value>name of column</value>
 		[MarshalAs(UnmanagedType.LPStr)]
 		public string Name;
@@ -87,46 +86,32 @@ namespace Mono.Data.MySql {
 		public uint Flags;
 		///<value>number of decimals in field</value>
 		public uint Decimals;	
+	}
 
-		#endregion
-
-		#region Methods
-
-		internal MySqlFieldFlags FlagsEnum {
-			get {
-				string s = Flags.ToString();
-				MySqlFieldFlags f;
-				f = (MySqlFieldFlags) Enum.Parse(typeof(MySqlFieldFlags), s);
-				return f;
-			}
-		}
+	internal sealed class MySqlFieldHelper {	
 		
-		public bool IsPrimaryKey {
-			get {
-				if((this.FlagsEnum & MySqlFieldFlags.PRI_KEY_FLAG).Equals(MySqlFieldFlags.PRI_KEY_FLAG))
-					return true;
-				else
-					return false;
-			}
-		}
-		public bool IsNotNull {
-			get {
-				if((this.FlagsEnum & MySqlFieldFlags.NOT_NULL_FLAG).Equals(MySqlFieldFlags.NOT_NULL_FLAG))
-					return true;
-				else
-					return false;
-			}
-		}
-		public bool IsBlob {
-			get {
-				if((this.FlagsEnum & MySqlFieldFlags.BLOB_FLAG).Equals(MySqlFieldFlags.BLOB_FLAG))
-					return true;
-				else
-					return false;
-			}
+		public static bool IsPrimaryKey(uint fieldFlags) {
+			//  if ((SomeEnum)U & SomeEnum.EnumFlagValue) != 0) {...}
+			if(! (((MySqlFieldFlags) fieldFlags) & MySqlFieldFlags.PRI_KEY_FLAG).Equals(0))	
+				return true;
+			else
+				return false;
 		}
 
-		#endregion
+		public static bool IsNotNull(uint fieldFlags) {
+			
+			if(! (((MySqlFieldFlags) fieldFlags) & MySqlFieldFlags.NOT_NULL_FLAG).Equals(0))	
+				return true;
+			else
+				return false;
+		}
 
+		public static bool IsBlob(uint fieldFlags) {
+			
+			if(! (((MySqlFieldFlags) fieldFlags) & MySqlFieldFlags.BLOB_FLAG).Equals(0))	
+				return true;
+			else
+				return false;
+		}
 	}
 }

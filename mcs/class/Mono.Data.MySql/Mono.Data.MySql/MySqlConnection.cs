@@ -17,8 +17,7 @@ using System.Text;
 
 namespace Mono.Data.MySql {
 
-	public sealed class MySqlConnection : Component, IDbConnection,
-		ICloneable	 {
+	public sealed class MySqlConnection : Component, ICloneable, IDbConnection {
 
 		#region Fields
 
@@ -75,7 +74,7 @@ namespace Mono.Data.MySql {
 	
 		// aka Finalize
 		// [ClassInterface(ClassInterfaceType.AutoDual)]
-		[MonoTODO]
+		//[MonoTODO]
 		~MySqlConnection() {
 			// FIXME: this class need 
 			//        a destructor to release resources
@@ -215,7 +214,6 @@ namespace Mono.Data.MySql {
 		#region Protected Methods
 		
 		[MonoTODO]
-		
 		protected override void Dispose(bool disposing) {
 			if(!this.disposed)
 				try {

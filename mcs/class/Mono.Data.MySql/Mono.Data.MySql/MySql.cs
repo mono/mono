@@ -69,6 +69,11 @@ namespace Mono.Data.MySql {
 		[DllImport("libmySQL", EntryPoint="mysql_init", ExactSpelling=true)]
 		public static extern IntPtr Init(IntPtr db);
 
+		[SuppressUnmanagedCodeSecurity]
+		[DllImport("libmySQL", EntryPoint="mysql_affected_rows", ExactSpelling=true)]
+		public static extern ulong AffectedRows(IntPtr db);
+		//my_ulonglong mysql_affected_rows(MYSQL *mysql);
+
 		///<summary>Connects to a MySql server</summary>
 		///<returns><paramref name="db"/> value on success, else returns IntPtr.Zero</returns>
 		[SuppressUnmanagedCodeSecurity]

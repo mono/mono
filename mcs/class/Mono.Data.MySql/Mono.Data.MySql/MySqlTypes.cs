@@ -116,5 +116,48 @@ namespace Mono.Data.MySql {
 
 			return dbType;
 		}
+
+		// Translates System.Data.DbType to System.Type
+		public static Type DbTypeToSystemType (DbType dType) {
+
+			Type typ = null;
+
+			switch(dType) {
+			case DbType.String:
+				typ = typeof(String);
+				break;
+			case DbType.Boolean:
+				typ = typeof(Boolean);
+				break;
+			case DbType.Int16: 
+				typ = typeof(Int16);
+				break;
+			case DbType.Int32:
+				typ = typeof(Int32);
+				break;
+			case DbType.Int64:
+				typ = typeof(Int64);
+				break;
+			case DbType.Decimal:
+				typ = typeof(Decimal);
+				break;
+			case DbType.Single:
+				typ = typeof(Single);
+				break;
+			case DbType.Double:
+				typ = typeof(Double);
+				break;
+			case DbType.Date:
+			case DbType.Time:
+			case DbType.DateTime:
+				typ = typeof(DateTime);
+				break;
+			default:
+				typ = typeof(String);
+				break;
+			}
+			return typ;
+		}
+
 	}
 }

@@ -1,3 +1,32 @@
+2002-10-12  Daniel Morgan <danmorg@sc.rr.com>
+
+	* Test/MySqlTest.cs: added file - to do
+	  various Tests for the MySql provider
+	  
+	* Mono.Data.MySql/Field.cs: enum MySqlFieldFlags
+	should be unit.  Rename class Field to MySqlMarshalledField
+	to represent what it really is.  Redo handling of field Flags.
+	
+	* Mono.Data.MySql/MySql.cs: added method AffectedRows() to 
+	pinvoke	into mysql_affected_rows() so we can know what rows 
+	were affected by an INSERT, UPDATE, or DELETE SQL statement.
+	
+	* Mono.Data.MySql/MySqlCommand.cs: rename 
+	internal method rowVal() to GetColumnData().  In GetColumnData,
+	if IntPtr.Zero, return an empty "" string instead of "NULL".
+	Pass command behavior to data reader.
+		
+	* Mono.Data.MySql/MySqlDataReader.cs: redo the 
+	way field meta data and data is structured so 
+	a schema DataTable can be built.  Implement
+	GetSchemaTable() to create a DataTable holding the schema
+	of the fields.  Implemented more methods.
+	
+	* Mono.Data.MySql/MySqlTypes.cs: added method to 
+	translate System.Data.DbType to System.Type
+	
+	* est/TestMySqlExecuteReader.cs: minor tweaks
+
 2002-10-11  Daniel Morgan <danmorg@sc.rr.com>
 
 	* Mono.Data.MySql/MySqlTransaction.cs: added to
