@@ -210,6 +210,24 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void GetBytesZero ()
+		{
+			byte[] expected = { 0xd1, 0xda, 0xa7, 0x86, 0x15, 0xf2, 0x87, 0xe6 };
+			Rfc2898DeriveBytes pkcs5 = new Rfc2898DeriveBytes ("password", salt, 5);
+			byte[] key = pkcs5.GetBytes (0);
+			AssertEquals ("GetBytesZero", 0, key.Length);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void GetBytesNegative () 
+		{
+			Rfc2898DeriveBytes pkcs5 = new Rfc2898DeriveBytes ("password", salt, 5);
+			byte[] key = pkcs5.GetBytes (Int32.MinValue);
+		}
+
+		[Test]
 		public void RFC3211_TC1 () 
 		{
 			byte[] expected = { 0xd1, 0xda, 0xa7, 0x86, 0x15, 0xf2, 0x87, 0xe6 };
@@ -228,15 +246,36 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-		public void RFC3211_TC2_Splitted () 
+		public void RFC3211_TC2_TwoBlocks () 
+		{
+			byte[] expected = { 0x6A, 0x89, 0x70, 0xBF, 0x68, 0xC9, 0x2C, 0xAE, 0xA8, 0x4A, 0x8D, 0xF2, 0x85, 0x10, 0x85, 0x86, 0x07, 0x12, 0x63, 0x80, 0xcc, 0x47, 0xab, 0x2d, 0xa6, 0xcc, 0xda, 0xfb, 0x26, 0x83, 0xdf, 0xe8 };
+			Rfc2898DeriveBytes pkcs5 = new Rfc2898DeriveBytes ("All n-entities must communicate with other n-entities via n-1 entiteeheehees", salt, 500);
+			byte[] key = pkcs5.GetBytes (32);
+			AssertEquals ("RFC3211_TC2_TwoBlocks", expected, key);
+		}
+
+		[Test]
+		public void RFC3211_TC2_Splitted_OneBlock () 
 		{
 			Rfc2898DeriveBytes pkcs5 = new Rfc2898DeriveBytes ("All n-entities must communicate with other n-entities via n-1 entiteeheehees", salt, 500);
 			byte[] key1 = pkcs5.GetBytes (8);
 			byte[] expected_part1 = { 0x6A, 0x89, 0x70, 0xBF, 0x68, 0xC9, 0x2C, 0xAE };
-			AssertEquals ("RFC3211_TC2_part1", expected_part1, key1);
+			AssertEquals ("RFC3211_TC2_Splitted_OneBlock-1", expected_part1, key1);
 			byte[] expected_part2 = { 0xA8, 0x4A, 0x8D, 0xF2, 0x85, 0x10, 0x85, 0x86 };
 			byte[] key2 = pkcs5.GetBytes (8);
-			AssertEquals ("RFC3211_TC2_part2", expected_part2, key2);
+			AssertEquals ("RFC3211_TC2_Splitted_OneBlock-2", expected_part2, key2);
+		}
+
+		[Test]
+		public void RFC3211_TC2_Splitted_TwoBlocks () 
+		{
+			Rfc2898DeriveBytes pkcs5 = new Rfc2898DeriveBytes ("All n-entities must communicate with other n-entities via n-1 entiteeheehees", salt, 500);
+			byte[] key1 = pkcs5.GetBytes (16);
+			byte[] expected_part1 = { 0x6A, 0x89, 0x70, 0xBF, 0x68, 0xC9, 0x2C, 0xAE, 0xA8, 0x4A, 0x8D, 0xF2, 0x85, 0x10, 0x85, 0x86 };
+			AssertEquals ("RFC3211_TC2_Splitted_TwoBlocks-1", expected_part1, key1);
+			byte[] expected_part2 = { 0x07, 0x12, 0x63, 0x80, 0xcc, 0x47, 0xab, 0x2d, 0xa6, 0xcc, 0xda, 0xfb, 0x26, 0x83, 0xdf, 0xe8 };
+			byte[] key2 = pkcs5.GetBytes (16);
+			AssertEquals ("RFC3211_TC2_Splitted_TwoBlocks-2", expected_part2, key2);
 		}
 
 		[Test]

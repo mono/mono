@@ -1,3 +1,8 @@
+2003-11-11  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* Rfc2898DeriveBytesTest.cs: More tests for Reset and keys longer than
+	a single block.
+
 2003-11-10  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Rfc2898DeriveBytesTest.cs: New. Unit tests for Rfc2898DeriveBytes
