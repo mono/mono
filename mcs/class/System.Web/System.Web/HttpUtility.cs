@@ -342,7 +342,7 @@ namespace System.Web {
 				return null;
 
 			if (e == null)
-				e = Encoding.Default;
+				e = WebEncoding.Encoding;
 	
 			StringBuilder output = new StringBuilder ();
 			long len = s.Length;

@@ -13,6 +13,7 @@ using System.IO;
 using System.Text;
 using System.Web;
 using System.Web.Compilation;
+using System.Web.Util;
 
 namespace System.Web.UI
 {
@@ -63,7 +64,7 @@ namespace System.Web.UI
 
 		private void ParseDirective (string line)
 		{
-			MemoryStream st = new MemoryStream (Encoding.Default.GetBytes (line));
+			MemoryStream st = new MemoryStream (WebEncoding.Encoding.GetBytes (line));
 			AspParser parser = new AspParser (physPath, st);
 			parser.Parse ();
 			ArrayList elems = parser.Elements;

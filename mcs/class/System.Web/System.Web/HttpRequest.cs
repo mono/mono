@@ -72,7 +72,7 @@ namespace System.Web {
 			_sPath = _oUrl.AbsolutePath;
 
 			_sQueryStringRaw = Querystring;
-			_oQueryString = new HttpValueCollection(Querystring, true, Encoding.Default);
+			_oQueryString = new HttpValueCollection(Querystring, true, WebEncoding.Encoding);
 		}
 
 		internal HttpRequest(HttpWorkerRequest WorkRequest, HttpContext Context) {
@@ -320,14 +320,14 @@ namespace System.Web {
 				if (_oContentEncoding == null) {
 					if (_WorkerRequest != null && 
 					    (!_WorkerRequest.HasEntityBody () || ContentType != String.Empty)) {
-						_oContentEncoding = Encoding.Default;
+						_oContentEncoding = WebEncoding.Encoding;
 					} else  {
 						string charset;
 						charset = GetValueFromHeader (_sContentType, "charset");
 						try {
 							_oContentEncoding = Encoding.GetEncoding (charset);
 						} catch {
-							_oContentEncoding = Encoding.Default;
+							_oContentEncoding = WebEncoding.Encoding;
 						}
 					}
 				}
