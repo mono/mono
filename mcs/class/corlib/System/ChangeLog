@@ -1,4 +1,11 @@
 
+Mon Mar 4 20:36:05 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Type.cs: fixed IsClass.
+	* MonoType.cs: fixed MemberType, IsPrimitiveImpl, IsPointerImpl,
+	IsByRefImpl. Added GetInterfaces().
+	* IServiceProvider.cs: compilation fix.
+
 Mon Mar 4 18:37:03 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* Array.cs: allow copying an empty array to an empty array.

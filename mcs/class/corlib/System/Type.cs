@@ -154,6 +154,8 @@ namespace System {
 			get {
 				if (this == typeof (System.Enum) || this == typeof (System.ValueType))
 					return true;
+				if (IsInterface)
+					return false;
 				return !type_is_subtype_of (this, typeof (System.ValueType), false);
 			}
 		}

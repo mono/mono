@@ -16,10 +16,12 @@ namespace System
 		public string name_space;
 		public Type parent;
 		public Type etype;
-		public Type[] interfaces;
 		public Assembly assembly;
 		public TypeAttributes attrs;
 		public int rank;
+		public bool isbyref;
+		public bool ispointer;
+		public bool isprimitive;
 	}
 
 	internal class MonoType : Type
@@ -71,12 +73,8 @@ namespace System
 			throw new NotImplementedException ();
 		}
 
-		public override Type[] GetInterfaces()
-		{
-			MonoTypeInfo info;
-			get_type_info (_impl, out info);
-			return info.interfaces;
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern override Type[] GetInterfaces();
 		
 		public override MemberInfo[] GetMembers( BindingFlags bindingAttr) {
 			// FIXME
@@ -117,19 +115,22 @@ namespace System
 			return type_is_subtype_of (this, typeof (System.Array), false);
 		}
 		protected override bool IsByRefImpl () {
-			// FIXME
-			return false;
+			MonoTypeInfo info;
+			get_type_info (_impl, out info);
+			return info.isbyref;
 		}
 		protected override bool IsCOMObjectImpl () {
 			return false;
 		}
 		protected override bool IsPointerImpl () {
-			// FIXME
-			return false;
+			MonoTypeInfo info;
+			get_type_info (_impl, out info);
+			return info.ispointer;
 		}
 		protected override bool IsPrimitiveImpl () {
-			// FIXME
-			return false;
+			MonoTypeInfo info;
+			get_type_info (_impl, out info);
+			return info.isprimitive;
 		}
 		protected override bool IsValueTypeImpl () {
 			return type_is_subtype_of (this, typeof (System.ValueType), false) &&
@@ -210,7 +211,7 @@ namespace System
 
 		public override MemberTypes MemberType {
 			get {
-				return MemberTypes.All;
+				return MemberTypes.TypeInfo;
 			}
 		}
 

@@ -9,7 +9,7 @@
 
 namespace System {
 
-	[ComVisible(false)]
+//	[ComVisible(false)]
 	public interface IServiceProvider {
 
 		object GetService (Type serviceType);
