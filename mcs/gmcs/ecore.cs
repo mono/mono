@@ -272,14 +272,14 @@ namespace Mono.CSharp {
 		// value will be returned if the expression is not a type
 		// reference
 		//
-		public TypeExpr ResolveAsTypeTerminal (EmitContext ec, bool silent)
+		public TypeExpr ResolveAsTypeTerminal (EmitContext ec)
 		{
 			int errors = Report.Errors;
 
 			TypeExpr te = ResolveAsTypeStep (ec) as TypeExpr;
 
 			if (te == null || te.eclass != ExprClass.Type) {
-				if (!silent && errors == Report.Errors)
+				if (errors == Report.Errors)
 					Report.Error (246, Location, "Cannot find type '{0}'", ToString ());
 				return null;
 			}
@@ -2077,7 +2077,7 @@ namespace Mono.CSharp {
 
 			TypeParameterExpr generic_type = ds.LookupGeneric (Name, loc);
 			if (generic_type != null)
-				return generic_type.ResolveAsTypeTerminal (ec, false);
+				return generic_type.ResolveAsTypeTerminal (ec);
 
 			if (ec.ResolvingTypeTree){
 				int errors = Report.Errors;
@@ -2322,7 +2322,7 @@ namespace Mono.CSharp {
 
 		override public Expression DoResolve (EmitContext ec)
 		{
-			return ResolveAsTypeTerminal (ec, false);
+			return ResolveAsTypeTerminal (ec);
 		}
 
 		override public void Emit (EmitContext ec)
@@ -2379,7 +2379,7 @@ namespace Mono.CSharp {
 
 		public virtual Type ResolveType (EmitContext ec)
 		{
-			TypeExpr t = ResolveAsTypeTerminal (ec, false);
+			TypeExpr t = ResolveAsTypeTerminal (ec);
 			if (t == null)
 				return null;
 
@@ -2532,7 +2532,7 @@ namespace Mono.CSharp {
 				}
 
 				ConstructedType ctype = new ConstructedType (type, args, loc);
-				return ctype.ResolveAsTypeTerminal (ec, false);
+				return ctype.ResolveAsTypeTerminal (ec);
 			} else if (num_args > 0) {
 				Report.Error (305, loc,
 					      "Using the generic type `{0}' " +
@@ -2546,7 +2546,7 @@ namespace Mono.CSharp {
 
 		public override Type ResolveType (EmitContext ec)
 		{
-			TypeExpr t = ResolveAsTypeTerminal (ec, false);
+			TypeExpr t = ResolveAsTypeTerminal (ec);
 			if (t == null)
 				return null;
 

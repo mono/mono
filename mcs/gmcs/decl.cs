@@ -668,16 +668,6 @@ namespace Mono.CSharp {
 			return type_resolve_ec;
 		}
 
-		// <summary>
-		//    Looks up the type, as parsed into the expression `e'.
-		// </summary>
-		[Obsolete ("This method is going away soon")]
-		public Type ResolveType (Expression e, bool silent, Location loc)
-		{
-			TypeExpr d = ResolveTypeExpr (e, silent, loc);
-			return d == null ? null : d.Type;
-		}
-
 		public Type ResolveNestedType (Type t, Location loc)
 		{
 			TypeContainer tc = TypeManager.LookupTypeContainer (t);
@@ -708,7 +698,7 @@ namespace Mono.CSharp {
 		//    Resolves the expression `e' for a type, and will recursively define
 		//    types.  This should only be used for resolving base types.
 		// </summary>
-		public TypeExpr ResolveTypeExpr (Expression e, bool silent, Location loc)
+		public TypeExpr ResolveTypeExpr (Expression e, Location loc)
 		{
 			if (type_resolve_ec == null)
 				type_resolve_ec = GetTypeResolveEmitContext (Parent, loc);
@@ -718,7 +708,7 @@ namespace Mono.CSharp {
 			else
 				type_resolve_ec.ContainerType = TypeBuilder;
 
-			return e.ResolveAsTypeTerminal (type_resolve_ec, silent);
+			return e.ResolveAsTypeTerminal (type_resolve_ec);
 		}
 		
 		public bool CheckAccessLevel (Type check_type) 

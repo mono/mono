@@ -1,5 +1,13 @@
 2004-11-17  Martin Baulig  <martin@ximian.com>
 
+	* ecore.cs
+	(Expression.ResolveAsTypeTerminal): Removed the `bool silent' argument.
+
+	* decl.cs (DeclSpace.ResolveType): Removed.
+	(DeclSpace.ResolveTypeExpr): Removed the `bool silent' argument.
+
+2004-11-17  Martin Baulig  <martin@ximian.com>
+
 	* decl.cs (MemberCache.AddHashtable): Add entries in the opposite
 	direction, like FindMembers() does.  Fixes #69546, testcase is in
 	test-315.cs.	

@@ -167,7 +167,7 @@ namespace Mono.CSharp {
 		// </summary>
 		public bool Resolve (EmitContext ec, Location l)
 		{
-			TypeExpr texpr = TypeName.ResolveAsTypeTerminal (ec, false);
+			TypeExpr texpr = TypeName.ResolveAsTypeTerminal (ec);
 			if (texpr == null)
 				return false;
 

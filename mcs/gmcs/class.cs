@@ -967,8 +967,7 @@ namespace Mono.CSharp {
 			int start, i, j;
 
 			if (Kind == Kind.Class){
-				TypeExpr name = ResolveTypeExpr (
-					(Expression) Bases [0], false, Location);
+				TypeExpr name = ResolveTypeExpr ((Expression) Bases [0], Location);
 
 				if (name == null){
 					error = true;
@@ -989,7 +988,7 @@ namespace Mono.CSharp {
 			
 			for (i = start, j = 0; i < count; i++, j++){
 				Expression name = (Expression) Bases [i];
-				TypeExpr resolved = ResolveTypeExpr (name, false, Location);
+				TypeExpr resolved = ResolveTypeExpr (name, Location);
 				if (resolved == null) {
 					error = true;
 					return null;
@@ -5234,7 +5233,7 @@ namespace Mono.CSharp {
 			// Lookup Type, verify validity
 			bool old_unsafe = ec.InUnsafe;
 			ec.InUnsafe = InUnsafe;
-			TypeExpr texpr = Type.ResolveAsTypeTerminal (ec, false);
+			TypeExpr texpr = Type.ResolveAsTypeTerminal (ec);
 			ec.InUnsafe = old_unsafe;
 
 			if (texpr == null)
@@ -5287,7 +5286,7 @@ namespace Mono.CSharp {
 
 			if (IsExplicitImpl) {
 				Expression expr = ExplicitInterfaceName.GetTypeExpression (Location);
-				TypeExpr iface_texpr = expr.ResolveAsTypeTerminal (ec, false);
+				TypeExpr iface_texpr = expr.ResolveAsTypeTerminal (ec);
 				if (iface_texpr == null)
 					return false;
 
@@ -5561,7 +5560,7 @@ namespace Mono.CSharp {
 
 			bool old_unsafe = ec.InUnsafe;
 			ec.InUnsafe = InUnsafe;
-			TypeExpr texpr = Type.ResolveAsTypeTerminal (ec, false);
+			TypeExpr texpr = Type.ResolveAsTypeTerminal (ec);
 			if (texpr == null)
 				return false;
 			

@@ -1031,7 +1031,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			TypeExpr texpr = ProbeType.ResolveAsTypeTerminal (ec, false);
+			TypeExpr texpr = ProbeType.ResolveAsTypeTerminal (ec);
 			if (texpr == null)
 				return null;
 			probe_type = texpr.ResolveType (ec);
@@ -1768,7 +1768,7 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return null;
 
-			TypeExpr target = target_type.ResolveAsTypeTerminal (ec, false);
+			TypeExpr target = target_type.ResolveAsTypeTerminal (ec);
 			if (target == null)
 				return null;
 			
@@ -5816,8 +5816,8 @@ namespace Mono.CSharp {
 			//
 			// First try to resolve it as a cast.
 			//
-			TypeExpr te = expr.ResolveAsTypeTerminal (ec, true);
-			if (te != null) {
+			TypeExpr te = expr.ResolveAsTypeStep (ec) as TypeExpr;
+			if ((te != null) && (te.eclass == ExprClass.Type)) {
 				Cast cast = new Cast (te, argument, loc);
 				return cast.Resolve (ec);
 			}
@@ -5863,8 +5863,8 @@ namespace Mono.CSharp {
 			//
 			// First try to resolve it as a cast.
 			//
-			TypeExpr te = expr.ResolveAsTypeTerminal (ec, true);
-			if (te != null) {
+			TypeExpr te = expr.ResolveAsTypeStep (ec) as TypeExpr;
+			if ((te != null) && (te.eclass == ExprClass.Type)) {
 				error201 ();
 				return null;
 			}
@@ -5999,7 +5999,7 @@ namespace Mono.CSharp {
 				return this;
 			}
 			
-			TypeExpr texpr = RequestedType.ResolveAsTypeTerminal (ec, false);
+			TypeExpr texpr = RequestedType.ResolveAsTypeTerminal (ec);
 			if (texpr == null)
 				return null;
 			
@@ -6536,7 +6536,7 @@ namespace Mono.CSharp {
 			//
 			TypeExpr array_type_expr;
 			array_type_expr = new ComposedCast (requested_base_type, array_qualifier.ToString (), loc);
-			array_type_expr = array_type_expr.ResolveAsTypeTerminal (ec, false);
+			array_type_expr = array_type_expr.ResolveAsTypeTerminal (ec);
 			if (array_type_expr == null)
 				return false;
 
@@ -7255,7 +7255,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			TypeExpr texpr = QueriedType.ResolveAsTypeTerminal (ec, false);
+			TypeExpr texpr = QueriedType.ResolveAsTypeTerminal (ec);
 			if (texpr == null)
 				return null;
 
@@ -7329,7 +7329,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 				
-			TypeExpr texpr = QueriedType.ResolveAsTypeTerminal (ec, false);
+			TypeExpr texpr = QueriedType.ResolveAsTypeTerminal (ec);
 			if (texpr == null)
 				return null;
 
@@ -8982,7 +8982,7 @@ namespace Mono.CSharp {
 
 		public override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
-			TypeExpr lexpr = left.ResolveAsTypeTerminal (ec, false);
+			TypeExpr lexpr = left.ResolveAsTypeTerminal (ec);
 			if (lexpr == null)
 				return null;
 
@@ -9173,7 +9173,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			TypeExpr texpr = t.ResolveAsTypeTerminal (ec, false);
+			TypeExpr texpr = t.ResolveAsTypeTerminal (ec);
 			if (texpr == null)
 				return null;
 

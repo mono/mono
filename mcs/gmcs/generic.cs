@@ -195,7 +195,7 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				TypeExpr expr = ds.ResolveTypeExpr ((Expression) obj, false, loc);
+				TypeExpr expr = ds.ResolveTypeExpr ((Expression) obj, loc);
 				if (expr == null)
 					return false;
 
@@ -954,7 +954,7 @@ namespace Mono.CSharp {
 			atypes = new Type [count];
 
 			for (int i = 0; i < count; i++){
-				TypeExpr te = ((Expression) args [i]).ResolveAsTypeTerminal (ec, false);
+				TypeExpr te = ((Expression) args [i]).ResolveAsTypeTerminal (ec);
 				if (te == null) {
 					ok = false;
 					continue;
@@ -1204,13 +1204,9 @@ namespace Mono.CSharp {
 			int num_args;
 
 			SimpleName sn = new SimpleName (name, loc);
-			TypeExpr resolved = sn.ResolveAsTypeTerminal (ec, true);
-			if ((resolved == null) || (resolved.Type == null)) {
-				Report.Error (246, loc,
-					      "The type or namespace name `{0}<...>' "+
-					      "could not be found", Basename);
+			TypeExpr resolved = sn.ResolveAsTypeTerminal (ec);
+			if (resolved == null)
 				return null;
-			}
 
 			t = resolved.Type;
 			if (t == null) {
@@ -1424,7 +1420,11 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			type = ec.DeclSpace.ResolveType (expr, false, loc);
+			TypeExpr texpr = expr.ResolveAsTypeTerminal (ec);
+			if (texpr == null)
+				return null;
+
+			type = texpr.ResolveType (ec);
 			if (type == null)
 				return null;
 
