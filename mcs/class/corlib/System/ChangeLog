@@ -1,4 +1,12 @@
+2002-02-16  Duncan Mak  <duncan@ximian.com>
 
+	* TimeZone.cs: patch from Ajay Kumar Dwivedi (adwiv@yahoo.com) to
+	make IsDaylightSavingTime (DateTime) call 
+	IsDaylightSavingTime (DateTime, DaylightTime).	
+
+	Added internal class CurrentTimeZone from Ajay. It needs more work
+	to fill in the appropriate internal calls.
+	
 Sat Feb 16 12:41:41 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* Type.cs: fix IsClass.
