@@ -56,13 +56,13 @@ public class MemberList : IList {
 
 	public bool IsSynchronized {
 		get {
-			return false;
+			return List.IsSynchronized;
 		}
 	}
 
 	public object SyncRoot {
 		get {
-			throw new NotSupportedException ();
+			return List.SyncRoot;
 		}
 	}
 
@@ -998,6 +998,15 @@ public class TypeManager {
 			return caching_finder.FindMembers (mt, bf, (string) criteria, filter, null);
 		}
 
+		//
+		// We have to take care of arrays specially, because GetType on
+		// a TypeBuilder array will return a Type, not a TypeBuilder,
+		// and we can not call FindMembers on this type.
+		//
+
+		if (t.IsSubclassOf (TypeManager.array_type))
+			return new MemberList (TypeManager.array_type.FindMembers (mt, bf, filter, criteria));
+
 		if (filter != FilterWithClosure_delegate)
 			return new MemberList (RealFindMembers (t, mt, bf, filter, criteria));
 
@@ -1013,17 +1022,9 @@ public class TypeManager {
 	static MemberInfo [] RealFindMembers (Type t, MemberTypes mt, BindingFlags bf,
 					      MemberFilter filter, object criteria)
 	{
-		//
-		// We have to take care of arrays specially, because GetType on
-		// a TypeBuilder array will return a Type, not a TypeBuilder,
-		// and we can not call FindMembers on this type.
-		//
-		if (t.IsSubclassOf (TypeManager.array_type))
-			return TypeManager.array_type.FindMembers (mt, bf, filter, criteria);
-
 		if (t is TypeBuilder)
 			return null;
-		
+
 		//
 		// Since FindMembers will not lookup both static and instance
 		// members, we emulate this behaviour here.
@@ -1906,7 +1907,10 @@ public class TypeManager {
 		//
 
 		if ((filter_criteria != null) && (m.Name != (string) filter_criteria))
-			return false;
+				return false;
+
+		if (closure_start_type == closure_invocation_type)
+			return true;
 
 		//
 		// Ugly: we need to find out the type of `m', and depending
@@ -1940,6 +1944,9 @@ public class TypeManager {
 
 			// Family and FamANDAssem require that we derive.
 			if ((ma == MethodAttributes.Family) || (ma == MethodAttributes.FamANDAssem)){
+				if (closure_invocation_type == null)
+					return false;
+
 				if (!IsSubclassOrNestedChildOf (closure_invocation_type, mb.DeclaringType))
 					return false;
 
@@ -1984,6 +1991,9 @@ public class TypeManager {
 
 			// Family and FamANDAssem require that we derive.
 			if ((fa == FieldAttributes.Family) || (fa == FieldAttributes.FamANDAssem)){
+				if (closure_invocation_type == null)
+					return false;
+
 				if (!IsSubclassOrNestedChildOf (closure_invocation_type, fi.DeclaringType))
 					return false;
 

@@ -2090,21 +2090,49 @@ namespace Mono.CSharp {
 		private MyStructInfo (Type type)
 		{
 			this.Type = type;
-			this.Fields = type.GetFields (BindingFlags.Instance|BindingFlags.Public);
+
+			if (type is TypeBuilder) {
+				TypeContainer tc = TypeManager.LookupTypeContainer (type);
+
+				ArrayList fields = tc.Fields;
+				foreach (Field field in fields) {
+					if ((field.ModFlags & Modifiers.STATIC) != 0)
+						continue;
+					if ((field.ModFlags & Modifiers.PUBLIC) != 0)
+						++Count;
+					else
+						++CountNonPublic;
+				}
+
+				Fields = new FieldInfo [Count];
+				NonPublicFields = new FieldInfo [CountNonPublic];
+
+				Count = CountNonPublic = 0;
+				foreach (Field field in fields) {
+					if ((field.ModFlags & Modifiers.STATIC) != 0)
+						continue;
+					if ((field.ModFlags & Modifiers.PUBLIC) != 0)
+						Fields [Count++] = field.FieldBuilder;
+					else
+						NonPublicFields [CountNonPublic++] = field.FieldBuilder;
+				}
+			} else {
+				Fields = type.GetFields (BindingFlags.Instance|BindingFlags.Public);
+				Count = Fields.Length;
+
+				NonPublicFields = type.GetFields (BindingFlags.Instance|BindingFlags.NonPublic);
+				CountNonPublic = NonPublicFields.Length;
+			}
+
+			Count += NonPublicFields.Length;
 
 			int number = 0;
 			field_hash = new Hashtable ();
 			foreach (FieldInfo field in Fields)
 				field_hash.Add (field.Name, ++number);
 
-			Count = Fields.Length;
-
-			NonPublicFields = type.GetFields (BindingFlags.Instance|BindingFlags.NonPublic);
 			if (NonPublicFields.Length != 0)
 				HasNonPublicFields = true;
-
-			CountNonPublic = NonPublicFields.Length;
-			Count += NonPublicFields.Length;
 
 			foreach (FieldInfo field in NonPublicFields)
 				field_hash.Add (field.Name, ++number);
@@ -2130,7 +2158,7 @@ namespace Mono.CSharp {
 
 		public static MyStructInfo GetStructInfo (Type type)
 		{
-			if (!TypeManager.IsValueType (type))
+			if (!TypeManager.IsValueType (type) || TypeManager.IsEnumType (type))
 				return null;
 
 			if (!(type is TypeBuilder) && TypeManager.IsBuiltinType (type))
