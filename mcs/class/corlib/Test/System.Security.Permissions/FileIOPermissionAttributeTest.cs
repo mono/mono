@@ -9,6 +9,7 @@
 
 using NUnit.Framework;
 using System;
+using System.IO;
 using System.Security;
 using System.Security.Permissions;
 
@@ -17,7 +18,18 @@ namespace MonoTests.System.Security.Permissions {
 	[TestFixture]
 	public class FileIOPermissionAttributeTest : Assertion {
 
-		private static string filename = @"c:\mono.txt";
+		private static string filename;
+
+		[SetUp]
+		public void SetUp () {
+			filename = Path.GetTempFileName ();
+		}
+
+		[TearDown]
+		public void TearDown () {
+			 if (File.Exists (filename))
+				File.Delete (filename);
+		}
 
 		[Test]
 		public void All () 
