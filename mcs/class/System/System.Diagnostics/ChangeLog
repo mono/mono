@@ -1,11 +1,12 @@
 2002-06-16  Jonathan Pryor <jonpryor@vt.edu>
 	* ICollectData.cs: Implemented
 	* TraceImpl.cs: Setting IndentLevel, IndentSize should change the
-	  corresponding properties on all current TraceListeners.
+		corresponding properties on all current TraceListeners.
 		Also, to answer the FIXME message: Yes, the properties in TraceListener
 		need to be [ThreadStatic] as well.
-	* TraceListenerCollection.cs:
-	* TraceListener.cs:
+	* TraceListenerCollection.cs: When adding a TraceListener, the TraceListener
+		should have its properties set to the current TraceImpl property values.
+	* TraceListener.cs: Make indentSize, lndentLevel [ThreadStatic].
 
 2002-06-09  Jonathan Pryor <jonpryor@vt.edu>
 	* EntryWrittenEventArgs.cs: Implemented
