@@ -29,22 +29,27 @@ test_stampfile = $(depsdir)/$(PROFILE)_$(test_lib).stamp
 test_flags = /r:$(the_lib) /r:$(topdir)/class/lib/$(PROFILE)/NUnit.Framework.dll $(TEST_MCS_FLAGS)
 endif
 
+gacutil = $(topdir)/tools/gacutil/gacutil.exe
+
 all-local: $(the_lib)
 
-install-local: $(the_lib)
+install-local: $(the_lib) gacutil
 	@if test -f Assembly/AssemblyInfo.cs ; then \
-		gacutil /i $(the_lib) /f || exit 1 ; \
+		$(PLATFORM_RUNTIME)  $(gacutil) /i $(the_lib) /f || exit 1 ; \
 	else \
 		$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib ; \
 		$(INSTALL_LIB) $(the_lib) $(DESTDIR)$(prefix)/lib ; \
 	fi
 
-uninstall-local:
+uninstall-local: gacutil
 	@if test -f Assembly/AssemblyInfo.cs ; then \
-		gacutil /u $(the_lib) /f ; \
+		$(PLATFORM_RUNTIME)  $(gacutil) /u $(the_lib) /f ; \
 	else \
 		-rm -f $(DESTDIR)$(prefix)/lib/$(LIBRARY)
 	fi
+
+gacutil:
+	cd $(topdir)/tools/gacutil && $(MAKE) || exit 1 ;
 
 clean-local:
 	-rm -f $(the_lib) $(makefrag) $(test_lib) \

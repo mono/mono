@@ -1,5 +1,10 @@
 2004-04-28  Jackson Harper  <jackson@ximian.com>
 
+	* library.make: Use the proper runtime, make sure gacutil is
+	built.
+	
+2004-04-28  Jackson Harper  <jackson@ximian.com>
+
 	* library.make: Install these bad actors to the GAC.
 	
 2004-04-28  Raja R Harinath  <rharinath@novell.com>
