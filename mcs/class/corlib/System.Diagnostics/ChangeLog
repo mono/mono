@@ -1,3 +1,7 @@
+2002-06-19  Dietmar Maurer  <dietmar@ximian.com>
+
+	* StackTrace.cs: impl. remaining constructors.
+
 2002-06-18  Dietmar Maurer  <dietmar@ximian.com>
 
 	* StackTrace.cs: use new internal call for constructors, use MS like

@@ -12,6 +12,7 @@ using System;
 using System.Reflection;
 using System.Threading;
 using System.Runtime.CompilerServices;
+using System.Collections;
 
 namespace System.Diagnostics {
         /// <summary>
@@ -35,7 +36,9 @@ namespace System.Diagnostics {
                 ///   Initializes a new instance of the StackTrace class.
                 /// </summary>
 		[MonoTODO]
-                public StackTrace() : this (METHODS_TO_SKIP, false) {}
+                public StackTrace() {
+			init_frames (METHODS_TO_SKIP, false);
+		}
                 
                 /// <summary>
                 ///   Initializes a new instance of the StackTrace class.
@@ -43,7 +46,9 @@ namespace System.Diagnostics {
                 /// <param name="needFileInfo">
                 ///   TODO:
                 /// </param>
-                public StackTrace(bool needFileInfo) : this (METHODS_TO_SKIP, needFileInfo) {}
+                public StackTrace(bool needFileInfo) {
+			init_frames (METHODS_TO_SKIP, needFileInfo);
+		}
 
                 /// <summary>
                 ///   Initializes a new instance of the StackTrace class
@@ -53,7 +58,9 @@ namespace System.Diagnostics {
                 ///   The number of frames up the stack to start the trace
                 ///   from.
                 /// </param>
-                public StackTrace(int skipFrames) : this (skipFrames, false) {}
+                public StackTrace(int skipFrames) {
+			init_frames (skipFrames, false);
+		}
 
 		/// <summary>
                 ///   Initializes a new instance of the StackTrace class
@@ -67,9 +74,26 @@ namespace System.Diagnostics {
                 ///   TODO:
                 /// </param>
                 public StackTrace(int skipFrames, bool needFileInfo) {
-                        throw new NotImplementedException();			
+			init_frames (skipFrames, needFileInfo);
 		}
-                
+
+		void init_frames (int skipFrames, bool needFileInfo)
+		{
+			StackFrame sf;
+			ArrayList al = new ArrayList ();
+
+			skipFrames += 2;
+			
+			while ((sf = new StackFrame (skipFrames, needFileInfo)) != null &&
+			       sf.GetMethod () != null) {
+				
+				al.Add (sf);
+				skipFrames++;
+			};
+
+                        frames = (StackFrame [])al.ToArray (typeof (StackFrame));	
+		}
+		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static StackFrame [] get_trace (Exception e, int skipFrames, bool needFileInfo);
 
