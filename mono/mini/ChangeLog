@@ -1,3 +1,7 @@
+2003-05-08  Dietmar Maurer  <dietmar@ximian.com>
+
+	* aot.c: add ability to handle array types
+	
 2003-05-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c: Call the _specific versions of the object allocation
