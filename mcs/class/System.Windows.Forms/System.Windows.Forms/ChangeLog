@@ -1,3 +1,83 @@
+  2002-11-28  DennisHayes <dennish@raytek.com>
+	* In visual studio, I added a SWFTest project to the SWF solution.
+	* Using Microsoft's swf.dll, I added one of each possible stock controls to the form.
+	* I closed the form (swf design stuff i svery incomplete).
+	* I Removed the reference to MS's swf.dll, and added a reference to the SWF project.
+	* The result compiles, runs, and can be closed, without crashing in windows.
+	* PrintPreviewDialog is the only item (other than crystal reports) on the 
+	* standard toolbar that is not included.
+	* When run, a standard window comes up, not a dialog/form type window.
+	* The form is as small as possible, just a caption bar of minimum width
+	* with control bax and min/max box. It can be resized to any size fine.
+	* no controls are actualy displayed. they may be of zero size, or it 
+	* may be due to the window not being a dialog box, or it may be anything.
+	
+	* ApplicationContext.cs
+	* Button.cs
+	* ChangeLog
+	* CheckBox.cs
+	* CheckedListBox.cs
+	* ColorDialog.cs
+	* ComboBox.cs
+	* ContainerControl.cs
+	* Control.cs
+	* DataGrid.cs
+	* DateTimePicker.cs
+	* DomainUpDown.cs
+	* ErrorProvider.cs
+	* FileDialog.cs
+	* FontDialog.cs
+	* Form.cs
+	* GroupBox.cs
+	* HelpProvider.cs
+	* HScrollBar.cs
+	* ImageList.cs
+	* Label.cs
+	* LinkLabel.cs
+	* ListBox.cs
+	* ListControl.cs
+	* ListView.cs
+	* logfile.txt
+	* MainMenu.cs
+	* Menu.cs
+	* MenuItem.cs
+	* NativeWindow.cs
+	* NotifyIcon.cs
+	* NumericUpDown.cs
+	* OpenFileDialog.cs
+	* PageSetupDialog.cs
+	* Panel.cs
+	* PictureBox.cs
+	* PrintDialog.cs
+	* PrintPreviewControl.cs
+	* PrintPreviewDialog.cs
+	* ProgressBar.cs
+	* RadioButton.cs
+	* RichTextBox.cs
+	* SaveFileDialog.cs
+	* ScrollableControl.cs
+	* ScrollBar.cs
+	* Splitter.cs
+	* StatusBar.cs
+	* System.Windows.Forms.csproj
+	* System.Windows.Forms.csproj.user
+	* TabControl.cs
+	* TextBox.cs
+	* TextBoxBase.cs
+	* Timer.cs
+	* ToolBar.cs
+	* ToolBarButton.cs
+	* tooltip.cs
+	* TrackBar.cs
+	* TreeNode.cs
+	* TreeNodeCollection.cs
+	* TreeView.cs
+	* UpDownBase.cs
+	* UserControl.cs
+	* VScrollBar.cs
+	* win32Enums.cs
+	* win32functions.cs
+
   2002-11-27  DennisHayes <dennish@raytek.com>	
 	* checkin for Alexandre Pigolkine (pigolkine@gmx.de) with minor changes
 	

@@ -10,12 +10,11 @@ using System.ComponentModel;
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
 	//
 	// </summary>
 
     public abstract class FileDialog : CommonDialog {
-
+		internal string fileName = "";
 		//
 		//  --- Public Properties
 		//
@@ -67,10 +66,10 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public string FileName {
 			get {
-				throw new NotImplementedException ();
+				return fileName;
 			}
 			set {
-				throw new NotImplementedException ();
+				fileName = value;
 			}
 		}
 		[MonoTODO]
@@ -147,42 +146,12 @@ namespace System.Windows.Forms {
 		//  --- Public Methods
 		//
 
-		// inherited
-		//[MonoTODO]
-		//public override void Dispose() {
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public override void Dispose(bool disposing) {
-		//	throw new NotImplementedException ();
-		//}
-		[MonoTODO]
-		public override bool Equals(object o)
-		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public override int GetHashCode() {
-			//FIXME add our proprities 
-			return base.GetHashCode();
-		}
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+
 		[MonoTODO]
 		public override void Reset()
 		{
 			throw new NotImplementedException ();
 		}
-		//public DialogResult ShowDialog()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public DialogResult ShowDialog(IWin32Window owner)
-		//{
-		//	throw new NotImplementedException ();
-		//}
 		[MonoTODO]
 		public override string ToString()
 		{
@@ -205,12 +174,7 @@ namespace System.Windows.Forms {
 		//
 		// --- Protected Methods
 		//
-		//inherited
-		//[MonoTODO]
-		//protected  void Dispose()
-		//{
-		//	throw new NotImplementedException ();
-		//}
+
 		[MonoTODO]
 		protected  override IntPtr HookProc( IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam )
 		{

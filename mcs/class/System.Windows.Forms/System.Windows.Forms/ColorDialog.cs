@@ -32,7 +32,7 @@ namespace System.Windows.Forms {
 		private bool solidColorOnly;
 
 		/// --- Constructor ---
-		protected ColorDialog() : base() 
+		public ColorDialog() : base() 
 		{
 			allowFullOpen = true;
 			anyColor = false;

@@ -16,8 +16,6 @@ namespace System.Windows.Forms {
 	/// <summary>
 	/// Displays ADO.NET data in a scrollable grid.
 	///
-	/// ToDo note:
-	///  - nothing is implemented
 	/// </summary>
 
 	[MonoTODO]
@@ -81,76 +79,127 @@ namespace System.Windows.Forms {
 			rowHeaderWidth = 50;
 			selectionBackColor = SystemColors.ActiveCaption;
 			selectionForeColor = SystemColors.ActiveCaptionText;
-			throw new NotImplementedException ();
 		}
 		#endregion
 		
 		#region Properties
 		public bool AllowNavigation {
-			get { return allowNavigation; }
-			set { allowNavigation=value; }
+			get {
+				return allowNavigation;
+			}
+			set {
+				allowNavigation=value;
+			}
 		}
 		
 		public bool AllowSorting {
-			get { return allowSorting; }
-			set { allowSorting=value; }
+			get { 
+				return allowSorting; 
+			}
+			set { 
+				allowSorting=value; 
+			}
 		}
 		
 		public Color AlternatingBackColor {
-			get { return alternatingBackColor; }
-			set { alternatingBackColor=value; }
+			get { 
+				return alternatingBackColor;
+			}
+			set {
+				alternatingBackColor=value;
+			}
 		}
 		
 		[MonoTODO]
 		public override Color BackColor {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set { 
+				throw new NotImplementedException (); 
+			}
 		}
 		
 		public Color BackgroundColor {
-			get { return backgroundColor; }
-			set { backgroundColor=value; }
+			get { 
+				return backgroundColor;
+			}
+			set {
+				backgroundColor=value;
+			}
 		}
 		
 		[MonoTODO]
 		public override Image BackgroundImage {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
 		
 		public BorderStyle BorderStyle {
-			get { return borderStyle; }
-			set { borderStyle=value; }
+			get {
+				return borderStyle;
+			}
+			set {
+				borderStyle=value;
+			}
 		}
 		
 		public Color CaptionBackColor {
-			get { return captionBackColor; }
-			set { captionBackColor=value; }
+			get {
+				return captionBackColor; 
+			}
+			set { 
+				captionBackColor=value;
+			}
 		}
 		
 		public Font CaptionFont {
-			get { return captionFont; }
-			set { captionFont=value; }
+			get {
+				return captionFont;
+			}
+			set {
+				captionFont=value;
+			}
 		}
 		
 		public Color CaptionForeColor {
-			get { return captionForeColor; }
-			set { captionForeColor=value; }
+			get {
+				return captionForeColor;
+			}
+			set {
+				captionForeColor=value;
+			}
 		}
 		
 		public string CaptionText {
-			get { return captionText; }
-			set { captionText=value; }
+			get {
+				return captionText; 
+			}
+			set {
+				captionText=value; 
+			}
 		}
 		
 		public bool CaptionVisible {
-			get { return captionVisible; }
-			set { captionVisible=value; }
+			get { 
+				return captionVisible; 
+			}
+			set { 
+				captionVisible=value;
+			}
 		}
 		
 		public bool ColumnHeadersVisible {
-			get { return columnHeadersVisible; }
-			set { columnHeadersVisible=value; }
+			get {
+				return columnHeadersVisible;
+			}
+			set {
+				columnHeadersVisible=value;
+			}
 		}
 		
 		[MonoTODO]
@@ -331,8 +380,12 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		public override string Text {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { 
+				return base.Text; 
+			}
+			set {
+				base.Text = value; 
+			}
 		}
 		
 		[MonoTODO]
@@ -367,7 +420,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void BeginInit() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]
@@ -413,12 +466,6 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		protected override void Dispose(bool disposing) 
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
 		public bool EndEdit(DataGridColumnStyle gridColumn,int rowNumber,bool shouldAbort) 
 		{
 			throw new NotImplementedException ();
@@ -427,7 +474,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public void EndInit() 
 		{
-			throw new NotImplementedException ();
+			//FIXME:
 		}
 		
 		[MonoTODO]

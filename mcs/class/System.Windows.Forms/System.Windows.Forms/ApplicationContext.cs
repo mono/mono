@@ -49,7 +49,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected virtual void Dispose(bool disposing) 
 		{
-			throw new NotImplementedException ();
+			
 		}
 		
 		[MonoTODO]

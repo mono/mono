@@ -23,7 +23,6 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public DomainUpDown() : base()
 		{
-			throw new NotImplementedException ();
 		}
 
 		
@@ -37,7 +36,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override string ToString()
 		{
-			throw new NotImplementedException ();
+			//FIXME:
+			return base.ToString();
 		}
 		[MonoTODO]
 		public override void UpButton()
@@ -180,8 +180,12 @@ namespace System.Windows.Forms {
 					
 			public override object this[int index] {
 
-				get { throw new NotImplementedException (); }
-				set { throw new NotImplementedException (); }
+				get {
+					throw new NotImplementedException ();
+				}
+				set {
+					throw new NotImplementedException ();
+				}
 			}
 		}
 	}

@@ -58,10 +58,10 @@ namespace System.Windows.Forms {
 			base.AdjustFormScrollbars (displayScrollbars);
 		}
 		
-		[MonoTODO]
 		protected override void Dispose (bool disposing) 
 		{
-			throw new NotImplementedException ();
+			//FIXME
+			base.Dispose(disposing);
 		}
 		
 		[MonoTODO]

@@ -462,7 +462,7 @@
     			get {
   					CreateParams createParams = new CreateParams ();
   					createParams.Caption = Text;
-  					createParams.ClassName = "mono_native_window";
+  					createParams.ClassName = "CONTROL";
   					createParams.X = Left;
   					createParams.Y = Top;
   					createParams.Width = Width;
@@ -866,14 +866,14 @@
 						SetWindowPosFlags.SWP_NOZORDER);// Activating might be a good idea?? | SetWindowPosFlags.SWP_NOACTIVATE);
     			}
     		}
-    		
+    		internal int tabindex;//for debug/test only. remove
     		[MonoTODO]
     		public int TabIndex {
     			get {
-    				throw new NotImplementedException ();
+    				return tabindex;
     			}
     			set {
-    				throw new NotImplementedException ();
+    				tabindex = value;
     			}
     		}
     		
@@ -1041,10 +1041,10 @@
     			window.DestroyHandle ();
     		}
     	
-    		[MonoTODO]
     		protected override void Dispose (bool disposing) 
     		{
-    			throw new NotImplementedException ();
+				//FIXME: 
+    			base.Dispose(disposing);
     		}
     	
     		[MonoTODO]
@@ -1829,7 +1829,8 @@
     		[MonoTODO]
     		public void ResumeLayout (bool performLayout) 
     		{
-    			throw new NotImplementedException ();
+				//removed so itr runs
+    			//throw new NotImplementedException ();
     		}
     		
     		[MonoTODO]
@@ -1981,7 +1982,8 @@
     		[MonoTODO]
     		public void SuspendLayout () 
     		{
-    			throw new NotImplementedException ();
+				//removed so it  will run
+    			//throw new NotImplementedException ();
     		}
     		
  			//Compact Framework

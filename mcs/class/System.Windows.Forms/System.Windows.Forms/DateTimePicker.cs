@@ -53,6 +53,7 @@ namespace System.Windows.Forms {
 		//
 		//  --- Constructors/Destructors
 		//
+
 		[MonoTODO]
 		public DateTimePicker() : base()
 		{
@@ -70,8 +71,8 @@ namespace System.Windows.Forms {
 			minDate = MinDateTime;
 			showCheckBox = false;
 			showUpDown = false;
-			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		static DateTimePicker()
 		{
@@ -103,21 +104,26 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected override void CreateHandle()
 		{
-			throw new NotImplementedException ();
+			//FIXME: Just to get it running
+			base.CreateHandle();
 		}
+
 		[MonoTODO]
 		protected override void DestroyHandle()
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected override bool IsInputKey(Keys keyData)
 		{
 			throw new NotImplementedException ();
 		}
+
 		[MonoTODO]
 		protected virtual void OnCloseUp(EventArgs e)
 		{
@@ -126,6 +132,7 @@ namespace System.Windows.Forms {
 				CloseUp(this, e);
 			}
 		}
+
 		[MonoTODO]
 		protected virtual void OnDropDown(EventArgs e)
 		{
@@ -134,6 +141,7 @@ namespace System.Windows.Forms {
 				DropDown(this, e);
 			}
 		}
+
 		[MonoTODO]
 		protected override void OnFontChanged(EventArgs e)
 		{
@@ -141,6 +149,7 @@ namespace System.Windows.Forms {
 			//	FontChanged(this, e);
 			//}
 		}
+
 		[MonoTODO]
 		protected virtual void OnFormatChanged(EventArgs e)
 		{
@@ -149,6 +158,7 @@ namespace System.Windows.Forms {
 				FormatChanged(this, e);
 			}
 		}
+
 		[MonoTODO]
 		protected override void OnSystemColorsChanged(EventArgs e)
 		{
@@ -166,11 +176,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
-		protected override void Dispose(bool disposing) { // .NET V1.1 Beta
-			throw new NotImplementedException ();
-		}
-		
 		[MonoTODO]
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)
 		{
@@ -198,121 +203,217 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override Color BackColor {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
+
 		[MonoTODO]
 		public override Image BackgroundImage {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
+
 		[MonoTODO]
 		public Font CalendarFont {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
+
 		[MonoTODO]
 		public Color CalendarForeColor {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
+
 		[MonoTODO]
 		public Color CalendarMonthBackground {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
+
 		[MonoTODO]
 		public Color CalendarTitleBackColor {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
+
 		[MonoTODO]
 		public Color CalendarTitleForeColor {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
+
 		[MonoTODO]
 		public Color CalendarTrailingForeColor {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException (); 
+			}
 		}
+
 		[MonoTODO]
 		public bool Checked {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
+
 		[MonoTODO]
 		public string CustomFormat {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
+
 		[MonoTODO]
 		public LeftRightAlignment DropDownAlign {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
+
 		[MonoTODO]
 		public override Color ForeColor {
-
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			//FIXME: Just to get it to run
+			get {
+				return base.ForeColor;
+			}
+			set {
+				base.ForeColor = value;
+			}
 		}
+
 		[MonoTODO]
 		public DateTimePickerFormat Format {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException (); 
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
+
 		[MonoTODO]
 		public DateTime MaxDate {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
+
 		[MonoTODO]
 		public DateTime MinDate {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
+
 		[MonoTODO]
 		public int PreferredHeight {
-
-			get { throw new NotImplementedException (); }
+			get{
+				return 300;
+			}
 		}
+
 		[MonoTODO]
 		public bool ShowCheckBox {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
+
 		[MonoTODO]
 		public bool ShowUpDown {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
+
 		[MonoTODO]
 		public override string Text {
-
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			//FIXME: just to get it to run
+			get {
+				return base.Text;
+			}
+			set {
+				base.Text = value;
+			}
 		}
+
 		[MonoTODO]
 		public DateTime Value {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException (); 
+			}
 		}
 
 		
@@ -320,13 +421,33 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		protected override CreateParams CreateParams {
+			get {
+				CreateParams createParams = new CreateParams ();
+				window = new ControlNativeWindow (this);
 
-			get { throw new NotImplementedException (); }
+				createParams.Caption = Text;
+				createParams.ClassName = "DATETIMEPICKER";
+				createParams.X = Left;
+				createParams.Y = Top;
+				createParams.Width = Width;
+				createParams.Height = Height;
+				createParams.ClassStyle = 0;
+				createParams.ExStyle = 0;
+				createParams.Param = 0;
+				//			createParams.Parent = Parent.Handle;
+				createParams.Style = (int) (
+					WindowStyles.WS_CHILD | 
+					WindowStyles.WS_VISIBLE);
+				window.CreateHandle (createParams);
+				return createParams;
+			}		
 		}
+
 		[MonoTODO]
 		protected override Size DefaultSize {
-
-			get { throw new NotImplementedException (); }
+			get{
+				return new System.Drawing.Size(300,200);
+			}
 		}
 	}
 }
