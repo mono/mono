@@ -1,3 +1,7 @@
+2004-03-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StrongName.cs: Added exceptions for null or invalid keys.
+
 2004-03-17  Jesper Pedersen  <jep@itplus.dk>
 
 	* ASN1.cs: Implemented ASN1::ToString (byte dump)

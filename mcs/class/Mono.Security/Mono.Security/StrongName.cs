@@ -85,15 +85,25 @@ namespace Mono.Security {
 		private byte[] keyToken;
 		private string tokenAlgorithm;
 
-		public StrongName () {}
+		public StrongName ()
+		{
+		}
 
 		public StrongName (byte[] data)
 		{
+			if (data == null)
+				throw new ArgumentNullException ("data");
+
 			RSA = CryptoConvert.FromCapiKeyBlob (data);
+			if (rsa == null)
+				throw new ArgumentException ("data isn't a correctly encoded RSA public key");
 		}
 
 		public StrongName (RSA rsa) : base ()
 		{
+			if (rsa == null)
+				throw new ArgumentNullException ("rsa");
+
 			RSA = rsa;
 		}
 
@@ -107,7 +117,7 @@ namespace Mono.Security {
 			get {
 				// if none then we create a new keypair
 				if (rsa == null)
-					rsa = (RSA)RSA.Create ();
+					rsa = (RSA) RSA.Create ();
 				return rsa; 
 			}
 			set { 
