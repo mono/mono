@@ -5,6 +5,7 @@
 //   Daniel Morgan
 //
 // (C) Ximian, Inc. 2002
+// (C) 2002 Daniel Morgan
 //
 
 using System;
@@ -18,120 +19,123 @@ namespace System.Data
 	/// </summary>
 	public class ConstraintCollection : InternalDataCollectionBase {
 
-		[MonoTODO]
-		[Serializable]
 		public virtual Constraint this[string name] {
 			[MonoTODO]
 			get {
+				throw new NotImplementedException ();
 			}
 		}
-
-		[MonoTODO]
-		[Serializable]
+		
 		public virtual Constraint this[int index] {
 			[MonoTODO]
 			get {
+				throw new NotImplementedException ();
 			}
 		}
 
 		// Overloaded Add method (5 of them)
 		// to add Constraint object to the collection
 
-		[Serializable]
 		[MonoTODO]
 		public void Add(Constraint constraint) {
+			
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
 		[MonoTODO]
 		public virtual Constraint Add(string name,
 			DataColumn column, bool primaryKey) {
+
+			throw new NotImplementedException ();
+
 		}
 
-		[Serializable]
 		[MonoTODO]
 		public virtual Constraint Add(string name,
 			DataColumn primaryKeyColumn,
 			DataColumn foreignKeyColumn) {
+
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
 		[MonoTODO]
 		public virtual Constraint Add(string name,
 			DataColumn[] columns, bool primaryKey) {
+
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
 		[MonoTODO]
 		public virtual Constraint Add(string name,
 			DataColumn[] primaryKeyColumns,
 			DataColumn[] foreignKeyColumns) {
+
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
 		[MonoTODO]
 		public void AddRange(Constraint[] constraints) {
+
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
 		[MonoTODO]
 		public bool CanRemove(Constraint constraint) {
+
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
 		[MonoTODO]
 		public void Clear() {
+			
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
 		[MonoTODO]
 		public bool Contains(string name) {
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
 		[MonoTODO]
 		public int IndexOf(Constraint constraint) {
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
 		[MonoTODO]
 		public virtual int IndexOf(string constraintName) {
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
 		[MonoTODO]
 		public void Remove(Constraint constraint) {
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
 		[MonoTODO]
 		public void Remove(string name) {
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
 		[MonoTODO]
 		public void RemoveAt(int index) {
+			throw new NotImplementedException ();
 		}
 
-		/*
-		 * FIXME: fix this event
-		[Serializable]
 		[MonoTODO]
 		public event CollectionChangeEventHandler CollectionChanged;
-		*/
 
-		[Serializable]
 		protected override ArrayList List {
 			[MonoTODO]
 			get{
+				throw new NotImplementedException ();
 			}
 		}
 
-		[Serializable]
 		[MonoTODO]
 		protected virtual void OnCollectionChanged(
 			CollectionChangeEventArgs ccevent) {
-		}
 
+			throw new NotImplementedException ();
+		}
 	}
 }

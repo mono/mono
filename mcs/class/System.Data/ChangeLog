@@ -1,3 +1,42 @@
+2002-04-28  Daniel Morgan <danmorg@sc.rr.com>
+
+	* System.Data/DataRelation.cs
+	* System.Data/ForeignKeyConstraint.cs
+	* System.Data/UniqueConstraint.cs: added more stubs
+	
+	* System.Data/DataTableRelationCollection.cs: added back to cvs
+	and modified for compile errors.  DataRelationCollection is an
+	abstract class and there must be a class that implements for
+	DataTable/DataSet.  DataTableRelationCollection was changed
+	to an internal class.
+	
+	* System.Data.build: modified - new files added
+	also wanted to include files/classes in the build 
+	so we can get a compilable forward read only result set.
+	It compiles now using csc/nant with warnings, but this 
+	is a start for adding functionality for the result set.  
+	Classes associated with/and DataSet are still excluded.
+	
+	* TODO: modified - updated to do list for System.Data
+	
+	* System.Data/Constraint.cs
+	* System.Data/ConstraintCollection.cs
+	* System.Data/DataRelationCollection.cs
+	* System.Data/DataRow.cs
+	* System.Data/DataRowChangeEventArgs.cs
+	* System.Data/DataRowCollection.cs
+	* System.Data/DataTable.cs
+	* System.Data/DataTableCollection.cs
+	* System.Data/InternalDataCollectionBase.cs
+	* System.Data/PropertyCollection.cs: modified -
+	changes to compile SqlDataReader/DataTable and
+	dependencies
+	
+	* System.Data/IDbCommand.cs
+	* System.Data.SqlClient/SqlCommand.cs: modified -
+	un-commented overloaded methods ExecuteReader 
+	which returns a SqlDataReader
+
 2002-04-28  Rodrigo Moya <rodrigo@ximian.com>
 
 	* System.Data/DataTableCollection.cs: more implementation.

@@ -18,17 +18,21 @@ namespace System.Data
 		[MonoTODO]
 		public DataRowChangeEventArgs(DataRow row,
 			DataRowAction action) {
+
+			throw new NotImplementedException ();
 		}
 
 		public DataRowAction Action {
 			[MonoTODO]
 			get {
+				throw new NotImplementedException ();
 			}
 		}
 
 		public DataRow Row {
 			[MonoTODO]
 			get {
+				throw new NotImplementedException ();
 			}
 		}
 

@@ -65,6 +65,7 @@ namespace System.Data
 			[MonoTODO]
 			get {
 				// FIXME: how do we sync?	
+				throw new NotImplementedException ();
 			}
 		}
 
@@ -82,7 +83,7 @@ namespace System.Data
 
 		[MonoTODO]
 		public IEnumerator GetEnumerator() {
-
+			throw new NotImplementedException ();
 		}
 
 		//[MonoTODO]

@@ -211,7 +211,6 @@ namespace System.Data.SqlClient
 
 		#endregion // Destructors
 
-
 		#region Properties
 
 		public int Depth {

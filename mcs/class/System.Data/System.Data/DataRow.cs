@@ -5,8 +5,12 @@
 //   Rodrigo Moya <rodrigo@ximian.com>
 //   Daniel Morgan <danmorg@sc.rr.com>
 //
-// (C) Ximian, Inc
+// (C) Ximian, Inc 2002
+// (C) Daniel Morgan 2002
 //
+
+using System;
+using System.Collections;
 
 namespace System.Data
 {
@@ -19,6 +23,7 @@ namespace System.Data
 
 		private ArrayList columns = new ArrayList();
 		private ArrayList columnNames = new ArrayList();
+		private DataTable table = null;
 
 		#endregion
 
@@ -198,64 +203,76 @@ namespace System.Data
 
 		#region Properties
 
-		[MonoTODO]
 		public bool HasErrors {
+			[MonoTODO]
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		public object this[string s] {
+			[MonoTODO]
 			get { throw new NotImplementedException (); }
+
+			[MonoTODO]
 			set { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		public object this[DataColumn dc] {
+			[MonoTODO]
 			get { throw new NotImplementedException (); }
+
+			[MonoTODO]
 			set { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		public object this[int i] {
+			[MonoTODO]
 			get { throw new NotImplementedException (); }
+
+			[MonoTODO]
 			set { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		public object this[string s, DataRowVersion version] {
+			[MonoTODO]
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		public object this[DataColumn dc, DataRowVersion version] {
+			[MonoTODO]
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		public object this[int i, DataRowVersion version] {
+			[MonoTODO]
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		public object[] ItemArray {
+			[MonoTODO]
 			get { throw new NotImplementedException (); }
+
+			[MonoTODO]
 			set { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		public string RowError {
+			[MonoTODO]
 			get { throw new NotImplementedException (); }
+
+			[MonoTODO]
 			set { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		public DataRowState RowState {
+			[MonoTODO]
 			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		public DataTable Table {
-			get { throw new NotImplementedException (); }
+			[MonoTODO]
+			get {
+				return table;
+			}
 		}
 
 		#endregion // Public Properties

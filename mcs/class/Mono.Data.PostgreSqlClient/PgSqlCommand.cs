@@ -163,14 +163,10 @@ namespace System.Data.SqlClient
 			return rowsAffected;
 		}
 		
-		// FIXME: temporarily commmented out, so I could get a simple working
-		//        SqlConnection and SqlCommand.  I had to temporarily
-		//        comment it out the ExecuteReader in IDbCommand as well.
-		/*
 		[MonoTODO]
 		IDataReader IDbCommand.ExecuteReader ()
 		{
-			throw new NotImplementedException ();	
+			return ExecuteReader ();
 		}
 
 		[MonoTODO]
@@ -183,7 +179,7 @@ namespace System.Data.SqlClient
 		IDataReader IDbCommand.ExecuteReader (
 					CommandBehavior behavior)
 		{
-			throw new NotImplementedException ();
+			return ExecuteReader (behavior);
 		}
 
 		[MonoTODO]
@@ -191,7 +187,6 @@ namespace System.Data.SqlClient
 		{
 			throw new NotImplementedException ();
 		}
-		*/
 
 		[MonoTODO]
 		public object ExecuteScalar ()

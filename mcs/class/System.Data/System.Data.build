@@ -11,6 +11,7 @@
 			<arg value="/unsafe"/>
 			<sources>
 				<includes name="**/*.cs"/> 
+				<!--
 				<excludes name="System.Data/Constraint.cs"/>
 				<excludes name="System.Data/ConstraintCollection.cs"/>
 				<excludes name="System.Data/InternalDataCollectionBase.cs"/>
@@ -19,16 +20,17 @@
 				<excludes name="System.Data/DataRow.cs"/>
 				<excludes name="System.Data/DataRowCollection.cs"/>
 				<excludes name="System.Data/DataRowChangeEventArgs.cs"/>
-				<excludes name="System.Data/DataTableCollection.cs"/>
 				<excludes name="System.Data/DataRelationCollection.cs"/>
 				<excludes name="System.Data/DataTable.cs"/>
+				<excludes name="System.Data/PropertyCollection.cs"/>
+				-->
+				<excludes name="System.Data/DataTableRelationCollection.cs"/>
 				<excludes name="System.Data/DataView.cs"/>
 				<excludes name="System.Data/DataSet.cs"/>
-				<excludes name="System.Data/PropertyCollection.cs"/>
 				<excludes name="Test/**"/>
 				<excludes name="System.Data.Common/*"/>
 				<excludes name="System.Data.SqlClient/SqlDataAdapter.cs"/>
-				<excludes name="System.Data.SqlClient/SqlDataReader.cs"/>
+				<!--<excludes name="System.Data.SqlClient/SqlDataReader.cs"/>-->
 				<excludes name="System.Data.SqlClient/SqlInfoMessageEventArgs.cs"/>
 				<excludes name="System.Data.SqlClient/SqlRowUpdatingEventArgs.cs"/>
 				<excludes name="System.Data.SqlClient/SqlRowUpdatedEventArgs.cs"/>

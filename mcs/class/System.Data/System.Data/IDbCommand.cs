@@ -22,17 +22,13 @@ namespace System.Data
 		
 		int ExecuteNonQuery();
 
-		// FIXME: temporarily commented so i could 
-		//        compile SqlConnection and SqlCommand
-		/*
 		IDataReader ExecuteReader();
 
 		IDataReader ExecuteReader(CommandBehavior behavior);
-		*/
+
 		object ExecuteScalar();
 
 		void Prepare();
-
 
 		string CommandText{get; set;}
 

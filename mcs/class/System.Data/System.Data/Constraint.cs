@@ -11,49 +11,52 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 
 namespace System.Data
 {
 	[Serializable]
 	public abstract class Constraint {
 
+		protected string name = null;
+		protected PropertyCollection properties = null;
+
 		[MonoTODO]
-		[Serializable]
 		protected Constraint() {
+			properties = new PropertyCollection();
 		}
 
-		[Serializable]
 		public virtual string ConstraintName {
-			[MonoTODO]
+			[MonoTODO]	
 			get{
+				return name;
 			} 
 
 			[MonoTODO]
 			set{
+				name = value;
 			}
 		}
 
-		[Serializable]
 		public PropertyCollection ExtendedProperties {
 			[MonoTODO]
 			get {
+				return properties;
 			}
 		}
 
-		[Serializable]
 		public abstract DataTable Table {
 			get;
 		}
 
 		[MonoTODO]
-		[Serializable]
 		public override string ToString() {
+			return name;
 		}
 
-		[MonoTODO]
-		[Serializable]
-		[ClassInterface(ClassInterfaceType.AutoDual)]
-		~Constraint() {
-		}
+		//[MonoTODO]
+		//[ClassInterface(ClassInterfaceType.AutoDual)]
+		//~Constraint() {
+		//}
 	}
 }

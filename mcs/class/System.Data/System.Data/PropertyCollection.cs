@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections;
+using System.ComponentModel;
 
 namespace System.Data
 {

@@ -8,6 +8,8 @@
 //
 
 using System;
+using System.Collections;
+using System.ComponentModel;
 
 namespace System.Data
 {
@@ -55,7 +57,6 @@ namespace System.Data
 		}
 
 		[MonoTODO]
-		[Serializable]
 		public bool CanRemove (DataTable table) {
 			throw new NotImplementedException ();
 		}
@@ -73,10 +74,6 @@ namespace System.Data
 			}
 
 			return false;
-		}
-
-		public void CopyTo (Array ar, int index) {
-			Array.Copy (tables, ar, size);
 		}
 
 		public virtual int IndexOf (DataTable table) {
@@ -136,25 +133,27 @@ namespace System.Data
 			}
 		}
 
-		[MonoTODO]
 		protected override ArrayList List {
-			throw new NotImplementedException ();
+			[MonoTODO]
+			get{
+				throw new NotImplementedException ();
+			}
 		}
 		
-		[Serializable]
 		public event CollectionChangeEventHandler CollectionChanged;
 
-		[Serializable]
 		public event CollectionChangeEventHandler CollectionChanging;
 
-		[Serializable]
 		protected virtual void OnCollectionChanged (
 			CollectionChangeEventArgs ccevent) {
+
+			throw new NotImplementedException ();
 		}
 
-		[Serializable]
 		protected internal virtual void OnCollectionChanging (
 			CollectionChangeEventArgs ccevent) {
+
+			throw new NotImplementedException ();
 		}
 	}
 }

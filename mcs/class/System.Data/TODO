@@ -1,17 +1,21 @@
 System.Data TODO List
 =====================
 
-This TODO list last updated on 2002-04-23
-
 Update this file as needed...
 
 * To get ExecuteReader() in a SqlCommand object to return 
   a SqlDataReader object which can Read() data and get a String or
   Int32 from the database.  Other types can be done later.
+  
+  A class (SqlDataReader) that implements IDataReader/IDataRecord
+  only has one row in memory at a time.
 
-In order to do this, we need to compile 
-	SqlDataReader 
-	DataTable
+In order to do this, we need to compile and edit these classes:
+	SqlDataReader	DataTable	DataRowCollection		DataRow
+								DataColumnCollection	DataColumn
+								DataConstraintCollection DataConstraint
+								DataRelationCollection	DataRelation
+								DataTableCollection
 	and dependencies...
 
 System.Data.Common classes that need to be implemented:
@@ -30,8 +34,12 @@ The following classes implement InternalDataCollectionBase:
 	* DataRowCollection
 	* DataColumnCollection
 	* DataTableCollection
-	* DataRelationCollection
+	* DataRelationCollection - an abstract class used by DataTable and DataSet
 	* ConstraintCollection
+
+DataTableRelationCollection is an internal class that implements DataRelationCollection
+and is used by DataTable for parent/child relations.  Don't know if it will/will not
+be used by DataSet.
 
 Other classes, structs, etc. that are missing:
 	DataRowView
@@ -40,9 +48,7 @@ Other classes, structs, etc. that are missing:
 	DataViewSetting
 	DataViewSettingCollection
 	FillErrorEventArgs
-	ForeignKeyConstraint
 	MergeFailedEventArgs
-	UniqueConstraint
 	TypedDataSetGenerator
 
 Exceptions that still need to be stubbed:

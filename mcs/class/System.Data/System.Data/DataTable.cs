@@ -28,16 +28,18 @@ namespace System.Data
 		private bool _caseSensitive;
 		private DataColumnCollection _columnCollection;
 		private ConstraintCollection _constraintCollection;
-		// private DataSet _dataSet;      // FIXME: temporarily commented
-		// private DataView _defaultView; // FIXME: temporarily commented
+		// FIXME: temporarily commented
+		// private DataSet _dataSet;   
+		// private DataView _defaultView;
 		private string _displayExpression;
 		private PropertyCollection _extendedProperties;
 		private bool _hasErrors;
 		private CultureInfo _locale;
 		private int _minimumCapacity;
 		private string _nameSpace;
-		private DataTableRelationCollection _childRelations;
-		private DataTableRelationCollection _parentRelations;
+		// FIXME: temporarily commented
+		// private DataTableRelationCollection _childRelations; 
+		// private DataTableRelationCollection _parentRelations;
 		private string _prefix;
 		private DataColumn[] _primaryKey;
 		private DataRowCollection _rows;
@@ -65,8 +67,10 @@ namespace System.Data
 			_displayExpression = null;
 			_primaryKey = null;
 			
-			_childRelations = new DataTableRelationCollection();
-			_parentRelations = new DataTableRelationCollection();
+			// FIXME: temporaily commented DataTableRelationCollection
+			// _childRelations = new DataTableRelationCollection();
+			// _parentRelations = new DataTableRelationCollection();
+
 			//_nextRowID = 1;
 			//_elementColumnCount = 0;
 			//_caseSensitiveAmbient = true;
@@ -90,7 +94,7 @@ namespace System.Data
 		
 		public DataTable(string tableName)
 		{
-			// _dataSet = null; // FIXME: temporarily commented
+			// _dataSet = null;     // FIXME: temporarily commented
 			// _defaultView = null; // FIXME: temporarily commented
 			_columnCollection = new DataColumnCollection(this);
 			//_constraintCollection = new ConstraintCollection(); TODO: uncomment after ConstraintCollection is built.
@@ -100,8 +104,11 @@ namespace System.Data
 			_caseSensitive = false;
 			_displayExpression = null;
 			_primaryKey = null;
-			_childRelations = new DataTableRelationCollection();
-			_parentRelations = new DataTableRelationCollection();
+			
+			// FIXME: temporarily commented DataTableRelationCollection
+			// _childRelations = new DataTableRelationCollection();
+			// _parentRelations = new DataTableRelationCollection();
+
 			//_nextRowID = 1;
 			//_elementColumnCount = 0;
 			//_caseSensitiveAmbient = true;
@@ -155,7 +162,9 @@ namespace System.Data
 		{
 			get
 			{
-				return (DataRelationCollection)_childRelations;
+				// FIXME: temporarily commented to compile
+				// return (DataRelationCollection)_childRelations;
+				throw new NotImplementedException ();
 			}
 		}
 
@@ -199,7 +208,8 @@ namespace System.Data
 		}
 
 		/// <summary>
-		/// Gets a customized view of the table which may include a filtered view, or a cursor position.
+		/// Gets a customized view of the table which may 
+		/// include a filtered view, or a cursor position.
 		/// </summary>
 		
 		public DataView DefaultView
@@ -212,7 +222,8 @@ namespace System.Data
 		*/
 
 		/// <summary>
-		/// Gets or sets the expression that will return a value used to represent this table in the user interface.
+		/// Gets or sets the expression that will return 
+		/// a value used to represent this table in the user interface.
 		/// </summary>
 		
 		public string DisplayExpression 
@@ -239,7 +250,9 @@ namespace System.Data
 		}
 
 		/// <summary>
-		/// Gets a value indicating whether there are errors in any of the rows in any of the tables of the DataSet to which the table belongs.
+		/// Gets a value indicating whether there are errors in 
+		/// any of the rows in any of the tables of the DataSet to 
+		/// which the table belongs.
 		/// </summary>
 		public bool HasErrors
 		{
@@ -250,7 +263,8 @@ namespace System.Data
 		}
 
 		/// <summary>
-		/// Gets or sets the locale information used to compare strings within the table.
+		/// Gets or sets the locale information used to 
+		/// compare strings within the table.
 		/// </summary>
 		public CultureInfo Locale
 		{
@@ -280,7 +294,8 @@ namespace System.Data
 		}
 
 		/// <summary>
-		/// Gets or sets the namespace for the XML represenation of the data stored in the DataTable.
+		/// Gets or sets the namespace for the XML represenation 
+		/// of the data stored in the DataTable.
 		/// </summary>
 		public string Namespace
 		{
@@ -295,18 +310,22 @@ namespace System.Data
 		}
 
 		/// <summary>
-		/// Gets the collection of parent relations for this DataTable.
+		/// Gets the collection of parent relations for 
+		/// this DataTable.
 		/// </summary>
 		public DataRelationCollection ParentRelations
 		{
 			get
-			{
-				return _parentRelations;
+			{	
+				// FIXME: temporarily commented to compile
+				// return _parentRelations;
+				throw new NotImplementedException ();
 			}
 		}
 
 		/// <summary>
-		/// Gets or sets the namespace for the XML represenation of the data stored in the DataTable.
+		/// Gets or sets the namespace for the XML represenation
+		///  of the data stored in the DataTable.
 		/// </summary>
 		public string Prefix
 		{
@@ -321,7 +340,8 @@ namespace System.Data
 		}
 
 		/// <summary>
-		/// Gets or sets an array of columns that function as primary keys for the data table.
+		/// Gets or sets an array of columns that function as 
+		/// primary keys for the data table.
 		/// </summary>
 		public DataColumn[] PrimaryKey
 		{
@@ -348,10 +368,11 @@ namespace System.Data
 		}
 
 		/// <summary>
-		/// Gets or sets an System.ComponentModel.ISite for the DataTable.
+		/// Gets or sets an System.ComponentModel.ISite 
+		/// for the DataTable.
 		/// </summary>
 		
-		public override ISite Site
+		public virtual ISite Site
 		{
 			get
 			{
@@ -379,17 +400,19 @@ namespace System.Data
 			}
 		}
 
-		bool IListSource.ContainsListCollection
+		/* FIXME: implement IListSource
+		public bool IListSource.ContainsListCollection
 		{
 			get
 			{
 				return _containsListCollection;
 			}
 		}
-
+		*/
 
 		/// <summary>
-		/// Commits all the changes made to this table since the last time AcceptChanges was called.
+		/// Commits all the changes made to this table since the 
+		/// last time AcceptChanges was called.
 		/// </summary>
 		
 		public void AcceptChanges()
@@ -397,7 +420,9 @@ namespace System.Data
 		}
 
 		/// <summary>
-		/// Begins the initialization of a DataTable that is used on a form or used by another component. The initialization occurs at runtime.
+		/// Begins the initialization of a DataTable that is used 
+		/// on a form or used by another component. The initialization
+		/// occurs at runtime.
 		/// </summary>
 		
 		public void BeginInit()
@@ -405,7 +430,8 @@ namespace System.Data
 		}
 
 		/// <summary>
-		/// Turns off notifications, index maintenance, and constraints while loading data.
+		/// Turns off notifications, index maintenance, and 
+		/// constraints while loading data.
 		/// </summary>
 		
 		public void BeginLoadData()
@@ -421,7 +447,8 @@ namespace System.Data
 		}
 
 		/// <summary>
-		/// Clones the structure of the DataTable, including all DataTable schemas and constraints.
+		/// Clones the structure of the DataTable, including
+		///  all DataTable schemas and constraints.
 		/// </summary>
 		
 		public virtual DataTable Clone()
@@ -430,7 +457,8 @@ namespace System.Data
 		}
 
 		/// <summary>
-		/// Computes the given expression on the current rows that pass the filter criteria.
+		/// Computes the given expression on the current rows that 
+		/// pass the filter criteria.
 		/// </summary>
 		
 		public object Compute(string expression, string filter)
@@ -449,7 +477,9 @@ namespace System.Data
 		}
 
 		/// <summary>
-		/// Ends the initialization of a DataTable that is used on a form or used by another component. The initialization occurs at runtime.
+		/// Ends the initialization of a DataTable that is used 
+		/// on a form or used by another component. The 
+		/// initialization occurs at runtime.
 		/// </summary>
 		
 		public void EndInit()
@@ -457,7 +487,8 @@ namespace System.Data
 		}
 
 		/// <summary>
-		/// Turns on notifications, index maintenance, and constraints after loading data.
+		/// Turns on notifications, index maintenance, and 
+		/// constraints after loading data.
 		/// </summary>
 		
 		public void EndLoadData()
@@ -465,7 +496,9 @@ namespace System.Data
 		}
 
 		/// <summary>
-		/// Gets a copy of the DataTable that contains all changes made to it since it was loaded or AcceptChanges was last called.
+		/// Gets a copy of the DataTable that contains all
+		///  changes made to it since it was loaded or 
+		///  AcceptChanges was last called.
 		/// </summary>
 		
 		public DataTable GetChanges()
@@ -474,7 +507,9 @@ namespace System.Data
 		}
 
 		/// <summary>
-		/// Gets a copy of the DataTable containing all changes made to it since it was last loaded, or since AcceptChanges was called, filtered by DataRowState.
+		/// Gets a copy of the DataTable containing all 
+		/// changes made to it since it was last loaded, or 
+		/// since AcceptChanges was called, filtered by DataRowState.
 		/// </summary>
 		
 		public DataTable GetChanges(DataRowState rowStates)
@@ -492,7 +527,8 @@ namespace System.Data
 		//}
 
 		/// <summary>
-		/// This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
+		/// This member supports the .NET Framework infrastructure
+		/// and is not intended to be used directly from your code.
 		/// </summary>
 		
 		//protected virtual Type GetRowType()
@@ -500,17 +536,21 @@ namespace System.Data
 		//}
 
 		/// <summary>
-		/// This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
+		/// This member supports the .NET Framework infrastructure 
+		/// and is not intended to be used directly from your code.
 		/// </summary>
 		
-		IList IListSource.GetList()
+		/* FIXME: implement IListSource
+		public IList IListSource.GetList()
 		{
 			IList list = null;
 			return list;
 		}
-
+		*/
+		
 		/// <summary>
-		/// Copies a DataRow into a DataTable, preserving any property settings, as well as original and current values.
+		/// Copies a DataRow into a DataTable, preserving any 
+		/// property settings, as well as original and current values.
 		/// </summary>
 		
 		public void ImportRow(DataRow row)
@@ -518,7 +558,8 @@ namespace System.Data
 		}
 
 		/// <summary>
-		/// This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
+		/// This member supports the .NET Framework infrastructure
+		///  and is not intended to be used directly from your code.
 		/// </summary>
 		
 		void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
@@ -526,7 +567,8 @@ namespace System.Data
 		}
 
 		/// <summary>
-		/// Finds and updates a specific row. If no matching row is found, a new row is created using the given values.
+		/// Finds and updates a specific row. If no matching row
+		///  is found, a new row is created using the given values.
 		/// </summary>
 		public DataRow LoadDataRow(object[] values, bool fAcceptChanges)
 		{
@@ -544,7 +586,8 @@ namespace System.Data
 		}
 
 		/// <summary>
-		/// This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.
+		/// This member supports the .NET Framework infrastructure
+		///  and is not intended to be used directly from your code.
 		/// </summary>
 		protected internal DataRow[] NewRowArray(int size)
 		{
@@ -627,7 +670,9 @@ namespace System.Data
 		}
 
 		/// <summary>
-		/// Rolls back all changes that have been made to the table since it was loaded, or the last time AcceptChanges was called.
+		/// Rolls back all changes that have been made to the 
+		/// table since it was loaded, or the last time AcceptChanges
+		///  was called.
 		/// </summary>
 		
 		public void RejectChanges()
@@ -653,7 +698,9 @@ namespace System.Data
 		}
 
 		/// <summary>
-		/// Gets an array of all DataRow objects that match the filter criteria in order of primary key (or lacking one, order of addition.)
+		/// Gets an array of all DataRow objects that match 
+		/// the filter criteria in order of primary key (or 
+		/// lacking one, order of addition.)
 		/// </summary>
 		
 		public DataRow[] Select(string filterExpression)
@@ -663,7 +710,9 @@ namespace System.Data
 		}
 
 		/// <summary>
-		/// Gets an array of all DataRow objects that match the filter criteria, in the the specified sort order.
+		/// Gets an array of all DataRow objects that 
+		/// match the filter criteria, in the the 
+		/// specified sort order.
 		/// </summary>
 		
 		public DataRow[] Select(string filterExpression, string sort)
@@ -673,7 +722,9 @@ namespace System.Data
 		}
 
 		/// <summary>
-		/// Gets an array of all DataRow objects that match the filter in the order of the sort, that match the specified state.
+		/// Gets an array of all DataRow objects that match
+		/// the filter in the order of the sort, that match 
+		/// the specified state.
 		/// </summary>
 		
 		public DataRow[] Select(string filterExpression, string sort, DataViewRowState recordStates)
@@ -683,7 +734,8 @@ namespace System.Data
 		}
 
 		/// <summary>
-		/// Gets the TableName and DisplayExpression, if there is one as a concatenated string.
+		/// Gets the TableName and DisplayExpression, if 
+		/// there is one as a concatenated string.
 		/// </summary>
 		
 		public override string ToString()
@@ -694,13 +746,15 @@ namespace System.Data
 		/* FIXME: temporarily commented - so we can get a
 		 *        a simple forward read only result set
 		/// <summary>
-		/// Occurs when after a value has been changed for the specified DataColumn in a DataRow.
+		/// Occurs when after a value has been changed for 
+		/// the specified DataColumn in a DataRow.
 		/// </summary>
 		
 		public event DataColumnChangeEventHandler ColumnChanged;
 
 		/// <summary>
-		/// Occurs when a value is being changed for the specified DataColumn in a DataRow.
+		/// Occurs when a value is being changed for the specified 
+		/// DataColumn in a DataRow.
 		/// </summary>
 		
 		public event DataColumnChangeEventHandler ColumnChanging;
