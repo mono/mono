@@ -1,5 +1,8 @@
 TEST_SOURCES = \
-	test-1 test-2 test-3
+	test-1 test-4 test-6
+
+TEST_NOPASS = \
+	test-2 test-3 test-5
 
 test-compiler:
 	for i in $(TEST_SOURCES); do \

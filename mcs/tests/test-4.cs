@@ -22,7 +22,7 @@ class X {
 			Console.WriteLine ("FAILED: Sbyte selected on constant int argument");
 			return 1;
 		} else {
-			Console.WriteLine ("OK: int selected for constant constant int");
+			Console.WriteLine ("OK: int selected for constant int");
 		}
 		
 		X y = new X ();
