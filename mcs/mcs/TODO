@@ -4,9 +4,6 @@ TODO:
 
 	2. EmitContext should be partially constructed.  No IL Generator.
 
-	Optimize the internal type expressions in the parser (system_object, etc)
-	to be something other than DecomposeQI-based expressions.
-
 	interface_type review.
 
 	parameter_array, line 952: `note: must be a single dimension array type'.  Validate this
@@ -46,19 +43,6 @@ BUGS
 
 	Explanation: The reason for the `instance' attribute on
 	indexers is that indexers only apply to instances
-
-* Indexer bugs:
-
-	the following wont work:
-
-	x [0] = x [1] = N
-
-	if x has indexers, the value of x [N] set is set to void.  This needs to be
-	fixed.
-
-* Array declarations
-
-	Multi-dim arrays are declared as [,] instead of [0..,0..]
 
 * Break/Continue statements
 
@@ -139,8 +123,6 @@ PENDING TASKS
 OPTIMIZATIONS
 -------------
 
-* Implement loop inversion for `For' as well.
-
 * There is too much unshared code between MemberAccess.Resolve and SimpleName
   resolve.  
  
@@ -178,11 +160,6 @@ OPTIMIZATIONS
 
 	It could be static for all we care, and just use it for making
 	sure that there are no recursive invocations on it.
-
-* Use of EmitBranchable
-
-	Currently I use brfalse/brtrue in the code for statements, instead of
-	using the EmitBranchable function that lives in Binary
 
 * ConvertImplicit
 
