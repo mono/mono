@@ -606,8 +606,15 @@ namespace System {
 		{
 			if (AssemblyResolve == null)
 				return null;
+			
+			ResolveEventHandler [] list = (ResolveEventHandler []) AssemblyResolve.GetInvocationList ();
+			foreach (ResolveEventHandler eh in list) {
+				Assembly assembly = eh (this, new ResolveEventArgs (name));
+				if (assembly != null)
+					return assembly;
+			}
 
-			return AssemblyResolve (this, new ResolveEventArgs (name));
+			return null;
 		}
 		// End of methods called from the runtime
 		

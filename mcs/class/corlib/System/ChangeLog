@@ -1,5 +1,10 @@
 2002-12-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* AppDomain.cs: DoAssemblyResolve now returns when one of the handlers
+	returns a non-null assembly.
+
+2002-12-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* MulticastDelegate.cs: make GetInvocationList work for more than 1
 	delegate.
 
