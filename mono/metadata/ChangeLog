@@ -1,3 +1,10 @@
+2003-03-18  Dick Porter  <dick@ximian.com>
+
+	* icall.c: Rename a couple of internal calls
+
+	* threads.c: Set the thread state to Stopped when a thread exits.
+	Fixes bug 39377.
+
 2003-03-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_System_Reflection_FieldInfo_internal_from_handle):
