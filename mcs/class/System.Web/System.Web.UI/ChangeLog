@@ -1,5 +1,10 @@
 2002-12-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* BaseParser.cs: a couple of path fixes to make it work
+	when the page is not in the root directory.
+
+2002-12-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Control.cs: fixed PreRenderRecursiveInternal. Thanks to kojoadams for
 	reporting the bug.
 

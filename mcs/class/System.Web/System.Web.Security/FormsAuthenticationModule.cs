@@ -48,19 +48,14 @@ namespace System.Web.Security
 
 			bool contextUserNull = (context.User == null);
 			if (formArgs.User != null || !contextUserNull) {
-				Console.WriteLine ("Aquiiiiiiiii");
-				if (contextUserNull) {
+				if (contextUserNull)
 					context.User = formArgs.User;
-					Console.WriteLine ("Allii {0}", formArgs.User);
-				}
 				return;
 			}
 				
 			HttpCookie cookie = context.Request.Cookies [cookieName];
-			if (cookie == null || cookie.Expires < DateTime.Now) {
-				Console.WriteLine ("Allá {0} {1}", (cookie == null), (cookie == null) ? "" : cookie.Expires.ToString ());
+			if (cookie == null || (cookie.Expires != DateTime.MinValue && cookie.Expires < DateTime.Now))
 				return;
-			}
 
 			FormsAuthenticationTicket ticket = FormsAuthentication.Decrypt (cookie.Value);
 			FormsAuthentication.RenewTicketIfOld (ticket);

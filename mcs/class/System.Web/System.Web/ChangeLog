@@ -1,3 +1,6 @@
+2002-12-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpCookie.cs: send 'expires' in the header.
 
 2002-12-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

@@ -75,6 +75,11 @@ namespace System.Web
 				oSetCookie.Append (_Path);
 			}
 
+			if (_ExpiresSet && _Expires != DateTime.MinValue) {
+				oSetCookie.Append ("; expires=");
+				oSetCookie.Append (_Expires.ToUniversalTime ().ToString ("ddd, dd-MMM-yyyy HH':'mm':'ss '+0000'"));
+			}
+
 			if (_Secure)
 				oSetCookie.Append ("; secure");
 

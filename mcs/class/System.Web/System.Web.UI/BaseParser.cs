@@ -31,7 +31,7 @@ namespace System.Web.UI
 			if (context == null)
 				throw new HttpException ("context is null!!");
 
-			return context.Request.MapPath (path, BaseVirtualDir, allowCrossAppMapping);
+			return context.Request.MapPath (path, context.Request.ApplicationPath, allowCrossAppMapping);
 		}
 
 		internal string PhysicalPath (string path)
@@ -39,7 +39,7 @@ namespace System.Web.UI
 			if (Path.DirectorySeparatorChar != '/')
 				path = path.Replace ('/', '\\');
 				
-			return Path.GetFullPath (Path.Combine (BaseVirtualDir, path));
+			return Path.Combine (BaseDir, path);
 		}
 
 		internal HttpContext Context

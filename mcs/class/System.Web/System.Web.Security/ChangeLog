@@ -1,3 +1,7 @@
+2002-12-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FormsAuthenticationModule.cs: remove debug lines.
+
 2002-12-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FormsAuthentication.cs: return a null ticket when an exception is

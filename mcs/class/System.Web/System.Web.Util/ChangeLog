@@ -1,3 +1,7 @@
+2002-12-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UrlUtils.cs: fixed IsRelativeUrl and IsRootUrl.
+
 2002-12-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* PathUtil.cs: removed.

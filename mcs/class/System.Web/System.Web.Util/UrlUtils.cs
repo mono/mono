@@ -68,9 +68,10 @@ namespace System.Web.Util
 		
 		public static bool IsRelativeUrl(string url)
 		{
-			if(url.IndexOf(':') != -1)
-				return !IsRootUrl(url);
-			return true;
+			if (url.IndexOf(':') == -1)
+				return !IsRooted(url);
+
+			return false;
 		}
 
 		public static bool IsRootUrl(string url)
@@ -91,7 +92,7 @@ namespace System.Web.Util
 			{
 				return (path[0]=='/' || path[0]=='\\');
 			}
-			return false;
+			return true;
 		}
 		
 		public static void FailIfPhysicalPath(string path)
@@ -273,7 +274,12 @@ namespace System.Web.Util
 				return String.Empty;
 			}
 			url.Replace('\\','/');
-			string baseDir = url.Substring(0, url.LastIndexOf('/'));
+
+			string baseDir = "";
+			int last = url.LastIndexOf ('/');
+			if (last > 0)
+				baseDir = url.Substring(0, url.LastIndexOf('/'));
+
 			if(baseDir.Length==0)
 			{
 				baseDir = "/";
