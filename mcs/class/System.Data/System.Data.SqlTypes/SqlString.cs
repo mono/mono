@@ -173,7 +173,7 @@ namespace System.Data.SqlTypes
 
 		public override bool Equals(object value) 
 		{
-			if (!(value is SqlGuid))
+			if (!(value is SqlString))
 				return false;
 			else
 				return (bool) (this == value);

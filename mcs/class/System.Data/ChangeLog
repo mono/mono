@@ -1,4 +1,9 @@
 2002-05-07  Tim Coleman <tim@timcoleman.com>
+	* SqlString.cs:
+		Fix a symantic error I made in SqlString
+		Equals where I copied and pasted wrongly
+
+2002-05-07  Tim Coleman <tim@timcoleman.com>
 	* INullable.cs:
 	* SqlBinary.cs:
 	* SqlBoolean.cs:
