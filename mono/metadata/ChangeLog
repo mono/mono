@@ -1,3 +1,7 @@
+2001-06-27  Miguel de Icaza  <miguel@ximian.com>
+
+	* metadata.c: Add inline documentation.
+
 2001-06-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* propertyattr.h, paramattr.h, methodsem.h, methodattr.h: New
