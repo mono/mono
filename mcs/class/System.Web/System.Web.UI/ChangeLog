@@ -1,3 +1,9 @@
+2002-06-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs: run OnInit, OnLoad y PreRender before rendering the page.
+	Invoke Page_Init and/or Page_Load if the user supplied them (though 
+	this should depend on AutoEventWireUp attribute of Page directive).
+
 2002-06-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs: don't throw exception in ControlID. By now, it returns ID.

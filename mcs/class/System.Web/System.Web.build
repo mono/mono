@@ -15,6 +15,7 @@
 			<arg value="/nowarn:0162"/> <!-- unreachable code -->
 			<arg value="/unsafe"/>
 			<arg value="/noconfig"/>
+			<arg value="/debug"/>
 			<arg value="/r:System.dll"/>
 			<arg value="/r:System.Drawing.dll"/>
 			<arg value="/r:System.Xml.dll"/>

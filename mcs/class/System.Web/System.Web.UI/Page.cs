@@ -12,6 +12,7 @@ using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
+using System.Reflection;
 using System.Security.Principal;
 using System.Web;
 using System.Web.Caching;
@@ -337,9 +338,49 @@ public class Page : TemplateControl, IHttpHandler
 		throw new NotImplementedException ();
 	}
 	
+	private void InvokeEventMethod (string m_name, object sender, EventArgs e)
+	{
+		MethodInfo evt_method = GetType ().GetMethod(m_name,
+						BindingFlags.IgnoreCase | BindingFlags.Public |
+						BindingFlags.NonPublic | BindingFlags.DeclaredOnly |
+						BindingFlags.Instance);
+
+		if (evt_method != null){
+			object [] parms = new object [2];
+			parms [0] = sender;
+			parms [1] = e;
+			evt_method.Invoke (this, parms);
+		}
+	}
+
+	private void Page_Init (object sender, EventArgs e)
+	{
+		InvokeEventMethod ("Page_Init", sender, e);
+	}
+
+	private void Page_Load (object sender, EventArgs e)
+	{
+		InvokeEventMethod ("Page_Load", sender, e);
+	}
+
 	public void ProcessRequest (HttpContext context)
 	{
 		FrameworkInitialize ();
+		// This 2 should depend on AutoEventWireUp in Page directive. Defaults to true.
+		Init += new EventHandler (Page_Init);
+		Load += new EventHandler (Page_Load);
+
+		//-- Control execution lifecycle in the docs
+		OnInit (EventArgs.Empty);
+		//LoadViewState ();
+		//if (this is IPostBackDataHandler)
+		//	LoadPostData ();
+		OnLoad (EventArgs.Empty);
+		//if (this is IPostBackDataHandler)
+		//	RaisePostBackEvent ();
+		OnPreRender (EventArgs.Empty);
+
+		//--
 		_context = context;
 		HtmlTextWriter output = new HtmlTextWriter (context.Response.Output);
 		

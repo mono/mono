@@ -44,12 +44,8 @@ namespace System.Web.UI.HtmlControls
 		
 		public virtual string InnerHtml
 		{
-			get
-			{
-				return _innerHtml;
-			}
-			set
-			{
+			get { return _innerHtml; }
+			set {
 				_innerHtml = value;
 				_doText = false;
 				_doChildren = false;
@@ -58,12 +54,8 @@ namespace System.Web.UI.HtmlControls
 		
 		public virtual string InnerText
 		{
-			get
-			{
-				return _innerText;
-			}
-			set
-			{
+			get { return _innerText; }
+			set {
 				_innerText = value;
 				_doText = true;
 				_doChildren = false;
@@ -75,9 +67,13 @@ namespace System.Web.UI.HtmlControls
 			writer.WriteBeginTag (TagName);
 			RenderAttributes (writer);
 			writer.Write ('>');
-			if(_doChildren) RenderChildren(writer);
-			else if(_doText) Page.Server.HtmlEncode(_innerText, writer);
-			else writer.Write(_innerHtml);
+			if (_doChildren)
+				RenderChildren(writer);
+			else if (_doText)
+				writer.Write (HttpUtility.HtmlEncode (_innerText));
+			else
+				writer.Write (_innerHtml);
+
 			RenderEndTag (writer);
 		}
 

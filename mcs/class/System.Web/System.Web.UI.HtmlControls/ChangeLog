@@ -1,3 +1,8 @@
+2002-06-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlContainerControl.cs: some formatting and use HttpUtility.Encode
+	instead of Page.Server to encode InnerText.
+
 2002-06-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlAnchor.cs:
