@@ -193,10 +193,12 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		private Type GetComponentType()
 		{
 			Type type = null;
-			if(GetId() != 0) return typeof(string);
 			
 			string strValue = xmlReader["type", XmlSchema.InstanceNamespace];
-			if(strValue == null) return null;
+			if(strValue == null) {
+			   if(GetId() != 0) return typeof(string);
+			   return null;
+			}
 			string[] strName = strValue.Split(':');
 			string namespaceURI = xmlReader.LookupNamespace(strName[0]);
 			type = mapper[new Element(string.Empty, strName[1], namespaceURI)];
@@ -325,6 +327,13 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		
 		private object DeserializeArray(long id)
 		{
+			// Special case for base64 byte arrays
+			if (GetComponentType () == typeof(byte[])) {
+			   byte[] data = Convert.FromBase64String (xmlReader.ReadElementString());
+			   RegisterObject(id, data, null, 0, null, null);
+			   return data;
+			}
+                       
 			// Get the array properties
 			string strArrayType = xmlReader["arrayType", SoapTypeMapper.SoapEncodingNamespace];
 			string[] arrayInfo = strArrayType.Split(':','[',',',']');

@@ -45,7 +45,6 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 	}
 	
 	public sealed class SoapFormatter: IRemotingFormatter, IFormatter {
-		private SoapWriter _soapWriter;
 		private SerializationBinder _binder;
 		private StreamingContext _context;
 		private ISurrogateSelector _selector;
@@ -102,11 +101,11 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 				throw new SerializationException("Can't write in the serialization stream");
 			if(graph == null)
 				throw new ArgumentNullException("graph");
-			_soapWriter = new SoapWriter(serializationStream, _selector, _context, _topObject);
+			SoapWriter soapWriter = new SoapWriter(serializationStream, _selector, _context, _topObject);
 			CultureInfo savedCi = CultureInfo.CurrentCulture;
 			try {
 				Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
-				_soapWriter.Serialize (graph, headers, _typeFormat, _assemblyFormat);
+				soapWriter.Serialize (graph, headers, _typeFormat, _assemblyFormat);
 			}
 			finally {
 				Thread.CurrentThread.CurrentCulture = savedCi;

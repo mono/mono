@@ -359,7 +359,10 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
 			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
 
-
+			element = new Element("base64", SoapEncodingNamespace);
+			elementType = typeof(byte[]);
+			xmlNodeToTypeTable.Add(element, elementType.AssemblyQualifiedName);
+			typeToXmlNodeTable.Add(elementType.AssemblyQualifiedName, element);
 		}
 		
 		public static string GetXsdValue (object value)
