@@ -4,6 +4,7 @@
 // Eduardo Garcia (kiwnix@yahoo.es)
 // 
 // (C) Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2004 Novell (http://www.novell.com)
 // 
 
 using NUnit.Framework;
@@ -2455,6 +2456,22 @@ public class ArrayTest : Assertion
                 object [] array = {true, 'k', SByte.MinValue, Byte.MinValue, (short) 2, 634, (long) 436, (float) 1.1, 1.23, "Hello World"};
                 Array.Sort (array, (IComparer) null);
         }
+
+	[Test]
+	public void ClearJaggedArray () 
+	{
+		byte[][] matrix = new byte [8][];
+		for (int i=0; i < 8; i++) {
+			matrix [i] = new byte [8];
+			for (int j=0; j < 8; j++) {
+				matrix [i][j] = 1;
+			}
+		}
+		Array.Clear (matrix, 0, 8);
+		for (int i=0; i < 8; i++) {
+			AssertNull (i.ToString (), matrix [i]);
+		}
+	}
 }
 
 }
