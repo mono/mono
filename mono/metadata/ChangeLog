@@ -3,6 +3,9 @@
 	* gc.c threads.c: Make the finalizer thread a normal managed thread so
 	the finalizer code can use thread functionality.
 
+	* gc.c (ves_icall_System_GC_WaitForPendingFinalizers): Fix check for 
+	the finalizer thread.
+
 	* threads.c: Make some functions more robust.
 
 	* loader.c (mono_lookup_pinvoke_call): Another attempt at fixing #22532.
