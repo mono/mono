@@ -1,3 +1,6 @@
+2002-07-05  Radek Doulik  <rodo@ximian.com>
+
+	* ppc/tramp.c: removed magic hack
 
 Tue Jun 18 10:21:56 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
