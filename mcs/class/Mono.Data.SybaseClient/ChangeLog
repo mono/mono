@@ -1,5 +1,5 @@
 2002-12-01  Tim Coleman <tim@timcoleman.com>
-        * Mono.Data.SybaseClient/SybaseDataAdapter.cs:
+        * Mono.Data.SybaseClient/SybaseDataReader.cs:
                 Change to reflect TdsSchemaInfo -> TdsDataColumnCollection
                 shift.
 
