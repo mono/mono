@@ -122,6 +122,15 @@ public class Z : Y
 		return 0;
 	}
 
+	class MyArray : ArrayList
+	{
+		public override object this[int index]
+		{
+			get { return base[index]; }
+			set { base[index] = value;}
+		}
+	}
+
 	public static int Main ()
 	{
 		int result = Test ();
@@ -130,6 +139,14 @@ public class Z : Y
 
 		E e = new E ();
 		e.g = "monkey";
+
+		//
+		// Now test base [...]
+		//
+		MyArray arr = new MyArray ( );
+		arr.Add ( "String value" );
+		if (arr[0].ToString () != "String value")
+			return 100;
 
 		return result;
 	}
