@@ -1,3 +1,15 @@
+2004-03-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-ops.h: Add sparcv9 compare and branch instructions.
+
+	* inssel-sparc.brg mini-sparc.h mini-sparc.c cpu-sparc.md: Use some
+	v9 instructions if we have a v9 cpu.
+
+	* mini-sparc.c (mono_arch_get_global_int_regs): Use unused input
+	registers for global allocation.
+
+	* exceptions-sparc.c: Fixes.
+	
 2004-03-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* liveness.c (mono_analyze_liveness): Optimized version.
