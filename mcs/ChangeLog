@@ -1,3 +1,7 @@
+2004-09-03  Martin Baulig  <martin@ximian.com>
+
+	* Makefile (test-compiler): New target to run the compiler test.
+
 2004-07-02  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (OVERRIDE_BARE_TARGETS): Remove.

@@ -25,6 +25,10 @@ clean-profiles:
 testcorlib:
 	@cd class/corlib && $(MAKE) test run-test
 
+test-compiler:
+	$(MAKE) -C tests test-everything
+	$(MAKE) -C errors test-everything
+
 # Disting. We need to override $(distdir) here.
 
 package := mcs-$(VERSION)
