@@ -199,12 +199,17 @@ namespace System.Collections.Generic {
 	
 		void CopyTo (KeyValuePair<K, V> [] array, int index)
 		{
-			if (array.Length > _usedSlots)
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			if (index < 0)
+				throw new ArgumentOutOfRangeException ("index");
+			if (index >= array.Length)
+				throw new ArgumentException ("index larger than largest valid index of array");
+			if (array.Length - index < _usedSlots)
 				throw new ArgumentException ("Destination array cannot hold the requested elements!");
 			
-			int i = 0;
 			foreach (KeyValuePair<K, V> kv in this)
-				array [i++] = kv;
+				array [index++] = kv;
 		}
 	
 		protected void Resize ()
@@ -635,10 +640,18 @@ namespace System.Collections.Generic {
 	
 			public void CopyTo (K [] array, int index)
 			{
+				if (array == null)
+					throw new ArgumentNullException ("array");
+				if (index < 0)
+					throw new ArgumentOutOfRangeException ("index");
+				if (index >= array.Length)
+					throw new ArgumentException ("index larger than largest valid index of array");
+				if (array.Length - index < _dictionary._usedSlots)
+					throw new ArgumentException ("Destination array cannot hold the requested elements!");
+
 				IEnumerable<K> enumerateThis = (IEnumerable<K>) this;
-				int i = 0;
 				foreach (K k in enumerateThis) {
-					array [i++] = k;
+					array [index++] = k;
 				}
 			}
 	
@@ -734,10 +747,18 @@ namespace System.Collections.Generic {
 	
 			public void CopyTo (V [] array, int index)
 			{
+				if (array == null)
+					throw new ArgumentNullException ("array");
+				if (index < 0)
+					throw new ArgumentOutOfRangeException ("index");
+				if (index >= array.Length)
+					throw new ArgumentException ("index larger than largest valid index of array");
+				if (array.Length - index < _dictionary._usedSlots)
+					throw new ArgumentException ("Destination array cannot hold the requested elements!");
+
 				IEnumerable<V> enumerateThis = (IEnumerable<V>) this;
-				int i = 0;
 				foreach (V v in enumerateThis) {
-					array [i++] = v;
+					array [index++] = v;
 				}
 			}
 	

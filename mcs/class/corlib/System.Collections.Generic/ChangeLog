@@ -6,6 +6,8 @@
 	the index of the chain suitable for/containing the key.
 	(Item, Add, Remove): Simplify, and remove FIXMEs.
 	(Resize): Reuse linked list nodes from old table.
+	(Dictionary.CopyTo, HashKeyCollection.CopyTo, HashValueCollection.CopyTo):
+	Add some argument checks.
 
 2005-04-02  Ben Maurer  <bmaurer@ximian.com>
 
