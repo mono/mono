@@ -1,3 +1,8 @@
+2004-08-22  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs (FlowBranching.UsageVector.MergeChild): If we're
+	a switch and may break, reset the barrier.  Fixes #59867.
+
 2004-08-22  Marek Safar  <marek.safar@seznam.cz>
 
 	CLS-Compliance speed up (~5% for corlib)

@@ -663,8 +663,12 @@ namespace Mono.CSharp
 						if (!new_r.MayReturn && !new_r.MayThrow)
 							new_r.ResetBarrier ();
 					}
-				} else if (branching.Type == BranchingType.Switch)
+				} else if (branching.Type == BranchingType.Switch) {
+					if (new_r.MayBreak || new_r.MayReturn)
+						new_r.ResetBarrier ();
+
 					new_r.ResetBreaks ();
+				}
 
 				//
 				// We've now either reached the point after the branching or we will
