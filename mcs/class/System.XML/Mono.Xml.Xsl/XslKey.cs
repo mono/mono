@@ -22,6 +22,37 @@ using QName = System.Xml.XmlQualifiedName;
 
 namespace Mono.Xml.Xsl
 {
+	internal class ExprKeyContainer : Expression
+	{
+		Expression expr;
+		public ExprKeyContainer (Expression expr)
+		{
+			this.expr = expr;
+		}
+
+		public Expression BodyExpression {
+			get { return expr; }
+		}
+
+		public override object Evaluate (BaseIterator iter)
+		{
+			return expr.Evaluate (iter);
+		}
+
+		internal override XPathNodeType EvaluatedNodeType {
+			get { return expr.EvaluatedNodeType; }
+		}
+
+		internal override bool NeedAbsoluteMatching {
+			// This must be evaluated at any point.
+			get { return true; }
+		}
+
+		public override XPathResultType ReturnType {
+			get { return expr.ReturnType; }
+		}
+	}
+
 	public class XslKey
 	{
 		QName name;
@@ -41,7 +72,7 @@ namespace Mono.Xml.Xsl
 
 			c.AssertAttribute ("match");
 			string matchString = c.GetAttribute ("match");
-			this.matchPattern = c.CompileExpression (matchString);
+			this.matchPattern = c.CompileExpression (matchString, true);
 			c.KeyCompilationMode = false;
 		}
 
@@ -65,9 +96,10 @@ namespace Mono.Xml.Xsl
 		{
 			XPathNavigator nav = doc.Clone ();
 			nav.MoveToRoot ();
-//			if (MatchPattern.ExpressionNode.IsAbsolutePath)
-//				CollectAbsoluteMatchNodes (nav);
-//			else
+			Expression expr = ((ExprKeyContainer) MatchPattern.ExpressionNode).BodyExpression;
+			if (expr.NeedAbsoluteMatching)
+				CollectAbsoluteMatchNodes (nav);
+			else
 				CollectRelativeMatchNodes (nav);
 		}
 

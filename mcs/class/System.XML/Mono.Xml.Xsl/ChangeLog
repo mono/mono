@@ -1,5 +1,12 @@
 2004-02-16 Atsushi Enomoto <atsushi@ximian.com>
 
+	* XslTransformProcessor.cs : Bugfix. Stored keys should be cleared.
+	* XslKey.cs : Added ExprKeyContainer expression type, which is 
+	  designed to be matched at any level.
+	* Compiler.cs : support for ExprKeyContainer.
+
+2004-02-16 Atsushi Enomoto <atsushi@ximian.com>
+
 	* XslKey.cs : Now it collects key and matching nodes at the first
 	  evaluation time. After that, we can just get them from the table.
 	* Compiler.cs : Added KeyCompilationMode. It is used to prevent

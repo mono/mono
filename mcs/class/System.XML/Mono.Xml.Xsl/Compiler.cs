@@ -312,10 +312,18 @@ namespace Mono.Xml.Xsl {
 		internal XPathParser parser;
 		internal CompiledExpression CompileExpression (string expression)
 		{
+			return CompileExpression (expression, false);
+		}
+
+		internal CompiledExpression CompileExpression (string expression, bool isKey)
+		{
 			if (expression == null || expression == "") return null;
 
-			CompiledExpression e = new CompiledExpression (parser.Compile (expression), true);
-			
+			Expression expr = parser.Compile (expression);
+			if (isKey)
+				expr = new ExprKeyContainer (expr);
+			CompiledExpression e = new CompiledExpression (expr);
+
 			exprStore.AddExpression (e, this);
 			
 			return e;
