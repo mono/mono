@@ -1,3 +1,8 @@
+2001-10-18  Ravi Pratap  <ravi@ximian.com>
+
+	* test-26.cs : Update to test delegate creation from another 
+	delegate.
+	
 2001-10-17  Ravi Pratap  <ravi@ximian.com>
 
 	* test-26.cs : Added to demonstrate delegate support.

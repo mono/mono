@@ -11,15 +11,21 @@ public class Blah {
 
 	public static int Main ()
 	{
-		Blah i = new Blah ();
+		Blah f = new Blah ();
 
-		MyDelegate del = new MyDelegate (i.Foo);
+		MyDelegate del = new MyDelegate (f.Foo);
+
+		MyDelegate another = new MyDelegate (del);
 
 		int number = del (2, 3);
 
-		Console.WriteLine ("Delegate invocation returned : " + number);
+		int i = another (4, 6);
+		
+		Console.WriteLine ("Delegate invocation of one returned : " + number);
 
-		if (number == 5)
+		Console.WriteLine ("Delegate invocation of the other returned : " + i);
+
+		if (number == 5 && i == 10)
 			return 0;
 		else
 			return 1;
