@@ -3440,7 +3440,7 @@ conditional_expression
 	  }
 	| conditional_or_expression INTERR INTERR expression
 	  {
-		$$ = new NullCoalescingOperator ((Expression) $1, (Expression) $4, lexer.Location);
+		$$ = new Nullable.NullCoalescingOperator ((Expression) $1, (Expression) $4, lexer.Location);
 	  }
 	// We'll be resolved into a `parenthesized_expression_0' later on.
 	| conditional_or_expression INTERR CLOSE_PARENS

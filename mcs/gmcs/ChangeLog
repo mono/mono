@@ -1,5 +1,9 @@
 2005-03-14  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (Nullable.NullCoalescingOperator): Implemented.
+
+2005-03-14  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs (Nullable.LiftedBinaryOperator): Added support for
 	the comparision operators `<', `>', `<=' and `>='.
 

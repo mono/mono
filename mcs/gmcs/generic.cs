@@ -2267,29 +2267,6 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class NullCoalescingOperator : Expression
-	{
-		Expression left;
-		Expression right;
-
-		public NullCoalescingOperator (Expression left, Expression right, Location loc)
-		{
-			this.left = left;
-			this.right = right;
-			this.loc = loc;
-		}
-
-		public override Expression DoResolve (EmitContext ec)
-		{
-			Error (-1, "The ?? operator is not yet implemented.");
-			return null;
-		}
-
-		public override void Emit (EmitContext ec)
-		{
-		}
-	}
-
 	public abstract class Nullable
 	{
 		protected sealed class NullableInfo
@@ -2895,6 +2872,98 @@ namespace Mono.CSharp {
 
 				ig.MarkLabel (is_null_label);
 				ig.Emit (OpCodes.Ldc_I4_0);
+
+				ig.MarkLabel (end_label);
+			}
+		}
+
+		public class NullCoalescingOperator : Expression
+		{
+			Expression left, right;
+			Expression expr;
+			Unwrap unwrap;
+
+			public NullCoalescingOperator (Expression left, Expression right, Location loc)
+			{
+				this.left = left;
+				this.right = right;
+				this.loc = loc;
+
+				eclass = ExprClass.Value;
+			}
+
+			public override Expression DoResolve (EmitContext ec)
+			{
+				if (type != null)
+					return this;
+
+				left = left.Resolve (ec);
+				if (left == null)
+					return null;
+
+				right = right.Resolve (ec);
+				if (right == null)
+					return null;
+
+				Type ltype = left.Type, rtype = right.Type;
+
+				if (!TypeManager.IsNullableType (ltype) && ltype.IsValueType) {
+					Binary.Error_OperatorCannotBeApplied (loc, "??", ltype, rtype);
+					return null;
+				}
+
+				if (TypeManager.IsNullableType (ltype)) {
+					NullableInfo info = new NullableInfo (ltype);
+
+					unwrap = (Unwrap) new Unwrap (left, loc).Resolve (ec);
+					if (unwrap == null)
+						return null;
+
+					expr = Convert.ImplicitConversion (ec, right, info.UnderlyingType, loc);
+					if (expr != null) {
+						left = unwrap;
+						type = expr.Type;
+						return this;
+					}
+				}
+
+				expr = Convert.ImplicitConversion (ec, right, ltype, loc);
+				if (expr != null) {
+					type = expr.Type;
+					return this;
+				}
+
+				if (unwrap != null) {
+					expr = Convert.ImplicitConversion (ec, unwrap, rtype, loc);
+					if (expr != null) {
+						left = expr;
+						expr = right;
+						type = expr.Type;
+						return this;
+					}
+				}
+
+				Binary.Error_OperatorCannotBeApplied (loc, "??", ltype, rtype);
+				return null;
+			}
+
+			public override void Emit (EmitContext ec)
+			{
+				ILGenerator ig = ec.ig;
+
+				Label is_null_label = ig.DefineLabel ();
+				Label end_label = ig.DefineLabel ();
+
+				if (unwrap != null) {
+					unwrap.EmitCheck (ec);
+					ig.Emit (OpCodes.Brfalse, is_null_label);
+				}
+
+				left.Emit (ec);
+				ig.Emit (OpCodes.Br, end_label);
+
+				ig.MarkLabel (is_null_label);
+				expr.Emit (ec);
 
 				ig.MarkLabel (end_label);
 			}
