@@ -5,6 +5,7 @@ Mono.Xml.XPath/DTMXPathDocumentBuilder.cs
 Mono.Xml.XPath/DTMXPathDocumentWriter.cs
 Mono.Xml.XPath/DTMXPathNavigator.cs
 Mono.Xml.XPath/DTMXPathNode.cs
+Mono.Xml.XPath/XPathNavigatorReader.cs
 Mono.Xml.XPath2/SequenceType.cs
 Mono.Xml.XPath2/XPath2Expression.cs
 Mono.Xml.XPath2/XPathSequence.cs
