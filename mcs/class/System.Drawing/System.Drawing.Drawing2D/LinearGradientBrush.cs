@@ -209,11 +209,11 @@ namespace System.Drawing.Drawing2D
 
 		public Matrix Transform {
 			get {
-				IntPtr matrix;
-				Status status = GDIPlus.GdipGetLineTransform (nativeObject, out matrix);
+				Matrix matrix = new Matrix ();
+				Status status = GDIPlus.GdipGetLineTransform (nativeObject, matrix.nativeMatrix);
 				GDIPlus.CheckStatus (status);
 
-				return new Matrix (matrix);
+				return matrix;
 			}
 			set {
 				Status status = GDIPlus.GdipSetLineTransform (nativeObject, value.nativeMatrix);
