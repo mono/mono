@@ -1,3 +1,8 @@
+2003-03-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MonoType.cs:
+	(GetMethodImpl): support BindingFlags.IgnoreCase flag. Fixes bug #40322.
+
 2003-03-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Activator.cs (CreateInstance): Call GetConstructor with the right

@@ -151,11 +151,12 @@ namespace System
 							     Type[] types, ParameterModifier[] modifiers)
 		{
 			MethodInfo[] methods = GetMethods (bindingAttr);
+			bool ignoreCase = ((bindingAttr & BindingFlags.IgnoreCase) != 0);
 			MethodInfo found = null;
 			MethodBase[] match;
 			int count = 0;
 			foreach (MethodInfo m in methods) {
-				if (m.Name != name)
+				if (String.Compare (m.Name, name, ignoreCase) != 0)
 					continue;
 				if (callConvention != CallingConventions.Any && m.CallingConvention != callConvention)
 					continue;
@@ -175,7 +176,7 @@ namespace System
 			else {
 				count = 0;
 				foreach (MethodInfo m in methods) {
-					if (m.Name != name)
+					if (String.Compare (m.Name, name, ignoreCase) != 0)
 						continue;
 					if (callConvention != CallingConventions.Any && m.CallingConvention != callConvention)
 						continue;
