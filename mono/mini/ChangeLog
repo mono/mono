@@ -1,4 +1,11 @@
 
+Fri May 2 17:37:29 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: avoid linking libmono with GMODULE_LIBS, because
+	that contains -export-dynamic and it makes using the ld script
+	useless.
+	* mini.h, main.c, driver.c: s/mini_main/mono_main/g.
+
 Fri May 2 12:52:32 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini.h, mini-x86.c, driver.c: disable optimizations not available on a
