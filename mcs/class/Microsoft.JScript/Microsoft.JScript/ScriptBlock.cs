@@ -14,7 +14,7 @@ namespace Microsoft.JScript {
 
 		internal ScriptBlock ()
 		{
-			src_elems = new Block ();
+			src_elems = new Block (null);
 		}
 
 		internal void Add (AST e)
