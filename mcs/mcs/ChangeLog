@@ -1,3 +1,9 @@
+2003-09-18  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs (TypeHandle.ctor): Set `IsInterface' solely based
+	on `type.IsInterface'; don't check whether the type has a parent
+	to determine whether it's an interface.
+
 2003-09-15  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (TypeContainer.DefineType): Added an error flag to
