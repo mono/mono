@@ -205,34 +205,40 @@ namespace System
 
 		public static TimeSpan FromDays (double value)
 		{
-			return FromMilliseconds (value * (TicksPerDay / TicksPerMillisecond));
+			return From (value, TicksPerDay);
 		}
 
 		public static TimeSpan FromHours (double value)
 		{
-			return FromMilliseconds (value * (TicksPerHour / TicksPerMillisecond));
+			return From (value, TicksPerHour);
 		}
 
 		public static TimeSpan FromMinutes (double value)
 		{
-			return FromMilliseconds (value * (TicksPerMinute / TicksPerMillisecond));
+			return From (value, TicksPerMinute);
 		}
 
 		public static TimeSpan FromSeconds (double value)
 		{
-			return FromMilliseconds (value * (TicksPerSecond / TicksPerMillisecond));
+			return From (value, TicksPerSecond);
 		}
 
 		public static TimeSpan FromMilliseconds (double value)
 		{
+			return From (value, TicksPerMillisecond);
+		}
+
+		private static TimeSpan From (double value, long tickMultiplicator) 
+		{
 			if (Double.IsNaN (value))
 				throw new ArgumentException (Locale.GetText ("Value cannot be NaN."), "value");
-			if (Double.IsNegativeInfinity (value))
-				return MinValue;
-			if (Double.IsPositiveInfinity (value))
-				return MaxValue;
+			if (Double.IsNegativeInfinity (value) || Double.IsPositiveInfinity (value) ||
+				(value < MinValue.Ticks) || (value > MaxValue.Ticks))
+				throw new OverflowException (Locale.GetText ("Outside range [MinValue,MaxValue]"));
 
 			try {
+				value = (value * (tickMultiplicator / TicksPerMillisecond));
+
 				checked {
 					long val = (long) Math.Round(value);
 					return new TimeSpan (val * TicksPerMillisecond);

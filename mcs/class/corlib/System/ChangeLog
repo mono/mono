@@ -1,3 +1,8 @@
+2004-06-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TimeSpan.cs: Fixed exceptions in FromXXX methods as they are 
+	somewhat different from the documentation.
+
 2004-06-01  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* Type.cs: added missing attributes on InvokeMember
