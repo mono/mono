@@ -1,3 +1,8 @@
+2003-03-05  Miguel de Icaza  <miguel@ximian.com>
+
+	* cfold.cs: Catch division by zero in modulus operator during
+	constant folding.
+
 2003-03-03  Miguel de Icaza  <miguel@ximian.com>
 
 	* interface.cs (Interface.DefineMembers): Avoid defining members
