@@ -1,0 +1,327 @@
+using System;
+
+namespace System.Data
+{
+	/// <summary>
+	/// Summary description for DataColumn.
+	/// </summary>
+	public class DataColumn
+	{		
+		private bool allowDBNull = true;
+		private bool autoIncrement = false;
+		private long autoIncrementSeed = 0;
+		private long autoIncrementStep = 1;
+		private string caption = null;
+		private MappingType columnMapping = null;
+		private string columnName = null;
+		private Type dataType = null;
+		private object defaultValue = null;
+		private string expression = null;
+		private PropertyCollection extendedProperties = null;
+		private int maxLength = -1;
+		private string nameSpace = null;
+		private int ordinal = -1;
+		private string prefix = null;
+		private bool readOnly = false;
+		private DataTable table = null;
+		private bool unique = false;
+
+		#region Constructors
+		public DataColumn()
+		{
+		}
+
+		public DataColumn(string columnName): this()
+		{
+			ColumnName = columnName;
+			Caption = columnName;
+		}
+
+		public DataColumn(string columnName, Type dataType): this(columnName)
+		{
+			if(dataType == null)
+			{
+				throw new ArgumentNullException();
+			}
+			
+			DataType = dataType;
+
+		}
+
+		public DataColumn( string columnName, Type dataType, string expr): this(columnName, dataType)
+		{
+			Expression = expr;
+		}
+
+		public DataColumn(string columnName, Type dataType, string expr, MappingType type): this(columnName, dataType, expr)
+		{
+			ColumnMapping = type;
+		}
+		#endregion
+
+		#region Properties		
+		public bool AllowDBNull
+		{
+			get
+			{
+				return allowDBNull;
+			}
+			set
+			{
+				allowDBNull = value;
+			}
+		}
+        
+		/// <summary>
+		/// Gets or sets a value indicating whether the column automatically increments the value of the column for new rows added to the table.
+		/// </summary>
+		/// <remarks>
+		///		If the type of this column is not Int16, Int32, or Int64 when this property is set, 
+		///		the DataType property is coerced to Int32. An exception is generated if this is a computed column 
+		///		(that is, the Expression property is set.) The incremented value is used only if the row's value for this column, 
+		///		when added to the columns collection, is equal to the default value.
+		///	</remarks>
+		public bool AutoIncrement
+		{
+			get
+			{
+				return autoIncrement;
+			}
+			set
+			{
+				autoIncrement = value;
+				if(autoIncrement == true)
+				{
+					if(Expression != null)
+					{
+						throw new Exception();
+					}
+					if(DataType != Int16 && DataType != Int32 && DataType != Int64)
+					{
+						DataType = Int32;
+					}
+				}
+			}
+		}
+
+		public long AutoIncrementSeed
+		{
+			get
+			{
+				return autoIncrementSeed;
+			}
+			set
+			{
+				autoIncrementSeed = value;
+			}
+		}
+
+		public long AutoIncrementStep
+		{
+			get
+			{
+				return autoIncrementStep;
+			}
+			set
+			{
+				autoIncrementStep = value;
+			}
+		}
+
+		public string Caption 
+		{
+			get
+			{
+				return caption;
+			}
+			set
+			{
+				caption = value;
+			}
+		}
+
+		public virtual MappingType ColumnMapping
+		{
+			get
+			{
+				return columnMapping;
+			}
+			set
+			{
+				columnMapping = value;
+			}
+		}
+
+		public string ColumnName
+		{
+			get
+			{
+				return columnName;
+			}
+			set
+			{
+				columnName = value;
+			}
+		}
+
+		public Type DataType
+		{
+			get
+			{
+				return dataType;
+			}
+			set
+			{
+				if(AutoIncrement == true && value != Int32)
+				{
+					throw new Exception();
+				}
+				dataType = value;
+			}
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <remarks>When AutoIncrement is set to true, there can be no default value.</remarks>
+		public object DefaultValue
+		{
+			get
+			{
+				return defaultValue;
+			}
+			set
+			{
+				defaultValue = value;
+			}
+		}
+
+		public string Expression
+		{
+			get
+			{
+				return expression;
+			}
+			set
+			{
+				expression = value;
+			}
+		}
+
+		public PropertyCollection ExtendedProperties
+		{
+			get
+			{
+				return extendedProperties;
+			}
+		}
+
+		public int MaxLength
+		{
+			get
+			{
+				return maxLength;
+			}
+			set
+			{
+				maxLength = value;
+			}
+		}
+
+		public string Namespace
+		{
+			get
+			{
+				return nameSpace;
+			}
+			set
+			{
+				nameSpace = value;
+			}
+		}
+
+		//Need a good way to set the Ordinal when the column is added to a columnCollection.
+		public int Ordinal
+		{
+			get
+			{
+				return ordinal;
+			}
+		}
+
+		public string Prefix
+		{
+			get
+			{
+				return prefix;
+			}
+			set
+			{
+				prefix = value;
+			}
+		}
+
+		public bool ReadOnly
+		{
+			get
+			{
+				return readOnly;
+			}
+			set
+			{
+				readOnly = value;
+			}
+		}
+
+		public DataTable Table
+		{
+			get
+			{
+				return table;
+			}
+		}
+
+		public bool Unique
+		{
+			get
+			{
+				return unique;
+			}
+			set
+			{
+				unique = value;
+			}
+		}
+
+		#endregion
+
+		#region Methods
+
+		protected internal void CheckNotAllowNull();
+
+		protected void CheckUnique();
+
+		protected internal virtual void OnPropertyChanging(PropertyChangedEventArgs pcevent);
+
+		protected internal void RaisePropertyChanging(string name);
+
+		/// <summary>
+		/// Gets the Expression of the column, if one exists.
+		/// </summary>
+		/// <returns>The Expression value, if the property is set; otherwise, the ColumnName property.</returns>
+		public override string ToString()
+		{
+			if(expression != null && expression != string.Empty)
+			{
+				return expression;
+			}
+			else
+			{
+				return columnName;
+			}
+		}
+
+		#endregion
+
+	}
+}

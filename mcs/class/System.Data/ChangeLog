@@ -6,4 +6,14 @@
 2002-02-11  Christopher Podurgiel <cpodurgiel@msn.com>
 
 	* DataColumnChangeEventArgs.cs : Added
-	* DataColumnChangeEventHandler.cs : Added
+	* DataColumnCollection.cs : Added
+
+2002-03-01  Christopher Podurgiel <cpodurgiel@msn.com>
+
+	* DataColumnCollection.cs : When an existing DataColumn is added, will now Assign a 
+		default name if the ColumnName is null.
+	* DataSet.cs : Added
+	* DataTable.cs : Added
+	* DataRelationCollection.cs : Added
+	* DataTableRelationCollection.cs : Added
+	* DataColumn : Added

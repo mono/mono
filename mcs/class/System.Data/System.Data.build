@@ -11,6 +11,11 @@
 			<arg value="/unsafe"/>
 			<sources>
 				<includes name="**/*.cs"/> 
+				<excludes name="System.Data/DataColumn.cs"/>
+				<excludes name="System.Data/DataTableRelationCollection.cs"/>
+				<excludes name="System.Data/DataRelationCollection.cs"/>
+				<excludes name="System.Data/DataTable.cs"/>
+				<excludes name="System.Data/DataSet.cs"/>
 				<excludes name="Test/**"/>
 			</sources>
 			<references>
