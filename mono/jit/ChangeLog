@@ -1,3 +1,8 @@
+2003-02-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* trampoline.c (arch_create_jit_trampoline): This function should 
+	allways return a trampoline for managed methods. Fixes bug #29859.
+
 2003-02-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* debug.c: allocate debug->source_files. Fixes GLib-CRITICAL upon
