@@ -112,24 +112,30 @@ statement [AST parent] returns [AST stm]
 	| stm = with_stm [parent]
 	| switch_stm [parent]
 	| stm = throw_stm [parent]
-	| try_stm
+	| stm = try_stm [parent]
 	;
 
-block
-	: OPEN_BRACE (statement [null])* CLOSE_BRACE
+block [Block elems, AST parent]
+{
+	AST stm = null;
+}
+	: OPEN_BRACE (stm = statement [parent] { if (stm != null) elems.Add (stm); })* CLOSE_BRACE
 	;
 
-try_stm
-	: "try" block
-	  ((catch_exp (finally_exp | ) | ) | finally_exp)
+try_stm [AST parent] returns [Try t]
+{
+	t = new Try (parent);
+}
+	: "try" block [t.guarded_block, t]
+        ((catch_exp [ref t.catch_id, t.catch_block, t] (finally_exp [t.finally_block, t] | ) | ) | finally_exp [t.finally_block, t])
 	;
 
-catch_exp
-	: "catch" OPEN_PARENS IDENTIFIER CLOSE_PARENS block
+catch_exp [ref string id, Block catch_block, AST parent]
+	: "catch" OPEN_PARENS i:IDENTIFIER { id = i.getText (); } CLOSE_PARENS block [catch_block, parent]
 	;
 
-finally_exp
-	: "finally" block
+finally_exp [Block elems, AST parent]
+	: "finally" block [elems, parent]
 	;
 
 throw_stm [AST parent] returns [AST t]

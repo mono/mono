@@ -1,5 +1,6 @@
 2004-05-18  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* jscript-lexer-parser.g: let's build Try/Catch/Finally ast.
 	* expression.cs: handle Try case for field or local vars allocation. 
 	* Try.cs: implemented Emit.
 	* Throw.cs: implemented code generation.
