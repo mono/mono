@@ -1,6 +1,12 @@
 2003-07-10  Martin Baulig  <martin@ximian.com>
 
-	* class.cs (MethodCore.DoDefineParameters): Added CS0225 check.
+	* expression.cs (TypeOfVoid): New class.
+	(TypeOf): Report a CS0673 if it's System.Void.  Fixes #42264.
+
+2003-07-10  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (MethodCore.DoDefineParameters): Added CS0225 check;
+	bug #35957.
 
 2003-07-10  Martin Baulig  <martin@ximian.com>
 

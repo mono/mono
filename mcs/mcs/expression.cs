@@ -6036,6 +6036,12 @@ namespace Mono.CSharp {
 			if (typearg == null)
 				return null;
 
+			if (typearg == TypeManager.void_type) {
+				Error (673, "System.Void cannot be used from C# - " +
+				       "use typeof (void) to get the void type object");
+				return null;
+			}
+
 			type = TypeManager.type_type;
 			eclass = ExprClass.Type;
 			return this;
@@ -6049,6 +6055,33 @@ namespace Mono.CSharp {
 
 		public Type TypeArg { 
 			get { return typearg; }
+		}
+	}
+
+	/// <summary>
+	///   Implements the `typeof (void)' operator
+	/// </summary>
+	public class TypeOfVoid : Expression {
+		public TypeOfVoid (Location l)
+		{
+			loc = l;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			type = TypeManager.type_type;
+			eclass = ExprClass.Type;
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			ec.ig.Emit (OpCodes.Ldtoken, TypeManager.void_type);
+			ec.ig.Emit (OpCodes.Call, TypeManager.system_type_get_type_from_handle);
+		}
+
+		public Type TypeArg { 
+			get { return TypeManager.void_type; }
 		}
 	}
 
