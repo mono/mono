@@ -24,9 +24,10 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.4 $
-// $Modtime: $
 // $Log: CheckBox.cs,v $
+// Revision 1.5  2004/09/01 01:55:58  pbartok
+// - Fixed to match the removal of the needs_redraw concept
+//
 // Revision 1.4  2004/08/31 18:48:31  pbartok
 // - Finished (famous last words)
 //
@@ -62,9 +63,6 @@ namespace System.Windows.Forms {
 			appearance = Appearance.Normal;
 			auto_check = true;
 			check_alignment = ContentAlignment.MiddleLeft;
-
-			SizeChanged+=new System.EventHandler(RedrawEvent);
-			TextChanged+=new System.EventHandler(RedrawEvent);
 		}
 		#endregion	// Public Constructors
 
@@ -80,8 +78,7 @@ namespace System.Windows.Forms {
 					if (AppearanceChanged != null) {
 						AppearanceChanged(this, EventArgs.Empty);
 					}
-					CheckRedraw();
-					Refresh();
+					Redraw();
 				}
 			}
 		}
@@ -105,8 +102,7 @@ namespace System.Windows.Forms {
 				if (value != check_alignment) {
 					check_alignment = value;
 
-					CheckRedraw();
-					Refresh();
+					Redraw();
 				}
 			}
 		}
@@ -122,13 +118,11 @@ namespace System.Windows.Forms {
 			set {
 				if (value && (check_state != CheckState.Checked)) {
 					check_state = CheckState.Checked;
-					CheckRedraw();
-					Refresh();
+					Redraw();
 					OnCheckedChanged(EventArgs.Empty);
 				} else if (!value && (check_state != CheckState.Unchecked)) {
 					check_state = CheckState.Unchecked;
-					CheckRedraw();
-					Refresh();
+					Redraw();
 					OnCheckedChanged(EventArgs.Empty);
 				}
 			}
@@ -150,8 +144,7 @@ namespace System.Windows.Forms {
 					}
 
 					OnCheckStateChanged(EventArgs.Empty);
-					CheckRedraw();
-					Refresh();
+					Redraw();
 				}
 			}
 		}
@@ -164,8 +157,7 @@ namespace System.Windows.Forms {
 			set {
 				if (value != text_alignment) {
 					text_alignment = value;
-					CheckRedraw();
-					Refresh();
+					Redraw();
 				}
 			}
 		}
@@ -270,12 +262,6 @@ namespace System.Windows.Forms {
 		#endregion	// Events
 
 		#region	Internal drawing code
-		internal override bool CheckRedraw() {
-			this.needs_redraw = true;
-
-			return true;
-		}
-
 		internal override void Redraw() {
 			StringFormat		text_format;
 			Rectangle		client_rectangle;
@@ -464,12 +450,9 @@ namespace System.Windows.Forms {
 			if (Focused) {
 				ControlPaint.DrawFocusRectangle(this.DeviceContext, text_rectangle);
 			}
-		}
 
-		private void RedrawEvent(object sender, System.EventArgs e) {
-			CheckRedraw();
+			Refresh();
 		}
-			
 		#endregion	// Internal drawing code
 	}
 }
