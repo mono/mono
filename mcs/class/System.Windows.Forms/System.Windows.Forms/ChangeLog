@@ -247,6 +247,9 @@ Added delegates. All delegates in System.Windows.Forms done
 * NativeWindow.cs
 * Removed trash byte
 
+2002-5-31 DennisHayes <dennish@raytek.com>
+* ColumnClickEventArgs.cs
+* Fully implmented.
 
 
 
