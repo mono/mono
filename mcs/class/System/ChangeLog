@@ -1,3 +1,8 @@
+2004-06-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System_test.dll.sources: Added X509CertificateCollectionTest
+	to the unit tests.
+
 2004-06-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : add run-test-ondotnet target support.
