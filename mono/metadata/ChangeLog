@@ -1,5 +1,7 @@
 2004-02-02  Zoltan Varga  <vargaz@freemail.hu>
 
+	* loader.c (mono_lookup_pinvoke_call): Another attempt at fixing #22532.
+
 	* metadata.h: Add new marshalling conventions.
 
 	* marshal.c (mono_marshal_get_native_wrapper): Add support for unicode
