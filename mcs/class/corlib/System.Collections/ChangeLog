@@ -1,0 +1,8 @@
+2001-07-05  Vladimir Vukicevic  <vladimir@ximian.com>
+
+	* ArrayList.cs: initial checkin and implementation
+
+	* ICollection.cs, IComprarer.cs, IDictionary.cs,
+	  IDictionaryEnumerator.cs, IEnumerable.cs, IHashCodeProvider.cs,
+	  IList.cs: initial checkin
+
