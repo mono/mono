@@ -38,6 +38,11 @@ namespace Mono.CSharp.Debugger
 		// only function and type declarations.
 		protected readonly bool DoGeneric = false;
 
+		public readonly ITypeHandle void_type;
+		public readonly ITypeHandle array_type;
+		public readonly ITypeHandle string_type;
+		public readonly DieCompileUnit DieGlobalCompileUnit;
+
 		//
 		// DwarfFileWriter public interface
 		//
@@ -47,6 +52,25 @@ namespace Mono.CSharp.Debugger
 			this.writer = new StreamWriter (symbol_file, false, Encoding.ASCII);
 			this.aw = new AssemblerWriterI386 (this.writer);
 			this.last_time = DateTime.Now;
+
+			CompileUnit compile_unit = new CompileUnit (this, symbol_file);
+			DieGlobalCompileUnit = new DieCompileUnit (compile_unit);
+
+			void_type = RegisterType (typeof (void));
+			RegisterType (typeof (bool));
+			RegisterType (typeof (char));
+			RegisterType (typeof (SByte));
+			RegisterType (typeof (Byte));
+			RegisterType (typeof (Int16));
+			RegisterType (typeof (UInt16));
+			RegisterType (typeof (Int32));
+			RegisterType (typeof (UInt32));
+			RegisterType (typeof (Int64));
+			RegisterType (typeof (UInt64));
+			RegisterType (typeof (Single));
+			RegisterType (typeof (Double));
+			array_type = RegisterType (typeof (MonoArray));
+			string_type = RegisterType (typeof (MonoString));
 		}
 
 		DateTime last_time;
@@ -61,9 +85,28 @@ namespace Mono.CSharp.Debugger
 				(int) span.TotalSeconds, span.Milliseconds, msg);
 		}
 
-		// Writes the final dwarf file.
-		public void Close ()
+		public void CreateTypes (Assembly assembly)
 		{
+			if (timestamps)
+				ShowTime ("Creating types");
+
+			Console.WriteLine ("CREATE TYPES: " + type_hash.Count);
+
+			types_closed = true;
+
+			foreach (ITypeHandle itype in type_hash.Values) {
+				if (!(itype is TypeHandle))
+					throw new NotSupportedException ();
+
+				((TypeHandle)itype).PrepareEmit (DieGlobalCompileUnit, assembly);
+			}
+		}
+
+		// Writes the final dwarf file.
+		public void Close (Assembly assembly)
+		{
+			CreateTypes (assembly);
+
 			if (timestamps)
 				ShowTime ("Emitting compile units");
 
@@ -116,28 +159,112 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		//
-		// Create a debugging information entry for the given type.
-		//
-		public DieType CreateType (DieCompileUnit die_compile_unit, Type type)
+		private Hashtable type_hash = new Hashtable ();
+		private bool types_closed = false;
+
+		public ITypeHandle RegisterType (Type type)
 		{
-			if (type.IsPointer)
-				return new DiePointerType (die_compile_unit, type.GetElementType ());
-			else if (type.IsEnum)
-				return new DieEnumType (die_compile_unit, type);
-			else if (type.Equals (typeof (string)))
-				return new DieStringType (die_compile_unit, type);
-			else if (type.IsArray)
-				return new DieArrayType (die_compile_unit, type.GetElementType (),
-							 type.GetArrayRank ());
-			else if (type.IsValueType)
-				return new DieStructureType (die_compile_unit, type);
-			else if (type.IsClass)
-				return new DieClassType (die_compile_unit, type);
+			if (types_closed)
+				throw new InvalidOperationException ();
 
-			return new DiePointerType (die_compile_unit, typeof (void));
+			if (type_hash.Contains (type))
+				return (ITypeHandle) type_hash [type];
 
-			// throw new NotSupportedException ("Type " + type + " is not yet supported.");
+			TypeHandle handle = new TypeHandle (type);
+			type_hash.Add (type, handle);
+
+			handle.CreateType (DieGlobalCompileUnit);
+
+			return handle;
+		}
+
+		//
+		// This is used to reference types.
+		//
+
+		public class TypeHandle : ITypeHandle
+		{
+			private readonly Type type;
+			private int token;
+			private DieType type_die;
+
+			public TypeHandle (Type type)
+			{
+				this.type = type;
+			}
+
+			public string Name {
+				get {
+					return type.Name;
+				}
+			}
+
+			public Type Type {
+				get {
+					return type;
+				}
+			}
+
+			public int Token {
+				get {
+					if (token == 0)
+						throw new NotSupportedException ("FUCK: " + type);
+					else
+						return token;
+				}
+			}
+
+			public DieType TypeDie {
+				get {
+					if (type_die == null)
+						throw new NotSupportedException ("FUCK: " + type);
+					else
+						return type_die;
+				}
+			}
+
+			public virtual void CreateType (DieCompileUnit parent_die)
+			{
+				if (type_die != null)
+					return;
+
+				ITypeHandle void_type = parent_die.Writer.void_type;
+
+				if ((type.IsPrimitive && !type.IsByRef) || (type == typeof (void))) {
+					type_die = new DieBaseType (parent_die, this);
+					return;
+				}
+
+#if FALSE
+				if ((type.Assembly != assembly) && (type.ReflectedType == null)) {
+					type_die = new DiePointerType (parent_die, void_type);
+					return;
+				}
+#endif
+
+				if (type.IsPointer || type.IsByRef)
+					type_die = new DiePointerType (parent_die, this);
+				else if (type.IsEnum)
+					type_die = new DieEnumType (parent_die, this);
+				else if (type.Equals (typeof (string)))
+					type_die = new DieStringType (parent_die, this);
+				else if (type.IsArray)
+					type_die = new DieArrayType (parent_die, this);
+				else if (type.IsValueType)
+					type_die = new DieStructureType (parent_die, this);
+				else if (type.IsClass)
+					type_die = new DieClassType (parent_die, this);
+				else
+					type_die = new DieTypeDef (parent_die, void_type, type.FullName);
+
+				type_die.CreateType ();
+			}
+
+			public virtual void PrepareEmit (DieCompileUnit parent_die, Assembly assembly)
+			{
+				if (!type.IsArray)
+					token = get_type_token (type);
+			}
 		}
 
 		//
@@ -596,57 +723,6 @@ namespace Mono.CSharp.Debugger
 			offset_length		= 0x01
 		}
 
-		protected class MethodParameter : IMethodParameter
-		{
-			public MethodParameter (ISourceMethod method, ParameterInfo param)
-			{
-				this._method = method;
-				this._param = param;
-			}
-
-			private readonly ISourceMethod _method;
-			private readonly ParameterInfo _param;
-
-			// interface IMethodParameter
-
-			public string Name {
-				get {
-					return _param.Name;
-				}
-			}
-
-			public ISourceMethod Method {
-				get {
-					return _method;
-				}
-			}
-
-			public int Index {
-				get {
-					return _method.MethodBase.IsStatic ? _param.Position - 1 :
-						_param.Position;
-				}
-			}
-
-			public Type Type {
-				get {
-					return _param.ParameterType;
-				}
-			}
-
-			public byte[] Signature {
-				get {
-					return null;
-				}
-			}
-
-			public ISourceLine Line {
-				get {
-					return null;
-				}
-			}
-		}
-
 		// Abstract base class for a "debugging information entry" (die).
 		public abstract class Die
 		{
@@ -757,6 +833,12 @@ namespace Mono.CSharp.Debugger
 					return GetCompileUnit ();
 				}
 			}
+
+			public DwarfFileWriter Writer {
+				get {
+					return dw;
+				}
+			}
 		}
 
 		// DW_TAG_compile_unit
@@ -796,59 +878,7 @@ namespace Mono.CSharp.Debugger
 				this.DoGeneric = dw.DoGeneric;
 				compile_unit.AddDie (this);
 
-				// GDB doesn't support DW_TAG_base_types yet, so we need to
-				// include the types in each compile unit.
-				RegisterType (typeof (bool));
-				RegisterType (typeof (char));
-				RegisterType (typeof (SByte));
-				RegisterType (typeof (Byte));
-				RegisterType (typeof (Int16));
-				RegisterType (typeof (UInt16));
-				RegisterType (typeof (Int32));
-				RegisterType (typeof (UInt32));
-				RegisterType (typeof (Int64));
-				RegisterType (typeof (UInt64));
-				RegisterType (typeof (Single));
-				RegisterType (typeof (Double));
-
 				LineNumberEngine = new LineNumberEngine (dw);
-			}
-
-			// Registers a new type
-			public Die RegisterType (Type type)
-			{
-				if (types.Contains (type))
-					return (Die) types [type];
-
-				if (type.IsPrimitive) {
-					Die base_type = new DieBaseType (this, type);
-
-					types.Add (type, base_type);
-
-					return base_type;
-				}
-
-				DieType die = dw.CreateType (this, type);
-
-				types.Add (type, die);
-
-				die.RegisterDependencyTypes ();
-
-				return die;
-			}
-
-			public Die RegisterPointerType (Type type)
-			{
-				if (pointer_types.Contains (type))
-					return (Die) pointer_types [type];
-
-				Die type_die = RegisterType (type);
-
-				Die pointer_die = new DieInternalPointer (this, type_die);
-
-				pointer_types.Add (type, pointer_die);
-
-				return pointer_die;
 			}
 
 			public void WriteRelativeDieReference (Die target_die)
@@ -859,6 +889,20 @@ namespace Mono.CSharp.Debugger
 
 				aw.WriteRelativeOffset (CompileUnit.ReferenceIndex,
 							target_die.ReferenceIndex);
+			}
+
+			public void WriteTypeReference (ITypeHandle ihandle)
+			{
+				if (!(ihandle is TypeHandle))
+					throw new NotSupportedException ("DOUBLE-FUCK: " + (ihandle == null));
+
+				TypeHandle handle = (TypeHandle) ihandle;
+
+				DieType die_type = handle.TypeDie;
+				if (die_type == null)
+					throw new Exception ("FUCK");
+
+				WriteRelativeDieReference (die_type);
 			}
 
 			public override void DoEmit ()
@@ -943,7 +987,7 @@ namespace Mono.CSharp.Debugger
 			}
 
 			protected ISourceMethod method;
-			protected Die retval_die;
+			protected ITypeHandle retval_type;
 
 			//
 			// Create a new DW_TAG_subprogram debugging information entry
@@ -956,19 +1000,15 @@ namespace Mono.CSharp.Debugger
 				this.method = method;
 
 				if (method.ReturnType != typeof (void))
-					retval_die = DieCompileUnit.RegisterType (
-						method.ReturnType);
+					retval_type = dw.RegisterType (method.ReturnType);
 
 				if (!method.MethodBase.IsStatic)
 					new DieMethodVariable (this, method);
 
-				ParameterInfo[] parameters = method.MethodBase.GetParameters ();
-				if (parameters != null) {
-					foreach (ParameterInfo param in parameters) {
-						MethodParameter mp = new MethodParameter (method, param);
+				foreach (ParameterInfo param in method.Parameters) {
+					MethodParameter mp = new MethodParameter (dw, method, param);
 
-						new DieMethodVariable (this, mp);
-					}
+					new DieMethodVariable (this, mp);
 				}
 
 				DieCompileUnit.LineNumberEngine.AddMethod (method);
@@ -976,7 +1016,7 @@ namespace Mono.CSharp.Debugger
 
 			public override void DoEmit ()
 			{
-				aw.WriteString (method.MethodBase.Name);
+				aw.WriteString (method.FullName);
 				aw.WriteUInt8 (true);
 				if (dw.DoGeneric)
 					aw.WriteUInt8 (true);
@@ -987,12 +1027,12 @@ namespace Mono.CSharp.Debugger
 					aw.WriteAddress (0);
 				}
 				if (method.ReturnType != typeof (void))
-					DieCompileUnit.WriteRelativeDieReference (retval_die);
+					DieCompileUnit.WriteTypeReference (retval_type);
 			}
 		}
 
 		// DW_TAG_base_type
-		public class DieBaseType : Die
+		public class DieBaseType : DieType
 		{
 			private static int my_abbrev_id;
 
@@ -1011,14 +1051,20 @@ namespace Mono.CSharp.Debugger
 			}
 
 			protected Type type;
+			protected string name;
 
 			//
 			// Create a new DW_TAG_base_type debugging information entry
 			//
-			public DieBaseType (DieCompileUnit parent_die, Type type)
-				: base (parent_die, my_abbrev_id)
+			public DieBaseType (DieCompileUnit parent_die, ITypeHandle type)
+				: this (parent_die, type, type.Name)
+			{ }
+
+			public DieBaseType (DieCompileUnit parent_die, ITypeHandle type, string name)
+				: base (parent_die, type, my_abbrev_id)
 			{
-				this.type = type;
+				this.type = type.Type;
+				this.name = name;
 			}
 
 			protected enum DW_ATE {
@@ -1035,123 +1081,79 @@ namespace Mono.CSharp.Debugger
 
 			public override void DoEmit ()
 			{
-				string name = type.Name;
-
 				aw.WriteString (name);
-				switch (name) {
-				case "Void":
+				if (type == typeof (void)) {
 					aw.WriteUInt8 ((int) DW_ATE.ATE_address);
 					aw.WriteUInt8 (0);
-					break;
-				case "Boolean":
+				} else if (type == typeof (bool)) {
 					aw.WriteUInt8 ((int) DW_ATE.ATE_boolean);
 					aw.WriteUInt8 (1);
-					break;
-				case "Char":
+				} else if (type == typeof (char)) {
 					aw.WriteUInt8 ((int) DW_ATE.ATE_unsigned_char);
 					aw.WriteUInt8 (2);
-					break;
-				case "SByte":
+				} else if (type == typeof (sbyte)) {
 					aw.WriteUInt8 ((int) DW_ATE.ATE_signed);
 					aw.WriteUInt8 (1);
-					break;
-				case "Byte":
+				} else if (type == typeof (byte)) {
 					aw.WriteUInt8 ((int) DW_ATE.ATE_unsigned);
 					aw.WriteUInt8 (1);
-					break;
-				case "Int16":
+				} else if (type == typeof (short)) {
 					aw.WriteUInt8 ((int) DW_ATE.ATE_signed);
 					aw.WriteUInt8 (2);
-					break;
-				case "UInt16":
+				} else if (type == typeof (ushort)) {
 					aw.WriteUInt8 ((int) DW_ATE.ATE_unsigned);
 					aw.WriteUInt8 (2);
-					break;
-				case "Int32":
+				} else if (type == typeof (int)) {
 					aw.WriteUInt8 ((int) DW_ATE.ATE_signed);
 					aw.WriteUInt8 (4);
-					break;
-				case "UInt32":
+				} else if (type == typeof (uint)) {
 					aw.WriteUInt8 ((int) DW_ATE.ATE_unsigned);
 					aw.WriteUInt8 (4);
-					break;
-				case "Int64":
+				} else if (type == typeof (long)) {
 					aw.WriteUInt8 ((int) DW_ATE.ATE_signed);
 					aw.WriteUInt8 (8);
-					break;
-				case "UInt64":
+				} else if (type == typeof (ulong)) {
 					aw.WriteUInt8 ((int) DW_ATE.ATE_unsigned);
 					aw.WriteUInt8 (8);
-					break;
-				case "Single":
+				} else if (type == typeof (float)) {
 					aw.WriteUInt8 ((int) DW_ATE.ATE_float);
 					aw.WriteUInt8 (4);
-					break;
-				case "Double":
+				} else if (type == typeof (double)) {
 					aw.WriteUInt8 ((int) DW_ATE.ATE_float);
 					aw.WriteUInt8 (8);
-					break;
-				default:
+				} else
 					throw new ArgumentException ("Not a base type: " + type);
+			}
+		}
+
+		//
+		// Abstract base class for types.
+		//
+
+		public abstract class DieType : Die
+		{
+			private readonly ITypeHandle type_handle;
+
+			public DieType (Die parent_die, Type type, int abbrev_id)
+				: this (parent_die, parent_die.Writer.RegisterType (type), abbrev_id)
+			{ }
+
+			public DieType (Die parent_die, ITypeHandle type_handle, int abbrev_id)
+				: base (parent_die, abbrev_id)
+			{
+				this.type_handle = type_handle;
+			}
+
+			public virtual void CreateType ()
+			{ }
+
+			public ITypeHandle TypeHandle {
+				get {
+					return type_handle;
 				}
 			}
 		}
 
-		public abstract class DieType : Die
-		{
-			public DieType (DieCompileUnit parent_die, Type type, int abbrev_id)
-				: base (parent_die, abbrev_id)
-			{
-				this.type = type;
-			}
-
-			protected Type type;
-
-			//
-			// This is called after the type has been added to the type hash.
-			//
-			// You need to register your dependency types here and not in the
-			// constructor to avoid a recursion loop if a type references itself.
-			//
-			public virtual void RegisterDependencyTypes ()
-			{
-				// do nothing
-			}
-		}
-
-		public class DieTypeDef : Die
-		{
-			private static int my_abbrev_id;
-
-			static DieTypeDef ()
-			{
-				AbbrevEntry[] entries = {
-					new AbbrevEntry (DW_AT.AT_name, DW_FORM.FORM_string),
-					new AbbrevEntry (DW_AT.AT_type, DW_FORM.FORM_ref4)
-				};
-
-				AbbrevDeclaration decl = new AbbrevDeclaration (
-					DW_TAG.TAG_typedef, false, entries);
-
-				my_abbrev_id = RegisterAbbrevDeclaration (decl);
-			}
-
-			protected string name;
-			protected Die type_die;
-
-			public DieTypeDef (Die parent_die, Die type_die, string name)
-				: base (parent_die, my_abbrev_id)
-			{
-				this.name = name;
-				this.type_die = type_die;
-			}
-
-			public override void DoEmit ()
-			{
-				aw.WriteString (name);
-				DieCompileUnit.WriteRelativeDieReference (type_die);
-			}
-		}
 
 		// DW_TAG_pointer_type
 		public class DiePointerType : DieType
@@ -1170,23 +1172,49 @@ namespace Mono.CSharp.Debugger
 				my_abbrev_id = RegisterAbbrevDeclaration (decl);
 			}
 
-			protected Die type_die;
-
-			public DiePointerType (DieCompileUnit parent_die, Type type)
+			public DiePointerType (DieCompileUnit parent_die, ITypeHandle type)
 				: base (parent_die, type, my_abbrev_id)
 			{ }
 
-			public override void RegisterDependencyTypes ()
+			public override void DoEmit ()
 			{
-				type_die = DieCompileUnit.RegisterType (type);
+				DieCompileUnit.WriteTypeReference (TypeHandle);
+			}
+		}
+
+		public class DieTypeDef : DieType
+		{
+			private static int my_abbrev_id;
+
+			static DieTypeDef ()
+			{
+				AbbrevEntry[] entries = {
+					new AbbrevEntry (DW_AT.AT_name, DW_FORM.FORM_string),
+					new AbbrevEntry (DW_AT.AT_type, DW_FORM.FORM_ref4)
+				};
+
+				AbbrevDeclaration decl = new AbbrevDeclaration (
+					DW_TAG.TAG_typedef, false, entries);
+
+				my_abbrev_id = RegisterAbbrevDeclaration (decl);
+			}
+
+			protected string name;
+
+			public DieTypeDef (Die parent_die, ITypeHandle type, string name)
+				: base (parent_die, type, my_abbrev_id)
+			{
+				this.name = name;
 			}
 
 			public override void DoEmit ()
 			{
-				DieCompileUnit.WriteRelativeDieReference (type_die);
+				aw.WriteString (name);
+				DieCompileUnit.WriteTypeReference (TypeHandle);
 			}
 		}
 
+#if FALSE
 		public class DieInternalPointer : Die
 		{
 			private static int my_abbrev_id;
@@ -1216,6 +1244,7 @@ namespace Mono.CSharp.Debugger
 				DieCompileUnit.WriteRelativeDieReference (type_die);
 			}
 		}
+#endif
 
 		// DW_TAG_enumeration_type
 		public class DieEnumType : DieType
@@ -1235,11 +1264,11 @@ namespace Mono.CSharp.Debugger
 				my_abbrev_id = RegisterAbbrevDeclaration (decl);
 			}
 
-			public DieEnumType (DieCompileUnit parent_die, Type type)
+			public DieEnumType (DieCompileUnit parent_die, ITypeHandle type)
 				: base (parent_die, type, my_abbrev_id)
 			{
-				Array values = Enum.GetValues (type);
-				string[] names = Enum.GetNames (type);
+				Array values = Enum.GetValues (type.Type);
+				string[] names = Enum.GetNames (type.Type);
 
 				foreach (object value in values) {
 					int intval;
@@ -1265,8 +1294,8 @@ namespace Mono.CSharp.Debugger
 
 			public override void DoEmit ()
 			{
-				aw.WriteString (type.Name);
-				dw.AddRelocEntry_TypeSize (type);
+				aw.WriteString (TypeHandle.Name);
+				dw.AddRelocEntry_TypeSize (TypeHandle);
 				aw.WriteUInt8 (0);
 			}
 		}
@@ -1324,26 +1353,27 @@ namespace Mono.CSharp.Debugger
 				my_abbrev_id = RegisterAbbrevDeclaration (decl);
 			}
 
+			protected readonly Type type;
 			protected string name;
 			protected FieldInfo[] fields;
-			protected Die[] field_type_dies;
+			protected ITypeHandle[] field_types;
 			protected Die[] field_dies;
 
 			protected const BindingFlags FieldBindingFlags =
 				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static |
 				BindingFlags.Instance;
 
-			public override void RegisterDependencyTypes ()
+			public override void CreateType ()
 			{
-				fields = type.GetFields (FieldBindingFlags);
-				field_type_dies = new Die [fields.Length];
+				fields = this.type.GetFields (FieldBindingFlags);
+				field_types = new ITypeHandle [fields.Length];
 				field_dies = new Die [fields.Length];
 
 				for (int i = 0; i < fields.Length; i++) {
 					Type field_type = fields [i].FieldType;
-					field_type_dies [i] = DieCompileUnit.RegisterType (field_type);
-
+					field_types [i] = dw.RegisterType (field_type);
 					DW_ACCESS access;
+
 					if (fields [i].IsPublic)
 						access = DW_ACCESS.ACCESS_public;
 					else if (fields [i].IsPrivate)
@@ -1351,41 +1381,79 @@ namespace Mono.CSharp.Debugger
 					else
 						access = DW_ACCESS.ACCESS_protected;
 
-					field_dies [i] = new DieMember (this, type, fields [i].Name,
-									i, field_type_dies [i],
-									access);
+					field_dies [i] = new DieMember (this, fields [i].Name, i,
+									field_types [i], access);
 				}
+
+				base.CreateType ();
 			}
 
-			public DieStructureType (DieCompileUnit parent_die, Type type)
+			public DieStructureType (DieCompileUnit parent_die, ITypeHandle type)
 				: this (parent_die, type, type.Name, my_abbrev_id)
 			{ }
 
-			protected DieStructureType (DieCompileUnit parent_die, Type type, int abbrev_id)
+			protected DieStructureType (DieCompileUnit parent_die, ITypeHandle type,
+						    int abbrev_id)
 				: this (parent_die, type, type.Name, abbrev_id)
 			{ }
 
-			protected DieStructureType (DieCompileUnit parent_die, Type type, string name)
+			protected DieStructureType (DieCompileUnit parent_die, ITypeHandle type,
+						    string name)
 				: this (parent_die, type, name, my_abbrev_id)
 			{ }
 
-			protected DieStructureType (DieCompileUnit parent_die, Type type,
+			protected DieStructureType (DieCompileUnit parent_die, ITypeHandle type,
 						    string name, int abbrev_id)
 				: base (parent_die, type, abbrev_id)
 			{
+				this.type = type.Type;
 				this.name = name;
 			}
 
 			public override void DoEmit ()
 			{
 				aw.WriteString (name);
-				dw.AddRelocEntry_TypeSize (type);
+				dw.AddRelocEntry_TypeSize (TypeHandle);
 				aw.WriteUInt8 (0);
 			}
 		}
 
 		public class DieArrayType : DieStructureType
 		{
+			protected new readonly ITypeHandle type;
+			protected ITypeHandle element_type;
+			protected int rank;
+
+			protected static string MakeArrayName (Type type, int rank)
+			{
+				string name = type.Name;
+
+				for (int i = 0; i < rank; i++)
+					name += "[]";
+
+				return name;
+			}
+
+			public DieArrayType (DieCompileUnit parent_die, ITypeHandle type)
+				: this (parent_die, type, type.Type.GetArrayRank ())
+			{ }
+
+			private DieArrayType (DieCompileUnit parent_die, ITypeHandle type, int rank)
+				: base (parent_die, parent_die.Writer.array_type,
+					MakeArrayName (type.Type, rank))
+			{
+				this.type = type;
+				this.rank = rank;
+			}
+
+			public override void CreateType ()
+			{
+				element_type = dw.RegisterType (type.Type.GetElementType ());
+
+				base.CreateType ();
+			}
+
+#if FIXME
 			public override void RegisterDependencyTypes ()
 			{
 				Die array_die = new DieInternalArray (DieCompileUnit, typeof (MonoArrayBounds));
@@ -1405,32 +1473,23 @@ namespace Mono.CSharp.Debugger
 				new DieMember (this, typeof (MonoArray), "Vector",
 					       (int) MRI_array.offset_vector, vector_die);
 			}
-
-			protected Type element_type;
-			protected int rank;
-
-			protected static string MakeArrayName (Type type, int rank)
-			{
-				string name = type.Name;
-
-				for (int i = 0; i < rank; i++)
-					name += "[]";
-
-				return name;
-			}
-
-			public DieArrayType (DieCompileUnit parent_die, Type type, int rank)
-				: base (parent_die, typeof (MonoArray), MakeArrayName (type, rank))
-			{
-				this.element_type = type;
-				this.rank = rank;
-			}
+#endif
+			
 		}
 
 		public class DieStringType : DieStructureType
 		{
-			public override void RegisterDependencyTypes ()
+			protected new readonly ITypeHandle type;
+
+			public DieStringType (DieCompileUnit parent_die, ITypeHandle type)
+				: base (parent_die, parent_die.Writer.string_type)
 			{
+				this.type = type;
+			}
+
+			public override void CreateType ()
+			{
+#if FALSE
 				Die length_die = DieCompileUnit.RegisterType (typeof (int));
 				new DieMember (this, typeof (MonoString), "Length",
 					       (int) MRI_string.offset_length, length_die);
@@ -1440,13 +1499,13 @@ namespace Mono.CSharp.Debugger
 
 				new DieMember (this, typeof (MonoString), "Chars",
 					       (int) MRI_string.offset_chars, vector_die);
-			}
+#endif
 
-			public DieStringType (DieCompileUnit parent_die, Type type)
-				: base (parent_die, typeof (MonoString))
-			{ }
+				base.CreateType ();
+			}
 		}
 
+#if FIXME
 		protected class DieInternalArray : Die
 		{
 			private static int my_abbrev_id;
@@ -1522,6 +1581,7 @@ namespace Mono.CSharp.Debugger
 				aw.WriteInt32 (upper);
 			}
 		}
+#endif
 
 		// DW_TAG_class_type
 		public class DieClassType : DieStructureType
@@ -1541,30 +1601,36 @@ namespace Mono.CSharp.Debugger
 				my_abbrev_id = RegisterAbbrevDeclaration (decl);
 			}
 
-			public DieClassType (DieCompileUnit parent_die, Type type)
-				: base (parent_die, type, my_abbrev_id)
-			{ }
+			ITypeHandle base_type;
 
-			public override void RegisterDependencyTypes ()
+			public DieClassType (DieCompileUnit parent_die, ITypeHandle type_handle)
+				: base (parent_die, type_handle, my_abbrev_id)
 			{
-				if ((type.BaseType != null) && !type.BaseType.Equals (typeof (object)) &&
-				    !type.BaseType.Equals (typeof (System.Array))) {
-					Die parent_die = DieCompileUnit.RegisterType (type.BaseType);
+			}
 
-					new DieInheritance (this, parent_die);
+			public override void CreateType ()
+			{
+				Type baset = TypeHandle.Type.BaseType;
+
+				if ((baset != null) && !baset.Equals (typeof (object)) && !baset.Equals (typeof (System.Array))) {
+					base_type = dw.RegisterType (baset);
+
+					new DieInheritance (this, base_type);
 				}
+
+				base.CreateType ();
 			}
 
 			public override void DoEmit ()
 			{
-				aw.WriteString (type.Name);
-				dw.AddRelocEntry_TypeSize (type);
+				aw.WriteString (TypeHandle.Name);
+				dw.AddRelocEntry_TypeSize (TypeHandle);
 				aw.WriteUInt8 (0);
 			}
 		}
 
 		// DW_TAG_inheritance
-		public class DieInheritance : Die
+		public class DieInheritance : DieType
 		{
 			private static int my_abbrev_id;
 
@@ -1581,17 +1647,13 @@ namespace Mono.CSharp.Debugger
 				my_abbrev_id = RegisterAbbrevDeclaration (decl);
 			}
 
-			Die type_die;
-
-			public DieInheritance (Die parent_die, Die type_die)
-				: base (parent_die, my_abbrev_id)
-			{
-				this.type_die = type_die;
-			}
+			public DieInheritance (Die parent_die, ITypeHandle type)
+				: base (parent_die, type, my_abbrev_id)
+			{ }
 
 			public override void DoEmit ()
 			{
-				DieCompileUnit.WriteRelativeDieReference (type_die);
+				DieCompileUnit.WriteTypeReference (TypeHandle);
 
 				object end_index = aw.StartSubsectionWithSize ();
 				aw.WriteUInt8 ((int) DW_OP.OP_const1u);
@@ -1601,7 +1663,7 @@ namespace Mono.CSharp.Debugger
 		}
 
 		// DW_TAG_member
-		public class DieMember : Die
+		public class DieMember : DieType
 		{
 			private static int my_abbrev_id;
 
@@ -1620,38 +1682,35 @@ namespace Mono.CSharp.Debugger
 				my_abbrev_id = RegisterAbbrevDeclaration (decl);
 			}
 
-			protected Type parent_type;
 			protected string name;
 			protected int index;
-			protected Die type_die;
 			protected DW_ACCESS access;
+			protected DieType parent_die;
 
-			public DieMember (Die parent_die, Type parent_type, string name, int index,
-					  Die type_die, DW_ACCESS access)
-				: base (parent_die, my_abbrev_id)
+			public DieMember (DieType parent_die, string name, int index,
+					  ITypeHandle type, DW_ACCESS access)
+				: base (parent_die, type, my_abbrev_id)
 			{
 				this.name = name;
 				this.index = index;
-				this.parent_type = parent_type;
-				this.type_die = type_die;
 				this.access = access;
+				this.parent_die = parent_die;
 			}
 
-			public DieMember (Die parent_die, Type parent_type, string name, int index,
-					  Die type_die)
-				: this (parent_die, parent_type, name, index, type_die,
+			public DieMember (DieType parent_die, string name, int index, ITypeHandle type)
+				: this (parent_die, name, index, type,
 					DW_ACCESS.ACCESS_public)
 			{ }
 
 			public override void DoEmit ()
 			{
 				aw.WriteString (name);
-				DieCompileUnit.WriteRelativeDieReference (type_die);
+				DieCompileUnit.WriteTypeReference (TypeHandle);
 				aw.WriteUInt8 ((int) access);
 
 				object end_index = aw.StartSubsectionWithSize ();
 				aw.WriteUInt8 ((int) DW_OP.OP_const4u);
-				dw.AddRelocEntry_TypeFieldOffset (parent_type, index);
+				dw.AddRelocEntry_TypeFieldOffset (parent_die.TypeHandle, index);
 				aw.WriteInt32 (0);
 				aw.EndSubsection (end_index);
 			}
@@ -1759,24 +1818,25 @@ namespace Mono.CSharp.Debugger
 			}
 
 			protected string name;
-			protected Die type_die;
+			protected ITypeHandle type_handle;
 			protected VariableType vtype;
 
 			public DieVariable (Die parent_die, string name, Type type, VariableType vtype)
+				: this (parent_die, name, parent_die.Writer.RegisterType (type), vtype)
+			{ }
+
+			public DieVariable (Die parent_die, string name, ITypeHandle handle, VariableType vtype)
 				: base (parent_die, get_abbrev_id (vtype))
 			{
 				this.name = name;
-				if (type.IsValueType)
-					this.type_die = DieCompileUnit.RegisterType (type);
-				else
-					this.type_die = DieCompileUnit.RegisterPointerType (type);
+				this.type_handle = handle;
 				this.vtype = vtype;
 			}
 
 			public override void DoEmit ()
 			{
 				aw.WriteString (name);
-				DieCompileUnit.WriteRelativeDieReference (type_die);
+				DieCompileUnit.WriteTypeReference (type_handle);
 				switch (vtype) {
 				case VariableType.VARIABLE_LOCAL:
 					aw.WriteUInt8 (false);
@@ -1801,13 +1861,15 @@ namespace Mono.CSharp.Debugger
 		public class DieMethodVariable : DieVariable
 		{
 			public DieMethodVariable (Die parent_die, ILocalVariable local)
-				: base (parent_die, local.Name, local.Type, VariableType.VARIABLE_LOCAL)
+				: base (parent_die, local.Name, local.TypeHandle,
+					VariableType.VARIABLE_LOCAL)
 			{
 				this.var = local;
 			}
 
 			public DieMethodVariable (Die parent_die, IMethodParameter param)
-				: base (parent_die, param.Name, param.Type, VariableType.VARIABLE_PARAMETER)
+				: base (parent_die, param.Name, param.TypeHandle,
+					VariableType.VARIABLE_PARAMETER)
 			{
 				this.var = param;
 			}
@@ -2057,17 +2119,17 @@ namespace Mono.CSharp.Debugger
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static int get_type_token (Type type);
 
-		protected void AddRelocEntry (RelocEntryType entry_type, Type type)
+		protected void AddRelocEntry (RelocEntryType entry_type, ITypeHandle type)
 		{
 			AddRelocEntry (entry_type, type, 0);
 		}
 
-		protected void AddRelocEntry (RelocEntryType entry_type, Type type, int original)
+		protected void AddRelocEntry (RelocEntryType entry_type, ITypeHandle type, int original)
 		{
-			AddRelocEntry (entry_type, get_type_token (type), original);
+			AddRelocEntry (entry_type, type.Token, original);
 		}
 
-		protected void AddRelocEntry_TypeSize (Type type)
+		protected void AddRelocEntry_TypeSize (ITypeHandle type)
 		{
 			if (type.Equals (typeof (MonoString)))
 				AddRelocEntry (RelocEntryType.MONO_STRING_SIZEOF);
@@ -2079,7 +2141,7 @@ namespace Mono.CSharp.Debugger
 				AddRelocEntry (RelocEntryType.TYPE_SIZEOF, type);
 		}
 
-		protected void AddRelocEntry_TypeFieldOffset (Type type, int index)
+		protected void AddRelocEntry_TypeFieldOffset (ITypeHandle type, int index)
 		{
 			if (type.Equals (typeof (MonoString)))
 				AddRelocEntry (RelocEntryType.MONO_STRING_OFFSET, index);
@@ -2091,7 +2153,7 @@ namespace Mono.CSharp.Debugger
 				AddRelocEntry (RelocEntryType.TYPE_FIELD_OFFSET, type, index);
 		}
 
-		protected void AddRelocEntry_TypeFieldSize (Type type, int index)
+		protected void AddRelocEntry_TypeFieldSize (ITypeHandle type, int index)
 		{
 			if (type.Equals (typeof (MonoString)))
 				AddRelocEntry (RelocEntryType.MONO_STRING_FIELDSIZE, index);

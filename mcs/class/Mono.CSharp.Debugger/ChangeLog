@@ -1,3 +1,17 @@
+2002-05-24  Martin Baulig  <martin@gnome.org>
+
+	* IMonoSymbolWriter.cs (ISourceMethod): Added `FullName' and `Parameters'.
+	(ITypeHandle): New interface.
+
+	* DwarfFileWriter.cs: Largely reorganized the type writing code.  Types are
+	now represented by ITypeHandle objects which are stored in a per-dwarf-writer
+	hash table.  At the moment, all types still need to be in one compile unit due
+	to lacking support in gdb - but this new type code here already supports this.
+
+	* MonoSymbolWriter.cs: Moved all the subclasses to the top-level and made them
+	public, cleaned up the code, put everything into one compile unit.
+	(DefineLocalVariable): Added a version of this function which takes useful args.
+
 2002-05-22  Martin Baulig  <martin@gnome.org>
 
 	* IMonoSymbolWriter.cs (IMonoSymbolWriter): Added `Sources' and `Methods'

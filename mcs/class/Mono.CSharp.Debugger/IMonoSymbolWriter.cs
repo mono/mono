@@ -69,11 +69,19 @@ namespace Mono.CSharp.Debugger
 			get;
 		}
 
+		string FullName {
+			get;
+		}
+
 		int Token {
 			get;
 		}
 
 		Type ReturnType {
+			get;
+		}
+
+		ParameterInfo[] Parameters {
 			get;
 		}
 
@@ -144,6 +152,21 @@ namespace Mono.CSharp.Debugger
 		}
 	}
 
+	public interface ITypeHandle
+	{
+		string Name {
+			get;
+		}
+
+		Type Type {
+			get;
+		}
+
+		int Token {
+			get;
+		}
+	}
+
 	public interface IVariable
 	{
 		string Name {
@@ -154,11 +177,7 @@ namespace Mono.CSharp.Debugger
 			get;
 		}
 
-		byte[] Signature {
-			get;
-		}
-
-		Type Type {
+		ITypeHandle TypeHandle {
 			get;
 		}
 
