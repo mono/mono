@@ -1,0 +1,9 @@
+2002-06-24  Andrew Birkett  <adb@tardis.ed.ac.uk>
+
+	* fail: cs0121.cs, cs0157.cs and cs1501.cs no longer fail.  
+	* cs0176.cs: Method has to be public for correct test
+	* cs0196.cs, cs0242.cs: Do 'return' to stop null statement warning.
+	* cs0255.cs: Add assignment to stop 'unused variable' warning.
+	* makefile: Output is now like "Running test 42 .. OK".  Added --unsafe to 
+	  make cs0193.cs, cs0196.cs and cs0214-3.cs work.
+

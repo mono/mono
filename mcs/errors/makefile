@@ -1,10 +1,12 @@
 #
 # Compile at the maximum warning level to probe for warnings
 #
-MCS=../mcs/mcs.exe --wlevel 4
+#MCS=mono ../mcs/mcs.exe --wlevel 4 # for linux
+MCS=../mcs/mcs.exe --wlevel 4 # for windows
+
 
 all:
-	failed=false; \
+	@ failed=false; \
 	for i in cs*.cs; do \
 		case $$i in \
 			cs[0-9]*-[0-9]*cs) \
@@ -14,20 +16,12 @@ all:
 			error=`echo $$i | sed -e 's/cs*//' -e 's/.cs//'`; \
 			;;\
 		esac; \
-		echo $(MCS) --probe $$error $$i; \
-		$(MCS) --probe $$error 1 $$i > /dev/null; \
-		code=$$?; \
-		if test $$code != 123; then \
-			echo Code is: $$code; \
-			if [ x$$code = x124 ]; then \
-				echo "Compiler failed to flag $$i"; \
-			else \
-				echo "Compiler failed to compile $$i"; \
-			fi; \
-			flist="$$flist $$i"; \
-			failed=true; \
-		else \
-			echo test $$i ok; \
+		echo -n "Running test $$i ... "; \
+		if $(MCS) --unsafe --expect-error $$error $$i > /dev/null; \
+		then echo OK; \
+		else echo FAILED; \
+		     flist="$$flist $$i"; \
+		     failed=true; \
 		fi; \
 	done; \
 	if $$failed; then \

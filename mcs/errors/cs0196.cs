@@ -6,6 +6,6 @@ unsafe class ZZ {
 		int *p = null;
 
 		if (p [10,4] == 4)
-			;
+			return;
 	}
 }
