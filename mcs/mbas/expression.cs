@@ -112,7 +112,7 @@ namespace Mono.MonoBASIC {
 			case Operator.UnaryNegation:
 				return "-";
 			case Operator.LogicalNot:
-				return "!";
+				return "Not";
 			case Operator.OnesComplement:
 				return "~";
 			case Operator.AddressOf:
@@ -271,12 +271,27 @@ namespace Mono.MonoBASIC {
 		{
 			Type expr_type = Expr.Type;
 
+			Expression mg;
+			string op_name;
+			if (Oper == Operator.LogicalNot && expr_type != TypeManager.bool_type) 
+				Oper = Operator.OnesComplement;
+
+
+			if ((expr_type == TypeManager.string_type) &&
+			    (Oper == Operator.UnaryPlus ||
+			     Oper == Operator.UnaryNegation)) {
+
+				Expr = ConvertImplicit (ec, Expr, TypeManager.double_type, loc);
+				if (Expr == null) {
+					Error23 (expr_type);
+					return null;
+				}
+				expr_type = Expr.Type;
+			}
+
 			//
 			// Step 1: Perform Operator Overload location
 			//
-			Expression mg;
-			string op_name;
-			
 			op_name = oper_names [(int) Oper];
 
 			mg = MemberLookup (ec, expr_type, op_name, MemberTypes.Method, AllBindingFlags, loc);
@@ -322,39 +337,29 @@ namespace Mono.MonoBASIC {
 				return this;
 
 			case Operator.OnesComplement:
-				if (!((expr_type == TypeManager.int32_type) ||
-				      (expr_type == TypeManager.uint32_type) ||
-				      (expr_type == TypeManager.int64_type) ||
-				      (expr_type == TypeManager.uint64_type) ||
-				      (expr_type.IsSubclassOf (TypeManager.enum_type)))){
-					Expression e;
-
-					e = ConvertImplicit (ec, Expr, TypeManager.int32_type, loc);
-					if (e != null){
-						type = TypeManager.int32_type;
-						return this;
+				if (expr_type == TypeManager.string_type ||
+				    expr_type == TypeManager.decimal_type ||
+				    expr_type == TypeManager.double_type ||
+				    expr_type == TypeManager.float_type) {
+					if ((Expr = ConvertImplicit (ec, Expr, TypeManager.int64_type, loc)) == null) {
+						Error23 (Expr.Type);
+						return null;
 					}
-					e = ConvertImplicit (ec, Expr, TypeManager.uint32_type, loc);
-					if (e != null){
-						type = TypeManager.uint32_type;
-						return this;
-					}
-					e = ConvertImplicit (ec, Expr, TypeManager.int64_type, loc);
-					if (e != null){
-						type = TypeManager.int64_type;
-						return this;
-					}
-					e = ConvertImplicit (ec, Expr, TypeManager.uint64_type, loc);
-					if (e != null){
-						type = TypeManager.uint64_type;
-						return this;
-					}
-					Error23 (expr_type);
-					return null;
+					expr_type = Expr.Type;
 				}
-				type = expr_type;
-				return this;
 
+				if (expr_type == TypeManager.int64_type) {
+					type = expr_type;
+					return this;
+				}
+				if (expr_type == TypeManager.byte_type ||
+				    expr_type == TypeManager.short_type ||
+				    expr_type == TypeManager.int32_type) {
+					type = TypeManager.int32_type;
+					return this;
+				}
+
+				break;
 			case Operator.AddressOf:
 				if (Expr.eclass != ExprClass.Variable){
 					Error (211, "Cannot take the address of non-variables");
@@ -398,6 +403,13 @@ namespace Mono.MonoBASIC {
 				//
 				// A plus in front of something is just a no-op, so return the child.
 				//
+				if (expr_type == TypeManager.string_type) {
+					Expression e = ConvertImplicit (ec, Expr, TypeManager.double_type, loc);
+					if (e != null){
+						type = TypeManager.double_type;
+						return e;
+					}
+				}
 				return Expr;
 
 			case Operator.UnaryNegation:
@@ -432,6 +444,14 @@ namespace Mono.MonoBASIC {
 				// It is also not clear if we should convert to Float
 				// or Double initially.
 				//
+				if (expr_type == TypeManager.string_type) {
+					Expression e = ConvertImplicit (ec, Expr, TypeManager.double_type, loc);
+					if (e != null){
+						Expr = e;
+						type = TypeManager.double_type;
+						return this;
+					}
+				}
 				if (expr_type == TypeManager.uint32_type){
 					//
 					// FIXME: handle exception to this rule that
@@ -453,7 +473,10 @@ namespace Mono.MonoBASIC {
 					return null;
 				}
 
-				if (expr_type == TypeManager.float_type){
+				if (expr_type == TypeManager.float_type || 
+				    expr_type == TypeManager.double_type || 
+				    expr_type == TypeManager.int64_type || 
+				    expr_type == TypeManager.int32_type){
 					type = expr_type;
 					return this;
 				}
@@ -490,6 +513,7 @@ namespace Mono.MonoBASIC {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+			Type init_type = Expr.Type;
 			if (Oper == Operator.AddressOf)
 				Expr = Expr.ResolveLValue (ec, new EmptyExpression ());
 			else
@@ -499,7 +523,18 @@ namespace Mono.MonoBASIC {
 				return null;
 
 			eclass = ExprClass.Value;
-			return ResolveOperator (ec);
+			Expression etmp = ResolveOperator (ec);
+			if (init_type == TypeManager.byte_type || init_type == TypeManager.short_type) {
+				Expression conv_exp = null;
+				if (init_type == TypeManager.byte_type && Oper != Operator.UnaryNegation){
+					conv_exp = ConvertImplicit (ec, etmp, TypeManager.byte_type, loc);
+				}
+				else 
+					conv_exp = ConvertImplicit (ec, etmp, TypeManager.short_type, loc);
+				if (conv_exp != null)
+					return conv_exp;
+			}
+			return etmp;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -1546,6 +1581,13 @@ namespace Mono.MonoBASIC {
 			
 			Type l = left.Type;
 			Type r = right.Type;
+			
+			if (l == TypeManager.date_type || r == TypeManager.date_type ||
+			    l == TypeManager.char_type || r == TypeManager.char_type ||
+			    ! l.IsValueType || ! r.IsValueType) {
+				Error_OperatorCannotBeApplied (loc, "^", l, r);
+				return null;
+			}
 
 			if (l != TypeManager.double_type) { 
 				left = ConvertImplicit (ec, left, TypeManager.double_type, loc);
@@ -1559,7 +1601,7 @@ namespace Mono.MonoBASIC {
 			if (r != TypeManager.double_type) {
 				right = ConvertImplicit (ec, right, TypeManager.double_type, loc);
 				if (right == null){
-					Error_OperatorCannotBeApplied (loc, "&", l, r);
+					Error_OperatorCannotBeApplied (loc, "^", l, r);
 					return null;
 				}
                                         
@@ -1808,7 +1850,7 @@ namespace Mono.MonoBASIC {
 			case Operator.Division:
 				return "/";
 			case Operator.Modulus:
-				return "%";
+				return "Mod";
 			case Operator.Addition:
 				return "+";
 			case Operator.Subtraction:
@@ -1826,19 +1868,19 @@ namespace Mono.MonoBASIC {
 			case Operator.GreaterThanOrEqual:
 				return ">=";
 			case Operator.Equality:
-				return "==";
+				return "=";
 			case Operator.Inequality:
-				return "!=";
+				return "<>";
 			case Operator.BitwiseAnd:
-				return "&";
+				return "And";
 			case Operator.BitwiseOr:
-				return "|";
+				return "Or";
 			case Operator.ExclusiveOr:
 				return "^";
 			case Operator.LogicalOr:
-				return "||";
+				return "Or";
 			case Operator.LogicalAnd:
-				return "&&";
+				return "And";
 			}
 
 			return oper.ToString ();
@@ -1869,159 +1911,77 @@ namespace Mono.MonoBASIC {
 		}
 
 		//
-		// Note that handling the case l == Decimal || r == Decimal
-		// is taken care of by the Step 1 Operator Overload resolution.
+		// Handles boolean types also
 		//
-		bool DoNumericPromotions (EmitContext ec, Type l, Type r)
+		bool DoNumericPromotions (EmitContext ec, Type l, Type r, Operator oper)
 		{
-			if (l == TypeManager.double_type || r == TypeManager.double_type){
+			// Need not do anything for shift operators, as this will be handled by the
+			// 'cHECKsHiftArguments' method
+
+			Type conv_left_as = null;
+			Type conv_right_as = null;
+			if (oper == Operator.LeftShift || oper == Operator.RightShift)
+				return true;
+			if (l == TypeManager.bool_type && r == TypeManager.bool_type) {
+				if (IsBitwiseOperator (oper) || IsRelationalOperator (oper)) 
+					return true;
+				if (IsArithmaticOperator (oper) && oper != Operator.Division) {
+					type = TypeManager.int32_type;
+					conv_left_as = conv_left_as = TypeManager.short_type;
+				}
+			}
+
+			if (IsBitwiseOperator (oper)) {
+
+				if (l == TypeManager.decimal_type || 
+				    l == TypeManager.double_type ||
+				    l == TypeManager.float_type) {
+					conv_left_as = type = TypeManager.int64_type;
+					l = conv_left_as;
+				}
+				if (r == TypeManager.decimal_type || 
+				    r == TypeManager.double_type ||
+				    r == TypeManager.float_type) {
+					conv_right_as = type = TypeManager.int64_type;
+					r = conv_right_as;
+				}
+			}
+
+			if ((l == TypeManager.double_type || r == TypeManager.double_type) ||
+			    (oper == Operator.Division && 
+			    !(l == TypeManager.decimal_type || r == TypeManager.decimal_type))) {
 				//
 				// If either operand is of type double, the other operand is
 				// conveted to type double.
 				//
-				if (r != TypeManager.double_type)
-					right = ConvertImplicit (ec, right, TypeManager.double_type, loc);
-				if (l != TypeManager.double_type)
-					left = ConvertImplicit (ec, left, TypeManager.double_type, loc);
+				type = conv_left_as = conv_right_as = TypeManager.double_type;
 				
-				type = TypeManager.double_type;
 			} else if (l == TypeManager.float_type || r == TypeManager.float_type){
 				//
 				// if either operand is of type float, the other operand is
 				// converted to type float.
 				//
-				if (r != TypeManager.double_type)
-					right = ConvertImplicit (ec, right, TypeManager.float_type, loc);
-				if (l != TypeManager.double_type)
-					left = ConvertImplicit (ec, left, TypeManager.float_type, loc);
-				type = TypeManager.float_type;
-			} else if (l == TypeManager.uint64_type || r == TypeManager.uint64_type){
-				Expression e;
-				Type other;
-				//
-				// If either operand is of type ulong, the other operand is
-				// converted to type ulong.  or an error ocurrs if the other
-				// operand is of type sbyte, short, int or long
-				//
-				if (l == TypeManager.uint64_type){
-					if (r != TypeManager.uint64_type){
-						if (right is IntConstant){
-							IntConstant ic = (IntConstant) right;
-							
-							e = TryImplicitNumericConversion (l, ic);
-							if (e != null)
-								right = e;
-						} else if (right is LongConstant){
-							long ll = ((LongConstant) right).Value;
-
-							if (ll > 0)
-								right = new ULongConstant ((ulong) ll);
-						} else {
-							e = ImplicitNumericConversion (ec, right, l, loc);
-							if (e != null)
-								right = e;
-						}
-					}
-					other = right.Type;
-				} else {
-					if (left is IntConstant){
-						e = TryImplicitNumericConversion (r, (IntConstant) left);
-						if (e != null)
-							left = e;
-					} else if (left is LongConstant){
-						long ll = ((LongConstant) left).Value;
-						
-						if (ll > 0)
-							left = new ULongConstant ((ulong) ll);
-					} else {
-						e = ImplicitNumericConversion (ec, left, r, loc);
-						if (e != null)
-							left = e;
-					}
-					other = left.Type;
-				}
-
-				if ((other == TypeManager.sbyte_type) ||
-				    (other == TypeManager.short_type) ||
-				    (other == TypeManager.int32_type) ||
-				    (other == TypeManager.int64_type))
-					Error_OperatorAmbiguous (loc, oper, l, r);
-				type = TypeManager.uint64_type;
+				type = conv_left_as = conv_right_as = TypeManager.float_type;
+			} else if (l == TypeManager.decimal_type || r == TypeManager.decimal_type){
+				type = conv_left_as = conv_right_as = TypeManager.decimal_type;
 			} else if (l == TypeManager.int64_type || r == TypeManager.int64_type){
 				//
 				// If either operand is of type long, the other operand is converted
 				// to type long.
 				//
-				if (l != TypeManager.int64_type)
-					left = ConvertImplicit (ec, left, TypeManager.int64_type, loc);
-				if (r != TypeManager.int64_type)
-					right = ConvertImplicit (ec, right, TypeManager.int64_type, loc);
-				
-				type = TypeManager.int64_type;
-			} else if (l == TypeManager.uint32_type || r == TypeManager.uint32_type){
-				//
-				// If either operand is of type uint, and the other
-				// operand is of type sbyte, short or int, othe operands are
-				// converted to type long.
-				//
-				Type other = null;
-				
-				if (l == TypeManager.uint32_type){
-					if (right is IntConstant){
-						IntConstant ic = (IntConstant) right;
-						int val = ic.Value;
-						
-						if (val >= 0)
-							right = new UIntConstant ((uint) val);
-
-						type = l;
-						return true;
-					}
-					other = r;
-				} 
-				else if (r == TypeManager.uint32_type){
-					if (left is IntConstant){
-						IntConstant ic = (IntConstant) left;
-						int val = ic.Value;
-						
-						if (val >= 0)
-							left = new UIntConstant ((uint) val);
-
-						type = r;
-						return true;
-					}
-					
-					other = l;
-				}
-
-				if ((other == TypeManager.sbyte_type) ||
-				    (other == TypeManager.short_type) ||
-				    (other == TypeManager.int32_type)){
-					left = ForceConversion (ec, left, TypeManager.int64_type);
-					right = ForceConversion (ec, right, TypeManager.int64_type);
-					type = TypeManager.int64_type;
-				} else {
-					//
-					// if either operand is of type uint, the other
-					// operand is converd to type uint
-					//
-					left = ForceConversion (ec, left, TypeManager.uint32_type);
-					right = ForceConversion (ec, right, TypeManager.uint32_type);
-					type = TypeManager.uint32_type;
-				} 
-			} else if (l == TypeManager.decimal_type || r == TypeManager.decimal_type){
-				if (l != TypeManager.decimal_type)
-					left = ConvertImplicit (ec, left, TypeManager.decimal_type, loc);
-
-				if (r != TypeManager.decimal_type)
-					right = ConvertImplicit (ec, right, TypeManager.decimal_type, loc);
-				type = TypeManager.decimal_type;
+				type = conv_left_as = conv_right_as = TypeManager.int64_type;
+			} else if (l == TypeManager.int32_type || r == TypeManager.int32_type){
+				type = conv_left_as = conv_right_as = TypeManager.int32_type;
+			} else if (l == TypeManager.short_type || r == TypeManager.short_type){
+				conv_left_as = conv_right_as = TypeManager.int32_type;
+				type = TypeManager.int32_type;
 			} else {
-				left = ForceConversion (ec, left, TypeManager.int32_type);
-				right = ForceConversion (ec, right, TypeManager.int32_type);
-
 				type = TypeManager.int32_type;
 			}
+			if (conv_left_as != null)
+				left = ConvertImplicit (ec, left, conv_left_as, loc);
+			if (conv_right_as != null)
+				right = ConvertImplicit (ec, right, conv_right_as, loc);
 
 			return (left != null) && (right != null);
 		}
@@ -2029,7 +1989,7 @@ namespace Mono.MonoBASIC {
 		static public void Error_OperatorCannotBeApplied (Location loc, string name, Type l, Type r)
 		{
 			Report.Error (19, loc,
-			       "Operator " + name + " cannot be applied to operands of type '" +
+			       "Operator '" + name + "' cannot be applied to operands of type '" +
 			       TypeManager.MonoBASIC_Name (l) + "' and '" +
 			       TypeManager.MonoBASIC_Name (r) + "'");
 		}
@@ -2060,19 +2020,79 @@ namespace Mono.MonoBASIC {
 				Error_OperatorCannotBeApplied ();
 				return null;
 			}
+
+			type = left.Type;
 			right = e;
+			int mask = 0;
+			if ( type == TypeManager.byte_type)
+				mask = 7;
+			else if (type == TypeManager.short_type || type == TypeManager.bool_type)
+				mask = 15;
+			else if (type == TypeManager.int32_type || type == TypeManager.uint32_type)
+				mask = 31;
+			else 
+				mask = 63;
+			if (mask != 0) {
+				right = new Binary (Binary.Operator.BitwiseAnd, right, new IntLiteral (mask), loc);
+				right = right.DoResolve (ec);
+			}
 
-			if (((e = ConvertImplicit (ec, left, TypeManager.int32_type, loc)) != null) ||
-			    ((e = ConvertImplicit (ec, left, TypeManager.uint32_type, loc)) != null) ||
-			    ((e = ConvertImplicit (ec, left, TypeManager.int64_type, loc)) != null) ||
-			    ((e = ConvertImplicit (ec, left, TypeManager.uint64_type, loc)) != null)){
+			if (type == TypeManager.bool_type) {
+				left = ConvertImplicit (ec, left, TypeManager.short_type, loc);
+				if (left == null) {
+					Error_OperatorCannotBeApplied (loc, OperName (oper), left.Type, right.Type);
+					return null;
+				}
+			}
+			if (type == TypeManager.byte_type || 
+			    type == TypeManager.short_type ||
+			    type == TypeManager.int32_type ||
+			    type == TypeManager.int64_type)
+				return this;
+
+			if ((e = ConvertImplicit (ec, left, TypeManager.int64_type, loc)) != null) {
 				left = e;
-				type = e.Type;
-
+				type = TypeManager.int64_type;
 				return this;
 			}
+
 			Error_OperatorCannotBeApplied ();
 			return null;
+		}
+
+		bool IsRelationalOperator (Binary.Operator oper) {
+			return (oper == Operator.Equality ||
+				oper == Operator.Inequality ||	
+				oper == Operator.LessThan ||	
+				oper == Operator.LessThanOrEqual ||	
+				oper == Operator.GreaterThan ||	
+				oper == Operator.GreaterThanOrEqual);
+		}
+
+		bool IsArithmaticOperator (Binary.Operator oper) {
+			return (oper == Operator.Addition ||
+				oper == Operator.Subtraction ||	
+				oper == Operator.Multiply ||	
+				oper == Operator.Division ||	
+				oper == Operator.Exponentiation ||	
+				oper == Operator.Modulus);
+		}
+
+		bool IsBitwiseOperator (Binary.Operator oper) {
+			return (oper == Operator.BitwiseOr ||
+				oper == Operator.BitwiseAnd ||
+				oper == Operator.ExclusiveOr);
+		}
+
+		bool IsNumericType (Type type) {
+			return (type == TypeManager.byte_type ||
+				type == TypeManager.sbyte_type ||
+				type == TypeManager.short_type ||
+				type == TypeManager.int32_type ||
+				type == TypeManager.int64_type ||
+				type == TypeManager.decimal_type ||
+				type == TypeManager.double_type ||
+				type == TypeManager.float_type);
 		}
 
 		Expression ResolveOperator (EmitContext ec)
@@ -2080,562 +2100,480 @@ namespace Mono.MonoBASIC {
 			Type l = left.Type;
 			Type r = right.Type;
 
-			bool overload_failed = false;
-
-			//
-			// Step 1: Perform Operator Overload location
-			//
 			Expression left_expr, right_expr;
-				
-			string op = oper_names [(int) oper];
-			//Catch this case before OverLoad Resolve is called
-			//String and date 	
-			if (oper == Operator.Equality || oper == Operator.Inequality){
-				if (l == TypeManager.string_type && r == TypeManager.date_type){
-					left = ConvertImplicit(ec, left, r, loc);
-					if (left == null) {
-						Error_OperatorCannotBeApplied (loc, OperName(oper), l, r);
-						return null;
-					}
-					return ResolveOperator(ec);
-				} else if (r == TypeManager.string_type && l == TypeManager.date_type) {
-					right = ConvertImplicit(ec, right, l, loc);
-					if (right == null) {
-						Error_OperatorCannotBeApplied (loc, OperName(oper), l, r);
-						return null;
-					}
-					return ResolveOperator(ec);
+			left_expr = right_expr = null;
+
+			if (oper == Operator.Addition && right is Unary) {
+				Unary unary_right = (Unary) right;
+				if (unary_right.Oper == Unary.Operator.UnaryNegation) {
+					oper = Operator.Subtraction;
+					right = unary_right.Expr;
+					r = right.Type;
 				}
 			}
 
-			MethodGroupExpr union;
+			if (oper == Operator.LogicalAnd) 
+				oper = Operator.BitwiseAnd;
+			if (oper == Operator.LogicalOr) 
+				oper = Operator.BitwiseOr;
+
+			if (TypeManager.IsEnumType (l)) 
+				l = TypeManager.EnumToUnderlying (l);
+			if (TypeManager.IsEnumType (r)) 
+				r = TypeManager.EnumToUnderlying (r);
+
+			Type conv_left_as = null;
+			Type conv_right_as = null;
+			Expression match, other;
+			match = other = null;
+
+			// deal with objects and reference types first
+			if (l == TypeManager.object_type || r == TypeManager.object_type) {
+	                        //
+                                // operator != (object a, object b)
+                                // operator == (object a, object b)
+                                //
+                                // For this to be used, both arguments have to be reference-types.
+                                // Read the rationale on the spec (14.9.6)
+                                //
+                                // Also, if at compile time we know that the classes do not inherit
+                                // one from the other, then we catch the error there.
+
+				// If other type is a value type, convert it to object
+				if (l.IsValueType && r == TypeManager.object_type)
+					left = ConvertImplicit (ec, left, TypeManager.object_type, loc);
+				if (r.IsValueType && l == TypeManager.object_type)
+					right = ConvertImplicit (ec, right, TypeManager.object_type, loc);
+				if (left == null || right == null) {
+					Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+					return null;
+				}
+
+				l = left.Type;
+				r = right.Type;
+
+				if (l == TypeManager.object_type && r == TypeManager.object_type) {
+					string fqn = null;
+					switch (oper) {
+					case Operator.Addition :
+						fqn = "ObjectType.AddObj";
+						break;
+					case Operator.Subtraction :
+						fqn = "ObjectType.SubObj";
+						break;
+					case Operator.Multiply :
+						fqn = "ObjectType.MulObj";
+						break;
+					case Operator.Division :
+						fqn = "ObjectType.DivObj";
+						break;
+					case Operator.Modulus :
+						fqn = "ObjectType.ModObj";
+						break;
+					case Operator.Exponentiation :
+						fqn = "ObjectType.PowObj";
+						break;
+					case Operator.Equality :
+					case Operator.Inequality :
+					case Operator.LessThan :
+					case Operator.LessThanOrEqual :
+					case Operator.GreaterThan :
+					case Operator.GreaterThanOrEqual :
+						fqn = "ObjectType.ObjTst";
+						break;
+					case Operator.BitwiseAnd:
+						fqn = "ObjectType.BitAndObj";
+						break;
+					case Operator.BitwiseOr:
+						fqn = "ObjectType.BitOrObj";
+						break;
+					case Operator.ExclusiveOr:
+						fqn = "ObjectType.BitXorObj";
+						break;
+					case Operator.LeftShift:
+						fqn = "ObjectType.ShiftLeftObj";
+						break;
+					case Operator.RightShift:
+						fqn = "ObjectType.ShiftRightObj";
+						break;
+					}
+			
+					if (fqn == null) {
+						Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+						return null;
+					}
+
+					if (oper == Operator.LeftShift || oper == Operator.RightShift) {
+						right = ConvertImplicit (ec, right, TypeManager.object_type, loc);
+						if (right == null) {
+							Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+							return null;
+						}
+					}
+
+					Expression etmp = Mono.MonoBASIC.Parser.DecomposeQI (
+								"Microsoft.VisualBasic.CompilerServices." + fqn, 
+								Location.Null);
+
+					ArrayList args = new ArrayList ();
+					args.Add (new Argument (left, Argument.AType.Expression));
+					args.Add (new Argument (right, Argument.AType.Expression));
+					if (IsRelationalOperator (oper)) 
+						args.Add (new Argument (new BoolConstant (false), Argument.AType.Expression));
+					Expression e = new Invocation (etmp, args, loc);
+					if (IsRelationalOperator (oper)) {
+						e = new Binary (oper, e.Resolve(ec), new IntConstant (0), loc);
+					}
+					return e.Resolve (ec);
+				}
+
+			} else if (!l.IsValueType || !r.IsValueType) {
+				// Either of the operands are reference types
+				if (l.IsSubclassOf (TypeManager.delegate_type) && 
+				    r.IsSubclassOf (TypeManager.delegate_type)) {
+					if (oper == Operator.Addition || oper == Operator.Subtraction) {
+	                                        Arguments = new ArrayList ();
+                                        	Arguments.Add (new Argument (left, Argument.AType.Expression));
+                                        	Arguments.Add (new Argument (right, Argument.AType.Expression));
+                                                                                                               
+                                        	if (oper == Operator.Addition)
+                                                	method = TypeManager.delegate_combine_delegate_delegate;
+                                        	else
+                                                	method = TypeManager.delegate_remove_delegate_delegate;
+                                                                                                              	 
+                                        	if (l != r) {
+                                                	Error_OperatorCannotBeApplied ();
+                                                	return null;
+                                        	}
+                                                                                                               
+                                        	DelegateOperation = true;
+                                        	type = l;
+                                        	return this;
+					}
+
+					if (oper != Operator.Equality) {
+						Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+						return null;
+					}
+				}
+
+				bool left_is_string = (left.Type == TypeManager.string_type);
+				bool right_is_string = (right.Type == TypeManager.string_type);
+
+				if (left_is_string || right_is_string) {
+
+					if (left_is_string && right_is_string) {
+						if (oper == Operator.Addition) {
+						// Both operands are string 
+							Expression e = new StringConcat (loc, left, right);
+							return e.Resolve(ec);
+						}
+	
+						if (IsRelationalOperator (oper)) {
+	
+							Expression etmp = Mono.MonoBASIC.Parser.DecomposeQI ("Microsoft.VisualBasic.CompilerServices.StringType.StrCmp", Location.Null);
+							eclass = ExprClass.Value;
+							type = TypeManager.bool_type;
+							ArrayList args = new ArrayList ();
+							args.Add (new Argument(left, Argument.AType.Expression));
+							args.Add (new Argument(right, Argument.AType.Expression));
+							args.Add (new Argument(new BoolConstant(false), Argument.AType.Expression));
+							Expression e = (Expression) new Invocation (etmp, args, loc);
+							e = new Binary (oper, e.Resolve(ec), new IntConstant(0), loc);
+							return e.Resolve(ec);
+						} 
+					} 
+	
+					match = left_is_string ? left: right;
+					other = right_is_string ? left: right;
+					Type other_type = other.Type;
+	
+					//
+					// Disallow arithmatic / shift / logical operators on dates and characters
+					//
+					if (other_type == TypeManager.date_type || other_type == TypeManager.char_type) {
+						if (!(oper == Operator.Addition || IsRelationalOperator (oper))) {
+							Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+							return null;
+						}
+					}
+	
+					if (oper == Operator.Addition) {
+						if (other_type == TypeManager.void_type) {
+							Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+							return null;
+						}
+						if (other_type == TypeManager.date_type || 
+					    	other_type == TypeManager.char_type || 
+					    	other_type == typeof (System.Char[])) {
+							conv_left_as = conv_right_as = TypeManager.string_type;
+							type = TypeManager.string_type;
+						}  else {
+							// numeric operand
+							conv_right_as = conv_left_as = TypeManager.double_type;
+							type = TypeManager.double_type;
+						}
+					} else if (IsRelationalOperator (oper)) {
+						if (other_type == TypeManager.char_type || other_type == typeof (System.Char[])) {
+							conv_left_as = conv_right_as = TypeManager.string_type;
+						} else if (other_type == TypeManager.date_type) {
+							conv_right_as = conv_left_as = other_type;
+						} else if (other_type == TypeManager.bool_type) {
+							conv_right_as = conv_left_as = other_type;
+						} else if (! other_type.IsValueType) {
+							// Do Nothing, just return
+							type = TypeManager.bool_type;
+							return this;
+						} else {
+							conv_right_as = conv_left_as = TypeManager.double_type;
+						}
+						type = TypeManager.bool_type;
+	
+					} else if (oper == Operator.LeftShift || oper == Operator.RightShift) {
+	
+						conv_left_as = TypeManager.int64_type;
+						conv_right_as = TypeManager.int32_type;
+						type = TypeManager.int64_type;
+	
+					} else if ( IsBitwiseOperator (oper)) {
+	
+				    		if (other_type == TypeManager.bool_type) {
+							conv_right_as = conv_left_as = TypeManager.bool_type;
+							type = TypeManager.bool_type;
+						} else {
+							conv_left_as = conv_right_as = TypeManager.int64_type;
+							type = TypeManager.int64_type;
+						}
+					} else {
+						// Arithmatic operators
+						conv_right_as = conv_left_as = TypeManager.double_type;
+						type = TypeManager.double_type;
+					}
+				} else {
+					// Both are not of type string
+					if (oper == Operator.Equality || oper == Operator.Inequality) {
+						if (l.IsValueType || r.IsValueType) {
+							Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+							return null;
+						}
+						type = TypeManager.bool_type;
+						return this;
+					} else {
+						Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+						return null;
+					}
+				}
+			} else if (l == TypeManager.date_type || r == TypeManager.date_type) {
+				// Date with string operations handled above
+				// Only other possiblity is date with date
+				if (l == TypeManager.date_type && r == TypeManager.date_type) {
+					if (oper == Operator.Addition) {
+						conv_left_as = conv_right_as = TypeManager.string_type;
+					} else if (IsRelationalOperator (oper)) { 
+						Expression etmp = Mono.MonoBASIC.Parser.DecomposeQI ("System.DateTime.Compare", Location.Null);
+						eclass = ExprClass.Value;
+						type = TypeManager.bool_type;
+						ArrayList args = new ArrayList ();
+						args.Add (new Argument(left, Argument.AType.Expression));
+						args.Add (new Argument(right, Argument.AType.Expression));
+						Expression e = (Expression) new Invocation (etmp, args, loc);
+						e = new Binary (oper, e.Resolve(ec), new IntConstant(0), loc);
+						return e.Resolve(ec);
+					} else {
+						Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+						return null;
+					}
+				} else {
+					Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+					return null;
+				}
+			} else if (l == TypeManager.char_type || r == TypeManager.char_type) {
+				// char op string handled above
+				if (l == TypeManager.char_type && r == TypeManager.char_type) {
+					if (oper == Operator.Addition)
+						conv_left_as = conv_right_as = TypeManager.string_type;
+					else if (IsRelationalOperator (oper)) {
+						type = TypeManager.bool_type;
+					} else {
+						Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+						return null;
+					}
+				} else {
+					Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+					return null;
+				}
+			} else if (l.IsPointer || r.IsPointer) {
+				if (oper == Operator.Addition || oper == Operator.Subtraction) {
+					if (l.IsPointer){
+						if (r.IsPointer && oper == Operator.Subtraction){
+							if (r == l)
+								return new PointerArithmetic (
+									false, left, right, TypeManager.int64_type,
+									loc);
+					} else if (is_32_or_64 (r))
+						return new PointerArithmetic (
+							oper == Operator.Addition, left, right, l, loc);
+					} else if (r.IsPointer && is_32_or_64 (l) && oper == Operator.Addition)
+						return new PointerArithmetic (
+							true, right, left, r, loc);
+				}
+
+				//
+				// Pointer comparison
+				//
+				if (l.IsPointer && r.IsPointer){
+					if (oper == Operator.Equality || oper == Operator.Inequality ||
+					    oper == Operator.LessThan || oper == Operator.LessThanOrEqual ||
+					    oper == Operator.GreaterThan || oper == Operator.GreaterThanOrEqual){
+						type = TypeManager.bool_type;
+						return this;
+					}
+				}
+				Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+				return null;
+
+			} else {
+
+				// Numeric Types
+				DoNumericPromotions (ec, l, r, oper);
+				if (left == null || right == null) {
+					Error_OperatorCannotBeApplied (loc, OperName(oper), l, r);
+					return null;
+				}
+
+				l = left.Type;
+				r = right.Type;
+				if (l == TypeManager.decimal_type  && r == TypeManager.decimal_type) {
+					if (IsRelationalOperator (oper)) {
+						Expression etmp = Mono.MonoBASIC.Parser.DecomposeQI ("System.Decimal.Compare", Location.Null);
+						eclass = ExprClass.Value;
+						type = TypeManager.bool_type;
+						ArrayList args = new ArrayList ();
+						args.Add (new Argument(left, Argument.AType.Expression));
+						args.Add (new Argument(right, Argument.AType.Expression));
+						Expression e = (Expression) new Invocation (etmp, args, loc);
+						e = new Binary (oper, e.Resolve(ec), new IntConstant(0), loc);
+						return e.Resolve(ec);
+					} else if (IsArithmaticOperator (oper)) {
+						string fqn = null;
+						if (oper == Operator.Addition) 
+							fqn = "System.Decimal.Add";
+						else if (oper == Operator.Subtraction) 
+							fqn = "System.Decimal.Subtract";
+						else if (oper == Operator.Multiply) 
+							fqn = "System.Decimal.Multiply";
+						else if (oper == Operator.Division) 
+							fqn = "System.Decimal.Divide";
+						else if (oper == Operator.Modulus) 
+							fqn = "System.Decimal.Remainder";
+						if (fqn != null) {
+
+							Expression etmp = Mono.MonoBASIC.Parser.DecomposeQI (fqn, Location.Null);
+							eclass = ExprClass.Value;
+							type = TypeManager.decimal_type;
+							ArrayList args = new ArrayList ();
+							args.Add (new Argument(left, Argument.AType.Expression));
+							args.Add (new Argument(right, Argument.AType.Expression));
+							Expression e = (Expression) new Invocation (etmp, args, loc);
+							return e.Resolve (ec);
+						}
+					}
+				}
+			}
+
+			bool conv_done = false;
+			if (conv_left_as != null && conv_left_as != l) {
+				conv_done = true;
+				left = ConvertImplicit (ec, left, conv_left_as, loc);
+				if (left == null) {
+					Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+					return null;
+				}
+				l = left.Type;
+			}
+
+			if (conv_right_as != null && conv_right_as != r) {
+				conv_done = true;
+				right = ConvertImplicit (ec, right, conv_right_as, loc);
+				if (right == null) {
+					Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
+					return null;
+				}
+				r = right.Type;
+			}
+
+			if (conv_done) 
+				return ResolveOperator (ec);
+
+			bool overload_failed = false;
+			string op = oper_names [(int) oper];
+			MethodGroupExpr union = null;
 			left_expr = MemberLookup (ec, l, op, MemberTypes.Method, AllBindingFlags, loc);
-			if (r != l){
+			if (r != l) {
 				right_expr = MemberLookup (
-					ec, r, op, MemberTypes.Method, AllBindingFlags, loc);
+						ec, r, op, MemberTypes.Method, AllBindingFlags, loc);
 				union = Invocation.MakeUnionSet (left_expr, right_expr, loc);
-			} else
+			} else 
 				union = (MethodGroupExpr) left_expr;
-				
+
 			if (union != null) {
 				Arguments = new ArrayList ();
 				Arguments.Add (new Argument (left, Argument.AType.Expression));
 				Arguments.Add (new Argument (right, Argument.AType.Expression));
-				
+
 				method = Invocation.OverloadResolve (ec, union, Arguments, Location.Null);
 				if (method != null) {
 					MethodInfo mi = (MethodInfo) method;
-					
+
 					type = mi.ReturnType;
 					return this;
 				} else {
 					overload_failed = true;
 				}
-			}	
-			//
-			// Step 2: Default operations on CLI native types.
-			//
-
-			//
-			// Step 0: String concatenation (because overloading will get this wrong)
-			//
-			if (oper == Operator.Addition) {
-				//
-				// If any of the arguments is a string, cast to string
-				//
-				
-				if (l == TypeManager.string_type){
-					
-					if (r == TypeManager.void_type) {
-						Error_OperatorCannotBeApplied ();
-						return null;
-					}
-					if (r == TypeManager.date_type || r == TypeManager.char_type) {
-						right = ConvertImplicit (ec, right, l, loc);
-						if (right == null){
-							Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
-							return null;
-						}
-						return ResolveOperator(ec);
-					}	
-					if (r == TypeManager.string_type){
-						if (left is Constant && right is Constant){
-							StringConstant ls = (StringConstant) left;
-							StringConstant rs = (StringConstant) right;
-							
-							return new StringConstant (
-								ls.Value + rs.Value);
-						}
-						
-						// string + string
-						method = TypeManager.string_concat_string_string;
-						type = TypeManager.string_type;
-						Arguments = new ArrayList ();
-						Arguments.Add (new Argument (left, Argument.AType.Expression));
-						Arguments.Add (new Argument (right, Argument.AType.Expression));
-						return this;
-					} 
-					
-				} else if (r == TypeManager.string_type){
-					// object + string
-
-					if (l == TypeManager.void_type) {
-						Error_OperatorCannotBeApplied ();
-						return null;
-					}
-					if (l == TypeManager.date_type || l == TypeManager.char_type) {
-						left = ConvertImplicit (ec, left, r, loc);
-						if (left == null){
-							Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
-							return null;
-						}
-						return ResolveOperator(ec);
-					}	
-				}
-				//if char + char convert to string and so string concat
-
-				if (l == TypeManager.char_type && r == TypeManager.char_type) {
-					left = ConvertImplicit (ec, left, TypeManager.string_type, loc);
-						if (left == null){
-							Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
-							return null;
-						}
-					right = ConvertImplicit (ec, right, TypeManager.string_type, loc);
-						if (left == null){
-							Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
-							return null;
-						}
-						return ResolveOperator(ec);
-
-					}
-				//
-				// Transform a + ( - b) into a - b
-				//
-				if (right is Unary){
-					Unary right_unary = (Unary) right;
-
-					if (right_unary.Oper == Unary.Operator.UnaryNegation){
-						oper = Operator.Subtraction;
-						right = right_unary.Expr;
-						r = right.Type;
-					}
-				}
 			}
 
-
-			if (oper == Operator.Equality || oper == Operator.Inequality){
-				if (l == TypeManager.bool_type && r != TypeManager.bool_type){
-					left = ConvertImplicit(ec, left, r, loc);
-					if (left == null) {
-						Error_OperatorCannotBeApplied (loc, OperName(oper), l, r);
-						return null;
-					}
-					return ResolveOperator(ec);
-				} else if (r == TypeManager.bool_type && l != TypeManager.bool_type) {
-					right = ConvertImplicit(ec, right, l, loc);
-					if (right == null) {
-						Error_OperatorCannotBeApplied (loc, OperName(oper), l, r);
-						return null;
-					}
-					return ResolveOperator(ec);
-				}
-
-
-				//
-				// operator != (object a, object b)
-				// operator == (object a, object b)
-				//
-				// For this to be used, both arguments have to be reference-types.
-				// Read the rationale on the spec (14.9.6)
-				//
-				// Also, if at compile time we know that the classes do not inherit
-				// one from the other, then we catch the error there.
-				//
-				if (!(l.IsValueType || r.IsValueType)){
-					type = TypeManager.bool_type;
-				//Both are object type
-					if (l == r){
-					type = TypeManager.bool_type;
-
-					Expression etmp;
-                       		 	ArrayList args;
-                       		 	Argument arg1, arg2,arg3;
-					Expression e = null;
-					eclass = ExprClass.Value;
-
-                        		etmp = Mono.MonoBASIC.Parser.DecomposeQI("Microsoft.VisualBasic.CompilerServices.ObjectType.ObjTst", loc);
-                        		args = new ArrayList();
-                        		arg1 = new Argument (left, Argument.AType.Expression);
-                        		arg2 = new Argument (right, Argument.AType.Expression);
-                        		arg3 = new Argument (new BoolConstant(false), Argument.AType.Expression);
-                        		args.Add (arg1);
-                        		args.Add (arg2);
-                        		args.Add (arg3);
-                        		e = (Expression) new Invocation (etmp, args, loc);
-                        		e = new Binary(oper,e.Resolve(ec),new IntConstant(0),loc);
-                        		return e.Resolve(ec);
-				}
-					
-					if (l.IsSubclassOf (r) || r.IsSubclassOf (l))
-						return this;
-					//
-					// Also, a standard conversion must exist from either one
-					//
-					if (!(StandardConversionExists (left, r) ||
-					      StandardConversionExists (right, l))){
-						Error_OperatorCannotBeApplied ();
-						return null;
-					}
-					//
-					// We are going to have to convert to an object to compare
-					//
-					if (l != TypeManager.object_type)
-						left = new EmptyCast (left, TypeManager.object_type);
-					if (r != TypeManager.object_type)
-						right = new EmptyCast (right, TypeManager.object_type);
-
-					//
-					// FIXME: CSC here catches errors cs254 and cs252
-					//
-					return this;
-				}
-
-				//
-				// One of them is a valuetype, but the other one is not.
-				//
-				if (l.IsValueType && r == TypeManager.object_type) {
-					type = TypeManager.bool_type;
-					left = ConvertImplicit(ec, left, r, loc);
-					if (left == null) {
-						Error_OperatorCannotBeApplied (loc, OperName(oper), l, r);
-						return null;
-					}
-					return ResolveOperator(ec);
-				} else if (r.IsValueType && l == TypeManager.object_type) {
-					type = TypeManager.bool_type;
-					right = ConvertImplicit(ec, right, l, loc);
-					if (right == null) {
-						Error_OperatorCannotBeApplied (loc, OperName(oper), l, r);
-						return null;
-					}
-					return ResolveOperator(ec);
-				}
-			}
-			if (oper == Operator.LogicalOr || oper == Operator.LogicalAnd){
-				if (l != TypeManager.bool_type && r == TypeManager.bool_type){
-					left = ConvertImplicit(ec, left, r, loc);
-					if (left == null) {
-						Error_OperatorCannotBeApplied (loc, OperName(oper), l, r);
-						return null;
-					}
-					return ResolveOperator(ec);
-				} else if (r != TypeManager.bool_type && l == TypeManager.bool_type) {
-					right = ConvertImplicit(ec, right, l, loc);
-					if (right == null) {
-						Error_OperatorCannotBeApplied (loc, OperName(oper), l, r);
-						return null;
-					}
-					return ResolveOperator(ec);
-				}
-	}
-
-
-			// Only perform numeric promotions on:
-			// +, -, *, /, %, &, |, ^, ==, !=, <, >, <=, >=
-			//
-			if (oper == Operator.Addition || oper == Operator.Subtraction) {
-				if (l.IsSubclassOf (TypeManager.delegate_type) &&
-				    r.IsSubclassOf (TypeManager.delegate_type)) {
-					
-					Arguments = new ArrayList ();
-					Arguments.Add (new Argument (left, Argument.AType.Expression));
-					Arguments.Add (new Argument (right, Argument.AType.Expression));
-					
-					if (oper == Operator.Addition)
-						method = TypeManager.delegate_combine_delegate_delegate;
-					else
-						method = TypeManager.delegate_remove_delegate_delegate;
-
-					if (l != r) {
-						Error_OperatorCannotBeApplied ();
-						return null;
-					}
-
-					DelegateOperation = true;
-					type = l;
-					return this;
-				}
-
-				//
-				// Pointer arithmetic:
-				//
-				// T* operator + (T* x, int y);
-				// T* operator + (T* x, uint y);
-				// T* operator + (T* x, long y);
-				// T* operator + (T* x, ulong y);
-				//
-				// T* operator + (int y,   T* x);
-				// T* operator + (uint y,  T *x);
-				// T* operator + (long y,  T *x);
-				// T* operator + (ulong y, T *x);
-				//
-				// T* operator - (T* x, int y);
-				// T* operator - (T* x, uint y);
-				// T* operator - (T* x, long y);
-				// T* operator - (T* x, ulong y);
-				//
-				// long operator - (T* x, T *y)
-				//
-				if (l.IsPointer){
-					if (r.IsPointer && oper == Operator.Subtraction){
-						if (r == l)
-							return new PointerArithmetic (
-								false, left, right, TypeManager.int64_type,
-								loc);
-					} else if (is_32_or_64 (r))
-						return new PointerArithmetic (
-							oper == Operator.Addition, left, right, l, loc);
-				} else if (r.IsPointer && is_32_or_64 (l) && oper == Operator.Addition)
-					return new PointerArithmetic (
-						true, right, left, r, loc);
-			}
-			
-			//
-			// Enumeration operators
-			//
-			bool lie = TypeManager.IsEnumType (l);
-			bool rie = TypeManager.IsEnumType (r);
-			if (lie || rie){
-				Expression temp;
-
-				// U operator - (E e, E f)
-				if (lie && rie && oper == Operator.Subtraction){
-					if (l == r){
-						type = TypeManager.EnumToUnderlying (l);
-						return this;
-					} 
-					Error_OperatorCannotBeApplied ();
-					return null;
-				}
-					
-				//
-				// operator + (E e, U x)
-				// operator - (E e, U x)
-				//
-				if (oper == Operator.Addition || oper == Operator.Subtraction){
-					Type enum_type = lie ? l : r;
-					Type other_type = lie ? r : l;
-					Type underlying_type = TypeManager.EnumToUnderlying (enum_type);
-;
-					
-					if (underlying_type != other_type){
-						Error_OperatorCannotBeApplied ();
-						return null;
-					}
-
-					type = enum_type;
-					return this;
-				}
-				
-				if (!rie){
-					temp = ConvertImplicit (ec, left, r, loc);
-					if (temp != null)
-						left = temp;
-					else {
-						Error_OperatorCannotBeApplied ();
-						return null;
-					}
-				} if (!lie){
-					temp = ConvertImplicit (ec, right, l, loc);
-					if (temp != null){
-						right = temp;
-						l = r;
-					} else {
-						Error_OperatorCannotBeApplied ();
-						return null;
-					}
-				}
-
-				if (oper == Operator.Equality || oper == Operator.Inequality ||
-				    oper == Operator.LessThanOrEqual || oper == Operator.LessThan ||
-				    oper == Operator.GreaterThanOrEqual || oper == Operator.GreaterThan){
-					type = TypeManager.bool_type;
-					return this;
-				}
-
-				if (oper == Operator.BitwiseAnd ||
-				    oper == Operator.BitwiseOr ||
-				    oper == Operator.ExclusiveOr){
-					type = l;
-					return this;
-				}
+			if (overload_failed) {
 				Error_OperatorCannotBeApplied ();
 				return null;
 			}
-			
-			if (oper == Operator.LeftShift || oper == Operator.RightShift)
-				return CheckShiftArguments (ec);
 
-			if (oper == Operator.LogicalOr || oper == Operator.LogicalAnd){
-				if (l != TypeManager.bool_type || r != TypeManager.bool_type){
-					Error_OperatorCannotBeApplied ();
-					return null;
-				}
-
+			if (IsRelationalOperator (oper)) {
 				type = TypeManager.bool_type;
-				return this;
-			} 
-
-			//
-			// operator & (bool x, bool y)
-			// operator | (bool x, bool y)
-			// operator ^ (bool x, bool y)
-			//
-			if (l == TypeManager.bool_type && r == TypeManager.bool_type){
-				if (oper == Operator.BitwiseAnd ||
-				    oper == Operator.BitwiseOr ||
-				    oper == Operator.ExclusiveOr){
-					type = l;
-					return this;
-				}
-			}
-			
-			//
-			// Pointer comparison
-			//
-			if (l.IsPointer && r.IsPointer){
-				if (oper == Operator.Equality || oper == Operator.Inequality ||
-				    oper == Operator.LessThan || oper == Operator.LessThanOrEqual ||
-				    oper == Operator.GreaterThan || oper == Operator.GreaterThanOrEqual){
-					type = TypeManager.bool_type;
-					return this;
+				if (l == TypeManager.bool_type && r == TypeManager.bool_type) {
+					// Reverse the operator - to make it consistent with vbc
+					if (oper == Operator.LessThan) 
+						oper = Operator.GreaterThan;
+					else if (oper == Operator.GreaterThan)
+						oper = Operator.LessThan;
+					else if (oper == Operator.LessThanOrEqual)
+						oper = Operator.GreaterThanOrEqual;
+					else if (oper == Operator.GreaterThanOrEqual)
+						oper = Operator.LessThanOrEqual;
 				}
 			}
 
-			// Arithmatic operations involving decimal
-			if (l == TypeManager.decimal_type) {
-				right = ConvertImplicit(ec, right, l, loc);
-				if (right == null) {
-					Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
-					return null;
-				}
-				return ResolveOperator(ec);
-			} else if (r == TypeManager.decimal_type) {
-				left = ConvertImplicit(ec, left, r, loc);
-				if (left == null) {
-					Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
-					return null;
-				}
-				return ResolveOperator(ec);
-			}
-		
-			if (l == TypeManager.string_type && r != TypeManager.string_type) {
-
-				type = TypeManager.string_type;
-				
-                                       left = ConvertImplicit(ec, left, TypeManager.double_type, loc);
-                                       if (left == null) {
-					Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
-                                               return null;
-                                       }
-
-				return ResolveOperator(ec);
-			}
-			
-			if (r == TypeManager.string_type && l != TypeManager.string_type) {
-
-				type = TypeManager.string_type;
-				
-                                       right = ConvertImplicit(ec, right, TypeManager.double_type, loc);
-                                       if (right == null) {
-					Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
-                                               return null;
-                                       }
-
-				return ResolveOperator(ec);
-			}
-			
-			//
-			// We are dealing with numbers
-			//
-			if (overload_failed){
-				Error_OperatorCannotBeApplied ();
-				return null;
-			}
-
-			//
-			// This will leave left or right set to null if there is an error
-			//
-			if (oper == Operator.Division) {
-				if (l != TypeManager.double_type) {
-					left = ConvertImplicit (ec, left, TypeManager.double_type, loc);
-					type = TypeManager.double_type;
-				}
-				if (r != TypeManager.double_type) {
-					right = ConvertImplicit (ec, right, TypeManager.double_type, loc);
-					type = TypeManager.double_type;
-				}
-			}else if (r != TypeManager.string_type && l != TypeManager.string_type) {
-				DoNumericPromotions (ec, l, r);
-				if (left == null || right == null){
-					Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
-					return null;
-				}
-			}
-
-			//
-			// reload our cached types if required
-			//
-			l = left.Type;
-			r = right.Type;
-			
-			if (oper == Operator.BitwiseAnd ||
-			    oper == Operator.BitwiseOr ||
-			    oper == Operator.ExclusiveOr){
-				if (l == r){
-					if (!((l == TypeManager.int32_type) ||
-					      (l == TypeManager.uint32_type) ||
-					      (l == TypeManager.int64_type) ||
-					      (l == TypeManager.uint64_type)))
+			if (IsBitwiseOperator (oper)) {
+				if (l == r) {
+					if (l == TypeManager.byte_type ||
+					    l == TypeManager.short_type ||
+					    l == TypeManager.bool_type ||
+					    l == TypeManager.int32_type ||
+					    l == TypeManager.int64_type) 
 						type = l;
+					else {
+						Error_OperatorCannotBeApplied();
+						return null;
+					}
 				} else {
-					Error_OperatorCannotBeApplied ();
+					Error_OperatorCannotBeApplied();
 					return null;
 				}
 			}
 
-			if (oper == Operator.Equality ||
-			    oper == Operator.Inequality ||
-			    oper == Operator.LessThanOrEqual ||
-			    oper == Operator.LessThan ||
-			    oper == Operator.GreaterThanOrEqual ||
-			    oper == Operator.GreaterThan){
-			if (r == TypeManager.string_type && l == TypeManager.string_type) {
-				type = TypeManager.bool_type;
-
-				Expression etmp;
-                        	ArrayList args;
-                        	Argument arg1, arg2,arg3;
-				Expression e = null;
-				eclass = ExprClass.Value;
-
-                        	etmp = Mono.MonoBASIC.Parser.DecomposeQI("Microsoft.VisualBasic.CompilerServices.StringType.StrCmp", loc);
-                        	args = new ArrayList();
-                        	arg1 = new Argument (left, Argument.AType.Expression);
-                        	arg2 = new Argument (right, Argument.AType.Expression);
-                        	arg3 = new Argument (new BoolConstant(false), Argument.AType.Expression);
-                        	args.Add (arg1);
-                        	args.Add (arg2);
-                        	args.Add (arg3);
-                        	e = (Expression) new Invocation (etmp, args, loc);
-                        	e = new Binary(oper,e.Resolve(ec),new IntConstant(0),loc);
-                        	return e.Resolve(ec);
-			
-			
-			}else {
-				type = TypeManager.bool_type;
+			if (oper == Operator.LeftShift || oper == Operator.RightShift) {
+				return CheckShiftArguments (ec);
 			}
-			}
+
 			return this;
 		}
 		
@@ -2674,7 +2612,16 @@ namespace Mono.MonoBASIC {
 					return e;
 			}
 
-			return ResolveOperator (ec);
+			Type l = left.Type;
+			Expression etmp = ResolveOperator (ec);
+			// if the operands are of type byte/short, convert the result back to short/byte
+			if (l == TypeManager.short_type || l == TypeManager.byte_type) {
+				Expression conv_exp = ConvertImplicit (ec, etmp, left.Type, loc);
+				if (conv_exp != null)
+					return conv_exp;
+			}
+
+			return etmp;
 		}
 
 		/// <remarks>
@@ -4923,7 +4870,7 @@ namespace Mono.MonoBASIC {
 					"or classes marked as MustInherit");
 				return null;
 			}
-			
+
 			bool is_struct = false;
 			is_struct = type.IsValueType;
 			eclass = ExprClass.Value;

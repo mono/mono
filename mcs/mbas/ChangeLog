@@ -1,3 +1,34 @@
+2005-03-07 Satya Sudha K <ksathyasudha@novell.com>
+	* mb-parser.jay : Support for shift operators
+	* assign.cs     : Calling 'RuntimeHelpers.GetObjectValue' during new Object creation 
+			   (to make it consistent with vbc)
+	* ecore.cs      : Implicit constant conversions - rounding the float/double values before 
+			  converting to Integer types
+	* expression.cs : 
+			 Unary class :
+				* Corrected the opertor names
+				* Allowing unary plus and minus on strings (by converting 
+				  to double)
+				* Allowing 'Not' operator on all numeric/string types 
+				  (float/double/decimal/strings are converted to long)
+				* In case of short/byte operations, changing the end result back to short/byte
+			Exponentiation class :
+				* Disallowing '^' operator on dates/char/ reference types
+			Binary class :
+				* Corrected operator names
+				* And-ing the right operand with appropriate mask in case of shift operators
+				* In case of short/byte operations, changing the end result back to short/byte
+				* Re-organised the code of the 'ResolveOperator' method:
+					* code organised according to expression types
+					* Performing the required conversions before 'OverloadResolve'
+					* Did the following fixes :
+						* Fixed string/bool behaviour with logical/shift operators
+						* Disallow arithmatic operators on char and dates
+						* Fixed DateTime comparisons
+						* Using methods of 'System.Decimal' for all Decimal operations
+						* Supporting all operators with enum types
+						* Allowing arithmatic/relational/shift/logical operators on type 'object'
+
 2005-03-04 Manjula GHM <mmanjula@novell.com>
 	* mb-parser.jay:
 	* assign.cs:

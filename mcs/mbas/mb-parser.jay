@@ -4531,11 +4531,11 @@ shift_expression
 	: concat_expression
 	| shift_expression OP_SHIFT_LEFT concat_expression
 	  {
-	  	// TODO
+	  	$$ = new Binary(Binary.Operator.LeftShift, (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	| shift_expression OP_SHIFT_RIGHT concat_expression
 	  {
-	  	//TODO
+	  	$$ = new Binary(Binary.Operator.RightShift, (Expression) $1, (Expression) $3, lexer.Location);
 	  }
 	;
 

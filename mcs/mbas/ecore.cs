@@ -2296,24 +2296,24 @@ namespace Mono.MonoBASIC {
 			//
 			if (target_type == TypeManager.sbyte_type){
 				if (value >= SByte.MinValue && value <= SByte.MaxValue)
-					return new SByteConstant ((sbyte) value);
+					return new SByteConstant ((sbyte) System.Math.Round (value));
 			} else if (target_type == TypeManager.byte_type){
 				if (value >= Byte.MinValue && value <= Byte.MaxValue)
-					return new ByteConstant ((byte) value);
+					return new ByteConstant ((byte) System.Math.Round (value));
 			} else if (target_type == TypeManager.short_type){
 				if (value >= Int16.MinValue && value <= Int16.MaxValue)
-					return new ShortConstant ((short) value);
+					return new ShortConstant ((short) System.Math.Round (value));
 			} else if (target_type == TypeManager.ushort_type){
 				if (value >= UInt16.MinValue && value <= UInt16.MaxValue)
-					return new UShortConstant ((ushort) value);
+					return new UShortConstant ((ushort) System.Math.Round (value));
 			} else if (target_type == TypeManager.int32_type){
 				if (value >= Int32.MinValue && value <= Int32.MaxValue)
-					return new IntConstant ((int) value);
+					return new IntConstant ((int) System.Math.Round (value));
 			} else if (target_type == TypeManager.uint32_type){
 				if (value >= 0)
-					return new UIntConstant ((uint) value);
+					return new UIntConstant ((uint) System.Math.Round (value));
 			} else if (target_type == TypeManager.int64_type){
-					return new LongConstant ((long) value);
+					return new LongConstant ((long) System.Math.Round (value));
 			} else if (target_type == TypeManager.uint64_type){
 				//
 				// we can optimize this case: a positive int32
@@ -2321,7 +2321,7 @@ namespace Mono.MonoBASIC {
 				// to do it.
 				//
 				if (value >= 0)
-					return new ULongConstant ((ulong) value);
+					return new ULongConstant ((ulong)System.Math.Round ( value));
 			} else if (target_type == TypeManager.float_type){
 					return new FloatConstant ((float) value);
 			} else if (target_type == TypeManager.double_type){

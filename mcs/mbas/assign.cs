@@ -5,6 +5,7 @@
 //   Miguel de Icaza (miguel@ximian.com)
 //   Martin Baulig (martin@gnome.org)
 //   Manjula GHM (mmanjula@novell.com)
+//   Satya Sudha K (ksathyasudha@novell.com)
 //
 // (C) 2001, 2002 Ximian, Inc.
 //
@@ -336,8 +337,18 @@ namespace Mono.MonoBASIC {
 			}
 			
 			if (source is New && target_type.IsValueType){
-				New n = (New) source;
+				if (source_type == TypeManager.object_type) {
+					Expression etmp = Mono.MonoBASIC.Parser.DecomposeQI (
+								"System.Runtime.CompilerServices.RuntimeHelpers.GetObjectValue",
+								 Location.Null);
+					ArrayList args = new ArrayList ();
+					args.Add (new Argument (source, Argument.AType.Expression));
+					Expression e = new Invocation (etmp, args, loc);
+					source = e.Resolve (ec);
+					return this;
+				}
 
+				New n = (New) source;
 				n.ValueTypeVariable = target;
 				return n;
 			}
