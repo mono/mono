@@ -1,5 +1,9 @@
 2002-02-16  Radek Doulik  <rodo@ximian.com>
 
+	* icall.c (ves_icall_System_Enum_ToObject): in case of big endian
+	and s2 > s1, just copy lower bytes to be compatible with little
+	endian (i.e. 64bit value & 0xffffffff --> 32bit value)
+
 	* unicode.c (ves_icall_iconv_new_encoder): decide on big_endian,
 	force big_endian to be 1 for big endian machines 
 	(ves_icall_iconv_new_decoder): ditto
