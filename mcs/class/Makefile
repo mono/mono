@@ -1,8 +1,12 @@
 thisdir = class
+include ../build/rules.make
+
 ifeq ($(PLATFORM),linux)
 MONO_CSHARP_DEBUGGER = Mono.CSharp.Debugger
+MONO_POSIX = Mono.Posix
 else
 MONO_CSHARP_DEBUGGER =
+MONO_POSIX =
 endif
 SUBDIRS = \
 	corlib				\
@@ -31,7 +35,7 @@ SUBDIRS = \
 	Mono.Data.TdsClient		\
 	System.Data.OracleClient	\
 	Mono.PEToolkit			\
-	Mono.Posix			\
+	$(MONO_POSIX)			\
 	Accessibility			\
 	Microsoft.VisualBasic		\
 	Microsoft.VisualC		\
@@ -72,8 +76,6 @@ DIST_ONLY_SUBDIRS = \
 
 # No new makefiles for: System.Messaging, System.Web.Mobile,
 # System.ServiceProcess
-
-include ../build/rules.make
 
 DISTFILES = \
 	LICENSE 		\

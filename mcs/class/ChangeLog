@@ -1,3 +1,8 @@
+2004-01-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Makefile: disabled Mono.Posix for other platforms than linux until
+	it builds properly.
+
 2003-12-17  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Makefile: Moved Mono.Security before Mono.Data.Tds because it's
