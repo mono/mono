@@ -53,6 +53,10 @@ namespace Microsoft.Web.Services.Referral {
                         list.CopyTo (array, index);
                 }
 
+		public virtual int Count {
+			get { return list.Count; }
+		}
+
                 public virtual IEnumerator GetEnumerator ()
                 {
                         return list.GetEnumerator ();
@@ -67,6 +71,10 @@ namespace Microsoft.Web.Services.Referral {
 
                         throw new NotImplementedException ();
                 }
+
+		public virtual bool IsSynchronized {
+			get { return list.IsSynchronized; }
+		}
 
                 [MonoTODO]
                 public virtual void LoadXml (XmlElement element)
@@ -87,5 +95,9 @@ namespace Microsoft.Web.Services.Referral {
                 {
                         list.Remove (new Referral (uri));
                 }
+
+		public virtual object SyncRoot {
+			get { return list.SyncRoot; }
+		}
         }
 }
