@@ -1,5 +1,5 @@
 //
-// System.Runtime.Remoting.Channels.Simple.SimpleClientChannel.cs
+// System.Runtime.Remoting.Channels.CORBA.CORBAClientChannel.cs
 //
 // Author: Dietmar Maurer (dietmar@ximian.com)
 //
@@ -12,21 +12,21 @@ using System.Net.Sockets;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Channels;
 
-namespace System.Runtime.Remoting.Channels.Simple
+namespace System.Runtime.Remoting.Channels.CORBA
 {
-	public class SimpleClientChannel : IChannelSender, IChannel
+	public class CORBAClientChannel : IChannelSender, IChannel
 	{
 		int priority = 1;					
-		string name = "tcp";
+		string name = "corba";
 		IClientChannelSinkProvider sink_provider;
 		
-		public SimpleClientChannel ()
+		public CORBAClientChannel ()
 	        {
-			sink_provider = new SimpleClientFormatterSinkProvider ();
-			sink_provider.Next = new SimpleClientTransportSinkProvider ();
+			sink_provider = new CORBAClientFormatterSinkProvider ();
+			sink_provider.Next = new CORBAClientTransportSinkProvider ();
 		}
 
-		public SimpleClientChannel (IDictionary properties, IClientChannelSinkProvider sinkProvider)
+		public CORBAClientChannel (IDictionary properties, IClientChannelSinkProvider sinkProvider)
 		{
 			priority = 1;
 			sink_provider = sinkProvider;
@@ -34,10 +34,10 @@ namespace System.Runtime.Remoting.Channels.Simple
 			// add the tcp provider at the end of the chain
 			IClientChannelSinkProvider prov = sinkProvider;
 			while (prov.Next != null) prov = prov.Next;
-			prov.Next = new SimpleClientTransportSinkProvider ();
+			prov.Next = new CORBAClientTransportSinkProvider ();
 		}
 
-		public SimpleClientChannel (string name, IClientChannelSinkProvider sinkProvider)
+		public CORBAClientChannel (string name, IClientChannelSinkProvider sinkProvider)
 		{
 			priority = 1;		
 			this.name = name;
@@ -46,7 +46,7 @@ namespace System.Runtime.Remoting.Channels.Simple
 			// add the tcp provider at the end of the chain
 			IClientChannelSinkProvider prov = sinkProvider;
 			while (prov.Next != null) prov = prov.Next;
-			prov.Next = new SimpleClientTransportSinkProvider ();
+			prov.Next = new CORBAClientTransportSinkProvider ();
 		}
 		
 		public string ChannelName
@@ -94,9 +94,9 @@ namespace System.Runtime.Remoting.Channels.Simple
 		{
 			int port;
 			
-			string host = SimpleChannel.ParseSimpleURL (url, out objectURI, out port);
+			string host = CORBAChannel.ParseCORBAURL (url, out objectURI, out port);
 
-			return "simple://" + host + ":" + port;
+			return "corba://" + host + ":" + port;
 		}
 	}
 }

@@ -126,6 +126,7 @@ namespace System.Runtime.Remoting.Channels
 			
 			foreach (object chnl_obj in registeredChannels) {
 				IChannelReceiver chnl = chnl_obj as IChannelReceiver;
+			
 				if (chnl != null) {
 					object chnl_data = chnl.ChannelData;
 					if (chnl_data != null)

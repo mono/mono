@@ -15,6 +15,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Proxies;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 
 namespace System.Runtime.Remoting
 {
@@ -96,7 +97,7 @@ namespace System.Runtime.Remoting
 
 		public static object Unmarshal (ObjRef objref)
 		{
-			throw new NotImplementedException ();
+			return objref.GetRealObject (new StreamingContext (StreamingContextStates.Other));
 		}
 
 		internal static MarshalByRefObject GetServerForUri (string uri)
@@ -116,8 +117,7 @@ namespace System.Runtime.Remoting
 			if (RemotingServices.IsTransparentProxy (obj))
 				throw new RemotingException ("its not possible marshal proxy objects");
 			
-			// fixme: handle requested_type
-			
+			// fixme: handle requested_type		
 			Type type = obj.GetType ();
 
 			ObjRef res = null;
@@ -136,7 +136,7 @@ namespace System.Runtime.Remoting
 					RegisterServerForUri (obj, uri);
 				}
 			
-				res = obj.CreateObjRef (requested_type);
+				res = obj.CreateObjRef (type);
 				res.URI = uri;
 				
 			} finally {

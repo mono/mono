@@ -10,7 +10,7 @@ using System.IO;
 
 
 // compile with:
-// csc -r:../../lib/System.Runtime.Remoting.dll example.cs
+// csc -r:../../lib/System.Runtime.Remoting.dll simple-example.cs
 
 class Test : MarshalByRefObject {
 
