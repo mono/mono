@@ -1,5 +1,10 @@
 2004-11-13  Ben Maurer  <bmaurer@ximian.com>
 
+	* reflection.c: Remove *_ATOMIC macros. We really shouldn't
+	have been using gc'd memory. First it is slower, unlikely
+	the comment in the source code said, secondly, it increases
+	our footprint to do it in the gc.
+
 	* icall.c (WriteToFile): rename of getDataChunk. Rewrite
 	the method so that it does not have to copy to managed code.
 
