@@ -1,5 +1,10 @@
 2004-06-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpUtility.cs: check for control characters in the string to encode
+	or decode and return the same string if there are none.
+
+2004-06-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpApplication.cs: change/restore the IPrincipal in their own methods
 	and make them internal.
 

@@ -316,8 +316,10 @@ namespace System.Web {
 			if (null == s) 
 				return null;
 	
+			if (s.IndexOf ('&') == -1 && s.IndexOf ('"') == -1)
+				return s;
+
 			StringBuilder output = new StringBuilder ();
-	
 			foreach (char c in s) 
 				switch (c) {
 				case '&' : 
@@ -348,6 +350,9 @@ namespace System.Web {
 		{
 			if (null == s) 
 				return null;
+
+			if (s.IndexOf ('%') == -1 && s.IndexOf ('+') == -1)
+				return s;
 
 			if (e == null)
 				e = Encoding.UTF8;
@@ -696,11 +701,16 @@ namespace System.Web {
 			if (s == null)
 				throw new ArgumentNullException ("s");
 
+			if (s.IndexOf ('&') == -1)
+				return s;
+
 			bool insideEntity = false; // used to indicate that we are in a potential entity
 			string entity = String.Empty;
 			StringBuilder output = new StringBuilder ();
+			int len = s.Length;
 	
-			foreach (char c in s) {
+			for (int i = 0; i < len; i++) {
+				char c = s [i];
 				switch (c) {
 				case '&' :
 					output.Append (entity);
