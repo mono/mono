@@ -1,5 +1,11 @@
 2003-11-30  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* expression.cs: Added new field to Call class, so it can handle more arguments.
+
+	* StringLiteral.cs (Emit) : Load the string value.
+
+	* Literal.cs: BooleanLiteral, Resolve always return true. Emit the value and box it to Boolean.
+
 	* CodeGenerator.cs: Set parent if 'JScript 0' to GlobalScope. Set
 	custom attribute. Build default 'JScript 0' constructor. Emit
 	default initial/final code of 'Global Code'. Create default
