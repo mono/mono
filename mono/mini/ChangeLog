@@ -1,3 +1,8 @@
+2004-03-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-x86.c: Remove valgrind workaround since it slows down things
+	even when mono is not run under valgrind.
+
 2004-03-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-sparc.c: Update status.
