@@ -66,6 +66,11 @@ namespace System.Data.OracleClient {
 
 		#region Methods
 
+		internal void AttachToServiceContext ()
+		{
+			transaction.AttachToServiceContext ();
+		}
+
 		public void Commit ()
 		{
 			transaction.Commit ();

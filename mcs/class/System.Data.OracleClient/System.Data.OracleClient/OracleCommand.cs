@@ -191,6 +191,9 @@ namespace System.Data.OracleClient {
 			int rowsAffected = -1;
 
 			ValidateCommand ("ExecuteNonQuery");
+			if (Transaction != null) 
+				Transaction.AttachToServiceContext ();
+
 			statement = Connection.Oci.CreateStatement ();
 			statement.Prepare (CommandText);
 			statement.ExecuteNonQuery ();
@@ -217,6 +220,9 @@ namespace System.Data.OracleClient {
 
 		public OracleDataReader ExecuteReader (CommandBehavior behavior)
 		{
+			ValidateCommand ("ExecuteNonQuery");
+			if (Transaction != null) 
+				Transaction.AttachToServiceContext ();
 			statement = Connection.Oci.CreateStatement ();
 			statement.Prepare (CommandText);
 			statement.ExecuteQuery ();

@@ -1,3 +1,13 @@
+2003-02-18  Tim Coleman <tim@timcoleman.com>
+	* System.Data.OracleClient/OracleCommand.cs:
+	* System.Data.OracleClient/OracleTransaction.cs:
+	* System.Data.OracleClient.Oci/OciTransactionHandle.cs:
+	* Test/TestOracleClient.cs:
+		Add transaction logic for rollback/commit,
+		attaching to oracle service context, and a
+		couple of test cases.
+
+
 2003-02-17  Tim Coleman <tim@timcoleman.com>
 	* Test/TestOracleClient.cs:
 		Add OracleDataAdapter test.

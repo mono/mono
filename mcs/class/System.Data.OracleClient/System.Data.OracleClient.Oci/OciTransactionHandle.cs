@@ -54,12 +54,22 @@ namespace System.Data.OracleClient.Oci {
 		#region Methods
 
 		[DllImport ("oci")]
+		public static extern int OCITransCommit (IntPtr svchp,
+							IntPtr errhp,
+							uint flags);
+
+		[DllImport ("oci")]
+		public static extern int OCITransRollback (IntPtr svchp,
+							IntPtr errhp,
+							uint flags);
+
+		[DllImport ("oci")]
 		public static extern int OCITransStart (IntPtr svchp,
 							IntPtr errhp,
 							uint timeout,
 							[MarshalAs (UnmanagedType.U4)] OciTransactionFlags flags);
 
-		public void Begin ()
+		public void AttachToServiceContext ()
 		{
 			int status = 0;
 			status = OciGlue.OCIAttrSet (Service.Handle,
@@ -72,6 +82,13 @@ namespace System.Data.OracleClient.Oci {
 				OciErrorInfo info = ErrorHandle.HandleError ();
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
 			}
+		}
+
+		public void Begin ()
+		{
+			int status = 0;
+
+			AttachToServiceContext ();
 
 			status = OCITransStart (Service.Handle,
 							ErrorHandle.Handle,
@@ -86,6 +103,16 @@ namespace System.Data.OracleClient.Oci {
 
 		public void Commit ()
 		{
+			int status = 0;
+			AttachToServiceContext ();
+			status = OCITransCommit (Service.Handle,
+						ErrorHandle.Handle,
+						0);
+
+			if (status != 0) {
+				OciErrorInfo info = ErrorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
 		}
 
 		public void Dispose ()
@@ -95,6 +122,16 @@ namespace System.Data.OracleClient.Oci {
 
 		public void Rollback ()
 		{
+			int status = 0;
+			AttachToServiceContext ();
+			status = OCITransRollback (Service.Handle,
+						ErrorHandle.Handle,
+						0);
+
+			if (status != 0) {
+				OciErrorInfo info = ErrorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
 		}
 
 		#endregion // Methods
