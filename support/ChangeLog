@@ -1,5 +1,10 @@
 2004-12-30  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* stdio.c: More wrapper functions.  This should complete C89's <stdio.h>
+	  requirements.
+
+2004-12-30  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* sys-statvfs.c: Further proving that changing code without compiling is
 	  dangerous business...  Compiler fix for OS X.
 
