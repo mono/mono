@@ -163,13 +163,12 @@ namespace System.Reflection {
 			return GetType (name, throwOnError, false);
 		}
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern virtual Type GetType (String name);
-
-		public Type GetType (String name, Boolean throwOnError, Boolean ignoreCase)
-		{
-			throw new NotImplementedException ();
+		public virtual Type GetType (String name) {
+			return GetType (name, false, false);
 		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern Type GetType (String name, Boolean throwOnError, Boolean ignoreCase);
 		
 		public virtual AssemblyName GetName (Boolean copiedName)
 		{
