@@ -504,7 +504,7 @@ namespace System.Net
 			if (aborted)
 				throw new WebException ("The request was previosly aborted.");
 
-			bool send = (method == "PUT" || method == "POST");
+			bool send = !(method == "GET" || method == "CONNECT" || method == "HEAD");
 			if (method == null || !send)
 				throw new ProtocolViolationException ("Cannot send data when method is: " + method);
 
