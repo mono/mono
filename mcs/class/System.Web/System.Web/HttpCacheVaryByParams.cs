@@ -5,6 +5,7 @@
 //   Patrik Torstensson (Patrik.Torstensson@labs2.com)
 //
 using System;
+using System.Text;
 using System.Collections;
 
 namespace System.Web {
@@ -33,7 +34,25 @@ namespace System.Web {
             _IgnoreParams = value;
          }
       }
-      
+
+      internal HttpResponseHeader GetResponseHeader ()
+      {
+	      if (_IgnoreParams)
+		      throw new Exception ("Can not get VaryByParams Header when params are ignored.");
+
+	      if (_Wildcard)
+		      return new HttpResponseHeader ("Vary", "*");
+
+	      StringBuilder builder = new StringBuilder ();
+	      foreach (string item in _Items.Keys) {
+		      if (!(bool) _Items [item])
+			      continue;
+		      builder.Append (item + ";");
+	      }
+
+	      return new HttpResponseHeader ("Vary", builder.ToString ());
+      }
+           
       public bool this[string header] {
          get {
             if (null == header) {

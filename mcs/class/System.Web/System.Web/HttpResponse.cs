@@ -159,7 +159,10 @@ namespace System.Web
 				oHeaders.Add (new HttpResponseHeader (HttpWorkerRequest.HeaderContentType,
 								      _sContentType));
 			}
-
+     			
+			if (_CachePolicy != null)
+				_CachePolicy.SetHeaders (this, oHeaders);
+			
 			if (_sCacheControl != null) {
 				oHeaders.Add (new HttpResponseHeader (HttpWorkerRequest.HeaderPragma,
 								      _sCacheControl));

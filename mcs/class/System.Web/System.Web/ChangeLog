@@ -1,3 +1,11 @@
+2003-11-13  Jackson Harper  <jackson@ximian.com>
+
+	* HttpCachePolicy.cs: Make sure cacheability and maxage get
+	set. Add method to set Http response header data
+	* HttpCacheVaryByParams.cs: Add method to create a response header.
+	* HttpCacheability.cs: Add ServerAndPrivate and ServerAndNoCache.
+	* HttpResponse.cs: Set cache headers.
+	
 2003-11-11 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* HttpModuleCollection.cs (GetKey): Recursion, again!

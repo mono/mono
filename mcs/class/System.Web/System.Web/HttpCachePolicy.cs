@@ -2,14 +2,15 @@
 // System.Web.HttpCachePolicy
 //
 // Authors:
-// 	Patrik Torstensson (Patrik.Torstensson@labs2.com)
-// 	Tim Coleman (tim@timcoleman.com)
+//	Patrik Torstensson (Patrik.Torstensson@labs2.com)
+//	Tim Coleman (tim@timcoleman.com)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 using System;
 using System.Collections;
 using System.Text;
 using System.Web.UI;
+using System.Web.Util;
 
 namespace System.Web {
 	public sealed class HttpCachePolicy {
@@ -45,7 +46,7 @@ namespace System.Web {
 		TimeSpan proxyMaxAge;
 		ArrayList fields;
 		bool slidingExpiration;
-
+		
 		#endregion
 
 		#region Properties
@@ -89,9 +90,9 @@ namespace System.Web {
 			if (cacheability < HttpCacheability.NoCache || cacheability > HttpCacheability.Public)
 				throw new ArgumentOutOfRangeException ("cacheability");
 
-			if (cacheability > this.cacheability)
+			if (this.cacheability > 0 && cacheability > this.cacheability)
 				return;
-
+			
 			this.cacheability = cacheability;
 		}
 
@@ -162,11 +163,12 @@ namespace System.Web {
 		{
 			if (date < TimeSpan.Zero)
 				throw new ArgumentOutOfRangeException ("date");
-
+			
 			if (haveMaxAge && maxAge < date)
 				return;
 
-			proxyMaxAge = date;
+			maxAge = date;
+			haveMaxAge = true;
 		}
 
 		public void SetNoServerCaching ()
@@ -226,6 +228,33 @@ namespace System.Web {
 			varyByCustom = custom;
 		}
 
+		internal void SetHeaders (HttpResponse response, ArrayList headers)
+		{
+			string cc, expires;
+			if (cacheability > HttpCacheability.NoCache) {
+				cc = String.Format ("{0}, max-age={1}", cacheability, (long) maxAge.TotalSeconds);
+				expires = TimeUtil.ToUtcTimeString (expireDate);
+			} else {
+				cc = "no-cache";
+				response.CacheControl = cc;
+				expires = "-1";
+			}
+			
+			headers.Add (new HttpResponseHeader ("Cache-Control", cc));
+			headers.Add (new HttpResponseHeader ("Expires", expires));
+						
+			if (etag != null)
+				headers.Add (new HttpResponseHeader ("ETag", etag));
+
+			if (haveLastModified)
+				headers.Add (new HttpResponseHeader ("Last-Modified",
+							     TimeUtil.ToUtcTimeString (lastModified)));
+
+			if (varyByParams.IgnoreParams)
+				headers.Add (varyByParams.GetResponseHeader ());
+
+		}
+		
 		#endregion // Methods
 	}
 }

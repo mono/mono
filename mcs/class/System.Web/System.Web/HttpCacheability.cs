@@ -14,5 +14,7 @@ namespace System.Web {
 		Private,
 		Server,
 		Public,
+		ServerAndPrivate,
+		ServerAndNoCache = 0x3
 	}
 }
