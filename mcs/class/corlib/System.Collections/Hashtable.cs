@@ -12,10 +12,7 @@ using System.Collections;
 using System.Runtime.Serialization;
 
 
-// TODO: 1. Interfaces to implement: ISerializable and IDeserializationCallback;
-//       2. Meaningfull error messages for all exceptions.
-//          Probably we should use ResourceSet to translate
-//          error codes to messages.
+// TODO: Interfaces to implement: ISerializable and IDeserializationCallback;
 
 
 namespace System.Collections {
@@ -39,7 +36,7 @@ namespace System.Collections {
 		//
 
 		private readonly static int CHAIN_MARKER  = ~Int32.MaxValue;
-		private readonly static int ALLOC_GRAIN = 0x2F;
+
 
 		// Used as indicator for the removed parts of a chain.
 		private readonly static Object REMOVED_MARKER = new Object ();
@@ -94,20 +91,11 @@ namespace System.Collections {
 		// Class constructor
 
 		static Hashtable () {
-			// NOTE: Precalculate primes table.
-			// This precalculated table of primes is intended
-			// to speed-up allocations/resize for relatively
-			// small tables.
-			// I'm not sure whether it's a good idea or not.
-			// Also I am in doubt as for the quality of this
-			// particular implementation, probably the increment
-			// shouldn't be linear? Consider this as a hack
-			// or as a placeholder for future improvements.
-			/*int size = 0x2000/ALLOC_GRAIN;
-			primeTbl = new int [size];
-			for (int x = 53, i = 0;i<size;x+= ALLOC_GRAIN, i++) {
-				primeTbl [i] = CalcPrime (x);
-			}*/
+			// NOTE: previously this static constructor was used
+			//       to calculate primeTbl, now primeTbl is
+			//       hardcoded and constructor does nothing
+			//       useful except for forcing compiler to
+			//       eliminate beforefieldinit from signature.
 		}
 
 
@@ -407,7 +395,7 @@ namespace System.Collections {
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			info.AddValue ("LoadFactor", loadFactor);
-			info.AddValue ("Version", 0); // TODO?
+			info.AddValue ("Version", modificationCount);
 			info.AddValue ("Comparer", comparerRef);
 			info.AddValue ("HashCodeProvider", hcpRef);
 			info.AddValue ("HashSize", this.Count );
@@ -676,7 +664,7 @@ namespace System.Collections {
 
 		private static int ToPrime (int x)
 		{
-			for (int i = x/ALLOC_GRAIN; i < primeTbl.Length; i++) {
+			for (int i = 0; i < primeTbl.Length; i++) {
 				if (x <= primeTbl [i])
 					return primeTbl [i];
 			}
@@ -719,7 +707,7 @@ namespace System.Collections {
 
 			private void FailFast ()
 			{
-				if (host.modificationCount!= stamp) {
+				if (host.modificationCount != stamp) {
 					throw new InvalidOperationException (xstr);
 				}
 			}

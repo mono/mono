@@ -1,3 +1,9 @@
+2002-03-08  Sergey Chaban <serge@wildwestsoftware.com>
+
+	* Hashtable.cs: Fixed ToPrime () bug. Removed ALLOC_GRAIN.
+	Removed unused code from static constructor.
+	GetObjectData () - Version is the same as modificationCount.
+
 2002-02-20  Nick Drochak  <ndrochak@gol.com>
 
 	* ArrayList.cs: Add MonoTODO's where necessary. Fix bugs discovered
