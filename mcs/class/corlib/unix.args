@@ -427,6 +427,7 @@ System.Runtime.InteropServices/UCOMTypeInfo.cs
 System.Runtime.InteropServices/UCOMTypeLib.cs
 System.Runtime.InteropServices/UnmanagedType.cs
 System.Runtime.InteropServices/VarEnum.cs
+System.Runtime.Remoting/IObjectHandle.cs
 System.Runtime.Remoting/LeaseState.cs
 System.Runtime.Remoting/ObjectHandle.cs
 System.Runtime.Remoting/ObjRef.cs

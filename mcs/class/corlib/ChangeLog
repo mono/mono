@@ -1,3 +1,8 @@
+2002-07-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* list:
+	* unix.args: added IObjectHandle.cs.
+
 2002-06-20  Martin Baulig  <martin@gnome.org>
 
 	* unix.args: New file.  This is a mcs response file to compile
