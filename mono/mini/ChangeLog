@@ -1,3 +1,9 @@
+2004-08-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c: Use OP_PADD to add offsets to addresses.
+
+	* mini-amd64.h: Disable SIGSEGV_ON_ALTSTACK.
+
 2004-08-04  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* mini-sparc.c (mono_arch_emit_epilog): fix check
