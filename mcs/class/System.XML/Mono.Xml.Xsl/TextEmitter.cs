@@ -46,15 +46,7 @@ namespace Mono.Xml.Xsl {
 		public override void WriteAttributeString (string prefix, string localName, string nsURI, string value) {
 			//Do nothing
 		}
-
-		public override void WriteStartAttribute (string prefix, string localName, string nsURI) {
-			//Do nothing
-		}
-
-		public override void WriteEndAttribute () {
-			//Do nothing
-		}
-
+		
 		public override void WriteComment (string text) {
 			//Do nothing
 		}

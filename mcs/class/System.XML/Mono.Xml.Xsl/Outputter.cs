@@ -17,40 +17,31 @@ namespace Mono.Xml.Xsl {
 	/// it further down to real consumers.
 	/// </summary>
 	public abstract class Outputter {
-		public abstract void WriteStartDocument();		
-		public abstract void WriteEndDocument();
+		public abstract void WriteStartDocument ();		
+		public abstract void WriteEndDocument ();
 		
-		public void WriteStartElement(string localName, string nsURI)
+		public void WriteStartElement (string localName, string nsURI)
 		{
 			WriteStartElement (null, localName, nsURI);
 		}
 		
-		public abstract void WriteStartElement(string prefix, string localName, string nsURI);
-		public abstract void WriteEndElement();
+		public abstract void WriteStartElement (string prefix, string localName, string nsURI);
+		public abstract void WriteEndElement ();
 		
-		public void WriteAttributeString(string localName, string value)
+		public void WriteAttributeString (string localName, string value)
 		{
 			WriteAttributeString ("", localName, "", value);
 		}
 		
-		public abstract void WriteAttributeString(string prefix, string localName, string nsURI, string value);
+		public abstract void WriteAttributeString (string prefix, string localName, string nsURI, string value);
 		public abstract void WriteNamespaceDecl (string prefix, string nsUri);		
+						
+		public abstract void WriteComment (string text);
 		
-		public void WriteStartAttribute(string localName, string nsURI)
-		{
-			WriteStartAttribute (null, localName, nsURI);
-		}
+		public abstract void WriteProcessingInstruction (string name, string text);
 		
-		//TODO: Seems like we can get rid of these two methods?
-		public abstract void WriteStartAttribute(string prefix, string localName, string nsURI);
-		public abstract void WriteEndAttribute();		
-		
-		public abstract void WriteComment(string text);
-		
-		public abstract void WriteProcessingInstruction(string name, string text);
-		
-		public abstract void WriteString(string text);
-		public abstract void WriteRaw(string data);
+		public abstract void WriteString (string text);
+		public abstract void WriteRaw (string data);
 		
 		public abstract void Done ();
 	}

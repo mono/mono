@@ -1,3 +1,9 @@
+2003-09-14 Oleg Tkachenko <oleg@tkachenko.com>
+
+	* GenericOutputter.cs - fix bug with outputting state.
+	* Emitter.cs, TextEmitter.cs, XmlWriterEmitter.cs, Outputter.cs, 
+	* TextOutputter.cs - get rid of WriteStartAttribute/WriteEndAttribute.	
+
 2003-09-13 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Compiler.cs, XslKey.cs, XslTransformProcessor.cs: dont clone

@@ -48,9 +48,7 @@ namespace Mono.Xml.Xsl.Operations {
 				if (nav.MoveToFirstAttribute())
 				{
 					do {
-						outputter.WriteStartAttribute (nav.Prefix, nav.LocalName, nav.NamespaceURI);
-						outputter.WriteString (nav.Value);
-						outputter.WriteEndAttribute (); 
+						outputter.WriteAttributeString (nav.Prefix, nav.LocalName, nav.NamespaceURI, nav.Value);
 					} while (nav.MoveToNextAttribute ());
 					nav.MoveToParent();
 				}

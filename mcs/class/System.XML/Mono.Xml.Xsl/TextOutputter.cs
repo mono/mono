@@ -20,20 +20,18 @@ namespace Mono.Xml.Xsl {
 		//Current output depth
 		private int _depth;		
 		//Ignore nested text nodes
-		private bool _ignoreNestedText;
-		//Attribute value is being outputted flag
-		private bool _inAttribute;
+		private bool _ignoreNestedText;		
 		
-		public TextOutputter(TextWriter w, bool ignoreNestedText) {
+		public TextOutputter (TextWriter w, bool ignoreNestedText) {
 			_writer = w;
 			_ignoreNestedText = ignoreNestedText;
 		}
 
-		public override void WriteStartDocument() {}
+		public override void WriteStartDocument () {}
 		
-		public override void WriteEndDocument() {}
+		public override void WriteEndDocument () {}
 
-		public override void WriteStartElement(string prefix, string localName, string nsURI) {
+		public override void WriteStartElement (string prefix, string localName, string nsURI) {
 			if (_ignoreNestedText) _depth++;
 		}
 
@@ -41,32 +39,24 @@ namespace Mono.Xml.Xsl {
 			if (_ignoreNestedText) _depth--;
 		}
 
-		public override void WriteAttributeString(string prefix, string localName, string nsURI, string value) {}
-
-		public override void WriteStartAttribute(string prefix, string localName, string nsURI) {
-			_inAttribute = true;
-		}
-
-		public override void WriteEndAttribute() {
-			_inAttribute = false;
-		}
-
+		public override void WriteAttributeString (string prefix, string localName, string nsURI, string value) {}
+		
 		public override void WriteNamespaceDecl (string prefix, string nsUri) {}
 
-		public override void WriteComment(string text) {}
+		public override void WriteComment (string text) {}
 
-		public override void WriteProcessingInstruction(string name, string text) {}
+		public override void WriteProcessingInstruction (string name, string text) {}
 
-		public override void WriteString(string text) {
-			WriteImpl(text);
+		public override void WriteString (string text) {
+			WriteImpl (text);
 		}
 
-		public override void WriteRaw(string data) {
-			WriteImpl(data);
+		public override void WriteRaw (string data) {
+			WriteImpl (data);
 		}
 
 		private void WriteImpl(string text) {
-			if ((!_ignoreNestedText || _depth==0) && !_inAttribute) _writer.Write(text);
+			if (!_ignoreNestedText || _depth==0) _writer.Write (text);
 		}
 
 		public override void Done () {

@@ -80,11 +80,7 @@ namespace Mono.Xml.Xsl
 		/// when it's appropriate.
 		/// </summary>
 		private void CheckState ()
-		{
-		// this isnt being called at the right place
-		// <a (1)> <b /> (2)</a>
-		// This should be called at 1, but is really being called at 2.
-		#if false
+		{		
 			if (_state == WriteState.Element) {
 				//Push scope to allow to unwind namespaces scope back in WriteEndElement
 				//Subject to optimization - avoid redundant push/pop by moving 
@@ -94,9 +90,10 @@ namespace Mono.Xml.Xsl
 				foreach (XmlQualifiedName qName in _pendingAttrs.Keys) {
 					Attribute attr = (Attribute)_pendingAttrs [qName];
 					_emitter.WriteAttributeString (attr.Prefix, qName.Name, qName.Namespace, attr.Value);
-				}					
-			}
-		#endif
+				}	
+				//Attributes flushed, state is Content now				
+				_state = WriteState.Content;
+			}		
 		}
 
 		#region Outputter's methods implementation
@@ -138,12 +135,7 @@ namespace Mono.Xml.Xsl
 		}
 
 		public override void WriteAttributeString (string prefix, string localName, string nsURI, string value)
-		{
-			
-			_emitter.WriteAttributeString (prefix, localName, nsURI, value);
-		
-		// See CheckState for why i commented this out
-		#if false
+		{										
 			//Put attribute to pending attributes collection, replacing namesake one
 		 	XmlQualifiedName qName = new XmlQualifiedName (localName, nsURI);
 		 	Attribute attr = (Attribute)_pendingAttrs [qName];
@@ -155,8 +147,7 @@ namespace Mono.Xml.Xsl
 		 		//Keep prefix (e.g. when literal attribute is overriden by xsl:attribute)
 		 		if (attr.Prefix == String.Empty && prefix != String.Empty)
 		 			attr.Prefix = prefix;
-		 	}
-		#endif
+		 	}		
 		}
 
 		public override void WriteNamespaceDecl (string prefix, string nsUri)
@@ -173,19 +164,7 @@ namespace Mono.Xml.Xsl
 				_emitter.WriteAttributeString ("xmlns", prefix, null, nsUri);
 			}			
 		}
-			 
-		public override void WriteStartAttribute (string prefix, string localName, string nsURI)
-		{
-			_emitter.WriteStartAttribute (prefix, localName, nsURI);
-			_state = WriteState.Attribute;
-		}
-
-		public override void WriteEndAttribute ()
-		{
-			_emitter.WriteEndAttribute ();
-			_state = WriteState.Element;
-		}
-
+			 		
 		public override void WriteComment (string text)
 		{
 			CheckState ();
