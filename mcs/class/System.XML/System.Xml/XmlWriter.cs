@@ -363,6 +363,8 @@ namespace System.Xml
 		{
 			if (localName == null || localName == String.Empty)
 				throw new ArgumentException ();
+			if (ns == null)
+				ns = String.Empty;
 
 #if NET_2_0
 			switch (Settings.ConformanceLevel) {
@@ -375,7 +377,7 @@ namespace System.Xml
 			XmlConvert.VerifyNCName (localName);
 #endif
 
-			string prefix = LookupPrefix (ns);
+			string prefix = ns.Length > 0 ? LookupPrefix (ns) : String.Empty;
 			if (prefix != String.Empty) {
 				WriteString (prefix);
 				WriteString (":");

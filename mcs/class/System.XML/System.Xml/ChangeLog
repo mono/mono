@@ -1,3 +1,8 @@
+2004-12-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlWriter.cs : WriteQualifiedNameInternal() should consider the case
+	  ns is null, and don't lookup prefix for empty namespace.
+
 2004-12-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XmlTextReader.cs: don't use \0 as buffer terminator.
