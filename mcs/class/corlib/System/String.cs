@@ -192,18 +192,22 @@ namespace System
 			return InternalSplit (separator, count);
 		}
 
-		public String Substring (int startIndex)
+		public unsafe String Substring (int startIndex)
 		{
 			if (startIndex < 0 || startIndex > this.length)
 				throw new ArgumentOutOfRangeException ("startIndex");
 
-			string tmp = InternalAllocateStr (this.length - startIndex);
-			InternalStrcpy (tmp, 0, this, startIndex, length - startIndex);
-
+			int newlen = this.length - startIndex;
+			string tmp = InternalAllocateStr (newlen);
+			if (newlen != 0) {
+				fixed (char *dest = tmp, src = this) {
+					memcpy ((byte*)dest, (byte*)(src + startIndex), newlen * 2);
+				}
+			}
 			return tmp;
 		}
 
-		public String Substring (int startIndex, int length)
+		public unsafe String Substring (int startIndex, int length)
 		{
 			if (length < 0)
 				throw new ArgumentOutOfRangeException ("length", "< 0");
@@ -217,7 +221,9 @@ namespace System
 				return String.Empty;
 
 			string tmp = InternalAllocateStr (length);
-			InternalStrcpy (tmp, 0, this, startIndex, length);
+			fixed (char *dest = tmp, src = this) {
+				memcpy ((byte*)dest, (byte*)(src + startIndex), length * 2);
+			}
 
 			return tmp;
 		}	
@@ -727,7 +733,7 @@ namespace System
 			return InternalReplace (oldValue, newValue, CultureInfo.CurrentCulture.CompareInfo);
 		}
 
-		public String Remove (int startIndex, int count)
+		public unsafe String Remove (int startIndex, int count)
 		{
 			if (startIndex < 0)
 				throw new ArgumentOutOfRangeException ("startIndex", "< 0");
@@ -737,7 +743,16 @@ namespace System
 			if (startIndex > this.length - count)
 				throw new ArgumentOutOfRangeException ("startIndex + count > this.length");
 
-			return InternalRemove (startIndex, count);
+			String tmp = InternalAllocateStr (this.length - count);
+
+			fixed (char *dest = tmp, src = this) {
+				char *dst = dest;
+				memcpy ((byte*)dst, (byte*)src, startIndex * 2);
+				int skip = startIndex + count;
+				dst += startIndex;
+				memcpy ((byte*)dst, (byte*)(src + skip), (length - skip) * 2);
+			}
+			return tmp;
 		}
 
 		public String ToLower ()
@@ -924,7 +939,7 @@ namespace System
 				result.Append (format.Substring (start));
 		}
 
-		public static String Copy (String str)
+		public unsafe static String Copy (String str)
 		{
 			if (str == null)
 				throw new ArgumentNullException ("str");
@@ -932,7 +947,11 @@ namespace System
 			int length = str.length;
 
 			String tmp = InternalAllocateStr (length);
-			InternalStrcpy (tmp, 0, str);
+			if (length != 0) {
+				fixed (char *dest = tmp, src = str) {
+					memcpy ((byte*)dest, (byte*)src, length * 2);
+				}
+			}
 			return tmp;
 		}
 
@@ -944,7 +963,7 @@ namespace System
 			return obj.ToString ();
 		}
 
-		public static String Concat (Object obj1, Object obj2)
+		public unsafe static String Concat (Object obj1, Object obj2)
 		{
 			string s1, s2;
 
@@ -960,8 +979,16 @@ namespace System
 				return s1;
 
 			String tmp = InternalAllocateStr (s1.Length + s2.Length);
-			InternalStrcpy (tmp, 0, s1);
-			InternalStrcpy (tmp, s1.length, s2);
+			if (s1.Length != 0) {
+				fixed (char *dest = tmp, src = s1) {
+					memcpy ((byte*)dest, (byte*)src, s1.length * 2);
+				}
+			}
+			if (s2.Length != 0) {
+				fixed (char *dest = tmp, src = s2) {
+					memcpy ((byte*)(dest + s1.Length), (byte*)src, s2.length * 2);
+				}
+			}
 
 			return tmp;
 		}
@@ -1027,7 +1054,7 @@ namespace System
 		}
 #endif
 
-		public static String Concat (String s1, String s2)
+		public unsafe static String Concat (String s1, String s2)
 		{
 			if (s1 == null) {
 				if (s2 == null)
@@ -1040,13 +1067,21 @@ namespace System
 
 			String tmp = InternalAllocateStr (s1.length + s2.length);
 
-			InternalStrcpy (tmp, 0, s1);
-			InternalStrcpy (tmp, s1.length, s2);
+			if (s1.Length != 0) {
+				fixed (char *dest = tmp, src = s1) {
+					memcpy ((byte*)dest, (byte*)src, s1.length * 2);
+				}
+			}
+			if (s2.Length != 0) {
+				fixed (char *dest = tmp, src = s2) {
+					memcpy ((byte*)(dest + s1.Length), (byte*)src, s2.length * 2);
+				}
+			}
 
 			return tmp;
 		}
 
-		public static String Concat (String s1, String s2, String s3)
+		public unsafe static String Concat (String s1, String s2, String s3)
 		{
 			if (s1 == null){
 				if (s2 == null){
@@ -1073,14 +1108,26 @@ namespace System
 			//return InternalConcat (s1, s2, s3);
 			String tmp = InternalAllocateStr (s1.length + s2.length + s3.length);
 
-			InternalStrcpy (tmp, 0, s1);
-			InternalStrcpy (tmp, s1.length, s2);
-			InternalStrcpy (tmp, s1.length + s2.length, s3);
+			if (s1.Length != 0) {
+				fixed (char *dest = tmp, src = s1) {
+					memcpy ((byte*)dest, (byte*)src, s1.length * 2);
+				}
+			}
+			if (s2.Length != 0) {
+				fixed (char *dest = tmp, src = s2) {
+					memcpy ((byte*)(dest + s1.Length), (byte*)src, s2.length * 2);
+				}
+			}
+			if (s3.Length != 0) {
+				fixed (char *dest = tmp, src = s3) {
+					memcpy ((byte*)(dest + s1.Length + s2.Length), (byte*)src, s3.length * 2);
+				}
+			}
 
 			return tmp;
 		}
 
-		public static String Concat (String s1, String s2, String s3, String s4)
+		public unsafe static String Concat (String s1, String s2, String s3, String s4)
 		{
 			if (s1 == null && s2 == null && s3 == null && s4 == null)
 				return String.Empty;
@@ -1096,10 +1143,26 @@ namespace System
 
 			String tmp = InternalAllocateStr (s1.length + s2.length + s3.length + s4.length);
 
-			InternalStrcpy (tmp, 0, s1);
-			InternalStrcpy (tmp, s1.length, s2);
-			InternalStrcpy (tmp, s1.length + s2.length, s3);
-			InternalStrcpy (tmp, s1.length + s2.length + s3.length, s4);
+			if (s1.Length != 0) {
+				fixed (char *dest = tmp, src = s1) {
+					memcpy ((byte*)dest, (byte*)src, s1.length * 2);
+				}
+			}
+			if (s2.Length != 0) {
+				fixed (char *dest = tmp, src = s2) {
+					memcpy ((byte*)(dest + s1.Length), (byte*)src, s2.length * 2);
+				}
+			}
+			if (s3.Length != 0) {
+				fixed (char *dest = tmp, src = s3) {
+					memcpy ((byte*)(dest + s1.Length + s2.Length), (byte*)src, s3.length * 2);
+				}
+			}
+			if (s4.Length != 0) {
+				fixed (char *dest = tmp, src = s4) {
+					memcpy ((byte*)(dest + s1.Length + s2.Length + s3.Length), (byte*)src, s4.length * 2);
+				}
+			}
 
 			return tmp;
 		}
@@ -1140,7 +1203,7 @@ namespace System
 			return InternalJoin (String.Empty, values, 0, values.Length);
 		}
 
-		public String Insert (int startIndex, String value)
+		public unsafe String Insert (int startIndex, String value)
 		{
 			if (value == null)
 				throw new ArgumentNullException ("value");
@@ -1148,7 +1211,21 @@ namespace System
 			if (startIndex < 0 || startIndex > this.length)
 				throw new ArgumentOutOfRangeException ();
 
-			return InternalInsert (startIndex, value);
+			if (value.Length == 0)
+				return this;
+			if (this.Length == 0)
+				return value;
+			String tmp = InternalAllocateStr (this.length + value.length);
+
+			fixed (char *dest = tmp, src = this, val = value) {
+				char *dst = dest;
+				memcpy ((byte*)dst, (byte*)src, startIndex * 2);
+				dst += startIndex;
+				memcpy ((byte*)dst, (byte*)val, value.length * 2);
+				dst += value.length;
+				memcpy ((byte*)dst, (byte*)(src + startIndex), (length - startIndex) * 2);
+			}
+			return tmp;
 		}
 
 
@@ -1417,6 +1494,161 @@ namespace System
 			}
 		}
 
+		/* helpers used by the runtime as well as above or eslewhere in corlib */
+		internal static unsafe void memset (byte *dest, int val, int len)
+		{
+			if (len < 8) {
+				while (len != 0) {
+					*dest = (byte)val;
+					++dest;
+					--len;
+				}
+				return;
+			}
+			if (val != 0) {
+				val = val | (val << 8);
+				val = val | (val << 16);
+			}
+			// align to 4
+			int rest = (int)dest & 3;
+			if (rest != 0) {
+				rest = 4 - rest;
+				len -= rest;
+				do {
+					*dest = (byte)val;
+					++dest;
+					--rest;
+				} while (rest != 0);
+			}
+			while (len >= 16) {
+				((int*)dest) [0] = val;
+				((int*)dest) [1] = val;
+				((int*)dest) [2] = val;
+				((int*)dest) [3] = val;
+				dest += 16;
+				len -= 16;
+			}
+			while (len >= 4) {
+				((int*)dest) [0] = val;
+				dest += 4;
+				len -= 4;
+			}
+			// tail bytes
+			while (len > 0) {
+				*dest = (byte)val;
+				dest++;
+				len--;
+			}
+		}
+
+		internal static unsafe void memcpy4 (byte *dest, byte *src, int size) {
+			/*while (size >= 32) {
+				// using long is better than int and slower than double
+				// FIXME: enable this only on correct alignment or on platforms
+				// that can tolerate unaligned reads/writes of doubles
+				((double*)dest) [0] = ((double*)src) [0];
+				((double*)dest) [1] = ((double*)src) [1];
+				((double*)dest) [2] = ((double*)src) [2];
+				((double*)dest) [3] = ((double*)src) [3];
+				dest += 32;
+				src += 32;
+				size -= 32;
+			}*/
+			while (size >= 16) {
+				((int*)dest) [0] = ((int*)src) [0];
+				((int*)dest) [1] = ((int*)src) [1];
+				((int*)dest) [2] = ((int*)src) [2];
+				((int*)dest) [3] = ((int*)src) [3];
+				dest += 16;
+				src += 16;
+				size -= 16;
+			}
+			while (size >= 4) {
+				((int*)dest) [0] = ((int*)src) [0];
+				dest += 4;
+				src += 4;
+				size -= 4;
+			}
+			while (size > 0) {
+				((byte*)dest) [0] = ((byte*)src) [0];
+				dest += 1;
+				src += 1;
+				--size;
+			}
+		}
+		static unsafe void memcpy2 (byte *dest, byte *src, int size) {
+			while (size >= 8) {
+				((short*)dest) [0] = ((short*)src) [0];
+				((short*)dest) [1] = ((short*)src) [1];
+				((short*)dest) [2] = ((short*)src) [2];
+				((short*)dest) [3] = ((short*)src) [3];
+				dest += 8;
+				src += 8;
+				size -= 8;
+			}
+			while (size >= 2) {
+				((short*)dest) [0] = ((short*)src) [0];
+				dest += 2;
+				src += 2;
+				size -= 2;
+			}
+			if (size > 0)
+				((byte*)dest) [0] = ((byte*)src) [0];
+		}
+		static unsafe void memcpy1 (byte *dest, byte *src, int size) {
+			while (size >= 8) {
+				((byte*)dest) [0] = ((byte*)src) [0];
+				((byte*)dest) [1] = ((byte*)src) [1];
+				((byte*)dest) [2] = ((byte*)src) [2];
+				((byte*)dest) [3] = ((byte*)src) [3];
+				((byte*)dest) [4] = ((byte*)src) [4];
+				((byte*)dest) [5] = ((byte*)src) [5];
+				((byte*)dest) [6] = ((byte*)src) [6];
+				((byte*)dest) [7] = ((byte*)src) [7];
+				dest += 8;
+				src += 8;
+				size -= 8;
+			}
+			while (size >= 2) {
+				((byte*)dest) [0] = ((byte*)src) [0];
+				((byte*)dest) [1] = ((byte*)src) [1];
+				dest += 2;
+				src += 2;
+				size -= 2;
+			}
+			if (size > 0)
+				((byte*)dest) [0] = ((byte*)src) [0];
+		}
+		static unsafe void memcpy (byte *dest, byte *src, int size) {
+			// FIXME: if pointers are not aligned, try to align them
+			// so a faster routine can be used. Handle the case where
+			// the pointers can't be reduced to have the same alignment
+			// (just ignore the issue on x86?)
+			if ((((int)dest | (int)src) & 3) != 0) {
+				if (((int)dest & 1) != 0 && ((int)src & 1) != 0 && size >= 1) {
+					dest [0] = src [0];
+					++dest;
+					++src;
+					--size;
+				}
+				if (((int)dest & 2) != 0 && ((int)src & 2) != 0 && size >= 2) {
+					((short*)dest) [0] = ((short*)src) [0];
+					dest += 2;
+					src += 2;
+					size -= 2;
+				}
+				if ((((int)dest | (int)src) & 1) != 0) {
+					memcpy1 (dest, src, size);
+					return;
+				}
+				if ((((int)dest | (int)src) & 2) != 0) {
+					memcpy2 (dest, src, size);
+					return;
+				}
+			}
+			memcpy4 (dest, src, size);
+		}
+
 		[CLSCompliant (false), MethodImplAttribute (MethodImplOptions.InternalCall)]
 		unsafe public extern String (char *value);
 
@@ -1445,16 +1677,10 @@ namespace System
 		private extern static string InternalJoin (string separator, string[] value, int sIndex, int count);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern String InternalInsert (int sourceIndex, String value);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern String InternalReplace (char oldChar, char newChar);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern String InternalReplace (String oldValue, string newValue, CompareInfo comp);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern String InternalRemove (int sIndex, int count);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern void InternalCopyTo (int sIndex, char[] dest, int destIndex, int count);
