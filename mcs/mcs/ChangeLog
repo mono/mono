@@ -1,3 +1,10 @@
+2002-09-16  Martin Baulig  <martin@gnome.org>
+
+	* ecore.cs (MethodGroupExpr.DoResolve): If we have an instance expression,
+	resolve it.  This is needed for the definite assignment check of the
+	instance expression, fixes bug #29846.
+	(PropertyExpr.DoResolve, EventExpr.DoResolve): Likewise.
+
 2002-09-16  Nick Drochak  <ndrochak@gol.com>
 
 	* parameter.cs: Fix compile error.  Cannot reference static member

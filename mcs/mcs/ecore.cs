@@ -3780,6 +3780,12 @@ namespace Mono.CSharp {
 		
 		override public Expression DoResolve (EmitContext ec)
 		{
+			if (instance_expression != null) {
+				instance_expression = instance_expression.DoResolve (ec);
+				if (instance_expression == null)
+					return null;
+			}
+
 			return this;
 		}
 
@@ -4188,6 +4194,12 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			if (instance_expr != null) {
+				instance_expr = instance_expr.DoResolve (ec);
+				if (instance_expr == null)
+					return null;
+			}
+
 			return this;
 		}
 
@@ -4199,6 +4211,12 @@ namespace Mono.CSharp {
 					      "' can not be used in " +
 					      "this context because it lacks a set accessor");
 				return null;
+			}
+
+			if (instance_expr != null) {
+				instance_expr = instance_expr.DoResolve (ec);
+				if (instance_expr == null)
+					return null;
 			}
 
 			return this;
@@ -4313,7 +4331,12 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			// We are born fully resolved
+			if (instance_expr != null) {
+				instance_expr = instance_expr.DoResolve (ec);
+				if (instance_expr == null)
+					return null;
+			}
+
 			return this;
 		}
 
