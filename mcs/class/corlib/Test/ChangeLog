@@ -1,3 +1,7 @@
+2002-03-20  Nick Drochak  <ndrochak@gol.com>
+
+	* corlib_test.build: On 'clean' remove all the dll's and pdb's
+
 2002/03/19  Nick Drochak <ndrochak@gol.com>
 
 	* corlib_test.build: Re-include tests into the build.

@@ -86,5 +86,13 @@
 	<target name="clean">
 		<delete file="corlib_test.dll" failonerror="false"/>
 		<delete file="RunTests.corlib.exe" failonerror="false"/>
+		<delete file="corlib_linux_test.dll" failonerror="false"/>
+		<delete file="corlib_reference.dll" failonerror="false"/>
+
+		<delete file="corlib_test.pdb" failonerror="false"/>
+		<delete file="RunTests.corlib.pdb" failonerror="false"/>
+		<delete file="corlib_linux_test.pdb" failonerror="false"/>
+		<delete file="corlib_reference.pdb" failonerror="false"/>
+		
 	</target>
 </project>
