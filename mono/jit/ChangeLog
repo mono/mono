@@ -1,3 +1,9 @@
+
+Wed Sep 4 14:06:09 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: link libmono directly into mono. Use a ld script
+	to reduce exported symbols.
+
 2002-09-03  Martin Baulig  <martin@gnome.org>
 
 	* debug.c (free_method_info): Make this actually work.
