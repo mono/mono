@@ -1,3 +1,8 @@
+2005-04-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* transform.cs:
+	* transform.js: replace transform.js with transform.cs
+
 2005-03-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* mono-api-info.exe: Don't process attributes inheriting from 
