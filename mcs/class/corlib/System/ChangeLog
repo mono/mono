@@ -1,3 +1,10 @@
+2002-07-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Activator.cs: reformatted. Implemented CreateInstance* methods
+	that return ObjectHandle.
+
+	* AppDomain.cs: implemented CreateInstance*AndUnwrap methods.
+
 2002-07-03  Nick Drochak  <ndrochak@gol.com>
 
 	* Decimal.cs (Divide): Short cut the case where the dividend is 0 (and

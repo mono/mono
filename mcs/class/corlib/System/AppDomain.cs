@@ -5,6 +5,7 @@
 //   Paolo Molaro (lupus@ximian.com)
 //   Dietmar Maurer (dietmar@ximian.com)
 //   Miguel de Icaza (miguel@ximian.com)
+//   Gonzalo Paniagua (gonzalo@ximian.com)
 //
 // (C) 2001, 2002 Ximian, Inc.  http://www.ximian.com
 //
@@ -119,18 +120,21 @@ namespace System {
 
 		public ObjectHandle CreateInstance (string assemblyName, string typeName)
 		{
-			return CreateInstance (assemblyName, typeName, false, 0,
-					       null, null, null, null, null);
+			if (assemblyName == null)
+				throw new ArgumentNullException ("assemblyName");
+
+			return Activator.CreateInstance (assemblyName, typeName);
 		}
 
 		public ObjectHandle CreateInstance (string assemblyName, string typeName,
 						    object[] activationAttributes)
 		{
-			return CreateInstance (assemblyName, typeName, false, 0,
-					       null, null, null, activationAttributes, null);
+			if (assemblyName == null)
+				throw new ArgumentNullException ("assemblyName");
+
+			return Activator.CreateInstance (assemblyName, typeName, activationAttributes);
 		}
 		
-		[MonoTODO]
 		public ObjectHandle CreateInstance (string assemblyName,
 						    string typeName,
 						    bool ignoreCase,
@@ -139,25 +143,75 @@ namespace System {
 						    object[] args,
 						    CultureInfo culture,
 						    object[] activationAttributes,
-						    Evidence securityAttribtutes)
+						    Evidence securityAttributes)
 		{
-			throw new NotImplementedException ();
+			if (assemblyName == null)
+				throw new ArgumentNullException ("assemblyName");
+
+			return Activator.CreateInstance (assemblyName,
+							 typeName,
+							 ignoreCase,
+							 bindingAttr,
+							 binder,
+							 args,
+							 culture,
+							 activationAttributes,
+							 securityAttributes);
+		}
+
+		public object CreateInstanceAndUnwrap (string assemblyName, string typeName)
+		{
+			ObjectHandle oh = CreateInstance (assemblyName, typeName);
+			return (oh != null) ? oh.Unwrap () : null;
+		}
+		
+		public object CreateInstanceAndUnwrap (string assemblyName,
+						       string typeName,
+						       object [] activationAttributes)
+		{
+			ObjectHandle oh = CreateInstance (assemblyName, typeName, activationAttributes);
+			return (oh != null) ? oh.Unwrap () : null;
+		}
+
+		public object CreateInstanceAndUnwrap (string assemblyName,
+						       string typeName,
+						       bool ignoreCase,
+						       BindingFlags bindingAttr,
+						       Binder binder,
+						       object[] args,
+						       CultureInfo culture,
+						       object[] activationAttributes,
+						       Evidence securityAttributes)
+		{
+			ObjectHandle oh = CreateInstance (assemblyName,
+							  typeName,
+							  ignoreCase,
+							  bindingAttr,
+							  binder,
+							  args,
+							  culture,
+							  activationAttributes,
+							  securityAttributes);
+			return (oh != null) ? oh.Unwrap () : null;
 		}
 
 		public ObjectHandle CreateInstanceFrom (string assemblyName, string typeName)
 		{
-			return CreateInstanceFrom (assemblyName, typeName, false, 0,
-						   null, null, null, null, null);
+			if (assemblyName == null)
+				throw new ArgumentNullException ("assemblyName");
+
+			return Activator.CreateInstanceFrom (assemblyName, typeName);
 		}
 		
 		public ObjectHandle CreateInstanceFrom (string assemblyName, string typeName,
 							object[] activationAttributes)
 		{
-			return CreateInstanceFrom (assemblyName, typeName, false, 0,
-						   null, null, null, activationAttributes, null);
+			if (assemblyName == null)
+				throw new ArgumentNullException ("assemblyName");
+
+			return Activator.CreateInstanceFrom (assemblyName, typeName, activationAttributes);
 		}
 		
-		[MonoTODO]
 		public ObjectHandle CreateInstanceFrom (string assemblyName,
 							string typeName,
 							bool ignoreCase,
@@ -166,9 +220,56 @@ namespace System {
 							object[] args,
 							CultureInfo culture,
 							object[] activationAttributes,
-							Evidence securityAttribtutes)
+							Evidence securityAttributes)
 		{
-			throw new NotImplementedException ();			
+			if (assemblyName == null)
+				throw new ArgumentNullException ("assemblyName");
+
+			return Activator.CreateInstanceFrom (assemblyName,
+							     typeName,
+							     ignoreCase,
+							     bindingAttr,
+							     binder,
+							     args,
+							     culture,
+							     activationAttributes,
+							     securityAttributes);
+		}
+
+		public object CreateInstanceFromAndUnwrap (string assemblyName, string typeName)
+		{
+			ObjectHandle oh = CreateInstanceFrom (assemblyName, typeName);
+			return (oh != null) ? oh.Unwrap () : null;
+		}
+		
+		public object CreateInstanceFromAndUnwrap (string assemblyName,
+							   string typeName,
+							   object [] activationAttributes)
+		{
+			ObjectHandle oh = CreateInstanceFrom (assemblyName, typeName, activationAttributes);
+			return (oh != null) ? oh.Unwrap () : null;
+		}
+
+		public object CreateInstanceFromAndUnwrap (string assemblyName,
+							   string typeName,
+							   bool ignoreCase,
+							   BindingFlags bindingAttr,
+							   Binder binder,
+							   object[] args,
+							   CultureInfo culture,
+							   object[] activationAttributes,
+							   Evidence securityAttributes)
+		{
+			ObjectHandle oh = CreateInstanceFrom (assemblyName,
+							      typeName,
+							      ignoreCase,
+							      bindingAttr,
+							      binder,
+							      args,
+							      culture,
+							      activationAttributes,
+							      securityAttributes);
+			return (oh != null) ? oh.Unwrap () : null;
 		}
 
 		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name,
