@@ -144,12 +144,8 @@ namespace System.Web.UI {
 
 			PropertyDescriptor prop = TypeDescriptor.GetProperties (container).Find (propName, true);
 			if (prop == null) {
-				try {
-					return GetIndexedPropertyValue (container, "[\"" + propName + "\"]");
-				} catch {
-					throw new HttpException ("Property " + propName + " not found in " +
-								 container.GetType ());
-				}
+				throw new HttpException ("Property " + propName + " not found in " +
+							 container.GetType ());
 			}
 
 			return prop.GetValue (container);

@@ -1,5 +1,10 @@
 2003-01-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* DataBinder.cs:
+	(GetPropertyValue): don't try to get the property as indexed
+
+2003-01-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* DataBinder.cs: use TypeDescriptor to get the properties and their
 	values.
 
