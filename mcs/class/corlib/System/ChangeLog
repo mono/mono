@@ -1,3 +1,7 @@
+2005-03-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Version.cs: don't ignore the last number. Fixes bug #73539.
+
 2005-03-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Activator.cs MonoType.cs: Applied patch from Carlos Alberto Cortez
