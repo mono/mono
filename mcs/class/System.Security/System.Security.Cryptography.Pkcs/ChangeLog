@@ -1,3 +1,12 @@
+2003-11-08  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ContentInfo.cs: New. Class to encapsulate PKCS7 ContentInfo. Static 
+	method GetContentType need to be completed (requires some test vectors).
+	* Pkcs7Signer.cs: New. Class to add attributes (authenticated and/or 
+	authenticated),	certificates and other informations to the signature.
+	* RecipientInfo.cs: New. Abstract class to encpasulate recipient 
+	informations.
+
 2003-11-07  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AlgorithmIdentifier.cs: New. Class to encapsulate PKCS7 AlgorithmIdentifier.
