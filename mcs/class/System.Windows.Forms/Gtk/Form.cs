@@ -59,7 +59,7 @@ namespace System.Windows.Forms
 				Activated (o, args);
 		}
 
-		internal void ConnectEvents (){
+		internal override void ConnectEvents (){
 			win.DefaultActivated += new EventHandler (activate_cb);
 			win.DeleteEvent += new DeleteEventHandler (delete_cb);
 			win.Realized += new EventHandler (load_cb);

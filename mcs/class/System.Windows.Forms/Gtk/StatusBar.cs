@@ -44,7 +44,7 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
-		internal void ConnectEvents () 
+		internal override void ConnectEvents () 
 		{
 			// statusbar.TextPopped +=
 			// statusbar.TextPushed +=
@@ -122,7 +122,7 @@ namespace System.Windows.Forms {
 
 		//FIXME:
 		[MonoTODO]
-		public virtual DockStyle Dock {
+		public override DockStyle Dock {
 			get {
 				return dockstyle;
 			}
