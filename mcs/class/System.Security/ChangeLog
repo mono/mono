@@ -1,3 +1,8 @@
+2005-01-06  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (LIB_MCS_FLAGS): Add reference to Mono.Security.dll
+	only in the NET 2.0 profile.  See 2004-07-07 entry.
+
 2005-01-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Makefile: Don't ignore the CS0119 warnings (private field not used) 
