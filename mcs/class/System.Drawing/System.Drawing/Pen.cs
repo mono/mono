@@ -9,16 +9,17 @@
 //
 
 using System;
+using System.Drawing.Drawing2D;
 
 namespace System.Drawing {
 
-	public sealed class Pen : MarshalByRefObject { //, ICloneable, IDisposable {
+	public sealed class Pen : MarshalByRefObject, ICloneable, IDisposable {
 		Brush brush;
 		Color color;
 		float width;
 		internal IntPtr nativeObject;
 
-		//PenAlignment alignment;
+		PenAlignment alignment;
 		
 		public Pen (Brush brush) : this (brush, 1.0F)
 		{
@@ -46,15 +47,15 @@ namespace System.Drawing {
 		//
 		// Properties
 		//
-//		public PenAlignment Alignment {
-//			get {
-//				return alignment;
-//			}
-//
-//			set {
-//				alignment = value;
-//			}
-//		}
+		public PenAlignment Alignment {
+			get {
+				return alignment;
+			}
+
+			set {
+				alignment = value;
+			}
+		}
 
 		public Brush Brush {
 			get {
@@ -85,15 +86,15 @@ namespace System.Drawing {
 			}
 		}
 
-//		public object Clone ()
-//		{
-//			Pen p = new Pen (brush, width);
-//			
-//			p.color = color;
-//			p.alignment = alignment;
-//
-//			return p;
-//		}
+		public object Clone ()
+		{
+			Pen p = new Pen (brush, width);
+			
+			p.color = color;
+			p.alignment = alignment;
+
+			return p;
+		}
 
 		public void Dispose ()
 		{

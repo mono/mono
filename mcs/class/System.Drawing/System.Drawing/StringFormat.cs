@@ -1,12 +1,15 @@
 //
 // System.Drawing.StringFormat.cs
 //
-// Author:
+// Authors:
 //   Dennis Hayes (dennish@Raytek.com)
+//   Miguel de Icaza (miguel@ximian.com)
 //
 // (C) 2002 Ximian, Inc
+// (C) 2003 Novell, Inc.
 //
 using System;
+using System.Drawing.Text;
 
 namespace System.Drawing
 {
@@ -15,9 +18,12 @@ namespace System.Drawing
 	/// </summary>
 	public class StringFormat
 	{
-		private StringAlignment alignment;
-		private StringAlignment line_alignment;
-
+		StringAlignment alignment;
+		StringAlignment line_alignment;
+		StringFormatFlags format_flags;
+		HotkeyPrefix hotkey_prefix;
+		StringTrimming trimming;
+		
 		public StringFormat()
 		{
 			//
@@ -25,6 +31,22 @@ namespace System.Drawing
 			//
 			alignment = StringAlignment.Center;
 			line_alignment = StringAlignment.Center;
+			format_flags = 0;
+		}
+
+		public StringFormat (StringFormat source)
+		{
+			alignment = source.alignment;
+			line_alignment = source.line_alignment;
+			format_flags = source.format_flags;
+			hotkey_prefix = source.hotkey_prefix;
+		}
+
+		public StringFormat (StringFormatFlags flags)
+		{
+			alignment = StringAlignment.Center;
+			line_alignment = StringAlignment.Center;
+			format_flags = flags;
 		}
 		
 		public StringAlignment Alignment {
@@ -37,8 +59,7 @@ namespace System.Drawing
 			}
 		}
 
-		public StringAlignment LineAlignment
-		{
+		public StringAlignment LineAlignment {
 			get {
 				return line_alignment;
 			}
@@ -47,5 +68,40 @@ namespace System.Drawing
 				line_alignment = value;
 			}
 		}
+
+		public StringFormatFlags FormatFlags {
+			get {
+				return format_flags;
+			}
+
+			set {
+				format_flags = value;
+			}
+		}
+
+		public HotkeyPrefix HotkeyPrefix {
+			get {
+				return hotkey_prefix;
+			}
+
+			set {
+				hotkey_prefix = value;
+			}
+		}
+
+		public void SetMeasurableCharacterRanges (CharacterRange [] range)
+		{
+		}
+
+		public StringTrimming Trimming {
+			get {
+				return trimming;
+			}
+
+			set {
+				trimming = value;
+			}
+		}
+		
 	}
 }

@@ -82,6 +82,8 @@ namespace System.Drawing {
 
 			int bmp = 0;
 			buffer = bd.Scan0;
+			Console.WriteLine ("Stride: {0} ", bd.Stride);
+			Console.WriteLine ("Scan0: {0:x}" , (long) bd.Scan0);
 			Status s = GDIPlus.GdipCreateBitmapFromScan0 (bd.Width, bd.Height, bd.Stride, bd.PixelFormat, bd.Scan0, out bmp);
 			if (s != Status.Ok)
 				throw new ArgumentException ("Could not allocate the GdiPlus image: " + s);

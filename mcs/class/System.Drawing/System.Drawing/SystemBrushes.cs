@@ -54,6 +54,18 @@ namespace System.Drawing
 				return new SolidBrush(SystemColors.Control);
 			}
 		}
+		
+		public static Brush ControlLight {
+			get {
+				return new SolidBrush(SystemColors.ControlLight);
+			}
+		}
+		
+		public static Brush ControlLightLight {
+			get {
+				return new SolidBrush(SystemColors.ControlLightLight);
+			}
+		}
 
 		public static Brush ControlText {
 			get {

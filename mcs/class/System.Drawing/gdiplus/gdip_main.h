@@ -130,6 +130,13 @@ extern Display *GDIP_display;
 
 void initializeGdipWin32 (void);
 
+/*
+ * Region
+ */
+typedef struct {
+	
+} GpRegion;
+
 #include "gdip_defs.h"
 
 #endif // _GDIP_MAIN_H

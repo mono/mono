@@ -9,18 +9,18 @@ using System;
 
 namespace System.Drawing
 {
-	/// <summary>
-	/// Summary description for CharacterRange.
-	/// </summary>
 	public struct CharacterRange
 	{
 		private int first;
 		private int length;
-		public CharacterRange(int First, int Length){
-			first = First;
-			length = Length;
+
+		public CharacterRange (int first, int length)
+		{
+			this.first = first;
+			this.length = length;
 		}
-		public int First{
+
+		public int First {
 			get{
 				return first;
 			}
@@ -28,7 +28,8 @@ namespace System.Drawing
 				first = value;
 			}
 		}
-		public int Length{
+		
+		public int Length {
 			get{
 				return length;
 			}

@@ -1,3 +1,15 @@
+2003-10-24  Miguel de Icaza  <miguel@ximian.com>
+
+	* SystemBrushes.cs: Some more brushe3s.
+
+	* SystemPens.cs: More pens.
+
+	* Pen.cs: Implement IDisposable, ICloneable.
+
+	* Region.cs: Add some more stubs here.
+
+	* StringFormat.cs: Add some more code here.
+
 2003-10-23  Miguel de Icaza  <miguel@ximian.com>
 
 	* Image.cs: Kill the InternalImageInfo, everything is now done in
