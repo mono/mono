@@ -42,7 +42,7 @@ ColumnHeader.cs			Need CE
 ComboBox.cs				Need CE
 CommonDialog.cs			Need CE
 ContainerControl.cs		Need CE
-ContextMenu.cs			Need CE
+ContextMenu.cs			Need CE - 10-28-2002 - Alexandre Pigolkine <pigolkin@transporeon.com>
 Control.cs				Need CE
 ControlBindingsCollection.cs Need CE
 ControlPaint.cs
@@ -68,7 +68,7 @@ FeatureSupport.cs
 FileDialog.cs			Need CE
 FolderBrowserDialog.cs
 FontDialog.cs
-Form.cs					Need CE
+Form.cs				Need CE
 GridColumnStylesCollection.cs
 GridItem.cs
 GridItemCollection.cs
@@ -88,14 +88,14 @@ LinkArea.cs
 LinkLabel.cs
 LinkState.cs
 ListBindingConverter.cs
-ListBox.cs				Need CE  - 10-28-2002 -Joshua Perry <jperry@1800contacts.com
+ListBox.cs				Need CE  - 10-28-2002 - Joshua Perry <jperry@1800contacts.com
 ListControl.cs			Need CE 
 ListView.cs				Need CE
 ListViewItem.cs			Need CE
 ListViewItemConverter.cs
-MainMenu.cs				Need CE
-Menu.cs				Need CE
-MenuItem.cs				Need CE
+MainMenu.cs				Need CE - 10-28-2002 - Alexandre Pigolkine <pigolkin@transporeon.com>
+Menu.cs				Need CE - 10-28-2002 - Alexandre Pigolkine <pigolkin@transporeon.com>
+MenuItem.cs				Need CE - 10-28-2002 - Alexandre Pigolkine <pigolkin@transporeon.com>
 Message.cs
 MessageBox.cs			Need CE
 MethodInvoker.cs
