@@ -38,7 +38,7 @@ namespace System.Runtime.CompilerServices {
 			Inherited=false)] 
 	[Serializable]
 	public sealed class MethodImplAttribute : Attribute {
-		MethodImplOptions impl_options;
+		MethodImplOptions _val;
 		
 		public MethodImplAttribute ()
 		{
@@ -46,19 +46,19 @@ namespace System.Runtime.CompilerServices {
 
 		public MethodImplAttribute (short options)
 		{
-			impl_options = (MethodImplOptions) options;
+			_val = (MethodImplOptions) options;
 		}
 
 		public MethodImplAttribute (MethodImplOptions options)
 		{
-			impl_options = options;
+			_val = options;
 		}
 
 		public MethodCodeType MethodCodeType;
 
 		public MethodImplOptions Value {
 			get {
-				return impl_options;
+				return _val;
 			}
 		}
 	}

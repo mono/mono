@@ -1,4 +1,9 @@
-2004-05-19  Gert Driesen   (drieseng@users.sourceforge.net)
+2004-06-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* MethodImplAttribute.cs: changed field name to fix serialization
+	compatibility with MS.NET
+
+2004-05-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CustomConstantAttribute.cs
 	* DateTimeconstantAttribute.cs
