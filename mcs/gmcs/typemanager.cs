@@ -815,7 +815,7 @@ public class TypeManager {
 			}
 			sb.Append (">");
 			return sb.ToString ();
-		} else if (t.HasGenericArguments) {
+		} else if (t.HasGenericArguments && !t.IsGenericInstance) {
 			Type[] tparam = t.GetGenericArguments ();
 
 			StringBuilder sb = new StringBuilder (name);
@@ -823,9 +823,6 @@ public class TypeManager {
 			for (int i = 0; i < tparam.Length; i++) {
 				if (i > 0)
 					sb.Append (",");
-				Report.Debug (64, "TEST", i, tparam [i],
-					      tparam [i].GetType (),
-					      tparam [i].Name);
 				sb.Append (tparam [i].Name);
 			}
 			sb.Append (">");
