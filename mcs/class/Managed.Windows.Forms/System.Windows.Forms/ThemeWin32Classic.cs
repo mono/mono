@@ -26,9 +26,14 @@
 //
 //
 //
-// $Revision: 1.55 $
+// $Revision: 1.56 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.56  2004/11/04 11:26:09  ravindra
+// 	- Changed default ListView values signatures (prefixed all with ListView).
+// 	- Fixed default size values for VScrollBar and HScrollBar.
+// 	- Fixed DrawListViewItem method.
+//
 // Revision 1.55  2004/11/03 18:52:14  jackson
 // Initial implementation of the scrolly widgerywoo
 //
@@ -815,7 +820,7 @@ namespace System.Windows.Forms
 		#region HScrollBar
 		public override Size HScrollBarDefaultSize {
 			get {
-				return new Size (80,13);
+				return new Size (80, this.ScrollBarButtonSize);
 			}
 		}
 
@@ -892,30 +897,87 @@ namespace System.Windows.Forms
 		// draws the ListViewItem of the given index
 		private void DrawListViewItem (Graphics dc, ListView control, ListViewItem item)
 		{
-			//if (control.CheckBoxes) {
-			//	if (item.Checked)
-			//		this.CPDrawCheckBox (dc, item.CheckRect, ButtonState.Checked);
-			//	else
-			//		this.CPDrawCheckBox (dc, item.CheckRect, ButtonState.Normal);
-			//}
+			if (control.CheckBoxes) {
+				if (control.StateImageList == null) {
+					// Make sure we've got at least a line width of 1
+					int check_wd = Math.Max (3, item.CheckRect.Width / 6);
+					int scale = Math.Max (1, item.CheckRect.Width / 12);
+
+					// define a rectangle inside the border area
+					Rectangle rect = new Rectangle (item.CheckRect.X + 2,
+									item.CheckRect.Y + 2,
+									item.CheckRect.Width - 4,
+									item.CheckRect.Height - 4);
+					Pen pen = new Pen (SystemColors.WindowText, 2);
+					dc.DrawRectangle (pen, rect);
+
+					// Need to draw a check-mark
+					if (item.Checked) {
+						pen.Width = 1;
+						// adjustments to get the check-mark at the right place
+						rect.X ++; rect.Y ++;
+						// following logic is taken from DrawFrameControl method
+						for (int i = 0; i < check_wd; i++) {
+							dc.DrawLine (pen, rect.Left + check_wd / 2,
+								     rect.Top + check_wd + i,
+								     rect.Left + check_wd / 2 + 2 * scale,
+								     rect.Top + check_wd + 2 * scale + i);
+							dc.DrawLine (pen,
+								     rect.Left + check_wd / 2 + 2 * scale,
+								     rect.Top + check_wd + 2 * scale + i,
+								     rect.Left + check_wd / 2 + 6 * scale,
+								     rect.Top + check_wd - 2 * scale + i);
+						}
+					}
+				}
+				else {
+					if (item.Checked && control.StateImageList.Images.Count > 1)
+						control.StateImageList.Draw (dc,
+									     item.CheckRect.Location, 1);
+					else if (! item.Checked && control.StateImageList.Images.Count > 0)
+						control.StateImageList.Draw (dc,
+									     item.CheckRect.Location, 0);
+				}
+			}
 
 			// Item is drawn as a special case, as it is not just text
-			if (item.ImageIndex > -1 && control.SmallImageList != null)
-				dc.DrawImage (control.SmallImageList.Images [item.ImageIndex],
-					      item.IconRect);
+			if (control.View == View.LargeIcon) {
+				if (item.ImageIndex > -1 &&
+				    control.LargeImageList != null &&
+				    item.ImageIndex < control.LargeImageList.Images.Count)
+					control.LargeImageList.Draw (dc, item.IconRect.Location,
+								     item.ImageIndex);
+			}
+			else {
+				if (item.ImageIndex > -1 &&
+				    control.SmallImageList != null &&
+				    item.ImageIndex < control.SmallImageList.Images.Count)
+					control.SmallImageList.Draw (dc, item.IconRect.Location,
+								     item.ImageIndex);
+			}
 
 			// draw the item text
 			Rectangle text_rect = Rectangle.Empty;
 			text_rect.X = item.LabelRect.X + 1;
 			text_rect.Y = item.LabelRect.Y + 1;
-			text_rect.Width = item.LabelRect.Width - 1;
+			text_rect.Width = item.LabelRect.Width - 3;
 			text_rect.Height = item.LabelRect.Height - 2;
 
+			// format for the item text
+			StringFormat format = new StringFormat ();
+			format.LineAlignment = StringAlignment.Center;
+			if (control.View == View.LargeIcon)
+				format.Alignment = StringAlignment.Center;
+			else
+				format.Alignment = StringAlignment.Near;
+
+			if (!control.LabelWrap)
+				format.FormatFlags = StringFormatFlags.NoWrap;
+
 			dc.FillRectangle (ResPool.GetSolidBrush (item.BackColor), text_rect);
-			text_rect.Width ++;
 			if (item.Text != null && item.Text.Length > 0)
 				dc.DrawString (item.Text, item.Font, this.ResPool.GetSolidBrush
-					       (item.ForeColor), text_rect, control.Columns[0].Format);
+					       (item.ForeColor), text_rect, format);
 
 			if (control.View == View.Details && control.Columns.Count > 0) {
 				// draw subitems for details view
@@ -932,11 +994,15 @@ namespace System.Windows.Forms
 					ListViewItem.ListViewSubItem subItem;
 					ColumnHeader col;
 
+					// set the format for subitems
+					format.FormatFlags = StringFormatFlags.NoWrap;
+					format.Alignment = StringAlignment.Near;
+
 					// 0th subitem is the item already drawn
 					for (int index = 1; index < count; index++) {
 						subItem = subItems [index];
 						col = control.Columns [index];
-						sub_item_rect.Width = col.Wd - 2;
+						sub_item_rect.Width = col.Wd - 3;
 
 						if (item.UseItemStyleForSubItems) {
 							dc.FillRectangle (this.ResPool.GetSolidBrush
@@ -945,7 +1011,7 @@ namespace System.Windows.Forms
 								dc.DrawString (subItem.Text, item.Font,
 									       this.ResPool.GetSolidBrush
 									       (item.ForeColor),
-									       sub_item_rect, col.Format);
+									       sub_item_rect, format);
 						}
 						else {
 							dc.FillRectangle (this.ResPool.GetSolidBrush
@@ -955,7 +1021,7 @@ namespace System.Windows.Forms
 								dc.DrawString (subItem.Text, subItem.Font,
 									       this.ResPool.GetSolidBrush
 									       (subItem.ForeColor),
-									       sub_item_rect, col.Format);
+									       sub_item_rect, format);
 						}
 						sub_item_rect.X += col.Wd;
 					}
@@ -964,27 +1030,27 @@ namespace System.Windows.Forms
 		}
 
 		// Sizing
-		public override Size CheckBoxSize {
+		public override Size ListViewCheckBoxSize {
 			get { return new Size (16, 16); }
 		}
 
-		public override int ColumnHeaderHeight {
+		public override int ListViewColumnHeaderHeight {
 			get { return 16; }
 		}
 
-		public override int DefaultColumnWidth {
+		public override int ListViewDefaultColumnWidth {
 			get { return 60; }
 		}
 
-		public override int VerticalSpacing {
+		public override int ListViewVerticalSpacing {
 			get { return 22; }
 		}
 
-		public override int EmptyColumnWidth {
+		public override int ListViewEmptyColumnWidth {
 			get { return 10; }
 		}
 
-		public override int HorizontalSpacing {
+		public override int ListViewHorizontalSpacing {
 			get { return 10; }
 		}
 
@@ -2467,7 +2533,7 @@ namespace System.Windows.Forms
 		#region	VScrollBar
 		public override Size VScrollBarDefaultSize {
 			get {
-				return new Size (13,80);
+				return new Size (this.ScrollBarButtonSize, 80);
 			}
 		}
 		#endregion	// VScrollBar

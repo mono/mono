@@ -23,9 +23,14 @@
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //
 //
-// $Revision: 1.16 $
+// $Revision: 1.17 $
 // $Modtime: $
 // $Log: Theme.cs,v $
+// Revision 1.17  2004/11/04 11:26:09  ravindra
+// 	- Changed default ListView values signatures (prefixed all with ListView).
+// 	- Fixed default size values for VScrollBar and HScrollBar.
+// 	- Fixed DrawListViewItem method.
+//
 // Revision 1.16  2004/11/02 02:47:55  jackson
 // New rendering and sizing code for tab controls
 //
@@ -335,12 +340,12 @@ namespace System.Windows.Forms
 		public abstract void DrawListView (Graphics dc, Rectangle clip_rectangle, ListView control);
 
 		// Sizing
-		public abstract Size CheckBoxSize { get; }
-		public abstract int ColumnHeaderHeight { get; }
-		public abstract int DefaultColumnWidth { get; }
-		public abstract int VerticalSpacing { get; }
-		public abstract int EmptyColumnWidth { get; }
-		public abstract int HorizontalSpacing { get; }
+		public abstract Size ListViewCheckBoxSize { get; }
+		public abstract int ListViewColumnHeaderHeight { get; }
+		public abstract int ListViewDefaultColumnWidth { get; }
+		public abstract int ListViewVerticalSpacing { get; }
+		public abstract int ListViewEmptyColumnWidth { get; }
+		public abstract int ListViewHorizontalSpacing { get; }
 		public abstract Size ListViewDefaultSize { get; }
 		#endregion	// ListView
 
