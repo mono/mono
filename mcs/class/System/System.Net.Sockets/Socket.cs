@@ -896,8 +896,7 @@ namespace System.Net.Sockets
 
 		public int SendTo(byte[] buffer, int size, SocketFlags flags,
 				  EndPoint remote_end) {
-			return(SendTo(buffer, size, buffer.Length, flags,
-				      remote_end));
+			return(SendTo(buffer, 0, size, flags, remote_end));
 		}
 
 

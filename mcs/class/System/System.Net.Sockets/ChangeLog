@@ -1,3 +1,8 @@
+2003-03-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs:
+	(SendTo): fix from Jerome Laban <jlaban@wanadoo.fr>.
+
 2003-02-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: patch from Elan Feingold <efeingold@mn.rr.com>. Fixes
