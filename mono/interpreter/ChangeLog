@@ -1,3 +1,8 @@
+2004-08-05  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* interp.c: (mono_interp_init) use g_thread_supported
+	to stop multiple g_thread_init calls
+
 2004-07-31  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* interp.h: add mono_interp_ftnptr_to_delegate 
