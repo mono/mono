@@ -3,24 +3,27 @@
 //
 // Author:
 //   Chris J Breisch (cjbreisch@altavista.net) 
+//   Rafael Teixeira (rafaelteixeirabr@hotmail.com)
 //
 // (C) 2002 Chris J Breisch
+// (C) 2004 Rafael Teixeira
 //
 
 using System;
 
 namespace Microsoft.VisualBasic 
 {
-	[System.AttributeUsageAttribute(System.AttributeTargets.Field)] 
-	sealed public class VBFixedStringAttribute : System.Attribute {
+	[AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)] 
+	sealed public class VBFixedStringAttribute : Attribute {
+
 		// Declarations
+		private int length;
+
 		// Constructors
-		[MonoTODO]
-		VBFixedStringAttribute(System.Int32 Length) { throw new NotImplementedException (); }
+		public VBFixedStringAttribute(int Length) { length = Length; }
+
 		// Properties
-		[MonoTODO]
-		public System.Int32 Length { get { throw new NotImplementedException (); } }
-		// Methods
-		// Events
+		public int Length { get { return length; } }
+
 	};
 }

@@ -7,26 +7,17 @@
 //
 // (C) 2002 Ximian Inc.
 //
+
 using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace Microsoft.VisualBasic.CompilerServices {
-	[MonoTODO]
 	[EditorBrowsable(EditorBrowsableState.Never)] 
 	[AttributeUsage(AttributeTargets.Parameter)] 
-	[StructLayoutAttribute(LayoutKind.Auto)] 
+	[StructLayout(LayoutKind.Auto)] 
+	[MonoTODO("What should it do?")]
 	sealed public class OptionCompareAttribute : Attribute {
-		// Declarations
-		// Constructors
-		// Properties
-		// Methods
-		// Events
-		public OptionCompareAttribute()
-		{
-			//FIXME: should this do something?
-			throw new NotImplementedException(); 
-		}
 	};
 
 }

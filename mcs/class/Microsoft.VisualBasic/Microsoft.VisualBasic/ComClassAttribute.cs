@@ -1,35 +1,54 @@
 //
 // ComClassAttribute.cs
 //
-// Author:
+// Authors:
 //   Chris J Breisch (cjbreisch@altavista.net) 
+//   Rafael Teixeira (rafaelteixeirabr@hotmail.com)
 //
 // (C) 2002 Chris J Breisch
+// (C) 2004 Rafael Teixeira
 //
 
 using System;
 
 namespace Microsoft.VisualBasic {
-	[System.AttributeUsageAttribute(System.AttributeTargets.Class)] 
-	sealed public class ComClassAttribute : System.Attribute {
+	[AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)] 
+	sealed public class ComClassAttribute : Attribute {
 		// Declarations
+		private string classID;
+		private string interfaceID;
+		private string eventID;
+		private bool interfaceShadows;
+
 		// Constructors
-		[MonoTODO]
-		ComClassAttribute(System.String _ClassID) { throw new NotImplementedException (); }
-		[MonoTODO]
-		ComClassAttribute(System.String _ClassID, System.String _InterfaceID) { throw new NotImplementedException (); }
-		[MonoTODO]
-		ComClassAttribute(System.String _ClassID, System.String _InterfaceID, System.String _EventId) { throw new NotImplementedException (); }
+
+		public ComClassAttribute() { }
+
+		public ComClassAttribute(string _ClassID) { 
+			classID = _ClassID;
+		}
+
+		public ComClassAttribute(string _ClassID, string _InterfaceID) { 
+			classID = _ClassID;
+			interfaceID = _InterfaceID;
+		}
+
+		public ComClassAttribute(string _ClassID, string _InterfaceID, string _EventID) { 
+			classID = _ClassID;
+			interfaceID = _InterfaceID;
+			eventID = _EventID;
+		}
+
 		// Properties
-		[MonoTODO]
-		public System.String EventID { get { throw new NotImplementedException (); } }
-		[MonoTODO]
-		public System.Boolean InterfaceShadows { get { throw new NotImplementedException (); } }
-		[MonoTODO]
-		public System.String ClassID { get { throw new NotImplementedException (); } }
-		[MonoTODO]
-		public System.String InterfaceID { get { throw new NotImplementedException (); } }
-		// Methods
-		// Events
+		public string EventID { get { return eventID; } }
+
+		public bool InterfaceShadows { 
+			get { return interfaceShadows; } 
+			set { interfaceShadows = value; } 
+		}
+
+		public string ClassID { get { return classID; } }
+
+		public string InterfaceID { get { return interfaceID; } }
 	};
 }

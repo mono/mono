@@ -1,3 +1,13 @@
+2004-02-20  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* ComClassAttibute.cs:
+		Implemented attribute (related to bug #52570)
+	* FileAttribute.cs
+		Cosmetic changes
+	* VBFixedArrayAttribute.cs:
+		Implemented attribute (related to bug #52570)
+	* VBFixedStringAttribute.cs:
+		Implemented attribute (related to bug #52570)
+	
 2004-01-21  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* FileSystem.cs:
 		Implemented Dir() now throws the right exception 

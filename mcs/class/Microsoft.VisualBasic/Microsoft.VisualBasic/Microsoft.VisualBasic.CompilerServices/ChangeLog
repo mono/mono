@@ -1,3 +1,9 @@
+2004-02-20  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* OptionCompareAttribute.cs:
+		Corrected constructor of attribute (bug #52570)
+	* OptionTextAttribute.cs, StandardModuleAttribute.cs:
+		Cosmetic changes
+
 2004-01-22  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* Utils.cs:
 		First Try Implementation for CopyArray(): NET_1_1-aware

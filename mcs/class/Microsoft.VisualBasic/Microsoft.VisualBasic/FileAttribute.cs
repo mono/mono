@@ -6,8 +6,10 @@
 //
 // (C) 2002 Chris J Breisch
 //
+using System;
+
 namespace Microsoft.VisualBasic {
-	[System.FlagsAttribute] 
+	[Flags] 
 	public enum FileAttribute : int {
 		Normal = 0,
 		ReadOnly = 1,

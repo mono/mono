@@ -6,15 +6,13 @@
 //
 // (C) 2002 Chris J Breisch
 //
+using System;
+using System.ComponentModel;
+
 namespace Microsoft.VisualBasic.CompilerServices {
-	[System.AttributeUsageAttribute(System.AttributeTargets.Class)] 
-	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
-	[MonoTODO]
-	sealed public class OptionTextAttribute : System.Attribute {
-		// Declarations
-		// Constructors
-		// Properties
-		// Methods
-		// Events
+	[AttributeUsage(AttributeTargets.Class)] 
+	[EditorBrowsable(EditorBrowsableState.Never)] 
+	[MonoTODO("What should it do?")]
+	sealed public class OptionTextAttribute : Attribute {
 	};
 }

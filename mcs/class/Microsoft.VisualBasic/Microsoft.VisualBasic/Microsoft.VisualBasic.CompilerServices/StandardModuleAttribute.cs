@@ -6,15 +6,15 @@
 //
 // (C) 2002 Chris J Breisch
 //
+using System;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
+
 namespace Microsoft.VisualBasic.CompilerServices {
-	[System.AttributeUsageAttribute(System.AttributeTargets.Class)] 
-	[System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Never)] 
-	[System.Runtime.InteropServices.StructLayoutAttribute(System.Runtime.InteropServices.LayoutKind.Auto)] 
-	sealed public class StandardModuleAttribute : System.Attribute {
-		// Declarations
-		// Constructors
-		// Properties
-		// Methods
-		// Events
+	[AttributeUsage(AttributeTargets.Class)] 
+	[EditorBrowsable(EditorBrowsableState.Never)] 
+	[StructLayout(LayoutKind.Auto)] 
+	[MonoTODO("What should it do?")]
+	sealed public class StandardModuleAttribute : Attribute {
 	};
 }
