@@ -671,6 +671,12 @@ public class EnumTest : TestCase
 		}
 	}
 
+	[Test]
+	public void ParseValue() {
+		TestingEnum3 t1 = new TestingEnum3();
+		AssertEquals ("Parse numeric value", TestingEnum3.Test, Enum.Parse(t1.GetType(), "18446744073709551615", false));
+	}
+
 	public void TestToObject() {
 		{
 			bool errorThrown = false;

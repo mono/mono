@@ -1,3 +1,7 @@
+2003/02/21  Nick Drochak <ndrochak@gol.com>
+
+	* EnumTest.cs: Add test for bug 38452 (Parsing numeric enum values).
+
 2003-02-20  Nick Drochak <ndrochak@gol.com>
 
 	* ByteTest.cs: Isolate test for mcs 'checked' bug.
