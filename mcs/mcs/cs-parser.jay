@@ -337,7 +337,7 @@ namespace_declaration
 		if (attrs != null) {
 			foreach (AttributeSection asec in attrs.AttributeSections)
 				if (asec.Target == "assembly")
-					CodeGen.Assembly.AddAttribute (current_container, asec);
+					CodeGen.Assembly.AddAttribute (new GlobalAttributeSection (current_container, asec));
 				else
 					Report.Error(1518, Lexer.Location,
 					"Attributes cannot be applied to namespaces."
@@ -457,11 +457,11 @@ attribute_sections
 		AttributeSection sect = (AttributeSection) $1;
 
 		if (sect.Target == "assembly") {
-			CodeGen.Assembly.AddAttribute (current_container, sect);
+			CodeGen.Assembly.AddAttribute (new GlobalAttributeSection (current_container, sect));
 			$$ = null;
 		}
 		else if (sect.Target == "module") {
-			CodeGen.Module.AddAttribute (current_container, sect);
+			CodeGen.Module.AddAttribute (new GlobalAttributeSection (current_container, sect));
 			$$ = null;
 		}
 		else
@@ -473,10 +473,10 @@ attribute_sections
 		AttributeSection sect = (AttributeSection) $2;
 
 		if (sect.Target == "assembly") {
-			CodeGen.Assembly.AddAttribute (current_container, sect);
+			CodeGen.Assembly.AddAttribute (new GlobalAttributeSection (current_container, sect));
 		}
 		else if (sect.Target == "module") {
-			CodeGen.Module.AddAttribute (current_container, sect);
+			CodeGen.Module.AddAttribute (new GlobalAttributeSection (current_container, sect));
 		}
 		else {
 			if (attrs == null)
@@ -1303,7 +1303,7 @@ interface_event_declaration
 	: opt_attributes opt_new EVENT type IDENTIFIER SEMICOLON
 	  {
 		$$ = new Event (current_container, (Expression) $4, (int) $2, true, (string) $5, null,
-				(Attributes) $1, null, null, lexer.Location);
+				(Attributes) $1, lexer.Location);
 	  }
 	| opt_attributes opt_new EVENT type error {
 		CheckIdentifierToken (yyToken);
@@ -1605,7 +1605,7 @@ event_declaration
 
 			Event e = new Event (current_container, (Expression) $4, (int) $2, false, var.identifier,
 					     var.expression_or_array_initializer,
-					     (Attributes) $1, null, null, lexer.Location);
+					     (Attributes) $1, lexer.Location);
 
 			CheckDef (current_container.AddEvent (e), e.Name, e.Location);
 				       
@@ -1633,16 +1633,9 @@ event_declaration
 			$$ = null;
 		} else {
 			Pair pair = (Pair) $8;
-			Accessor add_accessor = null;
-			Accessor rem_accessor = null;
-	
-			if (pair.First != null)
-				add_accessor = (Accessor) pair.First;
-			if (pair.Second != null)
-				rem_accessor = (Accessor) pair.Second;
 			
 			Event e = new Event (current_container, (Expression) $4, (int) $2, false, (string) $5,
-					     null, (Attributes) $1, add_accessor, rem_accessor,
+					     null, (Attributes) $1, (Accessor) pair.First, (Accessor) pair.Second,
 					     loc);
 			
 			CheckDef (current_container.AddEvent (e), e.Name, loc);

@@ -108,6 +108,7 @@ namespace Mono.CSharp {
 		static WarningData GetWarningMsg (int warn_no)
 		{
 			switch (warn_no) {
+				case -24: return new WarningData (1, "The Microsoft Runtime cannot set this marshal info. Please use the Mono runtime instead.");
 				case 3012: return new WarningData (1, "You must specify the CLSCompliant attribute on the assembly, not the module, to enable CLS compliance checking");
 				case 3019: return new WarningData (2, "CLS compliance checking will not be performed on '{0}' because it is private or internal");
 			}

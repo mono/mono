@@ -104,7 +104,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Analyze whether CLS-Compliant verification must be execute for this MemberCore.
 		/// </summary>
-		public bool IsClsCompliaceRequired (DeclSpace container)
+		public override bool IsClsCompliaceRequired (DeclSpace container)
 		{
 			if ((caching_flags & Flags.ClsCompliance_Undetected) == 0)
 				return (caching_flags & Flags.ClsCompliant) != 0;
@@ -946,6 +946,21 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public abstract MemberCache MemberCache {
 			get;
+		}
+
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		{
+			try {
+				TypeBuilder.SetCustomAttribute (cb);
+			} catch (System.ArgumentException e) {
+				Report.Warning (-21, a.Location,
+						"The CharSet named property on StructLayout\n"+
+						"\tdoes not work correctly on Microsoft.NET\n"+
+						"\tYou might want to remove the CharSet declaration\n"+
+						"\tor compile using the Mono runtime instead of the\n"+
+						"\tMicrosoft .NET runtime\n"+
+						"\tThe runtime gave the error: " + e);
+			}
 		}
 
 		/// <summary>

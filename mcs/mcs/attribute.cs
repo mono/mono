@@ -12,6 +12,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
@@ -47,7 +48,14 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Use member-specific procedure to apply attribute @a in @cb to the entity being built in @builder
 		/// </summary>
-		public abstract void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb);
+		public abstract void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb);
+
+		/// <summary>
+		/// Returns combination of enabled AttributeTargets
+		/// </summary>
+		public abstract AttributeTargets AttributeTargets { get; }
+
+		public abstract bool IsClsCompliaceRequired (DeclSpace ds);
 	};
 
 	public class Attribute {
@@ -58,18 +66,13 @@ namespace Mono.CSharp {
 
 		public Type Type;
 		
-		//
-		// The following are only meaningful when the attribute
-		// being emitted is an AttributeUsage attribute
-		//
-		public AttributeTargets Targets;
-		public bool AllowMultiple;
-		public bool Inherited;
+		// Is non-null if type is AttributeUsageAttribute
+		AttributeUsageAttribute usage_attribute;
 
-		bool usage_attr = false;
-
-		public bool UsageAttr {
-			get { return usage_attr; }
+		public AttributeUsageAttribute UsageAttribute {
+			get {
+				return usage_attribute;
+			}
 		}
 		
 		MethodImplOptions ImplOptions;
@@ -82,6 +85,8 @@ namespace Mono.CSharp {
 		object [] field_values_arr;
 		object [] prop_values_arr;
 		object [] pos_values;
+
+		static PtrHashtable usage_attr_cache = new PtrHashtable ();
 		
 		public Attribute (string name, ArrayList args, Location loc)
 		{
@@ -223,7 +228,7 @@ namespace Mono.CSharp {
 			bool MethodImplAttr = false;
 			bool MarshalAsAttr = false;
 			bool GuidAttr = false;
-			usage_attr = false;
+			bool usage_attr = false;
 
 			bool DoCompares = true;
 
@@ -279,8 +284,8 @@ namespace Mono.CSharp {
 				
 				pos_values [i] = val;
 				if (DoCompares){
-					if (UsageAttr)
-						this.Targets = (AttributeTargets) pos_values [0];
+					if (usage_attr)
+						usage_attribute = new AttributeUsageAttribute ((AttributeTargets) pos_values [0]);
 					else if (MethodImplAttr)
 						this.ImplOptions = (MethodImplOptions) pos_values [0];
 					else if (GuidAttr){
@@ -365,11 +370,11 @@ namespace Mono.CSharp {
 						object o = c.GetValue ();
 						prop_values.Add (o);
 						
-						if (UsageAttr) {
+						if (usage_attribute != null) {
 							if (member_name == "AllowMultiple")
-								this.AllowMultiple = (bool) o;
+								usage_attribute.AllowMultiple = (bool) o;
 							if (member_name == "Inherited")
-								this.Inherited = (bool) o;
+								usage_attribute.Inherited = (bool) o;
 						}
 						
 					} else if (e is TypeOf) {
@@ -529,39 +534,14 @@ namespace Mono.CSharp {
 			return cb;
 		}
 
-                /// <summary>
-                ///   Get a string containing a list of valid targets for the attribute 'attr'
-                /// </summary>
+		/// <summary>
+		///   Get a string containing a list of valid targets for the attribute 'attr'
+		/// </summary>
 		static string GetValidTargets (Attribute attr)
 		{
 			StringBuilder sb = new StringBuilder ();
-			AttributeTargets targets = 0;
-			
-			TypeContainer a = TypeManager.LookupAttr (attr.Type);
+			AttributeTargets targets = attr.GetAttributeUsage ().ValidOn;
 
-			if (a == null) {
-				
-				System.Attribute [] attrs = null;
-				
-				try {
-					attrs = System.Attribute.GetCustomAttributes (attr.Type);
-					
-				} catch {
-					Report.Error (-20, attr.Location, "Cannot find attribute type " + attr.Name +
-						      " (maybe you forgot to set the usage using the" +
-						      " AttributeUsage attribute ?).");
-					return null;
-				}
-					
-				foreach (System.Attribute tmp in attrs)
-					if (tmp is AttributeUsageAttribute) {
-						targets = ((AttributeUsageAttribute) tmp).ValidOn;
-						break;
-					}
-			} else
-				targets = a.Targets;
-
-			
 			if ((targets & AttributeTargets.Assembly) != 0)
 				sb.Append ("'assembly' ");
 
@@ -599,7 +579,7 @@ namespace Mono.CSharp {
 				sb.Append ("'property' ");
 
 			if ((targets & AttributeTargets.ReturnValue) != 0)
-				sb.Append ("'return value' ");
+				sb.Append ("'return' ");
 
 			if ((targets & AttributeTargets.Struct) != 0)
 				sb.Append ("'struct' ");
@@ -616,56 +596,26 @@ namespace Mono.CSharp {
 				"It is valid on " + GetValidTargets (a) + "declarations only.");
 		}
 
-                /// <summary>
-                ///   Ensure that Attribute 'a' is being applied to the right language element (target)
-                /// </summary>
-		public static bool CheckAttributeTarget (Attribute a, object element)
+
+		/// <summary>
+		/// Returns AttributeUsage attribute for this type
+		/// </summary>
+		public AttributeUsageAttribute GetAttributeUsage ()
 		{
-			TypeContainer attr = TypeManager.LookupAttr (a.Type);
-			AttributeTargets targets = 0;
+			AttributeUsageAttribute ua = usage_attr_cache [Type] as AttributeUsageAttribute;
+			if (ua != null)
+				return ua;
 
-			if (attr == null) {
-				System.Attribute [] attrs = null;
-				
-				try {
-					attrs = System.Attribute.GetCustomAttributes (a.Type);
+			Class attr_class = TypeManager.LookupClass (Type);
 
-				} catch {
-					Report.Error (-20, a.Location, "Cannot find attribute type " + a.Name +
-						      " (maybe you forgot to set the usage using the" +
-						      " AttributeUsage attribute ?).");
-					return false;
-				}
-					
-				foreach (System.Attribute tmp in attrs)
-					if (tmp is AttributeUsageAttribute) { 
-						targets = ((AttributeUsageAttribute) tmp).ValidOn;
-                                                break;
-                                        }
-			} else
-				targets = attr.Targets;
-
-
-			if (element is Class)		return ((targets & AttributeTargets.Class) != 0);
-			if (element is Struct)		return ((targets & AttributeTargets.Struct) != 0);
-			if (element is Constructor)	return ((targets & AttributeTargets.Constructor) != 0);
-			if (element is Delegate)	return ((targets & AttributeTargets.Delegate) != 0);
-			if (element is Enum)		return ((targets & AttributeTargets.Enum) != 0);
-			if (element is Event)		return ((targets & AttributeTargets.Event) != 0);
-			if (element is Field 
-			    || element is FieldBuilder)	return ((targets & AttributeTargets.Field) != 0);
-			if (element is Interface)	return ((targets & AttributeTargets.Interface) != 0);
-			if (element is Method
-			    || element is Operator
-			    || element is Accessor)	return ((targets & AttributeTargets.Method) != 0);
-			if (element is ParameterBase)	return ((targets & (AttributeTargets.Parameter 
-									    | AttributeTargets.ReturnValue)) != 0);
-			if (element is Property
-			    || element is Indexer
-			    || element is Accessor)	return ((targets & AttributeTargets.Property) != 0);
-			if (element is AssemblyClass)	return ((targets & AttributeTargets.Assembly) != 0);
-			if (element is ModuleClass)	return ((targets & AttributeTargets.Module) != 0);
-			return false;
+			if (attr_class == null) {
+				object[] usage_attr = Type.GetCustomAttributes (TypeManager.attribute_usage_type, true);
+				ua = (AttributeUsageAttribute)usage_attr [0];
+				usage_attr_cache.Add (Type, ua);
+				return ua;
+			}
+		
+			return attr_class.AttributeUsage;
 		}
 
 		//
@@ -873,145 +823,65 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   Applies the attributes specified on target 'kind' to the `builder'.
+		/// Emit attribute for Attributable symbol
 		/// </summary>
-		public static void ApplyAttributes (EmitContext ec, object builder, object kind,
-						    Attributes opt_attrs)
+		public void Emit (EmitContext ec, Attributable ias, ListDictionary emitted_attr, string target)
 		{
-			Type attr_type = null;
-			
-			if (opt_attrs == null)
-				return;
-			if (opt_attrs.AttributeSections == null)
+			CustomAttributeBuilder cb = Resolve (ec);
+			if (cb == null)
 				return;
 
-			ArrayList emitted_attrs = new ArrayList ();
-			ArrayList emitted_targets = new ArrayList ();
-
-			foreach (AttributeSection asec in opt_attrs.AttributeSections) {
-				string attr_target = asec.Target;
-				
-				if (asec.Attributes == null)
-					continue;
-
-				if (attr_target == "return" && !(builder is ParameterBuilder))
-					continue;
-				
-				foreach (Attribute a in asec.Attributes) {
-					Location loc = a.Location;
-					CustomAttributeBuilder cb = a.Resolve (ec);
-					attr_type = a.Type;
-
-					if (cb == null) 
-						continue;
-
-					//
-					// Perform the check for duplicate attributes
-					//
-					if (emitted_attrs.Contains (attr_type) &&
-					    emitted_targets.Contains (attr_target) &&
-					    !TypeManager.AreMultipleAllowed (attr_type)) {
-						Report.Error (579, loc, "Duplicate '" + a.Name + "' attribute");
-						return;
-					}
-
-					if (!CheckAttributeTarget (a, kind)) {
-						Error_AttributeNotValidForElement (a, loc);
-						return;
-					}
-
-					if (kind is Attributable) {
-						Attributable able = kind as Attributable;
-						able.ApplyAttributeBuilder (builder, a, cb);
-					} 
-					else if (kind is IAttributeSupport) {
-						IAttributeSupport attributeSupport = kind as IAttributeSupport;
-						attributeSupport.SetCustomAttribute (cb);
-					} 
-					else if (kind is FieldBuilder) {
-						// This is used only for enumerated constants
-
-						if (attr_type == TypeManager.marshal_as_attr_type) {
-							UnmanagedMarshal marshal = a.GetMarshal ();
-							if (marshal == null) {
-								Report.Warning (-24, loc,
-									"The Microsoft Runtime cannot set this marshal info. " +
-									"Please use the Mono runtime instead.");
-							} else {
-								((FieldBuilder) builder).SetMarshal (marshal);
-							}
-						} else { 
-							((FieldBuilder) builder).SetCustomAttribute (cb);
-						}
-					} 
-					else {
-						throw new Exception ("" + loc + ": Error applying Attribute " + a.Type 
-								     + " to unknown kind " + kind);
-
-					}
-
-					//
-					// Once an attribute type has been emitted once we
-					// keep track of the info to prevent multiple occurences
-					// for attributes which do not explicitly allow it
-					//
-					if (!emitted_attrs.Contains (attr_type))
-						emitted_attrs.Add (attr_type);
-
-					//
-					// We keep of this target-wise and so emitted targets
-					// are tracked too
-					//
-					if (!emitted_targets.Contains (attr_target))
-						emitted_targets.Add (attr_target);
-				}
+			AttributeUsageAttribute usage_attr = GetAttributeUsage ();
+			if ((usage_attr.ValidOn & ias.AttributeTargets) == 0) {
+				Error_AttributeNotValidForElement (this, Location);
+				return;
 			}
+
+			ias.ApplyAttributeBuilder (this, cb);
+
+			string emitted = emitted_attr [Type] as string;
+			if (target != null && emitted == target && !usage_attr.AllowMultiple) {
+				Report.Error (579, Location, "Duplicate '" + Name + "' attribute");
+			}
+
+			emitted_attr [Type] = target;
 
 			// Here we are testing attribute arguments for array usage (error 3016)
-			DeclSpace ds = kind as DeclSpace;
-			if ((ds != null && ds.IsClsCompliaceRequired (ds)) ||
-			    (kind is AssemblyClass && CodeGen.Assembly.IsClsCompliant)) {
-				
-				foreach (AttributeSection asec in opt_attrs.AttributeSections) {
-					foreach (Attribute a in asec.Attributes) {
-						if (a.Arguments == null)
-							continue;
+			if (ias.IsClsCompliaceRequired (ec.DeclSpace)) {
+				if (Arguments == null)
+					return;
 
-						ArrayList pos_args = (ArrayList) a.Arguments [0];
-						if (pos_args != null) {
-							foreach (Argument arg in pos_args) { 
-								// Type is undefined (was error 246)
-								if (arg.Type == null)
-									return;
+				ArrayList pos_args = (ArrayList) Arguments [0];
+				if (pos_args != null) {
+					foreach (Argument arg in pos_args) { 
+						// Type is undefined (was error 246)
+						if (arg.Type == null)
+							return;
 
-								if (arg.Type.IsArray) {
-									Report.Error_T (3016, a.Location);
-									return;
-								}
-							}
-						}
-					
-						if (a.Arguments.Count < 2)
-							continue;
-					
-						ArrayList named_args = (ArrayList) a.Arguments [1];
-						foreach (DictionaryEntry de in named_args) {
-							Argument arg  = (Argument) de.Value;
-
-							// Type is undefined (was error 246)
-							if (arg.Type == null)
-								return;
-
-							if (arg.Type.IsArray) 
-							{
-								Report.Error_T (3016, a.Location);
-								return;
-							}
+						if (arg.Type.IsArray) {
+							Report.Error_T (3016, Location);
+							return;
 						}
 					}
 				}
-			}
+			
+				if (Arguments.Count < 2)
+					return;
+			
+				ArrayList named_args = (ArrayList) Arguments [1];
+				foreach (DictionaryEntry de in named_args) {
+					Argument arg  = (Argument) de.Value;
 
+					// Type is undefined (was error 246)
+					if (arg.Type == null)
+						return;
+
+					if (arg.Type.IsArray) {
+						Report.Error_T (3016, Location);
+						return;
+					}
+				}
+			}
 		}
 
 		public object GetValue (EmitContext ec, Constant c, Type target)
@@ -1182,6 +1052,34 @@ namespace Mono.CSharp {
 		}
 	}
 	
+
+	/// <summary>
+	/// For global attributes (assembly, module) we need special handling.
+	/// Attributes can be located in the several files
+	/// </summary>
+	public class GlobalAttributeSection: AttributeSection
+	{
+		public readonly NamespaceEntry ns;
+
+		public GlobalAttributeSection (TypeContainer container, AttributeSection attrsec):
+			base (attrsec.Target, attrsec.Attributes)
+		{
+			ns = container.NamespaceEntry;
+		}
+
+		public override void Emit(EmitContext ec, Attributable ias, ListDictionary ld)
+		{
+			ec.DeclSpace.NamespaceEntry = ns;
+			base.Emit (ec, ias, ld);
+		}
+
+		public override Attribute Search(Type t, DeclSpace ds)
+		{
+			ds.NamespaceEntry = ns;
+			return base.Search (t, ds);
+		}
+	}
+
 	public class AttributeSection {
 		public readonly string    Target;
 		public readonly ArrayList Attributes;
@@ -1191,7 +1089,22 @@ namespace Mono.CSharp {
 			Target = target;
 			Attributes = attrs;
 		}
-		
+
+		public virtual void Emit (EmitContext ec, Attributable ias, ListDictionary ld)
+		{
+			foreach (Attribute a in Attributes) {
+				a.Emit (ec, ias, ld, Target);
+			}
+		}
+
+		public virtual Attribute Search (Type t, DeclSpace ds)
+		{
+			foreach (Attribute a in Attributes) {
+				if (a.ResolveType (ds, false) == t)
+					return a;
+			}
+			return null;
+		}
 	}
 
 	public class Attributes {
@@ -1213,28 +1126,31 @@ namespace Mono.CSharp {
 		public Attribute Search (Type t, DeclSpace ds)
 		{
 			foreach (AttributeSection attr_section in AttributeSections){
-				foreach (Attribute a in attr_section.Attributes){
-					if (a.ResolveType (ds, false) == t)
-						return a;
-				}
+				Attribute a = attr_section.Search (t, ds);
+				if (a != null)
+					return a;
 			}
 			return null;
 		}
 
+		public void Emit (EmitContext ec, Attributable ias)
+		{
+			ListDictionary ld = new ListDictionary ();
+
+			foreach (AttributeSection attr_section in AttributeSections) {
+				attr_section.Emit (ec, ias, ld);
+			}
+		}
+
 		public bool Contains (Type t, DeclSpace ds)
 		{
-                        return Search (t, ds) != null;
+			return Search (t, ds) != null;
 		}
 
 		public Attribute GetClsCompliantAttribute (DeclSpace ds)
 		{
 			return Search (TypeManager.cls_compliant_attribute_type, ds);
 		}
-	}
-
-	public interface IAttributeSupport
-	{
-		void SetCustomAttribute (CustomAttributeBuilder customBuilder);
 	}
 
 	/// <summary>

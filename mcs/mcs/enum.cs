@@ -16,6 +16,63 @@ using System.Reflection.Emit;
 
 namespace Mono.CSharp {
 
+	class EnumMember: Attributable {
+		string name;
+		Enum parent;
+		Location loc;
+
+		public FieldBuilder builder;
+
+		public EnumMember (string name, Enum parent, Location loc, Attributes attrs):
+			base (attrs)
+		{
+			this.name = name;
+			this.parent = parent;
+			this.loc = loc;
+		}
+
+		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
+		{
+			if (a.Type == TypeManager.marshal_as_attr_type) {
+				UnmanagedMarshal marshal = a.GetMarshal ();
+				if (marshal != null) {
+					builder.SetMarshal (marshal);
+					return;
+				}
+				Report.Warning_T (-24, a.Location);
+				return;
+			}
+
+			builder.SetCustomAttribute (cb);
+		}
+
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Field;
+			}
+		}
+
+		public override bool IsClsCompliaceRequired(DeclSpace ds)
+		{
+			return parent.IsClsCompliaceRequired (ds);
+		}
+
+		public void DefineMember (TypeBuilder tb)
+		{
+			FieldAttributes attr = FieldAttributes.Public | FieldAttributes.Static
+				| FieldAttributes.Literal;
+			
+			builder = tb.DefineField (name, tb, attr);
+		}
+
+		public void Emit (EmitContext ec)
+		{
+			if (OptAttributes != null)
+				OptAttributes.Emit (ec, this); 
+		}
+
+	}
+
 	/// <summary>
 	///   Enumeration container
 	/// </summary>
@@ -40,6 +97,9 @@ namespace Mono.CSharp {
 		Hashtable in_transit;
 		
 		ArrayList field_builders;
+
+
+		Hashtable name_to_member;
 		
 		public const int AllowedModifiers =
 			Modifiers.NEW |
@@ -61,6 +121,8 @@ namespace Mono.CSharp {
 			member_to_value = new Hashtable ();
 			in_transit = new Hashtable ();
 			field_builders = new ArrayList ();
+
+			name_to_member = new Hashtable ();
 		}
 
 		/// <summary>
@@ -87,13 +149,10 @@ namespace Mono.CSharp {
 				member_to_attributes = new Hashtable ();
 
 			member_to_attributes.Add (name, opt_attrs);
+
+			name_to_member.Add (name, new EnumMember (name, this, loc, opt_attrs));
 			
 			return AdditionResult.Success;
-		}
-
-		public override void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb)
-		{
-			((TypeBuilder) builder).SetCustomAttribute (cb);
 		}
 
 		//
@@ -505,10 +564,8 @@ namespace Mono.CSharp {
 				}
 			}
 
-			FieldAttributes attr = FieldAttributes.Public | FieldAttributes.Static
-					| FieldAttributes.Literal;
-			
-			FieldBuilder fb = TypeBuilder.DefineField (name, TypeBuilder, attr);
+			EnumMember em = name_to_member [name] as EnumMember;
+			em.DefineMember (TypeBuilder);
 
 			bool fail;
 			default_value = TypeManager.ChangeType (default_value, UnderlyingType, out fail);
@@ -517,18 +574,13 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			fb.SetConstant (default_value);
-			field_builders.Add (fb);
+			em.builder.SetConstant (default_value);
+			field_builders.Add (em.builder);
 			member_to_value [name] = default_value;
 
-			if (!TypeManager.RegisterFieldValue (fb, default_value))
+			if (!TypeManager.RegisterFieldValue (em.builder, default_value))
 				return null;
 
-			//
-			// Now apply attributes
-			//
-			Attribute.ApplyAttributes (ec, fb, fb, (Attributes) member_to_attributes [name]); 
-			
 			return default_value;
 		}
 
@@ -551,10 +603,7 @@ namespace Mono.CSharp {
 			
 			object default_value = 0;
 			
-			FieldAttributes attr = FieldAttributes.Public | FieldAttributes.Static
-				             | FieldAttributes.Literal;
-
-			
+		
 			foreach (string name in ordered_enums) {
 				//
 				// Have we already been defined, thanks to some cross-referencing ?
@@ -575,8 +624,10 @@ namespace Mono.CSharp {
 						return false;
 					}
 
-					FieldBuilder fb = TypeBuilder.DefineField (
-						name, TypeBuilder, attr);
+					EnumMember em = name_to_member [name] as EnumMember;
+
+					em.DefineMember (TypeBuilder);
+					FieldBuilder fb = em.builder;
 					
 					if (default_value == null) {
 					   Report.Error (543, loc, "Enumerator value for '" + name + "' is too large to " +
@@ -597,23 +648,23 @@ namespace Mono.CSharp {
 					
 					if (!TypeManager.RegisterFieldValue (fb, default_value))
 						return false;
-
-					//
-					// Apply attributes on the enum member
-					//
-					Attribute.ApplyAttributes (ec, fb, fb, (Attributes) member_to_attributes [name]);
 				}
 
 				default_value = GetNextDefaultValue (default_value);
 			}
 			return true;
 		}
-			
+
 		public override void Emit (TypeContainer tc)
 		{
+			EmitContext ec = new EmitContext (tc, this, Location, null, null, ModFlags, false);
+
 			if (OptAttributes != null) {
-				EmitContext ec = new EmitContext (tc, this, Location, null, null, ModFlags, false);
-				Attribute.ApplyAttributes (ec, TypeBuilder, this, OptAttributes);
+				OptAttributes.Emit (ec, this);
+			}
+
+			foreach (EnumMember em in name_to_member.Values) {
+				em.Emit (ec);
 			}
 
 			base.Emit (tc);
@@ -702,5 +753,12 @@ namespace Mono.CSharp {
 				return (Expression) defined_names [name];
 			}
 		}
+
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Enum;
+			}
+		}
+
 	}
 }

@@ -58,21 +58,6 @@ namespace Mono.CSharp {
 			Parameters      = param_list;
 		}
 
-		public override void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb)
-		{
-			try {
-				((TypeBuilder) builder).SetCustomAttribute (cb);
-			} catch (System.ArgumentException e) {
-				Report.Warning (-21, a.Location,
-						"The CharSet named property on StructLayout\n"+
-						"\tdoes not work correctly on Microsoft.NET\n"+
-						"\tYou might want to remove the CharSet declaration\n"+
-						"\tor compile using the Mono runtime instead of the\n"+
-						"\tMicrosoft .NET runtime\n"+
-						"\tThe runtime gave the error: " + e);
-			}
-		}
-
 		public override TypeBuilder DefineType ()
 		{
 			if (TypeBuilder != null)
@@ -227,7 +212,7 @@ namespace Mono.CSharp {
 					pb = InvokeBuilder.DefineParameter (i+1, p.Attributes, p.Name);
 					cattr = p.OptAttributes;
 					if (cattr != null)
-						Attribute.ApplyAttributes (ec, pb, p, cattr);
+						cattr.Emit (ec, p);
 
 					if ((p.ModFlags & Parameter.Modifier.ISBYREF) != 0)
 						out_params++;
@@ -240,7 +225,7 @@ namespace Mono.CSharp {
 					i+1, p.Attributes, p.Name);
 				cattr = p.OptAttributes;
 				if (cattr != null)
-					Attribute.ApplyAttributes (ec, pb, p, cattr);
+					cattr.Emit (ec, p);
 			}
 			
 			InvokeBuilder.SetImplementationFlags (MethodImplAttributes.Runtime);
@@ -280,7 +265,7 @@ namespace Mono.CSharp {
 					pb = BeginInvokeBuilder.DefineParameter (i+1, p.Attributes, p.Name);
 					cattr = p.OptAttributes;
 					if (cattr != null)
-						Attribute.ApplyAttributes (ec, pb, p, cattr);
+						cattr.Emit (ec, p);
 				}
 			}
 			if (Parameters.ArrayParameter != null){
@@ -289,7 +274,7 @@ namespace Mono.CSharp {
 				pb = BeginInvokeBuilder.DefineParameter (i+1, p.Attributes, p.Name);
 				cattr = p.OptAttributes;
 				if (cattr != null)
-					Attribute.ApplyAttributes (ec, pb, p, cattr);
+					cattr.Emit (ec, p);
 				i++;
 			}
 
@@ -374,7 +359,7 @@ namespace Mono.CSharp {
 		{
 			if (OptAttributes != null) {
 				EmitContext ec = new EmitContext (tc, this, Location, null, null, ModFlags, false);
-				Attribute.ApplyAttributes (ec, TypeBuilder, this, OptAttributes);
+				OptAttributes.Emit (ec, this);
 			}
 
 			base.Emit (tc);
@@ -629,7 +614,12 @@ namespace Mono.CSharp {
 				return param_types;
 			}
 		}
-		
+
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Delegate | AttributeTargets.ReturnValue;
+			}
+		}
 	}
 
 	//

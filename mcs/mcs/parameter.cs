@@ -17,37 +17,61 @@ using System.Collections;
 namespace Mono.CSharp {
 
 	/// <summary>
-	///   Base class for parameters of a method.  Can also be
-	///   used to directly represent the return type of a method
+	///   Abstract Base class for parameters of a method.
 	/// </summary>
-	public class ParameterBase : Attributable {
+	public abstract class ParameterBase : Attributable {
+
+		protected ParameterBuilder builder;
+
 		public ParameterBase (Attributes attrs)
 			: base (attrs)
 		{
 		}
 
-		public override void ApplyAttributeBuilder (object builder, Attribute a, CustomAttributeBuilder cb)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
-			ParameterBuilder pb = builder as ParameterBuilder;
-
 			if (a.Type == TypeManager.marshal_as_attr_type) {
 				UnmanagedMarshal marshal = a.GetMarshal ();
-				if (marshal == null)
-					Report.Warning (-24, a.Location,
-							"The Microsoft Runtime cannot set this marshal info. " +
-							"Please use the Mono runtime instead.");
-				else 
-					pb.SetMarshal (marshal);
-			}
-			else { 
-				try {
-					pb.SetCustomAttribute (cb);
-				} catch (System.ArgumentException) {
-					Report.Warning (-24, a.Location,
-							"The Microsoft Runtime cannot set attributes \n" +
-							"on the return type of a method. Please use the \n" +
-							"Mono runtime instead.");
+				if (marshal != null) {
+					builder.SetMarshal (marshal);
+					return;
 				}
+				Report.Warning_T (-24, a.Location);
+				return;
+			}
+
+			builder.SetCustomAttribute (cb);
+		}
+
+		public override bool IsClsCompliaceRequired(DeclSpace ds)
+		{
+			return false;
+		}
+
+	}
+
+	public class ReturnParameter: ParameterBase {
+		public ReturnParameter (Attributes attrs):
+			base (attrs)
+		{
+		}
+
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.ReturnValue;
+			}
+		}
+
+		public void DefineParameter (EmitContext ec, MethodBuilder mb, Location loc)
+		{
+			try {
+				builder = mb.DefineParameter (0, ParameterAttributes.None, "");				
+				OptAttributes.Emit (ec, this);
+			} catch (ArgumentOutOfRangeException) {
+				Report.Warning (
+					-24, loc,
+					".NET SDK 1.0 does not permit setting custom attributes" +
+					" on the return type of a method");
 			}
 		}
 	}
@@ -55,6 +79,8 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Represents a single method parameter
 	/// </summary>
+
+	//TODO: Add location member to this or base class for better error location and all methods simplification.
 	public class Parameter : ParameterBase {
 		[Flags]
 		public enum Modifier : byte {
@@ -135,6 +161,12 @@ namespace Mono.CSharp {
 			}
 		}
 		
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Parameter;
+			}
+		}
+
 		/// <summary>
 		///   Returns the signature for this parameter evaluating it on the
 		///   @tc context
@@ -161,6 +193,25 @@ namespace Mono.CSharp {
 					return "ref " + typeName;
 			}
 			return typeName;
+		}
+
+		public void DefineParameter (EmitContext ec, MethodBuilder mb, ConstructorBuilder cb, int index, Location loc)
+		{
+			ParameterAttributes par_attr = Attributes;
+					
+			if (mb == null)
+				builder = cb.DefineParameter (index, par_attr, Name);
+			else 
+				builder = mb.DefineParameter (index, par_attr, Name);
+					
+			if (OptAttributes != null) {
+				OptAttributes.Emit (ec, this);
+	
+				if (par_attr == ParameterAttributes.Out){
+					if (OptAttributes.Contains (TypeManager.in_attribute_type, ec.DeclSpace))
+						Report.Error (36, loc,	"Can not use [In] attribute on out parameter");
+				}
+			}
 		}
 	}
 
@@ -465,6 +516,74 @@ namespace Mono.CSharp {
 			// For now this is the only correc thing to do
 			return CallingConventions.Standard;
 		}
+
+		//
+		// The method's attributes are passed in because we need to extract
+		// the "return:" attribute from there to apply on the return type
+		//
+		public void LabelParameters (EmitContext ec,
+			MethodBase builder,
+			Attributes method_attrs,
+			Location loc) {
+			//
+			// Define each type attribute (in/out/ref) and
+			// the argument names.
+			//
+			int i = 0;
+			
+			MethodBuilder mb = builder as MethodBuilder;
+			ConstructorBuilder cb = builder as ConstructorBuilder;
+
+			if (FixedParameters != null) {
+				for (i = 0; i < FixedParameters.Length; i++) {
+					FixedParameters [i].DefineParameter (ec, mb, cb, i + 1, loc);
+				}
+			}
+
+			if (ArrayParameter != null){
+				ParameterBuilder pb;
+				Parameter array_param = ArrayParameter;
+
+				if (mb == null)
+					pb = cb.DefineParameter (
+						i + 1, array_param.Attributes,
+						array_param.Name);
+				else
+					pb = mb.DefineParameter (
+						i + 1, array_param.Attributes,
+						array_param.Name);
+					
+				CustomAttributeBuilder a = new CustomAttributeBuilder (
+					TypeManager.cons_param_array_attribute, new object [0]);
+				
+				pb.SetCustomAttribute (a);
+			}
+
+			//
+			// And now for the return type attribute decoration
+			//
+				
+			if (mb == null || method_attrs == null)
+				return;
+
+			Attributes ret_attrs = null;
+			foreach (AttributeSection asec in method_attrs.AttributeSections) {
+
+				if (asec.Target != "return")
+					continue;
+
+				if (ret_attrs == null)
+					ret_attrs = new Attributes (asec);
+				else
+					ret_attrs.AddAttributeSection (asec);
+			}
+
+			if (ret_attrs != null) {
+				ReturnParameter ret = new ReturnParameter (ret_attrs);
+				ret.DefineParameter (ec, mb, loc);
+			}
+		}
+
 	}
 }
 		
