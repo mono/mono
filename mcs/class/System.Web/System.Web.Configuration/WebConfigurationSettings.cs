@@ -486,7 +486,24 @@ namespace System.Web.Configuration
 		{
 			if (locations != null && dirname != null) {
 				string reduced = UrlUtils.MakeRelative (context.Request.FilePath, dirname);
-				Location location = locations [reduced] as Location;
+				string [] parts = reduced.Split ('/');
+				Location location = null;
+				int length = parts.Length;
+
+				string target = null;
+				for (int i = 0; i < parts.Length; i++) {
+					if (target == null)
+						target = parts [i];
+					else
+						target = target + "/" + parts [i];
+
+					if (locations.ContainsKey (target)) {
+						location = locations [target] as Location;
+					} else if (locations.ContainsKey (target + "/*")) {
+						location = locations [target + "/*"] as Location;
+					}
+				}
+				
 				if (location == null) {
 					location = locations ["*"] as Location;
 				}
