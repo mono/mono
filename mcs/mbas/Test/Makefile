@@ -1,7 +1,7 @@
 thisdir = mbas/Test
 SUBDIRS = misc dlls tests errors
 
-DISTFILES = test-mbas.make test-mbas.pl
+DISTFILES = test-mbas.make test-mbas.pl README.tests
 
 include ../../build/rules.make
 

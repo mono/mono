@@ -1,3 +1,7 @@
+2004-12-20  Jambunathan K  <kjambunathan@novell.com>
+	* README.tests: Added
+	* Makefile (DISTFILES): Added README.tests
+
 2004-11-25  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile: New.

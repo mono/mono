@@ -1,0 +1,131 @@
+* Organization of the regression suite
+  ------------------------------------
+
+  The mbas/Test directory tree is organized as follows:
+
+                + mbas/Test
+		|
+		+-------------> dlls
+		|
+		+-------------> tests
+		|
+		+-------------> errors
+		|
+		+-------------> rerrors
+
+  The 'tests' folder contain "positive tests" - tests that should
+  compile and run just fine.
+
+  The 'errors' folder contain "negative compilation tests" - tests
+  that should fail at compile time with a pre-determined error
+  number. The expected error number is specified as an annotation on
+  the file.
+
+  The 'rerrors' folder contain "negative runtime tests" - tests that
+  should compile just fine but throw a pre-determined exception at
+  runtime. The expected exception is specified as part of the
+  'ExpectedExceptionAttribute' defined by the NUnit Framework.
+
+  The 'dlls' folder contains files that are compiled as "helper dlls"
+  so that one of the above test cases can reference it.
+
+* A word about the test harness
+  ------------------------------
+
+  The tests under 'tests', 'errors' and 'dlls' are driven using the
+  driver - "test-mbas.pl". The test driver parses the test case files
+  (particularly the 'errors' files) for the annotations and takes
+  appropriate actions.
+
+  The test case driver currently understands following annotations in
+  the test case files:
+
+	LineNo: 
+	ExpectedError: 
+	ErrorMessage: 
+	Target: 
+	CompilerOptions:
+
+  Of the above annotations, LineNo and ErrorMessage are just
+  informational and is ignored by the test driver as such.
+
+  The driver assumes that an unannotated test file as a postive test
+  case but a test case with an ExpectedError as a "negative
+  compilation test".
+
+  Please refer to one of the 'errors' files to understand how these
+  options can be used.
+
+  The tests under 'rerrors' are driven using nunit-console.exe.
+
+* Do's and Don'ts of writing test cases
+  --------------------------------------
+
+  1) Test case files that are related should begin with the same
+     meaningful anchor. For example, all test cases that test for
+     Accessibility are named as AccessibilityA.vb, AccessibilityB.vb
+     and so on.
+
+  2) Positive test cases must assert for the expected runtime
+     behaviour.
+
+  3) The BCXXXX error numbers emitted by mbas must be same as the one
+     emitted by vbc - Microsoft's VB.NET compiler. 
+
+  4) Negative compilation test cases must check for one and only
+     compile time error. The primary error that is tested for should
+     occur first in the list of test case annotations.
+
+  5) Negative runtime test cases should be written as NUnit test
+     cases.
+
+
+* Naming conventions
+  ------------------
+
+  1) Positive test cases end with the alphabets.
+
+     For example, AccessibilityA.vb, AccessibilityB.vb etc are
+     positive test cases relating to accessibility.
+
+  2) Negative compilation test cases end with the sequence C<X>s.
+
+     For example, AccessibilityC1.vb, AccessibilityC2.vb etc are
+     negative test cases relating to accessibility.
+
+  3) Negative compilation test cases end with numbers.
+
+     For example, IntegralLiteraltest1.vb, IntegralLiteralTest2.vb etc
+     are negative runtime test cases relating to accessibility.
+
+  4) Helper dlls contain "_dll". Test cases that reference a helper
+     dll contains a "_exe" in their name. The dependent files are
+     named such that the link between the file and it's helper dll is
+     obvious.
+
+     For example, Override_dll.vb is a file that is compiled to a
+     helper dll and Override_exe.vb is a test case that references
+     that helper dll. 
+
+* Running the regression suite
+  ----------------------------
+
+  1) Use 'make run-test' to compile the tests against mbas and run it
+     against the mono runtime.
+
+  2) Use 'make run-test-ondotnet' to compile the tests against mbas
+     and run it against the Microsoft's runtime. This is particularly
+     useful while developing mbas under Cygwin environment on Windows.
+
+  3) Use 'make COMPILER=vbc run-test-ondotnet' to compiler the tests
+     using vbc and run it against the Microsoft's runtime. This is
+     particularly useful for benchmarking of test cases i.e.,
+     verifying the correctness of the tests.
+
+  4) Use 'make consolidate-test-results' to create a consolidated test
+     results file that is essentially a concatenation of the test
+     results generated for 'dlls', 'tests' and 'errors'.
+
+  5) Use 'make PATTERN=<shell pattern> .... ' to run a restricted set
+     of test cases. This is particularly helpful while during unit
+     testing a newly implemented feature.
