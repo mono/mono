@@ -220,15 +220,20 @@ namespace MonoTests.System
 			uri = new Uri ("file://server/filename.ext");
 			Assertion.Assert ("#3", uri.IsUnc);
 
+			uri = new Uri (@"\\server\share\filename.ext");			
+			Assertion.Assert ("#6", uri.IsUnc);
+		}
+
+		[Test]
+		[Ignore ("Known to fail under MS runtime")]
+		public void Unc2 ()
+		{
 			try {
-				uri = new Uri ("file:/filename.ext");
+				Uri uri = new Uri ("file:/filename.ext");
 				Assertion.Assert ("#4", uri.IsUnc);
 			} catch (UriFormatException) {
 				Assertion.Fail ("#5: known to fail with ms.net");
 			}			
-
-			uri = new Uri (@"\\server\share\filename.ext");			
-			Assertion.Assert ("#6", uri.IsUnc);
 		}
 		
 		[Test]
@@ -334,15 +339,6 @@ namespace MonoTests.System
 			Assertion.AssertEquals ("#14", "file://server", uri.GetLeftPart (UriPartial.Authority));
 			Assertion.AssertEquals ("#15", "file://server/filename.ext", uri.GetLeftPart (UriPartial.Path));			
 
-			try {
-				uri = new Uri ("file:/filename.ext");
-				Assertion.AssertEquals ("#16", "file://", uri.GetLeftPart (UriPartial.Scheme));
-				Assertion.AssertEquals ("#17", "", uri.GetLeftPart (UriPartial.Authority));
-				Assertion.AssertEquals ("#18", "file:///filename.ext", uri.GetLeftPart (UriPartial.Path));			
-			} catch (UriFormatException) {
-				Assertion.Fail ("#19: known to fail with ms.net (it's their own example!)");
-			}			
-
 			uri = new Uri (@"\\server\share\filename.ext");
 			Assertion.AssertEquals ("#20", "file://", uri.GetLeftPart (UriPartial.Scheme));
 			Assertion.AssertEquals ("#21", "file://server", uri.GetLeftPart (UriPartial.Authority));
@@ -354,6 +350,20 @@ namespace MonoTests.System
 			Assertion.AssertEquals ("#25", "http://www.contoso.com:8080/index.htm", uri.GetLeftPart (UriPartial.Path));
 		}
 		
+		[Test]
+		[Ignore("Known to fail under MS runtime")]
+		public void GetLeftPart2 ()
+		{
+			try {
+				Uri uri = new Uri ("file:/filename.ext");
+				Assertion.AssertEquals ("#16", "file://", uri.GetLeftPart (UriPartial.Scheme));
+				Assertion.AssertEquals ("#17", "", uri.GetLeftPart (UriPartial.Authority));
+				Assertion.AssertEquals ("#18", "file:///filename.ext", uri.GetLeftPart (UriPartial.Path));			
+			} catch (UriFormatException) {
+				Assertion.Fail ("#19: known to fail with ms.net (it's their own example!)");
+			}			
+		}
+
 		[Test]
 		public void CheckHostName ()
 		{
@@ -528,6 +538,67 @@ namespace MonoTests.System
 			Assertion.AssertEquals ("#10", true, Uri.CheckSchemeName ("htt+p6"));
 			// 0x00E1 -> &atilde;
 			Assertion.AssertEquals ("#11", true, Uri.CheckSchemeName ("htt\u00E1+p6"));
+		}
+
+		[Test]
+		[ExpectedException (typeof (UriFormatException))]
+		public void NoHostname ()
+		{
+			Uri uri = new Uri ("http://");
+		}
+
+		[Test]
+		[ExpectedException (typeof (UriFormatException))]
+		[Ignore ("MS throws an IndexOutOfRangeException. Bug?")]
+		public void NoHostname2 ()
+		{
+			Uri uri = new Uri ("file://");
+		}
+
+		[Test]
+		public void Segments1 ()
+		{
+			Uri uri = new Uri ("http://localhost/");
+			string [] segments = uri.Segments;
+			Assertion.AssertEquals ("#01", 1, segments.Length);
+			Assertion.AssertEquals ("#02", "/", segments [0]);
+			
+		}
+
+		[Test]
+		public void Segments2 ()
+		{
+			Uri uri = new Uri ("http://localhost/dir/dummypage.html");
+			string [] segments = uri.Segments;
+			Assertion.AssertEquals ("#01", 3, segments.Length);
+			Assertion.AssertEquals ("#02", "/", segments [0]);
+			Assertion.AssertEquals ("#03", "dir/", segments [1]);
+			Assertion.AssertEquals ("#04", "dummypage.html", segments [2]);
+			
+		}
+
+		[Test]
+		public void Segments3 ()
+		{
+			Uri uri = new Uri ("http://localhost/dir/dummypage/");
+			string [] segments = uri.Segments;
+			Assertion.AssertEquals ("#01", 3, segments.Length);
+			Assertion.AssertEquals ("#02", "/", segments [0]);
+			Assertion.AssertEquals ("#03", "dir/", segments [1]);
+			Assertion.AssertEquals ("#04", "dummypage/", segments [2]);
+			
+		}
+
+		[Test]
+		public void Segments4 ()
+		{
+			Uri uri = new Uri ("file:///c:/hello");
+			string [] segments = uri.Segments;
+			Assertion.AssertEquals ("#01", 3, segments.Length);
+			Assertion.AssertEquals ("#02", "c:", segments [0]);
+			Assertion.AssertEquals ("#03", "/", segments [1]);
+			Assertion.AssertEquals ("#04", "hello", segments [2]);
+			
 		}
 
 		public static void Print (Uri uri)

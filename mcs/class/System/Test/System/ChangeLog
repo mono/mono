@@ -1,5 +1,10 @@
 2003-03-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* UriTest.cs: moved a couple of test to their own method as they fail
+	with MS runtime. Added new tests for Segment.
+
+2003-03-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* UriTest.cs: added CheckSchemaName tests.
 
 2002-09-17  Nick Drochak  <ndrochak@gol.com>
