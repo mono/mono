@@ -172,7 +172,7 @@ namespace System.Windows.Forms {
 		
 		protected override CreateParams CreateParams {
 			get {
-				return this.CreateParams;
+				return base.CreateParams;
 			}
 		}
 
