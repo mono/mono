@@ -611,7 +611,11 @@ class_ref		: OPEN_BRACKET slashed_name CLOSE_BRACKET slashed_name
                           }
 			| OPEN_BRACKET D_MODULE slashed_name CLOSE_BRACKET slashed_name
                           {
-                                
+                                if (codegen.IsThisModule ((string) $3)) {
+                                        $$ = new TypeRef ((string) $5, false, null);
+                                } else {
+                                        $$ = codegen.ExternTable.GetModuleTypeRef ((string) $3, (string) $5, false);
+                                }
                           }
 			| slashed_name
                           {
@@ -2368,6 +2372,9 @@ module_head		: D_MODULE
                                 codegen.SetModuleName ((string) $2);
                           }
 			| D_MODULE K_EXTERN comp_name
+                          {
+                                codegen.ExternTable.AddModule ((string) $3);                         
+                          }
 			;
 
 file_decl		: D_FILE file_attr comp_name file_entry D_HASH ASSIGN
