@@ -1,3 +1,8 @@
+2003-03-31  Alan Tam <Tam@SiuLung.com>
+
+	* UITypeEditor.cs: Added
+	* PaintValueEventArgs.cs: Fixed typo in namespace
+
 2002-12-01  Alejandro Sánchez Acosta <raciel@es.gnu.org>
 
 	* PaintValueEventArgs.cs,

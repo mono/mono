@@ -8,7 +8,7 @@
 
 using System.ComponentModel;
 
-namespace System.Drawing.Desing
+namespace System.Drawing.Design
 {
 	public class PaintValueEventArgs : EventArgs
 	{
