@@ -1,3 +1,14 @@
+2001-09-28  Dick Porter  <dick@ximian.com>
+
+	* icall.c:
+	* threads-pthread.h: 
+	* threads-pthread.c: Implemented internal calls for
+	LocalDataStoreSlot operations.  Applied mutexes around all shared
+	data.  Reworked the thread creation and Start() operations to
+	avoid a race condition.
+	
+	* threads-dummy.h:
+	* threads-dummy.c: Dummy calls for the LocalDataStoreSlot operations
 
 Thu Sep 27 21:45:55 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
