@@ -1,3 +1,10 @@
+2005-04-05  Alexander Olk  <xenomorph2@onlinehome.de>
+
+	* FileDialog.cs:
+	  - Don't change PopupButtonState to Normal when the
+	    PopupButton gets pressed several times.
+	  - Renamed ButtonPanel to PopupButtonPanel
+
 2005-04-05  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ColorDialog.cs: Use cached objects instead of creating them

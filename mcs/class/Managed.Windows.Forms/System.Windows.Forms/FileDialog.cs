@@ -472,7 +472,7 @@ namespace System.Windows.Forms
 		{
 			private Button cancelButton;
 			private ToolBarButton upToolBarButton;
-			private ButtonPanel buttonPanel;
+			private PopupButtonPanel popupButtonPanel;
 			private Button openSaveButton;
 			private Button helpButton;
 			private Label fileTypeLabel;
@@ -537,7 +537,7 @@ namespace System.Windows.Forms
 				openSaveButton = new Button( );
 				fileDialog.form.AcceptButton = openSaveButton;
 				helpButton = new Button( );
-				buttonPanel = new ButtonPanel( this );
+				popupButtonPanel = new PopupButtonPanel( this );
 				upToolBarButton = new ToolBarButton( );
 				cancelButton = new Button( );
 				fileDialog.form.CancelButton = cancelButton;
@@ -593,9 +593,9 @@ namespace System.Windows.Forms
 				smallButtonToolBar.TextAlign = ToolBarTextAlign.Right;
 				
 				// buttonPanel
-				buttonPanel.Dock = DockStyle.None;
-				buttonPanel.Location = new Point( 7, 37 );
-				buttonPanel.TabIndex = 3;
+				popupButtonPanel.Dock = DockStyle.None;
+				popupButtonPanel.Location = new Point( 7, 37 );
+				popupButtonPanel.TabIndex = 3;
 				
 				// mwfFileView
 				mwfFileView.Anchor = ( (AnchorStyles)( ( ( ( AnchorStyles.Top | AnchorStyles.Bottom ) | AnchorStyles.Left ) | AnchorStyles.Right ) ) );
@@ -730,7 +730,7 @@ namespace System.Windows.Forms
 				Controls.Add( fileNameComboBox );
 				Controls.Add( dirComboBox );
 				Controls.Add( searchSaveLabel );
-				Controls.Add( buttonPanel );
+				Controls.Add( popupButtonPanel );
 				Controls.Add( checkBox );
 				
 				ResumeLayout( false );
@@ -1215,7 +1215,7 @@ namespace System.Windows.Forms
 					checkBox.Show( );
 			}
 			
-			internal class ButtonPanel : Panel
+			internal class PopupButtonPanel : Panel
 			{
 				internal class PopupButton : Control
 				{
@@ -1346,7 +1346,7 @@ namespace System.Windows.Forms
 				
 				private ImageList imageList = new ImageList();
 				
-				public ButtonPanel( FileDialogPanel fileDialogPanel )
+				public PopupButtonPanel( FileDialogPanel fileDialogPanel )
 				{
 					this.fileDialogPanel = fileDialogPanel;
 					
@@ -1419,7 +1419,7 @@ namespace System.Windows.Forms
 				
 				void OnClickButton( object sender, EventArgs e )
 				{
-					if ( lastPopupButton != null )
+					if ( lastPopupButton != null && (PopupButton)sender != lastPopupButton )
 						lastPopupButton.ButtonState = PopupButton.PopupButtonState.Normal;
 					lastPopupButton = sender as PopupButton;
 					
