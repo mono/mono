@@ -447,6 +447,7 @@ namespace Mono.CSharp {
 			Statement = statement;
 			loc = l;
 		}
+		
 
 		public override bool Resolve (EmitContext ec)
 		{
@@ -2518,7 +2519,7 @@ namespace Mono.CSharp {
 		//
 		// The statements in this block
 		//
-		ArrayList statements;
+		public ArrayList statements;
 
 		//
 		// An array of Blocks.  We keep track of children just
