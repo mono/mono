@@ -1,3 +1,8 @@
+2003-12-02  Dick Porter  <dick@ximian.com>
+
+	* locales.c (create_NumberFormat): NumberFormatInfo construction.
+	Patch by Mohammad DAMT (mdamt@cdl2000.com).
+
 2003-12-01  Dick Porter  <dick@ximian.com>
 
 	* threads.c: Fix signature and call in CreateMutex and
