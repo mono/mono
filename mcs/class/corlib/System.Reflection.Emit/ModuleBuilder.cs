@@ -28,7 +28,6 @@ namespace System.Reflection.Emit {
 		private FieldBuilder[] global_fields;
 		private TypeBuilder global_type;
 		private Type global_type_created;
-		private bool is_main_module;
 		internal IMonoSymbolWriter symbol_writer;
 		Hashtable name_cache;
 		bool transient;
@@ -36,11 +35,10 @@ namespace System.Reflection.Emit {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (ModuleBuilder ab);
 
-		internal ModuleBuilder (AssemblyBuilder assb, string name, string fullyqname, bool emitSymbolInfo, bool isMainModule, bool transient) {
+		internal ModuleBuilder (AssemblyBuilder assb, string name, string fullyqname, bool emitSymbolInfo, bool transient) {
 			this.name = this.scopename = name;
 			this.fqname = fullyqname;
 			this.assembly = this.assemblyb = assb;
-			this.is_main_module = isMainModule;
 			this.transient = transient;
 			guid = Guid.NewGuid().ToByteArray ();
 			table_idx = get_next_table_index (this, 0x00, true);
@@ -367,7 +365,7 @@ namespace System.Reflection.Emit {
 		{
 			if (symbol_writer != null) {
 				string res_name;
-				if (is_main_module)
+				if (assemblyb.mainModule == this)
 					res_name = "MonoSymbolFile";
 				else
 					res_name = "MonoSymbolFile:" + fqname;

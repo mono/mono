@@ -47,6 +47,7 @@ namespace System.Reflection.Emit {
 		PEFileKinds pekind = PEFileKinds.Dll;
 		bool delay_sign;
 		uint access;
+		internal ModuleBuilder mainModule;
 		internal Type corlib_object_type = typeof (System.Object);
 		internal Type corlib_value_type = typeof (System.ValueType);
 		internal Type corlib_enum_type = typeof (System.Enum);
@@ -218,7 +219,7 @@ namespace System.Reflection.Emit {
 					throw new InvalidOperationException ("Assembly was already saved.");
 			}
 
-			ModuleBuilder r = new ModuleBuilder (this, name, fileName, emitSymbolInfo, modules == null, transient);
+			ModuleBuilder r = new ModuleBuilder (this, name, fileName, emitSymbolInfo, transient);
 
 			if (modules != null) {
 				ModuleBuilder[] new_modules = new ModuleBuilder [modules.Length + 1];
@@ -376,6 +377,14 @@ namespace System.Reflection.Emit {
 					writer.Close ();
 				}
 			}
+
+			// Create a main module if not already created
+			ModuleBuilder mainModule = null;
+			foreach (ModuleBuilder module in modules)
+				if (module.FullyQualifiedName == assemblyFileName)
+					mainModule = module;
+			if (mainModule == null)
+				mainModule = DefineDynamicModule ("RefEmit_OnDiskManifestModule", assemblyFileName);
 
 			build_metadata (this);
 

@@ -1,3 +1,13 @@
+2003-11-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AssemblyBuilder.cs ModuleBuilder.cs: First steps toward a fix for
+	#48700 (proper module support in Ref.Emit). Remove is_main field from
+	ModuleBuilder and add a mainModule field to AssemblyBuilder instead.
+	This is neccesary, since the main module is determined during the 
+	Save () call: the module with the same file name as the assembly is
+	the main module. Also create a default main module, if one is not
+	existing.
+
 2003-11-03  Martin Baulig  <martin@ximian.com>
 
 	* OpCodes.cs: Added Ldelem_Any, Stelem_Any and Unbox_Any from .NET 1.2.
