@@ -1,5 +1,14 @@
 2004-11-07  Ben Maurer  <bmaurer@ximian.com>
 
+	* loader.c (mono_method_get_header): Lazily init the header
+	on first access.
+	(mono_get_method_from_token): don't init the header here
+	(mono_free_method): the header may never be allocated
+
+	Overall, this saves 150 kb of unmanaged allocations
+	for mcs helloworld.cs. That accounts for 10% of the unmanaged
+	memory at runtime.
+	
 	* loader.c, loader.h (mono_method_get_header): new accessor.
 
 	* *.[ch]: use the above method. Prepares us to lazily load
