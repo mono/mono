@@ -2573,7 +2573,9 @@ namespace Mono.CSharp {
 
 	public class PartialContainer : TypeContainer {
 
-		protected readonly Namespace Namespace;
+		public readonly Namespace Namespace;
+		public readonly int AllowedModifiers;
+		public readonly TypeAttributes DefaultTypeAttributes;
 
 		static PartialContainer Create (NamespaceEntry ns, TypeContainer parent,
 						string name, int mod_flags, Kind kind,
@@ -2637,11 +2639,38 @@ namespace Mono.CSharp {
 		}
 
 		protected PartialContainer (NamespaceEntry ns, TypeContainer parent,
-					    string name, int mod_flags, Kind kind, Location l)
+					    string name, int mod, Kind kind, Location l)
 			: base (ns, parent, name, null, kind, l)
 		{
 			this.Namespace = ns.NS;
-			this.ModFlags = mod_flags;
+
+			switch (kind) {
+			case Kind.Class:
+				AllowedModifiers = Class.AllowedModifiers;
+				DefaultTypeAttributes = Class.DefaultTypeAttributes;
+				break;
+
+			case Kind.Struct:
+				AllowedModifiers = Struct.AllowedModifiers;
+				DefaultTypeAttributes = Struct.DefaultTypeAttributes;
+				break;
+
+			case Kind.Interface:
+				AllowedModifiers = Interface.AllowedModifiers;
+				DefaultTypeAttributes = Interface.DefaultTypeAttributes;
+				break;
+
+			default:
+				throw new InvalidOperationException ();
+			}
+
+			int accmods;
+			if (parent.Parent == null)
+				accmods = Modifiers.INTERNAL;
+			else
+				accmods = Modifiers.PRIVATE;
+
+			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, l);
 		}
 
 		public override void Register ()
@@ -2659,6 +2688,12 @@ namespace Mono.CSharp {
 			AddPart (part);
 			return part;
 		}
+
+		public override TypeAttributes TypeAttr {
+			get {
+				return base.TypeAttr | DefaultTypeAttributes;
+			}
+		}
 	}
 
 	public class ClassPart : TypeContainer {
@@ -2671,6 +2706,15 @@ namespace Mono.CSharp {
 		{
 			this.PartialContainer = parent;
 			this.IsPartial = true;
+
+			int accmods;
+			if (parent.Parent == null)
+				accmods = Modifiers.INTERNAL;
+			else
+				accmods = Modifiers.PRIVATE;
+
+			this.ModFlags = Modifiers.Check (
+				parent.AllowedModifiers, mod, accmods, l);
 		}
 
 		public override void Register ()
@@ -2800,13 +2844,16 @@ namespace Mono.CSharp {
 			CheckDef (Parent.AddClass (this), Name, Location);
 		}
 
+		public const TypeAttributes DefaultTypeAttributes =
+			TypeAttributes.AutoLayout | TypeAttributes.Class;
+
 		//
 		// FIXME: How do we deal with the user specifying a different
 		// layout?
 		//
 		public override TypeAttributes TypeAttr {
 			get {
-				return base.TypeAttr | TypeAttributes.AutoLayout | TypeAttributes.Class;
+				return base.TypeAttr | DefaultTypeAttributes;
 			}
 		}
 	}
@@ -2850,6 +2897,11 @@ namespace Mono.CSharp {
 			CheckDef (Parent.AddStruct (this), Name, Location);
 		}
 
+		public const TypeAttributes DefaultTypeAttributes =
+			TypeAttributes.SequentialLayout |
+			TypeAttributes.Sealed |
+			TypeAttributes.BeforeFieldInit;
+
 		//
 		// FIXME: Allow the user to specify a different set of attributes
 		// in some cases (Sealed for example is mandatory for a class,
@@ -2857,10 +2909,7 @@ namespace Mono.CSharp {
 		//
 		public override TypeAttributes TypeAttr {
 			get {
-				return base.TypeAttr |
-					TypeAttributes.SequentialLayout |
-					TypeAttributes.Sealed |
-					TypeAttributes.BeforeFieldInit;
+				return base.TypeAttr | DefaultTypeAttributes;
 			}
 		}
 	}
@@ -2910,12 +2959,14 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public const TypeAttributes DefaultTypeAttributes =
+			TypeAttributes.AutoLayout |
+			TypeAttributes.Abstract |
+			TypeAttributes.Interface;
+
 		public override TypeAttributes TypeAttr {
 			get {
-				return base.TypeAttr |
-					TypeAttributes.AutoLayout |
-					TypeAttributes.Abstract |
-					TypeAttributes.Interface;
+				return base.TypeAttr | DefaultTypeAttributes;
 			}
 		}
 	}

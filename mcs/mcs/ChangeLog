@@ -1,5 +1,13 @@
 2004-07-25  Martin Baulig  <martin@ximian.com>
 
+	* class.cs (Class.DefaultTypeAttributes): New public constant.
+	(Struct.DefaultTypeAttributes): Likewise.
+	(Interface.DefaultTypeAttributes): Likewise.
+	(PartialContainer.TypeAttr): Override this and add the
+	DefaultTypeAttributes.
+
+2004-07-25  Martin Baulig  <martin@ximian.com>
+
 	* decl.cs (DeclSpace.Emit): Removed the `TypeContainer' argument,
 	we can just use the `Parent' field instead.
 
