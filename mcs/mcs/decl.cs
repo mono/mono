@@ -557,7 +557,7 @@ namespace Mono.CSharp {
 					}
 				}
 				if (t != null)
-					return match;
+					return t;
 			}
 
 			//Report.Error (246, Location, "Can not find type `"+name+"'");

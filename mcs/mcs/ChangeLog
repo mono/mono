@@ -1,3 +1,7 @@
+2002-09-20  Miguel de Icaza  <miguel@ximian.com>
+
+	* decl.cs (FindType): Sorry about this, fixed the type lookup bug.
+
 2002-09-19  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (TypeContainer.DefineType): We can not use the nice
