@@ -1,3 +1,8 @@
+2004-07-03  Zoltan Varga  <vargaz@freemail.hu>
+
+      * marshal.c: Fix managed->native stringbuilder marshalling. Implement
+      marshalling of stringbuilder arrays. Fixes #59900.
+
 2004-06-29  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.c (mono_debug_add_method): Protect the whole function
