@@ -1,20 +1,15 @@
 Mono Intermediate Representation Documentation
 
-Operation: OP_LOCALLOC
-	inst_left:
-		The value 
-                                ins->inst_left = *sp;
-                                ins->cil_code = ip;
+Operation: OP_ADDCC_IMM
 
-	This is the equivalent of alloca() in a C implementation: it
-	allocates a bunch of bytes on the stack dynamically. Local
-	variables are allocated statically in the stack instead.
-	
-	It is implemented by moving the stack pointer according to the
-	platform ABI: you may need to keep a specific frame register
-	to address local variables when LOCALLOC is used (the PPC code
-	does this, for example: ifyou're doing the s390 port I suggest
-	starting from that)
+	Add immediate that will set the carry flag.  
+
+	dreg:
+		Destination register
+	inst_imm
+		Immediate value to add.
+	sreg1:
+		Source register to add.
 
 Operation: OP_CALL_HANDLER.
 
@@ -52,3 +47,29 @@ Operation: OP_CCASTCLASS
 
 		throws an InvalidCastException exception otherwise.
 
+Operation: OP_LOCALLOC
+	inst_left:
+		The value 
+                                ins->inst_left = *sp;
+                                ins->cil_code = ip;
+
+	This is the equivalent of alloca() in a C implementation: it
+	allocates a bunch of bytes on the stack dynamically. Local
+	variables are allocated statically in the stack instead.
+	
+	It is implemented by moving the stack pointer according to the
+	platform ABI: you may need to keep a specific frame register
+	to address local variables when LOCALLOC is used (the PPC code
+	does this, for example: ifyou're doing the s390 port I suggest
+	starting from that)
+
+Operation: OP_SUBCC_IMM
+
+	Substract immediate that will set the borrow flag.
+
+	dreg:
+		Destination register
+	inst_imm
+		Immediate value to add.
+	sreg1:
+		Source register to add.
