@@ -1,3 +1,10 @@
+
+Thu Nov 11 20:17:17 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, mini-ppc,h, cpu-g5.md, exceptions-ppc.c:
+	implemented OP_RETHROW (patch by Geoff Norton
+	<gnorton@customerdna.com>).
+
 2004-11-10  Geoff Norton  <gnorton@customerdna.com>
 
 	* tramp-ppc.c (ppc_magic_trampoline): Don't trampoline methods
