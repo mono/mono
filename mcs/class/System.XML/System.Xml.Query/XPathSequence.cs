@@ -367,50 +367,560 @@ namespace Mono.Xml.XPath2
 
 		public override bool MoveNextCore ()
 		{
-			throw new NotImplementedException ();
+			while (iter.MoveNext ())
+				if (source.Matches (iter.Current as XPathNavigator))
+					return true;
+			return false;
 		}
 
 		public override XPathItem CurrentCore {
-			get { throw new NotImplementedException (); }
+			get { return iter.Current; }
 		}
 	}
 
-/*
-	// Node test iterator
-	internal class NodeKindTestIterator : XPathSequence
+	internal abstract class NodeIterator : XPathSequence
 	{
-		XPathSequence iter;
-		NodeKindTestExpression source;
+		XPathNavigator node;
+		XPathNavigator current;
 
-		public NodeKindTestIterator (XPathSequence iter, NodeKindTestExpression source)
-			: base (iter.Context)
+		public NodeIterator (XPathSequence iter)
+			: base (iter)
 		{
-			this.iter = iter;
-			this.source = source;
+			XPathItem item = iter.Context.CurrentItem;
+			node = item as XPathNavigator;
+			if (node == null)
+				throw new XmlQueryException (String.Format ("Current item is expected to be a node, but it is {0} ({1}).", item.XmlType.QualifiedName, item.XmlType.TypeCode));
+			node = node.Clone ();
 		}
 
-		private NodeKindTestIterator (NodeKindTestIterator other)
+		internal NodeIterator (NodeIterator other)
 			: base (other)
 		{
-			iter = other.iter.Clone ();
-			source = other.source;
+			node = other.node.Clone ();
 		}
 
-		public override XPathSequence Clone ()
-		{
-			return new NodeKindTestIterator (this);
+		internal XPathNavigator Node {
+			get { return node; }
 		}
 
 		public override bool MoveNextCore ()
 		{
-			throw new NotImplementedException ();
+			if (!base.MoveNext ())
+				return false;
+			current = null;
+			return true;
 		}
 
 		public override XPathItem CurrentCore {
-			get { throw new NotImplementedException (); }
+			get {
+				if (current == null)
+					current = node.Clone ();
+				return current;
+			}
+		}
+
+		public virtual bool ReverseAxis {
+			get { return false; }
+		}
+
+//		public override bool RequireSorting {
+//			get { return ReverseAxis; }
+//		}
+	}
+
+	// <copy original='System.Xml.XPath/Iterator.cs'>
+
+	internal class ParentIterator : NodeIterator
+	{
+		public ParentIterator (XPathSequence iter)
+			: base (iter)
+		{
+		}
+
+		private ParentIterator (ParentIterator other) 
+			: base (other)
+		{
+		}
+
+		public override XPathSequence Clone ()
+		{
+			return new ParentIterator (this);
+		}
+
+		public override bool MoveNextCore ()
+		{
+			if (Position == 0 && Node.MoveToParent ())
+				return true;
+			return false;
+		}
+
+		public override bool ReverseAxis {
+			get { return true; }
 		}
 	}
-*/
+
+	internal class ChildIterator : NodeIterator
+	{
+		public ChildIterator (XPathSequence iter)
+			: base (iter)
+		{
+		}
+
+		private ChildIterator (ChildIterator other) 
+			: base (other)
+		{
+		}
+
+		public override XPathSequence Clone ()
+		{
+			return new ChildIterator (this);
+		}
+
+		public override bool MoveNextCore ()
+		{
+			if (Position == 0)
+				return Node.MoveToFirstChild ();
+			else
+				return Node.MoveToNext ();
+		}
+	}
+
+	internal class FollowingSiblingIterator : NodeIterator
+	{
+		public FollowingSiblingIterator (XPathSequence iter)
+			: base (iter)
+		{
+		}
+
+		private FollowingSiblingIterator (FollowingSiblingIterator other) 
+			: base (other)
+		{
+		}
+
+		public override XPathSequence Clone ()
+		{
+			return new FollowingSiblingIterator (this);
+		}
+
+		public override bool MoveNextCore ()
+		{
+			return Node.MoveToNext ();
+		}
+	}
+
+	internal class PrecedingSiblingIterator : NodeIterator
+	{
+		bool finished;
+		bool started;
+		XPathNavigator startPosition;
+
+		public PrecedingSiblingIterator (XPathSequence iter)
+			: base (iter)
+		{
+			startPosition = Node.Clone ();
+		}
+
+		private PrecedingSiblingIterator (PrecedingSiblingIterator other) 
+			: base (other)
+		{
+			startPosition = other.startPosition;
+			started = other.started;
+			finished = other.finished;
+		}
+
+		public override XPathSequence Clone ()
+		{
+			return new ParentIterator (this);
+		}
+
+		public override bool MoveNextCore ()
+		{
+			if (finished)
+				return false;
+			if (!started) {
+				started = true;
+				Node.MoveToFirst ();
+			} else {
+				Node.MoveToNext ();
+			}
+			if (Node.ComparePosition (startPosition) == XmlNodeOrder.Same) {
+				finished = true;
+				return false;
+			}
+			else
+				return true;
+		}
+
+		public override bool ReverseAxis {
+			get { return true; }
+		}
+	}
+
+	internal class AncestorIterator : NodeIterator
+	{
+		bool finished;
+		ArrayList nodes = new ArrayList ();
+
+		public AncestorIterator (XPathSequence iter)
+			: base (iter)
+		{
+		}
+
+		private AncestorIterator (AncestorIterator other) 
+			: base (other)
+		{
+			finished = other.finished;
+			nodes = other.nodes;
+		}
+
+		public override XPathSequence Clone ()
+		{
+			return new AncestorIterator (this);
+		}
+
+		public override bool MoveNextCore ()
+		{
+			if (finished)
+				return false;
+			if (nodes != null) {
+				nodes = new ArrayList ();
+				while (Node.MoveToParent () && Node.NodeType != XPathNodeType.Root)
+					nodes.Add (Node.Clone ());
+				nodes.Reverse ();
+			}
+			if (nodes.Count >= Position)
+				return false;
+			Node.MoveTo (nodes [Position] as XPathNavigator);
+			return true;
+		}
+
+		public override bool ReverseAxis {
+			get { return true; }
+		}
+
+		public override int Count {
+			get {
+				if (Position == 0)
+					return base.Count;
+				return nodes.Count;
+			}
+		}
+	}
+
+	internal class AncestorOrSelfIterator : NodeIterator
+	{
+		bool finished;
+		ArrayList nodes = new ArrayList ();
+
+		public AncestorOrSelfIterator (XPathSequence iter)
+			: base (iter)
+		{
+		}
+
+		private AncestorOrSelfIterator (AncestorOrSelfIterator other) 
+			: base (other)
+		{
+			finished = other.finished;
+			nodes = other.nodes;
+		}
+
+		public override XPathSequence Clone ()
+		{
+			return new AncestorOrSelfIterator (this);
+		}
+
+		public override bool MoveNextCore ()
+		{
+			if (finished)
+				return false;
+			if (nodes != null) {
+				nodes = new ArrayList ();
+				do {
+					nodes.Add (Node.Clone ());
+				} while (Node.MoveToParent () && Node.NodeType != XPathNodeType.Root);
+				nodes.Reverse ();
+			}
+			if (nodes.Count >= Position)
+				return false;
+			Node.MoveTo (nodes [Position] as XPathNavigator);
+			return true;
+		}
+
+		public override bool ReverseAxis {
+			get { return true; }
+		}
+
+		public override int Count {
+			get {
+				if (Position == 0)
+					return base.Count;
+				return nodes.Count;
+			}
+		}
+	}
+
+	internal class DescendantIterator : NodeIterator
+	{
+		private int depth;
+		private bool finished;
+
+		public DescendantIterator (XPathSequence iter)
+			: base (iter)
+		{
+		}
+
+		private DescendantIterator (DescendantIterator other)
+			: base (other)
+		{
+			finished = other.finished;
+			depth = other.depth;
+		}
+
+		public override XPathSequence Clone ()
+		{
+			return new DescendantIterator (this);
+		}
+
+		public override bool MoveNextCore ()
+		{
+			if (finished)
+				return false;
+
+			if (Node.MoveToFirstChild ()) {
+				depth ++;
+				return true;
+			}
+			while (depth != 0) {
+				if (Node.MoveToNext ())
+					return true;
+
+				if (!Node.MoveToParent ())	// should NEVER fail!
+					throw new XPathException ("There seems some bugs on the XPathNavigator implementation class.");
+				depth --;
+			}
+			finished = true;
+			return false;
+		}
+	}
+
+	internal class DescendantOrSelfIterator : NodeIterator
+	{
+		protected int depth;
+		private bool finished;
+
+		public DescendantOrSelfIterator (XPathSequence iter) 
+			: base (iter)
+		{
+		}
+
+		protected DescendantOrSelfIterator (DescendantOrSelfIterator other)
+			: base (other)
+		{
+			depth = other.depth;
+			finished = other.finished;
+		}
+
+		public override XPathSequence Clone ()
+		{
+			return new DescendantOrSelfIterator (this);
+		}
+
+		public override bool MoveNextCore ()
+		{
+			if (finished)
+				return false;
+
+			if (Position == 0)
+				return true; // Self
+
+
+			if (Node.MoveToFirstChild ()) {
+				depth ++;
+				return true;
+			}
+			while (depth != 0) {
+				if (Node.MoveToNext ())
+					return true;
+
+				if (!Node.MoveToParent ())	// should NEVER fail!
+					throw new XPathException ("There seems some bugs on the XPathNavigator implementation class.");
+				depth --;
+			}
+			finished = true;
+			return false;
+		}
+	}
+
+	internal class FollowingIterator : NodeIterator
+	{
+		private bool finished;
+
+		public FollowingIterator (XPathSequence iter) 
+			: base (iter)
+		{
+		}
+
+		protected FollowingIterator (FollowingIterator other)
+			: base (other)
+		{
+			finished = other.finished;
+		}
+
+		public override XPathSequence Clone ()
+		{
+			return new FollowingIterator (this);
+		}
+
+		public override bool MoveNextCore ()
+		{
+			if (finished)
+				return false;
+			if (Position == 0) {
+				// At first, it should not iterate children.
+				if (Node.MoveToNext ())
+					return true;
+				else {
+					while (Node.MoveToParent ())
+						if (Node.MoveToNext ())
+							return true;
+				}
+			} else {
+				if (Node.MoveToFirstChild ())
+					return true;
+				do {
+					if (Node.MoveToNext ())
+						return true;
+				} while (Node.MoveToParent ());
+			}
+			finished = true;
+			return false;
+		}
+	}
+
+	internal class PrecedingIterator : NodeIterator
+	{
+		bool finished;
+		bool started;
+		XPathNavigator startPosition;
+
+		public PrecedingIterator (XPathSequence iter)
+			: base (iter) 
+		{
+			startPosition = Node.Clone ();
+		}
+
+		private PrecedingIterator (PrecedingIterator other)
+			: base (other) 
+		{
+			startPosition = other.startPosition;
+			started = other.started;
+			finished = other.finished;
+		}
+
+		public override XPathSequence Clone ()
+		{
+			return new PrecedingIterator (this);
+		}
+
+		public override bool MoveNextCore ()
+		{
+			if (finished)
+				return false;
+			if (!started) {
+				started = true;
+				Node.MoveToRoot ();
+			}
+			bool loop = true;
+			while (loop) {
+				while (!Node.MoveToFirstChild ()) {
+					while (!Node.MoveToNext ()) {
+						if (!Node.MoveToParent ()) { // Should not finish, at least before startPosition.
+							finished = true;
+							return false;
+						}
+					}
+					break;
+				}
+				if (Node.IsDescendant (startPosition))
+					continue;
+				loop = false;
+				break;
+			}
+			if (Node.ComparePosition (startPosition) != XmlNodeOrder.Before) {
+				// Note that if _nav contains only 1 node, it won't be Same.
+				finished = true;
+				return false;
+			}
+			else
+				return true;
+		}
+
+		public override bool ReverseAxis {
+			get { return true; }
+		}
+	}
+
+	internal class NamespaceIterator : NodeIterator
+	{
+		public NamespaceIterator (XPathSequence iter)
+			: base (iter)
+		{
+		}
+
+		private NamespaceIterator (NamespaceIterator other)
+			: base (other)
+		{
+		}
+
+		public override XPathSequence Clone ()
+		{
+			return new NamespaceIterator (this);
+		}
+
+		public override bool MoveNextCore ()
+		{
+			if (Position == 0) {
+				if (Node.MoveToFirstNamespace ())
+					return true;
+			}
+			else if (Node.MoveToNextNamespace ())
+				return true;
+			return false;
+		}
+
+		public override bool ReverseAxis { get { return true; } }
+	}
+
+	internal class AttributeIterator : NodeIterator
+	{
+		public AttributeIterator (XPathSequence iter)
+			: base (iter)
+		{
+		}
+
+		private AttributeIterator (AttributeIterator other)
+			: base (other)
+		{
+		}
+
+		public override XPathSequence Clone ()
+		{
+			return new AttributeIterator (this);
+		}
+
+		public override bool MoveNextCore ()
+		{
+			if (Position == 0) {
+				if (Node.MoveToFirstAttribute ())
+					return true;
+			}
+			else if (Node.MoveToNextAttribute ())
+				return true;
+			return false;
+		}
+	}
+
+	// </copy>
 
 	internal class ExprSequenceIterator : XPathSequence
 	{

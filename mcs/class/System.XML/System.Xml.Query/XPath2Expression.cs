@@ -135,6 +135,8 @@ namespace Mono.Xml.XPath2
 		{
 			if (item.IsNode) {
 				XPathNavigator nav = item as XPathNavigator;
+				if (w.WriteState != WriteState.Start && nav.NodeType == XPathNodeType.Root)
+					throw new XmlQueryException ("Current output can not accept root node.");
 				nav.WriteSubtree (w);
 			} else
 				w.WriteValue (item.Value);
@@ -194,8 +196,12 @@ namespace Mono.Xml.XPath2
 		public static XPathAtomicValue Atomize (XPathItem item)
 		{
 			XPathNavigator nav = item as XPathNavigator;
-			if (nav != null)
-				return new XPathAtomicValue (nav.TypedValue, nav.SchemaInfo.SchemaType);
+			if (nav != null) {
+				if (nav.SchemaInfo != null)
+					return new XPathAtomicValue (nav.TypedValue, nav.SchemaInfo.SchemaType);
+				else
+					return new XPathAtomicValue (nav.Value, XmlSchemaSimpleType.XsString);
+			}
 			else
 				return (XPathAtomicValue) item;
 		}
@@ -1643,8 +1649,46 @@ namespace Mono.Xml.XPath2
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-			// FIXME: provide more classes than just one iterator
-			return new AxisIterator (iter, this);
+			XPathSequence argIter = null;
+			switch (Axis.AxisType) {
+			case XPathAxisType.Child:
+				argIter = new ChildIterator (iter); break;
+			case XPathAxisType.Descendant:
+				argIter = new DescendantIterator (iter); break;
+			case XPathAxisType.Attribute:
+				argIter = new AttributeIterator (iter); break;
+			case XPathAxisType.Self:
+				argIter = new SingleItemIterator (iter.Current, iter); break;
+			case XPathAxisType.DescendantOrSelf:
+				argIter = new DescendantOrSelfIterator (iter); break;
+			case XPathAxisType.FollowingSibling:
+				argIter = new FollowingSiblingIterator (iter); break;
+			case XPathAxisType.Following:
+				argIter = new FollowingIterator (iter); break;
+			case XPathAxisType.Parent:
+				argIter = new ParentIterator (iter); break;
+			case XPathAxisType.Ancestor:
+				argIter = new AncestorIterator (iter); break;
+			case XPathAxisType.PrecedingSibling:
+				argIter = new PrecedingSiblingIterator (iter); break;
+			case XPathAxisType.Preceding:
+				argIter = new PrecedingIterator (iter); break;
+			case XPathAxisType.AncestorOrSelf:
+				argIter = new AncestorOrSelfIterator (iter); break;
+			case XPathAxisType.Namespace: // only applicable under XPath 2.0: not XQuery 1.0
+				argIter = new NamespaceIterator (iter); break;
+			}
+			return new AxisIterator (argIter, this);
+		}
+
+		internal bool Matches (XPathNavigator nav)
+		{
+			if (nameTest != null)
+				return nameTest == XmlQualifiedName.Empty || 
+					((nameTest.Name == nav.LocalName || nameTest.Name == "*") &&
+					(nameTest.Namespace == nav.NamespaceURI || nameTest.Namespace == "*"));
+			else
+				return kindTest.Matches (nav);
 		}
 #endregion
 	}

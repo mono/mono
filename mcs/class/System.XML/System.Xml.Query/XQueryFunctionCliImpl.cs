@@ -744,12 +744,12 @@ namespace Mono.Xml.XPath2
 			return ctx.ResolveCollection (name);
 		}
 
-		public static object FnPosition (XQueryContext ctx)
+		public static int FnPosition (XQueryContext ctx)
 		{
 			return ctx.CurrentSequence.Position;
 		}
 
-		public static object FnLast (XQueryContext ctx)
+		public static int FnLast (XQueryContext ctx)
 		{
 			return ctx.CurrentSequence.Count;
 		}
@@ -759,14 +759,14 @@ namespace Mono.Xml.XPath2
 			return DateTime.Now;
 		}
 
-		public static object FnCurrentDate ()
+		public static DateTime FnCurrentDate ()
 		{
 			return DateTime.Today;
 		}
 
-		public static object FnCurrentTime ()
+		public static DateTime FnCurrentTime ()
 		{
-			return DateTime.Now.TimeOfDay;
+			return new DateTime (DateTime.Now.TimeOfDay.Ticks);
 		}
 
 		[MonoTODO]

@@ -1,5 +1,21 @@
 2004-08-25  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPath2Expression.cs :
+	  Check write state before writing document node.
+	  Check if navigator's SchemaInfo is null or not before atomizing.
+	  Use individual axis-based iterator in AxisStepExpr.Evaluate().
+	* XPathSequence.cs : added individual axis-based iterator.
+	  Removed commented NodeKindTestIterator.
+	* XQueryCliFunction.cs, XQueryContext.cs, XQueryFunction.cs :
+	  Now XQueryContext.CurrentItem explicitly throws exception if
+	  no context node was provided (also XQueryCommand.Execute() is
+	  fixed not to provide empty document as input).
+	  Now XQueryFunction should not access to CurrentItem unless it is
+	  required.
+	* XQueryFunctionCliImpl.cs : fixed more method signatures.
+
+2004-08-25  Atsushi Enomoto <atsushi@ximian.com>
+
 	* removed IXmlCompilerInclude.cs (does not exist anymore).
 
 2004-08-25  Atsushi Enomoto <atsushi@ximian.com>

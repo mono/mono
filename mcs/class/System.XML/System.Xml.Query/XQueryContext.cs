@@ -72,8 +72,10 @@ namespace Mono.Xml.XPath2
 				namespaceManager.AddNamespace (de.Key.ToString (), de.Value.ToString ());
 			namespaceManager.PushScope ();
 
-			currentSequence = new SingleItemIterator (input, currentContext);
-			currentSequence.MoveNext ();
+			if (input != null) {
+				currentSequence = new SingleItemIterator (input, currentContext);
+				currentSequence.MoveNext ();
+			}
 
 			currentContext = new XQueryContext (this, currentSequence);
 		}
@@ -210,7 +212,11 @@ namespace Mono.Xml.XPath2
 		}
 
 		public XPathItem CurrentItem {
-			get { return currentSequence.Current; }
+			get {
+				if (currentSequence == null)
+					throw new XmlQueryException ("This XQuery dynamic context has no context item.");
+				return CurrentSequence.Current;
+			}
 		}
 
 		public XPathNavigator CurrentNode {

@@ -151,7 +151,7 @@ namespace Mono.Xml.XPath2
 			get { return maxArgs; }
 		}
 
-		public override object Invoke (XQueryContext context, object [] args, XPathItem currentItem)
+		public override object Invoke (XQueryContext context, object [] args)
 		{
 			MethodInfo mi = methods [args.Length] as MethodInfo;
 			if (mi == null)

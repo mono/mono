@@ -234,14 +234,14 @@ namespace Mono.Xml.XPath2
 			get { return returnType; }
 		}
 
-		public abstract object Invoke (XQueryContext context, object [] args, XPathItem currentItem);
+		public abstract object Invoke (XQueryContext context, object [] args);
 
 		public virtual XPathSequence Evaluate (XPathSequence iter, ExprSequence args)
 		{
 			object [] instParams = new object [args.Count];
 			for (int i = 0; i < args.Count; i++)
 				instParams [i] = Args [i].Type.ToRuntimeType (args [i].Evaluate (iter));
-			object o = Invoke (iter.Context, instParams, iter.Context.CurrentItem);
+			object o = Invoke (iter.Context, instParams);
 			if (o is XPathSequence)
 				return (XPathSequence) o;
 			XPathItem item = o as XPathItem;
@@ -292,7 +292,7 @@ namespace Mono.Xml.XPath2
 			get { return Args.Length; }
 		}
 
-		public override object Invoke (XQueryContext context, object [] args, XPathItem currentItem)
+		public override object Invoke (XQueryContext context, object [] args)
 		{
 			throw new NotImplementedException ("Not supported");
 		}
