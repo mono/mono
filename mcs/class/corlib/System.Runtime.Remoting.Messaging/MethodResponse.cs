@@ -105,8 +105,6 @@ namespace System.Runtime.Remoting.Messaging {
 		{
 			foreach (SerializationEntry entry in info)
 				InitMethodProperty (entry.Name, entry.Value);
-
-			_methodBase = RemotingServices.GetMethodBaseFromMethodMessage (this);
 		}
 
 		internal void InitMethodProperty (string key, object value) 
@@ -160,9 +158,12 @@ namespace System.Runtime.Remoting.Messaging {
 		
 		public MethodBase MethodBase {
 			get { 
-				if (null == _methodBase && null != _callMsg)
-					_methodBase = _callMsg.MethodBase;
-
+				if (null == _methodBase) {
+					if (_callMsg != null)
+						_methodBase = _callMsg.MethodBase;
+					else if (MethodName != null && TypeName != null)
+						_methodBase = RemotingServices.GetMethodBaseFromMethodMessage (this);
+				}
 				return _methodBase;
 			}
 		}
