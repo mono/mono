@@ -18,10 +18,12 @@ MCS_FLAGS = --target library --noconfig
 TEST_SUITE_PREFIX = MonoTests.
 TEST_SUITE = AllTests
 NUNITCONSOLE=$(topdir)/class/lib/NUnitConsole_mono.exe 
+MONO_PATH = $(topdir)/class/lib:.
+
 
 test: $(LIBRARY) run_test
 
 .PHONY: run_test
 
 run_test:
-	MONO_PATH=$(NUNIT_MONO_PATH) mono $(NUNITCONSOLE) $(TEST_SUITE_PREFIX)$(TEST_SUITE),system_linux_test.dll
+	-MONO_PATH=$(MONO_PATH) mono $(NUNITCONSOLE) $(TEST_SUITE_PREFIX)$(TEST_SUITE),system_linux_test.dll
