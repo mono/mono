@@ -26,9 +26,12 @@
 //
 //
 //
-// $Revision: 1.58 $
+// $Revision: 1.59 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.59  2004/11/08 20:40:08  jackson
+// Render the little scrolling jimmi in the correct location with bottom aligned tabs
+//
 // Revision 1.58  2004/11/08 14:15:00  jordi
 // fixes vertical scrollbar and removes dead code
 //
@@ -1797,15 +1800,14 @@ namespace System.Windows.Forms
 		}
 		#endregion	// StatusBar
 
-                
+ 		
 		public override void DrawTabControl (Graphics dc, Rectangle area, TabControl tab)
 		{
 			// Do we need to fill the back color? It can't be changed...
 			dc.FillRectangle (GetControlBackBrush (tab.BackColor), area);
+			Rectangle panel_rect = GetTabPanelRectExt (tab);
 
 			if (tab.Appearance == TabAppearance.Normal) {
-				Rectangle panel_rect = GetTabPanelRectExt (tab);
-
 				CPDrawBorder3D (dc, panel_rect, Border3DStyle.RaisedInner, Border3DSide.Left | Border3DSide.Top, ColorButtonFace);
 				CPDrawBorder3D (dc, panel_rect, Border3DStyle.Raised, Border3DSide.Right | Border3DSide.Bottom, ColorButtonFace);
 			}
@@ -1826,10 +1828,36 @@ namespace System.Windows.Forms
 			}
 
 			if (tab.ShowSlider) {
-				Rectangle right = new Rectangle (area.Right - 17, area.Top + 1, 17, 17);
-				Rectangle left = new Rectangle (area.Right - 34, area.Top + 1, 17, 17);
+				Rectangle right = GetTabControlRightScrollRect (tab);
+				Rectangle left = GetTabControlLeftScrollRect (tab);
 				CPDrawScrollButton (dc, right, ScrollButton.Right, tab.RightSliderState);
 				CPDrawScrollButton (dc, left, ScrollButton.Left, tab.LeftSliderState);
+			}
+		}
+
+		public override Rectangle GetTabControlLeftScrollRect (TabControl tab)
+		{
+			switch (tab.Alignment) {
+			case TabAlignment.Top:
+				return new Rectangle (tab.ClientRectangle.Right - 34, tab.ClientRectangle.Top + 1, 17, 17);
+			case TabAlignment.Bottom:
+				Rectangle panel_rect = GetTabPanelRectExt (tab);
+				return new Rectangle (tab.ClientRectangle.Right - 34, panel_rect.Bottom + 2, 17, 17);
+			default:
+				throw new Exception ("vertical tab rendering");
+			}
+		}
+
+		public override Rectangle GetTabControlRightScrollRect (TabControl tab)
+		{
+			switch (tab.Alignment) {
+			case TabAlignment.Top:
+				return new Rectangle (tab.ClientRectangle.Right - 17, tab.ClientRectangle.Top + 1, 17, 17);
+			case TabAlignment.Bottom:
+				Rectangle panel_rect = GetTabPanelRectExt (tab);
+				return new Rectangle (tab.ClientRectangle.Right - 17, panel_rect.Bottom + 2, 17, 17);
+			default:
+				throw new Exception ("vertical tab rendering");
 			}
 		}
 

@@ -386,8 +386,8 @@ namespace System.Windows.Forms {
 		private void MouseDownHandler (object sender, MouseEventArgs e)
 		{
 			if (ShowSlider) {
-				Rectangle right = new Rectangle (ClientRectangle.Right - 17, ClientRectangle.Top + 1, 17, 17);
-				Rectangle left = new Rectangle (ClientRectangle.Right - 34, ClientRectangle.Top + 1, 17, 17);
+				Rectangle right = ThemeEngine.Current.GetTabControlRightScrollRect (this);
+				Rectangle left = ThemeEngine.Current.GetTabControlLeftScrollRect (this);
 				if (right.Contains (e.X, e.Y)) {
 					right_slider_state = ButtonState.Pushed;
 					if (CanScrollRight) {

@@ -23,9 +23,12 @@
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //
 //
-// $Revision: 1.17 $
+// $Revision: 1.18 $
 // $Modtime: $
 // $Log: Theme.cs,v $
+// Revision 1.18  2004/11/08 20:40:08  jackson
+// Render the little scrolling jimmi in the correct location with bottom aligned tabs
+//
 // Revision 1.17  2004/11/04 11:26:09  ravindra
 // 	- Changed default ListView values signatures (prefixed all with ListView).
 // 	- Fixed default size values for VScrollBar and HScrollBar.
@@ -402,6 +405,8 @@ namespace System.Windows.Forms
 		public abstract Point TabControlDefaultPadding { get; }
 		public abstract int TabControlMinimumTabWidth { get; }
 
+		public abstract Rectangle GetTabControlLeftScrollRect (TabControl tab);
+		public abstract Rectangle GetTabControlRightScrollRect (TabControl tab);
 		public abstract Rectangle GetTabControlDisplayRectangle (TabControl tab);
 		public abstract Size TabControlGetSpacing (TabControl tab);
 		public abstract void DrawTabControl (Graphics dc, Rectangle area, TabControl tab);
@@ -412,12 +417,12 @@ namespace System.Windows.Forms
 		public abstract void DrawToolBar (Graphics dc, Rectangle clip_rectangle, ToolBar control);
 
 		// Sizing
-		public abstract int ToolBarGripWidth {get;}              // Grip width for the ToolBar
-		public abstract int ToolBarImageGripWidth {get;}         // Grip width for the Image on the ToolBarButton
-		public abstract int ToolBarSeparatorWidth {get;}         // width of the separator
-		public abstract int ToolBarDropDownWidth { get; }        // width of the dropdown arrow rect
-		public abstract int ToolBarDropDownArrowWidth { get; }   // width for the dropdown arrow on the ToolBarButton
-		public abstract int ToolBarDropDownArrowHeight { get; }  // height for the dropdown arrow on the ToolBarButton
+		public abstract int ToolBarGripWidth {get;}		 // Grip width for the ToolBar
+		public abstract int ToolBarImageGripWidth {get;}	 // Grip width for the Image on the ToolBarButton
+		public abstract int ToolBarSeparatorWidth {get;}	 // width of the separator
+		public abstract int ToolBarDropDownWidth { get; }	 // width of the dropdown arrow rect
+		public abstract int ToolBarDropDownArrowWidth { get; }	 // width for the dropdown arrow on the ToolBarButton
+		public abstract int ToolBarDropDownArrowHeight { get; }	 // height for the dropdown arrow on the ToolBarButton
 		public abstract Size ToolBarDefaultSize{get;}
 		#endregion	// ToolBar
 
