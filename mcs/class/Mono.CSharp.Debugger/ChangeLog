@@ -1,7 +1,7 @@
 2002-05-30  Martin Baulig  <martin@gnome.org>
 
-	* ModuleBuilder.cs (ModuleBuilder): The constructor now get's the AssemblyBuilder's
-	`methods' array as third argument.
+	* MonoSymbolWriter.cs (MonoSymbolWriter): The constructor now get's the
+	AssemblyBuilder's `methods' array as third argument.
 	(OpenMethod): Use this array to get the method builder rather than using an
 	interncall for it.
 	(get_method_builder): Removed this interncall.
