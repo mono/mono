@@ -1,3 +1,8 @@
+2004-04-29  Jackson Harper  <jackson@ximian.com>
+
+	* Makefile: Set MONO_PATH to use the bootstrap corlib
+	* driver.cs: Check the GAC for referenced assemblies.
+		
 2004-04-29  Martin Baulig  <martin@ximian.com>
 
 	* Makefile (gmcs.exe): Set MONO_PATH to use `../class/lib/net_2_0'.
