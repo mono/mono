@@ -1,5 +1,11 @@
 2001-10-14  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs: LocalTemporary: a new expression used to
+	reference a temporary that has been created.
+
+	* assign.cs: Handle PropertyAccess back here, so that we can
+	provide the proper semantic access to properties.
+
 	* expression.cs (Expression::ConvertReferenceExplicit): Implement
 	a few more explicit conversions. 
 

@@ -50,6 +50,12 @@ namespace CIR {
 			if (target == null || source == null)
 				return null;
 
+			Type target_type = target.Type;
+			Type source_type = source.Type;
+
+			type = target_type;
+			eclass = ExprClass.Value;
+			
 			//
 			// If we are doing a property assignment, then
 			// set the `value' field on the property, and Resolve
@@ -58,23 +64,20 @@ namespace CIR {
 			if (target is PropertyExpr){
 				PropertyExpr property_assign = (PropertyExpr) target;
 				
-				property_assign.Value = source;
+				if (!property_assign.VerifyAssignable ())
+					return null;
 				
-				return property_assign.Resolve (ec);
+				return this;
 			}
-
-			if (source is New && target.Type.IsSubclassOf (TypeManager.value_type)){
+			
+			if (source is New && target_type.IsSubclassOf (TypeManager.value_type)){
 				New n = (New) source;
 
 				n.ValueTypeVariable = target;
 
-				return source;
+				return n;
 			}
-
-			Type target_type = target.Type;
 			
-			Type source_type = source.Type;
-
 			if (target_type != source_type){
 				source = ConvertImplicitRequired (ec, source, target_type, l);
 				if (source == null)
@@ -85,16 +88,16 @@ namespace CIR {
 				Report.Error (131, l, "Left hand of an assignment must be a variable, a property or an indexer");
 				return null;
 			}
-			type = target_type;
-			eclass = ExprClass.Value;
+
 			return this;
 		}
 
 		void Emit (EmitContext ec, bool is_statement)
 		{
 			ILGenerator ig = ec.ig;
+			ExprClass eclass = target.ExprClass;
 			
-			if (target.ExprClass == ExprClass.Variable){
+			if (eclass == ExprClass.Variable){
 
 				//
 				// If it is an instance field, load the this pointer
@@ -112,11 +115,26 @@ namespace CIR {
 					ig.Emit (OpCodes.Dup);
 
 				((LValue) target).Store (ec);
-			} else if (target.ExprClass == ExprClass.PropertyAccess){
-				// FIXME
-				throw new Exception ("Can not assign to properties yet");
-			} else if (target.ExprClass == ExprClass.IndexerAccess){
-				// FIXME
+			} else if (eclass == ExprClass.PropertyAccess){
+				PropertyExpr pe = (PropertyExpr) target;
+
+				if (is_statement){
+					pe.Value = source;
+					pe.Emit (ec);
+				} else {
+					LocalTemporary tempo;
+					
+					tempo = new LocalTemporary (ec, source.Type);
+
+					pe.Value = tempo;
+					source.Emit (ec);
+					tempo.Store (ec);
+					target.Emit (ec);
+
+					tempo.Emit (ec);
+				}
+			} else if (eclass == ExprClass.IndexerAccess){
+				
 				throw new Exception ("Can not assign to indexers yet");
 			}
 		}

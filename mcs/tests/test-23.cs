@@ -51,6 +51,7 @@ class X {
 		z.XVal = 23;
 		if (z.XVal != 23)
 			return 7;
+
 		return 0;
 	}
 }

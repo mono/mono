@@ -697,7 +697,7 @@ namespace CIR {
 			ArrayList bases = Bases;
 			int count;
 			int start, j, i;
-			
+
 			error = false;
 
 			if (is_class)

@@ -3168,6 +3168,42 @@ namespace CIR {
 		// </summary>
 		void AddressOf (EmitContext ec);
 	}
+
+	public class LocalTemporary : Expression, LValue, MemoryLocation {
+		LocalBuilder builder;
+		
+		public LocalTemporary (EmitContext ec, Type t)
+		{
+			type = t;
+			eclass = ExprClass.Value;
+			builder = ec.GetTemporaryStorage (t);
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			return this;
+		}
+
+		public Expression LValueResolve (EmitContext ec)
+		{
+			return this;
+		}
+		
+		public override void Emit (EmitContext ec)
+		{
+			ec.ig.Emit (OpCodes.Ldloc, builder); 
+		}
+
+		public void Store (EmitContext ec)
+		{
+			ec.ig.Emit (OpCodes.Stloc, builder);
+		}
+
+		public void AddressOf (EmitContext ec)
+		{
+			ec.ig.Emit (OpCodes.Ldloca, builder);
+		}
+	}
 	
 	public class LocalVariableReference : Expression, LValue, MemoryLocation {
 		public readonly string Name;
@@ -4695,24 +4731,31 @@ namespace CIR {
 				return instance_expr;
 			}
 		}
+
+		public bool VerifyAssignable ()
+		{
+			if (!PropertyInfo.CanWrite){
+				Report.Error (200, loc, 
+					      "The property `" + PropertyInfo.Name +
+					      "' can not be assigned to, as it has not set accessor");
+				return false;
+			}
+
+			return true;
+		}
 		
 		override public Expression DoResolve (EmitContext ec)
 		{
-			if (value == null){
-				if (!PropertyInfo.CanRead){
-					Report.Error (154, loc, 
-						      "The property `" + PropertyInfo.Name +
-						      "' can not be used in " +
-						      "this context because it lacks a get accessor");
-					return null;
-				}
-			} else {
-				if (!PropertyInfo.CanWrite){
-					Report.Error (200, loc, 
-						      "The property `" + PropertyInfo.Name +
-						      "' can not be assigned to, as it has not set accessor");
-					return null;
-				}
+			//
+			// Not really sure who should call perform the test below
+			// given that `assignable' has special code for this.
+			//
+			if (!PropertyInfo.CanRead){
+				Report.Error (154, loc, 
+					      "The property `" + PropertyInfo.Name +
+					      "' can not be used in " +
+					      "this context because it lacks a get accessor");
+				return null;
 			}
 			
 			return this;
