@@ -2599,6 +2599,25 @@ namespace Mono.CSharp {
 			ILGenerator ig = ConstructorBuilder.GetILGenerator ();
 			EmitContext ec = new EmitContext (parent, Location, ig, null, ModFlags, true);
 
+			//
+			// extern methods have no bodies
+			//
+			if ((ModFlags & Modifiers.EXTERN) != 0) {
+				if ((block != null) && ((ModFlags & Modifiers.EXTERN) != 0)) {
+					Report.Error (
+						179, Location, "External constructor `" +
+						TypeManager.CSharpSignature (ConstructorBuilder) +
+						"' can not have a body");
+					return;
+				}
+			} else if (block == null) {
+				Report.Error (
+					501, Location, "Constructor `" +
+					TypeManager.CSharpSignature (ConstructorBuilder) +
+					"' must declare a body since it is not marked extern");
+				return;
+			}
+
 			if ((ModFlags & Modifiers.STATIC) == 0){
 				if (parent is Class && Initializer == null)
 					Initializer = new ConstructorBaseInitializer (

@@ -1,11 +1,4 @@
-
-Fri Nov 15 12:26:48 CET 2002 Paolo Molaro <lupus@ximian.com>
-
-	* class.cs: back out the last two changes to class.cs, since that
-	breaks the compilation of the string internalcall constructors in
-	corlib.
-
-2002/11/15  Nick Drochak <ndrochak@gol.com>
+2002-11-15  Nick Drochak  <ndrochak@gol.com>
 
 	* class.cs: Allow acces to block member by subclasses. Fixes build
 	breaker.
