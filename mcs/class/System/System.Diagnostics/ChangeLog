@@ -1,3 +1,18 @@
+2002-06-09  Jonathan Pryor <jonpryor@vt.edu>
+	* EntryWrittenEventArgs.cs: Implemented
+	* EntryWrittenEventHandler.cs: Implemented
+	* EventLog.cs: Stubbed out
+	* EventLogEntry.cs: Stubbed out
+	* EventLogEntryCOllection.cs: Implemented.
+	* EventLogEntryType.cs: Implemented
+	* EventLogInstaller.cs: Stubbed out
+	* EventLogPermission.cs: Stubbed out
+	* EventLogPermissionAccess.cs: Implemented
+	* EventLogPermissionAttribute.cs: Stubbed out
+	* EventLogPermissionEntry.cs: Stubbed out
+	* EventLogPermissionEntryCollection.cs: Stubbed out
+	* EventLogTraceListener.cs: Stubbed out
+
 2002-05-29  Jonathan Pryor <jonpryor@vt.edu>
   * DefaultTraceListener.cs: Implemented MONO_TRACE support
 
