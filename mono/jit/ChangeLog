@@ -1,3 +1,8 @@
+2002-06-17  Dietmar Maurer  <dietmar@ximian.com>
+
+	* exception.c (arch_handle_exception): correctly restore register
+	values when unwinding the stack (fixes bug 25698)
+
 2002-06-09  Martin Baulig  <martin@gnome.org>
 
 	* debug.c (mono_debug_open_image): For MONO_DEBUG_FORMAT_DWARF2_PLUS,
