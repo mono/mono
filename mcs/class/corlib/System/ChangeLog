@@ -1,5 +1,9 @@
 2002-06-09  Lawrence Pit  <loz@cable.a2000.nl>
 
+	* DateTime.cs: fixes to pass tests M0 to M6:
+		if yy pattern then year values >= 30 are in 20th century
+		rfc1123 pattern is always in GMT, therefor useutc must be false
+	made GetNow() internal static so it can be called from TimeZone.
 	* TimeZone.cs: removed dependency on year 2002 from initialization of 
 	current timezone.
 

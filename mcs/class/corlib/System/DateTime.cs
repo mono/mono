@@ -257,7 +257,7 @@ namespace System
 		}
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern long GetNow ();
+		internal static extern long GetNow ();
 
 		public static DateTime Now 
 		{
@@ -494,9 +494,9 @@ namespace System
 				// Only time
 				"T", "t",
 				// Only date, but no year
-				"m", "M",
+				"m",
 				// Only date, but no day
-				"y", "Y"
+				"y" 
 			};
 
 			return ParseExact (s, formats, fp, styles);
@@ -609,11 +609,10 @@ namespace System
 
 			int day = -1, dayofweek = -1, month = -1, year = -1;
 			int hour = -1, minute = -1, second = -1, millisecond = -1;
-			int ampm = -1, century = (Now.Year / 100) * 100;
+			int ampm = -1;
 			int tzsign = -1, tzoffset = -1, tzoffmin = -1;
 
 			result = new DateTime (0);
-
 			while (pos+num < len)
 			{
 				if (s.Length == 0)
@@ -712,12 +711,13 @@ namespace System
 				case 'y':
 					if (year != -1)
 						return false;
-					if (num == 0)
-						year = _ParseNumber (s, 2, false, sloppy_parsing, out num_parsed) + century;
-					else if (num < 3)
-						year = _ParseNumber (s, 2, true, sloppy_parsing, out num_parsed) + century;
-					else
-					{
+					if (num == 0) {
+						year = _ParseNumber (s, 2, false, sloppy_parsing, out num_parsed);
+						year += (year < 30) ? 2000 : 1900;
+					} else if (num < 3) {
+						year = _ParseNumber (s, 2, true, sloppy_parsing, out num_parsed);
+						year += (year < 30) ? 2000 : 1900;
+					} else {
 						year = _ParseNumber (s, 4, false, sloppy_parsing, out num_parsed);
 						num = 3;
 					}
@@ -1059,7 +1059,8 @@ namespace System
 			case 'r':
 			case 'R':
 				pattern = dfi.RFC1123Pattern;
-				useutc= true;
+				// commented by LP 09/jun/2002, rfc 1123 pattern is always in GMT
+				// useutc= true;
 				break;
 			case 's':
 				pattern = dfi.SortableDateTimePattern;
