@@ -25,6 +25,10 @@ public class Blah {
 
 		int [,] boo = new int [,] {{foo, foo+10}, {foo+3, foo+10}};
 
+		float [] f_array = new float [] { 1.23F, 4.5F, 6.24F };
+
+		double [] double_arr = new double [] { 34.4567, 90.1226, 54.9823 };
+
 		if (i [2] != 2)
 			return 1;
 		
@@ -49,6 +53,12 @@ public class Blah {
 			return 1;
 
 		if (boo [0,1] != 11)
+			return 1;
+
+		if (f_array [0] != 1.23F)
+			return 1;
+
+		if (double_arr [1] != 90.1226)
 			return 1;
 
 		foreach (string s in names)
