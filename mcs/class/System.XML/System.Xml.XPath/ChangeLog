@@ -1,5 +1,10 @@
 2003-07-28  Piers Haken	<piersh@friskit.com>
 
+	* DefaultContext.cs: better handling of null argument lists
+	* XPathNavigator.cs: implement ComparePosition
+
+2003-07-28  Piers Haken	<piersh@friskit.com>
+
 	* Expression.cs: boolean operators: handle comparing .Any better
 
 2003-07-28  Piers Haken	<piersh@friskit.com>

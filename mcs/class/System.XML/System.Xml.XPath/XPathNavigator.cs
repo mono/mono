@@ -48,6 +48,18 @@ namespace System.Xml.XPath
 
 		public abstract string XmlLang { get; }
 
+		int Depth
+		{
+			get
+			{
+				int cLevels = 0;
+				XPathNavigator nav = Clone ();
+				while (nav.MoveToParent ())
+					cLevels ++;
+				return cLevels;
+			}
+		}
+
 		#endregion
 
 		#region Methods
@@ -57,7 +69,79 @@ namespace System.Xml.XPath
 		[MonoTODO]
 		public virtual XmlNodeOrder ComparePosition (XPathNavigator nav)
 		{
-			throw new NotImplementedException ();
+			if (IsSamePosition (nav))
+				return XmlNodeOrder.Same;
+
+			XPathNavigator nav1 = Clone ();
+			XPathNavigator nav2 = nav.Clone ();
+
+			int nDepth1 = nav1.Depth;
+			int nDepth2 = nav2.Depth;
+
+			if (nDepth1 > nDepth2)
+			{
+				while (nDepth1 > nDepth2)
+				{
+					nav1.MoveToParent ();
+					nDepth1 --;
+				}
+				if (nav1.IsSamePosition (nav2))
+					return XmlNodeOrder.After;
+			}
+			else if (nDepth1 < nDepth2)
+			{
+				while (nDepth1 < nDepth2)
+				{
+					nav2.MoveToParent ();
+					nDepth2 --;
+				}
+				if (nav1.IsSamePosition (nav2))
+					return XmlNodeOrder.Before;
+			}
+
+			XPathNavigator parent1 = nav1.Clone ();
+			XPathNavigator parent2 = nav2.Clone ();
+			while (parent1.MoveToParent () && parent2.MoveToParent ())
+			{
+				if (parent1.IsSamePosition (parent2))
+				{
+					// the ordering is namespace, attribute, children
+					// assume that nav1 is before nav2, find counter-example
+					if (nav1.NodeType == XPathNodeType.Namespace)
+					{
+						if (nav2.NodeType == XPathNodeType.Namespace)
+						{
+							// match namespaces
+							while (nav2.MoveToNextNamespace ())
+								if (nav2.IsSamePosition (nav1))
+									return XmlNodeOrder.After;
+						}
+					}
+					else if (nav1.NodeType == XPathNodeType.Attribute)
+					{
+						if (nav2.NodeType == XPathNodeType.Namespace)
+							return XmlNodeOrder.After;
+						else if (nav2.NodeType == XPathNodeType.Attribute)
+						{
+							// match attributes
+							while (nav2.MoveToNextAttribute ())
+								if (nav2.IsSamePosition (nav1))
+									return XmlNodeOrder.After;
+						}
+					}
+					else
+					{
+						// match children
+						while (nav2.MoveToNext ())
+							if (nav2.IsSamePosition (nav1))
+								return XmlNodeOrder.After;
+					}
+					return XmlNodeOrder.Before;
+				}
+				nav1.MoveToParent ();
+				nav2.MoveToParent ();
+			}
+			return XmlNodeOrder.Unknown;
 		}
 
 		public virtual XPathExpression Compile (string xpath)

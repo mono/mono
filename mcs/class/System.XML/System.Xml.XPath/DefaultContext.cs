@@ -287,7 +287,9 @@ namespace System.Xml.XPath
 		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.NodeSet }; }}
 		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
 		{
-			BaseIterator iter = (args.Length == 1) ? ((BaseIterator) args [0]) : new SelfIterator (docContext, xsltContext);
+			if (args.Length == 0)
+				return docContext.LocalName;
+			BaseIterator iter = (BaseIterator) args [0];
 			if (iter == null || !iter.MoveNext ())
 				return "";
 			return iter.Current.LocalName;
@@ -305,7 +307,9 @@ namespace System.Xml.XPath
 		[MonoTODO]
 		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
 		{
-			BaseIterator iter = (args.Length == 1) ? ((BaseIterator) args [0]) : new SelfIterator (docContext, xsltContext);
+			if (args.Length == 0)
+				return docContext.NamespaceURI;
+			BaseIterator iter = (BaseIterator) args [0];
 			if (iter == null || !iter.MoveNext ())
 				return "";
 			return iter.Current.NamespaceURI;	// TODO: should the namespace be expanded wrt. the given context?
@@ -323,7 +327,9 @@ namespace System.Xml.XPath
 		[MonoTODO]
 		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
 		{
-			BaseIterator iter = (args.Length == 1) ? ((BaseIterator) args [0]) : new SelfIterator (docContext, xsltContext);
+			if (args.Length == 0)
+				return docContext.Name;
+			BaseIterator iter = (BaseIterator) args [0];
 			if (iter == null || !iter.MoveNext ())
 				return "";
 			return iter.Current.Name;
