@@ -1,3 +1,9 @@
+2002-05-24  Ravi Pratap  <ravi@ximian.com>
+
+	* test-124.cs, test-125.cs : Add.
+
+	* makefile : update.
+
 2002-05-11  Miguel de Icaza  <miguel@ximian.com>
 
 	* test-49.cs: Improve test.
