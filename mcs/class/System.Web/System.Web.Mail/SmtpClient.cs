@@ -43,10 +43,15 @@ namespace System.Web.Mail {
 	    	    
 	}
 	
-	public void Send( MailMessage msg ) {
+	public void Send( SmtpMessage msg ) {
+	    
+	    if( msg.From == null ) {
+		throw new SmtpException( "From property must be set." );
+	    }
 
-	    if( ( ! HasData( msg.From )  ) || ( ! HasData( msg.To ) ) )
-		throw new SmtpException( "From & To properties must be set." );
+	    if( msg.To == null ) {
+		if( msg.To.Count < 1 ) throw new SmtpException( "Atleast one recipient must be set." );
+	    }
 	    
 	    // if no encoding is set then set the system
 	    // default encoding
@@ -58,10 +63,17 @@ namespace System.Web.Mail {
 	    smtp.WriteRset();
 	    
 	    // write the mail from command
-	    smtp.WriteMailFrom( msg.From );
-	    	    
-	    // write the rcpt to command
-	    smtp.WriteRcptTo( msg.To );
+	    smtp.WriteMailFrom( msg.From.Address );
+	    
+	    // write the rcpt to command for the To addresses
+	    foreach( MailAddress addr in msg.To ) {
+		smtp.WriteRcptTo( addr.Address );
+	    }
+
+	    // write the rcpt to command for the Cc addresses
+	    foreach( MailAddress addr in msg.Cc ) {
+		smtp.WriteRcptTo( addr.Address );
+	    }
 	    
 	    // write the data command and then
 	    // send the email
@@ -84,7 +96,7 @@ namespace System.Web.Mail {
 	}
 	
 	// sends a single part mail to the server
-	private void SendSinglepartMail( MailMessage msg ) {
+	private void SendSinglepartMail( SmtpMessage msg ) {
 	    	    	    
 	    // create the headers
 	    IDictionary headers = CreateHeaders( msg );
@@ -97,7 +109,7 @@ namespace System.Web.Mail {
 	}
 	
 	// sends a multipart mail to the server
-	private void SendMultipartMail( MailMessage msg ) {
+	private void SendMultipartMail( SmtpMessage msg ) {
 	    	    	    
 	    // create the headers
 	    IDictionary headers = CreateHeaders( msg );
@@ -177,15 +189,15 @@ namespace System.Web.Mail {
 	
 	// send the standard headers
 	// and the custom in MailMessage
-	private IDictionary CreateHeaders( MailMessage msg ) {
+	private IDictionary CreateHeaders( SmtpMessage msg ) {
 	    Hashtable headers = new Hashtable(); 
 	    
-	    headers[ "From" ] = msg.From;
-	    headers[ "To" ] = msg.To;
+	    headers[ "From" ] = msg.From.ToString();
+	    headers[ "To" ] = msg.To.ToString();
 	    	    
-	    if( HasData( msg.Cc ) ) headers[ "Cc" ] = msg.Cc;
+	    if( msg.Cc.Count > 0 ) headers[ "Cc" ] = msg.Cc.ToString();
 			    
-	    if( HasData( msg.Bcc ) ) headers[ "Bcc" ] = msg.Bcc;
+	    if( msg.Bcc.Count > 0 ) headers[ "Bcc" ] = msg.Bcc.ToString();
 	    
 	    if( HasData( msg.Subject ) ) {
 		

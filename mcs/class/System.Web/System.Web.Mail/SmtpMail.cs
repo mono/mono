@@ -34,12 +34,38 @@ namespace System.Web.Mail
 		
 		public static void Send (MailMessage message) 
 		{
-		 
+		    
+		    SmtpMessage msg = new SmtpMessage ();
+		    
+		    try {
+			
+			if( message.From != null ) msg.From = MailAddress.Parse (message.From);
+			if( message.To != null ) msg.To = MailAddressCollection.Parse (message.To);
+			if( message.Cc != null ) msg.Cc = MailAddressCollection.Parse (message.Cc);
+			if( message.Bcc != null ) msg.Bcc = MailAddressCollection.Parse (message.Bcc);
+			
+			msg.Headers = message.Headers;
+			msg.UrlContentBase = message.UrlContentBase;
+			msg.UrlContentLocation = message.UrlContentLocation;
+			msg.Priority = message.Priority;
+			msg.Subject = message.Subject;
+			
+			msg.Body = message.Body;
+			msg.BodyEncoding = message.BodyEncoding; 
+			msg.BodyFormat = message.BodyFormat;
+			
+			msg.Attachments = message.Attachments;   
+						
+		    } catch (FormatException ex) {
+			throw new HttpException (ex.Message);
+		    }
+		    
+		    
 		    try {
 			
 			SmtpClient smtp = new SmtpClient (smtpServer);
 			
-			smtp.Send (message);
+			smtp.Send (msg);
 			
 			smtp.Close ();
 		    
