@@ -1,3 +1,14 @@
+2004-04-01  Duncan Mak  <duncan@ximian.com>
+
+	* Graphics.cs (DrawCurve): Call the correct GDI+ wrappers.
+
+	* gdipFunctions.cs (GdipAddPathCurveI):
+	(GdipAddPathCurve2, GdipAddPathCurve2I):
+	(GdipAddPathCurve3, GdipAddPathCurve3I):
+	(GdipAddPathClosedCurve, GdipAddPathClosedCurveI):
+	(GdipAddPathClosedCurve2, GdipAddPathClosedCurve2I): Added new
+	wrappers from GDI+.
+
 2004-03-30  Jordi Mas i Hernandez <jordi@ximian.com>	
 	* Image.cs: implemented a few GDI+ wrapper calls
 2004-03-30  Jordi Mas i Hernandez <jordi@ximian.com>

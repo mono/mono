@@ -228,19 +228,17 @@ namespace System.Drawing
 		
 		public void DrawCurve (Pen pen, Point [] points)
 		{
-			GDIPlus.GdipDrawCurveI (nativeObject, pen.nativeObject, points, points.Length);	 		
+			GDIPlus.GdipDrawCurveI (nativeObject, pen.nativeObject, points, points.Length);
 		}
 		
 		public void DrawCurve (Pen pen, PointF [] points)
 		{
-			GDIPlus.GdipDrawCurve (nativeObject, pen.nativeObject, points, points.Length); 				
-			
+			GDIPlus.GdipDrawCurve (nativeObject, pen.nativeObject, points, points.Length);
 		}
 		
 		public void DrawCurve (Pen pen, PointF [] points, float tension)
 		{			
-			GDIPlus.GdipDrawCurve2 (nativeObject, pen.nativeObject, points, points.Length, tension); 		
-			
+			GDIPlus.GdipDrawCurve2 (nativeObject, pen.nativeObject, points, points.Length, tension);
 		}
 		
 		public void DrawCurve (Pen pen, Point [] points, float tension)

@@ -334,6 +334,64 @@ namespace System.Drawing.Drawing2D
                         return pt;
                 }
 
+                //
+                // AddClosedCurve
+                //
+                public void AddClosedCurve (Point [] points)
+                {
+                        GDIPlus.GdipAddPathClosedCurveI (nativePath, points, points.Length);
+                }
+
+                public void AddClosedCurve (PointF [] points)
+                {
+                        GDIPlus.GdipAddPathClosedCurve (nativePath, points, points.Length);
+                }
+
+                public void AddClosedCurve (Point [] points, float tension)
+                {
+                        GDIPlus.GdipAddPathClosedCurve2I (nativePath, points, points.Length, tension);
+                }
+
+                public void AddClosedCurve (PointF [] points, float tension)
+                {
+                        GDIPlus.GdipAddPathClosedCurve2 (nativePath, points, points.Length, tension);
+                }
+
+                //
+                // AddCurve
+                //
+                public void AddCurve (Point [] points)
+                {
+                        GDIPlus.GdipAddPathCurveI (nativePath, points, points.Length);
+                }
+                
+                public void AddCurve (PointF [] points)
+                {
+                        GDIPlus.GdipAddPathCurve (nativePath, points, points.Length);
+                }
+                
+                public void AddCurve (Point [] points, float tension)
+                {
+                        GDIPlus.GdipAddPathCurve2I (nativePath, points, points.Length, tension);
+                }
+                
+                public void AddCurve (PointF [] points, float tension)
+                {
+                        GDIPlus.GdipAddPathCurve2 (nativePath, points, points.Length, tension);
+                }
+
+                public void AddCurve (Point [] points, int offset, int numberOfSegments, float tension)
+                {
+                        GDIPlus.GdipAddPathCurve3I (nativePath, points, points.Length,
+                                        offset, numberOfSegments, tension);
+                }
+                
+                public void AddCurve (PointF [] points, int offset, int numberOfSegments, float tension)
+                {
+                        GDIPlus.GdipAddPathCurve3 (nativePath, points, points.Length,
+                                        offset, numberOfSegments, tension);
+                }
+                        
                 public void Reset ()
                 {
                         GDIPlus.GdipResetPath (nativePath);

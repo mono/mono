@@ -919,6 +919,24 @@ namespace System.Drawing {
                 [DllImport ("gdiplus.dll")]                                                                
                 internal static extern Status GdipAddPathCurve (IntPtr path, PointF [] points, int count);
                 [DllImport ("gdiplus.dll")]                                                                
+                internal static extern Status GdipAddPathCurveI (IntPtr path, Point [] points, int count);
+                [DllImport ("gdiplus.dll")]                                                                
+                internal static extern Status GdipAddPathCurve2 (IntPtr path, PointF [] points, int count, float tension);
+                [DllImport ("gdiplus.dll")]                                                                
+                internal static extern Status GdipAddPathCurve2I (IntPtr path, Point [] points, int count, float tension);
+                [DllImport ("gdiplus.dll")]                                                                
+                internal static extern Status GdipAddPathCurve3 (IntPtr path, PointF [] points, int count, int offset, int numberOfSegments, float tension);
+                [DllImport ("gdiplus.dll")]                                                                
+                internal static extern Status GdipAddPathCurve3I (IntPtr path, Point [] points, int count, int offset, int numberOfSegments, float tension);
+                [DllImport ("gdiplus.dll")]                                                                
+                internal static extern Status GdipAddPathClosedCurve (IntPtr path, PointF [] points, int count);
+                [DllImport ("gdiplus.dll")]                                                                
+                internal static extern Status GdipAddPathClosedCurveI (IntPtr path, Point [] points, int count);
+                [DllImport ("gdiplus.dll")]                                                                
+                internal static extern Status GdipAddPathClosedCurve2 (IntPtr path, PointF [] points, int count, float tension);
+                [DllImport ("gdiplus.dll")]                                                                
+                internal static extern Status GdipAddPathClosedCurve2I (IntPtr path, Point [] points, int count, float tension);
+                [DllImport ("gdiplus.dll")]                                                                
                 internal static extern Status GdipAddPathRectangle (IntPtr path, float x, float y, float width, float height);
                 [DllImport ("gdiplus.dll")]                                                                
                 internal static extern Status GdipAddPathRectangles (IntPtr path, RectangleF [] rects, int count);
