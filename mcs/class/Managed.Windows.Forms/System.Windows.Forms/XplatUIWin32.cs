@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.7 $
+// $Revision: 1.8 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.8  2004/08/10 17:36:17  pbartok
+// - Implemented several methods
+//
 // Revision 1.7  2004/08/09 20:55:59  pbartok
 // - Removed Run method, was only required for initial development
 //
@@ -502,20 +505,25 @@ namespace System.Windows.Forms {
 		}
 
 
-		internal override void SetWindowPos(IntPtr handle, Rectangle rc) {
-			
-			Console.WriteLine("#region #line");
-			return;
-		}
-
 		internal override void SetWindowPos(IntPtr handle, int x, int y, int width, int height) {
 			Console.WriteLine("#region #line");
 			return;
 		}
 
-		internal override void Activate(IntPtr handle) {
-			Console.WriteLine("#region #line");
+		internal override void GetWindowPos(IntPtr handle, out int x, out int y, out int width, out int height) {
+			RECT	rect;
+
+			Win32GetWindowRect(handle, out rect);
+			Win32ScreenToClient(Win32GetParent(handle), ref rect);
+			x = rect.left;
+			y = rect.top;
+			width = rect.right - rect.left;
+			height = rect.bottom - rect.top;
 			return;
+		}
+
+		internal override void Activate(IntPtr handle) {
+			Win32SetActiveWindow(handle);
 		}
 
 		internal override void Invalidate(IntPtr handle, Rectangle rc, bool clear) {
@@ -526,7 +534,6 @@ namespace System.Windows.Forms {
 			rect.right=rc.Right;
 			rect.bottom=rc.Bottom;
 			Win32InvalidateRect(handle, ref rect, clear);
-			return;
 		}
 
 		internal override IntPtr DefWndProc(ref Message msg) {
@@ -572,7 +579,6 @@ namespace System.Windows.Forms {
 		}
 
 		internal override bool Text(IntPtr handle, string text) {
-			Console.WriteLine("Setting window text {0}", text);
 			Win32SetWindowText(handle, text);
 			return true;
 		}
@@ -588,14 +594,11 @@ namespace System.Windows.Forms {
 		}
 
 		internal override IntPtr SetParent(IntPtr handle, IntPtr parent) {
-			Console.WriteLine("Setting parent {0}", parent);
-			Win32SetParent(handle, parent);
-			return IntPtr.Zero;
+			return Win32SetParent(handle, parent);
 		}
 
 		internal override IntPtr GetParent(IntPtr handle) {
-			Console.WriteLine("Getting parent {0}", handle);
-			return IntPtr.Zero;
+			return Win32GetParent(handle);
 		}
 
 		internal override void GrabWindow(IntPtr hWnd) {
@@ -638,7 +641,7 @@ namespace System.Windows.Forms {
 		internal extern static bool Win32SetWindowText(IntPtr hWnd, string lpString);
 
 		[DllImport ("user32.dll", EntryPoint="SetParent", CallingConvention=CallingConvention.StdCall)]
-		internal extern static bool Win32SetParent(IntPtr hWnd, IntPtr hParent);
+		internal extern static IntPtr Win32SetParent(IntPtr hWnd, IntPtr hParent);
 
 		[DllImport ("user32.dll", EntryPoint="RegisterClassA", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32RegisterClass(ref WNDCLASS wndClass);
@@ -681,6 +684,18 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="ReleaseCapture", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32ReleaseCapture();
+
+		[DllImport ("user32.dll", EntryPoint="GetWindowRect", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32GetWindowRect(IntPtr hWnd, out RECT rect);
+
+		[DllImport ("user32.dll", EntryPoint="ScreenToClient", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32ScreenToClient(IntPtr hWnd, ref RECT rect);
+
+		[DllImport ("user32.dll", EntryPoint="GetParent", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32GetParent(IntPtr hWnd);
+
+		[DllImport ("user32.dll", EntryPoint="SetActiveWindow", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32SetActiveWindow(IntPtr hWnd);
 		#endregion
 
 	}
