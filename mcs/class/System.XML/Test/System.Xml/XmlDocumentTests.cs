@@ -980,6 +980,21 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void PreserveWhitespace2 ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			Assert (!doc.PreserveWhitespace);
+			doc.PreserveWhitespace = true;
+			XmlDocument d2 = doc.Clone () as XmlDocument;
+			Assert (!d2.PreserveWhitespace); // i.e. not cloned
+			d2.AppendChild (d2.CreateElement ("root"));
+			d2.DocumentElement.AppendChild (d2.CreateWhitespace ("   "));
+			StringWriter sw = new StringWriter ();
+			d2.WriteTo (new XmlTextWriter (sw));
+			AssertEquals ("<root>   </root>", sw.ToString ());
+		}
+
+		[Test]
 		public void CreateAttribute ()
 		{
 			XmlDocument dom = new XmlDocument ();

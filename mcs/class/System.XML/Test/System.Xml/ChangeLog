@@ -1,3 +1,8 @@
+2004-03-16  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlDocumentTests.cs : Added PreserveWhitespace2() (whitespace nodes
+	  should be written regardless of document.PreserveWhitespace.)
+
 2004-03-15  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReaderCommonTests.cs : Added tests for ReadInner/OuterXml() on
