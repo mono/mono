@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- NAnt build file for System.Web.Mobile.dll -->
+
+<project name="System.Web.Mobile" default="build">
+	<property name="debug" value="false"/>
+
+	<target name="build">
+		<mkdir dir="../lib"/>
+		<csc target="library" output="../lib/System.Web.Mobile.dll" debug="${debug}">
+			<arg value="/nowarn:1595"/>
+			<arg value="/nowarn:0169"/>
+			<arg value="/nowarn:0649"/> <!-- always default value -->
+			<arg value="/nowarn:0067"/> <!-- event never used -->
+			<arg value="/nowarn:0679"/> <!-- internal virual -->
+			<arg value="/nowarn:0168"/> <!-- never used variable -->
+			<arg value="/nowarn:0162"/> <!-- unreachable code -->
+			<!--<arg value="/noconfig"/>-->
+			<arg value="/debug"/>
+			<!--<arg value="/r:System.Web.dll"/>-->
+			<!--<arg value="/r:System.dll"/>-->
+			<sources>
+				<includes name="**/*.cs"/> 
+				<excludes name="Test/**"/>
+			</sources>
+		</csc>
+	</target>
+
+	<target name="clean">
+		<delete failonerror="false">
+			<fileset basedir="../lib">
+				<includes name="System.Web.Mobile.dll"/>
+			</fileset>
+		</delete>
+	</target>
+</project>

@@ -1,6 +1,11 @@
 
 2003-01-08	Gaurav Vaish <gvaish_mono AT lycos.com>
 
+	* .cvsignore                             : Ignores local files
+	* System.Web.Mobile.build                : The build file
+
+2003-01-08	Gaurav Vaish <gvaish_mono AT lycos.com>
+
 	* System.Web.Mobile,
 	* System.Web.UI.MobileControls,
 	* System.Web.UI.MobileControls.Adapters  : Added directories
