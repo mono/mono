@@ -18,7 +18,6 @@ bin_SCRIPTS = \
 	makecert		\
 	mbas			\
 	mcs			\
-	mint			\
 	mkbundle		\
 	mono-find-provides	\
 	mono-find-requires	\
