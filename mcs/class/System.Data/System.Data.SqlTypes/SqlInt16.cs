@@ -237,7 +237,7 @@ namespace System.Data.SqlTypes
 
 		public static SqlInt16 operator | (SqlInt16 x, SqlInt16 y)
 		{
-			return new SqlInt16 ((short) ((byte) x.Value | (byte) y.Value));
+			return new SqlInt16 ((short) ( x.Value | y.Value));
 		}
 
 		public static SqlInt16 operator / (SqlInt16 x, SqlInt16 y)
@@ -379,12 +379,13 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlInt16 (SqlInt64 x)
 		{
-			//checked {
-				if (x.IsNull)
-					return Null;
-				else
+			if (x.IsNull)
+				return Null;
+			else {
+				checked {
 					return new SqlInt16 ((short)x.Value);
-				//		}
+				}
+			}
 		}
 
 		public static explicit operator SqlInt16 (SqlMoney x)
@@ -400,13 +401,13 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlInt16 (SqlSingle x)
 		{
-			// FIXME
-			//checked {
-				if (x.IsNull)
-					return Null;
-				else 
+			if (x.IsNull)
+				return Null;
+			else {
+				checked {
 					return new SqlInt16 ((short)x.Value);
-				//}
+				}
+			}
 		}
 
 		public static explicit operator SqlInt16 (SqlString x)

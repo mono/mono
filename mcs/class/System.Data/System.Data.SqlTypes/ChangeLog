@@ -1,5 +1,9 @@
 2003-05-28  Ville Palo <vi64pa@kolumbus.fi>
 
+	* SqlInt16.cs: little fixes.
+	
+2003-05-28  Ville Palo <vi64pa@kolumbus.fi>
+
 	* SqlDouble.cs: Some fixes. Mostly infinity checks
 	* SqlSingle.cs: tiny fixes.
 	* SqlInt64.cs: checked fix.
