@@ -1,5 +1,16 @@
 2004-03-13  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* expression.cs: refactored Emit code from Identifier, now we take
+	care of function's paramenter references. First attack to function
+	calls, check if Resolve from Call succeed.
+	
+	* VariableDeclaration.cs: Deleted Decl class, field_info and
+	local_builder fields were being used only by VariableDeclaration,
+	I'll keep them there.
+	
+	* FormalParameterList.cs: added field pos to FormalParam, and set
+	it at FormalParameterList's Resolve stage. 
+	
 	* TODO: updated TODO.
 
 2004-03-07  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
