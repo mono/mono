@@ -9,7 +9,9 @@
 //
 
 using System;
+using System.Configuration.Assemblies;
 using System.IO;
+using System.Reflection;
 using System.Security.Cryptography;
 
 using Mono.Security.Cryptography;
@@ -408,13 +410,84 @@ namespace Mono.Security {
 			}
 
 			try {
-				RSAPKCS1SignatureDeformatter vrfy = new RSAPKCS1SignatureDeformatter (rsa);
-				vrfy.SetHashAlgorithm (TokenAlgorithm);
-				result = vrfy.VerifySignature (sn.Hash, sn.Signature);
+				AssemblyHashAlgorithm algorithm = AssemblyHashAlgorithm.SHA1;
+				if (tokenAlgorithm == "MD5")
+					algorithm = AssemblyHashAlgorithm.MD5;
+				return Verify (rsa, algorithm, sn.Hash, sn.Signature);
 			}
 			catch {
+				// no exception allowed
+				return false;
 			}
-			return result;
 		}
-	}	
+
+#if INSIDE_CORLIB
+		// We don't want a dependency on StrongNameManager in Mono.Security.dll
+		static public bool IsAssemblyStrongnamed (string assemblyName) 
+		{
+			try {
+				// this doesn't load the assembly (well it unloads it ;)
+				// http://weblogs.asp.net/nunitaddin/posts/9991.aspx
+				AssemblyName an = AssemblyName.GetAssemblyName (assemblyName);
+				if (an == null)
+					return false;
+
+				byte[] publicKey = StrongNameManager.GetMappedPublicKey (an.GetPublicKeyToken ());
+				if ((publicKey == null) || (publicKey.Length < 12)) {
+					// no mapping
+					publicKey = an.GetPublicKey ();
+					if ((publicKey == null) || (publicKey.Length < 12))
+						return false;
+				}
+
+				// Note: MustVerify is based on the original token (by design). Public key
+				// remapping won't affect if the assembly is verified or not.
+				if (!StrongNameManager.MustVerify (an)) {
+					return true;
+				}
+
+				RSA rsa = CryptoConvert.FromCapiPublicKeyBlob (publicKey, 12);
+				StrongName sn = new StrongName (rsa);
+				bool result = sn.Verify (assemblyName);
+				return result;
+			}
+			catch {
+				// no exception allowed
+				return false;
+			}
+		}
+
+		// TODO
+		// we would get better performance if the runtime hashed the
+		// assembly - as we wouldn't have to load it from disk a 
+		// second time. The runtime already have implementations of
+		// SHA1 (and even MD5 if required someday).
+		static public bool VerifySignature (byte[] publicKey, int algorithm, byte[] hash, byte[] signature) 
+		{
+			try {
+				RSA rsa = CryptoConvert.FromCapiPublicKeyBlob (publicKey);
+				return Verify (rsa, (AssemblyHashAlgorithm) algorithm, hash, signature);
+			}
+			catch {
+				// no exception allowed
+				return false;
+			}
+		}
+#endif
+		static private bool Verify (RSA rsa, AssemblyHashAlgorithm algorithm, byte[] hash, byte[] signature) 
+		{
+			RSAPKCS1SignatureDeformatter vrfy = new RSAPKCS1SignatureDeformatter (rsa);
+			switch (algorithm) {
+			case AssemblyHashAlgorithm.MD5:
+				vrfy.SetHashAlgorithm ("MD5");
+				break;
+			case AssemblyHashAlgorithm.SHA1:
+			case AssemblyHashAlgorithm.None:
+			default:
+				vrfy.SetHashAlgorithm ("SHA1");
+				break;
+			}
+			return vrfy.VerifySignature (hash, signature);
+		}
+	}
 }
