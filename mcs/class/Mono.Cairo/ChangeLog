@@ -1,3 +1,12 @@
+2003-09-08  Duncan Mak  <duncan@ximian.com>
+
+	* Mono.Cairo/Surface.cs (PutImage): Removed.
+
+	* Mono.Cairo/Object.cs (Copy): Wrapper for cairo_copy.
+
+	* Mono.Cairo/Cairo.cs (cairo_copy): New API
+	(cairo_surface_put_image): Removed.
+
 2003-09-05  Duncan Mak  <duncan@ximian.com>
 
 	* Mono.Cairo/Object.cs (Tolerance): Fix typo.

@@ -28,6 +28,9 @@ namespace Cairo {
 		[DllImport (CairoImp)]
 		public static extern IntPtr cairo_destroy (IntPtr cr);
 
+                [DllImport (CairoImp)]
+		public static extern IntPtr cairo_copy (IntPtr cr_other);                                                
+
 		[DllImport (CairoImp)]
 		public static extern void cairo_save (IntPtr cr);                
 
@@ -267,10 +270,6 @@ namespace Cairo {
 
                 [DllImport (CairoImp)]                
                 public static extern void cairo_surface_destroy (IntPtr surface);
-
-                [DllImport (CairoImp)]                
-                public static extern Cairo.Status cairo_surface_put_image (
-                        IntPtr surface, string data, int width, int height, int stride);
 
                 [DllImport (CairoImp)]                
                 public static extern Cairo.Status cairo_surface_set_repeat (

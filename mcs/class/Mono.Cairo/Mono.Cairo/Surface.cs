@@ -57,11 +57,6 @@ namespace Cairo {
                         CairoAPI.cairo_surface_destroy (surface);
                 }
 
-                public void PutImage (string data, int width, int height, int stride)
-                {
-                        CairoAPI.cairo_surface_put_image (surface, data, width, height, stride);
-                }
-
                 public IntPtr Pointer {
                         get { return surface; }
                 }

@@ -38,6 +38,11 @@ namespace Cairo {
                 {
                         return CairoAPI.cairo_destroy (state);
                 }
+
+                public IntPtr Copy ()
+                {
+                        return CairoAPI.cairo_copy (state);
+                }
                 
                 public void Save ()
                 {
