@@ -3,6 +3,7 @@
 // Author(s):
 //  Jackson Harper (Jackson@LatitudeGeo.com)
 //
+// (C) 2002 Jackson Harper, All rights reserved.
 
 using System;
 
