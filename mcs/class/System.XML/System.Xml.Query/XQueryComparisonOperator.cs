@@ -101,7 +101,7 @@ namespace Mono.Xml.XPath2
 
 			// other types
 			default:
-				if (lvalue.XmlType.TypeCode != rvalue.XmlType.TypeCode)
+				if (lvalue.XmlType.TypeCode == rvalue.XmlType.TypeCode)
 					return CompareEquality (lvalue, rvalue);
 				break;
 			}
@@ -133,7 +133,7 @@ namespace Mono.Xml.XPath2
 
 			// other types
 			default:
-				if (lvalue.XmlType.TypeCode != rvalue.XmlType.TypeCode)
+				if (lvalue.XmlType.TypeCode == rvalue.XmlType.TypeCode)
 					return !CompareEquality (lvalue, rvalue);
 				break;
 			}
@@ -179,7 +179,7 @@ namespace Mono.Xml.XPath2
 				break;
 
 			default:
-				if (lvalue.XmlType.TypeCode != rvalue.XmlType.TypeCode)
+				if (lvalue.XmlType.TypeCode == rvalue.XmlType.TypeCode)
 					return CompareLT (lvalue, rvalue);
 				break;
 			}
@@ -225,7 +225,7 @@ namespace Mono.Xml.XPath2
 				break;
 
 			default:
-				if (lvalue.XmlType.TypeCode != rvalue.XmlType.TypeCode)
+				if (lvalue.XmlType.TypeCode == rvalue.XmlType.TypeCode)
 					return CompareLE (lvalue, rvalue);
 				break;
 			}
@@ -271,7 +271,7 @@ namespace Mono.Xml.XPath2
 				break;
 
 			default:
-				if (lvalue.XmlType.TypeCode != rvalue.XmlType.TypeCode)
+				if (lvalue.XmlType.TypeCode == rvalue.XmlType.TypeCode)
 					return CompareGT (lvalue, rvalue);
 				break;
 			}
@@ -317,7 +317,7 @@ namespace Mono.Xml.XPath2
 				break;
 
 			default:
-				if (lvalue.XmlType.TypeCode != rvalue.XmlType.TypeCode)
+				if (lvalue.XmlType.TypeCode == rvalue.XmlType.TypeCode)
 					return CompareGE (lvalue, rvalue);
 				break;
 			}

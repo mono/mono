@@ -55,7 +55,8 @@ namespace Mono.Xml.XPath2
 		}
 
 		internal XQueryContext Context {
-			get { return ctx; }
+//			get { return ctx; }
+			get { return ctx.ContextManager.CurrentContext; }
 		}
 
 		public virtual int Count {
@@ -1272,11 +1273,11 @@ namespace Mono.Xml.XPath2
 				ForSingleBody fsb = sb as ForSingleBody;
 				if (fsb != null) {
 					XPathSequence backup = contextSequence;
-					XPathSequence current = sb.Expression.Evaluate (Context.CurrentSequence);
-					Context.ContextManager.PushCurrentSequence (current);
-					while (current.MoveNext ()) {
-						XPathItem forItem = (XPathItem) current.Current;
-						Context.PushVariable (fsb.PositionalVar, Context.CurrentSequence.Position);
+					contextSequence = sb.Expression.Evaluate (Context.CurrentSequence);
+					Context.ContextManager.PushCurrentSequence (contextSequence);
+					while (contextSequence.MoveNext ()) {
+						XPathItem forItem = (XPathItem) contextSequence.Current;
+						Context.PushVariable (fsb.PositionalVar, contextSequence.Position);
 						Context.PushVariable (sb.VarName, forItem);
 						// recurse here (including following bindings)
 						IEnumerator items = 

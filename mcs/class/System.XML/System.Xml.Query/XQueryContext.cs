@@ -71,12 +71,12 @@ namespace Mono.Xml.XPath2
 				namespaceManager.AddNamespace (de.Key.ToString (), de.Value.ToString ());
 			namespaceManager.PushScope ();
 
+			currentContext = new XQueryContext (this, null, new Hashtable ());
 			if (input != null) {
 				currentSequence = new SingleItemIterator (input, currentContext);
 				currentSequence.MoveNext ();
 			}
-
-			currentContext = new XQueryContext (this, currentSequence);
+			currentContext = new XQueryContext (this, currentSequence, new Hashtable ());
 		}
 
 		public bool Initialized {
@@ -154,6 +154,17 @@ namespace Mono.Xml.XPath2
 			currentContext = contextStack.Pop ();
 		}
 
+		internal void PushVariable (XmlQualifiedName name, object iter)
+		{
+			PushContext ();
+			CurrentContext.SetVariable (name, iter);
+		}
+
+		internal void PopVariable ()
+		{
+			PopContext ();
+		}
+
 		internal XmlNamespaceManager NSManager {
 			get { return namespaceManager; }
 		}
@@ -166,18 +177,23 @@ namespace Mono.Xml.XPath2
 		XPathSequence currentSequence;
 
 		internal XQueryContext (XQueryContextManager manager)
-			: this (manager, manager.CurrentContext.CurrentSequence)
+			: this (manager,
+				manager.CurrentContext.currentSequence,
+				(Hashtable) manager.CurrentContext.currentVariables.Clone ())
 		{
 		}
 
-		internal XQueryContext (XQueryContextManager manager, XPathSequence currentSequence)
+		internal XQueryContext (XQueryContextManager manager, XPathSequence currentSequence, Hashtable currentVariables)
 		{
 			contextManager = manager;
 			this.currentSequence = currentSequence;
+/*
 			if (manager.CurrentContext != null)
 				currentVariables = (Hashtable) manager.CurrentContext.currentVariables.Clone ();
 			else
 				currentVariables = new Hashtable ();
+*/
+			this.currentVariables = currentVariables;
 		}
 
 		internal XmlWriter Writer {
@@ -221,13 +237,18 @@ namespace Mono.Xml.XPath2
 
 		internal void PushVariable (XmlQualifiedName name, object iter)
 		{
-			contextManager.PushContext ();
+			contextManager.PushVariable (name, iter);
+		}
+
+		// FIXME: Hmm... this design is annoying.
+		internal void SetVariable (XmlQualifiedName name, object iter)
+		{
 			currentVariables [name] = iter;
 		}
 
 		internal void PopVariable ()
 		{
-			contextManager.PopContext ();
+			contextManager.PopVariable ();
 		}
 
 		internal XPathSequence ResolveVariable (XmlQualifiedName name)

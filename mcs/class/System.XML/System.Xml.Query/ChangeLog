@@ -1,3 +1,17 @@
+2004-09-12  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPath2Expression.cs : ComparisonExpr.CompareAtomic() should consider
+	  spec-conformant untypedAtomic handling.
+	* XQueryContext.cs : Variables were incorrectly added to the older
+	  context. Fixed Context and ContextManager constructors that were 
+	  in silly chicken-and-egg.
+	* XPathSequence.cs : now Context property always returns current
+	  XQuery context (will be fixed; it is workaround for variable
+	  resolution). In For iteration, context sequence should vary.
+	* XQueryComparisonOperator.cs : All value comparison failed to return
+	  true when both operands are the same types.
+	* XsltCommand.cs : use XmlWriter.Create().
+
 2004-09-08  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathSequence.cs : workarounded bug #65521. Erased foreach inside

@@ -109,7 +109,7 @@ namespace System.Xml.Query
 		[MonoTODO]
 		public void Execute (string contextDocumentUri, string resultDocumentUri)
 		{
-			XmlTextWriter xw = new XmlTextWriter (resultDocumentUri, null);
+			XmlWriter xw = XmlWriter.Create (resultDocumentUri);
 			try {
 				Execute (new XPathDocument (contextDocumentUri), xw);
 			} finally {
@@ -154,7 +154,7 @@ namespace System.Xml.Query
 			XmlArgumentList argList, 
 			Stream results)
 		{
-			XmlTextWriter w = new XmlTextWriter (results, null);
+			XmlWriter w = XmlWriter.Create (results);
 			Execute (contextDocumentUri, dataSources, argList, w);
 		}
 
@@ -165,7 +165,7 @@ namespace System.Xml.Query
 			XmlArgumentList argList, 
 			TextWriter results)
 		{
-			XmlTextWriter w = new XmlTextWriter (results);
+			XmlWriter w = XmlWriter.Create (results);
 			Execute (contextDocumentUri, dataSources, argList, w);
 		}
 

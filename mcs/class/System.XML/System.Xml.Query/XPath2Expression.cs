@@ -139,7 +139,7 @@ namespace Mono.Xml.XPath2
 					throw new XmlQueryException ("Current output can not accept root node.");
 				nav.WriteSubtree (w);
 			} else
-				w.WriteValue (item.TypedValue);
+				w.WriteString (item.Value);
 		}
 
 		// get EBV (fn:boolean())
@@ -204,7 +204,7 @@ namespace Mono.Xml.XPath2
 				if (nav.SchemaInfo != null)
 					return new XPathAtomicValue (nav.TypedValue, nav.SchemaInfo.SchemaType);
 				else
-					return new XPathAtomicValue (nav.Value, XmlSchemaSimpleType.XsString);
+					return new XPathAtomicValue (nav.Value, XmlSchemaSimpleType.XdtUntypedAtomic);
 			}
 			else
 				return (XPathAtomicValue) item;
@@ -1289,26 +1289,43 @@ namespace Mono.Xml.XPath2
 
 		private bool CompareAtomic (XPathItem itemL, XPathItem itemR)
 		{
+			XmlSchemaSimpleType ua = XmlSchemaSimpleType.XdtUntypedAtomic;
+			XmlSchemaSimpleType str = XmlSchemaSimpleType.XsString;
+			// FIXME: XPathNavigator might be complex content.
+			bool uaL = itemL.XmlType == null || itemL.XmlType == ua;
+			bool uaR = itemR.XmlType == null || itemR.XmlType == ua;
+			bool bothUA = uaL && uaR;
+			XPathAtomicValue avL =
+				(uaL) ?
+				bothUA ? new XPathAtomicValue (itemL.Value, str) :
+				new XPathAtomicValue (itemL.Value, itemR.XmlType) :
+				Atomize (itemL);
+			XPathAtomicValue avR =
+				uaR ?
+				bothUA ? new XPathAtomicValue (itemR.Value, str) :
+				new XPathAtomicValue (itemR.Value, itemL.XmlType) :
+				Atomize (itemR);
+
 			switch (Operation) {
 			// FIXME: it is curious but currently gmcs requires full typename.
 			case Mono.Xml.XPath2.ComparisonOperator.ValueEQ:
 			case Mono.Xml.XPath2.ComparisonOperator.GeneralEQ:
-				return XQueryComparisonOperator.ValueEQ (Atomize (itemL), Atomize (itemR));
+				return XQueryComparisonOperator.ValueEQ (avL, avR);
 			case Mono.Xml.XPath2.ComparisonOperator.ValueNE:
 			case Mono.Xml.XPath2.ComparisonOperator.GeneralNE:
-				return XQueryComparisonOperator.ValueNE (Atomize (itemL), Atomize (itemR));
+				return XQueryComparisonOperator.ValueNE (avL, avR);
 			case Mono.Xml.XPath2.ComparisonOperator.ValueLT:
 			case Mono.Xml.XPath2.ComparisonOperator.GeneralLT:
-				return XQueryComparisonOperator.ValueLT (Atomize (itemL), Atomize (itemR));
+				return XQueryComparisonOperator.ValueLT (avL, avR);
 			case Mono.Xml.XPath2.ComparisonOperator.ValueLE:
 			case Mono.Xml.XPath2.ComparisonOperator.GeneralLE:
-				return XQueryComparisonOperator.ValueLE (Atomize (itemL), Atomize (itemR));
+				return XQueryComparisonOperator.ValueLE (avL, avR);
 			case Mono.Xml.XPath2.ComparisonOperator.ValueGT:
 			case Mono.Xml.XPath2.ComparisonOperator.GeneralGT:
-				return XQueryComparisonOperator.ValueGT (Atomize (itemL), Atomize (itemR));
+				return XQueryComparisonOperator.ValueGT (avL, avR);
 			case Mono.Xml.XPath2.ComparisonOperator.ValueGE:
 			case Mono.Xml.XPath2.ComparisonOperator.GeneralGE:
-				return  XQueryComparisonOperator.ValueGE (Atomize (itemL), Atomize (itemR));
+				return  XQueryComparisonOperator.ValueGE (avL, avR);
 			}
 			return false; // should not happen
 		}
