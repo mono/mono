@@ -54,6 +54,8 @@ namespace Mono.CSharp {
 
 		public int DefineNamespace (string name, SourceFile file, string[] using_list, int parent)
 		{
+			if (file.SymbolDocument == null)
+				return 0;
 			return (int) define_namespace.Invoke (symwriter, new object[] {
 				name, file.SymbolDocument, using_list, parent });
 		}

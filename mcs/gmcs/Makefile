@@ -101,7 +101,7 @@ FRIENDLY_TIME = $(shell which time) -f'%U seconds'
 
 do-time : mcs.exe
 	@ echo -n "Run 1:   "
-	@ $(FRIENDLY_TIME) $(RUNTIME) ./mcs.exe $(USE_MCS_FLAGS) /target:exe /out:mcs2.exe $(all_sources) > /dev/null || (echo FAILED; exit 1)
+	 $(FRIENDLY_TIME) $(RUNTIME) ./mcs.exe $(USE_MCS_FLAGS) /target:exe /out:mcs2.exe $(all_sources) > /dev/null || (echo FAILED; exit 1)
 	@ echo -n "Run 2:   "
 	@ $(FRIENDLY_TIME) $(RUNTIME) ./mcs2.exe $(USE_MCS_FLAGS) /target:exe /out:mcs3.exe $(all_sources) > /dev/null || (echo FAILED; exit 1)
 	@ echo -n "corlib:  "

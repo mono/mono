@@ -98,7 +98,7 @@ namespace Mono.CSharp {
 		//
 		// Whether we have seen a static constructor for this class or not
 		//
-		bool have_static_constructor = false;
+		public bool UserDefinedStaticConstructor = false;
 
 		//
 		// Whether we have at least one non-static field
@@ -259,12 +259,9 @@ namespace Mono.CSharp {
 			bool is_static = (c.ModFlags & Modifiers.STATIC) != 0;
 			
 			if (is_static){
-				have_static_constructor = true;
-				if (default_static_constructor != null){
-					Console.WriteLine ("I have a static constructor already");
-					Console.WriteLine ("   " + default_static_constructor);
+				UserDefinedStaticConstructor = true;
+				if (default_static_constructor != null)
 					return AdditionResult.MethodExists;
-				}
 
 				default_static_constructor = c;
 			} else {
@@ -320,11 +317,6 @@ namespace Mono.CSharp {
 
 					initialized_static_fields.Add (field);
 
-					//
-					// We have not seen a static constructor,
-					// but we will provide static initialization of fields
-					//
-					have_static_constructor = true;
 				} else {
 					if (initialized_fields == null)
 						initialized_fields = new ArrayList ();
@@ -523,12 +515,6 @@ namespace Mono.CSharp {
 		public ArrayList Delegates {
 			get {
 				return delegates;
-			}
-		}
-		
-		public bool HaveStaticConstructor {
-			get {
-				return have_static_constructor;
 			}
 		}
 		
@@ -1121,6 +1107,14 @@ namespace Mono.CSharp {
 		{
 			MemberInfo [] defined_names = null;
 
+			//
+			// We need to be able to use the member cache while we are checking/defining
+			//
+#if CACHE
+			if (TypeBuilder.BaseType != null)
+				parent_container = TypeManager.LookupMemberContainer (TypeBuilder.BaseType);
+#endif
+
 			if (interface_order != null){
 				foreach (Interface iface in interface_order)
 					if ((iface.ModFlags & Modifiers.NEW) == 0)
@@ -1245,9 +1239,6 @@ namespace Mono.CSharp {
 
 
 #if CACHE
-			if (TypeBuilder.BaseType != null)
-				parent_container = TypeManager.LookupMemberContainer (TypeBuilder.BaseType);
-
 			member_cache = new MemberCache (this);
 #endif
 
@@ -2620,22 +2611,37 @@ namespace Mono.CSharp {
 			if (IsOperator) {
 				flags |= MethodAttributes.SpecialName | MethodAttributes.HideBySig;
 			} else {
-				MemberList mi_this;
 
-				mi_this = TypeContainer.FindMembers (
-					container.TypeBuilder, MemberTypes.Method,
-					BindingFlags.NonPublic | BindingFlags.Public |
-					BindingFlags.Static | BindingFlags.Instance |
-					BindingFlags.DeclaredOnly,
-					MethodSignature.method_signature_filter, ms);
+				//
+				// Check in our class for dups
+				//
+				ArrayList ar = container.Methods;
+				if (ar != null) {
+					int arLen = ar.Count;
+					
+					for (int i = 0; i < arLen; i++) {
+						Method m = (Method) ar [i];
+						if (m == this || m.Name != this.Name)
+							continue;
+						
+						if (m.MethodBuilder != null && m.ParameterTypes.Length == ParameterTypes.Length) {
+							
+							for (int j = ParameterTypes.Length - 1; j >= 0; j --)
+								if (m.ParameterTypes [j] != ParameterTypes [j])
+									goto next;
 
-				if (mi_this.Count > 0) {
 					Report.Error (111, Location, "Class `" + container.Name + "' " +
 						      "already defines a member called `" + Name + "' " +
 						      "with the same parameter types");
 					return false;
 				}
+						
+					next :
+						;
+					}
+				}
 			} 
+
 
 			//
 			// Verify if the parent has a type with the same name, and then
@@ -2814,7 +2820,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool Resolve (EmitContext ec)
+		public bool Resolve (ConstructorBuilder caller_builder, EmitContext ec)
 		{
 			Expression parent_constructor_group;
 			Type t;
@@ -2860,6 +2866,11 @@ namespace Mono.CSharp {
 			if (parent_constructor == null){
 				Report.Error (1501, loc,
 				       "Can not find a constructor for this argument list");
+				return false;
+			}
+			
+			if (parent_constructor == caller_builder){
+				Report.Error (515, String.Format ("Constructor `{0}' can not call itself", TypeManager.CSharpSignature (caller_builder)));
 				return false;
 			}
 			
@@ -2935,6 +2946,62 @@ namespace Mono.CSharp {
 					(Initializer.Arguments == null);
 		}
 
+		protected override bool CheckBase (TypeContainer container)
+		{
+			base.CheckBase (container);
+			
+			// Check whether arguments were correct.
+			if (!DoDefineParameters ())
+				return false;
+			
+			if ((ModFlags & Modifiers.STATIC) != 0)
+				return true;
+			
+			if (container is Struct && ParameterTypes.Length == 0) {
+				Report.Error (568, Location, 
+					"Structs can not contain explicit parameterless " +
+					"constructors");
+				return false;
+			}
+				
+			//
+			// Check in our class for dups
+			//
+			ArrayList ar = container.InstanceConstructors;
+			
+			// I don't think this is possible (there should be
+			// at least one, us). However, just in case:
+			if (ar == null)
+				return true;
+			
+			int arLen = ar.Count;
+			for (int i = 0; i < arLen; i++) {
+				Constructor m = (Constructor) ar [i];
+				
+				//
+				// Check for a ctor with identical args
+				//
+				if (m == this || m.ConstructorBuilder == null || m.ParameterTypes.Length != ParameterTypes.Length)
+					continue;
+
+				for (int j = ParameterTypes.Length - 1; j >= 0; j --)
+					if (m.ParameterTypes [j] != ParameterTypes [j])
+						goto next;
+				
+				Report.Error (
+					111, Location,
+					"Class `{0}' already contains a definition with the " +
+					"same return value and parameter types for constructor `{1}'",
+					container.Name, Name);
+				return false;
+				
+			next :
+				;
+			}
+			
+			return true;
+		}
+		
 		//
 		// Creates the ConstructorBuilder
 		//
@@ -2943,20 +3010,9 @@ namespace Mono.CSharp {
 			MethodAttributes ca = (MethodAttributes.RTSpecialName |
 					       MethodAttributes.SpecialName);
 
-			// Check if arguments were correct.
-			if (!DoDefineParameters ())
-				return false;
-
 			if ((ModFlags & Modifiers.STATIC) != 0){
 				ca |= MethodAttributes.Static | MethodAttributes.Private;
 			} else {
-				if (container is Struct && ParameterTypes.Length == 0){
-					Report.Error (
-						568, Location, 
-						"Structs can not contain explicit parameterless " +
-						"constructors");
-					return false;
-				}
 				ca |= MethodAttributes.HideBySig;
 
 				if ((ModFlags & Modifiers.PUBLIC) != 0)
@@ -2974,6 +3030,10 @@ namespace Mono.CSharp {
 					ca |= MethodAttributes.Private;
 			}
 
+			// Check if arguments were correct.
+			if (!CheckBase (container))
+				return false;
+
 			ConstructorBuilder = container.TypeBuilder.DefineConstructor (
 				ca, GetCallingConvention (container is Class), ParameterTypes);
 
@@ -2983,14 +3043,7 @@ namespace Mono.CSharp {
 			//
 			// HACK because System.Reflection.Emit is lame
 			//
-			if (!TypeManager.RegisterMethod (ConstructorBuilder, ParameterInfo, ParameterTypes)) {
-				Report.Error (
-					111, Location,
-					"Class `" +container.Name+ "' already contains a definition with the " +
-					"same return value and parameter types for constructor `" + Name
-					+ "'");
-				return false;
-			}
+			TypeManager.RegisterMethod (ConstructorBuilder, ParameterInfo, ParameterTypes);
 
 			return true;
 		}
@@ -3033,7 +3086,7 @@ namespace Mono.CSharp {
 				// `this' access
 				//
 				ec.IsStatic = true;
-				if (Initializer != null && !Initializer.Resolve (ec))
+				if (Initializer != null && !Initializer.Resolve (ConstructorBuilder, ec))
 					return;
 				ec.IsStatic = false;
 			}
@@ -3046,8 +3099,8 @@ namespace Mono.CSharp {
 
 			if ((sw != null) && (block != null) &&
 				!Location.IsNull (Location) &&
-				!Location.IsNull (block.EndLocation)) {
-
+				!Location.IsNull (block.EndLocation) &&
+				(Location.SymbolDocument != null)) {
 				sw.OpenMethod (container, ConstructorBuilder, Location, block.EndLocation);
 
 				generate_debugging = true;
@@ -3547,14 +3600,16 @@ namespace Mono.CSharp {
                                                             OptAttributes,
                                                             Location);
                         
+			SymbolWriter sw = CodeGen.SymbolWriter;
+			
 			//
 			// abstract or extern methods have no bodies
 			//
 			if ((modifiers & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0){
 				if (block == null) {
-					SymbolWriter sw = CodeGen.SymbolWriter;
-
-					if ((sw != null) && ((modifiers & Modifiers.EXTERN) != 0)) {
+					if ((sw != null) && ((modifiers & Modifiers.EXTERN) != 0) &&
+					    !Location.IsNull (Location) &&
+					    (Location.SymbolDocument != null)) {
 						sw.OpenMethod (container, MethodBuilder, Location, Location);
 						sw.CloseMethod ();
 					}
@@ -3597,19 +3652,21 @@ namespace Mono.CSharp {
 			//
 			// FIXME: This code generates buggy code
 			//
-			if (member is Destructor)
-				EmitDestructor (ec, block);
-			else {
-				SymbolWriter sw = CodeGen.SymbolWriter;
-
 				if ((sw != null) && !Location.IsNull (Location) &&
-				    !Location.IsNull (block.EndLocation)) {
+			    !Location.IsNull (block.EndLocation) &&
+			    (Location.SymbolDocument != null)) {
 					sw.OpenMethod (container, MethodBuilder, Location, block.EndLocation);
 
+				if (member is Destructor)
+					EmitDestructor (ec, block);
+				else
 					ec.EmitTopBlock (block, ParameterInfo, Location);
 
 					sw.CloseMethod ();
-				} else
+			} else {
+				if (member is Destructor)
+					EmitDestructor (ec, block);
+				else
 					ec.EmitTopBlock (block, ParameterInfo, Location);
 			}
 		}

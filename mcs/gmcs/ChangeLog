@@ -1,3 +1,176 @@
+2004-03-17  Marek Safar  <marek.safar@seznam.cz>
+
+	* interface.cs: In all interface classes removed redundant
+	member initialization.
+
+2004-03-16  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (TypeContainer.GetClassBases): Fix the CS0528 check.
+
+2004-03-15  Miguel de Icaza  <miguel@ximian.com>
+
+	* decl.cs (DefineTypeAndParents): New helper method to define a
+	type's containers before the type itself is defined;  This is a
+	bug exposed by the recent changes to Windows.Forms when an
+	implemented interface was defined inside a class that had not been
+	built yet.   
+
+	* modifiers.cs (MethodAttr): All methods in C# are HideBySig.
+
+	(Check): Loop correctly to report errors modifiers
+	(UNSAFE was not in the loop, since it was the same as TOP).
+
+	* interface.cs: Every interface member now takes a ModFlags,
+	instead of a "is_new" bool, which we set on the base MemberCore. 
+
+	Every place where we called "UnsafeOk" in the interface, now we
+	call the proper member (InterfaceMethod.UnsafeOK) instead to get
+	the unsafe settings from the member declaration instead of the
+	container interface. 
+
+	* cs-parser.jay (opt_new): Allow unsafe here per the spec. 
+
+	* pending.cs (TypeAndMethods): Add `get_indexer_name' and
+	`set_indexer_name' to the pending bits (one per type).
+
+	We fixed a bug today that was picking the wrong method to
+	override, since for properties the existing InterfaceMethod code
+	basically ignored the method name.  Now we make sure that the
+	method name is one of the valid indexer names.
+
+2004-03-14  Gustavo Giráldez  <gustavo.giraldez@gmx.net>
+ 
+ 	* support.cs (SeekableStreamReader): Keep track of stream byte
+ 	positions and don't mix them with character offsets to the buffer.
+
+	Patch from Gustavo Giráldez
+	
+2004-03-15  Marek Safar  <marek.safar@seznam.cz>
+
+	* interface.cs (InterfaceSetGetBase): Removed double member
+	initialization, base class does it as well.
+
+2004-03-13  Martin Baulig  <martin@ximian.com>
+
+	* class.cs: Reverted Miguel's latest commit; it makes mcs crash
+	when compiling corlib.
+
+2004-03-13  Miguel de Icaza  <miguel@ximian.com>
+
+	* convert.cs (ExplicitConversion): We were reporting an error on
+	certain conversions (object_type source to a value type, when the
+	expression was `null') before we had a chance to pass it through
+	the user defined conversions.
+
+	* driver.cs: Replace / and \ in resource specifications to dots.
+	Fixes 50752
+
+	* class.cs: Add check for duplicate operators.  Fixes 52477
+
+2004-03-11  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (Switch.SimpleSwitchEmit): Deal with default labels
+	that are in the middle of the statements, not only at the end.
+	Fixes #54987
+
+	* class.cs (TypeContainer.AddField): No longer set the
+	`HaveStaticConstructor' flag, now we call it
+	`UserDefineStaticConstructor' to diferentiate the slightly
+	semantic difference.
+
+	The situation is that we were not adding BeforeFieldInit (from
+	Modifiers.TypeAttr) to classes that could have it.
+	BeforeFieldInit should be set to classes that have no static
+	constructor. 
+
+	See:
+
+	http://www.yoda.arachsys.com/csharp/beforefieldinit.html
+
+	And most importantly Zoltan's comment:
+
+	http://bugzilla.ximian.com/show_bug.cgi?id=44229
+
+	"I think beforefieldinit means 'it's ok to initialize the type sometime 
+	 before its static fields are used', i.e. initialization does not need
+	 to be triggered by the first access to the type. Setting this flag
+	 helps the JIT to compile better code, since it can run the static
+	 constructor at JIT time, and does not need to generate code to call it
+	 (possibly lots of times) at runtime. Unfortunately, mcs does not set
+	 this flag for lots of classes like String. 
+	 
+	 csc sets this flag if the type does not have an explicit static 
+	 constructor. The reasoning seems to be that if there are only static
+	 initalizers for a type, and no static constructor, then the programmer
+	 does not care when this initialization happens, so beforefieldinit
+	 can be used.
+	 
+	 This bug prevents the AOT compiler from being usable, since it 
+	 generates so many calls to mono_runtime_class_init that the AOT code
+	 is much slower than the JITted code. The JITted code is faster, 
+	 because it does not generate these calls if the vtable is type is
+	 already initialized, which is true in the majority of cases. But the
+	 AOT compiler can't do this."
+
+2004-03-10  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (MethodData.Emit): Refactor the code so symbolic
+	information is generated for destructors;  For some reasons we
+	were taking a code path that did not generate symbolic information
+	before. 
+
+2004-03-11 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* class.cs: Create a Constructor.CheckBase method that
+	takes care of all validation type code. The method
+	contains some code that was moved from Define.
+
+	It also includes new code that checks for duplicate ctors.
+	This fixes bug #55148.
+
+2004-03-09  Joshua Tauberer <tauberer@for.net>
+
+	* expression.cs (ArrayCreation): Fix: More than 6 nulls in
+	a { ... }-style array creation invokes EmitStaticInitializers
+	which is not good for reference-type arrays.  String, decimal
+	and now null constants (NullCast) are not counted toward
+	static initializers.
+
+2004-03-05  Martin Baulig  <martin@ximian.com>
+
+	* location.cs (SourceFile.HasLineDirective): New public field;
+	specifies whether the file contains or is referenced by a "#line"
+	directive.
+	(Location.DefineSymbolDocuments): Ignore source files which
+	either contain or are referenced by a "#line" directive.	
+
+2004-02-29  Ben Maurer <bmaurer@users.sourceforge.net>
+
+	* class.cs (Method.CheckBase): Avoid using FindMembers, we have
+	direct access to our parent, so check the method inline there.
+
+2004-02-27 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* expression.cs (Invocation.EmitCall): Miguel's last commit
+	caused a regression. If you had:
+	
+	    T t = null;
+	    t.Foo ();
+
+	In Foo the implict this would be null.
+	
+2004-02-27  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Invocation.EmitCall): If the method is not
+	virtual, do not emit a CallVirt to it, use Call.
+
+	* typemanager.cs (GetFullNameSignature): Improve the method to
+	cope with ".ctor" and replace it with the type name.
+
+	* class.cs (ConstructorInitializer.Resolve): Now the method takes
+	as an argument the ConstructorBuilder where it is being defined,
+	to catch the recursive constructor invocations.
+
 2004-03-16  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (MemberAccess.DoResolve): If `expr' resolved to a

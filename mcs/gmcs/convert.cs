@@ -1656,17 +1656,22 @@ namespace Mono.CSharp {
 			//
 			if (expr_type == TypeManager.object_type && target_type.IsValueType){
 				if (expr is NullLiteral){
-					Report.Error (37, loc, "Cannot convert null to value type `" +
-                                                      TypeManager.CSharpName (target_type) + "'");
-					return null;
+					//
+					// Skip the ExplicitReferenceConversion because we can not convert
+					// from Null to a ValueType, and ExplicitReference wont check against
+					// null literal explicitly
+					//
+					goto skip_explicit;
 				}
 				return new UnboxCast (expr, target_type);
+
 			}
 
 			ne = ExplicitReferenceConversion (expr, target_type);
 			if (ne != null)
 				return ne;
 
+		skip_explicit:
 			if (ec.InUnsafe){
 				if (target_type.IsPointer){
 					if (expr_type.IsPointer)
@@ -1728,6 +1733,12 @@ namespace Mono.CSharp {
 			if (ne != null)
 				return ne;
 
+			if (expr is NullLiteral){
+				Report.Error (37, loc, "Cannot convert null to value type `" +
+					      TypeManager.CSharpName (target_type) + "'");
+				return null;
+			}
+				
 			Error_CannotConvertType (loc, original_expr_type, target_type);
 			return null;
 		}

@@ -1348,9 +1348,8 @@ opt_new
 	: opt_modifiers 
 	  {
 		int val = (int) $1;
-		
-		val = Modifiers.Check (Modifiers.NEW, val, 0, lexer.Location);
-		$$ = (bool) (val != 0);
+		val = Modifiers.Check (Modifiers.NEW | Modifiers.UNSAFE, val, 0, lexer.Location);
+		$$ = val;
 	  }
 	;
 
@@ -1359,7 +1358,7 @@ interface_method_declaration
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  SEMICOLON
 	  {
-		$$ = new InterfaceMethod ((Expression) $3, (string) $4, (bool) $2, 
+		$$ = new InterfaceMethod ((Expression) $3, (string) $4, (int) $2, 
 					  (Parameters) $6, (Attributes) $1, lexer.Location);
 	  }
 	| opt_attributes opt_new VOID IDENTIFIER 
@@ -1367,7 +1366,7 @@ interface_method_declaration
 	  SEMICOLON
 	  {
 		$$ = new InterfaceMethod (
-			TypeManager.system_void_expr, (string) $4, (bool) $2, (Parameters) $6, 
+			TypeManager.system_void_expr, (string) $4, (int) $2, (Parameters) $6, 
 					  (Attributes) $1, lexer.Location);
 	  }
 	;
@@ -1384,7 +1383,7 @@ interface_property_declaration
 	  {
                 InterfaceAccessorInfo pinfo = (InterfaceAccessorInfo) $7;
 
-		$$ = new InterfaceProperty ((Expression) $3, (string) $4, (bool) $2, 
+		$$ = new InterfaceProperty ((Expression) $3, (string) $4, (int) $2, 
 					    pinfo.has_get, pinfo.has_set, (Attributes) $1,
                                             pinfo.get_attrs, pinfo.set_attrs,
 					    lexer.Location);
@@ -1409,7 +1408,7 @@ interface_accessors
 interface_event_declaration
 	: opt_attributes opt_new EVENT type IDENTIFIER SEMICOLON
 	  {
-		$$ = new InterfaceEvent ((Expression) $4, (string) $5, (bool) $2, (Attributes) $1,
+		$$ = new InterfaceEvent ((Expression) $4, (string) $5, (int) $2, (Attributes) $1,
 					 lexer.Location);
 	  }
 	| opt_attributes opt_new EVENT type error {
@@ -1441,7 +1440,7 @@ interface_indexer_declaration
 		bool do_set = info.has_set;
 
 		$$ = new InterfaceIndexer ((Expression) $3, (Parameters) $6, do_get, do_set,
-					   (bool) $2, (Attributes) $1, (Attributes) info.get_attrs,
+					   (int) $2, (Attributes) $1, (Attributes) info.get_attrs,
                                            (Attributes) info.set_attrs, lexer.Location);
 	  }
 	;

@@ -651,6 +651,16 @@ namespace Mono.CSharp {
 		
 		static DoubleHash dh = new DoubleHash (1000);
 
+		Type DefineTypeAndParents (DeclSpace tc)
+		{
+			DeclSpace container = tc.Parent;
+
+			if (container.TypeBuilder == null && container.Name != "")
+				DefineTypeAndParents (container);
+
+			return tc.DefineType ();
+		}
+		
 		Type LookupInterfaceOrClass (string ns, string name, out bool error)
 		{
 			DeclSpace parent;
@@ -692,7 +702,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			t = parent.DefineType ();
+			t = DefineTypeAndParents (parent);
 			if (t == null){
 				error = true;
 				return null;

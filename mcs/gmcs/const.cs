@@ -78,8 +78,12 @@ namespace Mono.CSharp {
 
 			const_ec = new EmitContext (parent, Location, null, type, ModFlags);
 			
-			if (!TypeManager.IsBuiltinType (type) &&
-			    (!type.IsSubclassOf (TypeManager.enum_type))) {
+			Type ttype = type;
+			while (ttype.IsArray)
+			    ttype = TypeManager.GetElementType (ttype);
+			
+			if (!TypeManager.IsBuiltinType (ttype) &&
+			    (!ttype.IsSubclassOf (TypeManager.enum_type))) {
 				Report.Error (
 					-3, Location,
 					"Constant type is not valid (only system types are allowed)");
@@ -213,7 +217,15 @@ namespace Mono.CSharp {
 					Expr = un_expr.Expr;
 				else if ((ch_expr != null) && (ch_expr.Expr is Constant))
 					Expr = ch_expr.Expr;
-				else {
+				else if (Expr is ArrayCreation) {
+					ArrayCreation ac = (ArrayCreation) Expr;
+
+					Expr = ac.TurnIntoConstant ();
+					if (Expr == null){
+						Report.Error (150, Location, "A constant value is expected");
+						return null;
+					}
+				} else {
 					if (errors == Report.Errors)
 						Report.Error (150, Location, "A constant value is expected");
 					return null;

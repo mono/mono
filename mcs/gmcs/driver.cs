@@ -1504,9 +1504,13 @@ namespace Mono.CSharp
 				Type[] argst = new Type [2];
 				argst [0] = argst [1] = typeof (string);
 
-				MethodInfo embed_res = typeof (AssemblyBuilder).GetMethod ("EmbedResourceFile", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic, null, CallingConventions.Any, argst, null);
+				MethodInfo embed_res = typeof (AssemblyBuilder).GetMethod (
+					"EmbedResourceFile", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic,
+					null, CallingConventions.Any, argst, null);
+				
 				if (embed_res == null) {
-					Report.Warning (0, new Location (-1), "Cannot embed resources on this runtime: try the Mono runtime instead.");
+					Report.Warning (0, new Location (-1),
+							"Cannot embed resources on this runtime: try the Mono runtime instead.");
 				} else {
 					foreach (string spec in embedded_resources) {
 						int cp;
@@ -1515,8 +1519,10 @@ namespace Mono.CSharp
 						if (cp != -1){
 							margs [0] = spec.Substring (cp + 1);
 							margs [1] = spec.Substring (0, cp);
-						} else
-							margs [0] = margs [1] = spec;
+						} else {
+							margs [1] = spec;
+							margs [0] = spec.Replace ('/','.').Replace ('\\', '.');
+						}
 
 						if (File.Exists ((string) margs [1]))
 							embed_res.Invoke (CodeGen.Assembly.Builder, margs);

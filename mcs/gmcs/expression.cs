@@ -5045,6 +5045,7 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 			bool struct_call = false;
+			bool this_call = false;
 
 			Type decl_type = method.DeclaringType;
 
@@ -5084,6 +5085,7 @@ namespace Mono.CSharp {
 				// If this is ourselves, push "this"
 				//
 				if (instance_expr == null){
+					this_call = true;
 					ig.Emit (OpCodes.Ldarg_0);
 				} else {
 					//
@@ -5127,8 +5129,13 @@ namespace Mono.CSharp {
 			}
 
 			EmitArguments (ec, method, Arguments);
-
-			if (is_static || struct_call || is_base){
+			//
+			// If you have:
+			// this.DoFoo ();
+			// and DoFoo is not virtual, you can omit the callvirt,
+			// because you don't need the null checking behavior.
+			//
+			if (is_static || struct_call || is_base || (this_call && !method.IsVirtual)){
 				if (method is MethodInfo) {
 					ig.Emit (OpCodes.Call, (MethodInfo) method);
 				} else
@@ -5689,9 +5696,14 @@ namespace Mono.CSharp {
 					if (conv == null) 
 						return false;
 
-					if (conv is StringConstant)
+					if (conv is StringConstant || conv is DecimalConstant || conv is NullCast) {
+						// These are subclasses of Constant that can appear as elements of an
+						// array that cannot be statically initialized (with num_automatic_initializers
+						// > max_automatic_initializers), so num_automatic_initializers should be left as zero.
 						array_data.Add (conv);
-					else if (conv is Constant) {
+					} else if (conv is Constant) {
+						// These are the types of Constant that can appear in arrays that can be
+						// statically allocated.
 						array_data.Add (conv);
 						num_automatic_initializers++;
 					} else
@@ -6261,12 +6273,11 @@ namespace Mono.CSharp {
 				// 
 				bool dynamic_initializers = true;
 
-				if (underlying_type != TypeManager.string_type &&
-				    underlying_type != TypeManager.decimal_type &&
-				    underlying_type != TypeManager.object_type) {
+				// This will never be true for array types that cannot be statically
+				// initialized. num_automatic_initializers will always be zero.  See
+				// CheckIndices.
 					if (num_automatic_initializers > max_automatic_initializers)
 						EmitStaticInitializers (ec, dynamic_initializers || !is_statement);
-				}
 				
 				if (dynamic_initializers)
 					EmitDynamicInitializers (ec, !is_statement);
@@ -6309,6 +6320,16 @@ namespace Mono.CSharp {
 				ret [i++] = v;
 			}
 			return ret;
+		}
+
+		public Expression TurnIntoConstant ()
+		{
+			//
+			// Should use something like the above attribute thing.
+			// It should return a subclass of Constant that just returns
+			// the computed value of the array
+			//
+			throw new Exception ("Does not support yet Turning array into a Constant");
 		}
 	}
 	

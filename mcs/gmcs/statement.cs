@@ -2481,6 +2481,7 @@ namespace Mono.CSharp {
 			bool first_test = true;
 			bool pending_goto_end = false;
 			bool null_found;
+			bool default_at_end = false;
 			
 			ig.Emit (OpCodes.Ldloc, val);
 			
@@ -2502,6 +2503,7 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Br, end_of_switch);
 
 				int label_count = ss.Labels.Count;
+				bool mark_default = false;
 				null_found = false;
 				for (int label = 0; label < label_count; label++){
 					SwitchLabel sl = (SwitchLabel) ss.Labels [label];
@@ -2515,7 +2517,9 @@ namespace Mono.CSharp {
 					// If we are the default target
 					//
 					if (sl.Label == null){
-						ig.MarkLabel (default_target);
+						if (label+1 == label_count)
+							default_at_end = true;
+						mark_default = true;
 						default_found = true;
 					} else {
 						object lit = sl.Converted;
@@ -2547,14 +2551,18 @@ namespace Mono.CSharp {
 				foreach (SwitchLabel sl in ss.Labels)
 					ig.MarkLabel (sl.ILLabelCode);
 
+				if (mark_default)
+					ig.MarkLabel (default_target);
 				ss.Block.Emit (ec);
 				pending_goto_end = !ss.Block.HasRet;
 				first_test = false;
 			}
-			if (!default_found){
-				ig.MarkLabel (default_target);
-			}
 			ig.MarkLabel (next_test);
+			if (default_found){
+				if (!default_at_end)
+					ig.Emit (OpCodes.Br, default_target);
+			} else 
+				ig.MarkLabel (default_target);
 			ig.MarkLabel (end_of_switch);
 		}
 
