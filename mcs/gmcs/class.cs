@@ -5146,7 +5146,10 @@ namespace Mono.CSharp {
 
 		protected virtual bool DoDefine (DeclSpace decl)
 		{
-			EmitContext ec = new EmitContext (Parent, Location, null, null, 0);
+			EmitContext ec = decl.EmitContext;
+			if (ec == null)
+				throw new InternalErrorException ("MemberBase.DoDefine called too early");
+
 			ec.InUnsafe = InUnsafe;
 
 			// Lookup Type, verify validity
