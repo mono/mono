@@ -270,6 +270,20 @@ namespace System.Drawing {
 		static internal extern Status GdipSetLineTransform (IntPtr brush, IntPtr matrix);
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipSetLineWrapMode (IntPtr brush, WrapMode wrapMode);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipSetLineLinearBlend (IntPtr brush, float focus, float scale);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipSetLineSigmaBlend (IntPtr brush, float focus, float scale);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipMultiplyLineTransform (IntPtr texture, IntPtr matrix, MatrixOrder order);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipResetLineTransform (IntPtr brush);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipRotateLineTransform (IntPtr brush, float angle, MatrixOrder order);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipScaleLineTransform (IntPtr brush, float sx, float sy, MatrixOrder order);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipTranslateLineTransform (IntPtr brush, float dx, float dy, MatrixOrder order);
 
 		// Graphics functions
 		[DllImport("gdiplus.dll")]
