@@ -232,7 +232,7 @@ namespace System.Data.SqlTypes
 
 		public static SqlInt16 operator | (SqlInt16 x, SqlInt16 y)
 		{
-			return new SqlInt16 ((short) (x.Value | y.Value));
+			return new SqlInt16 ((short) ((byte) x.Value | (byte) y.Value));
 		}
 
 		public static SqlInt16 operator / (SqlInt16 x, SqlInt16 y)

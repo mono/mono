@@ -34,10 +34,11 @@ namespace System.Data.SqlClient {
 		CommandType commandType;
 		SqlConnection connection;
 		SqlTransaction transaction;
-		SqlParameterCollection parameters = new SqlParameterCollection ();
+		UpdateRowSource updatedRowSource;
 
 		CommandBehavior behavior = CommandBehavior.Default;
 		NameValueCollection preparedStatements = new NameValueCollection ();
+		SqlParameterCollection parameters;
 
 		#endregion // Fields
 
@@ -66,9 +67,11 @@ namespace System.Data.SqlClient {
 			this.connection = connection;
 			this.transaction = transaction;
 			this.commandType = CommandType.Text;
+			this.updatedRowSource = UpdateRowSource.Both;
 
 			this.designTimeVisible = false;
 			this.commandTimeout = 30;
+			parameters = new SqlParameterCollection (this);
 		}
 
 		#endregion // Constructors
@@ -79,11 +82,16 @@ namespace System.Data.SqlClient {
 			get { return behavior; }
 		}
 
+		[DataSysDescription ("Command text to execute.")]
+		[DefaultValue ("")]
+		[RefreshProperties (RefreshProperties.All)]
 		public string CommandText {
 			get { return CommandText; }
 			set { commandText = value; }
 		}
 
+		[DataSysDescription ("Time to wait for command to execute.")]
+		[DefaultValue (30)]
 		public int CommandTimeout {
 			get { return commandTimeout;  }
 			set { 
@@ -93,11 +101,16 @@ namespace System.Data.SqlClient {
 			}
 		}
 
+		[DataSysDescription ("How to interpret the CommandText.")]
+		[DefaultValue (CommandType.Text)]
+		[RefreshProperties (RefreshProperties.All)]
 		public CommandType CommandType	{
 			get { return commandType; }
 			set { commandType = value; }
 		}
 
+		[DefaultValue (null)]
+		[DataSysDescription ("Connection used by the command.")]
 		public SqlConnection Connection {
 			get { return connection; }
 			set { 
@@ -108,11 +121,16 @@ namespace System.Data.SqlClient {
 			}
 		}
 
+		[Browsable (false)]
+		[DefaultValue (true)]
+		[DesignOnly (true)]
 		public bool DesignTimeVisible {
 			get { return designTimeVisible; } 
 			set { designTimeVisible = value; }
 		}
 
+		[DataSysDescription ("The parameters collection.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public SqlParameterCollection Parameters {
 			get { return parameters; }
 		}
@@ -143,15 +161,19 @@ namespace System.Data.SqlClient {
 			}
 		}
 
+		[Browsable (false)]
+		[DataSysDescription ("The transaction used by the command.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public SqlTransaction Transaction {
 			get { return transaction; }
 			set { transaction = value; }
 		}	
 
-		[MonoTODO]
+		[DataSysDescription ("When used by a DataAdapter.Update, how command results are applied to the current DataRow.")]
+		[DefaultValue (UpdateRowSource.Both)]
 		public UpdateRowSource UpdatedRowSource	{
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return updatedRowSource; }
+			set { updatedRowSource = value; }
 		}
 
 		#endregion // Fields
@@ -199,7 +221,7 @@ namespace System.Data.SqlClient {
 					parms.Append (" output");
 			}
 
-			SqlParameterCollection localParameters = new SqlParameterCollection ();
+			SqlParameterCollection localParameters = new SqlParameterCollection (this);
 			SqlParameter parm;
 		
 			parm = new SqlParameter ("@P1", SqlDbType.NVarChar);
@@ -231,7 +253,7 @@ namespace System.Data.SqlClient {
 					parms.Append (" output");
 			}
 
-			SqlParameterCollection localParameters = new SqlParameterCollection ();
+			SqlParameterCollection localParameters = new SqlParameterCollection (this);
 			SqlParameter parm;
 		
 			parm = new SqlParameter ("@P1", SqlDbType.Int);

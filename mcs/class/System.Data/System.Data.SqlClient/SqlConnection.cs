@@ -24,6 +24,7 @@ using System.Text;
 using System.Xml;
 
 namespace System.Data.SqlClient {
+	[DefaultEvent ("InfoMessage")]
 	public sealed class SqlConnection : Component, IDbConnection, ICloneable	
 	{
 		#region Fields
@@ -79,16 +80,24 @@ namespace System.Data.SqlClient {
 		#endregion // Constructors
 
 		#region Properties
-		
+
+		[DataSysDescription ("Information used to connect to a DataSource, such as 'Data Source=x;Initial Catalog=x;Integrated Security=SSPI'.")]
+		[DefaultValue ("")]
+		[RecommendedAsConfigurable (true)]	
+		[RefreshProperties (RefreshProperties.All)]
 		public string ConnectionString	{
 			get { return connectionString; }
 			set { SetConnectionString (value); }
 		}
-		
+	
+		[DataSysDescription ("Current connection timeout value, 'Connect Timeout=X' in the ConnectionString.")]	
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int ConnectionTimeout {
 			get { return connectionTimeout; }
 		}
 
+		[DataSysDescription ("Current SQL Server database, 'Initial Catalog=X' in the ConnectionString.")]	
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string Database	{
 			get { return tds.Database; }
 		}
@@ -98,18 +107,28 @@ namespace System.Data.SqlClient {
 			set { dataReader = value; }
 		}
 
+		[DataSysDescription ("Current SqlServer that the connection is opened to, 'Data Source=X' in the ConnectionString.")]	
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string DataSource {
 			get { return dataSource; }
 		}
 
+		[DataSysDescription ("Network packet size, 'Packet Size=x' in the ConnectionString.")]	
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int PacketSize {
 			get { return packetSize; }
 		}
 
+		[Browsable (false)]
+		[DataSysDescription ("Version of the SQL Server accessed by the SqlConnection.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string ServerVersion {
 			get { return tds.ServerVersion; }
 		}
 
+		[Browsable (false)]
+		[DataSysDescription ("The ConnectionState indicating whether the connection is open or closed.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public ConnectionState State {
 			get { return state; }
 		}
@@ -122,6 +141,8 @@ namespace System.Data.SqlClient {
 			get { return transaction; }
 		}
 
+		[DataSysDescription ("Workstation Id, 'Workstation Id=x' in the ConnectionString.")]	
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string WorkstationId {
 			get { return parms.Hostname; }
 		}

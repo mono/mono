@@ -11,12 +11,11 @@ using System;
 using System.Data;
 using System.Runtime.InteropServices;
 
-namespace System.Data.SqlClient
-{
+namespace System.Data.SqlClient {
 	/// <summary>
 	/// Describes an error from a SQL database.
 	/// </summary>
-	[MonoTODO]
+	[Serializable]
 	public sealed class SqlError
 	{
 		byte theClass = 0;

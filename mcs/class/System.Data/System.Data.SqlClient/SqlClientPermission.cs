@@ -4,8 +4,10 @@
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc 2002
+// Copyright (C) Tim Coleman, 2002
 //
 
 using System;
@@ -15,6 +17,7 @@ using System.Security;
 using System.Security.Permissions;
 
 namespace System.Data.SqlClient {
+	[Serializable]
 	public sealed class SqlClientPermission : DBDataPermission 
 	{
 		[MonoTODO]

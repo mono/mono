@@ -39,7 +39,6 @@ namespace System.Data.SqlTypes
 		public SqlDateTime (int dayTicks, int timeTicks) 
 		{
 			throw new NotImplementedException ();
-			notNull = true;
 		}
 
 		public SqlDateTime (int year, int month, int day) 
@@ -58,14 +57,12 @@ namespace System.Data.SqlTypes
 		public SqlDateTime (int year, int month, int day, int hour, int minute, int second, double millisecond) 
 		{
 			throw new NotImplementedException ();
-			notNull = true;
 		}
 
 		[MonoTODO]
 		public SqlDateTime (int year, int month, int day, int hour, int minute, int second, int bilisecond) 
 		{
 			throw new NotImplementedException ();
-			notNull = true;
 		}
 
 		#endregion

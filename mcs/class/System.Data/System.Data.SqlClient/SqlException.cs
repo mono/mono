@@ -12,6 +12,7 @@
 
 using Mono.Data.TdsClient.Internal;
 using System;
+using System.ComponentModel;
 using System.Data;
 using System.Runtime.Serialization;
 
@@ -19,9 +20,15 @@ namespace System.Data.SqlClient {
 	[Serializable]
 	public sealed class SqlException : SystemException
 	{
-		private SqlErrorCollection errors; 
+		#region Fields
 
-		internal SqlException() 
+		SqlErrorCollection errors; 
+
+		#endregion // Fields
+
+		#region Constructors
+
+		internal SqlException () 
 			: base ("a SQL Exception has occurred.") 
 		{
 			errors = new SqlErrorCollection();
@@ -33,6 +40,7 @@ namespace System.Data.SqlClient {
 			errors = new SqlErrorCollection (theClass, lineNumber, message, number, procedure, server, source, state);
 		}
 
+		#endregion // Constructors
 
 		#region Properties
 
@@ -44,14 +52,12 @@ namespace System.Data.SqlClient {
 				else
 					return errors[0].Class;
 			}
-			set { errors[0].SetClass(value); }
 		}
 
 		[MonoTODO]
-		public SqlErrorCollection Errors 
-		{
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		public SqlErrorCollection Errors {
 			get { return errors; }
-			set { errors = value; }
 		}
 
 		[MonoTODO]
@@ -60,7 +66,6 @@ namespace System.Data.SqlClient {
 					return 0; // FIXME: throw exception here?
 				return errors[0].LineNumber;
 			}
-			set { errors[0].SetLineNumber(value); }
 		}
 		
 		[MonoTODO]
@@ -90,7 +95,6 @@ namespace System.Data.SqlClient {
 				else
 					return errors[0].Number;
 			}
-			set { errors[0].SetNumber(value); }
 		}
 		
 		[MonoTODO]
@@ -101,7 +105,6 @@ namespace System.Data.SqlClient {
 				else
 					return errors[0].Procedure;
 			}
-			set { errors[0].SetProcedure(value); }
 		}
 
 		[MonoTODO]
@@ -112,7 +115,6 @@ namespace System.Data.SqlClient {
 				else
 					return errors[0].Server;
 			}
-			set { errors[0].SetServer(value); }
 		}
 		
 		[MonoTODO]
@@ -123,7 +125,6 @@ namespace System.Data.SqlClient {
 				else
 					return errors[0].Source;
 			}
-			set { errors[0].SetSource(value); }
 		}
 
 		[MonoTODO]
@@ -134,7 +135,6 @@ namespace System.Data.SqlClient {
 				else
 					return errors[0].State;
 			}
-			set { errors[0].SetState(value); }
 		}
 
 		#endregion // Properties
@@ -142,7 +142,7 @@ namespace System.Data.SqlClient {
 		#region Methods
 
 		[MonoTODO]
-		public override void GetObjectData(SerializationInfo si, StreamingContext context) 
+		public override void GetObjectData (SerializationInfo si, StreamingContext context) 
 		{
 			throw new NotImplementedException ();
 		}

@@ -1,112 +1,91 @@
 //
-// System.Data.SqlClient.SqlError.cs
+// System.Data.SqlClient.SqlErrorCollection.cs
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc 2002
+// Copyright (C) Tim Coleman, 2002
 //
 using System;
 using System.Collections;
+using System.ComponentModel;
 using System.Data;
 using System.Runtime.InteropServices;
 
-namespace System.Data.SqlClient
-{
-	/// <summary>
-	/// Describes an error from a SQL database.
-	/// </summary>
-	[MonoTODO]
+namespace System.Data.SqlClient {
+	[ListBindable (false)]
+	[Serializable]
 	public sealed class SqlErrorCollection : ICollection, IEnumerable
 	{
-		ArrayList errorList = new ArrayList();
+		#region Fields
 
-		internal SqlErrorCollection() {
+		ArrayList list = new ArrayList();
+
+		#endregion // Fields
+
+		#region Constructors
+
+		internal SqlErrorCollection () 
+		{
 		}
 
-		internal SqlErrorCollection(byte theClass, int lineNumber,
-			string message,	int number, string procedure,
-			string server, string source, byte state) {
-			
-			Add (theClass, lineNumber, message,
-				number, procedure,
-				server, source, state);
+		internal SqlErrorCollection (byte theClass, int lineNumber, string message, int number, string procedure, string server, string source, byte state) 
+		{
+			Add (theClass, lineNumber, message, number, procedure, server, source, state);
 		}
+
+		#endregion // Constructors
 
 		#region Properties
                 
-		[MonoTODO]
 		public int Count {
-			get {	
-				return errorList.Count;
-			}			  
+			get { return list.Count; }			  
 		}
 
-		[MonoTODO]
-		public void CopyTo(Array array,	int index) {
-			throw new NotImplementedException ();
-		}
-
-		// [MonoTODO]
 		bool ICollection.IsSynchronized {
-			get {	
-				throw new NotImplementedException ();
-			}			  
+			get { return list.IsSynchronized; }
 		}
 
-		// [MonoTODO]
 		object ICollection.SyncRoot {
-			get {	
-				throw new NotImplementedException ();
-			}			  
+			get { return list.SyncRoot; }
 		}
 
-		[MonoTODO]
-		public IEnumerator GetEnumerator() {
-			throw new NotImplementedException ();
-		}
-		
-		// Index property (indexer)
-		// [MonoTODO]
 		public SqlError this[int index] {
-			get {
-				return (SqlError) errorList[index];
-			}
+			get { return (SqlError) list [index]; }
 		}
 
 		#endregion
 
 		#region Methods
 		
+		internal void Add(SqlError error) 
+		{
+			list.Add (error);
+		}
+
+		internal void Add(byte theClass, int lineNumber, string message, int number, string procedure, string server, string source, byte state) 
+		{
+			SqlError error = new SqlError (theClass, lineNumber, message, number, procedure, server, source, state);
+			Add (error);
+		}
+
+		public void CopyTo (Array array, int index) 
+		{
+			list.CopyTo (array, index);
+		}
+
+		public IEnumerator GetEnumerator() 
+		{
+			return list.GetEnumerator ();
+		}
+
 		[MonoTODO]
 		public override string ToString()
 		{
 			throw new NotImplementedException ();
-		}
-		#endregion
-
-		internal void Add(SqlError error) {
-			errorList.Add(error);
-		}
-
-		internal void Add(byte theClass, int lineNumber,
-			string message,	int number, string procedure,
-			string server, string source, byte state) {
-			
-			SqlError error = new SqlError(theClass,
-				lineNumber, message,
-				number, procedure,
-				server, source, state);
-			Add(error);
-		}
-
-		#region Destructors
-
-		[MonoTODO]
-		~SqlErrorCollection()
-		{
-			// FIXME: do the destructor - release resources
 		}
 
 		#endregion		

@@ -14,6 +14,16 @@ using System.Data;
 namespace System.Data.SqlClient {
 	public sealed class SqlInfoMessageEventArgs : EventArgs
 	{
+		#region Constructors
+	
+		[MonoTODO]	
+		internal SqlInfoMessageEventArgs (SqlException e)
+		{
+			throw new NotImplementedException ();
+		}
+
+		#endregion // Constructors
+
 		#region Properties
 
 		[MonoTODO]

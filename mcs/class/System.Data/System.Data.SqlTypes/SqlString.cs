@@ -51,7 +51,6 @@ namespace System.Data.SqlTypes
 		public SqlString (string data, int lcid) 
 		{
 			throw new NotImplementedException ();
-			notNull = true;
 		}
 
 		// init with locale id, compare options, 
@@ -60,7 +59,6 @@ namespace System.Data.SqlTypes
 		public SqlString (int lcid, SqlCompareOptions compareOptions, byte[] data) 
 		{
 			throw new NotImplementedException ();
-			notNull = true;
 		}
 
 		// init with string data, locale id, and compare options
@@ -68,7 +66,6 @@ namespace System.Data.SqlTypes
 		public SqlString (string data, int lcid, SqlCompareOptions compareOptions) 
 		{
 			throw new NotImplementedException ();
-			notNull = true;
 		}
 
 		// init with locale id, compare options, array of bytes data,
@@ -77,7 +74,6 @@ namespace System.Data.SqlTypes
 		public SqlString (int lcid, SqlCompareOptions compareOptions, byte[] data, bool fUnicode) 
 		{
 			throw new NotImplementedException ();
-			notNull = true;
 		}
 
 		// init with locale id, compare options, array of bytes data,
@@ -87,7 +83,6 @@ namespace System.Data.SqlTypes
 		public SqlString (int lcid, SqlCompareOptions compareOptions, byte[] data, int index, int count) 
 		{
 			throw new NotImplementedException ();
-			notNull = true;
 		}
 
 		// init with locale id, compare options, array of bytes data,
@@ -97,7 +92,6 @@ namespace System.Data.SqlTypes
 		public SqlString (int lcid, SqlCompareOptions compareOptions, byte[] data, int index, int count, bool fUnicode) 
 		{
 			throw new NotImplementedException ();
-			notNull = true;
 		}
 
 		#endregion // Constructors

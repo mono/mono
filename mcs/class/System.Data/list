@@ -22,6 +22,7 @@ System.Data/DataRowState.cs
 System.Data/DataRowVersion.cs
 System.Data/DataRowView.cs
 System.Data/DataSet.cs
+System.Data/DataSysDescriptionAttribute.cs
 System.Data/DataTable.cs
 System.Data/DataTableCollection.cs
 System.Data/DataView.cs
@@ -168,6 +169,7 @@ System.Data.SqlClient/SqlInfoMessageEventArgs.cs
 System.Data.SqlClient/SqlInfoMessageEventHandler.cs
 System.Data.SqlClient/SqlParameter.cs
 System.Data.SqlClient/SqlParameterCollection.cs
+System.Data.SqlClient/SqlParameterConverter.cs
 System.Data.SqlClient/SqlRowUpdatedEventArgs.cs
 System.Data.SqlClient/SqlRowUpdatedEventHandler.cs
 System.Data.SqlClient/SqlRowUpdatingEventArgs.cs
@@ -177,6 +179,7 @@ System.Data.SqlClient/SqlXmlTextReader.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/ITds.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/Tds.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/Tds70.cs
+../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/TdsBigDecimal.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/TdsColumnStatus.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/TdsColumnType.cs
 ../Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/TdsComm.cs

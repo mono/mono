@@ -24,7 +24,6 @@ namespace System.Data.SqlClient {
 	/// </summary>
 	public sealed class SqlParameter : MarshalByRefObject, IDbDataParameter, IDataParameter, ICloneable
 	{
-
 		#region Fields
 
 		string parmName;
@@ -46,48 +45,34 @@ namespace System.Data.SqlClient {
 
 		#region Constructors
 
-		[MonoTODO]
 		public SqlParameter () 
+			: this (String.Empty, SqlDbType.NVarChar, 0, ParameterDirection.Input, false, 0, 0, String.Empty, DataRowVersion.Current, null)
 		{
 		}
 
-		[MonoTODO]
 		public SqlParameter (string parameterName, object value) 
+			: this (parameterName, SqlDbType.NVarChar, 0, ParameterDirection.Input, false, 0, 0, String.Empty, DataRowVersion.Current, value)
 		{
-			this.parmName = parameterName;
-			this.objValue = value;
 		}
 		
-		[MonoTODO]
 		public SqlParameter (string parameterName, SqlDbType dbType) 
+			: this (parameterName, dbType, 0, ParameterDirection.Input, false, 0, 0, String.Empty, DataRowVersion.Current, null)
 		{
-			this.parmName = parameterName;
-			this.dbtype = dbType;
 		}
 
-		[MonoTODO]
 		public SqlParameter (string parameterName, SqlDbType dbType, int size) 
+			: this (parameterName, dbType, size, ParameterDirection.Input, false, 0, 0, String.Empty, DataRowVersion.Current, null)
 		{
-
-			this.parmName = parameterName;
-			this.dbtype = dbType;
-			this.size = size;
 		}
 		
-		[MonoTODO]
-		public SqlParameter(string parameterName, SqlDbType dbType, int size, string sourceColumn) 
+		public SqlParameter (string parameterName, SqlDbType dbType, int size, string sourceColumn) 
+			: this (parameterName, dbType, size, ParameterDirection.Input, false, 0, 0, sourceColumn, DataRowVersion.Current, null)
 		{
-
-			this.parmName = parameterName;
-			this.dbtype = dbType;
-			this.size = size;
-			this.sourceColumn = sourceColumn;
 		}
-			 
-		[MonoTODO]
-		public SqlParameter(string parameterName, SqlDbType dbType, int size, ParameterDirection direction, bool isNullable, byte precision, byte scale, string sourceColumn, DataRowVersion sourceVersion, object value) 
+		
+		[EditorBrowsable (EditorBrowsableState.Advanced)]	 
+		public SqlParameter (string parameterName, SqlDbType dbType, int size, ParameterDirection direction, bool isNullable, byte precision, byte scale, string sourceColumn, DataRowVersion sourceVersion, object value) 
 		{
-			
 			this.parmName = parameterName;
 			this.dbtype = dbType;
 			this.size = size;
@@ -104,77 +89,96 @@ namespace System.Data.SqlClient {
 
 		#region Properties
 
-		[MonoTODO]
+		[Browsable (false)]
+		[DataSysDescription ("The parameter generic type.")]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[RefreshProperties (RefreshProperties.All)]
 		public DbType DbType {
 			get { return theDbType; }
 			set { theDbType = value; }
 		}
 
-		[MonoTODO]
+		[DataSysDescription ("Input, output, or bidirectional parameter.")]
+		[DefaultValue (ParameterDirection.Input)]
 		public ParameterDirection Direction {
 			get { return direction; }
 			set { direction = value; }
 		}
 
-		[MonoTODO]
+		[Browsable (false)]
+		[DataSysDescription ("a design-time property used for strongly typed code-generation.")]
+		[DefaultValue (false)]
+		[DesignOnly (true)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]	 
 		public bool IsNullable	{
 			get { return isNullable; }
 		}
 
-		[MonoTODO]
+		[Browsable (false)]
+		[DataSysDescription ("Offset in variable length data types.")]
+		[DefaultValue (0)]
 		public int Offset {
 			get { return offset; }
 			set { offset = value; }
 		}
-
 		
 		string IDataParameter.ParameterName {
 			get { return parmName; }
 			set { parmName = value; }
 		}
-		
+	
+		[DataSysDescription ("Name of the parameter, like '@p1'")]
+		[DefaultValue ("")]
 		public string ParameterName {
 			get { return parmName; }
 			set { parmName = value; }
 		}
 
-		[MonoTODO]
-		public string SourceColumn {
-			get { return sourceColumn; }
-			set { sourceColumn = value; }
-		}
-
-		[MonoTODO]
-		public DataRowVersion SourceVersion {
-			get { return sourceVersion; }
-			set { sourceVersion = value; }
-		}
-		
-		[MonoTODO]
-		public SqlDbType SqlDbType {
-			get { return dbtype; }
-			set { dbtype = value; }
-		}
-
-		[MonoTODO]
-		public object Value {
-			get { return objValue; }
-			set { objValue = value; }
-		}
-
-		[MonoTODO]
+		[DataSysDescription ("For decimal, numeric, varnumeric DBTypes.")]
+		[DefaultValue (0)]
 		public byte Precision {
 			get { return precision; }
 			set { precision = value; }
 		}
 
-		[MonoTODO]
+		[DataSysDescription ("When used by a DataAdapter.Update, the source column name that is used to find the DataSetColumn name in the ColumnMappings. This is to copy a value between the parameter and a datarow.")]
+		[DefaultValue ("")]
+		public string SourceColumn {
+			get { return sourceColumn; }
+			set { sourceColumn = value; }
+		}
+
+		[DataSysDescription ("When used by a DataAdapter.Update (UpdateCommand only), the version of the DataRow value that is used to update the data source.")]
+		[DefaultValue (DataRowVersion.Current)]
+		public DataRowVersion SourceVersion {
+			get { return sourceVersion; }
+			set { sourceVersion = value; }
+		}
+		
+		[DataSysDescription ("The parameter native type.")]
+		[DefaultValue (SqlDbType.NVarChar)]
+		[RefreshProperties (RefreshProperties.All)]
+		public SqlDbType SqlDbType {
+			get { return dbtype; }
+			set { dbtype = value; }
+		}
+
+		[DataSysDescription ("Value of the parameter.")]
+		[DefaultValue (null)]
+		public object Value {
+			get { return objValue; }
+			set { objValue = value; }
+		}
+
+		[DataSysDescription ("For decimal, numeric, varnumeric DBTypes.")]
+		[DefaultValue (0)]
                 public byte Scale {
 			get { return scale; }
 			set { scale = value; }
 		}
 
-		[MonoTODO]
+		[DataSysDescription ("Size of variable length datatypes (strings & arrays).")]
+		[DefaultValue (0)]
                 public int Size {
 			get { return size; }
 			set { 

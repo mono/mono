@@ -1,3 +1,46 @@
+2002-11-04  Tim Coleman <tim@timcoleman.com>
+	* list:
+		Add Mono.Data.TdsClient.Internal.TdsBigDecimal
+		Add System.Data.SqlClient.SqlParameterConverter
+		Add System.Data.DataSysDescriptionAttribute
+	* System.Data/DataSysDescriptionAttribute.cs:
+		New class added
+	* System.Data.Common/DbDataPermission.cs:
+		Add CreateInstance method
+	* System.Data.SqlClient/SqlClientPermission.cs:
+	* System.Data.SqlClient/SqlError.cs:
+		Add Serializable attribute
+	* System.Data.SqlClient/SqlCommand.cs:
+	* System.Data.SqlClient/SqlConnection.cs:
+	* System.Data.SqlClient/SqlDataAdapter.cs:
+	* System.Data.SqlClient/SqlParameter.cs:
+		Add some missing property attributes
+	* System.Data.SqlClient/SqlCommandBuilder.cs:
+		Add some missing property attributes
+		Implement properties
+	* System.Data.SqlClient/SqlDataReader.cs:
+		Implement missing methods
+	* System.Data.SqlClient/SqlErrorCollection.cs:
+		Implement the properties
+	* System.Data.SqlClient/SqlException.cs:
+		Remove extra property accessors
+	* System.Data.SqlClient/SqlInfoMessageEventArgs.cs:
+		Add internal constructor
+	* System.Data.SqlClient/SqlParameterCollection.cs:
+		Add internal constructor
+		Add property attributes
+	* System.Data.SqlClient/SqlParameterConverter.cs:
+		New internal class added
+	* System.Data.SqlClient/SqlRowUpdatedEventArgs.cs:
+	* System.Data.SqlClient/SqlRowUpdatingEventArgs.cs:
+		Remove destructor
+	* System.Data.SqlTypes/SqlDecimal.cs:
+		Add implicit conversion from TdsBigDecimal to SqlDecimal
+	* System.Data.SqlTypes/SqlString.cs:
+	* System.Data.SqlTypes/SqlInt16.cs:
+	* System.Data.SqlTypes/SqlDateTime.cs:
+		Change code to remove compiler warnings
+
 2002-11-04  Stuart Caborn <stuart.caborn@clearswift.com>
 
 	* list: added System.Data/XmlConstants.cs to

@@ -15,13 +15,8 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 
-namespace System.Data.SqlClient
-{
-	/// <summary>
-	/// Represents a set of command-related properties that are used 
-	/// to fill the DataSet and update a data source, all this 
-	/// from a SQL database.
-	/// </summary>
+namespace System.Data.SqlClient {
+	[DefaultEvent ("RowUpdated")]
 	public sealed class SqlDataAdapter : DbDataAdapter, IDbDataAdapter 
 	{
 		#region Fields
@@ -65,21 +60,29 @@ namespace System.Data.SqlClient
 
 		#region Properties
 
+		[DataSysDescription ("Used during Update for deleted rows in DataSet.")]
+		[DefaultValue (null)]
 		public SqlCommand DeleteCommand {
 			get { return deleteCommand; }
 			set { deleteCommand = value; }
 		}
 
+		[DataSysDescription ("Used during Update for new rows in DataSet.")]
+		[DefaultValue (null)]
 		public SqlCommand InsertCommand {
 			get { return insertCommand; }
 			set { insertCommand = value; }
 		}
 
+		[DataSysDescription ("Used during Fill/FillSchema.")]
+		[DefaultValue (null)]
 		public SqlCommand SelectCommand {
 			get { return selectCommand; }
 			set { selectCommand = value; }
 		}
 
+		[DataSysDescription ("Used during Update for modified rows in DataSet.")]
+		[DefaultValue (null)]
 		public SqlCommand UpdateCommand {
 			get { return updateCommand; }
 			set { updateCommand = value; }
@@ -159,11 +162,13 @@ namespace System.Data.SqlClient
 
 		#region Events and Delegates
 
+		[DataSysDescription ("Event triggered before every DataRow during Update.")]
 		public event SqlRowUpdatedEventHandler RowUpdated {
 			add { Events.AddHandler (EventRowUpdated, value); }
 			remove { Events.RemoveHandler (EventRowUpdated, value); }
 		}
 
+		[DataSysDescription ("Event triggered after every DataRow during Update.")]
 		public event SqlRowUpdatingEventHandler RowUpdating {
 			add { Events.AddHandler (EventRowUpdating, value); }
 			remove { Events.RemoveHandler (EventRowUpdating, value); }

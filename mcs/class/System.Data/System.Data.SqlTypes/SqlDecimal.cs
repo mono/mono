@@ -7,6 +7,7 @@
 // (C) Copyright 2002 Tim Coleman
 //
 
+using Mono.Data.TdsClient.Internal;
 using System;
 using System.Globalization;
 
@@ -190,6 +191,14 @@ namespace System.Data.SqlTypes
 		public static SqlDecimal Floor (SqlDecimal n)
 		{
 			throw new NotImplementedException ();
+		}
+
+		internal static SqlDecimal FromTdsBigDecimal (TdsBigDecimal x)
+		{
+			if (x == null)
+				return Null;
+			else
+				return new SqlDecimal (x.Precision, x.Scale, !x.IsNegative, x.Data);
 		}
 
 		public override int GetHashCode ()
