@@ -1,8 +1,11 @@
 2004-09-07  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.h reflection.c icall.c: Only call TypeResolve handlers
+	once. Fixes #58334.
+	
 	* reflection.c (mono_reflection_create_runtime_class): Initialize
 	klass->nested_classes. Fixes #61224.
-	
+
 Tue Sep 7 14:35:26 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* threads.c: sched_yield() on exit, to allow threads to quit.
