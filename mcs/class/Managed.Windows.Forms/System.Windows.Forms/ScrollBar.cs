@@ -372,6 +372,7 @@ namespace System.Windows.Forms
 		{
 			base.OnHandleCreated (e);		
 
+			CalcButtonSizes ();
 			CalcThumbArea ();
 			UpdatePos (Value, true);
 		}
@@ -431,6 +432,22 @@ namespace System.Windows.Forms
 
 		#region Private Methods
 		
+		private void CalcButtonSizes ()
+    		{    		
+    			if (vert) {
+				if (Height < ThemeEngine.Current.ScrollBarButtonSize * 2)
+					scrollbutton_height = Height /2;
+				else
+					scrollbutton_height = ThemeEngine.Current.ScrollBarButtonSize;
+				
+			} else {
+				if (Width < ThemeEngine.Current.ScrollBarButtonSize * 2)
+					scrollbutton_width = Width /2;
+				else
+					scrollbutton_width = ThemeEngine.Current.ScrollBarButtonSize;
+			}
+		}
+				
 		private void CalcThumbArea ()
 		{
 			// Thumb area
@@ -495,32 +512,24 @@ namespace System.Windows.Forms
 			Refresh ();
 			OnScroll (new ScrollEventArgs (ScrollEventType.LargeDecrement, position));
 			OnScroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
-    		}
-
+    		}    		
+    		
     		private void OnResizeSB (Object o, EventArgs e)
     		{    			
     			if (Width <= 0 || Height <= 0)
-    				return;    			
-    			
-			if (vert) {				
-				if (Height < ThemeEngine.Current.ScrollBarButtonSize * 2)
-					scrollbutton_height = Height /2;
-				else
-					scrollbutton_height = ThemeEngine.Current.ScrollBarButtonSize;
-				
-			} else {
-				if (Width < ThemeEngine.Current.ScrollBarButtonSize * 2)
-					scrollbutton_width = Width /2;
-				else
-					scrollbutton_width = ThemeEngine.Current.ScrollBarButtonSize;
-			}			
-
+    				return;
+			
+			CalcButtonSizes ();
 			CalcThumbArea ();
 			UpdatePos (position, true);
     		}
 
 		private void OnPaintSB (PaintEventArgs pevent)
 		{
+			if (Paint != null) {
+				Paint (this, pevent);
+			}
+			
 			if (Width <= 0 || Height <=  0 || Visible == false)
     				return;
 
@@ -557,7 +566,20 @@ namespace System.Windows.Forms
 
 			case TimerType.RepeatThumbArea:
 			{
-				Point pnt;
+				Point pnt, pnt_screen;
+				Rectangle thumb_area_screen = thumb_area;
+
+				pnt_screen = PointToScreen (new Point (thumb_area.X, thumb_area.Y));
+				thumb_area_screen.X = pnt_screen.X;
+				thumb_area_screen.Y = pnt_screen.Y;
+				
+				if (thumb_area_screen.Contains (MousePosition) == false) {					
+					timer.Enabled = false;
+					thumb_moving = ThumbMoving.None;
+					Refresh ();
+					break;
+				}				
+				
 				pnt = PointToClient (MousePosition);
 				
 				if (vert)
@@ -594,6 +616,10 @@ namespace System.Windows.Forms
 
     		private void OnMouseMoveSB (object sender, MouseEventArgs e)
     		{
+    			if (MouseMove != null) {
+				MouseMove (this, e);
+			}
+				
 			if (Enabled == false || thumb_size == 0)
 				return;
 
@@ -698,6 +724,12 @@ namespace System.Windows.Forms
 
     		private void OnMouseDownSB (object sender, MouseEventArgs e)
     		{
+    			if (e.Button == MouseButtons.Right) {
+    				if (MouseDown != null) {
+					MouseDown (this, e);
+				}
+			}
+    			
 			if (Enabled == false)
 				return;
 
@@ -780,6 +812,12 @@ namespace System.Windows.Forms
     		
     		private void OnMouseUpSB (object sender, MouseEventArgs e)
     		{
+    			if (e.Button == MouseButtons.Right) {
+    				if (MouseUp != null) {
+					MouseUp (this, e);
+				}
+			}
+			
 			if (Enabled == false)
 				return;
 
@@ -838,6 +876,16 @@ namespace System.Windows.Forms
 			case Keys.PageDown:
 			{
 				LargeIncrement ();
+				break;
+			}
+			case Keys.Home:
+			{		
+				Value = 0;		
+				break;
+			}			
+			case Keys.End:
+			{	
+				Value = Maximum;			
 				break;
 			}
 			default:
