@@ -1,5 +1,10 @@
 2003-05-10 Jackson Harper <jackson@latitudegeo.com>
 
+	* ExternTable.cs: Alias corlib to mscorlib since these seem to get
+	used interchangably
+		
+2003-05-10 Jackson Harper <jackson@latitudegeo.com>
+
 	* IMethodRef.cs: New file - Interface that method references must
 	implement
 	* ExternMethodRef.cs: New file - Reference to a method in another

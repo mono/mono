@@ -58,6 +58,10 @@ namespace Mono.ILASM {
                         AssemblyName mscorlib = new AssemblyName ();
                         mscorlib.Name = mscorlib_name;
                         AddAssembly (mscorlib_name, mscorlib);
+
+                        // Also need to alias corlib, normally corlib and
+                        // mscorlib are used interchangably
+                        assembly_table["corlib"] = assembly_table["mscorlib"];
                 }
 
                 public void AddAssembly (string name, AssemblyName asmb_name)
