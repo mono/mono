@@ -1,5 +1,10 @@
 2005-01-05  Jonathan Pryor <jonpryor@vt.edu>
 
+	* StdioFileStream.cs: Added; System.IO.Stream wrapper for C FILE struct.
+	* Stdlib.cs: Correct visibility of ftell().
+
+2005-01-05  Jonathan Pryor <jonpryor@vt.edu>
+
 	* Stdlib.cs: Re-order declarations to match the order used in the 
 	  C99 Standard Annex B; Complete <stdio.h> exports (except for those not
 	  worth supporting); Add non-"unsafe" versions of fread(3), fwrite(3) and

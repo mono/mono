@@ -546,7 +546,7 @@ namespace Mono.Unix {
 
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Stdlib_ftell")]
-		private static extern long ftell (IntPtr stream);
+		public static extern long ftell (IntPtr stream);
 
 		[DllImport (LIBC)]
 		public static extern void rewind (IntPtr stream);
