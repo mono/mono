@@ -1,3 +1,11 @@
+2004-09-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile: Updated to include unit tests.
+	* System.ServiceProcess.dll.sources: Added ServiceControllerPermission
+	class to the build.
+	* System.ServiceProcess_test.dll.sources: New. Added sources file for 
+	unit tests.
+
 2003-07-30  Duncan Mak  <duncan@ximian.com>
 
 	* TimeoutException.cs: 
