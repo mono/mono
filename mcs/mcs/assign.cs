@@ -469,13 +469,13 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			original_source = original_source.Resolve (ec);
-			if (original_source == null)
+			if (source == null)
 				return null;
 
-			target = target.ResolveLValue (ec, original_source);
+			target = target.Resolve (ec);
 			if (target == null)
 				return null;
-
+			
 			//
 			// Only now we can decouple the original source/target
 			// into a tree, to guarantee that we do not have side
