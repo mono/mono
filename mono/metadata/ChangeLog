@@ -1,3 +1,7 @@
+2001-10-05  Dick Porter  <dick@ximian.com>
+
+	* threads-pthread.c (pthread_mutex_timedlock): Simple
+	compatibility version for C libraries that lack this call.
 
 Thu Oct 4 19:10:30 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
