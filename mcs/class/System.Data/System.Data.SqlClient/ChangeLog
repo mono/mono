@@ -1,3 +1,10 @@
+2005-03-28  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* SqlCommand.cs: Execute: Add a semicolon at the end of
+	CommandText. Multiple semicolon's are not being complained.
+
+	fixes bug #74134.
+
 2005-03-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SqlConnection.cs: added a finalizer for correct implementation of the
