@@ -1,3 +1,12 @@
+2003-02-05  Alan Tam <Tam@suiLung.com>
+
+	* DataSet.cs: Added framework for DataSet.Update Implemented missing 
+	methods GetSchemaSerializable, GetSerializationData, 
+	ReadXmlSerializable, ShouldSerializeRelations and ShouldSerializeTables
+	for DataSet
+	* DataTable.cs: Implemented missing methods CreateInstance and 
+	GetRowType for DataTable
+	
 2003-02-03  Ville Palo <vi64pa@koti.soon.fi>
 
 	* DataSet.cs: Implemented private method MapType for 

@@ -40,6 +40,7 @@ namespace System.Data {
 		// private DataTableRelationCollection relationCollection;
 		private PropertyCollection properties;
 		private DataViewManager defaultView;
+		private CultureInfo locale;
 		
 		#region Constructors
 
@@ -116,17 +117,60 @@ namespace System.Data {
 		[DataCategory ("Data")]
 		[DataSysDescription ("Indicates a locale under which to compare strings within the DataSet.")]
 		public CultureInfo Locale {
-			[MonoTODO]
-			get { 
-				throw new NotImplementedException ();
+			get {
+				return locale;
 			}
-			
-			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				if (locale == null || !locale.Equals(value)) {
+					// TODO: check if the new locale is valid
+					// TODO: update locale of all tables
+					locale = value;
+				}
 			}
 		}
 
+		[MonoTODO]
+		public void Merge (DataRow[] rows)
+		{
+			throw new NotImplementedException();
+		}
+		
+		[MonoTODO]
+		public void Merge (DataSet dataSet)
+		{
+			throw new NotImplementedException();
+		}
+		
+		[MonoTODO]
+		public void Merge (DataTable table)
+		{
+			throw new NotImplementedException();
+		}
+		
+		[MonoTODO]
+		public void Merge (DataSet dataSet, bool preserveChanges)
+		{
+			throw new NotImplementedException();
+		}
+		
+		[MonoTODO]
+		public void Merge (DataRow[] rows, bool preserveChanges, MissingSchemaAction missingSchemaAction)
+		{
+			throw new NotImplementedException();
+		}
+		
+		[MonoTODO]
+		public void Merge (DataSet dataSet, bool preserveChanges, MissingSchemaAction missingSchemaAction)
+		{
+			throw new NotImplementedException();
+		}
+		
+		[MonoTODO]
+		public void Merge (DataTable table, bool preserveChanges, MissingSchemaAction missingSchemaAction)
+		{
+			throw new NotImplementedException();
+		}
+		
 		[DataCategory ("Data")]
 		[DataSysDescription ("Indicates the XML uri namespace for the root element pointed at by this DataSet.")]
 		[DefaultValue ("")]
@@ -554,6 +598,34 @@ namespace System.Data {
 		}
 		#endregion
 		
+		#region Protected Methods
+		protected virtual void GetSerializationData(SerializationInfo info, StreamingContext context)
+		{
+			string s = info.GetValue ("XmlDiffGram", typeof (String)) as String;
+			if (s != null) ReadXmlSerializable (new XmlTextReader(new StringReader(s)));
+		}
+		
+		protected virtual System.Xml.Schema.XmlSchema GetSchemaSerializable()
+		{
+			return null; // FIXME
+		}
+		
+		protected virtual void ReadXmlSerializable(XmlReader reader)
+		{
+			ReadXml(reader, XmlReadMode.DiffGram); // FIXME
+		}
+		
+		protected virtual bool ShouldSerializeRelations ()
+		{
+			return true;
+		}
+		
+		protected virtual bool ShouldSerializeTables ()
+		{
+			return true;
+		}
+		#endregion
+
 		#region Private Xml Serialisation
 	
 		private void WriteTable( XmlWriter writer, DataTable table, XmlWriteMode mode )

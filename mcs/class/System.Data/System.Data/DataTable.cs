@@ -555,9 +555,20 @@ namespace System.Data {
 		/// and is not intended to be used directly from your code.
 		/// </summary>
 		
-		//protected virtual Type GetRowType()
-		//{	
-		//}
+		protected virtual DataTable CreateInstance()
+		{
+                        return Activator.CreateInstance(this.GetType(), true) as DataTable;
+		}
+
+		/// <summary>
+		/// This member supports the .NET Framework infrastructure
+		/// and is not intended to be used directly from your code.
+		/// </summary>
+		
+		protected virtual Type GetRowType()
+		{
+                        return typeof (DataRow);
+		}
 
 		/// <summary>
 		/// This member supports the .NET Framework infrastructure 
