@@ -175,6 +175,8 @@ namespace System.Web.UI
 						break;
 					case "varybyparam":
 						oc_param = (string) entry.Value;
+						if (String.Compare (oc_param, "none") == 0)
+							oc_param = null;
 						break;
 					case "varybyheader":
 						oc_header = (string) entry.Value;
