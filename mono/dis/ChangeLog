@@ -1,5 +1,12 @@
 2004-12-11  Martin Baulig  <martin@ximian.com>
 
+	* get.c (get_typespec): Added `gboolean is_def' argument; removed
+	the special case for MONO_TYPE_VAR/MVAR and pass `is_def' down to
+	dis_stringify_type().
+	(get_escaped_name): Allow `!'.	
+
+2004-12-11  Martin Baulig  <martin@ximian.com>
+
 	* get.c (get_token): Escape typedefs, typerefs and typespecs.
 
 2004-12-11  Martin Baulig  <martin@ximian.com>
