@@ -163,8 +163,8 @@ namespace System.Net.Sockets
 
 			try {
 				retval = socket.BeginReceive (buffer, offset, size, 0, callback, state);
-			} catch {
-				throw new IOException ("BeginReceive failure");
+			} catch (Exception e) {
+				throw new IOException ("BeginReceive failure", e);
 			}
 
 			return retval;
@@ -310,7 +310,10 @@ namespace System.Net.Sockets
 				throw new ArgumentOutOfRangeException("offset+size exceeds the size of buffer");
 
 			try {
-				socket.Send (buffer, offset, size, 0);
+				int count = 0;
+				while (size - count > 0) {
+					count += socket.Send (buffer, offset + count, size - count, 0);
+				}
 			} catch (Exception e) {
 				throw new IOException ("Write failure", e); 
 			}
