@@ -624,6 +624,8 @@ System.Security.Cryptography/MD5.cs
 System.Security.Cryptography/MD5CryptoServiceProvider.cs
 System.Security.Cryptography/PaddingMode.cs
 System.Security.Cryptography/RandomNumberGenerator.cs
+System.Security.Cryptography/RC2.cs
+System.Security.Cryptography/RC2CryptoServiceProvider.cs
 System.Security.Cryptography/Rijndael.cs
 System.Security.Cryptography/RijndaelManaged.cs
 System.Security.Cryptography/RNGCryptoServiceProvider.cs
