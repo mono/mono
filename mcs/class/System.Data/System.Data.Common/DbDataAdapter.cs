@@ -191,10 +191,8 @@ namespace System.Data.Common {
 					}
 				}
 
-				if (dataTable.Rows.Count > 0) {
-					dataSet.Tables.Add (dataTable);
-                               		tableName = String.Format ("{0}{1}", srcTable, ++resultIndex);
-				}
+				dataSet.Tables.Add (dataTable);
+                               	tableName = String.Format ("{0}{1}", srcTable, ++resultIndex);
 
 				startRecord = 0;
 				maxRecords = 0;

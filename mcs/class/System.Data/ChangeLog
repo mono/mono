@@ -1,3 +1,8 @@
+2003-06-16  Tim Coleman <tim@timcoleman.com>
+	* System.Data.Common/DbDataAdapter.cs:
+		Add the DataTable to the result set even if it contains
+		no rows.  Based on report by Krieg Andreas.
+
 2003-03-17  Daniel Morgan <danmorg@sc.rr.com>
 
 	* System.Data.build: on windows build, ignore
