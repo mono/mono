@@ -98,20 +98,27 @@ namespace Mono.Util.MonoDoc.Qt {
 		private class ListView : QListView {
 
 			QListViewItem _namespace;
+			Progress progress;
 
 			public ListView (QWidget parent) : base (parent)
 			{
 				SetRootIsDecorated (true);
 				AddColumn ("Namespace");
 				SetSorting (-1);
-				//Console.WriteLine ("ListView "+SizeHint ().Width ());
+				progress = new Progress (this);
             }
 
 			public void LoadFile (string filename)
 			{
 				if(File.Exists (filename)) {
+					progress.Show ();
 					DocParser parser = new DocParser (filename);
+					progress.SetTotalSteps (parser.DocTypes.Count - 1);
+					progress.SetLabelText ("Loading Master.xml file");
+					SetUpdatesEnabled (false);
+					int i = 0;
 					foreach(DocType type in parser.DocTypes) {
+						progress.SetProgress (i++);
 						ListItem typeitem = new ListItem (GetNamespaceItem (type.Namespace), type.Name, type);
 						ProcessMember (type.Dtors, typeitem);
 						ProcessMember (type.Events, typeitem);
@@ -120,7 +127,9 @@ namespace Mono.Util.MonoDoc.Qt {
 						ProcessMember (type.Methods, typeitem);
 						ProcessMember (type.Ctors, typeitem);
 					}
-            	}
+					SetUpdatesEnabled (true);
+            		Repaint ();
+				}
 			}
 
 			public void ProcessMember (ArrayList array, QListViewItem parent)
@@ -136,8 +145,10 @@ namespace Mono.Util.MonoDoc.Qt {
 			{
 				_namespace = FindItem (name, 0);
 				if (_namespace == null) {
-					//Console.WriteLine ("ListView "+SizeHint ().Width ());
+					SetUpdatesEnabled (true);
 					_namespace = new ListItem (this, name);
+            		Repaint ();
+					SetUpdatesEnabled (false);
 				}
 				return _namespace;
 			}
@@ -148,7 +159,6 @@ namespace Mono.Util.MonoDoc.Qt {
 			public DocEdit (QWidget parent) : base (parent)
 			{
 				SetMargin (10);
-				//Console.WriteLine ("DocEdit "+SizeHint ().Width ());
 			}
 
 			public void ListViewChanged (QListViewItem item)
@@ -159,7 +169,6 @@ namespace Mono.Util.MonoDoc.Qt {
 				if (listItem != null && !listItem.IsBuilt)
 					AddWidget (listItem.BuildEditForm ());
 				RaiseWidget (listItem.EditForm);
-				//Console.WriteLine ("DocEdit "+SizeHint ().Width ());
 			}
 		}
 
@@ -216,11 +225,22 @@ namespace Mono.Util.MonoDoc.Qt {
 			}
 		}
 
-		private class TypeEdit : QGroupBox {
+		private class TypeEdit : QVGroupBox {
 
 			public TypeEdit (string name) : base (name)
 			{
-				AddSpace (1);
+				SetInsideMargin (20);
+				QLabel sum = new QLabel (
+					"<summary> Provide a brief (usually one sentence) description of a member or type.",
+					 this);
+				QLineEdit sumedit = new QLineEdit (this);
+
+				QLabel rem = new QLabel (
+					"<remarks> Provide verbose information for a type or member.",
+					this);
+				QTextEdit remedit = new QTextEdit (this);
+				remedit.SetTextFormat (Qt.TextFormat.RichText);
+
 			}
 		}
 
@@ -235,6 +255,26 @@ namespace Mono.Util.MonoDoc.Qt {
 					label.SetText (param.Name);
 					QLineEdit edit = new QLineEdit (hbox);
 				}
+			}
+		}
+
+		private class Progress : QProgressDialog {
+			
+			QPushButton pb;
+			
+			public Progress (QWidget parent) : base (parent, "", true)
+			{
+				SetLabelText ("Parsing Master.xml file");
+				SetTotalSteps (500);
+				pb = new QPushButton (null);
+				SetCancelButton (pb);
+				pb.Hide ();
+			}
+
+			new public void Show ()
+			{
+				ForceShow ();
+				SetProgress (1);
 			}
 		}
 	}
