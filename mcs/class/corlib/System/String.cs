@@ -16,6 +16,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 
 namespace System {
+	[Serializable]
 	public sealed class String : IConvertible, IComparable, ICloneable, IEnumerable {
 		private int length;
 

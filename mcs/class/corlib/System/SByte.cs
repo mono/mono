@@ -52,6 +52,7 @@ namespace System {
 			return value;
 		}
 
+		[CLSCompliant(false)]
 		public static sbyte Parse (string s)
 		{
 			int ival = 0;
@@ -110,16 +111,19 @@ namespace System {
 			return (sbyte) ival;
 		}
 
+		[CLSCompliant(false)]
 		public static sbyte Parse (string s, IFormatProvider fp)
 		{
 			return Parse (s, NumberStyles.Integer, fp);
 		}
 
+		[CLSCompliant(false)]
 		public static sbyte Parse (string s, NumberStyles style)
 		{
 			return Parse (s, style, null);
 		}
 
+		[CLSCompliant(false)]
 		public static sbyte Parse (string s, NumberStyles style, IFormatProvider fp)
 		{
 			int tmpResult = Int32.Parse (s, style, fp);
