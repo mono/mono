@@ -8,6 +8,7 @@
 //
 
 namespace System.Web.Services.Protocols {
+
 	[Serializable]
 	public enum SoapMessageStage {
 		AfterDeserialize = 0x8,

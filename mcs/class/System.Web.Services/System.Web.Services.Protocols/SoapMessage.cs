@@ -65,6 +65,11 @@ namespace System.Web.Services.Protocols {
 			get { return stage; }
 		}
 
+		internal void SetStage (SoapMessageStage stage)
+		{
+			this.stage = stage;
+		}
+		
 		public Stream Stream {
 			get {
 				return stream;

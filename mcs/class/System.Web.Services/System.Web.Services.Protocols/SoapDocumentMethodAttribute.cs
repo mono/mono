@@ -31,15 +31,6 @@ namespace System.Web.Services.Protocols {
 
 		public SoapDocumentMethodAttribute () 
 		{
-			action = "http://tempuri.org/MethodName"; // FIXME
-			binding = String.Empty; // FIXME
-			oneWay = false;
-			parameterStyle = SoapParameterStyle.Wrapped;
-			requestElementName = String.Empty; // FIXME
-			requestNamespace = "http://tempuri.org/"; 
-			responseElementName = "WebServiceNameResult"; // FIXME
-			responseNamespace = "http://tempuri.org/";
-			use = SoapBindingUse.Literal;
 		}
 
 		public SoapDocumentMethodAttribute (string action)
@@ -58,7 +49,11 @@ namespace System.Web.Services.Protocols {
 		}
 
 		public string Binding {
-			get { return binding; }
+			get {
+				if (binding != null)
+					return binding;
+				return "";
+			}
 			set { binding = value; }
 		}
 
@@ -73,22 +68,39 @@ namespace System.Web.Services.Protocols {
 		}
 
 		public string RequestElementName {
-			get { return requestElementName; }
+			get {
+				if (requestElementName == null)
+					return "";
+				return requestElementName;
+			}
 			set { requestElementName = value; }
 		}
 
 		public string RequestNamespace {
-			get { return requestNamespace; }
+			get {
+				if (requestNamespace == null)
+					return "";
+				
+				return requestNamespace;
+			}
 			set { requestNamespace = value; }
 		}
 
 		public string ResponseElementName {
-			get { return responseElementName; }
+			get {
+				if (responseElementName == null)
+					return "";
+				return responseElementName;
+			}
 			set { responseElementName = value; }
 		}
 
 		public string ResponseNamespace {
-			get { return responseNamespace; }
+			get {
+				if (requestNamespace == null)
+					return "";
+				return responseNamespace;
+			}
 			set { responseNamespace = value; }
 		}
 

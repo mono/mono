@@ -1,5 +1,14 @@
 2003-04-29  Miguel de Icaza  <miguel@ximian.com>
 
+	* SoapHttpClientProtocol.cs (CreateMessage): Extract information
+
+	* SoapDocumentMethodAttribute.cs: Do not initialize all the fields
+	on the attribute at bootstrap, for default values, just compute
+	them when queried.
+
+	* SoapMessage.cs (SetStage): New internal method, used to register
+	the stage as we move along the soap pipeline.
+
 	* LogicalMethodInfo.cs: Most of this is implemented.  Its only
 	missing a few bits in the Create() method.
 

@@ -8,6 +8,7 @@
 //
 
 using System.Web.Services;
+using System.Web.Services.Protocols;
 
 namespace System.Web.Services.Protocols {
 	public sealed class SoapClientMessage : SoapMessage {
@@ -15,19 +16,23 @@ namespace System.Web.Services.Protocols {
 		#region Fields
 
 		SoapHttpClientProtocol client;
-		SoapClientMethod clientMethod;
 		string url;
-
+		LogicalMethodInfo client_method;
+		SoapDocumentMethodAttribute sma;
 		#endregion
 
 		#region Constructors
-		
-		[MonoTODO ("Determine what calls this constructor.")]
-		internal SoapClientMessage (SoapHttpClientProtocol client, SoapClientMethod clientMethod, string url)
+
+		//
+		// Constructs the SoapClientMessage
+		//
+		internal SoapClientMessage (SoapHttpClientProtocol client, SoapDocumentMethodAttribute sma,
+					    LogicalMethodInfo client_method, bool one_way, string url)
 		{
+			this.sma = sma;
 			this.client = client;
+			this.client_method = client_method;
 			this.url = url;
-			this.clientMethod = clientMethod;
 		}
 
 		#endregion 
@@ -35,8 +40,7 @@ namespace System.Web.Services.Protocols {
 		#region Properties
 
 		public override string Action {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return sma.Action; }
 		}
 
 		public SoapHttpClientProtocol Client {
@@ -44,13 +48,11 @@ namespace System.Web.Services.Protocols {
 		}
 
 		public override LogicalMethodInfo MethodInfo {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return client_method; }
 		}
 
 		public override bool OneWay {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return sma.OneWay; }
 		}
 
 		public override string Url {
@@ -64,13 +66,16 @@ namespace System.Web.Services.Protocols {
 		[MonoTODO]
 		protected override void EnsureInStage ()
 		{
-			throw new NotImplementedException (); 
+			//
+			// I believe for SoapClientMessage, we can safely remove this check
+			// as the In parameters are always available
+			//
+			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected override void EnsureOutStage ()
 		{
-			throw new NotImplementedException (); 
+			EnsureStage (SoapMessageStage.AfterDeserialize);
 		}
 
 		#endregion // Methods

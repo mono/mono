@@ -11,7 +11,7 @@ using System.Web.Services;
 using System.Web.Services.Description;
 
 namespace System.Web.Services.Protocols {
-	[MonoTODO ("Determine what this class does.")]
+
 	internal class SoapClientMethod {
 
 		#region Fields
