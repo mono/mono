@@ -170,7 +170,7 @@ namespace Mono.CSharp {
 			//
 		}
 
-		static void error100 (string name)
+		static void Error_DuplicateParameterName (string name)
 		{
 			Report.Error (
 				100, "The parameter name `" + name + "' is a duplicate");
@@ -192,12 +192,12 @@ namespace Mono.CSharp {
 				for (j = i + 1; j < count; j++){
 					if (base_name != FixedParameters [j].Name)
 						continue;
-					error100 (base_name);
+					Error_DuplicateParameterName (base_name);
 					return false;
 				}
 
 				if (base_name == array_par_name){
-					error100 (base_name);
+					Error_DuplicateParameterName (base_name);
 					return false;
 				}
 			}
@@ -279,14 +279,16 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			if (failed)
-				types = null;
-			
 			if (extra > 0){
 				if (ArrayParameter.Resolve (ds, loc))
 					types [i] = ArrayParameter.ExternalType (ds, loc);
-				else
-					return false;
+				else 
+					failed = true;
+			}
+
+			if (failed){
+				types = null;
+				return false;
 			}
 
 			return true;
