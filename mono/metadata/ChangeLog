@@ -1,3 +1,8 @@
+2004-06-08  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* icall.c (ves_icall_MonoType_GetEvent): Handle events without
+	any methods. Fixes #59629.
+
 2004-06-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* culture-info-tables.h: reflecting locale-builder updates.
