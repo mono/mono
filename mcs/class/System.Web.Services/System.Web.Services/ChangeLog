@@ -1,3 +1,7 @@
+2003-02-25  Dave Bettin <dave@opendotnet.com>
+	* WebService.cs:
+		Changed private application to HttpContext
+
 2002-08-19  Tim Coleman <tim@timcoleman.com>
 	* WebService.cs:
 		Change the attribute on Application to Description

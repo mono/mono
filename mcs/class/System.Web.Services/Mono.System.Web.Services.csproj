@@ -1,8 +1,8 @@
 <VisualStudioProject>
     <CSHARP
         ProjectType = "Local"
-        ProductVersion = "7.0.9466"
-        SchemaVersion = "1.0"
+        ProductVersion = "7.10.2292"
+        SchemaVersion = "2.0"
         ProjectGuid = "{1E24995F-861C-4FCB-BE59-C7B518F02F64}"
     >
         <Build>
@@ -16,7 +16,10 @@
                 DefaultTargetSchema = "IE50"
                 DelaySign = "false"
                 OutputType = "Library"
+                PreBuildEvent = ""
+                PostBuildEvent = ""
                 RootNamespace = "System.Web.Servces"
+                RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
             >
                 <Config
@@ -30,6 +33,8 @@
                     DebugSymbols = "true"
                     FileAlignment = "4096"
                     IncrementalBuild = "true"
+                    NoStdLib = "false"
+                    NoWarn = ""
                     Optimize = "false"
                     OutputPath = "bin\Debug\"
                     RegisterForComInterop = "false"
@@ -48,6 +53,8 @@
                     DebugSymbols = "false"
                     FileAlignment = "4096"
                     IncrementalBuild = "false"
+                    NoStdLib = "false"
+                    NoWarn = ""
                     Optimize = "true"
                     OutputPath = "bin\Release\"
                     RegisterForComInterop = "false"
@@ -57,11 +64,6 @@
                 />
             </Settings>
             <References>
-                <Reference
-                    Name = "System.Web"
-                    AssemblyName = "System.Web"
-                    HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.Web.dll"
-                />
                 <Reference
                     Name = "System.EnterpriseServices"
                     AssemblyName = "System.EnterpriseServices"
@@ -76,6 +78,11 @@
                     Name = "System.XML"
                     AssemblyName = "System.Xml"
                     HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.XML.dll"
+                />
+                <Reference
+                    Name = "System.Web"
+                    AssemblyName = "System.Web"
+                    HintPath = "..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Web.dll"
                 />
             </References>
         </Build>
@@ -653,6 +660,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Web.Services.Protocols\HttpServerProtocol.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Web.Services.Protocols\HttpSimpleClientProtocol.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
@@ -698,12 +710,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Web.Services.Protocols\MimeReturnWriter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Web.Services.Protocols\NopReturnReader.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Web.Services.Protocols\PatternMatcher.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Web.Services.Protocols\ServerProtocol.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -853,12 +875,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Web.Services.Protocols\WebServiceHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Web.Services.Protocols\WebServiceHandlerFactory.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Web.Services.Protocols\XmlReturnReader.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Web.Services.Protocols\XmlReturnWriter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
