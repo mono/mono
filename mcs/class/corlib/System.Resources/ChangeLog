@@ -1,3 +1,8 @@
+2004-05-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ResourceManager.cs: Avoid endless recursion when a resource file
+	isn't found.
+
 2004-04-08  Lluis Sanchez <lluis@ximian.com>
 
 	* ResourceSet.cs: Added minor null check.

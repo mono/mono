@@ -317,7 +317,9 @@ namespace System.Resources
 			}
 
 			if(set==null && tryParents==true) {
-				set=this.InternalGetResourceSet(culture.Parent, Createifnotexists, tryParents);
+				// avoid endless recursion
+				if (!culture.Equals (neutral_culture) && !culture.Equals(CultureInfo.InvariantCulture))
+					set = InternalGetResourceSet (culture.Parent, Createifnotexists, tryParents);
 			}
 
 			if(set!=null) {
