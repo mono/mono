@@ -80,7 +80,7 @@ namespace System.Reflection.Emit
 
 		protected override TypeAttributes GetAttributeFlagsImpl ()
 		{
-			return TypeAttributes.Class;
+			return TypeAttributes.Public;
 		}
 
 		protected override ConstructorInfo GetConstructorImpl (BindingFlags bindingAttr,
