@@ -1,3 +1,8 @@
+2004-11-26  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile: Convert to use executable.make.
+	* gmcs.exe.sources: New.
+
 2004-11-25  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (Invocation.InferType): Added support for byref types.

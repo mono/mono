@@ -1,3 +1,8 @@
+2004-11-26  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (PROGRAM_INSTALL_DIR): Change to
+	$(prefix)/lib/mono/$(FRAMEWORK_VERSION).
+
 2004-10-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* mono-api-info.cs : Use GetExportedTypes(). This fixes System.Xml.xml

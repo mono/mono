@@ -10,8 +10,6 @@ net_2_0_SUBDIRS = wsdl
 
 include ../build/rules.make
 
-PROGRAM_INSTALL_DIR = $(prefix)/bin
-
 DISTFILES = \
 	assemblies.xml			\
 	mono-win32-setup-dark.bmp	\

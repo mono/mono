@@ -1,3 +1,7 @@
+2004-11-26  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (PROGRAM_INSTALL_DIR): Define using $(FRAMEWORK_VERSION).
+
 2004-11-22  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (all-local) [PROFILE=net_1_1_bootstrap]: Build

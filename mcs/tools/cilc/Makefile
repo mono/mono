@@ -3,7 +3,6 @@ SUBDIRS =
 include ../../build/rules.make
 
 PROGRAM = cilc.exe
-PROGRAM_INSTALL_DIR = $(prefix)/lib/mono/1.0
 
 # fixme: make clean doesn't know to rm -rf generated.
 # and we can't extend the make clean target.

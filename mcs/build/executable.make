@@ -31,14 +31,13 @@ install-local uninstall-local:
 else
 
 ifndef PROGRAM_INSTALL_DIR
-PROGRAM_INSTALL_DIR = $(prefix)/bin
+PROGRAM_INSTALL_DIR = $(prefix)/lib/mono/$(FRAMEWORK_VERSION)
 endif
-
 
 install-local: $(PROGRAM) $(PROGRAM_config)
 	$(MKINSTALLDIRS) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 	$(INSTALL_BIN) $(PROGRAM) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
-	-$(INSTALL_BIN) $(PROGRAM).mdb $(DESTDIR)$(PROGRAM_INSTALL_DIR)
+	test ! -f $(PROGRAM).mdb || $(INSTALL_BIN) $(PROGRAM).mdb $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 ifdef PROGRAM_config
 	$(INSTALL_DATA) $(PROGRAM_config) $(DESTDIR)$(PROGRAM_INSTALL_DIR)
 endif
@@ -73,7 +72,7 @@ $(PROGRAM): $(BUILT_SOURCES) $(EXTRA_SOURCES) $(response)
 	$(PROGRAM_COMPILE) /target:exe /out:$(base_prog) $(BUILT_SOURCES) $(EXTRA_SOURCES) @$(response)
 ifneq ($(base_prog),$(PROGRAM))
 	mv $(base_prog) $(PROGRAM)
-	-mv $(base_prog).mdb $(PROGRAM).mdb
+	test ! -f $(base_prog).mdb || mv $(base_prog).mdb $(PROGRAM).mdb
 endif
 
 ifdef PROGRAM_config

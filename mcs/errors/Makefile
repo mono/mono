@@ -21,6 +21,7 @@ DISTFILES = \
 	errors.txt 		\
 	fail			\
 	runtest.pl		\
+	do-tests.pl		\
 	$(wildcard *.cs)
 
 #all-local: run-test-local test-multi-local

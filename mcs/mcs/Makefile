@@ -14,7 +14,6 @@ EXTRA_DISTFILES = \
 
 PROGRAM = $(topdir)/class/lib/$(PROFILE)/mcs.exe
 PROGRAM_COMPILE = $(BOOT_COMPILE)
-PROGRAM_INSTALL_DIR = $(prefix)/lib/mono/1.0
 
 CLEAN_FILES = y.output
 

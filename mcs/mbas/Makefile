@@ -10,8 +10,6 @@ LOCAL_MCS_FLAGS = /r:System.dll /r:$(topdir)/class/lib/$(PROFILE)/Mono.GetOption
 EXTRA_DISTFILES = mb-parser.jay mbas.csproj mbas.ico mbas.sln
 CLEAN_FILES = y.output 
 
-PROGRAM_INSTALL_DIR = $(prefix)/lib/mono/1.0
-
 CONSOLIDATED_TEST_RESULTS_FILE = TestResults.log
 
 include ../build/executable.make

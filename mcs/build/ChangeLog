@@ -1,5 +1,16 @@
 2004-11-26  Raja R Harinath  <rharinath@novell.com>
 
+	* library.make ($(the_lib)): Don't complain if a .mdb file wasn't
+	created (even though it's just a warning).
+	(install-local) [LIBRARY_INSTALL_DIR]: Likewise.
+	(PACKAGE): Remove.
+	(install-local) [!LIBRARY_INSTALL_DIR]: Use $(FRAMEWORK_VERSION).
+	* executable.make ($(PROGRAM)): Likewise.
+	(install-local): Likewise.
+	(PROGRAM_INSTALL_DIR): Define Using $(FRAMEWORK_VERSION).
+
+2004-11-26  Raja R Harinath  <rharinath@novell.com>
+
 	* profiles/basic.make (real-profile-check): Prepend ./ when
 	executing basic-profile-check.exe.  EXTERNAL_RUNTIME can be empty.
 

@@ -87,12 +87,6 @@ SN = MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap:$$MONO_PATH" $(RUNTIME) $(
 SNFLAGS = -q -R
 endif
 
-PACKAGE = 1.0
-
-ifeq ($(PROFILE), net_2_0)
-PACKAGE = 2.0
-endif
-
 libdir = $(prefix)/lib
 
 ifeq ($(PLATFORM), win32)
@@ -115,7 +109,7 @@ ifdef LIBRARY_INSTALL_DIR
 install-local:
 	$(MKINSTALLDIRS) $(DESTDIR)$(LIBRARY_INSTALL_DIR)
 	$(INSTALL_LIB) $(the_lib) $(DESTDIR)$(LIBRARY_INSTALL_DIR)/$(LIBRARY_NAME)
-	-$(INSTALL_LIB) $(the_lib).mdb $(DESTDIR)$(LIBRARY_INSTALL_DIR)/$(LIBRARY_NAME).mdb
+	test ! -f $(the_lib).mdb || $(INSTALL_LIB) $(the_lib).mdb $(DESTDIR)$(LIBRARY_INSTALL_DIR)/$(LIBRARY_NAME).mdb
 
 uninstall-local:
 	-rm -f $(DESTDIR)$(LIBRARY_INSTALL_DIR)/$(LIBRARY_NAME) $(DESTDIR)$(LIBRARY_INSTALL_DIR)/$(LIBRARY_NAME).mdb
@@ -123,7 +117,7 @@ uninstall-local:
 else
 
 install-local: $(gacutil)
-	$(GACUTIL) /i $(the_lib) /f /gacdir $(GACDIR) /root $(GACROOT) /package $(PACKAGE)
+	$(GACUTIL) /i $(the_lib) /f /gacdir $(GACDIR) /root $(GACROOT) /package $(FRAMEWORK_VERSION)
 
 uninstall-local: $(gacutil)
 	$(GACUTIL) /u $(LIBRARY_NAME:.dll=)
@@ -217,7 +211,7 @@ ifdef LIBRARY_USE_INTERMEDIATE_FILE
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$(@F) $(BUILT_SOURCES) @$(response)
 	$(SN) $(SNFLAGS) $(@F) $(LIBRARY_SNK)
 	mv $(@F) $@
-	-mv $(@F).mdb $@.mdb
+	test ! -f $(@F).mdb || mv $(@F).mdb $@.mdb
 else
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$@ $(BUILT_SOURCES) @$(response)
 	$(SN) $(SNFLAGS) $@ $(LIBRARY_SNK)
