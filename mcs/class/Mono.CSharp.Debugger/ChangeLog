@@ -1,5 +1,11 @@
 2002-08-23  Martin Baulig  <martin@gnome.org>
 
+	* MonoSymbolWriter.cs (MonoSymbolWriter.Initialize): Added
+	assembly name argument.  Since the symbol writer needs to read the
+	final assembly, we need to give it its full pathname.
+
+2002-08-23  Martin Baulig  <martin@gnome.org>
+
 	* makefile.gnu, list.unix: Added.
 
 2002-07-05  Martin Baulig  <martin@gnome.org>

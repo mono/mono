@@ -28,7 +28,7 @@ namespace Mono.CSharp.Debugger
 			get;
 		}
 
-		void Initialize (string filename, string[] args);
+		void Initialize (string assembly_filename, string filename, string[] args);
 	}
 
 	public interface ISourceFile

@@ -490,7 +490,7 @@ namespace Mono.CSharp.Debugger
 		}
 
 		protected SourceMethod current_method = null;
-		private readonly string assembly_filename = null;
+		private string assembly_filename = null;
 
 		//
 		// Interface IMonoSymbolWriter
@@ -613,9 +613,10 @@ namespace Mono.CSharp.Debugger
 			throw new NotSupportedException ();
 		}
 
-		public void Initialize (string filename, string[] args)
+		public void Initialize (string assembly_filename, string filename, string[] args)
 		{
 			this.writer = new DwarfFileWriter (filename, args);
+			this.assembly_filename = assembly_filename;
 		}
 
 		public void OpenMethod (SymbolToken symbol_token)
