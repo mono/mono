@@ -1,3 +1,8 @@
+2002-04-12  Martin Baulig  <martin@gnome.org>
+
+	* MonoDwarfFileWriter.cs (DieVariable): Provide info about the variable's
+	lifetime using DW_AT_begin_scope and a new baulig extension DW_AT_end_scope.
+
 2002-03-29  Martin Baulig  <martin@gnome.org>
 
 	* AssemblerWriterI386.cs: Rewrote most of the string output function, do the

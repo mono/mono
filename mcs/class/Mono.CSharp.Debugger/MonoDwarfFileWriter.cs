@@ -525,13 +525,15 @@ namespace Mono.CSharp.Debugger
 			AT_const_value		= 0x1c,
 			AT_lower_bound		= 0x22,
 			AT_producer		= 0x25,
+			AT_start_scope		= 0x2c,
 			AT_upper_bound		= 0x2f,
 			AT_artificial		= 0x34,
 			AT_data_member_location	= 0x38,
 			AT_declaration		= 0x3c,
 			AT_encoding		= 0x3e,
 			AT_external		= 0x3f,
-			AT_type			= 0x49
+			AT_type			= 0x49,
+			AT_end_scope		= 0x2121
 		}
 
 		// DWARF form from the DWARF 2 specification.
@@ -1692,8 +1694,16 @@ namespace Mono.CSharp.Debugger
 					new AbbrevEntry (DW_AT.AT_type, DW_FORM.FORM_ref4),
 					new AbbrevEntry (DW_AT.AT_external, DW_FORM.FORM_flag),
 					new AbbrevEntry (DW_AT.AT_location, DW_FORM.FORM_block4),
+					new AbbrevEntry (DW_AT.AT_start_scope, DW_FORM.FORM_data4),
+					new AbbrevEntry (DW_AT.AT_end_scope, DW_FORM.FORM_data4)
 				};
 				AbbrevEntry[] entries_2 = {
+					new AbbrevEntry (DW_AT.AT_name, DW_FORM.FORM_string),
+					new AbbrevEntry (DW_AT.AT_type, DW_FORM.FORM_ref4),
+					new AbbrevEntry (DW_AT.AT_external, DW_FORM.FORM_flag),
+					new AbbrevEntry (DW_AT.AT_location, DW_FORM.FORM_block4),
+				};
+				AbbrevEntry[] entries_3 = {
 					new AbbrevEntry (DW_AT.AT_name, DW_FORM.FORM_string),
 					new AbbrevEntry (DW_AT.AT_type, DW_FORM.FORM_ref4),
 					new AbbrevEntry (DW_AT.AT_artificial, DW_FORM.FORM_flag),
@@ -1703,9 +1713,9 @@ namespace Mono.CSharp.Debugger
 				AbbrevDeclaration decl_local = new AbbrevDeclaration (
 					DW_TAG.TAG_variable, false, entries_1);
 				AbbrevDeclaration decl_param = new AbbrevDeclaration (
-					DW_TAG.TAG_formal_parameter, false, entries_1);
-				AbbrevDeclaration decl_this = new AbbrevDeclaration (
 					DW_TAG.TAG_formal_parameter, false, entries_2);
+				AbbrevDeclaration decl_this = new AbbrevDeclaration (
+					DW_TAG.TAG_formal_parameter, false, entries_3);
 
 
 				my_abbrev_id_local = RegisterAbbrevDeclaration (decl_local);
@@ -1734,6 +1744,10 @@ namespace Mono.CSharp.Debugger
 				DieCompileUnit.WriteRelativeDieReference (type_die);
 				switch (vtype) {
 				case VariableType.VARIABLE_LOCAL:
+					aw.WriteUInt8 (false);
+					DoEmitLocation ();
+					DoEmitScope ();
+					break;
 				case VariableType.VARIABLE_PARAMETER:
 					aw.WriteUInt8 (false);
 					DoEmitLocation ();
@@ -1746,6 +1760,7 @@ namespace Mono.CSharp.Debugger
 			}
 
 			protected abstract void DoEmitLocation ();
+			protected abstract void DoEmitScope ();
 		}
 
 		public class DieMethodVariable : DieVariable
@@ -1798,9 +1813,19 @@ namespace Mono.CSharp.Debugger
 				aw.WriteUInt8 ((int) DW_OP.OP_plus);
 				aw.EndSubsection (end_index);
 			}
+
+			protected override void DoEmitScope ()
+			{
+				dw.AddRelocEntry (RelocEntryType.VARIABLE_START_SCOPE,
+						  var.Token, var.Index);
+				aw.WriteUInt32 (0);
+				dw.AddRelocEntry (RelocEntryType.VARIABLE_END_SCOPE,
+						  var.Token, var.Index);
+				aw.WriteUInt32 (0);
+			}
 		}
 
-		protected const int reloc_table_version = 7;
+		protected const int reloc_table_version = 8;
 
 		protected enum Section {
 			DEBUG_INFO		= 0x01,
@@ -1886,7 +1911,9 @@ namespace Mono.CSharp.Debugger
 			MONO_ARRAY_SIZEOF		= 0x0b,
 			MONO_ARRAY_OFFSET		= 0x0c,
 			MONO_ARRAY_BOUNDS_SIZEOF	= 0x0d,
-			MONO_ARRAY_BOUNDS_OFFSET	= 0x0e
+			MONO_ARRAY_BOUNDS_OFFSET	= 0x0e,
+			VARIABLE_START_SCOPE		= 0x0f,
+			VARIABLE_END_SCOPE		= 0x10
 		}
 
 		protected class RelocEntry {
@@ -2053,6 +2080,8 @@ namespace Mono.CSharp.Debugger
 				case RelocEntryType.LOCAL_VARIABLE:
 				case RelocEntryType.METHOD_PARAMETER:
 				case RelocEntryType.TYPE_FIELD_OFFSET:
+				case RelocEntryType.VARIABLE_START_SCOPE:
+				case RelocEntryType.VARIABLE_END_SCOPE:
 					aw.WriteUInt32 (entry.Token);
 					aw.WriteUInt32 (entry.Original);
 					break;
