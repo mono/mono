@@ -266,11 +266,8 @@ namespace System.Web.UI.WebControls
 		{
 			/* Based on DoVerticalRendering */
 			int total = user.RepeatedItemCount;
-			int colsCount = repeatColumns;
+			int colsCount = 0;
 			int rowsCount = 0;
-
-			if (colsCount == 0)
-				colsCount = total;
 			WebControl ctrl = null;
 			bool isTable = true;
 			bool hasSeps = user.HasSeparators;
@@ -336,13 +333,23 @@ namespace System.Web.UI.WebControls
 					if (isTable)
 						writer.RenderEndTag ();
 				}
-				rowsCount++;
-				if (rowsCount == total || index == (total - 1)) {
+
+				colsCount++;
+				if (colsCount == repeatColumns) {
+					if (isTable) {
+						writer.RenderEndTag ();
+						writer.RenderBeginTag (HtmlTextWriterTag.Tr);
+					}
+					else if (rowsCount < total)
+						writer.WriteFullBeginTag ("br");
+					colsCount = 0;
+				}
+
+				if (index == (total - 1)) {
 					if (isTable)
 						writer.RenderEndTag ();
 					else if (rowsCount < total)
 						writer.WriteFullBeginTag ("br");
-					rowsCount = 0;
 				}
 			}
 

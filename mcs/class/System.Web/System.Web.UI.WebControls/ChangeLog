@@ -1,5 +1,10 @@
 2003-11-03 Jackson Harper <jackson@ximian.com>
 
+	* RepeatInfo.cs: When doing horizontal rendering use the repeat
+	columns as the number of columns in a row. This fixes bug #49016.
+	
+2003-11-03 Jackson Harper <jackson@ximian.com>
+
 	* PagedDataSource.cs (PageCount): Return page count of 1 if there
 	paging is disabled. Patch by Yaron Shkop.
 	* PagedDataSource.cs (CopyTo): Improve. Patch by Yaron Shkop.
