@@ -18,7 +18,7 @@ namespace System {
 		protected string ClassName;
 		protected string MemberName;
 		protected byte[] Signature;
-		private string msg;		   
+		protected string msg;		   
 
 		// Constructors
 		public MissingMemberException ()
@@ -54,8 +54,7 @@ namespace System {
 		}
 
 		// Properties
-		public override string Message
-		{
+		public override string Message {
 			   get { return msg; }
 		}
 
@@ -66,8 +65,6 @@ namespace System {
 			info.AddValue ("MMClassName", ClassName);
 			info.AddValue ("MMMemberName", MemberName);
 			info.AddValue ("MMSignature", Signature);
-				
 		}
-		   
 	}
 }

@@ -8,6 +8,7 @@ namespace System
      [Serializable]
      public class MissingMethodException : MissingMemberException
 	{
+		
 		public MissingMethodException ()
 			: base (Locale.GetText ("A missing method exception has occurred."))
 		{
@@ -25,6 +26,15 @@ namespace System
 		public MissingMethodException (string message, Exception inner)
 			: base (message, inner)
 		{
+		}
+
+		public MissingMethodException (string className, string methodName)
+			: base (className, methodName)
+		{
+		}
+
+		public override string Message {
+			get { return Locale.GetText (msg); }
 		}
 	}
 }
