@@ -61,7 +61,7 @@ namespace System.Collections {
 		// IHashCodeProvider
 		//
 
-		[TODO]
+		[MonoTODO]
 		public virtual int GetHashCode (object obj)
 		{
 			if (obj == null) {

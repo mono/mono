@@ -287,7 +287,7 @@ namespace System.Collections {
 			System.Array.Copy (dataArray, 0, array, arrayIndex, count);
 		}
 
-		[TODO]
+		[MonoTODO]
 		public virtual void CopyTo (int index, Array array,
 					    int arrayIndex, int count) {
 			// FIXME: check count...
@@ -490,7 +490,7 @@ namespace System.Collections {
 			return outArray;
 		}
 
-		[TODO]
+		[MonoTODO]
 		public virtual void TrimToSize () {
 			// FIXME: implement this
 		}
