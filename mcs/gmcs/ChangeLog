@@ -1,5 +1,13 @@
 2004-11-10  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (TypeParameter.DefineConstraints): New public method.
+	(TypeParameter.CheckAccessLevel): Override this and return true.
+	(ConstructedType.ResolveType): Renamed to DoResolveType(), don't
+	override ResolveType() anymore.
+	(ConstructedType.DoResolveAsTypeStep): Call DoResolveType() here.
+
+2004-11-10  Martin Baulig  <martin@ximian.com>
+
 	* rootcontext.cs (RootContext.LookupType): If we're a nested type,
 	call DeclSpace.ResolveNestedType() on it.
 

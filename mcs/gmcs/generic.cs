@@ -533,10 +533,13 @@ namespace Mono.CSharp {
 				throw new InvalidOperationException ();
 
 			this.type = type;
-			Type[] ifaces = null;
+			TypeManager.AddTypeParameter (type, this);
+		}
+
+		public void DefineConstraints ()
+		{
 			if (constraints != null)
 				constraints.Define (type);
-			TypeManager.AddTypeParameter (type, this);
 		}
 
 		public bool DefineType (EmitContext ec)
@@ -834,6 +837,11 @@ namespace Mono.CSharp {
 			get { return false; }
 		}
 
+		public override bool CheckAccessLevel (DeclSpace ds)
+		{
+			return true;
+		}
+
 		public void Error_CannotUseAsUnmanagedType (Location loc)
 		{
 			Report.Error (-203, loc, "Can not use type parameter as unamanged type");
@@ -946,8 +954,7 @@ namespace Mono.CSharp {
 			atypes = new Type [count];
 
 			for (int i = 0; i < count; i++){
-				TypeExpr te = ds.ResolveTypeExpr (
-					(Expression) args [i], false, Location);
+				TypeExpr te = ((Expression) args [i]).ResolveAsTypeTerminal (ec, false);
 				if (te == null) {
 					ok = false;
 					continue;
@@ -1169,8 +1176,10 @@ namespace Mono.CSharp {
 
 		public override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
-			if (gt != null)
+			if (type != null)
 				return this;
+			if (gt != null)
+				return DoResolveType (ec);
 
 			//
 			// First, resolve the generic type.
@@ -1188,7 +1197,7 @@ namespace Mono.CSharp {
 				new_args.Add (args);
 
 				args = new_args;
-				return this;
+				return DoResolveType (ec);
 			}
 
 			Type t;
@@ -1220,16 +1229,11 @@ namespace Mono.CSharp {
 			}
 
 			gt = t.GetGenericTypeDefinition ();
-			return this;
+			return DoResolveType (ec);
 		}
 
-		public override Type ResolveType (EmitContext ec)
+		TypeExpr DoResolveType (EmitContext ec)
 		{
-			if (type != null)
-				return type;
-			if (DoResolveAsTypeStep (ec) == null)
-				return null;
-
 			//
 			// Resolve the arguments.
 			//
@@ -1257,7 +1261,7 @@ namespace Mono.CSharp {
 			// Now bind the parameters.
 			//
 			type = gt.BindGenericParameters (atypes);
-			return type;
+			return this;
 		}
 
 		public Expression GetSimpleName (EmitContext ec)
