@@ -142,7 +142,6 @@ namespace System.Xml
 		{
 			if (settings == null)
 				settings = new XmlWriterSettings ();
-//			throw new NotImplementedException ();
 			writer.settings = settings;
 			return writer;
 		}
@@ -167,6 +166,8 @@ namespace System.Xml
 			xtw.ConformanceLevel = settings.ConformanceLevel;
 			// OmitXmlDeclaration
 			xtw.OmitXmlDeclaration = settings.OmitXmlDeclaration;
+			// CheckCharacters
+			xtw.CheckCharacters = settings.CheckCharacters;
 			return Create (xtw, settings);
 		}
 

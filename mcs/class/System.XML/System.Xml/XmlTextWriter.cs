@@ -37,7 +37,7 @@ using System.Text;
 
 namespace System.Xml
 {
-	[MonoTODO ("CheckCharacters; NormalizeNewLines")]
+	[MonoTODO ("NormalizeNewLines")]
 	public class XmlTextWriter : XmlWriter
 	{
 		#region Fields
@@ -81,6 +81,7 @@ namespace System.Xml
 		bool shouldCheckElementXmlns;
 
 		// XmlWriterSettings support
+		bool checkCharacters;
 		bool closeOutput;
 		bool newLineOnAttributes;
 		string newLineChars;
@@ -173,6 +174,11 @@ openElements [openElementCount - 1]).IndentingOverriden;
 		}
 
 #if NET_2_0
+		internal bool CheckCharacters {
+			get { return checkCharacters; }
+			set { checkCharacters = value; }
+		}
+
 		internal bool CloseOutput {
 //			get { return closeOutput; }
 			set { closeOutput = value; }
@@ -360,8 +366,10 @@ openElements [openElementCount - 1]).IndentingOverriden;
 		{
 			CloseOpenAttributeAndElements ();
 
-			if (closeOutput)
-				w.Close();
+			w.Flush ();
+			if (closeOutput) {
+				w.Close ();
+			}
 			ws = WriteState.Closed;
 			openWriter = false;
 		}
@@ -964,6 +972,8 @@ openElements [openElementCount - 1]).IndentingOverriden;
 					pos = 6; break;
 				default:
 					if (XmlChar.IsInvalid (source [i])) {
+						if (checkCharacters)
+							throw new ArgumentException (String.Format ("Character hexadecimal value {0:4x} is invalid.", (int) source [i]));
 						invalid = source [i];
 						pos = -1;
 						break;
@@ -976,10 +986,11 @@ openElements [openElementCount - 1]).IndentingOverriden;
 				cachedStringBuilder.Append (source.Substring (start, i - start));
 				if (pos < 0) {
 					cachedStringBuilder.Append ("&#x");
-					if (invalid < (char) 255)
-						cachedStringBuilder.Append (((int) invalid).ToString ("X02", CultureInfo.InvariantCulture));
-					else
-						cachedStringBuilder.Append (((int) invalid).ToString ("X04", CultureInfo.InvariantCulture));
+//					if (invalid < (char) 255)
+//						cachedStringBuilder.Append (((int) invalid).ToString ("X02", CultureInfo.InvariantCulture));
+//					else
+//						cachedStringBuilder.Append (((int) invalid).ToString ("X04", CultureInfo.InvariantCulture));
+					cachedStringBuilder.Append (((int) invalid).ToString ("X", CultureInfo.InvariantCulture));
 					cachedStringBuilder.Append (";");
 				}
 				else
