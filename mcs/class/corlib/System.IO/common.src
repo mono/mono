@@ -9,3 +9,9 @@ TextReader.cs
 TextWriter.cs
 Stream.cs
 FileStream.cs
+Directory.cs
+DirectoryInfo.cs
+FileAttributes.cs
+FileInfo.cs
+Path.cs
+File.cs

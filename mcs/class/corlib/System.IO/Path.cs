@@ -15,11 +15,11 @@ namespace System.IO
 {
 	public class Path : Object
 	{
-		public static readonly char AltDirectorySeparatorChar = '\\'; // TODO: verify this
-		public static readonly char DirectorySeparatorChar = '/';
-		public static readonly char[] InvalidPathChars = { '\0' };	//  TODO: research invalid chars
-		public static readonly char PathSeparator = ';';	// might be a space for unix/linux
-		public static readonly char VolumeSeparatorChar = '/';
+		public static readonly char AltDirectorySeparatorChar = PlatformSpecific.InvalidPathChars;
+		public static readonly char DirectorySeparatorChar = PlatformSpecific.InvalidPathChars;
+		public static readonly char[] InvalidPathChars = PlatformSpecific.InvalidPathChars;
+		public static readonly char PathSeparator = PlatformSpecific.InvalidPathChars;
+		public static readonly char VolumeSeparatorChar = PlatformSpecific.InvalidPathChars;
 
 		private static readonly char[] PathSeparatorChars = {	DirectorySeparatorChar, 
 																AltDirectorySeparatorChar,
@@ -165,8 +165,7 @@ namespace System.IO
 		{
 			if(path != null)
 			{
-				//TODO: figure out what the equivilent linux api to
-				//      windoze ::GetCurrentDirectory() is and PInvoke it
+				//TODO: Implement this correctly
 				return path;
 			}
 			return null;

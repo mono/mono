@@ -19,17 +19,18 @@ namespace System.IO
 	public sealed class DirectoryInfo : FileSystemInfo
 	{
 
-		public DirectoryInfo()
+		public DirectoryInfo(string path)
 		{
-			// 
-			// TODO: Add constructor logic here
-			//
+			if(path == null) throw new ArgumentNullException();
+			if(path.IndexOfAny(Path.InvalidPathChars) > -1)
+				throw new ArgumentException("Invalid path characters");
+			if(!Directory.Exists(path)) throw new DirectoryNotFoundException();
 		}
 
 		public override bool Exists
 		{
 			get
-			{
+			{	//TODO: Implement
 				return false;
 			}
 		}
@@ -45,18 +46,19 @@ namespace System.IO
 		public DirectoryInfo Root
 		{
 			get
-			{
+			{	//TODO: Implement
 				return null;
 			}
 		}
 
 		public void Create()
 		{
+			//TODO: Implement
 		}
 
 		DirectoryInfo CreateSubdirectory(string path)
 		{
-			return null;
+			return null;	//TODO: Implement
 		}
 
 		public override void Delete()
@@ -74,7 +76,7 @@ namespace System.IO
 		/// </summary>
 		public DirectoryInfo[] GetDirectories()
 		{
-			return null;
+			return null;	//TODO: Implement
 		}
 		/// <summary>
 		/// Returns an array of DirectoryInfos
@@ -82,7 +84,7 @@ namespace System.IO
 		/// </summary>
 		public static DirectoryInfo[] GetDirectories(string mask)
 		{
-			return null;
+			return null;	//TODO: Implement
 		}
 		/// <summary>
 		/// Returns an array of FileInfo for subdirectories
@@ -97,14 +99,14 @@ namespace System.IO
 		/// </summary>
 		public static FileInfo[] GetFiles(string mask)
 		{
-			return null;
+			return null;	//TODO: Implement
 		}
 		/// <summary>
 		/// Returns an array of FileSystemInfo for subdirectories
 		/// </summary>
 		public FileSystemInfo[] GetFileSystemInfos()
 		{
-			return null;
+			return null;	//TODO: Implement
 		}
 		/// <summary>
 		/// Returns an array of FileSystemInfo
@@ -112,7 +114,7 @@ namespace System.IO
 		/// </summary>
 		public static FileSystemInfo[] GetFileSystemInfos(string mask)
 		{
-			return null;
+			return null;	//TODO: Implement
 		}
 
 		public void MoveTo(string destDirName)

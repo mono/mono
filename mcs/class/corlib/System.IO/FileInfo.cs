@@ -18,7 +18,7 @@ namespace System.IO
 	/// </summary>
 	public sealed class FileInfo : FileSystemInfo
 	{
-		public FileInfo()
+		public FileInfo(string fileName)
 		{
 			// 
 			// TODO: Add constructor logic here
@@ -28,7 +28,7 @@ namespace System.IO
 		public override bool Exists
 		{
 			get
-			{
+			{	// TODO: Implement
 				return false;
 			}
 		}
@@ -58,7 +58,7 @@ namespace System.IO
 		public string DirectoryName
 		{
 			get
-			{
+			{	// TODO: Implement
 				return null;
 			}
 		}
@@ -69,24 +69,23 @@ namespace System.IO
 		public long Length
 		{
 			get
-			{
+			{	// TODO: Implement
 				return 0;
 			}
 		}
 
-		/* TODO: Uncomment / implement as classes become available
-		public StreamWriter AppendText()
-		{
+   		public StreamWriter AppendText()
+		{	// TODO: Implement
 		}
 		
 
 		public FileStream Create()
-		{
+		{	// TODO: Implement
 			return null;
 		}
 
 		public StreamWriter CreateText()
-		{
+		{	// TODO: Implement
 			return null;
 		}
 		
@@ -101,7 +100,7 @@ namespace System.IO
 		}
 
 		public FileStream Open(FileMode mode, FileAccess access, FileShare share)
-		{
+		{	// TODO: Implement
 			return null;
 		}
 
@@ -111,7 +110,7 @@ namespace System.IO
 		}
 
 		public StreamReader OpenText()
-		{
+		{	// TODO: Implement
 			return null;
 		}
 
@@ -119,7 +118,6 @@ namespace System.IO
 		{
 			return Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
 		}
-		*/
 
 		public FileInfo CopyTo(string destFile)
 		{
@@ -127,16 +125,16 @@ namespace System.IO
 		}
 
 		public FileInfo CopyTo(string destFile, bool bOverwrite)
-		{
+		{	// TODO: Implement
 			return null;
 		}
 
 		public override void Delete()
-		{
+		{	// TODO: Implement
 		}
 
 		public void MoveTo(string destName)
-		{
+		{	// TODO: Implement
 		}
 	}
 }
