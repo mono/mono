@@ -3,7 +3,7 @@ CSC = $(RUNTIME) ../../mcs/mcs.exe
 CSCFLAGS=/nologo /debug+ /debug:full /out:$@
 SECFLAGS=/r:../../class/lib/Mono.Security.dll
 
-windows: linux
+windows: secutil.exe cert2spc.exe sn.exe makecert.exe
 
 linux: secutil.exe
 
