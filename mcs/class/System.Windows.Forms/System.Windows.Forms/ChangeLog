@@ -1,3 +1,6 @@
+2004-08-31  Marek Safar <marek.safar@seznam.cz>
+	* AxHost.cs: Implemented ClsidAttribute
+
 2004-05-28  Peter Bartok <pbartok@novell.com>
 	* ContainerControl.cs: First attempt at implementing some missing
 	  methods

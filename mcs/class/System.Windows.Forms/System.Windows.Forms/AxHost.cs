@@ -618,7 +618,19 @@ namespace System.Windows.Forms {
 		}
 
 		[AttributeUsage(AttributeTargets.Class)]
-			public sealed class ClsidAttribute : Attribute{
+		public sealed class ClsidAttribute : Attribute {
+			string clsid;
+
+			public ClsidAttribute (string clsid)
+			{
+				this.clsid = clsid;
+			}
+
+			public string Value {
+				get {
+					return clsid;
+				}
+			}
 		}
 
 		[AttributeUsage(AttributeTargets.Assembly)]
