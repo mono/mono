@@ -22,6 +22,7 @@ namespace Mono.ILASM {
                 private ITypeRef[] param;
 
                 private PEAPI.Method peapi_method;
+                private bool is_resolved;
 
                 public MethodRef (TypeRef owner, PEAPI.CallConv call_conv,
                         ITypeRef ret_type, string name, ITypeRef[] param)
@@ -31,6 +32,7 @@ namespace Mono.ILASM {
                         this.ret_type = ret_type;
                         this.name = name;
                         this.param = param;
+                        is_resolved = false;
                 }
 
                 public PEAPI.Method PeapiMethod {
@@ -39,6 +41,9 @@ namespace Mono.ILASM {
 
                 public void Resolve (CodeGen code_gen)
                 {
+                        if (is_resolved)
+                                return;
+
                         TypeDef owner_def = code_gen.TypeManager[owner.FullName];
                         string write_name;
 
@@ -66,6 +71,8 @@ namespace Mono.ILASM {
                                 peapi_method = owner_def.ResolveVarargMethod (sig, code_gen,
                                                 (PEAPI.Type[]) opt_list.ToArray (typeof (PEAPI.Type)));
                         }
+
+                        is_resolved = true;
 
                 }
 

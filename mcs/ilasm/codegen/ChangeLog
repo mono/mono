@@ -1,3 +1,14 @@
+2003-06-08 Jackson Harper <jackson@latitudegeo.com>
+
+	* EventDef.cs: New file - An event definition.
+	* FeatureAttr.cs: New file - Attributes for features (events and
+	properties)
+	* MethodRef.cs: Only resolve methods once.
+	* TypeDef.cs: Allow Events to be added to types. Also add
+	functionality to add generic type parameters to types. The
+	actually emission of these type parameters is commented out untill
+	I commit my patches to PEAPI and work out the syntax of constraints.
+		
 2003-05-31 Jackson Harper <jackson@latitudegeo.com>
 
 	* CodeGen.cs: Allow this assembly name to be set.

@@ -27,7 +27,11 @@ namespace Mono.ILASM {
                 private Hashtable method_table;
                 private ArrayList data_list;
                 private ArrayList customattr_list;
+                private ArrayList event_list;
+                private ArrayList typar_list;
                 private TypeDef outer;
+
+                private EventDef current_event;
 
                 private int size;
                 private int pack;
@@ -72,8 +76,16 @@ namespace Mono.ILASM {
                         get { return classdef; }
                 }
 
+                public bool IsGenericType {
+                        get { return (typar_list == null); }
+                }
+
                 public bool IsDefined {
                         get { return is_defined; }
+                }
+
+                public EventDef CurrentEvent {
+                        get { return current_event; }
                 }
 
                 public void SetSize (int size)
@@ -101,12 +113,44 @@ namespace Mono.ILASM {
                         method_table.Add (methoddef.Signature, methoddef);
                 }
 
+                public void BeginEventDef (EventDef event_def)
+                {
+                        if (current_event != null)
+                                throw new Exception ("An event definition was not closed.");
+
+                        current_event = event_def;
+                }
+
+                public void EndEventDef ()
+                {
+                        if (event_list == null)
+                                event_list = new ArrayList ();
+
+                        event_list.Add (current_event);
+                        current_event = null;
+                }
+
                 public void AddCustomAttribute (CustomAttr customattr)
                 {
                         if (customattr_list == null)
                                 customattr_list = new ArrayList ();
 
                         customattr_list.Add (customattr);
+                }
+
+                // Lamespec: Is id just for debugging? I don't see a spot for it
+                // in the metadata, unless it overrides name.
+                public void AddGenericParam (string name, string id)
+                {
+                        AddGenericParam (name, id, null);
+                }
+
+                public void AddGenericParam (string name, string id, ITypeRef constraint)
+                {
+                        if (typar_list == null)
+                                typar_list = new ArrayList ();
+
+                        typar_list.Add (new DictionaryEntry (name, constraint));
                 }
 
                 public void Define (CodeGen code_gen)
@@ -151,6 +195,24 @@ namespace Mono.ILASM {
                         if (size != -1)
                                 classdef.AddLayoutInfo (pack, size);
 
+                        /*
+                          ///
+                          /// Commented out until I checkin PEAPI generics fixes
+                          ///
+                        if (typar_list != null) {
+                                short index = 0;
+                                foreach (DictionaryEntry typar in typar_list) {
+                                        if (typar.Value == null) {
+                                                classdef.AddGenericParameter (index++, (string) typar.Key);
+                                        } else {
+                                                ITypeRef constraint = (ITypeRef) typar.Value;
+                                                constraint.Resolve (code_gen);
+                                                classdef.AddGenericParameter (index++, (string) typar.Key,
+                                                                constraint.PeapiType);
+                                        }
+                                }
+                        }
+                        */
                         is_intransit = false;
                         is_defined = true;
 
@@ -167,13 +229,17 @@ namespace Mono.ILASM {
                                 methoddef.Define (code_gen, classdef);
                         }
 
+                        foreach (EventDef eventdef in event_list) {
+                                eventdef.Define (code_gen, classdef);
+                        }
+
                         if (customattr_list != null) {
                                 foreach (CustomAttr customattr in customattr_list)
                                         customattr.AddTo (code_gen, classdef);
                         }
                 }
 
-                public PEAPI.Method ResolveMethod (string signature, CodeGen code_gen)
+                public PEAPI.MethodDef ResolveMethod (string signature, CodeGen code_gen)
                 {
                         MethodDef methoddef = (MethodDef) method_table[signature];
 
