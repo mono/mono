@@ -1,3 +1,9 @@
+2004-01-19  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* XmlReflectionImporter.cs: Read IsNullable flag from XmlArrayAttribute.
+	* XmlSerializationWriterInterpreter.cs: Interpret IsNullable flag for
+	  arrays. This fixes bug #53018.
+
 2004-01-14  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* MapCodeGenerator.cs: Use type namespace instead of root namespace as

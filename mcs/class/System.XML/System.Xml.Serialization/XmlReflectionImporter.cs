@@ -592,6 +592,7 @@ namespace System.Xml.Serialization {
 					elem.ElementName = (atts.XmlArray != null && atts.XmlArray.ElementName != null) ? atts.XmlArray.ElementName : rmember.MemberName;
 					elem.Namespace = (atts.XmlArray != null && atts.XmlArray.Namespace != null) ? atts.XmlArray.Namespace : defaultNamespace;
 					elem.MappedType = ImportListMapping (rmember.MemberType, null, elem.Namespace, atts, 0);
+					elem.IsNullable = (atts.XmlArray != null) ? atts.XmlArray.IsNullable : false;
 					member.ElementInfo.Add (elem);
 					mapMember = member;
 				}

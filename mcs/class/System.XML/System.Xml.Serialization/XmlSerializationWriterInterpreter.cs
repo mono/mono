@@ -212,8 +212,7 @@ namespace System.Xml.Serialization
 
 					if (memType == typeof(XmlTypeMapMemberList))
 					{
-						if (memberValue != null) 
-							WriteMemberElement ((XmlTypeMapElementInfo) member.ElementInfo[0], memberValue);
+						WriteMemberElement ((XmlTypeMapElementInfo) member.ElementInfo[0], memberValue);
 					}
 					else if (memType == typeof(XmlTypeMapMemberFlatList))
 					{
@@ -290,6 +289,7 @@ namespace System.Xml.Serialization
 
 				case SchemaTypes.Array:
 					if (memberValue == null) {
+						if (!elem.IsNullable) return;
 						if (_format == SerializationFormat.Literal) WriteNullTagLiteral (elem.ElementName, elem.Namespace);
 						else WriteNullTagEncoded (elem.ElementName, elem.Namespace);
 					}
