@@ -10,4 +10,9 @@ class X {
 }
 
 class Y : X {
+
+	public static int Main ()
+	{
+		return 0;
+	}
 }

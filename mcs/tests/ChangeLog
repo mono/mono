@@ -2,6 +2,10 @@
 
 	* test-90.cs : Fix bug where we had no class !
 
+	* test-96.cs : Here too !
+
+	* test-98.cs : Supply a missing Main.
+
 2002-03-27  Miguel de Icaza  <miguel@ximian.com>
 
 	* test-18.cs: Augment test with the multi-flow try/catch.
