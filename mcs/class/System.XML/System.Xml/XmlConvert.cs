@@ -18,91 +18,85 @@ namespace System.Xml {
 
 	public class XmlConvert {
 
-		static string encodedColon;
-		static string [] datetimeFormats;
-		static NumberStyles floatStyle;
-
-		static XmlConvert ()
-		{
-			floatStyle = NumberStyles.AllowCurrencySymbol | 
-				NumberStyles.AllowExponent | 
-				NumberStyles.AllowDecimalPoint |
-				NumberStyles.AllowLeadingSign;
-			encodedColon = "_x003A_";
-			datetimeFormats = new string[] {
-			  // dateTime
-			  "yyyy-MM-ddTHH:mm:ss",
-			  "yyyy-MM-ddTHH:mm:ss.f",
-			  "yyyy-MM-ddTHH:mm:ss.ff",
-			  "yyyy-MM-ddTHH:mm:ss.fff",
-			  "yyyy-MM-ddTHH:mm:ss.ffff",
-			  "yyyy-MM-ddTHH:mm:ss.fffff",
-			  "yyyy-MM-ddTHH:mm:ss.ffffff",
-			  "yyyy-MM-ddTHH:mm:ss.fffffff",
-			  "yyyy-MM-ddTHH:mm:sszzz",
-			  "yyyy-MM-ddTHH:mm:ss.fzzz",
-			  "yyyy-MM-ddTHH:mm:ss.ffzzz",
-			  "yyyy-MM-ddTHH:mm:ss.fffzzz",
-			  "yyyy-MM-ddTHH:mm:ss.ffffzzz",
-			  "yyyy-MM-ddTHH:mm:ss.fffffzzz",
-			  "yyyy-MM-ddTHH:mm:ss.ffffffzzz",
-			  "yyyy-MM-ddTHH:mm:ss.fffffffzzz",
-			  "yyyy-MM-ddTHH:mm:ssZ",
-			  "yyyy-MM-ddTHH:mm:ss.fZ",
-			  "yyyy-MM-ddTHH:mm:ss.ffZ",
-			  "yyyy-MM-ddTHH:mm:ss.fffZ",
-			  "yyyy-MM-ddTHH:mm:ss.ffffZ",
-			  "yyyy-MM-ddTHH:mm:ss.fffffZ",
-			  "yyyy-MM-ddTHH:mm:ss.ffffffZ",
-			  "yyyy-MM-ddTHH:mm:ss.fffffffZ",
-			  // time
-			  "HH:mm:ss",
-			  "HH:mm:ss.f",
-			  "HH:mm:ss.ff",
-			  "HH:mm:ss.fff",
-			  "HH:mm:ss.ffff",
-			  "HH:mm:ss.fffff",
-			  "HH:mm:ss.ffffff",
-			  "HH:mm:ss.fffffff",
-			  "HH:mm:sszzz",
-			  "HH:mm:ss.fzzz",
-			  "HH:mm:ss.ffzzz",
-			  "HH:mm:ss.fffzzz",
-			  "HH:mm:ss.ffffzzz",
-			  "HH:mm:ss.fffffzzz",
-			  "HH:mm:ss.ffffffzzz",
-			  "HH:mm:ss.fffffffzzz",
-			  "HH:mm:ssZ",
-			  "HH:mm:ss.fZ",
-			  "HH:mm:ss.ffZ",
-			  "HH:mm:ss.fffZ",
-			  "HH:mm:ss.ffffZ",
-			  "HH:mm:ss.fffffZ",
-			  "HH:mm:ss.ffffffZ",
-			  "HH:mm:ss.fffffffZ",
-			  // date
-			  "yyyy-MM-dd",
-			  "yyyy-MM-ddzzz",
-			  "yyyy-MM-ddZ",
-			  // gYearMonth
-			  "yyyy-MM",
-			  "yyyy-MMzzz",
-			  "yyyy-MMZ",
-			  // gYear
-			  "yyyy",
-			  "yyyyzzz",
-			  "yyyyZ",
-			  // gMonthDay
-			  "--MM-dd",
-			  "--MM-ddzzz",
-			  "--MM-ddZ",
-			  // gDay
-			  "---dd",
-			  "---ddzzz",
-			  "---ddZ",
-			};
-		}
-
+		const string encodedColon = "_x003A_";
+		const NumberStyles floatStyle = NumberStyles.AllowCurrencySymbol |
+			NumberStyles.AllowExponent | 
+			NumberStyles.AllowDecimalPoint |
+			NumberStyles.AllowLeadingSign;
+		
+		static readonly string [] datetimeFormats = {
+		  // dateTime
+		  "yyyy-MM-ddTHH:mm:ss",
+		  "yyyy-MM-ddTHH:mm:ss.f",
+		  "yyyy-MM-ddTHH:mm:ss.ff",
+		  "yyyy-MM-ddTHH:mm:ss.fff",
+		  "yyyy-MM-ddTHH:mm:ss.ffff",
+		  "yyyy-MM-ddTHH:mm:ss.fffff",
+		  "yyyy-MM-ddTHH:mm:ss.ffffff",
+		  "yyyy-MM-ddTHH:mm:ss.fffffff",
+		  "yyyy-MM-ddTHH:mm:sszzz",
+		  "yyyy-MM-ddTHH:mm:ss.fzzz",
+		  "yyyy-MM-ddTHH:mm:ss.ffzzz",
+		  "yyyy-MM-ddTHH:mm:ss.fffzzz",
+		  "yyyy-MM-ddTHH:mm:ss.ffffzzz",
+		  "yyyy-MM-ddTHH:mm:ss.fffffzzz",
+		  "yyyy-MM-ddTHH:mm:ss.ffffffzzz",
+		  "yyyy-MM-ddTHH:mm:ss.fffffffzzz",
+		  "yyyy-MM-ddTHH:mm:ssZ",
+		  "yyyy-MM-ddTHH:mm:ss.fZ",
+		  "yyyy-MM-ddTHH:mm:ss.ffZ",
+		  "yyyy-MM-ddTHH:mm:ss.fffZ",
+		  "yyyy-MM-ddTHH:mm:ss.ffffZ",
+		  "yyyy-MM-ddTHH:mm:ss.fffffZ",
+		  "yyyy-MM-ddTHH:mm:ss.ffffffZ",
+		  "yyyy-MM-ddTHH:mm:ss.fffffffZ",
+		  // time
+		  "HH:mm:ss",
+		  "HH:mm:ss.f",
+		  "HH:mm:ss.ff",
+		  "HH:mm:ss.fff",
+		  "HH:mm:ss.ffff",
+		  "HH:mm:ss.fffff",
+		  "HH:mm:ss.ffffff",
+		  "HH:mm:ss.fffffff",
+		  "HH:mm:sszzz",
+		  "HH:mm:ss.fzzz",
+		  "HH:mm:ss.ffzzz",
+		  "HH:mm:ss.fffzzz",
+		  "HH:mm:ss.ffffzzz",
+		  "HH:mm:ss.fffffzzz",
+		  "HH:mm:ss.ffffffzzz",
+		  "HH:mm:ss.fffffffzzz",
+		  "HH:mm:ssZ",
+		  "HH:mm:ss.fZ",
+		  "HH:mm:ss.ffZ",
+		  "HH:mm:ss.fffZ",
+		  "HH:mm:ss.ffffZ",
+		  "HH:mm:ss.fffffZ",
+		  "HH:mm:ss.ffffffZ",
+		  "HH:mm:ss.fffffffZ",
+		  // date
+		  "yyyy-MM-dd",
+		  "yyyy-MM-ddzzz",
+		  "yyyy-MM-ddZ",
+		  // gYearMonth
+		  "yyyy-MM",
+		  "yyyy-MMzzz",
+		  "yyyy-MMZ",
+		  // gYear
+		  "yyyy",
+		  "yyyyzzz",
+		  "yyyyZ",
+		  // gMonthDay
+		  "--MM-dd",
+		  "--MM-ddzzz",
+		  "--MM-ddZ",
+		  // gDay
+		  "---dd",
+		  "---ddzzz",
+		  "---ddZ",
+		};
+		
 		public XmlConvert()
 		{}
 

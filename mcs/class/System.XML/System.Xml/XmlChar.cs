@@ -17,7 +17,7 @@ namespace System.Xml
 	// (XmlConstruts class uses not a little memory).
 	internal class XmlCharCompact
 	{
-		public static char [] WhitespaceChars = new char [] {' ', '\n', '\t', '\r'};
+		public static readonly char [] WhitespaceChars = new char [] {' ', '\n', '\t', '\r'};
 
 		public static bool IsWhitespace (int ch)
 		{
@@ -199,7 +199,7 @@ namespace System.Xml
 			}
 		}
 
-		private static byte[] firstNamePages =
+		static readonly byte [] firstNamePages =
 		{
 			0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x00,
 			0x00, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
@@ -235,7 +235,7 @@ namespace System.Xml
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 		};
 
-		private static byte[] namePages =
+		static readonly byte [] namePages =
 		{
 			0x19, 0x03, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x00,
 			0x00, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25,
@@ -271,7 +271,7 @@ namespace System.Xml
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 		};
 
-		private static uint[] nameBitmap =
+		static readonly uint [] nameBitmap =
 		{
 			0x00000000, 0x00000000, 0x00000000, 0x00000000,
 			0x00000000, 0x00000000, 0x00000000, 0x00000000,

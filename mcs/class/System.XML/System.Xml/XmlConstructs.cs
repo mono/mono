@@ -12,25 +12,25 @@ namespace System.Xml
 	/// </remarks>
 	internal class XmlChar//XmlConstructs
 	{
-		internal static char [] WhitespaceChars = new char [] {' ', '\n', '\t', '\r'};
+		internal static readonly char [] WhitespaceChars = {' ', '\n', '\t', '\r'};
 
 		/** Character flags. */
-		internal static byte[] CHARS = new byte[1 << 16];
+		internal static readonly byte [] CHARS = new byte [1 << 16];
 
 		/** Valid character mask. */
-		internal static int VALID = 0x01;
+		internal const int VALID = 0x01;
 
 		/** Space character mask. */
-		internal static int SPACE = 0x02;
+		internal const int SPACE = 0x02;
 
 		/** Name start character mask. */
-		internal static int NAME_START = 0x04;
+		internal const int NAME_START = 0x04;
 
 		/** Name character mask. */
-		internal static int NAME = 0x08;
+		internal const int NAME = 0x08;
 
 		/** Pubid character mask. */
-		internal static int PUBID = 0x10;
+		internal const int PUBID = 0x10;
 		/** 
 			 * Content character mask. Special characters are those that can
 			 * be considered the start of markup, such as '&lt;' and '&amp;'. 
@@ -39,13 +39,13 @@ namespace System.Xml
 			 * <p>
 			 * This is an optimization for the inner loop of character scanning.
 			 */
-		internal static int CONTENT = 0x20;
+		internal const int CONTENT = 0x20;
 
 		/** NCName start character mask. */
-		internal static int NCNAME_START = 0x40;
+		internal const int NCNAME_START = 0x40;
 
 		/** NCName character mask. */
-		internal static int NCNAME = 0x80;
+		internal const int NCNAME = 0x80;
 	
 		static XmlChar()
 		{
