@@ -176,7 +176,7 @@ t              debug.shift(yyState, yyTable[yyN], yyErrorFlag-1);
 .            switch (yyErrorFlag) {
 .  
 .            case 0:
-.              yyerror("syntax error", yyExpecting(yyState));
+.              yyerror(String.Format ("syntax error, got token `{0}'", yyname (yyToken)), yyExpecting(yyState));
 t              if (debug != null) debug.error("syntax error");
 .              goto case 1;
 .            case 1: case 2:
