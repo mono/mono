@@ -1,5 +1,10 @@
 2003-11-16 Jackson Harper <jackson@ximian.com>
 
+	* Driver.cs: Give the parser an instance of the stream reader so
+	it can get the streams encoding.
+	
+2003-11-16 Jackson Harper <jackson@ximian.com>
+
 	* Driver.cs: If an arg isn't a switch and starts with a / add it
 	as a file to be compiled. This fixes bug #51041.
 	
