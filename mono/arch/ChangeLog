@@ -1,3 +1,8 @@
+2003-10-13  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* sparc/sparc-codegen.h sparc/tramp.c: add initial implementation
+	for V9 (64 bit), cover more 32 bit cases as well.
+
 2003-09-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* x86/tramp.c: Fixes from Bernie Solomon (bernard@ugsolutions.com).
