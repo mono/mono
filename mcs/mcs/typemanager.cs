@@ -65,7 +65,6 @@ public class TypeManager {
 	static public Type marshal_as_attr_type;
 	static public Type param_array_type;
 	static public Type void_ptr_type;
-	static public Type structlayout_type;
 
 	static public Type [] NoTypes;
 	
@@ -515,7 +514,6 @@ public class TypeManager {
 		uint64_type   = CoreLookupType ("System.UInt64"); 
 		byte_type     = CoreLookupType ("System.Byte");
 		sbyte_type    = CoreLookupType ("System.SByte");
-		char_type     = CoreLookupType ("System.Char");
 		short_type    = CoreLookupType ("System.Int16");
 		ushort_type   = CoreLookupType ("System.UInt16");
 	}
@@ -532,6 +530,7 @@ public class TypeManager {
 
 		InitEnumUnderlyingTypes ();
 
+		char_type     = CoreLookupType ("System.Char");
 		string_type   = CoreLookupType ("System.String");
 		float_type    = CoreLookupType ("System.Single");
 		double_type   = CoreLookupType ("System.Double");
@@ -560,7 +559,6 @@ public class TypeManager {
 		intptr_type          = CoreLookupType ("System.IntPtr");
 
 		attribute_type       = CoreLookupType ("System.Attribute");
-		structlayout_type    = CoreLookupType ("System.Runtime.InteropServices.StructLayoutAttribute");
 		attribute_usage_type = CoreLookupType ("System.AttributeUsageAttribute");
 		dllimport_type       = CoreLookupType ("System.Runtime.InteropServices.DllImportAttribute");
 		methodimpl_attr_type = CoreLookupType ("System.Runtime.CompilerServices.MethodImplAttribute");
