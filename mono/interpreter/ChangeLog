@@ -1,4 +1,9 @@
 
+Sat Aug 25 15:56:03 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: Implemented some opcodes: starg.s, ldobj, isinst,
+	ldarg, starg, ldloc, ldloca, stloc, initobj, cpblk, sizeof.
+
 Sat Aug 25 12:57:36 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: handle enumerations specially (not as valuetypes).
