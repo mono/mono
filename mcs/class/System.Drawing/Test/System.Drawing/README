@@ -1,0 +1,10 @@
+README
+
+* test.sh runs the tests using the Mono runtime and stores the bimaps created by 
+tests in the directory called Mono.
+
+* test-ms.sh runs the test using the MS .Net runtime and stores the bimaps 
+created by tests in the directory called MsNet.
+
+Fell free to hack both scripts
+

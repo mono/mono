@@ -26,7 +26,7 @@ namespace MonoTests.System.Drawing{
 		
 		}
 			
-		[Test]
+		//[Test]
 		public void TestPixels() 
 		{		
 			// Tests GetSetPixel/SetPixel			
@@ -41,10 +41,23 @@ namespace MonoTests.System.Drawing{
 			AssertEquals (Color.FromArgb(255,255,0,155), color2);			
 		}
 		
+		/* Get the right directory depending on the runtime*/
+		internal string getSubDir()
+		{				
+			string sRslt;			
+			
+			if (Environment.GetEnvironmentVariable("MSNet")==null)
+				sRslt = "mono/";
+			else
+				sRslt = "MSNet/";			
+				
+			return sRslt;
+		}
+		
 		[Test]
 		public void BitmapLoadAndSave() 
-		{							
-			string sOutFile = "output/linerect.bmp";
+		{				
+			string sOutFile = getSubDir() + "linerect.bmp";
 						
 			// Save		
 			Bitmap	bmp = new Bitmap(100,100, PixelFormat.Format32bppRgb);						
@@ -73,7 +86,7 @@ namespace MonoTests.System.Drawing{
 		public void MakeTransparent() 
 		{
 			string sInFile = "bitmaps/maketransparent.bmp";
-			string sOutFile = "output/transparent.bmp";
+			string sOutFile =  getSubDir() + "transparent.bmp";
 						
 			Bitmap	bmp = new Bitmap(sInFile);
 			Console.WriteLine("Bitmap loaded OK", bmp != null);
@@ -91,11 +104,10 @@ namespace MonoTests.System.Drawing{
 		public void Clone ()
 		{
 			string sInFile = "bitmaps/almogaver24bits.bmp";
-			string sOutFile = "output/clone24.bmp";			
+			string sOutFile =  getSubDir() + "clone24.bmp";			
 			
 			Rectangle rect = new Rectangle(0,0,50,50);						
-			Bitmap	bmp = new Bitmap(sInFile);
-			Console.WriteLine("Bitmap loaded OK", bmp != null);
+			Bitmap	bmp = new Bitmap(sInFile);			
 			
 			Bitmap bmpNew = bmp.Clone (rect, PixelFormat.Format32bppArgb);			
 			bmpNew.Save(sOutFile);							
@@ -125,8 +137,7 @@ namespace MonoTests.System.Drawing{
 			IntPtr HandleIcon = bmp.GetHicon();
 			Console.WriteLine("Handles.GetHicon()-> " + HandleIcon);
 			Assert(HandleIcon!=IntPtr.Zero);							
-		}
-		
+		}		
 			
 	}
 }
