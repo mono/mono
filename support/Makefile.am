@@ -8,10 +8,6 @@ INCLUDES = \
 	$(GLIB_CFLAGS) \
 	-I$(top_srcdir)
 
-LIBS = \
-	$(GLIB_LIBS) \
-	-lnsl
-
 MPH_SOURCE = \
 	mph.h 		\
 	old-map.h 	\
@@ -41,12 +37,11 @@ MPH_SOURCE = \
 	x-struct-str.c
 
 if HAVE_ZLIB
-libMonoPosixHelper_la_SOURCES = \
-	$(MPH_SOURCE) zlib_macros.c
-
-libMonoPosixHelper_la_LIBADD = -lz
+libMonoPosixHelper_la_SOURCES = $(MPH_SOURCE) zlib_macros.c
+libMonoPosixHelper_la_LIBADD = $(GLIB_LIBS) -lz
 else
 libMonoPosixHelper_la_SOURCES = $(MPH_SOURCE)
+libMonoPosixHelper_la_LIBADD = $(GLIB_LIBS)
 endif
 
 libMonoPosixHelper_la_LDFLAGS = -no-undefined -version-info 1:0:1
