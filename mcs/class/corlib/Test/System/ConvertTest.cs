@@ -2997,6 +2997,8 @@ namespace MonoTests.System {
 		{
 			// legal
 			Convert.ToByte ("-0");
+			// and so is this
+			Convert.ToByte ("-0", null);
 		}
 	}
 }
