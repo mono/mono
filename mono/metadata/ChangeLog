@@ -1,3 +1,8 @@
+2003-07-28  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.c (mono_debugger_runtime_invoke): New
+	method.  This is a wrapper around mono_runtime_invoke() which
+	boxes the instance object if neccessary.
 
 Fri Jul 25 19:14:13 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
