@@ -133,9 +133,18 @@ PENDING TASKS
 
 	* Implement Goto.
 
-	* Implement Switch.
-
 	* Unsafe code.
+
+* Function Declarations
+
+	Support PINvoke/Internallcall and extern declarated-functions.
+
+* Manual field layout in structures
+
+* Make the rules for inheritance/overriding apply to 
+  properties, operators and indexers (currently we only do this
+  on methods).
+
 
 * Using Alias
 
