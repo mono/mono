@@ -42,7 +42,7 @@ namespace System.Web.UI.WebControls
 		{
 			XmlTextReader reader = new XmlTextReader(new StringReader("<xsl:stylesheet version='1.0' " +
 			                                        "xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>" +
-			                                        "<xsl:template match=\"\">" +
+			                                        "<xsl:template match=\"*\">" +
 			                                        "<xsl:copy-of select=\".\"/>" +
 			                                        "</xsl:template>" +
 			                                        "</xsl:stylesheet>"));
@@ -113,7 +113,7 @@ namespace System.Web.UI.WebControls
 				document        = null;
 				documentContent = null;
 				xpathDoc        = null;
-				documentSource  = value;
+				documentSource  = MapPathSecure (value);
 			}
 		}
 
@@ -192,7 +192,7 @@ namespace System.Web.UI.WebControls
 
 			if (transformSource != null && transformSource.Length != 0) {
 				transform = new XslTransform ();
-				transform.Load (transformSource);
+				transform.Load (MapPathSecure (transformSource));
 			}
 		}
 
@@ -204,7 +204,7 @@ namespace System.Web.UI.WebControls
 			}
 
 			LoadTransform();
-			if(document == null || xpathDoc == null)
+			if(document == null && xpathDoc == null)
 			{
 				return;
 			}

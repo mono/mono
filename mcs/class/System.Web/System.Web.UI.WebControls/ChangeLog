@@ -1,3 +1,7 @@
+2003-01-22  Zdravko Tashev <ztashev@openlinksw.co.uk>
+
+	* Xml.cs: a few fixes.
+
 2003-01-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataList.cs: handle the exception when adding new keys to
