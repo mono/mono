@@ -434,6 +434,45 @@ namespace Mono.CSharp {
 			container.TypeBuilder.DefineMethodOverride (proxy, iface_method);
 		}
 		
+		static bool IsPropertyGetMethod (string m)
+		{
+			return (m.Substring (0, 4) == "get_");	
+		}
+
+		static bool IsPropertySetMethod (string m)
+		{
+			return (m.Substring (0, 4) == "set_");	
+		}
+
+		MethodInfo FindExplicitImplementation (string iface_name, string method_name)
+		{
+			if (container.Properties != null) {
+				foreach (Property p in container.Properties) 
+				{
+					if (p.Implements != null) {					
+						if (IsPropertyGetMethod (method_name) && (p.Implements.ToString() == iface_name + "." + method_name.Substring(4))) 
+								return p.PropertyBuilder.GetGetMethod(true);
+
+						if (IsPropertySetMethod (method_name) && (p.Implements.ToString() == iface_name + "." + method_name.Substring(4))) 
+								return p.PropertyBuilder.GetSetMethod(true);
+					}
+				}
+			}
+
+			if (container.Methods != null) 
+			{
+				foreach (Method m in container.Methods) 
+				{
+					if (m.Implements != null) 
+					{					
+						if (m.Implements.ToString() == iface_name + "." + method_name.Substring(4))
+							return (MethodInfo) m.MethodBuilder;
+					}
+				}
+			}
+			return null;
+		}
+
 		/// <summary>
 		///   This function tells whether one of our parent classes implements
 		///   the given method (which turns out, it is valid to have an interface
@@ -442,6 +481,7 @@ namespace Mono.CSharp {
 		bool ParentImplements (Type iface_type, MethodInfo mi)
 		{
 			MethodSignature ms;
+			MethodInfo mr;
 			
 			Type [] args = TypeManager.GetArgumentTypes (mi);
 
@@ -449,13 +489,19 @@ namespace Mono.CSharp {
 			MemberList list = TypeContainer.FindMembers (
 				container.TypeBuilder.BaseType, MemberTypes.Method | MemberTypes.Property,
 				BindingFlags.Public | BindingFlags.Instance,
-				MethodSignature.method_signature_noname_filter, ms);
+				MethodSignature.method_signature_filter, ms);
 
 			if (list.Count == 0) 
-				return false;		
+			{
+				mr = FindExplicitImplementation (iface_type.ToString(), mi.Name);
+				if (mr == null)
+					return false;
+			}
+			else
+				mr = (MethodInfo) list[0];
 
-			DefineProxy (iface_type, (MethodInfo) list [0], mi, args);
-			return true;
+			DefineProxy (iface_type, mr, mi, args);
+			return true;						
 		}
 
 		/// <summary>
