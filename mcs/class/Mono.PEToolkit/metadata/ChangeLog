@@ -1,3 +1,7 @@
+2003-03-01 Jackson Harper <jackson@latitudegeo.com>
+
+	* MetaDataRoot.cs: Add method to write Metadata
+
 2003-02-20 Jackson Harper <jackson@latitudegeo.com>
 
 	* MDStream.cs: Make Header a class and use a Read method to load it. Because it is no longer

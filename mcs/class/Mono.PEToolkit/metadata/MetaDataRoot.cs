@@ -101,7 +101,7 @@ namespace Mono.PEToolkit.Metadata {
 		unsafe public void Read(BinaryReader reader)
 		{
 			filePos = reader.BaseStream.Position;
-
+			
 			sig = reader.ReadUInt32();
 			if (sig != Sig) {
 				throw new BadImageException("Invalid MetaData Signature.");
@@ -110,10 +110,10 @@ namespace Mono.PEToolkit.Metadata {
 			majVer = reader.ReadInt16();
 			minVer = reader.ReadInt16();
 			reserved = reader.ReadUInt32();
-			
+
 			// Length of version string.
 			len = reader.ReadInt32();
-
+			
 			// Read version string.
 			if (len != 0) {
 				sbyte* pVer = stackalloc sbyte [len];
@@ -141,10 +141,9 @@ namespace Mono.PEToolkit.Metadata {
 			} else {
 				VersionString = String.Empty;
 			}
-
+			
 			flags = reader.ReadInt16();
 			nStreams = reader.ReadInt16();
-
 			streams = new Hashtable(nStreams);
 
 			// load all streams into memory
@@ -166,6 +165,44 @@ namespace Mono.PEToolkit.Metadata {
 			strIdx = tabsHeap.StringsIndexSize;
 			guidIdx = tabsHeap.GUIDIndexSize;
 			blobIdx = tabsHeap.BlobIndexSize;
+		}
+
+		public void Write (BinaryWriter writer)
+		{
+			filePos = writer.BaseStream.Position;
+			
+			writer.Write (Sig);
+			
+			writer.Write (majVer);
+			writer.Write (minVer);
+			writer.Write (reserved);
+
+			// Length of version string
+			writer.Write (verStr.Length);
+
+			if (verStr.Length > 0) {
+				long pos = writer.BaseStream.Position;
+				for (int i=0; i<verStr.Length; i++)
+					writer.Write ((sbyte) verStr[i]);
+
+				// Round up to dword boundary, relative to header start.
+				pos += verStr.Length;
+				pos -= filePos;
+				pos += 3;
+				pos &= ~3;
+				pos += filePos;
+				
+				// Advance file pointer
+				writer.BaseStream.Position = pos;
+			}
+		
+			writer.Write (flags);
+			writer.Write (nStreams);
+
+			// load all streams into memory
+			foreach (MDStream stream in streams.Values)
+				stream.Write (writer);
+			
 		}
 
 		public TablesHeap TablesHeap {
