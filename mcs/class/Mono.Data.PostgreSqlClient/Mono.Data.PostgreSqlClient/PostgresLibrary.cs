@@ -19,8 +19,50 @@ using System.Data;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
-namespace System.Data.SqlClient
-{
+namespace System.Data.SqlClient {
+
+	// PostgreSQL Type (oid and typname from pg_type)
+	internal enum PgType {
+		ABSTIME = 702,
+		ACLITEM = 1033,
+		BIT = 1560,
+		BOOL = 16,
+		BOX = 603,
+		BPCHAR = 1042,
+		BYTEA = 17,
+		CHAR = 18,
+		CIDR = 650,
+		CIRCLE = 718,
+		DATE = 1082,
+		FLOAT4 = 700,
+		FLOAT8 = 701,
+		INET = 869,
+		INT2 = 21,
+		INT4 = 23,
+		INT8 = 20,
+		INTERVAL = 1186,
+		LINE = 628,
+		LSEG = 601,
+		MACADDR = 829,
+		MONEY = 790,
+		NAME = 19,
+		NUMERIC = 1700,
+		OID = 26,
+		PATH = 602,
+		POINT = 600,
+		POLYGON = 604,
+		REFCURSOR = 1790,
+		RELTIME = 703,
+		TEXT = 25,
+		TIME = 1083,
+		TIMESTAMP = 1114,
+		TIMESTAMPTZ = 1184,
+		TIMETZ = 1266,
+		TINTERVAL = 704,
+		VARBIT = 1562,
+		VARCHAR = 1043
+	}
+
 	/* IMPORTANT: DO NOT CHANGE ANY OF THESE ENUMS */
 	
 	internal enum ConnStatusType
@@ -71,22 +113,23 @@ namespace System.Data.SqlClient
 			//        from PostgreSQL oid type
 			//        to .NET System.<type>
 
-			switch(oid) {
-			case 1043: // varchar
-			case 25: // text
-			case 18: // char
+			switch((PgType) oid) {
+			case PgType.VARCHAR:
+			case PgType.BPCHAR:
+			case PgType.TEXT:
+			case PgType.CHAR:
 				obj = (object) String.Copy(value); 
 				break;
-			case 16: // bool
+			case PgType.BOOL:
 				obj = (object) Boolean.Parse(value);
 				break;
-			case 21: // int2
+			case PgType.INT2:
 				obj = (object) Int16.Parse(value);
 				break;
-			case 23: // int4
+			case PgType.INT4:
 				obj = (object) Int32.Parse(value);
 				break;
-			case 20: // int8
+			case PgType.INT8:
 				obj = (object) Int64.Parse(value);
 				break;
 			default:
@@ -111,22 +154,23 @@ namespace System.Data.SqlClient
 
 			Type typ = null;
 
-			switch(oid) {
-			case 1043: // varchar
-			case 25: // text
-			case 18: // char
+			switch((PgType) oid) {
+			case PgType.VARCHAR:
+			case PgType.BPCHAR:
+			case PgType.TEXT:
+			case PgType.CHAR:
 				typ = typeof(String);
 				break;
-			case 16: // bool
+			case PgType.BOOL:
 				typ = typeof(Boolean);
 				break;
-			case 21: // int2
+			case PgType.INT2:
 				typ = typeof(Int16);
 				break;
-			case 23: // int4
+			case PgType.INT4:
 				typ = typeof(Int32);
 				break;
-			case 20: // int8
+			case PgType.INT8:
 				typ = typeof(Int64);
 				break;
 			default:

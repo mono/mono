@@ -1,3 +1,14 @@
+2002-05-03  Daniel Morgan <danmorg@sc.rr.com>
+
+	* System.Data.build: removed comments
+
+	* System.Data.SqlClient/PostgresLibrary.cs: changed
+	the hard-coded PostgreSQL oid type int's to using an
+	enum.  Also, added PostgreSQL bpchar (character) type.
+	
+	* Test/TestSqlDataReader.cs: updated test
+	to include new bpchar PostgreSQL type
+
 2002-05-03  Rodrigo Moya <rodrigo@ximian.com>
 
 	* System.Data.SqlTypes/SqlBinary.cs:

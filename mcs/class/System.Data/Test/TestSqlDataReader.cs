@@ -35,7 +35,7 @@ namespace TestSystemDataSqlClient
 				"user=danmorg;" +
 				"password=viewsonic";
 
-			sql = 	"select tid, tdesc, aint4 " + 
+			sql = 	"select tid, tdesc, aint4, abpchar " + 
 				"from sometable";
 			
 			con = new SqlConnection(connectionString);
@@ -70,12 +70,14 @@ namespace TestSystemDataSqlClient
 				Console.WriteLine("Row: " +
 					rdr["tid"].ToString() + ", " + 
 					rdr["tdesc"].ToString() + ", " + 
-					rdr["aint4"].ToString()
+					rdr["aint4"].ToString() + ", " + 
+					rdr["abpchar"].ToString()
 					);
 
-				Console.WriteLine("1:" + rdr.GetString(0));
-				Console.WriteLine("1:" + rdr.GetString(1));
-				Console.WriteLine("2:" + rdr.GetInt32(2));
+				Console.WriteLine("1: " + rdr.GetString(0));
+				Console.WriteLine("2: " + rdr.GetString(1));
+				Console.WriteLine("3: " + rdr.GetInt32(2));
+				Console.WriteLine("4: " + rdr.GetString(3));
 			}
 			
 			rdr.Close();
