@@ -14,6 +14,7 @@ using System.Security.Cryptography;
 using System.Text;
 
 using Mono.Security;
+using Mono.Security.Authenticode;
 using Mono.Security.X509;
 
 namespace System.Security.Cryptography.X509Certificates {
@@ -82,7 +83,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			return new X509Certificate (data);
 		}
 	
-		static private int ReadWord (Stream s) 
+		/*static private int ReadWord (Stream s) 
 		{
 			int word = s.ReadByte ();
 			word = (s.ReadByte () << 8) + word;
@@ -141,13 +142,23 @@ namespace System.Security.Cryptography.X509Certificates {
 				fs.Close ();
 				return null;
 			}
-		}
+		}*/
 
 		// LAMESPEC: How does it differ from CreateFromCertFile ?
 		// It seems to get the certificate inside a PE file (maybe a CAB too ?)
 		[MonoTODO ("Incomplete - no validation in this version")]
 		public static X509Certificate CreateFromSignedFile (string filename)
 		{
+			AuthenticodeDeformatter a = new AuthenticodeDeformatter (filename);
+			if ((a.Certificates != null) && (a.Certificates.Count > 0)) {
+				return new X509Certificate (a.Certificates [0].RawData);
+			}
+			else {
+				// if no signature is present return an empty certificate
+				byte[] cert = null; // must not confuse compiler about null ;)
+				return new X509Certificate (cert);
+			}
+/*
 			byte[] signature = GetAuthenticodeSignature (filename);
 			if (signature == null)
 				throw new COMException ("File doesn't have a signature", -2146762496);
@@ -164,7 +175,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 			catch {
 				return null;
-			}
+			}*/
 		}
 	
 		// constructors
