@@ -232,6 +232,7 @@ System.Xml.Schema/XmlSchemaReader.cs
 System.Xml.Serialization/CodeIdentifier.cs
 System.Xml.Serialization/CodeIdentifiers.cs
 System.Xml.Serialization/IXmlSerializable.cs
+System.Xml.Serialization/MapCodeGenerator.cs
 System.Xml.Serialization/ReflectionHelper.cs
 System.Xml.Serialization/SchemaTypes.cs
 System.Xml.Serialization/SerializationCodeGenerator.cs
