@@ -23,6 +23,7 @@ namespace Mono.CSharp {
 		GenericConstraints GenericConstraints (int pos);
 		bool HasArrayParameter { get; }
 		int  Count { get; }
+		bool HasParams { get; }
 		string ParameterName (int pos);
 		string ParameterDesc (int pos);
 		Parameter.Modifier ParameterModifier (int pos);
@@ -163,6 +164,12 @@ namespace Mono.CSharp {
 				return is_varargs ? pi.Length + 1 : pi.Length;
 			}
 		}
+
+		public bool HasParams {
+			get {
+				return this.last_arg_is_params;
+			}
+		}
 	}
 
 	public class InternalParameters : ParameterData {
@@ -199,8 +206,10 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool HasArrayParameter {
-			get { return Parameters.ArrayParameter != null; }
+		public bool HasParams {
+			get {
+				return Parameters.ArrayParameter != null;
+			}
 		}
 
 		Parameter GetParameter (int pos)

@@ -501,10 +501,17 @@ namespace Mono.CSharp {
 
 			ParameterData pd = Invocation.GetParameterData (constructor);
 
-			int group_in_params_array = Int32.MaxValue;
-			int pc = pd.Count;
-			if (pc > 0 && pd.ParameterModifier (pc-1) == Parameter.Modifier.PARAMS)
-				group_in_params_array = pc-1;
+			int last_real_param = pd.Count;
+			if (pd.HasParams) {
+				// When the params is not filled we need to put one
+				if (last_real_param > pos_arg_count) {
+					object [] new_pos_values = new object [pos_arg_count + 1];
+					pos_values.CopyTo (new_pos_values, 0);
+					new_pos_values [pos_arg_count] = new object [] {} ;
+					pos_values = new_pos_values;
+				}
+				last_real_param--;
+			}
 
 			for (int j = 0; j < pos_arg_count; ++j) {
 				Argument a = (Argument) pos_args [j];
@@ -514,32 +521,24 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				if (j < group_in_params_array)
+				if (j < last_real_param)
 					continue;
 				
-				if (j == group_in_params_array){
-					object v = pos_values [j];
-					int count = pos_arg_count - j;
-
-					object [] array = new object [count];
+				if (j == last_real_param) {
+					object [] array = new object [pos_arg_count - last_real_param];
+					array [0] = pos_values [j];
 					pos_values [j] = array;
-					array [0] = v;
-				} else {
-					object [] array = (object []) pos_values [group_in_params_array];
-
-					array [j - group_in_params_array] = pos_values [j];
+					continue;
 				}
+
+				object [] params_array = (object []) pos_values [last_real_param];
+				params_array [j - last_real_param] = pos_values [j];
 			}
 
-			//
 			// Adjust the size of the pos_values if it had params
-			//
-			if (group_in_params_array != Int32.MaxValue){
-				int argc = group_in_params_array+1;
-				object [] new_pos_values = new object [argc];
-
-				for (int p = 0; p < argc; p++)
-					new_pos_values [p] = pos_values [p];
+			if (last_real_param != pos_arg_count) {
+				object [] new_pos_values = new object [last_real_param + 1];
+				Array.Copy (pos_values, new_pos_values, last_real_param + 1);
 				pos_values = new_pos_values;
 			}
 
