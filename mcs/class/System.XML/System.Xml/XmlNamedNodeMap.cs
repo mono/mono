@@ -96,7 +96,7 @@ namespace System.Xml
 			return SetNamedItem (node, -1, true);
 		}
 
-		public virtual XmlNode SetNamedItem (XmlNode node, bool raiseEvent)
+		internal XmlNode SetNamedItem (XmlNode node, bool raiseEvent)
 		{
 			return SetNamedItem (node, -1, raiseEvent);
 		}

@@ -702,9 +702,7 @@ namespace System.Xml
 		{
 			while (reader.ReadAttributeValue ()) {
 				if (reader.NodeType == XmlNodeType.EntityReference)
-					// FIXME: if DocumentType is available, then try to resolve it.
 					attribute.AppendChild (CreateEntityReference (reader.Name));
-				// FIXME: else if(NodeType == EndEntity) -- reset BaseURI and so on -- ;
 				else
 					// Children of Attribute is restricted to CharacterData and EntityReference (Comment is not allowed).
 					attribute.AppendChild (CreateTextNode (reader.Value));

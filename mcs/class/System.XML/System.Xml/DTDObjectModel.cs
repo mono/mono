@@ -19,7 +19,7 @@ using Mono.Xml.Native;
 
 namespace Mono.Xml
 {
-	public class DTDObjectModel
+	internal class DTDObjectModel
 	{
 		// This specifies the max number of dependent external entities
 		// per a DTD can consume. A malicious external document server
@@ -211,7 +211,7 @@ namespace Mono.Xml
 		}
 	}
 
-	public class DTDCollectionBase : DictionaryBase
+	internal class DTDCollectionBase : DictionaryBase
 	{
 		DTDObjectModel root;
 
@@ -233,7 +233,7 @@ namespace Mono.Xml
 		}
 	}
 
-	public class DTDElementDeclarationCollection : DTDCollectionBase
+	internal class DTDElementDeclarationCollection : DTDCollectionBase
 	{
 
 		public DTDElementDeclarationCollection (DTDObjectModel root) : base (root) {}
@@ -260,7 +260,7 @@ namespace Mono.Xml
 		}
 	}
 
-	public class DTDAttListDeclarationCollection : DTDCollectionBase
+	internal class DTDAttListDeclarationCollection : DTDCollectionBase
 	{
 		public DTDAttListDeclarationCollection (DTDObjectModel root) : base (root) {}
 
@@ -283,7 +283,7 @@ namespace Mono.Xml
 		}
 	}
 
-	public class DTDEntityDeclarationCollection : DTDCollectionBase
+	internal class DTDEntityDeclarationCollection : DTDCollectionBase
 	{
 		public DTDEntityDeclarationCollection (DTDObjectModel root) : base (root) {}
 
@@ -302,7 +302,7 @@ namespace Mono.Xml
 		}
 	}
 
-	public class DTDNotationDeclarationCollection : DTDCollectionBase
+	internal class DTDNotationDeclarationCollection : DTDCollectionBase
 	{
 		public DTDNotationDeclarationCollection (DTDObjectModel root) : base (root) {}
 
@@ -322,7 +322,7 @@ namespace Mono.Xml
 	}
 
 	// This class contains either ElementName or ChildModels.
-	public class DTDContentModel : DTDNode
+	internal class DTDContentModel : DTDNode
 	{
 		DTDObjectModel root;
 		DTDAutomata compiledAutomata;
@@ -444,7 +444,7 @@ namespace Mono.Xml
 
 	}
 
-	public class DTDContentModelCollection
+	internal class DTDContentModelCollection
 	{
 		ArrayList contentModel = new ArrayList ();
 
@@ -466,7 +466,7 @@ namespace Mono.Xml
 		}
 	}
 
-	public abstract class DTDNode : IXmlLineInfo
+	internal abstract class DTDNode : IXmlLineInfo
 	{
 		DTDObjectModel root;
 		bool isInternalSubset;
@@ -511,7 +511,7 @@ namespace Mono.Xml
 		}
 	}
 
-	public class DTDElementDeclaration : DTDNode
+	internal class DTDElementDeclaration : DTDNode
 	{
 		DTDObjectModel root;
 		DTDContentModel contentModel;
@@ -559,7 +559,7 @@ namespace Mono.Xml
 		}
 	}
 
-	public class DTDAttributeDefinition : DTDNode
+	internal class DTDAttributeDefinition : DTDNode
 	{
 		string name;
 		XmlSchemaDatatype datatype;
@@ -685,7 +685,7 @@ namespace Mono.Xml
 
 	}
 
-	public class DTDAttListDeclaration : DTDNode
+	internal class DTDAttListDeclaration : DTDNode
 	{
 		string name;
 		Hashtable attributeOrders = new Hashtable ();
@@ -743,7 +743,7 @@ namespace Mono.Xml
 		}
 	}
 
-	public class DTDEntityBase : DTDNode
+	internal class DTDEntityBase : DTDNode
 	{
 		string name;
 		string publicId;
@@ -833,7 +833,7 @@ namespace Mono.Xml
 		}
 	}
 
-	public class DTDEntityDeclaration : DTDEntityBase
+	internal class DTDEntityDeclaration : DTDEntityBase
 	{
 		string entityValue;
 		string notationName;
@@ -873,9 +873,7 @@ namespace Mono.Xml
 					if (NotationName != null)
 						entityValue = "";
 					else if (SystemId == null || SystemId == String.Empty) {
-						// FIXME: Isn't it an error??
 						entityValue = ReplacementText;
-//						entityValue = LiteralEntityValue;
 						if (entityValue == null)
 							entityValue = String.Empty;
 					} else {
@@ -925,9 +923,6 @@ namespace Mono.Xml
 						throw new XmlException (this as IXmlLineInfo, "Entity reference name is missing.");
 					if (name [0] == '#')
 						break;	// character reference
-					// FIXME: Should be checked, but how to handle entity for ENTITY attribute?
-//					if (!XmlChar.IsName (name))
-//						throw new XmlException (this as IXmlLineInfo, "Invalid entity reference name.");
 					if (XmlChar.GetPredefinedEntity (name) >= 0)
 						break;	// predefined reference
 
@@ -958,7 +953,7 @@ namespace Mono.Xml
 		}
 	}
 
-	public class DTDNotationDeclaration : DTDNode
+	internal class DTDNotationDeclaration : DTDNode
 	{
 		string name;
 		string localName;
@@ -997,7 +992,7 @@ namespace Mono.Xml
 		}
 	}
 
-	public class DTDParameterEntityDeclarationCollection
+	internal class DTDParameterEntityDeclarationCollection
 	{
 		Hashtable peDecls = new Hashtable ();
 		DTDObjectModel root;
@@ -1029,7 +1024,7 @@ namespace Mono.Xml
 		}
 	}
 
-	public class DTDParameterEntityDeclaration : DTDEntityBase
+	internal class DTDParameterEntityDeclaration : DTDEntityBase
 	{
 		internal DTDParameterEntityDeclaration (DTDObjectModel root) : base (root)
 		{

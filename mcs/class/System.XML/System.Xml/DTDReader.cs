@@ -6,7 +6,9 @@
 //
 // (C)2003 Atsushi Enomoto
 //
-// This code is almost imported from existing XmlTextReader.cs
+// FIXME:
+//	When a parameter entity contains cp section, it should be closed 
+//	within that declaration.
 //
 
 using System;
@@ -692,7 +694,6 @@ namespace System.Xml
 			}
 			decl.ReplacementText = CreateValueString ();
 
-			// FIXME: This check should be done on 
 			if (decl is DTDEntityDeclaration) {
 				// GE - also checked as valid contents
 				XmlTextReader xtr = new XmlTextReader (decl.ReplacementText, XmlNodeType.Element, null);
@@ -830,11 +831,6 @@ namespace System.Xml
 
 			while (PeekChar () != quoteChar) {
 				int ch = ReadChar ();
-				/*
-				FIXME: Here, character reference range validity
-				should be checked, but also should consider
-				how to handle them e.g. &#38amp;
-				*/
 				switch (ch) {
 				case '%':
 					string name = ReadName ();

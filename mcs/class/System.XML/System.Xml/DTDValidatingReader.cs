@@ -7,7 +7,7 @@ using System.Xml.Schema;
 
 namespace Mono.Xml
 {
-	public class DTDValidatingReader : XmlReader, IXmlLineInfo, IHasXmlParserContext, IHasXmlSchemaInfo
+	internal class DTDValidatingReader : XmlReader, IXmlLineInfo, IHasXmlParserContext, IHasXmlSchemaInfo
 	{
 		public DTDValidatingReader (XmlReader reader)
 			: this (reader, null)

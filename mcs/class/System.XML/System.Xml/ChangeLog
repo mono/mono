@@ -1,3 +1,15 @@
+2004-02-16  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDAutomata.cs,
+	  DTDObjectModel.cs,
+	  DTDReader.cs,
+	  DTDValidatingReader.cs : made classes internal.
+	* XmlDocument.cs : removed extra FIXMEs.
+	* XmlNamedNodeMap.cs,
+	  XmlResolver.cs,
+	  XmlUrlResolver.cs : 
+	  Fixed incorrect method signature.
+
 2004-02-13  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTDObjectModel.cs, DTDReader.cs, DTDValidatingReader.cs : 

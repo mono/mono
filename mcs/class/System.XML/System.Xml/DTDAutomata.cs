@@ -15,7 +15,7 @@ using Mono.Xml.Schema;
 
 namespace Mono.Xml
 {
-	public class DTDAutomataFactory
+	internal class DTDAutomataFactory
 	{
 		public DTDAutomataFactory (DTDObjectModel root)
 		{
@@ -57,7 +57,7 @@ namespace Mono.Xml
 		}
 	}
 
-	public abstract class DTDAutomata
+	internal abstract class DTDAutomata
 	{
 		public DTDAutomata (DTDObjectModel root)
 		{
@@ -109,7 +109,7 @@ namespace Mono.Xml
 		}
 	}
 
-	public class DTDElementAutomata : DTDAutomata
+	internal class DTDElementAutomata : DTDAutomata
 	{
 		public DTDElementAutomata (DTDObjectModel root, string name)
 			: base (root)
@@ -132,7 +132,7 @@ namespace Mono.Xml
 		}
 	}
 
-	public class DTDChoiceAutomata : DTDAutomata
+	internal class DTDChoiceAutomata : DTDAutomata
 	{
 		public DTDChoiceAutomata (DTDObjectModel root,
 			DTDAutomata left, DTDAutomata right)
@@ -178,7 +178,7 @@ namespace Mono.Xml
 		}
 	}
 
-	public class DTDSequenceAutomata : DTDAutomata
+	internal class DTDSequenceAutomata : DTDAutomata
 	{
 		public DTDSequenceAutomata (DTDObjectModel root,
 			DTDAutomata left, DTDAutomata right)
@@ -232,7 +232,7 @@ namespace Mono.Xml
 		}
 	}
 
-	public class DTDOneOrMoreAutomata : DTDAutomata
+	internal class DTDOneOrMoreAutomata : DTDAutomata
 	{
 		public DTDOneOrMoreAutomata (DTDObjectModel root,
 			DTDAutomata children)
@@ -263,7 +263,7 @@ namespace Mono.Xml
 		}
 	}
 
-	public class DTDEmptyAutomata : DTDAutomata
+	internal class DTDEmptyAutomata : DTDAutomata
 	{
 		public DTDEmptyAutomata (DTDObjectModel root)
 			: base (root)
@@ -285,7 +285,7 @@ namespace Mono.Xml
 		}
 	}
 
-	public class DTDAnyAutomata : DTDAutomata
+	internal class DTDAnyAutomata : DTDAutomata
 	{
 		public DTDAnyAutomata (DTDObjectModel root)
 			: base (root)
@@ -307,7 +307,7 @@ namespace Mono.Xml
 		}
 	}
 
-	public class DTDInvalidAutomata : DTDAutomata
+	internal class DTDInvalidAutomata : DTDAutomata
 	{
 		public DTDInvalidAutomata (DTDObjectModel root)
 			: base (root)
