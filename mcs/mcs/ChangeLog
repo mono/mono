@@ -1,3 +1,12 @@
+2004-06-02  Marek Safar  <marek.safar@seznam.cz>
+
+	Fixed #56452
+	* class.cs (MemberBase.GetSignatureForError): New virtual method.
+	Use this method when MethodBuilder is null.
+	(MethodData.DefineMethodBuilder): Encapsulated code to the new method.
+	Added test for error CS0626 (MONO reports error for this situation).
+	(IMethodData.GetSignatureForError): Extended interface.
+
 2004-06-01  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs
