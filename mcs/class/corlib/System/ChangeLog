@@ -14,7 +14,6 @@
 	match MS implementation and allow serialization to work. Fix 
 	bug #59113.
 
->>>>>>> 1.841
 2004-05-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DateTime.cs: adjust milliseconds for fraction specifier ('f').
