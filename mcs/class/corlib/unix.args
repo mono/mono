@@ -523,6 +523,7 @@ System.Runtime.Remoting.Lifetime/ISponsor.cs
 System.Runtime.Remoting.Lifetime/LeaseSink.cs
 System.Runtime.Remoting.Lifetime/LeaseState.cs
 System.Runtime.Remoting.Lifetime/LifetimeServices.cs
+System.Runtime.Remoting.Messaging/ArgInfo.cs
 System.Runtime.Remoting.Messaging/AsyncResult.cs
 System.Runtime.Remoting.Messaging/CallContext.cs
 System.Runtime.Remoting.Messaging/Header.cs
@@ -540,6 +541,9 @@ System.Runtime.Remoting.Messaging/MessageSurrogateFilter.cs
 System.Runtime.Remoting.Messaging/MethodCall.cs
 System.Runtime.Remoting.Messaging/MethodCallMessageWrapper.cs
 System.Runtime.Remoting.Messaging/MethodResponse.cs
+System.Runtime.Remoting.Messaging/MethodCallDictionary.cs
+System.Runtime.Remoting.Messaging/MethodDictionary.cs
+System.Runtime.Remoting.Messaging/MethodReturnDictionary.cs
 System.Runtime.Remoting.Messaging/MethodReturnMessageWrapper.cs
 System.Runtime.Remoting.Messaging/MonoMethodMessage.cs
 System.Runtime.Remoting.Messaging/OneWayAttribute.cs
