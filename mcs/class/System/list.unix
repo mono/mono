@@ -191,6 +191,7 @@ System.ComponentModel/DesignerSerializationVisibilityAttribute.cs
 System.ComponentModel/PropertyDescriptor.cs
 System.ComponentModel/Container.cs
 System.ComponentModel/DesignerAttribute.cs
+System.ComponentModel/DesignerCategoryAttribute.cs
 System.ComponentModel/DesignOnlyAttribute.cs
 System.ComponentModel/EventHandlerList.cs
 System.ComponentModel/MemberDescriptor.cs
