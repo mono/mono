@@ -1,3 +1,8 @@
+2003-03-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Array.cs (Copy): Call FastCopy() earlier to avoid the expensive
+	type checks and let it decide whenever a fast copy is possible.
+
 2003-03-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MonoType.cs:

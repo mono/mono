@@ -134,7 +134,7 @@ namespace System
 		internal extern void SetValueImpl (object value, int pos);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern static void FastCopy (Array source, int source_idx, Array dest, int dest_idx, int length);
+		internal extern static bool FastCopy (Array source, int source_idx, Array dest, int dest_idx, int length);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static Array CreateInstanceImpl(Type elementType, int[] lengths, int [] bounds);
@@ -492,9 +492,11 @@ namespace System
 			if (dest_idx < 0)
 				throw new ArgumentException ("dest_idx");
 
+			if (FastCopy (source, source_idx, dest, dest_idx, length))
+				return;
+
 			int source_pos = source_idx - source.GetLowerBound (0);
 			int dest_pos = dest_idx - dest.GetLowerBound (0);
-
 
 			if (source_pos + length > source.Length || dest_pos + length > dest.Length)
 				throw new ArgumentException ("length");
@@ -504,11 +506,6 @@ namespace System
 
 			Type src_type = source.GetType ().GetElementType ();
 			Type dst_type = dest.GetType ().GetElementType ();
-
-			if (src_type == dst_type) {
-				FastCopy (source, source_pos, dest, dest_pos, length);
-				return;
-			}
 
 			if (!Object.ReferenceEquals (source, dest) || source_pos > dest_pos)
 			{
