@@ -1,3 +1,9 @@
+2004-12-21  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* icall.c: Added an internal call to retrieve the position and length
+	of assembly-level declarative security attributes (RequestMinimum, 
+	RequestOptional and RequestRefuse). This is used by the Assembly class
+	to re-create the corresponding permission sets.
 
 Tue Dec 21 14:50:31 CET 2004 Paolo Molaro <lupus@ximian.com>
 
