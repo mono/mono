@@ -1045,7 +1045,8 @@ namespace Mono.Unix {
 	//
 	public sealed class Syscall : Stdlib
 	{
-		private const string CRYPT = "crypt";
+		new internal const string LIBC  = "libc";
+		    private  const string CRYPT = "crypt";
 
 		private Syscall () {}
 
@@ -1808,6 +1809,10 @@ namespace Mono.Unix {
 				EntryPoint="Mono_Posix_Syscall_lstat")]
 		public static extern int lstat (string file_name, out Stat buf);
 
+		// TODO:
+		// S_ISDIR, S_ISCHR, S_ISBLK, S_ISREG, S_ISFIFO, S_ISLNK, S_ISSOCK
+		// All take FilePermissions
+
 		// chmod(2)
 		//    int chmod(const char *path, mode_t mode);
 		[DllImport (LIBC, SetLastError=true, EntryPoint="chmod")]
@@ -2020,7 +2025,7 @@ namespace Mono.Unix {
 
 		#region <syslog.h> Declarations
 		//
-		// <time.h>
+		// <syslog.h>
 		//
 
 		[DllImport (LIBC, EntryPoint="openlog")]

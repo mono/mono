@@ -1,3 +1,14 @@
+2005-01-31  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Stdlib.cs: Import "msvcrt", not "libc".  These members are part of the
+	  ANSI C standard, and thus should be present on Windows via msvcrt.dll
+	  (except snprintf, until they catch up to C99).  Change the calling
+	  convention of all functions to Cdecl, as the .NET default is Stdcall.
+	  Changing the calling convention isn't needed in Syscall, as it can only be
+	  run on Unix platforms anyway, where the default is Cdecl.
+	* Syscall.cs: Add LIBC member that points to the real "libc"; we can't use
+	  the imported definition from Stdlib as "msvcrt" doesn't exist on Unix.
+
 2005-01-29  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Stdlib.cs: sys_* functions shouldn't be public.
