@@ -1,4 +1,10 @@
-2004-05-06  Sebastien Pouliot  <sebastien@ximian.com>
+2004-04-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* cs1606.pub: New file. ECMA key.
+	* cs1606.cs: New file. This is the same problem as cs1548-3.cs but CSC
+	report a different error number when the ECMA key is being used.
+
+2004-04-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* cs1548.pub: New file. Strongname file with only the public key.
 	* cs1548-3.cs: New file to test signing with a strongname containing
