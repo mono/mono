@@ -408,9 +408,9 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void TestExpandEntity ()
 		{
-			string intSubset = "<!ELEMENT root EMPTY><!ATTLIST root foo CDATA 'foo-def' bar CDATA 'bar-def'><!ENTITY ent 'entity string'>";
+			string intSubset = "<!ELEMENT root (#PCDATA)><!ATTLIST root foo CDATA 'foo-def' bar CDATA 'bar-def'><!ENTITY ent 'entity string'>";
 			string dtd = "<!DOCTYPE root [" + intSubset + "]>";
-			string xml = dtd + "<root foo='&ent;' bar='internal &ent; value' />";
+			string xml = dtd + "<root foo='&ent;' bar='internal &ent; value'>&ent;</root>";
 			dvr = PrepareXmlReader (xml);
 			dvr.EntityHandling = EntityHandling.ExpandEntities;
 			dvr.Read ();	// DTD
@@ -423,6 +423,7 @@ namespace MonoTests.System.Xml
 			Assert (dvr.MoveToNextAttribute ());
 			AssertEquals ("bar", dvr.Name);
 			AssertEquals ("internal entity string value", dvr.Value);
+			AssertEquals ("entity string", dvr.ReadString ());
 
 			// ValidationType = None
 
@@ -441,6 +442,7 @@ namespace MonoTests.System.Xml
 			Assert (dvr.MoveToNextAttribute ());
 			AssertEquals ("bar", dvr.Name);
 			AssertEquals ("internal entity string value", dvr.Value);
+			AssertEquals ("entity string", dvr.ReadString ());
 		}
 
 		[Test]

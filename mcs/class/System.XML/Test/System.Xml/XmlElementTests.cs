@@ -362,5 +362,21 @@ namespace MonoTests.System.Xml
 			Assert (doc.OuterXml.IndexOf ("xmlns:html=\"http://www.w3.org/1999/xhtml\"") > 0);
 		}
 
+		[Test]
+		public void WriteToDefaultAttribute ()
+		{
+			// default attributes should be ignored.
+
+			string dtd = "<!DOCTYPE root[<!ATTLIST root hoge CDATA 'hoge-def'><!ENTITY foo 'ent-foo'>]>";
+			string xml = dtd + "<root>&foo;</root>";
+			XmlValidatingReader xvr = new XmlValidatingReader (xml, XmlNodeType.Document,null);
+			xvr.EntityHandling = EntityHandling.ExpandCharEntities;
+			xvr.ValidationType = ValidationType.None;
+			document.Load (xvr);
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter xtw = new XmlTextWriter (sw);
+			document.DocumentElement.WriteTo (xtw);
+			AssertEquals ("<root>&foo;</root>", sw.ToString ());
+		}
 	}
 }

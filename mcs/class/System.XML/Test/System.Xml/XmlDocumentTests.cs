@@ -933,6 +933,20 @@ namespace MonoTests.System.Xml
 			AssertEquals ("foo-ent", foo.InnerText);
 		}
 
+		[Test]
+		public void DTDEntityAttributeHandling ()
+		{
+			string dtd = "<!DOCTYPE root[<!ATTLIST root hoge CDATA 'hoge-def'><!ENTITY foo 'ent-foo'>]>";
+			string xml = dtd + "<root>&foo;</root>";
+			XmlValidatingReader xvr = new XmlValidatingReader (xml, XmlNodeType.Document,null);
+			xvr.EntityHandling = EntityHandling.ExpandCharEntities;
+			xvr.ValidationType = ValidationType.None;
+			document.Load (xvr);
+			// Don't include default attributes here.
+			AssertEquals (xml, document.OuterXml);
+			AssertEquals ("hoge-def", document.DocumentElement.GetAttribute ("hoge"));
+		}
+
 //		[Test]  Comment out in the meantime.
 //		public void LoadExternalUri ()
 //		{

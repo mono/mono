@@ -1066,5 +1066,16 @@ namespace MonoTests.System.Xml
 			AssertEquals ("<a xmlns:dt=\"b\" dt:dt=\"c\" />",
 				doc2.OuterXml);
 		}
+
+		[Test]
+		public void DontOutputNonDeclaredXmlns ()
+		{
+			string xml = "<x:a foo='foo' xmlns:x='urn:foo'><b /></x:a>";
+			XmlDocument doc = new XmlDocument();
+			doc.LoadXml(xml);
+			XmlDocument doc2 = new XmlDocument();
+			doc2.LoadXml(doc.InnerXml);
+			AssertEquals (xml.Replace ('\'', '"'), doc2.OuterXml);
+		}
 	}
 }

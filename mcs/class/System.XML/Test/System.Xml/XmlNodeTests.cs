@@ -250,5 +250,16 @@ namespace MonoTests.System.Xml
 			AssertEquals (total, document.DocumentElement.InnerText);	// element root
 			AssertEquals (total, document.InnerText);	// whole document
 		}
+
+		[Test]
+		public void InnerXmlWithXmlns ()
+		{
+			XmlDocument document = new XmlDocument ();
+			XmlElement xel = document.CreateElement ("KeyValue", "http://www.w3.org/2000/09/xmldsig#");
+			xel.SetAttribute ("xmlns", "http://www.w3.org/2000/09/xmldsig#");
+			xel.InnerXml = "<DSAKeyValue>blablabla</DSAKeyValue>";
+			string expected = "<KeyValue xmlns=\"http://www.w3.org/2000/09/xmldsig#\"><DSAKeyValue>blablabla</DSAKeyValue></KeyValue>";
+			AssertEquals (expected, xel.OuterXml);
+		}
 	}
 }
