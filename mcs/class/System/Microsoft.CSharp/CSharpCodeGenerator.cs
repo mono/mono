@@ -237,10 +237,9 @@ namespace Mono.CSharp
 							   expression.PropertyName );
 		}
 
-		// TODO
 		protected override void GeneratePropertySetValueReferenceExpression( CodePropertySetValueReferenceExpression expression )
 		{
-			
+			Output.Write ( "value" );	
 		}
 
 		protected override void GenerateThisReferenceExpression( CodeThisReferenceExpression expression )
@@ -444,7 +443,8 @@ namespace Mono.CSharp
 		{
 			TextWriter output = Output;
 
-			OutputAttributeDeclarations( field.CustomAttributes );
+			if (field.CustomAttributes.Count > 0)
+				OutputAttributeDeclarations( field.CustomAttributes );
 
 			MemberAttributes attributes = field.Attributes;
 			OutputMemberAccessModifier( attributes );
@@ -478,7 +478,8 @@ namespace Mono.CSharp
 		{
 			TextWriter output = Output;
 
-			OutputAttributeDeclarations( method.CustomAttributes );
+			if (method.CustomAttributes.Count > 0)
+				OutputAttributeDeclarations( method.CustomAttributes );
 
 			MemberAttributes attributes = method.Attributes;
 
@@ -515,7 +516,44 @@ namespace Mono.CSharp
 							  CodeTypeDeclaration declaration )
 		{
 			TextWriter output = Output;
-			output.Write( "<GenerateProperty>" );
+
+			if (property.CustomAttributes.Count > 0)
+				OutputAttributeDeclarations( property.CustomAttributes );
+
+			MemberAttributes attributes = property.Attributes;
+			OutputMemberAccessModifier( attributes );
+			OutputFieldScopeModifier( attributes );
+
+			OutputTypeNamePair( property.Type, property.Name );
+			output.WriteLine (" {");
+			++Indent;
+
+			if (property.HasGet)
+			{
+				output.WriteLine ("get {");
+				++Indent;
+
+				GenerateStatements (property.GetStatements);
+				output.WriteLine ();
+
+				output.WriteLine ("}");
+				--Indent;
+			}
+			
+			if (property.HasSet)
+			{
+				output.WriteLine ("set {");
+				++Indent;
+
+				GenerateStatements (property.SetStatements);
+				output.WriteLine ();
+
+				output.WriteLine ("}");
+				--Indent;
+			}
+
+			--Indent;
+			output.WriteLine ("}");
 		}
 
 		protected override void GenerateConstructor( CodeConstructor constructor,

@@ -1,3 +1,11 @@
+2002-10-19  Rachel Hestilow <hestilow@ximian.com>
+
+	* CSharpCodeProvider.cs
+	(GeneratePropertySetValueReferenceExpression): Implement.
+	(GenerateField, GenerateMethod): Only call OutputAttributeDeclarations
+	if there are any attributes.
+	(GenerateProperty): Implement.
+	 
 2002-10-11  Duncan Mak  <duncan@ximian.com>
 
 	* CSharpCodeProvider.cs: Fix constructor visibility.
