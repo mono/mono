@@ -17,6 +17,7 @@ namespace System.Drawing {
 
 	public sealed class Pen : MarshalByRefObject, ICloneable, IDisposable {
 		internal IntPtr nativeObject;
+		internal bool isModifiable = true;
 
                 internal Pen (IntPtr p)
                 {
@@ -57,7 +58,11 @@ namespace System.Drawing {
                         }
 
 			set {
-				GDIPlus.GdipSetPenMode (nativeObject, value);
+				if (isModifiable)
+					GDIPlus.GdipSetPenMode (nativeObject, value);
+				else
+					throw new ArgumentException("You may not change this Pen because it does not belong to you.");
+
 			}
 		}
 
@@ -72,7 +77,10 @@ namespace System.Drawing {
                         }
 
 			set {
-                                GDIPlus.GdipSetPenBrushFill (nativeObject, value.nativeObject);
+				if (isModifiable)
+                                	GDIPlus.GdipSetPenBrushFill (nativeObject, value.nativeObject);
+				else
+					throw new ArgumentException("You may not change this Pen because it does not belong to you.");
 			}
 		}
 
@@ -85,7 +93,10 @@ namespace System.Drawing {
 			}
 
 			set {
-				GDIPlus.GdipSetPenColor (nativeObject, value.ToArgb ());
+				if (isModifiable)
+					GDIPlus.GdipSetPenColor (nativeObject, value.ToArgb ());
+				else
+					throw new ArgumentException("You may not change this Pen because it does not belong to you.");
 			}
 		}
 
@@ -108,12 +119,16 @@ namespace System.Drawing {
 
                         set {
                                 throw new NotImplementedException ();                                
+//                              if (isModifiable) {
 //                                 int length = value.Length;
 //                                 IntPtr tmp = Marshal.AllocHGlobal (8 * length);
 //                                 Marshal.Copy (value, 0, tmp, length);
 //                                 GDIPlus.GdipSetPenCompoundArray (nativeObject, tmp, length);
 
 //                                 Marshal.FreeHGlobal (tmp);
+//                              }
+//                              else
+//				   throw new ArgumentException("You may not change this Pen because it does not belong to you.");
                         }
                 }
 
@@ -123,6 +138,7 @@ namespace System.Drawing {
                                 throw new NotImplementedException ();
                         }
 
+			// do a check for isModifiable when implementing this property
                         set {
                                 throw new NotImplementedException ();                                
                         }
@@ -135,6 +151,7 @@ namespace System.Drawing {
                                 throw new NotImplementedException ();                                
                         }
 
+			// do a check for isModifiable when implementing this property
                         set {
                                 throw new NotImplementedException ();                                
                         }
@@ -150,7 +167,10 @@ namespace System.Drawing {
                         }
 
                         set {
-                                GDIPlus.GdipSetPenDashCap (nativeObject, value);
+				if (isModifiable)
+                                	GDIPlus.GdipSetPenDashCap (nativeObject, value);
+				else
+					throw new ArgumentException("You may not change this Pen because it does not belong to you.");
                         }
                 }
 
@@ -164,7 +184,10 @@ namespace System.Drawing {
                         }
 
                         set {
-                                GDIPlus.GdipSetPenDashOffset (nativeObject, value);
+				if (isModifiable)
+                                	GDIPlus.GdipSetPenDashOffset (nativeObject, value);
+				else
+					throw new ArgumentException("You may not change this Pen because it does not belong to you.");
                         }
                 }
 
@@ -185,12 +208,16 @@ namespace System.Drawing {
                         }
 
                         set {
-                                int length = value.Length;
-                                IntPtr tmp = Marshal.AllocHGlobal (8 * length);
-                                Marshal.Copy (value, 0, tmp, length);
-                                GDIPlus.GdipSetPenDashArray (nativeObject, tmp, length);
+				if (isModifiable) {
+                                	int length = value.Length;
+                                	IntPtr tmp = Marshal.AllocHGlobal (8 * length);
+                                	Marshal.Copy (value, 0, tmp, length);
+                                	GDIPlus.GdipSetPenDashArray (nativeObject, tmp, length);
 
-                                Marshal.FreeHGlobal (tmp);
+                                	Marshal.FreeHGlobal (tmp);
+				}
+				else
+					throw new ArgumentException("You may not change this Pen because it does not belong to you.");
                         }
                 }
 
@@ -203,7 +230,10 @@ namespace System.Drawing {
 			}
 
 			set {
-				GDIPlus.GdipSetPenDashStyle (nativeObject, value);
+				if (isModifiable)
+					GDIPlus.GdipSetPenDashStyle (nativeObject, value);
+				else
+					throw new ArgumentException("You may not change this Pen because it does not belong to you.");
 			}
 		}
 
@@ -218,7 +248,10 @@ namespace System.Drawing {
 
 			set {
                                 throw new NotImplementedException ();                                
+//			if (isModifiable)
 // 				GDIPlus.GdipSetPenStartCap (nativeObject, value);
+//			else
+//				throw new ArgumentException("You may not change this Pen because it does not belong to you.");
 			}
 		}
  
@@ -233,7 +266,10 @@ namespace System.Drawing {
 
 			set {
                                 throw new NotImplementedException ();                                
+//			if (isModifiable)
 // 				GDIPlus.GdipSetPenEndCap (nativeObject, value);
+//			else
+//				throw new ArgumentException("You may not change this Pen because it does not belong to you.");
 			}
 		}
  
@@ -246,7 +282,10 @@ namespace System.Drawing {
                         }
 
                         set {
-                                GDIPlus.GdipSetPenLineJoin (nativeObject, value);
+				if (isModifiable)
+                                	GDIPlus.GdipSetPenLineJoin (nativeObject, value);
+				else
+					throw new ArgumentException("You may not change this Pen because it does not belong to you.");
                         }
                                 
                 }
@@ -260,7 +299,10 @@ namespace System.Drawing {
                         }
 
                         set {
-                                GDIPlus.GdipSetPenMiterLimit (nativeObject, value);
+				if (isModifiable)
+                                	GDIPlus.GdipSetPenMiterLimit (nativeObject, value);
+				else
+					throw new ArgumentException("You may not change this Pen because it does not belong to you.");
                         }
                                 
                 }
@@ -274,7 +316,10 @@ namespace System.Drawing {
                         }
 
                         set {
-                                GDIPlus.GdipSetPenTransform (nativeObject, value);
+				if (isModifiable)
+                                	GDIPlus.GdipSetPenTransform (nativeObject, value);
+				else
+					throw new ArgumentException("You may not change this Pen because it does not belong to you.");
                         }
                 }
 
@@ -285,7 +330,10 @@ namespace System.Drawing {
                                 return f;
 			}
 			set {
-				GDIPlus.GdipSetPenWidth (nativeObject, value);
+				if (isModifiable)
+					GDIPlus.GdipSetPenWidth (nativeObject, value);
+				else
+					throw new ArgumentException("You may not change this Pen because it does not belong to you.");
 			}
 		}
 
@@ -305,7 +353,10 @@ namespace System.Drawing {
 
 		void Dispose (bool disposing)
 		{
-                        GDIPlus.GdipDeletePen (nativeObject);
+			if (isModifiable)
+                        	GDIPlus.GdipDeletePen (nativeObject);
+			else
+				throw new ArgumentException("You may not change this Pen because it does not belong to you.");
 		}
 
 		~Pen ()
@@ -350,6 +401,7 @@ namespace System.Drawing {
 
                 public void SetLineCap (LineCap startCap, LineCap endCap, DashCap dashCap)
                 {
+			// do a check for isModifiable when implementing this method
                         // GDIPlus.GdipSetLineCap197819 (nativeObject, startCap, endCap, dashCap);
                 }
 

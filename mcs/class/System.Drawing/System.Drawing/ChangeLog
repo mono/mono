@@ -1,3 +1,20 @@
+2004-01-08  Ravindra  <rkumar@novell.com>
+	* Pen.cs: Added isModifiable (bool) variable. It is required to
+	make Pens created by SystemPens.cs unmodifiable. All property
+	setters are modified for this.
+
+	* SolidBrush.cs: Added isModifiable variable (bool). It is
+        required to make Brushes created by SystemBrushes.cs unmodifiable.
+        All property setters are modified for this.
+
+	* SystemBrushes.cs: Modified all the properties as per the .NET
+	specs, so that Brushes are not created every time. Also, missing
+	properties are added.
+
+	* SystemPens.cs: Modified all the properties as per the .NET
+        specs, so that Brushes are not created every time. Also, missing
+        properties are added.
+
 2003-12-12  Miguel de Icaza  <miguel@ximian.com>
 
 	* Rectangle.cs: Patch from Bryan Bulten, fixes Inflate and makes

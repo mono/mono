@@ -13,6 +13,7 @@ namespace System.Drawing
 {
 	public sealed class SolidBrush : Brush {
 		
+		internal bool isModifiable = true;
 		Color color;
 
                 internal SolidBrush (IntPtr ptr)
@@ -33,7 +34,10 @@ namespace System.Drawing
 				return color;
 			}
 			set {
-			    color = value;
+				if (isModifiable)
+					color = value;
+				else
+					throw new ArgumentException("You may not change this Brush because it does not belong to you.");
 			}
 		}
 		
@@ -42,6 +46,13 @@ namespace System.Drawing
 			return new SolidBrush( color );
 		}
 		
+		protected override void Dispose (bool disposing)
+		{
+			if (isModifiable)
+				GDIPlus.GdipDeleteBrush (nativeObject);
+			else
+				throw new ArgumentException("You may not change this Brush because it does not belong to you.");
+		}
 	}
 }
 
