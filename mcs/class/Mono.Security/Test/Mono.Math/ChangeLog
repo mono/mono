@@ -1,0 +1,12 @@
+2004-02-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ArithmeticBigTest.cs: 
+	* BigIntegerSetTest.cs:
+	* BitwiseTest.cs:
+	* GcdBigTest.cs:
+	* ModInverseBigTest.cs:
+	* ModRingTest.cs:
+	* PrimeGenerationTest.cs:
+	* PrimeTestingTest.cs:
+	* SearchGeneratorTest.cs:
+		New. Copied from corlib (where they cannot be executed because BigInteger is internal).
