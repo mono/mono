@@ -586,7 +586,7 @@ namespace Microsoft.JScript {
  					EmitInvoke (ec);					
 				}
 			} else if (bind_type == typeof (FunctionDeclaration) || bind_type == typeof (FunctionExpression)) {
-				MethodBuilder method = TypeManager.GetMethod ((binding as Function).func_obj.name);
+				MethodBuilder method = (MethodBuilder) TypeManager.Get ((binding as Function).func_obj.name);
 				emit_func_call (method, ec);
 				return;
 			} else if (binding is MemberInfo) {
@@ -1038,8 +1038,8 @@ namespace Microsoft.JScript {
 
 		void load_script_func (EmitContext ec, FunctionDeclaration binding)
 		{
-			if (InFunction && (TypeManager.GetLocal (binding.func_obj.name) != null))
-				ec.ig.Emit (OpCodes.Ldloc, TypeManager.GetLocal (binding.func_obj.name));
+			if (InFunction && (TypeManager.Get (binding.func_obj.name) != null))
+				ec.ig.Emit (OpCodes.Ldloc, (LocalBuilder) TypeManager.Get (binding.func_obj.name));
 			else {
 				TypeBuilder type = ec.type_builder;
 				FieldInfo method = type.GetField (binding.func_obj.name);

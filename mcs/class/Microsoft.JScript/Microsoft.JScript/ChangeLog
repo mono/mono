@@ -1,5 +1,33 @@
 2005-02-27  Cesar Lopez Nataren  <cnataren@novell.com>
 
+	* VariableStatement.cs (PopulateContext): Do not add the symbol to
+	the context if already defined in current context.
+
+	* CodeGenerator.cs: Renamed VariableDefined to variable_defined_in_current_scope.
+
+	* TypeManager.cs: Reimplemented it, We use an IdentificationTable
+	instead of a simple Hashtable so we can handle scopes
+	properly. Cleaner api.
+
+	* VariableDeclaration.cs: Use new CodeGenerator api. (EmitDecl)
+	Add the builders to the TypeManager.
+
+	* Block.cs: Use new TypeManager api.
+
+	* FunctionDeclaration.cs: Use new TypeManager api. Take care of
+	scopes in the TypeManger on Emit.
+
+	* IdentificationTable.cs: (Binder) Changed the type of value from
+	AST to object so I can use this symbol table
+	anywhere. (IdentificationTable) Add current_locals stack and added
+	method InCurrentScope. 
+
+	* expression.cs: Use new api from TypeManager, Add casts where neeeded.
+
+	This solves an infinite loop we were falling into when calling
+	IdentificationTable.CurrentLocals when repeated declarations where
+	inside function declarations.
+	
 	* ast.cs: Added protected field ig to class Function.
 	* Block.cs: Emit function's body in a later phase since free
 	ocurrences of functions - at the same level of it - can be handled

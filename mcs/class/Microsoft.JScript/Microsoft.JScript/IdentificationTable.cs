@@ -80,7 +80,7 @@ namespace Microsoft.JScript {
 	/// Associates a symbol to its declaring object.
 	/// </summary>
 	internal class Binder {
-		AST value;
+		object value;
 		Symbol prev_top;
 
 		/// <remarks>
@@ -89,7 +89,7 @@ namespace Microsoft.JScript {
 		/// </remarks>
 		Binder tail;
 
-		internal AST Value {
+		internal object Value {
 			get { return value; }
 			set { this.value = value; }
 		}
@@ -102,7 +102,7 @@ namespace Microsoft.JScript {
 			get { return prev_top; }
 		}
 
-		internal Binder (AST value, Symbol prev_top, Binder tail)
+		internal Binder (object value, Symbol prev_top, Binder tail)
 		{
 			this.value = value;
 			this.prev_top = prev_top;
@@ -119,8 +119,12 @@ namespace Microsoft.JScript {
 		private Symbol top;
 		private Binder marks;
 
+		Stack current_locals;
+
 		internal IdentificationTable ()
 		{
+			current_locals = new Stack ();
+			current_locals.Push (new Hashtable ());
 		}
 
 		internal bool Contains (Symbol key)
@@ -132,7 +136,7 @@ namespace Microsoft.JScript {
 		/// <summary>
 		/// Gets the object associated to the symbol in the table
 		/// </summary>
-		internal AST Get (Symbol key)
+		internal object Get (Symbol key)
 		{
 			Binder e = (Binder) dict [key];
 
@@ -145,8 +149,8 @@ namespace Microsoft.JScript {
 		/// <summary>
 		/// Bind a key
 		/// </summary>
-		internal void Enter (Symbol key, AST value)
-		{	
+		internal void Enter (Symbol key, object value)
+		{
  			Binder e = (Binder) dict [key];
 
 			/// <remarks>
@@ -169,6 +173,7 @@ namespace Microsoft.JScript {
 				//
 				top = key;					
 			}
+			((Hashtable) current_locals.Peek ()).Add (key.Value, "");
 		}
 
 		/// <summary>
@@ -191,6 +196,8 @@ namespace Microsoft.JScript {
 		{
 			marks = new Binder (null, top, marks);
 			top = null;
+
+			current_locals.Push (new Hashtable ());
 		}
 
 		/// <summary>
@@ -230,6 +237,8 @@ namespace Microsoft.JScript {
 			// delete the latest scope mark
 			//
 			marks = marks.Tail;
+
+			current_locals.Pop ();
 		}
 
 		internal AST [] CurrentLocals {
@@ -248,6 +257,12 @@ namespace Microsoft.JScript {
 				stack.CopyTo (locals, 0);
 				return locals;
 			}
+		}
+
+		internal bool InCurrentScope (Symbol id) 
+		{
+			Hashtable hash = (Hashtable) current_locals.Peek ();
+			return hash.ContainsKey (id.Value) && hash [id.Value] == "";
 		}
 
 		internal void BuildGlobalEnv ()

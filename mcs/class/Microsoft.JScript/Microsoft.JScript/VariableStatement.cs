@@ -65,7 +65,6 @@ namespace Microsoft.JScript {
 		internal void EmitVariableDecls (EmitContext ec)
 		{
 			int n = var_decls.Count;
-			
 			for (int i = 0; i < n; i++)
 				((VariableDeclaration) var_decls [i]).EmitDecl (ec);
 		}
@@ -82,10 +81,14 @@ namespace Microsoft.JScript {
 		{
 			VariableDeclaration tmp_decl;
 			int n = var_decls.Count;
+			Symbol id;
 
 			for (int i = 0; i < n; i++) {
 				tmp_decl = (VariableDeclaration) var_decls [i];
-				context.Enter (Symbol.CreateSymbol (tmp_decl.id), tmp_decl);
+				id = Symbol.CreateSymbol (tmp_decl.id);
+				if (context.InCurrentScope (id))
+					continue;
+				context.Enter (id, tmp_decl);
 			}
 		}
 

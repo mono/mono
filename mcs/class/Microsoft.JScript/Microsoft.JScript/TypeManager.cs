@@ -16,76 +16,44 @@ namespace Microsoft.JScript {
 
 	internal class TypeManager {
 
-		enum ManagedType {
-			Method,
-			Local
-		}
-	
-		enum Operation {
-			Add,
-			Get,
-			Set
-		}
-
-		static Hashtable methods;
-		static Hashtable locals;
+		static IdentificationTable infos;
 
 		static TypeManager ()
 		{
-			methods = new Hashtable ();
-			locals = new Hashtable ();
+			infos = new IdentificationTable ();
 		}
 
-		internal static void AddMethod (string name, MethodBuilder builder)
+		internal static void BeginScope ()
 		{
-			Operate (Operation.Add, ManagedType.Method, name, builder);
+			infos.BeginScope ();
 		}
 
-		internal static MethodBuilder GetMethod (string name)
+		internal static void EndScope ()
 		{
-			return (MethodBuilder) Operate (Operation.Get, ManagedType.Method, name, null);
+			infos.EndScope ();
 		}
 
-		internal static void SetMethod (string name, MethodBuilder builder)
+		internal static void Add (string name, object o)
 		{
-			Operate (Operation.Set, ManagedType.Method, name, builder);
+			infos.Enter (Symbol.CreateSymbol (name), o);
 		}
 
-		internal static void AddLocal (string name, LocalBuilder loc_builder)
+		internal static object Get (string name)
 		{
-			Operate (Operation.Add, ManagedType.Local, name, loc_builder);
+			return infos.Get (Symbol.CreateSymbol (name));
 		}
 
-		internal static LocalBuilder GetLocal (string name)
+		internal static void Set (string name, object o)
 		{
-			return (LocalBuilder) Operate (Operation.Get, ManagedType.Local, name, null);
+			object obj = Get (name);
+			obj = o;
 		}
 
-		static object Operate (Operation op, ManagedType managed_type, string name, object obj)
+		internal static object defined_in_current_scope (string id)
 		{
-			switch (managed_type) {
-			case ManagedType.Method:
-				if (op == Operation.Add) {
-					methods.Add (name, obj);
-					return null;
-				} else if (op == Operation.Get)
-					return methods [name];
-				else if (op == Operation.Set) {
-					methods [name] = obj;
-					return null;
-				}
-				break;
-			case ManagedType.Local:
-				if (op == Operation.Add) {
-					locals.Add (name, obj);
-					return null;
-				} else if (op == Operation.Get)
-					return locals [name];
-				break;
-			default:
-				return null;
-			}
-			throw new Exception ("Operate, invalid arguments were supplied.");
+			if (infos.InCurrentScope (Symbol.CreateSymbol (id)))
+				return Get (id);
+			return null;					
 		}
 	}
 }

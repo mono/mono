@@ -145,7 +145,7 @@ namespace Microsoft.JScript {
 					// in function's body.
 					//
 					string name = ((FunctionDeclaration) e).func_obj.name;
-					AST binding = context.Get (Symbol.CreateSymbol (name));
+					AST binding = (AST) context.Get (Symbol.CreateSymbol (name));
 
 					if (binding == null) {
 						ocurrences.Add (name, i);

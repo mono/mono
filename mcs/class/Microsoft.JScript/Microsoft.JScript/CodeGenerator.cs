@@ -488,9 +488,9 @@ namespace Microsoft.JScript {
 			ig.Emit (OpCodes.Callvirt, iact_obj.GetMethod ("GetDefaultThisObject"));
 		}
 
-		internal static FieldInfo VariableDefined (string id, EmitContext ec)
+		internal static object variable_defined_in_current_scope (string id)
 		{
-			return ec.type_builder.GetField (id, BindingFlags.Public | BindingFlags.Static);
+			return TypeManager.defined_in_current_scope (id);
 		}
 	}
 }

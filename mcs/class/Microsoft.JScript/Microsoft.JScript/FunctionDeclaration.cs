@@ -95,11 +95,11 @@ namespace Microsoft.JScript {
 
 			MethodBuilder method_builder = type.DefineMethod (full_name, func_obj.attr, HandleReturnType,
 								  func_obj.params_types ());
-			MethodBuilder tmp = TypeManager.GetMethod (name);
+			MethodBuilder tmp = (MethodBuilder) TypeManager.Get (name);
 			if (tmp == null)
-				TypeManager.AddMethod (name, method_builder);
+				TypeManager.Add (name, method_builder);
 			else 
-				TypeManager.SetMethod (name, method_builder);
+				TypeManager.Set (name, method_builder);
 
 			set_custom_attr (method_builder);
 			this.ig = method_builder.GetILGenerator ();
@@ -109,18 +109,20 @@ namespace Microsoft.JScript {
 						  FieldAttributes.Public | FieldAttributes.Static);
 			else {
 				local_func = ig.DeclareLocal (typeof (Microsoft.JScript.ScriptFunction));
-				TypeManager.AddLocal (name, local_func);
+				TypeManager.Add (name, local_func);
 			}
 			build_closure (ec, full_name);
 		}
 
 		internal override void Emit (EmitContext ec)
 		{
+			TypeManager.BeginScope ();
 			ILGenerator old_ig = ec.ig;
 			ec.ig = this.ig;
 			func_obj.body.Emit (ec);
 			this.ig.Emit (OpCodes.Ret);
 			ec.ig = old_ig;
+			TypeManager.EndScope ();
 		}
 		
 
