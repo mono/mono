@@ -59,6 +59,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 		dsa = new DSACryptoServiceProvider ();
 		// test default key size
 		AssertEquals ("DSA ConstructorEmpty", 1024, dsa.KeySize);
+		Assert ("PersistKeyInCsp", !dsa.PersistKeyInCsp);
 	}
 
 	[Test]
@@ -67,6 +68,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 		dsa = new DSACryptoServiceProvider (minKeySize);
 		// test default key size
 		AssertEquals ("DSA ConstructorKeySize", minKeySize, dsa.KeySize);
+		Assert ("PersistKeyInCsp", !dsa.PersistKeyInCsp);
 	}
 
 	[Test]
@@ -77,6 +79,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 		dsa = new DSACryptoServiceProvider (csp);
 		// test default key size
 		AssertEquals ("DSA ConstructorCspParameters", 1024, dsa.KeySize);
+		Assert ("PersistKeyInCsp", dsa.PersistKeyInCsp);
 	}
 
 	[Test]
@@ -85,6 +88,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 		CspParameters csp = new CspParameters (13, null, "Mono512");
 		dsa = new DSACryptoServiceProvider (minKeySize, csp);
 		AssertEquals ("DSA ConstructorCspParameters", minKeySize, dsa.KeySize);
+		Assert ("PersistKeyInCsp", dsa.PersistKeyInCsp);
 	}
 
 	[Test]
@@ -628,6 +632,79 @@ public class DSACryptoServiceProviderTest : Assertion {
 		Assert ("Mono-1024-Verify", dsa.VerifySignature (hash, sign1024));
 		sign1024[0] = 0x00;
 		Assert ("Mono-1024-VerBad", !dsa.VerifySignature (hash, sign1024));
+	}
+
+	// Key Pair Persistence Tests
+	// References
+	// a.	.Net Framework Cryptography Frequently Asked Questions, Question 8
+	//	http://www.gotdotnet.com/team/clr/cryptofaq.htm
+	// b.	Generating Keys for Encryption and Decryption
+	//	http://msdn.microsoft.com/library/en-us/cpguide/html/cpcongeneratingkeysforencryptiondecryption.asp
+
+	[Test]
+	public void Persistence_PersistKeyInCsp_False () 
+	{
+		CspParameters csp = new CspParameters (3, null, "Persistence_PersistKeyInCsp_False");
+		// MS generates (or load) keypair here
+		// Mono load (if it exists) the keypair here
+		DSACryptoServiceProvider dsa1 = new DSACryptoServiceProvider (minKeySize, csp);
+		// Mono will generate the keypair here (if it doesn't exists)
+		string first = dsa1.ToXmlString (true);
+
+		// persistance is "on" by default when a CspParameters is supplied
+		Assert ("PersistKeyInCsp", dsa1.PersistKeyInCsp);
+
+		// this means nothing if we don't call Clear !!!
+		dsa1.PersistKeyInCsp = false;
+		Assert ("PersistKeyInCsp", !dsa1.PersistKeyInCsp);
+
+		// reload using the same container name
+		DSACryptoServiceProvider dsa2 = new DSACryptoServiceProvider (minKeySize, csp);
+		string second = dsa2.ToXmlString (true);
+
+		AssertEquals ("Key Pair Same Container", first, second);
+	}
+
+	[Test]
+	public void Persistence_PersistKeyInCsp_True () 
+	{
+		CspParameters csp = new CspParameters (3, null, "Persistence_PersistKeyInCsp_True");
+		// MS generates (or load) keypair here
+		// Mono load (if it exists) the keypair here
+		DSACryptoServiceProvider dsa1 = new DSACryptoServiceProvider (minKeySize, csp);
+		// Mono will generate the keypair here (if it doesn't exists)
+		string first = dsa1.ToXmlString (true);
+
+		// persistance is "on" by default
+		Assert ("PersistKeyInCsp", dsa1.PersistKeyInCsp);
+
+		// reload using the same container name
+		DSACryptoServiceProvider dsa2 = new DSACryptoServiceProvider (minKeySize, csp);
+		string second = dsa2.ToXmlString (true);
+
+		AssertEquals ("Key Pair Same Container", first, second);
+	}
+
+	[Test]
+	public void Persistence_Delete () 
+	{
+		CspParameters csp = new CspParameters (3, null, "Persistence_Delete");
+		// MS generates (or load) keypair here
+		// Mono load (if it exists) the keypair here
+		DSACryptoServiceProvider dsa1 = new DSACryptoServiceProvider (minKeySize, csp);
+		// Mono will generate the keypair here (if it doesn't exists)
+		string original = dsa1.ToXmlString (true);
+
+		// note: Delete isn't well documented but can be done by 
+		// flipping the PersistKeyInCsp to false and back to true.
+		dsa1.PersistKeyInCsp = false;
+		dsa1.Clear ();
+
+		// recreate using the same container name
+		DSACryptoServiceProvider dsa2 = new DSACryptoServiceProvider (minKeySize, csp);
+		string newKeyPair = dsa2.ToXmlString (true);
+
+		Assert ("Key Pair Deleted", (original != newKeyPair));
 	}
 }
 

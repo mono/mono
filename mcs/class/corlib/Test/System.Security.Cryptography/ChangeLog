@@ -1,3 +1,10 @@
+2004-02-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DSACryptoServiceProvider.cs: Added new unit tests for key pair 
+	persistence.
+	* RSACryptoServiceProvider.cs: Added new unit tests for key pair 
+	persistence.
+
 2004-02-04  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptoStreamTest.cs: Added many more tests for every problem found

@@ -61,6 +61,7 @@ public class RSACryptoServiceProviderTest : Assertion {
 		rsa = new RSACryptoServiceProvider ();
 		// test default key size
 		AssertEquals ("ConstructorEmpty", 1024, rsa.KeySize);
+		Assert ("PersistKeyInCsp", !rsa.PersistKeyInCsp);
 	}
 
 	[Test]
@@ -69,6 +70,7 @@ public class RSACryptoServiceProviderTest : Assertion {
 		rsa = new RSACryptoServiceProvider (minKeySize);
 		// test default key size
 		AssertEquals ("ConstructorKeySize", minKeySize, rsa.KeySize);
+		Assert ("PersistKeyInCsp", !rsa.PersistKeyInCsp);
 	}
 
 	[Test]
@@ -79,6 +81,7 @@ public class RSACryptoServiceProviderTest : Assertion {
 		rsa = new RSACryptoServiceProvider (csp);
 		// test default key size
 		AssertEquals ("ConstructorCspParameters", 1024, rsa.KeySize);
+		Assert ("PersistKeyInCsp", rsa.PersistKeyInCsp);
 	}
 
 	[Test]
@@ -88,6 +91,7 @@ public class RSACryptoServiceProviderTest : Assertion {
 		CspParameters csp = new CspParameters (1, null, "Mono512");
 		rsa = new RSACryptoServiceProvider (keySize, csp);
 		AssertEquals ("ConstructorCspParameters", keySize, rsa.KeySize);
+		Assert ("PersistKeyInCsp", rsa.PersistKeyInCsp);
 	}
 
 	[Test]
@@ -739,6 +743,79 @@ public class RSACryptoServiceProviderTest : Assertion {
 		Assert ("Mono-2048-Verify", rsa.VerifyHash (hash, sha1OID, sign2048));
 		sign2048[0] = 0x00;
 		Assert ("Mono-2048-VerBad", !rsa.VerifyHash (hash, sha1OID, sign2048));
+	}
+
+	// Key Pair Persistence Tests
+	// References
+	// a.	.Net Framework Cryptography Frequently Asked Questions, Question 8
+	//	http://www.gotdotnet.com/team/clr/cryptofaq.htm
+	// b.	Generating Keys for Encryption and Decryption
+	//	http://msdn.microsoft.com/library/en-us/cpguide/html/cpcongeneratingkeysforencryptiondecryption.asp
+
+	[Test]
+	public void Persistence_PersistKeyInCsp_False () 
+	{
+		CspParameters csp = new CspParameters (1, null, "Persistence_PersistKeyInCsp_False");
+		// MS generates (or load) keypair here
+		// Mono load (if it exists) the keypair here
+		RSACryptoServiceProvider rsa1 = new RSACryptoServiceProvider (minKeySize, csp);
+		// Mono will generate the keypair here (if it doesn't exists)
+		string first = rsa1.ToXmlString (true);
+
+		// persistance is "on" by default when a CspParameters is supplied
+		Assert ("PersistKeyInCsp", rsa1.PersistKeyInCsp);
+
+		// this means nothing if we don't call Clear !!!
+		rsa1.PersistKeyInCsp = false;
+		Assert ("PersistKeyInCsp", !rsa1.PersistKeyInCsp);
+
+		// reload using the same container name
+		RSACryptoServiceProvider rsa2 = new RSACryptoServiceProvider (minKeySize, csp);
+		string second = rsa2.ToXmlString (true);
+
+		AssertEquals ("Key Pair Same Container", first, second);
+	}
+
+	[Test]
+	public void Persistence_PersistKeyInCsp_True () 
+	{
+		CspParameters csp = new CspParameters (1, null, "Persistence_PersistKeyInCsp_True");
+		// MS generates (or load) keypair here
+		// Mono load (if it exists) the keypair here
+		RSACryptoServiceProvider rsa1 = new RSACryptoServiceProvider (minKeySize, csp);
+		// Mono will generate the keypair here (if it doesn't exists)
+		string first = rsa1.ToXmlString (true);
+
+		// persistance is "on" by default
+		Assert ("PersistKeyInCsp", rsa1.PersistKeyInCsp);
+
+		// reload using the same container name
+		RSACryptoServiceProvider rsa2 = new RSACryptoServiceProvider (minKeySize, csp);
+		string second = rsa2.ToXmlString (true);
+
+		AssertEquals ("Key Pair Same Container", first, second);
+	}
+
+	[Test]
+	public void Persistence_Delete () 
+	{
+		CspParameters csp = new CspParameters (1, null, "Persistence_Delete");
+		// MS generates (or load) keypair here
+		// Mono load (if it exists) the keypair here
+		RSACryptoServiceProvider rsa1 = new RSACryptoServiceProvider (minKeySize, csp);
+		// Mono will generate the keypair here (if it doesn't exists)
+		string original = rsa1.ToXmlString (true);
+
+		// note: Delete isn't well documented but can be done by 
+		// flipping the PersistKeyInCsp to false and back to true.
+		rsa1.PersistKeyInCsp = false;
+		rsa1.Clear ();
+
+		// recreate using the same container name
+		RSACryptoServiceProvider rsa2 = new RSACryptoServiceProvider (minKeySize, csp);
+		string newKeyPair = rsa2.ToXmlString (true);
+
+		Assert ("Key Pair Deleted", (original != newKeyPair));
 	}
 }
 
