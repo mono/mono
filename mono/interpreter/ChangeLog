@@ -1,3 +1,9 @@
+2003-10-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* interp.c (dump_frame): Avoid crash on frames without a method. Patch
+	sam@superduper.net (sam clegg). Fixes #46197.
+	(ves_exec_method_with_context): Fix unbox casting.
+
 2003-09-25  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* interp.c - reinstate use of mono_marshal_get_delegate_invoke
