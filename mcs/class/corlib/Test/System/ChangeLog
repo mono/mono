@@ -1,3 +1,8 @@
+2002-04-08  Nick Drochak  <ndrochak@gol.com>
+
+	* EnumTest.cs: Add test for ToString for the case where the enum
+	has [Flags] on it, and a mask value is used.
+
 2002-04-04  Nick Drochak  <ndrochak@gol.com>
 
 	* EnumTest.cs: Change one Assert() message string so the two are 

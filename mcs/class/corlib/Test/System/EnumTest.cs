@@ -684,6 +684,9 @@ public class EnumTest : TestCase
 		// TODO - should probably test all the different underlying types
 	}
 
+	[Flags]
+	enum SomeEnum {a,b,c};
+
 	public void TestToString() {
 		AssertEquals("invalid string", "This", 
 			     TestingEnum.This.ToString());
@@ -704,6 +707,10 @@ public class EnumTest : TestCase
 			     "00000001", is1.ToString("x"));
 		AssertEquals("bitfield format wrong", 
 			     "Is", is1.ToString("f"));
+
+
+		AssertEquals("bitfield with flags format wrong", 
+			     "b, c", ((SomeEnum)3).ToString("f"));
 	}
 
 	// TODO - ToString with IFormatProviders
