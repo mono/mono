@@ -228,6 +228,7 @@ namespace System.Web.Compilation
 		protected bool self_closing;
 		protected bool hasDefaultID;
 		private static int ctrlNumber = 1;
+		ArrayList elements;
 
 		internal Tag (ElementType etype) : base (etype) { }
 
@@ -250,6 +251,22 @@ namespace System.Web.Compilation
 			this.hasDefaultID = false;
 		}
 
+		void ParseError (string msg, int line, int col)
+		{
+			string exc = String.Format ("error parsing attributes: {0}", msg);
+			throw new HttpException (exc);
+		}
+
+		void TagParsed (Tag tag, int line, int col)
+		{
+			elements.Add (tag);
+		}
+
+		void TextParsed (string msg, int line, int col)
+		{
+			elements.Add (new PlainText (msg));
+		}
+
 		public ArrayList GetElements ()
 		{
 			string text = this.PlainHtml;
@@ -257,8 +274,14 @@ namespace System.Web.Compilation
 			byte [] bytes = WebEncoding.Encoding.GetBytes (inner);
 			AspTokenizer tok = new AspTokenizer ("@@inner_string", new MemoryStream (bytes));
 			AspParser parser = new AspParser (tok);
+
+			elements = new ArrayList ();
+			parser.Error += new ParseErrorHandler (ParseError);
+			parser.TagParsed += new TagParsedHandler (TagParsed);
+			parser.TextParsed += new TextParsedHandler (TextParsed);
+
 			parser.Parse ();
-			ArrayList elements = parser.Elements;
+
 			elements.Insert (0, new PlainText ("<"));
 			elements.Add (new PlainText (">"));
 

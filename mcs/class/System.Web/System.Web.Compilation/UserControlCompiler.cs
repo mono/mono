@@ -95,10 +95,7 @@ namespace System.Web.Compilation
 		{
 			string inputFile = userControlParser.InputFile;
 
-			Stream input = File.OpenRead (inputFile);
-			AspParser parser = new AspParser (inputFile, input);
-			parser.Parse ();
-			AspGenerator generator = new AspGenerator (inputFile, parser.Elements);
+			AspGenerator generator = new AspGenerator (inputFile);
 			generator.Context = userControlParser.Context;
 			generator.BaseType = userControlParser.BaseType.ToString ();
 			generator.ProcessElements ();

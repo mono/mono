@@ -78,10 +78,7 @@ namespace System.Web.Compilation
 
 		string GenerateSourceFile ()
 		{
-			Stream input = File.OpenRead (filename);
-			AspParser parser = new AspParser (filename, input);
-			parser.Parse ();
-			AspGenerator generator = new AspGenerator (filename, parser.Elements);
+			AspGenerator generator = new AspGenerator (filename);
 			generator.Context = context;
 			generator.BaseType = typeof (HttpApplication).ToString ();
 			generator.ProcessElements ();

@@ -1,3 +1,17 @@
+2003-02-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspParser.cs: the parser fires events when it parses an element.
+
+	* GlobalAsaxCompiler.cs:
+	* PageCompiler.cs:
+	* UserControlCompiler.cs:
+	* AspElements.cs: modified to use the new parser interface.
+
+	* AspGenerator.cs: modified to use the new parser. Merge multiple text
+	strings into one single LiteralControl.
+
+	* AspTokenizer.cs: added Line and Column properties.
+
 2003-01-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspParser.cs: fixed bug #36929.

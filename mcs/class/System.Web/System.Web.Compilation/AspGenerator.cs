@@ -4,7 +4,7 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2002 Ximian, Inc (http://www.ximian.com)
+// (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
 //
 using System;
 using System.Collections;
@@ -259,69 +259,37 @@ class ControlStack
 		
 }
 
-class ArrayListWrapper
+enum ScriptStatus
 {
-	private ArrayList list;
-	private int index;
-
-	public ArrayListWrapper (ArrayList list)
-	{
-		this.list = list;
-		index = -1;
-	}
-
-	private void CheckIndex ()
-	{
-		if (index == -1 || index == list.Count)
-			throw new InvalidOperationException ();
-	}
-			
-	public object Current
-	{
-		get {
-			CheckIndex ();
-			return list [index];
-		}
-
-		set {
-			CheckIndex ();
-			list [index] = value;
-		}
-	}
-
-	public bool MoveNext ()
-	{
-		if (index < list.Count)
-			index++;
-
-		return index < list.Count;
-	}
+	Close,
+	Open,
+	Text
 }
 
 class AspGenerator
 {
-	private object [] parts;
-	private ArrayListWrapper elements;
-	private StringBuilder prolog;
-	private StringBuilder declarations;
-	private StringBuilder script;
-	private StringBuilder constructor;
-	private StringBuilder init_funcs;
-	private StringBuilder epilog;
-	private StringBuilder current_function;
-	private Stack functions;
-	private ControlStack controls;
-	private bool parse_ok;
-	private bool has_form_tag;
-	private AspComponentFoundry aspFoundry;
+	object [] parts;
+	StringBuilder prolog;
+	StringBuilder declarations;
+	StringBuilder script;
+	StringBuilder constructor;
+	StringBuilder init_funcs;
+	StringBuilder epilog;
+	StringBuilder current_function;
+	StringBuilder textChunk;
+	Stack functions;
+	ControlStack controls;
+	bool parse_ok;
+	bool has_form_tag;
+	AspComponentFoundry aspFoundry;
 
-	private string classDecl;
-	private string className;
-	private string interfaces;
-	private string basetype;
-	private string parent;
-	private Type parentType;
-	private string fullPath;
+	string classDecl;
+	string className;
+	string interfaces;
+	string basetype;
+	string parent;
+	Type parentType;
+	string fullPath;
 
 	Hashtable options;
 	string privateBinPath;
@@ -331,6 +299,10 @@ class AspGenerator
 	bool isPage;
 	bool isUserControl;
 	bool isApplication;
+
+	Element current;
+	ScriptStatus sstatus = ScriptStatus.Close;
+	string waitClosing;
 
 	HttpContext context;
 
@@ -353,12 +325,11 @@ class AspGenerator
 		Disabled
 	}
 	
-	public AspGenerator (string pathToFile, ArrayList elements)
+	public AspGenerator (string pathToFile)
 	{
-		if (elements == null)
-			throw new ArgumentNullException ();
+		if (pathToFile == null)
+			throw new ArgumentNullException ("pathToFile");
 
-		this.elements = new ArrayListWrapper (elements);
 		string filename = Path.GetFileName (pathToFile);
 		this.className = filename.Replace ('.', '_'); // Overridden by @ Page classname
 		this.className = className.Replace ('-', '_'); 
@@ -470,6 +441,7 @@ class AspGenerator
 		constructor = new StringBuilder ();
 		init_funcs = new StringBuilder ();
 		epilog = new StringBuilder ();
+		textChunk = new StringBuilder ();
 
 		current_function = new StringBuilder ();
 		functions = new Stack ();
@@ -509,25 +481,16 @@ class AspGenerator
 			controls.UseCodeRender = true;
 	}
 
-	public StringReader GetCode ()
+	public TextReader GetCode ()
 	{
 		if (!parse_ok)
-			throw new ApplicationException ("You gotta call ProcessElements () first!");
+			throw new InvalidOperationException ("Parsing not done yet! (may be there were errors?)");
 
 		StringBuilder code = new StringBuilder ();
 		for (int i = 0; i < parts.Length; i++)
 			code.Append ((StringBuilder) parts [i]);
 
 		return new StringReader (code.ToString ());
-	}
-
-	public void Print ()
-	{
-		if (!parse_ok){
-			Console.WriteLine ("//Warning!!!: Elements not correctly parsed.");
-		}
-
-		Console.Write (GetCode ().ReadToEnd ());
 	}
 
 	// Regex.Escape () make some illegal escape sequences for a C# source.
@@ -729,7 +692,8 @@ class AspGenerator
 
 	private void ProcessDirective ()
 	{
-		Directive directive = (Directive) elements.Current;
+		FlushPlainText ();
+		Directive directive = (Directive) current;
 		TagAttributes att = directive.Attributes;
 		if (att == null)
 			return;
@@ -821,7 +785,7 @@ class AspGenerator
 
 	private void ProcessPlainText ()
 	{
-		PlainText asis = (PlainText) elements.Current;
+		PlainText asis = (PlainText) current;
 		string trimmed = asis.Text.Trim ();
 		if (trimmed == String.Empty && controls.SpaceBetweenTags == true)
 			return;
@@ -1277,6 +1241,7 @@ class AspGenerator
 		if (0 != String.Compare (saved_id, tag_id, true))
 			return false;
 
+		FlushPlainText ();
 		StringBuilder old_function = (StringBuilder) functions.Pop ();
 		current_function = (StringBuilder) functions.Peek ();
 
@@ -1424,28 +1389,19 @@ class AspGenerator
 
 	private void ProcessHtmlControlTag ()
 	{
-		HtmlControlTag html_ctrl = (HtmlControlTag) elements.Current;
+		FlushPlainText ();
+		HtmlControlTag html_ctrl = (HtmlControlTag) current;
 		if (html_ctrl.TagID.ToUpper () == "SCRIPT"){
 			//FIXME: if the is script is to be read from disk, do it!
 			if (html_ctrl.SelfClosing)
 				throw new ApplicationException ("Read script from file not supported yet.");
 
-			if (elements.MoveNext () == false)
-				throw new ApplicationException ("Error after " + html_ctrl.ToString ());
-
-			if (elements.Current is PlainText){
-				script.Append (((PlainText) elements.Current).Text);
-				if (!elements.MoveNext ())
-					throw new ApplicationException ("Error after " +
-									elements.Current.ToString ());
-			}
-
-			if (elements.Current is CloseTag)
-				elements.MoveNext ();
+			sstatus = ScriptStatus.Open;
 			return;
-		} else if (IsApplication) {
-			throw new ApplicationException (app_file_wrong);
 		}
+		
+		if (IsApplication)
+			throw new ApplicationException (app_file_wrong);
 		
 		Type controlType = html_ctrl.ControlType;
 		AddProtectedField (controlType, html_ctrl.ControlID);
@@ -1469,9 +1425,7 @@ class AspGenerator
 		if (children_kind == ChildrenKind.HTMLROW || children_kind == ChildrenKind.HTMLCELL)
 			NewTableElementFunction (html_ctrl);
 
-		if (!html_ctrl.SelfClosing)
-			JustDoIt ();
-		else
+		if (html_ctrl.SelfClosing)
 			FinishControlFunction (html_ctrl.TagID);
 	}
 
@@ -1495,7 +1449,8 @@ class AspGenerator
 
 	private void ProcessComponent ()
 	{
-		AspComponent component = (AspComponent) elements.Current;
+		FlushPlainText ();
+		AspComponent component = (AspComponent) current;
 		Type component_type = component.ComponentType;
 		AddProtectedField (component_type, component.ControlID);
 
@@ -1514,15 +1469,14 @@ class AspGenerator
 		if (component.ChildrenKind == ChildrenKind.LISTITEM)
 			NewBuildListFunction (component);
 
-		if (!component.SelfClosing)
-			JustDoIt ();
-		else
+		if (component.SelfClosing)
 			FinishControlFunction (component.TagID);
 	}
 
 	private void ProcessServerObjectTag ()
 	{
-		ServerObjectTag obj = (ServerObjectTag) elements.Current;
+		FlushPlainText ();
+		ServerObjectTag obj = (ServerObjectTag) current;
 		declarations.AppendFormat ("\t\tprivate {0} cached{1};\n", obj.ObjectClass, obj.ObjectID);
 		constructor.AppendFormat ("\n\t\tprivate {0} {1}\n\t\t{{\n\t\t\tget {{\n\t\t\t\t" + 
 					  "if (this.cached{1} == null)\n\t\t\t\t\tthis.cached{1} = " + 
@@ -1574,23 +1528,7 @@ class AspGenerator
 		if (!tag.SelfClosing){
 			// Next tag should be the closing tag
 			controls.Push (null, null, null, ChildrenKind.NONE, null);
-			bool closing_tag_found = false;
-			Element elem;
-			while (!closing_tag_found && elements.MoveNext ()){
-				elem = (Element) elements.Current;
-				if (elem is PlainText)
-					ProcessPlainText ();
-				else if (!(elem is CloseTag))
-					throw new ApplicationException ("Tag " + tag.TagID + 
-									" not properly closed.");
-				else
-					closing_tag_found = true;
-			}
-
-			if (!closing_tag_found)
-				throw new ApplicationException ("Tag " + tag.TagID + " not properly closed.");
-
-			controls.Pop ();
+			waitClosing = tag.TagID;
 		}
 	}
 
@@ -1638,6 +1576,7 @@ class AspGenerator
 
 	private void NewPropertyFunction (PropertyTag tag)
 	{
+		FlushPlainText ();
 		if (tag.PropertyType == typeof (System.Web.UI.WebControls.Style) ||
 		    tag.PropertyType.IsSubclassOf (typeof (System.Web.UI.WebControls.Style)))
 			NewStyleFunction (tag);
@@ -1652,7 +1591,7 @@ class AspGenerator
 	
 	private void ProcessHtmlTag ()
 	{
-		Tag tag = (Tag) elements.Current;
+		Tag tag = (Tag) current;
 		ChildrenKind child_kind = controls.PeekChildKind ();
 		if (child_kind == ChildrenKind.NONE){
 			string tag_id = controls.PeekTagID ();
@@ -1674,13 +1613,13 @@ class AspGenerator
 			ArrayList tag_elements = tag.GetElements ();
 			foreach (Element e in tag_elements) {
 				if (e is PlainText) {
-					elements.Current = e;
-					ProcessPlainText ();
+					current = e;
+					textChunk.Append (((PlainText) e).Text);
 				} else if (e is CodeRenderTag) {
-					elements.Current = e;
+					current = e;
 					ProcessCodeRenderTag ();
 				} else if (e is DataBindingTag) {
-					elements.Current = e;
+					current = e;
 					ProcessDataBindingLiteral ();
 				} else {
 					throw new ApplicationException (fullPath + ": unexpected tag type " + e.GetType ());
@@ -1691,7 +1630,7 @@ class AspGenerator
 
 		if (child_kind == ChildrenKind.HTMLROW) {
 			if (0 == String.Compare (tag.TagID, "tr", true)) {
-				elements.Current = new HtmlControlTag (tag);
+				current = new HtmlControlTag (tag);
 				ProcessHtmlControlTag ();
 				return;
 			}
@@ -1699,7 +1638,7 @@ class AspGenerator
 
 		if (child_kind == ChildrenKind.HTMLCELL) {
 			if (0 == String.Compare (tag.TagID, "td", true)) {
-				elements.Current = new HtmlControlTag (tag);
+				current = new HtmlControlTag (tag);
 				ProcessHtmlControlTag ();
 				return;
 			}
@@ -1766,17 +1705,17 @@ class AspGenerator
 	
 	private void ProcessCloseTag ()
 	{
-		CloseTag close_tag = (CloseTag) elements.Current;
-		if (FinishControlFunction (close_tag.TagID))
-				return;
+		CloseTag closeTag = (CloseTag) current;
+		if (FinishControlFunction (closeTag.TagID))
+			return;
 
-		elements.Current = new PlainText (close_tag.PlainHtml);
-		ProcessPlainText ();
+		textChunk.Append (closeTag.PlainHtml);
 	}
 
 	private void ProcessDataBindingLiteral ()
 	{
-		DataBindingTag dataBinding = (DataBindingTag) elements.Current;
+		FlushPlainText ();
+		DataBindingTag dataBinding = (DataBindingTag) current;
 		string actual_value = dataBinding.Data;
 		if (actual_value == "")
 			throw new ApplicationException ("Empty data binding tag.");
@@ -1821,7 +1760,8 @@ class AspGenerator
 
 	private void ProcessCodeRenderTag ()
 	{
-		CodeRenderTag code_tag = (CodeRenderTag) elements.Current;
+		FlushPlainText ();
+		CodeRenderTag code_tag = (CodeRenderTag) current;
 
 		controls.UseCodeRender = true;
 		if (code_tag.IsVarName)
@@ -1831,58 +1771,108 @@ class AspGenerator
 			controls.CodeRenderFunction.AppendFormat ("\t\t\t{0}\n", code_tag.Code);
 	}
 	
+	void FlushPlainText ()
+	{
+		if (textChunk.Length != 0) {
+			Element saved = current;
+			current = new PlainText (textChunk.ToString ());
+			textChunk.Length = 0;
+			ProcessPlainText ();
+			current = saved;
+		}
+	}
+	
+	void ParseError (string msg, int line, int col)
+	{
+		throw new HttpException (String.Format ("error parsing {0} ({1}, {2}): {3}",
+							fullPath, line, col, msg));
+	}
+
+	void TagParsed (Tag tag, int line, int col)
+	{
+		if (waitClosing != null) {
+			if (!(tag is CloseTag) || tag.TagID.ToUpper () != waitClosing.ToUpper ())
+				throw new HttpException ("Tag " + waitClosing + " not properly closed.");
+
+			waitClosing = null;
+			controls.Pop ();
+			return;
+		}
+		
+		if ((sstatus == ScriptStatus.Open || sstatus == ScriptStatus.Text) &&
+		     tag.TagID.ToUpper () == "SCRIPT" && tag is CloseTag) {
+			sstatus = ScriptStatus.Close;
+			return;
+		}
+
+		current = tag;
+
+		if (current is Directive) {
+			ProcessDirective ();
+			return;
+		} else if (current is DataBindingTag) {
+			if (IsApplication)
+				throw new ApplicationException (app_file_wrong);
+
+			ProcessDataBindingLiteral ();
+			return;
+		} else if (current is CodeRenderTag) {
+			if (IsApplication)
+				throw new ApplicationException (app_file_wrong);
+
+			ProcessCodeRenderTag ();
+			return;
+		}
+
+		current = Map (tag);
+
+		if (current is ServerObjectTag) {
+			ProcessServerObjectTag ();
+			return;
+		} else if (current is HtmlControlTag) {
+			ProcessHtmlControlTag ();
+			return;
+		}
+
+		if (IsApplication)
+			throw new ApplicationException (app_file_wrong);
+
+		if (current is AspComponent) {
+			ProcessComponent ();
+		} else if (current is CloseTag) {
+			ProcessCloseTag ();
+		} else if (current is Tag) {
+			ProcessHtmlTag ();
+		} else {
+			throw new HttpException ("This place should not be reached.");
+		}
+	}
+
+	void TextParsed (string text, int line, int col)
+	{
+		if (sstatus == ScriptStatus.Open) {
+			script.Append (text);
+			sstatus = ScriptStatus.Text;
+			return;
+		}
+
+		textChunk.Append (text);
+	}
+
 	public void ProcessElements ()
 	{
-		JustDoIt ();
+		AspParser parser = new AspParser (fullPath, File.OpenRead (fullPath));
+		
+		parser.Error += new ParseErrorHandler (ParseError);
+		parser.TagParsed += new TagParsedHandler (TagParsed);
+		parser.TextParsed += new TextParsedHandler (TextParsed);
+
+		parser.Parse ();
+
 		End ();
 		parse_ok = true;
 	}
 	
-	private void JustDoIt ()
-	{
-		Element element;
-
-		while (elements.MoveNext ()){
-			element = (Element) elements.Current;
-			if (element is Directive){
-				ProcessDirective ();
-			} else if (element is PlainText){
-				ProcessPlainText ();
-			} else if (element is DataBindingTag){
-				if (IsApplication)
-					throw new ApplicationException (app_file_wrong);
-				ProcessDataBindingLiteral ();
-			} else if (element is CodeRenderTag){
-				if (IsApplication)
-					throw new ApplicationException (app_file_wrong);
-				ProcessCodeRenderTag ();
-			} else {
-				elements.Current = Map ((Tag) element);
-				if (elements.Current is ServerObjectTag) {
-					ProcessServerObjectTag ();
-					continue;
-				}
-
-				if (elements.Current is HtmlControlTag) {
-					ProcessHtmlControlTag ();
-					continue;
-				}
-
-				if (IsApplication)
-					throw new ApplicationException (app_file_wrong);
-
-				else if (elements.Current is AspComponent)
-					ProcessComponent ();
-				else if (elements.Current is CloseTag)
-					ProcessCloseTag ();
-				else if (elements.Current is Tag)
-					ProcessHtmlTag ();
-				else
-					throw new ApplicationException ("This place should not be reached.");
-			}
-		}
-	}
-
 	private string GetTemplateDirectory ()
 	{
 		string templatePath = Path.GetDirectoryName (fullPath);
@@ -1900,6 +1890,8 @@ class AspGenerator
 
 	private void End ()
 	{
+		FlushPlainText ();
+
 		if (isPage) {
 			if (sessionState == SessionState.Enabled || sessionState == SessionState.ReadOnly)
 				AddInterface (typeof (System.Web.SessionState.IRequiresSessionState));

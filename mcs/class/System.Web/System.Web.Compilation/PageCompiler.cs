@@ -79,12 +79,7 @@ namespace System.Web.Compilation
 
 		string GenerateSourceFile ()
 		{
-			string inputFile = pageParser.InputFile;
-
-			Stream input = File.OpenRead (inputFile);
-			AspParser parser = new AspParser (inputFile, input);
-			parser.Parse ();
-			AspGenerator generator = new AspGenerator (inputFile, parser.Elements);
+			AspGenerator generator = new AspGenerator (pageParser.InputFile);
 			generator.Context = pageParser.Context;
 			generator.BaseType = pageParser.BaseType.ToString ();
 			generator.ProcessElements ();

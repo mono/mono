@@ -196,13 +196,23 @@ namespace System.Web.Compilation {
 			return Token.EOF;
 		}
 
-		public string value 
-		{
+		public string value {
 			get { return sb.ToString (); }
 		}
 
-		public string location 
-		{
+		public int Line {
+			get {
+				return line;
+			}
+		}
+
+		public int Column {
+			get {
+				return col;
+			}
+		}
+
+		public string Location {
 			get { 
 				string msg = filename;
 				msg += " (" + line + ", " + col + "): " + sb.ToString ();

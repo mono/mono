@@ -13,34 +13,21 @@ using System.Text;
 
 namespace System.Web.Compilation
 {
+	delegate void ParseErrorHandler (string msg, int line, int col);
+	delegate void TagParsedHandler (Tag tag, int line, int col);
+	delegate void TextParsedHandler (string text, int line, int col);
+
 	class AspParser {
 		private AspTokenizer tokenizer;
-		private ArrayList elements; // List of processed elements in the HTML page.
-
-		private void error ()
-		{
-			throw new HttpException ("Error parsing: " + tokenizer.location);
-		}
-
-		private void error (string msg)
-		{
-			throw new Exception ("Error: "+ msg + "\n" + tokenizer.location);
-		}
 
 		public AspParser (AspTokenizer tokenizer)
 		{
 			this.tokenizer = tokenizer;
-			elements = new ArrayList ();
 		}
 
 		public AspParser (string filename, Stream input) : 
 			this (new AspTokenizer (filename, input))
 		{
-		}
-
-		public ArrayList Elements
-		{
-			get { return elements; }
 		}
 
 		private bool Eat (int expected_token)
@@ -52,18 +39,6 @@ namespace System.Web.Compilation
 			return true;
 		}
 
-		private void AddPlainText (string newText)
-		{
-			if (elements.Count > 0){
-				Element element = (Element) elements [elements.Count - 1];
-				if (element is PlainText){
-					((PlainText) element).Append (newText);
-					return;
-				}
-			}
-			elements.Add (new PlainText (newText));
-		}
-		
 		public void Parse ()
 		{
 			int token;
@@ -77,28 +52,29 @@ namespace System.Web.Compilation
 					string verbatim_text = GetVerbatim (token, end_verbatim);
 
 					if (verbatim_text == null)
-						error ("Unexpected EOF processing " + tag);
+						OnError ("Unexpected EOF processing " + tag);
 
-					AddPlainText (verbatim_text);
-					elements.Add (new CloseTag (tag));
+					OnTextParsed (verbatim_text);
+					OnTagParsed (new CloseTag (tag));
 					tokenizer.Verbatim = false;
 				}
 				else if (token == '<') {
 					element = GetTag ();
 					if (element == null)
-						error ();
+						OnError ("");
 
 					if (element is ServerComment)
 						continue;
 
 					if (!(element is Tag)){
-						AddPlainText (((PlainText) element).Text);
+						OnTextParsed (((PlainText) element).Text);
 						continue;
 					}
 
-					elements.Add (element);
+					OnTagParsed ((Tag) element);
 
-					tag_element = element as Tag;
+					tag_element = (Tag) element;
+					//FIXME: move this to the TagParsed handler.
 					tag = tag_element.TagID.ToUpper ();
 					if (!tag_element.SelfClosing && (tag == "SCRIPT" || tag == "PRE"))
 						tokenizer.Verbatim = true;
@@ -110,7 +86,7 @@ namespace System.Web.Compilation
 						token = tokenizer.get_token ();
 					} while (token != '<' && token != Token.EOF);
 					tokenizer.put_back ();
-					AddPlainText (text.ToString ());
+					OnTextParsed (text.ToString ());
 				}
 			}
 		}
@@ -125,10 +101,12 @@ namespace System.Web.Compilation
 				return GetServerTag ();
 			case '/':
 				if (!Eat (Token.IDENTIFIER))
-					error ("expecting TAGNAME");
+					OnError ("expecting TAGNAME");
+
 				id = tokenizer.value;
 				if (!Eat ('>'))
-					error ("expecting '>'");
+					OnError ("expecting '>'");
+
 				return new CloseTag (id);
 			case '!':
 				bool double_dash = Eat (Token.DOUBLEDASH);
@@ -140,14 +118,14 @@ namespace System.Web.Compilation
 				string comment = GetVerbatim (tokenizer.get_token (), end);
 				tokenizer.Verbatim = false;
 				if (comment == null)
-					error ("Unfinished HTML comment/DTD");
+					OnError ("Unfinished HTML comment/DTD");
 
 				return new PlainText ("<!" + comment + end);
 			case Token.IDENTIFIER:
 				id = tokenizer.value;
 				Tag tag = new Tag (id, GetAttributes (), Eat ('/'));
 				if (!Eat ('>'))
-					error ("expecting '>'");
+					OnError ("expecting '>'");
 				return tag;
 			default:
 				return new PlainText ("<" + tokenizer.value);
@@ -170,7 +148,7 @@ namespace System.Web.Compilation
 						attributes.Add (id, tokenizer.value);
 					} else {
 						//TODO: support data binding syntax without quotes
-						error ("expected ATTVALUE");
+						OnError ("expected ATTVALUE");
 						return null;
 					}
 					
@@ -247,7 +225,7 @@ namespace System.Web.Compilation
 				id = (Eat (Token.DIRECTIVE) ? tokenizer.value : "Page");
 				attributes = GetAttributes ();
 				if (!Eat ('%') || !Eat ('>'))
-					error ("expecting '%>'");
+					OnError ("expecting '%>'");
 
 				return new Directive (id, attributes);
 			} else if (Eat (Token.DOUBLEDASH)) {
@@ -271,6 +249,27 @@ namespace System.Web.Compilation
 			return new CodeRenderTag (varname, inside_tags);
 		}
 
+		public event ParseErrorHandler Error;
+		public event TagParsedHandler TagParsed;
+		public event TextParsedHandler TextParsed;
+
+		void OnError (string msg)
+		{
+			if (Error != null)
+				Error (msg, tokenizer.Line, tokenizer.Column);
+		}
+
+		void OnTagParsed (Tag tag)
+		{
+			if (TagParsed != null)
+				TagParsed (tag, tokenizer.Line, tokenizer.Column);
+		}
+
+		void OnTextParsed (string text)
+		{
+			if (TextParsed != null)
+				TextParsed (text, tokenizer.Line, tokenizer.Column);
+		}
 	}
 
 }

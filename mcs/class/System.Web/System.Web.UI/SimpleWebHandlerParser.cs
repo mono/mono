@@ -27,6 +27,7 @@ namespace System.Web.UI
 		bool debug;
 		string language;
 		string program;
+		ArrayList elements;
 
 		protected SimpleWebHandlerParser (HttpContext context, string virtualPath, string physicalPath)
 		{
@@ -62,16 +63,39 @@ namespace System.Web.UI
 			reader.Close ();
 		}
 
+		void ParseError (string msg, int line, int col)
+		{
+			string exc = String.Format ("parse error: {0}", msg);
+			throw new HttpException (exc);
+		}
+
+		void TagParsed (Tag tag, int line, int col)
+		{
+			elements.Add (tag);
+		}
+
+		void TextParsed (string msg, int line, int col)
+		{
+			elements.Add (new PlainText (msg));
+		}
+
 		private void ParseDirective (string line)
 		{
-			MemoryStream st = new MemoryStream (WebEncoding.Encoding.GetBytes (line));
-			AspParser parser = new AspParser (physPath, st);
+			byte [] bytes = WebEncoding.Encoding.GetBytes (line);
+			AspTokenizer tok = new AspTokenizer (physPath, new MemoryStream (bytes));
+			AspParser parser = new AspParser (tok);
+
+			elements = new ArrayList ();
+			parser.Error += new ParseErrorHandler (ParseError);
+			parser.TagParsed += new TagParsedHandler (TagParsed);
+			parser.TextParsed += new TextParsedHandler (TextParsed);
+
 			parser.Parse ();
-			ArrayList elems = parser.Elements;
-			if (elems.Count != 1)
+
+			if (elements.Count != 1)
 				throw new ApplicationException ("Error looking for WebService directive.");
 
-			Directive directive = elems [0] as Directive;
+			Directive directive = elements [0] as Directive;
 			if (directive == null)
 				throw new ApplicationException ("Error looking for WebService directive.");
 
