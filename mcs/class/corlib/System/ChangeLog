@@ -1,3 +1,11 @@
+
+Fri Feb 8 18:06:20 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MarshalByRefObject.cs: add ToString () method
+	(apparently needed by nunit).
+	* _AppDomain.cs: uncomment ToString(): dietmar fixed the bug triggered
+	by it in the runtime.
+
 2002-02-08  Dan Lewis <dihlewis@yahoo.co.uk>
 	
 	* String.cs (Format): implemented

@@ -31,5 +31,9 @@ namespace System {
 		protected MarshalByRefObject ()
 		{
 		}
+
+		public override string ToString () {
+			return "MarshalByRefObject";
+		}
 	}
 }
