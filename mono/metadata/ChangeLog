@@ -1,3 +1,9 @@
+2004-06-15  Jackson Harper  <jackson@ximian.com>
+
+	* assembly.c: Make locales lower case when searching the GAC for
+	assemblies. gacutil will always make locales lowercase when
+	installing so this effectively makes them case insensitive.
+	
 2004-06-15  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* locales.c, threadpool.c: use mono_monitor_enter instead of mono_monitor_try_enter.
