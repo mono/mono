@@ -1,5 +1,10 @@
 2004-02-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* DigestClient.cs: fix quote handling. Reordered attributes in response.
+	Fixed typo (QOP->CNonce).
+
+2004-02-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* DigestClient.cs: removed Console.
 	* HttpWebRequest.cs: 401/407 were hanging for GET. Fixed.
 

@@ -67,7 +67,7 @@ namespace System.Net
 		public string QOP {
 			get { return values [4]; }
 		}
-		
+
 		public bool Parse ()
 		{
 			if (!header.ToLower ().StartsWith ("digest "))
@@ -77,6 +77,7 @@ namespace System.Net
 			length = this.header.Length;
 			while (pos < length) {
 				string key, value;
+				bool useQuote;
 				if (!GetKeywordAndValue (out key, out value))
 					return false;
 
@@ -146,13 +147,28 @@ namespace System.Net
 			// note: Apache doesn't use " in all case (like algorithm)
 			if (pos + 1 >= length)
 				return false;
-			if (header [pos] == '"')
+
+			bool useQuote = false;
+			if (header [pos] == '"') {
 				pos++;
+				useQuote = true;
+			}
 
 			int beginQ = pos;
-			pos = header.IndexOf ('"', pos);
-			if (pos == -1)
-				return false;
+			if (useQuote) {
+				pos = header.IndexOf ('"', pos);
+				if (pos == -1)
+					return false;
+			} else {
+				do {
+					char c = header [pos];
+					if (c == ',' || c == ' ' || c == '\t' || c == '\r' || c == '\n')
+						break;
+				} while (++pos < length);
+
+				if (pos >= length && beginQ == pos)
+					return false;
+			}
 
 			value = header.Substring (beginQ, pos - beginQ);
 			pos += 2;
@@ -290,11 +306,15 @@ namespace System.Net
 			auth.AppendFormat ("nonce=\"{0}\", ", Nonce);
 			auth.AppendFormat ("uri=\"{0}\", ", request.Address.PathAndQuery);
 
-			if (QOP != null) // quality of protection (server decision)
-				auth.AppendFormat ("qop=\"{0}\", ", QOP);
-
-			if (Algorithm != null) // hash algorithm (only MD5 in RFC2617)
+			if (Algorithm != null) { // hash algorithm (only MD5 in RFC2617)
 				auth.AppendFormat ("algorithm=\"{0}\", ", Algorithm);
+			}
+
+			auth.AppendFormat ("response=\"{0}\", ", Response (userName, password, request));
+
+			if (QOP != null) { // quality of protection (server decision)
+				auth.AppendFormat ("qop={0}, ", QOP);
+			}
 
 			lock (this) {
 				// _nc MUST NOT change from here...
@@ -306,13 +326,13 @@ namespace System.Net
 				// until here, now _nc can change
 			}
 
-			if (QOP != null) // opaque value from the client
+			if (CNonce != null) // opaque value from the client
 				auth.AppendFormat ("cnonce=\"{0}\", ", CNonce);
 
 			if (Opaque != null) // exact same opaque value as received from server
 				auth.AppendFormat ("opaque=\"{0}\", ", Opaque);
 
-			auth.AppendFormat ("response=\"{0}\"", Response (userName, password, request));
+			auth.Length -= 2; // remove ", "
 			return new Authorization (auth.ToString ());
 		}
 	}
