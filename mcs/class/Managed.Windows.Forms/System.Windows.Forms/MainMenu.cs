@@ -24,7 +24,7 @@
 //
 //
 
-// NOT COMPLETE
+// COMPLETE
 
 using System.ComponentModel;
 
@@ -82,7 +82,7 @@ namespace System.Windows.Forms
 
 		public override string ToString ()
 		{
-			return base.ToString ();
+			return base.ToString () + ", GetForm: " + form;
 		}
 
 		#endregion Public Methods

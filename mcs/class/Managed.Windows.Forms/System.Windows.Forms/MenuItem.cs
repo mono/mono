@@ -39,8 +39,7 @@ namespace System.Windows.Forms
 	[DesignTimeVisible(false)]
 	[ToolboxItem(false)]
 	public class MenuItem : Menu
-	{
-		internal Menu parent_menu = null;
+	{		
 		internal bool separator;
 		internal bool break_;
 		internal bool bar_break;

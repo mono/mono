@@ -45,6 +45,7 @@ namespace System.Windows.Forms
 		internal IntPtr menu_handle = IntPtr.Zero;
 		internal bool is_dirty = true;
 		internal bool creating = false;
+		internal Menu parent_menu = null;
 
 		public const int FindHandle = 0;
 		public const int FindShortcut = 1;
@@ -169,18 +170,24 @@ namespace System.Windows.Forms
 
 		public ContextMenu GetContextMenu ()
 		{
-			if (this is ContextMenu)
-				return (ContextMenu) this;
-			else
-				return null;
+			for (Menu item = this; item != null; item = item.parent_menu) {
+				if (item is ContextMenu) {
+					return (ContextMenu) item;
+				}
+			}
+			
+			return null;
 		}
 
 		public MainMenu GetMainMenu ()
-		{
-			if (this is MainMenu)
-				return (MainMenu) this;
-			else
-				return null;
+		{				
+			for (Menu item = this; item != null; item = item.parent_menu) {
+				if (item is MainMenu) {
+					return (MainMenu) item;
+				}				
+			}
+			
+			return null;
 		}
 
 		public virtual void MergeMenu (Menu menuSrc)
@@ -223,7 +230,7 @@ namespace System.Windows.Forms
 
 		public override string ToString ()
 		{
-			return base.ToString ();
+			return base.ToString () + ", Items.Count: " + MenuItems.Count;
 		}
 
 		#endregion Public Methods

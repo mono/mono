@@ -1,3 +1,12 @@
+2005-02-11  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* Menu.cs: fixes methods GetContextMenu, GetMainMenu, ToString
+	* LinkLabel: Added missing attributes
+	* MainMenu.cs: fixes ToString
+	* MenuItem.cs: fixes methods GetContextMenu, GetMainMenu
+	* ListBox.cs: fixes event position
+	* TrackBar.cs: adds missing attributes and events 	 
+	
 2005-02-10  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* MenuItem.cs: Use SystemInformation and bug fixes	

@@ -174,7 +174,10 @@ namespace System.Windows.Forms
 				Refresh ();
 			}
 		}
-
+	
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public LinkLabel.LinkCollection Links {
 			get { return link_collection;}
 		}
@@ -196,6 +199,7 @@ namespace System.Windows.Forms
 			set { override_cursor = value;}
 		}
 
+		[RefreshProperties(RefreshProperties.Repaint)]
 		public override string Text {
 			get { return base.Text;	}
 			set {
@@ -655,6 +659,7 @@ namespace System.Windows.Forms
 				this.owner = owner;
 			}
 
+			[Browsable (false)]
 			public int Count {
 				get { return collection.Count; }
 			}

@@ -20,15 +20,15 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Autors:
-//		Jordi Mas i Hernandez, jordi@ximian.com
+//
+// Copyright (c) 2004-2005 Novell, Inc.
+//
+// Authors:
+//	Jordi Mas i Hernandez, jordi@ximian.com
 //
 // TODO:
 //		- The AutoSize functionality seems quite broken for vertical controls in .Net 1.1. Not
 //		sure if we are implementing it the right way.
-//
-// Copyright (C) Novell Inc., 2004
-//
 //
 
 
@@ -63,13 +63,42 @@ namespace System.Windows.Forms
 		internal int thumb_mouseclick;		
 		private bool mouse_clickmove;
 
-		#region Events
-		public event EventHandler Scroll;
-		public event EventHandler ValueChanged;		
-		public new event EventHandler ImeModeChanged;
-		public new event EventHandler ForeColorChanged;
-		public new event EventHandler TextChanged;
+		#region events
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler BackgroundImageChanged;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler Click;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler DoubleClick;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler FontChanged;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler ForeColorChanged;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler ImeModeChanged;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event PaintEventHandler Paint;
+		
+		public event EventHandler Scroll;
+		
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public new event EventHandler TextChanged;
+		public event EventHandler ValueChanged;
+		
 		#endregion // Events
 
 		public TrackBar ()
@@ -82,9 +111,7 @@ namespace System.Windows.Forms
 			position = 0;
 			tickStyle = TickStyle.BottomRight;
 			smallChange = 1;
-			largeChange = 5;
-			Scroll = null;
-			ValueChanged  = null;		
+			largeChange = 5;			
 			mouse_clickmove = false;
 			SizeChanged += new System.EventHandler (OnResizeTB);
 			MouseDown += new MouseEventHandler (OnMouseDownTB); 
@@ -127,6 +154,7 @@ namespace System.Windows.Forms
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Browsable (false)]
 		public override Image BackgroundImage {
 			get { return base.BackgroundImage; }
 			set { 
@@ -168,6 +196,7 @@ namespace System.Windows.Forms
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]	
+		[Browsable (false)]
 		public override Color ForeColor {
 			get { return base.ForeColor; }
 			set {
@@ -182,6 +211,7 @@ namespace System.Windows.Forms
 		}		
 
 		[EditorBrowsable (EditorBrowsableState.Never)]	
+		[Browsable (false)]
 		public new ImeMode ImeMode {
 			get { return base.ImeMode; }
 			set {
@@ -276,6 +306,7 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Bindable (false)]
+		[Browsable (false)]
 		public override string Text {
 			get {	return base.Text; }			
 			set {
@@ -604,13 +635,17 @@ namespace System.Windows.Forms
 
 		private void OnPaintTB (PaintEventArgs pevent)
 		{		
+			if (Paint != null) {
+				Paint (this, pevent);
+			}
+			
 			if (Width <= 0 || Height <=  0 || Visible == false)
     				return;		
 
 			/* Copies memory drawing buffer to screen*/
 			UpdateArea ();
 			Draw ();
-			pevent.Graphics.DrawImage (ImageBuffer, 0, 0);
+			pevent.Graphics.DrawImage (ImageBuffer, 0, 0);			
 		}  
 
 		private void OnKeyDownTB (KeyEventArgs e) 

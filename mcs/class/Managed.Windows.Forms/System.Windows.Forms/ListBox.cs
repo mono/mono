@@ -1417,6 +1417,9 @@ namespace System.Windows.Forms
 
 		private void OnPaintLB (PaintEventArgs pevent)
 		{
+			if (Paint != null)
+				Paint (this, pevent);
+				
 			if (Width <= 0 || Height <=  0 || Visible == false || suspend_ctrlupdate == true)
     				return;
 
@@ -1424,8 +1427,6 @@ namespace System.Windows.Forms
 			Draw (pevent.ClipRectangle);
 			pevent.Graphics.DrawImage (ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
 
-			if (Paint != null)
-				Paint (this, pevent);
 		}
 
 		internal void RellocateScrollBars ()
