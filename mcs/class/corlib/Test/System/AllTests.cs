@@ -20,6 +20,7 @@ namespace MonoTests.System {
                         get 
                         {
                                 TestSuite suite =  new TestSuite();
+                                suite.AddTest(ConsoleTest.Suite);
                                 suite.AddTest(ArrayTest.Suite);
                                 suite.AddTest(CharTest.Suite);
                                 suite.AddTest(ByteTest.Suite);
