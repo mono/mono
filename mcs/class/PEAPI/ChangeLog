@@ -1,3 +1,9 @@
+
+Fri Jul 25 19:25:31 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* PEAPI.cs: added coded index for the owner field in the GenericParam
+	table.
+
 2003-07-20 Jackson Harper <jackson@latitudegeo.com>
 
 	* PEAPI.cs: Add methods to PEFile to allow fields and methods to

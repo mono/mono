@@ -649,7 +649,8 @@ namespace PEAPI
 
   internal enum CIx { TypeDefOrRef, HasConst, HasCustomAttr, HasFieldMarshal,
     HasDeclSecurity, MemberRefParent, HasSemantics, MethodDefOrRef, 
-    MemberForwarded, Implementation, CustomAttributeType, ResolutionScope }
+    MemberForwarded, Implementation, CustomAttributeType, ResolutionScope,
+    TypeOrMethodDef, MaxCIx }
 
   internal enum MapType { eventMap, propertyMap, nestedClass }
 
@@ -1992,6 +1993,7 @@ namespace PEAPI
         case (CIx.TypeDefOrRef) : return 0; 
         case (CIx.HasCustomAttr) : return 3; 
         case (CIx.HasDeclSecurity) : return 0; 
+        case (CIx.TypeOrMethodDef) : return 0; 
       }
       return 0;
     }
@@ -3998,7 +4000,7 @@ namespace PEAPI
 
         internal class GenericParameter : MetaDataElement
         {
-                ClassDef owner;
+                ClassDef owner; /* FIXME: can also be a MethodDef */
                 string name;
                 uint nameIx;
                 short index;
@@ -4016,7 +4018,7 @@ namespace PEAPI
 
                 internal sealed override uint Size(MetaData md) {
                         return (uint) (4 +
-                               md.CodedIndexSize(CIx.TypeDefOrRef) + 
+                               md.CodedIndexSize(CIx.TypeOrMethodDef) + 
                                4 +
                                md.TableIndexSize(MDTable.TypeDef));
                 }
@@ -4033,7 +4035,7 @@ namespace PEAPI
                 internal sealed override void Write(FileImage output) {
                         output.Write ((short) index);
                         output.Write ((short) 0);
-                        output.WriteCodedIndex(CIx.TypeDefOrRef, owner);
+                        output.WriteCodedIndex(CIx.TypeOrMethodDef, owner);
                         output.Write ((uint) nameIx);
                         output.WriteIndex(MDTable.TypeDef,owner.Row);
                 }
@@ -4282,7 +4284,7 @@ namespace PEAPI
 
   public class MetaData 
 	{
-		private static readonly int[] CIxShiftMap = {2,2,5,1,2,3,1,1,1,2,3,2};
+		private static readonly int[] CIxShiftMap = {2,2,5,1,2,3,1,1,1,2,3,2,1};
 		private static readonly byte StringsHeapMask = 0x1;
 		private static readonly byte GUIDHeapMask = 0x2;
 		private static readonly byte BlobHeapMask = 0x4;
@@ -4316,7 +4318,7 @@ namespace PEAPI
     uint codeSize = 0, codeStart, byteCodePadding = 0, metaDataSize = 0;
 		ulong valid = 0, /*sorted = 0x000002003301FA00;*/ sorted = 0;
     bool[] largeIx = new bool[numMetaDataTables];
-    bool[] lgeCIx = new bool[(int)CIx.ResolutionScope + 1];
+    bool[] lgeCIx = new bool[(int)CIx.MaxCIx];
 		bool largeStrings = false, largeUS = false, largeGUID = false, largeBlob = false;
 		private FileImage file;
     private byte heapSizes = 0;
@@ -4559,6 +4561,8 @@ namespace PEAPI
                 lgeCIx[(int)CIx.MethodDefOrRef] = true;
               if ((tabIx == MDTable.Field) || (tabIx == MDTable.Method)) 
                 lgeCIx[(int)CIx.MemberForwarded] = true; 
+              if ((tabIx == MDTable.TypeDef) || (tabIx == MDTable.Method)) 
+                lgeCIx[(int)CIx.TypeOrMethodDef] = true; 
             }
           }
         }
@@ -5249,6 +5253,7 @@ namespace PEAPI
 				case (CIx.MethodDefOrRef) : return 0; 
 				case (CIx.MemberForwarded) : return 1; 
 				case (CIx.CustomAttributeType) : return 2; 
+				case (CIx.TypeOrMethodDef) : return 1; 
 			}
 			return 0;
     }
