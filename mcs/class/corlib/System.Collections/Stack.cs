@@ -276,6 +276,7 @@ namespace System.Collections {
 				modCount++;
 
 				object ret = contents[current];
+				contents [current] = null;
 		
 				count--;
 				current--;

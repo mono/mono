@@ -1,3 +1,9 @@
+2003-06-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ArrayList.cs: nullify the array in Clear ().
+	* Queue.cs: nullify the array in Dequeue ().
+	* Stack.cs: nullify the array in Pop ().
+
 2003-06-02  Ben Maurer <bmaurer@users.sourceforge.net>
 	* Queue.cs: Added argument checking in constructors according to
 	specs. Also changed default size to 32 as required by the specs.

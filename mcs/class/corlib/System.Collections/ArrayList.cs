@@ -641,6 +641,7 @@ namespace System.Collections {
 			if (readOnly || fixedSize)
 				throw new NotSupportedException();
 
+			Array.Clear (dataArray, 0, count);
 			count = 0;
 			version++;
 		}

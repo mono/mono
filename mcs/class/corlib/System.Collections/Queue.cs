@@ -147,6 +147,7 @@ namespace System.Collections {
 			if (count < 1)
 				throw new InvalidOperationException ();
 			object result = contents[head];
+			contents [head] = null;
 			head = (head + 1) % capacity;
 			count--;
 			return result;
