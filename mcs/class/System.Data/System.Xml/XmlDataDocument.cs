@@ -42,15 +42,15 @@ namespace System.Xml {
 
 		public XmlDataDocument() {
 			dataSet = new DataSet();
-			this.NodeChanged += new XmlNodeChangedEventHandler (OnXmlDataColumnChanged);
+			this.NodeChanged += new XmlNodeChangedEventHandler (OnXmlDataChanged);
 			//this.NodeChanging += new XmlNodeChangedEventHandler (OnXmlDataColumnChanged);
 			//this.NodeInserted += new XmlNodeChangedEventHandler (OnXmlDataColumnChanged);
-			//this.NodeRemoved += new XmlNodeChangedEventHandler (OnXmlDataColumnChanged);
+			this.NodeRemoved += new XmlNodeChangedEventHandler (OnXmlDataChanged);
 		}
 
 		public XmlDataDocument(DataSet dataset) {
 			this.dataSet = dataset;
-			this.NodeChanged += new XmlNodeChangedEventHandler (OnXmlDataColumnChanged);
+			this.NodeChanged += new XmlNodeChangedEventHandler (OnXmlDataChanged);
 		}
 
 		#endregion // Constructors
@@ -169,16 +169,72 @@ namespace System.Xml {
 		}
 
 		// get the XmlElement associated with the DataRow
+		[MonoTODO ("Exceptions")]
 		public XmlElement GetElementFromRow(DataRow r) 
 		{
-			throw new NotImplementedException();
+			if (r.XmlRowID == 0) // datarow was not in xmldatadocument
+				throw new Exception ();
+
+			int elementRow = dataRowIDList.IndexOf (r.XmlRowID);
+			
+			return (XmlElement)GetElementsByTagName (r.Table.TableName) [elementRow];
 		}
 
 		// get the DataRow associated with the XmlElement
-		[MonoTODO]
+		[MonoTODO ("Exceptions")]
 		public DataRow GetRowFromElement(XmlElement e)
 		{
-			throw new NotImplementedException();
+			XmlElement node = e;
+			if (node == null)
+				return null;
+
+			XPathNavigator nodeNavigator = node.CreateNavigator ();
+			int c  = GetElementsByTagName (node.Name).Count;
+			
+			if (c == 0)
+				return null;
+
+			// FIXME: I dont know which way it should be but this work on linux.
+			// could be also GetElementsByTagName (args.OldParent.Name) []
+			XmlNodeList nodeList = GetElementsByTagName (node.Name);
+			
+			int i = 0;
+			bool isSame = false;
+
+			while (i < c && !isSame) {
+
+				XPathNavigator docNavigator = nodeList [i].CreateNavigator ();
+				isSame = docNavigator.IsSamePosition (nodeNavigator);
+				docNavigator = nodeList [i].CreateNavigator ();
+				if (!isSame)
+					i++;
+			}
+
+			if (!isSame)
+				return null;
+
+			if (i >= dataRowIDList.Count)
+				return null;
+
+			// now we know rownum			
+			int xmlrowid = (int)dataRowIDList [i];
+			if (xmlrowid <= 0)
+				return null;
+
+			DataTable dt = DataSet.Tables [node.Name];
+			DataRow row = null;
+
+			if (dt == null)
+				return null;
+
+			foreach (DataRow r in dt.Rows) {
+				if (xmlrowid == r.XmlRowID) {
+					row = r;
+				}
+			}
+
+			
+			return row;			
 		}
 
 		#region overload Load methods
@@ -207,18 +263,18 @@ namespace System.Xml {
 				reader.MoveToContent ();
 
 			// TODO: Findout which exception should be throwen
-			if (reader.NodeType != XmlNodeType.Element)
+			if (reader.NodeType != XmlNodeType.Element) {
 				throw new Exception ();
+			}
 
-			if (dataSet.DataSetName != reader.Name)
+			if (dataSet.DataSetName != reader.Name) {
 				throw new Exception ();
+			}
 
 			// read to next element
 			while (reader.Read () && reader.NodeType != XmlNodeType.Element);
 
 			do {
-
-
 				// Find right table from tablecollection
 				for (int i = 0; i < DataSet.Tables.Count && dt == null; i++) {
 
@@ -293,46 +349,78 @@ namespace System.Xml {
 		#endregion // Protected Methods
 		
 		#region DataSet event handlers
-
-		// this changed datatable values when some of xmldocument elements is changed
-		private void OnXmlDataColumnChanged (object sender, XmlNodeChangedEventArgs args)
+		
+		// Invoked when XmlNode is changed colum is changed
+		[MonoTODO]
+		private void OnXmlChanged (object sender, XmlNodeChangedEventArgs args)
 		{
-			int i = 0;
-			XPathNavigator nodeNavigator = args.Node.CreateNavigator ();
-			int c = GetElementsByTagName (args.Node.Name).Count;
-
-			// FIXME: I dont know which way it should be but this work on linux.
-			// could be also GetElementsByTagName (args.OldParent.Name) []
-			XmlNodeList nodeList = GetElementsByTagName (args.Node.Name);
+			if (args.Node == null)
+				return;
 			
+			DataRow row = GetRowFromElement ((XmlElement)args.Node);
 
-			bool isSame = false;
+			if (row == null)
+				return;
 			
-			// Find right row		       			
-			while ((i < c) && !isSame ) {
+			if (row [args.Node.Name] != args.Node.InnerText)
+				row [args.Node.Name] = args.Node.InnerText;
+		}
 
-				XPathNavigator docNavigator = nodeList [i].CreateNavigator ();
-				isSame = docNavigator.IsSamePosition (nodeNavigator);
-				docNavigator = nodeList [i].CreateNavigator ();
-				i++;
-			} 
-			
-			// if there wasnt such row it is just added and we dont need to care about it
-			if (!isSame) 
+		// Invoked when XmlNode is removed
+		[MonoTODO]
+		private void OnXmlRemoved (object sender, XmlNodeChangedEventArgs args)
+		{
+			if (args.OldParent == null)
 				return;
 
-			// now we know rownum
-			int xmlrowid = (int)dataRowIDList [i];
-		       
-			DataTable dt = DataSet.Tables [args.OldParent.Name];			       
-			foreach (DataRow r in dt.Rows) {
-				if (xmlrowid == r.XmlRowID) {
+			DataRow row = GetRowFromElement ((XmlElement)args.OldParent);
+			
+			if (row == null) {
+				return ;
+			}
+
+			// Dont trig event again
+			row.Table.ColumnChanged -= new DataColumnChangeEventHandler (OnDataTableColumnChanged);
+			row [args.Node.Name] = null;
+
+			// if all columns are "nulled" we can remove the row. 
+		        // FIXME: This is rather slow, try to find faster way
+			bool allNulls = true;
+			foreach (DataColumn dc in row.Table.Columns) {
+				
+				if (row [dc.ColumnName] != DBNull.Value) {
+					allNulls = false;
+					break;
+				} 
+			}
+
+			if (allNulls) {
+				dataRowIDList.Remove (row.XmlRowID);
+				row.Delete ();
+			}
+
+			row.Table.ColumnChanged += new DataColumnChangeEventHandler (OnDataTableColumnChanged);
+		}
+
+		// this changed datatable values when some of xmldocument elements is changed
+		[MonoTODO("Insert")]
+		private void OnXmlDataChanged (object sender, XmlNodeChangedEventArgs args)
+		{
+			if (args == null)
+				return ;
+
+			switch  (args.Action) {
+				
+			        case XmlNodeChangedAction.Change:
+					OnXmlChanged (sender, args);
+					break;
+			        case XmlNodeChangedAction.Remove:
+					OnXmlRemoved (sender, args);
+					break;
+			        case XmlNodeChangedAction.Insert:
+					break;
+			}
 					
-					// change value only when have to.
-					if ((string)r [args.Node.Name] != (string)args.Node.InnerText)
-						r [args.Node.Name] = args.Node.InnerText;
-				}
-			}			
 		}
 
 		[MonoTODO]
@@ -357,12 +445,18 @@ namespace System.Xml {
 
 			if (eventArgs.Row.XmlRowID == 0)
 				return;
-
+			
 			int rowIndex = dataRowIDList.IndexOf (eventArgs.Row.XmlRowID);
-
+			if (rowIndex <= 0 || rowIndex > GetElementsByTagName (deletedRow.Table.TableName).Count - 1)
+				return;
+			
 			// Remove element from xmldocument and row indexlist
-			GetElementsByTagName (deletedRow.Table.TableName) [rowIndex].RemoveAll ();
-			dataRowIDList.RemoveAt (rowIndex);
+			// FIXME: this is one way to do this, but i hope someday i find out much better way.
+			XmlNode p = GetElementsByTagName (deletedRow.Table.TableName) [rowIndex].ParentNode;
+			if (p != null) {
+				p.RemoveChild (GetElementsByTagName (deletedRow.Table.TableName) [rowIndex]);
+				dataRowIDList.RemoveAt (rowIndex);
+			}
 		}
 		
 		[MonoTODO]

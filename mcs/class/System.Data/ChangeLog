@@ -1,3 +1,8 @@
+2002-12-11  Ville Palo <vi64pa@koti.soon.fi>
+
+	* System.Xml/XmlDataDocument.cs: Implemented GetRowFromElement() and
+	GetElementFromRowElement () -methods. Somefixed and little clean up.
+
 2002-12-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Data.SqlClient/SqlCommand.cs:
