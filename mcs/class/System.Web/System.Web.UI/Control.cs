@@ -57,7 +57,7 @@ namespace System.Web.UI
 		private bool bindingContainer = true;
 		private bool autoEventWireup = true;
 
-		bool inited;
+		bool inited, initing;
 		bool viewStateLoaded;
 		bool loaded;
 		bool prerendered;
@@ -377,7 +377,7 @@ namespace System.Web.UI
 					control._userId =  nc.GetDefaultName () + "a";
 			}
 
-			if (inited)
+			if (initing || inited)
 				control.InitRecursive (nc);
 
 			if (viewStateLoaded || loaded) {
@@ -829,9 +829,11 @@ namespace System.Web.UI
 				}
 			}
 
+			initing = true;
                         OnInit (EventArgs.Empty);
 			TrackViewState ();
 			inited = true;
+			initing = false;
                 }
 
                 internal object SaveViewStateRecursive ()

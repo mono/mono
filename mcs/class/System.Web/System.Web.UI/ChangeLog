@@ -1,3 +1,8 @@
+2004-01-30  Jackson Harper <jackson@ximian.com>
+
+	* Control.cs: Ensure that dynamically loaded controls are
+	initialized.
+	
 2004-01-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ApplicationFileParser.cs: check for error in directives. Use
