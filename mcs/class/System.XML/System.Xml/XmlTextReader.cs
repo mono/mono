@@ -330,7 +330,8 @@ namespace System.Xml
 
 		public override string GetAttribute (string name)
 		{
-			return attributes [name] as string;
+			return attributes.ContainsKey (name) ?
+				attributes [name] as string : String.Empty;
 		}
 
 		public override string GetAttribute (string localName, string namespaceURI)
@@ -349,10 +350,12 @@ namespace System.Xml
 						string thisNamespaceURI = LookupNamespace (thisPrefix);
 
 						if (namespaceURI == thisNamespaceURI)
-							return attributes [thisName] as string;
+							return attributes.ContainsKey (thisName) ?
+								attributes [thisName] as string : String.Empty;
 					}
 				} else if (localName == "xmlns" && namespaceURI == "http://www.w3.org/2000/xmlns/" && thisName == "xmlns")
-					return attributes [thisName] as string;
+					return attributes.ContainsKey (thisName) ? 
+						attributes [thisName] as string : String.Empty;
 			}
 
 			return String.Empty;
