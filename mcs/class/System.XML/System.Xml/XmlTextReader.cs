@@ -377,7 +377,8 @@ namespace System.Xml
 
 		public override bool MoveToElement ()
 		{
-			if (nodeType == XmlNodeType.Attribute) {
+			if (attributeEnumerator != null) {
+				attributeEnumerator = null;
 				RestoreProperties ();
 				return true;
 			}
@@ -413,8 +414,6 @@ namespace System.Xml
 				);
 				return true;
 			}
-
-			RestoreProperties ();
 
 			return false;
 		}
@@ -512,7 +511,7 @@ namespace System.Xml
 		private string saveLocalName;
 		private string saveNamespaceURI;
 		private bool saveIsEmptyElement;
-	
+
 		private Hashtable attributes;
 		private IDictionaryEnumerator attributeEnumerator;
 

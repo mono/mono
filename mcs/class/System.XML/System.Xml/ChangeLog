@@ -1,3 +1,11 @@
+2002-03-18  Jason Diamond <jason@injektilo.org>
+
+	* XmlTextReader.cs: Don't restore properties after reading last
+	attribute on an element.
+
+	* XmlDocument.cs: Move back to element after reading attributes
+	so that IsEmptyElement test succeeds.
+
 2002-03-18  Kral Ferch <kral_ferch@hotmail.com>
 
 	* XmlNamespaceManager.cs: Implemented LookupPrefix.

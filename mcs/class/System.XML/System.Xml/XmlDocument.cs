@@ -397,6 +397,8 @@ namespace System.Xml
 					while (xmlReader.MoveToNextAttribute ())
 						element.SetAttribute (xmlReader.Name, xmlReader.Value);
 
+					xmlReader.MoveToElement ();
+
 					// if this element isn't empty, push it onto our "stack".
 					if (!xmlReader.IsEmptyElement)
 						currentNode = element;
