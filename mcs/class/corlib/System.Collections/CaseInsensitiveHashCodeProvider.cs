@@ -100,9 +100,10 @@ namespace System.Collections
 			int h = 0;
 			char c;
 
-			if (culture != null) {
+			if (culture != null && culture.LCID != CultureInfo.InvariantCulture.LCID) {
+				str = str.ToLower (culture);
 				for (int i = 0; i < str.Length; i++) {
-					c = Char.ToLower (str [i], culture);
+					c = str [i];
 					h = h * 31 + c;
 				}
 			}
