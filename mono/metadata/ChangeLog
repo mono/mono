@@ -1,3 +1,8 @@
+2004-09-08  Martin Baulig  <martin@ximian.com>
+
+	* class.c (class_compute_field_layout): Don't call
+	mono_class_layout_fields() for open generic instances.
+
 2004-09-08 Bernie Solomon <bernard@ugsolutions.com>
 	* threads.c appdomain.c: fix typo in GC macro
 
