@@ -34,9 +34,22 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
-		protected override void RenderAttributes(HtmlTextWriter writer){
-			if (Page != null && Events[EventServerClick] != null){
-				/* Got to figure out how to manage events */
+		protected override void RenderAttributes (HtmlTextWriter writer)
+		{
+			if (Page != null && Events [EventServerClick] != null) {
+				string script = Page.GetPostBackClientEvent (this, String.Empty);
+				AttributeCollection coll = Attributes;
+				if (coll ["language"] != null)
+					coll.Remove ("language");
+				writer.WriteAttribute ("language", "javascript");
+
+				string onclick;
+				if ((onclick = coll ["onclick"]) != null) {
+					script = onclick + " " + script;
+					coll.Remove ("onclick");
+				}
+
+				writer.WriteAttribute ("onclick", script);
 			}
 			base.RenderAttributes(writer);
 		}

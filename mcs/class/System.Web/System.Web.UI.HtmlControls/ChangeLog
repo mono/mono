@@ -1,3 +1,8 @@
+2002-11-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlButton.cs: make it do a POST if the button has any ServerClick
+	events.
+
 2002-09-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlAnchor.cs:
