@@ -1,5 +1,10 @@
 2004-11-07  Ben Maurer  <bmaurer@ximian.com>
 
+	* loader.c, loader.h (mono_method_get_header): new accessor.
+
+	* *.[ch]: use the above method. Prepares us to lazily load
+	the header.
+
 	* *.[ch]: Clean up all the pesky warnings. gcc now only gives
 	three warnings, which are actual bugs (see 69206).
 
