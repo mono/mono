@@ -32,9 +32,6 @@ namespace System.Windows.Forms {
 		protected AxHost(string clsid,int flags){
 		}
 		
-		
-		
-		
 		/// --- public Properties ---
 		/// Properties supporting .NET framework, only. Not stubbed out:
 		public bool EditMode {
@@ -172,7 +169,7 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		//FIXME
-		public virtual bool RightToLeft {
+		public new virtual bool RightToLeft {
 			get {
 				throw new NotImplementedException (); 
 			}
@@ -457,47 +454,6 @@ namespace System.Windows.Forms {
 			base.WndProc(ref m);
 		}
 		
-		/// --- events ---
-
-		//[MonoToDo]
-		//public event EventHandler BackColorChanged;
-		//public new event EventHandler BackgroundImageChanged;
-		//public new event EventHandler BindingContextChanged;
-		//public new event UICuesEventHandler ChangeUICues;
-		//public new event EventHandler Click;
-		//public new event EventHandler ContextMenuChanged;
-		//public new event EventHandler CursorChanged;
-		//public new event EventHandler DoubleClick;
-		//public new event DragEventHandler DragDrop;
-		//public new event DragEventHandler DragEnter;
-		//public new event EventHandler DragLeave;
-		//public new event DragEventHandler DragOver;
-		//public new event EventHandler EnabledChanged;
-		//public new event EventHandler FontChanged;
-		//public new event EventHandler ForeColorChanged;
-		//public new event GiveFeedbackEventHandler GiveFeedback;
-		//public new event HelpEventHandler HelpRequested;
-		//public new event EventHandler ImeModeChanged;
-		//public new event KeyEventHandler KeyDown;
-		//public new event KeyPressEventHandler KeyPress;
-		//public new event KeyEventHandler KeyUp;
-		//public new event LayoutEventHandler Layout;
-		//public new event MouseEventHandler MouseDown;
-		//public new event EventHandler MouseEnter;
-		//public new event EventHandler MouseHover;
-		//public new event EventHandler MouseLeave;
-		//public new event MouseEventHandler MouseMove;
-		//public new event MouseEventHandler MouseUp;
-		//public new event MouseEventHandler MouseWheel;
-		//public new event PaintEventHandler Paint;
-		//public new event QueryAccessibilityHelpEventHandler QueryAccessibilityHelp;
-		//public new event QueryContinueDragEventHandler QueryContinueDrag;
-		//public new event EventHandler RightToLeftChanged;
-		//public new event EventHandler StyleChanged;
-		//public new event EventHandler TabIndexChanged;
-		//public new event EventHandler TabStopChanged;
-		//public new event EventHandler TextChanged;
-		public event CancelEventHandler Validating;
 		/// --- public delegates ---
 		//[Serializable]
 		protected delegate void AboutBoxDelegate();
@@ -607,12 +563,6 @@ namespace System.Windows.Forms {
 			//[Serializable]
 			void ISerializable.GetObjectData(SerializationInfo si,StreamingContext context) 
 			{
-				throw new NotImplementedException ();
-			}
-		}
-
-		AccessibleObject AccessibilityObject {
-			get {
 				throw new NotImplementedException ();
 			}
 		}

@@ -4,11 +4,13 @@
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 //	Dennis Hayes (dennish@raytek.com)
+//  Brian Takita (brian.takita@runbox.com)
 // (C) 2002/3 Ximian, Inc
 //
 using System;
 using System.Drawing;
 using System.Collections;
+using System.ComponentModel;
 using System.Reflection;
 
 namespace System.Windows.Forms {
@@ -17,29 +19,29 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-    public abstract class ListControl : Control {
+	public abstract class ListControl : Control {
 
-		protected string DisplayMember_ = String.Empty;
+		internal string DisplayMember_ = String.Empty;
 
-		protected object DataSource_;
+		internal object DataSource_;
 		//ControlStyles controlStyles;
 		//
 		//  --- Public Properties
 		//
 		[MonoTODO]
-		public virtual object DataSource {
+		public object DataSource {
 			get {
 				return DataSource_;
 			}
-
 			set {
 				if (DataSource_ != value) {
-					if ((value is IList) || (value is System.ComponentModel.IListSource)) {
+					if ((value is IList) || (value is IListSource)) {
 						DataSource_ = value;
 						OnDataSourceChanged (new EventArgs ());
 
-					} else
+					} else {
 						throw new Exception ("Complex DataBinding accepts as a data source either an IList or an IListSource");
+					}
 				}
 			}
 		}
@@ -49,27 +51,28 @@ namespace System.Windows.Forms {
 				return DisplayMember_;
 			}
 			set {
-				if( DisplayMember_ != value) {
+				if (DisplayMember_ != value) {
 					DisplayMember_ = value;
 					OnDisplayMemberChanged(new EventArgs());
 				}
 			}
 		}
 		
-		internal string getDisplayMemberOfObj( object obj) {
+		internal string getDisplayMemberOfObj (object obj)
+		{
 			string objectString = String.Empty;
 			Type t = obj.GetType();
-			if( DisplayMember != String.Empty) {
-				if( t != null) {
-					PropertyInfo prop = t.GetProperty(DisplayMember);
-					if( prop != null) {
-						objectString = prop.GetValue(obj, null).ToString();
-					}
+
+			if (DisplayMember != String.Empty) {
+				if (t != null) {
+					PropertyInfo prop = t.GetProperty (DisplayMember);
+					if (prop != null) 
+						objectString = prop.GetValue (obj, null).ToString ();
 				}
 			}
-			if( objectString == String.Empty) {
+			if (objectString == String.Empty)
 				objectString = obj.ToString();
-			}
+
 			return objectString;
 		}
 		
@@ -79,8 +82,9 @@ namespace System.Windows.Forms {
 				owner_ = owner;
 			}
 
+
 			public int Compare(object x, object y) {
-				return owner_.getDisplayMemberOfObj(x).CompareTo(owner_.getDisplayMemberOfObj(y));
+				return owner_.getDisplayMemberOfObj(x).CompareTo (owner_.getDisplayMemberOfObj (y));
 			}
 		}
 		
@@ -112,8 +116,8 @@ namespace System.Windows.Forms {
 		//
 
 		[MonoTODO]
-		public string GetItemText(object item)
-		{
+		public string GetItemText (object item)
+                {
 			throw new NotImplementedException ();
 		}
 
@@ -129,8 +133,7 @@ namespace System.Windows.Forms {
 		// --- Protected Constructor
 		//
 		[MonoTODO]
-		protected ListControl()
-		{
+		protected ListControl () {
 			
 		}
 
@@ -148,27 +151,31 @@ namespace System.Windows.Forms {
 		//  --- Protected Methods
 		//
 		[MonoTODO]
-		protected override bool IsInputKey(Keys keyData)
-		{
+		protected override bool IsInputKey (Keys keyData)
+                {
 			//FIXME:
 			return base.IsInputKey(keyData);
 		}
 		[MonoTODO]
-		protected virtual void OnDataSourceChanged(EventArgs e) {
+		protected virtual void OnDataSourceChanged (EventArgs e)
+                {
 			//FIXME:
 		}
 		[MonoTODO]
-		protected virtual void OnDisplayMemberChanged(EventArgs e) {
+		protected virtual void OnDisplayMemberChanged (EventArgs e)
+                {
 			//FIXME:
 		}
 
 		[MonoTODO]
-		protected virtual void OnSelectedIndexChanged(EventArgs e) {
+		protected virtual void OnSelectedIndexChanged (EventArgs e)
+                {
 			//FIXME:
 		}		
 		
 		[MonoTODO]
-		protected virtual void OnSelectedValueChanged(EventArgs e){
+		protected virtual void OnSelectedValueChanged (EventArgs e)
+                {
 			//FIXME:
 		}
 
@@ -176,14 +183,14 @@ namespace System.Windows.Forms {
 		public event EventHandler ValueMemberChanged;
 		
 		[MonoTODO]
-		protected override void OnBindingContextChanged(EventArgs e)
-		{
+		protected override void OnBindingContextChanged (EventArgs e)
+                {
 			//FIXME:
 			base.OnBindingContextChanged(e);
 		}
 
 		[MonoTODO]
-		protected abstract void RefreshItem(int index);
+		protected abstract void RefreshItem (int index);
 
-	 }
+	}
 }

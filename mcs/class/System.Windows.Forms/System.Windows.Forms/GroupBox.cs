@@ -88,10 +88,6 @@ namespace System.Windows.Forms {
 			Invalidate ( );
 		}
 
-		protected virtual void OnPaintBackground (PaintEventArgs e)
-		{
-		}
-
 		public override string Text {
 			get { return base.Text; }
 			set { 

@@ -1,3 +1,16 @@
+2003-08-24  Duncan Mak  <duncan@ximian.com>
+
+	* ListControl.cs: Indentation, coding style fixes.
+	
+2003-08-24  Duncan Mak  <duncan@ximian.com>
+
+	Patches from Brian Takita <brian.takita@runbox.com>
+
+	* GroupBox.cs (OnPaintBackground): Commented out.
+	* ListControl.cs (DataSource): Fixed visibility of property and
+	field. 
+	* MonthCalander.cs: Should match Specs better.
+
 2003-08-24  Alexandre Pigolkine <pigolkine@gmx.de>
 	* ControlPaint.cs		DrawRadioButton and DrawCheckBox improved
 

@@ -141,12 +141,10 @@ namespace System.Windows.Forms {
 		
 		// --- CheckBox methods ---
 
-		// I do not think this is part of the spec
-		//protected override AccessibleObject CreateAccessibilityInstance() 
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		
+		protected override AccessibleObject CreateAccessibilityInstance() 
+		{
+			throw new NotImplementedException ();
+		}
 		
 		// [event methods]
 		[MonoTODO]
@@ -237,7 +235,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		internal override void ButtonPaint (PaintEventArgs e) 
+		protected override void OnPaint (PaintEventArgs e) 
 		{
 			Rectangle paintBounds = ClientRectangle;
 			Bitmap bmp = new Bitmap( paintBounds.Width, paintBounds.Height,e.Graphics);
@@ -273,6 +271,18 @@ namespace System.Windows.Forms {
 			e.Graphics.DrawImage(bmp, 0, 0, paintBounds.Width, paintBounds.Height);
 			paintOn.Dispose ();
 			bmp.Dispose();
+		}
+		
+		protected override void WndProc (ref Message m) {
+			switch (m.Msg) {
+				case Msg.WM_DRAWITEM: {
+					m.Result = (IntPtr)1;
+				}
+					break;
+				default:
+					base.WndProc (ref m);
+					break;
+			}
 		}
 		
 		/// --- CheckBox events ---
