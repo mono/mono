@@ -11,6 +11,7 @@ namespace System.IO {
         public class StringWriter : TextWriter {
                 
                 private StringBuilder internalString;
+		private bool disposed = false;
 
                 public StringWriter() {
                         internalString = new StringBuilder();
@@ -41,6 +42,7 @@ namespace System.IO {
 
                 public override void Close() {
                         Dispose( true );
+			disposed = true;
                 }
 
                 protected override void Dispose (bool disposing)
@@ -48,6 +50,7 @@ namespace System.IO {
 			// MS.NET doesn't clear internal buffer.
 			// internalString = null;
 			base.Dispose (disposing);
+			disposed = true;
 		}
 
                 public virtual StringBuilder GetStringBuilder() {
@@ -59,14 +62,26 @@ namespace System.IO {
                 }
 
                 public override void Write( char value ) {
+
+			if (disposed) 
+				throw new ObjectDisposedException ("StringWriter", "Cannot write to a closed StringWriter");
+
                         internalString.Append( value );
                 }
 
                 public override void Write( string value ) {
+
+			if (disposed) 
+				throw new ObjectDisposedException ("StringWriter", "Cannot write to a closed StringWriter");
+
                         internalString.Append( value );
                 }
 
                 public override void Write( char[] buffer, int index, int count ) {
+
+			if (disposed) 
+				throw new ObjectDisposedException ("StringReader", "Cannot write to a closed StringWriter");
+
                         if( buffer == null ) {
                                 throw new ArgumentNullException();
                         } else if( index < 0 || count < 0 ) {

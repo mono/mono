@@ -17,6 +17,8 @@ namespace System.IO {
 		int m_encoding_max_byte;
 
 		byte[] m_buffer;
+		
+		private bool m_disposed = false;
 
 		public BinaryReader(Stream input) : this(input, Encoding.UTF8Unmarked) {
 		}
@@ -41,6 +43,7 @@ namespace System.IO {
 
 		public virtual void Close() {
 			Dispose (true);
+			m_disposed = true;
 		}
 		
 		protected virtual void Dispose (bool disposing)
@@ -48,6 +51,7 @@ namespace System.IO {
 			if (disposing && m_stream != null)
 				m_stream.Close ();
 
+			m_disposed = true;
 			m_buffer = null;
 			m_encoding = null;
 			m_stream = null;
@@ -79,6 +83,10 @@ namespace System.IO {
 
 		public virtual int PeekChar() {
 			if(m_stream==null) {
+				
+				if (m_disposed)
+					throw new ObjectDisposedException ("BinaryReader", "Cannot read from a closed BinaryReader.");
+
 				throw new IOException("Stream is invalid");
 			}
 
@@ -107,6 +115,10 @@ namespace System.IO {
 
 		public virtual int Read(byte[] buffer, int index, int count) {
 			if(m_stream==null) {
+
+				if (m_disposed)
+					throw new ObjectDisposedException ("BinaryReader", "Cannot read from a closed BinaryReader.");
+
 				throw new IOException("Stream is invalid");
 			}
 			
@@ -130,6 +142,10 @@ namespace System.IO {
 
 		public virtual int Read(char[] buffer, int index, int count) {
 			if(m_stream==null) {
+
+				if (m_disposed)
+					throw new ObjectDisposedException ("BinaryReader", "Cannot read from a closed BinaryReader.");
+
 				throw new IOException("Stream is invalid");
 			}
 			
@@ -201,6 +217,10 @@ namespace System.IO {
 
 		public virtual byte[] ReadBytes(int count) {
 			if(m_stream==null) {
+
+				if (m_disposed)
+					throw new ObjectDisposedException ("BinaryReader", "Cannot read from a closed BinaryReader.");
+
 				throw new IOException("Stream is invalid");
 			}
 			

@@ -16,6 +16,7 @@ namespace System.IO {
 
 		private int nextChar;
 		private int sourceLength;
+		private bool disposed = false;
 
 		public StringReader( string s ) {
 
@@ -30,6 +31,7 @@ namespace System.IO {
 
 		public override void Close() {
 			Dispose( true );
+			disposed = true;
 		}
 
 		protected override void Dispose (bool disposing)
@@ -39,6 +41,10 @@ namespace System.IO {
 		}
 
 		public override int Peek() {
+
+			if (disposed) 
+				throw new ObjectDisposedException ("StringReader", "Cannot read from a closed StringReader");
+
 			if( nextChar >= sourceLength ) {
 				return -1;
 			} else {
@@ -47,6 +53,10 @@ namespace System.IO {
 		}
 
 		public override int Read() {
+
+			if (disposed) 
+				throw new ObjectDisposedException ("StringReader", "Cannot read from a closed StringReader");
+
 			if( nextChar >= sourceLength ) {
 				return -1;
 			} else {
@@ -61,6 +71,9 @@ namespace System.IO {
 		// has been reached and no characters are read.
 
 		public override int Read( char[] buffer, int index, int count ) {
+
+			if (disposed) 
+				throw new ObjectDisposedException ("StringReader", "Cannot read from a closed StringReader");
 
 			if( buffer == null ) {
 				throw new ArgumentNullException();
@@ -98,6 +111,9 @@ namespace System.IO {
                         // HOWEVER, the MS implementation returns the rest of the string if no \r and/or \n is found
                         // in the string
 
+			if (disposed) 
+				throw new ObjectDisposedException ("StringReader", "Cannot read from a closed StringReader");
+
 			if (nextChar >= source.Length)
 				return null;
 
@@ -128,6 +144,10 @@ namespace System.IO {
 		}
 
                 public override string ReadToEnd() {
+
+			if (disposed) 
+				throw new ObjectDisposedException ("StringReader", "Cannot read from a closed StringReader");
+
                         string toEnd = source.Substring( nextChar, sourceLength - nextChar );
                         nextChar = sourceLength;
                         return toEnd;

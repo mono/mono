@@ -1,3 +1,9 @@
+2003-04-13  Ville Palo <vi64pa@kolumbus.fi>
+
+	* StringReader.cs: Added some ObjectDisposedExceptions.
+	* StringWriter.cs: Added some ObjectDisposedExceptions.
+	* BinaryReader.cs: Added some ObjectDisposedExceptions.
+	
 2003-04-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FileStream.cs: fixed the windows build. This is an mcs bug. I'll
