@@ -4,12 +4,9 @@
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
 //   Dietmar Maurer (dietmar@ximian.com)
-//   Lluis Sanchez Gual (lsg@ctv.es)
+//   Lluis Sanchez Gual (lluis@ideary.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-//
-//
-// FIXME: This is just a skeleton for practical purposes.
 //
 
 using System;
@@ -25,7 +22,9 @@ namespace System.Runtime.Remoting {
 	{
 		IChannelInfo channel_info;
 		string uri;
-		Type type;
+		IRemotingTypeInfo typeInfo;
+		IEnvoyInfo envoyInfo;
+		[NonSerialized] bool marshalledValue = false;
 		
 		public ObjRef ()
 		{
@@ -43,8 +42,11 @@ namespace System.Runtime.Remoting {
 			// The ObjRef can only be constructed if the given mbr
 			// has already been marshalled using RemotingServices.Marshall
 
-			this.uri = RemotingServices.GetObjectUri(mbr);
-			this.type = type;
+			uri = RemotingServices.GetObjectUri(mbr);
+			typeInfo = new TypeInfo(type);
+
+			if (!typeInfo.CanCastTo(mbr.GetType(), mbr))
+				throw new RemotingException ("The server object type cannot be cast to the requested type " + type.FullName + ".");
 
 			channel_info = new ChannelInfoStore ();
 		}
@@ -52,17 +54,28 @@ namespace System.Runtime.Remoting {
 		protected ObjRef (SerializationInfo si, StreamingContext sc)
 		{
 			SerializationInfoEnumerator en = si.GetEnumerator();
+			// Info to serialize: uri, objrefFlags, typeInfo, envoyInfo, channelInfo
+
+			marshalledValue = false;
 
 			while (en.MoveNext ()) {
 				switch (en.Name) {
 				case "uri":
 					uri = (string)en.Value;
 					break;
-				case "type":
-					type = (Type)en.Value;
+				case "typeInfo":
+					typeInfo = (IRemotingTypeInfo)en.Value;
 					break;
 				case "channelInfo":
-					type = (Type)en.Value;
+					channel_info = (IChannelInfo)en.Value;
+					break;
+				case "envoyInfo":
+					envoyInfo = (IEnvoyInfo)en.Value;
+					break;
+				case "fIsMarshalled":
+					marshalledValue = true;
+					break;
+				case "objrefFlags":		// FIXME: do something with this
 					break;
 				default:
 					throw new NotSupportedException ();
@@ -94,10 +107,10 @@ namespace System.Runtime.Remoting {
 		[MonoTODO]
 		public virtual IRemotingTypeInfo TypeInfo {
 			get {
-				throw new NotImplementedException ();
+				return typeInfo;
 			}
 			set {
-				throw new NotImplementedException ();
+				typeInfo = value;
 			}
 		}
 		
@@ -112,16 +125,20 @@ namespace System.Runtime.Remoting {
 
 		public virtual void GetObjectData (SerializationInfo si, StreamingContext sc)
 		{
-			si.SetType (type);
-
-			si.AddValue ("url", uri);
-			si.AddValue ("type", type, typeof (Type));
+			si.SetType (GetType());
+			si.AddValue ("uri", uri);
+			si.AddValue ("typeInfo", typeInfo, typeof (IRemotingTypeInfo));
+			si.AddValue ("envoyInfo", envoyInfo, typeof (IEnvoyInfo));
 			si.AddValue ("channelInfo", channel_info, typeof(IChannelInfo));
+			si.AddValue ("objrefFlags", 0);
 		}
 
 		public virtual object GetRealObject (StreamingContext sc)
 		{
-			return RemotingServices.GetRemoteObject(type, null, channel_info.ChannelData);
+			if (marshalledValue)
+				return RemotingServices.GetRemoteObject(Type.GetType(typeInfo.TypeName), null, channel_info.ChannelData, uri);
+			else
+				return this;
 		}
 
 		public bool IsFromThisAppDomain ()

@@ -1,8 +1,17 @@
-2002-12-28 Lluis Sanchez Gual <lsg@ctv.es>
+2003-01-24 Lluis Sanchez Gual <lluis@ideary.com>
+
+	* RemotingServices.cs: Implemented some missing methods: IsMethodOverloaded, 
+	  SetObjectUriForMarshal, IsOneWay, IsObjectOutOfAppDomain, 
+	  IsObjectOutOfContext, GetObjRefForProxy, GetObjectData,
+	  GetMethodBaseFromMethodMessage.
+	* TypeInfo.cs: Added.
+	* ObjRef.cs: Implemented serialization and added support for IRemotingTypeInfo.
+
+2002-12-28 Lluis Sanchez Gual <lluis@ideary.com>
 
 	* SoapServices.cs: Implemented some methods
 
-2002-12-20 Lluis Sanchez Gual <lsg@ctv.es>
+2002-12-20 Lluis Sanchez Gual <lluis@ideary.com>
 
 	* ObjRef.cs: Implementation now based on methods of RemotingServices.
 	* RemotingServices.cs: Remoting information now kept in Identity objects.
