@@ -1,3 +1,7 @@
+2004-11-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsdValidatingReader.cs : reuse NameTable on loading external schema.
+
 2004-11-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsdValidatingReader.cs : optimized some ArrayList fields; create them

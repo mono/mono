@@ -1589,7 +1589,7 @@ namespace Mono.Xml.Schema
 					XmlTextReader xtr = null;
 					try {
 						absUri = new Uri ((this.BaseURI != "" ? new Uri (BaseURI) : null), tmp [i + 1]);
-						xtr = new XmlTextReader (absUri.ToString ());
+						xtr = new XmlTextReader (absUri.ToString (), NameTable);
 						schema = XmlSchema.Read (xtr, null);
 					} catch (Exception) { // FIXME: (wishlist) It is bad manner ;-(
 						HandleError ("Could not resolve schema location URI: " + absUri, null, true);
@@ -1617,7 +1617,7 @@ namespace Mono.Xml.Schema
 				XmlTextReader xtr = null;
 				try {
 					absUri = new Uri ((this.BaseURI != "" ? new Uri (BaseURI) : null), noNsSchemaLocation);
-					xtr = new XmlTextReader (absUri.ToString ());
+					xtr = new XmlTextReader (absUri.ToString (), NameTable);
 					schema = XmlSchema.Read (xtr, null);
 				} catch (Exception) { // FIXME: (wishlist) It is bad manner ;-(
 					HandleError ("Could not resolve schema location URI: " + absUri, null, true);
