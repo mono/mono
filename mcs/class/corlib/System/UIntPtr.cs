@@ -13,6 +13,7 @@
 // valid CLS and the methods in question have been marked with
 // the CLSCompliant attribute that avoid compiler warnings.
 
+using System.Globalization;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 
@@ -27,6 +28,11 @@ namespace System
 	
 		public UIntPtr (ulong value)
 		{
+			if ((value > UInt32.MaxValue) && (UIntPtr.Size < 8)) {
+				throw new OverflowException (
+					Locale.GetText ("This isn't a 64bits machine."));
+			}
+
 			_pointer = (void*) value;
 		}
 		
