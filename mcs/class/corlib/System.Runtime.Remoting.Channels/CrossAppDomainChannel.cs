@@ -222,7 +222,6 @@ namespace System.Runtime.Remoting.Channels
 					arrRequest = reqMsgStream.GetBuffer();
 				}
 
-				object threadStatus = Thread.ResetDataStoreStatus ();
 				Context currentContext = Thread.CurrentContext;
 
 				try {
@@ -231,10 +230,8 @@ namespace System.Runtime.Remoting.Channels
 					ProcessMessageRes res = (ProcessMessageRes)AppDomain.InvokeInDomainByID (_domainID, processMessageMethod, null, new object [] { arrRequest, cadMsg });
 					arrResponse = res.arrResponse;
 					cadMrm = res.cadMrm;
-				}
-				finally {
+				} finally {
 					AppDomain.InternalSetContext (currentContext);
-					Thread.RestoreDataStoreStatus (threadStatus);
 				}					
 
 				

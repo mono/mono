@@ -1,3 +1,7 @@
+2005-03-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* CrossAppDomainChannel.cs: Remove call to ResetDataStoreStatus ().
+
 2004-10-26  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* CrossAppDomainChannel.cs: Added getter for the target domain Id.
