@@ -1,5 +1,8 @@
 2005-03-12  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c mini-*.h: Remove OUT_OF_LINE_BBLOCK defines since all arches
+	support that now.
+
 	* mini-ops.h: Add OP_LMUL_IMM.
 
 	* mini.c jit-icalls.cmini-amd64.h mini-amd64.c cpu-amd64.md: Implement
