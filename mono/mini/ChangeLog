@@ -1,3 +1,7 @@
+2004-04-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* mini-x86.h: SA_STACK defined as SA_ONSTACK. Fixed build under NetBSD.
+
 2004-04-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_method_to_ir): Avoid handle_loaded_temps in
