@@ -1,3 +1,7 @@
+2005-01-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Hash.cs: Fix regression in 2.0 to load default (hash) evidences.
+
 2005-01-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Hash.cs: Fix exception reporting for new methods in 2.0.
