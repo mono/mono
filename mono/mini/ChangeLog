@@ -1,3 +1,7 @@
+2005-01-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* driver.c (mini_usage): Reorder the usage screen.
+
 2005-01-21  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_resolve_patch_target): Fix warning.
