@@ -4257,7 +4257,8 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 
 			bool is_ret = false;
-
+			LocalBuilder [] clear_list = new LocalBuilder [data.Length];
+			
 			for (int i = 0; i < data.Length; i++) {
 				VariableInfo vi = data [i].vi;
 
@@ -4270,14 +4271,7 @@ namespace Mono.CSharp {
 					//
 					data [i].expr.Emit (ec);
 					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
-
-					is_ret = statement.Emit (ec);
-
-					// Clear the pinned variable.
-					ig.Emit (OpCodes.Ldc_I4_0);
-					ig.Emit (OpCodes.Conv_U);
-					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
-
+					clear_list [i] = vi.LocalBuilder;
 					continue;
 				}
 
@@ -4291,14 +4285,7 @@ namespace Mono.CSharp {
 					data [i].converted.Emit (ec);
 					
 					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
-
-					is_ret = statement.Emit (ec);
-					
-					// Clear the pinned variable.
-					ig.Emit (OpCodes.Ldc_I4_0);
-					ig.Emit (OpCodes.Conv_U);
-					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
-
+					clear_list [i] = vi.LocalBuilder;
 					continue;
 				}
 
@@ -4308,6 +4295,7 @@ namespace Mono.CSharp {
 				if (data [i].expr.Type == TypeManager.string_type){
 					LocalBuilder pinned_string = ig.DeclareLocal (TypeManager.string_type);
 					TypeManager.MakePinned (pinned_string);
+					clear_list [i] = pinned_string;
 					
 					data [i].expr.Emit (ec);
 					ig.Emit (OpCodes.Stloc, pinned_string);
@@ -4321,12 +4309,24 @@ namespace Mono.CSharp {
 
 					converted.Emit (ec);
 					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
-					
-					is_ret = statement.Emit (ec);
+				}
+			}
 
-					// Clear the pinned variable
+			is_ret = statement.Emit (ec);
+
+			//
+			// Clear the pinned variable
+			//
+			for (int i = 0; i < data.Length; i++) {
+				VariableInfo vi = data [i].vi;
+
+				if (data [i].is_object || data [i].expr.Type.IsArray) {
+					ig.Emit (OpCodes.Ldc_I4_0);
+					ig.Emit (OpCodes.Conv_U);
+					ig.Emit (OpCodes.Stloc, clear_list [i]);
+				} else if (data [i].expr.Type == TypeManager.string_type){
 					ig.Emit (OpCodes.Ldnull);
-					ig.Emit (OpCodes.Stloc, pinned_string);
+					ig.Emit (OpCodes.Stloc, clear_list [i]);
 				}
 			}
 
