@@ -42,8 +42,7 @@ namespace System.Drawing
 		private static StringFormat genericDefault;
 		private IntPtr nativeStrFmt = IntPtr.Zero;
                 private int language = GDIPlus.LANG_NEUTRAL;
-		internal CharacterRange [] CharRanges;
-		
+				
 		public StringFormat() : this (0, GDIPlus.LANG_NEUTRAL)
 		{					   
 			
@@ -232,17 +231,28 @@ namespace System.Drawing
 
 
       		public void SetMeasurableCharacterRanges (CharacterRange [] range)
-		{
-			CharRanges=(CharacterRange [])range.Clone();
-		}
-
-		internal CharacterRange [] GetCharRanges
-		{
-			get {
-				return(CharRanges);
+		{					
+			lock (this)
+			{					
+				Status status = GDIPlus.GdipSetStringFormatMeasurableCharacterRanges (nativeStrFmt, 
+					range.Length,	range);
+				
+				GDIPlus.CheckStatus (status);			
 			}
 		}
-	
+		
+		internal int GetMeasurableCharacterRangeCount () 
+		{
+			lock (this)
+			{				
+				int cnt;		
+				Status status = GDIPlus.GdipGetStringFormatMeasurableCharacterRangeCount (nativeStrFmt, out cnt);
+				
+				GDIPlus.CheckStatus (status);			
+				return cnt;
+			}
+		}			
+			
 		public object Clone()
 		{
 			lock (this)

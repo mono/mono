@@ -1425,20 +1425,26 @@ namespace System.Drawing
 			return IsVisible (new Rectangle (x, y, width, height));
 		}
 
-		[MonoTODO]
+		
 		public Region [] MeasureCharacterRanges (string text, Font font, RectangleF layoutRect, StringFormat stringFormat)
-		{
-			Region []	result=new Region[stringFormat.GetCharRanges.Length];
-			string 		textFragment;
-			SizeF		fragmentSize;
+		{	
+			Status status;			
+			int regcount = stringFormat.GetMeasurableCharacterRangeCount ();
+			IntPtr[] native_regions = new IntPtr [regcount];
+			Region[] regions = new Region [regcount];
 			
-			for (int i=0; i<stringFormat.GetCharRanges.Length; i++) { 
-				textFragment=text.Substring(stringFormat.GetCharRanges[i].First, stringFormat.GetCharRanges[i].Length);
-				fragmentSize=MeasureString(textFragment, font, new SizeF(layoutRect.Width, layoutRect.Height), stringFormat);
-				result[i]=new Region(new RectangleF(layoutRect.X, layoutRect.Y, layoutRect.X+fragmentSize.Width, layoutRect.Y+fragmentSize.Height));
-			}
-
-			return(result);
+			for (int i = 0; i < regcount; i++) {
+				regions[i] = new Region ();
+				native_regions[i] = regions[i].NativeObject;				
+			}												
+			
+			status =  GDIPlus.GdipMeasureCharacterRanges (nativeObject, text, text.Length,
+				font.NativeObject, ref layoutRect, stringFormat.NativeObject, 
+				regcount, out native_regions[0]); 
+			
+			GDIPlus.CheckStatus (status);				
+							
+			return regions;							
 		}
 
 		

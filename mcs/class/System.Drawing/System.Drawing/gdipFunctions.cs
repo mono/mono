@@ -850,8 +850,20 @@ namespace System.Drawing
 		[DllImport("gdiplus.dll", CharSet=CharSet.Unicode)]
 		internal static extern Status GdipMeasureString(IntPtr graphics, string str, int length, IntPtr font,
     		 ref RectangleF layoutRect, IntPtr stringFormat, out RectangleF boundingBox, out int codepointsFitted,
-    				out int linesFilled);          
+    				out int linesFilled);              				
+    				
+    		[DllImport("gdiplus.dll", CharSet=CharSet.Unicode)]
+		internal static extern Status GdipMeasureCharacterRanges (IntPtr graphics, string str, int length, IntPtr font,
+			ref RectangleF layoutRect, IntPtr stringFormat, int regcount, out IntPtr regions);          
+
+    		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipSetStringFormatMeasurableCharacterRanges (IntPtr native, 
+			int cnt, CharacterRange [] range);
 		
+  		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipGetStringFormatMeasurableCharacterRangeCount (IntPtr native, 
+			out int cnt);		
+	
 		// Bitmap functions
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipCreateBitmapFromScan0 (int width, int height, int stride, PixelFormat format, IntPtr scan0, out IntPtr bmp);
