@@ -1,3 +1,16 @@
+2003-07-14  Ravi Pratap M  <ravi@ximian.com>
+
+	* Makefile: Make sure that we use the newly generated compiler
+	to run the tests, not the installed one.
+
+	Modify targets to compile and run in one go instead of separate
+	targets for each task.
+
+	* test-196.cs: Fix careless error - returning a value from a void
+	Main ().
+
+	Add it back to the test suite.
+
 2003-07-14  Martin Baulig  <martin@ximian.com>
 
 	* test-204.cs: User defined conditional logical operators; bug #40505.

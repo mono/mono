@@ -16,7 +16,7 @@ class X {
 		long ll = (b & (l << r));
 	}
 	
-	static void Main ()
+	static int Main ()
 	{
 		return 0;
 	}
