@@ -1,3 +1,8 @@
+2004-12-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: reread application CultureInfo as web.config
+	might have changed. Fixes bug #62539.
+
 2004-11-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpResponse.cs: fixed ApplyAppPathModifier to insert the session ID.

@@ -1,3 +1,7 @@
+2004-12-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConfigurationSettings.cs: correctly detect web.config changes.
+
 2004-11-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HandlerItem.cs: for reusable items, return the same instance always.

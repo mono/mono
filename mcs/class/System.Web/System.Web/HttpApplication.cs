@@ -1322,6 +1322,7 @@ namespace System.Web
 
 		internal void OnStateExecuteEnter ()
 		{
+			InitCulture ();
 			SaveThreadCulture ();
 			_savedContext = HttpContext.Context;
 			HttpContext.Context = _Context;
