@@ -1,3 +1,7 @@
+2002-10-02  Martin Baulig  <martin@gnome.org>
+
+	* debug-mono-symfile.c: Added support for methods.
+
 2002-10-01  Martin Baulig  <martin@gnome.org>
 
 	* debug-mono-symfile.c: Don't emit methods and line numbers for
