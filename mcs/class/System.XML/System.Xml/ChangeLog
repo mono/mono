@@ -1,5 +1,29 @@
 2004-05-22  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlFactory.cs,
+	  XmlItemView.cs,
+	  XmlItemViewCollection.cs,
+	  XmlReaderSettings.cs,
+	  XmlWriterSettings.cs : added new .NET 2.0 classes.
+
+	* AsyncXmlTextWriter.cs,
+	  IXPathChangeNavigator.cs,
+	  IXPathEditor.cs,
+	  IXPathNavigator.cs,
+	  XmlChangeFilters.cs,
+	  XmlInfoItemType.cs,
+	  XmlNodeChangeType.cs,
+	  XPathChangeNavigator.cs,
+	  XPathDocument2.cs,
+	  XPathDocument2ChangedEventAction.cs,
+	  XPathDocument2ChangedEventHandler.cs,
+	  XPathEditor.cs,
+	  XPathNavigator2.cs : removed. (They are only in .NET 1.2)
+
+	* XmlWriter.cs : added new NET_2_0 WriteElementString().
+
+2004-05-22  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlNodeChangedEventArgs.cs : not properly inherited from EventArgs.
 
 2004-05-17  Atsushi Enomoto <atsushi@ximian.com>

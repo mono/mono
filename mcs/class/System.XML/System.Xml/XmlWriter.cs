@@ -149,6 +149,15 @@ namespace System.Xml
 			WriteEndElement();
 		}
 
+#if NET_2_0
+		public void WriteElementString (string prefix, string localName, string ns, string value)
+		{
+			WriteStartElement(prefix, localName, ns);
+			WriteString(value);
+			WriteEndElement();
+		}
+#endif
+
 		public abstract void WriteEndAttribute ();
 
 		public abstract void WriteEndDocument ();
