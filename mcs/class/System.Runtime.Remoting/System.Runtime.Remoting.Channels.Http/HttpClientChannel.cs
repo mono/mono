@@ -203,8 +203,7 @@ namespace System.Runtime.Remoting.Channels.Http
 		{
 			if(sinkProvider == null)
 			{
-				//_sinkProvider = new SoapClientFormatterSinkProvider();
-				_sinkProvider  = new BinaryClientFormatterSinkProvider();
+				_sinkProvider = new SoapClientFormatterSinkProvider();
 				_sinkProvider.Next = new HttpClientTransportSinkProvider();
 			}
 			else

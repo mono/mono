@@ -1,3 +1,7 @@
+2003-08-18  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* HttpClientChannel.cs, HttpServerChannel.cs: Fixed bug #47703
+
 2003-07-23  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* Makefile: added dll extension to System.Runtime.Remoting reference

@@ -147,9 +147,8 @@ namespace System.Runtime.Remoting.Channels.Http
 			_channelData = new ChannelDataStore(urls);
 			
 			
-			//Change this into BinaryFormatterSinkProvider() in mono
 			if(_sinkProvider == null)
-				_sinkProvider = new BinaryServerFormatterSinkProvider();
+				_sinkProvider = new SoapServerFormatterSinkProvider();
 
 			
 			
