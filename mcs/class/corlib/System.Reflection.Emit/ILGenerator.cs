@@ -500,8 +500,8 @@ namespace System.Reflection.Emit {
 			if (method is MethodBuilder)
 				add_token_fixup (method);
 			emit_int (token);
-			if (method.ReturnType == void_type)
-				cur_stack --;
+			if (method.ReturnType != void_type)
+				cur_stack ++;
 			ParameterInfo[] mparams = method.GetParameters();
 			if (mparams != null)
 				cur_stack -= mparams.Length;

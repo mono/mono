@@ -1,4 +1,8 @@
 
+Tue Jul 16 19:32:08 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* ILGenerator.cs: stack size check fix.
+
 Sat Jul 13 17:30:51 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* AssemblyBuilder.cs: add also the enum_type for compiling corlib.
