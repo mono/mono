@@ -305,7 +305,7 @@ namespace System.Xml.XPath
 					rgNodes.Add (n.Clone ());
 
 			rgNodes.Sort (XPathNavigatorComparer.Instance);
-			return new ListIterator (iter, rgNodes, true);
+			return new ListIterator (iter, rgNodes);
 		}
 
 		public override string ToString ()

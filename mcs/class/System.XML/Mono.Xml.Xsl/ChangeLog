@@ -1,3 +1,11 @@
+2005-03-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslKey.cs : removed last ListIterator.ctor() argument.
+	  Reverted the last commit that changed internal key index change 
+	  from ArrayList to Hashtable. Avoid clone in CollectIndex().
+	  Sort results in Evaluate() before passing list to ListIterator.
+	* XslFunctions.cs : removed last ListIterator.ctor() argument.
+
 2005-03-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslKey.cs,

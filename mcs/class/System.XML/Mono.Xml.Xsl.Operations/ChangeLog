@@ -1,3 +1,7 @@
+2005-03-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslVariable.cs : removed last ListIterator.ctor() argument.
+
 2005-03-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslText.cs : whitespace nodes should be written at any time, once

@@ -64,12 +64,10 @@ namespace System.Xml.XPath
 			get { return _nsm; }
 			set { _nsm = value; }
 		}
-		
+
 		public virtual bool ReverseAxis {
 			get { return false; }
 		}
-
-		public abstract bool RequireSorting { get; }
 
 		public virtual int ComparablePosition {
 			get {
@@ -139,10 +137,6 @@ namespace System.Xml.XPath
 		public override XPathNavigator Current {
 			get { return iter.Current; }
 		}
-
-		public override bool RequireSorting {
-			get { return true; }
-		}
 	}
 
 	internal abstract class SimpleIterator : BaseIterator
@@ -193,8 +187,6 @@ namespace System.Xml.XPath
 		public override XPathNavigator Current {
 			get { return _nav; }
 		}
-
-		public override bool RequireSorting { get { return false; } }
 	}
 
 	internal class NullIterator : SelfIterator
@@ -213,6 +205,7 @@ namespace System.Xml.XPath
 	internal class ParensIterator : BaseIterator
 	{
 		BaseIterator _iter;
+
 		public ParensIterator (BaseIterator iter) : base (iter.NamespaceManager) 
 		{
 			_iter = iter;
@@ -228,8 +221,6 @@ namespace System.Xml.XPath
 		}
 
 		public override XPathNavigator Current { get { return _iter.Current; }}
-
-		public override bool RequireSorting { get { return _iter.RequireSorting; } }
 
 		public override int Count { get { return _iter.Count; } }
 	}
@@ -258,8 +249,6 @@ namespace System.Xml.XPath
 		}
 
 		public override bool ReverseAxis { get { return true; } }
-
-		public override bool RequireSorting { get { return false; } }
 	}
 
 	internal class ChildIterator : SimpleIterator
@@ -275,8 +264,6 @@ namespace System.Xml.XPath
 			}
 			return fSuccess;
 		}
-
-		public override bool RequireSorting { get { return false; } }
 	}
 
 	internal class FollowingSiblingIterator : SimpleIterator
@@ -299,8 +286,6 @@ namespace System.Xml.XPath
 			}
 			return false;
 		}
-
-		public override bool RequireSorting { get { return false; } }
 	}
 
 	internal class PrecedingSiblingIterator : SimpleIterator
@@ -358,8 +343,6 @@ namespace System.Xml.XPath
 		public override bool ReverseAxis {
 			get { return true; }
 		}
-
-		public override bool RequireSorting { get { return true; } }
 	}
 
 	internal class AncestorIterator : SimpleIterator
@@ -422,8 +405,6 @@ namespace System.Xml.XPath
 		public override bool ReverseAxis {
 			get { return true; }
 		}
-
-		public override bool RequireSorting { get { return true; } }
 
 		public override int Count {
 			get {
@@ -500,8 +481,6 @@ namespace System.Xml.XPath
 			get { return true; }
 		}
 
-		public override bool RequireSorting { get { return true; } }
-
 		public override int Count {
 			get {
 				if (navigators == null)
@@ -551,8 +530,6 @@ namespace System.Xml.XPath
 			_finished = true;
 			return false;
 		}
-
-		public override bool RequireSorting { get { return false; } }
 	}
 
 	internal class DescendantOrSelfIterator : SimpleIterator
@@ -600,8 +577,6 @@ namespace System.Xml.XPath
 			_finished = true;
 			return false;
 		}
-
-		public override bool RequireSorting { get { return false; } }
 	}
 
 	internal class FollowingIterator : SimpleIterator
@@ -660,8 +635,6 @@ namespace System.Xml.XPath
 			_finished = true;
 			return false;
 		}
-
-		public override bool RequireSorting { get { return false; } }
 	}
 
 	internal class PrecedingIterator : SimpleIterator
@@ -717,8 +690,6 @@ namespace System.Xml.XPath
 		public override bool ReverseAxis {
 			get { return true; }
 		}
-
-		public override bool RequireSorting { get { return true; } }
 	}
 
 	internal class NamespaceIterator : SimpleIterator
@@ -745,7 +716,6 @@ namespace System.Xml.XPath
 		}
 
 		public override bool ReverseAxis { get { return true; } }
-		public override bool RequireSorting { get { return false; } }
 	}
 
 	internal class AttributeIterator : SimpleIterator
@@ -770,8 +740,6 @@ namespace System.Xml.XPath
 			}
 			return false;			
 		}
-
-		public override bool RequireSorting { get { return true; } }
 	}
 
 	internal class AxisIterator : BaseIterator
@@ -820,8 +788,6 @@ namespace System.Xml.XPath
 		public override bool ReverseAxis {
 			get { return _iter.ReverseAxis; }
 		}
-
-		public override bool RequireSorting { get { return _iter.RequireSorting; } }
 	}
 
 	internal class SimpleSlashIterator : BaseIterator
@@ -864,11 +830,6 @@ namespace System.Xml.XPath
 
 		public override XPathNavigator Current {
 			get { return _current; }
-		}
-
-		public override bool RequireSorting {
-			// It always does not need to be sorted.
-			get { return false; }
 		}
 	}
 
@@ -1027,11 +988,6 @@ namespace System.Xml.XPath
 			}
 		}
 
-		public override bool RequireSorting {
-			// It always does not need to be sorted.
-			get { return false; }
-		}
-
 		public override int Count { get { return _navStore == null ? base.Count : _navStore.Count; } }
 	}
 
@@ -1096,36 +1052,30 @@ namespace System.Xml.XPath
 		public override bool ReverseAxis {
 			get { return _iter.ReverseAxis; }
 		}
-
-		public override bool RequireSorting { get { return _iter.RequireSorting; } }
 	}
 
 	internal class ListIterator : BaseIterator
 	{
 		private IList _list;
-		bool _requireSorting;
 
-		public ListIterator (BaseIterator iter, IList list, bool requireSorting) : base (iter.NamespaceManager)
+		public ListIterator (BaseIterator iter, IList list) : base (iter.NamespaceManager)
 		{
 			if (!(list is ICloneable))
 				throw new ArgumentException ("Target enumerator must be cloneable.");
 			_list = list;
-			_requireSorting = requireSorting;
 		}
 		
-		public ListIterator (IList list, NSResolver nsm, bool requireSorting) : base (nsm)
+		public ListIterator (IList list, NSResolver nsm) : base (nsm)
 		{
 			if (!(list is ICloneable))
 				throw new ArgumentException ("Target enumerator must be cloneable.");
 			_list = list;
-			_requireSorting = requireSorting;
 		}
 
 		private ListIterator (ListIterator other) : base (other)
 		{
 			ICloneable listClone = other._list as ICloneable;
 			_list = (IList) listClone.Clone ();
-			_requireSorting = other._requireSorting;
 		}
 		public override XPathNodeIterator Clone () { return new ListIterator (this); }
 
@@ -1142,8 +1092,6 @@ namespace System.Xml.XPath
 				return (XPathNavigator) _list [CurrentPosition - 1]; 
 			}
 		}
-
-		public override bool RequireSorting { get { return _requireSorting; } }
 
 		public override int Count { get { return _list.Count; } }
 	}
@@ -1225,7 +1173,54 @@ namespace System.Xml.XPath
 		{
 			get { return _current; }
 		}
+	}
 
-		public override bool RequireSorting { get { return _left.RequireSorting || _right.RequireSorting; } }
+	internal class OrderedIterator : BaseIterator
+	{
+		BaseIterator iter;
+		ArrayList list;
+		int index = -1;
+
+		public OrderedIterator (BaseIterator iter)
+			: base (iter.NamespaceManager)
+		{
+//			if (iter.Ordered)
+			if (false)
+				this.iter = iter;
+			else {
+				list = new ArrayList ();
+				while (iter.MoveNext ())
+					list.Add (iter.Current);
+				list.Sort (XPathNavigatorComparer.Instance);
+			}
+		}
+
+		private OrderedIterator (OrderedIterator other, bool dummy)
+			: base (other)
+		{
+			if (other.iter != null)
+				iter = (BaseIterator) other.iter.Clone ();
+			list = other.list;
+			index = other.index;
+		}
+
+		public override XPathNodeIterator Clone ()
+		{
+			return new OrderedIterator (this);
+		}
+
+		public override bool MoveNextCore ()
+		{
+			if (iter != null)
+				return iter.MoveNext ();
+			else if (index++ < list.Count)
+				return true;
+			index--;
+			return false;
+		}
+
+		public override XPathNavigator Current {
+			get { return iter != null ? iter.Current : index < 0 ? null : (XPathNavigator) list [index]; }
+		}
 	}
 }

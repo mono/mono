@@ -277,7 +277,7 @@ namespace Mono.Xml.Xsl
 				}
 			}
 			
-			return new ListIterator (list, xsltContext, false);
+			return new ListIterator (list, xsltContext);
 		}
 	
 		XPathNodeIterator GetDocument (XsltCompiledContext xsltContext, string arg0, string baseUri)
@@ -662,7 +662,7 @@ namespace Mono.Xml.Xsl
 			}
 			ArrayList al = new ArrayList ();
 			al.Add (nav);
-			return new ListIterator (al, ctx, false);
+			return new ListIterator (al, ctx);
 		}
 	}
 }

@@ -95,7 +95,7 @@ namespace Mono.Xml.Xsl.Operations {
 					XPathNodeIterator iter = (XPathNodeIterator) o;
 					while (iter.MoveNext ())
 						al.Add (iter.Current.Clone ());
-					o = new ListIterator (al, p.XPathContext, false);
+					o = new ListIterator (al, p.XPathContext);
 				}
 				return o;
 			} else if (content != null) {

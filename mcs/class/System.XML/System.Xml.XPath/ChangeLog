@@ -1,5 +1,13 @@
 2004-03-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DefaultContext.cs,
+	  Expression.cs,
+	  Iterator.cs : Now RequireSorting is not required in BaseIterator
+	  (it is now fully in Expression).
+	  Removed the last ListIterator .ctor() argument.
+
+2004-03-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XPathNavigator.cs : In ComparePosition(), make use of IsDescendant().
 
 2004-03-14  Atsushi Enomoto  <atsushi@ximian.com>

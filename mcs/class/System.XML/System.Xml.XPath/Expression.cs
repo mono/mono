@@ -238,7 +238,7 @@ namespace System.Xml.XPath
 					XPathSortElement elt = (XPathSortElement) rgElts [iResult];
 					rgResults [iResult] = elt.Navigator;
 				}
-				return new ListIterator (iter, rgResults, false);
+				return new ListIterator (iter, rgResults);
 			}
 
 			class XPathSortElement

@@ -122,10 +122,13 @@ namespace Mono.Xml.Xsl
 		{
 			XPathNavigator nav = doc.Clone ();
 			nav.MoveToRoot ();
+			XPathNavigator tmp = doc.Clone ();
 
 			do {
-				if (nav.Matches (key.MatchPattern))
-					CollectIndex (nav);
+				if (nav.Matches (key.MatchPattern)) {
+					tmp.MoveTo (nav);
+					CollectIndex (nav, tmp);
+				}
 			} while (MoveNavigatorToNext (nav));
 		}
 
@@ -140,9 +143,8 @@ namespace Mono.Xml.Xsl
 			return false;
 		}
 
-		private void CollectIndex (XPathNavigator nav)
+		private void CollectIndex (XPathNavigator nav, XPathNavigator target)
 		{
-			XPathNavigator target = nav.Clone ();
 			XPathNodeIterator iter;
 			switch (key.UsePattern.ReturnType) {
 			case XPathResultType.NodeSet:
@@ -169,12 +171,15 @@ namespace Mono.Xml.Xsl
 
 		private void AddIndex (string key, XPathNavigator target)
 		{
-			Hashtable al = map [key] as Hashtable;
+			ArrayList al = map [key] as ArrayList;
 			if (al == null) {
-				al = new Hashtable ();
+				al = new ArrayList ();
 				map [key] = al;
 			}
-			al [target] = target;
+			for (int i = 0; i < al.Count; i++)
+				if (((XPathNavigator) al [i]).IsSamePosition (target))
+					return;
+			al.Add (target.Clone ());
 		}
 
 		public bool Matches (XPathNavigator nav, string value)
@@ -192,11 +197,11 @@ namespace Mono.Xml.Xsl
 				key.UsePattern.SetContext (null);
 			}
 			
-			Hashtable al = map [value] as Hashtable;
+			ArrayList al = map [value] as ArrayList;
 			if (al == null)
 				return false;
-			foreach (XPathNavigator i in al.Values)
-				if (i.IsSamePosition (nav))
+			for (int i = 0; i < al.Count; i++)
+				if (((XPathNavigator) al [i]).IsSamePosition (nav))
 					return true;
 			return false;
 		}
@@ -215,8 +220,8 @@ namespace Mono.Xml.Xsl
 			} else {
 				FindKeyMatch (XPathFunctions.ToString (o), result, iter.Current);
 			}
-			
-			return new ListIterator (result, (ctx), true);
+			result.Sort (XPathNavigatorComparer.Instance);
+			return new ListIterator (result, (ctx));
 		}
 		
 		void FindKeyMatch (string value, ArrayList result, XPathNavigator context)
