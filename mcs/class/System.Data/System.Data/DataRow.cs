@@ -1368,8 +1368,8 @@ namespace System.Data {
 					}
 					
 					//Saving the current value as the column value
-					row [index] = targetColumn [IndexFromVersion (DataRowVersion.Default)];
-					
+					object defaultVal = column [IndexFromVersion (DataRowVersion.Default)];
+					row [index] = defaultVal;
 				}
 			}
 			CopyState(row);

@@ -1,3 +1,8 @@
+2005-03-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataRow.cs : on importing row, it was copying data from incorrect
+	  DataRow. This fixes bug #73288.
+
 2005-03-07  Jackson Harper  <jackson@ximian.com>
 
 	* DataViewManagerListItemTypeDescriptor.cs: Implement missing
