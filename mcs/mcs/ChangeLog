@@ -1,5 +1,16 @@
 2001-10-18  Ravi Pratap  <ravi@ximian.com>
 
+	* delegate.cs (Delegate::VerifyDelegate): New method to verify
+	if two delegates are compatible.
+
+	(NewDelegate::DoResolve): Update to take care of the case when
+	we instantiate a delegate from another delegate.
+
+	* typemanager.cs (FindMembers): Don't even try to look up members
+	of Delegate types for now.
+
+2001-10-18  Ravi Pratap  <ravi@ximian.com>
+
 	* delegate.cs (NewDelegate): New class to take care of delegate
 	instantiation.
 

@@ -151,6 +151,10 @@ namespace CIR {
 			
 		}
 
+		// <summary>
+		//  Verifies whether the method in question is compatible with the delegate
+		//  Returns the method itself if okay and null if not.
+		// </summary>
 		public MethodBase VerifyMethod (MethodBase mb, Location loc)
 		{
 			ParameterData pd = Invocation.GetParameterData (mb);
@@ -187,6 +191,10 @@ namespace CIR {
 			return null;
 		}
 
+		// <summary>
+		//  Verifies whether the invocation arguments are compatible with the
+		//  delegate's target method
+		// </summary>
 		public bool VerifyApplicability (EmitContext ec, ArrayList args, Location loc)
 		{
 			int arg_count;
@@ -231,7 +239,34 @@ namespace CIR {
 
 			return true;
 		}
-  		
+
+		// <summary>
+		//  Verifies whether the delegate in question is compatible with this one in
+		//  order to determine if instantiation from the same is possible.
+		// </summary>
+		public bool VerifyDelegate (Delegate del)
+		{
+			if (ret_type != del.TargetReturnType)
+				return false;
+
+			Type [] other_param_types = del.ParameterTypes;
+			
+			if (param_types.Length != other_param_types.Length)
+				return false;
+
+			for (int i = param_types.Length; i > 0; ) {
+				i--;
+
+				if (param_types [i] != other_param_types [i])
+					return false;
+			}
+
+			// FIXME : Hey, what about parameter modifiers ?
+
+			return true;
+
+		}
+		
 		public string FullDelegateDesc ()
 		{
 			StringBuilder sb = new StringBuilder (TypeManager.CSharpName (System.Type.GetType (ReturnType)));
@@ -282,6 +317,19 @@ namespace CIR {
 				delegate_method = value;
 			}
 		}
+
+		public Type TargetReturnType {
+			get {
+				return ret_type;
+			}
+		}
+
+		public Type [] ParameterTypes {
+			get {
+				return param_types;
+			}
+		}
+		
 	}
 
 	public class NewDelegate : Expression {
@@ -348,10 +396,35 @@ namespace CIR {
 				
 				eclass = ExprClass.Value;
 				return this;
-			} else {
-				Report.Error (-200, Location, "Cannot handle delegate instantiation from other delegates");
+			}
+
+			Type e_type = e.Type;
+
+			Delegate d = TypeManager.LookupDelegate (e_type);
+
+			if (d == null) {
+				Report.Error (-12, Location, "Cannot create a delegate from something " +
+					      "not a delegate or a method.");
 				return null;
 			}
+
+			// This is what MS's compiler reports. We could always choose
+			// to be more verbose and actually give delegate-level specifics
+			
+			if (!d.VerifyDelegate (del)) {
+				Report.Error (29, Location, "Cannot implicitly convert type '" + d.Name + "' " +
+					      "to type '" + del.Name + "'");
+				return null;
+			}
+
+			delegate_instance_expr = d.InstanceExpression;
+			delegate_method        = d.TargetMethod;
+			
+			del.InstanceExpression = d.InstanceExpression;
+			del.TargetMethod       = d.TargetMethod;
+			
+			eclass = ExprClass.Value;
+			return this;
 		}
 		
 		public override void Emit (EmitContext ec)

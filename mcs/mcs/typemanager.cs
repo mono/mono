@@ -318,6 +318,9 @@ public class TypeManager {
 	public MemberInfo [] FindMembers (Type t, MemberTypes mt, BindingFlags bf, MemberFilter filter, object criteria)
 	{
 		TypeContainer tc;
+
+		if (IsDelegateType (t))
+		        return null;
 		
 		tc = (TypeContainer) builder_to_container [t];
 		
