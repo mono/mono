@@ -29,9 +29,12 @@
 //     - DropDownMenu
 //     - Adding a button to two toolbars
 //
-// $Revision: 1.4 $
+// $Revision: 1.5 $
 // $Modtime: $
 // $Log: ToolBarButton.cs,v $
+// Revision 1.5  2004/08/25 20:04:40  ravindra
+// Added the missing divider code and grip for ToolBar Control.
+//
 // Revision 1.4  2004/08/22 00:03:20  ravindra
 // Fixed toolbar control signatures.
 //
@@ -73,7 +76,8 @@ namespace System.Windows.Forms
 		private string text = "";
 		private string toolTip = "";
 		private bool visible = true;
-		private Point location = new Point (0, 0);
+		private Point location = new Point (ThemeEngine.Current.ToolBarGripWidth,
+						    ThemeEngine.Current.ToolBarGripWidth);
 		private bool wrapper = false;
 		private bool hilight = false;
 		private bool pressed = false; // this is to check for mouse down on a button

@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.30 $
+// $Revision: 1.31 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.31  2004/08/25 20:04:40  ravindra
+// Added the missing divider code and grip for ToolBar Control.
+//
 // Revision 1.30  2004/08/25 18:29:14  jordi
 // new methods, properties, and fixes for progressbar
 //
@@ -248,8 +251,15 @@ namespace System.Windows.Forms
 		/*
 		 * ToolBar Control properties
 		 */
+		// Grip width for the ToolBar
+		public override int ToolBarGripWidth
+		{
+			get { return 2;}
+		}
+
 		// Grip width for the Image on the ToolBarButton
-		public override int ToolBarImageGripWidth {
+		public override int ToolBarImageGripWidth
+		{
 			get { return 2;}
 		}
 
@@ -1679,10 +1689,16 @@ namespace System.Windows.Forms
 
 		public  override void DrawToolBar (Graphics dc, ToolBar control, StringFormat format)
 		{
-			Rectangle paint_area = new Rectangle (0, 0, control.Width, control.Height);// control.ClientRectangle;
+			// Exclude the area for divider
+			Rectangle paint_area = new Rectangle (0, ThemeEngine.Current.ToolBarGripWidth / 2, 
+							      control.Width, control.Height - ThemeEngine.Current.ToolBarGripWidth / 2);
+			bool flat = (control.Appearance == ToolBarAppearance.Flat);
+
 			dc.FillRectangle (SystemBrushes.Control, paint_area);
 			DrawBorderStyle (dc, paint_area, control.BorderStyle);
-			bool flat = (control.Appearance == ToolBarAppearance.Flat);
+
+			if (control.Divider)
+				dc.DrawLine (pen_buttonhilight, 0, 0, paint_area.Width, 0);
 
 			foreach (ToolBarButton button in control.Buttons) {
 

@@ -23,9 +23,12 @@
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //
 //
-// $Revision: 1.4 $
+// $Revision: 1.5 $
 // $Modtime: $
 // $Log: Theme.cs,v $
+// Revision 1.5  2004/08/25 20:04:40  ravindra
+// Added the missing divider code and grip for ToolBar Control.
+//
 // Revision 1.4  2004/08/24 18:37:02  jordi
 // fixes formmating, methods signature, and adds missing events
 //
@@ -198,6 +201,7 @@ namespace System.Windows.Forms
 		/*
 		  	ToolBar Control properties
 		 */
+		public abstract int ToolBarGripWidth {get;}              // Grip width for the ToolBar
 		public abstract int ToolBarImageGripWidth {get;}         // Grip width for the Image on the ToolBarButton
 		public abstract int ToolBarSeparatorWidth {get;}         // width of the separator
 		public abstract int ToolBarDropDownWidth { get; }        // width of the dropdown arrow rect

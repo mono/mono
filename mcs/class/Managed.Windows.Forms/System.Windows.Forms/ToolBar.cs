@@ -33,9 +33,12 @@
 // Copyright (C) Novell Inc., 2004
 //
 //
-// $Revision: 1.8 $
+// $Revision: 1.9 $
 // $Modtime: $
 // $Log: ToolBar.cs,v $
+// Revision 1.9  2004/08/25 20:04:40  ravindra
+// Added the missing divider code and grip for ToolBar Control.
+//
 // Revision 1.8  2004/08/25 00:43:13  ravindra
 // Fixed wrapping related issues in ToolBar control.
 //
@@ -589,12 +592,12 @@ namespace System.Windows.Forms
 		{
 			if (! this.Enabled || appearance != ToolBarAppearance.Flat) return;
 
-			if (currentButton != null) {
+			if (currentButton != null && currentButton.Hilight) {
 				currentButton.Hilight = false;
 				Redraw (false);
 				Invalidate (currentButton.Rectangle);
-				currentButton = null;
 			}
+			currentButton = null;
 		}
 
 		private void ToolBar_MouseMove (object sender, MouseEventArgs me)
@@ -703,7 +706,8 @@ namespace System.Windows.Forms
 		{
 			int wd = this.Width;             // the amount of space we have for rest of the buttons
 			int ht = this.ButtonSize.Height; // all buttons are displayed with the same height
-			Point loc = new Point (0, 0);    // the location to place the next button
+			Point loc;                       // the location to place the next button, leave the space for border
+			loc = new Point (ThemeEngine.Current.ToolBarGripWidth, ThemeEngine.Current.ToolBarGripWidth);
 
 			// clear all the wrappers if toolbar is not wrappable
 			if (! wrappable && ! autosize) {
@@ -742,7 +746,7 @@ namespace System.Windows.Forms
 							else {
 								button.Wrapper = true;
 								button.Location = loc;
-								loc.X = 0;
+								loc.X = ThemeEngine.Current.ToolBarGripWidth;
 								wd = this.Width;
 								// we need space to draw horizontal separator
 								loc.Y = loc.Y + ThemeEngine.Current.ToolBarSeparatorWidth + ht; 
@@ -764,7 +768,7 @@ namespace System.Windows.Forms
 								buttons [separatorIndex].Wrapper = true;
 								seenSeparator = false;
 								separatorIndex = -1;
-								loc.X = 0;
+								loc.X = ThemeEngine.Current.ToolBarGripWidth;
 								// we need space to draw horizontal separator
 								loc.Y = loc.Y + ht + ThemeEngine.Current.ToolBarSeparatorWidth; 
 								wd = this.Width;
@@ -785,8 +789,8 @@ namespace System.Windows.Forms
 				}
 				/* adjust the control height, if we are autosizeable */
 				if (autosize) // wrappable
-					if (this.Height != (loc.Y + ht))
-						this.Height = loc.Y + ht;
+					if (this.Height != (loc.Y + ht + ThemeEngine.Current.ToolBarGripWidth))
+						this.Height = loc.Y + ht + ThemeEngine.Current.ToolBarGripWidth;
 			}
 		}
 
