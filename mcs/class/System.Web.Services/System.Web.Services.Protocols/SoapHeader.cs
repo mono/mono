@@ -30,6 +30,7 @@
 
 using System.ComponentModel;
 using System.Xml.Serialization;
+using System.Xml;
 
 namespace System.Web.Services.Protocols {
 	[SoapType (IncludeInSchema = false)]
@@ -51,6 +52,12 @@ namespace System.Web.Services.Protocols {
 			actor = String.Empty; 
 			didUnderstand = false;
 			mustUnderstand = false;
+		}
+
+		internal SoapHeader (XmlElement elem)
+		{
+			actor = elem.GetAttribute ("actor", "http://schemas.xmlsoap.org/soap/envelope/");
+			EncodedMustUnderstand = elem.GetAttribute ("mustUnderstand", "http://schemas.xmlsoap.org/soap/envelope/");
 		}
 
 		#endregion // Constructors

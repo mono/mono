@@ -179,16 +179,20 @@ namespace System.Web.Services.Protocols {
 			responseSerializerId = parent.RegisterSerializer (OutputMembersMapping);
 
 			object[] o = source.GetCustomAttributes (typeof (SoapHeaderAttribute));
-			Headers = new HeaderInfo[o.Length];
+			ArrayList headerList = new ArrayList (o.Length);
+			
 			for (int i = 0; i < o.Length; i++) {
 				SoapHeaderAttribute att = (SoapHeaderAttribute) o[i];
 				MemberInfo[] mems = source.DeclaringType.GetMember (att.MemberName);
 				if (mems.Length == 0) throw new InvalidOperationException ("Member " + att.MemberName + " not found in class " + source.DeclaringType.FullName + ".");
 				
-				Type headerType = (mems[0] is FieldInfo) ? ((FieldInfo)mems[0]).FieldType : ((PropertyInfo)mems[0]).PropertyType;
-				Headers [i] = new HeaderInfo (mems[0], att);
-				parent.RegisterHeaderType (headerType, serviceNamespace, Use);
+				HeaderInfo header = new HeaderInfo (mems[0], att);
+				headerList.Add (header);
+
+				if (!header.IsUnknownHeader)
+					parent.RegisterHeaderType (header.HeaderType, serviceNamespace, Use);
 			}
+			Headers = (HeaderInfo[]) headerList.ToArray (typeof(HeaderInfo));
 
 			SoapExtensions = SoapExtension.GetMethodExtensions (source);
 		}
@@ -272,6 +276,7 @@ namespace System.Web.Services.Protocols {
 		internal MemberInfo Member;
 		internal SoapHeaderAttribute AttributeInfo;
 		internal Type HeaderType;
+		internal bool IsUnknownHeader;
 
 		public HeaderInfo (MemberInfo member, SoapHeaderAttribute attributeInfo)
 		{
@@ -279,6 +284,14 @@ namespace System.Web.Services.Protocols {
 			AttributeInfo = attributeInfo;
 			if (Member is PropertyInfo) HeaderType = ((PropertyInfo)Member).PropertyType;
 			else HeaderType = ((FieldInfo)Member).FieldType;
+			
+			if (HeaderType == typeof(SoapHeader) || HeaderType == typeof(SoapUnknownHeader) ||
+				HeaderType == typeof(SoapHeader[]) || HeaderType == typeof(SoapUnknownHeader[]))
+			{
+				IsUnknownHeader = true;
+			}
+			else if (!typeof(SoapHeader).IsAssignableFrom (HeaderType))
+				throw new InvalidOperationException (string.Format ("Header members type must be a SoapHeader subclass"));
 		}
 		
 		public object GetHeaderValue (object ob)
@@ -287,12 +300,28 @@ namespace System.Web.Services.Protocols {
 			else return ((FieldInfo)Member).GetValue (ob);
 		}
 
-		public void SetHeaderValue (object ob, object value)
+		public void SetHeaderValue (object ob, SoapHeader header)
 		{
+			object value = header;
+			if (IsUnknownHeader && HeaderType.IsArray)
+			{
+				SoapUnknownHeader uheader = header as SoapUnknownHeader;
+				SoapUnknownHeader[] array = (SoapUnknownHeader[]) GetHeaderValue (ob);
+				if (array == null || array.Length == 0) {
+					value = new SoapUnknownHeader[] { uheader };
+				}
+				else {
+					SoapUnknownHeader[] newArray = new SoapUnknownHeader [array.Length+1];
+					Array.Copy (array, newArray, array.Length);
+					newArray [array.Length] = uheader;
+					value = newArray;
+				}
+			}
+			
 			if (Member is PropertyInfo) ((PropertyInfo)Member).SetValue (ob, value, null);
 			else ((FieldInfo)Member).SetValue (ob, value);
 		}
-
+		
 		public SoapHeaderDirection Direction
 		{
 			get { return AttributeInfo.Direction; }

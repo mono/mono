@@ -1,3 +1,11 @@
+2004-07-01  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Methods.cs, SoapMessage.cs: Added support for unknown headers.
+	* SoapHeader.cs, SoapUnknownHeader.cs: Added new constructor that takes an
+	  XmlElement with header info.
+	* WebServiceHelper.cs: Write the encodingStyle attribute when using the
+	  encoded format. Added support for unknown headers.
+
 2004-06-22  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* XmlReturnReader.cs, XmlReturnWriter.cs: Generate the serializer with

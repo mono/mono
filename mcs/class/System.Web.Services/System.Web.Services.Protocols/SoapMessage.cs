@@ -187,7 +187,7 @@ namespace System.Web.Services.Protocols {
 			Headers.Clear ();
 			foreach (HeaderInfo hi in headers) 
 			{
-				if ((hi.Direction & direction) != 0) 
+				if ((hi.Direction & direction) != 0 && !hi.IsUnknownHeader) 
 				{
 					SoapHeader headerVal = hi.GetHeaderValue (target) as SoapHeader;
 					if (headerVal != null)
@@ -201,20 +201,24 @@ namespace System.Web.Services.Protocols {
 			foreach (SoapHeader header in Headers)
 			{
 				HeaderInfo hinfo = FindHeader (headersInfo, header.GetType ());
-				if (hinfo != null)
+				if (hinfo != null) {
 					hinfo.SetHeaderValue (target, header);
-				else
-					if (header.MustUnderstand)
-					throw new SoapHeaderException ("Unknown header", SoapException.MustUnderstandFaultCode);
-				header.DidUnderstand = false;
+					header.DidUnderstand = !hinfo.IsUnknownHeader;
+				}
 			}
 		}
 
 		HeaderInfo FindHeader (HeaderInfo[] headersInfo, Type headerType)
 		{
-			foreach (HeaderInfo headerInfo in headersInfo)
-				if (headerInfo.HeaderType == headerType) return headerInfo;
-			return null;
+			HeaderInfo unknownHeaderInfo = null;
+		
+			foreach (HeaderInfo headerInfo in headersInfo) {
+				if (headerInfo.HeaderType == headerType)
+					return headerInfo;
+				else if (headerInfo.IsUnknownHeader) 
+					unknownHeaderInfo = headerInfo;
+			}
+			return unknownHeaderInfo;
 		}
 
 		#endregion // Methods

@@ -47,6 +47,11 @@ namespace System.Web.Services.Protocols {
 			element = null;
 		}
 
+		internal SoapUnknownHeader (XmlElement elem): base (elem)
+		{
+			element = elem;
+		}
+
 		#endregion // Constructors
 
 		#region Properties

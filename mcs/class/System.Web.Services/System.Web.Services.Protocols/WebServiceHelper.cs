@@ -66,6 +66,8 @@ namespace System.Web.Services.Protocols
 		{
 			string encoding;
 
+			if (cts == null) cts = "";
+			
 			encoding = "utf-8";
 			int start = 0;
 			int idx = cts.IndexOf (';');
@@ -118,6 +120,10 @@ namespace System.Web.Services.Protocols
 
 			// Serialize body
 			xtw.WriteStartElement ("soap", "Body", WebServiceHelper.SoapEnvelopeNamespace);
+			
+			if (methodUse == SoapBindingUse.Encoded)
+				xtw.WriteAttributeString ("encodingStyle", WebServiceHelper.SoapEnvelopeNamespace, "http://schemas.xmlsoap.org/soap/encoding/");
+				
 			bodySerializer.Serialize (xtw, bodyContent);
 
 			xtw.WriteEndElement ();
@@ -152,19 +158,32 @@ namespace System.Web.Services.Protocols
 				{
 					xmlReader.ReadStartElement ();
 					xmlReader.MoveToContent ();
-					XmlQualifiedName qname = new XmlQualifiedName (xmlReader.LocalName, xmlReader.NamespaceURI);
-					XmlSerializer headerSerializer = typeStubInfo.GetHeaderSerializer (qname, methodUse);
-					if (headerSerializer != null)
-					{
-						SoapHeader header = (SoapHeader) headerSerializer.Deserialize (xmlReader);
-						headers.Add (header);
-					}
-					else
-					{
-						while (xmlReader.NodeType == XmlNodeType.EndElement)
-							xmlReader.Skip ();	// TODO: Check if the header has mustUnderstand=true
+					
+					while (xmlReader.NodeType != XmlNodeType.Element && xmlReader.NodeType != XmlNodeType.EndElement)
 						xmlReader.Skip ();
+						
+					xmlReader.MoveToContent ();
+					
+					if (xmlReader.NodeType == XmlNodeType.Element) {
+						XmlQualifiedName qname = new XmlQualifiedName (xmlReader.LocalName, xmlReader.NamespaceURI);
+						XmlSerializer headerSerializer = typeStubInfo.GetHeaderSerializer (qname, methodUse);
+						if (headerSerializer != null)
+						{
+							SoapHeader header = (SoapHeader) headerSerializer.Deserialize (xmlReader);
+							headers.Add (header);
+						}
+						else
+						{
+							XmlDocument doc = new XmlDocument ();
+							XmlElement elem = (XmlElement) doc.ReadNode (xmlReader);
+							headers.Add (new SoapUnknownHeader (elem));
+						}
 					}
+					
+					while (xmlReader.NodeType != XmlNodeType.EndElement)
+						xmlReader.Skip ();
+						
+					xmlReader.ReadEndElement ();
 				}
 				else
 					xmlReader.Skip ();
