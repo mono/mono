@@ -24,10 +24,14 @@ namespace System.Data
 		#region Fields
 
 		private DataTable table;
-		private Hashtable dataRowVersions;
-		private ArrayList columnErrors;
+
+		private object[] original;
+		private object[] proposed;
+		private object[] current;
+
+		private Hashtable versions;
+		private string[] columnErrors;
 		private string rowError;
-		private bool deleted;
 		private DataRowState rowState;
 
 		#endregion
@@ -38,16 +42,18 @@ namespace System.Data
 		{
 			table = builder.Table;
 
-			dataRowVersions = new Hashtable ();
-			dataRowVersions[DataRowVersion.Original] = new ArrayList ();
-			dataRowVersions[DataRowVersion.Default] = new ArrayList ();
-			dataRowVersions[DataRowVersion.Current] = new ArrayList ();
-			dataRowVersions[DataRowVersion.Proposed] = new ArrayList ();
+			original = new object[table.Columns.Count];
+			proposed = null;
+			current = new object[table.Columns.Count];
+	
+			versions = new Hashtable ();
 
-			columnErrors = new ArrayList ();
+			versions[DataRowVersion.Original] = original;
+			versions[DataRowVersion.Proposed] = proposed;
+			versions[DataRowVersion.Current] = current;
+
+			columnErrors = new string[table.Columns.Count];
 			rowError = String.Empty;
-
-			deleted = false;
 
 			rowState = DataRowState.Unchanged;
 		}
@@ -64,50 +70,96 @@ namespace System.Data
 		}
 
 		public object this[string columnName] {
-			get { return this[columnName, DataRowVersion.Default]; }
-			set { ((ArrayList)(dataRowVersions[DataRowVersion.Default]))[table.Columns.IndexOf(columnName)] = value; }
+			get { return this[columnName, DataRowVersion.Current]; }
+			set {
+				DataColumn column = table.Columns[columnName];
+				if (column == null) 
+					throw new IndexOutOfRangeException ();
+				this[column] = value;
+			}
 		}
 
 		public object this[DataColumn column] {
-			get { return this[column, DataRowVersion.Default]; }
-			set { ((ArrayList)(dataRowVersions[DataRowVersion.Default]))[table.Columns.IndexOf(column)] = value; }
+			get { return this[column, DataRowVersion.Current]; }
+			set {
+				if (column == null)
+					throw new ArgumentNullException ();
+				int columnIndex = table.Columns.IndexOf (column);
+				if (columnIndex == -1)
+					throw new ArgumentException ();
+				if (column.DataType != value.GetType ())
+					throw new InvalidCastException ();
+				if (rowState == DataRowState.Deleted)
+					throw new DeletedRowInaccessibleException ();
+				BeginEdit ();
+				proposed[columnIndex] = value;
+				EndEdit ();
+			}
 		}
 
 		public object this[int columnIndex] {
-			get { return this[columnIndex, DataRowVersion.Default]; }
-			set { ((ArrayList)(dataRowVersions[DataRowVersion.Default]))[columnIndex] = value; }
+			get { return this[columnIndex, DataRowVersion.Current]; }
+			set {
+				DataColumn column = table.Columns[columnIndex];
+				if (column == null) 
+					throw new IndexOutOfRangeException ();
+				this[column] = value;
+			}
 		}
 
 		public object this[string columnName, DataRowVersion version] {
-			get { return ((ArrayList)(dataRowVersions[version]))[table.Columns.IndexOf(columnName)]; }
+			get {
+				DataColumn column = table.Columns[columnName];
+				if (column == null) 
+					throw new IndexOutOfRangeException ();
+				return this[column, version];
+			}
 		}
 
 		public object this[DataColumn column, DataRowVersion version] {
-			get { return ((ArrayList)(dataRowVersions[version]))[table.Columns.IndexOf(column)]; }
+			get {
+				if (column == null)
+					throw new ArgumentNullException ();	
+				int columnIndex = table.Columns.IndexOf (column);
+				if (columnIndex == -1)
+					throw new ArgumentException ();
+				if (version == DataRowVersion.Default)
+					return column.DefaultValue;
+				if (versions[version] == null)
+					throw new VersionNotFoundException ();
+				return ((object[])(versions[version]))[columnIndex];
+			}
 		}
 
 		public object this[int columnIndex, DataRowVersion version] {
-			get { return ((ArrayList)(dataRowVersions[version]))[columnIndex]; }
+			get {
+				DataColumn column = table.Columns[columnIndex];
+				if (column == null) 
+					throw new IndexOutOfRangeException ();
+				return this[column, version];
+			}
 		}
 
 		public object[] ItemArray {
-			get { return ((ArrayList)(dataRowVersions[DataRowVersion.Default])).ToArray (); }
+			get { return current; }
 			set {
-				if (deleted)
-					throw new DeletedRowInaccessibleException ();
-
 				if (value.Length > table.Columns.Count)
-					throw new ArgumentException ("The array is larger than the number of columns in the table.");
+					throw new ArgumentException ();
+				if (rowState == DataRowState.Deleted)
+					throw new DeletedRowInaccessibleException ();
+				BeginEdit ();
+				proposed = value;
+
 				for (int i = 0; i < value.Length; i += 1)
 				{
 					if (table.Columns[i].DataType != value[i].GetType())
 						throw new InvalidCastException ();
-					if (table.Columns[i].ReadOnly && value[i] != ((ArrayList)(dataRowVersions[DataRowVersion.Default]))[i])
+					if (table.Columns[i].ReadOnly && value[i] != this[i])
 						throw new ReadOnlyException ();
 					if (!table.Columns[i].AllowDBNull && value[i] == null)
 						throw new NoNullAllowedException ();
-					((ArrayList)(dataRowVersions[DataRowVersion.Default]))[i] = value[i];
 				}
+				EndEdit ();
 			}
 		}
 
@@ -115,7 +167,6 @@ namespace System.Data
 			get {
 				if (this.HasErrors)
 					return rowError;
-
 				return String.Empty;
 			}
 			set { rowError = value; }
@@ -126,10 +177,7 @@ namespace System.Data
 		}
 
 		public DataTable Table {
-			[MonoTODO]
-			get {
-				return table;
-			}
+			get { return table; }
 		}
 
 		#endregion
@@ -139,25 +187,36 @@ namespace System.Data
 		public void AcceptChanges () 
 		{
 			this.EndEdit ();
-			// if the RowState was Added or Modified, RowState becomes Unchanged
-			// if the RowState was Deleted, the row is removed.
+
+			switch (rowState)
+			{
+				case DataRowState.Added:
+					rowState = DataRowState.Unchanged;
+					break;
+				case DataRowState.Modified:
+					rowState = DataRowState.Unchanged;
+					break;
+				case DataRowState.Deleted:
+					rowState = DataRowState.Deleted;
+					break;
+			}
 		}
 
 		public void BeginEdit() 
 		{
-			dataRowVersions[DataRowVersion.Proposed] = dataRowVersions[DataRowVersion.Current];
-			dataRowVersions[DataRowVersion.Default] = dataRowVersions[DataRowVersion.Proposed];
+			proposed = new object[table.Columns.Count];
+			Array.Copy (current, proposed, table.Columns.Count);
 		}
 
 		public void CancelEdit() 
 		{
-			dataRowVersions[DataRowVersion.Proposed] = null;
-			dataRowVersions[DataRowVersion.Default] = dataRowVersions[DataRowVersion.Current];
+			proposed = null;
 			rowState = DataRowState.Unchanged;
 		}
 
 		[MonoTODO]
-		public void ClearErrors() {
+		public void ClearErrors() 
+		{
 			throw new NotImplementedException ();
 		}
 
@@ -168,9 +227,8 @@ namespace System.Data
 
 		public void EndEdit() 
 		{
-			dataRowVersions[DataRowVersion.Current] = dataRowVersions[DataRowVersion.Proposed];
-			dataRowVersions[DataRowVersion.Default] = dataRowVersions[DataRowVersion.Current];
-			dataRowVersions[DataRowVersion.Proposed] = null;
+			Array.Copy (proposed, current, table.Columns.Count);
+			proposed = null;
 			rowState = DataRowState.Modified;
 		}
 
@@ -272,28 +330,29 @@ namespace System.Data
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public bool IsNull (DataColumn dc) {
-			throw new NotImplementedException ();
+		public bool IsNull (DataColumn column) 
+		{
+			return (this[column] == null);
+		}
+
+		public bool IsNull (int columnIndex) 
+		{
+			return (this[columnIndex] == null);
+		}
+
+		public bool IsNull (string columnName) 
+		{
+			return (this[columnName] == null);
+		}
+
+		public bool IsNull (DataColumn column, DataRowVersion version) 
+		{
+			return (this[column, version] == null);
 		}
 
 		[MonoTODO]
-		public bool IsNull (int i) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public bool IsNull (string s) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public bool IsNull (DataColumn dc, DataRowVersion version) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void RejectChanges () {
+		public void RejectChanges () 
+		{
 			CancelEdit ();
 		}
 
