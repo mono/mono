@@ -187,12 +187,9 @@ namespace System
 				binder = Binder.DefaultBinder;
 			return (MethodInfo)binder.SelectMethod (bindingAttr, match, types, modifiers);
 		}
-		
-		public override Type GetNestedType( string name, BindingFlags bindingAttr)
-		{
-			// FIXME
-			throw new NotImplementedException ();
-		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern override Type GetNestedType (string name, BindingFlags bindingAttr);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern override Type[] GetNestedTypes (BindingFlags bindingAttr);
