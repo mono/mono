@@ -1,5 +1,5 @@
 thisdir = class/System
-SUBDIRS = 
+SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = System.dll
@@ -9,11 +9,14 @@ LIBRARY_USE_INTERMEDIATE_FILE = yes
 # 1st pass - build System.dll without System.Xml.dll or System.Security.dll references
 # 2nd pass - build System.dll with System.Xml.dll and System.Security.dll references
 
+TEST_RESOURCES = \
+	Test/System/test-uri-props.txt \
+	Test/System/test-uri-props-manual.txt \
+	Test/System/test-uri-relative-props.txt
+
 LIB_MCS_FLAGS = /r:$(corlib)
 TEST_MCS_FLAGS = -nowarn:1595 -nowarn:0618 -nowarn:219 -nowarn:67 \
-	-resource:Test/System/test-uri-props.txt,test-uri-props.txt \
-	-resource:Test/System/test-uri-props-manual.txt,test-uri-props-manual.txt \
-	-resource:Test/System/test-uri-relative-props.txt,test-uri-relative-props.txt 
+	$(foreach f, $(TEST_RESOURCES), -resource:$(f),$(notdir $(f)))
 
 XML_DEP := System.Xml.dll
 XML_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(XML_DEP))
@@ -31,7 +34,8 @@ endif
 EXTRA_DISTFILES = \
 	System.Text.RegularExpressions/notes.txt	\
 	System.ComponentModel.Design/Changelog		\
-	Test/test-config-file
+	Test/test-config-file				\
+	$(TEST_RESOURCES)
 
 lib_file := $(wildcard ../lib/$(PROFILE)/System.dll)
 ifndef lib_file
@@ -79,7 +83,7 @@ LIB_MCS_FLAGS += /define:SECURITY_DEP /r:$(SECURITY_DEP)
 $(the_lib): $(SECURITY_DEP_FILE)
 endif
 
-$(test_lib): $(test_lib).config Test/System/test-uri-props.txt Test/System/test-uri-props-manual.txt Test/System/test-uri-relative-props.txt
+$(test_lib): $(test_lib).config $(TEST_RESOURCES)
 
 $(test_lib).config: Test/test-config-file
 	cp $< $@

@@ -1,3 +1,8 @@
+2005-02-03  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (TEST_RESOURCES): New.
+	(EXTRA_DISTFILES): Distribute them.
+
 2005-02-02  Ben Maurer  <bmaurer@ximian.com>
 
 	* Makefile: Embed the uri stuff as a resource.
