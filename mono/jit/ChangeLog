@@ -1,3 +1,7 @@
+2002-02-13  Miguel de Icaza  <miguel@ximian.com>
+
+	* jit.c (arch_allocate_var): Only assert that the alignment is
+	at least 32-bits aligned, not always 32-bits aligned (for I8 for example).
 
 Mon Feb 11 11:20:57 CET 2002 Paolo Molaro <lupus@ximian.com>
 
