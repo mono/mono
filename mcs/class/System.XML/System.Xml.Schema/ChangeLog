@@ -1,5 +1,10 @@
 2004-10-29  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaSimpleTypeUnion.cs : Added 2.0 BaseMemberTypes property 
+	  (this property name is also ambiguous and should be changed too.)
+
+2004-10-29  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaSimpleTypeList.cs : Added 2.0 BaseItemType property (BTW
 	  this property name is really ambiguous and should be changed.)
 

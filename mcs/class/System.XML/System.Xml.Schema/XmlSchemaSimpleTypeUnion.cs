@@ -37,6 +37,7 @@ namespace System.Xml.Schema
 		private XmlQualifiedName[] memberTypes;
 		const string xmlname = "union";
 		private object [] validatedTypes;
+		private XmlSchemaSimpleType [] validatedSchemaTypes;
 
 		public XmlSchemaSimpleTypeUnion()
 		{
@@ -55,6 +56,12 @@ namespace System.Xml.Schema
 			get{ return  memberTypes; } 
 			set{ memberTypes = value; }
 		}
+
+#if NET_2_0
+		public XmlSchemaSimpleType [] BaseMemberTypes {
+			get { return validatedSchemaTypes; }
+		}
+#endif
 
 		internal object [] ValidatedTypes
 		{
@@ -109,6 +116,8 @@ namespace System.Xml.Schema
 
 			XmlSchemaUtil.CompileID(Id,this,schema.IDCollection,h);
 
+			
+
 			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
@@ -149,6 +158,19 @@ namespace System.Xml.Schema
 				}
 			}
 			this.validatedTypes = al.ToArray ();
+
+#if NET_2_0
+			if (validatedTypes != null) {
+				validatedSchemaTypes = new XmlSchemaSimpleType [validatedTypes.Length];
+				for (int i = 0; i < validatedTypes.Length; i++) {
+					object t = validatedTypes [i];
+					XmlSchemaSimpleType st = t as XmlSchemaSimpleType;
+					if (st == null && t != null)
+						st = XmlSchemaType.GetBuiltInSimpleType (((XmlSchemaDatatype) t).TypeCode);
+					validatedSchemaTypes [i] = st;
+				}
+			}
+#endif
 
 			ValidationId = schema.ValidationId;
 			return errorCount;
