@@ -177,18 +177,18 @@ namespace System.Security {
 
 		public static PermissionSet ResolvePolicy (Evidence evidence)
 		{
-			PermissionSet ps = new PermissionSet (PermissionState.None);
-
 			// no evidence, no permission
 			if (evidence == null)
-				return ps;
+				return new PermissionSet (PermissionState.None);
 
+			PermissionSet ps = null;
 			// Note: can't call PolicyHierarchy since ControlPolicy isn't required to resolve policies
 			IEnumerator ple = Hierarchy;
 			while (ple.MoveNext ()) {
 				PolicyLevel pl = (PolicyLevel) ple.Current;
-				if (ResolvePolicyLevel (ps, pl, evidence))
+				if (ResolvePolicyLevel (ref ps, pl, evidence)) {
 					break;	// i.e. PolicyStatementAttribute.LevelFinal
+				}
 			}
 
 			ResolveIdentityPermissions (ps, evidence);
@@ -196,37 +196,36 @@ namespace System.Security {
 		}
 
 #if NET_2_0
+		[MonoTODO ("more tests are needed")]
 		public static PermissionSet ResolvePolicy (Evidence[] evidences)
 		{
-			if (evidences == null)
+			if ((evidences == null) || (evidences.Length == 0) ||
+				((evidences.Length == 1) && (evidences [0].Count == 0))) {
 				return new PermissionSet (PermissionState.None);
+			}
 
 			// probably not optimal
-			PermissionSet ps = null;
-			foreach (Evidence evidence in evidences) {
-				if (ps == null)
-					ps = ResolvePolicy (evidence);
-				else
-					ps = ps.Intersect (ResolvePolicy (evidence));
+			PermissionSet ps = ResolvePolicy (evidences [0]);
+			for (int i=1; i < evidences.Length; i++) {
+				ps = ps.Intersect (ResolvePolicy (evidences [i]));
 			}
 			return ps;
 		}
 
 		public static PermissionSet ResolveSystemPolicy (Evidence evidence)
 		{
-			PermissionSet ps = new PermissionSet (PermissionState.None);
-
 			// no evidence, no permission
 			if (evidence == null)
-				return ps;
+				return new PermissionSet (PermissionState.None);
 
 			// Note: can't call PolicyHierarchy since ControlPolicy isn't required to resolve policies
+			PermissionSet ps = null;
 			IEnumerator ple = Hierarchy;
 			while (ple.MoveNext ()) {
 				PolicyLevel pl = (PolicyLevel) ple.Current;
 				if (pl.Type == PolicyLevelType.AppDomain)
 					break;
-				if (ResolvePolicyLevel (ps, pl, evidence))
+				if (ResolvePolicyLevel (ref ps, pl, evidence))
 					break;	// i.e. PolicyStatementAttribute.LevelFinal
 			}
 
@@ -247,7 +246,7 @@ namespace System.Security {
 					"Policy doesn't grant the minimal permissions required to execute the assembly."));
 			}
 			// do we have the right to execute ?
-			if (checkExecutionRights) {
+			if (CheckExecutionRights) {
 				// unless we have "Full Trust"...
 				if (!resolved.IsUnrestricted ()) {
 					// ... we need to find a SecurityPermission
@@ -330,11 +329,21 @@ namespace System.Security {
 			_hierarchy = ArrayList.Synchronized (al);
 		}
 
-		internal static bool ResolvePolicyLevel (PermissionSet ps, PolicyLevel pl, Evidence evidence)
+		internal static bool ResolvePolicyLevel (ref PermissionSet ps, PolicyLevel pl, Evidence evidence)
 		{
 			PolicyStatement pst = pl.Resolve (evidence);
 			if (pst != null) {
-				ps = ps.Intersect (pst.PermissionSet);
+				if (ps == null) {
+					// only for initial (first) policy level processed
+					ps = pst.PermissionSet;
+				} else {
+					ps = ps.Intersect (pst.PermissionSet);
+					if (ps == null) {
+						// null is equals to None - exist that null can throw NullReferenceException ;-)
+						ps = new PermissionSet (PermissionState.None);
+					}
+				}
+
 				if ((pst.Attributes & PolicyStatementAttribute.LevelFinal) == PolicyStatementAttribute.LevelFinal)
 					return true;
 			}
