@@ -1,3 +1,8 @@
+2005-09-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BigInteger.cs: In sync with coirlib. This fix level 4 warnings about
+	CLSCompliant.
+
 2005-05-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BigInteger.cs: Faster scan of smallPrimes in IsProbablePrime. 
