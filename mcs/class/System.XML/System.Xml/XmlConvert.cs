@@ -5,7 +5,7 @@
 //      Dwivedi, Ajay kumar (Adwiv@Yahoo.com)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //      Alan Tam Siu Lung (Tam@SiuLung.com)
-//	Atsushi Enomoto (ginga@kit.h-ho.ne.jp)
+//	Atsushi Enomoto (ginga@kit.hi-ho.ne.jp)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
 //
@@ -20,9 +20,13 @@ namespace System.Xml {
 
 		static string encodedColon;
 		static string [] datetimeFormats;
+		static NumberStyles floatStyle;
 
 		static XmlConvert ()
 		{
+			floatStyle = NumberStyles.AllowCurrencySymbol | 
+				NumberStyles.AllowExponent | 
+				NumberStyles.AllowDecimalPoint;
 			encodedColon = "_x003A_";
 			datetimeFormats = new string[] {
 			  // dateTime
@@ -229,15 +233,15 @@ namespace System.Xml {
 		
 		public static Decimal ToDecimal(string s)
 		{
-			return Decimal.Parse(s, NumberFormatInfo.InvariantInfo);
+			return Decimal.Parse(s, CultureInfo.InvariantCulture);
 		}
-		
+
 		public static double ToDouble(string s)
 		{
 			if (s == "INF") return System.Double.PositiveInfinity;
 			if (s == "-INF") return System.Double.NegativeInfinity;
 			if (s == "NaN") return System.Double.NaN;
-			return Double.Parse(s, CultureInfo.InvariantCulture);
+			return Double.Parse (s, floatStyle);
 		}
 
 		public static Guid ToGuid(string s)
@@ -271,12 +275,12 @@ namespace System.Xml {
 			if (s == "INF") return System.Single.PositiveInfinity;
 			if (s == "-INF") return System.Single.NegativeInfinity;
 			if (s == "NaN") return System.Single.NaN;
-			return Single.Parse(s, CultureInfo.InvariantCulture);
+			return Single.Parse(s, floatStyle);
 		}
 
 		public static string ToString(Guid value)
 		{
-			return value.ToString("D",CultureInfo.InvariantCulture);
+			return value.ToString("D", CultureInfo.InvariantCulture);
 		}
 
 		public static string ToString(int value)
@@ -318,7 +322,7 @@ namespace System.Xml {
 
 		public static string ToString(Decimal value)
 		{
-			return value.ToString(CultureInfo.InvariantCulture);
+			return value.ToString (CultureInfo.InvariantCulture);
 		}
 
 		[CLSCompliant (false)]

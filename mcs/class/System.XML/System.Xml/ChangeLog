@@ -1,5 +1,14 @@
 2003-10-25  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* DTDValidatingReader.cs : Now it handles whitespace entity as
+	  significant.
+	* XmlConvert.cs : As to NIST testcases, exponential support on single
+	  and double floating point numbers.
+	* XmlValidatingReader.cs : If it IsDefault, then line number and line
+	  position returns 0.
+
+2003-10-25  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* DTDReader.cs,
 	  XmlConstructs.cs,
 	  XmlTextReader.cs,

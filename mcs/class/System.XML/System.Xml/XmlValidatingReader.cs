@@ -125,6 +125,8 @@ namespace System.Xml {
 
 		int IXmlLineInfo.LineNumber {
 			get {
+				if (IsDefault)
+					return 0;
 				IXmlLineInfo info = validatingReader as IXmlLineInfo;
 				return info != null ? info.LineNumber : 0;
 			}
@@ -132,6 +134,8 @@ namespace System.Xml {
 
 		int IXmlLineInfo.LinePosition {
 			get {
+				if (IsDefault)
+					return 0;
 				IXmlLineInfo info = validatingReader as IXmlLineInfo;
 				return info != null ? info.LinePosition : 0;
 			}

@@ -67,6 +67,7 @@ namespace Mono.Xml
 		bool isSignificantWhitespace;
 		bool isWhitespace;
 		bool isText;
+		bool nextMaybeSignificantWhitespace;
 
 		// This field is used to get properties and to raise events.
 		XmlValidatingReader validatingReader;
@@ -286,6 +287,7 @@ namespace Mono.Xml
 			isWhitespace = false;
 			isSignificantWhitespace = false;
 			isText = false;
+			nextMaybeSignificantWhitespace = false;
 
 			bool b = ReadContent () || currentTextValue != null;
 			if (!b && this.missingIDReferences.Count > 0) {
@@ -302,6 +304,7 @@ namespace Mono.Xml
 		private bool ReadContent ()
 		{
 			if (nextEntityReader != null) {
+				nextMaybeSignificantWhitespace = true;
 				if (DTD == null || DTD.EntityDecls [reader.Name] == null)
 					throw new XmlException ("Entity '" + reader.Name + "' was not declared.");
 				entityReaderStack.Push (reader);
@@ -346,6 +349,8 @@ namespace Mono.Xml
 					throw new InvalidOperationException ("Unexpected end of XmlReader.");
 				return false;
 			}
+
+			bool dontResetTextType = false;
 
 			switch (reader.NodeType) {
 			case XmlNodeType.XmlDeclaration:
@@ -484,10 +489,13 @@ namespace Mono.Xml
 			case XmlNodeType.SignificantWhitespace:
 				if (!isText)
 					isSignificantWhitespace = true;
+				dontResetTextType = true;
 				goto case XmlNodeType.Text;
 			case XmlNodeType.Text:
 				isText = true;
-				isWhitespace = isSignificantWhitespace = false;
+				if (!dontResetTextType) {
+					isWhitespace = isSignificantWhitespace = false;
+				}
 				// If no schema specification, then skip validation.
 				if (currentAutomata == null)
 					break;
@@ -498,7 +506,6 @@ namespace Mono.Xml
 				if (elem != null && !elem.IsMixedContent && !elem.IsAny) {
 					HandleError (String.Format ("Current element {0} does not allow character data content.", elementStack.Peek () as string),
 						XmlSeverityType.Error);
-					// FIXME: validation recovery code here.
 					currentAutomata = previousAutomata;
 				}
 				if (validatingReader.EntityHandling == EntityHandling.ExpandEntities) {
@@ -507,6 +514,11 @@ namespace Mono.Xml
 				}
 				break;
 			case XmlNodeType.Whitespace:
+				if (nextMaybeSignificantWhitespace) {
+					currentTextValue = reader.Value;
+					nextMaybeSignificantWhitespace = false;
+					goto case XmlNodeType.SignificantWhitespace;
+				}
 				if (!isText && !isSignificantWhitespace)
 					isWhitespace = true;
 				if (validatingReader.EntityHandling == EntityHandling.ExpandEntities) {
