@@ -1,3 +1,10 @@
+2004-06-21  Martin Baulig  <martin@ximian.com>
+
+	* mini/mini-exceptions.c
+	(mono_handle_exception): Added `gpointer original_ip' argument.
+	After calling mono_unhandled_exception(), call
+	mono_debugger_unhandled_exception() and if that returns true,
+	restore the context and return.
 
 Mon Jun 21 19:26:40 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
