@@ -19,8 +19,9 @@ namespace Mono.Data.PostgreSqlClient {
 	public sealed class PgSqlClientPermission : DBDataPermission {
 		
 		[MonoTODO]
-		public PgSqlClientPermission() {
-			// FIXME: do constructor
+		public PgSqlClientPermission() 
+			: this (PermissionState.None)
+		{
 		}
 
 		[MonoTODO]

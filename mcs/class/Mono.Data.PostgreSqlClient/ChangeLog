@@ -1,3 +1,10 @@
+2003-12-19  Tim Coleman <tim@timcoleman.com>
+	* Mono.Data.PostgreSqlClient/PgSqlPermission.cs:
+		Change constructor so it does not use base
+		constructor without arguments.  That constructor
+		becomes obsolete in .NET 1.2, but it doesn't hurt
+		to do it in other builds too.
+
 2002-12-06  Daniel Morgan <danmorg@sc.rr.com>
 
 	* Mono.Data.PostgreSqlClient/PgSqlCommand.cs: added
