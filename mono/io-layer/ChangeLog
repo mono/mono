@@ -1,5 +1,10 @@
 2004-05-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* processes.c: set the start time for the current process. Fixes bug
+	#58109.
+
+2004-05-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* io-private.h: 'namelist' is now a gchar ** in _WapiHandlePrivate_find.
 	* io.c: implemented scandir using glib functions.
 
