@@ -910,7 +910,7 @@ namespace System.IO
 
 		// fields
 
-		private static int DefaultBufferSize = 8192;
+		const int DefaultBufferSize = 8192;
 		private static Hashtable asyncObjects;
 
 		private FileAccess access;
