@@ -23,6 +23,7 @@ namespace Mono.ILASM {
                         public readonly int Pos;
 			public readonly uint Offset;
                         public PEAPI.CILLabel Label;
+			public bool UseOffset;
 
                         public LabelInfo (string name, int pos, uint offset)
                         {
@@ -30,7 +31,16 @@ namespace Mono.ILASM {
                                 Pos = pos;
 				Offset = offset;
                                 Label = null;
+				UseOffset = true;
                         }
+
+			public LabelInfo (string name, int pos)
+			{
+				Name = name;
+				Pos = pos;
+				Label = null;
+				UseOffset = false;
+			}
 
                         public void Define (PEAPI.CILLabel label)
                         {
@@ -327,7 +337,7 @@ namespace Mono.ILASM {
                         Array.Sort (label_info);
 
                         foreach (LabelInfo label in label_info) {
-				if (label.Offset > -1) {
+				if (label.UseOffset) {
 					label.Define (new PEAPI.CILLabel (label.Offset));
 					continue;
 				}
@@ -335,6 +345,7 @@ namespace Mono.ILASM {
                                         label.Label = previous_label.Label;
                                 else
                                         label.Define (cil.NewLabel ());
+				
                                 previous_label = label;
                                 previous_pos = label.Pos;
                         }
@@ -360,7 +371,7 @@ namespace Mono.ILASM {
 
                 public void AddLabel (string name)
                 {
-                        LabelInfo label_info = new LabelInfo (name, inst_list.Count, 0);
+                        LabelInfo label_info = new LabelInfo (name, inst_list.Count);
                         label_table.Add (name, label_info);
                 }
 
@@ -373,7 +384,7 @@ namespace Mono.ILASM {
 		public int AddLabel ()
 		{
 			int pos = inst_list.Count;
-			LabelInfo label_info = new LabelInfo (null, inst_list.Count, 0);
+			LabelInfo label_info = new LabelInfo (null, inst_list.Count);
 			label_list.Add (label_info);
 			return pos;
 		}

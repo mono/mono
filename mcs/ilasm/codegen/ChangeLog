@@ -1,6 +1,7 @@
 2003-07-31 Jackson Harper <jackson@latitudegeo.com>
 
-	* MethodDef.cs: Allow 0 offsets for labels
+	* MethodDef.cs: Allow 0 offsets for labels, and make sure to only
+	use offsets when we are supposed to.
 	
 2003-07-30 Jackson Harper <jackson@latitudegeo.com>
 
