@@ -1211,7 +1211,7 @@ namespace System.Web {
 		{
 			string v = "\"" + value + "\"";
 			if (v.Length > 20)
-				v = v.Substring (16) + "...\"";
+				v = v.Substring (0, 16) + "...\"";
 
 			string msg = String.Format ("A potentially dangerous Request.{0} value was " +
 						    "detected from the client ({1}={2}).", name, key, v);
@@ -1219,17 +1219,15 @@ namespace System.Web {
 			throw new HttpRequestValidationException (msg);
 		}
 
-		static char [] dangerousChars = "<>".ToCharArray ();
 		static bool CheckString (string val)
 		{
 			if (val == null)
 				return false;
 
 			//TODO: More checks
-			if (val.IndexOfAny (dangerousChars) != -1 && val.Length > 1) {
-				foreach (char c in val)
-					if (Array.IndexOf (dangerousChars, c) != -1)
-						return true;
+			foreach (char c in val) {
+				if (c == '<' || c == '>' || c == '\xff1c' || c == '\xff1e')
+					return true;
 			}
 
 			return false;
