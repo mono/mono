@@ -1,3 +1,15 @@
+2002-03-05  Duncan Mak  <duncan@ximian.com>
+
+	* ISymbolWriter.cs:
+	(DefineParameter) corrected typo in argument type.
+	(SetMethodSourceRange): Fixed typo in method name.
+
+	* ISymbolDocument.cs:
+	(CheckSumAlgorithmId) Fixed typo.
+
+	* ISymbolNamespace.cs:
+	(GetVariable) Added missing method.
+
 2002-02-05  Duncan Mak  <duncan@ximian.com>
 
 	* SymDocumentType.cs: 	

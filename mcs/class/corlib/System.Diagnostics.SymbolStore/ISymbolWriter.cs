@@ -52,7 +52,7 @@ public interface ISymbolWriter {
 		int endOffset);
 	void DefineParameter (
 		string name,
-		FieldAttributes attributes,
+		ParameterAttributes attributes,
 		int sequence,
 		SymAddressKind addrKind,
 		int addr1,
@@ -69,7 +69,7 @@ public interface ISymbolWriter {
 	void OpenMethod (SymbolToken method);
 	void OpenNamespace (string name);
 	int OpenScope (int startOffset);
-	void SetMethodSourceRanger (
+	void SetMethodSourceRange (
 		ISymbolDocumentWriter startDoc,
 		int startLine,
 		int startColumn,
@@ -81,6 +81,7 @@ public interface ISymbolWriter {
 	void SetUnderlyingWriter (IntPtr underlyingWriter);
 	void SetUserEntryPoint (SymbolToken entryMethod);
 	void UsingNamespace (string fullName);
+	
 
 }
 
