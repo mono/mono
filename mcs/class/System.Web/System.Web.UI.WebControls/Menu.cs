@@ -63,6 +63,7 @@ namespace System.Web.UI.WebControls
 		MenuItemBindingCollection dataBindings;
 		MenuItem selectedItem;
 		Hashtable bindings;
+		ArrayList dynamicMenus;
 		
 		private static readonly object MenuItemClickEvent = new object();
 		
@@ -833,80 +834,116 @@ namespace System.Web.UI.WebControls
 			Page.Header.StyleSheet.CreateStyleRule (ts, "." + baseStyle.RegisteredCssClass + " A", this);
 		}
 		
-		protected override void RenderContents (HtmlTextWriter writer)
+		public override void RenderBeginTag (HtmlTextWriter writer)
 		{
-			ArrayList dynamicMenus = new ArrayList ();
-			
-			RenderMenu (writer, Items, Orientation == Orientation.Vertical, dynamicMenus, false);
-			
-			for (int n=0; n<dynamicMenus.Count; n++) {
-				MenuItem item = (MenuItem) dynamicMenus [n];
-				
-				if (dynamicMenuStyle != null)
-					writer.AddAttribute ("class", dynamicMenuStyle.RegisteredCssClass);
-				
-				writer.AddStyleAttribute ("visibility", "hidden");
-				writer.AddStyleAttribute ("position", "absolute");
-				writer.AddStyleAttribute ("left", "0px");
-				writer.AddStyleAttribute ("top", "0px");
-				writer.AddAttribute ("id", GetItemClientId (item, "s"));
-				writer.RenderBeginTag (HtmlTextWriterTag.Div);
-
-				// Up button
-				writer.AddAttribute ("id", GetItemClientId (item, "cu"));
-				writer.AddStyleAttribute ("display", "block");
-				writer.AddStyleAttribute ("text-align", "center");
-				writer.AddAttribute ("onmouseover", string.Format ("javascript:Menu_OverScrollBtn ('{0}','{1}','{2}')", ClientID, item.Path, "u"));
-				writer.AddAttribute ("onmouseout", string.Format ("javascript:Menu_OutScrollBtn ('{0}','{1}','{2}')", ClientID, item.Path, "u"));
-				writer.RenderBeginTag (HtmlTextWriterTag.Div);
-				
-				string src = ScrollUpImageUrl != "" ? ScrollUpImageUrl : Page.GetWebResourceUrl (typeof(Menu), "arrow_up.gif");
-				writer.AddAttribute ("src", src);
-				writer.AddAttribute ("alt", ScrollUpText);
-				writer.RenderBeginTag (HtmlTextWriterTag.Img);
-				writer.RenderEndTag ();	// IMG
-				
-				writer.RenderEndTag ();	// DIV scroll button
-			
-				writer.AddAttribute ("id", GetItemClientId (item, "cb"));	// Scroll container
-				writer.RenderBeginTag (HtmlTextWriterTag.Div);
-				writer.AddAttribute ("id", GetItemClientId (item, "cc"));	// Content
-				writer.RenderBeginTag (HtmlTextWriterTag.Div);
-				
-				RenderMenu (writer, item.ChildItems, true, dynamicMenus, true);
-				
-				writer.RenderEndTag ();	// DIV Content
-				writer.RenderEndTag ();	// DIV Scroll container
-
-				// Down button
-				writer.AddAttribute ("id", GetItemClientId (item, "cd"));
-				writer.AddStyleAttribute ("display", "block");
-				writer.AddStyleAttribute ("text-align", "center");
-				writer.AddAttribute ("onmouseover", string.Format ("javascript:Menu_OverScrollBtn ('{0}','{1}','{2}')", ClientID, item.Path, "d"));
-				writer.AddAttribute ("onmouseout", string.Format ("javascript:Menu_OutScrollBtn ('{0}','{1}','{2}')", ClientID, item.Path, "d"));
-				writer.RenderBeginTag (HtmlTextWriterTag.Div);
-				
-				src = ScrollDownImageUrl != "" ? ScrollDownImageUrl : Page.GetWebResourceUrl (typeof(Menu), "arrow_down.gif");
-				writer.AddAttribute ("src", src);
-				writer.AddAttribute ("alt", ScrollDownText);
-				writer.RenderBeginTag (HtmlTextWriterTag.Img);
-				writer.RenderEndTag ();	// IMG
-				
-				writer.RenderEndTag ();	// DIV scroll button
-				
-				writer.RenderEndTag ();	// DIV menu
-			}
+			RenderMenuBeginTagAttributes (writer, false);
+			base.RenderBeginTag (writer);
 		}
 		
-		void RenderMenu (HtmlTextWriter writer, MenuItemCollection items, bool vertical, ArrayList dynamicMenus, bool dynamic)
+		public override void RenderEndTag (HtmlTextWriter writer)
+		{
+			base.RenderEndTag (writer);
+			
+			// Render dynamic menus outside the main control tag
+			for (int n=0; n<dynamicMenus.Count; n++) {
+				MenuItem item = (MenuItem) dynamicMenus [n];
+				RenderDynamicMenu (writer, item);
+			}
+			dynamicMenus = null;
+		}
+		
+		protected override void RenderContents (HtmlTextWriter writer)
+		{
+			dynamicMenus = new ArrayList ();
+			RenderMenuBody (writer, Items, Orientation == Orientation.Vertical, false);
+		}
+		
+		void RenderDynamicMenu (HtmlTextWriter writer, MenuItem item)
+		{
+			if (dynamicMenuStyle != null)
+				writer.AddAttribute ("class", dynamicMenuStyle.RegisteredCssClass);
+			
+			writer.AddStyleAttribute ("visibility", "hidden");
+			writer.AddStyleAttribute ("position", "absolute");
+			writer.AddStyleAttribute ("left", "0px");
+			writer.AddStyleAttribute ("top", "0px");
+			writer.AddAttribute ("id", GetItemClientId (item, "s"));
+			writer.RenderBeginTag (HtmlTextWriterTag.Div);
+
+			// Up button
+			writer.AddAttribute ("id", GetItemClientId (item, "cu"));
+			writer.AddStyleAttribute ("display", "block");
+			writer.AddStyleAttribute ("text-align", "center");
+			writer.AddAttribute ("onmouseover", string.Format ("javascript:Menu_OverScrollBtn ('{0}','{1}','{2}')", ClientID, item.Path, "u"));
+			writer.AddAttribute ("onmouseout", string.Format ("javascript:Menu_OutScrollBtn ('{0}','{1}','{2}')", ClientID, item.Path, "u"));
+			writer.RenderBeginTag (HtmlTextWriterTag.Div);
+			
+			string src = ScrollUpImageUrl != "" ? ScrollUpImageUrl : Page.GetWebResourceUrl (typeof(Menu), "arrow_up.gif");
+			writer.AddAttribute ("src", src);
+			writer.AddAttribute ("alt", ScrollUpText);
+			writer.RenderBeginTag (HtmlTextWriterTag.Img);
+			writer.RenderEndTag ();	// IMG
+			
+			writer.RenderEndTag ();	// DIV scroll button
+		
+			writer.AddAttribute ("id", GetItemClientId (item, "cb"));	// Scroll container
+			writer.RenderBeginTag (HtmlTextWriterTag.Div);
+			writer.AddAttribute ("id", GetItemClientId (item, "cc"));	// Content
+			writer.RenderBeginTag (HtmlTextWriterTag.Div);
+			
+			RenderMenu (writer, item.ChildItems, true, true);
+			
+			writer.RenderEndTag ();	// DIV Content
+			writer.RenderEndTag ();	// DIV Scroll container
+
+			// Down button
+			writer.AddAttribute ("id", GetItemClientId (item, "cd"));
+			writer.AddStyleAttribute ("display", "block");
+			writer.AddStyleAttribute ("text-align", "center");
+			writer.AddAttribute ("onmouseover", string.Format ("javascript:Menu_OverScrollBtn ('{0}','{1}','{2}')", ClientID, item.Path, "d"));
+			writer.AddAttribute ("onmouseout", string.Format ("javascript:Menu_OutScrollBtn ('{0}','{1}','{2}')", ClientID, item.Path, "d"));
+			writer.RenderBeginTag (HtmlTextWriterTag.Div);
+			
+			src = ScrollDownImageUrl != "" ? ScrollDownImageUrl : Page.GetWebResourceUrl (typeof(Menu), "arrow_down.gif");
+			writer.AddAttribute ("src", src);
+			writer.AddAttribute ("alt", ScrollDownText);
+			writer.RenderBeginTag (HtmlTextWriterTag.Img);
+			writer.RenderEndTag ();	// IMG
+			
+			writer.RenderEndTag ();	// DIV scroll button
+			
+			writer.RenderEndTag ();	// DIV menu
+		}
+		
+		void RenderMenuBeginTagAttributes (HtmlTextWriter writer, bool dynamic)
 		{
 			writer.AddAttribute ("cellpadding", "0");
 			writer.AddAttribute ("cellspacing", "0");
 
 			if (!dynamic && staticMenuStyle != null)
 				writer.AddAttribute ("class", staticMenuStyle.RegisteredCssClass);
-				
+		}
+		
+		void RenderMenu (HtmlTextWriter writer, MenuItemCollection items, bool vertical, bool dynamic)
+		{
+			RenderMenuBeginTag (writer, dynamic);
+			RenderMenuBody (writer, items, vertical, dynamic);
+			RenderMenuEndTag (writer);
+		}
+		
+		void RenderMenuBeginTag (HtmlTextWriter writer, bool dynamic)
+		{
+			RenderMenuBeginTagAttributes (writer, dynamic);
 			writer.RenderBeginTag (HtmlTextWriterTag.Table);
+		}
+		
+		void RenderMenuEndTag (HtmlTextWriter writer)
+		{
+			writer.RenderEndTag ();
+		}
+		
+		void RenderMenuBody (HtmlTextWriter writer, MenuItemCollection items, bool vertical, bool dynamic)
+		{
 			if (!vertical) writer.RenderBeginTag (HtmlTextWriterTag.Tr);
 			
 			for (int n=0; n<items.Count; n++) {
@@ -925,15 +962,13 @@ namespace System.Web.UI.WebControls
 						}
 					}
 				}
-				RenderMenuItem (writer, item, dynamicMenus);
+				RenderMenuItem (writer, item);
 			}
 			
 			if (!vertical) writer.RenderEndTag ();	// TR
-			writer.RenderEndTag ();	// TABLE
-			
 		}
 		
-		void RenderMenuItem (HtmlTextWriter writer, MenuItem item, ArrayList dynamicMenus)
+		void RenderMenuItem (HtmlTextWriter writer, MenuItem item)
 		{
 			bool displayChildren = (item.Depth + 1 < StaticDisplayLevels + MaximumDynamicDisplayLevels);
 			bool dynamicChildren = displayChildren && (item.Depth + 1 >= StaticDisplayLevels) && item.ChildItems.Count > 0;
@@ -1002,7 +1037,6 @@ namespace System.Web.UI.WebControls
 			}
 			
 			// Menu item box
-			
 			
 			writer.AddAttribute ("cellpadding", "0");
 			writer.AddAttribute ("cellspacing", "0");
@@ -1083,7 +1117,7 @@ namespace System.Web.UI.WebControls
 					if (dynamicChildren) dynamicMenus.Add (item);
 					else {
 						writer.AddAttribute ("width", "100%");
-						RenderMenu (writer, item.ChildItems, true, dynamicMenus, false);
+						RenderMenu (writer, item.ChildItems, true, false);
 					}
 				}
 				
@@ -1095,7 +1129,7 @@ namespace System.Web.UI.WebControls
 				writer.RenderBeginTag (HtmlTextWriterTag.Td);
 				if (displayChildren) {
 					if (dynamicChildren) dynamicMenus.Add (item);
-					else RenderMenu (writer, item.ChildItems, false, dynamicMenus, false);
+					else RenderMenu (writer, item.ChildItems, false, false);
 				}
 				writer.RenderEndTag ();	// TD
 			}
