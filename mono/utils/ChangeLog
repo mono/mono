@@ -1,4 +1,10 @@
 
+Tue Feb 17 21:45:12 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mono-codeman.c, mono-codeman.h: allocate extra room in memory close
+	to the native code for arch where calls have a limited immediate
+	displacement.
+
 Wed Feb 11 15:26:18 CET 2004 Paolo Molaro <lupus@ximian.com>
 
 	* Makefile.am, mono-codeman.h, mono-codeman.c: new support code
