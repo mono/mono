@@ -1,3 +1,57 @@
+
+2005-02-15  Ritvik Mayank <mritvik@novell.com>
+	* ConversionWithNEqlOperator.vb
+	* ConversionWithOrOperatorNumD.vb
+	* ConversionWithGTOperatorCharA.vb
+	* ConversionWithShiftOperatorI.vb
+	* ConversionWithOrOperatorBoolC.vb
+	* ConversionWithEqualOperatorLnInt.vb
+	* ImpConversionEnumToIntA.vb
+	* ConversionWithOrOperatorNumE.vb
+	* ConversionWithShiftOperatorJ.vb
+	* ConversionWithOrOperatorBoolD.vb
+	* ConversionWithGTOperatorString.vb
+	* ConversionWithXorOperatorA.vb
+	* ImpConversionEnumToIntB.vb
+	* ConversionWithShiftOperatorK.vb
+	* ConversionWithXorOperatorB.vb
+	* ConversionWithShiftOperatorA.vb
+	* ConversionWithGEOperatorA.vb
+	* ConversionWithAndOperatorNumA.vb
+	* ConversionWithLEOperatorA.vb
+	* ConversionWithXorOperatorC.vb
+	* ConversionWithShiftOperatorB.vb
+	* ConversionWithEqualOperatorsA.vb
+	* ConversionWithAndOperatorA.vb
+	* ConversionWithNotOperatorFalseA.vb
+	* ConversionWithAndOperatorNumB.vb
+	* ConversionWithGEoperatorB.vb
+	* ConversionWithAndOperatorBool.vb
+	* ConversionWithShiftOperatorC.vb
+	* ConversionWithNotOperatorTrueA.vb
+	* ConversionWithOrOperatorA.vb
+	* ConversionWithAndOperatorB.vb
+	* ConversionWithAndOperatorNumC.vb
+	* ConversionWithXorOperatorBoolA.vb
+	* ConversionWithShiftOperatorD.vb
+	* ConversionWithOrOperatorB.vb
+	* ConversionWithAndOperatorC.vb
+	* ConversionWithXorOperatorBoolB.vb
+	* ConversionWithAndOperatorNumD.vb
+	* ConversionWithShiftOperatorE.vb
+	* ConversionWithXorOperatorNumA.vb
+	* ExplicitConversionEnumToIntA.vb
+	* ConversionWithOrOperatorC.vb
+	* ConversionWithAndOperatorD.vb
+	* ConversionWithAndOperatorNumE.vb
+	* ConversionWithXorOperatorBoolC.vb
+	* ConversionWithGTOperatorsA.vb
+	* ConversionWithOrOperatorNumA.vb
+	* ConversionWithShiftOperatorF.vb
+	* ConversionWithGEOperatorDateA.vb
+	* ConversionWithXorOperatorNumB.vb
+			 Added Tests for Conversion (with different Operators: Logical,Relational,Shift) 
+
 2005-02-14  Satya Sudha K <ksathyasudha@novell.com>
 	* Test cases for Conversions with overloaded functions and Enum conversions
 		- by Sudharsan V <vsudharsan@novell.com>
