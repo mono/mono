@@ -177,7 +177,7 @@ namespace System.Xml
 				if (prefix == String.Empty || prefix == null)
 					return localName;
 				else
-					return prefix + ":" + localName;
+					return OwnerDocument.NameTable.Add (prefix + ":" + localName);
 			}
 		}
 

@@ -1,3 +1,9 @@
+2004-11-08  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlAttribute.cs, XmlElement.cs : get_Name should consider name table.
+	* XmlDocument.cs : use NameTable in Load() and LoadXml().
+	* XmlReader.cs : In Create(), use NameTable in XmlReaderSettings.
+
 2004-11-05  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlDocumentNavigator.cs : create rarely-used ArrayList later. This

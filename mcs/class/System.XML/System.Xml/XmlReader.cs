@@ -202,22 +202,23 @@ namespace System.Xml
 		[MonoTODO ("ConformanceLevel, IgnoreSchemaXXX etc.; Encoding")]
 		public static XmlReader Create (string url, Encoding encoding, XmlResolver resolver, XmlReaderSettings settings)
 		{
-			return CreateCustomizedTextReader (new XmlTextReader (url), resolver, settings);
+			return CreateCustomizedTextReader (new XmlTextReader (url, settings != null ? settings.NameTable : null), resolver, settings);
 		}
 
 		[MonoTODO ("ConformanceLevel, IgnoreSchemaXXX etc.")]
 		public static XmlReader Create (TextReader reader, string baseUri, XmlResolver resolver, XmlReaderSettings settings)
 		{
-			return CreateCustomizedTextReader (new XmlTextReader (baseUri, reader), resolver, settings);
+			return CreateCustomizedTextReader (new XmlTextReader (baseUri, reader, settings != null ? settings.NameTable : null), resolver, settings);
 		}
 
 		[MonoTODO ("ConformanceLevel, IgnoreSchemaXXX etc.")]
 		public static XmlReader Create (Stream stream, string baseUri, Encoding encoding, XmlResolver resolver, XmlReaderSettings settings)
 		{
+			XmlNameTable nameTable = settings != null ? settings.NameTable : null;
 			return CreateCustomizedTextReader (
 				encoding == null ?
-					new XmlTextReader (baseUri, stream) :
-					new XmlTextReader (baseUri, new StreamReader (stream, encoding)),
+					new XmlTextReader (baseUri, stream, nameTable) :
+					new XmlTextReader (baseUri, new StreamReader (stream, encoding), nameTable),
 				resolver,
 				settings);
 		}

@@ -591,7 +591,7 @@ namespace System.Xml
 
 		public virtual void Load (Stream inStream)
 		{
-			XmlTextReader reader = new XmlTextReader (inStream);
+			XmlTextReader reader = new XmlTextReader (inStream, NameTable);
 			reader.XmlResolver = resolver;
 			Load (reader);
 		}
@@ -600,7 +600,7 @@ namespace System.Xml
 		{
 			XmlTextReader xr = null;
 			try {
-				xr = new XmlTextReader (filename);
+				xr = new XmlTextReader (filename, NameTable);
 				xr.XmlResolver = resolver;
 				Load (xr);
 			} finally {
@@ -611,7 +611,7 @@ namespace System.Xml
 
 		public virtual void Load (TextReader txtReader)
 		{
-			XmlTextReader xr = new XmlTextReader (txtReader);
+			XmlTextReader xr = new XmlTextReader (txtReader, NameTable);
 			xr.XmlResolver = resolver;
 			Load (xr);
 		}
@@ -643,7 +643,9 @@ namespace System.Xml
 		public virtual void LoadXml (string xml)
 		{
 			XmlTextReader xmlReader = new XmlTextReader (
-				xml, XmlNodeType.Document, null);
+				xml,
+				XmlNodeType.Document,
+				new XmlParserContext (NameTable, null, null, XmlSpace.None));
 			try {
 				xmlReader.XmlResolver = resolver;
 				Load (xmlReader);

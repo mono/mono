@@ -144,7 +144,7 @@ namespace System.Xml
 
 		public override string Name {
 			get { 
-				return prefix != String.Empty ? prefix + ":" + localName : localName; 
+				return prefix != String.Empty ? OwnerDocument.NameTable.Add (prefix + ":" + localName) : localName; 
 			}
 		}
 
