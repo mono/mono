@@ -21,7 +21,7 @@ Documented + Undocumented.
 DataGridColumnCollectionEditor
 DataGridComponentEditor
 DataGridDesigner
-DataListComponentEditor
+& DataListComponentEditor
 DataListDesigner
 * HyperLinkDesigner
 * LabelDesigner
@@ -29,8 +29,8 @@ DataListDesigner
 ListControlDataBindingHandler
 ListControlDesigner
 ListItemsCollectionEditor
-PanelDesigner
-RegexTypeEditor
+* PanelDesigner
+* RegexTypeEditor
 * TableCellsCollectionEditor
 & TableDesigner
 & TableRowsCollectionEditor
