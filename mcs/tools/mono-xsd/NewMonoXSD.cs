@@ -110,7 +110,10 @@ namespace Mono.Util {
 
 			foreach (string arg in args)
 			{
-				if (!arg.StartsWith ("--") && !arg.StartsWith ("/")) {
+				if (!arg.StartsWith ("--") && !arg.StartsWith ("/") ||
+					(arg.StartsWith ("/") && arg.IndexOfAny (Path.InvalidPathChars) == -1)
+					) 
+				{
 					if (arg.EndsWith (".dll") || arg.EndsWith (".exe"))
 					{
 						if (!readingFiles) throw new Exception (incorrectOrder);
@@ -132,7 +135,7 @@ namespace Mono.Util {
 						inference = true;
 						continue;
 					}
-					else //if (!arg.StartsWith ("/") && !arg.StartsWith ("-"))
+					else if (!arg.StartsWith ("/"))
 					{
 						if (!readingFiles) Error (incorrectOrder);
 						unknownFiles.Add (arg);

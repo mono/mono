@@ -1,3 +1,7 @@
+2004-07-12  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* NewMonoXSD.cs: Accept files with absolute paths.
+
 2004-05-07  Atsushi Enomoto <atsushi@ximian.com>
 
 	* NewMonoXSD.cs : Previous change broke default C# code generation.
