@@ -30,9 +30,12 @@
 // Copyright (C) Novell Inc., 2004
 //
 //
-// $Revision: 1.9 $
+// $Revision: 1.10 $
 // $Modtime: $
 // $Log: TrackBar.cs,v $
+// Revision 1.10  2004/08/13 20:55:20  jordi
+// change from wndproc to events
+//
 // Revision 1.9  2004/08/13 18:46:26  jordi
 // adds timer and grap window
 //
@@ -110,6 +113,9 @@ namespace System.Windows.Forms
 			Scroll = null;
 			ValueChanged  = null;		
 			mouse_clickmove = false;
+			SizeChanged += new System.EventHandler (OnResizeTB);
+			MouseDown += new MouseEventHandler (OnMouseDownTB); 
+			MouseUp += new MouseEventHandler (OnMouseUpTB); 
 
 			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);			
@@ -368,19 +374,6 @@ namespace System.Windows.Forms
 
 			switch ((Msg) m.Msg) {
 				
-			case Msg.WM_LBUTTONDOWN:
-				OnMouseDownTB (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-						clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
-						0));
-					
-				break;
-
-			case Msg.WM_LBUTTONUP:
-				OnMouseUpTB (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-					clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
-					0));
-					
-				break;
 				
 			case Msg.WM_MOUSEMOVE: 
 				OnMouseMoveTB  (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
@@ -388,11 +381,7 @@ namespace System.Windows.Forms
 						LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
 						0));
 				break;
-
-			case Msg.WM_SIZE:
-				OnResizeTB ();
-				break;
-
+			
 			case Msg.WM_PAINT: {				
 				PaintEventArgs	paint_event;
 
@@ -482,7 +471,7 @@ namespace System.Windows.Forms
 
 		}		
 
-		private void OnMouseUpTB (MouseEventArgs e)
+		private void OnMouseUpTB (object sender, MouseEventArgs e)
 		{	
 			if (!Enabled) return;			
 
@@ -494,7 +483,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		private void OnMouseDownTB (MouseEventArgs e)
+		private void OnMouseDownTB (object sender, MouseEventArgs e)
     		{
     			if (!Enabled) return;			    			
 
@@ -575,8 +564,8 @@ namespace System.Windows.Forms
 			}
     		}
 
-		private void OnResizeTB ()
-    		{
+		private void OnResizeTB (object sender, System.EventArgs e)
+    		{			
     			if (Width <= 0 || Height <= 0)
     				return;
 
@@ -637,9 +626,8 @@ namespace System.Windows.Forms
 				Refresh ();
 
 			}			
-		}			
-
-
+		}					
+		
     		#endregion // Private Methods
 	}
 }
