@@ -1,3 +1,14 @@
+2004-01-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_System_Reflection_Module_Close): Prevent assertion
+	when closing resource modules.
+
+	* reflection.c (mono_image_create_pefile): Handle the case when the
+	entry point is not a MethodBuilder.
+
+	* reflection.h (MonoReflectionAssemblyBuilder): Change 'entry_point'
+	field to ReflectionMethod since it is not allways a builder.
+
 2004-01-20  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* marshal.c (mono_marshal_get_managed_wrapper): 
