@@ -94,7 +94,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public Line(int LineNo, string Text, Font font) : this() {
+		public Line(int LineNo, string Text, Font font, Brush color) : this() {
 			space = Text.Length > DEFAULT_TEXT_LEN ? Text.Length+1 : DEFAULT_TEXT_LEN;
 
 			text = new StringBuilder(Text, space);
@@ -103,6 +103,7 @@ namespace System.Windows.Forms {
 			widths = new float[space + 1];
 			tags = new LineTag(this, 1, text.Length);
 			tags.font = font;
+			tags.color = color;
 		}
 
 		public Line(int LineNo, string Text, LineTag tag) : this() {
@@ -285,6 +286,7 @@ namespace System.Windows.Forms {
 				if (pos == (tag.start-1 + tag.length)) {
 					// We just found the end of our current tag
 					tag.height = (int)tag.font.Height;
+
 					// Check if we're the tallest on the line (so far)
 					if (tag.height > this.height) {
 						this.height = tag.height;		// Yep; make sure the line knows
@@ -300,9 +302,10 @@ namespace System.Windows.Forms {
 						LineTag		t;
 
 						// We have a tag that has a taller ascent than the line;
+
 						t = tags;
 						while (t != tag) {
-							t.shift += tag.ascent - this.ascent;
+							t.shift = tag.ascent - t.ascent;
 							t = t.next;
 						}
 
@@ -322,6 +325,7 @@ namespace System.Windows.Forms {
 					tag = tag.next;
 					if (tag != null) {
 						tag.width = 0;
+						tag.shift = 0;
 					}
 				}
 			}
@@ -467,7 +471,7 @@ namespace System.Windows.Forms {
 			last_found = sentinel;
 
 			// We always have a blank line
-			Add(1, "", owner.Font);
+			Add(1, "", owner.Font, new SolidBrush(owner.ForeColor));
 			this.RecalculateDocument(owner.CreateGraphics());
 			PositionCaret(0, 0);
 			lines=1;
@@ -795,7 +799,7 @@ namespace System.Windows.Forms {
 					owner.Invalidate();
 				}
 			} else {
-				owner.Invalidate(new Rectangle((int)line.widths[pos] - viewport_x, line.Y - viewport_y, (int)owner.Width, line.height));
+				owner.Invalidate(new Rectangle((int)line.widths[pos] - viewport_x - 1, line.Y - viewport_y, (int)owner.Width, line.height));
 			}
 		}
 
@@ -1065,7 +1069,7 @@ namespace System.Windows.Forms {
 		}
 
 		// Draw the document
-		public void Draw(Graphics g, Rectangle clip, Brush brush) {
+		public void Draw(Graphics g, Rectangle clip) {
 			Line	line;		// Current line being drawn
 			LineTag	tag;		// Current tag being drawn
 			int	start;		// First line to draw
@@ -1091,7 +1095,7 @@ namespace System.Windows.Forms {
 				s = line.text.ToString();
 				while (tag != null) {
 					if (((tag.X + tag.width) > (clip.Left - viewport_x)) || (tag.X < (clip.Right - viewport_x))) {
-						g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, brush, tag.X - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
+						g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, tag.color, tag.X - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
 					}
 
 					tag = tag.next;
@@ -1291,12 +1295,12 @@ namespace System.Windows.Forms {
 
 			// cover the easy case first
 			if (pos == line.text.Length) {
-				Add(line.line_no + 1, "", tag.font);
+				Add(line.line_no + 1, "", tag.font, tag.color);
 				return;
 			}
 
 			// We need to move the rest of the text into the new line
-			Add(line.line_no + 1, line.text.ToString(pos, line.text.Length - pos), tag.font);
+			Add(line.line_no + 1, line.text.ToString(pos, line.text.Length - pos), tag.font, tag.color);
 
 			// Now transfer our tags from this line to the next
 			new_line = GetLine(line.line_no + 1);
@@ -1309,6 +1313,7 @@ namespace System.Windows.Forms {
 				if (tag == line.tags) {
 					new_tag = new LineTag(line, 1, 0);
 					new_tag.font = tag.font;
+					new_tag.color = tag.color;
 					line.tags = new_tag;
 				}
 
@@ -1334,6 +1339,7 @@ namespace System.Windows.Forms {
 				new_tag = new LineTag(new_line, 1, tag.start - 1 + tag.length - pos);
 				new_tag.next = tag.next;
 				new_tag.font = tag.font;
+				new_tag.color = tag.color;
 				new_line.tags = new_tag;
 				if (new_tag.next != null) {
 					new_tag.next.previous = new_tag;
@@ -1355,7 +1361,7 @@ namespace System.Windows.Forms {
 
 		// Adds a line of text, with given font.
 		// Bumps any line at that line number that already exists down
-		public void Add(int LineNo, string Text, Font font) {
+		public void Add(int LineNo, string Text, Font font, Brush color) {
 			Line	add;
 			Line	line;
 			int	line_no;
@@ -1368,7 +1374,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			add = new Line(LineNo, Text, font);
+			add = new Line(LineNo, Text, font, color);
 
 			line = document;
 			while (line != sentinel) {
@@ -1722,6 +1728,7 @@ namespace System.Windows.Forms {
 		#region	Local Variables;
 		// Payload; formatting
 		internal Font		font;		// System.Drawing.Font object for this tag
+		internal Brush		color;		// System.Drawing.Brush object
 
 		// Payload; text
 		internal int		start;		// start, in chars; index into Line.text
@@ -1757,7 +1764,7 @@ namespace System.Windows.Forms {
 		// Removes any previous tags overlapping the same area
 		// returns true if lineheight has changed
 		//
-		public static bool FormatText(Line line, int start, int length, Font font) {
+		public static bool FormatText(Line line, int start, int length, Font font, Brush color) {
 			LineTag	tag;
 			LineTag	start_tag;
 			LineTag	end_tag;
@@ -1783,7 +1790,9 @@ namespace System.Windows.Forms {
 
 			// Common special case
 			if ((start == 1) && (length == tag.length)) {
+				tag.ascent = 0;
 				tag.font = font;
+				tag.color = color;
 				return retval;
 			}
 
@@ -1792,6 +1801,7 @@ namespace System.Windows.Forms {
 
 			tag = new LineTag(line, start, length);
 			tag.font = font;
+			tag.color = color;
 
 			if (start == 1) {
 				line.tags = tag;
@@ -1811,6 +1821,7 @@ namespace System.Windows.Forms {
 				} else {
 					tag.next = new LineTag(line, start_tag.start, start_tag.length);
 					tag.next.font = start_tag.font;
+					tag.next.color = start_tag.color;
 
 					if (start_tag.next != null) {
 						tag.next.next = start_tag.next;
@@ -1938,7 +1949,7 @@ namespace System.Windows.Forms {
 
 			other = (LineTag)obj;
 
-			if (this.font.Equals(other.font)) {	// FIXME add checking for things like link or type later
+			if (this.font.Equals(other.font) && this.color.Equals(other.color)) {	// FIXME add checking for things like link or type later
 				return true;
 			}
 

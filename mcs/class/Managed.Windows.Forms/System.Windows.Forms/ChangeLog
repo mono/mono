@@ -1,3 +1,13 @@
+2004-12-17  Peter Bartok  <pbartok@novell.com>
+
+	* TextControl.cs:
+	- Added color attribute to line tags.
+	- Added color argument to all functions dealing with tags
+	- Added color argument support to various functions
+	- Fixed miss-calculation of baseline/shift in certain circumstances
+
+	* TextBoxBase.cs: Added new color option to test code
+
 2004-12-17  Jackson Harper  <jackson@ximian.com>
 
 	* TreeNode.cs:
