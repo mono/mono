@@ -4,9 +4,12 @@
 // Authors:
 //	Dan Lewis (dihlewis@yahoo.co.uk)
 //	Sebastien Pouliot (spouliot@motus.com)
+//	Ben Maurer (bmaurer@users.sf.net)
 //
 // (C) 2002
 // Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// Portions (C) 2003 Ben Maurer
+//
 // Key generation translated from Bouncy Castle JCE (http://www.bouncycastle.org/)
 // See bouncycastle.txt for license.
 //
@@ -19,15 +22,15 @@ using Mono.Math;
 namespace System.Security.Cryptography {
 
 	public class DSACryptoServiceProvider : DSA {
-	
+
 		private CspParameters cspParams;
 		private RandomNumberGenerator rng;
-	
+
 		private bool privateKeyExportable = true;
 		private bool m_disposed = false;
 		private bool keypairGenerated = false;
 		private bool persistKey = false;
-	
+
 		private BigInteger p;
 		private BigInteger q;
 		private BigInteger g;
@@ -36,8 +39,8 @@ namespace System.Security.Cryptography {
 		private BigInteger j;
 		private BigInteger seed;
 		private int counter;
-	
-		public DSACryptoServiceProvider () 
+
+		public DSACryptoServiceProvider ()
 		{
 			// Here it's not clear if we need to generate a keypair
 			// (note: MS implementation generates a keypair in this case).
@@ -45,37 +48,37 @@ namespace System.Security.Cryptography {
 			// (a) often use this constructor to import an existing keypair.
 			// (b) take a LOT of time to generate the DSA group
 			// So we'll generate the keypair only when (and if) it's being
-			// used (or exported). This should save us a lot of time (at 
+			// used (or exported). This should save us a lot of time (at
 			// least in the unit tests).
 			Common (1024, null);
 		}
-	
-		public DSACryptoServiceProvider (CspParameters parameters) 
+
+		public DSACryptoServiceProvider (CspParameters parameters)
 		{
 			Common (1024, parameters);
 			// no keypair generation done at this stage
 		}
-	
+
 		// This constructor will generate a new keypair
-		public DSACryptoServiceProvider (int dwKeySize) 
+		public DSACryptoServiceProvider (int dwKeySize)
 		{
 			// Here it's clear that we need to generate a new keypair
 			Common (dwKeySize, null);
 			Generate ();
 		}
-	
+
 		// This constructor will generate a new keypair
-		public DSACryptoServiceProvider (int dwKeySize, CspParameters parameters) 
+		public DSACryptoServiceProvider (int dwKeySize, CspParameters parameters)
 		{
 			Common (dwKeySize, parameters);
 			Generate ();
 		}
-	
-		~DSACryptoServiceProvider () 
+
+		~DSACryptoServiceProvider ()
 		{
 			Dispose (false);
 		}
-	
+
 		[MonoTODO("Persistance")]
 		private void Common (int dwKeySize, CspParameters p) 
 		{
@@ -91,10 +94,11 @@ namespace System.Security.Cryptography {
 			}
 			LegalKeySizesValue = new KeySizes [1];
 			LegalKeySizesValue [0] = new KeySizes (512, 1024, 64);
+
 			// will throw an exception is key size isn't supported
 			KeySize = dwKeySize;
 		}
-	
+
 		// generate both the group and the keypair
 		private void Generate () 
 		{
@@ -102,71 +106,71 @@ namespace System.Security.Cryptography {
 			GenerateKeyPair ();
 			keypairGenerated = true;
 		}
-	
+
 		// this part is quite fast
-		private void GenerateKeyPair () 
+		private void GenerateKeyPair ()
 		{
-			x = new BigInteger ();
-			do {
+			x = BigInteger.genRandom (160);
+			while ((x == 0) || (x >= q)) {
 				// size of x (private key) isn't affected by the keysize (512-1024)
-				x.genRandomBits (160);
+				x.randomize ();
 			}
-			while ((x == 0) || (x >= q));
-	
+
 			// calculate the public key y = g^x % p
 			y = g.modPow (x, p);
 		}
-	
-		private void add (byte[] a, byte[] b, int value) 
+
+		private void add (byte[] a, byte[] b, int value)
 		{
 			uint x = (uint) ((b [b.Length - 1] & 0xff) + value);
-	
+
 			a [b.Length - 1] = (byte)x;
 			x >>= 8;
-	
+
 			for (int i = b.Length - 2; i >= 0; i--) {
 				x += (uint) (b [i] & 0xff);
 				a [i] = (byte)x;
 				x >>= 8;
 			}
 		}
-	
-		private void GenerateParams (int keyLength) 
+
+		private void GenerateParams (int keyLength)
 		{
 			byte[] seed = new byte[20];
 			byte[] part1 = new byte[20];
 			byte[] part2 = new byte[20];
 			byte[] u = new byte[20];
-	
+
+			// TODO: a prime generator should be made for this
+
 			SHA1 sha = SHA1.Create ();
-	
+
 			int n = (keyLength - 1) / 160;
 			byte[] w = new byte [keyLength / 8];
 			bool primesFound = false;
-			int certainty = 80; // FIPS186-2
-	
+
 			while (!primesFound) {
 				do {
 					rng.GetBytes (seed);
 					part1 = sha.ComputeHash (seed);
 					Array.Copy(seed, 0, part2, 0, seed.Length);
-	
+
 					add (part2, seed, 1);
-	
+
 					part2 = sha.ComputeHash (part2);
-	
-					for (int i = 0; i != u.Length; i++) 
+
+					for (int i = 0; i != u.Length; i++)
 						u [i] = (byte)(part1 [i] ^ part2 [i]);
-	
+
 					// first bit must be set (to respect key length)
 					u[0] |= (byte)0x80;
 					// last bit must be set (prime are all odds - except 2)
 					u[19] |= (byte)0x01;
-	
+
 					q = new BigInteger (u);
 				}
-				while (!q.isProbablePrime (certainty));
-	
+				while (!q.isProbablePrime ());
+
 				counter = 0;
 				int offset = 2;
 				while (counter < 4096) {
@@ -175,127 +179,126 @@ namespace System.Security.Cryptography {
 						part1 = sha.ComputeHash (part1);
 						Array.Copy (part1, 0, w, w.Length - (k + 1) * part1.Length, part1.Length);
 					}
-	
+
 					add(part1, seed, offset + n);
 					part1 = sha.ComputeHash (part1);
 					Array.Copy (part1, part1.Length - ((w.Length - (n) * part1.Length)), w, 0, w.Length - n * part1.Length);
-	
+
 					w[0] |= (byte)0x80;
 					BigInteger x = new BigInteger (w);
-	
+
 					BigInteger c = x % (q * 2);
-	
+
 					p = x - (c - 1);
-	
+
 					if (p.testBit ((uint)(keyLength - 1))) {
-						if (p.isProbablePrime (certainty)) {
+						if (p.isProbablePrime ()) {
 							primesFound = true;
 							break;
 						}
 					}
-	
+
 					counter += 1;
 					offset += n + 1;
 				}
 			}
-	
+
 			// calculate the generator g
 			BigInteger pMinusOneOverQ = (p - 1) / q;
 			for (;;) {
-				BigInteger h = new BigInteger ();
-				h.genRandomBits (keyLength);
+				BigInteger h = BigInteger.genRandom (keyLength);
 				if ((h <= 1) || (h >= (p - 1)))
 					continue;
-	
+
 				g = h.modPow (pMinusOneOverQ, p);
 				if (g <= 1)
 					continue;
 				break;
 			}
-	
+
 			this.seed = new BigInteger (seed);
 			j = (p - 1) / q;
 		}
-	
+
 		[MonoTODO()]
-		private bool Validate () 
+		private bool Validate ()
 		{
-			// J is optional 
+			// J is optional
 			bool okJ = ((j == 0) || (j == ((p - 1) / q)));
 			// TODO: Validate the key parameters (P, Q, G, J) using the Seed and Counter
 			return okJ;
 		}
-	
+
 		// DSA isn't used for key exchange
 		public override string KeyExchangeAlgorithm {
 			get { return ""; }
 		}
-	
+
 		public override int KeySize {
 			get { return p.bitCount (); }
 		}
-	
+
 		public override KeySizes[] LegalKeySizes {
 			get { return LegalKeySizesValue; }
 		}
-	
+
 		public override string SignatureAlgorithm {
 			get { return "http://www.w3.org/2000/09/xmldsig#dsa-sha1"; }
 		}
-	
+
 		[MonoTODO("Persistance")]
 		public bool PersistKeyInCsp {
 			get { return persistKey; }
-			set { 
+			set {
 				persistKey = value;
 				// FIXME: We'll need this to support some kind of persistance
 				if (value)
 					throw new NotSupportedException ("CspParameters not supported");
 			}
 		}
-		
-		protected override void Dispose (bool disposing) 
+
+		protected override void Dispose (bool disposing)
 		{
 			if (!m_disposed) {
 				// TODO: always zeroize private key
 				if(disposing) {
 					// TODO: Dispose managed resources
 				}
-	         
+
 				// TODO: Dispose unmanaged resources
 			}
-			// call base class 
+			// call base class
 			// no need as they all are abstract before us
 			m_disposed = true;
 		}
-	
-		public override byte[] CreateSignature (byte[] rgbHash) 
+
+		public override byte[] CreateSignature (byte[] rgbHash)
 		{
 			return SignHash (rgbHash, "SHA1");
 		}
-		
-		public byte[] SignData (byte[] data) 
+
+		public byte[] SignData (byte[] data)
 		{
 			return SignData (data, 0, data.Length);
 		}
-	
-		public byte[] SignData (byte[] data, int offset, int count) 
+
+		public byte[] SignData (byte[] data, int offset, int count)
 		{
 			// right now only SHA1 is supported by FIPS186-2
 			HashAlgorithm hash = SHA1.Create ();
 			byte[] toBeSigned = hash.ComputeHash (data, offset, count);
 			return SignHash (toBeSigned, "SHA1");
 		}
-	
-		public byte[] SignData (Stream inputStream) 
+
+		public byte[] SignData (Stream inputStream)
 		{
 			// right now only SHA1 is supported by FIPS186-2
 			HashAlgorithm hash = SHA1.Create ();
 			byte[] toBeSigned = hash.ComputeHash (inputStream);
 			return SignHash (toBeSigned, "SHA1");
 		}
-	
-		public byte[] SignHash (byte[] rgbHash, string str) 
+
+		public byte[] SignHash (byte[] rgbHash, string str)
 		{
 			if (rgbHash == null)
 				throw new ArgumentNullException ();
@@ -306,16 +309,15 @@ namespace System.Security.Cryptography {
 				throw new Exception (); // not documented
 			if (rgbHash.Length != 20)
 				throw new Exception (); // not documented
-	
+
 			if (!keypairGenerated)
 				Generate ();
 	
 			BigInteger m = new BigInteger (rgbHash);
 			// (a) Select a random secret integer k; 0 < k < q.
-			BigInteger k = new BigInteger ();
-			k.genRandomBits (160);
+			BigInteger k = BigInteger.genRandom(160);
 			while (k >= q)
-				k.genRandomBits (160);
+				k.randomize();
 			// (b) Compute r = (g^k mod p) mod q
 			BigInteger r = (g.modPow (k, p)) % q;
 			// (c) Compute k -1 mod q (e.g., using Algorithm 2.142).
@@ -332,10 +334,10 @@ namespace System.Security.Cryptography {
 			Array.Copy (part2, 0, signature, start, part2.Length);
 			return signature;
 		}
-	
-		public bool VerifyData (byte[] rgbData, byte[] rgbSignature) 
+
+		public bool VerifyData (byte[] rgbData, byte[] rgbSignature)
 		{
-			// signature is always 40 bytes (no matter the size of the 
+			// signature is always 40 bytes (no matter the size of the
 			// public key). In fact it is 2 times the size of the private
 			// key (which is 20 bytes for 512 to 1024 bits DSA keypairs)
 			if (rgbSignature.Length != 40)
@@ -345,9 +347,9 @@ namespace System.Security.Cryptography {
 			byte[] toBeVerified = hash.ComputeHash (rgbData);
 			return VerifyHash (toBeVerified, "SHA1", rgbSignature);
 		}
-	
+
 		// LAMESPEC: MD5 isn't allowed with DSA
-		public bool VerifyHash (byte[] rgbHash, string str, byte[] rgbSignature) 
+		public bool VerifyHash (byte[] rgbHash, string str, byte[] rgbSignature)
 		{
 			if (rgbHash == null)
 				throw new ArgumentNullException ("rgbHash");
@@ -357,12 +359,12 @@ namespace System.Security.Cryptography {
 				str = "SHA1"; // default value
 			if (str != "SHA1")
 				throw new CryptographicException ();
-	
+
 			// it would be stupid to verify a signature with a newly
 			// generated keypair - so we return false
 			if (!keypairGenerated)
 				return false;
-	
+
 			try {
 				BigInteger m = new BigInteger (rgbHash);
 				byte[] half = new byte [20];
@@ -370,20 +372,20 @@ namespace System.Security.Cryptography {
 				BigInteger r = new BigInteger (half);
 				Array.Copy (rgbSignature, 20, half, 0, 20);
 				BigInteger s = new BigInteger (half);
-	
+
 				if ((r < 0) || (q <= r))
 					return false;
-	
+
 				if ((s < 0) || (q <= s))
 					return false;
-	
+
 				BigInteger w = s.modInverse(q);
 				BigInteger u1 = m * w % q;
 				BigInteger u2 = r * w % q;
-	
+
 				u1 = g.modPow(u1, p);
 				u2 = y.modPow(u2, p);
-	
+
 				BigInteger v = ((u1 * u2 % p) % q);
 				return (v == r);
 			}
@@ -391,13 +393,13 @@ namespace System.Security.Cryptography {
 				throw new CryptographicException ();
 			}
 		}
-	
-		public override bool VerifySignature(byte[] rgbHash, byte[] rgbSignature) 
+
+		public override bool VerifySignature(byte[] rgbHash, byte[] rgbSignature)
 		{
 			return VerifyHash (rgbHash, "SHA1", rgbSignature);
 		}
-	
-		private byte[] NormalizeArray (byte[] array) 
+
+		private byte[] NormalizeArray (byte[] array)
 		{
 			int n = (array.Length % 4);
 			if (n > 0) {
@@ -408,8 +410,8 @@ namespace System.Security.Cryptography {
 			else
 				return array;
 		}
-	
-		public override DSAParameters ExportParameters (bool includePrivateParameters) 
+
+		public override DSAParameters ExportParameters (bool includePrivateParameters)
 		{
 			if ((includePrivateParameters) && (!privateKeyExportable))
 				throw new CryptographicException ("cannot export private key");
@@ -437,13 +439,13 @@ namespace System.Security.Cryptography {
 			}
 			return param;
 		}
-	
-		public override void ImportParameters (DSAParameters parameters) 
+
+		public override void ImportParameters (DSAParameters parameters)
 		{
 			// if missing "mandatory" parameters
 			if ((parameters.P == null) || (parameters.Q == null) || (parameters.G == null) || (parameters.Y == null))
 				throw new CryptographicException ();
-	
+
 			p = new BigInteger (parameters.P);
 			q = new BigInteger (parameters.Q);
 			g = new BigInteger (parameters.G);
@@ -452,7 +454,7 @@ namespace System.Security.Cryptography {
 			if (parameters.X != null)
 				x = new BigInteger (parameters.X);
 			else
-				x = new BigInteger (0);
+				x = 0;
 			// optional parameter - pre-computation
 			if (parameters.J != null)
 				j = new BigInteger (parameters.J);
@@ -464,8 +466,8 @@ namespace System.Security.Cryptography {
 				counter = parameters.Counter;
 			}
 			else
-				seed = new BigInteger (0);
-	
+				seed = 0;
+
 			// we now have a keypair
 			keypairGenerated = true;
 		}

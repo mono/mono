@@ -3,8 +3,11 @@
 //
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
+//	Ben Maurer (bmaurer@users.sf.net)
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// Portions (C) 2003 Ben Maurer
+//
 // Key generation translated from Bouncy Castle JCE (http://www.bouncycastle.org/)
 // See bouncycastle.txt for license.
 //
@@ -83,9 +86,8 @@ namespace System.Security.Cryptography {
 				// FIXME: We'll need this to support some kind of persistance
 
 			// Microsoft RSA CSP can do between 384 and 16384 bits keypair
-			// we limit ourselve to 2048 because (a) BigInteger limits and (b) it's so SLOW
 			LegalKeySizesValue = new KeySizes [1];
-			LegalKeySizesValue [0] = new KeySizes (384, 2048, 8);
+			LegalKeySizesValue [0] = new KeySizes (384, 16384, 8);
 			KeySize = dwKeySize;
 		}
 	
@@ -94,12 +96,13 @@ namespace System.Security.Cryptography {
 			// p and q values should have a length of half the strength in bits
 			int pbitlength = ((KeySize + 1) >> 1);
 			int qbitlength = (KeySize - pbitlength);
-			e = new BigInteger (17); // fixed
+			const uint uint_e = 17;
+			e = uint_e; // fixed
 	
 			// generate p, prime and (p-1) relatively prime to e
 			for (;;) {
-				p = BigInteger.genPseudoPrime (pbitlength, 80);
-				if (e.gcd (p - 1) == 1)
+				p = BigInteger.genPseudoPrime (pbitlength);
+				if (p % uint_e != 1)
 					break;
 			}
 			// generate a modulus of the required length
@@ -107,8 +110,8 @@ namespace System.Security.Cryptography {
 				// generate q, prime and (q-1) relatively prime to e,
 				// and not equal to p
 				for (;;) {
-					q = BigInteger.genPseudoPrime (qbitlength, 80);
-					if ((e.gcd (q - 1) == 1) && (p != q)) 
+					q = BigInteger.genPseudoPrime (qbitlength);
+					if ((q % uint_e != 1) && (p != q))
 						break;
 				}
 	
@@ -119,7 +122,8 @@ namespace System.Security.Cryptography {
 	
 				// if we get here our primes aren't big enough, make the largest
 				// of the two p and try again
-				p = p.max (q);
+				if (p < q)
+					p = q;
 			}
 	
 			BigInteger pSub1 = (p - 1);

@@ -1,3 +1,10 @@
+2003-04-22  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* DSACryptoServiceProvider.cs: Changed key generation to use the
+	new BigInteger class (commited for Ben Maurer).
+	* RSACryptoServiceProvider.cs: Changed key generation to use the
+	new BigInteger class (commited for Ben Maurer).
+
 2003-04-06  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AsymmetricAlgorithm.cs: Moved IsLegalKeySize to KeySizes.cs.
