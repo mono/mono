@@ -221,6 +221,12 @@ public class TypeManager {
 
 	static Hashtable builder_to_attr;
 
+	// <remarks>
+	//  Keeps track of methods
+	// </remarks>
+
+	static Hashtable builder_to_method;
+
 	struct Signature {
 		public string name;
 		public Type [] args;
@@ -308,6 +314,7 @@ public class TypeManager {
 		builder_to_delegate = new PtrHashtable ();
 		builder_to_enum  = new PtrHashtable ();
 		builder_to_attr = new PtrHashtable ();
+		builder_to_method = new PtrHashtable ();
 		method_arguments = new PtrHashtable ();
 		method_internal_params = new PtrHashtable ();
 		builder_to_container = new PtrHashtable ();
@@ -385,11 +392,16 @@ public class TypeManager {
 		builder_to_interface.Add (t, i);
 	}
 
+	public static void AddMethod (MethodBuilder builder, Method method)
+	{
+		builder_to_method.Add (builder, method);
+	}
+
 	public static void RegisterAttrType (Type t, TypeContainer tc)
 	{
 		builder_to_attr.Add (t, tc);
 	}
-		
+
 	/// <summary>
 	///   Returns the TypeContainer whose Type is `t' or null if there is no
 	///   TypeContainer for `t' (ie, the Type comes from a library)
@@ -1587,22 +1599,31 @@ public class TypeManager {
 	[Flags]
 	public enum MethodFlags {
 		IsObsolete = 1,
-		ShouldIgnore = 2
+		IsObsoleteError = 2,
+		ShouldIgnore = 3
 	}
 	
-	static public MethodFlags GetMethodFlags (MethodBase mb)
+	//
+	// Returns the TypeManager.MethodFlags for this method.
+	// This emits an error 619 / warning 618 if the method is obsolete.
+	// In the former case, TypeManager.MethodFlags.IsObsoleteError is returned.
+	//
+	static public MethodFlags GetMethodFlags (MethodBase mb, Location loc)
 	{
 		MethodFlags flags = 0;
 		
 		if (mb.DeclaringType is TypeBuilder){
-			//
-			// FIXME: Support lookups of Obsolete and ConditionalAttribute
-			// on MethodBuilders.   
-			//
-			return 0;
+			Method method = (Method) builder_to_method [mb];
+			if (method == null) {
+				// FIXME: implement Obsolete attribute on Property,
+				//        Indexer and Event.
+				return 0;
+			}
+
+			return method.GetMethodFlags (loc);
 		}
 
-		object [] attrs = mb.GetCustomAttributes (false);
+		object [] attrs = mb.GetCustomAttributes (true);
 		foreach (object ta in attrs){
 			if (!(ta is System.Attribute)){
 				Console.WriteLine ("Unknown type in GetMethodFlags: " + ta);
@@ -1610,7 +1631,20 @@ public class TypeManager {
 			}
 			System.Attribute a = (System.Attribute) ta;
 			if (a.TypeId == TypeManager.obsolete_attribute_type){
+				ObsoleteAttribute oa = (ObsoleteAttribute) a;
+
+				string method_desc = TypeManager.CSharpSignature (mb);
+
+				if (oa.IsError) {
+					Report.Error (619, loc, "Method `" + method_desc +
+						      "' is obsolete: `" + oa.Message + "'");
+					return MethodFlags.IsObsoleteError;
+				} else
+					Report.Warning (618, loc, "Method `" + method_desc +
+							"' is obsolete: `" + oa.Message + "'");
+
 				flags |= MethodFlags.IsObsolete;
+
 				continue;
 			}
 			

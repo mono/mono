@@ -1,3 +1,27 @@
+2002-07-25  Martin Baulig  <martin@gnome.org>
+
+	* attribute.cs (Attribute.Conditional_GetConditionName): New static
+	method to pull the condition name ouf of a Conditional attribute.
+	(Attribute.Obsolete_GetObsoleteMessage): New static method to pull
+	the obsolete message and error flag out of an Obsolete attribute.
+
+	* class.cs (Method.GetMethodFlags): New public method to get the
+	TypeManager.MethodFlags for this method.
+	(Method.ApplyConditionalAttribute, Method.ApplyObsoleteAttribute): New
+	private methods.
+	(Method.Define): Get and apply the Obsolete and Conditional attributes;
+	if we're overriding a virtual function, set the new private variable
+	`parent_method'; call the new TypeManager.AddMethod().
+
+	* typemanager.cs (TypeManager.AddMethod): New static method.  Stores
+	the MethodBuilder and the Method in a PtrHashtable.
+	(TypeManager.builder_to_method): Added for this purpose.
+	(TypeManager.MethodFlags): Added IsObsoleteError.
+	(TypeManager.GetMethodFlags): Added `Location loc' argument.  Lookup
+	Obsolete and Conditional arguments in MethodBuilders.  If we discover
+	an Obsolete attribute, emit an appropriate warning 618 / error 619 with
+	the message from the attribute.
+
 2002-07-24  Martin Baulig  <martin@gnome.org>
 
 	* cs-tokenizer.cs: Eat up trailing whitespaces and one-line comments in

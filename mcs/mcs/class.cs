@@ -1802,6 +1802,14 @@ namespace Mono.CSharp {
 
 		MethodAttributes flags;
 
+		ArrayList conditionals;
+		string obsolete = null;
+		bool obsolete_error = false;
+
+		bool explicit_impl = false;
+		bool is_interface_method = false;
+		MethodInfo parent_method = null;
+
 		/// <summary>
 		///   Modifiers allowed in a class declaration
 		/// </summary>
@@ -1829,6 +1837,7 @@ namespace Mono.CSharp {
 			ReturnType = return_type;
 			ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE, l);
 			OptAttributes = attrs;
+			conditionals = new ArrayList ();
 		}
 
 		//
@@ -1889,6 +1898,112 @@ namespace Mono.CSharp {
                 }	
 
 		//
+		// Checks whether this method should be ignored due to its Conditional attributes.
+		//
+		bool ShouldIgnore (Location loc)
+		{
+			// When we're overriding a virtual method, we implicitly inherit the
+			// Conditional attributes from our parent.
+			if (parent_method != null) {
+				TypeManager.MethodFlags flags = TypeManager.GetMethodFlags (
+					parent_method, loc);
+
+				if ((flags & TypeManager.MethodFlags.ShouldIgnore) != 0)
+					return true;
+			}
+
+			foreach (string condition in conditionals)
+				if (RootContext.AllDefines [condition] == null)
+					return true;
+
+			return false;
+		}
+
+		//
+		// Returns the TypeManager.MethodFlags for this method.
+		// This emits an error 619 / warning 618 if the method is obsolete.
+		// In the former case, TypeManager.MethodFlags.IsObsoleteError is returned.
+		//
+		public TypeManager.MethodFlags GetMethodFlags (Location loc)
+		{
+			TypeManager.MethodFlags flags = 0;
+
+			if (obsolete != null) {
+				if (obsolete_error) {
+					Report.Error (619, loc, "Method `" + Name +
+						      "' is obsolete: `" + obsolete + "'");
+					return TypeManager.MethodFlags.IsObsoleteError;
+				} else
+					Report.Warning (618, loc, "Method `" + Name +
+							"' is obsolete: `" + obsolete + "'");
+
+				flags |= TypeManager.MethodFlags.IsObsolete;
+			}
+
+			if (ShouldIgnore (loc))
+				flags |= TypeManager.MethodFlags.ShouldIgnore;
+
+			return flags;
+		}
+
+		//
+		// Applies the `Conditional' attribute to the method.
+		//
+		bool ApplyConditionalAttribute (Attribute attr)
+		{
+			string condition = attr.Conditional_GetConditionName ();
+
+			if (condition == null)
+				return false;
+
+			if (ReturnType.Type != TypeManager.void_type) {
+				Report.Error (578, Location,
+					      "Conditional not valid on `" + Name + "' " +
+					      "because its return type is not void");
+				return false;
+			}
+
+			if ((ModFlags & Modifiers.OVERRIDE) != 0) {
+				Report.Error (243, Location,
+					      "Conditional not valid on `" + Name + "' " +
+					      "because it is an override method");
+				return false;
+			}
+
+			if (explicit_impl) {
+				Report.Error (577, Location,
+					      "Conditional not valid on `" + Name + "' " +
+					      "because it is an explicit interface implementation");
+				return false;
+			}
+
+			if (is_interface_method) {
+				Report.Error (623, Location,
+					      "Conditional not valid on `" + Name + "' " +
+					      "because it is an interface method");
+				return false;
+			}
+
+			conditionals.Add (condition);
+
+			return true;
+		}
+
+		//
+		// Applies the `Obsolete' attribute to the method.
+		//
+		bool ApplyObsoleteAttribute (Attribute attr)
+		{
+			if (obsolete != null) {
+				Report.Error (579, Location, "Duplicate `Obsolete' attribute");
+				return false;
+			}
+
+			obsolete = attr.Obsolete_GetObsoleteMessage (out obsolete_error);
+			return obsolete != null;
+		}
+
+		//
 		// Creates the type
 		//
 		public override bool Define (TypeContainer parent)
@@ -1896,10 +2011,9 @@ namespace Mono.CSharp {
 			Type ret_type = GetReturnType (parent);
 			Type [] parameters = ParameterTypes (parent);
 			bool error = false;
-			MethodInfo implementing = null;
 			Type iface_type = null;
 			string iface = "", short_name;
-			bool explicit_impl = false;
+			MethodInfo implementing = null;
 
 			// Check if the return type and arguments were correct
 			if (ret_type == null || parameters == null)
@@ -1962,6 +2076,7 @@ namespace Mono.CSharp {
 					if (!CheckMethodAgainstBase (parent, flags, (MethodInfo) mi [0])){
 						return false;
 					}
+					parent_method = (MethodInfo) mi [0];
 				} else {
 					if ((ModFlags & Modifiers.NEW) != 0)
 						WarningNotHiding (parent);
@@ -2063,6 +2178,9 @@ namespace Mono.CSharp {
 				//
 				parent.Pending.ImplementMethod (
 					iface_type, short_name, ret_type, parameters, explicit_impl);
+
+				is_interface_method = true;
+				parent_method = implementing;
 			} 
 
 			Attribute dllimport_attr = null;
@@ -2071,11 +2189,18 @@ namespace Mono.CSharp {
 				 	if (asec.Attributes == null)
 						continue;
 					
-					foreach (Attribute a in asec.Attributes)
-						if (a.Name.IndexOf ("DllImport") != -1) {
+					foreach (Attribute a in asec.Attributes) {
+						if (a.Name == "Conditional") {
+							if (!ApplyConditionalAttribute (a))
+								return false;
+						} else if (a.Name == "Obsolete") {
+							if (!ApplyObsoleteAttribute (a))
+								return false;
+						} else if (a.Name.IndexOf ("DllImport") != -1) {
 							flags |= MethodAttributes.PinvokeImpl;
 							dllimport_attr = a;
 						}
+					}
 				}
 			}
 
@@ -2144,6 +2269,8 @@ namespace Mono.CSharp {
                                 } else                                 	
                                	        Report28(MethodBuilder);
 			}
+
+			TypeManager.AddMethod (MethodBuilder, this);
 
 			return true;
 		}
