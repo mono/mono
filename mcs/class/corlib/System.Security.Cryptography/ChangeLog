@@ -1,3 +1,8 @@
+2003-10-07  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CryptoStream.cs: Commented CanTransformMultipleBlocks
+	optimization - it simply doesn't work :(
+
 2003-10-04  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptoStream.cs: Fixed bug 49323. The CanTransformMultipleBlocks

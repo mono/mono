@@ -200,7 +200,8 @@ public class CryptoStream : Stream {
 				_stream.Write (partialBlock, 0, partialBlock.Length);
 			}
 
-			if (_transform.CanTransformMultipleBlocks) {
+// FIXME: this was supposed to be an optimization but it's not always working
+/*			if (_transform.CanTransformMultipleBlocks) {
 				// transform all except the last block (which may be the last block
 				// of the stream and require TransformFinalBlock)
 				int numBlock = ((workPos + count) / blockSize);
@@ -221,7 +222,7 @@ public class CryptoStream : Stream {
 				}
 				count = 0; // the last block, if any, is in workingBlock
 			}
-			else {
+			else {*/
 				int len = Math.Min (blockSize - workPos, count);
 				Array.Copy (buffer, bufferPos, workingBlock, workPos, len);
 				bufferPos += len;
@@ -229,7 +230,7 @@ public class CryptoStream : Stream {
 				count -= len;
 				// here block may be full, but we wont TransformBlock it until next iteration
 				// so that the last block will be called in FlushFinalBlock using TransformFinalBlock
-			}
+//			}
 		}
 	}
 
