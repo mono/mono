@@ -284,4 +284,24 @@ Added delegates. All delegates in System.Windows.Forms done
 * SystemInformation.cs
 * added new files for Richard Baumann (biochem333@nyc.rr.com)
 
+2002-6-5 DennisHayes <dennish@raytek.com>
+* removed, code moved to main class files, Form.cs, ImageList.cs, LinkLabel.cs,
+*   ListBox.cs, ListView.cs, ListViewItem.cs, Menu.cs, MonthCalendar.cs, ScrollableControl.cs
+* Form.ControlCollectison.cs
+* ImageList.ImageCollection.c
+* LinkLabel.LinkCollection.cs
+* ListBox.ObjectCollection.cs
+* ListBox.SelectedIndexCollection.cs
+* ListBox.SelectedObjectCollection.cs
+* ListView.CheckedListViewItemCollection.cs
+* ListView.CheckedIndexCollection.cs
+* ListView.ColumnHeaderCollection.cs
+* ListView.ListViewItemCollection.cs
+* ListView.SelectedIndexCollection.cs
+* ListView.SelectedListViewItemCollection.cs
+* ListViewItem.ListViewSubItem.cs
+* ListViewItem.ListViewSubItemCollection.cs
+* Menu.MenuItemCollection.cs
+* MonthCalendar.HitTestInfo.cs
+* ScrollableControl.DockPaddingEdges.cs
 
