@@ -1,4 +1,10 @@
 
+Wed Sep 11 15:27:20 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: implemented MonoType::Module.
+	* reflection.c, reflection.h: mono_module_get_object () from
+	Tomi Pakarinen <tomi.pakarinen@welho.com>.
+
 Wed Sep 11 12:53:28 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: ignore overridden methods in GetMethods ().
