@@ -1,3 +1,8 @@
+2005-03-04  Kazuki Oikawa  <kazuki@panicode.com>
+
+	* PrePrepareMethodAttribute.cs:
+	* ReliabilityContractAttribute.cs: Fixed attributes.
+
 2004-08-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CER.cs: Copied from System.Runtime.Reliability. Fixed attributes.

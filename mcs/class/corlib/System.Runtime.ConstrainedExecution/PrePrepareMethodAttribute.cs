@@ -32,8 +32,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Runtime.ConstrainedExecution
 {
-	[AttributeUsage ((AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct |
-		AttributeTargets.Constructor | AttributeTargets.Method), Inherited=false)]
+	[AttributeUsage ((AttributeTargets.Constructor | AttributeTargets.Method), Inherited=false)]
 	[ComVisible (false)]
         public sealed class PrePrepareMethodAttribute : Attribute
         {
