@@ -1,5 +1,9 @@
 2003-07-27  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlDocumentFragment.cs : added XPathNodeType indicating Root.
+
+2003-07-27  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlDocument.cs (GetIdenticalAttribute): restored OwnerElement.IsRooted
 
 2003-07-27  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>

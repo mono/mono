@@ -10,6 +10,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Xml.XPath;
 
 namespace System.Xml
 {
@@ -88,6 +89,11 @@ namespace System.Xml
 		{
 			get { return lastLinkedChild; }
 			set { lastLinkedChild = value; }
+		}
+
+		internal override XPathNodeType XPathNodeType
+		{
+			get { return XPathNodeType.Root; }
 		}
 		#endregion
 
