@@ -34,16 +34,17 @@ namespace System {
 		internal static object[] GetCustomAttributes (ICustomAttributeProvider obj, Type attributeType, bool inherit)
 		{
 			if (obj == null)
-				return new object [0]; //FIXME: Should i throw an exception here?
+				return (object []) Array.CreateInstance (attributeType, 0);
 
 			object[] r;
 			object[] res = from_cache (obj);
 			// shortcut
 			if (res.Length == 1) {
 				if (attributeType.IsAssignableFrom (res[0].GetType ())) {
-					r = new object [] {res [0]};
+					r = (object []) Array.CreateInstance (attributeType, 1);
+					r [0] = res [0];
 				} else {
-					r = new object [0];
+					r = (object []) Array.CreateInstance (attributeType, 0);
 				}
 				return r;
 			}

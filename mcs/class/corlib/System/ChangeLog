@@ -1,3 +1,8 @@
+2003-02-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MonoCustomAttrs.cs: return the correct array type in the short case.
+	Fixes bug #37818.
+
 2003-02-08  Pedro Martíenz Juliá  <yoros@wanadoo.es>
 
 	* Math.cs: Fix a few methods (like Round) and add with comments the
