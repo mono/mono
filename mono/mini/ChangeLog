@@ -1,3 +1,8 @@
+2004-08-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (merge_argument_class_from_type): Handle generic
+	types.
+
 2004-08-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c cpu-amd64.md inssel-amd64.brg mini-amd64.h: Ongoing SSE
