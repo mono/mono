@@ -1,4 +1,8 @@
 
+Mon Jul 1 18:00:40 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: handle properties with only a set method.
+
 Mon Jul 1 17:11:11 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* opcodes.h: add enum with opcodes in opval order.
