@@ -8,6 +8,9 @@ include ../build/rules.make
 MCS = $(INTERNAL_MCS)
 LOCAL_MCS_FLAGS = /nowarn:162 /unsafe --wlevel 4
 
+RUNTEST_PL = ./runtest.pl
+
+
 DISTFILES = \
 	CONTRIBUTORS_README 	\
 	README.tests		\
@@ -16,7 +19,7 @@ DISTFILES = \
 	runtest.pl		\
 	$(wildcard *.cs)
 
-all-local install-local test-local:
+all-local: run-test-local test-multi-local
 
 # again, run-test is when the tests actually happen, so
 # don't compile on make test.
@@ -34,6 +37,23 @@ run-test-local:
 		esac; \
 		echo -n "Running test $$i ... "; \
 		if $(CSCOMPILE) --expect-error $$error $$i > /dev/null; \
+		then echo OK; \
+		else echo FAILED; \
+		     flist="$$flist $$i"; \
+		     failed=true; \
+		fi; \
+	done; \
+	if $$failed; then \
+		echo "The following tests failed: $$flist"; \
+	else \
+		echo All tests passed; \
+	fi
+
+test-multi-local:
+	@ failed=false; \
+	for i in error-*.cs; do \
+		echo -n "Running test $$i ... "; \
+		if MCS='$(INTERNAL_MCS)' $(RUNTEST_PL) $$i > /dev/null; \
 		then echo OK; \
 		else echo FAILED; \
 		     flist="$$flist $$i"; \

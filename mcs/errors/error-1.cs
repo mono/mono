@@ -84,6 +84,7 @@ public class X
 	public static void test7 (out float f)
 	{
 		goto World;
+		// warning CS0162
 		f = 8.0F;
 
 	World:

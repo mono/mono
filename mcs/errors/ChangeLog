@@ -1,3 +1,10 @@
+2003-07-26  Martin Baulig  <martin@ximian.com>
+
+	* error-6.cs: New test for bug #46907.
+
+	* Makefile.am (test-multi-local): Run the multi-test tests.
+	(all-local): Run run-test-local and test-multi-local.
+
 2003-07-21  Martin Baulig  <martin@ximian.com>
 
 	* syntax0068.cs, syntax0069.cs, syntax0071.cs, syntax0116.cs:

@@ -31,3 +31,8 @@ Ensure that we do not allow void types to be converted to anything else
 error-5.cs
 ----------
 Catch invalid access to a private event of a class
+
+error-6.cs
+----------
+Catch invalid (multiple) assignments.
+
