@@ -252,7 +252,6 @@ namespace Mono.Tools {
 			}
 
 			if (package != null) {
-				string link_path = Path.Combine (Path.Combine (link_gacdir, an.Name), version_token);
 				string ref_dir = Path.Combine (libdir, package);
 				string ref_path = Path.Combine (ref_dir, asmb_file);
 
@@ -265,13 +264,17 @@ namespace Mono.Tools {
 					Environment.Exit (1);
 				}
  				if (Path.DirectorySeparatorChar == '/') {
- 					symlink ("../gac/" + an.Name + "/" + version_token + "/" + asmb_file, ref_path);
+					string pkg_path = "../gac/" + an.Name + "/" + version_token + "/" + asmb_file;
+ 					symlink (pkg_path, ref_path);
+					WriteLine ("Package exported to: {0} -> {1}", ref_path, pkg_path);
  				} else {
- 					File.Copy (Path.Combine (link_path, asmb_file), ref_path);
+					// string link_path = Path.Combine (Path.Combine (link_gacdir, an.Name), version_token);
+					//
+					// We can't use 'link_path' here, since it need not be a valid path at the time 'gacutil'
+					// is run, esp. when invoked in a DESTDIR install.
+ 					File.Copy (name, ref_path);
+					WriteLine ("Package exported to: " + ref_path);
  				}
-
-				WriteLine ("Package exported to: " + ref_path + " -> " +
-						Path.Combine (link_path, asmb_file));
 			}
 
 			WriteLine ("{0} installed into the gac ({1})", an.Name, gacdir);

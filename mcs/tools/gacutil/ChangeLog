@@ -1,3 +1,7 @@
+2005-01-18  Raja R Harinath  <rharinath@novell.com>
+
+	* driver.cs (Install): Restore fix from 2004-12-08.
+
 2005-01-13  Mike Kestner  <mkestner@novell.com>
 
 	* driver.cs: use relative symlinks for the package dir.
