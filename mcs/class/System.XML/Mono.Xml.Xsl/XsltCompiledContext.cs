@@ -340,9 +340,9 @@ namespace Mono.Xml.Xsl.Functions {
 
 				return result;
 			} catch (Exception ex) {
-//				throw new XsltException ("Custom function reported an error.", ex);
-				Debug.WriteLine ("****** INCORRECT RESOLUTION **********");
-				return "";
+				throw new XsltException ("Custom function reported an error.", ex);
+//				Debug.WriteLine ("****** INCORRECT RESOLUTION **********");
+//				return "";
 			}
 		}
 	}
