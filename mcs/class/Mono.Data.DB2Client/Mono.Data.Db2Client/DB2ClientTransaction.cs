@@ -18,7 +18,7 @@ namespace DB2ClientCS
 	/// at the statement level, but I haven't worked that in here yet.
 	/// NOTE:  AT THE MOMENT, SETTING OF THE ISOLATION LEVEL IS NOT WORKING
 	/// </summary>
-	unsafe public class DB2ClientTransaction : IDbTransaction
+	public class DB2ClientTransaction : IDbTransaction
 	{
 		DB2ClientUtils util = new DB2ClientUtils();
 		IsolationLevel IL = IsolationLevel.Unspecified;

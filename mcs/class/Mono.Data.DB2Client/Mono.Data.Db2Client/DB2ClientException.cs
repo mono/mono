@@ -23,7 +23,7 @@ namespace DB2ClientCS
 		{	
 			this.message = Message;
 		}
-		unsafe public DB2ClientException(short sqlHandleType, IntPtr sqlHandle, string Message)
+		public DB2ClientException(short sqlHandleType, IntPtr sqlHandle, string Message)
 		{	
 			StringBuilder sqlState = new StringBuilder(50);
 			StringBuilder errorMessage = new StringBuilder(1025);

@@ -299,7 +299,6 @@ namespace DB2ClientCS
 		}
 		#endregion
 
-
 		#region Prepare ()
 		///
 		/// Prepare a statement against the database

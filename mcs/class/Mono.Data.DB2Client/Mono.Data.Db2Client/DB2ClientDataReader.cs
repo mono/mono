@@ -18,7 +18,7 @@ namespace DB2ClientCS
 	/// Summary description for DB2ClientDataReader.
 	/// DB2ClientDataReader. 
 	/// </summary>
-	unsafe public class DB2ClientDataReader : IDataReader
+	public class DB2ClientDataReader : IDataReader
 	{
 		internal DataTable rs;			//Our result set is a datatable
 		internal DB2ClientConnection db2Conn; //The connection we're working with
@@ -45,7 +45,7 @@ namespace DB2ClientCS
 			sqlRet = DB2ClientPrototypes.SQLNumResultCols(hwndStmt, ref numCols);
 			util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_STMT, hwndStmt, "DB2ClientDataReader - SQLNumResultCols");
 
-			IntPtr[] dbVals = new IntPtr[numCols];
+			byte[][] dbVals = new byte[(int)numCols][];
 			IntPtr[] sqlLen_or_IndPtr = new IntPtr[numCols];
 
 			PrepareResults(dbVals, sqlLen_or_IndPtr);
@@ -69,8 +69,9 @@ namespace DB2ClientCS
 			sqlRet = DB2ClientPrototypes.SQLNumResultCols(hwndStmt, ref numCols);
 			util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_STMT, hwndStmt, "DB2ClientDataReader - SQLNumResultCols");
 
-			IntPtr[] dbVals = new IntPtr[numCols];
+			byte[][] dbVals = new byte[(int)numCols][];
 			IntPtr[] sqlLen_or_IndPtr = new IntPtr[numCols];
+
 
 			PrepareResults(dbVals, sqlLen_or_IndPtr);
 			FetchResults(dbVals, sqlLen_or_IndPtr, rs);
@@ -184,7 +185,7 @@ namespace DB2ClientCS
 		/// <summary>
 		/// Does the describe and bind steps for the query result set.  Called for both immediate and prepared queries. 
 		/// </summary>
-		private void PrepareResults(IntPtr[] dbVals, IntPtr[] sqlLen_or_IndPtr)
+		private void PrepareResults(byte[][] dbVals, IntPtr[] sqlLen_or_IndPtr)
 		{
 			short sqlRet;
 			StringBuilder colName = new StringBuilder(18);
@@ -205,7 +206,8 @@ namespace DB2ClientCS
 				rs.Columns.Add(colName.ToString());
 
 				sqlLen_or_IndPtr[i-1] = new IntPtr();
-				dbVals[i-1] = Marshal.AllocHGlobal((int)colSize+1);
+				dbVals[i-1] = new byte[(int)colSize];
+
 
 				try 
 				{
@@ -216,10 +218,10 @@ namespace DB2ClientCS
 						case DB2ClientConstants.SQL_TYPE_TIME:
 						case DB2ClientConstants.SQL_TYPE_TIMESTAMP:
 						case DB2ClientConstants.SQL_VARCHAR:
-							sqlRet = DB2ClientPrototypes.SQLBindCol(hwndStmt, i, DB2ClientConstants.SQL_C_CHAR,  dbVals[i-1],(short)colSize+1, ref sqlLen_or_IndPtr[i-1]);
+							sqlRet = DB2ClientPrototypes.SQLBindCol(hwndStmt, i, DB2ClientConstants.SQL_C_CHAR, dbVals[i-1],(short)colSize+1, (int)sqlLen_or_IndPtr[i-1]);
 							break;
 						default:
-							sqlRet = DB2ClientPrototypes.SQLBindCol(hwndStmt, i, (short)sqlDataType, dbVals[i-1],(short)colSize+1, ref sqlLen_or_IndPtr[i-1]);
+							sqlRet = DB2ClientPrototypes.SQLBindCol(hwndStmt, i, (short)sqlDataType, dbVals[i-1],(short)colSize+1, (int)sqlLen_or_IndPtr[i-1]);
 							break;
 					}
 					util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_STMT, hwndStmt, "DB2ClientDataReader - SQLBindCol");
@@ -228,8 +230,8 @@ namespace DB2ClientCS
 				{
 					System.Console.Write(e.Message);
 				}
-				isClosed = false;
 			}
+			isClosed = false;
 		}
 /// <summary>
 /// FetchResults does  what it says.
@@ -237,7 +239,7 @@ namespace DB2ClientCS
 /// <param name="dbVals"></param>
 /// <param name="sqlLen_or_IndPtr"></param>
 /// <param name="rs"></param>
-		private void FetchResults(IntPtr[] dbVals, IntPtr[] sqlLen_or_IndPtr, DataTable rs) 
+		private void FetchResults(byte[][] dbVals, IntPtr[] sqlLen_or_IndPtr, DataTable rs) 
 		{
 			short sqlRet = 0;
 			DB2ClientUtils util = new DB2ClientUtils();
@@ -249,14 +251,12 @@ namespace DB2ClientCS
 			{
 				DataRow newRow = rs.NewRow();
 				for (short y=1;y<=numCols;y++) 
-					newRow[y-1] = Marshal.PtrToStringAnsi(dbVals[y-1]);
+					newRow[y-1] = System.Text.Encoding.Default.GetString(dbVals[y-1]);
 
 				rs.Rows.Add(newRow);
 				sqlRet = DB2ClientPrototypes.SQLFetch(hwndStmt);
 				util.DB2CheckReturn(sqlRet, DB2ClientConstants.SQL_HANDLE_STMT, hwndStmt, "DB2ClientDataReader - SQLFetch 2");
 			}		
-			for (int n=0;n<numCols;n++)
-				Marshal.FreeHGlobal(dbVals[n]);
 		}
 		#endregion
 
@@ -369,6 +369,10 @@ namespace DB2ClientCS
 		///
 		/// GetDateTime method
 		/// 
+		public string NewGetDateTime(int col)
+		{
+			return Convert.ToString(this[col]);
+		}
 		public DateTime GetDateTime(int col)
 		{
 			return Convert.ToDateTime(this[col]);
