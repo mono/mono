@@ -149,8 +149,17 @@ using System;
 				return 0;
 
 			byte[] receiver = new byte[target.Length];
-			int bytesRead   = sourceStream.Read(receiver, start, count);
-
+			int bytesRead=0;
+			int startIndex=start;
+			int bytesToRead=count;
+			while( bytesToRead > 0 )	{
+				int n= sourceStream.Read(receiver, startIndex, bytesToRead);
+				if (n==0)
+					break;
+				bytesRead+=n;
+				startIndex+=n;
+				bytesToRead-=n;
+			}
 			// Returns -1 if EOF
 			if (bytesRead == 0)	
 				return -1;
