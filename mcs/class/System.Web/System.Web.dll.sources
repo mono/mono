@@ -211,6 +211,8 @@ System.Web.UI.HtmlControls/HtmlControl.cs
 System.Web.UI.HtmlControls/HtmlControlBuilder.cs
 System.Web.UI.HtmlControls/HtmlForm.cs
 System.Web.UI.HtmlControls/HtmlGenericControl.cs
+System.Web.UI.HtmlControls/HtmlHead.cs
+System.Web.UI.HtmlControls/HtmlHeadBuilder.cs
 System.Web.UI.HtmlControls/HtmlImage.cs
 System.Web.UI.HtmlControls/HtmlInputButton.cs
 System.Web.UI.HtmlControls/HtmlInputCheckBox.cs
@@ -228,6 +230,7 @@ System.Web.UI.HtmlControls/HtmlTableCellCollection.cs
 System.Web.UI.HtmlControls/HtmlTableRow.cs
 System.Web.UI.HtmlControls/HtmlTableRowCollection.cs
 System.Web.UI.HtmlControls/HtmlTextArea.cs
+System.Web.UI.HtmlControls/HtmlTitle.cs
 System.Web.UI.WebControls/AccessDataSource.cs
 System.Web.UI.WebControls/AccessDataSourceView.cs
 System.Web.UI.WebControls/AdCreatedEventArgs.cs
@@ -641,6 +644,7 @@ System.Web.UI/IItemPaginationInfo.cs
 System.Web.UI/IMobileTextWriter.cs
 System.Web.UI/INamingContainer.cs
 System.Web.UI/INavigateUIData.cs
+System.Web.UI/IPageHeader.cs
 System.Web.UI/IPaginationContainer.cs
 System.Web.UI/IPaginationInfo.cs
 System.Web.UI/IParserAccessor.cs
@@ -650,6 +654,7 @@ System.Web.UI/IResourceResolutionService.cs
 System.Web.UI/IResourceUrlGenerator.cs
 System.Web.UI/IStateFormatter.cs
 System.Web.UI/IStateManager.cs
+System.Web.UI/IStyleSheet.cs
 System.Web.UI/ITagNameToTypeMapper.cs
 System.Web.UI/ITemplate.cs
 System.Web.UI/IUrlResolutionService.cs
