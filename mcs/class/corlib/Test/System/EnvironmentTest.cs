@@ -94,6 +94,23 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		public void ExpandEnvironmentVariables_ExpandableAndNonExpandable () 
+		{
+			string path = Environment.GetEnvironmentVariable ("PATH");
+			string expanded=Environment.ExpandEnvironmentVariables("%PATH% PATH%");
+			AssertEquals(path+" PATH%",expanded);
+		}
+
+
+		[Test]
+		public void ExpandEnvironmentVariables_ExpandableWithTrailingPercent () 
+		{
+			string path = Environment.GetEnvironmentVariable ("PATH");
+			string expanded=Environment.ExpandEnvironmentVariables("%PATH% %");
+			AssertEquals(path+" %",expanded);
+		}
+		
+		[Test]
 		public void ExpandEnvironmentVariables_ComplexExpandable2 () 
 		{
 			ExpandStartsEnds ("Hello %%PATH%%%", "Hello %", "%%");
