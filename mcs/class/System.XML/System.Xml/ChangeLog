@@ -1,5 +1,9 @@
 2004-07-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlWriter.cs : Added new WriteStartAttribute(string).
+
+2004-07-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlConvert.cs : Added 2.0 VerifyNMTOKEN() and internal WriteBinHex().
 	* XmlQualifiedName.cs : Added internal static Parse().
 	* XmlReader.cs : use XmlQualifiedName.Parse().

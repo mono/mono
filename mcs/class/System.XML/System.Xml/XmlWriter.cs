@@ -455,6 +455,13 @@ namespace System.Xml
 
 		public abstract void WriteRaw (char[] buffer, int index, int count);
 
+#if NET_2_0
+		public void WriteStartAttribute (string localName)
+		{
+			WriteStartAttribute (null, localName, null);
+		}
+#endif
+
 		public void WriteStartAttribute (string localName, string ns)
 		{
 			WriteStartAttribute (null, localName, ns);
