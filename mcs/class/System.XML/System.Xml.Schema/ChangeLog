@@ -1,5 +1,9 @@
 2004-11-05  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaSet.cs : reduced extraneous XmlSchemaObjectTable creation.
+
+2004-11-05  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaSimpleTypeList.cs,
 	  XmlSchemaSimpleTypeUnion.cs : XmlIgnore.
 

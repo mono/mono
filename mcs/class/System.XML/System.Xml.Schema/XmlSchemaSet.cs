@@ -76,9 +76,6 @@ namespace System.Xml.Schema
 			this.nameTable = nameTable;
 			schemas = new ArrayList ();
 			CompilationId = Guid.NewGuid ();
-			elements = new XmlSchemaObjectTable ();
-			attributes = new XmlSchemaObjectTable ();
-			types = new XmlSchemaObjectTable ();
 		}
 
 		public event ValidationEventHandler ValidationEventHandler;
@@ -88,15 +85,27 @@ namespace System.Xml.Schema
 		}
 
 		public XmlSchemaObjectTable GlobalAttributes {
-			get { return attributes; }
+			get {
+				if (attributes == null)
+					attributes = new XmlSchemaObjectTable ();
+				return attributes;
+			}
 		}
 
 		public XmlSchemaObjectTable GlobalElements {
-			get { return elements; }
+			get {
+				if (elements == null)
+					elements = new XmlSchemaObjectTable ();
+				return elements;
+			}
 		}
 
 		public XmlSchemaObjectTable GlobalTypes { 
-			get { return types; }
+			get {
+				if (types == null)
+					types = new XmlSchemaObjectTable ();
+				return types;
+			}
 		}
 
 		public bool IsCompiled { 
@@ -185,11 +194,11 @@ namespace System.Xml.Schema
 		private void AddGlobalComponents (XmlSchema schema)
 		{
 			foreach (XmlSchemaElement el in schema.Elements.Values)
-				elements.Add (el.QualifiedName, el);
+				GlobalElements.Add (el.QualifiedName, el);
 			foreach (XmlSchemaAttribute a in schema.Attributes.Values)
-				attributes.Add (a.QualifiedName, a);
+				GlobalAttributes.Add (a.QualifiedName, a);
 			foreach (XmlSchemaType t in schema.SchemaTypes.Values)
-				types.Add (t.QualifiedName, t);
+				GlobalTypes.Add (t.QualifiedName, t);
 		}
 
 		public bool Contains (string targetNamespace)
