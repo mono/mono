@@ -35,22 +35,25 @@ namespace System {
 			if (!(v is System.Double))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Double"));
 
-			if (IsPositiveInfinity(value) && IsPositiveInfinity((double) v)){
+			double dv = (double)v;
+
+			if (IsPositiveInfinity(value) && IsPositiveInfinity(dv)){
 				return 0;
 			}
 
-			if (IsNegativeInfinity(value) && IsNegativeInfinity((double) v)){
+			if (IsNegativeInfinity(value) && IsNegativeInfinity(dv)){
 				return 0;
 			}
 
-			if (IsNaN((double) v)) {
+			if (IsNaN(dv)) {
 				if (IsNaN(value))
 					return 0;
 				else
 					return 1;
 			}
 
-			return (int) (value - ((double) v));
+			if (value > dv) return 1;
+			else return -1;
 		}
 
 		public override bool Equals (object o)

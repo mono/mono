@@ -33,7 +33,11 @@ namespace System {
 			if (!(v is System.Single))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Single"));
 
-			return (int) (value - ((float) v));
+			float fv = (float)v;
+
+			if (this.value == fv) return 0;
+			else if (this.value > fv) return 1;
+			else return -1;
 		}
 
 		public override bool Equals (object o)

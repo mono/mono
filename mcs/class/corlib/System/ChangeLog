@@ -1,3 +1,11 @@
+2002-06-30  Nick Drochak  <ndrochak@gol.com>
+
+	* Double.cs (CompareTo): Just see which is bigger.  Don't use the
+	subtraction trick, it doesn't work when the values have a diference of
+	less than one.
+
+	* Single.cs (CompareTo): same
+
 2002-06-27  Martin Baulig  <martin@gnome.org>
 
 	* UIntPtr.cs (UIntPtr.Zero): Use an explicit `u' suffix in the
