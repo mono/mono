@@ -1,3 +1,10 @@
+2003-08-05  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* NewMonoXSD.cs: new implementation of monoxsd based on the
+	  classes in System.Xml.Serialization.
+	* xsd.exe.sources: new sources file.
+	* Makefile: renamed executable to xsd.exe
+
 2003-06-13  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XSD2Class.cs: several changes.
