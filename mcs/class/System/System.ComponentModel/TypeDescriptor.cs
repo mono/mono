@@ -441,6 +441,15 @@ public sealed class TypeDescriptor
 		if (Refreshed != null) Refreshed (new RefreshEventArgs (type));
 	}
 
+	static EventHandler onDispose;
+
+	static void OnComponentDisposed (object sender, EventArgs args)
+	{
+		lock (componentTable) {
+			componentTable.Remove (sender);
+		}
+	}
+
 	public static event RefreshEventHandler Refreshed;
 	
 	internal static ComponentInfo GetComponentInfo (IComponent com)
@@ -449,6 +458,10 @@ public sealed class TypeDescriptor
 		{
 			ComponentInfo ci = (ComponentInfo) componentTable [com];
 			if (ci == null) {
+				if (onDispose == null)
+					onDispose = new EventHandler (OnComponentDisposed);
+
+				com.Disposed += onDispose;
 				ci = new ComponentInfo (com);
 				componentTable [com] = ci;
 			}
