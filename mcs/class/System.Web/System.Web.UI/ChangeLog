@@ -1,3 +1,8 @@
+2002-09-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: implemented ObBubbleEvent.
+	* Page.cs: temporary workaround to make POST work with xsp server.
+
 2002-09-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs: fixed InvokeEventMethod now that Type.GetMethod does not

@@ -457,16 +457,21 @@ namespace System.Web.UI
                         }
                 }
                 
-				[MonoTODO]
                 protected void RaiseBubbleEvent(object source, EventArgs args)
                 {
-                        throw new NotImplementedException();
-                        //return false;
+			Control c = Parent;
+			while (c != null) {
+				if (c.OnBubbleEvent (source, args))
+					break;
+				c = c.Parent;
+			}
                 }
+
                 protected virtual void Render(HtmlTextWriter writer) //DIT
                 {
                         RenderChildren(writer);
                 }
+
                 protected virtual void RenderChildren(HtmlTextWriter writer) //DIT
                 {
                         if (_renderMethodDelegate != null)

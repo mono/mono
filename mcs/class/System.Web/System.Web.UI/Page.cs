@@ -281,7 +281,8 @@ public class Page : TemplateControl, IHttpHandler
 
 		NameValueCollection coll = null;
 		if (IsPostBack)
-			coll =  _context.Request.Form;
+			//coll =  _context.Request.Form; FIXME: the correct is this one. commented out to let xsp work
+			coll = _context.Request.QueryString;
 		else 
 			coll = _context.Request.QueryString;
 
