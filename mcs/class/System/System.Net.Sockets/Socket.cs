@@ -658,7 +658,7 @@ namespace System.Net.Sockets
 		public bool Poll(int time_us, SelectMode mode) {
 			ArrayList socketlist=new ArrayList(1);
 
-			socketlist.Add(socket);
+			socketlist.Add(this);
 			
 			switch(mode) {
 			case SelectMode.SelectError:
@@ -674,7 +674,7 @@ namespace System.Net.Sockets
 				throw new NotSupportedException();
 			}
 
-			if(socketlist.Contains(socket)) {
+			if(socketlist.Contains(this)) {
 				return(true);
 			} else {
 				return(false);

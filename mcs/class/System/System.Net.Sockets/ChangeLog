@@ -1,3 +1,8 @@
+2002-04-24  Dick Porter  <dick@ximian.com>
+
+	* Socket.cs (Poll): Give correct argument to Select(), as spotted
+	by Jaroslaw Kowalski <jarek@atm.com.pl>
+
 2002-04-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UdpClient.cs: implemented.
