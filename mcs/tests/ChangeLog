@@ -1,3 +1,8 @@
+2004-09-14  Martin Baulig  <martin@ximian.com>
+
+	* Makefile: Put the old Makefile back.  There was a reason why we
+	had this setup.
+
 2004-09-14  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (MCS) [PROFILE=default]: Force testing of 'mcs'.
