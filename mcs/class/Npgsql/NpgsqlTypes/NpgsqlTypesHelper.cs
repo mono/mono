@@ -498,5 +498,5 @@ namespace NpgsqlTypes
 	 	return new String (res);
 	
 	}
-	
+}
 }
