@@ -88,6 +88,7 @@ namespace System.Data.SqlClient {
 		[DataCategory ("Data")]
 		[DataSysDescription ("Information used to connect to a DataSource, such as 'Data Source=x;Initial Catalog=x;Integrated Security=SSPI'.")]
 		[DefaultValue ("")]
+		[EditorAttribute ("Microsoft.VSDesigner.Data.SQL.Design.SqlConnectionStringEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		[RecommendedAsConfigurable (true)]	
 		[RefreshProperties (RefreshProperties.All)]
 		public string ConnectionString	{
