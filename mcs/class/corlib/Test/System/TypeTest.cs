@@ -50,6 +50,23 @@ namespace MonoTests.System
 		public void Overload (int i) { }
 	}
 
+	class Base1 {
+		public virtual int Foo {
+			get {
+				return 1;
+			}
+			set {
+			}
+		}
+	}
+
+	class Derived1 : Base1 {
+		public override int Foo {
+			set {
+			}
+		}
+	}
+
 	[TestFixture]
 	public class TypeTest : Assertion
 	{
@@ -134,6 +151,9 @@ namespace MonoTests.System
 
 			// Test getting property that is not exact
 			AssertEquals("#02", typeof (NewVTable), typeof (NewVTable).GetProperty("Item", new Type[1] { typeof(Int16) }).DeclaringType);
+
+			// Test overriding of properties when only the set accessor is overriden
+			AssertEquals ("#03", 1, typeof (Derived1).GetProperties ().Length);
 		}
 	}
 }
