@@ -3,7 +3,6 @@ using System.Reflection;
 
 namespace Test {
 	
-       	[AttributeUsage (AttributeTargets.All)]
 	public class MyAttribute: Attribute {
 		public string val;
 		public MyAttribute (string stuff) {
@@ -12,7 +11,6 @@ namespace Test {
 		}
 	}
 	
-       	[AttributeUsage (AttributeTargets.All)]
 	public class My2Attribute: MyAttribute {
 		public int ival;
 		public My2Attribute (string stuff, int blah) : base (stuff) {
