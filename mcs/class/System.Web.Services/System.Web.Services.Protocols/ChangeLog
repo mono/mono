@@ -1,3 +1,19 @@
+2003-07-28  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* HttpSoapWebServiceHandler.cs: 
+	* Methods.cs: Added SoapBindingStyle, SoapBindingUse, InputMembersMapping
+	  and OutputMembersMapping properties in MethodStubInfo.
+	  Use default value defined in TypeStubInfo for RequestNamespace,
+	  ResponseNamespace and other properties.
+	  Added class BindingInfo to store information about class bindings.
+	  In TypeStubInfo added SoapBindingStyle, DefaultBinding, Methods and
+	  Bindings properties.
+	* SoapRpcMethodAttribute.cs: Use WebServiceAttribute.DefaultNamespace constant 
+	  instead of hardcoded namespace name.
+	* WebServiceHandlerFactory.cs: Create new SoapDocumentationHandler for
+	  documentation requests.
+	* SoapDocumentationHandler.cs: new handler that generates WS documentation.
+	
 2003-07-22  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* WebServiceHandler.cs: Fixed Invoke(). ParameterInfo.Position is now

@@ -14,6 +14,7 @@
 using System.Web.Services;
 using System.Web.Services.Configuration;
 using System.Web.UI;
+using System.Collections.Specialized;
 
 namespace System.Web.Services.Protocols
 {
@@ -61,7 +62,7 @@ namespace System.Web.Services.Protocols
 					//handler = new ();
 					break;
 				case WSProtocol.Documentation:
-					//handler = new ();
+					handler = new SoapDocumentationHandler (type, context);
 					break;
 				}
 				
@@ -74,7 +75,10 @@ namespace System.Web.Services.Protocols
 
 		static WSProtocol GuessProtocol (HttpContext context, string verb)
 		{
-			return WSProtocol.HttpSoap;
+			if (context.Request.RequestType == "GET")
+				return WSProtocol.Documentation;
+			else
+				return WSProtocol.HttpSoap;
 		}
 
 		public void ReleaseHandler (IHttpHandler handler)

@@ -31,9 +31,9 @@ namespace System.Web.Services.Protocols {
 			binding = ""; // FIXME
 			oneWay = false;
 			requestElementName = ""; // FIXME
-			requestNamespace = "http://tempuri.org/";
+			requestNamespace = WebServiceAttribute.DefaultNamespace;
 			responseElementName = ""; 
-			responseNamespace = "http://tempuri.org/";
+			responseNamespace = WebServiceAttribute.DefaultNamespace;
 		}
 
 		public SoapRpcMethodAttribute (string action)
