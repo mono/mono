@@ -1,3 +1,8 @@
+
+Tue May 25 12:46:50 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.h, jit-icalls.c: added explicit checks for divide by zero.
+
 2004-05-24 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* mini-x86.c (EMIT_COND_BRANCH): If an OP_LABEL has an offset
