@@ -28,18 +28,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
+using System;
 
-	public class FunctionPrototype : ScriptFunction
-	{
+namespace Microsoft.JScript {
+
+	public class FunctionPrototype : ScriptFunction	{
+
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Function_apply)]
 		public static object apply (object thisObj, object thisArg, object argArray)
 		{
 			throw new NotImplementedException ();
 		}
 
-
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject | JSFunctionAttributeEnum.HasVarArgs, JSBuiltin.Function_call)]
 		public static object call (object thisObj, object thisArg, params object [] args)
 		{
 			throw new NotImplementedException ();
@@ -50,7 +51,7 @@ namespace Microsoft.JScript.Tmp
 			get { throw new NotImplementedException (); }
 		}
 
-
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Function_toString)]
 		public static string toString (object thisObj)
 		{
 			throw new NotImplementedException ();
