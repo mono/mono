@@ -36,9 +36,14 @@ namespace Mono.Xml.XPath
 
 		public DTMXPathDocumentBuilder (string url, XmlSpace space, int defaultCapacity)
 		{
-			XmlReader r = new XmlTextReader (url);
-			Init (r, space, defaultCapacity);
-			r.Close ();
+			XmlReader r = null;
+			try {
+				r = new XmlTextReader (url);
+				Init (r, space, defaultCapacity);
+			} finally {
+				if (r != null)
+					r.Close ();
+			}
 		}
 
 		public DTMXPathDocumentBuilder (XmlReader reader)

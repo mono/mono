@@ -1,3 +1,8 @@
+2004-06-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTMXPathDocumentBuilder.cs : Close XmlTextReader strictly. It might
+	  raise an error after opening stream and before try-catch.
+
 2004-05-20  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Pattern.cs : don't throw System.Exception. Delegate error handling to
