@@ -1,3 +1,8 @@
+2004-11-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslVariable.cs : Local param might be overriden by XsltArgumentList.
+	  (plus some extraneous field cleanup.)
+
 2004-06-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslNumber.cs : Globalization. Removed unused code.
