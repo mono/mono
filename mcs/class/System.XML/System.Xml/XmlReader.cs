@@ -327,11 +327,11 @@ namespace System.Xml
 					return String.Empty;
 				int startDepth = Depth;
 				Read ();
-				do {
+				while (startDepth < Depth) {
 					if (ReadState != ReadState.Interactive)
 						throw new XmlException ("Unexpected end of the XML reader.");
 					xtw.WriteNode (this, false);
-				} while (startDepth < Depth);
+				}
 				// reader is now end element, then proceed once more.
 				Read ();
 			}

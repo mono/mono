@@ -1,3 +1,8 @@
+2004-03-21  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReader.cs : ReadInnerXml() incorrectly tried to get output xml.
+	  This fixes bug #55856.
+
 2004-03-20  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextWriter.cs : Fixed indentation on CDATA. This fixes bug #55828.
