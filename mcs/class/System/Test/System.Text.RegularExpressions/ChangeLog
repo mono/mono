@@ -1,3 +1,8 @@
+2004-03-17  Francois Beauchemin <beauche@softhome.net>
+ 	* PerlTrials.cs : Added many test for RightToLeft
+ 	* PerlTest.cs, RegexTrial : Modified version of regextrial to 
+ 		be run all the test and to report exception.
+  
 2004-03-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* RegexBugs.cs: added test case for bug 54797.

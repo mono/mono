@@ -9,6 +9,7 @@ namespace MonoTests.System.Text.RegularExpressions {
 		public string input;
 
 		public string expected;
+		public string error = "";
 
 		public RegexTrial (string pattern, RegexOptions options, string input, string expected) {
 			this.pattern = pattern;
@@ -19,6 +20,12 @@ namespace MonoTests.System.Text.RegularExpressions {
 
 		public string Expected {
 			get { return expected; }
+		}
+		
+		public string Error {
+			get {
+				return this.error;
+			}
 		}
 
 		public string Execute () {
@@ -42,7 +49,10 @@ namespace MonoTests.System.Text.RegularExpressions {
 				else
 					result = "Fail.";
 			}
-			catch (Exception) {
+			catch (Exception e) {
+				
+				error = e.Message + "\n" + e.StackTrace + "\n\n";
+				
 				result = "Error.";
 			}
 

@@ -17,21 +17,34 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Text.RegularExpressions {
 	
+       
 	[TestFixture]
 	public class PerlTest {
 
 		[Test]
 		public void Trials () {
+			string msg = "";
 			foreach (RegexTrial trial in PerlTrials.trials) {
 				string actual = trial.Execute ();
 				if (actual != trial.Expected) {
-					Assertion.Fail (
-						trial.ToString () +
+					msg += "\t" + trial.ToString () +
 						"Expected " + trial.Expected +
-						" but got " + actual
-					);
+						" but got " + actual + "\n";
+						
+					if ( trial.Error != "" ) 
+						msg += "\n" + trial.Error;
+
+						
+					//Assertion.Fail (
+					//	trial.ToString () +
+					//	"Expected " + trial.Expected +
+					//	" but got " + actual
+					//);
 				}
 			}
+			if (msg != "" ) 
+				Assertion.Fail("\n" + msg);
 		}
 	}
 }
+
