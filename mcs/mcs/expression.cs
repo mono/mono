@@ -6948,9 +6948,7 @@ namespace Mono.CSharp {
 						if (!c.LookupConstantValue (out o))
 							return null;
 
-						object real_value = ((Constant) c.Expr).GetValue ();
-
-						return Constantify (real_value, fi.FieldType);
+						return Constantify (o, fi.FieldType);
 					}
 				}
 

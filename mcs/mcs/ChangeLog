@@ -1,3 +1,11 @@
+2004-10-10  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (MemberAccess.ResolveMemberAccess): When looking
+	up a constant, do not use the "Const" object after LookupConstant,
+	instead use the result that is returned in the `out' parameter
+	that already has the GetValue done.   Fixes the corlib regression,
+	and removes duplicated code.
+
 2004-10-09  Miguel de Icaza  <miguel@ximian.com>
 
 	* const.cs (ConvertExpressionToConstant): Refactor code that does
