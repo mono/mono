@@ -24,35 +24,33 @@ namespace System.Windows.Forms
 		private string  m_sText;
 		private	ListViewSubItemCollection	m_colSubItem = null;
 		private int index;
-		
-		/* Properties */
-		private	Color	m_BackColor = SystemColors.Window;
+		private bool bSelected = false;
+		private bool useItemStyleForSubItems = true;
+		private bool bChecked = false;
+		private bool bFocused = false;
+		private	Color backColor = SystemColors.Window;
+		private	Color foreColor = SystemColors.WindowText;
 		private	System.Drawing.Rectangle m_Bounds;
 
 		//
 		//  --- Constructor
-		//			
-		
-		internal void CommonConstructor()
-		{
+		//					
+		protected void CommonConstructor(){
 			m_colSubItem = new 	ListViewSubItemCollection(this);
 		}
 		
-		public ListViewItem()		
-		{
-			Console.WriteLine("ListView.ListView");							
+		public ListViewItem(){			
 			CommonConstructor();			
 		}
 		
-		public ListViewItem(string str)
-		{
+		public ListViewItem(string str)	{
 			Console.WriteLine("ListViewItem.ListViewItem str");					
 			CommonConstructor();			
 			m_sText = str;
 		}
 		
-		public ListViewItem(string[] strings)	// An array of strings that represent the subitems of the new item.
-		{
+		public ListViewItem(string[] strings){	// An array of strings that represent the subitems of the new item.
+		
 			Console.WriteLine("ListView.ListView strings");				
 			CommonConstructor();
 			
@@ -66,10 +64,12 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[MonoTODO]
-		public ListViewItem(ListViewItem.ListViewSubItem[] subItems)
-		{
-			throw new NotImplementedException();
+		
+		public ListViewItem(ListViewItem.ListViewSubItem[] subItems){
+			
+			CommonConstructor();
+			for (int i=0; i<subItems.Length; i++)
+					m_colSubItem.Add(subItems[i]);		
 		}
 
 		[MonoTODO]
@@ -101,18 +101,14 @@ namespace System.Windows.Forms
 		{
 			throw new NotImplementedException ();
 		}
+		
 
 		//
 		//  --- Public Properties
-		//
-		[MonoTODO]
+		//		
 		public Color BackColor {
-			get {
-				return m_BackColor;
-			}
-			set {
-				m_BackColor = value;
-			}
+			get {return backColor;}
+			set {backColor = value;}
 		}
 
 		[MonoTODO]
@@ -124,25 +120,16 @@ namespace System.Windows.Forms
 				return m_Bounds;
 			}
 		}
-
-		[MonoTODO]
+		
 		public bool Checked {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+			get {return bChecked;}
+			set {bChecked = value;}
 		}
 
-		[MonoTODO]
+		
 		public bool Focused {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+			get {return bFocused;}
+			set {bFocused = value;}
 		}
 
 		[MonoTODO]
@@ -155,14 +142,9 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[MonoTODO]
-		public Color Forecolor {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+		public Color ForeColor {
+			get {return foreColor;}
+			set {foreColor = value;}
 		}
 		[MonoTODO]
 		public int ImageIndex {
@@ -188,14 +170,10 @@ namespace System.Windows.Forms
 		public ListView ListView {
 			get {return container;}						
 		}
-		[MonoTODO]
+		
 		public bool Selected {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+			get {return bSelected;}						
+			set {bSelected=value;}									
 		}
 		[MonoTODO]
 		public int StateImageIndex  {
@@ -223,21 +201,16 @@ namespace System.Windows.Forms
 				//FIXME:
 			}
 		}
-		[MonoTODO]
-		public string Text 
-		{
+		
+		public string Text 	{
 			get { return m_sText;}
 			set { m_sText = value;}		
 			
 		}
-		[MonoTODO]
+		
 		public bool UseItemStyleForSubItems {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+			get { return useItemStyleForSubItems;}
+			set { useItemStyleForSubItems = value;}		
 		}
 		
 		//
@@ -330,8 +303,7 @@ namespace System.Windows.Forms
 			//
 			//  --- Constructor
 			//		
-			public ListViewSubItemCollection(ListViewItem owner) 
-			{
+			public ListViewSubItemCollection(ListViewItem owner) {
 				m_owner = owner;
 			}			
 			
@@ -387,16 +359,15 @@ namespace System.Windows.Forms
 				return (ListViewSubItem)m_collection[nIdx]; // TODO: Check this in .Net?
 			} 
 			
-			[MonoTODO]
+			
 			public ListViewSubItem Add(string text) 
 			{
 				
 				Console.WriteLine("ListViewSubItem.Add " +  text);											
-				ListViewItem.ListViewSubItem item = new ListViewSubItem(m_owner, text);	 //aki
-				
+				ListViewItem.ListViewSubItem item = new ListViewSubItem(m_owner, text);	 
 						
 				int nIdx = m_collection.Add(item); 
-				return (ListViewSubItem)m_collection[nIdx]; // TODO: Check this in .Net?
+				return (ListViewSubItem)m_collection[nIdx]; 
 			}
 			
 			[MonoTODO]
@@ -516,81 +487,64 @@ namespace System.Windows.Forms
 	// <summary>
 	// </summary>
 
-	public class ListViewSubItem  //aka
+	public class ListViewSubItem  
 	{
 		
-		private string  m_sText;
-		public ListViewItem m_owner = null;
-		//private int index;
-		/*
-		public int CtrlIndex
-		{					
-			get{retrun index}
-			set{index=value;}
-		}*/
+		private string  sText;
+		private ListViewItem owner = null;
+		private	Color backColor = SystemColors.Window;
+		private	Color foreColor = SystemColors.WindowText;
+		private Font font;
 		
-		public ListViewItem ListViewItem
-		{
-			get{return m_owner;}
+		
+		public ListViewItem ListViewItem{
+			get{return owner;}
 		}
 	
 		//
 		//  --- Constructor
 		//
-		public ListViewSubItem()
-		{
+		public ListViewSubItem(){
 			
 		}
 		
-		public ListViewSubItem(ListViewItem item, string str)
-		{
-			m_owner = item;
-			m_sText = str;
+		public ListViewSubItem(ListViewItem item, string str){
+			
+			owner = item;
+			sText = str;
 		}
 		
-		public ListViewSubItem(ListViewItem item, string str, Color color1, Color color2, Font font)
-		{
-			throw new NotImplementedException();
+		public ListViewSubItem(ListViewItem item, string str, Color foreClr, Color backClr, Font fnt){
+			
+			owner = item;
+			sText = str;
+			BackColor = backClr;
+			ForeColor = foreClr;			
+			font = fnt;
 		}
 	
 		//
 		//  --- Public Properties
 		//
-		[MonoTODO]
 		public Color BackColor {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+			get {return backColor;}
+			set {backColor = value;}
 		}
-		[MonoTODO]
+
+		
 		public Font Font {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
+			get {return font;}
+			set {font = value;}
 		}
-		[MonoTODO]
+		
 		public Color ForeColor {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
-			}
-		}
-		[MonoTODO]
+			get {return foreColor;}
+			set {foreColor = value;}
+		}		
+		
 		public string Text {
-			get {
-				return m_sText;
-			}
-			set {
-				//FIXME:
-			}
+			get {return sText;}
+			set {sText=value;}
 		}
 
 		//

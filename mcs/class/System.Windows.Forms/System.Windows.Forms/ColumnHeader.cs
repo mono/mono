@@ -27,10 +27,8 @@ namespace System.Windows.Forms {
 		private ListView container = null;
 		int serial = 0;
 		
-		/// --- constructor ---
-		[MonoTODO]
-		public ColumnHeader() : base () 
-		{
+		/// --- constructor ---		
+		public ColumnHeader() : base () {
 			text = null;
 			textAlign = HorizontalAlignment.Left;
 			width = -2;
@@ -38,19 +36,24 @@ namespace System.Windows.Forms {
 		}
 		
 		//
-		//  --- Private Methods
-		//		
-		public ListView Container 
-		{			
+		//  --- Internal Methods for the implementation
+		//
+		internal int Serial {
+			get { return serial; }
+			set { serial = value; }
+		}
+		
+		internal ListView Container {			
 			set{container=value;}
 		}		
 		
-		public int CtrlIndex{			
+		internal int CtrlIndex{			
 			set{index=value;}
 		}		
 		
-		// --- Properties ---
-		
+		//
+		// --- Public Properties ---
+		//		
 		public int Index {
 			get { return index; }
 		}		
@@ -64,18 +67,12 @@ namespace System.Windows.Forms {
 			set { text = value; }
 		}
 		
-		// Not in the .Net spec
-		public int Serial {
-			get { return serial; }
-			set { serial = value; }
-		}
 		
 		public HorizontalAlignment TextAlign {
 			get { return textAlign; }
 			set { textAlign = value; }
-		}
+		}		
 		
-		[MonoTODO]
 		public int Width {
 			get { return width; }
 			set { width = value; }

@@ -31,7 +31,32 @@ public class MyListViewForm : System.Windows.Forms.Form
 	// Clear all columns
 	public void ClearColumnsButton()
 	{
+		
 		listViewCtrl.Columns.Clear();
+	}
+	
+	public void	ItemPropButton()
+	{
+		
+		//IList lst = (IList) listViewCtrl.CheckedItems;		
+		
+		Console.WriteLine ("MyListViewForm.ItemPropButton");				
+				
+		string sText = "Item properties---------------\n";
+		
+		for (int i=0; i < listViewCtrl.Items.Count; i++)
+			sText+=("Item->" +  listViewCtrl.Items[i].Text + " idx: " + listViewCtrl.Items[i].Index + 
+			 " Backcolor: "+  listViewCtrl.Items[i].BackColor + " Selected: " +  listViewCtrl.Items[i].Selected +
+			 " Checked: "  +  listViewCtrl.Items[i].Checked + " Focused: " + listViewCtrl.Items[i].Focused +
+			"\n");
+			
+		MessageBox.Show(sText);		
+		
+	}
+	
+	public void CheckedItemButton()
+	{
+		listViewCtrl.CheckBoxes = !listViewCtrl.CheckBoxes;
 	}
 	
 	public void ShowColumnsButton()
@@ -81,19 +106,28 @@ public class MyListViewForm : System.Windows.Forms.Form
 		listViewCtrl.Columns.RemoveAt(1); /*Base on 0 index*/		
 	}
 	
+	// Show selected items
 	public void DumpSelButton()
 	{				
-		// Show selected items
-		if (sel==null)
-		{
-			Console.WriteLine ("Col init");
-			sel = listViewCtrl.SelectedItems;
-		}
 		
-		Console.WriteLine ("Selected---------------");
+		if (sel==null)
+			sel = listViewCtrl.SelectedItems;
+		
+		string	sText;				
+		
+		if (sel==null)
+			sel = listViewCtrl.SelectedItems;
+				
+		sText = "Selected---------------\n";
 		
 		for (int i=0; i < sel.Count; i++)
-			Console.WriteLine ("Item->" +  sel[i].Text + " idx: " + sel[i].Index);
+			sText+=("Item->" +  sel[i].Text + " idx: " + sel[i].Index + "\n");
+			
+		sText+= "Checked Items---------------\n";
+		for (int i=0; i < listViewCtrl.CheckedItems.Count; i++)
+			sText+=("Item->" +  listViewCtrl.CheckedItems[i].Text + " idx: " + listViewCtrl.CheckedItems[i].Index + "\n");
+		
+		MessageBox.Show(sText);
 		
 		
 	}
@@ -114,7 +148,8 @@ public class MyListViewForm : System.Windows.Forms.Form
 	
 	public void ShowClassDefaults()
 	{
-	
+		
+		Console.WriteLine ("ListView defaults----");
 		Console.WriteLine ("Sorting " + listViewCtrl.Sorting);
 		Console.WriteLine ("Label Edit " + listViewCtrl.LabelEdit);
 		Console.WriteLine ("FullRowSelect " + listViewCtrl.FullRowSelect);
@@ -126,8 +161,15 @@ public class MyListViewForm : System.Windows.Forms.Form
 		Console.WriteLine ("BackColor " + listViewCtrl.BackColor);						
 		Console.WriteLine ("ItemActivation " + listViewCtrl.Activation);				
 		Console.WriteLine ("ColumnHeaderStyle " + listViewCtrl.HeaderStyle);				
+		Console.WriteLine ("BorderStyle " + listViewCtrl.BorderStyle);				
 		
-				
+		ListViewItem item = new ListViewItem();
+		
+		Console.WriteLine ("ListView item----");
+		Console.WriteLine ("BackColor " + item.BackColor);		
+		Console.WriteLine ("ForeColor  " + item.ForeColor);		
+		Console.WriteLine ("UseItemStyleForSubItems  " + item.UseItemStyleForSubItems);		
+				 
 	}
 	
 	public MyListViewForm()
@@ -141,7 +183,7 @@ public class MyListViewForm : System.Windows.Forms.Form
 		
 		ShowClassDefaults();
 		
-		listViewCtrl.HeaderStyle = ColumnHeaderStyle.None;
+		
 		
 		// Set params
 		listViewCtrl.View = View.Details;			
@@ -150,23 +192,31 @@ public class MyListViewForm : System.Windows.Forms.Form
 		listViewCtrl.FullRowSelect = true;	
 		listViewCtrl.GridLines = true;
 		listViewCtrl.Activation = ItemActivation.OneClick;
-			 
+		
 		
     	listViewCtrl.Bounds = new Rectangle(new Point(10,60), new Size(600, 550));
     	ListViewItem item1 = new ListViewItem("item1");
-    	ListViewItem item2 = new ListViewItem("item2");
+    	ListViewItem item2 = new ListViewItem("Yellow item");
     	ListViewItem item3 = new ListViewItem("item3");
     	ListViewItem item4 = new ListViewItem("item4");
     	ListViewItem item5 = new ListViewItem("item5");
-    	ListViewItem item6 = new ListViewItem("item6");
+    	ListViewItem item6 = new ListViewItem("Green item");
     	ListViewItem item7 = new ListViewItem("item7");
     	ListViewItem item8 = new ListViewItem("item8");
     	ListViewItem item9 = new ListViewItem("item9");
-    	ListViewItem item10 = new ListViewItem("item10 aaaaaaaaaaaaaaaaaaaaaaaaa");
-
-		Console.WriteLine ("*Column 1");			    	
-   	    column1 = listViewCtrl.Columns.Add("Column 1", -1, HorizontalAlignment.Left);
-   	    Console.WriteLine ("*Column 2");			    	
+    	ListViewItem item10 = new ListViewItem("This is a long text");
+    	
+    	    	
+    	ListViewItem.ListViewSubItem subItem11_1 = new ListViewItem.ListViewSubItem();          	
+    	ListViewItem.ListViewSubItem subItem11_2 = new ListViewItem.ListViewSubItem();          	
+    	
+    	//ListViewItem item11 = new ListViewItem(new ListViewItem.ListViewSubItem[]{subItem11_1, subItem11_2});
+    	//listViewCtrl.Items.Add( new ListViewItem(new string[]{"boy 1", "boy 2", "boy 3"}));
+    	
+    	subItem11_1.Text  = "subitem 11-1";
+    	subItem11_2.Text  = "subitem 11-2";    	    		
+		
+   	    column1 = listViewCtrl.Columns.Add("Column 1", -1, HorizontalAlignment.Left);   	    
    	   	column2 =  listViewCtrl.Columns.Add("Column 2", -2, HorizontalAlignment.Right);
    	   	column3 =  listViewCtrl.Columns.Add("Column 3", 50, HorizontalAlignment.Right);
    	   	column4 =  new ColumnHeader();
@@ -174,8 +224,19 @@ public class MyListViewForm : System.Windows.Forms.Form
    	   	column4.Text="Column 4";
    	   	column4.Width= 150;
    	   	
-   	   	//listViewCtrl.Columns.AddRange(new ColumnHeader[]{column4});
-   	    
+   	   	   	   	
+   	   	item2.BackColor = Color.Yellow;  		   	 
+   	   	item2.ForeColor  = Color.Blue;
+   	   	item2.SubItems.Add("yellow-blue subitem 1");          	
+   	   	item2.SubItems.Add("yellow-blue subitem 2");          	
+   	   	
+   	   	item6.BackColor = Color.Green;  		   	 
+   	   	item6.UseItemStyleForSubItems = false;
+   	   	ListViewItem.ListViewSubItem subItem= item6.SubItems.Add("Red subitem 1");          	
+   	   	subItem.BackColor = Color.Red;  		   	 
+   	   	subItem.ForeColor = Color.White;  		   	 
+   	   	    
+   	   	  	    
 		listViewCtrl.Items.Add(item1);					
 		listViewCtrl.Items.Add(item2);					
 		
@@ -226,6 +287,14 @@ public class MyListViewForm : System.Windows.Forms.Form
 		button2.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 		Controls.Add(button2); 
 		
+		CheckedItemButton button8 = new CheckedItemButton(this);		
+		button8.Location = new System.Drawing.Point(630, 50);
+		button8.Name = "button2";
+		button8.Size = new System.Drawing.Size(100, 30);		
+		button8.Text = "Checked on/off";
+		button8.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+		Controls.Add(button8); 
+		
 		DumpSelButton button3 = new DumpSelButton(this);		
 		button3.Location = new System.Drawing.Point(630, 120);
 		button3.Name = "button3";
@@ -242,6 +311,13 @@ public class MyListViewForm : System.Windows.Forms.Form
 		button4.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
 		Controls.Add(button4);    	
 		
+		ItemPropButton button9 = new ItemPropButton(this);		
+		button9.Location = new System.Drawing.Point(630, 180);
+		button9.Name = "button9";
+		button9.Size = new System.Drawing.Size(100, 30);		
+		button9.Text = "Item Properties";
+		button9.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+		Controls.Add(button9);    		
     	
     	Controls.Add(listViewCtrl);
 	}
@@ -341,6 +417,41 @@ public class ClearColumnsButton : System.Windows.Forms.Button{
 			form.ClearColumnsButton();
 		}
 }
+
+// CheckedItemButton
+public class CheckedItemButton : System.Windows.Forms.Button{
+		MyListViewForm form = null;
+
+		public CheckedItemButton(MyListViewForm frm) : base()
+		{
+			form =  frm;
+			
+		}
+		
+		/* User clicks the button*/
+		protected override void OnClick(EventArgs e) 
+		{	
+			form.CheckedItemButton();
+		}
+}
+
+// ItemPropButton
+public class ItemPropButton : System.Windows.Forms.Button{
+		MyListViewForm form = null;
+
+		public ItemPropButton(MyListViewForm frm) : base()
+		{
+			form =  frm;
+			
+		}
+		
+		/* User clicks the button*/
+		protected override void OnClick(EventArgs e) 
+		{	
+			form.ItemPropButton();
+		}
+}
+
 
 
 // AddColumnsButton

@@ -162,11 +162,11 @@ namespace System.Windows.Forms
 	internal struct NMCUSTOMDRAW
 	{
 		internal NMHDR hdr;
-		internal int dwDrawStage;
+		internal uint dwDrawStage;
 		internal IntPtr hdc;
 		internal RECT rc;
 		internal int dwItemSpec;
-		internal int uItemState;
+		internal uint uItemState;
 		internal IntPtr lItemlParam;
 	}
 	#endregion
@@ -196,9 +196,10 @@ namespace System.Windows.Forms
 	internal struct NMLVCUSTOMDRAW 
 	{
 		internal NMCUSTOMDRAW nmcd;
-		internal int clrText;
-		internal int clrTextBk;
-		internal int iSubItem;
+		internal uint clrText;
+		internal uint clrTextBk;
+		internal uint iSubItem;
+    
 	} 
 	#endregion
 

@@ -48,6 +48,8 @@ namespace System.Windows.Forms {
 		private CheckedIndexCollection chkIndexCol = null;
 		private	ItemActivation	activation = ItemActivation.Standard; 
 		private ColumnHeaderStyle headerStyle = ColumnHeaderStyle.Clickable;
+		private	BorderStyle borderStyle = BorderStyle.Fixed3D;
+		bool bScrollable = true;
 				
 		
 		//
@@ -128,15 +130,10 @@ namespace System.Windows.Forms {
 				base.BackgroundImage = value;
 			}
 		}
-		[MonoTODO]
+		
 		public BorderStyle BorderStyle {
-			get {
-				//throw new NotImplementedException ();
-				return 0;
-			}
-			set {
-				//throw new NotImplementedException ();
-			}
+			get { return borderStyle;  }
+			set { borderStyle = value; }			
 		}
 		
 		public bool CheckBoxes {
@@ -243,14 +240,10 @@ namespace System.Windows.Forms {
 			set {bMultiSelect=value;}
 		}
 		
-		[MonoTODO]
+		
 		public bool Scrollable {
-			get {				
-				throw new NotImplementedException ();
-			}
-			set {
-				//throw new NotImplementedException ();
-			}
+			get {return bScrollable;}			
+			set {bScrollable=value;}
 		}
 		
 		public ListView.SelectedIndexCollection SelectedIndices {
@@ -395,7 +388,8 @@ namespace System.Windows.Forms {
 				if (AutoArrange) createParams.Style |= (int) ListViewFlags.LVS_AUTOARRANGE;
 				if (!bLabelWrap)  createParams.Style |= (int) ListViewFlags.LVS_NOLABELWRAP;
 				if (!bMultiSelect) createParams.Style |= (int) ListViewFlags.LVS_SINGLESEL;
-				
+				if (!bScrollable)  createParams.Style |= (int) ListViewFlags.LVS_NOSCROLL;
+								
 				switch (headerStyle)
 				{
 					case ColumnHeaderStyle.Clickable:	// Default						
@@ -405,6 +399,21 @@ namespace System.Windows.Forms {
 						break;
 					case ColumnHeaderStyle.None:
 						createParams.Style |= (int) ListViewFlags.LVS_NOCOLUMNHEADER;
+						break;
+					default:	
+						break;				
+				}
+				
+				switch (borderStyle)
+				{
+					case BorderStyle.Fixed3D:	
+						createParams.ExStyle |= (int) WindowExStyles.WS_EX_CLIENTEDGE;
+						break;
+					case BorderStyle.FixedSingle:
+						createParams.Style |= (int) WindowStyles.WS_BORDER;
+						break;
+					case BorderStyle.None:
+						//createParams.ExStyle |= (int) ListViewFlags.LVS_NOCOLUMNHEADER;
 						break;
 					default:	
 						break;				
@@ -436,21 +445,11 @@ namespace System.Windows.Forms {
 		}
 
 		
-		[MonoTODO]
-		protected virtual void  OnAfterLabelEdit(LabelEditEventArgs e) {
-			//FIXME:
-		}
-		
-		[MonoTODO]
-		protected virtual void  OnBeforeLabelEdit(LabelEditEventArgs e) {
-			//FIXME:
-		}
-		
-		
-		[MonoTODO]
-		protected virtual void  OnColumnClick(ColumnClickEventArgs e) {
-			//FIXME:
-		}
+		// Implemented
+		protected virtual void  OnAfterLabelEdit(LabelEditEventArgs e) {}		
+		protected virtual void  OnBeforeLabelEdit(LabelEditEventArgs e) {}		
+		protected virtual void  OnColumnClick(ColumnClickEventArgs e) {}
+		protected virtual void  OnItemActivate(EventArgs e) 	{}
 
 		[MonoTODO]
 		protected override void OnEnabledChanged(EventArgs e) {
@@ -473,9 +472,7 @@ namespace System.Windows.Forms {
 			//FIXME:
 		}
 
-		protected virtual void  OnItemActivate(EventArgs e) 	{
-			//FIXME:
-		}
+		
 		[MonoTODO]
 		protected virtual void  OnItemCheck(ItemCheckEventArgs e) {
 			//FIXME:
@@ -736,7 +733,14 @@ namespace System.Windows.Forms {
 			Win32.SendMessage(Handle, (int)ListViewMessages.LVM_SETBKCOLOR, 0, 	(int) (backColor.R | backColor.G<<8 | backColor.B <<16));  			
 		}				
 		
-		public void insertItemsInCtrl()	{
+		// Sets Background color in an item
+		internal void SetItemBkColorCtrl(Color col){	
+			
+			if (!bInitialised) return;					
+			Win32.SendMessage(Handle, (int)ListViewMessages.LVM_SETTEXTBKCOLOR, 0, 	(int) (col.R | col.G<<8 | col.B <<16));  			
+		}				
+		
+		internal void insertItemsInCtrl()	{
 			
 			Win32.SendMessage(Handle, (int)ListViewMessages.LVM_DELETEALLITEMS, 0,0);			
 		
@@ -854,10 +858,8 @@ namespace System.Windows.Forms {
 						NMITEMACTIVATE NmItemAct = (NMITEMACTIVATE)Marshal.PtrToStructure (m.LParam,	typeof (NMITEMACTIVATE));								
 						
 						Console.WriteLine("ListViewMessages.LVN_ITEMACTIVATE " + NmItemAct.iItem + "sub: " + NmItemAct.iSubItem);    						
-						
-						EventArgs ice = new EventArgs();
-					
-						OnItemActivate(ice);
+																	
+						OnItemActivate(new EventArgs());
 							
 						break;
 					}
@@ -869,28 +871,36 @@ namespace System.Windows.Forms {
 						
 						Console.WriteLine("ListViewMessages.LVN_ITEMCHANGED item:" + NmLstView.iItem + " sub: "+ NmLstView.iSubItem + "att:" +NmLstView.uChanged);    											
 						
-						selItemsCol.Clear();
+						// NOTE: Using the LVIS_SELECTED status does not work well when you use the control
+						// to select diferent items.
+
+						// Selected						
+						selItemsCol.Clear();						
+						for (int i=0; i < selItemIndexs.Count; i++)						
+							Items[selItemIndexs[i]].Selected=false;				
 						
 						int nItem = Win32.SendMessage(Handle, (int)ListViewMessages.LVM_GETNEXTITEM, -1, (int) ListViewNotifyItem.LVNI_SELECTED);
-						
+												
 						while (nItem!=-1)
 						{
 							selItemsCol.Add(nItem);								
+							Items[nItem].Selected=true;				
 							nItem = Win32.SendMessage(Handle, (int)ListViewMessages.LVM_GETNEXTITEM, nItem, (int) ListViewNotifyItem.LVNI_SELECTED);
 						}
 						
-						int nItems = Win32.SendMessage(Handle, (int)ListViewMessages.LVM_GETITEMCOUNT, 0, 0);  			
-						
-						Console.WriteLine("Items " + nItems);    											
-						
+						// Check checked items
+						int nItems = Win32.SendMessage(Handle, (int)ListViewMessages.LVM_GETITEMCOUNT, 0, 0);  					
+					
 						chkItemCol.Clear();
+						for (int i=0; i < chkItemCol.Count; i++)						
+							Items[i].Checked = false;				
 						
-						for (int i=0; i<nItems; i++)
-							if (GetCheckStateInCtrl(i))
-							{
+						for (int i=0; i<nItems; i++){
+							if (GetCheckStateInCtrl(i))	{
 								chkItemCol.Add(i);
-								Console.WriteLine("Item checked " + i);    											
+								Items[i].Checked = true;												   											
 							}						
+						}
 						
 						break;
 					}
@@ -913,6 +923,61 @@ namespace System.Windows.Forms {
 												   																										
 						break;	
 					}
+					
+					// Used to paint item colours and font
+					case (int)NotificationMessages.NM_CUSTOMDRAW:
+					{						
+						NMLVCUSTOMDRAW LVNmCustom = (NMLVCUSTOMDRAW)Marshal.PtrToStructure (m.LParam,	typeof (NMLVCUSTOMDRAW));																																		
+					
+						switch(LVNmCustom.nmcd.dwDrawStage)    {							
+						
+						case (int)CustomDrawDrawStateFlags.CDDS_PREPAINT:														
+							m.Result = (IntPtr)CustomDrawReturnFlags.CDRF_NOTIFYITEMDRAW;
+							return;
+					
+						case (int)CustomDrawDrawStateFlags.CDDS_ITEMPREPAINT:						    						    	
+														
+							if (Items[(int)LVNmCustom.nmcd.dwItemSpec].UseItemStyleForSubItems)	{						
+							  
+								LVNmCustom.clrTextBk = (uint) Win32.RGB (Items[(int)LVNmCustom.nmcd.dwItemSpec].BackColor);						
+								LVNmCustom.clrText = (uint) Win32.RGB (Items[(int)LVNmCustom.nmcd.dwItemSpec].ForeColor);						
+								Marshal.StructureToPtr(LVNmCustom, m.LParam, false);								        				        
+								m.Result =(IntPtr)CustomDrawReturnFlags.CDRF_NEWFONT;		    								
+							}
+							else
+								m.Result =(IntPtr)CustomDrawReturnFlags.CDRF_NOTIFYSUBITEMDRAW;																		
+							
+							return;
+								
+						  case (int)(CustomDrawDrawStateFlags.CDDS_SUBITEM  | CustomDrawDrawStateFlags.CDDS_ITEMPREPAINT):						  						  
+						  
+						  	ListViewItem item = Items[(int)LVNmCustom.nmcd.dwItemSpec];						    
+						    
+						    if (LVNmCustom.iSubItem==0)    {						    	
+						    	LVNmCustom.clrTextBk = (uint) Win32.RGB (Items[(int)LVNmCustom.nmcd.dwItemSpec].BackColor);						
+						    	LVNmCustom.clrText = (uint) Win32.RGB (Items[(int)LVNmCustom.nmcd.dwItemSpec].ForeColor);
+								Marshal.StructureToPtr(LVNmCustom, m.LParam, false);								        				        
+								m.Result =(IntPtr)CustomDrawReturnFlags.CDRF_NEWFONT;		    								
+							}
+							else{						    															
+								
+								ListViewItem.ListViewSubItem subItem;
+								subItem = item.SubItems[(int)LVNmCustom.iSubItem-1];																																	
+						    	LVNmCustom.clrTextBk = (uint) Win32.RGB (subItem.BackColor);												    							  								    	
+						    	LVNmCustom.clrText = (uint) Win32.RGB (subItem.ForeColor);												    							  								    	
+						  	}
+						  	
+						  	Marshal.StructureToPtr(LVNmCustom, m.LParam, false);
+						  	m.Result =(IntPtr)CustomDrawReturnFlags.CDRF_NEWFONT;			
+						  	return;				
+						  	
+							
+						default: 							
+							break;
+					    }						    
+						
+						break;
+					}	
 											
 					default:
 						break;
@@ -967,13 +1032,13 @@ namespace System.Windows.Forms {
 			}
 			
 			//
-			//  --- Private Methods for the implementation
+			//  --- Internal Methods for the implementation
 			//
-			public void Add (int nIndex) {
+			internal void Add (int nIndex) {
 				collection.Add(nIndex);
 			}			
 			
-			public void Remove (int nIndex) {
+			internal void Remove (int nIndex) {
 				collection.Remove(nIndex);
 			}			
 
@@ -1024,8 +1089,7 @@ namespace System.Windows.Forms {
 			object IList.this[int index]{
 				get { return collection[index]; }
 				set { collection[index] = value; }
-			}
-		
+			}		
 
 			void IList.Clear(){
 				collection.Clear();
@@ -1107,7 +1171,7 @@ namespace System.Windows.Forms {
 			//  --- Constructor
 			//			
 			public CheckedListViewItemCollection(ListView owner) 	{				
-				container = owner;
+				container = owner;				
 			}
 
 			//
@@ -1118,7 +1182,7 @@ namespace System.Windows.Forms {
 			}
 			
 			public bool IsReadOnly {
-				get {return collection.IsReadOnly;}
+				get {return true;}	
 			} 			
 			
 			public virtual ListViewItem this[int index] {				
@@ -1126,12 +1190,14 @@ namespace System.Windows.Forms {
 				set { collection[index] = value.Index;}	
 			}
 			
-			// Internal
-			public void Clear() {
+			//
+			//  --- Internal Methods for the implementation
+			//
+			internal void Clear() {
 				 collection.Clear();  
 			}
 			
-			public void Add (int nIndex) {
+			internal void Add (int nIndex) {
 				collection.Add(nIndex);
 			}				
 
@@ -1165,19 +1231,13 @@ namespace System.Windows.Forms {
 				return collection.IndexOf(item);
 			}
 			/// <summary>
-			/// IList Interface implmentation.
+			/// IList Interface implementation.
 			/// </summary>
 			bool IList.IsReadOnly{
-				get{
-					// We allow addition, removeal, and editing of items after creation of the list.
-					return false;
-				}
+				get{return true;}
 			}
 			bool IList.IsFixedSize{
-				get{
-					// We allow addition and removeal of items after creation of the list.
-					return false;
-				}
+				get{return true;}
 			}
 
 			//[MonoTODO]
