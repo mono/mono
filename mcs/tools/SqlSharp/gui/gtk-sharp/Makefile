@@ -2,8 +2,7 @@
 # Makefile to build SqlSharpGtk for Mono
 #
 # Author:
-#    Daniel Morgan <danmorg@sc.rr.com>
-#
+#    Daniel Morgan <danielmorgan@verizon.net>
 # (c)copyright 2002-2003 Daniel Morgan 
 #
 

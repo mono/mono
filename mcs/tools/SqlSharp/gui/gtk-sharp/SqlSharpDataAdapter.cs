@@ -9,7 +9,7 @@
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
-//   Daniel Morgan (danmorg@sc.rr.com)
+//   Daniel Morgan (danielmorgan@verizon.net)
 //   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc 2002

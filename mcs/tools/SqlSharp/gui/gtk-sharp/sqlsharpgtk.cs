@@ -3,7 +3,7 @@
 //               Mono.Data providers
 //
 // Author:
-//     Daniel Morgan <danmorg@sc.rr.com>
+//     Daniel Morgan <danielmorgan@verizon.net>
 //
 // (C)Copyright 2002, 2003 by Daniel Morgan
 //

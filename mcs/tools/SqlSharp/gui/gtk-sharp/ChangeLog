@@ -1,5 +1,13 @@
 2003-10-16  Daniel Morgan <danielmorgan@verizon.net>
 
+	* Makefile
+	* LoginDialog.cs
+	* SqlSharpDataAdapter.cs
+	* sqlsharpgtk.cs: after editing these files, forgot to edit my
+          new email address
+
+2003-10-16  Daniel Morgan <danielmorgan@verizon.net>
+
 	* Win32.make: removed file.  replaced with Makefile
 
 	* Makefile: new makefile for building on Linux and Windows

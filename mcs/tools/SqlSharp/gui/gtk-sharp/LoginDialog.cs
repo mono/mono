@@ -1,9 +1,9 @@
 // LoginDialog.cs
 //
 // Author:
-//     Daniel Morgan <danmorg@sc.rr.com>
+//     Daniel Morgan <danielmorgan@verizon.net>
 //
-// (C)Copyright 2002 by Daniel Morgan
+// (C)Copyright 2002-2003 by Daniel Morgan
 //
 // To be included with Mono as a SQL query tool licensed under the GPL license.
 //
