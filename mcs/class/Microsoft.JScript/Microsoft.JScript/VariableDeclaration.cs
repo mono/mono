@@ -41,10 +41,9 @@ namespace Microsoft.JScript {
 		{
 			StringBuilder sb = new StringBuilder ();
 
-			// FIXME: we must add the string 
-			// representation of val, too.
-
 			sb.Append (Id);
+			sb.Append (" = ");
+			sb.Append (val.ToString ());
 
 			return sb.ToString ();
 		}

@@ -1,5 +1,7 @@
 2003-10-21  cesar lopez nataren  <cesar@ciencias.unam.mx>
 
+	* VariableDeclaration.cs: added the initializer to ToString.
+	
 	* jscript-lexer-parser.g: Allow "christmas trees" (aka expression
 	trees) building.
 	
@@ -31,6 +33,7 @@
 	* README: added some info about hacking the grammar
 
 	* JSparser.cs: Updated the constructor to not receiving params.
+
 	* JScriptLexer.cs, JScriptParser.cs, JScriptParserTokenTypes.cs,
 	JScriptParserTokenTypes.txt: update of antlr generated files from
 	grammar changes. 
