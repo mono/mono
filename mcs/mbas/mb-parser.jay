@@ -16,6 +16,7 @@ namespace Mono.MonoBASIC
 {
 	using System.Text;
 	using System;
+	using System.Reflection;
 	using System.Collections;
 	using Mono.Languages;
 	using Mono.CSharp;
@@ -42,6 +43,11 @@ namespace Mono.MonoBASIC
 		///   Tmp block is used to store tmp copies of expressions
 		/// </summary>
 		Expression      tmp_expr;	
+		
+		/// <summary>
+		///   Tmp catch is used to store catch clauses in try..catch..finally
+		/// </summary>
+		ArrayList      tmp_catch_clauses;			
 		
 		/// <summary>
 		///   Current interface is used by the various declaration
@@ -615,14 +621,27 @@ sub_declaration
 	  {
 		Method method = new Method (TypeManager.system_void_expr, (int) current_modifiers, (string) $2,
 					    (Parameters) current_local_parameters, null, lexer.Location);
-
-		
+	
 		method.Block = (Block) end_block();
 		$$ = method;
-		if ($6 != null) {
 
-			
-		}
+		if ($6 != null) { /* we have an event handler to take care of */
+			// This wouldn't work: AddHandler ((Expression)$6, (string) $2);
+			string evt_def = ((MemberAccess)$6).ToString();
+			int pos = evt_def.LastIndexOf (".");
+			string evt_target = ((string) $2).Substring (0, pos);
+
+			foreach (Property p in current_container.Properties) {
+				if (p.Name == evt_target) {
+					// FIXME: See below 
+					// RemoveHandler (p.Set.Block, (Expression)$6, (string) $2);
+					AddHandler (p.Set.Block, (Expression)$6, (string) $2);
+					break;
+				}
+			}
+							
+							
+		}	
 	  }	  
 	;
 	
@@ -689,7 +708,6 @@ delegate_declaration
 	  CLOSE_PARENS 
 	  EOL
 	  {
-	  	Console.WriteLine ("Declaring delegate " + (string) $3);
 		Location l = lexer.Location;
 		Mono.CSharp.Delegate del = new Mono.CSharp.Delegate (current_container, TypeManager.system_void_expr, 
 					     (int) current_modifiers, 
@@ -720,7 +738,7 @@ opt_evt_handler
 	{ 	$$ = null; }
 	| HANDLES qualified_identifier
 	{
-		$$ = $2;	
+		$$ = (Expression) DecomposeQI ((string)$2, lexer.Location);	
 	}
 	;	
 func_declaration
@@ -851,25 +869,12 @@ statement : embedded_statement
 	  {
 		Statement s = (Statement) $1;
 
-
 		current_block.AddStatement ((Statement) $1);
 	  } 
 	  | labeled_statement EOL
 	  | ADDHANDLER prefixed_unary_expression COMMA ADDRESSOF qualified_identifier
 	   {
-	   	string handler_name = (string) $5;
-	   	Location loc = lexer.Location;
-	   	ArrayList neh_args = new ArrayList();
-	   	neh_args.Add (new Argument (DecomposeQI(handler_name, loc), Argument.AType.Expression));
-	   	
-	   	ExpressionStatement se = (ExpressionStatement)new New (DecomposeQI("System.EventHandler", loc), neh_args, loc);
-	   	
-	   	CompoundAssign ca = new CompoundAssign (
-				Binary.Operator.Addition, (Expression) $2, (Expression) se, loc);
-				
-		Statement s = (Statement)(new StatementExpression ((ExpressionStatement) ca, loc)); 
-		current_block.AddStatement (s);	
-					
+	   	AddHandler ((Expression) $2, (string) $5);
 	   }
 	  ;	
 	  
@@ -892,9 +897,11 @@ embedded_statement
 	: expression_statement
 	| selection_statement
 	| iteration_statement
-	/*| jump_statement*/
+	| try_statement
+	 /* | jump_statement */
 	;
-
+        
+        
 iteration_statement
 	: while_statement
 	| do_statement
@@ -902,6 +909,163 @@ iteration_statement
 	/*| foreach_statement*/
 	;
 
+try_statement
+	: try_catch
+	| try_catch_finally
+	;
+			
+try_catch
+	: try_header 
+	  catch_clauses 
+	  END TRY
+	  { 
+		Catch g = null;
+		ArrayList s = new ArrayList ();
+
+		foreach (Catch cc in (ArrayList) $2) {
+			if (cc.IsGeneral)
+				g = cc;
+			else
+				s.Add (cc);
+		}
+
+		// Now s contains the list of specific catch clauses
+		// and g contains the general one.
+		Block b = end_block();
+
+		$$ = new Try ((Block) b, s, g, null, lexer.Location);
+	  }	  
+	;	
+	  
+try_catch_finally
+	: try_header 
+	  { 
+		$1 = end_block(); 
+	  }	
+	  opt_catch_clauses 
+	  FINALLY EOL
+  	  { 
+		start_block(); 
+	  }	  
+	  opt_statement_list 
+	  END TRY
+	  {
+		Catch g = null;
+		ArrayList s = new ArrayList ();
+		ArrayList catch_list = (ArrayList) $5;
+
+		if (catch_list != null){
+			foreach (Catch cc in catch_list) {
+				if (cc.IsGeneral)
+					g = cc;
+				else
+					s.Add (cc);
+			}
+		}
+
+		$$ = new Try ((Block) $1, s, g, (Block) end_block(), lexer.Location);
+	
+	  }	
+	  ;	  
+	
+try_header
+	: TRY EOL
+	  {   Console.WriteLine ("try_header");
+		start_block();  
+	  }
+	  opt_statement_list 
+	;	
+
+opt_catch_clauses
+	: /* empty */  {  $$ = null;  }
+        | catch_clauses
+	;
+
+catch_clauses
+	: catch_clause 
+	  {
+		ArrayList l = new ArrayList ();
+
+		l.Add ($1);
+		$$ = l;
+	  }
+	| catch_clauses catch_clause
+	  {
+		ArrayList l = (ArrayList) $1;
+
+		l.Add ($2);
+		$$ = l;
+	  }
+	;
+
+opt_identifier
+	: /* empty */	{  $$ = null;  }
+	| IDENTIFIER
+	;
+
+catch_clause 
+	: CATCH opt_catch_args EOL
+	{
+		Expression type = null;
+		string id = null;
+		
+		if ($2 != null) {
+			DictionaryEntry cc = (DictionaryEntry) $2;
+			type = (Expression) cc.Key;
+			id   = (string) cc.Value;
+			
+			if (id != null){
+				ArrayList one = new ArrayList ();
+				Location loc = lexer.Location;
+
+				one.Add (new VariableDeclaration (id, null, loc));
+
+
+				$1 = current_block;
+				current_block = new Block (current_block);
+				Block b = declare_local_variables (type, one, loc);
+				current_block = b;
+			}
+		}
+		/* start_block(); */
+	
+	} 
+	opt_statement_list {
+		Expression type = null;
+		string id = null;
+		Block b_catch = current_block;
+		
+		if ($2 != null){
+			DictionaryEntry cc = (DictionaryEntry) $2;
+			type = (Expression) cc.Key;
+			id   = (string) cc.Value;
+			
+			if ($1 != null) {
+				//
+				// FIXME: I can change this for an assignment.
+				//
+				while (current_block != (Block) $1)
+					current_block = current_block.Parent;
+			}
+		}
+
+		$$ = new Catch (type, id , (Block)b_catch, lexer.Location);
+	}
+        ;
+
+opt_catch_args
+	: /* empty */ {  $$ = null; }
+        | catch_args
+	;	  
+
+catch_args 
+        : IDENTIFIER AS type
+        {
+		 $$ = new DictionaryEntry ($3, $1); 
+	}
+        ;
+        
+        
 do_statement
 	: DO embedded_statement
 	  WHILE OPEN_PARENS boolean_expression CLOSE_PARENS 
@@ -1854,6 +2018,49 @@ Block end_block ()
 	return (res);
 }
 
+private void AddHandler (Expression evt_definition, string handler_name)
+{
+	AddHandler (current_block, evt_definition, handler_name);
+}
+
+private void AddHandler (Block b, Expression evt_definition, string handler_name)
+{
+   	Location loc = lexer.Location;
+   	ArrayList neh_args = new ArrayList();
+   	neh_args.Add (new Argument (DecomposeQI(handler_name, loc), Argument.AType.Expression));
+   	
+   	ExpressionStatement se = (ExpressionStatement)new New (DecomposeQI("System.EventHandler", loc), neh_args, loc);
+   	
+   	CompoundAssign ca = new CompoundAssign (
+			Binary.Operator.Addition, evt_definition, (Expression) se, loc);
+			
+	Statement s = (Statement)(new StatementExpression ((ExpressionStatement) ca, loc)); 
+	b.AddStatement (s);	
+}
+
+// FIXME: THIS DOES NOT WORK!!!
+private void RemoveHandler (Block b, Expression evt_definition, string handler_name)
+{
+   	Location loc = lexer.Location;
+   	ArrayList neh_args = new ArrayList();
+   	neh_args.Add (new Argument (DecomposeQI(handler_name, loc), Argument.AType.Expression));
+   	
+   	ExpressionStatement se = (ExpressionStatement)new New (DecomposeQI("System.EventHandler", loc), neh_args, loc);
+   	
+   	CompoundAssign ca = new CompoundAssign (
+			Binary.Operator.Subtraction, evt_definition, (Expression) se, loc);
+			
+	Statement s = (Statement)(new StatementExpression ((ExpressionStatement) ca, loc)); 
+	b.AddStatement (s);	
+}
+
+private void RemoveHandler (Expression evt_definition, string handler_name)
+{
+	RemoveHandler (current_block, evt_definition, handler_name);
+}
+
+
+
 void Error_ExpectingTypeName (Location l, Expression expr)
 {
 	if (expr is Invocation){
@@ -1861,6 +2068,10 @@ void Error_ExpectingTypeName (Location l, Expression expr)
 	} else {
 		Report.Error (-1, l, "Invalid Type definition");
 	}
+}
+
+static bool AlwaysAccept (MemberInfo m, object filterCriteria) {
+	return true;
 }
 
 public override int parse ()
