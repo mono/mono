@@ -1,3 +1,9 @@
+2004-11-10  Martin Baulig  <martin@ximian.com>
+
+	Merged latest changes into gmcs.  Please keep this comment in
+	here, it makes it easier for me to see what changed in MCS since
+	the last time I merged.
+
 2004-11-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Invocation.OverloadResolve): Flag error if we are
@@ -463,12 +469,6 @@
 	* class.cs (MethodCore.CheckBase): Add errors 505, 533, 544,
 	561 report.
 	(PropertyBase.FindOutParentMethod): Add errors 545, 546 report.
-
-2004-10-18  Martin Baulig  <martin@ximian.com>
-
-	Merged latest changes into gmcs.  Please keep this comment in
-	here, it makes it easier for me to see what changed in MCS since
-	the last time I merged.
 
 2004-10-18  Martin Baulig  <martin@ximian.com>
 
