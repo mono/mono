@@ -1,5 +1,9 @@
 2004-03-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* process.c: quote the string passed to the shell using g_shell_quote.
+
+2004-03-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* threads.c:
 	(mono_threads_manage): don't remove the finalizer thread and self
 	from the threads hash table so that mono_thread_manage can be called
