@@ -1,3 +1,9 @@
+2004-11-30  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (RESOURCE_FILES): Make sure that we distribute these,
+	irrespective of the profile.
+	(OTHER_RES): New.
+
 2004-11-29 Sanjay Gupta <gsanjay@novell.com>
 
 	* System.Web.dll.sources: Added DataControlField.cs and 

@@ -2,7 +2,6 @@ thisdir = class/System.Web
 SUBDIRS = Test
 include ../../build/rules.make
 
-ifeq (net_2_0, $(PROFILE))
 RESOURCE_FILES = \
 	resources/arrow_minus.gif \
 	resources/arrow_noexpand.gif \
@@ -37,6 +36,9 @@ RESOURCE_FILES = \
 	resources/TreeView_tminus.gif \
 	resources/TreeView_tplus.gif \
 	System.Web.UI.WebControls/TreeView.js
+
+ifeq (net_2_0, $(PROFILE))
+OTHER_RES = $(RESOURCE_FILES)
 endif
 
 LIBRARY = System.Web.dll
@@ -48,7 +50,7 @@ LIB_MCS_FLAGS = \
 	/r:System.Data.dll		\
 	/r:System.Xml.dll		\
 	/r:System.EnterpriseServices.dll \
-	$(RESOURCE_FILES:%=/resource:%)
+	$(OTHER_RES:%=/resource:%)
 
 EXTRA_DISTFILES = $(RESOURCE_FILES)
 
