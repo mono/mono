@@ -1,3 +1,6 @@
+2002-03-27  Mike Kestner <mkestner@speakeasy.net>
+
+	* delegate.c (arch_get_delegate_invoke): malloc a bigger area
 
 Tue Mar 26 19:54:45 CET 2002 Paolo Molaro <lupus@ximian.com>
 
