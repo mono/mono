@@ -1,3 +1,9 @@
+2002-12-22  Tim Coleman <tim@timcoleman.com>
+	* Mono.Data.Tds.Protocol/TdsComm.cs:
+		Change GetString to NOT explicitly add a NUL
+		to the end of the string since Encoder.GetString ()
+		will do that.
+
 2002-12-14  Daniel Morgan <danmorg@sc.rr.com>
 
 	* Mono.Data.Tds.Protocol/Tds70.cs: single quotes in SQL string

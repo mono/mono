@@ -296,7 +296,6 @@ namespace Mono.Data.Tds.Protocol {
 			else {
 				byte[] result = new byte[len + 1];
 				Array.Copy (GetBytes (len, false), result, len);
-				result[len] = (byte) 0;
 				return (encoder.GetString (result));
 			}
 		}
