@@ -29,17 +29,10 @@ namespace System.ComponentModel
 
 		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
-			if (value.GetType() == typeof (string)) {
-				string Test = ((String) value).ToLower (culture);
-				if (Test.Equals ("true"))
-					return true;
-				else if (Test.Equals ("false"))
-					return false;
-				else
-					throw new FormatException ("No valid boolean value");
-			}
-
-			return base.ConvertFrom (context, culture, value);
+			if (value is string)
+				return bool.Parse ((string) value);
+			else
+				return base.ConvertFrom (context, culture, value);
 		}
 
 		public override StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)
