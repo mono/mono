@@ -1,3 +1,8 @@
+2003-09-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* inssel.brg: Refactor the interface offset table related code into
+	its separate functions and add support for the AOT case.
+
 2003-09-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* aot.c (mono_aot_get_method_inner): Fix memory leak.
