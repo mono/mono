@@ -1,3 +1,10 @@
+2002-01-08  Nick Drochak  <ndrochak@gol.com>
+
+	* CodeAccessSecurityAttribute.cs, SecurityAttribute.cs, 
+	SecurityPermissionAttribute.cs: New Files
+
+	* SecurityPermissionFlag.cs: Add missing enum values
+
 2002-01-02  Nick Drochak  <ndrochak@gol.com>
 
 	* IUnrestrictedPermission.cs: Added missing interface class
