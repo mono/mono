@@ -1,3 +1,10 @@
+2005-01-13  Peter Bartok  <pbartok@novell.com>
+
+	* Panel.cs (ctor): Setting Selectable window style to off
+	* Splitter.cs (ctor): Setting Selectable window style to off
+	* GroupBox.cs (ctor): Setting Selectable window style to off
+	* Label.cs (ctor): Setting Selectable window style to off
+
 2005-01-12  Miguel de Icaza  <miguel@ximian.com>
 
 	* UpDownBase.cs (InitTimer): If the timer has been already

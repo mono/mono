@@ -36,6 +36,7 @@ namespace System.Windows.Forms {
 		#region	Constructors & Destructors
 		public Panel () {
 			base.TabStop = false;
+			SetStyle(ControlStyles.Selectable, false);
 		}
 		#endregion	// Constructors & Destructors
 

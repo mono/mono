@@ -61,6 +61,7 @@ namespace System.Windows.Forms
 			flat_style = FlatStyle.Standard;
 
 			SetStyle(ControlStyles.ContainerControl, true);
+			SetStyle(ControlStyles.Selectable, false);
 		}
 
 		#region Public Properties

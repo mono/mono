@@ -85,6 +85,7 @@ namespace System.Windows.Forms
     			TextAlignChanged = null;
 
 			SetStyle (ControlStyles.ResizeRedraw, true);
+			SetStyle (ControlStyles.Selectable, false);
 
 			Resize += new EventHandler (OnResizeLB);
 			HandleCreated += new EventHandler (OnHandleCreatedLB);
