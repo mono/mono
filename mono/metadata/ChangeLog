@@ -3,6 +3,7 @@
 	* appdomain.c (mono_domain_transfer_object): impl. hack for Arrays
 	and String - but we will need generic marshalling support in the
 	future. 
+	(mono_init): set the domain name in a ms compatible way
 
 	* object.c (mono_string_new_utf16): bug fix: use char[] instead of
 	String[].
