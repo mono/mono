@@ -1,3 +1,10 @@
+2004-05-24 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* mini-x86.c (EMIT_COND_BRANCH): If an OP_LABEL has an offset
+	which can be done with an imm8, do it that way.
+	(mono_arch_output_basic_block): ditto for a jmp
+	(mono_arch_emit_prolog): Computate maximum offset of a label.
+
 2004-05-24 18:18 CET Patrik Torstenson <totte@hiddenpeaks.com>
 
 	* mini-x86.c (mono_arch_local_regalloc): the reg allocator
