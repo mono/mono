@@ -32,6 +32,15 @@ public class TypeBuilderTest : Assertion
 	private interface AnInterface {
 	}
 
+	interface Foo {
+	}
+
+	interface Bar : Foo {
+	}
+
+	interface Baz : Bar {
+	}
+
 	private AssemblyBuilder assembly;
 
 	private ModuleBuilder module;
@@ -1745,6 +1754,29 @@ public class TypeBuilderTest : Assertion
 		tb.CreateType ();
 		handler_called ++;
 		return tb.Assembly;
+	}
+
+	[Test]
+	public void TestIsAssignableTo () {
+		Type icomparable = typeof (IComparable);
+
+		TypeBuilder tb = module.DefineType (genTypeName (),
+											TypeAttributes.Public, null, new Type[] { icomparable, typeof (Bar) });
+
+		Assert (icomparable.IsAssignableFrom (tb));
+		Assert (!tb.IsAssignableFrom (icomparable));
+
+		// Fails under MS.NET:
+		//Assert (typeof (Foo).IsAssignableFrom (tb));
+		Assert (typeof (Bar).IsAssignableFrom (tb));
+		Assert (!typeof (Baz).IsAssignableFrom (tb));
+
+		Assert (tb.IsAssignableFrom (tb));
+
+		Assert (!tb.IsAssignableFrom (typeof (IDisposable)));
+		tb.AddInterfaceImplementation (typeof (IDisposable));
+		// Fails under MS.NET:
+		//Assert (tb.IsAssignableFrom (typeof (IDisposable)));
 	}
 }
 }
