@@ -1,0 +1,6 @@
+2003-05-28  Ville Palo <vi64pa@kolumbus.fi>
+
+	* ChangeLog: Added this.
+	* SqlByte.cs: Fixed checked parts
+	
+

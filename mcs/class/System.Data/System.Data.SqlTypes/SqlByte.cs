@@ -3,8 +3,10 @@
 //
 // Author:
 //   Tim Coleman <tim@timcoleman.com>
+//   Ville Palo <vi64pa@kolumbus.fi>
 //
 // (C) Copyright 2002 Tim Coleman
+// (C) Copyright 2003 Ville Palo
 //
 
 using System;
@@ -345,13 +347,13 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlByte (SqlDouble x)
 		{
-			// FIXME
-			//			checked {
-				if (x.IsNull)
-					return Null;
-				else 					
+			if (x.IsNull)
+				return Null;
+			else {
+				checked {
 					return new SqlByte ((byte)x.Value);
-				//}
+				}
+			}
 		}
 
 		public static explicit operator SqlByte (SqlInt16 x)
@@ -376,13 +378,13 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlByte (SqlInt64 x)
 		{
-			// FIXME
-			//checked {
-				if (x.IsNull)
-					return Null;
-				else
+			if (x.IsNull)
+				return Null;
+			else {
+				checked {
 					return new SqlByte ((byte)x.Value);
-				//}
+				}
+			}
 		}
 
 		public static explicit operator SqlByte (SqlMoney x)
@@ -397,13 +399,13 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlByte (SqlSingle x)
 		{
-			// FIXME:
-			//checked {
-				if (x.IsNull)
-					return Null;
-				else
+			if (x.IsNull)
+				return Null;
+			else {
+				checked {
 					return new SqlByte ((byte)x.Value);
-				//}
+				}
+			}
 		}
 
 
