@@ -1,3 +1,9 @@
+2004-08-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HostExecutionContext.cs: Fx 2.0 stub required for AppDomain.
+	* HostExecutionContextManager.cs: Fx 2.0 stub required for AppDomain.
+	* HostExecutionContextSwitcher.cs: Fx 2.0 stub required for AppDomain.
+
 2004-08-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Timer.cs: don't invoke the callback if the period changes before the
