@@ -2,7 +2,7 @@ thisdir = tools
 SUBDIRS = 	\
 	al cilc corcompare ictool mono-xsd security wsdl genxs sqlsharp \
 	disco soapsuds browsercaps-updater monop gacutil mono-rpm-helpers 	\
-	resgen
+	resgen mkbundle
 
 net_1_1_bootstrap_SUBDIRS = security
 
