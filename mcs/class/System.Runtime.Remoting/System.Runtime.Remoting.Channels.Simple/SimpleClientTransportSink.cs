@@ -78,8 +78,6 @@ namespace System.Runtime.Remoting.Channels.Simple
 							       SimpleMessageFormat.MessageType.Request,
 							       object_uri);
 			
-			Console.WriteLine ("Client  ProcessMessage");
-
 			// read the response fro the network an copy it to a memory stream
 			SimpleMessageFormat.MessageType msg_type;
 			string uri;
