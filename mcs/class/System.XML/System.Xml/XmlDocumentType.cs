@@ -2,9 +2,12 @@
 // System.Xml.XmlDocumentType.cs
 //
 // Author: Duncan Mak (duncan@ximian.com)
+//	   Atsushi Enomoto (ginga@kit.hi-ho.ne.jp)
 //
 // (C) Ximian, Inc.
 //
+using System;
+using System.Collections;
 
 namespace System.Xml
 {
@@ -15,7 +18,11 @@ namespace System.Xml
 		string publicId;        // public identifier on the DOCTYPE
 		string systemId;        // system identifier on the DOCTYPE
 		string internalSubset;  // value of the DTD internal subset
-		
+		internal XmlNamedNodeMap entities;
+		internal XmlNamedNodeMap notations;
+		internal Hashtable elementDecls;
+		internal Hashtable attListDecls;
+
 		// Constructor
 		protected internal XmlDocumentType (string name, string publicId,
 						    string systemId, string internalSubset,
@@ -26,14 +33,17 @@ namespace System.Xml
 			this.publicId = publicId;
 			this.systemId = systemId;
 			this.internalSubset = internalSubset;
+			entities = new XmlNamedNodeMap (this);
+			notations = new XmlNamedNodeMap (this);
+			elementDecls = new Hashtable ();
+			attListDecls = new Hashtable ();
 		}
 
 
 		// Properties
-		[MonoTODO]
 		public XmlNamedNodeMap Entities
 		{
-			get { return null; }
+			get { return entities; }
 		}
 			
 		public string InternalSubset
@@ -61,10 +71,9 @@ namespace System.Xml
 			get { return XmlNodeType.DocumentType; }
 		}
 
-		[MonoTODO]
 		public XmlNamedNodeMap Notations
 		{
-			get { return null; }
+			get { return notations; }
 		}
 
 		public string PublicId
@@ -90,9 +99,9 @@ namespace System.Xml
 			// No effect
 		}
 
-		[MonoTODO]
 		public override void WriteTo (XmlWriter w)
 		{
+			w.WriteDocType (name, publicId, systemId, internalSubset);
 		}
 	}
 }

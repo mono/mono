@@ -66,10 +66,11 @@ namespace System.Xml
 		{			
 			foreach (XmlNode node in nodeList)
 				if (node.Name == name) {
+					if (node.IsReadOnly)
+						throw new InvalidOperationException ("Cannot remove. This node is read only: " + name);
 					nodeList.Remove (node);
 					return node;
 				}
-			
 			return null;
 		}
 

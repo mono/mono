@@ -1,3 +1,30 @@
+2003-03-18  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* added XmlParserInput.cs for multi xml document sources.
+	* added DTDObjectModel.cs (maybe temporary).
+	* XmlTextReader.cs :
+	  + fixed ctor to use XmlStreamReader. Allowed null XmlParserContext.
+	  + Some members such as LineNumber, ReadChar now uses XmlParserInput.
+	  + added support for Namespaces (namespace-ignorant parse available).
+	  + added support for XmlResolver.
+	  + replace SetReaderContext()/SetReaderFragment() with Initialize().
+	  + use NameTable in CreateNameString.
+	  + fixed ReadCData(). Now reads "]]]>" correctly.
+	  + support for DTD parse.
+	  + Read() now throws an error when it reached EOF while Depth > 0.
+	* XmlAttribute.cs,
+	  XmlDocumentFragment.cs,
+	  XmlElement.cs : fix related to the changes of XmlTextReader.Initialize
+	* XmlDocument.cs : ReadNode() now reads DocumentType.
+	* XmlDocumentType.cs : implemented Entities, Notations, WriteTo().
+	* XmlEntity.cs,
+	  XmlNotation.cs : added override LastLinkedChild (for doctype node).
+	* XmlNamedNodeMap.cs : Remove() raises an error if target is read only.
+	* XmlElement.cs : bugfix for node removal of set_InnerXml.
+	* XmlNode.cs : added insertBeforeIntern() derived from InsertBefore().
+	  (to append child XmlEntity into XmlDocumentType correctly.)
+	* XmlInputStream.cs : fixed to access file with FileAccess.Read.
+
 2003-03-15  Duncan Mak  <duncan@ximian.com>
 
 	* XmlElement.cs (Name): Only append prefix + ':' when prefix is

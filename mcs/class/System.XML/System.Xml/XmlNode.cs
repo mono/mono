@@ -322,58 +322,65 @@ namespace System.Xml
 
 				// checking validity finished. then appending...
 
-				ownerDoc.onNodeInserting (newChild, this);
-
-				if(newChild.ParentNode != null)
-					newChild.ParentNode.RemoveChild (newChild);
-
-				if(newChild.NodeType == XmlNodeType.DocumentFragment) {
-					int x = newChild.ChildNodes.Count;
-					for(int i=0; i<x; i++) {
-						XmlNode n = newChild.ChildNodes [0];
-						this.InsertBefore (n, refChild);	// recursively invokes events. (It is compatible with MS implementation.)
-					}
-				}
-				else {
-					XmlLinkedNode newLinkedChild = (XmlLinkedNode) newChild;
-					XmlLinkedNode lastLinkedChild = LastLinkedChild;
-
-					newLinkedChild.parentNode = this;
-
-					if(refChild == null) {
-						// append last, so:
-						// * set nextSibling of previous lastchild to newChild
-						// * set lastchild = newChild
-						// * set next of newChild to firstChild
-						if(LastLinkedChild != null) {
-							XmlLinkedNode formerFirst = FirstChild as XmlLinkedNode;
-							LastLinkedChild.NextLinkedSibling = newLinkedChild;
-							LastLinkedChild = newLinkedChild;
-							newLinkedChild.NextLinkedSibling = formerFirst;
-						}
-						else {
-							LastLinkedChild = newLinkedChild;
-							LastLinkedChild.NextLinkedSibling = newLinkedChild;	// FirstChild
-						}
-					}
-					else {
-						// append not last, so:
-						// * if newchild is first, then set next of lastchild is newChild.
-						//   otherwise, set next of previous sibling to newChild
-						// * set next of newChild to refChild
-						XmlLinkedNode prev = refChild.PreviousSibling as XmlLinkedNode;
-						if(prev == null)
-							LastLinkedChild.NextLinkedSibling = newLinkedChild;
-						else
-							prev.NextLinkedSibling = newLinkedChild;
-						newLinkedChild.NextLinkedSibling = refChild as XmlLinkedNode;
-					}
-					ownerDoc.onNodeInserted (newChild, newChild.ParentNode);
-				}
-				return newChild;
+				return insertBeforeIntern (newChild, refChild);
 			} 
 			else
 				throw new InvalidOperationException ();
+		}
+
+		internal XmlNode insertBeforeIntern (XmlNode newChild, XmlNode refChild)
+		{
+			XmlDocument ownerDoc = (NodeType == XmlNodeType.Document) ? (XmlDocument)this : OwnerDocument;
+
+			ownerDoc.onNodeInserting (newChild, this);
+
+			if(newChild.ParentNode != null)
+				newChild.ParentNode.RemoveChild (newChild);
+
+			if(newChild.NodeType == XmlNodeType.DocumentFragment) {
+				int x = newChild.ChildNodes.Count;
+				for(int i=0; i<x; i++) {
+					XmlNode n = newChild.ChildNodes [0];
+					this.InsertBefore (n, refChild);	// recursively invokes events. (It is compatible with MS implementation.)
+				}
+			}
+			else {
+				XmlLinkedNode newLinkedChild = (XmlLinkedNode) newChild;
+				XmlLinkedNode lastLinkedChild = LastLinkedChild;
+
+				newLinkedChild.parentNode = this;
+
+				if(refChild == null) {
+					// append last, so:
+					// * set nextSibling of previous lastchild to newChild
+					// * set lastchild = newChild
+					// * set next of newChild to firstChild
+					if(LastLinkedChild != null) {
+						XmlLinkedNode formerFirst = FirstChild as XmlLinkedNode;
+						LastLinkedChild.NextLinkedSibling = newLinkedChild;
+						LastLinkedChild = newLinkedChild;
+						newLinkedChild.NextLinkedSibling = formerFirst;
+					}
+					else {
+						LastLinkedChild = newLinkedChild;
+						LastLinkedChild.NextLinkedSibling = newLinkedChild;	// FirstChild
+					}
+				}
+				else {
+					// append not last, so:
+					// * if newchild is first, then set next of lastchild is newChild.
+					//   otherwise, set next of previous sibling to newChild
+					// * set next of newChild to refChild
+					XmlLinkedNode prev = refChild.PreviousSibling as XmlLinkedNode;
+					if(prev == null)
+						LastLinkedChild.NextLinkedSibling = newLinkedChild;
+					else
+						prev.NextLinkedSibling = newLinkedChild;
+					newLinkedChild.NextLinkedSibling = refChild as XmlLinkedNode;
+				}
+				ownerDoc.onNodeInserted (newChild, newChild.ParentNode);
+			}
+			return newChild;
 		}
 
 		[MonoTODO]

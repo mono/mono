@@ -20,6 +20,7 @@ using System.Text;
 using System.Xml.XPath;
 using System.Diagnostics;
 using System.Collections;
+using Mono.Xml;
 using Mono.Xml.Native;
 
 namespace System.Xml
@@ -553,8 +554,7 @@ namespace System.Xml
 
 		public virtual void Load (Stream inStream)
 		{
-			XmlReader xmlReader = new XmlTextReader (new XmlInputStream (inStream));
-			Load (xmlReader);
+			Load (new XmlTextReader (new XmlStreamReader (inStream)));
 		}
 
 		public virtual void Load (string filename)
@@ -684,11 +684,9 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO("DTD parser is not completed.")]
+		[MonoTODO ("Child of entity is not simple Value string;Get prefix of NotationDecl")]
 		public virtual XmlNode ReadNode(XmlReader reader)
 		{
-			// This logic was formerly defined in 'XmlNode.ConstructDOM()'
-
 			XmlNode resultNode = null;
 			XmlNode newNode = null;
 			XmlNode currentNode = null;
@@ -696,9 +694,7 @@ namespace System.Xml
 			if (reader.ReadState == ReadState.Initial)
 				reader.Read ();
 
-			// It was originally XmlDocument.Load(reader reader) when mcs was v0.16.
 			int startDepth = reader.Depth;
-//			bool atStart = true;
 			bool ignoredWhitespace;
 			bool reachedEOF = false;
 
@@ -777,7 +773,7 @@ namespace System.Xml
 					break;
 
 				case XmlNodeType.DocumentType:
-					// This logic is kinda hack;-)
+					// hack ;-)
 					XmlTextReader xtReader = reader as XmlTextReader;
 					if(xtReader == null) {
 						xtReader = new XmlTextReader (reader.ReadOuterXml (),
@@ -785,10 +781,7 @@ namespace System.Xml
 							new XmlParserContext (NameTable, ConstructNamespaceManager(), XmlLang, XmlSpace));
 						xtReader.Read ();
 					}
-					newNode = CreateDocumentType (xtReader.Name,
-						xtReader.GetAttribute ("PUBLIC"),
-						xtReader.GetAttribute ("SYSTEM"),
-						xtReader.Value);
+					newNode = ReadDoctypeNode (xtReader);
 					if(currentNode != null)
 						throw new XmlException ("XmlDocumentType at invalid position.");
 					break;
@@ -819,6 +812,34 @@ namespace System.Xml
 			} while (ignoredWhitespace || reader.Depth > startDepth ||
 				(reader.Depth == startDepth && reader.NodeType == XmlNodeType.EndElement));
 			return resultNode != null ? resultNode : newNode;
+		}
+
+		private XmlDocumentType ReadDoctypeNode (XmlTextReader xtReader)
+		{
+			XmlDocumentType doctype = CreateDocumentType (xtReader.Name,
+				xtReader.GetAttribute ("PUBLIC"),
+				xtReader.GetAttribute ("SYSTEM"),
+				xtReader.Value);
+			DTDObjectModel subset = xtReader.currentSubset;
+			foreach (DTDEntityDeclaration decl in subset.EntityDecls.Values) {
+				XmlNode n = new XmlEntity (decl.Name, decl.NotationName,
+					decl.PublicId, decl.SystemId, this);
+				// FIXME: Value is more complex, similar to Attribute.
+				n.insertBeforeIntern (this.CreateTextNode (decl.EntityValue), null);
+				doctype.entities.Nodes.Add (n);
+			}
+			foreach (DTDNotationDeclaration decl in subset.NotationDecls.Values) {
+				XmlNode n = new XmlNotation (decl.LocalName, decl.Prefix,
+					decl.PublicId, decl.SystemId, this);
+				doctype.notations.Nodes.Add (n);
+			}
+			foreach (DTDElementDeclaration decl in subset.ElementDecls.Values) {
+				doctype.elementDecls.Add (decl.Name, decl.Clone ());
+			}
+			foreach (DTDAttListDeclaration decl in subset.AttListDecls.Values) {
+				doctype.attListDecls.Add (decl.Name, decl.Clone ());
+			}
+			return doctype;
 		}
 
 		public virtual void Save(Stream outStream)

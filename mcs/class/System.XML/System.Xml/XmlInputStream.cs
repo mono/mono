@@ -17,7 +17,7 @@ namespace Mono.Xml.Native
 	#region XmlStreamReader
 	public class XmlStreamReader : StreamReader
 	{
-		public XmlStreamReader (XmlInputStream input)
+		XmlStreamReader (XmlInputStream input)
 			: base (input, input.ActualEncoding != null ? input.ActualEncoding : Encoding.UTF8)
 		{
 		}
@@ -34,7 +34,7 @@ namespace Mono.Xml.Native
 	}
 	#endregion
 
-	public class XmlInputStream : Stream
+	class XmlInputStream : Stream
 	{
 		Encoding enc;
 		Stream stream;
@@ -54,7 +54,7 @@ namespace Mono.Xml.Native
 				Initialize (new FileStream (url, FileMode.Open));
 			}
 #else
-			Initialize (new FileStream (url, FileMode.Open));
+			Initialize (new FileStream (url, FileMode.Open, FileAccess.Read));
 #endif
 		}
 

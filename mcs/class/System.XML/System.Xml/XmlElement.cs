@@ -85,16 +85,15 @@ namespace System.Xml
 				return base.InnerXml;
 			}
 			set {
-				foreach(XmlNode n in ChildNodes)
-					this.RemoveChild(n);
+				while (FirstChild != null)
+					this.RemoveChild (FirstChild);
 
 				// I hope there are any well-performance logic...
 				XmlNameTable nt = this.OwnerDocument.NameTable;
 				XmlNamespaceManager nsmgr = this.ConstructNamespaceManager ();
 				XmlParserContext ctx = new XmlParserContext (nt, nsmgr, XmlLang, this.XmlSpace);
 				XmlTextReader xmlReader = OwnerDocument.ReusableReader;
-				xmlReader.SetReaderContext (String.Empty, ctx);
-				xmlReader.SetReaderFragment (new StringReader (value), XmlNodeType.DocumentFragment);
+				xmlReader.Initialize (String.Empty, ctx, new StringReader (value), XmlNodeType.Element);
 
 				do {
 					XmlNode n = OwnerDocument.ReadNode (xmlReader);
