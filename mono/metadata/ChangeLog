@@ -1,5 +1,10 @@
 2005-02-21  Martin Baulig  <martin@ximian.com>
 
+	* marshal.c (mono_marshal_get_runtime_invoke): Add support for
+	generic instances.
+
+2005-02-21  Martin Baulig  <martin@ximian.com>
+
 	* reflection.c (mono_image_build_metadata): We also need to
 	"fixup" the MethodImpl table after we computed the final method
 	indices.  Call fixup_methodimpl() to do that.
