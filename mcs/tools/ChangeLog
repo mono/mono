@@ -1,3 +1,8 @@
+2004-10-29  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (net_2_0_SUBDIRS): New.  Only build 'wsdl' in the
+	net_2_0 profile.
+
 2004-06-11  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (PROGRAM_INSTALL_DIR): New define.

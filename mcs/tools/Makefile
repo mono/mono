@@ -1,5 +1,8 @@
 thisdir = tools
 SUBDIRS = al cilc corcompare ictool mono-xsd security wsdl genxs SqlSharp disco soapsuds browsercaps-updater monop gacutil mono-rpm-helpers
+
+net_2_0_SUBDIRS = wsdl
+
 include ../build/rules.make
 
 MONO_TOOLS = \
