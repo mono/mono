@@ -87,9 +87,9 @@ namespace MonoTests.System.Xml
 			string namespaceURI,
 			string value)
 		{
-			AssertEquals ("value", value, xmlReader [name]);
+			AssertEquals ("value.Indexer", value, xmlReader [name]);
 
-			Assert (xmlReader.GetAttribute (name) == value);
+			AssertEquals ("value.GetAttribute", value, xmlReader.GetAttribute (name));
 
 			if (namespaceURI != String.Empty) {
 				Assert (xmlReader[localName, namespaceURI] == value);
@@ -700,5 +700,14 @@ namespace MonoTests.System.Xml
 			AssertNotNull (foo);
 			AssertEquals ("foo-def", foo.InnerText);
 		}
+
+		[Test]
+		public void IfNamespacesThenProhibitedAttributes ()
+		{
+			string xml = @"<foo _1='1' xmlns:x='urn:x' x:_1='1' />";
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (xml);
+		}
+
 	}
 }

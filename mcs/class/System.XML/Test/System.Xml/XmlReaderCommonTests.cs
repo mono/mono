@@ -229,9 +229,9 @@ namespace MonoTests.System.Xml
 			this.AssertNodeValues (reader, XmlNodeType.Attribute,
 				1, false, "attr", "", "attr", "", "", true, 1, true);
 			Assert (reader.ReadAttributeValue ());
-			// MS.NET XmlNodeReader fails. Its Prefix returns "" instead of null.
+			// MS.NET XmlTextReader fails. Its Prefix returns null instead of "".
 			this.AssertNodeValues (reader, XmlNodeType.Text,
-				2, false, "", null, "", null, "", true, 1, true);
+				2, false, "", "", "", "", "", true, 1, true);
 			reader.MoveToElement ();
 			this.AssertNodeValues (reader, XmlNodeType.Element,
 				0, true, "root", "", "root", "", "", false, 1, true);
@@ -1260,5 +1260,25 @@ namespace MonoTests.System.Xml
 			Assert (!xmlReader.MoveToNextAttribute ());
 		}
 
+		[Test]
+		public void ProhibitedMultipleAttributes ()
+		{
+			string xml = @"<foo _1='1' _1='1' />";
+			try {
+				RunTest (xml, new TestMethod (ReadAll));
+			} catch (XmlException) {
+			}
+			xml = @"<foo _1='1' _1='2' />";
+			try {
+				RunTest (xml, new TestMethod (ReadAll));
+			} catch (XmlException) {
+			}
+		}
+
+		public void ReadAll (XmlReader xmlReader)
+		{
+			while (!xmlReader.EOF)
+				xmlReader.Read ();
+		}
 	}
 }
