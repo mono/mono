@@ -38,6 +38,8 @@ stampfile = $(depsdir)/$(PROFILE)_corlib.dll.stamp
 #corlib_flags = /unsafe /nostdlib /d:INSIDE_CORLIB
 corlib_flags = /unsafe /nostdlib
 
+net_2_0_dir = $(DESTDIR)$(prefix)/lib/mono/2.0
+
 net_2_0_bootstrap_response = $(depsdir)/corlib_net_2_0_bootstrap.dll.response
 net_2_0_bootstrap_makefrag = $(depsdir)/corlib_net_2_0_bootstrap.dll.makefrag
 net_2_0_bootstrap_stampfile = $(depsdir)/corlib_net_2_0_bootstrap.dll.stamp
@@ -75,10 +77,10 @@ all-local: $(corlib)
 
 install-local: $(corlib) $(makefrag)
 	@if test $(PROFILE) = "net_2_0" ; then \
-		echo $(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib/net_2_0 ; \
-		$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib/net_2_0 ; \
-		echo $(INSTALL_LIB) $(corlib) $(DESTDIR)$(prefix)/lib/net_2_0 ; \
-		$(INSTALL_LIB) $(corlib) $(DESTDIR)$(prefix)/lib/net_2_0 ; \
+		echo $(MKINSTALLDIRS) $(net_2_0_dir) ; \
+		$(MKINSTALLDIRS) $(net_2_0_dir) ; \
+		echo $(INSTALL_LIB) $(corlib) $(net_2_0_dir) ; \
+		$(INSTALL_LIB) $(corlib) $(net_2_0_dir) ; \
 	else \
 		echo $(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib ; \
 		$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib ; \
@@ -88,9 +90,9 @@ install-local: $(corlib) $(makefrag)
 
 uninstall-local:
 	@if test $(PROFILE) = "net_2_0" ; then \
-		-rm -f $(DESTDIR)$(prefix)/lib/net_2_0/corlib.dll
+		-rm -f $(net_2_0_dir)/mscorlib.dll
 	else \
-		-rm -f $(DESTDIR)$(prefix)/lib/corlib.dll
+		-rm -f $(DESTDIR)$(prefix)/lib/mscorlib.dll
 	fi
 
 clean-local:
