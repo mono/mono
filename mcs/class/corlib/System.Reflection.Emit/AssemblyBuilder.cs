@@ -192,16 +192,13 @@ namespace System.Reflection.Emit {
 		}
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern int getPEHeader (AssemblyBuilder ab, byte[] buf, out int data_size);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern int getDataChunk (AssemblyBuilder ab, byte[] buf);
+		private static extern int getDataChunk (AssemblyBuilder ab, byte[] buf, int offset);
 
 		public void Save (string assemblyFileName)
 		{
-			byte[] buf = new byte [2048];
+			byte[] buf = new byte [65536];
 			FileStream file;
-			int count, data_size, total;
+			int count, offset;
 
 			if (dir != null) {
 				assemblyFileName = String.Format ("{0}{1}{2}", dir, System.IO.Path.DirectorySeparatorChar, assemblyFileName);
@@ -209,18 +206,11 @@ namespace System.Reflection.Emit {
 
 			file = new FileStream (assemblyFileName, FileMode.Create, FileAccess.Write);
 
-			total = count = getPEHeader (this, buf, out data_size);
-			file.Write (buf, 0, count);
-			buf = new byte [data_size];
-			count = getDataChunk (this, buf);
-			file.Write (buf, 0, count);
-			// pad to file alignment
-			total += count;
-			total %= 512;
-			total = 512 - total;
-			buf = new byte [total];
-			file.Write (buf, 0, total);
-
+			offset = 0;
+			while ((count = getDataChunk (this, buf, offset)) != 0) {
+				file.Write (buf, 0, count);
+				offset += count;
+			}
 			file.Close ();
 		}
 

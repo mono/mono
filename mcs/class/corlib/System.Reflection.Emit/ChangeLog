@@ -1,3 +1,8 @@
+
+Fri Jun 7 17:04:06 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* AssemblyBuilder.cs: updates for PE/COFF rewrite.
+
 2002-05-30  Martin Baulig  <martin@gnome.org>
 
 	* AssemblyBuilder.cs (methods): Made this internal and don't
