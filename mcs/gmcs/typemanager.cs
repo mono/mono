@@ -2385,7 +2385,7 @@ public class TypeManager {
 			return false;
 
 		if (((closure_qualifier_type == null) || (closure_qualifier_type == closure_invocation_type)) &&
-		    IsEqual (m.DeclaringType, closure_invocation_type))
+		    (closure_invocation_type != null) && IsEqual (m.DeclaringType, closure_invocation_type))
 			return true;
 
 		//
