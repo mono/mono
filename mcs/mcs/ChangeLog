@@ -1,4 +1,12 @@
 
+Tue Jul 2 19:05:05 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* typemanager.cs: load unverifiable_code_ctor so we can build
+	corlib using the correct type. Avoid using GetTypeCode() with
+	TypeBuilders.
+	* rootcontext.cs: uses TypeManager.unverifiable_code_ctor and
+	TypeManager.object_type to allow building corlib.
+
 Tue Jul 2 19:03:19 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* ecore.cs: handle System.Enum separately in LoadFromPtr().

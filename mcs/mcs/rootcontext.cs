@@ -706,14 +706,12 @@ namespace Mono.CSharp {
 			}
 			
 			if (Unsafe) {
-				ConstructorInfo ci = TypeManager.unverifiable_code_type.GetConstructor (new Type [0]);
-					
-				if (ci == null) {
-					Console.WriteLine ("Internal error !");
+				if (TypeManager.unverifiable_code_ctor == null) {
+					Console.WriteLine ("Internal error ! Cannot set unverifiable code attribute.");
 					return;
 				}
 				
-				CustomAttributeBuilder cb = new CustomAttributeBuilder (ci, new object [0]);
+				CustomAttributeBuilder cb = new CustomAttributeBuilder (TypeManager.unverifiable_code_ctor, new object [0]);
 				CodeGen.ModuleBuilder.SetCustomAttribute (cb);
 			}
 		}
@@ -755,7 +753,7 @@ namespace Mono.CSharp {
 			
 			if (impl_details_class == null)
 				impl_details_class = CodeGen.ModuleBuilder.DefineType (
-					"<PrivateImplementationDetails>", TypeAttributes.NotPublic);
+					"<PrivateImplementationDetails>", TypeAttributes.NotPublic, TypeManager.object_type);
 
 			fb = impl_details_class.DefineInitializedData (
 				"$$field-" + (field_count++), data,

@@ -104,6 +104,7 @@ public class TypeManager {
 	//
 	static public ConstructorInfo cons_param_array_attribute;
 	static public ConstructorInfo void_decimal_ctor_five_args;
+	static public ConstructorInfo unverifiable_code_ctor;
 	
 	// <remarks>
 	//   Holds the Array of Assemblies that have been loaded
@@ -683,6 +684,9 @@ public class TypeManager {
 		//
 		cons_param_array_attribute = GetConstructor (
 			param_array_type, void_arg);
+
+		unverifiable_code_ctor = GetConstructor (
+			unverifiable_code_type, void_arg);
 		
 	}
 
@@ -1201,7 +1205,22 @@ public class TypeManager {
 		t = t.UnderlyingSystemType;
 		if (!TypeManager.IsEnumType (t))
 			return t;
-		
+	
+		if (t is TypeBuilder) {
+			// slow path needed to compile corlib
+			if (t == TypeManager.bool_type ||
+					t == TypeManager.byte_type ||
+					t == TypeManager.sbyte_type ||
+					t == TypeManager.char_type ||
+					t == TypeManager.short_type ||
+					t == TypeManager.ushort_type ||
+					t == TypeManager.int32_type ||
+					t == TypeManager.uint32_type ||
+					t == TypeManager.int64_type ||
+					t == TypeManager.uint64_type)
+				return t;
+			throw new Exception ("Unhandled typecode in enum " + " from " + t.AssemblyQualifiedName);
+		}
 		TypeCode tc = Type.GetTypeCode (t);
 
 		switch (tc){
@@ -1226,7 +1245,7 @@ public class TypeManager {
 		case TypeCode.UInt64:
 			return TypeManager.uint64_type;
 		}
-		throw new Exception ("Unhandled typecode in enum" + tc);
+		throw new Exception ("Unhandled typecode in enum " + tc + " from " + t.AssemblyQualifiedName);
 	}
 
 	//
