@@ -1,3 +1,8 @@
+2002-04-25  Martin Baulig  <martin@gnome.org>
+
+	* debug-dwarf2.c (dwarf2_write_string_type): Reflect latest MonoString
+	changes.
+
 2002-04-25  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg: enable stmt: STIND_I4 (addr, coni4) again,
