@@ -1,3 +1,10 @@
+2004-11-05  Ben Maurer  <bmaurer@ximian.com>
+
+	* ssa.c, linear-scan.c: replace g_list_remove_link with
+	g_list_delete.  The remove one does not free the GList, so we were
+	leaking memory. On -O=all --compile-all with corlib, this cut down
+	3 MB of allocations.
+
 2004-11-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* tramp-sparc.c (mono_arch_create_jit_trampoline): Fix sparc build.
