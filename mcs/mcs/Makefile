@@ -35,7 +35,8 @@ COMPILER_SOURCES = \
 	support.cs			\
 	typemanager.cs			\
 	symbolwriter.cs			\
-	tree.cs
+	tree.cs				\
+	flowanalysis.cs
 
 all_sources = $(COMPILER_SOURCES) cs-parser.cs
 
