@@ -270,7 +270,6 @@ namespace System.Web.UI
 				obj = Unit.Parse (enclosed);
 				break;
 			case fontUnitID:
-				Console.WriteLine ("FontUnit: {0}", enclosed);
 				obj = FontUnit.Parse (enclosed);
 				break;
 			default:
