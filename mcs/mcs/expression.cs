@@ -168,15 +168,60 @@ namespace CIR {
 			type = null;
 		}
 
+		// <summary>
+		//   Returns a literalized version of a literal FieldInfo
+		// </summary>
+		static Expression Literalize (FieldInfo fi)
+		{
+			Type t = fi.FieldType;
+			object v = fi.GetValue (fi);
+
+			if (t == TypeManager.int32_type)
+				return new IntLiteral ((int) v);
+			else if (t == TypeManager.uint32_type)
+				return new UIntLiteral ((uint) v);
+			else if (t == TypeManager.int64_type)
+				return new LongLiteral ((long) v);
+			else if (t == TypeManager.uint64_type)
+				return new ULongLiteral ((ulong) v);
+			else if (t == TypeManager.float_type)
+				return new FloatLiteral ((float) v);
+			else if (t == TypeManager.double_type)
+				return new DoubleLiteral ((double) v);
+			else if (t == TypeManager.string_type)
+				return new StringLiteral ((string) v);
+			else if (t == TypeManager.short_type)
+				return new IntLiteral ((int) ((short)v));
+			else if (t == TypeManager.ushort_type)
+				return new IntLiteral ((int) ((ushort)v));
+			else if (t == TypeManager.sbyte_type)
+				return new IntLiteral ((int) ((sbyte)v));
+			else if (t == TypeManager.byte_type)
+				return new IntLiteral ((int) ((byte)v));
+			else if (t == TypeManager.char_type)
+				return new IntLiteral ((int) ((char)v));
+			else
+				throw new Exception ("Unknown type for literal (" + v.GetType () +
+						     "), details: " + fi);
+		}
+
 		// 
 		// Returns a fully formed expression after a MemberLookup
 		//
-		static Expression ExprClassFromMemberInfo (MemberInfo mi)
+		static Expression ExprClassFromMemberInfo (TypeContainer tc, MemberInfo mi)
 		{
 			if (mi is EventInfo){
 				return new EventExpr ((EventInfo) mi);
 			} else if (mi is FieldInfo){
-				return new FieldExpr ((FieldInfo) mi);
+				FieldInfo fi = (FieldInfo) mi;
+
+				if (fi.IsLiteral){
+					Expression e = Literalize (fi);
+					e.Resolve (tc);
+
+					return e;
+				} else
+					return new FieldExpr (fi);
 			} else if (mi is PropertyInfo){
 				return new PropertyExpr ((PropertyInfo) mi);
 			} else if (mi is Type)
@@ -225,7 +270,7 @@ namespace CIR {
 				return null;
 			
 			if (mi.Length == 1 && !(mi [0] is MethodBase))
-				return Expression.ExprClassFromMemberInfo (mi [0]);
+				return Expression.ExprClassFromMemberInfo (tc, mi [0]);
 			
 			for (int i = 0; i < mi.Length; i++)
 				if (!(mi [i] is MethodBase)){
@@ -392,7 +437,7 @@ namespace CIR {
 				// we just inline it
 				//
 				if (((LongLiteral) expr).Value > 0)
-					return expr;
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
 			}
 			
 			if (expr_type == TypeManager.sbyte_type){
@@ -402,7 +447,7 @@ namespace CIR {
 				if (target_type == TypeManager.int32_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
 				if (target_type == TypeManager.int64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
 				if (target_type == TypeManager.double_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 				if (target_type == TypeManager.float_type)
@@ -450,10 +495,11 @@ namespace CIR {
 				//
 				// From ushort to int, uint, long, ulong, float, double
 				//
-				if ((target_type == TypeManager.uint32_type) ||
-				    (target_type == TypeManager.uint64_type))
+				if (target_type == TypeManager.uint32_type)
 					return new EmptyCast (expr, target_type);
-					
+
+				if (target_type == TypeManager.uint64_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
 				if (target_type == TypeManager.int32_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
 				if (target_type == TypeManager.int64_type)
@@ -481,7 +527,7 @@ namespace CIR {
 				// From uint to long, ulong, float, double
 				//
 				if (target_type == TypeManager.int64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
 				if (target_type == TypeManager.uint64_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
 				if (target_type == TypeManager.double_type)
@@ -746,7 +792,7 @@ namespace CIR {
 				if (target_type == TypeManager.uint32_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U4);
 				if (target_type == TypeManager.uint64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
 				if (target_type == TypeManager.char_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
 			} else if (expr_type == TypeManager.byte_type){
@@ -770,7 +816,7 @@ namespace CIR {
 				if (target_type == TypeManager.uint32_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U4);
 				if (target_type == TypeManager.uint64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
 				if (target_type == TypeManager.char_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
 			} else if (expr_type == TypeManager.ushort_type){
@@ -800,7 +846,7 @@ namespace CIR {
 				if (target_type == TypeManager.uint32_type)
 					return new EmptyCast (expr, target_type);
 				if (target_type == TypeManager.uint64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
 				if (target_type == TypeManager.char_type)
 					return new OpcodeCast (expr, target_type, OpCodes.Conv_U2);
 			} else if (expr_type == TypeManager.uint32_type){

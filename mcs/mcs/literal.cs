@@ -278,10 +278,7 @@ namespace CIR {
 
 		static public void EmitLong (ILGenerator ig, long l)
 		{
-			if (l >= -1 || l < Int32.MaxValue)
-				IntLiteral.EmitInt (ig, (int) l);
-			else
-				ig.Emit (OpCodes.Ldc_I8, l);
+			ig.Emit (OpCodes.Ldc_I8, l);
 		}
 	}
 

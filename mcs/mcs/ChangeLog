@@ -1,3 +1,21 @@
+2001-10-01  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Expression::ExprClassFromMemberInfo,
+	Expression::Literalize): Create literal expressions from
+	FieldInfos which are literals.
+
+	(ConvertNumericExplicit, ImplicitNumericConversion): Fix a few
+	type casts, because they were wrong.  The test suite in tests
+	caught these ones.
+
+	(ImplicitNumericConversion): ushort to ulong requires a widening
+	cast. 
+
+	Int32 constant to long requires widening cast as well.
+
+	* literal.cs (LongLiteral::EmitLong): Do not generate i4 constants
+	for integers because the type on the stack is not i4.
+
 2001-09-30  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (report118): require location argument. 
