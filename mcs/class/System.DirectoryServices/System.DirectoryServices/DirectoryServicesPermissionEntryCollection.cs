@@ -87,6 +87,26 @@ namespace System.DirectoryServices
 		{
 			List.Remove (entry);
 		}
+
+		[MonoTODO]
+		protected override void OnClear ()
+		{
+		}
+
+		[MonoTODO]
+		protected override void OnInsert (int index, object value)
+		{
+		}
+
+		[MonoTODO]
+		protected override void OnRemove (int index, object value)
+		{
+		}
+
+		[MonoTODO]
+		protected override void OnSet (int index, object oldValue, object newValue)
+		{
+		}
 	}
 }
 

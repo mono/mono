@@ -42,13 +42,12 @@ namespace System.DirectoryServices
 	/// </summary>
 	public class DirectoryEntries : IEnumerable
 	{
-		private ArrayList cList;
 		private LdapConnection _Conn=null;
 		private string _Bpath=null;
 		private string _Buser=null;
 		private string _Bpass=null;
 		private string _Basedn=null;
-		protected ArrayList m_oValues=null;
+		private ArrayList m_oValues=null;
 
 
 		/// <summary> Initializes the Connection and other properties.

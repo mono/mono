@@ -1,4 +1,18 @@
-2004-05-16  Gert Driesen (drieseng@users.sourceforge.net)
+2004-06-03  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* DirectoryEntries.cs: flagged field private to fix public API
+	* DirectoryEntry.cs: added protected override for Dispose, marked
+	properties TODO
+	* DirectoryServicesPermissionEntryCollection.cs: added stubs for
+	missing protected methods
+	* PropertyCollection.cs: flagged field private to fix public API
+	* PropertyValueCollection.cs: removed empty extra methods, added
+	stub for missing methods to fix public API
+	* SearchResult.cs: removed unused local variable
+	* SearchResultCollection.cs: flagged field private to fix public
+	API, added missing property Dispose method and finalizer
+
+2004-05-16  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* DirectoryServicesPermission.cs: marked sealed, added
 	Serializable attribute

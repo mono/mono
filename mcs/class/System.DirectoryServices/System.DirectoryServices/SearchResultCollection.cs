@@ -47,8 +47,7 @@ namespace System.DirectoryServices
 	/// </remarks>
 	public class SearchResultCollection : MarshalByRefObject, ICollection, IEnumerable, IDisposable
 	{
-		protected ArrayList sValues = new ArrayList();
-
+		private ArrayList sValues = new ArrayList();
 
 		internal SearchResultCollection()
 		{
@@ -164,6 +163,13 @@ namespace System.DirectoryServices
 
 		public void Dispose ()
 		{
+			Dispose (true);
+			GC.SuppressFinalize (this);
+		}
+
+		[MonoTODO]
+		protected virtual void Dispose (bool disposing)
+		{
 		}
 
 		public string[] PropertiesLoaded
@@ -176,6 +182,11 @@ namespace System.DirectoryServices
 		{
 			[MonoTODO]
 			get { throw new NotImplementedException (); }
+		}
+
+		~SearchResultCollection ()
+		{
+			Dispose (false);
 		}
 	}
 }

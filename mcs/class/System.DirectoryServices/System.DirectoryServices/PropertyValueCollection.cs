@@ -133,25 +133,24 @@ namespace System.DirectoryServices
 				copy_to[index++] = o;
 		}
 
-		protected override void OnInsert( int index, Object value )  
+		[MonoTODO]
+		protected override void OnClearComplete ()
 		{
-			// Insert additional code to be run only when inserting values.
 		}
 
-		protected override void OnRemove( int index, Object value )  
+		[MonoTODO]
+		protected override void OnInsertComplete (int index, object value)
 		{
-			// Insert additional code to be run only when removing values.
 		}
 
-		protected override void OnSet( int index, Object oldValue, Object newValue )  
+		[MonoTODO]
+		protected override void OnRemoveComplete (int index, object value)
 		{
-			// Insert additional code to be run only when setting values.
 		}
 
-		protected override void OnValidate( Object value )  
+		[MonoTODO]
+		protected override void OnSetComplete (int index, object oldValue, object newValue)
 		{
-//			if ( value.GetType() != Type.GetType("System.Object") )
-//				throw new ArgumentException( "value must be of type Object.", "value" );
 		}
 
 		public object Value 

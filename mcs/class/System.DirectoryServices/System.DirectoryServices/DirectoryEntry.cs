@@ -60,6 +60,7 @@ namespace System.DirectoryServices
 		private PropertyCollection _Properties = null;
 		private string _SchemaClassName=null;
 		private bool _Nflag = false;
+		private bool _disposed;
 
 		/// <summary>
 		/// Returns entry's Fully distinguished name.
@@ -288,6 +289,7 @@ namespace System.DirectoryServices
 		[DSDescription ("A globally unique identifier for this DirectoryEntry")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
+		[MonoTODO]
 		public Guid Guid 
 		{
 			get 
@@ -356,6 +358,7 @@ namespace System.DirectoryServices
 		[DSDescription ("The globally unique identifier of the DirectoryEntry, as returned from the provider")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
+		[MonoTODO]
 		public string NativeGuid 
 		{
 			get			{
@@ -416,7 +419,7 @@ namespace System.DirectoryServices
 		[Browsable (false)]
 		public string Password 
 		{
-			get			{
+			get		{
 				return _Password;
 			}
 			set			{
@@ -917,6 +920,14 @@ namespace System.DirectoryServices
 		{
 			throw new NotImplementedException ("System.DirectoryServices.DirectoryEntry.RefreshCache(System.String[])");
 		}
+
+		protected override void Dispose (bool disposing)
+		{
+			if (!_disposed && disposing) {
+				Close ();
+				_disposed = true;
+			}
+			base.Dispose (disposing);
+		}
 	}
 }
-

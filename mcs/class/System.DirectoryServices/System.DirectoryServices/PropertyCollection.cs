@@ -38,8 +38,8 @@ namespace System.DirectoryServices
 {
 	public class PropertyCollection : IDictionary, ICollection,IEnumerable
 	{
-		protected ArrayList m_oKeys = new ArrayList();
-		protected Hashtable m_oValues = new Hashtable();
+		private ArrayList m_oKeys = new ArrayList();
+		private Hashtable m_oValues = new Hashtable();
 
 		internal PropertyCollection()
 		{

@@ -102,7 +102,6 @@ namespace System.DirectoryServices
 					while(id.MoveNext())
 					{
 						string attribute=(string)id.Key;
-						LdapAttribute attr=null;
 							ResultPropertyValueCollection rpVal=
 								new ResultPropertyValueCollection();
 							if(Rproperties[attribute].Count==1)
