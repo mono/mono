@@ -1,5 +1,7 @@
 2004-07-30  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.c (signature_dup_add_this): Fix bug in previous patch.
+	
 	* marshal.c (mono_marshal_get_icall_wrapper): Add support for vararg
 	icalls.
 	(mono_marshal_get_runtime_invoke): Correctly handle valuetype methods.
