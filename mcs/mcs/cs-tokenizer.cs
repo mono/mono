@@ -1105,9 +1105,14 @@ namespace Mono.CSharp
 			tokens_seen = false;
 			arg = "";
 			static_cmd_arg.Length = 0;
+
+			// skip over white space
+			while ((c = getChar ()) != -1 && (c != '\n') && ((c == '\r') || (c == ' ') || (c == '\t')))
+				;
 				
-			while ((c = getChar ()) != -1 && (c != '\n') && (c != ' ') && (c != '\t') && (c != '\r')){
+			while ((c != -1) && (c != '\n') && (c != ' ') && (c != '\t') && (c != '\r')){
 				static_cmd_arg.Append ((char) c);
+                                c = getChar ();
 			}
 
 			cmd = static_cmd_arg.ToString ();

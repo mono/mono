@@ -1,3 +1,8 @@
+2004-02-01  Duncan Mak  <duncan@ximian.com>
+
+	* cs-tokenizer.cs (get_cmd_arg): Skip over whitespace before
+	parsing for cmd, fixes bug #53694.
+
 2004-02-04  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs, decl.cs: Fixed problem where IndexerName attribute was ignored
