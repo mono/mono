@@ -13,7 +13,7 @@ namespace System.Messaging
 {
 	internal class MonoTODOAttribute : Attribute 
 	{		
-
+                string comment;
 		
 		public MonoTODOAttribute (string comment)
 		{
