@@ -1,4 +1,8 @@
 
+Thu Jan 2 18:46:09 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* ModuleBuilder.cs, TypeBuilder.cs: support global fields and methods.
+
 Thu Dec 19 00:06:57 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* AssemblyBuilder.cs: remove duplicated user string entries.

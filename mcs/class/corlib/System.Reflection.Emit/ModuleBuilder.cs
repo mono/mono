@@ -23,6 +23,10 @@ namespace System.Reflection.Emit {
 		private byte[] guid;
 		private int table_idx;
 		internal AssemblyBuilder assemblyb;
+		private MethodBuilder[] global_methods;
+		private FieldBuilder[] global_fields;
+		private TypeBuilder global_type;
+		private Type global_type_created;
 		internal ISymbolWriter symbol_writer;
 		Hashtable name_cache;
 
@@ -83,6 +87,88 @@ namespace System.Reflection.Emit {
 
 		public override string FullyQualifiedName {get { return fqname;}}
 
+		public void CreateGlobalFunctions () 
+		{
+			if (global_type_created != null)
+				throw new InvalidOperationException ("global methods already created");
+			if (global_type != null)
+				global_type_created = global_type.CreateType ();
+		}
+
+
+		public FieldBuilder DefineInitializedData( string name, byte[] data, FieldAttributes attributes) {
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if (global_type_created != null)
+				throw new InvalidOperationException ("global fields already created");
+			if (global_type == null)
+				global_type = new TypeBuilder (this, 0);
+
+			FieldBuilder fb = global_type.DefineInitializedData (name, data, attributes);
+
+			if (global_fields != null) {
+				FieldBuilder[] new_fields = new FieldBuilder [global_fields.Length+1];
+				System.Array.Copy (global_fields, new_fields, global_fields.Length);
+				new_fields [global_fields.Length] = fb;
+				global_fields = new_fields;
+			} else {
+				global_fields = new FieldBuilder [1];
+				global_fields [0] = fb;
+			}
+			return fb;
+		}
+
+		public FieldBuilder DefineUninitializedData( string name, int size, FieldAttributes attributes) {
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if (global_type_created != null)
+				throw new InvalidOperationException ("global fields already created");
+			if (global_type == null)
+				global_type = new TypeBuilder (this, 0);
+
+			FieldBuilder fb = global_type.DefineUninitializedData (name, size, attributes);
+
+			if (global_fields != null) {
+				FieldBuilder[] new_fields = new FieldBuilder [global_fields.Length+1];
+				System.Array.Copy (global_fields, new_fields, global_fields.Length);
+				new_fields [global_fields.Length] = fb;
+				global_fields = new_fields;
+			} else {
+				global_fields = new FieldBuilder [1];
+				global_fields [0] = fb;
+			}
+			return fb;
+		}
+
+		public MethodBuilder DefineGlobalMethod (string name, MethodAttributes attributes, Type returnType, Type[] parameterTypes)
+		{
+			return DefineGlobalMethod (name, attributes, CallingConventions.Standard, returnType, parameterTypes);
+		}
+		
+		public MethodBuilder DefineGlobalMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes)
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if ((attributes & MethodAttributes.Static) == 0)
+				throw new ArgumentException ("global methods must be static");
+			if (global_type_created != null)
+				throw new InvalidOperationException ("global methods already created");
+			if (global_type == null)
+				global_type = new TypeBuilder (this, 0);
+			MethodBuilder mb = global_type.DefineMethod (name, attributes, callingConvention, returnType, parameterTypes);
+
+			if (global_methods != null) {
+				MethodBuilder[] new_methods = new MethodBuilder [global_methods.Length+1];
+				System.Array.Copy (global_methods, new_methods, global_methods.Length);
+				new_methods [global_methods.Length] = mb;
+				global_methods = new_methods;
+			} else {
+				global_methods = new MethodBuilder [1];
+				global_methods [0] = mb;
+			}
+			return mb;
+		}
+		
 		[MonoTODO]
 		public TypeBuilder DefineType (string name) {
 			// FIXME: LAMESPEC: what other attributes should we use here as default?

@@ -50,6 +50,16 @@ namespace System.Reflection.Emit {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void create_internal_class (TypeBuilder tb);
 		
+		internal TypeBuilder (ModuleBuilder mb, TypeAttributes attr) {
+			this.parent = null;
+			this.attrs = attr;
+			this.class_size = -1;
+			this.tname = "<Module>";
+			this.nspace = "";
+			pmodule = mb;
+			setup_internal_class (this);
+		}
+
 		internal TypeBuilder (ModuleBuilder mb, string name, TypeAttributes attr, Type parent, Type[] interfaces, PackingSize packing_size, int type_size) {
 			int sep_index;
 			this.parent = parent;
