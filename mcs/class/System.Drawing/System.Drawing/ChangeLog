@@ -1,3 +1,8 @@
+2005-02-10  Geoff Norton  <gnorton@customerdna.com>
+
+	* Icon.cs: Implement GetObjectData ()
+	* Image.cs: Implement GetObjectData ()
+
 2005-02-09  Geoff Norton  <gnorton@customerdna.com>
 
 	* Icon.cs: Implement deserializer

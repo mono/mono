@@ -76,10 +76,11 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		}
 	}
 	
-	[MonoTODO]	
 	void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 	{
-		throw new NotImplementedException();
+		MemoryStream ms = new MemoryStream ();
+		this.Save (ms, ImageFormat.Bmp);
+		info.AddValue ("Data", ms.ToArray ());
 	}
     
 	// public methods

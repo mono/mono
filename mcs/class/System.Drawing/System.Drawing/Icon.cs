@@ -177,14 +177,17 @@ namespace System.Drawing
 				}
 			}
 			if (dataStream != null && width != 0 && height != 0) {
+				dataStream.Seek (0, SeekOrigin.Begin);
 				InitFromStreamWithSize (dataStream, width, height);
 			}
                 }
 
-		[MonoTODO ("Implement")]
 		void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 		{
-			throw new NotImplementedException ();
+			MemoryStream ms = new MemoryStream ();
+			Save (ms);
+			info.AddValue ("IconSize", this.Size, typeof (Size));
+			info.AddValue ("IconData", ms.ToArray ());
 		}
 
 		public void Dispose ()
