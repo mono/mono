@@ -448,12 +448,12 @@ namespace Generator {
 		void GenerateFor (For s)
 		{
 			output ("for (");
-			if (! (s.InitStatement is EmptyStatement))
+			if (! (s.InitStatement == EmptyStatement.Value))
 				GenerateStatement (s.InitStatement, true, true, true);
 			output ("; ");
 			output (GetExpression (s.Test, 0));
 			output ("; ");
-			if (! (s.Increment is EmptyStatement))
+			if (! (s.Increment == EmptyStatement.Value))
 				GenerateStatement (s.Increment, true, true, true);
 			output (") ");
 			GenerateStatement (s.Statement, true, true, false);
@@ -589,7 +589,7 @@ namespace Generator {
 				output_newline ("break;");
 			else if (s is Continue)
 				output_newline ("continue;");
-			else if (s is EmptyStatement)
+			else if (s == EmptyStatement.Value)
 				output_newline ("/* empty statement */;");
 			else if (s is Block)
 				GenerateBlock ((Block) s, doPlacement, embedded);

@@ -2927,7 +2927,7 @@ embedded_statement
 empty_statement
 	: SEMICOLON
 	  {
-		  $$ = new EmptyStatement ();
+		  $$ = EmptyStatement.Value;
 	  }
 	;
 
@@ -3133,7 +3133,7 @@ if_statement_rest
 		$$ = new If ((Expression) $1, (Statement) $3, l);
 
 		if (RootContext.WarningLevel >= 3){
-			if ($3 is EmptyStatement)
+			if ($3 == EmptyStatement.Value)
 				Report.Warning (642, lexer.Location, "Possibly mistaken empty statement");
 		}
 
@@ -3255,7 +3255,7 @@ while_statement
 		$$ = new While ((Expression) $4, (Statement) $6, l);
 	
 		if (RootContext.WarningLevel >= 3){
-			if ($6 is EmptyStatement)
+			if ($6 == EmptyStatement.Value)
 				Report.Warning (642, lexer.Location, "Possibly mistaken empty statement");
 		}
 	}
@@ -3330,7 +3330,7 @@ for_statement
 		For f = new For ((Statement) $3, (Expression) $6, (Statement) $8, (Statement) $10, l);
 
 		if (RootContext.WarningLevel >= 3){
-			if ($10 is EmptyStatement)
+			if ($10 == EmptyStatement.Value)
 				Report.Warning (642, lexer.Location, "Possibly mistaken empty statement");
 		}
 
@@ -3343,7 +3343,7 @@ for_statement
 	;
 
 opt_for_initializer
-	: /* empty */		{ $$ = new EmptyStatement (); }
+	: /* empty */		{ $$ = EmptyStatement.Value; }
 	| for_initializer	
 	;
 
@@ -3358,7 +3358,7 @@ opt_for_condition
 	;
 
 opt_for_iterator
-	: /* empty */		{ $$ = new EmptyStatement (); }
+	: /* empty */		{ $$ = EmptyStatement.Value; }
 	| for_iterator
 	;
 

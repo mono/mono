@@ -95,7 +95,12 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class EmptyStatement : Statement {
+	public sealed class EmptyStatement : Statement {
+		
+		private EmptyStatement () {}
+		
+		public static readonly EmptyStatement Value = new EmptyStatement ();
+		
 		public override bool Resolve (EmitContext ec)
 		{
 			return true;
@@ -487,9 +492,8 @@ namespace Mono.CSharp {
 			Label loop = ig.DefineLabel ();
 			Label test = ig.DefineLabel ();
 			
-			if (InitStatement != null)
-				if (! (InitStatement is EmptyStatement))
-					InitStatement.Emit (ec);
+			if (InitStatement != null && InitStatement != EmptyStatement.Value)
+				InitStatement.Emit (ec);
 
 			ec.LoopBegin = ig.DefineLabel ();
 			ec.LoopEnd = ig.DefineLabel ();
@@ -501,7 +505,7 @@ namespace Mono.CSharp {
 			Statement.Emit (ec);
 
 			ig.MarkLabel (ec.LoopBegin);
-			if (!(Increment is EmptyStatement))
+			if (Increment != EmptyStatement.Value)
 				Increment.Emit (ec);
 
 			ig.MarkLabel (test);
@@ -1477,18 +1481,13 @@ namespace Mono.CSharp {
 
 		public LocalInfo GetLocalInfo (string name)
 		{
-			if (variables != null) {
-				object temp;
-				temp = variables [name];
-
-				if (temp != null){
-					return (LocalInfo) temp;
+			for (Block b = this; b != null; b = b.Parent) {
+				if (b.variables != null) {
+					LocalInfo ret = b.variables [name] as LocalInfo;
+					if (ret != null)
+						return ret;
 				}
 			}
-
-			if (Parent != null)
-				return Parent.GetLocalInfo (name);
-
 			return null;
 		}
 
@@ -1504,17 +1503,13 @@ namespace Mono.CSharp {
 
 		public Expression GetConstantExpression (string name)
 		{
-			if (constants != null) {
-				object temp;
-				temp = constants [name];
-				
-				if (temp != null)
-					return (Expression) temp;
+			for (Block b = this; b != null; b = b.Parent) {
+				if (b.constants != null) {
+					Expression ret = b.constants [name] as Expression;
+					if (ret != null)
+						return ret;
+				}
 			}
-			
-			if (Parent != null)
-				return Parent.GetConstantExpression (name);
-
 			return null;
 		}
 		
@@ -1542,10 +1537,10 @@ namespace Mono.CSharp {
 		Parameters parameters = null;
 		public Parameters Parameters {
 			get {
-				if (Parent != null)
-					return Parent.Parameters;
-
-				return parameters;
+				Block b = this;
+				while (b.Parent != null)
+					b = b.Parent;
+				return b.parameters;
 			}
 		}
 
@@ -1751,8 +1746,7 @@ namespace Mono.CSharp {
 			ec.StartFlowBranching (this);
 
 			Report.Debug (1, "RESOLVE BLOCK", StartLocation, ec.CurrentBranching);
-
-			ArrayList new_statements = new ArrayList ();
+			
 			bool unreachable = false, warning_shown = false;
 
 			int statement_count = statements.Count;
@@ -1760,16 +1754,18 @@ namespace Mono.CSharp {
 				Statement s = (Statement) statements [ix];
 				
 				if (unreachable && !(s is LabeledStatement)) {
-					if (!warning_shown && !(s is EmptyStatement)) {
+					if (!warning_shown && s != EmptyStatement.Value) {
 						warning_shown = true;
 						Warning_DeadCodeFound (s.loc);
 					}
 
+					statements [ix] = EmptyStatement.Value;
 					continue;
 				}
 
 				if (s.Resolve (ec) == false) {
  					ok = false;
+					statements [ix] = EmptyStatement.Value;
 					continue;
 				}
 
@@ -1777,11 +1773,7 @@ namespace Mono.CSharp {
 					unreachable = false;
 				else
 					unreachable = ec.CurrentBranching.CurrentUsageVector.IsUnreachable;
-
-				new_statements.Add (s);
 			}
-
-			statements = new_statements;
 
 			Report.Debug (1, "RESOLVE BLOCK DONE", StartLocation, ec.CurrentBranching);
 

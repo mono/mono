@@ -1,5 +1,35 @@
 2003-12-08 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* cs-parser.jay:
+	* gen-treedump.cs:
+	* statement.cs:
+	This patch does a few things:
+		1. EmptyStatement is now a singleton, so it is never reallocated.
+		2. All blah is EmptyStatement constructs have been changed to
+		   blah == EmptyStatement.Value, which is much faster and valid
+		   now that EmptyStatement is a singleton.
+		3. When resolving a block, rather than allocating a new array for
+		   the non-empty statements, empty statements are replaced with
+		   EmptyStatement.Value
+		4. Some recursive functions have been made non-recursive.
+	Mainly the performance impact is from (3), however (1) and (2) are needed for
+	this to work. (4) does not make a big difference in normal situations, however
+	it makes the profile look saner.
+
+	Bootstrap times:
+
+	BEFORE
+	9.25user 0.23system 0:10.28elapsed 92%CPU (0avgtext+0avgdata 0maxresident)k
+	9.34user 0.13system 0:10.23elapsed 92%CPU (0avgtext+0avgdata 0maxresident)k
+	Total memory allocated: 56397 KB
+	
+	AFTER
+	9.13user 0.09system 0:09.64elapsed 95%CPU (0avgtext+0avgdata 0maxresident)k
+	8.96user 0.24system 0:10.13elapsed 90%CPU (0avgtext+0avgdata 0maxresident)k
+	Total memory allocated: 55666 KB
+
+2003-12-08 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* support.cs: Rewrite DoubleHash to use its own impl. Is faster
 	than the hashtable in a hashtable version
 
@@ -9,6 +39,15 @@
 	patch, we first use a hashtable that works with two keys, so that
 	the strings do not need to be concat'ed.
 
+	Bootstrap times:
+	BEFORE
+		Run 1:   8.74 seconds
+		Run 2:   8.71 seconds
+	
+	AFTER
+		Run 1:   8.65 seconds
+		Run 2:   8.56 seconds
+	
 2003-12-08 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Makefile: Add a new target `do-time' that does a quick and simple
