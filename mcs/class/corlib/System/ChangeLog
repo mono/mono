@@ -1,3 +1,16 @@
+2002-02-17  Duncan Mak  <duncan@ximian.com>
+
+	* Convert.cs: Near-complete implementation of Convert.cs
+
+	Added all the To* methods taking (object) and
+	(object, IFormatProvider) as parameters.
+
+	Added [CLSCompliant (false)] attributes to methods dealing with
+	unsigned types.
+
+	Added the missing section on converting to and from DateTime. Only
+	6 missing methods, all marked with MonoTODOs. Will tackle them later.		
+
 2002-02-16  Duncan Mak  <duncan@ximian.com>
 
 	* TimeZone.cs: patch from Ajay Kumar Dwivedi (adwiv@yahoo.com) to

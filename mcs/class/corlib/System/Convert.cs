@@ -229,6 +229,11 @@ namespace System {
 			return (value != 0); 
 		}
 
+		public static bool ToBoolean (object value)
+		{
+			return (bool) ChangeType (value, Type.GetType ("System.Boolean"));
+		}
+
 		// ========== Byte Conversions ========== //
 	
 		public static byte ToByte (bool value) 
@@ -366,6 +371,11 @@ namespace System {
 			return (byte)value;
 		}
 
+		public static byte ToByte (object value)
+		{
+			return (byte) ChangeType (value, Type.GetType ("System.Byte"));
+		}
+
 		// ========== Char Conversions ========== //
 	
 		public static char ToChar (byte value) 
@@ -446,6 +456,11 @@ namespace System {
 			return (char)value; 
 		}
 
+		public static char ToChar (object value)
+		{
+			return (char) ChangeType (value, Type.GetType ("System.Char"));
+		}
+
 		// ========== DateTime Conversions ========== //
 	
 		public static DateTime ToDateTime (string value) 
@@ -456,6 +471,84 @@ namespace System {
 		public static DateTime ToDateTime (string value, IFormatProvider provider) 
 		{
 			return DateTime.Parse (value, provider);
+		}
+
+		public static DateTime ToDateTime (bool value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
+		}
+
+		public static DateTime ToDateTime (byte value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
+		}
+
+		public static DateTime ToDateTime (char value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
+		}
+
+		public static DateTime ToDateTime (DateTime value)
+		{
+			return value;
+		}
+
+		public static DateTime ToDateTime (decimal value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
+		}
+
+		public static DateTime ToDateTime (double value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
+		}
+
+		public static DateTime ToDateTime (short value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
+		}
+
+		public static DateTime ToDateTime (int value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
+		}
+
+		public static DateTime ToDateTime (long value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
+		}
+
+		public static DateTime ToDateTime (object value)
+		{
+			return (DateTime) ChangeType (value, Type.GetType ("System.DateTime"));
+		}
+
+		public static DateTime ToDateTime (object value, IFormatProvider provider)
+		{
+			return (DateTime) ChangeType (value, Type.GetType ("System.DateTime"), provider);
+		}
+
+		[CLSCompliant (false)]
+		public static DateTime ToDateTime (sbyte value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
+		}
+		[CLSCompliant (false)]
+		public static DateTime ToDateTime (ushort value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
+		}
+
+		[CLSCompliant (false)]
+		public static DateTime ToDateTime (uint value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
+		}
+
+		[CLSCompliant (false)]
+		public static DateTime ToDateTime (ulong value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
 		}
 
 		// ========== Decimal Conversions ========== //
@@ -469,7 +562,17 @@ namespace System {
 		{ 
 			return (decimal)value; 
 		}
-	
+
+		public static decimal ToDecimal (char value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
+		}
+
+		public static decimal ToDecimal (DateTime value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
+		}
+				
 		public static decimal ToDecimal (decimal value) 
 		{ 
 			return value; 
@@ -485,12 +588,8 @@ namespace System {
 		}
 
 		public static decimal ToDecimal (float value) 
-		{ 
-			if (value > (double)Decimal.MaxValue || value < (double)Decimal.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Decimal.MaxValue or less than Decimal.MinValue"));
-
-			return (decimal)value; 
+		{
+			return (decimal) Math.Round (value);	  			
 		}
 
 		public static decimal ToDecimal (int value) 
@@ -503,6 +602,7 @@ namespace System {
 			return (decimal)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static decimal ToDecimal (sbyte value) 
 		{ 
 			return (decimal)value; 
@@ -522,21 +622,35 @@ namespace System {
 		{
 			return Decimal.Parse (value, provider);
 		}
-	
+
+		[CLSCompliant (false)]
 		public static decimal ToDecimal (uint value) 
 		{ 
 			return (decimal)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static decimal ToDecimal (ulong value) 
 		{ 
 			return (decimal)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static decimal ToDecimal (ushort value) 
 		{ 
 			return (decimal)value; 
 		}
+
+		public static decimal ToDecimal (object value)
+		{
+			return (decimal) ChangeType (value, Type.GetType ("System.Decimal"));
+		}
+
+		public static decimal ToDecimal (object value, IFormatProvider provider)
+		{
+			return (decimal) ChangeType (value, Type.GetType ("System.Decimal"), provider);
+		}
+						 
 
 		// ========== Double Conversions ========== //
 	
@@ -547,7 +661,17 @@ namespace System {
 	
 		public static double ToDouble (byte value) 
 		{ 
-			return (double)value; 
+			throw new InvalidCastException ("This conversion is not supported.");
+		}
+
+		public static double ToDouble (char value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
+		}
+
+		public static double ToDouble (DateTime value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
 		}
 	
 		public static double ToDouble (decimal value) 
@@ -562,7 +686,7 @@ namespace System {
 
 		public static double ToDouble (float value) 
 		{ 
-			return (double)value; 
+			return (double) Math.Round (value);	  
 		}
 
 		public static double ToDouble (int value) 
@@ -575,6 +699,7 @@ namespace System {
 			return (double)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static double ToDouble (sbyte value) 
 		{ 
 			return (double)value; 
@@ -594,20 +719,33 @@ namespace System {
 		{
 			return Double.Parse (value, provider);
 		}
-	
+
+		[CLSCompliant (false)]
 		public static double ToDouble (uint value) 
 		{ 
 			return (double)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static double ToDouble (ulong value) 
 		{ 
 			return (double)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static double ToDouble (ushort value) 
 		{ 
 			return (double)value; 
+		}
+
+		public static double ToDouble (object value)
+		{
+			return (double) ChangeType (value, Type.GetType ("System.Double"));
+		}
+
+		public static double ToDouble (object value, IFormatProvider provider)
+		{
+			return (double) ChangeType (value, Type.GetType ("System.Double"), provider);
 		}
 
 		// ========== Int16 Conversions ========== //
@@ -623,12 +761,17 @@ namespace System {
 		}
 
 		public static short ToInt16 (char value) 
-		{ 
+		{
 			if (value > Int16.MaxValue) 
 				throw new OverflowException (Locale.GetText (
 					"Value is greater than Int16.MaxValue"));
 
-			return (short)value; 
+			return (short)value;
+		}
+
+		public static short ToInt16 (DateTime value) 
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
 		}
 	
 		public static short ToInt16 (decimal value) 
@@ -679,6 +822,7 @@ namespace System {
 			return (short)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static short ToInt16 (sbyte value) 
 		{ 
 			return (short)value; 
@@ -698,7 +842,17 @@ namespace System {
 		{
 			return Int16.Parse (value, provider);
 		}
-	
+
+		[MonoTODO]
+		public static short ToInt16 (string value, int fromBase)
+		{
+			if (NotValidBase (fromBase))
+				throw new ArgumentException ("fromBase is not valid.");
+			
+			return 0;
+		}
+
+		[CLSCompliant (false)]
 		public static short ToInt16 (uint value) 
 		{ 
 			if (value > Int16.MaxValue) 
@@ -708,15 +862,16 @@ namespace System {
 			return (short)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static short ToInt16 (ulong value) 
 		{ 
 			if (value > (ulong)Int16.MaxValue) 
 				throw new OverflowException (Locale.GetText (
 					"Value is greater than Int16.MaxValue"));
-
 			return (short)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static short ToInt16 (ushort value) 
 		{ 
 			if (value > Int16.MaxValue) 
@@ -726,6 +881,16 @@ namespace System {
 			return (short)value; 
 		}
 
+		public static short ToInt16 (object value)
+		{
+			return (short) ChangeType (value, Type.GetType ("System.Int16"));
+		}
+
+		public static short ToInt16 (object value, IFormatProvider provider)
+		{
+			return (short) ChangeType (value, Type.GetType ("System.Int16"), provider);
+		}
+	
 		// ========== Int32 Conversions ========== //
 
 		public static int ToInt32 (bool value) 
@@ -741,6 +906,11 @@ namespace System {
 		public static int ToInt32 (char value) 
 		{ 
 			return (int)value; 
+		}
+
+		public static int ToInt32 (DateTime value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
 		}
 	
 		public static int ToInt32 (decimal value) 
@@ -788,6 +958,7 @@ namespace System {
 			return (int)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static int ToInt32 (sbyte value) 
 		{ 
 			return (int)value; 
@@ -807,7 +978,17 @@ namespace System {
 		{
 			return Int32.Parse (value, provider);
 		}
-	
+
+		[MonoTODO]
+		public static int ToInt32 (string value, int fromBase)
+		{
+			if (NotValidBase (fromBase))
+				throw new ArgumentException ("fromBase is not valid.");
+			
+			return 0;
+		}
+		
+		[CLSCompliant (false)]
 		public static int ToInt32 (uint value) 
 		{ 
 			if (value > Int32.MaxValue) 
@@ -817,6 +998,7 @@ namespace System {
 			return (int)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static int ToInt32 (ulong value) 
 		{ 
 			if (value > Int32.MaxValue) 
@@ -826,9 +1008,20 @@ namespace System {
 			return (int)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static int ToInt32 (ushort value) 
 		{ 
 			return (int)value; 
+		}
+
+		public static int ToInt32 (object value)
+		{
+			return (int) ChangeType (value, Type.GetType ("System.Int32"));
+		}
+
+		public static int ToInt32 (object value, IFormatProvider provider)
+		{
+			return (int) ChangeType (value, Type.GetType ("System.Int32"), provider);
 		}
 
 		// ========== Int64 Conversions ========== //
@@ -846,6 +1039,11 @@ namespace System {
 		public static long ToInt64 (char value) 
 		{ 
 			return (long)value; 
+		}
+
+		public static long ToInt64 (DateTime value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
 		}
 	
 		public static long ToInt64 (decimal value) 
@@ -889,6 +1087,7 @@ namespace System {
 			return value; 
 		}
 
+		[CLSCompliant (false)]
 		public static long ToInt64 (sbyte value) 
 		{ 
 			return (long)value; 
@@ -908,12 +1107,23 @@ namespace System {
 		{
 			return Int64.Parse (value, provider);
 		}
-	
+
+		[MonoTODO]
+		public static long ToInt64 (string value, int fromBase)
+		{
+			if (NotValidBase (fromBase))
+				throw new ArgumentException ("fromBase is not valid.");
+			
+			return 0;
+		}
+
+		[CLSCompliant (false)]
 		public static long ToInt64 (uint value) 
 		{ 
 			return (long)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static long ToInt64 (ulong value) 
 		{ 
 			if (value > Int64.MaxValue) 
@@ -923,18 +1133,31 @@ namespace System {
 			return (long)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static long ToInt64 (ushort value) 
 		{ 
 			return (long)value; 
 		}
 
+		public static long ToInt64 (object value)
+		{
+			return (long) ChangeType (value, Type.GetType ("System.Int64"));
+		}
+
+		public static long ToInt64 (object value, IFormatProvider provider)
+		{
+			return (long) ChangeType (value, Type.GetType ("System.Int64"), provider);
+		}
+		
 		// ========== SByte Conversions ========== //
-	
+
+		[CLSCompliant (false)]
 		public static sbyte ToSByte (bool value) 
 		{ 
 			return (sbyte)(value ? 1 : 0); 
 		}
-	
+
+		[CLSCompliant (false)]
 		public static sbyte ToSByte (byte value) 
 		{ 
 			if (value > SByte.MaxValue)
@@ -944,6 +1167,7 @@ namespace System {
 			return (sbyte)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static sbyte ToSByte (char value) 
 		{ 
 			if (value > SByte.MaxValue)
@@ -952,7 +1176,14 @@ namespace System {
 
 			return (sbyte)value;
 		}
-	
+
+		[CLSCompliant (false)]
+		public static sbyte ToSByte (DateTime value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
+		}
+		
+		[CLSCompliant (false)]	
 		public static sbyte ToSByte (decimal value) 
 		{ 
 			if (value > SByte.MaxValue || value < SByte.MinValue)
@@ -962,7 +1193,8 @@ namespace System {
 			// Returned Even-Rounded
 			return (sbyte)(Math.Round (value));
 		}
-	
+
+		[CLSCompliant (false)]
 		public static sbyte ToSByte (double value) 
 		{ 
 			if (value > SByte.MaxValue || value < SByte.MinValue)
@@ -973,6 +1205,7 @@ namespace System {
 			return (sbyte)(Math.Round (value));
 		}
 
+		[CLSCompliant (false)]
 		public static sbyte ToSByte (float value) 
 		{ 
 			if (value > SByte.MaxValue || value < SByte.MinValue)
@@ -983,6 +1216,7 @@ namespace System {
 			return (sbyte)(Math.Round ( (double)value));
 		}
 
+		[CLSCompliant (false)]
 		public static sbyte ToSByte (int value) 
 		{ 
 			if (value > SByte.MaxValue || value < SByte.MinValue)
@@ -992,6 +1226,7 @@ namespace System {
 			return (sbyte)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static sbyte ToSByte (long value) 
 		{ 
 			if (value > SByte.MaxValue || value < SByte.MinValue)
@@ -1001,11 +1236,13 @@ namespace System {
 			return (sbyte)value;
 		}
 
+		[CLSCompliant (false)]
 		public static sbyte ToSByte (sbyte value) 
 		{ 
 			return value;
 		}
-	
+
+		[CLSCompliant (false)]
 		public static sbyte ToSByte (short value) 
 		{ 
 			if (value > SByte.MaxValue || value < SByte.MinValue)
@@ -1015,16 +1252,28 @@ namespace System {
 			return (sbyte)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static sbyte ToSByte (string value) 
 		{
 			return SByte.Parse (value);
 		}
-
+		
+		[CLSCompliant (false)]
 		public static sbyte ToSByte (string value, IFormatProvider provider) 
 		{
 			return SByte.Parse (value, provider);
 		}
-	
+
+		[MonoTODO] [CLSCompliant (false)]
+		public static sbyte ToSByte (string value, int fromBase)
+		{
+			if (NotValidBase (fromBase))
+				throw new ArgumentException ("fromBase is not valid.");
+			
+			return 0;
+		}
+		
+		[CLSCompliant (false)]
 		public static sbyte ToSByte (uint value) 
 		{ 
 			if (value > SByte.MaxValue)
@@ -1034,6 +1283,7 @@ namespace System {
 			return (sbyte)value;
 		}
 
+		[CLSCompliant (false)]
 		public static sbyte ToSByte (ulong value) 
 		{ 
 			if (value > (ulong)SByte.MaxValue)
@@ -1043,6 +1293,7 @@ namespace System {
 			return (sbyte)value;
 		}
 
+		[CLSCompliant (false)]
 		public static sbyte ToSByte (ushort value) 
 		{ 
 			if (value > SByte.MaxValue)
@@ -1050,6 +1301,18 @@ namespace System {
 					"Value is greater than SByte.MaxValue"));
 
 			return (sbyte)value;
+		}
+
+		[CLSCompliant (false)]
+		public static sbyte ToSByte (object value)
+		{
+			return (sbyte) ChangeType (value, Type.GetType ("System.SByte"));
+		}
+
+		[CLSCompliant (false)]
+		public static sbyte ToSByte (object value, IFormatProvider provider)
+		{
+			return (sbyte) ChangeType (value, Type.GetType ("System.SByte"), provider);
 		}
 
 		// ========== Single Conversions ========== //
@@ -1062,6 +1325,11 @@ namespace System {
 		public static float ToSingle (byte value) 
 		{ 
 			return (float)value; 
+		}
+
+		public static float ToSingle (DateTime value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
 		}
 	
 		public static float ToSingle (decimal value) 
@@ -1093,6 +1361,7 @@ namespace System {
 			return (float)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static float ToSingle (sbyte value) 
 		{ 
 			return (float)value; 
@@ -1111,21 +1380,36 @@ namespace System {
 		public static float ToSingle (string value, IFormatProvider provider) 
 		{
 			return Single.Parse (value, provider);
-		}
-	
+		}	       
+
+		[CLSCompliant (false)]
 		public static float ToSingle (uint value) 
 		{ 
 			return (float)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static float ToSingle (ulong value) 
 		{ 
 			return (float)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static float ToSingle (ushort value) 
 		{ 
 			return (float)value; 
+		}
+
+		[CLSCompliant (false)]
+		public static float ToSingle (object value)
+		{
+			return (float) ChangeType (value, Type.GetType ("System.Single"));
+		}
+
+		[CLSCompliant (false)]
+		public static float ToSingle (object value, IFormatProvider provider)
+		{
+			return (float) ChangeType (value, Type.GetType ("System.Single"), provider);
 		}
 
 		// ========== String Conversions ========== //
@@ -1210,6 +1494,16 @@ namespace System {
 			return value.ToString (provider); 
 		}
 
+		public static string ToString (object value)
+		{
+			return (string) ChangeType (value, Type.GetType ("System.String"));
+		}		
+
+		public static string ToString (object value, IFormatProvider provider)
+		{
+			return (string) ChangeType (value, Type.GetType ("System.String"), provider);
+		}				
+
 		public static string ToString (sbyte value) 
 		{ 
 			return value.ToString (); 
@@ -1235,53 +1529,69 @@ namespace System {
 			return value;
 		}
 
+		[CLSCompliant (false)]
 		public static string ToString (uint value) 
 		{ 
 			return value.ToString (); 
 		}
 
+		[CLSCompliant (false)]
 		public static string ToString (uint value, IFormatProvider provider) 
 		{ 
 			return value.ToString (provider); 
 		}
 
+		[CLSCompliant (false)]
 		public static string ToString (ulong value) 
 		{ 
 			return value.ToString (); 
 		}
 
+		[CLSCompliant (false)]
 		public static string ToString (ulong value, IFormatProvider provider) 
 		{ 
 			return value.ToString (provider); 
 		}
 
+		[CLSCompliant (false)]
 		public static string ToString (ushort value) 
 		{ 
 			return value.ToString (); 
 		}
 
+		[CLSCompliant (false)]
 		public static string ToString (ushort value, IFormatProvider provider) 
 		{ 
 			return value.ToString (provider); 
 		}
-
+		
 		// ========== UInt16 Conversions ========== //
 
+		[CLSCompliant (false)]
 		public static ushort ToUInt16 (bool value) 
 		{ 
 			return (ushort)(value ? 1 : 0); 
 		}
-	
+
+		[CLSCompliant (false)]
 		public static ushort ToUInt16 (byte value) 
 		{ 
 			return (ushort)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static ushort ToUInt16 (char value) 
 		{ 
 			return (ushort)value; 
 		}
-	
+
+		[CLSCompliant (false)]
+		public static ushort ToUInt16 (DateTime value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
+		}
+
+		[CLSCompliant (false)]
 		public static ushort ToUInt16 (decimal value) 
 		{ 
 			if (value > UInt16.MaxValue || value < UInt16.MinValue) 
@@ -1292,6 +1602,7 @@ namespace System {
 			return (ushort)(Math.Round (value));	  
 		}
 
+		[CLSCompliant (false)]
 		public static ushort ToUInt16 (double value) 
 		{ 
 			if (value > UInt16.MaxValue || value < UInt16.MinValue) 
@@ -1301,7 +1612,8 @@ namespace System {
 			// Returned Even-Rounded
 			return (ushort)(Math.Round (value));
 		}
- 
+
+		[CLSCompliant (false)]
 		public static ushort ToUInt16 (float value) 
 		{ 
 			if (value > UInt16.MaxValue || value < UInt16.MinValue) 
@@ -1312,6 +1624,7 @@ namespace System {
 			return (ushort)(Math.Round ( (double)value));
 		}
 
+		[CLSCompliant (false)]
 		public static ushort ToUInt16 (int value) 
 		{ 
 			if (value > UInt16.MaxValue || value < UInt16.MinValue) 
@@ -1320,7 +1633,8 @@ namespace System {
 
 			return (ushort)value; 
 		}
-	
+
+		[CLSCompliant (false)]
 		public static ushort ToUInt16 (long value) 
 		{ 
 			if (value > UInt16.MaxValue || value < UInt16.MinValue) 
@@ -1330,6 +1644,7 @@ namespace System {
 			return (ushort)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static ushort ToUInt16 (sbyte value) 
 		{ 
 			if (value < UInt16.MinValue) 
@@ -1338,7 +1653,8 @@ namespace System {
 
 			return (ushort)value; 
 		}
-	
+
+		[CLSCompliant (false)]
 		public static ushort ToUInt16 (short value) 
 		{ 
 			if (value < UInt16.MinValue) 
@@ -1347,17 +1663,29 @@ namespace System {
 
 			return (ushort)value; 
 		}
-
+		
+		[CLSCompliant (false)]
 		public static ushort ToUInt16 (string value) 
 		{
 			return UInt16.Parse (value);
 		}
 
+		[CLSCompliant (false)]
 		public static ushort ToUInt16 (string value, IFormatProvider provider) 
 		{
 			return UInt16.Parse (value, provider);
 		}
-	
+
+		[MonoTODO] [CLSCompliant (false)]
+		public static ushort ToUInt16 (string value, int fromBase) 
+		{
+			if (NotValidBase (fromBase))
+				throw new ArgumentException ("fromBase is not valid.");
+			
+			return 0;
+		} 
+
+		[CLSCompliant (false)]
 		public static ushort ToUInt16 (uint value) 
 		{ 
 			if (value > UInt16.MaxValue) 
@@ -1367,6 +1695,7 @@ namespace System {
 			return (ushort)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static ushort ToUInt16 (ulong value) 
 		{ 
 			if (value > (ulong)UInt16.MaxValue) 
@@ -1376,28 +1705,51 @@ namespace System {
 			return (ushort)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static ushort ToUInt16 (ushort value) 
 		{ 
 			return value; 
 		}
 
+		[CLSCompliant (false)]
+		public static ushort ToUInt16 (object value)
+		{
+			return (ushort) ChangeType (value, Type.GetType ("System.UInt16"));
+		}
+
+		[CLSCompliant (false)]
+		public static ushort ToUInt16 (object value, IFormatProvider provider)
+		{
+			return (ushort) ChangeType (value, Type.GetType ("System.UInt16"), provider);
+		}
+
 		// ========== UInt32 Conversions ========== //
 
+		[CLSCompliant (false)]
 		public static uint ToUInt32 (bool value) 
 		{ 
 			return (uint)(value ? 1 : 0); 
 		}
-	
+
+		[CLSCompliant (false)]
 		public static uint ToUInt32 (byte value) 
 		{ 
 			return (uint)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static uint ToUInt32 (char value) 
 		{ 
 			return (uint)value; 
 		}
-	
+
+		[CLSCompliant (false)]
+		public static uint ToUInt32 (DateTime value)
+		{
+			throw new InvalidCastException ("This conversion is not supported.");
+		}
+		
+		[CLSCompliant (false)]
 		public static uint ToUInt32 (decimal value) 
 		{ 
 			if (value > UInt32.MaxValue || value < UInt32.MinValue) 
@@ -1408,6 +1760,7 @@ namespace System {
 			return (uint)(Math.Round (value));	  
 		}
 
+		[CLSCompliant (false)]
 		public static uint ToUInt32 (double value) 
 		{ 
 			if (value > UInt32.MaxValue || value < UInt32.MinValue) 
@@ -1417,7 +1770,8 @@ namespace System {
 			// Returned Even-Rounded
 			return (uint)(Math.Round (value));	  
 		}
- 
+
+		[CLSCompliant (false)]
 		public static uint ToUInt32 (float value) 
 		{ 
 			if (value > UInt32.MaxValue || value < UInt32.MinValue) 
@@ -1428,6 +1782,7 @@ namespace System {
 			return (uint)(Math.Round ( (double)value));
 		}
 
+		[CLSCompliant (false)]
 		public static uint ToUInt32 (int value) 
 		{ 
 			if (value < UInt32.MinValue) 
@@ -1436,7 +1791,8 @@ namespace System {
 
 			return (uint)value; 
 		}
-	
+
+		[CLSCompliant (false)]
 		public static uint ToUInt32 (long value) 
 		{ 
 			if (value > UInt32.MaxValue || value < UInt32.MinValue) 
@@ -1446,6 +1802,7 @@ namespace System {
 			return (uint)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static uint ToUInt32 (sbyte value) 
 		{ 
 			if (value < UInt32.MinValue) 
@@ -1454,7 +1811,8 @@ namespace System {
 
 			return (uint)value; 
 		}
-	
+
+		[CLSCompliant (false)]
 		public static uint ToUInt32 (short value) 
 		{ 
 			if (value < UInt32.MinValue) 
@@ -1464,21 +1822,25 @@ namespace System {
 			return (uint)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static uint ToUInt32 (string value) 
 		{
 			return UInt32.Parse (value);
 		}
 
+		[CLSCompliant (false)]
 		public static uint ToUInt32 (string value, IFormatProvider provider) 
 		{
 			return UInt32.Parse (value, provider);
 		}
-	
+
+		[CLSCompliant (false)]
 		public static uint ToUInt32 (uint value) 
 		{ 
 			return value; 
 		}
 
+		[CLSCompliant (false)]
 		public static uint ToUInt32 (ulong value) 
 		{ 
 			if (value > UInt32.MaxValue) 
@@ -1488,28 +1850,52 @@ namespace System {
 			return (uint)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static uint ToUInt32 (ushort value) 
 		{ 
 			return (uint)value; 
 		}
 
+		[CLSCompliant (false)]
+		public static uint ToUInt32 (object value)
+		{
+			return (uint) ChangeType (value, Type.GetType ("System.UInt32"));
+		}		
+
+		[CLSCompliant (false)]
+		public static uint ToUInt32 (object value, IFormatProvider provider)
+		{
+			return (uint) ChangeType (value, Type.GetType ("System.UInt32"), provider);
+		}		
+		
+
 		// ========== UInt64 Conversions ========== //
 
+		[CLSCompliant (false)]
 		public static ulong ToUInt64 (bool value) 
 		{ 
 			return (ulong)(value ? 1 : 0); 
 		}
-	
+
+		[CLSCompliant (false)]
 		public static ulong ToUInt64 (byte value) 
 		{ 
 			return (ulong)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static ulong ToUInt64 (char value) 
 		{ 
 			return (ulong)value; 
 		}
-	
+
+		[CLSCompliant (false)]
+		public static ulong ToUint64 (DateTime value)
+		{
+			throw new InvalidCastException ("The conversion is not supported.");
+		}
+
+		[CLSCompliant (false)]
 		public static ulong ToUInt64 (decimal value) 
 		{ 
 			if (value > UInt64.MaxValue || value < UInt64.MinValue) 
@@ -1520,6 +1906,7 @@ namespace System {
 			return (ulong)(Math.Round (value));	  
 		}
 
+		[CLSCompliant (false)]
 		public static ulong ToUInt64 (double value) 
 		{ 
 			if (value > UInt64.MaxValue || value < UInt64.MinValue) 
@@ -1529,7 +1916,8 @@ namespace System {
 			// Returned Even-Rounded
 			return (ulong)(Math.Round (value));	  
 		}
- 
+		
+		[CLSCompliant (false)] 
 		public static ulong ToUInt64 (float value) 
 		{ 
 			if (value > UInt64.MaxValue || value < UInt64.MinValue) 
@@ -1539,7 +1927,8 @@ namespace System {
 			// Returned Even-Rounded, pass as a double to Math
 			return (ulong)(Math.Round ( (double)value));
 		}
-
+		
+		[CLSCompliant (false)]
 		public static ulong ToUInt64 (int value) 
 		{ 
 			if (value < (int)UInt64.MinValue) 
@@ -1548,7 +1937,8 @@ namespace System {
 
 			return (ulong)value; 
 		}
-	
+		
+		[CLSCompliant (false)]
 		public static ulong ToUInt64 (long value) 
 		{ 
 			if (value < (long)UInt64.MinValue) 
@@ -1558,6 +1948,7 @@ namespace System {
 			return (ulong)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static ulong ToUInt64 (sbyte value) 
 		{ 
 			if (value < (sbyte)UInt64.MinValue) 
@@ -1566,7 +1957,8 @@ namespace System {
 
 			return (ulong)value; 
 		}
-	
+		
+		[CLSCompliant (false)]	
 		public static ulong ToUInt64 (short value) 
 		{ 
 			if (value < (short)UInt64.MinValue) 
@@ -1576,30 +1968,57 @@ namespace System {
 			return (ulong)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static ulong ToUInt64 (string value) 
 		{
 			return UInt64.Parse (value);
 		}
 
+		[CLSCompliant (false)]
 		public static ulong ToUInt64 (string value, IFormatProvider provider) 
 		{
 			return UInt64.Parse (value, provider);
 		}
-	
+
+		[MonoTODO] [CLSCompliant (false)]
+		public static ulong TOUint64 (string value, int fromBase)
+		{
+			if (NotValidBase (fromBase))
+				throw new ArgumentException ("fromBase is not valid.");
+
+			return 0;
+		}					      
+
+		[CLSCompliant (false)]
 		public static ulong ToUInt64 (uint value) 
 		{ 
 			return (ulong)value; 
 		}
 
+		[CLSCompliant (false)]
 		public static ulong ToUInt64 (ulong value) 
 		{ 
 			return value; 
 		}
-
+		
+		[CLSCompliant (false)]
 		public static ulong ToUInt64 (ushort value) 
 		{ 
 			return (ulong)value; 
 		}
+
+		[CLSCompliant (false)]
+		public static ulong ToUInt64 (object value)
+		{
+			return (ulong) ChangeType (value, Type.GetType ("System.UInt64"));
+		}		
+
+		[CLSCompliant (false)]
+		public static ulong ToUInt64 (object value, IFormatProvider provider)
+		{
+			return (ulong) ChangeType (value, Type.GetType ("System.UInt64"), provider);
+		}		
+		
 
 		// ========== Conversion / Helper Fucntions ========== //
 
@@ -1627,7 +2046,16 @@ namespace System {
 		{
 			Type conversionType = conversionTable [(int)typeCode];
 			return ToType (value, conversionType, provider);
-		}	
+		}
+
+		private static bool NotValidBase (int value)
+		{
+			if ((value == 2) || (value == 8) ||
+			   (value == 10) || (value == 16))
+				return false;
+			
+			return true;
+		}
 
                 // Lookup table for the conversion ToType method. Order
 		// is important! Used by ToType for comparing the target
