@@ -515,22 +515,7 @@ public class TypeManager {
 	//
 	public static Type GetReferenceType (Type t)
 	{
-		string tname = t.FullName + "&";
-		
-		Type ret = t.Assembly.GetType (tname);
-
-		//
-		// If the type comes from the assembly we are building
-		// We need the Hashtable, because .NET 1.1 will return different instance types
-		// every time we call ModuleBuilder.GetType.
-		//
-		if (ret == null){
-			if (references [t] == null)
-				references [t] = CodeGen.ModuleBuilder.GetType (tname);
-			ret = (Type) references [t];
-		}
-
-		return ret;
+		return t.MakeByRefType ();
 	}
 
 	static Hashtable pointers = new Hashtable ();
