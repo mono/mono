@@ -1,3 +1,8 @@
+2003-05-09  Dietmar Maurer  <dietmar@ximian.com>
+
+	* mini-x86.c (mono_arch_emit_prolog): avoid reallocs with better
+	code size estimation.
+
 2003-05-08  Dietmar Maurer  <dietmar@ximian.com>
 
 	* mini.c (mono_jit_create_remoting_trampoline): make it work with
