@@ -14,8 +14,8 @@ namespace System
 {
 	public class UnhandledExceptionEventArgs: EventArgs
 	{
-		protected object exception;
-		protected bool m_isTerminating;
+		private object exception;
+		private bool m_isTerminating;
 
 		public UnhandledExceptionEventArgs(object exception, bool isTerminating)
 		{
