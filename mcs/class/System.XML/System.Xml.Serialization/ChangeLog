@@ -1,3 +1,10 @@
+2004-03-13  David Sheldon <dave-mono@earth.li>
+ 
+  * XmlTextAttribute.cs: Initialise dataType with zero-length string. 
+   fixes test case that tests for this directly.
+  * TypeTranslator.cs: Check for new zero-length dataType so we don't reject
+   it. Treat it as null.
+   
 2004-03-12  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* CodeIdentifier.cs: Limit the length of identifiers.

@@ -93,7 +93,7 @@ namespace System.Xml.Serialization
 
 		public static TypeData GetTypeData (Type type, string xmlDataType)
 		{
-			if (xmlDataType != null) return GetPrimitiveTypeData (xmlDataType);
+			if ((xmlDataType != null) && (xmlDataType.Length != 0)) return GetPrimitiveTypeData (xmlDataType);
 
 			TypeData typeData = nameCache[type] as TypeData;
 			if (typeData != null) return typeData;

@@ -18,7 +18,7 @@ namespace System.Xml.Serialization
 		 | AttributeTargets.Parameter | AttributeTargets.ReturnValue)]
 	public class XmlTextAttribute : Attribute
 	{
-		private string dataType;
+		private string dataType = "";
 		private Type type;
 
 		public XmlTextAttribute ()
