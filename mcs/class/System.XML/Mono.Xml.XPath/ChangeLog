@@ -1,3 +1,7 @@
+2003-10-04  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* DTMXPathDocumentBuilder.cs : Bugfix for whitespace handling.
+
 2003-10-01  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* Added DTMXPathNode.cs.

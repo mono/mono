@@ -49,7 +49,7 @@ namespace Mono.Xml.XPath
 			if (supportsID)
 				this.validatingReader = reader as XmlValidatingReader;
 			lineInfo = reader as IXmlLineInfo;
-			this.xmlSpace = xmlSpace;
+			this.xmlSpace = space;
 			this.nameTable = reader.NameTable;
 			nodeCapacity = nodeCapacity;
 			attributeCapacity = nodeCapacity * 2;
@@ -182,7 +182,8 @@ namespace Mono.Xml.XPath
 			requireFirstChildFill = false;	// Might be changed in ProcessElement().
 
 			string value = null;
-			XPathNodeType nodeType = XPathNodeType.Text;
+			XPathNodeType nodeType = xmlReader.NodeType == XmlNodeType.Whitespace ?
+				XPathNodeType.Whitespace : XPathNodeType.Text;
 
 			switch (xmlReader.NodeType) {
 			case XmlNodeType.Element:
@@ -191,6 +192,7 @@ namespace Mono.Xml.XPath
 			case XmlNodeType.CDATA:
 			case XmlNodeType.SignificantWhitespace:
 			case XmlNodeType.Text:
+			case XmlNodeType.Whitespace:
 				if (value == null)
 					skipRead = true;
 				AddNode (parent,
@@ -218,8 +220,6 @@ namespace Mono.Xml.XPath
 			case XmlNodeType.Comment:
 				value = xmlReader.Value;
 				nodeType = XPathNodeType.Comment;
-				goto case XmlNodeType.Text;
-			case XmlNodeType.Whitespace:
 				goto case XmlNodeType.Text;
 			case XmlNodeType.ProcessingInstruction:
 				value = xmlReader.Value;
