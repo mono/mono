@@ -8,10 +8,10 @@
 // Namespace: System.Data.OracleClient
 //
 // Authors: 
-//    Daniel Morgan <danmorg@sc.rr.com>
+//    Daniel Morgan <danielmorgan@verizon.net>
 //    Tim Coleman <tim@timcoleman.com>
 //
-// Copyright (C) Daniel Morgan, 2002
+// Copyright (C) Daniel Morgan, 2002, 2004
 // Copyright (C) Tim Coleman , 2003
 //
 // Licensed under the MIT/X11 License.
@@ -290,6 +290,16 @@ namespace System.Data.OracleClient {
 			throw new NotImplementedException ();
 		}
 
+		private bool IsNonQuery (OciStatementHandle statementHandle) {
+			// assumes Prepare() has been called prior to calling this function
+
+			OciStatementType statementType = statementHandle.GetStatementType ();
+			if (statementType.Equals (OciStatementType.Select))
+				return false;
+
+			return true;
+		}
+
 		public OracleDataReader ExecuteReader ()
 		{
 			return ExecuteReader (CommandBehavior.Default);
@@ -314,8 +324,14 @@ namespace System.Data.OracleClient {
 				else
 					preparedStatement = null;	// OracleDataReader releases the statement handle
 
+				bool isNonQuery = IsNonQuery (statement);
+
 				BindParameters (statement);
-				hasRows = statement.ExecuteQuery ();
+
+				if (isNonQuery)
+					ExecuteNonQueryInternal (statement, false);
+				else
+					hasRows = statement.ExecuteQuery ();
 
 				rd = new OracleDataReader (this, statement, hasRows);
 			}
