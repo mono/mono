@@ -614,7 +614,7 @@ namespace System.Reflection.Emit {
 
 			string attrname = customBuilder.Ctor.ReflectedType.FullName;
 			byte[] data;
-			int len, pos;
+			int pos;
 
 			if (attrname == "System.Reflection.AssemblyVersionAttribute") {
 				version = create_assembly_version (customBuilder.string_arg ());

@@ -14,6 +14,9 @@ namespace System.Reflection.Emit
 		public const int JitImmediate = 1;
 		public const int JitOnDemand = 1;
 
+		private MethodRental() {
+		}
+
 		[MonoTODO]
 		public static void SwapMethodBody (Type cls, int methodtoken, 
 										   IntPtr rgIL, int methodSize, int flags)
