@@ -172,50 +172,52 @@ namespace Mono.CSharp
 			Console.WriteLine (
 				"Mono C# compiler, (C) 2001 Ximian, Inc.\n" +
 				"mcs [options] source-files\n" +
-				"   --about          About the Mono C# compiler\n" +
-				"   --checked        Set default context to checked\n" +
-				"   --define SYM     Defines the symbol SYM\n" +
-				"   --debug          Generate debugging information\n" + 
-				"   -g               Generate debugging information\n" +
-				"   --debug-args X   Specify additional arguments for the\n" +
-				"                    symbol writer.\n" +
-				"   --fatal          Makes errors fatal\n" +
-				"   -L PATH          Adds PATH to the assembly link path\n" +
-				"   --noconfig       Disables implicit references to assemblies\n" +
-				"   --nostdlib       Does not load core libraries\n" +
-				"   --nowarn XXX     Ignores warning number XXX\n" +
-				"   -o FNAME         Specifies output file\n" +
-				"   -g, --debug      Write symbolic debugging information to FILE-debug.s\n" +
-				"   --parse          Only parses the source file\n" +
-				"   --expect-error X Expect that error X will be encountered\n" +
-				"   --recurse SPEC   Recursively compiles the files in SPEC ([dir]/file)\n" + 
-				"   --linkres FILE   Links FILE as a resource\n" + 
-				"   --resource FILE  Embed FILE as a resource\n" + 
-				"   --stacktrace     Shows stack trace at error location\n" +
-				"   --target KIND    Specifies the target (KIND is one of: exe, winexe, " +
-				                     "library, module)\n" +
-				"   --timestamp      Displays time stamps of various compiler events\n" +
-				"   --unsafe         Allows unsafe code\n" +
-				"   --werror         Treat warnings as errors\n" +
-				"   --wlevel LEVEL   Sets warning level (the highest is 4, the default)\n" +
-				"   -r               References an assembly\n" +
-				"   -v               Verbose parsing (for debugging the parser)\n" +
-#if MCS_DEBUG
-				"   --mcs-debug X    Sets MCS debugging level to X" +
-#endif
-                                "   @file            Read response file for more options");
+				"   --about            About the Mono C# compiler\n" +
+				"   -checked[+|-]      Set default context to checked\n" +
+				"   -define:S1[;S2]    Defines one or more symbols (short: /d:)\n" +
+				"   -debug[+-]         Generate debugging information\n" + 
+				"   -g                 Generate debugging information\n" +
+				"   --debug-args X     Specify additional arguments for the\n" +
+				"                      symbol writer.\n" +
+				"   --fatal            Makes errors fatal\n" +
+				"   -lib:PATH1,PATH2   Adds the paths to the assembly link path\n" +
+				"   -main:class        Specified the class that contains the entry point\n" +
+				"   -noconfig[+|-]     Disables implicit references to assemblies\n" +
+				"   -nostdlib[+|-]     Does not load core libraries\n" +
+				"   -nowarn:W1[,W2]    Disables one or more warnings\n" + 
+				"   -out:FNAME         Specifies output file\n" +
+				"   --parse            Only parses the source file\n" +
+				"   --expect-error X   Expect that error X will be encountered\n" +
+				"   -recurse:SPEC      Recursively compiles the files in SPEC ([dir]/file)\n" + 
+				"   -linkresource:FILE Links FILE as a resource\n" +
+				"   -resource:FILE     Embed FILE as a resource\n" +
+				"   -reference:ASS     References the specified assembly (-r:ASS)\n" +
+				"   --stacktrace       Shows stack trace at error location\n" +
+				"   -target:KIND       Specifies the target (KIND is one of: exe, winexe, " +
+				                       "library, module), (short: /t:)\n" +
+				"   --timestamp        Displays time stamps of various compiler events\n" +
+				"   -unsafe[+|-]       Allows unsafe code\n" +
+				"   -warnaserror[+|-]  Treat warnings as errors\n" +
+				"   -warn:LEVEL        Sets warning level (the highest is 4, the default)\n" +
+				"   -v                 Verbose parsing (for debugging the parser)\n" +
+#if MCS_DEBUG					       
+				"   --mcs-debug X      Sets MCS debugging level to X\n" +
+#endif						       
+                                "   @file              Read response file for more options\n\n" +
+				"Options can be of the form -option or /option");
 		}
 
 		static void About ()
 		{
 			Console.WriteLine (
-				"The Mono C# compiler is (C) 2001 Ximian, Inc.\n\n" +
+				"The Mono C# compiler is (C) 2001, 2002 Ximian, Inc.\n\n" +
 				"The compiler source code is released under the terms of the GNU GPL\n\n" +
 
 				"For more information on Mono, visit the project Web site\n" +
 				"   http://www.go-mono.com\n\n" +
 
 				"The compiler was written by Miguel de Icaza, Ravi Pratap and Martin Baulig");
+			Environment.Exit (0);
 		}
 		
 		public static int Main (string[] args)
@@ -865,7 +867,7 @@ namespace Mono.CSharp
 			case "/r":
 			case "/reference":
 				if (value == ""){
-					Console.WriteLine ("/recurse requires an argument");
+					Console.WriteLine ("/reference requires an argument");
 					Environment.Exit (1);
 				}
 				references.Add (value);
@@ -875,7 +877,7 @@ namespace Mono.CSharp
 				string [] libdirs;
 				
 				if (value == ""){
-					Usage ();	
+					Console.WriteLine ("/lib requires an argument");
 					Environment.Exit (1);
 				}
 
@@ -925,7 +927,7 @@ namespace Mono.CSharp
 				string [] warns;
 
 				if (value == ""){
-					Usage ();
+					Console.WriteLine ("/nowarn requires an argument");
 					Environment.Exit (1);
 				}
 				
@@ -957,7 +959,7 @@ namespace Mono.CSharp
 			case "/main":
 			case "/m":
 				if (value == ""){
-					Usage ();
+					Console.WriteLine ("/main requires an argument");					
 					Environment.Exit (1);
 				}
 				RootContext.MainClass = value;

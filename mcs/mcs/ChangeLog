@@ -1,3 +1,9 @@
+2002-08-15  Miguel de Icaza  <miguel@ximian.com>
+
+	* driver.cs: Show the CSC-like command line arguments.
+
+	Improved a few error messages.
+
 2002-08-15  Martin Baulig  <martin@gnome.org>
 
 	* typemanager.cs (IMemberContainer.Type): New property.
