@@ -1,3 +1,9 @@
+2003-10-07  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* metadata.c (mono_type_to_unmanaged): allow bools to marshal as I1
+	marshal.c (emit_ptr_to_str_conv & mono_marshal_get_native_wrapper):
+        handle more bool marshalling options
+
 2003-10-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (mono_marshal_get_native_wrapper): Fix marshalling of
