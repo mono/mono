@@ -395,9 +395,14 @@ namespace Mono.CSharp {
 						return null;
 					}
 
+					Type type = e.Type;
+					EmptyCast ecast = e as EmptyCast;
+					if ((ecast != null) && (ecast.Child is Constant))
+						e = ecast.Child;
+
 					Constant c = e as Constant;
 					if (c != null) {
-						if (c.Type != pi.PropertyType) {
+						if (type != pi.PropertyType) {
 							c = Const.ChangeType (Location, c, pi.PropertyType);
 							if (c == null)
 								return null;
@@ -433,12 +438,16 @@ namespace Mono.CSharp {
 						return null;
 					}
 
+					Type type = e.Type;
+					EmptyCast ecast = e as EmptyCast;
+					if ((ecast != null) && (ecast.Child is Constant))
+						e = ecast.Child;
 					//
 					// Handle charset here, and set the TypeAttributes
 					
 					Constant c = e as Constant;
 					if (c != null) {
-						if (c.Type != fi.FieldType){
+						if (type != fi.FieldType) {
 							c = Const.ChangeType (Location, c, fi.FieldType);
 							if (c == null)
 								return null;
@@ -448,6 +457,8 @@ namespace Mono.CSharp {
 						field_values.Add (value);
 					} else if (e is TypeOf) {
 						field_values.Add (((TypeOf) e).TypeArg);
+					} else if (e is ArrayCreation) {
+						field_values.Add (((ArrayCreation) e).EncodeAsAttribute());
 					} else {
 						Error_AttributeArgumentNotValid (Location);
 						return null;
@@ -471,7 +482,6 @@ namespace Mono.CSharp {
 				ec, (MethodGroupExpr) mg, pos_args, false, Location);
 
 			if (constructor == null) {
-				Error_AttributeConstructorMismatch ();
 				return null;
 			}
 
@@ -642,29 +652,18 @@ namespace Mono.CSharp {
 			return attr_class.AttributeUsage;
 		}
 
-		public string IndexerName_GetIndexerName (EmitContext ec)
+		/// <summary>
+		/// Returns custom name of indexer
+		/// </summary>
+		public string GetIndexerAttributeValue (EmitContext ec)
 		{
-			if (Arguments == null || Arguments [0] == null){
-				Error_AttributeConstructorMismatch ();
-				return null;
-			}
-			ArrayList pos_args = (ArrayList) Arguments [0];
-			if (pos_args.Count != 1) {
-				Error_AttributeConstructorMismatch ();
-				return null;
+			if (pos_values == null) {
+				// TODO: It is not neccessary to call whole Resolve (ApplyAttribute does it now) we need only ctor args.
+				// But because a lot of attribute class code must be rewritten will be better to wait...
+				Resolve (ec);
 			}
 			
-			Argument arg = (Argument) pos_args [0];
-			if (!arg.Resolve (ec, Location))
-				return null;
-			
-			StringConstant sc = arg.Expr as StringConstant;
-			if (sc == null){
-				Error_AttributeConstructorMismatch ();
-				return null;
-			}
-			
-			return sc.Value;
+			return pos_values [0] as string;
 		}
 
 		/// <summary>
@@ -1151,17 +1150,15 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Pulls the IndexerName attribute from an Indexer if it exists.
 		/// </summary>
-		public string ScanForIndexerName (EmitContext ec)
+		public Attribute GetIndexerNameAttribute (EmitContext ec)
 		{
-			Attribute a = Search (TypeManager.indexer_name_type, ec);
+			Attribute a = Search (TypeManager.indexer_name_type, ec, false);
 			if (a == null)
 				return null;
 
-			// Remove the attribute from the list
-			//TODO: It is very close to hack and it can crash here
+			// Remove the attribute from the list because it is not emitted
 			Attrs.Remove (a);
-
-			return a.IndexerName_GetIndexerName (ec);
+			return a;
 		}
 
 	}

@@ -89,20 +89,32 @@ namespace Mono.CSharp {
 		{
 			switch (error_no) {
  				case 0122: return "'{0}' is inaccessible due to its protection level";
+ 				case 0134: return "Cannot use qualified namespace names in nested namespace declarations";
+				case 0145: return "A const field requires a value to be provided";
 				case 0160: return "A previous catch clause already catches all exceptions of this or a super type '{0}'";
+				case 0210: return "You must provide an initializer in a fixed or using statement declaration";
  				case 0243: return "Conditional not valid on '{0}' because it is an override method";
+				case 0247: return "Cannot use a negative size with stackalloc";
+				case 0415: return "The 'IndexerName' attribute is valid only on an indexer that is not an explicit interface member declaration";
+ 				case 0553: return "'{0}' : user defined conversion to/from base class";
+ 				case 0554: return "'{0}' : user defined conversion to/from derived class";
  				case 0577: return "Conditional not valid on '{0}' because it is a destructor, operator, or explicit interface implementation";
  				case 0578: return "Conditional not valid on '{0}' because its return type is not void";
  				case 0582: return "Conditional not valid on interface members";
 				case 0592: return "Attribute '{0}' is not valid on this declaration type. It is valid on {1} declarations only.";
 				case 0601: return "The DllImport attribute must be specified on a method marked `static' and `extern'";
+				case 0609: return "Cannot set the 'IndexerName' attribute on an indexer marked override";
 				case 0610: return "Field or property cannot be of type '{0}'";
 				case 0619: return "'{0}' is obsolete: '{1}'";
 				case 0626: return "Method, operator, or accessor '{0}' is marked external and has no attributes on it. Consider adding a DllImport attribute to specify the external implementation";
  				case 0629: return "Conditional member '{0}' cannot implement interface member";
+				case 0633: return "The argument to the 'IndexerName' attribute must be a valid identifier";
 				case 0657: return "'{0}' is not a valid attribute location for this declaration. Valid attribute locations for this declaration are '{1}'";
+				case 1555: return "Could not find '{0}' specified for Main method";
+				case 1556: return "'{0}' specified for Main method must be a valid class or struct";                                    
  				case 1618: return "Cannot create delegate with '{0}' because it has a Conditional attribute";
 				case 1667: return "'{0}' is not valid on property or event accessors. It is valid on '{1}' declarations only";
+				case 1669: return "__arglist is not valid in this context";                                    
 				case 3000: return "Methods with variable arguments are not CLS-compliant";
 				case 3001: return "Argument type '{0}' is not CLS-compliant";
 				case 3002: return "Return type of '{0}' is not CLS-compliant";

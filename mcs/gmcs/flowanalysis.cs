@@ -334,6 +334,11 @@ namespace Mono.CSharp
 				barrier = FlowReturns.Always;
 			}
 
+			public void ResetBarrier ()
+			{
+				barrier = FlowReturns.Never;
+			}
+
 			static string ShortName (FlowReturns returns)
 			{
 				switch (returns) {
@@ -624,7 +629,7 @@ namespace Mono.CSharp
 			{
 				UsageVector result = branching.Merge ();
 
-				Report.Debug (2, "  MERGING CHILD", this, IsDirty,
+				Report.Debug (2, "  MERGING CHILD", this, branching, IsDirty,
 					      result.ParameterVector, result.LocalVector,
 					      result.Reachability, reachability, Type);
 

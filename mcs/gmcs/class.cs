@@ -3526,7 +3526,7 @@ namespace Mono.CSharp {
 				return c;
 			}
 
-			throw new InternalErrorException ();
+			return null;
 		}
 
 		//TODO: implement caching when it will be necessary
@@ -5946,6 +5946,7 @@ namespace Mono.CSharp {
 				EmitContext ec = CreateEmitContext (tc, ig);
 				FieldInfo field_info = (FieldInfo)method.FieldBuilder;
 
+				method_data.MethodBuilder.SetImplementationFlags (MethodImplAttributes.Synchronized);
 				if ((method.ModFlags & Modifiers.STATIC) != 0) {
 					ig.Emit (OpCodes.Ldsfld, field_info);
 					ig.Emit (OpCodes.Ldarg_0);
@@ -6054,11 +6055,7 @@ namespace Mono.CSharp {
 		public override bool Define (TypeContainer container)
 		{
 			EventAttributes e_attr;
-			if (IsInterface)
-				e_attr = EventAttributes.None;
-			else
-				e_attr = EventAttributes.RTSpecialName |
-					EventAttributes.SpecialName;
+			e_attr = EventAttributes.None;
 ;
 			if (!DoDefineBase (container))
 				return false;
@@ -6244,7 +6241,7 @@ namespace Mono.CSharp {
 		const int AllowedInterfaceModifiers =
 			Modifiers.NEW;
 
-		public string IndexerName;
+		public string IndexerName = "Item";
 		public string InterfaceIndexerName;
 
 		//
@@ -6276,21 +6273,27 @@ namespace Mono.CSharp {
 			if (!DoDefine (container, container))
 				return false;
 
-                       if (OptAttributes != null)
-                               IndexerName = OptAttributes.ScanForIndexerName (ec);
-
-			if (IndexerName == null)
-				IndexerName = "Item";
-			else {
-				if (! Tokenizer.IsValidIdentifier (IndexerName)) {
-					Report.Error (633, Location, "The IndexerName specified is an invalid identifier");
-					return false;
-				}
+			if (OptAttributes != null) {
+				Attribute indexer_attr = OptAttributes.GetIndexerNameAttribute (ec);
+				if (indexer_attr != null) {
+					IndexerName = indexer_attr.GetIndexerAttributeValue (ec);
+					if (IsExplicitImpl) {
+						// The 'IndexerName' attribute is valid only on an indexer that is not an explicit interface member declaration
+						Report.Error_T (415, indexer_attr.Location);
+						return false;
+					}
 				
-				if (IsExplicitImpl) {
-				Report.Error (592, Location,
-                                                     "Attribute 'IndexerName' is not valid on explicit implementations.");
-					return false;
+					if (IsExplicitImpl) {
+						// The 'IndexerName' attribute is valid only on an indexer that is not an explicit interface member declaration
+						Report.Error_T (415, indexer_attr.Location);
+						return false;
+					}
+
+					if (!Tokenizer.IsValidIdentifier (IndexerName)) {
+						// The argument to the 'IndexerName' attribute must be a valid identifier
+						Report.Error_T (633, indexer_attr.Location);
+						return false;
+					}
 				}
 			}
 
@@ -6609,12 +6612,15 @@ namespace Mono.CSharp {
 					return false;
 				}
 				
-				if (first_arg_type.IsSubclassOf (return_type) ||
-				    return_type.IsSubclassOf (first_arg_type)){
-					Report.Error (
-						-10, Location,
-						"User-defined conversion cannot convert between types " +
-						"that derive from each other");
+				if (first_arg_type.IsSubclassOf (return_type)
+					|| return_type.IsSubclassOf (first_arg_type)){
+					if (declaring_type.IsSubclassOf (return_type)) {
+						// '{0}' : user defined conversion to/from base class
+						Report.Error_T (553, Location, GetSignatureForError ());
+						return false;
+					}
+					// '{0}' : user defined conversion to/from derived class
+					Report.Error_T (554, Location, GetSignatureForError ());
 					return false;
 				}
 			} else if (SecondArgType == null) {
@@ -6738,7 +6744,12 @@ namespace Mono.CSharp {
 
 		public override string GetSignatureForError(TypeContainer tc)
 		{
-			return Prototype (tc);
+			return ToString ();
+		}
+
+		public override string GetSignatureForError()
+		{
+			return ToString ();
 		}
 		
 		public override string ToString ()

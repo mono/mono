@@ -1,3 +1,129 @@
+2004-07-08  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs (Lock.Resolve): Set ec.NeedReturnLabel() if we do
+	not always return, just like we're doing in Using.Resolve().
+
+2004-07-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay (fixed_statement): flag this as Pinned.
+
+2004-07-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* typemanager.cs (TypeManager): Removed MakePinned method, this
+	mechanism is replaced with the .NET 2.x compatible mechanism of
+	calling `ILGenerator.DeclareLocal (Type t, bool pinned)'.
+
+	* statement.cs (LocalInfo): Remove MakePinned, add Pinned property 
+	Rename `Fixed' to `Pinned' as a flag, to distinguish from the
+	`IsFixed' property which has a different meaning.
+
+2004-07-02  Raja R Harinath  <rharinath@novell.com>
+
+	* ecore.cs (DoSimpleNameResolve): Expand CS0038 check to all names
+	visible from inside a nested class, not just the names of the
+	immediately enclosing class.
+	Fix for bug #60730.
+
+2004-06-24  Raja R Harinath  <rharinath@novell.com>
+
+	* expression.cs (BetterConversion): Remove buggy special-case
+	handling of "implicit constant expression conversions".  At this
+	point, we already know that the conversion is possible -- we're
+	only checking to see which is better.
+
+2004-06-24  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay: Added error CS0210 test.
+
+2004-06-24  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay: Added error CS0134 test.
+
+2004-06-24  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix bug #52507
+	* cs-parser.jay: Added error CS0145 test.
+
+2004-06-24  Marek Safar  <marek.safar@seznam.cz>
+
+ 	* class.cs (Operator.Define): Added test for errors CS0553, CS0554.
+
+2004-06-23  Ben Maurer  <bmaurer@ximian.com>
+	
+	* expression.cs (StackAlloc.Resolve): The argument may not
+	be a constant; deal with this case.
+	
+2004-06-23  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (IndexerName_GetIndexerName): Renamed to
+	GetIndexerAttributeValue.
+	(ScanForIndexerName): Renamed to GetIndexerNameAttribute.
+
+	* class.cs (Indexer.Define): Added error tests for CS0415,
+	CS0609.
+
+2004-06-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* attribute.cs (Attribute.Resolve): Keep field code in sync with
+	property code.
+
+2004-06-23  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs (UsageVector.MergeChild): If we're a loop and we
+	neither return nor throw, reset the barrier as well.  Fixes #60457.
+
+2004-06-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* class.cs : EventAttributes is now set to None by default.
+	  This fixes bug #60459.
+
+2004-06-18  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix bug #60219
+	* class.cs (ConstructorInitializer.GetOverloadedConstructor):
+ 	Don't throw exception but return null (it's sufficient now).
+
+2004-06-18  Marek Safar  <marek.safar@seznam.cz>
+
+	* typemanager.cs (GetArgumentTypes): Faster implementation.
+
+2004-06-18  Martin Baulig  <martin@ximian.com>
+
+	* attribute.cs (Attribute.Resolve): Check whether we're an
+	EmptyCast which a Constant child.  Fixes #60333.
+
+2004-06-17  Ben Maurer  <bmaurer@ximian.com>
+
+	* statement.cs (EmitCollectionForeach): Account for the fact that
+	not all valuetypes are in areas which we can take the address of.
+	For these variables, we store to a temporary variable. Also, make
+	sure that we dont emit a `callvirt' on a valuetype method.
+
+2004-06-15  Marek Safar  <marek.safar@seznam.cz>
+
+	* expression.cs (StackAlloc.DoReSolve): Added test for
+	negative parameter (CS0247).
+
+2004-06-15  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix bug #59792
+	* class.cs: (Event.DelegateMethod.Emit): Added synchronization flag.
+
+2004-06-15  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix bug #59781
+	* expression.cs: (Binary.DoNumericPromotions): Added conversion for
+	ulong.
+
+2004-06-14  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix bug #58254 & cs1555.cs, cs1556.cs
+	* driver.cs (MainDriver): Added tests for errors CS1555, CS1556.
+
+2004-06-14  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay: Added error CS1669 test for indexers.
+
 2004-06-18  Martin Baulig  <martin@ximian.com>
 
 	* generics.cs (GenericMethod.ctor): Don't take an Attributes

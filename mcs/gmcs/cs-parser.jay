@@ -356,6 +356,11 @@ namespace_declaration
 					+ " Expected class, delegate, enum, interface, or struct");
 		}
 
+		if (current_namespace.Parent != null && $3 is MemberAccess) {
+			// Cannot use qualified namespace names in nested namespace declarations
+			Report.Error_T (134, lexer.Location);
+		}
+
 		current_namespace = RootContext.Tree.RecordNamespace (current_namespace, file, (string) $3, lexer.Location);
 	} 
 	  namespace_body opt_semicolon
@@ -823,14 +828,16 @@ constant_declarators
 	: constant_declarator 
 	  {
 		ArrayList constants = new ArrayList (4);
+		if ($1 != null)
 		constants.Add ($1);
 		$$ = constants;
 	  }
 	| constant_declarators COMMA constant_declarator
 	  {
+		if ($3 != null) {
 		ArrayList constants = (ArrayList) $1;
-
 		constants.Add ($3);
+	  }
 	  }
 	;
 
@@ -838,6 +845,12 @@ constant_declarator
 	: IDENTIFIER ASSIGN constant_expression
 	  {
 		$$ = new VariableDeclaration ((string) $1, $3, lexer.Location);
+	  }
+	| IDENTIFIER
+	  {
+		// A const field requires a value to be provided
+		Report.Error_T (145, lexer.Location);
+		$$ = null;
 	  }
 	;
 
@@ -1955,8 +1968,10 @@ indexer_declarator
 	: type THIS OPEN_BRACKET opt_formal_parameter_list CLOSE_BRACKET
 	  {
 		Parameters pars = (Parameters) $4;
-
-		if (pars.FixedParameters == null && pars.ArrayParameter == null){
+		if (pars.HasArglist) {
+			// "__arglist is not valid in this context"
+			Report.Error_T (1669, lexer.Location);
+		} else if (pars.FixedParameters == null && pars.ArrayParameter == null){
 			Report.Error (1551, lexer.Location, "Indexers must have at least one parameter");
 		}
 
@@ -1966,7 +1981,10 @@ indexer_declarator
 	  {
 		Parameters pars = (Parameters) $6;
 
-		if (pars.FixedParameters == null && pars.ArrayParameter == null){
+		if (pars.HasArglist) {
+			// "__arglist is not valid in this context"
+			Report.Error_T (1669, lexer.Location);
+		} else if (pars.FixedParameters == null && pars.ArrayParameter == null){
 			Report.Error (1551, lexer.Location, "Indexers must have at least one parameter");
 		}
 		MemberName name = (MemberName) $2;
@@ -4081,7 +4099,9 @@ fixed_statement
 			v = current_block.AddVariable (type, (string) p.First,current_local_parameters, l);
 			if (v == null)
 				continue;
+
 			v.ReadOnly = true;
+			v.Pinned = true;
 			p.First = v;
 			list [i] = p;
 		}
@@ -4102,12 +4122,14 @@ fixed_statement
 fixed_pointer_declarators
 	: fixed_pointer_declarator	{ 
 	   	ArrayList declarators = new ArrayList (4); 
+	   	if ($1 != null)
 		declarators.Add ($1);
 		$$ = declarators;
 	  }
 	| fixed_pointer_declarators COMMA fixed_pointer_declarator
 	  {
 		ArrayList declarators = (ArrayList) $1;
+		if ($3 != null)
 		declarators.Add ($3);
 		$$ = declarators;
 	  }
@@ -4117,6 +4139,12 @@ fixed_pointer_declarator
 	: IDENTIFIER ASSIGN expression
 	  {	
 		$$ = new Pair ($1, $3);
+	  }
+	| IDENTIFIER
+	  {
+		// You must provide an initializer in a fixed or using statement declaration
+		Report.Error_T (210, lexer.Location);
+		$$ = null;
 	  }
 	;
 
@@ -4162,6 +4190,10 @@ using_statement
 					expr = (Expression) decl.expression_or_array_initializer;
 				} else {
 					ArrayList init = (ArrayList) decl.expression_or_array_initializer;
+					if (init == null) {
+						// You must provide an initializer in a fixed or using statement declaration
+						Report.Error_T (210, l);
+					}
 					
 					expr = new ArrayCreation (type, "", init, decl.Location);
 				}

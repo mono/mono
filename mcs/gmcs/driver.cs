@@ -262,7 +262,7 @@ namespace Mono.CSharp
 				"For more information on Mono, visit the project Web site\n" +
 				"   http://www.go-mono.com\n\n" +
 
-				"The compiler was written by Miguel de Icaza, Ravi Pratap and Martin Baulig");
+				"The compiler was written by Miguel de Icaza, Ravi Pratap, Martin Baulig and Marek Safar");
 			Environment.Exit (0);
 		}
 
@@ -1588,6 +1588,21 @@ namespace Mono.CSharp
 				MethodInfo ep = RootContext.EntryPoint;
 
 				if (ep == null) {
+					if (RootContext.MainClass != null) {
+						object main_cont = RootContext.Tree.Decls [RootContext.MainClass];
+						if (main_cont == null) {
+							// "Could not find '{0}' specified for Main method"
+							Report.Error_T (1555, output_file, RootContext.MainClass); 
+							return false;
+						}
+
+						if (!(main_cont is ClassOrStruct)) {
+							// "'{0}' specified for Main method must be a valid class or struct"
+							Report.Error_T (1556, output_file, RootContext.MainClass);
+							return false;
+						}
+					}
+
 					if (Report.Errors == 0)
 						Report.Error (5001, "Program " + output_file +
 							      " does not have an entry point defined");

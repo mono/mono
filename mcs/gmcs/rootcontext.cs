@@ -457,7 +457,7 @@ namespace Mono.CSharp {
 			interface_resolve_order = null;
 			type_container_resolve_order = null;
 			helper_classes = null;
-			tree = null;
+			//tree = null;
 			TypeManager.CleanUp ();
 		}
 

@@ -2267,7 +2267,8 @@ namespace Mono.CSharp {
 					return e;
 
 				if (!me.IsStatic &&
-				    TypeManager.IsNestedChildOf (me.InstanceExpression.Type, me.DeclaringType) &&
+				    TypeManager.IsSubclassOrNestedChildOf (me.InstanceExpression.Type, me.DeclaringType) &&
+				    me.InstanceExpression.Type != me.DeclaringType &&
 				    !me.InstanceExpression.Type.IsSubclassOf (me.DeclaringType) &&
 				    (!intermediate || !MemberAccess.IdenticalNameAndTypeName (ec, this, e, loc))) {
 					Error (38, "Cannot access nonstatic member `" + me.Name + "' of " +
