@@ -49,6 +49,7 @@ Mono.Security.X509.Extensions/KeyUsageExtension.cs
 Mono.Security.X509.Extensions/SubjectKeyIdentifierExtension.cs
 Mono.Xml/MiniParser.cs
 Mono.Xml/SecurityParser.cs
+System/AccessViolationException.cs
 System/ActivationContext.cs
 System/Activator.cs
 System/AppDomain.cs
@@ -89,6 +90,7 @@ System/ContextMarshalException.cs
 System/ContextStaticAttribute.cs
 System/Convert.cs
 System/CrossAppDomainDelegate.cs
+System/DataMisalignedException.cs
 System/DateTime.cs
 System/DBNull.cs
 System/Decimal.cs
@@ -164,6 +166,7 @@ System/Object.cs
 System/ObjectDisposedException.cs
 System/ObsoleteAttribute.cs
 System/OperatingSystem.cs
+System/OperationCanceledException.cs
 System/OutOfMemoryException.cs
 System/OverflowException.cs
 System/ParamArrayAttribute.cs
@@ -178,6 +181,7 @@ System/RuntimeFieldHandle.cs
 System/RuntimeMethodHandle.cs
 System/RuntimeTypeHandle.cs
 System/ModuleHandle.cs
+System/NotCancelableException.cs
 System/SByte.cs
 System/SerializableAttribute.cs
 System/Single.cs
@@ -189,6 +193,7 @@ System/SystemException.cs
 System/ThreadStaticAttribute.cs
 System/TimeSpan.cs
 System/TimeZone.cs
+System/TimeoutException.cs
 System/TODOAttribute.cs
 System/Type.cs
 System/TypeCode.cs
