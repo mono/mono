@@ -19,7 +19,7 @@ namespace System.Drawing.Text {
 		{
 		}
         
-        internal FontCollection ( IntPtr ptr )
+		internal FontCollection (IntPtr ptr)
 		{
 			nativeFontCollection = ptr;
 		}
@@ -29,7 +29,6 @@ namespace System.Drawing.Text {
 		{
 		}
 
-		
 		protected virtual void Dispose (bool disposing)
 		{		
 		}
@@ -42,8 +41,6 @@ namespace System.Drawing.Text {
 				int returned;
 				Status status;
 				FontFamily[] families;
-				
-				Console.WriteLine("nativeFontCollection " + nativeFontCollection);
 				
 				status = GDIPlus.GdipGetFontCollectionFamilyCount (nativeFontCollection, out found);
 				
