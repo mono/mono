@@ -1,3 +1,9 @@
+2004-08-02  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (opcode.def): Make $(srcdir)!=$(builddir) safe.
+	* make-opcodes-def.pl (OUTPUT): Use $ARGV[1].
+	(parsefile): Parse $ARGV[0].
+
 2004-07-30  Duncan Mak  <duncan@ximian.com>
 
 	* cil-opcodes.xml: Added OpCodeType information to each of the
