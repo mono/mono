@@ -1,3 +1,8 @@
+2002-12-21  Ravi Pratap  <ravi@ximain.com>
+
+	* test-171.cs : This was mysteriously absent. Add new test in its
+	place.
+
 2002-12-18  Ravi Pratap  <ravi@ximian.com>
 
 	* test-177.cs : Add. This doesn't pass yet because we don't have
