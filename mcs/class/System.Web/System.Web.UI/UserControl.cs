@@ -16,6 +16,7 @@ namespace System.Web.UI
 	{
 		private bool initialized;
 		private AttributeCollection attributes;
+		private StateBag attrBag;
 
 		public UserControl ()
 		{
@@ -32,11 +33,19 @@ namespace System.Web.UI
 			}
 		}
 
+		private void EnsureAttributes ()
+		{
+			if (attributes == null) {
+				attrBag = new StateBag (true);
+				if (IsTrackingViewState)
+					attrBag.TrackViewState ();
+				attributes = new AttributeCollection (attrBag);
+			}
+		}
+
 		public AttributeCollection Attributes
 		{
 			get {
-				if (attributes == null)
-					attributes = new AttributeCollection (new StateBag ());
 				return attributes;
 			}
 		}
@@ -131,10 +140,17 @@ namespace System.Web.UI
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected override void LoadViewState (object savedState)
 		{
-			throw new NotImplementedException ();
+			if (savedState != null) {
+				Pair p = (Pair) savedState;
+				base.LoadViewState (p.First);
+				if (p.Second != null) {
+					EnsureAttributes ();
+					attrBag.LoadViewState (p.Second);
+				}
+			}
+
 		}
 
 		protected override void OnInit (EventArgs e)
@@ -145,10 +161,15 @@ namespace System.Web.UI
 			base.OnInit(e);
 		}
 
-		[MonoTODO]
 		protected override object SaveViewState ()
 		{
-			throw new NotImplementedException ();
+			object baseState = base.SaveViewState();
+			object attrState = null;
+			if (attributes != null)
+				attrState = attrBag.SaveViewState ();
+			if (baseState == null && attrState == null)
+				return null;
+			return new Pair (baseState, attrState);
 		}
 
 		string IAttributeAccessor.GetAttribute (string name)

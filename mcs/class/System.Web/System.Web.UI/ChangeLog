@@ -1,5 +1,9 @@
 2002-07-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* UserControl.cs: implemented Load/SaveViewState.
+
+2002-07-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* AttributeCollection.cs:
 	(Add): handle 'style' through styleCollection.
 
