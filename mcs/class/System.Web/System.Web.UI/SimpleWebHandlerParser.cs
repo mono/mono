@@ -39,6 +39,7 @@ namespace System.Web.UI
 		string baseVDir;
 		CompilationConfiguration compilationConfig;
 		int appAssemblyIndex = -1;
+		Type cachedType;
 
 		protected SimpleWebHandlerParser (HttpContext context, string virtualPath, string physicalPath)
 		{
@@ -61,10 +62,9 @@ namespace System.Web.UI
 			GetDirectivesAndContent ();
 		}
 
-		[MonoTODO]
 		protected Type GetCompiledTypeFromCache ()
 		{
-			return null;
+			return cachedType;
 		}
 
 		void GetDirectivesAndContent ()
@@ -74,7 +74,7 @@ namespace System.Web.UI
 			bool directiveFound = false;
 			StringBuilder content = new StringBuilder ();
 
-			while ((line = reader.ReadLine ()) != null) {
+			while ((line = reader.ReadLine ()) != null && cachedType == null) {
 				string trimmed = line.Trim ();
 				if (!directiveFound && trimmed == String.Empty)
 					continue;
@@ -82,18 +82,27 @@ namespace System.Web.UI
 				if (trimmed.StartsWith ("<")) {
 					ParseDirective (trimmed);
 					directiveFound = true;
+					if (gotDefault) {
+						cachedType = CachingCompiler.GetTypeFromCache (physPath,
+												className);
+						if (cachedType != null)
+							break;
+					}
+
 					continue;
 				}
 
 				content.Append (line + "\n");
 				content.Append (reader.ReadToEnd ());
 			}
+			reader.Close ();
 
 			if (!gotDefault)
-				throw new ParseException (null, "No @WebService directive found");
-				
-			this.program = content.ToString ();
-			reader.Close ();
+				throw new ParseException (null, "No @" + DefaultDirectiveName +
+							" directive found");
+
+			if (cachedType == null)
+				this.program = content.ToString ();
 		}
 
 		void TagParsed (ILocation location, System.Web.Compilation.TagType tagtype, string tagid, TagAttributes attributes)

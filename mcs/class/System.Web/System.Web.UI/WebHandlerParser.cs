@@ -22,7 +22,10 @@ namespace System.Web.UI
 		public static Type GetCompiledType (HttpContext context, string virtualPath, string physicalPath)
 		{
 			WebHandlerParser parser = new WebHandlerParser (context, virtualPath, physicalPath);
-			// WebServiceCompiler also does this job.
+			Type type = parser.GetCompiledTypeFromCache ();
+			if (type != null)
+				return type;
+
 			return WebServiceCompiler.CompileIntoType (parser);
 		}
 

@@ -1,3 +1,13 @@
+2004-06-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SimpleWebHandlerParser.cs: implemented GetCompiledTypeFromCache. When 
+	we read the default directive, check the cache for the Type and if
+	present, don't keep reading and store the type found.
+
+	* WebHandlerParser.cs:
+	* WebServiceParser.cs: try GetCompiledTypeFromCache before actually
+	compiling.
+
 2004-06-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs: properly fixed bug #59794.

@@ -11,6 +11,7 @@ using System;
 using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Reflection;
 using System.Web.UI;
 using System.Web.Caching;
 using System.Web.Configuration;
@@ -22,6 +23,20 @@ namespace System.Web.Compilation
 		static object compilationLock = new object ();
 		const string cachePrefix = "@@Assembly";
 
+		public static Type GetTypeFromCache (string filename, string typename)
+		{
+			string key = CachingCompiler.cachePrefix + filename;
+			CompilerResults results = (CompilerResults) HttpRuntime.Cache [key];
+			if (results == null)
+				return null;
+
+			Assembly a = results.CompiledAssembly;
+			if (a == null)
+				return null;
+
+			return a.GetType (typename, false);
+		}
+		
 		public static CompilerResults Compile (BaseCompiler compiler)
 		{
 			Cache cache = HttpRuntime.Cache;

@@ -22,9 +22,9 @@ namespace System.Web.Compilation
 			this.parser = parser;
 		}
 
-		public static Type CompileUserControlType (UserControlParser userControlParser)
+		public static Type CompileUserControlType (UserControlParser parser)
 		{
-			UserControlCompiler pc = new UserControlCompiler (userControlParser);
+			UserControlCompiler pc = new UserControlCompiler (parser);
 			return pc.GetCompiledType ();
 		}
 
@@ -32,12 +32,12 @@ namespace System.Web.Compilation
 		{
 			if (parser.OutputCache)
 				AddOutputCacheAttribute ();
-				
 		}
 
 		private void AddOutputCacheAttribute ()
 		{
-			CodeAttributeDeclaration cad = new CodeAttributeDeclaration ("System.Web.UI.PartialCachingAttribute");
+			CodeAttributeDeclaration cad;
+			cad = new CodeAttributeDeclaration ("System.Web.UI.PartialCachingAttribute");
 			AddPrimitiveAttribute (cad, parser.OutputCacheDuration);
 			AddPrimitiveAttribute (cad, parser.OutputCacheVaryByParam);
 			AddPrimitiveAttribute (cad, parser.OutputCacheVaryByControls);
@@ -45,13 +45,11 @@ namespace System.Web.Compilation
 			AddPrimitiveAttribute (cad, parser.OutputCacheShared);
 			mainClass.CustomAttributes.Add (cad);
 		}
-	
+
 		private void AddPrimitiveAttribute (CodeAttributeDeclaration cad, object obj)
 		{
 			cad.Arguments.Add (new CodeAttributeArgument (new CodePrimitiveExpression (obj)));
 		}
-	
-							   
 	}
 }
 

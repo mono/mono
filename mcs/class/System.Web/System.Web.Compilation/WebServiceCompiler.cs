@@ -38,15 +38,12 @@ namespace System.Web.Compilation
 
 		public override Type GetCompiledType ()
 		{
+			Type type = CachingCompiler.GetTypeFromCache (parser.PhysicalPath, parser.ClassName);
+			if (type != null)
+				return type;
+
 			if (parser.Program.Trim () == "")
 				return parser.GetTypeFromBin (parser.ClassName);
-
-			CompilerResults results = (CompilerResults) HttpRuntime.Cache [parser.PhysicalPath];
-			if (results != null) {
-				Assembly a = results.CompiledAssembly;
-				if (a != null)
-					return a.GetType (parser.ClassName, true);
-			}
 
 			string lang = parser.Language;
 			CompilationConfiguration config;
@@ -81,12 +78,13 @@ namespace System.Web.Compilation
 
 			compilerParameters.OutputAssembly = Path.Combine (dynamicBase, dllfilename);
 
-			results = CachingCompiler.Compile (this);
+			CompilerResults results = CachingCompiler.Compile (this);
 			CheckCompilerErrors (results);
 			if (results.CompiledAssembly == null)
 				throw new CompilationException (inputFile, results.Errors,
 					"No assembly returned after compilation!?");
 
+			results.TempFiles.Delete ();
 			return results.CompiledAssembly.GetType (parser.ClassName, true);
 		}
 

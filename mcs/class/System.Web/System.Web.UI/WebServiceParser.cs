@@ -22,6 +22,10 @@ namespace System.Web.UI
 		public static Type GetCompiledType (string inputFile, HttpContext context)
 		{
 			WebServiceParser parser = new WebServiceParser (context, null, inputFile);
+			Type type = parser.GetCompiledTypeFromCache ();
+			if (type != null)
+				return type;
+
 			return WebServiceCompiler.CompileIntoType (parser);
 		}
 
