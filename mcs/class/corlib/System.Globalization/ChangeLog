@@ -1,3 +1,8 @@
+2003-11-05  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* DateTimeFormatInfo.cs: Hack an era for US culture. We must look
+	for other ways to get the ERA string.
+
 2003-10-21  Dick Porter  <dick@ximian.com>
 
 	* TextInfo.cs: 

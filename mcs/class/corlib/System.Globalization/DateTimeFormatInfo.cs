@@ -25,6 +25,7 @@ namespace System.Globalization
 			= new string[13] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", ""};
 		private static readonly string[] INVARIANT_MONTH_NAMES
 			= new string[13] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December", ""};
+		private static readonly string[] INVARIANT_ERA_NAMES = {"A.D."};
 
 		internal static DateTimeFormatInfo theInvariantDateTimeFormatInfo;
 
@@ -154,11 +155,16 @@ namespace System.Globalization
 		[MonoTODO]
 		public string GetEraName(int era)
 		{
-			if (era < _Calendar.Eras.Length || era >= _Calendar.Eras.Length)
-				throw new ArgumentOutOfRangeException();
-			notImplemented();
-			//FIXME: implement me
-			return null;
+//			if (era < _Calendar.Eras.Length || era >= _Calendar.Eras.Length)
+//				throw new ArgumentOutOfRangeException();
+			try {
+				return INVARIANT_ERA_NAMES[era - 1];
+			}
+			catch {
+				//FIXME: implement me
+				notImplemented();
+				return null;
+			}
 		}
 
 		public string GetMonthName(int month)
