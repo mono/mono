@@ -14,22 +14,22 @@ namespace System.CodeDom
 	[Serializable]
 	[ComVisible(true)]
 	public enum CodeBinaryOperatorType {
-		Add,
-		Assign,
-		BitwiseAnd,
-		BitwiseOr,
-		BooleanAnd,
-		BooleanOr,
-		Divide,
-		GreaterThan,
-		GreaterThanOrEqual,
-		IdentityEquality,
-		IdentityInequality,
-		LessThan,
-		LessThanOrEqual,
-		Modulus,
-		Multiply,
-		Subtract,
-		ValueEquality
+		Add = 0,
+		Subtract = 1,
+		Multiply = 2,
+		Divide = 3,
+		Modulus = 4,
+		Assign = 5,
+		IdentityInequality = 6,
+		IdentityEquality = 7,
+		ValueEquality = 8,
+		BitwiseOr = 9,
+		BitwiseAnd = 10,
+		BooleanOr = 11,
+		BooleanAnd = 12,
+		LessThan = 13,
+		LessThanOrEqual = 14,
+		GreaterThan = 15,
+		GreaterThanOrEqual = 16
 	}
 }

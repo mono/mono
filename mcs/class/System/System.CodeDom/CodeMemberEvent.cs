@@ -18,7 +18,7 @@ namespace System.CodeDom
 	public class CodeMemberEvent
 		: CodeTypeMember
 	{
-		private CodeTypeReference implementationType;
+		private CodeTypeReferenceCollection implementationTypes;
 		private CodeTypeReference privateImplementationType;
 		private CodeTypeReference type;
 		
@@ -32,16 +32,18 @@ namespace System.CodeDom
 		//
 		// Properties
 		//
-		public CodeTypeReference ImplementationTypes {
+		public CodeTypeReferenceCollection ImplementationTypes
+		{
 			get {
-				return implementationType;
-			}
-			set {
-				implementationType = value;
+				if (implementationTypes == null)
+					implementationTypes = new CodeTypeReferenceCollection ();
+
+				return implementationTypes;
 			}
 		}
 
-		public CodeTypeReference PrivateImplementationType {
+		public CodeTypeReference PrivateImplementationType
+		{
 			get {
 				return privateImplementationType;
 			}
@@ -50,8 +52,12 @@ namespace System.CodeDom
 			}
 		}
 
-		public CodeTypeReference Type {
+		public CodeTypeReference Type
+		{
 			get {
+				if (type == null)
+					type = new CodeTypeReference (String.Empty);
+
 				return type;
 			}
 			set {

@@ -56,6 +56,16 @@ namespace System.CodeDom
 			return List.Add( value );
 		}
 
+		public void Add (string value)
+		{
+			Add (new CodeTypeReference (value));
+		}
+
+		public void Add (Type value)
+		{
+			Add (new CodeTypeReference (value));
+		}
+
 		public void AddRange (CodeTypeReference [] value )
 		{
 			foreach ( CodeTypeReference elem in value )

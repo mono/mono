@@ -34,21 +34,16 @@ namespace System.CodeDom
 			this.baseType = baseType.FullName;
 		}
 
-		// FIXME: probably broken
-		[MonoTODO]
 		public CodeTypeReference( CodeTypeReference arrayType, int rank )
 		{
-			this.arrayType = arrayType;
-			this.baseType = arrayType.BaseType;
+			this.baseType = null;
 			this.rank = rank;
+			this.arrayType = arrayType;
 		}
 
-		// FIXME: probably broken
-		[MonoTODO]
 		public CodeTypeReference( string baseType, int rank )
+			: this (new CodeTypeReference (baseType), rank)
 		{
-			this.baseType = baseType;
-			this.rank = rank;
 		}
 			
 
@@ -56,8 +51,6 @@ namespace System.CodeDom
 		// Properties
 		//
 
-		// FIXME: probably broken
-		[MonoTODO]
 		public CodeTypeReference ArrayElementType
 		{
 			get {
@@ -68,8 +61,6 @@ namespace System.CodeDom
 			}
 		}
 		
-		// FIXME: probably broken
-		[MonoTODO]
 		public int ArrayRank {
 			get {
 				return rank;
@@ -81,6 +72,9 @@ namespace System.CodeDom
 
 		public string BaseType {
 			get {
+				if (baseType == null)
+					return String.Empty;
+
 				return baseType;
 			}
 			set {

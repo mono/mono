@@ -58,6 +58,9 @@ namespace System.CodeDom
 					customAttributes = new CodeAttributeDeclarationCollection();
 				return customAttributes;
 			}
+			set {
+				customAttributes = value;
+			}
 		}
 
 		public CodeLinePragma LinePragma {

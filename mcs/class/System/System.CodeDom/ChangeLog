@@ -1,3 +1,12 @@
+2002-09-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CodeBinaryOperatorType.cs:
+	* CodeMemberEvent.cs:
+	* CodeParameterDeclarationExpression.cs:
+	* CodeTypeMember.cs:
+	* CodeTypeReference.cs:
+	* CodeTypeReferenceCollection.cs: misc. fixes
+
 2002-05-28  Daniel Stodden  <stodden@in.tum.de>
 
 	* CodeArrayCreateExpression.cs: typo + comments
