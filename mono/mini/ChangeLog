@@ -1,4 +1,8 @@
 
+Thu Apr 29 16:47:15 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, cpu-g4.md: fixed unisgned -> double conversion.
+
 Thu Apr 29 13:50:51 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* exceptions-ppc.c, mini-ppc.h, mini-ppc.c: fixed localloc
