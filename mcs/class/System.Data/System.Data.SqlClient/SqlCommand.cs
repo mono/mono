@@ -135,7 +135,9 @@ namespace System.Data.SqlClient {
 			execStatus = PostgresLibrary.
 				PQresultStatus (pgResult);
 			
-			if(execStatus == ExecStatusType.PGRES_COMMAND_OK) {
+			if(execStatus == ExecStatusType.PGRES_COMMAND_OK ||
+				execStatus == ExecStatusType.PGRES_TUPLES_OK ) {
+
 				rowsAffectedString = PostgresLibrary.
 					PQcmdTuples (pgResult);
 
@@ -317,7 +319,11 @@ namespace System.Data.SqlClient {
 			execStatus = PostgresLibrary.
 				PQresultStatus (pgResult);
 			
-			if(execStatus == ExecStatusType.PGRES_TUPLES_OK) {
+			res.ExecStatus = execStatus;
+
+			if(execStatus == ExecStatusType.PGRES_TUPLES_OK ||
+				execStatus == ExecStatusType.PGRES_COMMAND_OK) {
+
 				res.BuildTableSchema(pgResult);
 			}
 			else {
@@ -343,9 +349,21 @@ namespace System.Data.SqlClient {
 		// those resources.  Also, need to allow this SqlCommand
 		// and this SqlConnection to do things again.
 		internal void CloseReader() {
-			conn.OpenReader = false;
 			dataReader = null;
 			queries = null;
+
+			if((cmdBehavior & CommandBehavior.CloseConnection) == CommandBehavior.CloseConnection) {
+				conn.CloseReader(true);
+			}
+			else {
+				conn.CloseReader(false);
+			}
+		}
+
+		// only meant to be used between SqlConnectioin,
+		// SqlCommand, and SqlDataReader
+		internal void OpenReader(SqlDataReader reader) {
+			conn.OpenReader(reader);
 		}
 
 		/// <summary>
@@ -385,8 +403,18 @@ namespace System.Data.SqlClient {
 
 			execStatus = PostgresLibrary.
 				PQresultStatus (pgResult);
-			
-			if(execStatus == ExecStatusType.PGRES_TUPLES_OK) {
+			if(execStatus == ExecStatusType.PGRES_COMMAND_OK) {
+				// result was a SQL Command 
+
+				// close result set
+				PostgresLibrary.PQclear (pgResult);
+				pgResult = IntPtr.Zero;
+
+				return null; // return null reference
+			}
+			else if(execStatus == ExecStatusType.PGRES_TUPLES_OK) {
+				// result was a SQL Query
+
 				nRows = PostgresLibrary.
 					PQntuples(pgResult);
 
@@ -648,17 +676,34 @@ namespace System.Data.SqlClient {
 	// from SqlCommand to SqlDataReader
 	internal class SqlResult {
 
-		private DataTable dataTableSchema; // only will contain the schema
-		private IntPtr pg_result; // native PostgreSQL PGresult
-		private int rowCount; 
-		private int fieldCount;
-		private string[] pgtypes; // PostgreSQL types (typname)
+		private DataTable dataTableSchema = null; // only will contain the schema
+		private IntPtr pg_result = IntPtr.Zero; // native PostgreSQL PGresult
+		private int rowCount = 0; 
+		private int fieldCount = 0;
+		private string[] pgtypes = null; // PostgreSQL types (typname)
 		private bool resultReturned = false;
-		private SqlConnection con;
+		private SqlConnection con = null;
+		private int rowsAffected = -1;
+		private ExecStatusType execStatus = ExecStatusType.PGRES_FATAL_ERROR;
+
+		internal ExecStatusType ExecStatus {
+			get {
+				return execStatus;
+			}
+			set {
+				execStatus = value;
+			}
+		}
 
 		internal SqlConnection Connection {
 			set {
 				con = value;
+			}
+		}
+
+		internal int RecordsAffected {
+			get {
+				return rowsAffected;
 			}
 		}
 
@@ -701,93 +746,104 @@ namespace System.Data.SqlClient {
 			}
 		}
 
-		internal void BuildTableSchema (IntPtr pgResult) 
-		{
+		internal void BuildTableSchema (IntPtr pgResult) {
 			pg_result = pgResult;
+			
+			// need to set IDataReader.RecordsAffected property
+			string rowsAffectedString;
+			rowsAffectedString = PostgresLibrary.
+				PQcmdTuples (pgResult);
+			if(rowsAffectedString != null)
+				if(rowsAffectedString.Equals("") == false)
+					rowsAffected = int.Parse(rowsAffectedString);
+			
+			// Only Results from SQL SELECT Queries 
+			// get a DataTable for schema of the result
+			// otherwise, DataTable is null reference
+			if(execStatus == ExecStatusType.PGRES_TUPLES_OK) {
 
-			dataTableSchema = new DataTable ();
-			dataTableSchema.Columns.Add ("ColumnName", typeof (string));
-			dataTableSchema.Columns.Add ("ColumnOrdinal", typeof (int));
-			dataTableSchema.Columns.Add ("ColumnSize", typeof (int));
-			dataTableSchema.Columns.Add ("NumericPrecision", typeof (int));
-			dataTableSchema.Columns.Add ("NumericScale", typeof (int));
-			dataTableSchema.Columns.Add ("IsUnique", typeof (bool));
-			dataTableSchema.Columns.Add ("IsKey", typeof (bool));
-			dataTableSchema.Columns.Add ("BaseCatalogName", typeof (string));
-			dataTableSchema.Columns.Add ("BaseColumnName", typeof (string));
-			dataTableSchema.Columns.Add ("BaseSchemaName", typeof (string));
-			dataTableSchema.Columns.Add ("BaseTableName", typeof (string));
-			dataTableSchema.Columns.Add ("DataType", typeof(string));
-			dataTableSchema.Columns.Add ("AllowDBNull", typeof (bool));
-			dataTableSchema.Columns.Add ("ProviderType", typeof (int));
-			dataTableSchema.Columns.Add ("IsAliased", typeof (bool));
-			dataTableSchema.Columns.Add ("IsExpression", typeof (bool));
-			dataTableSchema.Columns.Add ("IsIdentity", typeof (bool));
-			dataTableSchema.Columns.Add ("IsAutoIncrement", typeof (bool));
-			dataTableSchema.Columns.Add ("IsRowVersion", typeof (bool));
-			dataTableSchema.Columns.Add ("IsHidden", typeof (bool));
-			dataTableSchema.Columns.Add ("IsLong", typeof (bool));
-			dataTableSchema.Columns.Add ("IsReadOnly", typeof (bool));
+				dataTableSchema = new DataTable ();
+				dataTableSchema.Columns.Add ("ColumnName", typeof (string));
+				dataTableSchema.Columns.Add ("ColumnOrdinal", typeof (int));
+				dataTableSchema.Columns.Add ("ColumnSize", typeof (int));
+				dataTableSchema.Columns.Add ("NumericPrecision", typeof (int));
+				dataTableSchema.Columns.Add ("NumericScale", typeof (int));
+				dataTableSchema.Columns.Add ("IsUnique", typeof (bool));
+				dataTableSchema.Columns.Add ("IsKey", typeof (bool));
+				dataTableSchema.Columns.Add ("BaseCatalogName", typeof (string));
+				dataTableSchema.Columns.Add ("BaseColumnName", typeof (string));
+				dataTableSchema.Columns.Add ("BaseSchemaName", typeof (string));
+				dataTableSchema.Columns.Add ("BaseTableName", typeof (string));
+				dataTableSchema.Columns.Add ("DataType", typeof(string));
+				dataTableSchema.Columns.Add ("AllowDBNull", typeof (bool));
+				dataTableSchema.Columns.Add ("ProviderType", typeof (int));
+				dataTableSchema.Columns.Add ("IsAliased", typeof (bool));
+				dataTableSchema.Columns.Add ("IsExpression", typeof (bool));
+				dataTableSchema.Columns.Add ("IsIdentity", typeof (bool));
+				dataTableSchema.Columns.Add ("IsAutoIncrement", typeof (bool));
+				dataTableSchema.Columns.Add ("IsRowVersion", typeof (bool));
+				dataTableSchema.Columns.Add ("IsHidden", typeof (bool));
+				dataTableSchema.Columns.Add ("IsLong", typeof (bool));
+				dataTableSchema.Columns.Add ("IsReadOnly", typeof (bool));
 
-			fieldCount = PostgresLibrary.PQnfields (pgResult);
-			rowCount = PostgresLibrary.PQntuples(pgResult);
-			pgtypes = new string[fieldCount];
+				fieldCount = PostgresLibrary.PQnfields (pgResult);
+				rowCount = PostgresLibrary.PQntuples(pgResult);
+				pgtypes = new string[fieldCount];
 
-			DataRow schemaRow;
-			int oid;
-			DbType dbType;
-			Type typ;
+				DataRow schemaRow;
+				int oid;
+				DbType dbType;
+				Type typ;
 						
-			for (int i = 0; i < fieldCount; i += 1 )
-			{
-				schemaRow = dataTableSchema.NewRow ();
+				for (int i = 0; i < fieldCount; i += 1 ) {
+					schemaRow = dataTableSchema.NewRow ();
 
-				schemaRow["ColumnName"] = PostgresLibrary.PQfname (pgResult, i);
-				schemaRow["ColumnOrdinal"] = i+1;
-				schemaRow["ColumnSize"] = PostgresLibrary.PQfsize (pgResult, i);
-				schemaRow["NumericPrecision"] = 0; // ? tim
-				schemaRow["NumericScale"] = 0; // ? tim
-				schemaRow["IsUnique"] = false; // ? tim
-				schemaRow["IsKey"] = false; // ? tim
-				schemaRow["BaseCatalogName"] = ""; // ? tim
-				schemaRow["BaseColumnName"] = PostgresLibrary.PQfname (pgResult, i);
-				schemaRow["BaseSchemaName"] = ""; // ? tim
-				schemaRow["BaseTableName"]  = ""; // ? tim
+					schemaRow["ColumnName"] = PostgresLibrary.PQfname (pgResult, i);
+					schemaRow["ColumnOrdinal"] = i+1;
+					schemaRow["ColumnSize"] = PostgresLibrary.PQfsize (pgResult, i);
+					schemaRow["NumericPrecision"] = 0;
+					schemaRow["NumericScale"] = 0;
+					schemaRow["IsUnique"] = false;
+					schemaRow["IsKey"] = false;
+					schemaRow["BaseCatalogName"] = "";
+					schemaRow["BaseColumnName"] = PostgresLibrary.PQfname (pgResult, i);
+					schemaRow["BaseSchemaName"] = "";
+					schemaRow["BaseTableName"]  = "";
 				
-				// PostgreSQL type to .NET type stuff
-				oid = PostgresLibrary.PQftype (pgResult, i);
-				pgtypes[i] = PostgresHelper.OidToTypname (oid, con.Types);	
-				dbType = PostgresHelper.TypnameToSqlDbType (pgtypes[i]);
+					// PostgreSQL type to .NET type stuff
+					oid = PostgresLibrary.PQftype (pgResult, i);
+					pgtypes[i] = PostgresHelper.OidToTypname (oid, con.Types);	
+					dbType = PostgresHelper.TypnameToSqlDbType (pgtypes[i]);
 				
-				typ = PostgresHelper.DbTypeToSystemType (dbType);
-				string st = typ.ToString();
-				schemaRow["DataType"] = st;
+					typ = PostgresHelper.DbTypeToSystemType (dbType);
+					string st = typ.ToString();
+					schemaRow["DataType"] = st;
 
-				schemaRow["AllowDBNull"] = false; // ? tim
-				schemaRow["ProviderType"] = oid; // ? tim
-				schemaRow["IsAliased"] = false; // ? tim
-				schemaRow["IsExpression"] = false; // ? tim
-				schemaRow["IsIdentity"] = false; // ? tim
-				schemaRow["IsAutoIncrement"] = false; // ? tim
-				schemaRow["IsRowVersion"] = false; // ? tim
-				schemaRow["IsHidden"] = false; // ? tim
-				schemaRow["IsLong"] = false; // ? tim
-				schemaRow["IsReadOnly"] = false; // ? tim
-				schemaRow.AcceptChanges();
-				dataTableSchema.Rows.Add (schemaRow);
-				
-			}
+					schemaRow["AllowDBNull"] = false;
+					schemaRow["ProviderType"] = oid;
+					schemaRow["IsAliased"] = false;
+					schemaRow["IsExpression"] = false;
+					schemaRow["IsIdentity"] = false;
+					schemaRow["IsAutoIncrement"] = false;
+					schemaRow["IsRowVersion"] = false;
+					schemaRow["IsHidden"] = false;
+					schemaRow["IsLong"] = false;
+					schemaRow["IsReadOnly"] = false;
+					schemaRow.AcceptChanges();
+					dataTableSchema.Rows.Add (schemaRow);	
+				}
 
 #if DEBUG_SqlCommand
-			Console.WriteLine("********** DEBUG Table Schema BEGIN ************");
-			foreach (DataRow myRow in dataTableSchema.Rows) {
-				foreach (DataColumn myCol in dataTableSchema.Columns)
-					Console.WriteLine(myCol.ColumnName + " = " + myRow[myCol]);
-				Console.WriteLine();
-			}
-			Console.WriteLine("********** DEBUG Table Schema END ************");
+				Console.WriteLine("********** DEBUG Table Schema BEGIN ************");
+				foreach (DataRow myRow in dataTableSchema.Rows) {
+					foreach (DataColumn myCol in dataTableSchema.Columns)
+						Console.WriteLine(myCol.ColumnName + " = " + myRow[myCol]);
+					Console.WriteLine();
+				}
+				Console.WriteLine("********** DEBUG Table Schema END ************");
 #endif // DEBUG_SqlCommand
 
+			}
 		}
 	}
 }

@@ -38,6 +38,7 @@ namespace TestSystemDataSqlClient {
 
 	class PostgresTest {
 
+		// execute SQL CREATE TABLE Command using ExecuteNonQuery()
 		static void CreateTable (IDbConnection cnc) {
 						
 			IDbCommand createCommand = cnc.CreateCommand();
@@ -77,6 +78,7 @@ namespace TestSystemDataSqlClient {
 			createCommand.ExecuteNonQuery ();
 		}
 
+		// execute SQL DROP TABLE Command using ExecuteNonQuery
 		static void DropTable (IDbConnection cnc) {
 				 
 			IDbCommand dropCommand = cnc.CreateCommand ();
@@ -87,6 +89,7 @@ namespace TestSystemDataSqlClient {
 			dropCommand.ExecuteNonQuery ();
 		}
 
+		// execute stored procedure using ExecuteScalar()
 		static object CallStoredProcedure (IDbConnection cnc) {
 				 
 			IDbCommand callStoredProcCommand = cnc.CreateCommand ();
@@ -102,6 +105,7 @@ namespace TestSystemDataSqlClient {
 			return data;
 		}
 
+		// execute SQL INSERT Command using ExecuteNonQuery()
 		static void InsertData (IDbConnection cnc) {		
 
 			IDbCommand insertCommand = cnc.CreateCommand();
@@ -142,12 +146,15 @@ namespace TestSystemDataSqlClient {
 			insertCommand.ExecuteNonQuery ();
 		}
 
+		// execute a SQL SELECT Query using ExecuteReader() to retrieve
+		// a IDataReader so we retrieve data
 		static IDataReader SelectData (IDbConnection cnc) {
 	
 			IDbCommand selectCommand = cnc.CreateCommand();
 			IDataReader reader;
 
 			// FIXME: System.Data classes need to handle NULLs
+			//        this would be done by System.DBNull ?
 			// FIXME: System.Data needs to handle more data types
 			/*
 			selectCommand.CommandText = 
@@ -192,6 +199,70 @@ namespace TestSystemDataSqlClient {
 			return reader;
 		}
 
+		// Tests a SQL Command (INSERT, UPDATE, DELETE)
+		// executed via ExecuteReader
+		static IDataReader SelectDataUsingInsertCommand (IDbConnection cnc) {
+	
+			IDbCommand selectCommand = cnc.CreateCommand();
+			IDataReader reader;
+
+			// This is a SQL INSERT Command, not a Query
+			selectCommand.CommandText = 
+				"insert into mono_postgres_test (" +
+				"boolean_value, " +
+				"int2_value, " +
+				"int4_value, " +
+				"bigint_value, " +
+				"float_value, " +
+				"double_value, " +
+				"numeric_value, " +
+				"char_value, " +
+				"varchar_value, " +
+				"text_value, " +
+				"time_value, " +
+				"date_value, " +
+				"timestamp_value, " +
+				"point_value " +
+				") values (" +
+				"'T', " +
+				"-22, " +
+				"1048000, " +
+				"123456789012345, " +
+				"3.141592, " +
+				"3.1415926969696, " +
+				"123456789012.345, " +
+				"'This is a char', " +
+				"'This is a varchar', " +
+				"'This is a text', " +
+				"'21:13:14', " +
+				"'2000-02-29', " +
+				"'2004-02-29 14:00:11.31', " +
+				"'(1,0)' " +
+				")";
+
+			reader = selectCommand.ExecuteReader ();
+
+			return reader;
+		}
+
+		// Tests a SQL Command not (INSERT, UPDATE, DELETE)
+		// executed via ExecuteReader
+		static IDataReader SelectDataUsingCommand (IDbConnection cnc) {
+	
+			IDbCommand selectCommand = cnc.CreateCommand();
+			IDataReader reader;
+
+			// This is a SQL Command, not a Query
+			selectCommand.CommandText = 
+				"SET DATESTYLE TO 'ISO'";
+
+			reader = selectCommand.ExecuteReader ();
+
+			return reader;
+		}
+
+
+		// execute an SQL UPDATE Command using ExecuteNonQuery()
 		static void UpdateData (IDbConnection cnc) {
 	
 			IDbCommand updateCommand = cnc.CreateCommand();		
@@ -199,19 +270,20 @@ namespace TestSystemDataSqlClient {
 			updateCommand.CommandText = 
 				"update mono_postgres_test " +				
 				"set " +
-					"boolean_value = 'F', " +
-					"int2_value    = 5, " +
-					"int4_value    = 3, " +
-					"bigint_value  = 9, " +
-					"char_value    = 'Mono.Data!'   , " +
-					"varchar_value = 'It was not me!', " +
-					"text_value    = 'We got data!'   " +
+				"boolean_value = 'F', " +
+				"int2_value    = 5, " +
+				"int4_value    = 3, " +
+				"bigint_value  = 9, " +
+				"char_value    = 'Mono.Data!'   , " +
+				"varchar_value = 'It was not me!', " +
+				"text_value    = 'We got data!'   " +
 				"where int2_value = -22";
 
 			updateCommand.ExecuteNonQuery ();		
 		}
 
 		// used to do a min(), max(), count(), sum(), or avg()
+		// execute SQL SELECT Query using ExecuteScalar
 		static object SelectAggregate (IDbConnection cnc, String agg) {
 	
 			IDbCommand selectCommand = cnc.CreateCommand();
@@ -231,6 +303,99 @@ namespace TestSystemDataSqlClient {
 			return data;
 		}
 
+		// used internally by ReadData() to read each result set
+		static void ReadResult(IDataReader rdr, DataTable dt) {
+                        			
+			// number of columns in the table
+			Console.WriteLine("   Total Columns: " +
+				dt.Rows.Count);
+
+			// display the schema
+			foreach (DataRow schemaRow in dt.Rows) {
+				foreach (DataColumn schemaCol in dt.Columns)
+					Console.WriteLine(schemaCol.ColumnName + 
+						" = " + 
+						schemaRow[schemaCol]);
+				Console.WriteLine();
+			}
+
+			int nRows = 0;
+			int c = 0;
+			string output, metadataValue, dataValue;
+			// Read and display the rows
+			Console.WriteLine("Gonna do a Read() now...");
+			while(rdr.Read()) {
+				Console.WriteLine("   Row " + nRows + ": ");
+					
+				for(c = 0; c < rdr.FieldCount; c++) {
+					// column meta data 
+					DataRow dr = dt.Rows[c];
+					metadataValue = 
+						"    Col " + 
+						c + ": " + 
+						dr["ColumnName"];
+						
+					// column data
+					if(rdr.IsDBNull(c) == true)
+						dataValue = " is NULL";
+					else
+						dataValue = 
+							": " + 
+							rdr.GetValue(c);
+					
+					// display column meta data and data
+					output = metadataValue + dataValue;					
+					Console.WriteLine(output);
+				}
+				nRows++;
+			}
+			Console.WriteLine("   Total Rows Retrieved: " + 
+				nRows);	
+		}
+
+		// Used to read data from IDataReader after calling IDbCommand:ExecuteReader()
+		static void ReadData(IDataReader rdr) {
+
+			int results = 0;
+			if(rdr == null) {
+		
+				Console.WriteLine("IDataReader has a Null Reference.");
+			}
+			else {
+				do {
+					DataTable dt = rdr.GetSchemaTable();
+					if(rdr.RecordsAffected != -1) {
+						// Results for 
+						// SQL INSERT, UPDATE, DELETE Commands 
+						// have RecordsAffected >= 0
+						Console.WriteLine("Result is from a SQL Command (INSERT,UPDATE,DELETE).  Records Affected: " + rdr.RecordsAffected);
+					}
+					else if(dt == null)
+						// Results for
+						// SQL Commands not INSERT, UPDATE, nor DELETE
+						// have RecordsAffected == -1
+						// and GetSchemaTable() returns a null reference
+						Console.WriteLine("Result is from a SQL Command not (INSERT,UPDATE,DELETE).   Records Affected: " + rdr.RecordsAffected);
+					else {
+						// Results for
+						// SQL SELECT Queries
+						// have RecordsAffected = -1
+						// and GetSchemaTable() returns a reference to a DataTable
+						Console.WriteLine("Result is from a SELECT SQL Query.  Records Affected: " + rdr.RecordsAffected);
+		
+						results++;
+						Console.WriteLine("Result Set " + results + "...");
+
+						ReadResult(rdr, dt);
+					}
+
+				} while(rdr.NextResult());
+				Console.WriteLine("Total Result sets: " + results);
+			
+				rdr.Close();
+			}
+		}
+		
 		/* Postgres provider tests */
 		static void DoPostgresTest (IDbConnection cnc) {
 
@@ -272,6 +437,11 @@ namespace TestSystemDataSqlClient {
 
 				/* Select aggregates */
 				SelectAggregate (cnc, "count(*)");
+				// FIXME: still having a problem with avg()
+				//        because it returns a decimal.
+				//        It may have something to do
+				//        with culture not being set
+				//        properly.
 				//SelectAggregate (cnc, "avg(int4_value)");
 				SelectAggregate (cnc, "min(text_value)");
 				SelectAggregate (cnc, "max(int4_value)");
@@ -280,59 +450,19 @@ namespace TestSystemDataSqlClient {
 				/* Select values */
 				Console.WriteLine ("\t\tSelect values from the database: ");
 				reader = SelectData (cnc);
+				ReadData(reader);
 
-                                // get the DataTable that holds
-				// the schema
-				Console.WriteLine("\t\tGet Schema.");
-				DataTable dt = reader.GetSchemaTable();
-			
-				// number of columns in the table
-				Console.WriteLine("Columns Count: " +
-					dt.Columns.Count);
+				/* SQL Command via ExecuteReader/SqlDataReader */
+				/* Command is not INSERT, UPDATE, or DELETE */
+				Console.WriteLine("\t\tCall ExecuteReader with a SQL Command. (Not INSERT,UPDATE,DELETE).");
+				reader = SelectDataUsingCommand(cnc);
+				ReadData(reader);
 
-				int c;
-				// display the schema
-				foreach (DataRow schemaRow in dt.Rows) {
-					foreach (DataColumn schemaCol in dt.Columns)
-						Console.WriteLine(schemaCol.ColumnName + 
-							" = " + 
-							schemaRow[schemaCol]);
-					Console.WriteLine();
-				}
-
-				int nRows = 0;
-				string metadataValue;
-				string dataValue;
-				string output;
-				// Read and display the rows
-				while(reader.Read()) {
-					Console.WriteLine ("Row " + nRows + ":");
-					for(c = 0; c < reader.FieldCount; c++) {
-						
-						// column meta data 
-						DataRow dr = dt.Rows[c];
-						metadataValue = 
-							"    Col " + 
-							c + ": " + 
-							dr["ColumnName"];
-						
-						// column data
-						if(reader.IsDBNull(c) == true)
-							dataValue = " is NULL";
-						else
-							dataValue = 
-								": " + 
-								reader.GetValue(c);
-					
-						// display column meta data and data
-						output = metadataValue + dataValue;					
-						Console.WriteLine(output);
-					}
-	
-					nRows++;
-				}
-				reader.Close();
-				Console.WriteLine ("Rows: " + nRows);		
+				/* SQL Command via ExecuteReader/SqlDataReader */
+				/* Command is INSERT, UPDATE, or DELETE */
+				Console.WriteLine("\t\tCall ExecuteReader with a SQL Command. (Is INSERT,UPDATE,DELETE).");
+				reader = SelectDataUsingInsertCommand(cnc);
+				ReadData(reader);
 
 				// Call a Stored Procedure named Version()
 				Console.WriteLine("\t\tCalling stored procedure version()");
@@ -354,14 +484,13 @@ namespace TestSystemDataSqlClient {
 		}
 
 		[STAThread]
-		static void Main(string[] args)
-		{
+		static void Main(string[] args) {
 			SqlConnection cnc = new SqlConnection ();
 
 			/*
 			string connectionString = 
-				"host=localhost;" +
-				"dbname=test;" +
+				"host=hostname;" +
+				"dbname=database;" +
 				"user=userid;" +
 				"password=password";
 			*/
@@ -375,7 +504,6 @@ namespace TestSystemDataSqlClient {
 
 			cnc.Open();
 			DoPostgresTest(cnc);
-
 			cnc.Close();
 		}
 	}

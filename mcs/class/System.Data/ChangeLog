@@ -1,3 +1,44 @@
+2002-05-26  Daniel Morgan <danmorg@sc.rr.com>
+
+	* Test/SqlSharpCli.cs: added file
+	My new toy.  SQL# is a command-line tool to enter
+	SQL	commands and queries using Mono System.Data.
+	It also serves as a test for Mono System.Data.
+	
+	* System.Data.SqlClient/SqlCommand.cs: modified
+	- ExecuteNonQuery(), ExecuteScalar(), and ExecuteReader()
+	should handle the results from SQL Commands and Queries.
+	- Internal class SqlResult should not create schema Table
+	for the result from a SQL Command.  Also, set the RecordsRetrieved
+	property for SqlDataReader.
+	- Closing the SqlDataReader should Close() the SqlConnection for
+	a CommandBehavior.CloseConnection.
+	- Set defaults for SqlResult
+	
+	* System.Data.SqlClient/SqlConnection.cs: modified - 
+	when SqlDataReader is Close()
+	should Close() the SqlConnection for
+	a CommandBehavior.CloseConnection.  Changed internal Property
+	from OpenReader get/set to IsReaderOpen get and created
+	internal methods OpenReader()/CloseReader() for SqlCommand to call.
+	SqlConnection needs to be prevented from doing while SqlDataReader
+	is being used.
+	
+	* System.Data.SqlClient/SqlDataReader.cs: modified -
+	call SqlCommand's OpenReader() internal method.  get
+	RecordsRetrieved from SqlResult.  set/reset default
+	values for SqlDataReader.
+	
+	* Test/PostgresTest.cs
+	* Test/TestExecuteScalar.cs
+	* Test/TestSqlDataReader.cs: modified
+	for the Execute...() methods in SqlCommand
+	to test SQL Queries and Commands
+	
+	* Test/System.Data_test.build: modified
+	exclude new file Test/SqlSharpCli.cs from 
+	test build
+	
 2002-05-24  Tim Coleman <tim@timcoleman.com>
 	* System.Data.Common/DbDataAdapter.cs: remove IDbCommands, except
 	for get accessors.  These should be implemented in derived classes.  See

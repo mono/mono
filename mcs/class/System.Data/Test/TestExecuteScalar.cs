@@ -53,22 +53,80 @@ namespace TestSystemDataSqlClient
 				"user=postgres";
 			
 			try {
+				string maxStrValue;
+
 				con = new SqlConnection(connectionString);
 				con.Open();
 
+				// test SQL Query for an aggregate count(*)
 				sql = 	"select count(*) " + 
 					"from sometable";
 				cmd = new SqlCommand(sql,con);
-				Console.WriteLine("Executing...");
+				Console.WriteLine("Executing: " + sql);
 				Int64 rowCount = (Int64) cmd.ExecuteScalar();
 				Console.WriteLine("Row Count: " + rowCount);
 
+				// test SQL Query for an aggregate min(text)
 				sql = 	"select max(tdesc) " + 
 					"from sometable";
 				cmd = new SqlCommand(sql,con);
-				Console.WriteLine("Executing...");
-				String maxValue = (string) cmd.ExecuteScalar();
-				Console.WriteLine("Max Value: " + maxValue);
+				Console.WriteLine("Executing: " + sql);
+				string minValue = (string) cmd.ExecuteScalar();
+				Console.WriteLine("Max Value: " + minValue);
+
+				// test SQL Query for an aggregate max(text)
+				sql = 	"select min(tdesc) " + 
+					"from sometable";
+				cmd = new SqlCommand(sql,con);
+				Console.WriteLine("Executing: " + sql);
+				maxStrValue = (string) cmd.ExecuteScalar();
+				Console.WriteLine("Max Value: " + maxStrValue);
+
+				// test SQL Query for an aggregate max(int)
+				sql = 	"select min(aint4) " + 
+					"from sometable";
+				cmd = new SqlCommand(sql,con);
+				Console.WriteLine("Executing: " + sql);
+				int maxIntValue = (int) cmd.ExecuteScalar();
+				Console.WriteLine("Max Value: " + maxIntValue.ToString());
+
+				// test SQL Query for an aggregate avg(int)
+				sql = 	"select avg(aint4) " + 
+					"from sometable";
+				cmd = new SqlCommand(sql,con);
+				Console.WriteLine("Executing: " + sql);
+				decimal avgDecValue = (decimal) cmd.ExecuteScalar();
+				Console.WriteLine("Max Value: " + avgDecValue.ToString());
+
+				// test SQL Query for an aggregate sum(int)
+				sql = 	"select sum(aint4) " + 
+					"from sometable";
+				cmd = new SqlCommand(sql,con);
+				Console.WriteLine("Executing: " + sql);
+				Int64 summed = (Int64) cmd.ExecuteScalar();
+				Console.WriteLine("Max Value: " + summed);
+
+				// test a SQL Command is (INSERT, UPDATE, DELETE)
+				sql = 	"insert into sometable " +
+					"(tid,tdesc,aint4,atimestamp) " +
+					"values('qqq','www',234,NULL)";
+				cmd = new SqlCommand(sql,con);
+				Console.WriteLine("Executing: " + sql);
+				object objResult1 = cmd.ExecuteScalar();
+				if(objResult1 == null)
+                                        Console.WriteLine("Result is null. (correct)");
+				else
+					Console.WriteLine("Result is not null. (not correct)");
+
+				// test a SQL Command is not (INSERT, UPDATE, DELETE)
+				sql = 	"SET DATESTYLE TO 'ISO'";
+				cmd = new SqlCommand(sql,con);
+				Console.WriteLine("Executing: " + sql);
+				object objResult2 = cmd.ExecuteScalar();
+				if(objResult2 == null)
+					Console.WriteLine("Result is null. (correct)");
+				else
+					Console.WriteLine("Result is not null. (not correct)");
 
 			}
 			catch(Exception e) {

@@ -68,6 +68,7 @@ namespace System.Data.SqlClient {
 
 			cmd = sqlCmd;
 			open = true;
+			cmd.OpenReader(this);
 		}
 
 		#endregion
@@ -98,18 +99,30 @@ namespace System.Data.SqlClient {
 		public bool NextResult() {
 			SqlResult res;
 			currentRow = -1;
+			bool resultReturned;
 			
-			res = cmd.NextResult();
+			// reset
+			table = null;
+			pgResult = IntPtr.Zero;
+			rows = 0;
+			cols = 0;
+			types = null;
+			recordsAffected = -1;
 
-			if(res.ResultReturned == true) {
+			res = cmd.NextResult();
+			resultReturned = res.ResultReturned;
+
+			if(resultReturned == true) {
 				table = res.Table;
 				pgResult = res.PgResult;
 				rows = res.RowCount;
 				cols = res.FieldCount;
 				types = res.PgTypes;
+				recordsAffected = res.RecordsAffected;
 			}
-
-			return res.ResultReturned;
+			
+			res = null;
+			return resultReturned;
 		}
 
 		[MonoTODO]

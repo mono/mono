@@ -26,6 +26,7 @@
 				<excludes name="TestSqlDataAdapter.cs"/>
 				<excludes name="PostgresTest.cs"/>
 				<excludes name="TestSqlParameters.cs"/>
+				<excludes name="SqlSharpCli.cs"/>
 
 			</sources>
 			<references basedir="..\..\..\nunit">
@@ -50,6 +51,7 @@
 				<excludes name="PostgresTest.cs"/>
 				<excludes name="TestSqlDataAdapter.cs"/>
 				<excludes name="TestSqlParameters.cs"/>
+				<excludes name="SqlSharpCli.cs"/>
 
 			</sources>
 			<references basedir="..\..\..\nunit">

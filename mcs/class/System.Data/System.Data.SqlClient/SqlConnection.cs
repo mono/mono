@@ -45,8 +45,9 @@ namespace System.Data.SqlClient {
 
 		#region Fields
 
-		private PostgresTypes types;
+		private PostgresTypes types = null;
 		private IntPtr pgConn = IntPtr.Zero;    
+
 		// PGConn (Postgres Connection)
 		private string connectionString = "";    
 		// OLE DB Connection String
@@ -82,7 +83,11 @@ namespace System.Data.SqlClient {
 		// support SSL. Set to 0 (default) to 
 		// negotiate with server. 
 
+		// connection state
 		private ConnectionState conState = ConnectionState.Closed;
+		
+		// DataReader state
+		private SqlDataReader rdr = null;
 		private bool dataReaderOpen = false;
 		// FIXME: if true, throw an exception if SqlConnection 
 		//        is used for anything other than reading
@@ -167,6 +172,12 @@ namespace System.Data.SqlClient {
 				
 		[MonoTODO]
 		public void Close () {
+			if(dataReaderOpen == true) {
+				// TODO: what do I do if
+				// the user Closes the connection
+				// without closing the Reader first?
+
+			}			
 			CloseDataSource ();
 		}
 
@@ -235,6 +246,40 @@ namespace System.Data.SqlClient {
 
 		#endregion
 
+		#region Internal Methods
+
+		// Used to prevent SqlConnection
+		// from doing anything while
+		// SqlDataReader is open.
+		// Open the Reader. (called from SqlCommand)
+		internal void OpenReader(SqlDataReader reader) 
+		{	
+			if(dataReaderOpen == true) {
+				// TODO: throw exception here?
+				//       because a reader
+				//       is already open
+			}
+			else {
+				rdr = reader;
+				dataReaderOpen = true;
+			}
+		}
+
+		// Used to prevent SqlConnection
+		// from doing anything while
+		// SqlDataReader is open
+		// Close the Reader (called from SqlCommand)
+		// if closeConnection true, Close() the connection
+		// this is based on CommandBehavior.CloseConnection
+		internal void CloseReader(bool closeConnection)
+		{	if(closeConnection == true)
+				CloseDataSource();
+			else
+				dataReaderOpen = false;
+		}
+
+		#endregion // Internal Methods
+
 		#region Private Methods
 
 		private void SetupConnection() {
@@ -261,9 +306,11 @@ namespace System.Data.SqlClient {
 
 		private void CloseDataSource () {
 			// FIXME: just a quick hack
-			conState = ConnectionState.Closed;
-			PostgresLibrary.PQfinish (pgConn);
-			pgConn = IntPtr.Zero;
+			if(conState == ConnectionState.Open) {
+				conState = ConnectionState.Closed;
+				PostgresLibrary.PQfinish (pgConn);
+				pgConn = IntPtr.Zero;
+			}
 		}
 
 		private void SetConnectionString (string connectionString) {
@@ -515,12 +562,9 @@ namespace System.Data.SqlClient {
 		// Used to prevent SqlConnection
 		// from doing anything while
 		// SqlDataReader is open
-		internal bool OpenReader {
+		internal bool IsReaderOpen {
 			get {
 				return dataReaderOpen;
-			}
-			set {
-				dataReaderOpen = value;
 			}
 		}
 
