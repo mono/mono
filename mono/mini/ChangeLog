@@ -1,5 +1,7 @@
 2005-01-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mono_method_to_ir): Handle MONO_CLASSCONST.
+
 	* mini-amd64.c (mono_arch_local_regalloc): Fix some regalloc problems
 	with global registers.
 	(mono_arch_output_basic_block): Fix SWITCH in the AOT case.
