@@ -72,6 +72,19 @@ namespace System.Drawing {
 				IntPtr hdc = g.GetHdc();
 				nativeObject_ = Win32.CreateCompatibleBitmap(hdc, width, height);
 				imageSize_ = new Size(width, height);
+				imageFormat_ = ImageFormat.Bmp;
+				// FIXME: shall we get pixel format from device or just set PixelFormat.Format32bppArgb
+				switch (Win32.GetDeviceCaps (g.GetHdc(), GetDeviceCapsParams.BITSPIXEL)){
+					case 32:
+						pixelFormat_ = PixelFormat.Format32bppArgb;
+						break;
+					case 24:
+						pixelFormat_ = PixelFormat.Format24bppRgb;
+						break;
+					default:
+						pixelFormat_ = PixelFormat.Format32bppArgb;
+						break;
+				}
 				g.ReleaseHdc(hdc);
 			}
 
@@ -79,6 +92,7 @@ namespace System.Drawing {
 			{
 				IntPtr hdc = Win32.GetDC(IntPtr.Zero);
 				pixelFormat_ = format;
+				imageFormat_ = ImageFormat.Bmp;
 				BITMAPINFO_FLAT bmi = new BITMAPINFO_FLAT();
 				bmi.bmiHeader_biSize = 40;
 				bmi.bmiHeader_biWidth = width;

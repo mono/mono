@@ -143,6 +143,11 @@ namespace System.Drawing.Win32Impl {
 			 CallingConvention = CallingConvention.StdCall, 
 			 CharSet = CharSet.Ansi)]
 		internal static extern int GdiFlush();
+
+		[DllImport ("gdi32.dll", 
+			 CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Ansi)]
+		internal static extern int GetDeviceCaps (IntPtr hdc, GetDeviceCapsParams index);
 		
 		#endregion
 		
