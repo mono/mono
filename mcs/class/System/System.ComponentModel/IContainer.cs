@@ -9,7 +9,7 @@
 
 namespace System.ComponentModel {
 
-	public interface IContainer {
+	public interface IContainer : IDisposable {
 
 		ComponentCollection Components {
 			get;
