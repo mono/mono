@@ -537,8 +537,7 @@ namespace Mono.Xml.Schema
 				if (dt != null) {
 					try {
 						identity = dt.ParseValue (value, NameTable, ParserContext.NamespaceManager);
-					} catch (Exception ex) { // FIXME: This is bad manner ;-(
-						// FIXME: Such exception handling is not a good idea.
+					} catch (Exception ex) { // FIXME: (wishlist) This is bad manner ;-(
 						HandleError ("Identity value is invalid against its data type " + dt.TokenizedType, ex);
 					}
 				}
@@ -576,7 +575,7 @@ namespace Mono.Xml.Schema
 						if (itemDatatype != null) {
 							try {
 								itemDatatype.ParseValue (each, NameTable, ParserContext.NamespaceManager);
-							} catch (Exception ex) { // FIXME: better exception handling ;-(
+							} catch (Exception ex) { // FIXME: (wishlist) better exception handling ;-(
 								HandleError ("List type value contains one or more invalid values.", ex);
 								break;
 							}
@@ -587,12 +586,8 @@ namespace Mono.Xml.Schema
 					break;
 				case XmlSchemaDerivationMethod.Union:
 					XmlSchemaSimpleTypeUnion union = st.Content as XmlSchemaSimpleTypeUnion;
-//					values = normalized.Split (wsChars);
-				{
-string each = normalized;
-//					foreach (string each in values) {
-//						if (each == String.Empty)
-//							continue;
+					{
+						string each = normalized;
 						// validate against ValidatedItemType
 						bool passed = false;
 						foreach (object eachType in union.ValidatedTypes) {
@@ -601,7 +596,7 @@ string each = normalized;
 							if (itemDatatype != null) {
 								try {
 									itemDatatype.ParseValue (each, NameTable, ParserContext.NamespaceManager);
-								} catch (Exception) { // FIXME: better exception handling ;-(
+								} catch (Exception) { // FIXME: (wishlist) better exception handling ;-(
 									continue;
 								}
 							}
@@ -621,7 +616,6 @@ string each = normalized;
 						}
 					}
 					break;
-				// TODO: rest
 				case XmlSchemaDerivationMethod.Restriction:
 					XmlSchemaSimpleTypeRestriction str = st.Content as XmlSchemaSimpleTypeRestriction;
 					// facet validation
@@ -638,7 +632,7 @@ string each = normalized;
 			if (validatedDatatype != null) {
 				try {
 					validatedDatatype.ParseValue (value, NameTable, ParserContext.NamespaceManager);
-				} catch (Exception ex) {	// FIXME: It is really bad design ;-P
+				} catch (Exception ex) {	// FIXME: (wishlist) It is bad manner ;-(
 					HandleError ("Invalidly typed data was specified.", ex);
 				}
 			}
@@ -735,9 +729,9 @@ string each = normalized;
 			// Note that Schema Validity Assessment(Element) 1.2 takes
 			// precedence than 1.1 of that.
 
-			// FIXME: xsi:type value should be normalized.
 			string xsiTypeName = reader.GetAttribute ("type", XmlSchema.InstanceNamespace);
 			if (xsiTypeName != null) {
+				xsiTypeName = xsiTypeName.Trim (XmlChar.WhitespaceChars);
 				object xsiType = GetLocalTypeDefinition (xsiTypeName);
 				if (xsiType == null)
 					HandleError ("The instance type was not found: " + xsiTypeName + " .");
@@ -1009,8 +1003,7 @@ string each = normalized;
 				object parsedValue = null;
 				try {
 					dt.ParseValue (normalized, reader.NameTable, this.ParserContext.NamespaceManager);
-				} catch (Exception ex) {
-					// FIXME: Such exception handling is not a good idea.
+				} catch (Exception ex) { // FIXME: (wishlist) It is bad manner ;-(
 					HandleError ("Attribute value is invalid against its data type " + dt.TokenizedType, ex);
 				}
 				if (attr.ValidatedFixedValue != null && attr.ValidatedFixedValue != normalized)
@@ -1147,22 +1140,21 @@ string each = normalized;
 				if (seq.SelectorMatches (this.elementQNameStack, reader) != null) {
 					// creates and registers new entry.
 					XsdKeyEntry entry = new XsdKeyEntry (seq, reader);
-					seq./*NotFound*/Entries.Add (entry);
+					seq.Entries.Add (entry);
 				}
 			}
 
 			// (c) Evaluate field paths.
 			foreach (XsdKeyTable seq in this.keyTables) {
 				// If possible, create new field entry candidates.
-				for (int i = 0; i < seq./*NotFound*/Entries.Count; i++) {
-					XsdKeyEntry entry = seq./*NotFound*/Entries [i] as XsdKeyEntry;
+				for (int i = 0; i < seq.Entries.Count; i++) {
+					XsdKeyEntry entry = seq.Entries [i] as XsdKeyEntry;
 //					if (entry.KeyFound)
 // FIXME: it should not be skipped for multiple key check!!
 //						continue;
 					try {
 						entry.FieldMatches (this.elementQNameStack, this);
-					} catch (Exception ex) {
-						// FIXME: Such exception handling is not a good idea.
+					} catch (Exception ex) { // FIXME: (wishlist) It is bad manner ;-(
 						HandleError ("Identity field value is invalid against its data type.", ex);
 					}
 				}
@@ -1473,9 +1465,7 @@ string each = normalized;
 						Uri absUri = new Uri ((this.BaseURI != "" ? new Uri (BaseURI) : null), tmp [i + 1]);
 						XmlTextReader xtr = new XmlTextReader (absUri.ToString ());
 						schema = XmlSchema.Read (xtr, null);
-					} catch (Exception ex) {
-						// FIXME: better exception handling...
-//						HandleError ("Errors were occured when resolving schemaLocation specified schema document.", ex);
+					} catch (Exception ex) { // FIXME: (wishlist) It is bad manner ;-(
 						continue;
 					}
 					if (schema.TargetNamespace == null)
@@ -1498,9 +1488,7 @@ string each = normalized;
 					Uri absUri = new Uri ((this.BaseURI != "" ? new Uri (BaseURI) : null), noNsSchemaLocation);
 					XmlTextReader xtr = new XmlTextReader (absUri.ToString ());
 					schema = XmlSchema.Read (xtr, null);
-				} catch (Exception ex) {
-					// FIXME: better exception handling...
-//					HandleError ("Errors were occured when resolving schemaLocation specified schema document.", ex);
+				} catch (Exception ex) { // FIXME: (wishlist) It is bad manner ;-(
 				}
 				if (schema != null && schema.TargetNamespace != null)
 					HandleError ("Specified schema has different target namespace.");

@@ -1,3 +1,9 @@
+2003-10-26  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XsdValidatingReader.cs : xsi:type should be normalized. More cleanup.
+	* XsdParticleValidationState.cs : Reverted default content processing
+	  to lax. It is msxsdtest/wildCard/wildG038.xsd which looks incorrect.
+
 2003-10-25  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XsdValidatingReader.cs : Removed MonoTODO which was implemented in

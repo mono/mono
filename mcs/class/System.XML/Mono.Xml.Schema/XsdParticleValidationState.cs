@@ -31,7 +31,7 @@ namespace Mono.Xml.Schema
 		public XsdValidationStateManager ()
 		{
 			table = new Hashtable ();
-			processContents = XmlSchemaContentProcessing.Lax;
+			processContents = XmlSchemaContentProcessing.Strict; // not Lax
 		}
 
 		public XmlSchemaElement CurrentElement {
