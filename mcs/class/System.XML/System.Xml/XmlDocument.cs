@@ -1,13 +1,19 @@
 //
 // System.Xml.XmlDocument
 //
-// Author:
+// Authors:
 //   Daniel Weber (daniel-weber@austin.rr.com)
+//   Kral Ferch <kral_ferch@hotmail.com>
+//   Jason Diamond <jason@injektilo.org>
+//   Miguel de Icaza (miguel@ximian.com)
 //
 // (C) 2001 Daniel Weber
+// (C) 2002 Kral Ferch, Jason Diamond, Miguel de Icaza
+//
 
 using System;
 using System.IO;
+using System.Text;
 using System.Xml.XPath;
 using System.Diagnostics;
 
@@ -523,28 +529,38 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Verify what encoding is used by default;  Should use PreserveWhiteSpace")]
 		public virtual void Save(Stream outStream)
 		{
-			throw new NotImplementedException ();
+			XmlTextWriter xmlWriter = new XmlTextWriter (outStream, Encoding.UTF8);
+			WriteContentTo (xmlWriter);
+			xmlWriter.Close ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Verify what encoding is used by default; Should use PreseveWhiteSpace")]
 		public virtual void Save (string filename)
 		{
-			throw new NotImplementedException ();
+			XmlTextWriter xmlWriter = new XmlTextWriter (filename, Encoding.UTF8);
+			WriteContentTo (xmlWriter);
+			xmlWriter.Close ();
 		}
 
 		[MonoTODO]
 		public virtual void Save (TextWriter writer)
 		{
-			throw new NotImplementedException ();
+			XmlTextWriter xmlWriter = new XmlTextWriter (writer);
+			WriteContentTo (xmlWriter);
+			xmlWriter.Flush ();
 		}
 
-		[MonoTODO]
-		public virtual void Save (XmlWriter writer)
+		[MonoTODO ("Should preserve white space if PreserveWhisspace is set")]
+		public virtual void Save (XmlWriter xmlWriter)
 		{
-			throw new NotImplementedException ();
+			//
+			// This should preserve white space if PreserveWhiteSpace is true
+			//
+			WriteContentTo (xmlWriter);
+			xmlWriter.Flush ();
 		}
 
 		public override void WriteContentTo (XmlWriter w)

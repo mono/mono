@@ -1,3 +1,7 @@
+2002-05-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* XmlDocument.cs: Implement the Save methods.
+
 2002-05-08  Mike Kestner  <mkestner@speakeasy.net>
 
 	* XmlNamedNodeMap.cs (SetNamedItem): Fixed a copy/paste bug.
