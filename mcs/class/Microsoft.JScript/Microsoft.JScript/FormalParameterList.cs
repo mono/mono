@@ -17,6 +17,7 @@ namespace Microsoft.JScript {
 	internal class FormalParam : AST {
 		internal string id;
 		internal string type_annot;
+		internal byte pos;
 
 		//
 		// FIXME: 
@@ -39,7 +40,7 @@ namespace Microsoft.JScript {
 		internal override void Emit (EmitContext ec)
 		{
 		}
-
+	
 		internal override bool Resolve (IdentificationTable context)
 		{
 			context.Enter (id, this);
@@ -79,6 +80,7 @@ namespace Microsoft.JScript {
 
 			for (i = 0; i < n; i++) {
 				f = (FormalParam) ids [i];
+				f.pos = (byte) (i + 2);
 				f.Resolve (context);
 			}
 			return true;
@@ -88,7 +90,7 @@ namespace Microsoft.JScript {
 		{
 			int n = ids.Count;
 			ILGenerator ig = ec.ig;
-				
+
 			ig.Emit (OpCodes.Ldc_I4, n);
 			ig.Emit (OpCodes.Newarr, typeof (string));
 
