@@ -1,5 +1,7 @@
 2003-12-13  Zoltan Varga  <vargaz@freemail.hu>
 
+	appdomain.c (MONO_CORLIB_VERSION): Bump version number.
+	
 	* appdomain.c verify.c: Moved corlib version checking into its own
 	function in appdomain.c since it needs to create vtables etc.
 
