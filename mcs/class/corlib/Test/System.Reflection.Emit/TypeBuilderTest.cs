@@ -919,6 +919,70 @@ public class TypeBuilderTest : Assertion
 		catch (NotSupportedException) {
 		}
 	}
+
+	/* FIXME: This does not work under mono
+	public void TestGetEvents () {
+		TypeBuilder tb = module.DefineType (genTypeName ());
+
+		try {
+			tb.GetEvents ();
+			Fail ();
+		}
+		catch (NotSupportedException) {
+		}
+
+		try {
+			tb.GetEvents (BindingFlags.Public);
+			Fail ();
+		}
+		catch (NotSupportedException) {
+		}
+	}
+	*/
+
+	public void TestGetEvent () {
+		TypeBuilder tb = module.DefineType (genTypeName ());
+
+		try {
+			tb.GetEvent ("FOO", BindingFlags.Public);
+			Fail ();
+		}
+		catch (NotSupportedException) {
+		}
+	}
+
+	public void TestGetMember () {
+		TypeBuilder tb = module.DefineType (genTypeName ());
+
+		try {
+			tb.GetMember ("FOO", MemberTypes.All, BindingFlags.Public);
+			Fail ();
+		}
+		catch (NotSupportedException) {
+		}
+	}
+
+	public void TestGetMembers () {
+		TypeBuilder tb = module.DefineType (genTypeName ());
+
+		try {
+			tb.GetMembers (BindingFlags.Public);
+			Fail ();
+		}
+		catch (NotSupportedException) {
+		}
+	}
+
+	public void TestGetInterface () {
+		TypeBuilder tb = module.DefineType (genTypeName ());
+
+		try {
+			tb.GetInterface ("FOO", true);
+			Fail ();
+		}
+		catch (NotSupportedException) {
+		}
+	}
 }
 }
 
