@@ -1,3 +1,9 @@
+2005-03-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityException.cs: Added try/catch in GetObjectData because the
+	PermissionState property is serialized only if both ControlEvidence 
+	and ControlPolicy are granted.
+
 2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeAccessPermission.cs: Fixed PermitOnly when used in a set. Added

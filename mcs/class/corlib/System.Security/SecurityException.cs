@@ -266,7 +266,12 @@ namespace System.Security {
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);
-			info.AddValue ("PermissionState", permissionState);
+			try {
+				info.AddValue ("PermissionState", PermissionState);
+			}
+			catch (SecurityException) {
+				// serialize only if permitted to do so
+			}
 		}
 
 		public override string ToString ()
