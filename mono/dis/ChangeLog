@@ -1,3 +1,8 @@
+2002-05-20  Martin Baulig  <martin@gnome.org>
+
+	* main.c: Added `--output=FILENAME' command line option.
+
+	* monodis.1: Documented it here.
 
 Thu May 16 17:21:07 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
