@@ -1,3 +1,7 @@
+2001-07-10  Joe Shaw  <joe@ximian.com>
+
+	* Array.cs: Implemented everything but Sort().
+
 2001-07-09  Jeffrey Stedfast  <fejj@ximian.com>
 
 	* Object.cs (Object::Equals): Object variable name is `o'.
