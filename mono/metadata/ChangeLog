@@ -1,5 +1,21 @@
 2003-04-03  Martin Baulig  <martin@ximian.com>
 
+	All the following changes are conditional to `WITH_INCLUDED_LIBGC'
+	which is not yet enabled by default.
+
+	* gc.c (mono_gc_init): Set the gc_thread_vtable to our thread
+	functions.
+	(mono_gc_lock, mono_gc_unlock): New static functions.
+
+	* threads.c (mono_gc_stop_world, mono_gc_start_world): New public
+	functions; stop/start the world for the garbage collector.  This
+	is using the windows API; we need to complete the SuspendThread()/
+	ResumeThread() implementation in the io-layer to make this work on Unix.
+	(mono_gc_push_all_stacks): New public function; tells the garbage
+	collector about the stack pointers from all managed threads.
+
+2003-04-03  Martin Baulig  <martin@ximian.com>
+
 	* object.h (MonoThread): Added `gpointer stack_ptr'.
 
 	* threads.c (start_wrapper): Save the stack pointer in `stack_ptr'.
