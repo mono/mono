@@ -299,7 +299,7 @@ public class Outline {
 		ParameterInfo [] idxp = pi.GetIndexParameters ();
 		MethodBase g = pi.GetGetMethod (true);
 		MethodBase s = pi.GetSetMethod (true);
-		MethodBase accessor = g == null ? g : s;
+		MethodBase accessor = g != null ? g : s;
 		
 		if (pi.CanRead && pi.CanWrite) {
 
