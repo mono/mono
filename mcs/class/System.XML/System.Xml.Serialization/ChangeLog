@@ -1,3 +1,9 @@
+2004-10-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializationWriter.cs : When namespace is an empty string,
+	  XmlTextWriter.LookupPrefix() will raise an error. Just skip it in
+	  such case.
+
 2004-10-01  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* MapCodeGenerator.cs: When the Object type is exported, export all
