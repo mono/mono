@@ -1,3 +1,9 @@
+2004-10-14  Dick Porter  <dick@ximian.com>
+
+	* sockets.c (_wapi_accept): On Darwin, make sure a newly
+	accept()ed socket is blocking.  Fixes bug 67355, patch by
+	grompf@sublimeintervention.com.
+
 2004-09-28  Dick Porter  <dick@ximian.com>
 
 	* io.c (pipe_close_private): Fix one small typo in the last change
