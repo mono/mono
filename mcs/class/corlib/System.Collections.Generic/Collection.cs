@@ -45,19 +45,17 @@ namespace System.Collections.Generic
 			ICollection, IEnumerable, IList
 	{
 
-		private const int defaultLength = 16;
+		const int defaultLength = 16;
 
-		private T [] contents;
-		private readonly Type innertype;
-		private int capacity;
-		private int count;
-		private int modcount;
+		T [] contents;
+		int capacity;
+		int count;
+		int modcount;
 
 		public Collection ()
 		{
 			contents = new T [defaultLength];
 			capacity = defaultLength;
-			innertype = typeof (T);
 		}
 
 		public Collection (List <T> list)
@@ -70,14 +68,12 @@ namespace System.Collections.Generic
 			count = list.Count;
 
 			capacity = contents.Length;
-			innertype = typeof (T);
-				
 		}
 		
 		public void Add (T item)
 		{
 			if (count >= capacity)
-				Resize (capacity * 2);
+				Array.Resize<T> (ref contents, capacity * 2);
 			
 			InsertItem (count, item);
 
@@ -100,11 +96,7 @@ namespace System.Collections.Generic
 
 		public bool Contains (T item)
 		{
-			int index = IndexOf (item);
-			if (index < 0)
-				return false;
-
-			return true;
+			return IndexOf (item) >= 0;
 		}
 
 		public void CopyTo (T [] array, int index)
@@ -174,9 +166,16 @@ namespace System.Collections.Generic
 
 		public int IndexOf (T item)
 		{
-			for (int i = 0; i < count; i++)
-				if (contents [i].Equals (item))
-					return i;
+			if (item == null)
+				for (int i = 0; i < count; i++) {
+					if (contents [i] == null)
+						return i;
+				}
+			else 
+				for (int i = 0; i < count; i++) {
+					if (item.Equals (contents [i]))
+						return i;
+				}
 
 			return -1;
 		}
@@ -187,7 +186,7 @@ namespace System.Collections.Generic
 				throw new ArgumentOutOfRangeException ("index");
 
 			if (count >= capacity)
-				Resize (capacity * 2);
+				Array.Resize<T> (ref contents, capacity * 2);
 
 			InsertItem (index, item);
 
@@ -329,7 +328,7 @@ namespace System.Collections.Generic
 
 		private void CheckType (object value)
 		{
-			if (!innertype.IsInstanceOfType (value)) {
+			if (!(value is T)) {
 				string valtype = value.GetType ().ToString ();
 				throw new ArgumentException (
 						String.Format ("A value of type {0} can't be used in this generic collection.", valtype),
@@ -337,14 +336,6 @@ namespace System.Collections.Generic
 			}
 		}
 
-		private void Resize (int newCapacity)
-		{
-			T [] tmp = new T [newCapacity];
-			Array.Copy (contents, tmp, count);
-			contents = tmp;
-			capacity = newCapacity;
-		}
-		
 		//
 		// Will we use this iterator until iterators support is done?
 		//

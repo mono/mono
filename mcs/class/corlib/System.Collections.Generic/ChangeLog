@@ -1,3 +1,12 @@
+2004-09-03  Carlos Alberto Cortez <carlos@unixmexico.org>
+
+	* Collection.cs: Small improvements related to
+	style, resizing, and type checking.
+
+2004-09-01  Carlos Alberto Cortez <carlos@unixmexico.org>
+
+	* Collection.cs: New file.
+
 2004-08-04  Martin Baulig  <martin@ximian.com>
 
 	* List.cs (List<T>.Enumerator): Made this a struct.
