@@ -44,8 +44,10 @@ namespace System.Web.Mail
 			smtp.Close ();
 		    
 		    } catch (SmtpException ex) {
-			// MS implementation throws HttpException
-			// so it is just to follow
+			// LAMESPEC:
+			// .NET sdk throws HttpException
+			// for some reason so to be compatible
+			// we have to do it to :(
 			throw new HttpException (ex.Message);
 		    
 		    } catch (IOException ex) {
