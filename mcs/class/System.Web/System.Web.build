@@ -9,6 +9,7 @@
 		<mkdir dir="../lib"/>
 		<csc target="library" output="../lib/System.Web.dll" debug="${debug}">
 			<arg value="/nowarn:1595"/>
+			<arg value="/nowarn:0169"/>
 			<arg value="/unsafe"/>
 			<arg value="/r:System.dll"/>
 			<sources>

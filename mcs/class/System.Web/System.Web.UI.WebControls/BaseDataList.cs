@@ -26,7 +26,7 @@ namespace System.Web.UI.WebControls
 		private DataKeyCollection dataKeys;
 		private object            dataSource;
 		
-		public BaseDataList() : base();
+		public BaseDataList() : base()
 		{
 		}
 

@@ -144,16 +144,23 @@ namespace System.Web.UI.WebControls
 		 * PrepareControlHierarchy()
 		 * CreateControlHeirarchy(bool)
 		 */
-		 
-		public override void CreateControlHierarchy(bool create)
+		
+		/// <summary>
+		/// Undocumented
+		/// </summary>
+		protected override void CreateControlHierarchy(bool create)
 		{
 			throw new NotImplementedException();
-			//TODO: THE LOST WORLD
-			// Put here to get compilation going
 		}
 		
-		//Impemented methods/properties of IRepeatInfoUser
-		//TODO: Check all these implementations are valid or a total absurd
+		/// <summary>
+		/// Undocumented
+		/// </summary>
+		protected override void PrepareControlHierarchy()
+		{
+			throw new NotImplementedException();
+		}
+		
 		bool IRepeatInfoUser.HasFooter
 		{
 			get

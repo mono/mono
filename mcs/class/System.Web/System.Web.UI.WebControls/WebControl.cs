@@ -380,9 +380,9 @@ namespace System.Web.UI.WebControls
 			RenderEngTags(writer);
 		}
 		
-		protected override void RenderContents(HtmlTextWriter writer)
+		protected virtual void RenderContents(HtmlTextWriter writer)
 		{
-			base.RenderContents(writer);
+			base.Render(writer);
 		}
 		
 		protected override object SaveViewState()
@@ -416,6 +416,5 @@ namespace System.Web.UI.WebControls
 		{
 			Attributes[key] = value;
 		}
-
 	}
 }
