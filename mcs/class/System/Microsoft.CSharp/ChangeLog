@@ -1,3 +1,8 @@
+2004-04-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CSharpCodeGenerator.cs : implemented GenerateEvent.
+	  Delegate was output as usual class.
+
 2004-03-29  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* CSharpCodeGenerator.cs: In GetTypeOutput, never escape runtime type names.

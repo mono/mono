@@ -460,10 +460,13 @@ namespace Mono.CSharp
 			Output.WriteLine ("#line default");
 		}
 
-		[MonoTODO]
 		protected override void GenerateEvent( CodeMemberEvent eventRef, CodeTypeDeclaration declaration )
 		{
-			Output.Write( "<GenerateEvent>" );
+			OutputMemberAccessModifier (eventRef.Attributes);
+			OutputMemberScopeModifier (eventRef.Attributes | MemberAttributes.Final); // Don't output "virtual"
+			Output.Write ("event ");
+			OutputTypeNamePair (eventRef.Type, GetSafeName (eventRef.Name));
+			Output.WriteLine (';');
 		}
 
 		protected override void GenerateField( CodeMemberField field )
@@ -664,6 +667,7 @@ namespace Mono.CSharp
 		protected override void GenerateTypeStart( CodeTypeDeclaration declaration )
 		{
 			TextWriter output = Output;
+			CodeTypeDelegate del = declaration as CodeTypeDelegate;
 
 			if (declaration.CustomAttributes.Count > 0)
 				OutputAttributeDeclarations( declaration.CustomAttributes );
@@ -673,7 +677,16 @@ namespace Mono.CSharp
 					      declaration.IsStruct,
 					      declaration.IsEnum );
 
+			if (del != null) {
+				if (del.ReturnType != null)
+					OutputType (del.ReturnType);
+				else
+					Output.Write ("void");
+				output.Write(' ');
+			}
+
 			output.Write( GetSafeName (declaration.Name) );
+
 			output.Write( ' ' );
 			
 			IEnumerator enumerator = declaration.BaseTypes.GetEnumerator();
@@ -692,14 +705,20 @@ namespace Mono.CSharp
 
 				output.Write( ' ' );
 			}
-			output.WriteLine( "{" );
+			if (del != null)
+				output.Write ( "(" );
+			else
+				output.WriteLine ( "{" );
 			++Indent;
 		}
 
 		protected override void GenerateTypeEnd( CodeTypeDeclaration declaration )
 		{
 			--Indent;
-			Output.WriteLine( "}" );
+			if (declaration is CodeTypeDelegate)
+				Output.WriteLine (");");
+			else
+				Output.WriteLine ("}");
 		}
 
 		protected override void GenerateNamespaceStart( CodeNamespace ns )
