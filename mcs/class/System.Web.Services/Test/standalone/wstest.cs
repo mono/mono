@@ -593,6 +593,7 @@ public class ServiceData
 		get 
 		{ 
 			string dir = new Uri (Wsdl).Host;
+			if (dir != "localhost") dir = "external";
 			return Path.Combine (dir, Name + ".cs");
 		}
 	}
