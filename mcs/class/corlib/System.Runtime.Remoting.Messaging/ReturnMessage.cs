@@ -50,6 +50,7 @@ namespace System.Runtime.Remoting.Messaging {
 			_methodName = request.MethodName;
 			_methodSignature = request.MethodSignature;
 			_typeName = request.TypeName;
+			_outArgs = new object[0];	// .NET does this
 		}
 		
 		public int ArgCount {

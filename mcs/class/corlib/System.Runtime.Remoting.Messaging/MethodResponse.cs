@@ -49,7 +49,7 @@ namespace System.Runtime.Remoting.Messaging {
 			
 			_exception = e;
 			_returnValue = null;
-			_outArgs = null;
+			_outArgs = new object[0];	// .NET does this
 		}
 
 		internal MethodResponse (object returnValue, object [] outArgs, LogicalCallContext callCtx, IMethodCallMessage msg) {
@@ -254,7 +254,7 @@ namespace System.Runtime.Remoting.Messaging {
 			throw new NotImplementedException ();
 		} 
 
-		class InternalDictionary : MethodCallDictionary {
+		class InternalDictionary : MethodReturnDictionary {
 			public InternalDictionary(MethodResponse message) : base (message) { }
 
 			protected override void SetMethodProperty (string key, object value) {
