@@ -59,7 +59,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			double secTimer = DateAndTime.Timer;
 			DateTime dtNow = DateTime.Now;
 			double secNow = dtNow.Hour * 3600 + dtNow.Minute * 60 + dtNow.Second + (dtNow.Millisecond + 1) / 1000D;
-			double secTimer2 = DateAndTime.Timer + .001;
+			double secTimer2 = DateAndTime.Timer + .002D; // before was .001; but we need to allow for rounding differences
 			
 			// waste a little time
 			for (int i = 0; i < int.MaxValue; i++);
@@ -69,7 +69,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			
 			// should be same time within a reasonable tolerance
 			Assert("#TI01", secNow >= secTimer);
-			Assert("#TI02: SecTimer2=" + secTimer2 + " secNow=" + secNow, secTimer2 >= secNow);
+			Assert("#TI02: slacked SecTimer2=" + secTimer2 + " secNow=" + secNow, secTimer2 >= secNow);
 
 			// third timer should be greater than the first
 			Assert("#TI03", secTimer3 > secTimer);
