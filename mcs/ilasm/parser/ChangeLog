@@ -1,3 +1,7 @@
+2004-04-14  Jackson Harper  <jackson@ximian.com>
+
+	* ILParser.jay: Correct args for version numbers.
+	
 2004-04-03  Jackson Harper  <jackson@ximian.com>
 
 	* ILParser.jay: Dont use hash alg enum its too restrictive

@@ -2428,7 +2428,7 @@ assemblyref_decls	: /* EMPTY */
 
 assemblyref_decl	: D_VER int32 COLON int32 COLON int32 COLON int32
                           {
-                                codegen.CurrentAssemblyRef.SetVersion ((int) $2, (int) $3, (int) $4, (int) $5);
+                                codegen.CurrentAssemblyRef.SetVersion ((int) $2, (int) $4, (int) $6, (int) $8);
                           }
                         | D_PUBLICKEY ASSIGN bytes_list
                           {
