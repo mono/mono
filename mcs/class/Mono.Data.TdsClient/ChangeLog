@@ -1,3 +1,8 @@
+2002-11-15  Tim Coleman <tim@timcoleman.com>
+	* Mono.Data.TdsClient.Internal/Tds.cs:
+		Add support for UniqueIdentifier (GUID)
+		types
+
 2002-11-14  Tim Coleman <tim@timcoleman.com>
 	* list:
 	* Mono.Data.TdsClient/TdsType.cs:

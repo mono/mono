@@ -478,8 +478,14 @@ namespace Mono.Data.TdsClient.Internal {
 				element = (columnSize != 0);
 				break;
 			case TdsColumnType.UniqueIdentifier :
+				if (comm.Peek () != 16) // If it's null, then what to do?
+					break;
+
 				len = comm.GetByte () & 0xff;
-				//element = (len == 0 ? null : new Guid (comm.GetBytes (len, false)));
+				if (len > 0) {
+					byte[] guidBytes = comm.GetBytes (len, true);
+					element = new Guid (guidBytes);
+				}
 				break;
 			default :
 				return null;
@@ -917,7 +923,6 @@ namespace Mono.Data.TdsClient.Internal {
 
 			if (type == TdsPacketSubType.DoneProc)  {
 				doneProc = true;
-Console.WriteLine ("RECORDS AFFECTED {0}", result.RowCount);
 				if (result.RowCount > 0)
 					recordsAffected += result.RowCount;
 			}
