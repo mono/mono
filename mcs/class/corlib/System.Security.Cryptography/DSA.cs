@@ -158,9 +158,9 @@ namespace System.Security.Cryptography {
 					// the number of bytes is important (no matter == 0x00)
 					byte[] inArr = BitConverterLE.GetBytes (dsaParams.Counter);
 					int l = inArr.Length;
-					while (inArr[l-1] == 0x00)
-						l--;
 					if (l > 0) {
+						while (inArr[l-1] == 0x00)
+							l--;
 						byte[] c = new byte [l];
 						Buffer.BlockCopy (inArr, 0, c, 0, l);
 						sb.Append (Convert.ToBase64String (c));
