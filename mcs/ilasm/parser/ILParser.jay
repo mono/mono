@@ -2387,8 +2387,7 @@ assembly_decl		: D_PUBLICKEY ASSIGN bytes_list
 			| D_LOCALE ASSIGN bytes_list
 			| D_HASH K_ALGORITHM int32
 			  {
-				int alg = (int) $3;
-				codegen.SetAssemblyHashAlgorithm ((HashAlgorithm) alg);
+				codegen.SetAssemblyHashAlgorithm ((int) $3);
 			  }
 			| customattr_decl
 			  {

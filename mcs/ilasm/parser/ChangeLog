@@ -1,3 +1,7 @@
+2004-04-03  Jackson Harper  <jackson@ximian.com>
+
+	* ILParser.jay: Dont use hash alg enum its too restrictive
+	
 2004-04-02  Jackson Harper  <jackson@ximian.com>
 
 	* ILParser.jay: Set assembly info.
