@@ -517,7 +517,7 @@ namespace Mono.CSharp.Debugger
 
 			int index = (token & 0xffffff) - 1;
 
-			MethodBuilder mb = (MethodBuilder) mbuilder_array [index];
+			MethodBase mb = (MethodBase) mbuilder_array [index];
 
 			current_method = new SourceMethod (mb);
 
