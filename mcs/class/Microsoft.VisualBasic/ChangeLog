@@ -1,3 +1,7 @@
+2004-06-15  Jambunathan K  <kjambunathan@novell.com>
+	* Microsoft.VisualBasic_test.dll.sources: Added FinancialTest.cs 
+	to the list of test files
+
 2004-06-07 Jambunathan K <kjambunathan@novell.com>
 	* Makefile: Changed to account for error string resources
 	* Microsoft.VisualBasic.dll.resources: Newly added list of compiled
