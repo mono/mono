@@ -1,3 +1,9 @@
+2003-12-04  Dick Porter  <dick@ximian.com>
+
+	* icall.c:
+	* locales.c: construct_compareinfo is now in CompareInfo, not
+	CultureInfo.
+
 2003-12-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* image.c (mono_image_load_file_for_image): Cache loaded images in the
