@@ -388,19 +388,19 @@ public class StringTest : TestCase
 			     -1, s1.IndexOf('i', 5, 3));
 
 		s1 = "original original";
-		AssertEquals("stepped string index",
+		AssertEquals("stepped string index 1",
 			     0, s1.IndexOf("original", 0));
-		AssertEquals("stepped string index", 
+		AssertEquals("stepped string index 2", 
 			     9, s1.IndexOf("original", 1));
-		AssertEquals("stepped string index", 
+		AssertEquals("stepped string index 3", 
 			     -1, s1.IndexOf("original", 10));
-		AssertEquals("stepped limited string index",
+		AssertEquals("stepped limited string index 1",
 			     1, s1.IndexOf("rig", 0, 5));
-		AssertEquals("stepped limited string index",
+		AssertEquals("stepped limited string index 2",
 			     -1, s1.IndexOf("rig", 0, 3));
-		AssertEquals("stepped limited string index",
+		AssertEquals("stepped limited string index 3",
 			     10, s1.IndexOf("rig", 2, 15));
-		AssertEquals("stepped limited string index",
+		AssertEquals("stepped limited string index 4",
 			     -1, s1.IndexOf("rig", 2, 3));
 	}
 

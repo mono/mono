@@ -1,3 +1,7 @@
+2002-04-22  Nick Drochak  <ndrochak@gol.com>
+
+	* StringTest.cs: Add unique markers to Assert messages.
+
 2002-04-09  Nick Drochak  <ndrochak@gol.com>
 
 	* ArrayTest.cs: Remove BinarySearch test on unsorted arrays. The
