@@ -1,3 +1,8 @@
+2002-03-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* IntegerFormatter.cs: fixed initialization error in static
+	constructor.
+
 2002-03-28  Dietmar Maurer  <dietmar@ximian.com>
 
 	* Delegate.cs: added new field to store a trampoline function

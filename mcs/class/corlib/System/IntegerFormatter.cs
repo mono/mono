@@ -122,8 +122,8 @@ namespace System {
 				digitUpperTable[i] = (char) ('0' + i);
 			}
 
-			char lc = 'a';
-			char uc = 'A';
+			char lc = (char ) ('a' - i);
+			char uc = (char ) ('A' - i);
 			while (i < 16){
 				digitLowerTable[i] = (char) (lc + i);
 				digitUpperTable[i] = (char) (uc + i);
