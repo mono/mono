@@ -4,6 +4,7 @@
 // Authors:
 //   Miguel de Icaza (miguel@ximian.com)
 //   Nick Drochak (ndrochak@gol.com)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
@@ -319,8 +320,7 @@ namespace System {
 		///   Compares the enum value with another enum value of the same type.
 		/// </summary>
 		///
-		/// <remarks>
-		///   
+		/// <remarks/>
 		public int CompareTo (object obj)
 		{
 			Type thisType;
@@ -467,6 +467,150 @@ namespace System {
 			}
 		}
 
+		static string FormatFlags (Type enumType, object value)
+		{
+			string retVal = "";
+			MonoEnumInfo info;
+			MonoEnumInfo.GetInfo (enumType, out info);
+			string asString = value.ToString ();
+			if (asString == "0") {
+				retVal = GetName (enumType, value);
+				if (retVal == null)
+					retVal = asString;
+
+				return retVal;
+			}
+			// This is ugly, yes.  We need to handle the different integer
+			// types for enums.  If someone else has a better idea, be my guest.
+			switch (((Enum)info.values.GetValue (0)).GetTypeCode()) {
+			case TypeCode.SByte: {
+				sbyte flags = (sbyte) value;
+				sbyte enumValue;
+				for (int i = info.values.Length - 1; i >= 0; i--) {
+					enumValue = (sbyte) info.values.GetValue (i);
+					if (i == 0 && enumValue == 0)
+						continue;
+
+					if ((flags & enumValue) == enumValue){
+						retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
+						flags -= enumValue;
+					}
+				}
+				}
+				break;
+			case TypeCode.Byte:{
+				byte flags = (byte) value;
+				byte enumValue;
+				for (int i = info.values.Length - 1; i >= 0; i--) {
+					enumValue = (byte) info.values.GetValue (i);
+					if (i == 0 && enumValue == 0)
+						continue;
+
+					if ((flags & enumValue) == enumValue){
+						retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
+						flags -= enumValue;
+					}
+				}
+				}
+				break;
+			case TypeCode.Int16: {
+				short flags = (short) value;
+				short enumValue;
+				for (int i = info.values.Length - 1; i >= 0; i--) {
+					enumValue = (short) info.values.GetValue (i);
+					if (i == 0 && enumValue == 0)
+						continue;
+
+					if ((flags & enumValue) == enumValue){
+						retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
+						flags -= enumValue;
+					}
+				}
+				}
+				break;
+			case TypeCode.Int32: {
+				int flags = (int) value;
+				int enumValue;
+				for (int i = info.values.Length - 1; i >= 0; i--) {
+					enumValue = (int) info.values.GetValue (i);
+					if (i == 0 && enumValue == 0)
+						continue;
+
+					if ((flags & enumValue) == enumValue){
+						retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
+						flags -= enumValue;
+					}
+				}
+				}
+				break;
+			case TypeCode.UInt16: {
+				ushort flags = (ushort) value;
+				ushort enumValue;
+				for (int i = info.values.Length - 1; i >= 0; i--) {
+					enumValue = (ushort) info.values.GetValue (i);
+					if (i == 0 && enumValue == 0)
+						continue;
+
+					if ((flags & enumValue) == enumValue){
+						retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
+						flags -= enumValue;
+					}
+				}
+				}
+				break;
+			case TypeCode.UInt32: {
+				uint flags = (uint) value;
+				uint enumValue;
+				for (int i = info.values.Length - 1; i >= 0; i--) {
+					enumValue = (uint) info.values.GetValue (i);
+					if (i == 0 && enumValue == 0)
+						continue;
+
+					if ((flags & enumValue) == enumValue){
+						retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
+						flags -= enumValue;
+					}
+				}
+				}
+				break;
+			case TypeCode.Int64: {
+				long flags = (long) value;
+				long enumValue;
+				for (int i = info.values.Length - 1; i >= 0; i--) {
+					enumValue = (long) info.values.GetValue (i);
+					if (i == 0 && enumValue == 0)
+						continue;
+
+					if ((flags & enumValue) == enumValue){
+						retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
+						flags -= enumValue;
+					}
+				}
+				}
+				break;
+			case TypeCode.UInt64: {
+				ulong flags = (ulong) value;
+				ulong enumValue;
+				for (int i = info.values.Length - 1; i >= 0; i--) {
+					enumValue = (ulong) info.values.GetValue (i);
+					if (i == 0 && enumValue == 0)
+						continue;
+
+					if ((flags & enumValue) == enumValue){
+						retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
+						flags -= enumValue;
+					}
+				}
+				}
+				break;
+			}
+
+			if (retVal == "")
+				return asString;
+
+			return retVal;
+		}
+
 		[MonoTODO]
 		public static string Format (Type enumType, object value, string format)
 		{
@@ -484,33 +628,29 @@ namespace System {
 			if (vType != enumType && vType != Enum.GetUnderlyingType(enumType))
 				throw new ArgumentException();
 
-
 			if (format.Length != 1)
 				throw new FormatException ("Format String can be only \"G\",\"g\",\"X\"," + 
 							  "\"x\",\"F\",\"f\",\"D\" or \"d\".");
 
 			char formatChar = format [0];
-			if ((formatChar == 'G' || formatChar == 'g') && value.GetHashCode () != 0 &&
-				Attribute.IsDefined(enumType, typeof(FlagsAttribute))) {
-				string result = GetName (enumType, value);
-				if (result == null)
-					return value.ToString ();
+			string retVal;
+			if ((formatChar == 'G' || formatChar == 'g')) {
+				if (!Attribute.IsDefined (enumType, typeof(FlagsAttribute))) {
+					retVal = GetName (enumType, value);
+					if (retVal == null)
+						retVal = value.ToString();
 
-				formatChar = 'F';
+					return retVal;
+				}
+
+				formatChar = 'f';
 			}
+			
+			if ((formatChar == 'f' || formatChar == 'F'))
+				return FormatFlags (enumType, value);
 
-			if ((formatChar == 'F' || formatChar == 'f') && value.GetHashCode () == 0 &&
-			     vType != typeof (long) && vType != typeof (ulong))
-				formatChar = 'G';
-
-			string retVal = "";
+			retVal = "";
 			switch (formatChar) {
-			    case 'G':
-			    case 'g':
-				retVal = GetName (enumType, value);
-				if (retVal == null)
-					retVal = value.ToString();
-				break;
 			    case 'X':
 			    case 'x':
 				retVal = FormatSpecifier_X (enumType, value);
@@ -523,106 +663,6 @@ namespace System {
 				} else {
 					long longValue = Convert.ToInt64 (value);
 					retVal = longValue.ToString ();
-				}
-				break;
-			    case 'F':
-			    case 'f':
-				MonoEnumInfo info;
-				MonoEnumInfo.GetInfo (enumType, out info);
-				// This is ugly, yes.  We need to handle the different integer
-				// types for enums.  If someone else has a better idea, be my guest.
-				bool first = true;
-				switch (((Enum)info.values.GetValue (0)).GetTypeCode()) {
-					case TypeCode.Byte:
-						byte byteFlag = (byte)value;
-						byte byteenumValue;
-						for (int i = info.values.Length-1; i>=0 && byteFlag != 0; i--) {
-							byteenumValue = (byte)info.values.GetValue (i);
-							if ((byteenumValue & byteFlag) == byteenumValue){
-								retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
-								byteFlag -= byteenumValue;
-							}
-						}
-						break;
-					case TypeCode.SByte:
-						SByte sbyteFlag = (SByte)value;
-						SByte sbyteenumValue;
-						for (int i = info.values.Length-1; i>=0 && sbyteFlag != 0; i--) {
-							sbyteenumValue = (SByte)info.values.GetValue (i);
-							if ((sbyteenumValue & sbyteFlag) == sbyteenumValue){
-								retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
-								sbyteFlag -= sbyteenumValue;
-							}
-						}
-						break;
-					case TypeCode.Int16:
-						short Int16Flag = (short)value;
-						short Int16enumValue;
-						for (int i = info.values.Length-1; i>=0 && Int16Flag != 0; i--) {
-							Int16enumValue = (short)info.values.GetValue (i);
-							if ((Int16enumValue & Int16Flag) == Int16enumValue){
-								retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
-								Int16Flag -= Int16enumValue;
-							}
-						}
-						break;
-					case TypeCode.Int32:
-						int Int32Flag = (int)value;
-						int Int32enumValue;
-						for (int i = info.values.Length-1; i>=0 && Int32Flag != 0; i--) {
-							Int32enumValue = (int)info.values.GetValue (i);
-							if ((Int32enumValue & Int32Flag) == Int32enumValue){
-								retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
-								Int32Flag -= Int32enumValue;
-							}
-						}
-						break;
-					case TypeCode.Int64:
-						long Int64Flag = (long)value;
-						long Int64enumValue;
-						for (int i = info.values.Length-1; i>=0 && (Int64Flag != 0 || first); i--) {
-							Int64enumValue = (long)info.values.GetValue (i);
-							if ((Int64enumValue & Int64Flag) == Int64enumValue){
-								first = false;
-								retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
-								Int64Flag -= Int64enumValue;
-							}
-						}
-						break;
-					case TypeCode.UInt16:
-						UInt16 UInt16Flag = (UInt16)value;
-						UInt16 UInt16enumValue;
-						for (int i = info.values.Length-1; i>=0 && UInt16Flag != 0; i--) {
-							UInt16enumValue = (UInt16)info.values.GetValue (i);
-							if ((UInt16enumValue & UInt16Flag) == UInt16enumValue){
-								retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
-								UInt16Flag -= UInt16enumValue;
-							}
-						}
-						break;
-					case TypeCode.UInt32:
-						UInt32 UInt32Flag = (UInt32)value;
-						UInt32 UInt32enumValue;
-						for (int i = info.values.Length-1; i>=0 && UInt32Flag != 0; i--) {
-							UInt32enumValue = (UInt32)info.values.GetValue (i);
-							if ((UInt32enumValue & UInt32Flag) == UInt32enumValue){
-								retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
-								UInt32Flag -= UInt32enumValue;
-							}
-						}
-						break;
-					case TypeCode.UInt64:
-						UInt64 UInt64Flag = (UInt64)value;
-						UInt64 UInt64enumValue;
-						for (int i = info.values.Length-1; i>=0 && (UInt64Flag != 0 || first); i--) {
-							UInt64enumValue = (UInt64)info.values.GetValue (i);
-							if ((UInt64enumValue & UInt64Flag) == UInt64enumValue){
-								first = false;
-								retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
-								UInt64Flag -= UInt64enumValue;
-							}
-						}
-						break;
 				}
 				break;
 			    default:

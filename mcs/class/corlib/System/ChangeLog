@@ -1,3 +1,7 @@
+2003-05-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Enum.cs: fixed bugs #41522 and #42879.
+
 2003-05-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* String.cs: Tweak IndexOf and LastIndexOf to match specification and
