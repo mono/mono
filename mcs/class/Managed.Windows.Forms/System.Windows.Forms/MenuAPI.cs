@@ -40,9 +40,6 @@ namespace System.Windows.Forms
 	*/
 	internal class MenuAPI
 	{
-		static StringFormat string_format_text = new StringFormat ();
-		static StringFormat string_format_shortcut = new StringFormat ();
-		static StringFormat string_format_menubar_text = new StringFormat ();
 		static ArrayList menu_list = new ArrayList ();		
 		static Font MENU_FONT = new Font (FontFamily.GenericSansSerif, 8.25f);
 		static int POPUP_ARROW_WITDH;
@@ -83,22 +80,18 @@ namespace System.Windows.Forms
 				bTracking = false;
 				menu = menu_obj;
 			}
-
 		}
 
 		public class MENUITEM
 		{
 			public	MenuItem 	item;
-			public  Rectangle	rect;
-			public	MF		fState;
+			public  Rectangle	rect;			
 			public 	int    		wID;
-			public	IntPtr		hSubMenu;
-			public 	int		xTab;
+			public	IntPtr		hSubMenu;			
 			public  int 		pos;	/* Position in the menuitems array*/
 
 			public MENUITEM ()
-			{
-				xTab = 0;
+			{				
 				wID = 0;
 				pos = 0;
 				rect = new Rectangle ();
@@ -163,16 +156,7 @@ namespace System.Windows.Forms
 
 		static MenuAPI ()
 		{
-			string_format_text.LineAlignment = StringAlignment.Center;
-			string_format_text.Alignment = StringAlignment.Near;
-			string_format_text.HotkeyPrefix = HotkeyPrefix.Show;
-
-			string_format_shortcut.LineAlignment = StringAlignment.Center;
-			string_format_shortcut.Alignment = StringAlignment.Far;
-
-			string_format_menubar_text.LineAlignment = StringAlignment.Center;
-			string_format_menubar_text.Alignment = StringAlignment.Center;
-			string_format_menubar_text.HotkeyPrefix = HotkeyPrefix.Show;			
+			
 		}		
 		
 		static public IntPtr StoreMenuID (MENU menu)
@@ -299,7 +283,7 @@ namespace System.Windows.Forms
 		static public void CalcItemSize (Graphics dc, MENUITEM item, int y, int x, bool menuBar)
 		{
 			item.rect.Y = y;
-			item.rect.X = x;
+			item.rect.X = x;		
 
 			if (item.item.Visible == false)
 				return;
@@ -309,29 +293,38 @@ namespace System.Windows.Forms
 				item.rect.Width = -1;
 				return;
 			}
+			
+			if (item.item.MeasureEventDefined) {
+				MeasureItemEventArgs mi = new MeasureItemEventArgs (dc, item.pos);
+				item.item.PerformMeasureItem (mi);
+				item.rect.Height = mi.ItemHeight;
+				item.rect.Width = mi.ItemWidth;
+				return;
+			} else {		
 
-			SizeF size;
-			size =  dc.MeasureString (item.item.Text, MENU_FONT);
-			item.rect.Width = (int) size.Width;
-			item.rect.Height = (int) size.Height;
-
-			if (!menuBar) {
-
-				if (item.item.Shortcut != Shortcut.None && item.item.ShowShortcut) {
-					item.xTab = SM_CXMENUCHECK + MENU_TAB_SPACE + (int) size.Width;
-					size =  dc.MeasureString (" " + item.item.GetShortCutText (), MENU_FONT);
-					item.rect.Width += MENU_TAB_SPACE + (int) size.Width;
+				SizeF size;
+				size =  dc.MeasureString (item.item.Text, MENU_FONT);
+				item.rect.Width = (int) size.Width;
+				item.rect.Height = (int) size.Height;
+	
+				if (!menuBar) {
+	
+					if (item.item.Shortcut != Shortcut.None && item.item.ShowShortcut) {
+						item.item.XTab = SM_CXMENUCHECK + MENU_TAB_SPACE + (int) size.Width;
+						size =  dc.MeasureString (" " + item.item.GetShortCutText (), MENU_FONT);
+						item.rect.Width += MENU_TAB_SPACE + (int) size.Width;
+					}
+	
+					item.rect.Width += 4 + (SM_CXMENUCHECK * 2);
 				}
-
-				item.rect.Width += 4 + (SM_CXMENUCHECK * 2);
-			}
-			else {
-				item.rect.Width += MENU_BAR_ITEMS_SPACE;
-				x += item.rect.Width;
-			}
-
-			if (item.rect.Height < SM_CYMENU - 1)
-				item.rect.Height = SM_CYMENU - 1;
+				else {
+					item.rect.Width += MENU_BAR_ITEMS_SPACE;
+					x += item.rect.Width;
+				}
+	
+				if (item.rect.Height < SM_CYMENU - 1)
+					item.rect.Height = SM_CYMENU - 1;
+				}
 		}
 
 		static public void CalcPopupMenuSize (Graphics dc, IntPtr hMenu)
@@ -381,126 +374,6 @@ namespace System.Windows.Forms
     			menu.Height += SM_CYBORDER;
 		}
 
-		static public void DrawMenuItem (Graphics dc, MENUITEM item, int menu_height, bool menuBar)
-		{
-			StringFormat string_format;
-
-			if (item.item.Visible == false)
-				return;
-
-			if (menuBar)
-				string_format = string_format_menubar_text;
-			else
-				string_format = string_format_text;
-
-			if (item.item.Separator == true) {
-
-				dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow),
-					item.rect.X, item.rect.Y, item.rect.X + item.rect.Width, item.rect.Y);
-
-				dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonHilight),
-					item.rect.X, item.rect.Y + 1, item.rect.X + item.rect.Width, item.rect.Y + 1);
-
-				return;
-			}
-
-			Rectangle rect_text = item.rect;
-
-			if (!menuBar)
-				rect_text.X += SM_CXMENUCHECK;
-
-			if (item.item.BarBreak) { /* Draw vertical break bar*/
-
-				Rectangle rect = item.rect;
-				rect.Y++;
-	        		rect.Width = 3;
-	        		rect.Height = menu_height - 6;
-
-				dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow),
-					rect.X, rect.Y , rect.X, rect.Y + rect.Height);
-
-				dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonHilight),
-					rect.X + 1, rect.Y , rect.X +1, rect.Y + rect.Height);
-
-			}
-
-			if ((item.fState & MF.MF_HILITE) == MF.MF_HILITE) {
-				Rectangle rect = item.rect;
-				rect.X++;
-				rect.Width -=2;
-
-				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
-					(ThemeEngine.Current.ColorHilight), rect);
-			}
-
-			if (item.item.Enabled) {
-
-				Color color_text;
-
-				if ((item.fState & MF.MF_HILITE) == MF.MF_HILITE)
-					color_text = ThemeEngine.Current.ColorHilightText;
-				else
-					color_text = ThemeEngine.Current.ColorMenuText;
-
-
-				dc.DrawString (item.item.Text, MENU_FONT,
-					ThemeEngine.Current.ResPool.GetSolidBrush (color_text),
-					rect_text, string_format);
-
-				if (!menuBar && item.item.Shortcut != Shortcut.None && item.item.ShowShortcut) {
-
-					string str = item.item.GetShortCutText ();
-					Rectangle rect = rect_text;
-					rect.X = item.xTab;
-					rect.Width -= item.xTab;
-
-					dc.DrawString (str, MENU_FONT, ThemeEngine.Current.ResPool.GetSolidBrush (color_text),
-						rect, string_format_shortcut);
-
-				}
-			}
-			else {
-				ControlPaint.DrawStringDisabled (dc,
-					item.item.Text, MENU_FONT, Color.Black, rect_text,
-					string_format);
-			}
-
-			/* Draw arrow */
-			if (menuBar == false && item.item.IsPopup) {
-
-				Bitmap	bmp = new Bitmap (SM_CXARROWCHECK, SM_CYARROWCHECK);
-				Graphics gr = Graphics.FromImage (bmp);
-				Rectangle rect_arrow = new Rectangle (0, 0, SM_CXARROWCHECK, SM_CYARROWCHECK);
-				ControlPaint.DrawMenuGlyph (gr, rect_arrow, MenuGlyph.Arrow);
-				bmp.MakeTransparent ();
-				dc.DrawImage (bmp, item.rect.X + item.rect.Width - SM_CXARROWCHECK,
-					item.rect.Y + ((item.rect.Height - SM_CYARROWCHECK) /2));
-
-				gr.Dispose ();
-				bmp.Dispose ();
-			}
-
-			/* Draw checked or radio */
-			if (menuBar == false && item.item.Checked) {
-
-				Rectangle area = item.rect;
-				Bitmap	bmp = new Bitmap (SM_CXMENUCHECK, SM_CYMENUCHECK);
-				Graphics gr = Graphics.FromImage (bmp);
-				Rectangle rect_arrow = new Rectangle (0, 0, SM_CXMENUCHECK, SM_CYMENUCHECK);
-
-				if (item.item.RadioCheck)
-					ControlPaint.DrawMenuGlyph (gr, rect_arrow, MenuGlyph.Bullet);
-				else
-					ControlPaint.DrawMenuGlyph (gr, rect_arrow, MenuGlyph.Checkmark);
-
-				bmp.MakeTransparent ();
-				dc.DrawImage (bmp, area.X, item.rect.Y + ((item.rect.Height - SM_CYMENUCHECK) / 2));
-
-				gr.Dispose ();
-				bmp.Dispose ();
-			}
-
-		}
 
 		static public void DrawPopupMenu (Graphics dc, IntPtr hMenu, Rectangle cliparea, Rectangle rect)
 		{
@@ -530,8 +403,10 @@ namespace System.Windows.Forms
 
 			for (int i = 0; i < menu.items.Count; i++)
 				if (cliparea.IntersectsWith (((MENUITEM) menu.items[i]).rect)) {
-					DrawMenuItem (dc, (MENUITEM) menu.items[i], menu.Height, menu.bMenubar);
-
+					MENUITEM it = (MENUITEM) menu.items[i];
+					it.item.MenuHeight = menu.Height;
+					it.item.PerformDrawItem (new DrawItemEventArgs (dc, MENU_FONT,
+						it.rect, i, it.item.Status));
 			}
 		}
 
@@ -559,7 +434,7 @@ namespace System.Windows.Forms
 				}
 
 				x += item.rect.Width;
-				item.fState |= MF.MF_MENUBAR;
+				item.item.MenuBar = true;				
 
 				if (y + item.rect.Height > menu.Height)
 					menu.Height = item.rect.Height + y;
@@ -579,10 +454,14 @@ namespace System.Windows.Forms
 				MenuBarCalcSize (dc, hMenu, rect_menu.Width);
 
 			rect.Height = menu.Height;
-			rect.Width = menu.Width;
+			rect.Width = menu.Width;						
 
-			for (int i = 0; i < menu.items.Count; i++)
-				DrawMenuItem (dc, (MENUITEM) menu.items[i], menu.Height, true);
+			for (int i = 0; i < menu.items.Count; i++) {
+				MENUITEM it = (MENUITEM) menu.items[i];
+				it.item.MenuHeight = menu.Height;
+				it.item.PerformDrawItem (new DrawItemEventArgs (dc, MENU_FONT,
+						it.rect, i, it.item.Status));
+			}				
 		}
 
 		/*
@@ -611,8 +490,8 @@ namespace System.Windows.Forms
 			
 			/* Loop all items */
 			for (int i = 0; i < menu.items.Count; i++) {
-				it = (MENUITEM) menu.items[i];
-				if ((it.fState & MF.MF_HILITE) == MF.MF_HILITE) {
+				it = (MENUITEM) menu.items[i];			
+				if ((it.item.Status & DrawItemState.Selected) == DrawItemState.Selected) {
 					return it;
 				}				
 			}
@@ -627,7 +506,7 @@ namespace System.Windows.Forms
 			if (item == null)
 				return;				
 			
-			item.fState = item.fState & ~MF.MF_HILITE;
+			item.item.Status = item.item.Status &~ DrawItemState.Selected;
 			menu.Wnd.Invalidate (item.rect);
 		}
 
@@ -654,7 +533,7 @@ namespace System.Windows.Forms
 			}
 
 			menu.SelectedItem = item;
-			item.fState |= MF.MF_HILITE;
+			item.item.Status |= DrawItemState.Selected;			
 			menu.Wnd.Invalidate (item.rect);
 
 			item.item.PerformSelect ();					

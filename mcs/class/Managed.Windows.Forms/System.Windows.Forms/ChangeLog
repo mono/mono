@@ -17,6 +17,12 @@
 
 2005-02-04  Jordi Mas i Hernandez <jordi@ximian.com>
 	
+	* MenuItem.cs:
+	* MenuAPI.cs:
+		- Owner draw support (MeasureItem and DrawItem)
+
+2005-02-04  Jordi Mas i Hernandez <jordi@ximian.com>
+	
 	*  Menu.cs:
 		- Implements FindMergePosition and MergeMenu functions (very poor documented)
 		- Fixes MenuItems.Add range
