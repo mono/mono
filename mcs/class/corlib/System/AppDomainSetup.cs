@@ -31,6 +31,8 @@ namespace System {
 		bool publisher_policy;
 		private bool path_changed;
 		private LoaderOptimization loader_optimization;
+		bool disallow_binding_redirects;
+		bool disallow_code_downloads;
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern AppDomainSetup InitAppDomainSetup (AppDomainSetup setup);
@@ -193,6 +195,27 @@ namespace System {
 				shadow_copy_files = value;
 			}
 		}
-		
+
+#if NET_1_1
+		public bool DisallowBindingRedirects {
+			get {
+				return disallow_binding_redirects;
+			}
+
+			set {
+				disallow_binding_redirects = value;
+			}
+		}
+
+		public bool DisallowCodeDownload {
+			get {
+				return disallow_code_downloads;
+			}
+
+			set {
+				disallow_code_downloads = value;
+			}
+		}
+#endif
 	}
 }

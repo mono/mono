@@ -1,3 +1,14 @@
+2003-11-11  Miguel de Icaza  <miguel@ximian.com>
+
+	* AppDomain.cs, Activator.cs: New unimplmented entry points from
+	1.1 (Com activation related).
+	
+	* Exception.cs: Formatting.
+	
+	* IServiceProvider.cs: Add ComVisible (true).
+
+	* AppDomainSetup.cs: Add a couple more properties from .NET 1.1 
+
 2003-11-03  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* AppDomain.cs: Added some null checks in Load methods. This fixes bug

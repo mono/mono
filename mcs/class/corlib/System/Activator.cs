@@ -15,6 +15,7 @@ using System.Runtime.Remoting;
 using System.Runtime.Remoting.Activation;
 using System.Runtime.CompilerServices;
 using System.Security.Policy;
+using System.Configuration.Assemblies;
 
 namespace System 
 {
@@ -32,6 +33,15 @@ namespace System
 			throw new NotImplementedException(); 
 		}
 
+#if NET_1_1
+		[MonoTODO]
+		public static ObjectHandle CreateComInstanceFrom (string assemblyFile, string typeName,
+								  byte []hash, AssemblyHashAlgorithm hashalgo)
+		{
+			throw new NotImplementedException(); 
+		}
+#endif
+		
 		public static ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName)
 		{
 			return CreateInstanceFrom (assemblyFile, typeName, null);

@@ -27,6 +27,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Security.Principal;
 using System.Security.Policy;
 using System.Security;
+using System.Configuration.Assemblies;
 
 namespace System {
 
@@ -150,7 +151,15 @@ namespace System {
 			
 			throw new NotImplementedException();
 		}
-		
+
+#if NET_1_1
+		[MonoTODO]
+		public static ObjectHandle CreateComInstanceFrom (string assemblyFile, string typeName,
+								  byte []hash, AssemblyHashAlgorithm hashalgo)
+		{
+			throw new NotImplementedException(); 
+		}
+#endif
 
 		public ObjectHandle CreateInstance (string assemblyName, string typeName)
 		{

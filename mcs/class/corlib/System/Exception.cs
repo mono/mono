@@ -49,13 +49,13 @@ namespace System {
 
 			class_name		= info.GetString ("ClassName");
 			message			= info.GetString ("Message");
-			inner_exception	= (Exception) info.GetValue  ("InnerException", typeof (Exception));
 			help_link		= info.GetString ("HelpURL");
 			stack_trace		= info.GetString ("StackTraceString");
 			remote_stack_trace	= info.GetString ("RemoteStackTrace");
 			remote_stack_index	= info.GetInt32  ("RemoteStackIndex");
-			hresult				= info.GetInt32  ("HResult");
-			source				= info.GetString ("Source");
+			hresult                 = info.GetInt32  ("HResult");
+			source                  = info.GetString ("Source");
+			inner_exception	= (Exception) info.GetValue  ("InnerException", typeof (Exception));
 		}
 
 		public Exception (string msg, Exception e)
@@ -98,6 +98,11 @@ namespace System {
 			}
 		}
 
+		internal void SetMessage (string s)
+		{
+			message = s;
+		}
+		
 		public virtual string Message 
 		{
 			get 

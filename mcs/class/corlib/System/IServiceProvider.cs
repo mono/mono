@@ -8,13 +8,12 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System {
 
-//	[ComVisible(false)]
+	[ComVisible(true)]
 	public interface IServiceProvider {
-
 		object GetService (Type serviceType);
-
 	}
 }

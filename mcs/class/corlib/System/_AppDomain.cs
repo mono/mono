@@ -12,11 +12,13 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Globalization;
 using System.Runtime.Remoting;
+using System.Runtime.InteropServices;
 
 namespace System
 {
 
 [CLSCompliant(false)]
+[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 public interface _AppDomain {
 
 	string BaseDirectory {get; }
