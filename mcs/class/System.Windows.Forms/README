@@ -75,7 +75,6 @@ System.Windows.Forms README
 	X11R6_INCLUDE=/usr/X11R6/include
 	WINE_INCLUDE=/usr/local/include/wine
 	WINE_LIB=/usr/local/lib/wine
-	LIBMONO=/usr/local/lib/libmono.a
 	
 	If you type make from the mcs/class/System.Windows.Forms/WINELib
 	directory it should build: 
@@ -92,11 +91,26 @@ System.Windows.Forms README
 	application running in it access to WineLib/Win32 function calls. 
 	
 	Before starting any of the applications set the LD_LIBRARY_PATH to the
-	current directory (so DllImport can find the monostub.exe.so library):
-	        export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:.
-	
+	directory where the Wine libraries are located:
+	        export LD_LIBRARY_PATH=/usr/local/lib/wine
+
+	(In this example user32.dll.so can be found in /usr/local/lib/wine)
+
 	To start any of the applications you type (from the WINELib directory): 
 	        wine monostub.exe.so mono-winelibapp.exe 
 	
-	
+	You may also need to add some DLL mappings to the Mono config file (usually
+	in etc/mono/config) if applications are unable to find the Wine libraries.
+
+	Here are the DLL's in the current implementation (more are probably needed):
+
+		<configuration>
+		        <dllmap dll="user32.dll" target="user32.dll.so" />
+		        <dllmap dll="kernel32.dll" target="kernel32.dll.so" />
+		        <dllmap dll="gdi32.dll" target="gdi32.dll.so" />
+		        <dllmap dll="shell32.dll" target="shell32.dll.so" />
+		        <dllmap dll="comctl32.dll" target="comctl32.dll.so" />
+		</configuration>
+
+
 	

@@ -1,3 +1,6 @@
+2003-01-31  John Sohn <jsohn@columbus.rr.com>
+	* README: updated for latest WineLib and Mono
+
 2003-01-15  Duncan Mak  <duncan@ximian.com>
 
        * Make it not spam all those warnings. Blocking errors 0108 and also
