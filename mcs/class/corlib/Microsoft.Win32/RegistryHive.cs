@@ -9,7 +9,7 @@ using System;
 namespace Microsoft.Win32
 {
 	[Serializable]
-	public enum RegistryHive
+	public enum RegistryHive :uint
 	{
 		ClassesRoot = 0x80000000,
 		CurrentConfig = 0x80000005,

@@ -2,6 +2,8 @@
 --unsafe --nostdlib --noconfig
 -o ../lib/corlib_mcs.dll
 Microsoft.Win32/RegistryKey.cs
+Microsoft.Win32/Registry.cs
+Microsoft.Win32/RegistryHive.cs
 Mono/Runtime.cs
 System/Activator.cs
 System/AppDomain.cs
