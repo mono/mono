@@ -1,5 +1,9 @@
 2005-02-04  Zoltan Varga  <vargaz@freemail.hu>
 
+	* object.c (mono_class_proxy_vtable): Add missing _setup () calls.
+
+	* marshal.h: Add prototypes for ldfld/stfld_remote.
+
 	* appdomain.c (mono_domain_fire_assembly_load): Handle the case when
 	this is called during startup.
 	
