@@ -409,19 +409,20 @@ namespace System.Windows.Forms {
 					if (CanScrollRight) {
 						slider_pos++;
 						SizeTabs ();
+						Refresh ();
+					} else {
+						Invalidate (right);
 					}
-					Refresh ();
-					return;
 				} else if (left.Contains (e.X, e.Y)) {
 					left_slider_state = ButtonState.Pushed;
 					if (CanScrollLeft) {
 						slider_pos--;
 						SizeTabs ();
+						Refresh ();
+					} else {
+						Invalidate (left);
 					}
-					Refresh ();
-					return;
 				}
-
 			}
 
 			int count = Controls.Count;
