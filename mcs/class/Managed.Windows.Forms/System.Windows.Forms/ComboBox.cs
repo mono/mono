@@ -104,7 +104,7 @@ namespace System.Windows.Forms
 			clicked = false;
 			dropdown_width = -1;
 			max_length = 0;
-
+			integral_height = true;
 			
 			string_format = new StringFormat ();
 			
@@ -762,7 +762,7 @@ namespace System.Windows.Forms
 
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			return base.ToString () + ", Items.Count:" + Items.Count;
 		}
 
 		protected override void WndProc (ref Message m)
@@ -1214,7 +1214,7 @@ namespace System.Windows.Forms
 					height = owner.CBoxInfo.listbox_area.Height;
 
 					if (owner.IntegralHeight == true) {
-						int remaining = (height - 2 -
+						int remaining = (height -
 							ThemeEngine.Current.DrawComboListBoxDecorationBottom (owner.DropDownStyle) -
 							ThemeEngine.Current.DrawComboListBoxDecorationTop (owner.DropDownStyle)) %
 							(item_height - 2);							
@@ -1324,7 +1324,7 @@ namespace System.Windows.Forms
 				Rectangle item_rect = new Rectangle ();
 				int height = owner.GetItemHeight (index);
 
-				item_rect.X = 0;
+				item_rect.X = ThemeEngine.Current.DrawComboListBoxDecorationRight (owner.DropDownStyle);
 				item_rect.Width = textarea_drawable.Width;
 				item_rect.Y = 2 + ((height - 2) * (index - first_displayble));
 				item_rect.Height = height;
