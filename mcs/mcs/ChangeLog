@@ -1,5 +1,11 @@
 2003-02-09  Martin Baulig  <martin@ximian.com>
 
+	* codegen.cs (EmitContext.Mark): Just pass the arguments to
+	ILGenerator.MarkSequencePoint() which are actually used by the
+	symbol writer.
+
+2003-02-09  Martin Baulig  <martin@ximian.com>
+
 	* location.cs (SourceFile): New public sealed class.  This
 	contains the name and an index which is used in the location's token.
 	(Location): Reserve an appropriate number of bits in the token for
