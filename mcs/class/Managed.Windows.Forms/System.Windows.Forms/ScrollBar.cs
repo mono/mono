@@ -26,9 +26,12 @@
 //	Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.19 $
+// $Revision: 1.20 $
 // $Modtime: $
 // $Log: ScrollBar.cs,v $
+// Revision 1.20  2004/09/17 16:14:36  pbartok
+// - Added missing release of keyboard/mouse capture
+//
 // Revision 1.19  2004/09/05 08:03:51  jordi
 // fixes bugs, adds flashing on certain situations
 //
@@ -779,12 +782,14 @@ namespace System.Windows.Forms
     			if (firstbutton_state != ButtonState.Inactive && first_arrow_area.Contains (e.X, e.Y)) {
 
 				firstbutton_state = ButtonState.Normal;
+				this.Capture = false;
 				SmallDecrement ();
 			}
 
 			if (secondbutton_state != ButtonState.Inactive && second_arrow_area.Contains (e.X, e.Y)) {
 
 				secondbutton_state = ButtonState.Normal;
+				this.Capture = false;
 				SmallIncrement ();
 			}
 
