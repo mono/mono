@@ -8,6 +8,7 @@
  *             Ximian Inc
  */
 
+using System.Drawing;
 using System.Web.Mobile;
 
 namespace System.Web.UI.MobileControls
@@ -15,72 +16,186 @@ namespace System.Web.UI.MobileControls
 	public class Style //: IParserAttribute, ITemplateable, IStateManager,
 	                   //    ICloneable
 	{
+		private BooleanOption bold      = BooleanOption.NotSet;
+		private BooleanOption italic    = BooleanOption.NotSet;
+		private Alignment     alignment = Alignment.NotSet;
+		private Color         backColor = Color.Empty;
+		private Color         foreColor = Color.Empty;
+		private string        fontName  = String.Empty;
+		private FontSize      fontSize  = FontSize.NotSet;
+		private Wrapping      wrapping  = Wrapping.NotSet;
+
+		private bool marked = false;
+
+		private MobileControl  control = null;
+		private DeviceSpecific deviceSpecific;
+		private FontInfo       font;
+		private Style          referredStyle;
+
 		public Style()
 		{
 		}
 
-		[MonoTODO]
+		public object this[object key]
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+			set
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		public object this[object key, bool inherit]
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		public Alignment Alignment
+		{
+			get
+			{
+				return this.alignment;
+			}
+			set
+			{
+				this.alignment = value;
+			}
+		}
+
+		public Color BackColor
+		{
+			get
+			{
+				return this.backColor;
+			}
+			set
+			{
+				this.backColor = value;
+			}
+		}
+
+		public DeviceSpecific DeviceSpecific
+		{
+			get
+			{
+				return deviceSpecific;
+			}
+			set
+			{
+				deviceSpecific = value;
+			}
+		}
+
+		public FontInfo Font
+		{
+			get
+			{
+				if(font == null)
+				{
+					font = new FontInfo(this);
+				}
+				return font;
+			}
+		}
+
+		public Color ForeColor
+		{
+			get
+			{
+				return this.foreColor;
+			}
+			set
+			{
+				this.foreColor = value;
+			}
+		}
+
+		public bool IsTemlpated
+		{
+			get
+			{
+				if(this.deviceSpecific != null)
+				{
+					return deviceSpecific.HasTemplates;
+				} else if(ReferredStyle != null)
+				{
+					return ReferredStyle.IsTemlpated;
+				}
+				return false;
+			}
+		}
+
+		internal Style ReferredStyle
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+		}
+
 		internal BooleanOption Bold
 		{
 			get
 			{
-				throw new NotImplementedException();
+				return this.bold;
 			}
 			set
 			{
-				throw new NotImplementedException();
+				this.bold = value;
 			}
 		}
 
-		[MonoTODO]
 		internal BooleanOption Italic
 		{
 			get
 			{
-				throw new NotImplementedException();
+				return this.italic;
 			}
 			set
 			{
-				throw new NotImplementedException();
+				this.italic = value;
 			}
 		}
 
-		[MonoTODO]
 		internal string FontName
 		{
 			get
 			{
-				throw new NotImplementedException();
+				return this.fontName;
 			}
 			set
 			{
-				throw new NotImplementedException();
+				this.fontName = value;
 			}
 		}
 
-		[MonoTODO]
 		internal FontSize FontSize
 		{
 			get
 			{
-				throw new NotImplementedException();
+				return this.fontSize;
 			}
 			set
 			{
-				throw new NotImplementedException();
+				this.fontSize = value;
 			}
 		}
 
-		[MonoTODO]
 		public MobileControl Control
 		{
 			get
 			{
-				throw new NotImplementedException();
+				return this.control;
 			}
 			set
 			{
-				throw new NotImplementedException();
+				this.control = value;
 			}
 		}
 	}

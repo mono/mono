@@ -1,6 +1,11 @@
 
 2003-04-04	Gaurav Vaish <gvaish_mono AT lycos.com>
 
+	* DeviceSpecificChoice.cs: FindAndApplyProperty(...) - Bug fix.
+	* Style.cs               : Added several properties.
+
+2003-04-04	Gaurav Vaish <gvaish_mono AT lycos.com>
+
 	* DeviceSpecificChoice.cs: HasTemplates { get; },
 	                         : FindAndApplyEvent(...)     - Completed
 	                         : FindAndApplyProperty(...),

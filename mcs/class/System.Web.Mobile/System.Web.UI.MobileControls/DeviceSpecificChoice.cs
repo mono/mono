@@ -186,6 +186,7 @@ namespace System.Web.UI.MobileControls
 				}
 				throw new NotImplementedException();
 			}
+			return retVal;
 		}
 
 		private bool FindAndApplyEvent(object parentObj, string key,
@@ -213,7 +214,7 @@ namespace System.Web.UI.MobileControls
 		private bool CheckOnPageEvaluator(MobileCapabilities capabilities,
 		                                  out bool evaluatorResult)
 		{
-			boolr retVal = false;
+			bool retVal = false;
 			evaluatorResult = false;
 			TemplateControl tc = Owner.ClosestTemplateControl;
 			// I have to get the method (MethodInfo?) and then invoke
