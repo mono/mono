@@ -816,12 +816,18 @@ namespace System.Xml.XPath
 
 		[MonoTODO]
 		public virtual IXmlSchemaInfo SchemaInfo {
-			get { throw new NotImplementedException (); }
+			get {
+				return null;
+			}
 		}
 
 		[MonoTODO]
 		public override object TypedValue {
-			get { throw new NotImplementedException (); }
+			get {
+				if (XmlType != null)
+					throw new NotImplementedException ();
+				return Value;
+			}
 		}
 
 		[MonoTODO]
@@ -876,7 +882,11 @@ namespace System.Xml.XPath
 
 		[MonoTODO]
 		public override XmlSchemaType XmlType {
-			get { throw new NotImplementedException (); }
+			get {
+				if (SchemaInfo != null)
+					throw new NotImplementedException ();
+				return null;
+			}
 		}
 
 		[MonoTODO]

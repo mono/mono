@@ -1,5 +1,13 @@
 2004-08-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XPathAtomicValue.cs : Value was not returning expected value when
+	  it is created as new XPathAtomicValue (object, XmlSchemaType).
+	  Compute stringValue and reuse.
+	* XPathNavigator.cs : Temporarily stubbed as to ignore SchemaInfo
+	  (for checking XQuery implementation).
+
+2004-08-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XPathAtomicValue.cs : Handle .ctor() with object parameter more
 	  precisely (still not enough, for list argument).
 	  Removed commended blocks.

@@ -242,40 +242,71 @@ namespace System.Xml.XPath
 		// This method works like ValueAsString.
 		public override string Value {
 			get {
+				if (stringValue != null)
+					return stringValue;
 				switch (xmlTypeCode) {
 				case XmlTypeCode.Boolean:
-					return XQueryConvert.BooleanToString (booleanValue);
+					stringValue = XQueryConvert.BooleanToString (booleanValue);
+					break;
 				case XmlTypeCode.DateTime:
-					return XQueryConvert.DateTimeToString (dateTimeValue);
+					stringValue = XQueryConvert.DateTimeToString (dateTimeValue);
+					break;
 				case XmlTypeCode.Decimal:
-					return XQueryConvert.DecimalToString (decimalValue);
+					stringValue = XQueryConvert.DecimalToString (decimalValue);
+					break;
 				case XmlTypeCode.Double:
-					return XQueryConvert.DoubleToString (doubleValue);
+					stringValue = XQueryConvert.DoubleToString (doubleValue);
+					break;
 				case XmlTypeCode.Long:
-					return XQueryConvert.IntegerToString (longValue);
+					stringValue = XQueryConvert.IntegerToString (longValue);
+					break;
 				case XmlTypeCode.Int:
-					return XQueryConvert.IntToString (intValue);
+					stringValue = XQueryConvert.IntToString (intValue);
+					break;
 				case XmlTypeCode.Float:
-					return XQueryConvert.FloatToString (floatValue);
+					stringValue = XQueryConvert.FloatToString (floatValue);
+					break;
 				case XmlTypeCode.String:
 					return stringValue;
 
 				case XmlTypeCode.None:
 				case XmlTypeCode.Item:
 				case XmlTypeCode.AnyAtomicType:
-					if (objectValue is string)
-						return (string) objectValue;
+					switch (XmlTypeCodeFromRuntimeType (objectValue.GetType (), false)) {
+					case XmlTypeCode.String:
+						stringValue = (string) objectValue;
+						break;
+					case XmlTypeCode.DateTime:
+						stringValue = XQueryConvert.DateTimeToString ((DateTime) objectValue);
+						break;
+					case XmlTypeCode.Boolean:
+						stringValue = XQueryConvert.BooleanToString ((bool) objectValue);
+						break;
+					case XmlTypeCode.Float:
+						stringValue = XQueryConvert.FloatToString ((float) objectValue);
+						break;
+					case XmlTypeCode.Double:
+						stringValue = XQueryConvert.DoubleToString ((double) objectValue);
+						break;
+					case XmlTypeCode.Decimal:
+						stringValue = XQueryConvert.DecimalToString ((decimal) objectValue);
+						break;
+					case XmlTypeCode.Long:
+						stringValue = XQueryConvert.IntegerToString ((long) objectValue);
+						break;
+					case XmlTypeCode.Int:
+						stringValue = XQueryConvert.IntToString ((int) objectValue);
+						break;
+					}
 					break;
-
-//				// FIXME: more check
-//				case XmlTypeCode.AnyAtomicType:
-//					return objectValue.ToString ();
 				}
+				if (stringValue != null)
+					return stringValue;
 
 				if (objectValue != null)
-					throw new InvalidOperationException (String.Format ("Conversion from {0} to {1} is not supported", objectValue.GetType (), XmlTypeCode.String));
+					throw new InvalidOperationException (String.Format ("Conversion from runtime type {0} to {1} is not supported", objectValue.GetType (), XmlTypeCode.String));
 				else
-					throw new InvalidOperationException (String.Format ("Conversion from {0} ({1}) to {2} is not supported", schemaType.QualifiedName, xmlTypeCode, XmlTypeCode.String));
+					throw new InvalidOperationException (String.Format ("Conversion from schema type {0} (type code {1}) to {2} is not supported", schemaType.QualifiedName, xmlTypeCode, XmlTypeCode.String));
 			}
 		}
 
@@ -285,8 +316,6 @@ namespace System.Xml.XPath
 				switch (xmlTypeCode) {
 				case XmlTypeCode.Boolean:
 					return booleanValue;
-//				case XmlTypeCode.DateTime:
-//					return XQueryConvert.DateTimeToBoolean (dateTimeValue);
 				case XmlTypeCode.Decimal:
 					return XQueryConvert.DecimalToBoolean (decimalValue);
 				case XmlTypeCode.Double:
