@@ -1,3 +1,8 @@
+2004-06-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: change/restore the IPrincipal in their own methods
+	and make them internal.
+
 2004-06-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpContext.cs: reverting Pedro's patch and sending mail with test

@@ -868,9 +868,7 @@ namespace System.Web
 			_savedContext = HttpContext.Context;
 			HttpContext.Context = _Context;
 			HttpRuntime.TimeoutManager.Add (_Context);
-
-			_savedUser = Thread.CurrentPrincipal;
-			Thread.CurrentPrincipal = Context.User;	
+			SetPrincipal (Context.User);
 		}
 
 		internal void OnStateExecuteLeave ()
@@ -878,10 +876,25 @@ namespace System.Web
 			RestoreThreadCulture ();
 			HttpRuntime.TimeoutManager.Remove (_Context);
 			HttpContext.Context = _savedContext;
-			if (null != _savedUser)  {
-				Thread.CurrentPrincipal = _savedUser;
-				_savedUser = null;
-			}
+			RestorePrincipal ();
+		}
+
+		internal void SetPrincipal (IPrincipal principal)
+		{
+			// Don't overwrite _savedUser if called from inside a step
+			if (_savedUser == null)
+				_savedUser = Thread.CurrentPrincipal;
+
+			Thread.CurrentPrincipal = principal;
+		}
+
+		internal void RestorePrincipal ()
+		{
+			if (_savedUser == null)
+				return;
+
+			Thread.CurrentPrincipal = _savedUser;
+			_savedUser = null;
 		}
 
 		internal void ClearError ()

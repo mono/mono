@@ -1,3 +1,8 @@
+2004-06-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DefaultAuthenticationModule.cs: set the IPrincipal for this thread
+	once we have a user. Fixes bug #59683.
+
 2004-04-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FormsAuthenticationModule.cs: re-read configuration files if needed
