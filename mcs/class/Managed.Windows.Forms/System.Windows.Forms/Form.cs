@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.9 $
+// $Revision: 1.10 $
 // $Modtime: $
 // $Log: Form.cs,v $
+// Revision 1.10  2004/09/13 16:56:04  pbartok
+// - Fixed #region names
+// - Moved properties and methods into their proper #regions
+//
 // Revision 1.9  2004/09/13 16:51:29  pbartok
 // - Added Accept and CancelButton properties
 // - Added ProcessDialogKey() method
@@ -79,13 +83,11 @@ namespace System.Windows.Forms {
 		private IButtonControl	accept_button;
 		private IButtonControl	cancel_button;
 		private DialogResult	dialog_result;
-		
 		#endregion	// Local Variables
 
 		#region Public Constructor & Destructor
 		public Form() {
 			closing = false;
-			//XplatUI.Version();
 		}
 		#endregion	// Public Constructor & Destructor
 
@@ -93,14 +95,6 @@ namespace System.Windows.Forms {
 		#endregion	// Public Static Properties
 
 		#region Public Instance Properties
-		protected override Size DefaultSize {
-			get {
-				return new Size (250, 250);
-			}
-		}
-		#endregion	// Public Instance Properties
-
-		#region Protected Instance Properties
 		public IButtonControl AcceptButton {
 			get {
 				return accept_button;
@@ -131,6 +125,16 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public IButtonControl CancelButton {
+			get {
+				return cancel_button;
+			}
+
+			set {
+				cancel_button = value;
+			}
+		}
+
 		[MonoTODO("Add code to terminate modal application loop")]
 		public DialogResult DialogResult {
 			get {
@@ -143,23 +147,9 @@ namespace System.Windows.Forms {
 				// Add termination code here
 			}
 		}
-
-		public IButtonControl CancelButton {
-			get {
-				return cancel_button;
-			}
-
-			set {
-				cancel_button = value;
-			}
-		}
-
 		#endregion	// Public Instance Properties
 
-		#region Public Static Methods
-		#endregion	// Public Static Methods
-
-		#region Public Instance Methods
+		#region Protected Instance Properties
 		[MonoTODO("Need to add MDI support")]
 		protected override CreateParams CreateParams {
 			get {
@@ -183,6 +173,19 @@ namespace System.Windows.Forms {
 				return create_params;
 			}
 		}
+
+		protected override Size DefaultSize {
+			get {
+				return new Size (250, 250);
+			}
+		}
+		#endregion	// Protected Instance Properties
+
+
+		#region Public Static Methods
+		#endregion	// Public Static Methods
+
+		#region Public Instance Methods
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
@@ -224,7 +227,6 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Methods
 
 		#region Events
-
 		protected virtual void OnActivated(EventArgs e) {
 			if (Activated != null) {
 				Activated(this, e);
