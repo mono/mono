@@ -1,3 +1,7 @@
+2004-04-01  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* SqlNullValueException.cs: Use a more clarifying error message.
+	  
 2003-12-19  Tim Coleman <tim@timcoleman.com>
 	* SqlBytes.cs SqlChars.cs SqlDate.cs SqlStreamChars.cs SqlTime.cs
 	* SqlUtcDateTime.cs SqlXmlReader.cs:

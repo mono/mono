@@ -15,7 +15,7 @@ namespace System.Data.SqlTypes {
 	public sealed class SqlNullValueException : SqlTypeException
 	{
 		public SqlNullValueException ()
-			: base (Locale.GetText ("The value property is null"))
+			: base (Locale.GetText ("Data is Null. This method or property cannot be called on Null values."))
 		{
 		}
 
