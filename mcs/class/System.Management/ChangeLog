@@ -1,3 +1,7 @@
+2003-03-20  Martin Willemoes Hansen <mwh@sysrq.dk>
+	
+	* Stubed out System.Management.Instrumentation
+
 2003-03-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* list: added new files.
