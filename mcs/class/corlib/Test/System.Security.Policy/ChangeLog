@@ -1,3 +1,7 @@
+2004-01-26  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CodeGroupTest.cs: Replaced "\r\n" with Environment.NewLine.
+
 2004-01-25  David Sheldon <dave-mono@earth.li>
 
        * UrlTest.cs:  Changed "\r\n" in strings to use

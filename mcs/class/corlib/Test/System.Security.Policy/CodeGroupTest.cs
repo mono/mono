@@ -71,6 +71,8 @@ namespace MonoTests.System.Security.Policy {
 
 	[TestFixture]
 	public class CodeGroupTest : Assertion {
+
+		private const string ps_Name = "TestName";
 		
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
@@ -151,7 +153,6 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void PermissionSetName ()
 		{
-			const string ps_Name = "TestName";
 			PolicyStatement ps = new PolicyStatement(new NamedPermissionSet (ps_Name));
 			MyCodeGroup cg = new MyCodeGroup (new AllMembershipCondition (), ps);
 			AssertEquals ("PermissionSetName", ps_Name, cg.PermissionSetName);
@@ -160,7 +161,6 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void Equals ()
 		{
-			const string ps_Name = "TestName";
 			PolicyStatement ps = new PolicyStatement (new NamedPermissionSet (ps_Name));
 			MyCodeGroup cg = new MyCodeGroup (new AllMembershipCondition (), ps);
 			cg.Name = "SomeName";
@@ -182,7 +182,6 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void EqualsWithChildren ()
 		{
-			const string ps_Name = "TestName";
 			PolicyStatement ps = new PolicyStatement (new NamedPermissionSet (ps_Name));
 			
 			MyCodeGroup cgChild = new MyCodeGroup(new ApplicationDirectoryMembershipCondition(), ps);
@@ -208,7 +207,6 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void RemoveChild ()
 		{
-			const string ps_Name = "TestName";
 			PolicyStatement ps = new PolicyStatement (new NamedPermissionSet (ps_Name));
 			MyCodeGroup cg = new MyCodeGroup (new AllMembershipCondition (), ps);
 			cg.Name = "SomeName";
@@ -233,7 +231,6 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void RemoveChild_NonExistant () 
 		{
-			const string ps_Name = "TestName";
 			PolicyStatement ps = new PolicyStatement (new NamedPermissionSet (ps_Name));
 
 			MyCodeGroup cgChild = new MyCodeGroup (new ApplicationDirectoryMembershipCondition (), ps);
@@ -262,7 +259,7 @@ namespace MonoTests.System.Security.Policy {
 			SecurityElement se = cg.ToXml ();
 			string s = se.ToString ();
 			Assert ("ToXml-Starts", s.StartsWith ("<CodeGroup class=\"MonoTests.System.Security.Policy.MyCodeGroup,"));
-			Assert ("ToXml-Ends", s.EndsWith ("version=\"1\"/>\r\n</CodeGroup>\r\n"));
+			Assert ("ToXml-Ends", s.EndsWith ("version=\"1\"/>" + Environment.NewLine + "</CodeGroup>" + Environment.NewLine));
 
 			cg.AddChild (new MyCodeGroup (new AllMembershipCondition (), new PolicyStatement(new PermissionSet (PermissionState.Unrestricted))));
 			se = cg.ToXml ();
@@ -273,7 +270,6 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void ToFromXmlRoundtrip () 
 		{
-			const string ps_Name = "TestName";
 			PolicyStatement ps = new PolicyStatement (new NamedPermissionSet (ps_Name));
 			MyCodeGroup cg = new MyCodeGroup (new AllMembershipCondition (), ps);
 			cg.Name = "SomeName";
@@ -294,7 +290,6 @@ namespace MonoTests.System.Security.Policy {
 		[ExpectedException (typeof (MissingMethodException))]
 		public void ToFromXmlRoundtrip_WithChildren () 
 		{
-			const string ps_Name = "TestName";
 			PolicyStatement ps = new PolicyStatement (new NamedPermissionSet (ps_Name));
 
 			MyCodeGroup cgChild = new MyCodeGroup (new ApplicationDirectoryMembershipCondition (), ps);
@@ -318,7 +313,6 @@ namespace MonoTests.System.Security.Policy {
 		[Test]
 		public void ToFromXmlRoundtrip_WithChildren_Second () 
 		{
-			const string ps_Name = "TestName";
 			PolicyStatement ps = new PolicyStatement (new NamedPermissionSet (ps_Name));
 
 			// only the child is MySecondCodeGroup
