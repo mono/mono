@@ -30,6 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 namespace Microsoft.VisualBasic {
+	[System.SerializableAttribute]
 	public enum CallType : int {
 		Method = 1,
 		Get = 2,

@@ -30,6 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 namespace Microsoft.VisualBasic {
+	[System.SerializableAttribute]
 	public enum DateInterval : int {
 		Year = 0,
 		Quarter = 1,

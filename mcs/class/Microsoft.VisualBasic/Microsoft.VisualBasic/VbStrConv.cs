@@ -40,6 +40,7 @@ namespace Microsoft.VisualBasic
 	/// members in your code in place of the actual values.
 	/// </summary>
 	[System.FlagsAttribute] 
+	[System.SerializableAttribute]
 	public enum VbStrConv : int {
 		/// <summary>
 		/// Performs no conversion 

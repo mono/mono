@@ -30,6 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 namespace Microsoft.VisualBasic {
+	[System.SerializableAttribute]
 	public enum FirstWeekOfYear : int {
 		System = 0,
 		Jan1 = 1,

@@ -31,6 +31,7 @@
 //
 namespace Microsoft.VisualBasic {
 	[System.FlagsAttribute] 
+	[System.SerializableAttribute]
 	public enum MsgBoxStyle : int {
 		ApplicationModal = 0,
 		DefaultButton1 = 0,
