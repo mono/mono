@@ -35,6 +35,8 @@ public class Blah {
 		int i = 1;
 		int j = 2;
 
+		int [] arr = new int [2] { 0, 1 };
+
 		Foo (i, j);
 		if (got != 3)
 			return 1;
@@ -45,6 +47,9 @@ public class Blah {
 
 		if (Bar (i, j, 5, 4, 3, 3, 2) != 19)
 			return 4;
+
+		//if (Bar (1, arr) != 1)
+		//	return 5;
 		
 		if (got != 2)
 			return 3;

@@ -56,9 +56,10 @@ public class Blah {
 		p.x = 15;
 		p.y = 20;
 
-		Console.WriteLine (PtInRect (ref r, p));
-			
-
+		if (!PtInRect (ref r, p))
+			return 1;
+		
+		Console.WriteLine ("Point lies inside rect");
 		Console.WriteLine ("Test passes");
 		return 0;
 	}
