@@ -1205,6 +1205,8 @@ namespace Mono.CSharp {
 					return new DoubleConstant ((double) v);
 				if (target_type == TypeManager.char_type)
 					return new CharConstant ((char) v);
+				if (target_type == TypeManager.decimal_type)
+					return new DecimalConstant ((decimal) v);
 			}
 			if (expr is SByteConstant){
 				sbyte v = ((SByteConstant) expr).Value;
@@ -1229,6 +1231,8 @@ namespace Mono.CSharp {
 					return new DoubleConstant ((double) v);
 				if (target_type == TypeManager.char_type)
 					return new CharConstant ((char) v);
+				if (target_type == TypeManager.decimal_type)
+					return new DecimalConstant ((decimal) v);
 			}
 			if (expr is ShortConstant){
 				short v = ((ShortConstant) expr).Value;
@@ -1253,6 +1257,8 @@ namespace Mono.CSharp {
 					return new DoubleConstant ((double) v);
 				if (target_type == TypeManager.char_type)
 					return new CharConstant ((char) v);
+				if (target_type == TypeManager.decimal_type)
+					return new DecimalConstant ((decimal) v);
 			}
 			if (expr is UShortConstant){
 				ushort v = ((UShortConstant) expr).Value;
@@ -1277,6 +1283,8 @@ namespace Mono.CSharp {
 					return new DoubleConstant ((double) v);
 				if (target_type == TypeManager.char_type)
 					return new CharConstant ((char) v);
+				if (target_type == TypeManager.decimal_type)
+					return new DecimalConstant ((decimal) v);
 			}
 			if (expr is IntConstant){
 				int v = ((IntConstant) expr).Value;
@@ -1301,6 +1309,8 @@ namespace Mono.CSharp {
 					return new DoubleConstant ((double) v);
 				if (target_type == TypeManager.char_type)
 					return new CharConstant ((char) v);
+				if (target_type == TypeManager.decimal_type)
+					return new DecimalConstant ((decimal) v);
 			}
 			if (expr is UIntConstant){
 				uint v = ((UIntConstant) expr).Value;
@@ -1325,6 +1335,8 @@ namespace Mono.CSharp {
 					return new DoubleConstant ((double) v);
 				if (target_type == TypeManager.char_type)
 					return new CharConstant ((char) v);
+				if (target_type == TypeManager.decimal_type)
+					return new DecimalConstant ((decimal) v);
 			}
 			if (expr is LongConstant){
 				long v = ((LongConstant) expr).Value;
@@ -1349,6 +1361,8 @@ namespace Mono.CSharp {
 					return new DoubleConstant ((double) v);
 				if (target_type == TypeManager.char_type)
 					return new CharConstant ((char) v);
+				if (target_type == TypeManager.decimal_type)
+					return new DecimalConstant ((decimal) v);
 			}
 			if (expr is ULongConstant){
 				ulong v = ((ULongConstant) expr).Value;
@@ -1373,6 +1387,8 @@ namespace Mono.CSharp {
 					return new DoubleConstant ((double) v);
 				if (target_type == TypeManager.char_type)
 					return new CharConstant ((char) v);
+				if (target_type == TypeManager.decimal_type)
+					return new DecimalConstant ((decimal) v);
 			}
 			if (expr is FloatConstant){
 				float v = ((FloatConstant) expr).Value;
@@ -1397,6 +1413,8 @@ namespace Mono.CSharp {
 					return new DoubleConstant ((double) v);
 				if (target_type == TypeManager.char_type)
 					return new CharConstant ((char) v);
+				if (target_type == TypeManager.decimal_type)
+					return new DecimalConstant ((decimal) v);
 			}
 			if (expr is DoubleConstant){
 				double v = ((DoubleConstant) expr).Value;
@@ -1421,6 +1439,8 @@ namespace Mono.CSharp {
 					return new FloatConstant ((float) v);
 				if (target_type == TypeManager.char_type)
 					return new CharConstant ((char) v);
+				if (target_type == TypeManager.decimal_type)
+					return new DecimalConstant ((decimal) v);
 			}
 
 			return null;
@@ -5337,6 +5357,11 @@ namespace Mono.CSharp {
 			if (type_queried == null)
 				return null;
 
+			if (!TypeManager.IsUnmanagedType (type_queried)){
+				Report.Error (208, "Cannot take the size of an unmanaged type (" + TypeManager.CSharpName (type_queried) + ")");
+				return null;
+			}
+			
 			type = TypeManager.int32_type;
 			eclass = ExprClass.Value;
 			return this;

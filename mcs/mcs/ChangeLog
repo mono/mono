@@ -1,5 +1,10 @@
 2002-10-03  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (Cast.TryReduce): Also handle decimal types when
+	trying to perform a constant fold on the type.
+
+	* typemanager.cs (IsUnmanagedtype): Partially implemented.
+
 	* parameter.cs: Removed ResolveAndDefine, as it was not needed, as
 	that only turned off an error report, and did nothing else. 
 

@@ -1062,7 +1062,30 @@ public class TypeManager {
 		else
 			return false;
 	}
-	
+
+	//
+	// Whether a type is unmanaged.  This is used by the unsafe code (25.2)
+	//
+	public static bool IsUnmanagedType (Type t)
+	{
+		if (IsBuiltinType (t))
+			return true;
+		if (IsEnumType (t))
+			return true;
+		if (t.IsPointer)
+			return true;
+
+		if (IsValueType (t)){
+			//
+			// FIXME: Check that every field in the struct is Unmanaged
+			//
+
+			return true;
+		}
+		
+		return false;
+	}
+		
 	public static bool IsValueType (Type t)
 	{
 		if (t.IsSubclassOf (TypeManager.value_type))
