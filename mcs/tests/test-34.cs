@@ -22,7 +22,7 @@ public class Blah {
 		Foo (i, j);
 		Foo (ref i, ref j);
 
-		Bar (i, j);
+		Bar (i, j, 5, 4, 3, 3, 2);
 
 		return  0;
 	}

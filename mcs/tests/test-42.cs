@@ -110,7 +110,7 @@ class Y {
 	static int arrays ()
 	{
 		int [] a = new int [10];
-		int i;
+		int i, j;
 		
 		for (i = 0; i < 10; i++)
 			a [i]++;
@@ -118,6 +118,25 @@ class Y {
 		for (i = 0; i < 10; i++)
 			if (a [i] != 1)
 				return 100;
+
+		int [,] b = new int [10,10];
+		for (i = 0; i < 10; i++){
+			for (j = 0; j < 10; j++){
+				b [i,j] = i * 10 + j;
+				if (i < 5)
+					b [i,j]++;
+				else
+					++b [i,j];
+			}
+		}
+
+		for (i = 0; i < 10; i++){
+			for (j = 0; j < 10; j++){
+				if (b [i,j] != i * 10 + (j + 1))
+					return 101;
+			}
+		}
+		
 		return 0;
 	}
 	
