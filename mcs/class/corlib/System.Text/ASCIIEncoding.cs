@@ -169,7 +169,10 @@ public class ASCIIEncoding : Encoding
 		}
 		int count = byteCount;
 		while (count-- > 0) {
-			chars [charIndex++] = (char)(bytes [byteIndex++]);
+			char c = (char)(bytes [byteIndex++]);
+			if (c > 127)
+				c = '?';
+			chars [charIndex++] = c;
 		}
 		return byteCount;
 	}
