@@ -82,14 +82,13 @@ namespace System.Windows.Forms {
 				if (up.Contains (args.X, args.Y)){
 					up_pressed = true;
 					pressed = up;
-					GoUp ();
 				} else if (down.Contains (args.X, args.Y)){
 					down_pressed = true;
 					pressed = down;
-					GoDown ();
 				} else
 					return;
 
+				Click ();
 				Invalidate (pressed);
 				Capture = true;
 				InitTimer ();
@@ -97,16 +96,6 @@ namespace System.Windows.Forms {
 				mouse_in = down_pressed | up_pressed;
 			}
 
-			void GoUp ()
-			{
-				Console.WriteLine ("Go Up" + DateTime.Now);
-			}
-
-			void GoDown ()
-			{
-				Console.WriteLine ("Go Down" + DateTime.Now);
-			}
-			
 			protected override void OnMouseUp (MouseEventArgs args)
 			{
 				if (Capture){
@@ -132,7 +121,7 @@ namespace System.Windows.Forms {
 				int kd = SystemInformation.KeyboardDelay;
 				kd = kd < 0 ? 0 : (kd > 4 ? 4 : kd);
 				timer.Interval = StartInterval;
-				timer.Tick += ClockTick;
+				timer.Tick += new EventHandler (ClockTick);
 				timer.Enabled = true;
 			}
 
@@ -158,9 +147,9 @@ namespace System.Windows.Forms {
 			void Click ()
 			{
 				if (up_pressed)
-					GoUp ();
+					updownbase.GoUp ();
 				if (down_pressed)
-					GoDown ();
+					updownbase.GoDown ();
 			}
 
 			protected override void OnMouseMove (MouseEventArgs args)
@@ -248,6 +237,16 @@ namespace System.Windows.Forms {
 			
 		}
 
+		protected override void OnMouseWheel (MouseEventArgs args)
+		{
+			base.OnMouseWheel (args);
+
+			if (args.Delta > 0)
+				GoUp ();
+			else if (args.Delta < 0)
+				GoDown ();
+		}
+		
 		protected override void OnLayout (LayoutEventArgs args)
 		{
 			base.OnLayout (args);
@@ -259,5 +258,16 @@ namespace System.Windows.Forms {
 			//scroll.SetBounds (entry_width + 1, bounds.Y, scrollbar_button_size, bounds.Height);
 			spinner.SetBounds (entry_width + 1, bounds.Y, scrollbar_button_size, bounds.Height);
 		}
+
+		void GoUp ()
+		{
+			Console.WriteLine ("Go Up" + DateTime.Now);
+		}
+		
+		void GoDown ()
+		{
+			Console.WriteLine ("Go Down" + DateTime.Now);
+		}
+			
 	}
 }

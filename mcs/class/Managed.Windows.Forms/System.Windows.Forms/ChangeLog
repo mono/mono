@@ -5,9 +5,12 @@
 
 2004-11-22  Miguel de Icaza  <miguel@ximian.com>
 
+	* UpDownBase.cs (InitTimer): Use prehistoric C# 1.0 notation for
+	event handler.
+	
 	* NumericUpDown.cs: Added new implementation.
 	* UpDownBase.cs: Added new implementation.
-	
+
 	* XplatUIWin32.cs (KeyboardSpeed, KeyboardDelay): added default
 	implementations. 
 	
