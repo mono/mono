@@ -28,7 +28,7 @@ namespace MonoTests.System.Xml
        WhiteSpaceTest("double", "2.3");
        WhiteSpaceTest("time", "12:34:56");
        WhiteSpaceTest("duration", "P1347Y");
-       WhiteSpaceTest("dateTime", "2003-10-10Z12:34:56.78");
+       WhiteSpaceTest("dateTime", "2003-10-10T12:34:56.78");
        WhiteSpaceTest("gYearMonth", "2003-10");
        WhiteSpaceTest("gYear", "2003");
        WhiteSpaceTest("gMonthDay", "--12-12");  // 
@@ -62,17 +62,19 @@ FIXME: Really we want to test the value of whitespace more
       XmlValidatingReader vr = new XmlValidatingReader(new XmlTextReader(new StringReader("<a xmlns='http://example.com/testCase'>\n\n"+valid+"\n\n</a>" )));
       vr.Schemas.Add(schema);
       vr.ValidationType = ValidationType.Schema;
-      vr.ValidationEventHandler += new ValidationEventHandler(ValidationCallbackOne);
+//      vr.ValidationEventHandler += new ValidationEventHandler(ValidationCallbackOne);
       while(vr.Read()) { };
       vr.Close();
       
-      Assert(type + " doesn't collapse whitespace", passed);
+      Assert(type + " doesn't collapse whitespace: " + (errorInfo != null ? errorInfo.Message : null), passed);
     }
 
     bool passed = true;
+    ValidationEventArgs errorInfo;
 
     public void ValidationCallbackOne(object sender, ValidationEventArgs args) {
       passed = false;
+      errorInfo = args;
     }
 
 
