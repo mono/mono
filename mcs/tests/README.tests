@@ -9,6 +9,10 @@ Test cases listed by Category:
 
   test-147.cs
 
+* Try/Catch blocks
+
+  verify-1.cs
+
 Test cases listed by Number:
 ============================
 
@@ -17,7 +21,11 @@ test-146.cs
 Test for Binary.EmitBrancheable() to ensure we're emitting correct
 unsinged branch targets.
 
-Test-147.cs
+test-147.cs
 -----------
 Testing `new' modifier.
+
+verify-1.cs
+-----------
+Test whether we do not jump out of the method in a Try/Finally block.
 
