@@ -1,5 +1,9 @@
 2004-05-13  Sanjay Gupta <gsanjay@novell.com>
 	
+	* MetaFile.cs: Added Editor attribute to class Metafile.
+
+2004-05-13  Sanjay Gupta <gsanjay@novell.com>
+	
 	* WmfPlaceableFileHeader.cs: Removed extra property Id.
 
 2004-05-04  Vladimir Vukicevic  <vladimir@pobox.com>

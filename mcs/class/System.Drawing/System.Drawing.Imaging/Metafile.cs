@@ -9,12 +9,14 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace System.Drawing.Imaging {
 
 	[Serializable]
 	[ComVisible (false)]
+	[Editor ("System.Drawing.Design.MetafileEditor, " + Consts.AssemblySystem_Drawing_Design, typeof (System.Drawing.Design.UITypeEditor))]
 	public sealed class Metafile : Image {
 
 		// constructors
