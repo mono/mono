@@ -41,7 +41,8 @@ using Mono.Xml.Schema;
 namespace System.Xml
 {
 #if NET_2_0
-	[Obsolete]
+	[Obsolete("Use XmlReader created by XmlReader.Create() method using"
+		+ " appropriate XmlReaderSettings instead.")]
 	public class XmlValidatingReader : XmlReader, IXmlLineInfo, IXmlNamespaceResolver
 #else
 	public class XmlValidatingReader : XmlReader, IXmlLineInfo
