@@ -1,5 +1,13 @@
 2004-01-26  Duncan Mak  <duncan@ximian.com>
 
+	* bitmap.c (GdipCreateBitmapFromScan0): Use GdipAlloc here instead
+	of malloc.
+	(gdip_bitmap_dispose): Call GdipFree on bitmap->data.scan0 here.
+
+	Jordi did the work for this, not me; I'm just the messenger.
+
+2004-01-26  Duncan Mak  <duncan@ximian.com>	
+
 	* graphics.c (GdipDrawPath): Doh! Added stupid breaks inside the
 	switch, so we can draw simple paths (lines) now. For more complex
 	curves, the array is holding some NaNs, so I'll need to look into

@@ -65,7 +65,7 @@ gdip_bitmap_new ()
 void 
 gdip_bitmap_dispose (GpBitmap *bitmap)
 {
-	
+	GdipFree (bitmap->data.scan0);
 }
 
 void 
@@ -171,7 +171,7 @@ GdipCreateBitmapFromScan0 (int width, int height, int stride, int format, void *
 		return InvalidParameter;
 
 	if (scan0 == NULL)
-                scan0 = malloc (stride*height);
+                scan0 = GdipAlloc (stride*height);
 			
 	switch (format) {
 	case Format24bppRgb:
