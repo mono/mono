@@ -31,6 +31,7 @@ using System;
 
 //namespace UtilityLibrary.Win32
 namespace System.Windows.Forms{
+#if HAVE_SHELL_SUPPORT
 	internal class ShellHandle : IDisposable
 	{
 		#region Class Variables
@@ -95,6 +96,7 @@ namespace System.Windows.Forms{
 		#endregion
 	
 	}
+#endif
 
 	internal class COMInterface : IDisposable
 	{

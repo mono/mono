@@ -512,7 +512,7 @@ namespace System.Windows.Forms{
 		#endregion
 
 		#region Shell32.dll functions
-
+#if HAVE_SHELL_SUPPORT 
 		[DllImport("shell32.dll", CharSet=CharSet.Auto)]
 		internal static extern IntPtr SHGetFileInfo(string drivePath, int fileAttributes,
 			out SHFILEINFO fileInfo, int countBytesFileInfo, ShellFileInfoFlags flags);
@@ -552,7 +552,7 @@ namespace System.Windows.Forms{
 				Debug.WriteLine(e.Message);
 			}
 		}
-
+#endif
 		#endregion
 
 		#region Common Controls functions
