@@ -2423,7 +2423,7 @@ public class TypeManager {
 			// We found methods, turn the search into "method scan"
 			// mode.
 			//
-			
+
 			method_list = CopyNewMethods (method_list, list);
 			mt &= (MemberTypes.Method | MemberTypes.Constructor);
 		} while (searching);

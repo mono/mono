@@ -1505,6 +1505,62 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
+		///   Returns an expression that can be used to invoke operator true
+		///   on the expression if it exists.
+		/// </summary>
+		static public StaticCallExpr GetOperatorTrue (EmitContext ec, Expression e, Location loc)
+		{
+			MethodBase method;
+			Expression operator_group;
+				
+			operator_group = MethodLookup (ec, e.Type, "op_True", loc);
+			if (operator_group == null)
+				return null;
+
+			ArrayList arguments = new ArrayList ();
+			arguments.Add (new Argument (e, Argument.AType.Expression));
+			method = Invocation.OverloadResolve (ec, (MethodGroupExpr) operator_group, arguments, loc);
+
+			if (method == null)
+				return null;
+
+			return new StaticCallExpr ((MethodInfo) method, arguments, loc);
+		}
+
+		/// <summary>
+		///   Resolves the expression `e' into a boolean expression: either through
+		///   an implicit conversion, or through an `operator true' invocation
+		/// </summary>
+		public static Expression ResolveBoolean (EmitContext ec, Expression e, Location loc)
+		{
+			e = e.Resolve (ec);
+			if (e == null)
+				return null;
+
+			Expression converted = e;
+			if (e.Type != TypeManager.bool_type)
+				converted = Expression.ConvertImplicit (ec, e, TypeManager.bool_type, new Location (-1));
+
+			//
+			// If no implicit conversion to bool exists, try using `operator true'
+			//
+			if (converted == null){
+				Expression operator_true = Expression.GetOperatorTrue (ec, e, loc);
+				if (operator_true == null){
+					Report.Error (
+						31, loc, "Can not convert the expression to a boolean");
+					return null;
+				}
+				e = operator_true;
+			} else
+				e = converted;
+
+			ec.Mark (loc);
+
+			return e;
+		}
+		
+		/// <summary>
 		///   Computes the MethodGroup for the user-defined conversion
 		///   operators from source_type to target_type.  `look_for_explicit'
 		///   controls whether we should also include the list of explicit
@@ -1518,17 +1574,10 @@ namespace Mono.CSharp {
 			Expression mg5 = null, mg6 = null, mg7 = null, mg8 = null;
 			string op_name;
 
-			//
-			// FIXME : How does the False operator come into the picture ?
-			// This doesn't look complete and very correct !
-			//
-			if (target_type == TypeManager.bool_type && !look_for_explicit)
-				op_name = "op_True";
-			else
-				op_name = "op_Implicit";
+			op_name = "op_Implicit";
 
 			MethodGroupExpr union3;
-			
+
 			mg1 = MethodLookup (ec, source_type, op_name, loc);
 			if (source_type.BaseType != null)
 				mg2 = MethodLookup (ec, source_type.BaseType, op_name, loc);
@@ -1596,7 +1645,6 @@ namespace Mono.CSharp {
 				return null;
 			
 			Type most_specific_source, most_specific_target;
-
 #if BLAH
 			foreach (MethodBase m in union.Methods){
 				Console.WriteLine ("Name: " + m.Name);

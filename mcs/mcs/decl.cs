@@ -1248,6 +1248,7 @@ namespace Mono.CSharp {
 			// If this is a method-only search, we try to use the method cache if
 			// possible; a lookup in the method cache will return a MemberInfo with
 			// the correct ReflectedType for inherited methods.
+			
 			if (method_search && (method_hash != null))
 				applicable = (ArrayList) method_hash [name];
 			else
@@ -1306,8 +1307,9 @@ namespace Mono.CSharp {
 			// search, we restart in method-only search mode if the first match is
 			// a method.  This ensures that we return a MemberInfo with the correct
 			// ReflectedType for inherited methods.
-			if (do_method_search && (list.Count > 0))
+			if (do_method_search && (list.Count > 0)){
 				return FindMembers (MemberTypes.Method, bf, name, filter, criteria);
+			}
 
 			return new MemberList (list);
 		}

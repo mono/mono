@@ -44,27 +44,6 @@ namespace Mono.CSharp {
 			return DoEmit (ec);
 		}
 		
-		public static Expression ResolveBoolean (EmitContext ec, Expression e, Location loc)
-		{
-			e = e.Resolve (ec);
-			if (e == null)
-				return null;
-			
-			if (e.Type != TypeManager.bool_type){
-				e = Expression.ConvertImplicit (ec, e, TypeManager.bool_type,
-								new Location (-1));
-			}
-
-			if (e == null){
-				Report.Error (
-					31, loc, "Can not convert the expression to a boolean");
-			}
-
-			ec.Mark (loc);
-
-			return e;
-		}
-		
 		/// <remarks>
 		///    Encapsulates the emission of a boolean test and jumping to a
 		///    destination.
@@ -155,7 +134,7 @@ namespace Mono.CSharp {
 		{
 			Report.Debug (1, "START IF BLOCK", loc);
 
-			expr = ResolveBoolean (ec, expr, loc);
+			expr = Expression.ResolveBoolean (ec, expr, loc);
 			if (expr == null){
 				return false;
 			}
@@ -255,7 +234,7 @@ namespace Mono.CSharp {
 			if (!EmbeddedStatement.Resolve (ec))
 				ok = false;
 
-			expr = ResolveBoolean (ec, expr, loc);
+			expr = Expression.ResolveBoolean (ec, expr, loc);
 			if (expr == null)
 				ok = false;
 			else if (expr is BoolConstant){
@@ -331,7 +310,7 @@ namespace Mono.CSharp {
 		{
 			bool ok = true;
 
-			expr = ResolveBoolean (ec, expr, loc);
+			expr = Expression.ResolveBoolean (ec, expr, loc);
 			if (expr == null)
 				return false;
 
@@ -457,7 +436,7 @@ namespace Mono.CSharp {
 			}
 
 			if (Test != null){
-				Test = ResolveBoolean (ec, Test, loc);
+				Test = Expression.ResolveBoolean (ec, Test, loc);
 				if (Test == null)
 					ok = false;
 				else if (Test is BoolConstant){
