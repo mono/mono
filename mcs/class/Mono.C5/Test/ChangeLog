@@ -1,5 +1,9 @@
 2005-01-19  Martin Baulig  <martin@ximian.com>
 
+	* Sorting.cs: 10000 elements is enough for us.
+
+2005-01-19  Martin Baulig  <martin@ximian.com>
+
 	* trees/RedBlackTreeSetTests.cs: Put the threading tests into a
 	"Threading" category, so we can exclude them when running in the
 	debugger.

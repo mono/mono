@@ -44,7 +44,7 @@ namespace nunit.SortingTests
 		{
 			ic = new IC();
 			ran = new Random(3456);
-			length = 100000;
+			length = 10000;
 			a = new int[length];
 			for (int i = 0; i < length; i++)
 				a[i] = ran.Next();
@@ -106,7 +106,7 @@ namespace nunit.SortingTests
 		{
 			ic = new IC();
 			ran = new Random(3456);
-			length = 100000;
+			length = 10000;
 			a = new int[length];
 			for (int i = 0; i < length; i++)
 				a[i] = ran.Next(3, 23);
@@ -165,7 +165,7 @@ namespace nunit.SortingTests
 		public void Init()
 		{
 			ic = new IC();
-			length = 100000;
+			length = 10000;
 			a = new int[length];
 			for (int i = 0; i < length; i++)
 				a[i] = i;
@@ -224,7 +224,7 @@ namespace nunit.SortingTests
 		public void Init()
 		{
 			ic = new IC();
-			length = 100000;
+			length = 10000;
 			a = new int[length];
 			for (int i = 0; i < length; i++)
 				a[i] = -i;
