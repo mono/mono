@@ -1,5 +1,10 @@
 2004-11-25  Martin Baulig  <martin@ximian.com>
 
+	* mini.c (mono_method_to_ir): In CEE_CALL, don't allow calling any
+	uninflated generic methods.
+
+2004-11-25  Martin Baulig  <martin@ximian.com>
+
 	* mini.c (mono_method_to_ir): Don't allow any uninflated generic methods.
 
 2004-11-24  Martin Baulig  <martin@ximian.com>
