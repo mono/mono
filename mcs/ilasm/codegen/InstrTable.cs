@@ -195,7 +195,6 @@ namespace Mono.ILASM {
 
                         inst_table["ldc.i4.s"] = new ILToken (Token.INSTR_I, IntOp.ldc_i4_s);
                         inst_table["ldc.i4"] = new ILToken (Token.INSTR_I, IntOp.ldc_i4);
-                        inst_table["ldc.i8"] = new ILToken (Token.INSTR_I, IntOp.ldc_i4);
                         inst_table["unaligned"] =  new ILToken (Token.INSTR_I, IntOp.unaligned);
 
                         //
@@ -279,6 +278,7 @@ namespace Mono.ILASM {
                         inst_table["ldstr"] = new ILToken (Token.INSTR_STRING, MiscInstr.ldstr);
                         inst_table["ldc.r4"] = new ILToken (Token.INSTR_R, MiscInstr.ldc_r4);
                         inst_table["ldc.r8"] = new ILToken (Token.INSTR_R, MiscInstr.ldc_r8);
+                        inst_table["ldc.i8"] = new ILToken (Token.INSTR_I8, MiscInstr.ldc_i8);
                         inst_table["switch"] = new ILToken (Token.INSTR_SWITCH, MiscInstr._switch);
                         inst_table["calli"] = new ILToken (Token.INSTR_SIG, MiscInstr.calli);
                         inst_table["ldtoken"] = new ILToken (Token.INSTR_TOK, MiscInstr.ldtoken);
