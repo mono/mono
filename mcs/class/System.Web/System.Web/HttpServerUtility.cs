@@ -279,7 +279,7 @@ namespace System.Web
 			{
 				if(s[i] == '%')
 				{
-					tmp = s[i+1];
+					tmp = s[i+1].ToString ();
 					tmp += s[i+2];
 					dest += char.Parse(tmp);
 				} 

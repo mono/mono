@@ -1,3 +1,8 @@
+2002-03-28  Martin Baulig  <martin@gnome.org>
+
+	* HttpServerUtils.cs (UrlDecode): You cannot implicitly cast a
+	char to a string, use ToString() instead.
+
 2002-03-16  Gaurav Vaish  <gavish@iitk.ac.in>
 
 	* WebCategoryAttribute.cs
