@@ -1399,20 +1399,13 @@ namespace System {
 
 			if (length == 0)
 				return String.Empty;
+
 			String res = new String (length);
 			str = res.c_str;
 
-			// NOTE: Not all the characters are adjacent at the beginning of the
-			//	array.  StringBuilder.Append() will place characters at the end
-			//	of the array, potentially leaving null characters in between.
-			int CopyCount = 0;
-			for (i = startIndex; i < this.length && CopyCount < length; i++){
-				// Don't copy null characters
-				if ((int)this.c_str[i] != 0) {
-					str[CopyCount] = this.c_str[i];
-					CopyCount++;
-				}
-			}
+			for (i = startIndex; i < startIndex + length; i++)
+				str[i - startIndex] = this.c_str[i];
+
 			return res;
 		}
 

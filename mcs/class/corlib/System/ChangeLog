@@ -1,3 +1,8 @@
+2002-04-16  Nick Drochak  <ndrochak@gol.com>
+
+	* String.cs (SubString): revert my change.  I can't reproduce the
+	problem anymore.
+
 2002-04-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Attribute.cs: added GetHashCode and Equals.
