@@ -217,10 +217,13 @@ System.ComponentModel/EditorBrowsableState.cs
 System.ComponentModel/EventDescriptorCollection.cs
 System.ComponentModel/IComponent.cs
 System.ComponentModel/ISite.cs
+System.ComponentModel/ListBindableAttribute.cs
 System.ComponentModel/MarshalByValueComponent.cs
 System.ComponentModel/PropertyChangedEventHandler.cs
 System.ComponentModel/PropertyTabScope.cs
 System.ComponentModel/ReadOnlyAttribute.cs
+System.ComponentModel/RefreshProperties.cs
+System.ComponentModel/RefreshPropertyAttribute.cs
 System.ComponentModel/Win32Exception.cs
 System.ComponentModel/ITypeDescriptorContext.cs
 System.ComponentModel/ToolboxItemAttribute.cs
