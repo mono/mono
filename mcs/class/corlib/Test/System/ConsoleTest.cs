@@ -240,6 +240,10 @@ public class ConsoleTest : TestCase
 			endPos = s.Position;
 		}
 
+		// test writing a null value		
+		string x = null;
+		Console.Write (x);
+
 		// TODO - Likewise for char[], decimal, double, int, long, object, single, uint32, uint64
 		// TODO - write with format string
 	}
@@ -277,6 +281,10 @@ public class ConsoleTest : TestCase
 			AssertEquals("Wrong char", c.ToString(), line);
 			endPos = s.Position;
 		}
+
+		// test writing a null value		
+		string x = null;
+		Console.WriteLine (x);
 
 		// TODO - Likewise for char[], decimal, double, int, long, object, single, uint32, uint64
 		// TODO - write with format string

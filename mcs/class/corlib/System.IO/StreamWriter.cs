@@ -191,7 +191,8 @@ namespace System.IO {
 			if (DisposedAlready)
 				throw new ObjectDisposedException("StreamWriter");
 
-			Write (value.ToCharArray (), 0, value.Length);
+			if (value != null)
+				Write (value.ToCharArray (), 0, value.Length);
 		}
 
 		public override void Close() {
