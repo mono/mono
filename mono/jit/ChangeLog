@@ -1,3 +1,11 @@
+2001-12-04  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg: impl. UNBOX, NEWSTRUCT, removed VTYPE, bug fixes,
+	removed the locaddr nonterminal, reimplemented value types
+	
+	* jit.c: reimplemented value type support, better support for
+	enumeration types. 
+
 2001-12-03  Miguel de Icaza  <miguel@ximian.com>
 
 	* x86.brg, jit.c: Implement conv.ovf.u4, conv.ovf.u2, conv.ovf.i2,

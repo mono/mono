@@ -1,3 +1,9 @@
+2001-12-04  Dietmar Maurer  <dietmar@ximian.com>
+
+	* object.c (mono_object_allocate): removed static, so that the jit
+	can allocate value types.
+
+	* icall.c (ves_icall_System_DateTime_GetNow): impl.
 
 Mon Dec 3 17:02:01 CET 2001 Paolo Molaro <lupus@ximian.com>
 
