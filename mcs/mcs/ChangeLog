@@ -9,6 +9,9 @@
 
 	(everywhere): Use the above appropriately.
 
+	* cs-parser.jay (for_statement): Update for array initialization while
+	declaring variables.
+
 2001-11-21  Ravi Pratap  <ravi@ximian.com>
 
 	* parameter.cs (GetCallingConvention): Always return

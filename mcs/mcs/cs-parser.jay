@@ -2756,17 +2756,25 @@ for_statement
 			}
 
 			foreach (VariableDeclaration decl in var_declarators){
-				if (decl.expression_or_array_initializer is Expression){
-					Expression expr = (Expression) decl.expression_or_array_initializer;
-					Assign a = new Assign (
-						new LocalVariableReference (
-							assign_block, decl.identifier),
-							expr, decl.Location);
 
-					assign_block.AddStatement (new StatementExpression (a));
+				Expression expr;
+				if (decl.expression_or_array_initializer is Expression){
+					expr = (Expression) decl.expression_or_array_initializer;
+					
 				} else {
-					Console.WriteLine ("Not handling array initializers, strange");
+
+					ArrayList init = (ArrayList) decl.expression_or_array_initializer;
+					
+					string base_type = type.Substring (0, type.IndexOf ("["));
+					string rank = type.Substring (type.IndexOf ("["));
+					
+					expr = new ArrayCreation (base_type, rank, init, decl.Location);
 				}
+
+				Assign a = new Assign (new LocalVariableReference (assign_block, decl.identifier),
+						       expr, decl.Location);
+				
+				assign_block.AddStatement (new StatementExpression (a));
 			}
 			$3 = null;
 		} 
