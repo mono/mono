@@ -120,7 +120,7 @@ namespace MonoTests.System.Drawing{
 			Assert.AreEqual (Color.Black.B, color.B);										
 		}
 		
-		//[Test]
+		[Test]
 		public void Clone()
 		{
 			string sInFile = getInFile ("bitmaps/almogaver24bits.bmp");
@@ -140,7 +140,7 @@ namespace MonoTests.System.Drawing{
 			Assert.AreEqual (colororg50, colornew50);				
 		}	
 		
-		//[Test]
+		[Test]
 		public void CloneImage()
 		{
 			string sInFile = getInFile ("bitmaps/almogaver24bits.bmp");			
@@ -148,9 +148,9 @@ namespace MonoTests.System.Drawing{
 			
 			Bitmap bmpNew = (Bitmap) bmp.Clone ();			
 			
-			/*Assert.AreEqual (bmp.Width, bmpNew.Width);
+			Assert.AreEqual (bmp.Width, bmpNew.Width);
 			Assert.AreEqual (bmp.Height, bmpNew.Height);		
-			Assert.AreEqual (bmp.PixelFormat, bmpNew.PixelFormat);			*/
+			Assert.AreEqual (bmp.PixelFormat, bmpNew.PixelFormat);
 			
 		}	
 
