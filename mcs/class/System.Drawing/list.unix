@@ -197,3 +197,4 @@ System.Drawing/impl/Xr/Pen.cs
 System.Drawing/impl/Xr/GDKfunctions.cs
 System.Drawing.Imaging/BmpCodec.cs
 System.Drawing.Imaging/JPEGCodec.cs
+System.Drawing/impl/Xr/SolidBrush.cs

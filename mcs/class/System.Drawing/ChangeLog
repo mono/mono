@@ -1,3 +1,6 @@
+2003-06-18 Alexandre Pigolkine <pigolkine@gmx.de>
+	* list.unix		changed
+
 2003-06-15 Alexandre Pigolkine <pigolkine@gmx.de>
 	* list.unix		files added
 	* makefile.gnu	--unsafe flag, cdecl delegates
