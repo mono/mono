@@ -8,104 +8,27 @@ export __SECURITY_BOOTSTRAP_DB=$(topdir)/class/corlib
 #
 # Here, we define a bunch of variables.
 
-ifdef PLATFORM_MONO_NATIVE
-test_against = $(corlib)
-else
-test_against = $(reslib)
-endif
-
+corlib_flags = /unsafe /nostdlib
 LOCAL_MCS_FLAGS = /nowarn:649 /nowarn:169 -d:INSIDE_CORLIB
 
-gmcs = $(topdir)/gmcs/gmcs.exe
+LIBRARY = corlib.dll
+LIBRARY_NAME = mscorlib.dll
+LIB_MCS_FLAGS = $(corlib_flags)
 
-corlib = $(topdir)/class/lib/$(PROFILE)/mscorlib.dll
-testlib = corlib_test.dll
-cmplib = $(topdir)/class/lib/$(PROFILE)/corlib_cmp.dll
-reslib = $(topdir)/class/lib/$(PROFILE)/corlib_res.dll
-plattestlib = corlib_plattest.dll
-
-corpdb = $(patsubst %.dll,%.pdb,$(corlib))
-testpdb = $(patsubst %.dll,%.pdb,$(testlib))
-cmppdb = $(patsubst %.dll,%.pdb,$(cmplib))
-respdb = $(patsubst %.dll,%.pdb,$(reslib))
-plattestpdb = $(patsubst %.dll,%.pdb,$(plattestlib))
-
-sourcefile = corlib.dll.sources
-response = $(depsdir)/$(PROFILE)_corlib.dll.response
-makefrag = $(depsdir)/$(PROFILE)_corlib.dll.makefrag
-stampfile = $(depsdir)/$(PROFILE)_corlib.dll.stamp
 # disable, until people fix their code...
 #corlib_flags = /unsafe /nostdlib /d:INSIDE_CORLIB
-corlib_flags = /unsafe /nostdlib
 
-net_2_0_dir = $(DESTDIR)$(prefix)/lib/mono/2.0
+ifeq (net_2_0, $(PROFILE))
+LIBRARY_INSTALL_DIR = $(prefix)/lib/mono/2.0
+else
+LIBRARY_INSTALL_DIR = $(prefix)/lib
+endif
 
-net_2_0_bootstrap_response = $(depsdir)/corlib_net_2_0_bootstrap.dll.response
-net_2_0_bootstrap_makefrag = $(depsdir)/corlib_net_2_0_bootstrap.dll.makefrag
-net_2_0_bootstrap_stampfile = $(depsdir)/corlib_net_2_0_bootstrap.dll.stamp
-
-net_2_0_response = $(depsdir)/corlib_net_2_0.dll.response
-net_2_0_makefrag = $(depsdir)/corlib_net_2_0.dll.makefrag
-net_2_0_stampfile = $(depsdir)/corlib_net_2_0.dll.stamp
-
-test_sourcefile = corlib_test.dll.sources
-test_response = $(depsdir)/$(PROFILE)_$(testlib).response
-test_makefrag = $(depsdir)/$(PROFILE)_$(testlib).makefrag
-test_stampfile = $(depsdir)/$(PROFILE)_$(testlib).stamp
-test_nunitfw = $(topdir)/class/lib/$(PROFILE)/nunit.framework.dll
-test_flags = /nowarn:0618 /nowarn:0672 /unsafe /r:$(test_against) /r:$(test_nunitfw)
-
-cmp_response = $(depsdir)/$(PROFILE)_corlib_cmp.dll.response
-cmp_makefrag = $(depsdir)/$(PROFILE)_corlib_cmp.dll.makefrag
-cmp_stampfile = $(depsdir)/$(PROFILE)_corlib_cmp.dll.stamp
-cmp_flags = /r:$(PLATFORM_CORLIB) $(corlib_flags)
-
-res_response = $(depsdir)/$(PROFILE)_corlib_res.dll.response
-res_makefrag = $(depsdir)/$(PROFILE)_corlib_res.dll.makefrag
-res_stampfile = $(depsdir)/$(PROFILE)_corlib_res.dll.stamp
-res_flags = /r:$(PLATFORM_CORLIB) $(corlib_flags)
-
-plattest_excludes = corlib_plattest.dll.excludes
-plattest_response = $(depsdir)/$(PROFILE)_$(plattestlib).response
-plattest_makefrag = $(depsdir)/$(PROFILE)_$(plattestlib).makefrag
-plattest_stampfile = $(depsdir)/$(PROFILE)_$(plattestlib).stamp
-plattest_flags = /debug+ /debug:full /nowarn:0618 /nowarn:0672 /unsafe /r:$(PLATFORM_CORLIB) /r:$(test_nunitfw)
-
-# Here, we make all.
-
-all-local: $(corlib)
-
-install-local: $(corlib) $(makefrag)
-	@if test $(PROFILE) = "net_2_0" ; then \
-		echo $(MKINSTALLDIRS) $(net_2_0_dir) ; \
-		$(MKINSTALLDIRS) $(net_2_0_dir) ; \
-		echo $(INSTALL_LIB) $(corlib) $(net_2_0_dir) ; \
-		$(INSTALL_LIB) $(corlib) $(net_2_0_dir) ; \
-	else \
-		echo $(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib ; \
-		$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib ; \
-		echo $(INSTALL_LIB) $(corlib) $(DESTDIR)$(prefix)/lib ; \
-		$(INSTALL_LIB) $(corlib) $(DESTDIR)$(prefix)/lib ; \
-	fi
-
-uninstall-local:
-	@if test $(PROFILE) = "net_2_0" ; then \
-		-rm -f $(net_2_0_dir)/mscorlib.dll
-	else \
-		-rm -f $(DESTDIR)$(prefix)/lib/mscorlib.dll
-	fi
-
-clean-local:
-	-rm -f $(corlib) $(cmplib) $(testlib) $(reslib) $(plattestlib) TestResult.xml \
-	       $(response) $(makefrag) $(stampfile) \
-	       $(net_2_0_bootstrap_response) $(net_2_0_bootstrap_makefrag) $(net_2_0_bootstrap_stampfile) \
-	       $(net_2_0_response) $(net_2_0_makefrag) $(net_2_0_stampfile) \
-	       $(test_response) $(test_makefrag) $(test_stampfile) \
-	       $(cmp_response) $(cmp_makefrag) $(cmp_stampfile) \
-	       $(res_response) $(res_makefrag) $(res_stampfile) \
-	       $(plattest_response) $(plattest_makefrag) $(plattest_stampfile) \
-	       $(corpdb) $(cmppdb) $(testpdb) $(respdb) $(plattestpdb)
-
+CLEAN_FILES = $(cmplib) $(reslib) $(plattestlib) $(plattestlib).sources \
+	       $(net20bootstrap_response) $(net20bootstrap_makefrag) \
+	       $(cmp_response) $(cmp_makefrag) \
+	       $(res_response) $(res_makefrag) \
+	       $(cmppdb) $(respdb) $(plattestpdb)
 
 # If building on a non mono-native platform, default
 # to running the unit tests on its corlib, to see if
@@ -116,125 +39,104 @@ clean-local:
 # You can access either one on demand with either 'make
 # run-monotest' or 'make run-plattest'.
 
-$(test_nunitfw):
-	(cd ${topdir}/nunit20 && make)
+plattestlib = corlib_plattest.dll
+plattestpdb = $(patsubst %.dll,%.pdb,$(plattestlib))
+reslib = $(topdir)/class/lib/$(PROFILE)/corlib_res.dll
+cmplib = $(topdir)/class/lib/$(PROFILE)/corlib_cmp.dll
 
-ifdef PLATFORM_MONO_NATIVE
-test-local: $(test_nunitfw) $(test_against) $(testlib)
+$(plattestlib).sources: corlib_test.dll.sources $(plattestlib).excludes
+	sort corlib_test.dll.sources $(plattestlib).excludes | uniq -u >$@
 
-run-test-local: run-monotest
-
-else
-test-local: $(test_nunitfw) $(plattestlib)
-
-run-test-local: run-plattest
-
+ifndef PLATFORM_MONO_NATIVE
+test_lib = $(plattestlib)
+test_against = $(PLATFORM_CORLIB)
 endif
+TEST_MCS_FLAGS = /debug+ /debug:full /nowarn:0618 /nowarn:0672 /unsafe
 
 run-test-ondotnet-local: run-plattest-ondotnet
 
-run-monotest: $(test_against) $(testlib)
-	$(TEST_RUNTIME) $(TEST_HARNESS) $(testlib)
+ifdef PLATFORM_MONO_NATIVE
+run-monotest: run-test
+else
+run-monotest:
+	$(MAKE) $(reslib)
+	$(MAKE) test_lib=corlib_test.dll test_against=$(reslib) run-test
 
-run-plattest: $(plattestlib)
-	$(TEST_RUNTIME) $(TEST_HARNESS) $(plattestlib)
+run-plattest:
+	$(MAKE) test_lib=$(plattestlib) test_against='$(PLATFORM_CORLIB)' run-test
+endif
 
 run-plattest-ondotnet: $(plattestlib)
 	$(TEST_HARNESS) $(plattestlib)
 
-# OK, that was the easy part. Now we get to the fun bits.
-#
-# first, make dist.
-
-DISTFILES = $(sourcefile) $(test_sourcefile) \
+EXTRA_DISTFILES = \
 	corlib.dll.win32-excludes corlib_cmp.dll.excludes corlib_res.dll.excludes \
-	$(plattest_excludes) \
+	$(plattestlib).excludes \
 	Test/ms_run_test.sh
 
-# see $(topdir)/build/library.make for explanation of what's going on
-# here.
+ifeq (net_2_0, $(PROFILE))
+# Net 2.0 corlib is built with in-tree 'gmcs'
+LIBRARY_COMPILE = MONO_PATH="../lib/net_2_0_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(gmcs) $(USE_MCS_FLAGS) /define:NET_1_1 /define:NET_2_0
+else
+LIBRARY_COMPILE = $(BOOT_COMPILE)
+endif
 
-dist-local: dist-default
-	for f in `cat $(sourcefile)` `cat $(test_sourcefile) |sed -e 's,^\(.\),Test/\1,'` ; do \
-	    dest=`dirname $(distdir)/$$f` ; \
-	    $(MKINSTALLDIRS) $$dest && cp $$f $$dest || exit 1 ; \
-	done
+include ../../build/library.make
 
-# plain ol corlib
+gmcs = $(topdir)/gmcs/gmcs.exe
+net20bootstraplib = $(topdir)/class/lib/net_2_0_bootstrap/mscorlib.dll
 
-$(corlib): $(makefrag) $(response) $(stampfile) 
-	@if test $(PROFILE) = "net_2_0" ; then \
-		$(MAKE) corlib_net_2_0 || exit 1 ; \
-	else \
-		$(MAKE) corlib_compile || exit 1 ; \
-	fi
+ifeq (net_2_0, $(PROFILE))
+$(the_lib): $(gmcs)
+endif
 
-corlib_compile: $(makefrag) $(response) $(stampfile) 
-	$(BOOT_COMPILE) $(LIBRARY_FLAGS) $(corlib_flags) /target:library /out:../lib/default/mscorlib.dll @$(response)
-
-# A bootstrap corlib 2.0 needs to be built so gmcs can be built and the full net 2.0 corlib can be built
-# here we go,....
-
-corlib_net_2_0: corlib_net_2_0_compile
-
-corlib_net_2_0_compile: corlib_net_2_0_bootstrap $(net_2_0_makefrag) $(net_2_0_response) $(net_2_0_stampfile) $(gmcs)
-	MONO_PATH="../lib/net_2_0_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(gmcs) $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(corlib_flags) /define:NET_1_1 /define:NET_2_0 /target:library /out:../lib/net_2_0/mscorlib.dll @$(net_2_0_response)
-
-corlib_net_2_0_bootstrap: $(net_2_0_bootstrap_response) $(net_2_0_bootstrap_stampfile)
-	$(BOOTSTRAP_MCS) /nowarn:649 /nowarn:169 /define:INSIDE_CORLIB /define:NET_1_1 /define:BOOTSTRAP_NET_2_0 $(corlib_flags) /target:library /out:../lib/net_2_0_bootstrap/mscorlib.dll @$(net_2_0_bootstrap_response)
-
+# The in-tree 'gmcs' needs at least a stripped-down version of the net 2.0 corlib.dll.  We build that first.
 # make sure that $(gmcs) is up-to-date
 FORCE:
-$(gmcs): FORCE
-	cd $(topdir)/gmcs && $(MAKE) ;
+$(gmcs): $(net20bootstraplib) FORCE
+	cd $(topdir)/gmcs && $(MAKE)
 
-$(response): $(sourcefile)
-	@echo Creating $@ ...
 ifdef PLATFORM_CHANGE_SEPARATOR_CMD
-	@cat $< |$(PLATFORM_TWEAK_CORLIB_SOURCES) |$(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
+post_process = $(PLATFORM_CHANGE_SEPARATOR_CMD)
 else
-	@cat $< |$(PLATFORM_TWEAK_CORLIB_SOURCES) >$@
+post_process = cat
 endif
 
-# warning: embedded tab in the 'echo touch' line
-$(makefrag): $(response)
+#net_2_0_bootstrap
+
+net20bootstrap_response = $(depsdir)/net_2_0_bootstrap_corlib.dll.response
+net20bootstrap_makefrag = $(depsdir)/net_2_0_bootstrap_corlib.dll.makefrag
+
+$(net20bootstraplib): $(net20bootstrap_makefrag) $(net20bootstrap_response)
+	$(BOOTSTRAP_MCS) /nowarn:649 /nowarn:169 /define:INSIDE_CORLIB /define:NET_1_1 /define:BOOTSTRAP_NET_2_0 $(corlib_flags) /target:library /out:$(net20bootstraplib) @$(net20bootstrap_response)
+
+$(net20bootstrap_response): $(sourcefile)
 	@echo Creating $@ ...
-	@echo "HAVE_MAKEFRAG = yes" >$@.new
-	@echo "$(stampfile): \\" >>$@.new
-	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
-	@cat $@.new |sed -e '$$s, \\$$,,' >$@
-	@echo "	touch \$$@" >>$@
-	@rm -rf $@.new
+	@cat $< |$(post_process) >$@
 
--include $(makefrag)
+$(net20bootstrap_makefrag): $(net20bootstrap_response)
+	@echo Creating $@ ...
+	@sed 's,^,$(net20bootstraplib): ,' $< >$@
 
-ifndef HAVE_MAKEFRAG
-$(stampfile):
-	touch $@
-endif
+-include $(net20bootstrap_makefrag)
 
 # corlib_cmp
 
-$(cmplib): $(cmp_makefrag) $(cmp_response) $(cmp_stampfile)
+cmppdb = $(patsubst %.dll,%.pdb,$(cmplib))
+cmp_response = $(depsdir)/$(PROFILE)_corlib_cmp.dll.response
+cmp_makefrag = $(depsdir)/$(PROFILE)_corlib_cmp.dll.makefrag
+cmp_flags = /r:$(PLATFORM_CORLIB) $(corlib_flags)
+
+$(cmplib): $(cmp_makefrag) $(cmp_response)
 	$(BOOT_COMPILE) $(LIBRARY_FLAGS) $(cmp_flags) /target:library /out:$@ @$(cmp_response)
 
 $(cmp_response): $(response) corlib_cmp.dll.excludes
 	@echo Creating $@ ...
-ifdef PLATFORM_CHANGE_SEPARATOR_CMD
-	@cat corlib_cmp.dll.excludes |$(PLATFORM_CHANGE_SEPARATOR_CMD) |cat - $< |sort |uniq -u >$@
-else
-	@cat corlib_cmp.dll.excludes |cat - $< |sort |uniq -u >$@
-endif
+	@sort corlib_cmp.dll.excludes $< |uniq -u | $(post_process) >$@
 
-# warning: embedded tab in the 'echo touch' line
 $(cmp_makefrag): $(cmp_response)
 	@echo Creating $@ ...
-	@echo "HAVE_CMP_MAKEFRAG = yes" >$@.new
-	@echo "$(cmp_stampfile): \\" >>$@.new
-	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
-	@cat $@.new |sed -e '$$s, \\$$,,' >$@
-	@echo "	touch \$$@" >>$@
-	@rm -rf $@.new
+	@sed 's,^,$(cmplib): ,' $< >$@
 
 # Since we make corlib_cmp on demand, there isn't a real need
 # to have full dep tracking for it. Also, the generation of this
@@ -243,161 +145,23 @@ $(cmp_makefrag): $(cmp_response)
 #
 # -include $(cmp_makefrag)
 
-ifndef HAVE_CMP_MAKEFRAG
-$(cmp_stampfile):
-	touch $@
-endif
-
 # corlib_res
 
-$(reslib): $(res_makefrag) $(res_response) $(res_stampfile)
+respdb = $(patsubst %.dll,%.pdb,$(reslib))
+res_response = $(depsdir)/$(PROFILE)_corlib_res.dll.response
+res_makefrag = $(depsdir)/$(PROFILE)_corlib_res.dll.makefrag
+res_flags = /r:$(PLATFORM_CORLIB) $(corlib_flags)
+
+$(reslib): $(res_makefrag) $(res_response)
 	$(BOOT_COMPILE) $(LIBRARY_FLAGS) $(res_flags) /target:library /out:$@ @$(res_response)
 
 $(res_response): $(sourcefile) corlib_res.dll.excludes
 	@echo Creating $@ ...
-ifdef PLATFORM_CHANGE_SEPARATOR_CMD
-	@cat corlib_res.dll.excludes $(sourcefile) |sort |uniq -u |$(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
-else
-	@cat corlib_res.dll.excludes $(sourcefile) |sort |uniq -u >$@
-endif
+	@sort corlib_res.dll.excludes $(sourcefile) |uniq -u | $(post_process) >$@
 
 # warning: embedded tab in the 'echo touch' line
 $(res_makefrag): $(res_response)
 	@echo Creating $@ ...
-	@echo "HAVE_RES_MAKEFRAG = yes" >$@.new
-	@echo "$(res_stampfile): \\" >>$@.new
-	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
-	@cat $@.new |sed -e '$$s, \\$$,,' >$@
-	@echo "	touch \$$@" >>$@
-	@rm -rf $@.new
+	@sed 's,^,$(reslib): ,' $< >$@
 
 -include $(res_makefrag)
-
-ifndef HAVE_RES_MAKEFRAG
-$(res_stampfile):
-	touch $@
-endif
-
-# corlib_test
-
-$(testlib): $(test_makefrag) $(test_response) $(test_stampfile)
-	$(CSCOMPILE) $(test_flags) /target:library /out:$@ @$(test_response)
-
-$(test_response): $(test_sourcefile)
-	@echo Creating $@ ...
-ifdef PLATFORM_CHANGE_SEPARATOR_CMD
-	@cat $< |sed -e 's,^\(.\),Test/\1,' |$(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
-else
-	@cat $< |sed -e 's,^\(.\),Test/\1,' >$@
-endif
-
-# warning: embedded tab in the 'echo touch' line
-$(test_makefrag): $(test_response)
-	@echo Creating $@ ...
-	@echo "HAVE_TEST_MAKEFRAG = yes" >$@.new
-	@echo "$(test_stampfile): \\" >>$@.new
-	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
-	@cat $@.new |sed -e '$$s, \\$$,,' >$@
-	@echo "	touch \$$@" >>$@
-	@rm -rf $@.new
-
--include $(test_makefrag)
-
-ifndef HAVE_TEST_MAKEFRAG
-$(test_stampfile):
-	touch $@
-endif
-
-# corlib_plattest
-
-$(plattestlib): $(plattest_makefrag) $(plattest_response) $(plattest_stampfile)
-	$(INTERNAL_MCS) $(plattest_flags) /target:library /out:$@ @$(plattest_response)
-	#$(CSCOMPILE) $(plattest_flags) /target:library /out:$@ @$(plattest_response)
-
-$(plattest_response): $(test_sourcefile) $(plattest_excludes)
-	@echo Creating $@ ...
-ifdef PLATFORM_CHANGE_SEPARATOR_CMD
-ifdef PLATFORM_MONO_NATIVE
-	@cat $(plattest_excludes) $(test_sourcefile) |sort |uniq -u |sed -e 's,^\(.\),Test/\1,' |$(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
-else
-	@cat $(test_sourcefile) |sort |uniq -u |sed -e 's,^\(.\),Test/\1,' |$(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
-endif
-else
-ifdef PLATFORM_MONO_NATIVE
-	@cat $(plattest_excludes) $(test_sourcefile) |sort |uniq -u |sed -e 's,^\(.\),Test/\1,' >$@
-else
-	@cat $(test_sourcefile) |sort |uniq -u |sed -e 's,^\(.\),Test/\1,' >$@
-endif
-endif
-
-# warning: embedded tab in the 'echo touch' line
-$(plattest_makefrag): $(plattest_response)
-	@echo Creating $@ ...
-	@echo "HAVE_PLATTEST_MAKEFRAG = yes" >$@.new
-	@echo "$(plattest_stampfile): \\" >>$@.new
-	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
-	@cat $@.new |sed -e '$$s, \\$$,,' >$@
-	@echo "	touch \$$@" >>$@
-	@rm -rf $@.new
-
--include $(plattest_makefrag)
-
-ifndef HAVE_PLATTEST_MAKEFRAG
-$(plattest_stampfile):
-	touch $@
-endif
-
-#net_2_0_bootstrap
-
-$(net_2_0_bootstrap_response): $(sourcefile)
-	@echo Creating $@ ...
-ifdef PLATFORM_CHANGE_SEPARATOR_CMD
-	@cat $< |$(PLATFORM_TWEAK_CORLIB_SOURCES) |$(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
-else
-	@cat $< |$(PLATFORM_TWEAK_CORLIB_SOURCES) >$@
-endif
-
-# warning: embedded tab in the 'echo touch' line
-$(net_2_0_boostrap_makefrag): $(net_2_0_boostrap_response)
-	@echo Creating $@ ...
-	@echo "HAVE_NET_2_0_BOOTSTRAP_MAKEFRAG = yes" >$@.new
-	@echo "$(net_2_0_bootstrap_stampfile): \\" >>$@.new
-	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
-	@cat $@.new |sed -e '$$s, \\$$,,' >$@
-	@echo "	touch \$$@" >>$@
-	@rm -rf $@.new
-
--include $(net_2_0_bootstrap_makefrag)
-
-ifndef HAVE_NET_2_0_BOOTSTRAP_MAKEFRAG
-$(net_2_0_bootstrap_stampfile):
-	touch $@
-endif
-
-#net_2_0
-
-$(net_2_0_response): $(sourcefile)
-	@echo Creating $@ ...
-ifdef PLATFORM_CHANGE_SEPARATOR_CMD
-	@cat $< |$(PLATFORM_TWEAK_CORLIB_SOURCES) |$(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
-else
-	@cat $< |$(PLATFORM_TWEAK_CORLIB_SOURCES) >$@
-endif
-
-# warning: embedded tab in the 'echo touch' line
-$(net_2_0_makefrag): $(net_2_0_response)
-	@echo Creating $@ ...
-	@echo "HAVE_NET_2_0_MAKEFRAG = yes" >$@.new
-	@echo "$(net_2_0_stampfile): \\" >>$@.new
-	@cat $< |sed -e 's,\.cs[ \t]*$$,\.cs \\,' >>$@.new
-	@cat $@.new |sed -e '$$s, \\$$,,' >$@
-	@echo "	touch \$$@" >>$@
-	@rm -rf $@.new
-
--include $(net_2_0_makefrag)
-
-ifndef HAVE_NET_2_0_MAKEFRAG
-$(net_2_0_stampfile):
-	touch $@
-endif
-
