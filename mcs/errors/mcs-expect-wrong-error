@@ -7,7 +7,6 @@
 # the file should be removed.
 #
 
-
 cs0012.cs
 cs0029-3.cs
 cs0029.cs
@@ -41,9 +40,7 @@ cs0217.cs
 cs0229-2.cs
 cs0234.cs
 cs0239.cs
-cs0245.cs
 cs0249.cs
-cs0250.cs
 cs0251.cs
 cs0448.cs
 cs0504.cs
@@ -78,12 +75,11 @@ cs0558.cs
 cs0559.cs
 cs0560.cs
 cs0561.cs
-cs0564-2.cs
-cs0564.cs
 cs0567.cs
 cs0571-3.cs
 cs0590-2.cs
 cs0590.cs
+cs0591.cs
 cs0610-3.cs
 cs0610.cs
 cs0611-2.cs
@@ -93,19 +89,14 @@ cs0620.cs
 cs0636-2.cs
 cs0637-2.cs
 cs0637.cs
-cs0641.cs
 cs0647-2.cs
 cs0650.cs
 cs0652.cs
-cs0653.cs
 cs0654.cs
-cs0674.cs
 cs0676.cs
 cs0681.cs
-cs0685.cs
 cs0715.cs
 cs1001.cs
-cs1013.cs
 cs1016.cs
 cs1031.cs
 cs1035.cs
