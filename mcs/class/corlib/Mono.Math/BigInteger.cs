@@ -766,11 +766,6 @@ namespace Mono.Math {
 
 		public bool isProbablePrime ()
 		{
-
-			for (int p = 0; p < smallPrimes.Length; p++) {
-				if (this % smallPrimes [p] == 0)
-					return this == smallPrimes [p];
-			}
 			for (int p = 0; p < smallPrimes.Length; p++) {
 				if (this == smallPrimes [p])
 					return true;
