@@ -1,3 +1,8 @@
+2004-01-10  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Path.cs : GetDirectoryName ("c:\readme.txt") should return "c:\"
+	  instead of "c:" . This fixed bug #52735.
+
 2004-01-04  Nick Drochak <ndrochak@gol.com>
 
 	* Path.cs: Remove defined but unused variable, and also got rid of

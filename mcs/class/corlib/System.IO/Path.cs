@@ -111,8 +111,13 @@ namespace System.IO
 			if (nLast == 0)
 				nLast++;
 
-			if (nLast > 0)
-				return path.Substring (0, nLast);
+			if (nLast > 0) {
+				string ret = path.Substring (0, nLast);
+				if (ret [ret.Length - 1] != DirectorySeparatorChar)
+					return ret + DirectorySeparatorChar;
+				else
+					return ret;
+			}
 
 			return String.Empty;
 		}
