@@ -1,3 +1,9 @@
+2003-04-17 Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* ImageList.cs
+	* ImageListStreamer.cs : started to implement
+	* Control.cs : changes in implementation of size-related functions
+	* Form.cs    : small modifications to reflect changes in Contol class
+
 2003-04-15 Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* NativeWindow.cs : don't assign window ID when it was already assigned by the system
 

@@ -6,7 +6,7 @@
     //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
     //	Dennis Hayes (dennish@raytek.com)
     //   WINELib implementation started by John Sohn (jsohn@columbus.rr.com)
-    //
+    //  Aleksey Ryabchuk (ryabchuk@yahoo.com)
     // (C) 2002/3 Ximian, Inc
     //
     
@@ -74,10 +74,6 @@
 			public Form () : base ()
     		{
 				opacity = 0;
-				Left = (int)CreateWindowCoordinates.CW_USEDEFAULT;
-				Top = (int)CreateWindowCoordinates.CW_USEDEFAULT;
-				Width = 300;
-				Height = 300;
     		}
     		
     		static Form ()
@@ -166,10 +162,8 @@
     				return base.ClientSize;
     			}
     			set {
-					//bool MenuReady;
-					//if(mainMenu_
-					SetClientSize( value, (int)WindowStyles.WS_OVERLAPPEDWINDOW, mainMenu_ != null);
-				}
+				base.ClientSize = value;
+			}
     		}
     
   			//Compact Framework
@@ -347,6 +341,8 @@
     			set {
     				mainMenu_ = value;
 				assignMenu();
+				// update size of the form				
+				ClientSize = ClientSize;
     			}
     		}
 
@@ -627,16 +623,19 @@
     		protected override CreateParams CreateParams {
     			get {
 				CreateParams pars = base.CreateParams;
-				
+			
 				if ( IsMdiChild ) {
 					pars.Style |= (int)( WindowStyles.WS_CHILD | WindowStyles.WS_VISIBLE );
 					pars.ExStyle |= (int)WindowExStyles.WS_EX_MDICHILD;
 				}
-				else 
+				else {
+					pars.X = (int)CreateWindowCoordinates.CW_USEDEFAULT;
+					pars.Y = (int)CreateWindowCoordinates.CW_USEDEFAULT;
+
 					pars.Style = (int)( WindowStyles.WS_OVERLAPPEDWINDOW | 
 							WindowStyles.WS_CLIPSIBLINGS /* |
 							WindowStyles.WS_CLIPCHILDREN */);
-
+				}
 				if ( Parent == null ) 
 					pars.Parent = IntPtr.Zero;
 
@@ -647,6 +646,10 @@
     			}
     		}
     
+		protected override bool MenuPresent {
+			get { return mainMenu_ != null; }
+		}
+
     		protected override ImeMode DefaultImeMode {
     			get {
     				return base.DefaultImeMode;

@@ -13,15 +13,15 @@ namespace System.Windows.Forms {
 
 	// <summary>
 	// </summary>
-
+	[Serializable]
 	public sealed class ImageListStreamer : ISerializable {
 
-		//
-		//  --- Public Methods
-		//
+		//Deserialization constructor.
+		public ImageListStreamer (SerializationInfo info, StreamingContext context) {
+		}
 
 		[MonoTODO]
-		void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context){
+		public void GetObjectData(SerializationInfo info, StreamingContext context){
 			//FIXME:
 		}
 	}

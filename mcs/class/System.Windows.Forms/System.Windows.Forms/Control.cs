@@ -69,6 +69,8 @@
     		Image backgroundImage;
     		//BindingContext bindingContext;
     		Rectangle bounds;
+		Rectangle oldBounds;
+
     		bool causesValidation;
     		//ContextMenu contextMenu;
     		DockStyle dock;
@@ -188,6 +190,7 @@
     			backColor = Control.DefaultBackColor;
     			backgroundImage = null;
     			bounds = new Rectangle();
+			oldBounds = new Rectangle();
     			// bindingContext = null;
     			causesValidation = true;
     			// contextMenu = null;
@@ -206,8 +209,10 @@
     			visible = true;
     			parent = null;
 
-			bounds.Width = DefaultSize.Width;
-			bounds.Height= DefaultSize.Height;
+			oldBounds.Width  = bounds.Width = DefaultSize.Width;
+			oldBounds.Height = bounds.Height= DefaultSize.Height;
+			clientWidth	 = DefaultSize.Width;
+			clientHeight	 = DefaultSize.Height;
 
 			mouseIsInside_ = false;
 				// Do not create Handle here, only in CreateHandle
@@ -365,17 +370,10 @@
  			//Compact Framework
     		public Rectangle Bounds {
     			get {
-    				if (IsHandleCreated) {
-    					RECT rect = new RECT();
-    					Win32.GetWindowRect (Handle, ref rect);
-    					return new Rectangle ((int) rect.left, 
-    							      (int) rect.top,
-    							      (int) rect.right, 
-    							      (int) rect.bottom);
-    				} else return bounds;
+    				return bounds;
     			}
     			set {
-					SetBounds(value.Left, value.Top, value.Width, value.Height);
+				SetBounds(value.Left, value.Top, value.Width, value.Height);
     			}
     		}
     		
@@ -459,20 +457,10 @@
 			[MonoTODO]
 			public Size ClientSize {
 				get {
-					if (IsHandleCreated) {
-						RECT rect = new RECT();
-						Win32.GetClientRect (Handle, ref rect);
-						return new Size (
-							(int) rect.right, 
-							(int) rect.bottom);
-					}
-					// FIXME: is the correct return value for
-					// window who's handle is not created
-					return new Size (0, 0);
+					return new Size ( clientWidth, clientHeight);
 				}
 				set {
-					// FIXME: Is this good default style ?
-					SetClientSize(value, (int)(WindowStyles.WS_CHILD | WindowStyles.WS_BORDER), false);
+					SetClientSizeCore ( value.Width, value.Height );
 				}
 			}
     		
@@ -764,17 +752,10 @@
   			//Compact Framework
     		public int Height {
     			get {
-    				if (IsHandleCreated) {
-    					// FIXME: GetWindowPos
-    				}
     				return bounds.Height;
     			}
     			set {
-    				//bounds.Height = value;
-    				if (IsHandleCreated) {
-    					// FIXME: SetWindowPos
-    				}
-					SetBounds(bounds.X, bounds.Y, bounds.Width, value, BoundsSpecified.Height);
+				SetBounds(bounds.X, bounds.Y, bounds.Width, value, BoundsSpecified.Height);
     			}
     		}
     		
@@ -814,15 +795,9 @@
   			//Compact Framework
 			public int Left {
 				get {
-					if (IsHandleCreated) {
-						// FIXME: GetWindowPos
-						return 0;
-					} else return bounds.X;
+					return bounds.X;
 				}
 				set {
-					if (IsHandleCreated) {
-						// FIXME: SetWindowPos
-					}
 					SetBounds(value, bounds.Y, bounds.Width, bounds.Height, BoundsSpecified.X);
 				}
 			}
@@ -834,9 +809,6 @@
 					return new Point (Top, Left);
 				}
 				set {
-					if (IsHandleCreated) {
-						// FIXME: SetWindowPos
-					}
 					SetBounds(value.X, value.Y, bounds.Width, bounds.Height, BoundsSpecified.Location);
 				}
 			}
@@ -1009,34 +981,14 @@
     			}
     		}
     		
-  			//Compact Framework
+		//Compact Framework
     		public Size Size {
-				//FIXME: should we return client size or someother size???
     			get {
-					if( IsHandleCreated) {
-						RECT WindowRectangle;
-						WindowRectangle = new RECT();
-						if(!Win32.GetWindowRect(Handle,ref WindowRectangle)){
-							//throw new Exception("couild not retreve Control Size");
-						}
-						// CHECKME: Here we can also update internal variables
-						return new Size(WindowRectangle.right - WindowRectangle.left,
-							WindowRectangle.bottom - WindowRectangle.top);
-					}
-					else {
-						return new Size(Width, Height);
-					}
+				return new Size(Width, Height);
     			}
     			set {
-					if( IsHandleCreated) {
-/*
-						Win32.SetWindowPos(Handle, SetWindowPosZOrder.HWND_TOP, 0, 0, value.Width, value.Height,
-							SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOMOVE | 
-							SetWindowPosFlags.SWP_NOZORDER);// Activating might be a good idea?? | SetWindowPosFlags.SWP_NOACTIVATE);
-*/							
-					}
-					SetBounds(bounds.X, bounds.Y, value.Width, value.Height, BoundsSpecified.Size);
-				}
+				SetBounds(bounds.X, bounds.Y, value.Width, value.Height, BoundsSpecified.Size);
+			}
     		}
 
     		internal int tabindex;//for debug/test only. remove
@@ -1098,15 +1050,9 @@
  			//Compact Framework
     		public int Top {
     			get {
-    				if (IsHandleCreated) {
-    					// FIXME: GetWindowPos
-    					return 0;
-    				} else return bounds.Top;
+				return bounds.Top;
  			}
  			set {
- 				if (IsHandleCreated) {
- 					// FIXME: SetWindowPos
- 				}
 				SetBounds(bounds.X, value, bounds.Width, bounds.Height, BoundsSpecified.Y);
 			}
  		}
@@ -1134,17 +1080,11 @@
  			//Compact Framework
     		public int Width {
     			get {
-    				if (IsHandleCreated) {
-    					// FIXME: GetWindowPos
-    				}
     				return bounds.Width;
     			}
     			set {
-    				if (IsHandleCreated) {
-    					// FIXME: SetWindowPos
-    				}
-					SetBounds(bounds.X, bounds.Y, value, bounds.Height, BoundsSpecified.Width);
-				}
+				SetBounds(bounds.X, bounds.Y, value, bounds.Height, BoundsSpecified.Width);
+			}
     		}
     		
     		/// --- methods ---
@@ -2245,52 +2185,47 @@
     		[MonoTODO]
     		public void SetBounds (int x, int y, int width, int height) 
     		{
-				SetBounds(x, y, width, height, BoundsSpecified.All);
-			}
+			SetBounds(x, y, width, height, BoundsSpecified.All);
+		}
     		
     		[MonoTODO]
     		public void SetBounds (int x, int y, int width, int height, BoundsSpecified specified) 
     		{
-				SetBoundsCore( x, y, width, height, specified);
-			}
+			SetBoundsCore( x, y, width, height, specified);
+		}
     		
     		[MonoTODO]
     		protected virtual void SetBoundsCore ( int x, int y, int width, int height, BoundsSpecified specified) 
     		{
-				if( IsHandleCreated) {
-//					SetWindowPosFlags flags = SetWindowPosFlags.SWP_NOOWNERZORDER | SetWindowPosFlags.SWP_NOZORDER |
-//						SetWindowPosFlags.SWP_FRAMECHANGED | SetWindowPosFlags.SWP_DRAWFRAME;
-					SetWindowPosFlags flags = SetWindowPosFlags.SWP_NOZORDER |
-						SetWindowPosFlags.SWP_FRAMECHANGED | SetWindowPosFlags.SWP_DRAWFRAME;
-					Win32.SetWindowPos( Handle, SetWindowPosZOrder.HWND_NOTOPMOST, x, y, width, height, flags);
-					RECT rect = new RECT();
-					Win32.GetWindowRect (Handle, ref rect);
-					if( Parent != null) {
-						Win32.ScreenToClient(Parent.Handle, ref rect);
-					}
-					bounds = new Rectangle (rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
-				}
-				else {
-					if( (specified & BoundsSpecified.X) != 0) {
-						bounds.X = x;
-					}
-					if( (specified & BoundsSpecified.Y) != 0) {
-						bounds.Y = y;
-					}
-					if( (specified & BoundsSpecified.Width) != 0) {
-						bounds.Width = width;
-					}
-					if( (specified & BoundsSpecified.Height) != 0) {
-						bounds.Height = height;
-					}
-				}
+			if( (specified & BoundsSpecified.X) == 0)      x = Left;
+			if( (specified & BoundsSpecified.Y) == 0)      y = Top;
+			if( (specified & BoundsSpecified.Width) == 0)  width = Width;
+			if( (specified & BoundsSpecified.Height) == 0) height = Height;
+
+			if( IsHandleCreated ) {
+				SetWindowPosFlags flags = SetWindowPosFlags.SWP_NOZORDER | SetWindowPosFlags.SWP_FRAMECHANGED | SetWindowPosFlags.SWP_DRAWFRAME;
+				Win32.SetWindowPos( Handle, SetWindowPosZOrder.HWND_NOTOPMOST, x, y, width, height, flags);
 			}
+
+			UpdateBounds( x, y, width, height );
+		}
     		
+		protected virtual bool MenuPresent {
+			get { return false; }
+		}
+
     		[MonoTODO]
     		protected virtual void SetClientSizeCore (int x, int y)
     		{
-				//FIXME:
-			}
+			RECT rc   = new RECT();
+			rc.right  = x;
+			rc.bottom = y;
+			
+			CreateParams pars = CreateParams;		
+			Win32.AdjustWindowRectEx ( ref rc, pars.Style, MenuPresent ? 1 : 0, pars.ExStyle );
+
+			Size = new Size( rc.right - rc.left, rc.bottom - rc.top );
+		}
     		
     		[MonoTODO]
     		protected void SetStyle (ControlStyles flag, bool value) 
@@ -2357,8 +2292,24 @@
     		[MonoTODO]
     		protected void UpdateBounds (int x, int y, int width, int height) 
     		{
-			UpdateBounds ( x , y, width, height, 0, 0 );
-			//FIXME: provide correct client width and height
+			int clWidth = width;
+			int clHeight = height;
+
+			CreateParams pars = CreateParams;
+			// this check should be removed when all controls will use base
+			// implementation of CreateParams
+			if ( pars != null ) {
+				RECT rc   = new RECT();
+				rc.right  = width;
+				rc.bottom = height;
+				
+				Win32.AdjustWindowRectEx ( ref rc, pars.Style, MenuPresent ? 1 : 0, pars.ExStyle );
+
+				clWidth  -= ( ( rc.right - rc.left ) - clWidth );
+				clHeight -= ( ( rc.bottom - rc.top ) - clHeight);
+			}
+			
+			UpdateBounds ( x , y, width, height, clWidth, clHeight );
 		}
     		
     		[MonoTODO]
@@ -2374,8 +2325,8 @@
 			bounds.Width  = width;
 			bounds.Height = height;
 
-			clientWidth   = clientWidth;
-			clientHeight  = clientHeight;
+			this.clientWidth   = clientWidth;
+			this.clientHeight  = clientHeight;
 
 			if ( bLocationChanged )
 				OnLocationChanged ( EventArgs.Empty );
@@ -2684,6 +2635,8 @@
     		}
 
 		private void DoDockAndAnchorLayout ( LayoutEventArgs e ) {
+			Rectangle area = DisplayRectangle;
+			
 			/*
 			IEnumerator cw = childControls.GetEnumerator();
 			while ( cw.MoveNext() ) {
