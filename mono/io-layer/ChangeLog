@@ -1,3 +1,36 @@
+2002-06-08  Jeffrey Stedfast  <fejj@ximian.com>
+
+	* mono-mutex.c (mono_once): New convenience function for my
+	previous fix.
+
+	* handles.c:
+	* error.c: 
+	* critical-sections.c: 
+	* threads.c: 
+	* sockets.c: 
+	* semaphores.c: 
+	* processes.c: 
+	* mutexes.c: 
+	* io.c: 
+	* events.c: 
+	* atomic.c: Use mono_once() rather than pthread_once().
+
+2002-06-06  Jeffrey Stedfast  <fejj@ximian.com>
+
+	* handles.c (_wapi_handle_new): pthread_once() is not atomic, so
+	if multiple threads all try to call _wapi_handle_new() before the
+	shared data has been initialized, it is possible that we could get
+	into a condition where shared_init() is being executed and later
+	threads will pass by pthread_once() due to the fact that it has
+	already been called and so therefor will attempt to use the shared
+	data before it has been completely initialized. If we instead use
+	a standard mutex locking mechanism around shared_init(), we can
+	avoid the situation entirely. By wrapping the mutex locking in a
+	check to see if we've already initialized the data, we can even
+	avoid wasting resources by having to lock/unlock the mutex in any
+	later calls (the only time we'd have to worry about
+	locking/unlocking is the initial race to call shared_init() at
+	startup).
 
 Sat Jun 1 13:27:11 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
