@@ -62,7 +62,8 @@ namespace System.Xml.Schema
 			if (reader == null)
 				throw new ArgumentNullException ("reader");
 
-			throw new NotImplementedException ();
+			XmlSchema schema = XmlSchema.Read (reader, ValidationEventHandler);
+			return Add (schema);
 		}
 
 		[MonoTODO]
@@ -71,7 +72,7 @@ namespace System.Xml.Schema
 			if (uri == null || uri == String.Empty)
 				throw new ArgumentNullException ("uri");
 
-			throw new NotImplementedException ();
+			return Add (ns, new XmlTextReader (uri));
 		}
 
 		[MonoTODO]
@@ -80,7 +81,8 @@ namespace System.Xml.Schema
 			if (schema == null)
 				throw new ArgumentNullException ("schema");
 
-			throw new NotImplementedException ();
+			htable [schema.TargetNamespace] = schema;
+			return schema;
 		}
 
 		public void Add(XmlSchemaCollection schema)
@@ -102,17 +104,19 @@ namespace System.Xml.Schema
 		}
 		public void CopyTo(XmlSchema[] array, int index)
 		{
-
+			throw new NotImplementedException ();
 		}
+
 		public XmlSchemaCollectionEnumerator GetEnumerator()
 		{
-			return new XmlSchemaCollectionEnumerator(this.htable);
+			return new XmlSchemaCollectionEnumerator(this);
 		}
 		
 		//assembly Methods
 		[MonoTODO]
 		void ICollection.CopyTo(Array array, int index)
 		{
+			throw new NotImplementedException ();
 		}
 		bool ICollection.IsSynchronized
 		{

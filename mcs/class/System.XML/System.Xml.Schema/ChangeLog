@@ -1,3 +1,32 @@
+2003-08-02  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* XmlSchema.cs :
+	  - Changed missingElementTypeRefs from Hashtable to ArrayList.
+	  - Added internal XmlSchemas for keeping imported schemas.
+	  - Added private Compile() that takes the original rootSchema and
+	    schema location stack for nested inclusion check.
+	  - Added basic xs:import and xs:include support.
+	  - Compile() is now aware of included XmlSchemaObject items.
+	  - Changed Compile() to fill missing elements' types and that of
+	    referencing elements.
+	  - Read() now adds SourceUri property (although only to itself).
+	* XmlSchemaCollection.cs : Implemented Add().
+	* XmlSchemaCollectionEnumerator.cs :
+	  Changed .ctor() to use schema collection as its argument.
+	  Fixed Current to return hashtable's Value, instead of Current 
+	  (which returns DictionaryEntry).
+	* XmlSchemaComplexType.cs :
+	  Added internal static AnyType.
+	  Compile() is now searches for its base type into other schemas.
+	* XmlSchemaElement.cs : anyType is supported.
+	  It now searches for type information after Compile().
+	  SetReferedElementInfo() is now changed to SetSchemaType().
+	* XmlSchemaObjectTable.cs :
+	  It had problems similar to schema collection. Now it uses internal
+	  class XmlSchemaObjectTableEnumerator to support GetEnumerator().
+	* XmlSchemaParticle.cs : added internal class XmlSchemaParticleEmpty
+	  and internal static Empty.
+
 2003-07-26  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* BuiltInDatatype.cs : XsdIDRefs.ParseValue () should be implemented.

@@ -401,7 +401,7 @@ namespace System.Xml.Schema
 						error(h,"simpleType or complexType must be absent");
 
 					qName = RefName;
-					schema.MissingElementTypeRefs.Add (this, qName);
+					schema.MissingElementTypeRefs.Add (this);
 				}
 			}
 
@@ -410,11 +410,13 @@ namespace System.Xml.Schema
 				if (this.schemaType != null)
 					this.elementType = schemaType;
 				else {
-					XmlSchemaType xsType = schema.SchemaTypes [schemaTypeName] as XmlSchemaType;
-					if (xsType != null)
-						this.elementType = xsType;
-					else
+					XmlSchemaType xsType = null;
+					if (schemaTypeName.Namespace == XmlSchema.Namespace)
 						this.elementType = XmlSchemaDatatype.FromName (schemaTypeName);
+					else if (schemaTypeName == XmlQualifiedName.Empty)
+						elementType = XmlSchemaComplexType.AnyType;
+					else
+						schema.MissingElementTypeRefs.Add (this);
 				}
 			}
 		
@@ -424,9 +426,9 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 
-		internal void SetReferedElementInfo (XmlSchemaElement element)
+		internal void SetSchemaType (object type)
 		{
-			this.elementType = element.elementType;
+			this.elementType = type;
 		}
 		
 		[MonoTODO]

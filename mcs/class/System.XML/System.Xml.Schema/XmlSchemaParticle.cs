@@ -12,6 +12,16 @@ namespace System.Xml.Schema
 	{
 		decimal minOccurs, maxOccurs;
 		string  minstr, maxstr;
+		static XmlSchemaParticle empty;
+
+		internal static XmlSchemaParticle Empty {
+			get {
+				if (empty == null) {
+					empty = new XmlSchemaParticleEmpty ();
+				}
+				return empty;
+			}
+		}
 
 		protected XmlSchemaParticle()
 		{
@@ -93,6 +103,15 @@ namespace System.Xml.Schema
 			}
 		}
 
+		#endregion
+
+		#region Internal Class
+		public class XmlSchemaParticleEmpty : XmlSchemaParticle
+		{
+			internal XmlSchemaParticleEmpty ()
+			{
+			}
+		}
 		#endregion
 	}
 }

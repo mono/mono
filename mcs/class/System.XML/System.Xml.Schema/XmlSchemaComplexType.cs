@@ -1,5 +1,10 @@
-// Author: Dwivedi, Ajay kumar
-//            Adwiv@Yahoo.com
+//
+// System.Xml.Schema.XmlSchemaComplexType.cs
+//
+// Authors:
+//	Dwivedi, Ajay kumar  Adwiv@Yahoo.com
+//	Enomoto, Atsushi     ginga@kit.hi-ho.ne.jp
+//
 using System;
 using System.Xml;
 using System.ComponentModel;
@@ -19,7 +24,6 @@ namespace System.Xml.Schema
 		private XmlSchemaDerivationMethod block;
 		private XmlSchemaDerivationMethod blockResolved;
 		private XmlSchemaContentModel contentModel;
-		private XmlSchemaContentType contentType;
 		private XmlSchemaParticle contentTypeParticle;
 		private bool isAbstract;
 		private bool isMixed;
@@ -27,6 +31,20 @@ namespace System.Xml.Schema
 		
 		internal bool istoplevel = false;
 		private static string xmlname = "complexType";
+
+		private static XmlSchemaComplexType anyType;
+
+		internal static XmlSchemaComplexType AnyType {
+			get {
+				if (anyType == null) {
+					anyType = new XmlSchemaComplexType ();
+					anyType.Name = "";
+					anyType.QNameInternal = XmlQualifiedName.Empty;
+					anyType.contentTypeParticle = XmlSchemaParticle.Empty;
+				}
+				return anyType;
+			}
+		}
 
 		public XmlSchemaComplexType()
 		{
@@ -281,7 +299,9 @@ namespace System.Xml.Schema
 					if (baseTypeName.Namespace == XmlSchema.Namespace)
 						BaseSchemaTypeInternal = XmlSchemaDatatype.FromName (baseTypeName);
 					else {
-						BaseSchemaTypeInternal = schema.SchemaTypes [baseTypeName];
+						XmlSchema targetSchema = schema.Schemas [baseTypeName.Namespace];
+						if (targetSchema != null)
+							BaseSchemaTypeInternal = schema.SchemaTypes [baseTypeName];
 						if (BaseSchemaTypeInternal == null)
 							schema.MissingBaseSchemaTypeRefs.Add (this, baseTypeName);
 					}

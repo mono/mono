@@ -21,9 +21,9 @@ namespace System.Xml.Schema
 		{
 			get{ return table.Count; }
 		}
-		public XmlSchemaObject this[XmlQualifiedName name] 
+		public XmlSchemaObject this [XmlQualifiedName name] 
 		{
-			get{ return (XmlSchemaObject) table[name]; }
+			get{ return (XmlSchemaObject) table [name]; }
 		}
 		public ICollection Names 
 		{
@@ -31,7 +31,7 @@ namespace System.Xml.Schema
 		}
 		public ICollection Values 
 		{
-			get{ return table.Values;}
+			get{ return table.Values; }
 		}
 
 		public bool Contains(XmlQualifiedName name)
@@ -40,12 +40,73 @@ namespace System.Xml.Schema
 		}
 		public IDictionaryEnumerator GetEnumerator()
 		{
-			return table.GetEnumerator();
+			return new XmlSchemaObjectTableEnumerator (this);
 		}
 
 		internal void Add(XmlQualifiedName name, XmlSchemaObject value)
 		{
 			table.Add(name,value);
+		}
+
+		internal void Set(XmlQualifiedName name, XmlSchemaObject value)
+		{
+			table [name] = value;
+		}
+
+		internal class XmlSchemaObjectTableEnumerator : IDictionaryEnumerator
+		{
+			private IDictionaryEnumerator xenum;
+			IEnumerable tmp;
+			XmlSchemaObjectTable table;
+			internal XmlSchemaObjectTableEnumerator (XmlSchemaObjectTable table)
+			{
+				this.table = table;
+				tmp = (IEnumerable) table.table;
+				xenum = (IDictionaryEnumerator) tmp.GetEnumerator ();
+			}
+			// Properties
+			public XmlSchemaObject Current { 
+				get {
+					return (XmlSchemaObject) xenum.Value; 
+				}
+			}
+			public DictionaryEntry Entry {
+				get { return xenum.Entry; }
+			}
+			public XmlQualifiedName Key {
+				get { return (XmlQualifiedName) xenum.Key; }
+			}
+			public XmlSchemaObject Value {
+				get { return (XmlSchemaObject) xenum.Value; }
+			}
+			// Methods
+			public bool MoveNext()
+			{
+				return xenum.MoveNext();
+			}
+
+			//Explicit Interface implementation
+			bool IEnumerator.MoveNext()
+			{
+				return xenum.MoveNext();
+			}
+			void IEnumerator.Reset()
+			{
+				xenum.Reset();
+			}
+			object IEnumerator.Current
+			{
+				get { return xenum.Value; }
+			}
+			DictionaryEntry IDictionaryEnumerator.Entry {
+				get { return xenum.Entry; }
+			}
+			object IDictionaryEnumerator.Key {
+				get { return (XmlQualifiedName) xenum.Key; }
+			}
+			object IDictionaryEnumerator.Value {
+				get { return (XmlSchemaObject) xenum.Value; }
+			}
 		}
 	}
 }
