@@ -1,3 +1,10 @@
+2004-02-08  Duncan Mak  <duncan@ximian.com>
+
+	* Convert.cs (ToType): Always let a Convert.ChangeType call
+	succeed if the source object is already of the destination type.
+
+	Patch by Ian MacLean (ianm@activestate.com).
+
 2004-02-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AppDomain.cs: Implemented SetPrincipalPolicy and SetThreadPrincipal.

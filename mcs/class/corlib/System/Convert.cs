@@ -7,7 +7,6 @@
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
-
 //
 // System.Convert class. This was written word for word off the 
 // Library specification for System.Convert in the ECMA TC39 TG2 
@@ -2479,6 +2478,9 @@ namespace System {
 			
 			if (value == null)
 				throw new NullReferenceException ("Value is null.");
+
+                        if (value.GetType () == conversionType)
+                                return value;
 			
 			if (value is IConvertible) {
 				IConvertible convertValue = (IConvertible) value;
