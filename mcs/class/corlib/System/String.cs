@@ -23,12 +23,14 @@
 
 using System;
 using System.Text;
+using System.Collections;
+using System.Globalization;
 
 namespace System {
 
-	public sealed class String : IComparable, IClonable, IConvertable, IEnumerable {
+	public sealed class String : IComparible, ICloneable, IConvertible, IEnumerable {
 		public static readonly string Empty = "";
-		private char c_str[];
+		private char[] c_str;
 		private int length;
 
 		// Constructors
@@ -149,13 +151,13 @@ namespace System {
 			// FIXME: implement me
 		}
 
-		protected ~String ()
+		~String ()
 		{
 			// FIXME: is there anything we need to do here?
 			base.Finalize ();
 		}
 
-		protected string MemberwiseClone ()
+		protected override string MemberwiseClone ()
 		{
 			// FIXME: implement me
 			return null;
@@ -184,7 +186,7 @@ namespace System {
 			// FIXME: if str.Length includes terminating null char, then return (str.Length - 1)
 			return str.Length;
 		}
-		
+
 		private char tolower (char c)
 		{
 			// FIXME: make me unicode aware
@@ -213,7 +215,7 @@ namespace System {
 				return false;
 		}
 
-		private int BoyerMoore (char haystack[], char needle[], int startIndex, int count)
+		private int BoyerMoore (char[] haystack, char[] needle, int startIndex, int count)
 		{
 			/* (hopefully) Unicode-safe Boyer-Moore implementation */
 			char skiptable[65536];  /* our unicode-safe skip-table */
@@ -606,7 +608,7 @@ namespace System {
 			len = str0.Length + str1.Length + str2.Length;
 			if (len == 0)
 				return this.Empty;
-			
+
 			concat = new string [len + 1];
 			for (i = 0; i < str0.Length; i++)
 				concat[i] = str0[i];
@@ -819,7 +821,7 @@ namespace System {
 				if (this.c_str[i] == value[0]) {
 					bool equal = true;
 					int j, offset;
-
+					
 					offset = i - startIndex;
 					for (j = 1; equal && value[j] != '\0' && offset + j < count; j++)
 						equal = this.c_str[i + j] == value[j];
@@ -1065,6 +1067,7 @@ namespace System {
 				for (int j = 0; j < strlen (values); j++) {
 					if (this.c_str[i] == values[j])
 						return i;
+				}
 			}
 
 			return -1;
@@ -1191,7 +1194,7 @@ namespace System {
 			return str;
 		}
 
-		private int splitme (params char[] separators, int startIndex)
+		private int splitme (char[] separators, int startIndex)
 		{
 			/* this is basically a customized IndexOfAny() for the Split() methods */
 			for (int i = startIndex; i < this.length, i++) {
@@ -1200,7 +1203,7 @@ namespace System {
 						if (this.c_str[i] == sep)
 							return i - startIndex;
 					}
-				} else if (is_lwsp (this.c_str[i]))
+				} else if (is_lwsp (this.c_str[i])) {
 					return i - startIndex;
 				}
 			}
@@ -1260,7 +1263,7 @@ namespace System {
 			return strings;
 		}
 
-		public string[] Split (params char[] separator, int maxCount)
+		public string[] Split (char[] separator, int maxCount)
 		{
 			// FIXME: what to do if maxCount <= 0?
 			// FIXME: would using Queue be better than ArrayList?
@@ -1370,6 +1373,24 @@ namespace System {
 			return str;
 		}
 
+		public override bool ToBoolean (IFormatProvider provider)
+		{
+			// FIXME: implement me
+			return false;
+		}
+
+		public override byte ToByte (IFormatProvider provider)
+		{
+			// FIXME: implement me
+			return '\0';
+		}
+
+		public override char ToChar (IFormatProvider provider)
+		{
+			// FIXME: implement me
+			return '\0';
+		}
+
 		public char[] ToCharArray ()
 		{
 			return ToCharArray (0, this.length);
@@ -1377,7 +1398,7 @@ namespace System {
 
 		public char[] ToCharArray (int startIndex, int length)
 		{
-			char chars[];
+			char[] chars;
 			int i, j;
 
 			if (startIndex < 0 || length < 0 || startIndex + length > this.length)
@@ -1390,6 +1411,42 @@ namespace System {
 			chars[length] = '\0';
 
 			return chars;
+		}
+
+		public override DateTime ToDateTime (IFormatProvider provider)
+		{
+			// FIXME: implement me
+			return null;
+		}
+
+		public override decimal ToDecimal (IFormatProvider provider)
+		{
+			// FIXME: implement me
+			return 0.0;
+		}
+
+		public override double ToDouble (IFormatProvider provider)
+		{
+			// FIXME: implement me
+			return 0.0;
+		}
+
+		public override short ToInt16 (IFormatProvider)
+		{
+			// FIXME: implement me
+			return 0;
+		}
+
+		public override int ToInt32 (IFormatProvider)
+		{
+			// FIXME: implement me
+			return 0;
+		}
+
+		public override long ToInt64 (IFormatProvider)
+		{
+			// FIXME: implement me
+			return 0;
 		}
 
 		public string ToLower ()
@@ -1411,6 +1468,18 @@ namespace System {
 			return null;
 		}
 
+		public override sbyte ToSByte (IFormatProvider)
+		{
+			// FIXME: implement me
+			return 0;
+		}
+
+		public override float ToSingle (IFormatProvider)
+		{
+			// FIXME: implement me
+			return 0.0;
+		}
+
 		public override string ToString ()
 		{
 			return Substring (0, this.length);
@@ -1420,6 +1489,30 @@ namespace System {
 		{
 			// FIXME: implement me
 			return null;
+		}
+
+		public override object ToType (Type conversionType, IFormatProvider provider)
+		{
+			// FIXME: implement me
+			return null;
+		}
+
+		public override ushort ToUInt16 (IFormatProvider provider)
+		{
+			// FIXME: implement me
+			return 0;
+		}
+
+		public override uint ToUInt32 (IFormatProvider provider)
+		{
+			// FIXME: implement me
+			return 0;
+		}
+
+		public override ulong ToUInt64 (IFormatProvider provider)
+		{
+			// FIXME: implement me
+			return 0;
 		}
 
 		public string ToUpper ()
@@ -1520,5 +1613,16 @@ namespace System {
 
 			return Substring (begin, this.length - begin);
 		}
+	}
+
+	// Operators
+	public static bool operator ==(string a, string b)
+	{
+		return a == b;
+	}
+
+	public static bool operator !=(string a, string b)
+	{
+		return a != b;
 	}
 }

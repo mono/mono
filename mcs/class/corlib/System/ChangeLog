@@ -1,5 +1,10 @@
 2001-07-14  Jeffrey Stedfast  <fejj@ximian.com>
 
+	* String.cs: Apparently I needed to at least write stubs for the
+	IConvertible interfaces. *sigh*
+
+2001-07-14  Jeffrey Stedfast  <fejj@ximian.com>
+
 	* String.cs: Many logic/other fixes and better usage of the
 	features of c#
 	(tolower): New convenience method to help condense code.
