@@ -1,3 +1,7 @@
+2004-04-30  Ravindra  <rkumar@novell.com>
+
+	* LinearGradientBrush.cs: Fixed some errors.
+
 2004-04-06  Duncan Mak  <duncan@ximian.com>
 
 	* GraphicsPath.cs (GraphicsPath): Filled out the missing

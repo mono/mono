@@ -18,13 +18,7 @@ namespace System.Drawing.Drawing2D
 	/// </summary>
 	public sealed class LinearGradientBrush : Brush
 	{
-		Blend blend;
-		Color [] linearColors;
-		bool useGammaCorrection;
 		RectangleF rectangle;
-		ColorBlend interpolationColors;
-		Matrix transform;
-		WrapMode wrapMode;
 		
 		internal LinearGradientBrush (IntPtr native) : base (native)
 		{
@@ -94,50 +88,111 @@ namespace System.Drawing.Drawing2D
 
 		public Blend Blend {
 			get {
+				int count;
+				Status status = GDIPlus.GdipGetLineBlendCount (nativeObject, out count);
+				GDIPlus.CheckStatus (status);
+				float [] factors = new float [count];
+				float [] positions = new float [count];
+				status = GDIPlus.GdipGetLineBlend (nativeObject, factors, positions, count);
+				GDIPlus.CheckStatus (status);
+
+				Blend blend = new Blend ();
+				blend.Factors = factors;
+				blend.Positions = positions;
+
 				return blend;
 			}
 			set {
-				Status status = GDIPlus.GdipSetLineBlend (nativeObject, value.Factors, value.Positions, value.Factors.Length);
+				int count;
+				float [] factors = value.Factors;
+				float [] positions = value.Positions;
+				count = factors.Length;
+
+				if (count != positions.Length)
+					throw new ArgumentException ();
+				if (positions [0] != 0.0F)
+					throw new ArgumentException ();
+				if (positions [count - 1] != 1.0F)
+					throw new ArgumentException ();
+
+				Status status = GDIPlus.GdipSetLineBlend (nativeObject, factors, positions, count);
 				GDIPlus.CheckStatus (status);
-				blend = value;
 			}
 		}
 
 		public bool GammaCorrection {
 			get {
-				return useGammaCorrection;
+				bool gammaCorrection;
+				Status status = GDIPlus.GdipGetLineGammaCorrection (nativeObject, out gammaCorrection);
+				GDIPlus.CheckStatus (status);
+				return gammaCorrection;
 			}
 			set {
 				Status status = GDIPlus.GdipSetLineGammaCorrection (nativeObject, value);
 				GDIPlus.CheckStatus (status);
-				useGammaCorrection = value;
 			}
 		}
 
 		public ColorBlend InterpolationColors {
 			get {
+				int count;
+				Status status = GDIPlus.GdipGetLinePresetBlendCount (nativeObject, out count);
+				GDIPlus.CheckStatus (status);
+				int [] intcolors = new int [count];
+				float [] positions = new float [count];
+				status = GDIPlus.GdipGetLinePresetBlend (nativeObject, intcolors, positions, count);
+				GDIPlus.CheckStatus (status);
+
+				ColorBlend interpolationColors = new ColorBlend ();
+				Color [] colors = new Color [count];
+				for (int i = 0; i < count; i++)
+					colors [i] = Color.FromArgb (intcolors [i]);
+				interpolationColors.Colors = colors;
+				interpolationColors.Positions = positions;
+
 				return interpolationColors;
 			}
 			set {
+				int count;
 				Color [] colors = value.Colors;
+				float [] positions = value.Positions;
+				count = colors.Length;
+
+				if (count == 0 || positions.Length == 0)
+					throw new ArgumentException ("An invalid ColorBlend object was set. There must be at least 2 elements in the colors and positions array. The ColorBlend object must be constructed with the same number of positions and color values. With a position starting at 0.0 and ranging to 1.0. 1.0 being the last element in the array.");
+
+				if (count != positions.Length)
+					throw new ArgumentException ("An invalid ColorBlend object was set. The colors and positions do not have the same number of elements. The ColorBlend object must be constructed with the same number of positions and color values. With a position starting at 0.0 and ranging to 1.0. 1.0 being the last element in the array.");
+
+				if (positions [0] != 0.0F)
+					throw new ArgumentException ("An invalid ColorBlend object was set. The position's first element must be equal to 0. The ColorBlend object must be constructed with the same number of positions and color values. With a position starting at 0.0 and ranging to 1.0. 1.0 being the last element in the array.");
+
+				if (positions [count - 1] != 1.0F)
+					throw new ArgumentException ("An invalid ColorBlend object was set. The position's last element must be equal to 1.0. The ColorBlend object must be constructed with the same number of positions and color values. With a position starting at 0.0 and ranging to 1.0. 1.0 being the last element in the array.");
+
 				int [] blend = new int [colors.Length];
 				for (int i = 0; i < colors.Length; i++)
 					blend [i] = colors [i].ToArgb ();
 
-				Status status = GDIPlus.GdipSetLinePresetBlend (nativeObject, blend, value.Positions, blend.Length);
+				Status status = GDIPlus.GdipSetLinePresetBlend (nativeObject, blend, positions, count);
 				GDIPlus.CheckStatus (status);
-				interpolationColors = value;
 			}
 		}
 
 		public Color [] LinearColors {
 			get {
+				int [] colors = new int [2];
+				Status status = GDIPlus.GdipGetLineColors (nativeObject, colors);
+				GDIPlus.CheckStatus (status);
+				Color [] linearColors = new Color [2];
+				linearColors [0] = Color.FromArgb (colors [0]);
+				linearColors [1] = Color.FromArgb (colors [1]);
+
 				return linearColors;
 			}
 			set {
 				Status status = GDIPlus.GdipSetLineColors (nativeObject, value [0].ToArgb (), value [1].ToArgb ());
 				GDIPlus.CheckStatus (status);
-				linearColors = value;
 			}
 		}
 
@@ -149,23 +204,29 @@ namespace System.Drawing.Drawing2D
 
 		public Matrix Transform {
 			get {
-				return transform;
+				IntPtr matrix;
+				Status status = GDIPlus.GdipGetLineTransform (nativeObject, out matrix);
+				GDIPlus.CheckStatus (status);
+
+				return new Matrix (matrix);
 			}
 			set {
 				Status status = GDIPlus.GdipSetLineTransform (nativeObject, value.nativeMatrix);
 				GDIPlus.CheckStatus (status);
-				transform = value;
 			}
 		}
 
 		public WrapMode WrapMode {
 			get {
+				WrapMode wrapMode;
+				Status status = GDIPlus.GdipGetLineWrapMode (nativeObject, out wrapMode);
+				GDIPlus.CheckStatus (status);
+
 				return wrapMode;
 			}
 			set {
 				Status status = GDIPlus.GdipSetLineWrapMode (nativeObject, value);
 				GDIPlus.CheckStatus (status);
-				wrapMode = value;
 			}
 		}
 
