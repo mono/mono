@@ -1,5 +1,13 @@
 2003-01-14  Martin Baulig  <martin@ximian.com>
 
+	* debug.c (debugger_update_symbol_file_table): Moved all the
+	functionality into debugger_update_symbol_file_table_internal();
+	the latter one will be called from the background thread while
+	already owning the lock.  This'll allow us to step into
+	debugger_update_symbol_file_table() in the debugger and debug it.
+
+2003-01-14  Martin Baulig  <martin@ximian.com>
+
 	* Makefile.am: Link against gthread.
 
 	* jit.c: After realizing that mono-mutex doesn't work either
