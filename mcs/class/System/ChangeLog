@@ -1,3 +1,7 @@
+2003-12-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System_test.dll.sources : Added UriTest2.cs
+
 2003-11-18  Todd Berman  <tberman@gentoo.org>
 
 	* System.dll.sources: Added IOrderedDictionary.cs
