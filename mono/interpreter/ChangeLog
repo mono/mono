@@ -1,3 +1,8 @@
+
+Wed Jul 31 14:29:43 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: fix so that mint can at least get to executing Main().
+
 2002-07-31  Dietmar Maurer  <dietmar@ximian.com>
 
 	* interp.c: use the new marshaling code. better delegate/remoting 
