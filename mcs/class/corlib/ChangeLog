@@ -1,5 +1,14 @@
 2004-08-19  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* corlib_test.dll.sources: Added System.Security.Permissions/
+	CodeAccessSecurityAttributeTest.cs,
+	DataProtectionPermissionAttributeTest.cs (NET_2_0),
+	HostProtectionAttributeTest.cs (NET_2_0), 
+	IsolatedStoragePermissionAttributeTest.cs and
+	KeyContainerPermissionAttributeTest.cs  (NET_2_0) to unit tests.
+
+2004-08-19  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* corlib_test.dll.sources: Added SecurityPermissionTest.cs to unit 
 	tests.
 
