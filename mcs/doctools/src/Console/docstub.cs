@@ -21,10 +21,10 @@ using System.Reflection;
 using System.Xml;
 using System.Text;
 
-namespace Mono.Util
-{
-	class DocStub
-	{
+namespace Mono.Util {
+
+	class DocStub {
+
 		Assembly assembly;
 		bool nested;
 		string assembly_file, directory, language, classname, currentNamespace, docname;
@@ -49,19 +49,19 @@ namespace Mono.Util
 			directory = null;
 			int argc = args.Length;
 
-			for(int i = 0; i < argc; i++)
-			{
+			for(int i = 0; i < argc; i++) {
+
 				string arg = args[i];
 
 				// The "/" switch is there for wine users, like me ;-)
-				if(arg.StartsWith("-") || arg.StartsWith("/"))
-				{
-					switch(arg)
-					{
+				if(arg.StartsWith("-") || arg.StartsWith("/")) {
+
+					switch(arg) {
+
 
 					case "-d": case "/-d": case "--directory":
-						if((i + 1) >= argc)
-						{
+						if((i + 1) >= argc) {
+
 							Usage();
 							return;
 						}
@@ -69,16 +69,16 @@ namespace Mono.Util
 						continue;
 
 					case "-a": case "/-a": case "--assembly":
-						if((i + 1) >= argc)
-						{
+						if((i + 1) >= argc) {
+
 							Usage();
 							return;
 						}
 						assembly_file = args[++i];
 						continue;
 					case "-l": case "/-l": case "--language":
-						if((i + 1) >= argc)
-						{
+						if((i + 1) >= argc) {
+
 							Usage();
 							return;
 						}
@@ -92,18 +92,18 @@ namespace Mono.Util
 				}
 			}
 
-			if(assembly_file == null)
-			{
+			if(assembly_file == null) {
+
 				Usage();
 				return;
-			} else if(directory == null)
-			{
+			} else if(directory == null) {
+
 				Usage();
 				return;
 			}
 
-			if (!Directory.Exists(directory) && directory != null)
-			{
+			if (!Directory.Exists(directory) && directory != null) {
+
                 Directory.CreateDirectory(directory);
             }
 
@@ -114,12 +114,12 @@ namespace Mono.Util
 		// Builds an XmlDocument with the reflected metadata
 		private void MakeXml()
 		{
-			try
-			{
+			try {
+
 				assembly = LoadAssembly(Path.GetFullPath(assembly_file));
 			}
-			catch (Exception e)
-			{
+			catch (Exception e) {
+
 				Console.WriteLine(e.Message);
 			}
 			Write();
@@ -127,8 +127,8 @@ namespace Mono.Util
 
 		private void Write()
 		{
-			foreach(Module module in assembly.GetModules())
-			{
+			foreach(Module module in assembly.GetModules()) {
+
 				WriteNamespaces(module);
 			}
 		}
@@ -138,8 +138,8 @@ namespace Mono.Util
 			Type[] types = module.GetTypes();
 			StringCollection namespaceNames = GetNamespaceNames(types);
 			XmlTextWriter dummy = new XmlTextWriter(".temp.xml", null);
-			foreach (string namespaceName in namespaceNames)
-			{
+			foreach (string namespaceName in namespaceNames) {
+
 				currentNamespace = namespaceName;
 				WriteClasses(dummy, types);
 				WriteInterfaces(dummy, types);
@@ -154,8 +154,8 @@ namespace Mono.Util
 
 		private XmlTextWriter StartDocument()
 		{
-			if (!Directory.Exists(directory+"/"+currentNamespace) && directory != null)
-			{
+			if (!Directory.Exists(directory+"/"+currentNamespace) && directory != null) {
+
                 Directory.CreateDirectory(directory+"/"+currentNamespace);
             }
 			string filename = directory+"/"+currentNamespace+"/"+docname+".xml";
@@ -163,6 +163,7 @@ namespace Mono.Util
 			writer.Formatting = Formatting.Indented;
 			writer.Indentation=4;
 			writer.WriteStartDocument();
+			writer.WriteDocType("monodoc", null, "http://www.barnette.biz/mono/monodoc.dtd", null);
 			writer.WriteStartElement("monodoc");
 			writer.WriteAttributeString("language",language);
 			return writer;
@@ -191,10 +192,10 @@ namespace Mono.Util
 		{
 			StringCollection namespaceNames = new StringCollection();
 
-			foreach (Type type in types)
-			{
-				if (namespaceNames.Contains(type.Namespace) == false)
-				{
+			foreach (Type type in types) {
+
+				if (namespaceNames.Contains(type.Namespace) == false) {
+
 					namespaceNames.Add(type.Namespace);
 				}
 			}
@@ -213,10 +214,10 @@ namespace Mono.Util
 				BindingFlags.NonPublic |
 				BindingFlags.DeclaredOnly;
 
-			foreach (EventInfo eventInfo in type.GetEvents(bindingFlags))
-			{
-				if (eventInfo.EventHandlerType.FullName == fullName)
-				{
+			foreach (EventInfo eventInfo in type.GetEvents(bindingFlags)) {
+
+				if (eventInfo.EventHandlerType.FullName == fullName) {
+
 					isEvent = true;
 					break;
 				}
@@ -238,8 +239,8 @@ namespace Mono.Util
 		// Loads an assembly.
 		public static Assembly LoadAssembly(string filename)
 		{
-			if (!File.Exists(filename))
-			{
+			if (!File.Exists(filename)) {
+
 				throw new ApplicationException("can't find assembly " + filename);
 			}
 
@@ -251,13 +252,28 @@ namespace Mono.Util
 			return Assembly.Load(buffer);
 		}
 
+		private bool MustDocumentType(Type type)
+		{
+			return (type.IsPublic || type.IsNestedPublic);
+		}
+
+		private bool MustDocumentMethod(MethodBase method)
+		{
+			return (method.IsPublic);
+		}
+
+		private bool MustDocumentField(FieldInfo field)
+		{
+			return (field.IsPublic);
+		}
+
 		private string GetParameterTypes(ParameterInfo[] parameters)
 		{
 			if (parameters.Length != 0) {
 				StringBuilder sb = new StringBuilder();
 				sb.Append("(");
-				foreach (ParameterInfo parameter in parameters)
-				{
+				foreach (ParameterInfo parameter in parameters) {
+
 					sb.Append(GetTypeName(parameter.ParameterType) + ", ");
 				}
 				sb.Remove(sb.Length-2, 2);
@@ -270,14 +286,14 @@ namespace Mono.Util
 
 		private void WriteClasses(XmlTextWriter writer, Type[] types)
 		{
-			foreach (Type type in types)
-			{
-				if (type.IsClass && !IsDelegate(type) && type.Namespace.Equals(currentNamespace))
-				{
+			foreach (Type type in types) {
+
+				if (type.IsClass && !IsDelegate(type) && type.Namespace.Equals(currentNamespace) && MustDocumentType(type)) {
+
 					classname = type.FullName;
 					docname = type.Name;
-					if (!nested)
-					{
+					if (!nested) {
+
 						writer = StartDocument();
 						WriteClass(writer, type);
 						EndDocument(writer);
@@ -290,14 +306,14 @@ namespace Mono.Util
 
 		private void WriteInterfaces(XmlTextWriter writer, Type[] types)
 		{
-  			foreach (Type type in types)
-			{
-				if (type.IsInterface && type.Namespace.Equals(currentNamespace))
-				{
+  			foreach (Type type in types) {
+
+				if (type.IsInterface && type.Namespace.Equals(currentNamespace) && MustDocumentType(type)) {
+
 					classname = type.FullName;
 					docname = type.Name;
-					if (!nested)
-					{
+					if (!nested) {
+
 						writer = StartDocument();
 						WriteInterface(writer, type);
 						EndDocument(writer);
@@ -310,14 +326,14 @@ namespace Mono.Util
 
 		private void WriteStructures(XmlTextWriter writer, Type[] types)
 		{
-			foreach (Type type in types)
-			{
-				if (type.IsValueType && !type.IsEnum && type.Namespace.Equals(currentNamespace))
-				{
+			foreach (Type type in types) {
+
+				if (type.IsValueType && !type.IsEnum && type.Namespace.Equals(currentNamespace) && MustDocumentType(type)) {
+
 					classname = type.FullName;
 					docname = type.Name;
-					if (!nested)
-					{
+					if (!nested) {
+
 						writer = StartDocument();
 						WriteClass(writer, type);
 						EndDocument(writer);
@@ -330,14 +346,14 @@ namespace Mono.Util
 
 		private void WriteDelegates(XmlTextWriter writer, Type[] types)
 		{
-			foreach (Type type in types)
-			{
-				if (type.IsClass && IsDelegate(type) && type.Namespace.Equals(currentNamespace))
-				{
+			foreach (Type type in types) {
+
+				if (type.IsClass && IsDelegate(type) && type.Namespace.Equals(currentNamespace) && MustDocumentType(type)) {
+
 					classname = type.FullName;
 					docname = type.Name;
-					if (!nested)
-					{
+					if (!nested) {
+
 						writer = StartDocument();
 						WriteDelegate(writer, type);
 						EndDocument(writer);
@@ -350,14 +366,14 @@ namespace Mono.Util
 
 		private void WriteEnumerations(XmlTextWriter writer, Type[] types)
 		{
-			foreach (Type type in types)
-			{
-				if (type.IsEnum && type.Namespace.Equals(currentNamespace))
-				{
+			foreach (Type type in types) {
+
+				if (type.IsEnum && type.Namespace.Equals(currentNamespace) && MustDocumentType(type)) {
+
 					classname = type.FullName;
 					docname = type.Name;
-					if (!nested)
-					{
+					if (!nested) {
+
 						writer = StartDocument();
 						WriteEnumeration(writer, type);
 						EndDocument(writer);
@@ -374,7 +390,7 @@ namespace Mono.Util
 			Type[] types = type.GetNestedTypes();
 			AssemblyName assemblyName = assembly.GetName();
 			bool isStruct = type.IsValueType;
-			nested = true;
+			nested = false;
 
 			writer.WriteStartElement(isStruct ? "struct" : "class");
 			writer.WriteAttributeString("name", type.FullName);
@@ -457,9 +473,12 @@ namespace Mono.Util
 
 			ConstructorInfo[] constructors = type.GetConstructors(bindingFlags);
 
-			foreach (ConstructorInfo constructor in constructors)
-			{
-				WriteConstructor(writer, constructor);
+			foreach (ConstructorInfo constructor in constructors) {
+
+				if (MustDocumentMethod(constructor)) {
+
+					WriteConstructor(writer, constructor);
+				}
 			}
 		}
 
@@ -471,10 +490,10 @@ namespace Mono.Util
 				BindingFlags.Public |
 				BindingFlags.NonPublic;
 
-			foreach (FieldInfo field in type.GetFields(bindingFlags))
-			{
-				if (!IsAlsoAnEvent(field))
-				{
+			foreach (FieldInfo field in type.GetFields(bindingFlags)) {
+
+				if (!IsAlsoAnEvent(field) && MustDocumentField(field)) {
+
 					WriteField(writer, field);
 				}
 			}
@@ -490,16 +509,16 @@ namespace Mono.Util
 
 			PropertyInfo[] properties = type.GetProperties(bindingFlags);
 
-			foreach (PropertyInfo property in properties)
-			{
+			foreach (PropertyInfo property in properties) {
+
 				MethodInfo getMethod = property.GetGetMethod(true);
 				MethodInfo setMethod = property.GetSetMethod(true);
 
 				bool hasGetter = (getMethod != null);
 				bool hasSetter = (setMethod != null);
 
-				if ((hasGetter || hasSetter) && !IsAlsoAnEvent(property))
-				{
+				if ((hasGetter || hasSetter) && !IsAlsoAnEvent(property)) {
+
 					WriteProperty(writer, property, property.DeclaringType.FullName != type.FullName);
 				}
 			}
@@ -515,13 +534,13 @@ namespace Mono.Util
 
 			MethodInfo[] methods = type.GetMethods(bindingFlags);
 
-			foreach (MethodInfo method in methods)
-			{
+			foreach (MethodInfo method in methods) {
+
 				if (!(method.Name.StartsWith("get_")) &&
 					!(method.Name.StartsWith("set_")) &&
 					!(method.Name.StartsWith("add_")) &&
 					!(method.Name.StartsWith("remove_")) &&
-					!(method.Name.StartsWith("op_")))
+					!(method.Name.StartsWith("op_")) && MustDocumentMethod(method))
 				{
 					WriteMethod(writer, method, method.DeclaringType.FullName != type.FullName);
 				}
@@ -538,10 +557,10 @@ namespace Mono.Util
 
 			MethodInfo[] methods = type.GetMethods(bindingFlags);
 
-			foreach (MethodInfo method in methods)
-			{
-				if (method.Name.StartsWith("op_"))
-				{
+			foreach (MethodInfo method in methods) {
+
+				if (method.Name.StartsWith("op_") && MustDocumentMethod(method)) {
+
 					WriteOperator(writer, method);
 				}
 			}
@@ -556,12 +575,12 @@ namespace Mono.Util
 				BindingFlags.NonPublic |
 				BindingFlags.DeclaredOnly;
 
-			foreach (EventInfo eventInfo in type.GetEvents(bindingFlags))
-			{
+			foreach (EventInfo eventInfo in type.GetEvents(bindingFlags)) {
+
 				MethodInfo addMethod = eventInfo.GetAddMethod(true);
 
-				if (addMethod != null)
-				{
+				if (addMethod != null && MustDocumentMethod(addMethod)) {
+
 					WriteEvent(writer, eventInfo);
 				}
 			}
@@ -597,8 +616,8 @@ namespace Mono.Util
 			writer.WriteElementString("summary","TODO");
 			writer.WriteElementString("remarks","TODO");
 
-			foreach (ParameterInfo parameter in constructor.GetParameters())
-			{
+			foreach (ParameterInfo parameter in constructor.GetParameters()) {
+
 				WriteParameter(writer, parameter);
 			}
 
@@ -609,8 +628,8 @@ namespace Mono.Util
 		// Writes XML documenting a property.
 		private void WriteProperty(XmlTextWriter writer, PropertyInfo property, bool inherited )
 		{
-			if (!inherited)
-			{
+			if (!inherited) {
+
 				writer.WriteStartElement("property");
 				writer.WriteAttributeString("name", property.Name);
 				writer.WriteElementString("summary","TODO");
@@ -624,15 +643,15 @@ namespace Mono.Util
 		// Writes XML documenting an operator.
 		private void WriteOperator(XmlTextWriter writer, MethodInfo method)
 		{
-			if (method != null)
-			{
+			if (method != null) {
+
 				writer.WriteStartElement("operator");
 				writer.WriteAttributeString("name", method.Name + GetParameterTypes(method.GetParameters()));
 				writer.WriteElementString("summary","TODO");
 				writer.WriteElementString("remarks","TODO");
 
-				foreach (ParameterInfo parameter in method.GetParameters())
-				{
+				foreach (ParameterInfo parameter in method.GetParameters()) {
+
 					WriteParameter(writer, parameter);
 				}
 
@@ -645,15 +664,15 @@ namespace Mono.Util
 		// Writes XML documenting a method.
 		private void WriteMethod(XmlTextWriter writer, MethodInfo method, bool inherited)
 		{
-			if (!inherited && method != null)
-			{
+			if (!inherited && method != null) {
+
 				writer.WriteStartElement("method");
 				writer.WriteAttributeString("name", method.Name + GetParameterTypes(method.GetParameters()));
 				writer.WriteElementString("summary","TODO");
 				writer.WriteElementString("remarks","TODO");
 
-				foreach (ParameterInfo parameter in method.GetParameters())
-				{
+				foreach (ParameterInfo parameter in method.GetParameters()) {
+
 					WriteParameter(writer, parameter);
 				}
 
@@ -672,4 +691,3 @@ namespace Mono.Util
 		}
 	}
 }
-
