@@ -888,14 +888,14 @@ instr                   : INSTR_NONE		{currentInstr = new InstrNone ((OpCode) $1
 			| instr_r_head bytes CLOSE_PARENS 
 			| INSTR_BRTARGET int32  
 			| INSTR_BRTARGET id 
-			| INSTR_METHOD binding_flags type assembly_name name1 DOUBLE_COLON call_name OPEN_PARENS arg_list CLOSE_PARENS 
+			| INSTR_METHOD binding_flags type full_type DOUBLE_COLON call_name OPEN_PARENS arg_list CLOSE_PARENS 
 			  {
 				if (OpCodes.Call.Equals ((OpCode)$1) || OpCodes.Callvirt.Equals ((OpCode)$1)) {
-					currentInstr = new InstrCall ((OpCode) $1, (string)$2, (string)$3, (string)$4,  
-						(string)$5, (string)$7, $9 as ArrayList);
+					currentInstr = new InstrCall ((OpCode) $1, (string)$2, (string)$3, 
+						(string)$4, (string)$6, $8 as ArrayList);
 				} else if (OpCodes.Newobj.Equals ((OpCode)$1)) {
-					currentInstr = new InstrNewobj ((OpCode) $1, (string)$2, (string)$3, (string)$4, 
-						(string)$5, (string)$7, $9 as ArrayList);
+					currentInstr = new InstrNewobj ((OpCode) $1, (string)$2, (string)$3, 
+						(string)$4, (string)$6, $8 as ArrayList);
 				}
 								
 			  }
