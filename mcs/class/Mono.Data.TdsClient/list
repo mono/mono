@@ -7,9 +7,9 @@ Mono.Data.TdsClient/TdsException.cs
 Mono.Data.TdsClient/TdsParameter.cs
 Mono.Data.TdsClient/TdsParameterCollection.cs
 Mono.Data.TdsClient/TdsTransaction.cs
-Mono.Data.TdsClient.Internal/TdsCommInternal.cs
-Mono.Data.TdsClient.Internal/TdsConnectionParametersInternal.cs
-Mono.Data.TdsClient.Internal/TdsInternal.cs
-Mono.Data.TdsClient.Internal/TdsPacketTypeInternal.cs
-Mono.Data.TdsClient.Internal/TdsServerTypeInternal.cs
-Mono.Data.TdsClient.Internal/TdsVersionInternal.cs
+Mono.Data.TdsClient.Internal/TdsComm.cs
+Mono.Data.TdsClient.Internal/TdsConnectionParameters.cs
+Mono.Data.TdsClient.Internal/Tds.cs
+Mono.Data.TdsClient.Internal/TdsPacketType.cs
+Mono.Data.TdsClient.Internal/TdsServerType.cs
+Mono.Data.TdsClient.Internal/TdsVersion.cs
