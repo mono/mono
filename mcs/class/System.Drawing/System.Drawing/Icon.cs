@@ -151,14 +151,14 @@ namespace System.Drawing
 		{			
 		}
 
-		[MonoTODO ("Implement")]
 		public Icon (Type type, string resource)
 		{
 			using (Stream s = type.Assembly.GetManifestResourceStream (resource)) {
-				if (s == null)
-					throw new FileNotFoundException ("Resource name was not found: `" + resource + "'");				
+				if (s == null) {
+					throw new FileNotFoundException ("Resource name was not found: `" + resource + "'");
+				}
+				InitFromStreamWithSize (s, 32, 32);		// 32x32 is default
 			}
-			throw new NotImplementedException ();
 		}
 
        		private Icon (SerializationInfo info, StreamingContext context)

@@ -1,3 +1,7 @@
+2005-03-30  Rogério Pereira Araújo <rogerio.araujo@gmail.com>
+
+	* Icon.cs: Finished Icon(Type, String) ctor
+
 2005-03-23 Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* gdipFunctions.cs: fixes GdipGetImagePalette signature
