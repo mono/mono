@@ -18,26 +18,26 @@ using System.Reflection;
 
 namespace Mono.CSharp {
 
-	public class MemberName {
+	public class TypeName {
 		public readonly string Name;
 		public readonly TypeArguments TypeArguments;
 
-		public readonly MemberName Left;
+		public readonly TypeName Left;
 
-		public static readonly MemberName Null = new MemberName ("");
+		public static readonly TypeName Null = new TypeName ("");
 
-		public MemberName (string name)
+		public TypeName (string name)
 		{
 			this.Name = name;
 		}
 
-		public MemberName (string name, TypeArguments args)
+		public TypeName (string name, TypeArguments args)
 			: this (name)
 		{
 			this.TypeArguments = args;
 		}
 
-		public MemberName (MemberName left, string name, TypeArguments args)
+		public TypeName (TypeName left, string name, TypeArguments args)
 			: this (name, args)
 		{
 			this.Left = left;
@@ -73,7 +73,7 @@ namespace Mono.CSharp {
 				return full_name;
 		}
 
-		public string GetMemberName ()
+		public string GetTypeName ()
 		{
 			string full_name;
 			if (Left != null)
@@ -99,6 +99,15 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public MemberName GetMemberName ()
+		{
+			if (TypeArguments != null) {
+				string[] type_params = TypeArguments.GetDeclarations ();
+				return new MemberName (Left, Name, type_params);
+			} else
+				return new MemberName (Left, Name);
+		}
+
 		public override string ToString ()
 		{
 			string full_name;
@@ -109,6 +118,63 @@ namespace Mono.CSharp {
 
 			if (Left != null)
 				return Left + "." + full_name;
+			else
+				return full_name;
+		}
+	}
+
+	public class MemberName {
+		public readonly TypeName TypeName;
+		public readonly string Name;
+		public readonly string[] TypeParameters;
+
+		public MemberName (string name)
+		{
+			this.Name = name;
+		}
+
+		public MemberName (TypeName type, string name)
+		{
+			this.TypeName = type;
+			this.Name = name;
+		}
+
+		public MemberName (TypeName type, string name, ArrayList type_params)
+			: this (type, name)
+		{
+			if (type_params != null) {
+				TypeParameters = new string [type_params.Count];
+				type_params.CopyTo (TypeParameters, 0);
+			}
+		}
+
+		public MemberName (TypeName type, string name, string[] type_params)
+			: this (type, name)
+		{
+			this.TypeParameters = type_params;
+		}
+
+		public static readonly MemberName Null = new MemberName ("");
+
+		public string GetMemberName ()
+		{
+			string full_name;
+			if (TypeName != null)
+				return TypeName.GetFullName () + "." + Name;
+			else
+				return Name;
+		}
+
+		public override string ToString ()
+		{
+			string full_name;
+			if (TypeParameters != null)
+				full_name = Name + "<" + TypeParameters + ">";
+			else
+				full_name = Name;
+
+			if (TypeName != null)
+				return TypeName + "." + full_name;
 			else
 				return full_name;
 		}

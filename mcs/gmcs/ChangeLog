@@ -1,3 +1,15 @@
+2004-04-03  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (MemberName): Renamed to `TypeName' and created a new
+	`MemberName' class.
+	(TypeName): Formerly known as MemberName.
+
+	* namespace.cs (NamespaceEntry.UsingAlias): Take a `TypeName'
+	instead of a `MemberName'.
+
+	* cs-parser.jay (namespace_or_type_name): Create a TypeName.
+	(member_name): New rule; create a MemberName.
+
 2004-04-02  Martin Baulig  <martin@ximian.com>
 
 	* namespace.cs (NamespaceEntry.VerifyUsing): Added error checking

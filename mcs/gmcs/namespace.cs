@@ -241,11 +241,11 @@ namespace Mono.CSharp {
 
 		public class AliasEntry {
 			public readonly string Name;
-			public readonly MemberName Alias;
+			public readonly TypeName Alias;
 			public readonly NamespaceEntry NamespaceEntry;
 			public readonly Location Location;
 			
-			public AliasEntry (NamespaceEntry entry, string name, MemberName alias, Location loc)
+			public AliasEntry (NamespaceEntry entry, string name, TypeName alias, Location loc)
 			{
 				Name = name;
 				Alias = alias;
@@ -267,7 +267,7 @@ namespace Mono.CSharp {
 				// this will fail with `using A = Stack<int>'
 				//
 				
-				string alias = Alias.GetMemberName ();
+				string alias = Alias.GetTypeName ();
 				while ((curr_ns != null) && (resolved == null)) {
 					resolved = curr_ns.Lookup (
 						null, alias, Alias.CountTypeArguments,
@@ -371,7 +371,7 @@ namespace Mono.CSharp {
 			using_clauses.Add (ue);
 		}
 
-		public void UsingAlias (string name, MemberName alias, Location loc)
+		public void UsingAlias (string name, TypeName alias, Location loc)
 		{
 			if (aliases == null)
 				aliases = new Hashtable ();

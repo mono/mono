@@ -321,7 +321,7 @@ using_alias_directive
 	: USING IDENTIFIER ASSIGN 
 	  namespace_or_type_name SEMICOLON
 	  {
-		current_namespace.UsingAlias ((string) $2, (MemberName) $4, lexer.Location);
+		current_namespace.UsingAlias ((string) $2, (TypeName) $4, lexer.Location);
 	  }
 	| USING error {
 		CheckIdentifierToken (yyToken);
@@ -375,7 +375,7 @@ opt_comma
 
 namespace_name
 	: namespace_or_type_name {
-		MemberName name = (MemberName) $1;
+		TypeName name = (TypeName) $1;
 
 		if (name.TypeArguments != null)
 			syntax_error (lexer.Location, "namespace name expected");
@@ -935,8 +935,7 @@ opt_error_modifier
 method_header
 	: opt_attributes
 	  opt_modifiers
-	  type
-	  namespace_or_type_name
+	  type namespace_or_type_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  {
 		lexer.ConstraintsParsing = true;
@@ -945,21 +944,22 @@ method_header
 	  {
 		lexer.ConstraintsParsing = false;
 
-		MemberName name = (MemberName) $4;
+		TypeName type_name = (TypeName) $4;
+		MemberName name = type_name.GetMemberName ();
 
-		if ($9 != null && name.TypeArguments == null)
+		if ($9 != null && name.TypeParameters == null)
 			Report.Error (80, lexer.Location,
 				      "Contraints are not allowed on non-generic declarations");
 
 		Method method;
 
 		GenericMethod generic = null;
-		if (name.TypeArguments != null) {
+		if (name.TypeParameters != null) {
 			generic = new GenericMethod (current_namespace, current_container,
 						     name.Name, (Attributes) $1,
 						     lexer.Location);
 
-			CheckDef (generic.SetParameterInfo (name.TypeArguments, (ArrayList) $9), name.Name, lexer.Location);
+			CheckDef (generic.SetParameterInfo (name.TypeParameters, (ArrayList) $9), name.Name, lexer.Location);
 
 			method = new Method (generic, (Expression) $3, (int) $2, false, name,
 					     (Parameters) $6, (Attributes) $1, lexer.Location);
@@ -974,8 +974,7 @@ method_header
 	  }
 	| opt_attributes
 	  opt_modifiers
-	  VOID
-	  namespace_or_type_name
+	  VOID namespace_or_type_name
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
 	  {
 		lexer.ConstraintsParsing = true;
@@ -984,21 +983,22 @@ method_header
 	  {
 		lexer.ConstraintsParsing = false;
 
-		MemberName name = (MemberName) $4;
+		TypeName type_name = (TypeName) $4;
+		MemberName name = type_name.GetMemberName ();
 
-		if ($9 != null && name.TypeArguments == null)
+		if ($9 != null && name.TypeParameters == null)
 			Report.Error (80, lexer.Location,
 				      "Contraints are not allowed on non-generic declarations");
 
 		Method method;
 		GenericMethod generic = null;
-		if (name.TypeArguments != null) {
+		if (name.TypeParameters != null) {
 			generic = new GenericMethod (current_namespace, current_container,
 						     name.Name, (Attributes) $1,
 						     lexer.Location);
 
 
-			CheckDef (generic.SetParameterInfo (name.TypeArguments, (ArrayList) $9), name.Name, lexer.Location);
+			CheckDef (generic.SetParameterInfo (name.TypeParameters, (ArrayList) $9), name.Name, lexer.Location);
 
 			method = new Method (generic, TypeManager.system_void_expr, (int) $2,
 					     false, name, (Parameters) $6, (Attributes) $1,
@@ -1015,7 +1015,7 @@ method_header
 	| opt_attributes
 	  opt_modifiers
 	  type 
-	  modifiers namespace_or_type_name OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
+	  modifiers member_name OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  {
 		Report.Error (1585, lexer.Location, 
 			String.Format ("Modifier {0} should appear before type", 
@@ -1123,7 +1123,7 @@ parameter_array
 property_declaration
 	: opt_attributes
 	  opt_modifiers
-	  type namespace_or_type_name
+	  type member_name
 	  OPEN_BRACE 
 	  {
 		implicit_value_parameter_type = (Expression) $3;
@@ -1146,7 +1146,7 @@ property_declaration
 		Accessor set_block = (Accessor) pair.Second;
 
 		MemberName name = (MemberName) $4;
-		if (name.TypeArguments != null)
+		if (name.TypeParameters != null)
 			syntax_error (lexer.Location, "a property can't have type arguments");
 
 		Location loc = (Location) $6;
@@ -1712,7 +1712,7 @@ event_declaration
 	  }
 	| opt_attributes
 	  opt_modifiers
-	  EVENT type namespace_or_type_name
+	  EVENT type member_name
 	  OPEN_BRACE
 	  {
 		implicit_value_parameter_type = (Expression) $4;  
@@ -1741,7 +1741,7 @@ event_declaration
 			rem_accessor = (Accessor) pair.Second;
 
 		MemberName name = (MemberName) $5;
-		if (name.TypeArguments != null)
+		if (name.TypeParameters != null)
 			syntax_error (lexer.Location, "an event can't have type arguments");
 
 		Event e = new Event ((Expression) $4, (int) $2, false, name, null,
@@ -1846,7 +1846,7 @@ indexer_declaration
 
 		MemberName name;
 		if (decl.interface_type != null)
-			name = new MemberName (decl.interface_type, "", null);
+			name = new MemberName (decl.interface_type, "");
 		else
 			name = MemberName.Null;
 
@@ -1883,7 +1883,7 @@ indexer_declarator
 		if (pars.FixedParameters == null && pars.ArrayParameter == null){
 			Report.Error (1551, lexer.Location, "Indexers must have at least one parameter");
 		}
-		MemberName name = (MemberName) $2;
+		TypeName name = (TypeName) $2;
 		if (name.TypeArguments != null)
 			syntax_error (lexer.Location, "an indexer can't have type arguments");
 
@@ -2040,27 +2040,28 @@ delegate_declaration
 
 type_name
 	: namespace_or_type_name {
-		$$ = ((MemberName) $1).GetTypeExpression (lexer.Location);
+		$$ = ((TypeName) $1).GetTypeExpression (lexer.Location);
 	  }
 	;
 
 namespace_or_type_name
 	: IDENTIFIER opt_type_argument_list {
-		$$ = new MemberName ((string) $1, (TypeArguments) $2);
+		$$ = new TypeName ((string) $1, (TypeArguments) $2);
 	  }
 	| namespace_or_type_name DOT IDENTIFIER opt_type_argument_list {
-		$$ = new MemberName ((MemberName) $1, (string) $3, (TypeArguments) $4);
+		$$ = new TypeName ((TypeName) $1, (string) $3, (TypeArguments) $4);
 	  }
-//	| namespace_or_type_name DOT DEFAULT
-//	  {
-//		$$ = new DefaultValueExpression ((Expression) $1, lexer.Location);
-//	  }
 	;
 
-// 
-// TODO:
-//   Figure out what to do with the list 
-//
+member_name
+	: IDENTIFIER opt_type_parameter_list {
+		$$ = new MemberName (null, (string) $1, (ArrayList) $2);
+	  }
+	| namespace_or_type_name DOT IDENTIFIER opt_type_parameter_list {
+		$$ = new MemberName ((TypeName) $1, (string) $3, (ArrayList) $4);
+	  }
+	;
+
 opt_type_argument_list
 	: /* empty */ 		     { $$ = null; } 
 	| OP_GENERICS_LT type_arguments OP_GENERICS_GT
@@ -4192,10 +4193,10 @@ public class InterfaceAccessorInfo {
 // </summary>
 public class IndexerDeclaration {
 	public Expression type;
-	public MemberName interface_type;
+	public TypeName interface_type;
 	public Parameters param_list;
 
-	public IndexerDeclaration (Expression type, MemberName interface_type,
+	public IndexerDeclaration (Expression type, TypeName interface_type,
 				   Parameters param_list)
 	{
 		this.type = type;

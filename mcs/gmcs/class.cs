@@ -1086,11 +1086,11 @@ namespace Mono.CSharp {
 
 			ArrayList list = new ArrayList ();
 			foreach (Indexer i in Indexers){
-				if (i.MemberName.Left != null)
+				if (i.MemberName.TypeName != null)
 					list.Add (i);
 			}
 			foreach (Indexer i in Indexers){
-				if (i.MemberName.Left == null)
+				if (i.MemberName.TypeName == null)
 					list.Add (i);
 			}
 
@@ -4305,8 +4305,8 @@ namespace Mono.CSharp {
 			//
 			// Check for explicit interface implementation
 			//
-			if (MemberName.Left != null) {
-				ExplicitInterfaceName = MemberName.Left.GetTypeExpression (Location);
+			if (MemberName.TypeName != null) {
+				ExplicitInterfaceName = MemberName.TypeName.GetTypeExpression (Location);
 				ShortName = MemberName.Name;
 			} else
 				ShortName = Name;
