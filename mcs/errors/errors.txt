@@ -84,3 +84,16 @@ numbers, as they look nicer on the debugging output.
 		class X {} 
 
 -25     Generic parse error
+
+----------
+
+Errors that we have allocated that will have corresponding errors in
+the Microsoft C# compiler:
+
+-200    Constraints for class defined, but there is no parameter list.
+
+-201    Class containing main method is generic.
+
+-202    Can not use a type parameter in an attribute.
+
+-203    Can not use type parameters as unmanaged types.
