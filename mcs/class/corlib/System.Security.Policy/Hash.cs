@@ -3,6 +3,7 @@
 // Author(s):
 //  Jackson Harper (Jackson@LatitudeGeo.com)
 //
+// (C) 2002 Jackson Harper, All rights reserved.
 
 using System;
 using System.IO;
@@ -17,6 +18,7 @@ namespace System.Security.Policy {
 	public sealed class Hash {
 		
 		private Assembly assembly;
+		private byte[] data = null;
 
 		public Hash(Assembly assembly)
 		{
@@ -56,16 +58,14 @@ namespace System.Security.Policy {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO("The Raw data seems to be different than the raw data I have")]
 		public override string ToString()
 		{
-			StringBuilder builder = new StringBuilder();
+			SecurityElement se = new SecurityElement (GetType ().FullName);
+			se.AddAttribute ("version", "1");
+			se.AddChild (new SecurityElement ("RawData", GetData ().ToString ()));
 
-			builder.Append ("<System.Security.Policy.Hash version=\"1\">");
-			builder.AppendFormat ("<RawData>{0}</RawData>", GetData ());
-			builder.Append ("</System.Security.Policy.Hash>");
-
-			return builder.ToString ();
+			return se.ToString ();
 		}
 
 		//
@@ -75,14 +75,15 @@ namespace System.Security.Policy {
 		[MonoTODO("This doesn't match the MS version perfectly.")]
 		private byte[] GetData()
 		{
-			FileStream stream = new FileStream( assembly.Location, FileMode.Open, FileAccess.Read );
-			byte[] buf = new byte[stream.Length];
+			if (null == data) {
+				FileStream stream = new 
+					FileStream( assembly.Location, FileMode.Open, FileAccess.Read );
+				data = new byte[stream.Length];
+				stream.Read( data, 0, (int)stream.Length );
+			}
 
-			stream.Read( buf, 0, (int)stream.Length );
-
-			return buf;
+			return data;
 		}
 	}
-
 }
 
