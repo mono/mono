@@ -146,7 +146,11 @@ namespace MonoTests.System.Data.Odbc {
 		}
 
 		[Test]
+#if NET_2_0
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+#else
+		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void KeyRestrictionBehavior_Invalid ()
 		{
 			OdbcPermissionAttribute a = new OdbcPermissionAttribute (SecurityAction.Assert);

@@ -91,7 +91,11 @@ namespace System.Data.Common {
 			set {
 				if (!Enum.IsDefined (typeof (KeyRestrictionBehavior), value)) {
 					string msg = Locale.GetText ("Unknown value.");
+#if NET_2_0
 					throw new ArgumentOutOfRangeException ("KeyRestrictionBehavior", value, msg);
+#else
+					throw new ArgumentException ("KeyRestrictionBehavior", msg);
+#endif
 				}
 				keyRestrictionBehavior = value;
 			}

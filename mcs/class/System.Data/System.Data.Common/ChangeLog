@@ -1,3 +1,10 @@
+2005-01-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DbDataPermissionAttribute.cs, PermissionHelper.cs :
+	  fixed some incompatible type of exception between 2.0 and 1.x.
+	* DataContainer.cs :
+	  Wrap exceptions thrown by SetValue() within ArgumentException.
+
 2004-12-10  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DbDataAdapter.cs (BuildSchema): Add the primary key schema iff

@@ -218,7 +218,11 @@ namespace System.Data.Common
 						SetValue(index,(short)value);
 					}
 					else {
-						SetValue(index,Convert.ToInt16(value));
+						try {
+							SetValue(index,Convert.ToInt16(value));
+						} catch (Exception ex) {
+							throw new ArgumentException (ex.Message, ex);
+						}
 					}
 					SetNull(index,value == null,isDbNull);
 				}

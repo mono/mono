@@ -1,3 +1,8 @@
+2005-01-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SqlClientPermissionTest.cs, SqlClientPermissionAttributeTest.cs:
+	  Fixed some incompatible type of exception between 2.0 and 1.1.
+
 2004-11-01 Gert Driesen <drieseng@users.sourceforge.net>
 	* SqlCommandTest.cs: Added testcase for bug #66630.
 

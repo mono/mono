@@ -1,3 +1,8 @@
+2005-01-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* OleDbPermissionTest.cs, OleDbPermissionAttributeTest.cs:
+	  Fixed some incompatible type of exception between 2.0 and 1.1.
+
 2004-09-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* OleDbPermissionTest.cs: New. Unit tests for OleDbPermission.

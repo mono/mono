@@ -140,7 +140,11 @@ namespace MonoTests.System.Data.Common {
 		}
 
 		[Test]
+#if NET_2_0
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+#else
+		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void KeyRestrictionBehavior_Invalid ()
 		{
 			DBDataPermissionAttribute a = new NonAbstractDBDataPermissionAttribute (SecurityAction.Assert);

@@ -59,7 +59,11 @@ namespace System.Data.Common {
 				break;
 			default:
 				msg = String.Format (Locale.GetText ("Invalid enum {0}"), state);
+#if NET_2_0
 				throw new ArgumentOutOfRangeException (msg, "state");
+#else
+				throw new ArgumentException (msg, "state");
+#endif
 			}
 			return state;
 		}

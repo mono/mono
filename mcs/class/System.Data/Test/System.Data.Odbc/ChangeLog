@@ -1,3 +1,8 @@
+2005-01-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* OdbcPermissionTest.cs, OdbcPermissionAttributeTest.cs:
+	  Fixed some incompatible type of exception between 2.0 and 1.1.
+
 2004-11-26  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* OdbcParameterCollectionTest.cs: New file for testing

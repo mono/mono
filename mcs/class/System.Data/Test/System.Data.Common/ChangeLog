@@ -1,5 +1,10 @@
 2005-01-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DBDataPermissionTest.cs, DBDataPermissionAttributeTest.cs:
+	  Fixed some incompatible type of exception between 2.0 and 1.1.
+
+2005-01-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataTableMappingCollectionTest.cs,
 	  DataColumnMappingCollectionTests.cs : Equals() and Remove() contains
 	  invalid attempt to add one map to two collections, which is rejected
