@@ -1,3 +1,9 @@
+2004-03-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConvert.cs: Added exception for null and bad parameters.
+	* RSAManaged.cs: CryptographicException thrown when trying to export
+	the private key when only the public key is present (CRT aware).
+
 2004-03-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConvert.cs: Added new methods to convert [From|To]Hex. Added
