@@ -1,3 +1,9 @@
+2004-04-21  Marek Safar <marek.safar@seznam.cz>
+
+	* test-238.cs,
+	test-239.cs,
+	test-239.cs: Tests for ObsoleteAttribute
+
 2004-04-21  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (test-compiler-jit-real): Create log files for failed
