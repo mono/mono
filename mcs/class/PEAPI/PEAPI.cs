@@ -5355,6 +5355,8 @@ if (rsrc != null)
 
     internal bool ZeroRva () {
         return (((methFlags & (ushort)MethAttr.Abstract) != 0) ||
+                        ((implFlags & (ushort)ImplAttr.Runtime) != 0) ||
+                        ((implFlags & (ushort)ImplAttr.InternalCall) != 0) || 
                         (pinvokeImpl != null)); // TODO: Not entirely true but works for now
     }
 
