@@ -230,6 +230,9 @@ namespace System.Web.Configuration
                         cacheTable = Hashtable.Synchronized (new Hashtable ());
 			this.path = Path.GetDirectoryName (data.FileName);
 			this.filename = Path.GetFileName (data.FileName);
+			if (!Directory.Exists (path))
+				return;
+
 			watcher = new FileSystemWatcher (this.path, this.filename);
 			FileSystemEventHandler handler = new FileSystemEventHandler (SetChanged);
 			watcher.Created += handler;
@@ -269,7 +272,8 @@ namespace System.Web.Configuration
 
 		public void Close ()
 		{
-			watcher.EnableRaisingEvents = false;
+			if (watcher != null)
+				watcher.EnableRaisingEvents = false;
 		}
         }
 
