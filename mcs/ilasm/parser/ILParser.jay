@@ -1114,7 +1114,7 @@ method_all		: method_head OPEN_BRACE method_decls CLOSE_BRACE
 			;
 
 method_head		: D_METHOD meth_attr call_conv param_attr type method_name
-			  OPEN_PARENS sig_args CLOSE_PARENS impl_attr
+                          typars_clause OPEN_PARENS sig_args CLOSE_PARENS impl_attr
 			| D_METHOD meth_attr call_conv param_attr type 
 			  K_MARSHAL OPEN_PARENS native_type CLOSE_PARENS method_name
 			  OPEN_PARENS sig_args CLOSE_PARENS impl_attr
