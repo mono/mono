@@ -1,3 +1,12 @@
+2003-01-19  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CryptoTools.cs: Added internal class BlockProcessor to help
+	implementation of block-based algorithms (like MAC and HMAC).
+	* HMACSHA1.cs: Refactored to remove dependencies on CryptoStream,
+	better constructors and Dispose support.
+	* MACTripleDES.cs: Refactored to reuse new HMACSHA1 stuff, better
+	constructors.
+
 2003-01-18  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* HMACSHA1.cs: Now use KeyBuilder to build the default key.

@@ -32,9 +32,9 @@ internal class HMACAlgorithm {
 	private byte[] hash;
 	private HashAlgorithm algo;
 	private string hashName;
-	private CryptoStream stream;
+	private BlockProcessor block;
 
-	public HMACAlgorithm (string algoName) 
+	public HMACAlgorithm (string algoName)
 	{
 		CreateHash (algoName);
 	}
@@ -48,11 +48,13 @@ internal class HMACAlgorithm {
 	{
 		algo = HashAlgorithm.Create (algoName);
 		hashName = algoName;
+		block = new BlockProcessor (algo, 8);
 	}
 
 	public void Dispose () 
 	{
-		ZeroizeKey ();
+		if (key != null)
+			Array.Clear (key, 0, key.Length);
 	}
 
 	public HashAlgorithm Algo {
@@ -61,15 +63,7 @@ internal class HMACAlgorithm {
 
 	public string HashName {
 		get { return hashName; }
-		set { 
-			// only if its not too late for a change
-			if (stream == null)
-				CreateHash (value);
-		}
-	}
-
-	public byte[] HashValue {
-		get { return hash; }
+		set { CreateHash (value); }
 	}
 
 	public byte[] Key {
@@ -85,6 +79,12 @@ internal class HMACAlgorithm {
 	public void Initialize () 
 	{
 		hash = null;
+		block.Initialize ();
+		byte[] buf = KeySetup (key, 0x36);
+		algo.Initialize ();
+		block.Core (buf);
+		// zeroize key
+		Array.Clear (buf, 0, buf.Length);
 	}
 
 	private byte[] KeySetup (byte[] key, byte padding) 
@@ -102,59 +102,39 @@ internal class HMACAlgorithm {
 
 	public void Core (byte[] rgb, int ib, int cb) 
 	{
-		if (stream == null) {
-			byte[] buf = KeySetup (key, 0x36);
-			algo.Initialize ();
-			stream = new CryptoStream (Stream.Null, algo, CryptoStreamMode.Write);
-			stream.Write (buf, 0, buf.Length);
-		}
-		stream.Write (rgb, ib, cb);
+		block.Core (rgb, ib, cb);
 	}
 
 	public byte[] Final () 
 	{
-		stream.Close ();
-		stream = null;
+		block.Final ();
 		byte[] intermediate = algo.Hash;
+
 		byte[] buf = KeySetup (key, 0x5C);
-
 		algo.Initialize ();
-		stream = new CryptoStream (Stream.Null, algo, CryptoStreamMode.Write);
-		stream.Write (buf, 0, buf.Length);
-		stream.Write (intermediate, 0, intermediate.Length);
-		stream.Close ();
-		stream = null;
-
+		algo.TransformBlock (buf, 0, buf.Length, buf, 0);
+		algo.TransformFinalBlock (intermediate, 0, intermediate.Length);
 		hash = algo.Hash;
 		algo.Clear ();
+		// zeroize sensitive data
+		Array.Clear (buf, 0, buf.Length);	
+		Array.Clear (intermediate, 0, intermediate.Length);
 		return hash;
-	}
-
-	// Note: this key is different (well most of the time) from the key
-	// used in KeyHashAlgorithm (this one may be padded or hashed). So
-	// it need to be zeroized independently.
-	public void ZeroizeKey () 
-	{
-		if (key != null)
-			Array.Clear (key, 0, key.Length);
 	}
 }
 
 public class HMACSHA1: KeyedHashAlgorithm {
 	private HMACAlgorithm hmac;
+	private bool m_disposed;
 
-	public HMACSHA1 () : base ()
+	public HMACSHA1 () : this (KeyBuilder.Key (8)) {}
+
+	public HMACSHA1 (byte[] rgbKey) : base ()
 	{
 		hmac = new HMACAlgorithm ("SHA1");
 		HashSizeValue = 160;
-		Key = KeyBuilder.Key (8);
-	}
-
-	public HMACSHA1 (byte[] rgbKey) 
-	{
-		hmac = new HMACAlgorithm ("SHA1");
-		HashSizeValue = 160;
-		hmac.Key = rgbKey;
+		Key = rgbKey;
+		m_disposed = false;
 	}
 
 	~HMACSHA1 () 
@@ -172,37 +152,51 @@ public class HMACSHA1: KeyedHashAlgorithm {
 
 	public string HashName {
 		get { return hmac.HashName; }
-		set { hmac.HashName = value; }
+		set { 
+			// only if its not too late for a change
+			if (State == 0)
+				hmac.HashName = value; 
+		}
 	}
 
 	protected override void Dispose (bool disposing) 
 	{
-		if (hmac != null)
-			hmac.Dispose();
-		base.Dispose (disposing);
+		if (!m_disposed) {
+			if (hmac != null)
+				hmac.Dispose();
+			base.Dispose (disposing);
+			m_disposed = true;
+		}
 	}
 
 	public override void Initialize ()
 	{
+		if (m_disposed)
+			throw new ObjectDisposedException ("HMACSHA1");
+		// let us throw an exception if hash name is invalid
+		// for HMACSHA1 (obviously this can't be done by the 
+		// generic HMAC class) 
+		if (! (hmac.Algo is SHA1))
+			throw new InvalidCastException ();
 		State = 0;
 		hmac.Initialize ();
 	}
 
         protected override void HashCore (byte[] rgb, int ib, int cb)
 	{
+		if (m_disposed)
+			throw new ObjectDisposedException ("HMACSHA1");
 		if (State == 0) {
-			// let us throw an exception if hash name is invalid
-			// for HMACSHA1 (obviously this can't be done by the 
-			// generic HMAC class) 
-			if (! (hmac.Algo is SHA1))
-				throw new InvalidCastException ();
+			Initialize ();
+			State = 1;
 		}
-		State = 1;
 		hmac.Core (rgb, ib, cb);
 	}
 
 	protected override byte[] HashFinal ()
 	{
+		if (m_disposed)
+			throw new ObjectDisposedException ("HMACSHA1");
 		State = 0;
 		return hmac.Final ();
 	}
