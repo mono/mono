@@ -765,7 +765,7 @@ struct hblk {
 	    /* Under NT, we add only written pages, which can result 	*/
 	    /* in many small root sets.					*/
 #     else
-#       define MAX_ROOT_SETS 256
+#       define MAX_ROOT_SETS 1024
 #     endif
 #   endif
 # endif

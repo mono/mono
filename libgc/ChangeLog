@@ -1,3 +1,6 @@
+2005-02-07  Geoff Norton  <gnorton@customerdna.com>
+
+	* include/private/gc_priv.h: Bump the max root sets to 1024
 
 Mon Jan 24 16:39:42 CET 2005 Paolo Molaro <lupus@ximian.com>
 
