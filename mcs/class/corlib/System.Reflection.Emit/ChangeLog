@@ -1,3 +1,11 @@
+2004-07-29  Martin Baulig  <martin@ximian.com>
+
+	* ILGenerator.cs (ILGenerator.Mono_GetCurrentOffset): New static
+	internal method.
+
+	* ModuleBuilder.cs (ModuleBuilder.Mono_GetGuid): New static
+	internal method.
+
 2004-07-24  Martin Baulig  <martin@ximian.com>
 
 	* TypeBuilder.cs (TypeBuilder.UnspecifiedTypeSize): Set this to 0

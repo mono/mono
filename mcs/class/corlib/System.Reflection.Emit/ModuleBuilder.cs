@@ -687,6 +687,11 @@ namespace System.Reflection.Emit {
 				is_main = value;
 			}
 		}
+
+		internal static Guid Mono_GetGuid (ModuleBuilder mb)
+		{
+			return new Guid (mb.guid);
+		}
 	}
 
 	internal class ModuleBuilderTokenGenerator : TokenGenerator {

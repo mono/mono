@@ -897,5 +897,10 @@ namespace System.Reflection.Emit {
 				}
 			}
 		}
+
+		internal static int Mono_GetCurrentOffset (ILGenerator ig)
+		{
+			return ig.code_len;
+		}
 	}
 }
