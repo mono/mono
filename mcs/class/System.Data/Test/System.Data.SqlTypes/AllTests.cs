@@ -19,6 +19,7 @@ namespace MonoTests.System.Data.SqlTypes
 		public static ITest Suite {
 			get {
 				TestSuite suite =  new TestSuite ();
+				suite.AddTest (new TestSuite (typeof (SqlBooleanTest)));
 				suite.AddTest (new TestSuite (typeof (SqlInt32Test)));
 				return suite;
 			}
