@@ -1,3 +1,7 @@
+2004-08-17 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* mini.c: thread local allocation
+
 2004-08-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.h (MONO_ARCH_NO_EMULATE_LONG_SHIFT_OPS): Enable.
