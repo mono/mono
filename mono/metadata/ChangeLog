@@ -3,6 +3,10 @@
 	* file-io.h: define here WapiOverlapped on windows. I don't want the
 	regular OVERLAPPED one.
 
+	* file-io.c:
+	* threadpool.c: somehow, BindIoCompletionCallback is not found.
+	Disabling AIO on windows.
+
 2004-03-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* marshal.c: Marshal.SizeOf throws an exception for AutoLayout. Fixes
