@@ -41,6 +41,7 @@ namespace System.Diagnostics {
         /// </summary>
 
 	[Serializable]
+	[MonoTODO ("Fix serialization compatibility with MS.NET")]
         public class StackFrame {
                 /// <value>
                 ///   Constant returned when the native or IL offset is unknown.

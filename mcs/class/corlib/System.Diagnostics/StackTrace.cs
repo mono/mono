@@ -43,6 +43,7 @@ namespace System.Diagnostics {
         ///   TODO: more information.
         /// </summary>
         [Serializable]
+	[MonoTODO ("Fix serialization compatibility with MS.NET")]
 	public class StackTrace {
                 /// <value>
                 ///   Uses a constant to define the number of methods that are

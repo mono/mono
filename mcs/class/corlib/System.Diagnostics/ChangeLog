@@ -1,3 +1,8 @@
+2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* StackTrace.cs: added TODO for serialization
+	* StackFrame.cs: added TODO for serialization
+
 2004-05-19  Gert Driesen (drieseng@users.sourceforge.net)
 
 	* DebuggerHiddenAttribute.cs
