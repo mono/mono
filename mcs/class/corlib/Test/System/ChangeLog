@@ -1,3 +1,7 @@
+2003-04-17  Nick Drochak  <ndrochak@gol.com>
+
+	* DoubleTest.cs: Output some more debug info.
+
 2003-04-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BufferTest.cs: added a few more tests for testing buffer length.
