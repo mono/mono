@@ -1,3 +1,8 @@
+2005-03-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* mono-compiler.h: Added defines to make it easier to compile mono and
+	it's unmanaged tools using the Microsoft C compiler (VS.NET 2005).
+
 2005-02-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mono-codeman.c: Pass MAP_32BIT to mmap on amd64 to force generated
