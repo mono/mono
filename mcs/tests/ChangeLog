@@ -1,3 +1,7 @@
+2002-11-17  Martin Baulig  <martin@ximian.com>
+
+	* test-173.cs: New test for bug #34165.
+
 2002-11-14  Martin Baulig  <martin@gnome.org>
 
 	* test-148.cs: Added some tests from bug #33089.

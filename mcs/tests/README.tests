@@ -7,7 +7,7 @@ Test cases listed by Category:
 
 * Overloading
 
-  test-147.cs
+  test-147.cs test-173.cs
 
 * Try/Catch blocks
 
@@ -150,6 +150,11 @@ Enums in array creation expression.
 test-166.cs
 -----------
 Using property from interface which is inherited multiple times.
+
+test-173.cs
+-----------
+Check whether we select the correct function, don't report CS0121
+for integer literals.
 
 verify-1.cs
 -----------
