@@ -172,7 +172,7 @@ namespace System.Web.Services.Discovery
 				System.Xml.XmlQualifiedName t = GetXsiType();
 				if (t != null) 
 				{
-					if (t.Name != "ContractReference" || t.Namespace != "https://schemas.xmlsoap.org/disco/scl/")
+					if (t.Name != "ContractReference" || t.Namespace != "http://schemas.xmlsoap.org/disco/scl/")
 						throw CreateUnknownTypeException(t);
 				}
 			}
@@ -243,11 +243,11 @@ namespace System.Web.Services.Discovery
 
 			while (Reader.MoveToNextAttribute())
 			{
-				if (Reader.LocalName == "ref" && Reader.NamespaceURI == "") {
-					ob.Ref = Reader.Value;
-				}
-				else if (Reader.LocalName == "targetNamespace" && Reader.NamespaceURI == "") {
+				if (Reader.LocalName == "targetNamespace" && Reader.NamespaceURI == "") {
 					ob.TargetNamespace = Reader.Value;
+				}
+				else if (Reader.LocalName == "ref" && Reader.NamespaceURI == "") {
+					ob.Ref = Reader.Value;
 				}
 				else if (IsXmlnsAttribute (Reader.Name)) {
 				}
@@ -325,7 +325,7 @@ namespace System.Web.Services.Discovery
 						WriteObject_DiscoveryDocumentReference (((System.Web.Services.Discovery.DiscoveryDocumentReference) ob.references[n3]), "discoveryRef", "http://schemas.xmlsoap.org/disco/", false, false, true);
 					}
 					else if (ob.references[n3] is System.Web.Services.Discovery.ContractReference) {
-						WriteObject_ContractReference (((System.Web.Services.Discovery.ContractReference) ob.references[n3]), "contractRef", "http://schemas.xmlsoap.org/disco/", false, false, true);
+						WriteObject_ContractReference (((System.Web.Services.Discovery.ContractReference) ob.references[n3]), "contractRef", "http://schemas.xmlsoap.org/disco/scl/", false, false, true);
 					}
 					else if (ob.references[n3] != null) throw CreateUnknownTypeException (ob.references[n3]);
 				}
@@ -348,10 +348,10 @@ namespace System.Web.Services.Discovery
 
 			if (needType) WriteXsiType("SchemaReference", "http://schemas/xmlsoap.org/disco/schema/");
 
-			WriteAttribute ("ref", "", ob.Ref);
 			if (ob.TargetNamespace != "") {
 				WriteAttribute ("targetNamespace", "", ob.TargetNamespace);
 			}
+			WriteAttribute ("ref", "", ob.Ref);
 
 			if (writeWrappingElem) WriteEndElement (ob);
 		}
@@ -389,7 +389,7 @@ namespace System.Web.Services.Discovery
 				WriteStartElement (element, namesp, ob);
 			}
 
-			if (needType) WriteXsiType("ContractReference", "https://schemas.xmlsoap.org/disco/scl/");
+			if (needType) WriteXsiType("ContractReference", "http://schemas.xmlsoap.org/disco/scl/");
 
 			WriteAttribute ("docRef", "", ob.DocRef);
 			WriteAttribute ("ref", "", ob.Ref);

@@ -23,7 +23,7 @@ namespace System.Web.Services.Discovery {
 		
 		public const string Namespace = "http://schemas.xmlsoap.org/disco/";
 		
-		[XmlElement(typeof(ContractReference))]
+		[XmlElement(typeof(ContractReference), Namespace="http://schemas.xmlsoap.org/disco/scl/")]
 		[XmlElement(typeof(DiscoveryDocumentReference))]
 		[XmlElement(typeof(SchemaReference))]
 		internal ArrayList references = new ArrayList();
@@ -75,20 +75,29 @@ namespace System.Web.Services.Discovery {
 		
 		public void Write (Stream stream)
 		{
-			Write (new XmlTextWriter (new StreamWriter (stream)));
+			DiscoveryDocumentSerializer ser = new DiscoveryDocumentSerializer();
+			ser.Serialize (stream, this, GetNamespaceList());
 		}
 		
 		public void Write (TextWriter textWriter)
 		{
-			Write (new XmlTextWriter (textWriter));
+			DiscoveryDocumentSerializer ser = new DiscoveryDocumentSerializer();
+			ser.Serialize (textWriter, this, GetNamespaceList());
 		}
 		
 		public void Write (XmlWriter xmlWriter)
 		{
 			DiscoveryDocumentSerializer ser = new DiscoveryDocumentSerializer();
-			ser.Serialize (xmlWriter, ser);
+			ser.Serialize (xmlWriter, this, GetNamespaceList());
 		}
 
+		XmlSerializerNamespaces GetNamespaceList ()
+		{
+			XmlSerializerNamespaces ns = new XmlSerializerNamespaces ();
+			ns.Add ("scl", ContractReference.Namespace);
+			return ns;
+		}
+		
 		#endregion // Methods
 	}
 

@@ -20,15 +20,13 @@ namespace System.Web.Services.Discovery {
 
 		#region Constructors
 
-		[MonoTODO]
 		public ExcludePathInfo () 
 		{
-			throw new NotImplementedException ();
 		}
 		
-		public ExcludePathInfo (string path) : this() 
+		public ExcludePathInfo (string path)
 		{
-			throw new NotImplementedException ();
+			this.path = path;
 		}
 		
 		#endregion // Constructors

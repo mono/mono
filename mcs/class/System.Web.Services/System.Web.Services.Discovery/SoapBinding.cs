@@ -26,10 +26,8 @@ namespace System.Web.Services.Discovery {
 		
 		#region Constructors
 
-		[MonoTODO]
 		public SoapBinding () 
 		{
-			throw new NotImplementedException ();
 		}
 		
 		#endregion // Constructors
