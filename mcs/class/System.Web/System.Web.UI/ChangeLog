@@ -1,3 +1,7 @@
+2004-02-16  Jackson Harper <jackson@ximian.com>
+
+	* Page.cs: Set cacheability for Location.DownStream.
+	
 2004-02-10  Jackson Harper <jackson@ximian.com>
 
 	* TemplateParser.cs: Use full path if the assembly is in the
