@@ -420,13 +420,12 @@ namespace System.Web.UI
 				ViewState.LoadViewState (savedState);
                 }
                 
-		[MonoTODO]
+		[MonoTODO("Secure?")]
                 protected string MapPathSecure(string virtualPath)
                 {
-                        //TODO: Need to read up on security+web.
-			//Return the same path. So AdRotator can read its config file.
-			return virtualPath;
+			return Context.Request.MapPath (virtualPath);
                 }
+
                 protected virtual bool OnBubbleEvent(object source, EventArgs args) //DIT
                 {
                         return false;

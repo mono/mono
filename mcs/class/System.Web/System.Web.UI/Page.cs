@@ -30,7 +30,6 @@ public class Page : TemplateControl, IHttpHandler
 	private string _errorPage;
 	private string _ID;
 	private bool _isValid;
-	private HttpServerUtility _server;
 	private bool _smartNavigation = false;
 	private TraceContext _trace;
 	private bool _traceEnabled;
@@ -184,7 +183,9 @@ public class Page : TemplateControl, IHttpHandler
 
 	public HttpServerUtility Server
 	{
-		get { return _server; }
+		get {
+			return Context.Server;
+		}
 	}
 
 	public virtual HttpSessionState Session

@@ -1,3 +1,8 @@
+2002-12-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: implemented MapPathSecure.
+	* Page.cs: fixed Server property.
+
 2002-12-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataBinder.cs: try the indexer if the property is not found in
