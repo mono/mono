@@ -27,23 +27,36 @@
 // NOT COMPLETE - work in progress
 
 // TODO:
-// - apply button
-// - help button
-// - color combobox
 // - correct drawing of the selected font in examplePanel
 // - select values for font/style/size via the TextBoxes
 // - etc
 
+using System.ComponentModel;
 using System.Drawing;
 
 namespace System.Windows.Forms
 {
+	[DefaultProperty( "Font" )]
 	public class FontDialog : CommonDialog
 	{
 		private FontDialogPanel fontDialogPanel;
 		
 		private Font font;
 		private Color color = Color.Black;
+		private bool allowSimulations = true;
+		private bool allowVectorFonts = true;
+		private bool allowVerticalFonts = true;
+		private bool allowScriptChange = true;
+		private bool fixedPitchOnly = false;
+		private int maxSize = 0;
+		private int minSize = 0;
+		private bool scriptsOnly = false;
+		private bool showApply = false;
+		private bool showColor = false;
+		private bool showEffects = true;
+		private bool showHelp = false;
+		
+		private bool fontMustExist = false;
 		
 		#region Public Constructors
 		public FontDialog( )
@@ -55,8 +68,6 @@ namespace System.Windows.Forms
 			form.Text = "Font";
 			
 			fontDialogPanel = new FontDialogPanel( this );
-			
-			
 		}
 		#endregion	// Public Constructors
 		
@@ -72,17 +83,19 @@ namespace System.Windows.Forms
 			}
 		}
 		
+		[DefaultValue(false)]
 		public bool FontMustExist
 		{
 			get {
-				throw new NotImplementedException( );
+				return fontMustExist;
 			}
 			
 			set {
-				throw new NotImplementedException( );
+				fontMustExist = value;
 			}
 		}
 		
+		[DefaultValue("Black")]
 		public Color Color
 		{
 			set {
@@ -91,6 +104,174 @@ namespace System.Windows.Forms
 			
 			get {
 				return color;
+			}
+		}
+		
+		[DefaultValue(true)]
+		public bool AllowSimulations
+		{
+			set
+			{
+				allowSimulations = value;
+			}
+			
+			get
+			{
+				return allowSimulations;
+			}
+		}
+		
+		[DefaultValue(true)]
+		public bool AllowVectorFonts
+		{
+			set
+			{
+				allowVectorFonts = value;
+			}
+			
+			get
+			{
+				return allowVectorFonts;
+			}
+		}
+		
+		[DefaultValue(true)]
+		public bool AllowVerticalFonts
+		{
+			set
+			{
+				allowVerticalFonts = value;
+			}
+			
+			get
+			{
+				return allowVerticalFonts;
+			}
+		}
+		
+		[DefaultValue(true)]
+		public bool AllowScriptChange
+		{
+			set
+			{
+				allowScriptChange = value;
+			}
+			
+			get
+			{
+				return allowScriptChange;
+			}
+		}
+		
+		[DefaultValue(false)]
+		public bool FixedPitchOnly
+		{
+			set
+			{
+				fixedPitchOnly = value;
+			}
+			
+			get
+			{
+				return fixedPitchOnly;
+			}
+		}
+		
+		[DefaultValue(0)]
+		public int MaxSize
+		{
+			set
+			{
+				maxSize = value;
+			}
+			
+			get
+			{
+				return maxSize;
+			}
+		}
+		
+		[DefaultValue(0)]
+		public int MinSize
+		{
+			set
+			{
+				minSize = value;
+			}
+			
+			get
+			{
+				return minSize;
+			}
+		}
+		
+		[DefaultValue(false)]
+		public bool ScriptsOnly
+		{
+			set
+			{
+				scriptsOnly = value;
+			}
+			
+			get
+			{
+				return scriptsOnly;
+			}
+		}
+		
+		[DefaultValue(false)]
+		public bool ShowApply
+		{
+			set
+			{
+				showApply = value;
+			}
+			
+			get
+			{
+				return showApply;
+			}
+		}
+		
+		[DefaultValue(false)]
+		public bool ShowColor
+		{
+			set
+			{
+				showColor = value;
+			}
+			
+			get
+			{
+				return showColor;
+			}
+		}
+		
+		[DefaultValue(true)]
+		public bool ShowEffects
+		{
+			set
+			{
+				showEffects = value;
+			}
+			
+			get
+			{
+				return showEffects;
+			}
+		}
+		
+		[DefaultValue(false)]
+		public bool ShowHelp
+		{
+			set
+			{
+				showHelp = value;
+			}
+			
+			get
+			{
+				return showHelp;
 			}
 		}
 		
@@ -103,7 +284,19 @@ namespace System.Windows.Forms
 		[MonoTODO]
 		public override void Reset( )
 		{
-			throw new NotImplementedException( );
+			color = Color.Black;
+			allowSimulations = true;
+			allowVectorFonts = true;
+			allowVerticalFonts = true;
+			allowScriptChange = true;
+			fixedPitchOnly = false;
+			maxSize = 0;
+			minSize = 0;
+			scriptsOnly = false;
+			showApply = false;
+			showColor = false;
+			showEffects = true;
+			showHelp = false;
 		}
 		#endregion	// Public Instance Methods
 		
@@ -400,8 +593,14 @@ namespace System.Windows.Forms
 			
 			sizeListBox.SelectedIndex = 0;
 			
-			applyButton.Hide( );
-			helpButton.Hide( );
+			if ( !fontDialog.ShowApply )
+				applyButton.Hide( );
+			if ( !fontDialog.ShowHelp )
+				helpButton.Hide( );
+			if ( !fontDialog.ShowEffects )
+				effectsGroupBox.Hide();
+			if ( !fontDialog.ShowColor )
+				colorComboBox.Hide();
 			
 			cancelButton.Click += new EventHandler( OnClickCancelButton );
 			okButton.Click += new EventHandler( OnClickOkButton );
@@ -671,15 +870,15 @@ namespace System.Windows.Forms
 				if ( ( e.State & DrawItemState.Selected ) == DrawItemState.Selected )
 				{
 					e.Graphics.FillRectangle( new SolidBrush( Color.Blue ), e.Bounds ); // bot blue
-					e.Graphics.FillRectangle( new SolidBrush( ccbi.Color ), e.Bounds.X + 3, e.Bounds.Y + 3, e.Bounds.X + 16, e.Bounds.Y + 8 );
-					e.Graphics.DrawRectangle( new Pen( Color.Black ), e.Bounds.X + 2, e. Bounds.Y + 2, e.Bounds.X + 17, e.Bounds.Y + 9 );
+					e.Graphics.FillRectangle( new SolidBrush( ccbi.Color ), e.Bounds.X + 3, e.Bounds.Y + 3, e.Bounds.X + 16, e.Bounds.Y + e.Bounds.Height - 2 );
+					e.Graphics.DrawRectangle( new Pen( Color.Black ), e.Bounds.X + 2, e. Bounds.Y + 2, e.Bounds.X + 17, e.Bounds.Y + e.Bounds.Height - 1 );
 					e.Graphics.DrawString( ccbi.Name, this.Font, new SolidBrush( Color.White ), r );
 				}
 				else
 				{
 					e.Graphics.FillRectangle( new SolidBrush( Color.White ), e.Bounds );
-					e.Graphics.FillRectangle( new SolidBrush( ccbi.Color ), e.Bounds.X + 3, e.Bounds.Y + 3, e.Bounds.X + 16, e.Bounds.Y + 8 );
-					e.Graphics.DrawRectangle( new Pen( Color.Black ), e.Bounds.X + 2, e. Bounds.Y + 2, e.Bounds.X + 17, e.Bounds.Y + 9 );
+					e.Graphics.FillRectangle( new SolidBrush( ccbi.Color ), e.Bounds.X + 3, e.Bounds.Y + 3, e.Bounds.X + 16, e.Bounds.Y + e.Bounds.Height - 2 );
+					e.Graphics.DrawRectangle( new Pen( Color.Black ), e.Bounds.X + 2, e. Bounds.Y + 2, e.Bounds.X + 17, e.Bounds.Y + e.Bounds.Height - 1 );
 					e.Graphics.DrawString( ccbi.Name, this.Font, new SolidBrush( Color.Black ), r );
 				}
 			}
