@@ -17,7 +17,7 @@ USE_MCS_FLAGS :=
 # Martin Baulig will manually move them into TEST_SOURCES after merging the code into GMCS.
 #
 NEW_TEST_SOURCES = \
-	test-297
+	test-297 test-287 test-294
 
 #
 # Please do _not_ add any tests here - all new tests must go into NEW_TEST_SOURCES
