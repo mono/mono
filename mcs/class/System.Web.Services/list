@@ -74,6 +74,7 @@ System.Web.Services.Description/SoapHeaderBinding.cs
 System.Web.Services.Description/SoapOperationBinding.cs
 System.Web.Services.Description/SoapHeaderFaultBinding.cs
 System.Web.Services.Description/SoapProtocolImporter.cs
+System.Web.Services.Description/SoapProtocolReflector.cs
 System.Web.Services.Description/SoapTransportImporter.cs
 System.Web.Services.Description/Types.cs
 System.Web.Services.Protocols/AnyReturnReader.cs
