@@ -1,3 +1,8 @@
+2004-09-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* libtest.c (mono_test_marshal_string_array): Add test for null
+	terminating string arrays.
+
 2004-09-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* libtest.c: Mark delegates with __stdcall on windows.
