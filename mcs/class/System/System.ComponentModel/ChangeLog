@@ -1,3 +1,7 @@
+2005-01-10  LLuis Sanchez Gual  <lluis@novell.com>
+
+	* BindingDirection.cs: New enum.
+
 2004-12-09  Dick Porter  <dick@ximian.com>
 
 	* Win32Exception.cs: Add another socket error, fix the message of
