@@ -196,8 +196,6 @@ namespace Mono.Data.TdsClient.Internal {
 		[MonoTODO ("fixme")]
 		public void ExecuteQuery (string sql)
 		{
-			TdsPacketResult result = null;
-
 			if (sql.Length > 0) {
 				comm.StartPacket (TdsPacketType.Query);
 				comm.Append (sql);
@@ -286,7 +284,6 @@ namespace Mono.Data.TdsClient.Internal {
 
 		private object GetImageValue ()
 		{
-			byte[] result;
 			byte hasValue = comm.GetByte ();
 			if (hasValue == 0)
 				return SqlBinary.Null;
@@ -302,7 +299,6 @@ namespace Mono.Data.TdsClient.Internal {
 
 		private object GetIntValue (TdsColumnType type)
 		{
-			object result;
 			int len;
 
 			switch (type) {
@@ -514,7 +510,7 @@ namespace Mono.Data.TdsClient.Internal {
 				precision = -1;
 
 				int bufLength = -1;
-				int dispSize = -1;
+				//int dispSize = -1;
 				byte[] flagData = new byte[4];
 				for (int i = 0; i < 4; i += 1) {
 					flagData[i] = comm.GetByte ();
