@@ -302,7 +302,7 @@ namespace System
 		public static Array CreateInstance(Type elementType, int[] lengths)
 		{
                         if (elementType == null || lengths == null)
-                                throw new ArgumentException ("The input cannot be null.");
+                                throw new ArgumentNullException ("The input cannot be null.");
 
                         if (lengths.Length > 255)
                                 throw new TypeLoadException ();

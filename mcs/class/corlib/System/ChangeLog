@@ -1,3 +1,8 @@
+2003-06-10  Duncan Mak  <duncan@ximian.com>
+
+	* Array.cs (CreateInstance): Fixed a typo. It should throw
+	ArgumentNullException instead of ArgumentException.
+
 2003-06-09  Duncan Mak  <duncan@ximian.com>
 
 	* Array.cs: Revert the last revert. I fixed it.
