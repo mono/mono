@@ -1,4 +1,8 @@
 
+Wed Jun 19 20:57:40 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* ecore.cs: stobj requires a type argument. Handle indirect stores on enums.
+
 Wed Jun 19 20:17:59 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* modifiers.cs: produce correct field attributes for protected

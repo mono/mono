@@ -2467,6 +2467,8 @@ namespace Mono.CSharp {
 		//
 		public static void StoreFromPtr (ILGenerator ig, Type type)
 		{
+			if (type.IsEnum)
+				type = TypeManager.EnumToUnderlying (type);
 			if (type == TypeManager.int32_type || type == TypeManager.uint32_type)
 				ig.Emit (OpCodes.Stind_I4);
 			else if (type == TypeManager.int64_type || type == TypeManager.uint64_type)
@@ -2484,7 +2486,7 @@ namespace Mono.CSharp {
 			else if (type == TypeManager.intptr_type)
 				ig.Emit (OpCodes.Stind_I);
 			else if (type.IsValueType)
-				ig.Emit (OpCodes.Stobj);
+				ig.Emit (OpCodes.Stobj, type);
 			else
 				ig.Emit (OpCodes.Stind_Ref);
 		}
