@@ -1,3 +1,15 @@
+2004-03-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CipherSuite.cs: Fixed PRF generation when secret is an odd number of 
+	bytes (section 5 in RFC2246).
+	* CipherSuiteFactory.cs: Added algorithms RSA_EXPORT_WITH_RC4_40_MD5,
+	RSA_EXPORT_WITH_RC2_CBC_40_MD5, RSA_EXPORT_WITH_DES40_CBC_SHA,
+	RSA_EXPORT_WITH_RC4_56_MD5, RSA_EXPORT_WITH_RC2_CBC_56_MD5,
+	RSA_EXPORT_WITH_DES_CBC_56_SHA and RSA_EXPORT_WITH_RC4_56_SHA to both
+	SSL3 and TLS1 protocols.
+	* SslCipherSuite.cs: Fixed key generation for exportable ciphers.
+	* TlsCipherSuite.cs: Fixed key generation for exportable ciphers.
+
 2004-03-16 Carlos Guzman Alvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls/SslCipherSuite.cs:

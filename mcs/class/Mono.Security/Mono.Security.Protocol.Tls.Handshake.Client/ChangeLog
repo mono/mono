@@ -1,3 +1,9 @@
+2004-03-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TlsClientKeyExchange.cs: Fixed key pair used to encrypt pre-master
+	secret for exportable ciphers - must use the public key received in 
+	ServerKeyExchange.
+
 2004-03-10 Carlos Guzman Alvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls.Handshake.Client/TlsClientCertificateVerify.cs:
