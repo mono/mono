@@ -1202,7 +1202,8 @@ namespace Mono.CSharp {
 			    t == TypeManager.uint64_type ||
 			    t == TypeManager.int64_type ||
 			    t == TypeManager.string_type ||
-			    t.IsSubclassOf (TypeManager.enum_type))
+				t == TypeManager.bool_type ||
+				t.IsSubclassOf (TypeManager.enum_type))
 				return Expr;
 
 			if (allowed_types == null){
@@ -1216,6 +1217,7 @@ namespace Mono.CSharp {
 					TypeManager.int64_type,
 					TypeManager.uint64_type,
 					TypeManager.char_type,
+					TypeManager.bool_type,
 					TypeManager.string_type
 				};
 			}
@@ -1374,7 +1376,16 @@ namespace Mono.CSharp {
 							lname = v.ToString ();
 						else
 							Elements.Add (v, sl);
-					} else {
+					} else if (compare_type == TypeManager.bool_type) {
+						bool v = (bool) key;
+
+						if (Elements.Contains (v))
+							lname = v.ToString ();
+						else
+							Elements.Add (v, sl);
+					}
+					else
+					{
 						throw new Exception ("Unknown switch type!" +
 								     SwitchType + " " + compare_type);
 					}
@@ -1395,14 +1406,33 @@ namespace Mono.CSharp {
 		{
 			if (k is int)
 				IntConstant.EmitInt (ig, (int) k);
-			else if (k is Constant){
+			else if (k is Constant) {
 				EmitObjectInteger (ig, ((Constant) k).GetValue ());
-			} else if (k is uint)
+			} 
+			else if (k is uint)
 				IntConstant.EmitInt (ig, unchecked ((int) (uint) k));
 			else if (k is long)
-				LongConstant.EmitLong (ig, (long) k);
+			{
+				if ((long) k >= int.MinValue && (long) k <= int.MaxValue)
+				{
+					IntConstant.EmitInt (ig, (int) (long) k);
+					ig.Emit (OpCodes.Conv_I8);
+				}
+				else
+					LongConstant.EmitLong (ig, (long) k);
+			}
 			else if (k is ulong)
-				LongConstant.EmitLong (ig, unchecked ((long) (ulong) k));
+			{
+				if ((ulong) k < (1L<<32))
+				{
+					IntConstant.EmitInt (ig, (int) (long) k);
+					ig.Emit (OpCodes.Conv_U8);
+				}
+				else
+				{
+					LongConstant.EmitLong (ig, unchecked ((long) (ulong) k));
+				}
+			}
 			else if (k is char)
 				IntConstant.EmitInt (ig, (int) ((char) k));
 			else if (k is sbyte)
@@ -1413,14 +1443,233 @@ namespace Mono.CSharp {
 				IntConstant.EmitInt (ig, (int) ((short) k));
 			else if (k is ushort)
 				IntConstant.EmitInt (ig, (int) ((ushort) k));
+			else if (k is bool)
+				IntConstant.EmitInt (ig, ((bool) k) ? 1 : 0);
 			else
 				throw new Exception ("Unhandled case");
 		}
 		
+		// structure used to hold blocks of keys while calculating table switch
+		class KeyBlock : IComparable
+		{
+			public KeyBlock (long _nFirst)
+			{
+				nFirst = nLast = _nFirst;
+			}
+			public long nFirst;
+			public long nLast;
+			public ArrayList rgKeys = null;
+			public int Length
+			{
+				get { return (int) (nLast - nFirst + 1); }
+			}
+			public static long TotalLength (KeyBlock kbFirst, KeyBlock kbLast)
+			{
+				return kbLast.nLast - kbFirst.nFirst + 1;
+			}
+			public int CompareTo (object obj)
+			{
+				KeyBlock kb = (KeyBlock) obj;
+				int nLength = Length;
+				int nLengthOther = kb.Length;
+				if (nLengthOther == nLength)
+					return (int) (kb.nFirst - nFirst);
+				return nLength - nLengthOther;
+			}
+		}
+
+		/// <summary>
+		/// This method emits code for a lookup-based switch statement (non-string)
+		/// Basically it groups the cases into blocks that are at least half full,
+		/// and then spits out individual lookup opcodes for each block.
+		/// It emits the longest blocks first, and short blocks are just
+		/// handled with direct compares.
+		/// </summary>
+		/// <param name="ec"></param>
+		/// <param name="val"></param>
+		/// <returns></returns>
+		bool TableSwitchEmit (EmitContext ec, LocalBuilder val)
+		{
+			int cElements = Elements.Count;
+			object [] rgKeys = new object [cElements];
+			Elements.Keys.CopyTo (rgKeys, 0);
+			Array.Sort (rgKeys);
+
+			// initialize the block list with one element per key
+			ArrayList rgKeyBlocks = new ArrayList ();
+			foreach (object key in rgKeys)
+				rgKeyBlocks.Add (new KeyBlock (Convert.ToInt64 (key)));
+
+			KeyBlock kbCurr;
+			// iteratively merge the blocks while they are at least half full
+			// there's probably a really cool way to do this with a tree...
+			while (rgKeyBlocks.Count > 1)
+			{
+				ArrayList rgKeyBlocksNew = new ArrayList ();
+				kbCurr = (KeyBlock) rgKeyBlocks [0];
+				for (int ikb = 1; ikb < rgKeyBlocks.Count; ikb++)
+				{
+					KeyBlock kb = (KeyBlock) rgKeyBlocks [ikb];
+					if ((kbCurr.Length + kb.Length) * 2 >=  KeyBlock.TotalLength (kbCurr, kb))
+					{
+						// merge blocks
+						kbCurr.nLast = kb.nLast;
+					}
+					else
+					{
+						// start a new block
+						rgKeyBlocksNew.Add (kbCurr);
+						kbCurr = kb;
+					}
+				}
+				rgKeyBlocksNew.Add (kbCurr);
+				if (rgKeyBlocks.Count == rgKeyBlocksNew.Count)
+					break;
+				rgKeyBlocks = rgKeyBlocksNew;
+			}
+
+			// initialize the key lists
+			foreach (KeyBlock kb in rgKeyBlocks)
+				kb.rgKeys = new ArrayList ();
+
+			// fill the key lists
+			int iBlockCurr = 0;
+			kbCurr = (KeyBlock) rgKeyBlocks [0];
+			foreach (object key in rgKeys)
+			{
+				bool fNextBlock = (key is UInt64) ? (ulong) key > (ulong) kbCurr.nLast : Convert.ToInt64 (key) > kbCurr.nLast;
+				if (fNextBlock)
+					kbCurr = (KeyBlock) rgKeyBlocks [++iBlockCurr];
+				kbCurr.rgKeys.Add (key);
+			}
+
+			// sort the blocks so we can tackle the largest ones first
+			rgKeyBlocks.Sort ();
+
+			// okay now we can start...
+			ILGenerator ig = ec.ig;
+			Label lblEnd = ig.DefineLabel ();	// at the end ;-)
+			Label lblDefault = new Label ();
+			Type typeKeys = rgKeys [0].GetType ();	// used for conversions
+
+			for (int iBlock = rgKeyBlocks.Count - 1; iBlock >= 0; --iBlock)
+			{
+				KeyBlock kb = ((KeyBlock) rgKeyBlocks [iBlock]);
+				lblDefault = (iBlock == 0) ? DefaultTarget : ig.DefineLabel ();
+				if (kb.Length <= 2)
+				{
+					foreach (object key in kb.rgKeys)
+					{
+						ig.Emit (OpCodes.Ldloc, val);
+						EmitObjectInteger (ig, key);
+						SwitchLabel sl = (SwitchLabel) Elements [key];
+						ig.Emit (OpCodes.Beq, sl.ILLabel);
+					}
+				}
+				else
+				{
+					// TODO: if all the keys in the block are the same and there are
+					//       no gaps/defaults then just use a range-check.
+					if (SwitchType == TypeManager.int64_type ||
+						SwitchType == TypeManager.uint64_type)
+					{
+						// TODO: optimize constant/I4 cases
+
+						// check block range (could be > 2^31)
+						ig.Emit (OpCodes.Ldloc, val);
+						EmitObjectInteger (ig, Convert.ChangeType (kb.nFirst, typeKeys));
+						ig.Emit (OpCodes.Blt, lblDefault);
+						ig.Emit (OpCodes.Ldloc, val);
+						EmitObjectInteger (ig, Convert.ChangeType (kb.nFirst, typeKeys));
+						ig.Emit (OpCodes.Bgt, lblDefault);
+
+						// normalize range
+						ig.Emit (OpCodes.Ldloc, val);
+						if (kb.nFirst != 0)
+						{
+							EmitObjectInteger (ig, Convert.ChangeType (kb.nFirst, typeKeys));
+							ig.Emit (OpCodes.Sub);
+						}
+						ig.Emit (OpCodes.Conv_I4);	// assumes < 2^31 labels!
+					}
+					else
+					{
+						// normalize range
+						ig.Emit (OpCodes.Ldloc, val);
+						int nFirst = (int) kb.nFirst;
+						if (nFirst > 0)
+						{
+							IntConstant.EmitInt (ig, nFirst);
+							ig.Emit (OpCodes.Sub);
+						}
+						else if (nFirst < 0)
+						{
+							IntConstant.EmitInt (ig, -nFirst);
+							ig.Emit (OpCodes.Add);
+						}
+					}
+
+					// first, build the list of labels for the switch
+					int iKey = 0;
+					int cJumps = kb.Length;
+					Label [] rgLabels = new Label [cJumps];
+					for (int iJump = 0; iJump < cJumps; iJump++)
+					{
+						object key = kb.rgKeys [iKey];
+						if (Convert.ToInt64 (key) == kb.nFirst + iJump)
+						{
+							SwitchLabel sl = (SwitchLabel) Elements [key];
+							rgLabels [iJump] = sl.ILLabel;
+							iKey++;
+						}
+						else
+							rgLabels [iJump] = lblDefault;
+					}
+					// emit the switch opcode
+					ig.Emit (OpCodes.Switch, rgLabels);
+				}
+
+				// mark the default for this block
+				if (iBlock != 0)
+					ig.MarkLabel (lblDefault);
+			}
+
+			// TODO: find the default case and emit it here,
+			//       to prevent having to do the following jump.
+			//       make sure to mark other labels in the default section
+
+			// the last default just goes to the end
+			ig.Emit (OpCodes.Br, lblDefault);
+
+			// now emit the code for the sections
+			bool fFoundDefault = false;
+			bool fAllReturn = true;
+			foreach (SwitchSection ss in Sections)
+			{
+				foreach (SwitchLabel sl in ss.Labels)
+				{
+					ig.MarkLabel (sl.ILLabel);
+					if (sl.Label == null)
+					{
+						ig.MarkLabel (lblDefault);
+						fFoundDefault = true;
+					}
+				}
+				fAllReturn &= ss.Block.Emit (ec);
+				//ig.Emit (OpCodes.Br, lblEnd);
+			}
+			
+			if (!fFoundDefault)
+				ig.MarkLabel (lblDefault);
+			ig.MarkLabel (lblEnd);
+
+			return fAllReturn;
+		}
 		//
 		// This simple emit switch works, but does not take advantage of the
-		// `switch' opcode.  The swithc opcode uses a jump table that we are not
-		// computing at this point
+		// `switch' opcode. 
+		// TODO: remove non-string logic from here
+		// TODO: binary search strings?
 		//
 		bool SimpleSwitchEmit (EmitContext ec, LocalBuilder val)
 		{
@@ -1568,7 +1817,11 @@ namespace Mono.CSharp {
 			ec.Switch = this;
 
 			// Emit Code.
-			bool all_return =  SimpleSwitchEmit (ec, value);
+			bool all_return;
+			if (SwitchType == TypeManager.string_type)
+				all_return = SimpleSwitchEmit (ec, value);
+			else
+				all_return = TableSwitchEmit (ec, value);
 
 			// Restore context state. 
 			ig.MarkLabel (ec.LoopEnd);
