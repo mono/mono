@@ -1,4 +1,9 @@
 
+Tue Jun 15 16:36:51 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: make sure the needed wrappers are compiled, too, with
+	precomp.
+
 Mon Jun 14 18:36:08 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* driver.c: remove NPTL reference in --version output.
