@@ -1,6 +1,11 @@
 2004-03-23  Atsushi Enomoto  <atsushi@ximian.com>
 
-	* DataObjectTest.cs : assure that owner document object are different
+	* SignedInfoTest.cs : assure the owner document object equality /
+	  inequality with related to LoadXml() and setting properties.
+
+2004-03-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataObjectTest.cs : assure that owner document object is different
 	  after setting properties.
 
 2004-03-20  Sebastien Pouliot  <sebastien@ximian.com>
