@@ -1,5 +1,9 @@
 2009-09-14 Sanjay Gupta <gsanjay@novell.com>
 
+	* ThemeableAttribute.cs: Completed implementation.
+
+2009-09-14 Sanjay Gupta <gsanjay@novell.com>
+
 	* FilterableAttribute.cs: Completed implementation.
 
 2004-09-14 Sanjay Gupta <gsanjay@novell.com>

@@ -32,6 +32,8 @@ using System;
 using System.ComponentModel;
 
 namespace System.Web.UI {
+	
+	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]		
 	public sealed class ThemeableAttribute : Attribute, IDisposable 
 	{
 		private bool themeable;
@@ -65,6 +67,43 @@ namespace System.Web.UI {
 				//Do nothing
 				this.dispose = true;
 			}
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj != null && obj is ThemeableAttribute)
+			{
+				ThemeableAttribute ta = (ThemeableAttribute) obj;
+				return (this.themeable == ta.themeable);
+			}
+			return false;
+		}
+
+		public override int GetHashCode ()
+		{
+			return this.themeable.GetHashCode ();
+		}
+
+		public override bool IsDefaultAttribute()
+		{
+			return Equals (Default);
+		}
+
+		public static bool IsObjectThemeable (object obj)
+		{
+			return IsTypeThemeable (obj.GetType ());
+		}
+
+		public static bool IsTypeThemeable (Type type)
+		{
+			Object [] ac = type.GetCustomAttributes (false);
+			if (ac.Length != 0)
+			{
+				foreach (Attribute attrib in ac)
+					if (attrib.GetType () == ThemeableAttribute.Default.GetType ())
+						return true;
+			}
+			return false;
 		}
 	}
 }
