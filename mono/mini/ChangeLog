@@ -1,3 +1,11 @@
+2003-10-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c mini-ops.h inssel.brg: Implement undeniable exception 
+	propagation.
+
+	* mini.c (sigusr1_signal_handler): Move creation of the thread abort
+	object here, so it is in the correct appdomain etc.
+
 2003-10-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_jit_compile_method_inner): Lookup icalls here if not
