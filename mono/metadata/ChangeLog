@@ -1,3 +1,8 @@
+2002-12-05  Dietmar Maurer  <dietmar@ximian.com>
+
+	* threads.c (ves_icall_System_Threading_Thread_Abort): we use SIGRTMIN 
+	instead of SIGUSR1, because SIGUSR1 is used by the pthread implementation 
+	on some systems (redhat 7.3) 
 
 Thu Dec 5 16:13:40 CET 2002 Paolo Molaro <lupus@ximian.com>
 
