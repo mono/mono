@@ -1,3 +1,6 @@
+2004-07-26 Anirban Bhattacharjee <banirban@novell.com>
+	* InheritanceC3.vb: Little correction in the test
+
 2004-07-18 Anirban Bhattacharjee <banirban@novell.com>
 	* DelegateA.vb: The test for passing AddressOf operator in method parameter is added.
 
