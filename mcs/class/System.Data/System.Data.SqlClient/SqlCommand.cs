@@ -475,12 +475,10 @@ namespace System.Data.SqlClient {
 					if (parameter.Value.GetType () == typeof (bool))
 						return (((bool) parameter.Value) ? "0x1" : "0x0");
 					return parameter.Value.ToString ();
+				case SqlDbType.Image:
 				case SqlDbType.Binary:
 				case SqlDbType.VarBinary:
-					StringBuilder result = new StringBuilder ("0x");
-					foreach (byte b in (byte[]) parameter.Value)
-						result.Append (Convert.ToString (b, 16));
-					return result.ToString ();
+					return String.Format ("0x{0}", BitConverter.ToString ((byte[]) parameter.Value).Replace ("-", "").ToLower ());
 				default:
 					return String.Format ("'{0}'", parameter.Value.ToString ().Replace ("'", "''"));
 			}

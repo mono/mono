@@ -20,70 +20,36 @@ namespace System.Data.SqlClient {
 	[Serializable]
 	public sealed class SqlClientPermission : DBDataPermission 
 	{
+		#region Fields
+
+		PermissionState state;
+
+		#endregion // Fields
+
 		#region Constructors
 
-		[MonoTODO]
-		public SqlClientPermission () 
+		public SqlClientPermission ()
+			: this (PermissionState.None, false)
 		{
-			// FIXME: do constructor
 		}
 
-		[MonoTODO]
 		public SqlClientPermission (PermissionState state) 
+			: this (state, false)
 		{
-			// FIXME: do constructor
 		}
 
-		[MonoTODO]
 		public SqlClientPermission (PermissionState state, bool allowBlankPassword) 
-		{ 
-			throw new NotImplementedException ();
+		{
+			AllowBlankPassword = allowBlankPassword;
 		}
 
 		#endregion // Constructors
 
 		#region Methods
 
-		[MonoTODO]
-		public override IPermission Copy () 
+		protected override DBDataPermission CreateInstance ()
 		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override void FromXml (SecurityElement securityElement) 
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override IPermission Intersect (IPermission target)  
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override bool IsSubsetOf (IPermission target) 
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override string ToString () 
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override SecurityElement ToXml () 
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override IPermission Union (IPermission target) 
-		{
-			throw new NotImplementedException ();
+			return (DBDataPermission) new SqlClientPermission ();
 		}
 
 		#endregion // Methods

@@ -16,41 +16,60 @@ namespace System.Data.Common {
 	[Serializable]
 	public abstract class DBDataPermission : CodeAccessPermission, IUnrestrictedPermission
 	{
-		private bool allowBlankPassword;
-		private PermissionState permissionState;
+		#region Fields
+
+		bool allowBlankPassword;
+		PermissionState state;
+
+		#endregion // Fields
+
+		#region Constructors
 
 		protected DBDataPermission () 
+			: this (PermissionState.None, false)
 		{
-			allowBlankPassword = false;
-			permissionState = PermissionState.None;
 		}
 
 		protected DBDataPermission (PermissionState state) 
+			: this (state, false)
 		{
-			allowBlankPassword = false;
-			permissionState = state;
 		}
 
-		public DBDataPermission (PermissionState state, bool abp) 
+		public DBDataPermission (PermissionState state, bool allowBlankPassword) 
 		{
-			allowBlankPassword = abp;
-			permissionState = state;
+			this.state = state;
+			this.allowBlankPassword = allowBlankPassword;
 		}
+
+		#endregion // Constructors
+
+		#region Properties
 
 		public bool AllowBlankPassword {
 			get { return allowBlankPassword; }
 			set { allowBlankPassword = value; }
 		}
+		
+		internal PermissionState State {
+			get { return state; }
+			set { state = value; }
+		}
+
+		#endregion // Properties
+
+		#region Methods
 
 		public override IPermission Copy () 
 		{
-			throw new NotImplementedException ();
+			DBDataPermission copy = CreateInstance ();
+			copy.AllowBlankPassword = this.allowBlankPassword;
+			copy.State = this.state;
+			return copy;
 		}
 
-		[MonoTODO]
 		protected virtual DBDataPermission CreateInstance ()
 		{
-			throw new NotImplementedException ();
+			return (DBDataPermission) Activator.CreateInstance (this.GetType ());
 		}
 
 		[MonoTODO]
@@ -73,9 +92,7 @@ namespace System.Data.Common {
 
 		public bool IsUnrestricted () 
 		{
-			if (permissionState == PermissionState.Unrestricted)
-				return true;
-			return false;
+			return (state == PermissionState.Unrestricted);
 		}
 
 		[MonoTODO]
@@ -89,5 +106,7 @@ namespace System.Data.Common {
 		{
 			throw new NotImplementedException ();
 		}
+
+		#endregion // Methods
 	}
 }

@@ -32,6 +32,9 @@ namespace System.Data.SqlClient {
 		DbType dbType;
 		string typeName;
 
+		bool isSizeSet = false;
+		bool isTypeSet = false;
+
 		string parmName;
 		object objValue;
 		int size;
@@ -42,7 +45,8 @@ namespace System.Data.SqlClient {
 		byte scale;
 		DataRowVersion sourceVersion;
 		int offset;
-		bool sizeSet = false;
+
+		SqlParameterCollection container = null;
 
 		#endregion // Fields
 
@@ -58,7 +62,7 @@ namespace System.Data.SqlClient {
 			this.parmName = parameterName;
 			this.objValue = value;
 			this.sourceVersion = DataRowVersion.Current;
-			SetType (value.GetType ());
+			InferSqlType (value);
 		}
 		
 		public SqlParameter (string parameterName, SqlDbType dbType) 
@@ -128,6 +132,13 @@ namespace System.Data.SqlClient {
 
 		#region Properties
 
+		// Used to ensure that only one collection can contain this
+		// parameter
+		internal SqlParameterCollection Container {
+			get { return container; }
+			set { container = value; }
+		}
+
 		[Browsable (false)]
 		[DataCategory ("Data")]
 		[DataSysDescription ("The parameter generic type.")]
@@ -135,7 +146,10 @@ namespace System.Data.SqlClient {
 		[RefreshProperties (RefreshProperties.All)]
 		public DbType DbType {
 			get { return dbType; }
-			set { SetDbType (value); }
+			set { 
+				SetDbType (value); 
+				isTypeSet = true;
+			}
 		}
 
 		[DataCategory ("Data")]
@@ -199,8 +213,8 @@ namespace System.Data.SqlClient {
                 public int Size {
 			get { return size; }
 			set { 
-				sizeSet = true;
 				size = value; 
+				isSizeSet = true;
 			}
 		}
 
@@ -226,7 +240,10 @@ namespace System.Data.SqlClient {
 		[RefreshProperties (RefreshProperties.All)]
 		public SqlDbType SqlDbType {
 			get { return sqlDbType; }
-			set { SetSqlDbType (value); }
+			set { 
+				SetSqlDbType (value); 
+				isTypeSet = true;
+			}
 		}
 
 		[DataCategory ("Data")]
@@ -234,7 +251,11 @@ namespace System.Data.SqlClient {
 		[DefaultValue (null)]
 		public object Value {
 			get { return objValue; }
-			set { objValue = value; }
+			set { 
+				if (!isTypeSet)
+					InferSqlType (value);
+				objValue = value; 
+			}
 		}
 
 		#endregion // Properties
@@ -246,6 +267,57 @@ namespace System.Data.SqlClient {
 			return new SqlParameter (ParameterName, SqlDbType, Size, Direction, IsNullable, Precision, Scale, SourceColumn, SourceVersion, Value);
 		}
 
+		private void InferSqlType (object value)
+		{
+			Type type = value.GetType ();
+
+			string exception = String.Format ("The parameter data type of {0} is invalid.", type.Name);
+
+			switch (type.FullName) {
+			case "System.Int64":
+				SetSqlDbType (SqlDbType.BigInt);
+				break;
+			case "System.Boolean":
+				SetSqlDbType (SqlDbType.Bit);
+				break;
+			case "System.String":
+				SetSqlDbType (SqlDbType.NVarChar);
+				break;
+			case "System.DateTime":
+				SetSqlDbType (SqlDbType.DateTime);
+				break;
+			case "System.Decimal":
+				SetSqlDbType (SqlDbType.Decimal);
+				break;
+			case "System.Double":
+				SetSqlDbType (SqlDbType.Float);
+				break;
+			case "System.Byte[]":
+				SetSqlDbType (SqlDbType.VarBinary);
+				break;
+			case "System.Byte":
+				SetSqlDbType (SqlDbType.TinyInt);
+				break;
+			case "System.Int32":
+				SetSqlDbType (SqlDbType.Int);
+				break;
+			case "System.Single":
+				SetSqlDbType (SqlDbType.Real);
+				break;
+			case "System.Int16":
+				SetSqlDbType (SqlDbType.SmallInt);
+				break;
+			case "System.Guid":
+				SetSqlDbType (SqlDbType.UniqueIdentifier);
+				break;
+			case "System.Object":
+				SetSqlDbType (SqlDbType.Variant);
+				break;
+			default:
+				throw new ArgumentException (exception);				
+			}
+		}
+
 		internal string Prepare (string name)
 		{
 			StringBuilder result = new StringBuilder ();
@@ -254,11 +326,10 @@ namespace System.Data.SqlClient {
 			result.Append (typeName);
 
 			switch (sqlDbType) {
-			case SqlDbType.Image :
 			case SqlDbType.VarBinary :
 			case SqlDbType.NVarChar :
 			case SqlDbType.VarChar :
-				if (!sizeSet || size == 0)
+				if (!isSizeSet || size == 0)
 					throw new InvalidOperationException ("All variable length parameters must have an explicitly set non-zero size.");
 				result.Append ("(");
 				result.Append (size.ToString ());
@@ -274,8 +345,6 @@ namespace System.Data.SqlClient {
 				}
 				break;
 			case SqlDbType.Decimal :
-			case SqlDbType.Money :
-			case SqlDbType.SmallMoney :
 				result.Append ("(");
 				result.Append (precision.ToString ());
 				result.Append (",");
@@ -295,58 +364,76 @@ namespace System.Data.SqlClient {
 
 			switch (type) {
 			case DbType.AnsiString:
+				typeName = "varchar";
 				sqlDbType = SqlDbType.VarChar;
 				break;
 			case DbType.AnsiStringFixedLength:
+				typeName = "char";
 				sqlDbType = SqlDbType.Char;
 				break;
 			case DbType.Binary:
+				typeName = "varbinary";
 				sqlDbType = SqlDbType.VarBinary;
 				break;
 			case DbType.Boolean:
+				typeName = "bit";
 				sqlDbType = SqlDbType.Bit;
 				break;
 			case DbType.Byte:
+				typeName = "tinyint";
 				sqlDbType = SqlDbType.TinyInt;
 				break;
 			case DbType.Currency:
 				sqlDbType = SqlDbType.Money;
+				typeName = "money";
 				break;
 			case DbType.Date:
 			case DbType.DateTime:
+				typeName = "datetime";
 				sqlDbType = SqlDbType.DateTime;
 				break;
 			case DbType.Decimal:
+				typeName = "decimal";
 				sqlDbType = SqlDbType.Decimal;
 				break;
 			case DbType.Double:
+				typeName = "float";
 				sqlDbType = SqlDbType.Float;
 				break;
 			case DbType.Guid:
+				typeName = "uniqueidentifier";
 				sqlDbType = SqlDbType.UniqueIdentifier;
 				break;
 			case DbType.Int16:
+				typeName = "smallint";
 				sqlDbType = SqlDbType.SmallInt;
 				break;
 			case DbType.Int32:
+				typeName = "int";
 				sqlDbType = SqlDbType.Int;
 				break;
 			case DbType.Int64:
+				typeName = "bigint";
 				sqlDbType = SqlDbType.BigInt;
 				break;
 			case DbType.Object:
+				typeName = "sql_variant";
 				sqlDbType = SqlDbType.Variant;
 				break;
 			case DbType.Single:
+				typeName = "real";
 				sqlDbType = SqlDbType.Real;
 				break;
 			case DbType.String:
+				typeName = "nvarchar";
 				sqlDbType = SqlDbType.NVarChar;
 				break;
 			case DbType.StringFixedLength:
+				typeName = "nchar";
 				sqlDbType = SqlDbType.NChar;
 				break;
 			case DbType.Time:
+				typeName = "datetime";
 				sqlDbType = SqlDbType.DateTime;
 				break;
 			default:
@@ -532,62 +619,13 @@ namespace System.Data.SqlClient {
 				dbType = DbType.Guid;
 				break;
 			case SqlDbType.Variant:
-				typeName = "variant";
+				typeName = "sql_variant";
 				dbType = DbType.Object;
 				break;
 			default:
 				throw new ArgumentException (exception);
 			}
 			sqlDbType = type;
-		}
-
-		private void SetType (Type type)
-		{
-			string exception = String.Format ("The parameter data type of {0} is invalid.", type.Name);
-
-			switch (type.FullName) {
-			case "System.Int64":
-				SetSqlDbType (SqlDbType.BigInt);
-				break;
-			case "System.Boolean":
-				SetSqlDbType (SqlDbType.Bit);
-				break;
-			case "System.String":
-				SetSqlDbType (SqlDbType.NVarChar);
-				break;
-			case "System.DateTime":
-				SetSqlDbType (SqlDbType.DateTime);
-				break;
-			case "System.Decimal":
-				SetSqlDbType (SqlDbType.Decimal);
-				break;
-			case "System.Double":
-				SetSqlDbType (SqlDbType.Float);
-				break;
-			case "System.Byte[]":
-				SetSqlDbType (SqlDbType.VarBinary);
-				break;
-			case "System.Byte":
-				SetSqlDbType (SqlDbType.TinyInt);
-				break;
-			case "System.Int32":
-				SetSqlDbType (SqlDbType.Int);
-				break;
-			case "System.Single":
-				SetSqlDbType (SqlDbType.Real);
-				break;
-			case "System.Int16":
-				SetSqlDbType (SqlDbType.SmallInt);
-				break;
-			case "System.Guid":
-				SetSqlDbType (SqlDbType.UniqueIdentifier);
-				break;
-			case "System.Object":
-				SetSqlDbType (SqlDbType.Variant);
-				break;
-			default:
-				throw new ArgumentException (exception);				
-			}
 		}
 
 		public override string ToString() 

@@ -49,40 +49,49 @@ namespace Test.Mono.Data.SqlClient {
 	
 			createCommand.CommandText = 
 				"create table mono_sql_test (" +
-				"boolean_value bit, " +
-				"byte_value tinyint, " +
-				"int2_value smallint, " +
-				"int4_value integer, " +
-				"float_value real, " + 
-				"double_value float, " +
-				"numeric_value decimal(15, 3), " +
-				"char_value char(50), " +
-				"nchar_value nchar(50), " +
-				"varchar_value varchar(20), " +
-				"nvarchar_value nvarchar(20), " +
-				"text_value text, " +
-				"ntext_value ntext, " +
-				"datetime_value datetime, " +
-				"guid_value uniqueidentifier, " +
+				"bit_value bit, " +
 				"binary_value binary (8), " +
+				"char_value char(50), " +
+				"datetime_value datetime, " +
+				"decimal_value decimal(15, 3), " +
+				"float_value float, " +
+				"image_value image, " +
+				"int_value int, " +
+				"money_value money, " +
+				"nchar_value nchar(50), " +
+				"ntext_value ntext, " +
+				"nvarchar_value nvarchar(20), " +
+				"real_value real, " + 
+				"smalldatetime_value smalldatetime, " +
+				"smallint_value smallint, " +
+				"smallmoney_value smallmoney, " +
+				"text_value text, " +
+				"timestamp_value timestamp, " +
+				"tinyint_value tinyint, " +
+				"uniqueidentifier_value uniqueidentifier, "  +
 				"varbinary_value varbinary (8), " +
-				"null_boolean_value bit, " +
-				"null_byte_value tinyint, " +
-				"null_int2_value smallint, " +
-				"null_int4_value integer, " +
-				"null_float_value real, " + 
-				"null_double_value float, " +
-				"null_numeric_value decimal(15, 3), " +
-				"null_char_value char(50), " +
-				"null_nchar_value nchar(50), " +
-				"null_varchar_value varchar(20), " +
-				"null_nvarchar_value nvarchar(20), " +
-				"null_text_value text, " +
-				"null_ntext_value ntext, " +
-				"null_datetime_value datetime, " +
-				"null_guid_value uniqueidentifier, " +
+				"varchar_value varchar(20), " +
+				"null_bit_value bit, " +
 				"null_binary_value binary (8), " +
-				"null_varbinary_value varbinary (8) " +
+				"null_char_value char(50), " +
+				"null_datetime_value datetime, " +
+				"null_decimal_value decimal(15, 3), " +
+				"null_float_value float, " +
+				"null_image_value image, " +
+				"null_int_value int, " +
+				"null_money_value int, " +
+				"null_nchar_value nchar(50), " +
+				"null_ntext_value ntext, " +
+				"null_nvarchar_value nvarchar(20), " +
+				"null_real_value real, " + 
+				"null_smalldatetime_value smalldatetime, " +
+				"null_smallint_value smallint, " +
+				"null_smallmoney_value int, " +
+				"null_text_value text, " +
+				"null_tinyint_value tinyint, " +
+				"null_uniqueidentifier_value uniqueidentifier, "  +
+				"null_varbinary_value varbinary (8), " +
+				"null_varchar_value varchar(20) " +
 				")";			
 	
 			createCommand.ExecuteNonQuery ();
@@ -122,23 +131,27 @@ namespace Test.Mono.Data.SqlClient {
 		
 			insertCommand.CommandText =
 				"insert into mono_sql_test (" +
-				"boolean_value, " +
-				"byte_value, " +
-				"int2_value, " +
-				"int4_value, " +
-				"float_value, " + 
-				"double_value, " +
-				"numeric_value, " +
-				"char_value, " +
-				"nchar_value, " +
-				"varchar_value, " +
-				"nvarchar_value, " +
-				"text_value, " +
-				"ntext_value, " +
-				"datetime_value, " +
-				"guid_value, " +
+				"bit_value, " +
 				"binary_value, " +
-				"varbinary_value " +
+				"char_value, " +
+				"datetime_value, " +
+				"decimal_value, " +
+				"float_value, " +
+				"image_value, " +
+				"int_value, " +
+				"money_value, " +
+				"nchar_value, " +
+				"ntext_value, " +
+				"nvarchar_value, " +
+				"real_value, " + 
+				"smalldatetime_value, " +
+				"smallint_value, " +
+				"smallmoney_value, " +
+				"text_value, " +
+				"tinyint_value, " +
+				"uniqueidentifier_value, " +
+				"varbinary_value, " +
+				"varchar_value " +
 				") values (" +
 				"@p1, " +
 				"@p2, " +
@@ -156,48 +169,62 @@ namespace Test.Mono.Data.SqlClient {
 				"@p14, " +
 				"@p15, " +
 				"@p16, " +
-				"@p17 " +
+				"@p17, " +
+				"@p18, " +
+				"@p19, " +
+				"@p20, " +
+				"@p21 " +
 				")";
 
 			SqlParameterCollection parameters = ((SqlCommand) insertCommand).Parameters;
 
 			parameters.Add ("@p1",  SqlDbType.Bit);
-			parameters.Add ("@p2",  SqlDbType.TinyInt);
-			parameters.Add ("@p3",  SqlDbType.SmallInt);
-			parameters.Add ("@p4",  SqlDbType.Int);
-			parameters.Add ("@p5",  SqlDbType.Real);
+			parameters.Add ("@p2",  SqlDbType.Binary, 8);
+			parameters.Add ("@p3",  SqlDbType.Char, 14);
+			parameters.Add ("@p4",  SqlDbType.DateTime);
+			parameters.Add ("@p5",  SqlDbType.Decimal);
 			parameters.Add ("@p6",  SqlDbType.Float);
-			parameters.Add ("@p7",  SqlDbType.Decimal);
-			parameters.Add ("@p8",  SqlDbType.Char, 14);
-			parameters.Add ("@p9",  SqlDbType.NChar, 16);
-			parameters.Add ("@p10", SqlDbType.VarChar, 17);
-			parameters.Add ("@p11", SqlDbType.NVarChar, 19);
-			parameters.Add ("@p12", SqlDbType.Text);
-			parameters.Add ("@p13", SqlDbType.NText);
-			parameters.Add ("@p14", SqlDbType.DateTime);
-			parameters.Add ("@p15", SqlDbType.UniqueIdentifier);
-			parameters.Add ("@p16", SqlDbType.Binary, 8);
-			parameters.Add ("@p17", SqlDbType.VarBinary, 8);
+			parameters.Add ("@p7",  SqlDbType.Image);
+			parameters.Add ("@p8",  SqlDbType.Int);
+			parameters.Add ("@p9",  SqlDbType.Money);
+			parameters.Add ("@p10", SqlDbType.NChar, 16);
+			parameters.Add ("@p11", SqlDbType.NText);
+			parameters.Add ("@p12", SqlDbType.NVarChar, 19);
+			parameters.Add ("@p13", SqlDbType.Real);
+			parameters.Add ("@p14", SqlDbType.SmallDateTime);
+			parameters.Add ("@p15", SqlDbType.SmallInt);
+			parameters.Add ("@p16", SqlDbType.SmallMoney);
+			parameters.Add ("@p17", SqlDbType.Text);
+			parameters.Add ("@p18", SqlDbType.TinyInt);
+			parameters.Add ("@p19", SqlDbType.UniqueIdentifier);
+			parameters.Add ("@p20", SqlDbType.VarBinary, 8);
+			parameters.Add ("@p21", SqlDbType.VarChar, 17);
 
 			parameters ["@p1"].Value = true;
-			parameters ["@p2"].Value = 15;
-			parameters ["@p3"].Value = -22;
-			parameters ["@p4"].Value = 1048000;
-			parameters ["@p5"].Value = 3.141592;
+			parameters ["@p2"].Value = new byte[2] {0x12,0x34};
+			parameters ["@p3"].Value = "This is a char";
+			parameters ["@p4"].Value = new DateTime (1959, 7, 17); // My mom's birthday!
+
+			parameters ["@p5"].Value = 123456789012.345;
+			parameters ["@p5"].Precision = 15;
+			parameters ["@p5"].Scale = 3;
+
 			parameters ["@p6"].Value = 3.1415926969696;
-			parameters ["@p7"].Value = 123456789012.345;
-			parameters ["@p7"].Precision = 15;
-			parameters ["@p7"].Scale = 3;
-			parameters ["@p8"].Value = "This is a char";
-			parameters ["@p9"].Value = "This is an nchar";
-			parameters ["@p10"].Value = "This is a varchar";
-			parameters ["@p11"].Value = "This is an nvarchar";
-			parameters ["@p12"].Value = "This is a text";
-			parameters ["@p13"].Value = "This is an ntext";
-			parameters ["@p14"].Value = DateTime.Now;
-			parameters ["@p15"].Value = Guid.NewGuid ();
-			parameters ["@p16"].Value = new byte[2] {0x12,0x34};
-			parameters ["@p17"].Value = new byte[2] {0x56,0x78};
+			parameters ["@p7"].Value = new byte[4] {0xde, 0xad, 0xbe, 0xef};
+			parameters ["@p8"].Value = 1048000;
+			parameters ["@p9"].Value = 31337.456;
+			parameters ["@p10"].Value = "This is an nchar";
+			parameters ["@p11"].Value = "This is an ntext";
+			parameters ["@p12"].Value = "This is an nvarchar";
+			parameters ["@p13"].Value = 3.141592;
+			parameters ["@p14"].Value = new DateTime (1976, 10, 31); // My birthday!
+			parameters ["@p15"].Value = -22;
+			parameters ["@p16"].Value = 31337.456;
+			parameters ["@p17"].Value = "This is a text";
+			parameters ["@p18"].Value = 15;
+			parameters ["@p19"].Value = Guid.NewGuid ();
+			parameters ["@p20"].Value = new byte[2] {0x56,0x78};
+			parameters ["@p21"].Value = "This is a varchar";
 
 			insertCommand.ExecuteNonQuery ();
 		}
@@ -220,40 +247,49 @@ namespace Test.Mono.Data.SqlClient {
 
 			selectCommand.CommandText = 
 				"select " +				
-				"boolean_value, " +
-				"byte_value, " +
-				"int2_value, " +
-				"int4_value, " +
-				"float_value, " + 
-				"double_value, " +
-				"numeric_value, " +
-				"char_value, " +
-				"nchar_value, " +
-				"varchar_value, " +
-				"nvarchar_value, " +
-				"text_value, " +
-				"ntext_value, " +
-				"datetime_value, " +
-				"guid_value, " +
+				"bit_value, " +
 				"binary_value, " +
+				"char_value, " +
+				"datetime_value, " +
+				"decimal_value, " +
+				"float_value, " +
+				"image_value, " +
+				"int_value, " +
+				"money_value, " +
+				"nchar_value, " +
+				"ntext_value, " +
+				"nvarchar_value, " +
+				"real_value, " + 
+				"smalldatetime_value, " +
+				"smallint_value, " +
+				"smallmoney_value, " +
+				"text_value, " +
+				"timestamp_value, " +
+				"tinyint_value, " +
+				"uniqueidentifier_value, "  +
 				"varbinary_value, " +
-				"null_boolean_value, " +
-				"null_byte_value, " +
-				"null_int2_value, " +
-				"null_int4_value, " +
-				"null_float_value, " + 
-				"null_double_value, " +
-				"null_numeric_value, " +
-				"null_char_value, " +
-				"null_nchar_value, " +
-				"null_varchar_value, " +
-				"null_nvarchar_value, " +
-				"null_text_value, " +
-				"null_ntext_value, " +
-				"null_datetime_value, " +
-				"null_guid_value, " +
+				"varchar_value, " +
+				"null_bit_value, " +
 				"null_binary_value, " +
-				"null_varbinary_value " +
+				"null_char_value, " +
+				"null_datetime_value, " +
+				"null_decimal_value, " +
+				"null_float_value, " +
+				"null_image_value, " +
+				"null_int_value, " +
+				"null_money_value, " +
+				"null_nchar_value, " +
+				"null_ntext_value, " +
+				"null_nvarchar_value, " +
+				"null_real_value, " + 
+				"null_smalldatetime_value, " +
+				"null_smallint_value, " +
+				"null_smallmoney_value, " +
+				"null_text_value, " +
+				"null_tinyint_value, " +
+				"null_uniqueidentifier_value, "  +
+				"null_varbinary_value, " +
+				"null_varchar_value " +
 				"from mono_sql_test";
 
 
@@ -272,23 +308,27 @@ namespace Test.Mono.Data.SqlClient {
 			// This is a SQL INSERT Command, not a Query
 			selectCommand.CommandText =
 				"insert into mono_sql_test (" +
-				"boolean_value, " +
-				"byte_value, " +
-				"int2_value, " +
-				"int4_value, " +
-				"float_value, " + 
-				"double_value, " +
-				"numeric_value, " +
-				"char_value, " +
-				"nchar_value, " +
-				"varchar_value, " +
-				"nvarchar_value, " +
-				"text_value, " +
-				"ntext_value, " +
-				"datetime_value, " +
-				"guid_value, " +
+				"bit_value, " +
 				"binary_value, " +
-				"varbinary_value " +
+				"char_value, " +
+				"datetime_value, " +
+				"decimal_value, " +
+				"float_value, " +
+				"image_value, " +
+				"int_value, " +
+				"money_value, " +
+				"nchar_value, " +
+				"ntext_value, " +
+				"nvarchar_value, " +
+				"real_value, " + 
+				"smalldatetime_value, " +
+				"smallint_value, " +
+				"smallmoney_value, " +
+				"text_value, " +
+				"tinyint_value, " +
+				"uniqueidentifier_value, "  +
+				"varbinary_value, " +
+				"varchar_value " +
 				") values (" +
 				"@p1, " +
 				"@p2, " +
@@ -306,48 +346,62 @@ namespace Test.Mono.Data.SqlClient {
 				"@p14, " +
 				"@p15, " +
 				"@p16, " +
-				"@p17 " +
+				"@p17, " +
+				"@p18, " +
+				"@p19, " +
+				"@p20, " +
+				"@p21 " +
 				")";
 
 			SqlParameterCollection parameters = ((SqlCommand) selectCommand).Parameters;
 
 			parameters.Add ("@p1",  SqlDbType.Bit);
-			parameters.Add ("@p2",  SqlDbType.TinyInt);
-			parameters.Add ("@p3",  SqlDbType.SmallInt);
-			parameters.Add ("@p4",  SqlDbType.Int);
-			parameters.Add ("@p5",  SqlDbType.Real);
+			parameters.Add ("@p2",  SqlDbType.Binary, 8);
+			parameters.Add ("@p3",  SqlDbType.Char, 14);
+			parameters.Add ("@p4",  SqlDbType.DateTime);
+			parameters.Add ("@p5",  SqlDbType.Decimal);
 			parameters.Add ("@p6",  SqlDbType.Float);
-			parameters.Add ("@p7",  SqlDbType.Decimal);
-			parameters.Add ("@p8",  SqlDbType.Char, 14);
-			parameters.Add ("@p9",  SqlDbType.NChar, 16);
-			parameters.Add ("@p10", SqlDbType.VarChar, 17);
-			parameters.Add ("@p11", SqlDbType.NVarChar, 19);
-			parameters.Add ("@p12", SqlDbType.Text);
-			parameters.Add ("@p13", SqlDbType.NText);
-			parameters.Add ("@p14", SqlDbType.DateTime);
-			parameters.Add ("@p15", SqlDbType.UniqueIdentifier);
-			parameters.Add ("@p16", SqlDbType.Binary, 8);
-			parameters.Add ("@p17", SqlDbType.VarBinary, 8);
+			parameters.Add ("@p7",  SqlDbType.Image);
+			parameters.Add ("@p8",  SqlDbType.Int);
+			parameters.Add ("@p9",  SqlDbType.Money);
+			parameters.Add ("@p10", SqlDbType.NChar, 16);
+			parameters.Add ("@p11", SqlDbType.NText);
+			parameters.Add ("@p12", SqlDbType.NVarChar, 19);
+			parameters.Add ("@p13", SqlDbType.Real);
+			parameters.Add ("@p14", SqlDbType.SmallDateTime);
+			parameters.Add ("@p15", SqlDbType.SmallInt);
+			parameters.Add ("@p16", SqlDbType.SmallMoney);
+			parameters.Add ("@p17", SqlDbType.Text);
+			parameters.Add ("@p18", SqlDbType.TinyInt);
+			parameters.Add ("@p19", SqlDbType.UniqueIdentifier);
+			parameters.Add ("@p20", SqlDbType.VarBinary, 8);
+			parameters.Add ("@p21", SqlDbType.VarChar, 17);
 
 			parameters ["@p1"].Value = true;
-			parameters ["@p2"].Value = 15;
-			parameters ["@p3"].Value = -22;
-			parameters ["@p4"].Value = 1048000;
-			parameters ["@p5"].Value = 3.141592;
+			parameters ["@p2"].Value = new byte[2] {0x9a,0xbc};
+			parameters ["@p3"].Value = "This is a char";
+			parameters ["@p4"].Value = DateTime.Now;
+
+			parameters ["@p5"].Value = 123456789012.345;
+			parameters ["@p5"].Precision = 15;
+			parameters ["@p5"].Scale = 3;
+
 			parameters ["@p6"].Value = 3.1415926969696;
-			parameters ["@p7"].Value = 123456789012.345;
-			parameters ["@p7"].Precision = 15;
-			parameters ["@p7"].Scale = 3;
-			parameters ["@p8"].Value = "This is a char";
-			parameters ["@p9"].Value = "This is an nchar";
-			parameters ["@p10"].Value = "This is a varchar";
-			parameters ["@p11"].Value = "This is an nvarchar";
-			parameters ["@p12"].Value = "This is a text";
-			parameters ["@p13"].Value = "This is an ntext";
-			parameters ["@p14"].Value = DateTime.Now;
-			parameters ["@p15"].Value = Guid.NewGuid ();
-			parameters ["@p16"].Value = new byte[2] {0x9a,0xbc};
-			parameters ["@p17"].Value = new byte[2] {0xde, 0xef};
+			parameters ["@p7"].Value = new byte[4] {0xfe, 0xeb, 0xda, 0xed};
+			parameters ["@p8"].Value = 1048000;
+			parameters ["@p9"].Value = 31337.456;
+			parameters ["@p10"].Value = "This is an nchar";
+			parameters ["@p11"].Value = "This is an ntext";
+			parameters ["@p12"].Value = "This is an nvarchar";
+			parameters ["@p13"].Value = 3.141592;
+			parameters ["@p14"].Value = new DateTime (1978, 6, 30); // My brother's birthday!
+			parameters ["@p15"].Value = -22;
+			parameters ["@p16"].Value = 31337.456;
+			parameters ["@p17"].Value = "This is a text";
+			parameters ["@p18"].Value = 15;
+			parameters ["@p19"].Value = Guid.NewGuid ();
+			parameters ["@p20"].Value = new byte[2] {0xde, 0xef};
+			parameters ["@p21"].Value = "This is a varchar";
 
 			reader = selectCommand.ExecuteReader ();
 
@@ -379,20 +433,20 @@ namespace Test.Mono.Data.SqlClient {
 			updateCommand.CommandText = 
 				"update mono_sql_test " +				
 				"set " +
-				"boolean_value    = @p1, " +
-				"byte_value       = @p2, " +
-				"int2_value       = @p3, " +
-				"int4_value       = @p4, " +
-				"char_value       = @p5, " +
-				"nchar_value      = @p6, " +
-				"varchar_value    = @p7, " +
-				"nvarchar_value   = @p8, " +
-				"text_value       = @p9, " +
-				"ntext_value      = @p10, " +
-				"guid_value       = @p11, " +
-				"binary_value     = @p12, " +
-				"varbinary_value  = @p13 " +
-				"where int2_value = @p14";
+				"bit_value              = @p1, " +
+				"tinyint_value          = @p2, " +
+				"smallint_value         = @p3, " +
+				"int_value              = @p4, " +
+				"char_value             = @p5, " +
+				"nchar_value            = @p6, " +
+				"varchar_value          = @p7, " +
+				"nvarchar_value         = @p8, " +
+				"text_value             = @p9, " +
+				"ntext_value            = @p10, " +
+				"uniqueidentifier_value = @p11, " +
+				"binary_value           = @p12, " +
+				"varbinary_value        = @p13  " +
+				"where smallint_value   = @p14";
 
 			SqlParameterCollection parameters = ((SqlCommand) updateCommand).Parameters;
 
@@ -485,12 +539,10 @@ namespace Test.Mono.Data.SqlClient {
 					// column data
 					if (rdr.IsDBNull(c) == true)
 						dataValue = " is NULL";
-					else if ((Type) dr["DataType"] == typeof (byte[])) {
-						StringBuilder builder = new StringBuilder ("0x");
-						foreach (byte b in (byte[]) rdr.GetValue (c)) 
-							builder.Append (Convert.ToString (b, 16));
-						dataValue = ": " + builder.ToString ();
-					}
+					else if ((Type) dr["DataType"] == typeof (byte[])) 
+						dataValue = 
+							": 0x" + 
+							BitConverter.ToString ((byte[]) rdr.GetValue (c)).Replace ("-", "").ToLower ();
 					else
 						dataValue = 
 							": " + 
@@ -595,10 +647,10 @@ namespace Test.Mono.Data.SqlClient {
 				//        It may have something to do
 				//        with culture not being set
 				//        properly.
-				//SelectAggregate (cnc, "avg(int4_value)");
+				//SelectAggregate (cnc, "avg(int_value)");
 				SelectAggregate (cnc, "min(varchar_value)");
-				SelectAggregate (cnc, "max(int4_value)");
-				SelectAggregate (cnc, "sum(int4_value)");
+				SelectAggregate (cnc, "max(int_value)");
+				SelectAggregate (cnc, "sum(int_value)");
 
 				/* Select values */
 				Console.WriteLine ("\t\tSelect values from the database: ");

@@ -54,7 +54,8 @@ namespace System.Data.SqlClient {
 		object IDataParameterCollection.this [string parameterName] {
 			get { return this[parameterName]; }
 			set { 
-				CheckType (value);
+				if (!(value is SqlParameter))
+					throw new InvalidCastException ("Only SQLParameter objects can be used.");
 				this [parameterName] = (SqlParameter) value;
 			}
 		}
@@ -102,52 +103,40 @@ namespace System.Data.SqlClient {
 
 		public int Add (object value)
 		{
-			// Check if value is a SqlParameter.
-			CheckType (value);
+			if (!(value is SqlParameter))
+				throw new InvalidCastException ("Only SQLParameter objects can be used.");
 			Add ((SqlParameter) value);
 			return IndexOf (value);
 		}
 		
 		public SqlParameter Add (SqlParameter value)
 		{
+			if (value.Container != null)
+				throw new ArgumentException ("The SqlParameter specified in the value parameter is already added to this or another SqlParameterCollection.");
+			
+			value.Container = this;
 			list.Add (value);
 			return value;
 		}
 		
 		public SqlParameter Add (string parameterName, object value)
 		{
-			SqlParameter sqlparam = new SqlParameter();
-			sqlparam.Value = value;
-			// TODO: Get the dbtype and Sqldbtype from system type of value.
-			
-			return Add(sqlparam);
+			return Add (new SqlParameter (parameterName, value));
 		}
 		
 		public SqlParameter Add (string parameterName, SqlDbType sqlDbType)
 		{
-			SqlParameter sqlparam = new SqlParameter();
-			sqlparam.ParameterName = parameterName;
-			sqlparam.SqlDbType = sqlDbType;
-			return Add(sqlparam);			
+			return Add (new SqlParameter (parameterName, sqlDbType));
 		}
 
 		public SqlParameter Add (string parameterName, SqlDbType sqlDbType, int size)
 		{
-			SqlParameter sqlparam = new SqlParameter();
-			sqlparam.ParameterName = parameterName;
-			sqlparam.SqlDbType = sqlDbType;
-			sqlparam.Size = size;
-			return Add(sqlparam);			
+			return Add (new SqlParameter (parameterName, sqlDbType, size));
 		}
 
 		public SqlParameter Add (string parameterName, SqlDbType sqlDbType, int size, string sourceColumn)
 		{
-			SqlParameter sqlparam = new SqlParameter ();
-			sqlparam.ParameterName = parameterName;
-			sqlparam.SqlDbType = sqlDbType;
-			sqlparam.Size = size;
-			sqlparam.SourceColumn = sourceColumn;
-			return Add (sqlparam);
+			return Add (new SqlParameter (parameterName, sqlDbType, size, sourceColumn));
 		}
 
 		public void Clear()
@@ -157,7 +146,8 @@ namespace System.Data.SqlClient {
 		
 		public bool Contains (object value)
 		{
-			CheckType (value);
+			if (!(value is SqlParameter))
+				throw new InvalidCastException ("Only SQLParameter objects can be used.");
 			return Contains (((SqlParameter) value).ParameterName);
 		}
 
@@ -181,7 +171,8 @@ namespace System.Data.SqlClient {
 		
 		public int IndexOf (object value)
 		{
-			CheckType (value);
+			if (!(value is SqlParameter))
+				throw new InvalidCastException ("Only SQLParameter objects can be used.");
 			return IndexOf (((SqlParameter) value).ParameterName);
 		}
 		
@@ -208,16 +199,6 @@ namespace System.Data.SqlClient {
 		public void RemoveAt (string parameterName)
 		{
 			RemoveAt (IndexOf (parameterName));
-		}
-
-		/// <summary>
-		/// This method checks if the parameter value is of 
-		/// SqlParameter type. If it doesn't, throws an InvalidCastException.
-		/// </summary>
-		private void CheckType(object value)
-		{
-			if (!(value is SqlParameter))
-				throw new InvalidCastException ("Only SQLParameter objects can be used.");
 		}
 
 		#endregion // Methods	
