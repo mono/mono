@@ -150,7 +150,7 @@ namespace System.Xml
 			if (prefix == PrefixXml && uri != XmlnsXml)
 				message = String.Format ("Prefix \"xml\" is only allowed to the fixed uri \"{0}\"", XmlnsXml);
 			else if (uri == XmlnsXml)
-				message = String.Format ("Namespace URI \"{0}\" can only be declared with the fixed prefix \"xml\"", XmlnsXml);
+				message = String.Format ("Namespace URI \"{0}\" is reserved to be mapped to \"xml\" and cannot be declared.", XmlnsXml);
 			if (message == null && prefix == "xmlns")
 				message = "Declaring prefix named \"xmlns\" is not allowed to any namespace.";
 			if (message == null && uri == XmlnsXmlns)

@@ -1,3 +1,8 @@
+2004-06-09  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlNamespaceManager.cs : The error message was improper.
+	  Fix for bug #59880.
+
 2004-06-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XmlInputStream.cs: Initialize reads a larger buffer now when trying
