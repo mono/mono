@@ -1,3 +1,9 @@
+
+Tue Feb 8 18:04:51 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, class-internals.h: keep track if a type has
+	reference fields in either the instance or static fields.
+
 2005-02-07  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* domain.c, domain-internals.h: Moved RuntimeInfo to domain-internals.h,
