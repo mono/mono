@@ -95,6 +95,14 @@ namespace System.Text.RegularExpressions {
 			return low <= i && i <= high;
 		}
 
+		public bool Intersects (Interval i) {
+ 			if (IsEmpty || i.IsEmpty)
+ 				return false;
+ 			
+ 			return ((Contains (i.low) && !Contains (i.high)) ||
+				(Contains (i.high) && !Contains (i.low)));
+ 		}	
+
 		public void Merge (Interval i) {
 			if (i.IsEmpty)
 				return;
