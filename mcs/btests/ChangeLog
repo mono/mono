@@ -1,3 +1,15 @@
+2004-08-19 Sachin Kumar <skumar1@novell.com>
+	* ConditionalStatements1.vb:
+	* ConditionalStatementsA.vb:
+	* ConditionalStatementsC1.vb:
+	* ConditionalStatementsC2.vb:
+	* ConditionalStatementsC3.vb:
+	* ConditionalStatementsC4.vb:
+	* ConditionalStatementsC5.vb:
+	* ConditionalStatementsC6.vb:
+	* ConditionalStatementsC7.vb:
+	* Test.Sources: included new tests
+
 2004-08-19 Anirban Bhattacharjee <banirban@novell.com>
 	* Makefile: Changed the makefile to support multiple file compilation sothat  we can compile files A1.vb, A2.vb, A3.vb as A*.vb
 

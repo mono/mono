@@ -180,7 +180,8 @@ WithStatementC \
 ForEachA \
 AssignmentStatementsA \
 AssignmentStatementsB \
-AssignmentStatementsC
+AssignmentStatementsC \
+ConditionalStatementsA
 
 # All negetive test cases which should
 # fail during compilation goes here
@@ -379,7 +380,14 @@ WithStatementC4 \
 AssignmentStatementsC1 \
 AssignmentStatementsC2 \
 AssignmentStatementsC3 \
-AssignmentStatementsC4
+AssignmentStatementsC4 \
+ConditionalStatementsC1 \
+ConditionalStatementsC2 \
+ConditionalStatementsC3 \
+ConditionalStatementsC4 \
+ConditionalStatementsC5 \
+ConditionalStatementsC6 \
+ConditionalStatementsC7
 
 # All negetive test cases which should fail at
 # runtime goes here
@@ -411,6 +419,7 @@ AssignmentStatements1 \
 AssignmentStatements2 \
 AssignmentStatements3 \
 AssignmentStatements4 \
-AssignmentStatements5
+AssignmentStatements5 \
+ConditionalStatements1
 
 
