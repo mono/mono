@@ -59,13 +59,9 @@ namespace MonoTests.System {
         public String str;
     }
 
-    /// <summary>
-    /// Tests for System.Decimal
-    /// </summary>
-    public class DecimalTest : TestCase
+    [TestFixture]
+    public class DecimalTest : Assertion
     {
-	public DecimalTest() {}
-
         private const int negativeBitValue = unchecked ((int)0x80000000);
         private const int negativeScale4Value = unchecked ((int)0x80040000);
         private int [] parts0 = {0,0,0,0}; //Positive Zero.
@@ -81,7 +77,8 @@ namespace MonoTests.System {
 
 	private CultureInfo old_culture;
 
-	protected override void SetUp() 
+	[TestFixtureSetUp]
+	public void FixtureSetUp ()
 	{
 		old_culture = Thread.CurrentThread.CurrentCulture;
 
@@ -109,7 +106,8 @@ namespace MonoTests.System {
 		NfiUser.PercentSymbol = "%%%";
         }
 
-	protected override void TearDown()
+	[TestFixtureTearDown]
+	public void FixtureTearDown ()
 	{
 		Thread.CurrentThread.CurrentCulture = old_culture;
 	}
@@ -1053,6 +1051,46 @@ namespace MonoTests.System {
 		AssertEquals ("-Decimal.ToDouble", -254.9d, Decimal.ToDouble (d));
 		AssertEquals ("-Convert.ToDouble", -254.9d, Convert.ToDouble (d));
 		AssertEquals ("-IConvertible.ToDouble", -254.9d, (d as IConvertible).ToDouble (null));
+	}
+
+	[Test]
+	public void ToString_Defaults () 
+	{
+		Decimal d = 254.9m;
+		// everything defaults to "G"
+		string def = d.ToString ("G");
+		AssertEquals ("ToString()", def, d.ToString ());
+		AssertEquals ("ToString((IFormatProvider)null)", def, d.ToString ((IFormatProvider)null));
+		AssertEquals ("ToString((string)null)", def, d.ToString ((string)null));
+		AssertEquals ("ToString(empty)", def, d.ToString (String.Empty));
+		AssertEquals ("ToString(null,null)", def, d.ToString (null, null));
+		AssertEquals ("ToString(empty,null)", def, d.ToString (String.Empty, null));
+
+		AssertEquals ("ToString()", "254.9", def);
+	}
+
+	[Test]
+	public void CastTruncRounding ()
+	{
+		// casting truncs decimal value (not normal nor banker's rounding)
+		AssertEquals ("254.9==254", 254, (long)(254.9m));
+		AssertEquals ("-254.9=-254", -254, (long)(-254.9m));
+		AssertEquals ("255.9==256", 255, (long)(255.9m));
+		AssertEquals ("-255.9=-256", -255, (long)(-255.9m));
+	}
+
+	[Test]
+	public void ParseFractions ()
+	{
+		Decimal.Parse ("0.523456789012345467890123456789", CultureInfo.InvariantCulture);
+		Decimal.Parse ("0.49214206543486529434634231456", CultureInfo.InvariantCulture);
+	}
+
+	[Test]
+	[ExpectedException (typeof (OverflowException))]
+	public void ParseFractions_TooSmall ()
+	{
+		Decimal.Parse ("0.0000000000000000000000000000001", CultureInfo.InvariantCulture);
 	}
     }
 }

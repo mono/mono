@@ -1,3 +1,9 @@
+2004-06-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DecimalTest.cs: Added tests for default ToString(). Added tests when
+	Decimal is casted to an integer (trunc not rounded). Added tests to
+	parse very small values (#59301).
+
 2004-06-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ConvertTest.cs: Added tests to convert min/max values of integer
