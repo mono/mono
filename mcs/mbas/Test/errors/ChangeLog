@@ -1,4 +1,10 @@
 
+2005-03-14 Ritvik Mayank <mritvik@novell.com>
+	Added the following test cases
+	* ExpressionLiteralNumeric1.vb
+	* ExpressionLiteralString1.vb
+	* ExpressionMyBase1.vb
+
 2005-03-11 Ritvik Mayank <mritvik@novell.com>
 	* ConditionalStatementsC22.vb
 	* ConditionalCompilationC10.vb
