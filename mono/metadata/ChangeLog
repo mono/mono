@@ -1,3 +1,8 @@
+
+Fri Jun 25 21:36:26 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: make sure padding bytes in heaps are zeroed.
+
 2004-06-24  David Waite  <mass@akuma.org>
 
 	* appdomain.c, class.c, domain.c, file-io.c, gc.c, icall.c,
