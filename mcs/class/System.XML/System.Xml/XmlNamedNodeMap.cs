@@ -15,8 +15,9 @@ namespace System.Xml
 {
 	public class XmlNamedNodeMap : IEnumerable
 	{
-		private XmlNode parent;
-		private ArrayList nodeList;
+		XmlNode parent;
+		ArrayList nodeList;
+		bool readonly;
 
 		internal XmlNamedNodeMap (XmlNode parent)
 		{
@@ -28,10 +29,9 @@ namespace System.Xml
 			get { return nodeList.Count; }
 		}
 
-		[MonoTODO]
 		public virtual IEnumerator GetEnumerator () 
 		{
-			throw new NotImplementedException ();
+			return ArrayList.GetEnumerator ();
 		}
 
 		public virtual XmlNode GetNamedItem (string name)
@@ -43,10 +43,15 @@ namespace System.Xml
 			return null;
 		}
 
-		[MonoTODO]
 		public virtual XmlNode GetNamedItem (string localName, string namespaceURI)
 		{
-			throw new NotImplementedException ();
+			foreach (XmlNode node in nodeList) {
+				if ((node.Name == name)
+				    && (parent.NamespaceURI == namespaceURI))
+					return node;
+			}
+
+			return null;
 		}
 		
 		public virtual XmlNode Item (int index)
@@ -57,21 +62,37 @@ namespace System.Xml
 				return (XmlNode) nodeList [index];
 		}
 
-		[MonoTODO]
 		public virtual XmlNode RemoveNamedItem (string name)
 		{
-			throw new NotImplementedException ();
+			XmlNode removed = null;
+
+			foreach (XmlNode node in nodeList)
+				if (node.Name == name) {
+					removed = node;
+					nodeList.Remove (node);
+				}
+			
+			return removed;
 		}
 
-		[MonoTODO]
 		public virtual XmlNode RemoveNamedItem (string localName, string namespaceURI)
 		{
-			throw new NotImplementedException ();
+			XmlNode removed = null;
+
+			foreach (XmlNode node in nodeList)
+				if ((node.Name == name)
+				    && (parent.NamespaceURI == namespaceURI)) {
+					removed = node;
+					nodeList.Remove (node);
+				}
+
+			return removed;
 		}
 
-		[MonoTODO]
 		public virtual XmlNode SetNamedItem (XmlNode node)
 		{
+			if (readonly || (node.OwnerDocument != parent.OwnerDocument))
+				throw new ArgumentException ("Cannot add to NodeMap.");
 			nodeList.Add (node);
 			return node;
 		}

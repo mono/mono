@@ -1,3 +1,10 @@
+2002-03-13  Duncan Mak  <duncan@ximian.com>
+
+	* XmlNamedNodeMap.cs (GetEnumerator): piggyback on the ArrayList implementation.
+	(GetNamedItem (string, string)): implemented.
+	(RemoveNamedItem): implemented.
+	(SetNamedItem): Added check for ReadOnly and matching OwnerDocuments.
+
 2002-03-12  Kral Ferch  <kral_ferch@hotmail.com>
 
 	* XmlAttribute.cs: Moved a method from amongst properties down to
