@@ -855,6 +855,8 @@ namespace System.Drawing
 		static public Color Green
 		{	
 			get {
+				// LAMESPEC: MS uses A=255, R=0, G=128, B=0 for Green Color,
+				// which is obviously wrong.
 				return Color.FromArgbNamed (255, 0, 255, 0, "Green", KnownColor.Green);
 			}
 		}
