@@ -237,12 +237,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-   		protected virtual void OnPaintBackground (PaintEventArgs e) 
-   		{
-   			// just do nothing to avoid flickering
-		}
-		
-		protected override void OnPaint (PaintEventArgs e) 
+		internal override void ButtonPaint (PaintEventArgs e) 
 		{
 			Rectangle paintBounds = ClientRectangle;
 			Bitmap bmp = new Bitmap( paintBounds.Width, paintBounds.Height,e.Graphics);
@@ -278,18 +273,6 @@ namespace System.Windows.Forms {
 			e.Graphics.DrawImage(bmp, 0, 0, paintBounds.Width, paintBounds.Height);
 			paintOn.Dispose ();
 			bmp.Dispose();
-		}
-		
-		protected override void WndProc (ref Message m) {
-			switch (m.Msg) {
-				case Msg.WM_DRAWITEM: {
-					m.Result = (IntPtr)1;
-				}
-					break;
-				default:
-					base.WndProc (ref m);
-					break;
-			}
 		}
 		
 		/// --- CheckBox events ---

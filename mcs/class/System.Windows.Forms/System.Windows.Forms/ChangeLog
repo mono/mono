@@ -1,4 +1,11 @@
 2003-08-22  Alexandre Pigolkine <pigolkine@gmx.de>
+	* Button.cs
+	* ButtonBase.cs
+	* CheckBox.cs
+	* RadioButton.cs
+				modified to be compatible with specification
+	
+2003-08-22  Alexandre Pigolkine <pigolkine@gmx.de>
 
 	* ComboBox.cs
 	* Control.cs		modofications for ComboBox sample

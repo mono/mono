@@ -128,7 +128,7 @@ namespace System.Windows.Forms {
 		//	base.OnMouseLeave(mevent);
 		//}
 
-		protected override void OnPaint (PaintEventArgs pevent) {
+		internal override void ButtonPaint (PaintEventArgs pevent) {
 
 			Rectangle paintBounds = ClientRectangle;
 			Bitmap bmp = new Bitmap( paintBounds.Width, paintBounds.Height,pevent.Graphics);
@@ -277,15 +277,7 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void WndProc (ref Message m) {
-			switch (m.Msg) {
-				case Msg.WM_DRAWITEM: {
-					m.Result = (IntPtr)1;
-				}
-					break;
-				default:
-					base.WndProc (ref m);
-					break;
-			}
+			base.WndProc (ref m);
 		}
 		
 		/// --- Button events ---

@@ -218,9 +218,13 @@ namespace System.Windows.Forms {
 			base.OnMouseUp (mevent);
 		}
 		
+		internal virtual void ButtonPaint (PaintEventArgs pevent) {
+		}
+
 		protected override void OnPaint (PaintEventArgs pevent) 
 		{
 			base.OnPaint (pevent);
+			ButtonPaint (pevent);
 		}
 		
 		protected override void OnParentChanged (EventArgs e) 
@@ -258,6 +262,22 @@ namespace System.Windows.Forms {
 					}
 					break;
 				}
+				case Msg.WM_DRAWITEM:
+					m.Result = (IntPtr)1;
+					break;
+				case Msg.WM_PAINT:
+					PAINTSTRUCT	ps = new PAINTSTRUCT ();
+					IntPtr hdc = Win32.BeginPaint (Handle, ref ps);
+					Rectangle rc = new Rectangle ();
+					rc.X = ps.rcPaint.left;
+					rc.Y = ps.rcPaint.top;
+					rc.Width = ps.rcPaint.right - ps.rcPaint.left;
+					rc.Height = ps.rcPaint.bottom - ps.rcPaint.top;
+					PaintEventArgs paintEventArgs = new PaintEventArgs (Graphics.FromHdc (hdc), rc);
+					OnPaint (paintEventArgs);
+					paintEventArgs.Dispose ();
+					Win32.EndPaint (Handle, ref ps);
+					break;
 				default:
 					base.WndProc (ref m);
 					break;
