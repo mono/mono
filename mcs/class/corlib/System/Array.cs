@@ -581,14 +581,13 @@ namespace System
 			if (array.Rank > 1)
 				throw new RankException ();
 
-			if (index < array.GetLowerBound (0) || length < 0 ||
-				index + length > array.GetUpperBound (0) + 1)
+			int low = array.GetLowerBound (0);
+			if (index < low || length < 0 || index + length > array.GetUpperBound (0) + 1)
 				throw new ArgumentOutOfRangeException ();
 
+			low = index - low;
 			for (int i = 0; i < length; i++) 
-			{
-				array.SetValueImpl(null, index + i);
-			}
+				array.SetValueImpl (null, low + i);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
