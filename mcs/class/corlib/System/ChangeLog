@@ -1,3 +1,7 @@
+2002-02-26  Martin Baulig  <martin@gnome.org>
+
+	* TimeZone.cs: Fully implemented this. There's a new InternCall in the
+	runtime for this.
 
 Fri Feb 22 18:47:08 CET 2002 Paolo Molaro <lupus@ximian.com>
 

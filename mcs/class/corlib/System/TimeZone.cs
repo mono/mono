@@ -3,12 +3,14 @@
 //
 // Author: Duncan Mak (duncan@ximian.com)
 // 	   Ajay Kumar Dwivedi (adwiv@yahoo.com)
+//         Martin Baulig (martin@gnome.org)
 //
 // (C) Ximian, Inc.
 //
 
 using System.Collections;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace System {
 	
@@ -105,11 +107,33 @@ namespace System {
                 // the offset when daylightsaving is on.
                 private static TimeSpan utcOffsetWithDLS;
 
+		// Internal method to get timezone data.
+		//    data[0]:  start of daylight saving time (in DateTime ticks).
+		//    data[1]:  end of daylight saving time (in DateTime ticks).
+		//    data[2]:  utcoffset (in TimeSpan ticks).
+		//    data[3]:  additional offset when daylight saving (in TimeSpan ticks).
+		//    name[0]:  name of this timezone when not daylight saving.
+		//    name[1]:  name of this timezone when daylight saving.
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern bool GetTimeZoneData (int year,
+							    out Int64[] data,
+							    out string[] names);
+
 		// Constructor
-		[MonoTODO ("Add internal calls to initialize the fields")]
 		internal CurrentTimeZone ()
 			: base ()
 		{
+			Int64[] data;
+			string[] names;
+
+			if (!GetTimeZoneData (2002, out data, out names))
+				throw new NotSupportedException (Locale.GetText ("Can't get timezone name"));
+
+			standardName = names[0];
+			daylightName = names[1];
+
+			utcOffsetWithOutDLS = new TimeSpan (data[2]);
+			utcOffsetWithDLS = new TimeSpan (data[2] + data[3]);
 		}
 
 		// Properties
@@ -131,9 +155,15 @@ namespace System {
                                 throw new ArgumentOutOfRangeException (year + " is not in a range between 1 and 9999.");
 
                         if (daylightCache [year] == null) {
-                                //TODO: do something and put the DaylightTime corresponding to the time in cache.
-                                DaylightTime dlt = new DaylightTime (new DateTime (0),
-						     new DateTime (0), new TimeSpan (0));
+				Int64[] data;
+				string[] names;
+
+				if (!GetTimeZoneData (year, out data, out names))
+					throw new ArgumentException (Locale.GetText ("Can't get timezone data for " + year));
+
+				DaylightTime dlt = new DaylightTime (new DateTime (data[0]),
+								     new DateTime (data[1]),
+								     new TimeSpan (data[3]));
 				daylightCache.Add (year, dlt);
                         }
 
