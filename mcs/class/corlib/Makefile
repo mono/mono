@@ -122,12 +122,15 @@ $(test_nunitfw):
 ifdef PLATFORM_MONO_NATIVE
 test-local: $(test_nunitfw) $(test_against) $(testlib)
 
+run-test-local: run-monotest
+
 else
 test-local: $(test_nunitfw) $(plattestlib)
 
+run-test-local: run-plattest
+
 endif
 
-run-test-local: run-plattest
 run-test-ondotnet-local: run-plattest-ondotnet
 
 run-monotest: $(test_against) $(testlib)

@@ -1,3 +1,8 @@
+2004-06-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : fixed incorrectly unified corlib-plattest in the
+	  previous fix.
+
 2004-06-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : added run-test-ondotnet support.
