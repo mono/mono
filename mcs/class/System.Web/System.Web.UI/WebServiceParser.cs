@@ -25,8 +25,7 @@ namespace System.Web.UI
 			return WebServiceCompiler.CompileIntoType (parser);
 		}
 
-		protected override string DefaultDirectiveName
-		{
+		protected override string DefaultDirectiveName {
 			get {
 				return "webservice";
 			}

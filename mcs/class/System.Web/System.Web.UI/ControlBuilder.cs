@@ -10,7 +10,10 @@
 
 using System;
 using System.Collections;
+using System.CodeDom;
 using System.Reflection;
+using System.Web;
+using System.Web.Compilation;
 
 namespace System.Web.UI {
 
@@ -26,14 +29,22 @@ namespace System.Web.UI {
 		Type type;	       
 		string tagName;
 		string id;
-		IDictionary attribs;
+		internal IDictionary attribs;
 		protected int line;
 		protected string fileName;
 		bool childrenAsProperties;
-		bool isIParserAccessor;
+		bool isIParserAccessor = true;
 		bool hasAspCode;
-		ControlBuilder defaultPropertyBuilder;
+		internal ControlBuilder defaultPropertyBuilder;
 		ArrayList children;
+		static int nextID;
+
+		internal bool haveParserVariable;
+		internal CodeMemberMethod method;
+		internal CodeMemberMethod renderMethod;
+		internal int renderIndex;
+		internal bool isProperty;
+		internal ILocation location;
 
 		public ControlBuilder ()
 		{
@@ -68,7 +79,7 @@ namespace System.Web.UI {
 		}
 
 		public bool FIsNonParserAccessor {
-			get { return isIParserAccessor; }
+			get { return !isIParserAccessor; }
 		}
 
 		public bool HasAspCode {
@@ -78,6 +89,10 @@ namespace System.Web.UI {
 		public string ID {
 			get { return id; }
 			set { id = value; }
+		}
+
+		internal ArrayList Children {
+			get { return children; }
 		}
 
 		protected void SetControlType (Type t)
@@ -99,10 +114,10 @@ namespace System.Web.UI {
 				if (ptype == null)
 					return typeof (Control);
 
-				if (!typeof (INamingContainer).IsAssignableFrom (type))
+				if (!typeof (INamingContainer).IsAssignableFrom (ptype))
 					return parentBuilder.NamingContainerType;
 
-				return type;
+				return ptype;
 			}
 		}
 
@@ -114,23 +129,95 @@ namespace System.Web.UI {
 			get { return tagName; }
 		}
 
+		internal RootBuilder Root {
+			get {
+				if (GetType () == typeof (RootBuilder))
+					return (RootBuilder) this;
+
+				return (RootBuilder) parentBuilder.Root;
+			}
+		}
+
 		public virtual bool AllowWhitespaceLiterals ()
 		{
 			return true;
 		}
 
-		[MonoTODO]
 		public virtual void AppendLiteralString (string s)
 		{
-			throw new NotImplementedException ();
+			if (s == null || s == "")
+				return;
+
+			if (childrenAsProperties || !isIParserAccessor) {
+				if (defaultPropertyBuilder != null) {
+					defaultPropertyBuilder.AppendLiteralString (s);
+				} else if (s.Trim () != "") {
+					throw new HttpException ("Literal content not allowed for " + tagName + " " +
+								GetType () + " \"" + s + "\"");
+				}
+
+				return;
+			}
+			
+			if (!AllowWhitespaceLiterals () && s.Trim () == "")
+				return;
+
+			if (HtmlDecodeLiterals ())
+				s = HttpUtility.HtmlDecode (s);
+
+			if (children == null)
+				children = new ArrayList ();
+
+			children.Add (s);
 		}
 
 		public virtual void AppendSubBuilder (ControlBuilder subBuilder)
 		{
+			subBuilder.OnAppendToParentBuilder (this);
+			
+			if (childrenAsProperties) {
+				AppendToProperty (subBuilder);
+				return;
+			}
+
+			if (typeof (CodeRenderBuilder).IsAssignableFrom (subBuilder.GetType ())) {
+				AppendCode (subBuilder);
+				return;
+			}
+
 			if (children == null)
 				children = new ArrayList ();
 
-			subBuilder.OnAppendToParentBuilder (this);
+			children.Add (subBuilder);
+		}
+
+		void AppendToProperty (ControlBuilder subBuilder)
+		{
+			if (typeof (CodeRenderBuilder) == subBuilder.GetType ())
+				throw new HttpException ("Code render not supported here.");
+
+			if (defaultPropertyBuilder != null) {
+				defaultPropertyBuilder.AppendSubBuilder (subBuilder);
+				return;
+			}
+
+			if (children == null)
+				children = new ArrayList ();
+
+			children.Add (subBuilder);
+		}
+
+		void AppendCode (ControlBuilder subBuilder)
+		{
+			if (type != null && !(typeof (Control).IsAssignableFrom (type)))
+				throw new HttpException ("Code render not supported here.");
+
+			if (typeof (CodeRenderBuilder) == subBuilder.GetType ())
+				hasAspCode = true;
+
+			if (children == null)
+				children = new ArrayList ();
+
 			children.Add (subBuilder);
 		}
 
@@ -177,7 +264,7 @@ namespace System.Web.UI {
 			return false;
 		}
 
-		ControlBuilder CreatePropertyBuilder (string propName, TemplateParser parser)
+		ControlBuilder CreatePropertyBuilder (string propName, TemplateParser parser, IDictionary atts)
 		{
 			PropertyInfo prop = type.GetProperty (propName, flagsNoCase);
 			if (prop == null) {
@@ -187,23 +274,21 @@ namespace System.Web.UI {
 
 			Type propType = prop.PropertyType;
 			ControlBuilder builder = null;
-			if (typeof (ICollection).IsAssignableFrom (propType))
+			if (typeof (ICollection).IsAssignableFrom (propType)) {
 				builder = new CollectionBuilder ();
-			else if (typeof (ITemplate).IsAssignableFrom (propType))
+			} else if (typeof (ITemplate).IsAssignableFrom (propType)) {
 				builder = new TemplateBuilder ();
-			else
-				return CreateBuilderFromType (parser,
-							      parentBuilder,
-							      propType,
-							      propName,
-							      null,
-							      null,
-							      line,
-							      fileName);
+			} else {
+				builder = CreateBuilderFromType (parser, parentBuilder, propType, prop.Name,
+								 null, atts, line, fileName);
+				builder.isProperty = true;
+				return builder;
+			}
 
-			builder.Init (parser, this, null, tagName, null, null);
+			builder.Init (parser, this, null, prop.Name, null, atts);
 			builder.fileName = fileName;
 			builder.line = line;
+			builder.isProperty = true;
 			return builder;
 		}
 		
@@ -215,12 +300,18 @@ namespace System.Web.UI {
 					  IDictionary attribs)
 		{
 			this.parser = parser;
+			if (parser != null)
+				this.location = parser.Location;
+
 			this.parentBuilder = parentBuilder;
 			this.type = type;
 			this.tagName = tagName;
 			this.id = id;
 			this.attribs = attribs;
 			if (type == null)
+				return;
+
+			if (this is TemplateBuilder)
 				return;
 
 			if (!typeof (IParserAccessor).IsAssignableFrom (type)) {
@@ -231,9 +322,10 @@ namespace System.Web.UI {
 				if (atts != null && atts.Length > 0) {
 					ParseChildrenAttribute att = (ParseChildrenAttribute) atts [0];
 					childrenAsProperties = att.ChildrenAsProperties;
-					if (childrenAsProperties && att.DefaultProperty != "")
+					if (childrenAsProperties && att.DefaultProperty != "") {
 						defaultPropertyBuilder = CreatePropertyBuilder (att.DefaultProperty,
-												parser);
+												parser, null);
+					}
 				}
 			}
 		}
@@ -245,16 +337,51 @@ namespace System.Web.UI {
 
 		public virtual void OnAppendToParentBuilder (ControlBuilder parentBuilder)
 		{
-			if (parentBuilder.defaultPropertyBuilder == null)
+			if (defaultPropertyBuilder == null)
 				return;
 
-			ControlBuilder old = parentBuilder.defaultPropertyBuilder;
+			ControlBuilder old = defaultPropertyBuilder;
 			defaultPropertyBuilder = null;
 			AppendSubBuilder (old);
 		}
 
 		public virtual void SetTagInnerText (string text)
 		{
+		}
+
+		internal string GetNextID (string proposedID)
+		{
+			if (proposedID != null && proposedID.Trim () != "")
+				return proposedID;
+
+			return "_bctrl_" + nextID++;
+		}
+
+		internal virtual ControlBuilder CreateSubBuilder (string tagid,
+								  Hashtable atts,
+								  Type childType,
+								  TemplateParser parser,
+								  ILocation location)
+		{
+			ControlBuilder childBuilder = null;
+			if (childrenAsProperties) {
+				if (defaultPropertyBuilder == null) {
+					childBuilder = CreatePropertyBuilder (tagid, parser, atts);
+				} else {
+					childBuilder = defaultPropertyBuilder.CreateSubBuilder (tagid, atts,
+											null, parser, location);
+				}
+				return childBuilder;
+			}
+
+			childType = GetChildControlType (tagid, atts);
+			if (childType == null)
+				return null;
+
+			childBuilder = CreateBuilderFromType (parser, this, childType, tagid, id, atts,
+							      location.BeginLine, location.Filename);
+
+			return childBuilder;
 		}
 
 		internal virtual object CreateInstance ()

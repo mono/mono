@@ -7,16 +7,14 @@
 // (C) 2003 Ximian, Inc. (http://www.ximian.com)
 //
 
-using System;
-using System.Collections;
-using System.Reflection;
+using System.Web.Compilation;
 
 namespace System.Web.UI
 {
 	sealed class CodeRenderBuilder : CodeBuilder
 	{
-		public CodeRenderBuilder (string code, bool isAssign, string fileName, int line)
-			: base (code, isAssign, fileName, line)
+		public CodeRenderBuilder (string code, bool isAssign, ILocation location)
+			: base (code, isAssign, location)
 		{
 		}
 	}

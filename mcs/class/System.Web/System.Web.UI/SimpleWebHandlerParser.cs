@@ -69,21 +69,21 @@ namespace System.Web.UI
 			throw new HttpException (exc);
 		}
 
-		void TagParsed (Tag tag, int line, int col)
+	/*	void TagParsed (Tag tag, int line, int col)
 		{
 			elements.Add (tag);
-		}
+		}*/
 
 		void TextParsed (string msg, int line, int col)
 		{
-			elements.Add (new PlainText (msg));
+			//elements.Add (msg);
 		}
 
 		private void ParseDirective (string line)
 		{
-			byte [] bytes = WebEncoding.Encoding.GetBytes (line);
-			AspTokenizer tok = new AspTokenizer (physPath, new MemoryStream (bytes));
-			AspParser parser = new AspParser (tok);
+			/*byte [] bytes = WebEncoding.Encoding.GetBytes (line);
+			//AspTokenizer tok = new AspTokenizer (physPath, new MemoryStream (bytes));
+			//AspParser parser = new AspParser (tok);
 
 			elements = new ArrayList ();
 			parser.Error += new ParseErrorHandler (ParseError);
@@ -102,6 +102,7 @@ namespace System.Web.UI
 			if (0 != String.Compare (directive.TagID, DefaultDirectiveName, false))
 				throw new ApplicationException ("Expecting @WebService. Got: " +
 								directive.TagID);
+
 			
 			TagAttributes ta = directive.Attributes;
 			className = ta ["class"] as string;
@@ -126,6 +127,7 @@ namespace System.Web.UI
 					throw new ApplicationException ("Unknown file type in CodeBehind.");
 
 			}
+			*/
 		}
 
 		protected abstract string DefaultDirectiveName { get; }

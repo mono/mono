@@ -4,9 +4,10 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2002 Ximian, Inc (http://www.ximian.com)
+// (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
 //
 using System;
+using System.IO;
 using System.Web;
 using System.Web.Compilation;
 
@@ -14,22 +15,23 @@ namespace System.Web.UI
 {
 	public sealed class UserControlParser : TemplateControlParser
 	{
-		internal UserControlParser (string inputFile, HttpContext context)
+		internal UserControlParser (string virtualPath, string inputFile, HttpContext context)
 		{
 			Context = context;
-			InputFile = context.Request.MapPath (inputFile);
+			CurrentVirtualPath = virtualPath;
+			InputFile = Path.Combine (context.Request.MapPath (virtualPath), inputFile);
 		}
 		
 		public static Type GetCompiledType (string virtualPath, string inputFile, HttpContext context)
 		{
-			UserControlParser ucp = new UserControlParser (inputFile, context);
-			Type t = ucp.CompileIntoType ();
-			return t;
+			UserControlParser ucp = new UserControlParser (virtualPath, inputFile, context);
+			return ucp.CompileIntoType ();
 		}
 
 		protected override Type CompileIntoType ()
 		{
-			return UserControlCompiler.CompileUserControlType (this);
+			AspGenerator generator = new AspGenerator (this);
+			return generator.GetCompiledType ();
 		}
 
 		protected override Type DefaultBaseType
@@ -39,7 +41,7 @@ namespace System.Web.UI
 			}
 		}
 
-		protected override string DefaultDirectiveName
+		protected internal override string DefaultDirectiveName
 		{
 			get {
 				return "control";

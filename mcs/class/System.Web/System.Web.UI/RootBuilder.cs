@@ -54,6 +54,9 @@ namespace System.Web.UI
 		public RootBuilder (TemplateParser parser)
 		{
 			foundry = new AspComponentFoundry ();
+			line = 1;
+			fileName = parser.InputFile;
+			Init (parser, null, null, null, null, null);
 		}
 
 		public override Type GetChildControlType (string tagName, IDictionary attribs) 
@@ -83,6 +86,9 @@ namespace System.Web.UI
 		{
 			object o = htmlControls [tagName];
 			if (o is string) {
+				if (attribs == null)
+					throw new HttpException ("Unable to map input type control to a Type.");
+
 				string ctype = attribs ["TYPE"] as string;
 				if (ctype == null)
 					ctype = "TEXT"; // The default used by MS

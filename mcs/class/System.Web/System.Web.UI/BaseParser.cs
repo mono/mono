@@ -8,6 +8,8 @@
 // (C) 2002 Ximian, Inc. (http://www.ximian.com)
 //
 
+using System;
+using System.Collections;
 using System.IO;
 using System.Web;
 using System.Web.Util;
@@ -42,18 +44,43 @@ namespace System.Web.UI
 			return Path.Combine (BaseDir, path);
 		}
 
-		internal HttpContext Context
+		internal bool GetBool (Hashtable hash, string key, bool deflt)
 		{
-			get {
-				return context;
-			}
-			set {
-				context = value;
-			}
+			string val = hash [key] as string;
+			if (val == null)
+				return deflt;
+
+			hash.Remove (key);
+
+			bool result;
+			if (String.Compare (val, "true", true) == 0)
+				result = true;
+			else if (String.Compare (val, "false", true) == 0)
+				result = false;
+			else
+				throw new HttpException ("Invalid value for " + key);
+
+			return result;
 		}
 
-		internal string BaseDir
+		internal string GetString (Hashtable hash, string key, string deflt)
 		{
+			string val = hash [key] as string;
+			if (val == null)
+				return deflt;
+
+			hash.Remove (key);
+			return val;
+		}
+		
+		//
+		
+		internal HttpContext Context {
+			get { return context; }
+			set { context = value; }
+		}
+
+		internal string BaseDir {
 			get {
 				if (baseDir == null)
 					baseDir = MapPath (BaseVirtualDir, false);
@@ -62,8 +89,7 @@ namespace System.Web.UI
 			}
 		}
 
-		internal string BaseVirtualDir
-		{
+		internal string BaseVirtualDir {
 			get {
 				if (baseVDir == null)
 					baseVDir = UrlUtils.GetDirectory (context.Request.FilePath);
@@ -72,11 +98,9 @@ namespace System.Web.UI
 			}
 		}
 
-		internal string CurrentVirtualPath
-		{
-			get {
-				return vPath;
-			}
+		internal string CurrentVirtualPath {
+			get { return vPath; }
+			set { vPath = value; }
 		}
 	}
 

@@ -1,3 +1,38 @@
+2003-04-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ApplicationFileParser.cs: it works now. Prior to these changes, we
+	were using the compiler directly.
+
+	* BaseParser.cs: added some useful properties and methods.
+
+	* CodeBuilder.cs: use ILocation.
+	* CodeRenderBuilder.cs: use ILocation.
+	* CollectionBuilder.cs: use the RootBuilder to map tag names into Types.
+
+	* ControlBuilder.cs: made it useful.
+
+	* DataBindingBuilder.cs: the control type for data bound text is
+	DataBoundLiteralControl now.
+
+	* ObjectTagBuilder.cs: store some object tag attributes.
+
+	* PageParser.cs: handle page-only directives.
+
+	* RootBuilder.cs: bah.
+	* SimpleWebHandlerParser.cs: made it dummy.
+	* TemplateControl.cs: Modified file.
+
+	* TemplateControlParser.cs: handle directives that are common to pages
+	and user controls.
+
+	* TemplateParser.cs: utility methods and handling of directives that
+	are common to app, page and user controls.
+
+	* UserControl.cs: added ControlBuilderAttribute.
+
+	* UserControlControlBuilder.cs: builder for user controls.
+	* UserControlParser.cs: use the new interfaces.
+
 2003-04-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ControlBuilder.cs: line and fileName are protected now.

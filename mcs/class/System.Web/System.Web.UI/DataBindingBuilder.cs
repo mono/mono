@@ -8,16 +8,16 @@
 //
 
 using System;
-using System.Collections;
-using System.Reflection;
+using System.Web.Compilation;
 
 namespace System.Web.UI
 {
 	sealed class DataBindingBuilder : CodeBuilder
 	{
-		public DataBindingBuilder (string code, bool isAssign, string fileName, int line)
-			: base (code, isAssign, fileName, line)
+		public DataBindingBuilder (string code, ILocation location)
+			: base (code, false, location)
 		{
+			SetControlType (typeof (DataBoundLiteralControl));
 		}
 	}
 }

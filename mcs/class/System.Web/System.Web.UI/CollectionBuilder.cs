@@ -29,8 +29,8 @@ namespace System.Web.UI
 
 		public override Type GetChildControlType (string tagName, IDictionary attribs)
 		{
-			Type t = Parser.GetTypeFromTag (tagName);
-			if (elementType != null && !(elementType.IsAssignableFrom (t))) 
+			Type t = Root.GetChildControlType (tagName, attribs);
+			if (elementType != null && !elementType.IsAssignableFrom (t)) 
 				throw new HttpException ("Cannot add a " + t + " to " + elementType);
 
 			return t;
@@ -49,8 +49,7 @@ namespace System.Web.UI
 			SetControlType (prop.PropertyType);
 
 			prop = ControlType.GetProperty ("Item", flagsNoCase & ~BindingFlags.IgnoreCase);
-			if (prop != null)
-				elementType = prop.PropertyType;
+			elementType = prop.PropertyType;
 		}
 	}
 }

@@ -7,9 +7,7 @@
 // (C) 2003 Ximian, Inc. (http://www.ximian.com)
 //
 
-using System;
-using System.Collections;
-using System.Reflection;
+using System.Web.Compilation;
 
 namespace System.Web.UI
 {
@@ -18,12 +16,13 @@ namespace System.Web.UI
 		string code;
 		bool isAssign;
 		
-		public CodeBuilder (string code, bool isAssign, string fileName, int line)
+		public CodeBuilder (string code, bool isAssign, ILocation location)
 		{
 			this.code = code;
 			this.isAssign = isAssign;
-			this.line = line;
-			this.fileName = fileName;
+			this.line = location.BeginLine;
+			this.fileName = location.Filename;
+			this.location = location;
 		}
 
 		internal override object CreateInstance ()

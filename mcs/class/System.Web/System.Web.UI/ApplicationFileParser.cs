@@ -4,41 +4,40 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2002 Ximian, Inc (http://www.ximian.com)
+// (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
 //
 using System;
 using System.Web;
+using System.Web.Compilation;
 
 namespace System.Web.UI
 {
-	internal sealed class ApplicationFileParser : TemplateParser
+	sealed class ApplicationFileParser : TemplateParser
 	{
-		[MonoTODO]
+		public ApplicationFileParser (string fname)
+		{
+			InputFile = fname;
+		}
+		
 		protected override Type CompileIntoType ()
 		{
-			throw new NotImplementedException ();
+			GlobalAsaxCompiler compiler = new GlobalAsaxCompiler (this);
+			return compiler.GetCompiledType ();
 		}
 
-		[MonoTODO]
-		internal static Type GetCompiledApplicationType (string inputFile, 
-								 HttpContext context,
-								 ref ApplicationFileParser parser)
+		internal static Type GetCompiledApplicationType (string inputFile, HttpContext context)
 		{
-			throw new NotImplementedException ();
+			ApplicationFileParser parser = new ApplicationFileParser (inputFile);
+			parser.Context = context;
+			return parser.CompileIntoType ();
 		}
 
-		protected override Type DefaultBaseType
-		{
-			get {
-				return typeof (HttpApplication);
-			}
+		protected override Type DefaultBaseType {
+			get { return typeof (HttpApplication); }
 		}
 
-		protected override string DefaultDirectiveName
-		{
-			get {
-				return "application";
-			}
+		protected internal override string DefaultDirectiveName {
+			get { return "application"; }
 		}
 	}
 

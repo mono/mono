@@ -12,6 +12,7 @@ using System.Web.SessionState;
 
 namespace System.Web.UI
 {
+	[ControlBuilder (typeof (UserControlControlBuilder))]
 	public class UserControl : TemplateControl, IAttributeAccessor
 	{
 		private bool initialized;
