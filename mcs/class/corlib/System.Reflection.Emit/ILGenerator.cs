@@ -115,6 +115,7 @@ namespace System.Reflection.Emit {
 		private int num_fixups;
 		private AssemblyBuilder abuilder;
 		private int cur_block;
+		private int open_blocks;
 
 		internal ILGenerator (MethodBase mb, int size) {
 			if (size < 0)
@@ -124,7 +125,6 @@ namespace System.Reflection.Emit {
 			mbuilder = mb;
 			cur_stack = max_stack = 0;
 			num_fixups = num_labels = 0;
-			cur_block = -1;
 			label_to_addr = new int [16];
 			fixups = new LabelFixup [16];
 			if (mb is MethodBuilder) {
@@ -232,7 +232,7 @@ namespace System.Reflection.Emit {
 		}
 
 		public virtual void BeginCatchBlock (Type exceptionType) {
-			if (cur_block < 0)
+			if (open_blocks <= 0)
 				throw new NotSupportedException ("Not in an exception block");
 			InternalEndClause ();
 			ex_handlers [cur_block].AddCatch (exceptionType, code_len);
@@ -245,25 +245,27 @@ namespace System.Reflection.Emit {
 		public virtual Label BeginExceptionBlock () {
 			//System.Console.WriteLine ("Begin Block");
 			
-			++ cur_block;
 			if (ex_handlers != null) {
+				cur_block = ex_handlers.Length;
 				ILExceptionInfo[] new_ex = new ILExceptionInfo [cur_block + 1];
 				System.Array.Copy (ex_handlers, new_ex, cur_block);
 				ex_handlers = new_ex;
 			} else {
 				ex_handlers = new ILExceptionInfo [1];
+				cur_block = 0;
 			}
+			open_blocks++;
 			ex_handlers [cur_block].start = code_len;
 			return ex_handlers [cur_block].end = DefineLabel ();
 		}
 		public virtual void BeginFaultBlock() {
-			if (cur_block < 0)
+			if (open_blocks <= 0)
 				throw new NotSupportedException ("Not in an exception block");
 			//System.Console.WriteLine ("Begin fault Block");
 			//throw new NotImplementedException ();
 		}
 		public virtual void BeginFinallyBlock() {
-			if (cur_block < 0)
+			if (open_blocks <= 0)
 				throw new NotSupportedException ("Not in an exception block");
 			//System.Console.WriteLine ("Begin finally Block");
 			InternalEndClause ();
@@ -447,12 +449,14 @@ namespace System.Reflection.Emit {
 		}
 
 		public virtual void EndExceptionBlock () {
-			if (cur_block < 0)
+			if (open_blocks <= 0)
 				throw new NotSupportedException ("Not in an exception block");
 			InternalEndClause ();
 			MarkLabel (ex_handlers [cur_block].end);
 			ex_handlers [cur_block].End (code_len);
 			ex_handlers [cur_block].Debug ();
+			--cur_block;
+			--open_blocks;
 			//System.Console.WriteLine ("End Block");
 			//throw new NotImplementedException ();
 		}

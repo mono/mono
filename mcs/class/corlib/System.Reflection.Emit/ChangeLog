@@ -1,4 +1,8 @@
 
+Wed Feb 27 18:48:47 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* ILGenerator.cs: fix nested exception blocks.
+
 Wed Feb 20 22:30:49 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* AssemblyBuilder.cs: upped compiled assembly size limit.
