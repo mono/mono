@@ -355,10 +355,8 @@ public class Page : TemplateControl, IHttpHandler
 	
 	private void InvokeEventMethod (string m_name, object sender, EventArgs e)
 	{
-		MethodInfo evt_method = GetType ().GetMethod(m_name,
-						BindingFlags.IgnoreCase | BindingFlags.Public |
-						BindingFlags.NonPublic | BindingFlags.DeclaredOnly |
-						BindingFlags.Instance);
+		Type [] types = new Type [] {typeof (object), typeof (EventArgs)};
+		MethodInfo evt_method = GetType ().GetMethod (m_name, types);
 
 		if (evt_method != null){
 			object [] parms = new object [2];
@@ -368,12 +366,12 @@ public class Page : TemplateControl, IHttpHandler
 		}
 	}
 
-	private void Page_Init (object sender, EventArgs e)
+	private void _Page_Init (object sender, EventArgs e)
 	{
 		InvokeEventMethod ("Page_Init", sender, e);
 	}
 
-	private void Page_Load (object sender, EventArgs e)
+	private void _Page_Load (object sender, EventArgs e)
 	{
 		InvokeEventMethod ("Page_Load", sender, e);
 	}
@@ -382,8 +380,8 @@ public class Page : TemplateControl, IHttpHandler
 	{
 		FrameworkInitialize ();
 		// This 2 should depend on AutoEventWireUp in Page directive. Defaults to true.
-		Init += new EventHandler (Page_Init);
-		Load += new EventHandler (Page_Load);
+		Init += new EventHandler (_Page_Init);
+		Load += new EventHandler (_Page_Load);
 
 		//-- Control execution lifecycle in the docs
 		OnInit (EventArgs.Empty);
