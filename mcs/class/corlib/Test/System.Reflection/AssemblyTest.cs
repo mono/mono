@@ -33,6 +33,13 @@ namespace MonoTests.System.Reflection
                         Object obj = type.Assembly.CreateInstance("NunitTests.ThisTypeDoesNotExist"); 
                         AssertNull ("#03", obj); 
                 } 
+
+				[Test]
+				[ExpectedException (typeof (TypeLoadException))]
+				public void TestGetType () {
+					// Bug #49114
+					typeof (int).Assembly.GetType ("&blabla", true, true);
+				}
 	}
 }
 
