@@ -8,8 +8,8 @@ DIRS =	corlib				\
 	System.Drawing			\
 	System.EnterpriseServices	\
 	Mono.Data.Tds			\
-	Mono.GetOptions			\
 	System.Data			\
+	Mono.GetOptions			\
 	System.Web			\
 	System.Web.Services		\
 	System.Runtime.Remoting		\

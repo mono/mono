@@ -1,3 +1,8 @@
+2002-12-08  Radek Doulik  <rodo@ximian.com>
+
+	* makefile.gnu (DIRS): place System.Data before Mono.GetOptions,
+	Mono.GetOptions references System.Data
+
 2002-12-07 Jackson Harper <jackson@latitudegeo.com>
 
 	* library.build: Added Cscompmgd to the build
