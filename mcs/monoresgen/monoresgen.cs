@@ -105,7 +105,7 @@ the output file name.
 
 			reader = GetReader (source, sname);
 
-			dest = new FileStream (dname, FileMode.OpenOrCreate, FileAccess.Write);
+			dest = new FileStream (dname, FileMode.Create, FileAccess.Write);
 			writer = GetWriter (dest, dname);
 
 			int rescount = 0;

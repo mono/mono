@@ -1,3 +1,8 @@
+2005-01-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* monoresgen.cs: s/monoresgen/resgen/. Open the destination file with
+	FileMode.Create. Fixes bug #52105.
+
 2004-06-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* monoresgen.cs: fixed format exception in the po reader.
