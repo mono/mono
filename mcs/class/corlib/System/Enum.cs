@@ -38,12 +38,14 @@ namespace System {
 			MonoEnumInfo.GetInfo (enumType, out info);
 			return info.values;
 		}
+		
 		public static string[] GetNames (Type enumType) {
 			MonoEnumInfo info;
 			MonoEnumInfo.GetInfo (enumType, out info);
 			return info.names;
 		}
-		public static string GetName( Type enumType, object value) {
+		
+		public static string GetName (Type enumType, object value) {
 			MonoEnumInfo info;
 			int i;
 			MonoEnumInfo.GetInfo (enumType, out info);
@@ -53,15 +55,34 @@ namespace System {
 			}
 			return null;
 		}
-		public static bool IsDefined( Type enumType, object value) {
+		
+		public static bool IsDefined (Type enumType, object value) {
 			return GetName (enumType, value) != null;
 		}
-		public static Type GetUnderlyingType( Type enumType) {
+		
+		public static Type GetUnderlyingType (Type enumType) {
 			MonoEnumInfo info;
 			MonoEnumInfo.GetInfo (enumType, out info);
 			return info.utype;
 		}
 
+		public static object Parse (Type enumType, string value)
+		{
+			return Parse (enumType, value, false);
+		}
+
+		public static object Parse (Type enumType, string value, bool ignoreCase)
+		{
+			MonoEnumInfo info;
+			int i;
+			MonoEnumInfo.GetInfo (enumType, out info);
+			for (i = 0; i < info.values.Length; ++i) {				
+				if (String.Compare (value, info.names [i], ignoreCase) == 0)
+					return ToObject (enumType, info.values.GetValue (i));
+			}
+			throw new ArgumentException ("The rquested value was not found");
+		}
+		
 		/// <summary>
 		///   Compares the enum value with another enum value of the same type.
 		/// </summary>
@@ -87,22 +108,23 @@ namespace System {
 		
 		public override string ToString ()
 		{
-			return GetName (this.GetType(), this.get_value ());
+			return ToString ("G", null);
 		}
 
 		public string ToString (IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return ToString ("G", provider);
 		}
 
 		public string ToString (String format)
 		{
-			throw new NotImplementedException ();
+			return ToString (format, null);
 		}
 
 		public string ToString (String format, IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			// fixme: consider format and provider
+			return GetName (this.GetType(), this.get_value ());
 		}
 
 		public static object ToObject(Type enumType, byte value)
@@ -157,5 +179,18 @@ namespace System {
 
 			return v1.Equals (v2);
 		}
+
+		public override int GetHashCode ()
+		{
+			object v = this.get_value ();
+			return v.GetHashCode ();
+		}
+
+		public static string Format (Type enumType, object value, string format)
+		{
+			// fixme: consider format
+			return GetName (enumType, value);
+		}
+
 	}
 }
