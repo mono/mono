@@ -1804,9 +1804,16 @@ delegate_declaration
 	| DELEGATE FUNCTION	  
 	  identifier OPEN_PARENS 
 	  opt_formal_parameter_list
-	  CLOSE_PARENS AS type
+	  CLOSE_PARENS AS type EOL
 	  {
 		Location l = lexer.Location;
+		
+		// Module members are static by default, but delegates *can't* be declared static
+		// so we must fix it, if mbas was the one actually responsible for this
+		// instead of triggering an error.
+		if (implicit_modifiers && ((current_modifiers & Modifiers.STATIC) != 0))
+			current_modifiers = (current_modifiers & ~Modifiers.STATIC);
+			
 		Mono.MonoBASIC.Delegate del = new Mono.MonoBASIC.Delegate (
 			current_container,
 			(Expression) $8, (int) current_modifiers, MakeName ((string) $3), 
@@ -3715,13 +3722,12 @@ assignment_expression
 	  { 
 		$$ = new Assign ((Expression) $1, (Expression) $3, lexer.Location);
 	  }
-	/*| prefixed_unary_expression ASSIGN ADDRESSOF argument_list
+/*	| prefixed_unary_expression ASSIGN ADDRESSOF argument_list
 	  { 
 			// fixme: this is not working
 			// d = AddressOf F
 			// type of d has to  get resolved somewhere
-			Console.WriteLine("right");
-			New n = new New ((Expression) $1, (ArrayList) $4, lexer.Location);
+			$$ = new New ((Expression) $1, (ArrayList) $4, lexer.Location);
 			$$ = new Assign ((Expression) $1, (Expression) n, lexer.Location);
 	  }*/
 	| prefixed_unary_expression OP_MULT_ASSIGN expression

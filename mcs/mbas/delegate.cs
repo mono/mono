@@ -37,11 +37,11 @@ namespace Mono.MonoBASIC {
 		MethodBase delegate_method;
 	
 		const int AllowedModifiers =
-			Modifiers.NEW |
+			Modifiers.SHADOWS |
 			Modifiers.PUBLIC |
 			Modifiers.PROTECTED |
 			Modifiers.INTERNAL |
-		        Modifiers.UNSAFE |
+		    Modifiers.UNSAFE |
 			Modifiers.PRIVATE;
 
  		public Delegate (TypeContainer parent, Expression type, int mod_flags,
@@ -50,6 +50,7 @@ namespace Mono.MonoBASIC {
 			: base (parent, name, l)
 		{
 			this.ReturnType = type;
+
 			ModFlags        = Modifiers.Check (AllowedModifiers, mod_flags,
 							   IsTopLevel ? Modifiers.INTERNAL :
 							   Modifiers.PUBLIC, l);
