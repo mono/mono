@@ -122,13 +122,15 @@ public class ByteTest : TestCase
 		}
 
 		//test Parse(string s, NumberStyles style)
-		Assert(" $42 ", 42 == Byte.Parse(" $42 ", NumberStyles.Currency));
+		AssertEquals(" "+NumberFormatInfo.CurrentInfo.CurrencySymbol+"42 ",
+				(byte)42, Byte.Parse(" "+NumberFormatInfo.CurrentInfo.CurrencySymbol+"42 ",
+						NumberStyles.Currency));
 		try {
-			Byte.Parse("$42", NumberStyles.Integer);
+			Byte.Parse(NumberFormatInfo.CurrentInfo.CurrencySymbol+"42", NumberStyles.Integer);
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert("$42 and NumberStyles.Integer", typeof(FormatException) == e.GetType());
+			Assert(NumberFormatInfo.CurrentInfo.CurrencySymbol+"42 and NumberStyles.Integer", typeof(FormatException) == e.GetType());
 		}
 		//test Parse(string s, IFormatProvider provider)
 		Assert(" 42 and Nfi", 42 == Byte.Parse(" 42 ", Nfi));
@@ -142,11 +144,11 @@ public class ByteTest : TestCase
 		//test Parse(string s, NumberStyles style, IFormatProvider provider)
 		Assert("NumberStyles.HexNumber", 16 == Byte.Parse(" 10 ", NumberStyles.HexNumber, Nfi));
 		try {
-			Byte.Parse("$42", NumberStyles.Integer, Nfi);
+			Byte.Parse(NumberFormatInfo.CurrentInfo.CurrencySymbol+"42", NumberStyles.Integer, Nfi);
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert("$42, NumberStyles.Integer, Nfi", typeof(FormatException) == e.GetType());
+			Assert(NumberFormatInfo.CurrentInfo.CurrencySymbol+"42, NumberStyles.Integer, Nfi", typeof(FormatException) == e.GetType());
 		}
 	}
 	

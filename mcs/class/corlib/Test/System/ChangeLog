@@ -1,3 +1,14 @@
+2002/03/18  Nick Drochak <ndrochak@gol.com>
+
+	* ByteTest.cs:
+	* Int64Test.cs:
+	* SByteTest.cs: Do not hard code the "$" as the currency symbol to
+	use for Parse tests. This isn not really the fix we need. These
+	number formats vary wildly depending on the culture the system
+	runs with.  We need a much better strategy here for testing this.
+	* Int32Test.cs: Use #if NOTYET-#endif to disable a test.  This removes
+	an annoying compile warning.
+
 2002-03-18  Nick Drochak  <ndrochak@gol.com>
 
 	* DoubleTest.cs:

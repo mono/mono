@@ -22,7 +22,7 @@ public class SByteTest : TestCase
 	private const string MyString3 = "127";
 	private string[] Formats1 = {"c", "d", "e", "f", "g", "n", "p", "x" };
 	private string[] Formats2 = {"c5", "d5", "e5", "f5", "g5", "n5", "p5", "x5" };
-	private string[] Results1 = {"("+NumberFormatInfo.CurrentInfo.CurrencySymbol+"$128.00)",
+	private string[] Results1 = {"("+NumberFormatInfo.CurrentInfo.CurrencySymbol+"128.00)",
 					"-128", "-1.280000e+002", "-128.00",
 					"-128", "-128.00", "-12,800.00 %", "80"};
 	private string[] Results2 = {NumberFormatInfo.CurrentInfo.CurrencySymbol+"127.00000",
@@ -119,9 +119,9 @@ public class SByteTest : TestCase
 			Assert(typeof(OverflowException) == e.GetType());
 		}
 		//test Parse(string s, NumberStyles style)
-		Assert(42 == SByte.Parse(" $42 ", NumberStyles.Currency));
+		AssertEquals("A1", (sbyte)42, SByte.Parse(" "+NumberFormatInfo.CurrentInfo.CurrencySymbol+"42 ", NumberStyles.Currency));
 		try {
-			SByte.Parse("$42", NumberStyles.Integer);
+			SByte.Parse(NumberFormatInfo.CurrentInfo.CurrencySymbol+"42", NumberStyles.Integer);
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
@@ -139,7 +139,7 @@ public class SByteTest : TestCase
 		//test Parse(string s, NumberStyles style, IFormatProvider provider)
 		Assert(16 == SByte.Parse(" 10 ", NumberStyles.HexNumber, Nfi));
 		try {
-			SByte.Parse("$42", NumberStyles.Integer, Nfi);
+			SByte.Parse(NumberFormatInfo.CurrentInfo.CurrencySymbol+"42", NumberStyles.Integer, Nfi);
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {

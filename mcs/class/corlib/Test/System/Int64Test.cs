@@ -27,9 +27,9 @@ public class Int64Test : TestCase
 	private const string MyString3 = "9223372036854775807";
 	private string[] Formats1 = {"c", "d", "e", "f", "g", "n", "p", "x" };
 	private string[] Formats2 = {"c5", "d5", "e5", "f5", "g5", "n5", "p5", "x5" };
-	private string[] Results1 = {"($9,223,372,036,854,775,808.00)", "-9223372036854775808", "-9.223372e+018", "-9223372036854775808.00",
+	private string[] Results1 = {"("+NumberFormatInfo.CurrentInfo.CurrencySymbol+"9,223,372,036,854,775,808.00)", "-9223372036854775808", "-9.223372e+018", "-9223372036854775808.00",
 	                                  "-9223372036854775808", "-9,223,372,036,854,775,808.00", "-922,337,203,685,477,580,800.00 %", "8000000000000000"};
-	private string[] Results2 = {"$9,223,372,036,854,775,807.00000", "9223372036854775807", "9.22337e+018", "9223372036854775807.00000",
+	private string[] Results2 = {NumberFormatInfo.CurrentInfo.CurrencySymbol+"9,223,372,036,854,775,807.00000", "9223372036854775807", "9.22337e+018", "9223372036854775807.00000",
 	                                  "9.2234e+18", "9,223,372,036,854,775,807.00000", "922,337,203,685,477,580,700.00000 %", "7fffffffffffffff"};
 	private string[] ResultsNfi1 = {"("+NumberFormatInfo.InvariantInfo.CurrencySymbol+"9,223,372,036,854,775,808.00)", "-9223372036854775808", "-9.223372e+018", "-9223372036854775808.00",
 	                                  "-9223372036854775808", "-9,223,372,036,854,775,808.00", "-922,337,203,685,477,580,800.00 %", "8000000000000000"};
@@ -238,9 +238,9 @@ public class Int64Test : TestCase
 	catch (Exception e) {
 		Assert(typeof(FormatException) == e.GetType());
 	}
-	Assert(42 == Int64.Parse(" $42 ", NumberStyles.Currency));
+	AssertEquals("A1", (long)42, Int64.Parse(" "+NumberFormatInfo.CurrentInfo.CurrencySymbol+"42 ", NumberStyles.Currency));
 	try {
-		Int64.Parse("$42", NumberStyles.Integer);
+		Int64.Parse(NumberFormatInfo.CurrentInfo.CurrencySymbol+"42", NumberStyles.Integer);
 		Fail("Should raise a System.FormatException");
 	}
 	catch (Exception e) {
@@ -258,7 +258,7 @@ public class Int64Test : TestCase
 	//test Parse(string s, NumberStyles style, IFormatProvider provider)
 	Assert(16 == Int64.Parse(" 10 ", NumberStyles.HexNumber, Nfi));
 	try {
-		Int64.Parse("$42", NumberStyles.Integer, Nfi);
+		Int64.Parse(NumberFormatInfo.CurrentInfo.CurrencySymbol+"42", NumberStyles.Integer, Nfi);
 		Fail("Should raise a System.FormatException");
 	}
 	catch (Exception e) {
