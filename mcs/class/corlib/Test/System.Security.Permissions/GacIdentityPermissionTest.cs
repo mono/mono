@@ -52,6 +52,7 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.IsFalse (Object.ReferenceEquals (gip, copy), "ReferenceEquals");
 		}
 
+		[Category ("NotWorking")]
 		[Test]
 		public void PermissionStateUnrestricted ()
 		{

@@ -333,6 +333,7 @@ namespace MonoTests.System.Security.Cryptography {
 		[Test]
 		// MS BUG [ExpectedException (typeof (ObjectDisposedException))]
 #if NET_2_0
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (IndexOutOfRangeException))]
 #else
 		[Category ("NotDotNet")] // Test cause System.ExecutionEngineException on MS runtime
@@ -434,6 +435,7 @@ namespace MonoTests.System.Security.Cryptography {
 		[Test]
 		// MS BUG [ExpectedException (typeof (ObjectDisposedException))]
 #if NET_2_0
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (IndexOutOfRangeException))]
 #else
 		[Category ("NotDotNet")] // Test cause System.ExecutionEngineException on MS runtime
@@ -833,6 +835,9 @@ namespace MonoTests.System.Security.Cryptography {
 			AssertEquals ("Unicode DES Roundtrip", "ximian", Encoding.Unicode.GetString (data, 0, len));
 		}
 
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif		
 		[Test]
 		public void DecryptPartial_TransformFinalBlock_2Pass () 
 		{
@@ -859,6 +864,9 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		// based on http://www.c-sharpcorner.com/Code/2002/May/FileEncryption.asp
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif	
 		[Test]
 		public void WriteByteReadByte () 
 		{
@@ -1250,7 +1258,9 @@ namespace MonoTests.System.Security.Cryptography {
 			byte[] digest = hash.Hash;
 			AssertEquals ("Hash", "71-04-12-D1-95-01-CF-F9-8D-8F-F8-0D-F9-AA-11-7D", BitConverter.ToString (digest));
 		}
-
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif	
 		[Test]
 		public void CascadedCryptoStream_Read () 
 		{

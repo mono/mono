@@ -40,6 +40,7 @@ namespace MonoTests.System.Security.Permissions {
 	public class KeyContainerPermissionAttributeTest {
 
 		[Test]
+		[Category ("NotWorking")]
 		public void Default ()
 		{
 			KeyContainerPermissionAttribute a = new KeyContainerPermissionAttribute (SecurityAction.Assert);

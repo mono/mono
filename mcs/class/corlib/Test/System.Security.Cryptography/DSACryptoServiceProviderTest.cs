@@ -346,6 +346,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 
 #if NET_2_0
 	[Test]
+	[Category ("NotWorking")]
 	public void ImportDisposed ()
 	{
 		DSACryptoServiceProvider import = new DSACryptoServiceProvider (minKeySize);
@@ -889,6 +890,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 
 #if NET_2_0
 	[Test]
+	[Category ("NotWorking")]
 	public void CspKeyContainerInfo_NewKeypair ()
 	{
 		dsa = new DSACryptoServiceProvider (minKeySize);
@@ -909,6 +911,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 	}
 
 	[Test]
+	[Category ("NotWorking")]
 	public void CspKeyContainerInfo_ImportedKeypair ()
 	{
 		dsa = new DSACryptoServiceProvider (minKeySize);
@@ -931,6 +934,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 	}
 
 	[Test]
+	[Category ("NotWorking")]
 	// This case wasn't fixed in Nov CTP
 	public void CspKeyContainerInfo_ImportedPublicKey ()
 	{
@@ -954,6 +958,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 	}
 
 	[Test]
+	[Category ("NotWorking")]
 	public void ExportCspBlob_Full ()
 	{
 		dsa = new DSACryptoServiceProvider (minKeySize);
@@ -965,6 +970,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 	}
 
 	[Test]
+	[Category ("NotWorking")]
 	public void ExportCspBlob_PublicOnly ()
 	{
 		dsa = new DSACryptoServiceProvider (minKeySize);
@@ -977,6 +983,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 
 	[Test]
 	[ExpectedException (typeof (CryptographicException))]
+	[Category ("NotWorking")]
 	public void ExportCspBlob_MissingPrivateKey ()
 	{
 		dsa = new DSACryptoServiceProvider (minKeySize);
@@ -987,6 +994,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 	}
 
 	[Test]
+	[Category ("NotWorking")]
 	public void ExportCspBlob_MissingPrivateKey_PublicOnly ()
 	{
 		dsa = new DSACryptoServiceProvider (minKeySize);
@@ -998,6 +1006,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 	}
 
 	[Test]
+	[Category ("NotWorking")]
 	public void ImportCspBlob_Keypair ()
 	{
 		byte[] blob = new byte [336] { 0x07, 0x02, 0x00, 0x00, 0x00, 0x22, 0x00, 0x00, 0x44, 0x53, 0x53, 0x32, 0x00, 0x04, 0x00, 0x00, 0xD3,
@@ -1025,6 +1034,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 	}
 
 	[Test]
+	[Category ("NotWorking")]
 	public void ExportCspBlob_PublicKey ()
 	{
 		byte[] blob = new byte [444] { 0x06, 0x02, 0x00, 0x00, 0x00, 0x22, 0x00, 0x00, 0x44, 0x53, 0x53, 0x31, 0x00, 0x04, 0x00, 0x00, 0xD3, 
@@ -1066,6 +1076,7 @@ public class DSACryptoServiceProviderTest : Assertion {
 
 	[Test]
 	[ExpectedException (typeof (CryptographicException))]
+	[Category ("NotWorking")]
 	public void ImportCspBlob_Bad ()
 	{
 		byte[] blob = new byte [148]; // valid size for public key

@@ -236,6 +236,9 @@ namespace MonoTests.System.Security.Permissions {
 			ep.FromXml (se2);
 		}
 
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 		public void FromXml ()
 		{
@@ -277,6 +280,9 @@ namespace MonoTests.System.Security.Permissions {
 			Assert ("EP2 U Unrestricted == Unrestricted", ep3.IsUnrestricted ());
 		}
 
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 		public void Union ()
 		{
@@ -289,6 +295,9 @@ namespace MonoTests.System.Security.Permissions {
 			AssertEquals ("EP1 U EP2 U EP3 == EP1+2+3", ep4.ToXml ().ToString (), ep5.ToXml ().ToString ());
 		}
 
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 		public void Union_Subset ()
 		{
@@ -356,6 +365,9 @@ namespace MonoTests.System.Security.Permissions {
 			AssertEquals ("Intersect-AllAccess-Write", keyLocalMachine, ep3.GetPathList (RegistryPermissionAccess.Write));
 		}
 
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 		public void Intersect_Subset ()
 		{

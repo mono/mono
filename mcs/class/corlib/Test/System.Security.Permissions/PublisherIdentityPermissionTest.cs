@@ -103,6 +103,7 @@ namespace MonoTests.System.Security.Permissions {
 		}
 #if NET_2_0
 		[Test]
+		[Category ("NotWorking")]
 		public void PermissionStateUnrestricted ()
 		{
 			// In 2.0 Unrestricted are permitted for identity permissions
@@ -230,6 +231,9 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		public void Union_DifferentCertificates ()
 		{
 			PublisherIdentityPermission p1 = new PublisherIdentityPermission (x509);

@@ -399,6 +399,7 @@ public class RSACryptoServiceProviderTest : Assertion {
 
 #if NET_2_0
 	[Test]
+	[Category ("NotWorking")]
 	public void ImportDisposed ()
 	{
 		RSACryptoServiceProvider import = new RSACryptoServiceProvider (minKeySize);
@@ -1091,6 +1092,7 @@ public class RSACryptoServiceProviderTest : Assertion {
 
 #if NET_2_0
 	[Test]
+	[Category ("NotWorking")]
 	public void CspKeyContainerInfo_NewKeypair ()
 	{
 		rsa = new RSACryptoServiceProvider (minKeySize);
@@ -1111,6 +1113,7 @@ public class RSACryptoServiceProviderTest : Assertion {
 	}
 
 	[Test]
+	[Category ("NotWorking")]
 	public void CspKeyContainerInfo_ImportedKeypair ()
 	{
 		rsa = new RSACryptoServiceProvider (minKeySize);

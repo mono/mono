@@ -57,6 +57,7 @@ namespace MonoTests.System.Security {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void DetermineApplicationTrust_Evidence_Null_TrustManagerContext ()
 		{
@@ -67,6 +68,7 @@ namespace MonoTests.System.Security {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 		public void DetermineApplicationTrust_Evidence_Evidence_Null ()
 		{

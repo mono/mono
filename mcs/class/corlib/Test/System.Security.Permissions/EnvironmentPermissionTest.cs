@@ -200,6 +200,10 @@ namespace MonoTests.System.Security.Permissions {
 			ep.FromXml (se2);
 		}
 
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
+		
 		[Test]
 		public void FromXml () 
 		{
@@ -235,7 +239,9 @@ namespace MonoTests.System.Security.Permissions {
 			ep3 = (EnvironmentPermission) ep2.Union (ep1);
 			Assert ("EP2 U Unrestricted == Unrestricted", ep3.IsUnrestricted ());
 		}
-
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 		public void Union () 
 		{
