@@ -1,4 +1,9 @@
 thisdir = class
+ifeq ($(PLATFORM),linux)
+MONO_CSHARP_DEBUGGER = Mono.CSharp.Debugger
+else
+MONO_CSHARP_DEBUGGER =
+endif
 SUBDIRS = \
 	corlib				\
 	I18N				\
@@ -16,7 +21,7 @@ SUBDIRS = \
 	System.Runtime.Remoting		\
 	System.Configuration.Install 	\
 	System.Management		\
-	Mono.CSharp.Debugger		\
+	$(MONO_CSHARP_DEBUGGER)         \
 	Mono.Data.DB2Client		\
 	Mono.Data.MySql			\
 	Mono.Data.PostgreSqlClient	\
