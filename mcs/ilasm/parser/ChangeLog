@@ -1,3 +1,7 @@
+2003-09-21 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: Define data
+	
 2003-09-15 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: dashed names aren't legal for file names, if the

@@ -1092,7 +1092,7 @@ field_decl		: D_FIELD repeat_opt field_attr type id at_opt init_opt
                                 }
                                 
                                 if ($6 != null) {
-                                        field_def.AddDataValue ((DataConstant) $6);
+                                        field_def.AddDataValue ((string) $6);
                                 }
                                 
                                 if ($7 != null) {
@@ -1173,8 +1173,7 @@ field_attr		: /* EMPTY */
 at_opt			: /* EMPTY */
 			| K_AT id
                           {
-                          //      DataDef def = new DataDef ((string) $2, false);
-                          //      def.PeapiConstant = new DataConstant (DataTable.GetOffset ((string) $2));
+                                $$ = $2;
                           }
 			;
 
@@ -1255,7 +1254,7 @@ data_decl		: data_head data_body
                                 } else {
                                         datadef.PeapiConstant = (PEAPI.Constant) $2;
                                 }
-                                codegen.CurrentTypeDef.AddDataDef ((DataDef) $1);
+                                codegen.AddDataDef (datadef);
                           }
 			;
 
@@ -1296,8 +1295,8 @@ dataitem		: K_CHAR STAR OPEN_PARENS comp_qstring CLOSE_PARENS
                           }
 			| AMPERSAND OPEN_PARENS id CLOSE_PARENS
                           {
-                                DataDef def = codegen.CurrentTypeDef.GetDataDef ((string) $3);
-                                $$ = new AddressConstant ((DataConstant) def.PeapiConstant);
+                           //     DataDef def = codegen.CurrentTypeDef.GetDataDef ((string) $3);
+                           //     $$ = new AddressConstant ((DataConstant) def.PeapiConstant);
                           }
 			| K_BYTEARRAY ASSIGN OPEN_PARENS bytes CLOSE_PARENS
                           {
