@@ -1,3 +1,8 @@
+2004-12-19  Daniel Morgan <danielmorgan@verizon.net>
+
+	* OracleCommand.cs: ExecuteReader needs to be able 
+	to handle non queries too
+
 2004-09-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ChangeLog: New.
