@@ -52,12 +52,17 @@ namespace System.Xml.Query
 		}
 
 		public XmlQueryCompileException (string res)
-			: base (res)
+			: this (res, null, null, null)
 		{
 		}
 
 		public XmlQueryCompileException (string resource, Exception exception)
-			: base (resource, exception)
+			: this (resource, null, null, exception)
+		{
+		}
+
+		internal XmlQueryCompileException (string message, IXmlLineInfo li, string sourceUri, Exception innerException)
+			: base (message, li, sourceUri, innerException)
 		{
 		}
 

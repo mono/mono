@@ -1,3 +1,9 @@
+2004-07-23  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlQueryCompileException.cs, XmlQueryException.cs :
+	  added internal constructor that supplies error location.
+	  Removed Message property.
+
 2004-07-20  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsltCommand.cs, XmlArgumentList.cs : sealed. Added missing MonoTODO.

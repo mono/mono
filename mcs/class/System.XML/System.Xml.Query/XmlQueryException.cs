@@ -39,9 +39,11 @@ namespace System.Xml.Query
 	{
 		#region Constructors
 
+		[MonoTODO]
 		protected XmlQueryException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
+			throw new NotImplementedException ();
 		}
 
 		public XmlQueryException ()
@@ -50,13 +52,28 @@ namespace System.Xml.Query
 		}
 
 		public XmlQueryException (string res)
-			: base (res)
+			: this (res, null, null, null)
 		{
 		}
 
 		public XmlQueryException (string resource, Exception exception)
-			: base (resource, exception)
+			: this (resource, null, null, exception)
 		{
+		}
+
+		internal XmlQueryException (string message, IXmlLineInfo lineInfo, string sourceUri, Exception innerException)
+			: base (BuildMessage (message, lineInfo, sourceUri), innerException)
+		{
+		}
+
+		static string BuildMessage (string message, IXmlLineInfo li, string sourceUri)
+		{
+			if (li != null && li.HasLineInfo ()) {
+				message = String.Format ("{0}. Location: {1} ({2}, {3}).", message, sourceUri, li.LineNumber, li.LinePosition);
+			}
+			else if (sourceUri != null)
+				message = String.Format ("{0}. Location: {1}", message, sourceUri);
+			return message;
 		}
 
 		#endregion // Constructors
@@ -73,11 +90,6 @@ namespace System.Xml.Query
 			get { throw new NotImplementedException (); }
 		}
 	
-		[MonoTODO]
-		public override string Message {
-			get { throw new NotImplementedException(); }
-		}
-
 		[MonoTODO]
 		public string SourceUri {
 			get { throw new NotImplementedException(); }
