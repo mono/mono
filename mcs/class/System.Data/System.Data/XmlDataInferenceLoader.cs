@@ -378,7 +378,7 @@ namespace System.Data
 		{
 			TableMapping map = tables [tableName];
 			if (map != null) {
-				if (map.ParentTable != parent)
+				if (parent != null && map.ParentTable != null && map.ParentTable != parent)
 					throw new DataException (String.Format ("The table {0} is already allocated as another table's child table.", tableName));
 			} else {
 				map = new TableMapping (tableName, ns);

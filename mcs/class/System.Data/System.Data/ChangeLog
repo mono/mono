@@ -1,5 +1,10 @@
 2004-05-31  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlDataInferenceLoader.cs : Fixed GetMappedTable() that incorrectly
+	  rejected same-named tables in different hierarchy. Thanks to Boris.
+
+2004-05-31  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlDiffLoader.cs : Added some Skip() that is required not to go to
 	  infinite loop. Thanks to Boris for this fix.
 
