@@ -82,7 +82,6 @@ namespace Microsoft.VisualBasic
 			 * This can be 0 through 65535. The returned value is independent 
 			 * of the culture and code page settings for the current thread.
 			 */
-
 			return (int) String;
 		}
 		
@@ -99,8 +98,8 @@ namespace Microsoft.VisualBasic
 			 */
 			if ((String == null) || (String.Length == 0))
 				throw new ArgumentException("Length of argument 'String' must be at least one.", "String");
-			return AscW(String[0]);
 
+			return AscW(String[0]);
 		}
 
 		/// <summary>
@@ -700,7 +699,7 @@ namespace Microsoft.VisualBasic
 				return 0;
 			}
 			if (String2 == null || String2.Length == 0) {
-				return Start + 1;
+				return Start;
 			}
 
 			switch (Compare) {
