@@ -1,3 +1,8 @@
+2004-08-19 Anirban Bhattacharjee <banirban@novell.com>
+	* NameSpaceTestA.vb: New test
+	* NameSpaceTestB.vb: New test
+	* Test.Source: Added new test names
+
 2004-08-19 Sachin Kumar <skumar1@novell.com>
 	* ConditionalStatements1.vb:
 	* ConditionalStatementsA.vb:

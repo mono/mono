@@ -3,7 +3,9 @@
 #
 
 TEST_DLL_SOURCES = \
-Dll1
+Dll1 \
+Override_dll \
+Delegate_dll \
 
 #
 # All positive test cases goes here
@@ -71,12 +73,10 @@ ExternalSourceDirectives \
 RegionDirectives \
 RegionDirectivesA \
 NameSpace \
-NameSpaceA \
-NameSpaceB \
+NameSpaceTest\* \
 NameSpaceC \
 NameSpaceD \
-NSA \
-NSB \
+NS\* \
 ModuleTest \
 ModuleA \
 ModuleB \
@@ -116,6 +116,7 @@ ShadowsC \
 ShadowsD \
 OverrideA \
 OverrideB \
+Override_exe \
 Accessibility \
 AccessibilityA \
 AccessibilityB \
@@ -148,6 +149,7 @@ PropertyC \
 PropertyD \
 PropertyE \
 DelegateA \
+Delegate_exe \
 EventA \
 EventB \
 EventC \
