@@ -48,11 +48,13 @@ namespace System.Windows.Forms {
 					return;
 				}
 
+				active_control = value;
+
 				if (!Contains(value)) {
 					throw new ArgumentException("Not a child control");
 				}
 
-				XplatUI.Activate(active_control.window.Handle);
+				XplatUI.SetFocus(active_control.window.Handle);
 			}
 		}
 
@@ -123,7 +125,48 @@ namespace System.Windows.Forms {
 		}
 
 		protected override bool ProcessDialogKey(Keys keyData) {
-			return base.ProcessDialogKey (keyData);
+			Keys	key;
+			bool	forward;
+
+			key = keyData & Keys.KeyCode;
+			forward = true;
+
+			switch (key) {
+				case Keys.Tab: {
+					if (ProcessTabKey((keyData & Keys.Shift) == 0)) {
+						return true;
+					}
+					break;
+				}
+
+				case Keys.Left: {
+					forward = false;
+					goto case Keys.Down;
+				}
+
+				case Keys.Up: {
+					forward = false;
+					goto case Keys.Down;
+				}
+
+				case Keys.Right: {
+					goto case Keys.Down;
+				}
+				case Keys.Down: {
+					Control control;
+
+					control = active_control;
+
+					if (control.SelectNextControl(active_control, forward, false, false, true)) {
+						return true;
+					}
+					break;
+				} 
+
+
+			}
+			return base.ProcessDialogKey(keyData);
+
 		}
 
 		protected override bool ProcessMnemonic(char charCode) {
@@ -131,10 +174,11 @@ namespace System.Windows.Forms {
 		}
 
 		protected virtual bool ProcessTabKey(bool forward) {
-			throw new NotImplementedException();
+			return SelectNextControl(active_control, forward, true, true, true);
 		}
 
 		protected override void Select(bool directed, bool forward) {
+			base.Select(directed, forward);
 		}
 
 		protected virtual void UpdateDefaultButton() {

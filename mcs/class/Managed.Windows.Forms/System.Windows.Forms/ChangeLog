@@ -1,5 +1,9 @@
 2005-01-12  Peter Bartok  <pbartok@novell.com>
 
+	* ContainerControl.cs: Implemented ProcessDialogKeys()
+
+2005-01-12  Peter Bartok  <pbartok@novell.com>
+
 	* Control.cs:
 	  - Implemented SelectNextControl() method
 	  - Several focus related bug fixes
