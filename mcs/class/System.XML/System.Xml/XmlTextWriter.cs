@@ -365,6 +365,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 				throw new ArgumentException ();
 
 			CheckState ();
+			IndentingOverriden = true;
 			CloseStartElement ();
 			
 			w.Write ("<![CDATA[");

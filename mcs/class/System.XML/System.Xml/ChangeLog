@@ -1,3 +1,7 @@
+2004-03-20  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriter.cs : Fixed indentation on CDATA. This fixes bug #55828.
+
 2004-03-19  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlImplementation.cs : HasFeature() returns true when strVersion
