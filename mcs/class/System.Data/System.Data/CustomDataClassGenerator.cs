@@ -44,6 +44,8 @@ using System.Text;
 using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
 // only for Driver
 using Microsoft.CSharp;
@@ -489,6 +491,7 @@ namespace System.Data
 			// Type
 			dsType = new CodeTypeDeclaration (opts.DataSetName (ds.DataSetName, gen));
 			dsType.BaseTypes.Add (TypeRef (typeof (DataSet)));
+			dsType.BaseTypes.Add (TypeRef (typeof (IXmlSerializable)));
 
 			// .ctor()
 			dsType.Members.Add (CreateDataSetDefaultCtor ());
@@ -509,10 +512,12 @@ namespace System.Data
 
 			// ReadXmlSerializable()
 			dsType.Members.Add (CreateDataSetReadXmlSerializable ());
+*/
 
 			// GetSchemaSerializable()
 			dsType.Members.Add (CreateDataSetGetSchemaSerializable ());
-*/
+
+			dsType.Members.Add (CreateDataSetGetSchema ());
 			dsType.Members.Add (CreateDataSetInitializeClass ());
 			dsType.Members.Add (CreateDataSetInitializeFields ());
 			dsType.Members.Add (CreateDataSetSchemaChanged ());
@@ -667,6 +672,40 @@ namespace System.Data
 			// Hey, how can I specify the constructor to invoke chained ctor with an empty parameter list!?
 			method.Statements.Add (Throw (New (typeof (NotImplementedException))));
 			return method;
+		}
+
+		private CodeMemberMethod CreateDataSetGetSchema ()
+		{
+			CodeMemberMethod m = new CodeMemberMethod ();
+			m.PrivateImplementationType = TypeRef (typeof (IXmlSerializable));
+			m.Name = "GetSchema";
+			m.ReturnType = TypeRef (typeof (XmlSchema));
+			m.Statements.Add (Return (MethodInvoke ("GetSchemaSerializable")));
+
+			return m;
+		}
+
+		private CodeMemberMethod CreateDataSetGetSchemaSerializable ()
+		{
+			CodeMemberMethod m = new CodeMemberMethod ();
+			m.Attributes = MemberAttributes.Family | 
+				MemberAttributes.Override;
+			m.Name = "GetSchemaSerializable";
+			m.ReturnType = TypeRef (typeof (XmlSchema));
+
+			m.Statements.Add (VarDecl (typeof (StringWriter), "sw",
+				New (typeof (StringWriter))));
+			m.Statements.Add (Eval (MethodInvoke ("WriteXmlSchema", Local ("sw"))));
+			m.Statements.Add (Return (MethodInvoke (
+				TypeRefExp (typeof (XmlSchema)),
+				"Read",
+				New (typeof (XmlTextReader),
+					New (typeof (StringReader),
+						MethodInvoke (Local ("sw"),
+							"ToString"))),
+				Const (null))));
+
+			return m;
 		}
 
 		private CodeMemberMethod CreateDataSetInitializeClass ()

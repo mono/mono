@@ -1070,7 +1070,7 @@ namespace System.Data {
 
 		XmlSchema IXmlSerializable.GetSchema ()
 		{
-			return BuildSchema ();
+			return GetSchemaSerializable ();
 		}
 
 		protected virtual bool ShouldSerializeRelations ()
@@ -1478,6 +1478,7 @@ namespace System.Data {
 				if (prefix != "xmlns" && prefix != "xml" && ns != null && ns != String.Empty)
 					schema.Namespaces.Add (prefix, ns);
 			}
+
 			return schema;
 		}
 
