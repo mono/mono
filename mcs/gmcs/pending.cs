@@ -368,6 +368,8 @@ namespace Mono.CSharp {
 					if (m == null)
 						continue;
 
+					string mname = TypeManager.GetMethodName (m);
+
 					//
 					// `need_proxy' is not null when we're implementing an
 					// interface indexer and this is Clear(One/All) operation.
@@ -377,9 +379,9 @@ namespace Mono.CSharp {
 					// for an interface indexer).
 					//
 					if (name == null){
-						if (m.Name != tm.get_indexer_name && m.Name != tm.set_indexer_name)
+						if (mname != tm.get_indexer_name && mname != tm.set_indexer_name)
 							continue;
-					} else if ((need_proxy == null) && (name != m.Name))
+					} else if ((need_proxy == null) && (name != mname))
 						continue;
 
 					if (!TypeManager.IsEqual (ret_type, m.ReturnType)){
@@ -414,7 +416,7 @@ namespace Mono.CSharp {
 						// a proxy if the implementation's IndexerName doesn't
 						// match the IndexerName in the interface.
 						bool name_matches = false;
-						if (name == m.Name || m.Name == tm.get_indexer_name || m.Name == tm.set_indexer_name)
+						if (name == mname || mname == tm.get_indexer_name || mname == tm.set_indexer_name)
 							name_matches = true;
 						
 						if ((t == null) && (need_proxy != null) && !name_matches)

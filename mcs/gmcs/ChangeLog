@@ -1,3 +1,13 @@
+2004-11-11  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs (TypeManager.GetMethodName): New method.
+
+	* class.cs (MethodData.Define): Include the generic arity in the
+	name of an explicit interface; also add it to the method name.
+
+	* pending.cs (PendingImplementation.InterfaceMethod): The method
+	name now includes the generic arity.
+
 2004-11-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Invocation.OverloadResolve): Flag error if we are

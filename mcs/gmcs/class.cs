@@ -4754,13 +4754,13 @@ namespace Mono.CSharp {
 
 			string prefix;
 			if (member.IsExplicitImpl)
-				prefix = RemoveArity (member.InterfaceType.FullName) + ".";
+				prefix = member.InterfaceType.FullName + ".";
 			else
 				prefix = "";
 
-			string name = method.MethodName.Name;
+			string name = method.MethodName.Basename;
 			string method_name = prefix + name;
-  
+
 			Type[] ParameterTypes = method.ParameterTypes;
 
 			if (container.Pending != null){

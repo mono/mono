@@ -1000,6 +1000,14 @@ public class TypeManager {
 		return GetFullNameSignature (mb) + sig.ToString ();
         }
 
+	public static string GetMethodName (MethodInfo m)
+	{
+		if (!IsGenericMethod (m))
+			return m.Name;
+
+		return MemberName.MakeName (m.Name, m.GetGenericArguments ().Length);
+	}
+
 	/// <summary>
 	///   Looks up a type, and aborts if it is not found.  This is used
 	///   by types required by the compiler
