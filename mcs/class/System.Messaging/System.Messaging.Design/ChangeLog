@@ -1,7 +1,0 @@
-2004-06-02  Gert Driesen <drieseng@users.sourceforge.net>
-
-	* MessageFormatterConverter.cs: added file
-	* MessageQueueConverter.cs: added file
-	* QueuePathDialog.cs: added file
-	* QueuePathEditor.cs: added file
-	* TimeoutConverter.cs: added file

@@ -1,5 +1,0 @@
-2003-10-05  Sebastien Pouliot  <spouliot@videotron.ca>
-
-	* TraceFilter.cs: New. Generic trace logging (for input/output).
-	* TraceInputFilter.cs: New. Trace SOAP input to logfile.
-	* TraceOutputFilter.cs: New. Trace SOAP output to logfile.

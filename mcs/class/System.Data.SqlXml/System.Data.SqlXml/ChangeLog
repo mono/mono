@@ -1,5 +1,0 @@
-2004-07-23  Atsushi Enomoto <atsushi@novell.com>
-
-	* started ChangeLog.
-	* DBObject.cs : XmlQueryArgumentList is now XmlArgumentList.
-

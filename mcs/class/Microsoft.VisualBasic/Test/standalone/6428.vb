@@ -1,45 +1,0 @@
-  '
-  ' Copyright (c) 2002-2003 Mainsoft Corporation.
-  '
-  ' Permission is hereby granted, free of charge, to any person obtaining a
-  ' copy of this software and associated documentation files (the "Software"),
-  ' to deal in the Software without restriction, including without limitation
-  ' the rights to use, copy, modify, merge, publish, distribute, sublicense,
-  ' and/or sell copies of the Software, and to permit persons to whom the
-  ' Software is furnished to do so, subject to the following conditions:
-  ' 
-  ' The above copyright notice and this permission notice shall be included in
-  ' all copies or substantial portions of the Software.
-  ' 
-  ' THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  ' IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  ' FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-  ' AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  ' LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-  ' FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-  ' DEALINGS IN THE SOFTWARE.
-  '
-
-
-Imports Microsoft.VisualBasic.Collection
-Imports System.Collections
-
-Public Class TestClass
-    Public Function Test() As Integer
-        'BeginCode
-        Dim s() As String = {"a", "b", "c", "d"}
-        Dim col As New Microsoft.VisualBasic.Collection()
-        Dim e As IEnumerator
-        Dim i As Integer = 0
-        col.Add(s(0), Nothing, Nothing, Nothing)
-        col.Add(s(1), Nothing, Nothing, Nothing)
-        col.Add(s(2), Nothing, Nothing, Nothing)
-        col.Add(s(3), Nothing, Nothing, Nothing)
-        e = col.GetEnumerator()        If e Is Nothing Then Return 2
-        While (e.MoveNext())            If s(i).ToString <> e.Current.tostring Then Return i * 2            i = i + 1        End While
-        e.Reset()        e.MoveNext()        If s(0).ToString <> e.Current.tostring Then Return 32
-        Return 1
-
-        'EndCode
-    End Function
-End Class

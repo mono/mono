@@ -1,8 +1,0 @@
-<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>
-<xs:element name='foo' type='st' />
-<xs:simpleType name='st'>
-  <xs:restriction base='xs:string'>
-    <xs:maxLength value='5' />
-  </xs:restriction>
-</xs:simpleType>
-</xs:schema>

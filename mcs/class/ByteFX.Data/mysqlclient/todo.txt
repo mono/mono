@@ -1,1 +1,0 @@
-1.  implement connect timeout in ConnectionInternal

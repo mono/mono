@@ -1,7 +1,0 @@
-<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'>
-<xs:element name='foo' type='st' />
-<xs:complexType name='st'>
-  <xs:attribute name='att1' />
-  <xs:attribute name='att2' type='xs:int' default='2' />
-</xs:complexType>
-</xs:schema>

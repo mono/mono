@@ -1,5 +1,0 @@
-2004-10-02  Christopher Lahey (clahey@ximian.com)
-
-	* DeflateStream.cs GzipStream.cs: Implemented the DeflateStream
-	and GzipStream using zlib.
-

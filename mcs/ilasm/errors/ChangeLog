@@ -1,6 +1,0 @@
-2004-06-10  Jackson Harper  <jackson@ximian.com>
-
-	* errors: This directory will contain assembly files that should
-	not compile.
-	* bad_bytearray.il: A bad bytearray in a .data line. Should give a
-	syntax error.
