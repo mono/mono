@@ -1,3 +1,7 @@
+2004-04-02  Jackson Harper  <jackson@ximian.com>
+
+	* PEAPI.cs: Allow hash algorithms to be any integer.
+	
 2004-02-18  Jackson Harper <jackson@ximian.com>
 
 	* PEAPI.cs: Add a class for creating instances of class refs, this

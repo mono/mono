@@ -318,7 +318,7 @@ namespace PEAPI
   {
     ushort majorVer, minorVer, buildNo, revisionNo;
     uint flags;
-    HashAlgorithm hashAlgId = HashAlgorithm.None;
+    uint hashAlgId;
     uint keyIx = 0, cultIx = 0;
     
     internal Assembly(string name, MetaData md) : base(name,md) {
@@ -336,7 +336,7 @@ namespace PEAPI
     /// <param name="hash">Hash Algorithm</param>
     /// <param name="cult">Culture</param>
     public void AddAssemblyInfo(int majVer, int minVer, int bldNo, int revNo, 
-                              byte[] key, HashAlgorithm hash, string cult) {
+                              byte[] key, uint hash, string cult) {
       majorVer = (ushort)majVer;
       minorVer = (ushort)minVer;
       buildNo = (ushort)bldNo;
