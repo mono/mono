@@ -1,3 +1,9 @@
+2004-08-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CodeAccessPermission.cs : csc build fix. Currently mcs has bugs on
+	  CS0136 error detection (variable identifiers in switch cases share
+	  the scope).
+
 2004-08-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeAccessPermission.cs: Added common methods to help building all

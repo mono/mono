@@ -236,17 +236,18 @@ namespace System.Security {
 
 		internal static PermissionState CheckPermissionState (PermissionState state, bool allowUnrestricted)
 		{
+			string msg;
 			switch (state) {
 			case PermissionState.None:
 				break;
 			case PermissionState.Unrestricted:
 				if (!allowUnrestricted) {
-					string msg = Locale.GetText ("Unrestricted isn't not allowed for identity permissions.");
+					msg = Locale.GetText ("Unrestricted isn't not allowed for identity permissions.");
 					throw new ArgumentException (msg, "state");
 				}
 				break;
 			default:
-				string msg = String.Format (Locale.GetText ("Invalid enum {0}"), state);
+				msg = String.Format (Locale.GetText ("Invalid enum {0}"), state);
 				throw new ArgumentException (msg, "state");
 			}
 			return state;
