@@ -2120,6 +2120,7 @@ namespace Mono.CSharp {
 				return false;
 
 			flags = Modifiers.MethodAttr (ModFlags);
+
 			//
 			// verify accessibility
 			//
@@ -2353,7 +2354,7 @@ namespace Mono.CSharp {
 				ig = null;
 			
 			ec = new EmitContext (parent, Location, ig,
-							  GetReturnType (parent), ModFlags);
+					      GetReturnType (parent), ModFlags);
 
 			if (OptAttributes != null)
 				Attribute.ApplyAttributes (ec, MethodBuilder, this, OptAttributes, Location);
@@ -3671,6 +3672,7 @@ namespace Mono.CSharp {
 		const int AllowedModifiers =
 			Modifiers.PUBLIC |
 			Modifiers.UNSAFE |
+			Modifiers.EXTERN |
 			Modifiers.STATIC;
 
 		const int RequiredModifiers =

@@ -1,3 +1,17 @@
+2002-03-01  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Add support for [Attribute ()] (empty arguments
+	in positional arguments)
+
+	* class.cs (Operator): Update the AllowedModifiers to contain
+	extern. 
+
+	* cs-parser.jay: Update operator declaration to allow for the
+	operator body to be empty.
+
+	* cs-tokenizer.cs: Added '\u' unicode support in strings and hex
+	values. 
+
 2002-02-27  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (Method.Emit): Label parameters.

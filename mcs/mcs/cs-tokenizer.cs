@@ -482,6 +482,11 @@ namespace Mono.CSharp
 			return seen_digits;
 		}
 
+		bool is_hex (char e)
+		{
+			return Char.IsDigit (e) || (e >= 'A' && e <= 'F');
+		}
+		
 		void hex_digits (int c)
 		{
 			int d;
@@ -491,7 +496,7 @@ namespace Mono.CSharp
 			while ((d = peekChar ()) != -1){
 				char e = Char.ToUpper ((char) d);
 				
-				if (Char.IsDigit (e) || (e >= 'A' && e <= 'F')){
+				if (is_hex (e)){
 					number.Append ((char) e);
 					getChar ();
 				} else
@@ -714,9 +719,48 @@ namespace Mono.CSharp
 			Console.WriteLine ("This should not be reached");
 			throw new Exception ("Is Number should never reach this point");
 		}
+
+		//
+		// Accepts exactly count (4 or 8) hex, no more no less
+		//
+		int getHex (int count, out bool error)
+		{
+			int [] buffer = new int [8];
+			int i;
+			int total = 0;
+			int c;
+			char e;
+			int top = count != -1 ? count : 4;
 			
+			getChar ();
+			error = false;
+			for (i = 0; i < top; i++){
+				c = getChar ();
+				e = Char.ToUpper ((char) c);
+				
+				if (!is_hex (e)){
+					error = true;
+					return 0;
+				}
+				if (Char.IsDigit (e))
+					c = (int) e - (int) '0';
+				else
+					c = (int) e - (int) 'A';
+				total = (total * 16) + c;
+				if (count == -1){
+					int p = peekChar ();
+					if (p == -1)
+						break;
+					if (!is_hex ((char)p))
+						break;
+				}
+			}
+			return total;
+		}
+
 		int escape (int c)
 		{
+			bool error;
 			int d;
 			int v;
 
@@ -747,8 +791,23 @@ namespace Mono.CSharp
 				v = '"'; break;
 			case '\'':
 				v = '\''; break;
+			case 'x':
+				v = getHex (-1, out error);
+				if (error)
+					goto default;
+				return v;
+			case 'u':
+				v = getHex (4, out error);
+				if (error)
+					goto default;
+				return v;
+			case 'U':
+				v = getHex (8, out error);
+				if (error)
+					goto default;
+				return v;
 			default:
-				error_details = "cs1009: Unrecognized escape sequence " + (char)d;
+				Report.Error (1009, Location, "Unrecognized escape sequence in " + (char)d);
 				return -1;
 			}
 			getChar ();

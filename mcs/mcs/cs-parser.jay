@@ -255,7 +255,7 @@ namespace Mono.CSharp
 %%
 
 compilation_unit
-	: opt_using_directives opt_namespace_member_declarations opt_attributes opt_EOF
+	: opt_using_directives opt_attributes opt_namespace_member_declarations opt_attributes opt_EOF
 	  {
 		// Check that using comes only before namespace elements
 	  }
@@ -497,12 +497,16 @@ opt_attribute_arguments
 
 
 attribute_arguments
-	: positional_argument_list
+	: opt_positional_argument_list
 	  {
-		ArrayList args = new ArrayList ();
-		args.Add ($1);
+		if ($1 == null)
+			$$ = null;
+		else {
+			ArrayList args = new ArrayList ();
+			args.Add ($1);
 		
-		$$ = args;
+			$$ = args;
+		}
 	  }
         | positional_argument_list COMMA named_argument_list
 	  {
@@ -522,6 +526,11 @@ attribute_arguments
 	  }
         ;
 
+
+opt_positional_argument_list
+	: /* empty */ 		{ $$ = null; } 
+	| positional_argument_list
+	;
 
 positional_argument_list
 	: expression
@@ -1216,7 +1225,7 @@ interface_indexer_declaration
 	;
 
 operator_declaration
-	: opt_attributes opt_modifiers operator_declarator block
+	: opt_attributes opt_modifiers operator_declarator operator_body
 	  {
 		OperatorDeclaration decl = (OperatorDeclaration) $3;
 		
@@ -1230,6 +1239,10 @@ operator_declaration
 	  }
 	;
 
+operator_body 
+	: block
+	| SEMICOLON { $$ = null; }
+	; 
 operator_declarator
 	: type OPERATOR overloadable_operator 
 	  OPEN_PARENS type IDENTIFIER CLOSE_PARENS
@@ -1796,6 +1809,7 @@ integral_type
 	| LONG		{ $$ = "System.Int64"; }
 	| ULONG		{ $$ = "System.UInt64"; }
 	| CHAR		{ $$ = "System.Char"; }
+	| VOID		{ $$ = "System.Void"; }
 	;
 
 interface_type
