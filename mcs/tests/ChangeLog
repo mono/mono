@@ -1,3 +1,7 @@
+2004-08-24  Martin Baulig  <martin@ximian.com>
+
+	* gen-69.cs, gen-70.cs: New tests.
+
 2004-08-23  Martin Baulig  <martin@ximian.com>
 
 	* test-285.cs: New test for #52428.
