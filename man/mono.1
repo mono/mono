@@ -1,141 +1,196 @@
 .\" 
-.\" mono manual page.
-.\" (C) Ximian, Inc. 
+.\" mini manual page.
+.\" (C) 2003 Ximian, Inc. 
 .\" Author:
 .\"   Miguel de Icaza (miguel@gnu.org)
 .\"
 .TH Mono "Mono 1.0"
 .SH NAME
-mono \- Mono ECMA-CLI Just in Time compiler.
+mini \- Mono new's code ECMA-CLI code generator (Just-in-Time and Ahead-of-Time)
 .SH SYNOPSIS
 .PP
-.B mono
-[\-\-help] [\-d] [\-\-debug-asm] [\-\-debug-forest] [\-\-trace-calls]
-[\-\-compile name] [\-\-ncompile num]  [\-\-noinline] [\-\-profile]
-[\-\-debug=[format]] [\-\-debug-args args] [\-\-break name] [\-\-precompile name]
+.B mini
+[\-\-aot]
+[\-\-break METHOD] 
+[\-\-breakonex]
+[\-\-compile name] 
+[\-\-compileall] 
 [\-\-config filename]
-program.exe [arguments...]
+[\-\-coverage]
+[\-\-debug] 
+[\-\-graph[=TYPE] METHOD]
+[\-\-help] 
+[\-\-trace]
+[\-\-ncompile num]  
+[\-\-optimize=MODE]
+[\-O=mode]
+[\-\-profile]
+[\-\-regression]
+[\-\-statfile FILE]
+[\-v]
+[\-\-verbose]
+file [arguments...]
 .SH DESCRIPTION
-The \fImono\fP program is a Just in Time compiler for ECMA CLI byte
-codes.  It translates dynamically a CIL stream into native code. 
-.I program.exe
+The \fImini\fP program is a runtime implementation of the ECMA Common
+Language Infrastructure.  The runtime contains a native code generator
+that transforms the Common Intermediate Language into native code.
+.PP
+The code generator can operate in two modes: just in time compilation
+(JIT) or ahead of time compilation (AOT).  Since code can be
+dynamically loaded, the runtime environment and the JIT are always
+present, even if code is compiled ahead of time.  
+.PP
+The runtime loads ths specified
+.I file
 and optionally passes
 the
 .I arguments
-to it. 
-.SH OPTIONS
-The following options are supported:
+to it.  The 
+.I file
+is an ECMA assembly.  They typically have a .exe or .dll extension.
+.PP
+The runtime provides a number of configuration options for running
+applications, for developping and debugging, and for testing and
+debugging the runtime itself.
+.SH RUNTIME OPTIONS
 .TP
-.I "--help", "-h"
-Displays usage instructions.
-.I "--share-code"
-This mode makes the LoaderOptimization for Application Domains default
-to sharing code.  This results in slower code, but enables code
-sharing across application domains.  The default is to maximize for
-speed, but disallow JITed code sharing across domains.  See
-System.LoaderOptimization for more information
+.I "--aot"
+This option is used to precompile the CIL code in the specified
+assembly to native code.  The generated code is stored in a file with
+the extension .so.  This file will be automatically picked up by the
+runtime when the assembly is executed.  
+.TP
+This pre-compiles the methods, but the original assembly is still
+required to execute as this one contains the metadata and exception
+information which is not availble on the generated file.  When
+precompiling code, you might want to compile with all optimizations
+(-O=all).  Pre-compiled code is position independent code.
+.TP
+Pre compilation is just a mechanism to reduce startup time, and avoid
+just-in-time compilation costs.  The original assembly must still be
+present, as the metadata is contained there.
 .TP
 .I "--config filename"
 Load the specified configuration file instead of the default one(s).
 The default files are /etc/mono/config and ~/.mono/config or the file
-specified in the MONO_CONFIG environment variable, if set.
+specified in the MONO_CONFIG environment variable, if set.  See the
+mono-config(5) man page for details on the format of this file.
 .TP
-.I "--noinline"
-Disables the code inliner.
+.I "--help", "-h"
+Displays usage instructions.
 .TP
-.SH DEBUGGING OPTIONS
-The following options are used to debug, or perfomance test the JIT
-compiler:
+.I "--optimize=MODE", "-O=mode"
+MODE is a comma separated list of optimizations.  They also allow
+optimizations to be turned off by prefixing the optimization name with
+a minus sign.
 .TP
-.I "--trace-calls"
+The following optimizations are implemented:
+.nf
+             peephole   Peephole postpass
+             branch     Branch optimizations
+             inline     Inline method calls
+             cfold      Constant folding
+             consprop   Constant propagation
+             copyprop   Copy propagation
+             deadce     Dead code elimination
+             linears    Linear scan global reg allocation
+             cmov       Conditional moves
+             shared     Emit per-domain code
+             sched      Instruction scheduling
+             instrins   Intrinsic method implementations
+             tailc      Tail recursion and tail calls
+             loop       Loop related optimizations
+.fi
+.TP
+For example, to enable all the optimization but dead code
+elimination and inlining, you can use:
+.nf
+	-O=all,-deadce,-inline
+.fi
+
+.SH DEVELOPMENT OPTIONS
+.I "--break method"
+Inserts a breakpoint before the method whose name is `method'
+(namespace.class:methodname).  Use `Main' as method name to insert a
+breakpoint on the application's main method.
+.TP
+.I "--breakonex"
+Inserts a breakpoint on exceptions.  This allows you to debug your
+application with a native debugger when an exception is thrown.
+.TP
+.I "--coverage"
+Performs coverage analysis on the underlying IL code.
+.TP
+.I "--trace"
 Shows method names as they are invoked.
-.TP
-.I "--dump-asm"
-Displays the generated code as methods are invoked.
-.TP
-.I "--dump-forest"
-Displays the basic blocks and the forest of trees that is 
-created from a stream of CIL opcodes.
-.TP
-.I "--compile name"
-Compiles the method on the given class (namespace.name:methodname) or
-all classes in the given image (@imagename).
-.TP
-.I "--ncompile"
-Compiles the method a number of times.  If no argument is specified,
-the method will be compiled a thousand times.
+
+
+
 .SH DEVELOPMENT OPTIONS
 The following options are used to debug a JITed application.  They're
 only useful when running the JIT in a debugger:
 .TP
 .I "--debug"
-Writes out debug information in the given format or in the default format.
-See DEBUGGING FORMATS for details.
-.TP
-.I "--debug-args args"
-Comma-separated list of additional arguments for the symbol writer.
-See DEBUGGING FORMATS for details.
-.TP
-.I "--break method"
-Inserts a breakpoint before the method whose name is `method'
-(namespace.class:methodname).  Use `Main' as method name to insert a breakpoint on the
-application's main method.
-.TP
-.I "--precompile name"
-Compiles the given class (namespace.name), method (namespace.name:methodname)
-or all classes in the given image (@imagename) before executing the main
-application.
+Turns on the debugging mode in the runtime.  If an assembly was
+compiled with debugging information, it will produce line number
+information for stack traces. 
 .TP
 .I "--profile"
-Collect profiling information and dump it at the end of the process.
-.SH DEBUGGING FORMATS
-The following debugging formats are currently supported:
+Instructs the runtime to collect profiling information about execution
+times and memory allocation, and dump it at the end of the execution.
+
+
+
+.SH MAINTAINER OPTIONS
+The maintainer options are only used by those developing the runtime
+itself, and not typically of interest to runtime users or developers.
 .TP
-.I "stabs"
-Writes out stabs debug information.
+.I "--compile name"
+This compiles a method (namespace.name:methodname), this is used for
+testing the compiler performance or to examine the output of the code
+generator. 
 .TP
-.I "dwarf"
-Writes out dwarf debug information.
+.I "--compileall"
+Compiles all the methods in an assembly.  This is used to test the
+compiler performance or to examine the output of the code generator
+.TP 
+.I "--graph=TYPE METHOD"
+This generates a postscript file with a graph with the details about
+the specified method (namespace.name:methodname).  This requires `dot'
+and ghostview to be installed (it expects Ghostview to be called
+"gv"). 
 .TP
-.I "mono"
-Use a symbol file which has been created by MCS.  It can be used to get
-source lines in stack traces.
-.PP
-The "stabs" and "dwarf" formats support the following options:
+The following graphs are available:
+.nf
+          cfg        Control Flow Graph (CFG)
+          dtree      Dominator Tree
+          code       CFG showing code
+          ssa        CFG showing code after SSA translation
+          optcode    CFG showing code after IR optimizations
+.fi
+Some graphs will only be available if certain optimizations are turned
+on.
 .TP
-.I "filename=FILENAME"
-Write debugging information into FILENAME.  This file must be run through
-the assembler to create an object file.
+.I "--ncompile"
+Instruct the runtime on the number of times that the method specified
+by --compile (or all the methods if --compileall is used) to be
+compiled.  This is used for testing the code generator performance. 
 .TP
-.I "objfile=FILENAME"
-When automatically assembling the symbol file, write the resulting object
-file into FILENAME.
-.TP
-.I "dont_assemble"
-Normally, the symbol file is automatically assembled to an object file
-when you call "mono_debug_make_symbols".  Use this option to disable this
-behaviour.
-.TP
-.I "install_il_files"
-Put the generated *.il files in the same directory than the assembly they
-came from.  The default is to put them into the current working directory.
-.TP
-.I "dont_update_il_files"
-Normally, the *.il files are recreated if their assemblies have changed
-when you call "mono_debug_make_symbols".  Use this option to disable this
-behaviour.
-.TP
-.I "dont_create_il_files"
-Update the *.il files if their assemblies have changed, but only if the
-file already exists.
-.PP
+.I "-v", "--verbose"
+Increases the verbosity level, each time it is listed, increases the
+verbosity level to include more information.
+
+
 .SH ENVIRONMENT VARIABLES
+.TP
+.I "GC_DONT_GC"
+Turns off the garbage collection in Mono.  This should be only used
+for debugging purposes
 .TP
 .I "MONO_PATH"
 Provides a search path to mono and mint where to look for library files.
 Directories are separated by the platform path separator (colons on unix). Example:
 .B /home/username/lib:/usr/local/mono/lib
-.PP
 .TP
 .I "MONO_DISABLE_SHM"
 If this variable is set, it disables the Windows I/O Emulation layer,
@@ -145,10 +200,6 @@ processes.  This option is only available on Unix.
 .I "MONO_CFG_DIR"
 If set, this variable overrides the default system configuration directory
 ($PREFIX/etc). It's used to locate machine.config file.
-.TP
-.I "GC_DONT_GC"
-Turns off the garbage collection in Mono.  This should be only used
-for debugging purposes
 .TP
 .I "MONO_CONFIG"
 If set, this variable overrides the default runtime configuration file
