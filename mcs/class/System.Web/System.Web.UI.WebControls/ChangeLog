@@ -1,3 +1,8 @@
+2003-11-21  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* Xml.cs: Corrected attribute
+	* XmlBuilder.cs: Added
+
 2003-11-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Xml.cs: class status based fixes.
