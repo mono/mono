@@ -1,10 +1,12 @@
-
 Mon May 26 15:21:21 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ops.h, mini.c, inssel.brg, exceptions.cs: validate arguments passed
 	to a method (including results of ldelema, bug#43207).
 
 2003-05-26  Dietmar Maurer  <dietmar@ximian.com>
+
+	* graph.c (cfg_emit_one_loop_level): loop over all blocks. use
+	colors to show exception handler blocks.
 
 	* inssel-x86.brg (OP_OUTARG_VT): dont push zero sized structures
 	(fix for pinvoke7.cs).
