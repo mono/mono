@@ -135,7 +135,7 @@ namespace Npgsql
             get
             {
                 if (HashValue == null)
-                    throw new NullReferenceException("HashValue is null");
+                    throw new InvalidOperationException("HashValue is null");
                 return HashValue;
             }
         }
