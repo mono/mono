@@ -1,3 +1,7 @@
+2004-06-03  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* threads.c: Made Thread.Sleep abortable.
+
 2004-06-02  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.h (MONO_DEBUGGER_VERSION): Bumped version to 41.
