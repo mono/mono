@@ -1,5 +1,8 @@
 2004-07-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* pinvoke3.cs libtest.c: New test for returning delegates from a
+	delegate.
+
 	* pinvoke2.cs libtest.c: New tests for stringbuilder marshalling.
 
 2004-07-02  Zoltan Varga  <vargaz@freemail.hu>
