@@ -681,6 +681,8 @@ System.Security.Principal/IPrincipal.cs
 System.Security.Principal/PrincipalPolicy.cs
 System.Security.Principal/WindowsAccountType.cs
 System.Security.Principal/WindowsBuiltInRole.cs
+System.Security.Principal/WindowsIdentity.cs
+System.Security.Principal/WindowsImpersonationContext.cs
 System.Text/ASCIIEncoding.cs
 System.Text/Decoder.cs
 System.Text/DefaultEncoding.cs

@@ -1,3 +1,8 @@
+2002-08-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WindowsIdentity.cs:
+	* WindowsImpersonationContext.cs: stubbed.
+
 2002/07/10  Nick Drochak <ndrochak@gol.com>
 
 	* WindowsAccountType.cs:

@@ -1,3 +1,7 @@
+2002-08-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* unix.args: added a couple of new files in System.Security.Principal.
+
 2002-08-15  Tim Coleman <tim@timcoleman.com>
 	* unix.args: 
 		Add System.Globalization/TextInfo.cs
