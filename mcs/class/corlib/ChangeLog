@@ -1,3 +1,7 @@
+2003-01-05  Sebastien Pouliot <spouliot@videotron.ca>
+
+	* unix.args: added COMException.cs in System.Runtime.InteropServices
+
 2003-01-01  Jaime Anguiano Olarra <jaime@gnome.org>
 
 	* unix.args: added System.Diagnostics.Process.cs 

@@ -396,6 +396,7 @@ System.Runtime.InteropServices/ClassInterfaceType.cs
 System.Runtime.InteropServices/CoClassAttribute.cs
 System.Runtime.InteropServices/ComAliasNameAttribute.cs
 System.Runtime.InteropServices/ComConversionLossAttribute.cs
+System.Runtime.InteropServices/COMException.cs
 System.Runtime.InteropServices/ComEventInterfaceAttribute.cs
 System.Runtime.InteropServices/ComImportAttribute.cs
 System.Runtime.InteropServices/ComInterfaceType.cs
