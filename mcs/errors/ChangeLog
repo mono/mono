@@ -1,3 +1,8 @@
+2004-09-27  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile: Re-apply changes from 2004-09-14.
+	(test-everything): Run tests in both profiles.
+
 2004-09-21  Raja R Harinath  <rharinath@novell.com>
 
 	* do-tests.pl: Print 'IGNORED' when a test is ignored.

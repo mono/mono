@@ -2,14 +2,16 @@ thisdir = errors
 SUBDIRS = 
 include ../build/rules.make
 
+ifeq (default, $(PROFILE))
 # force this, we don't case if CSC is broken. This also
 # means we can use --options, yay.
 
-MCS = $(INTERNAL_MCS)
+MCS = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_MCS)
+endif
+
 LOCAL_MCS_FLAGS = /nowarn:162 --wlevel 4
 
-GMCS_COMPILE = $(RUNTIME) ../gmcs/gmcs.exe $(LOCAL_MCS_FLAGS)
-GENERICS_COMPILE = $(RUNTIME) ../gmcs/gmcs.exe $(LOCAL_MCS_FLAGS) /target:library
+GENERICS_COMPILE = $(CSCOMPILE) /target:library
 
 RUNTEST_PL = ./runtest.pl
 
@@ -21,11 +23,6 @@ DISTFILES = \
 	runtest.pl		\
 	$(wildcard *.cs)
 
-#
-# This is the target which is run by buildbot.
-#
-test-everything: run-test-local
-
 #all-local: run-test-local test-multi-local
 all-local: CS0571-3-lib.dll CS0618-2-lib.dll \
 	CS0619-8-lib.dll CS0619-17-lib.dll CS0619-32-lib.dll CS0619-33-lib.dll CS0619-36-lib.dll \
@@ -36,13 +33,21 @@ test-local:
 # again, run-test is when the tests actually happen, so
 # don't compile on make test.
 
-run-test-local: run-mcs-tests run-gmcs-tests run-generics-tests
+run-test-local: run-mcs-tests 
+
+TEST_PROFILE=mcs
+
+ifeq (net_2_0, $(PROFILE))
+TEST_PROFILE=gmcs
+run-test-local: run-generics-tests
+endif
+
+test-everything:
+	$(MAKE) PROFILE=default run-test
+	$(MAKE) PROFILE=net_2_0 run-test
 
 run-mcs-tests:
-	@ ./do-tests.pl mcs "$(CSCOMPILE)" "cs*.cs"
-
-run-gmcs-tests:
-	@ ./do-tests.pl gmcs "$(GMCS_COMPILE)" "cs*.cs"
+	@ ./do-tests.pl $(TEST_PROFILE) "$(CSCOMPILE)" "cs*.cs"
 
 run-generics-tests:
 	@ ./do-tests.pl generics "$(GENERICS_COMPILE)" "gcs*.cs"
