@@ -364,6 +364,13 @@ namespace Mono.MonoBASIC {
 			AdditionResult res;
 			string basename = prop.Name;
 
+			string fullname = Name + "." + basename;
+
+			Object value = defined_names [fullname];
+
+			if (value != null && (!(value is Property)))
+				return AdditionResult.NameExists;
+
 			if ((res = IsValid (basename)) != AdditionResult.Success)
 				return res;
 
@@ -374,7 +381,9 @@ namespace Mono.MonoBASIC {
 				properties.Insert (0, prop);
 			else
 				properties.Add (prop);
-			DefineName (Name + "." + basename, prop);
+
+			if (value == null)
+				DefineName (Name + "." + basename, prop);
 
 			return AdditionResult.Success;
 		}
