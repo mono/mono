@@ -1,3 +1,8 @@
+2004-02-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DTMXPathDocumentBuilder2.cs : whitespace node values were not added
+	  to Value.
+
 2004-02-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DTMXPathDocumentBuilder2.cs : in some cases, significant whitespace

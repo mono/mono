@@ -287,10 +287,36 @@ namespace Mono.Xml.XPath
 					nsIndex,
 					lineInfo != null ? lineInfo.LineNumber : 0,
 					lineInfo != null ? lineInfo.LinePosition : 0);
-				// this code is tricky, but after ReadString() invokation,
-				// xmlReader is moved to next node!!
-				if (value == null)
-					nodes [nodeIndex].Value = NonAtomicIndex (xmlReader.ReadString ());
+				// this code is tricky, but after sequential
+				// Read() invokation, xmlReader is moved to
+				// next node.
+				if (value == null) {
+					bool loop = true;
+					value = String.Empty;
+					XPathNodeType type = XPathNodeType.Whitespace;
+					do {
+						switch (xmlReader.NodeType) {
+						case XmlNodeType.Text:
+						case XmlNodeType.CDATA:
+							type = XPathNodeType.Text;
+							goto case XmlNodeType.Whitespace;
+						case XmlNodeType.SignificantWhitespace:
+							if (type == XPathNodeType.Whitespace)
+								type = XPathNodeType.SignificantWhitespace;
+							goto case XmlNodeType.Whitespace;
+						case XmlNodeType.Whitespace:
+							if (xmlReader.NodeType != XmlNodeType.Whitespace || xmlSpace == XmlSpace.Preserve)
+								value += xmlReader.Value;
+							xmlReader.Read ();
+							continue;
+						default:
+							loop = false;
+							break;
+						}
+					} while (loop && !xmlReader.EOF);
+					nodes [nodeIndex].Value = NonAtomicIndex (value);
+					nodes [nodeIndex].NodeType = type;
+				}
 				break;
 			case XmlNodeType.Comment:
 				value = xmlReader.Value;
