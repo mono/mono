@@ -45,6 +45,10 @@
 using System.Globalization;
 using System.Runtime.Serialization;
 
+#if NET_2_0
+using System.Runtime.ConstrainedExecution;
+#endif
+
 namespace System
 {
 	[Serializable]
@@ -108,11 +112,17 @@ namespace System
 			return (int) value;
 		}
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+#endif
 		public int ToInt32 ()
 		{
 			return (int) value;
 		}
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+#endif
 		public long ToInt64 ()
 		{
 			return (long) value;
@@ -132,26 +142,41 @@ namespace System
 				return ((long) value).ToString ();
 		}
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+#endif
 		public static bool operator == (IntPtr a, IntPtr b)
 		{
 			return (a.value == b.value);
 		}
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+#endif
 		public static bool operator != (IntPtr a, IntPtr b)
 		{
 			return (a.value != b.value);
 		}
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+#endif
 		public static explicit operator IntPtr (int value)
 		{
 			return new IntPtr (value);
 		}
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+#endif
 		public static explicit operator IntPtr (long value)
 		{
 			return new IntPtr (value);
 		}
-		
+
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+#endif		
 		[CLSCompliant (false)]
 		unsafe public static explicit operator IntPtr (void *value)
 		{

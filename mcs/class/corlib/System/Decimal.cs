@@ -41,6 +41,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 #endif
 
+#if NET_2_0
+using System.Runtime.ConstrainedExecution;
+#endif
 
 namespace System
 {
@@ -651,6 +654,9 @@ namespace System
 		return result;
         }
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+#endif
         public static int Compare(Decimal d1, Decimal d2) 
         {
             return decimalCompare(ref d1, ref d2);

@@ -35,6 +35,10 @@
 using System.Globalization;
 using System.Runtime.CompilerServices;
 
+#if NET_2_0
+using System.Runtime.ConstrainedExecution;
+#endif
+
 namespace System {
 	
 	[Serializable]
@@ -153,6 +157,9 @@ namespace System {
 			return (d == PositiveInfinity || d == NegativeInfinity);
 		}
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+#endif
 		public static bool IsNaN (double d)
 		{
 			return (d != d);

@@ -32,6 +32,10 @@
 
 using System.Runtime.CompilerServices;
 
+#if NET_2_0
+using System.Runtime.ConstrainedExecution;
+#endif
+
 namespace System
 {
 	public
@@ -89,7 +93,10 @@ namespace System
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static void ReRegisterForFinalize (object obj);
-		
+
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+#endif
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static void SuppressFinalize (object obj);
 

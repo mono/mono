@@ -1,3 +1,8 @@
+2005-02-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* GC.cs Double.cs IntPtr.cs Array.cs Decimal.cs Math.cs Single.cs:
+	Add net 2.0 ReliabilityContractAttributes.
+
 2005-02-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TermInfoDriver.cs: cygwin terminals are handled by the windows

@@ -32,6 +32,10 @@
 
 using System.Globalization;
 
+#if NET_2_0
+using System.Runtime.ConstrainedExecution;
+#endif
+
 namespace System
 {
 	[Serializable]
@@ -146,6 +150,9 @@ namespace System
 			return (f == PositiveInfinity || f == NegativeInfinity);
 		}
 
+#if NET_2_0
+		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, CER.Success)]
+#endif
 		public static bool IsNaN (float f)
 		{
 			return (f != f);
