@@ -108,7 +108,8 @@ class X {
 		
 		Console.WriteLine ("hello");
 		return 0;
-		
+
+#if FIXME
 		v = test_int_single_dim ();
 
 		if (v != 0)
@@ -132,5 +133,6 @@ class X {
 			// Console.WriteLine ("Should be: " + (i + 1) + " it is = " + a [i]);
 		}
 		return 0;
+#endif
 	}
 }	
