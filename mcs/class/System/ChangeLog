@@ -1,3 +1,8 @@
+2004-04-16  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* System_test.dll.sources: Added 
+		System.ComponentModel/TypeDescriptorTests.cs.
+
 2004-04-14  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* System.dll.sources: Added 

@@ -17,6 +17,7 @@ System.Collections.Specialized/NameValueCollectionTest.cs
 System.Collections.Specialized/StringCollectionTest.cs
 System.ComponentModel/EventHandlerListTests.cs
 System.ComponentModel/LicenseManagerTests.cs
+System.ComponentModel/TypeDescriptorTests.cs
 System.ComponentModel.Design/ServiceContainerTest.cs
 System.Diagnostics/TraceTest.cs
 System.Diagnostics/SwitchesTest.cs
