@@ -1,5 +1,7 @@
 2002-05-21  Dietmar Maurer  <dietmar@ximian.com>
 
+	* x86.brg (stmt): removed unnecessary assertion
+
 	* jit.c (check_inlining):  we cant inline throw instructions
 	(because it breaks some basic block requirements)
 
