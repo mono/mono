@@ -154,7 +154,8 @@ namespace Mono.CSharp
 		const int TAKEN_BEFORE  = 2;
 		const int ELSE_SEEN     = 4;
 		const int PARENT_TAKING = 8;
-		
+		const int REGION        = 16;		
+
 		//
 		// pre-processor if stack state:
 		//
@@ -1308,7 +1309,8 @@ namespace Mono.CSharp
 		{
 			char [] blank = { ' ', '\t' };
 			string cmd, arg;
-			
+			bool region_directive = false;
+
 			get_cmd_arg (out cmd, out arg);
 
 			// Eat any trailing whitespaces and single-line comments
@@ -1328,10 +1330,12 @@ namespace Mono.CSharp
 				return true;
 
 			case "region":
+				region_directive = true;
 				arg = "true";
 				goto case "if";
 
 			case "endregion":
+				region_directive = true;
 				goto case "endif";
 				
 			case "if":
@@ -1350,12 +1354,18 @@ namespace Mono.CSharp
 					if ((state & TAKING) != 0)
 						taking = true;
 				}
-					
+
 				if (eval (arg) && taking){
-					ifstack.Push (TAKING | TAKEN_BEFORE | PARENT_TAKING);
+					int push = TAKING | TAKEN_BEFORE | PARENT_TAKING;
+					if (region_directive)
+						push |= REGION;
+					ifstack.Push (push);
 					return true;
 				} else {
-					ifstack.Push (taking ? PARENT_TAKING : 0);
+					int push = (taking ? PARENT_TAKING : 0);
+					if (region_directive)
+						push |= REGION;
+					ifstack.Push (push);
 					return false;
 				}
 				
@@ -1364,7 +1374,13 @@ namespace Mono.CSharp
 					Error_UnexpectedDirective ("no #if for this #endif");
 					return true;
 				} else {
-					ifstack.Pop ();
+					int pop = (int) ifstack.Pop ();
+					
+					if (region_directive && ((pop & REGION) == 0))
+						Report.Error (1027, Location, "#endif directive expected");
+					else if (!region_directive && ((pop & REGION) != 0))
+						Report.Error (1038, Location, "#endregion directive expected");
+					
 					if (ifstack.Count == 0)
 						return true;
 					else {
@@ -1383,6 +1399,11 @@ namespace Mono.CSharp
 					return true;
 				} else {
 					int state = (int) ifstack.Peek ();
+
+					if ((state & REGION) != 0) {
+						Error_UnexpectedDirective ("#endregion directive expected");
+						return true;
+					}
 
 					if ((state & ELSE_SEEN) != 0){
 						Error_UnexpectedDirective ("#elif not valid after #else");
@@ -1408,6 +1429,11 @@ namespace Mono.CSharp
 					return true;
 				} else {
 					int state = (int) ifstack.Peek ();
+
+					if ((state & REGION) != 0) {
+						Error_UnexpectedDirective ("#endregion directive expected");
+						return true;
+					}
 
 					if ((state & ELSE_SEEN) != 0){
 						Error_UnexpectedDirective ("#else within #else");
