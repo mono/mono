@@ -58,7 +58,8 @@ namespace Mono.ILASM {
                 /// <summary>
                 ///  Convert this typeref into a CustomModifiedType
                 /// </summary>
-                void MakeCustomModified (PEAPI.CustomModifier modifier);
+                void MakeCustomModified (CodeGen code_gen,
+                                PEAPI.CustomModifier modifier, IClassRef klass);
 
                 /// <summary>
                 ///  Make this typeref pinned.

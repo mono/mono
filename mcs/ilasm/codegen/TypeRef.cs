@@ -35,7 +35,8 @@ namespace Mono.ILASM {
 
                 private bool is_resolved;
 
-                public static TypeRef Ellipsis = new TypeRef ("ELLIPSIS", null);
+                public static readonly TypeRef Ellipsis = new TypeRef ("ELLIPSIS", null);
+                public static readonly TypeRef Any = new TypeRef ("any", null);
 
                 public TypeRef (string full_name, Location location)
                 {
@@ -100,9 +101,11 @@ namespace Mono.ILASM {
                         conversion_list.Add (ConversionMethod.MakeUnmanagedPointer);
                 }
 
-                public void MakeCustomModified (PEAPI.CustomModifier modifier)
+                public void MakeCustomModified (CodeGen code_gen, PEAPI.CustomModifier modifier,
+                                IClassRef klass)
                 {
                         conversion_list.Add (ConversionMethod.MakeCustomModified);
+                        conversion_list.Add (klass);
                         conversion_list.Add (modifier);
                 }
 
@@ -156,7 +159,8 @@ namespace Mono.ILASM {
                                         peapi_type.MakeUnmanagedPointer ();
                                         break;
                                 case ConversionMethod.MakeCustomModified:
-                                        peapi_type.MakeCustomModified ((PEAPI.CustomModifier) conversion_list[++i]);
+                                        peapi_type.MakeCustomModified (code_gen, (PEAPI.CustomModifier) conversion_list[++i],
+                                                (IClassRef) conversion_list[++i]);
                                         break;
                                 }
                         }

@@ -117,10 +117,12 @@ namespace Mono.ILASM {
                         full_name += "*";
                 }
 
-                public void MakeCustomModified (PEAPI.CustomModifier modifier)
+                public void MakeCustomModified (CodeGen code_gen, PEAPI.CustomModifier modifier,
+                                IClassRef klass)
                 {
+                        klass.Resolve (code_gen);
                         peapi_type = new PEAPI.CustomModifiedType (peapi_type,
-                                        PEAPI.CustomModifier.modreq, (PEAPI.Class) peapi_type);
+                                        modifier, klass.PeapiClass);
                 }
 
                 public void MakePinned ()
