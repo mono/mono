@@ -8,14 +8,10 @@
 // Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
 //
 
-// TODO: Implement SecurityElement parsing
-// TODO: Complete AsymmetricSignatureFormatter & AsymmetricSignatureDeformatter methods
-
 // Notes:
 // There seems to be some (internal?) class inheriting from SignatureDescription
 // http://www.csharpfriends.com/Members/Main/Classes/get_class.aspx?assembly=mscorlib,%20Version=1.0.3300.0,%20Culture=neutral,%20PublicKeyToken=b77a5c561934e089&namespace=System.Security.Cryptography&class=SignatureDescription
-// However I've no idea where the class is being used in the framework 
-// (doesn't look like it's for every users ;-)
+// Those 2 classes are returned by CryptoConfig.CreateFromName and used in XMLDSIG
 
 using System;
 using System.Security;
@@ -30,10 +26,8 @@ public class SignatureDescription {
 
 	public SignatureDescription () {}
 	
-	/// <summary>
 	/// LAMESPEC: ArgumentNullException is thrown (not CryptographicException)
-	/// </summary>
-	[MonoTODO]
+	[MonoTODO("Parse SecurityElement")]
 	public SignatureDescription (SecurityElement el) 
 	{
 		if (el == null)
@@ -68,24 +62,6 @@ public class SignatureDescription {
 		set { _KeyAlgorithm = value; }
 	}
 
-	private object CreateFromName (string objectName) 
-	{
-		try {
-			// first try
-			Type algoClass = Type.GetType (objectName);
-			if (algoClass == null) {
-				// second (and last) try
-				algoClass = Type.GetType ("System.Security.Cryptography." + objectName);
-			}
-			// call the constructor for the type
-			return Activator.CreateInstance (algoClass);
-		}
-		catch {
-			return null;
-		}
-	}
-
-	[MonoTODO]
 	public virtual AsymmetricSignatureDeformatter CreateDeformatter (AsymmetricAlgorithm key) 
 	{
 		if (_DeformatterAlgorithm == null)
@@ -93,18 +69,13 @@ public class SignatureDescription {
 
 		// this should throw the InvalidCastException if we have an invalid class
 		// (but not if the class doesn't exist - as null is valid for AsymmetricSignatureDeformatter)
-		AsymmetricSignatureDeformatter def = (AsymmetricSignatureDeformatter) CreateFromName (_DeformatterAlgorithm);
-		if (def == null)
-			throw new InvalidCastException ("DeformatterAlgorithm");
-		def.SetKey (key);
+		AsymmetricSignatureDeformatter def = (AsymmetricSignatureDeformatter) CryptoConfig.CreateFromName (_DeformatterAlgorithm);
 
-		throw new NullReferenceException ("why?");
-		
-		// We must make a choice of the Deformatter based on
-		// the DeformatterAlgorithm property (factory like CryptoConfig ?)
-		// There are only 2 SignatureDeformatter based on the
-		// key algorithm (DSA or RSA) - but how does the 
-		// KeyAlgorithm property string really looks like ?
+		if (_KeyAlgorithm == null)
+			throw new NullReferenceException ("KeyAlgorithm");
+
+		def.SetKey (key);
+		return def;
 	}
 	
 	/// <summary>
@@ -112,10 +83,11 @@ public class SignatureDescription {
 	/// </summary>
 	public virtual HashAlgorithm CreateDigest ()
 	{
-		return HashAlgorithm.Create (_DigestAlgorithm);
+		if (_DigestAlgorithm == null)
+			throw new ArgumentNullException ("DigestAlgorithm");
+		return (HashAlgorithm) CryptoConfig.CreateFromName (_DigestAlgorithm);
 	}
 
-	[MonoTODO]
 	public virtual AsymmetricSignatureFormatter CreateFormatter (AsymmetricAlgorithm key)
 	{
 		if (_FormatterAlgorithm == null)
@@ -123,21 +95,35 @@ public class SignatureDescription {
 
 		// this should throw the InvalidCastException if we have an invalid class
 		// (but not if the class doesn't exist - as null is valid for AsymmetricSignatureDeformatter)
-		AsymmetricSignatureFormatter fmt = (AsymmetricSignatureFormatter) CreateFromName (_FormatterAlgorithm);
-		if (fmt == null)
-			throw new InvalidCastException ("FormatterAlgorithm");
+		AsymmetricSignatureFormatter fmt = (AsymmetricSignatureFormatter) CryptoConfig.CreateFromName (_FormatterAlgorithm);
+
+		if (_KeyAlgorithm == null)
+			throw new NullReferenceException ("KeyAlgorithm");
+
 		fmt.SetKey (key);
-
-		throw new NullReferenceException ("why?");
-
-		// We must make a choice of the Formatter based on
-		// the FormatterAlgorithm property (factory like CryptoConfig ?)
-		// There are only 2 SignatureFormatter based on the
-		// key algorithm (DSA or RSA) - but how does the 
-		// KeyAlgorithm property string really looks like ?
+		return fmt;
 	}
 	
 } // SignatureDescription
+
+internal class DSASignatureDescription : SignatureDescription {
+	public DSASignatureDescription () 
+	{
+		DeformatterAlgorithm = "System.Security.Cryptography.DSASignatureDeformatter";
+		DigestAlgorithm = "System.Security.Cryptography.SHA1CryptoServiceProvider";
+		FormatterAlgorithm = "System.Security.Cryptography.DSASignatureFormatter";		
+		KeyAlgorithm = "System.Security.Cryptography.DSACryptoServiceProvider";		
+	}
+}
+
+internal class RSAPKCS1SHA1SignatureDescription : SignatureDescription {
+	public RSAPKCS1SHA1SignatureDescription () 
+	{
+		DeformatterAlgorithm = "System.Security.Cryptography.RSAPKCS1SignatureDeformatter";
+		DigestAlgorithm = "System.Security.Cryptography.SHA1CryptoServiceProvider";
+		FormatterAlgorithm = "System.Security.Cryptography.RSAPKCS1SignatureFormatter";		
+		KeyAlgorithm = "System.Security.Cryptography.RSACryptoServiceProvider";		
+	}
+}
 	
 } // System.Security.Cryptography
-

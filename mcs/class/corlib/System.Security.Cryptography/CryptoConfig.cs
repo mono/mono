@@ -18,6 +18,7 @@ public class CryptoConfig
 {
 	static private Hashtable algorithms;
 	static private Hashtable oid;
+	static Assembly xmldsig;
 
 	private const string defaultNamespace = "System.Security.Cryptography.";
 	private const string defaultSHA1 = defaultNamespace + "SHA1CryptoServiceProvider";
@@ -35,6 +36,16 @@ public class CryptoConfig
 	private const string defaultRNG = defaultNamespace + "RNGCryptoServiceProvider";
 	private const string defaultHMAC = defaultNamespace + "HMACSHA1";
 	private const string defaultMAC3DES = defaultNamespace + "MACTripleDES";
+	// LAMESPEC: undocumented classes (also undocumented in CryptoConfig ;-)
+	private const string defaultDSASigDesc = defaultNamespace + "DSASignatureDescription";
+	private const string defaultRSASigDesc = defaultNamespace + "RSAPKCS1SHA1SignatureDescription";
+	// LAMESPEC: undocumented names in CryptoConfig
+	private const string defaultC14N = defaultNamespace + "Xml.XmlDsigC14NTransform";
+	private const string defaultC14NWithComments = defaultNamespace + "Xml.XmlDsigC14NWithCommentsTransform";
+	private const string defaultBase64 = defaultNamespace + "Xml.XmlDsigBase64Transform";
+	private const string defaultXPath = defaultNamespace + "Xml.XmlDsigXPathTransform";
+	private const string defaultXslt = defaultNamespace + "Xml.XmlDsigXsltTransform";
+	private const string defaultEnveloped = defaultNamespace + "Xml.XmlDsigEnvelopedSignatureTransform";
 
 	// Oddly OID seems only available for hash algorithms
 	private const string oidSHA1 = "1.3.14.3.2.26";
@@ -82,6 +93,16 @@ public class CryptoConfig
 	private const string nameHMACb = "System.Security.Cryptography.HMACSHA1";
 	private const string nameMAC3DESa = "MACTripleDES";
 	private const string nameMAC3DESb = "System.Security.Cryptography.MACTripleDES";
+	// LAMESPEC: undocumented URLs in CryptoConfig
+	private const string urlDSASHA1 = "http://www.w3.org/2000/09/xmldsig#dsa-sha1";
+	private const string urlRSASHA1 = "http://www.w3.org/2000/09/xmldsig#rsa-sha1";
+	private const string urlSHA1 = "http://www.w3.org/2000/09/xmldsig#sha1";
+	private const string urlC14N = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315"; 
+	private const string urlC14NWithComments = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments";
+	private const string urlBase64 = "http://www.w3.org/2000/09/xmldsig#base64";
+	private const string urlXPath = "http://www.w3.org/TR/1999/REC-xpath-19991116";
+	private const string urlXslt = "http://www.w3.org/TR/1999/REC-xslt-19991116";
+	private const string urlEnveloped = "http://www.w3.org/2000/09/xmldsig#enveloped-signature";
 
 	// ??? must we read from the machine.config each time or just at startup ???
 	[MonoTODO ("support machine.config")]
@@ -143,6 +164,19 @@ public class CryptoConfig
 		algorithms.Add (nameMAC3DESa, defaultMAC3DES);
 		algorithms.Add (nameMAC3DESb, defaultMAC3DES);
 
+		// LAMESPEC These URLs aren't documented but (hint) installing the WSDK
+		// add some of the XMLDSIG urls into machine.config (and they make a LOT
+		// of sense for implementing XMLDSIG in System.Security.Cryptography.Xml)
+		algorithms.Add (urlDSASHA1, defaultDSASigDesc); 
+		algorithms.Add (urlRSASHA1, defaultRSASigDesc);
+		algorithms.Add (urlSHA1, defaultSHA1);
+		algorithms.Add (urlC14N, defaultC14N);
+		algorithms.Add (urlC14NWithComments, defaultC14NWithComments);
+		algorithms.Add (urlBase64, defaultBase64);
+		algorithms.Add (urlXPath, defaultXPath);
+		algorithms.Add (urlXslt, defaultXslt);
+		algorithms.Add (urlEnveloped, defaultEnveloped);
+
 		oid = new Hashtable ();
 		// comments here are to match with MS implementation (but not with doc)
 		// LAMESPEC: only HashAlgorithm seems to have their OID included
@@ -174,8 +208,22 @@ public class CryptoConfig
 			throw new ArgumentNullException ();
 	
 		try {
+			Type algoClass = null;
 			string algo = (string)algorithms [name];
-			Type algoClass = Type.GetType (algo);
+			// do we have an entry
+			if (algo != null) {
+				algoClass = Type.GetType (algo);
+				// some classes are in assembly System.Security.Cryptography.Xml
+				if ((algoClass == null) && (algo.StartsWith ("System.Security.Cryptography.Xml."))) {
+					// second chance !
+					if (xmldsig == null)
+						xmldsig = Assembly.LoadWithPartialName ("System.Security");
+					if (xmldsig != null)
+						algoClass = xmldsig.GetType (algo);
+				}
+			}
+			else
+				algoClass = Type.GetType (name);
 			// call the constructor for the type
 			return Activator.CreateInstance (algoClass, args);
 		}
@@ -183,6 +231,16 @@ public class CryptoConfig
 			return null;
 		}
 	}
+
+	// Note: Couldn't access private in DefaultConfig so I copied the
+	// two required functions.
+/*	[MethodImplAttribute(MethodImplOptions.InternalCall)]
+	extern private static string get_machine_config_path ();
+
+	private static string GetMachineConfigPath () 
+	{
+		return get_machine_config_path ();
+	}*/
 
 	// encode (7bits array) number greater than 127
 	private static byte[] EncodeLongNumber (long x)
