@@ -1,5 +1,6 @@
 class X {
 	int v1, v2;
+	int y;
 	
 	int this [int a] {
 		get {
@@ -17,6 +18,20 @@ class X {
 		}
 	}
 
+	int Foo () {
+		return 8;
+	}
+
+	int Y {
+		get {
+			return y;
+		}
+
+		set {
+			y = value;
+		}
+	}
+
 	static int Main ()
 	{
 		X x = new X ();
@@ -29,6 +44,17 @@ class X {
 
 		if (x [0] != 1)
 			return 2;
+
+		double d;
+		long l;
+
+		d = l = b = x [0] = x [1] = x.Y = x [2] = x [3] = x [4] = x.Foo ();
+
+		if (x.Y != 8)
+			return 3;
+
+		if (l != 8)
+			return 4;
 
 		return 0;
 		

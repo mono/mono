@@ -70,7 +70,7 @@ class X {
 			total2 = total2 + name;
 		}
 
-		if (total2 != "AB")
+		if ((total2 != "AB") && (total2 != "BA"))
 			return 3;
 
 		ArrayList list = new ArrayList ();
