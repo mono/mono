@@ -18,7 +18,6 @@ namespace System.Data.SqlTypes
 
 		public static readonly SqlDateTime MaxValue = new SqlDateTime (9999,12,31);
 		public static readonly SqlDateTime MinValue = new SqlDateTime (1753,1,1);
-		[MonoTODO]
 		public static readonly SqlDateTime Null;
 		public static readonly int SQLTicksPerHour;
 		public static readonly int SQLTicksPerMinute;
@@ -71,7 +70,7 @@ namespace System.Data.SqlTypes
 		}
 
 		public bool IsNull { 
-			get { return (bool) (this == SqlDateTime.Null); }
+			get { return (bool) (this == Null); }
 		}
 
 		[MonoTODO]
@@ -80,7 +79,12 @@ namespace System.Data.SqlTypes
 		}
 
 		public DateTime Value {
-			get { return value; }
+			get { 
+				if (this.IsNull) 
+					throw new SqlNullValueException ("The property contains Null.");
+				else 
+					return value; 
+			}
 		}
 
 		#endregion
@@ -159,42 +163,54 @@ namespace System.Data.SqlTypes
 
 		public static SqlBoolean operator == (SqlDateTime x, SqlDateTime y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value == y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value == y.Value);
 		}
 
 		public static SqlBoolean operator > (SqlDateTime x, SqlDateTime y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value > y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value > y.Value);
 		}
 
 		public static SqlBoolean operator >= (SqlDateTime x, SqlDateTime y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value >= y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value >= y.Value);
 		}
 
 		public static SqlBoolean operator != (SqlDateTime x, SqlDateTime y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (!(x.Value == y.Value));
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (!(x.Value == y.Value));
 		}
 
 		public static SqlBoolean operator < (SqlDateTime x, SqlDateTime y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value < y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value < y.Value);
 		}
 
 		public static SqlBoolean operator <= (SqlDateTime x, SqlDateTime y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value <= y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value <= y.Value);
 		}
 
 		[MonoTODO]
-		public static SqlByte operator - (SqlDateTime x, TimeSpan t)
+		public static SqlDateTime operator - (SqlDateTime x, TimeSpan t)
 		{
 			throw new NotImplementedException ();
 		}
@@ -210,7 +226,7 @@ namespace System.Data.SqlTypes
 			throw new NotImplementedException();
 		}
 
-		public static explicit operator SqlDateTime (DateTime x)
+		public static implicit operator SqlDateTime (DateTime x)
 		{
 			return new SqlDateTime (x);
 		}

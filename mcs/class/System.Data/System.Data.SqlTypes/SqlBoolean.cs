@@ -7,6 +7,7 @@
 //   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc. 2002
+// (C) Copyright 2002 Tim Coleman
 //
 
 namespace System.Data.SqlTypes
@@ -47,24 +48,33 @@ namespace System.Data.SqlTypes
 		#region Properties
 
 		public byte ByteValue {
-			get { return value; }
+			get {
+				if (this.IsNull)
+					throw new SqlNullValueException( "The property is set to null.");
+				else
+					return value;
+			}
 		}
 
 		public bool IsFalse {
 			get { 
-				if (this.IsNull) return false;
-				else return (value == 0);
+				if (this.IsNull) 
+					return false;
+				else 
+					return (value == 0);
 			}
 		}
 
 		public bool IsNull {
-			get { return (bool) (this == SqlBoolean.Null); }
+			get { return (bool) (this == Null); }
 		}
 
 		public bool IsTrue {
 			get { 
-				if (this.IsNull) return false;
-				else return (value != 0);
+				if (this.IsNull) 
+					return false;
+				else 	
+					return (value != 0);
 			}
 		}
 
@@ -208,7 +218,10 @@ namespace System.Data.SqlTypes
 		// Compares two instances for equality
 		public static SqlBoolean operator == (SqlBoolean x, SqlBoolean y)
 		{
-			return new SqlBoolean (x.Value == y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value == y.Value);
 		}
 		
 		// Bitwize exclusive-OR (XOR)
@@ -226,13 +239,19 @@ namespace System.Data.SqlTypes
 		// in-equality
 		public static SqlBoolean operator != (SqlBoolean x, SqlBoolean y)
 		{
-			return new SqlBoolean (x.Value != y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value != y.Value);
 		}
 
 		// Logical NOT
 		public static SqlBoolean operator ! (SqlBoolean x) 
 		{
-			return new SqlBoolean (!x.Value);
+			if (x.IsNull)
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (!x.Value);
 		}
 
 		// One's Complement
@@ -263,7 +282,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlBoolean (SqlByte x) 
 		{
 			if (x.IsNull)
-				return SqlBoolean.Null;
+				return Null;
 			else
 				return new SqlBoolean ((int)x.Value);
 		}
@@ -272,7 +291,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlBoolean (SqlDecimal x) 
 		{
 			if (x.IsNull)
-				return SqlBoolean.Null;
+				return Null;
 			else
 				return new SqlBoolean ((int)x.Value);
 		}
@@ -281,7 +300,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlBoolean (SqlDouble x) 
 		{
 			if (x.IsNull)
-				return SqlBoolean.Null;
+				return Null;
 			else
 				return new SqlBoolean ((int)x.Value);
 		}
@@ -290,7 +309,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlBoolean (SqlInt16 x) 
 		{
 			if (x.IsNull)
-				return SqlBoolean.Null;
+				return Null;
 			else
 				return new SqlBoolean ((int)x.Value);
 		}
@@ -299,7 +318,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlBoolean (SqlInt32 x) 
 		{
 			if (x.IsNull)
-				return SqlBoolean.Null;
+				return Null;
 			else
 				return new SqlBoolean (x.Value);
 		}
@@ -308,7 +327,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlBoolean (SqlInt64 x) 
 		{
 			if (x.IsNull)
-				return SqlBoolean.Null;
+				return Null;
 			else
 				return new SqlBoolean ((int)x.Value);
 		}
@@ -317,7 +336,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlBoolean (SqlMoney x) 
 		{
 			if (x.IsNull)
-				return SqlBoolean.Null;
+				return Null;
 			else
 				return new SqlBoolean ((int)x.Value);
 		}
@@ -326,7 +345,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlBoolean (SqlSingle x) 
 		{
 			if (x.IsNull)
-				return SqlBoolean.Null;
+				return Null;
 			else
 				return new SqlBoolean ((int)x.Value);
 		}

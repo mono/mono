@@ -76,17 +76,19 @@ namespace System.Data.SqlTypes
 		}
 
 		public bool IsNull { 
-			get { return (bool) (this == SqlDecimal.Null); }
+			get { return (bool) (this == Null); }
 		}
 
 		public bool IsPositive { 
-			get { throw new NotImplementedException (); }
+			get { return (this.Value > 0); }
 		}
 
+		[MonoTODO]
 		public byte Precision { 
 			get { throw new NotImplementedException (); }
 		}
 
+		[MonoTODO]
 		public byte Scale { 
 			get { throw new NotImplementedException (); }
 		}
@@ -113,6 +115,12 @@ namespace System.Data.SqlTypes
 		public static SqlDecimal Add (SqlDecimal x, SqlDecimal y)
 		{
 			return (x + y);
+		}
+
+		[MonoTODO]
+		public static SqlDecimal AdjustScale (SqlDecimal n, int digits, bool fRound)
+		{
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -295,38 +303,50 @@ namespace System.Data.SqlTypes
 
 		public static SqlBoolean operator == (SqlDecimal x, SqlDecimal y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value == y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value == y.Value);
 		}
 
 		public static SqlBoolean operator > (SqlDecimal x, SqlDecimal y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value > y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value > y.Value);
 		}
 
 		public static SqlBoolean operator >= (SqlDecimal x, SqlDecimal y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value >= y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value >= y.Value);
 		}
 
 		public static SqlBoolean operator != (SqlDecimal x, SqlDecimal y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (!(x.Value == y.Value));
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (!(x.Value == y.Value));
 		}
 
 		public static SqlBoolean operator < (SqlDecimal x, SqlDecimal y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value < y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value < y.Value);
 		}
 
 		public static SqlBoolean operator <= (SqlDecimal x, SqlDecimal y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value <= y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value <= y.Value);
 		}
 
 		public static SqlDecimal operator * (SqlDecimal x, SqlDecimal y)
@@ -347,7 +367,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlDecimal (SqlBoolean x)
 		{
 			if (x.IsNull) 
-				return SqlDecimal.Null;
+				return Null;
 			else
 				return new SqlDecimal ((decimal)x.ByteValue);
 		}
@@ -360,7 +380,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlDecimal (SqlDouble x)
 		{
 			if (x.IsNull) 
-				return SqlDecimal.Null;
+				return Null;
 			else
 				return new SqlDecimal ((decimal)x.Value);
 		}
@@ -368,7 +388,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlDecimal (SqlSingle x)
 		{
 			if (x.IsNull) 
-				return SqlDecimal.Null;
+				return Null;
 			else
 				return new SqlDecimal ((decimal)x.Value);
 		}
@@ -379,47 +399,47 @@ namespace System.Data.SqlTypes
 			throw new NotImplementedException ();
 		}
 
-		public static explicit operator SqlDecimal (decimal x)
+		public static implicit operator SqlDecimal (decimal x)
 		{
 			return new SqlDecimal (x);
 		}
 
-		public static explicit operator SqlDecimal (SqlByte x)
+		public static implicit operator SqlDecimal (SqlByte x)
 		{
 			if (x.IsNull) 
-				return SqlDecimal.Null;
+				return Null;
 			else
 				return new SqlDecimal ((decimal)x.Value);
 		}
 
-		public static explicit operator SqlDecimal (SqlInt16 x)
+		public static implicit operator SqlDecimal (SqlInt16 x)
 		{
 			if (x.IsNull) 
-				return SqlDecimal.Null;
+				return Null;
 			else
 				return new SqlDecimal ((decimal)x.Value);
 		}
 
-		public static explicit operator SqlDecimal (SqlInt32 x)
+		public static implicit operator SqlDecimal (SqlInt32 x)
 		{
 			if (x.IsNull) 
-				return SqlDecimal.Null;
+				return Null;
 			else
 				return new SqlDecimal ((decimal)x.Value);
 		}
 
-		public static explicit operator SqlDecimal (SqlInt64 x)
+		public static implicit operator SqlDecimal (SqlInt64 x)
 		{
 			if (x.IsNull) 
-				return SqlDecimal.Null;
+				return Null;
 			else
 				return new SqlDecimal ((decimal)x.Value);
 		}
 
-		public static explicit operator SqlDecimal (SqlMoney x)
+		public static implicit operator SqlDecimal (SqlMoney x)
 		{
 			if (x.IsNull) 
-				return SqlDecimal.Null;
+				return Null;
 			else
 				return new SqlDecimal ((decimal)x.Value);
 		}

@@ -24,7 +24,7 @@ namespace System.Data.SqlTypes
 
 		#region Fields
 
-		private string value;
+		string value;
 
 		public static readonly int BinarySort;
 		public static readonly int IgnoreCase;
@@ -188,6 +188,12 @@ namespace System.Data.SqlTypes
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
+		public byte[] GetUnicodeBytes() 
+		{
+			throw new NotImplementedException ();
+		}
+
 		public static SqlBoolean GreaterThan(SqlString x, SqlString y) 
 		{
 			return (x > y);
@@ -217,75 +223,64 @@ namespace System.Data.SqlTypes
 		// Type Conversions From SqlString To ...
 		// ****************************************
 
-		[MonoTODO]
 		public SqlBoolean ToSqlBoolean() 
 		{
-			throw new NotImplementedException ();
+			return ((SqlBoolean)this);
 		}
 
-		[MonoTODO]
 		public SqlByte ToSqlByte() 
 		{
-			throw new NotImplementedException ();
+			return ((SqlByte)this);
 		}
 
-		[MonoTODO]
 		public SqlDateTime ToSqlDateTime() 
 		{
-			throw new NotImplementedException ();
+			return ((SqlDateTime)this);
 		}
 
-		[MonoTODO]
 		public SqlDecimal ToSqlDecimal() 
 		{
-			throw new NotImplementedException ();
+			return ((SqlDecimal)this);
 		}
 
-		[MonoTODO]
 		public SqlDouble ToSqlDouble() 
 		{
-			throw new NotImplementedException ();
+			return ((SqlDouble)this);
 		}
 
-		[MonoTODO]
 		public SqlGuid ToSqlGuid() 
 		{
-			throw new NotImplementedException ();
+			return ((SqlGuid)this);
 		}
 
-		[MonoTODO]
 		public SqlInt16 ToSqlInt16() 
 		{
-			throw new NotImplementedException ();
+			return ((SqlInt16)this);
 		}
 
-		[MonoTODO]
 		public SqlInt32 ToSqlInt32() 
 		{
-			throw new NotImplementedException ();
+			return ((SqlInt32)this);
 		}
 
-		[MonoTODO]
 		public SqlInt64 ToSqlInt64() 
 		{
-			throw new NotImplementedException ();
+			return ((SqlInt64)this);
 		}
 
-		[MonoTODO]
 		public SqlMoney ToSqlMoney() 
 		{
-			throw new NotImplementedException ();
+			return ((SqlMoney)this);
 		}
 
-		[MonoTODO]
 		public SqlSingle ToSqlSingle() 
 		{
-			throw new NotImplementedException ();
+			return ((SqlSingle)this);
 		}
 
 		public override string ToString() 
 		{
-			return value;
+			return ((string)this);
 		}
 
 		// ***********************************
@@ -301,36 +296,54 @@ namespace System.Data.SqlTypes
 		// Equality
 		public static SqlBoolean operator == (SqlString x, SqlString y) 
 		{
-			return new SqlBoolean (x.Value == y.Value);
+			if (x.IsNull || y.IsNull)
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value == y.Value);
 		}
 
-		[MonoTODO]
+		// Greater Than
 		public static SqlBoolean operator > (SqlString x, SqlString y) 
 		{
-			throw new NotImplementedException ();
+			if (x.IsNull || y.IsNull)
+				return SqlBoolean.Null;
+			else
+				throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		// Greater Than Or Equal
 		public static SqlBoolean operator >= (SqlString x, SqlString y) 
 		{
-			throw new NotImplementedException ();
+			if (x.IsNull || y.IsNull)
+				return SqlBoolean.Null;
+			else
+				throw new NotImplementedException ();
 		}
 
 		public static SqlBoolean operator != (SqlString x, SqlString y) 
 		{ 
-			return new SqlBoolean (x.Value != y.Value);
+			if (x.IsNull || y.IsNull)
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value != y.Value);
 		}
 
-		[MonoTODO]
+		// Less Than
 		public static SqlBoolean operator < (SqlString x, SqlString y) 
 		{
-			throw new NotImplementedException ();
+			if (x.IsNull || y.IsNull)
+				return SqlBoolean.Null;
+			else
+				throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		// Less Than Or Equal
 		public static SqlBoolean operator <= (SqlString x, SqlString y) 
 		{
-			throw new NotImplementedException ();
+			if (x.IsNull || y.IsNull)
+				return SqlBoolean.Null;
+			else
+				throw new NotImplementedException ();
 		}
 
 		// **************************************
@@ -339,67 +352,100 @@ namespace System.Data.SqlTypes
 
 		public static explicit operator SqlString (SqlBoolean x) 
 		{
-			throw new NotImplementedException ();
+			if (x.IsNull)
+				return Null;
+			else
+				return new SqlString (x.ToString ());
 		}
 
 		public static explicit operator SqlString (SqlByte x) 
 		{
-			throw new NotImplementedException ();
+			if (x.IsNull)
+				return Null;
+			else
+				return new SqlString (x.ToString ());
 		}
 
 		public static explicit operator SqlString (SqlDateTime x) 
 		{
-			throw new NotImplementedException ();
+			if (x.IsNull)
+				return Null;
+			else
+				return new SqlString (x.ToString ());
 		}
 
 		public static explicit operator SqlString (SqlDecimal x) 
 		{
-			throw new NotImplementedException ();
+			if (x.IsNull)
+				return Null;
+			else
+				return new SqlString (x.ToString ());
 		}
 
 		public static explicit operator SqlString (SqlDouble x) 
 		{
-			throw new NotImplementedException ();
+			if (x.IsNull)
+				return Null;
+			else
+				return new SqlString (x.ToString ());
 		}
 
 		public static explicit operator SqlString (SqlGuid x) 
 		{
-			throw new NotImplementedException ();
+			if (x.IsNull)
+				return Null;
+			else
+				return new SqlString (x.ToString ());
 		}
 
 		public static explicit operator SqlString (SqlInt16 x) 
 		{
-			throw new NotImplementedException ();
+			if (x.IsNull)
+				return Null;
+			else
+				return new SqlString (x.ToString ());
 		}
 
 		public static explicit operator SqlString (SqlInt32 x) 
 		{
-			throw new NotImplementedException ();
+			if (x.IsNull)
+				return Null;
+			else
+				return new SqlString (x.ToString ());
 		}
 
 		public static explicit operator SqlString (SqlInt64 x) 
 		{
-			throw new NotImplementedException ();
+			if (x.IsNull)
+				return Null;
+			else
+				return new SqlString (x.ToString ());
 		}
 
 		public static explicit operator SqlString (SqlMoney x) 
 		{
-			throw new NotImplementedException ();
+			if (x.IsNull)
+				return Null;
+			else
+				return new SqlString (x.ToString ());
 		}
 
 		public static explicit operator SqlString (SqlSingle x) 
 		{
-			throw new NotImplementedException ();
+			if (x.IsNull)
+				return Null;
+			else
+				return new SqlString (x.ToString ());
 		}
 
 		public static explicit operator string (SqlString x) 
 		{
-			throw new NotImplementedException ();
+			return x.Value;
 		}
 
 		public static implicit operator SqlString (string x) 
 		{
-			throw new NotImplementedException ();
+			return new SqlString (x);
 		}
 
 		#endregion // Public Methods

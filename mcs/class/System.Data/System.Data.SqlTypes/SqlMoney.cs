@@ -14,12 +14,11 @@ namespace System.Data.SqlTypes
 	public struct SqlMoney : INullable, IComparable
 	{
 		#region Fields
-		private decimal value;
+
+		decimal value;
 
 		public static readonly SqlMoney MaxValue = new SqlMoney (922337203685475.5807);
 		public static readonly SqlMoney MinValue = new SqlMoney (-922337203685477.5808);
-
-		[MonoTODO]
 		public static readonly SqlMoney Null;
 		public static readonly SqlMoney Zero = new SqlMoney (0);
 
@@ -53,7 +52,7 @@ namespace System.Data.SqlTypes
 
 		[MonoTODO]
 		public bool IsNull { 
-			get { return (bool) (this == SqlMoney.Null); }
+			get { return (bool) (this == Null); }
 		}
 
 		public decimal Value { 
@@ -227,32 +226,42 @@ namespace System.Data.SqlTypes
 
 		public static SqlBoolean operator == (SqlMoney x, SqlMoney y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value == y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value == y.Value);
 		}
 
 		public static SqlBoolean operator > (SqlMoney x, SqlMoney y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value > y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value > y.Value);
 		}
 
 		public static SqlBoolean operator >= (SqlMoney x, SqlMoney y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value >= y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value >= y.Value);
 		}
 
 		public static SqlBoolean operator != (SqlMoney x, SqlMoney y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (!(x.Value == y.Value));
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (!(x.Value == y.Value));
 		}
 
 		public static SqlBoolean operator < (SqlMoney x, SqlMoney y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value < y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value < y.Value);
 		}
 
 		public static SqlBoolean operator <= (SqlMoney x, SqlMoney y)
@@ -279,7 +288,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlMoney (SqlBoolean x)
 		{
 			if (x.IsNull) 
-				return SqlMoney.Null;
+				return Null;
 			else
 				return new SqlMoney ((decimal)x.ByteValue);
 		}
@@ -287,7 +296,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlMoney (SqlDecimal x)
 		{
 			if (x.IsNull) 
-				return SqlMoney.Null;
+				return Null;
 			else
 				return new SqlMoney (x.Value);
 		}
@@ -295,7 +304,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlMoney (SqlDouble x)
 		{
 			if (x.IsNull) 
-				return SqlMoney.Null;
+				return Null;
 			else
 				return new SqlMoney ((decimal)x.Value);
 		}
@@ -308,7 +317,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlMoney (SqlSingle x)
 		{
 			if (x.IsNull) 
-				return SqlMoney.Null;
+				return Null;
 			else
 				return new SqlMoney ((decimal)x.Value);
 		}
@@ -319,39 +328,39 @@ namespace System.Data.SqlTypes
 			throw new NotImplementedException ();
 		}
 
-		public static explicit operator SqlMoney (decimal x)
+		public static implicit operator SqlMoney (decimal x)
 		{
 			return new SqlMoney (x);
 		}
 
-		public static explicit operator SqlMoney (SqlByte x)
+		public static implicit operator SqlMoney (SqlByte x)
 		{
 			if (x.IsNull) 
-				return SqlMoney.Null;
+				return Null;
 			else
 				return new SqlMoney ((decimal)x.Value);
 		}
 
-		public static explicit operator SqlMoney (SqlInt16 x)
+		public static implicit operator SqlMoney (SqlInt16 x)
 		{
 			if (x.IsNull) 
-				return SqlMoney.Null;
+				return Null;
 			else
 				return new SqlMoney ((decimal)x.Value);
 		}
 
-		public static explicit operator SqlMoney (SqlInt32 x)
+		public static implicit operator SqlMoney (SqlInt32 x)
 		{
 			if (x.IsNull) 
-				return SqlMoney.Null;
+				return Null;
 			else
 				return new SqlMoney ((decimal)x.Value);
 		}
 
-		public static explicit operator SqlMoney (SqlInt64 x)
+		public static implicit operator SqlMoney (SqlInt64 x)
 		{
 			if (x.IsNull) 
-				return SqlMoney.Null;
+				return Null;
 			else
 				return new SqlMoney ((decimal)x.Value);
 		}

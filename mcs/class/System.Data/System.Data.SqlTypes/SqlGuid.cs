@@ -194,7 +194,7 @@ namespace System.Data.SqlTypes
 			throw new NotImplementedException ();
 		}
 
-		public static explicit operator SqlGuid (Guid x)
+		public static implicit operator SqlGuid (Guid x)
 		{
 			return new SqlGuid (x);
 		}

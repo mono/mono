@@ -6,6 +6,7 @@
 //   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc.
+// (C) Copyright 2002 Tim Coleman
 //
 
 namespace System.Data.SqlTypes
@@ -19,7 +20,8 @@ namespace System.Data.SqlTypes
 		#region Fields
 
 		byte[] value;
-		public static readonly SqlBinary Null = new SqlBinary (null);
+
+		public static readonly SqlBinary Null;
 
 		#endregion
 
@@ -35,21 +37,37 @@ namespace System.Data.SqlTypes
 		#region Properties
 
 		public bool IsNull {
-			get { return (value == null); }
+			get { return (bool) (this == Null); }
 		}
 
 		public byte this[int index] {
-			get { return value[index]; }
+			get { 
+				if (this.IsNull)
+					throw new SqlNullValueException ("The property contains Null.");
+				else if (index >= this.Length)
+					throw new SqlNullValueException ("The index parameter indicates a position beyond the length of the byte array.");
+				else
+					return value [index]; 
+			}
 		}
 
-		[MonoTODO]
 		public int Length {
-			get { throw new NotImplementedException (); }
+			get { 
+				if (this.IsNull)
+					throw new SqlNullValueException ("The property contains Null.");
+				else
+					return value.Length;
+			}
 		}
 
 		public byte[] Value 
 		{
-			get { return value; }
+			get { 
+				if (this.IsNull) 
+					throw new SqlNullValueException ("The property contains Null.");
+				else 
+					return value; 
+			}
 		}
 
 		#endregion
@@ -123,7 +141,10 @@ namespace System.Data.SqlTypes
 		{
 			throw new NotImplementedException ();
 		}
-		
+
+		#endregion
+
+		#region Operators
 
 		[MonoTODO]
 		public static SqlBinary operator + (SqlBinary x, SqlBinary y) 
@@ -136,7 +157,8 @@ namespace System.Data.SqlTypes
 		{
 			if (x.IsNull || y.IsNull) 
 				return SqlBoolean.Null;
-			throw new NotImplementedException ();
+			else
+				throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -144,7 +166,8 @@ namespace System.Data.SqlTypes
 		{
 			if (x.IsNull || y.IsNull) 
 				return SqlBoolean.Null;
-			throw new NotImplementedException ();
+			else
+				throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -152,7 +175,8 @@ namespace System.Data.SqlTypes
 		{
 			if (x.IsNull || y.IsNull) 
 				return SqlBoolean.Null;
-			throw new NotImplementedException ();
+			else
+				throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -160,7 +184,8 @@ namespace System.Data.SqlTypes
 		{
 			if (x.IsNull || y.IsNull) 
 				return SqlBoolean.Null;
-			throw new NotImplementedException ();
+			else
+				throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -168,7 +193,8 @@ namespace System.Data.SqlTypes
 		{
 			if (x.IsNull || y.IsNull) 
 				return SqlBoolean.Null;
-			throw new NotImplementedException ();
+			else
+				throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -176,7 +202,8 @@ namespace System.Data.SqlTypes
 		{
 			if (x.IsNull || y.IsNull) 
 				return SqlBoolean.Null;
-			throw new NotImplementedException ();
+			else
+				throw new NotImplementedException ();
 		}
 
 		public static explicit operator byte[] (SqlBinary x) 
@@ -184,9 +211,10 @@ namespace System.Data.SqlTypes
 			return x.Value;
 		}
 
+		[MonoTODO]
 		public static explicit operator SqlBinary (SqlGuid x) 
 		{
-			return x.ToSqlBinary ();
+			throw new NotImplementedException ();
 		}
 
 		public static implicit operator SqlBinary (byte[] x) 

@@ -35,7 +35,7 @@ namespace System.Data.SqlTypes
 		#region Properties
 
 		public bool IsNull {
-			get { return (bool) (this == SqlByte.Null); }
+			get { return (bool) (this == Null); }
 		}
 
 		public byte Value { 
@@ -61,6 +61,11 @@ namespace System.Data.SqlTypes
 			return (x & y);
 		}
 
+		public static SqlByte BitwiseOr (SqlByte x, SqlByte y)
+		{
+			return (x | y);
+		}
+
 		[MonoTODO]
 		public int CompareTo (object value)
 		{
@@ -83,7 +88,6 @@ namespace System.Data.SqlTypes
 			return (x == y);
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
 			return (int)value;
@@ -219,8 +223,10 @@ namespace System.Data.SqlTypes
 
 		public static SqlBoolean operator == (SqlByte x, SqlByte y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value == y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value == y.Value);
 		}
 
 		public static SqlByte operator ^ (SqlByte x, SqlByte y)
@@ -230,32 +236,42 @@ namespace System.Data.SqlTypes
 
 		public static SqlBoolean operator > (SqlByte x, SqlByte y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value > y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value > y.Value);
 		}
 
 		public static SqlBoolean operator >= (SqlByte x, SqlByte y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value >= y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value >= y.Value);
 		}
 
 		public static SqlBoolean operator != (SqlByte x, SqlByte y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (!(x.Value == y.Value));
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (!(x.Value == y.Value));
 		}
 
 		public static SqlBoolean operator < (SqlByte x, SqlByte y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value < y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value < y.Value);
 		}
 
 		public static SqlBoolean operator <= (SqlByte x, SqlByte y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value <= y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value <= y.Value);
 		}
 
 		public static SqlByte operator % (SqlByte x, SqlByte y)
@@ -281,7 +297,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlByte (SqlBoolean x)
 		{
 			if (x.IsNull)
-				return SqlByte.Null;
+				return Null;
 			else
 				return new SqlByte (x.ByteValue);
 		}
@@ -294,7 +310,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlByte (SqlDecimal x)
 		{
 			if (x.IsNull)
-				return SqlByte.Null;
+				return Null;
 			else
 				return new SqlByte ((byte)x.Value);
 		}
@@ -302,7 +318,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlByte (SqlDouble x)
 		{
 			if (x.IsNull)
-				return SqlByte.Null;
+				return Null;
 			else
 				return new SqlByte ((byte)x.Value);
 		}
@@ -310,7 +326,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlByte (SqlInt16 x)
 		{
 			if (x.IsNull)
-				return SqlByte.Null;
+				return Null;
 			else
 				return new SqlByte ((byte)x.Value);
 		}
@@ -318,7 +334,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlByte (SqlInt32 x)
 		{
 			if (x.IsNull)
-				return SqlByte.Null;
+				return Null;
 			else
 				return new SqlByte ((byte)x.Value);
 		}
@@ -326,7 +342,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlByte (SqlInt64 x)
 		{
 			if (x.IsNull)
-				return SqlByte.Null;
+				return Null;
 			else
 				return new SqlByte ((byte)x.Value);
 		}
@@ -334,7 +350,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlByte (SqlMoney x)
 		{
 			if (x.IsNull)
-				return SqlByte.Null;
+				return Null;
 			else
 				return new SqlByte ((byte)x.Value);
 		}
@@ -342,7 +358,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlByte (SqlSingle x)
 		{
 			if (x.IsNull)
-				return SqlByte.Null;
+				return Null;
 			else
 				return new SqlByte ((byte)x.Value);
 		}
@@ -353,7 +369,7 @@ namespace System.Data.SqlTypes
 			throw new NotImplementedException ();
 		}
 
-		public static explicit operator SqlByte (byte x)
+		public static implicit operator SqlByte (byte x)
 		{
 			return new SqlByte (x);
 		}

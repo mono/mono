@@ -14,7 +14,8 @@ namespace System.Data.SqlTypes
 	public struct SqlInt16 : INullable, IComparable
 	{
 		#region Fields
-		private short value;
+
+		short value;
 
 		public static readonly SqlInt16 MaxValue = new SqlInt16 (32767);
 		public static readonly SqlInt16 MinValue = new SqlInt16 (-32768);
@@ -35,7 +36,7 @@ namespace System.Data.SqlTypes
 		#region Properties
 
 		public bool IsNull { 
-			get { return (bool) (this == SqlInt16.Null); }
+			get { return (bool) (this == Null); }
 		}
 
 		public short Value { 
@@ -88,7 +89,6 @@ namespace System.Data.SqlTypes
 			return (x == y);
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
 			return (int)value;
@@ -186,7 +186,7 @@ namespace System.Data.SqlTypes
 		}
 
 		[MonoTODO]
-		public static SqlString ToSqlString ()
+		public SqlString ToSqlString ()
 		{
 			throw new NotImplementedException ();
 		}
@@ -224,8 +224,10 @@ namespace System.Data.SqlTypes
 
 		public static SqlBoolean operator == (SqlInt16 x, SqlInt16 y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value == y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value == y.Value);
 		}
 
 		public static SqlInt16 operator ^ (SqlInt16 x, SqlInt16 y)
@@ -235,32 +237,42 @@ namespace System.Data.SqlTypes
 
 		public static SqlBoolean operator > (SqlInt16 x, SqlInt16 y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value > y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value > y.Value);
 		}
 
 		public static SqlBoolean operator >= (SqlInt16 x, SqlInt16 y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value >= y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value >= y.Value);
 		}
 
 		public static SqlBoolean operator != (SqlInt16 x, SqlInt16 y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (!(x.Value == y.Value));
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else 
+				return new SqlBoolean (!(x.Value == y.Value));
 		}
 
 		public static SqlBoolean operator < (SqlInt16 x, SqlInt16 y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value < y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value < y.Value);
 		}
 
 		public static SqlBoolean operator <= (SqlInt16 x, SqlInt16 y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value <= y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value <= y.Value);
 		}
 
 		public static SqlInt16 operator % (SqlInt16 x, SqlInt16 y)
@@ -291,7 +303,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlInt16 (SqlBoolean x)
 		{
 			if (x.IsNull)
-				return SqlInt16.Null;
+				return Null;
 			else
 				return new SqlInt16 ((short)x.ByteValue);
 		}
@@ -299,7 +311,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlInt16 (SqlDecimal x)
 		{
 			if (x.IsNull)
-				return SqlInt16.Null;
+				return Null;
 			else
 				return new SqlInt16 ((short)x.Value);
 		}
@@ -307,7 +319,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlInt16 (SqlDouble x)
 		{
 			if (x.IsNull)
-				return SqlInt16.Null;
+				return Null;
 			else
 				return new SqlInt16 ((short)x.Value);
 		}
@@ -320,7 +332,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlInt16 (SqlInt32 x)
 		{
 			if (x.IsNull)
-				return SqlInt16.Null;
+				return Null;
 			else
 				return new SqlInt16 ((short)x.Value);
 		}
@@ -328,7 +340,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlInt16 (SqlInt64 x)
 		{
 			if (x.IsNull)
-				return SqlInt16.Null;
+				return Null;
 			else
 				return new SqlInt16 ((short)x.Value);
 		}
@@ -336,7 +348,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlInt16 (SqlMoney x)
 		{
 			if (x.IsNull)
-				return SqlInt16.Null;
+				return Null;
 			else
 				return new SqlInt16 ((short)x.Value);
 		}
@@ -344,7 +356,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlInt16 (SqlSingle x)
 		{
 			if (x.IsNull)
-				return SqlInt16.Null;
+				return Null;
 			else
 				return new SqlInt16 ((short)x.Value);
 		}
@@ -355,15 +367,15 @@ namespace System.Data.SqlTypes
 			throw new NotImplementedException ();
 		}
 
-		public static explicit operator SqlInt16 (short x)
+		public static implicit operator SqlInt16 (short x)
 		{
 			return new SqlInt16 (x);
 		}
 
-		public static explicit operator SqlInt16 (SqlByte x)
+		public static implicit operator SqlInt16 (SqlByte x)
 		{
 			if (x.IsNull)
-				return SqlInt16.Null;
+				return Null;
 			else
 				return new SqlInt16 ((short)x.Value);
 		}

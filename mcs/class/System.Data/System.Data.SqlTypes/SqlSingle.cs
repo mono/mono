@@ -15,11 +15,10 @@ namespace System.Data.SqlTypes
 	{
 		#region Fields
 
-		private float value;
+		float value;
 
 		public static readonly SqlSingle MaxValue = new SqlSingle (3.40E+38);
 		public static readonly SqlSingle MinValue = new SqlSingle (-3.40E+38);
-		[MonoTODO]
 		public static readonly SqlSingle Null;
 		public static readonly SqlSingle Zero = new SqlSingle (0);
 
@@ -42,7 +41,7 @@ namespace System.Data.SqlTypes
 		#region Properties
 
 		public bool IsNull { 
-			get { return (bool) (this == SqlSingle.Null); }
+			get { return (bool) (this == Null); }
 		}
 
 		public float Value { 
@@ -267,55 +266,55 @@ namespace System.Data.SqlTypes
 			throw new NotImplementedException ();
 		}
 
-		public static explicit operator SqlSingle (float x)
+		public static implicit operator SqlSingle (float x)
 		{
 			return new SqlSingle (x);
 		}
 
-		public static explicit operator SqlSingle (SqlByte x)
+		public static implicit operator SqlSingle (SqlByte x)
 		{
 			if (x.IsNull) 
-				return SqlSingle.Null;
+				return Null;
 			else
 				return new SqlSingle((float)x.Value);
 		}
 
-		public static explicit operator SqlSingle (SqlDecimal x)
+		public static implicit operator SqlSingle (SqlDecimal x)
 		{
 			if (x.IsNull) 
-				return SqlSingle.Null;
+				return Null;
 			else
 				return new SqlSingle((float)x.Value);
 		}
 
-		public static explicit operator SqlSingle (SqlInt16 x)
+		public static implicit operator SqlSingle (SqlInt16 x)
 		{
 			if (x.IsNull) 
-				return SqlSingle.Null;
+				return Null;
 			else
 				return new SqlSingle((float)x.Value);
 		}
 
-		public static explicit operator SqlSingle (SqlInt32 x)
+		public static implicit operator SqlSingle (SqlInt32 x)
 		{
 			if (x.IsNull) 
-				return SqlSingle.Null;
+				return Null;
 			else
 				return new SqlSingle((float)x.Value);
 		}
 
-		public static explicit operator SqlSingle (SqlInt64 x)
+		public static implicit operator SqlSingle (SqlInt64 x)
 		{
 			if (x.IsNull) 
-				return SqlSingle.Null;
+				return Null;
 			else
 				return new SqlSingle((float)x.Value);
 		}
 
-		public static explicit operator SqlSingle (SqlMoney x)
+		public static implicit operator SqlSingle (SqlMoney x)
 		{
 			if (x.IsNull) 
-				return SqlSingle.Null;
+				return Null;
 			else
 				return new SqlSingle((float)x.Value);
 		}

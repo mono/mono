@@ -14,7 +14,8 @@ namespace System.Data.SqlTypes
 	public struct SqlInt64 : INullable, IComparable
 	{
 		#region Fields
-		private long value;
+
+		long value;
 		
 		[MonoTODO]
 		public static readonly SqlInt64 MaxValue; // 2^63 - 1
@@ -22,7 +23,6 @@ namespace System.Data.SqlTypes
 		[MonoTODO]
 		public static readonly SqlInt64 MinValue; // -2^63
 
-		[MonoTODO]
 		public static readonly SqlInt64 Null;
 		public static readonly SqlInt64 Zero = new SqlInt64 (0);
 
@@ -41,7 +41,7 @@ namespace System.Data.SqlTypes
 
 		[MonoTODO]
 		public bool IsNull { 
-			get { return (bool) (this == SqlInt64.Null); }
+			get { return (bool) (this == Null); }
 		}
 
 		public long Value { 
@@ -118,6 +118,11 @@ namespace System.Data.SqlTypes
 		public static SqlBoolean LessThanOrEqual (SqlInt64 x, SqlInt64 y)
 		{
 			return (x <= y);
+		}
+
+		public static SqlInt64 Mod (SqlInt64 x, SqlInt64 y)
+		{
+			return (x % y);
 		}
 
 		public static SqlInt64 Multiply (SqlInt64 x, SqlInt64 y)
@@ -225,8 +230,10 @@ namespace System.Data.SqlTypes
 
 		public static SqlBoolean operator == (SqlInt64 x, SqlInt64 y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value == y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value == y.Value);
 		}
 
 		public static SqlInt64 operator ^ (SqlInt64 x, SqlInt64 y)
@@ -236,32 +243,42 @@ namespace System.Data.SqlTypes
 
 		public static SqlBoolean operator > (SqlInt64 x, SqlInt64 y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value > y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value > y.Value);
 		}
 
 		public static SqlBoolean operator >= (SqlInt64 x, SqlInt64 y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value >= y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value >= y.Value);
 		}
 
 		public static SqlBoolean operator != (SqlInt64 x, SqlInt64 y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (!(x.Value == y.Value));
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (!(x.Value == y.Value));
 		}
 
 		public static SqlBoolean operator < (SqlInt64 x, SqlInt64 y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value < y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value < y.Value);
 		}
 
 		public static SqlBoolean operator <= (SqlInt64 x, SqlInt64 y)
 		{
-			if (x.IsNull || y.IsNull) return SqlBoolean.Null;
-			return new SqlBoolean (x.Value <= y.Value);
+			if (x.IsNull || y.IsNull) 
+				return SqlBoolean.Null;
+			else
+				return new SqlBoolean (x.Value <= y.Value);
 		}
 
 		public static SqlInt64 operator % (SqlInt64 x, SqlInt64 y)
@@ -340,12 +357,12 @@ namespace System.Data.SqlTypes
 			throw new NotImplementedException ();
 		}
 
-		public static explicit operator SqlInt64 (long x)
+		public static implicit operator SqlInt64 (long x)
 		{
 			return new SqlInt64 (x);
 		}
 
-		public static explicit operator SqlInt64 (SqlByte x)
+		public static implicit operator SqlInt64 (SqlByte x)
 		{
 			if (x.IsNull) 
 				return SqlInt64.Null;
@@ -353,7 +370,7 @@ namespace System.Data.SqlTypes
 				return new SqlInt64 ((long)x.Value);
 		}
 
-		public static explicit operator SqlInt64 (SqlInt16 x)
+		public static implicit operator SqlInt64 (SqlInt16 x)
 		{
 			if (x.IsNull) 
 				return SqlInt64.Null;
@@ -361,7 +378,7 @@ namespace System.Data.SqlTypes
 				return new SqlInt64 ((long)x.Value);
 		}
 
-		public static explicit operator SqlInt64 (SqlInt32 x)
+		public static implicit operator SqlInt64 (SqlInt32 x)
 		{
 			if (x.IsNull) 
 				return SqlInt64.Null;

@@ -23,7 +23,7 @@ namespace System.Data.SqlTypes
 	{
 		#region Fields
 
-		private int value;
+		int value;
 
 		public static readonly SqlInt32 MaxValue = new SqlInt32 (2147483647);
 		public static readonly SqlInt32 MinValue = new SqlInt32 (-2147483648);
@@ -44,7 +44,7 @@ namespace System.Data.SqlTypes
 		#region Properties
 
 		public bool IsNull {
-			get { return (bool) (this == SqlInt32.Null); }
+			get { return (bool) (this == Null); }
 		}
 
 		public int Value {
@@ -193,6 +193,12 @@ namespace System.Data.SqlTypes
 		}
 
 		[MonoTODO]
+		public SqlString ToSqlString ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		public override string ToString() 
 		{
 			throw new NotImplementedException ();	
@@ -322,11 +328,10 @@ namespace System.Data.SqlTypes
 		}
 
 		// Type Conversions
-
 		public static explicit operator SqlInt32 (SqlBoolean x) 
 		{
 			if (x.IsNull) 
-				return SqlInt32.Null;
+				return Null;
 			else 
 				return new SqlInt32 ((int)x.ByteValue);
 		}
@@ -334,7 +339,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlInt32 (SqlDecimal x) 
 		{
 			if (x.IsNull) 
-				return SqlInt32.Null;
+				return Null;
 			else 
 				return new SqlInt32 ((int)x.Value);
 		}
@@ -342,7 +347,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlInt32 (SqlDouble x) 
 		{
 			if (x.IsNull) 
-				return SqlInt32.Null;
+				return Null;
 			else 
 				return new SqlInt32 ((int)x.Value);
 		}
@@ -355,7 +360,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlInt32 (SqlInt64 x) 
 		{
 			if (x.IsNull) 
-				return SqlInt32.Null;
+				return Null;
 			else 
 				return new SqlInt32 ((int)x.Value);
 		}
@@ -363,7 +368,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlInt32(SqlMoney x) 
 		{
 			if (x.IsNull) 
-				return SqlInt32.Null;
+				return Null;
 			else 
 				return new SqlInt32 ((int)x.Value);
 		}
@@ -371,7 +376,7 @@ namespace System.Data.SqlTypes
 		public static explicit operator SqlInt32(SqlSingle x) 
 		{
 			if (x.IsNull) 
-				return SqlInt32.Null;
+				return Null;
 			else 
 				return new SqlInt32 ((int)x.Value);
 		}
@@ -390,7 +395,7 @@ namespace System.Data.SqlTypes
 		public static implicit operator SqlInt32(SqlByte x) 
 		{
 			if (x.IsNull) 
-				return SqlInt32.Null;
+				return Null;
 			else 
 				return new SqlInt32 ((int)x.Value);
 		}
@@ -398,7 +403,7 @@ namespace System.Data.SqlTypes
 		public static implicit operator SqlInt32(SqlInt16 x) 
 		{
 			if (x.IsNull) 
-				return SqlInt32.Null;
+				return Null;
 			else 
 				return new SqlInt32 ((int)x.Value);
 		}

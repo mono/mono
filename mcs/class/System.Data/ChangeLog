@@ -1,3 +1,23 @@
+2002-05-05  Tim Coleman <tim@timcoleman.com>
+	* System.Data.SqlTypes/SqlBinary.cs:
+	* System.Data.SqlTypes/SqlBoolean.cs:
+	* System.Data.SqlTypes/SqlByte.cs:
+	* System.Data.SqlTypes/SqlDateTime.cs:
+	* System.Data.SqlTypes/SqlDecimal.cs:
+	* System.Data.SqlTypes/SqlDouble.cs:
+	* System.Data.SqlTypes/SqlGuid.cs:
+	* System.Data.SqlTypes/SqlInt16.cs:
+	* System.Data.SqlTypes/SqlInt32.cs:
+	* System.Data.SqlTypes/SqlInt64.cs:
+	* System.Data.SqlTypes/SqlMoney.cs:
+	* System.Data.SqlTypes/SqlSingle.cs:
+	* System.Data.SqlTypes/SqlString.cs:
+		More implementation, and code clean-up for consistency.
+		Also, I had implemented many conversions as explicit
+		that should have been implicit.  This should remove
+		many of the red X's and green pluses from the 
+		System.Data.SqlTypes namespace.
+
 2002-05-05  Miguel de Icaza  <miguel@ximian.com>
 
 	* System.Data/DataSet.cs: Remove [Serializable] attributes from
