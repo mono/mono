@@ -1,3 +1,7 @@
+2005-03-17 Miguel de Icaza <miguel@novell.com>
+
+	* io.c: don't fail on NFS when there are no more locks available.
+
 2005-03-09  Dick Porter  <dick@ximian.com>
 
 	* error.c (_wapi_get_win32_file_error): ENFILE and EMFILE should
