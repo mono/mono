@@ -1,3 +1,7 @@
+2004-08-18 Umadevi S <sumadevi@novell.com>
+	* DataViewTest.cs : Revamped to get Event handling tested
+	Thanks to Punit Todi for his contribution towards the test cases
+
 2004-06-23 Umadevi S <sumadevi@novell.com>
 	* DataTableTest.cs :Corrected Testcases to .net 1.1 specifications
 
