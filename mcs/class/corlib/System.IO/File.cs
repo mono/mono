@@ -69,36 +69,38 @@ namespace System.IO
 		public static void Copy (string src, string dest, bool overwrite)
 		{	
 			if (src == null)
-				throw new ArgumentNullException ("src");
+				throw new ArgumentNullException (Locale.GetText ("src is null"));
 			if (dest == null)
-				throw new ArgumentNullException ("dest");
+				throw new ArgumentNullException (Locale.GetText ("dest is null"));
 			if (src.Trim () == "" || src.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException ("src");
+				throw new ArgumentException (Locale.GetText ("src is null"));
 			if (dest.Trim () == "" || dest.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException ("dest");
+				throw new ArgumentException (Locale.GetText ("dest is empty or contains invalid characters"));
 			if (!Exists (src))
-				throw new FileNotFoundException (src + " does not exist", src);
+				throw new FileNotFoundException (Locale.GetText ("{0} does not exist", src), src);
 
 			if ((GetAttributes(src) & FileAttributes.Directory) == FileAttributes.Directory){
-				throw new ArgumentException(src + " is a directory");
+				throw new ArgumentException(Locale.GetText ("{0} is a directory", src));
 			}
 			
 			if (Exists (dest)) {
 				if ((GetAttributes(dest) & FileAttributes.Directory) == FileAttributes.Directory){
-					throw new ArgumentException(dest + " is a directory");	
+					throw new ArgumentException (Locale.GetText ("{0} is a directory", dest));
 				}
 				if (!overwrite)
-					throw new IOException (dest + " already exists");
+					throw new IOException (Locale.GetText ("{0} already exists", dest));
 			}
 
 			string DirName = Path.GetDirectoryName(dest);
 			if (DirName != String.Empty && !Directory.Exists (DirName))
-				throw new DirectoryNotFoundException("Destination directory not found: " + DirName);
+				throw new DirectoryNotFoundException (Locale.GetText ("Destination directory not found: {0}",DirName));
 
 			MonoIOError error;
 			
-			if (!MonoIO.CopyFile (src, dest, overwrite, out error))
-				throw MonoIO.GetException (error);
+			if (!MonoIO.CopyFile (src, dest, overwrite, out error)){
+				string p = Locale.GetText ("{0}\" or \"{1}", src, dest);
+				throw MonoIO.GetException (p, error);
+			}
 		}
 
 		public static FileStream Create (string path)
@@ -109,16 +111,16 @@ namespace System.IO
 		public static FileStream Create (string path, int buffersize)
 		{
 			if (null == path)
-				throw new ArgumentNullException("path");
+				throw new ArgumentNullException ("path");
 			if (String.Empty == path.Trim() || path.IndexOfAny(Path.InvalidPathChars) >= 0)
-				throw new ArgumentException("path");
+				throw new ArgumentException (Locale.GetText ("path is invalid"));
 
 			string DirName = Path.GetDirectoryName(path);
 			if (DirName != String.Empty && !Directory.Exists (DirName))
-				throw new DirectoryNotFoundException("Destination directory not found: " + DirName);
+				throw new DirectoryNotFoundException (Locale.GetText ("Destination directory not found: {0}", DirName));
 			if (Exists(path)){
 				if ((GetAttributes(path) & FileAttributes.ReadOnly) == FileAttributes.ReadOnly){
-					throw new UnauthorizedAccessException(path + " is a read-only");	
+					throw new UnauthorizedAccessException (Locale.GetText ("{0} is read-only", path));
 				}
 			}
 
@@ -142,11 +144,11 @@ namespace System.IO
 			if (String.Empty == path.Trim() || path.IndexOfAny(Path.InvalidPathChars) >= 0)
 				throw new ArgumentException("path");
 			if (Directory.Exists (path))
-				throw new UnauthorizedAccessException("path is a directory");
+				throw new UnauthorizedAccessException(Locale.GetText ("{0} is a directory", path));
 
 			string DirName = Path.GetDirectoryName(path);
 			if (DirName != String.Empty && !Directory.Exists (DirName))
-				throw new DirectoryNotFoundException("Destination directory not found: " + DirName);
+				throw new DirectoryNotFoundException (Locale.GetText ("Destination directory not found: {0}", DirName));
 
 			MonoIOError error;
 			
@@ -189,11 +191,11 @@ namespace System.IO
 			}
 			
 			if (String.Empty == path.Trim()) {
-				throw new ArgumentException("Path is empty");
+				throw new ArgumentException (Locale.GetText ("Path is empty"));
 			}
 
 			if (path.IndexOfAny(Path.InvalidPathChars) >= 0) {
-				throw new ArgumentException("Path contains invalid chars");
+				throw new ArgumentException(Locale.GetText ("Path contains invalid chars"));
 			}
 
 			MonoIOError error;
@@ -268,19 +270,19 @@ namespace System.IO
 			if (dest.Trim () == "" || dest.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ("dest");
 			if (!MonoIO.Exists (src, out error))
-				throw new FileNotFoundException (src + " does not exist", src);
+				throw new FileNotFoundException (Locale.GetText ("{0} does not exist", src), src);
 			if (MonoIO.ExistsDirectory (dest, out error))
-					throw new IOException (dest + " is a directory");	
+					throw new IOException (Locale.GetText ("{0} is a directory", dest));	
 			if (MonoIO.Exists (dest, out error))
-				throw new IOException (dest + " already exists");
+				throw new IOException (Locale.GetText ("{0} already exists", dest));
 
 			string DirName;
 			DirName = Path.GetDirectoryName(src);
 			if (DirName != String.Empty && !Directory.Exists (DirName))
-				throw new DirectoryNotFoundException("Source directory not found: " + DirName);
+				throw new DirectoryNotFoundException(Locale.GetText ("Source directory not found: {0}", DirName));
 			DirName = Path.GetDirectoryName(dest);
 			if (DirName != String.Empty && !Directory.Exists (DirName))
-				throw new DirectoryNotFoundException("Destination directory not found: " + DirName);
+				throw new DirectoryNotFoundException(Locale.GetText ("Destination directory not found: {0}", DirName));
 
 			if (!MonoIO.MoveFile (src, dest, out error))
 				throw MonoIO.GetException (error);
@@ -389,13 +391,13 @@ namespace System.IO
 		private static void CheckPathExceptions (string path)
 		{
 			if (path == null)
-				throw new System.ArgumentNullException("Path is Null");
+				throw new System.ArgumentNullException("path");
 			if (path == "")
-				throw new System.ArgumentException("Path is Empty");
+				throw new System.ArgumentException(Locale.GetText ("Path is empty"));
 			if (path.Trim().Length == 0)
-				throw new ArgumentException ("Only blank characters in path");
+				throw new ArgumentException (Locale.GetText ("Path is empty"));
 			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException ("Path contains invalid chars");
+				throw new ArgumentException (Locale.GetText ("Path contains invalid chars"));
 		}
 
 		#endregion

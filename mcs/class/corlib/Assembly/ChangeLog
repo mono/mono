@@ -1,3 +1,7 @@
+2004-09-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* Locale.cs: Added overload that calls String.Format.
+
 2004-06-22  Raja R Harinath  <rharinath@novell.com>
 
 	Refine previous change to work with mcs 0.31.
