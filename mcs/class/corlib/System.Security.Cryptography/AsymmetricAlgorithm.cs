@@ -91,7 +91,7 @@ namespace System.Security.Cryptography {
 		/// Creates the default implementation of the default asymmetric algorithm (RSA).
 		/// </summary>
 		public static AsymmetricAlgorithm Create () {
-			return RSA.Create();;
+			return RSA.Create();
 		}
 	
 		/// <summary>

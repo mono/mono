@@ -14,7 +14,7 @@ namespace System.Security.Cryptography {
 	[MonoTODO]
 	public abstract class Rijndael : SymmetricAlgorithm {
 		public static new Rijndael Create () { return null; }
-		public static new Rijndael Create (string alg) { return Create (); }
+		public static new Rijndael Create (string alg) { return null; }
 		
 		public Rijndael () {
 			KeySizeValue = 256;

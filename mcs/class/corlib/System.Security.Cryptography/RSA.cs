@@ -16,7 +16,7 @@ namespace System.Security.Cryptography {
 	[MonoTODO]
 	public abstract class RSA : AsymmetricAlgorithm {
 		public static new RSA Create () { return null; }
-		public static new RSA Create (string alg) { return Create (); }
+		public static new RSA Create (string alg) { return null; }
 	
 		public RSA () { }
 

@@ -1,3 +1,11 @@
+2002-06-29  Martin Baulig  <martin@gnome.org>
+
+	* AsymmetricAlgorithm.cs: Removed a duplicate semicolon to make it compile.
+
+	* *.cs (Create (string)): Don't call the non-args version of Create(),
+	duplicate their contents here.  [FIXME: I was too lazy to hunt this bug down
+	in mcs and it was the last one which prevented us from compiling corlib.]
+
 2002-05-19  Martin Baulig  <martin@gnome.org>
 
 	* FromBase64Transform.cs (TransformFinalBlock): The return value of
