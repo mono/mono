@@ -52,6 +52,10 @@ namespace System.Runtime.Remoting.Contexts {
 			context_id = 1 + global_count++;
 		}
 
+		~Context ()
+		{
+		}
+
 		public static Context DefaultContext {
 			get {
 				return AppDomain.InternalGetDefaultContext ();

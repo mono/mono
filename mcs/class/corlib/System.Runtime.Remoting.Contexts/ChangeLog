@@ -1,3 +1,7 @@
+2004-06-09  Gert Driesen <drieseng@users.sourceforge.net>
+	
+	* Context.cs: Added finalizer to match MS.NET
+
 2003-12-23  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* SynchronizationAttribute.cs: Several bug fixes.
