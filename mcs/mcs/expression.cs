@@ -4385,7 +4385,7 @@ namespace Mono.CSharp {
 			for (int i = pd_count - 1; i < arg_count; i++) {
 				Argument a = (Argument) arguments [i];
 				
-				if (!Convert.ImplicitStandardConversionExists (a.Expr, element_type))
+				if (!Convert.ImplicitConversionExists (ec, a.Expr, element_type))
 					return false;
 			}
 			

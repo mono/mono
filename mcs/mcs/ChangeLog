@@ -17,6 +17,11 @@
 	(CheckAttribute): Rename to CheckAttributeTarget.
 	(GetValidPlaces): Rename to GetValidTargets.
 
+	* expression.cs (Invocation.IsParamsMethodApplicable): Fix trivial
+	bug - use Convert.ImplicitConversion, not ImplicitUserConversion!
+
+	Fixes bug #44468.
+
 2003-07-28  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (TypeContainer.DefineMembers): Use the base type's full
