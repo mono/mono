@@ -476,9 +476,10 @@
     		public bool ContainsFocus {
     			get {
     				if (IsHandleCreated) {
-    					IntPtr focusedWindow = Win32.GetFocus();
-    					if (focusedWindow == Handle)
-    						return true;
+						if (Focused) return true;
+						foreach (Control ctr in Controls) {
+							if (ctr.ContainsFocus) return true;
+						}
     				}
     				return false;
     			}
@@ -675,8 +676,13 @@
   			//Compact Framework
     		public virtual bool Focused {
     			get {
-    				return ContainsFocus;
-    			}
+					if (IsHandleCreated) {
+						IntPtr focusedWindow = Win32.GetFocus();
+						if (focusedWindow == Handle)
+							return true;
+					}
+					return false;
+				}
     		}
     		
   			//Compact Framework

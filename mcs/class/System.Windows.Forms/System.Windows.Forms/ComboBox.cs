@@ -229,7 +229,14 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override bool Focused {
 			get {
-				return base.Focused;
+				if (IsHandleCreated) {
+					IntPtr focusedWindow = Win32.GetFocus();
+					if (focusedWindow == Handle)
+						return true;
+					if( Win32.GetParent(focusedWindow) == Handle)
+						return true;
+				}
+				return false;
 			}
 		}
 		

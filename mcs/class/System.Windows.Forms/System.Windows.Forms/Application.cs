@@ -238,7 +238,7 @@ namespace System.Windows.Forms {
 						dispatchMessage = false;
 				}
 
-				Control receiver = Control.FromHandle ( message.HWnd );
+				Control receiver = Control.FromChildHandle ( message.HWnd );
 				if ( receiver != null ) {
 					dispatchMessage = ! receiver.PreProcessMessage ( ref message );
 				}
