@@ -1,3 +1,6 @@
+2005-01-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* reflection.c: Remove warning by adding missing include for marshal.h
 
 Tue Jan 25 18:06:00 CET 2005 Paolo Molaro <lupus@ximian.com>
 
