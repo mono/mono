@@ -2650,7 +2650,7 @@ namespace Mono.CSharp {
 	}
 	
 	/// <summary>
-	///   Implements the ternary conditiona operator (?:)
+	///   Implements the ternary conditional operator (?:)
 	/// </summary>
 	public class Conditional : Expression {
 		Expression expr, trueExpr, falseExpr;
