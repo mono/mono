@@ -1101,7 +1101,7 @@ namespace System.Windows.Forms
 					int fullpage = (listbox_info.page_size * (listbox_info.client_rect.Width / ColumnWidthInternal));
 
 					if (hscrollbar_ctrl.Enabled && listbox_info.page_size > 0)
-						hscrollbar_ctrl.Maximum  = 1 + ((Items.Count - fullpage) / listbox_info.page_size);
+						hscrollbar_ctrl.Maximum  = Math.Max (0, 1 + ((Items.Count - fullpage) / listbox_info.page_size));
 				}
 			}
 
