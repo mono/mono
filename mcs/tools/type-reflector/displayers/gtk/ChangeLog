@@ -1,4 +1,7 @@
 2002-12-31  Jonathan Pryor <jonpryor@vt.edu>
+  * GtkTypeDisplayer.cs: Remove some debugging messages.
+
+2002-12-31  Jonathan Pryor <jonpryor@vt.edu>
 	* ChangeLog: Added
 	* GtkTypeDisplayer.cs: Gtk# front-end for reflection information
 	* type-reflector.glade: Glade description for Gtk# front-end

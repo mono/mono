@@ -77,7 +77,6 @@ namespace Mono.TypeReflector
 
 		public GtkTypeDisplayer ()
 		{
-      Console.WriteLine ("GtkTypeDisplayer created");
 			if (++windows == 1)
 				Application.Init ();
 
@@ -139,7 +138,6 @@ namespace Mono.TypeReflector
 
 		public override void AddType (Type type)
 		{
-			Console.WriteLine ("Adding Type: " + type.FullName);
 			base.AddType (type);
 		}
 
@@ -151,15 +149,12 @@ namespace Mono.TypeReflector
 
 		private void ShowTypes ()
 		{
-			Console.WriteLine ("Showing Types...");
 			foreach (Assembly a in Assemblies) {
-				Console.WriteLine ("Assembly: " + a.FullName);
 				TreeIter ai;
 				store.Append (out ai);
 				store.SetValue (ai, 0, new GLib.Value (string.Format ("Assembly: {0}", a.FullName)));
 
 				foreach (string ns in Namespaces (a)) {
-					Console.WriteLine ("Namespace: " + ns);
 					TreeIter ni;
 					store.Append (out ni, ai);
 					store.SetValue (ni, 0, new GLib.Value (string.Format ("Namespace: {0}", ns)));
@@ -167,14 +162,12 @@ namespace Mono.TypeReflector
 						AddType (type, ni);
 				}
 			}
-			Console.WriteLine ("----");
 
 			mainWindow.ShowAll ();
 		}
 		
 		private void AddType (Type type, TreeIter parent)
 		{
-			Console.WriteLine ("Type: " + type.FullName);
 			TreeIter p;
 			store.Append (out p, parent);
 			// store.SetValue (p, 0, new NodeValue (CreateNode(type)));
