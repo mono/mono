@@ -6069,7 +6069,7 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Call,
 				 TypeManager.void_initializearray_array_fieldhandle);
 		}
-		
+
 		//
 		// Emits pieces of the array that can not be computed at compile
 		// time (variables and string locations).
@@ -6135,9 +6135,9 @@ namespace Mono.CSharp {
 						// If we are dealing with a struct, get the
 						// address of it, so we can store it.
 						//
-						if ((dims == 1) &&
+						if ((dims == 1) && 
 						    etype.IsSubclassOf (TypeManager.value_type) &&
-						    (!TypeManager.IsBuiltinType (etype) ||
+						    (!TypeManager.IsBuiltinOrEnum (etype) ||
 						     etype == TypeManager.decimal_type)) {
 							if (e is New){
 								New n = (New) e;
@@ -6152,7 +6152,10 @@ namespace Mono.CSharp {
 							ig.Emit (OpCodes.Ldelema, etype);
 						}
 
+						ig.Emit (OpCodes.Nop);
 						e.Emit (ec);
+						ig.Emit (OpCodes.Nop);
+						ig.Emit (OpCodes.Nop);
 
                                                 if (dims == 1)
                                                         ArrayAccess.EmitStoreOpcode (ig, array_element_type);

@@ -1,3 +1,12 @@
+2003-10-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (ArrayCreation.EmitDynamicInitializers): When
+	coping with enumerations variables, we were mistakenly processing
+	them as a regular value type instead of built-in types.  Fixes the
+	bug #48063
+
+	* typemanager.cs (IsBuiltinOrEnum): New method.
+
 2003-09-30  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-parser.jay: Upgrade: yield now needs the return clause.

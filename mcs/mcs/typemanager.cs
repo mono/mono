@@ -1321,6 +1321,16 @@ public class TypeManager {
 		else
 			return false;
 	}
+	public static bool IsBuiltinOrEnum (Type t)
+	{
+		if (IsBuiltinType (t))
+			return true;
+		
+		if (IsEnumType (t))
+			return true;
+
+		return false;
+	}
 
 	//
 	// Whether a type is unmanaged.  This is used by the unsafe code (25.2)
