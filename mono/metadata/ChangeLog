@@ -1,6 +1,10 @@
 2002-07-12  Dietmar Maurer  <dietmar@ximian.com>
 
+	* debug-helpers.c (mono_method_full_name): print the type of the
+	runtime wrapper
+
 	* metadata.c (mono_signature_hash): a hash function for signatures
+	(mono_signature_hash): better hash algorithm
 
 	* marshal.c (mono_marshal_get_delegate_invoke): cache methods by signature
 
