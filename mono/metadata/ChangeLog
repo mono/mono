@@ -1,3 +1,10 @@
+
+Mon Jun 21 16:04:43 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c, icall.c, object.c, image.c: fix the runtime_invoke ()
+	code that was broken since Ben's change: wrappers are now
+	dependent on the method signature only again.
+
 2004-06-21  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug-debugger.c (write_class): Cleaned this up a bit and
@@ -10794,3 +10801,4 @@ Tue Jul  3 18:33:32 CEST 2001 Paolo Molaro <lupus@ximian.com>
 	Beta2. 
 
 	* mono/metadata/assembly.c (load_metadata_ptrs): Fix for Beta2
+
