@@ -151,9 +151,8 @@ namespace System.Runtime.Remoting.Messaging {
 			get { return _args; }
 		}
 		
-		[MonoTODO]
 		public bool HasVarArgs {
-			get { throw new NotImplementedException (); }
+			get { return (MethodBase.CallingConvention | CallingConventions.VarArgs) != 0; }
 		}
 
 		public int InArgCount 

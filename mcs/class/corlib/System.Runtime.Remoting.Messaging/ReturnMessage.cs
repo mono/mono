@@ -78,7 +78,7 @@ namespace System.Runtime.Remoting.Messaging {
 		
 		public bool HasVarArgs {
 			get {
-				return false;	//todo: complete
+				return (MethodBase.CallingConvention | CallingConventions.VarArgs) != 0;
 			}
 		}
 
