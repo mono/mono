@@ -28,7 +28,8 @@ namespace System.Data.Odbc
 		ParameterDirection direction;
 		OdbcType odbcType;
 		DbType dbType;
-
+		OdbcParameterCollection container = null;	
+		
 		// Buffers for parameter value based on type. Currently I've only optimized 
 		// for int parameters and everything else is just converted to a string.
 		private bool bufferIsSet;
@@ -90,6 +91,13 @@ namespace System.Data.Odbc
 		#endregion
 
 		#region Properties
+
+		// Used to ensure that only one collection can contain this
+                // parameter
+                internal OdbcParameterCollection Container {
+                        get { return container; }
+                        set { container = value; }
+                }
 
 		public DbType DbType {
 			get { return dbType; }
