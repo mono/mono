@@ -1,3 +1,12 @@
+2005-03-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* icall1.cs: Fixed test to work on NET_2_0. We're now accepting the
+	2.0 behaviour when dealing with icalls (as we do not keep their
+	pblic status in the runtime).
+	* icall2.cs: Fixed test to work on NET_2_0 as the icall has changed
+	it's return value from bool to void. 
+	* Makefile: Allow to build the tests with either NET_1_1 or NET_2_0.
+
 2005-03-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* cas4-5.cs: Removed. Replaced by new refcas#.cs tests.

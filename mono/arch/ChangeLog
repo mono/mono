@@ -1,3 +1,14 @@
+2005-03-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* amd64/amd64-codegen.h (amd64_emit_rex): Emit a rex when accessing the
+	byte registers.
+	
+	* amd64/amd64-codegen.h (AMD64_BYTE_REGS): Add AMD64_BYTE_REGS macro.
+
+2005-03-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* amd64/amd64-codegen.h: Add missing AMD64_XMM7.
+
 2005-03-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* amd64/amd64-codegen.h: Remove some unneccesary REXes.

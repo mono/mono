@@ -1,3 +1,21 @@
+2005-03-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c: Rework local register allocator to unify the fp+non fp
+	allocation. Also add handling for more corner cases.
+
+	* mini.c linear-scan.c: Promote local variables which are local to
+	a basic block to virtual registers.
+	
+	* mini-amd64.c (mono_arch_setup_jit_tls_data): Enable 
+	thread_tls_offset calculation.
+
+2005-03-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* declsec.c: Reworked linkdemand checks for icall. The previous code
+	was using the declaration code (untrusted) and didn't work as expected
+	with the CLR 2.0. We're now more compatible with 2.0 than 1.x for this
+	specific case.
+
 2005-03-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* iltests.il: Add new localloc test.

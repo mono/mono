@@ -16,8 +16,9 @@
 #	b  base register (used in address references)
 #	f  floating point register
 #	a  EAX register
-#       d  EDX register
+#   d  EDX register
 #	l  long reg (forced eax:edx)
+#   c  register which can be used as a byte register (RAX..RDX)
 #
 # len:number         describe the maximun length in bytes of the instruction
 # 		     number is a positive integer.  If the length is not specified
@@ -204,11 +205,11 @@ prefix2:
 prefix1:
 prefixref:
 arglist:
-ceq: dest:i len:8
-cgt: dest:i len:8
-cgt.un: dest:i len:8
-clt: dest:i len:8
-clt.un: dest:i len:8
+ceq: dest:c len:8
+cgt: dest:c len:8
+cgt.un: dest:c len:8
+clt: dest:c len:8
+clt.un: dest:c len:8
 ldftn:
 ldvirtftn:
 ldarg:
@@ -262,9 +263,9 @@ voidcall_membase: src1:b clob:c len:64
 fcall: dest:f len:64 clob:c
 fcall_reg: dest:f src1:i len:64 clob:c
 fcall_membase: dest:f src1:b len:64 clob:c
-lcall: dest:i len:64 clob:c
-lcall_reg: dest:i src1:i len:64 clob:c
-lcall_membase: dest:i src1:b len:64 clob:c
+lcall: dest:a len:64 clob:c
+lcall_reg: dest:a src1:i len:64 clob:c
+lcall_membase: dest:a src1:b len:64 clob:c
 vcall: len:64 clob:c
 vcall_reg: src1:i len:64 clob:c
 vcall_membase: src1:b len:64 clob:c
@@ -283,7 +284,7 @@ store_membase_imm: dest:b len:15
 store_membase_reg: dest:b src1:i len:9
 storei8_membase_reg: dest:b src1:i len:9
 storei1_membase_imm: dest:b len:11
-storei1_membase_reg: dest:b src1:i len:9
+storei1_membase_reg: dest:b src1:c len:9
 storei2_membase_imm: dest:b len:13
 storei2_membase_reg: dest:b src1:i len:9
 storei4_membase_imm: dest:b len:13
@@ -292,8 +293,8 @@ storei8_membase_imm: dest:b len:18
 storer4_membase_reg: dest:b src1:f len:14
 storer8_membase_reg: dest:b src1:f len:9
 load_membase: dest:i src1:b len:15
-loadi1_membase: dest:i src1:b len:9
-loadu1_membase: dest:i src1:b len:9
+loadi1_membase: dest:c src1:b len:9
+loadu1_membase: dest:c src1:b len:9
 loadi2_membase: dest:i src1:b len:9
 loadu2_membase: dest:i src1:b len:9
 loadi4_membase: dest:i src1:b len:9
@@ -575,11 +576,11 @@ int_shr_imm: dest:i src1:i clob:1 len:64
 int_shr_un_imm: dest:i src1:i clob:1 len:64
 int_neg: dest:i src1:i clob:1 len:64
 int_not: dest:i src1:i clob:1 len:64
-int_ceq: dest:i len:64
-int_cgt: dest:i len:64
-int_cgt_un: dest:i len:64
-int_clt: dest:i len:64
-int_clt_un: dest:i len:64
+int_ceq: dest:c len:64
+int_cgt: dest:c len:64
+int_cgt_un: dest:c len:64
+int_clt: dest:c len:64
+int_clt_un: dest:c len:64
 int_beq: len:64
 int_bne_un: len:64
 int_blt: len:64
