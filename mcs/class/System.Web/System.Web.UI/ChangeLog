@@ -1,3 +1,8 @@
+2003-11-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs: patch by Alon Gazit <along@mainsoft.com> to remove extra
+	space in generated javascript.
+
 2003-11-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* LosFormatter.cs: encoding updates. 

@@ -379,7 +379,7 @@ public class Page : TemplateControl, IHttpHandler
 	public string GetPostBackEventReference (Control control, string argument)
 	{
 		RequiresPostBackScript ();
-		return String.Format ("__doPostBack ('{0}', '{1}')", control.UniqueID, argument);
+		return String.Format ("__doPostBack ('{0}','{1}')", control.UniqueID, argument);
 	}
 
 	internal void RequiresPostBackScript ()
