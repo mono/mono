@@ -167,6 +167,16 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "MdiToolBar.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "MdiToolBar.resx"
+                    DependentUpon = "MdiToolBar.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "ProjectOptionsForm.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
@@ -174,6 +184,16 @@
                 <File
                     RelPath = "ProjectOptionsForm.resx"
                     DependentUpon = "ProjectOptionsForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "TestingForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "TestingForm.resx"
+                    DependentUpon = "TestingForm.cs"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
