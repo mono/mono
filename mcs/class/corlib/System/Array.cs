@@ -1,4 +1,4 @@
-//
+
 // System.Array.cs
 //
 // Authors:
@@ -48,7 +48,7 @@ namespace System
 		}
 
 		// IList interface
-		public object this [int index] {
+		object IList.this [int index] {
 			get {
 				return GetValueImpl (index);
 			} 
@@ -140,7 +140,7 @@ namespace System
 		internal extern static Array CreateInstanceImpl(Type elementType, int[] lengths, int [] bounds);
 
 		// Properties
-		public virtual int Count {
+		int ICollection.Count {
 			get {
 				return Length;
 			}

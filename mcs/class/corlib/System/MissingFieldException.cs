@@ -42,11 +42,5 @@ namespace System
 			: base (className, fieldName)
 		{
 		}
-
-		// Properties
-
-		public override string Message {
-			get { return Locale.GetText (msg); }
-		}
 	}
 }

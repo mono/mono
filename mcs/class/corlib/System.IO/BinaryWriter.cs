@@ -48,12 +48,20 @@ namespace System.IO {
 		}
 
 		public virtual void Close() {
-			Dispose();
+			Dispose (true);
 		}
 
-		public virtual void Dispose() {
-			OutStream.Close();
-			OutStream.Dispose();			
+		void IDisposable.Dispose() {
+			Dispose (true);
+		}
+
+		protected virtual void Dispose (bool disposing)
+		{
+			if (disposing)
+			{
+				OutStream.Close();
+				//OutStream.Dispose();			
+			}
 		}
 
 		public virtual void Flush() {

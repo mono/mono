@@ -42,21 +42,21 @@ namespace System.Security.Permissions {
 		/// </summary>
 		ControlThread = 0x00000010,
 
-		ControlAppDomain = 0x00000020,
+		ControlEvidence = 0x00000020,
 
-		ControlDomainPolicy = 0x00000040,
+		ControlPolicy = 0x00000040,
 
-		ControlEvidence = 0x00000080,
+		SerializationFormatter = 0x00000080,
 
-		ControlPolicy = 0x00000100,
+		ControlDomainPolicy = 0x00000100,
 
 		ControlPrincipal = 0x00000200,
 
-		Infrastructure = 0x00000400,
+		ControlAppDomain = 0x00000400,
 
 		RemotingConfiguration = 0x00000800,
 
-		SerializationFormatter = 0x00001000,
+		Infrastructure = 0x00001000,
 
 		/// <summary>
 		/// </summary>

@@ -444,8 +444,7 @@ namespace System
 
 		// Internal Methods		
 
-		// note: in the docs this is protected
-		internal static string EscapeString (string str) 
+		protected static string EscapeString (string str) 
 		{
 			return EscapeString (str, false, true, true);
 		}
@@ -481,7 +480,7 @@ namespace System
 			return s.ToString ();
 		}		
 		
-		internal static string Unescape (string str) 
+		protected virtual string Unescape (string str) 
 		{
 			if (str == null)
 				return String.Empty;

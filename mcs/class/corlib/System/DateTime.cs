@@ -1365,17 +1365,17 @@ namespace System
 			return new DateTime (true, d.ticks - t);
 		}
 
-		public bool ToBoolean(IFormatProvider provider)
+		bool IConvertible.ToBoolean(IFormatProvider provider)
 		{
 			throw new InvalidCastException();
 		}
 		
-		public byte ToByte(IFormatProvider provider)
+		byte IConvertible.ToByte(IFormatProvider provider)
 		{
 			throw new InvalidCastException();
 		}
 
-		public char ToChar(IFormatProvider provider)
+		char IConvertible.ToChar(IFormatProvider provider)
 		{
 			throw new InvalidCastException();
 		}
@@ -1387,60 +1387,60 @@ namespace System
 			return new System.DateTime(true,this.ticks);
 		} 
 		
-		public decimal ToDecimal(IFormatProvider provider)
+		decimal IConvertible.ToDecimal(IFormatProvider provider)
 		{
 			 throw new InvalidCastException();
 		}
 
-		public double ToDouble(IFormatProvider provider)
+		double IConvertible.ToDouble(IFormatProvider provider)
 		{
 			throw new InvalidCastException();
 		}
 
-		public Int16 ToInt16(IFormatProvider provider)
+		Int16 IConvertible.ToInt16(IFormatProvider provider)
 		{
 			throw new InvalidCastException();
 		}
 
-		public Int32 ToInt32(IFormatProvider provider)
+		Int32 IConvertible.ToInt32(IFormatProvider provider)
 		{
 			throw new InvalidCastException();
 		}
 
-		public Int64 ToInt64(IFormatProvider provider)
+		Int64 IConvertible.ToInt64(IFormatProvider provider)
 		{
 			throw new InvalidCastException();
 		}
 
 		[CLSCompliant(false)]
-		public SByte ToSByte(IFormatProvider provider)
+		SByte IConvertible.ToSByte(IFormatProvider provider)
 		{
 			throw new InvalidCastException();
 		}
 
-		public Single ToSingle(IFormatProvider provider)
+		Single IConvertible.ToSingle(IFormatProvider provider)
 		{
 			throw new InvalidCastException();
 		}
 
-		public object ToType(Type conversionType,IFormatProvider provider)
+		object IConvertible.ToType(Type conversionType,IFormatProvider provider)
 		{
 			throw new InvalidCastException();
 		}
 
-		UInt16 System.IConvertible.ToUInt16(IFormatProvider provider)
+		UInt16 IConvertible.ToUInt16(IFormatProvider provider)
 		{
 			throw new InvalidCastException();
 		}
 		
 		[CLSCompliant(false)]
-		public UInt32 ToUInt32(IFormatProvider provider)
+		UInt32 IConvertible.ToUInt32(IFormatProvider provider)
 		{
 			throw new InvalidCastException();
 		}
 
 		[CLSCompliant(false)]
-		public UInt64 ToUInt64(IFormatProvider provider)
+		UInt64 IConvertible.ToUInt64(IFormatProvider provider)
 		{
 			throw new InvalidCastException();
 		}

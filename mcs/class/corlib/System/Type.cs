@@ -33,6 +33,10 @@ namespace System {
 		public static readonly MemberFilter FilterNameIgnoreCase = new MemberFilter (FilterNameIgnoreCase_impl);
 		public static readonly object Missing;
 
+		private Type _typeEnum = typeof (System.Enum);
+		private Type _typeObject = typeof (System.Object);
+		private Type _typeValueType = typeof (System.ValueType);
+
 		private const BindingFlags DefaultBindingFlags = BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
 
 		/* implementation of the delegates for MemberFilter */
@@ -157,11 +161,9 @@ namespace System {
 
 		public bool IsClass {
 			get {
-				if (this == typeof (System.Enum) || this == typeof (System.ValueType))
-					return true;
-				if (IsInterface)
-					return false;
-				return !type_is_subtype_of (this, typeof (System.ValueType), false);
+				if ((Attributes & TypeAttributes.ClassSemanticsMask) == TypeAttributes.Class)
+					return IsSubclassOf (_typeValueType);
+				return false;
 			}
 		}
 
@@ -179,8 +181,7 @@ namespace System {
 
 		public bool IsEnum {
 			get {
-				return type_is_subtype_of (this, typeof (System.Enum), false) &&
-					this != typeof (System.Enum);
+				return this != _typeEnum && IsSubclassOf (_typeEnum);
 			}
 		}
 
@@ -477,6 +478,19 @@ namespace System {
 		
 		public virtual bool IsSubclassOf (Type c)
 		{
+			/*
+			if (this != c)
+			{
+				Type tmp = this;
+				while (tmp != null)
+				{
+					if (tmp == c)
+						return true;
+					tmp = tmp.BaseType;
+				}
+			}
+			return false;
+			*/
 			return type_is_subtype_of (this, c, false);
 		}
 
@@ -701,7 +715,12 @@ namespace System {
 		}
 		protected abstract bool IsPointerImpl ();
 		protected abstract bool IsPrimitiveImpl ();
-		protected abstract bool IsValueTypeImpl ();
+		protected virtual bool IsValueTypeImpl ()
+		{
+			if (this == _typeValueType || this == _typeEnum)
+				return true;
+			return IsSubclassOf (_typeValueType);
+		}
 		
 		[MonoTODO]
 		public ConstructorInfo GetConstructor (Type[] types)

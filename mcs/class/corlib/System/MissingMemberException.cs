@@ -18,19 +18,20 @@ namespace System {
 		protected string ClassName;
 		protected string MemberName;
 		protected byte[] Signature;
-		protected string msg;		   
 
-		// Constructors
 		public MissingMemberException ()
 			: base (Locale.GetText ("A missing member exception has occurred."))
 		{
-			msg = Locale.GetText ("A missing member exception has occured.");
 		}
 
 		public MissingMemberException (string message)
 			: base (message)
 		{
-			msg = message;
+		}
+
+		public MissingMemberException (string message, Exception inner)
+			: base (message, inner)
+		{
 		}
 
 		protected MissingMemberException (SerializationInfo info, StreamingContext context)
@@ -41,21 +42,10 @@ namespace System {
 			Signature = (byte[]) info.GetValue ("MMSignature", Signature.GetType ());
 		}
 		
-		public MissingMemberException (string message, Exception inner)
-			: base (message, inner)
-		{
-			msg = message;
-		}
-
 		public MissingMemberException (string className, string memberName)
 		{
 			ClassName = className;
 			MemberName = memberName;
-		}
-
-		// Properties
-		public override string Message {
-			   get { return msg; }
 		}
 
 		// Methods

@@ -12,34 +12,6 @@
 
 namespace System.Security.Permissions {
 
-
-	[MonoTODO ("These values are WRONG!!!, and incomplete")]
-	/// <summary>
-	/// </summary>
-	public enum IsolatedStorageContainment {
-
-		/// <summary>
-		/// </summary>
-		None = 0,
-
-		/// <summary>
-		/// </summary>
-		DomainIsolationByUser = 1,
-
-		/// <summary>
-		/// </summary>
-		AssemblyIsolationByUser = 2,
-
-		/// <summary>
-		/// </summary>
-		AdministerIsolatedStorageByUser = 5,
-
-		/// <summary>
-		/// </summary>
-		UnrestrictedIsolatedStorage = 7,
-	} // IsolatedStorageContainment
-
-/* here are the correct ones (from msdn)
 	[Serializable]
 	public enum IsolatedStorageContainment
 	{
@@ -51,6 +23,5 @@ namespace System.Security.Permissions {
 		AdministerIsolatedStorageByUser = 0x70,
 		UnrestrictedIsolatedStorage = 0xF0,
 	};
-*/
 
 } // System.Security.Permissions

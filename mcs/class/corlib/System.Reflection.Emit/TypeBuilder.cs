@@ -115,9 +115,11 @@ namespace System.Reflection.Emit {
 			get {return packing_size;}
 		}
 		public override Type ReflectedType {get {return parent;}}
+/* no need to override
 		public override MemberTypes MemberType { 
 			get {return MemberTypes.TypeInfo;}
 		}
+*/
 
 		[MonoTODO]
 		public void AddDeclarativeSecurity( SecurityAction action, PermissionSet pset) {
@@ -531,10 +533,6 @@ namespace System.Reflection.Emit {
 		protected override bool IsPrimitiveImpl () {
 			// FIXME
 			return false;
-		}
-		protected override bool IsValueTypeImpl () {
-			// test this one
-			return type_is_subtype_of (this, typeof (System.ValueType), false);
 		}
 		
 		public override RuntimeTypeHandle TypeHandle { get { return _impl; } }

@@ -13,7 +13,7 @@ using System.Reflection;
 
 namespace System.Runtime.Remoting.Messaging {
 
-	internal class ReturnMessage : IMethodReturnMessage, IMethodMessage {
+	public class ReturnMessage : IMethodReturnMessage, IMethodMessage {
 
 		MonoMethodMessage msg;
 		IMethodCallMessage request;

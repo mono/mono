@@ -10,7 +10,7 @@
 using System.Collections.Specialized;
 
 namespace System.Diagnostics {
-	public class ProcessStartInfo {
+	public sealed class ProcessStartInfo {
 		[MonoTODO]
 		public ProcessStartInfo() {
 		}

@@ -33,7 +33,7 @@ namespace System.IO {
 		private Stream internalStream;
 
 		[MonoTODO("Make Read methods return 0, etc.")]
-		internal class NullStreamReader : StreamReader {
+		private class NullStreamReader : StreamReader {
 		}
 
 		public new static readonly StreamReader Null = (StreamReader)(new NullStreamReader());

@@ -9,19 +9,29 @@ namespace System.Reflection
 {
 	public class ManifestResourceInfo
 	{
+		private Assembly _assembly;
+		private string _filename;
+		private ResourceLocation _location;
+
+		internal ManifestResourceInfo (Assembly assembly, string filename, ResourceLocation location)
+		{
+			_assembly = assembly;
+			_filename = filename;
+			_location = location;
+		}
 		[MonoTODO]
 		public virtual string FileName {
-			get { return null; }
+			get { return _filename; }
 		}
 
 		[MonoTODO]
 		public virtual Assembly ReferencedAssembly {
-			get { return null; }
+			get { return _assembly; }
 		}
 
 		[MonoTODO]
 		public virtual ResourceLocation ResourceLocation {
-			get { return 0; }
+			get { return _location; }
 		}
 	}
 }

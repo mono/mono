@@ -28,24 +28,24 @@ namespace System
 		public enum SpecialFolder
 		{	// TODO: Determine if these windoze style folder identifiers 
 			//       have unix/linux counterparts
-			ApplicationData,
-			CommonApplicationData,
-			CommonProgramFiles,
-			Cookies,
-			DesktopDirectory,
-			Favorites,
-			History,
-			InternetCache,
-			LocalApplicationData,
-			Personal,
-			ProgramFiles,
-			Programs,
-			Recent,
-			SendTo,
-			StartMenu,
-			Startup,
-			System,
-			Templates
+			Programs = 0x02,
+			Personal = 0x05,
+			Favorites = 0x06,
+			Startup = 0x07,
+			Recent = 0x08,
+			SendTo = 0x09,
+			StartMenu = 0x0b,
+			DesktopDirectory = 0x10,
+			Templates = 0x15,
+			ApplicationData	= 0x1a,
+			LocalApplicationData = 0x1c,
+			InternetCache = 0x20,
+			Cookies = 0x21,
+			History = 0x22,
+			CommonApplicationData	= 0x23,
+			System = 0x25,
+			ProgramFiles = 0x26,
+			CommonProgramFiles = 0x2b,
 		}
 
 		// TODO: Make sure the security attributes do what I expect

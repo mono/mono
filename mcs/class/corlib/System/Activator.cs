@@ -17,6 +17,8 @@ namespace System
 	// FIXME: This class is just stubs to get System.dll to compile
 	public sealed class Activator
 	{
+		private Activator () {}
+
 		[MonoTODO]
 		public static ObjectHandle CreateComInstanceFrom(string assemblyName, 
 			string typeName) { 

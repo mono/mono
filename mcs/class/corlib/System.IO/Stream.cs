@@ -58,8 +58,9 @@ namespace System.IO
 			Flush ();
 		}
 
-		public virtual void Dispose ()
+		void IDisposable.Dispose ()
 		{
+			Close ();
 		}
 
 		protected virtual WaitHandle CreateWaitHandle()
@@ -67,14 +68,6 @@ namespace System.IO
 			return new ManualResetEvent (false);
 		}
 		
-		protected virtual void Dispose (bool disposing)
-		{
-		}
-
-		~Stream ()
-		{
-		}
-
 		public abstract void Flush ();
 
 		public abstract int Read (byte[] buffer,

@@ -9,7 +9,6 @@ using System.Reflection.Emit;
 namespace System.Reflection.Emit {
 
 
-
 	public class OpCodes {
 		public static readonly OpCode Add;
   		public static readonly OpCode Add_Ovf;
@@ -235,6 +234,7 @@ namespace System.Reflection.Emit {
   		public static readonly OpCode Xor;
   
 
+		private OpCodes () {}
 
 		static OpCodes ()
 		{

@@ -14,7 +14,7 @@ using System.Runtime.CompilerServices;
 
 namespace System
 {
-	[CLSCompliant(false)]
+//	[CLSCompliant(false)]
         public sealed class Math
         {
                 public const double E = 2.7182818284590452354;

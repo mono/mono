@@ -59,11 +59,7 @@ namespace System.IO {
 		public override void Close() {
 			Flush();
 			m_stream.Close();
-			Dispose();
-		}
-
-		public override void Dispose() {
-			m_stream.Dispose();
+			m_stream = null;
 			m_buffer = null;
 		}
 

@@ -13,7 +13,7 @@ using System.Security.Permissions;
 namespace System.Net
 {
 	[Serializable]
-	public class SocketPermission : CodeAccessPermission, IUnrestrictedPermission
+	public sealed class SocketPermission : CodeAccessPermission, IUnrestrictedPermission
 	{
 		// Fields
 		ArrayList m_acceptList = new ArrayList ();

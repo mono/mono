@@ -11,19 +11,15 @@ namespace System.ComponentModel
 {
 	public abstract class EventDescriptor : MemberDescriptor
 	{
-		[MonoTODO]
-		protected EventDescriptor (MemberDescriptor desc)
+		protected EventDescriptor (MemberDescriptor desc) : base (desc)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		protected EventDescriptor (MemberDescriptor desc, Attribute[] attrs)
+		protected EventDescriptor (MemberDescriptor desc, Attribute[] attrs) : base (desc, attrs)
 		{
-			throw new NotImplementedException ();
 		}
 
-		protected EventDescriptor(string str, Attribute[] attrs)
+		protected EventDescriptor(string str, Attribute[] attrs) : base (str, attrs)
 		{
 		}
 	}

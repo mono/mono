@@ -20,7 +20,7 @@ namespace System.IO {
 
                 protected char[] CoreNewLine;
 
-                protected IFormatProvider internalFormatProvider;
+                internal IFormatProvider internalFormatProvider;
 
                 public static readonly TextWriter Null;
 

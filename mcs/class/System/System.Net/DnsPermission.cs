@@ -13,7 +13,7 @@ using System.Security.Permissions;
 namespace System.Net
 {
 	[Serializable]
-	public class DnsPermission : CodeAccessPermission, IUnrestrictedPermission
+	public sealed class DnsPermission : CodeAccessPermission, IUnrestrictedPermission
 	{
 		// Fields
 		bool m_noRestriction;

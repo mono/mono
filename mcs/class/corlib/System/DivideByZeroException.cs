@@ -30,7 +30,7 @@ namespace System {
 		{
 		}
 
-		public DivideByZeroException (SerializationInfo info, StreamingContext context)
+		protected DivideByZeroException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}

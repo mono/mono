@@ -10,9 +10,9 @@
 namespace System.Security {
 
 	public enum PolicyLevelType {
-		AppDomain,
-		Enterprise,
+		User = 0x0,
 		Machine,
-		User
+		Enterprise,
+		AppDomain,
 	}
 }

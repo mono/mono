@@ -97,7 +97,7 @@ namespace System.Reflection.Emit {
 		public ILGenerator GetILGenerator () {
 			return GetILGenerator (256);
 		}
-		public ILGenerator GetILGenerator (int size) {
+		internal ILGenerator GetILGenerator (int size) {
 			ilgen = new ILGenerator (this, size);
 			return ilgen;
 		}

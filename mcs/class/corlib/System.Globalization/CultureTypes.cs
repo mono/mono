@@ -28,11 +28,12 @@ namespace System.Globalization {
 
 		/// <summary>
 		/// </summary>
-		AllCultures = 3,
+		InstalledWin32Cultures = 4,
 
 		/// <summary>
 		/// </summary>
-		InstalledWin32Cultures = 4,
+		AllCultures = 7,
+
 	} // CultureTypes
 
 } // System.Globalization

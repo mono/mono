@@ -23,79 +23,80 @@ namespace System.Reflection {
 
 		/// <summary>
 		/// </summary>
-		PrivateScope = 0,
+		PrivateScope = 0x0,
 
 		/// <summary>
 		/// </summary>
-		Private = 1,
+		Private = 0x1,
 
 		/// <summary>
 		/// </summary>
-		FamANDAssem = 2,
+		FamANDAssem = 0x2,
 
 		/// <summary>
 		/// </summary>
-		Assembly = 3,
+		Assembly = 0x3,
 
 		/// <summary>
 		/// </summary>
-		Family = 4,
+		Family = 0x4,
 
 		/// <summary>
 		/// </summary>
-		FamORAssem = 5,
+		FamORAssem = 0x5,
 
 		/// <summary>
 		/// </summary>
-		Public = 6,
+		Public = 0x6,
 
 		/// <summary>
 		/// </summary>
-		Static = 16,
+		Static = 0x10,
 
 		/// <summary>
 		/// </summary>
-		InitOnly = 32,
+		InitOnly = 0x20,
 
 		/// <summary>
 		/// </summary>
-		Literal = 64,
+		Literal = 0x40,
 
 		/// <summary>
 		/// </summary>
-		NotSerialized = 128,
+		NotSerialized = 0x80,
 
 		/// <summary>
 		/// </summary>
-		SpecialName = 512,
+		HasFieldRVA = 0x100,
 
 		/// <summary>
 		/// </summary>
-		PinvokeImpl = 8192,
+		SpecialName = 0x200,
 
 		/// <summary>
 		/// </summary>
-		ReservedMask = 54528,
+		RTSpecialName = 0x400,
 
 		/// <summary>
 		/// </summary>
-		RTSpecialName = 1024,
+		HasFieldMarshal = 0x1000,	
 
 		/// <summary>
 		/// </summary>
-		HasFieldMarshal = 4096,	
+		PinvokeImpl = 0x2000,
 
 		/// <summary>
 		/// </summary>
-		// HasSecurity = 16384,
+		// HasSecurity = 0x4000,
 
 		/// <summary>
 		/// </summary>
-		HasDefault = 32768,
+		HasDefault = 0x8000,
 
 		/// <summary>
 		/// </summary>
-		HasFieldRVA = 256,
+		ReservedMask = HasDefault | HasFieldMarshal | RTSpecialName | HasFieldRVA,
+
 	} // FieldAttributes
 
 } // System.Reflection

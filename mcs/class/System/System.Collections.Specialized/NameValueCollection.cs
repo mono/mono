@@ -210,7 +210,7 @@ namespace System.Collections.Specialized{
 		/// starting at the specified index of the target array.</summary>
 
 		[MonoTODO]
-		override public void CopyTo( Array dest, int index )
+		public void CopyTo( Array dest, int index )
 		{
 			if (dest==null)
 				throw new ArgumentNullException("Null argument - dest");

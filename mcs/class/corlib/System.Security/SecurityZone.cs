@@ -10,11 +10,11 @@
 namespace System.Security {
 
 	public enum SecurityZone {
-		Internet,
+		MyComputer = 0x0,
 		Intranet,
-		MyComputer,
-		NoZone,
 		Trusted,
-		Untrusted
+		Internet,
+		Untrusted,
+		NoZone = -1,
 	}
 }

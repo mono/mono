@@ -10,21 +10,21 @@
 namespace System.CodeDom {
 	public enum CodeBinaryOperatorType {
 		Add,
-		Assign,
-		BitwiseAnd,
-		BitwiseOr,
-		BooleanAnd,
-		BooleanOr,
+		Subtract,
+		Multiply,
 		Divide,
-		GreaterThan,
-		GreaterThanOrEqual,
-		IdentityEquality,
+		Modulus,
+		Assign,
 		IdentityInequality,
+		IdentityEquality,
+		ValueEquality,
+		BitwiseOr,
+		BitwiseAnd,
+		BooleanOr,
+		BooleanAnd,
 		LessThan,
 		LessThanOrEqual,
-		Modulus,
-		Multiply,
-		Subtract,
-		ValueEquality	
+		GreaterThan,
+		GreaterThanOrEqual,
 	}
 }

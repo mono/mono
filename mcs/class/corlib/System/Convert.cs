@@ -74,7 +74,7 @@ using System.Text;
 
 namespace System {
   
-	[CLSCompliant(false)]
+//	[CLSCompliant(false)]
 	public sealed class Convert {
 
 		// Fields
@@ -1522,7 +1522,7 @@ namespace System {
 			return ToSingle (value, null);
 		}
 
-		[CLSCompliant (false)]
+//		[CLSCompliant (false)]
 		public static float ToSingle (object value, IFormatProvider provider)
 		{
 			if (value == null)

@@ -60,9 +60,11 @@ namespace System.Reflection.Emit {
 		public override Type UnderlyingSystemType {
 			get {return null;}
 		}
+/* no need to override
 		public override MemberTypes MemberType {
 			get {return MemberTypes.TypeInfo;}
 		}
+*/
 
 		internal EnumBuilder (ModuleBuilder mb, string name, TypeAttributes visibility, Type underlyingType) {
 		}
@@ -167,15 +169,6 @@ namespace System.Reflection.Emit {
 		public override bool IsDefined( Type attributeType, bool inherit) {
 			return false;
 		}
-		/*protected override bool IsPointerImpl() {
-			return false;
-		}
-		protected override bool IsPrimitiveImpl() {
-			return false;
-		}
-		protected override bool IsValueTypeImpl() {
-			return true;
-		}*/
 		
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
 			if (cattrs != null) {

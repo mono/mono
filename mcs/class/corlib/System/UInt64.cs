@@ -380,7 +380,7 @@ namespace System {
 		{
 			return System.Convert.ToChar (value);
 		}
-		public DateTime ToDateTime (IFormatProvider provider)
+		DateTime IConvertible.ToDateTime (IFormatProvider provider)
 		{
 			throw new NotImplementedException ();
 		}
@@ -413,7 +413,7 @@ namespace System {
 		{
 			return System.Convert.ToSingle (value);
 		}
-		public object   ToType     (Type conversionType, IFormatProvider provider)
+		object IConvertible.ToType (Type conversionType, IFormatProvider provider)
 		{
 			throw new NotImplementedException ();
 		}

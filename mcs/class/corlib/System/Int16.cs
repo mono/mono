@@ -155,81 +155,81 @@ namespace System {
 			return TypeCode.Int16;
 		}
 
-		public bool ToBoolean (IFormatProvider provider)
+		bool IConvertible.ToBoolean (IFormatProvider provider)
 		{
 			return System.Convert.ToBoolean (value);
 		}
 
-		public byte ToByte (IFormatProvider provider)
+		byte IConvertible.ToByte (IFormatProvider provider)
 		{
 			return System.Convert.ToByte (value);
 		}
 
-		public char ToChar (IFormatProvider provider)
+		char IConvertible.ToChar (IFormatProvider provider)
 		{
 			return System.Convert.ToChar (value);
 		}
 
-		public DateTime ToDateTime (IFormatProvider provider)
+		DateTime IConvertible.ToDateTime (IFormatProvider provider)
 		{
 			return System.Convert.ToDateTime (value);
 		}
 
-		public decimal ToDecimal (IFormatProvider provider)
+		decimal IConvertible.ToDecimal (IFormatProvider provider)
 		{
 			return System.Convert.ToDecimal (value);
 		}
 
-		public double ToDouble (IFormatProvider provider)
+		double IConvertible.ToDouble (IFormatProvider provider)
 		{
 			return System.Convert.ToDouble (value);
 		}
 
-		public short ToInt16 (IFormatProvider provider)
+		short IConvertible.ToInt16 (IFormatProvider provider)
 		{
 			return System.Convert.ToInt16 (value);
 		}
 
-		public int ToInt32 (IFormatProvider provider)
+		int IConvertible.ToInt32 (IFormatProvider provider)
 		{
 			return System.Convert.ToInt32 (value);
 		}
 
-		public long ToInt64 (IFormatProvider provider)
+		long IConvertible.ToInt64 (IFormatProvider provider)
 		{
 			return System.Convert.ToInt64 (value);
 		}
 
 		[CLSCompliant (false)]
-		public sbyte ToSByte (IFormatProvider provider)
+		sbyte IConvertible.ToSByte (IFormatProvider provider)
 		{
 			return System.Convert.ToSByte (value);
 		}
 		
-		public float ToSingle (IFormatProvider provider)
+		float IConvertible.ToSingle (IFormatProvider provider)
 		{
 			return System.Convert.ToSingle (value);
 		}
 
-		public object ToType (Type conversionType, IFormatProvider provider)
+		object IConvertible.ToType (Type conversionType, IFormatProvider provider)
 		{
 			return System.Convert.ToType (value, conversionType, provider);
 		}
 
 		[CLSCompliant (false)]
-		public ushort ToUInt16 (IFormatProvider provider)
+		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt16 (value);
 		}
 
 		[CLSCompliant (false)]
-		public uint ToUInt32 (IFormatProvider provider)
+		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt32 (value);
 		}
 
 		[CLSCompliant (false)]
-		public ulong ToUInt64 (IFormatProvider provider)
+		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
 			return System.Convert.ToUInt64 (value);
 		}

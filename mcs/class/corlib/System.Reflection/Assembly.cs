@@ -33,7 +33,7 @@ namespace System.Reflection {
 			}
 		}
 
-		public virtual string CopiedCodeBase {
+		internal virtual string CopiedCodeBase {
 			get {
 				return null;
 			}
@@ -107,7 +107,7 @@ namespace System.Reflection {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern Type[] GetTypes (bool exportedOnly);
+		private extern Type[] GetTypes (bool exportedOnly);
 		
 		public virtual Type[] GetTypes ()
 		{

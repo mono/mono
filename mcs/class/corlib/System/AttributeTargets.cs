@@ -76,7 +76,7 @@ namespace System {
 
 		/// <summary>
 		/// </summary>
-		All = Assembly | Class | Struct | Enum | Constructor | Method | Property | Field | Event | Interface | Parameter | Delegate | ReturnValue,
+		All = Assembly | Module | Class | Struct | Enum | Constructor | Method | Property | Field | Event | Interface | Parameter | Delegate | ReturnValue,
 	} // AttributeTargets
 
 } // System

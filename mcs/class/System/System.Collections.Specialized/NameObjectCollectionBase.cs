@@ -24,11 +24,11 @@ namespace System.Collections.Specialized
 		private int m_defCapacity;
 		private bool m_readonly;
 
-		internal protected IComparer Comparer {
+		internal IComparer Comparer {
 			get {return m_comparer;}
 		}
 
-		internal protected IHashCodeProvider HashCodeProvider {
+		internal IHashCodeProvider HashCodeProvider {
 			get {return m_hashprovider;}
 		}
 
@@ -127,7 +127,7 @@ namespace System.Collections.Specialized
 			/// <summary>
 			/// Gets the number of keys in the NameObjectCollectionBase.KeysCollection
 			/// </summary>
-			public virtual int Count 
+			public int Count 
 			{
 				get{
 					return m_collection.Count;
@@ -247,11 +247,7 @@ namespace System.Collections.Specialized
 		{
 			throw new Exception("Not implemented yet");
 		}
-		public/*?*/ virtual void /*ISerializable*/ CopyTo(Array arr, int index)
-		{
-			throw new Exception("Not implemented yet");
-		}
-		
+
 		// ICollection
 		public virtual int Count 
 		{
@@ -260,19 +256,20 @@ namespace System.Collections.Specialized
 				//throw new Exception("Not implemented yet");
 			}
 		}
-		public virtual bool IsSynchronized
+		bool ICollection.IsSynchronized
 		{
-			get{
-				throw new Exception("Not implemented yet");
-			}
+			get { return false; }
 		}
-		public virtual object SyncRoot
+		object ICollection.SyncRoot
 		{
-			get 
-			{
-				throw new Exception("Not implemented yet");
-			}
+			get { return this; }
 		}
+
+		void ICollection.CopyTo (Array array, int index)
+		{
+			throw new NotImplementedException ();
+		}
+		
 
 		// IDeserializationCallback
 		public virtual void OnDeserialization( object sender)

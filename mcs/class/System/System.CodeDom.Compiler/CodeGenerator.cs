@@ -20,7 +20,7 @@ namespace System.CodeDom.Compiler {
 		{
 		}
 
-		CodeGenerator ()
+		protected CodeGenerator ()
 		{
 			indent = 8;
 		}

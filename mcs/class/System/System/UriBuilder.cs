@@ -106,7 +106,7 @@ namespace System
 				if (fragment == null)
 					fragment = String.Empty;
 				else if (fragment.Length > 0)
-					fragment = "#" + Uri.EscapeString (fragment).Replace ("%23", "#");
+					fragment = "#" + Uri.EscapeString (fragment, false, true, true).Replace ("%23", "#");
 				query = String.Empty;				
 				modified = true;
 			}
@@ -136,7 +136,7 @@ namespace System
 					    (scheme != Uri.UriSchemeNews)) 
 						path = "/";					
 				} else {
-					path = Uri.EscapeString (value.Replace ('\\', '/'));
+					path = Uri.EscapeString (value.Replace ('\\', '/'), false, true, true);
 					if ((scheme != Uri.UriSchemeMailto) &&
 					    (scheme != Uri.UriSchemeNews) &&
 					    path [0] != '/') 
@@ -173,7 +173,7 @@ namespace System
 				if (query == null)
 					query = String.Empty;
 				else if (query.Length > 0)
-					query = "?" + Uri.EscapeString (query);
+					query = "?" + Uri.EscapeString (query, false, true, true);
 				fragment = String.Empty;
 				modified = true;
 			}

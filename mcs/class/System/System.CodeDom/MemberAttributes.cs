@@ -9,21 +9,22 @@
 
 namespace System.CodeDom {
 	public enum MemberAttributes {
-		Abstract,
-		AccessMask,
-		Assembly,
-		Const,
-		Family,
-		FamilyAndAssembly,
-		FamilyOrAssembly,
+		Abstract = 0x1,
 		Final,
-		New,
-		Overloaded,
-		Override,
-		Private,
-		Public,
-		ScopeMask,
 		Static,
-		VTableMask	
+		Override,
+		Const,
+		New = 0x10,
+		Overloaded = 0x100,
+		Assembly = 0x1000,
+		FamilyAndAssembly = 0x2000,
+		Family = 0x3000,
+		FamilyOrAssembly = 0x4000,
+		Private = 0x5000,
+		Public = 0x6000,
+
+		ScopeMask = 0xf,
+		VTableMask = 0xf0,
+		AccessMask = 0xf000,
 	}
 }

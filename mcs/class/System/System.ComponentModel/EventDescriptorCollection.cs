@@ -21,7 +21,7 @@ namespace System.ComponentModel
 				this.Add (events[i]);
 		}
 
-		public int IList.Add (object value) {
+		public int Add (EventDescriptor value) {
 			return eventList.Add (value);
 		}
 
@@ -42,21 +42,22 @@ namespace System.ComponentModel
 			return eventList.GetEnumerator ();
 		}
 
-		public int IList.IndexOf (EventDescriptor value) {
+		public int IndexOf (EventDescriptor value) {
 			return eventList.IndexOf (value);
 		}
 
-		public void IList.Insert (int index, EventDescriptor value) {
+		public void Insert (int index, EventDescriptor value) {
 			eventList.Insert (index, value);
 		}
 
-		public void IList.Remove (EventDescriptor value) {
+		public void Remove (EventDescriptor value) {
 			eventList.Remove (value);
 		}
 
 		public void RemoveAt (int index) {
 			eventList.RemoveAt (index);
 		}
+
 
 		[MonoTODO]
 		public virtual EventDescriptorCollection Sort () {
@@ -104,8 +105,60 @@ namespace System.ComponentModel
 
 		public virtual EventDescriptor this[int index] {
 			get {
-				return eventList[index];
+				return (EventDescriptor) eventList[index];
 			}
+		}
+
+		// IList methods
+
+		int IList.Add (object value) {
+			return Add ((EventDescriptor) value);
+		}
+
+		bool IList.Contains (object value) {
+			return Contains ((EventDescriptor) value);
+		}
+
+		int IList.IndexOf (object value) {
+			return IndexOf ((EventDescriptor) value);
+		}
+
+		void IList.Insert (int index, object value) {
+			Insert (index, (EventDescriptor) value);
+		}
+
+		void IList.Remove (object value) {
+			Remove ((EventDescriptor) value);
+		}
+
+		bool IList.IsFixedSize {
+			get { return false; }
+		}
+
+//		[MonoTODO]
+		bool IList.IsReadOnly {
+			get { return false; }
+		}
+
+		object IList.this [int index] {
+			get { return this [index]; }
+			[MonoTODO]
+			set { throw new NotImplementedException (); }
+		}
+
+		// ICollection methods
+
+		[MonoTODO]
+		void ICollection.CopyTo (Array array, int index) {
+			throw new NotImplementedException ();
+		}
+
+		bool ICollection.IsSynchronized {
+			get { return false; }
+		}
+
+		object ICollection.SyncRoot {
+			get { return null; }
 		}
 	}
 }

@@ -234,11 +234,6 @@ namespace System.IO
 			GC.SuppressFinalize (this);	// remove from finalize queue
 		}
 
-		public override void Dispose ()
-		{
-			Close ();
-		}
-
 		// protected
 
 		~FileStream ()
@@ -246,7 +241,7 @@ namespace System.IO
 			Dispose (false);
 		}
 
-		protected override void Dispose (bool disposing) {
+		protected virtual void Dispose (bool disposing) {
 			if (handle != MonoIO.InvalidHandle) {
 				Flush ();
 				MonoIO.Close (handle);

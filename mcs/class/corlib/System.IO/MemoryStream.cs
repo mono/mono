@@ -198,10 +198,7 @@ namespace System.IO {
                         }
 
                         streamClosed = true;
-                        Dispose( true );
                 }
-
-                protected override void Dispose( bool disposing ) { }
 
                 public override void Flush() { }
 

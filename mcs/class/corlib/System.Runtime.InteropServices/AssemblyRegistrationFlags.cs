@@ -13,6 +13,6 @@ namespace System.Runtime.InteropServices
 	[Serializable]
 	public enum AssemblyRegistrationFlags {
 		None = 0,
-		SetCodeBase = 0,
+		SetCodeBase,
 	}
 }

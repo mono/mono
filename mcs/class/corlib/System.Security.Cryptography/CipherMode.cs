@@ -14,11 +14,11 @@ namespace System.Security.Cryptography {
 	/// Block cipher modes of operation.
 	/// </summary>
 	public enum CipherMode {
-		CBC, // Cipher Block Chaining
+		CBC = 0x1, // Cipher Block Chaining
+		ECB, // Electronic Codebook
+		OFB, // Output Feedback
 		CFB, // Cipher Feedback
 		CTS, // Cipher Text Stealing
-		ECB, // Electronic Codebook
-		OFB  // Output Feedback
 	}
 }
 

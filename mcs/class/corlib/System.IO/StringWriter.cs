@@ -10,7 +10,7 @@ namespace System.IO {
 		[Serializable]
         public class StringWriter : TextWriter {
                 
-                protected StringBuilder internalString;
+                private StringBuilder internalString;
 
                 public StringWriter() {
                         internalString = new StringBuilder();

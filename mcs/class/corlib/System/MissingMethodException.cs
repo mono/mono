@@ -32,10 +32,6 @@ namespace System
 			: base (className, methodName)
 		{
 		}
-
-		public override string Message {
-			get { return Locale.GetText (msg); }
-		}
 	}
 }
 

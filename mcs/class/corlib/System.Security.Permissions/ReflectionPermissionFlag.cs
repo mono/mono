@@ -32,7 +32,11 @@ namespace System.Security.Permissions {
 
 		/// <summary>
 		/// </summary>
-		AllFlags = TypeInformation | MemberAccess,
+		ReflectionEmit = 0x4,
+
+		/// <summary>
+		/// </summary>
+		AllFlags = TypeInformation | MemberAccess | ReflectionEmit,
 	} // ReflectionPermissionFlag
 
 } // System.Security.Permissions

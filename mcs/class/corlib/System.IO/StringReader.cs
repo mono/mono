@@ -11,11 +11,11 @@ namespace System.IO {
 	[Serializable]
 	public class StringReader : TextReader {
 
-		protected string source;
-		protected char[] sourceChars;
+		private string source;
+		private char[] sourceChars;
 
-		protected int nextChar;
-		protected int sourceLength;
+		private int nextChar;
+		private int sourceLength;
 
 		public StringReader( string s ) {
 			this.source = s;
