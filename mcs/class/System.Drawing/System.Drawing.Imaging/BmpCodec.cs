@@ -222,6 +222,9 @@ namespace System.Drawing.Imaging {
 				else {
 				}
 				break;
+				default:
+					throw new NotImplementedException(String.Format("This format is not yet supported : {0} bpp", bmih.biBitCount));
+				break;
 			}
 			return true;
 		}

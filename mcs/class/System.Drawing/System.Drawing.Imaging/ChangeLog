@@ -1,3 +1,7 @@
+2003-06-23 Alexandre Pigolkine <pigolkine@gmx.de>
+	* BmpCodec.cs 	pixel format check added
+	* JPEGCodec.cs  encoder implemented
+
 2003-06-15 Alexandre Pigolkine <pigolkine@gmx.de>
 	* ColorPalette.cs
 	* ImageCodecInfo.cs
