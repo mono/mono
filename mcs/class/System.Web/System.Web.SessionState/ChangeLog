@@ -1,3 +1,8 @@
+2003-07-30  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* IStateRuntime.cs: New interface class
+	* StateRuntime.cs: New class - stubbed out
+
 2003-07-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* SessionInProcHandler.cs: Made these internal to fix signature and building CLS-compliant
