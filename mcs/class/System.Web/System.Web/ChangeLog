@@ -1,3 +1,8 @@
+2004-01-11  Jackson Harper <jackson@ximian.com>
+
+	* HttpRequest.cs: Add property for determining if the request is
+	local or not.
+	
 2004-01-10  Jackson Harper <jackson@ximian.com>
 
 	* TraceContext.cs: Handle tracing when it is enabled in the config

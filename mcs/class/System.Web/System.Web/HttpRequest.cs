@@ -1016,7 +1016,13 @@ namespace System.Web {
 				return baseVirtualDir;
 			}
 		}
-		
+
+                internal bool IsLocal {
+                        get {
+                                return _WorkerRequest.GetLocalAddress () == "127.0.0.1";
+                        }
+                }
+                
 		public byte [] BinaryRead(int count) {
 			int iSize = TotalBytes;
 			if (iSize == 0) {
