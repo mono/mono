@@ -570,10 +570,20 @@ namespace System.Text {
 		}
 
 		public StringBuilder Insert( int index, char value) {
-			char[] insertChar = new char[1];
+			if (index > sLength || index < 0)
+				throw new ArgumentOutOfRangeException ("index");
+			// Check we have the capacity to insert this array
+			if( sCapacity < sLength + 1) {
+				Capacity = 1 + ( sCapacity + sCapacity );
+			}
 			
-			insertChar[0] = value;
-			return Insert( index, insertChar );
+			// Move everything to the right of the insert point across
+			Array.Copy( sString, index, sString, index + 1, sLength - index);
+			
+			sString [index] = value;
+			sLength += 1;
+			thestring = null;
+			return this;
 		}
 
 		public StringBuilder Insert( int index, decimal value ) {

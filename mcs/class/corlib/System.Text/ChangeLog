@@ -1,3 +1,9 @@
+2003-11-17 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* StringBuilder.cs (Insert int, char): It is really silly and
+	wasteful to allocate an array here. We can just copy the value
+	over.
+
 2003-11-11  Miguel de Icaza  <miguel@ximian.com>
 
 	* Encoding.cs: Use an internal variable to track the parameters of
