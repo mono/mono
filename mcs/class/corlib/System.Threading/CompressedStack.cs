@@ -5,7 +5,7 @@
 //	Zoltan Varga (vargaz@freemail.hu)
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,6 +33,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security;
+using System.Security.Permissions;
 
 namespace System.Threading {
 
@@ -65,7 +66,7 @@ namespace System.Threading {
 		[ComVisibleAttribute (false)]
 		public CompressedStack CreateCopy ()
 		{
-			// in 2.0 beta1 Object.ReferenceEquals (cs, cs.CreateCopy ()) == true !!!
+			// FIXME: in 2.0 beta1 Object.ReferenceEquals (cs, cs.CreateCopy ()) == true !!!
 			return this;
 //			return new CompressedStack (this);
 		}
@@ -84,6 +85,8 @@ namespace System.Threading {
 			return cs;
 		}
 
+		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
+		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey="00000000000000000400000000000000")]
 		static public CompressedStack GetCompressedStack ()
 		{
 			// Note: CompressedStack.GetCompressedStack doesn't return null

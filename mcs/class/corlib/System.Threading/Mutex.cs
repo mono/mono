@@ -2,15 +2,11 @@
 // System.Threading.Mutex.cs
 //
 // Author:
-//
 //   Dick Porter (dick@ximian.com)
 //   Veronica De Santis (veron78@interfree.it)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,8 +28,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Runtime.CompilerServices;
+using System.Security.Permissions;
 
 namespace System.Threading
 {
@@ -61,18 +57,17 @@ namespace System.Threading
 						    out created);
 		}
 
-		public Mutex(bool initiallyOwned, string name) {
+		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
+		public Mutex (bool initiallyOwned, string name)
+		{
 			bool created;
-			
-			Handle=CreateMutex_internal(initiallyOwned, name,
-						    out created);
+			Handle = CreateMutex_internal (initiallyOwned, name, out created);
 		}
-	
 
-		public Mutex(bool initiallyOwned, string name,
-			     out bool createdNew) {
-			Handle=CreateMutex_internal(initiallyOwned, name,
-						    out createdNew);
+		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
+		public Mutex (bool initiallyOwned, string name, out bool createdNew)
+		{
+			Handle = CreateMutex_internal (initiallyOwned, name, out createdNew);
 		}
 	
 		public void ReleaseMutex() {

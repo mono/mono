@@ -5,11 +5,7 @@
 //   Dick Porter (dick@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004 Novell (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -891,6 +887,8 @@ namespace System.Threading
 			}
 		}
 
+		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
+		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey="00000000000000000400000000000000")]
 		public CompressedStack GetCompressedStack ()
 		{
 			// Note: returns null if no CompressedStack has been set.
@@ -899,6 +897,8 @@ namespace System.Threading
 			return _stack;
 		}
 
+		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
+		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey="00000000000000000400000000000000")]
 		public void SetCompressedStack (CompressedStack stack)
 		{
 			_stack = stack;
