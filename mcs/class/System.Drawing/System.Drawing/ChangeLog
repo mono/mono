@@ -1,3 +1,7 @@
+2003-11-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SizeConverter.cs: fixed class signature and implemented some methods.
+
 2003-11-17  Duncan Mak  <duncan@ximian.com>
 
 	* gdipFunctions.cs (GdipGetMatrixElements): Fix signature.
