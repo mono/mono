@@ -45,8 +45,7 @@ namespace Npgsql
         private static readonly String CLASSNAME = "NpgsqlBinaryRow";
 
         private ArrayList							data;
-        private Byte[]								null_map_array;
-        private readonly Int16	READ_BUFFER_SIZE = 300; //[FIXME] Is this enough??
+        //        private readonly Int16	READ_BUFFER_SIZE = 300; //[FIXME] Is this enough??
         private NpgsqlRowDescription row_desc;
 
         public NpgsqlBinaryRow(NpgsqlRowDescription rowDesc)
@@ -55,8 +54,6 @@ namespace Npgsql
 
             data = new ArrayList();
             row_desc = rowDesc;
-            null_map_array = new Byte[(row_desc.NumFields + 7)/8];
-
 
         }
 
@@ -66,8 +63,10 @@ namespace Npgsql
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "ReadFromStream");
 
             //Byte[] input_buffer = new Byte[READ_BUFFER_SIZE];
-            Byte[] input_buffer = null;
+            Byte[]       input_buffer = null;
+            Byte[]       null_map_array = new Byte[(row_desc.NumFields + 7)/8];
 
+            null_map_array = new Byte[(row_desc.NumFields + 7)/8];
             Array.Clear(null_map_array, 0, null_map_array.Length);
 
             // Read the null fields bitmap.
@@ -78,12 +77,11 @@ namespace Npgsql
             {
 
                 // Check if this field isn't null
-                if (IsNull(field_count))
+                if (IsBackendNull(null_map_array, field_count))
                 {
                     // Field is null just keep next field.
-
-                    //[FIXME] See this[] method.
-                    data.Add(null);
+                   
+                    data.Add(DBNull.Value);
                     continue;
                 }
 
@@ -98,47 +96,21 @@ namespace Npgsql
                 input_buffer = new Byte[bytes_left];
 
 
-                //StringBuilder result = new StringBuilder();
-
-                /*while (bytes_left > READ_BUFFER_SIZE)
-                {
-                	// Now, read just the field value.
-                	PGUtil.CheckedStreamRead(inputStream, input_buffer, 0, READ_BUFFER_SIZE);
-                	
-                	// Read the bytes as string.
-                	result.Append(new String(encoding.GetChars(input_buffer, 0, READ_BUFFER_SIZE)));
-                					
-                	bytes_left -= READ_BUFFER_SIZE;
-                }
-                */
                 // Now, read just the field value.
                 PGUtil.CheckedStreamRead(inputStream, input_buffer, 0, bytes_left);
 
-                // Read the bytes as string.
-                //result.Append(new String(encoding.GetChars(input_buffer, 0, bytes_left)));
-
-
                 // Add them to the BinaryRow data.
-                //data.Add(NpgsqlTypesHelper.ConvertStringToNpgsqlType(result.ToString(), row_desc[field_count].type_oid));
                 data.Add(input_buffer);
 
             }
 
         }
 
-
-        public Boolean IsNull(Int32 index)
+        // Using the given null field map (provided by the backend),
+        // determine if the given field index is mapped null by the backend.
+        // We only need to do this for version 2 protocol.
+        private static Boolean IsBackendNull(Byte[] null_map_array, Int32 index)
         {
-            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "IsNull");
-            // [FIXME] Check more optimized way of doing this.
-            // Should this be public or internal?
-
-            // Check valid index range.
-            if ((index < 0) || (index >= row_desc.NumFields))
-                throw new ArgumentOutOfRangeException("index");
-
-            // Check if the value (index) of the field is null
-
             // Get the byte that holds the bit index position.
             Byte test_byte = null_map_array[index/8];
 
@@ -149,6 +121,17 @@ namespace Npgsql
         }
 
 
+        public Boolean IsDBNull(Int32 index)
+        {
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "IsDBNull", index);
+
+            // Check valid index range.
+            if ((index < 0) || (index >= row_desc.NumFields))
+                throw new ArgumentOutOfRangeException("index");
+
+            return (this.data[index] == DBNull.Value);
+        }
+
         public Object this[Int32 index]
         {
             get
@@ -156,16 +139,6 @@ namespace Npgsql
                 NpgsqlEventLog.LogIndexerGet(LogLevel.Debug, CLASSNAME, index);
                 if ((index < 0) || (index >= row_desc.NumFields))
                     throw new ArgumentOutOfRangeException("this[] index value");
-                // [FIXME] Should return null or something else
-                // more meaningful?
-
-                //[FIXME] This code assumes that the data arraylist has the null and non null values
-                // in order, but just the non-null values are added.
-                // It is necessary to map the index value with the elements in the array list.
-                // For now, the workaround is to insert the null values in the array list.
-                // But this is a hack. :)
-
-                //return (IsNull(index) ? null : data[index]);
                 return data[index];
 
 

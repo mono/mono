@@ -418,7 +418,7 @@ namespace Npgsql
 
             CheckCanRead();
 
-            return ((NpgsqlAsciiRow)_currentResultset[_rowIndex]).IsNull(i);
+            return ((NpgsqlAsciiRow)_currentResultset[_rowIndex]).IsDBNull(i);
         }
 
         private DataTable GetResultsetSchema()
