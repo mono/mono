@@ -64,6 +64,7 @@ public class TypeManager {
 	static public Type marshal_as_attr_type;
 	static public Type param_array_type;
 	static public Type void_ptr_type;
+	static public Type structlayout_type;
 
 	static public Type [] NoTypes;
 	
@@ -521,6 +522,7 @@ public class TypeManager {
 		intptr_type          = CoreLookupType ("System.IntPtr");
 
 		attribute_type       = CoreLookupType ("System.Attribute");
+		structlayout_type    = CoreLookupType ("System.Runtime.InteropServices.StructLayoutAttribute");
 		attribute_usage_type = CoreLookupType ("System.AttributeUsageAttribute");
 		dllimport_type       = CoreLookupType ("System.Runtime.InteropServices.DllImportAttribute");
 		methodimpl_attr_type = CoreLookupType ("System.Runtime.CompilerServices.MethodImplAttribute");

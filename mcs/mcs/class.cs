@@ -67,6 +67,9 @@ namespace Mono.CSharp {
 		// Holds the operators
 		ArrayList operators;
 
+		// The emit context for toplevel objects.
+		EmitContext ec;
+		
 		//
 		// Pointers to the default constructor and the default static constructor
 		//
@@ -867,6 +870,8 @@ namespace Mono.CSharp {
 			else
 				is_class = false;
 
+			ec = new EmitContext (this, Mono.CSharp.Location.Null, null, null, ModFlags);
+
 			ifaces = GetClassBases (is_class, out parent, out error); 
 			
 			if (error)
@@ -887,6 +892,14 @@ namespace Mono.CSharp {
 			if (!is_class && TypeManager.value_type == null)
 				throw new Exception ();
 
+			TypeAttributes type_attributes = TypeAttr;
+
+			//
+			// The Ansi/Auto/Unicode bits are encoded in attributes.  Argh
+			//
+			if (OptAttributes != null)
+				type_attributes |= Attribute.GetExtraTypeInfo (ec, OptAttributes);
+			
 			// if (parent_builder is ModuleBuilder) {
 			if (IsTopLevel){
 				ModuleBuilder builder = CodeGen.ModuleBuilder;
@@ -898,7 +911,7 @@ namespace Mono.CSharp {
 
 				if (!is_class && Fields == null)
 					TypeBuilder = builder.DefineType (Name,
-									  TypeAttr,
+									  type_attributes,
 									  parent, 
 									  PackingSize.Unspecified, 1);
 				else
@@ -906,7 +919,7 @@ namespace Mono.CSharp {
 				// classes or structs with fields
 				//
 					TypeBuilder = builder.DefineType (Name,
-									  TypeAttr,
+									  type_attributes,
 									  parent,
 									  ifaces);
 			} else {
@@ -918,7 +931,7 @@ namespace Mono.CSharp {
 				//
 				if (!is_class && Fields == null)
 					TypeBuilder = builder.DefineNestedType (Basename,
-										TypeAttr,
+										type_attributes,
 										parent, 
 										PackingSize.Unspecified);
 				else {
@@ -926,7 +939,7 @@ namespace Mono.CSharp {
 					// classes or structs with fields
 					//
 					TypeBuilder = builder.DefineNestedType (Basename,
-										TypeAttr,
+										type_attributes,
 										parent,
 										ifaces);
 				}
@@ -1645,10 +1658,6 @@ namespace Mono.CSharp {
 				if (!VerifyPendingMethods ())
 					return;
 			
-			EmitContext ec = new EmitContext (
-						  this, Mono.CSharp.Location.Null, null, null,
-						  ModFlags);
-
 			Attribute.ApplyAttributes (ec, TypeBuilder, this, OptAttributes, Location);
 
 			//

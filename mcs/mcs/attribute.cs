@@ -31,14 +31,17 @@ namespace Mono.CSharp {
 		// The following are only meaningful when the attribute
 		// being emitted is one of the builtin ones
 		//
-		public AttributeTargets Targets;
-		public bool AllowMultiple;
-		public bool Inherited;
+		AttributeTargets Targets;
+		bool AllowMultiple;
+		bool Inherited;
 
-		public bool UsageAttr = false;
+		bool UsageAttr = false;
+		public bool StructLayout = false;
+		public TypeAttributes StructLayoutAttributes = 0;
 		
-		public MethodImplOptions ImplOptions;
-		public UnmanagedType     UnmanagedType;
+		MethodImplOptions ImplOptions;
+		UnmanagedType     UnmanagedType;
+		CustomAttributeBuilder cb;
 		
 		public Attribute (string name, ArrayList args, Location loc)
 		{
@@ -93,6 +96,15 @@ namespace Mono.CSharp {
 
 		public CustomAttributeBuilder Resolve (EmitContext ec)
 		{
+			//
+			// We might call resolve twice, because Structs will call
+			// things in advance, so they can find out any attribute information
+			// that needs to be encoded in the TypeAttribute (TypeAttribute.AnsiClass,
+			// TypeAttribute.UnicodeClass, or TypeAttribute.AutoClass
+			//
+			if (cb != null)
+				return cb;
+			
 			bool MethodImplAttr = false;
 			bool MarshalAsAttr = false;
 
@@ -108,8 +120,11 @@ namespace Mono.CSharp {
 				MethodImplAttr = true;
 			if (Type == TypeManager.marshal_as_attr_type)
 				MarshalAsAttr = true;
+			if (Type == TypeManager.structlayout_type){
+				StructLayout = true;
+				StructLayoutAttributes = TypeAttributes.AnsiClass;
+			}
 			
-
 			// Now we extract the positional and named arguments
 			
 			ArrayList pos_args = new ArrayList ();
@@ -222,9 +237,34 @@ namespace Mono.CSharp {
 						return null;
 					}
 
-					if (e is Constant)
-						field_values.Add (((Constant) e).GetValue ());
-					else { 
+					//
+					// Handle charset here, and set the TypeAttributes
+					
+					if (e is Constant){
+						object value = ((Constant) e).GetValue ();
+						
+						if (StructLayout && fi.Name == "CharSet"){
+							CharSet cs = (CharSet) value;
+
+							switch (cs){
+							case CharSet.Ansi:
+							case CharSet.None:
+								StructLayoutAttributes =
+								TypeAttributes.AnsiClass;
+								break;
+							case CharSet.Auto:
+								StructLayoutAttributes =
+								TypeAttributes.AutoClass;
+								break;
+							case CharSet.Unicode:
+								StructLayoutAttributes =
+								TypeAttributes.UnicodeClass;
+								break;
+							}
+							continue;
+						}
+						field_values.Add (value);
+					} else { 
 						error182 ();
 						return null;
 					}
@@ -265,7 +305,7 @@ namespace Mono.CSharp {
 			prop_values.CopyTo  (prop_values_arr, 0);
 			prop_infos.CopyTo   (prop_info_arr, 0);
 			
-			CustomAttributeBuilder cb = new CustomAttributeBuilder (
+			cb = new CustomAttributeBuilder (
 				(ConstructorInfo) constructor, pos_values,
 				prop_info_arr, prop_values_arr,
 				field_info_arr, field_values_arr); 
@@ -445,6 +485,36 @@ namespace Mono.CSharp {
 			}
 
 			return false;
+		}
+
+		//
+		// Returns TypeAttributes that might be encoded on the attributes.  Ugly, ugly
+		//
+		public static TypeAttributes GetExtraTypeInfo (EmitContext ec, Attributes opt_attrs)
+		{
+			if (opt_attrs.AttributeSections == null)
+				return 0;
+
+			foreach (AttributeSection asec in opt_attrs.AttributeSections) {
+
+				if (asec.Attributes == null)
+					continue;
+
+				if (asec.Target == "assembly")
+					continue;
+				
+				foreach (Attribute a in asec.Attributes) {
+					CustomAttributeBuilder cb = a.Resolve (ec);
+
+					if (cb == null)
+						continue;
+
+					if (a.StructLayout)
+						return a.StructLayoutAttributes;
+				}
+			}
+
+			return 0;
 		}
 		
 		public static void ApplyAttributes (EmitContext ec, object builder, object kind,

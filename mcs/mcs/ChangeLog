@@ -1,5 +1,18 @@
 2002-05-13  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs (DefineType): Call Attribute.GetExtraTypeInfo to fetch
+	the Ansi/Unicode/Auto information for the type.
+
+	(TypeContainer.DefineType): instantiate the EmitContext here, as
+	we will be using it during the type definition (to resolve
+	attributes) and during the emit phase.
+
+	* attribute.cs (Attribute.GetExtraTypeInfo): This routine is used
+	to pull type information out of the attributes
+
+	(Attribute.Resolve): track the constructor builder, and allow for
+	multiple invocations (structs and classes will use this).
+
 	* ecore.cs (MemberLookupFinal): new version with all the
 	parameters customizable.
 
