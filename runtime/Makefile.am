@@ -43,6 +43,12 @@ install-exec:
 install-data:
 	@:
 
+# override automake
+uninstall:
+	d=`pwd`; \
+	cd $(mcs_topdir) && $(MAKE) prefix='$(exec_prefix)' PROFILES='$(build_profiles)' \
+				    RUNTIME=$$d/mono-wrapper RUNTIME_HAS_CONSISTENT_GACDIR=yes uninstall-profiles
+
 clean-local:
 	-rm -fr $(symlinks)
 	d=`pwd`; cd $(mcs_topdir) && $(MAKE) PROFILES='$(clean_profiles)' clean-profiles
