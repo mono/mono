@@ -5,18 +5,21 @@
 		<mkdir dir="./build" />
 		<csc target="library" output="./build/Mono.Doc.Utils.dll">
 			<sources>
-				<includes name="./src/shared/*.cs" />
+				<includes name="src/shared/*.cs" />
 			</sources>
 		</csc>
 	</target>
 
 	<target name="status" depends="shared">
-		<csc target="executable" output="./build/statusgen.exe">
+		<csc target="exe" output="./build/statusgen.exe">
 			<arg value="/r:./build/Mono.Doc.Utils.dll" />
 
 			<sources>
-				<includes name="./src/statusgen/*.cs" />
+				<includes name="src/statusgen/*.cs" />
 			</sources>
 		</csc>
+	</target>
+	<target name="linux" depends="status"></target>
+	<target name="clean">
 	</target>
 </project>
