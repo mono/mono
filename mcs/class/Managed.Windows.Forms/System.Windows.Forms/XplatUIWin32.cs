@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.12 $
+// $Revision: 1.13 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.13  2004/08/11 22:20:59  pbartok
+// - Signature fixes
+//
 // Revision 1.12  2004/08/11 19:41:38  jordi
 // Fixes ClientRect
 //
@@ -79,7 +82,7 @@ using System.Runtime.InteropServices;
 
 /// Win32 Version
 namespace System.Windows.Forms {
-	public class XplatUIWin32 : XplatUIDriver {
+	internal class XplatUIWin32 : XplatUIDriver {
 		#region Local Variables
 		private static XplatUIWin32	instance;
 		private static int		ref_count;
@@ -89,6 +92,8 @@ namespace System.Windows.Forms {
 		internal static MouseButtons	mouse_state;
 		internal static Point		mouse_position;
 		internal static WndProc		wnd_proc;
+
+		internal static bool		themes_enabled;
 		#endregion	// Local Variables
 
 		#region Private Structs
@@ -320,9 +325,11 @@ namespace System.Windows.Forms {
 			ref_count=0;
 
 			// Now regular initialization
-			key_state=Keys.None;
-			mouse_state=MouseButtons.None;
-			mouse_position=Point.Empty;
+			key_state = Keys.None;
+			mouse_state = MouseButtons.None;
+			mouse_position = Point.Empty;
+
+			themes_enabled = false;
 
 			// Prepare 'our' window class
 			wnd_proc = new WndProc(NativeWindow.WndProc);
@@ -432,6 +439,10 @@ namespace System.Windows.Forms {
 
 		internal override void Exit() {
 			Win32PostQuitMessage(0);
+		}
+
+		internal override void EnableThemes() {
+			themes_enabled=true;
 		}
 
 		internal override IntPtr CreateWindow(CreateParams cp) {
@@ -556,7 +567,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override IntPtr DefWndProc(ref Message msg) {
-			msg.Result=Win32DefWindowProc(msg.Hwnd, (Msg)msg.Msg, msg.WParam, msg.LParam);
+			msg.Result=Win32DefWindowProc(msg.HWnd, (Msg)msg.Msg, msg.WParam, msg.LParam);
 			return msg.Result;
 		}
 

@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: Keys.cs,v $
+// Revision 1.2  2004/08/11 22:20:59  pbartok
+// - Signature fixes
+//
 // Revision 1.1  2004/07/09 05:21:25  pbartok
 // - Initial check-in
 //
@@ -47,12 +50,13 @@ namespace System.Windows.Forms {
 		LineFeed	= 0x0000000A,
 		Clear		= 0x0000000C,
 		Return		= 0x0000000D,
+		Enter		= 0x0000000D,
 		ShiftKey	= 0x00000010,
 		ControlKey	= 0x00000011,
 		Menu		= 0x00000012,
 		Pause		= 0x00000013,
 		CapsLock	= 0x00000014,
-		Captial		= 0x00000014,
+		Capital		= 0x00000014,
 		KanaMode	= 0x00000015,
 		HanguelMode	= 0x00000015,
 		HangulMode	= 0x00000015,
@@ -62,9 +66,8 @@ namespace System.Windows.Forms {
 		HanjaMode	= 0x00000019,
 		Escape		= 0x0000001B,
 		IMEConvert	= 0x0000001C,
-		IMENonConvert	= 0x0000001D,
+		IMENonconvert	= 0x0000001D,
 		IMEAceept	= 0x0000001E,
-		IMEAccept	= 0x0000001E,
 		IMEModeChange	= 0x0000001F,
 		Space		= 0x00000020,
 		PageUp		= 0x00000021,

@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: NativeWindow.cs,v $
+// Revision 1.2  2004/08/11 22:20:59  pbartok
+// - Signature fixes
+//
 // Revision 1.1  2004/07/09 05:21:25  pbartok
 // - Initial check-in
 //
@@ -55,12 +58,6 @@ namespace System.Windows.Forms
 		public IntPtr Handle {
 			get {
 				return window_handle;
-			}
-		}
-
-		public bool IsHandleCreated {
-			get {
-				return (window_handle != IntPtr.Zero);
 			}
 		}
 		#endregion	// Public Instance Properties
@@ -135,10 +132,9 @@ namespace System.Windows.Forms
 		internal static IntPtr WndProc(IntPtr hWnd, Msg msg, IntPtr wParam, IntPtr lParam) {
 			Message		m = new Message();
 			NativeWindow	window = null;
-
 			try {
 				window = (NativeWindow)window_collection[hWnd];
-				m.Hwnd=hWnd;
+				m.HWnd=hWnd;
 				m.Msg=(int)msg;
 				m.WParam=wParam;
 				m.LParam=lParam;

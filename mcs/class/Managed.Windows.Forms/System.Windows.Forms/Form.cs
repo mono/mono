@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 // $Modtime: $
 // $Log: Form.cs,v $
+// Revision 1.4  2004/08/11 22:20:59  pbartok
+// - Signature fixes
+//
 // Revision 1.3  2004/08/04 21:13:47  pbartok
 // - Added AutoScale properties
 //
@@ -139,7 +142,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		protected virtual void OnClosed(System.ComponentModel.CancelEventArgs e) {
+		protected virtual void OnClosing(System.ComponentModel.CancelEventArgs e) {
 			if (Closing != null) {
 				Closing(this, e);
 			}

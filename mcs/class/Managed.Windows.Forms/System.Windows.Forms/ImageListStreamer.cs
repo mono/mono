@@ -23,9 +23,12 @@
 //	Peter Bartok	(pbartok@novell.com)
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: ImageListStreamer.cs,v $
+// Revision 1.2  2004/08/11 22:20:59  pbartok
+// - Signature fixes
+//
 // Revision 1.1  2004/07/15 20:05:28  pbartok
 // - Implemented ImageList and ImageList.ImageCollection classes
 // - Added ColorDepth enumeration
@@ -39,7 +42,13 @@
 using System.Runtime.Serialization;
 
 namespace System.Windows.Forms {
+	[Serializable]
 	public sealed class ImageListStreamer : ISerializable {
+		#region Constructor
+		private ImageListStreamer() {
+		}
+		#endregion	// Constructor
+
 		#region Public Instance Methods
 		[MonoTODO("Need to learn about streaming first - Peter")]
 		public void GetObjectData(SerializationInfo si, StreamingContext context) {

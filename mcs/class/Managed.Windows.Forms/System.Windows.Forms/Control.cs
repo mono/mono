@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.22 $
+// $Revision: 1.23 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.23  2004/08/11 22:20:59  pbartok
+// - Signature fixes
+//
 // Revision 1.22  2004/08/11 19:19:44  pbartok
 // - We had SetWindowPos and MoveWindow to set window positions and size,
 //   removed MoveWindow. We have GetWindowPos, so it made sense to keep
@@ -775,10 +778,6 @@ namespace System.Windows.Forms
 		public virtual bool Focused {
 			get {
 				return this.has_focus;
-			}
-
-			set {
-				throw new NotImplementedException();
 			}
 		}
 

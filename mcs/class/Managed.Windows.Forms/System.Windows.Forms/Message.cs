@@ -23,9 +23,10 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.1 $
-// $Modtime: $
 // $Log: Message.cs,v $
+// Revision 1.2  2004/08/11 22:20:59  pbartok
+// - Signature fixes
+//
 // Revision 1.1  2004/07/09 05:21:25  pbartok
 // - Initial check-in
 //
@@ -47,7 +48,7 @@ namespace System.Windows.Forms {
 		private IntPtr	result;
 
 		#region Public Instance Properties
-		public IntPtr Hwnd {
+		public IntPtr HWnd {
 			get { return hwnd; }
 			set { hwnd=value; }
 		}
@@ -91,23 +92,11 @@ namespace System.Windows.Forms {
 				return false;
 			}
 
-			return (this == (Message)o);
-		}
-
-		public static bool operator == (Message msg_a, Message msg_b) {
-			return ((msg_a.msg == msg_b.msg) && 
-				(msg_a.hwnd == msg_b.hwnd) && 
-				(msg_a.lParam == msg_b.lParam) && 
-				(msg_a.wParam == msg_b.wParam) && 
-				(msg_a.result == msg_b.result));
-		}
-
-		public static bool operator != (Message msg_a, Message msg_b) {
-			return ((msg_a.msg != msg_b.msg) || 
-				(msg_a.hwnd != msg_b.hwnd) || 
-				(msg_a.lParam != msg_b.lParam) || 
-				(msg_a.wParam != msg_b.wParam) || 
-				(msg_a.result != msg_b.result));
+			return ((this.msg == ((Message)o).msg) && 
+				(this.hwnd == ((Message)o).hwnd) && 
+				(this.lParam == ((Message)o).lParam) && 
+				(this.wParam == ((Message)o).wParam) && 
+				(this.result == ((Message)o).result));
 		}
 
 		public override int GetHashCode() {

@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: ContainerControl.cs,v $
+// Revision 1.2  2004/08/11 22:20:59  pbartok
+// - Signature fixes
+//
 // Revision 1.1  2004/07/09 05:21:25  pbartok
 // - Initial check-in
 //
@@ -91,7 +94,7 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
-		public bool ActivateControl(Control control) {
+		bool IContainerControl.ActivateControl(Control control) {
 			throw new NotImplementedException();
 		}
 		#endregion	// Public Instance Methods

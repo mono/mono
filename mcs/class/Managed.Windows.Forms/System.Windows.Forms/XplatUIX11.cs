@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.18 $
+// $Revision: 1.19 $
 // $Modtime: $
 // $Log: XplatUIX11.cs,v $
+// Revision 1.19  2004/08/11 22:20:59  pbartok
+// - Signature fixes
+//
 // Revision 1.18  2004/08/11 19:19:44  pbartok
 // - We had SetWindowPos and MoveWindow to set window positions and size,
 //   removed MoveWindow. We have GetWindowPos, so it made sense to keep
@@ -103,10 +106,11 @@ using System.Runtime.InteropServices;
 
 /// X11 Version
 namespace System.Windows.Forms {
-	public class XplatUIX11 : XplatUIDriver {
+	internal class XplatUIX11 : XplatUIDriver {
 		#region Local Variables
 		private static XplatUIX11	instance;
 		private static int		ref_count;
+		private static bool		themes_enabled;
 
 		private static IntPtr		DisplayHandle;		// X11 handle to display
 		private static IntPtr		FosterParent;		// Container to hold child windows until their parent exists
@@ -222,6 +226,10 @@ namespace System.Windows.Forms {
 
 		internal override void Exit() {
 			Console.WriteLine("XplatUIX11.Exit");
+		}
+
+		internal override void EnableThemes() {
+			themes_enabled=true;
 		}
 
 		internal override IntPtr CreateWindow(CreateParams cp) {

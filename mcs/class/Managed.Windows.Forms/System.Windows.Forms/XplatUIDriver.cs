@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.9 $
+// $Revision: 1.10 $
 // $Modtime: $
 // $Log: XplatUIDriver.cs,v $
+// Revision 1.10  2004/08/11 22:20:59  pbartok
+// - Signature fixes
+//
 // Revision 1.9  2004/08/11 19:19:44  pbartok
 // - We had SetWindowPos and MoveWindow to set window positions and size,
 //   removed MoveWindow. We have GetWindowPos, so it made sense to keep
@@ -64,7 +67,7 @@
 using System.Drawing;
 
 namespace System.Windows.Forms {
-	public abstract class XplatUIDriver {
+	internal abstract class XplatUIDriver {
 		internal abstract IntPtr	InitializeDriver();
 		internal abstract void		ShutdownDriver(IntPtr token);
 		internal delegate IntPtr	WndProc(IntPtr hwnd, Msg msg, IntPtr wParam, IntPtr lParam);
@@ -119,6 +122,9 @@ namespace System.Windows.Forms {
 
 		#region XplatUI Driver Methods
 		internal abstract void Exit();
+
+		internal abstract void EnableThemes();
+
 		internal abstract IntPtr CreateWindow(CreateParams cp);
 		internal abstract IntPtr CreateWindow(IntPtr Parent, int X, int Y, int Width, int Height);
 		internal abstract void DestroyWindow(IntPtr handle);

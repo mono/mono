@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.9 $
+// $Revision: 1.10 $
 // $Modtime: $
 // $Log: XplatUI.cs,v $
+// Revision 1.10  2004/08/11 22:20:59  pbartok
+// - Signature fixes
+//
 // Revision 1.9  2004/08/11 19:19:44  pbartok
 // - We had SetWindowPos and MoveWindow to set window positions and size,
 //   removed MoveWindow. We have GetWindowPos, so it made sense to keep
@@ -84,7 +87,7 @@ using System.Runtime.InteropServices;
 
 /// X11 Version
 namespace System.Windows.Forms {
-	public class XplatUI {
+	internal class XplatUI {
 		#region Local Variables
 		static XplatUIDriver		driver;
 		static String			default_class_name;
@@ -157,6 +160,10 @@ namespace System.Windows.Forms {
 		#region Public Static Methods
 		internal static void Exit() {
 			driver.Exit();
+		}
+
+		internal static void EnableThemes() {
+			driver.EnableThemes();
 		}
 
 		internal static bool Text(IntPtr hWnd, string text) {

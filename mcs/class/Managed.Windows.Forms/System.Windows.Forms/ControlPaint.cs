@@ -23,9 +23,10 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.2 $
-// $Modtime: $
 // $Log: ControlPaint.cs,v $
+// Revision 1.3  2004/08/11 22:20:59  pbartok
+// - Signature fixes
+//
 // Revision 1.2  2004/07/26 17:42:03  jordi
 // Theme support
 //
@@ -49,6 +50,12 @@ namespace System.Windows.Forms {
 
 		#region Private Enumerations
 
+
+		#region Constructor
+		// Prevent a public constructor from being created
+		private ControlPaint() {
+		}
+		#endregion	// Constructor
 
 
 		#endregion	// Private Enumerations
@@ -356,25 +363,33 @@ namespace System.Windows.Forms {
 			ThemeEngine.Current.DrawRadioButton (graphics, rectangle, state);
 		}
 
-		[MonoTODO]
+		[MonoTODO("Figure out a good System.Drawing way for XOR drawing")]
 		public static void DrawReversibleFrame(Rectangle rectangle, Color backColor, FrameStyle style) {
-			//FIXME:
+			throw new NotImplementedException();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Figure out a good System.Drawing way for XOR drawing")]
 		public static void DrawReversibleLine(Point start, Point end, Color backColor) {
-			//FIXME:
+			throw new NotImplementedException();
 		}
 
-		[MonoTODO]
+		[MonoTODO("Figure out a good System.Drawing way for XOR drawing")]
 		public static void FillReversibleRectangle(Rectangle rectangle, Color backColor) {
-			//FIXME:
+			throw new NotImplementedException();
 		}
 
+
+		public static void DrawScrollButton (Graphics graphics, int x, int y, int width, int height, ScrollButton button, ButtonState state) {
+			ThemeEngine.Current.DrawScrollButton (graphics, new Rectangle(x, y, width, height), button, state);
+		}
 
 		public static void DrawScrollButton (Graphics graphics, Rectangle rectangle, ScrollButton button, ButtonState state) {
-
 			ThemeEngine.Current.DrawScrollButton (graphics, rectangle, button, state);
+		}
+
+		[MonoTODO]
+		public static void DrawSelectionFrame(Graphics graphics, bool active, Rectangle outsideRect, Rectangle insideRect, Color backColor) {
+			throw new NotImplementedException();
 		}
 
 		public static void DrawSizeGrip (Graphics graphics, Color backColor, Rectangle bounds)

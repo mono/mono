@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: ScrollableControl.cs,v $
+// Revision 1.2  2004/08/11 22:20:59  pbartok
+// - Signature fixes
+//
 // Revision 1.1  2004/07/09 05:21:25  pbartok
 // - Initial check-in
 //
@@ -54,14 +57,20 @@ namespace System.Windows.Forms {
 
 		#region Subclass DockPaddingEdges
 		public class DockPaddingEdges : ICloneable {
-			// Local Variables;
+			#region DockPaddingEdges Local Variables
 			private int all;
 			private int left;
 			private int right;
 			private int top;
 			private int bottom;
+			#endregion	// DockPaddingEdges Local Variables
 
-			// Public Instance Properties
+			#region DockPaddingEdges Constructor
+			private DockPaddingEdges() {
+			}
+			#endregion	// DockPaddingEdges Constructor
+
+			#region DockPaddingEdges Public Instance Properties
 			public int All {
 				get {
 					return all;
@@ -112,19 +121,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			public static bool operator == (DockPaddingEdges obj_a, DockPaddingEdges obj_b) {
-				if (	(obj_a.all == obj_b.all) && (obj_a.left == obj_b.left) &&
-					(obj_a.right == obj_b.right) && (obj_a.top == obj_b.top) && 
-					(obj_a.bottom == obj_b.bottom)) {
-						return true;
-				}
-
-				return false;
-			}
-
-			public static bool operator != (DockPaddingEdges obj_a, DockPaddingEdges obj_b) {
-				return !(obj_a==obj_b);
-			}
+			#endregion	// DockPaddingEdges Public Instance Properties
 
 			// Public Instance Methods
 			public override bool Equals(object other) {
@@ -132,7 +129,13 @@ namespace System.Windows.Forms {
 					return false;
 				}
 
-				return (this==(DockPaddingEdges)other);
+				if (	(this.all == ((DockPaddingEdges)other).all) && (this.left == ((DockPaddingEdges)other).left) &&
+					(this.right == ((DockPaddingEdges)other).right) && (this.top == ((DockPaddingEdges)other).top) && 
+					(this.bottom == ((DockPaddingEdges)other).bottom)) {
+					return true;
+				}
+
+				return false;
 			}
 
 			public override int GetHashCode() {
@@ -219,6 +222,7 @@ namespace System.Windows.Forms {
 
 		public override Rectangle DisplayRectangle {
 			get {
+				return base.DisplayRectangle;
 				throw new NotImplementedException();
 			}
 		}
@@ -275,6 +279,8 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnLayout(LayoutEventArgs levent) {
+			base.OnLayout(levent);
+			return;
 			throw new NotImplementedException();
 		}
 

@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: BindingMemberInfo.cs,v $
+// Revision 1.2  2004/08/11 22:20:59  pbartok
+// - Signature fixes
+//
 // Revision 1.1  2004/07/09 05:21:25  pbartok
 // - Initial check-in
 //
@@ -34,7 +37,7 @@
 // COMPLETE
 
 namespace System.Windows.Forms {
-	public class BindingMemberInfo {
+	public struct BindingMemberInfo {
 		private string		data_member;
 		private string		data_field;
 		private string		data_path;
@@ -84,7 +87,9 @@ namespace System.Windows.Forms {
 		#region Public Instance Methods
 		public override bool Equals(object otherObject) {
 			if (otherObject is BindingMemberInfo) {
-				return (this == (BindingMemberInfo)otherObject);
+				return ((this.data_field == ((BindingMemberInfo)otherObject).data_field) &&
+					(this.data_path == ((BindingMemberInfo)otherObject).data_path) &&
+					(this.data_member == ((BindingMemberInfo)otherObject).data_member));
 			} else {
 				return false;
 			}

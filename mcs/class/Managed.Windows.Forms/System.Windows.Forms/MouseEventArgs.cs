@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: MouseEventArgs.cs,v $
+// Revision 1.2  2004/08/11 22:20:59  pbartok
+// - Signature fixes
+//
 // Revision 1.1  2004/07/09 05:21:25  pbartok
 // - Initial check-in
 //
@@ -34,7 +37,7 @@
 // COMPLETE
 
 namespace System.Windows.Forms {
-	public class MouseEventArgs {
+	public class MouseEventArgs : EventArgs {
 		private MouseButtons	buttons;
 		private int		clicks;
 		private int		delta;
