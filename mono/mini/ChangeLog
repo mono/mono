@@ -1,3 +1,8 @@
+2003-06-02  Dietmar Maurer  <dietmar@ximian.com>
+
+	* mini.c (mono_find_block_region): bug fix in region code
+	(mini_method_compile): enable removing unreachable code again, but
+	only in methods without exception clauses.
 
 Fri May 30 18:40:24 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
