@@ -298,13 +298,13 @@ namespace System.Collections {
 		// methods
 
 		public virtual int Add (object value) {
-			if (readOnly) {
-				throw new NotSupportedException ("Collection is read-only.");
-			}
+			if (readOnly)
+				throw new NotSupportedException ("ArrayList is read-only.");
+			if (fixedSize)
+				throw new NotSupportedException ("ArrayList is fixed size.");
 
-			if (count + 1 >= capacity) {
+			if (count + 1 >= capacity)
 				setSize (capacity * 2);
-			}
 
 			dataArray[count] = value;
 			version++;
@@ -312,6 +312,11 @@ namespace System.Collections {
 		}
 
 		public virtual void AddRange (ICollection c) {
+			if (null == c)
+				throw new ArgumentNullException ("c");
+			if (readOnly || fixedSize)
+				throw new NotSupportedException ();
+
 			int cc = c.Count;
 			if (count + cc >= capacity)
 				Capacity = cc < count? count * 2: count + cc + 1;
