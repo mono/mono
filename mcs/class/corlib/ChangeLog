@@ -1,3 +1,7 @@
+2003-11-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* corlib.dll.sources: Add System.Runtime.CompilerServices/IsVolatile.cs.
+
 2003-11-12 Jackson Harper <jackson@ximian.com>
 
 	* Makefile: corlib is now named mscorlib.

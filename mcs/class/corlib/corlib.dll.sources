@@ -424,6 +424,7 @@ System.Runtime.CompilerServices/DiscardableAttribute.cs
 System.Runtime.CompilerServices/IDispatchConstantAttribute.cs
 System.Runtime.CompilerServices/IUnknownConstantAttribute.cs
 System.Runtime.CompilerServices/IndexerNameAttribute.cs
+System.Runtime.CompilerServices/IsVolatile.cs
 System.Runtime.CompilerServices/MethodCodeType.cs
 System.Runtime.CompilerServices/MethodImplAttribute.cs
 System.Runtime.CompilerServices/MethodImplOptions.cs
