@@ -228,7 +228,7 @@ namespace System.Data
 					
 			IDictionaryEnumerator enumerator = rowValue.GetEnumerator ();
 			while (enumerator.MoveNext ()) {
-				row [enumerator.Key.ToString ()] = enumerator.Value.ToString ();
+				row [enumerator.Key.ToString ()] = StringToObject (table.Columns[enumerator.Key.ToString ()].DataType, enumerator.Value.ToString ());
 			}
 
 			table.Rows.Add (row);
