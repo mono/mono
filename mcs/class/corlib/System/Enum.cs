@@ -164,7 +164,6 @@ namespace System {
 			return info.names;
 		}
 		
-		[MonoTODO("Complete parameter validation")]
 		public static string GetName (Type enumType, object value) {
 			if (null == enumType)
 				throw new ArgumentNullException ("enumType cannot be null.");
@@ -182,10 +181,9 @@ namespace System {
 				if (value.Equals (info.values.GetValue (i)))
 					return info.names [i];
 			}
-			throw new ArgumentException ("value is an invalid type.");
+			return null;
 		}
 		
-		[MonoTODO("Complete parameter validation")]
 		public static bool IsDefined (Type enumType, object value) {
 			if (null == enumType)
 				throw new ArgumentNullException ("enumType cannot be null.");
@@ -199,10 +197,17 @@ namespace System {
 			MonoEnumInfo.GetInfo (enumType, out info);
 
 			Type vType = value.GetType ();
-			if (vType is String) {
+			if (vType == typeof(String)) {
 				return ((IList)(info.names)).Contains (value);
 			} else if (vType == info.utype) {
-				return ((IList)(info.values)).Contains (value);
+				int i;
+				value = ToObject (enumType, value);
+				MonoEnumInfo.GetInfo (enumType, out info);
+				for (i = 0; i < info.values.Length; ++i) {				
+					if (value.Equals (info.values.GetValue (i)))
+						return true;
+				}
+				return false;
 			} else {
 				throw new ArgumentException("The value parameter is not the correct type."
 					+ "It must be type String or the same type as the underlying type"
@@ -247,13 +252,50 @@ namespace System {
 			MonoEnumInfo info;
 			int i;
 			MonoEnumInfo.GetInfo (enumType, out info);
-			for (i = 0; i < info.values.Length; ++i) {				
-				if (String.Compare (value, info.names [i], ignoreCase) == 0)
-					return info.values.GetValue (i);
+
+			long retVal = 0;
+			string[] names = value.Split(new char[] {','});
+			foreach (string name in names) {
+				bool found = false;
+				for (i = 0; i < info.values.Length; ++i) {				
+					if (String.Compare (name, info.names [i], ignoreCase) == 0) {
+						switch (((Enum)info.values.GetValue (i)).GetTypeCode()) {
+							case TypeCode.Byte:
+								retVal |= (long)((byte)info.values.GetValue (i));
+								break;
+							case TypeCode.SByte:
+								retVal |= (long)((SByte)info.values.GetValue (i));
+								break;
+							case TypeCode.Int16:
+								retVal |= (long)((short)info.values.GetValue (i));
+								break;
+							case TypeCode.Int32:
+								retVal |= (long)((int)info.values.GetValue (i));
+								break;
+							case TypeCode.Int64:
+								retVal |= (long)info.values.GetValue (i);
+								break;
+							case TypeCode.UInt16:
+								retVal |= (long)((UInt16)info.values.GetValue (i));
+								break;
+							case TypeCode.UInt32:
+								retVal |= (long)((UInt32)info.values.GetValue (i));
+								break;
+							case TypeCode.UInt64:
+								retVal |= (long)((UInt64)info.values.GetValue (i));
+								break;
+						}
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+					throw new ArgumentException ("The requested value was not found");
+				
 			}
-			throw new ArgumentException ("The rquested value was not found");
+			return ToObject(enumType, retVal);
 		}
-		
+
 		/// <summary>
 		///   Compares the enum value with another enum value of the same type.
 		/// </summary>
