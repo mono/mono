@@ -228,7 +228,11 @@ namespace Mono.Xml.XPath
 					return nonAtomicStringPool [nodes [currentNode].Value];
 				}
 
-				// Element
+				// Element - collect all content values
+				int iter = nodes [currentNode].FirstChild;
+				if (iter == 0)
+					return String.Empty;
+
 				if (valueBuilder == null)
 					valueBuilder = new StringBuilder ();
 				else
@@ -244,10 +248,6 @@ namespace Mono.Xml.XPath
 					if (end == 0)
 						end = nodes.Length;
 				}
-
-				int iter = nodes [currentNode].FirstChild;
-				if (iter == 0)
-					iter = end;
 
 				while (iter < end) {
 					switch (nodes [iter].NodeType) {

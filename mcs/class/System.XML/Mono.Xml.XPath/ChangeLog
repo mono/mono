@@ -1,3 +1,10 @@
+2004-03-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DTMXPathDocumentBuilder2.cs : Eliminating Depth. Store parent index
+	  stack instead of depending on Depth.
+	  Just use hasAttributes and hasLocalNs instead of indices.
+	* DTMXPathNavigator2.cs : (get_Value) Check empty element earlier.
+
 2004-03-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DTMXPathNavigator2.cs : Eliminating Depth. (To completely eliminate,

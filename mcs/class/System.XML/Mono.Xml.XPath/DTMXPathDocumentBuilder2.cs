@@ -130,17 +130,18 @@ namespace Mono.Xml.XPath
 		int nodeIndex;
 		int attributeIndex;
 		int nsIndex;
-		int parentForFirstChild;
 
 		// for attribute processing; should be reset per each element.
-		int firstAttributeIndex;
-		int lastNsIndexInCurrent;
+		bool hasAttributes;
+		bool hasLocalNs;
 		int attrIndexAtStart;
 		int nsIndexAtStart;
 
-		int prevSibling;
 		int lastNsInScope;
 		bool skipRead = false;
+
+		int [] parentStack = new int [10];
+		int parentStackIndex = 0;
 
 		public DTMXPathDocument2 CreateDocument ()
 		{
@@ -177,7 +178,7 @@ namespace Mono.Xml.XPath
 
 			this.nodeIndex = 1;
 			this.lastNsInScope = 1;
-			this.parentForFirstChild = nodeIndex;
+			parentStack [0] = nodeIndex;
 
 			while (!xmlReader.EOF)
 				Read ();
@@ -211,15 +212,9 @@ namespace Mono.Xml.XPath
 				if (!xmlReader.Read ())
 					return;
 			skipRead = false;
-			int parent = nodeIndex;
+			int parent = parentStack [parentStackIndex];
+			int prevSibling = nodeIndex;
 
-			if (nodes [nodeIndex].Depth >= xmlReader.Depth) {
-				// if not, then current node is parent.
-				while (xmlReader.Depth <= nodes [parent].Depth)
-					parent = nodes [parent].Parent;
-			}
-
-			prevSibling = nodeIndex;
 			switch (xmlReader.NodeType) {
 			case XmlNodeType.Element:
 			case XmlNodeType.CDATA:
@@ -227,17 +222,17 @@ namespace Mono.Xml.XPath
 			case XmlNodeType.Comment:
 			case XmlNodeType.Text:
 			case XmlNodeType.ProcessingInstruction:
-				if (parentForFirstChild >= 0)
+				if (parent == nodeIndex)
 					prevSibling = 0;
 				else
-					while (nodes [prevSibling].Depth != xmlReader.Depth)
+					while (nodes [prevSibling].Parent != parent)
 						prevSibling = nodes [prevSibling].Parent;
 
 				nodeIndex++;
 
 				if (prevSibling != 0)
 					nodes [prevSibling].NextSibling = nodeIndex;
-				if (parentForFirstChild >= 0)
+				if (parentStack [parentStackIndex] == nodeIndex - 1)
 					nodes [parent].FirstChild = nodeIndex;
 				break;
 			case XmlNodeType.Whitespace:
@@ -246,14 +241,12 @@ namespace Mono.Xml.XPath
 				else
 					goto default;
 			case XmlNodeType.EndElement:
-				parentForFirstChild = -1;
+				parentStackIndex--;
 				return;
 			default:
 				// No operations. Doctype, EntityReference, 
 				return;
 			}
-
-			parentForFirstChild = -1;	// Might be changed in ProcessElement().
 
 			string value = null;
 			XPathNodeType nodeType = XPathNodeType.Text;
@@ -352,8 +345,8 @@ namespace Mono.Xml.XPath
 
 		private void PrepareStartElement (int previousSibling)
 		{
-			firstAttributeIndex = 0;
-			lastNsIndexInCurrent = 0;
+			hasAttributes = false;
+			hasLocalNs = false;
 			attrIndexAtStart = attributeIndex;
 			nsIndexAtStart = nsIndex;
 
@@ -394,21 +387,28 @@ namespace Mono.Xml.XPath
 					lastNsInScope = nsIndex;
 			}
 
-			if (!nodes [nodeIndex].IsEmptyElement)
-				parentForFirstChild = nodeIndex;
+			if (!nodes [nodeIndex].IsEmptyElement) {
+				parentStack [++parentStackIndex] = nodeIndex;
+				if (parentStack.Length == parentStackIndex) {
+					int [] tmp = new int [parentStackIndex * 2];
+					Array.Copy (parentStack, tmp, parentStackIndex);
+					parentStack = tmp;
+				}
+			}
 		}
 
 		private void ProcessNamespace (string prefix, string ns)
 		{
-			nsIndex++;
+			int nextTmp = hasLocalNs ?
+				nsIndex : nodes [nodeIndex].FirstNamespace;
 
-			int nextTmp = lastNsIndexInCurrent == 0 ? nodes [nodeIndex].FirstNamespace : lastNsIndexInCurrent;
+			nsIndex++;
 
 			this.AddNsNode (nodeIndex,
 				AtomicIndex (prefix),
 				AtomicIndex (ns),
 				nextTmp);
-			lastNsIndexInCurrent = nsIndex;
+			hasLocalNs = true;
 		}
 
 		private void ProcessAttribute (string prefix, string localName, string ns, string value)
@@ -422,10 +422,10 @@ namespace Mono.Xml.XPath
 				NonAtomicIndex (value),
 				lineInfo != null ? lineInfo.LineNumber : 0,
 				lineInfo != null ? lineInfo.LinePosition : 0);
-			if (firstAttributeIndex == 0)
-				firstAttributeIndex = attributeIndex;
-			else
+			if (hasAttributes)
 				attributes [attributeIndex - 1].NextAttribute = attributeIndex;
+			else
+				hasAttributes = true;
 
 			// Identity infoset
 			if (validatingReader != null) {
