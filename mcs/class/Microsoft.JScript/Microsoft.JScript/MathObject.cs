@@ -33,6 +33,8 @@ namespace Microsoft.JScript {
 
 	public class MathObject : JSObject {
 
+		static Random random_gen = new Random ();
+		
 		public const double E = 2.7182818284590452354;
 		public const double LN10 = 2.302585092994046;
 		public const double LN2 = 0.6931471805599453;
@@ -49,61 +51,61 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (0, JSBuiltin.Math_abs)]
 		public static double abs (double d)
 		{
-			throw new NotImplementedException ();
+			return Math.Abs (d);
 		}
 
 		[JSFunctionAttribute (0, JSBuiltin.Math_acos)]
 		public static double acos (double x)
 		{
-			throw new NotImplementedException ();
+			return Math.Acos (x);
 		}
 
 		[JSFunctionAttribute (0, JSBuiltin.Math_asin)]
 		public static double asin (double x)
 		{
-			throw new NotImplementedException ();
+			return Math.Asin (x);
 		}
 
 		[JSFunctionAttribute (0, JSBuiltin.Math_atan)]
 		public static double atan (double x)
 		{
-			throw new NotImplementedException ();
+			return Math.Atan (x);
 		}
 
 		[JSFunctionAttribute (0, JSBuiltin.Math_atan2)]
 		public static double atan2 (double dy, double dx)
 		{
-			throw new NotImplementedException ();
+			return Math.Atan2 (dy, dx);
 		}
 
 		[JSFunctionAttribute (0, JSBuiltin.Math_ceil)]
 		public static double ceil (double x)
 		{
-			throw new NotImplementedException ();
+			return Math.Ceiling (x);
 		}
 
 		[JSFunctionAttribute (0, JSBuiltin.Math_cos)]
 		public static double cos (double x)
 		{
-			throw new NotImplementedException ();
+			return Math.Cos (x);
 		}
 
 		[JSFunctionAttribute (0, JSBuiltin.Math_exp)]
 		public static double exp (double x)
 		{
-			throw new NotImplementedException ();
+			return Math.Exp (x);
 		}
 
 		[JSFunctionAttribute (0, JSBuiltin.Math_floor)]
 		public static double floor (double x)
 		{
-			throw new NotImplementedException ();
+			return Math.Floor (x);
 		}
 
 		[JSFunctionAttribute (0, JSBuiltin.Math_log)]
 		public static double log (double x)
 		{
-			throw new NotImplementedException ();
+			return Math.Log (x);
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasVarArgs, JSBuiltin.Math_max)]
@@ -121,37 +123,37 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (0, JSBuiltin.Math_pow)]
 		public static double pow (double dx, double dy)
 		{
-			throw new NotImplementedException ();
+			return Math.Pow (dx, dy);
 		}
 
 		[JSFunctionAttribute (0, JSBuiltin.Math_random)]
 		public static double random ()
 		{
-			throw new NotImplementedException ();
+			return random_gen.Next (1);
 		}
 
 		[JSFunctionAttribute (0, JSBuiltin.Math_round)]
 		public static double round (double d)
 		{
-			throw new NotImplementedException ();
+			return Math.Round (d);
 		}
 
 		[JSFunctionAttribute (0, JSBuiltin.Math_sin)]
 		public static double sin (double x)
 		{
-			throw new NotImplementedException ();
+			return Math.Sin (x);
 		}
 
 		[JSFunctionAttribute (0, JSBuiltin.Math_sqrt)]
 		public static double sqrt (double x)
 		{
-			throw new NotImplementedException ();
+			return Math.Sqrt (x);
 		}
 
 		[JSFunctionAttribute (0, JSBuiltin.Math_tan)]
 		public static double tan (double x)
 		{
-			throw new NotImplementedException ();
+			return Math.Tan (x);
 		}
 	}
 }

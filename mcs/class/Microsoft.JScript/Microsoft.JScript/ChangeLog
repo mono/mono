@@ -1,3 +1,7 @@
+2004-11-25  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* MathObject.cs: implement its methods.
+
 2004-11-24  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* DateConstructor.cs: runtime support, ported parse method from Rhino.
