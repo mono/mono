@@ -1,3 +1,7 @@
+2003-04-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* String.cs (Equals): Add trivial optimization.
+
 2003-04-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DateTime.cs: fixed bug #40910.

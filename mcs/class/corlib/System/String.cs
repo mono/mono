@@ -35,7 +35,7 @@ namespace System {
 
 			if (str1.length != str2.length)
 				return false;
-    
+
 			return InternalEquals(str1, str2);
 		}
 
@@ -48,6 +48,9 @@ namespace System {
 		}
 
 		public override bool Equals(Object obj) {
+			if ((this as object) == obj)
+				return true;
+
 			if (null == obj)
 				return false;
 
@@ -62,6 +65,9 @@ namespace System {
 		}
 
 		public bool Equals(String value) {
+			if ((this as object) == value)
+				return true;
+
 			if (null == value)
 				return false;
 
