@@ -406,6 +406,12 @@ namespace Mono.Data.Tds.Protocol {
 
 			string value = null;
 			switch (parameter.TypeName) {
+                        case "smalldatetime":
+			case "datetime":
+				DateTime d = (DateTime)parameter.Value;
+				value = String.Format(System.Globalization.CultureInfo.InvariantCulture, 
+                                                      "'{0:MM/dd/yyyy hh:mm:ss tt}'", d );
+                                break;
 			case "bigint":
 			case "decimal":
 			case "float":

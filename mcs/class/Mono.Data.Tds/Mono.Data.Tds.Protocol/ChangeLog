@@ -1,3 +1,8 @@
+2005-01-07  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* Tds70.cs : add a special case for datetime parameters to convert
+	to invariant culture. fixes bug #70209.
+
 2005-01-06  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* Tds.cs: change the typecast to ushort for
