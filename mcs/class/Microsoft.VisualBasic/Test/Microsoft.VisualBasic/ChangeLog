@@ -1,3 +1,6 @@
+2004-05-15 Anirban Bhattacharjee <banirban@novell.com>
+	* FinancialTest.cs: Tests for Financial class
+
 2004-04-26	Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* DateAndTimeTest.cs:
 		Allow some slack for rounding differences on test #TI02
