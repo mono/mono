@@ -6,32 +6,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // Portions (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
-// 
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -218,13 +193,13 @@ namespace Mono.Security.Cryptography {
 		// Output-FeedBack (OFB)
 		protected virtual void OFB (byte[] input, byte[] output) 
 		{
-			throw new NotImplementedException ("OFB not yet supported");
+			throw new CryptographicException ("OFB isn't supported by the framework");
 		}
 
 		// Cipher Text Stealing (CTS)
 		protected virtual void CTS (byte[] input, byte[] output) 
 		{
-			throw new NotImplementedException ("CTS not yet supported");
+			throw new CryptographicException ("CTS  isn't supported by the framework");
 		}
 
 		private void CheckInput (byte[] inputBuffer, int inputOffset, int inputCount)
@@ -310,6 +285,30 @@ namespace Mono.Security.Cryptography {
 			return total;
 		}
 
+#if NET_2_0
+		RandomNumberGenerator _rng;
+
+		private void Random (byte[] buffer, int start, int length)
+		{
+			if (_rng == null) {
+				_rng = RandomNumberGenerator.Create ();
+			}
+			byte[] random = new byte [length];
+			_rng.GetBytes (random);
+			Buffer.BlockCopy (random, 0, buffer, start, length);
+		}
+
+		private void ThrowBadPaddingException (PaddingMode padding, int length, int position)
+		{
+			string msg = String.Format (Locale.GetText ("Bad {0} padding."), padding);
+			if (length >= 0)
+				msg += String.Format (Locale.GetText (" Invalid length {0}."), length);
+			if (position >= 0)
+				msg += String.Format (Locale.GetText (" Error found at position {0}."), position);
+			throw new CryptographicException (msg);
+		}
+#endif
+
 		private byte[] FinalEncrypt (byte[] inputBuffer, int inputOffset, int inputCount) 
 		{
 			// are there still full block to process ?
@@ -317,7 +316,16 @@ namespace Mono.Security.Cryptography {
 			int rem = inputCount - full;
 			int total = full;
 
-			if (algo.Padding != PaddingMode.PKCS7) {
+			switch (algo.Padding) {
+#if NET_2_0
+			case PaddingMode.ANSIX923:
+			case PaddingMode.ISO10126:
+#endif
+			case PaddingMode.PKCS7:
+				// we need to add an extra block for padding
+				total += BlockSizeByte;
+				break;
+			default:
 				if (inputCount == 0)
 					return new byte [0];
 				if (rem != 0) {
@@ -331,10 +339,7 @@ namespace Mono.Security.Cryptography {
 					inputCount = paddedInput.Length;
 					total = inputCount;
 				}
-			}
-			else {
-				// we need to add an extra block for padding
-				total += BlockSizeByte;
+				break;
 			}
 
 			byte[] res = new byte [total];
@@ -349,17 +354,37 @@ namespace Mono.Security.Cryptography {
 			}
 
 			// now we only have a single last block to encrypt
-			if (algo.Padding == PaddingMode.PKCS7) {
-				byte padding = (byte) (BlockSizeByte - rem);
+			byte padding = (byte) (BlockSizeByte - rem);
+			switch (algo.Padding) {
+#if NET_2_0
+			case PaddingMode.ANSIX923:
+				// XX 00 00 00 00 00 00 07 (zero + padding length)
+				res [res.Length - 1] = padding;
+				Buffer.BlockCopy (inputBuffer, inputOffset, res, full, rem);
+				// the last padded block will be transformed in-place
+				InternalTransformBlock (res, full, BlockSizeByte, res, full);
+				break;
+			case PaddingMode.ISO10126:
+				// XX 3F 52 2A 81 AB F7 07 (random + padding length)
+				Random (res, res.Length - padding, padding - 1);
+				res [res.Length - 1] = padding;
+				Buffer.BlockCopy (inputBuffer, inputOffset, res, full, rem);
+				// the last padded block will be transformed in-place
+				InternalTransformBlock (res, full, BlockSizeByte, res, full);
+				break;
+#endif
+			case PaddingMode.PKCS7:
+				// XX 07 07 07 07 07 07 07 (padding length)
 				for (int i = res.Length; --i >= (res.Length - padding);) 
 					res [i] = padding;
 				Buffer.BlockCopy (inputBuffer, inputOffset, res, full, rem);
 				// the last padded block will be transformed in-place
 				InternalTransformBlock (res, full, BlockSizeByte, res, full);
-			}
-			else
+				break;
+			default:
 				InternalTransformBlock (inputBuffer, inputOffset, BlockSizeByte, res, outputOffset);
-
+				break;
+			}
 			return res;
 		}
 
@@ -389,13 +414,40 @@ namespace Mono.Security.Cryptography {
 				lastBlock = false;
 			}
 
+			byte padding = res [total - 1];
 			switch (algo.Padding) {
-				case PaddingMode.None:	// nothing to do - it's a multiple of block size
-				case PaddingMode.Zeros:	// nothing to do - user must unpad himself
-					break;
-				case PaddingMode.PKCS7:
-					total -= res [total - 1];
-					break;
+#if NET_2_0
+			case PaddingMode.ANSIX923:
+				if ((padding == 0) || (padding > BlockSizeByte))
+					ThrowBadPaddingException (algo.Padding, padding, -1);
+				for (int i=padding; i > 0; i--) {
+					if (res [total - 1 - i] != 0x00)
+						ThrowBadPaddingException (algo.Padding, -1, i);
+				}
+				total -= padding;
+				break;
+			case PaddingMode.ISO10126:
+				if ((padding == 0) || (padding > BlockSizeByte))
+					ThrowBadPaddingException (algo.Padding, padding, -1);
+				total -= padding;
+				break;
+			case PaddingMode.PKCS7:
+				if ((padding == 0) || (padding > BlockSizeByte))
+					ThrowBadPaddingException (algo.Padding, padding, -1);
+				for (int i=padding - 1; i > 0; i--) {
+					if (res [total - 1 - i] != padding)
+						ThrowBadPaddingException (algo.Padding, -1, i);
+				}
+				total -= padding;
+				break;
+#else
+			case PaddingMode.PKCS7:
+				total -= padding;
+				break;
+#endif
+			case PaddingMode.None:	// nothing to do - it's a multiple of block size
+			case PaddingMode.Zeros:	// nothing to do - user must unpad himself
+				break;
 			}
 
 			// return output without padding

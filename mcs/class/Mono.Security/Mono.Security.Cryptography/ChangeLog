@@ -1,3 +1,8 @@
+2005-01-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SymmetricTransform.cs: Added support for ANSI X9.23 padding and
+	ISO 10126 padding modes (applies to all symmetric block ciphers).
+
 2004-12-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* KeyPairPersistence.cs: Commented imperative asserts until it is 
