@@ -1,3 +1,10 @@
+
+Thu Sep 6 15:41:24 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: link to libmonoarch.
+	* interp.h, interp.c: use mono_create_trampoline ().
+	Pass the command line arguments to Main (String[]) methods.
+
 2001-08-30  Dietmar Maurer  <dietmar@ximian.com>
 
 	* interp.c (ves_pinvoke_method): removed the libffi dependency

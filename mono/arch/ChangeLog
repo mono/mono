@@ -1,4 +1,10 @@
 
+Thu Sep 6 15:38:00 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* x86/x86-codegen.h: added x86_rdtsc() and fixes.
+	* x86/tramp.c: create trampolines to call pinvoke methods.
+	* x86/Makefile.am: create a libmonoarch convenience library.
+
 Mon Aug 27 09:29:00 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* x86/x86-codegen.h: fix x86_call_code (). x86_mov_regp_reg () added.
