@@ -4,6 +4,11 @@ class X {
 		a = 1, b, c
 	}
 	
+	enum Test : short {
+		A = 1,
+		B
+	}
+	
 	static int Main ()
 	{
 		int v = 1;
@@ -20,6 +25,10 @@ class X {
 			return 2;
 		}
 
+		// Now try the implicit conversions for underlying types in enum operators
+		byte b = 1;
+		short s = (short) (Test.A + b);
+		
 		return 0;
 	}
 }
