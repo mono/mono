@@ -1,3 +1,16 @@
+2005-04-01  Raja R Harinath  <rharinath@novell.com>
+
+	* ecore.cs (SimpleName.SimpleNameResolve): Move 'invariant meaning
+	in block' checks to Block.CheckInvariantMeaningInBlock.
+	* statement.cs (Block.GetKnownVariableInfo): Make private.
+	(Block.IsVariableUsedInChildBlock): Remove.
+	(Block.IsVariableUsedInBlock): Likewise.
+	(Block.CheckInvariantMeaningInBlock): New.  Show location of
+	conflicting declaration.
+	(Block.AddVariable): Make error messages less long-winded and more
+	specific.  Show location of conflicting declaration.
+	* parameter.cs (Parameters.Location): New readonly property.
+
 2005-03-31  Raja R Harinath  <rharinath@novell.com>
 
 	Clean up semantics of invoking ResolveMemberAccess.

@@ -2003,25 +2003,10 @@ namespace Mono.CSharp {
 			if (e == null)
 				return null;
 
-			Block current_block = ec.CurrentBlock;
-			if (current_block != null){
-				if (current_block.IsVariableNameUsedInChildBlock (Name)) {
-					Report.Error (135, Location,
-						      "'{0}' has a different meaning in a child block", Name);
-					return null;
-				}
+			if (ec.CurrentBlock == null || ec.CurrentBlock.CheckInvariantMeaningInBlock (Name, e, Location))
+				return e;
 
-				if (!(e is LocalVariableReference) && current_block.IsVariableNameUsedInBlock (Name)) {
-					// Catch some false positives, e.g., when a local variable resolves to a constant.
-					LocalInfo vi = current_block.GetLocalInfo (Name);
-					if (vi == null) {
-						Report.Error (136, Location, "'{0}' has a different meaning later in the block", Name);
-						return null;
-					}
-				}
-			}
-
-			return e;
+			return null;
 		}
 
 		/// <remarks>
