@@ -4997,34 +4997,32 @@ namespace CIR {
 			loc  = l;
 		}
 
-		Expression CommonResolve (EmitContext ec)
+		bool CommonResolve (EmitContext ec)
 		{
 			Expr = Expr.Resolve (ec);
 
 			if (Expr == null) 
-				return null;
+				return false;
 
 			if (Arguments == null)
-				return null;
+				return false;
 
 			for (int i = Arguments.Count; i > 0;){
 				--i;
 				Argument a = (Argument) Arguments [i];
 				
 				if (!a.Resolve (ec))
-					return null;
+					return false;
 			}
 
-			return this;
+			return true;
 		}
 				
 		public override Expression DoResolve (EmitContext ec)
 		{
-			Expr = CommonResolve (ec);
-
-			if (Expr == null)
+			if (!CommonResolve (ec))
 				return null;
-			
+
 			//
 			// We perform some simple tests, and then to "split" the emit and store
 			// code we create an instance of a different class, and return that.
@@ -5039,9 +5037,7 @@ namespace CIR {
 
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
-			Expr = CommonResolve (ec);
-
-			if (Expr == null)
+			if (!CommonResolve (ec))
 				return null;
 
 			if (Expr.Type == TypeManager.array_type)
@@ -5136,6 +5132,9 @@ namespace CIR {
 		{
 			System.Attribute attr;
 
+			//
+			// FIXME: Replace with something that works around S.R.E failure
+			//
 			attr = System.Attribute.GetCustomAttribute (t, TypeManager.default_member_type);
 
 			if (attr != null)
@@ -5229,7 +5228,7 @@ namespace CIR {
 		{
 			Type indexer_type = ea.Expr.Type;
 			Type right_type = right_side.Type;
-			
+
 			if (ilist == null)
 				ilist = Indexers.GetIndexersForType (
 					indexer_type, ec.TypeContainer.RootContext.TypeManager, ea.loc);
