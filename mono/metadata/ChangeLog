@@ -1,3 +1,11 @@
+
+Mon Jan 24 15:53:25 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, gc.c, mono-gc.h, boehm-gc.c, null-gc.c, gc-internal.h:
+	start providing a GC API and keeping different implementations in
+	their own file.
+	* profiler.h, profiler.c, profiler-private.h: provide the GC events API.
+
 2005-01-22  Ben Maurer  <bmaurer@ximian.com>
 
 	* debug-mono-symfile.c (mono_debug_open_mono_symbol_file): Use
