@@ -1,3 +1,7 @@
+2005-04-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* exceptions-x86.c (mono_arch_monoctx_to_sigctx): Fix cygwin build.
+
 2005-03-31  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-x86.c: If sigaltstack support is enabled, perform win32 style
