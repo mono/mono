@@ -65,7 +65,7 @@ namespace System {
 
 		public Exception InnerException 
 		{
-			get 
+			get
 			{
 				return inner_exception;
 			}
@@ -78,7 +78,7 @@ namespace System {
 				return help_link;
 			}
 
-			set 
+			set
 			{
 				help_link = value;
 			}
@@ -86,7 +86,7 @@ namespace System {
 
 		protected int HResult 
 		{
-			get 
+			get
 			{
 				return hresult;
 			}
