@@ -207,7 +207,8 @@ namespace System.Collections.Specialized{
 
 		/// <summary> SDK: Copies the entire NameValueCollection to a compatible one-dimensional Array,
 		/// starting at the specified index of the target array.</summary>
-		
+
+		[MonoTODO]
 		override public void CopyTo( Array dest, int index )
 		{
 			if (dest==null)
@@ -258,6 +259,7 @@ namespace System.Collections.Specialized{
 
 		}
 		/// <summary></summary>
+		[MonoTODO]
 		private static string AsSingleString(ArrayList values)
 		{
 			const char separator = ',';

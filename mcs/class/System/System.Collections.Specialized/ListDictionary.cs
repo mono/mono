@@ -120,7 +120,8 @@ namespace System.Collections.Specialized
 				return this;
 			}
 		}
-		
+
+		[MonoTODO]
 		public void CopyTo(Array array, int index)
 		{
 			// FIXME
@@ -354,7 +355,8 @@ namespace System.Collections.Specialized
 					return dict.SyncRoot;
 				}
 			}
-			
+
+			[MonoTODO]
 			public void CopyTo(Array array, int index)
 			{
 				// FIXME

@@ -1,3 +1,9 @@
+2002-01-05  Ravi Pratap  <ravi@ximian.com>
+
+	* BitVector32.cs, ListDictionary.cs : MonoTODO everywhere!
+
+	* NameObjectCollectionBase.cs, NameValueCollection.cs : Ditto.
+
 2001-08-24  Nick Drochak  <ndrochak@gol.com>
 	* NameObjectCollectionBase.cs: Add stub implementation
 	* common.src: Add NameObjectCollectionBase to the build

@@ -143,6 +143,7 @@ namespace System.Collections.Specialized
 		/// <summary>
 		/// SDK: Initializes a new instance of the NameObjectCollectionBase class that is empty.
 		/// </summary>
+		[MonoTODO]
 		protected NameObjectCollectionBase():base()
 		{
 			m_readonly = false;
@@ -370,6 +371,7 @@ namespace System.Collections.Specialized
 			return allValues;
 //			throw new Exception("Not implemented yet");
 		}
+		[MonoTODO]
 		protected object[] BaseGetAllValues( Type type )
 		{
 			if (type == null)
@@ -397,6 +399,7 @@ namespace System.Collections.Specialized
 		/// 
 		/// </summary>
 		/// <param name="name"></param>
+		[MonoTODO]
 		protected void BaseRemove( string name )
 		{
 			int cnt = 0;
@@ -439,6 +442,7 @@ namespace System.Collections.Specialized
 		/// It's ok only then the key is uniquely assosiated with the value
 		/// To fix it a comparsion of objects stored under the same key in the hashtable and in the arraylist should be added 
 		/// </LAME>>
+		[MonoTODO]
 		protected void BaseRemoveAt( int index )
 		{
 			if (this.IsReadOnly)
@@ -483,6 +487,7 @@ namespace System.Collections.Specialized
 
 			//throw new Exception("Not implemented yet");
 		}
+		[MonoTODO]
 		private _Item FindFirstMatchedItem(string name)
 		{
 			if (name!=null)
