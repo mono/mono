@@ -686,7 +686,7 @@ namespace Mono.CSharp {
 			get { return Name; }
 		}
 
-		MemberCache IMemberContainer.ParentCache {
+		MemberCache IMemberContainer.BaseCache {
 			get { return null; }
 		}
 

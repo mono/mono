@@ -8,7 +8,7 @@
 //
 // TODO:
 //    Flow analysis for Yield.
-//    Emit calls to parent object constructor.
+//    Emit calls to base object constructor.
 //
 // Generics note:
 //    Current should be defined to return T, and IEnumerator.Current returns object
