@@ -1,3 +1,11 @@
+2003-12-02  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* pen.c (GdipSetPenLineCap): fix arg type so it compiles
+	using HP compiler.
+
+	* gdip.h: fix spelling of GdipSetPenLineJoin and add
+	prototype for GdipGetPenLineJoin
+
 2003-11-28  Duncan Mak  <duncan@ximian.com>
 
 	* brush.c (gdip_brush_setup): Check on the type of the brush and

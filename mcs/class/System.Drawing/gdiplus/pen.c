@@ -279,7 +279,7 @@ GdipSetPenLineCap (GpPen *pen, GpLineCap lineCap)
 }
 
 GpStatus
-GdipGetPenLineCap (GpPen *pen, GpLineJoin *lineCap)
+GdipGetPenLineCap (GpPen *pen, GpLineCap *lineCap)
 {
         *lineCap = pen->line_cap;
         return Ok;

@@ -372,8 +372,8 @@ GpStatus GdipSetPenMiterLimit (GpPen *pen, float miterLimit);
 GpStatus GdipGetPenMiterLimit (GpPen *pen, float *miterLimit);
 GpStatus GdipSetPenLineCap (GpPen *pen, GpLineCap lineCap);
 GpStatus GdipGetPenLineCap (GpPen *pen, GpLineCap *lineCap);
-GpStatus GdipSetPenLineJoine (GpPen *pen, GpLineJoin lineJoin);
-GpStatus GdipGetPenLineCap (GpPen *pen, GpLineJoin *lineJoin);
+GpStatus GdipSetPenLineJoin (GpPen *pen, GpLineJoin lineJoin);
+GpStatus GdipGetPenLineJoin (GpPen *pen, GpLineJoin *lineJoin);
 
 /* Text */
 GpStatus GdipDrawString (GpGraphics *graphics, const char *string, int len, void *font, RectF *rc, void *format, GpBrush *brush);
