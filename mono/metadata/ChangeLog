@@ -1,3 +1,8 @@
+2004-11-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: use memmove in BlockCopyInternal when the source and
+	destination arrays are the same.
+
 2004-11-09  Martin Baulig  <martin@ximian.com>
 
 	* class-internals.h (MonoGenericContainer): Removed `method' and
