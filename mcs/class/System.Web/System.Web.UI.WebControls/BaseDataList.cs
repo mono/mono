@@ -158,7 +158,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[Bindable(true)]
-		[DefaultValue(null)]
+		//[DefaultValue(null)]
 		//[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[WebCategory("Data")]
 		[WebSysDescription("BaseDataList_DataSource")]
