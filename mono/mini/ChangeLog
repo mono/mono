@@ -1,3 +1,7 @@
+2005-01-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* aot.c (emit_method_code): Fix the 'method emitted as' messages.
+
 2004-12-31  Zoltan Varga  <vargaz@freemail.hu>
 
 	* debug-mini.c (encode_value): Fix off-by-one.
