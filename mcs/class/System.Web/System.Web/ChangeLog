@@ -1,3 +1,7 @@
+2003-05-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWriter.cs: don't do anything in Flush. Fixes #42249.
+
 2003-05-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlizedException.cs: added more virtual methods.

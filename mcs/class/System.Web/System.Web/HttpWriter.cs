@@ -151,8 +151,6 @@ namespace System.Web
 
 		public override void Flush ()
 		{
-			FlushBuffers ();
-			_Response.Flush ();
 		}
 
 		private void CheckIfFlush ()
