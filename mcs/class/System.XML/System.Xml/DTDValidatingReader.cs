@@ -8,7 +8,7 @@ using System.Xml.Schema;
 
 namespace Mono.Xml
 {
-	public class DTDValidatingReader : XmlReader, IXmlLineInfo
+	public class DTDValidatingReader : XmlReader, IXmlLineInfo, IHasXmlParserContext
 	{
 		public DTDValidatingReader (XmlReader reader)
 			: this (reader, null)
@@ -764,18 +764,6 @@ namespace Mono.Xml
 				throw new InvalidOperationException ("The current node is not an Entity Reference");
 			DTDEntityDeclaration entity = DTD != null ? DTD.EntityDecls [reader.Name] as DTDEntityDeclaration : null;
 
-			XmlParserContext ctx = null;
-			if (sourceTextReader != null)
-				ctx = sourceTextReader.GetInternalParserContext ();
-			else if (reader is XmlNodeReader)
-				ctx = ((XmlNodeReader) reader).GetInternalParserContext ();
-			else if (reader is IHasXmlParserContext)
-				ctx = ((IHasXmlParserContext) reader).ParserContext;
-
-			if (ctx == null)
-				throw new NotSupportedException (
-					"Entity resolution from non-XmlTextReader XmlReader could not be supported.");
-
 			XmlNodeType xmlReaderNodeType =
 				(currentAttribute != null) ? XmlNodeType.Attribute : XmlNodeType.Element;
 
@@ -783,11 +771,11 @@ namespace Mono.Xml
 			if (entity != null && entity.SystemId != null) {
 				Uri baseUri = entity.BaseURI == null ? null : new Uri (entity.BaseURI);
 				Stream stream = resolver.GetEntity (resolver.ResolveUri (baseUri, entity.SystemId), null, typeof (Stream)) as Stream;
-				nextEntityReader = new XmlTextReader (stream, xmlReaderNodeType, ctx);
+				nextEntityReader = new XmlTextReader (stream, xmlReaderNodeType, ParserContext);
 			} else {
 				string replacementText =
 					(entity != null) ? entity.EntityValue : String.Empty;
-				nextEntityReader = new XmlTextReader (replacementText, xmlReaderNodeType, ctx);
+				nextEntityReader = new XmlTextReader (replacementText, xmlReaderNodeType, ParserContext);
 			}
 			nextEntityReader.XmlResolver = resolver;
 			nextEntityReader.MaybeTextDecl = true;
@@ -933,6 +921,24 @@ namespace Mono.Xml
 				return consumedAttribute ? XmlNodeType.Text :
 					IsDefault ? XmlNodeType.Attribute :
 					reader.NodeType;
+			}
+		}
+
+		public XmlParserContext ParserContext {
+			get {
+				XmlParserContext ctx = null;
+				if (sourceTextReader != null)
+					ctx = sourceTextReader.GetInternalParserContext ();
+				else if (reader is XmlNodeReader)
+					ctx = ((XmlNodeReader) reader).GetInternalParserContext ();
+				else if (reader is IHasXmlParserContext)
+					ctx = ((IHasXmlParserContext) reader).ParserContext;
+
+				if (ctx == null)
+					throw new NotSupportedException (
+						"Cannot get parser context from specified XmlReader. To support this XmlReader, implement IHasXmlParserContext interface on the reader.");
+
+				return ctx;
 			}
 		}
 

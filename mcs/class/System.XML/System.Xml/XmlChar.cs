@@ -97,7 +97,7 @@ namespace System.Xml
 
 		internal static bool IsPubidChar(int ch)
 		{
-			return IsWhitespace(ch) | ('a' <= ch && ch <= 'z') | ('A' <= ch && ch <= 'Z') | ('0' <= ch && ch <= '9') | "-'()+,./:=?;!*#@$_%".IndexOf((char)ch) >= 0;
+			return (IsWhitespace(ch) && ch != '\t') | ('a' <= ch && ch <= 'z') | ('A' <= ch && ch <= 'Z') | ('0' <= ch && ch <= '9') | "-'()+,./:=?;!*#@$_%".IndexOf((char)ch) >= 0;
 		}
 
 		internal static bool IsPubid (string str)

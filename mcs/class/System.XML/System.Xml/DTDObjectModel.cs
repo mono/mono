@@ -8,6 +8,7 @@
 //
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -25,6 +26,7 @@ namespace Mono.Xml
 		DTDEntityDeclarationCollection entityDecls;
 		DTDNotationDeclarationCollection notationDecls;
 		ArrayList validationErrors;
+		XmlResolver resolver;
 
 		public DTDObjectModel ()
 		{
@@ -53,6 +55,14 @@ namespace Mono.Xml
 			DTDEntityDeclaration decl = EntityDecls [name] 
 				as DTDEntityDeclaration;
 			return decl.EntityValue;
+		}
+
+		internal XmlResolver Resolver {
+			get { return resolver; }
+		}
+
+		public XmlResolver XmlResolver {
+			set { resolver = value; }
 		}
 
 		private DTDAutomataFactory factory;
@@ -396,6 +406,8 @@ namespace Mono.Xml
 	{
 		private DTDObjectModel root;
 		public string BaseURI;
+		public int LineNumber;
+		public int LinePosition;
 
 		internal void SetRoot (DTDObjectModel root)
 		{
@@ -605,19 +617,73 @@ namespace Mono.Xml
 		public string NotationName;
 		public string LiteralEntityValue;
 		public bool IsInternalSubset;
+		public StringCollection ReferencingEntities = new StringCollection ();
+		bool scanned;
+		bool recursed;
 
 		public string EntityValue {
 			get {
 				if (entityValue == null) {
-					if (SystemId == null)
+					if (NotationName != null)
+						entityValue = "";
+					else if (SystemId == null)
 						entityValue = LiteralEntityValue;
 					else {
 						// FIXME: should use specified XmlUrlResolver.
-						entityValue = ResolveExternalEntity (new XmlUrlResolver ());
+						entityValue = ResolveExternalEntity (Root.Resolver);
 					}
+					// Check illegal recursion.
+					ScanEntityValue (new StringCollection ());
 				}
 				return entityValue;
 			}
+		}
+
+		public void ScanEntityValue (StringCollection refs)
+		{
+			// To modify this code, beware nesting between this and EntityValue.
+			string value = EntityValue;
+
+			if (recursed)
+				throw new XmlException ("Entity recursion was found.");
+			recursed = true;
+
+			if (scanned) {
+				foreach (string referenced in refs)
+					if (this.ReferencingEntities.Contains (referenced))
+						throw new XmlException (String.Format (
+							"Nested entity was found between {0} and {1}",
+							referenced, Name));
+				recursed = false;
+				return;
+			}
+
+			int len = value.Length;
+			int start = 0;
+			for (int i=0; i<len; i++) {
+				switch (value [i]) {
+				case '&':
+					start = i+1;
+					break;
+				case ';':
+					if (start == 0)
+						break;
+					string name = value.Substring (start, i - start);
+					this.ReferencingEntities.Add (name);
+					DTDEntityDeclaration decl = Root.EntityDecls [name];
+					if (decl != null) {
+						refs.Add (Name);
+						decl.ScanEntityValue (refs);
+						foreach (string str in decl.ReferencingEntities)
+							ReferencingEntities.Add (str);
+						refs.Remove (Name);
+					}
+					start = 0;
+					break;
+				}
+			}
+			scanned = true;
+			recursed = false;
 		}
 
 		private string ResolveExternalEntity (XmlResolver resolver)
@@ -637,14 +703,16 @@ namespace Mono.Xml
 
 			bool checkTextDecl = true;
 			while (reader.Peek () != -1) {
-				sb.Append (reader.Read ());
+				sb.Append ((char) reader.Read ());
 				if (checkTextDecl && sb.Length == 6) {
 					if (sb.ToString () == "<?xml ") {
 						// Skip Text declaration.
 						sb.Length = 0;
 						StringBuilder textdecl = new StringBuilder ();
-						while (reader.Peek () == '>' || reader.Peek () == -1)
-							textdecl.Append (reader.Read ());
+						while (reader.Peek () != '>' && reader.Peek () != -1)
+							textdecl.Append ((char) reader.Read ());
+						if (textdecl.ToString ().IndexOf ("encoding") < 0)
+							throw new XmlException ("Text declaration must have encoding specification: " + BaseURI);
 						if (textdecl.ToString ().IndexOf ("standalone") >= 0)
 							throw new XmlException ("Text declaration cannot have standalone declaration: " + BaseURI);
 					}
@@ -711,11 +779,17 @@ namespace Mono.Xml
 			string absPath = absUri.ToString ();
 
 			try {
-				TextReader tw = new XmlStreamReader (absUri.ToString (), false, resolver, BaseURI);
+				XmlStreamReader tw = new XmlStreamReader (absUri.ToString (), false, resolver, BaseURI);
 				string s = tw.ReadToEnd ();
 				if (s.StartsWith ("<?xml")) {
-					int end = s.IndexOf (">" + 1);
-					if (s.IndexOf ("standal0ne", end) >= 0)
+					int end = s.IndexOf (">") + 1;
+					if (end < 0)
+						throw new XmlException (this as IXmlLineInfo,
+							"Inconsistent text declaration markup.");
+					if (s.IndexOf ("encoding", 0, end) < 0)
+						throw new XmlException (this as IXmlLineInfo,
+							"Text declaration must not omit encoding specification.");
+					if (s.IndexOf ("standalone", 0, end) >= 0)
 						throw new XmlException (this as IXmlLineInfo,
 							"Text declaration cannot have standalone declaration.");
 					resolvedValue = s.Substring (end);

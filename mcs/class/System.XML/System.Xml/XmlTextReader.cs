@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.IO;
 using System.Text;
 using System.Xml.Schema;
@@ -1010,16 +1011,9 @@ namespace System.Xml
 				popScope = false;
 			}
 
-			if (returnEntityReference) {
+			if (returnEntityReference)
 				SetEntityReferenceProperties ();
-				if (DTD == null)
-					throw new XmlException (this as IXmlLineInfo,
-						"Entity reference is not allowed without document type declaration.");
-				else if((!DTD.InternalSubsetHasPEReference || 
-					isStandalone || resolver == null) && DTD.EntityDecls [name] == null)
-					throw new XmlException (this as IXmlLineInfo,
-						"Required entity declaration for '" + name + "' was not found.");
-			} else {
+			else {
     				switch (PeekChar ()) {
 				case '<':
 					ReadChar ();
@@ -1061,6 +1055,18 @@ namespace System.Xml
 
 		private void SetEntityReferenceProperties ()
 		{
+/*
+			if (resolver != null) {
+				if (DTD == null)
+					throw new XmlException (this as IXmlLineInfo,
+						"Entity reference is not allowed without document type declaration.");
+				else if((!DTD.InternalSubsetHasPEReference || isStandalone) &&
+					DTD.EntityDecls [entityReferenceName] == null)
+					throw new XmlException (this as IXmlLineInfo,
+						"Required entity declaration for '" + entityReferenceName + "' was not found.");
+				string dummy = DTD.EntityDecls [entityReferenceName].EntityValue;
+			}
+*/
 			SetProperties (
 				XmlNodeType.EntityReference, // nodeType
 				entityReferenceName, // name
@@ -1358,23 +1364,23 @@ namespace System.Xml
 				throw new XmlException (this as IXmlLineInfo,
 					"Invalid entity reference name was found.");
 
-				char predefined = XmlChar.GetPredefinedEntity (name);
-				if (predefined != 0)
-					AppendValueChar (predefined);
-				else {
-					if (ignoreEntityReferences) {
-						AppendValueChar ('&');
+			char predefined = XmlChar.GetPredefinedEntity (name);
+			if (predefined != 0)
+				AppendValueChar (predefined);
+			else {
+				if (ignoreEntityReferences) {
+					AppendValueChar ('&');
 
-						foreach (char ch2 in name) {
-							AppendValueChar (ch2);
-						}
-
-						AppendValueChar (';');
-					} else {
-						returnEntityReference = true;
-						entityReferenceName = name;
+					foreach (char ch2 in name) {
+						AppendValueChar (ch2);
 					}
+
+					AppendValueChar (';');
+				} else {
+					returnEntityReference = true;
+					entityReferenceName = name;
 				}
+			}
 		}
 
 		// The reader is positioned on the first character of
@@ -1444,9 +1450,7 @@ namespace System.Xml
 					if (XmlChar.GetPredefinedEntity (entName) == 0) {
 						DTDEntityDeclaration entDecl = 
 							DTD == null ? null : DTD.EntityDecls [entName];
-						// In this point, XML 1.0 spec is tricky. Its WFC constraints 
-						// allow non-declared entity, while prohibiting external entity reference.
-						if (entDecl == null || !entDecl.IsInternalSubset)
+						if (entDecl == null || entDecl.SystemId != null)
 							throw new XmlException (this as IXmlLineInfo,
 								"Reference to external entities is not allowed in attribute value.");
 					}
@@ -1553,8 +1557,8 @@ namespace System.Xml
 						message = "Version 1.0 declaration is required in Text Declaration.";
 					currentCheck = 1;
 				}
-				if (orderedAttributes.Count > currentCheck && orderedAttributes [currentCheck] as string != "encoding")
-					message = "Invalid Text Declaration markup was found.";
+				if (orderedAttributes.Count <= currentCheck || orderedAttributes [currentCheck] as string != "encoding")
+					message = "Invalid Text Declaration markup was found. encoding specification is required.";
 			}
 			if (message != null)
 				throw new XmlException (this as IXmlLineInfo, message);
@@ -1699,8 +1703,8 @@ namespace System.Xml
 			currentState = XmlNodeType.DocumentType;
 
 			string doctypeName = null;
-			string publicId = String.Empty;
-			string systemId = String.Empty;
+			string publicId = null;
+			string systemId = null;
 			int intSubsetStartLine = 0;
 			int intSubsetStartColumn = 0;
 
@@ -1765,6 +1769,10 @@ namespace System.Xml
 			parserContext.Dtd = new DTDObjectModel ();	// merges both internal and external subsets in the meantime,
 			DTD.BaseURI = BaseURI;
 			DTD.Name = name;
+			DTD.PublicId = publicId;
+			DTD.SystemId = systemId;
+			DTD.InternalSubset = internalSubset;
+			DTD.XmlResolver = resolver;
 			int originalParserDepth = parserInputStack.Count;
 			if (internalSubset != null && internalSubset.Length > 0) {
 				XmlParserInput original = currentInput;
@@ -1787,7 +1795,6 @@ namespace System.Xml
 				} while (nodeType != XmlNodeType.None || parserInputStack.Count > originalParserDepth + 1);
 				PopParserInput ();
 			}
-			// TODO: Check entity nesting
 
 			return DTD;
 		}
@@ -2002,7 +2009,18 @@ namespace System.Xml
 				// It affects on entity references' well-formedness
 				if (this.parserInputStack.Count == 0)
 					DTD.InternalSubsetHasPEReference = true;
-				TryExpandPERef ();
+				ReadChar ();
+				string peName = ReadName ();
+				Expect (';');
+				currentInput.InsertParameterEntityBuffer (GetPEValue (peName));
+				int currentLine = currentInput.LineNumber;
+				int currentColumn = currentInput.LinePosition;
+				while (currentInput.HasPEBuffer)
+					CompileDTDSubset ();
+				if (currentInput.LineNumber != currentLine ||
+					currentInput.LinePosition != currentColumn)
+					throw new XmlException (this as IXmlLineInfo,
+						"Incorrectly nested parameter entity.");
 				break;
 			case '<':
 				ReadChar ();
@@ -2060,7 +2078,7 @@ namespace System.Xml
 							TryExpandPERef ();
 							SkipWhitespace ();
 							if (XmlChar.IsNameChar (PeekChar ()))
-							ReadParameterEntityDecl ();
+								ReadParameterEntityDecl ();
 							else
 								throw new XmlException (this as IXmlLineInfo,"expected name character");
 						}
@@ -2420,8 +2438,12 @@ namespace System.Xml
 				this.parameterEntities [peName] as DTDParameterEntityDeclaration;
 			if (peDecl != null)
 				return peDecl.Value;
-				DTD.AddError (new XmlSchemaException (
-					"Parameter entity " + peName + " not found.", null));
+			// See XML 1.0 section 4.1 for both WFC and VC.
+			if ((DTD.SystemId == null && !DTD.InternalSubsetHasPEReference) || this.isStandalone)
+				throw new XmlException (this as IXmlLineInfo,
+					"Parameter entity " + peName + " not found.");
+			DTD.AddError (new XmlSchemaException (
+				"Parameter entity " + peName + " not found.", null));
 			return "";
 		}
 
@@ -2484,7 +2506,7 @@ namespace System.Xml
 			}
 			else {
 				// literal entity
-				decl.LiteralEntityValue = ReadEntityValueDecl ();
+				ReadEntityValueDecl (decl);
 			}
 			SkipWhitespace ();
 			// This expanding is only allowed as a non-validating parser.
@@ -2494,7 +2516,7 @@ namespace System.Xml
 			return decl;
 		}
 
-		private string ReadEntityValueDecl ()
+		private void ReadEntityValueDecl (DTDEntityDeclaration decl)
 		{
 			SkipWhitespace ();
 			// quotation char will be finally removed on unescaping
@@ -2511,8 +2533,10 @@ namespace System.Xml
 					ReadChar ();
 					string name = ReadName ();
 					Expect (';');
+					if (decl.IsInternalSubset)
+						throw new XmlException (this as IXmlLineInfo,
+							"Parameter entity is not allowed in internal subset entity '" + name + "'");
 					valueBuffer.Append (GetPEValue (name));
-					continue;
 					break;
 				case -1:
 					throw new XmlException ("unexpected end of stream.");
@@ -2526,7 +2550,7 @@ namespace System.Xml
 			ClearValueBuffer ();
 
 			Expect (quoteChar);
-			return value;
+			decl.LiteralEntityValue = value;
 		}
 
 		private DTDAttListDeclaration ReadAttListDecl ()
@@ -2627,7 +2651,9 @@ namespace System.Xml
 				case 'O':
 					Expect ("OTATION");
 					def.Datatype = XmlSchemaDatatype.FromName ("NOTATION");
-					SkipWhitespace ();
+					if (!SkipWhitespace ())
+						throw new XmlException (this as IXmlLineInfo,
+							"Whitespace is required between name and content in DTD attribute definition.");
 					Expect ('(');
 					SkipWhitespace ();
 					def.EnumeratedNotations.Add (ReadName ());		// notation name

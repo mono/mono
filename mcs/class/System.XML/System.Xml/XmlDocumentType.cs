@@ -16,10 +16,10 @@ namespace System.Xml
 	public class XmlDocumentType  : XmlLinkedNode
 	{
 		// Fields
-		string name;            // name of the document type
-		string publicId;        // public identifier on the DOCTYPE
-		string systemId;        // system identifier on the DOCTYPE
-		string internalSubset;  // value of the DTD internal subset
+//		string name;            // name of the document type
+//		string publicId;        // public identifier on the DOCTYPE
+//		string systemId;        // system identifier on the DOCTYPE
+//		string internalSubset;  // value of the DTD internal subset
 		internal XmlNamedNodeMap entities;
 		internal XmlNamedNodeMap notations;
 		DTDObjectModel dtd;
@@ -30,11 +30,6 @@ namespace System.Xml
 						    XmlDocument doc)
 			: base (doc)
 		{
-			this.name = name;
-			this.publicId = publicId;
-			this.systemId = systemId;
-			this.internalSubset = internalSubset;
-
 			XmlTextReader xtr = new XmlTextReader (BaseURI, new StringReader (""), doc.NameTable);
 			xtr.XmlResolver = doc.Resolver;
 			xtr.GenerateDTDObjectModel (name, publicId, systemId, internalSubset);
@@ -43,15 +38,10 @@ namespace System.Xml
 			ImportFromDTD ();
 		}
 
-		internal XmlDocumentType (XmlTextReader reader, XmlDocument doc)
+		internal XmlDocumentType (DTDObjectModel dtd, XmlDocument doc)
 			: base (doc)
 		{
-			this.name = reader.Name;
-			this.publicId = reader ["PUBLIC"];
-			this.systemId = reader ["SYSTEM"];
-			this.internalSubset = reader.Value;
-			this.dtd = reader.DTD;
-
+			this.dtd = dtd;
 			ImportFromDTD ();
 		}
 
@@ -86,7 +76,7 @@ namespace System.Xml
 			
 		public string InternalSubset
 		{
-			get { return internalSubset; }
+			get { return dtd.InternalSubset; }
 		}
 
 		public override bool IsReadOnly
@@ -96,12 +86,12 @@ namespace System.Xml
 
 		public override string LocalName
 		{
-			get { return name; }
+			get { return dtd.Name; }
 		}
 
 		public override string Name
 		{
-			get { return name; }
+			get { return dtd.Name; }
 		}
 
 		public override XmlNodeType NodeType
@@ -116,20 +106,21 @@ namespace System.Xml
 
 		public string PublicId
 		{
-			get { return publicId; }
+			get { return dtd.PublicId; }
 		}
 
 		public string SystemId
 		{
-			get { return systemId; }
+			get { return dtd.SystemId; }
 		}
 
 		// Methods
 		public override XmlNode CloneNode (bool deep)
 		{
 			// deep is ignored
-			return new XmlDocumentType (name, publicId, systemId,
-						    internalSubset, OwnerDocument);
+//			return new XmlDocumentType (Name, PublicId, SystemId,
+//						    InternalSubset, OwnerDocument);
+			return new XmlDocumentType (dtd, OwnerDocument);
 		}
 		
 		public override void WriteContentTo (XmlWriter w)
@@ -139,7 +130,7 @@ namespace System.Xml
 
 		public override void WriteTo (XmlWriter w)
 		{
-			w.WriteDocType (name, publicId, systemId, internalSubset);
+			w.WriteDocType (Name, PublicId, SystemId, InternalSubset);
 		}
 	}
 }

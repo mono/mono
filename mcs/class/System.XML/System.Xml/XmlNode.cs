@@ -254,7 +254,6 @@ namespace System.Xml
 
 		public abstract XmlNode CloneNode (bool deep);
 
-		[MonoTODO]
 		public XPathNavigator CreateNavigator ()
 		{
 			XmlDocument document = this.NodeType == XmlNodeType.Document ?
@@ -347,7 +346,6 @@ namespace System.Xml
 			return InsertBefore (newChild, argNode);
 		}
 
-		[MonoTODO("If inserted node is entity reference, then check conforming entity. Wait for DTD implementation.")]
 		public virtual XmlNode InsertBefore (XmlNode newChild, XmlNode refChild)
 		{
 			XmlDocument ownerDoc = (NodeType == XmlNodeType.Document) ? (XmlDocument)this : OwnerDocument;
@@ -552,7 +550,7 @@ namespace System.Xml
 			return SelectNodes (xpath, null);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("return nodes in document order")]
 		public XmlNodeList SelectNodes (string xpath, XmlNamespaceManager nsmgr)
 		{
 			XPathNavigator nav = CreateNavigator ();
@@ -585,11 +583,6 @@ namespace System.Xml
 				return null;
 			return ((XmlDocumentNavigator) iter.Current).Node;
 		}
-
-//		internal void SetParentNode (XmlNode parent)
-//		{
-//			parentNode = parent;
-//		}
 
 		[MonoTODO]
 		public virtual bool Supports (string feature, string version)

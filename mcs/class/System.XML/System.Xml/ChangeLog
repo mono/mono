@@ -1,3 +1,33 @@
+2003-08-10  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* DTDObjectModel.cs : added XmlResolver related members. Added
+	  invalid entity recursion logic. Added encodingdecl check on textdecl.
+	* DTDValidatingReader.cs : It now implements IHasXmlParserContext.
+	* XmlChar.cs : IsPubidChar() should not allow TAB(&#9;).
+	* XmlDocumentType.cs : 1) internal CreateDocumentType() was now changed
+	  to receive DTDObjectModel to support other than XmlTextReader. 
+	  2) Most of its public member is now based on DTDObjectModel.
+	* XmlDocument.cs : 1) Synchronous change with XmlDocumentType.
+	  2) ReadNode() now considers XmlParserContext's DTDObjectModel for
+	  other than XmlTextReader (such as XmlValidatingReader).
+	* XmlNode.cs : code cleanup only.
+	* XmlParserInput.cs : added HasPEBuffer, used to check illegal nesting.
+	* XmlTextReader.cs : 1) Illegal entity reference check logic was moved 
+	  from ReadContent() to SetEntityReferenceProperties(). 2) Indentation
+	  change on ReadEntityReference(). 3) ReadAttribute() now checks
+	  reference to external entity reference. 4) Added textdecl encoding
+	  check. 5) DTDObjectModel fields are now set correctly. 6) added
+	  PERef markup nest check. 7) If PEDecl was not found, it might be WFC
+	  violation, not only be VC violation. 8) ReadEntityDecl() now receives
+	  its declared entity itself, and this method checks IsInternalSubset.
+	* XmlValidatingReader.cs : 1) Added GetInternalPerserContext().
+	  2) ValidationType.None should be the same as Auto, not DTD (in the
+	  future it should keep xml schema's default values).
+
+	Pending Stuff in XmlTextReader which breaks some NUnit tests;
+	  1) SetEntityReferenceProperies() has check for illegal references.
+	  2) ReadAttribute(bool) has similar check for illegal references.
+
 2003-08-09  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* DTDAutomata.cs : Fixed (modified or added) TryEndElement() of choice,

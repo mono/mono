@@ -268,9 +268,9 @@ namespace System.Xml
 			return new XmlDocumentType (name, publicId, systemId, internalSubset, this);
 		}
 
-		private XmlDocumentType CreateDocumentType (XmlTextReader reader)
+		private XmlDocumentType CreateDocumentType (DTDObjectModel dtd)
 		{
-			return new XmlDocumentType (reader, this);
+			return new XmlDocumentType (dtd, this);
 		}
 
 		public XmlElement CreateElement (string name)
@@ -800,15 +800,28 @@ namespace System.Xml
 					break;
 
 				case XmlNodeType.DocumentType:
-					// hack ;-)
-					XmlTextReader xtReader = reader as XmlTextReader;
-					if(xtReader == null)
-						newNode = CreateDocumentType (reader.Name, reader ["PUBLIC"], reader ["SYSTEM"], reader.Value);
-					else
-						newNode = CreateDocumentType (xtReader);
-
 					if(currentNode != null)
 						throw new XmlException (reader as IXmlLineInfo, "XmlDocumentType at invalid position.");
+
+					DTDObjectModel dtd = null;
+					XmlTextReader xtReader = reader as XmlTextReader;
+					if (xtReader != null)
+						dtd = xtReader.DTD;
+					XmlNodeReader xnReader = reader as XmlNodeReader;
+					if (xnReader != null)
+						dtd = xnReader.GetInternalParserContext ().Dtd;
+					XmlValidatingReader xvReader = reader as XmlValidatingReader;
+					if (xvReader != null)
+						dtd = xvReader.GetInternalParserContext ().Dtd;
+					IHasXmlParserContext ctxReader = reader as IHasXmlParserContext;
+					if (ctxReader != null)
+						dtd = ctxReader.ParserContext.Dtd;
+
+					if (dtd != null)
+						newNode = CreateDocumentType (dtd);
+					else
+						newNode = CreateDocumentType (reader.Name, reader ["PUBLIC"], reader ["SYSTEM"], reader.Value);
+
 					break;
 
 				case XmlNodeType.EntityReference:

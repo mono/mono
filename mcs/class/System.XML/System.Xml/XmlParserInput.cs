@@ -125,6 +125,18 @@ namespace Mono.Xml.Native
 			get { return this.currentMarkup; }
 		}
 
+		private char [] wsChars = new char [] {' ', '\r', '\n', '\t'};
+		public bool HasPEBuffer {
+			get {
+				if (peBuffer.Length == 0)
+					return false;
+				else if (peBuffer.ToString ().Trim (wsChars).Length == 0)
+					return false;
+				else
+					return true;
+			}
+		}
+
 		public int LineNumber {
 			get { return line; }
 		}

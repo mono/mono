@@ -25,6 +25,7 @@ namespace System.Xml {
 		XmlResolver resolver;
 		ValidationType validationType;
 		XmlSchemaCollection schemas;
+		DTDValidatingReader dtdReader;
 
 		#endregion // Fields
 
@@ -283,6 +284,12 @@ namespace System.Xml {
 			return validatingReader.GetAttribute (localName, namespaceName);
 		}
 
+		internal XmlParserContext GetInternalParserContext ()
+		{
+			return dtdReader != null ?
+				dtdReader.ParserContext : null;
+		}
+
 		bool IXmlLineInfo.HasLineInfo ()
 		{
 			IXmlLineInfo info = validatingReader as IXmlLineInfo;
@@ -337,19 +344,17 @@ namespace System.Xml {
 			if (ReadState == ReadState.Initial) {
 				switch (ValidationType) {
 				case ValidationType.Auto:
+				case ValidationType.None:
 					if (schemas.Count > 0)
 						goto case ValidationType.Schema;
 					else
 						goto case ValidationType.DTD;
-				case ValidationType.None:
-					validatingReader = // new XmlSchemaValidatingReader (
-						new DTDValidatingReader (sourceReader, this);
-					break;
 				case ValidationType.DTD:
-					validatingReader = new DTDValidatingReader (sourceReader, this);
+					validatingReader = dtdReader = new DTDValidatingReader (sourceReader, this);
 					break;
 				case ValidationType.Schema:
-//					validatingReader = new XmlSchemaValidatingReader (sourceReader, this);
+//					dtdReader = new DTDValidatingReader (sourceReader, this);
+//					validatingReader = new XmlSchemaValidatingReader (dtdReader, this);
 //					break;
 				case ValidationType.XDR:
 					throw new NotImplementedException ();
