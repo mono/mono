@@ -1,3 +1,7 @@
+2004-06-21  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (LIBRARY_SNK): Sign with Npgsql/Npgsql.snk.
+
 2004-06-18  Francisco Figueiredo Jr. <fxjrlists@yahoo.com.br>
 	* Synchronized files with gborg cvs up to release 0.6.
 
