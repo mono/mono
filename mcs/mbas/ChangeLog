@@ -1,3 +1,6 @@
+2004-05-24 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-paresr.jay: Support for abstruct property is added
+
 2004-05-24  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (PROGRAM_INSTALL_DIR): Install mbas into
