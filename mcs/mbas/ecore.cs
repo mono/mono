@@ -1619,11 +1619,115 @@ namespace Mono.CSharp {
 			e = ImplicitUserConversion (ec, expr, target_type, loc);
 			if (e != null)
 				return e;
+				
+			e = RuntimeConversion (ec, expr, target_type, loc);
+			if (e != null)
+				return e;				
 
 			return null;
 		}
 
+		/// <summary>
+		///   Converts the resolved expression `expr' into the
+		///   `target_type' using the Microsoft.VisualBasic runtime.
+		///   It returns a new expression that can be used
+		///   in a context that expects a `target_type'. 
+		/// </summary>
+		static private Expression RTConversionExpression (EmitContext ec, string s, Expression expr, Location loc)
+		{
+			Expression etmp, e;
+			ArrayList args;
+			Argument arg;
+			
+		 	etmp = Mono.MonoBASIC.Parser.DecomposeQI("Microsoft.VisualBasic.CompilerServices." + s, loc);
+		 	args = new ArrayList();
+		 	arg = new Argument (expr, Argument.AType.Expression);
+		 	args.Add (arg);
+			e = (Expression) new Invocation (etmp, args, loc);
+			e = e.Resolve(ec);	
+			
+			return (e);		
+		}
 		
+		static public Expression RuntimeConversion (EmitContext ec, Expression expr,
+								Type target_type, Location loc)
+		{
+			Type expr_type = expr.Type;
+			TypeCode dest_type = Type.GetTypeCode (target_type);
+			TypeCode src_type = Type.GetTypeCode (expr_type);
+			Expression e = null;
+			
+			switch (dest_type) {
+				case TypeCode.String:
+					switch (src_type) {
+						case TypeCode.SByte:						
+						case TypeCode.Byte:
+							e = RTConversionExpression(ec, "StringType.FromByte", expr, loc);
+							break;	
+						case TypeCode.UInt16:
+						case TypeCode.Int16:
+							e = RTConversionExpression(ec, "StringType.FromShort", expr, loc);
+							break;		
+						case TypeCode.UInt32:					
+						case TypeCode.Int32:
+							e = RTConversionExpression(ec, "StringType.FromInteger", expr, loc);
+							break;							
+						case TypeCode.UInt64:	
+						case TypeCode.Int64:
+							e = RTConversionExpression(ec, "StringType.FromLong", expr, loc);
+							break;							
+						case TypeCode.Char:
+							e = RTConversionExpression(ec, "StringType.FromChar", expr, loc);
+							break;								
+						case TypeCode.Single:
+							e = RTConversionExpression(ec, "StringType.FromSingle", expr, loc);
+							break;		
+						case TypeCode.Double:
+							e = RTConversionExpression(ec, "StringType.FromDouble", expr, loc);
+							break;																			
+						case TypeCode.Boolean:
+							e = RTConversionExpression(ec, "StringType.FromBoolean", expr, loc);
+							break;	
+						case TypeCode.DateTime:
+							e = RTConversionExpression(ec, "StringType.FromDate", expr, loc);
+							break;		
+						case TypeCode.Decimal:
+							e = RTConversionExpression(ec, "StringType.FromDecimal", expr, loc);
+							break;		
+						case TypeCode.Object:
+							e = RTConversionExpression(ec, "StringType.FromObject", expr, loc);
+							break;																												
+					}
+					break;
+					
+				case TypeCode.Int32:
+				case TypeCode.UInt32:	
+					switch (src_type) {						
+						case TypeCode.String:				
+							e = RTConversionExpression(ec, "IntegerType.FromString", expr, loc);
+							break;		
+						case TypeCode.Object:				
+							e = RTConversionExpression(ec, "IntegerType.FromObject", expr, loc);
+							break;											
+					}
+					break;	
+
+				case TypeCode.Int16:
+				case TypeCode.UInt16:	
+					switch (src_type) {						
+						case TypeCode.String:				
+							e = RTConversionExpression(ec, "ShortType.FromString", expr, loc);
+							break;		
+						case TypeCode.Object:				
+							e = RTConversionExpression(ec, "ShortType.FromObject", expr, loc);
+							break;											
+					}
+					break;													
+			}
+			
+			return e;
+		}
+										  		
 		/// <summary>
 		///   Attempts to apply the `Standard Implicit
 		///   Conversion' rules to the expression `expr' into
