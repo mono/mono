@@ -1,3 +1,14 @@
+2004-02-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DES.cs: Same fix as for SymmetricAlgorithm (get_Key is 
+	overridden to check for weak keys). Also ensured that no weak keys
+	would be generated.
+	* SymmetricAlgorithm.cs: Return a copy of the key (and IV) so it 
+	doesn't get destroyed when dispose is called (in this case the key
+	zeroization is the caller's responsability). Match MS implementation.
+	* TripleDES.cs: Same fix as for SymmetricAlgorithm (get_Key is 
+	overridden to check for weak keys). Fix bugzilla #54868.
+
 2004-02-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoStream.cs: Remove the _blockSize assumptions because some 

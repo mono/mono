@@ -2,9 +2,10 @@
 // TripleDES.cs: Handles TripleDES (abstract class)
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -43,7 +44,7 @@ public abstract class TripleDES : SymmetricAlgorithm {
 				while (IsWeakKey (KeyValue))
 					GenerateKey ();
 			}
-			return KeyValue;
+			return (byte[]) KeyValue.Clone ();
 		}
 		set { 
 			if (value == null)

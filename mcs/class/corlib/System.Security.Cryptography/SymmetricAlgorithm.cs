@@ -3,9 +3,10 @@
 //
 // Authors:
 //   Thomas Neidhart (tome@sbox.tugraz.at)
-//   Sebastien Pouliot (spouliot@motus.com)
+//   Sebastien Pouliot <sebastien@ximian.com>
 //
 // Portions (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -110,7 +111,7 @@ namespace System.Security.Cryptography {
 				if (this.IVValue == null)
 					GenerateIV();
 
-				return this.IVValue;
+				return (byte[]) this.IVValue.Clone ();
 			}
 			set {
 				if (value == null)
@@ -131,7 +132,7 @@ namespace System.Security.Cryptography {
 				if (this.KeyValue == null)
 					GenerateKey();
 
-				return this.KeyValue;
+				return (byte[]) this.KeyValue.Clone ();
 			}
 			set {
 				if (value == null)

@@ -2,10 +2,11 @@
 // System.Security.Cryptography.DES
 //
 // Author:
-//   Sergey Chaban (serge@wildwestsoftware.com)
-//   Sebastien Pouliot (spouliot@motus.com)
+//	Sergey Chaban (serge@wildwestsoftware.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -105,13 +106,22 @@ public abstract class DES : SymmetricAlgorithm {
 	}
 
 	public override byte[] Key {
-		get { return base.Key; }
+		get {
+			if (KeyValue == null) {
+				// generate keys as long as we get weak or semi-weak keys
+				GenerateKey ();
+				while (IsWeakKey (KeyValue) || IsSemiWeakKey (KeyValue))
+					GenerateKey ();
+			}
+			return (byte[]) KeyValue.Clone ();
+		}
 		set {
 			if (value == null)
 				throw new ArgumentNullException ();
 			if (IsWeakKey (value) || IsSemiWeakKey (value))
 				throw new CryptographicException ();
-			base.Key = value;
+
+			KeyValue = (byte[]) value.Clone ();
 		}
 	}
 
