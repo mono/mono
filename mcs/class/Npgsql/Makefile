@@ -29,11 +29,31 @@ EXTRA_DISTFILES = \
 	Npgsql/Npgsql.snk	\
 	Npgsql/Npgsql.pub	\
 	$(RESX_RES:.resources=.resx) \
+	$(OTHER_RES)		\
 	Npgsql.dll.resources
 
 include ../../build/library.make
 
-RESX_RES = Npgsql/NpgsqlState.resources Npgsql/NpgsqlClosedState.resources Npgsql/NpgsqlParameterCollection.resources Npgsql/NpgsqlCommand.resources Npgsql/NpgsqlConnectedState.resources Npgsql/NpgsqlParameter.resources Npgsql/NpgsqlConnection.resources Npgsql/NpgsqlReadyState.resources Npgsql/NpgsqlTransaction.resources Npgsql/NpgsqlEventLog.resources Npgsql/NpgsqlException.resources Npgsql/PGUtil.resources NpgsqlTypes/NpgsqlTypesHelper.resources Npgsql/Design/ConnectionStringEditorForm.resources
+OTHER_RES = \
+	Npgsql/NpgsqlConnection.bmp		\
+	Npgsql/NpgsqlCommand.bmp		\
+	Npgsql/NpgsqlDataAdapter.bmp
+
+RESX_RES = \
+	Npgsql/NpgsqlState.resources				\
+	Npgsql/NpgsqlClosedState.resources			\
+	Npgsql/NpgsqlParameterCollection.resources		\
+	Npgsql/NpgsqlCommand.resources				\
+	Npgsql/NpgsqlConnectedState.resources			\
+	Npgsql/NpgsqlParameter.resources			\
+	Npgsql/NpgsqlConnection.resources			\
+	Npgsql/NpgsqlReadyState.resources			\
+	Npgsql/NpgsqlTransaction.resources			\
+	Npgsql/NpgsqlEventLog.resources				\
+	Npgsql/NpgsqlException.resources			\
+	Npgsql/PGUtil.resources					\
+	NpgsqlTypes/NpgsqlTypesHelper.resources			\
+	Npgsql/Design/ConnectionStringEditorForm.resources
 
 $(the_lib): $(RESX_RES)
 

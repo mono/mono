@@ -1,3 +1,8 @@
+2004-11-26  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (OTHER_RES): New.  List of resources.
+	(EXTRA_DISTFILES): Distribute them.
+
 2004-05-18  Duncan Mak  <duncan@ximian.com>
 
 	* AssemblyInfo.cs: Gonzalo reminded me that I need to update the

@@ -1,3 +1,8 @@
+2004-11-26  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (OTHER_RES): New.  List of .bmp files.
+	(EXTRA_DISTFILES): Distribute them.
+
 2004-11-25  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com>
     
     Updated to 0.7beta3 release.
