@@ -1,3 +1,10 @@
+2003-03-03  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* RSACryptoServiceProvider.cs: Delay keypair generation event when 
+	keysize is a constructor parameter (major speed improvment when
+	importing keys). Removed NotSupportedException when CspParameter is
+	used in constructor (required for forthcoming security tools).
+
 2003-02-08  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Changes to refer Mono.Math and Mono.Security.Cryptography

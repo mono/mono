@@ -58,7 +58,7 @@ namespace System.Security.Cryptography {
 		{
 			// Here it's clear that we need to generate a new keypair
 			Common (null);
-			GenerateKeyPair (dwKeySize);
+			// no keypair generation done at this stage
 		}
 	
 		// FIXME: We currently dont link with MS CAPI. Anyway this makes
@@ -66,7 +66,7 @@ namespace System.Security.Cryptography {
 		public RSACryptoServiceProvider (int dwKeySize, CspParameters parameters) 
 		{
 			Common (parameters);
-			GenerateKeyPair (dwKeySize);
+			// no keypair generation done at this stage
 		}
 	
 		[MonoTODO("Persistance")]
@@ -74,15 +74,14 @@ namespace System.Security.Cryptography {
 		// only sense in Windows - what do we do elsewhere ?
 		private void Common (CspParameters p) 
 		{
-			cspParams = new CspParameters ();
 			if (p == null) {
+				cspParams = new CspParameters ();
 				// TODO: set default values (for keypair persistance)
 			}
-			else {
+			else
 				cspParams = p;
 				// FIXME: We'll need this to support some kind of persistance
-				throw new NotSupportedException ("CspParameters not supported");
-			}
+
 			// Microsoft RSA CSP can do between 384 and 16384 bits keypair
 			// we limit ourselve to 2048 because (a) BigInteger limits and (b) it's so SLOW
 			LegalKeySizesValue = new KeySizes [1];
