@@ -517,13 +517,32 @@ namespace System.Drawing
 			[MonoTODO]
 			void IGraphics.DrawLines (System.Drawing.Pen pen, PointF [] points)
 			{
-				throw new NotImplementedException ();
+				if( points.Length != 0) {
+					Pen XrPen = ConvertPen(pen);
+					XrPen.SetXrValues(nativeObject_);
+					Xr.XrMoveTo (nativeObject_, (double)points[0].X, (double)points[0].Y);
+					if( points.Length == 1) {
+						Xr.XrLineTo (nativeObject_, (double)points[0].X, (double)points[0].Y);
+					}
+					else {
+						for( int i = 1; i < points.Length; i++) {
+							Xr.XrLineTo (nativeObject_, (double)points[i].X, (double)points[i].Y);
+						}
+					}
+					Xr.XrStroke (nativeObject_);
+				}
 			}
 
 			[MonoTODO]
 			void IGraphics.DrawLines (System.Drawing.Pen pen, Point [] points)
 			{
-				throw new NotImplementedException ();
+				if( points.Length != 0) {
+					PointF[] pointsf = new PointF[points.Length];
+					for( int i = 0; i < points.Length; i++) {
+						pointsf[i] = new PointF(points[i].X, points[i].Y);
+					}
+					((IGraphics)this).DrawLines( pen, pointsf);
+				}
 			}
 
 			[MonoTODO]
@@ -997,34 +1016,40 @@ namespace System.Drawing
 			[MonoTODO]
 			void IGraphics.FillRectangle (System.Drawing.Brush brush, RectangleF rect)
 			{
-				FillRectangle( ConvertBrush(brush), (int)rect.Left, (int)rect.Top, (int)rect.Width, (int)rect.Height);
+				FillRectangle( ConvertBrush(brush), rect.Left, rect.Top, rect.Width, rect.Height);
 			}
 
 			[MonoTODO]
 			void IGraphics.FillRectangle (System.Drawing.Brush brush, Rectangle rect)
 			{
-				FillRectangle( ConvertBrush(brush), rect.Left, rect.Top, rect.Width, rect.Height);
+				FillRectangle( ConvertBrush(brush), (float)rect.Left, (float)rect.Top, (float)rect.Width, (float)rect.Height);
 			}
 
-			void FillRectangle (Brush wineBrush, RectangleF rect)
+			void FillRectangle (Brush brush, RectangleF rect)
 			{
-				FillRectangle( wineBrush, (int)rect.Left, (int)rect.Top, (int)rect.Width, (int)rect.Height);
+				FillRectangle( brush, rect.Left, rect.Top, rect.Width, rect.Height);
 			}
 
-			void FillRectangle (Brush wineBrush, Rectangle rect)
+			void FillRectangle (Brush brush, Rectangle rect)
 			{
-				FillRectangle( wineBrush, rect.Left, rect.Top, rect.Width, rect.Height);
+				FillRectangle( brush, (float)rect.Left, (float)rect.Top, (float)rect.Width, (float)rect.Height);
 			}
 
-			void FillRectangle (Brush wineBrush, int x, int y, int width, int height)
+			void FillRectangle (Brush brush, float x, float y, float width, float height)
 			{
-				throw new NotImplementedException ();
+				//throw new NotImplementedException ();
+				if( brush is SolidBrush) {
+					SolidBrush xrBrush = brush as SolidBrush;
+					xrBrush.SetXrValues( nativeObject_);
+					Xr.XrRectangle(nativeObject_, x, y, width, height);
+					Xr.XrFill(nativeObject_);
+				}
 			}
 
 			[MonoTODO]
 			void IGraphics.FillRectangle (System.Drawing.Brush brush, int x, int y, int width, int height)
 			{
-				throw new NotImplementedException ();
+				FillRectangle( brush, (float)x, (float)y, (float)width, (float)height);
 			}
 
 			[MonoTODO]
@@ -1296,13 +1321,13 @@ namespace System.Drawing
 			[MonoTODO]
 			void IGraphics.Restore (GraphicsState gstate)
 			{
-				throw new NotImplementedException ();
+				Xr.XrRestore(nativeObject_);
 			}
 
-			[MonoTODO]
 			void IGraphics.RotateTransform (float angle)
 			{
-				throw new NotImplementedException ();
+				double rad = angle * Math.PI / 180.0;				
+				Xr.XrRotate(nativeObject_, rad);
 			}
 
 			[MonoTODO]
@@ -1314,7 +1339,8 @@ namespace System.Drawing
 			[MonoTODO]
 			public GraphicsState Save ()
 			{
-				throw new NotImplementedException ();
+				Xr.XrSave(nativeObject_);
+				return new GraphicsState();
 			}
 
 			[MonoTODO]
@@ -1410,7 +1436,7 @@ namespace System.Drawing
 			[MonoTODO]
 			void IGraphics.TranslateTransform (float dx, float dy)
 			{
-				throw new NotImplementedException ();
+				Xr.XrTranslate(nativeObject_, (double)dx, (double)dy);
 			}
 
 			[MonoTODO]

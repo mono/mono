@@ -47,8 +47,25 @@ namespace System.Drawing.XrImpl {
 		internal static extern void XrLineTo (IntPtr xrs, double x, double y);
 		
 		[DllImport(Xrimp)]
+		internal static extern void XrTranslate(IntPtr xrs, double tx, double ty);
+
+		[DllImport(Xrimp)]
+		internal static extern void XrRotate(IntPtr xrs, double angle);
+		
+		[DllImport(Xrimp)]
+		internal static extern void XrRectangle (IntPtr xrs, double x, double y, double width, double height);
+		
+		[DllImport(Xrimp)]
 		internal static extern void XrStroke (IntPtr xrs);
 		
+		[DllImport(Xrimp)]
+		internal static extern void XrFill(IntPtr xrs);
+		
+		[DllImport(Xrimp)]
+		internal static extern void XrSave(IntPtr xrs);
+
+		[DllImport(Xrimp)]
+		internal static extern void XrRestore(IntPtr xrs);
 		
 		#endregion
 	}

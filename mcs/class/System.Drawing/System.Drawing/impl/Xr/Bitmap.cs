@@ -51,6 +51,9 @@ namespace System.Drawing {
 
 		internal sealed class Bitmap : Image, IBitmap {
 
+			float horizontalResolution;
+			float verticalResolution;
+			
 			internal void CommonInit (int width, int height) {
 				size = new Size(width, height);
 				switch( format) {
@@ -65,6 +68,7 @@ namespace System.Drawing {
 				default:
 					throw new NotImplementedException ();
 				}
+				horizontalResolution = verticalResolution = 96.0F;
 			}
 
 			#region constructors
@@ -206,7 +210,8 @@ namespace System.Drawing {
 			}
 
 			public void SetResolution (float xDpi, float yDpi) {
-				throw new NotImplementedException ();
+				horizontalResolution = xDpi;
+				verticalResolution = yDpi;
 			}
 		
 			//Fixme: gtk should be inherited from Image
