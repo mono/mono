@@ -1,3 +1,7 @@
+2002-05-20  Radek Doulik  <rodo@ximian.com>
+
+	* interp.c (dump_stack): print boxed values for --noptr
+
 2002-05-17  Radek Doulik  <rodo@ximian.com>
 
 	* interp.c (dump_stack): if --noptr then print content of strings
