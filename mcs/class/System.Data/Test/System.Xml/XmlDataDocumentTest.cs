@@ -46,7 +46,7 @@ namespace MonoTests.System.Data.Xml
 	[TestFixture]
         public class XmlDataDocumentTest : DataSetAssertion {
 
-		static string EOL = Environment.NewLine;
+		static string EOL = "\n";
 
 		[SetUp]
                 public void GetReady() 
@@ -307,6 +307,7 @@ namespace MonoTests.System.Data.Xml
 			
                         //string outstring = "";
                         TextWriter text = new StringWriter ();
+			text.NewLine = "\n";
                         doc.Save(text);
 
                         //str.Read (bytes, 0, (int)str.Length);
@@ -381,7 +382,7 @@ namespace MonoTests.System.Data.Xml
                         RegionDS.AcceptChanges ();
 			
                         TextWriter text = new StringWriter ();
-
+			text.NewLine = "\n";
                         DataDoc.Save (text);
                         string TextString = text.ToString ();
                         string substring = TextString.Substring (0, TextString.IndexOf(EOL));
@@ -513,6 +514,7 @@ namespace MonoTests.System.Data.Xml
 			DataDoc.GetElementsByTagName ("Region") [0].RemoveAll ();
 
                         TextWriter text = new StringWriter ();
+			text.NewLine = "\n";
 			dataset.WriteXml (text);
                         //DataDoc.Save (text);
                         string TextString = text.ToString ();
@@ -535,7 +537,9 @@ namespace MonoTests.System.Data.Xml
 
                         substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        AssertEquals ("#C05", "    <RegionDescription>Western", substring);
+			// Regardless of NewLine value, original xml contains CR
+			// (but in the context of XML spec, it should be normalized)
+                        AssertEquals ("#C05", "    <RegionDescription>Western\r", substring);
                         
                         substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -555,7 +559,9 @@ namespace MonoTests.System.Data.Xml
 
                         substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        AssertEquals ("#C10", "    <RegionDescription>Northern", substring);
+			// Regardless of NewLine value, original xml contains CR
+			// (but in the context of XML spec, it should be normalized)
+                        AssertEquals ("#C10", "    <RegionDescription>Northern\r", substring);
 
                         substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -607,7 +613,7 @@ namespace MonoTests.System.Data.Xml
 			table.Rows.Add (newRow);			
 			
                         TextWriter text = new StringWriter ();
-
+			text.NewLine = "\n";
                         DataDoc.Save (text);
                         string TextString = text.ToString ();
                         string substring = TextString.Substring (0, TextString.IndexOf(EOL));
@@ -627,7 +633,9 @@ namespace MonoTests.System.Data.Xml
 
                         substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        AssertEquals ("#F05", "    <RegionDescription>Eastern", substring);
+			// Regardless of NewLine value, original xml contains CR
+			// (but in the context of XML spec, it should be normalized)
+                        AssertEquals ("#F05", "    <RegionDescription>Eastern\r", substring);
 
                         substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
@@ -687,7 +695,9 @@ namespace MonoTests.System.Data.Xml
 
                         substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        AssertEquals ("#F20", "    <RegionDescription>Southern", substring);
+			// Regardless of NewLine value, original xml contains CR
+			// (but in the context of XML spec, it should be normalized)
+                        AssertEquals ("#F20", "    <RegionDescription>Southern\r", substring);
 
                         substring = TextString.Substring (0, TextString.IndexOf(EOL));
                         TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
