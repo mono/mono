@@ -37,6 +37,7 @@ Microsoft.VisualBasic/VBFixedStringAttribute.cs
 Microsoft.VisualBasic/VBMath.cs
 Microsoft.VisualBasic/VariantType.cs
 Microsoft.VisualBasic/VbStrConv.cs
+Microsoft.VisualBasic/VBUtils.cs
 Microsoft.VisualBasic/Microsoft.VisualBasic.CompilerServices/BooleanType.cs
 Microsoft.VisualBasic/Microsoft.VisualBasic.CompilerServices/ByteType.cs
 Microsoft.VisualBasic/Microsoft.VisualBasic.CompilerServices/CharArrayType.cs
