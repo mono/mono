@@ -1,3 +1,10 @@
+2005-01-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IsVolatile.cs: Fix errors in corcompare (HEAD versus 1.1 and 2.0). 
+	It seems that the file was replaced for 2.0, which broke 1.1 build and
+	was then fixed (build-wise) but introduced corcompare errors on both 
+	1.1 and 2.0. The MONO-1-0 branch wasn't affected.
+
 2004-10-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* IsVolatile.cs: Remove #ifdef NET_2_0.
