@@ -6,6 +6,7 @@
  *      Duncan Mak (duncan@ximian.com)
  *      Miguel de Icaza (miguel@ximian.com)
  *
+ * Copyright (C) Novell, Inc. 2003.
  */
 
 #ifndef _GDIP_H
@@ -292,7 +293,7 @@ GpStatus GdipSetRenderingOrigin (GpGraphics *graphics, int x, int y);
 GpStatus GdipGetRenderingOrigin (GpGraphics *graphics, int *x, int *y);
 
 /* Status */
-GpStatus gdip_get_status (cairo_t *ct);
+GpStatus gdip_get_status (cairo_status_t status);
 
 /* Brush */
 GpStatus GdipCloneBrush (GpBrush *brush, GpBrush **clonedBrush);

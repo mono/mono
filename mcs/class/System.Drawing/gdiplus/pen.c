@@ -20,6 +20,7 @@
  * 
  * Authors:
  *   Alexandre Pigolkine(pigolkine@gmx.de)
+ *   Duncan Mak (duncan@ximian.com)
  *
  */
 
@@ -43,7 +44,7 @@ gdip_pen_new (void)
         return result;
 }
 
-cairo_line_join_t
+static cairo_line_join_t
 convert_line_join (GpLineJoin join)
 {
         switch (join) {
@@ -59,12 +60,11 @@ convert_line_join (GpLineJoin join)
  
         case LineJoinMiterClipped:
         default:
-                printf ("We don't support MiterClipped LineJoins yet.\n");
                 return CAIRO_LINE_JOIN_MITER;
         }
 }
 
-cairo_line_cap_t
+static cairo_line_cap_t
 convert_line_cap (GpLineCap cap)
 {
         switch (cap) {
@@ -117,7 +117,10 @@ GdipCreatePen1(int argb, float width, GpUnit unit, GpPen **pen)
 GpStatus 
 GdipDeletePen (GpPen *pen)
 {
-        return NotImplemented; 
+        if (pen->matrix != NULL)
+                cairo_matrix_destroy (pen->matrix);
+        
+        GdipFree (pen);
 }
 
 GpStatus

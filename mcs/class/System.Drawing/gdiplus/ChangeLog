@@ -1,3 +1,21 @@
+2003-11-14  Duncan Mak  <duncan@ximian.com>
+
+	* general.c (gdip_get_status): Take cairo_status_t instead of
+	cairo_t. We need this because this is used in matrix.c and we only
+	have cairo_matrix_t there.
+
+	* graphics.c: Updated calls to gdip_get_status.
+
+	* pen.c
+	(convert_line_cap, convert_line_join): Added static keyword.
+	(GdipDeletePen): Implemented.
+
+	* matrix.c
+	(GdipCreateMatrix2, GdipCloneMatrix, GdipInvertMatrix): Use
+	gdip_get_status instead of just returning Ok.
+	(GdipRotateMatrix, GdipScaleMatrix, GdipTranslateMatrix):
+	Implemented.
+
 2003-11-12  Duncan Mak  <duncan@ximian.com>
 
 	* bitmap.c, brush.c, general.c:

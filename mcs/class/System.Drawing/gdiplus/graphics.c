@@ -336,7 +336,7 @@ GdipDrawBezier (GpGraphics *graphics, GpPen *pen,
         cairo_curve_to (graphics->ct, x2, y2, x3, y3, x4, y4);
         cairo_stroke (graphics->ct);
 
-        return gdip_get_status (graphics->ct);
+        return gdip_get_status (cairo_status (graphics->ct));
 }
 
 GpStatus GdipDrawBezierI (GpGraphics *graphics, GpPen *pen, 
@@ -370,7 +370,7 @@ GdipDrawBeziers (GpGraphics *graphics, GpPen *pen,
 
         cairo_stroke (graphics->ct);
 
-        return gdip_get_status (graphics->ct);
+        return gdip_get_status (cairo_status (graphics->ct));
 }
 
 GpStatus
@@ -396,7 +396,7 @@ GdipDrawBeziersI (GpGraphics *graphics, GpPen *pen,
 
         cairo_stroke (graphics->ct);
 
-        return gdip_get_status (graphics->ct);
+        return gdip_get_status (cairo_status (graphics->ct));
 }
 
 GpStatus 
@@ -407,7 +407,7 @@ GdipDrawEllipse (GpGraphics *graphics, GpPen *pen,
         make_ellipse (graphics, x, y, width, height);
         cairo_stroke (graphics->ct);
 
-        return gdip_get_status (graphics->ct);
+        return gdip_get_status (cairo_status (graphics->ct));
 }
 
 GpStatus
@@ -428,7 +428,7 @@ GdipDrawLine (GpGraphics *graphics, GpPen *pen,
 
 	cairo_stroke (graphics->ct);
 
-        return gdip_get_status (graphics->ct);
+        return gdip_get_status (cairo_status (graphics->ct));
 }
 
 GpStatus 
@@ -484,7 +484,7 @@ GdipDrawPie (GpGraphics *graphics, GpPen *pen, float x, float y,
         cairo_stroke (graphics->ct);
         cairo_close_path (graphics->ct);
         
-        return gdip_get_status (graphics->ct);
+        return gdip_get_status (cairo_status (graphics->ct));
 }
 
 GpStatus
@@ -496,7 +496,7 @@ GdipDrawPieI (GpGraphics *graphics, GpPen *pen, int x, int y,
         cairo_stroke (graphics->ct);
         cairo_close_path (graphics->ct);
         
-        return gdip_get_status (graphics->ct);
+        return gdip_get_status (cairo_status (graphics->ct));
 }
 
 GpStatus
@@ -506,7 +506,7 @@ GdipDrawPolygon (GpGraphics *graphics, GpPen *pen, GpPointF *points, int count)
         make_polygon (graphics, points, count);
         cairo_stroke (graphics->ct);
 
-        return gdip_get_status (graphics->ct);
+        return gdip_get_status (cairo_status (graphics->ct));
 }
 
 GpStatus
@@ -516,7 +516,7 @@ GdipDrawPolygonI (GpGraphics *graphics, GpPen *pen, GpPoint *points, int count)
         make_polygon_from_integers (graphics, points, count);
         cairo_stroke (graphics->ct);
 
-        return gdip_get_status (graphics->ct);
+        return gdip_get_status (cairo_status (graphics->ct));
 }
 
 GpStatus
@@ -527,7 +527,7 @@ GdipDrawRectangle (GpGraphics *graphics, GpPen *pen,
         cairo_rectangle (graphics->ct, x, y, width, height);
         cairo_stroke (graphics->ct);
 
-        return gdip_get_status (graphics->ct);
+        return gdip_get_status (cairo_status (graphics->ct));
 }
 
 GpStatus
@@ -545,7 +545,7 @@ GdipFillEllipse (GpGraphics *graphics, GpBrush *brush,
         make_ellipse (graphics, x, y, width, height);
         cairo_fill (graphics->ct);
 
-        return gdip_get_status (graphics->ct);
+        return gdip_get_status (cairo_status (graphics->ct));
 }
 
 GpStatus
@@ -562,7 +562,7 @@ GdipFillRectangle (GpGraphics *graphics, GpBrush *brush,
 	gdip_brush_setup (graphics, brush);
 	cairo_rectangle (graphics->ct, x, y, width, height);
 	cairo_fill (graphics->ct);
-	return gdip_get_status (graphics->ct);
+        return gdip_get_status (cairo_status (graphics->ct));
 }
 
 GpStatus
@@ -578,7 +578,7 @@ GdipFillPolygon (GpGraphics *graphics, GpBrush *brush,
 
         cairo_fill (graphics->ct);
 
-        return gdip_get_status (graphics->ct);
+        return gdip_get_status (cairo_status (graphics->ct));
 }
 
 GpStatus
@@ -594,7 +594,7 @@ GdipFillPolygonI (GpGraphics *graphics, GpBrush *brush,
         
         cairo_fill (graphics->ct);
 
-        return gdip_get_status (graphics->ct);
+        return gdip_get_status (cairo_status (graphics->ct));
 }
 
 GpStatus
@@ -624,7 +624,7 @@ GdipDrawString (GpGraphics *graphics, const char *string,
 	cairo_show_text (graphics->ct, string);
 	cairo_restore(graphics->ct);
 
-	return gdip_get_status (graphics->ct);
+	return gdip_get_status (cairo_status (graphics->ct));
 }
 
 GpStatus 
@@ -633,7 +633,7 @@ GdipSetRenderingOrigin (GpGraphics *graphics, int x, int y)
         cairo_move_to (graphics->ct, x, y);
         cairo_close_path (graphics->ct);
 
-        return gdip_get_status (graphics->ct);
+        return gdip_get_status (cairo_status (graphics->ct));
 }
 
 /*
@@ -649,6 +649,6 @@ GdipGetRenderingOrigin (GpGraphics *graphics, int *x, int *y)
         *x = (int) cx;
         *y = (int) cy;
 
-        return gdip_get_status (graphics->ct);
+        return gdip_get_status (cairo_status (graphics->ct));
 }
 

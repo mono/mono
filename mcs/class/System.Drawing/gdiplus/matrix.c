@@ -21,9 +21,10 @@ GpStatus
 GdipCreateMatrix2 (float m11, float m12, float m21, float m22, float dx, float dy, GpMatrix **matrix)
 {
         *matrix = cairo_matrix_create ();
-        cairo_matrix_set_affine (*matrix, m11, m12, m21, m22, dx, dy);
 
-        return Ok;
+        return gdip_get_status (
+                cairo_matrix_set_affine (
+                        *matrix, m11, m12, m21, m22, dx, dy));
 }
 
 GpStatus
@@ -41,16 +42,14 @@ GdipCreateMatrix3I (GpRect *rect, GpPoint *dstplg, GpMatrix **matrix)
 GpStatus
 GdipCloneMatrix (GpMatrix *matrix, GpMatrix **cloneMatrix)
 {
-        cairo_matrix_copy (matrix, *cloneMatrix);
-
-        return Ok;
+        return gdip_get_status (
+                cairo_matrix_copy (matrix, *cloneMatrix));
 }
 
 GpStatus
 GdipDeleteMatrix (GpMatrix *matrix)
 {
         cairo_matrix_destroy (matrix);
-
         return Ok;
 }
 
@@ -69,19 +68,26 @@ GdipMultiplyMatrix (GpMatrix *matrix, GpMatrix *matrix2, GpMatrixOrder order)
 GpStatus
 GdipTranslateMatrix (GpMatrix *matrix, float offsetX, float offsetY, GpMatrixOrder order)
 {
-        return NotImplemented;
+        double x = (double) offsetX;
+        double y = (double) offsetY;
+        
+        return gdip_get_status (
+                cairo_matrix_transform_distance (matrix, &x, &y));
 }
 
 GpStatus
 GdipScaleMatrix (GpMatrix *matrix, float scaleX, float scaleY, GpMatrixOrder order)
 {
-        return NotImplemented;
+        return gdip_get_status (
+                cairo_matrix_scale (matrix, scaleX, scaleY));
+        
 }
 
 GpStatus
-GdipRotateMatrix(GpMatrix *matrix, float angle, GpMatrixOrder order)
+GdipRotateMatrix (GpMatrix *matrix, float angle, GpMatrixOrder order)
 {
-        return NotImplemented;
+        return gdip_get_status (
+                cairo_matrix_rotate (matrix, angle));
 }
 
 GpStatus
@@ -93,8 +99,8 @@ GdipShearMatrix (GpMatrix *matrix, float shearX, float shearY, GpMatrixOrder ord
 GpStatus
 GdipInvertMatrix (GpMatrix *matrix)
 {
-        cairo_matrix_invert (matrix);
-        return Ok;
+        return gdip_get_status (
+                cairo_matrix_invert (matrix));
 }
 
 GpStatus

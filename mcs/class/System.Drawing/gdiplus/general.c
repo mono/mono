@@ -98,7 +98,7 @@ GdiplusStartup(unsigned long *token, const struct startupInput *input, struct st
 }
 
 void 
-GdiplusShutdown(unsigned long * token)
+GdiplusShutdown(unsigned long *token)
 {
 	if (closeDisplay) {
 		XCloseDisplay(GDIP_display);
@@ -115,17 +115,15 @@ GdipAlloc (int size)
 }
 
 void 
-GdipFree (void * ptr)
+GdipFree (void *ptr)
 {
 	free (ptr);
 }
 
 /* Helpers */
 GpStatus 
-gdip_get_status (cairo_t *ct)
+gdip_get_status (cairo_status_t status)
 {
-        cairo_status_t status = cairo_status (ct);
-        
         if (status == CAIRO_STATUS_SUCCESS)
                 return Ok;
 
@@ -135,6 +133,7 @@ gdip_get_status (cairo_t *ct)
                 case CAIRO_STATUS_NO_MEMORY:
                         return OutOfMemory;
 
+                case CAIRO_STATUS_INVALID_MATRIX:
                 case CAIRO_STATUS_INVALID_RESTORE:
                 case CAIRO_STATUS_INVALID_POP_GROUP:
                         return InvalidParameter;                
@@ -142,9 +141,6 @@ gdip_get_status (cairo_t *ct)
                 case CAIRO_STATUS_NO_CURRENT_POINT:
                 case CAIRO_STATUS_NO_TARGET_SURFACE:
                         return WrongState;
-                
-                case CAIRO_STATUS_INVALID_MATRIX:
-                        return InsufficientBuffer;
 
                 default:
                         return GenericError;
