@@ -1,13 +1,13 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     BoundColumn
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  60%
- * 
+ *
  * (C) Gaurav Vaish (2001)
  */
 
@@ -21,89 +21,159 @@ namespace System.Web.UI.WebControls
 	public class BoundColumn : DataGridColumn
 	{
 		public static readonly string thisExpr = "!";
-		
-		private string dataField;
-		private string dataFormatString;
-		private bool readOnly;
+
+		private bool boundFieldDesciptionValid;
+		private string boundField;
+		private string formatting;
 		
 		private PropertyDescriptor desc;
 
 		public BoundColumn(): base()
 		{
-			//TODO: The start work
-			Initialize();
 		}
-		
+
 		public override void Initialize()
 		{
 			base.Initialize();
-			dataField        = String.Empty;
-			dataFormatString = String.Empty;
-			readOnly         = false;
-			desc             = null;
+
+			desc       = null;
+			boundField = DataField;
+			formatting = DataFormatString;
+			boundFieldDesciptionValid = false;
 		}
 
-		[MonoTODO]
 		public override void InitializeCell(TableCell cell, int columnIndex, ListItemType itemType)
 		{
-			//TODO: What to do?
-			InitializeCell(cell, columnIndex, itemType);
-//			switch(itemType)
-//			{
-//				case 
-//			}
-			throw new NotImplementedException();
+			base.InitializeCell(cell, columnIndex, itemType);
+
+			Control bindCtrl = null;
+			Control toAdd    = null;
+			switch(itemType)
+			{
+				case ListItemType.Item : goto case ListItemType.SelectedItem;
+				case ListItemType.AlternatingItem
+				                       : goto case ListItemType.SelectedItem;
+				case ListItemType.SelectedItem
+				                       : if(DataField.Length != 0)
+				                         	bindCtrl = cell;
+				                         break;
+				case ListItemType.EditItem
+					                   : if(!ReadOnly)
+					                     {
+					                     	TextBox box = new TextBox();
+					                     	toAdd = box;
+					                     	if(DataField.Length != 0)
+					                     		bindCtrl = box;
+					                     }
+					                     break;
+			}
+			if(toAdd != null)
+				cell.Controls.Add(toAdd);
+			if(bindCtrl != null)
+				bindCtrl.DataBinding += new EventHandler(OnDataBindColumn);
+			//throw new NotImplementedException();
 		}
-		
+
+		private void OnDataBindColumn(object sender, EventArgs e)
+		{
+			Control senderCtrl = (Control)sender;
+			DataGridItem item  = (DataGridItem)senderCtrl.NamingContainer;
+			object       data  = item.DataItem;
+
+			if(!boundFieldDesciptionValid)
+			{
+				if(boundField != BoundColumn.thisExpr)
+				{
+					desc = TypeDescriptor.GetProperties(data).Find(boundField, true);
+					if(desc == null && !DesignMode)
+					{
+						throw new HttpException(
+						          HttpRuntime.FormatResourceString("File_Not_Found",
+						                                           boundField));
+					}
+					boundFieldDesciptionValid = true;
+				}
+			}
+			object value = data;
+			string val = String.Empty;
+			if(desc == null && DesignMode)
+			{
+				throw new NotImplementedException();
+			} else
+			{
+				if(desc != null)
+					value = desc.GetValue(data);
+				val = FormatDataValue(value);
+			}
+			if(senderCtrl is TableCell)
+			{
+				if(val.Length == 0)
+					val = "&nbsp;";
+				((TableCell)senderCtrl).Text = val;
+			} else
+			{
+				((TextBox)senderCtrl).Text = val;
+			}
+		}
+
 		public virtual string DataField
 		{
 			get
 			{
-				return dataField;
+				object o = ViewState["DataField"];
+				if(o != null)
+					return (string)o;
+				return String.Empty;
 			}
 			set
 			{
-				dataField = value;
+				ViewState["DataField"] = value;
+				OnColumnChanged();
 			}
 		}
-		
+
 		public virtual string DataFormatString
 		{
 			get
 			{
-				return dataFormatString;
+				object o = ViewState["DataFormatString"];
+				if(o != null)
+					return (string)o;
+				return String.Empty;
 			}
 			set
 			{
-				dataFormatString = value;
+				ViewState["DataFormatString"] = value;
+				OnColumnChanged();
 			}
 		}
-		
+
 		public virtual bool ReadOnly
 		{
 			get
 			{
-				return readOnly;
+				object o = ViewState["ReadOnly"];
+				if(o != null)
+					return (bool)o;
+				return false;
 			}
 			set
 			{
-				readOnly = value;
+				ViewState["ReadOnly"] = value;
 			}
 		}
-		
-		[MonoTODO]
+
 		protected virtual string FormatDataValue(Object dataValue)
 		{
-			// TODO: How to extract the value from the object?
-			// TODO: Then format the value. Here's a possible solution
-			if(dataFormatString == null || dataFormatString.Equals(String.Empty))
-				return dataValue.ToString();
-			if(dataValue is DateTime)
-				return ((DateTime)dataValue).ToString(dataFormatString);
-			throw new NotImplementedException();
-			// and so on for int, String, double..
-			// something's wrong here. there must be some shorter method!
-			//string val = dataValue.toString(dataFormatString);
+			string retVal = String.Empty;
+			if(dataValue != null)
+			{
+				if(formatting.Length == 0)
+					retVal = dataValue.ToString();
+				else
+					retVal = String.Format(formatting, dataValue);
+			}
+			return retVal;
 		}
 	}
 }

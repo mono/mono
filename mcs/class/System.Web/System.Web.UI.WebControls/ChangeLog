@@ -1,6 +1,12 @@
 
 2002-10-28      Gaurav Vaish <gvaish_mono@lycos.com>
 
+	* BoundColumn.cs        - InitializeCell(TableCell, int, ListItemType)
+	                                              : Implemented.
+	                        - All Properties      : Now make use of ViewState.
+
+2002-10-28      Gaurav Vaish <gvaish_mono@lycos.com>
+
 	* BaseValidator.cs      - Uncomment NotImplementedException.
 
 2002-10-28      Gaurav Vaish <gvaish_mono@lycos.com>
