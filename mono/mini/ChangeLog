@@ -1,3 +1,7 @@
+2004-10-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* trace.c (is_filenamechar): Add '_'.
+
 2004-10-15  Geoff Norton  <gnorton@customerdna.com>
 
 	* mini-ppc.c (calculate_sizes): Marshal valuetypes for pinvoke
