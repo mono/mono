@@ -1,3 +1,9 @@
+2004-04-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* icall.c: Add new icalls mapping for security.
+	* security.c|h: Add internal calls for WindowsIdentity,
+	WindowsImpersonationContext and WindowsPrincipal.
+
 2004-04-13  Gert Driesen (drieseng@users.sourceforge.net)
 
 	* class.c: Added comment to ensure the System.MonoDummy class
