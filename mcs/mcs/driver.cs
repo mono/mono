@@ -266,7 +266,6 @@ namespace Mono.CSharp
 			bool ok = MainDriver (args);
 			
 			if (ok && Report.Errors == 0) {
-				Console.Write("Compilation succeeded");
 				if (Report.Warnings > 0) {
 					Console.Write(" - {0} warning(s)", Report.Warnings);
 				}

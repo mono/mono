@@ -1,5 +1,7 @@
 2004-12-08  Miguel de Icaza  <miguel@ximian.com>
 
+	* driver.cs: Removed message.
+
 	* delegate.cs: Fix bug introduced in 1.1.x: 70219.
 
 2004-12-08    <vargaz@freemail.hu>
