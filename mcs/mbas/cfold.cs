@@ -31,7 +31,8 @@ namespace Mono.MonoBASIC {
 							 ref Constant left, ref Constant right,
 							 Location loc)
 		{
-			if (left is DoubleConstant || right is DoubleConstant || oper == Binary.Operator.Exponentiation){
+			if (left is DoubleConstant || right is DoubleConstant || 
+			    oper == Binary.Operator.Exponentiation || oper == Binary.Operator.Division) {
 				//
 				// If either side is a double, convert the other to a double
 				//
@@ -647,46 +648,46 @@ namespace Mono.MonoBASIC {
 				}
 				break;
 
-			case Binary.Operator.Division:
+			case Binary.Operator.IntDivision:
 				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
 				if (left == null || right == null)
 					return null;
 
 				try {
-					if (left is DoubleConstant){
-						double res;
+					if (left is DoubleConstant) {
+						long left_val, right_val, res;
+						left_val = (long) ((DoubleConstant) left).Value;
+						right_val = (long) ((DoubleConstant) right).Value;
 						
 						if (ec.ConstantCheckState)
-							res = checked (((DoubleConstant) left).Value /
-								       ((DoubleConstant) right).Value);
+							res = checked (left_val / right_val);
 						else
-							res = unchecked (((DoubleConstant) left).Value /
-									 ((DoubleConstant) right).Value);
+							res = unchecked (left_val / right_val);
 						
-						return new DoubleConstant (res);
-					} else if (left is FloatConstant){
-						float res;
+						return new LongConstant (res);
+					} else if (left is FloatConstant) {
+						long left_val, right_val, res;
+						left_val = (long) ((FloatConstant) left).Value;
+						right_val = (long) ((FloatConstant) right).Value;
 						
 						if (ec.ConstantCheckState)
-							res = checked (((FloatConstant) left).Value /
-								       ((FloatConstant) right).Value);
+							res = checked (left_val / right_val);
 						else
-							res = unchecked (((FloatConstant) left).Value /
-									 ((FloatConstant) right).Value);
+							res = unchecked (left_val / right_val);
 						
-						return new FloatConstant (res);
-					} else if (left is ULongConstant){
-						ulong res;
+						return new LongConstant (res);
+					} else if (left is DecimalConstant) {
+						long left_val, right_val, res;
+						left_val = (long) ((DecimalConstant) left).Value;
+						right_val = (long) ((DecimalConstant) right).Value;
 						
 						if (ec.ConstantCheckState)
-							res = checked (((ULongConstant) left).Value /
-								       ((ULongConstant) right).Value);
+							res = checked (left_val / right_val);
 						else
-							res = unchecked (((ULongConstant) left).Value /
-									 ((ULongConstant) right).Value);
+							res = unchecked (left_val / right_val);
 						
-						return new ULongConstant (res);
-					} else if (left is LongConstant){
+						return new LongConstant (res);
+					} else if (left is LongConstant) {
 						long res;
 						
 						if (ec.ConstantCheckState)
@@ -697,31 +698,42 @@ namespace Mono.MonoBASIC {
 									 ((LongConstant) right).Value);
 						
 						return new LongConstant (res);
-					} else if (left is UIntConstant){
-						uint res;
-						
-						if (ec.ConstantCheckState)
-							res = checked (((UIntConstant) left).Value /
-								       ((UIntConstant) right).Value);
-						else
-							res = unchecked (((UIntConstant) left).Value /
-									 ((UIntConstant) right).Value);
-						
-						return new UIntConstant (res);
-					} else if (left is IntConstant){
+					} else {
 						int res;
-
+						
 						if (ec.ConstantCheckState)
 							res = checked (((IntConstant) left).Value /
 								       ((IntConstant) right).Value);
 						else
 							res = unchecked (((IntConstant) left).Value /
 									 ((IntConstant) right).Value);
-
+						
 						return new IntConstant (res);
-					} else {
-						throw new Exception ( "Unexepected input: " + left);
 					}
+				} catch (OverflowException){
+					Error_CompileTimeOverflow (loc);
+
+				} catch (DivideByZeroException) {
+					Report.Error (30542, loc, "Division by constant zero");
+				}
+				
+				break;
+			case Binary.Operator.Division:
+				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
+				if (left == null || right == null)
+					return null;
+
+				try {
+					double res;
+					
+					if (ec.ConstantCheckState)
+						res = checked (((DoubleConstant) left).Value /
+							       ((DoubleConstant) right).Value);
+					else
+						res = unchecked (((DoubleConstant) left).Value /
+								 ((DoubleConstant) right).Value);
+					
+					return new DoubleConstant (res);
 				} catch (OverflowException){
 					Error_CompileTimeOverflow (loc);
 

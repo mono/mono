@@ -4299,6 +4299,19 @@ invocation_expression
 		$$ = new Invocation ((Expression) $2, (ArrayList) $3, (Location)$5);
 //		Console.WriteLine ("Invocation: {0} with {1} arguments", $2, ($3 != null) ? ((ArrayList) $3).Count : 0);
 	  }
+	| primary_expression EXCLAMATION _mark_ identifier // FIXME : This should be identifier-or-keyword
+	  {
+		if ($1 == null) {
+			Location l = (Location)$3;
+			Report.Error (1, l, "THIS IS CRAZY");
+		}
+		
+		ArrayList args = new ArrayList ();
+		Expression etmp = new StringLiteral ((string)$4);
+		
+		args.Add (new Argument (etmp, Argument.AType.Expression));
+		$$ = new Invocation ((Expression) $1, args, (Location)$3);
+	  }
 	;
 	
 base_access
@@ -4391,9 +4404,7 @@ this_access
 	  }
 	| MYCLASS
 	  {
-		// FIXME: This is actually somewhat different from Me
-		// because it is for accessing static (classifier) methods/properties/fields
-		$$ = new This (current_block, lexer.Location);
+		$$ = new This (This.TypeOfAccess.MyClass, current_block, lexer.Location);
 	  }
 	;
 
@@ -4435,15 +4446,16 @@ get_type_expression
 	;
 	
 exponentiation_expression
-	: primary_expression
+	: prefixed_unary_expression
 	| exponentiation_expression OP_EXP _mark_ primary_expression
 	  {
-		$$ = new Exponentiation ((Location)$3, (Expression) $1, (Expression) $4);
+		$$ = new Binary (Binary.Operator.Exponentiation,
+			         (Expression) $1, (Expression) $4, (Location)$3);
 	  }			  	
 	;
 	
 prefixed_unary_expression
-	: exponentiation_expression
+	: primary_expression
 	| PLUS _mark_ prefixed_unary_expression
 	  {
 	  	//FIXME: Is this rule correctly defined ?
@@ -4457,7 +4469,7 @@ prefixed_unary_expression
 	;
 
 multiplicative_expression
-	: prefixed_unary_expression
+	: exponentiation_expression
 	| multiplicative_expression STAR _mark_ prefixed_unary_expression
 	  {
 		$$ = new Binary (Binary.Operator.Multiply,
@@ -4627,6 +4639,13 @@ assignment_expression
 	  { 
 		$$ = new Assign ((Expression) $1, (Expression) $4, (Location)$3);
 	  }
+	| prefixed_unary_expression OP_EXP ASSIGN _mark_ expression
+	  {
+		Location l = (Location)$4;
+
+		$$ = new CompoundAssign (
+			Binary.Operator.Exponentiation, (Expression) $1, (Expression) $5, l);
+	  }
 	| prefixed_unary_expression STAR ASSIGN _mark_ expression
 	  {
 		Location l = (Location)$4;
@@ -4676,13 +4695,6 @@ assignment_expression
 		// FIXME should be strings only
 		$$ = new CompoundAssign (
 			Binary.Operator.Addition, (Expression) $1, (Expression) $5, l);
-	  }
-	| prefixed_unary_expression OP_EXP ASSIGN _mark_ expression
-	  {
-		/*Location l = (Location)$4;
-
-		 TODO: $$ = new CompoundAssign (
-			Binary.Operator.ExclusiveOr, (Expression) $1, (Expression) $5, l); */
 	  }
 	| prefixed_unary_expression ASSIGN ADDRESSOF _mark_ expression
 	  { 

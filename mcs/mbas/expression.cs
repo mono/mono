@@ -1527,137 +1527,6 @@ namespace Mono.MonoBASIC {
 		}
 	}
 
-        public class Exponentiation : Expression {
-
-		Expression left, right;
-		ArrayList Arguments; 
-		protected MethodBase method;
-	
-		public Exponentiation(Location loc, Expression left, Expression right) {
-			this.left = left;
-			this.right = right;
-			this.loc = loc;
-		}
-
-		public override Expression DoResolve (EmitContext ec)
-		{
-			left = left.Resolve (ec);
-			right = right.Resolve (ec);
-
-			if (left == null || right == null)
-				return null;
-
-			if (left.Type == null)
-				throw new Exception (
-					"Resolve returned non null, but did not set the type! (" +
-					left + ") at Line: " + loc.Row);
-			if (right.Type == null)
-				throw new Exception (
-					"Resolve returned non null, but did not set the type! (" +
-					right + ") at Line: "+ loc.Row);
-
-			eclass = ExprClass.Value;
-			Expression e = null;
-
-			if (left is EnumConstant) {
-				left = ((EnumConstant) left).WidenToCompilerConstant();
-			}
-
-			if (right is EnumConstant) {
-				right = ((EnumConstant) right).WidenToCompilerConstant();
-			}
-
- 			if (left is Constant && right is Constant){
- 				e = ConstantFold.BinaryFold (
- 				ec, Binary.Operator.Exponentiation, (Constant) left, (Constant) right, loc);
- 				if (e != null)
- 					return e;
- 			}
-			
-			Type l = left.Type;
-			Type r = right.Type;
-
-			if (left is NullLiteral && right is NullLiteral) {
-				Error_OperatorCannotBeApplied (loc, "^", l, r);
-				return null;
-			}
-			if (left is NullLiteral)
-				l = r;
-			if (right is NullLiteral)
-				r = l;
-
-			if (l == TypeManager.object_type || r == TypeManager.object_type) {
-				if (r.IsValueType)
-					right = ConvertImplicit (ec, right, TypeManager.object_type, loc);
-				if (l.IsValueType)
-					left = ConvertImplicit (ec, left, TypeManager.object_type, loc);
-				if (left == null || right == null) {
-					Error_OperatorCannotBeApplied (loc, "^", l, r);
-					return null;
-				}
-
-				l = left.Type;
-				r = right.Type;
-
-				Expression tmp = Mono.MonoBASIC.Parser.DecomposeQI (
-							"Microsoft.VisualBasic.CompilerServices.ObjectType.PowObj",
-							Location.Null);
-
-				ArrayList arguments = new ArrayList ();
-				arguments.Add (new Argument (left, Argument.AType.Expression));
-				arguments.Add (new Argument (right, Argument.AType.Expression));
-				e = new Invocation (tmp, arguments, loc);
-				return e.Resolve (ec);
-			}
-			
-			if (l == TypeManager.date_type || r == TypeManager.date_type ||
-			    l == TypeManager.char_type || r == TypeManager.char_type ||
-			    ! l.IsValueType || ! r.IsValueType) {
-				Error_OperatorCannotBeApplied (loc, "^", l, r);
-				return null;
-			}
-
-			if (l != TypeManager.double_type) { 
-				left = ConvertImplicit (ec, left, TypeManager.double_type, loc);
-				if (left == null){
-					Error_OperatorCannotBeApplied (loc, "&", l, r);
-					return null;
-				}
-				type = TypeManager.double_type;
-			}
-
-			if (r != TypeManager.double_type) {
-				right = ConvertImplicit (ec, right, TypeManager.double_type, loc);
-				if (right == null){
-					Error_OperatorCannotBeApplied (loc, "^", l, r);
-					return null;
-				}
-                                        
-				type = TypeManager.double_type;
-			}
-
-                        Expression etmp = Mono.MonoBASIC.Parser.DecomposeQI("System.Math.Pow", loc);
-                        ArrayList args = new ArrayList();
-                        args.Add (new Argument (left, Argument.AType.Expression));
-                        args.Add (new Argument (right, Argument.AType.Expression));
-                        e = (Expression) new Invocation (etmp, args, loc);
-                        return e.Resolve(ec);
-		}
-
-                public override void Emit (EmitContext ec)
-                {
-			throw new Exception ("Should not happen");
-		}
-
-                static public void Error_OperatorCannotBeApplied (Location loc, string name, Type l, Type r)
-                {  
-	                 Report.Error (19, loc,
-                               "Operator " + name + " cannot be applied to operands of type '" +
-                               TypeManager.MonoBASIC_Name (l) + "' and '" +
-                               TypeManager.MonoBASIC_Name (r) + "'");
-                }
-
-        }
         public class StringConcat : Expression {
 
 		Expression left, right;
@@ -1994,8 +1863,9 @@ namespace Mono.MonoBASIC {
 				else if (r == TypeManager.decimal_type)
 					conv_right_as = TypeManager.bool_type;
 			} else if ((l == TypeManager.double_type || r == TypeManager.double_type) ||
-			    (oper == Operator.Division && 
-			    !(l == TypeManager.decimal_type || r == TypeManager.decimal_type))) {
+				   (oper == Operator.Exponentiation) ||
+			    	   (oper == Operator.Division && 
+			    	   !(l == TypeManager.decimal_type || r == TypeManager.decimal_type))) {
 				//
 				// If either operand is of type double, the other operand is
 				// conveted to type double.
@@ -2478,6 +2348,8 @@ namespace Mono.MonoBASIC {
 							conv_left_as = conv_right_as = TypeManager.int64_type;
 							type = TypeManager.int64_type;
 						}
+					} else if (oper == Operator.Exponentiation) {
+						conv_left_as = conv_right_as = TypeManager.double_type;
 					} else if (oper == Operator.IntDivision) {
 						conv_left_as = conv_right_as = TypeManager.int64_type;
 					} else {
@@ -2590,6 +2462,7 @@ namespace Mono.MonoBASIC {
 				// Required conversions done by 'DoNumericPromotions' method
 				// So Reset 'conv_left_as', 'conv_right_as'
 				conv_left_as = conv_right_as = null;
+
 				if (l == TypeManager.decimal_type  && r == TypeManager.decimal_type) {
 					if (IsRelationalOperator (oper)) {
 						Expression etmp = Mono.MonoBASIC.Parser.DecomposeQI ("System.Decimal.Compare", Location.Null);
@@ -2651,6 +2524,16 @@ namespace Mono.MonoBASIC {
 
 			if (conv_done) 
 				return ResolveOperator (ec);
+
+
+			if (oper == Operator.Exponentiation) {
+				Expression etmp = Mono.MonoBASIC.Parser.DecomposeQI("System.Math.Pow", loc);
+				ArrayList args = new ArrayList();
+				args.Add (new Argument (left, Argument.AType.Expression));
+				args.Add (new Argument (right, Argument.AType.Expression));
+				Expression e = (Expression) new Invocation (etmp, args, loc);
+				return e.Resolve(ec);
+			}
 
 			bool overload_failed = false;
 			string op = oper_names [(int) oper];
