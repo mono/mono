@@ -1,3 +1,9 @@
+2005-02-23  Jackson Harper  <jackson@ximian.com>
+
+	* PropertyManager.cs: Implement property binding. This doesn't
+	seem to work yet though as (I think) there are some bugs in
+	System.ComponentModel.PropertyDescriptor.
+
 2005-02-23  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ProgressBar.cs: use clip region in ProgressBar

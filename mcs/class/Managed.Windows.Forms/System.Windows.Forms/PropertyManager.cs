@@ -26,64 +26,98 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 
-namespace System.Windows.Forms
-{
-	public class PropertyManager : BindingManagerBase
-	{
-		private object current;
+namespace System.Windows.Forms {
 
-		internal PropertyManager (object data_source)
+	public class PropertyManager : BindingManagerBase {
+
+		private object data_source;
+		private string property_name;
+		private PropertyDescriptor prop_desc;
+		private bool binding_suspended;
+		
+		internal PropertyManager (object data_source, string property_name)
 		{
+			this.data_source = data_source;
+			this.property_name = property_name;
 
+			prop_desc = TypeDescriptor.GetProperties (data_source).Find (property_name, true);
+
+			if (prop_desc == null)
+				throw new ArgumentException ("Property does not exist");
+			prop_desc.AddValueChanged (data_source, new EventHandler (PropertyChangedHandler));
 		}
 
 		public override object Current {
-			get { return current; }
+			get { return data_source; }
 		}
 
 		public override int Position {
 			get { return 0; }
-			set { }
+			set { /* Doesn't do anything on MS" */ }
 		}
 
 		public override int Count {
-			get { return 0; }
+			get { return 1; }
 		}
 
-		public override void AddNew () {
+		public override void AddNew ()
+		{
+			throw new NotSupportedException ("AddNew is not supported for property to property binding");
 		}
 
-		public override void CancelCurrentEdit () {
+		[MonoTODO]
+		public override void CancelCurrentEdit ()
+		{
 		}
 
-		public override void EndCurrentEdit () {
+		[MonoTODO]
+		public override void EndCurrentEdit ()
+		{
 		}
 
 		public override PropertyDescriptorCollection GetItemProperties ()
 		{
-			throw new NotImplementedException ();
+			return TypeDescriptor.GetProperties (data_source);
 		}
 
-		public override void RemoveAt (int idx) {
+		public override void RemoveAt (int idx)
+		{
+			throw new NotSupportedException ("RemoveAt is not supported for property to property binding");
 		}
 
-		public override void ResumeBinding () {
+		public override void ResumeBinding ()
+		{
+			binding_suspended = false;
 		}
 
-		public override void SuspendBinding () {
+		public override void SuspendBinding ()
+		{
+			binding_suspended = true;
 		}
 
-		protected internal override string GetListName (ArrayList list) {
-			throw new NotImplementedException ();
+		protected internal override string GetListName (ArrayList list)
+		{
+			return String.Empty ();
 		}
 
-		protected override void UpdateIsBinding () {
+		[MonoTODO]
+		protected override void UpdateIsBinding ()
+		{
 		}
 
-		protected internal override void OnCurrentChanged (EventArgs e) {
+		protected internal override void OnCurrentChanged (EventArgs e)
+		{
+			UpdateBindings ();
+
 			if (onCurrentChangedHandler != null) {
 				onCurrentChangedHandler (this, e);
 			}
 		}
+
+		private void PropertyChangedHandler (object sender, EventArgs e)
+		{
+			OnCurrentChanged (EventArgs.Empty);
+		}
 	}
 }
+
