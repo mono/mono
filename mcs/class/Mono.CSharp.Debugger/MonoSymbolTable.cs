@@ -769,6 +769,16 @@ namespace Mono.CompilerServices.SymbolWriter
 
 		internal void WriteIndex (BinaryWriter bw)
 		{
+			/*
+			 * NOTE: This has nothing to do with the `Index' field.
+			 *
+			 * The `Index' field specifies at which position the `MethodEntry' is
+			 * written to the symbol file; they can be in any order.
+			 *
+			 * The `MethodIndexEntry' is a way of quickly looking up a method by its
+			 * token - we're using a bsearch() on it in the runtime, so they have to
+			 * be sorted by token.
+			 */
 			new MethodIndexEntry (file_offset, Token).Write (bw);
 		}
 

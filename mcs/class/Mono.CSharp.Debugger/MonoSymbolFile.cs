@@ -391,8 +391,10 @@ namespace Mono.CompilerServices.SymbolWriter
 			ot.DataSectionSize = (int) bw.BaseStream.Position - ot.DataSectionOffset;
 
 			//
-			// Write out the method index
+			// Sort the methods according to their tokens and write
+			// the method table.
 			//
+			methods.Sort ();
 			ot.MethodTableOffset = (int) bw.BaseStream.Position;
 			for (int i = 0; i < methods.Count; i++) {
 				MethodEntry entry = (MethodEntry) methods [i];
