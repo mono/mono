@@ -2,13 +2,16 @@
 // System.Security.Permissions.PublisherIdentityPermissionAttribute.cs
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
 using System.Security.Cryptography.X509Certificates;
+
+using Mono.Security.Cryptography;
 
 namespace System.Security.Permissions {
 
@@ -41,15 +44,6 @@ namespace System.Security.Permissions {
 			set { x509data = value; }
 		}
 
-		private byte FromHexChar (char c) 
-		{
-			if ((c >= 'A') && (c <= 'F'))
-				return (byte) (c - 'A' + 10);
-			if ((c >= '0') && (c <= '9'))
-				return (byte) (c - '0');
-			throw new ArgumentException ("invalid hex char");
-		}
-
 		public override IPermission CreatePermission ()
 		{
 			if (this.Unrestricted)
@@ -57,13 +51,7 @@ namespace System.Security.Permissions {
 
 			X509Certificate x509 = null;
 			if (x509data != null) {
-				byte[] rawcert = new byte [x509data.Length >> 1];
-				int n = 0;
-				int i = 0;
-				while (n < rawcert.Length) {
-					rawcert [n] = (byte) (FromHexChar (x509data [i++]) << 4);
-					rawcert [n++] += FromHexChar (x509data [i++]);
-				}
+				byte[] rawcert = CryptoConvert.FromHex (x509data);
 				x509 = new X509Certificate (rawcert);
 				return new PublisherIdentityPermission (x509);
 			}
