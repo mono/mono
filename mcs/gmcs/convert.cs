@@ -1027,7 +1027,7 @@ namespace Mono.CSharp {
 			Type expr_type = expr.Type;
 			Expression e;
 
-			if (expr_type == target_type && !(expr is NullLiteral))
+			if (expr_type.Equals (target_type) && !(expr is NullLiteral))
 				return expr;
 
 			e = ImplicitNumericConversion (ec, expr, target_type, loc);
@@ -1147,7 +1147,7 @@ namespace Mono.CSharp {
 								     Type target_type, Location loc)
 		{
 			Expression e;
-			
+
 			e = ImplicitConversion (ec, source, target_type, loc);
 			if (e != null)
 				return e;

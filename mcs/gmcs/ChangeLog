@@ -1,5 +1,10 @@
 2003-12-08  Martin Baulig  <martin@ximian.com>
 
+	* convert.cs (Convert.ImplicitConversionStandard): Use
+	`expr_type.Equals (target_type)' instead of `=='.
+
+2003-12-08  Martin Baulig  <martin@ximian.com>
+
 	* typemanager.cs (TypeManager.GetReferenceType): Call
 	`Type.MakeByRefType ()'.
 
