@@ -1,4 +1,7 @@
-2004-08-18 Anirban Bhattacharjee <banirban@novell.com>
+2004-08-20 Anirban Bhattacharjee <banirban@novell.com>
+	* statement.cs: Bug fixing - Prevent AddHandler from getting resolved second time. This is critical for ASP programs with VB.
+
+2004-08-20 Anirban Bhattacharjee <banirban@novell.com>
 	* expression.cs: Bug fixing - reference to the current type is fixed during BaseAccess resolution
 
 2004/08/19  Rafael Teixeira <rafaelteixeirabr@hotmail.com>

@@ -5447,6 +5447,11 @@ namespace Mono.MonoBASIC {
 		Expression EvtHandler;
 		Expression EvtTarget;
 
+		//
+		// keeps track whether EvtId is already resolved
+		//
+		bool resolved;
+
 		public AddHandler (Expression evt_id, Expression evt_handler, 
 							Expression evt_target, Location l)
 		{
@@ -5454,11 +5459,21 @@ namespace Mono.MonoBASIC {
 			EvtHandler = evt_handler;
 			EvtTarget = evt_target;
 			loc = l;
+			resolved = false;
 			//Console.WriteLine ("Adding handler '" + evt_handler + "' for Event '" + evt_id +"'");
 		}
 
 		public override bool Resolve (EmitContext ec)
 		{
+			//
+			// if EvetId is of EventExpr type that means
+			// this is already resolved 
+			//
+			if (EvtId is EventExpr)	{
+				resolved = true;
+				return true;
+			}
+
 			EvtId = EvtId.Resolve(ec);
 			EvtHandler = EvtHandler.Resolve(ec,ResolveFlags.MethodGroup);
 			EvtTarget = EvtTarget.Resolve (ec,ResolveFlags.VariableOrValue);
@@ -5481,11 +5496,19 @@ namespace Mono.MonoBASIC {
 
 		protected override bool DoEmit (EmitContext ec)
 		{
+			//
+			// Already resolved and emitted don't do anything
+			//
+			if (resolved)
+				return true;
+
 			Expression e, d;
 			ArrayList args = new ArrayList();
 			Argument arg = new Argument (EvtHandler, Argument.AType.Expression);
 			args.Add (arg);
 			
+			
+
 			// The even type was already resolved to a delegate, so
 			// we must un-resolve its name to generate a type expression
 			string ts = (EvtId.Type.ToString()).Replace ('+','.');
