@@ -39,7 +39,8 @@ namespace System.Net.Sockets
 
 		public override bool Equals (object o)
 		{
-			return (enabled == o.enabled) && (seconds == o.seconds);
+			return (enabled == ((LingerOption)o).enabled) &&
+				(seconds == ((LingerOption)o).seconds);
 		}
 
 		public override int GetHashCode()
@@ -47,7 +48,7 @@ namespace System.Net.Sockets
 			return seconds;
 		}
 
-		public string ToString()
+		public override string ToString()
 		{
 			string ret;
 			if (enabled) {

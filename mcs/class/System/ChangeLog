@@ -1,3 +1,8 @@
+2002-01-23  Dick Porter  <dick@ximian.com>
+
+	* System.build: Start build System.Net.Sockets.Socket.cs,
+	TcpClient.cs and TcpListener.cs
+
 2001-12-07  Nick Drochak <ndrochak@gol.com>
 
 	* ChangeLog: Add the change log to this directory

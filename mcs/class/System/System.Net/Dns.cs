@@ -9,8 +9,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Collections;
 using System.Threading;
-using System.Runtime.InteropServices;
-using System.Runtime.Remoting.Messaging;
+using System.Runtime.CompilerServices;
 
 namespace System.Net {
 
@@ -86,19 +85,6 @@ namespace System.Net {
 			}
 		}
 		
-		/// <summary>
-		/// This class conforms to the C structure <c>hostent</c> and is used
-		/// by the Dns class when doing native calls.
-		/// </summary>
-		[StructLayout(LayoutKind.Sequential)]
-		private unsafe class Hostent {
-			public string h_name;       /* official name */
-			public byte** h_aliases;    /* alias list */
-			public short h_addrtype;    /* address type */
-			public short h_length;      /* address length */
-			public byte** h_addr_list;  /* address list */
-		}
-		
 		public static IAsyncResult BeginGetHostByName(string hostName,
                                                   AsyncCallback requestCallback,
                                                   object stateObject) {
@@ -127,68 +113,68 @@ namespace System.Net {
 			throw new NotImplementedException();
 		}
 		
-		/// <param name=hostName>
-		/// IP address in network byte order (e.g. Big-Endian).
-		/// </param>
-		/// <param name=length>
-		/// Length of IP address.
-		/// </param>
-		/// <param name=type>
-		/// Type (should be 2, equals AF_INET).
-		/// </param>
-		[DllImport("cygwin1", EntryPoint="gethostbyaddr")]
-		private static extern IntPtr _GetHostByAddress(byte[] hostName,
-							       short length,
-							       short type);
 		
-		/// <param name=address>
-		/// IP address in network byte order (e.g. Big-Endian).
-		/// </param>
-		[MonoTODO]
-		private static IPHostEntry GetHostByAddress(long address) {
-			short length = 4;
-			if (address > uint.MaxValue)
-				length = 8;
-			byte[] addr = new byte[length];
-			for(int i = length - 1, j = 0; i >= 0; --i, ++j) {
-				byte b = (byte)(address >> i * 8);
-//				Console.WriteLine(b);
-				addr[j] = b;
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static bool GetHostByName_internal(string host, out string h_name, out string[] h_aliases, out string[] h_addr_list);
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static bool GetHostByAddr_internal(string addr, out string h_name, out string[] h_aliases, out string[] h_addr_list);
+		
+		private static IPHostEntry hostent_to_IPHostEntry(string h_name, string[] h_aliases, string[] h_addrlist) {
+			IPHostEntry he = new IPHostEntry();
+			IPAddress[] addrlist = new IPAddress[h_addrlist.Length];
+			
+			he.HostName=h_name;
+			he.Aliases=h_aliases;
+			for(int i=0; i<h_addrlist.Length; i++) {
+				addrlist[i]=IPAddress.Parse(h_addrlist[i]);
 			}
-			IntPtr p = _GetHostByAddress(addr, length, 2);  // TODO: set type
-			if (p == IntPtr.Zero)
-				throw new SocketException();  // TODO: set error code
-			Hostent h = new Hostent();
-			System.Runtime.InteropServices.Marshal.PtrToStructure(p, h);
-			return ToIPHostEntry(h);
+			he.AddressList=addrlist;
+
+			return(he);
 		}
-		
+
 		public static IPHostEntry GetHostByAddress(IPAddress address) {
 			if (address == null)
 				throw new ArgumentNullException();
-			return GetHostByAddress (IPAddress.HostToNetworkOrder (address.Address));
+			return GetHostByAddress(address.ToString());
 		}
 		
 		public static IPHostEntry GetHostByAddress(string address) {
-			if (address == null)
+			if (address == null) {
 				throw new ArgumentNullException();
-			return GetHostByAddress(CreateAddress(address));
+			}
+			
+			string h_name;
+			string[] h_aliases, h_addrlist;
+			
+			bool ret = GetHostByAddr_internal(address, out h_name,
+							  out h_aliases,
+							  out h_addrlist);
+			if (ret == false) {
+				throw new SocketException();
+			}
+			
+			return(hostent_to_IPHostEntry(h_name, h_aliases,
+						      h_addrlist));
 		}
-		
-		[DllImport("cygwin1", EntryPoint="gethostbyname")]
-		private static extern IntPtr _GetHostByName(string hostName);
 
-		[MonoTODO]
 		public static IPHostEntry GetHostByName(string hostName) {
-			if (hostName == null)
+			if (hostName == null) {
 				throw new ArgumentNullException();
-			IntPtr p = _GetHostByName(hostName);
-			//	  int errNo = _h_errno;
-			if (p == IntPtr.Zero)
-				throw new SocketException();  // TODO: set error code
-			Hostent h = new Hostent();
-			System.Runtime.InteropServices.Marshal.PtrToStructure(p, h);
-			return ToIPHostEntry(h);
+			}
+			
+			string h_name;
+			string[] h_aliases, h_addrlist;
+			
+			bool ret = GetHostByName_internal(hostName, out h_name,
+							  out h_aliases,
+							  out h_addrlist);
+			if (ret == false) {
+				throw new SocketException();
+			}
+
+			return(hostent_to_IPHostEntry(h_name, h_aliases,
+						      h_addrlist));
 		}
 		
 		/// <summary>
@@ -211,94 +197,10 @@ namespace System.Net {
 			if (hostName == null)
 				throw new ArgumentNullException();
 			try {
-				long addr = CreateAddress(hostName);
-				if (addr > uint.MaxValue)
-					throw new FormatException("Only IP version 4 addresses are supported");
-				return GetHostByAddress(addr);
-			} catch (FormatException) {
-			  return GetHostByName(hostName);
+				return GetHostByAddress(hostName);
+			} catch (SocketException) {
+				return GetHostByName(hostName);
 			}
-		}
-		
-		/// <summary>
-		/// Utility method. This method converts a Hostent instance to a
-		/// IPHostEntry instance.
-		/// </summary>
-		/// <param name=h>
-		/// Object which should be mapped to a IPHostEntry instance.
-		/// </param>
-		private static unsafe IPHostEntry ToIPHostEntry(Hostent h) {
-			IPHostEntry res = new IPHostEntry();
-			
-			// Set host name
-			res.HostName = h.h_name;
-			
-			// Set IP address list
-			byte** p = h.h_addr_list;
-			ArrayList tmp = new ArrayList(1);
-			while (*p != null) {
-				tmp.Add(CreateIPAddress(*p, h.h_length));
-				++p;
-			}
-			IPAddress[] addr_list = new IPAddress[tmp.Count];
-			for(int i = 0; i < tmp.Count; ++i)
-				addr_list[i] = (IPAddress)tmp[i];
-			res.AddressList = addr_list;
-			
-			// Set IP aliases
-			p = h.h_aliases;
-			tmp.Clear();
-			while (*p != null) {
-				tmp.Add(new string((sbyte*)*p));
-				++p;
-			}
-			string[] aliases = new string[tmp.Count];
-			for(int i = 0; i < tmp.Count; ++i)
-				aliases[i] = (string)tmp[i];
-			res.Aliases = aliases;
-			
-			return res;
-		}
-		
-		/// <summary>
-		/// Utility method. Convert IP address in dotted notation
-		/// to IP address.
-		/// </summary>
-		private static long CreateAddress(string address) {
-			string[] tokens = address.Split('.');
-			if (tokens.Length % 4 != 0)
-				throw new FormatException("IP address has invalid length");
-			long addr = 0;
-			for(int i = 0, j = tokens.Length - 1; i < tokens.Length; ++i, --j) {
-				try {
-					addr = addr | (((long)byte.Parse(tokens[i])) << j * 8);
-				} catch (OverflowException) {
-					throw new FormatException("Invalid IP address format");
-				}
-			}
-			return addr;
-		}
-	
-		/// <summary>
-		/// Utility method. This method creates a IP address.
-		/// </summary>
-		/// <param name=addr>
-		/// IP address in network byte order (e.g. Big-Endian).
-		/// </param>
-		/// <param name=length>
-		/// Length of IP address (4 or 8 bytes).
-		/// </param>
-		private static unsafe IPAddress CreateIPAddress(byte* addr, short length) {
-			byte* p = addr;
-			long res = 0;
-			for(int i = 0, j = length - 1; i < length; ++i, --j) {
-				res += *p << j * 8;
-				++p;
-			}
-			if (res > uint.MaxValue)
-				return new IPAddress(IPAddress.NetworkToHostOrder((long)res));
-			else
-				return new IPAddress(IPAddress.NetworkToHostOrder((int)res));
 		}
 	}
 }

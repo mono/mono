@@ -162,7 +162,7 @@ namespace System.Xml
 		/// Return the child element named [string].  Returns XmlElement
 		/// Indexer for XmlNode class.
 		/// </summary>
-		[System.Runtime.CompilerServices.CSharp.IndexerName("Item")]
+		[System.Runtime.CompilerServices.IndexerNameAttribute("Item")]
 		public virtual XmlElement this [String index]
 		{
 			get 

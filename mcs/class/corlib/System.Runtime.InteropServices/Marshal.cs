@@ -15,5 +15,7 @@ namespace System.Runtime.InteropServices
 
 		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
 		public static extern IntPtr ReadIntPtr (IntPtr ptr);		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public static extern int GetLastWin32Error();
 	}
 }

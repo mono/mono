@@ -1,3 +1,20 @@
+2002-01-23  Dick Porter  <dick@ximian.com>
+
+	* SocketAddress.cs: Implemented.
+
+	* IPEndPoint.cs: Turned 'Address' field into a real property.
+	Implemented Create() and Serialize() methods.
+
+	* IPAddress.cs: Fixed class constructor, turned 'Address' field
+	into a real property. Removed undocumented "public
+	IPAddress(string)" constructor.
+
+	* EndPoint.cs: Implemented.  All methods return
+	NotSupportedException to enforce subclass overriding.
+
+	* Dns.cs: Replaced fixed-layout Hostent struct and cygwin
+	P/Invokes with portable internal calls.
+
 2002-01-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* Dns.cs: Updated to API changes.

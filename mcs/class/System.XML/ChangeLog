@@ -1,3 +1,8 @@
+2002-01-23  Dick Porter  <dick@ximian.com>
+
+	* System.Xml/XmlNode.cs: Fixed IndexerName attribute so it
+	compiles under .net 1.0
+
 2001-12-07  Nick Drochak <ndrochak@gol.com>
 
 	* ChangeLog: Add the change log to this directory

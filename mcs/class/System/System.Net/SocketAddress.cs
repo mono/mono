@@ -3,49 +3,75 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Dick Porter (dick@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Net.Sockets;
+
 namespace System.Net {
 
 	public class SocketAddress {
-		short family;
-		int size;
+		private byte[] data;
 		
-		public SocketAddress (short family, int size)
+		public SocketAddress (AddressFamily family, int size)
 		{
-			this.family = family;
-			this.size = size;
+			if(size<2) {
+				throw new ArgumentOutOfRangeException("size is too small");
+			}
+			
+			data=new byte[size];
+			data[0]=(byte)family;
+			data[1]=(byte)size;
 		}
 
-		public SocketAddress (short family)
+		public SocketAddress (AddressFamily family)
 		{
-			this.family = family;
+			data=new byte[32];
+			data[0]=(byte)family;
+			data[1]=(byte)32;
 		}
 		
-		public short Family {
+		public AddressFamily Family {
 			get {
-				return family;
+				return((AddressFamily)data[0]);
 			}
 		}
 
 		public int Size {
 			get {
-				return size;
+				return((int)data[1]);
 			}
 		}
 
-		[MonoTODO]
 		public byte this [ int offset ] {
 			get {
-				// FIXME; Unimplemented.
-				return 0;
+				return(data[offset]);
 			}
 
 			set {
-				// FIXME: Unimplemented.
+				data[offset]=value;
 			}
 		}
+
+		public override string ToString() {
+			string af=((AddressFamily)data[0]).ToString();
+			int size=(int)data[1];
+			string ret=af+":"+size+":{";
+			
+			for(int i=2; i<size; i++) {
+				int val=(int)data[i];
+				ret=ret+val;
+				if(i<size-1) {
+					ret=ret+",";
+				}
+			}
+			
+			ret=ret+"}";
+			
+			return(ret);
+		}
+		
 	}
 }

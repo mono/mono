@@ -423,10 +423,10 @@ namespace System.PAL
 		 * from DateTime(1/1/1601 00:00 GMT))
 		 */
 		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
-		private extern bool GetFileTime(IntPtr handle, out long creat, out long lastaccess, out long lastwrite);
+		private extern static bool GetFileTime(IntPtr handle, out long creat, out long lastaccess, out long lastwrite);
 
 		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
-		private extern bool SetFileTime(IntPtr handle, long creat, long lastaccess, long lastwrite);
+		private extern static bool SetFileTime(IntPtr handle, long creat, long lastaccess, long lastwrite);
 	
 		public DateTime	GetCreationTimeFile(string path)
 		{

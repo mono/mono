@@ -14,11 +14,7 @@
 				<includes name="**/*.cs"/> 
 				<excludes name="Test/**"/>
 				<excludes name="System.CodeDom/Code-X-Collection.cs"/>
-				<excludes name="System.Net.Sockets/LingerOption.cs"/>
 				<excludes name="System.Net.Sockets/NetworkStream.cs"/>
-				<excludes name="System.Net.Sockets/Socket.cs"/>
-				<excludes name="System.Net.Sockets/TcpClient.cs"/>
-				<excludes name="System.Net.Sockets/TcpListener.cs"/>
 				<excludes name="System.Net/IAuthenticationModule.cs"/>
 				<excludes name="System.Net/AuthenticationManager.cs"/>
 			</sources>

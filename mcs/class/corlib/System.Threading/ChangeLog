@@ -1,3 +1,7 @@
+2002-01-23  Dick Porter  <dick@ximian.com>
+
+	* ManualResetEvent.cs: 
+	* AutoResetEvent.cs: Fixed DOS line endings
 
 2002-01-22  Veronica De Santis <veron78@interfree.it>   
         

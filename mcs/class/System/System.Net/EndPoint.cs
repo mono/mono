@@ -2,35 +2,39 @@
 // System.Net.EndPoint.cs
 //
 // Author:
-//   Miguel de Icaza (miguel@ximian.com)
+//   Dick Porter (dick@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
-namespace System.Net {
+using System.Net.Sockets;
 
-	public class EndPoint {
+namespace System.Net {
+	[Serializable]
+	public abstract class EndPoint {
+
+		// NB: These methods really do nothing but throw
+		// NotSupportedException
+		
+		public virtual AddressFamily AddressFamily {
+			get {
+				throw new NotSupportedException();
+			}
+		}
+		
 		public virtual EndPoint Create (SocketAddress address)
 		{
-			return null;
+			throw new NotSupportedException();
 		}
 
 		public virtual SocketAddress Serialize ()
 		{
-			return null;
+			throw new NotSupportedException();
 		}
 
 		protected EndPoint ()
 		{
 		}
-
-		public virtual int AddressFamily {
-			get {
-				return 0;
-			}
-		}
-
-		
 	}
 }
 

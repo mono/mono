@@ -7,55 +7,92 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Net.Sockets;
+
 namespace System.Net {
 
 	/// <remarks>
 	///   Encapsulates an IP Address.
 	/// </remarks>
+	[Serializable]
 	public class IPAddress {
-		public long Address;
+		private long address;
 
-		public static readonly IPAddress Any;
-		public static readonly IPAddress Broadcast;
-		public static readonly IPAddress Loopback;
-		public static readonly IPAddress None;
+		public static readonly IPAddress Any=new IPAddress(0);
+		public static readonly IPAddress Broadcast=new IPAddress(0xffffffff);
+		public static readonly IPAddress Loopback=new IPAddress(0x7f000001);
+		public static readonly IPAddress None=new IPAddress(0xffffffff);
 		
-		public const uint InaddrAny       = 0;
-		public const uint InaddrBroadcast = 0xffffffff;
-		public const uint InaddrLoopback  = 0x7f000001;
-		public const uint InaddrNone      = 0xffffffff;
+		[MonoTODO("Figure out host endian")]
+		public static short HostToNetworkOrder(short host) {
+			return(host);
+		}
 
-		static IPAddress ()
-		{
-			Any.Address = InaddrAny;
-			Broadcast.Address = InaddrBroadcast;
-			Loopback.Address = InaddrLoopback;
-			None.Address = InaddrNone;
+		[MonoTODO("Figure out host endian")]
+		public static int HostToNetworkOrder(int host) {
+			return(host);
+		}
+		
+		[MonoTODO("Figure out host endian")]
+		public static long HostToNetworkOrder(long host) {
+			return(host);
+		}
+
+		[MonoTODO("Figure out host endian")]
+		public static short NetworkToHostOrder(short network) {
+			return(network);
+		}
+
+		[MonoTODO("Figure out host endian")]
+		public static int NetworkToHostOrder(int network) {
+			return(network);
+		}
+
+		[MonoTODO("Figure out host endian")]
+		public static long NetworkToHostOrder(long network) {
+			return(network);
 		}
 		
 		/// <summary>
 		///   Constructor from a 32-bit constant.
 		/// </summary>
-		public IPAddress (long address)
+		public IPAddress (long addr)
 		{
-			this.Address = address;
+			address = addr;
 		}
 
-		/// <summary>
-		///   Constructor from a dotted quad notation. 
-		/// </summary>
-		public IPAddress (string ip)
+		public static IPAddress Parse(string ip)
 		{
+			if(ip==null) {
+				throw new ArgumentNullException("null ip string");
+			}
+
 			string[] ips = ip.Split (new char[] {'.'});
 			int i;
-			uint a = 0;
+			long a = 0;
 
 			for (i = 0; i < ips.Length; i++)
 				a = (a << 8) |  (UInt16.Parse(ips [i]));
 
-			Address = a;
+			return(new IPAddress(a));
+		}
+		
+		public long Address {
+			get {
+				return(address);
+			}
+			set {
+				address=value;
+			}
 		}
 
+		public AddressFamily AddressFamily {
+			get {
+				return(AddressFamily.InterNetwork);
+			}
+		}
+		
+		
 		/// <summary>
 		///   Used to tell whether an address is a loopback.
 		/// </summary>
@@ -63,7 +100,7 @@ namespace System.Net {
 		/// <returns></returns>
 		public static bool IsLoopback (IPAddress addr)
 		{
-			return addr.Address == InaddrLoopback;
+			return addr.Equals(Loopback);
 		}
 
 		/// <summary>
@@ -72,7 +109,7 @@ namespace System.Net {
 		/// </summary>
 		public override string ToString ()
 		{
-			return ToString (Address);
+			return ToString (address);
 		}
 
 		/// <summary>
@@ -80,7 +117,7 @@ namespace System.Net {
 		/// </summary>
 		static string ToString (long addr)
 		{
-			return  (addr >> 24).ToString () + "." +
+			return  ((addr >> 24) & 0xff).ToString () + "." +
 				((addr >> 16) & 0xff).ToString () + "." +
 				((addr >> 8) & 0xff).ToString () + "." +
 				(addr & 0xff).ToString ();
@@ -101,42 +138,5 @@ namespace System.Net {
 		{
 			return (int)Address;
 		}
-
-		[MonoTODO]
-		public static short HostToNetworkOrder (short host)
-		{
-			return host;
-		}
-
-		[MonoTODO]
-		public static int HostToNetworkOrder (int host)
-		{
-			return host;
-		}
-
-		[MonoTODO]
-		public static long HostToNetworkOrder (long host)
-		{
-			return host;
-		}
-
-		[MonoTODO]
-		public static short NetworkToHostOrder (short host)
-		{
-			return host;
-		}
-
-		[MonoTODO]
-		public static int NetworkToHostOrder (int host)
-		{
-			return host;
-		}
-
-		[MonoTODO]
-		public static long NetworkToHostOrder (long host)
-		{
-			return host;
-		}
 	}
-	
 }

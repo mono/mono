@@ -2,30 +2,33 @@
 // System.Net.Sockets.NetworkStream.cs
 //
 // Author:
-//   Miguel de Icaza (miguel@ximian.com)
+//	Dick Porter <dick@ximian.com>
 //
 // (C) 2002 Ximian, Inc.
 //
-using System;
+
 using System.Runtime.Serialization;
-using System.Globalization;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace System.Net.Sockets
 {
-	public class SocketException : Win32Exception {
-		// Constructors
+	[Serializable]
+	public class SocketException : Win32Exception
+	{
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern int WSAGetLastError_internal();
+		
 		public SocketException ()
-			: base (Locale.GetText ("Socket exception"))
-		{
+			: base (WSAGetLastError_internal()) {
 		}
 
-		public SocketException (int code)
-			: base (Locale.GetText ("Socket exception"), code)
-		{
+		public SocketException (int error)
+			: base (error) {
 		}
-		
-		protected SocketException(SerializationInfo info, StreamingContext context)
+
+		protected SocketException (SerializationInfo info,
+					StreamingContext context)
 			: base (info, context) {
 		}
 		

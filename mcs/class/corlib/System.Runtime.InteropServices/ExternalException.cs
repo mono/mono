@@ -11,9 +11,9 @@ using System.Runtime.Serialization;
 using System.Globalization;
 
 namespace System.Runtime.InteropServices {
-
+	[Serializable]
 	public class ExternalException : SystemException {
-		int error_code;
+		private int error_code;
 		
 		// Constructors
 		public ExternalException ()
@@ -36,6 +36,7 @@ namespace System.Runtime.InteropServices {
 		}
 
 		public ExternalException (string message, int errorCode)
+			: base (message)
 		{
 			error_code = errorCode;
 		}
