@@ -1,0 +1,6 @@
+2003-07-09:  Jean-Marc André <jean-marc.andre@polymtl.ca>
+
+	* SoapClientFormatterSink.cs, SoapClientFormatterSinkProvider.cs, 
+	SoapServerFormatterSink.cs, SoapServerFormatterSinkProvider.cs, 
+	SoapMessageFormatter.cs: Support for the soap serialization added to
+	the remoting infrastructure.

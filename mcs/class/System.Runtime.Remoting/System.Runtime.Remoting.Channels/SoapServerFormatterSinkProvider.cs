@@ -13,42 +13,47 @@ namespace System.Runtime.Remoting.Channels
 	public class SoapServerFormatterSinkProvider :
 		IServerFormatterSinkProvider, IServerChannelSinkProvider
 	{
-		[MonoTODO]
+		private IServerChannelSinkProvider _next;
+//		////[MonoTODO]
 		public SoapServerFormatterSinkProvider ()
 		{
-			throw new NotImplementedException ();
+//			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+//		////[MonoTODO]
 		public SoapServerFormatterSinkProvider (IDictionary properties,
 							ICollection providerData)
 		{
-			throw new NotImplementedException ();
+//			throw new NotImplementedException ();
 		}
 
 		public IServerChannelSinkProvider Next
 		{
-			[MonoTODO]
+//			////[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return _next;
 			}
 
-			[MonoTODO]
+//			////[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				_next = value;
 			}
 		}
 
-		[MonoTODO]
+//		////[MonoTODO]
 		public IServerChannelSink CreateSink (IChannelReceiver channel)
 		{
-			throw new NotImplementedException ();
+			IServerChannelSink chain = _next.CreateSink(channel);
+			IServerChannelSink sinkFormatter = new SoapServerFormatterSink(SoapServerFormatterSink.Protocol.Http, chain, channel);
+			
+			return sinkFormatter;
 		}
 
-		[MonoTODO]
+//		////[MonoTODO]
 		public void GetChannelData (IChannelDataStore channelData)
 		{
-			throw new NotImplementedException ();
+			if(_next != null)
+				_next.GetChannelData(channelData);
 		}
 	}
 }
