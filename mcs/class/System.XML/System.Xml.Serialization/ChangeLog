@@ -1,5 +1,15 @@
 2003-06-11  Lluis Sanchez Gual <lluis@ximian.com>
 
+	* XmlReflectionImporter.cs: Added support for XmlIgnoreAttribute in enum members.
+	  Added support for DefaultValueAttribute.
+	* XmlSerializationWriterInterpreter.cs: Added support for DefaultValueAttribute. Fixed bug when writting
+	  the value of an enum.
+	* XmlTypeMapMember.cs: Added DefaultValue attribute.
+	* XmlTypeMapping.cs: EnumMap.GetXmlName and GetXmlValue, so they can now deal with
+	  integer values.
+
+2003-06-11  Lluis Sanchez Gual <lluis@ximian.com>
+
 	* XmlSerializationReader.cs: Minor fix.
 
 2003-06-11  Lluis Sanchez Gual <lluis@ximian.com>

@@ -212,8 +212,14 @@ namespace System.Xml.Serialization
 
 		bool MemberHasValue (XmlTypeMapMember member, object ob, bool isValueList)
 		{
-			if (isValueList) return member.Index < ((object[])ob).Length;
-			else return true;
+			if (isValueList) {
+				return member.Index < ((object[])ob).Length;
+			}
+			else if (member.DefaultValue != null) {
+				object val = GetMemberValue (member, ob, isValueList);
+				if (val != null && val.Equals (member.DefaultValue)) return false;
+			}
+			return true;
 		}
 
 		void WriteMemberElement (XmlTypeMapElementInfo elem, object memberValue)
@@ -372,7 +378,7 @@ namespace System.Xml.Serialization
 		string GetEnumXmlValue (XmlTypeMapping typeMap, object ob)
 		{
 			EnumMap map = (EnumMap)typeMap.ObjectMap;
-			return map.GetXmlName (ob.ToString ());
+			return map.GetXmlName (ob);
 		}
 
 		class CallbackInfo

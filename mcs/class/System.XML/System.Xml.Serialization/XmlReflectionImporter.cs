@@ -350,17 +350,19 @@ namespace System.Xml.Serialization {
 			helper.RegisterClrType (map, type, defaultNamespace);
 
 			string [] names = Enum.GetNames (type);
-			EnumMap.EnumMapMember[] members = new EnumMap.EnumMapMember[names.Length];
-			for (int n=0; n<names.Length; n++)
+			ArrayList members = new ArrayList();
+			foreach (string name in names)
 			{
-				MemberInfo[] mem = type.GetMember (names[n]);
-				string xmlName = names[n];
-				object[] atts = mem[0].GetCustomAttributes (typeof(XmlEnumAttribute), false);
+				MemberInfo[] mem = type.GetMember (name);
+				string xmlName = name;
+				object[] atts = mem[0].GetCustomAttributes (typeof(XmlIgnoreAttribute), false);
+				if (atts.Length > 0) continue;
+				atts = mem[0].GetCustomAttributes (typeof(XmlEnumAttribute), false);
 				if (atts.Length > 0) xmlName = ((XmlEnumAttribute)atts[0]).Name;
-				members[n] = new EnumMap.EnumMapMember (xmlName, names[n]);
+				members.Add (new EnumMap.EnumMapMember (xmlName, name));
 			}
 
-			map.ObjectMap = new EnumMap (members);
+			map.ObjectMap = new EnumMap ((EnumMap.EnumMapMember[])members.ToArray (typeof(EnumMap.EnumMapMember)));
 			ImportTypeMapping (typeof(object)).DerivedTypes.Add (map);
 			return map;
 		}
@@ -443,7 +445,10 @@ namespace System.Xml.Serialization {
 			}
 			else if (typeData.SchemaType == SchemaTypes.Array)
 			{
-				if (atts.XmlElements.Count > 0)
+				// If the member has a single XmlElementAttribute and the type is the type of the member,
+				// then it is not a flat list
+				
+				if (atts.XmlElements.Count > 1 || (atts.XmlElements.Count == 1 && atts.XmlElements[0].Type != typeData.Type))
 				{
 					// A flat list
 
@@ -479,6 +484,7 @@ namespace System.Xml.Serialization {
 				mapMember = member;
 			}
 
+			mapMember.DefaultValue = atts.XmlDefaultValue;
 			mapMember.TypeData = typeData;
 			mapMember.Name = rmember.MemberName;
 			return mapMember;

@@ -307,18 +307,27 @@ namespace System.Xml.Serialization
 			get { return _members; }
 		}
 
-		public string GetXmlName (string enumName)
+		public string GetXmlName (object enumValue)
 		{
+			string enumName = enumValue.ToString();
 			foreach (EnumMapMember mem in _members)
 				if (mem.EnumName == enumName) return mem.XmlName;
-			throw new InvalidOperationException ("Invalid enumeration value: " + enumName);
+			
+			return Convert.ToInt64(enumValue).ToString();
 		}
 
 		public string GetEnumName (string xmlName)
 		{
 			foreach (EnumMapMember mem in _members)
 				if (mem.XmlName == xmlName) return mem.EnumName;
-			throw new InvalidOperationException ("Invalid enumeration value: " + xmlName);
+				
+			try {
+				Int64.Parse (xmlName);
+				return xmlName;
+			}
+			catch {
+				throw new InvalidOperationException ("Invalid enumeration value: " + xmlName);
+			}
 		}
 	}
 }

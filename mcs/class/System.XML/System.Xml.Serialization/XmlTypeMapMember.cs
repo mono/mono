@@ -22,6 +22,7 @@ namespace System.Xml.Serialization
 		int _index;
 		TypeData _typeData;
 		MemberInfo _member;
+		object _defaultValue;
 
 		public XmlTypeMapMember()
 		{
@@ -31,6 +32,12 @@ namespace System.Xml.Serialization
 		{
 			get { return _name; }
 			set { _name = value; }
+		}
+		
+		public object DefaultValue
+		{
+			get { return _defaultValue; }
+			set { _defaultValue = value; }
 		}
 
 		public bool IsReadOnly (Type type)
