@@ -1,4 +1,5 @@
-
+2005-03-24 Manjula GHM <mmanjula@novell.com>
+	* Removed invalid test case
 2005-03-23 Ritvik Mayank <mritvik@novell.com>
 	* Removed executable attribute and eol control-char from all the files
 	* Removed some unwanted tests.
