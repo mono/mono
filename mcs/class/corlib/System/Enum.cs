@@ -157,7 +157,7 @@ namespace System {
 
 			MonoEnumInfo info;
 			MonoEnumInfo.GetInfo (enumType, out info);
-			return info.values;
+			return (Array) info.values.Clone ();
 		}
 		
 		public static string[] GetNames (Type enumType) {
@@ -169,7 +169,7 @@ namespace System {
 
 			MonoEnumInfo info;
 			MonoEnumInfo.GetInfo (enumType, out info);
-			return info.names;
+			return (string []) info.names.Clone ();
 		}
 		
 		public static string GetName (Type enumType, object value) {
