@@ -1,3 +1,6 @@
+2004-04-08  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
+	* OptionDetails.cs: Implemented Jonathan Pryor request for multiplicity in boolean properties
+
 2004-03-31  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
 	* AssemblyInfo.cs: Bumped version and completed some more infos
 	* OptionDetails.cs: Incorporated C.J. Collier patch to make help screen more Windows-ish when mode==windows

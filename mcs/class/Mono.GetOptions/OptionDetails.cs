@@ -137,26 +137,42 @@ namespace Mono.GetOptions
 			this.MaxOccurs = 1;
 			this.ParameterType = TypeOfMember(memberInfo);
 
-			if (this.ParameterType != null && this.ParameterType.FullName != "System.Boolean")
+			if (this.ParameterType != null)
 			{
-				if (this.LongForm.IndexOf(':') >= 0)
-					throw new InvalidOperationException("Options with an embedded colon (':') in their visible name must be boolean!!! [" + this.MemberInfo.ToString() + " isn't]");
-				
-				this.NeedsParameter = true;
-
-				if (option.MaxOccurs != 1)
+				if (this.ParameterType.FullName != "System.Boolean")
 				{
-					if (this.ParameterType.IsArray)
+					if (this.LongForm.IndexOf(':') >= 0)
+						throw new InvalidOperationException("Options with an embedded colon (':') in their visible name must be boolean!!! [" + 
+									this.MemberInfo.ToString() + " isn't]");
+				
+					this.NeedsParameter = true;
+
+					if (option.MaxOccurs != 1)
 					{
-						this.Values = new ArrayList();
-						this.MaxOccurs = option.MaxOccurs;
+						if (this.ParameterType.IsArray)
+						{
+							this.Values = new ArrayList();
+							this.MaxOccurs = option.MaxOccurs;
+						}
+						else
+						{
+							if (this.MemberInfo is MethodInfo || this.MemberInfo is PropertyInfo)
+								this.MaxOccurs = option.MaxOccurs;
+							else
+								throw new InvalidOperationException("MaxOccurs set to non default value (" + option.MaxOccurs + ") for a [" + 
+											this.MemberInfo.ToString() + "] option");
+						}
 					}
-					else
-					{
+				}
+				else
+				{
+					if (option.MaxOccurs != 1)
+					{			
 						if (this.MemberInfo is MethodInfo || this.MemberInfo is PropertyInfo)
 							this.MaxOccurs = option.MaxOccurs;
 						else
-							throw new InvalidOperationException("MaxOccurs set to non default value (" + option.MaxOccurs + ") for a [" + this.MemberInfo.ToString() + "] option");
+							throw new InvalidOperationException("MaxOccurs set to non default value (" + option.MaxOccurs + ") for a [" + 
+										this.MemberInfo.ToString() + "] option");
 					}
 				}
 			}
