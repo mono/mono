@@ -11,17 +11,18 @@ using System.Collections;
 using System.IO;
 
 namespace System.Resources {
-
+	   
+	   [Serializable]
 	   public class ResourceSet : IDisposable {
 
 			 protected IResourceReader Reader;
-			 protected Hashtable Table;
+			 protected ResourceHashtable Table;
 			 
 			 // Constructors
 			 protected ResourceSet () {}
 			 protected ResourceSet (IResourceReader reader) {
 				    if (reader == null)
-						  throw new ArgumentNullException("The reader is null.");
+						  throw new ArgumentNullException ("The reader is null.");
 				    Reader = reader;
 			 }
 
@@ -66,7 +67,7 @@ namespace System.Resources {
 				    }
 				    if (Table != null)
 						  return Table[name];
-			    return null;
+				    return null;
 			 }
 
 			 public virtual object GetObject (string name, bool ignoreCase) {
@@ -74,19 +75,25 @@ namespace System.Resources {
 						  throw new ArgumentNullException ("The name parameter is null.");
 				    if (Reader == null)
 						  throw new InvalidOperationException ("ResourceSet has been closed.");
+				    if (Table == null)
+						  ReadResources ();
+				    
 				    if (Table != null && ignoreCase == false)
 						  return Table[name];
+
+				    if (ignoreCase) {
+						  IComparer c = new CaseInsensitiveComparer ();
+						  Table.comparer (c);
+						  return Table[name];
+				    }
 				    
-				    if (ignoreCase && Table == null)
-						  ReadResources (); // find out how to get element from Hashtable
-
-				    if (ignoreCase && Table != null) // while ignoring case.
-						  throw new NotImplementedException ();
-
-				    return null;
+				    else {  // Comparer is the default, case sensitive
+						  IComparer c = new Comparer ();
+						  Table.comparer (c);
+						  return Table[name];
+				    }
 			 }
 
-			 [MonoTODO]
 			 public virtual string GetString (string name) {
 				    Object o = GetObject (name);
 				    if (o is string)
@@ -94,8 +101,10 @@ namespace System.Resources {
 				    return null;
 			 }
 
-	 		 [MonoTODO]
 			 public virtual string GetString (string name, bool ignoreCase) {
+				    Object o = GetObject (name, ignoreCase);
+				    if (o is string)
+						  return (string) o;
 				    return null;
 			 }
 
@@ -103,12 +112,13 @@ namespace System.Resources {
 				    IDictionaryEnumerator i = Reader.GetEnumerator();
 
 				    if (Table == null)
-						  Table = new Hashtable ();
+						  Table = new ResourceHashtable ();
 				    i.Reset ();
 
 				    while (i.MoveNext ()) 
 						  Table.Add (i.Key, i.Value);
-				    
 			 }
 	   }
+	   public class ResourceHashtable : Hashtable {}
 }
+

@@ -1,3 +1,9 @@
+2002-1-17  Duncan Mak  <duncan@192.168.10-120.masq>
+
+	* ResourceSet.cs: Implemented GetObject (string, bool) and GetString
+	(string, bool). ResourceSet has no more MonoTODOs! Also added in the
+	Serializable attribute.
+
 2002-01-17  Duncan Mak  <duncan@ximian.com>
 
 	* ResourceManager.cs: Fixed GetNeutralResourcesLanguage () and added
