@@ -1,3 +1,8 @@
+2003-03-30 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: New grammar that I haven't made a mess of, this
+	takes all the special cases into account much better.
+		
 2003-03-19 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: .hash algorithm can be followed by bytes
