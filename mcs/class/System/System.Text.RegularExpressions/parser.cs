@@ -287,20 +287,29 @@ namespace System.Text.RegularExpressions.Syntax {
 				
 				if (ptr < pattern.Length) {
 					char k = pattern[ptr];
+					int min = 0, max = 0;
+					bool lazy = false;
+					bool haveRep = false;
 
-					if (k == '?' || k == '*' || k == '+' || k == '{') {
+
+					if (k == '?' || k == '*' || k == '+') {
 						++ ptr;
-
-						int min = 0, max = 0;
-						bool lazy = false;
+						haveRep = true;
 
 						switch (k) {
 						case '?': min = 0; max = 1; break;
 						case '*': min = 0; max = 0xffff; break;
 						case '+': min = 1; max = 0xffff; break;
-						case '{': ParseRepetitionBounds (out min, out max, options); break;
 						}
+					} else if (k == '{' && ptr + 1 < pattern.Length) {
+						int saved_ptr = ptr;
+						++ptr;
+						haveRep = ParseRepetitionBounds (out min, out max, options);
+						if (!haveRep)
+							ptr = saved_ptr;
+					}
 
+					if (haveRep) {
 						ConsumeWhitespace (IsIgnorePatternWhitespace (options));
 						if (ptr < pattern.Length && pattern[ptr] == '?') {
 							++ ptr;
@@ -738,8 +747,9 @@ namespace System.Text.RegularExpressions.Syntax {
 			return cls;
 		}
 
-		private void ParseRepetitionBounds (out int min, out int max, RegexOptions options) {
+		private bool ParseRepetitionBounds (out int min, out int max, RegexOptions options) {
 			int n, m;
+			min = max = 0;
 
 			/* check syntax */
 
@@ -761,10 +771,10 @@ namespace System.Text.RegularExpressions.Syntax {
 				m = ParseNumber (10, 1, 0);
 				ConsumeWhitespace (IsIgnorePatternWhitespace (options));
 				if (pattern[ptr ++] != '}')
-					throw NewParseException ("Illegal {x,y} - bad value of y.");
+					return false;
 				break;
 			default:
-				throw NewParseException ("Illegal {x,y}");
+				return false;
 			}
 
 			/* check bounds and ordering */
@@ -781,6 +791,8 @@ namespace System.Text.RegularExpressions.Syntax {
 				max = m;
 			else
 				max = 0xffff;
+
+			return true;
 		}
 
 		private Category ParseUnicodeCategory () {
