@@ -1,3 +1,10 @@
+2004-08-16  Dick Porter  <dick@ximian.com>
+
+	* sockets.c:
+	* io.c:
+	* handles-private.h (_wapi_handle_fd_offset_to_handle): Improve
+	error checking with passed-in file descriptors.
+
 2004-08-11  Dick Porter  <dick@ximian.com>
 
 	* sockets.c: 
