@@ -22,6 +22,10 @@ namespace System.Xml.Serialization {
 		ReflectionHelper helper = new ReflectionHelper();
 		int arrayChoiceCount = 1;
 
+		static readonly string errSimple = "Cannot serialize object of type '{0}'. Base " +
+			"type '{1}' has simpleContent and can be only extended by adding XmlAttribute " +
+			"elements. Please consider changing XmlTextMember of the base class to string array";
+
 		#region Constructors
 
 		public XmlReflectionImporter ()
@@ -221,8 +225,11 @@ namespace System.Xml.Serialization {
 			if (typeData.Type != typeof(object))
 				ImportTypeMapping (typeof(object)).DerivedTypes.Add (map);
 
-			if (type.BaseType != null && type.BaseType != typeof(object))
+			if (type.BaseType != null && type.BaseType != typeof(object)) {
 				map.BaseMap = ImportClassMapping (type.BaseType, root, defaultNamespace);
+				if (((ClassMap)map.BaseMap.ObjectMap).HasSimpleContent && classMap.ElementMembers.Count != 1)
+					throw new InvalidOperationException (String.Format (errSimple, map.TypeData.TypeName, map.BaseMap.TypeData.TypeName));
+			}
 			
 			return map;
 		}
@@ -473,7 +480,7 @@ namespace System.Xml.Serialization {
 					 (rmember.MemberType.FullName == "System.Xml.XmlElement"))
 				{
 					XmlTypeMapMemberAnyElement member = new XmlTypeMapMemberAnyElement();
-					member.ElementInfo = ImportAnyElementInfo (defaultNamespace, member, atts);
+					member.ElementInfo = ImportAnyElementInfo (defaultNamespace, rmember.MemberType, member, atts);
 					mapMember = member;
 				}
 				else
@@ -558,23 +565,8 @@ namespace System.Xml.Serialization {
 		{
 			XmlTypeMapElementInfoList list = new XmlTypeMapElementInfoList();
 
-			if (atts.XmlText != null)
-			{
-				member.IsXmlTextCollector = true;
-				if (atts.XmlText.Type != null) defaultType = atts.XmlText.Type;
-				if (defaultType == typeof(XmlNode)) defaultType = typeof(XmlText);	// Nodes must be text nodes
-
-				XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (member, TypeTranslator.GetTypeData(defaultType, atts.XmlText.DataType));
-
-				if (elem.TypeData.SchemaType != SchemaTypes.Primitive && elem.TypeData.SchemaType != SchemaTypes.Enum &&
-				    elem.TypeData.SchemaType != SchemaTypes.XmlNode)
-					throw new InvalidOperationException ("XmlText cannot be used to encode complex types");
-
-				elem.IsTextElement = true;
-				elem.WrappedElement = false;
-				list.Add (elem);
-			}
-
+			ImportTextElementInfo (list, defaultType, member, atts);
+			
 			if (atts.XmlElements.Count == 0 && list.Count == 0)
 			{
 				XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (member, TypeTranslator.GetTypeData(defaultType));
@@ -614,9 +606,11 @@ namespace System.Xml.Serialization {
 			return list;
 		}
 
-		XmlTypeMapElementInfoList ImportAnyElementInfo (string defaultNamespace, XmlTypeMapMemberElement member, XmlAttributes atts)
+		XmlTypeMapElementInfoList ImportAnyElementInfo (string defaultNamespace, Type defaultType, XmlTypeMapMemberElement member, XmlAttributes atts)
 		{
 			XmlTypeMapElementInfoList list = new XmlTypeMapElementInfoList();
+
+			ImportTextElementInfo (list, defaultType, member, atts);
 
 			foreach (XmlAnyElementAttribute att in atts.XmlAnyElements)
 			{
@@ -629,6 +623,29 @@ namespace System.Xml.Serialization {
 			return list;
 		}
 
+		void ImportTextElementInfo (XmlTypeMapElementInfoList list, Type defaultType, XmlTypeMapMemberElement member, XmlAttributes atts)
+		{
+			if (atts.XmlText != null)
+			{
+				member.IsXmlTextCollector = true;
+				if (atts.XmlText.Type != null) defaultType = atts.XmlText.Type;
+				if (defaultType == typeof(XmlNode)) defaultType = typeof(XmlText);	// Nodes must be text nodes
+
+				XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (member, TypeTranslator.GetTypeData(defaultType, atts.XmlText.DataType));
+
+				if (elem.TypeData.SchemaType != SchemaTypes.Primitive &&
+					elem.TypeData.SchemaType != SchemaTypes.Enum &&
+				    elem.TypeData.SchemaType != SchemaTypes.XmlNode &&
+				    !(elem.TypeData.SchemaType == SchemaTypes.Array && elem.TypeData.ListItemTypeData.SchemaType == SchemaTypes.XmlNode)
+				 )
+					throw new InvalidOperationException ("XmlText cannot be used to encode complex types");
+
+				elem.IsTextElement = true;
+				elem.WrappedElement = false;
+				list.Add (elem);
+			}
+		}
+		
 		public void IncludeType (Type type)
 		{
 			if (type == null)

@@ -1,5 +1,28 @@
 2003-08-05  Lluis Sanchez Gual <lluis@ximian.com>
 
+	* CodeIdentifier.cs: Fixed MakeValid method.
+	* TypeTranslator.cs: Added support for more primitive types. Added
+	  GetDefaultPrimitiveTypeData, which returns the type data to which a clr type
+	  maps by default.
+	* XmlCodeExporter.cs: Generate XmlRoot attribute only if root element name and ns
+	  are different from the type ns and name.
+	  Generate class and field comments.
+	  Fixed default attribute generation. In elements with ref attribute, it has to be
+	  generated in the referred attribute.
+	* XmlReflectionImporter.cs: Added check: simple type extensions can't add new elements.
+	  Added suport for text nodes in members of type "any".
+	* XmlSchemaExporter.cs: Several fixes. Fixed generation of complex types with simple
+	  content.
+	* XmlSchemaImporter.cs: Several fixes. The importer now collects documentation info.
+	* XmlSerializationWriter.cs: WriteNamespaceDeclarations(): do not declare namespaces
+	  that have already been declared.
+	  WriteStartElement(): elements from schema namespace are always written with ns prefix.
+	* XmlTypeMapMember.cs: Added documentation property.
+	* XmlTypeMapping.cs: Added documentation property. Added property to check if a class map
+	  represents a simple type.
+
+2003-08-05  Lluis Sanchez Gual <lluis@ximian.com>
+
 	* XmlSchemaImporter.cs: Implemented ImportTypeMapping and all needed parsing
 	  stuff.
 	* SoapReflectionImporter.cs: Set the type namespace parameter when creating a map.

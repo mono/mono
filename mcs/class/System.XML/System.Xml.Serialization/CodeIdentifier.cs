@@ -37,7 +37,7 @@ namespace System.Xml.Serialization {
 
 			string output = "";
 
-			if (Char.IsNumber (identifier[0]))
+			if (!Char.IsLetter (identifier[0]) && (identifier[0]!='_') )
 				output = "Item";
 
 			foreach (char c in identifier) 

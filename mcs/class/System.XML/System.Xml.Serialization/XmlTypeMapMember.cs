@@ -23,6 +23,7 @@ namespace System.Xml.Serialization
 		TypeData _typeData;
 		MemberInfo _member;
 		object _defaultValue = System.DBNull.Value;
+		string documentation;
 
 		public XmlTypeMapMember()
 		{
@@ -38,6 +39,12 @@ namespace System.Xml.Serialization
 		{
 			get { return _defaultValue; }
 			set { _defaultValue = value; }
+		}
+
+		public string Documentation
+		{
+			set { documentation = value; }
+			get { return documentation; }
 		}
 
 		public bool IsReadOnly (Type type)

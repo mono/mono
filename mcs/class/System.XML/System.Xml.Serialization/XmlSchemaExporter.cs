@@ -19,7 +19,7 @@ namespace System.Xml.Serialization {
 
 		XmlSchemas schemas;
 		Hashtable exportedMaps = new Hashtable();
-
+		
 		#endregion
 
 		#region Constructors
@@ -68,14 +68,14 @@ namespace System.Xml.Serialization {
 
 		public void ExportTypeMapping (XmlTypeMapping xmlTypeMapping)
 		{
-			XmlSchema schema = GetSchema (null);
+			XmlSchema schema = GetSchema (xmlTypeMapping.Namespace);
 			XmlTypeMapElementInfo einfo = new XmlTypeMapElementInfo (null, xmlTypeMapping.TypeData);
 			einfo.Namespace = xmlTypeMapping.Namespace;
 			einfo.ElementName = xmlTypeMapping.ElementName;
 			einfo.MappedType = xmlTypeMapping;
 			einfo.IsNullable = false;
 			AddSchemaElement (schema.Items, schema, einfo, false);
-//			CompileSchemas ();
+			CompileSchemas ();
 		}
 
 		void ExportClassSchema (XmlTypeMapping map)
@@ -87,7 +87,25 @@ namespace System.Xml.Serialization {
 			XmlSchemaComplexType stype = new XmlSchemaComplexType ();
 			stype.Name = map.XmlType;
 			schema.Items.Add (stype);
-			if (map.BaseMap != null)
+
+			ClassMap cmap = (ClassMap)map.ObjectMap;
+
+			if (cmap.HasSimpleContent)
+			{
+				XmlSchemaSimpleContent simple = new XmlSchemaSimpleContent ();
+				stype.ContentModel = simple;
+				XmlSchemaSimpleContentExtension ext = new XmlSchemaSimpleContentExtension ();
+				simple.Content = ext;
+				XmlSchemaSequence particle;
+				XmlSchemaAnyAttribute anyAttribute;
+				ExportMembersMapSchema (schema, cmap, map.BaseMap, ext.Attributes, out particle, out anyAttribute);
+				ext.AnyAttribute = anyAttribute;
+				if (map.BaseMap == null)
+					ext.BaseTypeName = cmap.SimpleContentBaseType;
+				else
+					ext.BaseTypeName = new XmlQualifiedName (map.BaseMap.XmlType, map.BaseMap.XmlTypeNamespace);
+			}
+			else if (map.BaseMap != null)
 			{
 				XmlSchemaComplexContent cstype = new XmlSchemaComplexContent ();
 				XmlSchemaComplexContentExtension ext = new XmlSchemaComplexContentExtension ();
@@ -97,7 +115,7 @@ namespace System.Xml.Serialization {
 
 				XmlSchemaSequence particle;
 				XmlSchemaAnyAttribute anyAttribute;
-				ExportMembersMapSchema (schema, (ClassMap)map.ObjectMap, map.BaseMap, ext.Attributes, out particle, out anyAttribute);
+				ExportMembersMapSchema (schema, cmap, map.BaseMap, ext.Attributes, out particle, out anyAttribute);
 				ext.Particle = particle;
 				ext.AnyAttribute = anyAttribute;
 
@@ -108,10 +126,10 @@ namespace System.Xml.Serialization {
 			{
 				XmlSchemaSequence particle;
 				XmlSchemaAnyAttribute anyAttribute;
-				ExportMembersMapSchema (schema, (ClassMap)map.ObjectMap, map.BaseMap, stype.Attributes, out particle, out anyAttribute);
+				ExportMembersMapSchema (schema, cmap, map.BaseMap, stype.Attributes, out particle, out anyAttribute);
 				stype.Particle = particle;
 				stype.AnyAttribute = anyAttribute;
-				stype.IsMixed = ((ClassMap)map.ObjectMap).XmlTextCollector != null;
+				stype.IsMixed = cmap.XmlTextCollector != null;
 			}
 		}
 
@@ -142,9 +160,7 @@ namespace System.Xml.Serialization {
 					}
 					else if (memType == typeof(XmlTypeMapMemberElement))
 					{
-						XmlSchemaElement selem = (XmlSchemaElement) AddSchemaElement (seq.Items, schema, (XmlTypeMapElementInfo) member.ElementInfo [0], true);
-						if (selem != null && member.DefaultValue != System.DBNull.Value)
-							selem.DefaultValue = XmlCustomFormatter.ToXmlString (member.TypeData, member.DefaultValue);
+						XmlSchemaElement selem = (XmlSchemaElement) AddSchemaElement (seq.Items, schema, (XmlTypeMapElementInfo) member.ElementInfo [0], member.DefaultValue, true);
 					}
 					else
 					{
@@ -187,6 +203,7 @@ namespace System.Xml.Serialization {
 				sat.Name = attinfo.AttributeName;
 				if (attinfo.TypeData.SchemaType == SchemaTypes.Enum)
 				{
+					ImportNamespace (currentSchema, attinfo.DataTypeNamespace);
 					ExportEnumSchema (attinfo.MappedType);
 					sat.SchemaTypeName = new XmlQualifiedName (attinfo.TypeData.XmlType, attinfo.DataTypeNamespace);;
 				}
@@ -206,6 +223,11 @@ namespace System.Xml.Serialization {
 		}
 
 		XmlSchemaParticle AddSchemaElement (XmlSchemaObjectCollection destcol, XmlSchema currentSchema, XmlTypeMapElementInfo einfo, bool isTypeMember)
+		{
+			return AddSchemaElement (destcol, currentSchema, einfo, System.DBNull.Value, isTypeMember);
+		}
+		
+		XmlSchemaParticle AddSchemaElement (XmlSchemaObjectCollection destcol, XmlSchema currentSchema, XmlTypeMapElementInfo einfo, object defaultValue, bool isTypeMember)
 		{
 			if (einfo.IsTextElement) return null;
 
@@ -238,6 +260,10 @@ namespace System.Xml.Serialization {
 				if (isTypeMember) selem.IsNillable = einfo.IsNullable;
 				selem.Name = einfo.ElementName;
 				XmlQualifiedName typeName = new XmlQualifiedName (einfo.TypeData.XmlType, einfo.DataTypeNamespace);
+
+				if (defaultValue != System.DBNull.Value)
+					selem.DefaultValue = XmlCustomFormatter.ToXmlString (einfo.TypeData, defaultValue);
+
 				switch (einfo.TypeData.SchemaType)
 				{
 					case SchemaTypes.XmlNode: 
@@ -250,20 +276,20 @@ namespace System.Xml.Serialization {
 
 					case SchemaTypes.Enum:
 						selem.SchemaTypeName = new XmlQualifiedName (einfo.MappedType.XmlType, einfo.MappedType.XmlTypeNamespace);
-						ImportNamespace (currentSchema, einfo.MappedType.Namespace);
+						ImportNamespace (currentSchema, einfo.MappedType.XmlTypeNamespace);
 						ExportEnumSchema (einfo.MappedType);
 						break;
 
 					case SchemaTypes.Array: 
 						selem.SchemaTypeName = new XmlQualifiedName (einfo.MappedType.XmlType, einfo.MappedType.XmlTypeNamespace);;
-						ImportNamespace (currentSchema, einfo.MappedType.Namespace);
+						ImportNamespace (currentSchema, einfo.MappedType.XmlTypeNamespace);
 						ExportArraySchema (einfo.MappedType); 
 						break;
 
 					case SchemaTypes.Class:
 						if (einfo.MappedType.TypeData.Type != typeof(object)) {
 							selem.SchemaTypeName = new XmlQualifiedName (einfo.MappedType.XmlType, einfo.MappedType.XmlTypeNamespace);;
-							ImportNamespace (currentSchema, einfo.MappedType.Namespace);
+							ImportNamespace (currentSchema, einfo.MappedType.XmlTypeNamespace);
 							ExportClassSchema (einfo.MappedType);
 						}
 						break;
@@ -276,7 +302,7 @@ namespace System.Xml.Serialization {
 			else
 			{
 				selem.RefName = new XmlQualifiedName (einfo.ElementName, einfo.Namespace);
-				AddSchemaElement (memberSchema.Items, memberSchema, einfo, false);
+				AddSchemaElement (memberSchema.Items, memberSchema, einfo, defaultValue, false);
 			}
 			return selem;
 		}

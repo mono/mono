@@ -426,7 +426,8 @@ namespace System.Xml.Serialization {
 
 			ICollection namespaces = ns.Namespaces.Values;
 			foreach (XmlQualifiedName qn in namespaces) {
-				WriteAttribute ("xmlns", qn.Name, xmlNamespace, qn.Namespace);
+				if (Writer.LookupPrefix (qn.Namespace) == null)
+					WriteAttribute ("xmlns", qn.Name, xmlNamespace, qn.Namespace);
 			}
 		}
 
@@ -660,15 +661,20 @@ namespace System.Xml.Serialization {
 			WriteStartElement (name, ns, o, false);
 		}
 
-		[MonoTODO]
 		protected void WriteStartElement (string name, string ns, object o, bool writePrefixed)
 		{
 			WriteState oldState = Writer.WriteState;
 
+			// Elements with schema namespace are always written prefixed
+			if (ns == XmlSchema.Namespace) writePrefixed = true;
+
 			if (writePrefixed && ns != string.Empty) {
 				name = XmlCustomFormatter.FromXmlName (name);
 				string prefix = Writer.LookupPrefix (ns);
-				if (prefix == null) prefix = "q" + (++qnameCount);
+				if (prefix == null) {
+					if (ns == XmlSchema.Namespace) prefix = "xsd";
+					else prefix = "q" + (++qnameCount);
+				}
 				Writer.WriteStartElement (prefix, name, ns);
 			} else
 				Writer.WriteStartElement (name, ns);

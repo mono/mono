@@ -3,6 +3,7 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2002
 //
@@ -22,6 +23,7 @@ namespace System.Xml.Serialization {
 		Hashtable mappedTypes = new Hashtable ();
 		Hashtable dataMappedTypes = new Hashtable ();
 		Queue pendingMaps = new Queue ();
+		Hashtable sharedAnonymousTypes = new Hashtable ();
 
 		static readonly XmlQualifiedName anyType = new XmlQualifiedName ("anyType",XmlSchema.Namespace);
 		XmlSchemaElement anyElement = null;
@@ -155,8 +157,6 @@ namespace System.Xml.Serialization {
 
 		XmlTypeMapping ImportClassComplexType (XmlQualifiedName typeQName, XmlSchemaComplexType stype, XmlQualifiedName root)
 		{
-//			if (root != null) typeQName = root;
-
 			XmlTypeMapping map;
 
 			// The need for fixups: If the complex type is an array, then to get the type of the
@@ -166,7 +166,7 @@ namespace System.Xml.Serialization {
 			// the class map is registered before parsing the children. We can't do the same
 			// with the array type because to register the array map we need the type of the array.
 
-			if (root == null && CanBeArray (typeQName, stype))
+			if (CanBeArray (typeQName, stype))
 			{
 				TypeData typeData;
 				ListMap listMap = BuildArrayMap (typeQName, stype, out typeData);
@@ -192,6 +192,7 @@ namespace System.Xml.Serialization {
 			// This will avoid loops.
 
 			map = CreateTypeMapping (typeQName, SchemaTypes.Class, root);
+			map.Documentation = GetDocumentation (stype);
 			RegisterMapFixup (map, typeQName, stype);
 			return map;
 		}
@@ -275,11 +276,12 @@ namespace System.Xml.Serialization {
 					XmlSchemaAttribute refAttr = GetRefAttribute (typeQName, attr, out ns);
 					XmlTypeMapMemberAttribute member = new XmlTypeMapMemberAttribute ();
 					member.Name = classIds.AddUnique (CodeIdentifier.MakeValid (refAttr.Name), member);
+					member.Documentation = GetDocumentation (attr);
 					member.AttributeName = refAttr.Name;
 					member.Namespace = ns;
 					member.Form = refAttr.Form;
 					member.TypeData = GetAttributeTypeData (typeQName, attr);
-					if (refAttr.DefaultValue != null) member.DefaultValue = refAttr.DefaultValue;
+					if (refAttr.DefaultValue != null) member.DefaultValue = XmlCustomFormatter.FromXmlString (member.TypeData, refAttr.DefaultValue);
 					if (member.TypeData.IsComplexType)
 						member.MappedType = GetTypeMapping (member.TypeData);
 					cmap.AddMember (member);
@@ -368,7 +370,7 @@ namespace System.Xml.Serialization {
 						if (typeData.SchemaType != SchemaTypes.Array)
 						{
 							member = new XmlTypeMapMemberElement ();
-							if (refElem.DefaultValue != null) member.DefaultValue = refElem.DefaultValue;
+							if (refElem.DefaultValue != null) member.DefaultValue = XmlCustomFormatter.FromXmlString (typeData, refElem.DefaultValue);
 						}
 						else if (GetTypeMapping (typeData).IsSimpleType)
 						{
@@ -382,6 +384,7 @@ namespace System.Xml.Serialization {
 							member = new XmlTypeMapMemberList ();
 
 						member.Name = classIds.AddUnique(CodeIdentifier.MakeValid(refElem.Name), member);
+						member.Documentation = GetDocumentation (elem);
 						member.TypeData = typeData;
 						member.ElementInfo.Add (CreateElementInfo (ns, member, refElem.Name, typeData, refElem.IsNillable));
 						cmap.AddMember (member);
@@ -391,6 +394,7 @@ namespace System.Xml.Serialization {
 						XmlTypeMapMemberFlatList member = new XmlTypeMapMemberFlatList ();
 						member.ListMap = new ListMap ();
 						member.Name = classIds.AddUnique(CodeIdentifier.MakeValid(refElem.Name), member);
+						member.Documentation = GetDocumentation (elem);
 						member.TypeData = typeData.ListTypeData;
 						member.ElementInfo.Add (CreateElementInfo (ns, member, refElem.Name, typeData, refElem.IsNillable));
 						member.ListMap.ItemInfo = member.ElementInfo;
@@ -402,6 +406,7 @@ namespace System.Xml.Serialization {
 					XmlSchemaAny elem = (XmlSchemaAny) item;
 					XmlTypeMapMemberAnyElement member = new XmlTypeMapMemberAnyElement ();
 					member.Name = classIds.AddUnique ("Any", member);
+					member.Documentation = GetDocumentation (elem);
 
 					Type ctype;
 					if (elem.MaxOccurs > 1 || multiValue)
@@ -462,6 +467,7 @@ namespace System.Xml.Serialization {
 			bool twoEqual = false;
 			bool allEqual = true;
 			Hashtable types = new Hashtable ();
+
 			foreach (XmlTypeMapElementInfo einfo in choices)
 			{
 				if (types.ContainsKey (einfo.TypeData)) twoEqual = true;
@@ -498,6 +504,7 @@ namespace System.Xml.Serialization {
 
 				// Create the choice enum
 				XmlTypeMapping enumMap = CreateTypeMapping (new XmlQualifiedName (member.Name + "ChoiceType", typeQName.Namespace), SchemaTypes.Enum, null);
+
 				CodeIdentifiers codeIdents = new CodeIdentifiers ();
 				EnumMap.EnumMapMember[] members = new EnumMap.EnumMapMember [choices.Count];
 				for (int n=0; n<choices.Count; n++)
@@ -518,6 +525,7 @@ namespace System.Xml.Serialization {
 				typeData = typeData.ListTypeData;
 
 			member.ElementInfo = choices;
+			member.Documentation = GetDocumentation (choice);
 			member.TypeData = typeData;
 			cmap.AddMember (member);
 		}
@@ -669,6 +677,7 @@ namespace System.Xml.Serialization {
 			if (ext != null) {
 				// Add the members of this map
 				ImportParticleComplexContent (typeQName, cmap, ext.Particle, classIds, isMixed);
+
 				ImportAttributes (typeQName, cmap, ext.Attributes, ext.AnyAttribute, classIds);
 			}
 			else {
@@ -686,6 +695,7 @@ namespace System.Xml.Serialization {
 				XmlSchemaSimpleTypeRestriction rest = (XmlSchemaSimpleTypeRestriction)stype.Content;
 
 				XmlTypeMapping enumMap = CreateTypeMapping (typeQName, SchemaTypes.Enum, null);
+				enumMap.Documentation = GetDocumentation (stype);
 				codeIdents.AddReserved (enumMap.TypeData.TypeName);
 
 				EnumMap.EnumMapMember[] members = new EnumMap.EnumMapMember [rest.Facets.Count];
@@ -694,6 +704,7 @@ namespace System.Xml.Serialization {
 					XmlSchemaEnumerationFacet enu = (XmlSchemaEnumerationFacet) rest.Facets[n];
 					string enumName = codeIdents.AddUnique(CodeIdentifier.MakeValid (enu.Value), enu);
 					members [n] = new EnumMap.EnumMapMember (enu.Value, enumName);
+					members [n].Documentation = GetDocumentation (enu);
 				}
 				enumMap.ObjectMap = new EnumMap (members, false);
 				enumMap.IsSimpleType = true;
@@ -735,7 +746,8 @@ namespace System.Xml.Serialization {
 
 		bool CanBeArray (XmlQualifiedName typeQName, XmlSchemaComplexType stype)
 		{
-			return !stype.IsMixed && CanBeArray (typeQName, stype.Particle, false);
+			if (stype.Attributes.Count > 0 || stype.AnyAttribute != null) return false;
+			else return !stype.IsMixed && CanBeArray (typeQName, stype.Particle, false);
 		}
 
 		bool CanBeArray (XmlQualifiedName typeQName, XmlSchemaParticle particle, bool multiValue)
@@ -894,6 +906,7 @@ namespace System.Xml.Serialization {
 
 		XmlSchemaElement GetRefElement (XmlQualifiedName typeQName, XmlSchemaElement elem, out string ns)
 		{
+
 			if (!elem.RefName.IsEmpty)
 			{
 				ns = elem.RefName.Namespace;
@@ -922,43 +935,68 @@ namespace System.Xml.Serialization {
 
 		TypeData GetElementTypeData (XmlQualifiedName typeQName, XmlSchemaElement elem)
 		{
+			bool sharedAnnType = false;
+			XmlQualifiedName root = null;
+			
 			if (!elem.RefName.IsEmpty) {
 				XmlSchemaElement refElem = FindRefElement (elem);
-				if (refElem == null) throw new InvalidOperationException ("Ref type not found: " + elem.RefName);
-				return GetElementTypeData (typeQName, refElem);
+				if (refElem == null) throw new InvalidOperationException ("Global element not found: " + elem.RefName);
+				root = elem.RefName;
+				elem = refElem;
+				sharedAnnType = true;
 			}
-			
-			if (!elem.SchemaTypeName.IsEmpty) return GetTypeData (elem.SchemaTypeName);
+
+			if (!elem.SchemaTypeName.IsEmpty) return GetTypeData (elem.SchemaTypeName, root);
 			else if (elem.SchemaType == null) return TypeTranslator.GetTypeData (typeof(object));
-			else return GetTypeData (elem.SchemaType, typeQName, elem.Name);
+			else return GetTypeData (elem.SchemaType, typeQName, elem.Name, sharedAnnType, root);
 		}
 
 		TypeData GetAttributeTypeData (XmlQualifiedName typeQName, XmlSchemaAttribute attr)
 		{
-			if (!attr.RefName.IsEmpty)
-				return GetAttributeTypeData (typeQName, (XmlSchemaAttribute)schemas.Find (attr.RefName, typeof (XmlSchemaAttribute)));
+			bool sharedAnnType = false;
 
-			if (!attr.SchemaTypeName.IsEmpty) return GetTypeData (attr.SchemaTypeName);
-			else return GetTypeData (attr.SchemaType, typeQName, attr.Name);
+			if (!attr.RefName.IsEmpty) {
+				XmlSchemaAttribute refAtt = (XmlSchemaAttribute)schemas.Find (attr.RefName, typeof (XmlSchemaAttribute));
+				if (refAtt == null) throw new InvalidOperationException ("Global attribute not found: " + attr.RefName);
+				attr = refAtt;
+				sharedAnnType = true;
+			}
+			
+			if (!attr.SchemaTypeName.IsEmpty) return GetTypeData (attr.SchemaTypeName, null);
+			else return GetTypeData (attr.SchemaType, typeQName, attr.Name, sharedAnnType, null);
 		}
 
-		TypeData GetTypeData (XmlQualifiedName typeQName)
+		TypeData GetTypeData (XmlQualifiedName typeQName, XmlQualifiedName root)
 		{
 			if (typeQName.Namespace == XmlSchema.Namespace)
 				return TypeTranslator.GetPrimitiveTypeData (typeQName.Name);
 
-			return ImportType (typeQName, null).TypeData;
+			return ImportType (typeQName, root).TypeData;
 		}
 
-		TypeData GetTypeData (XmlSchemaType stype, XmlQualifiedName typeQNname, string propertyName)
+		TypeData GetTypeData (XmlSchemaType stype, XmlQualifiedName typeQNname, string propertyName, bool sharedAnnType, XmlQualifiedName root)
 		{
-			string baseName = typeQNname.Name + typeIdentifiers.MakeRightCase (propertyName);
+			string baseName;
+
+			if (sharedAnnType)
+			{
+				// Anonymous types defined in root elements or attributes can be shared among all elements that
+				// reference this root element or attribute
+				TypeData std = sharedAnonymousTypes [stype] as TypeData;
+				if (std != null) return std;
+				baseName = propertyName;
+			}
+			else
+				baseName = typeQNname.Name + typeIdentifiers.MakeRightCase (propertyName);
+
 			baseName = elemIdentifiers.AddUnique (baseName, stype);
 			
 			XmlQualifiedName newName;
 			newName = new XmlQualifiedName (baseName, typeQNname.Namespace);
 
-			XmlTypeMapping map = ImportType (newName, stype, null);
+			XmlTypeMapping map = ImportType (newName, stype, root);
+			if (sharedAnnType) sharedAnonymousTypes [stype] = map.TypeData;
+
 			return map.TypeData;
 		}
 
@@ -1015,6 +1053,24 @@ namespace System.Xml.Serialization {
 				return anyElement;
 			}
 			return (XmlSchemaElement) schemas.Find (elem.RefName, typeof(XmlSchemaElement));
+		}
+
+		string GetDocumentation (XmlSchemaAnnotated elem)
+		{
+			string res = "";
+			XmlSchemaAnnotation anot = elem.Annotation;
+			if (anot == null || anot.Items == null) return null;
+			
+			foreach (object ob in anot.Items)
+			{
+				XmlSchemaDocumentation doc = ob as XmlSchemaDocumentation;
+				if (doc != null && doc.Markup != null && doc.Markup.Length > 0) {
+					if (res != string.Empty) res += "\n";
+					foreach (XmlNode node in doc.Markup)
+						res += node.Value;
+				}
+			}
+			return res;
 		}
 
 		#endregion // Methods

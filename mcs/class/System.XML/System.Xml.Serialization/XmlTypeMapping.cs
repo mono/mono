@@ -24,6 +24,7 @@ namespace System.Xml.Serialization
 		XmlTypeMapping baseMap;
 		bool multiReferenceType = false;
 		bool isSimpleType;
+		string documentation;
 
 		ArrayList _derivedTypes = new ArrayList();
 
@@ -93,6 +94,12 @@ namespace System.Xml.Serialization
 		{
 			get { return isSimpleType; }
 			set { isSimpleType = value; }
+		}
+
+		internal string Documentation
+		{
+			set { documentation = value; }
+			get { return documentation; }
 		}
 
 		internal XmlTypeMapping GetRealTypeMap (string objectFullTypeName)
@@ -252,6 +259,30 @@ namespace System.Xml.Serialization
 		{
 			get { return _xmlTextCollector; }
 		}
+
+		public XmlQualifiedName SimpleContentBaseType
+		{
+			get
+			{
+				if (_elementMembers == null || _elementMembers.Count != 1) return null;
+				XmlTypeMapMemberElement member = (XmlTypeMapMemberElement) _elementMembers[0];
+				if (member.ElementInfo.Count != 1) return null;
+				XmlTypeMapElementInfo einfo = (XmlTypeMapElementInfo) member.ElementInfo[0];
+				if (!einfo.IsTextElement) return null;
+				if (einfo.TypeData.SchemaType == SchemaTypes.Primitive || einfo.TypeData.SchemaType == SchemaTypes.Enum)
+					return new XmlQualifiedName (einfo.TypeData.XmlType, einfo.DataTypeNamespace);
+				return null;
+			}
+		}
+
+		public bool HasSimpleContent
+		{
+			get
+			{
+				return SimpleContentBaseType != null;
+			}
+		}
+
 	}
 
 	// Mapping info for arrays and lists
@@ -297,6 +328,7 @@ namespace System.Xml.Serialization
 
 		public XmlTypeMapElementInfoList ItemInfo
 		{
+
 			get { return _itemInfo; }
 			set { _itemInfo = value; }
 		}
@@ -376,6 +408,7 @@ namespace System.Xml.Serialization
 		{
 			string _xmlName;
 			string _enumName;
+			string _documentation;
 
 			public EnumMapMember (string xmlName, string enumName)
 			{
@@ -391,6 +424,12 @@ namespace System.Xml.Serialization
 			public string EnumName
 			{
 				get { return _enumName; }
+			}
+
+			public string Documentation
+			{
+				get { return _documentation; }
+				set { _documentation = value; }
 			}
 		}
 

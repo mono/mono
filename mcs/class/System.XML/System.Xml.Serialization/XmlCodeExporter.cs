@@ -111,6 +111,7 @@ namespace System.Xml.Serialization {
 			SetMapExported (map);
 
 			CodeTypeDeclaration codeClass = new CodeTypeDeclaration (map.TypeData.TypeName);
+			AddCodeType (codeClass, map.Documentation);
 			codeClass.Attributes = MemberAttributes.Public;
 
 			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlType");
@@ -118,13 +119,15 @@ namespace System.Xml.Serialization {
 			if (map.XmlTypeNamespace != "") att.Arguments.Add (GetArg ("Namespace", map.XmlTypeNamespace));
 			AddCustomAttribute (codeClass, att, false);
 
-			if (isRoot) {
+			if (map.ElementName != map.XmlType || map.Namespace != map.XmlTypeNamespace) {
 				CodeAttributeDeclaration ratt = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlRoot");
-				if (map.ElementName != map.TypeData.TypeName) ratt.Arguments.Add (GetArg (map.ElementName));
-				if (map.Namespace != "") ratt.Arguments.Add (GetArg ("Namespace", map.Namespace));
+				ratt.Arguments.Add (GetArg (map.ElementName));
+				ratt.Arguments.Add (GetArg ("Namespace", map.Namespace));
 				AddCustomAttribute (codeClass, ratt, false);
 			}
-			
+
+			ExportMembersMapCode (codeClass, (ClassMap)map.ObjectMap, map.Namespace, map.BaseMap);
+
 			if (map.BaseMap != null)
 			{
 				CodeTypeReference ctr = new CodeTypeReference (map.BaseMap.TypeData.FullTypeName);
@@ -139,9 +142,6 @@ namespace System.Xml.Serialization {
 				AddCustomAttribute (codeClass, iatt, true);
 				ExportMapCode (tm, false);
 			}
-
-			AddCodeType (codeClass);
-			ExportMembersMapCode (codeClass, (ClassMap)map.ObjectMap, map.Namespace, map.BaseMap);
 		}
 
 		void ExportMembersMapCode (CodeTypeDeclaration codeClass, ClassMap map, string defaultNamespace, XmlTypeMapping baseMap)
@@ -193,18 +193,18 @@ namespace System.Xml.Serialization {
 			if (anyAttrMember != null)
 			{
 				CodeMemberField codeField = new CodeMemberField (anyAttrMember.TypeData.FullTypeName, anyAttrMember.Name);
-				codeField.Comments.Add (new CodeCommentStatement ("<remarks/>", true));
+				AddComments (codeField, anyAttrMember.Documentation);
 				codeField.Attributes = MemberAttributes.Public;
 				AddCustomAttribute (codeField, "System.Xml.Serialization.XmlAnyAttribute");
 				codeClass.Members.Add (codeField);
 			}
 		}
 
-		CodeMemberField CreateFieldMember (string type, string name, object defaultValue)
+		CodeMemberField CreateFieldMember (string type, string name, object defaultValue, string comments)
 		{
 			CodeMemberField codeField = new CodeMemberField (type, name);
 			codeField.Attributes = MemberAttributes.Public;
-			codeField.Comments.Add (new CodeCommentStatement ("<remarks/>", true));
+			AddComments (codeField, comments);
 
 			if (defaultValue != System.DBNull.Value)
 			{
@@ -216,13 +216,14 @@ namespace System.Xml.Serialization {
 
 		void AddAttributeFieldMember (CodeTypeDeclaration codeClass, XmlTypeMapMemberAttribute attinfo, string defaultNamespace)
 		{
-			CodeMemberField codeField = CreateFieldMember (attinfo.TypeData.FullTypeName, attinfo.Name, attinfo.DefaultValue);
+			CodeMemberField codeField = CreateFieldMember (attinfo.TypeData.FullTypeName, attinfo.Name, attinfo.DefaultValue, attinfo.Documentation);
 			codeClass.Members.Add (codeField);
 
 			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlAttribute");
 			if (attinfo.Name != attinfo.AttributeName) att.Arguments.Add (GetArg (attinfo.AttributeName));
 			if (attinfo.Namespace != defaultNamespace) att.Arguments.Add (GetArg ("Namespace", attinfo.Namespace));
 			if (attinfo.Form != XmlSchemaForm.None) att.Arguments.Add (GetArg ("Form",attinfo.Form));
+			if (!TypeTranslator.IsDefaultPrimitiveTpeData(attinfo.TypeData)) att.Arguments.Add (GetArg ("DataType",attinfo.TypeData.XmlType));
 			AddCustomAttribute (codeField, att, true);
 
 			if (attinfo.MappedType != null)
@@ -231,8 +232,7 @@ namespace System.Xml.Serialization {
 
 		void AddElementFieldMember (CodeTypeDeclaration codeClass, XmlTypeMapMemberElement member, string defaultNamespace)
 		{
-			if (member.TypeData == null) Console.WriteLine ("NN:" + member.Name);
-			CodeMemberField codeField = CreateFieldMember (member.TypeData.FullTypeName, member.Name, member.DefaultValue);
+			CodeMemberField codeField = CreateFieldMember (member.TypeData.FullTypeName, member.Name, member.DefaultValue, member.Documentation);
 			codeClass.Members.Add (codeField);
 			TypeData defaultType = member.TypeData;
 			bool addAlwaysAttr = false;
@@ -253,6 +253,7 @@ namespace System.Xml.Serialization {
 				if (einfo.TypeData.FullTypeName != defaultType.FullTypeName) att.Arguments.Add (GetTypeArg ("Type", einfo.TypeData.FullTypeName));
 				if (einfo.Namespace != defaultNamespace) att.Arguments.Add (GetArg ("Namespace", einfo.Namespace));
 				if (einfo.IsNullable) att.Arguments.Add (GetArg ("IsNullable", true));
+				if (!TypeTranslator.IsDefaultPrimitiveTpeData(einfo.TypeData)) att.Arguments.Add (GetArg ("DataType",einfo.TypeData.XmlType));
 				AddCustomAttribute (codeField, att, addAlwaysAttr);
 
 				if (einfo.MappedType != null) ExportMapCode (einfo.MappedType, false);
@@ -264,7 +265,7 @@ namespace System.Xml.Serialization {
 
 		void AddAnyElementFieldMember (CodeTypeDeclaration codeClass, XmlTypeMapMemberElement member, string defaultNamespace)
 		{
-			CodeMemberField codeField = CreateFieldMember (member.TypeData.FullTypeName, member.Name, member.DefaultValue);
+			CodeMemberField codeField = CreateFieldMember (member.TypeData.FullTypeName, member.Name, member.DefaultValue, member.Documentation);
 			codeClass.Members.Add (codeField);
 
 			foreach (XmlTypeMapElementInfo einfo in member.ElementInfo)
@@ -286,7 +287,7 @@ namespace System.Xml.Serialization {
 		void AddArrayElementFieldMember (CodeTypeDeclaration codeClass, XmlTypeMapMemberList member, string defaultNamespace)
 		{
 			CodeMemberField codeField = new CodeMemberField (member.TypeData.FullTypeName, member.Name);
-			codeField.Comments.Add (new CodeCommentStatement ("<remarks/>", true));
+			AddComments (codeField, member.Documentation);
 			codeField.Attributes = MemberAttributes.Public;
 			codeClass.Members.Add (codeField);
 			XmlTypeMapElementInfo einfo = (XmlTypeMapElementInfo) member.ElementInfo[0];
@@ -366,7 +367,7 @@ namespace System.Xml.Serialization {
 			CodeTypeDeclaration codeEnum = new CodeTypeDeclaration (map.TypeData.TypeName);
 			codeEnum.Attributes = MemberAttributes.Public;
 			codeEnum.IsEnum = true;
-			AddCodeType (codeEnum);
+			AddCodeType (codeEnum, map.Documentation);
 
 			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Xml.Serialization.XmlTypeAttribute");
 			if (map.ElementName != map.TypeData.TypeName) att.Arguments.Add (GetArg ("Name", map.ElementName));
@@ -378,7 +379,7 @@ namespace System.Xml.Serialization {
 			foreach (EnumMap.EnumMapMember emem in emap.Members)
 			{
 				CodeMemberField codeField = new CodeMemberField ("", emem.EnumName);
-				codeField.Comments.Add (new CodeCommentStatement ("<remarks/>", true));
+				AddComments (codeField, emem.Documentation);
 
 				if (emem.EnumName != emem.XmlName)
 				{
@@ -432,9 +433,15 @@ namespace System.Xml.Serialization {
 			return new CodeAttributeArgument (name, new CodeTypeOfExpression(typeName));
 		}
 
-		void AddCodeType (CodeTypeDeclaration type)
+		void AddComments (CodeTypeMember member, string comments)
 		{
-			type.Comments.Add (new CodeCommentStatement ("<remarks/>", true));
+			if (comments == null || comments == "") member.Comments.Add (new CodeCommentStatement ("<remarks/>", true));
+			else member.Comments.Add (new CodeCommentStatement ("<remarks>\n" + comments + "\n</remarks>", true));
+		}
+
+		void AddCodeType (CodeTypeDeclaration type, string comments)
+		{
+			AddComments (type, comments);
 			codeNamespace.Types.Add (type);
 		}
 
