@@ -228,7 +228,7 @@ namespace System.Xml.Serialization {
 			{
 				XmlTypeMapping bmap = ImportClassMapping (type.BaseType, root, defaultNamespace);
 				
-				if (type != typeof (object))
+				if (type.BaseType != typeof (object))
 					map.BaseMap = bmap;
 				
 				// At this point, derived classes of this map must be already registered

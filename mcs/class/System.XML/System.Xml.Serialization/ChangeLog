@@ -1,5 +1,9 @@
 2003-12-15  Lluis Sanchez Gual <lluis@ximian.com>
 	
+	* XmlReflectionImporter.cs: Little fix.
+	
+2003-12-15  Lluis Sanchez Gual <lluis@ximian.com>
+	
 	* XmlReflectionImporter.cs: Type specified with XmlIncludeAttribute don't
 	  need to be derived types of the includer. This fixes bug #52152.
 	  Added null check for Name property of XmlEnumAttribute. This fixes
