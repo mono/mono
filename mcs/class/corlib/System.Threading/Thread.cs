@@ -356,9 +356,9 @@ namespace System.Threading
 		}
 
 		public bool Join(int millisecondsTimeout) {
-			if(millisecondsTimeout<0) {
-				throw new ArgumentException("Timeout less than zero");
-			}
+			if (millisecondsTimeout != Timeout.Infinite && millisecondsTimeout < 0)
+				throw new ArgumentException ("Timeout less than zero", "millisecondsTimeout");
+
 			if((state & ThreadState.Unstarted) != 0) {
 				throw new ThreadStateException("Thread has not been started");
 			}

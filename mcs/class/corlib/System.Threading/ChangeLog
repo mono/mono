@@ -1,3 +1,7 @@
+2003-02-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Thread.cs: fixed bug #37759.
+
 2003-02-07  Patrik Torstensson
 
 	* Timer.cs: Set the Background thread flag for the timer thread
