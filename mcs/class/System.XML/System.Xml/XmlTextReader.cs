@@ -370,6 +370,7 @@ namespace System.Xml
 		[MonoTODO]
 		public override bool MoveToAttribute (string name)
 		{
+			MoveToElement ();
 			bool match = false;
 			if (attributes == null)
 				return false;
