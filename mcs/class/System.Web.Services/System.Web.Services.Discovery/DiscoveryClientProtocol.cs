@@ -105,6 +105,7 @@ namespace System.Web.Services.Discovery {
 				doc = new DiscoveryDocument ();
 				refe = new ContractReference ();
 				doc.References.Add (refe);
+				((ContractReference)refe).ResolveInternal (this, wsdl);
 			}
 			else
 			{
@@ -185,9 +186,10 @@ namespace System.Web.Services.Discovery {
 				object doc = Documents [re.Url];
 				if (doc == null) continue;
 				
-				resfile.Results.Add (new DiscoveryClientResult (re.GetType(), re.Url, re.DefaultFilename));
+				string fileName = FindValidName (resfile, re.DefaultFilename);
+				resfile.Results.Add (new DiscoveryClientResult (re.GetType(), re.Url, fileName));
 				
-				string filepath = Path.Combine (directory, re.DefaultFilename);
+				string filepath = Path.Combine (directory, fileName);
 				FileStream fs = new FileStream (filepath, FileMode.Create, FileAccess.Write);
 				re.WriteDocument (doc, fs);
 				fs.Close ();
@@ -198,6 +200,28 @@ namespace System.Web.Services.Discovery {
 			ser.Serialize (sw, resfile);
 			sw.Close ();
 			return resfile.Results;
+		}
+		
+		string FindValidName (DiscoveryClientResultsFile resfile, string baseName)
+		{
+			string name = baseName;
+			int id = 0;
+			bool found;
+			do
+			{
+				found = false;
+				foreach (DiscoveryClientResult res in resfile.Results)
+				{
+					if (name == res.Filename) {
+						found = true; break;
+					}
+				}
+				if (found)
+					name = Path.GetFileNameWithoutExtension (baseName) + (++id) + Path.GetExtension (baseName);
+			}
+			while (found);
+			
+			return name;
 		}
 		
 		#endregion // Methods

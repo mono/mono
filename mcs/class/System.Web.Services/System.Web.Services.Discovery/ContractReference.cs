@@ -11,6 +11,8 @@
 using System.IO;
 using System.Web.Services.Description;
 using System.Xml.Serialization;
+using System.Xml;
+using System.Xml.Schema;
 
 namespace System.Web.Services.Discovery {
 
@@ -98,9 +100,53 @@ namespace System.Web.Services.Discovery {
 		protected internal override void Resolve (string contentType, Stream stream) 
 		{
 			ServiceDescription wsdl = ServiceDescription.Read (stream);
-			ClientProtocol.Documents.Add (Url, wsdl);
+			
 			if (!ClientProtocol.References.Contains (Url))
 				ClientProtocol.References.Add (this);
+
+			ClientProtocol.Documents.Add (Url, wsdl);
+			ResolveInternal (ClientProtocol, wsdl);
+		}
+		
+		internal void ResolveInternal (DiscoveryClientProtocol prot, ServiceDescription wsdl) 
+		{
+			if (wsdl.Imports == null) return;
+			
+			foreach (Import import in wsdl.Imports)
+			{
+				if (prot.Documents.Contains (import.Location)) 	// Already resolved
+					continue;
+					
+				string url = import.Location;
+				string contentType = null;
+				Stream stream = prot.Download (ref url, ref contentType);
+				XmlTextReader reader = new XmlTextReader (stream);
+				reader.MoveToContent ();
+				
+				DiscoveryReference refe;
+				if (ServiceDescription.CanRead (reader))
+				{
+					ServiceDescription refWsdl = ServiceDescription.Read (reader);
+					refe = new ContractReference ();
+					refe.ClientProtocol = prot;
+					refe.Url = url;
+					((ContractReference)refe).ResolveInternal (prot, refWsdl);
+					prot.Documents.Add (url, refWsdl);
+				}
+				else
+				{
+					XmlSchema schema = XmlSchema.Read (reader, null);
+					refe = new SchemaReference ();
+					refe.ClientProtocol = prot;
+					refe.Url = url;
+					prot.Documents.Add (url, schema);
+				}
+				
+				if (!prot.References.Contains (url))
+					prot.References.Add (refe);
+					
+				reader.Close ();
+			}
 		}
                 
         public override void WriteDocument (object document, Stream stream) 

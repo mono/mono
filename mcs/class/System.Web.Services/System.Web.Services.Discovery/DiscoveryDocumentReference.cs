@@ -91,7 +91,10 @@ namespace System.Web.Services.Discovery {
 				ClientProtocol.References.Add (this);
 				
 			foreach (DiscoveryReference re in doc.References)
+			{
+				re.ClientProtocol = ClientProtocol;
 				ClientProtocol.References.Add (re.Url, re);
+			}
 		}
 
 		public void ResolveAll () 

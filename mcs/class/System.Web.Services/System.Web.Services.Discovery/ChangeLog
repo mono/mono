@@ -1,3 +1,9 @@
+2004-01-24  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ContractReference.cs, DiscoveryClientProtocol.cs, 
+	  DiscoveryDocumentReference.cs: When resolving a wsdl document, recursively
+	  resolve the documents it imports.
+
 2003-12-19  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* DiscoveryDocument.cs: Set namespace for ContractReference references.
