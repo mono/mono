@@ -29,6 +29,7 @@
 
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
 using System.Text;
 
 using Mono.Security;
@@ -123,6 +124,10 @@ namespace System.Security.Cryptography.X509Certificates {
 				byte[] cert = null; // must not confuse compiler about null ;)
 				return new X509Certificate (cert);
 			}
+			catch (SecurityException) {
+				// don't wrap SecurityException into a COMException
+				throw;
+			}
 			catch (Exception e) {
 				string msg = String.Format (Locale.GetText ("Couldn't extract digital signature from {0}."), filename);
 				throw new COMException (msg, e);
@@ -145,12 +150,16 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 		}
 	
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public X509Certificate (IntPtr handle) 
 		{
-			CertificateContext cc = (CertificateContext) Marshal.PtrToStructure (handle, typeof (CertificateContext));
-			byte[] data = new byte [cc.cbCertEncoded];
-			Marshal.Copy (cc.pbCertEncoded, data, 0, (int)cc.cbCertEncoded);
-			x509 = new Mono.Security.X509.X509Certificate (data);
+			if (handle != IntPtr.Zero) {
+				CertificateContext cc = (CertificateContext) Marshal.PtrToStructure (handle, typeof (CertificateContext));
+				byte[] data = new byte [cc.cbCertEncoded];
+				Marshal.Copy (cc.pbCertEncoded, data, 0, (int)cc.cbCertEncoded);
+				x509 = new Mono.Security.X509.X509Certificate (data);
+			}
+			// IntPtr.Zero results in an "empty" certificate instance
 		}
 	
 		public X509Certificate (System.Security.Cryptography.X509Certificates.X509Certificate cert) 

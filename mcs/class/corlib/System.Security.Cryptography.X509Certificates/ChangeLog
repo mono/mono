@@ -1,3 +1,9 @@
+2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate.cs: Added Demand for UnmanagedCode to ctor(IntPtr).
+	Return "empty" certificate when IntPtr.Zero is used with ctor(IntPtr).
+	Don't wrap SecurityException inside COMException for Authenticode.
+
 2004-11-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate.cs: Added ComVisible attributes to match 2.0 October
