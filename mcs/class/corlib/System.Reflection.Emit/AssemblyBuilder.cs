@@ -350,6 +350,8 @@ namespace System.Reflection.Emit {
 
 			foreach (ModuleBuilder module in modules)
 				module.Save ();
+
+			created = true;
 		}
 
 		public void SetEntryPoint (MethodInfo entryMethod)
