@@ -1,3 +1,29 @@
+2003-05-10  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* Added TypeTableEntry.cs.
+	* TypeTranslator.cs : changed for non-static use.
+	* XmlAttributes.cs : XmlType attribute support for GetAttributeName() 
+	  and GetElementName(). Bugfix so that if any XmlElementAttribute 
+	  exists after non-typed XmlElementAttribute then it might be ignored.
+	  Added GetElementIsNullable().
+	* XmlSerializer.cs :
+	  Introduced TypeTablePool and TypeTableEntry and erased ambiguous 
+	  Object memberObj[4].
+	  Deserialize() now uses XmlReader.Depth to check its depth.
+	  Serialize() for non-XmlReader arguments now always write xmldecl.
+	  SerializeBuiltin() now explicitly requires Type to support xsi:nil,
+	  and handles XmlQualifiedName.
+	  Separated SerializeType () from Serialize().
+	  Separated WriteCollectionElementMember(), IsFieldTypeSerializable(),
+	  IsPropertyTypeSerializable() from SerializeMembers().
+	  SerializeMembers() is now capable of null value and actual type,
+	  which should be included by XmlIncludeAttribute and so on.
+	  Renamed SerializeArray() to SerializeArrayContent(), and added
+	  SerializeCollectionContent().
+	  SerializeMembers() now requries XmlSerializerNamespaces (not used yet).
+	  FillTypeTable() is now aware of XmlInclude attributes.
+	  FillEnum() should not have different type table content from others.
+
 2003-05-09  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlSerializer.cs : this time, only replaced spaces with tabs.

@@ -403,18 +403,26 @@ namespace System.Xml.Serialization
 		{
 			if(XmlAttribute != null && XmlAttribute.AttributeName != null && XmlAttribute.AttributeName != "")
 				return XmlAttribute.AttributeName;
+			else if (XmlType != null && XmlType.TypeName != null && XmlType.TypeName != "")
+				return XmlType.TypeName;
 			return defaultName;
 		}
 
 		internal string GetElementName(Type type, string defaultName)
 		{
+			string anonymousElemAttrName = null;
 			foreach(XmlElementAttribute elem in XmlElements)
 			{
 				if(elem.Type == type && elem.ElementName != null && elem.ElementName != "")
 					return elem.ElementName;
 				else if(elem.Type == null && elem.ElementName != null && elem.ElementName != "")
-					return elem.ElementName;
+					anonymousElemAttrName = elem.ElementName;
 			}
+			if (anonymousElemAttrName != null)
+				return anonymousElemAttrName;
+
+			if (XmlType != null && XmlType.TypeName != null && XmlType.TypeName != "")
+				return XmlType.TypeName;
 			return defaultName;
 		}
 
@@ -424,16 +432,31 @@ namespace System.Xml.Serialization
 				return XmlAttribute.Namespace;
 			return null;
 		}
+
 		internal string GetElementNamespace(Type type)
 		{
+			string defaultNS = null;
 			foreach(XmlElementAttribute elem in XmlElements)
 			{
 				if(elem.Type == type )
 					return elem.Namespace;
 				else if(elem.Type == null)
-					return elem.Namespace;
+					defaultNS = elem.Namespace;
 			}
-			return null;
+			return defaultNS;
+		}
+
+		internal bool GetElementIsNullable (Type type)
+		{
+			bool defaultIsNullable = false;
+			foreach(XmlElementAttribute elem in XmlElements)
+			{
+				if(elem.Type == type)
+					return elem.IsNullable;
+				else if(elem.Type == null)
+					defaultIsNullable = elem.IsNullable;
+			}
+			return defaultIsNullable;
 		}
 	}
 }

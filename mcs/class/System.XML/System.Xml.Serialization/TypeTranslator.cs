@@ -42,11 +42,11 @@ namespace System.Xml.Serialization
 			primitives.Add (typeof (byte[]), "base64Binary");
 		}
 
-		private TypeTranslator ()
+		public TypeTranslator ()
 		{
 		}
 
-		static public TypeData GetTypeData (Type type)
+		public TypeData GetTypeData (Type type)
 		{
 			string name = primitives [type] as string;
 			if (name == null && type.IsArray) {
