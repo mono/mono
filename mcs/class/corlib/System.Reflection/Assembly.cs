@@ -335,7 +335,10 @@ namespace System.Reflection {
 
 		public Object CreateInstance (String typeName, Boolean ignoreCase)
 		{
-			Type t = GetType (typeName, true, ignoreCase);
+			Type t = GetType (typeName, false, ignoreCase);
+			if (t == null)
+				return null;
+
 			return Activator.CreateInstance (t);
 		}
 
@@ -344,7 +347,10 @@ namespace System.Reflection {
 					      Object[] args, CultureInfo culture,
 					      Object[] activationAttributes)
 		{
-			Type t = GetType (typeName, true, ignoreCase);
+			Type t = GetType (typeName, false, ignoreCase);
+			if (t == null)
+				return null;
+
 			return Activator.CreateInstance (t, bindingAttr, binder, args, culture, activationAttributes);
 		}
 

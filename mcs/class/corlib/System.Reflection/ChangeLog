@@ -1,3 +1,7 @@
+2003-05-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Assembly.cs: fixed bug #42833.
+
 2003-05-11  Miguel de Icaza  <miguel@ximian.com>
 
 	* Binder.cs (ChangeType): Very simplistic change.  Am not sure if
