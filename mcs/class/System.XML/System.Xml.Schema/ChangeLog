@@ -1,3 +1,7 @@
+2004-05-13  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaSimpleTypeRestriction.cs : Removed MonoTODO. done.
+
 2004-05-12  Atsushi Enomoto <atsushi@ximian.com>
 
 	* BuiltInDatatype.cs : made classes/enums internal.

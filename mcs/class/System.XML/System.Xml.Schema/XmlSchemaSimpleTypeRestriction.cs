@@ -78,7 +78,6 @@ namespace System.Xml.Schema
 		/// 2. id must be a valid ID
 		/// 3. base must be a valid QName *NO CHECK REQUIRED*
 		/// </remarks>
-		[MonoTODO]
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
@@ -152,7 +151,6 @@ namespace System.Xml.Schema
 		
 		
 	
-		[MonoTODO]
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
 			
