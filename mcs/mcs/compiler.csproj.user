@@ -11,11 +11,11 @@
                     RemoteDebugEnabled = "false"
                     RemoteDebugMachine = ""
                     StartAction = "Project"
-                    StartArguments = "c:\mono\mcs\mcs\sw.cs"
+                    StartArguments = "@response"
                     StartPage = ""
                     StartProgram = ""
                     StartURL = ""
-                    StartWorkingDirectory = "c:\mono\mcs\tests"
+                    StartWorkingDirectory = "c:\mono\mcs\mcs"
                     StartWithIE = "false"
                 />
                 <Config
