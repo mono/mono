@@ -1,3 +1,7 @@
+2003-07-14  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* AssemblyInfo.cs: Removed
+
 2003-07-9  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* XmlSerializationWriter.cs: WriteStartElement(): Do not write xsd and xsi 
