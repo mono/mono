@@ -120,7 +120,7 @@ namespace MonoTests.System.Xml
 			AssertEquals("", navigator2.Evaluate ("namespace-uri(//bar)").ToString ());
 		}
 
-		public void saveTestCoreFunctionString ()
+		public void TestCoreFunctionString ()
 		{
 			document.LoadXml ("<foo>hello<bar>world</bar><baz>how are you</baz></foo>");
 			navigator = document.CreateNavigator();
