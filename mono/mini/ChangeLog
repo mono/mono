@@ -1,3 +1,7 @@
+2004-12-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+	* mini.c: return immediately after setting OP_ARRAY_RANK or CEE_LDLEN
+	for Array get_Rank and get_Length. Fixes bug #70465.
+
 2004-12-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.h mini.c aot.c: Put the bblock table for a SWITCH patch into a
