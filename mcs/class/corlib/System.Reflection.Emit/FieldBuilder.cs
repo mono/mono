@@ -24,6 +24,7 @@ namespace System.Reflection.Emit {
 		private int offset;
 		private int table_idx;
 		internal TypeBuilder typeb;
+		private byte[] rva_data;
 
 		internal FieldBuilder (TypeBuilder tb, string fieldName, Type type, FieldAttributes attributes) {
 			attrs = attributes;
@@ -67,6 +68,9 @@ namespace System.Reflection.Emit {
 		}
 		public override bool IsDefined( Type attributeType, bool inherit) {
 			return false;
+		}
+		internal void SetRVAData (byte[] data) {
+			rva_data = (byte[])data.Clone ();
 		}
 		public void SetConstant( object defaultValue) {
 			/*if (defaultValue.GetType() != type)

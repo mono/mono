@@ -1,4 +1,11 @@
 
+Thu Feb 14 18:55:52 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* FieldBuilder.cs: Add SetRVAData().
+	* ILGenerator.cs: speed up code array growth.
+	* TypeBuilder.cs: fix IsValueTypeImpl(). Add class_size member.
+	Implement DefineInitializedData().
+
 Tue Jan 22 23:01:11 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* EnumBuilder.cs, TypeBuilder.cs: updates for changes in Type.cs.

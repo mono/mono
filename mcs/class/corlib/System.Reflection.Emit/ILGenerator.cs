@@ -111,8 +111,8 @@ namespace System.Reflection.Emit {
 		private void make_room (int nbytes) {
 			if (code_len + nbytes < code.Length)
 				return;
-			byte[] new_code = new byte [code.Length + 128];
-			System.Array.Copy (code, new_code, code.Length);
+			byte[] new_code = new byte [code.Length * 2 + 128];
+			System.Array.Copy (code, 0, new_code, 0, code.Length);
 			code = new_code;
 		}
 		private void emit_int (int val) {

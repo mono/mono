@@ -28,6 +28,7 @@ namespace System.Reflection.Emit {
 	private TypeAttributes attrs;
 	private int table_idx;
 	private ModuleBuilder pmodule;
+	private int class_size;
 	private PackingSize packing_size;
 
 	public const int UnspecifiedTypeSize = -1;
@@ -359,7 +360,7 @@ namespace System.Reflection.Emit {
 		}
 		protected override bool IsValueTypeImpl () {
 			// test this one
-			return (Attributes & TypeAttributes.ClassSemanticsMask) == TypeAttributes.ValueType;
+			return type_is_subtype_of (this, typeof (System.ValueType));
 		}
 		
 		public override RuntimeTypeHandle TypeHandle { get { return _impl; } }
@@ -373,8 +374,19 @@ namespace System.Reflection.Emit {
 			return null;
 		}
 
+		static int InitializedDataCount = 0;
+		
 		public FieldBuilder DefineInitializedData( string name, byte[] data, FieldAttributes attributes) {
-			return null;
+			TypeBuilder datablobtype = pmodule.DefineType ("$ArrayType$"+InitializedDataCount.ToString(),
+				TypeAttributes.Public|TypeAttributes.ExplicitLayout|TypeAttributes.Sealed,
+				typeof (System.ValueType), PackingSize.Size1, data.Length);
+			datablobtype.packing_size = PackingSize.Size1;
+			datablobtype.class_size = data.Length;
+			datablobtype.CreateType ();
+			FieldBuilder res = DefineField (name, datablobtype, attributes|FieldAttributes.Assembly|FieldAttributes.Static|FieldAttributes.HasFieldRVA);
+			res.SetRVAData (data);
+			InitializedDataCount++;
+			return res;
 		}
 
 		public FieldBuilder DefineUninitializedData( string name, int size, FieldAttributes attributes) {
