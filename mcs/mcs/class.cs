@@ -1118,7 +1118,8 @@ namespace Mono.CSharp {
 					// then: `continue;' 
 				}
 #endif
-				Report108 (mc.Location, defined_names [idx]);
+				if ((mc.ModFlags & Modifiers.NEW) == 0)
+					Report108 (mc.Location, defined_names [idx]);
 			}
 			
 			foreach (object o in remove_list)

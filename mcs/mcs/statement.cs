@@ -818,6 +818,7 @@ namespace Mono.CSharp {
 
 			variables.Add (name, vi);
 
+			// Console.WriteLine ("Adding {0} to {1}", name, ID);
 			return vi;
 		}
 
@@ -888,6 +889,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public bool IsVariableDefined (string name)
 		{
+			// Console.WriteLine ("Looking up {0} in {1}", name, ID);
 			if (variables != null) {
 				if (variables.Contains (name))
 					return true;

@@ -1,3 +1,16 @@
+NOTES:
+	I am trying to remove the LocalVariableReference from the code
+	but the compiler does not pass its own self-compilation.
+
+	The problem is that constructs with embedded_statements like:
+
+	foreach (int b in X)
+		if (b ...)
+
+	The ec.CurrentBlock is not updated with the fact that `b' lives
+	in an implicit internal block, and the lookup is attempted on the
+	parent's block, hence rendering the lookup invalid.
+
 Major tasks:
 ------------
 
@@ -45,7 +58,9 @@ BUGS
 * Emit warning on hiding members without NEW not only in members.
 
 * Implement visibility.
- 
+
+* Casts need to trigger a name resolution against types only.
+
 * Adding variables.
 
 	We do add variables in a number of places, and this is erroneous:

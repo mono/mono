@@ -1,5 +1,10 @@
 %{
 //
+// OPTIMIZATION:
+//   This loop is pointless:
+//    while (current_block != prev_block)
+//       current_block = current_block.Parent;
+//
 // cs-parser.jay: The Parser for the C# compiler
 //
 // Author: Miguel de Icaza (miguel@gnu.org)
@@ -3102,7 +3107,8 @@ for_iterator
 statement_expression_list
 	: statement_expression	
 	  {
-		Block b = new Block (null, true);
+		// CHANGE: was `null'
+		Block b = new Block (current_block, true);   
 
 		b.AddStatement ((Statement) $1);
 		$$ = b;
@@ -3138,22 +3144,24 @@ foreach_statement
 		}
 
 		v = new LocalVariableReference (foreach_block, (string) $4, l);
-
-		current_block.AddStatement (foreach_block);
 		current_block = foreach_block;
 
 		oob_stack.Push (v);
+		oob_stack.Push (current_block);
 	  } 
 	  embedded_statement 
 	  {
+		Block foreach_block = (Block) oob_stack.Pop ();
 		LocalVariableReference v = (LocalVariableReference) oob_stack.Pop ();
 		Block prev_block = (Block) oob_stack.Pop ();
 		Location l = (Location) oob_stack.Pop ();
 
-		while (current_block != prev_block)
-			current_block = current_block.Parent;
+		current_block = prev_block;
 
-		$$ = new Foreach ((string) $3, v, (Expression) $7, (Statement) $10, l);
+		Foreach f = new Foreach ((string) $3, v, (Expression) $7, (Statement) $10, l);
+		foreach_block.AddStatement (f);
+
+		$$ = foreach_block;
 	  }
 	;
 
@@ -3642,6 +3650,11 @@ CheckDef (bool result, string name)
 	CheckDef (AdditionResult.NameExists, name);
 }
 
+//
+// This routine should be removed soon.  I am in the process of making
+// changes to never keep anything but SimpleNames during parsing, as
+// that breaks some kinds of code (documented in the ChangeLog).
+//
 Expression
 SimpleLookup (string name, Location loc)
 {
@@ -3650,10 +3663,13 @@ SimpleLookup (string name, Location loc)
 	// as `expression' is allowed in argument_lists, which 
 	// do not exist inside a block.  
 	//
+#if BLAH
 	if (current_block != null){
-		if (current_block.IsVariableDefined (name))
+		if (current_block.IsVariableDefined (name)){
 			return new LocalVariableReference (current_block, name, loc);
+	        }
 	}
+#endif
 
 	if (current_local_parameters != null){
 		int idx;

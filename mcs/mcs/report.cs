@@ -111,6 +111,9 @@ namespace Mono.CSharp {
 					l.Name,  row, code, text));
 				Warnings++;
 				Check (code);
+
+				if (Stacktrace)
+					Console.WriteLine (new StackTrace ().ToString ());
 			}
 		}
 		

@@ -232,7 +232,7 @@ namespace Mono.CSharp {
 			if (e != null){
 				if (e is SimpleName){
 					SimpleName s = (SimpleName) e;
-					
+
 					Report.Error (
 						103, s.Location,
 						"The name `" + s.Name + "' could not be found in `" +
@@ -2971,7 +2971,15 @@ namespace Mono.CSharp {
 			//
 			// Stage 1: Performed by the parser (binding to locals or parameters).
 			//
+			Block current_block = ec.CurrentBlock;
+			if (current_block != null && current_block.IsVariableDefined (Name)){
+				LocalVariableReference var;
+				
+				var = new LocalVariableReference (ec.CurrentBlock, Name, Location);
 
+				return var.Resolve (ec);
+			}
+			
 			//
 			// Stage 2: Lookup members 
 			//

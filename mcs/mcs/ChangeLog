@@ -1,4 +1,29 @@
+2002-03-12  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs: Only report 108 if there is no `new' modifier.
+
+	* cs-parser.jay: rework foreach statement to work with the new
+	changes to the policy on SimpleNames.
+	
+	* report.cs: support Stacktrace on warnings as well.
+
+	* makefile: drop --unsafe and /unsafe from the compile.
+
 2002-03-11  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (SimpleName.SimpleNameResolve): Perform local variable
+	lookups here, instead of doing that at parse time.  This means
+	that our grammar will not introduce `LocalVariableReferences' as
+	expressions at this point.  That solves the problem of code like
+	this:
+
+	class X {
+	   static void Main ()
+	   { int X = 1;
+	    { X x = null }}}
+
+	This is only half the fix.  The full fix requires parameters to
+	also be handled in this way.
 
 	* class.cs (Property.DefineMethod): When implementing an interface
 	method, set newslot, when implementing an abstract method, do not

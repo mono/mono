@@ -1,5 +1,5 @@
 CSC=csc.exe
-CSCFLAGS=/nologo /debug+ /debug:full  /optimize /unsafe
+CSCFLAGS=/nologo /debug+ /debug:full  /optimize
 
 VERSION=0.13
 
@@ -46,10 +46,10 @@ dum: cs-parser.cs
 	./mcs --fatal --target exe -o mcs2.exe $(COMPILER_SOURCES)
 
 mcs2.exe: mcs.exe
-	./mcs $(XFLAGS) --target exe --unsafe -o mcs2.exe $(COMPILER_SOURCES)
+	./mcs $(XFLAGS) --target exe -o mcs2.exe $(COMPILER_SOURCES)
 
 mcs3.exe: mcs2.exe
-	./mcs2 --target exe --unsafe -o mcs3.exe $(COMPILER_SOURCES)
+	./mcs2 --target exe -o mcs3.exe $(COMPILER_SOURCES)
 
 mm:
 	mint ./mcs.exe --target exe -o mcs4.exe $(COMPILER_SOURCES)

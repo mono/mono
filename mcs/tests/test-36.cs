@@ -29,6 +29,17 @@ class Y {
 
 		if (total != 6)
 			return 1;
+
+		total = 0;
+
+		//
+		// implicit block
+		//
+		foreach (object a in x)
+			total += (int) a;
+		if (total != 6)
+			return 2;
+		
 		return 0;
 	}
 }
