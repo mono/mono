@@ -1,3 +1,10 @@
+2005-03-04  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (TEST_HARNESS_EXTRAS): Add test-353-2.cs.
+	* test-353.cs: Don't use ../ to refer to test-353-2.cs.
+
+	* test-354.cs: New test from #73282.
+
 2005-03-01  Marek Safar <marek.safar@seznam.cz>
 
 	* test-352.cs: New test.
