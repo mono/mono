@@ -1,3 +1,7 @@
+2004-08-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c mini.h: Add initial support for passing/returning 
+	structures to/from pinvoked methods.
 
 Mon Aug 2 11:59:35 PDT 2004 Paolo Molaro <lupus@ximian.com>
 
