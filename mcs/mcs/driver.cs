@@ -276,11 +276,9 @@ namespace Mono.CSharp
 
 			} catch (FileNotFoundException){
 				foreach (string dir in link_paths){
-					string full_path;
-					if (assembly.EndsWith (".dll"))
-						full_path = dir + "/" + assembly;
-					else
-						full_path = dir + "/" + assembly + ".dll";
+					string full_path = Path.Combine (dir, assembly);
+					if (!assembly.EndsWith (".dll"))
+						full_path += ".dll";
 
 					try {
 						a = Assembly.LoadFrom (full_path);
