@@ -1,5 +1,10 @@
 2003-08-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpException.cs: make the unhandled error more like the MS one.
+	* HttpRuntime.cs: set a 500 error code on unhandled exceptions.
+
+2003-08-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpResponse.cs: flush headers when the body length is 0.
 	* StaticFileHandler.cs: added If-Modified-Since handling patch slightly
 	modified from the original by Piers Haken <piersh@friskit.com>.

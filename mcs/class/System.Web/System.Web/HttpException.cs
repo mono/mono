@@ -80,11 +80,11 @@ namespace System.Web
 			StringBuilder builder = new StringBuilder ("<html>\n<title>");
 			builder.Append ("Error"); //FIXME
 			builder.AppendFormat ("</title><body bgcolor=\"white\">" + 
-					      "<h1><font color=\"red\">Error in '{0}' " + 
-					      "Application</font></h1><hr>\n",
+					      "<h1><font color=\"red\">Server error in '{0}' " + 
+					      "application</font></h1><hr>\n",
 					      HttpRuntime.AppDomainAppVirtualPath);
 
-			builder.AppendFormat ("<h2><font color=\"maroon\"><i>{0}</i></font></h2>\n", "Error"); //FIXME
+			builder.AppendFormat ("<h2><font color=\"maroon\"><i>{0}</i></font></h2>\n", Message);
 			builder.AppendFormat ("<b>Description: </b>{0}\n<p>\n", "Error processing request.");
 			builder.AppendFormat ("<b>Error Message: </b>{0}\n<p>\n", HtmlEncode (this.Message));
 			builder.AppendFormat ("<b>Stack Trace: </b>");

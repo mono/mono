@@ -137,6 +137,7 @@ namespace System.Web {
 
 				context.Response.Clear ();
 				context.Response.ClearHeaders ();
+				context.Response.StatusCode = 500;
 				if (!(error is HttpException)) {
 					error = new HttpException (String.Empty, error);
 				}
