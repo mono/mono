@@ -9,6 +9,7 @@
 //
 
 using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Reflection;
 
@@ -88,7 +89,7 @@ namespace System.Web.UI {
 				} catch {
 					throw new ArgumentException (expr + " is not a valid indexed expression.");
 				}
-				
+
 			} else if (first == '"' && val [valLength - 1] == '"') {
 				is_string = true;
 				val = val.Substring (0, val.Length - 1).Substring (1);
@@ -103,15 +104,20 @@ namespace System.Web.UI {
 					container = GetPropertyValue (container, property);
 			}
 
-			if (container == null)
-				return null;
+                        if (container == null)
+                                return null;
+
+			if (container is System.Collections.IList) {
+				IList l = (IList) container;
+				return l [intVal];
+			}
 
 			Type t = container.GetType ();
 			// MS does not seem to look for any other than "Item"!!!
 			object [] atts = t.GetCustomAttributes (typeof (DefaultMemberAttribute), false);
 			if (atts.Length != 1)
 				throw new ArgumentException (expr + " indexer not found.");
-				
+
 			property = ((DefaultMemberAttribute) atts [0]).MemberName;
 
 			Type [] argTypes = new Type [] { (is_string) ? typeof (string) : typeof (int) };

@@ -1,3 +1,9 @@
+2003-12-05  Jackson Harper <jackson@ximian.com>
+
+	* DataBinder.cs (GetIndexedPropertyValue): Check if container is
+	an IList and use a cast instead of reflection to retrieve the item
+	if it is. Fixes bug #51759.
+	
 2003-12-04  Alon Gazit <along@mainsoft.com>
 	* Page.cs: Changed Page.ID so it will call Control.ID.
 	Fixed Bug 51682.	  
