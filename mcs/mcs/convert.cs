@@ -1232,10 +1232,15 @@ namespace Mono.CSharp {
 			if (e != null)
 				return e;
 
-			if (source is DoubleLiteral && target_type == TypeManager.float_type){
-				Report.Error (664, loc,
-					      "Double literal cannot be implicitly converted to " +
-					      "float type, use F suffix to create a float literal");
+			if (source is DoubleLiteral) {
+				if (target_type == TypeManager.float_type) {
+					Error_664 (loc, "float", "f");
+					return null;
+				}
+				if (target_type == TypeManager.decimal_type) {
+					Error_664 (loc, "decimal", "m");
+					return null;
+				}
 			}
 
 			if (source is Constant){
@@ -1248,6 +1253,12 @@ namespace Mono.CSharp {
 			Error_CannotImplicitConversion (loc, source.Type, target_type);
 
 			return null;
+		}
+
+		static void Error_664 (Location loc, string type, string suffix) {
+			Report.Error (664, loc,
+				"Literal of type double cannot be implicitly converted to type '{0}'. Add suffix '{1}' to create a literal of this type",
+				type, suffix);
 		}
 
 		/// <summary>

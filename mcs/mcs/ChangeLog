@@ -1,5 +1,10 @@
 2004-11-22  Marek Safar  <marek.safar@seznam.cz>
 
+	* convert.cs (ImplicitConversionRequired): Add error cs0642 for
+	decimal types.
+
+2004-11-22  Marek Safar  <marek.safar@seznam.cz>
+
 	* class.cs (EventField.ApplyAttributeBuilder): Fix error
 	test cs1667-5.cs.
 
