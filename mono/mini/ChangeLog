@@ -1,5 +1,8 @@
 2005-03-28  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-amd64.c (mono_arch_output_basic_block): Fix order of parameters
+	to amd64_div_reg_size ().
+	
 	* mini-amd64.c (mono_arch_emit_exceptions): Emit a near call here too.
 
 2005-03-27  Zoltan Varga  <vargaz@freemail.hu>
