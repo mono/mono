@@ -1,3 +1,8 @@
+2004-11-19  Martin Baulig  <martin@ximian.com>
+
+	* Wrappers.cs: Removed all the FIXME's.  GMCS can now compile the
+	original, unmodified code :-)
+
 2004-11-12  Martin Baulig  <martin@ximian.com>
 
 	* Wrappers.cs: Added workaround for #69082.
