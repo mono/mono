@@ -89,6 +89,11 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Brfalse, target);
 			}
 		}
+
+		public static void Warning_DeadCodeFound (Location loc)
+		{
+			Report.Warning (162, loc, "Unreachable code detected");
+		}
 	}
 
 	public class EmptyStatement : Statement {
@@ -159,12 +164,11 @@ namespace Mono.CSharp {
 
 				if (take){
 					if (FalseStatement != null){
-						Report.Warning (162, FalseStatement.loc,
-								"Unreachable code detected");
+						Warning_DeadCodeFound (FalseStatement.loc);
 					}
 					return TrueStatement.Emit (ec);
 				} else {
-					Report.Warning (162, TrueStatement.loc, "Unreachable code detected");
+					Warning_DeadCodeFound (TrueStatement.loc);
 					if (FalseStatement != null)
 						return FalseStatement.Emit (ec);
 				}
@@ -310,9 +314,10 @@ namespace Mono.CSharp {
 				BoolConstant bc = (BoolConstant) bool_expr;
 
 				ig.MarkLabel (ec.LoopBegin);
-				if (bc.Value == false)
+				if (bc.Value == false){
+					Warning_DeadCodeFound (Statement.loc);
 					ret = false;
-				else {
+				} else {
 					Statement.Emit (ec);
 					ig.Emit (OpCodes.Br, ec.LoopBegin);
 					
