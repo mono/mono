@@ -25,7 +25,7 @@ namespace System.Windows.Forms {
 
 		string description;
 		string selectedPath;
-		Environment.SpecialFolder folder = Environment.SpecialFolder.Desktop;		
+		Environment.SpecialFolder folder;
 		bool bShowNewFolderButton;		
 		
 		private IntPtr SpecialFolderConv(Environment.SpecialFolder fldr) {
@@ -50,9 +50,15 @@ namespace System.Windows.Forms {
 					nRslt = (IntPtr) ShellSpecialFolder.CSIDL_COOKIES;
 					break;
 				
+#if NET_1_1
 				case Environment.SpecialFolder.Desktop:
 					nRslt = (IntPtr) ShellSpecialFolder.CSIDL_DESKTOP;
 					break;
+					
+				//case Environment.SpecialFolder.MyComputer: //TODO: Which value?
+					//nRslt = (IntPtr) ShellSpecialFolder.;
+					//break;
+#endif
 				
 				case Environment.SpecialFolder.DesktopDirectory:
 					nRslt = (IntPtr) ShellSpecialFolder.CSIDL_DESKTOPDIRECTORY;
@@ -74,10 +80,6 @@ namespace System.Windows.Forms {
 					nRslt = (IntPtr) ShellSpecialFolder.CSIDL_LOCAL_APPDATA;
 					break;
 					
-				//case Environment.SpecialFolder.MyComputer: //TODO: Which value?
-					//nRslt = (IntPtr) ShellSpecialFolder.;
-					//break;
-				
 				case Environment.SpecialFolder.MyMusic:
 					nRslt = (IntPtr) ShellSpecialFolder.CSIDL_MYMUSIC;
 					break;
@@ -142,7 +144,11 @@ namespace System.Windows.Forms {
 			
 			description = "";
 			selectedPath  = "";
+#if NET_1_1
 			folder = Environment.SpecialFolder.Desktop;		
+#else
+			folder = Environment.SpecialFolder.DesktopDirectory;		
+#endif
 			bShowNewFolderButton = true;		
 		}
 

@@ -1,3 +1,7 @@
+2004-04-02  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* FolderBrowserDialog.cs: Fixed build for net_1_0 profile.
+
 2004-03-15  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* AssemblyInfo.cs: Deleted
