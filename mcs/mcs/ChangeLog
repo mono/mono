@@ -1,3 +1,7 @@
+2003-12-26 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* flowanalysis.cs: bytify common enums.
+
 2003-12-25 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* modifiers.cs: Add a new set of flags for the

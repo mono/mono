@@ -25,7 +25,7 @@ namespace Mono.CSharp
 		// <summary>
 		//   The type of a FlowBranching.
 		// </summary>
-		public enum BranchingType {
+		public enum BranchingType : byte {
 			// Normal (conditional or toplevel) block.
 			Block,
 
@@ -48,7 +48,7 @@ namespace Mono.CSharp
 		// <summary>
 		//   The type of one sibling of a branching.
 		// </summary>
-		public enum SiblingType {
+		public enum SiblingType : byte {
 			Block,
 			Conditional,
 			SwitchSection,
@@ -62,7 +62,7 @@ namespace Mono.CSharp
 		//   current code block may return to its enclosing block before reaching
 		//   its end.
 		// </summary>
-		public enum FlowReturns {
+		public enum FlowReturns : byte {
 			Undefined = 0,
 
 			// It can never return.
