@@ -8,6 +8,8 @@ include ../build/rules.make
 MCS = $(INTERNAL_MCS)
 LOCAL_MCS_FLAGS = /nowarn:162 --wlevel 4
 
+GMCS_COMPILE = $(RUNTIME) ../gmcs/gmcs.exe $(MCS_FLAGS)
+
 RUNTEST_PL = ./runtest.pl
 
 DISTFILES = \
@@ -52,6 +54,32 @@ run-test-local:
 		echo All tests passed; \
 	fi
 
+run-generics-local:
+	@ failed=false; \
+	for i in gcs*.cs; do \
+		case $$i in \
+			gcs[0-9]*-[0-9]*cs) \
+			error=`echo $$i | sed -e 's/gcs*//' -e 's/.cs//' -e 's/-.*//'`; \
+			;;\
+			gcs[0-9-]*cs)  \
+			error=`echo $$i | sed -e 's/gcs*//' -e 's/.cs//'`; \
+			;;\
+		esac; \
+		echo -n "Running test $$i ... "; \
+		options=`fgrep "// Compiler options:" $$i | sed -e 's/\/\/ Compiler options://'`; \
+		if $(GMCS_COMPILE) --expect-error $$error $$i $$options > /dev/null; \
+		then echo OK; \
+		else echo FAILED; \
+		     flist="$$flist $$i"; \
+		     failed=true; \
+		fi; \
+	done; \
+	if $$failed; then \
+		echo "The compiler failed to flag the following errors: $$flist"; \
+	else \
+		echo All tests passed; \
+	fi
+
 test-multi-local:
 	@ failed=false; \
 	for i in error-*.cs; do \
@@ -79,6 +107,6 @@ install-local uninstall-local:
 
 CS3005-16-lib.dll: 
 	$(BOOTSTRAP_MCS) /target:library /out:$@ CS3005-16-lib.cs
-	
+
 CS3013-module.dll:
 	$(BOOTSTRAP_MCS) /target:module /out:$@ CS3013-module.cs

@@ -1,3 +1,11 @@
+2004-03-16  Martin Baulig  <martin@ximian.com>
+
+	* Makefile (run-generics-local): New target to run the generics
+	tests.
+
+	* gmcs0246.cs, gmcs0305.cs, gmcs0305-2.cs, gmcs0308.cs,
+	gmcs0308-2.cs: New tests.
+
 2004-03-12 Marek Safar <marek.safar@seznam.cz>
 
 	* cs0182-1.cs,
