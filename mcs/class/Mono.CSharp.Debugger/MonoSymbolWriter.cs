@@ -252,17 +252,6 @@ namespace Mono.CSharp.Debugger
 			if (last_row >= 0)
 				lines [pos] = new LineNumberEntry (last_row, last_offset);
 		}
-		
-		LineNumberEntry[] BuildLineNumberTable (LineNumberEntry[] line_numbers)
-		{
-			ArrayList list = new ArrayList ();
-
-
-
-			LineNumberEntry[] retval = new LineNumberEntry [list.Count];
-			list.CopyTo (retval, 0);
-			return retval;
-		}
 	}
 
 	public class MonoSymbolWriter : IMonoSymbolWriter
