@@ -1,5 +1,9 @@
 2005-01-27  Peter Bartok  <pbartok@novell.com>
 
+	* Application.cs (Run): Don't use form if we don't have one
+
+2005-01-27  Peter Bartok  <pbartok@novell.com>
+
 	* TextBoxBase.cs (get_Lines): Fixed index off by one error
 
 2005-01-27  Peter Bartok  <pbartok@novell.com>

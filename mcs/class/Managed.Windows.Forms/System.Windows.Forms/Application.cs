@@ -302,9 +302,11 @@ namespace System.Windows.Forms {
 				form = app_context.MainForm;
 			}
 
-			// Both calls are needed, one is for the WM, the other for our focus logic
-			XplatUI.Activate(form.form_parent_window.window.Handle);
-			form.Activate();
+			if (form != null) {
+				// Both calls are needed, one is for the WM, the other for our focus logic
+				XplatUI.Activate(form.form_parent_window.window.Handle);
+				form.Activate();
+			}
 
 			messageloop_started = true;
 
