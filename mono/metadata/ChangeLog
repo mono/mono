@@ -1,3 +1,7 @@
+2003-02-04  Dietmar Maurer  <dietmar@ximian.com>
+
+	* marshal.c (mono_marshal_get_remoting_invoke): generate valid IL
+
 2003-02-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c: added support for SignatureHelper tokens, which is
