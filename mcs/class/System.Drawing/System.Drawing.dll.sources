@@ -140,7 +140,7 @@ System.Drawing.Imaging/PlayRecordCallback.cs
 System.Drawing.Imaging/PropertyItem.cs
 System.Drawing.Imaging/WmfPlaceableFileHeader.cs
 System.Drawing.Printing/Duplex.cs
-System.Drawing.Printing/InvalidPrinterExecption.cs
+System.Drawing.Printing/InvalidPrinterException.cs
 System.Drawing.Printing/MarginsConverter.cs
 System.Drawing.Printing/Margins.cs
 System.Drawing.Printing/PageSettings.cs
