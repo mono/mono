@@ -584,7 +584,6 @@ namespace Novell.Directory.Ldap
 			conn = new Connection();
 			return ;
 		}
-		
 		/*
 		* The following are methods that affect the operation of
 		* LdapConnection, but are not Ldap requests.
@@ -3621,5 +3620,111 @@ namespace Novell.Directory.Ldap
 			}
 			return ;
 		}
+
+		//*************************************************************************
+		// Schema Related methods
+		//*************************************************************************
+		
+		/// <summary> Retrieves the schema associated with a particular schema DN in the
+		/// directory server.
+		/// <p>The schema DN for a particular entry is obtained by calling the
+		/// getSchemaDN method of LDAPConnection</p>
+		/// 
+		/// </summary>
+		/// <param name="schemaDN">The schema DN used to fetch the schema.
+		/// 
+		/// </param>
+		/// <returns>    An LDAPSchema entry containing schema attributes.  If the
+		/// entry contains no schema attributes then the returned LDAPSchema object
+		/// will be empty.
+		/// 
+		/// </returns>
+		/// <exception cref=""> LDAPException     This exception occurs if the schema entry
+		/// cannot be retrieved with this connection.
+		/// </exception>
+		/// <seealso cref="#getSchemaDN()">
+		/// </seealso>
+		/// <seealso cref="#getSchemaDN(String)">
+		/// </seealso>
+		public virtual LdapSchema FetchSchema(System.String schemaDN)
+		{
+			LdapEntry ent = Read(schemaDN, LdapSchema.schemaTypeNames);
+			return new LdapSchema(ent);
+		}
+		
+		/// <summary> Retrieves the Distiguished Name (DN) for the schema advertised in the
+		/// root DSE of the Directory Server.
+		/// 
+		/// <p>The DN can be used with the methods fetchSchema and modify to retreive
+		/// and extend schema definitions.  The schema entry is located by reading
+		/// subschemaSubentry attribute of the root DSE.  This is equivalent to
+		/// calling {@link #getSchemaDN(String) } with the DN parameter as an empty
+		/// string: <code>getSchemaDN("")</code>.
+		/// </p>
+		/// 
+		/// </summary>
+		/// <returns>     Distinguished Name of a schema entry in effect for the
+		/// Directory.
+		/// </returns>
+		/// <exception cref=""> LDAPException     This exception occurs if the schema DN
+		/// cannot be retrieved, or if the subschemaSubentry attribute associated
+		/// with the root DSE contains multiple values.
+		/// 
+		/// </exception>
+		/// <seealso cref="#fetchSchema">
+		/// </seealso>
+		/// <seealso cref="#modify">
+		/// </seealso>
+		public virtual System.String GetSchemaDN()
+		{
+			return GetSchemaDN("");
+		}
+		
+		/// <summary> Retrieves the Distiguished Name (DN) of the schema associated with a
+		/// entry in the Directory.
+		/// 
+		/// <p>The DN can be used with the methods fetchSchema and modify to retreive
+		/// and extend schema definitions.  Reads the subschemaSubentry of the entry
+		/// specified.<p>
+		/// 
+		/// </summary>
+		/// <param name="dn">    Distinguished Name of any entry.  The subschemaSubentry
+		/// attribute is queried from this entry.
+		/// 
+		/// </param>
+		/// <returns>      Distinguished Name of a schema entry in effect for the entry
+		/// identified by <code>dn</code>.
+		/// 
+		/// </returns>
+		/// <exception cref=""> LDAPException     This exception occurs if a null or empty
+		/// value is passed as dn, if the subschemasubentry attribute cannot
+		/// be retrieved, or the subschemasubentry contains multiple values.
+		/// 
+		/// </exception>
+		/// <seealso cref="#fetchSchema">
+		/// </seealso>
+		/// <seealso cref="#modify">
+		/// </seealso>
+		public virtual System.String GetSchemaDN(System.String dn)
+		{
+			System.String[] attrSubSchema = new System.String[]{"subschemaSubentry"};
+			
+			/* Read the entries subschemaSubentry attribute. Throws an exception if
+			* no entries are returned. */
+			LdapEntry ent = this.Read(dn, attrSubSchema);
+			
+			LdapAttribute attr = ent.getAttribute(attrSubSchema[0]);
+			System.String[] values = attr.StringValueArray;
+			if (values == null || values.Length < 1)
+			{
+				throw new LdapLocalException(ExceptionMessages.NO_SCHEMA, new System.Object[]{dn}, LdapException.NO_RESULTS_RETURNED);
+			}
+			else if (values.Length > 1)
+			{
+				throw new LdapLocalException(ExceptionMessages.MULTIPLE_SCHEMA, new System.Object[]{dn}, LdapException.CONSTRAINT_VIOLATION);
+			}
+			return values[0];
+		}
+
 	}
 }
