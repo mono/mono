@@ -4487,7 +4487,8 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Brfalse, end_try);
 
 			if (ec.InIterator)
-				enumerator.EmitThis (ig);
+				ig.Emit (OpCodes.Ldarg_0);
+			
 			enumerator.EmitCall (ig, hm.get_current);
 
 			if (ec.InIterator){
@@ -4587,7 +4588,7 @@ namespace Mono.CSharp {
 				ig.MarkLabel (loop);
 
 				if (ec.InIterator)
-					ec.EmitThis ();
+					ig.Emit (OpCodes.Ldarg_0);
 				
 				copy.EmitThis (ig);
 				copy.EmitLoad (ig);
@@ -4656,7 +4657,8 @@ namespace Mono.CSharp {
 				}
 
 				if (ec.InIterator)
-					ec.EmitThis ();
+					ig.Emit (OpCodes.Ldarg_0);
+				
 				copy.EmitThis (ig);
 				copy.EmitLoad (ig);
 				for (dim = 0; dim < rank; dim++){

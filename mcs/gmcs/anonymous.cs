@@ -1008,8 +1008,13 @@ namespace Mono.CSharp {
 				cc.EmitParameterInstance (ec, name);
 				return;
 			}
-			Block invocation_block = ec.CurrentBlock;
+			
 			CapturedParameter par_info = (CapturedParameter) captured_parameters [name];
+			if (par_info != null){
+				// 
+				// FIXME: implementing this.
+				//
+			}
 			ILGenerator ig = ec.ig;
 
 			ScopeInfo si;
@@ -1042,6 +1047,11 @@ namespace Mono.CSharp {
 			}
 			EmitParameterInstance (ec, name);
 			CapturedParameter par_info = (CapturedParameter) captured_parameters [name];
+			if (par_info != null){
+				// 
+				// FIXME: implementing this.
+				//
+			}
 			ec.ig.Emit (OpCodes.Ldfld, par_info.FieldBuilder);
 		}
 
