@@ -1,4 +1,11 @@
 
+Mon Aug 27 20:16:37 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: merge isinst/castclass handling. Hopefully implement
+	the right semantics for handling callvirt correctly (changes
+	here and there to support it). Integrate bugfix from Dietmar quickly
+	so he needs to handle the cvs conflict:-)
+
 Mon Aug 27 12:20:32 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: fix compilation and updates for changes in metadata/.
