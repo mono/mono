@@ -143,9 +143,16 @@ namespace System.Web.UI {
 
 			Type type = container.GetType ();
 			PropertyInfo prop = type.GetProperty (propName);
-			if (prop == null)
-				throw new HttpException ("Property " + propName + " not found in " +
-							 type.ToString ());
+			if (prop == null) {
+				try {
+					return GetIndexedPropertyValue (container, "[\"" + propName + "\"]");
+				} catch {
+					throw new HttpException ("Property " + propName + " not found in " +
+								 type.ToString ());
+				}
+			}
+
+
 			MethodInfo getm = prop.GetGetMethod ();
 			if (getm == null)
 				throw new HttpException ("Cannot find get accessor for " + propName +
