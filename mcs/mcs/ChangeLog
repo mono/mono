@@ -1,5 +1,18 @@
 2004-04-28  Martin Baulig  <martin@ximian.com>
 
+	* statement.cs (LocalInfo.Resolve): Check whether the type is not
+	void (CS1547).
+
+	* class.cs (MemberBase.CheckParameters, FieldBase.DoDefine): Check
+	whether the type is not void (CS1547).
+
+2004-04-28  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (Unary.DoResolveLValue): Override this and report
+	CS0131 for anything but Operator.Indirection.
+
+2004-04-28  Martin Baulig  <martin@ximian.com>
+
 	Committing a patch from Ben Maurer; see bug #50820.
 
 	* typemanager.cs (TypeManager.FilterWithClosure): Added CS1540

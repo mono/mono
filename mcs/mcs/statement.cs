@@ -1003,6 +1003,12 @@ namespace Mono.CSharp {
 			if (VariableType == null)
 				VariableType = decl.ResolveType (Type, false, Location);
 
+			if (VariableType == TypeManager.void_type) {
+				Report.Error (1547, Location,
+					      "Keyword 'void' cannot be used in this context");
+				return false;
+			}
+
 			if (VariableType == null)
 				return false;
 

@@ -4144,6 +4144,13 @@ namespace Mono.CSharp {
 			bool error = false;
 
 			foreach (Type partype in parameters){
+				if (partype == TypeManager.void_type) {
+					Report.Error (
+						1547, Location, "Keyword 'void' cannot " +
+						"be used in this context");
+					return false;
+				}
+
 				if (partype.IsPointer){
 					if (!UnsafeOK (ds))
 						error = true;
@@ -4357,6 +4364,20 @@ namespace Mono.CSharp {
 			init_expr_initialized = true;
 
 			return init_expr;
+		}
+
+		protected override bool DoDefine (TypeContainer container)
+		{
+			if (!base.DoDefine (container))
+				return false;
+
+			if (MemberType == TypeManager.void_type) {
+				Report.Error (1547, Location,
+					      "Keyword 'void' cannot be used in this context");
+				return false;
+			}
+
+			return true;
 		}
 
 		public override string GetSignatureForError ()
