@@ -1,3 +1,14 @@
+2004-03-27  Duncan Mak  <duncan@ximian.com>
+
+	* ForEachEnum.cs:
+	* OpenModeTypes.cs: Implemented according to the
+	Mainsoft Java implementation.
+
+	* Globals.cs:
+	* VBFixedArrayAttribute.cs:
+	* VBFixedStringAttribute: Changes made by Dennis Hayes
+	<dennish@raytek.com> from studying the Mainsoft implementation.
+
 2004-03-19	Joerg Rosenkranz <JoergR@voelcker.com>
 	* Interaction.cs:
 		Added MonoTODO attributes

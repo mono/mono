@@ -1,3 +1,8 @@
+2004-03-27  Duncan Mak  <duncan@ximian.com>
+
+	* Utils.cs (GetResourceString): Added stub for easing the port
+	from the Mainsoft Java implementation.
+
 2004-03-10	Joerg Rosenkranz <JoergR@voelcker.com>
 	* BooleanType.cs:
 		Corrected implementation of method FromString. 

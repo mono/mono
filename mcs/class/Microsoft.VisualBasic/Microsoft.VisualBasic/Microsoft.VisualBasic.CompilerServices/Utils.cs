@@ -21,17 +21,20 @@ namespace Microsoft.VisualBasic.CompilerServices
 		}
 
 		[MonoTODO]
-		public static void ThrowException (System.Int32 hr) { 
+		public static void ThrowException (System.Int32 hr)
+                { 
 			throw new NotImplementedException (); 
 		}
 
 		[MonoTODO]
-		public static System.Object SetCultureInfo (System.Globalization.CultureInfo Culture) { 
+		public static System.Object SetCultureInfo (System.Globalization.CultureInfo Culture)
+                { 
 			throw new NotImplementedException (); 
 		}
 
 		[MonoTODO]
-		public static System.Array CopyArray (System.Array SourceArray, System.Array DestinationArray) { 
+		public static System.Array CopyArray (System.Array SourceArray, System.Array DestinationArray)
+                { 
 #if NET_1_1
 			long SourceLength = SourceArray.LongLength;
 			long DestinationLength = DestinationArray.LongLength;
@@ -47,9 +50,17 @@ namespace Microsoft.VisualBasic.CompilerServices
 		}
 
 		[MonoTODO]
-		public static System.String MethodToString (System.Reflection.MethodBase Method) {
+		public static System.String MethodToString (System.Reflection.MethodBase Method)
+                {
 			 throw new NotImplementedException (); 
 		}
+
+                [MonoTODO ("Used by the Mainsoft people")]
+                internal static string GetResourceString (string s)
+                {
+                        return String.Empty;
+                }
+
 		// Events
 	};
 }

@@ -18,6 +18,7 @@ Microsoft.VisualBasic/FileSystem.cs
 Microsoft.VisualBasic/Financial.cs
 Microsoft.VisualBasic/FirstDayOfWeek.cs
 Microsoft.VisualBasic/FirstWeekOfYear.cs
+Microsoft.VisualBasic/ForEachEnum.cs
 Microsoft.VisualBasic/Globals.cs
 Microsoft.VisualBasic/Information.cs
 Microsoft.VisualBasic/Interaction.cs
@@ -25,6 +26,7 @@ Microsoft.VisualBasic/MsgBoxResult.cs
 Microsoft.VisualBasic/MsgBoxStyle.cs
 Microsoft.VisualBasic/OpenAccess.cs
 Microsoft.VisualBasic/OpenMode.cs
+Microsoft.VisualBasic/OpenModeTypes.cs
 Microsoft.VisualBasic/OpenShare.cs
 Microsoft.VisualBasic/SpcInfo.cs
 Microsoft.VisualBasic/Strings.cs
