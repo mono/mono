@@ -196,6 +196,30 @@ namespace System {
 		///   
 		public int CompareTo (object obj)
 		{
+			Type thisType;
+			thisType = this.GetType();
+			if (obj.GetType() != thisType){
+				throw new ArgumentException(
+					"Object must be the same type as the "
+					+ "enum. The type passed in was " 
+					+ obj.GetType().ToString()
+					+ "; the enum type was " 
+					+ thisType.ToString() + ".");
+			}
+
+			thisType = GetUnderlyingType(this.GetType());
+			if (!(thisType == typeof(SByte)
+				|| thisType == typeof(Int16)
+				|| thisType == typeof(Int32)
+				|| thisType == typeof(Int64)
+				|| thisType == typeof(Byte)
+				|| thisType == typeof(UInt16)
+				|| thisType == typeof(UInt32)
+				|| thisType == typeof(UInt64)
+				)
+			)
+				throw new InvalidOperationException();
+
 			if (obj == null)
 				return 1;
 

@@ -3,6 +3,9 @@
 	* Double.cs: Explicitly handle comparisons in CompareTo() for
 	Positive/Negative Infinity and NaN. Unit Test now passes on Linux.
 
+	* Enum.cs(CompareTo): Check types of values before trying to compare.
+	Throw exceptions if types are invalid or don't match.
+
 2002-03-14  Miguel de Icaza  <miguel@ximian.com>
 
 	* Array.cs: Add some extra debugging information.
