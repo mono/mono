@@ -1,5 +1,9 @@
 2002-07-19  Martin Baulig  <martin@gnome.org>
 
+	* makefile.gnu (DIRS): Added nunit.
+
+2002-07-19  Martin Baulig  <martin@gnome.org>
+
 	Added the super-cool set of makefiles from Peter Williams which run on
 	GNU/Linux without NAnt.  I named them `makefile.gnu' and not `GNUmakefile'
 	since this won't break the windows build.

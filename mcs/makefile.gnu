@@ -1,4 +1,4 @@
-DIRS=jay mcs class
+DIRS=jay mcs nunit class
 
 #nant doesn't work yet
 
