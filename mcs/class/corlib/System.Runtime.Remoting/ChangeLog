@@ -1,3 +1,9 @@
+2003-02-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* RemotingServices.cs:
+	(GetMethodBaseFromMethodMessage): fixed to make it also work with
+	internal methods without MethodSignature (see ApplicationHost.cs).
+
 2003-02-03 Patrik Torstensson
 
 	* ObjRef.cs: added copy constructor and two helpers for cross 

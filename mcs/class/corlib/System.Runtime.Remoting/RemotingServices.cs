@@ -156,12 +156,15 @@ namespace System.Runtime.Remoting
 
 		public static MethodBase GetMethodBaseFromMethodMessage(IMethodMessage msg)
 		{
-			Type type = Type.GetType(msg.TypeName);
+			Type type = Type.GetType (msg.TypeName);
+			if (type == null)
+				throw new RemotingException ("Type '" + msg.TypeName + "' not found!");
 
+			BindingFlags bflags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 			if (msg.MethodSignature == null)
-				return type.GetMethod (msg.MethodName);
+				return type.GetMethod (msg.MethodName, bflags);
 			else
-				return type.GetMethod (msg.MethodName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, (Type[]) msg.MethodSignature, null);
+				return type.GetMethod (msg.MethodName, bflags, null, (Type[]) msg.MethodSignature, null);
 		}
 
 		public static void GetObjectData(object obj, SerializationInfo info, StreamingContext context)
