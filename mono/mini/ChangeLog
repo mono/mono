@@ -1,4 +1,8 @@
 
+Fri May 14 14:30:13 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, cfold.c: fix style.
+
 Fri May 14 14:28:22 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: handle issue with the low-level implementation of
