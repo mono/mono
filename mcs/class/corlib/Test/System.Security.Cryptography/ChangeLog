@@ -18,6 +18,8 @@
 	coverage.
 	* RSATest.cs: Updated unit tests for importing XML key pairs.
 	* SHA256Test.cs: Corrected Setup attribtue (was [Test]).
+	* SignatureDescriptionTest.cs: Removed unimplemented constructor from
+	tests. Converted to NUnit2.
 	* SymmetricAlgorithm2Test.cs: New. Non generated unit test for better
 	coverage (like exception testing).
 	* ToBase64TransformTest.cs: New. Unit tests to complete coverage of

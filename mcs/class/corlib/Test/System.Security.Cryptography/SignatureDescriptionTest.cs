@@ -2,9 +2,10 @@
 // SignatureDescriptionTest.cs - NUnit Test Cases for SignatureDescription
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell  http://www.novell.com
 //
 
 using NUnit.Framework;
@@ -14,12 +15,14 @@ using System.Security.Cryptography;
 
 namespace MonoTests.System.Security.Cryptography {
 
-public class SignatureDescriptionTest : TestCase {
+public class SignatureDescriptionTest : Assertion {
+
 	protected SignatureDescription sig;
 	protected static DSA dsa;
 	protected static RSA rsa;
 
-	protected override void SetUp () 
+	[Setup]
+	void SetUp () 
 	{
 		sig = new SignatureDescription();
 		// key generation is VERY long so one time is enough
@@ -29,37 +32,40 @@ public class SignatureDescriptionTest : TestCase {
 			rsa = RSA.Create ();
 	}
 
-	protected override void TearDown () {}
-
 	public void AssertEquals (string msg, byte[] array1, byte[] array2) 
 	{
 		AllTests.AssertEquals (msg, array1, array2);
 	}
 
-	public void TestConstructors () 
+	[Test]
+	public void Constructor_Default () 
 	{
 		// empty constructor
 		SignatureDescription sig = new SignatureDescription ();
 		AssertNotNull ("SignatureDescription()", sig);
+	}
+	
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void Constructor_Null () 
+	{
 		// null constructor
-		try {
-			sig = new SignatureDescription (null);
-			Fail ("SignatureDescription(null): Expected ArgumentNullException but got none");
-		}
-		catch (ArgumentNullException) {
-			// LAMESPEC: Documented as CryptographicException
-			// but thrown as ArgumentNullException
-		}
-		catch (Exception e) {
-			Fail ("SignatureDescription(null): Expected ArgumentNullException but got: " + e.ToString ());
-		}
+		SignatureDescription sig = new SignatureDescription (null);
+		// LAMESPEC: Documented as CryptographicException
+	}
+	
+	[Test]
+	[Ignore ("Undocumented format - unsupported by Mono")]
+	public void Constructor_SecurityElement () 
+	{
 		// (empty) SecurityElement constructor
 		SecurityElement se = new SecurityElement ("xml");
-		sig = new SignatureDescription (se);
+		SignatureDescription sig = new SignatureDescription (se);
 		AssertNotNull ("SignatureDescription(SecurityElement)", sig);
 	}
 
-	public void TestProperties () 
+	[Test]
+	public void Properties () 
 	{
 		string invalid = "invalid";
 		AssertNull ("DeformatterAlgorithm 1", sig.DeformatterAlgorithm);
@@ -91,7 +97,8 @@ public class SignatureDescriptionTest : TestCase {
 		AssertNull ("KeyAlgorithm 4", sig.KeyAlgorithm);
 	}
 
-	public void TestDeformatter () 
+	[Test]
+	public void Deformatter () 
 	{
 		AsymmetricSignatureDeformatter def = null;
 		// Deformatter with all properties null
@@ -145,7 +152,8 @@ public class SignatureDescriptionTest : TestCase {
 		}
 	}
 
-	public void TestDigest ()
+	[Test]
+	public void Digest ()
 	{
 		bool rightClass = false;
 		HashAlgorithm hash = null;
@@ -196,7 +204,8 @@ public class SignatureDescriptionTest : TestCase {
 		AssertNull ("CreateDigest(bad)", hash);
 	}
 
-	public void TestFormatter () 
+	[Test]
+	public void Formatter () 
 	{
 		AsymmetricSignatureFormatter fmt = null;
 		// Formatter with all properties null
@@ -250,7 +259,8 @@ public class SignatureDescriptionTest : TestCase {
 		}
 	}
 
-	public void TestDSASignatureDescription ()  
+	[Test]
+	public void DSASignatureDescription ()  
 	{
 		// internal class - we cannot create one without CryptoConfig
 		SignatureDescription sd = (SignatureDescription) CryptoConfig.CreateFromName ("http://www.w3.org/2000/09/xmldsig#dsa-sha1");
@@ -271,7 +281,8 @@ public class SignatureDescriptionTest : TestCase {
 		AssertEquals ("DSA.CreateFormatter", "System.Security.Cryptography.DSASignatureFormatter", asf.ToString ());
 	}
 
-	public void TestRSASignatureDescription () 
+	[Test]
+	public void RSASignatureDescription () 
 	{
 		// internal class - we cannot create one without CryptoConfig
 		SignatureDescription sd = (SignatureDescription) CryptoConfig.CreateFromName ("http://www.w3.org/2000/09/xmldsig#rsa-sha1");
