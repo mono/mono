@@ -958,6 +958,25 @@ namespace System {
 			return FullName;
 		}
 
+		internal object[] GetPseudoCustomAttributes () {
+			int count = 0;
+
+			/* StructLayoutAttribute is not returned by MS.NET */
+
+			if (IsSerializable)
+				count ++;
+
+			if (count == 0)
+				return null;
+			object[] attrs = new object [count];
+			count = 0;
+
+			if (IsSerializable)
+				attrs [count ++] = new SerializableAttribute ();
+
+			return attrs;
+		}
+
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 		public abstract Type[] GetGenericArguments ();
 
@@ -1072,6 +1091,36 @@ namespace System {
 		public virtual Type MakeByRefType ()
 		{
 			return make_byref_type ();
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern void GetPacking (out int packing, out int size);		
+
+		public virtual StructLayoutAttribute StructLayoutAttribute {
+			get {
+				LayoutKind kind;
+
+				if (IsLayoutSequential)
+					kind = LayoutKind.Sequential;
+				else if (IsExplicitLayout)
+					kind = LayoutKind.Explicit;
+				else
+					kind = LayoutKind.Auto;
+
+				StructLayoutAttribute attr = new StructLayoutAttribute (kind);
+
+				if (IsUnicodeClass)
+					attr.CharSet = CharSet.Unicode;
+				else if (IsAnsiClass)
+					attr.CharSet = CharSet.Ansi;
+				else
+					attr.CharSet = CharSet.Auto;
+
+				if (kind != LayoutKind.Auto)
+					GetPacking (out attr.Pack, out attr.Size);
+
+				return attr;
+			}
 		}
 #endif
 	}

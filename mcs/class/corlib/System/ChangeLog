@@ -1,3 +1,9 @@
+2004-09-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Type.cs: Implement 2.0 StructLayoutAttribute property. 
+
+	* Type.cs Add GetPseudoCustomAttributes () method.
+
 2004-09-24  Martin Baulig  <martin@ximian.com>
 
 	* Type.cs (Type.GetGenericParameterConstraints): New public method.
