@@ -111,15 +111,15 @@ namespace System.Threading
 			void Dispose (bool disposing)
 			{
 				disposed = true;
-				if (wait != null) {
-					wait.Set ();
-					Thread.Sleep (100);
-					((IDisposable) wait).Dispose ();
-					wait = null;
-				}
-
-				if (disposing)
+				if (disposing) {
+					if (wait != null) {
+						wait.Set ();
+						Thread.Sleep (100);
+						((IDisposable) wait).Dispose ();
+						wait = null;
+					}
 					GC.SuppressFinalize (this);
+				}
 			}
 
 			~Runner ()
