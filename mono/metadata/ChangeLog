@@ -1,3 +1,15 @@
+2004-10-04  Martin Baulig  <martin@ximian.com>
+
+	* class-internals.h (MonoGenericContainer): New type.
+	(MonoMethodNormal): Replaced `MonoGenericParam *gen_params' with
+	`MonoGenericContainer *generic_container'.
+	(MonoClass): Replaced `gen_params' and `num_gen_params' with
+	`MonoGenericContainer *generic_container'.
+
+	* metadata.c (mono_metadata_load_generic_params): Return a
+	`MonoGenericContainer *' instead of a `MonoGenericParam *';
+	removed the `num' argument.
+
 2004-10-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_System_Reflection_Module_GetPEKind): Add support
