@@ -1,3 +1,10 @@
+2004-08-05  Sanjay Gupta <gsanjay@novell.com>
+
+	* IButtonControl.cs:
+	* ICallbackContainer.cs:
+	* ICompositeControlDesignerAccessor.cs:
+	* IPostBackContainer.cs: Added new interfaces.
+
 2004-08-03  Sanjay Gupta <gsanjay@novell.com>
 
 	* AdType.cs:
