@@ -50,7 +50,7 @@ DISTFILES = \
 	NOTES			\
 	TODO
 
-all-local:
+all-local: mcs.exe
 
 install-local: mcs.exe
 	$(MKINSTALLDIRS) $(DESTDIR)$(prefix)/lib/mono/1.0
