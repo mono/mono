@@ -1,3 +1,7 @@
+2004-05-03  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* NtlmClient.cs: Use assembly name const to load Mono.Security.
+
 2004-04-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnectionStream.cs: avoid the exception when getting the content

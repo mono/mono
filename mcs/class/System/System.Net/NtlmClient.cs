@@ -21,7 +21,7 @@ namespace System.Net
 
 		static NtlmClient ()
 		{
-			Assembly ass = Assembly.Load ("Mono.Security");
+			Assembly ass = Assembly.Load (Consts.AssemblyMono_Security);
 			if (ass != null)
 				ntlmAuthType = ass.GetType ("Mono.Http.NtlmClient", false);
 		}
