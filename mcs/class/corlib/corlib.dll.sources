@@ -930,6 +930,8 @@ System.Security.Permissions/FileDialogPermissionAttribute.cs
 System.Security.Permissions/FileIOPermission.cs
 System.Security.Permissions/FileIOPermissionAccess.cs
 System.Security.Permissions/FileIOPermissionAttribute.cs
+System.Security.Permissions/GacIdentityPermission.cs
+System.Security.Permissions/GacIdentityPermissionAttribute.cs
 System.Security.Permissions/HostProtectionResource.cs
 System.Security.Permissions/IBuiltInPermission.cs
 System.Security.Permissions/IsolatedStorageContainment.cs
@@ -981,6 +983,8 @@ System.Security.Policy/CodeGroupGrantScope.cs
 System.Security.Policy/Evidence.cs
 System.Security.Policy/FileCodeGroup.cs
 System.Security.Policy/FirstMatchCodeGroup.cs
+System.Security.Policy/Gac.cs
+System.Security.Policy/GacMembershipCondition.cs
 System.Security.Policy/Hash.cs
 System.Security.Policy/HashMembershipCondition.cs
 System.Security.Policy/IApplicationTrustManager.cs

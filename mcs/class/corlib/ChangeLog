@@ -1,6 +1,10 @@
 2004-08-04  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* corlib.dll.sources: Added System.Security.Permissions/
+	GacIdentityPermission.cs and GacIdentityPermissionAttribute.cs, and
+	System.Security.Policy/Gac.cs and GacMembershipCondition.cs to NET_2_0
 	* corlib_test.dll.sources: Added /Test/System.Security.Policy/
+	GacMembershipConditionTest.cs, GacTest.cs and
 	ZoneMembershipConditionTest.cs to unit tests.
 
 2004-08-03  Sebastien Pouliot  <sebastien@ximian.com>
