@@ -1,5 +1,7 @@
 2004-09-09  Zoltan Varga  <vargaz@freemail.hu>
 
+	* TypeBuilder.cs: Set the table_idx of the global type to 1.
+
 	* ModuleBuilder.cs: Save the main module of the assembly even if it is 
 	transient.
 
