@@ -153,7 +153,9 @@ namespace System.Drawing.Imaging
 						break;
 					}
 				}
-				if (!structureFound) throw new Exception("JPEG Codec cannot work with existing libjpeg");
+				if (!structureFound){
+					throw new Exception(String.Format("JPEG Codec cannot work with existing libjpeg.Structure size {0}.", size));
+				}
 			}
 
 			public byte[] raw_struct {

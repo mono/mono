@@ -222,6 +222,16 @@ namespace System.Drawing.Imaging {
 				else {
 				}
 				break;
+				case 32:
+				info.Format = PixelFormat.Format32bppArgb;
+				if (bmfh.bfOffBits != 0L) stream.Seek (startPosition + bmfh.bfOffBits,SeekOrigin.Begin);
+				if (bmih.biCompression == (uint)BitmapCompression.BI_RGB) {
+					info.RawImageBytes = new byte[bmih.biSizeImage];
+					stream.Read(info.RawImageBytes, 0, (int)bmih.biSizeImage);
+				}
+				else {
+				}
+				break;
 				default:
 					throw new NotImplementedException(String.Format("This format is not yet supported : {0} bpp", bmih.biBitCount));
 				break;

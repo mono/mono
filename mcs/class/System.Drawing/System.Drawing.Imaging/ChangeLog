@@ -1,3 +1,7 @@
+2003-06-29 Alexandre Pigolkine
+	* BmpCodec.cs		handle 32bpp images
+	* JPEGCodec.cs		small fix
+
 2003-06-27 Alexandre Pigolkine <pigolkine@gmx.de>
 	* JPEGCodec.cs 	encode 32 bpp images
 
