@@ -310,12 +310,12 @@ namespace System.Web.UI.WebControls
 			object vs = base.SaveViewState();
 			object itemSvs = Items.SaveViewState();
 			object indices = null;
-			if(SaveSelectedIndicesViewState)
+			if (SaveSelectedIndicesViewState)
 				indices = SelectedIndices;
-			if(vs!= null && itemSvs != null && indices != null)
-			{
+
+			if (vs != null || itemSvs != null || indices != null)
 				return new Triplet(vs, itemSvs, indices);
-			}
+
 			return null;
 		}
 
@@ -325,15 +325,13 @@ namespace System.Web.UI.WebControls
 			Items.TrackViewState();
 		}
 
-		private bool SaveSelectedIndicesViewState
-		{
-			get
-			{
-				if( Events[SelectedIndexChangedEvent] != null && Enabled && Visible)
-				{
+		private bool SaveSelectedIndicesViewState {
+			get {
+				if (Events[SelectedIndexChangedEvent] == null && Enabled && Visible) {
 					Type t = GetType();
 					// If I am a derivative, let it take of storing the selected indices.
-					if(t == typeof(DropDownList) || t == typeof(ListBox) || t == typeof(CheckBoxList) || t == typeof(RadioButtonList))
+					if (t == typeof(DropDownList) || t == typeof(ListBox) ||
+					    t == typeof(CheckBoxList) || t == typeof(RadioButtonList))
 						return false;
 				}
 				return true;

@@ -1,4 +1,9 @@
 
+2003-06-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ListControl.cs: save viewstate data when any of the 3 values is not
+	null. Fixed condition to save selection indices. Closes bug #45493.
+
 2003-06-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataGrid.cs: fixed bug #43823.
