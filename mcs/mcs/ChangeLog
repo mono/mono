@@ -1,3 +1,9 @@
+2004-08-04  Miguel de Icaza  <miguel@ximian.com>
+ 
+	* cfold.cs: Synchronize the folding with the code in expression.cs
+	Binary.DoNumericPromotions for uint operands.
+
+
 2004-08-03  Ben Maurer  <bmaurer@ximian.com>
 
 	* ecore.cs (MethodGroupExpr): new IsBase property.
