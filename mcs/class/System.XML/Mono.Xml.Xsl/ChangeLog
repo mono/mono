@@ -1,5 +1,10 @@
 2003-07-31 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* XsltCompiledContext.cs: Hmm, maybe I should actually *enable*
+	the functions ;-). Also wrote current ().
+
+2003-07-31 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* XsltCompiledContext.cs: Remove excess conversion stuff. It is
 	done in XPath. Add stubs for XSLT functions.
 

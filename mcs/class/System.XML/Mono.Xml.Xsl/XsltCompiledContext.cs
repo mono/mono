@@ -68,10 +68,8 @@ namespace Mono.Xml.Xsl {
 		{
 			IXsltContextFunction func = null;
 			if (prefix == String.Empty || prefix == null) {
-			//	return xsltFunctions [name] as IXsltContextFunction;
-				return null;
-			}
-			else {
+				return xsltFunctions [name] as IXsltContextFunction;
+			} else {
 				string ns = this.LookupNamespace (prefix);
 
 				if (ns == null || p.Arguments == null) return null;
@@ -271,7 +269,7 @@ namespace Mono.Xml.Xsl.Functions {
 		
 		public override object Invoke (XsltCompiledContext xsltContext, object [] args, XPathNavigator docContext)
 		{
-			throw new NotImplementedException ();
+			return new SelfIterator (xsltContext.Processor.CurrentNode, null);
 		}
 	}
 	
