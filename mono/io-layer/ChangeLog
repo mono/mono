@@ -1,5 +1,11 @@
 2002-07-12  Dick Porter  <dick@ximian.com>
 
+	* wapi-private.h:
+	* handles.c:
+	* daemon.c: Use size of sockaddr_un.sun_path from config.h
+
+2002-07-12  Dick Porter  <dick@ximian.com>
+
 	* processes.c (CreateProcess): Send stdin, stdout and stderr
 	handles if the startup info doesnt specify new ones
 
