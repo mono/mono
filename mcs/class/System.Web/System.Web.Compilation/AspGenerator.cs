@@ -725,8 +725,12 @@ class AspGenerator
 				throw new ApplicationException ("@Application not allowed.");
 
 			string inherits = att ["inherits"] as string;
-			if (inherits != null)
-				Options ["Inherits"] = inherits;
+			if (inherits != null) {
+				parent = inherits;
+				parentType = LoadParentType (parent);
+				if (parentType == null)
+					throw new ApplicationException ("The class " + parent + " cannot be found.");
+			}
 
 			main_directive = directive.TagID;
 			break;

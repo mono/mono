@@ -1,3 +1,8 @@
+2003-03-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: now the Inherits attribute works as expected for
+	global.asax file.
+
 2003-03-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CompilationException.cs:
