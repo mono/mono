@@ -51,25 +51,35 @@ namespace Mono.Xml.Xsl {
 
 			string ns = name.Namespace;
 
-			if (ns == null || p.Arguments == null) return null;
+			if (ns == null) return null;
 
-			object extension = p.Arguments.GetExtensionObject (ns);
-				
-			if (extension == null)
-				return null;			
+			object extension = null;
 			
-			MethodInfo method = FindBestMethod (extension.GetType (), name.Name, argTypes);
+			if (p.Arguments != null)
+				p.Arguments.GetExtensionObject (ns);
+			
+			bool isScript = false;
+			if (extension == null) {
+				extension = p.ScriptManager.GetExtensionObject (ns);
+				if (extension == null)
+					return null;
+				
+				isScript = true;
+			}
+			
+			
+			MethodInfo method = FindBestMethod (extension.GetType (), name.Name, argTypes, isScript);
 			
 			if (method != null) 
 				return new XsltExtensionFunction (extension, method);
 			return null;
 		}
 		
-		MethodInfo FindBestMethod (Type t, string name, XPathResultType [] argTypes)
+		MethodInfo FindBestMethod (Type t, string name, XPathResultType [] argTypes, bool isScript)
 		{
 			int free, length;
 			
-			MethodInfo [] mi = t.GetMethods (BF.Public | BF.Instance | BF.Static);
+			MethodInfo [] mi = t.GetMethods ((isScript ? BF.Public | BF.NonPublic : BF.Public) | BF.Instance | BF.Static);
 			if (mi.Length == 0)
 				return null;
 			

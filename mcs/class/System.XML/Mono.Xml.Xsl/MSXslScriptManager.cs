@@ -18,29 +18,25 @@ using System.Xml.Xsl;
 namespace Mono.Xml.Xsl {
 
 	public class MSXslScriptManager {
-		ArrayList jsScripts = new ArrayList ();
-		ArrayList vbScripts = new ArrayList ();
-		ArrayList csScripts = new ArrayList ();
+		Hashtable scripts = new Hashtable ();
 		
 		public MSXslScriptManager () {}
 		
 		public void AddScript (XPathNavigator nav)
 		{
 			MSXslScript s = new MSXslScript (nav);
-			switch (s.Language) {
-				case ScriptingLanguage.JScript:
-					jsScripts.Add (s); break;
-				case ScriptingLanguage.VisualBasic:
-					vbScripts.Add (s); break;
-				case ScriptingLanguage.CSharp:
-					csScripts.Add (s); break;
-			}
+			scripts.Add (s.ImplementsPrefix, s.Compile ());
 		}
 		
 		enum ScriptingLanguage {
 			JScript,
 			VisualBasic,
 			CSharp
+		}
+		
+		public object GetExtensionObject (string ns)
+		{
+			return scripts [ns];
 		}
 		
 		class MSXslScript {
@@ -88,6 +84,11 @@ namespace Mono.Xml.Xsl {
 	
 			public string Code {
 				get { return code; }
+			}
+			
+			public object Compile ()
+			{
+				throw new NotImplementedException ();
 			}
 		}
 	}

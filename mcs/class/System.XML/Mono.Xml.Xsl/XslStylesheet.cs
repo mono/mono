@@ -27,7 +27,7 @@ namespace Mono.Xml.Xsl {
 
 	public class XslStylesheet {
 		public const string XsltNamespace = "http://www.w3.org/1999/XSL/Transform";
-		public const string MSXsltNamespace = "urn:schemas-microsoft-com:xslt::script";
+		public const string MSXsltNamespace = "urn:schemas-microsoft-com:xslt";
 		
 		Compiler c;
 
@@ -43,7 +43,6 @@ namespace Mono.Xml.Xsl {
 		// [QName]=>XslKey
 		Hashtable keys = new Hashtable();
 
-		MSXslScriptManager msScripts = new MSXslScriptManager ();
 		XslTemplateTable templates;
 
 		// stylesheet attributes
@@ -98,10 +97,6 @@ namespace Mono.Xml.Xsl {
 
 		public Hashtable Parameters {
 			get { return parameters; }
-		}
-
-		public MSXslScriptManager ScriptManager{
-			get { return msScripts; }
 		}
 
 		public XPathNavigator StyleDocument {
@@ -233,7 +228,7 @@ namespace Mono.Xml.Xsl {
 				switch (n.LocalName)
 				{
 				case "script":
-					msScripts.AddScript (n);
+					c.ScriptManager.AddScript (n);
 					break;
 				}
 				break;

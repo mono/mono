@@ -36,8 +36,10 @@ namespace Mono.Xml.Xsl {
 		Hashtable keys;
 		Hashtable outputs;
 		Hashtable decimalFormats;
+		MSXslScriptManager msScripts;
 		
-		public CompiledStylesheet (XslStylesheet style, Hashtable globalVariables, Hashtable attrSets, ExpressionStore exprStore, XmlNamespaceManager nsMgr, Hashtable keys, Hashtable outputs, Hashtable decimalFormats)
+		public CompiledStylesheet (XslStylesheet style, Hashtable globalVariables, Hashtable attrSets, ExpressionStore exprStore, XmlNamespaceManager nsMgr, Hashtable keys, Hashtable outputs, Hashtable decimalFormats,
+			MSXslScriptManager msScripts)
 		{
 			this.style = style;
 			this.globalVariables = globalVariables;
@@ -47,6 +49,7 @@ namespace Mono.Xml.Xsl {
 			this.keys = keys;
 			this.outputs = outputs;
 			this.decimalFormats = decimalFormats;
+			this.msScripts = msScripts;
 		}
 		public Hashtable Variables {get{return globalVariables;}}
 		public XslStylesheet Style { get { return style; }}
@@ -54,6 +57,11 @@ namespace Mono.Xml.Xsl {
 		public XmlNamespaceManager NamespaceManager {get{return nsMgr;}}
 		public Hashtable Keys {get { return keys;}}
 		public Hashtable Outputs { get { return outputs; }}
+		
+		public MSXslScriptManager ScriptManager {
+			get { return msScripts; }
+		}
+		
 		
 		public XslDecimalFormat LookupDecimalFormat (QName name)
 		{
@@ -117,8 +125,14 @@ namespace Mono.Xml.Xsl {
 			}
 			this.rootStyle = new XslStylesheet (this);
 			
-			return new CompiledStylesheet (rootStyle, globalVariables, attrSets, exprStore, nsMgr, rootStyle.Keys, outputs, decimalFormats);
+			return new CompiledStylesheet (rootStyle, globalVariables, attrSets, exprStore, nsMgr, rootStyle.Keys, outputs, decimalFormats, msScripts);
 		}
+		
+		MSXslScriptManager msScripts = new MSXslScriptManager ();
+		public MSXslScriptManager ScriptManager {
+			get { return msScripts; }
+		}
+		
 		
 #region Input
 		public XPathNavigator Input {

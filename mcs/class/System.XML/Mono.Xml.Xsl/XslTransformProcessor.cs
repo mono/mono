@@ -84,6 +84,11 @@ namespace Mono.Xml.Xsl {
 		public CompiledStylesheet CompiledStyle { get { return compiledStyle; }}
 		public XsltArgumentList Arguments {get{return args;}}
 		
+		public MSXslScriptManager ScriptManager {
+			get { return compiledStyle.ScriptManager; }
+		}
+
+		
 		#region Document Resolution
 		public XmlResolver Resolver {get{return resolver;}}
 		

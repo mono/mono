@@ -1,3 +1,11 @@
+2003-11-27 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* Compiler.cs
+	* MSXslScriptManager.cs
+	* XslStylesheet.cs
+	* XslTransformProcessor.cs
+	* XsltCompiledContext.cs: Some work on msxsl script.
+
 2003-11-24 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	(in general: cdata-section-elements support, correct document() 
