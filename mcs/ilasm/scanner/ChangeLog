@@ -1,3 +1,7 @@
+2003-03-14 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILTokenizer.cs: Use the IsInstr method for checking if a string is an instruction
+
 2003-03-13 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILTokenizer.cs: Use InstrTable for looking up and getting Opcodes

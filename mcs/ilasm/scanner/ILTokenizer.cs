@@ -153,14 +153,11 @@ namespace Mono.ILASM {
 							next = reader.Peek ();
 							if (Char.IsLetterOrDigit ((char) next)) {
 								string opTail = reader.ReadToWhitespace ();
-								ILToken op = ILTables.Opcodes [val + "." + opTail] as ILToken;
-								if (op == null) {
+								
+								if (!IsOpcode (val + "." + opTail)) {
 									reader.Unread (opTail.ToCharArray ());
 									reader.RestoreLocation ();
 									reader.Unread (ch);
-								} else {
-									res = op;
-									break;
 								}
 							}
 						}
@@ -212,7 +209,7 @@ namespace Mono.ILASM {
 		/// <returns></returns>
 		public static bool IsOpcode (string name)
 		{
-			return InstrTable.IsOp (name);
+			return InstrTable.IsInstr (name);
 		}
 
 
