@@ -691,6 +691,7 @@ namespace Mono.CSharp {
 				label.AddUsageVector (ec.CurrentBranching.CurrentUsageVector);
 
 			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.ALWAYS;
+			ec.CurrentBranching.CurrentUsageVector.Returns = FlowReturns.ALWAYS;
 
 			return true;
 		}
@@ -798,7 +799,8 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.UNREACHABLE;
+			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.ALWAYS;
+			ec.CurrentBranching.CurrentUsageVector.Returns = FlowReturns.ALWAYS;
 			return true;
 		}
 
@@ -867,6 +869,7 @@ namespace Mono.CSharp {
 			label = sl.ILLabelCode;
 
 			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.UNREACHABLE;
+			ec.CurrentBranching.CurrentUsageVector.Returns = FlowReturns.ALWAYS;
 			return true;
 		}
 
@@ -2024,7 +2027,7 @@ namespace Mono.CSharp {
 						Report.Error (
 							177, loc, "The out parameter `" +
 							param_info.ParameterName (i) + "' must be " +
-							"assigned before control leave the current method.");
+							"assigned before control leaves the current method.");
 						param_map [i] = 0;
 						break;
 					}
