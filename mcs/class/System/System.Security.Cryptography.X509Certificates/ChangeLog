@@ -1,0 +1,4 @@
+2002-05-12  Lawrence Pit <loz@cable.a2000.nl>
+
+	* X509CertificateCollection.cs: implemented
+
