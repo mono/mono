@@ -275,13 +275,14 @@ namespace Mono.CSharp {
 				ec.TypeContainer, ec.DeclSpace, loc, null,
 				invoke_mb.ReturnType,
 				/* REVIEW */ (ec.InIterator ? Modifiers.METHOD_YIELDS : 0) |
-				(ec.InUnsafe ? Modifiers.UNSAFE : 0),
+				(ec.InUnsafe ? Modifiers.UNSAFE : 0) |
+				(ec.IsStatic ? Modifiers.STATIC : 0),
 				/* No constructor */ false);
 
 			aec.CurrentAnonymousMethod = this;
 			ContainerAnonymousMethod = ec.CurrentAnonymousMethod;
 			ContainingBlock = ec.CurrentBlock;
-		
+
 			if (aec.ResolveTopBlock (ec, Block, amp, loc, out unreachable))
 				return new AnonymousDelegate (this, delegate_type, loc).Resolve (ec);
 
