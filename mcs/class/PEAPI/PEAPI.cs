@@ -5022,7 +5022,7 @@ namespace PEAPI
     int maxStack = 0, numPars = 0;
     bool entryPoint = false;
     LocalSig localSig;
-    MethodRef varArgSig;
+                ArrayList varArgSigList;
     ImplMap pinvokeImpl;
 
 
@@ -5111,10 +5111,15 @@ namespace PEAPI
     /// <returns></returns>
     public MethodRef MakeVarArgSignature(Type[] optPars) {
       Type[] pars = new Type[numPars];
+      MethodRef varArgSig;
       for (int i=0; i < numPars; i++) {
         pars[i] = parList[i].GetParType();
       }
       varArgSig = new MethodRef(this,name,retType,pars,true,optPars);
+
+      if (varArgSigList == null)
+              varArgSigList = new ArrayList ();
+      varArgSigList.Add (varArgSig);
       return varArgSig;
     }
 
@@ -5153,9 +5158,11 @@ namespace PEAPI
 				md.AddToTable(MDTable.Param,parList[i]);
 				parList[i].BuildTables(md);
 			}
-      if (varArgSig != null) {
+      if (varArgSigList != null) {
+              foreach (MethodRef varArgSig in varArgSigList) {
         md.AddToTable(MDTable.MemberRef,varArgSig);
         varArgSig.BuildTables(md);
+      }
       }
       // Console.WriteLine("method has " + numPars + " parameters");
       done = true;

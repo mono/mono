@@ -1,3 +1,9 @@
+2003-05-25 Jackson Harper <jackson@latitudegeo.com>
+
+	* PEAPI.cs: Create a list of vararg signatures and add them all to
+	tables. this allows more then one vararg signature to be created
+	per method.
+		
 2003-05-18 Jackson Harper <jackson@latitudegeo.com>
 
 	* PEAPI.cs: Add methods to allow methods to be added to arrays.
