@@ -1,3 +1,8 @@
+2004-07-20  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* HttpWebClientProtocol.cs: Add received cookies to cookieContainer when
+	  getting the response, do not wait for the next request to do it.
+
 2004-07-13  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* HttpWebClientProtocol.cs, Soap12FaultCodes.cs, SoapClientMessage.cs,
