@@ -679,9 +679,12 @@ namespace System.Windows.Forms {
 			
 		}
 
-		private void DrawNodePlusMinus (TreeNode node, int x, int y, int middle)
+		private void DrawNodePlusMinus (TreeNode node, Rectangle clip, int x, int y, int middle)
 		{
 			node.UpdatePlusMinusBounds (x, middle - 4, 8, 8);
+
+			if (!clip.IntersectsWith (node.PlusMinusBounds))
+				return;
 
 			DeviceContext.DrawRectangle (SystemPens.ControlDark, node.PlusMinusBounds);
 
@@ -693,11 +696,15 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void DrawNodeCheckBox (TreeNode node, int x, int y)
+		private void DrawNodeCheckBox (TreeNode node, Rectangle clip, int x, int y)
 		{
 			int offset = (ItemHeight - 13);
 
 			node.UpdateCheckBoxBounds (x + 3, y + offset, 10, 10);
+
+			// new rectangle that factors in line width
+			if (!RectsIntersect (clip, x + 3, y + offset, 12, 12))
+				return;
 
 			DeviceContext.DrawRectangle (new Pen (Color.Black, 2), x + 0.5F + 3, y + 0.5F + offset, 11, 11);
 
@@ -738,8 +745,14 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void DrawNodeImage (TreeNode node, int x, int y)
+		private void DrawNodeImage (TreeNode node, Rectangle clip, int x, int y)
 		{
+
+			Rectangle r = new Rectangle (x, y + 2, ImageList.ImageSize.Width, 
+					ImageList.ImageSize.Height);
+			if (!RectsIntersect (r, x, y + 2, ImageList.ImageSize.Width, ImageList.ImageSize.Height))
+				return;
+
 			if (node.ImageIndex > -1 && ImageList != null && node.ImageIndex < ImageList.Images.Count) {
 				ImageList.Draw (DeviceContext, x, y + 2, ImageList.ImageSize.Width, 
 						ImageList.ImageSize.Height, node.ImageIndex);
@@ -747,6 +760,7 @@ namespace System.Windows.Forms {
 				ImageList.Draw (DeviceContext, x, y + 2, ImageList.ImageSize.Width, 
 						ImageList.ImageSize.Height, ImageIndex);
 			}
+			
 		}
 
 		private void UpdateNodeBounds (TreeNode node, int x, int y, int item_height)
@@ -785,7 +799,7 @@ namespace System.Windows.Forms {
 				x += 5;
 				if (_n_count > 0) {
 					if (show_plus_minus && visible) {
-						DrawNodePlusMinus (node, x, y, middle);
+						DrawNodePlusMinus (node, clip, x, y, middle);
 					}
 				}
 				x += indent - 5; 
@@ -793,17 +807,17 @@ namespace System.Windows.Forms {
 
 			int ox = x;
 
-			if (checkboxes) {
-				DrawNodeCheckBox (node, ox, y);
+			if (visible && checkboxes) {
+				DrawNodeCheckBox (node, clip, ox, y);
 				ox += 19;
 			}
 
-			if (show_lines)
+			if (visible && show_lines)
 				DrawNodeLines (node, dash, x, y, middle, item_height, _n_count);
 
-			if (ImageList != null) {
+			if (visible && ImageList != null) {
 				if (visible)
-					DrawNodeImage (node, ox, y);
+					DrawNodeImage (node, clip, ox, y);
 				// MS leaves the space for the image if the ImageList is
 				// non null regardless of whether or not an image is drawn
 				ox += ImageList.ImageSize.Width + 3; // leave a little space so the text isn't against the image
@@ -811,7 +825,7 @@ namespace System.Windows.Forms {
 
 			UpdateNodeBounds (node, x, y, item_height);
 
-			if (visible) {
+			if (visible && clip.IntersectsWith (node.Bounds)) {
 				Rectangle r = node.Bounds;
 				StringFormat format = new StringFormat ();
 				format.LineAlignment = StringAlignment.Center;
@@ -1024,6 +1038,13 @@ namespace System.Windows.Forms {
 			if(node != null) {
 				node.Toggle();
 			}
+		}
+
+		
+		private bool RectsIntersect (Rectangle r, int left, int top, int width, int height)
+		{
+			return !((r.Left > left + width) || (r.Right < left) ||
+					(r.Top > top + height) || (r.Bottom < top));
 		}
 
 		public event TreeViewEventHandler AfterCheck {
