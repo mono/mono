@@ -26,50 +26,162 @@ namespace Mono.CSharp.Debugger
 		protected Hashtable methods = null;
 		protected Hashtable sources = null;
 
-		protected class MySourceInfo
+		protected class SourceFile : ISourceFile
 		{
-			private MyMethodInfo[] _methods;
-			public readonly string FileName;
+			private ISourceMethod[] _methods;
+			private string _file_name;
 
-			public MySourceInfo (string filename)
+			public SourceFile (string filename)
 			{
-				this.FileName = filename;
+				this._file_name = filename;
 
-				this._methods = new MyMethodInfo [0];
+				this._methods = new ISourceMethod [0];
 			}
 
-			public MyMethodInfo[] GetMethods ()
-			{
-				return _methods;
+			// interface ISourceFile
+
+			public string FileName {
+				get {
+					return _file_name;
+				}
 			}
 
-			public void AddMethod (MyMethodInfo method)
+			public ISourceMethod[] Methods {
+				get {
+					return _methods;
+				}
+			}
+
+			public void AddMethod (ISourceMethod method)
 			{
 				int i = _methods.Length;
-				MyMethodInfo[] new_m = new MyMethodInfo [i + 1];
+				ISourceMethod[] new_m = new ISourceMethod [i + 1];
 				Array.Copy (_methods, new_m, i);
 				new_m [i] = method;
 				_methods = new_m;
 			}
 		}
 
-		protected struct MyMethodInfo
+		protected class SourceLine : ISourceLine
 		{
-			public MyMethodInfo (MethodInfo method_info, MySourceInfo source_file) {
-				this.MethodInfo = method_info;
-				this.SourceFile = source_file;
+			public SourceLine (int offset, int line)
+			{
+				this._offset = offset;
+				this._line = line;
+			}
+
+			private readonly int _offset;
+			private readonly int _line;
+
+			// interface ISourceLine
+
+			public int Offset {
+				get {
+					return _offset;
+				}
+			}
+
+			public int Line {
+				get {
+					return _line;
+				}
+			}
+		}
+
+		protected class LocalVariable : ILocalVariable
+		{
+			public LocalVariable (string name, int index)
+			{
+				this._name = name;
+				this._index = index;
+			}
+
+			private readonly string _name;
+			private readonly int _index;
+
+			// interface ILocalVariable
+
+			public string Name {
+				get {
+					return _name;
+				}
+			}
+
+			public int Index {
+				get {
+					return _index;
+				}
+			}
+		}
+
+		protected class SourceMethod : ISourceMethod
+		{
+			private ISourceLine[] _lines;
+			private ILocalVariable[] _locals;
+
+			private readonly MethodInfo _method_info;
+			private readonly SourceFile _source_file;
+
+			public SourceMethod (MethodInfo method_info, SourceFile source_file) {
+				this._method_info = method_info;
+				this._source_file = source_file;
+
+				this._lines = new ISourceLine [0];
+				this._locals = new ILocalVariable [0];
 			}
 
 			public void SetSourceRange (int startLine, int startColumn,
 						    int endLine, int endColumn)
 			{
+				AddLine (new SourceLine (0, startLine));
 			}
 
-			public readonly MethodInfo MethodInfo;
-			public readonly MySourceInfo SourceFile;
+			// interface ISourceMethod
+
+			public ISourceLine[] Lines {
+				get {
+					return _lines;
+				}
+			}
+
+			public ILocalVariable[] Locals {
+				get {
+					return _locals;
+				}
+			}
+
+			public void AddLine (ISourceLine line)
+			{
+				int i = _lines.Length;
+				ISourceLine[] new_m = new ISourceLine [i + 1];
+				Array.Copy (_lines, new_m, i);
+				new_m [i] = line;
+				_lines = new_m;
+			}
+
+			public void AddLocal (ILocalVariable local)
+			{
+				int i = _locals.Length;
+				ILocalVariable[] new_m = new ILocalVariable [i + 1];
+				Array.Copy (_locals, new_m, i);
+				new_m [i] = local;
+				_locals = new_m;
+			}
+
+			public MethodInfo MethodInfo {
+				get {
+					return _method_info;
+				}
+			}
+
+			public ISourceFile SourceFile {
+				get {
+					return _source_file;
+				}
+			}
 		}
 
-		protected Object current_method = null;
+		protected SourceMethod current_method = null;
 
 		//
 		// Interface IMonoSymbolWriter
@@ -133,7 +245,10 @@ namespace Mono.CSharp.Debugger
 						 int startOffset,
 						 int endOffset)
 		{
-			Console.WriteLine ("WRITE LOCAL: " + name + " " + addr1);
+			LocalVariable local_info = new LocalVariable (name, addr1);
+
+			if (current_method != null)
+				current_method.AddLocal (local_info);
 		}
 
 		public void DefineParameter (
@@ -147,14 +262,17 @@ namespace Mono.CSharp.Debugger
 		{
 		}
 
-		public void DefineSequencePoints (
-			ISymbolDocumentWriter document,
-			int[] offsets,
-			int[] lines,
-			int[] columns,
-			int[] endLines,
-			int[] endColumns)
+		public void DefineSequencePoints (ISymbolDocumentWriter document,
+						  int[] offsets,
+						  int[] lines,
+						  int[] columns,
+						  int[] endLines,
+						  int[] endColumns)
 		{
+			SourceLine source_line = new SourceLine (offsets [0], lines [0]);
+
+			if (current_method != null)
+				current_method.AddLine (source_line);
 		}
 
 		public void Initialize (IntPtr emitter, string filename, bool fFullBuild)
@@ -180,21 +298,21 @@ namespace Mono.CSharp.Debugger
 					string source_file)
 		{
 			int token = symbol_token.GetToken ();
-			MySourceInfo source_info;
+			SourceFile source_info;
 
 			if (methods.ContainsKey (token))
 				methods.Remove (token);
 
 			if (sources.ContainsKey (source_file))
-				source_info = (MySourceInfo) sources [source_file];
+				source_info = (SourceFile) sources [source_file];
 			else {
-				source_info = new MySourceInfo (source_file);
+				source_info = new SourceFile (source_file);
 				sources.Add (source_file, source_info);
 			}
 
-			current_method = new MyMethodInfo (method_info, source_info);
+			current_method = new SourceMethod (method_info, source_info);
 
-			source_info.AddMethod ((MyMethodInfo) current_method);
+			source_info.AddMethod (current_method);
 
 			methods.Add (token, current_method);
 
@@ -217,8 +335,10 @@ namespace Mono.CSharp.Debugger
 				throw new NotSupportedException ("startDoc and endDoc must be the same");
 
 			if (current_method != null)
-				((MyMethodInfo) current_method).SetSourceRange (startLine, startColumn,
-									      endLine, endColumn);
+				current_method.SetSourceRange (startLine, startColumn,
+							       endLine, endColumn);
+
+			Console.WriteLine ("SOURCE RANGE");
 		}
 
 		public void CloseMethod () {
@@ -257,16 +377,16 @@ namespace Mono.CSharp.Debugger
 		//
 		// MonoSymbolWriter implementation
 		//
-		protected void WriteMethod (DwarfFileWriter.DieCompileUnit parent_die, MyMethodInfo method)
+		protected void WriteMethod (DwarfFileWriter.DieCompileUnit parent_die, ISourceMethod method)
 		{
 			Console.WriteLine ("WRITING METHOD: " + method.MethodInfo.Name);
 
 			DwarfFileWriter.DieSubProgram die;
 
-			die = new DwarfFileWriter.DieSubProgram (parent_die, method.MethodInfo);
+			die = new DwarfFileWriter.DieSubProgram (parent_die, method);
 		}
 
-		protected void WriteSource (DwarfFileWriter writer, MySourceInfo source)
+		protected void WriteSource (DwarfFileWriter writer, ISourceFile source)
 		{
 			Console.WriteLine ("WRITING SOURCE: " + source.FileName);
 
@@ -275,7 +395,7 @@ namespace Mono.CSharp.Debugger
 
 			DwarfFileWriter.DieCompileUnit die = new DwarfFileWriter.DieCompileUnit (compile_unit);
 
-			foreach (MyMethodInfo method in source.GetMethods ())
+			foreach (ISourceMethod method in source.Methods)
 				WriteMethod (die, method);
 		}
 
@@ -285,7 +405,7 @@ namespace Mono.CSharp.Debugger
 
 			DwarfFileWriter writer = new DwarfFileWriter (filename);
 
-			foreach (MySourceInfo source in sources.Values)
+			foreach (ISourceFile source in sources.Values)
 				WriteSource (writer, source);
 
 			writer.Close ();

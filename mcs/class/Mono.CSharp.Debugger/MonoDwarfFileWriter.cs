@@ -39,8 +39,6 @@ namespace Mono.CSharp.Debugger
 		{
 			this.symbol_file = symbol_file;
 			this.writer = new StreamWriter (symbol_file);
-
-			Console.WriteLine ("WRITING DWARF FILE: " + symbol_file);
 		}
 
 		// Writes the final dwarf file.
@@ -78,7 +76,12 @@ namespace Mono.CSharp.Debugger
 		//
 		public Die CreateType (DieCompileUnit die_compile_unit, Type type)
 		{
-			return new DieBaseType (die_compile_unit, type);
+			if (type.IsPrimitive)
+				return new DieBaseType (die_compile_unit, type);
+			else if (type.IsPointer)
+				return new DiePointerType (die_compile_unit, type.GetElementType ());
+
+			throw new NotSupportedException ("Type " + type + " is not yet supported.");
 		}
 
 		//
@@ -179,6 +182,7 @@ namespace Mono.CSharp.Debugger
 
 		// DWARF tag from the DWARF 2 specification.
 		public enum DW_TAG {
+			TAG_pointer_type	= 0x0f,
 			TAG_compile_unit	= 0x11,
 			TAG_base_type		= 0x24,
 			TAG_subprogram		= 0x2e
@@ -279,9 +283,6 @@ namespace Mono.CSharp.Debugger
 				if (!(o is Die))
 					return false;
 
-				Console.WriteLine ("EQUALS: " + ((Die) o).ReferenceIndex + " " +
-						   ReferenceIndex);
-
 				return ((Die) o).ReferenceIndex == ReferenceIndex;
 			}
 
@@ -295,8 +296,6 @@ namespace Mono.CSharp.Debugger
 			//
 			public virtual void Emit ()
 			{
-				EmitMeta ();
-
 				dw.WriteLabel (ReferenceLabel);
 
 				dw.WriteULeb128 (abbrev_id);
@@ -309,14 +308,6 @@ namespace Mono.CSharp.Debugger
 
 					dw.WriteUInt8 (0);
 				}
-			}
-
-			//
-			// This is called before actually emitting anything.
-			//
-			public virtual void EmitMeta ()
-			{
-				// Do nothing
 			}
 
 			//
@@ -342,6 +333,12 @@ namespace Mono.CSharp.Debugger
 					return (DieCompileUnit) die;
 				else
 					return null;
+			}
+
+			public DieCompileUnit DieCompileUnit {
+				get {
+					return GetCompileUnit ();
+				}
 			}
 		}
 
@@ -378,6 +375,21 @@ namespace Mono.CSharp.Debugger
 				this.compile_unit = compile_unit;
 				this.DoGeneric = dw.DoGeneric;
 				compile_unit.AddDie (this);
+
+				// GDB doesn't support DW_TAG_base_types yet, so we need to
+				// include the types in each compile unit.
+				RegisterType (typeof (bool));
+				RegisterType (typeof (char));
+				RegisterType (typeof (SByte));
+				RegisterType (typeof (Byte));
+				RegisterType (typeof (Int16));
+				RegisterType (typeof (UInt16));
+				RegisterType (typeof (Int32));
+				RegisterType (typeof (UInt32));
+				RegisterType (typeof (Int64));
+				RegisterType (typeof (UInt64));
+				RegisterType (typeof (Single));
+				RegisterType (typeof (Double));
 			}
 
 			// Registers a new type
@@ -394,40 +406,12 @@ namespace Mono.CSharp.Debugger
 
 			public void WriteRelativeDieReference (Die target_die)
 			{
-				Console.WriteLine ("TEST 2: " + this + " " + target_die + " " +
-						   target_die.GetCompileUnit ());
-
 				if (!this.Equals (target_die.GetCompileUnit ()))
 					throw new ArgumentException ("Target die must be in the same "
 								     + "compile unit");
 
 				dw.WriteRelativeReference (compile_unit.ReferenceLabel,
 							   target_die.ReferenceLabel);
-			}
-
-			public void WriteTypeReference (Type type)
-			{
-				Die type_die = RegisterType (type);
-				WriteRelativeDieReference (type_die);
-			}
-
-			public override void EmitMeta ()
-			{
-				// GDB doesn't support DW_TAG_base_types yet, so we need to
-				// include the types in each compile unit.
-				RegisterType (typeof (void));
-				RegisterType (typeof (bool));
-				RegisterType (typeof (char));
-				RegisterType (typeof (SByte));
-				RegisterType (typeof (Byte));
-				RegisterType (typeof (Int16));
-				RegisterType (typeof (UInt16));
-				RegisterType (typeof (Int32));
-				RegisterType (typeof (UInt32));
-				RegisterType (typeof (Int64));
-				RegisterType (typeof (UInt64));
-				RegisterType (typeof (Single));
-				RegisterType (typeof (Double));
 			}
 
 			public override void DoEmit ()
@@ -494,38 +478,41 @@ namespace Mono.CSharp.Debugger
 			}
 
 			private static int get_abbrev_id (DieCompileUnit parent_die,
-							  MethodInfo method_info)
+							  ISourceMethod method)
 			{
 				if (parent_die.DoGeneric)
-					if (method_info.ReturnType == typeof (void))
+					if (method.MethodInfo.ReturnType == typeof (void))
 						return my_abbrev_id_3;
 					else
 						return my_abbrev_id_4;
 				else
-					if (method_info.ReturnType == typeof (void))
+					if (method.MethodInfo.ReturnType == typeof (void))
 						return my_abbrev_id_1;
 					else
 						return my_abbrev_id_2;
 			}
 
-			protected MethodInfo method_info;
-			protected DieCompileUnit comp_unit_die;
+			protected ISourceMethod method;
+			protected Die retval_die;
 
 			//
 			// Create a new DW_TAG_subprogram debugging information entry
 			// for method @name (which has a void return value) and add it
 			// to the @parent_die
 			//
-			public DieSubProgram (DieCompileUnit parent_die, MethodInfo method_info)
-				: base (parent_die, get_abbrev_id (parent_die, method_info))
+			public DieSubProgram (DieCompileUnit parent_die, ISourceMethod method)
+				: base (parent_die, get_abbrev_id (parent_die, method))
 			{
-				this.method_info = method_info;
-				this.comp_unit_die = parent_die;
+				this.method = method;
+
+				if (method.MethodInfo.ReturnType != typeof (void))
+					retval_die = DieCompileUnit.RegisterType (
+						method.MethodInfo.ReturnType);
 			}
 
 			public override void DoEmit ()
 			{
-				dw.WriteString (method_info.Name);
+				dw.WriteString (method.MethodInfo.Name);
 				dw.WriteFlag (true);
 				if (dw.DoGeneric)
 					dw.WriteFlag (true);
@@ -535,8 +522,8 @@ namespace Mono.CSharp.Debugger
 					dw.AddRelocEntry (RelocEntryType.IL_OFFSET);
 					dw.WriteAddress (0);
 				}
-				if (method_info.ReturnType != typeof (void))
-					comp_unit_die.WriteTypeReference (method_info.ReturnType);
+				if (method.MethodInfo.ReturnType != typeof (void))
+					DieCompileUnit.WriteRelativeDieReference (retval_die);
 			}
 		}
 
@@ -646,6 +633,41 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
+		// DW_TAG_pointer_type
+		public class DiePointerType : Die
+		{
+			private static int my_abbrev_id;
+
+			static DiePointerType ()
+			{
+				AbbrevEntry[] entries = {
+					new AbbrevEntry (DW_AT.AT_type, DW_FORM.FORM_ref4)
+				};
+
+				AbbrevDeclaration decl = new AbbrevDeclaration (
+					DW_TAG.TAG_pointer_type, false, entries);
+
+				my_abbrev_id = RegisterAbbrevDeclaration (decl);
+			}
+
+			protected Type type;
+			protected Die type_die;
+
+			//
+			// Create a new type DIE describing a pointer to @type.
+			//
+			public DiePointerType (DieCompileUnit parent_die, Type type)
+				: base (parent_die, my_abbrev_id)
+			{
+				this.type = type;
+				type_die = DieCompileUnit.RegisterType (type);
+			}
+
+			public override void DoEmit ()
+			{
+				DieCompileUnit.WriteRelativeDieReference (type_die);
+			}
+		}
 
 		protected const int reloc_table_version = 1;
 
