@@ -495,13 +495,16 @@ namespace System {
 			return Load (rawAssembly, rawSymbolStore, new Evidence ());
 		}
 
-		[MonoTODO]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern Assembly LoadAssemblyRaw (byte[] rawAssembly, byte[] rawSymbolStore,
+		    					 Evidence securityEvidence);
+
 		public Assembly Load (byte[] rawAssembly, byte[] rawSymbolStore, Evidence securityEvidence)
 		{
 			if (rawAssembly == null)
 				throw new ArgumentNullException ("rawAssembly");
 				
-			throw new NotImplementedException ();
+			return LoadAssemblyRaw (rawAssembly, rawSymbolStore, securityEvidence);
 		}
 			
 		[MonoTODO]
