@@ -1,3 +1,7 @@
+2004-12-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Assembly.cs: Removed old Demand support (moved in System.Security).
+
 2004-12-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* CustomAttributeData.cs MethodBody.cs: Reenable some 2.0 code now that

@@ -56,7 +56,7 @@ namespace System.Reflection {
 
 		private ResolveEventHolder resolve_event_holder;
 		private Evidence _evidence;
-		internal PermissionSet _minimum;		// for SecurityAction.RequestMinimum
+		internal PermissionSet _minimum;	// for SecurityAction.RequestMinimum
 		internal PermissionSet _optional;	// for SecurityAction.RequestOptional
 		internal PermissionSet _refuse;		// for SecurityAction.RequestRefuse
 		private PermissionSet _granted;		// for the resolved assembly granted permissions
@@ -712,9 +712,18 @@ namespace System.Reflection {
 					_refuse, out _denied);
 			}
 #if false
+			Console.WriteLine ("*** ASSEMBLY RESOLVE INPUT ***");
+			if (_minimum != null)
+				Console.WriteLine ("Minimum: {0}", _minimum);
+			if (_optional != null)
+				Console.WriteLine ("Optional: {0}", _optional);
+			if (_refuse != null)
+				Console.WriteLine ("Refuse: {0}", _refuse);
+			Console.WriteLine ("*** ASSEMBLY RESOLVE RESULTS ***");
 			Console.WriteLine ("Granted: {0}", _granted);
 			if (_denied != null)
 				Console.WriteLine ("Denied: {0}", _denied);
+			Console.WriteLine ("*** ASSEMBLY RESOLVE END ***");
 #endif
 		}
 
@@ -735,65 +744,6 @@ namespace System.Reflection {
 				}
 				return _denied;
 			}
-		}
-
-		// Result isn't affected by overrides (like Assert, Deny and PermitOnly)
-		internal bool Demand (IPermission p) 
-		{
-			Type t = p.GetType ();
-
-			// have we been explicitely denied this permission ?
-			if (_denied != null) {
-				IPermission denied = _denied.GetPermission (t);
-				if (denied != null) {
-					if (p.IsSubsetOf (denied))
-						return false;
-				}
-			}
-
-			// is it part of the optional permissions requested by the assembly ?
-			if (_optional != null) {
-				IPermission optional = _optional.GetPermission (t);
-				if (optional != null) {
-					// there is! so we can only request a subset of it
-					if (!p.IsSubsetOf (optional))
-						return false;
-				}
-			}
-
-			// don't check IUnrestrictedPermission if we have "Full Trust"
-			// note: that won't work for code identity permissions (e.g. Zone)
-			if ((p is IUnrestrictedPermission) && GrantedPermissionSet.IsUnrestricted ())
-				return true;
-
-			// finally does the resolved policy allow this requested permission ?
-			IPermission granted = GrantedPermissionSet.GetPermission (t);
-			if (granted != null) {
-				if (!p.IsSubsetOf (granted))
-					return false;
-			}
-			return true;
-		}
-
-		// Result isn't affected by overrides (like Assert, Deny and PermitOnly)
-		internal bool Demand (PermissionSet ps) 
-		{
-			// have we been explicitely denied this permission ?
-			if (DeniedPermissionSet != null) {
-				if (ps.IsSubsetOf (DeniedPermissionSet)) {
-					return false;
-				}
-			}
-
-			// is it part of the optional permissions requested by the assembly ?
-			if (_optional != null) {
-				// there is! so we can only request a subset of it
-				if (!ps.IsSubsetOf (_optional)) {
-					return false;
-				}
-			}
-
-			return ps.IsSubsetOf (GrantedPermissionSet);
 		}
 	}
 }
