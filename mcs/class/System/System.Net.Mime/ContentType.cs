@@ -55,6 +55,12 @@ namespace System.Net.Mime {
 		public ContentType (string contentType)
 		{
 			this.contentType = contentType;
+
+			int index = contentType.IndexOf (";");
+			if (index > 0)
+				this.mediaType = contentType.Substring (0, index);
+			else
+				this.mediaType = contentType;
 		}
 
 		#endregion // Constructors
@@ -109,7 +115,14 @@ namespace System.Net.Mime {
 		{
 			if (contentType != null)
 				return contentType;
-			return String.Format ("{0}; Charset={1}; Name={2}", MediaType, CharSet, Name);
+			string output = MediaType;
+			if (CharSet != null)
+				output += String.Format ("; charset={0}", CharSet);
+			if (Name != null)
+				output += String.Format ("; name={0}", Name);
+			if (Boundary != null)
+				output += String.Format ("; boundary={0}", Boundary);
+			return output;
 		}
 
 		#endregion // Methods
