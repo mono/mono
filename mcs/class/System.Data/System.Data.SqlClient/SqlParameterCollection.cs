@@ -14,16 +14,12 @@ using System.Data;
 using System.Data.Common;
 using System.Collections;
 
-namespace System.Data.SqlClient
-{
+namespace System.Data.SqlClient {
 	/// <summary>
 	/// Collects all parameters relevant to a Command object 
 	/// and their mappings to DataSet columns.
 	/// </summary>
-	// public sealed class SqlParameterCollection : MarshalByRefObject,
-	// IDataParameterCollection, IList, ICollection, IEnumerable
-	public sealed class SqlParameterCollection : IDataParameterCollection,
-		IList
+	public sealed class SqlParameterCollection : MarshalByRefObject, IDataParameterCollection, IList, ICollection, IEnumerable
 	{
 		private ArrayList parameterList = new ArrayList();
 

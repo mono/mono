@@ -8,22 +8,10 @@
 //
 // (C) Ximian, Inc 2002 http://www.ximian.com/
 // (C) Daniel Morgan, 2002
-// (C) Copyright 2002 Tim Coleman
-//
-// Credits:
-//    SQL and concepts were used from libgda 0.8.190 (GNOME Data Access)
-//    http://www.gnome-db.org/
-//    with permission from the authors of the
-//    PostgreSQL provider in libgda:
-//        Michael Lausch <michael@lausch.at>
-//        Rodrigo Moya <rodrigo@gnome-db.org>
-//        Vivien Malerba <malerba@gnome-db.org>
-//        Gonzalo Paniagua Javier <gonzalo@gnome-db.org>
+// Copyright (C) Tim Coleman, 2002
 //
 
-// use #define DEBUG_SqlCommand if you want to spew debug messages
-// #define DEBUG_SqlCommand
-
+using Mono.Data.TdsClient.Internal;
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -34,26 +22,19 @@ using System.Text;
 using System.Xml;
 
 namespace System.Data.SqlClient {
-	/// <summary>
-	/// Represents a SQL statement that is executed 
-	/// while connected to a SQL database.
-	/// </summary>
-	// public sealed class SqlCommand : Component, IDbCommand, ICloneable
-	public sealed class SqlCommand : IDbCommand {
-
+	public sealed class SqlCommand : Component, IDbCommand, ICloneable
+	{
 		#region Fields
 
-		private string sql = "";
-		private int timeout = 30; 
-		// default is 30 seconds 
-		// for command execution
+		int commandTimeout;
+		bool designTimeVisible;
+		string commandText;
 
-		private SqlConnection conn = null;
-		private SqlTransaction trans = null;
-		private CommandType cmdType = CommandType.Text;
-		private bool designTime = false;
-		private SqlParameterCollection parmCollection = new 
-			SqlParameterCollection();
+		CommandType commandType;
+		SqlConnection connection;
+		SqlTransaction transaction;
+
+		SqlParameterCollection parameters = new SqlParameterCollection ();
 
 		// SqlDataReader state data for ExecuteReader()
 		private SqlDataReader dataReader = null;
@@ -61,868 +42,229 @@ namespace System.Data.SqlClient {
 		private int currentQuery = -1;
 		private CommandBehavior cmdBehavior = CommandBehavior.Default;
 
-		private ParmUtil parmUtil = null;
-		
 		#endregion // Fields
 
 		#region Constructors
 
-		public SqlCommand() {
-			sql = "";
+		public SqlCommand() 
+			: this (String.Empty, null, null)
+		{
 		}
 
-		public SqlCommand (string cmdText) {
-			sql = cmdText;
+		public SqlCommand (string commandText) 
+			: this (commandText, null, null)
+		{
+			commandText = commandText;
 		}
 
-		public SqlCommand (string cmdText, SqlConnection connection) {
-			sql = cmdText;
-			conn = connection;
+		public SqlCommand (string commandText, SqlConnection connection) 
+			: this (commandText, connection, null)
+		{
+			Connection = connection;
 		}
 
-		public SqlCommand (string cmdText, SqlConnection connection, 
-			SqlTransaction transaction) {
-			sql = cmdText;
-			conn = connection;
-			trans = transaction;
+		public SqlCommand (string commandText, SqlConnection connection, SqlTransaction transaction) 
+		{
+			this.commandText = commandText;
+			this.connection = connection;
+			this.transaction = transaction;
+			this.commandType = CommandType.Text;
+			this.designTimeVisible = false;
+			this.commandTimeout = 30;
 		}
 
 		#endregion // Constructors
 
-		#region Methods
-
-		[MonoTODO]
-		public void Cancel () {
-			// FIXME: use non-blocking Exec for this
-			throw new NotImplementedException ();
-		}
-
-		// FIXME: is this the correct way to return a stronger type?
-		[MonoTODO]
-		IDbDataParameter IDbCommand.CreateParameter () {
-			return CreateParameter ();
-		}
-
-		[MonoTODO]
-		public SqlParameter CreateParameter () {
-			return new SqlParameter ();
-		}
-
-		public int ExecuteNonQuery () {	
-			IntPtr pgResult; // PGresult
-			int rowsAffected = -1;
-			ExecStatusType execStatus;
-			String rowsAffectedString;
-			string query;
-
-			if(conn.State != ConnectionState.Open)
-				throw new InvalidOperationException(
-					"ConnnectionState is not Open");
-
-			query = TweakQuery(sql, cmdType);
-
-			// FIXME: PQexec blocks 
-			// while PQsendQuery is non-blocking
-			// which is better to use?
-			// int PQsendQuery(PGconn *conn,
-			//        const char *query);
-
-			// execute SQL command
-			// uses internal property to get the PGConn IntPtr
-			pgResult = PostgresLibrary.
-				PQexec (conn.PostgresConnection, query);
-
-			execStatus = PostgresLibrary.
-				PQresultStatus (pgResult);
-			
-			if(execStatus == ExecStatusType.PGRES_COMMAND_OK ||
-				execStatus == ExecStatusType.PGRES_TUPLES_OK ) {
-
-				rowsAffectedString = PostgresLibrary.
-					PQcmdTuples (pgResult);
-
-				if(rowsAffectedString != null)
-					if(rowsAffectedString.Equals("") == false)
-						rowsAffected = int.Parse(rowsAffectedString);
-
-				PostgresLibrary.PQclear (pgResult);
-				pgResult = IntPtr.Zero;
-			}
-			else {
-				String errorMessage;
-				
-				errorMessage = PostgresLibrary.
-					PQresStatus(execStatus);
-
-				errorMessage += " " + PostgresLibrary.
-					PQresultErrorMessage(pgResult);
-
-				PostgresLibrary.PQclear (pgResult);
-				pgResult = IntPtr.Zero;
-
-				throw new SqlException(0, 0,
-					errorMessage, 0, "",
-					conn.DataSource, "SqlCommand", 0);
-			}
-			
-			return rowsAffected;
-		}
-		
-		[MonoTODO]
-		IDataReader IDbCommand.ExecuteReader () {
-			return ExecuteReader ();
-		}
-
-		[MonoTODO]
-		public SqlDataReader ExecuteReader () {
-			return ExecuteReader(CommandBehavior.Default);
-		}
-
-		[MonoTODO]
-		IDataReader IDbCommand.ExecuteReader (
-			CommandBehavior behavior) {
-			return ExecuteReader (behavior);
-		}
-
-		[MonoTODO]
-		public SqlDataReader ExecuteReader (CommandBehavior behavior) 
-		{
-			if(conn.State != ConnectionState.Open)
-				throw new InvalidOperationException(
-					"ConnectionState is not Open");
-
-			cmdBehavior = behavior;
-
-			queries = null;
-			currentQuery = -1;
-			dataReader = new SqlDataReader(this);
-
-			queries = sql.Split(new Char[] {';'});			
-
-			dataReader.NextResult();
-					
-			return dataReader;
-		}
-
-		internal SqlResult NextResult() 
-		{
-			SqlResult res = new SqlResult();
-			res.Connection = this.Connection;
-			res.Behavior = cmdBehavior;
-			string statement;
-		
-			currentQuery++;
-
-			res.CurrentQuery = currentQuery;
-
-			if(currentQuery < queries.Length && queries[currentQuery].Equals("") == false) {
-				res.SQL = queries[currentQuery];
-				statement = TweakQuery(queries[currentQuery], cmdType);
-				ExecuteQuery(statement, res);
-				res.ResultReturned = true;
-			}
-			else {
-				res.ResultReturned = false;
-			}
-
-			return res;
-		}
-
-		private string TweakQuery(string query, CommandType commandType) {
-			string statement = "";
-			StringBuilder td;
-
-#if DEBUG_SqlCommand
-			Console.WriteLine("---------[][] TweakQuery() [][]--------");
-			Console.WriteLine("CommandType: " + commandType + " CommandBehavior: " + cmdBehavior);
-			Console.WriteLine("SQL before command type: " + query);
-#endif						
-			// finish building SQL based on CommandType
-			switch(commandType) {
-			case CommandType.Text:
-				statement = query;
-				break;
-			case CommandType.StoredProcedure:
-				statement = 
-					"SELECT " + query + "()";
-				break;
-			case CommandType.TableDirect:
-				// NOTE: this is for the PostgreSQL provider
-				//       and for OleDb, according to the docs,
-				//       an exception is thrown if you try to use
-				//       this with SqlCommand
-				string[] directTables = query.Split(
-					new Char[] {','});	
-										 
-				td = new StringBuilder("SELECT * FROM ");
-				
-				for(int tab = 0; tab < directTables.Length; tab++) {
-					if(tab > 0)
-						td.Append(',');
-					td.Append(directTables[tab]);
-					// FIXME: if multipe tables, how do we
-					//        join? based on Primary/Foreign Keys?
-					//        Otherwise, a Cartesian Product happens
-				}
-				statement = td.ToString();
-				break;
-			default:
-				// FIXME: throw an exception?
-				statement = query;
-				break;
-			}
-#if DEBUG_SqlCommand			
-			Console.WriteLine("SQL after command type: " + statement);
-#endif
-			// TODO: this parameters utility
-			//       currently only support input variables
-			//       need todo output, input/output, and return.
-#if DEBUG_SqlCommand
-			Console.WriteLine("using ParmUtil in TweakQuery()...");
-#endif
-			parmUtil = new ParmUtil(statement, parmCollection);
-#if DEBUG_SqlCommand
-			Console.WriteLine("ReplaceWithParms...");
-#endif
-
-			statement = parmUtil.ReplaceWithParms();
-
-#if DEBUG_SqlCommand
-			Console.WriteLine("SQL after ParmUtil: " + statement);
-#endif	
-			return statement;
-		}
-
-		private void ExecuteQuery (string query, SqlResult res)
-		{			
-			IntPtr pgResult;
-		
-			ExecStatusType execStatus;	
-
-			if(conn.State != ConnectionState.Open)
-				throw new InvalidOperationException(
-					"ConnectionState is not Open");
-
-			// FIXME: PQexec blocks 
-			// while PQsendQuery is non-blocking
-			// which is better to use?
-			// int PQsendQuery(PGconn *conn,
-			//        const char *query);
-
-			// execute SQL command
-			// uses internal property to get the PGConn IntPtr
-			pgResult = PostgresLibrary.
-				PQexec (conn.PostgresConnection, query);
-
-			execStatus = PostgresLibrary.
-				PQresultStatus (pgResult);
-			
-			res.ExecStatus = execStatus;
-
-			if(execStatus == ExecStatusType.PGRES_TUPLES_OK ||
-				execStatus == ExecStatusType.PGRES_COMMAND_OK) {
-
-				res.BuildTableSchema(pgResult);
-			}
-			else {
-				String errorMessage;
-				
-				errorMessage = PostgresLibrary.
-					PQresStatus(execStatus);
-
-				errorMessage += " " + PostgresLibrary.
-					PQresultErrorMessage(pgResult);
-
-				PostgresLibrary.PQclear (pgResult);
-				pgResult = IntPtr.Zero;
-
-				throw new SqlException(0, 0,
-					errorMessage, 0, "",
-					conn.DataSource, "SqlCommand", 0);
-			}
-		}
-
-		// since SqlCommand has resources so SqlDataReader
-		// can do Read() and NextResult(), need to free
-		// those resources.  Also, need to allow this SqlCommand
-		// and this SqlConnection to do things again.
-		internal void CloseReader() {
-			dataReader = null;
-			queries = null;
-
-			if((cmdBehavior & CommandBehavior.CloseConnection) == CommandBehavior.CloseConnection) {
-				conn.CloseReader(true);
-			}
-			else {
-				conn.CloseReader(false);
-			}
-		}
-
-		// only meant to be used between SqlConnectioin,
-		// SqlCommand, and SqlDataReader
-		internal void OpenReader(SqlDataReader reader) {
-			conn.OpenReader(reader);
-		}
-
-		/// <summary>
-		/// ExecuteScalar is used to retrieve one object
-		/// from one result set 
-		/// that has one row and one column.
-		/// It is lightweight compared to ExecuteReader.
-		/// </summary>
-		[MonoTODO]
-		public object ExecuteScalar () {
-			IntPtr pgResult; // PGresult
-			ExecStatusType execStatus;	
-			object obj = null; // return
-			int nRow = 0; // first row
-			int nCol = 0; // first column
-			String value;
-			int nRows;
-			int nFields;
-			string query;
-
-			if(conn.State != ConnectionState.Open)
-				throw new InvalidOperationException(
-					"ConnnectionState is not Open");
-
-			query = TweakQuery(sql, cmdType);
-
-			// FIXME: PQexec blocks 
-			// while PQsendQuery is non-blocking
-			// which is better to use?
-			// int PQsendQuery(PGconn *conn,
-			//        const char *query);
-
-			// execute SQL command
-			// uses internal property to get the PGConn IntPtr
-			pgResult = PostgresLibrary.
-				PQexec (conn.PostgresConnection, query);
-
-			execStatus = PostgresLibrary.
-				PQresultStatus (pgResult);
-			if(execStatus == ExecStatusType.PGRES_COMMAND_OK) {
-				// result was a SQL Command 
-
-				// close result set
-				PostgresLibrary.PQclear (pgResult);
-				pgResult = IntPtr.Zero;
-
-				return null; // return null reference
-			}
-			else if(execStatus == ExecStatusType.PGRES_TUPLES_OK) {
-				// result was a SQL Query
-
-				nRows = PostgresLibrary.
-					PQntuples(pgResult);
-
-				nFields = PostgresLibrary.
-					PQnfields(pgResult);
-
-				if(nRows > 0 && nFields > 0) {
-
-					// get column name
-					//String fieldName;
-					//fieldName = PostgresLibrary.
-					//	PQfname(pgResult, nCol);
-
-					int oid;
-					string sType;
-					DbType dbType;
-					// get PostgreSQL data type (OID)
-					oid = PostgresLibrary.
-						PQftype(pgResult, nCol);
-					sType = PostgresHelper.
-						OidToTypname (oid, conn.Types);
-					dbType = PostgresHelper.
-						TypnameToSqlDbType(sType);
-
-					int definedSize;
-					// get defined size of column
-					definedSize = PostgresLibrary.
-						PQfsize(pgResult, nCol);
-
-					// get data value
-					value = PostgresLibrary.
-						PQgetvalue(
-						pgResult,
-						nRow, nCol);
-
-					int columnIsNull;
-					// is column NULL?
-					columnIsNull = PostgresLibrary.
-						PQgetisnull(pgResult,
-						nRow, nCol);
-
-					int actualLength;
-					// get Actual Length
-					actualLength = PostgresLibrary.
-						PQgetlength(pgResult,
-						nRow, nCol);
-						
-					obj = PostgresHelper.
-						ConvertDbTypeToSystem (
-						dbType,
-						value);
-				}
-
-				// close result set
-				PostgresLibrary.PQclear (pgResult);
-				pgResult = IntPtr.Zero;
-
-			}
-			else {
-				String errorMessage;
-				
-				errorMessage = PostgresLibrary.
-					PQresStatus(execStatus);
-
-				errorMessage += " " + PostgresLibrary.
-					PQresultErrorMessage(pgResult);
-
-				PostgresLibrary.PQclear (pgResult);
-				pgResult = IntPtr.Zero;
-
-				throw new SqlException(0, 0,
-					errorMessage, 0, "",
-					conn.DataSource, "SqlCommand", 0);
-			}
-					
-			return obj;
-		}
-
-		[MonoTODO]
-		public XmlReader ExecuteXmlReader () {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void Prepare () {
-			// FIXME: parameters have to be implemented for this
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public SqlCommand Clone () {
-			throw new NotImplementedException ();
-		}
-
-		#endregion // Methods
-
 		#region Properties
 
 		public string CommandText {
-			get { 
-				return sql; 
-			}
-
-			set { 
-				sql = value; 
-			}
+			get { return CommandText; }
+			set { commandText = value; }
 		}
 
 		public int CommandTimeout {
-			get { 
-				return timeout;  
-			}
-			
-			set {
-				// FIXME: if value < 0, throw
-				// ArgumentException
-				// if (value < 0)
-				//	throw ArgumentException;
-				timeout = value;
+			get { return commandTimeout;  }
+			set { 
+				if (commandTimeout < 0)
+					throw new ArgumentException ("The property value assigned is less than 0.");
+				commandTimeout = value; 
 			}
 		}
 
 		public CommandType CommandType	{
-			get {
-				return cmdType;
-			}
-
-			set { 
-				cmdType = value;
-			}
+			get { return commandType; }
+			[MonoTODO ("Validate")]
+			set { commandType = value; }
 		}
 
-		// FIXME: for property Connection, is this the correct
-		//        way to handle a return of a stronger type?
-		IDbConnection IDbCommand.Connection {
-			get { 
-				return Connection;
-			}
-
-			set { 
-				// FIXME: throw an InvalidOperationException
-				// if the change was during a 
-				// transaction in progress
-
-				// csc
-				Connection = (SqlConnection) value; 
-				// mcs
-				// Connection = value; 
-				
-				// FIXME: set Transaction property to null
-			}
-		}
-		
 		public SqlConnection Connection {
-			get { 
-				// conn defaults to null
-				return conn;
-			}
-
+			get { return connection; }
 			set { 
-				// FIXME: throw an InvalidOperationException
-				// if the change was during 
-				// a transaction in progress
-				conn = value; 
-				// FIXME: set Transaction property to null
+				if (transaction != null && connection.Transaction != null && connection.Transaction.IsOpen)
+					throw new InvalidOperationException ("The Connection property was changed while a transaction was in progress.");
+				transaction = null;
+				connection = value; 
 			}
 		}
 
 		public bool DesignTimeVisible {
-			get {
-				return designTime;
-			} 
-			
-			set{
-				designTime = value;
-			}
-		}
-
-		// FIXME; for property Parameters, is this the correct
-		//        way to handle a stronger return type?
-		IDataParameterCollection IDbCommand.Parameters	{
-			get { 
-				return Parameters;
-			}
+			get { return designTimeVisible; } 
+			set { designTimeVisible = value; }
 		}
 
 		public SqlParameterCollection Parameters {
-			get { 
-				return parmCollection;
+			get { return parameters; }
+		}
+
+		internal ITds Tds {
+			get { return connection.Tds; }
+		}
+
+		IDbConnection IDbCommand.Connection {
+			get { return Connection; }
+			set { 
+				if (!(value is SqlConnection))
+					throw new InvalidCastException ("The value was not a valid SqlConnection.");
+				Connection = (SqlConnection) value;
 			}
 		}
 
-		// FIXME: for property Transaction, is this the correct
-		//        way to handle a return of a stronger type?
-		IDbTransaction IDbCommand.Transaction 	{
-			get { 
-				return Transaction;
-			}
+		IDataParameterCollection IDbCommand.Parameters	{
+			get { return Parameters; }
+		}
 
+		IDbTransaction IDbCommand.Transaction {
+			get { return Transaction; }
 			set { 
-				// FIXME: error handling - do not allow
-				// setting of transaction if transaction
-				// has already begun
-
-				// csc
-				Transaction = (SqlTransaction) value;
-				// mcs
-				// Transaction = value; 
+				if (!(value is SqlTransaction))
+					throw new ArgumentException ();
+				Transaction = (SqlTransaction) value; 
 			}
 		}
 
 		public SqlTransaction Transaction {
-			get { 
-				return trans; 
-			}
-
-			set { 
-				// FIXME: error handling
-				trans = value; 
-			}
+			get { return transaction; }
+			set { transaction = value; }
 		}	
 
 		[MonoTODO]
 		public UpdateRowSource UpdatedRowSource	{
-			// FIXME: do this once DbDataAdaptor 
-			// and DataRow are done
-			get { 		
-				throw new NotImplementedException (); 
-			}
-			set { 
-				throw new NotImplementedException (); 
-			}
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
 		}
 
-		#endregion // Properties
+		#endregion // Fields
 
-		#region Inner Classes
+		#region Methods
 
-		#endregion // Inner Classes
+		public void Cancel () 
+		{
+			if (connection == null || connection.Tds == null)
+				return;
+			connection.Tds.Cancel ();
+		}
 
-		#region Destructors
+		public SqlParameter CreateParameter () 
+		{
+			return new SqlParameter ();
+		}
+
+		public int ExecuteNonQuery ()
+		{
+			if (connection == null)
+				throw new InvalidOperationException ("ExecuteNonQuery requires a Connection object to continue.");
+			if (connection.Transaction != null && transaction != connection.Transaction)
+				throw new InvalidOperationException ("The Connection object does not have the same transaction as the command object.");
+			if (connection.State != ConnectionState.Open)
+				throw new InvalidOperationException ("ExecuteNonQuery requires an open Connection object to continue. This connection is closed.");
+			if (commandText == String.Empty || commandText == null)
+				throw new InvalidOperationException ("The command text for this Command has not been set.");
+			return connection.Tds.ExecuteNonQuery (FormatQuery (commandText, commandType));
+		}
+
+		public SqlDataReader ExecuteReader ()
+		{
+			return ExecuteReader (CommandBehavior.Default);
+		}
+
+		public SqlDataReader ExecuteReader (CommandBehavior behavior)
+		{
+			if (connection == null)
+				throw new InvalidOperationException ("ExecuteReader requires a Connection object to continue.");
+			if (connection.Transaction != null && transaction != connection.Transaction)
+				throw new InvalidOperationException ("The Connection object does not have the same transaction as the command object.");
+			if (connection.State != ConnectionState.Open)
+				throw new InvalidOperationException ("ExecuteReader requires an open Connection object to continue. This connection is closed.");
+			if (commandText == String.Empty || commandText == null)
+				throw new InvalidOperationException ("The command text for this Command has not been set.");
+			connection.Tds.ExecuteQuery (FormatQuery (commandText, commandType));
+			connection.DataReaderOpen = true;
+			return new SqlDataReader (this);
+		}
 
 		[MonoTODO]
-		public void Dispose() {
-			// FIXME: need proper way to release resources
-			// Dispose(true);
+		public object ExecuteScalar ()
+		{
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		~SqlCommand() {
-			// FIXME: need proper way to release resources
-			// Dispose(false);
+		public XmlReader ExecuteXmlReader ()
+		{
+			throw new NotImplementedException ();
 		}
 
-		#endregion //Destructors
-	}
-
-	// SqlResult is used for passing Result Set data 
-	// from SqlCommand to SqlDataReader
-	internal class SqlResult {
-
-		private DataTable dataTableSchema = null; // only will contain the schema
-		private IntPtr pg_result = IntPtr.Zero; // native PostgreSQL PGresult
-		private int rowCount = 0; 
-		private int fieldCount = 0;
-		private string[] pgtypes = null; // PostgreSQL types (typname)
-		private bool resultReturned = false;
-		private SqlConnection con = null;
-		private int rowsAffected = -1;
-		private ExecStatusType execStatus = ExecStatusType.PGRES_FATAL_ERROR;
-		private int currentQuery = -1;
-		private string sql = "";
-		private CommandBehavior cmdBehavior = CommandBehavior.Default;
-
-		internal CommandBehavior Behavior {
-			get {
-				return cmdBehavior;
-			}
-			set {
-				cmdBehavior = value;
+		static string FormatQuery (string commandText, CommandType commandType)
+		{
+			switch (commandType) {
+			case CommandType.Text :
+				return commandText;
+			case CommandType.TableDirect :
+				return String.Format ("SELECT * FROM {0}", commandText);
+			case CommandType.StoredProcedure :
+				return String.Format ("EXEC {0}", commandText);
+			default:
+				throw new InvalidOperationException ("The CommandType was not recognized.");
 			}
 		}
 
-		internal string SQL {
-			get {
-				return sql;
-			}
-			set {
-				sql = value;
-			}
+		[MonoTODO]
+		object ICloneable.Clone ()
+		{
+			throw new NotImplementedException ();
 		}
 
-		internal ExecStatusType ExecStatus {
-			get {
-				return execStatus;
-			}
-			set {
-				execStatus = value;
-			}
+		IDbDataParameter IDbCommand.CreateParameter ()
+		{
+			return CreateParameter ();
 		}
 
-		internal int CurrentQuery {
-			get {
-				return currentQuery;
-			}
-
-			set {
-				currentQuery = value;
-			}
-
+		IDataReader IDbCommand.ExecuteReader ()
+		{
+			return ExecuteReader ();
 		}
 
-		internal SqlConnection Connection {
-			get {
-				return con;
-			}
-
-			set {
-				con = value;
-			}
+		IDataReader IDbCommand.ExecuteReader (CommandBehavior behavior)
+		{
+			return ExecuteReader (behavior);
 		}
 
-		internal int RecordsAffected {
-			get {
-				return rowsAffected;
-			}
+		void IDisposable.Dispose ()
+		{
+			Dispose (true);
 		}
 
-		internal bool ResultReturned {
-			get {
-				return resultReturned;
-			}
-			set {
-				resultReturned = value;
-			}
+		[MonoTODO]
+		public void Prepare ()
+		{
+			throw new NotImplementedException ();
 		}
 
-		internal DataTable Table {
-			get { 
-				return dataTableSchema;
-			}
+		public void ResetCommandTimeout ()
+		{
+			commandTimeout = 30;
 		}
 
-		internal IntPtr PgResult {
-			get {
-				return pg_result;
-			}
-		}
-
-		internal int RowCount {
-			get {
-				return rowCount;
-			}
-		}
-
-		internal int FieldCount {
-			get {
-				return fieldCount;
-			}
-		}
-
-		internal string[] PgTypes {
-			get {
-				return pgtypes;
-			}
-		}
-
-		internal void BuildTableSchema (IntPtr pgResult) {
-			pg_result = pgResult;
-			
-			// need to set IDataReader.RecordsAffected property
-			string rowsAffectedString;
-			rowsAffectedString = PostgresLibrary.
-				PQcmdTuples (pgResult);
-			if(rowsAffectedString != null)
-				if(rowsAffectedString.Equals("") == false)
-					rowsAffected = int.Parse(rowsAffectedString);
-			
-			// Only Results from SQL SELECT Queries 
-			// get a DataTable for schema of the result
-			// otherwise, DataTable is null reference
-			if(execStatus == ExecStatusType.PGRES_TUPLES_OK) {
-
-				dataTableSchema = new DataTable ();
-				dataTableSchema.Columns.Add ("ColumnName", typeof (string));
-				dataTableSchema.Columns.Add ("ColumnOrdinal", typeof (int));
-				dataTableSchema.Columns.Add ("ColumnSize", typeof (int));
-				dataTableSchema.Columns.Add ("NumericPrecision", typeof (int));
-				dataTableSchema.Columns.Add ("NumericScale", typeof (int));
-				dataTableSchema.Columns.Add ("IsUnique", typeof (bool));
-				dataTableSchema.Columns.Add ("IsKey", typeof (bool));
-				DataColumn dc = dataTableSchema.Columns["IsKey"];
-				dc.AllowDBNull = true; // IsKey can have a DBNull
-				dataTableSchema.Columns.Add ("BaseCatalogName", typeof (string));
-				dataTableSchema.Columns.Add ("BaseColumnName", typeof (string));
-				dataTableSchema.Columns.Add ("BaseSchemaName", typeof (string));
-				dataTableSchema.Columns.Add ("BaseTableName", typeof (string));
-				dataTableSchema.Columns.Add ("DataType", typeof(Type));
-				dataTableSchema.Columns.Add ("AllowDBNull", typeof (bool));
-				dataTableSchema.Columns.Add ("ProviderType", typeof (int));
-				dataTableSchema.Columns.Add ("IsAliased", typeof (bool));
-				dataTableSchema.Columns.Add ("IsExpression", typeof (bool));
-				dataTableSchema.Columns.Add ("IsIdentity", typeof (bool));
-				dataTableSchema.Columns.Add ("IsAutoIncrement", typeof (bool));
-				dataTableSchema.Columns.Add ("IsRowVersion", typeof (bool));
-				dataTableSchema.Columns.Add ("IsHidden", typeof (bool));
-				dataTableSchema.Columns.Add ("IsLong", typeof (bool));
-				dataTableSchema.Columns.Add ("IsReadOnly", typeof (bool));
-
-				fieldCount = PostgresLibrary.PQnfields (pgResult);
-				rowCount = PostgresLibrary.PQntuples(pgResult);
-				pgtypes = new string[fieldCount];
-
-				// TODO: for CommandBehavior.SingleRow
-				//       use IRow, otherwise, IRowset
-				if(fieldCount > 0)
-					if((cmdBehavior & CommandBehavior.SingleRow) == CommandBehavior.SingleRow)
-						fieldCount = 1;
-
-				// TODO: for CommandBehavior.SchemaInfo
-				if((cmdBehavior & CommandBehavior.SchemaOnly) == CommandBehavior.SchemaOnly)
-					fieldCount = 0;
-
-				// TODO: for CommandBehavior.SingleResult
-				if((cmdBehavior & CommandBehavior.SingleResult) == CommandBehavior.SingleResult)
-					if(currentQuery > 0)
-						fieldCount = 0;
-
-				// TODO: for CommandBehavior.SequentialAccess - used for reading Large OBjects
-				//if((cmdBehavior & CommandBehavior.SequentialAccess) == CommandBehavior.SequentialAccess) {
-				//}
-
-				DataRow schemaRow;
-				int oid;
-				DbType dbType;
-				Type typ;
-						
-				for (int i = 0; i < fieldCount; i += 1 ) {
-					schemaRow = dataTableSchema.NewRow ();
-
-					string columnName = PostgresLibrary.PQfname (pgResult, i);
-
-					schemaRow["ColumnName"] = columnName;
-					schemaRow["ColumnOrdinal"] = i+1;
-					schemaRow["ColumnSize"] = PostgresLibrary.PQfsize (pgResult, i);
-					schemaRow["NumericPrecision"] = 0;
-					schemaRow["NumericScale"] = 0;
-					// TODO: need to get KeyInfo
-					if((cmdBehavior & CommandBehavior.KeyInfo) == CommandBehavior.KeyInfo) {
-						bool IsUnique, IsKey;
-						GetKeyInfo(columnName, out IsUnique, out IsKey);
-					}
-					else {
-						schemaRow["IsUnique"] = false;
-						schemaRow["IsKey"] = DBNull.Value;
-					}
-					schemaRow["BaseCatalogName"] = "";
-					schemaRow["BaseColumnName"] = columnName;
-					schemaRow["BaseSchemaName"] = "";
-					schemaRow["BaseTableName"] = "";
-				
-					// PostgreSQL type to .NET type stuff
-					oid = PostgresLibrary.PQftype (pgResult, i);
-					pgtypes[i] = PostgresHelper.OidToTypname (oid, con.Types);	
-					dbType = PostgresHelper.TypnameToSqlDbType (pgtypes[i]);
-				
-					typ = PostgresHelper.DbTypeToSystemType (dbType);
-					string st = typ.ToString();
-					schemaRow["DataType"] = typ;
-
-					schemaRow["AllowDBNull"] = false;
-					schemaRow["ProviderType"] = oid;
-					schemaRow["IsAliased"] = false;
-					schemaRow["IsExpression"] = false;
-					schemaRow["IsIdentity"] = false;
-					schemaRow["IsAutoIncrement"] = false;
-					schemaRow["IsRowVersion"] = false;
-					schemaRow["IsHidden"] = false;
-					schemaRow["IsLong"] = false;
-					schemaRow["IsReadOnly"] = false;
-					schemaRow.AcceptChanges();
-					dataTableSchema.Rows.Add (schemaRow);
-				}
-				
-#if DEBUG_SqlCommand
-				Console.WriteLine("********** DEBUG Table Schema BEGIN ************");
-				foreach (DataRow myRow in dataTableSchema.Rows) {
-					foreach (DataColumn myCol in dataTableSchema.Columns)
-						Console.WriteLine(myCol.ColumnName + " = " + myRow[myCol]);
-					Console.WriteLine();
-				}
-				Console.WriteLine("********** DEBUG Table Schema END ************");
-#endif // DEBUG_SqlCommand
-
-			}
-		}
-
-		// TODO: how do we get the key info if
-		//       we don't have the tableName?
-		private void GetKeyInfo(string columnName, out bool isUnique, out bool isKey) {
-			isUnique = false;
-			isKey = false;
-
-			string sql;
-
-			sql =
-			"SELECT i.indkey, i.indisprimary, i.indisunique " +
-			"FROM pg_class c, pg_class c2, pg_index i " +
-			"WHERE c.relname = ':tableName' AND c.oid = i.indrelid " +
-			"AND i.indexrelid = c2.oid ";
-		}
+		#endregion // Methods
 	}
 }

@@ -15,32 +15,21 @@ using System.Security;
 using System.Security.Permissions;
 
 namespace System.Data.SqlClient {
-
-	[AttributeUsage(AttributeTargets.Assembly    | 
-			AttributeTargets.Class 	     | 
-			AttributeTargets.Struct      | 
-			AttributeTargets.Constructor |
-			AttributeTargets.Method)]
+	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method)]
 	[Serializable]
-	public sealed class SqlClientPermissionAttribute :
-		DBDataPermissionAttribute {
-
+	public sealed class SqlClientPermissionAttribute : DBDataPermissionAttribute 
+	{
 		[MonoTODO]
-		public SqlClientPermissionAttribute(SecurityAction action) : 
-			base(action)
+		public SqlClientPermissionAttribute(SecurityAction action) 
+			: base(action)
 		{
 			// FIXME: do constructor
 		}
 
 		[MonoTODO]
-		public override IPermission CreatePermission() {
+		public override IPermission CreatePermission() 
+		{
 			throw new NotImplementedException ();
 		}
-
-		//[MonoTODO]
-		//~SqlClientPermissionAttribute() {
-		//	// FIXME: destructor to release resources
-		//}
 	}
-
 }

@@ -15,64 +15,66 @@ using System.Security;
 using System.Security.Permissions;
 
 namespace System.Data.SqlClient {
-
-	public sealed class SqlClientPermission : DBDataPermission {
-		
+	public sealed class SqlClientPermission : DBDataPermission 
+	{
 		[MonoTODO]
-		public SqlClientPermission() {
+		public SqlClientPermission () 
+		{
 			// FIXME: do constructor
 		}
 
 		[MonoTODO]
-		public SqlClientPermission(PermissionState state) {
+		public SqlClientPermission (PermissionState state) 
+		{
 			// FIXME: do constructor
 		}
 
 		[MonoTODO]
-		public SqlClientPermission(PermissionState state,
-			bool allowBlankPassword) { 
+		public SqlClientPermission (PermissionState state, bool allowBlankPassword) 
+		{ 
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public override IPermission Copy() {
+		public override IPermission Copy () 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public override void FromXml(SecurityElement 
-					securityElement) {
+		public override void FromXml (SecurityElement securityElement) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public override IPermission Intersect(IPermission target)  {
+		public override IPermission Intersect (IPermission target)  
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public override bool IsSubsetOf(IPermission target) {
+		public override bool IsSubsetOf (IPermission target) 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public override string ToString() {
+		public override string ToString () 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public override SecurityElement ToXml() {
+		public override SecurityElement ToXml () 
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public override IPermission Union(IPermission target) {
+		public override IPermission Union (IPermission target) 
+		{
 			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		~SqlClientPermission() {
-			// FIXME: destructor to release resources
 		}
 	}
 }

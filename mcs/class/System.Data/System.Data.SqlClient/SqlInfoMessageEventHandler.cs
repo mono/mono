@@ -11,9 +11,6 @@
 using System;
 using System.Data;
 
-namespace System.Data.SqlClient
-{
-	public delegate void 
-	SqlInfoMessageEventHandler (object sender,
-				SqlInfoMessageEventArgs e);
+namespace System.Data.SqlClient {
+	public delegate void SqlInfoMessageEventHandler (object sender, SqlInfoMessageEventArgs e);
 }

@@ -4,36 +4,33 @@
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc
+// Copyright (C) Tim Coleman, 2002
 //
+
+using Mono.Data.TdsClient.Internal;
 using System;
 using System.Data;
 using System.Runtime.Serialization;
 
-namespace System.Data.SqlClient
-{
-	/// <summary>
-	/// Exceptions, as returned by SQL databases.
-	/// </summary>
+namespace System.Data.SqlClient {
+	[Serializable]
 	public sealed class SqlException : SystemException
 	{
 		private SqlErrorCollection errors; 
 
 		internal SqlException() 
-			: base("a SQL Exception has occurred") {
+			: base ("a SQL Exception has occurred.") 
+		{
 			errors = new SqlErrorCollection();
 		}
 
-		internal SqlException(byte theClass, int lineNumber,
-			string message,	int number, string procedure,
-			string server, string source, byte state) 
-				: base(message) {	
-			
-			errors = new SqlErrorCollection (theClass, 
-				lineNumber, message,
-				number, procedure,
-				server, source, state);
+		internal SqlException (byte theClass, int lineNumber, string message, int number, string procedure, string server, string source, byte state) 
+			: base (message) 
+		{
+			errors = new SqlErrorCollection (theClass, lineNumber, message, number, procedure, server, source, state);
 		}
 
 		#region Properties
@@ -46,34 +43,23 @@ namespace System.Data.SqlClient
 				else
 					return errors[0].Class;
 			}
-
-			set { 
-				errors[0].SetClass(value);
-			}
+			set { errors[0].SetClass(value); }
 		}
 
 		[MonoTODO]
-		public SqlErrorCollection Errors {
-			get { 
-				return errors;
-			}
-
-			set { 
-				errors = value;
-			}
+		public SqlErrorCollection Errors 
+		{
+			get { return errors; }
+			set { errors = value; }
 		}
 
 		[MonoTODO]
 		public int LineNumber {
-			get { 
-				if(errors.Count == 0)
+			get { if(errors.Count == 0)
 					return 0; // FIXME: throw exception here?
 				return errors[0].LineNumber;
 			}
-
-			set { 
-				errors[0].SetLineNumber(value);
-			}
+			set { errors[0].SetLineNumber(value); }
 		}
 		
 		[MonoTODO]
@@ -103,10 +89,7 @@ namespace System.Data.SqlClient
 				else
 					return errors[0].Number;
 			}
-
-			set { 
-				errors[0].SetNumber(value);
-			}
+			set { errors[0].SetNumber(value); }
 		}
 		
 		[MonoTODO]
@@ -117,10 +100,7 @@ namespace System.Data.SqlClient
 				else
 					return errors[0].Procedure;
 			}
-
-			set { 
-				errors[0].SetProcedure(value);
-			}
+			set { errors[0].SetProcedure(value); }
 		}
 
 		[MonoTODO]
@@ -131,10 +111,7 @@ namespace System.Data.SqlClient
 				else
 					return errors[0].Server;
 			}
-
-			set { 
-				errors[0].SetServer(value);
-			}
+			set { errors[0].SetServer(value); }
 		}
 		
 		[MonoTODO]
@@ -145,10 +122,7 @@ namespace System.Data.SqlClient
 				else
 					return errors[0].Source;
 			}
-
-			set { 
-				errors[0].SetSource(value);
-			}
+			set { errors[0].SetSource(value); }
 		}
 
 		[MonoTODO]
@@ -159,10 +133,7 @@ namespace System.Data.SqlClient
 				else
 					return errors[0].State;
 			}
-
-			set { 
-				errors[0].SetState(value);
-			}
+			set { errors[0].SetState(value); }
 		}
 
 		#endregion // Properties
@@ -170,33 +141,15 @@ namespace System.Data.SqlClient
 		#region Methods
 
 		[MonoTODO]
-		public override void GetObjectData(SerializationInfo si,
-			StreamingContext context) {
-			// FIXME: to do
-		}
-
-		// [Serializable]
-		// [ClassInterface(ClassInterfaceType.AutoDual)]
-		public override string ToString() {
-			String toStr = "";
-			for (int i = 0; i < errors.Count; i++) {
-				toStr = toStr + errors[i].ToString() + "\n";
-			}
-			return toStr;
-		}
-
-		internal void Add(byte theClass, int lineNumber,
-			string message,	int number, string procedure,
-			string server, string source, byte state) {
-			
-			errors.Add (theClass, lineNumber, message,
-				number, procedure,
-				server, source, state);
+		public override void GetObjectData(SerializationInfo si, StreamingContext context) 
+		{
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		~SqlException() {
-			// FIXME: destructor to release resources
+		internal static SqlException FromTdsError (TdsPacketErrorResultCollection errors)
+		{
+			throw new NotImplementedException ();
 		}
 
 		#endregion // Methods

@@ -4,722 +4,443 @@
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc 2002
 // (C) Daniel Morgan 2002
-//
-// Credits:
-//    SQL and concepts were used from libgda 0.8.190 (GNOME Data Access)
-//    http://www.gnome-db.org/
-//    with permission from the authors of the
-//    PostgreSQL provider in libgda:
-//        Michael Lausch <michael@lausch.at>
-//        Rodrigo Moya <rodrigo@gnome-db.org>
-//        Vivien Malerba <malerba@gnome-db.org>
-//        Gonzalo Paniagua Javier <gonzalo@gnome-db.org>
+// Copyright (C) Tim Coleman, 2002
 //
 
-// use #define DEBUG_SqlConnection if you want to spew debug messages
-// #define DEBUG_SqlConnection
-
+using Mono.Data.TdsClient.Internal;
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
-using System.Runtime.InteropServices;
+using System.EnterpriseServices;
+using System.Net;
 using System.Text;
 
 namespace System.Data.SqlClient {
-
-	/// <summary>
-	/// Represents an open connection to a SQL data source
-	/// </summary>
-	public sealed class SqlConnection : Component, IDbConnection,
-		ICloneable	
+	public sealed class SqlConnection : Component, IDbConnection, ICloneable	
 	{
-		// FIXME: Need to implement class Component, 
-		// and interfaces: ICloneable and IDisposable	
-
 		#region Fields
 
-		private PostgresTypes types = null;
-		private IntPtr pgConn = IntPtr.Zero;    
+		// The set of SQL connection pools
+		static Hashtable SqlConnectionPools = new Hashtable ();
 
-		// PGConn (Postgres Connection)
-		private string connectionString = "";    
-		// OLE DB Connection String
-		private string pgConnectionString = ""; 
-		// PostgreSQL Connection String
-		private SqlTransaction trans = null;
-		private int connectionTimeout = 15;     
-		// default for 15 seconds
-		
-		// connection parameters in connection string
-		private string host = "";     
-		// Name of host to connect to
-		private string hostaddr = ""; 
-		// IP address of host to connect to
-		// should be in "n.n.n.n" format
-		private string port = "";     
-		// Port number to connect to at the server host
-		private string dbname = "";   // The database name. 
-		private string user = "";     // User name to connect as. 
-		private string password = "";
-		// Password to be used if the server 
-		// demands password authentication.  		
-		private string options = ""; 
-		// Trace/debug options to be sent to the server. 
-		private string tty = ""; 
-		// A file or tty for optional 
-		// debug output from the backend. 
-		private string requiressl = "";
-		// Set to 1 to require 
-		// SSL connection to the backend. 
-		// Libpq will then refuse to connect 
-		// if the server does not 
-		// support SSL. Set to 0 (default) to 
-		// negotiate with server. 
+		// The current connection pool
+		SqlConnectionPool pool;
 
-		// connection state
-		private ConnectionState conState = ConnectionState.Closed;
-		
-		// DataReader state
-		private SqlDataReader rdr = null;
-		private bool dataReaderOpen = false;
-		// FIXME: if true, throw an exception if SqlConnection 
-		//        is used for anything other than reading
-		//        data using SqlDataReader
-		
-		private string versionString = "Unknown";
+		// The connection string that identifies this connection
+		string connectionString = null;
 
-		private bool disposed = false;
+		// The transaction object for the current transaction
+		SqlTransaction transaction = null;
+
+		// Connection parameters
+		TdsConnectionParameters parms = new TdsConnectionParameters ();
+		bool connectionReset;
+		bool pooling;
+		string dataSource;
+		int connectionTimeout;
+		int minPoolSize;
+		int maxPoolSize;
+		int packetSize;
+		int port = 1433;
+
+		// The current state
+		ConnectionState state = ConnectionState.Closed;
+		bool dataReaderOpen = false;
+
+
+		// The TDS object
+		ITds tds;
 
 		#endregion // Fields
 
 		#region Constructors
 
-		// A lot of the defaults were initialized in the Fields
-		[MonoTODO]
-		public SqlConnection () {
-
+		public SqlConnection () 
+			: this (String.Empty)
+		{
 		}
 	
-		[MonoTODO]
-		public SqlConnection (String connectionString) {
+		public SqlConnection (string connectionString) 
+		{
 			SetConnectionString (connectionString);
+			this.connectionString = connectionString;
 		}
 
 		#endregion // Constructors
 
-		#region Destructors
-
-		protected override void Dispose(bool disposing) {
-			if(!this.disposed)
-				try {
-					if(disposing) {
-						// release any managed resources
-					}
-					// release any unmanaged resources
-					// close any handles
-										
-					this.disposed = true;
-				}
-				finally {
-					base.Dispose(disposing);
-				}
-		}
-	
-		// aka Finalize()
-		// [ClassInterface(ClassInterfaceType.AutoDual)]
-		[MonoTODO]
-		~SqlConnection() {
-			Dispose (false);
-		}
+		#region Properties
 		
-		#endregion // Destructors
-
-		#region Public Methods
-
-		IDbTransaction IDbConnection.BeginTransaction () {
-			return BeginTransaction ();
-		}
-
-		public SqlTransaction BeginTransaction () {
-			return TransactionBegin (); // call private method
-		}
-
-		IDbTransaction IDbConnection.BeginTransaction (IsolationLevel 
-			il) {
-			return BeginTransaction (il);
-		}
-
-		public SqlTransaction BeginTransaction (IsolationLevel il) {
-			return TransactionBegin (il); // call private method
-		}
-
-		// PostgreSQL does not support named transactions/savepoint
-		//            nor nested transactions
-		[Obsolete]
-		public SqlTransaction BeginTransaction(string transactionName) {
-			return TransactionBegin (); // call private method
-		}
-
-		[Obsolete]
-		public SqlTransaction BeginTransaction(IsolationLevel iso,
-			string transactionName) {
-			return TransactionBegin (iso); // call private method
-		}
-
-		[MonoTODO]
-		public void ChangeDatabase (string databaseName) {
-			throw new NotImplementedException ();
-		}
-
-		object ICloneable.Clone() {
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public void Close () {
-			if(dataReaderOpen == true) {
-				// TODO: what do I do if
-				// the user Closes the connection
-				// without closing the Reader first?
-
-			}			
-			CloseDataSource ();
-		}
-
-		IDbCommand IDbConnection.CreateCommand () {
-			return CreateCommand ();
-		}
-
-		public SqlCommand CreateCommand () {
-			SqlCommand sqlcmd = new SqlCommand ("", this);
-
-			return sqlcmd;
-		}
-
-		[MonoTODO]
-		public void Open () {
-			if(dbname.Equals(""))
-				throw new InvalidOperationException(
-					"dbname missing");
-			else if(conState == ConnectionState.Open)
-				throw new InvalidOperationException(
-					"ConnnectionState is already Open");
-
-			ConnStatusType connStatus;
-
-			// FIXME: check to make sure we have 
-			//        everything to connect,
-			//        otherwise, throw an exception
-
-			pgConn = PostgresLibrary.PQconnectdb 
-				(pgConnectionString);
-
-			// FIXME: should we use PQconnectStart/PQconnectPoll
-			//        instead of PQconnectdb?  
-			// PQconnectdb blocks 
-			// PQconnectStart/PQconnectPoll is non-blocking
-			
-			connStatus = PostgresLibrary.PQstatus (pgConn);
-			if(connStatus == ConnStatusType.CONNECTION_OK) {
-				// Successfully Connected
-				disposed = false;
-				SetupConnection();
-			}
-			else {
-				String errorMessage = PostgresLibrary.
-					PQerrorMessage (pgConn);
-				errorMessage += ": Could not connect to database.";
-
-				throw new SqlException(0, 0,
-					errorMessage, 0, "",
-					host, "SqlConnection", 0);
-			}
-		}
-
-		#endregion // Public Methods
-
-		#region Internal Methods
-
-		// Used to prevent SqlConnection
-		// from doing anything while
-		// SqlDataReader is open.
-		// Open the Reader. (called from SqlCommand)
-		internal void OpenReader(SqlDataReader reader) 
-		{	
-			if(dataReaderOpen == true) {
-				// TODO: throw exception here?
-				//       because a reader
-				//       is already open
-			}
-			else {
-				rdr = reader;
-				dataReaderOpen = true;
-			}
-		}
-
-		// Used to prevent SqlConnection
-		// from doing anything while
-		// SqlDataReader is open
-		// Close the Reader (called from SqlCommand)
-		// if closeConnection true, Close() the connection
-		// this is based on CommandBehavior.CloseConnection
-		internal void CloseReader(bool closeConnection)
-		{	if(closeConnection == true)
-				CloseDataSource();
-			else
-				dataReaderOpen = false;
-		}
-
-		#endregion // Internal Methods
-
-		#region Private Methods
-
-		private void SetupConnection() {
-			
-			conState = ConnectionState.Open;
-
-			// FIXME: load types into hashtable
-			types = new PostgresTypes(this);
-			types.Load();
-
-			versionString = GetDatabaseServerVersion();
-
-			// set DATE style to YYYY/MM/DD
-			IntPtr pgResult = IntPtr.Zero;
-			pgResult = PostgresLibrary.PQexec (pgConn, "SET DATESTYLE TO 'ISO'");
-			PostgresLibrary.PQclear (pgResult);
-			pgResult = IntPtr.Zero;
-		}
-
-		private string GetDatabaseServerVersion() 
-		{
-			SqlCommand cmd = new SqlCommand("select version()",this);
-			return (string) cmd.ExecuteScalar();
-		}
-
-		private void CloseDataSource () {
-			// FIXME: just a quick hack
-			if(conState == ConnectionState.Open) {
-				if(trans != null)
-					if(trans.DoingTransaction == true) {
-						trans.Rollback();
-						// trans.Dispose();
-						trans = null;
-					}
-
-				conState = ConnectionState.Closed;
-				PostgresLibrary.PQfinish (pgConn);
-				pgConn = IntPtr.Zero;
-			}
-		}
-
-		private void SetConnectionString (string connectionString) {
-			// FIXME: perform error checking on string
-			// while translating string from 
-			// OLE DB format to PostgreSQL 
-			// connection string format
-			//
-			//     OLE DB: "host=localhost;dbname=test;user=joe;password=smoe"
-			// PostgreSQL: "host=localhost dbname=test user=joe password=smoe"
-			//
-			// For OLE DB, you would have the additional 
-			// "provider=postgresql"
-			// OleDbConnection you would be using libgda
-			//
-			// Also, parse the connection string into properties
-
-			// FIXME: if connection is open, you can 
-			//        not set the connection
-			//        string, throw an exception
-
-			this.connectionString = connectionString;
-			pgConnectionString = ConvertStringToPostgres (
-				connectionString);
-
-#if DEBUG_SqlConnection
-			Console.WriteLine(
-				"OLE-DB Connection String    [in]: " +
-				this.ConnectionString);
-			Console.WriteLine(
-				"Postgres Connection String [out]: " +
-				pgConnectionString);
-#endif // DEBUG_SqlConnection
-		}
-
-		private String ConvertStringToPostgres (String 
-			oleDbConnectionString) {
-			StringBuilder postgresConnection = 
-				new StringBuilder();
-			string result;
-			string[] connectionParameters;
-
-			char[] semicolon = new Char[1];
-			semicolon[0] = ';';
-			
-			// FIXME: what is the max number of value pairs 
-			//        can there be for the OLE DB 
-			//	  connnection string? what about libgda max?
-			//        what about postgres max?
-
-			// FIXME: currently assuming value pairs are like:
-			//        "key1=value1;key2=value2;key3=value3"
-			//        Need to deal with values that have
-			//        single or double quotes.  And error 
-			//        handling of that too.
-			//        "key1=value1;key2='value2';key=\"value3\""
-
-			// FIXME: put the connection parameters 
-			//        from the connection
-			//        string into a 
-			//        Hashtable (System.Collections)
-			//        instead of using private variables 
-			//        to store them
-			connectionParameters = oleDbConnectionString.
-				Split (semicolon);
-			foreach (string sParameter in connectionParameters) {
-				if(sParameter.Length > 0) {
-					BreakConnectionParameter (sParameter);
-					postgresConnection.
-						Append (sParameter + 
-						" ");
-				}
-			}
-			result = postgresConnection.ToString ();
-			return result;
-		}
-
-		private bool BreakConnectionParameter (String sParameter) {	
-			bool addParm = true;
-			int index;
-
-			index = sParameter.IndexOf ("=");
-			if (index > 0) {	
-				string parmKey, parmValue;
-
-				// separate string "key=value" to 
-				// string "key" and "value"
-				parmKey = sParameter.Substring (0, index);
-				parmValue = sParameter.Substring (index + 1,
-					sParameter.Length - index - 1);
-
-				switch(parmKey.ToLower()) {
-				case "hostaddr":
-					hostaddr = parmValue;
-					break;
-
-				case "port":
-					port = parmValue;
-					break;
-
-				case "host":
-					// set DataSource property
-					host = parmValue;
-					break;
-
-				case "dbname":
-					// set Database property
-					dbname = parmValue;
-					break;
-
-				case "user":
-					user = parmValue;
-					break;
-
-				case "password":
-					password = parmValue;
-					//	addParm = false;
-					break;
-
-				case "options":
-					options = parmValue;
-					break;
-
-				case "tty":
-					tty = parmValue;
-					break;
-							
-				case "requiressl":
-					requiressl = parmValue;
-					break;
-				}
-			}
-			return addParm;
-		}
-
-		private SqlTransaction TransactionBegin () {
-			// FIXME: need to keep track of 
-			// transaction in-progress
-			trans = new SqlTransaction ();
-			// using internal methods of SqlTransaction
-			trans.SetConnection (this);
-			trans.Begin();
-
-			return trans;
-		}
-
-		private SqlTransaction TransactionBegin (IsolationLevel il) {
-			// FIXME: need to keep track of 
-			// transaction in-progress
-			trans = new SqlTransaction ();
-			// using internal methods of SqlTransaction
-			trans.SetConnection (this);
-			trans.SetIsolationLevel (il);
-			trans.Begin();
-			
-			return trans;
-		}
-
-		#endregion
-
-		#region Public Properties
-
-		[MonoTODO]
-		public ConnectionState State 		{
-			get { 
-				return conState;
-			}
-		}
-
 		public string ConnectionString	{
-			get { 
-				return connectionString;
-			}
-			set { 
-				SetConnectionString (value);
-			}
+			get { return connectionString; }
+			set { SetConnectionString (value); }
 		}
 		
 		public int ConnectionTimeout {
-			get { 
-				return connectionTimeout; 
-			}
+			get { return connectionTimeout; }
 		}
 
 		public string Database	{
-			get { 
-				return dbname; 
-			}
+			get { return tds.Database; }
+		}
+
+		internal bool DataReaderOpen {
+			get { return dataReaderOpen; }
+			set { dataReaderOpen = value; }
 		}
 
 		public string DataSource {
-			get {
-				return host;
-			}
+			get { return dataSource; }
 		}
 
 		public int PacketSize {
-			get { 
-				throw new NotImplementedException ();
-			}
+			get { return packetSize; }
 		}
 
 		public string ServerVersion {
-			get { 
-				return versionString;
-			}
+			get { return tds.ServerVersion; }
 		}
 
-		#endregion // Public Properties
+		public ConnectionState State {
+			get { return state; }
+		}
 
-		#region Internal Properties
+		internal ITds Tds {
+			get { return tds; }
+		}
 
-		// For System.Data.SqlClient classes
-		// to get the current transaction
-		// in progress - if any
 		internal SqlTransaction Transaction {
-			get {
-				return trans;
+			get { return transaction; }
+		}
+
+		public string WorkstationId {
+			get { return parms.Hostname; }
+		}
+
+		#endregion // Properties
+
+		#region Methods
+
+		public SqlTransaction BeginTransaction ()
+		{
+			return BeginTransaction (IsolationLevel.ReadCommitted, String.Empty);
+		}
+
+		public SqlTransaction BeginTransaction (IsolationLevel iso)
+		{
+			return BeginTransaction (iso, String.Empty);
+		}
+
+		public SqlTransaction BeginTransaction (string transactionName)
+		{
+			return BeginTransaction (IsolationLevel.ReadCommitted, String.Empty);
+		}
+
+		public SqlTransaction BeginTransaction (IsolationLevel iso, string transactionName)
+		{
+			if (transaction != null)
+				throw new InvalidOperationException ("SqlConnection does not support parallel transactions.");
+
+			tds.ExecuteNonQuery (String.Format ("BEGIN TRANSACTION {0}", transactionName));
+
+			if (tds.Errors.Count > 0)
+				throw SqlException.FromTdsError (tds.Errors);
+
+			transaction = new SqlTransaction (this, iso);
+			return transaction;
+		}
+
+		public void ChangeDatabase (string database) 
+		{
+			if (!IsValidDatabaseName (database))
+				throw new ArgumentException (String.Format ("The database name {0} is not valid."));
+
+			if (state != ConnectionState.Open)
+				throw new InvalidOperationException ("The connection is not open");
+
+			tds.ExecuteNonQuery (String.Format ("use {0}", database));
+
+			if (tds.Errors.Count > 0)
+				throw SqlException.FromTdsError (tds.Errors);
+		}
+
+		public void Close () 
+		{
+			if (transaction != null && transaction.IsOpen)
+				transaction.Rollback ();
+			if (pooling)
+				pool.ReleaseConnection (tds);
+			else
+				tds.Disconnect ();
+			this.state = ConnectionState.Closed;
+		}
+
+		public SqlCommand CreateCommand () 
+		{
+			SqlCommand command = new SqlCommand ();
+			command.Connection = this;
+			return command;
+		}
+
+		protected override void Dispose (bool disposing) 
+		{
+			Close ();
+		}
+
+		[MonoTODO]
+		public void EnlistDistributedTransaction (ITransaction transaction)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		object ICloneable.Clone ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		IDbTransaction IDbConnection.BeginTransaction ()
+		{
+			return BeginTransaction ();
+		}
+
+		IDbTransaction IDbConnection.BeginTransaction (IsolationLevel iso)
+		{
+			return BeginTransaction (iso);
+		}
+
+		IDbCommand IDbConnection.CreateCommand ()
+		{
+			return CreateCommand ();
+		}
+
+		void IDisposable.Dispose ()
+		{
+			Dispose ();
+		}
+
+		public void Open () 
+		{
+			if (connectionString == null)
+				throw new InvalidOperationException ("Connection string has not been initialized.");
+			if (!pooling)
+				tds = new Tds70 (dataSource, port, packetSize);
+			else {
+				pool = (SqlConnectionPool) SqlConnectionPools [connectionString];
+				if (pool == null) {
+					pool = new SqlConnectionPool (dataSource, port, packetSize, minPoolSize, maxPoolSize);
+					SqlConnectionPools [connectionString] = pool;
+				}
+				tds = pool.AllocateConnection ();
+			}
+
+			state = ConnectionState.Open;
+
+			if (!tds.IsConnected) {
+				tds.Connect (parms);
+				ChangeDatabase (parms.Database);
 			}
 		}
 
-		// For System.Data.SqlClient classes 
-		// to get the unmanaged PostgreSQL connection
-		internal IntPtr PostgresConnection {
-			get {
-				return pgConn;
+                void SetConnectionString (string connectionString)
+                {
+                        connectionString += ";";
+                        NameValueCollection parameters = new NameValueCollection ();
+
+                        if (connectionString == String.Empty)
+                                return;
+
+                        bool inQuote = false;
+                        bool inDQuote = false;
+
+                        string name = String.Empty;
+                        string value = String.Empty;
+                        StringBuilder sb = new StringBuilder ();
+
+                        foreach (char c in connectionString)
+                        {
+                                switch (c) {
+                                case '\'':
+                                        inQuote = !inQuote;
+                                        break;
+                                case '"' :
+                                        inDQuote = !inDQuote;
+                                        break;
+                                case ';' :
+                                        if (!inDQuote && !inQuote) {
+						if (name != String.Empty && name != null) {
+                                                	value = sb.ToString ();
+                                                	parameters [name.ToUpper ().Trim ()] = value.Trim ();
+						}
+                                                name = String.Empty;
+                                                value = String.Empty;
+                                                sb = new StringBuilder ();
+                                        }
+                                        else
+                                                sb.Append (c);
+                                        break;
+                                case '=' :
+                                        if (!inDQuote && !inQuote) {
+                                                name = sb.ToString ();
+                                                sb = new StringBuilder ();
+                                        }
+                                        else
+                                                sb.Append (c);
+                                        break;
+                                default:
+                                        sb.Append (c);
+                                        break;
+                                }
+                        }
+
+                        if (this.ConnectionString == null)
+                        {
+                                SetDefaultConnectionParameters (parameters);
+                        }
+
+                        SetProperties (parameters);
+
+                        this.connectionString = connectionString;
+                }
+
+                void SetDefaultConnectionParameters (NameValueCollection parameters)
+                {
+                        if (null == parameters.Get ("APPLICATION NAME"))
+                                parameters["APPLICATION NAME"] = ".Net SqlClient Data Provider";
+                        if (null == parameters.Get ("CONNECT TIMEOUT") && null == parameters.Get ("CONNECTION TIMEOUT"))
+                                parameters["CONNECT TIMEOUT"] = "15";
+                        if (null == parameters.Get ("CONNECTION LIFETIME"))
+                                parameters["CONNECTION LIFETIME"] = "0";
+                        if (null == parameters.Get ("CONNECTION RESET"))
+                                parameters["CONNECTION RESET"] = "true";
+                        if (null == parameters.Get ("ENLIST"))
+                                parameters["ENLIST"] = "true";
+                        if (null == parameters.Get ("INTEGRATED SECURITY") && null == parameters.Get ("TRUSTED_CONNECTION"))
+                                parameters["INTEGRATED SECURITY"] = "false";
+                        if (null == parameters.Get ("MAX POOL SIZE"))
+                                parameters["MAX POOL SIZE"] = "100";
+                        if (null == parameters.Get ("MIN POOL SIZE"))
+                                parameters["MIN POOL SIZE"] = "0";
+                        if (null == parameters.Get ("NETWORK LIBRARY") && null == parameters.Get ("NET"))
+                                parameters["NETWORK LIBRARY"] = "dbmssocn";
+                        if (null == parameters.Get ("PACKET SIZE"))
+                                parameters["PACKET SIZE"] = "512";
+                        if (null == parameters.Get ("PERSIST SECURITY INFO"))
+                                parameters["PERSIST SECURITY INFO"] = "false";
+                        if (null == parameters.Get ("POOLING"))
+                                parameters["POOLING"] = "true";
+                        if (null == parameters.Get ("WORKSTATION ID"))
+                                parameters["WORKSTATION ID"] = Dns.GetHostByName ("localhost").HostName;
+                }
+
+                private void SetProperties (NameValueCollection parameters)
+                {
+                        string value;
+                        foreach (string name in parameters) {
+                                value = parameters[name];
+
+                                switch (name) {
+                                case "APPLICATION NAME" :
+                                        parms.ApplicationName = value;
+                                        break;
+                                case "ATTACHDBFILENAME" :
+                                case "EXTENDED PROPERTIES" :
+                                case "INITIAL FILE NAME" :
+                                        break;
+                                case "CONNECT TIMEOUT" :
+                                case "CONNECTION TIMEOUT" :
+                                        connectionTimeout = Int32.Parse (value);
+                                        break;
+                                case "CONNECTION LIFETIME" :
+                                        break;
+                                case "CONNECTION RESET" :
+                                        connectionReset = !(value.ToUpper ().Equals ("FALSE") || value.ToUpper ().Equals ("NO"));
+                                        break;
+                                case "CURRENT LANGUAGE" :
+                                        parms.Language = value;
+                                        break;
+                                case "DATA SOURCE" :
+                                case "SERVER" :
+                                case "ADDRESS" :
+                                case "ADDR" :
+                                case "NETWORK ADDRESS" :
+                                        dataSource = value;
+                                        break;
+                                case "ENLIST" :
+                                        break;
+                                case "INITIAL CATALOG" :
+                                case "DATABASE" :
+                                        parms.Database = value;
+                                        break;
+                                case "INTEGRATED SECURITY" :
+                                case "TRUSTED_CONNECTION" :
+                                        break;
+                                case "MAX POOL SIZE" :
+                                        maxPoolSize = Int32.Parse (value);
+                                        break;
+                                case "MIN POOL SIZE" :
+                                        minPoolSize = Int32.Parse (value);
+                                        break;
+                                case "NET" :
+                                case "NETWORK LIBRARY" :
+                                        if (!value.ToUpper ().Equals ("DBMSSOCN"))
+                                                throw new ArgumentException ("Unsupported network library.");
+                                        break;
+                                case "PACKET SIZE" :
+                                        packetSize = Int32.Parse (value);
+                                        break;
+                                case "PASSWORD" :
+                                case "PWD" :
+                                        parms.Password = value;
+                                        break;
+                                case "PERSIST SECURITY INFO" :
+                                        break;
+                                case "POOLING" :
+                                        pooling = !(value.ToUpper ().Equals ("FALSE") || value.ToUpper ().Equals ("NO"));
+                                        break;
+                                case "USER ID" :
+                                        parms.User = value;
+                                        break;
+                                case "WORKSTATION ID" :
+                                        parms.Hostname = value;
+                                        break;
+                                }
 			}
 		}
 
-		// For System.Data.SqlClient classes
-		// to get the list PostgreSQL types
-		// so can look up based on OID to
-		// get the .NET System type.
-		internal ArrayList Types {
-			get {
-				return types.List;
-			}
+
+		static bool IsValidDatabaseName (string database)
+		{
+			if (database.Length > 32 || database.Length < 1)
+				return false;
+
+			if (database[0] == '"' && database[database.Length] == '"')
+				database = database.Substring (1, database.Length - 2);
+			else if (Char.IsDigit (database[0]))
+				return false;
+
+			if (database[0] == '_')
+				return false;
+
+			foreach (char c in database.Substring (1, database.Length - 1))
+				if (!Char.IsLetterOrDigit (c) && c != '_')
+					return false;
+			return true;
 		}
 
-		// Used to prevent SqlConnection
-		// from doing anything while
-		// SqlDataReader is open
-		internal bool IsReaderOpen {
-			get {
-				return dataReaderOpen;
-			}
-		}
-
-		#endregion // Internal Properties
+		#endregion // Methods
 
 		#region Events
                 
-		public event 
-		SqlInfoMessageEventHandler InfoMessage;
-
-		public event 
-		StateChangeEventHandler StateChange;
+		public event SqlInfoMessageEventHandler InfoMessage;
+		public event StateChangeEventHandler StateChange;
 		
-		#endregion
-
-		#region Inner Classes
-
-		private class PostgresTypes {
-			// TODO: create hashtable for 
-			// PostgreSQL types to .NET types
-			// containing: oid, typname, SqlDbType
-
-			private Hashtable hashTypes;
-			private ArrayList pgTypes;
-			private SqlConnection con;
-
-			// Got this SQL with the permission from 
-			// the authors of libgda
-			private const string SEL_SQL_GetTypes = 
-				"SELECT oid, typname FROM pg_type " +
-				"WHERE typrelid = 0 AND typname !~ '^_' " +
-				" AND  typname not in ('SET', 'cid', " +
-				"'int2vector', 'oidvector', 'regproc', " +
-				"'smgr', 'tid', 'unknown', 'xid') " +
-				"ORDER BY typname";
-
-			internal PostgresTypes(SqlConnection sqlcon) {
-				
-				con = sqlcon;
-				hashTypes = new Hashtable();
-			}
-
-			private void AddPgType(Hashtable types, 
-				string typname, DbType dbType) {
-
-				PostgresType pgType = new PostgresType();
-			
-				pgType.typname = typname;
-				pgType.dbType = dbType;	
-
-				types.Add(pgType.typname, pgType);
-			}
-
-			private void BuildTypes(IntPtr pgResult, 
-				int nRows, int nFields) {
-
-				String value;
-
-				int r;
-				for(r = 0; r < nRows; r++) {
-					PostgresType pgType = 
-						new PostgresType();
-
-					// get data value (oid)
-					value = PostgresLibrary.
-						PQgetvalue(
-							pgResult,
-							r, 0);
-						
-					pgType.oid = Int32.Parse(value);
-
-					// get data value (typname)
-					value = PostgresLibrary.
-						PQgetvalue(
-						pgResult,
-						r, 1);	
-					pgType.typname = String.Copy(value);
-					pgType.dbType = PostgresHelper.
-							TypnameToSqlDbType(
-								pgType.typname);
-
-					pgTypes.Add(pgType);
-				}
-				pgTypes = ArrayList.ReadOnly(pgTypes);
-			}
-
-			internal void Load() {
-				pgTypes = new ArrayList();
-				IntPtr pgResult = IntPtr.Zero; // PGresult
-				
-				if(con.State != ConnectionState.Open)
-					throw new InvalidOperationException(
-						"ConnnectionState is not Open");
-
-				// FIXME: PQexec blocks 
-				// while PQsendQuery is non-blocking
-				// which is better to use?
-				// int PQsendQuery(PGconn *conn,
-				//        const char *query);
-
-				// execute SQL command
-				// uses internal property to get the PGConn IntPtr
-				pgResult = PostgresLibrary.
-					PQexec (con.PostgresConnection, SEL_SQL_GetTypes);
-
-				if(pgResult.Equals(IntPtr.Zero)) {
-					throw new SqlException(0, 0,
-						"No Resultset from PostgreSQL", 0, "",
-						con.DataSource, "SqlConnection", 0);
-				}
-				else {
-					ExecStatusType execStatus;
-
-					execStatus = PostgresLibrary.
-						PQresultStatus (pgResult);
-			
-					if(execStatus == ExecStatusType.PGRES_TUPLES_OK) {
-						int nRows;
-						int nFields;
-
-						nRows = PostgresLibrary.
-							PQntuples(pgResult);
-
-						nFields = PostgresLibrary.
-							PQnfields(pgResult);
-
-						BuildTypes (pgResult, nRows, nFields);
-
-						// close result set
-						PostgresLibrary.PQclear (pgResult);
-						pgResult = IntPtr.Zero;
-					}
-					else {
-						String errorMessage;
-				
-						errorMessage = PostgresLibrary.
-							PQresStatus(execStatus);
-
-						errorMessage += " " + PostgresLibrary.
-							PQresultErrorMessage(pgResult);
-
-						// close result set
-						PostgresLibrary.PQclear (pgResult);
-						pgResult = IntPtr.Zero;
-
-						throw new SqlException(0, 0,
-							errorMessage, 0, "",
-							con.DataSource, "SqlConnection", 0);
-					}
-				}
-			}
-
-			public ArrayList List {
-				get {
-					return pgTypes;
-				}
-			}
-		}
-
-		#endregion
+		#endregion // Events
 	}
 }

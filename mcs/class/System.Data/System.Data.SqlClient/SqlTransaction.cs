@@ -2,190 +2,124 @@
 // System.Data.SqlClient.SqlTransaction.cs
 //
 // Author:
-//   Rodrigo Moya (rodrigo@ximian.com)
-//   Daniel Morgan (danmorg@sc.rr.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
-// (C) Ximian, Inc. 2002
+// Copyright (C) Tim Coleman, 2002
 //
 
-// use #define DEBUG_SqlTransaction if you want to spew debug messages
-// #define DEBUG_SqlTransaction
-
-
+using Mono.Data.TdsClient;
 using System;
 using System.Data;
 using System.Data.Common;
 
-namespace System.Data.SqlClient
-{
-	/// <summary>
-	/// Represents a transaction to be performed on a SQL database.
-	/// </summary>
-	// public sealed class SqlTransaction : MarshalByRefObject,
-	//	IDbTransaction, IDisposable
-	public sealed class SqlTransaction : IDbTransaction
+namespace System.Data.SqlClient {
+	public sealed class SqlTransaction : MarshalByRefObject, IDbTransaction, IDisposable
 	{
 		#region Fields
 
-		private bool doingTransaction = false;
-		private SqlConnection conn = null;
-		private IsolationLevel isolationLevel =	
-			IsolationLevel.ReadCommitted;
-		// There are only two IsolationLevel's for PostgreSQL:
-		//    ReadCommitted and Serializable, 
-		// but ReadCommitted is the default 
-		
+		SqlConnection connection;
+		IsolationLevel isolationLevel;
+		bool isOpen;
+
 		#endregion
-               
-		#region Public Methods
 
-		[MonoTODO]
-		public void Commit ()
+		#region Constructors
+
+		internal SqlTransaction (SqlConnection connection, IsolationLevel isolevel)
 		{
-			if(doingTransaction == false)
-				throw new InvalidOperationException(
-					"Begin transaction was not " +
-					"done earlier " +
-					"thus PostgreSQL can not " +
-					"Commit transaction.");
-			
-			SqlCommand cmd = new SqlCommand("COMMIT", conn);
-			cmd.ExecuteNonQuery();
-						
-			doingTransaction = false;
-		}		
-
-		[MonoTODO]
-		public void Rollback()
-		{
-			if(doingTransaction == false)
-				throw new InvalidOperationException(
-					"Begin transaction was not " +
-					"done earlier " +
-					"thus PostgreSQL can not " +
-					"Rollback transaction.");
-			
-			SqlCommand cmd = new SqlCommand("ROLLBACK", conn);
-			cmd.ExecuteNonQuery();
-						
-			doingTransaction = false;
+			SetIsolationLevel (connection, isolevel);
+			this.connection = connection;
+			this.isolationLevel = isolevel;
+			isOpen = true;
 		}
 
-		// For PostgreSQL, Rollback(string) will not be implemented
-		// because PostgreSQL does not support Savepoints
-		[Obsolete]
-		public void Rollback(string transactionName) {
-			// throw new NotImplementedException ();
-			Rollback();
-		}
-
-		// For PostgreSQL, Save(string) will not be implemented
-		// because PostgreSQL does not support Savepoints
-		[Obsolete]
-		public void Save (string savePointName) {
-			// throw new NotImplementedException ();
-		}
-
-		#endregion // Public Methods
-
-		#region Internal Methods to System.Data.dll Assembly
-
-		internal void Begin()
-		{
-			if(doingTransaction == true)
-				throw new InvalidOperationException(
-					"Transaction has begun " +
-					"and PostgreSQL does not " +
-					"support nested transactions.");
-			
-			SqlCommand cmd = new SqlCommand("BEGIN", conn);
-			cmd.ExecuteNonQuery();
-						
-			doingTransaction = true;
-		}
-
-		internal void SetIsolationLevel(IsolationLevel isoLevel)
-		{
-			String sSql = "SET TRANSACTION ISOLATION LEVEL ";
- 
-			switch (isoLevel) 
-			{
-				case IsolationLevel.ReadCommitted:
-					sSql += "READ COMMITTED";
-					break;
-
-				case IsolationLevel.Serializable:
-					sSql += "SERIALIZABLE";
-					break;
-
-				default:
-					// FIXME: generate exception here
-					// PostgreSQL only supports:
-					//   ReadCommitted or Serializable
-					break;
-			}
-			SqlCommand cmd = new SqlCommand(sSql, conn);
-			cmd.ExecuteNonQuery();
-
-			this.isolationLevel = isoLevel;
-		}
-
-		internal void SetConnection(SqlConnection connection)
-		{
-			this.conn = connection;
-		}
-
-		#endregion // Internal Methods to System.Data.dll Assembly
+		#endregion // Constructors
 
 		#region Properties
 
-		IDbConnection IDbTransaction.Connection	{
-			get { 
-				return Connection; 
-			}
+		public SqlConnection Connection {
+			get { return connection; }
 		}
 
-		public SqlConnection Connection	{
-			get { 
-				return conn; 
-			}
+		internal bool IsOpen {
+			get { return isOpen; }
 		}
 
 		public IsolationLevel IsolationLevel {
-			get { 
-				return isolationLevel; 
-			}
+			get { return isolationLevel; }
+		}
+		
+		IDbConnection IDbTransaction.Connection	{
+			get { return Connection; }
 		}
 
-		internal bool DoingTransaction {
-			get {
-				return doingTransaction;
-			}
-		}
+		#endregion // Properties
+               
+		#region Methods
 
-		#endregion Properties
-
-		#region Destructors
-
-		// Destructors aka Finalize and Dispose
-
-		[MonoTODO]
-		public void Dispose()
+		static void SetIsolationLevel (SqlConnection connection, IsolationLevel isolevel)
 		{
-			// FIXME: need to properly release resources
-			// Dispose(true);
+			string commandText = "SET TRANSACTION ISOLATION LEVEL ";
+
+			switch (isolevel) {
+			case IsolationLevel.Chaos :
+				commandText += "CHAOS";
+				break;
+			case IsolationLevel.ReadCommitted :
+				commandText += "READ COMMITTED";
+				break;
+			case IsolationLevel.ReadUncommitted :
+				commandText += "READ UNCOMMITTED";
+				break;
+			case IsolationLevel.RepeatableRead :
+				commandText += "REPEATABLE READ";
+				break;
+			case IsolationLevel.Serializable :
+				commandText += "SERIALIZABLE";
+				break;
+			default :
+				return;
+			}
+			connection.Tds.ExecuteNonQuery (commandText);
 		}
 
-		// Destructor 
+		public void Commit ()
+		{
+			if (!isOpen)
+				throw new InvalidOperationException ("The Transaction was not open.");
+			connection.Tds.ExecuteNonQuery ("IF @@TRANCOUNT>0 COMMIT TRAN");
+			isOpen = false;
+		}		
+
 		[MonoTODO]
-		// [Serializable]
-		// [ClassInterface(ClassInterfaceType.AutoDual)]
-		~SqlTransaction() {
-			// FIXME: need to properly release resources
-			// Dispose(false);
+		public void Dispose ()
+		{
+			throw new NotImplementedException ();
 		}
 
-		#endregion // Destructors
+		public void Rollback ()
+		{
+			if (!isOpen)
+				throw new InvalidOperationException ("The Transaction was not open.");
+			connection.Tds.ExecuteNonQuery ("IF @@TRANCOUNT>0 ROLLBACK TRAN");
+			isOpen = false;
+		}
 
+		public void Rollback (string transactionName)
+		{
+			if (!isOpen)
+				throw new InvalidOperationException ("The Transaction was not open.");
+			connection.Tds.ExecuteNonQuery (String.Format ("IF @@TRANCOUNT > 0 ROLLBACK TRAN {0}", transactionName));
+			isOpen = false;
+		}
+
+		public void Save (string savePointName)
+		{
+			if (!isOpen)
+				throw new InvalidOperationException ("The Transaction was not open.");
+			connection.Tds.ExecuteNonQuery (String.Format ("SAVE TRAN {0}", savePointName));
+		}
+
+		#endregion // Methods
 	}
 }

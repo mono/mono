@@ -1,3 +1,25 @@
+2002-10-25  Tim Coleman (tim@timcoleman.com)
+	* System.Data.SqlClient/SqlConnectionPool.cs:
+		New class added
+	* System.Data.SqlClient/SqlClientPermission.cs:
+	* System.Data.SqlClient/SqlClientPermissionAttribute.cs:
+	* System.Data.SqlClient/SqlInfoMessageEventArgs.cs:
+	* System.Data.SqlClient/SqlInfoMessageEventHandler.cs:
+	* System.Data.SqlClient/SqlParameter.cs:
+	* System.Data.SqlClient/SqlParameterCollection.cs:
+		Code reformatting
+	* System.Data.SqlClient/SqlCommand.cs:
+	* System.Data.SqlClient/SqlConnection.cs:
+	* System.Data.SqlClient/SqlException.cs:
+	* System.Data.SqlClient/SqlTransaction.cs:
+		New code based on work in TDS Client
+	* list:
+		New files added for SqlClient, and TdsClient.Internal
+	* System.Data.build:
+		Added reference to System.EnterpriseServices.dll
+		Still leave SqlClient out of build until danmorg
+		can fix.
+
 2002-10-23  Ville Palo <vi64pa@koti.soon.fi>
 
 	* System.Data.SqlTypes/SqlDouble.cs:
