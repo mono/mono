@@ -8,6 +8,7 @@
 //
 
 using System.Globalization;
+using System.Runtime.Serialization;
 
 namespace System {
 
@@ -25,6 +26,12 @@ namespace System {
 
 		public FormatException (string message, Exception inner)
 			: base (message, inner)
+		{
+		}
+
+		public FormatException (SerializationInfo info,
+					StreamingContext context)
+			: base (info, context)
 		{
 		}
 	}

@@ -55,10 +55,9 @@ namespace System.Security.Permissions
 		 }
 		
 		// Methods
-		[MonoTODO]
 		public override IPermission CreatePermission ()
 		{
-			return null;
+			return null; 	  // Not used, used for inheritance from SecurityAttribute
 		}
 
 		[MonoTODO]

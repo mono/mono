@@ -14,7 +14,7 @@ using System.Runtime.Serialization;
 namespace System
 {
 	[Serializable]
-	public class EntryPointNotFoundException : SystemException
+	public class EntryPointNotFoundException : TypeLoadException
 	{
 		// Constructors
 		public EntryPointNotFoundException ()

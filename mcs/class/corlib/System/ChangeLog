@@ -1,3 +1,10 @@
+2002-01-23  Duncan Mak  <duncan@ximian.com>
+
+	* EntryPointNotFoundException.cs:
+	* FormatException: Added missing constructor and related bits.
+
+	* TypeLoadException: Added missing constructor, methods and properties.
+
 2002-01-23  Miguel de Icaza  <miguel@ximian.com>
 
 	* AppDomain.cs (GetAssemblies): Use foreach construct instead of

@@ -1,3 +1,27 @@
+2002-01-23  Duncan Mak  <duncan@ximian.com>
+
+	* AssemblyAlgorithmIdAttribute.cs:
+	* AssemblyCompanyAttribute.cs:
+	* AssemblyConfigurationAttribute.cs:
+	* AssemblyCopyrightAttribute.cs:
+	* AssemblyCultureAttribute.cs:
+	* AssemblyDefaultAliasAttribute.cs:
+	* AssemblyDelaySignAttribute.cs:
+	* AssemblyDescriptionAttribute.cs:
+	* AssemblyFileVersionAttribute.cs:
+	* AssemblyFlagsAttribute.cs:
+	* AssemblyInformationalVersionAttribute.cs:
+	* AssemblyKeyFileAttribute.cs:
+	* AssemblyKeyNameAttribute.cs:
+	* AssemblyNameProxy.cs:
+	* AssemblyProductAttribute.cs:
+	* AssemblyTitleAttribute.cs:
+	* AssemblyTradeMarkAttribute.cs:
+	* AssemblyVersionAttribute.cs:
+	* CustomAttributeFormatException.cs:
+	* InvalidFilterCriteriaException.cs:
+	* TargetParameterCountException.cs: Added.
+
 2002-01-23  Miguel de Icaza  <miguel@ximian.com>
 
 	* Assembly.cs (Assembly.CodeBase): Implement.
