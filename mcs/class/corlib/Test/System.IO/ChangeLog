@@ -1,3 +1,8 @@
+2002-08-17  Eduardo Garcia Cebollero <kiwnix@yahoo.es>
+
+	* AllTests.cs: added BinaryReaderTest.Suite.
+	* BinaryReaderTest.cs: New file.
+
 2002-06-12  Nick Drochak  <ndrochak@gol.com>
 
 	* StringReaderTest.cs: Regression test for a bug that we had were

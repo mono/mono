@@ -19,14 +19,15 @@ namespace MonoTests.System.IO {
                 { 
                         get 
                         {
-                                TestSuite suite =  new TestSuite();
-                                suite.AddTest(MemoryStreamTest.Suite);
-                                suite.AddTest(StreamReaderTest.Suite);
-                                suite.AddTest(StreamWriterTest.Suite);
-                                suite.AddTest(PathTest.Suite);
-                                suite.AddTest(StringReaderTest.Suite);
-                                suite.AddTest(StringWriterTest.Suite);
-                                suite.AddTest(FileTest.Suite);
+                                TestSuite suite =  new TestSuite ();
+                                suite.AddTest (BinaryReaderTest.Suite);
+                                suite.AddTest (FileTest.Suite);
+                                suite.AddTest (MemoryStreamTest.Suite);
+                                suite.AddTest (PathTest.Suite);
+                                suite.AddTest (StreamReaderTest.Suite);
+                                suite.AddTest (StreamWriterTest.Suite);
+                                suite.AddTest (StringReaderTest.Suite);
+                                suite.AddTest (StringWriterTest.Suite);
                                 return suite;
                         }
                 }
