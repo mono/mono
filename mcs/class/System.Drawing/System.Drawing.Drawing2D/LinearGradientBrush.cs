@@ -171,41 +171,86 @@ namespace System.Drawing.Drawing2D
 
 		// Public Methods
 
-		[MonoTODO()]
-		public override object Clone ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO()]
 		public void MultiplyTransform (Matrix matrix)
 		{
-			throw new NotImplementedException ();
+			MultiplyTransform (matrix, MatrixOrder.Prepend);
 		}
 
-		[MonoTODO()]
 		public void MultiplyTransform (Matrix matrix, MatrixOrder order)
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipMultiplyLineTransform (nativeObject, matrix.nativeMatrix, order);
+			GDIPlus.CheckStatus (status);
 		}
 
-		[MonoTODO()]
 		public void ResetTransform ()
 		{
-			throw new NotImplementedException ();
+			Status status = GDIPlus.GdipResetLineTransform (nativeObject);
+			GDIPlus.CheckStatus (status);
 		}
 
-		[MonoTODO()]
-		public void RotateTransform (float angle, MatrixOrder order)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO()]
 		public void RotateTransform (float angle)
 		{
-			throw new NotImplementedException ();
+			RotateTransform (angle, MatrixOrder.Prepend);
 		}
 
+		public void RotateTransform (float angle, MatrixOrder order)
+		{
+			Status status = GDIPlus.GdipRotateLineTransform (nativeObject, angle, order);
+			GDIPlus.CheckStatus (status);
+		}
+
+		public void ScaleTransform (float sx, float sy)
+		{
+			ScaleTransform (sx, sy, MatrixOrder.Prepend);
+		}
+
+		public void ScaleTransform (float sx, float sy, MatrixOrder order)
+		{
+			Status status = GDIPlus.GdipScaleLineTransform (nativeObject, sx, sy, order);
+			GDIPlus.CheckStatus (status);
+		}
+
+		public void SetBlendTriangularShape (float focus)
+		{
+			SetBlendTriangularShape (focus, 1.0F);
+		}
+
+		public void SetBlendTriangularShape (float focus, float scale)
+		{
+			Status status = GDIPlus.GdipSetLineLinearBlend (nativeObject, focus, scale);
+			GDIPlus.CheckStatus (status);
+		}
+
+		public void SetSigmaBellShape (float focus)
+		{
+			SetSigmaBellShape (focus, 1.0F);
+		}
+
+		public void SetSigmaBellShape (float focus, float scale)
+		{
+			Status status = GDIPlus.GdipSetLineSigmaBlend (nativeObject, focus, scale);
+			GDIPlus.CheckStatus (status);
+		}
+
+		public void TranslateTransform (float dx, float dy)
+		{
+			TranslateTransform (dx, dy, MatrixOrder.Prepend);
+		}
+
+		public void TranslateTransform (float dx, float dy, MatrixOrder order)
+		{
+			Status status = GDIPlus.GdipTranslateLineTransform (nativeObject, dx, dy, order);
+			GDIPlus.CheckStatus (status);
+		}
+
+		public override object Clone ()
+		{
+			IntPtr clonePtr;
+			Status status = GDIPlus.GdipCloneBrush (nativeObject, out clonePtr);
+			GDIPlus.CheckStatus (status);
+
+			LinearGradientBrush clone = new LinearGradientBrush (clonePtr);
+			return clone;
+		}
 	}
 }
