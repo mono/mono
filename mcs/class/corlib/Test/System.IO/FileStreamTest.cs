@@ -291,7 +291,9 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+#if (!NET_1_1)
 		[ExpectedException (typeof (IOException))]
+#endif
 		public void CtorIOException2 ()
 		{
 			FileStream stream = null;

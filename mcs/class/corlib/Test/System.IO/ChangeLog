@@ -1,3 +1,8 @@
+2003-12-16  Nick Drochak <ndrochak@gol.com>
+
+	* FileStreamTest.cs: Exception not thrown in .NET 1.1.
+	And Happy Birthday to Me!
+
 2003-11-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* StringReaderTest.cs: added test from bug #51020.
