@@ -19,17 +19,17 @@ namespace System.Windows.Forms {
 		//
 		//  --- Constructor
 		//
-		// [MonoTODO]
-		// public ListView.CheckedIndexCollection(ListView owner)
-		// {
-		//		throw new NotImplementedException ();
-		// }
+		//[MonoTODO]
+		//public ListView.CheckedIndexCollection(ListView owner)
+		//{
+		//	throw new NotImplementedException ();
+		//}
 
 		//
 		//  --- Public Properties
 		//
-		// [MonoTODO]
-		// public int Count {
+		//[MonoTODO]
+		//public int Count {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -37,14 +37,14 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public bool IsReadOnly {
+		//[MonoTODO]
+		//public bool IsReadOnly {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public int this[int index] {
+		//[MonoTODO]
+		//public int this[int index] {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -53,30 +53,30 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		// [MonoTODO]
-		// public bool Contains(int checkedIndex)
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public virtual bool Equals(object o);
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public static bool Equals(object o1, object o2);
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public IEnumerator GetEnumerator()
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public int IndexOf(int checkedIndex)
-		// {
-		//		throw new NotImplementedException ();
-		// }
-	//}
+		//[MonoTODO]
+		//public bool Contains(int checkedIndex)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public virtual bool Equals(object o);
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public static bool Equals(object o1, object o2);
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public IEnumerator GetEnumerator()
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public int IndexOf(int checkedIndex)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+	// }
 }

@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.ListBindingConverter
+// System.Windows.Forms.KeysConverter
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
@@ -14,13 +14,13 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class ListBindingConverter : TypeConverter {
+        //public class KeysConverter : TypeConverter, IComparer {
 
 		//
 		//  --- Constructor
 		//
 		//[MonoTODO]
-		//public ListBindingConverter()
+		//public KeysConverter()
 		//{
 		//	throw new NotImplementedException ();
 		//}
@@ -29,22 +29,27 @@ namespace System.Windows.Forms {
 		//  --- Public Methods
 		//
 		//[MonoTODO]
-		//public bool CanConvertFrom(Type t)
+		//public bool CanConvertFrom(Type type)
 		//{
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public virtual bool (ITypeDescriptorContext context, Type t)
+		//public override bool CanConvertFrom(ITypeDescriptorContext context, Type type)
 		//{
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public bool CanConvertTo(Type t)
+		//public bool CanCompareTo(Type type)
 		//{
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public override bool CanConvertTo(ITypeDescriptorContext context, Type t)
+		//public virtual bool CanCompareTo(ITypeDescriptorContext context, Type type)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public int Compare(object a, object b)
 		//{
 		//	throw new NotImplementedException ();
 		//}
@@ -54,72 +59,67 @@ namespace System.Windows.Forms {
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public virtual object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object o)
+		//public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object o)
 		//{
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public object ConvertFromInvariantString(string s)
+		//public object ConvertFromInvariantString(string str)
 		//{
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public object ConvertFromInvariantString(ITypeDescriptorContext context, string s)
+		//public object ConvertFromInvariantString( ITypeDescriptorContext context, string str)
 		//{
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public object ConvertFromString(string s)
+		//public object ConvertFromString(string str)
 		//{
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public object ConvertFromString(ITypeDescriptorContext context, string s)
+		//public object ConvertFromString( ITypeDescriptorContext context, string str)
 		//{
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public object ConvertFromString(ITypeDescriptorContext context, CultureInfo culture, string s)
+		//public object ConvertTo( object o, Type t)
 		//{
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public object ConvertTo(object o, Type t)
+		//public override object ConvertTo( ITypeDescriptorContext context, CultureInfo culture, object o, Type t)
 		//{
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object o, Type t)
+		//public string ConvertToInvariantString( object o)
 		//{
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public string ConvertToInvariantString(object o)
+		//public stirng ConvertToInvariantString( ITypeDescriptorContext context, object o)
 		//{
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public string ConvertToInvariantString(ITypeDescriptorContext context, object o)
+		//public string ConvertToString( object o)
 		//{
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public string ConvertToString(object o)
+		//public stirng ConvertToString( ITypeDescriptorContext context , object o)
 		//{
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public string ConvertToString(ITypeDescriptorContext context, object o)
+		//public object CreateInstance(IDicitonary dict)
 		//{
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public object CreateInstance(IDictionary dict)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public override object CreateInstance(ITypeDescriptorContext context, IDictionary dict)
+		//public virtual object CreateInstance( ITypeDescriptorContext context, IDictionary dict)
 		//{
 		//	throw new NotImplementedException ();
 		//}
@@ -139,12 +139,7 @@ namespace System.Windows.Forms {
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public override bool GetCreateInstanceSupported(ITypeDescriptorContext context)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public virtual int GetHashCode()
+		//public virtual bool GetCreateInstanceSupported(ITypeDescriptorContext context)
 		//{
 		//	throw new NotImplementedException ();
 		//}
@@ -154,17 +149,27 @@ namespace System.Windows.Forms {
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public PropertyDescriptorCollection GetProperties(ITypeDescriptorContext context, object o)
+		//public PropertyDescriptorCollection GetProperties( ITypeDescriptorContext context, object o)
 		//{
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public bool GetPropertiesObject()
+		//public virtual PropertyDescriptorCollection GetProperties(ITypeDescriptorContext context,  object o, Attribute[] attributes)
 		//{
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public virtual bool GetPropertiesObject(ITypeDescriptorContext context)
+		//public bool GetProertiesSupported()
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public bool GetProertiesSupported(ITypeDescriptorContext context)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public override StandardValuescollection GetStandardValues(ITypeDescriptorContext context)
 		//{
 		//	throw new NotImplementedException ();
 		//}
@@ -174,17 +179,12 @@ namespace System.Windows.Forms {
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public virtual StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
 		//public bool GetStandardValuesExclusive()
 		//{
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public virtual bool GetStandardValuesExclusive(ITypeDescriptorContext context)
+		//public bool GetStandardValuesExclusive(ITypeDescriptorContext context)
 		//{
 		//	throw new NotImplementedException ();
 		//}
@@ -194,7 +194,7 @@ namespace System.Windows.Forms {
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
-		//public virtual bool GetStandardValuesSupported(ITypeDescriptorContext context)
+		//public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
 		//{
 		//	throw new NotImplementedException ();
 		//}

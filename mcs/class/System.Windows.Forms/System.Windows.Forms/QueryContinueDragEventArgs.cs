@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.LinkLabelLinkClickedEventArgs
+// System.Windows.Forms.QueryContinueDragEventArgs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
@@ -14,13 +14,13 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class LinkLabelLinkClickedEventArgs : EventArgs {
+        //public class QueryContinueDragEventArgs : EventArgs {
 
 		//
 		//  --- Constructor
 		//
 		//[MonoTODO]
-		//public LinkLabelLinkClickedEventArgs(LinkLabel.Link link)
+		//[ComVisible(true)] public QueryContinueDragEventArgs(int keyState, book escapePressed, DragAction action)
 		//{
 		//	throw new NotImplementedException ();
 		//}
@@ -29,7 +29,22 @@ namespace System.Windows.Forms {
 		//  --- Public Properties
 		//
 		//[MonoTODO]
-		//public LinkLabel.Link Link {
+		//[ComVisible(true)] public DragAction Action {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//	set {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
+		//[MonoTODO]
+		//[ComVisible(true)] public bool EscapePressed {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
+		//[MonoTODO]
+		//[ComVisible(true)] public int KeyState {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}

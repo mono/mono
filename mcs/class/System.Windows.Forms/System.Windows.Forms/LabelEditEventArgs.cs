@@ -19,22 +19,22 @@ namespace System.Windows.Forms {
 		//
 		//  --- Constructor
 		//
-		// [MonoTODO]
-		// public LabelEditEventArgs (int val)
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public LabelEditEventArgs (int val, string str)
-		// {
-		//		throw new NotImplementedException ();
-		// }
+		//[MonoTODO]
+		//public LabelEditEventArgs (int val)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public LabelEditEventArgs (int val, string str)
+		//{
+		//	throw new NotImplementedException ();
+		//}
 
 		//
 		//  --- Public Properties
 		//
-		// [MonoTODO]
-		// public bool CancelEdit {
+		//[MonoTODO]
+		//public bool CancelEdit {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -42,14 +42,14 @@ namespace System.Windows.Forms {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public int Item {
+		//[MonoTODO]
+		//public int Item {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public string Label {
+		//[MonoTODO]
+		//public string Label {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -58,15 +58,15 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		// [MonoTODO]
-		// public virtual bool Equals(object o);
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public static bool Equals(object o1, object o2);
-		// {
-		//		throw new NotImplementedException ();
-		// }
-	//}
+		//[MonoTODO]
+		//public virtual bool Equals(object o);
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public static bool Equals(object o1, object o2);
+		//{
+		//	throw new NotImplementedException ();
+		//}
+	// }
 }

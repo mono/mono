@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.LinkLabelLinkClickedEventArgs
+// System.Windows.Forms.KeyPressEventArgs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
@@ -14,13 +14,13 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class LinkLabelLinkClickedEventArgs : EventArgs {
+        //public class KeyPressEventArgs : EventArgs {
 
 		//
 		//  --- Constructor
 		//
 		//[MonoTODO]
-		//public LinkLabelLinkClickedEventArgs(LinkLabel.Link link)
+		//public KeyPressEventArgs (char keyChar)
 		//{
 		//	throw new NotImplementedException ();
 		//}
@@ -29,7 +29,16 @@ namespace System.Windows.Forms {
 		//  --- Public Properties
 		//
 		//[MonoTODO]
-		//public LinkLabel.Link Link {
+		//public bool Handled {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//	set {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
+		//[MonoTODO]
+		//public char KeyChar {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}

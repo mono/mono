@@ -19,29 +19,29 @@ namespace System.Windows.Forms {
 		//
 		//  --- Constructor
 		//
-		// [MonoTODO]
-		// public LinkLabel.LinkCollection(LinkLabel owner)
-		// {
-		//		throw new NotImplementedException ();
-		// }
+		//[MonoTODO]
+		//public LinkLabel.LinkCollection(LinkLabel owner)
+		//{
+		//	throw new NotImplementedException ();
+		//}
 
 		//
 		//  --- Public Properties
 		//
-		// [MonoTODO]
-		// public int Count {
+		//[MonoTODO]
+		//public int Count {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public bool IsReadOnly {
+		//[MonoTODO]
+		//public bool IsReadOnly {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public virtual LinkLabel.Link this[ int index]  {
+		//[MonoTODO]
+		//public virtual LinkLabel.Link this[ int index]  {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -53,55 +53,55 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		// [MonoTODO]
-		// public Link Add(int val1, int val2)
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public Link Add(int val1, int val2, object o)
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public virtual void Clear()
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public bool Contains(LinkLabel.Link link)
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public virtual bool Equals(object o);
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public static bool Equals(object o1, object o2);
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public IEnumerator GetEnumerator()
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public int IndexOf(LinkLabel.Link link)
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public void Remove(LinkLabel.Link value)
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public void RemoveAt(int index)
-		// {
-		//		throw new NotImplementedException ();
-		// }
-	//}
+		//[MonoTODO]
+		//public Link Add(int val1, int val2)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public Link Add(int val1, int val2, object o)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public virtual void Clear()
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public bool Contains(LinkLabel.Link link)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public virtual bool Equals(object o);
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public static bool Equals(object o1, object o2);
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public IEnumerator GetEnumerator()
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public int IndexOf(LinkLabel.Link link)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public void Remove(LinkLabel.Link value)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public void RemoveAt(int index)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+	// }
 }

@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.ListView.SelectedIndexCollection
+// System.Windows.Forms.QueryAccessibilityHelpEventArgs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
@@ -14,13 +14,18 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class ListView.SelectedIndexCollection :  IList, ICollection, IEnumerable {
+        //public class QueryAccessibilityHelpEventArgs : EventArgs {
 
 		//
 		//  --- Constructor
 		//
 		//[MonoTODO]
-		//public ListView.SelectedIndexCollection(ListView owner)
+		//public QueryAccessibilityHelpEventArgs()
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public QueryAccessibilityHelpEventArgs(string str1, string str2, string str3)
 		//{
 		//	throw new NotImplementedException ();
 		//}
@@ -29,20 +34,29 @@ namespace System.Windows.Forms {
 		//  --- Public Properties
 		//
 		//[MonoTODO]
-		//public int Count {
+		//[ComVisible(true)] public string HelpKeyword {
 		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//	set {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
 		//[MonoTODO]
-		//public bool IsReadOnly {
+		//[ComVisible(true)] public string HelpNamespace {
 		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//	set {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
 		//[MonoTODO]
-		//public int this [int index] {
+		//[ComVisible(true)] public string HelpString {
 		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//	set {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
@@ -51,32 +65,12 @@ namespace System.Windows.Forms {
 		//  --- Public Methods
 		//
 		//[MonoTODO]
-		//public bool Contains(ListView item)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void CopyTo(Array dest, int index)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
 		//public virtual bool Equals(object o);
 		//{
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
 		//public static bool Equals(object o1, object o2);
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public IEnumerator GetEnumerator()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public int IndexOf(int index)
 		//{
 		//	throw new NotImplementedException ();
 		//}

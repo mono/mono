@@ -19,23 +19,23 @@ namespace System.Windows.Forms {
 		//
 		//  --- Constructor
 		//
-		// [MonoTODO]
-		// public LayoutEventArgs (Control affectedControl, string affectedProperty)
-		// {
-		//		throw new NotImplementedException ();
-		// }
+		//[MonoTODO]
+		//public LayoutEventArgs (Control affectedControl, string affectedProperty)
+		//{
+		//	throw new NotImplementedException ();
+		//}
 
 		//
 		//  --- Public Properties
 		//
-		// [MonoTODO]
-		// public Control AffectedControl {
+		//[MonoTODO]
+		//public Control AffectedControl {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public string AffectedProperty {
+		//[MonoTODO]
+		//public string AffectedProperty {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -44,15 +44,15 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		// [MonoTODO]
-		// public virtual bool Equals(object o);
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public static bool Equals(object o1, object o2);
-		// {
-		//		throw new NotImplementedException ();
-		// }
-	//}
+		//[MonoTODO]
+		//public virtual bool Equals(object o);
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public static bool Equals(object o1, object o2);
+		//{
+		//	throw new NotImplementedException ();
+		//}
+	// }
 }

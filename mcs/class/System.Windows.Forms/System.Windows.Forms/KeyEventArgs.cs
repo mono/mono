@@ -1,5 +1,5 @@
 //
-// System.Windows.Forms.ListBox.SelectedObjectCollection
+// System.Windows.Forms.KeyEventArgs
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
@@ -14,13 +14,13 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class ListBox.SelectedObjectCollection :  IList, ICollection, IEnumerable {
+        //public class KeyEventArgs : EventArgs {
 
 		//
 		//  --- Constructor
 		//
 		//[MonoTODO]
-		//public ListBox.SelectedObjectCollection(ListBox owner)
+		//public KeyEventArgs ( Keys keyData)
 		//{
 		//	throw new NotImplementedException ();
 		//}
@@ -29,23 +29,53 @@ namespace System.Windows.Forms {
 		//  --- Public Properties
 		//
 		//[MonoTODO]
-		//public int Count {
+		//public virtual bool Alt {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
 		//[MonoTODO]
-		//public bool IsReadOnly {
+		//public bool Control {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
 		//[MonoTODO]
-		//public object this[int index] {
+		//public bool Handled {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
 		//	set {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
+		//[MonoTODO]
+		//public Keys KeyCode {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
+		//[MonoTODO]
+		//public Keys KeyData {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
+		//[MonoTODO]
+		//public int KeyValue {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
+		//[MonoTODO]
+		//public Keys Modifiers {
+		//	get {
+		//		throw new NotImplementedException ();
+		//	}
+		//}
+		//[MonoTODO]
+		//public bool Shift {
+		//	get {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
@@ -54,32 +84,12 @@ namespace System.Windows.Forms {
 		//  --- Public Methods
 		//
 		//[MonoTODO]
-		//public bool Contains(object selectedObject)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public void CopyTo(Array dest, int index)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
 		//public virtual bool Equals(object o);
 		//{
 		//	throw new NotImplementedException ();
 		//}
 		//[MonoTODO]
 		//public static bool Equals(object o1, object o2);
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public IEnumerator GetEnumerator()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public int IndexOf(object selectedObject)
 		//{
 		//	throw new NotImplementedException ();
 		//}

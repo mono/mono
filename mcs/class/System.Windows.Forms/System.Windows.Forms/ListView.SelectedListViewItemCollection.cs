@@ -19,29 +19,29 @@ namespace System.Windows.Forms {
 		//
 		//  --- Constructor
 		//
-		// [MonoTODO]
-		// public ListView.SelectedListViewItemCollection(ListView owner)
-		// {
-		//		throw new NotImplementedException ();
-		// }
+		//[MonoTODO]
+		//public ListView.SelectedListViewItemCollection(ListView owner)
+		//{
+		//	throw new NotImplementedException ();
+		//}
 
 		//
 		//  --- Public Properties
 		//
-		// [MonoTODO]
-		// public int Count {
+		//[MonoTODO]
+		//public int Count {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public bool IsReadOnly {
+		//[MonoTODO]
+		//public bool IsReadOnly {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
 		//}
-		// [MonoTODO]
-		// public ListViewItem this[int index] {
+		//[MonoTODO]
+		//public ListViewItem this[int index] {
 		//	get {
 		//		throw new NotImplementedException ();
 		//	}
@@ -50,40 +50,40 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		// [MonoTODO]
-		// public void Clear()
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public bool Contains(ListViewItem item)
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public void CopyTo(Array dest, int index)
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public virtual bool Equals(object o);
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public static bool Equals(object o1, object o2);
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public IEnumerator GetEnumerator()
-		// {
-		//		throw new NotImplementedException ();
-		// }
-		// [MonoTODO]
-		// public int IndexOf(ListViewItem item)
-		// {
-		//		throw new NotImplementedException ();
-		// }
-	//}
+		//[MonoTODO]
+		//public void Clear()
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public bool Contains(ListViewItem item)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public void CopyTo(Array dest, int index)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public virtual bool Equals(object o);
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public static bool Equals(object o1, object o2);
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public IEnumerator GetEnumerator()
+		//{
+		//	throw new NotImplementedException ();
+		//}
+		//[MonoTODO]
+		//public int IndexOf(ListViewItem item)
+		//{
+		//	throw new NotImplementedException ();
+		//}
+	// }
 }
