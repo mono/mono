@@ -1,3 +1,11 @@
+2003-10-18  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SoapReflectionImporter.cs: Support element references for enum values in
+	  encoding format. This fixes bug #49568.
+	* XmlSerializationReaderInterpreter.cs: In encoded format, do not check
+	  the name and namespace of the wrapper element. MS.NET doesn't do it.
+	  This fixes bug #49729.
+
 2003-10-15  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* MapCodeGenerator.cs: Made MapCodeGenerator internal.

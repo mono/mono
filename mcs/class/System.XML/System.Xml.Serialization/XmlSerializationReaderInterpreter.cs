@@ -93,9 +93,21 @@ namespace System.Xml.Serialization
 
 			if (typeMap.HasWrapperElement)
 			{
+				if (_format == SerializationFormat.Encoded)
+				{
+					while (Reader.NodeType == System.Xml.XmlNodeType.Element)
+					{
+						string root = Reader.GetAttribute ("root", XmlSerializer.EncodingNamespace);
+						if (root == null || System.Xml.XmlConvert.ToBoolean(root)) break;
+						ReadReferencedElement ();
+						Reader.MoveToContent ();
+					}
+				}
+				
 				while (Reader.NodeType != System.Xml.XmlNodeType.EndElement) 
 				{
-					if (Reader.IsStartElement(typeMap.ElementName, typeMap.Namespace))  
+					if (Reader.IsStartElement(typeMap.ElementName, typeMap.Namespace) 
+					    || _format == SerializationFormat.Encoded)  
 					{
 						if (Reader.IsEmptyElement) { Reader.Skip(); Reader.MoveToContent(); continue; }
 						Reader.ReadStartElement();

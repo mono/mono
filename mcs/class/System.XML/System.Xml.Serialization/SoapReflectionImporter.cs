@@ -285,6 +285,8 @@ namespace System.Xml.Serialization {
 			map = CreateTypeMapping (typeData, null, defaultNamespace);
 			helper.RegisterClrType (map, type, map.Namespace);
 
+			map.MultiReferenceType = true;
+			
 			string [] names = Enum.GetNames (type);
 			EnumMap.EnumMapMember[] members = new EnumMap.EnumMapMember[names.Length];
 			for (int n=0; n<names.Length; n++)
