@@ -1,5 +1,11 @@
 2003-02-10 Jackson Harper <jackson@latitudegeo.com>
 
+	* ClassTable.cs: Add file, this is a 'table' for storing classes
+	* Location.cs: Add file, this will eventually be used for marking
+	locations in IL files
+
+2003-02-10 Jackson Harper <jackson@latitudegeo.com>
+
 	* Method.cs: Add method to set parameters, 
 	       set parameters when defining type
 	* Class.cs: Fix very silly bug in GetMethod method
