@@ -8182,6 +8182,9 @@ namespace Mono.CSharp {
 
 				pe.IsBase = true;
 			}
+			
+			if (e is MethodGroupExpr)
+				((MethodGroupExpr) e).IsBase = true;
 
 			return e;
 		}
