@@ -1,3 +1,7 @@
+2003-02-20  Nick Drochak <ndrochak@gol.com>
+
+	* ByteTest.cs: Isolate test for mcs 'checked' bug.
+
 2003/02/13  Nick Drochak <ndrochak@gol.com>
 
 	* ActivatorTest.cs:
