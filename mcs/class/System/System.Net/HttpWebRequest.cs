@@ -1071,15 +1071,16 @@ namespace System.Net
 						if (InternalAllowBuffering) {
 							bodyBuffer = writeStream.WriteBuffer;
 							bodyBufferLength = writeStream.WriteBufferLength;
+							webResponse.ReadAll ();
 							return true;
 						} else if (method != "PUT" && method != "POST") {
+							webResponse.ReadAll ();
 							return true;
 						}
 						
 						writeStream.InternalClose ();
 						writeStream = null;
-						if (webResponse != null)
-							webResponse.ReadAll ();
+						webResponse.ReadAll ();
 						webResponse = null;
 
 						throw new WebException ("This request requires buffering " +

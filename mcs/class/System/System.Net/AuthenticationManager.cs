@@ -37,6 +37,7 @@ namespace System.Net
 	public class AuthenticationManager
 	{
 		static ArrayList modules;
+		static object locker = new object ();
 
 		private AuthenticationManager ()
 		{
@@ -44,10 +45,7 @@ namespace System.Net
 
 		static void EnsureModules ()
 		{
-			if (modules != null)
-				return;
-
-			lock (typeof (AuthenticationManager)) {
+			lock (locker) {
 				if (modules != null)
 					return;
 				
