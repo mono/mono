@@ -132,7 +132,7 @@ namespace System.Xml.Serialization {
 				// has the requested base type
 				
 				SetMapBaseType (map, baseType);
-				map.SetRoot (name);
+				map.UpdateRoot (name);
 				return map;
 			}
 			
@@ -235,7 +235,7 @@ namespace System.Xml.Serialization {
 				
 				XmlQualifiedName typeQName = new XmlQualifiedName ("Message", names[n].Namespace);
 				XmlTypeMapping tmap;
-				TypeData td = GetElementTypeData (typeQName, elem, out tmap);
+				TypeData td = GetElementTypeData (typeQName, elem, names[n], out tmap);
 				
 				mapping[n] = ImportMemberMapping (elem.Name, typeQName.Namespace, elem.IsNillable, td, tmap);
 			}
@@ -364,7 +364,10 @@ namespace System.Xml.Serialization {
 		XmlTypeMapping ImportType (XmlQualifiedName name, XmlQualifiedName root)
 		{
 			XmlTypeMapping map = GetRegisteredTypeMapping (name);
-			if (map != null) return map;
+			if (map != null) {
+				map.UpdateRoot (root);
+				return map;
+			}
 
 			XmlSchemaType type = (XmlSchemaType) schemas.Find (name, typeof (XmlSchemaComplexType));
 			if (type == null) type = (XmlSchemaType) schemas.Find (name, typeof (XmlSchemaSimpleType));
@@ -385,8 +388,10 @@ namespace System.Xml.Serialization {
 			XmlTypeMapping map = GetRegisteredTypeMapping (name);
 			if (map != null) {
 				XmlSchemaComplexType ct = stype as XmlSchemaComplexType;
-				if (map.TypeData.SchemaType != SchemaTypes.Class || ct == null || !CanBeArray (name, ct))
+				if (map.TypeData.SchemaType != SchemaTypes.Class || ct == null || !CanBeArray (name, ct)) {
+					map.UpdateRoot (root);
 					return map;
+				}
 					
 				// The map was initially imported as a class, but it turns out that it is an
 				// array. It has to be imported now as array.
@@ -705,7 +710,7 @@ namespace System.Xml.Serialization {
 					string ns;
 					XmlSchemaElement elem = (XmlSchemaElement) item;
 					XmlTypeMapping emap;
-					TypeData typeData = GetElementTypeData (typeQName, elem, out emap);
+					TypeData typeData = GetElementTypeData (typeQName, elem, null, out emap);
 					XmlSchemaElement refElem = GetRefElement (typeQName, elem, out ns);
 
 					if (elem.MaxOccurs == 1 && !multiValue)
@@ -891,7 +896,7 @@ namespace System.Xml.Serialization {
 					string ns;
 					XmlSchemaElement elem = (XmlSchemaElement) item;
 					XmlTypeMapping emap;
-					TypeData typeData = GetElementTypeData (typeQName, elem, out emap);
+					TypeData typeData = GetElementTypeData (typeQName, elem, null, out emap);
 					XmlSchemaElement refElem = GetRefElement (typeQName, elem, out ns);
 					choices.Add (CreateElementInfo (ns, member, refElem.Name, typeData, refElem.IsNillable, refElem.Form, emap));
 					if (elem.MaxOccurs > 1) multiValue = true;
@@ -1392,10 +1397,9 @@ namespace System.Xml.Serialization {
 			}
 		}
 
-		TypeData GetElementTypeData (XmlQualifiedName typeQName, XmlSchemaElement elem, out XmlTypeMapping map)
+		TypeData GetElementTypeData (XmlQualifiedName typeQName, XmlSchemaElement elem, XmlQualifiedName root, out XmlTypeMapping map)
 		{
 			bool sharedAnnType = false;
-			XmlQualifiedName root = null;
 			map = null;
 			
 			if (!elem.RefName.IsEmpty) {

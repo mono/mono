@@ -21,7 +21,7 @@ namespace System.Xml.Serialization
 	{
 		private string dataType;
 		private string elementName;
-		private bool isNullable;
+		private bool isNullable = true;
 		private string ns;
 
 		public XmlRootAttribute ()

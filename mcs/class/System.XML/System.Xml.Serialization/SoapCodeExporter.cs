@@ -123,8 +123,8 @@ namespace System.Xml.Serialization {
 		protected override void GenerateEnum (XmlTypeMapping map, CodeTypeDeclaration codeEnum)
 		{
 			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Xml.Serialization.SoapType");
-			if (map.ElementName != map.TypeData.TypeName) att.Arguments.Add (GetArg (map.ElementName));
-			if (map.Namespace != "") att.Arguments.Add (GetArg ("Namespace", map.Namespace));
+			if (map.XmlType != map.TypeData.TypeName) att.Arguments.Add (GetArg (map.XmlType));
+			if (map.XmlTypeNamespace != "") att.Arguments.Add (GetArg ("Namespace", map.XmlTypeNamespace));
 			AddCustomAttribute (codeEnum, att, false);
 		}		
 		

@@ -1,3 +1,22 @@
+2004-06-02  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* XmlSerializationReader.cs: Support schamea instance namespaces other than
+	  the 2001 one when reading the xsi type.
+	* MapCodeGenerator.cs: Take into account that the root namespace and element
+	  name may have changed from one export to another of the same type. In
+	  this case the class attributes need to be regenerated.
+	* SoapCodeExporter.cs, XmlCodeExporter.cs: Take the enum name from XmlType,
+	  not ElementName. Idem for namespace.
+	* XmlReflectionImporter.cs: Set nullable property of XmlTypeMapping.
+	* XmlRootAttribute.cs: Default value for nullable is true.
+	* XmlSchemaImporter.cs: The root name for a class may change in some
+	  scenarios (for example, when the type is initially exported as part of
+	  another type and later exported as a root type).
+	* XmlSerializationReader.cs: In GetXsiType(), if the type attribute is not
+	  found using the standard namespace, try getting the type using
+	  the 2000/10 and 1999 namespaces.
+	* XmlTypeMapping.cs: Added IsNullable property. Updated SetRoot method ;-)
+
 2004-05-26  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SerializationCodeGenerator.cs, XmlSerializationReaderInterpreter.cs:

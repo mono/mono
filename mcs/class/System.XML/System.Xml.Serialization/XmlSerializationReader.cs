@@ -274,7 +274,16 @@ namespace System.Xml.Serialization {
 		protected XmlQualifiedName GetXsiType ()
 		{
 			string typeName = Reader.GetAttribute ("type", XmlSchema.InstanceNamespace);
-			if (typeName == string.Empty || typeName == null) return null;
+			
+			if (typeName == string.Empty || typeName == null) {
+				typeName = Reader.GetAttribute ("type", w3InstanceNS1999);
+				if (typeName == string.Empty || typeName == null) {
+					typeName = Reader.GetAttribute ("type", w3InstanceNS2000);
+					if (typeName == string.Empty || typeName == null)
+						return null;
+				}
+			}
+			
 			int i = typeName.IndexOf (":");
 			if (i == -1) return new XmlQualifiedName (typeName, Reader.NamespaceURI);
 			else 

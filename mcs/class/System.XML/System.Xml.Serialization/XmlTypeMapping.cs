@@ -26,6 +26,7 @@ namespace System.Xml.Serialization
 		bool isSimpleType;
 		string documentation;
 		bool includeInSchema;
+		bool isNullable = true;
 
 		ArrayList _derivedTypes = new ArrayList();
 
@@ -108,6 +109,12 @@ namespace System.Xml.Serialization
 			get { return includeInSchema; }
 			set { includeInSchema = value; }
 		}
+		
+		internal bool IsNullable
+		{
+			get { return isNullable; }
+			set { isNullable = value; }
+		}
 
 		internal XmlTypeMapping GetRealTypeMap (string objectFullTypeName)
 		{
@@ -132,10 +139,12 @@ namespace System.Xml.Serialization
 			return null;
 		}
 		
-		internal void SetRoot (XmlQualifiedName qname)
+		internal void UpdateRoot (XmlQualifiedName qname)
 		{
-			this.elementName = qname.Name;
-			this.ns = qname.Namespace;
+			if (qname != null) {
+				this.elementName = qname.Name;
+				this.ns = qname.Namespace;
+			}
 		}
 	}
 

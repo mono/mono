@@ -85,16 +85,29 @@ namespace System.Xml.Serialization {
 
 		void ExportClassCode (XmlTypeMapping map)
 		{
-			if (IsMapExported (map)) return;
-			SetMapExported (map);
+			CodeTypeDeclaration codeClass;
+			
+			if (IsMapExported (map)) {
+				// Regenerate attributes, since things may have changed
+				codeClass = GetMapDeclaration (map);
+				if (codeClass != null) {
+					codeClass.CustomAttributes = null;
+					GenerateClass (map, codeClass);
+					ExportDerivedTypes (map, codeClass, true);
+				}
+				return;
+			}
 
 			if (map.TypeData.Type == typeof(object))
 			{
 				exportedAnyType = map;
+				SetMapExported (map, null);
 				return;
 			}
 			
-			CodeTypeDeclaration codeClass = new CodeTypeDeclaration (map.TypeData.TypeName);
+			codeClass = new CodeTypeDeclaration (map.TypeData.TypeName);
+			SetMapExported (map, codeClass);
+			
 			AddCodeType (codeClass, map.Documentation);
 			codeClass.Attributes = MemberAttributes.Public;
 
@@ -109,10 +122,10 @@ namespace System.Xml.Serialization {
 				ExportMapCode (map.BaseMap);
 			}
 
-			ExportDerivedTypes (map, codeClass);
+			ExportDerivedTypes (map, codeClass, false);
 		}
 		
-		void ExportDerivedTypes (XmlTypeMapping map, CodeTypeDeclaration codeClass)
+		void ExportDerivedTypes (XmlTypeMapping map, CodeTypeDeclaration codeClass, bool onlyIncludes)
 		{
 			foreach (XmlTypeMapping tm in map.DerivedTypes)
 			{
@@ -120,8 +133,8 @@ namespace System.Xml.Serialization {
 					codeClass.CustomAttributes = new CodeAttributeDeclarationCollection ();
 
 				GenerateClassInclude (codeClass.CustomAttributes, tm);
-				ExportMapCode (tm);
-				ExportDerivedTypes (tm, codeClass);
+				if (!onlyIncludes) ExportMapCode (tm);
+				ExportDerivedTypes (tm, codeClass, onlyIncludes);
 			}
 		}
 
@@ -352,9 +365,10 @@ namespace System.Xml.Serialization {
 		void ExportEnumCode (XmlTypeMapping map)
 		{
 			if (IsMapExported (map)) return;
-			SetMapExported (map);
 
 			CodeTypeDeclaration codeEnum = new CodeTypeDeclaration (map.TypeData.TypeName);
+			SetMapExported (map, codeEnum);
+			
 			codeEnum.Attributes = MemberAttributes.Public;
 			codeEnum.IsEnum = true;
 			AddCodeType (codeEnum, map.Documentation);
@@ -392,9 +406,14 @@ namespace System.Xml.Serialization {
 			return false;
 		}
 
-		void SetMapExported (XmlTypeMapping map)
+		void SetMapExported (XmlTypeMapping map, CodeTypeDeclaration declaration)
 		{
-			exportedMaps.Add (map.TypeData.FullTypeName, map);
+			exportedMaps.Add (map.TypeData.FullTypeName, declaration);
+		}
+
+		CodeTypeDeclaration GetMapDeclaration (XmlTypeMapping map)
+		{
+			return exportedMaps [map.TypeData.FullTypeName] as CodeTypeDeclaration;
 		}
 
 		public static void AddCustomAttribute (CodeTypeMember ctm, CodeAttributeDeclaration att, bool addIfNoParams)

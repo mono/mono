@@ -149,10 +149,11 @@ namespace System.Xml.Serialization {
 		{
 			string rootNamespace = defaultNamespace;
 			string typeNamespace = null;
-			
 			string elementName;
 			bool includeInSchema = true;
 			XmlAttributes atts = null;
+			bool nullable = true;
+
 			if (defaultXmlType == null) defaultXmlType = typeData.XmlType;
 
 			if (!typeData.IsListType)
@@ -189,6 +190,7 @@ namespace System.Xml.Serialization {
 					elementName = root.ElementName;
 				if (root.Namespace != null && root.Namespace != String.Empty)
 					rootNamespace = root.Namespace;
+				nullable = root.IsNullable;
 			}
 
 			if (rootNamespace == null) rootNamespace = "";
