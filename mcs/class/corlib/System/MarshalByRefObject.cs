@@ -27,5 +27,9 @@ namespace System {
 		{
 			return null;
 		}
+
+		protected MarshalByRefObject ()
+		{
+		}
 	}
 }

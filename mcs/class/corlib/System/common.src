@@ -69,6 +69,7 @@ Enum.cs
 MulticastDelegate.cs
 ParamArrayAttribute.cs
 RuntimeTypeHandle.cs
+SerializableAttribute.cs
 Type.cs
 TypeInitializationException.cs
 ValueType.cs

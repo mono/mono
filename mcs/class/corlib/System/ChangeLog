@@ -1,3 +1,7 @@
+2001-09-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* MarshalByRefObject.cs: Mark class as [Serializable].
+
 2001-08-28  Dietmar Maurer  <dietmar@ximian.com>
 
 	* Console.cs: impl. (write only)
