@@ -21,6 +21,25 @@ namespace System.Runtime.Serialization
 		string fullTypeName; // the type being serialized.
 
 		[CLSCompliant (false)] IFormatterConverter converter;
+		
+		/* used by the runtime */
+		private SerializationInfo (Type type)
+		{
+			assemblyName = type.Assembly.FullName;
+			fullTypeName = type.FullName;
+		}
+		
+		/* used by the runtime */
+		private SerializationInfo (Type type, SerializationEntry [] data)
+		{
+			int len = data.Length;
+
+			assemblyName = type.Assembly.FullName;
+			fullTypeName = type.FullName;
+
+			for (int i = 0; i < len; i++)
+				serialized.Add (data [i].Name, data [i]);
+		}
 
 		// Constructor
 		[CLSCompliant (false)]
@@ -256,6 +275,17 @@ namespace System.Runtime.Serialization
 		public UInt64 GetUInt64 (string name)
 		{
 			return (UInt64) GetValue (name, typeof (System.UInt64));
+		}
+
+		private SerializationEntry [] get_entries ()
+		{
+			SerializationEntry [] res = new SerializationEntry [this.MemberCount];
+			int i = 0;
+			
+			foreach (SerializationEntry e in this)
+				res [i++] = e;
+			
+			return res;
 		}
 	}
 }
