@@ -18,7 +18,7 @@ namespace System.Collections.Generic
 	[CLSCompliant(false)]
 	[ComVisible(false)]
 	public class List<T> : IList<T>, ICollection<T>, IEnumerable<T>,
-		ICollection, IEnumerable
+		IList, ICollection, IEnumerable
 	{
 		protected int count;
 		protected int capacity;
@@ -47,6 +47,11 @@ namespace System.Collections.Generic
 			return count++;
 		}
 
+		int IList.Add (object item)
+		{
+			return Add ((T) item);
+		}
+
 		public void Clear ()
 		{
 			count = 0;
@@ -61,6 +66,11 @@ namespace System.Collections.Generic
 			return false;
 		}
 
+		bool IList.Contains (object item)
+		{
+			return Contains ((T) item);
+		}
+
 		public int IndexOf (T item)
 		{
 			for (int i = 0; i < count; i++)
@@ -68,6 +78,11 @@ namespace System.Collections.Generic
 					return i;
 
 			return -1;
+		}
+
+		int IList.IndexOf (object item)
+		{
+			return IndexOf ((T) item);
 		}
 
 		public void Insert (int index, T item)
@@ -89,6 +104,11 @@ namespace System.Collections.Generic
 			int index = IndexOf (item);
 			if (index >= 0)
 				RemoveAt (index);
+		}
+
+		void IList.Remove (object item)
+		{
+			Remove ((T) item);
 		}
 
 		public void RemoveAt (int index)
@@ -127,7 +147,22 @@ namespace System.Collections.Generic
 			}
 		}
 
+		object IList.this [int index] {
+			get {
+				return contents [index];
+			}
+
+			set {
+				contents [index] = (T) value;
+			}
+		}
+
 		public void CopyTo (T[] array, int arrayIndex)
+		{
+			Array.Copy (contents, 0, array, arrayIndex, count);
+		}
+
+		void ICollection.CopyTo (Array array, int arrayIndex)
 		{
 			Array.Copy (contents, 0, array, arrayIndex, count);
 		}
@@ -138,12 +173,25 @@ namespace System.Collections.Generic
 			}
 		}
 
+		public bool IsSynchronized {
+			get { return false; }
+		}
+
+		public object SyncRoot {
+			get { return this; }
+		}
+
 		public IEnumerator<T> GetEnumerator ()
 		{
 			return new Enumerator (this);
 		}
 
-		protected class Enumerator : IEnumerator<T>
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return new Enumerator (this);
+		}
+
+		protected class Enumerator : IEnumerator<T>, IEnumerator
 		{
 			List<T> list;
 			int modified;
@@ -166,6 +214,12 @@ namespace System.Collections.Generic
 				}
 			}
 
+			object IEnumerator.Current {
+				get {
+					return Current;
+				}
+			}
+
 			public bool MoveNext ()
 			{
 				if (list.modified != modified)
@@ -173,6 +227,14 @@ namespace System.Collections.Generic
 
 				current++;
 				return current < list.count;
+			}
+
+			public void Reset ()
+			{
+				if (list.modified != modified)
+					throw new InvalidOperationException ();
+
+				current = 0;
 			}
 
 			public void Dispose ()

@@ -78,6 +78,15 @@ namespace System.Collections.Generic
 				array [start++] = node.Item;
 		}
 
+		void ICollection.CopyTo (Array array, int start)
+		{
+			if (start + count >= array.Length)
+				throw new ArgumentException ();
+
+			for (Node node = head; node != null; node = node.Next)
+				array.SetValue (node.Item, start++);
+		}
+
 		public T[] ToArray ()
 		{
 			int pos = 0;
@@ -95,7 +104,20 @@ namespace System.Collections.Generic
 			get { return count; }
 		}
 
+		public bool IsSynchronized {
+			get { return false; }
+		}
+
+		public object SyncRoot {
+			get { return this; }
+		}
+
 		public IEnumerator<T> GetEnumerator ()
+		{
+			return new Enumerator (this);
+		}
+
+		IEnumerator IEnumerable.GetEnumerator ()
 		{
 			return new Enumerator (this);
 		}
@@ -112,7 +134,7 @@ namespace System.Collections.Generic
 			}
 		}
 
-		protected class Enumerator : IEnumerator<T>
+		protected class Enumerator : IEnumerator<T>, IEnumerator
 		{
 			Stack<T> stack;
 			int modified;
@@ -135,6 +157,12 @@ namespace System.Collections.Generic
 				}
 			}
 
+			object IEnumerator.Current {
+				get {
+					return Current;
+				}
+			}
+
 			public bool MoveNext ()
 			{
 				if (stack.modified != modified)
@@ -144,6 +172,14 @@ namespace System.Collections.Generic
 
 				current = current.Next;
 				return current != null;
+			}
+
+			public void Reset ()
+			{
+				if (stack.modified != modified)
+					throw new InvalidOperationException ();
+
+				current = stack.head;
 			}
 
 			public void Dispose ()

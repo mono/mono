@@ -1,3 +1,7 @@
+2004-03-13  Martin Baulig  <martin@ximian.com>
+
+	* Stack.cs, Queue.cs, List.cs: Implement the non-generic interfaces.
+
 2004-03-11  Martin Baulig  <martin@ximian.com>
 
 	* List.cs: New file.
