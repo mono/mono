@@ -98,7 +98,9 @@ namespace System
                 throw new FormatException(); // should never happen 
             }
 
-            StringBuilder sb = new StringBuilder(new String(buf), bufSize);
+		string TempString = new String(buf);
+		TempString = TempString.Trim(new char[] {(char)0x0});
+		StringBuilder sb = new StringBuilder(TempString, TempString.Length);
 #else
             StringBuilder sb = new StringBuilder(bufSize);
             if (S.Decimal.decimal2string(ref value, digits, decimals, sb, bufSize, out decPos, out sign) != 0) 

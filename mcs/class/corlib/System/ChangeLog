@@ -1,5 +1,10 @@
 2002-04-16  Nick Drochak  <ndrochak@gol.com>
 
+	* DecimalFormatter.cs: Trim off excess null characters from the string
+	that decimal2string gives back.
+
+2002-04-16  Nick Drochak  <ndrochak@gol.com>
+
 	* String.cs (SubString): revert my change.  I can't reproduce the
 	problem anymore.
 
