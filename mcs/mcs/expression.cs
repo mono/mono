@@ -1679,6 +1679,7 @@ namespace Mono.CSharp {
 				//
 				// If any of the arguments is a string, cast to string
 				//
+				
 				if (l == TypeManager.string_type){
 					
 					if (r == TypeManager.void_type) {
@@ -1739,6 +1740,7 @@ namespace Mono.CSharp {
 					if (right_unary.Oper == Unary.Operator.UnaryNegation){
 						oper = Operator.Subtraction;
 						right = right_unary.Expr;
+						r = right.Type;
 					}
 				}
 			}
@@ -1802,6 +1804,29 @@ namespace Mono.CSharp {
 			if (lie || rie){
 				Expression temp;
 
+				//
+				// operator + (E e, U x)
+				//
+				if (oper == Operator.Addition){
+					if (lie && rie){
+						error19 ();
+						return null;
+					}
+
+					Type enum_type = lie ? l : r;
+					Type other_type = lie ? r : l;
+					Type underlying_type = TypeManager.EnumToUnderlying (enum_type);
+;
+					
+					if (underlying_type != other_type){
+						error19 ();
+						return null;
+					}
+
+					type = enum_type;
+					return this;
+				}
+				
 				if (!rie){
 					temp = ConvertImplicit (ec, right, l, loc);
 					if (temp != null)
@@ -1813,7 +1838,7 @@ namespace Mono.CSharp {
 						l = r;
 					}
 				}
-				
+				 
 				if (oper == Operator.Equality || oper == Operator.Inequality ||
 				    oper == Operator.LessThanOrEqual || oper == Operator.LessThan ||
 				    oper == Operator.GreaterThanOrEqual || oper == Operator.GreaterThan){
@@ -1827,6 +1852,7 @@ namespace Mono.CSharp {
 					type = l;
 					return this;
 				}
+				
 			}
 			
 			if (oper == Operator.LeftShift || oper == Operator.RightShift)
@@ -1913,7 +1939,6 @@ namespace Mono.CSharp {
 			//
 			// We are dealing with numbers
 			//
-
 			if (!DoNumericPromotions (ec, l, r)){
 				error19 ();
 				return null;
