@@ -4,17 +4,22 @@
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Tim Coleman (tim@timcoleman.com)
+//   Umadevi S	 (sumadevi@novell.com)
 //
 // Copyright (C) Rodrigo Moya, 2002
 // Copyright (C) Tim Coleman, 2002
+// Copyright (C) Novell Inc.
 //
 
 using System.Collections;
 using System.Data;
 using System.Data.Common;
+using System.ComponentModel;
 
 namespace System.Data.OleDb
 {
+        [ListBindable (false)]
+        [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBParametersEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 	public sealed class OleDbParameterCollection : MarshalByRefObject,
 		IDataParameterCollection, IList, ICollection, IEnumerable
 	{
@@ -24,22 +29,41 @@ namespace System.Data.OleDb
 
 		#endregion // Fields
 
+		#region Constructors
+                                                                                                    
+                public OleDbParameterCollection () {
+                }
+                                                                                                    
+                #endregion // Constructors
+	
 		#region Properties
-
+		
+		[Browsable (false)]
+                [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int Count {
 			get { return list.Count; }
 		}
-
+		
+		[Browsable (false)]
+                [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public OleDbParameter this[int index] {
 			get { return (OleDbParameter) list[index]; }
 			set { list[index] = value; }
 		}
 
+		[Browsable (false)]
+                [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public OleDbParameter this[string parameterName] {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			get {
+                                foreach (OleDbParameter p in list)
+                                        if (p.ParameterName.Equals (parameterName))
+                                                return p; 
+	                        throw new IndexOutOfRangeException ("The specified name does not exist: " + parameterName);
+                        }
+                        set {
+                                if (!Contains (parameterName))                                         						throw new IndexOutOfRangeException("The specified name does not exist: " + parameterName);
+                                this [IndexOf (parameterName)] = value;
+                        }                                                                                           
 		}
 
 		int ICollection.Count {
@@ -94,41 +118,43 @@ namespace System.Data.OleDb
 		#endregion // Properties
 
 		#region Methods
-
-
+		
+		 public int Add (object value) {
+                         if (!(value is OleDbParameter))
+                                throw new InvalidCastException ("The parameter was not an OleDbParameter.");                      
+			 Add ((OleDbParameter) value);                      
+			 return IndexOf (value);
+                }
+                                                                                                    
 		public OleDbParameter Add (OleDbParameter parameter)
 		{
-			list.Add (parameter);
-			return parameter;
+			  if (parameter.Container != null)
+                                throw new ArgumentException ("The OleDbParameter specified in the value parameter is already added to this or another OleDbParameterCollection.");
+                                                                                                    
+                        parameter.Container = this;
+                        list.Add (parameter);
+                        return parameter;
 		}
 
 		public OleDbParameter Add (string name, object value)
 		{
-			OleDbParameter parameter = new OleDbParameter (name, value);
-			list.Add (parameter);
-			return parameter;
+			return Add (new OleDbParameter (name, value));	
 		}
 
 		public OleDbParameter Add (string name, OleDbType type)
 	        {
-			OleDbParameter parameter = new OleDbParameter (name, type);
-			list.Add (parameter);
-			return parameter;
+			return Add (new OleDbParameter (name, type));
 		}
 
 		public OleDbParameter Add (string name, OleDbType type, int width)
 		{
-			OleDbParameter parameter = new OleDbParameter (name, type, width);
-			list.Add (parameter);
-			return parameter;
+			return Add (new OleDbParameter (name, type, width));
 		}
 
 		public OleDbParameter Add (string name, OleDbType type,
 					   int width, string src_col)
 		{
-			OleDbParameter parameter = new OleDbParameter (name, type, width, src_col);
-			list.Add (parameter);
-			return parameter;
+			return Add (new OleDbParameter (name, type, width, src_col));
 		}
 
 		int IList.Add (object value)
@@ -202,6 +228,77 @@ namespace System.Data.OleDb
 		{
 			list.Remove (((IDataParameterCollection) this)[name]);
 		}
+	
+		public void Clear() {
+                       
+			foreach (OleDbParameter p in list)
+                                p.Container = null;
+                                                                                                    
+                        list.Clear ();
+                }
+
+		public bool Contains (object value) {
+	
+                	if (!(value is OleDbParameter))
+                                throw new InvalidCastException ("The parameter was not an OleDbParameter.");
+                        return Contains (((OleDbParameter) value).ParameterName);
+                }
+                                                                                                    
+                public bool Contains (string value) {
+                
+                        foreach (OleDbParameter p in list)
+                                if (p.ParameterName.Equals (value))
+                                        return true;
+                        return false;
+                }
+                                                                                                    
+                public void CopyTo (Array array, int index) {
+                
+                        list.CopyTo (array, index);
+                }
+                                                                                                    
+                public IEnumerator GetEnumerator() {
+                
+                        return list.GetEnumerator ();
+                }
+		
+	        public int IndexOf (object value) {
+                
+                        if (!(value is OleDbParameter))
+                                throw new InvalidCastException ("The parameter was not an OleDbParameter.");
+                        return IndexOf (((OleDbParameter) value).ParameterName);
+                }
+                                                                                                    
+                public int IndexOf (string parameterName) {
+                
+                        for (int i = 0; i < Count; i += 1)
+                                if (this [i].ParameterName.Equals (parameterName))
+                                        return i;
+                        return -1;
+                }
+                                                                                                    
+                public void Insert (int index, object value) {
+                
+                        list.Insert (index, value);
+                }
+                                                                                                    
+                public void Remove (object value) {
+                
+                        ((OleDbParameter) value).Container = null;
+                        list.Remove (value);
+                }
+                                                                                                    
+                public void RemoveAt (int index) {
+                
+                        this [index].Container = null;
+                        list.RemoveAt (index);
+                }
+		
+		public void RemoveAt (string parameterName) {
+                
+                        RemoveAt (IndexOf (parameterName));
+                }
+
 
 		#endregion // Methods
 	}

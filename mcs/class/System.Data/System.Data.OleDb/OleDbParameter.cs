@@ -30,6 +30,7 @@ namespace System.Data.OleDb
 		ParameterDirection direction;
 		OleDbType oleDbType;
 		DbType dbType;
+		OleDbParameterCollection container = null;		
 
 		IntPtr gdaParameter;
 
@@ -150,6 +151,14 @@ namespace System.Data.OleDb
 			get { return value; }
 			set { this.value = value; }
 		}
+
+		// Used to ensure that only one collection can contain this
+                // parameter
+                internal OleDbParameterCollection Container {
+                        get { return container; }
+                        set { container = value; }
+                }
+
 
 		#endregion // Properties
 
