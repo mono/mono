@@ -92,8 +92,8 @@ all-local: $(gac_assemblies)
 if INSTALL_2_0
 install-data-local:
 	@if test -f $(srcdir)/mscorlib.dll.mdb; then \
-	  echo $(INSTALL_DATA) $(srcdir)/mscorlib.dll.mdb $(corlibdir)/mscorlib.dll.mdb; \
-	  $(INSTALL_DATA) $(srcdir)/mscorlib.dll.mdb $(corlibdir)/mscorlib.dll.mdb; \
+	  echo $(INSTALL_DATA) $(srcdir)/mscorlib.dll.mdb $(DESTDIR)$(corlibdir)/mscorlib.dll.mdb; \
+	  $(INSTALL_DATA) $(srcdir)/mscorlib.dll.mdb $(DESTDIR)$(corlibdir)/mscorlib.dll.mdb; \
 	fi
 	@if test -n '$(gac_assemblies)'; then \
 	  for i in ''$(gac_assemblies); do \
