@@ -1,6 +1,8 @@
 2003-10-05  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* FilterConfiguration.cs: Added Trace[In/Out]putFilters support.
+	* WebServicesConfiguration.cs: now reads <microsoft.web.services>
+	<diagnostics><trace>
 
 2003-09-06  Sebastien Pouliot  <spouliot@videotron.ca>
 

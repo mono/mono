@@ -13,7 +13,48 @@ using System.Xml;
 
 namespace Microsoft.Web.Services.Configuration {
 
+	internal class WSEConfig {
+		bool diagnosticsTraceEnabled;
+		string diagnosticsTraceInputFilename;
+		string diagnosticsTraceOutputFilename;
+
+		public WSEConfig (XmlNode section) 
+		{
+			XmlNode trace = section.SelectSingleNode ("/diagnostics/trace");
+			if (trace != null) {
+				diagnosticsTraceEnabled = (trace.Attributes ["enabled"].InnerText == "true");
+				diagnosticsTraceInputFilename = trace.Attributes ["input"].InnerText;
+				diagnosticsTraceOutputFilename = trace.Attributes ["output"].InnerText;
+			}
+		}
+
+		public bool Trace {
+			get { return diagnosticsTraceEnabled; }
+		}
+
+		public string TraceInput {
+			get { return diagnosticsTraceInputFilename; }
+		}
+
+		public string TraceOutput {
+			get { return diagnosticsTraceOutputFilename; }
+		}
+	}
+
 	public sealed class WebServicesConfiguration : ConfigurationBase, IConfigurationSectionHandler {
+
+		static WSEConfig config;
+
+		static WebServicesConfiguration () 
+		{
+			config = (WSEConfig) ConfigurationSettings.GetConfig ("microsoft.web.services");
+		}
+
+		internal WebServicesConfiguration () {}
+
+		internal static WSEConfig Config {
+			get { return config; }
+		}
 
 		public static FilterConfiguration FilterConfiguration { 
 			get { return new FilterConfiguration (); }
@@ -35,7 +76,7 @@ namespace Microsoft.Web.Services.Configuration {
 		[MonoTODO()]
 		object IConfigurationSectionHandler.Create (object parent, object configContext, XmlNode section) 
 		{
-			return null;
+			return new WSEConfig (section);
 		}
 	}
 }
