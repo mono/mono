@@ -342,7 +342,7 @@ namespace System {
 		public int IndexOf(char value, int sindex, int count) {
 			if (sindex < 0 || count < 0 || sindex + count > this.length)
 				throw new ArgumentOutOfRangeException ();
-			
+
 			if (sindex == 0 && this.length == 0)
 				return -1;			
 
@@ -355,12 +355,12 @@ namespace System {
 
 			if (sindex < 0 || count < 0 || sindex + count > this.length)
 				throw new ArgumentOutOfRangeException ();
+
+			if (value.length == 0)
+				return sindex;
 			
 			if (sindex == 0 && this.length == 0)
 				return -1;
-
-			if (value.length == 0)
-				return 0;
 
 			return InternalIndexOf(value, sindex, count);
 		}
@@ -439,6 +439,10 @@ namespace System {
 		public int LastIndexOf(String value, int sindex, int count) {
 			if (null == value) 
 				throw new ArgumentNullException();
+
+			// This check is needed to match undocumented MS behaviour
+			if (this.length == 0 && value.length > 0)
+				return -1;
 
 			if (sindex < 0 || sindex > this.length)
 				throw new ArgumentOutOfRangeException ();

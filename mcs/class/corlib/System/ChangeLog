@@ -1,3 +1,7 @@
+2003-05-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* String.cs: Tweak IndexOf and LastIndexOf to match specification and
+	undocumented MS behaviour.
 
 2003-05-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
