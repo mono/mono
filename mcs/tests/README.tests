@@ -465,3 +465,8 @@ gen-10.cs:
 ----------
 
 `where T : I, J' - I is an inferface, J a class.
+
+gen-15.cs:
+----------
+
+Generic methods.

@@ -1,3 +1,7 @@
+2003-10-10  Martin Baulig  <martin@ximian.com>
+
+	* gen-15.cs: New test for generic methods.
+
 2003-09-29  Martin Baulig  <martin@ximian.com>
 
 	* gen-14.cs: New generics test.
