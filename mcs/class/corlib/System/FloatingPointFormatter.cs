@@ -151,6 +151,37 @@ namespace System {
 			return false;
 		}
 
+		// Math.Round use banker's rounding while this is not what must
+		// be used for string formatting (see bug #60111)
+		// http://bugzilla.ximian.com/show_bug.cgi?id=60111
+
+		// FIXME: should be moved out of here post Mono 1.0
+		private double Round (double value) 
+		{
+			double int_part = Math.Floor (value);
+			double dec_part = value - int_part;
+			if (dec_part >= 0.5) {
+				int_part++;
+			}
+			return int_part;
+		}
+		
+		// FIXME: should be moved out of here post Mono 1.0
+		private double Round (double value, int digits) 
+		{
+			if (digits == 0)
+				return Round (value);
+			double p = Math.Pow (10, digits);
+			double int_part = Math.Floor (value);
+			double dec_part = value - int_part;
+			dec_part *= 1000000000000000L;
+			dec_part = Math.Floor (dec_part);
+			dec_part /= (1000000000000000L / p);
+			dec_part = Round (dec_part);
+			dec_part /= p;
+			return int_part + dec_part;
+		}
+
 		private void Normalize (Format formatData, double value, int precision,
 				out long mantissa, out int exponent) {
 			mantissa = 0;
@@ -162,7 +193,7 @@ namespace System {
 			}
 			value = Math.Abs(value);
 			if (precision <= (formatData.dec_len) && precision >= 0) {
-				value = Math.Round (value, precision);
+				value = Round (value, precision);
 			}
 			
 			if (value == 0.0 ||
@@ -183,7 +214,7 @@ namespace System {
 					exponent--;
 				}
 			}
-			mantissa = (long) Math.Round(value);
+			mantissa = (long) Round(value);
 		}
 
 		private string FormatCurrency (Format formatData, double value,
@@ -260,7 +291,7 @@ namespace System {
 				for (int i = 0; i < formatData.dec_len - precision; i++) {
 					aux /= 10;
 				}
-				mantissa = (long) Math.Round(aux);
+				mantissa = (long) Round(aux);
 				for (int i = 0; i < formatData.dec_len - precision; i++) {
 					mantissa *= 10;
 				}
@@ -376,7 +407,7 @@ namespace System {
 					for (int i = 0; i < formatData.dec_len - precision + 1; i++) {
 						dmant /= 10;
 					}
-					mantissa = (long) Math.Round (dmant);
+					mantissa = (long) Round (dmant);
 					for (int i = 0; i < formatData.dec_len - precision + 1; i++) {
 						mantissa *= 10;
 					}
@@ -727,12 +758,12 @@ namespace System {
 				if (len < 0) {
 					len = 0;
 				}
-				value = Math.Round(value, len);
+				value = Round(value, len);
 				Normalize (formatData, value, 15, out mantissa, out exponent);
 				exponent += exp;
 			}
 			else {
-				value = Math.Round(value, f.DecimalLength);
+				value = Round(value, f.DecimalLength);
 				Normalize (formatData, value, 15, out mantissa, out exponent);
 			}
 			StringBuilder sb = new StringBuilder();
@@ -839,7 +870,7 @@ namespace System {
 			}
 			if (f.DotPos < 0) {
 				while (exponent < 0) {
-					mantissa = (long) Math.Round((double)mantissa / 10);
+					mantissa = (long) Round((double)mantissa / 10);
 					exponent++;
 				}
 				f.DotPos = format.Length;

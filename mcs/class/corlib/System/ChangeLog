@@ -4,6 +4,10 @@
 	from a math point of view but affect the string representation of the
 	value). Note: other operations also have scale problems!
 	* DecimalFormatter.cs: Fixed FormatGeneral to match Fx 1.1 output.
+	* FloatingPointFormatter.cs: Fixed ToString which doesn't use banker's
+	rounding (which is the rounding provided by Math.Round). This fix bug
+	#60111. The code (new Round methods) should be moved elsewhere (as it
+	may also be required elsewhere) post Mono 1.0.
 
 2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
 
