@@ -1,0 +1,4 @@
+2002-11-23  Eduardo Garcia Cebollero <kiwnix@yahoo.es>
+
+	* ThreadTest.cs : New suite for Thread.
+	* AllTests.cs : Add the new suite.
