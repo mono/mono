@@ -169,7 +169,6 @@ namespace Mono.CSharp {
 
 			if (Parameters == null){
 				int i, j;
-				out_invalid_check = true;
 				
 				//
 				// We provide a set of inaccessible parameters
