@@ -1,9 +1,9 @@
 2005-03-25  Jambunathan K  <kjambunathan.devel@gmail.com>
 
-	* constant.cs (DateConstant): Added (Booroed from mbas)
+	* constant.cs (DateConstant): Added (Borrowed from mbas)
 	* literal.cs (DateLiteral): Added (Borrowed from mbas)
 	* mb-parser.jay: Added support for Date type. (Borrowed from mbas)
-	* typemanager.cs (void_datetime_ctor_ticks_arg):  Added (Borroed from mbas)
+	* typemanager.cs (void_datetime_ctor_ticks_arg):  Added (Borrowed from mbas)
 	* mb-tokenizer.cs (ParseDateLiteral, GobbleWhitespaces): Added afresh
 
 2005-03-25  Jambunathan K  <kjambunathan.devel@gmail.com>
