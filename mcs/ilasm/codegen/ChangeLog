@@ -1,3 +1,10 @@
+2004-04-01  Jackson Harper  <jackson@ximian.com>
+
+	* CodeGen.cs: Add a current assembly ref and methods to create/end
+	it so we can set assembly ref attributes.
+	* ExternTable.cs: Make the ExternAssembly public so that its
+	attributes can be set.
+
 2004-03-28  Jackson Harper  <jackson@ximian.com>
 
 	* PeapiTypeRef.cs: Check for null bounds in bound arrays. Patch by

@@ -23,6 +23,7 @@ namespace Mono.ILASM {
                 private PEFile pefile;
                 private string assembly_name;
                 private Report report;
+                private ExternAssembly current_assemblyref;
                 private string current_namespace;
                 private TypeDef current_typedef;
                 private MethodDef current_methoddef;
@@ -85,6 +86,10 @@ namespace Mono.ILASM {
 
                 public MethodDef CurrentMethodDef {
                         get { return current_methoddef; }
+                }
+
+                public ExternAssembly CurrentAssemblyRef {
+                        get { return current_assemblyref; }
                 }
 
                 public ExternTable ExternTable {
@@ -202,6 +207,16 @@ namespace Mono.ILASM {
                         else
                                 current_typedef = null;
 
+                }
+
+                public void BeginAssemblyRef (string name, AssemblyName asmb_name)
+                {
+                        current_assemblyref = ExternTable.AddAssembly (name, asmb_name);
+                }
+
+                public void EndAssemblyRef ()
+                {
+                        current_assemblyref = null;
                 }
 
                 public void AddToDefineContentsList (TypeDef typedef)

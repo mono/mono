@@ -13,25 +13,67 @@ using System.Reflection;
 
 namespace Mono.ILASM {
 
-        public class ExternTable {
-
-                protected class ExternAssembly {
-
+        public class ExternAssembly {
+                        
                         public PEAPI.AssemblyRef AssemblyRef;
                         protected Hashtable class_table;
                         protected Hashtable typeref_table;
                         protected string name;
-
+                        private int major, minor, build, revision;
+                        private byte [] public_key;
+                        private byte [] public_key_token;
+                        private string locale;
+                        private byte [] hash;
+                        
                         public ExternAssembly (string name, AssemblyName asmb_name)
                         {
                                 this.name = name;
                                 typeref_table = new Hashtable ();
+                                major = minor = build = revision = -1;
                         }
 
                         public void Resolve (CodeGen code_gen)
                         {
                                 AssemblyRef = code_gen.PEFile.AddExternAssembly (name);
+                                if (major != -1)
+                                        AssemblyRef.AddVersionInfo (major, minor, build, revision);
+                                if (public_key != null)
+                                        AssemblyRef.AddKey (public_key);
+                                if (public_key_token != null)
+                                        AssemblyRef.AddKeyToken (public_key_token);
+                                if (locale != null)
+                                        AssemblyRef.AddCulture (locale);
+                                if (hash != null)
+                                        AssemblyRef.AddHash (hash);
                                 class_table = new Hashtable ();
+                        }
+
+                        public void SetVersion (int major, int minor, int build, int revision)
+                        {
+                                this.major = major;
+                                this.minor = minor;
+                                this.build = build;
+                                this.revision = revision;
+                        }
+
+                        public void SetPublicKey (byte [] public_key)
+                        {
+                                this.public_key = public_key;
+                        }
+
+                        public void SetPublicKeyToken (byte [] public_key_token)
+                        {
+                                this.public_key_token = public_key_token;
+                        }
+
+                        public void SetLocale (string locale)
+                        {
+                                this.locale = locale;
+                        }
+
+                        public void SetHash (byte [] hash)
+                        {
+                                this.hash = hash;
                         }
 
                         public ExternTypeRef GetTypeRef (string full_name, bool is_valuetype, ExternTable table)
@@ -87,7 +129,10 @@ namespace Mono.ILASM {
 
                                 return klass;
                         }
-                }
+        }
+
+        
+        public class ExternTable {
 
                 Hashtable assembly_table;
 
@@ -104,16 +149,23 @@ namespace Mono.ILASM {
                         assembly_table["corlib"] = assembly_table["mscorlib"];
                 }
 
-                public void AddAssembly (string name, AssemblyName asmb_name)
+                public ExternAssembly AddAssembly (string name, AssemblyName asmb_name)
                 {
+                        ExternAssembly ea = null;
+
                         if (assembly_table == null) {
                                 assembly_table = new Hashtable ();
-                        } else if (assembly_table.Contains (name)) {
-                                // Maybe this is an error??
-                                return;
+                        } else {
+                                ea = assembly_table [name] as ExternAssembly;
+                                if (ea != null)
+                                        return ea;
                         }
 
-                        assembly_table[name] = new ExternAssembly (name, asmb_name);
+                        ea = new ExternAssembly (name, asmb_name);
+
+                        assembly_table [name] = ea;
+
+                        return ea;
                 }
 
                 public void Resolve (CodeGen code_gen)
