@@ -266,6 +266,7 @@ namespace System.Web.UI.WebControls
 				return;
 
 			AdCreatedEventArgs acea = new AdCreatedEventArgs (SelectAd ());
+			OnAdCreated (acea);
 			imageUrl = acea.ImageUrl;
 			navigateUrl = acea.NavigateUrl;
 			alternateText = acea.AlternateText;

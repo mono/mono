@@ -1,5 +1,10 @@
 2003-09-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* AdRotator.cs: fixes bug #48691. Patch by yaronsh@mainsoft.com (Yaron
+	Shkop).
+
+2003-09-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* CheckBox.cs: render the 'disabled' attribute in the correct tag.
 	* WebControl.cs: fixed Enabled property and save it in ViewState.
 
