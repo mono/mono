@@ -1,3 +1,9 @@
+2004-05-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConstraintCollection.cs :
+	  Use Table.CaseSensitive and Table.Locale to compare strings.
+	  Duplicate constraint name exception does not occur under .NET 1.1.
+
 2004-05-04  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* XmlSchemaDataImporter.cs: Added little type check.
@@ -12,6 +18,7 @@
 	* DataColumnCollection.cs : Fixed nunit test errors, removed TODOs
 	* DataTableCollection.cs  : Tested and removed TODO
 	* TypedDataSetGeneratorException.cs : Fixed a couple of TODOs	
+
 2004-04-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataRow.cs : My previous patch unintentionally reverted Boris patch.

@@ -83,16 +83,10 @@ namespace System.Data {
 		}
 
 		private bool _isDuplicateConstraintName(string constraintName, Constraint excludeFromComparison) 
-		{	
-			string cmpr = constraintName.ToUpper();
-			foreach (Constraint cst in List) 
-			{
-				//Case insensitive comparision
-				if (  cmpr.CompareTo(cst.ConstraintName.ToUpper()) == 0  &&
-					cst != excludeFromComparison) 
-				{
+		{
+			foreach (Constraint cst in List) {
+				if (String.Compare (constraintName, cst.ConstraintName, !Table.CaseSensitive) == 0  && cst != excludeFromComparison) 
 					return true;
-				}
 			}
 
 			return false;
@@ -111,11 +105,15 @@ namespace System.Data {
 				foreach (Constraint cst in List) 
 				{
 					//Case insensitive
-					if (cst.ConstraintName.ToUpper().CompareTo("CONSTRAINT" + 
-						index.ToString()) == 0 ) 
+					if (String.Compare (cst.ConstraintName,
+						"Constraint" + index,
+						!Table.CaseSensitive,
+						Table.Locale)
+						== 0)
 					{
 						loopAgain = true;
 						index++;
+						break;
 					}
 				}
 			} while (loopAgain);
@@ -141,8 +139,10 @@ namespace System.Data {
 				throw new ArgumentException("Constraint already belongs to another collection.");
 			
 			//check for duplicate name
+#if !NET_1_1
 			if (_isDuplicateConstraintName(constraint.ConstraintName,null)  )
 				throw new DuplicateNameException("Constraint name already exists.");
+#endif
 	
 			// Check whether Constraint is UniqueConstraint and initailized with the special
                         // constructor - UniqueConstraint( string, string[], bool );
@@ -347,7 +347,7 @@ namespace System.Data {
 			int index = 0;
 			foreach (Constraint con in List)
 			{
-				if (constraintName.ToUpper().CompareTo( con.ConstraintName.ToUpper() ) == 0)
+				if (String.Compare (constraintName, con.ConstraintName, !Table.CaseSensitive, Table.Locale) == 0)
 				{
 					return index;
 				}
