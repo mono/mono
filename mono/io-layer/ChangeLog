@@ -1,3 +1,9 @@
+2002-10-07  Dick Porter  <dick@ximian.com>
+
+	* timefuncs.c:
+	* daemon.c: Use a more accurate time source for process start and
+	end times.
+
 2002-10-03  Dick Porter  <dick@ximian.com>
 
 	* daemon.c:
