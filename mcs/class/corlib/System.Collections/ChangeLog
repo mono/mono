@@ -1,3 +1,7 @@
+2004-06-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Hashtable.cs: Compare index and length in CopyTo only when length > 0.
+
 2004-06-14  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ArrayList.cs: Avoid endless loop in Insert when the current size is 0.

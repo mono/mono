@@ -28,14 +28,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
-
 using System;
 using System.Collections;
 using System.Runtime.Serialization;
-
-
-
 
 namespace System.Collections {
 
@@ -342,7 +337,7 @@ namespace System.Collections {
 			if (array.Rank > 1)
 				throw new ArgumentException ("array is multidimensional");
 
-			if (arrayIndex >= array.Length)
+			if ((array.Length > 0) && (arrayIndex >= array.Length))
 				throw new ArgumentException ("arrayIndex is equal to or greater than array.Length");
 
 			if (arrayIndex + this.inUse > array.Length)
