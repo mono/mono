@@ -1,5 +1,8 @@
 2004-06-30  Zoltan Varga  <vargaz@freemail.hu>
 
+	* class-internals.h (MonoVTable): Make max_interface_id a guint32 so
+	it has a constant size across platforms.
+
 	* marshal.c (mono_delegate_end_invoke): Avoid crash when there is no
 	stack trace.
 	
