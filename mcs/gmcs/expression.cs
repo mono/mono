@@ -7282,21 +7282,13 @@ namespace Mono.CSharp {
 				      "type name instead");
 		}
 
-		static bool IdenticalNameAndTypeName (EmitContext ec, Expression left_original, Location loc)
+		public static bool IdenticalNameAndTypeName (EmitContext ec, Expression left_original, Expression left, Location loc)
 		{
-			if (left_original == null)
+			SimpleName sn = left_original as SimpleName;
+			if (sn == null || left == null || left.Type.Name != sn.Name)
 				return false;
 
-			if (!(left_original is SimpleName))
-				return false;
-
-			SimpleName sn = (SimpleName) left_original;
-
-			TypeExpr t = RootContext.LookupType (ec.DeclSpace, sn.Name, true, loc);
-			if (t != null)
-				return true;
-
-			return false;
+			return RootContext.LookupType (ec.DeclSpace, sn.Name, true, loc) != null;
 		}
 		
 		public static Expression ResolveMemberAccess (EmitContext ec, Expression member_lookup,
@@ -7350,7 +7342,7 @@ namespace Mono.CSharp {
 					
 					if (decl_type.IsSubclassOf (TypeManager.enum_type)) {
 						if (left_is_explicit && !left_is_type &&
-						    !IdenticalNameAndTypeName (ec, left_original, loc)) {
+						    !IdenticalNameAndTypeName (ec, left_original, member_lookup, loc)) {
 							error176 (loc, fe.FieldInfo.Name);
 							return null;
 						}					
@@ -7434,7 +7426,7 @@ namespace Mono.CSharp {
 
 					if (!me.IsStatic){
 						if ((ec.IsFieldInitializer || ec.IsStatic) &&
-						    IdenticalNameAndTypeName (ec, left_original, loc))
+						    IdenticalNameAndTypeName (ec, left_original, member_lookup, loc))
 							return member_lookup;
 
 						SimpleName.Error_ObjectRefRequired (ec, loc, me.Name);
@@ -7443,7 +7435,7 @@ namespace Mono.CSharp {
 
 				} else {
 					if (!me.IsInstance){
-						if (IdenticalNameAndTypeName (ec, left_original, loc))
+						if (IdenticalNameAndTypeName (ec, left_original, left, loc))
 							return member_lookup;
 
 						if (left_is_explicit) {
@@ -7473,7 +7465,7 @@ namespace Mono.CSharp {
 						}
 					}
 
-					if ((mg != null) && IdenticalNameAndTypeName (ec, left_original, loc))
+					if ((mg != null) && IdenticalNameAndTypeName (ec, left_original, left, loc))
 						mg.IdenticalTypeName = true;
 
 					me.InstanceExpression = left;
@@ -7502,7 +7494,7 @@ namespace Mono.CSharp {
 			//
 
 			Expression original = expr;
-			expr = expr.Resolve (ec, flags | ResolveFlags.DisableFlowAnalysis);
+			expr = expr.Resolve (ec, flags | ResolveFlags.Intermediate | ResolveFlags.DisableFlowAnalysis);
 			if (expr == null)
 				return null;
 
