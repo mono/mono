@@ -1,3 +1,9 @@
+2004-10-21  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.c (mono_debugger_handle_exception): Write
+	the stack pointer and the exception object in some struct and pass
+	that to the debugger.
+
 2004-10-21  Chris Toshok  <toshok@ximian.com>
 
 	* mono-debug-debugger.c (do_write_class): add instance/static
