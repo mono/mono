@@ -1,3 +1,9 @@
+2002-05-19  Martin Baulig  <martin@gnome.org>
+
+	* corlib_test.build: Don't create Runtest.corlib.exe anymore.
+
+	* MartinTests.cs: Removed.
+
 2002/05/07  Nick Drochak <ndrochak@gol.com>
 
 	* AllTests.cs: Do not run the System.Net tests from here, they belong
