@@ -117,79 +117,12 @@ namespace Mono.Security.Protocol.Tls
 
 		public override void CreateMasterSecret(byte[] preMasterSecret)
 		{
-			TlsStream seed = new TlsStream();
-
-			// Seed
-			seed.Write(context.ClientRandom);
-			seed.Write(context.ServerRandom);
-
-			// Create master secret
-			context.MasterSecret = new byte[preMasterSecret.Length];
-			context.MasterSecret = PRF(preMasterSecret, "master secret", seed.ToArray(), 48);
-
-			seed.Reset();
+			throw new NotSupportedException();
 		}
 
 		public override void CreateKeys()
 		{
-			TlsStream seed = new TlsStream();
-
-			// Seed
-			seed.Write(context.ServerRandom);
-			seed.Write(context.ClientRandom);
-
-			// Create keyblock
-			TlsStream keyBlock = new TlsStream(
-				PRF(this.Context.MasterSecret, 
-				"key expansion",
-				seed.ToArray(),
-				this.KeyBlockSize));
-
-			this.Context.ClientWriteMAC = keyBlock.ReadBytes(this.HashSize);
-			this.Context.ServerWriteMAC = keyBlock.ReadBytes(this.HashSize);
-			this.Context.ClientWriteKey = keyBlock.ReadBytes(this.KeyMaterialSize);
-			this.Context.ServerWriteKey = keyBlock.ReadBytes(this.KeyMaterialSize);
-
-			if (!this.IsExportable)
-			{
-				if (this.IvSize != 0)
-				{
-					this.Context.ClientWriteIV = keyBlock.ReadBytes(this.IvSize);
-					this.Context.ServerWriteIV = keyBlock.ReadBytes(this.IvSize);
-				}
-				else
-				{
-					this.Context.ClientWriteIV = new byte[0];
-					this.Context.ServerWriteIV = new byte[0];
-				}
-			}
-			else
-			{
-				// Seed
-				seed.Reset();
-				seed.Write(this.Context.ClientRandom);
-				seed.Write(this.Context.ServerRandom);
-
-				// Generate final write keys
-				byte[] finalClientWriteKey	= PRF(this.Context.ClientWriteKey, "client write key", seed.ToArray(), this.KeyMaterialSize);
-				byte[] finalServerWriteKey	= PRF(this.Context.ServerWriteKey, "server write key", seed.ToArray(), this.KeyMaterialSize);
-				
-				this.Context.ClientWriteKey	= finalClientWriteKey;
-				this.Context.ServerWriteKey	= finalServerWriteKey;
-
-				// Generate IV block
-				byte[] ivBlock = PRF(new byte[]{}, "IV block", seed.ToArray(), this.IvSize*2);
-
-				// Generate IV keys
-				this.Context.ClientWriteIV = new byte[this.IvSize];				
-				System.Array.Copy(ivBlock, 0, this.Context.ClientWriteIV, 0, this.Context.ClientWriteIV.Length);
-				this.Context.ServerWriteIV = new byte[this.IvSize];
-				System.Array.Copy(ivBlock, this.IvSize, this.Context.ServerWriteIV, 0, this.Context.ServerWriteIV.Length);
-			}
-
-			// Clear no more needed data
-			seed.Reset();
-			keyBlock.Reset();
+			throw new NotSupportedException();
 		}
 
 		#endregion

@@ -33,10 +33,10 @@ namespace Mono.Security.Protocol.Tls
 			switch (protocol)
 			{
 				case TlsProtocol.Tls1:
-					return TlsCipherSuiteFactory.GetTlsSupportedCiphers();
+					return TlsCipherSuiteFactory.GetTls1SupportedCiphers();
 
 				case TlsProtocol.Ssl3:
-					return TlsCipherSuiteFactory.GetSslSupportedCiphers();
+					return TlsCipherSuiteFactory.GetSsl3SupportedCiphers();
 
 				default:
 					throw new NotSupportedException();
@@ -45,7 +45,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#region PRIVATE_STATIC_METHODS
 
-		private static TlsCipherSuiteCollection GetTlsSupportedCiphers()
+		private static TlsCipherSuiteCollection GetTls1SupportedCiphers()
 		{
 			TlsCipherSuiteCollection scs = new TlsCipherSuiteCollection();
 
@@ -114,7 +114,7 @@ namespace Mono.Security.Protocol.Tls
 			return scs;
 		}
 
-		private static TlsCipherSuiteCollection GetSslSupportedCiphers()
+		private static TlsCipherSuiteCollection GetSsl3SupportedCiphers()
 		{
 			TlsCipherSuiteCollection scs = new TlsCipherSuiteCollection();
 
