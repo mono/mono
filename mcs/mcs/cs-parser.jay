@@ -40,14 +40,8 @@ namespace Mono.CSharp
 		///   Current block is used to add statements as we find
 		///   them.  
 		/// </summary>
-		Block      current_block;
+		Block      current_block, top_current_block;
 
-		/// <summary>
-                ///   If true, creates a toplevel block in the block production
-                ///   This is flagged by the delegate creation
-                /// </summary>
-                bool       create_toplevel_block;
-	
 		/// <summary>
 		///   This is used by the unary_expression code to resolve
 		///   a name against a parameter.  
@@ -943,7 +937,7 @@ method_declaration
 			}
 		}
 
-		method.Block = (Block) $3;
+		method.Block = (ToplevelBlock) $3;
 		current_container.AddMethod (method);
 
 		current_local_parameters = null;
@@ -1216,7 +1210,7 @@ get_accessor_declaration
 	  }
           accessor_body
 	  {
-		$$ = new Accessor ((Block) $4, (Attributes) $1, lexer.Location);
+		$$ = new Accessor ((ToplevelBlock) $4, (Attributes) $1, lexer.Location);
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
 	  }
@@ -1253,7 +1247,7 @@ set_accessor_declaration
 	  }
 	  accessor_body
 	  {
-		$$ = new Accessor ((Block) $4, (Attributes) $1, lexer.Location);
+		$$ = new Accessor ((ToplevelBlock) $4, (Attributes) $1, lexer.Location);
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
 	  }
@@ -1472,7 +1466,7 @@ operator_declaration
 		Operator op = new Operator (
 			current_class, decl.optype, decl.ret_type, (int) $2, 
 			new Parameters (param_list, null, decl.location),
-			(Block) $5, (Attributes) $1, decl.location);
+			(ToplevelBlock) $5, (Attributes) $1, decl.location);
 
 		if (SimpleIteratorContainer.Simple.Yields)
 			op.SetYields ();
@@ -1601,7 +1595,7 @@ constructor_declaration
 	  constructor_body
 	  { 
 		Constructor c = (Constructor) $3;
-		c.Block = (Block) $4;
+		c.Block = (ToplevelBlock) $4;
 		c.OptAttributes = (Attributes) $1;
 		c.ModFlags = (int) $2;
 	
@@ -1716,7 +1710,7 @@ destructor_declaration
 				current_class, TypeManager.system_void_expr, m, "Finalize", 
 				new Parameters (null, null, l), (Attributes) $1, l);
 		  
-			d.Block = (Block) $7;
+			d.Block = (ToplevelBlock) $7;
 			current_container.AddMethod (d);
 		}
 	  }
@@ -1812,7 +1806,7 @@ add_accessor_declaration
 	  }
           block
 	  {
-		$$ = new Accessor ((Block) $4, (Attributes) $1, lexer.Location);
+		$$ = new Accessor ((ToplevelBlock) $4, (Attributes) $1, lexer.Location);
 		lexer.EventParsing = true;
 	  }
 	| opt_attributes ADD error {
@@ -1836,7 +1830,7 @@ remove_accessor_declaration
 	  }
           block
 	  {
-		$$ = new Accessor ((Block) $4, (Attributes) $1, lexer.Location);
+		$$ = new Accessor ((ToplevelBlock) $4, (Attributes) $1, lexer.Location);
 		lexer.EventParsing = true;
 	  }
 	| opt_attributes REMOVE error {
@@ -2588,25 +2582,32 @@ anonymous_method_expression
 	: DELEGATE opt_anonymous_method_signature {
 		oob_stack.Push (current_local_parameters);
 		current_local_parameters = (Parameters)$2;
-		create_toplevel_block = true;
+
+		// Force the next block to be created as a ToplevelBlock
+		oob_stack.Push (current_block);
+		oob_stack.Push (top_current_block);
+		oob_stack.Push (lexer.Location);
+		current_block = null;
 	  } block {
-		if (true){
-			Report.Error (-213, lexer.Location, "Anonymous methods are not supported in this branch");
+		Location loc = (Location) oob_stack.Pop ();
+		top_current_block = (Block) oob_stack.Pop ();
+		current_block = (Block) oob_stack.Pop ();
+		if (RootContext.Version == LanguageVersion.ISO_1){
+			Report.FeatureIsNotStandardized (lexer.Location, "anonymous methods");
 			$$ = null;
-		} else {
-			create_toplevel_block = false;
-			if (RootContext.Version == LanguageVersion.ISO_1){
-				Report.FeatureIsNotStandardized (lexer.Location, "anonymous methods");
-				$$ = null;
-			} else 
-				$$ = new AnonymousMethod ((Parameters) $2, (Block) $4, lexer.Location);
-			current_local_parameters = (Parameters) oob_stack.Pop ();
+		} else  {
+			ToplevelBlock anon_block = (ToplevelBlock) $4;
+
+			anon_block.Parent = current_block;
+			$$ = new AnonymousMethod ((Parameters) $2, (ToplevelBlock) top_current_block, 
+				anon_block, loc);
 		}
+		current_local_parameters = (Parameters) oob_stack.Pop ();
 	  }
 	;
 
 opt_anonymous_method_signature
-	: /* empty */			{ $$ = Parameters.EmptyReadOnlyParameters; }
+	: /* empty */			{ $$ = null; } 
 	| anonymous_method_signature
 	;
 
@@ -2625,7 +2626,7 @@ anonymous_method_signature
 	;
 
 opt_anonymous_method_parameter_list
-	: /* empty */	{ $$ = null; } 
+	: /* empty */	                   { $$ = null; } 
 	| anonymous_method_parameter_list  { $$ = $1; }
 	;
 
@@ -2646,7 +2647,11 @@ anonymous_method_parameter_list
 
 anonymous_method_parameter
 	: opt_parameter_modifier type IDENTIFIER {
-		$$ = new Parameter ((Expression) $2, (string) $2, (Parameter.Modifier) $1, null);
+		$$ = new Parameter ((Expression) $2, (string) $3, (Parameter.Modifier) $1, null);
+	  }
+	| PARAMS type IDENTIFIER {
+		Report.Error (-221, lexer.Location, "params modifier not allowed in anonymous method declaration");
+		$$ = null;
 	  }
 	;
 
@@ -3095,8 +3100,9 @@ class_base
 block
 	: OPEN_BRACE 
 	  {
-		if (current_block == null || create_toplevel_block){
-			current_block = new ToplevelBlock (current_local_parameters, lexer.Location);
+		if (current_block == null){
+			current_block = new ToplevelBlock ((ToplevelBlock) top_current_block, current_local_parameters, lexer.Location);
+			top_current_block = current_block;
 		} else {
 		current_block = new Block (current_block, current_local_parameters,
 					   lexer.Location, Location.Null);
@@ -3109,6 +3115,8 @@ block
 		$$ = current_block;
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
+		if (current_block == null)
+			top_current_block = null;
 	  }
 	;
 

@@ -1,3 +1,4 @@
+
 NEW NOTES:
 ----------
 
@@ -45,7 +46,6 @@ Error Reporting:
 
 Iterators
 ---------
-
 	* Reset should throw not implemented now.
 
 Optimization ideas

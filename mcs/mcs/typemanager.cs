@@ -87,6 +87,7 @@ public class TypeManager {
 	static public Type obsolete_attribute_type;
 	static public Type conditional_attribute_type;
 	static public Type in_attribute_type;
+	static public Type anonymous_method_type;
 	static public Type cls_compliant_attribute_type;
 	static public Type typed_reference_type;
 	static public Type arg_iterator_type;
@@ -1241,6 +1242,11 @@ public class TypeManager {
 		system_asynccallback_expr.Type = asynccallback_type;
 		system_iasyncresult_expr.Type = iasyncresult_type;
 		system_valuetype_expr.Type = value_type;
+
+		//
+		// These are only used for compare purposes
+		//
+		anonymous_method_type = typeof (AnonymousMethod);
 	}
 
 	//

@@ -6,6 +6,7 @@
 //   Martin Baulig (martin@gnome.org)
 //
 // (C) 2001, 2002, 2003 Ximian, Inc.
+// (C) 2003, 2004 Novell, Inc.
 //
 
 using System;
@@ -559,6 +560,11 @@ namespace Mono.CSharp {
 		{
 			if (ec.ReturnType == null){
 				if (Expr != null){
+					if (ec.CurrentAnonymousMethod != null){
+						Report.Error (1662, loc, String.Format (
+							"Anonymous method could not be converted to delegate " +
+							"since the return value does not match the delegate value"));
+					}
 					Error (127, "Return with a value not allowed here");
 					return false;
 				}
@@ -598,6 +604,9 @@ namespace Mono.CSharp {
 			} else
 				vector.CheckOutParameters (ec.CurrentBranching);
 
+			if (!in_exc)
+				ec.NeedReturnLabel ();
+
 			ec.CurrentBranching.CurrentUsageVector.Return ();
 			return true;
 		}
@@ -611,12 +620,10 @@ namespace Mono.CSharp {
 					ec.ig.Emit (OpCodes.Stloc, ec.TemporaryReturn ());
 			}
 
-			if (in_exc) {
-				ec.NeedReturnLabel ();
+			if (in_exc)
 				ec.ig.Emit (OpCodes.Leave, ec.ReturnLabel);
-			} else {
+			else
 				ec.ig.Emit (OpCodes.Ret);
-			}
 		}
 	}
 
@@ -755,7 +762,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class GotoCase : Statement {
 		Expression expr;
-		Label label;
+		SwitchLabel sl;
 		
 		public GotoCase (Expression e, Location l)
 		{
@@ -785,7 +792,7 @@ namespace Mono.CSharp {
 			if (val == null)
 				return false;
 					
-			SwitchLabel sl = (SwitchLabel) ec.Switch.Elements [val];
+			sl = (SwitchLabel) ec.Switch.Elements [val];
 
 			if (sl == null){
 				Report.Error (
@@ -794,15 +801,13 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			label = sl.ILLabelCode;
-
 			ec.CurrentBranching.CurrentUsageVector.Goto ();
 			return true;
 		}
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			ec.ig.Emit (OpCodes.Br, label);
+			ec.ig.Emit (OpCodes.Br, sl.GetILLabelCode (ec));
 		}
 	}
 	
@@ -891,6 +896,9 @@ namespace Mono.CSharp {
 
 			crossing_exc = ec.CurrentBranching.BreakCrossesTryCatchBoundary ();
 
+			if (!crossing_exc)
+				ec.NeedReturnLabel ();
+
 			ec.CurrentBranching.CurrentUsageVector.Break ();
 			return true;
 		}
@@ -902,7 +910,6 @@ namespace Mono.CSharp {
 			if (crossing_exc)
 				ig.Emit (OpCodes.Leave, ec.LoopEnd);
 			else {
-				ec.NeedReturnLabel ();
 				ig.Emit (OpCodes.Br, ec.LoopEnd);
 			}
 		}
@@ -945,13 +952,17 @@ namespace Mono.CSharp {
 		}
 	}
 
+	//
+	// The information about a user-perceived local variable
+	//
 	public class LocalInfo {
 		public Expression Type;
 
 		//
 		// Most of the time a variable will be stored in a LocalBuilder
 		//
-		// But sometimes, it will be stored in a field.  The context of the field will
+		// But sometimes, it will be stored in a field (variables that have been
+		// hoisted by iterators or by anonymous methods).  The context of the field will
 		// be stored in the EmitContext
 		//
 		//
@@ -969,7 +980,8 @@ namespace Mono.CSharp {
 			Used = 1,
 			ReadOnly = 2,
 			Pinned = 4,
-			IsThis = 8	
+			IsThis = 8,
+			Captured = 16
 		}
 
 		Flags flags;
@@ -1047,6 +1059,16 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool IsCaptured {
+			get {
+				return (flags & Flags.Captured) != 0;
+			}
+
+			set {
+				flags |= Flags.Captured;
+			}
+		}
+
 		public override string ToString ()
 		{
 			return String.Format ("LocalInfo ({0},{1},{2},{3})",
@@ -1058,7 +1080,7 @@ namespace Mono.CSharp {
 				return (flags & Flags.Used) != 0;
 			}
 			set {
-				flags = value ? (flags | Flags.Used) : (flags & ~Flags.Used);
+				flags = value ? (flags | Flags.Used) : (unchecked (flags & ~Flags.Used));
 			}
 		}
 
@@ -1067,7 +1089,7 @@ namespace Mono.CSharp {
 				return (flags & Flags.ReadOnly) != 0;
 			}
 			set {
-				flags = value ? (flags | Flags.ReadOnly) : (flags & ~Flags.ReadOnly);
+				flags = value ? (flags | Flags.ReadOnly) : (unchecked (flags & ~Flags.ReadOnly));
 			}
 		}
 
@@ -1109,12 +1131,12 @@ namespace Mono.CSharp {
 	///   they contain extra information that is not necessary on normal blocks.
 	/// </remarks>
 	public class Block : Statement {
-		public readonly Block     Parent;
+		public Block    Parent;
 		public readonly Location  StartLocation;
-		public Location           EndLocation = Location.Null;
+		public Location EndLocation = Location.Null;
 
 		[Flags]
-		public enum Flags : byte {
+		public enum Flags {
 			Implicit  = 1,
 			Unchecked = 2,
 			BlockUsed = 4,
@@ -1122,7 +1144,8 @@ namespace Mono.CSharp {
 			HasRet = 16,
 			IsDestructor = 32,
 			HasVarargs = 64,
-			Unsafe = 128,
+			IsToplevel = 128,
+			Unsafe = 256
 		}
 		Flags flags;
 
@@ -1192,11 +1215,16 @@ namespace Mono.CSharp {
 		Hashtable constants;
 
 		//
+		// The parameters for the block, this is only needed on the toplevel block really
+		// TODO: move `parameters' into ToplevelBlock
+		Parameters parameters;
+		
+		//
 		// If this is a switch section, the enclosing switch block.
 		//
 		Block switch_block;
 
-		static int id;
+		protected static int id;
 
 		int this_id;
 		
@@ -1564,17 +1592,79 @@ namespace Mono.CSharp {
 			
 			return e != null;
 		}
-		
-		Parameters parameters = null;
-		public Parameters Parameters {
-			get {
-				Block b = this;
-				while (b.Parent != null)
-					b = b.Parent;
-				return b.parameters;
-			}
+
+		//
+		// Returns a `ParameterReference' for the given name, or null if there
+		// is no such parameter
+		//
+		public ParameterReference GetParameterReference (string name, Location loc)
+		{
+			Block b = this;
+
+			do {
+				Parameters pars = b.parameters;
+				
+				if (pars != null){
+					Parameter par;
+					int idx;
+					
+					par = pars.GetParameterByName (name, out idx);
+					if (par != null){
+						ParameterReference pr;
+
+						pr = new ParameterReference (pars, this, idx, name, loc);
+						return pr;
+					}
+				}
+				b = b.Parent;
+			} while (b != null);
+			return null;
 		}
 
+		//
+		// Whether the parameter named `name' is local to this block, 
+		// or false, if the parameter belongs to an encompassing block.
+		//
+		public bool IsLocalParameter (string name)
+		{
+			Block b = this;
+			int toplevel_count = 0;
+
+			do {
+				if (this is ToplevelBlock)
+					toplevel_count++;
+
+				Parameters pars = b.parameters;
+				if (pars != null){
+					if (pars.GetParameterByName (name) != null)
+						return true;
+					return false;
+				}
+				if (toplevel_count > 0)
+					return false;
+				b = b.Parent;
+			} while (b != null);
+			return false;
+		}
+		
+		//
+		// Whether the `name' is a parameter reference
+		//
+		public bool IsParameterReference (string name)
+		{
+			Block b = this;
+
+			do {
+				Parameters pars = b.parameters;
+				
+				if (pars != null)
+					if (pars.GetParameterByName (name) != null)
+						return true;
+				b = b.Parent;
+			} while (b != null);
+			return false;
+		}
+		
 		/// <returns>
 		///   A list of labels that were not used within this block
 		/// </returns>
@@ -1623,7 +1713,7 @@ namespace Mono.CSharp {
 		public VariableMap ParameterMap {
 			get {
 				if ((flags & Flags.VariablesInitialized) == 0)
-					throw new Exception ();
+					throw new Exception ("Variables have not been initialized yet");
 
 				return param_map;
 			}
@@ -1632,17 +1722,12 @@ namespace Mono.CSharp {
 		public VariableMap LocalMap {
 			get {
 				if ((flags & Flags.VariablesInitialized) == 0)
-					throw new Exception ();
+					throw new Exception ("Variables have not been initialized yet");
 
 				return local_map;
 			}
 		}
 
-		public bool LiftVariable (LocalInfo local_info)
-		{
-			return false;
-		}
-		
 		/// <summary>
 		///   Emits the variable declarations and labels.
 		/// </summary>
@@ -1650,7 +1735,7 @@ namespace Mono.CSharp {
 		///   tc: is our typecontainer (to resolve type references)
 		///   ig: is the code generator:
 		/// </remarks>
-		public void EmitMeta (EmitContext ec, InternalParameters ip)
+		public void ResolveMeta (ToplevelBlock toplevel, EmitContext ec, InternalParameters ip)
 		{
 			ILGenerator ig = ec.ig;
 
@@ -1687,8 +1772,7 @@ namespace Mono.CSharp {
 
 			bool old_check_state = ec.ConstantCheckState;
 			ec.ConstantCheckState = (flags & Flags.Unchecked) == 0;
-			bool remap_locals = ec.RemapToProxy;
-				
+			
 			//
 			// Process this block variables
 			//
@@ -1713,6 +1797,7 @@ namespace Mono.CSharp {
 							continue;
 					}
 
+#if false
 					if (remap_locals)
 						vi.FieldBuilder = ec.MapVariable (name, vi.VariableType);
 					else if (vi.Pinned)
@@ -1723,6 +1808,7 @@ namespace Mono.CSharp {
 						vi.LocalBuilder = TypeManager.DeclareLocalPinned (ig, vi.VariableType);
 					else if (!vi.IsThis)
 						vi.LocalBuilder = ig.DeclareLocal (vi.VariableType);
+#endif
 
 					if (constants == null)
 						continue;
@@ -1761,10 +1847,47 @@ namespace Mono.CSharp {
 			//
 			if (children != null){
 				foreach (Block b in children)
-					b.EmitMeta (ec, ip);
+					b.ResolveMeta (toplevel, ec, ip);
+			}
+			ec.InUnsafe = old_unsafe;
+		}
+
+		//
+		// Emits the local variable declarations for a block
+		//
+		public void EmitMeta (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			
+			if (variables != null){
+				bool have_captured_vars = ec.HaveCapturedVariables ();
+				bool remap_locals = ec.RemapToProxy;
+				
+				foreach (DictionaryEntry de in variables){
+					LocalInfo vi = (LocalInfo) de.Value;
+
+					if (have_captured_vars && ec.IsCaptured (vi))
+						continue;
+
+					if (remap_locals){
+						vi.FieldBuilder = ec.MapVariable (vi.Name, vi.VariableType);
+					} else {
+						if (vi.Pinned)
+							//
+							// This is needed to compile on both .NET 1.x and .NET 2.x
+							// the later introduced `DeclareLocal (Type t, bool pinned)'
+							//
+							vi.LocalBuilder = TypeManager.DeclareLocalPinned (ig, vi.VariableType);
+						else if (!vi.IsThis)
+							vi.LocalBuilder = ig.DeclareLocal (vi.VariableType);
+					}
+				}
 			}
 
-			ec.InUnsafe = old_unsafe;
+			if (children != null){
+				foreach (Block b in children)
+					b.EmitMeta (ec);
+			}
 		}
 
 		void UsageWarning (FlowBranching.UsageVector vector)
@@ -1934,19 +2057,116 @@ namespace Mono.CSharp {
 
 			ec.CurrentBlock = prev_block;
 		}
+
+		public ToplevelBlock Toplevel {
+			get {
+				Block b = this;
+				while (b.Parent != null){
+					if ((b.flags & Flags.IsToplevel) != 0)
+						break;
+					b = b.Parent;
+				}
+
+				return (ToplevelBlock) b;
+			}
+		}
+
+		//
+		// Returns true if we ar ea child of `b'.
+		//
+		public bool IsChildOf (Block b)
+		{
+			Block current = this;
+			
+			do {
+				if (current.Parent == b)
+					return true;
+				current = current.Parent;
+			} while (current != null);
+			return false;
+		}
 	}
 
 	//
+	// A toplevel block contains extra information, the split is done
+	// only to separate information that would otherwise bloat the more
+	// lightweight Block.
+	//
+	// In particular, this was introduced when the support for Anonymous
+	// Methods was implemented. 
 	// 
 	public class ToplevelBlock : Block {
+		//
+		// Pointer to the host of this anonymous method, or null
+		// if we are the topmost block
+		//
+		public ToplevelBlock Container;
+		CaptureContext capture_context;
+
+		Hashtable capture_contexts;
+
+		static int did = 0;
+		
+		int my_id = did++;
+
+			
+		public void RegisterCaptureContext (CaptureContext cc)
+		{
+			if (capture_contexts == null)
+				capture_contexts = new Hashtable ();
+			capture_contexts [cc] = cc;
+		}
+
+		public void CompleteContexts ()
+		{
+			if (capture_contexts == null)
+				return;
+
+			foreach (CaptureContext cc in capture_contexts.Keys){
+				cc.AdjustScopes ();
+			}
+		}
+		
+		public CaptureContext ToplevelBlockCaptureContext {
+			get {
+				return capture_context;
+			}
+		}
+		
+		//
+		// Parent is only used by anonymous blocks to link back to their
+		// parents
+		//
+		public ToplevelBlock (ToplevelBlock container, Parameters parameters, Location start) :
+			base (null, Flags.IsToplevel, parameters, start, Location.Null)
+		{
+			Container = container;
+		}
+		
 		public ToplevelBlock (Parameters parameters, Location start) :
-			base (null, parameters, start, Location.Null)
+			base (null, Flags.IsToplevel, parameters, start, Location.Null)
 		{
 		}
 
 		public ToplevelBlock (Flags flags, Parameters parameters, Location start) :
-			base (null, flags, parameters, start, Location.Null)
+			base (null, flags | Flags.IsToplevel, parameters, start, Location.Null)
 		{
+		}
+
+		public ToplevelBlock (Location loc) : base (null, Flags.IsToplevel, loc, loc)
+		{
+		}
+
+		public void SetHaveAnonymousMethods (Location loc, AnonymousMethod host)
+		{
+			if (capture_context == null)
+				capture_context = new CaptureContext (this, loc, host);
+		}
+
+		public CaptureContext CaptureContext {
+			get {
+				return capture_context;
+			}
 		}
 	}
 	
@@ -1954,8 +2174,11 @@ namespace Mono.CSharp {
 		Expression label;
 		object converted;
 		public Location loc;
-		public Label ILLabel;
-		public Label ILLabelCode;
+
+		Label il_label;
+		bool  il_label_set;
+		Label il_label_code;
+		bool  il_label_code_set;
 
 		//
 		// if expr == null, then it is the default case.
@@ -1978,15 +2201,30 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public Label GetILLabel (EmitContext ec)
+		{
+			if (!il_label_set){
+				il_label = ec.ig.DefineLabel ();
+				il_label_set = true;
+			}
+			return il_label;
+		}
+
+		public Label GetILLabelCode (EmitContext ec)
+		{
+			if (!il_label_code_set){
+				il_label_code = ec.ig.DefineLabel ();
+				il_label_code_set = true;
+			}
+			return il_label_code;
+		}				
+		
 		//
 		// Resolves the expression, reduces it to a literal if possible
 		// and then converts it to the requested type.
 		//
 		public bool ResolveAndReduce (EmitContext ec, Type required_type)
 		{
-			ILLabel = ec.ig.DefineLabel ();
-			ILLabelCode = ec.ig.DefineLabel ();
-
 			if (label == null)
 				return true;
 			
@@ -2003,7 +2241,6 @@ namespace Mono.CSharp {
 			if (e is StringConstant || e is NullLiteral){
 				if (required_type == TypeManager.string_type){
 					converted = e;
-					ILLabel = ec.ig.DefineLabel ();
 					return true;
 				}
 			}
@@ -2470,7 +2707,7 @@ namespace Mono.CSharp {
 						ig.Emit (OpCodes.Ldloc, val);
 						EmitObjectInteger (ig, key);
 						SwitchLabel sl = (SwitchLabel) Elements [key];
-						ig.Emit (OpCodes.Beq, sl.ILLabel);
+						ig.Emit (OpCodes.Beq, sl.GetILLabel (ec));
 					}
 				}
 				else
@@ -2526,7 +2763,7 @@ namespace Mono.CSharp {
 						if (System.Convert.ToInt64 (key) == kb.nFirst + iJump)
 						{
 							SwitchLabel sl = (SwitchLabel) Elements [key];
-							rgLabels [iJump] = sl.ILLabel;
+							rgLabels [iJump] = sl.GetILLabel (ec);
 							iKey++;
 						}
 						else
@@ -2554,8 +2791,8 @@ namespace Mono.CSharp {
 			{
 				foreach (SwitchLabel sl in ss.Labels)
 				{
-					ig.MarkLabel (sl.ILLabel);
-					ig.MarkLabel (sl.ILLabelCode);
+					ig.MarkLabel (sl.GetILLabel (ec));
+					ig.MarkLabel (sl.GetILLabelCode (ec));
 					if (sl.Label == null)
 					{
 						ig.MarkLabel (lblDefault);
@@ -2613,7 +2850,7 @@ namespace Mono.CSharp {
 				null_found = false;
 				for (int label = 0; label < label_count; label++){
 					SwitchLabel sl = (SwitchLabel) ss.Labels [label];
-					ig.MarkLabel (sl.ILLabel);
+					ig.MarkLabel (sl.GetILLabel (ec));
 					
 					if (!first_test){
 						ig.MarkLabel (next_test);
@@ -2655,7 +2892,7 @@ namespace Mono.CSharp {
 					ig.MarkLabel (null_target);
 				ig.MarkLabel (sec_begin);
 				foreach (SwitchLabel sl in ss.Labels)
-					ig.MarkLabel (sl.ILLabelCode);
+					ig.MarkLabel (sl.GetILLabelCode (ec));
 
 				if (mark_default)
 					ig.MarkLabel (default_target);
@@ -4205,7 +4442,7 @@ namespace Mono.CSharp {
 
 			if (ec.InIterator){
 				conv.Emit (ec);
-				ig.Emit (OpCodes.Stfld, ((FieldExpr) variable).FieldInfo);
+				ig.Emit (OpCodes.Stfld, ((LocalVariableReference) variable).local_info.FieldBuilder);
 			} else 
 				((IAssignMethod)variable).EmitAssign (ec, conv, false, false);
 				
@@ -4311,7 +4548,7 @@ namespace Mono.CSharp {
 				ArrayAccess.EmitLoadOpcode (ig, element_type);
 				if (ec.InIterator){
 					conv.Emit (ec);
-					ig.Emit (OpCodes.Stfld, ((FieldExpr) variable).FieldInfo);
+					ig.Emit (OpCodes.Stfld, ((LocalVariableReference) variable).local_info.FieldBuilder);
 				} else 
 					((IAssignMethod)variable).EmitAssign (ec, conv, false, false);
 
@@ -4391,7 +4628,7 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Call, get);
 				if (ec.InIterator){
 					conv.Emit (ec);
-					ig.Emit (OpCodes.Stfld, ((FieldExpr) variable).FieldInfo);
+					ig.Emit (OpCodes.Stfld, ((LocalVariableReference) variable).local_info.FieldBuilder);
 				} else 
 					((IAssignMethod)variable).EmitAssign (ec, conv, false, false);
 				statement.Emit (ec);

@@ -1,3 +1,286 @@
+2004-10-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (LocalVariableReference.DoResolveBase, Emit):
+	Remove the tests for `ec.RemapToProxy' from here, and encapsulate
+	all of this information into
+	EmitContext.EmitCapturedVariableInstance.
+	
+	* codegen.cs (EmitCapturedVariableInstance): move here the
+	funcionality of emitting an ldarg.0 in the presence of a
+	remapping.   This centralizes the instance emit code.
+
+	(EmitContext.EmitThis): If the ScopeInfo contains a THIS field,
+	then emit a load of this: it means that we have reached the
+	topmost ScopeInfo: the one that contains the pointer to the
+	instance of the class hosting the anonymous method.
+
+	* anonymous.cs (AddField, HaveCapturedFields): Propagate field
+	captures to the topmost CaptureContext.
+
+2004-10-12  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (LocalVariableReference): Move the knowledge about
+	the iterators into codegen's EmitCapturedVariableInstance.
+
+2004-10-11  Miguel de Icaza  <miguel@ximian.com>
+
+	* codegen.cs (EmitContext.ResolveTopBlock): Emit a 1643 when not
+	all code paths return a value from an anonymous method (it is the
+	same as the 161 error, but for anonymous methods).
+
+2004-10-08  Miguel de Icaza  <miguel@ximian.com>
+
+	The introduction of anonymous methods in the compiler changed
+	various ways of doing things in the compiler.  The most
+	significant one is the hard split between the resolution phase
+	and the emission phases of the compiler.
+
+	For instance, routines that referenced local variables no
+	longer can safely create temporary variables during the
+	resolution phase: they must do so from the emission phase,
+	since the variable might have been "captured", hence access to
+	it can not be done with the local-variable operations from the runtime.
+	
+	* statement.cs 
+
+	(Block.Flags): New flag `IsTopLevel' to indicate that this block
+	is a toplevel block.
+
+	(ToplevelBlock): A new kind of Block, these are the blocks that
+	are created by the parser for all toplevel method bodies.  These
+	include methods, accessors and anonymous methods.
+
+	These contain some extra information not found in regular blocks:
+	A pointer to an optional CaptureContext (for tracking captured
+	local variables and parameters).  A pointer to the parent
+	ToplevelBlock.
+	
+	(Return.Resolve): Catch missmatches when returning a value from an
+	anonymous method (error 1662).
+	Invoke NeedReturnLabel from the Resolve phase instead of the emit
+	phase.
+
+	(Break.Resolve): ditto.
+
+	(SwitchLabel): instead of defining the labels during the
+	resolution phase, we now turned the public ILLabel and ILLabelCode
+	labels into methods called GetILLabelCode() and GetILLabel() that
+	only define the label during the Emit phase.
+
+	(GotoCase): Track the SwitchLabel instead of the computed label
+	(its contained therein).  Emit the code by using
+	SwitchLabel.GetILLabelCode ().
+
+	(LocalInfo.Flags.Captured): A new flag has been introduce to track
+	whether the Local has been captured or not.
+
+	(LocalInfo.IsCaptured): New property, used to tell whether the
+	local has been captured.
+	
+	* anonymous.cs: Vastly updated to contain the anonymous method
+	support.
+
+	The main classes here are: CaptureContext which tracks any
+	captured information for a toplevel block and ScopeInfo used to
+	track the activation frames for various local variables.   
+
+	Each toplevel block has an optional capture context associated
+	with it.  When a method contains an anonymous method both the
+	toplevel method and the anonymous method will create a capture
+	context.   When variables or parameters are captured, they are
+	recorded on the CaptureContext that owns them, for example:
+
+	void Demo () {
+	     int a;
+	     MyDelegate d = delegate {
+	         a = 1;
+	     }
+	}
+
+	Here `a' will be recorded as captured on the toplevel
+	CapturedContext, the inner captured context will not have anything
+	(it will only have data if local variables or parameters from it
+	are captured in a nested anonymous method.
+
+	The ScopeInfo is used to track the activation frames for local
+	variables, for example:
+
+	for (int i = 0; i < 10; i++)
+		for (int j = 0; j < 10; j++){
+		   MyDelegate d = delegate {
+		   	call (i, j);
+		   }
+		}
+
+	At runtime this captures a single captured variable `i', but it
+	captures 10 different versions of the variable `j'.  The variable
+	`i' will be recorded on the toplevel ScopeInfo, while `j' will be
+	recorded on a child.  
+
+	The toplevel ScopeInfo will also track information like the `this'
+	pointer if instance variables were referenced (this is necessary
+	as the anonymous method lives inside a nested class in the host
+	type of the method). 
+
+	(AnonymousMethod): Expanded to track the Toplevel, implement
+	`AnonymousMethod.Compatible' to tell whether an anonymous method
+	can be converted to a target delegate type. 
+
+	The routine now also produces the anonymous method content
+
+	(AnonymousDelegate): A helper class that derives from
+	DelegateCreation, this is used to generate the code necessary to
+	produce the delegate for the anonymous method that was created. 
+
+	* assign.cs: API adjustments for new changes in
+	Convert.ImplicitStandardConversionExists.
+
+	* class.cs: Adjustments to cope with the fact that now toplevel
+	blocks are of type `ToplevelBlock'. 
+
+	* cs-parser.jay: Now we produce ToplevelBlocks for toplevel blocks
+	insteda of standard blocks.
+
+	Flag errors if params arguments are passed to anonymous methods.
+
+	* codegen.cs (EmitContext): Replace `InAnonymousMethod' with
+	`CurrentAnonymousMethod' which points to the current Anonymous
+	Method.  The variable points to the AnonymousMethod class that
+	holds the code being compiled.  It is set in the new EmitContext
+	created for the anonymous method.
+
+	(EmitContext.Phase): Introduce a variable and an enumeration to
+	assist in enforcing some rules about when and where we are allowed
+	to invoke certain methods (EmitContext.NeedsReturnLabel is the
+	only one that enfonces this right now).
+
+	(EmitContext.HaveCaptureInfo): new helper method that returns
+	whether we have a CapturedContext initialized.
+
+	(EmitContext.CaptureVariable): New method used to register that a
+	LocalInfo must be flagged for capturing. 
+
+	(EmitContext.CapturedParameter): New method used to register that a
+	parameters must be flagged for capturing. 
+	
+	(EmitContext.CapturedField): New method used to register that a
+	field must be flagged for capturing. 
+
+	(EmitContext.HaveCapturedVariables,
+	EmitContext.HaveCapturedFields): Return whether there are captured
+	variables or fields. 
+
+	(EmitContext.EmitMethodHostInstance): This is used to emit the
+	instance for the anonymous method.  The instance might be null
+	(static methods), this (for anonymous methods that capture nothing
+	and happen to live side-by-side with the current method body) or a
+	more complicated expression if the method has a CaptureContext.
+
+	(EmitContext.EmitTopBlock): Routine that drives the emission of
+	code: it will first resolve the top block, then emit any metadata
+	and then emit the code.  The split is done so that we can extract
+	any anonymous methods and flag any captured variables/parameters.
+	
+	(EmitContext.ResolveTopBlock): Triggers the resolution phase,
+	during this phase, the ILGenerator should not be used as labels
+	and local variables declared here might not be accessible to any
+	code that is part of an anonymous method.  
+
+	Exceptions to this include the temporary variables that are
+	created by some statements internally for holding temporary
+	variables. 
+	
+	(EmitContext.EmitMeta): New routine, in charge of emitting all the
+	metadata for a cb
+
+	(EmitContext.TemporaryReturn): This method is typically called
+	from the Emit phase, and its the only place where we allow the
+	ReturnLabel to be defined other than the EmitMeta.  The reason is
+	that otherwise we would have to duplicate a lot of logic in the
+	Resolve phases of various methods that today is on the Emit
+	phase. 
+
+	(EmitContext.NeedReturnLabel): This no longer creates the label,
+	as the ILGenerator is not valid during the resolve phase.
+
+	(EmitContext.EmitThis): Extended the knowledge in this class to
+	work in anonymous methods in addition to iterators. 
+
+	(EmitContext.EmitCapturedVariableInstance): This emits whatever
+	code is necessary on the stack to access the instance to a local
+	variable (the variable will be accessed as a field).
+
+	(EmitContext.EmitParameter, EmitContext.EmitAssignParameter,
+	EmitContext.EmitAddressOfParameter): Routines to support
+	parameters (not completed at this point). 
+	
+	Removals: Removed RemapLocal and RemapLocalLValue.  We probably
+	will also remove the parameters.
+
+	* convert.cs (Convert): Define a `ConstantEC' which points to a
+	null.  This is just to prefity some code that uses
+	ImplicitStandardConversion code and do not have an EmitContext
+	handy.
+
+	The idea is to flag explicitly that at that point in time, it is
+	known that the conversion will not trigger the delegate checking
+	code in implicit conversions (which requires a valid
+	EmitContext). 
+
+	Everywhere: pass new EmitContext parameter since
+	ImplicitStandardConversionExists now requires it to check for
+	anonymous method conversions. 
+
+	(Convert.ImplicitStandardConversionExists): If the type of an
+	expression is the anonymous_method_type, and the type is a
+	delegate, we invoke the AnonymousMethod.Compatible method to check
+	whether an implicit conversion is possible. 
+
+	(Convert.ImplicitConversionStandard): Only do implicit method
+	group conversions if the language level is not ISO_1.
+
+	* delegate.cs (Delegate.GetInvokeMethod): Common method to get the
+	MethodInfo for the Invoke method.  used by Delegate and
+	AnonymousDelegate.
+
+	* expression.cs (Binary.DoNumericPromotions): only allow anonymous
+	method conversions if the target type is a delegate.
+
+	Removed extra debugging nops.
+
+	(LocalVariableReference): Turn the `local_info' into a public
+	field. 
+
+	Add `prepared' field, the same hack used for FieldExprs to cope
+	with composed assignments, as Local variables do not necessarily
+	operate purely on the stack as they used to: they can be captured
+	fields. 
+
+	Add `temp' for a temporary result, like fields.
+
+	Refactor DoResolve and DoResolveLValue into DoResolveBase.
+
+	It now copes with Local variables that are captured and emits the
+	proper instance variable to load it from a field in the captured
+	case. 
+
+	(ParameterReference.DoResolveBase): During the resolve phase,
+	capture parameters if we are in an anonymous method.
+
+	(ParameterReference.Emit, ParameterReference.AddressOf): If in an
+	anonymous method, use the EmitContext helper routines to emit the
+	parameter reference.
+
+	* iterators.cs: Set RemapToProxy to true/false during the
+	EmitDispose class.
+
+	* parameters.cs (GetParameterByName): New helper method. 
+
+	* typemanager.cs (anonymous_method_type) a new type that
+	represents an anonyous method.  This is always an internal type,
+	used as a fencepost to test against the anonymous-methodness of an
+	expression. 
+	
 2004-10-24  Marek Safar  <marek.safar@seznam.cz>
 
 	Fixed bugs #63705, #67130

@@ -2374,8 +2374,8 @@ namespace Mono.CSharp {
 					//
 					// Also, a standard conversion must exist from either one
 					//
-					if (!(Convert.ImplicitStandardConversionExists (left, r) ||
-					      Convert.ImplicitStandardConversionExists (right, l))){
+					if (!(Convert.ImplicitStandardConversionExists (ec, left, r) ||
+					      Convert.ImplicitStandardConversionExists (ec, right, l))){
 						Error_OperatorCannotBeApplied ();
 						return null;
 					}
@@ -2407,15 +2407,17 @@ namespace Mono.CSharp {
 			//
 			if (oper == Operator.Addition || oper == Operator.Subtraction) {
 				if (l.IsSubclassOf (TypeManager.delegate_type)){
-					if ((right.eclass == ExprClass.MethodGroup) &&
-					    (RootContext.Version != LanguageVersion.ISO_1)){
-						Expression tmp = Convert.ImplicitConversionRequired (ec, right, l, loc);
-						if (tmp == null)
-							return null;
-						right = tmp;
-						r = right.Type;
+					if (((right.eclass == ExprClass.MethodGroup) ||
+					     (r == TypeManager.anonymous_method_type))){
+						if ((RootContext.Version != LanguageVersion.ISO_1)){
+							Expression tmp = Convert.ImplicitConversionRequired (ec, right, l, loc);
+							if (tmp == null)
+								return null;
+							right = tmp;
+							r = right.Type;
+						}
 					}
-				
+					
 					if (r.IsSubclassOf (TypeManager.delegate_type)){
 						MethodInfo method;
 						ArrayList args = new ArrayList (2);
@@ -3312,8 +3314,6 @@ namespace Mono.CSharp {
 			Label false_target = ig.DefineLabel ();
 			Label end_target = ig.DefineLabel ();
 
-			ig.Emit (OpCodes.Nop);
-
 			left.Emit (ec);
 			left_temp.Store (ec);
 
@@ -3323,8 +3323,6 @@ namespace Mono.CSharp {
 			ig.MarkLabel (false_target);
 			op.Emit (ec);
 			ig.MarkLabel (end_target);
-
-			ig.Emit (OpCodes.Nop);
 		}
 	}
 
@@ -3539,8 +3537,10 @@ namespace Mono.CSharp {
 	public class LocalVariableReference : Expression, IAssignMethod, IMemoryLocation, IVariable {
 		public readonly string Name;
 		public readonly Block Block;
-		LocalInfo local_info;
+		public LocalInfo local_info;
 		bool is_readonly;
+		bool prepared;
+		LocalTemporary temp;
 		
 		public LocalVariableReference (Block block, string name, Location l)
 		{
@@ -3550,8 +3550,10 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Variable;
 		}
 
+		//
 		// Setting `is_readonly' to false will allow you to create a writable
 		// reference to a read-only variable.  This is used by foreach and using.
+		//
 		public LocalVariableReference (Block block, string name, Location l,
 					       LocalInfo local_info, bool is_readonly)
 			: this (block, name, l)
@@ -3561,7 +3563,9 @@ namespace Mono.CSharp {
 		}
 
 		public VariableInfo VariableInfo {
-			get { return local_info.VariableInfo; }
+			get {
+				return local_info.VariableInfo;
+			}
 		}
 
 		public bool IsReadOnly {
@@ -3570,7 +3574,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected void DoResolveBase (EmitContext ec)
+		protected Expression DoResolveBase (EmitContext ec, Expression lvalue_right_side)
 		{
 			if (local_info == null) {
 				local_info = Block.GetLocalInfo (Name);
@@ -3578,14 +3582,18 @@ namespace Mono.CSharp {
 			}
 
 			type = local_info.VariableType;
-#if false
-			if (ec.InAnonymousMethod)
-				Block.LiftVariable (local_info);
-#endif
-		}
 
-		protected Expression DoResolve (EmitContext ec, bool is_lvalue)
-		{
+			VariableInfo variable_info = local_info.VariableInfo;
+			if (lvalue_right_side != null){
+				if (is_readonly){
+					Error (1604, "cannot assign to `" + Name + "' because it is readonly");
+					return null;
+				}
+				
+				if (variable_info != null)
+					variable_info.SetAssigned (ec);
+			}
+			
 			Expression e = Block.GetConstantExpression (Name);
 			if (e != null) {
 				local_info.Used = true;
@@ -3593,50 +3601,34 @@ namespace Mono.CSharp {
 				return e.Resolve (ec);
 			}
 
-			VariableInfo variable_info = local_info.VariableInfo; 
 			if ((variable_info != null) && !variable_info.IsAssigned (ec, loc))
 				return null;
 
-			if (!is_lvalue)
+			if (lvalue_right_side == null)
 				local_info.Used = true;
 
-			if (local_info.LocalBuilder == null)
-				return ec.RemapLocal (local_info);
-			
+			if (ec.CurrentAnonymousMethod != null){
+				//
+				// If we are referencing a variable from the external block
+				// flag it for capturing
+				//
+				if (local_info.Block.Toplevel != ec.CurrentBlock.Toplevel){
+					ec.CaptureVariable (local_info);
+					//Console.WriteLine ("Capturing at " + loc);
+				}
+			}
+
 			return this;
 		}
 		
 		public override Expression DoResolve (EmitContext ec)
 		{
-			DoResolveBase (ec);
-
-			return DoResolve (ec, false);
+			return DoResolveBase (ec, null);
 		}
 
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
-			DoResolveBase (ec);
-
-			VariableInfo variable_info = local_info.VariableInfo; 
-			if (variable_info != null)
-				variable_info.SetAssigned (ec);
-
-			Expression e = DoResolve (ec, right_side != EmptyExpression.Null);
-
-			if (e == null)
-				return null;
-
-			if (is_readonly){
-				Error (1604, "cannot assign to `" + Name + "' because it is readonly");
-				return null;
-			}
-
-			CheckObsoleteAttribute (e.Type);
-
-			if (local_info.LocalBuilder == null)
-				return ec.RemapLocalLValue (local_info, right_side);
-			
-			return this;
+			return DoResolveBase (ec, right_side);
 		}
 
 		public bool VerifyFixed (bool is_expression)
@@ -3648,29 +3640,86 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 
-			ig.Emit (OpCodes.Ldloc, local_info.LocalBuilder);
+			if (local_info.FieldBuilder == null){
+				//
+				// A local variable on the local CLR stack
+				//
+				ig.Emit (OpCodes.Ldloc, local_info.LocalBuilder);
+			} else {
+				//
+				// A local variable captured by anonymous methods.
+				//
+				if (!prepared)
+					ec.EmitCapturedVariableInstance (local_info);
+				
+				ig.Emit (OpCodes.Ldfld, local_info.FieldBuilder);
+			}
 		}
 		
 		public void Emit (EmitContext ec, bool leave_copy)
 		{
 			Emit (ec);
-			if (leave_copy)
+			if (leave_copy){
 				ec.ig.Emit (OpCodes.Dup);
+				if (local_info.FieldBuilder != null){
+					temp = new LocalTemporary (ec, Type);
+					temp.Store (ec);
+				}
+			}
 		}
 		
 		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
 		{
-			source.Emit (ec);
-			if (leave_copy)
-				ec.ig.Emit (OpCodes.Dup);
-			ec.ig.Emit (OpCodes.Stloc, local_info.LocalBuilder);
+			ILGenerator ig = ec.ig;
+			prepared = prepare_for_load;
+
+			if (local_info.FieldBuilder == null){
+				//
+				// A local variable on the local CLR stack
+				//
+				if (local_info.LocalBuilder == null)
+					throw new Exception ("This should not happen: both Field and Local are null");
+				
+				source.Emit (ec);
+				if (leave_copy)
+					ec.ig.Emit (OpCodes.Dup);
+				ig.Emit (OpCodes.Stloc, local_info.LocalBuilder);
+			} else {
+				//
+				// A local variable captured by anonymous methods or itereators.
+				//
+				ec.EmitCapturedVariableInstance (local_info);
+
+				if (prepare_for_load)
+					ig.Emit (OpCodes.Dup);
+				source.Emit (ec);
+				if (leave_copy){
+					ig.Emit (OpCodes.Dup);
+					temp = new LocalTemporary (ec, Type);
+					temp.Store (ec);
+				}
+				ig.Emit (OpCodes.Stfld, local_info.FieldBuilder);
+				if (temp != null)
+					temp.Emit (ec);
+			}
 		}
 		
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			ILGenerator ig = ec.ig;
-			
-			ig.Emit (OpCodes.Ldloca, local_info.LocalBuilder);
+
+			if (local_info.FieldBuilder == null){
+				//
+				// A local variable on the local CLR stack
+				//
+				ig.Emit (OpCodes.Ldloca, local_info.LocalBuilder);
+			} else {
+				//
+				// A local variable captured by anonymous methods or iterators
+				//
+				ec.EmitCapturedVariableInstance (local_info);
+				ig.Emit (OpCodes.Ldflda, local_info.FieldBuilder);
+			}
 		}
 
 		public override string ToString ()
@@ -3691,6 +3740,19 @@ namespace Mono.CSharp {
 		VariableInfo vi;
 		public Parameter.Modifier mod;
 		public bool is_ref, is_out, prepared;
+
+		public bool IsOut {
+			get {
+				return is_out;
+			}
+		}
+
+		public bool IsRef {
+			get {
+				return is_ref;
+			}
+		}
+
 		LocalTemporary temp;
 		
 		public ParameterReference (Parameters pars, Block block, int idx, string name, Location loc)
@@ -3714,8 +3776,7 @@ namespace Mono.CSharp {
 
 		public bool IsAssigned (EmitContext ec, Location loc)
 		{
-			if (!ec.DoFlowAnalysis || !is_out ||
-			    ec.CurrentBranching.IsAssigned (vi))
+			if (!ec.DoFlowAnalysis || !is_out || ec.CurrentBranching.IsAssigned (vi))
 				return true;
 
 			Report.Error (165, loc,
@@ -3725,8 +3786,7 @@ namespace Mono.CSharp {
 
 		public bool IsFieldAssigned (EmitContext ec, string field_name, Location loc)
 		{
-			if (!ec.DoFlowAnalysis || !is_out ||
-			    ec.CurrentBranching.IsFieldAssigned (vi, field_name))
+			if (!ec.DoFlowAnalysis || !is_out || ec.CurrentBranching.IsFieldAssigned (vi, field_name))
 				return true;
 
 			Report.Error (170, loc,
@@ -3740,7 +3800,7 @@ namespace Mono.CSharp {
 				ec.CurrentBranching.SetAssigned (vi);
 		}
 
-		public void SetFieldAssigned (EmitContext ec, string field_name)
+		public void SetFieldAssigned (EmitContext ec, string field_name)	
 		{
 			if (is_out && ec.DoFlowAnalysis)
 				ec.CurrentBranching.SetFieldAssigned (vi, field_name);
@@ -3755,6 +3815,23 @@ namespace Mono.CSharp {
 
 			if (is_out)
 				vi = block.ParameterMap [idx];
+
+			if (ec.CurrentAnonymousMethod != null){
+				if (is_ref){
+					Report.Error (1628, Location,
+						      "Can not reference a ref or out parameter in an anonymous method");
+					return;
+				}
+				
+				//
+				// If we are referencing the parameter from the external block
+				// flag it for capturing
+				//
+				//Console.WriteLine ("Is parameter `{0}' local? {1}", name, block.IsLocalParameter (name));
+				if (!block.IsLocalParameter (name)){
+					ec.CaptureParameter (name, type, idx);
+				}
+			}
 		}
 
 		//
@@ -3823,17 +3900,25 @@ namespace Mono.CSharp {
 				arg_idx++;
 
 			EmitLdArg (ig, arg_idx);
+
+			//
+			// FIXME: Review for anonymous methods
+			//
 		}
 		
 		public override void Emit (EmitContext ec)
 		{
+			if (ec.HaveCaptureInfo && ec.IsParameterCaptured (name)){
+				ec.EmitParameter (name);
+				return;
+			}
+			
 			Emit (ec, false);
 		}
 		
 		public void Emit (EmitContext ec, bool leave_copy)
 		{
 			ILGenerator ig = ec.ig;
-			
 			int arg_idx = idx;
 
 			if (!ec.IsStatic)
@@ -3864,6 +3949,11 @@ namespace Mono.CSharp {
 		
 		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
 		{
+			if (ec.HaveCaptureInfo && ec.IsParameterCaptured (name)){
+				ec.EmitAssignParameter (name, source, leave_copy, prepare_for_load);
+				return;
+			}
+
 			ILGenerator ig = ec.ig;
 			int arg_idx = idx;
 			
@@ -3900,6 +3990,11 @@ namespace Mono.CSharp {
 
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
+			if (ec.HaveCaptureInfo && ec.IsParameterCaptured (name)){
+				ec.EmitAddressOfParameter (name);
+				return;
+			}
+			
 			int arg_idx = idx;
 
 			if (!ec.IsStatic)
@@ -4075,7 +4170,7 @@ namespace Mono.CSharp {
 				if (Expr is ParameterReference){
 					ParameterReference pr = (ParameterReference) Expr;
 
-					if (pr.is_ref)
+					if (pr.IsRef)
 						pr.EmitLoad (ec);
 					else {
 						
@@ -4474,10 +4569,10 @@ namespace Mono.CSharp {
 
 				Argument a = (Argument) arguments [i];
 
-				Parameter.Modifier a_mod = a.GetParameterModifier () &
-					~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
+				Parameter.Modifier a_mod = a.GetParameterModifier () & 
+					(unchecked (~(Parameter.Modifier.OUT | Parameter.Modifier.REF)));
 				Parameter.Modifier p_mod = pd.ParameterModifier (i) &
-					~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
+					(unchecked (~(Parameter.Modifier.OUT | Parameter.Modifier.REF)));
 
 				if (a_mod == p_mod) {
 
@@ -4546,9 +4641,9 @@ namespace Mono.CSharp {
 				Argument a = (Argument) arguments [i];
 
 				Parameter.Modifier a_mod = a.GetParameterModifier () &
-					~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
+					unchecked (~(Parameter.Modifier.OUT | Parameter.Modifier.REF));
 				Parameter.Modifier p_mod = pd.ParameterModifier (i) &
-					~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
+					unchecked (~(Parameter.Modifier.OUT | Parameter.Modifier.REF));
 
 
 				if (a_mod == p_mod ||
@@ -4912,9 +5007,9 @@ namespace Mono.CSharp {
 				}
 
 				Parameter.Modifier a_mod = a.GetParameterModifier () &
-					~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
+					unchecked (~(Parameter.Modifier.OUT | Parameter.Modifier.REF));
 				Parameter.Modifier p_mod = pd.ParameterModifier (j) &
-					~(Parameter.Modifier.OUT | Parameter.Modifier.REF);
+					unchecked (~(Parameter.Modifier.OUT | Parameter.Modifier.REF));
 				
 				if (a_mod != p_mod &&
 				    pd.ParameterModifier (pd_count - 1) != Parameter.Modifier.PARAMS) {
