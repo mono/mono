@@ -34,7 +34,7 @@ install: all
 	$(INSTALL) -m 644 ilasm.exe $(prefix)/bin
 
 parser/ILParser.cs: parser/ILParser.jay ../jay/skeleton.cs
-	jay -ct < ../jay/skeleton.cs parser/ILParser.jay > parser/ILParser.cs
+	../jay/jay -ct < ../jay/skeleton.cs parser/ILParser.jay > parser/ILParser.cs
 
 list: $(SOURCES)
 	echo $(SOURCES) > list
