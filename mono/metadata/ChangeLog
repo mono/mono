@@ -1,3 +1,9 @@
+
+Fri Jul 30 16:49:05 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: always create an object if null is passed
+	to Invoke() where a valuetype is expected.
+
 2004-07-29  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* marshal.c (mono_marshal_init): make managed
