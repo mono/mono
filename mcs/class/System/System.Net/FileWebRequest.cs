@@ -19,6 +19,7 @@ namespace System.Net
 		private WebHeaderCollection webHeaders;
 		
 		private ICredentials credentials;
+		private string connectionGroup;
 		private string method;
 		private int timeout;
 		private bool open = false;
@@ -43,8 +44,8 @@ namespace System.Net
 		
 		// currently not used according to spec
 		public override string ConnectionGroupName { 
-			get { throw new NotSupportedException (); }
-			set { throw new NotSupportedException (); }
+			get { return connectionGroup; }
+			set { connectionGroup = value; }
 		}
 		
 		public override long ContentLength { 

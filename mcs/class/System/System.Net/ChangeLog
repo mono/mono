@@ -1,5 +1,8 @@
 2002-05-12  Lawrence Pit <loz@cable.a2000.nl>
 
+	* HttpWebRequest.cs: properties implemented
+	* HttpWebResponse.cs: added
+	* GlobalProxySelection.cs: implemented
 	* FileWebResponse.cs: added
 	* FileWebRequest.cs: some methods implemented
 

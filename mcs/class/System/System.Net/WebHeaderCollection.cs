@@ -91,7 +91,7 @@ namespace System.Net
 					  serializationInfo.GetString ("v" + i));
 		}
 		
-		internal WebHeaderCollection (bool dummy) 
+		internal WebHeaderCollection (bool dummy) : base ()
 		{	
 			this.internallyCreated = true;
 		}		
@@ -222,6 +222,26 @@ namespace System.Net
 				serializationInfo.AddValue ("k" + i, GetKey (i));
 				serializationInfo.AddValue ("v" + i, Get (i));
 			}
+		}
+		
+		// Internal Methods
+		
+		internal void SetInternal (string name, string value)
+		{
+			if (value == null)
+				value = String.Empty;
+			else
+				value = value.Trim ();
+			if (!IsHeaderValue (value))
+				throw new ArgumentException ("invalid header value");
+			base.Set (name, value);	
+		}
+		
+		internal void RemoveInternal (string name)
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			base.Remove (name);
 		}		
 		
 		// Private Methods
