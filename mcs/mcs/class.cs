@@ -1665,7 +1665,7 @@ namespace Mono.CSharp {
 		public MethodBuilder MethodBuilder;
 		public readonly Attributes OptAttributes;
 
-		public bool IsPInvoke = false;
+		MethodAttributes flags;
 
 		/// <summary>
 		///   Modifiers allowed in a class declaration
@@ -1818,7 +1818,6 @@ namespace Mono.CSharp {
 		{
 			Type ret_type = GetReturnType (parent);
 			Type [] parameters = ParameterTypes (parent);
-			MethodAttributes flags;
 			bool error = false;
 			MethodInfo implementing;
 			Type iface_type = null;
@@ -1990,7 +1989,6 @@ namespace Mono.CSharp {
 					foreach (Attribute a in asec.Attributes)
 						if (a.Name.IndexOf ("DllImport") != -1) {
 							flags |= MethodAttributes.PinvokeImpl;
-							IsPInvoke = true;
 							dllimport_attr = a;
 						}
 				
@@ -2001,7 +1999,7 @@ namespace Mono.CSharp {
 			// Finally, define the method
 			//
 
-			if (IsPInvoke) {
+			if ((flags & MethodAttributes.PinvokeImpl) != 0) {
 				EmitContext ec = new EmitContext (
 					parent, Location, null, GetReturnType (parent), ModFlags);
 				
@@ -2093,7 +2091,7 @@ namespace Mono.CSharp {
 		// 
 		public void Emit (TypeContainer parent)
 		{
-			if (IsPInvoke)
+			if ((flags & MethodAttributes.PinvokeImpl) != 0)
 				return;
 
 			ILGenerator ig = MethodBuilder.GetILGenerator ();

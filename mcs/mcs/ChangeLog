@@ -1,3 +1,12 @@
+2001-12-14  Ravi Pratap  <ravi@ximian.com>
+
+	* class.cs (Method.IsPInvoke): Get rid of it as it is an expensive
+	thing.
+
+	(Method::Define, ::Emit): Modify accordingly.
+
+	* expression.cs (Invocation::OverloadResolve): Handle error # 121.
+
 2001-12-13  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (TypeContainer.Define): Correctly define explicit

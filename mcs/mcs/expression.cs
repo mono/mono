@@ -2642,6 +2642,7 @@ namespace Mono.CSharp {
 			int best_match_idx = -1;
 			MethodBase method = null;
 			int argument_count;
+			ArrayList candidates = new ArrayList ();
 			
 			for (int i = me.Methods.Length; i > 0; ){
 				i--;
@@ -2652,6 +2653,7 @@ namespace Mono.CSharp {
 				if (!IsApplicable (Arguments, candidate))
 					continue;
 
+				candidates.Add (candidate);
 				x = BetterFunction (ec, Arguments, candidate, method, use_standard, loc);
 				
 				if (x == 0)
@@ -2690,7 +2692,8 @@ namespace Mono.CSharp {
 			// Now we see if we can at least find a method with the same number of arguments
 			//
 			ParameterData pd;
-			
+			int method_count = 0;
+
 			if (best_match_idx == -1) {
 				
 				for (int i = me.Methods.Length; i > 0;) {
@@ -2701,14 +2704,44 @@ namespace Mono.CSharp {
 					if (pd.Count == argument_count) {
 						best_match_idx = i;
 						method = me.Methods [best_match_idx];
-						break;
+						method_count++;
 					} else
 						continue;
+				}
+
+				if (method_count > 1) {
+					Report.Error (121, loc,
+						      "Ambiguous call when selecting function due to implicit casts");
+					return null;
+					
 				}
 			}
 
 			if (method == null)
 				return null;
+
+			//
+			// Now check that there are no ambiguities i.e the selected method
+			// should be better than all the others
+			//
+
+			for (int i = candidates.Count; i > 0; ) {
+				i--;
+				MethodBase candidate = (MethodBase) candidates [i];
+				int x;
+
+				if (candidate == method)
+					continue;
+
+				x = BetterFunction (ec, Arguments, method, candidate, use_standard, loc);
+				
+				if (x != 1) {
+					Report.Error (121, loc,
+						      "Ambiguous call when selecting function due to implicit casts");
+					return null;
+				}
+			}
+
 			
 			// And now convert implicitly, each argument to the required type
 			
