@@ -341,7 +341,7 @@ namespace_declaration
 		
 		if (current_namespace.Parent != null && $3 is MemberAccess) {
 			// Cannot use qualified namespace names in nested namespace declarations
-			Report.Error_T (Message.CS0134_Cannot_use_qualified_namespace_names_in_nested_namespace_declarations, lexer.Location);
+			Report.Error (Message.CS0134_Cannot_use_qualified_namespace_names_in_nested_namespace_declarations, lexer.Location);
 		}
 
 		current_namespace = new NamespaceEntry (
@@ -824,7 +824,7 @@ constant_declarator
 	| IDENTIFIER
 	  {
 		// A const field requires a value to be provided
-		Report.Error_T (Message.CS0145_A_const_field_requires_a_value_to_be_provided, lexer.Location);
+		Report.Error (Message.CS0145_A_const_field_requires_a_value_to_be_provided, lexer.Location);
 		$$ = null;
 	  }
 	;
@@ -1838,7 +1838,7 @@ indexer_declarator
 		Parameters pars = (Parameters) $4;
 		if (pars.HasArglist) {
 			// "__arglist is not valid in this context"
-			Report.Error_T (Message.CS1669__arglist_is_not_valid_in_this_context, lexer.Location);
+			Report.Error (Message.CS1669__arglist_is_not_valid_in_this_context, lexer.Location);
 		} else if (pars.FixedParameters == null && pars.ArrayParameter == null){
 			Report.Error (1551, lexer.Location, "Indexers must have at least one parameter");
 		}
@@ -1851,7 +1851,7 @@ indexer_declarator
 
 		if (pars.HasArglist) {
 			// "__arglist is not valid in this context"
-			Report.Error_T (Message.CS1669__arglist_is_not_valid_in_this_context, lexer.Location);
+			Report.Error (Message.CS1669__arglist_is_not_valid_in_this_context, lexer.Location);
 		} else if (pars.FixedParameters == null && pars.ArrayParameter == null){
 			Report.Error (1551, lexer.Location, "Indexers must have at least one parameter");
 		}
@@ -3913,7 +3913,7 @@ fixed_pointer_declarator
 	  }
 	| IDENTIFIER
 	  {
-		Report.Error_T (Message.CS0210_You_must_provide_an_initializer_in_a_fixed_or_using_statement_declaration, lexer.Location);
+		Report.Error (Message.CS0210_You_must_provide_an_initializer_in_a_fixed_or_using_statement_declaration, lexer.Location);
 		$$ = null;
 	  }
 	;
@@ -3961,7 +3961,7 @@ using_statement
 				} else {
 					ArrayList init = (ArrayList) decl.expression_or_array_initializer;
 					if (init == null) {
-						Report.Error_T (Message.CS0210_You_must_provide_an_initializer_in_a_fixed_or_using_statement_declaration, l);
+						Report.Error (Message.CS0210_You_must_provide_an_initializer_in_a_fixed_or_using_statement_declaration, l);
 					}
 					
 					expr = new ArrayCreation (type, "", init, decl.Location);
