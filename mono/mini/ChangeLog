@@ -1,4 +1,8 @@
 
+Thu May 29 11:44:49 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* driver.c, debug-mini.c: warning fixes.
+
 Wed May 28 11:19:15 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* Makefile.am, jit.h, mini.h: install header for embedding mono.
