@@ -1,3 +1,8 @@
+2003-09-20 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* XmlNamespaceManager.cs: Rewrote. Uses arrays, rather than linked
+	lists and removes uses of Hashtable. Results in huge speed gains.
+
 2003-09-19 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* XmlConvert.cs: NaN.ToString () != INF.

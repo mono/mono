@@ -1,10 +1,12 @@
 //
 // XmlNamespaceManager.cs
 //
-// Author:
+// Authors:
 //   Jason Diamond (jason@injektilo.org)
+//   Ben Maurer (bmaurer@users.sourceforge.net)
 //
 // (C) 2001 Jason Diamond  http://injektilo.org/
+// (C) 2003 Ben Maurer
 //
 
 using System.Collections;
@@ -13,10 +15,54 @@ namespace System.Xml
 {
 	public class XmlNamespaceManager : IEnumerable
 	{
+		#region Data
+		struct NsDecl {
+			public string Prefix, Uri;
+		}
+		
+		struct NsScope {
+			public int DeclCount;
+			public string DefaultNamespace;
+		}
+		
+		NsDecl [] decls;
+		int declPos = -1;
+		
+		NsScope [] scopes;
+		int scopePos = -1;
+		
+		string defaultNamespace;
+		int count;
+		
+		void InitData ()
+		{
+			decls = new NsDecl [10];
+			scopes = new NsScope [40];
+		}
+		
+		// precondition declPos == nsDecl.Length
+		void GrowDecls ()
+		{
+			NsDecl [] old = decls;
+			decls = new NsDecl [declPos * 2 + 1];
+			if (declPos > 0)
+				Array.Copy (old, 0, decls, 0, declPos);
+		}
+		
+		// precondition scopePos == scopes.Length
+		void GrowScopes ()
+		{
+			NsScope [] old = scopes;
+			scopes = new NsScope [scopePos * 2 + 1];
+			if (declPos > 0)
+				Array.Copy (old, 0, scopes, 0, scopePos);
+		}
+		
+		#endregion
+		
 		#region Fields
 
 		private XmlNameTable nameTable;
-		private NamespaceScope currentScope;
 		internal const string XmlnsXml = "http://www.w3.org/XML/1998/namespace";
 		internal const string XmlnsXmlns = "http://www.w3.org/2000/xmlns/";
 
@@ -34,12 +80,8 @@ namespace System.Xml
 			nameTable.Add (String.Empty);
 			nameTable.Add (XmlnsXmlns);
 			nameTable.Add (XmlnsXml);
-
-			PushScope ();
-			currentScope.Namespaces = new Hashtable ();
-			currentScope.Namespaces.Add ("", "");
-			currentScope.Namespaces.Add ("xml", XmlnsXml);
-			currentScope.Namespaces.Add ("xmlns", XmlnsXmlns);
+			
+			InitData ();
 		}
 
 		#endregion
@@ -47,7 +89,7 @@ namespace System.Xml
 		#region Properties
 
 		public virtual string DefaultNamespace {
-			get { return LookupNamespace (String.Empty); }
+			get { return defaultNamespace == null ? string.Empty : defaultNamespace; }
 		}
 
 		public XmlNameTable NameTable {
@@ -65,15 +107,29 @@ namespace System.Xml
 
 			if (uri == null)
 				throw new ArgumentNullException ("uri", "Value cannot be null.");
+			
+			prefix = nameTable.Add (prefix);
+			uri = nameTable.Add (uri);
 
 			IsValidDeclaration (prefix, uri, true);
 
-			if (currentScope.Namespaces == null)
-				currentScope.Namespaces = new Hashtable ();
-
-			if (prefix != String.Empty)
-				nameTable.Add (prefix);
-			currentScope.Namespaces [prefix] = nameTable.Add (uri);
+			if (prefix == string.Empty)
+				defaultNamespace = uri;
+			
+			for (int i = declPos; i > declPos - count; i--) {
+				if (decls [i].Prefix == prefix) {
+					decls [i].Uri = uri;
+					return;
+				}
+			}
+			
+			declPos ++;
+			count ++;
+			
+			if (declPos == decls.Length)
+				GrowDecls ();
+			decls [declPos].Prefix = prefix;
+			decls [declPos].Uri = uri;
 		}
 
 		internal static string IsValidDeclaration (string prefix, string uri, bool throwException)
@@ -95,57 +151,52 @@ namespace System.Xml
 
 		public virtual IEnumerator GetEnumerator ()
 		{
-			/*
-			if (currentScope.Namespaces == null)
-				currentScope.Namespaces = new Hashtable ();
-
-			return currentScope.Namespaces.Keys.GetEnumerator ();
-			*/
-
 			// In fact it returns such table's enumerator that contains all the namespaces.
 			// while HasNamespace() ignores pushed namespaces.
+			
 			Hashtable ht = new Hashtable ();
-			NamespaceScope scope = currentScope;
-
-			while (scope != null) {
-				if (scope.Namespaces != null) {
-					IEnumerator e = scope.Namespaces.Keys.GetEnumerator ();
-					while (e.MoveNext ()) {
-						if (!ht.ContainsKey (e.Current))
-							ht.Add (e.Current, scope.Namespaces [e.Current]);
-					}
+			for (int i = 0; i < declPos; i++) {
+				if (decls [i].Prefix != string.Empty && decls [i].Uri != null) {
+					ht [decls [i].Prefix] = decls [i].Uri;
 				}
-				scope = scope.Next;
 			}
+			
+			ht [string.Empty] = DefaultNamespace;
+			ht ["xml"] = XmlnsXml;
+			ht ["xmlns"] = XmlnsXmlns;
+			
 			return ht.Keys.GetEnumerator ();
 		}
 
 		public virtual bool HasNamespace (string prefix)
 		{
-			return currentScope != null && currentScope.Namespaces != null && currentScope.Namespaces.Contains (prefix);
+			if (prefix == null || count == 0)
+				return false;
+
+			for (int i = declPos; i > declPos - count; i--) {
+				if (decls [i].Prefix == prefix)
+					return true;
+			}
+			
+			return false;
 		}
 
 		public virtual string LookupNamespace (string prefix)
 		{
-			NamespaceScope scope = currentScope;
-
-			while (scope != null) {
-				if (scope.Namespaces != null) {
-					string s = scope.Namespaces [prefix] as string;
-					if (s != null) return s;
-				}
-				scope = scope.Next;
-			}
-
 			switch (prefix) {
 			case "xmlns":
 				return nameTable.Get (XmlnsXmlns);
 			case "xml":
 				return nameTable.Get (XmlnsXml);
 			case "":
-				return nameTable.Get (String.Empty);
+				return DefaultNamespace;
 			}
-
+			
+			for (int i = declPos; i >= 0; i--) {
+				if (decls [i].Prefix == prefix && decls [i].Uri != null /* null == flag for removed */)
+					return decls [i].Uri;
+			}
+			
 			return null;
 		}
 
@@ -153,19 +204,20 @@ namespace System.Xml
 		{
 			if (uri == null)
 				return null;
-
-			NamespaceScope scope = currentScope;
-
-			while (scope != null) 
-			{
-				if (scope.Namespaces != null && scope.Namespaces.ContainsValue (uri)) {
-					foreach (DictionaryEntry entry in scope.Namespaces) {
-						if (entry.Value.ToString() == uri)
-							return nameTable.Get (entry.Key as string) as string;
-					}
-				}
-
-				scope = scope.Next;
+			
+			if (uri == DefaultNamespace)
+				return string.Empty;
+				
+			if (uri == XmlnsXml)
+				return nameTable.Add ("xml");
+			
+			if (uri == XmlnsXmlns)
+				return nameTable.Add ("xmlns");
+			
+			
+			for (int i = declPos; i >= 0; i--) {
+				if (decls [i].Uri == uri && decls [i].Prefix != string.Empty) // we already looked for ""
+					return decls [i].Prefix;
 			}
 
 			// ECMA specifies that this method returns String.Empty
@@ -178,17 +230,29 @@ namespace System.Xml
 
 		public virtual bool PopScope ()
 		{
-			if (currentScope != null)
-				currentScope = currentScope.Next;
-
-			return currentScope != null;
+			if (scopePos == -1) return false;
+			scopePos --;
+			
+			declPos -= count;
+			if (scopePos == -1) {
+				defaultNamespace = string.Empty;
+				count = declPos + 1;
+			} else {
+				defaultNamespace = scopes [scopePos].DefaultNamespace;
+				count = scopes [scopePos].DeclCount;
+			}
+			return true;
 		}
 
 		public virtual void PushScope ()
 		{
-			NamespaceScope newScope = new NamespaceScope ();
-			newScope.Next = currentScope;
-			currentScope = newScope;
+			scopePos ++;
+			if (scopePos == scopes.Length)
+				GrowScopes ();
+			
+			scopes [scopePos].DefaultNamespace = defaultNamespace;
+			scopes [scopePos].DeclCount = count;
+			count = 0;
 		}
 
 		public virtual void RemoveNamespace (string prefix, string uri)
@@ -198,28 +262,16 @@ namespace System.Xml
 
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
+			
+			if (count == 0)
+				return;		
 
-			if (currentScope == null || currentScope.Namespaces == null)
-				return;
-
-			string p = nameTable.Get (prefix);
-			string u = nameTable.Get (uri);
-			if (p == null || u == null)
-				return;
-				
-			string storedUri = currentScope.Namespaces [p] as string;
-			if (storedUri == null || storedUri != u)
-				return;
-
-			currentScope.Namespaces.Remove (p);
+			for (int i = declPos; i > declPos - count; i--) {
+				if (decls [i].Prefix == prefix && decls [i].Uri == uri)
+					decls [i].Uri = null;
+			}
 		}
 
 		#endregion
-	}
-
-	internal class NamespaceScope
-	{
-		internal NamespaceScope Next;
-		internal Hashtable Namespaces;
 	}
 }
