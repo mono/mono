@@ -421,7 +421,7 @@ namespace System.Reflection.Emit {
 		}
 		public virtual void Emit (OpCode opcode, string val) {
 			int token = abuilder.GetToken (val);
-			make_room (3);
+			make_room (6);
 			ll_emit (opcode);
 			emit_int (token);
 		}

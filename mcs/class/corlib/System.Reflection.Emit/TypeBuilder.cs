@@ -71,7 +71,11 @@ namespace System.Reflection.Emit {
 			get {return pmodule.Assembly;}
 		}
 		public override string AssemblyQualifiedName {get {return null;}}
-		public override Type BaseType {get {return parent;}}
+		public override Type BaseType {
+			get {
+				return parent;
+			}
+		}
 		public override Type DeclaringType {get {return null;}}
 		public override Type UnderlyingSystemType {
 			get {return null;}
@@ -367,11 +371,20 @@ namespace System.Reflection.Emit {
 		
 		public override Type[] GetInterfaces () {
 			if (interfaces != null) {
-				Type[] ret = new Type [interfaces.Length];
-				System.Array.Copy (interfaces, ret, ret.Length);
+				Type [] pi;
+				if (parent != null)
+					pi = parent.GetInterfaces ();
+				else
+					pi = Type.EmptyTypes;
+				Type[] ret = new Type [interfaces.Length + pi.Length];
+				interfaces.CopyTo (ret, 0);
+				pi.CopyTo (ret, interfaces.Length);
 				return ret;
 			} else {
-				return Type.EmptyTypes;
+				if (parent != null)
+					return parent.GetInterfaces ();
+				else
+					return Type.EmptyTypes;
 			}
 		}
 

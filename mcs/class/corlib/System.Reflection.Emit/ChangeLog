@@ -1,4 +1,10 @@
 
+Mon Mar 4 20:34:52 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* ILGenerator.cs: make enough room in the byte array for string
+	tokens.
+	* TypeBuilder.cs: fixed GetInterfaces().
+
 Mon Mar 4 11:30:40 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* TypeBuilder.cs: implemented GetConstructors(), GetFields(),
