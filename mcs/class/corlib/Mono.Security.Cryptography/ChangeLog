@@ -3,6 +3,8 @@
 	* MACAlgorithm.cs: Fixed difference between 1.0 and 1.1 framework. 
 	The 1.0 framework is adding an additional  padding block (empty) 
 	to MAC when MACing an exact multiple of the TripleDES block size.
+	* PKCS1.cs: Fixed a typo which prevented "lame" (without OID) 
+	signature verification.
 
 2003-10-30  Sebastien Pouliot  <spouliot@videotron.ca>
 

@@ -274,7 +274,7 @@ namespace Mono.Security.Cryptography {
 			if (!result) {
 				// NOTE: some signatures don't include the hash OID (pretty lame but real)
 				// and compatible with MS implementation
-				if ((EM2 [0] != 0x00) || (EM2 [0] != 0x01))
+				if ((EM2 [0] != 0x00) || (EM2 [1] != 0x01))
 					return false;
 				// TODO: add more validation
 				byte[] decryptedHash = new byte [hashValue.Length];
