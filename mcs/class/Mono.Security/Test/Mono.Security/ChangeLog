@@ -1,0 +1,4 @@
+2003-03-08  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* StrongNameTest.cs: New. Unit tests for StrongNames.
+
