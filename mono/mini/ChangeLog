@@ -1,3 +1,10 @@
+2004-11-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* declsec.c|h: New files to support declarative security attributes.
+	Added function to check if a method has (applicable) security.
+	* mini.c|h: Add check for declarative security attributes in
+	mono_method_check_inlining.
+	* Makefile.am: Added declsec.c and declsec.h to the build.
 
 Mon Nov 15 11:53:46 CET 2004 Paolo Molaro <lupus@ximian.com>
 
