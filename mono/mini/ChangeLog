@@ -1,3 +1,8 @@
+2004-01-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (optimize_branches): Add an upper bound to the number of
+	iterations to prevent infinite loops on strange loops. Fixes #53003.
+
 2004-01-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* inssel.brg: Add vectors<->one dimensional array checking to CASTCLASS
