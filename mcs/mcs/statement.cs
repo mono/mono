@@ -3543,7 +3543,7 @@ namespace Mono.CSharp {
 				if (hm == null){
 					error1579 (expr.Type);
 					return false;
-				}
+				}			
 
 				array_type = expr.Type;
 				element_type = hm.element_type;
@@ -3724,30 +3724,51 @@ namespace Mono.CSharp {
 			// Ok, we can access it, now make sure that we can do something
 			// with this `GetEnumerator'
 			//
-
+			
+			Type return_type = mi.ReturnType;
 			if (mi.ReturnType == TypeManager.ienumerator_type ||
-			    TypeManager.ienumerator_type.IsAssignableFrom (mi.ReturnType) ||
-			    (!RootContext.StdLib && TypeManager.ImplementsInterface (mi.ReturnType, TypeManager.ienumerator_type))) {
-				if (declaring != TypeManager.string_type) {
+			    TypeManager.ienumerator_type.IsAssignableFrom (return_type) ||
+			    (!RootContext.StdLib && TypeManager.ImplementsInterface (return_type, TypeManager.ienumerator_type))) {
+				
+				//
+				// If it is not an interface, lets try to find the methods ourselves.
+				// For example, if we have:
+				// public class Foo : IEnumerator { public bool MoveNext () {} public int Current { get {}}}
+				// We can avoid the iface call. This is a runtime perf boost.
+				// even bigger if we have a ValueType, because we avoid the cost
+				// of boxing.
+				//
+				// We have to make sure that both methods exist for us to take
+				// this path. If one of the methods does not exist, we will just
+				// use the interface. Sadly, this complex if statement is the only
+				// way I could do this without a goto
+				//
+				
+				if (return_type.IsInterface ||
+				    (hm.move_next = FetchMethodMoveNext (return_type)) == null ||
+				    (hm.get_current = FetchMethodGetCurrent (return_type)) == null) {
+					
 					hm.move_next = TypeManager.bool_movenext_void;
 					hm.get_current = TypeManager.object_getcurrent_void;
-					return true;
+					return true;    
 				}
+
+			} else {
+
+				//
+				// Ok, so they dont return an IEnumerable, we will have to
+				// find if they support the GetEnumerator pattern.
+				//
+				
+				hm.move_next = FetchMethodMoveNext (return_type);
+				if (hm.move_next == null)
+					return false;
+				
+				hm.get_current = FetchMethodGetCurrent (return_type);
+				if (hm.get_current == null)
+					return false;
 			}
-
-			//
-			// Ok, so they dont return an IEnumerable, we will have to
-			// find if they support the GetEnumerator pattern.
-			//
-			Type return_type = mi.ReturnType;
-
-			hm.move_next = FetchMethodMoveNext (return_type);
-			if (hm.move_next == null)
-				return false;
-			hm.get_current = FetchMethodGetCurrent (return_type);
-			if (hm.get_current == null)
-				return false;
-
+			
 			hm.element_type = hm.get_current.ReturnType;
 			hm.enumerator_type = return_type;
 			hm.is_disposable = !hm.enumerator_type.IsSealed ||
@@ -3876,14 +3897,14 @@ namespace Mono.CSharp {
 			Label end_try = ig.DefineLabel ();
 			
 			ig.MarkLabel (ec.LoopBegin);
-			enumerator.EmitLoad ();
-			ig.Emit (OpCodes.Callvirt, hm.move_next);
+			
+			enumerator.EmitCall (hm.move_next);
+			
 			ig.Emit (OpCodes.Brfalse, end_try);
 			if (ec.InIterator)
 				ec.EmitThis ();
 			
-			enumerator.EmitLoad ();
-			ig.Emit (OpCodes.Callvirt, hm.get_current);
+			enumerator.EmitCall (hm.get_current);
 
 			if (ec.InIterator){
 				conv.Emit (ec);

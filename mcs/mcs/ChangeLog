@@ -1,3 +1,34 @@
+2004-02-12 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* statement.cs, codegen.cs:
+	This patch deals with patterns such as:
+
+	public class List : IEnumerable {
+
+		public MyEnumerator GetEnumerator () {
+			return new MyEnumerator(this);
+		}
+	
+		IEnumerator IEnumerable.GetEnumerator () {
+			...
+		}
+		
+		public struct MyEnumerator : IEnumerator {
+			...
+		}
+	}
+
+	Before, there were a few things we did wrong:
+	1) we would emit callvirt on a struct, which is illegal
+	2) we emited ldarg when we needed to emit ldarga
+	3) we would mistakenly call the interface methods on an enumerator
+	type that derived from IEnumerator and was in another assembly. For example:
+
+	public class MyEnumerator : IEnumerator
+
+	Would have the interface methods called, even if there were public impls of the
+	method. In a struct, this lead to invalid IL code.
+	
 2004-02-11  Marek Safar  <marek.safar@seznam.cz>
 
         * const.cs: Const is now derived from FieldBase. Method EmitConstant name

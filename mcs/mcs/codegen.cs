@@ -163,6 +163,33 @@ namespace Mono.CSharp {
 			else 
 				ig.Emit (OpCodes.Ldfld, fb);
 		}
+		
+		public void EmitCall (MethodInfo mi)
+		{
+			// FIXME : we should handle a call like tostring
+			// here, where boxing is needed. However, we will
+			// never encounter that with the current usage.
+			
+			bool value_type_call;
+			EmitThis ();
+			if (fb == null) {
+				value_type_call = local.LocalType.IsValueType;
+				
+				if (value_type_call)
+					ig.Emit (OpCodes.Ldloca, local);
+				else
+					ig.Emit (OpCodes.Ldloc, local);
+			} else {
+				value_type_call = fb.FieldType.IsValueType;
+				
+				if (value_type_call)
+					ig.Emit (OpCodes.Ldflda, fb);
+				else
+					ig.Emit (OpCodes.Ldfld, fb);
+			}
+			
+			ig.Emit (value_type_call ? OpCodes.Call : OpCodes.Callvirt, mi);
+		}
 	}
 	
 	/// <summary>
