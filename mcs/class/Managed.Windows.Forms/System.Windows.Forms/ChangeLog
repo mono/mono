@@ -1,3 +1,17 @@
+2005-01-25  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ListControl.cs: 
+		- IsInputKey for ListBox
+	* ListBox.cs:
+		- Focus item 
+		- Shift and Control item selection
+		- Implement SelectionMode.MultiExtended
+		- Fixes RightToLeft
+	* ComboBox.cs
+		- IsInputKey implemented
+		- Do not generate OnTextChangedEdit on internal txt changes		
+		
+
 2005-01-23  Miguel de Icaza  <miguel@ximian.com>
 
 	* UpDownBase.cs (ctor): Connect TextChanged in the entry to the

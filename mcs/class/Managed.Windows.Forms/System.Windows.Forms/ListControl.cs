@@ -99,9 +99,26 @@ namespace System.Windows.Forms
 			 throw new NotImplementedException ();
 		}
 
+		// Used only by ListBox to avoid to break Listbox's member signature
 		protected override bool IsInputKey (Keys keyData)
 		{
-			return base.IsInputKey (keyData);
+			switch (keyData) {
+			case Keys.Up:
+			case Keys.Down:
+			case Keys.PageUp:
+			case Keys.PageDown:
+			case Keys.Right:
+			case Keys.Left:
+			case Keys.End:
+			case Keys.Home:
+			case Keys.ControlKey:
+			case Keys.Space:
+			case Keys.ShiftKey:
+				return true;
+			
+			default:					
+				return false;
+			}
 		}
 
 		protected override void OnBindingContextChanged (EventArgs e)

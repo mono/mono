@@ -55,6 +55,7 @@ namespace System.Windows.Forms
 		private ComboListBox listbox_ctrl;
 		private StringFormat string_format;
 		private TextBox textbox_ctrl;
+		private bool process_textchanged_event;
 
 		internal class ComboBoxInfo
 		{
@@ -105,6 +106,7 @@ namespace System.Windows.Forms
 			dropdown_width = -1;
 			max_length = 0;
 			integral_height = true;
+			process_textchanged_event = true;
 			
 			string_format = new StringFormat ();
 			
@@ -357,7 +359,7 @@ namespace System.Windows.Forms
     				selected_index = value;
     				
     				if (dropdown_style != ComboBoxStyle.DropDownList) {
-    					textbox_ctrl.Text = Items[selected_index].ToString ();
+    					SetControlText (Items[selected_index].ToString ());
     				}
     				
     				OnSelectedIndexChanged  (new EventArgs ());
@@ -384,7 +386,7 @@ namespace System.Windows.Forms
 				selected_index = index;
 				
 				if (dropdown_style != ComboBoxStyle.DropDownList) {
-    					textbox_ctrl.Text = Items[selected_index].ToString ();
+					SetControlText (Items[selected_index].ToString ());
     				}
 				
 				OnSelectedItemChanged  (new EventArgs ());
@@ -576,7 +578,16 @@ namespace System.Windows.Forms
 
 		protected override bool IsInputKey (Keys keyData)
 		{
-			return base.IsInputKey (keyData);
+			switch (keyData) {
+			case Keys.Up:
+			case Keys.Down:
+			case Keys.PageUp:
+			case Keys.PageDown:			
+				return true;
+			
+			default:					
+				return false;
+			}
 		}
 
 		protected override void OnBackColorChanged (EventArgs e)
@@ -793,7 +804,6 @@ namespace System.Windows.Forms
 		#endregion Public Methods
 
 		#region Private Methods
-
 		
 		// Calcs the text area size
 		internal void CalcTextArea ()
@@ -953,6 +963,9 @@ namespace System.Windows.Forms
 		
 		private void OnTextChangedEdit (object sender, EventArgs e)
 		{
+			if (process_textchanged_event == false)
+				return; 
+				
 			int item = FindStringCaseInsensitive (textbox_ctrl.Text);
 			
 			if (item == -1)
@@ -962,6 +975,13 @@ namespace System.Windows.Forms
 			listbox_ctrl.SetHighLightedItem (item);
 			
 		}
+		
+		internal void SetControlText (string s)
+		{		
+			process_textchanged_event = false; 
+    			textbox_ctrl.Text = s;
+    			process_textchanged_event = true;
+    		}
 		
 		private void UpdatedItems ()
 		{
@@ -1349,6 +1369,11 @@ namespace System.Windows.Forms
 
 				return -1;
 			}
+			
+			protected override bool IsInputKey (Keys keyData)
+			{
+				return owner.IsInputKey (keyData);
+			}
 
 			private int LastVisibleItem ()
 			{
@@ -1365,8 +1390,10 @@ namespace System.Windows.Forms
 				return i - 1;
 			}
 			
-			private void NavigateItem (ItemNavigation navigation)
+			private void NavigateItemVisually (ItemNavigation navigation)
 			{
+				int item = -1;
+				
 				switch (navigation) {
 				case ItemNavigation.Next: {
 					if (highlighted_item + 1 < owner.Items.Count) {
@@ -1375,7 +1402,7 @@ namespace System.Windows.Forms
 							top_item++;
 							vscrollbar_ctrl.Value = top_item;
 						}
-						SetHighLightedItem (highlighted_item + 1);
+						item = highlighted_item + 1;
 					}
 					break;
 				}
@@ -1387,7 +1414,7 @@ namespace System.Windows.Forms
 							top_item--;
 							vscrollbar_ctrl.Value = top_item;							
 						}
-						SetHighLightedItem (highlighted_item - 1);
+						item = highlighted_item - 1;
 					}					
 					break;
 				}
@@ -1396,7 +1423,7 @@ namespace System.Windows.Forms
 					if (highlighted_item + page_size - 1 > owner.Items.Count) {
 						top_item = owner.Items.Count - page_size;
 						vscrollbar_ctrl.Value = top_item; 						
-						SetHighLightedItem (owner.Items.Count - 1);						
+						item = owner.Items.Count - 1;
 					}
 					else {
 						if (highlighted_item + page_size - 1  > last_item) {
@@ -1404,9 +1431,8 @@ namespace System.Windows.Forms
 							vscrollbar_ctrl.Value = highlighted_item;
 						}
 					
-						SetHighLightedItem (highlighted_item + page_size - 1);
-					}
-					
+						item = highlighted_item + page_size - 1;
+					}					
 					break;
 				}
 				
@@ -1417,9 +1443,7 @@ namespace System.Windows.Forms
 																		
 						top_item = 0;
 						vscrollbar_ctrl.Value = top_item;
-						SetHighLightedItem (0);
-						
-					
+						item = 0;			
 					}
 					else { /* One page back */
 						if (highlighted_item - (page_size - 1)  < top_item) {
@@ -1427,7 +1451,7 @@ namespace System.Windows.Forms
 							vscrollbar_ctrl.Value = top_item;
 						}
 					
-						SetHighLightedItem (highlighted_item - (page_size - 1));
+						item = highlighted_item - (page_size - 1);
 					}
 					
 					break;
@@ -1435,27 +1459,34 @@ namespace System.Windows.Forms
 					
 				default:
 					break;
-				}		
+				}	
 				
+				if (item != -1) {
+					SetHighLightedItem (item);
+					
+					if (owner.DropDownStyle == ComboBoxStyle.Simple) {
+						owner.SetControlText (owner.Items[item].ToString ());
+					}
+				}
 			}
 			
 			private void OnKeyDownPUW (object sender, KeyEventArgs e) 			
 			{				
 				switch (e.KeyCode) {			
 				case Keys.Up:
-					NavigateItem (ItemNavigation.Previous);
+					NavigateItemVisually (ItemNavigation.Previous);
 					break;				
 	
 				case Keys.Down:				
-					NavigateItem (ItemNavigation.Next);
+					NavigateItemVisually (ItemNavigation.Next);
 					break;
 				
 				case Keys.PageUp:
-					NavigateItem (ItemNavigation.PreviousPage);
+					NavigateItemVisually (ItemNavigation.PreviousPage);
 					break;				
 	
 				case Keys.PageDown:				
-					NavigateItem (ItemNavigation.NextPage);
+					NavigateItemVisually (ItemNavigation.NextPage);
 					break;
 				
 				default:
@@ -1466,6 +1497,9 @@ namespace System.Windows.Forms
 			public void SetHighLightedItem (int index)
 			{
 				Rectangle invalidate;
+				
+				if (highlighted_item == index)
+					return;
 				
 				/* Previous item */
     				if (highlighted_item != -1) {
@@ -1503,11 +1537,15 @@ namespace System.Windows.Forms
     				if (index == -1) return;
 
 				owner.SelectedIndex = index;
+				SetHighLightedItem (index);
 				HideWindow ();
 			}
 
 			private void OnMouseMovePUW (object sender, MouseEventArgs e)
-			{				
+			{			
+				if (owner.DropDownStyle == ComboBoxStyle.Simple)
+					return;
+						
 				int index = IndexFromPointDisplayRectangle (e.X, e.Y);
 
     				if (index != -1)

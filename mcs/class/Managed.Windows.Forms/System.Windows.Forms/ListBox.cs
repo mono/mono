@@ -103,8 +103,8 @@ namespace System.Windows.Forms
 		private bool multicolumn;
 		private bool scroll_always_visible;
 		private int selected_index;
-		private SelectedIndexCollection selected_indices;
-		private object selected_item;
+		private int focused_item;
+		private SelectedIndexCollection selected_indices;		
 		private SelectedObjectCollection selected_items;
 		private SelectionMode selection_mode;
 		private bool sorted;
@@ -115,6 +115,9 @@ namespace System.Windows.Forms
 		private VScrollBar vscrollbar_ctrl;
 		private HScrollBar hscrollbar_ctrl;
 		private bool suspend_ctrlupdate;
+		private bool ctrl_pressed;
+		private bool shift_pressed;
+		private bool has_focus;
 
 		internal StringFormat string_format;
 		internal ListBoxInfo listbox_info;
@@ -131,7 +134,7 @@ namespace System.Windows.Forms
 			preferred_height = 7;
 			scroll_always_visible = false;
 			selected_index = -1;
-			selected_item = null;
+			focused_item = -1;
 			selection_mode = SelectionMode.One;
 			sorted = false;
 			top_index = 0;
@@ -139,6 +142,9 @@ namespace System.Windows.Forms
 			BackColor = ThemeEngine.Current.ColorWindow;
 			ColumnWidth = 0;
 			suspend_ctrlupdate = false;
+			ctrl_pressed = false;
+			shift_pressed = false;
+			has_focus = false;
 
 			items = new ObjectCollection (this);
 			selected_indices = new SelectedIndexCollection (this);
@@ -167,7 +173,9 @@ namespace System.Windows.Forms
 
 			/* Events */
 			MouseDown += new MouseEventHandler (OnMouseDownLB);
-			KeyDown += new KeyEventHandler (OnKeyDownLB);			
+			KeyDown += new KeyEventHandler (OnKeyDownLB);
+			KeyUp += new KeyEventHandler (OnKeyUpLB);
+			GotFocus += new EventHandler (OnGotFocus);
 
 			UpdateFormatString ();
 		}
@@ -390,6 +398,7 @@ namespace System.Windows.Forms
 
     				SelectItem (value);
     				selected_index = value;
+    				focused_item = value;
     				OnSelectedIndexChanged  (new EventArgs ());
 			}
 		}
@@ -406,15 +415,15 @@ namespace System.Windows.Forms
 					return null;
 			}
 			set {
-				if (selected_item == value)
-					return;
-
+				
 				int index = Items.IndexOf (value);
 
 				if (index == -1)
 					return;
-
-				SelectedIndex = index;
+					
+				if (index != SelectedIndex) {
+					SelectedIndex = index;
+				}
 			}
 		}
 
@@ -675,26 +684,32 @@ namespace System.Windows.Forms
 
 		protected virtual void OnDrawItem (DrawItemEventArgs e)
 		{
+			Color back_color, fore_color;
+			
 			if (DrawItem != null && (DrawMode == DrawMode.OwnerDrawFixed || DrawMode == DrawMode.OwnerDrawVariable)) {
 				DrawItem (this, e);
 				return;
-			}
+			}			
 
 			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
-				e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
-					(ThemeEngine.Current.ColorHilight), e.Bounds);
-
-				e.Graphics.DrawString (Items[e.Index].ToString (), e.Font,
-					ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHilightText),
-					e.Bounds, string_format);
+				back_color = ThemeEngine.Current.ColorHilight;
+				fore_color = ThemeEngine.Current.ColorHilightText;
 			}
 			else {
-				e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
-					(e.BackColor), e.Bounds);
+				back_color = e.BackColor;
+				fore_color = e.ForeColor;
+			}
+			
+			e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
+				(back_color), e.Bounds);
 
-				e.Graphics.DrawString (Items[e.Index].ToString (), e.Font,
-					ThemeEngine.Current.ResPool.GetSolidBrush (e.ForeColor),
-					e.Bounds, string_format);
+			e.Graphics.DrawString (Items[e.Index].ToString (), e.Font,
+				ThemeEngine.Current.ResPool.GetSolidBrush (fore_color),
+				e.Bounds, string_format);
+					
+			if ((e.State & DrawItemState.Focus) == DrawItemState.Focus) {
+				ThemeEngine.Current.CPDrawFocusRectangle (e.Graphics, e.Bounds,
+					fore_color, back_color);
 			}
 		}
 
@@ -943,6 +958,9 @@ namespace System.Windows.Forms
 					if ((Items.GetListBoxItem (i)).Selected) {
 						state |= DrawItemState.Selected;
 					}
+					
+					if (has_focus == true && focused_item == i)
+						state |= DrawItemState.Focus;
 
 					OnDrawItem (new DrawItemEventArgs (DeviceContext, Font, item_rect,
 						i, state, ForeColor, BackColor));
@@ -1033,11 +1051,11 @@ namespace System.Windows.Forms
 					vscrollbar_ctrl.Value = LBoxInfo.top_item;
 			}
 		}
-
-		private void NavigateItem (ItemNavigation navigation)
-		{
-			int highlighted_item = SelectedIndex;
-			int page_size, columns;
+		
+		// Navigates to the indicated item and returns the new item
+		private int NavigateItemVisually (ItemNavigation navigation)
+		{			
+			int page_size, columns, selected_index = -1;
 
 			if (multicolumn) {
 				columns = LBoxInfo.textdrawing_rect.Width / ColumnWidthInternal; 
@@ -1052,36 +1070,36 @@ namespace System.Windows.Forms
 			switch (navigation) {
 
 			case ItemNavigation.PreviousColumn: {
-				if (highlighted_item - LBoxInfo.page_size < 0) {
-					return;
+				if (focused_item - LBoxInfo.page_size < 0) {
+					return -1;
 				}
 
-				if (highlighted_item - LBoxInfo.page_size < LBoxInfo.top_item) {
-					LBoxInfo.top_item = highlighted_item - LBoxInfo.page_size;
+				if (focused_item - LBoxInfo.page_size < LBoxInfo.top_item) {
+					LBoxInfo.top_item = focused_item - LBoxInfo.page_size;
 					UpdatedTopItem ();
 				}
 					
-				SelectedIndex = highlighted_item - LBoxInfo.page_size;
+				selected_index = focused_item - LBoxInfo.page_size;
 				break;
 			}
 			
 			case ItemNavigation.NextColumn: {
-				if (highlighted_item + LBoxInfo.page_size >= Items.Count) {
-					return;
+				if (focused_item + LBoxInfo.page_size >= Items.Count) {
+					break;
 				}
 
-				if (highlighted_item + LBoxInfo.page_size > LBoxInfo.last_item) {
-					LBoxInfo.top_item = highlighted_item;
+				if (focused_item + LBoxInfo.page_size > LBoxInfo.last_item) {
+					LBoxInfo.top_item = focused_item;
 					UpdatedTopItem ();
 				}
 					
-				SelectedIndex = highlighted_item + LBoxInfo.page_size;					
+				selected_index = focused_item + LBoxInfo.page_size;					
 				break;
 			}
 
 			case ItemNavigation.First: {
 				LBoxInfo.top_item = 0;
-				SelectedIndex  = 0;
+				selected_index  = 0;
 				UpdatedTopItem ();
 				break;
 			}
@@ -1090,56 +1108,56 @@ namespace System.Windows.Forms
 
 				if (Items.Count < LBoxInfo.page_size) {
 					LBoxInfo.top_item = 0;
-					SelectedIndex  = Items.Count - 1;
+					selected_index  = Items.Count - 1;
 					UpdatedTopItem ();
 				} else {
 					LBoxInfo.top_item = Items.Count - LBoxInfo.page_size;
-					SelectedIndex  = Items.Count - 1;
+					selected_index  = Items.Count - 1;
 					UpdatedTopItem ();
 				}
 				break;
 			}
 
 			case ItemNavigation.Next: {
-				if (highlighted_item + 1 < Items.Count) {	
-					if (highlighted_item + 1 > LBoxInfo.last_item) {
+				if (focused_item + 1 < Items.Count) {	
+					if (focused_item + 1 > LBoxInfo.last_item) {
 						LBoxInfo.top_item++;
 						UpdatedTopItem ();						
 					}
-					SelectedIndex  = highlighted_item + 1;
+					selected_index = focused_item + 1;
 				}
 				break;
 			}
 
 			case ItemNavigation.Previous: {
-				if (highlighted_item > 0) {						
-					if (highlighted_item - 1 < LBoxInfo.top_item) {							
+				if (focused_item > 0) {						
+					if (focused_item - 1 < LBoxInfo.top_item) {							
 						LBoxInfo.top_item--;
 						UpdatedTopItem ();
 					}
-					SelectedIndex = highlighted_item - 1;
+					selected_index = focused_item - 1;
 				}					
 				break;
 			}
 
 			case ItemNavigation.NextPage: {
 				if (Items.Count < page_size) {
-					NavigateItem (ItemNavigation.Last);
-					return;
+					NavigateItemVisually (ItemNavigation.Last);
+					break;
 				}
 
-				if (highlighted_item + page_size - 1 >= Items.Count) {
+				if (focused_item + page_size - 1 >= Items.Count) {
 					LBoxInfo.top_item = Items.Count - page_size;
 					UpdatedTopItem ();
-					SelectedIndex = Items.Count - 1;						
+					selected_index = Items.Count - 1;						
 				}
 				else {
-					if (highlighted_item + page_size - 1  > LBoxInfo.last_item) {
-						LBoxInfo.top_item = highlighted_item;
+					if (focused_item + page_size - 1  > LBoxInfo.last_item) {
+						LBoxInfo.top_item = focused_item;
 						UpdatedTopItem ();
 					}
 					
-					SelectedIndex = highlighted_item + page_size - 1;						
+					selected_index = focused_item + page_size - 1;						
 				}
 					
 				break;
@@ -1147,68 +1165,103 @@ namespace System.Windows.Forms
 
 			case ItemNavigation.PreviousPage: {
 					
-				if (highlighted_item - (LBoxInfo.page_size - 1) <= 0) {
+				if (focused_item - (LBoxInfo.page_size - 1) <= 0) {
 																		
 					LBoxInfo.top_item = 0;
 					vscrollbar_ctrl.Value = LBoxInfo.top_item;
 					SelectedIndex = 0;					
 				}
 				else { 
-					if (highlighted_item - (LBoxInfo.page_size - 1)  < LBoxInfo.top_item) {
-						LBoxInfo.top_item = highlighted_item - (LBoxInfo.page_size - 1);
+					if (focused_item - (LBoxInfo.page_size - 1)  < LBoxInfo.top_item) {
+						LBoxInfo.top_item = focused_item - (LBoxInfo.page_size - 1);
 						vscrollbar_ctrl.Value = LBoxInfo.top_item;
 					}
 					
-					SelectedIndex = highlighted_item - (LBoxInfo.page_size - 1);
+					selected_index = focused_item - (LBoxInfo.page_size - 1);
 				}
 					
 				break;
 			}		
 			default:
-				break;
-				
-			}		
+				break;				
+			}
+			
+			return selected_index;
 		}
+		
+		private void OnGotFocus (object sender, EventArgs e) 			
+		{			
+			has_focus = true;			
+			
+			if (focused_item != -1) {
+				Rectangle invalidate = GetItemDisplayRectangle (focused_item, LBoxInfo.top_item);
+				Invalidate (invalidate);
+			}
+		}		
+		
+		private void OnLostFocus (object sender, EventArgs e) 			
+		{			
+			has_focus = false;
+			
+			if (focused_item != -1) {
+				Rectangle invalidate = GetItemDisplayRectangle (focused_item, LBoxInfo.top_item);
+				Invalidate (invalidate);
+			}			
+		}		
 
-		private void OnKeyDownLB (object sender, KeyEventArgs e) 			
-		{	
-			if (SelectionMode == SelectionMode.None)	// No keyboard navigation
-				return;
+		private void OnKeyDownLB (object sender, KeyEventArgs e)
+		{					
+			int new_item = -1;
 
-			switch (e.KeyCode) {			
+			switch (e.KeyCode) {
+				
+				case Keys.ControlKey:
+					ctrl_pressed = true;
+					break;
+					
+				case Keys.ShiftKey:
+					shift_pressed = true;
+					break;
+					
 				case Keys.Home:
-					NavigateItem (ItemNavigation.First);
+					new_item = NavigateItemVisually (ItemNavigation.First);
 					break;	
 
 				case Keys.End:
-					NavigateItem (ItemNavigation.Last);
+					new_item = NavigateItemVisually (ItemNavigation.Last);
 					break;	
 
 				case Keys.Up:
-					NavigateItem (ItemNavigation.Previous);
+					new_item = NavigateItemVisually (ItemNavigation.Previous);
 					break;				
 	
 				case Keys.Down:				
-					NavigateItem (ItemNavigation.Next);
+					new_item = NavigateItemVisually (ItemNavigation.Next);
 					break;
 				
 				case Keys.PageUp:
-					NavigateItem (ItemNavigation.PreviousPage);
+					new_item = NavigateItemVisually (ItemNavigation.PreviousPage);
 					break;				
 	
 				case Keys.PageDown:				
-					NavigateItem (ItemNavigation.NextPage);
+					new_item = NavigateItemVisually (ItemNavigation.NextPage);
 					break;
 
 				case Keys.Right:
 					if (multicolumn == true) {
-						NavigateItem (ItemNavigation.NextColumn);
+						new_item = NavigateItemVisually (ItemNavigation.NextColumn);
 					}
 					break;				
 	
 				case Keys.Left:			
 					if (multicolumn == true) {	
-						NavigateItem (ItemNavigation.PreviousColumn);
+						new_item = NavigateItemVisually (ItemNavigation.PreviousColumn);
+					}
+					break;
+					
+				case Keys.Space:
+					if (selection_mode == SelectionMode.MultiSimple) {
+						SelectedItemFromNavigation (focused_item);
 					}
 					break;
 				
@@ -1216,39 +1269,39 @@ namespace System.Windows.Forms
 				default:
 					break;
 				}
-
+				
+				if (new_item != -1) {
+					SetFocusedItem (new_item);
+				}
+				
+				if (new_item != -1) {					
+					if (selection_mode != SelectionMode.MultiSimple && selection_mode != SelectionMode.None) {
+						SelectedItemFromNavigation (new_item);
+					}
+				}
 		}
+		
+		private void OnKeyUpLB (object sender, KeyEventArgs e) 			
+		{
+			switch (e.KeyCode) {
+				case Keys.ControlKey:
+					ctrl_pressed = false;
+					break;
+				case Keys.ShiftKey:
+					shift_pressed = false;
+					break;
+				default: 
+					break;
+			}
+		}		
 
 		internal virtual void OnMouseDownLB (object sender, MouseEventArgs e)
     		{
     			int index = IndexFromPointDisplayRectangle (e.X, e.Y);
-
-    			if (index == -1) return;
-
-    			switch (SelectionMode) {
-    				case SelectionMode.None: // Do nothing
-    					break;
-    				case SelectionMode.One: {
-    					SelectedIndex = index;
-    					break;
-    				}
-
-    				case SelectionMode.MultiSimple: {
-					if (selected_index == -1) {
-						SelectedIndex = index;
-					} else {
-
-						if ((Items.GetListBoxItem (index)).Selected)
-							UnSelectItem (index, true);
-						else {
-    							SelectItem (index);
-    							OnSelectedIndexChanged  (new EventArgs ());
-    						}
-    					}
-    					break;
-    				}
-    				default:
-    					break;
+    			
+    			if (index != -1) {
+    				SelectedItemFromNavigation (index);
+    				SetFocusedItem (index);
     			}
     		}
 
@@ -1267,7 +1320,6 @@ namespace System.Windows.Forms
 
 		internal void RellocateScrollBars ()
 		{
-
 			if (listbox_info.show_verticalsb) {
 
 				vscrollbar_ctrl.Size = new Size (vscrollbar_ctrl.Width,
@@ -1313,6 +1365,113 @@ namespace System.Windows.Forms
     			if (ClientRectangle.Contains (invalidate))
     				Invalidate (invalidate);
 
+		}		
+		
+		// An item navigation operation (mouse or keyboard) has caused to select a new item
+		private void SelectedItemFromNavigation (int index)
+		{
+			switch (SelectionMode) {
+    				case SelectionMode.None: // Do nothing
+    					break;
+    				case SelectionMode.One: {
+    					SelectedIndex = index;
+    					break;
+    				}
+    				case SelectionMode.MultiSimple: {
+					if (selected_index == -1) {
+						SelectedIndex = index;
+					} else {
+
+						if ((Items.GetListBoxItem (index)).Selected) // BUG: index or selected_index?
+							UnSelectItem (index, true);
+						else {
+    							SelectItem (index);
+    							OnSelectedIndexChanged  (new EventArgs ());
+    						}
+    					}
+    					break;
+    				}
+    				
+    				case SelectionMode.MultiExtended: {
+					if (selected_index == -1) {
+						SelectedIndex = index;
+					} else {
+
+						if (ctrl_pressed == false && shift_pressed == false) {
+							ClearSelected ();
+						}
+						
+						if (shift_pressed == true) {
+							ShiftSelection (index);
+						} else { // ctrl_pressed or single item
+							SelectItem (index);
+						}
+    						
+    						OnSelectedIndexChanged  (new EventArgs ());
+    					}
+    					break;
+    				}    				
+    				
+    				default:
+    					break;
+    			}			
+		}
+		
+		private void ShiftSelection (int index)
+		{
+			int shorter_item = -1, dist = Items.Count + 1, cur_dist;
+			
+			foreach (int idx in selected_indices) {
+				if (idx > index) {
+					cur_dist = idx - index;
+				}
+				else {
+					cur_dist = index - idx;					
+				}
+						
+				if (cur_dist < dist) {
+					dist = cur_dist;
+					shorter_item = idx;
+				}
+			}
+			
+			if (shorter_item != -1) {
+				int start, end;
+				
+				if (shorter_item > index) {
+					start = index;
+					end = shorter_item;
+				} else {
+					start = shorter_item;
+					end = index;
+				}
+				
+				ClearSelected ();
+				for (int idx = start; idx <= end; idx++) {
+					SelectItem (idx);	
+				}
+			}
+		}
+		
+		void SetFocusedItem (int index)
+		{			
+			Rectangle invalidate;
+			int prev = focused_item;			
+			
+			focused_item = index;
+			
+			if (has_focus == false)
+				return;
+
+			if (prev != -1) { // Invalidates previous item
+				invalidate = GetItemDisplayRectangle (prev, LBoxInfo.top_item);
+				Invalidate (invalidate);
+			}
+			
+			if (index != -1) {
+				invalidate = GetItemDisplayRectangle (index, LBoxInfo.top_item);
+				Invalidate (invalidate);
+			}
 		}
 
 		// Removes an item in the Selection array and marks it visually as unselected
@@ -1336,10 +1495,12 @@ namespace System.Windows.Forms
 
 		private void UpdateFormatString ()
 		{
-			if (RightToLeft == RightToLeft.No)
-				string_format.Alignment = StringAlignment.Near;
+			Console.WriteLine ("UpdateFormatString {0}", RightToLeft);
+			
+			if (RightToLeft == RightToLeft.Yes)
+				string_format.Alignment = StringAlignment.Far;				
 			else
-				string_format.Alignment = StringAlignment.Far;
+				string_format.Alignment = StringAlignment.Near;				
 
 			if (UseTabStops)
 				string_format.SetTabStops (0, new float [] {(float)(Font.Height * 3.7)});
