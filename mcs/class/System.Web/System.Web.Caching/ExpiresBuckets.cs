@@ -13,17 +13,17 @@ namespace System.Web.Caching
 	/// <summary>
 	/// Responsible for holding a cache entry in the linked list bucket.
 	/// </summary>
-	public struct ExpiresEntry
+	internal struct ExpiresEntry
 	{
-		public CacheEntry	_objEntry;
-		public long			_ticksExpires;
-		public int			_intNext;
+		internal CacheEntry _objEntry;
+		internal long _ticksExpires;
+		internal int _intNext;
 	}
 
 	/// <summary>
 	/// Holds cache entries that has a expiration in a bucket list.
 	/// </summary>
-	public class ExpiresBucket
+	internal class ExpiresBucket
 	{
 		private static int MIN_ENTRIES = 16;
 		
@@ -51,7 +51,7 @@ namespace System.Web.Caching
 		/// </summary>
 		/// <param name="bucket">Current bucket ID.</param>
 		/// <param name="objManager">Cache manager reponsible for the item(s) in the expires bucket.</param>
-		public ExpiresBucket(byte bucket, Cache objManager) 
+		internal ExpiresBucket(byte bucket, Cache objManager) 
 		{
 			_objManager = objManager;
 			Initialize(bucket);
@@ -162,7 +162,7 @@ namespace System.Web.Caching
 		/// Adds a cache entry into the expires bucket.
 		/// </summary>
 		/// <param name="objEntry">Cache Entry object to be added.</param>
-		public void Add(CacheEntry objEntry)
+		internal void Add(CacheEntry objEntry)
 		{
 			bool dogrow = false;
 
@@ -243,7 +243,7 @@ namespace System.Web.Caching
 		/// Removes a cache entry from the expires bucket.
 		/// </summary>
 		/// <param name="objEntry">Cache entry to be removed.</param>
-		public void Remove(CacheEntry objEntry)
+		internal void Remove(CacheEntry objEntry)
 		{
 			//HACK: optimized locks. [DHC]
 			_lock.AcquireReaderLock(0);
@@ -280,7 +280,7 @@ namespace System.Web.Caching
 		/// </summary>
 		/// <param name="objEntry">Cache entry to update.</param>
 		/// <param name="ticksExpires">New expiration value for the cache entry.</param>
-		public void Update(CacheEntry objEntry, long ticksExpires)
+		internal void Update(CacheEntry objEntry, long ticksExpires)
 		{
 			//HACK: optimized locks. [DHC]
 			_lock.AcquireReaderLock(0);
@@ -309,7 +309,7 @@ namespace System.Web.Caching
 		/// <summary>
 		/// Flushes all cache entries that has expired and removes them from the cache manager.
 		/// </summary>
-		public void FlushExpiredItems()
+		internal void FlushExpiredItems()
 		{
 			ExpiresEntry objEntry;
 			CacheEntry [] arrCacheEntries;
@@ -379,7 +379,7 @@ namespace System.Web.Caching
 		/// <summary>
 		/// Returns the current size of the expires bucket.
 		/// </summary>
-		public int Size
+		internal int Size
 		{
 			get 
 			{ 
@@ -391,7 +391,7 @@ namespace System.Web.Caching
 		/// <summary>
 		/// Returns number of items in the bucket.
 		/// </summary>
-		public int Count
+		internal int Count
 		{
 			get 
 			{

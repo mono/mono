@@ -13,7 +13,7 @@ namespace System.Web.Caching
 	/// <summary>
 	/// Class responsible for representing a cache entry.
 	/// </summary>
-	public class CacheEntry
+	internal class CacheEntry
 	{
 		/// <summary>
 		/// Defines the status of the current cache entry
@@ -47,12 +47,12 @@ namespace System.Web.Caching
 		/// <summary>
 		/// The item is not placed in a bucket. [DHC]
 		/// </summary>
-		public static readonly byte NoBucketHash = byte.MaxValue;
+		internal static readonly byte NoBucketHash = byte.MaxValue;
 		
 		/// <summary>
 		/// The item is not placed in a bucket. [DHC]
 		/// </summary>
-		public static readonly int NoIndexInBucket = int.MaxValue;
+		internal static readonly int NoIndexInBucket = int.MaxValue;
 
 		/// <summary>
 		/// Lock for syncronized operations. [DHC]
@@ -70,7 +70,7 @@ namespace System.Web.Caching
 		/// <param name="longMinHits">Used to detect and control if the item should be flushed due to under usage</param>
 		/// <param name="boolPublic">Defines if the item is public or not</param>
 		/// <param name="enumPriority">The relative cost of the object, as expressed by the CacheItemPriority enumeration. The cache uses this value when it evicts objects; objects with a lower cost are removed from the cache before objects with a higher cost.</param>
-		public CacheEntry(	Cache objManager, string strKey, object objItem, CacheDependency objDependency, CacheItemRemovedCallback eventRemove, 
+		internal CacheEntry(	Cache objManager, string strKey, object objItem, CacheDependency objDependency, CacheItemRemovedCallback eventRemove, 
 			System.DateTime dtExpires, System.TimeSpan tsSpan, long longMinHits, bool boolPublic, CacheItemPriority enumPriority )
 		{
 			if (boolPublic)
@@ -104,13 +104,8 @@ namespace System.Web.Caching
 			_objDependency = objDependency;
 			if (_objDependency != null)
 			{
-				if (_objDependency.IsDisposed)
-				{
-					throw new System.ObjectDisposedException("System.Web.CacheDependency");
-				}
-
 				// Add the entry to the cache dependency handler (we support multiple entries per handler)
-				_objDependency.Changed += new CacheDependency.CacheDependencyCallback(OnChanged); 
+				_objDependency.Changed += new CacheDependencyChangedHandler (OnChanged); 
 			}
 
 			_longMinHits = longMinHits;
@@ -118,16 +113,16 @@ namespace System.Web.Caching
 
 		private event CacheItemRemovedCallback _onRemoved;
 
-		public void OnChanged(CacheDependency objDependency)
+		internal void OnChanged (object sender, CacheDependencyChangedArgs objDependency)
 		{
-			_objCache.Remove(_strKey, CacheItemRemovedReason.DependencyChanged);
+			_objCache.Remove (objDependency.Key, CacheItemRemovedReason.DependencyChanged);
 		}
 
 		/// <summary>
 		/// Cleans up the cache entry, removes the cache dependency and calls the remove delegate.
 		/// </summary>
 		/// <param name="enumReason">The reason why the cache entry are going to be removed</param>
-		public void Close(CacheItemRemovedReason enumReason)
+		internal void Close(CacheItemRemovedReason enumReason)
 		{	
 			//HACK: optimized locks. [DHC]
 			_lock.AcquireWriterLock(0);
@@ -157,11 +152,7 @@ namespace System.Web.Caching
 				// If we have a dependency, remove the entry
 				if (_objDependency != null)
 				{
-					_objDependency.Changed -= new CacheDependency.CacheDependencyCallback(OnChanged);
-					if (!_objDependency.HasEvents)
-					{
-						_objDependency.Dispose();
-					}
+					_objDependency.Changed -= new CacheDependencyChangedHandler (OnChanged);
 				}
 			}
 			finally
@@ -175,7 +166,7 @@ namespace System.Web.Caching
 		/// </summary>
 		/// <param name="oFlag">Flag to test agains</param>
 		/// <returns>Returns true if the flag is set.</returns>
-		public bool TestFlag(Flags oFlag)
+		internal bool TestFlag(Flags oFlag)
 		{
 			_lock.AcquireReaderLock(0);
 			try
@@ -197,7 +188,7 @@ namespace System.Web.Caching
 		/// Sets a specific flag.
 		/// </summary>
 		/// <param name="oFlag">Flag to set.</param>
-		public void SetFlag(Flags oFlag)
+		internal void SetFlag(Flags oFlag)
 		{
 			_lock.AcquireWriterLock(0);
 			try
@@ -213,7 +204,7 @@ namespace System.Web.Caching
 		/// <summary>
 		/// Returns true if the object has minimum hit usage flushing enabled.
 		/// </summary>
-		public bool HasUsage
+		internal bool HasUsage
 		{
 			get { 
 				if (_longMinHits == System.Int64.MaxValue) 
@@ -228,7 +219,7 @@ namespace System.Web.Caching
 		/// <summary>
 		/// Returns true if the entry has absolute expiration.
 		/// </summary>
-		public bool HasAbsoluteExpiration
+		internal bool HasAbsoluteExpiration
 		{
 			get 
 			{ 
@@ -246,7 +237,7 @@ namespace System.Web.Caching
 		/// <summary>
 		/// Returns true if the entry has sliding expiration enabled.
 		/// </summary>
-		public bool HasSlidingExpiration
+		internal bool HasSlidingExpiration
 		{
 			get 
 			{ 
@@ -264,7 +255,7 @@ namespace System.Web.Caching
 		/// <summary>
 		/// Gets and sets the current expires bucket the entry is active in.
 		/// </summary>
-		public byte ExpiresBucket
+		internal byte ExpiresBucket
 		{
 			get 
 			{ 
@@ -295,7 +286,7 @@ namespace System.Web.Caching
 		/// <summary>
 		/// Gets and sets the current index in the expires bucket of the current cache entry.
 		/// </summary>
-		public int ExpiresIndex
+		internal int ExpiresIndex
 		{
 			get 
 			{ 
@@ -327,7 +318,7 @@ namespace System.Web.Caching
 		/// <summary>
 		/// Gets and sets the expiration of the cache entry.
 		/// </summary>
-		public long Expires
+		internal long Expires
 		{
 			get 
 			{ 
@@ -358,7 +349,7 @@ namespace System.Web.Caching
 		/// <summary>
 		/// Gets the sliding expiration value. The return value is in ticks (since 0/0-01 in 100nanosec)
 		/// </summary>
-		public long SlidingExpiration
+		internal long SlidingExpiration
 		{
 			get 
 			{ 
@@ -369,7 +360,7 @@ namespace System.Web.Caching
 		/// <summary>
 		/// Returns the current cached item.
 		/// </summary>
-		public object Item
+		internal object Item
 		{
 			get
 			{
@@ -380,7 +371,7 @@ namespace System.Web.Caching
 		/// <summary>
 		/// Returns the current cache identifier.
 		/// </summary>
-		public string Key
+		internal string Key
 		{
 			get 
 			{ 
@@ -391,7 +382,7 @@ namespace System.Web.Caching
 		/// <summary>
 		/// Gets and sets the current number of hits on the cache entry.
 		/// </summary>
-		public long Hits
+		internal long Hits
 		{
 			// todo: Could be optimized by using interlocked methods..
 			get 
@@ -423,7 +414,7 @@ namespace System.Web.Caching
 		/// <summary>
 		/// Returns minimum hits for the usage flushing rutine.
 		/// </summary>
-		public long MinimumHits
+		internal long MinimumHits
 		{
 			get 
 			{ 
@@ -434,7 +425,7 @@ namespace System.Web.Caching
 		/// <summary>
 		/// Returns the priority of the cache entry.
 		/// </summary>
-		public CacheItemPriority Priority
+		internal CacheItemPriority Priority
 		{
 			get 
 			{ 

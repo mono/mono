@@ -1,3 +1,9 @@
+2003-03-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpSessionState.cs: implemented CodePage.
+
+	* SessionStateModule.cs: initial stuff to make it work.
+
 2003-03-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpSessionState.cs: reworked to use SessionDictionary.

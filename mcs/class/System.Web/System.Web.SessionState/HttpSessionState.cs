@@ -10,7 +10,9 @@ using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Globalization;
+using System.Text;
 using System.Threading;
+using System.Web;
 
 namespace System.Web.SessionState {
 public sealed class HttpSessionState : ICollection, IEnumerable
@@ -44,96 +46,86 @@ public sealed class HttpSessionState : ICollection, IEnumerable
 		_isReadonly = isReadonly;
 	}
 
-	// Compatibility with ASP
-	public int CodePage
-	{
-		get { return 0; }
-		set { }
+	public int CodePage {
+		get {
+			HttpContext current = HttpContext.Current;
+			if (current == null)
+				return Encoding.Default.CodePage;
+
+			return current.Response.ContentEncoding.CodePage;
+		}
+		
+		set {
+			HttpContext current = HttpContext.Current;
+			if (current != null)
+				current.Response.ContentEncoding = Encoding.GetEncoding (value);
+		}
 	}
 
-	public HttpSessionState Contents
-	{
+	public HttpSessionState Contents {
 		get { return this; }
 	}
 
-	public int Count
-	{
+	public int Count {
 		get { return _dict.Count; }
 	}
 
-	internal bool IsAbandoned
-	{
+	internal bool IsAbandoned {
 		get { return _abandoned; }
 	}
 
-	public bool IsCookieless
-	{
+	public bool IsCookieless {
 		get { return _isCookieless; }
 	}
 
-	public bool IsNewSession
-	{
+	public bool IsNewSession {
 		get { return _newSession; }
 	}
 
-	public bool IsReadOnly
-	{
+	public bool IsReadOnly {
 		get { return _isReadonly; }
 	}
 
-	public bool IsSynchronized
-	{
+	public bool IsSynchronized {
 		get { return false; }
 	}
 
-	public object this [string key]
-	{
+	public object this [string key] {
 		get { return _dict [key]; }
 		set { _dict [key] = value; }
 	}
 
-	public object this [int index]
-	{
+	public object this [int index] {
 		get { return _dict [index]; }
-		set {
-			string key = _dict.Keys [index];
-			_dict [key] = value;
-		}
+		set { _dict [index] = value; }
 	}
 
-	public NameObjectCollectionBase.KeysCollection Keys
-	{
+	public NameObjectCollectionBase.KeysCollection Keys {
 		get { return _dict.Keys; }
 	}
 
-	public int LCID
-	{
+	public int LCID {
 		get { return Thread.CurrentThread.CurrentCulture.LCID; }
 		set { Thread.CurrentThread.CurrentCulture = new CultureInfo(value); }
 	}
 
-	public SessionStateMode Mode
-	{
+	public SessionStateMode Mode {
 		get { return _mode; }
 	}
 
-	public string SessionID
-	{
+	public string SessionID {
 		get { return _id; }
 	}
 
-	public HttpStaticObjectsCollection StaticObjects
-	{
+	public HttpStaticObjectsCollection StaticObjects {
 		get { return _staticObjects; }
 	}
 
-	public object SyncRoot
-	{
+	public object SyncRoot {
 		get { return this; }
 	}
 
-	public int Timeout
-	{
+	public int Timeout {
 		get { return _timeout; }
 		set { _timeout = value; }
 	}

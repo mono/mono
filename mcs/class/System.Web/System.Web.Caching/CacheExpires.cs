@@ -16,7 +16,7 @@ namespace System.Web.Caching
 	/// for an entry is one minute more than the timeout just to make sure that the item end up in the
 	/// bucket where it should be flushed.
 	/// </summary>
-	public class CacheExpires : System.IDisposable
+	internal class CacheExpires : System.IDisposable
 	{
 		static int	_intFlush;
 		/// <summary>
@@ -36,7 +36,7 @@ namespace System.Web.Caching
 		/// Constructor
 		/// </summary>
 		/// <param name="objManager">The cache manager, used when flushing items in a bucket.</param>
-		public CacheExpires(Cache objManager)
+		internal CacheExpires(Cache objManager)
 		{
 			_objManager = objManager;
 			Initialize();
@@ -66,7 +66,7 @@ namespace System.Web.Caching
 		/// Adds a Cache entry to the correct flush bucket.
 		/// </summary>
 		/// <param name="objEntry">Cache entry to add.</param>
-		public void Add(CacheEntry objEntry)
+		internal void Add (CacheEntry objEntry)
 		{
 			lock(this) 
 			{
@@ -80,7 +80,7 @@ namespace System.Web.Caching
 			}
 		}
 
-		public void Remove(CacheEntry objEntry)
+		internal void Remove(CacheEntry objEntry)
 		{
 			lock(this) 
 			{
@@ -94,7 +94,7 @@ namespace System.Web.Caching
 			}
 		}
 
-		public void Update(CacheEntry objEntry, long ticksExpires)
+		internal void Update(CacheEntry objEntry, long ticksExpires)
 		{
 			lock(this) 
 			{
@@ -108,7 +108,7 @@ namespace System.Web.Caching
 			}		
 		}
 
-		public void GarbageCleanup(object State)
+		internal void GarbageCleanup(object State)
 		{
 			ExpiresBucket	objBucket;
 

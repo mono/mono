@@ -22,22 +22,11 @@ namespace System.Web.Caching
 	}
 
 	/// <summary>
-	/// Specifies the rate at which the priority of items stored in the Cache are downgraded when not accessed frequently.
-	/// </summary>
-	public enum CacheItemPriorityDecay { 
-		Default,
-		Fast,
-		Medium,
-		Never,
-		Slow
-	}
-
-	/// <summary>
 	/// Specifies the reason an item was removed from the Cache.
 	/// </summary>
 	public enum CacheItemRemovedReason {
-		Expired = 1,
-		Removed = 2,
+		Removed = 1,
+		Expired = 2,
 		Underused = 3,
 		DependencyChanged = 4
 	}
@@ -50,4 +39,4 @@ namespace System.Web.Caching
 	/// <param name="reason">The reason the item was removed from the cache, as specified by the CacheItemRemovedReason enumeration.</param>
 	public delegate void CacheItemRemovedCallback(string key, object value, CacheItemRemovedReason reason);
 
-	}
+}

@@ -1,3 +1,13 @@
+2003-03-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Cache.cs:
+	* CacheDefinitions.cs:
+	* CacheDependency.cs:
+	* CacheEntry.cs:
+	* CacheExpires.cs:
+	* ExpiresBuckets.cs: reformatted, make class status page happier. Does
+	not work yet (wait for the next patch).
+
 2002-12-27  Daniel Cazzulino <dcazzulino@users.sf.net>
 
 	* CacheEntry.cs: several changes. New constants, use of constants

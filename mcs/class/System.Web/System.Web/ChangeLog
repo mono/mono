@@ -1,3 +1,9 @@
+2003-03-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRuntime.cs: Cache no longer have a Dispose method.
+
+	* HttpServerUtility.cs: removed MonoTODO.
+
 2003-03-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpHelper.cs: store the values in an ArrayList to get them in correct

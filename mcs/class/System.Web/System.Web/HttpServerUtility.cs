@@ -216,7 +216,6 @@ namespace System.Web
 		/// </summary>
 		/// <param name="s">The HTML string to decode. </param>
 		/// <returns>The decoded text.</returns>
-		[MonoTODO()]
 		public string HtmlDecode (string s)
 		{
 			return HttpUtility.HtmlDecode (s);

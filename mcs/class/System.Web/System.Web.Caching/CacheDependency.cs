@@ -1,95 +1,104 @@
 // 
-// System.Web.Caching
+// System.Web.Caching.CacheDependency
 //
-// Author:
-//   Patrik Torstensson (Patrik.Torstensson@labs2.com)
+// Authors:
+// 	Patrik Torstensson (Patrik.Torstensson@labs2.com)
+// 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) Copyright Patrik Torstensson, 2001
+// (c) 2003 Ximian, Inc. (http://www.ximian.com)
 //
+using System;
+using System.Web;
+
 namespace System.Web.Caching
 {
-	/// <summary>
-	/// Class to handle cache dependency, right now this class is only a mookup
-	/// </summary>
-	public sealed class CacheDependency : System.IDisposable
+	internal class CacheDependencyChangedArgs : EventArgs
 	{
-		private bool _boolDisposed;
+		string key;
 
-		public CacheDependency() 
+		public CacheDependencyChangedArgs (string key)
 		{
-			_boolDisposed = false;
+			this.key = key;
 		}
 
-		/// <remarks>
-		/// Added by gvaish@iitk.ac.in
-		/// </remarks>
-		[MonoTODO("Constructor")]
-		public CacheDependency(string filename)
+		public string Key {
+			get { return key; }
+		}
+	}
+
+	internal delegate void CacheDependencyChangedHandler (object sender, CacheDependencyChangedArgs args);
+
+	public sealed class CacheDependency : IDisposable
+	{
+		DateTime start;
+		string [] filenames;
+
+		public CacheDependency (string filename)
+			: this (filename, DateTime.MaxValue)
 		{
 		}
-		
-		/// <remarks>
-		/// Added by gvaish@iitk.ac.in
-		/// </remarks>
-		[MonoTODO("Constructor")]
-		public CacheDependency(string[] filenames, string[] cachekeys)
+
+		public CacheDependency (string filename, DateTime start)
+			: this (new string [] {filename}, null, null, start)
 		{
 		}
 
-		public delegate void CacheDependencyCallback(CacheDependency objDependency);
-		
-		public event CacheDependencyCallback Changed;
-
-		public void OnChanged()
+		public CacheDependency (string [] filenames)
+			: this (filenames, null, null, DateTime.MaxValue)
 		{
-			if (_boolDisposed)
-			{
-				throw new System.ObjectDisposedException("System.Web.CacheDependency");
-			}
-
-			if (Changed != null)
-			{
-				Changed(this);
-			}
 		}
 
-		public bool IsDisposed
+		public CacheDependency (string [] filenames, DateTime start)
+			: this (filenames, null, null, start)
 		{
-			get 
-			{
-				return _boolDisposed;
-			}
 		}
 
-		public bool HasEvents
+		public CacheDependency (string [] filenames, string [] cachekeys)
+			: this (filenames, cachekeys, null, DateTime.MaxValue)
 		{
-			get 
-			{
-				if (_boolDisposed)
-				{
-					throw new System.ObjectDisposedException("System.Web.CacheDependency");
-				}
+		}
 
-				if (Changed != null)
-				{
-					return true;
-				}
+		public CacheDependency (string [] filenames, string [] cachekeys, DateTime start)
+			: this (filenames, cachekeys, null, start)
+		{
+		}
 
+		public CacheDependency (string [] filenames, string [] cachekeys, CacheDependency dependency)
+			: this (filenames, cachekeys, dependency, DateTime.MaxValue)
+		{
+		}
+
+		[MonoTODO]
+		public CacheDependency (string [] filenames,
+					string [] cachekeys,
+					CacheDependency dependency,
+					DateTime start)
+		{
+			this.start = start;
+		}
+
+		[MonoTODO]
+		public void Dispose ()
+		{
+			throw new NotImplementedException ();
+		}
+
+
+		public bool HasChanged
+		{
+			get {
 				return false;
 			}
 		}
 
-		public void Dispose()
+		[MonoTODO]
+		internal CacheEntry [] GetCacheEntries ()
 		{
-			_boolDisposed = true;
+			return null;
 		}
 
-		/// <summary>
-		/// Used in testing.
-		/// </summary>
-		public void Signal()
-		{
-			OnChanged();
-		}
+		internal event CacheDependencyChangedHandler Changed;
 	}
 }
+

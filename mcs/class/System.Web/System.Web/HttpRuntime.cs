@@ -171,7 +171,7 @@ namespace System.Web {
 			// TODO: Move timeout value to config
 			WaitForRequests(5000);
 			
-			_cache.Dispose();
+			_cache = null;
 			HttpApplicationFactory.EndApplication();
 		}
 
