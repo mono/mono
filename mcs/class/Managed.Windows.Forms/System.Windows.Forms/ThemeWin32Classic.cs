@@ -26,9 +26,16 @@
 //
 //
 //
-// $Revision: 1.60 $
+// $Revision: 1.61 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.61  2004/11/09 11:06:21  jba
+// - (DrawButtonBase): Fix verticle text rect clipping in windows
+// - (DrawCheckBox): Fix CheckAlign.TopCenter and CheckAlign.BottomCenter
+//   rendering and incorrect text rect clipping
+// - (DrawRadioButton): Fix CheckAlign.TopCenter and CheckAlign.BottomCenter
+//   rendering and incorrect text rect clipping
+//
 // Revision 1.60  2004/11/09 03:12:00  jackson
 // 	* ThemeWin32Classic.cs (DrawTabControl): Render tabs from top to
 // 	bottom when they are bottom aligned so the bottoms of the tabs get
@@ -361,6 +368,7 @@ namespace System.Windows.Forms
 			int		width;
 			int		height;
 			Rectangle buttonRectangle;
+			Rectangle borderRectangle;
 
 			width = button.ClientSize.Width;
 			height = button.ClientSize.Height;
@@ -373,13 +381,15 @@ namespace System.Windows.Forms
 			buttonRectangle = button.ClientRectangle;
 			if (button.has_focus) {
 				// shrink the rectangle for the normal button drawing inside the focus rectangle
-				buttonRectangle.Inflate(-1,-1);
+				borderRectangle = Rectangle.Inflate(buttonRectangle, -1, -1);
+			} else {
+				borderRectangle = buttonRectangle;
 			}
 
 			if (button.FlatStyle == FlatStyle.Flat || button.FlatStyle == FlatStyle.Popup) {
-				DrawFlatStyleButton (dc, buttonRectangle, button);
+				DrawFlatStyleButton (dc, borderRectangle, button);
 			} else {
-				CPDrawButton(dc, buttonRectangle, button.ButtonState);
+				CPDrawButton(dc, borderRectangle, button.ButtonState);				
 			}
 			
 			// First, draw the image
@@ -463,8 +473,8 @@ namespace System.Windows.Forms
 				}
 
 				if (button.is_pressed) {
-					image_x+=2;
-					image_y+=2;
+					image_x+=1;
+					image_y+=1;
 				}
 
 				if (button.is_enabled) {
@@ -485,7 +495,7 @@ namespace System.Windows.Forms
 			
 			// Now the text
 			if (button.text != null && button.text != String.Empty) {
-				Rectangle text_rect = new Rectangle(6, 6, button.ClientSize.Width-12, button.ClientSize.Height-12);
+				Rectangle text_rect = Rectangle.Inflate(buttonRectangle, -4, -4);
 
 				if (button.is_pressed) {
 					text_rect.X++;
@@ -607,6 +617,7 @@ namespace System.Windows.Forms
 			Rectangle		checkbox_rectangle;
 			SolidBrush		sb;
 			int			checkmark_size=13;
+			int			checkmark_space = 4;
 
 			client_rectangle = checkbox.ClientRectangle;
 			text_rectangle = client_rectangle;
@@ -624,14 +635,15 @@ namespace System.Windows.Forms
 						checkbox_rectangle.Y=client_rectangle.Bottom-checkmark_size;
 						text_rectangle.X=client_rectangle.X;
 						text_rectangle.Width=client_rectangle.Width;
+						text_rectangle.Height=client_rectangle.Height-checkbox_rectangle.Y-checkmark_space;
 						break;
 					}
 
 					case ContentAlignment.BottomLeft: {
 						checkbox_rectangle.X=client_rectangle.Left;
 						checkbox_rectangle.Y=client_rectangle.Bottom-checkmark_size;
-						text_rectangle.X=client_rectangle.X+checkmark_size;
-						text_rectangle.Width=client_rectangle.Width-checkmark_size;
+						text_rectangle.X=client_rectangle.X+checkmark_size+checkmark_space;
+						text_rectangle.Width=client_rectangle.Width-checkmark_size-checkmark_space;						
 						break;
 					}
 
@@ -639,7 +651,7 @@ namespace System.Windows.Forms
 						checkbox_rectangle.X=client_rectangle.Right-checkmark_size;
 						checkbox_rectangle.Y=client_rectangle.Bottom-checkmark_size;
 						text_rectangle.X=client_rectangle.X;
-						text_rectangle.Width=client_rectangle.Width-checkmark_size;
+						text_rectangle.Width=client_rectangle.Width-checkmark_size-checkmark_space;						
 						break;
 					}
 
@@ -655,8 +667,8 @@ namespace System.Windows.Forms
 					case ContentAlignment.MiddleLeft: {
 						checkbox_rectangle.X=client_rectangle.Left;
 						checkbox_rectangle.Y=(client_rectangle.Bottom-client_rectangle.Top)/2-checkmark_size/2;
-						text_rectangle.X=client_rectangle.X+checkmark_size;
-						text_rectangle.Width=client_rectangle.Width-checkmark_size;
+						text_rectangle.X=client_rectangle.X+checkmark_size+checkmark_space;
+						text_rectangle.Width=client_rectangle.Width-checkmark_size-checkmark_space;												
 						break;
 					}
 
@@ -664,7 +676,7 @@ namespace System.Windows.Forms
 						checkbox_rectangle.X=client_rectangle.Right-checkmark_size;
 						checkbox_rectangle.Y=(client_rectangle.Bottom-client_rectangle.Top)/2-checkmark_size/2;
 						text_rectangle.X=client_rectangle.X;
-						text_rectangle.Width=client_rectangle.Width-checkmark_size;
+						text_rectangle.Width=client_rectangle.Width-checkmark_size-checkmark_space;
 						break;
 					}
 
@@ -672,25 +684,23 @@ namespace System.Windows.Forms
 						checkbox_rectangle.X=(client_rectangle.Right-client_rectangle.Left)/2-checkmark_size/2;
 						checkbox_rectangle.Y=client_rectangle.Top;
 						text_rectangle.X=client_rectangle.X;
-						text_rectangle.Y=checkmark_size;
 						text_rectangle.Width=client_rectangle.Width;
-						text_rectangle.Height=client_rectangle.Height-checkmark_size;
+						text_rectangle.Y=checkmark_size+checkmark_space;
+						text_rectangle.Height=client_rectangle.Height-checkmark_size-checkmark_space;
 						break;
 					}
 
 					case ContentAlignment.TopLeft: {
 						checkbox_rectangle.X=client_rectangle.Left;
-						checkbox_rectangle.Y=client_rectangle.Top;
-						text_rectangle.X=client_rectangle.X+checkmark_size;
-						text_rectangle.Width=client_rectangle.Width-checkmark_size;
+						text_rectangle.X=client_rectangle.X+checkmark_size+checkmark_space;
+						text_rectangle.Width=client_rectangle.Width-checkmark_size-checkmark_space;
 						break;
 					}
 
 					case ContentAlignment.TopRight: {
 						checkbox_rectangle.X=client_rectangle.Right-checkmark_size;
-						checkbox_rectangle.Y=client_rectangle.Top;
 						text_rectangle.X=client_rectangle.X;
-						text_rectangle.Width=client_rectangle.Width-checkmark_size;
+						text_rectangle.Width=client_rectangle.Width-checkmark_size-checkmark_space;
 						break;
 					}
 				}
@@ -699,8 +709,6 @@ namespace System.Windows.Forms
 				text_rectangle.Width=client_rectangle.Width;
 			}
 			
-			text_rectangle.Inflate (-4, -4);
-
 			/* Set the horizontal alignment of our text */
 			switch(checkbox.text_alignment) {
 				case ContentAlignment.BottomLeft:
@@ -794,35 +802,31 @@ namespace System.Windows.Forms
 				}
 			}
 			
-			// win32 compat - win32 seems to give the text a slight (3px) offset when rendering
-			Rectangle inner_text_rectangle = new Rectangle (text_rectangle.X + 2, text_rectangle.Y + 2, Math.Max (text_rectangle.Width - 4, 0), Math.Max (text_rectangle.Height - 4, 0)); 
 			// offset the text if it's pressed and a button
 			if (checkbox.Appearance == Appearance.Button) {
-				int buttonXOffset = 2;
-				int buttonYOffset = 0;
-				int pressedOffset = 0;
-				
 				if (checkbox.Checked || (checkbox.Capture && checkbox.FlatStyle != FlatStyle.Flat)) {
-					pressedOffset += 2;
+					text_rectangle.X ++;
+					text_rectangle.Y ++;
 				}
 				
-				inner_text_rectangle = new Rectangle (inner_text_rectangle.X + buttonXOffset + pressedOffset, inner_text_rectangle.Y + buttonYOffset + pressedOffset, inner_text_rectangle.Width - 2*buttonXOffset, inner_text_rectangle.Height - 2*buttonYOffset); 
-			} 
+				text_rectangle.Inflate(-4, -4);
+			}
+			
 			/* Place the text; to be compatible with Windows place it after the checkbox has been drawn */
 			if (checkbox.Enabled) {
 				sb = ResPool.GetSolidBrush(checkbox.ForeColor);
-				dc.DrawString(checkbox.Text, checkbox.Font, sb, inner_text_rectangle, text_format);				
+				dc.DrawString(checkbox.Text, checkbox.Font, sb, text_rectangle, text_format);				
 			} else if (checkbox.FlatStyle == FlatStyle.Flat || checkbox.FlatStyle == FlatStyle.Popup) {
-				dc.DrawString(checkbox.Text, checkbox.Font, ResPool.GetSolidBrush (ControlPaint.DarkDark (this.ColorButtonFace)), inner_text_rectangle, text_format);
+				dc.DrawString(checkbox.Text, checkbox.Font, ResPool.GetSolidBrush (ControlPaint.DarkDark (this.ColorButtonFace)), text_rectangle, text_format);
 			} else {
-				CPDrawStringDisabled(dc, checkbox.Text, checkbox.Font, ColorButtonText, inner_text_rectangle, text_format);
+				CPDrawStringDisabled(dc, checkbox.Text, checkbox.Font, ColorButtonText, text_rectangle, text_format);
 			}
 
 			if (checkbox.Focused) {
 				if (checkbox.FlatStyle != FlatStyle.Flat) {
-					DrawInnerFocusRectangle (dc, text_rectangle, checkbox.BackColor);
+					DrawInnerFocusRectangle (dc, Rectangle.Inflate (client_rectangle, -4, -4), checkbox.BackColor);
 				} else {
-					dc.DrawRectangle (ResPool.GetPen (checkbox.ForeColor), text_rectangle);
+					dc.DrawRectangle (ResPool.GetPen (checkbox.ForeColor), Rectangle.Inflate (client_rectangle, -4, -4));
 				}
 			}
 		}
@@ -868,9 +872,6 @@ namespace System.Windows.Forms
 					} else {
 						// draw sunken effect
 						CPDrawBorder3D (graphics, checkbox_rectangle, Border3DStyle.SunkenInner, Border3DSide.All, checkbox.BackColor);
-						// draw top left
-//						graphics.DrawLine(ResPool.GetPen (ControlPaint.DarkDark (checkbox.BackColor)), checkbox_rectangle.X, checkbox_rectangle.Y, checkbox_rectangle.X, checkbox_rectangle.Y+checkbox_rectangle.Height);
-						//graphics.DrawLine(ResPool.GetPen (ControlPaint.DarkDark (checkbox.BackColor)), checkbox_rectangle.X, checkbox_rectangle.Y, Math.Max(checkbox_rectangle.X + checkbox_rectangle.Width - 1, 0), checkbox_rectangle.Y);
 					}
 				} else {
 					graphics.FillRectangle(ResPool.GetSolidBrush (ControlPaint.LightLight (checkbox.BackColor)), fill_rectangle);				
@@ -1301,6 +1302,7 @@ namespace System.Windows.Forms
 			Rectangle 	radiobutton_rectangle;
 			SolidBrush	sb;
 			int		radiobutton_size = 12;
+			int 	radiobutton_space = 4;
 
 			client_rectangle = radio_button.ClientRectangle;
 			text_rectangle = client_rectangle;
@@ -1318,14 +1320,15 @@ namespace System.Windows.Forms
 					radiobutton_rectangle.Y=client_rectangle.Bottom-radiobutton_size;
 					text_rectangle.X=client_rectangle.X;
 					text_rectangle.Width=client_rectangle.Width;
+					text_rectangle.Height=client_rectangle.Height-radiobutton_size-radiobutton_space;
 					break;
 				}
 
 				case ContentAlignment.BottomLeft: {
 					radiobutton_rectangle.X=client_rectangle.Left;
 					radiobutton_rectangle.Y=client_rectangle.Bottom-radiobutton_size;
-					text_rectangle.X=client_rectangle.X+radiobutton_size;
-					text_rectangle.Width=client_rectangle.Width-radiobutton_size;
+					text_rectangle.X=client_rectangle.X+radiobutton_size+radiobutton_space;
+					text_rectangle.Width=client_rectangle.Width-radiobutton_size-radiobutton_space;					
 					break;
 				}
 
@@ -1333,7 +1336,7 @@ namespace System.Windows.Forms
 					radiobutton_rectangle.X=client_rectangle.Right-radiobutton_size;
 					radiobutton_rectangle.Y=client_rectangle.Bottom-radiobutton_size;
 					text_rectangle.X=client_rectangle.X;
-					text_rectangle.Width=client_rectangle.Width-radiobutton_size;
+					text_rectangle.Width=client_rectangle.Width-radiobutton_size-radiobutton_space;
 					break;
 				}
 
@@ -1349,8 +1352,8 @@ namespace System.Windows.Forms
 				case ContentAlignment.MiddleLeft: {
 					radiobutton_rectangle.X=client_rectangle.Left;
 					radiobutton_rectangle.Y=(client_rectangle.Bottom-client_rectangle.Top)/2-radiobutton_size/2;
-					text_rectangle.X=client_rectangle.X+radiobutton_size;
-					text_rectangle.Width=client_rectangle.Width-radiobutton_size;
+					text_rectangle.X=client_rectangle.X+radiobutton_size+radiobutton_space;
+					text_rectangle.Width=client_rectangle.Width-radiobutton_size-radiobutton_space;
 					break;
 				}
 
@@ -1358,7 +1361,7 @@ namespace System.Windows.Forms
 					radiobutton_rectangle.X=client_rectangle.Right-radiobutton_size;
 					radiobutton_rectangle.Y=(client_rectangle.Bottom-client_rectangle.Top)/2-radiobutton_size/2;
 					text_rectangle.X=client_rectangle.X;
-					text_rectangle.Width=client_rectangle.Width-radiobutton_size;
+					text_rectangle.Width=client_rectangle.Width-radiobutton_size-radiobutton_space;
 					break;
 				}
 
@@ -1366,17 +1369,17 @@ namespace System.Windows.Forms
 					radiobutton_rectangle.X=(client_rectangle.Right-client_rectangle.Left)/2-radiobutton_size/2;
 					radiobutton_rectangle.Y=client_rectangle.Top;
 					text_rectangle.X=client_rectangle.X;
-					text_rectangle.Y=radiobutton_size;
+					text_rectangle.Y=radiobutton_size+radiobutton_space;
 					text_rectangle.Width=client_rectangle.Width;
-					text_rectangle.Height=client_rectangle.Height-radiobutton_size;
+					text_rectangle.Height=client_rectangle.Height-radiobutton_size-radiobutton_space;
 					break;
 				}
 
 				case ContentAlignment.TopLeft: {
 					radiobutton_rectangle.X=client_rectangle.Left;
 					radiobutton_rectangle.Y=client_rectangle.Top;
-					text_rectangle.X=client_rectangle.X+radiobutton_size;
-					text_rectangle.Width=client_rectangle.Width-radiobutton_size;
+					text_rectangle.X=client_rectangle.X+radiobutton_size+radiobutton_space;
+					text_rectangle.Width=client_rectangle.Width-radiobutton_size-radiobutton_space;
 					break;
 				}
 
@@ -1384,7 +1387,7 @@ namespace System.Windows.Forms
 					radiobutton_rectangle.X=client_rectangle.Right-radiobutton_size;
 					radiobutton_rectangle.Y=client_rectangle.Top;
 					text_rectangle.X=client_rectangle.X;
-					text_rectangle.Width=client_rectangle.Width-radiobutton_size;
+					text_rectangle.Width=client_rectangle.Width-radiobutton_size-radiobutton_space;
 					break;
 				}
 				}
@@ -1393,8 +1396,6 @@ namespace System.Windows.Forms
 				text_rectangle.Width=client_rectangle.Width;
 			}
 			
-			text_rectangle.Inflate (-4, -4);
-
 			/* Set the horizontal alignment of our text */
 			switch(radio_button.text_alignment) {
 				case ContentAlignment.BottomLeft:
@@ -1475,32 +1476,27 @@ namespace System.Windows.Forms
 				}
 			}
 			
-			// wind32 compat - win32 seems to give the text a slight (3px) offset when rendering
-			Rectangle inner_text_rectangle = new Rectangle (text_rectangle.X + 3, text_rectangle.Y, Math.Max (text_rectangle.Width - 3, 0), text_rectangle.Height);
 			// offset the text if it's pressed and a button
 			if (radio_button.Appearance == Appearance.Button) {
-				int buttonXOffset = 2;
-				int buttonYOffset = 0;
-				int pressedOffset = 0;
-				
 				if (radio_button.Checked || (radio_button.Capture && radio_button.FlatStyle != FlatStyle.Flat)) {
-					pressedOffset += 2;
+					text_rectangle.X ++;
+					text_rectangle.Y ++;
 				}
 				
-				inner_text_rectangle = new Rectangle (inner_text_rectangle.X + buttonXOffset + pressedOffset, inner_text_rectangle.Y + buttonYOffset + pressedOffset, inner_text_rectangle.Width - 2*buttonXOffset, inner_text_rectangle.Height - 2*buttonYOffset); 
+				text_rectangle.Inflate(-4,-4);
 			} 
-
+			
 			/* Place the text; to be compatible with Windows place it after the radiobutton has been drawn */
 			sb=new SolidBrush(radio_button.ForeColor);
-			dc.DrawString (radio_button.Text, radio_button.Font, sb, inner_text_rectangle, text_format);
+			dc.DrawString (radio_button.Text, radio_button.Font, sb, text_rectangle, text_format);
 			sb.Dispose();
 			if (radio_button.Enabled) {
 				sb = ResPool.GetSolidBrush(radio_button.ForeColor);
-				dc.DrawString(radio_button.Text, radio_button.Font, sb, inner_text_rectangle, text_format);				
+				dc.DrawString(radio_button.Text, radio_button.Font, sb, text_rectangle, text_format);				
 			} else if (radio_button.FlatStyle == FlatStyle.Flat) {
-				dc.DrawString(radio_button.Text, radio_button.Font, ResPool.GetSolidBrush (ControlPaint.DarkDark (this.ColorButtonFace)), inner_text_rectangle, text_format);
+				dc.DrawString(radio_button.Text, radio_button.Font, ResPool.GetSolidBrush (ControlPaint.DarkDark (this.ColorButtonFace)), text_rectangle, text_format);
 			} else {
-				CPDrawStringDisabled(dc, radio_button.Text, radio_button.Font, this.ColorButtonText, inner_text_rectangle, text_format);
+				CPDrawStringDisabled(dc, radio_button.Text, radio_button.Font, this.ColorButtonText, text_rectangle, text_format);
 			}
 
 			if (radio_button.Focused) {
@@ -3157,11 +3153,11 @@ namespace System.Windows.Forms
 			
 			// draw the inner rectangle						
 			if (button.FlatStyle == FlatStyle.Popup) {
-				DrawInnerFocusRectangle (graphics, Rectangle.Inflate (rectangle, -5, -5), backColor);
+				DrawInnerFocusRectangle (graphics, Rectangle.Inflate (rectangle, -4, -4), backColor);
 			} else {
 				// draw a flat inner rectangle
 				Pen pen = ResPool.GetPen (ControlPaint.LightLight (backColor));
-				graphics.DrawRectangle(pen, Rectangle.Inflate (trace_rectangle, -5, -5));				
+				graphics.DrawRectangle(pen, Rectangle.Inflate (trace_rectangle, -4, -4));				
 			}
 		}
 		

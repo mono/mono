@@ -1,3 +1,12 @@
+2004-11-09  jba  <jba-mono@optusnet.com.au>
+
+	* ThemeWin32Classic.cs 
+	(DrawButtonBase): Fix verticle text rect clipping in windows
+	(DrawCheckBox): Fix CheckAlign.TopCenter and CheckAlign.BottomCenter
+	rendering and incorrect text rect clipping 
+	(DrawRadioButton): Fix CheckAlign.TopCenter and CheckAlign.BottomCenter
+	rendering and incorrect text rect clipping 
+	
 2004-11-08  Jackson Harper  <jackson@ximian.com>
 
 	* ThemeWin32Classic.cs (DrawTabControl): Render tabs from top to
