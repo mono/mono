@@ -10,7 +10,6 @@
  * TODO:
  * * escape/unescape in the .txt reader/writer to be able to roundtrip values with newlines
  *   (unlike the MS ResGen utility)
- * * add .po format to help traslators on unixy systems
  */
 
 using System;
@@ -48,7 +47,7 @@ Usage:
 		monoresgen /compile source.ext[,dest.resources] [...]
 
 Convert a resource file from one format to another.
-The currently supported formats are: '.txt' '.resources' '.resx'.
+The currently supported formats are: '.txt' '.resources' '.resx' '.po'.
 If the destination file is not specified, source.resources will be used.
 The /compile option takes a list of .resX or .txt files to convert to
 .resources files in one bulk operation, replacing .ext with .resources for
@@ -60,6 +59,8 @@ the output file name.
 	static IResourceReader GetReader (Stream stream, string name) {
 		string format = Path.GetExtension (name);
 		switch (format.ToLower ()) {
+		case ".po":
+			return new PoResourceReader (stream);
 		case ".txt":
 		case ".text":
 			return new TxtResourceReader (stream);
@@ -76,6 +77,8 @@ the output file name.
 	static IResourceWriter GetWriter (Stream stream, string name) {
 		string format = Path.GetExtension (name);
 		switch (format.ToLower ()) {
+		case ".po":
+			return new PoResourceWriter (stream);
 		case ".txt":
 		case ".text":
 			return new TxtResourceWriter (stream);
@@ -246,3 +249,120 @@ class TxtResourceReader : IResourceReader {
 	void IDisposable.Dispose () {}
 }
 
+class PoResourceReader : IResourceReader {
+	Hashtable data;
+	Stream s;
+	int line_num;
+	
+	public PoResourceReader (Stream stream)
+	{
+		data = new Hashtable ();
+		s = stream;
+		Load ();
+	}
+	
+	public virtual void Close ()
+	{
+		s.Close ();
+	}
+	
+	public IDictionaryEnumerator GetEnumerator()
+	{
+		return data.GetEnumerator ();
+	}
+	
+	string GetValue (string line)
+	{
+		int begin = line.IndexOf ('"');
+		if (begin == -1)
+			throw new FormatException (String.Format ("No begin quote at line {0}: {1}", line_num, line));
+
+		int end = line.LastIndexOf ('"');
+		if (end == -1)
+			throw new FormatException (String.Format ("No closing quote at line {0}: {1}", line_num, line));
+
+		return line.Substring (begin + 1, end - begin - 1);
+	}
+	
+	void Load ()
+	{
+		StreamReader reader = new StreamReader (s);
+		string line, msgstr;
+		string msgid = null;
+		bool haveID = false;
+
+		while ((line = reader.ReadLine ()) != null) {
+			line_num++;
+			line = line.Trim ();
+			if (line.Length == 0 || line [0] == '#' ||
+			    line [0] == ';' || line [0] == '"')
+				continue;
+
+			if (!haveID) {
+				msgid = GetValue (line);
+				haveID = true;
+				continue;
+			}
+
+			msgstr = GetValue (line);
+			haveID = false;
+			data.Add (msgid, msgstr);
+		}
+	}
+	
+	IEnumerator IEnumerable.GetEnumerator ()
+	{
+		return GetEnumerator();
+	}
+
+	void IDisposable.Dispose ()
+	{
+		if (data != null)
+			data = null;
+
+		if (s != null) {
+			s.Close ();
+			s = null;
+		}
+	}
+}
+
+class PoResourceWriter : IResourceWriter
+{
+	TextWriter s;
+	
+	public PoResourceWriter (Stream stream)
+	{
+		s = new StreamWriter (stream);
+	}
+	
+	public void AddResource (string name, byte [] value)
+	{
+		throw new InvalidOperationException ("Binary data not valid in a po resource file");
+	}
+	
+	public void AddResource (string name, object value)
+	{
+		if (value is string) {
+			AddResource (name, (string) value);
+			return;
+		}
+		throw new InvalidOperationException ("Objects not valid in a po resource file");
+	}
+	
+	public void AddResource (string name, string value)
+	{
+		s.WriteLine ("msgid \"{0}\"", name);
+		s.WriteLine ("msgstr \"{0}\"", value);
+		s.WriteLine ();
+	}
+	
+	public void Close ()
+	{
+		s.Close ();
+	}
+	
+	public void Dispose () { }
+	
+	public void Generate () {}
+}
