@@ -1373,5 +1373,46 @@ namespace MonoTests.System.Collections
 		{
 			PrivateTestReverse(new ArrayList().GetRange(0,0));
 		}
+
+		[Test]
+		public void TestIterator ()
+		{
+			ArrayList a = new ArrayList ();
+			a.Add (1);
+			a.Add (2);
+			a.Add (3);
+
+			int total = 0;
+			foreach (int b in a)
+				total += b;
+			Assert ("Count should be 6", total == 6);
+		}
+
+		[Test]
+		public void TestIteratorObjects ()
+		{
+			ArrayList a = new ArrayList ();
+			a.Add (1);
+			a.Add (null);
+			a.Add (3);
+
+			int total = 0;
+			int count = 0;
+			bool found_null = false;
+			foreach (object b in a){
+				count++;
+				if (b == null){
+					if (found_null)
+						Assert ("Should only find one null", false);
+					found_null = true;
+				} else {
+					total += (int) b;
+				}
+			}
+			
+			Assert ("Should fine one null", found_null);
+			Assert ("Total should be 4", total == 4);
+			Assert ("Count should be 3", count == 3);
+		}
 	}
 }
