@@ -1211,21 +1211,11 @@ namespace Mono.CSharp {
 		{
 			foreach (AttributeSection attr_section in AttributeSections) {
 				foreach (Attribute a in attr_section.Attributes) {
-
-					// Unfortunately, we have also attributes that has not been resolved yet.
-					// We need to simulate part of ApplyAttribute method.
-					if (a.Type == null) {
-						Type attr_type = RootContext.LookupType (ds, GetAttributeFullName (a.Name), true, a.Location);
-						if (attr_type == TypeManager.cls_compliant_attribute_type)
-							return a;
-
-						continue;
-					}
-
-					if (a.Type == TypeManager.cls_compliant_attribute_type)
+					if (a.ResolveType (ds) == TypeManager.cls_compliant_attribute_type)
 						return a;
 				}
 			}
+
 			return null;
 		}
 
