@@ -1,3 +1,9 @@
+2003-02-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XmlDocument.cs:
+	(Load (string)): hack to workaround some issues with Uri.Parse. Once
+	Parse is fixed, remove the hack.
+
 2003-02-16  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlQualifiedName.cs : fixed GetHashCode() to avoid null reference

@@ -558,11 +558,18 @@ namespace System.Xml
 
 		public virtual void Load (string filename)
 		{
-			Uri uri = new Uri (filename);
-			baseURI = filename;	// FIXME: resolve base
-			Stream stream = new XmlUrlResolver ().GetEntity (uri, null, typeof(Stream)) as Stream;
-			XmlReader xmlReader = new XmlTextReader (new XmlStreamReader (new XmlInputStream (stream)));
-			Load (xmlReader);
+			//HACK, HACK
+			if (filename.IndexOf (':') != -1) {
+				// While we fix Uri the code that uses it is only triggered by a colon in the filename.
+				Uri uri = new Uri (filename);
+				baseURI = filename;	// FIXME: resolve base
+				Stream stream = new XmlUrlResolver ().GetEntity (uri, null, typeof(Stream)) as Stream;
+				XmlReader xmlReader = new XmlTextReader (new XmlStreamReader (new XmlInputStream (stream)));
+				Load (xmlReader);
+			} else {
+				//Remove this once Uri.Parse is fixed.
+				Load (File.OpenRead (filename));
+			}
 		}
 
 		public virtual void Load (TextReader txtReader)
