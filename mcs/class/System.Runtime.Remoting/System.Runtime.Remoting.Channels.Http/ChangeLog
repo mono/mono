@@ -1,3 +1,10 @@
+2004-12-17  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* HttpHelper.cs: Removed unused method. Optimized CopyStream method.
+	* HttpServerChannel.cs: SendResponse does not return a bool any
+	  more, it throws an exception when it fails.
+	* HttpServer.cs: Improved handling of errors.
+
 2004-10-22  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* HttpClientChannel.cs: In CreateMessageSink, process the remote channel

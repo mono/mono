@@ -326,9 +326,9 @@ namespace System.Runtime.Remoting.Channels.Http
 			requestHeaders [CommonTransportKeys.RequestUri] = uri;
 			CreateUrl(uri,out url);
 
-			HttpWebRequest httpWebRequest = CreateWebRequest(url,requestHeaders,requestStream);
+			HttpWebRequest httpWebRequest = CreateWebRequest (url,requestHeaders,requestStream);
 
-			SendAndRecieve(httpWebRequest,out responseHeaders,out responseStream);
+			SendAndRecieve (httpWebRequest,out responseHeaders,out responseStream);
 		}
 
 
@@ -567,15 +567,11 @@ namespace System.Runtime.Remoting.Channels.Http
 			}
 
 			Stream reqStream = request.GetRequestStream();
-			if (requestStream is MemoryStream)
-			{
-				MemoryStream memStream = (MemoryStream)requestStream;
-				reqStream.Write (memStream.GetBuffer(), 0, (int)memStream.Length);
-			}
-			else
+			try {
 				HttpHelper.CopyStream(requestStream, reqStream);
-
-			reqStream.Close();
+			} finally {
+				reqStream.Close();
+			}
 			
 			return request;
 		}       
@@ -602,17 +598,19 @@ namespace System.Runtime.Remoting.Channels.Http
 		private void ReceiveResponse (HttpWebResponse httpWebResponse, out ITransportHeaders responseHeaders, out Stream responseStream)
 		{
 			responseHeaders = new TransportHeaders();
+			Stream webStream = httpWebResponse.GetResponseStream();
 
 			try
 			{
-				Stream webStream = httpWebResponse.GetResponseStream();
-
 				if (httpWebResponse.ContentLength != -1)
 				{
 					byte[] buffer = new byte [httpWebResponse.ContentLength];
 					int nr = 0;
-					while (nr < buffer.Length)
-						nr += webStream.Read (buffer, nr, buffer.Length - nr);
+					while (nr < buffer.Length) {
+						int pr = webStream.Read (buffer, nr, buffer.Length - nr);
+						if (pr == 0) throw new RemotingException ("Connection closed");
+						nr += pr;
+					}
 					responseStream = new MemoryStream (buffer);
 				}
 				else
@@ -632,8 +630,8 @@ namespace System.Runtime.Remoting.Channels.Http
 			}
 			finally
 			{
-				if(httpWebResponse!=null)
-					httpWebResponse.Close();
+				webStream.Close ();
+				httpWebResponse.Close();
 			}
 		}
 

@@ -353,17 +353,11 @@ namespace System.Runtime.Remoting.Channels.Http
 				switch (processing)
 				{                    
 					case ServerProcessing.Complete:
-						if (!HttpServer.SendResponse (reqArg, 200, responseHeaders, responseStream))
-						{
-							//ooops couldnot send response !!!!!! and error occured
-						}
+						HttpServer.SendResponse (reqArg, 200, responseHeaders, responseStream);
 						break;
 
 					case ServerProcessing.OneWay:				
-						if (!HttpServer.SendResponse (reqArg, 200, null, null))
-						{
-							//ooops couldnot send response !!!!!! and error occured
-						}
+						HttpServer.SendResponse (reqArg, 200, null, null);
 						break;
 
 					case ServerProcessing.Async:
