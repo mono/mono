@@ -1,3 +1,8 @@
+2004-07-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* KeyUsageExtension.cs: Added Encode to extension so it can be used 
+	by makecert. Fix bug # 61240. Patch provided by Ianier Munoz.
+
 2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* KeyUsageExtension.cs: Added missing INSIDE_CORLIB to enum.
