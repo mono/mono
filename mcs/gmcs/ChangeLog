@@ -1,5 +1,10 @@
 2004-07-13  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (MemberAccess.ResolveAsTypeStep): Use the full `!'
+	name for generic types.
+
+2004-07-13  Martin Baulig  <martin@ximian.com>
+
 	* assign.cs (Assign.DoResolve): Moved the CS0131 check up a little
 	bit to fix #60119.
 

@@ -7592,6 +7592,9 @@ namespace Mono.CSharp {
 				else
 					fname = full_expr.Identifier;
 
+				if (args != null)
+					fname = fname + "!" + args.Count;
+
 				if (full_expr.Expr is SimpleName) {
 					string full_name = String.Concat (((SimpleName) full_expr.Expr).Name, ".", fname);
 					Type fully_qualified = ec.DeclSpace.FindType (loc, full_name);
