@@ -51,6 +51,7 @@ System.Xml\\XmlTextWriter.cs
 System.Xml\\XmlTextWriterOpenElement.cs
 System.Xml\\XmlTokenizedType.cs
 System.Xml\\XmlUrlResolver.cs
+System.Xml\\XmlValidatingReader.cs
 System.Xml\\XmlWhitespace.cs
 System.Xml\\XmlWriter.cs
 System.Xml.Schema\\Parser.cs

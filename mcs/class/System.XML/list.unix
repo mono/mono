@@ -50,6 +50,7 @@ System.Xml/XmlText.cs
 System.Xml/XmlTextReader.cs
 System.Xml/XmlTokenizedType.cs
 System.Xml/XmlUrlResolver.cs
+System.Xml/XmlValidatingReader.cs
 System.Xml/XmlWhitespace.cs
 System.Xml/XmlWriter.cs
 System.Xml/XmlNodeChangedEventHandler.cs
