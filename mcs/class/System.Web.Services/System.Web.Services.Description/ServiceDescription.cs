@@ -42,7 +42,7 @@ namespace System.Web.Services.Description {
 
 		static ServiceDescription ()
 		{
-			serializer = new XmlSerializer (typeof (ServiceDescription, Namespace);
+			serializer = new XmlSerializer (typeof (ServiceDescription), Namespace);
 		}
 
 		public ServiceDescription ()
