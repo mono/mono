@@ -34,9 +34,10 @@ namespace Mono.CSharp {
 			this.pi = pi;
 
 			int count = pi.Length-1;
+
 			if (count > 0) {
-				a = pi [count-1].GetCustomAttributes (TypeManager.param_array_type, false);
-			
+				a = pi [count].GetCustomAttributes (TypeManager.param_array_type, false);
+
 				if (a != null)
 					if (a.Length != 0)
 						last_arg_is_params = true;
@@ -45,7 +46,10 @@ namespace Mono.CSharp {
 		       
 		public Type ParameterType (int pos)
 		{
-			return pi [pos].ParameterType;
+			if (last_arg_is_params && pos >= pi.Length - 1)
+				return pi [pi.Length -1].ParameterType.GetElementType ();
+			else 
+				return pi [pos].ParameterType;
 		}
 
 		public string ParameterDesc (int pos)
@@ -69,13 +73,13 @@ namespace Mono.CSharp {
 
 		public Parameter.Modifier ParameterModifier (int pos)
 		{
-			if (pi [pos].IsOut)
-				return Parameter.Modifier.OUT;
-
-			if (pos == pi.Length-1) 
+			if (pos >= pi.Length - 1) 
 				if (last_arg_is_params)
 					return Parameter.Modifier.PARAMS;
 
+			if (pi [pos].IsOut)
+				return Parameter.Modifier.OUT;
+			
 			return Parameter.Modifier.NONE;
 		}
 
@@ -118,21 +122,17 @@ namespace Mono.CSharp {
 				return null;
 
 			int len = parameters.FixedParameters.Length;
-			Parameter p;
 
-			if (pos == len)
-				p = parameters.ArrayParameter;
-			else if (pos < len)
-				p = parameters.FixedParameters [pos];
-			else {
-				p = parameters.ArrayParameter;
-				pos = len;
-			}
+			if (pos < len)
+				return parameters.FixedParameters [pos].ParameterType;
+			else 
+				return parameters.ArrayParameter.ParameterType.GetElementType ();
+
 
 			//
 			// Return the internal type.
 			//
-			return p.ParameterType;
+			//return p.ParameterType;
 		}
 
 		public string ParameterDesc (int pos)

@@ -2721,6 +2721,7 @@ namespace Mono.CSharp {
 			ParameterData candidate_pd = GetParameterData (candidate);
 			ParameterData best_pd;
 			int argument_count;
+		
 
 			if (args == null)
 				argument_count = 0;
@@ -2730,59 +2731,53 @@ namespace Mono.CSharp {
 			if (candidate_pd.Count == 0 && argument_count == 0)
 				return 1;
 
+			if (candidate_pd.ParameterModifier (candidate_pd.Count - 1) != Parameter.Modifier.PARAMS)
+				if (candidate_pd.Count != argument_count)
+					return 0;
+			
 			if (best == null) {
-				if (candidate_pd.Count == argument_count) {
-					int x = 0;
-					for (int j = argument_count; j > 0;) {
-						j--;
-						
-						Argument a = (Argument) args [j];
-						
-						x = BetterConversion (
-							ec, a, candidate_pd.ParameterType (j), null,
-							use_standard, loc);
-						
-						if (x <= 0)
-							break;
-					}
+				int x = 0;
+				for (int j = argument_count; j > 0;) {
+					j--;
 					
-					if (x > 0)
-						return 1;
-					else
-						return 0;
+					Argument a = (Argument) args [j];
 					
-				} else
+					x = BetterConversion (ec, a, candidate_pd.ParameterType (j), null,
+							      use_standard, loc);
+					
+					if (x <= 0)
+						break;
+				}
+				
+				if (x > 0)
+					return 1;
+				else
 					return 0;
 			}
 
 			best_pd = GetParameterData (best);
 
-			if (candidate_pd.Count == argument_count && best_pd.Count == argument_count) {
-				int rating1 = 0, rating2 = 0;
-				
-				for (int j = argument_count; j > 0;) {
-					j--;
-					int x, y;
-					
-					Argument a = (Argument) args [j];
-
-					x = BetterConversion (ec, a, candidate_pd.ParameterType (j),
-							      best_pd.ParameterType (j), use_standard, loc);
-					y = BetterConversion (ec, a, best_pd.ParameterType (j),
-							      candidate_pd.ParameterType (j), use_standard,
-							      loc);
-					
-					rating1 += x;
-					rating2 += y;
-				}
-
-				if (rating1 > rating2)
-					return 1;
-				else
-					return 0;
-			} else
-				return 0;
+			int rating1 = 0, rating2 = 0;
 			
+			for (int j = 0; j < argument_count; ++j) {
+				int x, y;
+				
+				Argument a = (Argument) args [j];
+				
+				x = BetterConversion (ec, a, candidate_pd.ParameterType (j),
+						      best_pd.ParameterType (j), use_standard, loc);
+				y = BetterConversion (ec, a, best_pd.ParameterType (j),
+						      candidate_pd.ParameterType (j), use_standard, loc);
+
+				rating1 += x;
+				rating2 += y;
+
+			}
+
+			if (rating1 > rating2)
+				return 1;
+			else
+				return 0;
 		}
 
 		public static string FullMethodDesc (MethodBase mb)
@@ -2892,19 +2887,21 @@ namespace Mono.CSharp {
 			
 			if (pd.ParameterModifier (pd_count - 1) != Parameter.Modifier.PARAMS)
 				return false;
-
+			
 			if (pd_count - 1 > arg_count)
 				return false;
 
+			//
 			// If we have come this far, the case which remains is when the number of parameters
 			// is less than or equal to the argument count. So, we now check if the element type
 			// of the params array is compatible with each argument type
 			//
 
-			Type element_type = pd.ParameterType (pd_count - 1).GetElementType ();
+			Type element_type = pd.ParameterType (pd_count - 1);
 
 			for (int i = pd_count - 1; i < arg_count - 1; i++) {
 				Argument a = (Argument) arguments [i];
+				
 				if (!StandardConversionExists (a.Type, element_type))
 					return false;
 			}
@@ -2998,6 +2995,7 @@ namespace Mono.CSharp {
 					continue;
 
 				candidates.Add (candidate);
+		
 				x = BetterFunction (ec, Arguments, candidate, method, use_standard, loc);
 				
 				if (x == 0)
@@ -3020,14 +3018,23 @@ namespace Mono.CSharp {
 			//
 			if (best_match_idx == -1) {
 
+				candidates = new ArrayList ();
 				for (int i = me.Methods.Length; i > 0; ) {
 					i--;
 					MethodBase candidate = me.Methods [i];
 
-					if (IsParamsMethodApplicable (Arguments, candidate)) {
+					if (!IsParamsMethodApplicable (Arguments, candidate))
+						continue;
+
+					candidates.Add (candidate);
+
+					int x = BetterFunction (ec, Arguments, candidate, method, use_standard, loc);
+
+					if (x == 0)
+						continue;
+					else {
 						best_match_idx = i;
 						method = me.Methods [best_match_idx];
-						break;
 					}
 				}
 			}
@@ -3057,28 +3064,28 @@ namespace Mono.CSharp {
 			if (method == null)
 				return null;
 
+
 			//
 			// Now check that there are no ambiguities i.e the selected method
 			// should be better than all the others
 			//
 
-			for (int i = candidates.Count; i > 0; ) {
-				i--;
-				MethodBase candidate = (MethodBase) candidates [i];
-				int x;
+// 			for (int i = 0; i < candidates.Count; ++i) {
+// 				MethodBase candidate = (MethodBase) candidates [i];
 
-				if (candidate == method)
-					continue;
-
-				x = BetterFunction (ec, Arguments, method, candidate, use_standard, loc);
+// 				if (candidate == method)
+// 					continue;
 				
-				if (x != 1) {
-					Report.Error (
-						121, loc,
-						"Ambiguous call when selecting function due to implicit casts");
-					return null;
-				}
-			}
+// 				int x = BetterFunction (ec, Arguments, method, candidate, use_standard, loc);
+
+// 				if (x != 1) {
+// 					Console.WriteLine (candidate + "  " + method);
+// 					Report.Error (
+// 						121, loc,
+// 						"Ambiguous call when selecting function due to implicit casts");
+// 					return null;
+// 				}
+// 			}
 
 			
 			// And now convert implicitly, each argument to the required type
@@ -3090,15 +3097,6 @@ namespace Mono.CSharp {
 				Argument a = (Argument) Arguments [j];
 				Expression a_expr = a.Expr;
 				Type parameter_type = pd.ParameterType (j);
-
-				//
-				// Note that we need to compare against the element type
-				// when we have a params method
-				//
-				if (pd.ParameterModifier (pd_count - 1) == Parameter.Modifier.PARAMS) {
-					if (j >= pd_count - 1) 
-						parameter_type = pd.ParameterType (pd_count - 1).GetElementType ();
-				}
 
 				if (a.Type != parameter_type){
 					Expression conv;

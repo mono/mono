@@ -1,3 +1,18 @@
+2001-12-27  Ravi Pratap  <ravi@ximian.com>
+
+	* support.cs (ReflectionParameters): Fix minor bug where we
+	were examining the wrong parameter for the ParamArray attribute.
+
+	Cope with requests for the type of the parameter at position
+	greater than the params parameter's. We now return the element
+	type of the params array as that makes more sense.
+
+	* expression.cs (Invocation.IsParamsMethodApplicable): Update 
+	accordingly as we no longer have to extract the element type
+	ourselves.
+
+	(Invocation.OverloadResolve): Update.
+
 2001-12-27  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs (Foreach.GetEnumeratorFilter): Do not compare
