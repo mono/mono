@@ -28,7 +28,9 @@ public class BufferedStreamTest : Assertion {
         [TearDown]
        	protected void TearDown ()
         {
-		mem.Close ();        	
+		//Some tests might mess with mem, so let's check it first
+		if (mem != null)
+			mem.Close ();
         }
 
 
@@ -405,11 +407,11 @@ public class BufferedStreamTest : Assertion {
 	 }
 
 	 [Test]
-	 [ExpectedException(typeof(NullReferenceException))]
 	 public void SetLengthException3 ()
 	 {
 		BufferedStream stream = new BufferedStream (mem);
 	 	mem = null;
+		// Strangely, this does not throw an exception on .NET 1.1
 		stream.SetLength (1);	 	
 	 }
 	 
