@@ -59,16 +59,25 @@ namespace System {
 		static bool FilterName_impl (MemberInfo m, object filterCriteria)
 		{
 			string name = (string) filterCriteria;
-			return name.Equals (m.Name);
+        	if (name == null || name.Length == 0 )
+				return false; // because m.Name cannot be null or empty
+				
+			if (name [name.Length-1] == '*')
+				return string.Compare (name, 0, m.Name, 0, name.Length-1, false, CultureInfo.InvariantCulture) == 0;
+
+           	return name.Equals (m.Name);            	
 		}
 
 		static bool FilterNameIgnoreCase_impl (MemberInfo m, object filterCriteria)
 		{
 			string name = (string) filterCriteria;
-			if (name.Length != m.Name.Length)
-				return false;
+        	if (name == null || name.Length == 0 )
+				return false; // because m.Name cannot be null or empty
+				
+			if (name [name.Length-1] == '*')
+				return string.Compare (name, 0, m.Name, 0, name.Length-1, true, CultureInfo.InvariantCulture) == 0;
 
-			return String.Compare (name, m.Name, true, CultureInfo.InvariantCulture) == 0;
+			return String.Compare (name, m.Name, true, CultureInfo.InvariantCulture) == 0;				
 		}
 
 		static bool FilterAttribute_impl (MemberInfo m, object filterCriteria)

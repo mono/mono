@@ -265,6 +265,62 @@ Culture=neutral
 ,
 PublicKeyToken=b77a5c561934e089"));
 		}
+		
+		[Test]
+		public void ExerciseFilterName() {
+			MemberInfo[] mi = typeof(Base).FindMembers(
+				MemberTypes.Method, 
+				BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic |
+			    BindingFlags.Instance | BindingFlags.DeclaredOnly,
+			    Type.FilterName, "*");
+			AssertEquals(4, mi.Length);
+			mi = typeof(Base).FindMembers(
+				MemberTypes.Method, 
+				BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic |
+			    BindingFlags.Instance | BindingFlags.DeclaredOnly,
+			    Type.FilterName, "Test*");
+			AssertEquals(2, mi.Length);
+			mi = typeof(Base).FindMembers(
+				MemberTypes.Method, 
+				BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic |
+			    BindingFlags.Instance | BindingFlags.DeclaredOnly,
+			    Type.FilterName, "TestVoid");
+			AssertEquals(1, mi.Length);
+			mi = typeof(Base).FindMembers(
+				MemberTypes.Method, 
+				BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic |
+			    BindingFlags.Instance | BindingFlags.DeclaredOnly,
+			    Type.FilterName, "NonExistingMethod");
+			AssertEquals(0, mi.Length);
+		}
+		
+		[Test]
+		public void ExerciseFilterNameIgnoreCase() {
+			MemberInfo[] mi = typeof(Base).FindMembers(
+				MemberTypes.Method, 
+				BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic |
+			    BindingFlags.Instance | BindingFlags.DeclaredOnly,
+			    Type.FilterNameIgnoreCase, "*");
+			AssertEquals(4, mi.Length);
+			mi = typeof(Base).FindMembers(
+				MemberTypes.Method, 
+				BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic |
+			    BindingFlags.Instance | BindingFlags.DeclaredOnly,
+			    Type.FilterNameIgnoreCase, "test*");
+			AssertEquals(2, mi.Length);
+			mi = typeof(Base).FindMembers(
+				MemberTypes.Method, 
+				BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic |
+			    BindingFlags.Instance | BindingFlags.DeclaredOnly,
+			    Type.FilterNameIgnoreCase, "TESTVOID");
+			AssertEquals(1, mi.Length);
+			mi = typeof(Base).FindMembers(
+				MemberTypes.Method, 
+				BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic |
+			    BindingFlags.Instance | BindingFlags.DeclaredOnly,
+			    Type.FilterNameIgnoreCase, "NonExistingMethod");
+			AssertEquals(0, mi.Length);
+		}
 	}
 }
 

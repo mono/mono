@@ -1,3 +1,8 @@
+2005-01-19  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
+	* Type.cs: Corrected implementation for the Type.FilterNameIgnoreCase
+	and Type.FilterName delegates They weren't dealing with the optional '*'
+	at the end of the filter mask
+
 2005-01-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Array.cs: Fix a typo in the previous patch.
