@@ -41,7 +41,8 @@ namespace System.IO {
 
                 protected override void Dispose (bool disposing)
 		{
-			internalString = null;
+			// MS.NET doesn't clear internal buffer.
+			// internalString = null;
 			base.Dispose (disposing);
 		}
 

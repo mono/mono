@@ -1,3 +1,7 @@
+2003-03-18  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* StringWriter.cs : don't release internalString on Dispose().
+
 2003-03-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* StreamReader.cs: fixed bug #39280.
