@@ -1,3 +1,8 @@
+2004-12-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* process.c: make the patch that handles spaces in file paths work
+	on mono/windows too.
+
 2004-12-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* image.c: Add unbox_wrapper_cache.
