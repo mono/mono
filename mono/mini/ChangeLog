@@ -1,5 +1,7 @@
 2005-04-01  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-sparc.c mini-sparc.h: Add asserts when running with sigaltstack.
+
 	* exceptions-x86.c (mono_arch_monoctx_to_sigctx): Fix cygwin build.
 
 2005-03-31  Zoltan Varga  <vargaz@freemail.hu>
