@@ -808,7 +808,8 @@ type			: K_CLASS class_ref
                           }
                         | BANG BANG int32
                           {
-                                // access method type parameter by number
+                                MVar mvar = new MVar ((int) $3);
+                                $$ = new GenericTypeRef (mvar, $3.ToString ());
                           }
                         | K_CLASS slashed_name OPEN_ANGLE_BRACKET BANG int32 CLOSE_ANGLE_BRACKET
                           {
@@ -1975,25 +1976,28 @@ instr			: INSTR_NONE
                           }
 			;
 
-method_ref		: call_conv type type_spec DOUBLE_COLON method_name 
-			  OPEN_PARENS type_list CLOSE_PARENS
+method_ref		: call_conv type type_spec DOUBLE_COLON method_name
+                          OPEN_PARENS type_list CLOSE_PARENS 
                           {
                                 ITypeRef owner = (ITypeRef) $3;
                                 ArrayList arg_list = (ArrayList) $7;
                                 ITypeRef[] param_list;
-  
+                                IMethodRef methref;
+
                                 if (arg_list != null)
                                         param_list = (ITypeRef[]) arg_list.ToArray (typeof (ITypeRef));
                                 else
                                         param_list = new ITypeRef[0];
 
                                 if (owner.UseTypeSpec) {
-                                        $$ = new TypeSpecMethodRef (owner, (ITypeRef) $2,
+                                        methref = new TypeSpecMethodRef (owner, (ITypeRef) $2,
                                                 (CallConv) $1, (string) $5, param_list);
                                 } else {
-                                        $$ = owner.GetMethodRef ((ITypeRef) $2,
+                                        methref = owner.GetMethodRef ((ITypeRef) $2,
                                                 (CallConv) $1, (string) $5, param_list);
                                 }
+
+                                $$ = methref;
                           }
 			| call_conv type method_name 
 			  OPEN_PARENS type_list CLOSE_PARENS
@@ -2008,6 +2012,36 @@ method_ref		: call_conv type type_spec DOUBLE_COLON method_name
 
                                 $$ = new GlobalMethodRef ((ITypeRef) $2, (CallConv) $1,
                                         (string) $3, param_list);
+                          }
+                        | call_conv type type_spec DOUBLE_COLON method_name
+                          typars_clause OPEN_PARENS type_list CLOSE_PARENS 
+                          {
+                                ITypeRef owner = (ITypeRef) $3;
+                                ArrayList arg_list = (ArrayList) $8;
+                                ITypeRef[] param_list;
+                                IMethodRef methref;
+
+                                if (arg_list != null)
+                                        param_list = (ITypeRef[]) arg_list.ToArray (typeof (ITypeRef));
+                                else
+                                        param_list = new ITypeRef[0];
+
+                                if (owner.UseTypeSpec) {
+                                        methref = new TypeSpecMethodRef (owner, (ITypeRef) $2,
+                                                (CallConv) $1, (string) $5, param_list);
+                                } else {
+                                        methref = owner.GetMethodRef ((ITypeRef) $2,
+                                                (CallConv) $1, (string) $5, param_list);
+                                }
+
+                                if ($6 != null) {
+                                        ArrayList tp = (ArrayList) $6;
+                                        ITypeRef[] ta = (ITypeRef[]) tp.ToArray (typeof (ITypeRef));
+                                        
+                                        methref = new GenericMethodRef (methref, new GenericMethodSig (ta));
+                                }
+                                Console.WriteLine ("methodref:  {0}", methref);
+                                $$ = methref;
                           }
 			;
 
