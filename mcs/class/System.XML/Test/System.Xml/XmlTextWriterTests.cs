@@ -1299,5 +1299,14 @@ namespace MonoTests.System.Xml
 			// should not result in an exception
 			writer.Close ();
 		}
+
+		[Test]
+		public void WriteRawWriteString ()
+		{
+			// WriteRaw () -> WriteString ().
+			xtw.WriteRaw ("");
+			xtw.WriteString ("foo");
+			AssertEquals (WriteState.Content, xtw.WriteState);
+		}
 	}
 }

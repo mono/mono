@@ -1,3 +1,8 @@
+2005-02-24  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriter.cs : WriteString() should be valid when 
+	  WriteStartDocument() was not called.
+
 2005-02-23  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlNamespaceManager.cs : IsValidDeclaration was giving useless error

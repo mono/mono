@@ -1,3 +1,7 @@
+2005-02-24  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriterTests.cs : Test for call to WriteRaw() -> WriteString()
+
 2005-02-16  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlConvertTests.cs : added some null/empty string cases for

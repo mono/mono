@@ -69,6 +69,7 @@ namespace System.Xml
 		string openElementPrefix;
 		string openElementNS;
 		bool hasRoot = false;
+		bool isDocumentEntity = false;
 		Hashtable newAttributeNamespaces = new Hashtable ();
 		Hashtable userWrittenNamespaces = new Hashtable ();
 		StringBuilder cachedStringBuilder;
@@ -848,6 +849,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 
 			if (hasRoot)
 				throw new XmlException ("WriteStartDocument called twice.");
+			isDocumentEntity = true;
 
 //			CheckState ();
 			CheckOutputState ();
@@ -930,8 +932,14 @@ openElements [openElementCount - 1]).IndentingOverriden;
 
 		public override void WriteString (string text)
 		{
-			if (ws == WriteState.Prolog)
-				throw new InvalidOperationException ("Token content in state Prolog would result in an invalid XML document.");
+			switch (ws) {
+			case WriteState.Start:
+			case WriteState.Prolog:
+				if (isDocumentEntity)
+					throw new InvalidOperationException ("Token content in state Prolog would result in an invalid XML document.");
+				ws = WriteState.Content;
+				break;
+			}
 
 			WriteStringInternal (text, true);
 
