@@ -285,24 +285,8 @@ namespace System.Windows.Forms {
 			//FIXME:
 		}
 		
-		[MonoTODO]
 		public static void DrawCheckBox( Graphics graphics, Rectangle rectangle, ButtonState state) {
-			// FIXME: (sometimes) DrawFrameControl paints control not in "desired" position ( DC coordinates transformed or something like this)
-			// so, we paint to the bitmap ( fresh DC, (0,0)) and then DrawImage to requested position
-			Bitmap bmp = new Bitmap(rectangle.Width+1, rectangle.Height+1,graphics);
-			Graphics g = Graphics.FromImage(bmp);
-			// FIXME: fill new context with some color here?
-			IntPtr hdc = g.GetHdc();
-			RECT rc = new RECT();
-			rc.left = 0;
-			rc.top = 0;
-			rc.right = rectangle.Width;
-			rc.bottom = rectangle.Height;
-			int res = Win32.DrawFrameControl( hdc, ref rc, (uint)DrawFrameControl.DFC_BUTTON, (uint)state | (uint)DrawFrameControl.DFCS_BUTTONCHECK);
-			g.ReleaseHdc(hdc);
-			g.Dispose();
-			graphics.DrawImage(bmp, rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
-			bmp.Dispose();
+			DrawFrameControlHelper (graphics, rectangle, (uint)DrawFrameControl.DFC_BUTTON, (uint)state | (uint)DrawFrameControl.DFCS_BUTTONCHECK);
 		}
 		
 		[MonoTODO]
@@ -425,23 +409,66 @@ namespace System.Windows.Forms {
 			ButtonState state) {
 			//FIXME:
 		}
-		
-		[MonoTODO]
-		public static void DrawRadioButton (Graphics graphics, Rectangle rectangle, ButtonState state) {
-			Bitmap bmp = new Bitmap(rectangle.Width+1, rectangle.Height+1,graphics);
-			Graphics g = Graphics.FromImage(bmp);
-			// FIXME: fill new context with some color here?
-			IntPtr hdc = g.GetHdc();
+
+		internal static void CopyImageTransparent (IntPtr targetDC, IntPtr sourceDC, Rectangle rectangle, Color transparentColor) {
+			// Monochrome mask
+			IntPtr maskDC = Win32.CreateCompatibleDC (sourceDC);
+			IntPtr maskBmp = Win32.CreateBitmap (rectangle.Width, rectangle.Height, 1, 1, IntPtr.Zero);
+			IntPtr oldMaskBmp = Win32.SelectObject (maskDC, maskBmp);
+
+			uint oldColor = Win32.SetBkColor (sourceDC, (uint)Win32.RGB (transparentColor));
+			Win32.StretchBlt (maskDC, 0, 0, rectangle.Width, rectangle.Height, sourceDC, 
+				0, 0, rectangle.Width, rectangle.Height, PatBltTypes.SRCCOPY);
+			Win32.SetBkColor (sourceDC, oldColor);
+
+			Win32.StretchBlt (targetDC, rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height,
+				sourceDC, 0, 0, rectangle.Width, rectangle.Height, PatBltTypes.SRCINVERT);
+
+			uint oldBkClr = Win32.SetBkColor (targetDC, 0xFFFFFF);
+			int oldTextClr = Win32.SetTextColor (targetDC, 0);
+			Win32.StretchBlt (targetDC, rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height,
+				maskDC, 0, 0, rectangle.Width, rectangle.Height, PatBltTypes.SRCAND);
+			Win32.SetTextColor (targetDC, oldTextClr);
+			Win32.SetBkColor (targetDC, oldBkClr);
+
+			Win32.StretchBlt (targetDC, rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height,
+				sourceDC, 0, 0, rectangle.Width, rectangle.Height, PatBltTypes.SRCINVERT);
+
+			Win32.SelectObject (maskDC, oldMaskBmp);
+			Win32.DeleteDC (maskDC);
+			Win32.DeleteObject (maskBmp);
+		}
+
+		internal static void DrawFrameControlHelper (Graphics graphics, Rectangle rectangle, uint type, uint state) {
+
+			IntPtr targetDC = graphics.GetHdc ();
+			Bitmap bmp = new Bitmap (rectangle.Width, rectangle.Height, graphics);
+			Graphics g = Graphics.FromImage (bmp);
+			IntPtr memDC = g.GetHdc ();
+
 			RECT rc = new RECT();
 			rc.left = 0;
 			rc.top = 0;
 			rc.right = rectangle.Width;
 			rc.bottom = rectangle.Height;
-			int res = Win32.DrawFrameControl( hdc, ref rc, (uint)DrawFrameControl.DFC_BUTTON, (uint)state | (uint)DrawFrameControl.DFCS_BUTTONRADIO);
-			g.ReleaseHdc(hdc);
+
+			Color transparentColor = Color.FromArgb (0, 0, 1);
+			uint oldBk = Win32.SetBkColor (memDC, (uint)Win32.RGB(transparentColor));
+			Win32.ExtTextOut (memDC, 0, 0, ExtTextOutFlags.ETO_OPAQUE, ref rc, 0, 0, IntPtr.Zero);
+			Win32.SetBkColor (memDC, oldBk);
+
+			int res = Win32.DrawFrameControl( memDC, ref rc, type, state);
+
+			CopyImageTransparent (targetDC, memDC, rectangle, transparentColor);
+
+			g.ReleaseHdc(memDC);
 			g.Dispose();
-			graphics.DrawImage(bmp, rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
 			bmp.Dispose();
+			graphics.ReleaseHdc (targetDC);
+		}
+
+		public static void DrawRadioButton (Graphics graphics, Rectangle rectangle, ButtonState state) {
+			DrawFrameControlHelper (graphics,  rectangle, (uint)DrawFrameControl.DFC_BUTTON, (uint)state | (uint)DrawFrameControl.DFCS_BUTTONRADIO);
 		}
 		
 		[MonoTODO]

@@ -1,3 +1,6 @@
+2003-08-24  Alexandre Pigolkine <pigolkine@gmx.de>
+	* ControlPaint.cs		DrawRadioButton and DrawCheckBox improved
+
 2003-08-22  Alexandre Pigolkine <pigolkine@gmx.de>
 	* CheckedListBox.cs
 				new keyword added to avoid warnings - Brian Takita
