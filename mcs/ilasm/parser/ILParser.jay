@@ -550,8 +550,8 @@ classDecl               : methodAll
 
 fieldDecl               : D_FIELD repeatOpt fieldAttr type_ref id atOpt initOpt 
 			  {
-				codegen.CurrentClass.AddField ((FieldAttr) $3, 
-					(string) $5, ((TypeRef) $4).Type);
+				codegen.AddField ((FieldAttr) $3, 
+					(string) $5, (TypeRef) $4, null);
 			  }
 			;
 
@@ -685,6 +685,19 @@ propDecl                : D_SET callConv type typeSpec DOUBLE_COLON methodName O
 			| customAttrDecl
 			| extSourceSpec
 			| languageDecl
+			;
+
+field_ref		: internal_field_ref
+			| external_field_ref
+			;
+
+internal_field_ref	: type_ref internal_type_ref DOUBLE_COLON id
+			  {
+				$$ = codegen.GetFieldRef ((TypeRef) $1, (TypeRef) $2, (string) $4, null);
+			  }
+			;
+
+external_field_ref	:
 			;
 
 method_ref		: internal_method_ref
@@ -1076,7 +1089,10 @@ instr                   : INSTR_NONE
 							
 						}
 			| INSTR_FIELD type typeSpec DOUBLE_COLON id 
-			| INSTR_FIELD type id 
+			| INSTR_FIELD field_ref 
+			  {
+				codegen.CodeBuffer.FieldInst ((FieldOp) $1, (Field) $2);
+			  }
 			| INSTR_TYPE type_ref
 			  {
 				TypeRef type_ref = (TypeRef) $2;
